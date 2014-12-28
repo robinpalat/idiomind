@@ -1,9 +1,9 @@
 [Desktop Entry]
-Exec=/usr/share/idiomind/ifs/tls nt
-Icon=/usr/share/idiomind/icon/sntc.png
+Exec=idiomind topic
+Icon=/usr/share/idiomind/icon/tpc.png
 Version=3
 Encoding=UTF-8
 Type=Application
 Comment=Play last entry
 Terminal=false
-Name[en]=Note
+Name[en]=Topic

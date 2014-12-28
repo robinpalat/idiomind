@@ -30,11 +30,11 @@ else
 fi
 
 yad --geometry=185x318-120-420 --width=160 \
-	--height=250 --fixed --title=" New" --button=Close:1 \
+	--height=250 --fixed --title=" Idiomind" --button=Close:1 \
 	--window-icon=/usr/share/idiomind/icon/icon.png \
 	--icons --single-click \
 	--on-top --borders=0 \
-	--read-dir=$HOME/.config/idiomind/addons/new --item-width=56
+	--read-dir=/usr/share/idiomind/default/new --item-width=60
 rm "$DIR2"/lstntry
 
 else

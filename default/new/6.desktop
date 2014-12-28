@@ -1,0 +1,9 @@
+[Desktop Entry]
+Exec=/usr/share/idiomind/cnfg
+Icon=/usr/share/idiomind/icon/cnfg.png
+Version=3
+Encoding=UTF-8
+Type=Application
+Terminal=false
+Comment=Settings
+Name[en]=Settings

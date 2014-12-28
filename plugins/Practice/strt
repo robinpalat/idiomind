@@ -62,7 +62,7 @@ img2=$DS_pp/icons_st/$iconmc.png
 img3=$DS_pp/icons_st/$iconlw.png
 img4=$DS_pp/icons_st/$iconls.png
 
-VAR=$(/lib32/yad_idiomind --ellipsize=NONE --list \
+VAR=$(yad --ellipsize=NONE --list \
 --on-top --class=idiomind --name=idiomind \
 --center --window-icon=idiomind \
 --image-on-top --buttons-layout=edge $img \

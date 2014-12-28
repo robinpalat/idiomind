@@ -262,7 +262,7 @@ st10=$(cat $DC_s/cnfg5 | sed -n 10p)
 slct=$(mktemp $DT/slct.XXXX)
 
 btn1="--button=Ok:0"
-btn2="--button=Viewer:5"
+btn2="--center"
 if [ -f $DT/.p__$uid ]; then
 	btn1="--button=Ok:0"
 	btn2="--button=gtk-media-stop:2"
