@@ -81,7 +81,7 @@ class IndicatorIdiomind:
     def on_Topics_click(self, widget, path):
         subprocess.Popen('/usr/share/idiomind/chng')
     def on_New_click(self, widget, path):
-        subprocess.Popen('/usr/share/idiomind/default/pnls')
+        subprocess.Popen('/usr/share/idiomind/default/nw.sh')
     def on_Settings_click(self, widget, path):
         subprocess.Popen('/usr/share/idiomind/cnfg')
     def on_menutopic_changed(self, filemonitor, file, other_file, event_type):

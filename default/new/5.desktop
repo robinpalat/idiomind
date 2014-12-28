@@ -1,0 +1,9 @@
+[Desktop Entry]
+Exec=/usr/share/idiomind/add n_t
+Icon=/usr/share/idiomind/icon/tpc.png
+Version=3
+Encoding=UTF-8
+Type=Application
+Terminal=false
+Comment=Created new topic in current Language
+Name[en]=Topic

@@ -72,7 +72,7 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 	--sticky --center --window-icon=$ICON --window-icon=idiomind \
 	--tab="Preferences" --tab="  Addons  " \
 	--tab="  More  " --tab="  About  " \
-	--width=400 --height=310 --title="Settings" \
+	--width=450 --height=340 --title="Settings" \
 	--button=Close:0
 	
 	ret=$?

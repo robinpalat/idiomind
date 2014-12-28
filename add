@@ -1396,6 +1396,7 @@ elif [ $1 = prs ]; then
 	lpre=$(cat $DS/default/$lgt/prepositions)
 	ladj=$(cat $DS/default/$lgt/adjetives)
 	nspr='/usr/share/idiomind/add prs'
+	LNK='http://www.chromium.org/developers/how-tos/api-keys'
 	dct=$DS/plugins/Dics/dict
 	lckpr=$DT/.n_s_pr
 	DM_tlt="$DM_tl/$tpe"
