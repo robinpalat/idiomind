@@ -346,7 +346,6 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 		
 	elif [ $ret -eq 1 ]; then
 		rm -f $cnf1 $cnf2 $cnf3 $DT/.l_$uid & exit 1
-		
 	else
 		rm -f $cnf1 $cnf2 $cnf3 $DT/.l_$uid & exit 1
 	fi
