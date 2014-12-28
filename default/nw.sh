@@ -30,7 +30,7 @@ else
 fi
 
 yad --geometry=185x318-120-420 --width=160 \
-	--height=250 --fixed --title=" Idiomind" --button=Close:1 \
+	--height=220 --fixed --title=" Idiomind" --no-buttons \
 	--window-icon=/usr/share/idiomind/icon/icon.png \
 	--icons --single-click \
 	--on-top --borders=0 \
