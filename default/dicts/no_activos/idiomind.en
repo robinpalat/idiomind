@@ -1,0 +1,6 @@
+#!/bin/bash
+lng=$(sed -n 1p ~/.config/idiomind/s/lang)
+word=$(echo "$1")
+w=${word:0:1}
+wget http://"$lng"dict.com.ar/$w/"$word".mp3
+exit

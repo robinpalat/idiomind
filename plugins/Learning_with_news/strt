@@ -1,0 +1,287 @@
+#!/bin/bash
+source /usr/share/idiomind/ifs/c.conf
+STT=$(cat $DC_s/topic_m)
+
+if  [[ -z "$(cat $DC/addons/dict/.dicts)" ]]; then
+	sleep 1
+	$DS/plugins/Dics/dict \
+	$DS/plugins/Learning_with_news/info1 f cnf
+	if  [[ -z "$(cat $DC/addons/dict/.dicts)" ]]; then
+		exit 1
+	fi
+fi
+
+if echo "$STT" | grep "Actualizando..."; then
+	$yad --image=info --geometry=350x80 --window-icon=idiomind \
+	--title=Info --center --borders=15 \
+	--on-top --skip-taskbar --button=Detener:2 \
+	--button=Ok:1 --text=" <i>Hay una Actualización en Curso.</i>"
+		ret=$?
+		
+		if [ $ret -eq 1 ]; then
+			$DS/plugins/Learning_with_news/cnf & exit
+		
+		elif [ $ret -eq 2 ]; then
+			echo "- Modo Feeds" > $DC_s/topic_m
+			$DS/plugins/Learning_with_news/stp.sh
+			$DS/plugins/Learning_with_news/cnf
+		fi
+	exit 1
+fi
+
+sleep 1
+uid=$(sed -n 1p $DC_s/cnfg4)
+dct="$DS/plugins/Dics/dict"
+feed=$(sed -n 1p "$DC/addons/Learning with news/$lgtl/link")
+rsrc=$(cat "$DC/addons/Learning with news/$lgtl/.rss")
+DS_pf="$DS/plugins/Learning_with_news"
+icon=$DS/icon/cnn.png
+date=$(date "+%a %d %B")
+c=$(echo $(($RANDOM%1000)))
+
+if [ ! -d $DM_tl/Feeds ]; then
+
+	mkdir $DM_tl/Feeds
+	mkdir $DM_tl/Feeds/conten
+	mkdir $DM_tl/Feeds/kept
+	mkdir $DM_tl/Feeds/kept/.audio
+	mkdir $DM_tl/Feeds/kept/words
+	mkdir $DC_tl/Feeds/
+	
+	if [ ! -d "$DC/addons/Learning with news/$lgtl" ]; then
+		mkdir "$DC/addons/Learning with news/$lgtl"
+		mkdir "$DC/addons/Learning with news/$lgtl/subscripts"
+		cp $DS_pf/examples/$lgtl \
+		"$DC/addons/Learning with news/$lgtl/subscripts/Example"
+		cp $DS_pf/examples/$lgtl.txt \
+		"$DC/addons/Learning with news/$lgtl/subscripts/Example.txt"
+	fi
+	
+	echo '#!/bin/bash
+source /usr/share/idiomind/ifs/c.conf
+uid=$(sed -n 1p $DC_s/cnfg4)
+FEED=$(cat "$DC/addons/Learning with news/$lgtl/.rss")
+sleep 1
+if [ -f $DT/.uptf$uid ]; then
+	infmn=$(cat $DT/.uptf$uid)
+	echo "$infmn" > $DC_s/topic_m
+else
+	echo "- Feed Mode" > $DC_s/topic_m
+fi
+ICON=$DS/icon/cnn.png
+echo "$tpc" > $DC_s/topic.id
+echo fd >> $DC_s/topic.id
+notify-send --icon=$ICON "Feed Mode" " $FEED" -t 3000
+exit 1' > $DC_tl/Feeds/tpc.sh
+	chmod +x $DC_tl/Feeds/tpc.sh
+	echo "11" > $DC_tl/Feeds/.stts
+	> $DC_tl/Feeds/.t-inx
+	> $DC_tl/Feeds/.sinx
+	> $DC_tl/Feeds/.winx
+fi
+
+if [ -n "$feed" ]; then
+
+	curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
+	$yad --window-icon=idiomind --on-top \
+	--image=info --name=idiomind \
+	--text="<b> No hay conexión a internet  \\n</b>" \
+	--image-on-top --center --sticky \
+	--width=340 --height=50 --borders=3 \
+	--skip-taskbar --title=Idiomind \
+	--button=Ok:0 >&2; exit 1;}
+	
+	if [ "$1" != A ]; then
+		echo "- Feeds Mode ( Actualizando... 5% )" > $DC_s/topic_m
+		echo "- Feeds Mode ( Actualizando... 5% )" > $DT/.uptf$uid
+		echo "$tpc" > $DC_s/topic.id
+		echo fd >> $DC_s/topic.id
+		notify-send --icon=$icon "$rsrc" "Updating..." -t 2000 &
+	fi
+	
+	DT_r=$(mktemp -d $DT/XXXXXX)
+	cd $DT_r
+	echo "$rsrc" > $DT/.rss_$uid
+	rsstail -NHPl -n 8 -1 -u "$feed" > rss.txt
+	cat rss.txt | sed -n 2~2p | sed 's/^ *//g' | sed 's/\&/\\/g' > lnk
+	cat rss.txt | sed -n 1~2p | sed 's/://g' | sed 's/\&//g' | sed 's/"//g' \
+	| sed "s/'//g" | sed 's/^ *//g' | sed 's/-/ /g' \
+	| sed 's/^[ \t]*//;s/[ \t]*$//g' > rss
+	
+	if [ $(cat rss | wc -l) = 0 ]; then
+		echo "- feed Mode" > $DC_s/topic_m
+		$yad --window-icon=idiomind --on-top \
+		--image=info --name=idiomind \
+		--text="<b>No se encuentran noticias o el link es mal</b>" \
+		--image-on-top --center --sticky \
+		--width=380 --height=50 --borders=3 \
+		--skip-taskbar --title=Idiomind \
+		--button=Ok:0 &
+		rm -fr $DT_r .rss_$uid & exit 1
+	fi
+	
+	n=1
+	while [ $n -le $(cat rss | wc -l) ]; do
+	
+			f="5"
+			if [[ "$(cat $DT/.uptf$uid \
+			| grep -o "Actualizando...")" = "Actualizando..." ]]; then
+				echo "- feeds Mode ( Actualizando... $n$f% )" > $DT/.uptf$uid
+				if [ "$1" != A ]; then
+					echo "- feeds Mode ( Actualizando... $n$f% )" > $DC_s/topic_m
+				fi
+			fi
+		
+		trgt=$(sed -n "$n"p rss)
+		lnk=$(sed -n "$n"p lnk)
+		
+		if [[ "$trgt" != "$(grep "$trgt" $DC_tl/Feeds/.updt.lst)" ]]; then
+			if [ $(echo "$trgt" | wc -c) -ge 73 ]; then
+				nme="$(echo "$trgt" | cut -c 1-70 | sed 's/[ \t]*$//' | \
+				sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')..."
+			else
+				nme=$(echo "$trgt" | sed 's/[ \t]*$//' | \
+				sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
+			fi
+			mkdir "$nme"
+			result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
+			encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
+			iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 | sed 's/\n/ /g' > srce
+			srce=$(cat srce | sed ':a;N;$!ba;s/\n/ /g')
+			
+			if [[ $(sed -n 1p $DC_s/cnfg3) != TRUE ]]; then
+				vs=$(sed -n 7p $DC_s/cnfg1)
+				if [ -n "$vs" ]; then
+					if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
+						lg=$(echo $lgtl | awk '{print tolower($0)}')
+						if [ "$lg" != 'english' ] || [ "$lg" != 'spanish' ] || [ "$lg" != 'russian' ]; then
+							if [ "$1" != A ]; then
+								echo "- feed Mode" > $DC_s/topic_m
+							fi
+							rm -fr $DT_r $DT/.uptf$uid $DT/.rss_$uid
+							$yad --text=error & break & exit 1 ############### DIALOG
+						fi
+						echo "$trgt" | text2wave -o $DT_r/s.wav
+						sox $DT_r/s.wav "$nme.mp3"
+					else
+						cd $DT_r
+						echo "$trgt" | $vs
+						if [ -f *.mp3 ]; then
+							mv -f *.mp3 "$nme.mp3"
+						elif [ -f *.wav ]; then
+							sox *.wav "$nme.mp3"
+						fi
+					fi
+				else
+					lg=$(echo $lgtl | awk '{print tolower($0)}')
+					if [ $lg = chinese ]; then
+						lg=Mandarin
+					elif [ $lg = japanese ]; then
+						if [ "$1" != A ]; then
+							echo "- feed Mode" > $DC_s/topic_m
+						fi
+						rm -fr $DT_r $DT/.uptf$uid $DT/.rss_$uid
+						$yad --text=error & break & exit 1 ############### DIALOG
+					fi
+					espeak "$trgt" -v $lg -k 1 -p 65 -a 80 -s 120 -w $DT_r/s.wav
+					sox $DT_r/s.wav "$nme.mp3"
+				fi
+			else
+				wget -q -U Mozilla -O ./"$nme.mp3" "https://translate.google.com/translate_tts?ie=UTF-8&tl=$lgt&q=$trgt"
+			fi
+			
+			eyeD3 --encoding utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I "$nme.mp3"
+			
+			> swrd
+			> twrd
+			if [ $lgt = ja ] || [ $lgt = zh-cn ]; then
+				vrbl="$srce"; lg=$lgt; aw=$DT/swrd; bw=$DT/twrd
+			else
+				vrbl="$trgt"; lg=$lgs; aw=$DT/twrd; bw=$DT/swrd
+			fi
+			echo  "$vrbl" | sed 's/ /\n/g' | grep -v '^.$' | grep -v '^..$' \
+			| sed -n 1,20p | sed s'/&//'g | sed 's/\.//g' | sed 's/,//g' \
+			| sed 's/ /\. /g'  | awk '{print tolower($0)}' > $aw
+			twrd=$(cat $aw | sed '/^$/d')
+			result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lg" --data-urlencode text="$twrd" https://translate.google.com)
+			encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
+			iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 > $bw
+			sed -i 's/\. /\n/g' $bw
+			sed -i 's/\. /\n/g' $aw
+
+
+			if [ $lgt = ja ] || [ $lgt = zh-cn ]; then
+				(
+				n=1
+				while [ $n -le "$(cat $aw | wc -l)" ]; do
+					s=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
+					t=$(sed -n "$n"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
+					echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> A
+					echo "$t"_"$s""" >> B
+					let n++
+				done
+				)
+			else
+				(
+				n=1
+				while [ $n -le "$(cat $aw | wc -l)" ]; do
+					t=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
+					s=$(sed -n "$n"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
+					echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> A
+					echo "$t"_"$s""" >> B
+					let n++
+				done
+				)
+			fi
+
+			lwrds=$(cat A)
+			pwrds=$(cat B | tr '\n' '_')
+			eyeD3 -A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0I "$nme".mp3
+			(
+			if [ $lgt = ja ] || [ $lgt = zh-cn ]; then
+				n=1
+				while [ $n -le $(cat $bw | wc -l) ]; do
+					t=$(sed -n "$n"p $bw)
+					$dct "$t" $DT_r swrd
+					mv "$t.mp3" "$nme/$t.mp3"
+					let n++
+				done
+			else
+				n=1
+				while [ $n -le $(cat $aw | wc -l) ]; do
+					t=$(sed -n "$n"p $aw)
+					$dct "$t" $DT_r swrd
+					mv "$t.mp3" "$nme/$t.mp3"
+					let n++
+				done
+			fi
+			)
+			
+			cp -fr "./$nme" "$DM_tl/Feeds/conten/$nme"
+			mv -f "$nme.mp3" "$DM_tl/Feeds/conten/$nme.mp3"
+			echo "$lnk" > "$DM_tl/Feeds/conten/$nme.lnk"
+			rm -f A B twrd swrd srce
+			notify-send "$trgt" "$srce"  -t 10000 &
+			echo "$date" > $DC_tl/Feeds/.dt
+		fi
+		
+		let n++
+	done
+	
+	mv -f $DT_r/rss "$DC_tl/Feeds/.updt.lst"
+	rm -fr $DT_r $DT/.uptf$uid $DT/.rss_$uid
+	cd "$DM_tl/Feeds/conten"
+	find ./* -mtime +5 -exec rm -r {} \; &
+	
+	if [ "$1" != A ]; then
+		echo "- feed Mode" > $DC_s/topic_m
+		notify-send --icon=$icon "$rsrc" " Actualizado" -t 3000
+	fi
+
+	exit 1
+	
+else
+	sleep 1
+	$DS_pf/cnf NS & exit 1
+fi
+

@@ -1,0 +1,4 @@
+#!/bin/bash
+cd "$HOME/.config/idiomind/addons/Learning with news/Portuguese/subscripts"
+echo "r7.com - Sample subscription" > ../.rss
+echo "http://www.r7.com//data/rss/tecnologiaCiencia.xml" > ../link

@@ -1,0 +1,104 @@
+#!/bin/bash
+source /usr/share/idiomind/ifs/c.conf
+itdl="$2"
+kpt="$DM_tl/Feeds/kept"
+drtc="$DC_tl/Feeds/"
+
+if [[ $1 = dlti ]]; then
+	
+	if [ -f "$kpt/words/$itdl.mp3" ]; then
+
+		$yad --title="Confirm" --width=320 \
+		--height=80 --on-top --center \
+		--image=dialog-question --skip-taskbar \
+		--text=" Borrar esta Palabra?" \
+		--window-icon=idiomind --borders=10 \
+		--button=gtk-delete:2 --button=Cancel:0
+		ret=$?
+		
+			if [[ $ret -eq 2 ]]; then
+				rm "$kpt/words/$itdl.mp3"
+				cd "$drtc"
+				grep -v -x -v "$itdl" ./.inx > ./inx
+				sed '/^$/d' ./inx > ./.inx
+				rm ./inx
+				grep -v -x -v "$itdl" ./indfa > ./indfa_
+				sed '/^$/d' ./indfa_ > ./indfa
+				rm ./indfa_
+				grep -v -x -v "$itdl" ./indfe > ./indfe_
+				sed '/^$/d' ./indfe_ > ./indfe
+				rm ./indfe_
+				notify-send  -i info "$itdl" "Deleted"  -t 1500
+			fi
+			
+			if [[ $ret -eq 1 ]]; then
+				exit
+			fi
+
+	else
+		$yad --title="Confirm" --width=320 \
+		--height=80 --on-top --center \
+		--image=dialog-question --skip-taskbar \
+		--text=" Borrar esta Oración?" \
+		--window-icon=idiomind --borders=10 \
+		--button=gtk-delete:2 --button=Cancel:0
+		ret=$?
+		
+			if [[ $ret -eq 2 ]]; then
+				rm "$kpt/$itdl.mp3"
+				cd "$drtc"
+				grep -v -x -v "$itdl" ./.inx > ./inx
+				sed '/^$/d' ./inx > ./.inx
+				rm ./inx
+				grep -v -x -v "$itdl" ./indfa > ./indfa_
+				sed '/^$/d' ./indfa_ > ./indfa
+				rm ./indfa_
+				grep -v -x -v "$itdl" ./indfe > ./indfe_
+				sed '/^$/d' ./indfe_ > ./indfe
+				rm ./indfe_
+				notify-send  -i info "$itdl" "Deleted"  -t 1500
+			fi
+			
+			if [[ $ret -eq 1 ]]; then
+				exit
+			fi
+	fi
+
+elif [[ $1 = dlns ]]; then
+
+	$yad --width=400 --height=50 --title="Confirm" \
+	--on-top --image=dialog-question --center --geometry=400x50 --skip-taskbar \
+	--window-icon=idiomind --text="<b>¿Eliminar Todo?</b>\\nLas Descargas de las Subcripciones Se Eliminan Automaticamente Al Tener Más de 5 Dias" \
+	--borders=5 --button="gtk-delete:0" --button="Cancel:1"
+		ret=$?
+
+		if [[ $ret -eq 0 ]]; then
+		
+			rm -r $DM_tl/Feeds/conten/*
+			rm $DC_tl/Feeds/.updt.lst
+			rm $DC_tl/Feeds/.dt
+			notify-send  -i info "Delete" "puedes cerrar la ventana" -t 2000
+			
+		else
+			exit 1
+		fi
+
+elif [[ $1 = dlkt ]]; then
+
+	$yad --image=dialog-question \
+	--window-icon=idiomind --width=360 --height=80  \
+	--title="Confirm" --on-top --center --skip-taskbar \
+	--borders=10 --button=gtk-delete:0 --name=idiomind \
+	--button=Cancel:1 --text=" Eliminar todo el contenido guardado?"
+
+	ret=$?
+
+	if [[ $ret -eq 0 ]]; then
+		rm -r "$drtc"/.inx
+		rm -r "$kpt"/*.mp3
+		rm -r "$kpt"/words/*.mp3
+	else
+		exit 1
+	fi
+
+fi

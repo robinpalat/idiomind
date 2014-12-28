@@ -1,0 +1,86 @@
+#!/bin/bash
+tpc=$(sed -n 1p ~/.config/idiomind/s/topic.id)
+lgtl=$(sed -n 2p ~/.config/idiomind/s/lang)
+drtt="$HOME/.idiomind/topics/$lgtl/$tpc/"
+drsh="$HOME/.idiomind/topics/$lgtl/.share"
+drtu="/usr/share/idiomind/plugins/Practice/"
+cd "$HOME/.config/idiomind/topics/$lgtl/$tpc/Practice"
+yad=/lib32/yad_idiomind
+vws=$drtu/vws
+nw="$1"
+st="$2"
+if [ ! -f "/tmp/.idmtp1/idadtmptts/lw" ]; then
+	nm=$(sed -n "$3"p lsin)
+	if [ -f "$drtt/$nm.mp3" ]; then
+		file="$drtt/$nm.mp3"
+	fi
+	mkdir /tmp/.idmtp1/idadtmptts
+	chmod 777 -R /tmp/.idmtp1/idadtmptts
+	eyeD3 "$file" > /tmp/.idmtp1/idadtmptts/lw
+	echo "$nm" > /tmp/.idmtp1/idadtmptts/ls
+fi
+
+S=$(cat /tmp/.idmtp1/idadtmptts/lw | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' | awk '{print tolower($0)}')
+tgt=$(cat /tmp/.idmtp1/idadtmptts/lw | grep -o -P '(?<=ISTI'$nw'I0I).*(?=ISTI'$nw'I0I)'| awk '{print tolower($0)}')
+src=$(cat /tmp/.idmtp1/idadtmptts/lw | grep -o -P '(?<=ISSI'$nw'I0I).*(?=ISSI'$nw'I0I)')
+nm=$(cat /tmp/.idmtp1/idadtmptts/ls)
+if [ -z "$tgt" ]; then
+	tgt=$(cat /tmp/.idmtp1/idadtmptts/lw | grep -o -P '(?<=ISTI1I0I).*(?=ISTI1I0I)' | awk '{print tolower($0)}')
+	src=$(cat /tmp/.idmtp1/idadtmptts/lw | grep -o -P '(?<=ISSI1I0I).*(?=ISSI1I0I)')
+	nw=1
+fi
+
+A=$(echo "$st" | sed -n 2p)
+B=$(echo "$st" | sed -n 3p) 
+if [ "$B" = TRUE ]; then
+	aut=--timeout=2
+fi
+
+if [ "$A" = TRUE ]; then
+	prn=play
+fi
+
+itm=$(echo "$tgt")
+trgt=$(echo "$S" | sed "s#${tgt}#<b><big><big><big>\
+<big> ${tgt} <\/\big><\/\big><\/\big><\/\big><\/\b>#g")
+play="play '$drtt/$nm.mp3'"
+i=Play
+
+(
+"$prn" "$drsh/$itm.mp3"
+) &
+
+vw=$($yad --form --always-print-result \
+	--center --separator="\\n" --columns=3 --name=idmnd \
+	--width=480 --height=240 --on-top --skip-taskbar \
+	--borders=5 --class=idmnd $aut --undecorated \
+	--title=" " --buttons-layout=center \
+	--text-align=center --window-icon=idiomind \
+	--field="$i:BTN" "$play" \
+	--field="pronounce":chk "$A" \
+	--field="Auto":chk "$B" \
+	--button="	<	:3" \
+	--button="	Practice	:1" \
+	--button="	>	:2" \
+	--text="\\n$trgt\\n\\n <i><big><big><big>\
+<span color='#7F7F7F'>[</span> \
+<span color='#6F96BE'><b><big> $src </big></b></span> \
+<span color='#7F7F7F'>]</span></big></big></big></i> \\n")
+
+	ret=$?
+	if [[ $ret -eq 1 ]]; then 
+		killall vws & rm -f -r /tmp/.idmtp1/idadtmptts & exit 1
+	elif [[ $ret -eq 2 ]]; then
+		ff=$(($nw + 1))
+		$vws "$ff" "$vw"
+	elif [[ $ret -eq 3 ]]; then
+		ff=$(($nw - 1))
+		$vws "$ff" "$vw"
+	elif [[ $B = TRUE ]]; then 
+		ff=$(($nw + 1))
+		$vws "$ff" "$vw"
+	else
+		killall vws &
+		$drtu/cls s &
+		rm -f -r /tmp/.idmtp1/idadtmptts & exit 1
+	fi

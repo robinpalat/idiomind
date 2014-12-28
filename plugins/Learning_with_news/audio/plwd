@@ -1,0 +1,25 @@
+#!/bin/bash
+
+lngt=$(sed -n 2p ~/.config/idiomind/s/lang)
+if [ -f "$HOME/.idiomind/topics/$lngt/Feeds/conten/$1.mp3" ]; then
+	drtx="$HOME/.idiomind/topics/$lngt/Feeds/conten/$1"
+	fle="$HOME/.idiomind/topics/$lngt/Feeds/conten/$1.mp3"
+elif [ -f "$HOME/.idiomind/topics/$lngt/Feeds/kept/$1.mp3" ]; then
+	drtx="$HOME/.idiomind/topics/$lngt/Feeds/kept/.audio"
+	fle="$HOME/.idiomind/topics/$lngt/Feeds/kept/$1.mp3"
+else
+	exit 1
+fi
+
+killall play
+file="$fle"
+lwrd=$(eyeD3 "$file" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' \
+| awk '{print tolower($0)}' | tr ' ' '\n')
+
+n=1
+while [ $n -le "$(echo "$lwrd" | wc -l)" ]; do
+	ply=$(echo "$lwrd" | sed -n "$n"p)
+	play "$drtx/$ply.mp3"
+	let n++
+done
+exit 1

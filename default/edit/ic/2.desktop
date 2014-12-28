@@ -1,0 +1,9 @@
+[Desktop Entry]
+Exec=/usr/share/idiomind/mngr mklg-
+Icon=/usr/share/idiomind/icon/refresh.png
+Version=3
+Encoding=UTF-8
+Type=Application
+Comment=Marcar todo como aprendiendo
+Terminal=false
+Name[en]=Repasar

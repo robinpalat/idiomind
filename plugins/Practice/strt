@@ -1,0 +1,134 @@
+#!/bin/bash
+tpc=$(sed -n 1p $HOME/.config/idiomind/s/topic.id)
+lgtl=$(sed -n 2p $HOME/.config/idiomind/s/lang)
+DC_tlt="$HOME/.config/idiomind/topics/$lgtl/$tpc"
+DS_pp="/usr/share/idiomind/plugins/Practice"
+eht=$(sed -n 13p $HOME/.config/idiomind/s/.rd)
+wth=$(sed -n 14p $HOME/.config/idiomind/s/.rd)
+/usr/share/idiomind/stop.sh &
+cd "$DC_tlt/Practice"
+
+if [[ -n "$1" ]]; then
+
+	if [ $1 = 1 ]; then
+		info1="* "
+		echo 21 > .iconf
+	elif [ $1 = 2 ]; then
+		info2="* "
+		echo 21 > .iconmc
+	elif [ $1 = 3 ]; then
+		info3="* "
+		echo 21 > .iconlw
+	elif [ $1 = 4 ]; then
+		info4="* "
+		echo 21 > .iconls
+
+	elif [ $1 = 5 ]; then
+		wrong=$((100*$(cat no.id)/$(cat scr)))
+		good=$((100*$(cat ok.id)/$(cat scr)))
+		info="  <span color='#3AB451'><b><big> $good%</big></b></span><sup>  Correct</sup>\\t<span color='#D11B5D'> <b><big>$wrong%</big></b></span><sup>  Wrong</sup>\\n"
+		num=$(cat .iconf)
+		info1="* "
+
+	elif [ $1 = 6 ]; then
+		wrong=$((100*$(cat no.id)/$(cat scr)))
+		good=$((100*$(cat ok.id)/$(cat scr)))
+		info="  <span color='#3AB451'><b><big> $good%</big></b></span><sup>  Correct</sup>\\t<span color='#D11B5D'> <b><big>$wrong%</big></b></span><sup>  Wrong</sup>\\n"
+		num=$(cat .iconmc)
+		info2="* "
+
+	elif [ $1 = 7 ]; then
+		wrong=$((100*$(cat no.id)/$(cat scr)))
+		good=$((100*$(cat ok.id)/$(cat scr)))
+		info="  <span color='#3AB451'><b><big> $good%</big></b></span><sup>  Correct</sup>\\t<span color='#D11B5D'> <b><big>$wrong%</big></b></span><sup>  Wrong</sup>\\n"
+		num=$(cat .iconlw)
+		info3="* "
+
+	elif [ $1 = 8 ]; then
+		wrong=$((100*$(cat no.id)/$(cat scr)))
+		good=$((100*$(cat ok.id)/$(cat scr)))
+		info="  <span color='#3AB451'><b><big> $good%</big></b></span><sup>  Correct</sup>\\t<span color='#D11B5D'> <b><big>$wrong%</big></b></span><sup>  Wrong</sup>\\n"
+		num=$(cat .iconls)
+		info4="* "
+	fi
+fi
+
+iconf=$(cat .iconf)
+iconmc=$(cat .iconmc)
+iconlw=$(cat .iconlw)
+iconls=$(cat .iconls)
+img1=$DS_pp/icons_st/$iconf.png
+img2=$DS_pp/icons_st/$iconmc.png
+img3=$DS_pp/icons_st/$iconlw.png
+img4=$DS_pp/icons_st/$iconls.png
+
+VAR=$(/lib32/yad_idiomind --ellipsize=NONE --list \
+--on-top --class=idiomind --name=idiomind \
+--center --window-icon=idiomind \
+--image-on-top --buttons-layout=edge $img \
+--borders=5 --expand-column=2 \
+--width="$wth" --height="$eht" --text="$info" \
+--no-headers --button=Restart:3 --button=Learning:2 --button=Start:0 \
+--title="Practice - $tpc" --column="Pick":IMG \
+--column="Action" $img1 "          $info1 Flashcards" $img2 \
+"          $info2 Multiple Choisse" \
+	$img3 "          $info3 Listening Words" $img4 \
+"          $info4 Listening Sentences" )
+ret=$?
+
+
+	if [ $ret -eq 0 ]; then
+		echo "prctc.$tpc.prctc" >> \
+		$HOME/.config/idiomind/addons/stats/.log &
+		
+		if echo "$VAR" | grep "Flashcards"; then
+			$DS_pp/prct f f && exit 1
+		fi
+		
+		if echo "$VAR" | grep "Multiple Choisse"; then
+			$DS_pp/prct m m && exit 1
+		fi
+		
+		if echo "$VAR" | grep "Listening Words"; then
+			$DS_pp/prct w w && exit 1
+		fi
+		
+		if echo "$VAR" | grep "Listening Sentences"; then
+			$DS_pp/prct s s && exit 1
+		fi
+	
+	elif [ $ret -eq 2 ]; then
+		echo "lrnpr.$tpc.lrnpr" >> \
+		$HOME/.config/idiomind/addons/stats/.log &
+		
+		if echo "$VAR" | grep "Flashcards"; then
+			$DS_pp/prct l f && exit 1
+		fi
+		
+		if echo "$VAR" | grep "Multiple Choisse"; then
+			$DS_pp/prct l m && exit 1
+		fi
+		
+		if echo "$VAR" | grep "Listening Words"; then
+			$DS_pp/prct l w && exit 1
+		fi
+		
+		if echo "$VAR" | grep "Listening Sentences"; then
+			$DS_pp/prct l s && exit 1
+		fi
+	
+	elif [ $ret -eq 3 ]; then
+		(
+		echo "#" ;
+		cd "$DC_tlt/Practice"
+		rm *
+		cp -f /usr/share/idiomind/plugins/Practice/default/.* "$DC_tlt/Practice"
+		) | /lib32/yad_idiomind --progress \
+		--width 50 --height 35 --center \
+		--pulsate --auto-close --no-buttons \
+		--sticky --undecorated --skip-taskbar
+		/usr/share/idiomind/plugins/Practice/strt & exit 1
+	else
+		/usr/share/idiomind/plugins/Practice/stp.sh
+		exit 1
+	fi

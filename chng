@@ -1,0 +1,453 @@
+#!/bin/bash
+source /usr/share/idiomind/ifs/c.conf
+
+
+if [[ "$1" = prs ]]; then
+
+	rm -f $DT/prs.png
+	now="$2"
+	ind="$DC_tlt/.tlng-inx"
+	nme=$(sed -n "$2"p "$ind")
+	if [ -z "$nme" ]; then
+		$yad --image-on-top --form --on-top \
+		--geometry=400x500-400-1200 --sticky \
+		--skip-taskbar --borders=0 \
+		--buttons-layout=center \
+		--undecorated --field="<big> </big>:lbl" \
+		--image="$DS/icon/veprs.png" \
+		--button="		Play		:2" \
+		--button="		Exit		:1"
+		ret=$?
+		if [[ $ret -eq 2 ]]; then 
+			$DS/chng prs 1 & exit 1
+		fi
+		if [[ $ret -eq 1 ]]; then 
+			/usr/share/idiomind/stop.sh V & exit 1
+		fi
+	exit 1
+	fi
+	
+	B=TRUE
+	
+	if [ -f "$DM_tlt/words/$nme.mp3" ]; then
+		eyeD3 --write-objects=$DT "$DM_tlt/words/$nme.mp3"
+		if [ -f "$DT/prs.png" ]; then
+			prs="$DT/prs.png"
+		else
+			trgt=$(eyeD3 "$DM_tlt/words/$nme.mp3" | \
+			grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
+			textt=$(echo "$trgt" | fold -s -w15)
+			srce=$(eyeD3 "$DM_tlt/words/$nme.mp3" | \
+			grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
+			texts=$(echo "$srce")
+			convert "$DS/icon/prs.png" -font Purisa-BoldOblique \
+			-gravity Center -pointsize 90 -fill gray32 \
+			-draw "text 0 0 \"$textt\"" $DT/prs.png
+			width=`identify -format %w $DT/prs.png`; \
+			convert -background '#0007' -fill gray95 \
+			-gravity center -size ${width}x50 \
+			caption:"$texts" \
+			$DT/prs.png +swap -gravity south -composite $DT/prs.png
+			#eyeD3 --add-object $DT/prs.png:PRS "$DM_tlt/words/$nme".mp3
+			prs="$DT/prs.png"
+		fi
+		#(play "$DM_tlt/words/$nme.mp3") &
+		$yad --form --image-on-top --geometry=400x500-400-1200 \
+		--image="$prs" --sticky --buttons-layout=center \
+		--skip-taskbar --borders=0 --on-top \
+		--undecorated --field="►:BTN" "play '$DM_tlt/words/$nme.mp3'" \
+		--button="			<			:3" \
+		--button="Exit:1" \
+		--button="			>			:2"
+
+	elif [ -f "$DM_tlt/$nme.mp3" ]; then
+		eyeD3 --write-objects=$DT "$DM_tlt/$nme.mp3"
+		if [ -f "$DT/prs.png" ]; then
+			prs="$DT/prs.png"
+		else
+			trgt=$(eyeD3 "$DM_tlt/$nme.mp3" | \
+			grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
+			textt=$(echo "$trgt" | fold -s -w30)
+			srce=$(eyeD3 "$DM_tlt/$nme.mp3" | \
+			grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
+			texts=$(echo "$srce")
+			convert "$DS/icon/prs.png" -font Purisa-BoldOblique \
+			-gravity Center -pointsize 50 \
+			-fill gray32 -draw "text 0 0 \"$textt\"" $DT/prs.png
+			width=`identify -format %w $DT/prs.png`; \
+			convert -background '#0007' -fill gray95 \
+			-gravity center -size ${width}x50 \
+			caption:"$texts" \
+			$DT/prs.png +swap -gravity south -composite $DT/prs.png
+			#eyeD3 --add-object $DT/prs.png:PRS "$DM_tlt/$nme".mp3
+			prs="$DT/prs.png"
+		fi
+		if [ ! -f "$DM_tlt/$nme.mp3" ]; then
+			exit 1
+		fi
+		wmm=$(($8 + $(echo "$nme" | wc -w)))
+		#(sleep 0.5 && play "$DM_tlt/$nme.mp3") &
+		$yad --form --image-on-top --on-top \
+		--geometry=400x500-400-1200 \
+		--image="$prs" --skip-taskbar --sticky \
+		--borders=0 --buttons-layout=center \
+		--undecorated --field="►:BTN" "$DS/audio/ply2 '$nme'" \
+		--button="			<			:3" \
+		--button="Exit:1" \
+		--button="			>			:2" 
+		
+	fi
+			ret=$?
+			if [[ $ret -eq 1 ]]; then 
+				/usr/share/idiomind/stop.sh V & exit 1
+			elif [[ $ret -eq 2 ]]; then
+				ff=$(($now + 1))
+				$DS/chng prs $ff &
+			elif [[ $ret -eq 3 ]]; then
+				ff=$(($now - 1))
+				$DS/chng prs $ff &
+			elif [[ B = TRUE ]]; then 
+				ff=$(($now + 1))
+				$DS/chng prs $ff &
+			fi
+exit 1
+
+elif [[ "$1" = chngi ]]; then
+
+	saw=$(sed -n 1p $DC_s/cnfg5)
+	sas=$(sed -n 2p $DC_s/cnfg5)
+	sap=$(sed -n 3p $DC_s/cnfg5)
+	saf=$(sed -n 4p $DC_s/cnfg5)
+	sna=$(sed -n 5p $DC_s/cnfg5)
+	nta=$(sed -n 6p $DC_s/cnfg5)
+	dga=$(sed -n 7p $DC_s/cnfg5)
+	user=$(echo "$(whoami)")
+	cnfg1="$DC_s/cnfg5"
+	indx="$DT/.$user/indx"
+	tlck="$DS/icon/chng.mp3"
+	imgt="/$DT/FRONT_COVER.jpeg"
+	rm -f "$DT/FRONT_COVER.jpeg"
+	wth=$(sed -n 10p $DC_s/.rd)
+	eht=$(sed -n 9p $DC_s/.rd)
+	nim=$(sed -n 11p $DC_s/.rd)
+	indp="$DT/.$user/indp"
+	br="$DS/icon/br.png"
+	br2="$DS/icon/br2.png"
+	br3="$DS/icon/br3.png"
+	img="$DS/icon/prs.png"
+	
+	if [[ -z $(sed -n 1p $DC_s/cnfg2) ]]; then
+	pst=$(sed -n 1p $DC_s/.pst)
+		echo 8 > $DC_s/cnfg2
+		echo $pst >> $DC_s/cnfg2
+		bcl=$(sed -n 1p $DC_s/cnfg2)
+		pst=$(sed -n 2p $DC_s/cnfg2)
+	else
+		bcl=$(sed -n 1p $DC_s/cnfg2)
+		pst=$(sed -n 2p $DC_s/cnfg2)
+	fi
+	if echo "$sna" | grep "TRUE"; then
+		aud=play
+	else
+		aud='#'
+	fi
+	if echo "$nta" | grep "TRUE"; then
+		osd=notify-send
+		bcl=$(sed -n 1p $DC_s/cnfg2)
+	else
+		osd="#"
+	fi
+	if echo "$dga" | grep "TRUE"; then
+		yad=$yad
+	else
+		yad="#"
+	fi
+	itm=$(sed -n "$2"p $indx)
+	
+	if ( [ $sas = TRUE ] ) && \
+	( [ $(echo "$itm" | wc -w) != 1 ] && \
+	[ -f "$DM_tlt/$itm.mp3" ] || [ -f "$DM_tlt/$itm.omd" ] ); then
+
+		if [ -f "$DM_tlt/$itm.mp3" ]; then
+			file="$DM_tlt/$itm.mp3"
+		else
+			file="$DM_tlt/$itm.omd"
+		fi
+		
+		tgs=$(eyeD3 "$file")
+		srce=$(echo "$tgs" | \
+		grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
+		gmmk=$(echo "$tgs" | \
+		grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)')
+		
+		if [ -z "$trgt" ]; then
+			trgt="$itm"
+		fi
+		
+		if [ -z "$srce" ]; then
+			srce=" 
+			- - - - "
+		fi
+		
+		cnt=$(echo "$trgt" | wc -w)
+		
+		if echo "$nta" | grep "TRUE"; then
+			cnt=10
+		fi
+		
+		wmm=$(($bcl + $cnt / 2 ))
+		wmt=$(($wmm + 5))
+		
+		#play $tlck &
+		$yad --form --sticky --scroll --fixed \
+		--columns=1 --no-buttons --title=" " \
+		--timeout=$wmt --undecorated \
+		--image=$br --borders=0 \
+		--align=left --skip-taskbar --on-top \
+		--width=$wth --height=$eht \
+		--geometry="$wth"x"$eht"-2-$pst \
+		--field="<b>$gmmk</b>":lbl"" \
+		--field="":lbl"" \
+		--field="<small><i>$srce</i></small>":lbl"" \
+		--field=" :lbl"  &
+
+		$osd "$trgt" "\\n$srce\\n" -t 8000  &
+		sleep 3
+		$aud "$DM_tlt/$itm".mp3 &
+		
+		if [ $bcl -ge 30 ]; then
+			(sleep 15 && $aud "$DM_tlt/$itm".mp3) &
+		fi
+		if [ $bcl -ge 45 ]; then
+			(sleep 30 && $aud "$DM_tlt/$itm".mp3) &
+		fi
+		if [ $bcl -ge 65 ]; then
+			(sleep 50 && $aud "$DM_tlt/$itm".mp3) &
+		fi
+		
+		sleep $wmm
+	
+	elif ( [ $saw = TRUE ] || [ $sap = TRUE ] ) && \
+	( [ $(echo "$itm" | wc -w) = 1 ] && \
+	[ -f "$DM_tlt/words/$itm.mp3" ] || [ -f "$DM_tlt/words/$itm.mp3" ] ); then
+		file="$DM_tlt/words/$itm.mp3"
+		if echo "$nta" | grep "TRUE"; then
+			cnt=10
+		else
+			cnt=1
+		fi
+		wmm=$(($bcl + $cnt))
+		wmt=$(($wmm + 5))
+		rm -f $imgt
+		eyeD3 --write-images=$DT "$file"
+		imgt=$DT/FRONT_COVER.jpeg
+		if [ -f $imgt ]; then
+			img=$imgt
+			osdi=$imgt
+		else
+			if [[ -n "$(cat "$indp" | grep "$itm")" ]] \
+			&& [[ $sap = TRUE ]]; then
+				img=$br2
+			else
+				img=$br
+			fi
+			osdi=$DS/icon/W.png
+		fi
+		tgs=$(eyeD3 "$file")
+		tgt=$(echo "$tgs" | \
+		grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
+		srce=$(echo "$tgs" | \
+		grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
+		mrk=$(echo "$tgs" | \
+		grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)')
+		if [ -z "$tgt" ]; then
+			tgt="$itm"
+		fi
+		if [ -z "$srce" ]; then
+			srce=" - - - "
+		fi
+		if [ "$mrk" = TRUE ]; then
+			trgt=$(echo "<span color='#DF7732'>"tgt"</span>")
+		else
+			trgt=$(echo "$tgt")
+		fi
+		
+		#play $tlck &
+		$yad --form --sticky --scroll --fixed \
+		--columns=1 --no-buttons --title=" " \
+		--timeout=$wmt --undecorated \
+		--borders=0 --image=$img \
+		--align=left --skip-taskbar --on-top \
+		--width="$wth" --height="$eht" \
+		--geometry="$wth"x"$eht"-2-$pst \
+		--field="<big><b>  $trgt</b></big>:lbl" \
+		--field="":lbl"" \
+		--field="<i>   $srce</i>:lbl" \
+		--field=" :lbl" &
+		
+		$osd "$trgt" "\n$srce\n" -t 7000 &
+		sleep 3
+		$aud "$DM_tlt/words/$itm".mp3 &
+		if [ $bcl -ge 5 ]; then
+			(sleep 2.5 && $aud "$DM_tlt/words/$itm.mp3") &
+		fi
+		if [ $bcl -ge 30 ]; then
+			(sleep 10 && $aud "$DM_tlt/words/$itm.mp3"
+			sleep 10
+			$aud "$DM_tlt/words/$itm.mp3") &
+		fi
+		rm -f $DT/*.jpeg ./.id.tmp
+		sleep $wmm
+				
+	elif ([ $saf = TRUE ]) && \
+	([ -f "$DM_tl/Feeds/kept/words/$itm.mp3" ] || [ -f "$DM_tl/Feeds/kept/$itm.mp3" ]); then
+	
+		if [ -f "$DM_tl/Feeds/kept/$itm.mp3" ]; then
+			file="$DM_tl/Feeds/kept/$itm.mp3"
+			tgs=$(eyeD3 "$file")
+			trgt=$(echo "$tgs" | \
+			grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
+			srce=$(echo "$tgs" | \
+			grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
+			cnt=$(echo "$trgt" | wc -w)
+			if [ -z "$trgt" ]; then
+				trgt="$itm"
+			fi
+			if echo "$nta" | grep "TRUE"; then
+				cnt=10
+			fi
+			wmm=$(($bcl + $cnt))
+			wmt=$(($wmm + 5))
+			
+			$yad --form --sticky --scroll --fixed \
+			--columns=1 --no-buttons --title=" "  \
+			--timeout=$wmt --undecorated \
+			--borders=0 --image=$br3 \
+			--align=left --skip-taskbar --on-top \
+			--width="$wth" --height="$eht" \
+			--geometry="$wth"x"$eht"-2-$pst \
+			--field="<b>$trgt</b>":lbl"" \
+			--field="":lbl"" \
+			--field="<small><i>$srce</i></small>":lbl"" &
+				
+			$osd "$trgt" "$srce" -t 8000 -i $DS/icon/S.png &
+			sleep 3
+			$aud "$DM_tl/Feeds/kept/$itm".mp3 &
+			sleep $wmm
+					
+		elif [ -f "$DM_tl/Feeds/kept/words/$itm.mp3" ]; then
+			
+			file="$DM_tl/Feeds/kept/words/$itm.mp3"
+			if echo "$nta" | grep "TRUE"; then
+				cnt=10
+			else
+				cnt=1
+			fi
+			wmm=$(($bcl + $cnt))
+			wmt=$(($wmm + 5))
+			tgs=$(eyeD3 "$file")
+			tgt=$(echo "$tgs" | \
+			grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
+			srce=$(echo "$tgs" | \
+			grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
+			mrk=$(echo "$tgs" | \
+			grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)')
+			exm=$(echo "$tgs" | \
+			grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)')
+			exmm=$(echo "$exm" | \
+			sed "s/"$tgt"/<b>"$tgt"<\/\b>/g")
+			if [ -z "$tgt" ]; then
+				tgt="$itm"
+			fi
+			if [ -n "$exm" ]; then
+				exmp=$(echo "<i><small>"$exmm"\\n</small></i>")
+			else
+				exmp=$(echo " ")
+			fi
+			if [ "$mrk" = TRUE ]; then
+				trgt=$(echo "<span color='#DF7732'>"$tgt"</span>")
+			else
+				trgt=$(echo "$tgt")
+			fi
+			
+			$yad --form --sticky --scroll --fixed \
+			--no-buttons --title=" " --columns=1 \
+			--timeout=$wmt --undecorated \
+			--borders=0 --image=$br3 \
+			--align=left --skip-taskbar --on-top \
+			--width="$wth" --height="$eht" \
+			--geometry="$wth"x"$eht"-2-$pst \
+			--field="<big><b>$trgt</b></big>:lbl" \
+			--field="":lbl"" \
+			--field="<i>$srce</i>:lbl" \
+			--field="$exmp:lbl" &
+			
+			$osd -i "$osdi" "$trgt" "$srce\\n\\n[ $exm ]" -t 7000 &
+			sleep 3
+			$aud "$DM_tl/Feeds/kept/words/$itm".mp3 &
+			if [ $bcl -ge 5 ]; then
+				(sleep 2.5 && $aud "$DM_tl/Feeds/kept/words/$itm.mp3") &
+			fi
+			if [ $bcl -ge 30 ]; then
+				(sleep 10 && $aud "$DM_tl/Feeds/kept/words/$itm.mp3"
+				sleep 10
+				$aud "$DM_tl/Feeds/kept/words/$itm.mp3") &
+			fi
+			rm -f $DT/*.jpeg
+			sleep $wmm
+		else
+			exit 1
+		fi
+	else
+		exit 1
+	fi
+exit 1
+
+elif [ "$1" != chngi ]; then
+	if [ ! -d $DC_s ]; then
+		/usr/share/idiomind/ifs/1u &
+		exit 1
+	fi
+	if [ ! -f $DC_s/chng ]; then
+		> $DC_s/chng
+		fi
+		eht=$(sed -n 3p $DC_s/.rd)
+		wth=$(sed -n 4p $DC_s/.rd)
+		img1=$DS/icon/img1.png
+		img2=$DS/icon/img2.png
+		img3=$DS/icon/img3.png
+		img4=$DS/icon/img4.png
+		img5=$DS/icon/img5.png
+		img6=$DS/icon/img6.png
+		img7=$DS/icon/img7.png
+		img8=$DS/icon/img8.png
+		img9=$DS/icon/img9.png
+		img10=$DS/icon/img10.png
+		img11=$DS/icon/img11.png
+		img12=$DS/icon/img12.png
+		text=--class=idm
+		if [ -n "$1" ]; then
+		text="--text=$(cat "$1")"
+		fi
+		info2=$(cat $$DC_tl/.in | wc -l)
+		cd $DC_s
+
+		VAR=$(cat $DC_s/chng | $yad --name=idiomind --ellipsize=END \
+		--class=idiomind --center --separator="" \
+		"$text" --width=$wth --height=$eht --on-top \
+		--no-headers --buttons-layout=edge --list --window-icon=idiomind \
+		--button="gtk-add":3 --button="       Ok       ":0 \
+		--borders=5 --title "Topics" --column=img:img --column=File:TEXT)
+			ret=$?
+
+			if [ $ret -eq 3 ]; then
+				$DS/add n_t
+				exit 1
+			elif [ $ret -eq 0 ]; then
+				$DC_tl/"$VAR/tpc.sh" $2 & exit 1
+			else
+				exit 1
+			fi
+	fi
+fi
+

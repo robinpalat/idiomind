@@ -1,0 +1,188 @@
+#!/bin/bash
+source /usr/share/idiomind/ifs/c.conf
+
+if [[ $1 = n_i ]]; then
+
+	trgt=$(cat $DT/.dzmxx.x | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
+	nm=$(cat $DT/.dzmxx.x)
+	info2=$(cat $DT/list | wc -l)
+	c=$(echo $(($RANDOM%100)))
+	var="$2"
+
+	if [ $info2 -ge 50 ]; then
+		$yad --center --fixed --image=info \
+		--image-on-top --on-top --fixed --sticky \
+		--width=220 --height=80 --borders=3 \
+		--skip-taskbar --window-icon=idiomind --title=" " \
+		--button=Ok:1 && exit 1
+	fi
+
+	if [[ ! -d "$DM_tl/Feeds"/kept ]]; then
+		mkdir "$DM_tl/Feeds"/kept
+		mkdir "$DM_tl/Feeds"/kept/words
+	fi
+
+	if [[ -f $DT/.dzmxx.x ]]; then
+		bttn=$(echo --button="Save Word:0")
+		txt=$(echo "<b>Palabra:</b>")
+	fi
+
+	$yad --width=320 --height=90 --window-icon=idiomind \
+	--title="Save " --center --on-top --borders=15 \
+	--image=dialog-question --skip-taskbar \
+	--text="<b>Oración:</b>\\n<i>$var</i>\\n\\n$txt\\n<i>$trgt\\n</i>" \
+	--button="Save sentence:2" "$bttn" \
+	--button="Close:1"
+		ret=$?
+		
+		if [[ $ret -eq 0 ]]; then
+		
+			if [ $(cat "$DC_tl/Feeds/.winx" | wc -l) -ge 50 ]; then
+				$yad --name=idiomind --center --on-top --image=info \
+				--text=" <b>$tpe    </b>\\n\\n Alcanzaste la cantidad máxima de palabras   \\n Puedes borrar algunas o crear un nuevo tema" \
+				--image-on-top --fixed --sticky --title="$tpe" \
+				--width=230 --height=80 --borders=3 --button=gtk-ok:0 \
+				--skip-taskbar --window-icon=idiomind && exit 1
+			fi
+		
+			curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
+			$yad --window-icon=idiomind --on-top \
+			--image="info" --name=idiomind \
+			--text="<b> No hay conexión a internet  \\n  </b>" \
+			--image-on-top --center --sticky \
+			--width=300 --height=50 --borders=3 \
+			--skip-taskbar --title="Idiomind" \
+			--button="  Ok  ":0 & exit 1
+			 >&2; exit 1;}
+			
+			mkdir $DT/rss_$c
+			cd $DT/rss_$c
+			result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
+			encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
+			srce=$(iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8)
+			nme=$(echo "$trgt" | sed 's/[ \t]*$//' | sed "s/'/ /g")
+			
+			cp "$DM_tl/Feeds/conten/$var/$nm.mp3" "$DM_tl/Feeds/kept/words/$nme.mp3"
+			
+			eyeD3 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" -A IWI3I0I"$var"IWI3I0I \
+			"$DM_tl/Feeds/kept/words/$nme.mp3"
+			echo "$nme" >> "$DC_tl/Feeds/.t-inx"
+			echo "$nme" >> "$DC_tl/Feeds/.winx"
+			
+			if [ -n "$(cat "$DC_tl/Feeds/.t-inx" | sort -n | uniq -dc)" ]; then
+				cat "$DC_tl/Feeds/.t-inx" | awk '!array_temp[$0]++' > $DT/.ls.x
+				sed '/^$/d' $DT/.ls.x > "$DC_tl/Feeds/.t-inx"
+			fi
+			rm -rf $DT/rss_$c
+			
+		elif [[ $ret -eq 2 ]]; then
+		
+			if [ $(cat "$DC_tl/Feeds/.sinx" | wc -l) -ge 50 ]; then
+				$yad --name=idiomind --center --on-top --image=info \
+				--text=" <b>$tpe    </b>\\n\\n Alcanzaste la cantidad máxima de oraciones   \\n Puedes borrar algunas o crear un nuevo tema" \
+				--image-on-top --fixed --sticky --title="$tpe" \
+				--width=230 --height=80 --borders=3 --button=gtk-ok:0 \
+				--skip-taskbar --window-icon=idiomind && exit 1
+			fi
+			
+			curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
+			$yad --window-icon=idiomind --on-top \
+			--image="info" --name=idiomind \
+			--text="<b> No hay conexión a internet  \\n  </b>" \
+			--image-on-top --center --sticky \
+			--width=300 --height=50 --borders=3 \
+			--skip-taskbar --title="Idiomind" \
+			--button="  Ok  ":0 & exit 1
+			 >&2; exit 1;}
+			
+			if [[ $(echo "$var" | wc -c) -ge 73 ]]; then
+				nme="$(echo "$var" | cut -c 1-70 | sed 's/[ \t]*$//' | \
+				sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')..."
+			else
+				nme=$(echo "$var" | sed 's/[ \t]*$//' | \
+				sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
+			fi
+			
+			cp "$DM_tl/Feeds/conten/$var.mp3" "$DM_tl/Feeds/kept/$nme.mp3"
+			cp $DM_tl/Feeds/conten/"$var"/*.mp3 "$DM_tl/Feeds/kept/.audio/"
+			
+			if [ -n "$(cat "$DC_tl/Feeds/.t-inx" | sort -n | uniq -dc)" ]; then
+				cat "$DC_tl/Feeds/.t-inx" | awk '!array_temp[$0]++' > $DT/.ls.x
+				sed '/^$/d' $DT/.ls.x > "$DC_tl/Feeds/.t-inx"
+			fi
+				echo "$nme" >> "$DC_tl/Feeds/.t-inx"
+				echo "$nme" >> "$DC_tl/Feeds/.sinx"
+				rm -f -r $DT/.dzmxx.x $DT/rss_$ & exit 1
+		else
+			rm -f -r $DT/.dzmxx.x $DT/rss_$ & exit 1
+		fi
+		
+
+elif [[ $1 = n_t ]]; then
+
+	dte=$(date "+%a %d %B")
+
+	if [ $(cat "$DC_tl/.in" | wc -l) -ge 30 ]; then
+		$yad --fixed --image=info --title=Idiomind \
+		--name=idiomind --center --skip-taskbar \
+		--text=" <b>Hás alcanzado la cantidad máxima de temas  </b>\\n Tienes la posibilidad de guardarlos en la web\\n o solo borrar algunos" \
+		--image-on-top --fixed --sticky --on-top \
+		--width=230 --height=80 --borders=3 \
+		--window-icon=idiomind \
+		--button=gtk-ok:0
+		
+		exit 1
+	fi
+
+	jlbi=$($yad --form \
+	--window-icon=idiomind --borders=10 \
+	--fixed --width=400 --height=80 \
+	--on-top --center --skip-taskbar \
+	--field=" : " "News - $dte" \
+	--button=Make:0 --title="New Topic" )
+
+		if [ -z "$jlbi" ];then
+		
+			exit 0
+		else
+
+			jlb=$(echo "$jlbi" | cut -d "|" -f1 | sed s'/!//'g)
+			
+			(
+				mkdir $DM_tl/"$jlb"
+				mkdir $DM_tl/"$jlb"/words
+				mkdir $DM_tl/"$jlb"/words/images
+				mkdir $DC_tl/"$jlb"
+				mkdir $DC_tl/"$jlb"/Practice
+				cd $DS/plugins/Practice/default/
+				cp -f ./.* "$DC_tl/$jlb/Practice/"
+				cp -f $DS/default/tpc.sh $DC_tl/"$jlb"/tpc.sh
+				cd "$DC_tl/$jlb"
+				echo "$jlb" >> $DC_tl/.in_s
+				echo "1" > "$DC_tl/$jlb/.stts"
+				cd "$DM_tl/Feeds/kept"/.audio
+				ls *.mp3 > "$DC_tl/$jlb/.ainx"
+				mv -f "$DC_tl/Feeds/.winx" "$DC_tl/$jlb/.winx"
+				mv -f "$DC_tl/Feeds/.sinx" "$DC_tl/$jlb/.sinx"
+				mv -f "$DC_tl/Feeds/.t-inx" "$DC_tl/$jlb/.tinx"
+				cp -f "$DC_tl/$jlb/.tinx" "$DC_tl/$jlb/.t-inx"
+				cp -f "$DC_tl/$jlb/.tinx" "$DC_tl/$jlb/.tlng-inx"
+				rm "$DC_tl/Feeds/indfa"
+				rm "$DC_tl/Feeds/indfe"
+				cd "$DM_tl/Feeds/kept"
+				mv -f ./* "$DM_tl/$jlb/"
+				cd "$DM_tl/Feeds/kept/.audio"
+				mv ./* "$DM_tl/.share/"
+				cd "$DM_tl/Feeds/kept/words/"
+				mv -f ./* "$DM_tl/$jlb/words/"
+				chmod +x $DC_tl/"$jlb"/tpc.sh
+				$DC_tl/"$jlb"/tpc.sh
+				cnt=$(cat "$DC_tl/$jlb/.t-inx" | wc -l)
+				echo "aitm.$cnt.aitm" >> \
+				$DC/addons/stats/.log &
+				$DS/mngr mkmn
+			)
+		fi
+		[ "$?" -eq 1 ] && exit
+
+fi
