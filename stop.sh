@@ -1,5 +1,4 @@
 #!/bin/bash
-
 user=$(echo "$(whoami)")
 
 if echo "$1" | grep "P"; then
