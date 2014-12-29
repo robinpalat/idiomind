@@ -46,7 +46,7 @@ elif [ $1 = infsd ]; then
 	icon=$DS/icon/idmnd.png
 	file="http://currently.url.ph/$lgs/$lgtl/$Ctgry/$nme/$userid.$tpcd.idmnd"
 
-	$yad --borders=15 --width=450 --height=20 --fixed \
+	$yad --borders=15 --width=450 --height=180 --fixed \
 	--on-top --skip-taskbar --center --image=$icon \
 	--title="idiomind" --button="   Download   :0" \
 	--button="  Close  :1" --text="<b>$NM</b>\\n<small>$LNGT language </small> \\n<small><a href='$LNK'>$NM</a></small>"
