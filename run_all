@@ -15,6 +15,7 @@ if [ "$(sed -n 10p $cnfg)" = "TRUE" ]; then
 		let n++
 	done
 	done
+
 else
 	ls=$(cat ./indx | wc -l)
 	n=1
