@@ -1,2 +1,2 @@
-idiomin
-=======
+idiomind
+========

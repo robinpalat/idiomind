@@ -1,5 +1,5 @@
 #!/bin/bash
-YAD=/lib32/yad_idiomind
+YAD=yad
 cd /tmp/.idmtp1/idmimp_X015x/tmp
 nmt=$(sed -n 1p /tmp/.idmtp1/idmimp_X015x/ls)
 dir="/tmp/.idmtp1/idmimp_X015x/$nmt"

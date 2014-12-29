@@ -18,7 +18,7 @@ if [ -z "$1" ]; then
 	sz=$(cat $DT/.sz)
 	D=$($yad --list --title="User Data" \
 	--center --on-top --radiolist --expand-column=2 \
-	--text=" Size: $sz \\n" --width=350 --height=250 \
+	--text=" Size: $sz \\n" --width=380 --height=250 \
 	--skip-taskbar --image=folder --separator=" " \
 	--borders=10 --print-all --window-icon=idiomind \
 	--button=Backup:2 --button=Ok:0 --image-on-top --column="" \
@@ -275,7 +275,7 @@ if [ -z "$1" ]; then
 				$yad --fixed --name=idiomind --center \
 				--image=info --sticky --class=idiomind \
 				--text=" Datos de usuario se restauraran a $udt  \\n Esto va a tomar un tiempo dependiendo del tamaño  " \
-				--image-on-top --fixed --width=240 --height=80 --borders=3 \
+				--image-on-top --fixed --width=280 --height=160 --borders=3 \
 				--skip-taskbar --window-icon=idiomind \
 				--title=Idiomind --button=Cancel:1 --button=gtk-ok:0
 					ret=$?
@@ -343,7 +343,7 @@ elif ([ "$1" = C ] && [ "$dte" != "$udt" ]); then
 		$yad --fixed --name=idiomind --center \
 		--image=info --sticky --class=idiomind \
 		--text=" No existe el directorio de copia se seguridad  \\n por fabor vuelve a configura" \
-		--image-on-top --fixed --width=240 --height=80 --borders=3 \
+		--image-on-top --fixed --width=280 --height=130 --borders=3 \
 		--skip-taskbar --window-icon=idiomind \
 		--title=Idiomind --button=Cancel:1 --button=gtk-ok:0
 	fi
