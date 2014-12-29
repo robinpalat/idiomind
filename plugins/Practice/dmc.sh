@@ -39,7 +39,7 @@ $ess" > word2.tmp
 		fi
 		
 		dlg=$(cat word2.id | awk '{print "\n"$0}' \
-		|/lib32/yad_idiomind --list ---radiolist --on-top --skip-taskbar \
+		|/lib32/yad_idiomind --list --list --on-top --skip-taskbar \
 		--width=330 --height=300 --center --buttons-layout=edge --undecorated \
 		--text-align=center --no-headers --borders=8 --window-icon=idiomind \
 		--button=Close:1 \

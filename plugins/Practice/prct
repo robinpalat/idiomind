@@ -706,10 +706,10 @@ elif [ "$2" = s ]; then
 	else
 		cd "$DM_tlt"
 		cd "$DC_tlt/Practice"
-		echo "$(grep -F -x -v -f "$Si" "$Li" | wc -l)" > idxlsin
-		grep -F -x -v -f "$Si" "$Li" > lsin #SACA LA LISTA DE APRENDIDOS DE LA LISTA DE MP3'S PALABRAS
+		echo "$(grep -F -x -v -f "$Wi" "$Li" | wc -l)" > idxlsin
+		grep -F -x -v -f "$Wi" "$Li" > lsin #SACA LA LISTA DE APRENDIDOS DE LA LISTA DE MP3'S PALABRAS
 		rm -f *.id *.ok *.no $DT/*.tp
-		if [ "$(cat lsin | wc -l)" -lt 2 ]; then # cuentas , si hay mas de 10 si , si no NO
+		if [ "$(cat lsin | wc -l)" -lt 2 ]; then # cuenta, si hay mas de 2 
 			$yad --form --center --borders=5 --skip-taskbar \
 			--title="Info" --on-top --window-icon=idiomind \
 			--button=Ok:1 --image=info \

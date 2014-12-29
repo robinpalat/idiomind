@@ -1,119 +1,7 @@
 #!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
 
-
-if [[ "$1" = prs ]]; then
-
-	rm -f $DT/prs.png
-	now="$2"
-	ind="$DC_tlt/.tlng-inx"
-	nme=$(sed -n "$2"p "$ind")
-	if [ -z "$nme" ]; then
-		$yad --image-on-top --form --on-top \
-		--geometry=400x500-400-1200 --sticky \
-		--skip-taskbar --borders=0 \
-		--buttons-layout=center \
-		--undecorated --field="<big> </big>:lbl" \
-		--image="$DS/icon/veprs.png" \
-		--button="		Play		:2" \
-		--button="		Exit		:1"
-		ret=$?
-		if [[ $ret -eq 2 ]]; then 
-			$DS/chng prs 1 & exit 1
-		fi
-		if [[ $ret -eq 1 ]]; then 
-			/usr/share/idiomind/stop.sh V & exit 1
-		fi
-	exit 1
-	fi
-	
-	B=TRUE
-	
-	if [ -f "$DM_tlt/words/$nme.mp3" ]; then
-		eyeD3 --write-objects=$DT "$DM_tlt/words/$nme.mp3"
-		if [ -f "$DT/prs.png" ]; then
-			prs="$DT/prs.png"
-		else
-			trgt=$(eyeD3 "$DM_tlt/words/$nme.mp3" | \
-			grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
-			textt=$(echo "$trgt" | fold -s -w15)
-			srce=$(eyeD3 "$DM_tlt/words/$nme.mp3" | \
-			grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
-			texts=$(echo "$srce")
-			convert "$DS/icon/prs.png" -font Purisa-BoldOblique \
-			-gravity Center -pointsize 90 -fill gray32 \
-			-draw "text 0 0 \"$textt\"" $DT/prs.png
-			width=`identify -format %w $DT/prs.png`; \
-			convert -background '#0007' -fill gray95 \
-			-gravity center -size ${width}x50 \
-			caption:"$texts" \
-			$DT/prs.png +swap -gravity south -composite $DT/prs.png
-			#eyeD3 --add-object $DT/prs.png:PRS "$DM_tlt/words/$nme".mp3
-			prs="$DT/prs.png"
-		fi
-		#(play "$DM_tlt/words/$nme.mp3") &
-		$yad --form --image-on-top --geometry=400x500-400-1200 \
-		--image="$prs" --sticky --buttons-layout=center \
-		--skip-taskbar --borders=0 --on-top \
-		--undecorated --field="►:BTN" "play '$DM_tlt/words/$nme.mp3'" \
-		--button="			<			:3" \
-		--button="Exit:1" \
-		--button="			>			:2"
-
-	elif [ -f "$DM_tlt/$nme.mp3" ]; then
-		eyeD3 --write-objects=$DT "$DM_tlt/$nme.mp3"
-		if [ -f "$DT/prs.png" ]; then
-			prs="$DT/prs.png"
-		else
-			trgt=$(eyeD3 "$DM_tlt/$nme.mp3" | \
-			grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
-			textt=$(echo "$trgt" | fold -s -w30)
-			srce=$(eyeD3 "$DM_tlt/$nme.mp3" | \
-			grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
-			texts=$(echo "$srce")
-			convert "$DS/icon/prs.png" -font Purisa-BoldOblique \
-			-gravity Center -pointsize 50 \
-			-fill gray32 -draw "text 0 0 \"$textt\"" $DT/prs.png
-			width=`identify -format %w $DT/prs.png`; \
-			convert -background '#0007' -fill gray95 \
-			-gravity center -size ${width}x50 \
-			caption:"$texts" \
-			$DT/prs.png +swap -gravity south -composite $DT/prs.png
-			#eyeD3 --add-object $DT/prs.png:PRS "$DM_tlt/$nme".mp3
-			prs="$DT/prs.png"
-		fi
-		if [ ! -f "$DM_tlt/$nme.mp3" ]; then
-			exit 1
-		fi
-		wmm=$(($8 + $(echo "$nme" | wc -w)))
-		#(sleep 0.5 && play "$DM_tlt/$nme.mp3") &
-		$yad --form --image-on-top --on-top \
-		--geometry=400x500-400-1200 \
-		--image="$prs" --skip-taskbar --sticky \
-		--borders=0 --buttons-layout=center \
-		--undecorated --field="►:BTN" "$DS/audio/ply2 '$nme'" \
-		--button="			<			:3" \
-		--button="Exit:1" \
-		--button="			>			:2" 
-		
-	fi
-			ret=$?
-			if [[ $ret -eq 1 ]]; then 
-				/usr/share/idiomind/stop.sh V & exit 1
-			elif [[ $ret -eq 2 ]]; then
-				ff=$(($now + 1))
-				$DS/chng prs $ff &
-			elif [[ $ret -eq 3 ]]; then
-				ff=$(($now - 1))
-				$DS/chng prs $ff &
-			elif [[ B = TRUE ]]; then 
-				ff=$(($now + 1))
-				$DS/chng prs $ff &
-			fi
-exit 1
-
-elif [[ "$1" = chngi ]]; then
-
+if [[ "$1" = chngi ]]; then
 	saw=$(sed -n 1p $DC_s/cnfg5)
 	sas=$(sed -n 2p $DC_s/cnfg5)
 	sap=$(sed -n 3p $DC_s/cnfg5)
@@ -134,7 +22,7 @@ elif [[ "$1" = chngi ]]; then
 	br="$DS/icon/br.png"
 	br2="$DS/icon/br2.png"
 	br3="$DS/icon/br3.png"
-	img="$DS/icon/prs.png"
+	osdi="$DS/icon/idm.png"
 	
 	if [[ -z $(sed -n 1p $DC_s/cnfg2) ]]; then
 	pst=$(sed -n 1p $DC_s/.pst)
@@ -211,7 +99,7 @@ elif [[ "$1" = chngi ]]; then
 		--field="<small><i>$srce</i></small>":lbl"" \
 		--field=" :lbl"  &
 
-		$osd "$trgt" "\\n$srce\\n" -t 8000  &
+		$osd -i "$osdi" "$trgt" "\\n$srce\\n" -t 8000  &
 		sleep 3
 		$aud "$DM_tlt/$itm".mp3 &
 		
@@ -251,7 +139,7 @@ elif [[ "$1" = chngi ]]; then
 			else
 				img=$br
 			fi
-			osdi=$DS/icon/W.png
+			osdi=$DS/icon/idm.png
 		fi
 		tgs=$(eyeD3 "$file")
 		tgt=$(echo "$tgs" | \
@@ -285,7 +173,7 @@ elif [[ "$1" = chngi ]]; then
 		--field="<i>   $srce</i>:lbl" \
 		--field=" :lbl" &
 		
-		$osd "$trgt" "\n$srce\n" -t 7000 &
+		$osd -i "$osdi" "$trgt" "\n$srce\n" -t 7000 &
 		sleep 3
 		$aud "$DM_tlt/words/$itm".mp3 &
 		if [ $bcl -ge 5 ]; then
