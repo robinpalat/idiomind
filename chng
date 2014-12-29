@@ -289,7 +289,7 @@ if [[ "$1" = chngi ]]; then
 	else
 		exit 1
 	fi
-exit 1
+
 
 elif [ "$1" != chngi ]; then
 	if [ ! -d $DC_s ]; then
@@ -336,6 +336,5 @@ elif [ "$1" != chngi ]; then
 			else
 				exit 1
 			fi
-	fi
 fi
 
