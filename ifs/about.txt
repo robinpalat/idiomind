@@ -16,7 +16,7 @@ Puedes ingresar el texto indiferente en que idioma.
 En este modo algunas veces la traducción no sera literalmente correcta.
 
 Ver más:
-http://vimeo.com/channels/466611/videos/rss
+http://channels.com/466611/rss
 
 Usando "Learning with News"
 Abrir el dialogo "Setting" y doble click en peztaña "Addons"
@@ -26,7 +26,7 @@ Boton "Feed Mode": Funciona en modo "RSS Feed"
 
 
 Ver más:
-http://vimeo.com/channels/466611/videos/rss
+http://channels.com/466611/rss
 
 
 
