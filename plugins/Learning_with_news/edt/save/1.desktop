@@ -1,0 +1,9 @@
+[Desktop Entry]
+Exec=/usr/share/idiomind/plugins/Learning_with_news/add n_t
+Icon=/usr/share/idiomind/plugins/Learning_with_news/img/Save-icon.png
+Version=3
+Encoding=UTF-8
+Type=Application
+Comment=Save Like Topic
+Terminal=false
+Name[en]=Save Like Topic

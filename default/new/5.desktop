@@ -1,0 +1,9 @@
+[Desktop Entry]
+Exec=/usr/share/idiomind/chng
+Icon=/usr/share/idiomind/icon/tpcs.png
+Version=3
+Encoding=UTF-8
+Type=Application
+Terminal=false
+Comment=Topics
+Name[en]=Topics

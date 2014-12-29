@@ -1,0 +1,9 @@
+[Desktop Entry]
+Exec=/usr/share/idiomind/add n_i
+Icon=/usr/share/idiomind/icon/add.png
+Version=3
+Encoding=UTF-8
+Type=Application
+Comment=Add new
+Terminal=false
+Name[en]=Add

@@ -1,0 +1,8 @@
+#!/bin/bash
+word=$(echo "$1")
+w=${word:0:1}
+wor=${word:0:3}
+words=${word:0:5}
+wget http://www.macmillandictionary.com/media/british/uk_pron/$w/$wor/$words/"$word"_British_English_pronunciation.mp3
+mv -f "$word"_British_English_pronunciation.mp3 "$word".mp3
+exit

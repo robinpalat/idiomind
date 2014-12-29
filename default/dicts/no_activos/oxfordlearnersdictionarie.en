@@ -1,0 +1,8 @@
+#!/bin/bash
+word="$1"
+w=${word:0:1}
+wor=${word:0:3}
+words=${word:0:5}
+wget http://oald8.oxfordlearnersdictionaries.com/media/oald8/us_pron/$w/$wor/$words/"$word"__us_1.mp3
+mv -f "$word"__us_1.mp3 "$word.mp3"
+exit

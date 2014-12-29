@@ -1,0 +1,51 @@
+
+Idiomind it's specifically designed for people learning one or more foreign languages. It helps you learn foreign language vocabulary. You can create and manage word lists and share them online.
+supports different types of exercises, including grammar and pronunciation tests.
+
+
+
+
+Agregando oraciones o palabras (entradas)
+
+Opción manual:
+Ingresar texto en ambos idiomas y su archivo de audio mp3 correspondiente.
+
+Opción "google translation service"
+Esta opción usa el servicio de Google para traducir
+Puedes ingresar el texto indiferente en que idioma.
+En este modo algunas veces la traducción no sera literalmente correcta.
+
+Ver más:
+http://vimeo.com/channels/466611/videos/rss
+
+Usando "Learning with News"
+Abrir el dialogo "Setting" y doble click en peztaña "Addons"
+Se pueden agregar 5 subcripciones.
+El contenido que no se ha seleccionado para guardar se elimina automáticamente cada 5 días.
+Boton "Feed Mode": Funciona en modo "RSS Feed"
+
+
+Ver más:
+http://vimeo.com/channels/466611/videos/rss
+
+
+
+Problemas conocidos y limitaciones
+
+Errores de visualización
+Textos en lenguajes con distinta codificación de caracteres como por ejemplo el Japonés, puede mostrarse aveces con errores.
+
+Limitaciones
+Hasta 30 topics de 50 oraciones y 50 palabras cada uno.
+Este límite ayuda a tener más clara la información; Una vez superado, tiene la posibilidad de guardar y a la vez, compartir los temas en la web facilmente.
+
+Puedes enviar sugerencias o comentarios para seguir manteniendo el programa, o si crees que te resultó util, Considera realizar una donación.
+
+
+
+Licencia: GPLv3
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+

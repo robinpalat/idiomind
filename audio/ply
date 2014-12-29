@@ -1,0 +1,9 @@
+#!/bin/bash
+topic=$(sed -n 1p ~/.config/idiomind/s/topic.id)
+lngt=$(sed -n 2p ~/.config/idiomind/s/lang)
+DIR1="$HOME/.idiomind/topics/$lngt/.share"
+DIR2="$HOME/.config/idiomind/topics/"
+wdr=$(echo "$1" | awk '{print tolower($0)}')
+play "$DIR1/$wdr".mp3
+exit 1
+

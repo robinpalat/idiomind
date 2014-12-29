@@ -1,0 +1,789 @@
+#!/bin/bash
+source /usr/share/idiomind/ifs/c.conf
+DS_pp="$DS/plugins/Practice/"
+strt="$DS_pp/strt"
+IND='play $DS_pp/all.mp3'
+w9="$DC/addons/practice/w9"
+w6="$DC/addons/practice/w6"
+
+if [ "$2" = f ]; then
+
+	cd "$DC_tlt/Practice"
+	DF=$DS_pp/df.sh
+	vw=#
+	Wi="$DC_tlt/.winx"
+	Si="$DC_tlt/.sinx"
+	Li="$DC_tlt/.tlng-inx"
+	if [ "$1" = l ]; then
+		vw=$DS_pp/lrng
+	fi
+	if [ -f look_f ]; then
+		$yad --title="$tpc" \
+		--borders=15 --center --buttons-layout=edge \
+		--on-top --skip-taskbar --window-icon=idiomind \
+		--buttons-layout=edge --center --image=info \
+		--button="Reiniciar Práctica":0 \
+		--button=Ok:2 \
+		--text "<span color='#007D17'>  Hás completado esta práctica\\n  El $(cat look_f)</span>\\n\\n" \
+		--width=350 --height=80
+		ret=$?
+			if [[ "$ret" -eq 0 ]]; then
+				$DS_pp/cls df & exit
+			else
+				$DS_pp/strt & exit
+			fi
+	fi
+	if [ -f fin.tmp ]; then
+		rm *.id *.ok *.no
+		sed '/^$/d' fin.tmp > fin1
+		cat fin1 | wc -l > scr
+	else
+		cd "$DC_tlt/Practice"
+		echo "$(grep -F -x -v -f "$Si" "$Li" | wc -l)" > idxfin
+		grep -F -x -v -f "$Si" "$Li" > fin1
+		rm *.id *.ok *.no
+		if [ "$(cat idxfin)" -lt 1 ]; then
+			$yad --form --center --borders=5 --image=info \
+			--title="Info" --on-top --window-icon=idiomind \
+			--button=Ok:1 --text-align=center --skip-taskbar \
+			--text "<span color='#636363'>  <b>Para Comenzar \\nDebes Tener 1 Palabra  </b></span>" \
+			--width=310 --height=80
+			
+			$strt & killall prct & exit
+		fi
+	fi
+	cp fin1 fin.tmp
+	cat fin1 | wc -l > scr
+	> fin.ok
+	find -name 'stp*' -exec rm {} \;
+	split -d -l 5 fin1 stp --suffix-length=1
+	if [ -f stp0 ]; then
+		$vw 1 0 1
+		$DF 0 1
+	fi
+	if [ -f stp1 ]; then
+		$vw 1 1 1
+		$DF 1 1
+	fi
+	if [ -f stp2 ]; then
+		$vw 1 2 1
+		$DF 2 1
+	fi
+	if [ -f stp3 ]; then
+		$vw 1 3 1
+		$DF 3 1
+	fi
+	if [ -f stp4 ]; then
+		$vw 1 4 1
+		$DF 4 1
+	fi
+	if [ -f stp5 ]; then
+		$vw 1 5 1
+		$DF 5 1
+	fi
+	if [ -f stp6 ]; then
+		$vw 1 6 1
+		$DF 6 1
+	fi
+	if [ -f stp7 ]; then
+		$vw 1 7 1
+		$DF 7 1
+	fi
+	if [ -f stp8 ]; then
+		$vw 1 8 1
+		$DF 8 1
+	fi
+	if [ -f stp9 ]; then
+		$vw 1 9 1
+		$DF 9 1
+	fi
+	cat ./fin.ok >> iF
+	echo "$(cat iF | wc -l)" > f_r
+	if [ -f ./fin.no ]; then
+		cat *.no >> "$w6"
+		cat *.ok >> "$w9"
+		cat fin.no >> f
+		rm *.id fin1
+	else
+		cat *.no >> "$w6"
+		cat *.ok >> "$w9"
+		rm *.id *.ok *.no fin.tmp fin1
+		echo "$(date "+%a %d %B")" > look_f
+		echo 21 > .iconf
+		play $DS_pp/all.mp3 & $strt 1 &
+		killall df.sh
+		exit 1
+	fi
+	cat fin.tmp | sed '/^$/d' > ./fin2
+	cp -f fin2 fin.tmp
+	find -name 'stp*' -exec rm {} \;
+	split -d -l 5 fin2 stp --suffix-length=1
+	if [ -f stp0 ]; then
+		$vw 1 0 2
+		$DF 0 2
+	fi
+	if [ -f ./stp1 ]; then
+		$vw 1 1 2
+		$DF 1 2
+	fi
+	if [ -f ./stp2 ]; then
+		$vw 1 2 2
+		$DF 2 2
+	fi
+	if [ -f stp3 ]; then
+		$vw 1 3 2
+		$DF 3 2
+	fi
+	if [ -f stp4 ]; then
+		$vw 1 4 2
+		$DF 4 2
+	fi
+	if [ -f stp5 ]; then
+		$vw 1 5 2
+		$DF 5 2
+	fi
+	if [ -f stp6 ]; then
+		$vw 1 6 2
+		$DF 6 2
+	fi
+	if [ -f stp7 ]; then
+		$vw 1 7 2
+		$DF 7 2
+	fi
+	if [ -f stp8 ]; then
+		$vw 1 8 2
+		$DF 8 2
+	fi
+	if [ -f stp9 ]; then
+		$vw 1 9 2
+		$DF 9 2
+	fi
+	echo "$(grep -F -x -v -f fin.ok fin.no | sort -u | uniq | wc -l)" > no.id
+	echo "$(cat fin.ok | wc -l)" > ok.id
+	cat ./fin.ok >> iF
+	echo "$(cat iF | wc -l)" > f_r
+	if [ -f fin.no ]; then
+		cat *.no >> "$w6"
+		cat *.ok >> "$w9"
+		cat fin.no >> f
+		var1=$((100*$(cat f_r)/$(cat idxfin)))
+		if [ $var1 -lt 1 ]; then
+			echo 1 > .iconf
+		elif [ $var1 -lt 5 ]; then
+			echo 2 > .iconf
+		elif [ $var1 -lt 10 ]; then
+			echo 3 > .iconf
+		elif [ $var1 -lt 15 ]; then
+			echo 4 > .iconf
+		elif [ $var1 -lt 20 ]; then
+			echo 5 > .iconf
+		elif [ $var1 -lt 25 ]; then
+			echo 6 > .iconf
+		elif [ $var1 -lt 30 ]; then
+			echo 7 > .iconf
+		elif [ $var1 -lt 35 ]; then
+			echo 8 > .iconf
+		elif [ $var1 -lt 40 ]; then
+			echo 9 > .iconf
+		elif [ $var1 -lt 45 ]; then
+			echo 10 > .iconf
+		elif [ $var1 -lt 50 ]; then
+			echo 11 > .iconf
+		elif [ $var1 -lt 55 ]; then
+			echo 12 > .iconf
+		elif [ $var1 -lt 60 ]; then
+			echo 13 > .iconf
+		elif [ $var1 -lt 65 ]; then
+			echo 14 > .iconf
+		elif [ $var1 -lt 70 ]; then
+			echo 15 > .iconf
+		elif [ $var1 -lt 75 ]; then
+			echo 16 > .iconf
+		elif [ $var1 -lt 80 ]; then
+			echo 17 > .iconf
+		elif [ $var1 -lt 85 ]; then
+			echo 18 > .iconf
+		elif [ $var1 -lt 90 ]; then
+			echo 19 > .iconf
+		elif [ $var1 -lt 95 ]; then
+			echo 20 > .iconf
+		elif [ $var1 -eq 100 ]; then
+			echo 21 > .iconf
+		fi
+		$strt 5 & exit 1
+	else
+		cat *.no >> "$w6"
+		cat *.ok >> "$w9"
+		rm *.id *.ok *.no fin.tmp fin1
+		echo "$(date "+%a %d %B")" > look_f
+		echo 21 > .iconf
+		play $DS_pp/all.mp3 & $strt 1 &
+		killall df.sh
+		exit 1
+	fi
+	
+elif [ "$2" = m ]; then
+	cd "$DC_tlt/Practice"
+	DMC=$DS_pp/dmc.sh
+	vw="#"
+	Wi="$DC_tlt/.winx"
+	Si="$DC_tlt/.sinx"
+	Li="$DC_tlt/.tlng-inx"
+	if [ "$1" = l ]; then
+		vw=$DS_pp/lrng
+	fi
+	if [ -f look_mc ]; then
+		$yad --title="$tpc" \
+		--borders=15 --center --buttons-layout=edge \
+		--on-top --skip-taskbar --window-icon=idiomind \
+		--buttons-layout=edge --center --image=info \
+		--button="Reiniciar Práctica":0 \
+		--button=Ok:1 \
+		--text "<span color='#007D17'>  Completaste esta práctica\\n  El $(cat look_mc)</span>\\n\\n" \
+		--width=350 --height=80
+		ret=$?
+			if [[ "$ret" -eq 0 ]]; then
+				$DS_pp/cls dm & exit
+			else
+				$DS_pp/strt & exit
+			fi
+	fi
+	if [ -f mcin.tmp ]; then
+		rm *.id *.ok *.no
+		sed '/^$/d' mcin.tmp > mcin1
+		cat mcin1 | wc -l > scr
+	else
+		echo "$(grep -F -x -v -f "$Si" "$Li" | wc -l)" > idxmcin
+		grep -F -x -v -f "$Si" "$Li" > mcin1
+		rm *.id *.ok *.no
+		if [ "$(cat idxmcin)" -lt 6 ]; then
+			($yad --form --center --borders=5 \
+			--title="Info" --on-top --image=info \
+			--window-icon=idiomind --skip-taskbar \
+			--button=Ok:1 --text-align=center \
+			--text "<span color='#636363'><b>  Para Comenzar \\nDebes Tener 6 Palabras  </b></span>" \
+			--width=310 --height=80)
+			$strt & killall prct & exit 1
+		fi
+	fi
+	if [ ! -f word1.idx ]; then
+		(
+		echo "5" ; sleep 0
+		echo "# " ; sleep 0
+		n=1
+		while [[ $n -le "$(cat mcin1 | sed 's/mcin1//g' | wc -l)" ]]; do
+			word=$(sed -n "$n"p mcin1)
+			file="$DM_tlt/words/$word.mp3"
+			echo "$(eyeD3 "$file" | grep -o -P "(?<=IWI2I0I).*(?=IWI2I0I)")" >> word1.idx
+			let n++
+		done
+		
+		) | /lib32/yad_idiomind --progress \
+		--width 50 --height 35 --undecorated \
+		--pulsate --auto-close \
+		--skip-taskbar --center --no-buttons
+	fi
+	cp mcin1 mcin.tmp
+	cat mcin1 | wc -l > scr
+	> mcin.ok
+	find -name 'stp*' -exec rm {} \;
+	split -d -l 5 mcin1 stp --suffix-length=1
+	if [ -f stp0 ]; then
+		$vw 1 0 1
+		$DMC 0 1
+	fi
+	if [ -f stp1 ]; then
+		$vw 1 1 1
+		$DMC 1 1
+	fi
+	if [ -f stp2 ]; then
+		$vw 1 2 1
+		$DMC 2 1
+	fi
+	if [ -f stp3 ]; then
+		$vw 1 3 1
+		$DMC 3 1
+	fi
+	if [ -f stp4 ]; then
+		$vw 1 4 1
+		$DMC 4 1
+	fi
+	if [ -f stp5 ]; then
+		$vw 1 5 1
+		$DMC 5 1
+	fi
+	if [ -f stp6 ]; then
+		$vw 1 6 1
+		$DMC 6 1
+	fi
+	if [ -f stp7 ]; then
+		$vw 1 7 1
+		$DMC 7 1
+	fi
+	if [ -f stp8 ]; then
+		$vw 1 8 1
+		$DMC 8 1
+	fi
+	if [ -f stp9 ]; then
+		$vw 1 9 1
+		$DMC 9 1
+	fi
+	cat mcin.ok >> iMC
+	echo "$(cat iMC | wc -l)" > mc_r
+	if [ -f mcin1.no ]; then
+		cat *.no >> "$w6"
+		cat *.ok >> "$w9"
+		cat mcin.no >> m
+		rm *.id mcin1
+	else
+		cat *.no >> "$w6"
+		cat *.ok >> "$w9"
+		rm *.id *.ok *.no mcin1 mcin.tmp
+		echo "$(date "+%a %d %B")" > look_mc
+		echo 21 > .iconmc
+		play $DS_pp/all.mp3 & $strt 2 &
+		killall dmc.sh
+		exit 1
+	fi
+	sed '/^$/d' ./mcin.tmp > ./mcin2
+	cp mcin2 mcin.tmp
+	find -name 'stp*' -exec rm {} \;
+	split -d -l 5 mcin2 stp --suffix-length=1
+	if [ -f stp0 ]; then
+		$vw 1 0 2
+		$DMC 0 2
+	fi
+	if [ -f stp1 ]; then
+		$vw 1 1 2
+		$DMC 1 2
+	fi
+	if [ -f stp2 ]; then
+		$vw 1 2 2
+		$DMC 2 2
+	fi
+	if [ -f stp3 ]; then
+		$vw 1 3 2
+		$DMC 3 2
+	fi
+	if [ -f stp4 ]; then
+		$vw 1 4 2
+		$DMC 4 2
+	fi
+	if [ -f stp5 ]; then
+		$vw 1 5 2
+		$DMC 5 2
+	fi
+	if [ -f stp6 ]; then
+		$vw 1 6 2
+		$DMC 6 2
+	fi
+	if [ -f stp7 ]; then
+		$vw 1 7 2
+		$DMC 7 2
+	fi
+	if [ -f stp8 ]; then
+		$vw 1 8 2
+		$DMC 8 2
+	fi
+	if [ -f stp9 ]; then
+		$vw 1 9 2
+		$DMC 9 2
+	fi
+	echo "$(grep -F -x -v -f mcin.ok mcin.no | sort -u | uniq | wc -l)" > no.id
+	echo "$(cat mcin.ok | wc -l)" > ok.id
+	cat mcin.ok >> iMC
+	echo "$(cat iMC | wc -l)" > mc_r
+	if [ -f mcin.no ]; then
+	
+		cat *.no >> "$w6"
+		cat *.ok >> "$w9"
+		cat mcin.no >> m
+		var3=$((100*$(cat mc_r)/$(cat idxmcin)))
+		if [ $var3 -lt 1 ]; then
+			echo 1 > .iconmc
+		elif [ $var3 -lt 5 ]; then
+			echo 2 > .iconmc
+		elif [ $var3 -lt 10 ]; then
+			echo 3 > .iconmc
+		elif [ $var3 -lt 15 ]; then
+			echo 4 > .iconmc
+		elif [ $var3 -lt 20 ]; then
+			echo 5 > .iconmc
+		elif [ $var3 -lt 25 ]; then
+			echo 6 > .iconmc
+		elif [ $var3 -lt 30 ]; then
+			echo 7 > .iconmc
+		elif [ $var3 -lt 35 ]; then
+			echo 8 > .iconmc
+		elif [ $var3 -lt 40 ]; then
+			echo 9 > .iconmc
+		elif [ $var3 -lt 45 ]; then
+			echo 10 > .iconmc
+		elif [ $var3 -lt 50 ]; then
+			echo 11 > .iconmc
+		elif [ $var3 -lt 55 ]; then
+			echo 12 > .iconmc
+		elif [ $var3 -lt 60 ]; then
+			echo 13 > .iconmc
+		elif [ $var3 -lt 65 ]; then
+			echo 14 > .iconmc
+		elif [ $var3 -lt 70 ]; then
+			echo 15 > .iconmc
+		elif [ $var3 -lt 75 ]; then
+			echo 16 > .iconmc
+		elif [ $var3 -lt 80 ]; then
+			echo 17 > .iconmc
+		elif [ $var3 -lt 85 ]; then
+			echo 18 > .iconmc
+		elif [ $var3 -lt 90 ]; then
+			echo 19 > .iconmc
+		elif [ $var3 -lt 95 ]; then
+			echo 20 > .iconmc
+		elif [ $var3 -eq 100 ]; then
+			echo 21 > .iconmc
+		fi
+		$strt 6 & exit 1
+	else
+		cat *.no >> "$w6"
+		cat *.ok >> "$w9"
+		rm *.id *.ok *.no mcin2 mcin.tmp
+		echo "$(date "+%a %d %B")" > look_mc
+		echo 21 > .iconmc
+		play $DS_pp/all.mp3 & $strt 2 &
+		killall dmc.sh
+		exit 1
+	fi
+	exit 1
+
+elif [ "$2" = w ]; then
+
+	cd "$DC_tlt/Practice"
+	DLW=$DS_pp/dlw.sh
+	Wi="$DC_tlt/.winx"
+	Si="$DC_tlt/.sinx"
+	Li="$DC_tlt/.tok-inx"
+	
+	Wi="$DC_tlt/.winx"
+	Si="$DC_tlt/.sinx"
+	Li="$DC_tlt/.tlng-inx"
+	l="$1"
+	if [ "$1" = l ]; then
+		vw=$DS_pp/lrng
+	fi
+	if [ -f look_lw ]; then
+		$yad --title="$tpc" \
+		--borders=15 --center --buttons-layout=edge \
+		--on-top --skip-taskbar --window-icon=idiomind \
+		--buttons-layout=edge --center --image=info \
+		--button="Reiniciar Práctica":0 \
+		--button=Ok:1 \
+		--text "<span color='#007D17'>  Completaste esta práctica\\n  El $(cat look_lw)</span>\\n\\n" \
+		--width=350 --height=80
+		ret=$?
+			if [[ "$ret" -eq 0 ]]; then
+				$DS_pp/cls dw & exit
+			else
+				$DS_pp/strt & exit
+			fi
+	fi
+	if [ -f lwin.tmp ]; then
+		rm *.id *.ok *.no
+		sed '/^$/d' lwin.tmp > lwin1
+		cat lwin1 | wc -l > scr
+	else
+		cd "$DC_tlt/Practice"
+		echo "$(grep -F -x -v -f "$Si" "$Li" | wc -l)" > idxlwin
+		grep -F -x -v -f "$Si" "$Li" > lwin1
+		rm -f *.id *.ok *.no
+		if [ $(cat idxlwin) -lt 1 ]; then
+			$yad --form --center --borders=5 --image=info \
+			--title="Info" --on-top --window-icon=idiomind \
+			--button=Ok:1 --text-align=center --skip-taskbar \
+			--text "<span color='#636363'><b>  Para Comenzar \\nDebes Tener 1 Palabra  </b></span>" \
+			--width=310 --height=80
+			rm -f tmp/.idmtp1/mp3.tmp
+			$strt & killall prct & exit
+		fi
+	fi
+	cp -f lwin1 lwin.tmp
+	cat lwin1 | wc -l > scr
+	> lwin.ok
+	find -name 'stp*' -exec rm {} \;
+	split -d -l 5 lwin1 stp --suffix-length=1
+	if [ -f stp0 ]; then
+		$vw 1 0 1
+		$DLW 0 1
+	fi
+	if [ -f stp1 ]; then
+		$vw 1 1 1
+		$DLW 1 1
+	fi
+	if [ -f stp2 ]; then
+		$vw 1 2 1
+		$DLW 2 1
+	fi
+	if [ -f stp3 ]; then
+		$vw 1 3 1
+		$DLW 3 1
+	fi
+	if [ -f stp4 ]; then
+		$vw 1 4 1
+		$DLW 4 1
+	fi
+	if [ -f stp5 ]; then
+		$vw 1 5 1
+		$DLW 5 1
+	fi
+	if [ -f stp6 ]; then
+		$vw 1 6 1
+		$DLW 6 1
+	fi
+	if [ -f stp7 ]; then
+		$vw 1 7 1
+		$DLW 7 1
+	fi
+	if [ -f stp8 ]; then
+		$vw 1 8 1
+		$DLW 8 1
+	fi
+	if [ -f stp9 ]; then
+		$vw 1 9 1
+		$DLW 9 1
+	fi
+	cat lwin.ok >> iF
+	echo "$(cat iF | wc -l)" > f_r
+	if [ -f lwin.no ]; then
+		cat *.no >> "$w6"
+		cat *.ok >> "$w9"
+		cat lwin.no >> f
+		rm *.id lwin1
+	else
+		cat *.no >> "$w6"
+		cat *.ok >> "$w9"
+		rm *.id *.ok *.no lwin.tmp lwin1
+		echo "$(date "+%a %d %B")" > look_lw
+		echo 21 > .iconlw
+		play $DS_pp/all.mp3 & $strt 3 &
+		killall df.sh
+		exit 1
+	fi
+	cat lwin.tmp | sed '/^$/d' > ./lwin2
+	cp -f lwin2 lwin.tmp
+	find -name 'stp*' -exec rm {} \;
+	split -d -l 5 lwin2 stp --suffix-length=1
+	if [ -f stp0 ]; then
+		$vw 1 0 2
+		$DLW 0 2
+	fi
+	if [ -f stp1 ]; then
+		$vw 1 1 2
+		$DLW 1 2
+	fi
+	if [ -f stp2 ]; then
+		$vw 1 2 2
+		$DLW 2 2
+	fi
+	if [ -f stp3 ]; then
+		$vw 1 3 2
+		$DLW 3 2
+	fi
+	if [ -f stp4 ]; then
+		$vw 1 4 2
+		$DLW 4 2
+	fi
+	if [ -f stp5 ]; then
+		$vw 1 5 2
+		$DLW 5 2
+	fi
+	if [ -f stp6 ]; then
+		$vw 1 6 2
+		$DLW 6 2
+	fi
+	if [ -f stp7 ]; then
+		$vw 1 7 2
+		$DLW 7 2
+	fi
+	if [ -f stp8 ]; then
+		$vw 1 8 2
+		$DLW 8 2
+	fi
+	if [ -f stp9 ]; then
+		$vw 1 9 2
+		$DLW 9 2
+	fi
+	echo "$(grep -F -x -v -f lwin.ok lwin.no | sort -u | uniq | wc -l)" > no.id
+	echo "$(cat lwin.ok | wc -l)" > ok.id
+	cat lwin.ok >> iLW
+	echo "$(cat iLW | wc -l)" > lw_r
+	if [ -f lwin.no ]; then
+		cat *.no >> "$w6"
+		cat *.ok >> "$w9"
+		var2=$((100*$(cat lw_r)/$(cat idxlwin)));
+		if [ $var2 -lt 1 ]; then
+			echo 1 > .iconlw
+		elif [ $var2 -lt 5 ]; then
+			echo 2 > .iconlw
+		elif [ $var2 -lt 10 ]; then
+			echo 3 > .iconlw
+		elif [ $var2 -lt 15 ]; then
+			echo 4 > .iconlw
+		elif [ $var2 -lt 20 ]; then
+			echo 5 > .iconlw
+		elif [ $var2 -lt 25 ]; then
+			echo 6 > .iconlw
+		elif [ $var2 -lt 30 ]; then
+			echo 7 > .iconlw
+		elif [ $var2 -lt 35 ]; then
+			echo 8 > .iconlw
+		elif [ $var2 -lt 40 ]; then
+			echo 9 > .iconlw
+		elif [ $var2 -lt 45 ]; then
+			echo 10 > .iconlw
+		elif [ $var2 -lt 50 ]; then
+			echo 11 > .iconlw
+		elif [ $var2 -lt 55 ]; then
+			echo 12 > .iconlw
+		elif [ $var2 -lt 60 ]; then
+			echo 13 > .iconlw
+		elif [ $var2 -lt 65 ]; then
+			echo 14 > .iconlw
+		elif [ $var2 -lt 70 ]; then
+			echo 15 > .iconlw
+		elif [ $var2 -lt 75 ]; then
+			echo 16 > .iconlw
+		elif [ $var2 -lt 80 ]; then
+			echo 17 > .iconlw
+		elif [ $var2 -lt 85 ]; then
+			echo 18 > .iconlw
+		elif [ $var2 -lt 90 ]; then
+			echo 19 > .iconlw
+		elif [ $var2 -lt 95 ]; then
+			echo 20 > .iconlw
+		elif [ $var2 -eq 100 ]; then
+			echo 21 > .iconlw
+		fi
+		$strt 7 & exit 1
+	else
+		cat *.no >> "$w6"
+		cat *.ok >> "$w9"
+		rm *.id *.ok *.no iLW lwin.tmp lwin
+		echo "$(date "+%a %d %B")" > look_lw
+		echo 21 > .iconlw
+		play $DS_pp/all.mp3 & $strt 3 &
+		killall dlw.sh
+		exit 1
+	fi
+	exit 1
+
+elif [ "$2" = s ]; then
+
+	cd "$DC_tlt/Practice"
+	DLS=$DS_pp/dls.sh
+	Wi="$DC_tlt/.winx"
+	Si="$DC_tlt/.sinx"
+	Li="$DC_tlt/.tok-inx"
+	l="$1"
+	if [ -f look_ls ]; then
+		$yad --title="$tpc" \
+		--borders=15 --center --buttons-layout=edge \
+		--on-top --skip-taskbar --window-icon=idiomind \
+		--buttons-layout=edge --center --image=info \
+		--button="Reiniciar Práctica":0 \
+		--button=Ok:1 \
+		--text "<span color='#007D17'>  Completaste esta práctica\\n  El $(cat look_ls)</span>\\n\\n" \
+		--width=350 --height=80
+		ret=$?
+			if [[ "$ret" -eq 0 ]]; then
+				$DS_pp/cls ds & exit
+			else
+				$DS_pp/strt & exit
+			fi
+	fi
+	if [ -f lsin.tmp ]; then
+		rm *.id *.ok *.no
+		sed '/^$/d' lsin.tmp > lsin
+		cat lsin | wc -l > scr
+	else
+		cd "$DM_tlt"
+		cd "$DC_tlt/Practice"
+		echo "$(grep -F -x -v -f "$Si" "$Li" | wc -l)" > idxlsin
+		grep -F -x -v -f "$Si" "$Li" > lsin #SACA LA LISTA DE APRENDIDOS DE LA LISTA DE MP3'S PALABRAS
+		rm -f *.id *.ok *.no $DT/*.tp
+		if [ "$(cat lsin | wc -l)" -lt 2 ]; then # cuentas , si hay mas de 10 si , si no NO
+			$yad --form --center --borders=5 --skip-taskbar \
+			--title="Info" --on-top --window-icon=idiomind \
+			--button=Ok:1 --image=info \
+			--text "<span color='#636363'><b> Para Comenzar Debes Tener al menos 1 Oración  </b></span>" \
+			--width=310 --height=80
+			rm -f $DT/text.tmp
+			$strt & killall prct & exit
+		fi
+	fi
+	cp -f lsin lsin.tmp
+	cat lsin | wc -l > scr
+	> lsin.ok
+	$DLS 1 $l
+	sed -i '/^$/d' lsin.ok
+	sed -i '/^$/d' lsin.no
+	echo "$(grep -F -x -v -f lsin.ok lsin.no | sort -u | uniq | wc -l)" > no.id
+	echo "$(cat lsin.ok | wc -l)" > ok.id
+	cat ./lsin.ok >> iLS
+	echo "$(cat iLS | wc -l)" > ls_r
+	if [ -f lsin.no ]; then
+		var4=$((100*$(cat ls_r)/$(cat idxlsin)))
+		if [ $var4 -lt 1 ]; then
+			echo 1 > .iconls
+		elif [ $var4 -lt 5 ]; then
+			echo 2 > .iconls
+		elif [ $var4 -lt 10 ]; then
+			echo 3 > .iconls
+		elif [ $var4 -lt 15 ]; then
+			echo 4 > .iconls
+		elif [ $var4 -lt 20 ]; then
+			echo 5 > .iconls
+		elif [ $var4 -lt 25 ]; then
+			echo 6 > .iconls
+		elif [ $var4 -lt 30 ]; then
+			echo 7 > .iconls
+		elif [ $var4 -lt 35 ]; then
+			echo 8 > .iconls
+		elif [ $var4 -lt 40 ]; then
+			echo 9 > .iconls
+		elif [ $var4 -lt 45 ]; then
+			echo 10 > .iconls
+		elif [ $var4 -lt 50 ]; then
+			echo 11 > .iconls
+		elif [ $var4 -lt 55 ]; then
+			echo 12 > .iconls
+		elif [ $var4 -lt 60 ]; then
+			echo 13 > .iconls
+		elif [ $var4 -lt 65 ]; then
+			echo 14 > .iconls
+		elif [ $var4 -lt 70 ]; then
+			echo 15 > .iconls
+		elif [ $var4 -lt 75 ]; then
+			echo 16 > .iconls
+		elif [ $var4 -lt 80 ]; then
+			echo 17 > .iconls
+		elif [ $var4 -lt 85 ]; then
+			echo 18 > .iconls
+		elif [ $var4 -lt 90 ]; then
+			echo 19 > .iconls
+		elif [ $var4 -lt 95 ]; then
+			echo 20 > .iconls
+		elif [ $var4 -eq 100 ]; then
+			echo 21 > .iconls
+		fi
+		$strt 8
+	else
+		rm *.id *.ok *.no iLS lsin.tmp lsin
+		echo "$(date "+%a %d %B")" > look_ls
+		echo 21 > .iconls
+		echo ok > .iiconls
+		play $DS_pp/all.mp3 & $strt 4 &
+		killall dls.sh
+		killall play
+		exit 1
+	fi
+	exit 1
+fi

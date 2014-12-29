@@ -1,0 +1,73 @@
+#!/bin/bash
+tpc=$(sed -n 1p ~/.config/idiomind/s/topic.id)
+lgtl=$(sed -n 2p ~/.config/idiomind/s/lang)
+drtt="$HOME/.idiomind/topics/$lgtl/$tpc/words"
+drtu="/usr/share/idiomind/plugins/Practice/"
+cd "$HOME/.config/idiomind/topics/$lgtl/$tpc/Practice"
+yad=/lib32/yad_idiomind
+vww=$drtu/lrng
+e=$1
+
+nm=$(sed -n "$1"p stp"$2")
+if [ -z "$nm" ]; then
+	nm=$(sed -n 1p stp"$2")
+	e=1
+fi
+file="$drtt/$nm.mp3"
+vw="$3"
+A=$(echo "$vw" | sed -n 2p)
+B=$(echo "$vw" | sed -n 3p) 
+if [ $B = TRUE ]; then
+	aut=--timeout=2
+fi
+if [ "$A" = TRUE ]; then
+	prn=play
+fi
+
+wrds=$(cat stp"$2" | awk 1 ORS='   ')
+vsw=$(echo "$wrds" | sed "s#${nm}#<big><big><big><big><big><big> \
+${nm} <\/\big><\/\big><\/\big><\/\big><\/\big><\/\big>#g")
+srce=$(eyeD3 "$file" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
+
+listen="play '$file'"
+stp="$drtu/stp.sh"
+play="play '$file'"
+
+(
+sleep 0.5
+"$prn" "$file"
+) &
+
+vw=$($yad --form --always-print-result --window-icon=idiomind \
+--center --separator="\\n" --columns=3 --name=idiomind \
+--width=480 --height=230 --on-top --skip-taskbar \
+--borders=5 --align=center --class=idiomind $aut \
+--buttons-layout=center --title=" " --undecorated \
+--text-align=center \
+--field="Play:BTN" "$play" \
+--field="pronounce":chk "$A" \
+--field="Auto":chk "$B" \
+--button="	<	:3" \
+--button="	Practice	:$stp" \
+--button="	>	:2" \
+--text="$vsw\\n\\n <i><big><big>\
+<span color='#7F7F7F'>[</span> \
+<span color='#6F96BE'><big><big> $srce </big></big></span> \
+<span color='#7F7F7F'>]</span></big></big></i> \\n")
+
+	ret=$?
+	if [[ $ret -eq 2 ]]; then
+		ff=$(($e + 1))
+		$vww "$ff" "$2" "$vw"
+	elif [[ $ret -eq 3 ]]; then
+		ff=$(($e - 1))
+		$vww "$ff" "$2" "$vw"
+	elif [[ $ret -eq 1 ]]; then
+		killall $vww & exit 1
+	elif [[ $B = TRUE ]]; then
+		ff=$(($e + 1))
+		$vww "$ff" "$2" "$vw"
+	else
+		$drtu/cls w &
+		killall $vww & exit 1
+	fi

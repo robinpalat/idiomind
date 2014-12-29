@@ -1,0 +1,10 @@
+#!/bin/bash
+topic=$(sed -n 1p ~/.config/idiomind/s/topic.id)
+lngt=$(sed -n 2p ~/.config/idiomind/s/lang)
+lngs=$(sed -n 2p ~/.config/idiomind/s/langt)
+
+if [[ "$(ps -A | grep -o "plst2")" = "plst2" ]]; then
+/usr/share/idiomind/audio/plwd2 "$1"
+else
+/usr/share/idiomind/audio/plst2 "$1"
+fi

@@ -1,0 +1,5 @@
+#!/bin/bash
+# gstaticcom en
+wdr=$(echo "$1")
+wget http://ssl.gstatic.com/dictionary/static/sounds/de/0/"$wdr".mp3
+exit
