@@ -395,8 +395,8 @@ elif [ $1 = n_s ]; then
 		fi
 		result=$(curl -s -i --user-agent "" -d "sl=$lgt" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
 		encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
-		iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 > .es
-		sed -i ':a;N;$!ba;s/\n/ /g' .es
+		iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 > ./.es
+		sed -i ':a;N;$!ba;s/\n/ /g' ./.es
 		srce=$(cat ./.es)
 		
 		sed -i 's/,/ /g' .en
@@ -421,7 +421,7 @@ elif [ $1 = n_s ]; then
 		fi
 		
 		cat tmp01.mp3 tmp02.mp3 tmp03.mp3 tmp04.mp3 > "$DM_tlt/$nme.mp3"
-		eyeD3 --encoding utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I "$DM_tlt/$nme.mp3"
+		eyeD3 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I "$DM_tlt/$nme.mp3"
 
 		if [ -f img.jpg ]; then
 			/usr/bin/convert -scale 450x270! -border 0.5 \
