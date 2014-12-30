@@ -31,7 +31,7 @@ while [ $n -le $(cat ./stp$1 | wc -l) ]; do
 	
 	if [ -f "$drtt/images/$w1.jpg" ]; then
 		IMAGE="$drtt/images/$w1.jpg"
-		/lib32/yad_idiomind --form --align=center --undecorated \
+		yad --form --align=center --undecorated \
 		--center --on-top --image-on-top --image="$IMAGE" \
 		--skip-taskbar --text-align=center --title=" "  \
 		--window-icon=idiomind --buttons-layout=edge --borders=0 \
@@ -43,7 +43,7 @@ while [ $n -le $(cat ./stp$1 | wc -l) ]; do
 		--width=365 --height=300
 	
 	else
-		/lib32/yad_idiomind --form --align=center \
+		yad --form --align=center \
 		--center --on-top --image-on-top --undecorated \
 		--skip-taskbar --text-align=center --title=" " \
 		--window-icon=idiomind --buttons-layout=edge --borders=0 \

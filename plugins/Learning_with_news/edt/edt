@@ -3,7 +3,7 @@ lnglbl=$(sed -n 2p ~/.config/idiomind/s/lang)
 drtc="$HOME/.config/idiomind/topics/$lnglbl/Feeds/"
 
 if [[ "$(cat "$drtc/.inx" | wc -l)" -ge 20 ]]; then
-	/lib32/yad_idiomind --sticky --center \
+	yad --sticky --center \
 	--width=190 --name=idiomind --class=idmnd --button=Close:1 \
 	--height=260 --title="Edit" --compact \
 	--window-icon=/usr/share/idiomind/icon/icon.png \
@@ -13,7 +13,7 @@ if [[ "$(cat "$drtc/.inx" | wc -l)" -ge 20 ]]; then
 	exit 1
 	
 else
-	/lib32/yad_idiomind --sticky --center \
+	yad --sticky --center \
 	--width=190 --name=idiomind --class=idmnd --button=Close:1 \
 	--height=260 --title="Edit" --compact \
 	--window-icon=/usr/share/idiomind/icon/icon.png \

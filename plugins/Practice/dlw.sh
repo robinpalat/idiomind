@@ -26,7 +26,7 @@ while [ $n -le $(cat ./stp$1 | wc -l) ]; do
 	
 		IMAGE="$drtt/images/$w1".jpg
 		play "$drtt/$w1".mp3 &
-		/lib32/yad_idiomind --form --align=center \
+		yad --form --align=center \
 		--center --on-top --image="$IMAGE" --image-on-top \
 		--window-icon=idiomind --buttons-layout=edge --borders=0 \
 		--skip-taskbar --title=" " --undecorated \
@@ -39,7 +39,7 @@ while [ $n -le $(cat ./stp$1 | wc -l) ]; do
 			
 	else
 		play "$drtt/$w1".mp3 &
-		/lib32/yad_idiomind --form --align=center --undecorated \
+		yad --form --align=center --undecorated \
 		--center --on-top --text-align=center --name=idiomind \
 		--window-icon=idiomind --buttons-layout=edge --borders=0 \
 		--skip-taskbar  --title=" " --class=idiomind \

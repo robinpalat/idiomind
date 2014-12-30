@@ -74,7 +74,7 @@ elif [ "$3" = cnf ]; then
 		let n++
 	done
 	
-	D=$(mktemp /tmp/.idmtp1/D.XXXX)
+	D=$(mktemp $DT/D.XXXX)
 	cat "$DICT/.listdicts" | $yad --list --title=" " \
 	--center --on-top --expand-column=2 --text="$tex" --window-icon=idiomind \
 	--width=350 --height=250 --skip-taskbar --separator=" " \

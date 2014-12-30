@@ -10,7 +10,7 @@ elif [ "$1" = n ]; then
 	int="--field=<small><b> Debes completar los campos</b></small>\\t\\t:lbl"
 fi
 
-idmnd=$(/lib32/yad_idiomind --center --width=520 --height=250 --fixed \
+idmnd=$(yad --center --width=520 --height=280 --fixed \
 	--image-on-top --on-top --class=idiomind --name=idiomind \
 	--window-icon=idiomind --buttons-layout=end --image=$IMAGE  \
 	--title="Idiomind" --form --borders=10 --align=right \
@@ -42,7 +42,7 @@ elif [[ $ret -eq 0 ]]; then
 	
 	if [ $? -ne 0 ]; then
 	
-		/lib32/yad_idiomind --name=idiomind \
+		yad --name=idiomind \
 		--image=error --button=gtk-ok:1\
 		--text=" <b>Error al intentar escribir en /home/$user/</b>\\n" \
 		--image-on-top --sticky --fixed \
@@ -239,8 +239,11 @@ elif [[ $ret -eq 0 ]]; then
 	b=$(tr -dc a-z < /dev/urandom | head -c 1)
 	c=$(echo $(($RANDOM%100)))
 	echo $c$b > $DIR2/s/cnfg4
-	cp /usr/share/idiomind/default/cng \
+	cp /usr/share/idiomind/default/cnfg1 \
 	"$HOME/.config/idiomind/s/cnfg1"
+	touch $DIR2/s/topic.id
+	touch $DIR2/s/fnew.id
+	touch $DIR2/s/topic_m
 	/usr/share/idiomind/mngr mkmn
 	idiomind
 	
