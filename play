@@ -251,7 +251,6 @@ fi
 img5=$DS/icon/set-26.png
 
 if [ ! -f $DC_s/cnfg5 ]; then
-	echo "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
 	cp $DS/default/cnfg5 $DC_s/cnfg5
 fi
 
