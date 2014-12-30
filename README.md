@@ -4,7 +4,7 @@ Captura de pantalla
 
 
 
-Pruébalo
+Pruébalo (beta)
 en Ubuntu y derivados:
 
 * agregando el repositorio de Launchpad (recomendado).
@@ -18,6 +18,8 @@ sudo apt-get install idiomind
 * o descarga el paquete:
 
 http://idiomind.sourceforge.net
+
+
 
 
 
