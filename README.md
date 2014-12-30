@@ -10,7 +10,9 @@ en Ubuntu y derivados:
 * agregando el repositorio de Launchpad (recomendado).
 
 sudo add-apt-repository ppa:robinpala/idiomind
+
 sudo apt-get update
+
 sudo apt-get install idiomind
 
 * o descarga el paquete:
