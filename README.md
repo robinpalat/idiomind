@@ -1,8 +1,10 @@
 idiomind
 ========
 
-Herramienta de escritorio para aprender palabras con la rareza de que funciona solo con bash scripting basico.
-Tiene varias características útiles que toma de 'sniparse'.
+Captura de pantalla
+![alt tag](https://github.com/sniparse/sniparse.github.io/blob/master/images/shot.png)
+
+
 
 Pruébalo
 en Ubuntu y derivados:
