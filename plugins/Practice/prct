@@ -291,7 +291,7 @@ elif [ "$2" = m ]; then
 			let n++
 		done
 		
-		) | /lib32/yad_idiomind --progress \
+		) | yad --progress \
 		--width 50 --height 35 --undecorated \
 		--pulsate --auto-close \
 		--skip-taskbar --center --no-buttons

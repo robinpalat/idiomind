@@ -249,13 +249,21 @@ else
 img4=$DS/icon/srss.png
 fi
 img5=$DS/icon/set-26.png
+
+if [ ! -f $DC_s/cnfg5 ]; then
+	echo "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+	cp $DS/default/cnfg5 $DC_s/cnfg5
+fi
+
 st1=$(cat $DC_s/cnfg5 | sed -n 1p)
 st2=$(cat $DC_s/cnfg5 | sed -n 2p)
 st3=$(cat $DC_s/cnfg5 | sed -n 3p)
 st4=$(cat $DC_s/cnfg5 | sed -n 4p)
+
 st5=$(cat $DC_s/cnfg5 | sed -n 5p)
 st6=$(cat $DC_s/cnfg5 | sed -n 6p)
 st7=$(cat $DC_s/cnfg5 | sed -n 7p)
+
 st8=$(cat $DC_s/cnfg5 | sed -n 8p)
 st9=$(cat $DC_s/cnfg5 | sed -n 9p)
 st10=$(cat $DC_s/cnfg5 | sed -n 10p)
@@ -295,16 +303,7 @@ if  [[ "$ret" -eq 0 ]]; then
 	cd $DT/.$uid
 	> ./indx
 	
-	if echo "$(echo "$slt" | sed -n 2p)" | grep TRUE; then
-		sed -i "2s/.*/TRUE/" $DC_s/cnfg5
-		if  [ -f ./indsa ]; then
-			cat ./indsa >> ./indx
-		else
-			cat ./inds >> ./indx
-		fi
-	else
-		sed -i "2s/.*/FALSE/" $DC_s/cnfg5
-	fi
+	#----------------------------------------------------- words
 	if echo "$(echo "$slt" | sed -n 1p)" | grep TRUE; then
 		sed -i "1s/.*/TRUE/" $DC_s/cnfg5
 		if  [ -f ./indwa ]; then
@@ -315,6 +314,18 @@ if  [[ "$ret" -eq 0 ]]; then
 	else
 		sed -i "1s/.*/FALSE/" $DC_s/cnfg5
 	fi
+	#-----------------------------------------------------sentences
+	if echo "$(echo "$slt" | sed -n 2p)" | grep TRUE; then
+		sed -i "2s/.*/TRUE/" $DC_s/cnfg5
+		if  [ -f ./indsa ]; then
+			cat ./indsa >> ./indx
+		else
+			cat ./inds >> ./indx
+		fi
+	else
+		sed -i "2s/.*/FALSE/" $DC_s/cnfg5
+	fi
+	#-----------------------------------------------------practice
 	if echo "$(echo "$slt" | sed -n 3p)" | grep TRUE; then
 		sed -i "3s/.*/TRUE/" $DC_s/cnfg5
 		if  [ -f ./indpa ]; then
@@ -325,6 +336,7 @@ if  [[ "$ret" -eq 0 ]]; then
 	else
 		sed -i "3s/.*/FALSE/" $DC_s/cnfg5
 	fi
+	#-----------------------------------------------------feeds content
 	if echo "$(echo "$slt" | sed -n 4p)" | grep TRUE; then
 		sed -i "4s/.*/TRUE/" $DC_s/cnfg5
 		if  [ -f ./indfa ]; then
@@ -335,26 +347,31 @@ if  [[ "$ret" -eq 0 ]]; then
 	else
 		sed -i "4s/.*/FALSE/" $DC_s/cnfg5
 	fi
+	#-----------------------------------------------------dialogs
 	if echo "$(echo "$slt" | sed -n 5p)" | grep TRUE; then
 		sed -i "5s/.*/TRUE/" $DC_s/cnfg5
 	else
 		sed -i "5s/.*/FALSE/" $DC_s/cnfg5
 	fi
+	#-----------------------------------------------------osd
 	if echo "$(echo "$slt" | sed -n 6p)" | grep TRUE; then
 		sed -i "6s/.*/TRUE/" $DC_s/cnfg5
 	else
 		sed -i "6s/.*/FALSE/" $DC_s/cnfg5
 	fi
+	#-----------------------------------------------------audio
 	if echo "$(echo "$slt" | sed -n 7p)" | grep TRUE; then
 		sed -i "7s/.*/TRUE/" $DC_s/cnfg5
 	else
 		sed -i "7s/.*/FALSE/" $DC_s/cnfg5
 	fi
+	#-----------------------------------------------------repeat
 	if echo "$(echo "$slt" | sed -n 8p)" | grep TRUE; then
 		sed -i "8s/.*/TRUE/" $DC_s/cnfg5
 	else
 		sed -i "8s/.*/FALSE/" $DC_s/cnfg5
 	fi
+	#-----------------------------------------------------
 	
 	rm -f "$slct"
 

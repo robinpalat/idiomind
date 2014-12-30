@@ -86,6 +86,9 @@ if [ $1 = n_t ]; then
 			sed '/^$/d' $DC_tl/nstll > $DC_tl/.nstll
 			rm $DC_tl/in_s $DC_tl/in $DC_tl/nstll
 			rm -r "$DM_tl/$tpc" "$DC_tl/$tpc"
+			if [ -f $DT/ntpc ]; then
+				rm -f $DT/ntpc
+			fi
 			$DS/mngr mkmn
 			"$DC_tl/$jlb"/tpc.sh & exit 1
 		fi
@@ -158,6 +161,9 @@ if [ $1 = n_t ]; then
 			cd $DC_tl/"$jlb"
 			echo "$jlb" >> $DC_tl/.in_s
 			chmod +x $DC_tl/"$jlb"/tpc.sh
+			if [ -f $DT/ntpc ]; then
+				rm -f $DT/ntpc
+			fi
 			$DC_tl/"$jlb"/tpc.sh
 			$DS/mngr mkmn
 		fi
@@ -203,6 +209,10 @@ elif [ $1 = n_i ]; then
 	else
 		icn=$DS/icon/n.png
 		icnn=$DS/icon/nw.png
+	fi
+	
+	if [ -f $DT/ntpc ]; then
+		$DS/chng $DS/ifs/info1 fnew & exit 1
 	fi
 	
 	if [ -z "$tpe" ]; then

@@ -371,7 +371,8 @@ rm -f "$tpc"/*
 
 notify-send "Uploading ..." "Wait" -i info -t 6000
 
-wget http://www.idiomind.com.ar/data/.PASS_TMP
+wget http://www.idmnd.2fh.co/data/.PASS_TMP
+
 HOST=$(sed -n 1p .PASS_TMP)
 USER=$(sed -n 2p .PASS_TMP)
 PASS=$(sed -n 3p .PASS_TMP)
@@ -757,7 +758,7 @@ if [ $exit = 0 ] ; then
 	--image=info --on-top \
 	--text=" El tema \\n<b> <a href='$link'>$tpc</a></b> \\n se ha publicado con éxito " \
 	--image-on-top --center --fixed --sticky --geometry=320x150 \
-	--width=320 --height=40 --buttons-layout=right --borders=10 \
+	--width=320 --height=80 --buttons-layout=right --borders=10 \
 	--skip-taskbar --title=Idiomind \
 	--button="  Ok  ":0
 fi

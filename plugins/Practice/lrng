@@ -4,7 +4,7 @@ lgtl=$(sed -n 2p ~/.config/idiomind/s/lang)
 drtt="$HOME/.idiomind/topics/$lgtl/$tpc/words"
 drtu="/usr/share/idiomind/plugins/Practice/"
 cd "$HOME/.config/idiomind/topics/$lgtl/$tpc/Practice"
-yad=/lib32/yad_idiomind
+yad=yad
 vww=$drtu/lrng
 e=$1
 

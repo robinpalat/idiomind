@@ -69,7 +69,7 @@ elif [ $1 = srch ]; then
 		sleep 1
 	
 	echo "$d2" > $HOME/.config/idiomind/s/updt
-	wget -O/dev/null -q http://tmp.site50.net/uploads/recents/19Q.Adverbs%20of%20frequency.idmnd && /lib32/yad_idiomind --text="<b>  Esta disponible una nueva version  </b>" \
+	wget -O/dev/null -q http://tmp.site50.net/uploads/recents/19Q.Adverbs%20of%20frequency.idmnd && yad --text="<b>  Esta disponible una nueva version  </b>" \
 	--image=info --title="Idiomind 1.5.0" --window-icon=idiomind \
 	--on-top --skip-taskbar --sticky \
 	--center --name=idiomind --borders=15 \

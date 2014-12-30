@@ -2,13 +2,14 @@
 source /usr/share/idiomind/ifs/c.conf
 
 if [[ "$1" = chngi ]]; then
-	saw=$(sed -n 1p $DC_s/cnfg5)
-	sas=$(sed -n 2p $DC_s/cnfg5)
-	sap=$(sed -n 3p $DC_s/cnfg5)
-	saf=$(sed -n 4p $DC_s/cnfg5)
-	sna=$(sed -n 5p $DC_s/cnfg5)
-	nta=$(sed -n 6p $DC_s/cnfg5)
-	dga=$(sed -n 7p $DC_s/cnfg5)
+	saw=$(sed -n 1p $DC_s/cnfg5) # words
+	sas=$(sed -n 2p $DC_s/cnfg5) # sentences
+	sap=$(sed -n 3p $DC_s/cnfg5) # practice
+	saf=$(sed -n 4p $DC_s/cnfg5) # feeds conten
+	dga=$(sed -n 5p $DC_s/cnfg5) # dialog
+	nta=$(sed -n 6p $DC_s/cnfg5) # osd
+	sna=$(sed -n 7p $DC_s/cnfg5) # audio
+	
 	user=$(echo "$(whoami)")
 	cnfg1="$DC_s/cnfg5"
 	indx="$DT/.$user/indx"
