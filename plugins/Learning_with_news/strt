@@ -190,7 +190,7 @@ if [ -n "$feed" ]; then
 				wget -q -U Mozilla -O ./"$nme.mp3" "https://translate.google.com/translate_tts?ie=UTF-8&tl=$lgt&q=$trgt"
 			fi
 			
-			eyeD3 --encoding utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I "$nme.mp3"
+			eyeD3 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I "$nme.mp3"
 			
 			> swrd
 			> twrd
@@ -236,7 +236,7 @@ if [ -n "$feed" ]; then
 
 			lwrds=$(cat A)
 			pwrds=$(cat B | tr '\n' '_')
-			eyeD3 -A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0I "$nme".mp3
+			eyeD3 -A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0I "$nme.mp3"
 			(
 			if [ $lgt = ja ] || [ $lgt = zh-cn ]; then
 				n=1
