@@ -5,6 +5,7 @@ Captura de pantalla
 
 
 Dependencias
+
 bash (>=4.1), rsstail (>= 1.4~), scrot (>= 0.8~), imagemagick, wkhtmltopdf, lynx, eyed3, curl, html2text, sox, libsox-fmt-mp3, libnotify-bin, wget, xdg-utils, mp3splt, xclip, tesseract-ocr, lftp, libc6, libgtk-3-0, yad
 
 
