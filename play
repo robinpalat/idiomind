@@ -16,7 +16,6 @@ infw=$(echo "$wrds Words" | wc -l)
 #wth=$(sed -n 8p $HOME/.config/idiomind/s/.rd)
 
 if [[ "$1" = d ]]; then
-
 	uid=$(echo "$(whoami)")
 	pst=$(sed -n 1p $DC_s/.pst)
 	> $DT/.$uid/INACT
@@ -26,8 +25,7 @@ if [[ "$1" = d ]]; then
 	ACTIV=$DT/.$uid/ACTIV
 	cd $DT/.$uid/
 	
-	if echo "$2" | grep "Dialog"; then
-	
+	if echo "$2" | grep "Notification"; then
 		cnf1=$(mktemp $DT/cnf1.XXXX.s)
 		cnf2=$(mktemp $DT/cnf2.XXXX.s)
 		bcl=$(sed -n 1p $DC_s/cnfg2)
@@ -56,7 +54,6 @@ if [[ "$1" = d ]]; then
 		    --button="	Ok    ":0
 		
 			if [[ "$?" -eq 0 ]]; then
-			
 				a=$(cat "$cnf1")
 				b=$(cat "$cnf2")
 				if [[ "$b" -gt "$pst" ]]; then
@@ -138,7 +135,6 @@ if [[ "$1" = d ]]; then
 		ret=$?
 		
 		if [ $ret -eq 0 ]; then
-		
 			lst=$(cat "$slt" | sed 's/|//g')
 			rm -f "$inda" "$inde"
 			n=1
@@ -158,7 +154,6 @@ if [[ "$1" = d ]]; then
 			exit 1
 				
 		elif [ $ret -eq 2 ]; then
-		
 			kill -9 $(pgrep -f "$yad --list ") &
 			rm "$sinda" "$sinde" "$inde" "$inda"
 			$DS/play
@@ -190,7 +185,6 @@ if [ -f "$DC_tlf/indfa" ]; then
 fi
 
 if [ ! -d $DT/.$uid ]; then
-
 	mkdir $DT/.$uid/
 	cd $DT/.$uid
 	
@@ -289,7 +283,6 @@ $yad --list --on-top \
 "Sentences" "$img2" "$Sentences" $st2 \
 "Practice" "$img3" "$Practice" $st3 \
 "Feeds" "$img4" "$Feeds" $st4 \
-"Dialog" "$img5" "Dialog" $st5 \
 "Notification" "$img5" "Notification" $st6 \
 "Audio" "$img5" "Audio" $st7 \
 "Repeat" "$img5" "Repeat" $st8 > "$slct"
@@ -374,27 +367,7 @@ if  [[ "$ret" -eq 0 ]]; then
 	
 	rm -f "$slct"
 
-#=============================   stop 
-elif [[ "$ret" -eq 5 ]]; then
-
-	if [ ! -f "$DS/icon/stprs.png" ]; then
-		convert "$DS/icon/prs.png" -font Purisa-BoldOblique -gravity Center -pointsize 50 -fill gray32 -draw "text 0 0 \"$textt\"" $DT/prs.png
-		width=`identify -format %w $DT/prs.png`; \
-		convert -background '#0007' -fill gray95 -gravity center -size ${width}x50 \
-		caption:"$texts" \
-		$DT/prs.png +swap -gravity south -composite $DT/prs.png
-		mv -f $DT/prs.png "$DS/icon/stprs.png"
-	fi
-
-	$yad --form --image-on-top --fixed --geometry=400x500-400-1200 --sticky \
-	--skip-taskbar --borders=0 --buttons-layout=center \
-	--undecorated --field="►:BTN" "'/usr/share/idiomind/audio/pl'" \
-	--image="$DS/icon/stprs.png" \
-	--button="			<			:null" \
-	--button="Exit:'/usr/share/idiomind/stop.sh V'" \
-	--button="			>			:null" &
-	$DS/chng prs 1 & exit 1
-
+#-------------------------------------stop 
 elif [[ "$ret" -eq 2 ]]; then
 	rm -fr $DT/.$uid $slct $DT/.p__$uid &
 	$DS/stop.sh P & exit 1
@@ -407,12 +380,10 @@ else
 	exit 1
 fi
 
-#=============================   acondicion
-
+#-----------------------------------------acondicion
 rm -f $slct
 $DS/stop.sh P
-
-#=============================   condicion 
+#-----------------------------------------condicion 
 
 w=$(sed -n 1p $DC_s/cnfg5)
 s=$(sed -n 2p $DC_s/cnfg5)

@@ -14,7 +14,7 @@ elif echo "$1" | grep "S"; then
 	killall p_lay
 	killall chng &
 	kill -9 $(pgrep -f "yad --form ")
-	rm -f -r /tmp/.idmtp1/.idadtmptts_$user
+	rm -f -r /tmp/.idmtp1.$user/.idadtmptts_$user
 	exit 1
 	
 elif echo "$1" | grep "V"; then
@@ -29,7 +29,7 @@ elif echo "$1" | grep "L"; then
 	killall play
 	killall chng &
 	kill -9 $(pgrep -f "yad --form ")
-	rm -f -r /tmp/.idmtp1/.idadtmptts_$user
+	rm -f -r /tmp/.idmtp1.$user/.idadtmptts_$user
 	exit 1
 	
 else
@@ -38,6 +38,6 @@ else
 	killall play
 	killall chng &
 	kill -9 $(pgrep -f "yad --form ")
-	rm -f -r /tmp/.idmtp1/.idadtmptts_$user /tmp/.idmtp1/.p__$user
+	rm -f -r /tmp/.idmtp1.$user/.idadtmptts_$user /tmp/.idmtp1.$user/.p__$user
 	exit 1
 fi
