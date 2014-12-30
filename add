@@ -17,8 +17,7 @@ if [ $1 = n_t ]; then
 			nmt=""
 		fi
 		
-		#===========normal
-		
+		#--------------normal
 		jlbi=$($yad --window-icon=idiomind \
 		--form --center --field="" "$nmt" --title="$tle" \
 		--width=400 --height=80 --name=idiomind --on-top \
@@ -29,8 +28,6 @@ if [ $1 = n_t ]; then
 		| sed s'/&//'g | sed s'/\://'g | sed s'/\&//'g \
 		| sed s"/'//"g | sed 's/^[ \t]*//;s/[ \t]*$//' \
 		| sed 's/^\s*./\U&\E/g')
-		
-		#==========
 		
 		if [ $(cat $DC_tl/.in | grep -Fxo "$jlb" | wc -l) -ge 1 ]; then
 		
@@ -49,8 +46,7 @@ if [ $1 = n_t ]; then
 		else
 			jlb=$(echo "$jlb")
 		fi
-		#==========
-		
+		#--------------
 		if [ -z "$jlb" ]; then
 			exit 1
 		else		
@@ -204,11 +200,9 @@ elif [ $1 = n_i ]; then
 	fi
 	
 	if [ -f $DT_r/ico.jpg ]; then
-		icnn=$DT_r/ico.jpg
-		icn=$DT_r/ico.jpg
+		img="--image=$DT_r/ico.jpg"
 	else
-		icn=$DS/icon/n.png
-		icnn=$DS/icon/nw.png
+		img="--on-top"
 	fi
 	
 	if [ -f $DT/ntpc ]; then
@@ -247,9 +241,10 @@ elif [ $1 = n_i ]; then
 	fi
 	
 	if sed -n 1p $DC_s/cnfg3 | grep TRUE; then
+	sx='120x100'
 		lzgpr=$($yad --form --center --always-print-result \
 		--text-info --on-top --window-icon=idiomind --skip-taskbar \
-		--separator="\n" --align=right --image=$icnn \
+		--separator="\n" --align=right "$img" \
 		--name=idiomind --class=idiomind --margins="5" \
 		--borders=2 --title="$tpe" --width=420 --height=150 \
 		--field="  <small><small>$lgtl / $lgsl</small></small>":TXT "$txt" \
@@ -264,12 +259,13 @@ elif [ $1 = n_i ]; then
 	else
 		cd $HOME
 		txt2="$5"
+		sx='180x160'
 		auds="--button=Audio:$DS/audio/auds pnl '$DT_r' 10"
 		rec="--button=gtk-media-record:$DS/audio/auds rec '$DT_r' '10'"
 		ls="--button=►:play $DT_r/audtm.mp3"
 		lzgpr=$($yad --separator="\\n" --skip-taskbar \
-		--width=490 --height=220 --form --on-top --name=idiomind \
-		--class=idiomind --window-icon=idiomind --image=$icn --center "$ls" "$rec" \
+		--width=420 --height=220 --form --on-top --name=idiomind \
+		--class=idiomind --window-icon=idiomind "$img" --center "$ls" "$rec" \
 		--button="Image":3 --always-print-result --align=right \
 		--button=gtk-ok:0 --borders=2 --title="$tpe" \
 		--field="  <small><small>$lgtl</small></small>":TXT "$txt" \
@@ -291,7 +287,7 @@ elif [ $1 = n_i ]; then
 			fi
 			cd $DT_r
 			scrot -s --quality 70 img.jpg
-			/usr/bin/convert -scale 140x100! -border 0.5 \
+			/usr/bin/convert -scale $sx! -border 0.5 \
 			-bordercolor '#9A9A9A' img.jpg ico.jpg
 			$DS/add n_i $DT_r 2 "$trgt" "$srce" && exit 1
 		
@@ -370,16 +366,17 @@ elif [ $1 = n_s ]; then
 		--skip-taskbar --window-icon=idiomind && exit 1
 	fi
 	
-	curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
-	$yad --window-icon=idiomind --on-top \
-	--image=info --name=idiomind \
-	--text="<b> No hay conexión a internet  \\n  </b>" \
-	--image-on-top --center --sticky \
-	--width=300 --height=50 --borders=3 \
-	--skip-taskbar --title=Idiomind \
-	--button="  Ok  ":0 >&2; exit 1;}
 			
 	if sed -n 1p $DC_s/cnfg3 | grep TRUE; then
+	
+		curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
+		$yad --window-icon=idiomind --on-top \
+		--image=info --name=idiomind \
+		--text="<b> No hay conexión a internet  \\n  </b>" \
+		--image-on-top --center --sticky \
+		--width=300 --height=50 --borders=3 \
+		--skip-taskbar --title=Idiomind \
+		--button="  Ok  ":0 >&2; exit 1;}
 	
 		cd $DT_r
 		echo "$2" > ./txt2
@@ -431,7 +428,7 @@ elif [ $1 = n_s ]; then
 		fi
 		
 		cat tmp01.mp3 tmp02.mp3 tmp03.mp3 tmp04.mp3 > "$DM_tlt/$nme.mp3"
-		eyeD3 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I "$DM_tlt/$nme.mp3"
+		eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I "$DM_tlt/$nme.mp3"
 
 		if [ -f img.jpg ]; then
 			/usr/bin/convert -scale 450x270! -border 0.5 \
@@ -513,7 +510,7 @@ elif [ $1 = n_s ]; then
 		grmrk=$(cat grmrk | sed ':a;N;$!ba;s/\n/ /g')
 		lwrds=$(cat A)
 		pwrds=$(cat B | tr '\n' '_')
-		eyeD3 -A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0IIGMI3I0I"$grmrk"IGMI3I0I "$DM_tlt/$nme.mp3"
+		eyeD3 --set-encoding=utf8 -A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0IIGMI3I0I"$grmrk"IGMI3I0I "$DM_tlt/$nme.mp3"
 		
 		(
 		if [ $(sed -n 4p $DC_s/cnfg1) = TRUE ]; then
@@ -556,7 +553,7 @@ elif [ $1 = n_s ]; then
 			sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
 		fi
 		
-		# =========================================
+		#-----------------------------------------
 		srce="$4"
 		trgt="$(cat trgt)"
 		> swrd
@@ -630,7 +627,7 @@ elif [ $1 = n_s ]; then
 		
 		if [ -f $DT_r/audtm.mp3 ]; then
 			mv -f $DT_r/audtm.mp3 "$DM_tlt/$nme.mp3"
-			eyeD3 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I \
+			eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I \
 			-A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0IIGMI3I0I"$grmrk"IGMI3I0I "$DM_tlt/$nme.mp3"
 				if [ -f img.jpg ]; then
 					/usr/bin/convert -scale 450x270! -border 0.5 \
@@ -638,7 +635,7 @@ elif [ $1 = n_s ]; then
 					eyeD3 --add-image imgs.jpg:ILLUSTRATION "$DM_tlt/$nme.mp3"
 				fi
 				
-		else # si no hay audio ===========================
+		else # si no hay audio
 			vs=$(sed -n 7p $DC_s/cnfg1)
 			if [ -n "$vs" ]; then
 				if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
@@ -671,7 +668,7 @@ elif [ $1 = n_s ]; then
 				espeak "$trgt" -v $lg -k 1 -p 65 -a 80 -s 120 -w $DT_r/s.wav
 				sox $DT_r/s.wav "$DM_tlt/$nme.mp3"
 			fi
-			eyeD3 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I \
+			eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I \
 			-A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0IIGMI3I0I"$grmrk"IGMI3I0I "$DM_tlt/$nme.mp3"
 				if [ -f img.jpg ]; then
 					/usr/bin/convert -scale 450x270! -border 0.5 \
@@ -680,7 +677,6 @@ elif [ $1 = n_s ]; then
 				fi
 		fi
 		sleep 1
-		#yad --text="$icnn $trgt $srce\\n ($tpe)" !!!!!!!!!!
 		$DS/mngr inx S "$nme" "$tpe"
 		if [ $lgt = ja ] || [ $lgt = zh-cn ]; then
 			n=1
@@ -745,14 +741,14 @@ elif [ $1 = n_w ]; then
 
 		if [ -f "$DT_r/$trgt.mp3" ]; then
 			cp -f "$DT_r/$trgt.mp3" "$DM_tlt/words/$nme.mp3"
-			eyeD3 -t IWI1I0I"$trgt"IWI1I0I -a IWI2I0I"$src"IWI2I0I "$DM_tlt/words/$nme.mp3"
+			eyeD3 --set-encoding=utf8 -t IWI1I0I"$trgt"IWI1I0I -a IWI2I0I"$src"IWI2I0I "$DM_tlt/words/$nme.mp3"
 		fi
 		
 		if [ -f img.jpg ]; then
 			/usr/bin/convert -scale 100x90! -border 0.5 \
 			-bordercolor '#9A9A9A' img.jpg imgs.jpg
 			/usr/bin/convert -scale 360x240! img.jpg imgt.jpg
-			eyeD3 --add-image imgs.jpg:ILLUSTRATION "$DM_tlt/words/$nme.mp3"
+			eyeD3 --set-encoding=utf8 --add-image imgs.jpg:ILLUSTRATION "$DM_tlt/words/$nme.mp3"
 			mv -f imgt.jpg "$DM_tlt/words/images/$nme.jpg"
 		fi
 		
@@ -765,7 +761,7 @@ elif [ $1 = n_w ]; then
 	else
 		if [ -f audtm.mp3 ]; then
 			mv -f audtm.mp3 "$DM_tlt/words/$trgt.mp3"
-			eyeD3 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" \
+			eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" \
 			"$DM_tlt/words/$trgt.mp3"
 			
 			if [ -f img.jpg ]; then
@@ -782,7 +778,7 @@ elif [ $1 = n_w ]; then
 			
 			if [ -f "$DT_r/$trgt.mp3" ]; then
 				mv -f "$DT_r/$trgt.mp3" "$DM_tlt/words/$trgt.mp3"
-				eyeD3 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" \
+				eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" \
 				"$DM_tlt/words/$trgt.mp3"
 			
 				if [ -f img.jpg ]; then
@@ -826,7 +822,7 @@ elif [ $1 = n_w ]; then
 					espeak "$trgt" -v $lg -k 1 -p 45 -a 80 -s 110 -w $DT_r/s.wav
 					sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
 				fi
-				eyeD3 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" \
+				eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" \
 				"$DM_tlt/words/$trgt.mp3"
 				
 				if [ -f img.jpg ]; then
@@ -935,9 +931,9 @@ elif [ $1 = edt ]; then
 				
 				if [ -f "$trgt.mp3" ]; then
 					mv -f $DT_r/"$trgt.mp3" "$DM_tlt/words/$trgt.mp3"
-					eyeD3 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${UNI}IWI2I0I" -A IWI3I0I"$5"IWI3I0I \
+					eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${UNI}IWI2I0I" -A IWI3I0I"$5"IWI3I0I \
 					"$DM_tlt/words/$trgt.mp3" >/dev/null 2>&1
-				############### si no hay audio
+				#----------------------si no hay audio
 				else
 					vs=$(sed -n 7p $DC_s/cnfg1)
 					if [ -n "$vs" ]; then
@@ -971,7 +967,7 @@ elif [ $1 = edt ]; then
 						espeak "$trgt" -v $lg -k 1 -p 45 -a 80 -s 110 -w $DT_r/s.wav
 						sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
 					fi
-					eyeD3 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${UNI}IWI2I0I" -A IWI3I0I"$5"IWI3I0I \
+					eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${UNI}IWI2I0I" -A IWI3I0I"$5"IWI3I0I \
 					"$DM_tlt/words/$trgt.mp3" >/dev/null 2>&1
 				fi
 				$DS/mngr inx W "$trgt" "$tpc" "$nme"
@@ -1334,16 +1330,18 @@ elif [ $1 = snt ]; then
 			$DIC "$trgt" $DT_r swrd
 			if [ -f "$trgt.mp3" ]; then
 				mv -f "$DT_r/$trgt.mp3" "$DM_tlt/words/$trgt.mp3"
-				eyeD3 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${UNI}IWI2I0I" -A IWI3I0I"$2"IWI3I0I \
+				eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${UNI}IWI2I0I" -A IWI3I0I"$2"IWI3I0I \
 				"$DM_tlt/words/$trgt.mp3"
-				############### si no hay audio
+				#-----------------------si no hay audio
 				else
 					vs=$(sed -n 7p $DC_s/cnfg1)
 					if [ -n "$vs" ]; then
 						if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
 							lg=$(echo $lgtl | awk '{print tolower($0)}')
 							if [ "$lg" != 'english' ] || [ "$lg" != 'spanish' ] || [ "$lg" != 'russian' ]; then
-								$yad --text=error & exit 1 ############### DIALOG
+								$yad --image=error --button=gtk-ok:1 \
+								--text=" <b>Error</b>\\n \ q carajo va aca " \
+								--on-top --skip-taskbar & exit 1
 							fi
 							echo "$trgt" | text2wave -o $DT_r/s.wav
 							sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
@@ -1361,13 +1359,15 @@ elif [ $1 = snt ]; then
 						if [ $lg = chinese ]; then
 							lg=Mandarin
 						elif [ $lg = japanese ]; then
-							$yad --text=error & exit 1 ############### DIALOG
+							$yad --image=error --button=gtk-ok:1 \
+							--text=" <b>Error</b>\\n \ q carajo va aca " \
+							--on-top --skip-taskbar & exit 1
 						fi
 						espeak "$trgt" -v $lg -k 1 -p 45 -a 80 -s 110 -w $DT_r/s.wav
 						sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
 					fi
 
-				eyeD3 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${UNI}IWI2I0I" -A IWI3I0I"$2"IWI3I0I \
+				eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${UNI}IWI2I0I" -A IWI3I0I"$2"IWI3I0I \
 				"$DM_tlt/words/$trgt.mp3"
 			fi
 			$DS/mngr inx W "$trgt" "$3"
@@ -1539,8 +1539,8 @@ elif [ $1 = prs ]; then
 				rm -fr ls $lckpr $DT_r & exit 1
 			fi
 			
-			echo "# Key accepted ... " ; sleep 1
-			#=========================================
+			echo "# key accepted" ; sleep 1
+			#-----------------------------------------
 			
 			n=1
 			while [ $n -le "$lns" ]; do
@@ -1653,7 +1653,7 @@ $trgt" >> log
 					--button="  Ok  ":0 & exit 1
 					>&2; exit 1;}
 					
-					#================================
+					#-----------------------------------------
 					(
 					echo "2"
 					echo "# " ;
@@ -1684,7 +1684,7 @@ $sntc" >> ./slog
 								encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
 								srce=$(iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8)
 								
-								eyeD3 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" "$sntc".mp3
+								eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" "$sntc".mp3
 								
 								mv -f "$sntc".mp3 "$DM_tlt/words/$nme".mp3
 								$DS/mngr inx W "$nme" "$tpe"
@@ -1702,7 +1702,7 @@ $sntc" >> ./wlog
 								encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
 								srce=$(iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 | sed ':a;N;$!ba;s/\n/ /g')
 
-								eyeD3 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I \
+								eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I \
 								"$sntc.mp3"
 
 								mv -f "$sntc.mp3" "$DM_tlt/$nme.mp3"
@@ -1780,7 +1780,7 @@ $sntc" >> ./wlog
 								grmrk=$(cat C_$r | sed ':a;N;$!ba;s/\n/ /g')
 								lwrds=$(cat A_$r)
 								pwrds=$(cat B_$r | tr '\n' '_')
-								eyeD3 -A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0IIGMI3I0I"$grmrk"IGMI3I0I "$DM_tlt/$nme.mp3"
+								eyeD3 --set-encoding=utf8 -A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0IIGMI3I0I"$grmrk"IGMI3I0I "$DM_tlt/$nme.mp3"
 
 								if [ $lgt = ja ] || [ $lgt = zh-cn ]; then
 									n=1
@@ -1810,8 +1810,7 @@ $sntc" >> ./wlog
 						let n++
 					done
 					
-					#========================================= palabras
-					
+					#-----------------------------------------palabras
 					if [ -n "$(cat wrds)" ]; then
 						nwrds=" y $(cat wrds | head -50 | wc -l) Palabras"
 					fi
@@ -1841,10 +1840,10 @@ $trgt" >> ./wlog
 							
 							if [ -f "$trgt".mp3 ]; then
 								mv -f "$DT_r/$trgt.mp3" "$DM_tlt/words/$trgt.mp3"
-								eyeD3 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" -A "IWI3I0I${exmp}IWI3I0I" \
+								eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" -A "IWI3I0I${exmp}IWI3I0I" \
 								"$DM_tlt/words/$trgt.mp3"
 							
-							############### if not audio
+							#-----------------if not audio
 							else
 								vs=$(sed -n 7p $DC_s/cnfg1)
 								if [ -n "$vs" ]; then
@@ -1878,7 +1877,7 @@ $trgt" >> ./wlog
 									espeak "$trgt" -v $lg -k 1 -p 45 -a 80 -s 110 -w $DT_r/s.wav
 									sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
 								fi
-								eyeD3 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${UNI}IWI2I0I" -A "IWI3I0I${exmp}IWI3I0I" \
+								eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${UNI}IWI2I0I" -A "IWI3I0I${exmp}IWI3I0I" \
 								"$DM_tlt/words/$trgt.mp3"
 							fi
 							echo "$trgt" >> addw
@@ -2150,7 +2149,7 @@ $trgt" >> ./wlog
 					> ./wlog
 					> ./slog
 					
-					#========================================= oraciones
+					#-----------------------------------oraciones
 					{
 					echo "5"
 					echo "# " ;
@@ -2177,7 +2176,7 @@ $sntc" >> ./wlog
 								srce=$(iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8)
 
 								wget -q -U Mozilla -O $DT_r/$trgt.mp3 "https://translate.google.com/translate_tts?ie=UTF-8&tl=$lgt&q=$trgt"
-								eyeD3 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" "$trgt".mp3
+								eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" "$trgt".mp3
 
 								mv -f "$trgt".mp3 "$DM_tlt/words/$trgt".mp3
 								echo "$trgt" >> addw
@@ -2282,7 +2281,7 @@ $sntc" >> ./slog
 										fi
 									fi
 
-									eyeD3 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I "$DM_tlt/$nme.mp3"
+									eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I "$DM_tlt/$nme.mp3"
 									
 									echo "$nme" >> adds
 									$DS/mngr inx S "$nme" "$tpe"
@@ -2359,7 +2358,7 @@ $sntc" >> ./slog
 										grmrk=$(cat C_$r | sed ':a;N;$!ba;s/\n/ /g')
 										lwrds=$(cat A_$r)
 										pwrds=$(cat B_$r | tr '\n' '_')
-										eyeD3 -A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0IIGMI3I0I"$grmrk"IGMI3I0I "$DM_tlt/$nme.mp3"
+										eyeD3 --set-encoding=utf8 -A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0IIGMI3I0I"$grmrk"IGMI3I0I "$DM_tlt/$nme.mp3"
 										
 										if [ $lgt = ja ] || [ $lgt = zh-cn ]; then
 											n=1
@@ -2391,8 +2390,7 @@ $sntc" >> ./slog
 						let n++
 					done
 					
-					#========================================= palabras
-					
+					#----------------------------------palabras
 					n=1
 					while [ $n -le $(cat wrds | head -50 | wc -l) ]; do
 					
@@ -2418,12 +2416,12 @@ $itm" >> ./wlog
 							
 							if [ -f "$itm".mp3 ]; then
 								mv -f "$DT_r/$itm.mp3" "$DM_tlt/words/$itm.mp3"
-								eyeD3 -t "IWI1I0I${itm}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" -A "IWI3I0I${exmp}IWI3I0I" \
+								eyeD3 --set-encoding=utf8 -t "IWI1I0I${itm}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" -A "IWI3I0I${exmp}IWI3I0I" \
 								"$DM_tlt/words/$itm.mp3"
 							
 							else
 								cp -f $DS/ifs/w "$DM_tlt/words/$itm.mp3"
-								eyeD3 -t "IWI1I0I${itm}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" -A "IWI3I0I${exmp}IWI3I0I" \
+								eyeD3 --set-encoding=utf8 -t "IWI1I0I${itm}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" -A "IWI3I0I${exmp}IWI3I0I" \
 								"$DM_tlt/words/$itm.mp3"
 							fi
 							echo "$itm" >> addw

@@ -1,8 +1,9 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
-if [ $1 = inx ]; then
 
+#--------------------------------
+if [ $1 = inx ]; then
 	[ $lgt = ja ] || [ $lgt = zh-cn ] && c=c || c=w
 	itm="$3"
 	fns="$5"
@@ -57,11 +58,9 @@ if [ $1 = inx ]; then
 	fi
 
 	exit 1
-	
+#--------------------------------
 elif [ "$1" = mklg- ]; then
-
 	kill -9 $(pgrep -f "$yad --icons")
-
 	(
 	echo "# " ;
 	nstll=$(grep -Fxo "$tpc" "$DC_tl/.nstll")
@@ -139,9 +138,9 @@ elif [ "$1" = mklg- ]; then
 	--skip-taskbar --center --no-buttons
 
 	idiomind topic & exit 1
-
+	
+#--------------------------------
 elif [ "$1" = mkok- ]; then
-
 	kill -9 $(pgrep -f "$yad --icons")
 	(
 	echo "1" ; sleep 0
@@ -195,12 +194,10 @@ elif [ "$1" = mkok- ]; then
 	--sticky --undecorated \
 	--skip-taskbar --center --no-buttons
 
-	idiomind topic &
-
-	exit 1
-
+	idiomind topic & exit 1
+	
+#--------------------------------
 elif [ "$1" = edt ]; then
-
 	dct="$DS/plugins/Dics/dict"
 	cnf=$(mktemp $DT/cnf.XXXX)
 	edta=$(sed -n 17p ~/.config/idiomind/s/cnfg1)
@@ -276,58 +273,28 @@ elif [ "$1" = edt ]; then
 			if [[ $ret -eq 0 ]]; then
 			
 				if [ "$mrk" != "$mrk2" ]; then
-					eyeD3 -Y IWI4I0I"$mrk2"IWI4I0I "$DM_tlt/words/$nme".mp3 >/dev/null 2>&1
+					eyeD3 --set-encoding=utf8 -Y IWI4I0I"$mrk2"IWI4I0I "$DM_tlt/words/$nme".mp3 >/dev/null 2>&1
 				fi
 				
 				if [ "$audo" != "$file" ]; then
 					eyeD3 --write-images=$DT "$file"
 					cp -f "$audo" "$DM_tlt/words/$nme.mp3"
-					eyeD3 -t "IWI1I0I${TGT}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" -A "IWI3I0I${exm1}IWI3I0I" \
+					eyeD3 --set-encoding=utf8 -t "IWI1I0I${TGT}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" -A "IWI3I0I${exm1}IWI3I0I" \
 					"$DM_tlt/words/$nme.mp3" >/dev/null 2>&1
 					
-					#===========================================
-					textt=$(echo "$TGT" | fold -s -w30)
-					convert "$DS/icon/prs.png" -font Purisa-BoldOblique -gravity Center -pointsize 50 -fill gray32 -draw "text 0 0 \"$textt\"" ./prs.png
-					width=`identify -format %w ./prs.png`; \
-					convert -background '#0007' -fill gray95 -gravity center -size ${width}x50 \
-					caption:"$srce" \
-					./prs.png +swap -gravity south -composite ./prs.png
-					eyeD3 --add-object ./prs.png:PRS "$DM_tlt/words/$nme.mp3" >/dev/null 2>&1
-					#===========================================
-					
-					eyeD3 --add-image $DT/FRONT_COVER.jpeg:FRONT_COVER \
-					"$DM_tlt/words/$nme.mp3" >/dev/null 2>&1
-				fi
-				
-				if [ -f $DT/idadtmptts/tmpauw.mp3 ]; then
-					eyeD3 --write-images=$DT "$file"
-					cp -f $DT/idadtmptts/tmpauw.mp3 "$DM_tlt/words/$nme.mp3"
-					eyeD3 -t "IWI1I0I${TGT}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" -A "IWI3I0I${exm1}IWI3I0I" \
-					"$DM_tlt/words/$nme.mp3" >/dev/null 2>&1
-					
-					#===========================================
-					textt=$(echo "$TGT" | fold -s -w30)
-					convert "$DS/icon/prs.png" -font Purisa-BoldOblique -gravity Center -pointsize 50 -fill gray32 -draw "text 0 0 \"$textt\"" ./prs.png
-					width=`identify -format %w ./prs.png`; \
-					convert -background '#0007' -fill gray95 -gravity center -size ${width}x50 \
-					caption:"$srce" \
-					./prs.png +swap -gravity south -composite ./prs.png
-					eyeD3 --add-object ./prs.png:PRS "$DM_tlt/words/$nme.mp3" >/dev/null 2>&1
-					#===========================================
-
 					eyeD3 --add-image $DT/FRONT_COVER.jpeg:FRONT_COVER \
 					"$DM_tlt/words/$nme.mp3" >/dev/null 2>&1
 					rm -fr $DT/idadtmptts
 				fi
 				
 				if [ "$srce" != "$SRC" ]; then
-					eyeD3 -a IWI2I0I"$srce"IWI2I0I "$file" >/dev/null 2>&1
+					eyeD3 --set-encoding=utf8 -a IWI2I0I"$srce"IWI2I0I "$file" >/dev/null 2>&1
 				fi
 				
 				infm="$(echo $exm1 && echo $dftn && echo $ntes)"
 				if [ "$infm" != "$inf" ]; then
 					impr=$(echo "$infm" | tr '\n' '_')
-					eyeD3 -A IWI3I0I"$impr"IWI3I0I "$file" >/dev/null 2>&1
+					eyeD3 --set-encoding=utf8 -A IWI3I0I"$impr"IWI3I0I "$file" >/dev/null 2>&1
 					echo "eitm.$tpc.eitm" >> \
 					$DC/addons/stats/.log &
 				fi
@@ -396,18 +363,8 @@ elif [ "$1" = edt ]; then
 				
 					cp -f "$audo" "$DM_tlt/$nme.mp3"
 					eyeD3 --remove-all "$DM_tlt/$nme.mp3"
-					eyeD3 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I \
+					eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I \
 					"$DM_tlt/$nme.mp3" >/dev/null 2>&1
-					
-					#===========================================
-					textt=$(echo "$trgt" | fold -s -w30)
-					convert "$DS/icon/prs.png" -font Purisa-BoldOblique -gravity Center -pointsize 50 -fill gray32 -draw "text 0 0 \"$textt\"" ./prs.png
-					width=`identify -format %w ./prs.png`; \
-					convert -background '#0007' -fill gray95 -gravity center -size ${width}x50 \
-					caption:"$srce" \
-					./prs.png +swap -gravity south -composite ./prs.png
-					eyeD3 --add-object ./prs.png:PRS "$DM_tlt/$nme.mp3" >/dev/null 2>&1
-					#===========================================
 					
 					(
 					DT_r=$(mktemp -d $DT/XXXXXX)
@@ -475,7 +432,7 @@ elif [ "$1" = edt ]; then
 						done
 					fi
 					
-					eyeD3 -A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0IIGMI3I0I"$grmrk"IGMI3I0I \
+					eyeD3 --set-encoding=utf8 -A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0IIGMI3I0I"$grmrk"IGMI3I0I \
 					"$DM_tlt/$nme.mp3" >/dev/null 2>&1
 					rm -f grmrk
 					
@@ -492,7 +449,7 @@ elif [ "$1" = edt ]; then
 			
 			if [ -f $DT/tmpau.mp3 ]; then
 				cp -f $DT/tmpau.mp3 "$DM_tlt/$nme.mp3"
-				eyeD3 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I \
+				eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I \
 				"$DM_tlt/$nme.mp3" >/dev/null 2>&1
 				rm -f $DT/tmpau.mp3
 			fi
@@ -518,18 +475,8 @@ elif [ "$1" = edt ]; then
 				sed -i "s/${nme}/${fln}/" "$DC_tlt/Practice/lsin.tmp"
 
 				mv -f "$DM_tlt/$nme".mp3 "$DM_tlt/$fln".mp3
-				eyeD3 -t ISI1I0I"$trgt"ISI1I0I "$DM_tlt/$fln".mp3 >/dev/null 2>&1
-				
-				#===========================================
-				textt=$(echo "$trgt" | fold -s -w30)
-				convert "$DS/icon/prs.png" -font Purisa-BoldOblique -gravity Center -pointsize 50 -fill gray32 -draw "text 0 0 \"$textt\"" ./prs.png
-				width=`identify -format %w ./prs.png`; \
-				convert -background '#0007' -fill gray95 -gravity center -size ${width}x50 \
-				caption:"$srce" \
-				./prs.png +swap -gravity south -composite ./prs.png
-				eyeD3 --add-object ./prs.png:PRS "$DM_tlt/$fln".mp3 >/dev/null 2>&1
-				#===========================================
-				
+				eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I "$DM_tlt/$fln".mp3 >/dev/null 2>&1
+
 				(
 					DT_r=$(mktemp -d $DT/XXXXXX)
 					cd $DT_r
@@ -588,7 +535,7 @@ elif [ "$1" = edt ]; then
 					grmrk=$(cat grmrk | sed ':a;N;$!ba;s/\n/ /g')
 					lwrds=$(cat A)
 					pwrds=$(cat B | tr '\n' '_')
-					eyeD3 -A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0IIGMI3I0I"$grmrk"IGMI3I0I \
+					eyeD3 --set-encoding=utf8 -A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0IIGMI3I0I"$grmrk"IGMI3I0I \
 					"$DM_tlt/$fln.mp3" >/dev/null 2>&1
 					
 					n=1
@@ -606,16 +553,7 @@ elif [ "$1" = edt ]; then
 			
 			if [ "$srce" != "$src" ]; then
 				file="$DM_tlt/$nme.mp3"
-				eyeD3 -a ISI2I0I"$srce"ISI2I0I "$file" >/dev/null 2>&1
-				#===========================================
-				textt=$(echo "$trgt" | fold -s -w30)
-				convert "$DS/icon/prs.png" -font Purisa-BoldOblique -gravity Center -pointsize 50 -fill gray32 -draw "text 0 0 \"$textt\"" ./prs.png
-				width=`identify -format %w ./prs.png`; \
-				convert -background '#0007' -fill gray95 -gravity center -size ${width}x50 \
-				caption:"$srce" \
-				./prs.png +swap -gravity south -composite ./prs.png
-				eyeD3 --add-object ./prs.png:PRS "$file" >/dev/null 2>&1
-				#===========================================
+				eyeD3 --set-encoding=utf8 -a ISI2I0I"$srce"ISI2I0I "$file" >/dev/null 2>&1
 			fi
 			
 			if [ "$(echo $tpc | cut -c 1-40)" != "$topc" ]; then
@@ -652,8 +590,8 @@ elif [ "$1" = edt ]; then
 			./vwr "$v" "$nme" $ff & exit 1
 	fi
 	
+#--------------------------------
 elif [ $1 = dli ]; then
-
 	itdl=$(echo "$2")
 	if [ "$3" = "C" ]; then
 		# delete word
@@ -765,7 +703,6 @@ elif [ $1 = dli ]; then
 			fi
 			
 	elif [ -f "$fls" ]; then
-
 		$yad --fixed --center --scroll \
 		--title="Confirm" --width=320 --height=80 \
 		--on-top --image=dialog-question --skip-taskbar \
@@ -806,7 +743,6 @@ elif [ $1 = dli ]; then
 			fi
 			
 	elif [ ! -f "$flw" ] || [ ! -f "$flw" ]; then
-	
 		$yad --fixed --center --scroll \
 		--title="Confirm" --width=320 --height=80 \
 		--on-top --image=dialog-question --skip-taskbar \
@@ -852,9 +788,9 @@ elif [ $1 = dli ]; then
 			sed '/^$/d' ./indpa_ > ./indpa
 			rm ./indpa_
 	fi
-
+	
+#--------------------------------
 elif [ $1 = dlt ]; then
-
 	$yad --name=idiomind --center \
 	--image=dialog-question --sticky --on-top \
 	--text=" Borrar? \\n $tpc \\n" --buttons-layout=end \
@@ -872,7 +808,6 @@ elif [ $1 = dlt ]; then
 			$ > $DC_s/fnew.id
 			rm $DC_s/topic.id
 			$ > $DC_tl/.lst
-			
 			grep -v -x -v "$tpc" $DC_tl/.in_s > $DC_tl/in_s
 			sed '/^$/d' $DC_tl/in_s > $DC_tl/.in_s
 			grep -v -x -v "$tpc" $DC_tl/.in > $DC_tl/in
@@ -899,7 +834,6 @@ elif [ $1 = dlt ]; then
 		fi
 		
 elif [ $1 = mkmn ]; then
-	
 	cd "$DC_tl"
 	[ -d ./images ] && rm -r ./images
 	[ -d ./words ] && rm -r ./words

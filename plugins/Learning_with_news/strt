@@ -159,7 +159,9 @@ if [ -n "$feed" ]; then
 								echo "- feed Mode" > $DC_s/topic_m
 							fi
 							rm -fr $DT_r $DT/.uptf$uid $DT/.rss_$uid
-							$yad --text=error & break & exit 1 ############### DIALOG
+							$yad --image=error --button=gtk-ok:1 \
+							--text=" <b>Error</b>\\n \ q carajo va aca " \
+							--on-top --skip-taskbar & break & exit 1
 						fi
 						echo "$trgt" | text2wave -o $DT_r/s.wav
 						sox $DT_r/s.wav "$nme.mp3"
@@ -181,7 +183,9 @@ if [ -n "$feed" ]; then
 							echo "- feed Mode" > $DC_s/topic_m
 						fi
 						rm -fr $DT_r $DT/.uptf$uid $DT/.rss_$uid
-						$yad --text=error & break & exit 1 ############### DIALOG
+						$yad --image=error --button=gtk-ok:1 \
+						--text=" <b>Error</b>\\n \ q carajo va aca " \
+						--on-top --skip-taskbar & break & exit 1
 					fi
 					espeak "$trgt" -v $lg -k 1 -p 65 -a 80 -s 120 -w $DT_r/s.wav
 					sox $DT_r/s.wav "$nme.mp3"
@@ -190,7 +194,7 @@ if [ -n "$feed" ]; then
 				wget -q -U Mozilla -O ./"$nme.mp3" "https://translate.google.com/translate_tts?ie=UTF-8&tl=$lgt&q=$trgt"
 			fi
 			
-			eyeD3 --encoding utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I "$nme.mp3"
+			eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I "$nme.mp3"
 			
 			> swrd
 			> twrd
@@ -208,7 +212,6 @@ if [ -n "$feed" ]; then
 			iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 > $bw
 			sed -i 's/\. /\n/g' $bw
 			sed -i 's/\. /\n/g' $aw
-
 
 			if [ $lgt = ja ] || [ $lgt = zh-cn ]; then
 				(
@@ -236,7 +239,7 @@ if [ -n "$feed" ]; then
 
 			lwrds=$(cat A)
 			pwrds=$(cat B | tr '\n' '_')
-			eyeD3 -A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0I "$nme".mp3
+			eyeD3 --set-encoding=utf8 -A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0I "$nme".mp3
 			(
 			if [ $lgt = ja ] || [ $lgt = zh-cn ]; then
 				n=1

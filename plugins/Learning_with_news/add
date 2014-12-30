@@ -64,7 +64,7 @@ if [[ $1 = n_i ]]; then
 			
 			cp "$DM_tl/Feeds/conten/$var/$nm.mp3" "$DM_tl/Feeds/kept/words/$nme.mp3"
 			
-			eyeD3 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" -A IWI3I0I"$var"IWI3I0I \
+			eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" -A IWI3I0I"$var"IWI3I0I \
 			"$DM_tl/Feeds/kept/words/$nme.mp3"
 			echo "$nme" >> "$DC_tl/Feeds/.t-inx"
 			echo "$nme" >> "$DC_tl/Feeds/.winx"

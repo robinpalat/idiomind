@@ -3,7 +3,6 @@ source /usr/share/idiomind/ifs/c.conf
 
 if [ $1 = nt ]; then
 	if [ ! -f "$nt".odt ] || [ -z "$(cat $DC_s/nt)" ]; then
-	
 		sv=$($yad --save --center --borders=10 --on-top \
 		--window-icon=idiomind --skip-taskbar --title=Notes \
 		--file --width=600 --height=500 --button=gtk-ok:0)
@@ -97,7 +96,6 @@ elif [ $1 = pdf ]; then
 	ret=$?
 z
 	if [[ "$ret" -eq 0 ]]; then
-		
 		dte=$(date "+%d %B %Y")
 		mkdir $DT/mkhtml
 		mkdir $DT/mkhtml/images
@@ -112,8 +110,7 @@ z
 		echo "5" ; sleep 0
 		echo "# " ; sleep 1
 
-		#=======================================================================imagenes
-		
+		#-----------------------images
 		n=1
 		while [[ $n -le "$(cat $iw | wc -l | awk '{print ($1)}')" ]]; do
 
@@ -127,8 +124,7 @@ z
 			let n++
 		done
 		
-		#============================================================== para las oraciones
-		
+		#-----------------------sentences
 		n=1
 		while [[ $n -le "$(cat  $is | wc -l | awk '{print ($1)}')" ]]; do
 			wnm=$(sed -n "$n"p $is)
@@ -149,7 +145,7 @@ z
 			margin-top: 0;
 			padding-right: 5px;
 			padding-left: 5px;
-			color: #244D87;
+			color: #696F79;
 			font-size: 18px;
 			font-weight: bold;
 			font-family: Verdana, Geneva, sans-serif;
@@ -158,9 +154,9 @@ z
 			margin-top: 0;
 			padding-right: 5px;
 			padding-left: 5px;
-			color: #5E823B;
+			color: #7A7B7A;
 			font-size: 18px;
-			font-weight: bold;
+			font-weight: normal;
 			font-family: Verdana, Geneva, sans-serif;
 		}
 		h3 {
@@ -265,13 +261,12 @@ z
 		</tr>
 		</table>' > pdf
 
-		############################### IMAGES  #########################################
+		#-----------------------images
 		
 		cd "$DM_tlt/words/images"
 		cnt=`ls -1 *.jpg 2>/dev/null | wc -l`
 		
 		if [ $cnt != 0 ]; then
-		
 			cd $DT/mkhtml/images/
 			ls *.png | sed 's/\.png//g' > $DT/mkhtml/nimg
 			
@@ -280,7 +275,6 @@ z
 			
 			n=1
 			while [ $n -le "$(cat nimg | wc -l)" ]; do
-				
 					if [ -f nnn ]; then
 					n=$(cat nnn)
 					fi
@@ -291,7 +285,6 @@ z
 					d2m=$(cat nimg | sed -n "$n","$nn"p | sed -n 2p)
 					
 					if [ -n "$d1m" ]; then
-						
 						echo '<tr>
 						<td align="center"><img src="images/'$d1m'.png" width="240" height="220"></td>' >> pdf
 
@@ -331,12 +324,11 @@ z
 			<p>&nbsp;</p>' >> pdf
 		fi
 		
-		############################################################### palabras
+		#-----------------------words
 		cd $DT/mkhtml
 
 		n=1
 		while [ $n -le "$(cat $iw | wc -l)" ]; do
-			
 			wnm=$(sed -n "$n"p $iw)
 			tgs=$(eyeD3 "$DM_tlt/words/$wnm.mp3")
 			wt=$(echo "$tgs" | grep -o -P "(?<=IWI1I0I).*(?=IWI1I0I)")
@@ -354,14 +346,13 @@ z
 			echo "$ws" >> W.lizs.x
 			
 			if [ -n "$wt" ]; then
-			
 				echo '<table width="55%" border="0" align="left" cellpadding="10" cellspacing="5">
 				<tr>
-				<td bgcolor="#9FBFF8" class="side"></td>
+				<td bgcolor="#B7C9E9" class="side"></td>
 				<td bgcolor="#E7EFFD"><h1>'$wt'</h1></td>
 				</tr>
 				<tr>
-				<td bgcolor="#B5DA8F" class="side"></td>
+				<td bgcolor="#C6E3A8" class="side"></td>
 				<td bgcolor="#F4FFE9"><h2>'$ws'</h2></td>
 				</tr>
 				</table>' >> pdf
@@ -371,7 +362,6 @@ z
 				<td width="10px"></td>' >> pdf
 				
 				if ([ -z "$dftn" ] && [ -z "$exmp1" ]); then
-				
 				echo '<td width="466" valign="top" class="nfont" >'$ntes'</td>
 				<td width="389"</td>
 				</tr>
@@ -406,15 +396,12 @@ z
 			let n++
 		done
 				
-		######################################################## oraciones
-		
+		#-----------------------sentences
 		n=1
 		while [ $n -le "$(cat s.inx.l | wc -l)" ]; do
-				
 				st=$(sed -n "$n"p S.gprt.x)
 				
 				if [ -n "$st" ]; then
-
 					ss=$(sed -n "$n"p S.gprs.x)
 					fn=$(sed -n "$n"p s.inx.l)
 				
@@ -455,8 +442,8 @@ z
 						
 						if cat W.lizt.x | grep "$wt2"; then
 							echo '<tr>
-							<td bgcolor="#9FBFF8"><ma>'$wt'</ma></td>
-							<td bgcolor="#B5DA8F"><ma>'$ws'</ma></td>
+							<td bgcolor="#C9D8F4"><ma>'$wt'</ma></td>
+							<td bgcolor="#D4E7C1"><ma>'$ws'</ma></td>
 							</tr>' >> ./Wgprs.tmp
 						else
 							echo '<tr>
@@ -468,7 +455,6 @@ z
 						let n++
 					done
 					)
-					
 					echo '</tbody>
 					</table>
 					</div>
@@ -495,8 +481,7 @@ z
 			let n++
 		done
 		
-		# =======================================  - - - - -   html de topic
-		
+		#-----------------------html
 		echo '<p>&nbsp;</p>
 		<p>&nbsp;</p>
 		<h3>&nbsp;</h3>

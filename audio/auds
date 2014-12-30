@@ -16,7 +16,7 @@ if [ -z $1 ]; then
 	$yad --fixed --center --align=center \
 	--text="   Recording with  <b>$msj</b>" \
 	--image="$img" --name=idiomind \
-	--width=350 --height=20 --center \
+	--width=350 --height=120 --center \
 	--on-top --skip-taskbar \
 	--button=Change:2 --button=gtk-apply:3 \
 	--window-icon=idiomind --borders=10 \
@@ -98,7 +98,7 @@ elif [ $1 = rec ]; then
 	$yad --fixed --align=center --timeout="$t" \
 	--text="Recording with: <b>$inf</b>" \
 	--timeout-indicator=bottom \
-	--image=$img --image-on-top --width=350 --height=50 \
+	--image=$img --image-on-top --width=350 --height=100 \
 	--on-top --skip-taskbar --no-buttons --center \
 	--window-icon=idiomind --center --borders=10 \
 	--title="Recording..." \

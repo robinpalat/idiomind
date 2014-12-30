@@ -46,11 +46,7 @@ if [[ "$1" = chngi ]]; then
 	else
 		osd="#"
 	fi
-	if echo "$dga" | grep "TRUE"; then
-		yad=$yad
-	else
-		yad="#"
-	fi
+
 	itm=$(sed -n "$2"p $indx)
 	
 	if ( [ $sas = TRUE ] ) && \
@@ -86,21 +82,8 @@ if [[ "$1" = chngi ]]; then
 		
 		wmm=$(($bcl + $cnt / 2 ))
 		wmt=$(($wmm + 5))
-		
-		#play $tlck &
-		$yad --form --sticky --scroll --fixed \
-		--columns=1 --no-buttons --title=" " \
-		--timeout=$wmt --undecorated \
-		--image=$br --borders=0 \
-		--align=left --skip-taskbar --on-top \
-		--width=$wth --height=$eht \
-		--geometry="$wth"x"$eht"-2-$pst \
-		--field="<b>$gmmk</b>":lbl"" \
-		--field="":lbl"" \
-		--field="<small><i>$srce</i></small>":lbl"" \
-		--field=" :lbl"  &
 
-		$osd -i "$osdi" "$trgt" "\\n$srce\\n" -t 8000  &
+		$osd -i idiomind "$trgt" "$srce\\n" -t 8000  &
 		sleep 3
 		$aud "$DM_tlt/$itm".mp3 &
 		
@@ -140,7 +123,7 @@ if [[ "$1" = chngi ]]; then
 			else
 				img=$br
 			fi
-			osdi=$DS/icon/idm.png
+			osdi=idiomind
 		fi
 		tgs=$(eyeD3 "$file")
 		tgt=$(echo "$tgs" | \
@@ -160,21 +143,8 @@ if [[ "$1" = chngi ]]; then
 		else
 			trgt=$(echo "$tgt")
 		fi
-		
-		#play $tlck &
-		$yad --form --sticky --scroll --fixed \
-		--columns=1 --no-buttons --title=" " \
-		--timeout=$wmt --undecorated \
-		--borders=0 --image=$img \
-		--align=left --skip-taskbar --on-top \
-		--width="$wth" --height="$eht" \
-		--geometry="$wth"x"$eht"-2-$pst \
-		--field="<big><b>  $trgt</b></big>:lbl" \
-		--field="":lbl"" \
-		--field="<i>   $srce</i>:lbl" \
-		--field=" :lbl" &
-		
-		$osd -i "$osdi" "$trgt" "\n$srce\n" -t 7000 &
+
+		$osd -i idiomind "$trgt" "$srce\n" -t 7000 &
 		sleep 3
 		$aud "$DM_tlt/words/$itm".mp3 &
 		if [ $bcl -ge 5 ]; then
@@ -207,19 +177,8 @@ if [[ "$1" = chngi ]]; then
 			fi
 			wmm=$(($bcl + $cnt))
 			wmt=$(($wmm + 5))
-			
-			$yad --form --sticky --scroll --fixed \
-			--columns=1 --no-buttons --title=" "  \
-			--timeout=$wmt --undecorated \
-			--borders=0 --image=$br3 \
-			--align=left --skip-taskbar --on-top \
-			--width="$wth" --height="$eht" \
-			--geometry="$wth"x"$eht"-2-$pst \
-			--field="<b>$trgt</b>":lbl"" \
-			--field="":lbl"" \
-			--field="<small><i>$srce</i></small>":lbl"" &
-				
-			$osd "$trgt" "$srce" -t 8000 -i $DS/icon/S.png &
+
+			$osd "$trgt" "$srce" -t 8000 -i idiomind &
 			sleep 3
 			$aud "$DM_tl/Feeds/kept/$itm".mp3 &
 			sleep $wmm
@@ -258,20 +217,8 @@ if [[ "$1" = chngi ]]; then
 			else
 				trgt=$(echo "$tgt")
 			fi
-			
-			$yad --form --sticky --scroll --fixed \
-			--no-buttons --title=" " --columns=1 \
-			--timeout=$wmt --undecorated \
-			--borders=0 --image=$br3 \
-			--align=left --skip-taskbar --on-top \
-			--width="$wth" --height="$eht" \
-			--geometry="$wth"x"$eht"-2-$pst \
-			--field="<big><b>$trgt</b></big>:lbl" \
-			--field="":lbl"" \
-			--field="<i>$srce</i>:lbl" \
-			--field="$exmp:lbl" &
-			
-			$osd -i "$osdi" "$trgt" "$srce\\n\\n[ $exm ]" -t 7000 &
+
+			$osd -i idiomind "$trgt" "$srce\\n\\n[ $exm ]" -t 7000 &
 			sleep 3
 			$aud "$DM_tl/Feeds/kept/words/$itm".mp3 &
 			if [ $bcl -ge 5 ]; then
@@ -290,7 +237,6 @@ if [[ "$1" = chngi ]]; then
 	else
 		exit 1
 	fi
-
 
 elif [ "$1" != chngi ]; then
 	if [ ! -d $DC_s ]; then
@@ -318,19 +264,21 @@ elif [ "$1" != chngi ]; then
 		if [ -n "$1" ]; then
 		text="--text=$(cat "$1")"
 		fi
-		info2=$(cat $$DC_tl/.in | wc -l)
+		info2=$(cat $DC_tl/.in | wc -l)
 		cd $DC_s
 
 		VAR=$(cat $DC_s/chng | $yad --name=idiomind --ellipsize=END \
 		--class=idiomind --center --separator="" \
 		"$text" --width=$wth --height=$eht --on-top \
-		--no-headers --buttons-layout=edge --list --window-icon=idiomind \
-		--button="gtk-add":3 --button="       Ok       ":0 \
+		--no-headers --list --window-icon=idiomind \
+		--button="gtk-add":3 --button="gtk-ok":0 --button="Close":1 \
 		--borders=5 --title "Topics" --column=img:img --column=File:TEXT)
 			ret=$?
 
 			if [ $ret -eq 3 ]; then
 				$DS/add n_t
+				exit 1
+			elif [ $ret -eq 1 ]; then
 				exit 1
 			elif [ $ret -eq 0 ]; then
 				$DC_tl/"$VAR/tpc.sh" $2 & exit 1
