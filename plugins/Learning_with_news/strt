@@ -10,7 +10,6 @@ if  [[ -z "$(cat $DC/addons/dict/.dicts)" ]]; then
 		exit 1
 	fi
 fi
-
 if echo "$STT" | grep "Actualizando..."; then
 	$yad --image=info --geometry=350x80 --window-icon=idiomind \
 	--title=Info --center --borders=15 \
@@ -28,7 +27,6 @@ if echo "$STT" | grep "Actualizando..."; then
 		fi
 	exit 1
 fi
-
 sleep 1
 uid=$(sed -n 1p $DC_s/cnfg4)
 dct="$DS/plugins/Dics/dict"
