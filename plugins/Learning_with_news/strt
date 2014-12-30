@@ -1,4 +1,5 @@
 #!/bin/bash
+# -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
 STT=$(cat $DC_s/topic_m)
 
@@ -79,7 +80,6 @@ exit 1' > $DC_tl/Feeds/tpc.sh
 fi
 
 if [ -n "$feed" ]; then
-
 	curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
 	$yad --window-icon=idiomind --on-top \
 	--image=info --name=idiomind \
@@ -120,7 +120,6 @@ if [ -n "$feed" ]; then
 	
 	n=1
 	while [ $n -le $(cat rss | wc -l) ]; do
-	
 			f="5"
 			if [[ "$(cat $DT/.uptf$uid \
 			| grep -o "Actualizando...")" = "Actualizando..." ]]; then
@@ -129,7 +128,6 @@ if [ -n "$feed" ]; then
 					echo "- feeds Mode ( Actualizando... $n$f% )" > $DC_s/topic_m
 				fi
 			fi
-		
 		trgt=$(sed -n "$n"p rss)
 		lnk=$(sed -n "$n"p lnk)
 		
@@ -234,7 +232,6 @@ if [ -n "$feed" ]; then
 				done
 				)
 			fi
-
 			lwrds=$(cat A)
 			pwrds=$(cat B | tr '\n' '_')
 			eyeD3 --set-encoding=utf8 -A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0I "$nme".mp3
@@ -257,7 +254,6 @@ if [ -n "$feed" ]; then
 				done
 			fi
 			)
-			
 			cp -fr "./$nme" "$DM_tl/Feeds/conten/$nme"
 			mv -f "$nme.mp3" "$DM_tl/Feeds/conten/$nme.mp3"
 			echo "$lnk" > "$DM_tl/Feeds/conten/$nme.lnk"
@@ -268,7 +264,7 @@ if [ -n "$feed" ]; then
 		
 		let n++
 	done
-	
+
 	mv -f $DT_r/rss "$DC_tl/Feeds/.updt.lst"
 	rm -fr $DT_r $DT/.uptf$uid $DT/.rss_$uid
 	cd "$DM_tl/Feeds/conten"
@@ -280,9 +276,7 @@ if [ -n "$feed" ]; then
 	fi
 
 	exit 1
-	
 else
 	sleep 1
 	$DS_pf/cnf NS & exit 1
 fi
-
