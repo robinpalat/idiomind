@@ -4,7 +4,7 @@ lgtl=$(sed -n 2p ~/.config/idiomind/s/lang)
 drtt="$HOME/.idiomind/topics/$lgtl/$tpc/"
 drtc="$HOME/.config/idiomind/topics/$lgtl/$tpc/Practice"
 drts="/usr/share/idiomind/plugins/Practice/"
-yad=/lib32/yad_idiomind
+yad=yad
 vws="#"
 cd "$drtc"
 rm w.ok w.no
@@ -54,7 +54,7 @@ while [ $n -le $(cat lsin | wc -l) ]; do
 			--buttons-layout=end --borders=0 --title=" " --image-on-top \
 			--skip-taskbar --margins=8 --text-align=right --height=450 --width=460 \
 			--on-top --align=left --window-icon=idiomind --fore=4A4A4A \
-			--button=gtk-media-play:"play '$drtt/$s1.mp3'" \
+			--button=►:"play '$drtt/$s1.mp3'" \
 			--button="Ok  ( $good ):0")
 		
 		else
@@ -62,9 +62,9 @@ while [ $n -le $(cat lsin | wc -l) ]; do
 			SE=$(echo "$prsw" | $yad --center --text-info --fore=4A4A4A \
 			--fontname="Verdana Black" --justify=fill --editable --wrap \
 			--buttons-layout=end --borders=0 --title=" " \
-			--skip-taskbar --margins=8 --text-align=right --height=150 --width=460 \
+			--skip-taskbar --margins=8 --text-align=right --height=250 --width=460 \
 			--on-top --align=left --window-icon=idiomind \
-			--button=gtk-media-play:"play '$drtt/$s1.mp3'" \
+			--button=►:"play '$drtt/$s1.mp3'" \
 			--button=Hint:5 \
 			--button="Ok  ( $good ):0")
 		fi
@@ -100,7 +100,7 @@ while [ $n -le $(cat lsin | wc -l) ]; do
 			--class=idiomind $aut --wrap --window-icon=idiomind \
 			--buttons-layout=end --title="" --image-on-top \
 			--text-align=left --borders=10 --selectable-labels \
-			--button="gtk-media-play:"$drts/plys.sh"" \
+			--button="►:"$drts/plys.sh"" \
 			--button="Next Sentence:2" \
 			--field="<big>$WEN</big>\\n":lbl \
 			--field="":lbl \
@@ -108,11 +108,11 @@ while [ $n -le $(cat lsin | wc -l) ]; do
 		
 		else
 			$yad --form --center --name=idiomind \
-			--width=470 --height=200 --on-top --skip-taskbar --scroll \
+			--width=470 --height=250 --on-top --skip-taskbar --scroll \
 			--class=idiomind $aut --wrap --window-icon=idiomind \
 			--buttons-layout=end --title="" \
 			--text-align=left --borders=10 --selectable-labels \
-			--button="gtk-media-play:"$drts/plys.sh"" \
+			--button="►:"$drts/plys.sh"" \
 			--button="Next Sentence:2" \
 			--field="<big>$WEN</big>\\n":lbl \
 			--field="":lbl \

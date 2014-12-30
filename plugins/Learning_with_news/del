@@ -22,6 +22,12 @@ if [[ $1 = dlti ]]; then
 				grep -v -x -v "$itdl" ./.inx > ./inx
 				sed '/^$/d' ./inx > ./.inx
 				rm ./inx
+				grep -v -x -v "$itdl" ./.winx > ./winx
+				sed '/^$/d' ./winx > ./.winx
+				rm ./winx
+				grep -v -x -v "$itdl" ./.t-inx > ./t-inx
+				sed '/^$/d' ./t-inx > ./.t-inx
+				rm ./t-inx
 				grep -v -x -v "$itdl" ./indfa > ./indfa_
 				sed '/^$/d' ./indfa_ > ./indfa
 				rm ./indfa_
@@ -50,6 +56,12 @@ if [[ $1 = dlti ]]; then
 				grep -v -x -v "$itdl" ./.inx > ./inx
 				sed '/^$/d' ./inx > ./.inx
 				rm ./inx
+				grep -v -x -v "$itdl" ./.sinx > ./sinx
+				sed '/^$/d' ./sinx > ./.sinx
+				rm ./sinx
+				grep -v -x -v "$itdl" ./.t-inx > ./t-inx
+				sed '/^$/d' ./t-inx > ./.t-inx
+				rm ./t-inx
 				grep -v -x -v "$itdl" ./indfa > ./indfa_
 				sed '/^$/d' ./indfa_ > ./indfa
 				rm ./indfa_
@@ -94,7 +106,8 @@ elif [[ $1 = dlkt ]]; then
 	ret=$?
 
 	if [[ $ret -eq 0 ]]; then
-		rm -r "$drtc"/.inx
+		rm -r "$drtc"/.inx "$drtc"/.winx "$drtc"/.sinx "$drtc"/.t-inx
+		touch "$drtc"/.inx "$drtc"/.winx "$drtc"/.sinx "$drtc"/.t-inx
 		rm -r "$kpt"/*.mp3
 		rm -r "$kpt"/words/*.mp3
 	else

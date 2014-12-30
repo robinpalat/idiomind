@@ -2,44 +2,39 @@
 Idiomind it's specifically designed for people learning one or more foreign languages. It helps you learn foreign language vocabulary. You can create and manage word lists and share them online.
 supports different types of exercises, including grammar and pronunciation tests.
 
-
-
+USO
 
 Agregando oraciones o palabras (entradas)
 
 Opción manual:
-Ingresar texto en ambos idiomas y su archivo de audio mp3 correspondiente.
+Ingresar texto en ambos idiomas y su correspondiente archivo de audio mp3.
 
 Opción "google translation service"
 Esta opción usa el servicio de Google para traducir
-Puedes ingresar el texto indiferente en que idioma.
-En este modo algunas veces la traducción no sera literalmente correcta.
+Puedes ingresar el texto indiferente del idioma,
+aunque algunas veces la traducción no sera literalmente correcta.
 
 Ver más:
 http://channels.com/466611/videos/rss
 
-Usando "Learning with News"
-Abrir el dialogo "Setting" y doble click en peztaña "Addons"
+"Learning with News"
 Se pueden agregar 5 subcripciones.
 El contenido que no se ha seleccionado para guardar se elimina automáticamente cada 5 días.
-Boton "Feed Mode": Funciona en modo "RSS Feed"
-
 
 Ver más:
 http://channels.com/466611/videos/rss
 
 
+Problemas conocidos, limitaciones.
 
-Problemas conocidos y limitaciones
+Errores de visualización.
+Textos en lenguajes con distinta codificación de caracteres como por ejemplo: Japonés, puede mostrarse aveces con errores.
 
-Errores de visualización
-Textos en lenguajes con distinta codificación de caracteres como por ejemplo el Japonés, puede mostrarse aveces con errores.
-
-Limitaciones
+Limitaciones.
 Hasta 30 topics de 50 oraciones y 50 palabras cada uno.
-Este límite ayuda a tener más clara la información; Una vez superado, tiene la posibilidad de guardar y a la vez, compartir los temas en la web facilmente.
+Este límite ayuda a tener más clara la información. Una vez superado, tienes la posibilidad de guardar y a la vez, compartir los temas en la web fácilmente.
 
-Puedes enviar sugerencias o comentarios para seguir manteniendo el programa, o si crees que te resultó util, Considera realizar una donación.
+Enviar sugerencias o comentarios para seguir manteniendo el programa, o si crees que te resultó util, considera realizar una donación.
 
 
 
