@@ -22,13 +22,10 @@ if [ -z "$1" ]; then
 	PS="$?"
 	if (($PS!=0)); then
 	
-		# prepare $DS/images for panel tray
-		if [ -d $DT ]; then
-			rm -fr $DT
-		fi
-		
 		# write in /tmp
-		mkdir $DT
+		if [ ! -d $DT ]; then
+			mkdir $DT
+		fi
 		if [ $? -ne 0 ]; then
 			$yad --name=idiomind \
 			--image=error --button=gtk-ok:1\
@@ -51,8 +48,8 @@ if [ -z "$1" ]; then
 		if echo "$(cat $DC_s/topic_m)" | grep "Actualizando..."; then
 			> $DC_s/topic_m
 		fi
-		cp -f $DS/$DS/images/flags/$lgt.png \
-		$DT/tryidmd$DS/images
+		cp -f $DS/images/flags/$lgt.png \
+		$DT/tryidmdicon
 		chmod 777 -R $DT
 		$DS/default/nw.sh & 
 		
