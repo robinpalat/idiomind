@@ -252,11 +252,9 @@ st1=$(cat $DC_s/cnfg5 | sed -n 1p)
 st2=$(cat $DC_s/cnfg5 | sed -n 2p)
 st3=$(cat $DC_s/cnfg5 | sed -n 3p)
 st4=$(cat $DC_s/cnfg5 | sed -n 4p)
-
 st5=$(cat $DC_s/cnfg5 | sed -n 5p)
 st6=$(cat $DC_s/cnfg5 | sed -n 6p)
 st7=$(cat $DC_s/cnfg5 | sed -n 7p)
-
 st8=$(cat $DC_s/cnfg5 | sed -n 8p)
 st9=$(cat $DC_s/cnfg5 | sed -n 9p)
 st10=$(cat $DC_s/cnfg5 | sed -n 10p)
@@ -283,9 +281,9 @@ $yad --list --on-top \
 "Sentences" "$img2" "$Sentences" $st2 \
 "Practice" "$img3" "$Practice" $st3 \
 "Feeds" "$img4" "$Feeds" $st4 \
-"Notification" "$img5" "Notification" $st6 \
-"Audio" "$img5" "Audio" $st7 \
-"Repeat" "$img5" "Repeat" $st8 > "$slct"
+"Notification" "$img5" "Notification" $st5 \
+"Audio" "$img5" "Audio" $st6 \
+"Repeat" "$img5" "Repeat" $st7 > "$slct"
 	
 ret=$?
 slt=$(cat "$slct")
@@ -339,29 +337,23 @@ if  [[ "$ret" -eq 0 ]]; then
 	else
 		sed -i "4s/.*/FALSE/" $DC_s/cnfg5
 	fi
-	#-----------------------------------------------------dialogs
+	#-----------------------------------------------------osd
 	if echo "$(echo "$slt" | sed -n 5p)" | grep TRUE; then
 		sed -i "5s/.*/TRUE/" $DC_s/cnfg5
 	else
 		sed -i "5s/.*/FALSE/" $DC_s/cnfg5
 	fi
-	#-----------------------------------------------------osd
+	#-----------------------------------------------------audio
 	if echo "$(echo "$slt" | sed -n 6p)" | grep TRUE; then
 		sed -i "6s/.*/TRUE/" $DC_s/cnfg5
 	else
 		sed -i "6s/.*/FALSE/" $DC_s/cnfg5
 	fi
-	#-----------------------------------------------------audio
+	#-----------------------------------------------------repeat
 	if echo "$(echo "$slt" | sed -n 7p)" | grep TRUE; then
 		sed -i "7s/.*/TRUE/" $DC_s/cnfg5
 	else
 		sed -i "7s/.*/FALSE/" $DC_s/cnfg5
-	fi
-	#-----------------------------------------------------repeat
-	if echo "$(echo "$slt" | sed -n 8p)" | grep TRUE; then
-		sed -i "8s/.*/TRUE/" $DC_s/cnfg5
-	else
-		sed -i "8s/.*/FALSE/" $DC_s/cnfg5
 	fi
 	#-----------------------------------------------------
 	
