@@ -120,7 +120,7 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			fi
 			echo "en" > $DC_s/lang
 			echo "English" >> $DC_s/lang
-			$DS/stop.sh L
+			$DS/stop L
 			$DS/addons/Learning_with_news/stp.sh
 			cp -f $DS/images/flags/en.png $DT/tryidmdicon
 			chmod 777 $DT/tryidmdicon
@@ -146,7 +146,7 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			fi
 			echo "es" > $DC_s/lang
 			echo "Spanish" >> $DC_s/lang
-			$DS/stop.sh L
+			$DS/stop L
 			$DS/addons/Learning_with_news/stp.sh
 			cp -f $DS/images/flags/es.png $DT/tryidmdicon
 			chmod 777 $DT/tryidmdicon
@@ -172,7 +172,7 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			fi
 			echo "it" > $DC_s/lang
 			echo "Italian" >> $DC_s/lang
-			$DS/stop.sh L
+			$DS/stop L
 			$DS/addons/Learning_with_news/stp.sh
 			cp -f $DS/images/flags/it.png $DT/tryidmdicon
 			chmod 777 $DT/tryidmdicon
@@ -198,7 +198,7 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			fi
 			echo "pt" > $DC_s/lang
 			echo "Portuguese" >> $DC_s/lang
-			$DS/stop.sh L
+			$DS/stop L
 			$DS/addons/Learning_with_news/stp.sh
 			cp -f $DS/images/flags/pt.png $DT/tryidmdicon
 			chmod 777 $DT/tryidmdicon
@@ -224,7 +224,7 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			fi
 			echo "de" > $DC_s/lang
 			echo "German" >> $DC_s/lang
-			$DS/stop.sh L
+			$DS/stop L
 			$DS/addons/Learning_with_news/stp.sh
 			cp -f $DS/images/flags/de.png $DT/tryidmdicon
 			chmod 777 $DT/tryidmdicon
@@ -250,7 +250,7 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			fi
 			echo "ja" > $DC_s/lang
 			echo "Japanese" >> $DC_s/lang
-			$DS/stop.sh L
+			$DS/stop L
 			$DS/addons/Learning_with_news/stp.sh
 			cp -f $DS/images/flags/ja.png $DT/tryidmdicon
 			chmod 777 $DT/tryidmdicon
@@ -276,7 +276,7 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			fi
 			echo "fr" > $DC_s/lang
 			echo "French" >> $DC_s/lang
-			$DS/stop.sh L
+			$DS/stop L
 			$DS/addons/Learning_with_news/stp.sh
 			cp -f $DS/images/flags/fr.png $DT/tryidmdicon
 			chmod 777 $DT/tryidmdicon
@@ -302,7 +302,7 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			fi
 			echo "vi" > $DC_s/lang
 			echo "Vietnamese" >> $DC_s/lang
-			$DS/stop.sh L
+			$DS/stop L
 			$DS/addons/Learning_with_news/stp.sh
 			cp -f $DS/images/flags/vi.png $DT/tryidmdicon
 			chmod 777 $DT/tryidmdicon
@@ -328,7 +328,7 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			fi
 			echo "zh-cn" > $DC_s/lang
 			echo "Chinese" >> $DC_s/lang
-			$DS/stop.sh L
+			$DS/stop L
 			$DS/addons/Learning_with_news/stp.sh
 			cp -f $DS/images/flags/zh-cn.png $DT/tryidmdicon
 			chmod 777 $DT/tryidmdicon

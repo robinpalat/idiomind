@@ -2,13 +2,13 @@
 user=$(echo "$(whoami)")
 
 if echo "$1" | grep "P"; then
-	killall run_all &
+	killall bcle &
 	killall chng &
 	kill -9 $(pgrep -f "yad --form ")
 	exit 1
 	
 elif echo "$1" | grep "S"; then
-	killall run_all &
+	killall bcle &
 	killall notify-osd
 	killall play
 	killall p_lay
@@ -24,7 +24,7 @@ elif echo "$1" | grep "V"; then
 	exit 1
 
 elif echo "$1" | grep "L"; then
-	killall run_all &
+	killall bcle &
 	killall notify-osd
 	killall play
 	killall chng &
@@ -33,7 +33,7 @@ elif echo "$1" | grep "L"; then
 	exit 1
 	
 else
-	killall run_all &
+	killall bcle &
 	killall notify-osd
 	killall play
 	killall chng &
