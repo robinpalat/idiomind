@@ -320,6 +320,9 @@ if [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 	wth=$(sed -n 4p $DC_s/.rd)
 	eht=$(sed -n 3p $DC_s/.rd)
 	dte=$(date "+%d %B")
+	if [ ! -d $DT ]; then
+		mkdir $DT
+	fi
 	mkdir $DT/idmimp_$c
 	(cp -f $DS/default/p1 $DT/p1.$c
 	cp -f $DS/default/p2 $DT/p2.$c

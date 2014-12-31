@@ -4,11 +4,12 @@ lgtl=$(sed -n 2p ~/.config/idiomind/s/lang)
 drtt="$HOME/.idiomind/topics/$lgtl/$tpc/"
 drtc="$HOME/.config/idiomind/topics/$lgtl/$tpc/Practice"
 drts="/usr/share/idiomind/addons/Practice/"
+u=$(echo "$(whoami)")
+DT=/tmp/.idmtp1.$u
 yad=yad
 vws="#"
 cd "$drtc"
 rm w.ok w.no
-
 if [ "$2" = l ]; then
 	vws=$drts/vws
 fi
@@ -23,7 +24,7 @@ while [ $n -le $(cat lsin | wc -l) ]; do
 	
 		WEN=$(eyeD3 "$drtt/$s1".mp3 | \
 		grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
-		eyeD3 --write-images=/tmp/.idmtp1 "$drtt/$s1.mp3"
+		eyeD3 --write-images=$DT "$drtt/$s1.mp3"
 		echo "$WEN" | awk '{print tolower($0)}' > ./sentc
 		sed -i '/^$/d' lsin.ok
 		sed -i '/^$/d' lsin.no
@@ -43,35 +44,35 @@ while [ $n -le $(cat lsin | wc -l) ]; do
 		grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' \
 		| awk '{print tolower($0)}' \
 		| sed "s/\b\(.\)/\u\1/g" \
-		| sed "s|[a-z]| |g" | tr ".?!;," ' ')
+		| sed "s|[a-z]|._|g" | tr ".?!;," ' ')
+		Hint="--button=Hint:$drts/hint '$prsw'"
 		
-		if [ -f "/tmp/.idmtp1/FRONT_COVER".jpeg ]; then
-		
-			IMAGE="/tmp/.idmtp1/FRONT_COVER".jpeg		
+		if [ -f "$DT/FRONT_COVER".jpeg ]; then
+			IMAGE="$DT/FRONT_COVER".jpeg		
 			(sleep 1.5 && play "$drtt/$s1".mp3) &
-			SE=$(echo "$prsw" | $yad --center --text-info --image="$IMAGE" \
+			SE=$($yad --center --text-info --image="$IMAGE" \
 			--fontname="Verdana Black" --justify=fill --editable --wrap \
 			--buttons-layout=end --borders=0 --title=" " --image-on-top \
-			--skip-taskbar --margins=8 --text-align=right --height=450 --width=460 \
-			--on-top --align=left --window-icon=idiomind --fore=4A4A4A \
-			--button=►:"play '$drtt/$s1.mp3'" \
+			--skip-taskbar --margins=8 --text-align=right --height=360 --width=460 \
+			--align=left --window-icon=idiomind --fore=4A4A4A \
+			--button=Listen:"play '$drtt/$s1.mp3'" \
+			"$Hint" \
 			--button="Ok  ( $good ):0")
-		
 		else
 			(sleep 1.5 && play "$drtt/$s1".mp3) &
-			SE=$(echo "$prsw" | $yad --center --text-info --fore=4A4A4A \
+			SE=$($yad --center --text-info --fore=4A4A4A \
 			--fontname="Verdana Black" --justify=fill --editable --wrap \
 			--buttons-layout=end --borders=0 --title=" " \
-			--skip-taskbar --margins=8 --text-align=right --height=250 --width=460 \
-			--on-top --align=left --window-icon=idiomind \
-			--button=►:"play '$drtt/$s1.mp3'" \
-			--button=Hint:5 \
+			--skip-taskbar --margins=8 --text-align=right --height=160 --width=460 \
+			--align=left --window-icon=idiomind \
+			--button=Listen:"play '$drtt/$s1.mp3'" \
+			"$Hint" \
 			--button="Ok  ( $good ):0")
 		fi
 		ret=$?
 		
-		if [[ $ret -eq 0 ]]; then	
-			killall play	
+		if [[ $ret -eq 0 ]]; then
+			killall play
 			echo "$SE" | awk '{print tolower($0)}' | sed 's/ /\n/g' | grep -v '^.$' > ing # poner todo a minusculas y despues de toda palabra un salto de linea
 			cat sentc | awk '{print tolower($0)}' | sed 's/ /\n/g' | grep -v '^.$' > all # poner todo a minusculas y despues de toda palabra un salto de linea
 			grep -f all ing | sed 's/ /\n/g' > w.ok # listar las coincidencias
@@ -93,41 +94,37 @@ while [ $n -le $(cat lsin | wc -l) ]; do
 			$drts/cls s && exit 1
 		fi
 		
-		if [ -f "/tmp/.idmtp1/FRONT_COVER".jpeg ]; then
-		
+		if [ -f "$DT/FRONT_COVER".jpeg ]; then
 			$yad --form --center --name=idiomind --image="$IMAGE" \
 			--width=470 --height=450 --on-top --skip-taskbar --scroll \
 			--class=idiomind $aut --wrap --window-icon=idiomind \
 			--buttons-layout=end --title="" --image-on-top \
 			--text-align=left --borders=10 --selectable-labels \
-			--button="►:"$drts/plys.sh"" \
+			--button=Listen:"play '$drtt/$s1.mp3'" \
 			--button="Next Sentence:2" \
 			--field="<big>$WEN</big>\\n":lbl \
 			--field="":lbl \
 			--field="<span color='#3A9000'>$OK </span>\\n<sup>$prc</sup>\\n":lbl
-		
 		else
 			$yad --form --center --name=idiomind \
 			--width=470 --height=250 --on-top --skip-taskbar --scroll \
 			--class=idiomind $aut --wrap --window-icon=idiomind \
 			--buttons-layout=end --title="" \
 			--text-align=left --borders=10 --selectable-labels \
-			--button="►:"$drts/plys.sh"" \
+			--button=Listen:"play '$drtt/$s1.mp3'" \
 			--button="Next Sentence:2" \
 			--field="<big>$WEN</big>\\n":lbl \
 			--field="":lbl \
 			--field="<span color='#3A9000'>$OK </span>\\n<sup>$prc</sup>\\n":lbl
 		fi
-			
 			ret=$?
 			if [[ $ret -eq 2 ]]; then
-				rm -f /tmp/.idmtp1/*.jpeg *.png &
+				rm -f $DT/*.jpeg *.png &
 				killall play &
 			else
-				rm -f /tmp/.idmtp1/*.jpeg *.png
+				rm -f $DT/*.jpeg *.png
 				$drts/cls s && exit
 			fi
 	fi
-
 	let n++
 done

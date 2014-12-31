@@ -1,0 +1,6 @@
+#!/bin/bash
+yad --center --text="<b><big>$1</big></b>" \
+	--buttons-layout=end --borders=12 --title=" " \
+	--skip-taskbar --text-align=center --height=180 --width=460 \
+	--on-top --align=center --window-icon=idiomind \
+	--button="Close:0"

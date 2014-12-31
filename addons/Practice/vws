@@ -4,29 +4,31 @@ lgtl=$(sed -n 2p ~/.config/idiomind/s/lang)
 drtt="$HOME/.idiomind/topics/$lgtl/$tpc/"
 drsh="$HOME/.idiomind/topics/$lgtl/.share"
 drtu="/usr/share/idiomind/addons/Practice/"
+u=$(echo "$(whoami)")
 cd "$HOME/.config/idiomind/topics/$lgtl/$tpc/Practice"
+DT=/tmp/.idmtp1.$u/idadtmptts
 yad=yad
 vws=$drtu/vws
 nw="$1"
 st="$2"
-if [ ! -f "/tmp/.idmtp1/idadtmptts/lw" ]; then
+if [ ! -f "$DT/lw" ]; then
 	nm=$(sed -n "$3"p lsin)
 	if [ -f "$drtt/$nm.mp3" ]; then
 		file="$drtt/$nm.mp3"
 	fi
-	mkdir /tmp/.idmtp1/idadtmptts
-	chmod 777 -R /tmp/.idmtp1/idadtmptts
-	eyeD3 "$file" > /tmp/.idmtp1/idadtmptts/lw
-	echo "$nm" > /tmp/.idmtp1/idadtmptts/ls
+	mkdir $DT
+	chmod 777 -R $DT
+	eyeD3 "$file" > $DT/lw
+	echo "$nm" > $DT/ls
 fi
 
-S=$(cat /tmp/.idmtp1/idadtmptts/lw | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' | awk '{print tolower($0)}')
-tgt=$(cat /tmp/.idmtp1/idadtmptts/lw | grep -o -P '(?<=ISTI'$nw'I0I).*(?=ISTI'$nw'I0I)'| awk '{print tolower($0)}')
-src=$(cat /tmp/.idmtp1/idadtmptts/lw | grep -o -P '(?<=ISSI'$nw'I0I).*(?=ISSI'$nw'I0I)')
-nm=$(cat /tmp/.idmtp1/idadtmptts/ls)
+S=$(cat $DT/lw | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' | awk '{print tolower($0)}')
+tgt=$(cat $DT/lw | grep -o -P '(?<=ISTI'$nw'I0I).*(?=ISTI'$nw'I0I)'| awk '{print tolower($0)}')
+src=$(cat $DT/lw | grep -o -P '(?<=ISSI'$nw'I0I).*(?=ISSI'$nw'I0I)')
+nm=$(cat $DT/ls)
 if [ -z "$tgt" ]; then
-	tgt=$(cat /tmp/.idmtp1/idadtmptts/lw | grep -o -P '(?<=ISTI1I0I).*(?=ISTI1I0I)' | awk '{print tolower($0)}')
-	src=$(cat /tmp/.idmtp1/idadtmptts/lw | grep -o -P '(?<=ISSI1I0I).*(?=ISSI1I0I)')
+	tgt=$(cat $DT/lw | grep -o -P '(?<=ISTI1I0I).*(?=ISTI1I0I)' | awk '{print tolower($0)}')
+	src=$(cat $DT/lw | grep -o -P '(?<=ISSI1I0I).*(?=ISSI1I0I)')
 	nw=1
 fi
 
@@ -44,7 +46,7 @@ itm=$(echo "$tgt")
 trgt=$(echo "$S" | sed "s#${tgt}#<b><big><big><big>\
 <big> ${tgt} <\/\big><\/\big><\/\big><\/\big><\/\b>#g")
 play="play '$drtt/$nm.mp3'"
-i=Play
+i=Listen
 
 (
 "$prn" "$drsh/$itm.mp3"
@@ -53,15 +55,15 @@ i=Play
 vw=$($yad --form --always-print-result \
 	--center --separator="\\n" --columns=3 --name=idmnd \
 	--width=480 --height=240 --on-top --skip-taskbar \
-	--borders=5 --class=idmnd $aut --undecorated \
+	--borders=10 --class=idmnd $aut --undecorated \
 	--title=" " --buttons-layout=center \
 	--text-align=center --window-icon=idiomind \
 	--field="$i:BTN" "$play" \
-	--field="pronounce":chk "$A" \
+	--field="Pronounce":chk "$A" \
 	--field="Auto":chk "$B" \
-	--button="	<	:3" \
-	--button="	Practice	:1" \
-	--button="	>	:2" \
+	--button="Previous:3" \
+	--button="Practice:1" \
+	--button="Next:2" \
 	--text="\\n$trgt\\n\\n <i><big><big><big>\
 <span color='#7F7F7F'>[</span> \
 <span color='#6F96BE'><b><big> $src </big></b></span> \
@@ -69,7 +71,7 @@ vw=$($yad --form --always-print-result \
 
 	ret=$?
 	if [[ $ret -eq 1 ]]; then 
-		killall vws & rm -f -r /tmp/.idmtp1/idadtmptts & exit 1
+		killall vws & rm -f -r $DT & exit 1
 	elif [[ $ret -eq 2 ]]; then
 		ff=$(($nw + 1))
 		$vws "$ff" "$vw"
@@ -82,5 +84,5 @@ vw=$($yad --form --always-print-result \
 	else
 		killall vws &
 		$drtu/cls s &
-		rm -f -r /tmp/.idmtp1/idadtmptts & exit 1
+		rm -f -r $DT & exit 1
 	fi

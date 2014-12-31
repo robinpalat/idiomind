@@ -31,7 +31,7 @@ while [ $n -le $(cat ./stp$1 | wc -l) ]; do
 		--window-icon=idiomind --buttons-layout=edge --borders=0 \
 		--skip-taskbar --title=" " --undecorated \
 		--field="Play:BTN" "$listen" \
-		--field="<big><big><big><big><big><big><b>$exc<span color='#949494'>$lst</span></b></big></big></big></big></big></big>":lbl \
+		--field="<big><big><big><big><big><b>$exc<span color='#949494'>$lst</span></b></big></big></big></big></big>":lbl \
 		--button=Close:1 \
 		--button="   ( $good ) Got It   ":3 \
 		--button="   ( $wrong ) Nope   ":4 \
@@ -46,7 +46,7 @@ while [ $n -le $(cat ./stp$1 | wc -l) ]; do
 		--field="
 Play
 :BTN" "$listen" \
-		--text="\\n\\n\\n<big><big><big><big><big><big><b>$exc<span color='#949494'>$lst</span></b></big></big></big></big></big></big>" \
+		--text="\\n\\n\\n<big><big><big><big><big><b>$exc<span color='#949494'>$lst</span></b></big></big></big></big></big>" \
 		--field=" ":lbl \
 		--button=Close:1 \
 		--button="   ( $good ) Got It   ":3 \
@@ -58,12 +58,9 @@ Play
 	if [[ $ret -eq 3 ]]; then
 		play $drts/d.mp3 & sed -i 's/'"$w1"'//g' ./lwin.tmp
 		echo "$w1" >> ./lwin.ok
-		rm -f /tmp/.idmtp1/FRONT_COVER.jpeg
 	elif [[ $ret -eq 4 ]]; then
 		play $drts/d.mp3 & echo "$w1" >> ./lwin.no
-		rm -f /tmp/.idmtp1/FRONT_COVER.jpeg
 	else
-		rm -f /tmp/.idmtp1/FRONT_COVER.jpeg
 		$drts/cls "$2" w && exit 1
 	fi
 
