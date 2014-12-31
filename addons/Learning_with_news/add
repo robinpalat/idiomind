@@ -154,7 +154,7 @@ elif [[ $1 = n_t ]]; then
 				mkdir $DM_tl/"$jlb"/words/images
 				mkdir $DC_tl/"$jlb"
 				mkdir $DC_tl/"$jlb"/Practice
-				cd $DS/plugins/Practice/default/
+				cd $DS/addons/Practice/default/
 				cp -f ./.* "$DC_tl/$jlb/Practice/"
 				cp -f $DS/default/tpc.sh $DC_tl/"$jlb"/tpc.sh
 				cd "$DC_tl/$jlb"

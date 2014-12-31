@@ -1,6 +1,6 @@
 [Desktop Entry]
 Exec=/usr/share/idiomind/mngr mkok-
-Icon=/usr/share/idiomind/icon/check.png
+Icon=/usr/share/idiomind/images/check.png
 Version=3
 Encoding=UTF-8
 Type=Application

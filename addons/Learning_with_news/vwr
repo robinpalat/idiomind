@@ -1,11 +1,11 @@
 #!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
-DS_pf="$DS/plugins/Learning_with_news"
+DS_pf="$DS/addons/Learning_with_news"
 vwr="$DS_pf/vwr"
 
 if [[ $1 = V1 ]]; then
 
-	DS_pf="$DS/plugins/Learning_with_news"
+	DS_pf="$DS/addons/Learning_with_news"
 	wth=$(sed -n 5p $DC_s/.rd)
 	eht=$(sed -n 6p $DC_s/.rd)
 	c=$(echo $(($RANDOM%100)))
@@ -61,7 +61,7 @@ if [[ $1 = V1 ]]; then
 elif [[ $1 = V2 ]]; then
 	
 	DM_tlfk="$DM_tl/Feeds/kept"
-	DS_pf="$DS/plugins/Learning_with_news"
+	DS_pf="$DS/addons/Learning_with_news"
 	trgt="$DS_pf/trgt1"
 	wth=$(sed -n 5p $DC_s/.rd)
 	eht=$(sed -n 6p $DC_s/.rd)

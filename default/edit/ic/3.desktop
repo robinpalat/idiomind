@@ -1,6 +1,6 @@
 [Desktop Entry]
 Exec=/usr/share/idiomind/mngr dlt
-Icon=/usr/share/idiomind/icon/delete.png
+Icon=/usr/share/idiomind/images/delete.png
 Version=3
 Encoding=UTF-8
 Type=Application

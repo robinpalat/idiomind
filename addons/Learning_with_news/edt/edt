@@ -9,7 +9,7 @@ if [[ "$(cat "$drtc/.inx" | wc -l)" -ge 20 ]]; then
 	--window-icon=/usr/share/idiomind/icon/icon.png \
 	--icons --single-click --buttons-layout=end --skip-taskbar \
 	--borders=0 \
-	--read-dir="/usr/share/idiomind/plugins/Learning_with_news/edt/save/" --item-width=65
+	--read-dir="/usr/share/idiomind/addons/Learning_with_news/edt/save/" --item-width=65
 	exit 1
 	
 else
@@ -19,7 +19,7 @@ else
 	--window-icon=/usr/share/idiomind/icon/icon.png \
 	--icons --single-click --buttons-layout=end --skip-taskbar \
 	--borders=0 \
-	--read-dir="/usr/share/idiomind/plugins/Learning_with_news/edt/" --item-width=65
+	--read-dir="/usr/share/idiomind/addons/Learning_with_news/edt/" --item-width=65
 
 	exit 1
 fi

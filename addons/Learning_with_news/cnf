@@ -1,7 +1,7 @@
 #!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
 dir2="$DC/addons/Learning with news"
-DIR3="$DS/plugins/Learning_with_news"
+DIR3="$DS/addons/Learning_with_news"
 FEED=$(sed -n 1p "$dir2/$lgtl/.rss")
 if [[ -z "$FEED" ]]; then
 FEED=" "

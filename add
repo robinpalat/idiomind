@@ -57,7 +57,7 @@ if [ $1 = n_t ]; then
 			> $DC_tl/"$jlb"/.winx
 			> $DC_tl/"$jlb"/.sinx
 			mkdir $DC_tl/"$jlb"/Practice
-			cp $DS/plugins/Practice/default/.* $DC_tl/"$jlb"/Practice
+			cp $DS/addons/Practice/default/.* $DC_tl/"$jlb"/Practice
 			cd $DC_tl/"$jlb"
 			echo "$jlb" >> $DC_tl/.in_s
 			cd "$DM_tl/$tpc"
@@ -152,7 +152,7 @@ if [ $1 = n_t ]; then
 			> $DC_tl/"$jlb"/.tlng-inx
 			echo "1" > $DC_tl/"$jlb"/.stts
 			mkdir $DC_tl/"$jlb"/Practice
-			cp $DS/plugins/Practice/default/.* $DC_tl/"$jlb"/Practice
+			cp $DS/addons/Practice/default/.* $DC_tl/"$jlb"/Practice
 			cp -f $DS/default/tpc.sh $DC_tl/"$jlb"/tpc.sh
 			cd $DC_tl/"$jlb"
 			echo "$jlb" >> $DC_tl/.in_s
@@ -171,7 +171,7 @@ if [ $1 = n_t ]; then
 elif [ $1 = n_i ]; then
 
 	if  [ -z "$(cat $DC/addons/dict/.dicts)" ]; then
-		$DS/plugins/Dics/dict $DS/ifs/info6 f cnf
+		$DS/addons/Dics/dict $DS/ifs/info6 f cnf
 		if  [ -z "$(cat $DC/addons/dict/.dicts)" ]; then
 			exit 1
 		fi
@@ -356,7 +356,7 @@ elif [ $1 = n_s ]; then
 	DM_tlt="$DM_tl/$tpe"
 	DC_tlt="$DC_tl/$tpe"
 	
-	dct=$DS/plugins/Dics/dict
+	dct=$DS/addons/Dics/dict
 			
 	if [ $(cat "$DC_tlt/.sinx" | wc -l) -ge 50 ]; then
 		$yad --name=idiomind --center --on-top --image=info \
@@ -702,7 +702,7 @@ elif [ $1 = n_w ]; then
 
 	trgt="$2"
 	srce="$4"
-	dct="$DS/plugins/Dics/dict"
+	dct="$DS/addons/Dics/dict"
 	tpcs=$(cat "$DC_tl/.in_s" | cut -c 1-30 | egrep -v "$tpe" \
 	| tr "\\n" '!' | sed 's/!\+$//g')
 	ttle="${tpe:0:30}"
@@ -850,7 +850,7 @@ elif [ $1 = n_w ]; then
 elif [ $1 = edt ]; then
 
 	c="$4"
-	DIC=$DS/plugins/Dics/dict
+	DIC=$DS/addons/Dics/dict
 
 	if [ "$3" = "F" ]; then
 
@@ -1262,7 +1262,7 @@ elif [ $1 = snt ]; then
 
 	DM_tlt="$DM_tl/$tpe"
 	DC_tlt="$DC_tl/$tpe"
-	DIC=$DS/plugins/Dics/dict
+	DIC=$DS/addons/Dics/dict
 	c=$(echo $(($RANDOM%100)))
 	DT_r=$(mktemp -d $DT/XXXXXX)
 	cd $DT_r
@@ -1411,7 +1411,7 @@ elif [ $1 = prs ]; then
 	ladj=$(cat $DS/default/$lgt/adjetives)
 	nspr='/usr/share/idiomind/add prs'
 	LNK='http://www.chromium.org/developers/how-tos/api-keys'
-	dct=$DS/plugins/Dics/dict
+	dct=$DS/addons/Dics/dict
 	lckpr=$DT/.n_s_pr
 	DM_tlt="$DM_tl/$tpe"
 	DC_tlt="$DC_tl/$tpe"
@@ -1523,18 +1523,18 @@ elif [ $1 = prs ]; then
 			echo "3"
 			echo "# Checking key ... " ; sleep 1
 			
-			wget -q -U "Mozilla/5.0" --post-file $DS/plugins/Google_translation_service/test.flac \
+			wget -q -U "Mozilla/5.0" --post-file $DS/addons/Google_translation_service/test.flac \
 			--header="Content-Type: audio/x-flac; rate=16000" \
 			-O - "https://www.google.com/speech-api/v2/recognize?&lang="$lgt"-"$lgt"&key=$key" > info.ret
 			if [ -z "$(cat info.ret)" ]; then
 				key=$(sed -n 3p $DC_s/cnfg3)
-				wget -q -U "Mozilla/5.0" --post-file $DS/plugins/Google_translation_service/test.flac \
+				wget -q -U "Mozilla/5.0" --post-file $DS/addons/Google_translation_service/test.flac \
 				--header="Content-Type: audio/x-flac; rate=16000" \
 				-O - "https://www.google.com/speech-api/v2/recognize?&lang="$lgt"-"$lgt"&key=$key" > info.ret
 			fi
 			if [ -z "$(cat info.ret)" ]; then
 				key=$(sed -n 4p $DC_s/cnfg3)
-				wget -q -U "Mozilla/5.0" --post-file $DS/plugins/Google_translation_service/test.flac \
+				wget -q -U "Mozilla/5.0" --post-file $DS/addons/Google_translation_service/test.flac \
 				--header="Content-Type: audio/x-flac; rate=16000" \
 				-O - "https://www.google.com/speech-api/v2/recognize?&lang="$lgt"-"$lgt"&key=$key" > info.ret
 			fi

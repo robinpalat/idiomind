@@ -1,6 +1,6 @@
 #!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
-DS_pp="$DS/plugins/Practice/"
+DS_pp="$DS/addons/Practice/"
 strt="$DS_pp/strt"
 IND='play $DS_pp/all.mp3'
 w9="$DC/addons/practice/w9"

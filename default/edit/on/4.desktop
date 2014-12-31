@@ -1,6 +1,6 @@
 [Desktop Entry]
 Exec=/usr/share/idiomind/add n_t name 2
-Icon=/usr/share/idiomind/icon/rename.png
+Icon=/usr/share/idiomind/images/rename.png
 Version=3
 Encoding=UTF-8
 Type=Application

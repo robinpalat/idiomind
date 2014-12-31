@@ -8,8 +8,8 @@ if [ -f $DT/.l_$uid ]; then
 fi
 > $DT/.l_$uid
 
-ICON=$DS/icon/icon.png
-cd $DS/plugins
+ICON=$DS/images/icon.png
+cd $DS/addons
 
 if [ ! -d "$DC" ]; then
 	$DS/ifs/1u
@@ -30,8 +30,8 @@ sttng7=$(sed -n 7p $DC_s/cnfg1)
 sttng8=$(sed -n 8p $DC_s/cnfg1)
 sttng9=$(sed -n 9p $DC_s/cnfg1)
 sttng10=$(sed -n 10p $DC_s/cnfg1)
-img1=$DS/icon/gts.png
-img2=$DS/icon/lwn.png
+img1=$DS/images/gts.png
+img2=$DS/images/lwn.png
 img3=applications-other
 img4=applications-other
 img5=applications-other
@@ -115,14 +115,14 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 				mkdir "$DC/topics"/English
 				mkdir "$DC_a/Learning with news"/English
 				mkdir "$DC_a/Learning with news"/English/subscripts
-				cp -f "$DS/plugins/Learning_with_news/examples/English" \
+				cp -f "$DS/addons/Learning_with_news/examples/English" \
 				"$DC_a/Learning with news/English/subscripts/Example"
 			fi
 			echo "en" > $DC_s/lang
 			echo "English" >> $DC_s/lang
 			$DS/stop.sh L
-			$DS/plugins/Learning_with_news/stp.sh
-			cp -f $DS/icon/flags/en.png $DT/tryidmdicon
+			$DS/addons/Learning_with_news/stp.sh
+			cp -f $DS/images/flags/en.png $DT/tryidmdicon
 			chmod 777 $DT/tryidmdicon
 			$ > $DC_s/topic_m
 			if [ -f "$DC/topics/English/.lst" ]; then
@@ -141,14 +141,14 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 				mkdir "$DC/topics"/Spanish
 				mkdir "$DC_a/Learning with news"/Spanish
 				mkdir "$DC_a/Learning with news"/Spanish/subscripts
-				cp -f "$DS/plugins/Learning_with_news/examples/Spanish" \
+				cp -f "$DS/addons/Learning_with_news/examples/Spanish" \
 				"$DC_a/Learning with news/Spanish/subscripts/Example"
 			fi
 			echo "es" > $DC_s/lang
 			echo "Spanish" >> $DC_s/lang
 			$DS/stop.sh L
-			$DS/plugins/Learning_with_news/stp.sh
-			cp -f $DS/icon/flags/es.png $DT/tryidmdicon
+			$DS/addons/Learning_with_news/stp.sh
+			cp -f $DS/images/flags/es.png $DT/tryidmdicon
 			chmod 777 $DT/tryidmdicon
 			$ > $DC_s/topic_m
 			if [ -f "$DC/topics/Spanish/.lst" ]; then
@@ -167,14 +167,14 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 				mkdir "$DC/topics"/Italian
 				mkdir "$DC_a/Learning with news"/Italian
 				mkdir "$DC_a/Learning with news"/Italian/subscripts
-				cp -f "$DS/plugins/Learning_with_news/examples/Italian" \
+				cp -f "$DS/addons/Learning_with_news/examples/Italian" \
 				"$DC_a/Learning with news/Italian/subscripts/Example"
 			fi
 			echo "it" > $DC_s/lang
 			echo "Italian" >> $DC_s/lang
 			$DS/stop.sh L
-			$DS/plugins/Learning_with_news/stp.sh
-			cp -f $DS/icon/flags/it.png $DT/tryidmdicon
+			$DS/addons/Learning_with_news/stp.sh
+			cp -f $DS/images/flags/it.png $DT/tryidmdicon
 			chmod 777 $DT/tryidmdicon
 			$ > $DC_s/topic_m
 			if [ -f "$DC/topics/Italian/.lst" ]; then
@@ -193,14 +193,14 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 				mkdir "$DC/topics"/Portuguese
 				mkdir "$DC_a/Learning with news"/Portuguese
 				mkdir "$DC_a/Learning with news"/Portuguese/subscripts
-				cp -f "$DS/plugins/Learning_with_news/examples/Portuguese" \
+				cp -f "$DS/addons/Learning_with_news/examples/Portuguese" \
 				"$DC_a/Learning with news/Portuguese/subscripts/Example"
 			fi
 			echo "pt" > $DC_s/lang
 			echo "Portuguese" >> $DC_s/lang
 			$DS/stop.sh L
-			$DS/plugins/Learning_with_news/stp.sh
-			cp -f $DS/icon/flags/pt.png $DT/tryidmdicon
+			$DS/addons/Learning_with_news/stp.sh
+			cp -f $DS/images/flags/pt.png $DT/tryidmdicon
 			chmod 777 $DT/tryidmdicon
 			$ > $DC_s/topic_m
 			if [ -f "$DC/topics/Portuguese/.lst" ]; then
@@ -219,14 +219,14 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 				mkdir "$DC/topics"/German
 				mkdir "$DC_a/Learning with news"/German
 				mkdir "$DC_a/Learning with news"/German/subscripts
-				cp -f "$DS/plugins/Learning_with_news/examples/German" \
+				cp -f "$DS/addons/Learning_with_news/examples/German" \
 				"$DC_a/Learning with news/German/subscripts/Example"
 			fi
 			echo "de" > $DC_s/lang
 			echo "German" >> $DC_s/lang
 			$DS/stop.sh L
-			$DS/plugins/Learning_with_news/stp.sh
-			cp -f $DS/icon/flags/de.png $DT/tryidmdicon
+			$DS/addons/Learning_with_news/stp.sh
+			cp -f $DS/images/flags/de.png $DT/tryidmdicon
 			chmod 777 $DT/tryidmdicon
 			$ > $DC_s/topic_m
 			if [ -f "$DC/topics/German/.lst" ]; then
@@ -245,14 +245,14 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 				mkdir "$DC/topics"/Japanese
 				mkdir "$DC_a/Learning with news"/Japanese
 				mkdir "$DC_a/Learning with news"/Japanese/subscripts
-				cp -f "$DS/plugins/Learning_with_news/examples/Japanese" \
+				cp -f "$DS/addons/Learning_with_news/examples/Japanese" \
 				"$DC_a/Learning with news/Japanese/subscripts/Example"
 			fi
 			echo "ja" > $DC_s/lang
 			echo "Japanese" >> $DC_s/lang
 			$DS/stop.sh L
-			$DS/plugins/Learning_with_news/stp.sh
-			cp -f $DS/icon/flags/ja.png $DT/tryidmdicon
+			$DS/addons/Learning_with_news/stp.sh
+			cp -f $DS/images/flags/ja.png $DT/tryidmdicon
 			chmod 777 $DT/tryidmdicon
 			$ > $DC_s/topic_m
 			if [ -f "$DC/topics/Japanese/.lst" ]; then
@@ -271,14 +271,14 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 				mkdir "$DC/topics"/French
 				mkdir "$DC_a/Learning with news"/French
 				mkdir "$DC_a/Learning with news"/French/subscripts
-				cp -f "$DS/plugins/Learning_with_news/examples/French" \
+				cp -f "$DS/addons/Learning_with_news/examples/French" \
 				"$DC_a/Learning with news/French/subscripts/Example"
 			fi
 			echo "fr" > $DC_s/lang
 			echo "French" >> $DC_s/lang
 			$DS/stop.sh L
-			$DS/plugins/Learning_with_news/stp.sh
-			cp -f $DS/icon/flags/fr.png $DT/tryidmdicon
+			$DS/addons/Learning_with_news/stp.sh
+			cp -f $DS/images/flags/fr.png $DT/tryidmdicon
 			chmod 777 $DT/tryidmdicon
 			$ > $DC_s/topic_m
 			if [ -f "$DC/topics/French/.lst" ]; then
@@ -297,14 +297,14 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 				mkdir "$DC/topics"/Vietnamese
 				mkdir "$DC_a/Learning with news"/Vietnamese
 				mkdir "$DC_a/Learning with news"/Vietnamese/subscripts
-				cp -f "$DS/plugins/Learning_with_news/examples/Vietnamese" \
+				cp -f "$DS/addons/Learning_with_news/examples/Vietnamese" \
 				"$DC_a/Learning with news/Vietnamese/subscripts/Example"
 			fi
 			echo "vi" > $DC_s/lang
 			echo "Vietnamese" >> $DC_s/lang
 			$DS/stop.sh L
-			$DS/plugins/Learning_with_news/stp.sh
-			cp -f $DS/icon/flags/vi.png $DT/tryidmdicon
+			$DS/addons/Learning_with_news/stp.sh
+			cp -f $DS/images/flags/vi.png $DT/tryidmdicon
 			chmod 777 $DT/tryidmdicon
 			$ > $DC_s/topic_m
 			if [ -f "$DC/topics/Vietnamese/.lst" ]; then
@@ -323,14 +323,14 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 				mkdir "$DC/topics"/Chinese
 				mkdir "$DC_a/Learning with news"/Chinese
 				mkdir "$DC_a/Learning with news"/Chinese/subscripts
-				cp -f "$DS/plugins/Learning_with_news/examples/Chinese" \
+				cp -f "$DS/addons/Learning_with_news/examples/Chinese" \
 				"$DC_a/Learning with news/Chinese/subscripts/Example"
 			fi
 			echo "zh-cn" > $DC_s/lang
 			echo "Chinese" >> $DC_s/lang
 			$DS/stop.sh L
-			$DS/plugins/Learning_with_news/stp.sh
-			cp -f $DS/icon/flags/zh-cn.png $DT/tryidmdicon
+			$DS/addons/Learning_with_news/stp.sh
+			cp -f $DS/images/flags/zh-cn.png $DT/tryidmdicon
 			chmod 777 $DT/tryidmdicon
 			$ > $DC_s/topic_m
 			if [ -f "$DC/topics/Chinese/.lst" ]; then

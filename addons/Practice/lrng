@@ -2,7 +2,7 @@
 tpc=$(sed -n 1p ~/.config/idiomind/s/topic.id)
 lgtl=$(sed -n 2p ~/.config/idiomind/s/lang)
 drtt="$HOME/.idiomind/topics/$lgtl/$tpc/words"
-drtu="/usr/share/idiomind/plugins/Practice/"
+drtu="/usr/share/idiomind/addons/Practice/"
 cd "$HOME/.config/idiomind/topics/$lgtl/$tpc/Practice"
 yad=yad
 vww=$drtu/lrng
@@ -40,8 +40,8 @@ sleep 0.5
 
 vw=$($yad --form --always-print-result --window-icon=idiomind \
 --center --separator="\\n" --columns=3 --name=idiomind \
---width=500 --height=240 --on-top --skip-taskbar \
---borders=50 --align=center --class=idiomind $aut \
+--width=400 --height=200 --on-top --skip-taskbar \
+--borders=20 --align=center --class=idiomind $aut \
 --buttons-layout=center --title=" " --undecorated \
 --text-align=center \
 --field="Play:BTN" "$play" \

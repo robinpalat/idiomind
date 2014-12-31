@@ -1,7 +1,7 @@
 #!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
 $DS/stop.sh T
-icn=$DS/icon/cnn.png
+icn=$DS/images/cnn.png
 gtdr="$(cd "$(dirname "$0")" && pwd)"
 topic=$(echo "$gtdr" | sed 's|\/|\n|g' | sed -n 8p)
 DC_tlt="$DC_tl/$topic"

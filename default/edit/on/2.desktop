@@ -1,6 +1,6 @@
 [Desktop Entry]
 Exec=/usr/share/idiomind/mngr mklg-
-Icon=/usr/share/idiomind/icon/refresh.png
+Icon=/usr/share/idiomind/images/refresh.png
 Version=3
 Encoding=UTF-8
 Type=Application

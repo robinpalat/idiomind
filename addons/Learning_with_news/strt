@@ -5,8 +5,8 @@ STT=$(cat $DC_s/topic_m)
 
 if  [[ -z "$(cat $DC/addons/dict/.dicts)" ]]; then
 	sleep 1
-	$DS/plugins/Dics/dict \
-	$DS/plugins/Learning_with_news/info1 f cnf
+	$DS/addons/Dics/dict \
+	$DS/addons/Learning_with_news/info1 f cnf
 	if  [[ -z "$(cat $DC/addons/dict/.dicts)" ]]; then
 		exit 1
 	fi
@@ -19,22 +19,22 @@ if echo "$STT" | grep "Actualizando..."; then
 		ret=$?
 		
 		if [ $ret -eq 1 ]; then
-			$DS/plugins/Learning_with_news/cnf & exit
+			$DS/addons/Learning_with_news/cnf & exit
 		
 		elif [ $ret -eq 2 ]; then
 			echo "- Modo Feeds" > $DC_s/topic_m
-			$DS/plugins/Learning_with_news/stp.sh
-			$DS/plugins/Learning_with_news/cnf
+			$DS/addons/Learning_with_news/stp.sh
+			$DS/addons/Learning_with_news/cnf
 		fi
 	exit 1
 fi
 sleep 1
 uid=$(sed -n 1p $DC_s/cnfg4)
-dct="$DS/plugins/Dics/dict"
+dct="$DS/addons/Dics/dict"
 feed=$(sed -n 1p "$DC/addons/Learning with news/$lgtl/link")
 rsrc=$(cat "$DC/addons/Learning with news/$lgtl/.rss")
-DS_pf="$DS/plugins/Learning_with_news"
-icon=$DS/icon/cnn.png
+DS_pf="$DS/addons/Learning_with_news"
+icon=$DS/images/cnn.png
 date=$(date "+%a %d %B")
 c=$(echo $(($RANDOM%1000)))
 
@@ -67,7 +67,7 @@ if [ -f $DT/.uptf$uid ]; then
 else
 	echo "- Feed Mode" > $DC_s/topic_m
 fi
-ICON=$DS/icon/cnn.png
+ICON=$DS/images/cnn.png
 echo "$tpc" > $DC_s/topic.id
 echo fd >> $DC_s/topic.id
 notify-send --icon=$ICON "Feed Mode" " $FEED" -t 3000

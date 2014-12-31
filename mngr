@@ -198,7 +198,7 @@ elif [ "$1" = mkok- ]; then
 	
 #--------------------------------
 elif [ "$1" = edt ]; then
-	dct="$DS/plugins/Dics/dict"
+	dct="$DS/addons/Dics/dict"
 	cnf=$(mktemp $DT/cnf.XXXX)
 	edta=$(sed -n 17p ~/.config/idiomind/s/cnfg1)
 	tpcs=$(cat "$DC_tl/.in_s" | egrep -v "$tpc" | cut -c 1-40 \
@@ -853,7 +853,7 @@ elif [ $1 = mkmn ]; then
 		[ ! -d "$DM_tl/$tp" ]; then
 			i=13
 		fi
-		echo "/usr/share/idiomind/icon/img$i.png" >> $DC_s/chng
+		echo "/usr/share/idiomind/images/img$i.png" >> $DC_s/chng
 		echo "$tp" >> $DC_s/chng
 		let n++
 	done
@@ -868,9 +868,9 @@ elif [ $1 = mkmn ]; then
 		[ ! -f "$DC_tl/$tp/.winx" ] || \
 		[ ! -f "$DC_tl/$tp/.sinx" ] || \
 		[ ! -d "$DM_tl/$tp" ]; then
-			echo '/usr/share/idiomind/icon/img13.png' >> $DC_s/chng
+			echo '/usr/share/idiomind/images/img13.png' >> $DC_s/chng
 		else
-			echo '/usr/share/idiomind/icon/img12.png' >> $DC_s/chng
+			echo '/usr/share/idiomind/images/img12.png' >> $DC_s/chng
 		fi
 		echo "$tp" >> $DC_s/chng
 		let n++

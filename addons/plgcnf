@@ -9,13 +9,13 @@ done
 CMD="${CMD[@]}"
 
 if echo "$CMD" | grep "Google translation service"; then
-	$DS/plugins/"Google_translation_service"/cnf
+	$DS/addons/"Google_translation_service"/cnf
 elif echo "$CMD" | grep "Weekly Report"; then
-	$DS/plugins/"Stats"/rprt C
+	$DS/addons/"Stats"/rprt C
 elif echo "$CMD" | grep "Learning with News"; then
-	$DS/plugins/"Learning_with_news"/cnf
+	$DS/addons/"Learning_with_news"/cnf
 elif echo "$CMD" | grep "Dictionary"; then
-	$DS/plugins/Dics/dict 1 1 cnf
+	$DS/addons/Dics/dict 1 1 cnf
 elif echo "$CMD" | grep "Learning with Tweets"; then
-	$DS/plugins/"Learning_with_tweets"/cnf
+	$DS/addons/"Learning_with_tweets"/cnf
 fi
