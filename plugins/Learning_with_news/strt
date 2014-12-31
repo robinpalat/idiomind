@@ -1,4 +1,5 @@
 #!/bin/bash
+# -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
 STT=$(cat $DC_s/topic_m)
 
@@ -79,7 +80,6 @@ exit 1' > $DC_tl/Feeds/tpc.sh
 fi
 
 if [ -n "$feed" ]; then
-
 	curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
 	$yad --window-icon=idiomind --on-top \
 	--image=info --name=idiomind \
@@ -120,7 +120,6 @@ if [ -n "$feed" ]; then
 	
 	n=1
 	while [ $n -le $(cat rss | wc -l) ]; do
-	
 			f="5"
 			if [[ "$(cat $DT/.uptf$uid \
 			| grep -o "Actualizando...")" = "Actualizando..." ]]; then
@@ -129,7 +128,6 @@ if [ -n "$feed" ]; then
 					echo "- feeds Mode ( Actualizando... $n$f% )" > $DC_s/topic_m
 				fi
 			fi
-		
 		trgt=$(sed -n "$n"p rss)
 		lnk=$(sed -n "$n"p lnk)
 		
@@ -152,17 +150,19 @@ if [ -n "$feed" ]; then
 				if [ -n "$vs" ]; then
 					if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
 						lg=$(echo $lgtl | awk '{print tolower($0)}')
-						if [ "$lg" != 'english' ] || [ "$lg" != 'spanish' ] || [ "$lg" != 'russian' ]; then
-							if [ "$1" != A ]; then
+						
+						if ([ $lg = "english" ] || [ $lg = "spanish" ] || [ $lg = "russian" ]); then
+						if [ "$1" != A ]; then
 								echo "- feed Mode" > $DC_s/topic_m
 							fi
+							echo "$trgt" | text2wave -o $DT_r/s.wav
+							sox $DT_r/s.wav "$nme.mp3"
+						else
 							rm -fr $DT_r $DT/.uptf$uid $DT/.rss_$uid
 							$yad --image=error --button=gtk-ok:1 \
-							--text=" <b>Error</b>\\n \ q carajo va aca " \
+							--text=" <b>Error</b>\\n \ Festival no puede procesar texto en $lgtl " \
 							--on-top --skip-taskbar & break & exit 1
 						fi
-						echo "$trgt" | text2wave -o $DT_r/s.wav
-						sox $DT_r/s.wav "$nme.mp3"
 					else
 						cd $DT_r
 						echo "$trgt" | $vs
@@ -182,7 +182,7 @@ if [ -n "$feed" ]; then
 						fi
 						rm -fr $DT_r $DT/.uptf$uid $DT/.rss_$uid
 						$yad --image=error --button=gtk-ok:1 \
-						--text=" <b>Error</b>\\n \ q carajo va aca " \
+						--text=" <b>Error</b>\\n \ Espeak no puede procesar texto en japanese " \
 						--on-top --skip-taskbar & break & exit 1
 					fi
 					espeak "$trgt" -v $lg -k 1 -p 65 -a 80 -s 120 -w $DT_r/s.wav
@@ -234,7 +234,6 @@ if [ -n "$feed" ]; then
 				done
 				)
 			fi
-
 			lwrds=$(cat A)
 			pwrds=$(cat B | tr '\n' '_')
 			eyeD3 --set-encoding=utf8 -A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0I "$nme".mp3
@@ -257,7 +256,6 @@ if [ -n "$feed" ]; then
 				done
 			fi
 			)
-			
 			cp -fr "./$nme" "$DM_tl/Feeds/conten/$nme"
 			mv -f "$nme.mp3" "$DM_tl/Feeds/conten/$nme.mp3"
 			echo "$lnk" > "$DM_tl/Feeds/conten/$nme.lnk"
@@ -268,7 +266,7 @@ if [ -n "$feed" ]; then
 		
 		let n++
 	done
-	
+
 	mv -f $DT_r/rss "$DC_tl/Feeds/.updt.lst"
 	rm -fr $DT_r $DT/.uptf$uid $DT/.rss_$uid
 	cd "$DM_tl/Feeds/conten"
@@ -280,9 +278,7 @@ if [ -n "$feed" ]; then
 	fi
 
 	exit 1
-	
 else
 	sleep 1
 	$DS_pf/cnf NS & exit 1
 fi
-

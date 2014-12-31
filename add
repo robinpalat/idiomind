@@ -638,15 +638,17 @@ elif [ $1 = n_s ]; then
 		else # si no hay audio
 			vs=$(sed -n 7p $DC_s/cnfg1)
 			if [ -n "$vs" ]; then
-				if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
+				if ([ $vs = "festival" ] || [ $vs = "text2wave" ]); then
 					lg=$(echo $lgtl | awk '{print tolower($0)}')
-					if [ "$lg" != 'english' ] || [ "$lg" != 'spanish' ] || [ "$lg" != 'russian' ]; then
-						$yad --image=error --button=gtk-ok:1 \
-						--text=" <b>Error</b>\\n \ q carajo va aca " \
-						--on-top --skip-taskbar & exit 1
-					fi
+
+					if ([ $lg = "english" ] || [ $lg = "spanish" ] || [ $lg = "russian" ]); then
 					echo "$trgt" | text2wave -o $DT_r/s.wav
 					sox $DT_r/s.wav "$DM_tlt/$nme.mp3"
+					else
+						$yad --image=error --button=gtk-ok:1 \
+						--text=" <b>Error</b>\\n \ Festival no puede procesar texto en $lgtl " \
+						--on-top --skip-taskbar & exit 1
+					fi
 				else
 					cd $DT_r
 					echo "$trgt" | $vs
@@ -662,7 +664,7 @@ elif [ $1 = n_s ]; then
 					lg=Mandarin
 				elif [ $lg = japanese ]; then
 					$yad --image=error --button=gtk-ok:1 \
-					--text=" <b>Error</b>\\n \ q carajo va aca " \
+					--text=" <b>Error</b>\\n \ Espeak no puede procesar texto en japanese " \
 					--on-top --skip-taskbar & exit 1
 				fi
 				espeak "$trgt" -v $lg -k 1 -p 65 -a 80 -s 120 -w $DT_r/s.wav
@@ -794,13 +796,15 @@ elif [ $1 = n_w ]; then
 				if [ -n "$vs" ]; then
 					if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
 						lg=$(echo $lgtl | awk '{print tolower($0)}')
-						if [ "$lg" != 'english' ] || [ "$lg" != 'spanish' ] || [ "$lg" != 'russian' ]; then
+						
+						if ([ $lg = "english" ] || [ $lg = "spanish" ] || [ $lg = "russian" ]); then
+							echo "$trgt" | text2wave -o $DT_r/s.wav
+							sox $DT_r/s.wav "$DM_tlt/$nme.mp3"
+						else
 							$yad --image=error --button=gtk-ok:1 \
-							--text=" <b>Error</b>\\n \ q carajo va aca " \
+							--text=" <b>Error</b>\\n \ Festival no puede procesar texto en $lgtl " \
 							--on-top --skip-taskbar & exit 1
 						fi
-						echo "$trgt" | text2wave -o $DT_r/s.wav
-						sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
 					else
 						cd $DT_r
 						echo "$trgt" | "$vs"
@@ -816,7 +820,7 @@ elif [ $1 = n_w ]; then
 						lg=Mandarin
 					elif [ $lg = japanese ]; then
 						$yad --image=error --button=gtk-ok:1 \
-						--text=" <b>Error</b>\\n \ q carajo va aca " \
+						--text=" <b>Error</b>\\n \ Espeak no puede procesar texto en japanese " \
 						--on-top --skip-taskbar & exit 1
 					fi
 					espeak "$trgt" -v $lg -k 1 -p 45 -a 80 -s 110 -w $DT_r/s.wav
@@ -939,13 +943,15 @@ elif [ $1 = edt ]; then
 					if [ -n "$vs" ]; then
 						if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
 							lg=$(echo $lgtl | awk '{print tolower($0)}')
-							if [ "$lg" != 'english' ] || [ "$lg" != 'spanish' ] || [ "$lg" != 'russian' ]; then
+							
+							if ([ $lg = "english" ] || [ $lg = "spanish" ] || [ $lg = "russian" ]); then
+								echo "$trgt" | text2wave -o $DT_r/s.wav
+								sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
+							else
 								$yad --image=error --button=gtk-ok:1 \
-								--text=" <b>Error</b>\\n \ q carajo va aca " \
+								--text=" <b>Error</b>\\n \ Festival no puede procesar texto en $lgtl " \
 								--on-top --skip-taskbar & exit 1
 							fi
-							echo "$trgt" | text2wave -o $DT_r/s.wav
-							sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
 						else
 							cd $DT_r
 							echo "$trgt" | "$vs"
@@ -961,7 +967,7 @@ elif [ $1 = edt ]; then
 							lg=Mandarin
 						elif [ $lg = japanese ]; then
 							$yad --image=error --button=gtk-ok:1 \
-							--text=" <b>Error</b>\\n \ q carajo va aca " \
+							--text=" <b>Error</b>\\n \ Espeak no puede procesar texto en japanese " \
 							--on-top --skip-taskbar & exit 1
 						fi
 						espeak "$trgt" -v $lg -k 1 -p 45 -a 80 -s 110 -w $DT_r/s.wav
@@ -1338,13 +1344,15 @@ elif [ $1 = snt ]; then
 					if [ -n "$vs" ]; then
 						if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
 							lg=$(echo $lgtl | awk '{print tolower($0)}')
-							if [ "$lg" != 'english' ] || [ "$lg" != 'spanish' ] || [ "$lg" != 'russian' ]; then
+
+							if ([ $lg = "english" ] || [ $lg = "spanish" ] || [ $lg = "russian" ]); then
+								echo "$trgt" | text2wave -o $DT_r/s.wav
+								sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
+							else
 								$yad --image=error --button=gtk-ok:1 \
-								--text=" <b>Error</b>\\n \ q carajo va aca " \
+								--text=" <b>Error</b>\\n \ Festival no puede procesar texto en $lgtl " \
 								--on-top --skip-taskbar & exit 1
 							fi
-							echo "$trgt" | text2wave -o $DT_r/s.wav
-							sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
 						else
 							cd $DT_r
 							echo "$trgt" | "$vs"
@@ -1360,7 +1368,7 @@ elif [ $1 = snt ]; then
 							lg=Mandarin
 						elif [ $lg = japanese ]; then
 							$yad --image=error --button=gtk-ok:1 \
-							--text=" <b>Error</b>\\n \ q carajo va aca " \
+							--text=" <b>Error</b>\\n \ Espeak no puede procesar texto en japanese " \
 							--on-top --skip-taskbar & exit 1
 						fi
 						espeak "$trgt" -v $lg -k 1 -p 45 -a 80 -s 110 -w $DT_r/s.wav
@@ -1849,13 +1857,15 @@ $trgt" >> ./wlog
 								if [ -n "$vs" ]; then
 									if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
 										lg=$(echo $lgtl | awk '{print tolower($0)}')
-										if [ "$lg" != 'english' ] || [ "$lg" != 'spanish' ] || [ "$lg" != 'russian' ]; then
-											$yad --image=error --button=gtk-ok:1 \
-											--text=" <b>Error</b>\\n \ q carajo va aca " \
-											--on-top --skip-taskbar & exit 1
-										fi
+
+										if ([ $lg = "english" ] || [ $lg = "spanish" ] || [ $lg = "russian" ]); then
 										echo "$trgt" | text2wave -o $DT_r/s.wav
 										sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
+										else
+											$yad --image=error --button=gtk-ok:1 \
+											--text=" <b>Error</b>\\n \ Festival no puede procesar texto en $lgtl " \
+											--on-top --skip-taskbar & exit 1
+										fi
 									else
 										cd $DT_r
 										echo "$trgt" | "$vs"
@@ -1871,7 +1881,7 @@ $trgt" >> ./wlog
 										lg=Mandarin
 									elif [ $lg = japanese ]; then
 										$yad --image=error --button=gtk-ok:1 \
-										--text=" <b>Error</b>\\n \ q carajo va aca " \
+										--text=" <b>Error</b>\\n \ Espeak no puede procesar texto en japanese " \
 										--on-top --skip-taskbar & exit 1
 									fi
 									espeak "$trgt" -v $lg -k 1 -p 45 -a 80 -s 110 -w $DT_r/s.wav
@@ -2248,16 +2258,17 @@ $sntc" >> ./slog
 									else
 										vs=$(sed -n 7p $DC_s/cnfg1)
 										if [ -n "$vs" ]; then
-										
 											if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
 												lg=$(echo $lgtl | awk '{print tolower($0)}')
-												if [ "$lg" != 'english' ] || [ "$lg" != 'spanish' ] || [ "$lg" != 'russian' ]; then
+
+												if ([ $lg = "english" ] || [ $lg = "spanish" ] || [ $lg = "russian" ]); then
+													echo "$trgt" | text2wave -o $DT_r/s.wav
+													sox $DT_r/s.wav "$DM_tlt/$nme.mp3"
+												else
 													$yad --image=error --button=gtk-ok:1 \
-													--text=" <b>Error</b>\\n \ q carajo va aca " \
+													--text=" <b>Error</b>\\n \ Festival no puede procesar texto en $lgtl " \
 													--on-top --skip-taskbar & exit 1
 												fi
-												echo "$trgt" | text2wave -o $DT_r/s.wav
-												sox $DT_r/s.wav "$DM_tlt/$nme.mp3"
 											else
 												cd $DT_r
 												echo "$trgt" | $vs
@@ -2273,7 +2284,7 @@ $sntc" >> ./slog
 												lg=Mandarin
 											elif [ $lg = japanese ]; then
 												$yad --image=error --button=gtk-ok:1 \
-												--text=" <b>Error</b>\\n \ q carajo va aca " \
+												--text=" <b>Error</b>\\n \ Espeak no puede procesar texto en $lgtl " \
 												--on-top --skip-taskbar & exit 1
 											fi
 											espeak "$trgt" -v $lg -k 1 -p 65 -a 80 -s 120 -w $DT_r/s.wav
