@@ -2,7 +2,7 @@
 tpc=$(sed -n 1p $HOME/.config/idiomind/s/topic.id)
 lgtl=$(sed -n 2p $HOME/.config/idiomind/s/lang)
 DC_tlt="$HOME/.config/idiomind/topics/$lgtl/$tpc"
-DS_pp="/usr/share/idiomind/plugins/Practice"
+DS_pp="/usr/share/idiomind/addons/Practice"
 eht=$(sed -n 13p $HOME/.config/idiomind/s/.rd)
 wth=$(sed -n 14p $HOME/.config/idiomind/s/.rd)
 /usr/share/idiomind/stop.sh &
@@ -122,13 +122,13 @@ ret=$?
 		echo "#" ;
 		cd "$DC_tlt/Practice"
 		rm *
-		cp -f /usr/share/idiomind/plugins/Practice/default/.* "$DC_tlt/Practice"
+		cp -f /usr/share/idiomind/addons/Practice/default/.* "$DC_tlt/Practice"
 		) | yad --progress \
 		--width 50 --height 35 --center \
 		--pulsate --auto-close --no-buttons \
 		--sticky --undecorated --skip-taskbar
-		/usr/share/idiomind/plugins/Practice/strt & exit 1
+		/usr/share/idiomind/addons/Practice/strt & exit 1
 	else
-		/usr/share/idiomind/plugins/Practice/stp.sh
+		/usr/share/idiomind/addons/Practice/stp.sh
 		exit 1
 	fi

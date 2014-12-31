@@ -1,6 +1,6 @@
 [Desktop Entry]
 Exec=/usr/share/idiomind/ifs/upld
-Icon=/usr/share/idiomind/icon/upload.png
+Icon=/usr/share/idiomind/images/upload.png
 Version=3
 Encoding=UTF-8
 Type=Application

@@ -223,26 +223,26 @@ if [ ! -d $DT/.$uid ]; then
 	
 fi
 if [ -z "$indw" ]; then
-img1=$DS/icon/addi.png
+img1=$DS/images/addi.png
 else
-img1=$DS/icon/add.png
+img1=$DS/images/add.png
 fi
 if [ -z "$inds" ]; then
-img2=$DS/icon/addi.png
+img2=$DS/images/addi.png
 else
-img2=$DS/icon/add.png
+img2=$DS/images/add.png
 fi
 if [ -z "$indp" ]; then
-img3=$DS/icon/prtci.png
+img3=$DS/images/prtci.png
 else
-img3=$DS/icon/prtc.png
+img3=$DS/images/prtc.png
 fi
 if [ -z "$indf" ]; then
-img4=$DS/icon/srssi.png
+img4=$DS/images/srssi.png
 else
-img4=$DS/icon/srss.png
+img4=$DS/images/srss.png
 fi
-img5=$DS/icon/set-26.png
+img5=$DS/images/set-26.png
 
 if [ ! -f $DC_s/cnfg5 ]; then
 	cp $DS/default/cnfg5 $DC_s/cnfg5

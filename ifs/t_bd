@@ -1,6 +1,6 @@
 #!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
-DS_ppd="$DS/plugins/Practice/default"
+DS_ppd="$DS/addons/Practice/default"
 user=$(echo "$(whoami)")
 D_cps=$(sed -n 2p $DC_s/SC)
 udt=$(cat "$D_cps/.udt")

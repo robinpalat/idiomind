@@ -13,17 +13,17 @@ if [[ "$1" = chngi ]]; then
 	user=$(echo "$(whoami)")
 	cnfg1="$DC_s/cnfg5"
 	indx="$DT/.$user/indx"
-	tlck="$DS/icon/chng.mp3"
+	tlck="$DS/images/chng.mp3"
 	imgt="/$DT/FRONT_COVER.jpeg"
 	rm -f "$DT/FRONT_COVER.jpeg"
 	wth=$(sed -n 10p $DC_s/.rd)
 	eht=$(sed -n 9p $DC_s/.rd)
 	nim=$(sed -n 11p $DC_s/.rd)
 	indp="$DT/.$user/indp"
-	br="$DS/icon/br.png"
-	br2="$DS/icon/br2.png"
-	br3="$DS/icon/br3.png"
-	osdi="$DS/icon/idm.png"
+	br="$DS/images/br.png"
+	br2="$DS/images/br2.png"
+	br3="$DS/images/br3.png"
+	osdi="$DS/images/idm.png"
 	
 	if [[ -z $(sed -n 1p $DC_s/cnfg2) ]]; then
 	pst=$(sed -n 1p $DC_s/.pst)
@@ -248,18 +248,18 @@ elif [ "$1" != chngi ]; then
 		fi
 		eht=$(sed -n 3p $DC_s/.rd)
 		wth=$(sed -n 4p $DC_s/.rd)
-		img1=$DS/icon/img1.png
-		img2=$DS/icon/img2.png
-		img3=$DS/icon/img3.png
-		img4=$DS/icon/img4.png
-		img5=$DS/icon/img5.png
-		img6=$DS/icon/img6.png
-		img7=$DS/icon/img7.png
-		img8=$DS/icon/img8.png
-		img9=$DS/icon/img9.png
-		img10=$DS/icon/img10.png
-		img11=$DS/icon/img11.png
-		img12=$DS/icon/img12.png
+		img1=$DS/images/img1.png
+		img2=$DS/images/img2.png
+		img3=$DS/images/img3.png
+		img4=$DS/images/img4.png
+		img5=$DS/images/img5.png
+		img6=$DS/images/img6.png
+		img7=$DS/images/img7.png
+		img8=$DS/images/img8.png
+		img9=$DS/images/img9.png
+		img10=$DS/images/img10.png
+		img11=$DS/images/img11.png
+		img12=$DS/images/img12.png
 		text=--class=idm
 		if [ -n "$1" ]; then
 		text="--text=$(cat "$1")"
@@ -270,7 +270,7 @@ elif [ "$1" != chngi ]; then
 		VAR=$(cat $DC_s/chng | $yad --name=idiomind --ellipsize=END \
 		--class=idiomind --center --separator="" \
 		"$text" --width=$wth --height=$eht --on-top \
-		--no-headers --list --window-icon=idiomind \
+		--no-headers --list --window-images=idiomind \
 		--button="gtk-add":3 --button="gtk-ok":0 --button="Close":1 \
 		--borders=5 --title "Topics" --column=img:img --column=File:TEXT)
 			ret=$?

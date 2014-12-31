@@ -1,9 +1,0 @@
-[Desktop Entry]
-Exec=/usr/share/idiomind/plugins/Learning_with_news/del dlns
-Icon=/usr/share/idiomind/plugins/Learning_with_news/img/delete-1.png
-Version=3
-Encoding=UTF-8
-Type=Application
-Terminal=false
-Comment=Delete News
-Name[en]=Delete News

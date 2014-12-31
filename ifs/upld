@@ -43,7 +43,7 @@ elif [ $1 = infsd ]; then
 	CTGY=$(sed -n 9p ./"$tpcd".AL)
 	LNK=$(sed -n 10p ./"$tpcd".AL)
 	nme=$(echo "$tpcd" | sed 's/ /_/g')
-	icon=$DS/icon/idmnd.png
+	icon=$DS/images/idmnd.png
 	file="http://currently.url.ph/$lgs/$lgtl/$Ctgry/$nme/$userid.$tpcd.idmnd"
 
 	$yad --borders=15 --width=450 --height=180 --fixed \
@@ -114,7 +114,7 @@ elif [ $1 = infsd ]; then
 				--image=info \
 				--text=" <b>Aún no esta listo el archivo </b> \\n Intente Luego" \
 				--fixed --sticky --width=220 --height=80 --borders=3 \
-				--skip-taskbar --window-icon=$DS/icon/icon.png \
+				--skip-taskbar --window-icon=$DS/images/icon.png \
 				--on-top --title="Idiomind" ---button="Info":3 \
 				--button="Ok":0 && exit 1
 			fi
@@ -281,7 +281,7 @@ fi
 
 upld=$($yad --image-on-top --width=350 \
 --buttons-layout=end --center --window-icon=idiomind \
---on-top --image=$DS/icon/upld.png \
+--on-top --image=$DS/images/upld.png \
 --height=400 --form --borders=20 --skip-taskbar --align=right \
 --button=Cancel:1 --button=Upload:0 \
 --title="Upload" --text="<b>$tpc\\n</b>" \
@@ -725,7 +725,7 @@ echo '<a href="#top">Ir Arriba</a>
 
 echo '<footer role="contentinfo">
 	<div class="inner">
-    	<img width="64" height="64" class="w3c-logo" alt="W3C HTML5 logo (not CSS3!)" src="/usr/share/idiomind/icon/cnn.png">
+    	<img width="64" height="64" class="w3c-logo" alt="W3C HTML5 logo (not CSS3!)" src="/usr/share/idiomind/images/cnn.png">
 		<p id="copyright">This site is licensed under a <a href="http://creativecommons.org/licenses/by-nc/2.0/uk/" rel="license">Creative Commons Attribution-Non-Commercial 2.0</a> share alike license. Feel free to change, reuse modify and extend it. Some authors will retain their copyright on certain articles.</p>
         <p>Copyright © 2013 Idiomind. All rights.</p>
 	</div>

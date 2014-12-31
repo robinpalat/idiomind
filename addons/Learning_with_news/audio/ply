@@ -1,5 +1,5 @@
 #!/bin/bash
-drtu="/usr/share/idiomind/plugins/Learning_with_news"
+drtu="/usr/share/idiomind/addons/Learning_with_news"
 if [[ "$(ps -A | grep -o plst)" = plst ]]; then
 	$drtu/audio/plwd "$1"
 else

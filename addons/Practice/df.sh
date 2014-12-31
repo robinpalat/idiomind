@@ -3,7 +3,7 @@ tpc=$(sed -n 1p ~/.config/idiomind/s/topic.id)
 lgtl=$(sed -n 2p ~/.config/idiomind/s/lang)
 lgsl=$(sed -n 2p ~/.config/idiomind/s/langt)
 drtt="$HOME/.idiomind/topics/$lgtl/$tpc/words"
-drts="/usr/share/idiomind/plugins/Practice/"
+drts="/usr/share/idiomind/addons/Practice/"
 cd "$HOME/.config/idiomind/topics/$lgtl/$tpc/Practice"
 
 n=1

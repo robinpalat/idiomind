@@ -7,7 +7,7 @@ if [ -z $1 ]; then
 	cn=$(sed -n 2p $DC_s/.sncardd)
 	
 	if [ -z "$cn" ]; then
-		img=$DS/icon/tr.png
+		img=$DS/images/tr.png
 		msj=" ( No especificado )"
 	else
 		img="$cn"
@@ -90,7 +90,7 @@ elif [ $1 = rec ]; then
 	paud=$(sed -n 17p $DC_s/cnfg1)
 	DT_r="$2"
 	t="$3"
-	img=$DS/icon/rec.png
+	img=$DS/images/rec.png
 	killall play
 	inf=$(sed -n 1p $DC_s/.sncardd)
 	rm -f $DT_r/audtm.mp3

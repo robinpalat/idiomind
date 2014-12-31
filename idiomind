@@ -22,7 +22,7 @@ if [ -z "$1" ]; then
 	PS="$?"
 	if (($PS!=0)); then
 	
-		# prepare icon for panel tray
+		# prepare $DS/images for panel tray
 		if [ -d $DT ]; then
 			rm -fr $DT
 		fi
@@ -37,7 +37,7 @@ if [ -z "$1" ]; then
 			--width=320 --height=80 \
 			--borders=2 --title=Idiomind \
 			--skip-taskbar --center \
-			--window-icon=idiomind & exit 1
+			--window-$DS/images=idiomind & exit 1
 		fi
 		
 		#check if there directories
@@ -51,8 +51,8 @@ if [ -z "$1" ]; then
 		if echo "$(cat $DC_s/topic_m)" | grep "Actualizando..."; then
 			> $DC_s/topic_m
 		fi
-		cp -f $DS/icon/flags/$lgt.png \
-		$DT/tryidmdicon
+		cp -f $DS/$DS/images/flags/$lgt.png \
+		$DT/tryidmd$DS/images
 		chmod 777 -R $DT
 		$DS/default/nw.sh & 
 		
@@ -247,13 +247,13 @@ if [ -z "$1" ]; then
 				# set weekly report
 				if ([ "$(date +%u)" = 7 ] && \
 				[ "$(sed -n 1p $DC/addons/stats/cnf)" = "TRUE" ]); then
-					$DS/plugins/Stats/rprt A &
+					$DS/addons/Stats/rprt A &
 				fi
 				
 				# set feed update at starting
 				if [ "$(sed -n 1p "$DC/addons/Learning with news/.cnf")" = "TRUE" ]; then
 					(sleep 200
-					$DS/plugins/Learning_with_news/strt A
+					$DS/addons/Learning_with_news/strt A
 					) &
 				fi
 				
@@ -341,7 +341,7 @@ if [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 	cc=$(sed -n 1p "$tmp/.AL")
 	cgy=$(sed -n 9p "$tmp/.AL")
 	nt=$(sed -n 11p "$tmp/.AL")
-	ICON=$DS/icon/idm2.png
+	ICON=$DS/images/idm2.png
 	
 	if [ "$inme" != "$cc" ]; then
 		cstn=$($yad --name=idiomind \
@@ -351,7 +351,7 @@ if [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 		--width=230 --height=80 \
 		--borders=3 --title=Idiomind \
 		--skip-taskbar --center \
-		--window-icon=idiomind)
+		--window-$DS/images=idiomind)
 		rm -fr $DT/idmimp_$c $DT/*.$c \
 		$DT/import.tar.gz
 	else
@@ -371,7 +371,7 @@ if [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 		--ellipsize=END --print-all --image-on-top \
 		--text="$itxt" --class=Idiomind  \
 		--width="$wth" --height="$eht" --image-on-top \
-		--window-icon=idiomind --column=Items --center \
+		--window-$DS/images=idiomind --column=Items --center \
 		--dclick-action="$dlck" --image="$ICON" \
 		--button="  Install  ":0 --button=Close:1
 			ret=$?
@@ -390,7 +390,7 @@ if [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 					--image-on-top --sticky --skip-taskbar \
 					--width=230 --height=80 \
 					--borders=3 --title=Idiomind \
-					--window-icon=idiomind \
+					--window-$DS/images=idiomind \
 					--button=gtk-ok:1
 					rm -r -f $DT/idmimp_$c $DT/*.$c \
 					$DT/import.tar.gz & exit 1
@@ -404,7 +404,7 @@ if [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 					--class=idiomind --center --skip-taskbar \
 					--image-on-top --width=240 \
 					--height=80 --borders=3 \
-					--window-icon=idiomind \
+					--window-$DS/images=idiomind \
 					--title=Idiomind --button=Cancel:1 \
 					--button=gtk-ok:0
 						ret=$?
@@ -423,8 +423,8 @@ if [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 					mkdir "$DC/topics/$lgtli"
 					mkdir "$DC_a/Learning with news/$lgtli"
 					mkdir "$DC_a/Learning with news/$lgtli/subscripts"
-					"$DS/plugins/Learning_with_news/examples/$lgtli"
-					cp -f "$DS/plugins/Learning_with_news/examples/$lgtli" \
+					"$DS/addons/Learning_with_news/examples/$lgtli"
+					cp -f "$DS/addons/Learning_with_news/examples/$lgtli" \
 					"$DC_a/Learning with news/$lgtli/subscripts/Example"
 				fi
 				mkdir "$DM/topics/$lgtli/$inm"
@@ -432,7 +432,7 @@ if [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 				drit="$DM/topics/$lgtli/$inm"
 				dric="$DC/topics/$lgtli/$inm"
 				mkdir "$dric/Practice"
-				cp -f $DS/plugins/Practice/default/.* \
+				cp -f $DS/addons/Practice/default/.* \
 				"$dric/Practice"
 				cd "$tmp"
 				cp -n ./.audio/*.mp3 "$DM_t/$lgtli/.share/"
@@ -457,8 +457,8 @@ if [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 				sed -i 's/'"$inm"'//g' "$DC/topics/$lgtli/.in_s"
 				sed '/^$/d' $DC/topics/$lgtli/.in_s > $DC/topics/$lgtli/.in_s.tmp
 				mv -f $DC/topics/$lgtli/.in_s.tmp $DC/topics/$lgtli/.in_s
-				cp -f $DS/icon/flags/$lng.png $DT/tryidmdicon
-				chmod 777 $DT/tryidmdicon
+				cp -f $DS/$DS/images/flags/$lng.png $DT/tryidmd$DS/images
+				chmod 777 $DT/tryidmd$DS/images
 				$DS/mngr mkmn &&
 				"$dric/tpc.sh" &
 				rm -r -f $DT/idmimp_$c $DT/*.$c \
@@ -504,7 +504,7 @@ if [ "$1" = topic ]; then
 
 	#--------------topic own
 	if echo "$mde" | grep "wn"; then
-		ICON=$DS/icon/wn.png
+		ICON=$DS/images/wn.png
 		cd "$DC_tlt"
 		ws=$(cat .winx | wc -l)
 		ss=$(cat .sinx | wc -l)
@@ -526,7 +526,7 @@ if [ "$1" = topic ]; then
 			$yad --notebook --name=idiomind --center \
 			--class=idiomind --align=right --key=$KEY  \
 			--tab-borders=0 --center --title="$tpc" \
-			--tab="  Notes  " --window-icon=idiomind \
+			--tab="  Notes  " --window-$DS/images=idiomind \
 			--buttons-layout=edge --image-on-top --class=idiomind \
 			--width="$wth" --height="$eht" --borders=0  \
 			--button=Delete:"$DS/mngr dlt" \
@@ -581,10 +581,10 @@ if [ "$1" = topic ]; then
 					echo "4" > "$DC_tlt/.stts"
 					$DS/mngr mkmn &
 					RM=100
-					$yad --title="$tpc" --window-icon=idiomind \
+					$yad --title="$tpc" --window-$DS/images=idiomind \
 					--borders=20 --buttons-layout=edge --name=idiomind \
-					--image=$DS/icon/qstn.png \
-					--on-top --window-icon=idiomind \
+					--image=$DS/$DS/images/qstn.png \
+					--on-top --window-$DS/images=idiomind \
 					--buttons-layout=edge --center --class=idiomind \
 					--button="       No       ":1 \
 					--button="        Review        ":2 \
@@ -618,7 +618,7 @@ if [ "$1" = topic ]; then
 				$yad --notebook --name=Idiomind --center \
 				--class=Idiomind --align=right --key=$KEY \
 				--tab-borders=0 --center --title="$tpc" \
-				--tab=" Review " --window-icon=idiomind \
+				--tab=" Review " --window-$DS/images=idiomind \
 				--tab=" Learned ($tb2) " --tab=" Notes " \
 				--ellipsize=END --image-on-top  \
 				--width="$wth" --height="$eht" \
@@ -641,7 +641,7 @@ if [ "$1" = topic ]; then
 				--show-uri --fontname=vendana --print-column=1 \
 				--column="" --filename="$nt" > "$cnf3" &
 				$yad --notebook --name=Idiomind --center --key=$KEY \
-				--class=Idiomind --align=right --window-icon=idiomind \
+				--class=Idiomind --align=right --window-$DS/images=idiomind \
 				--tab-borders=0 --center --title="$tpc" \
 				--tab=" Learning ($tb1) " \
 				--tab=" Learned ($tb2) " --tab=" Notes " \
@@ -657,13 +657,13 @@ if [ "$1" = topic ]; then
 					
 				elif [ $ret -eq 5 ]; then
 					rm -f $DT/*.x
-					$DS/plugins/Practice/strt & killall topic.sh &
+					$DS/addons/Practice/strt & killall topic.sh &
 					
 				elif [ $ret -eq 4 ]; then
-					$yad --title="$tpc" --window-icon=idiomind \
+					$yad --title="$tpc" --window-$DS/images=idiomind \
 					--borders=5 --name=idiomind \
 					--image=dialog-question \
-					--on-top --window-icon=idiomind \
+					--on-top --window-$DS/images=idiomind \
 					--center --class=idiomind \
 					--button="News":3 \
 					--button="All":2 \
@@ -737,7 +737,7 @@ if [ "$1" = topic ]; then
 			
 		# 3er vista - si el topic esta aprendido 
 		elif [ "$tb1" -eq 0 ]; then
-			# actualiza la lista de topic para que se actualizen los iconos 
+			# actualiza la lista de topic para que se actualizen los $DS/imagesos 
 			if [ ! -f "$DC_tlt/.lk" ]; then
 				> "$DC_tlt/.lk"
 				echo "$(date +%m/%d/%Y)" > "$DC_tlt/.trw"
@@ -772,10 +772,10 @@ if [ "$1" = topic ]; then
 				echo "4" > "$DC_tlt/.stts"
 				$DS/mngr mkmn &
 				RM=100
-				$yad --title="$tpc" --window-icon=idiomind \
+				$yad --title="$tpc" --window-$DS/images=idiomind \
 				--borders=20 --buttons-layout=edge --name=idiomind \
-				--image=$DS/icon/qstn.png \
-				--on-top --window-icon=idiomind \
+				--image=$DS/$DS/images/qstn.png \
+				--on-top --window-$DS/images=idiomind \
 				--buttons-layout=edge --center --class=idiomind \
 				--button="       No       ":1 \
 				--button="        Review        ":2 \
@@ -809,7 +809,7 @@ if [ "$1" = topic ]; then
 			$yad --notebook --name=Idiomind --center \
 			--class=Idiomind --align=right --key=$KEY \
 			--tab-borders=0 --center --title="$tpc" \
-			--tab=" Review " --window-icon=idiomind \
+			--tab=" Review " --window-$DS/images=idiomind \
 			--tab=" Learned ($tb2) " --tab=" Notes " \
 			--ellipsize=END --image-on-top  \
 			--width="$wth" --height="$eht" --borders=0 \
@@ -820,7 +820,7 @@ if [ "$1" = topic ]; then
 					./default/pnls edt &
 					
 				elif [ $ret -eq 5 ]; then
-					$DS/plugins/Practice/strt & killall topic.sh &
+					$DS/addons/Practice/strt & killall topic.sh &
 				
 				elif [ $ret -eq 2 ]; then
 					if [ -f "$cnf3" ]; then
@@ -879,7 +879,7 @@ if [ "$1" = topic ]; then
 		l2=$(sed -n 7p "$DC_tlt/.AL")
 		l3=$(sed -n 8p "$DC_tlt/.AL")
 		l4=$(sed -n 9p "$DC_tlt/.AL")
-		ICON=$DS/icon/wn.png
+		ICON=$DS/images/wn.png
 		cd "$DC_tlt"
 		ws=$(cat .winx | wc -l)
 		ss=$(cat .sinx | wc -l)
@@ -921,10 +921,10 @@ if [ "$1" = topic ]; then
 					echo "4" > "$DC_tlt/.stts"
 					$DS/mngr mkmn &
 					RM=100
-					$yad --title="$tpc" --window-icon=idiomind \
+					$yad --title="$tpc" --window-$DS/images=idiomind \
 					--borders=20 --buttons-layout=edge --name=idiomind \
-					--image=$DS/icon/qstn.png \
-					--on-top --window-icon=idiomind \
+					--image=$DS/$DS/images/qstn.png \
+					--on-top --window-$DS/images=idiomind \
 					--buttons-layout=edge --center --class=idiomind \
 					--button="       No       ":1 \
 					--button="        Review        ":2 \
@@ -958,7 +958,7 @@ if [ "$1" = topic ]; then
 				$yad --notebook --name=Idiomind --center \
 				--class=Idiomind --align=right --key=$KEY \
 				--tab-borders=0 --center --title="$tpc" \
-				--tab=" Review " --window-icon=idiomind \
+				--tab=" Review " --window-$DS/images=idiomind \
 				--tab=" Learned ($tb2) " --tab=" Notes " \
 				--ellipsize=END --image-on-top  \
 				--width="$wth" --height="$eht" \
@@ -984,7 +984,7 @@ if [ "$1" = topic ]; then
 				--tab-borders=0 --center --title="$tpc" \
 				--tab=" Learning ($tb1) " \
 				--tab=" Learned ($tb2) " --tab=" Notes " \
-				--ellipsize=END --image-on-top --window-icon=idiomind \
+				--ellipsize=END --image-on-top --window-$DS/images=idiomind \
 				--width="$wth" --height="$eht" --borders=0 \
 				--button=Play:./play --button=Practice:5 \
 				--button=Edit:3 --button=Close:2 --always-print-result
@@ -996,13 +996,13 @@ if [ "$1" = topic ]; then
 				
 				elif [ $ret -eq 5 ]; then
 					rm -f $DT/*.x
-					$DS/plugins/Practice/strt & killall topic.sh &
+					$DS/addons/Practice/strt & killall topic.sh &
 					
 				elif [ $ret -eq 4 ]; then
-					$yad --title="$tpc" --window-icon=idiomind \
+					$yad --title="$tpc" --window-$DS/images=idiomind \
 					--borders=20 --name=idiomind \
 					--image=dialog-question \
-					--on-top --window-icon=idiomind \
+					--on-top --window-$DS/images=idiomind \
 					--center --class=idiomind \
 					--button="News":3 \
 					--button="All":2 \
@@ -1113,8 +1113,8 @@ if [ "$1" = topic ]; then
 				
 				$yad --title="$tpc" \
 				--borders=20 --buttons-layout=edge --class=idiomind \
-				--image=$DS/icon/qstn.png --window-icon=idiomind \
-				--on-top --window-icon=idiomind \
+				--image=$DS/$DS/images/qstn.png --window-$DS/images=idiomind \
+				--on-top --window-$DS/images=idiomind \
 				--buttons-layout=edge --center --name=idiomind \
 				--button="       No       ":1 \
 				--button="        Review        ":2 \
@@ -1148,7 +1148,7 @@ if [ "$1" = topic ]; then
 			$yad --notebook --name=Idiomind --center  \
 			--class=Idiomind --align=right --key=$KEY \
 			--tab-borders=0 --center --title="$tpc" \
-			--tab=" Review " --window-icon=idiomind \
+			--tab=" Review " --window-$DS/images=idiomind \
 			--tab=" Learned ($tb2) " --tab=" Notes " \
 			--ellipsize=END --image-on-top \
 			--width="$wth" --height="$eht" --borders=0 \
@@ -1160,7 +1160,7 @@ if [ "$1" = topic ]; then
 				
 				elif [ $ret -eq 5 ]; then
 					rm -f $DT/*.x
-					$DS/plugins/Practice/strt & killall topic.sh &
+					$DS/addons/Practice/strt & killall topic.sh &
 				
 				elif [ $ret -eq 2 ]; then
 					if [ -f "$cnf3" ]; then
@@ -1216,7 +1216,7 @@ if [ "$1" = topic ]; then
 	elif echo "$mde" | grep "fd"; then
 		dir1="$DM_tl/Feeds"
 		dir2="$DC/addons/Learning with news"
-		DF="$DS/plugins/Learning_with_news"
+		DF="$DS/addons/Learning_with_news"
 		STT=$(cat $DC_s/topic_m)
 		FEED=$(cat "$dir2/$lgtl/.rss")
 		ICON=$DF/img/icon.png
@@ -1249,7 +1249,7 @@ if [ "$1" = topic ]; then
 		--image=$ICON --image-on-top  \
 		--tab-borders=0 --center --title="$FEED" \
 		--tab="  News  " --tab="   Saved Conten   " \
-		--ellipsize=END --image-on-top --window-icon=idiomind \
+		--ellipsize=END --image-on-top --window-$DS/images=idiomind \
 		--width="$wth" --height="$eht" --borders=0 \
 		--button=Play:$DS/play \
 		--button=Update:2 \
@@ -1273,7 +1273,7 @@ if [ "$1" = topic ]; then
 			fi
 			
 	elif echo "$mde" | grep "wr"; then
-		$DS/plugins/Stats/rprt T & exit 1
+		$DS/addons/Stats/rprt T & exit 1
 	fi
 	rm -f $DT/*.x
 fi
