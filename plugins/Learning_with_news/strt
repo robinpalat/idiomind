@@ -150,17 +150,19 @@ if [ -n "$feed" ]; then
 				if [ -n "$vs" ]; then
 					if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
 						lg=$(echo $lgtl | awk '{print tolower($0)}')
-						if [ "$lg" != 'english' ] || [ "$lg" != 'spanish' ] || [ "$lg" != 'russian' ]; then
-							if [ "$1" != A ]; then
+						
+						if ([ $lg = "english" ] || [ $lg = "spanish" ] || [ $lg = "russian" ]); then
+						if [ "$1" != A ]; then
 								echo "- feed Mode" > $DC_s/topic_m
 							fi
+							echo "$trgt" | text2wave -o $DT_r/s.wav
+							sox $DT_r/s.wav "$nme.mp3"
+						else
 							rm -fr $DT_r $DT/.uptf$uid $DT/.rss_$uid
 							$yad --image=error --button=gtk-ok:1 \
-							--text=" <b>Error</b>\\n \ q carajo va aca " \
+							--text=" <b>Error</b>\\n \ Festival no puede procesar texto en $lgtl " \
 							--on-top --skip-taskbar & break & exit 1
 						fi
-						echo "$trgt" | text2wave -o $DT_r/s.wav
-						sox $DT_r/s.wav "$nme.mp3"
 					else
 						cd $DT_r
 						echo "$trgt" | $vs
@@ -180,7 +182,7 @@ if [ -n "$feed" ]; then
 						fi
 						rm -fr $DT_r $DT/.uptf$uid $DT/.rss_$uid
 						$yad --image=error --button=gtk-ok:1 \
-						--text=" <b>Error</b>\\n \ q carajo va aca " \
+						--text=" <b>Error</b>\\n \ Espeak no puede procesar texto en japanese " \
 						--on-top --skip-taskbar & break & exit 1
 					fi
 					espeak "$trgt" -v $lg -k 1 -p 65 -a 80 -s 120 -w $DT_r/s.wav
