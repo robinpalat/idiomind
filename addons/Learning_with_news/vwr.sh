@@ -25,7 +25,7 @@ if [[ $1 = V1 ]]; then
 		nuw=1
 	fi
 
-	listen="--button=Play:$DS_pf/audio/ply '$nme'"
+	listen="--button=Listen:$DS_pf/audio/ply '$nme'"
 	echo "$nme" > $DT/.dzmx.x
 
 	n_i="$DS_pf/add n_i '$nme'"
@@ -87,7 +87,7 @@ elif [[ $1 = V2 ]]; then
 	echo "$nme" > $DT/.dzmx.x
 
 	if [[ "$(echo "$nme" | wc -w)" -eq 1 ]]; then
-		listen="--button=Play:play '$DM_tlfk/words/$nme.mp3'"
+		listen="--button=Listen:play '$DM_tlfk/words/$nme.mp3'"
 		tgs=$(eyeD3 "$DM_tlfk/words/$nme.mp3")
 		trg=$(echo "$tgs" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
 		srce=$(echo "$tgs" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
@@ -109,7 +109,7 @@ elif [[ $1 = V2 ]]; then
 		"$listen" --button=gtk-go-up:3 --button=gtk-go-down:2
 
 	else
-		listen="--button=Play:$DS_pf/audio/ply '$nme'"
+		listen="--button=Listen:$DS_pf/audio/ply '$nme'"
 		tgs=$(eyeD3 "$DM_tlfk/$nme.mp3")
 		trg=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
 		srce=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
