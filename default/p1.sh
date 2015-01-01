@@ -1,12 +1,13 @@
 #!/bin/bash
 YAD=yad
-cd /tmp/.idmtp1/idmimp_X015x/tmp
-nmt=$(sed -n 1p /tmp/.idmtp1/idmimp_X015x/ls)
-dir="/tmp/.idmtp1/idmimp_X015x/$nmt"
-lnglbl=$(sed -n 2p "/tmp/.idmtp1/idmimp_X015x/$nmt/.AL")
-lng=$(sed -n 3p "/tmp/.idmtp1/idmimp_X015x/$nmt/.AL")
-lngs=$(sed -n 4p "/tmp/.idmtp1/idmimp_X015x/$nmt/.AL")
-var2=$(sed -n 1p "/tmp/.idmtp1/idmimp_X015x/$nmt/.AL")
+cd /tmp/.idmtp1.$u/idmimp_X015x/tmp
+u=$(echo "$(whoami)")
+nmt=$(sed -n 1p /tmp/.idmtp1.$u/idmimp_X015x/ls)
+dir="/tmp/.idmtp1.$u/idmimp_X015x/$nmt"
+lnglbl=$(sed -n 2p "/tmp/.idmtp1.$u/idmimp_X015x/$nmt/.AL")
+lng=$(sed -n 3p "/tmp/.idmtp1.$u/idmimp_X015x/$nmt/.AL")
+lngs=$(sed -n 4p "/tmp/.idmtp1.$u/idmimp_X015x/$nmt/.AL")
+var2=$(sed -n 1p "/tmp/.idmtp1.$u/idmimp_X015x/$nmt/.AL")
 wth=$(sed -n 5p $HOME/.config/idiomind/s/.rd)
 eht=$(sed -n 6p $HOME/.config/idiomind/s/.rd)
 re='^[0-9]+$'
@@ -70,7 +71,7 @@ else
 		listen="--list"
 	fi
 	
-	dwck="/tmp/.idmtp1/p2.X015x"
+	dwck="/tmp/.idmtp1.$u/p2.X015x"
 	tgs=$(eyeD3 "$file")
 	trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
 	src=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
@@ -90,10 +91,10 @@ fi
 ret=$?
 if [[ $ret -eq 2 ]]; then
 ff=$(($nuw + 1))
-/tmp/.idmtp1/p1.X015x "$nll" "$ff" &
+/tmp/.idmtp1.$u/p1.X015x "$nll" "$ff" &
 elif [[ $ret -eq 3 ]]; then
 ff=$(($nuw - 1))
-/tmp/.idmtp1/p1.X015x "$nll" "$ff" &
+/tmp/.idmtp1.$u/p1.X015x "$nll" "$ff" &
 exit 1
 fi
 

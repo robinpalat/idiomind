@@ -1,6 +1,0 @@
-#!/bin/bash
-idiomind topic &
-sleep 5
-(
-/usr/share/idiomind/ifs/tls srch
-) & exit 1

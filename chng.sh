@@ -21,7 +21,6 @@ if [[ "$1" = chngi ]]; then
 	br="$DS/images/br.png"
 	br2="$DS/images/br2.png"
 	br3="$DS/images/br3.png"
-	osdi="$DS/images/idm.png"
 	
 	if [[ -z $(sed -n 1p $DC_s/cnfg2) ]]; then
 	pst=$(sed -n 1p $DC_s/.pst)
@@ -80,9 +79,23 @@ if [[ "$1" = chngi ]]; then
 		
 		wmm=$(($bcl + $cnt / 2 ))
 		wmt=$(($wmm + 5))
-
-		$osd -i idiomind "$trgt" "$srce\\n" -t 8000  &
-		sleep 3
+		rm -f $imgt
+		eyeD3 --write-images=$DT "$file"
+		imgt=$DT/FRONT_COVER.jpeg
+		if [ -f $imgt ]; then
+			img=$imgt
+			osdi=$imgt
+		else
+			if [[ -n "$(cat "$indp" | grep "$itm")" ]] \
+			&& [[ $sap = TRUE ]]; then
+				img=$br2
+			else
+				img=$br
+			fi
+			osdi=idiomind
+		fi
+		$osd -i "$osdi" "$trgt" "$srce\\n" -t 8000  &
+		sleep 1
 		$aud "$DM_tlt/$itm".mp3 &
 		
 		if [ $bcl -ge 30 ]; then
@@ -137,13 +150,13 @@ if [[ "$1" = chngi ]]; then
 			srce=" - - - "
 		fi
 		if [ "$mrk" = TRUE ]; then
-			trgt=$(echo "<span color='#DF7732'>"tgt"</span>")
+			trgt=" * $tgt"
 		else
-			trgt=$(echo "$tgt")
+			trgt="$tgt"
 		fi
 
-		$osd -i idiomind "$trgt" "$srce\n" -t 7000 &
-		sleep 3
+		$osd -i "$osdi" "$trgt" "$srce\n" -t 7000 &
+		sleep 1
 		$aud "$DM_tlt/words/$itm".mp3 &
 		if [ $bcl -ge 5 ]; then
 			(sleep 2.5 && $aud "$DM_tlt/words/$itm.mp3") &
@@ -176,8 +189,8 @@ if [[ "$1" = chngi ]]; then
 			wmm=$(($bcl + $cnt))
 			wmt=$(($wmm + 5))
 
-			$osd "$trgt" "$srce" -t 8000 -i idiomind &
-			sleep 3
+			$osd -i idiomind "$trgt" "$srce" -t 8000 -i idiomind &
+			sleep 1
 			$aud "$DM_tl/Feeds/kept/$itm".mp3 &
 			sleep $wmm
 					
@@ -211,13 +224,13 @@ if [[ "$1" = chngi ]]; then
 				exmp=$(echo " ")
 			fi
 			if [ "$mrk" = TRUE ]; then
-				trgt=$(echo "<span color='#DF7732'>"$tgt"</span>")
+				trgt="* $tgt"
 			else
-				trgt=$(echo "$tgt")
+				trgt="$tgt"
 			fi
 
 			$osd -i idiomind "$trgt" "$srce\\n\\n[ $exm ]" -t 7000 &
-			sleep 3
+			sleep 1
 			$aud "$DM_tl/Feeds/kept/words/$itm".mp3 &
 			if [ $bcl -ge 5 ]; then
 				(sleep 4 && $aud "$DM_tl/Feeds/kept/words/$itm.mp3") &
@@ -274,7 +287,7 @@ elif [ "$1" != chngi ]; then
 			ret=$?
 
 			if [ $ret -eq 3 ]; then
-				$DS/add n_t
+				$DS/add.sh n_t
 				exit 1
 			elif [ $ret -eq 1 ]; then
 				exit 1

@@ -1,7 +1,8 @@
 #!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
 DS_pf="$DS/addons/Learning_with_news"
-vwr="$DS_pf/vwr"
+vwr="$DS_pf/vwr.sh"
+ap=$(cat $DC_s/cnfg1 | sed -n 5p)
 
 if [[ $1 = V1 ]]; then
 
@@ -25,7 +26,7 @@ if [[ $1 = V1 ]]; then
 		nuw=1
 	fi
 
-	listen="--button=Play:$DS_pf/audio/ply '$nme'"
+	listen="--button=Listen:$DS_pf/audio/ply '$nme'"
 	echo "$nme" > $DT/.dzmx.x
 
 	n_i="$DS_pf/add n_i '$nme'"
@@ -34,14 +35,19 @@ if [[ $1 = V1 ]]; then
 	srce=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
 	lwrd=$(echo "$tgs" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' | tr '_' '\n')
 	lnk=$(cat "$DM_tl/Feeds/conten/$nme.lnk")
+	
+	if [ "$ap" = TRUE ]; then
+		killall play
+		play "$DM_tl/Feeds/conten/$nme.mp3" &
+	fi
 
 	echo "$lwrd" | awk '{print $0""}' | $yad --list \
 	--window-icon=idiomind --scroll --quoted-output \
 	--skip-taskbar --center --title=" " --borders=10 \
-	--text="<big>$trg </big><a href='$lnk'><small>More</small></a>\\n\\n<small><i>$srce</i></small>\\n" \
+	--text="<big>$trg </big><a href='$lnk'><small>More</small></a>\\n\\n<small><i>$srce</i></small>\\n\\n\\n" \
 	--width="$wth" --height="$eht" --center \
 	--column=$lgtl:TEXT --column=$lgsl:TEXT \
-	--expand-column=0 --limit=20 \
+	--expand-column=0 --limit=20 --text-align=center \
 	--button=gtk-save:"$DS_pf/add n_i '$nme'" "$listen" \
 	--button=gtk-go-up:3 --button=gtk-go-down:2 \
 	--dclick-action="$DS_pf/audio/ply.sh '$nme'"
@@ -83,10 +89,15 @@ elif [[ $1 = V2 ]]; then
 	fi
 
 	listen="--button=gtk-media-play:play '$DM_tlfk/$nme.mp3'"
+	lnk=$(cat "$DM_tlfk/$nme.lnk")
 	echo "$nme" > $DT/.dzmx.x
+	if [ "$ap" = TRUE ]; then
+		killall play
+		play "$DM_tlfk/words/$nme.mp3" &
+	fi
 
 	if [[ "$(echo "$nme" | wc -w)" -eq 1 ]]; then
-		listen="--button=Play:play '$DM_tlfk/words/$nme.mp3'"
+		listen="--button=Listen:play '$DM_tlfk/words/$nme.mp3'"
 		tgs=$(eyeD3 "$DM_tlfk/words/$nme.mp3")
 		trg=$(echo "$tgs" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
 		srce=$(echo "$tgs" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
@@ -108,17 +119,22 @@ elif [[ $1 = V2 ]]; then
 		"$listen" --button=gtk-go-up:3 --button=gtk-go-down:2
 
 	else
-		listen="--button=Play:$DS_pf/audio/ply '$nme'"
+		if [ "$ap" = TRUE ]; then
+			killall play
+			play "$DM_tlfk/$nme.mp3" &
+		fi
+	
+		listen="--button=Listen:$DS_pf/audio/ply '$nme'"
 		tgs=$(eyeD3 "$DM_tlfk/$nme.mp3")
 		trg=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
 		srce=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
 		lwrd=$(echo "$tgs" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' | tr '_' '\n')
 		
 		echo "$lwrd" | awk '{print $0""}' | $yad --list \
-		--window-icon=idiomind --scroll \
+		--window-icon=idiomind --scroll --text-align=center \
 		--skip-taskbar --center --title=" " --borders=10 \
 		--quoted-output --selectable-labels \
-		--text="<big>$trg</big>\\n\\n<small><i>$srce</i></small>\\n" \
+		--text="<big>$trg </big><a href='$lnk'><small>More</small></a>\\n\\n<small><i>$srce</i></small>\\n\\n\\n" \
 		--width="$wth" --height="$eht" --center \
 		--column=$lgtl:TEXT --column=$lgsl:TEXT \
 		--expand-column=0 --limit=20 \

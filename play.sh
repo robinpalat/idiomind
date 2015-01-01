@@ -156,7 +156,7 @@ if [[ "$1" = d ]]; then
 		elif [ $ret -eq 2 ]; then
 			kill -9 $(pgrep -f "$yad --list ") &
 			rm "$sinda" "$sinde" "$inde" "$inda"
-			$DS/play
+			$DS/play.sh
 			rm -f $DT/*.s
 			exit 1
 		
@@ -274,7 +274,7 @@ $yad --list --on-top \
 --window-icon=idiomind --no-headers \
 --buttons-layout=end --skip-taskbar \
 --borders=0 $btn2 $btn1 --hide-column=1 \
---dclick-action='/usr/share/idiomind/play d' \
+--dclick-action='/usr/share/idiomind/play.sh d' \
 --column=Action:TEXT --column=icon:IMG \
 --column=Action:TEXT --column=icon:CHK \
 "Words" "$img1" "$Words" $st1 \
@@ -362,7 +362,7 @@ if  [[ "$ret" -eq 0 ]]; then
 #-------------------------------------stop 
 elif [[ "$ret" -eq 2 ]]; then
 	rm -fr $DT/.$uid $slct $DT/.p__$uid &
-	$DS/stop P & exit 1
+	$DS/stop.sh P & exit 1
 	
 else
 	if  [ ! -f $DT/.p__$uid ]; then
@@ -374,7 +374,7 @@ fi
 
 #-----------------------------------------acondicion
 rm -f $slct
-$DS/stop P
+$DS/stop.sh P
 #-----------------------------------------condicion 
 
 w=$(sed -n 1p $DC_s/cnfg5)
@@ -386,16 +386,16 @@ if [ -z "$(echo "$w""$s""$f""$p" | grep -o "TRUE")" ]; then
 	notify-send "Error " "No Hay Nada \
 	Indicado para Reproduccir" -i info -t 2000 &&
 	sleep 5
-	$DS/stop
+	$DS/stop.sh
 fi
 
 if [[ "$(cat ./indx | wc -l)" -lt 1 ]]; then
 	notify-send -i info "nada para reproducir" -t 9000 &
 	rm -f $DT/.p__$uid &
-	$DS/stop S & exit
+	$DS/stop.sh S & exit
 fi
 
 echo "$(date '+%Y %m %d %l %M') -plyrt $tpc -plyrt" >> \
 $DC/addons/stats/.log &
 
-$DS/bcle & exit 1
+$DS/bcle.sh & exit 1

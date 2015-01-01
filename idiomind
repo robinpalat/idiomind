@@ -303,7 +303,7 @@ if [ -z "$1" ]; then
 					fi
 					let n++
 				done
-				$DS/mngr mkmn & exit 1
+				$DS/mngr.sh mkmn & exit 1
 			fi
 			exit 1
 		else
@@ -459,7 +459,7 @@ if [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 				mv -f $DC/topics/$lgtli/.in_s.tmp $DC/topics/$lgtli/.in_s
 				cp -f $DS/$DS/images/flags/$lng.png $DT/tryidmd$DS/images
 				chmod 777 $DT/tryidmd$DS/images
-				$DS/mngr mkmn &&
+				$DS/mngr.sh mkmn &&
 				"$dric/tpc.sh" &
 				rm -r -f $DT/idmimp_$c $DT/*.$c \
 				$DT/import.tar.gz & exit 1
@@ -510,7 +510,7 @@ if [ "$1" = topic ]; then
 		ss=$(cat .sinx | wc -l)
 		itxt="\\n<big>  <b>$ttl</b> </big> <small><small><b>\\n    $ss Sentences     $ws Words</b></small></small>\\n"
 		cd $DS
-		KEY=12356
+		KEY=12359
 		cnf1=$(mktemp $DT/cnf1.XXXX.x)
 		cnf2=$(mktemp $DT/cnf2.XXXX.x)
 		cnf3=$(mktemp $DT/cnf3.XXXX.x)
@@ -529,7 +529,7 @@ if [ "$1" = topic ]; then
 			--tab="  Notes  " --window-$DS/images=idiomind \
 			--buttons-layout=edge --image-on-top --class=idiomind \
 			--width="$wth" --height="$eht" --borders=0  \
-			--button=Delete:"$DS/mngr dlt" \
+			--button=Delete:"$DS/mngr.sh dlt" \
 			--button=Close:2 --always-print-result
 			ret=$?
 					
@@ -576,10 +576,10 @@ if [ "$1" = topic ]; then
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/150))
 				fi
-				# si el topic aprendido tiene mas de 30 dias ( 100%) entonces pone su nombre en la lista de repasar borra de la lista "ok" , actualiza la lista de topic (mngr mkmn ) y muestra el cuadro con la pregunta de reiniciar para repasar o no .
+				# si el topic aprendido tiene mas de 30 dias ( 100%) entonces pone su nombre en la lista de repasar borra de la lista "ok" , actualiza la lista de topic (mngr.sh mkmn ) y muestra el cuadro con la pregunta de reiniciar para repasar o no .
 				if [ "$RM" -ge 100 ]; then
 					echo "4" > "$DC_tlt/.stts"
-					$DS/mngr mkmn &
+					$DS/mngr.sh mkmn &
 					RM=100
 					$yad --title="$tpc" --window-$DS/images=idiomind \
 					--borders=20 --buttons-layout=edge --name=idiomind \
@@ -594,7 +594,7 @@ if [ "$1" = topic ]; then
 						if [ "$ret" -eq 2 ]; then
 							rm -f $DT/*.x
 							echo "3" > "$DC_tlt/.stts"
-							$DS/mngr mkmn
+							$DS/mngr.sh mkmn
 							rm -f "$ls2" 
 							rm -f "$DC_tlt/.lk"
 							cp -f "$ls0" "$ls1" && idiomind topic & exit 1
@@ -609,7 +609,7 @@ if [ "$1" = topic ]; then
 				--no-headers --list --plug=$KEY --tabnum=2 \
 				--expand-column=1 --ellipsize=END --print-all \
 				--column=Name:TEXT --column=Review:CHK \
-				--dclick-action='./vwr v2' > "$cnf2" &
+				--dclick-action='./vwr.sh v2' > "$cnf2" &
 				$yad --text-info --plug=$KEY --margins=14 \
 				--wrap --editable --text="$itxt" \
 				--tabnum=3 --fore='gray40' \
@@ -627,14 +627,14 @@ if [ "$1" = topic ]; then
 			else
 				cat "$ls1" | awk '{print $0"\n"}' | $yad \
 				--no-headers --list --plug=$KEY --tabnum=1 \
-				--dclick-action='./vwr v1'\
+				--dclick-action='./vwr.sh v1'\
 				--expand-column=1 --ellipsize=END --print-all \
 				--column=Name:TEXT --column=Learned:CHK > "$cnf1" &
 				cat "$ls2" | awk '{print $0"\n"}' | $yad \
 				--no-headers --list --plug=$KEY --tabnum=2 \
 				--expand-column=1 --ellipsize=END --print-all \
 				--column=Name:TEXT --column=Review:CHK \
-				--dclick-action='./vwr v2' > "$cnf2" &
+				--dclick-action='./vwr.sh v2' > "$cnf2" &
 				$yad --text-info --plug=$KEY --margins=14 \
 				--text="$itxt" \
 				--tabnum=3 --fore='gray40' --wrap --editable \
@@ -647,7 +647,7 @@ if [ "$1" = topic ]; then
 				--tab=" Learned ($tb2) " --tab=" Notes " \
 				--ellipsize=END --image-on-top \
 				--width="$wth" --height="$eht" --borders=0 \
-				--button=Play:./play --button=Practice:5 \
+				--button=Play:./play.sh --button=Practice:5 \
 				--button=Edit:3 --button=Close:2 --always-print-result
 			fi
 				ret=$?
@@ -674,7 +674,7 @@ if [ "$1" = topic ]; then
 							rm -f "$DC_tlt/.lk"
 							rm -f $DT/*.x
 							echo "4" > "$DC_tlt/.stts"
-							$DS/mngr mkmn
+							$DS/mngr.sh mkmn
 							rm -f "$ls2"
 							cp -f "$ls0" "$ls1" && idiomind topic & exit 1
 							
@@ -742,7 +742,7 @@ if [ "$1" = topic ]; then
 				> "$DC_tlt/.lk"
 				echo "$(date +%m/%d/%Y)" > "$DC_tlt/.trw"
 				echo "7" > "$DC_tlt/.stts"
-				$DS/mngr mkmn &
+				$DS/mngr.sh mkmn &
 			fi
 			
 			dts=$(cat "$DC_tlt/.trw" | wc -l)
@@ -770,7 +770,7 @@ if [ "$1" = topic ]; then
 				
 			if [ "$RM" -ge 100 ]; then
 				echo "4" > "$DC_tlt/.stts"
-				$DS/mngr mkmn &
+				$DS/mngr.sh mkmn &
 				RM=100
 				$yad --title="$tpc" --window-$DS/images=idiomind \
 				--borders=20 --buttons-layout=edge --name=idiomind \
@@ -786,7 +786,7 @@ if [ "$1" = topic ]; then
 						rm -f "$DC_tlt/.lk"
 						rm -f $DT/*.x
 						echo "3" > "$DC_tlt/.stts"
-						$DS/mngr mkmn
+						$DS/mngr.sh mkmn
 						rm -f "$ls2" 
 						cp -f "$ls0" "$ls1" && idiomind topic & exit 1
 					fi 
@@ -800,7 +800,7 @@ if [ "$1" = topic ]; then
 			--no-headers --list --plug=$KEY --tabnum=2 \
 			--expand-column=1 --ellipsize=END --print-all \
 			--column=Name:TEXT --column=Review:CHK \
-			--dclick-action='./vwr v2' > "$cnf2" &
+			--dclick-action='./vwr.sh v2' > "$cnf2" &
 			$yad --text-info --plug=$KEY --margins=14 \
 			--wrap --editable --text="$itxt" \
 			--tabnum=3 --fore='gray40' \
@@ -916,10 +916,10 @@ if [ "$1" = topic ]; then
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/150))
 				fi
-			 # si el topic aprendido tiene mas de 30 dias ( 100%) entonces pone su nombre en la lista de repasar borra de la lista "ok" , actualiza la lista de topic (mngr mkmn ) y muestra el cuadro con la pregunta de reiniciar para repasar o no .
+			 # si el topic aprendido tiene mas de 30 dias ( 100%) entonces pone su nombre en la lista de repasar borra de la lista "ok" , actualiza la lista de topic (mngr.sh mkmn ) y muestra el cuadro con la pregunta de reiniciar para repasar o no .
 				if [ "$RM" -ge 100 ]; then
 					echo "4" > "$DC_tlt/.stts"
-					$DS/mngr mkmn &
+					$DS/mngr.sh mkmn &
 					RM=100
 					$yad --title="$tpc" --window-$DS/images=idiomind \
 					--borders=20 --buttons-layout=edge --name=idiomind \
@@ -935,7 +935,7 @@ if [ "$1" = topic ]; then
 							rm -f "$DC_tlt/.lk"
 							rm -f $DT/*.x
 							echo "3" > "$DC_tlt/.stts"
-							$DS/mngr mkmn
+							$DS/mngr.sh mkmn
 							rm -f "$ls2"
 							cp -f "$ls0" "$ls1" && idiomind topic & exit 1
 						fi 
@@ -949,7 +949,7 @@ if [ "$1" = topic ]; then
 				--no-headers --list --plug=$KEY --tabnum=2 \
 				--expand-column=1 --ellipsize=END --print-all \
 				--column=Name:TEXT --column=Review:CHK \
-				--dclick-action='./vwr v2' > "$cnf2" &
+				--dclick-action='./vwr.sh v2' > "$cnf2" &
 				$yad --text-info --plug=$KEY --margins=14 \
 				--wrap --editable --text="$itxt" \
 				--tabnum=3 --fore='gray40' \
@@ -969,12 +969,12 @@ if [ "$1" = topic ]; then
 				--no-headers --list --plug=$KEY --tabnum=1 $t \
 				--expand-column=1 --ellipsize=END --print-all \
 				--column=Name:TEXT --column=Learned:CHK \
-				--dclick-action='./vwr v1' > "$cnf1" &
+				--dclick-action='./vwr.sh v1' > "$cnf1" &
 				cat "$ls2" | awk '{print $0"\n"}' | $yad \
 				--no-headers --list --plug=$KEY --tabnum=2 \
 				--expand-column=1 --ellipsize=END --print-all \
 				--column=Name:TEXT --column=Review:CHK \
-				--dclick-action='./vwr v2' > "$cnf2" &
+				--dclick-action='./vwr.sh v2' > "$cnf2" &
 				$yad --text-info --plug=$KEY --margins=14 \
 				--editable --wrap --text="$itxt" \
 				--tabnum=3 --fore='gray40' --column="" --filename="$nt" \
@@ -986,7 +986,7 @@ if [ "$1" = topic ]; then
 				--tab=" Learned ($tb2) " --tab=" Notes " \
 				--ellipsize=END --image-on-top --window-$DS/images=idiomind \
 				--width="$wth" --height="$eht" --borders=0 \
-				--button=Play:./play --button=Practice:5 \
+				--button=Play:./play.sh --button=Practice:5 \
 				--button=Edit:3 --button=Close:2 --always-print-result
 			fi
 				ret=$?
@@ -1013,7 +1013,7 @@ if [ "$1" = topic ]; then
 							rm -f "$DC_tlt/.lk"
 							rm -f $DT/*.x
 							echo "9" > "$DC_tlt/.stts"
-							$DS/mngr mkmn
+							$DS/mngr.sh mkmn
 							rm -f "$ls2"
 							cp -f "$ls0" "$ls1" && idiomind topic & exit 1
 							
@@ -1080,7 +1080,7 @@ if [ "$1" = topic ]; then
 				> "$DC_tlt/.lk"
 				echo "$(date +%m/%d/%Y)" > "$DC_tlt/.trw"
 				echo "7" > "$DC_tlt/.stts"
-				$DS/mngr mkmn &
+				$DS/mngr.sh mkmn &
 			fi
 			
 			dts=$(cat "$DC_tlt/.trw" | wc -l)
@@ -1108,7 +1108,7 @@ if [ "$1" = topic ]; then
 			
 			if [ "$RM" -ge 100 ]; then
 				echo "9" > "$DC_tlt/.stts"
-				$DS/mngr mkmn &
+				$DS/mngr.sh mkmn &
 				RM=100
 				
 				$yad --title="$tpc" \
@@ -1126,7 +1126,7 @@ if [ "$1" = topic ]; then
 						echo "8" > "$DC_tlt/.stts"
 						rm -f "$DC_tlt/.lk"
 						rm -f $DT/*.x
-						$DS/mngr mkmn &
+						$DS/mngr.sh mkmn &
 						rm -f "$ls2"
 						cp -f "$ls0" "$ls1" && idiomind topic & exit 1
 					fi
@@ -1140,7 +1140,7 @@ if [ "$1" = topic ]; then
 			--no-headers --list --plug=$KEY --tabnum=2 \
 			--expand-column=1 --ellipsize=END --print-all \
 			--column=Name:TEXT --column=Review:CHK \
-			--dclick-action='./vwr v2' > "$cnf2" &
+			--dclick-action='./vwr.sh v2' > "$cnf2" &
 			$yad --text-info --plug=$KEY --margins=14 \
 			--editable --wrap --text="$itxt" \
 			--tabnum=3 --fore='gray40' --column="" --filename="$nt" \
@@ -1220,7 +1220,7 @@ if [ "$1" = topic ]; then
 		STT=$(cat $DC_s/topic_m)
 		FEED=$(cat "$dir2/$lgtl/.rss")
 		ICON=$DF/img/icon.png
-		KEY=12311
+		KEY=12315
 		
 		if echo "$STT" | grep "Actualizando"; then
 			info=$(echo "<i>Actualizando...</i>")
@@ -1238,11 +1238,11 @@ if [ "$1" = topic ]; then
 		--no-headers --list --listen --plug=$KEY --tabnum=1 \
 		--text=" <small>$info</small>" \
 		--expand-column=1 --ellipsize=END --print-all \
-		--column=Name:TEXT --dclick-action='./vwr V1' &
+		--column=Name:TEXT --dclick-action='./vwr.sh V1' &
 		cat "$DC_tl/Feeds/.t-inx" | awk '{print $0""}' \
 		| $yad --no-headers --list --listen --plug=$KEY --tabnum=2 \
 		--expand-column=1 --ellipsize=END --print-all \
-		--column=Name:TEXT --dclick-action='./vwr V2' &
+		--column=Name:TEXT --dclick-action='./vwr.sh V2' &
 		$yad --notebook --name=Idiomind --center \
 		--class=Idiomind --align=right --key=$KEY \
 		--text=" <big><b>Feeds </b></big>\\n <small>$FEED \\n</small>" \
@@ -1251,7 +1251,7 @@ if [ "$1" = topic ]; then
 		--tab="  News  " --tab="   Saved Conten   " \
 		--ellipsize=END --image-on-top --window-$DS/images=idiomind \
 		--width="$wth" --height="$eht" --borders=0 \
-		--button=Play:$DS/play \
+		--button=Play:$DS/play.sh \
 		--button=Update:2 \
 		--button=Edit:3 \
 		--button=Close:1

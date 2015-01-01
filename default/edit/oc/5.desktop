@@ -1,5 +1,5 @@
 [Desktop Entry]
-Exec=/usr/share/idiomind/ifs/upld
+Exec=/usr/share/idiomind/ifs/upld.sh
 Icon=/usr/share/idiomind/images/upload.png
 Version=3
 Encoding=UTF-8

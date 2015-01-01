@@ -1,7 +1,7 @@
 #!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
-$DS/stop T
-icn=$DS/images/cnn.png
+$DS/stop.sh T
+
 gtdr="$(cd "$(dirname "$0")" && pwd)"
 topic=$(echo "$gtdr" | sed 's|\/|\n|g' | sed -n 8p)
 DC_tlt="$DC_tl/$topic"
@@ -12,7 +12,7 @@ else
 	title="$topic"
 fi
 
-if [ "$1" = 2 ]; then
+if [[ $1 = 2 ]]; then
 	if cat "$DC_tl/.nstll" | grep -Fxo "$topic"; then
 		$DC_s/chng.sh $DS/ifs/info2 2 & exit 1
 	else
@@ -141,7 +141,6 @@ if [ -d "$DC_tlt" ]; then
 	fi
 	
 	if cat "$DC_tl/.nstll" | grep -Fxo "$topic"; then
-	
 		$ > $DC_s/fnew.id
 		echo "- $title" > $DC_s/topic_m
 		echo "$topic" > $DC_s/topic.id
@@ -201,7 +200,7 @@ if [ -d "$DC_tlt" ]; then
 	fi
 	
 	sleep 1
-	notify-send --icon=$icn \
+	notify-send --icon=idiomind \
 	"$topic" "It's your topic now" -t 2000 & exit
 else
 	$yad --name=idiomind \

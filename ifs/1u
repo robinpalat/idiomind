@@ -16,9 +16,9 @@ idmnd=$(yad --center --width=520 --height=280 --fixed \
 	--title="Idiomind" --form --borders=10 --align=right \
 	--button=Ok:0 \
 	--field="<small>\\t\\t\\t\\tChose language for learning : </small>:CB" \
-	!"English!French!German!Italian!Japanese!Portuguese!Spanish!Chinese"\
+	!"English!French!German!Italian!Japanese!Portuguese!Spanish!Vietnamese!Chinese!"\
 	--field="<small>\\t\\t\\t\\tYour language : </small>:CB" \
-	!"English!French!German!Italian!Japanese!Portuguese!Spanish!Vietnamese!Chinese" \
+	!"English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
 	"$ins" "$int" --field=":lbl")
 
 ret=$?
@@ -117,6 +117,11 @@ elif [[ $ret -eq 0 ]]; then
 	if echo "$target" | grep "Chinese"; then
 		echo "zh-cn" > $DIR2/s/langt
 		echo "Chinese" >> $DIR2/s/langt
+	fi
+	
+	if echo "$target" | grep "Russian"; then
+		echo "ru" > $DIR2/s/langt
+		echo "Russian" >> $DIR2/s/langt
 	fi
 	
 	if echo "$source" | grep "English"; then
@@ -236,6 +241,19 @@ elif [[ $ret -eq 0 ]]; then
 		echo "Vietnamese" >> $DIR2/s/lang
 	fi
 	
+	if echo "$source" | grep "Russian"; then
+		if [ ! -d "$DIR1"/Russian ]; then
+			mkdir "$DIR1"/Russian
+			mkdir "$DIR1"/Russian/.share
+			mkdir "$DIR3"/Russian
+			mkdir "$DIR4"/Russian
+			mkdir "$DIR4"/Russian/subscripts
+			cp -f "$drtf"/Russian "$DIR4"/Russian/subscripts/Example
+		fi
+		echo "ru" > $DIR2/s/lang
+		echo "Russian" >> $DIR2/s/lang
+	fi
+	
 	b=$(tr -dc a-z < /dev/urandom | head -c 1)
 	c=$(echo $(($RANDOM%100)))
 	echo $c$b > $DIR2/s/cnfg4
@@ -244,7 +262,7 @@ elif [[ $ret -eq 0 ]]; then
 	touch $DIR2/s/topic.id
 	touch $DIR2/s/fnew.id
 	touch $DIR2/s/topic_m
-	/usr/share/idiomind/mngr mkmn
+	/usr/share/idiomind/mngr.sh mkmn
 	idiomind
 	
 	exit 1

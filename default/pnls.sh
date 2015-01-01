@@ -73,7 +73,7 @@ fi
 cd $DM_tl
 
 if [ $(ls * -d | wc -l) -lt 1 ]; then
-$DS/chng $DS/ifs/info1 2 & exit 1
+$DS/chng.sh $DS/ifs/info1 2 & exit 1
 fi
 
 #E=$(sed -n 1p "$DC/s/topic_m")
@@ -82,14 +82,14 @@ fi
 #fi
 
 if [ -z "$tpe" ]; then
-$DS/chng $DS/ifs/info2 2 & exit 1
+$DS/chng.sh $DS/ifs/info2 2 & exit 1
 fi
 
 if [ ! -d "$DC_tlt" ]; then
-$DS/chng $DS/ifs/info2 2 & exit 1
+$DS/chng.sh $DS/ifs/info2 2 & exit 1
 fi
 
-$DS/default/add.py
+$DS/default/nw.sh
 rm "$DC_tlt"/lstntry &
 exit 1
 else
