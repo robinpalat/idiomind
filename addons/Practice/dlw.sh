@@ -32,7 +32,7 @@ while [ $n -le $(cat ./stp$1 | wc -l) ]; do
 		--skip-taskbar --title=" " --undecorated \
 		--field="Play:BTN" "$listen" \
 		--field="<big><big><big><big><big><b>$exc<span color='#949494'>$lst</span></b></big></big></big></big></big>":lbl \
-		--button=Close:1 \
+		--button=gtk-close:1 \
 		--button="   ( $good ) Got It   ":3 \
 		--button="   ( $wrong ) Nope   ":4 \
 		--width=365 --height=180
@@ -48,7 +48,7 @@ Play
 :BTN" "$listen" \
 		--text="\\n\\n\\n<big><big><big><big><big><b>$exc<span color='#949494'>$lst</span></b></big></big></big></big></big>" \
 		--field=" ":lbl \
-		--button=Close:1 \
+		--button=gtk-close:1 \
 		--button="   ( $good ) Got It   ":3 \
 		--button="   ( $wrong ) Nope   ":4 \
 		--width=365 --height=220

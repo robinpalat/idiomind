@@ -7,7 +7,6 @@ if [ -z $1 ]; then
 	cn=$(sed -n 2p $DC_s/.sncardd)
 	
 	if [ -z "$cn" ]; then
-		img=$DS/images/tr.png
 		msj=" ( No especificado )"
 	else
 		img="$cn"
@@ -15,7 +14,7 @@ if [ -z $1 ]; then
 
 	$yad --fixed --center --align=center \
 	--text="   Recording with  <b>$msj</b>" \
-	--image="$img" --name=idiomind \
+	---name=idiomind \
 	--width=350 --height=120 --center \
 	--on-top --skip-taskbar \
 	--button=Change:2 --button=gtk-apply:3 \
@@ -59,7 +58,6 @@ if [ $1 = pnl ]; then
 	--field="\\n\\n:lbl" "" \
 	--field=":lbl" "" \
 	--field="  <small>Or record</small>:lbl" "" )
-		
 	ret=$?
 	
 		audio=$(echo "$FLAS" | cut -d "|" -f2)
@@ -90,18 +88,17 @@ elif [ $1 = rec ]; then
 	paud=$(sed -n 17p $DC_s/cnfg1)
 	DT_r="$2"
 	t="$3"
-	img=$DS/images/rec.png
 	killall play
 	inf=$(sed -n 1p $DC_s/.sncardd)
 	rm -f $DT_r/audtm.mp3
 	
 	$yad --fixed --align=center --timeout="$t" \
-	--text="Recording with: <b>$inf</b>" \
-	--timeout-indicator=bottom \
-	--image=$img --image-on-top --width=350 --height=100 \
+	--text="Recording with: <b>$inf</b>\n\n<small><sub>Time:</sub></small>" \
+	--timeout-indicator=bottom --geometry=0-0-0-0\
+	--image-on-top --width=350 --height=100 \
 	--on-top --skip-taskbar --no-buttons --center \
 	--window-icon=idiomind --center --borders=10 \
-	--title="Recording..." \
+	--title="Recording ..." \
 	--field="\\n\\n$NAME":lbl &
 	
 	sox -t alsa default $DT_r/audtm.mp3 silence 1 0.1 5% 1 1.0 5% &

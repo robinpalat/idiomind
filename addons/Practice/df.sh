@@ -37,7 +37,7 @@ while [ $n -le $(cat ./stp$1 | wc -l) ]; do
 		--window-icon=idiomind --buttons-layout=edge --borders=0 \
 		--field="<big><big><big><big><big><big><big><big><b>$trgt</b></big></big></big></big></big></big></big></big>":lbl \
 		--field="<span color='#949494'><span font='monospace'><b> $stgt </b></span></span>":lbl \
-		--button="Close":1 \
+		--button="gtk-close":1 \
 		--button="   ( $good ) Got It   ":3 \
 		--button="   ( $wrong ) Nope   ":4 \
 		--width=365 --height=300
@@ -49,7 +49,7 @@ while [ $n -le $(cat ./stp$1 | wc -l) ]; do
 		--window-icon=idiomind --buttons-layout=edge --borders=0 \
 		--field="\\n\\n<big><big><big><big><big><big><big><big><b>$trgt</b></big></big></big></big></big></big></big></big>":lbl \
 		--field="<span color='#949494'><span font='monospace'><b>$stgt</b></span></span>\\n\\n\\n":lbl \
-		--button="Close":1 \
+		--button="gtk-close":1 \
 		--button="   ( $good ) Got It   ":3 \
 		--button="   ( $wrong ) Nope   ":4 \
 		--width=365 --height=220

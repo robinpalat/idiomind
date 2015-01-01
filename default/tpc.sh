@@ -1,6 +1,6 @@
 #!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
-$DS/stop.sh T
+$DS/stop T
 icn=$DS/images/cnn.png
 gtdr="$(cd "$(dirname "$0")" && pwd)"
 topic=$(echo "$gtdr" | sed 's|\/|\n|g' | sed -n 8p)
@@ -12,7 +12,7 @@ else
 	title="$topic"
 fi
 
-if [ $1 = 2 ]; then
+if [ "$1" = 2 ]; then
 	if cat "$DC_tl/.nstll" | grep -Fxo "$topic"; then
 		$DC_s/chng.sh $DS/ifs/info2 2 & exit 1
 	else

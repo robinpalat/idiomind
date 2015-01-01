@@ -1,12 +1,13 @@
 #!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
-uid=$(sed -n 1p $DC_s/cnfg4)
+
 wth=$(sed -n 5p $DC_s/.rd)
 eht=$(sed -n 6p $DC_s/.rd)
-if [ -f $DT/.l_$uid ]; then
+if [ -f $DT/.lc ]; then
+	echo "--loock"
 	exit 1
 fi
-> $DT/.l_$uid
+> $DT/.lc
 
 ICON=$DS/images/icon.png
 cd $DS/addons
@@ -79,7 +80,7 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 	
 	if [ $ret -eq 0 ]; then
 	
-		rm -f $DT/.l_$uid
+		rm -f $DT/.lc
 		cp -f "$cnf1" $DC_s/cnfg1
 		[ ! -d  $HOME/.config/autostart ] && mkdir $HOME/.config/autostart
 		config_dir=$HOME/.config/autostart
@@ -105,7 +106,9 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 				chmod +x $config_dir/idiomind.desktop
 			fi
 		else
-			rm $config_dir/idiomind.desktop
+			if [ -f $config_dir/idiomind.desktop ]; then
+				rm $config_dir/idiomind.desktop
+			fi
 		fi
 		
 		if cat "$cnf1" | grep "English" && [ English != $lgtl ] ; then
@@ -342,11 +345,12 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			$DS/mngr mkmn
 		fi
 		
-		rm -f $cnf1 $cnf2 $cnf3 $DT/.l_$uid & exit 1
+		rm -f $cnf1 $cnf2 $cnf3 $DT/.lc & exit 1
 		
 	elif [ $ret -eq 1 ]; then
-		rm -f $cnf1 $cnf2 $cnf3 $DT/.l_$uid & exit 1
+		rm -f $cnf1 $cnf2 $cnf3 $DT/.lc & exit 1
 		
 	else
-		rm -f $cnf1 $cnf2 $cnf3 $DT/.l_$uid & exit 1
+		rm -f $cnf1 $cnf2 $cnf3 $DT/.lc & exit 1
 	fi
+exit 0

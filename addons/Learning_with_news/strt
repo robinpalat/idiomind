@@ -29,7 +29,7 @@ if echo "$STT" | grep "Actualizando..."; then
 	exit 1
 fi
 sleep 1
-uid=$(sed -n 1p $DC_s/cnfg4)
+
 dct="$DS/addons/Dics/dict"
 feed=$(sed -n 1p "$DC/addons/Learning with news/$lgtl/link")
 rsrc=$(cat "$DC/addons/Learning with news/$lgtl/.rss")
@@ -99,7 +99,7 @@ if [ -n "$feed" ]; then
 	
 	DT_r=$(mktemp -d $DT/XXXXXX)
 	cd $DT_r
-	echo "$rsrc" > $DT/.rss_$uid
+	echo "$rsrc" > $DT/.rss
 	rsstail -NHPl -n 8 -1 -u "$feed" > rss.txt
 	cat rss.txt | sed -n 2~2p | sed 's/^ *//g' | sed 's/\&/\\/g' > lnk
 	cat rss.txt | sed -n 1~2p | sed 's/://g' | sed 's/\&//g' | sed 's/"//g' \
@@ -115,7 +115,7 @@ if [ -n "$feed" ]; then
 		--width=380 --height=50 --borders=3 \
 		--skip-taskbar --title=Idiomind \
 		--button=Ok:0 &
-		rm -fr $DT_r .rss_$uid & exit 1
+		rm -fr $DT_r .rss & exit 1
 	fi
 	
 	n=1
@@ -158,7 +158,7 @@ if [ -n "$feed" ]; then
 							echo "$trgt" | text2wave -o $DT_r/s.wav
 							sox $DT_r/s.wav "$nme.mp3"
 						else
-							rm -fr $DT_r $DT/.uptf$uid $DT/.rss_$uid
+							rm -fr $DT_r $DT/.uptf$uid $DT/.rss
 							$yad --image=error --button=gtk-ok:1 \
 							--text=" <b>Error</b>\\n \ Festival no puede procesar texto en $lgtl " \
 							--on-top --skip-taskbar & break & exit 1
@@ -180,7 +180,7 @@ if [ -n "$feed" ]; then
 						if [ "$1" != A ]; then
 							echo "- feed Mode" > $DC_s/topic_m
 						fi
-						rm -fr $DT_r $DT/.uptf$uid $DT/.rss_$uid
+						rm -fr $DT_r $DT/.uptf$uid $DT/.rss
 						$yad --image=error --button=gtk-ok:1 \
 						--text=" <b>Error</b>\\n \ Espeak no puede procesar texto en japanese " \
 						--on-top --skip-taskbar & break & exit 1
@@ -268,7 +268,7 @@ if [ -n "$feed" ]; then
 	done
 
 	mv -f $DT_r/rss "$DC_tl/Feeds/.updt.lst"
-	rm -fr $DT_r $DT/.uptf$uid $DT/.rss_$uid
+	rm -fr $DT_r $DT/.uptf$uid $DT/.rss
 	cd "$DM_tl/Feeds/conten"
 	find ./* -mtime +5 -exec rm -r {} \; &
 	

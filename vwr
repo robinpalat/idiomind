@@ -100,6 +100,6 @@ fi
 			$DS/vwr "$v" "$nll" $ff &
 		else 
 			echo "vwr.$(cat $DC/addons/stats/.tmp | wc -l).vwr" >> \
-			$DC/addons/stats/.log &
+			$DC/addons/stats/.log
 			rm $DC/addons/stats/.tmp & exit 1
 		fi
