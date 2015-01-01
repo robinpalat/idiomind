@@ -14,7 +14,7 @@ if [ -z $1 ]; then
 
 	$yad --fixed --center --align=center \
 	--text="   Recording with  <b>$msj</b>" \
-	---name=idiomind \
+	---name=idiomind --geometry=0-0-0-0 \
 	--width=350 --height=120 --center \
 	--on-top --skip-taskbar \
 	--button=Change:2 --button=gtk-apply:3 \
@@ -94,7 +94,7 @@ elif [ $1 = rec ]; then
 	
 	$yad --fixed --align=center --timeout="$t" \
 	--text="Recording with: <b>$inf</b>\n\n<small><sub>Time:</sub></small>" \
-	--timeout-indicator=bottom --geometry=0-0-0-0\
+	--timeout-indicator=bottom --geometry=0-0-0-0 \
 	--image-on-top --width=350 --height=100 \
 	--on-top --skip-taskbar --no-buttons --center \
 	--window-icon=idiomind --center --borders=10 \
@@ -114,7 +114,7 @@ elif [ $1 = add ]; then
 	FILE=$($yad --fixed --center \
 	--borders=10 --file-filter="*.mp3" --on-top --title=" " \
 	--window-icon=idiomind --skip-taskbar --title="Add Audio" \
-	--window-icon=$ICON --file --width=600 --height=500 )
+	--file --width=600 --height=500 )
 		
 		if [ -z "$FILE" ];then
 			exit 1

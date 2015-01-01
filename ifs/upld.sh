@@ -2,7 +2,6 @@
 source /usr/share/idiomind/ifs/c.conf
 
 if [ $1 = vsd ]; then
-
 	userid=$(sed -n 1p $HOME/.config/idiomind/s/cnfg4)
 	lng=$(echo "$lgtl" |  awk '{print tolower($0)}')
 	wth=$(sed -n 4p $DC_s/.rd)
@@ -12,7 +11,7 @@ if [ $1 = vsd ]; then
 	ls -t *.AL > ls
 	(sed -i 's/.AL//g' ./ls)
 
-	cat ./ls | $yad --list \
+	cat ./ls | $yad --list --on-top \
 	--window-icon=idiomind --center --skip-taskbar \
 	--buttons-layout=edge --borders=8 --text=" <small>Double Clikfor Download \\t\\t\\t\\t</small>" \
 	--title="Topics Saved" --width=$wth --height=$eht \
@@ -29,7 +28,6 @@ if [ $1 = vsd ]; then
 	exit 1
 	
 elif [ $1 = infsd ]; then
-
 	cd $DM_t/saved
 	userid=$(sed -n 1p $DC_s/cnfg4)
 	user=$(echo "$(whoami)")
@@ -47,7 +45,7 @@ elif [ $1 = infsd ]; then
 	file="http://currently.url.ph/$lgs/$lgtl/$Ctgry/$nme/$userid.$tpcd.idmnd"
 
 	$yad --borders=15 --width=450 --height=180 --fixed \
-	--on-top --skip-taskbar --center --image=$icon \
+	--on-top --skip-taskbar --center --image=$icon --geometry=0-0-0-0 \
 	--title="idiomind" --button="   Download   :0" \
 	--button="  Close  :1" --text="<b>$NM</b>\\n<small>$LNGT language </small> \\n<small><a href='$LNK'>$NM</a></small>"
 
@@ -58,7 +56,6 @@ elif [ $1 = infsd ]; then
 		exit 1
 
 		elif [ $ret -eq 0 ]; then
-		
 			sv=$($yad --save --center --borders=10 \
 			--on-top --filename="$tpcd.idmnd" \
 			--window-icon=idiomind --skip-taskbar --title="Save" \
@@ -575,7 +572,6 @@ $("#various1").fancybox({
 cd "$DM_tlt/words/images"
 
 if [ $(ls -1 *.jpg 2>/dev/null | wc -l) != 0 ]; then
-
 	echo '<div class="entry">
 	<div id="myGallery" class="spacegallery">' >> $DT/$NAME/index.html
 	
@@ -601,7 +597,6 @@ while [ $n -le $(cat s.inx.l | wc -l) ]; do
 		st=$(sed -n "$n"p S.gprt.x)
 		
 		if [ -n "$st" ]; then
-
 			ss=$(sed -n "$n"p S.gprs.x)
 			fn=$(sed -n "$n"p s.inx.l)
 	
@@ -734,13 +729,6 @@ echo '<footer role="contentinfo">
 chmod 775  $DT/$NAME/index.html
 
 #-----------------------upload ftp
-
-
-HOST=tmp.site50.net
-USER=a4436531
-PASSWD=111111s
-
-
 HOST=$HOST
 USER=$USER
 PASSWD=$PASS
@@ -758,23 +746,25 @@ curl -T /tmp/$userid."$tpc".idmnd -u $USER:$PASS \
 ftp://$HOST/public_html/uploads/recents/$userid."$topic".idmnd
 
 #-----------------------
-
 exit=$?
 
 if [ $exit = 0 ] ; then
-	cp -f "$DT/$tpc/.AL" "$HOME/.idiomind/topics/saved/$tpc.AL"
-	$yad --window-icon=idiomind --name=idiomind \
-	--image=info --on-top \
-	--text=" El tema \\n<b> <a href='$link'>$tpc</a></b> \\n se ha publicado con éxito " \
-	--image-on-top --center --fixed --sticky --geometry=320x150 \
-	--width=320 --height=80 --buttons-layout=right --borders=10 \
-	--skip-taskbar --title=Idiomind \
-	--button="  Ok  ":0
+    cp -f "$DT/$tpc/.AL" "$HOME/.idiomind/topics/saved/$tpc.AL"
+    info="El tema \\n<b> <a href='$link'>$tpc</a></b> \\n se ha publicado con éxito"
+else
+    info="Ha ocurrido un problema al subir el archivo"
 fi
+
+$yad --window-icon=idiomind --name=idiomind \
+--image=info --on-top \
+--text="$info" \
+--image-on-top --center --fixed --sticky --geometry=320x150 \
+--width=320 --height=80 --buttons-layout=right --borders=10 \
+--skip-taskbar --title=Idiomind \
+--button="  Ok  ":0
+
 
 rm -fr $DT/mkhtml/ $DT/.ti
 rm -f -r  $DT/"$tpc" $DT/.PASS_TMP $DT/$userid."$tpc".idmnd
 rm $DT/.aud $DT/.img $DT/$userid."$tpc".idmnd \
 $DT/"$tpc".tar $DT/"$tpc".tar.gz & exit 1
-
-exit 1
