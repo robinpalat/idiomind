@@ -9,6 +9,30 @@ if [ -f $DT/.lc ]; then
 fi
 > $DT/.lc
 
+
+text="
+Idiomind it's specifically designed for people learning one or more foreign languages. It helps you learn foreign language vocabulary. You can create and manage word lists and share them online.
+supports different types of exercises, including grammar and pronunciation tests.
+
+Enviar sugerencias o comentarios para mejorar el programa, si crees que te resultó util, considera realizar una donación.
+
+Limitaciones:
+Hasta 30 topics de 50 oraciones y 50 palabras cada uno.
+
+Github:
+https://github.com/robinsato/idiomind
+
+Licencia:
+GPLv3
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details."
+
+
+
+
+
 ICON=$DS/images/icon.png
 cd $DS/addons
 
@@ -65,10 +89,9 @@ $yad --plug=$KEY --tabnum=3 --form --align=left \
 	--field="User Data :BTN" "'$DS/ifs/t_bd'" \
 	--field="Report Problem / Suggestion :BTN" "$DS/ifs/tls rpsg" \
 	--field="Make Donation:BTN" "$DS/ifs/tls mkdnt" &
-$yad --plug=$KEY --tabnum=4 --text-info \
-	--text="\\n<big><big><big><b>Idiomind 1.5.0 Beta</b></big></big></big>\\n<sup>Vocabulary Learning Tool\\n<a href='http://www.idiomind.com.ar'>Homepage</a> © 2012-2014 Robin Palat</sup>" \
-	--show-uri --fontname=Arial --margins=10 --wrap \
-	--filename=$DS/ifs/about.txt --text-align=center &
+echo "$text" | $yad --plug=$KEY --tabnum=4 --text-info \
+	--text="\\n<big><big><big><b>Idiomind 1.0 alpha</b></big></big></big>\\n<sup>Vocabulary Learning Tool\\n<a href='https://sourceforge.net/projects/idiomind/'>Homepage</a> © 2013-2014 Robin Palat</sup>" \
+	--show-uri --fontname=Arial --margins=10 --wrap --text-align=center &
 $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 	--sticky --center --window-icon=$ICON --window-icon=idiomind \
 	--tab="Preferences" --tab="  Addons  " \
