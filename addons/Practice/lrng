@@ -44,12 +44,12 @@ vw=$($yad --form --always-print-result --window-icon=idiomind \
 --borders=20 --align=center --class=idiomind $aut \
 --buttons-layout=center --title=" " --undecorated \
 --text-align=center \
---field="Play:BTN" "$play" \
+--field="Listen:BTN" "$play" \
 --field="pronounce":chk "$A" \
 --field="Auto":chk "$B" \
---button="	<	:3" \
---button="	Practice	:$stp" \
---button="	>	:2" \
+--button="Previous:3" \
+--button="Practice:$stp" \
+--button="Next:2" \
 --text="$vsw\\n\\n <i><big><big>\
 <span color='#7F7F7F'>[</span> \
 <span color='#6F96BE'><big><big> $srce </big></big></span> \

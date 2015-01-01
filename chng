@@ -6,10 +6,8 @@ if [[ "$1" = chngi ]]; then
 	sas=$(sed -n 2p $DC_s/cnfg5) # sentences
 	sap=$(sed -n 3p $DC_s/cnfg5) # practice
 	saf=$(sed -n 4p $DC_s/cnfg5) # feeds conten
-	dga=$(sed -n 5p $DC_s/cnfg5) # dialog
-	nta=$(sed -n 6p $DC_s/cnfg5) # osd
-	sna=$(sed -n 7p $DC_s/cnfg5) # audio
-	
+	nta=$(sed -n 5p $DC_s/cnfg5) # osd
+	sna=$(sed -n 6p $DC_s/cnfg5) # audio
 	user=$(echo "$(whoami)")
 	cnfg1="$DC_s/cnfg5"
 	indx="$DT/.$user/indx"
@@ -222,7 +220,7 @@ if [[ "$1" = chngi ]]; then
 			sleep 3
 			$aud "$DM_tl/Feeds/kept/words/$itm".mp3 &
 			if [ $bcl -ge 5 ]; then
-				(sleep 2.5 && $aud "$DM_tl/Feeds/kept/words/$itm.mp3") &
+				(sleep 4 && $aud "$DM_tl/Feeds/kept/words/$itm.mp3") &
 			fi
 			if [ $bcl -ge 30 ]; then
 				(sleep 10 && $aud "$DM_tl/Feeds/kept/words/$itm.mp3"

@@ -1,9 +1,6 @@
 #!/bin/bash
 
 source /usr/share/idiomind/ifs/c.conf
-STT=$(cat $DC_s/topic_m)
-uid=$(sed -n 1p $DC_s/cnfg4)
-c=$(echo $(($RANDOM%1000)))
 
 if [ ! -d "$HOME/.idiomind" ]; then
 	$DS/ifs/1u && exit
@@ -13,8 +10,8 @@ if [ ! -d "$HOME/.idiomind" ]; then
 fi
 
 if [ -z "$1" ]; then
-	if [ -f $DT/.uptf$uid ]; then
-		rm -f $DT/.uptf$uid
+	if [ -f $DT/.upt ]; then
+		rm -f $DT/.upt
 	fi
 	
 	# check if program is active 
@@ -22,13 +19,10 @@ if [ -z "$1" ]; then
 	PS="$?"
 	if (($PS!=0)); then
 	
-		# prepare $DS/images for panel tray
-		if [ -d $DT ]; then
-			rm -fr $DT
-		fi
-		
 		# write in /tmp
-		mkdir $DT
+		if [ ! -d $DT ]; then
+			mkdir $DT
+		fi
 		if [ $? -ne 0 ]; then
 			$yad --name=idiomind \
 			--image=error --button=gtk-ok:1\
@@ -51,199 +45,201 @@ if [ -z "$1" ]; then
 		if echo "$(cat $DC_s/topic_m)" | grep "Actualizando..."; then
 			> $DC_s/topic_m
 		fi
-		cp -f $DS/$DS/images/flags/$lgt.png \
-		$DT/tryidmd$DS/images
-		chmod 777 -R $DT
+		
 		$DS/default/nw.sh & 
 		
-		# set size screen 
-		xrandr | grep '*' | awk '{ print $1 }' > $DC_s/.rd
-		sed -i 's/x/\n/' $DC_s/.rd
-		y=$(sed -n 2p $DC_s/.rd)
-		
-		(
-		if [ $y -gt 1200 ]; then
-			#play posicion 
-			echo 1000 > $DC_s/.pst
-			#topic tamaño 3 - 4 
-			echo 450 >> $DC_s/.rd
-			echo 520 >> $DC_s/.rd
-			
-			#trgt tamanño 5 - 6 
-			echo 450 >> $DC_s/.rd
-			echo 300 >> $DC_s/.rd
-			
-			#edit tamaño 7 - 8
-			echo 260 >> $DC_s/.rd
-			echo 190 >> $DC_s/.rd
-			
-		    #play tamaño  9 - 10 - 11
-		    echo 125 >> $DC_s/.rd
-			echo 380 >> $DC_s/.rd
-			
-			#new la posicion  12 - 13
-			echo 450 >> $DC_s/.rd
-			echo 100 >> $DC_s/.rd
-			
-			#practice tamaño 14 - 15
-			echo 470 >> $DC_s/.rd
-			echo 300 >> $DC_s/.rd
-			exit
-			
-		elif [ $y -ge 1080 ]; then  # 1024 -  la mia
-			#play posicion 
-			echo 800 > $DC_s/.pst
-			#topic tamaño 3 - 4 
-			echo 450 >> $DC_s/.rd #FIXED!
-			echo 520 >> $DC_s/.rd
-			
-			#trgt tamanño 5 - 6 
-			echo 450 >> $DC_s/.rd
-			echo 300 >> $DC_s/.rd
-			
-			#edit tamaño 7 - 8
-			echo 260 >> $DC_s/.rd
-			echo 190 >> $DC_s/.rd
-			
-		    #play tamaño  9 - 10 - 
-		    echo 100 >> $DC_s/.rd
-			echo 300 >> $DC_s/.rd
-			
-			#new la posicion  11 - 12
-			echo 450 >> $DC_s/.rd
-			echo 100 >> $DC_s/.rd
-			
-			#practice tamaño 13 - 14
-			echo 470 >> $DC_s/.rd
-			echo 300 >> $DC_s/.rd
-			exit
-			
-		elif [ $y -ge 1024 ]; then # 1024
-			#play posicion  1 
-			echo 800 > $DC_s/.pst
-			
-			#topic tamaño 3 - 4 
-			echo 430 >> $DC_s/.rd
-			echo 490 >> $DC_s/.rd
-			
-			#trgt tamanño 5 - 6 
-			echo 450 >> $DC_s/.rd
-			echo 300 >> $DC_s/.rd
-			
-			#edit tamaño 7 - 8 
-			echo 260 >> $DC_s/.rd
-			echo 190 >> $DC_s/.rd
-			
-		    #play tamaño  6 - 10 - 11
-		    echo 100 >> $DC_s/.rd
-			echo 320 >> $DC_s/.rd
-			
-			#new la posicion  12 - 13
-			echo 450 >> $DC_s/.rd
-			echo 100 >> $DC_s/.rd
-			
-			#practice tamaño 14 - 15
-			echo 470 >> $DC_s/.rd
-			echo 300 >> $DC_s/.rd
-			exit
-			
-		elif [ $y -gt 700 ]; then # 720 el del negocio
-			#play posicion  1
-			echo 520 > $DC_s/.pst
-			
-			#topic tamaño 2 -3
-			echo 420 >> $DC_s/.rd
-			echo 480 >> $DC_s/.rd
-			
-			#trgt tamaño 4 - 5 
-			echo 450 >> $DC_s/.rd
-			echo 300 >> $DC_s/.rd
-			
-			#edit tamaño  6 - 7 
-			echo 230 >> $DC_s/.rd
-			echo 170 >> $DC_s/.rd
-			
-			#play tamaño  8 - 9 
-			echo 100 >> $DC_s/.rd
-			echo 300 >> $DC_s/.rd
-			
-			#new posicion  10 - 11
-			echo 200 >> $DC_s/.rd
-			echo 50 >> $DC_s/.rd
-			
-			#practice tamaño  12 - 13
-			echo 460 >> $DC_s/.rd
-			echo 250 >> $DC_s/.rd
-			exit
-			
-		elif [ $y -gt 599 ]; then # 600 · 	la de mama
-			#play position 
-			echo 520 > $DC_s/.pst
-			
-			#topic tamaño 
-			echo 400 >> $DC_s/.rd
-			echo 460 >> $DC_s/.rd
-			
-			#trgt tamaño 
-			echo 450 >> $DC_s/.rd
-			echo 300 >> $DC_s/.rd
-			
-			#edit tamaño 6 - 7
-			echo 230 >> $DC_s/.rd
-			echo 170 >> $DC_s/.rd
-			
-			#play tamaño 
-			echo 100 >> $DC_s/.rd
-			echo 250 >> $DC_s/.rd
-			
-			#new posicion 
-			echo 200 >> $DC_s/.rd
-			echo 50 >> $DC_s/.rd
-			
-			#practice tamaño 
-			echo 460 >> $DC_s/.rd
-			echo 250 >> $DC_s/.rd
-			exit
-			
-		elif [ $y -gt 400 ]; then # 400   FALTAAAAA
-			# play position 
-			echo 420 > $DC_s/.pst
-			#topic tamaño 
-			echo 400 >> $DC_s/.rd
-			echo 460 >> $DC_s/.rd
-			#trgt tamaño 
-			echo 400 >> $DC_s/.rd
-			echo 280 >> $DC_s/.rd
-			#edit tamaño 
-			echo 500 >> $DC_s/.rd
-			echo 320 >> $DC_s/.rd
-			#play tamañño 
-			echo 500 >> $DC_s/.rd
-			echo 320 >> $DC_s/.rd
-			#new posicion 
-			echo 50 >> $DC_s/.rd
-			echo 200 >> $DC_s/.rd
-			#practice tamaño 
-			echo 250 >> $DC_s/.rd
-			echo 420 >> $DC_s/.rd
-			exit
-		fi
-		)
-
 		# init count for log (weekly report stats)
 		echo "strt.1.strt" >> \
 		$DC/addons/stats/.log &
 		
 		#check session
-		dt1="$(date +%d)"
-		dt2=$(cat $DC_tl/.in)
-		echo "$dt1 / $dt2"
+		d1="$(date +%d)"
+		d2=$(cat $DC_s/.session)
 		
 		if [ -f $DC_s/.session ]; then
 
-			if [ "$dt1" != "$dt2" ]; then
+			if [ "$d1" != "$d2" ]; then
 				echo "$(date +%d)" > $DC_s/.session
+				echo "--new session"
 
+				# set size screen 
+				xrandr | grep '*' | awk '{ print $1 }' > $DC_s/.rd
+				sed -i 's/x/\n/' $DC_s/.rd
+				y=$(sed -n 2p $DC_s/.rd)
+				
+				(
+				if [ $y -gt 1200 ]; then
+					#play posicion 
+					echo 1000 > $DC_s/.pst
+					#topic tamaño 3 - 4 
+					echo 450 >> $DC_s/.rd
+					echo 520 >> $DC_s/.rd
+					
+					#trgt tamanño 5 - 6 
+					echo 480 >> $DC_s/.rd
+					echo 320 >> $DC_s/.rd
+					
+					#edit tamaño 7 - 8
+					echo 260 >> $DC_s/.rd
+					echo 190 >> $DC_s/.rd
+					
+					#play tamaño  9 - 10 - 11
+					echo 125 >> $DC_s/.rd
+					echo 380 >> $DC_s/.rd
+					
+					#new la posicion  12 - 13
+					echo 450 >> $DC_s/.rd
+					echo 100 >> $DC_s/.rd
+					
+					#practice tamaño 14 - 15
+					echo 470 >> $DC_s/.rd
+					echo 300 >> $DC_s/.rd
+					exit
+					
+				elif [ $y -ge 1080 ]; then  # 1024 -  la mia
+					#play posicion 
+					echo 800 > $DC_s/.pst
+					#topic tamaño 3 - 4 
+					echo 450 >> $DC_s/.rd #FIXED!
+					echo 520 >> $DC_s/.rd
+					
+					#trgt tamanño 5 - 6 
+					echo 480 >> $DC_s/.rd
+					echo 320 >> $DC_s/.rd
+					
+					#edit tamaño 7 - 8
+					echo 260 >> $DC_s/.rd
+					echo 190 >> $DC_s/.rd
+					
+					#play tamaño  9 - 10 - 
+					echo 100 >> $DC_s/.rd
+					echo 300 >> $DC_s/.rd
+					
+					#new la posicion  11 - 12
+					echo 450 >> $DC_s/.rd
+					echo 100 >> $DC_s/.rd
+					
+					#practice tamaño 13 - 14
+					echo 470 >> $DC_s/.rd
+					echo 300 >> $DC_s/.rd
+					exit
+					
+				elif [ $y -ge 1024 ]; then # 1024
+					#play posicion  1 
+					echo 800 > $DC_s/.pst
+					
+					#topic tamaño 3 - 4 
+					echo 430 >> $DC_s/.rd
+					echo 490 >> $DC_s/.rd
+					
+					#trgt tamanño 5 - 6 
+					echo 470 >> $DC_s/.rd
+					echo 320 >> $DC_s/.rd
+					
+					#edit tamaño 7 - 8 
+					echo 260 >> $DC_s/.rd
+					echo 190 >> $DC_s/.rd
+					
+					#play tamaño  6 - 10 - 11
+					echo 100 >> $DC_s/.rd
+					echo 320 >> $DC_s/.rd
+					
+					#new la posicion  12 - 13
+					echo 450 >> $DC_s/.rd
+					echo 100 >> $DC_s/.rd
+					
+					#practice tamaño 14 - 15
+					echo 470 >> $DC_s/.rd
+					echo 300 >> $DC_s/.rd
+					exit
+					
+				elif [ $y -gt 700 ]; then # 720 el del negocio
+					#play posicion  1
+					echo 520 > $DC_s/.pst
+					
+					#topic tamaño 2 -3
+					echo 420 >> $DC_s/.rd
+					echo 480 >> $DC_s/.rd
+					
+					#trgt tamaño 4 - 5 
+					echo 460 >> $DC_s/.rd
+					echo 320 >> $DC_s/.rd
+					
+					#edit tamaño  6 - 7 
+					echo 230 >> $DC_s/.rd
+					echo 170 >> $DC_s/.rd
+					
+					#play tamaño  8 - 9 
+					echo 100 >> $DC_s/.rd
+					echo 300 >> $DC_s/.rd
+					
+					#new posicion  10 - 11
+					echo 200 >> $DC_s/.rd
+					echo 50 >> $DC_s/.rd
+					
+					#practice tamaño  12 - 13
+					echo 460 >> $DC_s/.rd
+					echo 250 >> $DC_s/.rd
+					exit
+					
+				elif [ $y -gt 599 ]; then # 600 · 	la de mama
+					#play position 
+					echo 520 > $DC_s/.pst
+					
+					#topic tamaño 
+					echo 400 >> $DC_s/.rd
+					echo 460 >> $DC_s/.rd
+					
+					#trgt tamaño 
+					echo 450 >> $DC_s/.rd
+					echo 300 >> $DC_s/.rd
+					
+					#edit tamaño 6 - 7
+					echo 230 >> $DC_s/.rd
+					echo 170 >> $DC_s/.rd
+					
+					#play tamaño 
+					echo 100 >> $DC_s/.rd
+					echo 250 >> $DC_s/.rd
+					
+					#new posicion 
+					echo 200 >> $DC_s/.rd
+					echo 50 >> $DC_s/.rd
+					
+					#practice tamaño 
+					echo 460 >> $DC_s/.rd
+					echo 250 >> $DC_s/.rd
+					exit
+					
+				elif [ $y -gt 400 ]; then # 400   FALTAAAAA
+					# play position 
+					echo 420 > $DC_s/.pst
+					#topic tamaño 
+					echo 400 >> $DC_s/.rd
+					echo 460 >> $DC_s/.rd
+					#trgt tamaño 
+					echo 400 >> $DC_s/.rd
+					echo 280 >> $DC_s/.rd
+					#edit tamaño 
+					echo 500 >> $DC_s/.rd
+					echo 320 >> $DC_s/.rd
+					#play tamañño 
+					echo 500 >> $DC_s/.rd
+					echo 320 >> $DC_s/.rd
+					#new posicion 
+					echo 50 >> $DC_s/.rd
+					echo 200 >> $DC_s/.rd
+					#practice tamaño 
+					echo 250 >> $DC_s/.rd
+					echo 420 >> $DC_s/.rd
+					exit
+				fi
+				)
+				
+				cp -f $DS/images/flags/$lgt.png \
+				$DT/tryidmdicon
+				chmod 777 -R $DT
+				
 				# set weekly report
 				if ([ "$(date +%u)" = 7 ] && \
 				[ "$(sed -n 1p $DC/addons/stats/cnf)" = "TRUE" ]); then
@@ -323,6 +319,10 @@ if [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 	wth=$(sed -n 4p $DC_s/.rd)
 	eht=$(sed -n 3p $DC_s/.rd)
 	dte=$(date "+%d %B")
+	c=$(echo $(($RANDOM%1000)))
+	if [ ! -d $DT ]; then
+		mkdir $DT
+	fi
 	mkdir $DT/idmimp_$c
 	(cp -f $DS/default/p1 $DT/p1.$c
 	cp -f $DS/default/p2 $DT/p2.$c
@@ -491,10 +491,10 @@ if [ "$1" = topic ]; then
 		ttl="$tpc"
 	fi
 	
-	if [ -f $DT/l_$uid.x ]; then
+	if [ -f $DT/l_.x ]; then
 		exit 1
 	fi
-	> $DT/l_$uid.x
+	> $DT/l_.x
 	
 	echo "tpcs.$tpc.tpcs" >> \
 	$DC/addons/stats/.log &
@@ -510,7 +510,7 @@ if [ "$1" = topic ]; then
 		ss=$(cat .sinx | wc -l)
 		itxt="\\n<big>  <b>$ttl</b> </big> <small><small><b>\\n    $ss Sentences     $ws Words</b></small></small>\\n"
 		cd $DS
-		KEY=12358
+		KEY=12356
 		cnf1=$(mktemp $DT/cnf1.XXXX.x)
 		cnf2=$(mktemp $DT/cnf2.XXXX.x)
 		cnf3=$(mktemp $DT/cnf3.XXXX.x)
@@ -1224,7 +1224,7 @@ if [ "$1" = topic ]; then
 		
 		if echo "$STT" | grep "Actualizando"; then
 			info=$(echo "<i>Actualizando...</i>")
-			FEED=$(cat "$DT/.rss_$uid")
+			FEED=$(cat "$DT/.rss")
 		else
 			info=$(cat $DC_tl/Feeds/.dt)
 		fi

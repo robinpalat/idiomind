@@ -521,7 +521,6 @@ elif [ "$2" = w ]; then
 			--button=Ok:1 --text-align=center --skip-taskbar \
 			--text "<span color='#636363'><b>  Para Comenzar \\nDebes Tener 1 Palabra  </b></span>" \
 			--width=310 --height=80
-			rm -f tmp/.idmtp1/mp3.tmp
 			$strt & killall prct & exit
 		fi
 	fi

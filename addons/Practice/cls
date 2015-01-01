@@ -1,6 +1,7 @@
 #!/bin/bash
 killall prct
 killall play
+killall lrng
 DS_pp=/usr/share/idiomind/addons/Practice
 tpc=$(sed -n 1p $HOME/.config/idiomind/s/topic.id)
 lgtl=$(sed -n 2p $HOME/.config/idiomind/s/lang)

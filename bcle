@@ -2,8 +2,8 @@
 uid=$(echo "$(whoami)")
 DS=/usr/share/idiomind
 cnfg=$HOME/.config/idiomind/s/cnfg1
-> /tmp/.idmtp1/.p__$uid
-cd /tmp/.idmtp1/.$uid
+> /tmp/.idmtp1.$uid/.p__$uid
+cd /tmp/.idmtp1.$uid/.$uid
 
 if [ "$(sed -n 10p $cnfg)" = "TRUE" ]; then
 	while [ 1 ]
@@ -22,5 +22,5 @@ else
 	$DS/chng chngi $n
 		let n++
 	done
-	rm -fr /tmp/.idmtp1/.p__$uid /tmp/.idmtp1/.$uid
+	rm -fr /tmp/.idmtp1.$uid/.p__$uid /tmp/.idmtp1.$uid/.$uid
 fi

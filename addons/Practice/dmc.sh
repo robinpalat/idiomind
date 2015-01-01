@@ -42,7 +42,7 @@ $ess" > word2.tmp
 		| yad --list --list --on-top --skip-taskbar \
 		--width=330 --height=300 --center --buttons-layout=edge --undecorated \
 		--text-align=center --no-headers --borders=8 --window-icon=idiomind \
-		--button=Close:1 \
+		--button=gtk-close:1 \
 		--button="  Ok  ( $good )  ":0 --title=" " \
 		--text="<big><big><big><big><big><big><big><b>$trgt</b></big></big></big></big></big></big></big>\\n<small></small>" --column=Opcion --column=Opciodn)
 
