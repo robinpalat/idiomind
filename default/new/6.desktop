@@ -1,5 +1,5 @@
 [Desktop Entry]
-Exec=/usr/share/idiomind/cnfg
+Exec=/usr/share/idiomind/cnfg.sh
 Icon=/usr/share/idiomind/images/set-26.png
 Version=3
 Encoding=UTF-8

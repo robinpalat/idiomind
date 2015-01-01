@@ -1,5 +1,5 @@
 [Desktop Entry]
-Exec=/usr/share/idiomind/add n_i
+Exec=/usr/share/idiomind/add.sh n_i
 Icon=/usr/share/idiomind/images/pencil.png
 Version=3
 Encoding=UTF-8

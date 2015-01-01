@@ -1,7 +1,7 @@
 #!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
 DS_pf="$DS/addons/Learning_with_news"
-vwr="$DS_pf/vwr"
+vwr.sh="$DS_pf/vwr.sh"
 
 if [[ $1 = V1 ]]; then
 
@@ -49,10 +49,10 @@ if [[ $1 = V1 ]]; then
 		ret=$?
 		if [[ $ret -eq 2 ]]; then
 			ff=$(($nuw + 1))
-			$vwr V1 "$nll" "$ff" &
+			$vwr.sh V1 "$nll" "$ff" &
 		elif [[ $ret -eq 3 ]]; then
 			ff=$(($nuw - 1))
-			$vwr V1 "$nll" "$ff" &
+			$vwr.sh V1 "$nll" "$ff" &
 		else
 			rm -f $DT/.*.x &
 		exit 1
@@ -130,10 +130,10 @@ elif [[ $1 = V2 ]]; then
 		ret=$?
 		if [[ $ret -eq 2 ]]; then
 			ff=$(($nuw + 1))
-			$vwr V2 "$nll" "$ff" &
+			$vwr.sh V2 "$nll" "$ff" &
 		elif [[ $ret -eq 3 ]]; then
 			ff=$(($nuw - 1))
-			$vwr V2 "$nll" "$ff" &
+			$vwr.sh V2 "$nll" "$ff" &
 		else
 			rm -f $DT/.*.x & exit 1
 		fi

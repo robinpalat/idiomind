@@ -11,7 +11,7 @@ if [ "$(sed -n 10p $cnfg)" = "TRUE" ]; then
 	ls=$(cat ./indx | wc -l)
 	n=1
 	while [ $n -le "$ls" ]; do
-		$DS/chng chngi $n
+		$DS/chng.sh chngi $n
 		let n++
 	done
 	done
@@ -19,7 +19,7 @@ else
 	ls=$(cat ./indx | wc -l)
 	n=1
 	while [ $n -le "$ls" ]; do
-	$DS/chng chngi $n
+	$DS/chng.sh chngi $n
 		let n++
 	done
 	rm -fr /tmp/.idmtp1.$uid/.p__$uid /tmp/.idmtp1.$uid/.$uid

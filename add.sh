@@ -85,7 +85,7 @@ if [ $1 = n_t ]; then
 			if [ -f $DT/ntpc ]; then
 				rm -f $DT/ntpc
 			fi
-			$DS/mngr mkmn
+			$DS/mngr.sh mkmn
 			"$DC_tl/$jlb"/tpc.sh & exit 1
 		fi
 		[ "$?" -eq 1 ] && exit
@@ -161,7 +161,7 @@ if [ $1 = n_t ]; then
 				rm -f $DT/ntpc
 			fi
 			$DC_tl/"$jlb"/tpc.sh
-			$DS/mngr mkmn
+			$DS/mngr.sh mkmn
 		fi
 		
 		[ "$?" -eq 1 ] && exit
@@ -206,15 +206,15 @@ elif [ $1 = n_i ]; then
 	fi
 	
 	if [ -f $DT/ntpc ]; then
-		$DS/chng $DS/ifs/info1 fnew & exit 1
+		$DS/chng.sh $DS/ifs/info1 fnew & exit 1
 	fi
 	
 	if [ -z "$tpe" ]; then
-		$DS/chng $DS/ifs/info2 fnew & exit 1
+		$DS/chng.sh $DS/ifs/info2 fnew & exit 1
 	fi
 
 	if [ -z "$tpe" ]; then
-		$DS/chng $DS/ifs/info5 fnew & exit 1
+		$DS/chng.sh $DS/ifs/info5 fnew & exit 1
 	fi
 	
 	ls=$((50 - $(cat "$DC_tlt/.sinx" | wc -l)))
@@ -289,7 +289,7 @@ elif [ $1 = n_i ]; then
 			scrot -s --quality 70 img.jpg
 			/usr/bin/convert -scale $sx! -border 0.5 \
 			-bordercolor '#9A9A9A' img.jpg ico.jpg
-			$DS/add n_i $DT_r 2 "$trgt" "$srce" && exit 1
+			$DS/add.sh n_i $DT_r 2 "$trgt" "$srce" && exit 1
 		
 		elif [ $ret -eq 0 ]; then
 		
@@ -317,7 +317,7 @@ elif [ $1 = n_i ]; then
 					--button=Save:0 --title="selector" --borders=3 \
 					--column=" " --column="Sentences"`
 					if [ -z "$(echo "$slt" | sed -n 2p)" ]; then
-						killall add & exit 1
+						killall add.sh & exit 1
 					fi
 					tpe=$(echo "$slt" | sed -n 2p)
 				fi
@@ -328,17 +328,17 @@ elif [ $1 = n_i ]; then
 			[ $lgt = ja ] || [ $lgt = zh-cn ] && c=c || c=w
 			
 			if [ "$(echo "$trgt" | sed -n 1p | awk '{print tolower($0)}')" = image ]; then
-				$DS/add prs image $DT_r & exit 1
+				$DS/add.sh prs image $DT_r & exit 1
 			elif [ "$(echo "$trgt" | sed -n 1p | awk '{print tolower($0)}')" = audio ]; then
-				$DS/add prs "$trgt" $DT_r & exit 1
+				$DS/add.sh prs "$trgt" $DT_r & exit 1
 			elif [ "$(echo "$trgt" | sed -n 1p | grep -o http)" = http ]; then
-				$DS/add prs "$trgt" $DT_r & exit 1
+				$DS/add.sh prs "$trgt" $DT_r & exit 1
 			elif [ $(echo "$trgt" | wc -$c) = 1 ]; then
-				$DS/add n_w "$trgt" $DT_r "$srce" & exit 1
+				$DS/add.sh n_w "$trgt" $DT_r "$srce" & exit 1
 			elif [ $(echo "$trgt" | wc -$c) -ge 1 -a $(echo "$trgt" | wc -c) -le 180 ]; then
-				$DS/add n_s "$trgt" $DT_r "$srce" & exit 1
+				$DS/add.sh n_s "$trgt" $DT_r "$srce" & exit 1
 			elif [ $(echo "$trgt" | wc -c) -gt 180 ]; then
-				$DS/add prs "$trgt" $DT_r & exit 1
+				$DS/add.sh prs "$trgt" $DT_r & exit 1
 			fi
 		else
 			rm -fr $DT_r & exit 1
@@ -436,7 +436,7 @@ elif [ $1 = n_s ]; then
 		fi
 		
 		notify-send -i "$icnn" "$trgt" "$srce \\n($tpe)" -t 10000
-		$DS/mngr inx S "$nme" "$tpe"
+		$DS/mngr.sh inx S "$nme" "$tpe"
 		
 		cd $DT_r
 		> swrd
@@ -513,7 +513,7 @@ elif [ $1 = n_s ]; then
 		
 		(
 		if [ $(sed -n 4p $DC_s/cnfg1) = TRUE ]; then
-		$DS/add snt "$nme" "$tpe"
+		$DS/add.sh snt "$nme" "$tpe"
 		fi
 		) &
 		
@@ -678,7 +678,7 @@ elif [ $1 = n_s ]; then
 				fi
 		fi
 		sleep 1
-		$DS/mngr inx S "$nme" "$tpe"
+		$DS/mngr.sh inx S "$nme" "$tpe"
 		if [ $lgt = ja ] || [ $lgt = zh-cn ]; then
 			n=1
 			while [ $n -le $(cat $bw | wc -l) ]; do
@@ -754,7 +754,7 @@ elif [ $1 = n_w ]; then
 		fi
 		
 		notify-send -i "$icn" "$trgt" "$src\\n  ($tpe)" -t 5000
-		$DS/mngr inx W "$nme" "$tpe"
+		$DS/mngr.sh inx W "$nme" "$tpe"
 		echo "aitm.1.aitm" >> \
 		$DC/addons/stats/.log
 		rm -f -r *.jpg $DT_r
@@ -840,7 +840,7 @@ elif [ $1 = n_w ]; then
 		
 		sleep 2
 		notify-send -i "$icn" "$trgt" "$srce\\n ($tpe)" -t 3000
-		$DS/mngr inx W "$trgt" "$tpe"
+		$DS/mngr.sh inx W "$trgt" "$tpe"
 		echo "aitm.1.aitm" >> \
 		$DC/addons/stats/.log
 		rm -fr $DT_r & exit 1
@@ -975,7 +975,7 @@ elif [ $1 = edt ]; then
 					eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${UNI}IWI2I0I" -A IWI3I0I"$5"IWI3I0I \
 					"$DM_tlt/words/$trgt.mp3" >/dev/null 2>&1
 				fi
-				$DS/mngr inx W "$trgt" "$tpc" "$nme"
+				$DS/mngr.sh inx W "$trgt" "$tpc" "$nme"
 			fi
 			
 			let n++
@@ -1377,7 +1377,7 @@ elif [ $1 = snt ]; then
 				eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${UNI}IWI2I0I" -A IWI3I0I"$2"IWI3I0I \
 				"$DM_tlt/words/$trgt.mp3"
 			fi
-			$DS/mngr inx W "$trgt" "$3"
+			$DS/mngr.sh inx W "$trgt" "$3"
 			fi
 		let n++
 	done
@@ -1408,7 +1408,7 @@ elif [ $1 = prs ]; then
 	lprn=$(cat $DS/default/$lgt/pronouns)
 	lpre=$(cat $DS/default/$lgt/prepositions)
 	ladj=$(cat $DS/default/$lgt/adjetives)
-	nspr='/usr/share/idiomind/add prs'
+	nspr='/usr/share/idiomind/add.sh prs'
 	LNK='http://www.chromium.org/developers/how-tos/api-keys'
 	dct=$DS/addons/Dics/dict
 	lckpr=$DT/.n_s_pr
@@ -1442,7 +1442,7 @@ elif [ $1 = prs ]; then
 			if [ $ret -eq "3" ]; then
 				rm=$(cat $lckpr)
 				rm fr $rm $lckpr
-				$DS/mngr inx R && killall add
+				$DS/mngr.sh inx R && killall add.sh
 				exit 1
 			else
 				exit 1
@@ -1626,11 +1626,11 @@ $trgt" >> log
 				cat ./ls | awk '{print "FALSE\n"$0}' | \
 				$yad --center --sticky --no-headers \
 				--name=idiomind --class=idiomind \
-				--dclick-action='/usr/share/idiomind/add prc' \
+				--dclick-action='/usr/share/idiomind/add.sh prc' \
 				--list --checklist --window-icon=idiomind \
 				--width=$wth --text="$info" \
 				--height=$eht --borders=3 --button=gtk-cancel:1 \
-				--button="Save Like New Topic":'/usr/share/idiomind/add n_t' \
+				--button="Save Like New Topic":'/usr/share/idiomind/add.sh n_t' \
 				--button=gtk-save:0 --title=Select \
 				--column="$(cat ./ls | wc -l)" --column="Items" > "$slt"
 			fi
@@ -1694,7 +1694,7 @@ $sntc" >> ./slog
 								eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" "$sntc".mp3
 								
 								mv -f "$sntc".mp3 "$DM_tlt/words/$nme".mp3
-								$DS/mngr inx W "$nme" "$tpe"
+								$DS/mngr.sh inx W "$nme" "$tpe"
 								echo "$nme" >> addw
 							fi
 						
@@ -1713,7 +1713,7 @@ $sntc" >> ./wlog
 								"$sntc.mp3"
 
 								mv -f "$sntc.mp3" "$DM_tlt/$nme.mp3"
-								$DS/mngr inx S "$nme" "$tpe"
+								$DS/mngr.sh inx S "$nme" "$tpe"
 								echo "$nme" >> adds
 								
 								(
@@ -1890,7 +1890,7 @@ $trgt" >> ./wlog
 								"$DM_tlt/words/$trgt.mp3"
 							fi
 							echo "$trgt" >> addw
-							$DS/mngr inx W "$trgt" "$tpe" "$nme"
+							$DS/mngr.sh inx W "$trgt" "$tpe" "$nme"
 						fi
 						nn=$(($n+$(cat ./slts | wc -l)-1))
 						prg=$((100*$nn/$lns))
@@ -2099,14 +2099,14 @@ $trgt" >> ./wlog
 			slt=$(mktemp $DT/slt.XXXX.x)
 			cat ./sntsls | awk '{print "FALSE\n"$0}' | \
 			$yad --name=idiomind --window-icon=idiomind \
-			--dclick-action='/usr/share/idiomind/add prc' --sticky \
+			--dclick-action='/usr/share/idiomind/add.sh prc' --sticky \
 			--list --checklist --class=idiomind --center \
 			--text="<b> $te </b> \\n<small><small> $info</small></small>\\n" \
 			--width=$wth --print-all \
 			--height=$eht --borders=3 \
 			--button=Cancel:1 \
 			--button=Ordenar:2 \
-			--button="Save Like New Topic":'/usr/share/idiomind/add n_t' \
+			--button="Save Like New Topic":'/usr/share/idiomind/add.sh n_t' \
 			--button=gtk-save:0 --title="$tpe" \
 			--column="$(cat ./sntsls | wc -l)" --column="Sentences" > $slt
 				ret=$?
@@ -2190,7 +2190,7 @@ $sntc" >> ./wlog
 								mv -f "$trgt".mp3 "$DM_tlt/words/$trgt".mp3
 								echo "$trgt" >> addw
 								
-								$DS/mngr inx W "$trgt" "$tpe"
+								$DS/mngr.sh inx W "$trgt" "$tpe"
 							fi
 						
 						elif [ $(echo "$sntc" | wc -$c) -ge 1 ]; then
@@ -2294,7 +2294,7 @@ $sntc" >> ./slog
 									eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I "$DM_tlt/$nme.mp3"
 									
 									echo "$nme" >> adds
-									$DS/mngr inx S "$nme" "$tpe"
+									$DS/mngr.sh inx S "$nme" "$tpe"
 									
 									(
 										r=$(echo $(($RANDOM%1000)))
@@ -2435,7 +2435,7 @@ $itm" >> ./wlog
 								"$DM_tlt/words/$itm.mp3"
 							fi
 							echo "$itm" >> addw
-							$DS/mngr inx  W "$itm" "$tpe" "$nme"
+							$DS/mngr.sh inx  W "$itm" "$tpe" "$nme"
 						
 						fi
 						
@@ -2573,7 +2573,7 @@ elif [ $1 = img ]; then
 				eyeD3 --remove-images "$file" >/dev/null 2>&1
 				eyeD3 --add-image "$wrd"_temp.jpeg:ILLUSTRATION "$file" >/dev/null 2>&1
 				rm -f *.jpeg
-				$DS/add img "$wrd" w
+				$DS/add.sh img "$wrd" w
 				
 			elif [ $ret -eq 2 ]; then
 			
@@ -2622,7 +2622,7 @@ elif [ $1 = img ]; then
 				rm -f *.jpeg
 				echo "aimg.$tpc.aimg" >> \
 				$DC/addons/stats/.log &
-				$DS/add img "$wrd" s
+				$DS/add.sh img "$wrd" s
 				
 			elif [ $ret -eq 2 ]; then
 				eyeD3 --remove-images "$file" >/dev/null 2>&1

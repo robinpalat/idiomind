@@ -85,19 +85,19 @@ elif [ -f "$DM_tlt/$nme.mp3" ]; then
 	
 else
 	ff=$(($nuw + 1))
-	$DS/vwr "$v" "$nll" "$ff" & exit 1
+	$DS/vwr.sh "$v" "$nll" "$ff" & exit 1
 fi
 
 		ret=$?
 		
 		if [[ $ret -eq 4 ]]; then
-			$DS/mngr edt "$v" "$nme" $nuw & exit 1
+			$DS/mngr.sh edt "$v" "$nme" $nuw & exit 1
 		elif [[ $ret -eq 2 ]]; then
 			ff=$(($nuw + 1))
-			$DS/vwr "$v" "$nll" $ff &
+			$DS/vwr.sh "$v" "$nll" $ff &
 		elif [[ $ret -eq 3 ]]; then
 			ff=$(($nuw - 1))
-			$DS/vwr "$v" "$nll" $ff &
+			$DS/vwr.sh "$v" "$nll" $ff &
 		else 
 			echo "vwr.$(cat $DC/addons/stats/.tmp | wc -l).vwr" >> \
 			$DC/addons/stats/.log

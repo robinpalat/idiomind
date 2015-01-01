@@ -244,7 +244,7 @@ elif [[ $ret -eq 0 ]]; then
 	touch $DIR2/s/topic.id
 	touch $DIR2/s/fnew.id
 	touch $DIR2/s/topic_m
-	/usr/share/idiomind/mngr mkmn
+	/usr/share/idiomind/mngr.sh mkmn
 	idiomind
 	
 	exit 1

@@ -129,7 +129,7 @@ elif [ "$1" = mklg- ]; then
 	rm "$DC_tlt/.tok-inx" "$DC_tlt/.tlng-inx" "$DC_tl/ok_r" "$DC_tl/ok"
 	cp -f "$DC_tlt/.t-inx" "$DC_tlt/.tlng-inx"
 
-	$DS/mngr mkmn &
+	$DS/mngr.sh mkmn &
 
 	) | $yad --progress \
 	--width=50 --height= 35 \
@@ -186,7 +186,7 @@ elif [ "$1" = mkok- ]; then
 	fi
 	rm "$DC_tlt/.tok-inx" "$DC_tlt/.tlng-inx"
 	cp -f "$DC_tlt/.t-inx" "$DC_tlt/.tok-inx"
-	$DS/mngr mkmn &
+	$DS/mngr.sh mkmn &
 
 	) | $yad --progress \
 	--width 50 --height 35 \
@@ -234,8 +234,8 @@ elif [ "$1" = edt ]; then
 		exm1=$(echo "$inf" | sed -n 1p)
 		dftn=$(echo "$inf" | sed -n 2p)
 		ntes=$(echo "$inf" | sed -n 3p)
-		dlte="$DS/mngr dli '$nme'"
-		imge="$DS/add img '$nme' w"
+		dlte="$DS/mngr.sh dli '$nme'"
+		imge="$DS/add.sh img '$nme' w"
 
 		$yad --form --wrap --center --name=idiomind --class=idmnd \
 		--width=550 --height=380 --always-print-result \
@@ -303,9 +303,9 @@ elif [ "$1" = edt ]; then
 
 				if [ "$(echo $tpc | cut -c 1-40)" != "$topc" ]; then
 					cp -f "$audo" "$DM_tl/$tpc/words/$nme.mp3"
-					$DS/mngr inx W "$nme" "$tpc" &
+					$DS/mngr.sh inx W "$nme" "$tpc" &
 					if [ -n "$(cat "$DC_tl/.in_s" | grep "$tpc")" ]; then
-						$DS/mngr dli "$nme" C
+						$DS/mngr.sh dli "$nme" C
 					fi
 				fi
 				
@@ -316,9 +316,9 @@ elif [ "$1" = edt ]; then
 					echo "$nme" >> "$inp"
 					echo "okim.1.okim" >> \
 					$DC/addons/stats/.log &
-					./vwr "$v" "nll" $ff & exit 1
+					./vwr.sh "$v" "nll" $ff & exit 1
 				fi
-				./vwr "$v" "$nme" $ff & exit 1
+				./vwr.sh "$v" "$nme" $ff & exit 1
 			fi
 			
 	else 
@@ -328,11 +328,11 @@ elif [ "$1" = edt ]; then
 		src=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
 		lwrd=$(echo "$tgs" | grep -o -P '(?<=IWI3I0I).*(?=IPWI3I0I)')
 		pwrds=$(echo "$tgs" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)')
-		wrds="$DS/add edt '$nme' F $c"
+		wrds="$DS/add.sh edt '$nme' F $c"
 		
 		edau="--button=Edit Audio:/usr/share/idiomind/audio/auds edt '$DM_tlt/$nme.mp3' '$DM_tlt'"
-		dlte="$DS/mngr dli '$nme'"
-		imge="$DS/add img '$nme' s"
+		dlte="$DS/mngr.sh dli '$nme'"
+		imge="$DS/add.sh img '$nme' s"
 		
 		$yad --form --wrap --center --name=idiomind --class=idmnd \
 		--width=500 --height=300 --always-print-result \
@@ -570,9 +570,9 @@ elif [ "$1" = edt ]; then
 					echo "$(echo "$tgt" | sed -n "$n"p).mp3" >> "$DC_tl/$tpc/.ainx"
 					let n++
 				done
-				$DS/mngr inx S "$nme" "$tpc" &
+				$DS/mngr.sh inx S "$nme" "$tpc" &
 				if [ -n "$(cat "$DC_tl/.in_s" | grep "$tpc")" ]; then
-					$DS/mngr dli "$nme" C
+					$DS/mngr.sh dli "$nme" C
 				fi
 			fi
 			
@@ -583,11 +583,11 @@ elif [ "$1" = edt ]; then
 				echo "$nme" >> "$inp"
 				echo "okim.1.okim" >> \
 				$DC/addons/stats/.log &
-				./vwr "$v" "nll" $ff & exit 1
+				./vwr.sh "$v" "nll" $ff & exit 1
 			fi
 			
-			[ -d "$DT/$c" ] && $DS/add edt "$nme" S $c "$trgt" &
-			./vwr "$v" "$nme" $ff & exit 1
+			[ -d "$DT/$c" ] && $DS/add.sh edt "$nme" S $c "$trgt" &
+			./vwr.sh "$v" "$nme" $ff & exit 1
 	fi
 	
 #--------------------------------
@@ -825,7 +825,7 @@ elif [ $1 = dlt ]; then
 			kill -9 $(pgrep -f "$yad --list ")
 			notify-send  -i info "$tpc" "Deleted"  -t 1000
 			
-			$DS/mngr mkmn
+			$DS/mngr.sh mkmn
 			
 		elif [ $ret -eq 1 ]; then
 			exit

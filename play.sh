@@ -156,7 +156,7 @@ if [[ "$1" = d ]]; then
 		elif [ $ret -eq 2 ]; then
 			kill -9 $(pgrep -f "$yad --list ") &
 			rm "$sinda" "$sinde" "$inde" "$inda"
-			$DS/play
+			$DS/play.sh
 			rm -f $DT/*.s
 			exit 1
 		
@@ -274,7 +274,7 @@ $yad --list --on-top \
 --window-icon=idiomind --no-headers \
 --buttons-layout=end --skip-taskbar \
 --borders=0 $btn2 $btn1 --hide-column=1 \
---dclick-action='/usr/share/idiomind/play d' \
+--dclick-action='/usr/share/idiomind/play.sh d' \
 --column=Action:TEXT --column=icon:IMG \
 --column=Action:TEXT --column=icon:CHK \
 "Words" "$img1" "$Words" $st1 \
@@ -398,4 +398,4 @@ fi
 echo "$(date '+%Y %m %d %l %M') -plyrt $tpc -plyrt" >> \
 $DC/addons/stats/.log &
 
-$DS/bcle & exit 1
+$DS/bcle.sh & exit 1

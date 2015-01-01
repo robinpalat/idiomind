@@ -274,7 +274,7 @@ elif [ "$1" != chngi ]; then
 			ret=$?
 
 			if [ $ret -eq 3 ]; then
-				$DS/add n_t
+				$DS/add.sh n_t
 				exit 1
 			elif [ $ret -eq 1 ]; then
 				exit 1

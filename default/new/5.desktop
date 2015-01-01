@@ -1,5 +1,5 @@
 [Desktop Entry]
-Exec=/usr/share/idiomind/chng
+Exec=/usr/share/idiomind/chng.sh
 Icon=/usr/share/idiomind/images/tpcs.png
 Version=3
 Encoding=UTF-8
