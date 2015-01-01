@@ -8,7 +8,7 @@ bash (>=4.1), rsstail, scrot, imagemagick, wkhtmltopdf, lynx, eyed3, curl, html2
 
 
 
-<b>Pruébalo (beta) en Ubuntu y derivados:</b>
+<b>Pruébalo (alpha) en Ubuntu y derivados:</b>
 
 Agregando el repositorio de Launchpad (recomendado).
 
