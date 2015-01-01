@@ -82,7 +82,7 @@ if [[ "$1" = chngi ]]; then
 		wmt=$(($wmm + 5))
 
 		$osd -i idiomind "$trgt" "$srce\\n" -t 8000  &
-		sleep 3
+		sleep 1
 		$aud "$DM_tlt/$itm".mp3 &
 		
 		if [ $bcl -ge 30 ]; then
@@ -137,13 +137,13 @@ if [[ "$1" = chngi ]]; then
 			srce=" - - - "
 		fi
 		if [ "$mrk" = TRUE ]; then
-			trgt=$(echo "<span color='#DF7732'>"tgt"</span>")
+			trgt=" * $tgt"
 		else
-			trgt=$(echo "$tgt")
+			trgt="$tgt"
 		fi
 
 		$osd -i idiomind "$trgt" "$srce\n" -t 7000 &
-		sleep 3
+		sleep 1
 		$aud "$DM_tlt/words/$itm".mp3 &
 		if [ $bcl -ge 5 ]; then
 			(sleep 2.5 && $aud "$DM_tlt/words/$itm.mp3") &
@@ -177,7 +177,7 @@ if [[ "$1" = chngi ]]; then
 			wmt=$(($wmm + 5))
 
 			$osd "$trgt" "$srce" -t 8000 -i idiomind &
-			sleep 3
+			sleep 1
 			$aud "$DM_tl/Feeds/kept/$itm".mp3 &
 			sleep $wmm
 					
@@ -211,13 +211,13 @@ if [[ "$1" = chngi ]]; then
 				exmp=$(echo " ")
 			fi
 			if [ "$mrk" = TRUE ]; then
-				trgt=$(echo "<span color='#DF7732'>"$tgt"</span>")
+				trgt="* $tgt"
 			else
-				trgt=$(echo "$tgt")
+				trgt="$tgt"
 			fi
 
 			$osd -i idiomind "$trgt" "$srce\\n\\n[ $exm ]" -t 7000 &
-			sleep 3
+			sleep 1
 			$aud "$DM_tl/Feeds/kept/words/$itm".mp3 &
 			if [ $bcl -ge 5 ]; then
 				(sleep 4 && $aud "$DM_tl/Feeds/kept/words/$itm.mp3") &

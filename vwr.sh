@@ -2,6 +2,7 @@
 source /usr/share/idiomind/ifs/c.conf
 wth=$(sed -n 5p $DC_s/.rd)
 eht=$(sed -n 6p $DC_s/.rd)
+ap=$(cat $DC_s/cnfg1 | sed -n 5p)
 echo "_" >> $DC/addons/stats/.tmp &
 re='^[0-9]+$'
 v="$1"
@@ -43,6 +44,10 @@ if [ -f "$DM_tlt/words/$nme.mp3" ]; then
 	if [ "$mrk" = TRUE ]; then
 		trgt=$(echo "<span color='#DF7732'>"$trgt"</span>")
 	fi
+	if [ "$ap" = TRUE ]; then
+		killall play
+		play "$DM_tlt/words/$nme.mp3" &
+	fi
 
 	$yad --columns=1 --form \
 	--window-icon=idiomind --scroll --text-align=center \
@@ -71,9 +76,13 @@ elif [ -f "$DM_tlt/$nme.mp3" ]; then
 	if [ ! -f "$file" ]; then
 		exit 1
 	fi
+	if [ "$ap" = TRUE ]; then
+		killall play
+		play "$DM_tlt/$nme.mp3" &
+	fi
 	
 	echo "$lwrd" | $yad --list --print-column=0 \
-	--window-icon=idiomind --scroll \
+	--window-icon=idiomind --scroll --text-align=center \
 	--skip-taskbar --center --title=" " --borders=10 \
 	--on-top --selectable-labels --expand-column=0 \
 	--text="<big><big>$trgt</big></big>\\n\\n<i>$src</i>\\n\\n\\n" \

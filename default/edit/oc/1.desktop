@@ -1,5 +1,5 @@
 [Desktop Entry]
-Exec=/usr/share/idiomind/mngr mkok-
+Exec=/usr/share/idiomind/mngr.sh mkok-
 Icon=/usr/share/idiomind/images/check.png
 Version=3
 Encoding=UTF-8

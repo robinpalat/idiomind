@@ -1,6 +1,17 @@
 #!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
 
+if [ $1 = tls ]; then
+
+$yad --form --height=150 --width=350 \
+	--title=" " --skip-taskbar --columns=2 \
+	--field="Topics saved :BTN" "$DS/ifs/upld.sh vsd" \
+	--field="User data :BTN" "'$DS/ifs/t_bd.sh'" \
+	--field="Audio imput :BTN" "'$DS/audio/auds'" \
+	--field="Search updates :BTN" "$DS/ifs/tls.sh updt" \
+	--button=Close:0 & exit 1
+fi
+
 if [ $1 = nt ]; then
 	if [ ! -f "$nt".odt ] || [ -z "$(cat $DC_s/nt)" ]; then
 		sv=$($yad --save --center --borders=10 --on-top \
@@ -94,7 +105,7 @@ elif [ $1 = pdf ]; then
 	--window-icon=idiomind --skip-taskbar --title="Export " \
 	--file --width=600 --height=500 --button=gtk-ok:0 )
 	ret=$?
-z
+
 	if [[ "$ret" -eq 0 ]]; then
 		dte=$(date "+%d %B %Y")
 		mkdir $DT/mkhtml

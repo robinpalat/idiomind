@@ -1,5 +1,5 @@
 [Desktop Entry]
-Exec=/usr/share/idiomind/mngr dlt
+Exec=/usr/share/idiomind/mngr.sh dlt
 Icon=/usr/share/idiomind/images/delete.png
 Version=3
 Encoding=UTF-8

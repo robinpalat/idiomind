@@ -9,17 +9,18 @@ if [ -f $DT/.lc ]; then
 fi
 > $DT/.lc
 
-
 text="
 Idiomind it's specifically designed for people learning one or more foreign languages. It helps you learn foreign language vocabulary. You can create and manage word lists and share them online.
-supports different types of exercises, including grammar and pronunciation tests.
+supports 4 types of exercises, including grammar and pronunciation tests.
 
-Enviar sugerencias o comentarios para mejorar el programa, si crees que te resultó util, considera realizar una donación.
 
-Limitaciones:
-Hasta 30 topics de 50 oraciones y 50 palabras cada uno.
+Send comments or suggestions to improve the program.
+https://sourceforge.net/p/idiomind/tickets
 
-Github:
+if you think it is useful, please consider making a donation.
+https://sourceforge.net/projects/idiomind/support
+
+Check out the code:
 https://github.com/robinsato/idiomind
 
 Licencia:
@@ -28,10 +29,6 @@ GPLv3
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details."
-
-
-
-
 
 ICON=$DS/images/icon.png
 cd $DS/addons
@@ -44,17 +41,19 @@ if [ ! -d "$DC" ]; then
 	$DS/cnfg & exit
 fi
 
-KEY=12348
+c=$(echo $(($RANDOM%100000)))
+KEY=$c
 cnf1=$(mktemp $DT/cnf1.XXXX)
 cnf3=$(mktemp $DT/cnf3.XXXX)
-sttng3=$(sed -n 3p $DC_s/cnfg1)
-sttng4=$(sed -n 4p $DC_s/cnfg1)
-sttng5=$(sed -n 5p $DC_s/cnfg1)
-sttng6=$(sed -n 6p $DC_s/cnfg1)
-sttng7=$(sed -n 7p $DC_s/cnfg1)
-sttng8=$(sed -n 8p $DC_s/cnfg1)
-sttng9=$(sed -n 9p $DC_s/cnfg1)
-sttng10=$(sed -n 10p $DC_s/cnfg1)
+sttng3=$(sed -n 3p $DC_s/cnfg1) #Use colors for grammar (experimental)
+sttng4=$(sed -n 4p $DC_s/cnfg1) #Show dialog word Selector
+sttng5=$(sed -n 5p $DC_s/cnfg1) #Listen pronounce
+sttng6=$(sed -n 6p $DC_s/cnfg1) #Start with System
+sttng7=$(sed -n 7p $DC_s/cnfg1) #tools
+sttng8=$(sed -n 8p $DC_s/cnfg1) 
+sttng9=$(sed -n 9p $DC_s/cnfg1) #Voice Syntetizer\n(Defaul espeak)
+sttng10=$(sed -n 10p $DC_s/cnfg1) #Use this program\nto record audio
+sttng11=$(sed -n 11p $DC_s/cnfg1)
 img1=$DS/images/gts.png
 img2=$DS/images/lwn.png
 img3=applications-other
@@ -68,11 +67,11 @@ $yad --plug=$KEY --tabnum=1 --borders=15 --scroll \
 	--field=":lbl" "#2"\
 	--field="Use colors for grammar (experimental):CHK" $sttng3 \
 	--field="Show dialog word Selector:CHK" $sttng4 \
-	--field="Start with system:CHK" $sttng5 \
-	--field=" :lbl" "#6"\
-	--field="<small>Voice Syntetizer\n(Defaul espeak)</small>:CB5" "$sttng7" \
-	--field="<small>Use this program\nto record audio</small>:CB5" "$sttng8" \
-	--field="Audio Imput:BTN" "$DS/audio/auds" \
+	--field="Listen pronounce:CHK" $sttng5 \
+	--field="Start with System:CHK" $sttng6 \
+	--field=" :lbl" "#7"\
+	--field="<small>Voice Syntetizer\n(Defaul espeak)</small>:CB5" "$sttng8" \
+	--field="<small>Use this program\nto record audio</small>:CB5" "$sttng9" \
 	--field=" :lbl" "#10"\
 	--field="languages:CB" "$lgtl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
 	--field=" :lbl" "#12" > "$cnf1" &
@@ -81,32 +80,25 @@ $yad --plug=$KEY --tabnum=2 --list --expand-column=2 \
 	--no-headers --dclick-action="./plgcnf" --print-all \
 	--column=icon:IMG --column=Action \
 	"$img1" "Google translation service" "$img2" "Learning with News" "$img4" "Dictionarys" "$img5" "Weekly Report" &
-$yad --plug=$KEY --tabnum=3 --form --align=left \
-	--borders=20 --text-align=left \
-	--field="Topics Saved :BTN" "$DS/ifs/upld vsd" \
-	--field="Search Updates :BTN" "$DS/ifs/tls updt" \
-	--field="Basic Use :BTN" "$DS/ifs/tls how" \
-	--field="User Data :BTN" "'$DS/ifs/t_bd'" \
-	--field="Report Problem / Suggestion :BTN" "$DS/ifs/tls rpsg" \
-	--field="Make Donation:BTN" "$DS/ifs/tls mkdnt" &
-echo "$text" | $yad --plug=$KEY --tabnum=4 --text-info \
-	--text="\\n<big><big><big><b>Idiomind 1.0 alpha</b></big></big></big>\\n<sup>Vocabulary Learning Tool\\n<a href='https://sourceforge.net/projects/idiomind/'>Homepage</a> © 2013-2014 Robin Palat</sup>" \
+echo "$text" | $yad --plug=$KEY --tabnum=3 --text-info \
+	--text="\\n<big><big><big><b>Idiomind 1.0 alpha</b></big></big></big>\\n<sup>Vocabulary learning tool\\n<a href='https://sourceforge.net/projects/idiomind/'>Homepage</a> © 2013-2014 Robin Palat</sup>" \
 	--show-uri --fontname=Arial --margins=10 --wrap --text-align=center &
 $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 	--sticky --center --window-icon=$ICON --window-icon=idiomind \
 	--tab="Preferences" --tab="  Addons  " \
-	--tab="  More  " --tab="  About  " \
+	--tab="  About  " \
 	--width=450 --height=340 --title="Settings" \
-	--button=Close:0
+	--button=Tools:"$DS/ifs/tls.sh tls" --button=Close:0
 	
 	ret=$?
 	
 	if [ $ret -eq 0 ]; then
 		rm -f $DT/.lc
 		cp -f "$cnf1" $DC_s/cnfg1
+		
 		[ ! -d  $HOME/.config/autostart ] && mkdir $HOME/.config/autostart
 		config_dir=$HOME/.config/autostart
-		if [[ "$(sed -n 5p $DC_s/cnfg1)" = "TRUE" ]]; then
+		if [[ "$(sed -n 6p $DC_s/cnfg1)" = "TRUE" ]]; then
 			if [ ! -f $config_dir/idiomind.desktop ]; then
 			
 				if [ ! -d "$HOME/.config/autostart" ]; then
@@ -147,8 +139,6 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			echo "English" >> $DC_s/lang
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
-			cp -f $DS/images/flags/en.png $DT/tryidmdicon
-			chmod 777 $DT/tryidmdicon
 			
 			if [ -f "$DC/topics/English/.lst" ]; then
 				LST=$(sed -n 1p "$DC/topics/English/.lst")
@@ -171,8 +161,6 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			echo "Spanish" >> $DC_s/lang
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
-			cp -f $DS/images/flags/es.png $DT/tryidmdicon
-			chmod 777 $DT/tryidmdicon
 			
 			if [ -f "$DC/topics/Spanish/.lst" ]; then
 				LST=$(sed -n 1p "$DC/topics/Spanish/.lst")
@@ -195,8 +183,6 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			echo "Italian" >> $DC_s/lang
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
-			cp -f $DS/images/flags/it.png $DT/tryidmdicon
-			chmod 777 $DT/tryidmdicon
 			
 			if [ -f "$DC/topics/Italian/.lst" ]; then
 				LST=$(sed -n 1p "$DC/topics/Italian/.lst")
@@ -219,8 +205,6 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			echo "Portuguese" >> $DC_s/lang
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
-			cp -f $DS/images/flags/pt.png $DT/tryidmdicon
-			chmod 777 $DT/tryidmdicon
 			
 			if [ -f "$DC/topics/Portuguese/.lst" ]; then
 				LST=$(sed -n 1p "$DC/topics/Portuguese/.lst")
@@ -243,8 +227,6 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			echo "German" >> $DC_s/lang
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
-			cp -f $DS/images/flags/de.png $DT/tryidmdicon
-			chmod 777 $DT/tryidmdicon
 			
 			if [ -f "$DC/topics/German/.lst" ]; then
 				LST=$(sed -n 1p "$DC/topics/German/.lst")
@@ -267,8 +249,6 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			echo "Japanese" >> $DC_s/lang
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
-			cp -f $DS/images/flags/ja.png $DT/tryidmdicon
-			chmod 777 $DT/tryidmdicon
 			
 			if [ -f "$DC/topics/Japanese/.lst" ]; then
 				LST=$(sed -n 1p "$DC/topics/Japanese/.lst")
@@ -291,8 +271,6 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			echo "French" >> $DC_s/lang
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
-			cp -f $DS/images/flags/fr.png $DT/tryidmdicon
-			chmod 777 $DT/tryidmdicon
 			
 			if [ -f "$DC/topics/French/.lst" ]; then
 				LST=$(sed -n 1p "$DC/topics/French/.lst")
@@ -315,8 +293,6 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			echo "Vietnamese" >> $DC_s/lang
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
-			cp -f $DS/images/flags/vi.png $DT/tryidmdicon
-			chmod 777 $DT/tryidmdicon
 			
 			if [ -f "$DC/topics/Vietnamese/.lst" ]; then
 				LST=$(sed -n 1p "$DC/topics/Vietnamese/.lst")
@@ -339,8 +315,6 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			echo "Chinese" >> $DC_s/lang
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
-			cp -f $DS/images/flags/zh-cn.png $DT/tryidmdicon
-			chmod 777 $DT/tryidmdicon
 			
 			if [ -f "$DC/topics/Chinese/.lst" ]; then
 				LST=$(sed -n 1p "$DC/topics/Chinese/.lst")
@@ -363,8 +337,6 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			echo "Russian" >> $DC_s/lang
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
-			cp -f $DS/images/flags/ru.png $DT/tryidmdicon
-			chmod 777 $DT/tryidmdicon
 			
 			if [ -f "$DC/topics/Russian/.lst" ]; then
 				LST=$(sed -n 1p "$DC/topics/Russian/.lst")

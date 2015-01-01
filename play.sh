@@ -362,7 +362,7 @@ if  [[ "$ret" -eq 0 ]]; then
 #-------------------------------------stop 
 elif [[ "$ret" -eq 2 ]]; then
 	rm -fr $DT/.$uid $slct $DT/.p__$uid &
-	$DS/stop P & exit 1
+	$DS/stop.sh P & exit 1
 	
 else
 	if  [ ! -f $DT/.p__$uid ]; then
@@ -374,7 +374,7 @@ fi
 
 #-----------------------------------------acondicion
 rm -f $slct
-$DS/stop P
+$DS/stop.sh P
 #-----------------------------------------condicion 
 
 w=$(sed -n 1p $DC_s/cnfg5)
@@ -386,13 +386,13 @@ if [ -z "$(echo "$w""$s""$f""$p" | grep -o "TRUE")" ]; then
 	notify-send "Error " "No Hay Nada \
 	Indicado para Reproduccir" -i info -t 2000 &&
 	sleep 5
-	$DS/stop
+	$DS/stop.sh
 fi
 
 if [[ "$(cat ./indx | wc -l)" -lt 1 ]]; then
 	notify-send -i info "nada para reproducir" -t 9000 &
 	rm -f $DT/.p__$uid &
-	$DS/stop S & exit
+	$DS/stop.sh S & exit
 fi
 
 echo "$(date '+%Y %m %d %l %M') -plyrt $tpc -plyrt" >> \
