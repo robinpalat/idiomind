@@ -21,4 +21,4 @@ Agregando el repositorio de Launchpad (recomendado).
 
 O descarga el paquete:
 
-https://github.com/robinsato/idiomind/releases/edit/v1.0-alpha
+https://github.com/robinsato/idiomind/releases
