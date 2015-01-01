@@ -50,7 +50,7 @@ $yad --plug=$KEY --tabnum=1 --borders=15 --scroll \
 	--field="<small>Use this program\nto record audio</small>:CB5" "$sttng8" \
 	--field="Audio Imput:BTN" "$DS/audio/auds" \
 	--field=" :lbl" "#10"\
-	--field="languages:CB" "$lgtl!English!Spanish!Italian!Portuguese!German!Japanese!French!Chinese" \
+	--field="languages:CB" "$lgtl!English!Spanish!Italian!Portuguese!German!Japanese!French!Chinese!Vietnamese" \
 	--field=" :lbl" "#12" > "$cnf1" &
 $yad --plug=$KEY --tabnum=2 --list --expand-column=2 \
 	--text="<small>  Double click for configure</small>" \
@@ -79,7 +79,6 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 	ret=$?
 	
 	if [ $ret -eq 0 ]; then
-	
 		rm -f $DT/.lc
 		cp -f "$cnf1" $DC_s/cnfg1
 		[ ! -d  $HOME/.config/autostart ] && mkdir $HOME/.config/autostart

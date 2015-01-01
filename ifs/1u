@@ -16,7 +16,7 @@ idmnd=$(yad --center --width=520 --height=280 --fixed \
 	--title="Idiomind" --form --borders=10 --align=right \
 	--button=Ok:0 \
 	--field="<small>\\t\\t\\t\\tChose language for learning : </small>:CB" \
-	!"English!French!German!Italian!Japanese!Portuguese!Spanish!Chinese"\
+	!"English!French!German!Italian!Japanese!Portuguese!Spanish!Vietnamese!Chinese!"\
 	--field="<small>\\t\\t\\t\\tYour language : </small>:CB" \
 	!"English!French!German!Italian!Japanese!Portuguese!Spanish!Vietnamese!Chinese" \
 	"$ins" "$int" --field=":lbl")

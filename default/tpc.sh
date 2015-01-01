@@ -12,7 +12,7 @@ else
 	title="$topic"
 fi
 
-if [ "$1" = 2 ]; then
+if [[ $1 = 2 ]]; then
 	if cat "$DC_tl/.nstll" | grep -Fxo "$topic"; then
 		$DC_s/chng.sh $DS/ifs/info2 2 & exit 1
 	else
@@ -141,7 +141,6 @@ if [ -d "$DC_tlt" ]; then
 	fi
 	
 	if cat "$DC_tl/.nstll" | grep -Fxo "$topic"; then
-	
 		$ > $DC_s/fnew.id
 		echo "- $title" > $DC_s/topic_m
 		echo "$topic" > $DC_s/topic.id
