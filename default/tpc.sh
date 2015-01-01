@@ -1,7 +1,7 @@
 #!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
-$DS/stop T
-icn=$DS/images/cnn.png
+$DS/stop.sh T
+
 gtdr="$(cd "$(dirname "$0")" && pwd)"
 topic=$(echo "$gtdr" | sed 's|\/|\n|g' | sed -n 8p)
 DC_tlt="$DC_tl/$topic"
@@ -200,7 +200,7 @@ if [ -d "$DC_tlt" ]; then
 	fi
 	
 	sleep 1
-	notify-send --icon=$icn \
+	notify-send --icon=idiomind \
 	"$topic" "It's your topic now" -t 2000 & exit
 else
 	$yad --name=idiomind \

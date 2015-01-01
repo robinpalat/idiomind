@@ -355,6 +355,7 @@ elif [ $1 = n_s ]; then
 	ladj=$(cat $DS/default/$lgt/adjetives)
 	DM_tlt="$DM_tl/$tpe"
 	DC_tlt="$DC_tl/$tpe"
+	icnn=idiomind
 	
 	dct=$DS/addons/Dics/dict
 			
@@ -433,6 +434,7 @@ elif [ $1 = n_s ]; then
 			/usr/bin/convert -scale 450x270! -border 0.5 \
 			-bordercolor '#9A9A9A' img.jpg imgs.jpg
 			eyeD3 --add-image imgs.jpg:ILLUSTRATION "$DM_tlt/$nme".mp3
+			icnn=img.jpg
 		fi
 		
 		notify-send -i "$icnn" "$trgt" "$srce \\n($tpe)" -t 10000
@@ -483,8 +485,6 @@ elif [ $1 = n_s ]; then
 			fi
 			let n++
 		done
-		
-		DB7720
 		
 		if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]; then
 			n=1
@@ -675,10 +675,13 @@ elif [ $1 = n_s ]; then
 					/usr/bin/convert -scale 450x270! -border 0.5 \
 					-bordercolor '#9A9A9A' img.jpg imgs.jpg
 					eyeD3 --add-image imgs.jpg:ILLUSTRATION "$DM_tlt/$nme.mp3"
+					icnn=img.jpg
 				fi
 		fi
 		sleep 1
+		notify-send -i "$icnn" "$trgt" "$srce \\n($tpe)" -t 10000
 		$DS/mngr.sh inx S "$nme" "$tpe"
+		
 		if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]; then
 			n=1
 			while [ $n -le $(cat $bw | wc -l) ]; do
@@ -702,6 +705,7 @@ elif [ $1 = n_w ]; then
 	trgt="$2"
 	srce="$4"
 	dct="$DS/addons/Dics/dict"
+	icnn=idiomind
 	tpcs=$(cat "$DC_tl/.in_s" | cut -c 1-30 | egrep -v "$tpe" \
 	| tr "\\n" '!' | sed 's/!\+$//g')
 	ttle="${tpe:0:30}"
@@ -751,9 +755,10 @@ elif [ $1 = n_w ]; then
 			/usr/bin/convert -scale 360x240! img.jpg imgt.jpg
 			eyeD3 --set-encoding=utf8 --add-image imgs.jpg:ILLUSTRATION "$DM_tlt/words/$nme.mp3"
 			mv -f imgt.jpg "$DM_tlt/words/images/$nme.jpg"
+			icnn=img.jpg
 		fi
 		
-		notify-send -i "$icn" "$trgt" "$src\\n  ($tpe)" -t 5000
+		notify-send -i "$icnn" "$trgt" "$src\\n  ($tpe)" -t 5000
 		$DS/mngr.sh inx W "$nme" "$tpe"
 		echo "aitm.1.aitm" >> \
 		$DC/addons/stats/.log
@@ -834,12 +839,13 @@ elif [ $1 = n_w ]; then
 					/usr/bin/convert -scale 360x240! img.jpg imgt.jpg
 					eyeD3 --add-image imgs.jpg:ILLUSTRATION "$DM_tlt/words/$trgt.mp3"
 					mv -f imgt.jpg "$DM_tlt/words/images/$trgt.jpg"
+					icnn="$DM_tlt/words/images/$trgt.jpg"
 				fi
 			fi
 		fi
 		
 		sleep 2
-		notify-send -i "$icn" "$trgt" "$srce\\n ($tpe)" -t 3000
+		notify-send -i "$icnn" "$trgt" "$srce\\n ($tpe)" -t 3000
 		$DS/mngr.sh inx W "$trgt" "$tpe"
 		echo "aitm.1.aitm" >> \
 		$DC/addons/stats/.log
