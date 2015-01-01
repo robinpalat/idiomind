@@ -74,7 +74,7 @@ $yad --plug=$KEY --tabnum=1 --borders=15 --scroll \
 	--field="<small>Use this program\nto record audio</small>:CB5" "$sttng8" \
 	--field="Audio Imput:BTN" "$DS/audio/auds" \
 	--field=" :lbl" "#10"\
-	--field="languages:CB" "$lgtl!English!Spanish!Italian!Portuguese!German!Japanese!French!Chinese!Vietnamese" \
+	--field="languages:CB" "$lgtl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
 	--field=" :lbl" "#12" > "$cnf1" &
 $yad --plug=$KEY --tabnum=2 --list --expand-column=2 \
 	--text="<small>  Double click for configure</small>" \
@@ -145,18 +145,16 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			fi
 			echo "en" > $DC_s/lang
 			echo "English" >> $DC_s/lang
-			$DS/stop L
+			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
 			cp -f $DS/images/flags/en.png $DT/tryidmdicon
 			chmod 777 $DT/tryidmdicon
-			$ > $DC_s/topic_m
+			
 			if [ -f "$DC/topics/English/.lst" ]; then
 				LST=$(sed -n 1p "$DC/topics/English/.lst")
 				"$DC/topics/English/$LST/tpc.sh"
-			else
-				$ > $DC_s/topic_m
 			fi
-			$DS/mngr mkmn
+			$DS/mngr.sh mkmn
 		fi
 		
 		if cat "$cnf1" | grep "Spanish" && [ Spanish != $lgtl ] ; then
@@ -171,18 +169,16 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			fi
 			echo "es" > $DC_s/lang
 			echo "Spanish" >> $DC_s/lang
-			$DS/stop L
+			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
 			cp -f $DS/images/flags/es.png $DT/tryidmdicon
 			chmod 777 $DT/tryidmdicon
-			$ > $DC_s/topic_m
+			
 			if [ -f "$DC/topics/Spanish/.lst" ]; then
 				LST=$(sed -n 1p "$DC/topics/Spanish/.lst")
 				"$DC/topics/Spanish/$LST/tpc.sh"
-			else
-				$ > $DC_s/topic_m
 			fi
-			$DS/mngr mkmn
+			$DS/mngr.sh mkmn
 		fi
 		
 		if cat "$cnf1" | grep "Italian" && [ Italian != $lgtl ] ; then
@@ -197,18 +193,16 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			fi
 			echo "it" > $DC_s/lang
 			echo "Italian" >> $DC_s/lang
-			$DS/stop L
+			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
 			cp -f $DS/images/flags/it.png $DT/tryidmdicon
 			chmod 777 $DT/tryidmdicon
-			$ > $DC_s/topic_m
+			
 			if [ -f "$DC/topics/Italian/.lst" ]; then
 				LST=$(sed -n 1p "$DC/topics/Italian/.lst")
 				"$DC/topics/Italian/$LST/tpc.sh"
-			else
-				$ > $DC_s/topic_m
 			fi
-			$DS/mngr mkmn
+			$DS/mngr.sh mkmn
 		fi
 		
 		if cat "$cnf1" | grep "Portuguese" && [ Portuguese != $lgtl ] ; then
@@ -223,18 +217,16 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			fi
 			echo "pt" > $DC_s/lang
 			echo "Portuguese" >> $DC_s/lang
-			$DS/stop L
+			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
 			cp -f $DS/images/flags/pt.png $DT/tryidmdicon
 			chmod 777 $DT/tryidmdicon
-			$ > $DC_s/topic_m
+			
 			if [ -f "$DC/topics/Portuguese/.lst" ]; then
 				LST=$(sed -n 1p "$DC/topics/Portuguese/.lst")
 				"$DC/topics/Portuguese/$LST/tpc.sh"
-			else
-				$ > $DC_s/topic_m
 			fi
-			$DS/mngr mkmn
+			$DS/mngr.sh mkmn
 		fi
 		
 		if cat "$cnf1" | grep "German" && [ German != $lgtl ] ; then
@@ -249,18 +241,16 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			fi
 			echo "de" > $DC_s/lang
 			echo "German" >> $DC_s/lang
-			$DS/stop L
+			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
 			cp -f $DS/images/flags/de.png $DT/tryidmdicon
 			chmod 777 $DT/tryidmdicon
-			$ > $DC_s/topic_m
+			
 			if [ -f "$DC/topics/German/.lst" ]; then
 				LST=$(sed -n 1p "$DC/topics/German/.lst")
 				"$DC/topics/German/$LST/tpc.sh"
-			else
-				$ > $DC_s/topic_m
 			fi
-			$DS/mngr mkmn
+			$DS/mngr.sh mkmn
 		fi
 		
 		if cat "$cnf1" | grep "Japanese" && [ Japanese != $lgtl ] ; then
@@ -275,18 +265,16 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			fi
 			echo "ja" > $DC_s/lang
 			echo "Japanese" >> $DC_s/lang
-			$DS/stop L
+			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
 			cp -f $DS/images/flags/ja.png $DT/tryidmdicon
 			chmod 777 $DT/tryidmdicon
-			$ > $DC_s/topic_m
+			
 			if [ -f "$DC/topics/Japanese/.lst" ]; then
 				LST=$(sed -n 1p "$DC/topics/Japanese/.lst")
 				"$DC/topics/Japanese/$LST/tpc.sh"
-			else
-				$ > $DC_s/topic_m
 			fi
-			$DS/mngr mkmn
+			$DS/mngr.sh mkmn
 		fi
 		
 		if cat "$cnf1" | grep "French" && [ French != $lgtl ] ; then
@@ -301,18 +289,16 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			fi
 			echo "fr" > $DC_s/lang
 			echo "French" >> $DC_s/lang
-			$DS/stop L
+			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
 			cp -f $DS/images/flags/fr.png $DT/tryidmdicon
 			chmod 777 $DT/tryidmdicon
-			$ > $DC_s/topic_m
+			
 			if [ -f "$DC/topics/French/.lst" ]; then
 				LST=$(sed -n 1p "$DC/topics/French/.lst")
 				"$DC/topics/French/$LST/tpc.sh"
-			else
-				$ > $DC_s/topic_m
 			fi
-			$DS/mngr mkmn
+			$DS/mngr.sh mkmn
 		fi
 		
 		if cat "$cnf1" | grep "Vietnamese" && [ Vietnamese != $lgtl ] ; then
@@ -327,18 +313,16 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			fi
 			echo "vi" > $DC_s/lang
 			echo "Vietnamese" >> $DC_s/lang
-			$DS/stop L
+			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
 			cp -f $DS/images/flags/vi.png $DT/tryidmdicon
 			chmod 777 $DT/tryidmdicon
-			$ > $DC_s/topic_m
+			
 			if [ -f "$DC/topics/Vietnamese/.lst" ]; then
 				LST=$(sed -n 1p "$DC/topics/Vietnamese/.lst")
 				"$DC/topics/Vietnamese/$LST/tpc.sh"
-			else
-				$ > $DC_s/topic_m
 			fi
-			$DS/mngr mkmn
+			$DS/mngr.sh mkmn
 		fi
 		
 		if cat "$cnf1" | grep "Chinese" && [ Chinese != $lgtl ] ; then
@@ -353,18 +337,40 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			fi
 			echo "zh-cn" > $DC_s/lang
 			echo "Chinese" >> $DC_s/lang
-			$DS/stop L
+			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
 			cp -f $DS/images/flags/zh-cn.png $DT/tryidmdicon
 			chmod 777 $DT/tryidmdicon
-			$ > $DC_s/topic_m
+			
 			if [ -f "$DC/topics/Chinese/.lst" ]; then
 				LST=$(sed -n 1p "$DC/topics/Chinese/.lst")
 				"$DC/topics/Chinese/$LST/tpc.sh"
-			else
-				$ > $DC_s/topic_m
 			fi
-			$DS/mngr mkmn
+			$DS/mngr.sh mkmn
+		fi
+		
+		if cat "$cnf1" | grep "Russian" && [ Russian != $lgtl ] ; then
+			if [ ! -d "$DM_t"/Russian ]; then
+				mkdir "$DM_t"/Russian
+				mkdir "$DM_t"/Russian/.share
+				mkdir "$DC/topics"/Russian
+				mkdir "$DC_a/Learning with news"/Russian
+				mkdir "$DC_a/Learning with news"/Russian/subscripts
+				cp -f "$DS/addons/Learning_with_news/examples/Russian" \
+				"$DC_a/Learning with news/Russian/subscripts/Example"
+			fi
+			echo "ru" > $DC_s/lang
+			echo "Russian" >> $DC_s/lang
+			$DS/stop.sh L
+			$DS/addons/Learning_with_news/stp.sh
+			cp -f $DS/images/flags/ru.png $DT/tryidmdicon
+			chmod 777 $DT/tryidmdicon
+			
+			if [ -f "$DC/topics/Russian/.lst" ]; then
+				LST=$(sed -n 1p "$DC/topics/Russian/.lst")
+				"$DC/topics/Russian/$LST/tpc.sh"
+			fi
+			$DS/mngr.sh mkmn
 		fi
 		
 		rm -f $cnf1 $cnf2 $cnf3 $DT/.lc & exit 1

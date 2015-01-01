@@ -1,7 +1,7 @@
 #!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
 DS_pf="$DS/addons/Learning_with_news"
-vwr.sh="$DS_pf/vwr.sh"
+vwr="$DS_pf/vwr.sh"
 
 if [[ $1 = V1 ]]; then
 
@@ -38,7 +38,7 @@ if [[ $1 = V1 ]]; then
 	echo "$lwrd" | awk '{print $0""}' | $yad --list \
 	--window-icon=idiomind --scroll --quoted-output \
 	--skip-taskbar --center --title=" " --borders=10 \
-	--text="<big>$trg </big><a href='$lnk'><small>More</small></a>\\n\\n<small><i>$srce</i></small>\\n" \
+	--text="<big>$trg </big><a href='$lnk'><small>More</small></a>\\n\\n<small><i>$srce</i></small>\\n\\n\\n" \
 	--width="$wth" --height="$eht" --center \
 	--column=$lgtl:TEXT --column=$lgsl:TEXT \
 	--expand-column=0 --limit=20 \
@@ -49,10 +49,10 @@ if [[ $1 = V1 ]]; then
 		ret=$?
 		if [[ $ret -eq 2 ]]; then
 			ff=$(($nuw + 1))
-			$vwr.sh V1 "$nll" "$ff" &
+			$vwr V1 "$nll" "$ff" &
 		elif [[ $ret -eq 3 ]]; then
 			ff=$(($nuw - 1))
-			$vwr.sh V1 "$nll" "$ff" &
+			$vwr V1 "$nll" "$ff" &
 		else
 			rm -f $DT/.*.x &
 		exit 1
@@ -83,6 +83,7 @@ elif [[ $1 = V2 ]]; then
 	fi
 
 	listen="--button=gtk-media-play:play '$DM_tlfk/$nme.mp3'"
+	lnk=$(cat "$DM_tlfk/$nme.lnk")
 	echo "$nme" > $DT/.dzmx.x
 
 	if [[ "$(echo "$nme" | wc -w)" -eq 1 ]]; then
@@ -118,7 +119,7 @@ elif [[ $1 = V2 ]]; then
 		--window-icon=idiomind --scroll \
 		--skip-taskbar --center --title=" " --borders=10 \
 		--quoted-output --selectable-labels \
-		--text="<big>$trg</big>\\n\\n<small><i>$srce</i></small>\\n" \
+		--text="<big>$trg </big><a href='$lnk'><small>More</small></a>\\n\\n<small><i>$srce</i></small>\\n\\n\\n" \
 		--width="$wth" --height="$eht" --center \
 		--column=$lgtl:TEXT --column=$lgsl:TEXT \
 		--expand-column=0 --limit=20 \
@@ -130,10 +131,10 @@ elif [[ $1 = V2 ]]; then
 		ret=$?
 		if [[ $ret -eq 2 ]]; then
 			ff=$(($nuw + 1))
-			$vwr.sh V2 "$nll" "$ff" &
+			$vwr V2 "$nll" "$ff" &
 		elif [[ $ret -eq 3 ]]; then
 			ff=$(($nuw - 1))
-			$vwr.sh V2 "$nll" "$ff" &
+			$vwr V2 "$nll" "$ff" &
 		else
 			rm -f $DT/.*.x & exit 1
 		fi

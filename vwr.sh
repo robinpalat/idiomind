@@ -76,7 +76,7 @@ elif [ -f "$DM_tlt/$nme.mp3" ]; then
 	--window-icon=idiomind --scroll \
 	--skip-taskbar --center --title=" " --borders=10 \
 	--on-top --selectable-labels --expand-column=0 \
-	--text="<big><big>$trgt</big></big>\\n\\n<i>$src</i>\\n" \
+	--text="<big><big>$trgt</big></big>\\n\\n<i>$src</i>\\n\\n\\n" \
 	--width="$wth" --height="$eht" --center \
 	--column="$lgtl":TEXT --column="$lgsl":TEXT \
 	--button=gtk-edit:4 --button=" ► :$DS/audio/ply2 '$nme'" \

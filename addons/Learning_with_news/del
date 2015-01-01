@@ -52,6 +52,7 @@ if [[ $1 = dlti ]]; then
 		
 			if [[ $ret -eq 2 ]]; then
 				rm "$kpt/$itdl.mp3"
+				rm "$kpt/$itdl.lnk"
 				cd "$drtc"
 				grep -v -x -v "$itdl" ./.inx > ./inx
 				sed '/^$/d' ./inx > ./.inx

@@ -104,6 +104,7 @@ if [[ $1 = n_i ]]; then
 			fi
 			
 			cp "$DM_tl/Feeds/conten/$var.mp3" "$DM_tl/Feeds/kept/$nme.mp3"
+			cp "$DM_tl/Feeds/conten/$var.lnk" "$DM_tl/Feeds/kept/$nme.lnk"
 			cp $DM_tl/Feeds/conten/"$var"/*.mp3 "$DM_tl/Feeds/kept/.audio/"
 			
 			if [ -n "$(cat "$DC_tl/Feeds/.t-inx" | sort -n | uniq -dc)" ]; then

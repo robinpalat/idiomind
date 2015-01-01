@@ -510,7 +510,7 @@ if [ "$1" = topic ]; then
 		ss=$(cat .sinx | wc -l)
 		itxt="\\n<big>  <b>$ttl</b> </big> <small><small><b>\\n    $ss Sentences     $ws Words</b></small></small>\\n"
 		cd $DS
-		KEY=12356
+		KEY=12359
 		cnf1=$(mktemp $DT/cnf1.XXXX.x)
 		cnf2=$(mktemp $DT/cnf2.XXXX.x)
 		cnf3=$(mktemp $DT/cnf3.XXXX.x)
@@ -1220,7 +1220,7 @@ if [ "$1" = topic ]; then
 		STT=$(cat $DC_s/topic_m)
 		FEED=$(cat "$dir2/$lgtl/.rss")
 		ICON=$DF/img/icon.png
-		KEY=12311
+		KEY=12315
 		
 		if echo "$STT" | grep "Actualizando"; then
 			info=$(echo "<i>Actualizando...</i>")
