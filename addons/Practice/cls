@@ -13,7 +13,7 @@ cd "$DIR2"
 
 if [ "$1" = df ]; then
 	
-	rm look_f *.id *.no *.ok fin1 fin2 fin3 iF
+	rm look_f *.no *.ok fin1 fin2 fin3 iF
 	echo "1" > .iconf
 	echo "0" > f_r
 	$DS_pp/strt &
@@ -45,14 +45,15 @@ elif [ "$1" = ds ]; then
 	
 	
 elif [ "$2" = f ]; then
-	
 	killall df.sh
 	cat *.no >> "$w6"
 	cat *.ok >> "$w9"
-	echo "$(grep -F -x -v -f fin.ok fin.no | sort -u | uniq | wc -l)" > no.id
-	echo "$(cat fin.ok | wc -l)" > ok.id
-	cat ./fin.ok >> iF
-	echo "$(cat iF | wc -l)" > f_r
+
+	s1=$(cat  f_r)
+	s2=$(cat fin.1.ok | wc -l)
+	s3=$(($s1 + $s2))
+	echo $s3 > f_r
+	
 	var1=$((100*$(cat f_r)/$(cat idxfin)))
 	
 	if [ $var1 -lt 1 ]; then
@@ -122,19 +123,18 @@ elif [ "$2" = f ]; then
 		echo 21 > "$DIR2"/.iconf
 	fi
 	
-	$DS_pp/strt 5
+	$DS_pp/strt 5 "$1"
 	
 	exit
 
 elif [ "$2" = m ]; then
-
 	killall dmc.sh
 	cat *.no >> "$w6"
 	cat *.ok >> "$w9"
-	echo "$(grep -F -x -v -f mcin.ok mcin.no | sort -u | uniq | wc -l)" > no.id
-	echo "$(cat mcin.ok | wc -l)" > ok.id
-	cat mcin.ok >> iMC
-	echo "$(cat iMC | wc -l)" > mc_r
+	s1=$(cat  mc_r)
+	s2=$(cat mcin.1.ok | wc -l)
+	s3=$(($s1 + $s2))
+	echo $s3 > mc_r
 	var3=$((100*$(cat "$DIR2"/mc_r)/$(cat idxmcin)))
 	
 	if [ $var3 -lt 1 ]; then
@@ -201,19 +201,18 @@ elif [ "$2" = m ]; then
 		echo 21 > "$DIR2"/.iconmc
 	fi
 	
-	$DS_pp/strt 6
+	$DS_pp/strt 6 "$1"
 	
 	exit
 
 elif [ "$2" = w ]; then
-
 	killall dlw.sh
 	cat lwin.no >> "$w6"
 	cat lwin.ok >> "$w9"
-	echo "$(grep -F -x -v -f lwin.ok lwin.no | sort -u | uniq | wc -l)" > no.id
-	echo "$(cat lwin.ok | wc -l)" > ok.id
-	cat lwin.ok >> iLW
-	echo "$(cat iLW | wc -l)" > lw_r
+	s1=$(cat  lw_r)
+	s2=$(cat lwin.1.ok | wc -l)
+	s3=$(($s1 + $s2))
+	echo $s3 > lw_r
 	var2=$((100*$(cat lw_r)/$(cat idxlwin)))
 	
 	if [ $var2 -lt 1 ]; then
@@ -280,13 +279,9 @@ elif [ "$2" = w ]; then
 		echo 21 > "$DIR2"/.iconlw
 	fi
 	
-	$DS_pp/strt 7
-	
-	exit
-
+	$DS_pp/strt 7 "$1" & exit
 
 elif [ "$1" = s ]; then
-	
 	killall dls.sh
 	echo "$(grep -F -x -v -f lsin.ok lsin.no | sort -u | uniq | wc -l)" > no.id
 	echo "$(cat lsin.ok | wc -l)" > ok.id

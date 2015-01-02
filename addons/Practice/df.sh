@@ -8,7 +8,6 @@ cd "$HOME/.config/idiomind/topics/$lgtl/$tpc/Practice"
 
 n=1
 while [ $n -le $(cat ./stp$1 | wc -l) ]; do
-
 	w1=$(sed -n "$n"p ./stp$1)
 	file="$drtt/$w1.mp3"
 	tgt="$w1"
@@ -20,14 +19,13 @@ while [ $n -le $(cat ./stp$1 | wc -l) ]; do
 	|| stgt=$(echo "$lst" | tr aeiouáéíóúyñ ' ')
 	
 	if [ $2 = 2 ]; then
-		trgt=$(echo "<span font='ultralight'>\
-<span color='#DF6A75'><b><i>!  </i></b></span>$tgt</span>")
+		trgt=$(echo "<span font='ultralight'>$tgt</span>")
 		[ $lgsl = Japanese ] || [ $lgsl = Chinese ] || [ $lgsl = Vietnamese ] && stgt="$lst"
 	
 	fi
 	
-	wrong=$(cat fin.no | wc -l)
-	good=$(cat fin.ok | wc -l)
+	wrong=$(cat fin.$2.no | wc -l)
+	good=$(cat fin.$2.ok | wc -l)
 	
 	if [ -f "$drtt/images/$w1.jpg" ]; then
 		IMAGE="$drtt/images/$w1.jpg"
@@ -38,10 +36,9 @@ while [ $n -le $(cat ./stp$1 | wc -l) ]; do
 		--field="<big><big><big><big><big><big><big><big><b>$trgt</b></big></big></big></big></big></big></big></big>":lbl \
 		--field="<span color='#949494'><span font='monospace'><b> $stgt </b></span></span>":lbl \
 		--button="gtk-close":1 \
-		--button="   ( $good ) Got It   ":3 \
-		--button="   ( $wrong ) Nope   ":4 \
+		--button="	  Got It	  ":3 \
+		--button="	  Nope	  ":4 \
 		--width=365 --height=300
-	
 	else
 		yad --form --align=center \
 		--center --on-top --image-on-top --undecorated \
@@ -50,19 +47,21 @@ while [ $n -le $(cat ./stp$1 | wc -l) ]; do
 		--field="\\n\\n<big><big><big><big><big><big><big><big><b>$trgt</b></big></big></big></big></big></big></big></big>":lbl \
 		--field="<span color='#949494'><span font='monospace'><b>$stgt</b></span></span>\\n\\n\\n":lbl \
 		--button="gtk-close":1 \
-		--button="   ( $good ) Got It   ":3 \
-		--button="   ( $wrong ) Nope   ":4 \
+		--button="	  Got It	  ":3 \
+		--button="	  Nope	  ":4 \
 		--width=365 --height=220
 	fi
-	
 	ret=$?
 	
 	if [[ $ret -eq 3 ]]; then
-		play $drts/d.mp3 & sed -i 's/'"$w1"'//g' \
-		./fin.tmp & echo "$w1" >> ./fin.ok
-		
+		if [[ $2 = 1 ]]; then
+			play $drts/d.mp3 & sed -i 's/'"$w1"'//g' fin.tmp & echo "$w1" >> ./fin.1.ok
+		else
+			play $drts/d.mp3 & echo "$w1" >> ./fin.2.ok
+		fi
+
 	elif [[ $ret -eq 4 ]]; then
-		play $drts/d.mp3 & echo "$w1" >> ./fin.no
+		play $drts/d.mp3 & echo "$w1" >> ./fin.$2.no
 		
 	else
 		$drts/cls "$2" f && break & exit 1

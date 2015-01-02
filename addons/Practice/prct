@@ -21,11 +21,10 @@ if [ "$2" = f ]; then
 		$yad --title="$tpc" \
 		--borders=15 --center --buttons-layout=edge \
 		--on-top --skip-taskbar --window-icon=idiomind \
-		--buttons-layout=edge --center --image=info \
-		--button="Reiniciar Práctica":0 \
-		--button=Ok:2 \
-		--text "<span color='#007D17'>  Hás completado esta práctica\\n  El $(cat look_f)</span>\\n\\n" \
-		--width=350 --height=80
+		--buttons-layout=edge --center --image=gtk-ok \
+		--button="Reiniciar":0 --button=Ok:2 \
+		--text "<span color='#007D17'>Práctica completa\\n$(cat look_f)</span>\\n\\n" \
+		--width=350 --height=80 --text-align=center
 		ret=$?
 			if [[ "$ret" -eq 0 ]]; then
 				$DS_pp/cls df & exit
@@ -34,9 +33,8 @@ if [ "$2" = f ]; then
 			fi
 	fi
 	if [ -f fin.tmp ]; then
-		rm *.id *.ok *.no
+		rm *.ok *.no
 		sed '/^$/d' fin.tmp > fin1
-		cat fin1 | wc -l > scr
 	else
 		cd "$DC_tlt/Practice"
 		
@@ -48,20 +46,17 @@ if [ "$2" = f ]; then
 			cat "$Wi" > fin1
 		fi
 		
-		rm *.id *.ok *.no
+		rm *.ok *.no
 		if [ "$(cat idxfin)" -lt 1 ]; then
 			$yad --form --center --borders=5 --image=info \
 			--title="Info" --on-top --window-icon=idiomind \
 			--button=Ok:1 --text-align=center --skip-taskbar \
 			--text "<span color='#636363'>  <b>Para Comenzar \\nDebes Tener 1 Palabra  </b></span>" \
 			--width=310 --height=80
-			
 			$strt & killall prct & exit
 		fi
 	fi
 	cp fin1 fin.tmp
-	cat fin1 | wc -l > scr
-	> fin.ok
 	find -name 'stp*' -exec rm {} \;
 	split -d -l 5 fin1 stp --suffix-length=1
 	if [ -f stp0 ]; then
@@ -104,20 +99,24 @@ if [ "$2" = f ]; then
 		$vw 1 9 1
 		$DF 9 1
 	fi
-	cat ./fin.ok >> iF
-	echo "$(cat iF | wc -l)" > f_r
-	if [ -f ./fin.no ]; then
+	
+	s1=$(cat  f_r)
+	s2=$(cat fin.1.ok | wc -l)
+	s3=$(($s1 + $s2))
+	echo $s3 > f_r
+	
+	if [ -f ./fin.1.no ]; then
 		cat *.no >> "$w6"
 		cat *.ok >> "$w9"
-		cat fin.no >> f
-		rm *.id fin1
+		#cat fin.1.no >> f
+		rm fin1
 	else
 		cat *.no >> "$w6"
 		cat *.ok >> "$w9"
-		rm *.id *.ok *.no fin.tmp fin1
+		rm *.ok *.no fin.tmp fin1
 		echo "$(date "+%a %d %B")" > look_f
 		echo 21 > .iconf
-		play $DS_pp/all.mp3 & $strt 1 &
+		play $DS_pp/all.mp3 & $strt 1 1 &
 		killall df.sh
 		exit 1
 	fi
@@ -165,14 +164,11 @@ if [ "$2" = f ]; then
 		$vw 1 9 2
 		$DF 9 2
 	fi
-	echo "$(grep -F -x -v -f fin.ok fin.no | sort -u | uniq | wc -l)" > no.id
-	echo "$(cat fin.ok | wc -l)" > ok.id
-	cat ./fin.ok >> iF
-	echo "$(cat iF | wc -l)" > f_r
-	if [ -f fin.no ]; then
+
+	if [ -f fin.2.no ]; then
 		cat *.no >> "$w6"
 		cat *.ok >> "$w9"
-		cat fin.no >> f
+		#cat fin.1.no >> f
 		var1=$((100*$(cat f_r)/$(cat idxfin)))
 		if [ $var1 -lt 1 ]; then
 			echo 1 > .iconf
@@ -217,18 +213,18 @@ if [ "$2" = f ]; then
 		elif [ $var1 -eq 100 ]; then
 			echo 21 > .iconf
 		fi
-		$strt 5 & exit 1
+		$strt 5 2 & exit 1
 	else
 		cat *.no >> "$w6"
 		cat *.ok >> "$w9"
-		rm *.id *.ok *.no fin.tmp fin1
+		rm *.ok *.no fin.tmp fin1
 		echo "$(date "+%a %d %B")" > look_f
 		echo 21 > .iconf
 		play $DS_pp/all.mp3 & $strt 1 &
 		killall df.sh
 		exit 1
 	fi
-	
+
 elif [ "$2" = m ]; then
 	cd "$DC_tlt/Practice"
 	DMC=$DS_pp/dmc.sh
@@ -243,11 +239,10 @@ elif [ "$2" = m ]; then
 		$yad --title="$tpc" \
 		--borders=15 --center --buttons-layout=edge \
 		--on-top --skip-taskbar --window-icon=idiomind \
-		--buttons-layout=edge --center --image=info \
-		--button="Reiniciar Práctica":0 \
-		--button=Ok:1 \
-		--text "<span color='#007D17'>  Completaste esta práctica\\n  El $(cat look_mc)</span>\\n\\n" \
-		--width=350 --height=80
+		--buttons-layout=edge --center --image=gtk-ok \
+		--button="Reiniciar":0 --button=Ok:1 \
+		--text "<span color='#007D17'>Práctica completa\\n$(cat look_mc)</span>\\n\\n" \
+		--width=350 --height=80 --text-align=center
 		ret=$?
 			if [[ "$ret" -eq 0 ]]; then
 				$DS_pp/cls dm & exit
@@ -256,9 +251,8 @@ elif [ "$2" = m ]; then
 			fi
 	fi
 	if [ -f mcin.tmp ]; then
-		rm *.id *.ok *.no
+		rm *.ok *.no
 		sed '/^$/d' mcin.tmp > mcin1
-		cat mcin1 | wc -l > scr
 	else
 		if [ "$(cat "$Li" | wc -l)" < 1 ]; then
 			echo "$(grep -F -x -v -f "$Si" "$Li" | wc -l)" > idxmcin
@@ -267,14 +261,13 @@ elif [ "$2" = m ]; then
 			echo "$(cat "$Wi" | wc -l)" > idxmcin
 			cat "$Wi" > mcin1
 		fi
-		
-		rm *.id *.ok *.no
+		rm *.ok *.no
 		if [ "$(cat idxmcin)" -lt 6 ]; then
 			($yad --form --center --borders=5 \
 			--title="Info" --on-top --image=info \
 			--window-icon=idiomind --skip-taskbar \
 			--button=Ok:1 --text-align=center \
-			--text "<span color='#636363'><b>  Para Comenzar \\nDebes Tener 6 Palabras  </b></span>" \
+			--text "<span color='#636363'><b>  Para Comenzar \\ndebes tener 6 palabras  </b></span>" \
 			--width=310 --height=80)
 			$strt & killall prct & exit 1
 		fi
@@ -290,15 +283,12 @@ elif [ "$2" = m ]; then
 			echo "$(eyeD3 "$file" | grep -o -P "(?<=IWI2I0I).*(?=IWI2I0I)")" >> word1.idx
 			let n++
 		done
-		
 		) | yad --progress \
 		--width 50 --height 35 --undecorated \
 		--pulsate --auto-close \
 		--skip-taskbar --center --no-buttons
 	fi
 	cp mcin1 mcin.tmp
-	cat mcin1 | wc -l > scr
-	> mcin.ok
 	find -name 'stp*' -exec rm {} \;
 	split -d -l 5 mcin1 stp --suffix-length=1
 	if [ -f stp0 ]; then
@@ -341,20 +331,23 @@ elif [ "$2" = m ]; then
 		$vw 1 9 1
 		$DMC 9 1
 	fi
-	cat mcin.ok >> iMC
-	echo "$(cat iMC | wc -l)" > mc_r
-	if [ -f mcin1.no ]; then
+
+	s1=$(cat  mc_r)
+	s2=$(cat mcin.1.ok | wc -l)
+	s3=$(($s1 + $s2))
+	echo $s3 > mc_r
+	
+	if [ -f mcin.1.no ]; then
 		cat *.no >> "$w6"
 		cat *.ok >> "$w9"
-		cat mcin.no >> m
-		rm *.id mcin1
+		rm mcin1
 	else
 		cat *.no >> "$w6"
 		cat *.ok >> "$w9"
-		rm *.id *.ok *.no mcin1 mcin.tmp
+		rm *.ok *.no mcin1 mcin.tmp
 		echo "$(date "+%a %d %B")" > look_mc
 		echo 21 > .iconmc
-		play $DS_pp/all.mp3 & $strt 2 &
+		play $DS_pp/all.mp3 & $strt 2 1 &
 		killall dmc.sh
 		exit 1
 	fi
@@ -402,15 +395,10 @@ elif [ "$2" = m ]; then
 		$vw 1 9 2
 		$DMC 9 2
 	fi
-	echo "$(grep -F -x -v -f mcin.ok mcin.no | sort -u | uniq | wc -l)" > no.id
-	echo "$(cat mcin.ok | wc -l)" > ok.id
-	cat mcin.ok >> iMC
-	echo "$(cat iMC | wc -l)" > mc_r
-	if [ -f mcin.no ]; then
 	
+	if [ -f mcin.2.no ]; then
 		cat *.no >> "$w6"
 		cat *.ok >> "$w9"
-		cat mcin.no >> m
 		var3=$((100*$(cat mc_r)/$(cat idxmcin)))
 		if [ $var3 -lt 1 ]; then
 			echo 1 > .iconmc
@@ -455,11 +443,11 @@ elif [ "$2" = m ]; then
 		elif [ $var3 -eq 100 ]; then
 			echo 21 > .iconmc
 		fi
-		$strt 6 & exit 1
+		$strt 6 2 & exit 1
 	else
 		cat *.no >> "$w6"
 		cat *.ok >> "$w9"
-		rm *.id *.ok *.no mcin2 mcin.tmp
+		rm *.ok *.no mcin2 mcin.tmp
 		echo "$(date "+%a %d %B")" > look_mc
 		echo 21 > .iconmc
 		play $DS_pp/all.mp3 & $strt 2 &
@@ -474,24 +462,18 @@ elif [ "$2" = w ]; then
 	DLW=$DS_pp/dlw.sh
 	Wi="$DC_tlt/.winx"
 	Si="$DC_tlt/.sinx"
-	Li="$DC_tlt/.tok-inx"
-	
-	Wi="$DC_tlt/.winx"
-	Si="$DC_tlt/.sinx"
 	Li="$DC_tlt/.tlng-inx"
-	l="$1"
 	if [ "$1" = l ]; then
-		vw=$DS_pp/lrng
+	    vw=$DS_pp/lrng
 	fi
 	if [ -f look_lw ]; then
 		$yad --title="$tpc" \
 		--borders=15 --center --buttons-layout=edge \
 		--on-top --skip-taskbar --window-icon=idiomind \
-		--buttons-layout=edge --center --image=info \
-		--button="Reiniciar Práctica":0 \
-		--button=Ok:1 \
-		--text "<span color='#007D17'>  Completaste esta práctica\\n  El $(cat look_lw)</span>\\n\\n" \
-		--width=350 --height=80
+		--buttons-layout=edge --center --image=gtk-ok \
+		--button="Reiniciar":0 --button=Ok:1 \
+		--text "<span color='#007D17'>Práctica completa\\n$(cat look_lw)</span>\\n\\n" \
+		--width=350 --height=80 --text-align=center
 		ret=$?
 			if [[ "$ret" -eq 0 ]]; then
 				$DS_pp/cls dw & exit
@@ -500,9 +482,8 @@ elif [ "$2" = w ]; then
 			fi
 	fi
 	if [ -f lwin.tmp ]; then
-		rm *.id *.ok *.no
+		rm *.ok *.no
 		sed '/^$/d' lwin.tmp > lwin1
-		cat lwin1 | wc -l > scr
 	else
 		cd "$DC_tlt/Practice"
 		
@@ -514,19 +495,17 @@ elif [ "$2" = w ]; then
 			cat "$Wi" > lwin1
 		fi
 		
-		rm -f *.id *.ok *.no
+		rm *.ok *.no
 		if [ $(cat idxlwin) -lt 1 ]; then
 			$yad --form --center --borders=5 --image=info \
 			--title="Info" --on-top --window-icon=idiomind \
 			--button=Ok:1 --text-align=center --skip-taskbar \
-			--text "<span color='#636363'><b>  Para Comenzar \\nDebes Tener 1 Palabra  </b></span>" \
+			--text "<span color='#636363'><b>  Para Comenzar \\ndebes tener 1 palabra  </b></span>" \
 			--width=310 --height=80
 			$strt & killall prct & exit
 		fi
 	fi
 	cp -f lwin1 lwin.tmp
-	cat lwin1 | wc -l > scr
-	> lwin.ok
 	find -name 'stp*' -exec rm {} \;
 	split -d -l 5 lwin1 stp --suffix-length=1
 	if [ -f stp0 ]; then
@@ -569,22 +548,24 @@ elif [ "$2" = w ]; then
 		$vw 1 9 1
 		$DLW 9 1
 	fi
-	cat lwin.ok >> iF
-	echo "$(cat iF | wc -l)" > f_r
-	if [ -f lwin.no ]; then
+	
+	s1=$(cat  lw_r)
+	s2=$(cat lwin.1.ok | wc -l)
+	s3=$(($s1 + $s2))
+	echo $s3 > lw_r
+
+	if [ -f lwin.1.no ]; then
 		cat *.no >> "$w6"
 		cat *.ok >> "$w9"
-		cat lwin.no >> f
-		rm *.id lwin1
+		rm lwin1
 	else
 		cat *.no >> "$w6"
 		cat *.ok >> "$w9"
-		rm *.id *.ok *.no lwin.tmp lwin1
+		rm *.ok *.no lwin.tmp lwin1
 		echo "$(date "+%a %d %B")" > look_lw
 		echo 21 > .iconlw
-		play $DS_pp/all.mp3 & $strt 3 &
-		killall df.sh
-		exit 1
+		play $DS_pp/all.mp3 & $strt 3 1 &
+		killall df.sh & exit 1
 	fi
 	cat lwin.tmp | sed '/^$/d' > ./lwin2
 	cp -f lwin2 lwin.tmp
@@ -630,11 +611,8 @@ elif [ "$2" = w ]; then
 		$vw 1 9 2
 		$DLW 9 2
 	fi
-	echo "$(grep -F -x -v -f lwin.ok lwin.no | sort -u | uniq | wc -l)" > no.id
-	echo "$(cat lwin.ok | wc -l)" > ok.id
-	cat lwin.ok >> iLW
-	echo "$(cat iLW | wc -l)" > lw_r
-	if [ -f lwin.no ]; then
+
+	if [ -f lwin.2.no ]; then
 		cat *.no >> "$w6"
 		cat *.ok >> "$w9"
 		var2=$((100*$(cat lw_r)/$(cat idxlwin)));
@@ -681,11 +659,11 @@ elif [ "$2" = w ]; then
 		elif [ $var2 -eq 100 ]; then
 			echo 21 > .iconlw
 		fi
-		$strt 7 & exit 1
+		$strt 7 2 & exit 1
 	else
 		cat *.no >> "$w6"
 		cat *.ok >> "$w9"
-		rm *.id *.ok *.no iLW lwin.tmp lwin
+		rm *.ok *.no lwin.tmp lwin
 		echo "$(date "+%a %d %B")" > look_lw
 		echo 21 > .iconlw
 		play $DS_pp/all.mp3 & $strt 3 &
@@ -712,11 +690,10 @@ elif [ "$2" = s ]; then
 		$yad --title="$tpc" \
 		--borders=15 --center --buttons-layout=edge \
 		--on-top --skip-taskbar --window-icon=idiomind \
-		--buttons-layout=edge --center --image=info \
-		--button="Reiniciar Práctica":0 \
-		--button=Ok:1 \
-		--text "<span color='#007D17'>  Completaste esta práctica\\n  El $(cat look_ls)</span>\\n\\n" \
-		--width=350 --height=80
+		--buttons-layout=edge --center --image=gtk-ok \
+		--button="Reiniciar":0 --button=Ok:1 \
+		--text "<span color='#007D17'>Práctica completa\\n$(cat look_ls)</span>\\n\\n" \
+		--width=350 --height=80 --text-align=center
 		ret=$?
 			if [[ "$ret" -eq 0 ]]; then
 				$DS_pp/cls ds & exit
@@ -725,9 +702,8 @@ elif [ "$2" = s ]; then
 			fi
 	fi
 	if [ -f lsin.tmp ]; then
-		rm *.id *.ok *.no
+		rm *.ok *.no
 		sed '/^$/d' lsin.tmp > lsin
-		cat lsin | wc -l > scr
 	else
 		cd "$DM_tlt"
 		cd "$DC_tlt/Practice"
@@ -745,21 +721,17 @@ elif [ "$2" = s ]; then
 			$yad --form --center --borders=5 --skip-taskbar \
 			--title="Info" --on-top --window-icon=idiomind \
 			--button=Ok:1 --image=info \
-			--text "<span color='#636363'><b> Para Comenzar Debes Tener al menos 1 Oración  </b></span>" \
+			--text "<span color='#636363'><b> Para comenzar debes tener al menos 1 oración  </b></span>" \
 			--width=310 --height=80
 			rm -f $DT/text.tmp
 			$strt & killall prct & exit
 		fi
 	fi
 	cp -f lsin lsin.tmp
-	cat lsin | wc -l > scr
-	> lsin.ok
 	$DLS 1 $l
 	sed -i '/^$/d' lsin.ok
 	sed -i '/^$/d' lsin.no
-	echo "$(grep -F -x -v -f lsin.ok lsin.no | sort -u | uniq | wc -l)" > no.id
-	echo "$(cat lsin.ok | wc -l)" > ok.id
-	cat ./lsin.ok >> iLS
+
 	echo "$(cat iLS | wc -l)" > ls_r
 	if [ -f lsin.no ]; then
 		var4=$((100*$(cat ls_r)/$(cat idxlsin)))
@@ -808,7 +780,7 @@ elif [ "$2" = s ]; then
 		fi
 		$strt 8
 	else
-		rm *.id *.ok *.no iLS lsin.tmp lsin
+		rm *.ok *.no lsin.tmp lsin
 		echo "$(date "+%a %d %B")" > look_ls
 		echo 21 > .iconls
 		echo ok > .iiconls

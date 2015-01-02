@@ -27,37 +27,37 @@ $ess" > word2.tmp
 		echo "$ells" > word2.tmp
 		sed '/^$/d' word2.tmp > word2.id
 		
-		wrong=$(cat mcin.no | wc -l)
-		good=$(cat mcin.ok | wc -l)
-
 		if [ "$2" = 1 ]; then
 			trgt=$(echo "<span font='ultralight'>$tgt</span>")
-		elif [ "$2" = 2 ]; then
-			trgt=$(echo "<span font='ultralight'><span color='#B04541'><b><i>!  </i></b></span>$tgt</span>")
-		elif [ "$2" = 3 ]; then
-			trgt=$(echo "<span font='ultralight'><span color='#B04541'><b><i>!  </i></b></span>$tgt</span>")
 		fi
+		#elif [ "$2" = 2 ]; then
+			#trgt=$(echo "<span font='ultralight'><b>$tgt</b></span>")
+		#elif [ "$2" = 3 ]; then
+			#trgt=$(echo "<span font='ultralight'><b>$tgt</b></span>")
+		#fi
 		
 		dlg=$(cat word2.id | awk '{print "\n"$0}' \
 		| yad --list --list --on-top --skip-taskbar \
-		--width=330 --height=300 --center --buttons-layout=edge --undecorated \
+		--width=350 --height=320 --center --buttons-layout=edge --undecorated \
 		--text-align=center --no-headers --borders=8 --window-icon=idiomind \
 		--button=gtk-close:1 \
-		--button="  Ok  ( $good )  ":0 --title=" " \
-		--text="<big><big><big><big><big><big><big><b>$trgt</b></big></big></big></big></big></big></big>\\n<small></small>" --column=Opcion --column=Opciodn)
+		--button=" Ok ":0 --title=" " \
+		--text="<big><big><big><big><big><big><big><b>$trgt</b></big></big></big></big></big></big></big>\\n\\n\\n<small></small>" --column=Opcion --column=Opciodn)
 
 		ret=$?
 		if [[ $ret -eq 0 ]]; then	
 			if echo "$dlg" | grep "$wes"; then
-				play $drts/d.mp3 & sed -i 's/'"$w1"'//g'  \
-				./mcin.tmp & echo "$w1" >> ./mcin.ok &
+				if [[ $2 = 1 ]]; then
+					play $drts/d.mp3 & sed -i 's/'"$w1"'//g' mcin.tmp & echo "$w1" >> ./mcin.1.ok &
+				else
+					play $drts/d.mp3 & echo "$w1" >> ./mcin.2.ok &
+				fi
 			else
-				play $drts/d.mp3 & echo "$w1" >> ./mcin.no
+				play $drts/d.mp3 & echo "$w1" >> ./mcin.$2.no
 			fi	
 		else
 			$drts/cls "$2" m && exit 1
 		fi
 	fi
-
 	let n++
 done

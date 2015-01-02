@@ -15,14 +15,14 @@ if [ -z "$nm" ]; then
 fi
 file="$drtt/$nm.mp3"
 vw="$3"
-A=$(echo "$vw" | sed -n 2p)
-B=$(echo "$vw" | sed -n 3p) 
+
+B=$(echo "$vw" | sed -n 1p) 
 if [ $B = TRUE ]; then
 	aut=--timeout=2
 fi
-if [ "$A" = TRUE ]; then
-	prn=play
-fi
+
+prn=play
+
 
 wrds=$(cat stp"$2" | awk 1 ORS='   ')
 vsw=$(echo "$wrds" | sed "s#${nm}#<big><big><big><big><big><big> \
@@ -34,26 +34,24 @@ stp="$drtu/stp.sh"
 play="play '$file'"
 
 (
-sleep 0.5
+sleep 0.3
 "$prn" "$file"
 ) &
 
 vw=$($yad --form --always-print-result --window-icon=idiomind \
---center --separator="\\n" --columns=3 --name=idiomind \
---width=400 --height=200 --on-top --skip-taskbar \
---borders=20 --align=center --class=idiomind $aut \
+--center --separator="\\n" --columns=1 --name=idiomind \
+--width=420 --height=250 --on-top --skip-taskbar --fixed \
+--borders=15 --align=right --class=idiomind $aut \
 --buttons-layout=center --title=" " --undecorated \
 --text-align=center \
---field="Listen:BTN" "$play" \
---field="pronounce":chk "$A" \
 --field="Auto":chk "$B" \
---button="Previous:3" \
 --button="Practice:$stp" \
---button="Next:2" \
+--button="Listen:"$play"" \
+--button=">:2" \
 --text="$vsw\\n\\n <i><big><big>\
-<span color='#7F7F7F'>[</span> \
-<span color='#6F96BE'><big><big> $srce </big></big></span> \
-<span color='#7F7F7F'>]</span></big></big></i> \\n")
+<span color='#7F7F7F'>[ </span> \
+<span color='#8B9299'><big><big><b> $srce </b></big></big></span> \
+<span color='#7F7F7F'> ]</span></big></big></i> \\n\\n")
 
 	ret=$?
 	if [[ $ret -eq 2 ]]; then
