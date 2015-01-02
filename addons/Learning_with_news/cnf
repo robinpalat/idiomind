@@ -48,25 +48,19 @@ CNFG=$($yad --on-top --form --center \
 		sed -i "1s/.*/$st2/" "$DIR1/.cnf" & exit 1
 
 	elif [[ $ret -eq 2 ]]; then
-	
-			
 		if echo "$st1" | grep "Sample subscription"; then
-		
 			$yad --title="Info" \
 			--center --on-top --window-icon=idiomind \
 			--width=350 --height=80 --fixed --image=info --skip-taskbar \
 			--text="  Sample subscription\\n  No se puede eliminar" \
 			--borders=10 --button=OK:1
 			$DIR3/cnf & exit
-			
 		elif echo "$st1" | grep "Example"; then
-			
 			$yad --title="Info" --center --on-top --window-icon=idiomind \
 			--width=350 --height=80 --fixed --image=info --skip-taskbar \
 			--text="  Sample subscription\\n  No se puede eliminar" \
 			--borders=10 --button=OK:1
 			$DIR3/cnf & exit
-			
 		else
 			$yad --show-uri --center \
 			--title=Confirm --window-icon=idiomind \
@@ -79,20 +73,16 @@ CNFG=$($yad --on-top --form --center \
 					$DIR3/cnf & exit
 				
 				elif [[ $ret -eq 0 ]]; then
-							
 					if [[ "$(cat "$dir2/$lgtl/.rss")" = "$st1" ]]; then
 						rm "$dir2/$lgtl/.rss" "$dir2/$lgtl/link"
 					fi
 					rm "$dir2/$lgtl/subscripts/$st1"
-					
 					$DIR3/cnf & exit
 				fi
 		fi
 				
 	elif [[ $ret -eq 5 ]]; then
-	
 		dirs="$dir2/$lgtl/subscripts"
-		
 		nwfd=$($yad --width=480 --height=100 \
 			--center --on-top --window-icon=idiomind --align=right \
 			--skip-taskbar --button=Cancel:1 --button=Ok:0 \
@@ -107,7 +97,6 @@ CNFG=$($yad --on-top --form --center \
 			fi
 		
 			if [ "$?" -eq 0 ]; then
-				
 				name=$(echo "$nwfd" | cut -d "|" -f1)
 				link=$(echo "$nwfd" | cut -d "|" -f2)
 				
@@ -130,7 +119,6 @@ CNFG=$($yad --on-top --form --center \
 			fi
 	
 	elif [[ $ret -eq 4 ]]; then
-	
 		sh "$dir2/$lgtl/subscripts/$st1"
 		"$DIR3/strt" & exit 1
 				

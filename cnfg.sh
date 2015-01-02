@@ -1,6 +1,7 @@
 #!/bin/bash
-source /usr/share/idiomind/ifs/c.conf
+# -*- ENCODING: UTF-8 -*-
 
+source /usr/share/idiomind/ifs/c.conf
 wth=$(sed -n 5p $DC_s/.rd)
 eht=$(sed -n 6p $DC_s/.rd)
 if [ -f $DT/.lc ]; then

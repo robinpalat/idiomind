@@ -1,4 +1,5 @@
 #!/bin/bash
+# -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
 LOG=$DC/addons/stats/.log
 NUM=$DC/addons/stats/.num
@@ -12,7 +13,6 @@ udt=$(cat "$DC/addons/stats/.udt")
 [ ! -d "$DC/addons/stats" ] && mkdir "$DC/addons/stats"
 
 if [ "$1" = A ]; then # recopida informacion para despues mostrarla en el reporte ( si esta activa) 
-
 	#[[ "$(date +%F)" = "$udt" ]] && exit 1
 
 	du -b -h $DM | tail -1 | awk '{print ($1)}' > $DC/addons/stats/.sz
@@ -21,7 +21,7 @@ if [ "$1" = A ]; then # recopida informacion para despues mostrarla en el report
 	echo $(cat $DC_s/topic_m) >> $DC/addons/stats/.tpc
 	
 	#2 TOPICS MAS ACTIVOS 
-	#======================================================================= OK
+	#-------------------
 	
 	TPCS=$(cat "$LOG" | grep -o -P '(?<=tpcs.).*(?=.tpcs)' \
 	| sort | uniq -dc | sort -n -r | head -3 | sed -e 's/^ *//' -e 's/ *$//')
@@ -40,7 +40,7 @@ if [ "$1" = A ]; then # recopida informacion para despues mostrarla en el report
 	fi
 	
 	#DEDICACION // 100 
-	#=======================================================================
+	#-------------------
 	
 	#palabras editadas o tratadas para añadir  informacion // 20
 	EITM=$(cat "$LOG" \
@@ -67,7 +67,7 @@ if [ "$1" = A ]; then # recopida informacion para despues mostrarla en el report
 	DDC=$(echo "$EITM $AIMG $REIM $AITM" | tr ' ' '+' | bc -l)
 	
 	#LOGROS // 100
-	#=======================================================================
+	#-------------------
 	#items que podrian marcarse como apendidos ( practica) // 20
 	tpc1=$(sed -n 1p $TPS) #topics mas activos
 	tpc2=$(sed -n 2p $TPS)
@@ -80,9 +80,7 @@ if [ "$1" = A ]; then # recopida informacion para despues mostrarla en el report
 	
 	n=1
 	while [ $n -le 15 ]; do
-	
 		if [[ $(echo "$W9INX" | sed -n "$n"p | awk '{print ($1)}') -ge 3 ]]; then
-		
 			fwk=$(echo "$W9INX" | sed -n "$n"p | awk '{print ($2)}')
 			
 			if ! cat "$tok1" | grep -o "$fwk"; then
@@ -98,7 +96,6 @@ if [ "$1" = A ]; then # recopida informacion para despues mostrarla en el report
 		
 		let n++
 	done
-	
 	sed -i '/^$/d' $DC/addons/stats/w9
 	
 	CTW9=$(cat $DC/addons/stats/w9 | wc -l)
@@ -114,7 +111,7 @@ if [ "$1" = A ]; then # recopida informacion para despues mostrarla en el report
 	ARCH=$(echo "$CTW9 $OKIM" | tr ' ' '+' | bc -l)
 	
 	#STUDY // 100
-	#=======================================================================
+	#-------------------
 	
 	#veces que se uso el visor para estudiar // 30
 	VWR=$(cat "$LOG" \
@@ -135,7 +132,7 @@ if [ "$1" = A ]; then # recopida informacion para despues mostrarla en el report
 	STDY=$(echo "$VWR $LRNPR $PRCTC" | tr ' ' '+' | bc -l)
 	
 	#Plabras dificiles
-	#=======================================================================
+	#-------------------
 	if [[ -n "$(cat $DC/addons/stats/w6)" ]]; then
 	
 		W6INX=$(cat $W6 | sort | uniq -dc | sort -n -r | sed 's/ \+/ /g')
@@ -158,7 +155,7 @@ if [ "$1" = A ]; then # recopida informacion para despues mostrarla en el report
 	fi
 	
 	#Operaciones de porcent 
-	#=======================================================================
+	#-------------------
 	
 	[[ $DDC -ge 100 ]] && DDC=100
 	[[ $STDY -ge 100 ]] && STDY=100
@@ -255,7 +252,6 @@ rm -f  $DT/.sz
 exit 1
 
 elif [ "$1" = T ]; then
-
 	eht=$(sed -n 3p $DC_s/.rd)
 	wth=$(sed -n 4p $DC_s/.rd)
 	tpc1=$(sed -n 1p $TPS) #topics mas activos
@@ -287,7 +283,6 @@ elif [ "$1" = T ]; then
 		ret=$?
 		
 		if [[ $ret -eq 0 ]]; then
-		
 			rm $WKRT $LOG
 			tlng1="$DC_tl/$tpc1/.tlng-inx"
 			tlng2="$DC_tl/$tpc2/.tlng-inx"
@@ -301,7 +296,6 @@ elif [ "$1" = T ]; then
 				
 				n=1
 				while [ $n -le "$(cat "$DT/slt" | wc -l)" ]; do
-				
 					chkst=$(echo "$list" |sed -n "$n"p)
 					if  echo "$chkst" | grep  "TRUE";  then
 						echo "$chkst" | sed 's/TRUE//g'  >> $DT/tmp
@@ -312,11 +306,9 @@ elif [ "$1" = T ]; then
 				
 				n=1
 				while [ $n -le "$(cat "$DT/tmp" | wc -l)" ]; do
-				
 					itm=$(sed -n "$n"p $DT/tmp)
 					
 					if [ -f "$tlng1" ]; then
-					
 						if cat "$tlng1" | grep -o "$itm"; then
 							grep -v -x -v "$itm" "$tlng1" > $DT/tlng
 							sed '/^$/d' $DT/tlng > "$tlng1"
@@ -325,7 +317,6 @@ elif [ "$1" = T ]; then
 					fi
 						
 					if [ -f "$tlng2" ]; then
-					
 						if cat "$tlng2" | grep -o "$itm"; then
 							grep -v -x -v "$itm" "$tlng2" > $DT/tlng
 							sed '/^$/d' $DT/tlng > "$tlng2"
@@ -334,7 +325,6 @@ elif [ "$1" = T ]; then
 					fi
 					
 					if [ -f "$tlng3" ]; then
-					
 						if cat "$tlng3" | grep -o "$itm"; then
 							grep -v -x -v "$itm" "$tlng3" > $DT/tlng
 							sed '/^$/d' $DT/tlng > "$tlng3"
@@ -359,7 +349,6 @@ elif [ "$1" = T ]; then
 		fi
 		
 elif [ "$1" = C ]; then
-	
 	sttng=$(sed -n 1p $DC/addons/stats/cnf)
 	
 	if [ -z $sttng ]; then
@@ -383,12 +372,10 @@ elif [ "$1" = C ]; then
 		ret=$?
 		
 		if [ $ret -eq 0 ]; then
-		
 			sttng=$(echo "$CNFG" | cut -d "|" -f1)
 			sed -i "1s/.*/$sttng/" $DC/addons/stats/cnf
 			rm -f $DT/*.r
 			exit
-			
 		else
 			sttng=$(echo "$CNFG" | cut -d "|" -f1)
 			sed -i "1s/.*/$sttng/" $DC/addons/stats/cnf

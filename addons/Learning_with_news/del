@@ -28,13 +28,7 @@ if [[ $1 = dlti ]]; then
 				grep -v -x -v "$itdl" ./.t-inx > ./t-inx
 				sed '/^$/d' ./t-inx > ./.t-inx
 				rm ./t-inx
-				grep -v -x -v "$itdl" ./indfa > ./indfa_
-				sed '/^$/d' ./indfa_ > ./indfa
-				rm ./indfa_
-				grep -v -x -v "$itdl" ./indfe > ./indfe_
-				sed '/^$/d' ./indfe_ > ./indfe
-				rm ./indfe_
-				notify-send  -i info "$itdl" "Deleted"  -t 1500
+				notify-send  -i idiomind "$itdl" "Deleted"  -t 1500
 			fi
 			
 			if [[ $ret -eq 1 ]]; then
@@ -63,13 +57,7 @@ if [[ $1 = dlti ]]; then
 				grep -v -x -v "$itdl" ./.t-inx > ./t-inx
 				sed '/^$/d' ./t-inx > ./.t-inx
 				rm ./t-inx
-				grep -v -x -v "$itdl" ./indfa > ./indfa_
-				sed '/^$/d' ./indfa_ > ./indfa
-				rm ./indfa_
-				grep -v -x -v "$itdl" ./indfe > ./indfe_
-				sed '/^$/d' ./indfe_ > ./indfe
-				rm ./indfe_
-				notify-send  -i info "$itdl" "Deleted"  -t 1500
+				notify-send  -i idiomind "$itdl" "Deleted"  -t 1500
 			fi
 			
 			if [[ $ret -eq 1 ]]; then
@@ -90,7 +78,7 @@ elif [[ $1 = dlns ]]; then
 			rm -r $DM_tl/Feeds/conten/*
 			rm $DC_tl/Feeds/.updt.lst
 			rm $DC_tl/Feeds/.dt
-			notify-send  -i info "Delete" "puedes cerrar la ventana" -t 2000
+			notify-send  -i idiomind "Delete" "puedes cerrar la ventana" -t 2000
 			
 		else
 			exit 1

@@ -352,7 +352,7 @@ elif ([ "$1" = C ] && [ "$dte" != "$udt" ]); then
 		rm "$D_cps/idiomind.backup"
 	fi
 	
-	notify-send -i info "Realizando copia de seguridad"
+	notify-send -i idiomind "Comenzando la copia de seguridad"
 	cp -r "$DC" "$DM"
 	cd $DM
 	tar cvzf backup.tar.gz *

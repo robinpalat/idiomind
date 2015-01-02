@@ -64,7 +64,7 @@ img4=$DS_pp/icons_st/$iconls.png
 
 VAR=$(yad --ellipsize=NONE --list \
 --on-top --class=idiomind --name=idiomind \
---center --window-icon=idiomind \
+--center --window-icon=idiomind --skip-taskbar \
 --image-on-top --buttons-layout=edge $img \
 --borders=5 --expand-column=2 \
 --width=200 --height=400 --text="$info" \

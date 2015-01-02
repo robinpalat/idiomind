@@ -238,7 +238,7 @@ elif [ "$1" = edt ]; then
 		imge="$DS/add.sh img '$nme' w"
 
 		$yad --form --wrap --center --name=idiomind --class=idmnd \
-		--width=550 --height=380 --always-print-result \
+		--width=600 --height=450 --always-print-result \
 		--borders=15 --columns=2 --align=center \
 		--buttons-layout=end --title=" $nme" --separator="\\n" \
 		--fontname="Arial" --scroll --window-icon=idiomind \
@@ -271,8 +271,14 @@ elif [ "$1" = edt ]; then
 			rm -f $cnf
 			
 			if [[ $ret -eq 0 ]]; then
-			
 				if [ "$mrk" != "$mrk2" ]; then
+					if [ "$mrk2" = "TRUE" ]; then
+						echo "$TGT" >> "$DC_tlt/.marks"
+					else
+						grep -v -x -v "$TGT" "$DC_tlt/.marks" > "$DC_tlt/.marks_"
+						sed '/^$/d' "$DC_tlt/.marks_" > "$DC_tlt/.marks"
+						rm "$DC_tlt/.marks_"
+					fi
 					eyeD3 -p IWI4I0I"$mrk2"IWI4I0I "$DM_tlt/words/$nme".mp3 >/dev/null 2>&1
 				fi
 				
@@ -335,7 +341,7 @@ elif [ "$1" = edt ]; then
 		imge="$DS/add.sh img '$nme' s"
 		
 		$yad --form --wrap --center --name=idiomind --class=idmnd \
-		--width=500 --height=300 --always-print-result \
+		--width=600 --height=450 --always-print-result \
 		--separator="\\n" --borders=15 --align=center --align=center \
 		--buttons-layout=end --title=" $nme" --fontname="Arial" \
 		--selectable-labels --window-icon=idiomind \
@@ -683,18 +689,6 @@ elif [ $1 = dli ]; then
 				grep -v -x -v "$itdl" ./.tlng-inx > ./tlng-inx
 				sed '/^$/d' ./tlng-inx > ./.tlng-inx
 				rm ./tlng-inx
-				grep -v -x -v "$itdl" ./indwe > ./indwe_
-				sed '/^$/d' ./indwe_ > ./indwe
-				rm ./indwe_
-				grep -v -x -v "$itdl" ./indwa > ./indwa_
-				sed '/^$/d' ./indwa_ > ./indwa
-				rm ./indwa_
-				grep -v -x -v "$itdl" ./indpe > ./indpe_
-				sed '/^$/d' ./indpe_ > ./indpe
-				rm ./indpe_
-				grep -v -x -v "$itdl" ./indpa > ./indpa_
-				sed '/^$/d' ./indpa_ > ./indpa
-				rm ./indpa_
 				grep -v -x -v "$itdl" .winx > .winx_
 				sed '/^$/d' .winx_ > .winx
 				rm ./.winx_
@@ -729,12 +723,6 @@ elif [ $1 = dli ]; then
 				grep -v -x -v "$itdl" ./.tlng-inx > ./tlng-inx
 				sed '/^$/d' ./tlng-inx > ./.tlng-inx
 				rm ./tlng-inx
-				grep -v -x -v "$itdl" ./indse > ./indse_
-				sed '/^$/d' ./indse_ > ./indse
-				rm ./indse_
-				grep -v -x -v "$itdl" ./indsa > ./indsa_
-				sed '/^$/d' ./indsa_ > ./indsa
-				rm ./indsa_
 				grep -v -x -v "$itdl" .sinx > .sinx_
 				sed '/^$/d' .sinx_ > .sinx
 				rm ./.sinx_
@@ -775,18 +763,6 @@ elif [ $1 = dli ]; then
 			grep -v -x -v "$itdl" .winx > .winx_
 			sed '/^$/d' .winx_ > .winx
 			rm ./.winx_
-			grep -v -x -v "$itdl" ./indwe > ./indwe_
-			sed '/^$/d' ./indwe_ > ./indwe
-			rm ./indwe_
-			grep -v -x -v "$itdl" ./indwa > ./indwa_
-			sed '/^$/d' ./indwa_ > ./indwa
-			rm ./indwa_
-			grep -v -x -v "$itdl" ./indpe > ./indpe_
-			sed '/^$/d' ./indpe_ > ./indpe
-			rm ./indpe_
-			grep -v -x -v "$itdl" ./indpa > ./indpa_
-			sed '/^$/d' ./indpa_ > ./indpa
-			rm ./indpa_
 	fi
 	
 #--------------------------------
@@ -823,7 +799,7 @@ elif [ $1 = dlt ]; then
 			rm $DC_tl/in_s $DC_tl/in $DC_tl/nstll $DC_tl/ok_R $DC_tl/ok_R $DC_tl/ok_r $DC_tl/ok 
 			
 			kill -9 $(pgrep -f "$yad --list ")
-			notify-send  -i info "$tpc" "Deleted"  -t 1000
+			notify-send  -i idiomind "$tpc" "Deleted"  -t 1000
 			
 			$DS/mngr.sh mkmn
 			

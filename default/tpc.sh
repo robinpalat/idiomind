@@ -74,7 +74,7 @@ if [ -d "$DC_tlt" ]; then
 	
 	if [[ $(($chk4 + $chk5)) != $chk1 \
 	|| $(($chk2 + $chk3)) != $chk1 ]]; then
-		notify-send --icon=error "Error en indice" \
+		notify-send -i idiomind "Error en indice" \
 		"Repararando..." -t 2000 &
 		
 		rm -f $DT/ind
@@ -200,6 +200,10 @@ if [ -d "$DC_tlt" ]; then
 	fi
 	
 	sleep 1
+
+	if [ "$1" = n_i ]; then
+		"$DS/add.sh n_i"
+	fi
 	notify-send --icon=idiomind \
 	"$topic" "It's your topic now" -t 2000 & exit
 else
