@@ -5,8 +5,8 @@ source /usr/share/idiomind/ifs/c.conf
 if [ -d $DM ]; then
 	yad --geometry=185x318-120-420 --width=160 \
 		--height=220 --fixed --title=" Idiomind" --no-buttons \
-		--window-icon=$DS/images/icon.png \
-		--icons --single-click --skip-taskbar\
+		--skip-taskbar \
+		--icons --single-click \
 		--on-top --borders=0 \
 		--read-dir=$DS/default/new --item-width=60 \
 		--always-print-result

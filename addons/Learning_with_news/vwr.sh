@@ -37,8 +37,7 @@ if [[ $1 = V1 ]]; then
 	lnk=$(cat "$DM_tl/Feeds/conten/$nme.lnk")
 	
 	if [ "$ap" = TRUE ]; then
-		killall play
-		play "$DM_tl/Feeds/conten/$nme.mp3" &
+		(killall play & sleep 1 && play "$DM_tl/Feeds/conten/$nme.mp3") &
 	fi
 
 	echo "$lwrd" | awk '{print $0""}' | $yad --list \
@@ -92,8 +91,7 @@ elif [[ $1 = V2 ]]; then
 	lnk=$(cat "$DM_tlfk/$nme.lnk")
 	echo "$nme" > $DT/.dzmx.x
 	if [ "$ap" = TRUE ]; then
-		killall play
-		play "$DM_tlfk/words/$nme.mp3" &
+		(killall play & sleep 1 && play "$DM_tlfk/words/$nme.mp3") &
 	fi
 
 	if [[ "$(echo "$nme" | wc -w)" -eq 1 ]]; then

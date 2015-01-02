@@ -42,11 +42,10 @@ if [ -f "$DM_tlt/words/$nme.mp3" ]; then
 	exmp1=$(echo "$exm1" \
 	| sed "s/"$hlgt"/<span background='#CFFF8B'>"$hlgt"<\/\span>/g")
 	if [ "$mrk" = TRUE ]; then
-		trgt=$(echo "<span color='#DF7732'>"$trgt"</span>")
+		trgt=$(echo "<span color='#00335E'><b>"$trgt"</b></span>")
 	fi
 	if [ "$ap" = TRUE ]; then
-		killall play
-		play "$DM_tlt/words/$nme.mp3" &
+		(killall play & sleep 1 && play "$DM_tlt/words/$nme.mp3") &
 	fi
 
 	$yad --columns=1 --form \
@@ -77,8 +76,7 @@ elif [ -f "$DM_tlt/$nme.mp3" ]; then
 		exit 1
 	fi
 	if [ "$ap" = TRUE ]; then
-		killall play
-		play "$DM_tlt/$nme.mp3" &
+		(killall play & sleep 1 && play "$DM_tlt/$nme.mp3") &
 	fi
 	
 	echo "$lwrd" | $yad --list --print-column=0 \

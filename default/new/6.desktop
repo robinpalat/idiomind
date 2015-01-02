@@ -1,9 +1,9 @@
 [Desktop Entry]
-Exec=/usr/share/idiomind/cnfg.sh
-Icon=/usr/share/idiomind/images/set-26.png
+Exec=/usr/share/idiomind/play.sh
+Icon=/usr/share/idiomind/images/play.png
 Version=3
 Encoding=UTF-8
 Type=Application
 Terminal=false
-Comment=Settings
-Name[en]=Settings
+Comment=play
+Name[en]=play
