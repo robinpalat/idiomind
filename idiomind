@@ -31,14 +31,14 @@ if [ -z "$1" ]; then
 			--width=320 --height=80 \
 			--borders=2 --title=Idiomind \
 			--skip-taskbar --center \
-			--window-$DS/images=idiomind & exit 1
+			--window-icon=idiomind & exit 1
 		fi
 		
 		#check if there directories
 		if [ -f $DC_tl/.in ]; then
 			if [[ "$(cat $DC_tl/.in | wc -l)" -lt 1 ]]; then
 				echo "$(cat $DC_tl/.in | wc -l)"
-				$ > "$DT/ntpc"
+				touch "$DT/ntpc"
 			fi
 		fi
 		
@@ -56,9 +56,7 @@ if [ -z "$1" ]; then
 		d1="$(date +%d)"
 		d2=$(cat $DC_s/.session)
 		
-		if [ -f $DC_s/.session ]; then
-
-			if [ "$d1" != "$d2" ]; then
+			if [ "$d1" != "$d2" ] || [ ! -f $DC_s/.session ]; then
 				echo "$(date +%d)" > $DC_s/.session
 				echo "--new session"
 
@@ -236,10 +234,6 @@ if [ -z "$1" ]; then
 				fi
 				)
 				
-				cp -f $DS/images/flags/$lgt.png \
-				$DT/tryidmdicon
-				chmod 777 -R $DT
-				
 				# set weekly report
 				if ([ "$(date +%u)" = 7 ] && \
 				[ "$(sed -n 1p $DC/addons/stats/cnf)" = "TRUE" ]); then
@@ -256,8 +250,11 @@ if [ -z "$1" ]; then
 				# set baskup
 				if ([ "$(date +%u)" = 6 ] && \
 				[ "$(sed -n 1p $DC_s/SC)" = "TRUE" ]); then
-					$DS/ifs/t_bd C &
+					$DS/ifs/t_bd.sh C &
 				fi
+				
+				#search updates
+				/usr/share/idiomind/ifs/tls.sh srch &
 				
 				# update topics status
 				n=1
@@ -304,8 +301,6 @@ if [ -z "$1" ]; then
 					let n++
 				done
 				$DS/mngr.sh mkmn & exit 1
-			fi
-			exit 1
 		else
 			echo "$(date +%d)" > $DC_s/.session & exit 1
 		fi
@@ -324,8 +319,8 @@ if [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 		mkdir $DT
 	fi
 	mkdir $DT/idmimp_$c
-	(cp -f $DS/default/p1 $DT/p1.$c
-	cp -f $DS/default/p2 $DT/p2.$c
+	(cp -f $DS/default/p1.sh $DT/p1.$c
+	cp -f $DS/default/p2.sh $DT/p2.$c
 	sed -i 's/X015x/'$c'/g' $DT/*.$c) &
 	cp "$1" $DT/import.tem
 	cd $DT
@@ -351,7 +346,7 @@ if [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 		--width=230 --height=80 \
 		--borders=3 --title=Idiomind \
 		--skip-taskbar --center \
-		--window-$DS/images=idiomind)
+		--window-icon=idiomind)
 		rm -fr $DT/idmimp_$c $DT/*.$c \
 		$DT/import.tar.gz
 	else
@@ -371,7 +366,7 @@ if [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 		--ellipsize=END --print-all --image-on-top \
 		--text="$itxt" --class=Idiomind  \
 		--width="$wth" --height="$eht" --image-on-top \
-		--window-$DS/images=idiomind --column=Items --center \
+		--window-icon=idiomind --column=Items --center \
 		--dclick-action="$dlck" --image="$ICON" \
 		--button="  Install  ":0 --button=Close:1
 			ret=$?
@@ -390,7 +385,7 @@ if [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 					--image-on-top --sticky --skip-taskbar \
 					--width=230 --height=80 \
 					--borders=3 --title=Idiomind \
-					--window-$DS/images=idiomind \
+					--window-icon=idiomind \
 					--button=gtk-ok:1
 					rm -r -f $DT/idmimp_$c $DT/*.$c \
 					$DT/import.tar.gz & exit 1
@@ -404,7 +399,7 @@ if [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 					--class=idiomind --center --skip-taskbar \
 					--image-on-top --width=240 \
 					--height=80 --borders=3 \
-					--window-$DS/images=idiomind \
+					--window-icon=idiomind \
 					--title=Idiomind --button=Cancel:1 \
 					--button=gtk-ok:0
 						ret=$?
@@ -510,7 +505,8 @@ if [ "$1" = topic ]; then
 		ss=$(cat .sinx | wc -l)
 		itxt="\\n<big>  <b>$ttl</b> </big> <small><small><b>\\n    $ss Sentences     $ws Words</b></small></small>\\n"
 		cd $DS
-		KEY=12359
+		c=$(echo $(($RANDOM%100000)))
+		KEY=$c
 		cnf1=$(mktemp $DT/cnf1.XXXX.x)
 		cnf2=$(mktemp $DT/cnf2.XXXX.x)
 		cnf3=$(mktemp $DT/cnf3.XXXX.x)
@@ -526,7 +522,7 @@ if [ "$1" = topic ]; then
 			$yad --notebook --name=idiomind --center \
 			--class=idiomind --align=right --key=$KEY  \
 			--tab-borders=0 --center --title="$tpc" \
-			--tab="  Notes  " --window-$DS/images=idiomind \
+			--tab="  Notes  " --window-icon=idiomind \
 			--buttons-layout=edge --image-on-top --class=idiomind \
 			--width="$wth" --height="$eht" --borders=0  \
 			--button=Delete:"$DS/mngr.sh dlt" \
@@ -581,10 +577,10 @@ if [ "$1" = topic ]; then
 					echo "4" > "$DC_tlt/.stts"
 					$DS/mngr.sh mkmn &
 					RM=100
-					$yad --title="$tpc" --window-$DS/images=idiomind \
+					$yad --title="$tpc" --window-icon=idiomind \
 					--borders=20 --buttons-layout=edge --name=idiomind \
 					--image=$DS/$DS/images/qstn.png \
-					--on-top --window-$DS/images=idiomind \
+					--on-top --window-icon=idiomind \
 					--buttons-layout=edge --center --class=idiomind \
 					--button="       No       ":1 \
 					--button="        Review        ":2 \
@@ -618,7 +614,7 @@ if [ "$1" = topic ]; then
 				$yad --notebook --name=Idiomind --center \
 				--class=Idiomind --align=right --key=$KEY \
 				--tab-borders=0 --center --title="$tpc" \
-				--tab=" Review " --window-$DS/images=idiomind \
+				--tab=" Review " --window-icon=idiomind \
 				--tab=" Learned ($tb2) " --tab=" Notes " \
 				--ellipsize=END --image-on-top  \
 				--width="$wth" --height="$eht" \
@@ -641,7 +637,7 @@ if [ "$1" = topic ]; then
 				--show-uri --fontname=vendana --print-column=1 \
 				--column="" --filename="$nt" > "$cnf3" &
 				$yad --notebook --name=Idiomind --center --key=$KEY \
-				--class=Idiomind --align=right --window-$DS/images=idiomind \
+				--class=Idiomind --align=right --window-icon=idiomind \
 				--tab-borders=0 --center --title="$tpc" \
 				--tab=" Learning ($tb1) " \
 				--tab=" Learned ($tb2) " --tab=" Notes " \
@@ -653,17 +649,17 @@ if [ "$1" = topic ]; then
 				ret=$?
 				
 				if [ $ret -eq 3 ]; then
-					./default/pnls edt &
+					./default/pnls.sh edt &
 					
 				elif [ $ret -eq 5 ]; then
 					rm -f $DT/*.x
 					$DS/addons/Practice/strt & killall topic.sh &
 					
 				elif [ $ret -eq 4 ]; then
-					$yad --title="$tpc" --window-$DS/images=idiomind \
+					$yad --title="$tpc" --window-icon=idiomind \
 					--borders=5 --name=idiomind \
 					--image=dialog-question \
-					--on-top --window-$DS/images=idiomind \
+					--on-top --window-icon=idiomind \
 					--center --class=idiomind \
 					--button="News":3 \
 					--button="All":2 \
@@ -772,10 +768,10 @@ if [ "$1" = topic ]; then
 				echo "4" > "$DC_tlt/.stts"
 				$DS/mngr.sh mkmn &
 				RM=100
-				$yad --title="$tpc" --window-$DS/images=idiomind \
+				$yad --title="$tpc" --window-icon=idiomind \
 				--borders=20 --buttons-layout=edge --name=idiomind \
 				--image=$DS/$DS/images/qstn.png \
-				--on-top --window-$DS/images=idiomind \
+				--on-top --window-icon=idiomind \
 				--buttons-layout=edge --center --class=idiomind \
 				--button="       No       ":1 \
 				--button="        Review        ":2 \
@@ -809,7 +805,7 @@ if [ "$1" = topic ]; then
 			$yad --notebook --name=Idiomind --center \
 			--class=Idiomind --align=right --key=$KEY \
 			--tab-borders=0 --center --title="$tpc" \
-			--tab=" Review " --window-$DS/images=idiomind \
+			--tab=" Review " --window-icon=idiomind \
 			--tab=" Learned ($tb2) " --tab=" Notes " \
 			--ellipsize=END --image-on-top  \
 			--width="$wth" --height="$eht" --borders=0 \
@@ -817,7 +813,7 @@ if [ "$1" = topic ]; then
 				ret=$?
 				
 				if [ $ret -eq 3 ]; then
-					./default/pnls edt &
+					./default/pnls.sh edt &
 					
 				elif [ $ret -eq 5 ]; then
 					$DS/addons/Practice/strt & killall topic.sh &
@@ -885,7 +881,8 @@ if [ "$1" = topic ]; then
 		ss=$(cat .sinx | wc -l)
 		itxt="\\n<big>  <b>$ttl</b></big><small><small><b>\\n    $ss Sentences   $ws Words\\n    Category: $l4\\n    created by: $l1</b></small></small>\\n"
 		cd $DS
-		KEY=12392
+		c=$(echo $(($RANDOM%100000)))
+		KEY=$c
 		cnf1=$(mktemp $DT/cnf1.XXXX.x)
 		cnf2=$(mktemp $DT/cnf2.XXXX.x)
 		cnf3=$(mktemp $DT/cnf3.XXXX.x)
@@ -921,10 +918,10 @@ if [ "$1" = topic ]; then
 					echo "4" > "$DC_tlt/.stts"
 					$DS/mngr.sh mkmn &
 					RM=100
-					$yad --title="$tpc" --window-$DS/images=idiomind \
+					$yad --title="$tpc" --window-icon=idiomind \
 					--borders=20 --buttons-layout=edge --name=idiomind \
 					--image=$DS/$DS/images/qstn.png \
-					--on-top --window-$DS/images=idiomind \
+					--on-top --window-icon=idiomind \
 					--buttons-layout=edge --center --class=idiomind \
 					--button="       No       ":1 \
 					--button="        Review        ":2 \
@@ -958,7 +955,7 @@ if [ "$1" = topic ]; then
 				$yad --notebook --name=Idiomind --center \
 				--class=Idiomind --align=right --key=$KEY \
 				--tab-borders=0 --center --title="$tpc" \
-				--tab=" Review " --window-$DS/images=idiomind \
+				--tab=" Review " --window-icon=idiomind \
 				--tab=" Learned ($tb2) " --tab=" Notes " \
 				--ellipsize=END --image-on-top  \
 				--width="$wth" --height="$eht" \
@@ -984,7 +981,7 @@ if [ "$1" = topic ]; then
 				--tab-borders=0 --center --title="$tpc" \
 				--tab=" Learning ($tb1) " \
 				--tab=" Learned ($tb2) " --tab=" Notes " \
-				--ellipsize=END --image-on-top --window-$DS/images=idiomind \
+				--ellipsize=END --image-on-top --window-icon=idiomind \
 				--width="$wth" --height="$eht" --borders=0 \
 				--button=Play:./play.sh --button=Practice:5 \
 				--button=Edit:3 --button=Close:2 --always-print-result
@@ -992,17 +989,17 @@ if [ "$1" = topic ]; then
 				ret=$?
 				
 				if [ $ret -eq 3 ]; then
-					./default/pnls edt &
+					./default/pnls.sh edt &
 				
 				elif [ $ret -eq 5 ]; then
 					rm -f $DT/*.x
 					$DS/addons/Practice/strt & killall topic.sh &
 					
 				elif [ $ret -eq 4 ]; then
-					$yad --title="$tpc" --window-$DS/images=idiomind \
+					$yad --title="$tpc" --window-icon=idiomind \
 					--borders=20 --name=idiomind \
 					--image=dialog-question \
-					--on-top --window-$DS/images=idiomind \
+					--on-top --window-icon=idiomind \
 					--center --class=idiomind \
 					--button="News":3 \
 					--button="All":2 \
@@ -1113,8 +1110,8 @@ if [ "$1" = topic ]; then
 				
 				$yad --title="$tpc" \
 				--borders=20 --buttons-layout=edge --class=idiomind \
-				--image=$DS/$DS/images/qstn.png --window-$DS/images=idiomind \
-				--on-top --window-$DS/images=idiomind \
+				--image=$DS/$DS/images/qstn.png --window-icon=idiomind \
+				--on-top --window-icon=idiomind \
 				--buttons-layout=edge --center --name=idiomind \
 				--button="       No       ":1 \
 				--button="        Review        ":2 \
@@ -1148,7 +1145,7 @@ if [ "$1" = topic ]; then
 			$yad --notebook --name=Idiomind --center  \
 			--class=Idiomind --align=right --key=$KEY \
 			--tab-borders=0 --center --title="$tpc" \
-			--tab=" Review " --window-$DS/images=idiomind \
+			--tab=" Review " --window-icon=idiomind \
 			--tab=" Learned ($tb2) " --tab=" Notes " \
 			--ellipsize=END --image-on-top \
 			--width="$wth" --height="$eht" --borders=0 \
@@ -1156,7 +1153,7 @@ if [ "$1" = topic ]; then
 				ret=$?
 				
 				if [ $ret -eq 3 ]; then
-					./default/pnls edt &
+					./default/pnls.sh edt &
 				
 				elif [ $ret -eq 5 ]; then
 					rm -f $DT/*.x
@@ -1220,7 +1217,8 @@ if [ "$1" = topic ]; then
 		STT=$(cat $DC_s/topic_m)
 		FEED=$(cat "$dir2/$lgtl/.rss")
 		ICON=$DF/img/icon.png
-		KEY=12315
+		c=$(echo $(($RANDOM%100000)))
+		KEY=$c
 		
 		if echo "$STT" | grep "Actualizando"; then
 			info=$(echo "<i>Actualizando...</i>")
@@ -1249,7 +1247,7 @@ if [ "$1" = topic ]; then
 		--image=$ICON --image-on-top  \
 		--tab-borders=0 --center --title="$FEED" \
 		--tab="  News  " --tab="   Saved Conten   " \
-		--ellipsize=END --image-on-top --window-$DS/images=idiomind \
+		--ellipsize=END --image-on-top --window-icon=idiomind \
 		--width="$wth" --height="$eht" --borders=0 \
 		--button=Play:$DS/play.sh \
 		--button=Update:2 \
