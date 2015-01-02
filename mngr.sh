@@ -213,11 +213,11 @@ elif [ "$1" = edt ]; then
 	if [ "$v" = v1 ]; then
 		ind="$DC_tlt/.tlng-inx"
 		inp="$DC_tlt/.tok-inx"
-		chk=Aprendido
+		chk="Mark as learned"
 	elif [ "$v" = v2 ]; then
 		ind="$DC_tlt/.tok-inx"
 		inp="$DC_tlt/.tlng-inx"
-		chk=Repasar
+		chk="Review"
 	fi
 
 	file="$DM_tlt/words/$nme.mp3"

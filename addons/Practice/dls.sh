@@ -65,9 +65,8 @@ while [ $n -le $(cat lsin | wc -l) ]; do
 			--buttons-layout=end --borders=0 --title=" " \
 			--skip-taskbar --margins=8 --text-align=right --height=160 --width=460 \
 			--align=left --window-icon=idiomind \
-			--button=Listen:"play '$drtt/$s1.mp3'" \
-			"$Hint" \
-			--button="Ok  ( $good ):0")
+			--button="  Listen  ":"play '$drtt/$s1.mp3'" "$Hint" \
+			--button="Ok:0")
 		fi
 		ret=$?
 		
@@ -96,10 +95,10 @@ while [ $n -le $(cat lsin | wc -l) ]; do
 		
 		if [ -f "$DT/FRONT_COVER".jpeg ]; then
 			$yad --form --center --name=idiomind --image="$IMAGE" \
-			--width=470 --height=450 --on-top --skip-taskbar --scroll \
+			--width=470 --height=430 --on-top --skip-taskbar --scroll \
 			--class=idiomind $aut --wrap --window-icon=idiomind \
 			--buttons-layout=end --title="" --image-on-top \
-			--text-align=left --borders=10 --selectable-labels \
+			--text-align=left --borders=5 --selectable-labels \
 			--button=Listen:"play '$drtt/$s1.mp3'" \
 			--button="Next Sentence:2" \
 			--field="<big>$WEN</big>\\n":lbl \
@@ -107,10 +106,10 @@ while [ $n -le $(cat lsin | wc -l) ]; do
 			--field="<span color='#3A9000'>$OK </span>\\n<sup>$prc</sup>\\n":lbl
 		else
 			$yad --form --center --name=idiomind \
-			--width=470 --height=250 --on-top --skip-taskbar --scroll \
+			--width=470 --height=230 --on-top --skip-taskbar --scroll \
 			--class=idiomind $aut --wrap --window-icon=idiomind \
 			--buttons-layout=end --title="" \
-			--text-align=left --borders=10 --selectable-labels \
+			--text-align=left --borders=5 --selectable-labels \
 			--button=Listen:"play '$drtt/$s1.mp3'" \
 			--button="Next Sentence:2" \
 			--field="<big>$WEN</big>\\n":lbl \

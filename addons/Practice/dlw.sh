@@ -7,10 +7,7 @@ cd "$HOME/.config/idiomind/topics/$lgtl/$tpc/Practice"
 
 n=1
 while [ $n -le $(cat ./stp$1 | wc -l) ]; do
-
 	w1=$(sed -n "$n"p stp$1)
-	wrong=$(cat lwin.no | wc -l)
-	good=$(cat lwin.ok | wc -l)
 	listen="play '$drtt/$w1.mp3'"
 	[ $lgtl = Japanese ] || [ $lgtl = Chinese ] && lst=? \
 	|| lst=$(echo "$w1" | awk '$1=$1' FS= OFS=" " | tr aeiouáéíóúy ' ')
@@ -31,12 +28,12 @@ while [ $n -le $(cat ./stp$1 | wc -l) ]; do
 		--window-icon=idiomind --buttons-layout=edge --borders=0 \
 		--skip-taskbar --title=" " --undecorated \
 		--field="Play:BTN" "$listen" \
-		--field="<big><big><big><big><big><b>$exc<span color='#949494'>$lst</span></b></big></big></big></big></big>":lbl \
+		--field="<big><big><big><big><big><b>$exc<span color='#949494'>$lst</span></b></big></big></big></big></big>\n":lbl \
 		--button=gtk-close:1 \
-		--button="   ( $good ) Got It   ":3 \
-		--button="   ( $wrong ) Nope   ":4 \
+		--button="	  Got It	  ":3 \
+		--button="	  Nope	  ":4 \
 		--width=365 --height=180
-			
+		
 	else
 		play "$drtt/$w1".mp3 &
 		yad --form --align=center --undecorated \
@@ -49,20 +46,22 @@ Play
 		--text="\\n\\n\\n<big><big><big><big><big><b>$exc<span color='#949494'>$lst</span></b></big></big></big></big></big>" \
 		--field=" ":lbl \
 		--button=gtk-close:1 \
-		--button="   ( $good ) Got It   ":3 \
-		--button="   ( $wrong ) Nope   ":4 \
+		--button="	  Got It	  ":3 \
+		--button="	  Nope	  ":4 \
 		--width=365 --height=220
 	fi
 	
 	ret=$?
 	if [[ $ret -eq 3 ]]; then
-		play $drts/d.mp3 & sed -i 's/'"$w1"'//g' ./lwin.tmp
-		echo "$w1" >> ./lwin.ok
+		if [[ $2 = 1 ]]; then
+			play $drts/d.mp3 & sed -i 's/'"$w1"'//g' lwin.tmp & echo "$w1" >> ./lwin.1.ok
+		else
+			play $drts/d.mp3 & echo "$w1" >> ./lwin.2.ok
+		fi
 	elif [[ $ret -eq 4 ]]; then
-		play $drts/d.mp3 & echo "$w1" >> ./lwin.no
+		play $drts/d.mp3 & echo "$w1" >> ./lwin.$2.no
 	else
 		$drts/cls "$2" w && exit 1
 	fi
-
 	let n++
 done

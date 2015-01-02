@@ -15,7 +15,7 @@ if [ -z "$1" ]; then
 	fi
 	
 	# check if program is active 
-	ps -A | pgrep -f "$DS/default/nw.sh"
+	ps -A | pgrep -f "/usr/bin/idiomind panel"
 	PS="$?"
 	if (($PS!=0)); then
 	
@@ -46,7 +46,7 @@ if [ -z "$1" ]; then
 			> $DC_s/topic_m
 		fi
 		
-		$DS/default/nw.sh & 
+		idiomind panel &
 		
 		# init count for log (weekly report stats)
 		echo "strt.1.strt" >> \
@@ -74,7 +74,7 @@ if [ -z "$1" ]; then
 					echo 520 >> $DC_s/.rd
 					
 					#trgt tamanño 5 - 6 
-					echo 480 >> $DC_s/.rd
+					echo 500 >> $DC_s/.rd
 					echo 320 >> $DC_s/.rd
 					
 					#edit tamaño 7 - 8
@@ -98,11 +98,11 @@ if [ -z "$1" ]; then
 					#play posicion 
 					echo 800 > $DC_s/.pst
 					#topic tamaño 3 - 4 
-					echo 450 >> $DC_s/.rd #FIXED!
-					echo 520 >> $DC_s/.rd
+					echo 450 >> $DC_s/.rd #FIXED! #w
+					echo 520 >> $DC_s/.rd #h
 					
 					#trgt tamanño 5 - 6 
-					echo 480 >> $DC_s/.rd
+					echo 500 >> $DC_s/.rd
 					echo 320 >> $DC_s/.rd
 					
 					#edit tamaño 7 - 8
@@ -131,7 +131,7 @@ if [ -z "$1" ]; then
 					echo 490 >> $DC_s/.rd
 					
 					#trgt tamanño 5 - 6 
-					echo 470 >> $DC_s/.rd
+					echo 490 >> $DC_s/.rd
 					echo 320 >> $DC_s/.rd
 					
 					#edit tamaño 7 - 8 
@@ -160,7 +160,7 @@ if [ -z "$1" ]; then
 					echo 480 >> $DC_s/.rd
 					
 					#trgt tamaño 4 - 5 
-					echo 460 >> $DC_s/.rd
+					echo 470 >> $DC_s/.rd
 					echo 320 >> $DC_s/.rd
 					
 					#edit tamaño  6 - 7 
@@ -310,7 +310,22 @@ if [ -z "$1" ]; then
 	fi
 fi
 
-if [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
+if [[ "$1" = "panel" ]]; then
+	if [ -d $DM ]; then
+		yad --geometry=185x318-120-420 --width=160 --name=idiomind\
+			--height=220 --fixed --title=" Idiomind" --no-buttons \
+			--icons --single-click --on-top --borders=0 \
+			--read-dir=$DS/default/new --item-width=60 --skip-taskbar \
+			--always-print-result --window-icon=idiomind --class=idiomind
+			ret=$?
+			if  [[ "$ret" -eq 0 ]]; then
+				exit 1 & rm "$DC_tlt/lstntry"
+			fi
+	else
+		$DS/ifs/1u
+	fi
+
+elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 	wth=$(sed -n 4p $DC_s/.rd)
 	eht=$(sed -n 3p $DC_s/.rd)
 	dte=$(date "+%d %B")
@@ -364,10 +379,10 @@ if [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 		cat "$tmp/.t-inx" | awk '{print $0""}' | \
 		$yad --list --name=Idiomind --title="Idiomind" \
 		--ellipsize=END --print-all --image-on-top \
-		--text="$itxt" --class=Idiomind  \
+		--text="$itxt" --class=Idiomind  --no-headers \
 		--width="$wth" --height="$eht" --image-on-top \
 		--window-icon=idiomind --column=Items --center \
-		--dclick-action="$dlck" --image="$ICON" \
+		--dclick-action="$dlck" --image=$ICON \
 		--button="  Install  ":0 --button=Close:1
 			ret=$?
 			
@@ -643,7 +658,7 @@ if [ "$1" = topic ]; then
 				--tab=" Learned ($tb2) " --tab=" Notes " \
 				--ellipsize=END --image-on-top \
 				--width="$wth" --height="$eht" --borders=0 \
-				--button=Play:./play.sh --button=Practice:5 \
+				--button=Practice:5 \
 				--button=Edit:3 --button=Close:2 --always-print-result
 			fi
 				ret=$?
@@ -983,7 +998,7 @@ if [ "$1" = topic ]; then
 				--tab=" Learned ($tb2) " --tab=" Notes " \
 				--ellipsize=END --image-on-top --window-icon=idiomind \
 				--width="$wth" --height="$eht" --borders=0 \
-				--button=Play:./play.sh --button=Practice:5 \
+				--button=Practice:5 \
 				--button=Edit:3 --button=Close:2 --always-print-result
 			fi
 				ret=$?
@@ -1249,7 +1264,6 @@ if [ "$1" = topic ]; then
 		--tab="  News  " --tab="   Saved Conten   " \
 		--ellipsize=END --image-on-top --window-icon=idiomind \
 		--width="$wth" --height="$eht" --borders=0 \
-		--button=Play:$DS/play.sh \
 		--button=Update:2 \
 		--button=Edit:3 \
 		--button=Close:1

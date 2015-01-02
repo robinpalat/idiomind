@@ -32,15 +32,13 @@ if [ -z "$tgt" ]; then
 	nw=1
 fi
 
-A=$(echo "$st" | sed -n 2p)
-B=$(echo "$st" | sed -n 3p) 
+
+B=$(echo "$st" | sed -n 1p) 
 if [ "$B" = TRUE ]; then
 	aut=--timeout=2
 fi
+prn=play
 
-if [ "$A" = TRUE ]; then
-	prn=play
-fi
 
 itm=$(echo "$tgt")
 trgt=$(echo "$S" | sed "s#${tgt}#<b><big><big><big>\
@@ -53,21 +51,19 @@ i=Listen
 ) &
 
 vw=$($yad --form --always-print-result \
-	--center --separator="\\n" --columns=3 --name=idmnd \
+	--center --separator="\\n" --columns=1 --name=idmnd \
 	--width=480 --height=240 --on-top --skip-taskbar \
-	--borders=10 --class=idmnd $aut --undecorated \
+	--borders=15 --class=idmnd $aut --undecorated \
 	--title=" " --buttons-layout=center \
 	--text-align=center --window-icon=idiomind \
-	--field="$i:BTN" "$play" \
-	--field="Pronounce":chk "$A" \
 	--field="Auto":chk "$B" \
-	--button="Previous:3" \
 	--button="Practice:1" \
-	--button="Next:2" \
+	--button="$i:"$play"" \
+	--button=">:2" \
 	--text="\\n$trgt\\n\\n <i><big><big><big>\
-<span color='#7F7F7F'>[</span> \
-<span color='#6F96BE'><b><big> $src </big></b></span> \
-<span color='#7F7F7F'>]</span></big></big></big></i> \\n")
+<span color='#7F7F7F'>[ </span> \
+<span color='#7B7F84'><b><big> $src </big></b></span> \
+<span color='#7F7F7F'> ]</span></big></big></big></i> \\n\\n")
 
 	ret=$?
 	if [[ $ret -eq 1 ]]; then 
