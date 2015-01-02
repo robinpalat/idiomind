@@ -250,7 +250,7 @@ elif [ "$1" = edt ]; then
 		--field="<small>Example</small>":TXT "$exm1" \
 		--field="<small>Definition</small>":TXT "$dftn" \
 		--field="<small>Notes</small>":TXT "$ntes" \
-		--field="Mark"":CHK" \
+		--field="Mark"":CHK" "$mrk" \
 		--field="$chk"":CHK" "$mrok" \
 		--field=" :LBL" " " \
 		--field="<a href='http://www.google.com/search?q=$TGT'>Buscar en google</a>\\n\\n<a href='http://glosbe.com/en/es/$TGT'>Buscar en dict 1</a>":lbl \
@@ -273,7 +273,7 @@ elif [ "$1" = edt ]; then
 			if [[ $ret -eq 0 ]]; then
 			
 				if [ "$mrk" != "$mrk2" ]; then
-					eyeD3 --set-encoding=utf8 -Y IWI4I0I"$mrk2"IWI4I0I "$DM_tlt/words/$nme".mp3 >/dev/null 2>&1
+					eyeD3 -p IWI4I0I"$mrk2"IWI4I0I "$DM_tlt/words/$nme".mp3 >/dev/null 2>&1
 				fi
 				
 				if [ "$audo" != "$file" ]; then

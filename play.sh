@@ -50,7 +50,7 @@ if [[ "$1" = d ]]; then
 			$yad --notebook --center --key=$KEY --name=idiomind --on-top \
 			--fixed --sticky --skip-taskbar --window-icon=idiomind \
 			--tab="  Time  " --tab="  Position  " --borders=10 \
-		    --title="Play" --width=400 --height=280 --buttons-layout=right \
+		    --title=" " --width=400 --height=280 --buttons-layout=right \
 		    --button="	Ok    ":0
 		
 			if [[ "$?" -eq 0 ]]; then
@@ -270,7 +270,7 @@ fi
 $yad --list --on-top \
 --expand-column=3 --print-all --center \
 --width=190 --name=idiomind --class=idmnd \
---height=260 --title=Play --always-print-result \
+--height=260 --title=" " --always-print-result \
 --window-icon=idiomind --no-headers \
 --buttons-layout=end --skip-taskbar \
 --borders=0 $btn2 $btn1 --hide-column=1 \

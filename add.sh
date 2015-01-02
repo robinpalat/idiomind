@@ -1491,7 +1491,7 @@ elif [ $1 = prs ]; then
 			
 			(
 			echo "2"
-			echo "# Processing the file" ; sleep 1
+			echo "# Processing file" ; sleep 1
 			cp -f "$FL" $DT_r/rv.mp3
 			cd $DT_r
 			eyeD3 -P itunes-podcast --remove "$DT_r"/rv.mp3
@@ -1526,7 +1526,7 @@ elif [ $1 = prs ]; then
 			 >&2; exit 1;}
 			 
 			echo "3"
-			echo "# Checking key ... " ; sleep 1
+			echo "# Checking key... " ; sleep 1
 			
 			wget -q -U "Mozilla/5.0" --post-file $DS/addons/Google_translation_service/test.flac \
 			--header="Content-Type: audio/x-flac; rate=16000" \

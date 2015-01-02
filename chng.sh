@@ -280,8 +280,9 @@ elif [ "$1" != chngi ]; then
 
 		VAR=$(cat $DC_s/chng | $yad --name=idiomind --ellipsize=END \
 		--class=idiomind --center --separator="" \
-		"$text" --width=$wth --height=$eht --on-top \
-		--no-headers --list --window-images=idiomind \
+		"$text" --width=$wth --height=$eht \
+		--no-headers --list --window-icon=idiomind \
+		--button="gtk-preferences":$DS/cnfg.sh \
 		--button="gtk-add":3 --button="gtk-ok":0 --button="Close":1 \
 		--borders=5 --title "Topics" --column=img:img --column=File:TEXT)
 			ret=$?
