@@ -30,7 +30,7 @@ if [[ "$(echo "$nms" | wc -w)" -eq "1" ]]; then
 
 	if [ -f "$dir/words/$nms.mp3" ]; then
 		file="$dir/words/$nms.mp3"
-		listen="--button=►:play '$dir/words/$nms.mp3'"
+		listen="--button=Listen:play '$dir/words/$nms.mp3'"
 	else
 		file="$dir/words/$nms.omd"
 		listen="--form"
@@ -50,10 +50,10 @@ if [[ "$(echo "$nms" | wc -w)" -eq "1" ]]; then
 	
 	$YAD --columns=1 --form \
 	--window-icon=idiomind --scroll --text-align=center \
-	--skip-taskbar --center --title="$MPG " --borders=10 \
+	--skip-taskbar --center --title="$MPG " --borders=5 \
 	--quoted-output --on-top --selectable-labels \
-	--text="<big><big>$trgt</big></big>\\n\\n\
-<small><big><i>$src</i></big></small>\\n\\n" \
+	--text="<big><big><big>$trgt</big></big></big>\\n\\n\
+<i>$src</i>\\n\\n" \
 	--field="":lbl \
 	--field="<i><span color='#808080'>$exmp1\
 	</span></i>\\n:lbl" "$dfnts" \
@@ -65,7 +65,7 @@ else
 
 	if [ -f "$dir/$nms.mp3" ]; then
 		file="$dir/$nms.mp3"
-		listen="--button=►:play '$dir/$nms.mp3'"
+		listen="--button=Listen:play '$dir/$nms.mp3'"
 	elif [ -f "$dir/$nms.omd" ]; then
 		file="$dir/$nms.omd"
 		listen="--list"
@@ -79,10 +79,10 @@ else
 	
 	echo "$lwrd" | awk '{print $0""}' | $YAD --list \
 	--window-icon=idiomind --scroll \
-	--skip-taskbar --center --title=" " --borders=10 \
+	--skip-taskbar --center --title=" " --borders=5 \
 	--on-top --selectable-labels --expand-column=0 \
-	--text="<big>$trgt</big>\\n\\n<small><i>$src</i></small>\\n" \
-	--width=$wth --height=$eht --center \
+	--text="<big><big>$trgt</big></big>\\n\\n<i>$src</i>\\n\\n" \
+	--width=$wth --height=$eht --center --text-align=center \
 	--column=$lnglbl:TEXT --column=$lngs:TEXT \
 	"$listen" --button=gtk-go-up:3 --button=gtk-go-down:2 \
 	--dclick-action="$dwck"

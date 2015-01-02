@@ -35,8 +35,6 @@ else
 	killall bcle.sh &
 	killall notify-osd
 	killall play
-	killall chng.sh &
-	kill -9 $(pgrep -f "yad --form ")
 	rm -f -r /tmp/.idmtp1.$user/.idadtmptts_$user /tmp/.idmtp1.$user/.p__$user
 	exit 1
 fi

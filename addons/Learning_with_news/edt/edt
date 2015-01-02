@@ -6,20 +6,18 @@ if [[ "$(cat "$drtc/.inx" | wc -l)" -ge 20 ]]; then
 	yad --sticky --center \
 	--width=190 --name=idiomind --class=idmnd --button=Close:1 \
 	--height=260 --title="Edit" --compact \
-	--window-icon=/usr/share/idiomind/icon/icon.png \
-	--icons --single-click --buttons-layout=end --skip-taskbar \
+	--window-icon=idiomind  --skip-taskbar \
+	--icons --single-click --buttons-layout=end \
 	--borders=0 \
 	--read-dir="/usr/share/idiomind/addons/Learning_with_news/edt/save/" --item-width=65
 	exit 1
-	
 else
 	yad --sticky --center \
 	--width=190 --name=idiomind --class=idmnd --button=Close:1 \
 	--height=260 --title="Edit" --compact \
-	--window-icon=/usr/share/idiomind/icon/icon.png \
-	--icons --single-click --buttons-layout=end --skip-taskbar \
+	--window-icon=idiomind  --skip-taskbar \
+	--icons --single-click --buttons-layout=end \
 	--borders=0 \
 	--read-dir="/usr/share/idiomind/addons/Learning_with_news/edt/" --item-width=65
-
 	exit 1
 fi

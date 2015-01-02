@@ -209,12 +209,12 @@ elif [ $1 = n_i ]; then
 		$DS/chng.sh $DS/ifs/info1 fnew & exit 1
 	fi
 	
-	if [ -z "$tpe" ]; then
-		$DS/chng.sh $DS/ifs/info2 fnew & exit 1
+	if [ -z "$tpc" ]; then
+		$DS/chng.sh $DS/ifs/info5 fnew & exit 1
 	fi
 
 	if [ -z "$tpe" ]; then
-		$DS/chng.sh $DS/ifs/info5 fnew & exit 1
+		$DS/chng.sh $DS/ifs/info2 fnew & exit 1
 	fi
 	
 	ls=$((50 - $(cat "$DC_tlt/.sinx" | wc -l)))
@@ -245,8 +245,8 @@ elif [ $1 = n_i ]; then
 		lzgpr=$($yad --form --center --always-print-result \
 		--text-info --on-top --window-icon=idiomind --skip-taskbar \
 		--separator="\n" --align=right "$img" \
-		--name=idiomind --class=idiomind --margins="5" \
-		--borders=2 --title="$tpe" --width=360 --height=150 \
+		--name=idiomind --class=idiomind \
+		--borders=0 --title="$tpe" --width=360 --height=160 \
 		--field="  <small><small>$lgtl / $lgsl</small></small>":TXT "$txt" \
 		--field="<small><small>$topic</small></small>:CB" "$ttle!$tpcs" "$field" \
 		--button=Image:3 \
@@ -1944,7 +1944,7 @@ $trgt" >> ./wlog
 					adds=$(cat ./adds ./addw | wc -l)
 					
 					if [ $adds -ge 1 ]; then
-						notify-send "$tpe" "se agregaron:\\n$sadds$S$wadds$W" -t 2000 &
+						notify-send -i idiomind "$tpe" "se agregaron:\\n$sadds$S$wadds$W" -t 2000 &
 						echo "aitm.$adds.aitm" >> \
 						$DC/addons/stats/.log
 					fi
@@ -2494,7 +2494,7 @@ $itm" >> ./wlog
 					adds=$(cat ./adds ./addw | wc -l)
 					
 					if [ $adds -ge 1 ]; then
-						notify-send "$tpe" "se agregaron:\\n$sadds$S$wadds$W" -t 2000 &
+						notify-send -i idiomind "$tpe" "se agregaron:\\n$sadds$S$wadds$W" -t 2000 &
 						echo "aitm.$adds.aitm" >> \
 						$DC/addons/stats/.log
 					fi

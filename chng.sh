@@ -1,13 +1,15 @@
 #!/bin/bash
+# -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
 
 if [[ "$1" = chngi ]]; then
 	saw=$(sed -n 1p $DC_s/cnfg5) # words
 	sas=$(sed -n 2p $DC_s/cnfg5) # sentences
-	sap=$(sed -n 3p $DC_s/cnfg5) # practice
-	saf=$(sed -n 4p $DC_s/cnfg5) # feeds conten
-	nta=$(sed -n 5p $DC_s/cnfg5) # osd
-	sna=$(sed -n 6p $DC_s/cnfg5) # audio
+	sam=$(sed -n 3p $DC_s/cnfg5) # marks
+	sap=$(sed -n 4p $DC_s/cnfg5) # practice
+	saf=$(sed -n 5p $DC_s/cnfg5) # feeds conten
+	nta=$(sed -n 6p $DC_s/cnfg5) # osd
+	sna=$(sed -n 7p $DC_s/cnfg5) # audio
 	user=$(echo "$(whoami)")
 	cnfg1="$DC_s/cnfg5"
 	indx="$DT/.$user/indx"
@@ -110,7 +112,7 @@ if [[ "$1" = chngi ]]; then
 		
 		sleep $wmm
 	
-	elif ( [ $saw = TRUE ] || [ $sap = TRUE ] ) && \
+	elif ( [ $saw = TRUE ] || [ $sap = TRUE ] || [ $sam = TRUE ] ) && \
 	( [ $(echo "$itm" | wc -w) = 1 ] && \
 	[ -f "$DM_tlt/words/$itm.mp3" ] || [ -f "$DM_tlt/words/$itm.mp3" ] ); then
 		file="$DM_tlt/words/$itm.mp3"
@@ -150,7 +152,7 @@ if [[ "$1" = chngi ]]; then
 			srce=" - - - "
 		fi
 		if [ "$mrk" = TRUE ]; then
-			trgt=" * $tgt"
+			trgt="$tgt"
 		else
 			trgt="$tgt"
 		fi
@@ -273,7 +275,7 @@ elif [ "$1" != chngi ]; then
 		img12=$DS/images/img12.png
 		text=--class=idm
 		if [ -n "$1" ]; then
-		text="--text=$(cat "$1")"
+			text="--text=$(cat "$1")"
 		fi
 		info2=$(cat $DC_tl/.in | wc -l)
 		cd $DC_s
@@ -293,7 +295,12 @@ elif [ "$1" != chngi ]; then
 			elif [ $ret -eq 1 ]; then
 				exit 1
 			elif [ $ret -eq 0 ]; then
-				$DC_tl/"$VAR/tpc.sh" $2 & exit 1
+				if [ -n "$1" ]; then
+					$DC_tl/"$VAR/tpc.sh" && $DS/add.sh n_i & exit 1
+				else
+					$DC_tl/"$VAR/tpc.sh" & exit 1
+				fi
+					
 			else
 				exit 1
 			fi

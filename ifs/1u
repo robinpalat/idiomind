@@ -1,4 +1,6 @@
 #!/bin/bash
+# -*- ENCODING: UTF-8 -*-
+
 IMAGE=/usr/share/idiomind/ifs/1u.png
 drtf="/usr/share/idiomind/plugins/Learning_with_news/examples/"
 user=$(echo "$(whoami)")
@@ -41,7 +43,6 @@ elif [[ $ret -eq 0 ]]; then
 	mkdir "$HOME"/.idiomind/
 	
 	if [ $? -ne 0 ]; then
-	
 		yad --name=idiomind \
 		--image=error --button=gtk-ok:1\
 		--text=" <b>Error al intentar escribir en /home/$user/</b>\\n" \
@@ -70,8 +71,6 @@ elif [[ $ret -eq 0 ]]; then
 	DIR4="$HOME/.config/idiomind/addons/Learning with news"
 	cp -f /usr/share/idiomind/default/new/* $DIR2/addons/new
 	cp -f -r /usr/share/idiomind/default/dicts/* $DIR2/addons/dict
-	cp -f /usr/share/idiomind/default/README.txt $HOME/.idiomind/README.txt
-	cp -f /usr/share/idiomind/default/README.txt $HOME/.idiomind/README.txt
 	
 	if echo "$target" | grep "English"; then
 		echo "en" > $DIR2/s/langt
@@ -264,9 +263,7 @@ elif [[ $ret -eq 0 ]]; then
 	touch $DIR2/s/topic_m
 	/usr/share/idiomind/mngr.sh mkmn
 	idiomind
-	
 	exit 1
-	
 else
 	killall 1u & exit 1
 fi

@@ -183,7 +183,7 @@ chk5=$(cat "$DC_tlt/.sinx" | wc -l)
 
 if [[ "$(($chk4 + $chk5))" != $chk1 \
 	|| "$(($chk2 + $chk3))" != $chk1 ]]; then
-	notify-send --icon=error "Error en indice" \
+	notify-send -i idiomind "Error en indice" \
 	"Repararando..." -t 2000 &
 	
 	rm -f $DT/ind
@@ -366,7 +366,7 @@ gzip -9 "$tpc.tar"
 mv "$tpc.tar.gz" "$userid.$tpc.idmnd"
 rm -f "$tpc"/*
 
-notify-send "Uploading ..." "Wait" -i info -t 6000
+notify-send "Uploading ..." "Wait" -i idiomind -t 6000
 
 wget http://www.idmnd.2fh.co/data/.PASS_TMP
 
