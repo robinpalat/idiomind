@@ -37,9 +37,9 @@ if [[ $1 = n_i ]]; then
 		if [[ $ret -eq 0 ]]; then
 			if [ $(cat "$DC_tl/Feeds/.winx" | wc -l) -ge 50 ]; then
 				$yad --name=idiomind --center --on-top --image=info \
-				--text=" <b>$tpe    </b>\\n\\n Alcanzaste la cantidad máxima de palabras   \\n Puedes borrar algunas o crear un nuevo tema" \
+				--text=" <b>$tpe    </b>\\n\\n Alcanzaste la cantidad máxima de palabras  \\n" \
 				--image-on-top --fixed --sticky --title="$tpe" \
-				--width=230 --height=80 --borders=3 --button=gtk-ok:0 \
+				--width=230 --height=120 --borders=3 --button=gtk-ok:0 \
 				--skip-taskbar --window-icon=idiomind && exit 1
 			fi
 		
@@ -48,7 +48,7 @@ if [[ $1 = n_i ]]; then
 			--image="info" --name=idiomind \
 			--text="<b> No hay conexión a internet  \\n  </b>" \
 			--image-on-top --center --sticky \
-			--width=300 --height=50 --borders=3 \
+			--width=300 --height=120 --borders=3 \
 			--skip-taskbar --title="Idiomind" \
 			--button="  Ok  ":0 & exit 1
 			 >&2; exit 1;}
@@ -76,9 +76,9 @@ if [[ $1 = n_i ]]; then
 		elif [[ $ret -eq 2 ]]; then
 			if [ $(cat "$DC_tl/Feeds/.sinx" | wc -l) -ge 50 ]; then
 				$yad --name=idiomind --center --on-top --image=info \
-				--text=" <b>$tpe    </b>\\n\\n Alcanzaste la cantidad máxima de oraciones   \\n Puedes borrar algunas o crear un nuevo tema" \
+				--text=" <b>$tpe    </b>\\n\\n Alcanzaste la cantidad máxima de oraciones \\n" \
 				--image-on-top --fixed --sticky --title="$tpe" \
-				--width=230 --height=80 --borders=3 --button=gtk-ok:0 \
+				--width=230 --height=120 --borders=3 --button=gtk-ok:0 \
 				--skip-taskbar --window-icon=idiomind && exit 1
 			fi
 			
@@ -87,7 +87,7 @@ if [[ $1 = n_i ]]; then
 			--image="info" --name=idiomind \
 			--text="<b> No hay conexión a internet  \\n  </b>" \
 			--image-on-top --center --sticky \
-			--width=300 --height=50 --borders=3 \
+			--width=300 --height=120 --borders=3 \
 			--skip-taskbar --title="Idiomind" \
 			--button="  Ok  ":0 & exit 1
 			 >&2; exit 1;}
@@ -119,9 +119,9 @@ elif [[ $1 = n_t ]]; then
 	if [ $(cat "$DC_tl/.in" | wc -l) -ge 30 ]; then
 		$yad --fixed --image=info --title=Idiomind \
 		--name=idiomind --center --skip-taskbar \
-		--text=" <b>Hás alcanzado la cantidad máxima de temas  </b>\\n Tienes la posibilidad de guardarlos en la web\\n o solo borrar algunos" \
+		--text=" <b>Alcanzaste la cantidad máxima de temas  </b>" \
 		--image-on-top --fixed --sticky --on-top \
-		--width=230 --height=80 --borders=3 \
+		--width=230 --height=120 --borders=3 \
 		--window-icon=idiomind \
 		--button=gtk-ok:0
 		exit 1
@@ -129,7 +129,7 @@ elif [[ $1 = n_t ]]; then
 
 	jlbi=$($yad --form \
 	--window-icon=idiomind --borders=10 \
-	--fixed --width=400 --height=80 \
+	--fixed --width=400 --height=120 \
 	--on-top --center --skip-taskbar \
 	--field=" : " "News - $dte" \
 	--button=Make:0 --title="New Topic" )

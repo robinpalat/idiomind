@@ -1,9 +1,0 @@
-[Desktop Entry]
-Exec=/usr/share/idiomind/mngr.sh dlt
-Icon=/usr/share/idiomind/images/delete.png
-Version=3
-Encoding=UTF-8
-Type=Application
-Terminal=false
-Comment=Delete topic
-Name[en]=Delete

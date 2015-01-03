@@ -5,13 +5,12 @@ kpt="$DM_tl/Feeds/kept"
 drtc="$DC_tl/Feeds/"
 
 if [[ $1 = dlti ]]; then
-	
 	if [ -f "$kpt/words/$itdl.mp3" ]; then
 
 		$yad --title="Confirm" --width=320 \
 		--height=80 --on-top --center \
 		--image=dialog-question --skip-taskbar \
-		--text=" Borrar esta Palabra?" \
+		--text=" Borrar esta palabra?" \
 		--window-icon=idiomind --borders=10 \
 		--button=gtk-delete:2 --button=Cancel:0
 		ret=$?
@@ -34,7 +33,6 @@ if [[ $1 = dlti ]]; then
 			if [[ $ret -eq 1 ]]; then
 				exit
 			fi
-
 	else
 		$yad --title="Confirm" --width=320 \
 		--height=80 --on-top --center \
@@ -66,10 +64,9 @@ if [[ $1 = dlti ]]; then
 	fi
 
 elif [[ $1 = dlns ]]; then
-
 	$yad --width=400 --height=50 --title="Confirm" \
 	--on-top --image=dialog-question --center --geometry=400x50 --skip-taskbar \
-	--window-icon=idiomind --text="<b>¿Eliminar Todo?</b>\\nLas Descargas de las Subcripciones Se Eliminan Automaticamente Al Tener Más de 5 Dias" \
+	--window-icon=idiomind --text="<b>¿Eliminar Todo?</b>\\nLas descargas de las subcripciones se eliminan automaticamente al tener más de 5 dias" \
 	--borders=5 --button="gtk-delete:0" --button="Cancel:1"
 		ret=$?
 
@@ -78,7 +75,7 @@ elif [[ $1 = dlns ]]; then
 			rm -r $DM_tl/Feeds/conten/*
 			rm $DC_tl/Feeds/.updt.lst
 			rm $DC_tl/Feeds/.dt
-			notify-send  -i idiomind "Delete" "puedes cerrar la ventana" -t 2000
+			notify-send  -i idiomind "Borrado" "Puedes cerrar la ventana" -t 2000
 			
 		else
 			exit 1

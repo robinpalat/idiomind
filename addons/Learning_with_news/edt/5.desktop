@@ -1,9 +1,0 @@
-[Desktop Entry]
-Exec=/usr/share/idiomind/addons/Learning_with_news/cnf
-Icon=/usr/share/idiomind/addons/Learning_with_news/img/rss-icon.png
-Version=3
-Encoding=UTF-8
-Type=Application
-Terminal=false
-Comment=Feeds
-Name[en]=Feeds

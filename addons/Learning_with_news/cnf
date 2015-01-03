@@ -3,126 +3,173 @@ source /usr/share/idiomind/ifs/c.conf
 dir2="$DC/addons/Learning with news"
 DIR3="$DS/addons/Learning_with_news"
 FEED=$(sed -n 1p "$dir2/$lgtl/.rss")
-if [[ -z "$FEED" ]]; then
-FEED=" "
-fi
-cd "$dir2/$lgtl/subscripts"
-DIR1="$DC/addons/Learning with news"
-st2=$(sed -n 1p "$DIR1/.cnf")
-		
-if [ -z $st2 ]; then
-	echo FALSE > "$DIR1/.cnf"
+if [[ -z "$1" ]]; then
+	if [[ -z "$FEED" ]]; then
+	FEED=" "
+	fi
+	cd "$dir2/$lgtl/subscripts"
+	DIR1="$DC/addons/Learning with news"
 	st2=$(sed -n 1p "$DIR1/.cnf")
-fi
+			
+	if [ -z $st2 ]; then
+		echo FALSE > "$DIR1/.cnf"
+		st2=$(sed -n 1p "$DIR1/.cnf")
+	fi
 
-if [ "$2" = NS ]; then
-	inf=$(cat $DS/ifs/info6)
-	txt='--text="No"'
-fi
+	if [ "$2" = NS ]; then
+		inf=$(cat $DS/ifs/info6)
+		txt='--text="No"'
+	fi
 
-if [ "$1" = NS ]; then
-	inf=$(cat $DS/ifs/info7)
-	text="--text=$inf"
-else
-	text="--class=idm"
-fi
-
-scrp=$(cd "$dir2/$lgtl/subscripts"; ls * | egrep -v "$FEED" \
-| tr "\\n" '!' | sed 's/!\+$//g')
-
-CNFG=$($yad --on-top --form --center \
-	--window-icon=idiomind --skip-taskbar --borders=15 \
-	--width=350 --height=250 --always-print-result \
-	--title="Feeds - $lgtl " "$text" \
-	--button="Delete:2" \
-	--button="gtk-add:5" \
-	--button="Update:4" \
-	--field="  <small>Current Feed: </small>:CB" "$FEED!$scrp" \
-	--field="Actualiar al inicio:CHK" $st2)
-	ret=$?
-	
-	st1="$(echo "$CNFG" | cut -d "|" -f1)"
-	st2="$(echo "$CNFG" | cut -d "|" -f2)"
-	
-	if [[ $ret -eq 1 ]]; then
-		sed -i "1s/.*/$st2/" "$DIR1/.cnf" & exit 1
-
-	elif [[ $ret -eq 2 ]]; then
-		if echo "$st1" | grep "Sample subscription"; then
-			$yad --title="Info" \
-			--center --on-top --window-icon=idiomind \
-			--width=350 --height=80 --fixed --image=info --skip-taskbar \
-			--text="  Sample subscription\\n  No se puede eliminar" \
-			--borders=10 --button=OK:1
-			$DIR3/cnf & exit
-		elif echo "$st1" | grep "Example"; then
-			$yad --title="Info" --center --on-top --window-icon=idiomind \
-			--width=350 --height=80 --fixed --image=info --skip-taskbar \
-			--text="  Sample subscription\\n  No se puede eliminar" \
-			--borders=10 --button=OK:1
-			$DIR3/cnf & exit
-		else
-			$yad --show-uri --center \
-			--title=Confirm --window-icon=idiomind \
-			--on-top --width=350 --height=80 --fixed --image=dialog-question \
-			--skip-taskbar --text="  Eliminar subcripción   <b>$st1 </b> ?" \
-			--borders=8 --button=Delete:0 --button=Cancel:1
-				ret=$?
-				
-				if [[ $ret -eq 1 ]]; then
-					$DIR3/cnf & exit
-				
-				elif [[ $ret -eq 0 ]]; then
-					if [[ "$(cat "$dir2/$lgtl/.rss")" = "$st1" ]]; then
-						rm "$dir2/$lgtl/.rss" "$dir2/$lgtl/link"
-					fi
-					rm "$dir2/$lgtl/subscripts/$st1"
-					$DIR3/cnf & exit
-				fi
-		fi
-				
-	elif [[ $ret -eq 5 ]]; then
-		dirs="$dir2/$lgtl/subscripts"
-		nwfd=$($yad --width=480 --height=100 \
-			--center --on-top --window-icon=idiomind --align=right \
-			--skip-taskbar --button=Cancel:1 --button=Ok:0 \
-			--form --title=" New Subscription" --borders=5 \
-			--field="<small>Name:</small>: " "" \
-			--field="<small>Link:</small>: " "" \ )
-		
-			if [[ -z "$(echo "$nwfd" | cut -d "|" -f1)" ]]; then
-				$DIR3/cnf & exit
-			elif [[ -z "$(echo "$nwfd" | cut -d "|" -f2)" ]]; then
-				$DIR3/cnf & exit
-			fi
-		
-			if [ "$?" -eq 0 ]; then
-				name=$(echo "$nwfd" | cut -d "|" -f1)
-				link=$(echo "$nwfd" | cut -d "|" -f2)
-				
-				if [[ "$(echo "$name" | wc -c)" -gt 40 ]]; then
-					nme="${name:0:37}..."
-				else
-					nme="$name"
-				fi
-				echo '#!/bin/bash
-				lgtl=$(sed -n 2p ~/.config/idiomind/s/lang)
-				cd "$HOME/.config/idiomind/addons/Learning with news/$lgtl/subscripts"
-				echo "'$nme'" > ../.rss
-				echo '$link' > ../link
-				exit' > "$dirs/$nme"
-				chmod +x  "$dirs/$nme"
-				$DIR3/cnf & exit
-				
-			elif [ "$?" -eq 1 ]; then
-				$DIR3/cnf & exit
-			fi
-	
-	elif [[ $ret -eq 4 ]]; then
-		sh "$dir2/$lgtl/subscripts/$st1"
-		"$DIR3/strt" & exit 1
-				
+	if [ "$1" = NS ]; then
+		inf=$(cat $DS/ifs/info7)
+		text="--text=$inf"
 	else
-		sed -i "1s/.*/$st2/" "$DIR1/.cnf"
+		text="--class=idm"
+	fi
+
+	scrp=$(cd "$dir2/$lgtl/subscripts"; ls * | egrep -v "$FEED" \
+	| tr "\\n" '!' | sed 's/!\+$//g')
+
+	CNFG=$($yad --on-top --form --center \
+		--window-icon=idiomind --skip-taskbar --borders=15 \
+		--width=350 --height=250 --always-print-result \
+		--title="Feeds - $lgtl " "$text" \
+		--button="Delete:2" \
+		--button="gtk-add:5" \
+		--button="Update:4" \
+		--field="  <small>Current Feed: </small>:CB" "$FEED!$scrp" \
+		--field="Actualiar al inicio:CHK" $st2)
+		ret=$?
+		
+		st1="$(echo "$CNFG" | cut -d "|" -f1)"
+		st2="$(echo "$CNFG" | cut -d "|" -f2)"
+		
+		if [[ $ret -eq 1 ]]; then
+			sed -i "1s/.*/$st2/" "$DIR1/.cnf" & exit 1
+
+		elif [[ $ret -eq 2 ]]; then
+			if echo "$st1" | grep "Sample subscription"; then
+				$yad --title="Info" \
+				--center --on-top --window-icon=idiomind \
+				--width=350 --height=80 --fixed --image=info --skip-taskbar \
+				--text="  Sample subscription\\n  No se puede eliminar" \
+				--borders=10 --button=OK:1
+				$DIR3/cnf & exit
+			elif echo "$st1" | grep "Example"; then
+				$yad --title="Info" --center --on-top --window-icon=idiomind \
+				--width=350 --height=80 --fixed --image=info --skip-taskbar \
+				--text="  Sample subscription\\n  No se puede eliminar" \
+				--borders=10 --button=OK:1
+				$DIR3/cnf & exit
+			else
+				$yad --show-uri --center \
+				--title=Confirm --window-icon=idiomind \
+				--on-top --width=350 --height=80 --fixed --image=dialog-question \
+				--skip-taskbar --text="  Eliminar subcripción   <b>$st1 </b> ?" \
+				--borders=8 --button=Delete:0 --button=Cancel:1
+					ret=$?
+					
+					if [[ $ret -eq 1 ]]; then
+						$DIR3/cnf & exit
+					
+					elif [[ $ret -eq 0 ]]; then
+						if [[ "$(cat "$dir2/$lgtl/.rss")" = "$st1" ]]; then
+							rm "$dir2/$lgtl/.rss" "$dir2/$lgtl/link"
+						fi
+						rm "$dir2/$lgtl/subscripts/$st1"
+						$DIR3/cnf & exit
+					fi
+			fi
+					
+		elif [[ $ret -eq 5 ]]; then
+			dirs="$dir2/$lgtl/subscripts"
+			nwfd=$($yad --width=480 --height=100 \
+				--center --on-top --window-icon=idiomind --align=right \
+				--skip-taskbar --button=Cancel:1 --button=Ok:0 \
+				--form --title=" New Subscription" --borders=5 \
+				--field="<small>Name:</small>: " "" \
+				--field="<small>Link:</small>: " "" \ )
+			
+				if [[ -z "$(echo "$nwfd" | cut -d "|" -f1)" ]]; then
+					$DIR3/cnf & exit
+				elif [[ -z "$(echo "$nwfd" | cut -d "|" -f2)" ]]; then
+					$DIR3/cnf & exit
+				fi
+			
+				if [ "$?" -eq 0 ]; then
+					name=$(echo "$nwfd" | cut -d "|" -f1)
+					link=$(echo "$nwfd" | cut -d "|" -f2)
+					
+					if [[ "$(echo "$name" | wc -c)" -gt 40 ]]; then
+						nme="${name:0:37}..."
+					else
+						nme="$name"
+					fi
+					echo '#!/bin/bash
+					lgtl=$(sed -n 2p ~/.config/idiomind/s/lang)
+					cd "$HOME/.config/idiomind/addons/Learning with news/$lgtl/subscripts"
+					echo "'$nme'" > ../.rss
+					echo '$link' > ../link
+					exit' > "$dirs/$nme"
+					chmod +x  "$dirs/$nme"
+					$DIR3/cnf & exit
+					
+				elif [ "$?" -eq 1 ]; then
+					$DIR3/cnf & exit
+				fi
+		
+		elif [[ $ret -eq 4 ]]; then
+			sh "$dir2/$lgtl/subscripts/$st1"
+			"$DIR3/strt" & exit 1
+					
+		else
+			sed -i "1s/.*/$st2/" "$DIR1/.cnf"
+			exit 1
+		fi
+		
+elif [[ $1 = edit ]]; then
+	lnglbl=$(sed -n 2p ~/.config/idiomind/s/lang)
+	drtc="$HOME/.config/idiomind/topics/$lnglbl/Feeds/"
+	slct=$(mktemp $DT/slct.XXXX)
+	img1=$DIR3/img/del1.png
+	img2=$DIR3/img/del2.png
+	img3=$DIR3/img/save.png
+	img4=$DIR3/img/rss.png
+	st1=FALSE
+	st2=FALSE
+	st3=FALSE
+	st4=FALSE
+
+	if [[ "$(cat "$drtc/.inx" | wc -l)" -ge 20 ]]; then
+		dd="$img3 Create_Topic $st1 $img1 Delete_News $st2 $img2 Delete_Save $st3 $img4 Suscripcions $st4"
+	else
+		dd="$img1 Delete_News $st1 $img2 Delete_Save $st2 $img4 Suscripcions $st3"
+	fi
+
+	$yad --list --on-top \
+	--expand-column=2 --center \
+	--width=190 --name=idiomind --class=idmnd \
+	--height=260 --title=" " \
+	--window-icon=idiomind --no-headers \
+	--buttons-layout=end --skip-taskbar \
+	--borders=0 --button=Ok:0 --column=icon:IMG \
+	--column=Action:TEXT --column=icon:RD $dd > "$slct"
+	ret=$?
+	slt=$(cat "$slct")
+	if  [[ "$ret" -eq 0 ]]; then
+		if echo "$slt" | grep -o "Delete_News"; then
+			$DIR3/del dlns
+		elif echo "$slt" | grep -o "Delete_Save"; then
+			$DIR3/del dlkt
+		elif echo "$slt" | grep -o "Create_Topic"; then
+			$DIR3/add n_t
+		elif echo "$slt" | grep -o Suscripcions; then
+			$DIR3/cnf
+		fi
+		rm -f "$slct"
+
+	elif [[ "$ret" -eq 1 ]]; then
 		exit 1
 	fi
+fi

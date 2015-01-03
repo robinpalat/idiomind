@@ -1,9 +1,0 @@
-[Desktop Entry]
-Exec=/usr/share/idiomind/ifs/upld.sh
-Icon=/usr/share/idiomind/images/upload.png
-Version=3
-Encoding=UTF-8
-Type=Application
-Terminal=false
-Comment=Upload
-Name[en]=Upload

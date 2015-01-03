@@ -2,8 +2,76 @@
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
 
+
+
+if [ $1 = edit ]; then
+	ttl=$(sed -n 2p $DC_s/fnew.id)
+	plg1=$(sed -n 1p $DC_s/cnfg3)
+	cnfg1="$DC_s/cnfg1"
+	ti=$(cat "$DC_tl/$tpc/.t-inx" | wc -l)
+	ni="$DC_tl/$tpc/.tlng-inx"
+	bi=$(cat "$DC_tl/$tpc/.tok-inx" | wc -l)
+	nstll=$(grep -Fxo "$tpc" "$DC_tl"/.nstll)
+	eht=$(sed -n 7p $DC_s/.rd)
+	wth=$(sed -n 8p $DC_s/.rd)
+	slct=$(mktemp $DT/slct.XXXX)
+	img1=$DS/images/ok.png
+	img2=$DS/images/rw.png
+	img3=$DS/images/rn.png
+	img4=$DS/images/dlt.png
+	img5=$DS/images/upd.png
+	img6=$DS/images/pdf.png
+	st1=FALSE
+	st2=FALSE
+	st3=FALSE
+	st4=FALSE
+	st5=FALSE
+	st6=FALSE
+	
+	if [ -z "$nstll" ]; then
+		if [ "$ti" -ge 15 ]; then
+			dd="$img1 Learned $st1 $img2 Review $st2 $img3 Rename $st3 $img4 Delete $st4 $img5 Upload $st5 $img6 ToPDF $st6"
+		else
+			dd="$img3 Rename $st3 $img4 Delete $st4 $img5 Upload $st5 $img6 ToPDF $st6"
+		fi
+	else
+		if [ "$ti" -ge 15 ]; then
+			dd="$img1 Learned $st1 $img2 Review $st2 $img3 Rename $st3 $img4 Delete $st4 $img6 ToPDF $st6"
+		else
+			dd="$img3 Rename $st3 $img4 Delete $st4 $img6 ToPDF $st6"
+		fi
+	fi
+	$yad --list --on-top \
+	--expand-column=2 --center \
+	--width=190 --name=idiomind --class=idmnd \
+	--height=260 --title=" " \
+	--window-icon=idiomind --no-headers \
+	--buttons-layout=end --skip-taskbar \
+	--borders=0 --button=Ok:0 --column=icon:IMG \
+	--column=Action:TEXT --column=icon:RD $dd > "$slct"
+	ret=$?
+	slt=$(cat "$slct")
+	if  [[ "$ret" -eq 0 ]]; then
+		if echo "$slt" | grep -o Learned; then
+			/usr/share/idiomind/mngr.sh mkok-
+		elif echo "$slt" | grep -o Review; then
+			/usr/share/idiomind/mngr.sh mklg-
+		elif echo "$slt" | grep -o Rename; then
+			/usr/share/idiomind/add.sh n_t name 2
+		elif echo "$slt" | grep -o Delete; then
+			/usr/share/idiomind/mngr.sh dlt
+		elif echo "$slt" | grep -o Upload; then
+			/usr/share/idiomind/ifs/upld.sh
+		elif echo "$slt" | grep -o ToPDF; then
+			/usr/share/idiomind/ifs/tls.sh pdf
+		fi
+		rm -f "$slct"
+
+	elif [[ "$ret" -eq 1 ]]; then
+		exit 1
+	fi
 #--------------------------------
-if [ $1 = inx ]; then
+elif [ $1 = inx ]; then
 	[ $lgt = ja ] || [ $lgt = zh-cn ] && c=c || c=w
 	itm="$3"
 	fns="$5"

@@ -1,9 +1,0 @@
-[Desktop Entry]
-Exec=/usr/share/idiomind/mngr.sh mkok-
-Icon=/usr/share/idiomind/images/check.png
-Version=3
-Encoding=UTF-8
-Type=Application
-Comment=Marcar como todo aprendido / Postergar
-Terminal=false
-Name[en]=Aprendido

@@ -1,9 +1,0 @@
-[Desktop Entry]
-Exec=/usr/share/idiomind/ifs/tls.sh pdf
-Icon=/usr/share/idiomind/images/xprt.png
-Version=3
-Encoding=UTF-8
-Type=Application
-Terminal=false
-Comment=Export a PDF
-Name[en]=To PDF
