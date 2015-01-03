@@ -33,7 +33,7 @@ if [ -z "$1" ]; then
 		in=$(echo "$D" | sed -n 1p)
 		ex=$(echo "$D" | sed -n 2p)
 		
-		# se ha elegido exportar los datos
+		# exportar datos
 		if echo "$ex" | grep "TRUE Export"; then
 			
 			cd $HOME &&
@@ -47,20 +47,15 @@ if [ -z "$1" ]; then
 			
 				(
 				echo "#"; sleep 0
-				
 				mkdir "$DM/cnf/"
 				cp -r "$DC/topics/" "$DM/cnf/"
-				
 				cd "$DM/cnf/"
-
 				find . -type f \( -name "indpe" -o -name "indpa" \
 				-o -name "inds" -o -name "indsa" -o -name "indse" \
 				-o -name "indw" -o -name "indwa" -o -name "indwe" \
 				-o -name "indf" -o -name "indfa" -o -name "indfe" \) -exec rm {} \;
-				
 				shopt -s globstar
 				rm ./**/*Practice*/.*
-				
 				cd ..
 				tar cvzf backup.tar.gz *
 				mv -f backup.tar.gz $DT/"$user"_idiomind_data.tar.gz
@@ -69,23 +64,19 @@ if [ -z "$1" ]; then
 				--width=30 --height=20 --geometry=20x20-2-2 \
 				--pulsate --percentage="5" --auto-close \
 				--sticky --on-top --undecorated --skip-taskbar --no-buttons
-				
 				mv -f $DT/"$user"_idiomind_data.tar.gz "$exp"
-				
 				$yad --fixed --name=idiomind --center --class=idiomind \
 				--image=info --sticky \
-				--text=" Datos Exportados Correctamente   \\n" \
+				--text=" Datos exportados correctamente   \\n" \
 				--image-on-top --fixed --width=240 --height=80 --borders=3 \
 				--skip-taskbar --window-icon=idiomind \
 				--title=Idiomind --button=gtk-ok:0 && exit 1
-			
 			else
 				exit 1
 			fi
 
-		# se ha elegido importar los datos 
+		# importar datos 
 		elif echo "$in" | grep "TRUE Import"; then
-		
 			cd $HOME &&
 			add=$($yad --center --on-top \
 			--borders=10 --file-filter="*.gz" --button=gtk-ok:0 \
@@ -93,7 +84,6 @@ if [ -z "$1" ]; then
 			--window-icon=$ICON --file --width=600 --height=500)
 			
 			if [ "$ret" -eq 0 ]; then
-				
 				if [[ -z "$add" || ! -d "$DM" ]]; then
 					exit 1
 				fi
@@ -102,18 +92,15 @@ if [ -z "$1" ]; then
 				rm -f $DT/*.XXXXXXXX
 				echo "5"
 				echo "# Copiando..." ; sleep 2
-				
 				mkdir $DT/.imprt
 				cp -f "$add" $DT/.imprt/.import.tar.gz
 				cd $DT/.imprt
 				tar -xzvf .import.tar.gz
 				cd $DT/.imprt/topics
-				
 				list=$(ls * -d | sed 's/saved//g' | sed '/^$/d')
 				lines=$(echo "$list" | wc -l)
 				n=1
 				while [ $n -le "$lines" ]; do
-				
 					lng=$(echo "$list" | sed -n "$n"p)
 					mkdir "$DC/topics/$lng"
 					mkdir "$DM_t/$lng"
@@ -126,7 +113,6 @@ if [ -z "$1" ]; then
 						
 				n=1
 				while [ $n -le "$(cat $DT/.imprt/topics/lenguages | wc -l)" ]; do
-				
 					dlng=$(cat $DT/.imprt/topics/lenguages | sed -n "$n"p)
 					cd $DT/.imprt/topics/$dlng/
 					ls * -d | sed 's/Feeds//g' | sed '/^$/d' > \
@@ -143,24 +129,19 @@ if [ -z "$1" ]; then
 						topic=$(cat $lts | sed -n "$n"p)
 						echo "5"
 						echo "# Creando configuración para ${topic:0:20} ... " ; sleep 1
-						
 						# mp3's
 						mkdir "$DM_t/$dlng/$topic"
 						cd "$DT/.imprt/topics/$dlng/$topic/"
 						cp -f -r * "$DM_t/$dlng/$topic/"
-						
 						echo "25"
 						echo "# Creando configuracion para ${topic:0:20} ... " ; sleep 1
-						
 						# indices, configuraciones
 						mkdir "$DC/topics/$dlng/$topic"
 						mkdir "$DC/topics/$dlng/$topic/Practice"
 						tdirc="$DC/topics/$dlng/$topic"
 						sdirc="$DT/.imprt/cnf/topics/$dlng/$topic/"
-						
 						echo "50"
 						echo "# Copiando datos para ${topic:0:20} ... " ; sleep 1
-						
 						cd "$sdirc"
 						echo "6" > "$tdirc/.stts"
 						cp -f .t-inx "$tdirc/.t-inx"
@@ -175,11 +156,9 @@ if [ -z "$1" ]; then
 						echo $dte > .impt
 						cp -f $DS/default/tpc.sh "$tdirc/tpc.sh"
 						chmod +x "$tdirc/tpc.sh"
-						
 						echo "80"
 						echo "# Copiando datos para ${topic:0:20} ... " ; sleep 1
 						cd "$DT/.imprt/cnf/topics/$dlng"
-						
 						echo "90"
 						echo "# Copiando datos para ${topic:0:20} ... " ; sleep 1
 						echo "$topic" >> "$DC/topics/$dlng/.nstll"
@@ -187,7 +166,6 @@ if [ -z "$1" ]; then
 						sed '/^$/d' $DM_t/$dlng/.in_s > $DM_t/$dlng/.in_s.tmp
 						mv -f $DM_t/$dlng/.in_s.tmp $DM_t/$dlng/.in_s
 						cd $DT/.imprt/topics
-					
 						let n++
 					done
 					)
@@ -198,7 +176,6 @@ if [ -z "$1" ]; then
 				echo "95"
 				echo "# All finished." ; sleep 2
 				echo "100"
-				
 				$DS/mngr mkmn
 				chmod -R +x "$DC"/topics/
 				cp -f $DS/default/README.txt "$DM"/README.txt
@@ -212,11 +189,10 @@ if [ -z "$1" ]; then
 				
 				$yad --fixed --name=idiomind --center --class=idiomind \
 				--image=info --sticky \
-				--text=" Datos Importados  Correctamente   \\n" \
+				--text=" Datos importados  correctamente   \\n" \
 				--image-on-top --fixed --width=240 --height=80 --borders=3 \
 				--skip-taskbar --window-icon=idiomind \
 				--title=Idiomind --button=gtk-ok:0 && exit 1
-				
 			else
 				exit 1
 			fi
@@ -224,7 +200,6 @@ if [ -z "$1" ]; then
 
 	# se ha elegido " backup" 
 	elif [ "$ret" -eq 2 ]; then
-
 		sttng=$(sed -n 1p $DC_s/SC)
 		D_cps=$(sed -n 2p $DC_s/SC)
 		
@@ -232,15 +207,15 @@ if [ -z "$1" ]; then
 			echo FALSE > $DC_s/SC
 			echo " " > $DC_s/SC
 		fi
-		
+
 		cd ~/
 		CNFG=$($yad --center --form --on-top --window-icon=idiomind \
 		--borders=15 --expand-column=3 --no-headers \
 		--print-all --button=Restore:3 --always-print-result \
 		--button=Close:0 --width=350 --height=250 \
 		--title=Backup --columns=2 \
-		--text="Weekly Report es para llevar un control y tener una vista rapida de los avances que estas haciendo al aprender\\n" \
-		--field="Mantener una copia de seguridad:CHK" $sttng \
+		--text="Backup de los datos del usuario\\n" \
+		--field="Mantener periodicamente una copia de seguridad:CHK" $sttng \
 		--field=" Folder Path::CDIR" "$D_cps" \
 		--field=" :LBL" " " )
 		
@@ -257,7 +232,7 @@ if [ -z "$1" ]; then
 			if [ ! -d "$D_cps" ]; then
 				$yad --fixed --name=idiomind --center \
 				--image=info --sticky --class=idiomind \
-				--text=" No esta configurado el directorio  \\n para para copia de seguridad   " \
+				--text=" No esta definido el directorio \\n para las copias se seguridad " \
 				--image-on-top --fixed --width=240 --height=80 --borders=3 \
 				--skip-taskbar --window-icon=idiomind \
 				--title=Idiomind --button=gtk-ok:0 & exit 1
@@ -265,7 +240,7 @@ if [ -z "$1" ]; then
 			elif [ ! -f "$D_cps/idiomind.backup" ]; then
 				$yad --fixed --name=idiomind --center \
 				--image=info --sticky --class=idiomind \
-				--text=" no hay copia de seguridad  \\n" \
+				--text=" No existe copia de seguridad  \\n" \
 				--image-on-top --fixed --width=240 --height=80 --borders=3 \
 				--skip-taskbar --window-icon=idiomind \
 				--title=Idiomind --button=gtk-ok:0 & exit 1
@@ -274,7 +249,7 @@ if [ -z "$1" ]; then
 				udt=$(cat "$D_cps/.udt")
 				$yad --fixed --name=idiomind --center \
 				--image=info --sticky --class=idiomind \
-				--text=" Datos de usuario se restauraran a $udt  \\n Esto va a tomar un tiempo dependiendo del tamaño  " \
+				--text=" Datos de usuario se restauraran a $udt  \\n" \
 				--image-on-top --fixed --width=280 --height=160 --borders=3 \
 				--skip-taskbar --window-icon=idiomind \
 				--title=Idiomind --button=Cancel:1 --button=gtk-ok:0
@@ -284,7 +259,6 @@ if [ -z "$1" ]; then
 						(
 						rm -f $DT/*.XXXXXXXX
 						echo "#" ; sleep 0
-						
 						cp "$DC_s/SC"  "$DT/.SC.bk"
 						mv "$DC/" "$DT/.s2.bk"
 						mv "$DM/" "$DT/.idm2.bk"
@@ -302,7 +276,6 @@ if [ -z "$1" ]; then
 						rm -r  "$D_cps/idiomind"
 						rm -r  "$D_cps/topics"
 						mv -f "$D_cps/backup.tar.gz" "$D_cps/idiomind.backup"
-						
 						) | $yad --on-top \
 						--width=200 --height=20 --geometry=200x40-2-2 \
 						--pulsate --percentage="5" --auto-close \
@@ -313,13 +286,11 @@ if [ -z "$1" ]; then
 						exit 1
 					fi
 			fi
-			
 		else
 			sttng=$(echo "$CNFG" | cut -d "|" -f1)
 			dircy=$(echo "$CNFG" | cut -d "|" -f2)
 			echo "$sttng" > $DC_s/SC
 			echo "$dircy" >> $DC_s/SC
-			
 		fi	
 	else
 		exit 1
@@ -327,9 +298,7 @@ if [ -z "$1" ]; then
 
 # copia de seguridad cada 7 dias 
 elif ([ "$1" = C ] && [ "$dte" != "$udt" ]); then
-
-	sleep 300
-	
+	sleep 3
 	while true; do
 	idle=$(top -bn2 | grep "Cpu(s)" | tail -n 1 | sed 's/\%us,.*//' | sed 's/.*Cpu(s): //')
 	echo "idle is $idle"
@@ -342,16 +311,23 @@ elif ([ "$1" = C ] && [ "$dte" != "$udt" ]); then
 	if [ ! -d "$D_cps" ]; then
 		$yad --fixed --name=idiomind --center \
 		--image=info --sticky --class=idiomind \
-		--text=" No existe el directorio de copia se seguridad  \\n por fabor vuelve a configura" \
+		--text=" No se encuentra el directorio \\n establecido para las copias se seguridad " \
 		--image-on-top --fixed --width=280 --height=130 --borders=3 \
-		--skip-taskbar --window-icon=idiomind \
-		--title=Idiomind --button=Cancel:1 --button=gtk-ok:0
+		--skip-taskbar --window-icon=idiomind --buttons-layout=edge \
+		--title=Idiomind --button=Configure:3 --button=gtk-ok:0
+		ret=$?
+		
+		if [ "$ret" -eq 0 ]; then
+		exit 1
+		elif [ "$ret" -eq 3 ]; then
+		/usr/share/idiomind/ifs/t_bd.sh
+		fi
 	fi
 	
 	if [ -f "$D_cps/idiomind.backup" ]; then
 		rm "$D_cps/idiomind.backup"
 	fi
-	
+
 	notify-send -i idiomind "Comenzando la copia de seguridad"
 	cp -r "$DC" "$DM"
 	cd $DM
@@ -360,4 +336,5 @@ elif ([ "$1" = C ] && [ "$dte" != "$udt" ]); then
 	echo "$dte" > "$D_cps/.udt"
 	rm -r "$DM/idiomind"
 	exit
+
 fi

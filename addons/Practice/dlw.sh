@@ -15,8 +15,7 @@ while [ $n -le $(cat ./stp$1 | wc -l) ]; do
 	if [ "$2" = 1 ]; then
 		trgt=$(echo "$w1" | tr aeiouáéíóúyñ ' ')
 	elif [ "$2" = 2 ]; then
-		trgt="$(echo "$wi" | tr iouñ ' ')"
-		exc="<span font='ultralight'><span color='#DF6A75'><b><i>!  </i></b></span></span>  "
+		lst="$w1"
 	fi
 	
 	if [ -f "$drtt/images/$w1".jpg ]; then
@@ -28,7 +27,7 @@ while [ $n -le $(cat ./stp$1 | wc -l) ]; do
 		--window-icon=idiomind --buttons-layout=edge --borders=0 \
 		--skip-taskbar --title=" " --undecorated \
 		--field="Play:BTN" "$listen" \
-		--field="<big><big><big><big><big><b>$exc<span color='#949494'>$lst</span></b></big></big></big></big></big>\n":lbl \
+		--field="<big><big><big><big><big><b><span color='#949494'>$lst</span></b></big></big></big></big></big>\n":lbl \
 		--button=gtk-close:1 \
 		--button="	  Got It	  ":3 \
 		--button="	  Nope	  ":4 \
@@ -43,7 +42,7 @@ while [ $n -le $(cat ./stp$1 | wc -l) ]; do
 		--field="
 Play
 :BTN" "$listen" \
-		--text="\\n\\n\\n<big><big><big><big><big><b>$exc<span color='#949494'>$lst</span></b></big></big></big></big></big>" \
+		--text="\\n\\n\\n<big><big><big><big><big><b><span color='#949494'>$lst</span></b></big></big></big></big></big>" \
 		--field=" ":lbl \
 		--button=gtk-close:1 \
 		--button="	  Got It	  ":3 \

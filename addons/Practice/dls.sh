@@ -21,7 +21,9 @@ while [ $n -le $(cat lsin | wc -l) ]; do
 	s1=$(sed -n "$n"p lsin)
 	
 	if [ -f "$drtt/$s1".mp3 ]; then
-	
+		if [ -f "$DT/ILLUSTRATION".jpeg ]; then
+			rm -f "$DT/ILLUSTRATION".jpeg
+		fi
 		WEN=$(eyeD3 "$drtt/$s1".mp3 | \
 		grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
 		eyeD3 --write-images=$DT "$drtt/$s1.mp3"
@@ -47,13 +49,13 @@ while [ $n -le $(cat lsin | wc -l) ]; do
 		| sed "s|[a-z]|._|g" | tr ".?!;," ' ')
 		Hint="--button=Hint:$drts/hint '$prsw'"
 		
-		if [ -f "$DT/FRONT_COVER".jpeg ]; then
-			IMAGE="$DT/FRONT_COVER".jpeg		
+		if [ -f "$DT/ILLUSTRATION".jpeg ]; then
+			IMAGE="$DT/ILLUSTRATION".jpeg		
 			(sleep 1.5 && play "$drtt/$s1".mp3) &
 			SE=$($yad --center --text-info --image="$IMAGE" \
 			--fontname="Verdana Black" --justify=fill --editable --wrap \
 			--buttons-layout=end --borders=0 --title=" " --image-on-top \
-			--skip-taskbar --margins=8 --text-align=right --height=360 --width=460 \
+			--skip-taskbar --margins=8 --text-align=right --height=400 --width=460 \
 			--align=left --window-icon=idiomind --fore=4A4A4A \
 			--button=Listen:"play '$drtt/$s1.mp3'" \
 			"$Hint" \
@@ -92,38 +94,25 @@ while [ $n -le $(cat lsin | wc -l) ]; do
 		else
 			$drts/cls s && exit 1
 		fi
-		
-		if [ -f "$DT/FRONT_COVER".jpeg ]; then
-			$yad --form --center --name=idiomind --image="$IMAGE" \
-			--width=470 --height=430 --on-top --skip-taskbar --scroll \
-			--class=idiomind $aut --wrap --window-icon=idiomind \
-			--buttons-layout=end --title="" --image-on-top \
-			--text-align=left --borders=5 --selectable-labels \
-			--button=Listen:"play '$drtt/$s1.mp3'" \
-			--button="Next Sentence:2" \
-			--field="<big>$WEN</big>\\n":lbl \
-			--field="":lbl \
-			--field="<span color='#3A9000'>$OK </span>\\n<sup>$prc</sup>\\n":lbl
+	
+		$yad --form --center --name=idiomind \
+		--width=470 --height=230 --on-top --skip-taskbar --scroll \
+		--class=idiomind $aut --wrap --window-icon=idiomind \
+		--buttons-layout=end --title="" \
+		--text-align=left --borders=5 --selectable-labels \
+		--button=Listen:"play '$drtt/$s1.mp3'" \
+		--button="Next Sentence:2" \
+		--field="<big>$WEN</big>\\n":lbl \
+		--field="":lbl \
+		--field="<span color='#3A9000'>$OK </span>\\n<sup>$prc</sup>\\n":lbl
+		ret=$?
+		if [[ $ret -eq 2 ]]; then
+			rm -f $DT/*.jpeg *.png &
+			killall play &
 		else
-			$yad --form --center --name=idiomind \
-			--width=470 --height=230 --on-top --skip-taskbar --scroll \
-			--class=idiomind $aut --wrap --window-icon=idiomind \
-			--buttons-layout=end --title="" \
-			--text-align=left --borders=5 --selectable-labels \
-			--button=Listen:"play '$drtt/$s1.mp3'" \
-			--button="Next Sentence:2" \
-			--field="<big>$WEN</big>\\n":lbl \
-			--field="":lbl \
-			--field="<span color='#3A9000'>$OK </span>\\n<sup>$prc</sup>\\n":lbl
+			rm -f $DT/*.jpeg *.png
+			$drts/cls s && exit
 		fi
-			ret=$?
-			if [[ $ret -eq 2 ]]; then
-				rm -f $DT/*.jpeg *.png &
-				killall play &
-			else
-				rm -f $DT/*.jpeg *.png
-				$drts/cls s && exit
-			fi
 	fi
 	let n++
 done

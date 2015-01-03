@@ -248,13 +248,14 @@ elif [ $1 = n_i ]; then
 		--name=idiomind --class=idiomind \
 		--borders=0 --title="$tpe" --width=360 --height=160 \
 		--field="  <small><small>$lgtl / $lgsl</small></small>":TXT "$txt" \
-		--field="<small><small>$topic</small></small>:CB" "$ttle!$tpcs" "$field" \
+		--field="<small><small>$topic</small></small>:CB" "$ttle!New*!$tpcs" "$field" \
 		--button=Image:3 \
 		--button=gtk-ok:0)
 		ret=$?
 		trgt=$(echo "$lzgpr"| head -n -1)
 		chk=$(echo "$lzgpr" | tail -1)
 		tpe=$(cat "$DC_tl/.in_s" | grep "$chk")
+		echo "$chk"
 		
 	else
 		cd $HOME
@@ -273,7 +274,7 @@ elif [ $1 = n_i ]; then
 		--field="  <small><small>$lgsl</small></small>":TXT "$srce" \
 		--field=":lbl" "" \
 		--field="<small><small>$topic</small></small>:CB" \
-		"$ttle!$tpcs" "$field")
+		"$ttle!New*!$tpcs" "$field")
 		ret=$?
 		trgt=$(echo "$lzgpr" | tail -5 | sed -n 1p | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
 		srce=$(echo "$lzgpr" | tail -5 | sed -n 3p | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
@@ -322,9 +323,12 @@ elif [ $1 = n_i ]; then
 					tpe=$(echo "$slt" | sed -n 2p)
 				fi
 			fi
-			
-			echo "$tpe" > $DC_s/fnewm.id
-			echo "$tpe" > $DC_s/fnew.id
+			if [ "$chk" = "New*" ]; then
+				$DS/add.sh n_t
+			else
+				echo "$tpe" > $DC_s/fnewm.id
+				echo "$tpe" > $DC_s/fnew.id
+			fi
 			[ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ] && c=c || c=w
 			
 			if [ "$(echo "$trgt" | sed -n 1p | awk '{print tolower($0)}')" = image ]; then
@@ -1566,7 +1570,7 @@ elif [ $1 = prs ]; then
 				
 				if [ -z "$(cat info.ret)" ]; then
 					$yad --name=idiomind --center --on-top --image=error \
-					--text="  La actual key ya no es válida.\\n  Debes proporcionar otra.  \\n  Intenta conseguir una nueva desde <a href='$LNK'>aqui. </a>" \
+					--text="  La clave actual ya no es válida o superó su cuota de pedidos diario.\\n  Intenta conseguir una desde <a href='$LNK'>aqui. </a>" \
 					--image-on-top --sticky --title="Idiomind" \
 					--width=400 --height=80 --borders=3 --button=gtk-ok:0 \
 					--skip-taskbar --window-icon=idiomind &
@@ -1621,7 +1625,7 @@ $trgt" >> log
 			fi
 			
 			if [ -z "$(cat ./ls)" ]; then
-				echo "No se pudo obtener texto. Para que el proseso se exitoso el archivo de audio proporcionado no debebá contener ruido de fondo o música porque se usarán los silencios para dividirlo" | $yad --text-info --center --wrap \
+				echo "No se pudo obtener texto. Para que el proseso sea exitoso el archivo de audio proporcionado no debebá contener ruido de fondo o música porque se usan los silencios para dividirlo" | $yad --text-info --center --wrap \
 				--name=idiomind --class=idiomind --window-icon=idiomind \
 				--text=" " --sticky --width=$wth --height=$eht \
 				--margins=8 --borders=3 --button=gtk-ok:0 --title=selector && \
