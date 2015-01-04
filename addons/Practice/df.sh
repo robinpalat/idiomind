@@ -1,4 +1,6 @@
 #!/bin/bash
+# -*- ENCODING: UTF-8 -*-
+
 tpc=$(sed -n 1p ~/.config/idiomind/s/cnfg8)
 lgtl=$(sed -n 2p ~/.config/idiomind/s/cnfg10)
 lgsl=$(sed -n 2p ~/.config/idiomind/s/cnfg9)
@@ -16,12 +18,11 @@ while [ $n -le $(cat ./stp$1 | wc -l) ]; do
 	trgt=$(echo "<span font='ultralight'>$tgt</span>")
 	
 	[ $lgsl = Japanese ] || [ $lgsl = Chinese ] || [ $lgsl = Vietnamese ] && stgt=? \
-	|| stgt=$(echo "$lst" | tr aeiouáéíóúyñ ' ')
+	|| stgt=$(echo "$lst" | tr aeiouy ' ')
 	
 	if [ $2 = 2 ]; then
 		trgt=$(echo "<span font='ultralight'>$tgt</span>")
 		[ $lgsl = Japanese ] || [ $lgsl = Chinese ] || [ $lgsl = Vietnamese ] && stgt="$lst"
-	
 	fi
 	
 	wrong=$(cat fin.$2.no | wc -l)
@@ -36,8 +37,8 @@ while [ $n -le $(cat ./stp$1 | wc -l) ]; do
 		--field="<big><big><big><big><big><big><big><big><b>$trgt</b></big></big></big></big></big></big></big></big>":lbl \
 		--field="<span color='#949494'><span font='monospace'><b> $stgt </b></span></span>":lbl \
 		--button="gtk-close":1 \
-		--button="	  Got It	  ":3 \
-		--button="	  Nope	  ":4 \
+		--button=" Got It ":3 \
+		--button=" Nope ":4 \
 		--width=365 --height=300
 	else
 		yad --form --align=center \
@@ -47,8 +48,8 @@ while [ $n -le $(cat ./stp$1 | wc -l) ]; do
 		--field="\\n\\n<big><big><big><big><big><big><big><big><b>$trgt</b></big></big></big></big></big></big></big></big>":lbl \
 		--field="<span color='#949494'><span font='monospace'><b>$stgt</b></span></span>\\n\\n\\n":lbl \
 		--button="gtk-close":1 \
-		--button="	  Got It	  ":3 \
-		--button="	  Nope	  ":4 \
+		--button=" Got It ":3 \
+		--button=" Nope ":4 \
 		--width=365 --height=220
 	fi
 	ret=$?
@@ -59,14 +60,11 @@ while [ $n -le $(cat ./stp$1 | wc -l) ]; do
 		else
 			play $drts/d.mp3 & echo "$w1" >> ./fin.2.ok
 		fi
-
 	elif [[ $ret -eq 4 ]]; then
 		play $drts/d.mp3 & echo "$w1" >> ./fin.$2.no
-		
 	else
 		$drts/cls "$2" f && break & exit 1
 	fi
-	
 	let n++
 done
 

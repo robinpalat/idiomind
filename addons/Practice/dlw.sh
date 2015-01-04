@@ -1,6 +1,6 @@
 #!/bin/bash
 tpc=$(sed -n 1p ~/.config/idiomind/s/cnfg8)
-lgtl=$(sed -n 2p ~/.config/idiomind/s/lang)
+lgtl=$(sed -n 2p ~/.config/idiomind/s/cnfg10)
 drtt="$HOME/.idiomind/topics/$lgtl/$tpc/words"
 drts="/usr/share/idiomind/addons/Practice/"
 cd "$HOME/.config/idiomind/topics/$lgtl/$tpc/Practice"
@@ -10,10 +10,10 @@ while [ $n -le $(cat ./stp$1 | wc -l) ]; do
 	w1=$(sed -n "$n"p stp$1)
 	listen="play '$drtt/$w1.mp3'"
 	[ $lgtl = Japanese ] || [ $lgtl = Chinese ] && lst=? \
-	|| lst=$(echo "$w1" | awk '$1=$1' FS= OFS=" " | tr aeiouáéíóúy ' ')
+	|| lst=$(echo "$w1" | awk '$1=$1' FS= OFS=" " | tr aeiouy ' ')
 	
 	if [ "$2" = 1 ]; then
-		trgt=$(echo "$w1" | tr aeiouáéíóúyñ ' ')
+		trgt=$(echo "$w1" | tr aeiouy ' ')
 	elif [ "$2" = 2 ]; then
 		lst="$w1"
 	fi
@@ -29,8 +29,8 @@ while [ $n -le $(cat ./stp$1 | wc -l) ]; do
 		--field="Play:BTN" "$listen" \
 		--field="<big><big><big><big><big><b><span color='#949494'>$lst</span></b></big></big></big></big></big>\n":lbl \
 		--button=gtk-close:1 \
-		--button="	  Got It	  ":3 \
-		--button="	  Nope	  ":4 \
+		--button=" Got It ":3 \
+		--button=" Nope ":4 \
 		--width=365 --height=180
 		
 	else
@@ -45,8 +45,8 @@ Play
 		--text="\\n\\n\\n<big><big><big><big><big><b><span color='#949494'>$lst</span></b></big></big></big></big></big>" \
 		--field=" ":lbl \
 		--button=gtk-close:1 \
-		--button="	  Got It	  ":3 \
-		--button="	  Nope	  ":4 \
+		--button=" Got It ":3 \
+		--button=" Nope ":4 \
 		--width=365 --height=220
 	fi
 	

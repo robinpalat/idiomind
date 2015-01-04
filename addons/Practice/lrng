@@ -1,6 +1,6 @@
 #!/bin/bash
 tpc=$(sed -n 1p ~/.config/idiomind/s/cnfg8)
-lgtl=$(sed -n 2p ~/.config/idiomind/s/lang)
+lgtl=$(sed -n 2p ~/.config/idiomind/s/cnfg10)
 drtt="$HOME/.idiomind/topics/$lgtl/$tpc/words"
 drtu="/usr/share/idiomind/addons/Practice/"
 cd "$HOME/.config/idiomind/topics/$lgtl/$tpc/Practice"

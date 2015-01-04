@@ -1,10 +1,11 @@
 #!/bin/bash
+
 killall prct
 killall play
 killall lrng
 DS_pp=/usr/share/idiomind/addons/Practice
 tpc=$(sed -n 1p $HOME/.config/idiomind/s/cnfg8)
-lgtl=$(sed -n 2p $HOME/.config/idiomind/s/lang)
+lgtl=$(sed -n 2p $HOME/.config/idiomind/s/cnfg10)
 DIR2="$HOME/.config/idiomind/topics/$lgtl/$tpc/Practice"
 DIR3="$HOME/.config/idiomind/topics/$lgtl/$tpc"
 w9="$HOME/.config/idiomind/addons/practice/w9"
@@ -12,38 +13,29 @@ w6="$HOME/.config/idiomind/addons/practice/w6"
 cd "$DIR2"
 
 if [ "$1" = df ]; then
-	
 	rm look_f *.no *.ok fin1 fin2 fin3 iF
 	echo "1" > .iconf
 	echo "0" > f_r
 	$DS_pp/strt &
 	exit 1
-	
 elif [ "$1" = dm ]; then
-	
-	rm look_mc *.id *.no *.ok mcin1 mcin2 mcin3 iMC word1.idx
+	rm look_mc *.no *.ok mcin1 mcin2 mcin3 iMC word1.idx
 	echo "1" > .iconmc
 	echo "0" > mc_r
 	$DS_pp/strt &
 	exit 1
-	
 elif [ "$1" = dw ]; then
-	
-	rm look_lw *.id *.no *.ok lwin iLW
+	rm look_lw *.no *.ok lwin iLW
 	echo "1" > .iconlw
 	echo "0" > lw_r
 	$DS_pp/strt &
 	exit 1
-	
 elif [ "$1" = ds ]; then
-	
-	rm look_ls *.id *.no *.ok lsin lsin.tmp iLC
+	rm look_ls *.no *.ok lsin lsin.tmp iLC
 	echo "1" > .iconls
 	echo "0" > ls_r
 	$DS_pp/strt &
 	exit 1
-	
-	
 elif [ "$2" = f ]; then
 	killall df.sh
 	cat *.no >> "$w6"
@@ -55,7 +47,7 @@ elif [ "$2" = f ]; then
 	echo $s3 > f_r
 	
 	var1=$((100*$(cat f_r)/$(cat idxfin)))
-	
+
 	if [ $var1 -lt 1 ]; then
 		echo 1 > "$DIR2"/.iconf
 	
@@ -122,10 +114,7 @@ elif [ "$2" = f ]; then
 	elif [ $var1 -eq 100 ]; then
 		echo 21 > "$DIR2"/.iconf
 	fi
-	
-	$DS_pp/strt 5 "$1"
-	
-	exit
+	$DS_pp/strt 5 "$1" & exit 1
 
 elif [ "$2" = m ]; then
 	killall dmc.sh
@@ -200,10 +189,7 @@ elif [ "$2" = m ]; then
 	elif [ $var3 -eq 100 ]; then
 		echo 21 > "$DIR2"/.iconmc
 	fi
-	
-	$DS_pp/strt 6 "$1"
-	
-	exit
+	$DS_pp/strt 6 "$1" & exit 1
 
 elif [ "$2" = w ]; then
 	killall dlw.sh
@@ -278,8 +264,7 @@ elif [ "$2" = w ]; then
 	elif [ $var2 -eq 100 ]; then
 		echo 21 > "$DIR2"/.iconlw
 	fi
-	
-	$DS_pp/strt 7 "$1" & exit
+	$DS_pp/strt 7 "$1" & exit 1
 
 elif [ "$1" = s ]; then
 	killall dls.sh
@@ -351,10 +336,6 @@ elif [ "$1" = s ]; then
 	
 	elif [ $var4 -eq 100 ]; then
 		echo 21 > "$DIR2"/.iconls
-	
 	fi
-	
-	$DS_pp/strt 8
-	
-	exit
+	$DS_pp/strt 8 & exit 1
 fi

@@ -1,6 +1,6 @@
 #!/bin/bash
 tpc=$(sed -n 1p ~/.config/idiomind/s/cnfg8)
-lgtl=$(sed -n 2p ~/.config/idiomind/s/lang)
+lgtl=$(sed -n 2p ~/.config/idiomind/s/cnfg10)
 drtt="$HOME/.idiomind/topics/$lgtl/$tpc/"
 drtc="$HOME/.config/idiomind/topics/$lgtl/$tpc/Practice"
 drts="/usr/share/idiomind/addons/Practice/"
@@ -59,7 +59,7 @@ while [ $n -le $(cat lsin | wc -l) ]; do
 			--align=left --window-icon=idiomind --fore=4A4A4A \
 			--button=Listen:"play '$drtt/$s1.mp3'" \
 			"$Hint" \
-			--button="Ok  ( $good ):0")
+			--button=" Ok ":0)
 		else
 			(sleep 1.5 && play "$drtt/$s1".mp3) &
 			SE=$($yad --center --text-info --fore=4A4A4A \
@@ -68,7 +68,7 @@ while [ $n -le $(cat lsin | wc -l) ]; do
 			--skip-taskbar --margins=8 --text-align=right --height=160 --width=460 \
 			--align=left --window-icon=idiomind \
 			--button="  Listen  ":"play '$drtt/$s1.mp3'" "$Hint" \
-			--button="Ok:0")
+			--button=" Ok ":0)
 		fi
 		ret=$?
 		

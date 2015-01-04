@@ -1,6 +1,6 @@
 #!/bin/bash
 tpc=$(sed -n 1p ~/.config/idiomind/s/cnfg8)
-lgtl=$(sed -n 2p ~/.config/idiomind/s/lang)
+lgtl=$(sed -n 2p ~/.config/idiomind/s/cnfg10)
 drtt="$HOME/.idiomind/topics/$lgtl/$tpc/words"
 drts="/usr/share/idiomind/addons/Practice/"
 cd "$HOME/.config/idiomind/topics/$lgtl/$tpc/Practice"
@@ -29,12 +29,9 @@ $ess" > word2.tmp
 		
 		if [ "$2" = 1 ]; then
 			trgt=$(echo "<span font='ultralight'>$tgt</span>")
+		elif [ "$2" = 2 ]; then
+			trgt=$(echo "<span font='ultralight'><b>$tgt</b></span>")
 		fi
-		#elif [ "$2" = 2 ]; then
-			#trgt=$(echo "<span font='ultralight'><b>$tgt</b></span>")
-		#elif [ "$2" = 3 ]; then
-			#trgt=$(echo "<span font='ultralight'><b>$tgt</b></span>")
-		#fi
 		
 		dlg=$(cat word2.id | awk '{print "\n"$0}' \
 		| yad --list --list --on-top --skip-taskbar \

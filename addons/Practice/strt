@@ -1,4 +1,6 @@
 #!/bin/bash
+# -*- ENCODING: UTF-8 -*-
+
 source /usr/share/idiomind/ifs/c.conf
 DS_pp="/usr/share/idiomind/addons/Practice"
 eht=$(sed -n 13p $HOME/.config/idiomind/s/cnfg18)
@@ -137,6 +139,7 @@ ret=$?
 		--sticky --undecorated --skip-taskbar
 		/usr/share/idiomind/addons/Practice/strt & exit 1
 	else
+		rm stp0 stp1 stp2 stp3 fin1 fin2 idxfin mcin1 mcin2 idxmcin word2.tmp lwin1 lwin2 idxlwin lsin idlsin *.no *.ok
 		/usr/share/idiomind/addons/Practice/stp.sh
 		exit 1
 	fi

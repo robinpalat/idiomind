@@ -1,4 +1,6 @@
 #!/bin/bash
+# -*- ENCODING: UTF-8 -*-
+
 source /usr/share/idiomind/ifs/c.conf
 int="$(sed -n 63p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
 btn="$(sed -n 62p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
@@ -9,7 +11,6 @@ w9="$DC/addons/practice/w9"
 w6="$DC/addons/practice/w6"
 
 if [ "$2" = f ]; then
-
 	cd "$DC_tlt/Practice"
 	DF=$DS_pp/df.sh
 	vw=#
@@ -262,7 +263,7 @@ elif [ "$2" = m ]; then
 			cat "$Li" > mcin1
 		fi
 		rm *.ok *.no
-		if [ "$(cat idxmcin)" -lt 6 ]; then
+		if [ "$(cat idxmcin)" -lt 5 ]; then
 			($yad --form --center --borders=5 \
 			--title="Info" --on-top --image=info \
 			--window-icon=idiomind --skip-taskbar \
@@ -494,7 +495,7 @@ elif [ "$2" = w ]; then
 			cat "$Li" > lwin1
 		fi
 		rm *.ok *.no
-		if [ $(cat idxlwin) -lt 1 ]; then
+		if [ $(cat idxlwin) -lt 5 ]; then
 			$yad --form --center --borders=5 --image=info \
 			--title="Info" --on-top --window-icon=idiomind \
 			--button=Ok:1 --text-align=center --skip-taskbar \

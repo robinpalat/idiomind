@@ -153,7 +153,7 @@ if [ -z "$1" ]; then
 						echo "$nt" > "$tdirc/nt"
 						(cd "$DS_ppd"; cp -f .* \
 						"$DC/topics/$dlng/$topic/Practice")
-						echo $dte > .impt
+						echo $dte > cnfg12
 						cp -f $DS/default/tpc.sh "$tdirc/tpc.sh"
 						chmod +x "$tdirc/tpc.sh"
 						echo "80"

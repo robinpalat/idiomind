@@ -10,7 +10,7 @@ Wrd="$1"
 DT_r="$2"
 
 if [ ! -f $DT_r/.topic ]; then
-	topic=$(sed -n 1p $DC_s/fnew.id)
+	topic=$(sed -n 1p $DC_s/cnfg7)
 	echo "$topic" > $DT_r/.topic
 fi
 
@@ -166,7 +166,7 @@ elif [ "$3" = swrd ]; then
 else
 	cd $DT_r
 	if [ -f "$DM_tl/.share/$wrd.mp3" ]; then
-		echo "$wrd.mp3" >> "$DC_tlt/.ainx" && exit 1
+		echo "$wrd.mp3" >> "$DC_tlt/cnfg5" && exit 1
 	else
 		n=1
 		while [ $n -le $(cat "$DICT/.dicts" | wc -l) ]; do
@@ -174,7 +174,7 @@ else
 			"$dict" "$wrd"
 			if [ -f "$wrd.mp3" ]; then
 				mv "$wrd.mp3" "$DM_tl/.share/$wrd.mp3"
-				echo "$wrd.mp3" >> "$DC_tlt/.ainx" && break
+				echo "$wrd.mp3" >> "$DC_tlt/cnfg5" && break
 			fi
 			let n++
 		done

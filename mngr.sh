@@ -81,23 +81,23 @@ elif [ $1 = inx ]; then
 	
 	if [ "$2" = W ]; then
 		if [[ "$(cat "$DC_tlt/cnfg0" | grep "$fns")" ]] && [ -n "$fns" ]; then
-			sed -i "s/${fns}/${fns}\n$itm/" "$DC_tlt/.tinx"
+			sed -i "s/${fns}/${fns}\n$itm/" "$DC_tlt/cnfg11"
 			sed -i "s/${fns}/${fns}\n$itm/" "$DC_tlt/cnfg0"
 			sed -i "s/${fns}/${fns}\n$itm/" "$DC_tlt/cnfg1"
 		else
-			echo "$itm" >> "$DC_tlt/.tinx"
+			echo "$itm" >> "$DC_tlt/cnfg11"
 			echo "$itm" >> "$DC_tlt/cnfg0"
 			echo "$itm" >> "$DC_tlt/cnfg1"
 		fi
 		echo "$itm" >> "$DC_tlt/cnfg3"
 	elif [ "$2" = S ]; then
-		echo "$itm" >> "$DC_tlt"/.tinx
+		echo "$itm" >> "$DC_tlt"/cnfg11
 		echo "$itm" >> "$DC_tlt"/cnfg0
 		echo "$itm" >> "$DC_tlt"/cnfg1
 		echo "$itm" >> "$DC_tlt"/cnfg4
 	fi
 	
-	lss="$DC_tlt/.tinx"
+	lss="$DC_tlt/cnfg11"
 	if [ -n "$(cat "$lss" | sort -n | uniq -dc)" ]; then
 		cat "$lss" | awk '!array_temp[$0]++' > lss_inx
 		sed '/^$/d' lss_inx > "$lss"
@@ -158,7 +158,7 @@ elif [ "$1" = mklg- ]; then
 		else
 			echo "6" > "$DC_tlt/cnfg8"
 		fi
-		rm -f "$DC_tlt/.lk"
+		rm -f "$DC_tlt/cnfg7"
 	else
 		if [ $(cat "$DC_tlt/cnfg8") = 2 ]; then
 			dts=$(cat "$DC_tlt/cnfg9" | wc -l)
@@ -187,7 +187,7 @@ elif [ "$1" = mklg- ]; then
 		else
 			echo "1" > "$DC_tlt/cnfg8"
 		fi
-		rm -f "$DC_tlt/.lk"
+		rm -f "$DC_tlt/cnfg7"
 	fi
 	cat "$DC_tlt/cnfg0" | awk '!array_temp[$0]++' > $DT/cnfg0.t
 	sed '/^$/d' $DT/cnfg0.t > "$DC_tlt/cnfg0"
@@ -241,7 +241,7 @@ elif [ "$1" = mkok- ]; then
 	else
 		echo "$(date +%m/%d/%Y)" > "$DC_tlt/cnfg9"
 	fi
-	> "$DC_tlt/.lk"
+	> "$DC_tlt/cnfg7"
 	nstll=$(grep -Fxo "$tpc" "$DC_tl/.nstll")
 	if [ -n "$nstll" ]; then
 		echo "7" > "$DC_tlt/cnfg8"
@@ -665,8 +665,8 @@ elif [ $1 = dli ]; then
 			cd "$DC_tlt/Practice"
 			sed -i 's/'"$itdl"'//g' ./lsin.tmp
 			cd ..
-			grep -v -x -v "$itdl" ./.tinx > ./tinx
-			sed '/^$/d' ./tinx > ./.tinx
+			grep -v -x -v "$itdl" ./cnfg11 > ./tinx
+			sed '/^$/d' ./tinx > ./cnfg11
 			rm ./tinx
 			grep -v -x -v "$itdl" ./cnfg0 > ./t-inx
 			sed '/^$/d' ./t-inx > ./cnfg0
@@ -688,8 +688,8 @@ elif [ $1 = dli ]; then
 			cd "$DC_tlt/Practice"
 			sed -i 's/'"$itdl"'//g' ./lsin.tmp
 			cd ..
-			grep -v -x -v "$itdl" ./.tinx > ./tinx
-			sed '/^$/d' ./tinx > ./.tinx
+			grep -v -x -v "$itdl" ./cnfg11 > ./tinx
+			sed '/^$/d' ./tinx > ./cnfg11
 			rm ./tinx
 			grep -v -x -v "$itdl" ./cnfg0 > ./t-inx
 			sed '/^$/d' ./t-inx > ./cnfg0
@@ -735,8 +735,8 @@ elif [ $1 = dli ]; then
 				sed -i 's/'"$itdl"'//g' ./lwin.tmp
 				sed -i 's/'"$itdl"'//g' ./mcin.tmp
 				cd ..
-				grep -v -x -v "$itdl" ./.tinx > ./tinx
-				sed '/^$/d' ./tinx > ./.tinx
+				grep -v -x -v "$itdl" ./cnfg11 > ./tinx
+				sed '/^$/d' ./tinx > ./cnfg11
 				rm ./tinx
 				grep -v -x -v "$itdl" ./cnfg0 > ./t-inx
 				sed '/^$/d' ./t-inx > ./cnfg0
@@ -769,8 +769,8 @@ elif [ $1 = dli ]; then
 				cd "$DC_tlt/Practice"
 				sed -i 's/'"$itdl"'//g' ./lsin.tmp
 				cd ..
-				grep -v -x -v "$itdl" ./.tinx > ./tinx
-				sed '/^$/d' ./tinx > ./.tinx
+				grep -v -x -v "$itdl" ./cnfg11 > ./tinx
+				sed '/^$/d' ./tinx > ./cnfg11
 				rm ./tinx
 				grep -v -x -v "$itdl" ./cnfg0 > ./t-inx
 				sed '/^$/d' ./t-inx > ./cnfg0
@@ -803,8 +803,8 @@ elif [ $1 = dli ]; then
 			sed -i 's/'"$itdl"'//g' ./mcin.tmp
 			sed -i 's/'"$itdl"'//g' ./lsin.tmp
 			cd ..
-			grep -v -x -v "$itdl" ./.tinx > ./tinx
-			sed '/^$/d' ./tinx > ./.tinx
+			grep -v -x -v "$itdl" ./cnfg11 > ./tinx
+			sed '/^$/d' ./tinx > ./cnfg11
 			rm ./tinx
 			grep -v -x -v "$itdl" ./cnfg0 > ./t-inx
 			sed '/^$/d' ./t-inx > ./cnfg0

@@ -1,6 +1,6 @@
 #!/bin/bash
 YAD=yad
-cd /tmp/.idmtp1.$u/idmimp_X015x/tmp
+
 u=$(echo "$(whoami)")
 nmt=$(sed -n 1p /tmp/.idmtp1.$u/idmimp_X015x/ls)
 dir="/tmp/.idmtp1.$u/idmimp_X015x/$nmt"

@@ -300,7 +300,6 @@ elif [ "$1" != chngi ]; then
 				else
 					$DC_tl/"$VAR/tpc.sh" & exit 1
 				fi
-					
 			else
 				exit 1
 			fi
