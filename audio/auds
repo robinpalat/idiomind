@@ -2,7 +2,6 @@
 source /usr/share/idiomind/ifs/c.conf
 
 if [ -z $1 ]; then
-
 	msj=$(sed -n 1p $DC_s/.sncardd)
 	cn=$(sed -n 2p $DC_s/.sncardd)
 	
@@ -13,7 +12,7 @@ if [ -z $1 ]; then
 	fi
 
 	$yad --fixed --center --align=center \
-	--text="   Recording with  <b>$msj</b>" \
+	--text="   Recording with  $msj" \
 	---name=idiomind --geometry=0-0-0-0 \
 	--width=350 --height=120 --center \
 	--on-top --skip-taskbar \
@@ -51,7 +50,7 @@ if [ $1 = pnl ]; then
 	FLAS=$($yad --fixed --buttons-layout=spread \
 	--width=480 --height=224  --form --on-top --name=idiomind \
 	--class=idiomind --window-icon=idiomind --center \
-	--button="gtk-preferences":$inp "$rec" --button="►":"$ls" \
+	--button="gtk-preferences":$inp "$rec" --button="Play":"$ls" \
 	--button=gtk-save:0 --borders=10 --title="$ttl" --skip-taskbar \
 	--field=":lbl" "" \
 	--field=" <small>   Add audio     </small>":FL \
@@ -93,12 +92,12 @@ elif [ $1 = rec ]; then
 	rm -f $DT_r/audtm.mp3
 	
 	$yad --fixed --align=center --timeout="$t" \
-	--text="Recording with: <b>$inf</b>\n\n<small><sub>Time:</sub></small>" \
+	--text=" $inf  Recording...\n\n" \
 	--timeout-indicator=bottom --geometry=0-0-0-0 \
 	--image-on-top --width=350 --height=100 \
 	--on-top --skip-taskbar --no-buttons --center \
 	--window-icon=idiomind --center --borders=10 \
-	--title="Recording ..." \
+	--title=" " \
 	--field="\\n\\n$NAME":lbl &
 	
 	sox -t alsa default $DT_r/audtm.mp3 silence 1 0.1 5% 1 1.0 5% &

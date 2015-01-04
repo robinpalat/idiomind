@@ -3,8 +3,10 @@
 source /usr/share/idiomind/ifs/c.conf
 
 if [ $1 = n_t ]; then
-
+	
 	info2=$(cat $DC_tl/.in | wc -l)
+	int="$(sed -n 22p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+	btn="$(sed -n 21p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
 	c=$(echo $(($RANDOM%100)))
 
 	if [ "$3" = 2 ]; then
@@ -13,7 +15,7 @@ if [ $1 = n_t ]; then
 		if [ -n "$nmt" ];then
 			nmt="$nmt"
 		else
-			tle=$(echo "New Topic")
+			tle=$(echo "$(echo "$int" | sed -n 1p)")
 			nmt=""
 		fi
 		
@@ -22,22 +24,22 @@ if [ $1 = n_t ]; then
 		--form --center --field="" "$nmt" --title="$tle" \
 		--width=400 --height=80 --name=idiomind --on-top \
 		--skip-taskbar --borders=10 --button=Make:0 \
-		--text="<small>  New Name for topic:</small>")
+		--text="<small>  $(echo "$int" | sed -n 2p)</small>")
 		
 		jlb=$(echo "$jlbi" | cut -d "|" -f1 | sed s'/!//'g \
 		| sed s'/&//'g | sed s'/\://'g | sed s'/\&//'g \
 		| sed s"/'//"g | sed 's/^[ \t]*//;s/[ \t]*$//' \
 		| sed 's/^\s*./\U&\E/g')
 		
-		if [ $(cat $DC_tl/.in | grep -Fxo "$jlb" | wc -l) -ge 1 ]; then
-		
+		snm=$(cat $DC_tl/.in | grep -Fxo "$jlb" | wc -l)
+		if [ $snm -ge 1 ]; then
 			jlb=$(echo ""$jlb" $snm")
 			$yad --name=idiomind --center --on-top \
 			--image=info --sticky \
-			--text=" <b>Hay instalado un tema con el mismo nombre   </b>\\n Se renombrara a:  <b>$jlb</b>   \\n" \
-			--image-on-top --width=400 --height=80 --borders=3 \
+			--text=" <b>$(echo "$int" | sed -n 3p)   </b>\\n $(echo "$int" | sed -n 4p)  <b>$jlb</b>   \\n" \
+			--image-on-top --width=400 --height=120 --borders=3 \
 			--skip-taskbar --window-icon=idiomind \
-			--title=Idiomind --button=Cancel:1 --button=gtk-ok:0
+			--title=Idiomind --button="$(echo "$btn" | sed -n 7p)":1 --button=gtk-ok:0
 				ret=$?
 				
 				if [ "$ret" -eq 1 ]; then
@@ -98,19 +100,18 @@ if [ $1 = n_t ]; then
 		
 		if [ $info2 -ge 50 ]; then
 			$yad --name=idiomind --center --image=info \
-			--text=" <b>Hás alcanzado la cantidad máxima de temas </b>" \
+			--text=" <b>$(echo "$int" | sed -n 5p) </b>" \
 			--image-on-top --sticky --on-top \
-			--width=430 --height=80 --borders=3 \
-			--skip-taskbar --window-icon=idiomind \
-			--title=Idiomind \
+			--width=430 --height=120 --borders=3 \
+			--skip-taskbar --window-icon=idiomind --title=Idiomind \
 			--button=Ok:0 && rm "$DM_tl/.rn" & exit 1
 		fi
 		
 		jlbi=$($yad --window-icon=idiomind \
-		--form --center --title="New Topic"  --separator="\n" \
+		--form --center --title="$(echo "$int" | sed -n 1p)"  --separator="\n" \
 		--width=400 --height=80 --name=idiomind --on-top \
 		--skip-taskbar --borders=10 --button=Make:0 \
-		--text="<small>  Name for topic:</small>" \
+		--text="<small>  $(echo "$int" | sed -n 2p)</small>" \
 		--field=" : " "$nmt")
 			
 		jlb=$(echo "$jlbi" | sed -n 1p | cut -d "|" -f1 | sed s'/!//'g \
@@ -120,19 +121,19 @@ if [ $1 = n_t ]; then
 		ABC=$(echo "$jlbi" | sed -n 2p)
 		
 		snme=$(cat $DC_tl/.in | grep -Fxo "$jlb" | wc -l)
-		if [ "$snm" -ge 1 ]; then
-			jlb="$jlb $snm"
+		if [ "$snme" -ge 1 ]; then
+			jlb="$jlb $snme"
 			$yad --name=idiomind --center --on-top \
 			--image=info --sticky \
-			--text=" <b>Hay instalado un tema con el mismo nombre   </b>\\n Se renombrara a:  <b>$jlb</b>   \\n" \
-			--image-on-top --width=400 --height=80 --borders=3 \
+			--text=" <b>$(echo "$int" | sed -n 3p)   </b>\\n $(echo "$int" | sed -n 4p)  <b>$jlb</b>   \\n" \
+			--image-on-top --width=400 --height=120 --borders=3 \
 			--skip-taskbar --window-icon=idiomind \
-			--title=Idiomind --button=Cancel:1 --button=gtk-ok:0
-				ret=$?
+			--title=Idiomind --button="$(echo "$btn" | sed -n 7p)":1 --button=gtk-ok:0
+			ret=$?
 			
-				if [ "$ret" -eq 1 ]; then
-					rm "$DM_tl"/.rn & exit 1
-				fi
+			if [ "$ret" -eq 1 ]; then
+				rm "$DM_tl"/.rn & exit 1
+			fi
 		else
 			jlb="$jlb"
 		fi
@@ -169,7 +170,8 @@ if [ $1 = n_t ]; then
 	exit 1
 	
 elif [ $1 = n_i ]; then
-
+	int="$(sed -n 21p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+	int="$(sed -n 22p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
 	if  [ -z "$(cat $DC/addons/dict/.dicts)" ]; then
 		$DS/addons/Dics/dict $DS/ifs/info6 f cnf
 		if  [ -z "$(cat $DC/addons/dict/.dicts)" ]; then
@@ -235,9 +237,9 @@ elif [ $1 = n_i ]; then
 		info="\\n$is $iw"
 	fi
 	if [ "$tpe" != "$tpc" ]; then
-		topic="<span color='#CE6F1C'>Topic:</span>$info"
+		topic="<span color='#CE6F1C'>"$(echo "$int" | sed -n 14p)":</span>$info"
 	else
-		topic="Topic:$info"
+		topic="$(echo "$int" | sed -n 14p):$info"
 	fi
 	
 	if sed -n 1p $DC_s/cnfg3 | grep TRUE; then
@@ -249,25 +251,24 @@ elif [ $1 = n_i ]; then
 		--borders=0 --title="$tpe" --width=360 --height=160 \
 		--field="  <small><small>$lgtl / $lgsl</small></small>":TXT "$txt" \
 		--field="<small><small>$topic</small></small>:CB" "$ttle!New*!$tpcs" "$field" \
-		--button=Image:3 \
+		--button="$(echo "$int" | sed -n 30p)":3 \
 		--button=gtk-ok:0)
 		ret=$?
 		trgt=$(echo "$lzgpr"| head -n -1)
 		chk=$(echo "$lzgpr" | tail -1)
 		tpe=$(cat "$DC_tl/.in_s" | grep "$chk")
 		echo "$chk"
-		
 	else
 		cd $HOME
 		txt2="$5"
 		sx='180x160'
 		auds="--button=Audio:$DS/audio/auds pnl '$DT_r' 10"
 		rec="--button=gtk-media-record:$DS/audio/auds rec '$DT_r' '10'"
-		ls="--button=►:play $DT_r/audtm.mp3"
+		ls="--button=Play:play $DT_r/audtm.mp3"
 		lzgpr=$($yad --separator="\\n" --skip-taskbar \
 		--width=400 --height=220 --form --on-top --name=idiomind \
 		--class=idiomind --window-icon=idiomind "$img" --center "$ls" "$rec" \
-		--button="Image":3 --always-print-result --align=right \
+		--button="$(echo "$int" | sed -n 30p)":3 --always-print-result --align=right \
 		--button=gtk-ok:0 --borders=2 --title="$tpe" \
 		--field="  <small><small>$lgtl</small></small>":TXT "$txt" \
 		--field=":lbl" "" \
@@ -279,7 +280,8 @@ elif [ $1 = n_i ]; then
 		trgt=$(echo "$lzgpr" | tail -5 | sed -n 1p | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
 		srce=$(echo "$lzgpr" | tail -5 | sed -n 3p | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
 		tpe=$(cat "$DC_tl/.in_s" | grep "$(echo "$lzgpr" | tail -5 | sed -n 5p)")
-		
+		chk=$(echo "$lzgpr" | tail -1)
+		echo "$chk"
 	fi
 		
 		if [ $ret -eq 3 ]; then
@@ -297,7 +299,7 @@ elif [ $1 = n_i ]; then
 			if [ -z "$trgt" ]; then
 				rm -fr $DT_r & exit 1
 			fi
-			# ===si coincide con otro nombre de topic
+			# si coincide con otro nombre de topic
 			if [ $(echo "$tpe" | wc -l) -ge 2 ]; then
 				
 				if [[ $(echo "$tpe" | sed -n 1p | wc -w) \
@@ -357,6 +359,8 @@ elif [ $1 = n_s ]; then
 	lprn=$(cat $DS/default/$lgt/pronouns)
 	lpre=$(cat $DS/default/$lgt/prepositions)
 	ladj=$(cat $DS/default/$lgt/adjetives)
+	btn="$(sed -n 21p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+	int="$(sed -n 22p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
 	DM_tlt="$DM_tl/$tpe"
 	DC_tlt="$DC_tl/$tpe"
 	icnn=idiomind
@@ -365,7 +369,7 @@ elif [ $1 = n_s ]; then
 			
 	if [ $(cat "$DC_tlt/.sinx" | wc -l) -ge 50 ]; then
 		$yad --name=idiomind --center --on-top --image=info \
-		--text=" <b>$tpe    </b>\\n\\n Alcanzaste la cantidad máxima de oraciones   \\n Puedes borrar algunas o crear un nuevo tema" \
+		--text=" <b>$tpe    </b>\\n\\n $(echo "$int" | sed -n 7p)" \
 		--image-on-top --fixed --sticky --title="$tpe" \
 		--width=230 --height=80 --borders=3 --button=gtk-ok:0 \
 		--skip-taskbar --window-icon=idiomind && exit 1
@@ -376,7 +380,7 @@ elif [ $1 = n_s ]; then
 		curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
 		$yad --window-icon=idiomind --on-top \
 		--image=info --name=idiomind \
-		--text="<b> No hay conexión a internet  \\n  </b>" \
+		--text="<b> $(echo "$int" | sed -n 8p)  \\n  </b>" \
 		--image-on-top --center --sticky \
 		--width=300 --height=50 --borders=3 \
 		--skip-taskbar --title=Idiomind \
@@ -649,7 +653,7 @@ elif [ $1 = n_s ]; then
 					sox $DT_r/s.wav "$DM_tlt/$nme.mp3"
 					else
 						$yad --image=error --button=gtk-ok:1 \
-						--text=" <b>Error</b>\\n \ Festival no puede procesar texto en $lgtl " \
+						--text=" <b>$(echo "$int" | sed -n 9p) $lgtl " \
 						--on-top --skip-taskbar & exit 1
 					fi
 				else
@@ -667,7 +671,7 @@ elif [ $1 = n_s ]; then
 					lg=Mandarin
 				elif [ $lg = japanese ]; then
 					$yad --image=error --button=gtk-ok:1 \
-					--text=" <b>Error</b>\\n \ Espeak no puede procesar texto en japanese " \
+					--text=" <b>$(echo "$int" | sed -n 10p) " \
 					--on-top --skip-taskbar & exit 1
 				fi
 				espeak "$trgt" -v $lg -k 1 -p 65 -a 80 -s 120 -w $DT_r/s.wav
@@ -710,6 +714,8 @@ elif [ $1 = n_w ]; then
 	srce="$4"
 	dct="$DS/addons/Dics/dict"
 	icnn=idiomind
+	int="$(sed -n 22p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+	btn="$(sed -n 21p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
 	tpcs=$(cat "$DC_tl/.in_s" | cut -c 1-30 | egrep -v "$tpe" \
 	| tr "\\n" '!' | sed 's/!\+$//g')
 	ttle="${tpe:0:30}"
@@ -719,7 +725,7 @@ elif [ $1 = n_w ]; then
 
 	if [ $(cat "$DC_tlt/.winx" | wc -l) -ge 50 ]; then
 		$yad --name=idiomind --center --on-top --image=info \
-		--text=" <b>$tpe    </b>\\n\\n Alcanzaste la cantidad máxima de palabras   \\n Puedes borrar algunas o crear un nuevo tema" \
+		--text=" <b>$tpe    </b>\\n\\n $(echo "$int" | sed -n 6p)" \
 		--image-on-top --fixed --sticky --title="$tpe" \
 		--width=230 --height=80 --borders=3 --button=gtk-ok:0 \
 		--skip-taskbar --window-icon=idiomind && exit 1
@@ -728,7 +734,7 @@ elif [ $1 = n_w ]; then
 	curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
 	$yad --window-icon=idiomind --on-top \
 	--image=info --name=idiomind \
-	--text="<b>No hay conexión a internet  \\n  </b>" \
+	--text="<b>$(echo "$int" | sed -n 8p)  \\n  </b>" \
 	--image-on-top --center --fixed --sticky \
 	--width=220 --height=50 --borders=3 \
 	--skip-taskbar --title=Idiomind \
@@ -810,7 +816,7 @@ elif [ $1 = n_w ]; then
 							sox $DT_r/s.wav "$DM_tlt/$nme.mp3"
 						else
 							$yad --image=error --button=gtk-ok:1 \
-							--text=" <b>Error</b>\\n \ Festival no puede procesar texto en $lgtl " \
+							--text=" <b>$(echo "$int" | sed -n 9p) $lgtl </b>" \
 							--on-top --skip-taskbar & exit 1
 						fi
 					else
@@ -828,7 +834,7 @@ elif [ $1 = n_w ]; then
 						lg=Mandarin
 					elif [ $lg = japanese ]; then
 						$yad --image=error --button=gtk-ok:1 \
-						--text=" <b>Error</b>\\n \ Espeak no puede procesar texto en japanese " \
+						--text=" <b>$(echo "$int" | sed -n 10p)</b>" \
 						--on-top --skip-taskbar & exit 1
 					fi
 					espeak "$trgt" -v $lg -k 1 -p 45 -a 80 -s 110 -w $DT_r/s.wav
@@ -860,13 +866,15 @@ elif [ $1 = edt ]; then
 
 	c="$4"
 	DIC=$DS/addons/Dics/dict
+	int="$(sed -n 22p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+	btn="$(sed -n 21p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
 
 	if [ "$3" = "F" ]; then
 
 		tpe="$tpc"
 		if [ $(cat "$DC_tlt/.winx" | wc -l) -ge 50 ]; then
 		$yad --name=idiomind --center --image=info --on-top \
-		--text=" <b>Alcanzaste la cantidad máxima de palabras   </b>\\n Puedes borrar algunas o crear un nuevo tema\\n" \
+		--text=" <b>$(echo "$int" | sed -n 6p)   </b>" \
 		--image-on-top --fixed --sticky --title="$tpc" \
 		--width=230 --height=80 --borders=3 --button=gtk-ok:0 \
 		--skip-taskbar --window-icon=idiomind && exit 1
@@ -874,11 +882,11 @@ elif [ $1 = edt ]; then
 		
 		nw=$(cat "$DC_tlt/.winx" | wc -l)
 		left=$((50 - $nw))
-		info=$(echo " Puedes agregar  <b>"$left"</b> palabras")
+		info=$(echo " $(echo "$int" | sed -n 11p)  <b>"$left"</b> $(echo "$int" | sed -n 12p)")
 		if [ $nw -ge 45 ]; then
-			info=$(echo " Puedes agregar  <span color='#EA355F'><b>"$left"</b></span>  palabras")
+			info=$(echo " $(echo "$int" | sed -n 11p)  <span color='#EA355F'><b>"$left"</b></span>  $(echo "$int" | sed -n 12p)")
 		elif [ $nw -ge 49 ]; then
-			info=$(echo " Puedes agregar  <span color='#EA355F'><b>"$left"</b></span>  palabra ")
+			info=$(echo " $(echo "$int" | sed -n 11p)  <span color='#EA355F'><b>"$left"</b></span>  $(echo "$int" | sed -n 13p) ")
 		fi
 
 		mkdir $DT/$c
@@ -904,8 +912,8 @@ elif [ $1 = edt ]; then
 		--buttons-layout=end --skip-taskbar --width=400 \
 		--height=280 --borders=10 --window-icon=idiomind \
 		--button=gtk-close:1 \
-		--button="Add to Topic":0 \
-		--title="Select words to add" \
+		--button="$(echo "$btn" | sed -n 1p)":0 \
+		--title="$(echo "$int" | sed -n 15p)" \
 		--column="" --column="Select" > "$slt"
 
 			if [ $? -eq 0 ]; then
@@ -958,7 +966,7 @@ elif [ $1 = edt ]; then
 								sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
 							else
 								$yad --image=error --button=gtk-ok:1 \
-								--text=" <b>Error</b>\\n \ Festival no puede procesar texto en $lgtl " \
+								--text=" <b> $(echo "$int" | sed -n 9p) $lgtl </b> " \
 								--on-top --skip-taskbar & exit 1
 							fi
 						else
@@ -976,7 +984,7 @@ elif [ $1 = edt ]; then
 							lg=Mandarin
 						elif [ $lg = japanese ]; then
 							$yad --image=error --button=gtk-ok:1 \
-							--text=" <b>Error</b>\\n \ Espeak no puede procesar texto en japanese " \
+							--text=" <b>$(echo "$int" | sed -n 10p)</b> " \
 							--on-top --skip-taskbar & exit 1
 						fi
 						espeak "$trgt" -v $lg -k 1 -p 45 -a 80 -s 110 -w $DT_r/s.wav
@@ -1000,7 +1008,7 @@ elif [ $1 = edt ]; then
 				--width=400 --height=280 --on-top --margins=4 \
 				--fontname=vendana --window-icon=idiomind \
 				--button=Ok:0 --borders=0 --filename=logw --title="$ttl" \
-				--text=" <span color='#C7664B'><b>  ! </b></span><small><small> Oraciones que no se agregaron por haber superado el número</small></small>" \
+				--text=" <span color='#C7664B'><b>  ! </b></span><small><small> $(echo "$int" | sed -n 16p)</small></small>" \
 				--field=":lbl" "" >/dev/null 2>&1
 			fi
 			rm -fr logw $DT/*.$c $DT_r & exit 1
@@ -1011,6 +1019,8 @@ elif [ $1 = prc ]; then
 	DM_tlt="$DM_tl/$tpe"
 	DC_tlt="$DC_tl/$tpe"
 	DT_r=$(cat $DT/.n_s_pr)
+	int="$(sed -n 22p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+	btn="$(sed -n 21p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
 	cd $DT_r
 	echo "$3" > ./lstws
 
@@ -1022,20 +1032,20 @@ elif [ $1 = prc ]; then
 	if [ $nw -ge 50 ]; then
 		$yad --name=idiomind --center \
 		--image=info --on-top \
-		--text=" <b>Alcanzaste la cantidad máxima de palabras   </b>\\n Puedes borrar algunas o crear un nuevo tema\\n" \
+		--text=" <b>$(echo "$int" | sed -n 6p)   </b>" \
 		--image-on-top --fixed --sticky --title="$tpe" \
-		--width=230 --height=80 --borders=3 --button=gtk-ok:0 \
+		--width=230 --height=120 --borders=3 --button=gtk-ok:0 \
 		--skip-taskbar --window-icon=idiomind && exit 1
 	fi
 
 	left=$((50 - $nw))
-	info=$(echo " Puedes agregar  <b>"$left"</b> palabras")
+	info=$(echo " $(echo "$int" | sed -n 11p)  <b>"$left"</b> $(echo "$int" | sed -n 12p)")
 	if [ $nw -ge 45 ]; then
-		info=$(echo " Puedes agregar  <span color='#EA355F'>\
-		<b>"$left"</b></span>  palabras")
+		info=$(echo " $(echo "$int" | sed -n 11p)  <span color='#EA355F'>\
+		<b>"$left"</b></span>  $(echo "$int" | sed -n 12p)")
 	elif [ $nw -ge 49 ]; then
-		info=$(echo " Puedes agregar  <span color='#EA355F'>\
-		<b>"$left"</b></span>  palabra ")
+		info=$(echo " $(echo "$int" | sed -n 11p)  <span color='#EA355F'>\
+		<b>"$left"</b></span>  $(echo "$int" | sed -n 13p) ")
 	fi
 
 	cat ./lstws | tr -c "[:alnum:]" '\n' | sed '/^$/d' | sed '/"("/d' \
@@ -1092,8 +1102,8 @@ elif [ $1 = prc ]; then
 		--buttons-layout=end --skip-taskbar --width=400 \
 		--height=280 --borders=10 \
 		--button="gtk-close":1 \
-		--button="Add to Topic":0 \
-		--title="Word selector" \
+		--button="$(echo "$btn" | sed -n 3p)":0 \
+		--title="$(echo "$int" | sed -n 27p)" \
 		--column="" --column="Select"`
 		
 		if [ $? -eq 0 ]
@@ -1272,6 +1282,8 @@ elif [ $1 = snt ]; then
 	DM_tlt="$DM_tl/$tpe"
 	DC_tlt="$DC_tl/$tpe"
 	DIC=$DS/addons/Dics/dict
+	int="$(sed -n 22p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+	btn="$(sed -n 21p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
 	c=$(echo $(($RANDOM%100)))
 	DT_r=$(mktemp -d $DT/XXXXXX)
 	cd $DT_r
@@ -1284,11 +1296,11 @@ elif [ $1 = snt ]; then
 	left=$((50 - $nw))
 	if [ "$left" = 0 ]; then
 		exit 1
-		info=$(echo " Puedes agregar  <b>"$left"</b>  palabras")
+		info=$(echo " $(echo "$int" | sed -n 11p)  <b>"$left"</b>  $(echo "$int" | sed -n 12p)")
 	elif [ $nw -ge 45 ]; then
-		info=$(echo " Puedes agregar  <span color='#EA355F'><b>"$left"</b></span>  palabras")
+		info=$(echo " $(echo "$int" | sed -n 11p)  <span color='#EA355F'><b>"$left"</b></span>  $(echo "$int" | sed -n 12p)")
 	elif [ $nw -ge 49 ]; then
-		info=$(echo " Puedes agregar  <span color='#EA355F'><b>"$left"</b></span>  palabra ")
+		info=$(echo " $(echo "$int" | sed -n 11p)  <span color='#EA355F'><b>"$left"</b></span>  $(echo "$int" | sed -n 13p) ")
 	fi
 
 	if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]; then
@@ -1310,8 +1322,8 @@ elif [ $1 = snt ]; then
 	--buttons-layout=end --skip-taskbar --width=400 \
 	--height=280 --borders=10 \
 	--button=gtk-close:1 \
-	--button="Add to Topic":0 \
-	--title="Word Selector - $tpe" \
+	--button="$(echo "$btn" | sed -n 3p)":0 \
+	--title="$(echo "$int" | sed -n 27p) - $tpe" \
 	--column="" --column="Select" > "$slt"
 		
 		ret=$?
@@ -1347,7 +1359,7 @@ elif [ $1 = snt ]; then
 				mv -f "$DT_r/$trgt.mp3" "$DM_tlt/words/$trgt.mp3"
 				eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${UNI}IWI2I0I" -A IWI3I0I"$2"IWI3I0I \
 				"$DM_tlt/words/$trgt.mp3"
-				#-----------------------si no hay audio
+				# si no hay audio
 				else
 					vs=$(sed -n 7p $DC_s/cnfg1)
 					if [ -n "$vs" ]; then
@@ -1359,7 +1371,7 @@ elif [ $1 = snt ]; then
 								sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
 							else
 								$yad --image=error --button=gtk-ok:1 \
-								--text=" <b>Error</b>\\n \ Festival no puede procesar texto en $lgtl " \
+								--text=" <b>$(echo "$int" | sed -n 9p) $lgtl</b> " \
 								--on-top --skip-taskbar & exit 1
 							fi
 						else
@@ -1377,7 +1389,7 @@ elif [ $1 = snt ]; then
 							lg=Mandarin
 						elif [ $lg = japanese ]; then
 							$yad --image=error --button=gtk-ok:1 \
-							--text=" <b>Error</b>\\n \ Espeak no puede procesar texto en japanese " \
+							--text=" <b>$(echo "$int" | sed -n 10p)</b> " \
 							--on-top --skip-taskbar & exit 1
 						fi
 						espeak "$trgt" -v $lg -k 1 -p 45 -a 80 -s 110 -w $DT_r/s.wav
@@ -1401,7 +1413,7 @@ elif [ $1 = snt ]; then
 		--width=400 --height=280 --on-top --margins=4 \
 		--fontname=vendana --window-icon=idiomind \
 		--button="Ok:0" --borders=0 --filename=logw --title="$ttl" \
-		--text=" <span color='#C7664B'><b>  ! </b></span><small><small> Oraciones que no se han agregado por haber superado el número</small></small>" \
+		--text=" <span color='#C7664B'><b>  ! </b></span><small><small> $(echo "$int" | sed -n 16p)</small></small>" \
 		--field=":lbl" "" >/dev/null 2>&1
 	fi
 	rm -f $DT/*."$c" 
@@ -1419,6 +1431,8 @@ elif [ $1 = prs ]; then
 	lpre=$(cat $DS/default/$lgt/prepositions)
 	ladj=$(cat $DS/default/$lgt/adjetives)
 	nspr='/usr/share/idiomind/add.sh prs'
+	int="$(sed -n 22p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+	btn="$(sed -n 21p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
 	LNK='http://www.chromium.org/developers/how-tos/api-keys'
 	dct=$DS/addons/Dics/dict
 	lckpr=$DT/.n_s_pr
@@ -1433,9 +1447,9 @@ elif [ $1 = prs ]; then
 
 	if [ $ns -ge 50 ]; then
 		$yad --name=idiomind --center --on-top --image=info \
-		--text=" <b>Alcanzaste la cantidad máxima de oraciones para este Topic</b>" \
+		--text=" <b>$(echo "$int" | sed -n 5p)</b>" \
 		--image-on-top --fixed --sticky --title="$tpe" \
-		--width=230 --height=80 --borders=3 --button=gtk-ok:0 \
+		--width=350 --height=150 --button=gtk-ok:0 \
 		--skip-taskbar --window-icon=idiomind && \
 		rm -fr ls $lckpr $DT_r & exit 1
 	fi
@@ -1443,9 +1457,9 @@ elif [ $1 = prs ]; then
 	if [ -f $lckpr ]; then
 		$yad --fixed --center --on-top \
 		--image=info --name=idiomind \
-		--text=" <i>Espere a que finalize\\n el proceso anterior</i> " \
+		--text=" <i>$(echo "$int" | sed -n 18p)</i> " \
 		--fixed --sticky --buttons-layout=edge \
-		--width=250 --height=80 --borders=3 \
+		--width=250 --height=150  \
 		--skip-taskbar --window-icon=idiomind \
 		--title=Idiomind --button=gtk-cancel:3 --button=Ok:1
 			ret=$?
@@ -1472,9 +1486,9 @@ elif [ $1 = prs ]; then
 		
 		if [ -z "$key" ]; then
 			$yad --name=idiomind --center --on-top --image=error \
-			--text="  Debes proporcionar una key  \\n  Intenta conseguir una nueva desde <a href='$LNK'>aqui. </a>" \
+			--text="  $(echo "$int" | sed -n 19p) <a href='$LNK'>$(echo "$int" | sed -n 20p). </a>" \
 			--image-on-top --sticky --title="Idiomind" \
-			--width=400 --height=80 --borders=3 --button=gtk-ok:0 \
+			--width=400 --height=150 --button=gtk-ok:0 \
 			--skip-taskbar --window-icon=idiomind && \
 			rm -fr ls $lckpr $DT_r & exit 1
 		fi
@@ -1495,7 +1509,7 @@ elif [ $1 = prs ]; then
 			
 			(
 			echo "2"
-			echo "# Processing file" ; sleep 1
+			echo "# $(echo "$int" | sed -n 21p)" ; sleep 1
 			cp -f "$FL" $DT_r/rv.mp3
 			cd $DT_r
 			eyeD3 -P itunes-podcast --remove "$DT_r"/rv.mp3
@@ -1522,15 +1536,15 @@ elif [ $1 = prs ]; then
 			curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
 			$yad --window-icon=idiomind --on-top \
 			--image=info --name=idiomind \
-			--text="<b>No hay conexión a internet  \\n  </b>" \
+			--text=" <b>$(echo "$int" | sed -n 8p)  \\n  </b>" \
 			--image-on-top --center --fixed --sticky \
-			--width=220 --height=50 --borders=3 \
+			--width=220 --height=150 \
 			--skip-taskbar --title=Idiomind \
 			--button="  Ok  ":0
 			 >&2; exit 1;}
 			 
 			echo "3"
-			echo "# Checking key... " ; sleep 1
+			echo "# $(echo "$int" | sed -n 22p)... " ; sleep 1
 			
 			wget -q -U "Mozilla/5.0" --post-file $DS/addons/Google_translation_service/test.flac \
 			--header="Content-Type: audio/x-flac; rate=16000" \
@@ -1549,14 +1563,14 @@ elif [ $1 = prs ]; then
 			fi
 			if [ -z "$(cat info.ret)" ]; then
 				$yad --name=idiomind --center --on-top --image=error \
-				--text="  La actual key ya no es válida.\\n  Debes proporcionar otra.  \\n  Intenta conseguir una nueva desde <a href='$LNK'>aqui. </a>" \
+				--text="  $(echo "$int" | sed -n 23p) <a href='$LNK'>$(echo "$int" | sed -n 20p). </a>" \
 				--image-on-top --sticky --title="Idiomind" \
 				--width=400 --height=80 --borders=3 --button=gtk-ok:0 \
 				--skip-taskbar --window-icon=idiomind && \
 				rm -fr ls $lckpr $DT_r & exit 1
 			fi
 			
-			echo "# key accepted" ; sleep 1
+			echo "# $(echo "$int" | sed -n 22p)... " ; sleep 0.2
 			#-----------------------------------------
 			
 			n=1
@@ -1570,9 +1584,9 @@ elif [ $1 = prs ]; then
 				
 				if [ -z "$(cat info.ret)" ]; then
 					$yad --name=idiomind --center --on-top --image=error \
-					--text="  La clave actual ya no es válida o superó su cuota de pedidos diario.\\n  Intenta conseguir una desde <a href='$LNK'>aqui. </a>" \
+					--text="  $(echo "$int" | sed -n 23p) <a href='$LNK'>$(echo "$int" | sed -n 20p). </a>" \
 					--image-on-top --sticky --title="Idiomind" \
-					--width=400 --height=80 --borders=3 --button=gtk-ok:0 \
+					--width=400 --height=150 --button=gtk-ok:0 \
 					--skip-taskbar --window-icon=idiomind &
 					rm -fr ls $lckpr $DT_r & break & exit 1
 				fi
@@ -1625,10 +1639,10 @@ $trgt" >> log
 			fi
 			
 			if [ -z "$(cat ./ls)" ]; then
-				echo "No se pudo obtener texto. Para que el proseso sea exitoso el archivo de audio proporcionado no debebá contener ruido de fondo o música porque se usan los silencios para dividirlo" | $yad --text-info --center --wrap \
+				echo "$(echo "$int" | sed -n 26p)" | $yad --text-info --center --wrap \
 				--name=idiomind --class=idiomind --window-icon=idiomind \
 				--text=" " --sticky --width=$wth --height=$eht \
-				--margins=8 --borders=3 --button=gtk-ok:0 --title=selector && \
+				--margins=8 --borders=3 --button=gtk-ok:0 --title="$(echo "$int" | sed -n 31p)" && \
 				rm -fr $lckpr $DT_r & exit 1
 				
 			else
@@ -1640,8 +1654,8 @@ $trgt" >> log
 				--list --checklist --window-icon=idiomind \
 				--width=$wth --text="$info" \
 				--height=$eht --borders=3 --button=gtk-cancel:1 \
-				--button="Save Like New Topic":'/usr/share/idiomind/add.sh n_t' \
-				--button=gtk-save:0 --title=Select \
+				--button="$(echo "$btn" | sed -n 5p)":'/usr/share/idiomind/add.sh n_t' \
+				--button=gtk-save:0 --title="$(echo "$int" | sed -n 31p)" \
 				--column="$(cat ./ls | wc -l)" --column="Items" > "$slt"
 			fi
 			
@@ -1663,9 +1677,9 @@ $trgt" >> log
 					curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
 					$yad --window-icon=idiomind --on-top \
 					--image=info --name=idiomind \
-					--text="<b>No hay conexión a internet  \\n  </b>" \
+					--text="<b>$(echo "$int" | sed -n 8p) \\n  </b>" \
 					--image-on-top --center --fixed --sticky \
-					--width=220 --height=50 --borders=3 \
+					--width=220 --height=150 --borders=3 \
 					--skip-taskbar --title=Idiomind \
 					--button="  Ok  ":0 & exit 1
 					>&2; exit 1;}
@@ -1700,7 +1714,6 @@ $sntc" >> ./slog
 								result=$(curl -s -i --user-agent "" -d "sl=$lgt" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
 								encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
 								srce=$(iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8)
-								
 								eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" "$sntc".mp3
 								
 								mv -f "$sntc".mp3 "$DM_tlt/words/$nme".mp3
@@ -1718,7 +1731,6 @@ $sntc" >> ./wlog
 								result=$(curl -s -i --user-agent "" -d "sl=$lgt" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
 								encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
 								srce=$(iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 | sed ':a;N;$!ba;s/\n/ /g')
-
 								eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I \
 								"$sntc.mp3"
 
@@ -1834,7 +1846,6 @@ $sntc" >> ./wlog
 					
 					n=1
 					while [ $n -le "$(cat wrds | head -50 | wc -l)" ]; do
-					
 						trgt=$(sed -n "$n"p wrds | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
 						exmp=$(sed -n "$n"p wrdsls)
 						
@@ -1872,7 +1883,7 @@ $trgt" >> ./wlog
 										sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
 										else
 											$yad --image=error --button=gtk-ok:1 \
-											--text=" <b>Error</b>\\n \ Festival no puede procesar texto en $lgtl " \
+											--text=" <b>$(echo "$int" | sed -n 9p) $lgtl</b> " \
 											--on-top --skip-taskbar & exit 1
 										fi
 									else
@@ -1890,7 +1901,7 @@ $trgt" >> ./wlog
 										lg=Mandarin
 									elif [ $lg = japanese ]; then
 										$yad --image=error --button=gtk-ok:1 \
-										--text=" <b>Error</b>\\n \ Espeak no puede procesar texto en japanese " \
+										--text=" <b>$(echo "$int" | sed -n 10p)</b> " \
 										--on-top --skip-taskbar & exit 1
 									fi
 									espeak "$trgt" -v $lg -k 1 -p 45 -a 80 -s 110 -w $DT_r/s.wav
@@ -1918,29 +1929,29 @@ $trgt" >> ./wlog
 					
 					if [ -f ./wlog ]; then
 						wadds=" $(($(cat ./addw | wc -l) - $(cat ./wlog | sed '/^$/d' | wc -l)))"
-						W=" Palabras"
+						W=" $(echo "$int" | sed -n 12p)"
 						if [ $(echo $wadds) = 1 ]; then
-							W=" Palabra"
+							W=" $(echo "$int" | sed -n 13p)"
 						fi
 					else
 						wadds=" $(cat ./addw | wc -l)"
-						W=" Palabras"
+						W=" $(echo "$int" | sed -n 12p)"
 						if [ $(echo $wadds) = 1 ]; then
 							wadds=" $(cat ./addw | wc -l)"
-							W=" Palabra"
+							W=" $(echo "$int" | sed -n 13p)"
 						fi
 					fi
 					if [ -f ./slog ]; then
 						sadds=" $(($(cat ./adds | wc -l) - $(cat ./slog | sed '/^$/d' | wc -l)))"
-						S=" oraciones"
+						S=" $(echo "$int" | sed -n 32p)"
 						if [ $(echo $sadds) = 1 ]; then
-							S=" oracion"
+							S=" $(echo "$int" | sed -n 33p)"
 						fi
 					else
 						sadds=" $(cat ./adds | wc -l) oraciones"
-						S=" oraciones"
+						S=" $(echo "$int" | sed -n 32p)"
 						if [ $(echo $sadds) = 1 ]; then
-							S=" oracion"
+							S=" $(echo "$int" | sed -n 33p)"
 						fi
 					fi
 					
@@ -1948,21 +1959,21 @@ $trgt" >> ./wlog
 					adds=$(cat ./adds ./addw | wc -l)
 					
 					if [ $adds -ge 1 ]; then
-						notify-send -i idiomind "$tpe" "se agregaron:\\n$sadds$S$wadds$W" -t 2000 &
+						notify-send -i idiomind "$tpe" "$(echo "$int" | sed -n 36p):\\n$sadds$S$wadds$W" -t 2000 &
 						echo "aitm.$adds.aitm" >> \
 						$DC/addons/stats/.log
 					fi
 					
 					if [ -f ./log ]; then
 						if [ $(ls ./*.mp3 | wc -l) -ge 1 ]; then
-							btn="--button=Save Audio:0"
+							btn="--button=$(echo "$btn" | sed -n 4p):0"
 						fi
 						$yad --form --name=idiomind --class=idiomind \
 						--center --skip-taskbar --on-top \
 						--width=350 --height=300 --on-top --margins=4 \
 						--window-icon=idiomind \
 						--borders=0 --title="$tpe" \
-						--field="<span color='#C7664B'><b>  ! </b></span><small><small> Oraciones que no se han agregado</small> </small><small><small>$logn</small></small>":txt "$log" \
+						--field="<span color='#C7664B'><b>  ! </b></span><small><small> $(echo "$int" | sed -n 34p)</small> </small><small><small>$logn</small></small>":txt "$log" \
 						--field=":lbl"\
 						"$btn" --button=Ok:1 >/dev/null 2>&1
 							ret=$?
@@ -2008,9 +2019,9 @@ $trgt" >> ./wlog
 		| grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
 		$yad --window-icon=idiomind --on-top \
 		--image=info --name=idiomind \
-		--text="<b> No hay conexión a internet  \\n  </b>" \
+		--text="<b> $(echo "$int" | sed -n 8p)  \\n  </b>" \
 		--image-on-top --center --sticky \
-		--width=300 --height=50 --borders=3 \
+		--width=300 --height=150 \
 		--skip-taskbar --title=Idiomind \
 		--button="  Ok  ":0
 		>&2; exit 1;}
@@ -2055,7 +2066,6 @@ $trgt" >> ./wlog
 		--undecorated --auto-close \
 		--skip-taskbar --no-buttons
 	else
-		
 		(
 		echo "3"
 		echo "# " ;
@@ -2069,7 +2079,6 @@ $trgt" >> ./wlog
 		--pulsate --percentage="5" --on-top \
 		--undecorated --auto-close \
 		--skip-taskbar --no-buttons
-		
 	fi
 		
 		if [ $(sed -n 1p ./sntsls | wc -c) -gt 40 ]; then
@@ -2088,20 +2097,19 @@ $trgt" >> ./wlog
 		
 		te=$(cat ./te)
 		left=$((50 - $ns))
-		info=$(echo "Puedes agregar  <b>"$left"</b>  oraciones")
-		
+		info=$(echo "$(echo "$int" | sed -n 11p)  <b>"$left"</b>  $(echo "$int" | sed -n 32p)")
+
 		if [ $ns -ge 45 ]; then
-			info=$(echo "Puedes agregar  <span color='#EA355F'><b>"$left"</b></span>  oraciones en $tcnm")
+			info=$(echo "$(echo "$int" | sed -n 11p)  <span color='#EA355F'><b>"$left"</b></span>  $(echo "$int" | sed -n 32p) en $tcnm")
 		elif [ $ns -ge 49 ]; then
-			info=$(echo "Puedes agregar  <span color='#EA355F'><b>"$left"</b></span>  oración en $tcnm")
+			info=$(echo "$(echo "$int" | sed -n 11p)  <span color='#EA355F'><b>"$left"</b></span>  $(echo "$int" | sed -n 33p) en $tcnm")
 		fi
 		
 		if [ -z "$(cat ./sntsls)" ]; then
-			echo "  No se ha encontrado ninguna oración. " | \
+			echo "  $(echo "$int" | sed -n 35p). " | \
 			$yad --text-info --center --wrap \
 			--name=idiomind --class=idiomind --window-icon=idiomind \
-			--text=" " --sticky \
-			--width=$wth --height=$eht \
+			--text=" " --sticky --width=$wth --height=$eht \
 			--borders=3 --button=Ok:0 --title=selector
 			rm -fr $lckpr $DT_r $slt & exit 1
 		
@@ -2112,11 +2120,10 @@ $trgt" >> ./wlog
 			--dclick-action='/usr/share/idiomind/add.sh prc' --sticky \
 			--list --checklist --class=idiomind --center \
 			--text="<b> $te </b> \\n<small><small> $info</small></small>\\n" \
-			--width=$wth --print-all \
-			--height=$eht --borders=3 \
-			--button=Cancel:1 \
-			--button=Ordenar:2 \
-			--button="Save Like New Topic":'/usr/share/idiomind/add.sh n_t' \
+			--width=$wth --print-all --height=$eht --borders=3 \
+			--button="$(echo "$btn" | sed -n 7p)":1 \
+			--button="$(echo "$btn" | sed -n 6p)":2 \
+			--button="$(echo "$btn" | sed -n 5p)":'/usr/share/idiomind/add.sh n_t' \
 			--button=gtk-save:0 --title="$tpe" \
 			--column="$(cat ./sntsls | wc -l)" --column="Sentences" > $slt
 				ret=$?
@@ -2125,7 +2132,7 @@ $trgt" >> ./wlog
 					rm -f $lckpr "$slt" &
 					w=`cat ./sntsls | awk '{print "\n\n\n"$0}' | \
 					$yad --text-info --editable --window-icon=idiomind \
-					--name=idiomind --wrap --margins=20 --class=idiomind \
+					--name=idiomind --wrap --margins=150 --class=idiomind \
 					--sticky --fontname=vendana --on-top --center \
 					--skip-taskbar --width=$wth \
 					--height=$eht --borders=3 \
@@ -2157,9 +2164,9 @@ $trgt" >> ./wlog
 					curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
 					$yad --window-icon=idiomind --on-top \
 					--image=info --name=idiomind \
-					--text="<b>No hay conexión a internet  \\n  </b>" \
+					--text="<b> $(echo "$int" | sed -n 8p)  \\n  </b>" \
 					--image-on-top --center --fixed --sticky \
-					--width=220 --height=50 --borders=3 \
+					--width=220 --height=150 \
 					--skip-taskbar --title=Idiomind \
 					--button="  Ok  ":0
 					>&2; exit 1;}
@@ -2176,11 +2183,8 @@ $trgt" >> ./wlog
 					lns=$(cat ./slts ./wrds | wc -l)
 					n=1
 					while [ $n -le $(cat slts | head -50 | wc -l) ]; do
-					
 						sntc=$(sed -n "$n"p slts)
-						
 						if [ $(echo "$sntc" | wc -$c) = 1 ]; then
-						
 							if [ $(cat "$DC_tlt"/.winx | wc -l) -ge 50 ]; then
 								echo "
 $sntc" >> ./wlog
@@ -2275,7 +2279,7 @@ $sntc" >> ./slog
 													sox $DT_r/s.wav "$DM_tlt/$nme.mp3"
 												else
 													$yad --image=error --button=gtk-ok:1 \
-													--text=" <b>Error</b>\\n \ Festival no puede procesar texto en $lgtl " \
+													--text=" <b>$(echo "$int" | sed -n 9p) $lgtl</b> " \
 													--on-top --skip-taskbar & exit 1
 												fi
 											else
@@ -2293,7 +2297,7 @@ $sntc" >> ./slog
 												lg=Mandarin
 											elif [ $lg = japanese ]; then
 												$yad --image=error --button=gtk-ok:1 \
-												--text=" <b>Error</b>\\n \ Espeak no puede procesar texto en $lgtl " \
+												--text=" <b>$(echo "$int" | sed -n 10p)</b> " \
 												--on-top --skip-taskbar & exit 1
 											fi
 											espeak "$trgt" -v $lg -k 1 -p 65 -a 80 -s 120 -w $DT_r/s.wav
@@ -2438,7 +2442,6 @@ $itm" >> ./wlog
 								mv -f "$DT_r/$itm.mp3" "$DM_tlt/words/$itm.mp3"
 								eyeD3 --set-encoding=utf8 -t "IWI1I0I${itm}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" -A "IWI3I0I${exmp}IWI3I0I" \
 								"$DM_tlt/words/$itm.mp3"
-							
 							else
 								cp -f $DS/ifs/w "$DM_tlt/words/$itm.mp3"
 								eyeD3 --set-encoding=utf8 -t "IWI1I0I${itm}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" -A "IWI3I0I${exmp}IWI3I0I" \
@@ -2446,7 +2449,6 @@ $itm" >> ./wlog
 							fi
 							echo "$itm" >> addw
 							$DS/mngr.sh inx  W "$itm" "$tpe" "$nme"
-						
 						fi
 						
 						nn=$(($n+$(cat ./slts | wc -l)-1))
@@ -2465,32 +2467,29 @@ $itm" >> ./wlog
 					
 					if [ -f ./wlog ]; then
 						wadds=" $(($(cat ./addw | wc -l) - $(cat ./wlog | sed '/^$/d' | wc -l)))"
-						W=" Palabras"
+						W=" $(echo "$int" | sed -n 12p)"
 						if [ $(echo $wadds) = 1 ]; then
-							W=" Palabra"
+							W=" $(echo "$int" | sed -n 13p)"
 						fi
-						
 					else
 						wadds=" $(cat ./addw | wc -l)"
-						W=" Palabras"
+						W=" $(echo "$int" | sed -n 12p)"
 						if [ $(echo $wadds) = 1 ]; then
 							wadds=" $(cat ./addw | wc -l)"
-							W=" Palabra"
+							W=" $(echo "$int" | sed -n 13p)"
 						fi
 					fi
-					
 					if [ -f ./slog ]; then
 						sadds=" $(($(cat ./adds | wc -l) - $(cat ./slog | sed '/^$/d' | wc -l)))"
-						S=" oraciones"
+						S=" $(echo "$int" | sed -n 32p)"
 						if [ $(echo $sadds) = 1 ]; then
-							S=" oracion"
+							S=" $(echo "$int" | sed -n 33p)"
 						fi
-						
 					else
 						sadds=" $(cat ./adds | wc -l) oraciones"
-						S=" oraciones"
+						S=" $(echo "$int" | sed -n 32p)"
 						if [ $(echo $sadds) = 1 ]; then
-							S=" oracion"
+							S=" $(echo "$int" | sed -n 33p)"
 						fi
 					fi
 					
@@ -2498,7 +2497,7 @@ $itm" >> ./wlog
 					adds=$(cat ./adds ./addw | wc -l)
 					
 					if [ $adds -ge 1 ]; then
-						notify-send -i idiomind "$tpe" "se agregaron:\\n$sadds$S$wadds$W" -t 2000 &
+						notify-send -i idiomind "$tpe" "$(echo "$int" | sed -n 36p):\\n$sadds$S$wadds$W" -t 2000 &
 						echo "aitm.$adds.aitm" >> \
 						$DC/addons/stats/.log
 					fi
@@ -2509,7 +2508,7 @@ $itm" >> ./wlog
 						--width=350 --height=300 --on-top --margins=4 \
 						--fontname=vendana --window-icon=idiomind \
 						--button=Ok:0 --borders=0 --title="$tpe" \
-						--text=" <span color='#C7664B'><b>  ! </b></span><small><small> Oraciones que no se han agregado</small></small>" \
+						--text=" <span color='#C7664B'><b>  ! </b></span><small><small> $(echo "$int" | sed -n 34p)</small></small>" \
 						--field=":lbl" "" >/dev/null 2>&1
 					fi
 					
@@ -2533,7 +2532,8 @@ $itm" >> ./wlog
 				fi
 				
 elif [ $1 = img ]; then
-	
+	int="$(sed -n 22p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+	btn="$(sed -n 21p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
 	cd $DT
 	wrd="$2"
 	echo '<html>
@@ -2549,7 +2549,7 @@ elif [ $1 = img ]; then
 	mv -f html s.html
 	chmod +x s.html
 	ICON=$DS/icon/nw.png
-	btn=$(echo --button="Add Image":3)
+	btnn=$(echo --button=$(echo "$btn" | sed -n 10p):3)
 	
 	if [ "$3" = w ]; then
 		
@@ -2559,16 +2559,16 @@ elif [ $1 = img ]; then
 		
 		if [ -f "$DM_tlt/words/images/$wrd.jpg" ]; then
 			ICON="--image=$DM_tlt/words/images/$wrd.jpg"
-			btn=$(echo --button="Change":3)
-			btn2=$(echo --button="Delete":2)
+			btnn=$(echo --button=$(echo "$btn" | sed -n 8p):3)
+			btn2=$(echo --button=$(echo "$btn" | sed -n 9p):2)
 		else
-			txt="--text=<small>Imágenes de  <a href='file://$DT/s.html'>$wrd</a></small>"
+			txt="--text=<small>$(echo "$int" | sed -n 28p)  <a href='file://$DT/s.html'>$wrd</a></small>"
 		fi
 		
 		$yad --form --align=center --center \
 		--width=340 --text-align=center --height=280 \
 		--on-top --skip-taskbar --image-on-top "$txt">/dev/null 2>&1 \
-		"$btn" --window-icon=idiomind --borders=0 \
+		"$btnn" --window-icon=idiomind --borders=0 \
 		--title=Image "$ICON" "$btn2" \
 		--button=gtk-close:1
 			ret=$? >/dev/null 2>&1
@@ -2601,23 +2601,23 @@ elif [ $1 = img ]; then
 			file="$DM_tlt/$wrd.mp3"
 		fi
 		
-		btn=$(echo --button="Add Image":3)
+		btnn=$(echo "--button=$(echo "$btn" | sed -n 10p):3")
 		eyeD3 --write-images=$DT "$file" >/dev/null 2>&1
 		
 		if [ -f "$DT/ILLUSTRATION".jpeg ]; then
 			mv -f "$DT/ILLUSTRATION".jpeg "$DT/imgsw".jpeg
 			ICON="--image=$DT/imgsw.jpeg"
-			btn=$(echo --button="Change":3)
-			btn2=$(echo --button="Delete":2)
+			btnn=$(echo --button=$(echo "$btn" | sed -n 8p):3)
+			btn2=$(echo --button=$(echo "$btn" | sed -n 9p):2)
 			
 		else
-			txt="--text=<small>Buscar imágenes \\n<a href='file://$DT/s.html'>$wrd</a></small>"
+			txt="--text=<small>$(echo "$int" | sed -n 29p) \\n<a href='file://$DT/s.html'>$wrd</a></small>"
 		fi
 		
 		$yad --form --text-align=center \
 		--center --width=470 --height=280 \
 		--on-top --skip-taskbar --image-on-top \
-		"$txt" "$btn" --window-icon=idiomind --borders=0 \
+		"$txt" "$btnn" --window-icon=idiomind --borders=0 \
 		--title="Image" "$ICON" "$btn2" --button=gtk-close:1
 			ret=$? >/dev/null 2>&1
 				

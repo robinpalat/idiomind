@@ -1,6 +1,8 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
+int="$(sed -n 55p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+btn="$(sed -n 54p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
 STT=$(cat $DC_s/topic_m)
 
 if  [[ -z "$(cat $DC/addons/dict/.dicts)" ]]; then
@@ -14,15 +16,14 @@ fi
 if echo "$STT" | grep "Actualizando..."; then
 	$yad --image=info --geometry=350x80 --window-icon=idiomind \
 	--title=Info --center --borders=15 \
-	--on-top --skip-taskbar --button=Detener:2 \
-	--button=Ok:1 --text=" <i>Hay una Actualización en Curso.</i>"
+	--on-top --skip-taskbar --button=$(echo "$btn" | sed -n 1p):2 \
+	--button=Ok:1 --text=" <i>$(echo "$int" | sed -n 1p)</i>"
 		ret=$?
 		
 		if [ $ret -eq 1 ]; then
 			$DS/addons/Learning_with_news/cnf & exit
 		
 		elif [ $ret -eq 2 ]; then
-			echo "- Modo Feeds" > $DC_s/topic_m
 			$DS/addons/Learning_with_news/stp.sh
 			$DS/addons/Learning_with_news/cnf
 		fi
@@ -82,18 +83,17 @@ if [ -n "$feed" ]; then
 	curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
 	$yad --window-icon=idiomind --on-top \
 	--image=info --name=idiomind \
-	--text="<b> No hay conexión a internet  \\n</b>" \
+	--text="<b> $(echo "$int" | sed -n 2p)  \\n</b>" \
 	--image-on-top --center --sticky \
 	--width=340 --height=50 --borders=3 \
 	--skip-taskbar --title=Idiomind \
 	--button=Ok:0 >&2; exit 1;}
 	
 	if [ "$1" != A ]; then
-		echo "- Feeds Mode ( Actualizando... 5% )" > $DC_s/topic_m
 		echo "- Feeds Mode ( Actualizando... 5% )" > $DT/.uptf$uid
 		echo "$tpc" > $DC_s/topic.id
 		echo fd >> $DC_s/topic.id
-		notify-send -i idiomind "$rsrc" "Updating..." -t 2000 &
+		notify-send -i idiomind "$rsrc" "$(echo "$int" | sed -n 3p)" -t 2000 &
 	fi
 	
 	DT_r=$(mktemp -d $DT/XXXXXX)
@@ -109,7 +109,7 @@ if [ -n "$feed" ]; then
 		echo "- feed Mode" > $DC_s/topic_m
 		$yad --window-icon=idiomind --on-top \
 		--image=info --name=idiomind \
-		--text="<b>No se encuentran noticias o el link es mal</b>" \
+		--text="<b>$(echo "$int" | sed -n 4p)</b>" \
 		--image-on-top --center --sticky \
 		--width=380 --height=50 --borders=3 \
 		--skip-taskbar --title=Idiomind \
@@ -123,9 +123,6 @@ if [ -n "$feed" ]; then
 			if [[ "$(cat $DT/.uptf$uid \
 			| grep -o "Actualizando...")" = "Actualizando..." ]]; then
 				echo "- feeds Mode ( Actualizando... $n$f% )" > $DT/.uptf$uid
-				if [ "$1" != A ]; then
-					echo "- feeds Mode ( Actualizando... $n$f% )" > $DC_s/topic_m
-				fi
 			fi
 		trgt=$(sed -n "$n"p rss)
 		lnk=$(sed -n "$n"p lnk)
@@ -159,7 +156,7 @@ if [ -n "$feed" ]; then
 						else
 							rm -fr $DT_r $DT/.uptf$uid $DT/.rss
 							$yad --image=error --button=gtk-ok:1 \
-							--text=" <b>Error</b>\\n \ Festival no puede procesar texto en $lgtl " \
+							--text=" <b>$(echo "$int" | sed -n 5p) $lgtl</b> " \
 							--on-top --skip-taskbar & break & exit 1
 						fi
 					else
@@ -181,7 +178,7 @@ if [ -n "$feed" ]; then
 						fi
 						rm -fr $DT_r $DT/.uptf$uid $DT/.rss
 						$yad --image=error --button=gtk-ok:1 \
-						--text=" <b>Error</b>\\n \ Espeak no puede procesar texto en japanese " \
+						--text=" <b>$(echo "$int" | sed -n 6p)</b> " \
 						--on-top --skip-taskbar & break & exit 1
 					fi
 					espeak "$trgt" -v $lg -k 1 -p 65 -a 80 -s 120 -w $DT_r/s.wav
@@ -272,8 +269,7 @@ if [ -n "$feed" ]; then
 	find ./* -mtime +5 -exec rm -r {} \; &
 	
 	if [ "$1" != A ]; then
-		echo "- feed Mode" > $DC_s/topic_m
-		notify-send -i idiomind "$rsrc" " Actualizado" -t 3000
+		notify-send -i idiomind "$rsrc" " $(echo "$int" | sed -n 7p)" -t 3000
 	fi
 
 	exit 1

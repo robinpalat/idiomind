@@ -1,5 +1,7 @@
 #!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
+int="$(sed -n 47p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+btn="$(sed -n 46p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
 dir2="$DC/addons/Learning with news"
 DIR3="$DS/addons/Learning_with_news"
 FEED=$(sed -n 1p "$dir2/$lgtl/.rss")
@@ -35,11 +37,11 @@ if [[ -z "$1" ]]; then
 		--window-icon=idiomind --skip-taskbar --borders=15 \
 		--width=350 --height=250 --always-print-result \
 		--title="Feeds - $lgtl " "$text" \
-		--button="Delete:2" \
+		--button="$(echo "$btn" | sed -n 1p):2" \
 		--button="gtk-add:5" \
-		--button="Update:4" \
-		--field="  <small>Current Feed: </small>:CB" "$FEED!$scrp" \
-		--field="Actualiar al inicio:CHK" $st2)
+		--button="$(echo "$btn" | sed -n 2p):4" \
+		--field="  <small>$(echo "$int" | sed -n 1p): </small>:CB" "$FEED!$scrp" \
+		--field="$(echo "$int" | sed -n 2p):CHK" $st2)
 		ret=$?
 		
 		st1="$(echo "$CNFG" | cut -d "|" -f1)"
@@ -52,22 +54,22 @@ if [[ -z "$1" ]]; then
 			if echo "$st1" | grep "Sample subscription"; then
 				$yad --title="Info" \
 				--center --on-top --window-icon=idiomind \
-				--width=350 --height=80 --fixed --image=info --skip-taskbar \
-				--text="  Sample subscription\\n  No se puede eliminar" \
+				--width=350 --height=120 --fixed --image=info --skip-taskbar \
+				--text="  Sample subscription\\n  $(echo "$int" | sed -n 3p)" \
 				--borders=10 --button=OK:1
 				$DIR3/cnf & exit
 			elif echo "$st1" | grep "Example"; then
 				$yad --title="Info" --center --on-top --window-icon=idiomind \
-				--width=350 --height=80 --fixed --image=info --skip-taskbar \
-				--text="  Sample subscription\\n  No se puede eliminar" \
+				--width=350 --height=120 --fixed --image=info --skip-taskbar \
+				--text="  Sample subscription\\n  $(echo "$int" | sed -n 3p)" \
 				--borders=10 --button=OK:1
 				$DIR3/cnf & exit
 			else
 				$yad --show-uri --center \
 				--title=Confirm --window-icon=idiomind \
-				--on-top --width=350 --height=80 --fixed --image=dialog-question \
-				--skip-taskbar --text="  Eliminar subcripción   <b>$st1 </b> ?" \
-				--borders=8 --button=Delete:0 --button=Cancel:1
+				--on-top --width=350 --height=120 --fixed --image=dialog-question \
+				--skip-taskbar --text="  $(echo "$int" | sed -n 4p)   <b>$st1 </b> ?" \
+				--borders=8 --button=$(echo "$btn" | sed -n 1p):0 --button=$(echo "$btn" | sed -n 4p):1
 					ret=$?
 					
 					if [[ $ret -eq 1 ]]; then
@@ -86,10 +88,10 @@ if [[ -z "$1" ]]; then
 			dirs="$dir2/$lgtl/subscripts"
 			nwfd=$($yad --width=480 --height=100 \
 				--center --on-top --window-icon=idiomind --align=right \
-				--skip-taskbar --button=Cancel:1 --button=Ok:0 \
-				--form --title=" New Subscription" --borders=5 \
-				--field="<small>Name:</small>: " "" \
-				--field="<small>Link:</small>: " "" \ )
+				--skip-taskbar --button=$(echo "$btn" | sed -n 4p):1 --button=Ok:0 \
+				--form --title=" $(echo "$int" | sed -n 11p)" --borders=5 \
+				--field="<small>$(echo "$int" | sed -n 5p):</small>: " "" \
+				--field="<small>$(echo "$int" | sed -n 6p):</small>: " "" \ )
 			
 				if [[ -z "$(echo "$nwfd" | cut -d "|" -f1)" ]]; then
 					$DIR3/cnf & exit
@@ -141,10 +143,10 @@ elif [[ $1 = edit ]]; then
 	st3=FALSE
 	st4=FALSE
 
-	if [[ "$(cat "$drtc/.inx" | wc -l)" -ge 20 ]]; then
-		dd="$img3 Create_Topic $st1 $img1 Delete_News $st2 $img2 Delete_Save $st3 $img4 Suscripcions $st4"
+	if [[ "$(cat "$drtc/.t-inx" | wc -l)" -ge 20 ]]; then
+		dd="$img3 $(echo "$int" | sed -n 7p) $st1 $img1 $(echo "$int" | sed -n 8p) $st2 $img2 $(echo "$int" | sed -n 9p) $st3 $img4 $(echo "$int" | sed -n 10p) $st4"
 	else
-		dd="$img1 Delete_News $st1 $img2 Delete_Save $st2 $img4 Suscripcions $st3"
+		dd="$img1 $(echo "$int" | sed -n 8p) $st1 $img2 $(echo "$int" | sed -n 9p) $st2 $img4 $(echo "$int" | sed -n 10p) $st3"
 	fi
 
 	$yad --list --on-top \
@@ -158,13 +160,13 @@ elif [[ $1 = edit ]]; then
 	ret=$?
 	slt=$(cat "$slct")
 	if  [[ "$ret" -eq 0 ]]; then
-		if echo "$slt" | grep -o "Delete_News"; then
+		if echo "$slt" | grep -o "$(echo "$int" | sed -n 7p)"; then
 			$DIR3/del dlns
-		elif echo "$slt" | grep -o "Delete_Save"; then
+		elif echo "$slt" | grep -o "$(echo "$int" | sed -n 8p)"; then
 			$DIR3/del dlkt
-		elif echo "$slt" | grep -o "Create_Topic"; then
+		elif echo "$slt" | grep -o "$(echo "$int" | sed -n 9p)"; then
 			$DIR3/add n_t
-		elif echo "$slt" | grep -o Suscripcions; then
+		elif echo "$slt" | grep -o "$(echo "$int" | sed -n 10p)"; then
 			$DIR3/cnf
 		fi
 		rm -f "$slct"

@@ -6,7 +6,6 @@ if [ $1 = vsd ]; then
 	lng=$(echo "$lgtl" |  awk '{print tolower($0)}')
 	wth=$(sed -n 4p $DC_s/.rd)
 	eht=$(sed -n 3p $DC_s/.rd)
-
 	cd $DM_t/saved
 	ls -t *.AL > ls
 	(sed -i 's/.AL//g' ./ls)
@@ -48,7 +47,6 @@ elif [ $1 = infsd ]; then
 	--on-top --skip-taskbar --center --image=$icon --geometry=0-0-0-0 \
 	--title="idiomind" --button="   Download   :0" \
 	--button="  Close  :1" --text="<b>$NM</b>\\n<small>$LNGT language </small> \\n<small><a href='$LNK'>$NM</a></small>"
-
 		ret=$?
 
 		if [ $ret -eq 2 ]; then
@@ -202,7 +200,6 @@ if [[ "$(($chk4 + $chk5))" != $chk1 \
 	
 	n=1
 	while [ $n -le $(cat "$DT/ind" | wc -l) ]; do
-	
 		chk1=$(sed -n "$n"p "$DC_tlt/.t-inx")
 		if cat "$DT/ind" | grep -Fxo "$chk1"; then
 				if [[ "$(echo "$chk1" | wc -w)" -eq 1 ]]; then
@@ -220,14 +217,12 @@ if [[ "$(($chk4 + $chk5))" != $chk1 \
 	
 	n=1
 	while [ $n -le $(cat "$DT/ind" | wc -l) ]; do
-	
 		chk2=$(sed -n "$n"p "$DT/ind")
 		if [ $(echo "$chk2" | wc -w) -eq 1 ]; then
 			echo "$chk2" >> "$DC_tlt/.winx"
 		elif [ $(echo "$chk2" | wc -w) -gt 1 ]; then
 			echo "$chk2" >> "$DC_tlt/.sinx"
 		fi
-		
 		let n++
 	done
 
@@ -366,7 +361,7 @@ gzip -9 "$tpc.tar"
 mv "$tpc.tar.gz" "$userid.$tpc.idmnd"
 rm -f "$tpc"/*
 
-notify-send "Uploading ..." "Wait" -i idiomind -t 6000
+notify-send "Uploading..." "Wait" -i idiomind -t 6000
 
 wget http://www.idmnd.2fh.co/data/.PASS_TMP
 
@@ -375,7 +370,6 @@ USER=$(sed -n 2p .PASS_TMP)
 PASS=$(sed -n 3p .PASS_TMP)
 
 #-----------------------
-
 NAME=$(echo "$tpc" | sed 's/ /_/g')
 dte=$(date "+%d %B %Y")
 mkdir $DT/mkhtml
@@ -389,7 +383,6 @@ cp -f "$DT/$userid.$tpc.idmnd" $DT/$NAME/
 cd $DT/mkhtml
 
 #-----------------------
-
 n=1
 while [ $n -le $(cat $iw | wc -l | awk '{print ($1)}') ]; do
 	WL=$(sed -n "$n"p  $iw)
@@ -406,7 +399,6 @@ while [ $n -le $(cat $iw | wc -l | awk '{print ($1)}') ]; do
 done
 
 #-----------------------
-
 n=1
 while [[ $n -le "$(cat  $is | wc -l | awk '{print ($1)}')" ]]; do
 	WL=$(sed -n "$n"p $is)
@@ -418,8 +410,7 @@ while [[ $n -le "$(cat  $is | wc -l | awk '{print ($1)}')" ]]; do
 	let n++
 done
 
-#-----------------------get variables
-
+#-----------------------
 lgt=$(sed -n 2p "$DT/$tpc"/.AL | awk '{print tolower($0)}')
 ls=$(sed -n 5p "$DT/$tpc"/.AL)
 cby=$(sed -n 6p "$DT/$tpc"/.AL)
@@ -593,7 +584,6 @@ fi
 cd $DT/mkhtml/
 n=1
 while [ $n -le $(cat s.inx.l | wc -l) ]; do
-		
 		st=$(sed -n "$n"p S.gprt.x)
 		
 		if [ -n "$st" ]; then
@@ -722,13 +712,14 @@ echo '<footer role="contentinfo">
 	<div class="inner">
     	<img width="64" height="64" class="w3c-logo" alt="W3C HTML5 logo (not CSS3!)" src="/usr/share/idiomind/images/cnn.png">
 		<p id="copyright">This site is licensed under a <a href="http://creativecommons.org/licenses/by-nc/2.0/uk/" rel="license">Creative Commons Attribution-Non-Commercial 2.0</a> share alike license. Feel free to change, reuse modify and extend it. Some authors will retain their copyright on certain articles.</p>
-        <p>Copyright © 2013 Idiomind. All rights.</p>
+        <p>Copyright © 2015 Idiomind. All rights.</p>
 	</div>
 </footer>
 </div></html>' >> $DT/$NAME/index.html
 chmod 775  $DT/$NAME/index.html
 
-#-----------------------upload ftp
+#-----------------------ftp
+(
 HOST=$HOST
 USER=$USER
 PASSWD=$PASS
@@ -736,7 +727,6 @@ rm -f $DT/.PASS_TMP
 cp -f -R $DS/ifs/ln $DT/$NAME
 chmod 775 -R $DT/$NAME
 lftp -u $USER,$PASS $HOST << END_SCRIPT
-cd /html_public/uploads
 mkdir $NAME
 mirror --reverse $DT/$NAME/ public_html/$lgs/$lgtl/$Ctgry/$NAME
 quit
@@ -744,27 +734,24 @@ END_SCRIPT
 
 curl -T /tmp/$userid."$tpc".idmnd -u $USER:$PASS \
 ftp://$HOST/public_html/uploads/recents/$userid."$topic".idmnd
-
-#-----------------------
 exit=$?
 
-if [ $exit = 0 ] ; then
+if [ 0 = 0 ] ; then
     cp -f "$DT/$tpc/.AL" "$HOME/.idiomind/topics/saved/$tpc.AL"
-    info="El tema \\n<b> <a href='$link'>$tpc</a></b> \\n se ha publicado con éxito"
+    info="El tema \\n<b> <a href='$link'>$tpc</a></b> \\n se guardo y publico con éxito"
 else
-    info="Ha ocurrido un problema al subir el archivo"
+    info="Ocurrio un problema al subir el archivo"
 fi
+)
 
-$yad --window-icon=idiomind --name=idiomind \
---image=info --on-top \
---text="$info" \
+yad --window-icon=idiomind --name=idiomind \
+--image=info --on-top --text="$info" \
 --image-on-top --center --fixed --sticky --geometry=320x150 \
---width=320 --height=80 --buttons-layout=right --borders=10 \
---skip-taskbar --title=Idiomind \
+--width=320 --height=120 --buttons-layout=right --borders=10 \
+--skip-taskbar --title=idiomind \
 --button="  Ok  ":0
 
-
 rm -fr $DT/mkhtml/ $DT/.ti
-rm -f -r  $DT/"$tpc" $DT/.PASS_TMP $DT/$userid."$tpc".idmnd
+rm -fr  $DT/"$tpc" $DT/.PASS_TMP $DT/$userid."$tpc".idmnd
 rm $DT/.aud $DT/.img $DT/$userid."$tpc".idmnd \
 $DT/"$tpc".tar $DT/"$tpc".tar.gz & exit 1

@@ -1,5 +1,7 @@
 #!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
+int="$(sed -n 63p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+btn="$(sed -n 62p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
 DS_pp="$DS/addons/Practice/"
 strt="$DS_pp/strt"
 IND='play $DS_pp/all.mp3'
@@ -23,7 +25,7 @@ if [ "$2" = f ]; then
 		--on-top --skip-taskbar --window-icon=idiomind \
 		--buttons-layout=edge --center --image=gtk-ok \
 		--button="Reiniciar":0 --button=Ok:2 \
-		--text "<span color='#007D17'>Práctica completa\\n$(cat look_f)</span>\\n\\n" \
+		--text "<span color='#007D17'>$(echo "$int" | sed -n 1p)\\n$(cat look_f)</span>\\n\\n" \
 		--width=350 --height=80 --text-align=center
 		ret=$?
 			if [[ "$ret" -eq 0 ]]; then
@@ -47,13 +49,13 @@ if [ "$2" = f ]; then
 		fi
 		
 		rm *.ok *.no
-		if [ "$(cat idxfin)" -lt 1 ]; then
+		if [ "$(cat idxfin)" -lt 5 ]; then
 			$yad --form --center --borders=5 --image=info \
 			--title="Info" --on-top --window-icon=idiomind \
 			--button=Ok:1 --text-align=center --skip-taskbar \
-			--text "<span color='#636363'>  <b>Para Comenzar \\nDebes Tener 1 Palabra  </b></span>" \
+			--text "<span color='#636363'>  <b>$(echo "$int" | sed -n 2p)  </b></span>" \
 			--width=310 --height=80
-			$strt & killall prct & exit
+			$strt & killall prct.sh & exit
 		fi
 	fi
 	cp fin1 fin.tmp
@@ -241,7 +243,7 @@ elif [ "$2" = m ]; then
 		--on-top --skip-taskbar --window-icon=idiomind \
 		--buttons-layout=edge --center --image=gtk-ok \
 		--button="Reiniciar":0 --button=Ok:1 \
-		--text "<span color='#007D17'>Práctica completa\\n$(cat look_mc)</span>\\n\\n" \
+		--text "<span color='#007D17'>$(echo "$int" | sed -n 1p)\\n$(cat look_mc)</span>\\n\\n" \
 		--width=350 --height=80 --text-align=center
 		ret=$?
 			if [[ "$ret" -eq 0 ]]; then
@@ -267,7 +269,7 @@ elif [ "$2" = m ]; then
 			--title="Info" --on-top --image=info \
 			--window-icon=idiomind --skip-taskbar \
 			--button=Ok:1 --text-align=center \
-			--text "<span color='#636363'><b>  Para Comenzar \\ndebes tener 6 palabras  </b></span>" \
+			--text "<span color='#636363'><b>  $(echo "$int" | sed -n 2p)  </b></span>" \
 			--width=310 --height=80)
 			$strt & killall prct & exit 1
 		fi
@@ -472,7 +474,7 @@ elif [ "$2" = w ]; then
 		--on-top --skip-taskbar --window-icon=idiomind \
 		--buttons-layout=edge --center --image=gtk-ok \
 		--button="Reiniciar":0 --button=Ok:1 \
-		--text "<span color='#007D17'>Práctica completa\\n$(cat look_lw)</span>\\n\\n" \
+		--text "<span color='#007D17'>$(echo "$int" | sed -n 1p)\\n$(cat look_lw)</span>\\n\\n" \
 		--width=350 --height=80 --text-align=center
 		ret=$?
 			if [[ "$ret" -eq 0 ]]; then
@@ -500,7 +502,7 @@ elif [ "$2" = w ]; then
 			$yad --form --center --borders=5 --image=info \
 			--title="Info" --on-top --window-icon=idiomind \
 			--button=Ok:1 --text-align=center --skip-taskbar \
-			--text "<span color='#636363'><b>  Para Comenzar \\ndebes tener 1 palabra  </b></span>" \
+			--text "<span color='#636363'><b>  P$(echo "$int" | sed -n 2p)  </b></span>" \
 			--width=310 --height=80
 			$strt & killall prct & exit
 		fi
@@ -692,7 +694,7 @@ elif [ "$2" = s ]; then
 		--on-top --skip-taskbar --window-icon=idiomind \
 		--buttons-layout=edge --center --image=gtk-ok \
 		--button="Reiniciar":0 --button=Ok:1 \
-		--text "<span color='#007D17'>Práctica completa\\n$(cat look_ls)</span>\\n\\n" \
+		--text "<span color='#007D17'>$(echo "$int" | sed -n 1p)\\n$(cat look_ls)</span>\\n\\n" \
 		--width=350 --height=80 --text-align=center
 		ret=$?
 			if [[ "$ret" -eq 0 ]]; then
@@ -721,7 +723,7 @@ elif [ "$2" = s ]; then
 			$yad --form --center --borders=5 --skip-taskbar \
 			--title="Info" --on-top --window-icon=idiomind \
 			--button=Ok:1 --image=info \
-			--text "<span color='#636363'><b> Para comenzar debes tener al menos 1 oración  </b></span>" \
+			--text "<span color='#636363'><b> $(echo "$int" | sed -n 3p)  </b></span>" \
 			--width=310 --height=80
 			rm -f $DT/text.tmp
 			$strt & killall prct & exit

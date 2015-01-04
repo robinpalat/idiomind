@@ -23,10 +23,9 @@ fi
 
 prn=play
 
-
 wrds=$(cat stp"$2" | awk 1 ORS='   ')
-vsw=$(echo "$wrds" | sed "s#${nm}#<big><big><big><big><big><big> \
-${nm} <\/\big><\/\big><\/\big><\/\big><\/\big><\/\big>#g")
+vsw=$(echo "$wrds" | sed "s#${nm}#<big><big><big><big><big> \
+${nm} <\/\big><\/\big><\/\big><\/\big><\/\big>#g")
 srce=$(eyeD3 "$file" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
 
 listen="play '$file'"
@@ -41,14 +40,14 @@ sleep 0.3
 vw=$($yad --form --always-print-result --window-icon=idiomind \
 --center --separator="\\n" --columns=1 --name=idiomind \
 --width=420 --height=250 --on-top --skip-taskbar --fixed \
---borders=15 --align=right --class=idiomind $aut \
+--borders=10 --align=right --class=idiomind $aut \
 --buttons-layout=center --title=" " --undecorated \
 --text-align=center \
 --field="Auto":chk "$B" \
 --button="Practice:$stp" \
 --button="Listen:"$play"" \
 --button=">:2" \
---text="$vsw\\n\\n <i><big><big>\
+--text="<big>$vsw</big>\\n\\n <i><big><big>\
 <span color='#7F7F7F'>[ </span> \
 <span color='#8B9299'><big><big><b> $srce </b></big></big></span> \
 <span color='#7F7F7F'> ]</span></big></big></i> \\n\\n")

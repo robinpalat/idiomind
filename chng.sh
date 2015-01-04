@@ -285,7 +285,7 @@ elif [ "$1" != chngi ]; then
 		"$text" --width=$wth --height=$eht \
 		--no-headers --list --window-icon=idiomind \
 		--button="gtk-preferences":$DS/cnfg.sh \
-		--button="gtk-add":3 --button="gtk-ok":0 --button="Close":1 \
+		--button="gtk-add":3 --button="gtk-ok":0 --button="gtk-close":1 \
 		--borders=5 --title "Topics" --column=img:img --column=File:TEXT)
 			ret=$?
 

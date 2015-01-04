@@ -4,11 +4,6 @@
 source /usr/share/idiomind/ifs/c.conf
 wth=$(sed -n 5p $DC_s/.rd)
 eht=$(sed -n 6p $DC_s/.rd)
-if [ -f $DT/.lc ]; then
-	echo "--loock"
-	exit 1
-fi
-> $DT/.lc
 
 text="
 Idiomind it's specifically designed for people learning one or more foreign languages. It helps you learn foreign language vocabulary. You can create and manage word lists and share them online.
@@ -74,11 +69,13 @@ $yad --plug=$KEY --tabnum=1 --borders=15 --scroll \
 	--field="<small>Voice Syntetizer\n(Defaul espeak)</small>:CB5" "$sttng8" \
 	--field="<small>Use this program\nto record audio</small>:CB5" "$sttng9" \
 	--field=" :lbl" "#10"\
-	--field="languages:CB" "$lgtl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
-	--field=" :lbl" "#12" > "$cnf1" &
+	--field="languages:lbl" "#11" \
+	--field=":lbl" "#12"\
+	--field="language for learning:CB" "$lgtl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
+	--field="Your language:CB" "$lgsl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" > "$cnf1" &
 $yad --plug=$KEY --tabnum=2 --list --expand-column=2 \
 	--text="<small>  Double click for configure</small>" \
-	--no-headers --dclick-action="./plgcnf" --print-all \
+	--no-headers --dclick-action="./plgcnf.sh" --print-all \
 	--column=icon:IMG --column=Action \
 	"$img1" "Google translation service" "$img2" "Learning with News" "$img4" "Dictionarys" "$img5" "Weekly Report" &
 echo "$text" | $yad --plug=$KEY --tabnum=3 --text-info \
@@ -126,7 +123,7 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			fi
 		fi
 		
-		if cat "$cnf1" | grep "English" && [ English != $lgtl ] ; then
+		if cat "$cnf1" | sed -n 13p | grep "English" && [ English != $lgtl ] ; then
 			if [ ! -d "$DM_t"/English ]; then
 				mkdir "$DM_t"/English
 				mkdir "$DM_t"/English/.share
@@ -148,7 +145,7 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			$DS/mngr.sh mkmn
 		fi
 		
-		if cat "$cnf1" | grep "Spanish" && [ Spanish != $lgtl ] ; then
+		if cat "$cnf1" | sed -n 13p | grep "Spanish" && [ Spanish != $lgtl ] ; then
 			if [ ! -d "$DM_t"/Spanish ]; then
 				mkdir "$DM_t"/Spanish
 				mkdir "$DM_t"/Spanish/.share
@@ -170,7 +167,7 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			$DS/mngr.sh mkmn
 		fi
 		
-		if cat "$cnf1" | grep "Italian" && [ Italian != $lgtl ] ; then
+		if cat "$cnf1" | sed -n 13p | grep "Italian" && [ Italian != $lgtl ] ; then
 			if [ ! -d "$DM_t"/Italian ]; then
 				mkdir "$DM_t"/Italian
 				mkdir "$DM_t"/Italian/.share
@@ -192,7 +189,7 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			$DS/mngr.sh mkmn
 		fi
 		
-		if cat "$cnf1" | grep "Portuguese" && [ Portuguese != $lgtl ] ; then
+		if cat "$cnf1" | sed -n 13p | grep "Portuguese" && [ Portuguese != $lgtl ] ; then
 			if [ ! -d "$DM_t"/Portuguese ]; then
 				mkdir "$DM_t"/Portuguese
 				mkdir "$DM_t"/Portuguese/.share
@@ -214,7 +211,7 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			$DS/mngr.sh mkmn
 		fi
 		
-		if cat "$cnf1" | grep "German" && [ German != $lgtl ] ; then
+		if cat "$cnf1" | sed -n 13p | grep "German" && [ German != $lgtl ] ; then
 			if [ ! -d "$DM_t"/German ]; then
 				mkdir "$DM_t"/German
 				mkdir "$DM_t"/German/.share
@@ -236,7 +233,7 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			$DS/mngr.sh mkmn
 		fi
 		
-		if cat "$cnf1" | grep "Japanese" && [ Japanese != $lgtl ] ; then
+		if cat "$cnf1" | sed -n 13p | grep "Japanese" && [ Japanese != $lgtl ] ; then
 			if [ ! -d "$DM_t"/Japanese ]; then
 				mkdir "$DM_t"/Japanese
 				mkdir "$DM_t"/Japanese/.share
@@ -258,7 +255,7 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			$DS/mngr.sh mkmn
 		fi
 		
-		if cat "$cnf1" | grep "French" && [ French != $lgtl ] ; then
+		if cat "$cnf1" | sed -n 13p | grep "French" && [ French != $lgtl ] ; then
 			if [ ! -d "$DM_t"/French ]; then
 				mkdir "$DM_t"/French
 				mkdir "$DM_t"/French/.share
@@ -280,7 +277,7 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			$DS/mngr.sh mkmn
 		fi
 		
-		if cat "$cnf1" | grep "Vietnamese" && [ Vietnamese != $lgtl ] ; then
+		if cat "$cnf1" | sed -n 13p | grep "Vietnamese" && [ Vietnamese != $lgtl ] ; then
 			if [ ! -d "$DM_t"/Vietnamese ]; then
 				mkdir "$DM_t"/Vietnamese
 				mkdir "$DM_t"/Vietnamese/.share
@@ -302,7 +299,7 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			$DS/mngr.sh mkmn
 		fi
 		
-		if cat "$cnf1" | grep "Chinese" && [ Chinese != $lgtl ] ; then
+		if cat "$cnf1" | sed -n 13p | grep "Chinese" && [ Chinese != $lgtl ] ; then
 			if [ ! -d "$DM_t"/Chinese ]; then
 				mkdir "$DM_t"/Chinese
 				mkdir "$DM_t"/Chinese/.share
@@ -324,7 +321,7 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			$DS/mngr.sh mkmn
 		fi
 		
-		if cat "$cnf1" | grep "Russian" && [ Russian != $lgtl ] ; then
+		if cat "$cnf1" | sed -n 13p | grep "Russian" && [ Russian != $lgtl ] ; then
 			if [ ! -d "$DM_t"/Russian ]; then
 				mkdir "$DM_t"/Russian
 				mkdir "$DM_t"/Russian/.share
@@ -345,13 +342,54 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			fi
 			$DS/mngr.sh mkmn
 		fi
-		
-		rm -f $cnf1 $cnf2 $cnf3 $DT/.lc & exit 1
+
+		if cat "$cnf1" | sed -n 14p | grep "English" && [ English != $lgsl ] ; then
+			echo "en" > $DC_s/langt
+			echo "english" >> $DC_s/langt
+		fi
+		if cat "$cnf1" | sed -n 14p | grep "French" && [ French != $lgsl ] ; then
+			echo "fr" > $DC_s/langt
+			echo "french" >> $DC_s/langt
+		fi
+		if cat "$cnf1" | sed -n 14p | grep "German" && [ German != $lgsl ] ; then
+			echo "de" > $DC_s/langt
+			echo "german" >> $DC_s/langt
+		fi
+		if cat "$cnf1" | sed -n 14p | grep "Italian" && [ Italian != $lgsl ] ; then
+			echo "it" > $DC_s/s/langt
+			echo "italian" >> $DC_s/langt
+		fi
+		if cat "$cnf1" | sed -n 14p | grep "Japanese" && [ Japanese != $lgsl ] ; then
+			echo "ja" > $DC_s/langt
+			echo "japanese" >> $DC_s/langt
+		fi
+		if cat "$cnf1" | sed -n 14p | grep "Portuguese" && [ Portuguese != $lgsl ] ; then
+			echo "pt" > $DC_s/langt
+			echo "portuguese" >> $DC_s/langt
+		fi
+		if cat "$cnf1" | sed -n 14p | grep "Spanish" && [ Spanish != $lgsl ] ; then
+			echo "es" > $DC_s/langt
+			echo "spanish" >> $DC_s/langt
+		fi
+		if cat "$cnf1" | sed -n 14p | grep "Vietnamese" && [ Vietnamese != $lgsl ] ; then
+			echo "vi" > $DC_s/langt
+			echo "vietnamese" >> $DC_s/langt
+		fi
+		if cat "$cnf1" | sed -n 14p | grep "Chinese" && [ Chinese != $lgsl ] ; then
+			echo "zh-cn" > $DC_s/langt
+			echo "chinese" >> $DC_s/langt
+		fi
+		if cat "$cnf1" | sed -n 14p | grep "Russian" && [ Russian != $lgsl ] ; then
+			echo "ru" > $DC_s/langt
+			echo "russian" >> $DC_s/langt
+		fi
+
+		rm -f $cnf1 $cnf2 $cnf3 & exit 1
 		
 	elif [ $ret -eq 1 ]; then
-		rm -f $cnf1 $cnf2 $cnf3 $DT/.lc & exit 1
+		rm -f $cnf1 $cnf2 $cnf3 & exit 1
 		
 	else
-		rm -f $cnf1 $cnf2 $cnf3 $DT/.lc & exit 1
+		rm -f $cnf1 $cnf2 $cnf3 & exit 1
 	fi
 exit 0

@@ -28,7 +28,6 @@ if [ -z "$nme" ]; then
 fi
 
 if [ -f "$DM_tlt/words/$nme.mp3" ]; then
-
 	file="$DM_tlt/words/$nme.mp3"
 	tgs=$(eyeD3 "$file")
 	trgt="$nme"
@@ -63,7 +62,6 @@ if [ -f "$DM_tlt/words/$nme.mp3" ]; then
 	--dclick-action=/usr/share/idiomind/audio/pl >/dev/null 2>&1
 	
 elif [ -f "$DM_tlt/$nme.mp3" ]; then
-
 	file="$DM_tlt/$nme.mp3"
 	tgs=$(eyeD3 "$file")
 	if [ $(sed -n 4p $DC_s/cnfg1) = TRUE ]; then
@@ -91,14 +89,11 @@ elif [ -f "$DM_tlt/$nme.mp3" ]; then
 	--button=gtk-edit:4 --button="Listen:$DS/audio/ply2 '$nme'" \
 	--button=gtk-go-up:3 --button=gtk-go-down:2 \
 	--dclick-action=/usr/share/idiomind/audio/pl >/dev/null 2>&1
-	
 else
 	ff=$(($nuw + 1))
 	$DS/vwr.sh "$v" "$nll" "$ff" & exit 1
 fi
-
 		ret=$?
-		
 		if [[ $ret -eq 4 ]]; then
 			$DS/mngr.sh edt "$v" "$nme" $nuw & exit 1
 		elif [[ $ret -eq 2 ]]; then
