@@ -2,7 +2,7 @@
 source /usr/share/idiomind/ifs/c.conf
 DS_ppd="$DS/addons/Practice/default"
 user=$(echo "$(whoami)")
-D_cps=$(sed -n 2p $DC_s/SC)
+D_cps=$(sed -n 2p $DC_s/cnfg12)
 udt=$(cat "$D_cps/.udt")
 dte=$(date +%F)
 
@@ -143,12 +143,12 @@ if [ -z "$1" ]; then
 						echo "50"
 						echo "# Copiando datos para ${topic:0:20} ... " ; sleep 1
 						cd "$sdirc"
-						echo "6" > "$tdirc/.stts"
-						cp -f .t-inx "$tdirc/.t-inx"
-						cp -f .t-inx "$tdirc/.tlng-inx"
-						cp -f .winx "$tdirc/.winx"
-						cp -f .sinx "$tdirc/.sinx"
-						cp -f .ainx "$tdirc/.ainx"
+						echo "6" > "$tdirc/cnfg8"
+						cp -f cnfg0 "$tdirc/cnfg0"
+						cp -f cnfg0 "$tdirc/cnfg1"
+						cp -f cnfg3 "$tdirc/cnfg3"
+						cp -f cnfg4 "$tdirc/cnfg4"
+						cp -f cnfg5 "$tdirc/cnfg5"
 						cp -f .AL "$tdirc/.AL"
 						echo "$nt" > "$tdirc/nt"
 						(cd "$DS_ppd"; cp -f .* \
@@ -200,12 +200,12 @@ if [ -z "$1" ]; then
 
 	# se ha elegido " backup" 
 	elif [ "$ret" -eq 2 ]; then
-		sttng=$(sed -n 1p $DC_s/SC)
-		D_cps=$(sed -n 2p $DC_s/SC)
+		sttng=$(sed -n 1p $DC_s/cnfg12)
+		D_cps=$(sed -n 2p $DC_s/cnfg12)
 		
 		if [ -z $sttng ]; then
-			echo FALSE > $DC_s/SC
-			echo " " > $DC_s/SC
+			echo FALSE > $DC_s/cnfg12
+			echo " " > $DC_s/cnfg12
 		fi
 
 		cd ~/
@@ -224,8 +224,8 @@ if [ -z "$1" ]; then
 		if [ "$ret" -eq 0 ]; then
 			sttng=$(echo "$CNFG" | cut -d "|" -f1)
 			dircy=$(echo "$CNFG" | cut -d "|" -f2)
-			echo "$sttng" > $DC_s/SC
-			echo "$dircy" >> $DC_s/SC
+			echo "$sttng" > $DC_s/cnfg12
+			echo "$dircy" >> $DC_s/cnfg12
 
 		elif [ "$ret" -eq 3 ]; then
 		
@@ -259,7 +259,7 @@ if [ -z "$1" ]; then
 						(
 						rm -f $DT/*.XXXXXXXX
 						echo "#" ; sleep 0
-						cp "$DC_s/SC"  "$DT/.SC.bk"
+						cp "$DC_s/cnfg12"  "$DT/.SC.bk"
 						mv "$DC/" "$DT/.s2.bk"
 						mv "$DM/" "$DT/.idm2.bk"
 						mkdir "$DC/"
@@ -289,8 +289,8 @@ if [ -z "$1" ]; then
 		else
 			sttng=$(echo "$CNFG" | cut -d "|" -f1)
 			dircy=$(echo "$CNFG" | cut -d "|" -f2)
-			echo "$sttng" > $DC_s/SC
-			echo "$dircy" >> $DC_s/SC
+			echo "$sttng" > $DC_s/cnfg12
+			echo "$dircy" >> $DC_s/cnfg12
 		fi	
 	else
 		exit 1

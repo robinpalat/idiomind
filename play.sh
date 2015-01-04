@@ -2,25 +2,34 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-tlng="$DC_tlt/.tlng-inx"
-winx="$DC_tlt/.winx"
-sinx="$DC_tlt/.sinx"
+tlng="$DC_tlt/cnfg1"
+winx="$DC_tlt/cnfg3"
+sinx="$DC_tlt/cnfg4"
+
+if [ "$(cat "$sinx" | wc -l)" -gt 0 ]; then
 indw=$(grep -F -x -v -f "$sinx" "$tlng")
+else
+indw=$(cat "$tlng")
+fi
+if [ "$(cat "$winx" | wc -l)" -gt 0 ]; then
 inds=$(grep -F -x -v -f "$winx" "$tlng")
-indm=$(cat "$DC_tlt/.marks")
+else
+inds=$(cat "$tlng")
+fi
+indm=$(cat "$DC_tlt/cnfg6")
 cd "$DC_tlt/Practice"
 indp=$(cat fin.tmp mcin.tmp \
 lwin.tmp | sed '/^$/d' | sort | uniq)
-indf=$(cat $DC_tl/Feeds/.t-inx)
+indf=$(cat $DC_tl/Feeds/cnfg0)
 uid=$(echo "$(whoami)")
 infs=$(echo "$snts Sentences" | wc -l)
 infw=$(echo "$wrds Words" | wc -l)
-#eht=$(sed -n 7p $HOME/.config/idiomind/s/.rd)
-#wth=$(sed -n 8p $HOME/.config/idiomind/s/.rd)
+#eht=$(sed -n 7p $HOME/.config/idiomind/s/cnfg18)
+#wth=$(sed -n 8p $HOME/.config/idiomind/s/cnfg18)
 
 if [[ "$1" = d ]]; then
 	uid=$(echo "$(whoami)")
-	pst=$(sed -n 1p $DC_s/.pst)
+	pst=$(sed -n 1p $DC_s/cnfg17)
 	> $DT/.$uid/INACT
 	> $DT/.$uid/ACTIV
 	slt=$(mktemp $DT/slt.XXX.s)

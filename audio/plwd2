@@ -1,7 +1,7 @@
 #!/bin/bash
-topic=$(sed -n 1p ~/.config/idiomind/s/topic.id)
-lngt=$(sed -n 2p ~/.config/idiomind/s/lang)
-lngs=$(sed -n 2p ~/.config/idiomind/s/langt)
+topic=$(sed -n 1p ~/.config/idiomind/s/cnfg8)
+lngt=$(sed -n 2p ~/.config/idiomind/s/cnfg10)
+lngs=$(sed -n 2p ~/.config/idiomind/s/cnfg9)
 DIR1="$HOME/.idiomind/topics/$lngt/$topic"
 SHR="$HOME/.idiomind/topics/$lngt/.share"
 killall play & killall plh

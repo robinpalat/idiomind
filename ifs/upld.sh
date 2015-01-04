@@ -4,8 +4,8 @@ source /usr/share/idiomind/ifs/c.conf
 if [ $1 = vsd ]; then
 	userid=$(sed -n 1p $HOME/.config/idiomind/s/cnfg4)
 	lng=$(echo "$lgtl" |  awk '{print tolower($0)}')
-	wth=$(sed -n 4p $DC_s/.rd)
-	eht=$(sed -n 3p $DC_s/.rd)
+	wth=$(sed -n 4p $DC_s/cnfg18)
+	eht=$(sed -n 3p $DC_s/cnfg18)
 	cd $DM_t/saved
 	ls -t *.AL > ls
 	(sed -i 's/.AL//g' ./ls)
@@ -127,27 +127,27 @@ mail=$(sed -n 2p $DC_s/cnfg4)
 skp=$(sed -n 3p $DC_s/cnfg4)
 nme=$(echo "$tpc" | sed 's/ /_/g' \
 | sed 's/"//g' | sed 's/’//g')
-chk1="$DC_tlt/.t-inx"
-chk2="$DC_tlt/.tlng-inx"
-chk3="$DC_tlt/.tok-inx"
-chk4="$DC_tlt/.winx"
-chk5="$DC_tlt/.sinx"
+chk1="$DC_tlt/cnfg0"
+chk2="$DC_tlt/cnfg1"
+chk3="$DC_tlt/cnfg2"
+chk4="$DC_tlt/cnfg3"
+chk5="$DC_tlt/cnfg4"
 chk6="$DC_tlt/nt"
 
 if [ -z "$cat chk1" ]; then
-	cp -f "$DC_tlt/.t-inx~" "$DC_tlt/.t-inx"
+	cp -f "$DC_tlt/cnfg0~" "$DC_tlt/cnfg0"
 fi
 if [ -z "$cat chk2" ]; then
-	cp -f "$DC_tlt/.tlng-inx~" "$DC_tlt/.tlng-inx"
+	cp -f "$DC_tlt/cnfg1~" "$DC_tlt/cnfg1"
 fi
 if [ -z "$cat chk3" ]; then
-	cp -f "$DC_tlt/.tok-inx~" "$DC_tlt/.tok-inx"
+	cp -f "$DC_tlt/cnfg2~" "$DC_tlt/cnfg2"
 fi
 if [ -z "$cat chk4" ]; then
-	cp -f "$DC_tlt/.winx~" "$DC_tlt/.winx"
+	cp -f "$DC_tlt/cnfg3~" "$DC_tlt/cnfg3"
 fi
 if [ -z "$cat chk5" ]; then
-	cp -f "$DC_tlt/.sinx~" "$DC_tlt/.sinx"
+	cp -f "$DC_tlt/cnfg4~" "$DC_tlt/cnfg4"
 fi
 if [ -z "$cat chk6" ]; then
 	cp -f "$DC_tlt/.nt~" "$DC_tlt/nt"
@@ -173,11 +173,11 @@ if [ -n "$(cat "$chk5" | sort -n | uniq -dc)" ]; then
 	sed '/^$/d' $DT/ls2.x > "$chk5"
 fi
 
-chk1=$(cat "$DC_tlt/.t-inx" | wc -l)
-chk2=$(cat "$DC_tlt/.tlng-inx" | wc -l)
-chk3=$(cat "$DC_tlt/.tok-inx" | wc -l)
-chk4=$(cat "$DC_tlt/.winx" | wc -l)
-chk5=$(cat "$DC_tlt/.sinx" | wc -l)
+chk1=$(cat "$DC_tlt/cnfg0" | wc -l)
+chk2=$(cat "$DC_tlt/cnfg1" | wc -l)
+chk3=$(cat "$DC_tlt/cnfg2" | wc -l)
+chk4=$(cat "$DC_tlt/cnfg3" | wc -l)
+chk5=$(cat "$DC_tlt/cnfg4" | wc -l)
 
 if [[ "$(($chk4 + $chk5))" != $chk1 \
 	|| "$(($chk2 + $chk3))" != $chk1 ]]; then
@@ -195,17 +195,17 @@ if [[ "$(($chk4 + $chk5))" != $chk1 \
 	for i in *.mp3 ; do [ ! -s ${i} ] && rm ${i} ; done
 	if [ -f ".mp3" ]; then rm .mp3; fi
 	ls *.mp3 | sed 's/.mp3//g' >> $DT/ind
-	rm "$DC_tlt/.winx"
-	rm "$DC_tlt/.sinx"
+	rm "$DC_tlt/cnfg3"
+	rm "$DC_tlt/cnfg4"
 	
 	n=1
 	while [ $n -le $(cat "$DT/ind" | wc -l) ]; do
-		chk1=$(sed -n "$n"p "$DC_tlt/.t-inx")
+		chk1=$(sed -n "$n"p "$DC_tlt/cnfg0")
 		if cat "$DT/ind" | grep -Fxo "$chk1"; then
 				if [[ "$(echo "$chk1" | wc -w)" -eq 1 ]]; then
-					echo "$chk1" >> "$DC_tlt/.winx"
+					echo "$chk1" >> "$DC_tlt/cnfg3"
 				elif [[ "$(echo "$chk1" | wc -w)" -gt 1 ]]; then
-					echo "$chk1" >> "$DC_tlt/.sinx"
+					echo "$chk1" >> "$DC_tlt/cnfg4"
 				fi
 			echo "$chk1" >> $DT/ind_ok
 			grep -v -x -v "$chk1" $DT/ind > $DT/ind_
@@ -219,32 +219,32 @@ if [[ "$(($chk4 + $chk5))" != $chk1 \
 	while [ $n -le $(cat "$DT/ind" | wc -l) ]; do
 		chk2=$(sed -n "$n"p "$DT/ind")
 		if [ $(echo "$chk2" | wc -w) -eq 1 ]; then
-			echo "$chk2" >> "$DC_tlt/.winx"
+			echo "$chk2" >> "$DC_tlt/cnfg3"
 		elif [ $(echo "$chk2" | wc -w) -gt 1 ]; then
-			echo "$chk2" >> "$DC_tlt/.sinx"
+			echo "$chk2" >> "$DC_tlt/cnfg4"
 		fi
 		let n++
 	done
 
 	cat $DT/ind >> $DT/ind_ok
-	cp -f $DT/ind_ok "$DC_tlt/.t-inx"
-	rm "$DC_tlt/.tok-inx"
-	in1="$DC_tlt/.t-inx"
+	cp -f $DT/ind_ok "$DC_tlt/cnfg0"
+	rm "$DC_tlt/cnfg2"
+	in1="$DC_tlt/cnfg0"
 	if [ -n "$(cat "$in1" | sort -n | uniq -dc)" ]; then
 		cat "$in1" | awk '!array_temp[$0]++' > $DT/ind
 		sed '/^$/d' $DT/ind > "$in1"
 	fi
-	in2="$DC_tlt/.sinx"
+	in2="$DC_tlt/cnfg4"
 	if [ -n "$(cat "$in2" | sort -n | uniq -dc)" ]; then
 		cat "$in2" | awk '!array_temp[$0]++' > $DT/ind
 		sed '/^$/d' $DT/ind > "$in2"
 	fi
-	in3="$DC_tlt/.sinx"
+	in3="$DC_tlt/cnfg4"
 	if [ -n "$(cat "$in3" | sort -n | uniq -dc)" ]; then
 		cat "$in3" | awk '!array_temp[$0]++' > $DT/ind
 		sed '/^$/d' $DT/ind > "$in3"
 	fi
-	cp -f "$in1" "$DC_tlt/.tlng-inx"
+	cp -f "$in1" "$DC_tlt/cnfg1"
 fi
 
 if cat "$DM_t/saved/ls" \
@@ -345,16 +345,16 @@ cp -r * $DT/"$tpc/"
 mkdir $DT/"$tpc"/.audio
 
 n=1
-while [ $n -le $(cat "$DC_tlt/.ainx" | wc -l) ]; do
-	cp=$(sed -n "$n"p "$DC_tlt/.ainx")
+while [ $n -le $(cat "$DC_tlt/cnfg5" | wc -l) ]; do
+	cp=$(sed -n "$n"p "$DC_tlt/cnfg5")
 	cp "$DM/topics/$lgtl/.share/$cp" "$DT/$tpc/.audio/$cp"
 	let n++
 done
 
-cp -f "$DC_tlt/.t-inx" "$DT/$tpc/.t-inx"
-cp -f "$DC_tlt/.winx" "$DT/$tpc/.winx"
-cp -f "$DC_tlt/.sinx" "$DT/$tpc/.sinx"
-cp -f "$DC_tlt/.ainx" "$DT/$tpc/.ainx"
+cp -f "$DC_tlt/cnfg0" "$DT/$tpc/cnfg0"
+cp -f "$DC_tlt/cnfg3" "$DT/$tpc/cnfg3"
+cp -f "$DC_tlt/cnfg4" "$DT/$tpc/cnfg4"
+cp -f "$DC_tlt/cnfg5" "$DT/$tpc/cnfg5"
 cd $DT
 tar -cvf "$tpc.tar" "$tpc"
 gzip -9 "$tpc.tar"
@@ -373,8 +373,8 @@ PASS=$(sed -n 3p .PASS_TMP)
 NAME=$(echo "$tpc" | sed 's/ /_/g')
 dte=$(date "+%d %B %Y")
 mkdir $DT/mkhtml
-cp -f "$DC_tlt/.winx" $DT/mkhtml/w.inx.l
-cp -f "$DC_tlt/.sinx" $DT/mkhtml/s.inx.l
+cp -f "$DC_tlt/cnfg3" $DT/mkhtml/w.inx.l
+cp -f "$DC_tlt/cnfg4" $DT/mkhtml/s.inx.l
 iw=$DT/mkhtml/w.inx.l
 is=$DT/mkhtml/s.inx.l
 mkdir $DT/$NAME

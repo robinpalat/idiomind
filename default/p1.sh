@@ -8,21 +8,21 @@ lnglbl=$(sed -n 2p "/tmp/.idmtp1.$u/idmimp_X015x/$nmt/.AL")
 lng=$(sed -n 3p "/tmp/.idmtp1.$u/idmimp_X015x/$nmt/.AL")
 lngs=$(sed -n 4p "/tmp/.idmtp1.$u/idmimp_X015x/$nmt/.AL")
 var2=$(sed -n 1p "/tmp/.idmtp1.$u/idmimp_X015x/$nmt/.AL")
-wth=$(sed -n 5p $HOME/.config/idiomind/s/.rd)
-eht=$(sed -n 6p $HOME/.config/idiomind/s/.rd)
+wth=$(sed -n 5p $HOME/.config/idiomind/s/cnfg18)
+eht=$(sed -n 6p $HOME/.config/idiomind/s/cnfg18)
 re='^[0-9]+$'
 now="$1"
 nuw="$2"
 cd "$dir"
 
 if ! [[ $nuw =~ $re ]]; then
-nuw=$(cat "$dir/.t-inx" | grep -Fxon "$now" \
+nuw=$(cat "$dir/cnfg0" | grep -Fxon "$now" \
 | sed -n 's/^\([0-9]*\)[:].*/\1/p')
 nll='echo  " "'
 fi
-nms=$(sed -n "$nuw"p "$dir/.t-inx")
+nms=$(sed -n "$nuw"p "$dir/cnfg0")
 if [ -z "$nms" ]; then
-nms=$(sed -n 1p "$dir/.t-inx")
+nms=$(sed -n 1p "$dir/cnfg0")
 nuw=1
 fi
 

@@ -37,7 +37,7 @@ if [[ $1 = n_i ]]; then
 		ret=$?
 		
 		if [[ $ret -eq 0 ]]; then
-			if [ $(cat "$DC_tl/Feeds/.winx" | wc -l) -ge 50 ]; then
+			if [ $(cat "$DC_tl/Feeds/cnfg3" | wc -l) -ge 50 ]; then
 				$yad --name=idiomind --center --on-top --image=info \
 				--text=" <b>$tpe    </b>\\n\\n $(echo "$int" | sed -n 3p)  \\n" \
 				--image-on-top --fixed --sticky --title="$tpe" \
@@ -66,17 +66,17 @@ if [[ $1 = n_i ]]; then
 			
 			eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" -A IWI3I0I"$var"IWI3I0I \
 			"$DM_tl/Feeds/kept/words/$nme.mp3"
-			echo "$nme" >> "$DC_tl/Feeds/.t-inx"
-			echo "$nme" >> "$DC_tl/Feeds/.winx"
+			echo "$nme" >> "$DC_tl/Feeds/cnfg0"
+			echo "$nme" >> "$DC_tl/Feeds/cnfg3"
 			
-			if [ -n "$(cat "$DC_tl/Feeds/.t-inx" | sort -n | uniq -dc)" ]; then
-				cat "$DC_tl/Feeds/.t-inx" | awk '!array_temp[$0]++' > $DT/.ls.x
-				sed '/^$/d' $DT/.ls.x > "$DC_tl/Feeds/.t-inx"
+			if [ -n "$(cat "$DC_tl/Feeds/cnfg0" | sort -n | uniq -dc)" ]; then
+				cat "$DC_tl/Feeds/cnfg0" | awk '!array_temp[$0]++' > $DT/.ls.x
+				sed '/^$/d' $DT/.ls.x > "$DC_tl/Feeds/cnfg0"
 			fi
 			rm -rf $DT/rss_$c
 			
 		elif [[ $ret -eq 2 ]]; then
-			if [ $(cat "$DC_tl/Feeds/.sinx" | wc -l) -ge 50 ]; then
+			if [ $(cat "$DC_tl/Feeds/cnfg4" | wc -l) -ge 50 ]; then
 				$yad --name=idiomind --center --on-top --image=info \
 				--text=" <b>$tpe    </b>\\n\\n $(echo "$int" | sed -n 4p) \\n" \
 				--image-on-top --fixed --sticky --title="$tpe" \
@@ -106,12 +106,12 @@ if [[ $1 = n_i ]]; then
 			cp "$DM_tl/Feeds/conten/$var.lnk" "$DM_tl/Feeds/kept/$nme.lnk"
 			cp $DM_tl/Feeds/conten/"$var"/*.mp3 "$DM_tl/Feeds/kept/.audio/"
 			
-			if [ -n "$(cat "$DC_tl/Feeds/.t-inx" | sort -n | uniq -dc)" ]; then
-				cat "$DC_tl/Feeds/.t-inx" | awk '!array_temp[$0]++' > $DT/.ls.x
-				sed '/^$/d' $DT/.ls.x > "$DC_tl/Feeds/.t-inx"
+			if [ -n "$(cat "$DC_tl/Feeds/cnfg0" | sort -n | uniq -dc)" ]; then
+				cat "$DC_tl/Feeds/cnfg0" | awk '!array_temp[$0]++' > $DT/.ls.x
+				sed '/^$/d' $DT/.ls.x > "$DC_tl/Feeds/cnfg0"
 			fi
-				echo "$nme" >> "$DC_tl/Feeds/.t-inx"
-				echo "$nme" >> "$DC_tl/Feeds/.sinx"
+				echo "$nme" >> "$DC_tl/Feeds/cnfg0"
+				echo "$nme" >> "$DC_tl/Feeds/cnfg4"
 				rm -f -r $DT/.dzmxx.x $DT/rss_$ & exit 1
 		else
 			rm -f -r $DT/.dzmxx.x $DT/rss_$ & exit 1
@@ -151,14 +151,14 @@ elif [[ $1 = n_t ]]; then
 				cp -f $DS/default/tpc.sh $DC_tl/"$jlb"/tpc.sh
 				cd "$DC_tl/$jlb"
 				echo "$jlb" >> $DC_tl/.in_s
-				echo "1" > "$DC_tl/$jlb/.stts"
+				echo "1" > "$DC_tl/$jlb/cnfg8"
 				cd "$DM_tl/Feeds/kept"/.audio
-				ls *.mp3 > "$DC_tl/$jlb/.ainx"
-				mv -f "$DC_tl/Feeds/.winx" "$DC_tl/$jlb/.winx"
-				mv -f "$DC_tl/Feeds/.sinx" "$DC_tl/$jlb/.sinx"
-				mv -f "$DC_tl/Feeds/.t-inx" "$DC_tl/$jlb/.tinx"
-				cp -f "$DC_tl/$jlb/.tinx" "$DC_tl/$jlb/.t-inx"
-				cp -f "$DC_tl/$jlb/.tinx" "$DC_tl/$jlb/.tlng-inx"
+				ls *.mp3 > "$DC_tl/$jlb/cnfg5"
+				mv -f "$DC_tl/Feeds/cnfg3" "$DC_tl/$jlb/cnfg3"
+				mv -f "$DC_tl/Feeds/cnfg4" "$DC_tl/$jlb/cnfg4"
+				mv -f "$DC_tl/Feeds/cnfg0" "$DC_tl/$jlb/.tinx"
+				cp -f "$DC_tl/$jlb/.tinx" "$DC_tl/$jlb/cnfg0"
+				cp -f "$DC_tl/$jlb/.tinx" "$DC_tl/$jlb/cnfg1"
 				rm "$DC_tl/Feeds/indfa"
 				rm "$DC_tl/Feeds/indfe"
 				cd "$DM_tl/Feeds/kept"
@@ -169,7 +169,7 @@ elif [[ $1 = n_t ]]; then
 				mv -f ./* "$DM_tl/$jlb/words/"
 				chmod +x $DC_tl/"$jlb"/tpc.sh
 				$DC_tl/"$jlb"/tpc.sh
-				cnt=$(cat "$DC_tl/$jlb/.t-inx" | wc -l)
+				cnt=$(cat "$DC_tl/$jlb/cnfg0" | wc -l)
 				echo "aitm.$cnt.aitm" >> \
 				$DC/addons/stats/.log &
 				$DS/mngr mkmn

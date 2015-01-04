@@ -1,0 +1,44 @@
+
+/ usr / bin / idiomund
+Pratique|Modifier|Fermer|Supprimer|Apprendre|Learned|Notes|Prières|Mots|Catégorie|Créé par|apprises|Météo information|Cependant pas de nouveaux éléments|Revue|Supprimer|Nouvelles|Contenu Filed|Mise à jour|Installer
+Erreur lors de la tentative d'écriture|répertoire ne existe pas ou n'a pas les autorisations des utilisateurs Fichier corrompu
+A atteint le nombre maximum d'éléments que vous avez un problème avec le même nom|Dans le renommer à: jours se sont écoulés depuis que vous avez marqué \ n cette question que je ai appris Voulez-vous revoir|ne pas
+¿Examen de tous ou seulement neuf|Nouveau|Tous
+réactualisation
+/usr/share/idiomind/play.sh
+Partir|Rien spécifiée à jouer |
+Going|Rien à jouer |
+Mots|Prières|Marqué|Pratique|Nouvelles|Notifications|Audio|Répéter
+/usr/share/idiomind/add.sh
+Sujet|Image|Ajouter|Enregistrer Audio|Un nouveau sujet|Commander|Annuler|Change|Supprimer|Ajouter image |
+Sujet:|Nom pour le nouveau sujet|avez un sujet avec le même nom|Ce est nommé:|Vous avez atteint le nombre maximal de threads|Vous avez atteint le nombre maximum de mots|Le montant que vous atteint peine maximale|Pas d'Internet|festival ne peut traiter le texte|Espeak ne peut pas traiter le texte en japonais|Vous pouvez ajouter|mots|Word|Topic|Sélectionner mots à ajouter au sujet|prières qui ne ont pas été ajoutés pour dépasser le nombre|sélecteur mots|Attendez qu'il termine \ n le processus ci-dessus|doit fournir une clé \ n Essayez d'obtenir un nouveau auprès|ici|traitement du fichier|Comprabando clé|clé actuelle ne est plus valide ou dépassé son quota de commandes quotidiennes. \ N Essayez d'obtenir un de|Prières|Prière|Impossible d'obtenir texte. Pour rendre le fichier audio réussi de processus n'a fourni aucune debebá contient bruit de fond ou de la musique parce que les silences sont utilisés pour diviser|Sélectionner|Images|Recherche images|Image|Prière|Prières|Prière|Prières qui ne ont pas été ajoutés|pas trouvé de prière|ils ont été ajoutés
+/usr/share/idiomind/mngr.sh
+Effacer|Image|Supprimer |
+Apprises|Revue|Renommer|Supprimer|Partager|PDF|sujet|Audio|Exemple|Définition|Notes|Google Recherche|Définition|Marquer|Mark appris|Revue|Liste mots|Supprimer|Espèces|Supprimer ce mot? cette prière |? Supprimer article |? Supprimer?
+/usr/share/idiomind/vwr.sh
+prononcer
+// usr / share / idiomind / addons / Dics / dict
+ajouter
+Trouver plus de dictionnaires|Disponible|Langues|Erreur installation |
+/ usr / share / idiomind / addons / Google_translation_service / cnf
+fermer
+Utilisation de Google Translator |
+/ usr / share / idiomind / addons / Learning_with_news / ajouter
+Enregistrer le mot|Enregistrer prière|Annuler|Créez|Fermer
+Parole:|Prière:|Vous avez atteint le nombre maximum de mots|Vous avez atteint le nombre maximum de phrases|Vous avez atteint le nombre maximum de sujets|Nouveau sujet|Pas d'Internet
+/ usr / share / idiomind / addons / Learning_with_news / cnf
+Effacer|Mise à jour|Supprimer|Annuler
+Subcripción active:|Mise à jour de page|Vous ne pouvez pas supprimer|Supprimer subcripción|Nom|URL|Crear_Tema|Borrar_Noticias|Borrar_guardado|Subcripciones|Nouveau subcripción
+/ usr / share / idiomind / addons / Learning_with_news / la
+annuler |
+Confirmez|Supprimer ce mot |? Supprimer|Supprimer cette phrase |? <B> Supprimer tout </ b> \ nLes téléchargements de subcripciones tous les 5 jours seront automatiquement supprimés |? Supprimer tout le contenu sauvé?
+/ usr / share / idiomind / addons / Learning_with_news / strt
+Stop |
+Il ya une mise à jour en cours |. Pas d'Internet|Mise à jour ...|Pas de nouvelles ou sur le lien sont mauvais|Festival ne peut pas traiter le texte|Espeak ne peut pas traiter le texte en japonais|Mise à jour |
+/ usr / share / idiomind / addons / pratique / strt
+
+Reset|Apprendre|Lancer|OK|NO|Écouter|Aide|Suivant |
+Appris|Facile|Apprendre|Disques |
+/ usr / share / idiomind / addons / pratique / PRCT
+reboot
+Pratique complète|Mise en route \ nVous avez une Word|Pour commencer, vous devez avoir au moins une phrase

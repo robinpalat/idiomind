@@ -143,7 +143,7 @@ elif [[ $1 = edit ]]; then
 	st3=FALSE
 	st4=FALSE
 
-	if [[ "$(cat "$drtc/.t-inx" | wc -l)" -ge 20 ]]; then
+	if [[ "$(cat "$drtc/cnfg0" | wc -l)" -ge 20 ]]; then
 		dd="$img3 $(echo "$int" | sed -n 7p) $st1 $img1 $(echo "$int" | sed -n 8p) $st2 $img2 $(echo "$int" | sed -n 9p) $st3 $img4 $(echo "$int" | sed -n 10p) $st4"
 	else
 		dd="$img1 $(echo "$int" | sed -n 8p) $st1 $img2 $(echo "$int" | sed -n 9p) $st2 $img4 $(echo "$int" | sed -n 10p) $st3"

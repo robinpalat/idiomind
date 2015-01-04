@@ -1,6 +1,6 @@
 #!/bin/bash
 
-lgtl=$(sed -n 2p ~/.config/idiomind/s/lang)
+lgtl=$(sed -n 2p ~/.config/idiomind/s/cnfg10)
 DM_tl="$HOME/.idiomind/topics/$lgtl"
 
 wdr=$(echo "$1" | awk '{print tolower($0)}')

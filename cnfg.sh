@@ -2,18 +2,13 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-wth=$(sed -n 5p $DC_s/.rd)
-eht=$(sed -n 6p $DC_s/.rd)
+wth=$(sed -n 5p $DC_s/cnfg18)
+eht=$(sed -n 6p $DC_s/cnfg18)
 
 text="
 Idiomind it's specifically designed for people learning one or more foreign languages. It helps you learn foreign language vocabulary. You can create and manage word lists and share them online.
 supports 4 types of exercises, including grammar and pronunciation tests.
 
-
-Send comments or suggestions to improve the program.
-https://sourceforge.net/p/idiomind/tickets
-
-if you think it is useful, please consider making a donation.
 https://sourceforge.net/projects/idiomind/support
 
 Check out the code:
@@ -133,8 +128,8 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 				cp -f "$DS/addons/Learning_with_news/examples/English" \
 				"$DC_a/Learning with news/English/subscripts/Example"
 			fi
-			echo "en" > $DC_s/lang
-			echo "English" >> $DC_s/lang
+			echo "en" > $DC_s/cnfg10
+			echo "English" >> $DC_s/cnfg10
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
 			
@@ -155,8 +150,8 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 				cp -f "$DS/addons/Learning_with_news/examples/Spanish" \
 				"$DC_a/Learning with news/Spanish/subscripts/Example"
 			fi
-			echo "es" > $DC_s/lang
-			echo "Spanish" >> $DC_s/lang
+			echo "es" > $DC_s/cnfg10
+			echo "Spanish" >> $DC_s/cnfg10
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
 			
@@ -177,8 +172,8 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 				cp -f "$DS/addons/Learning_with_news/examples/Italian" \
 				"$DC_a/Learning with news/Italian/subscripts/Example"
 			fi
-			echo "it" > $DC_s/lang
-			echo "Italian" >> $DC_s/lang
+			echo "it" > $DC_s/cnfg10
+			echo "Italian" >> $DC_s/cnfg10
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
 			
@@ -199,8 +194,8 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 				cp -f "$DS/addons/Learning_with_news/examples/Portuguese" \
 				"$DC_a/Learning with news/Portuguese/subscripts/Example"
 			fi
-			echo "pt" > $DC_s/lang
-			echo "Portuguese" >> $DC_s/lang
+			echo "pt" > $DC_s/cnfg10
+			echo "Portuguese" >> $DC_s/cnfg10
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
 			
@@ -221,8 +216,8 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 				cp -f "$DS/addons/Learning_with_news/examples/German" \
 				"$DC_a/Learning with news/German/subscripts/Example"
 			fi
-			echo "de" > $DC_s/lang
-			echo "German" >> $DC_s/lang
+			echo "de" > $DC_s/cnfg10
+			echo "German" >> $DC_s/cnfg10
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
 			
@@ -243,8 +238,8 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 				cp -f "$DS/addons/Learning_with_news/examples/Japanese" \
 				"$DC_a/Learning with news/Japanese/subscripts/Example"
 			fi
-			echo "ja" > $DC_s/lang
-			echo "Japanese" >> $DC_s/lang
+			echo "ja" > $DC_s/cnfg10
+			echo "Japanese" >> $DC_s/cnfg10
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
 			
@@ -265,8 +260,8 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 				cp -f "$DS/addons/Learning_with_news/examples/French" \
 				"$DC_a/Learning with news/French/subscripts/Example"
 			fi
-			echo "fr" > $DC_s/lang
-			echo "French" >> $DC_s/lang
+			echo "fr" > $DC_s/cnfg10
+			echo "French" >> $DC_s/cnfg10
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
 			
@@ -287,8 +282,8 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 				cp -f "$DS/addons/Learning_with_news/examples/Vietnamese" \
 				"$DC_a/Learning with news/Vietnamese/subscripts/Example"
 			fi
-			echo "vi" > $DC_s/lang
-			echo "Vietnamese" >> $DC_s/lang
+			echo "vi" > $DC_s/cnfg10
+			echo "Vietnamese" >> $DC_s/cnfg10
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
 			
@@ -309,8 +304,8 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 				cp -f "$DS/addons/Learning_with_news/examples/Chinese" \
 				"$DC_a/Learning with news/Chinese/subscripts/Example"
 			fi
-			echo "zh-cn" > $DC_s/lang
-			echo "Chinese" >> $DC_s/lang
+			echo "zh-cn" > $DC_s/cnfg10
+			echo "Chinese" >> $DC_s/cnfg10
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
 			
@@ -331,8 +326,8 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 				cp -f "$DS/addons/Learning_with_news/examples/Russian" \
 				"$DC_a/Learning with news/Russian/subscripts/Example"
 			fi
-			echo "ru" > $DC_s/lang
-			echo "Russian" >> $DC_s/lang
+			echo "ru" > $DC_s/cnfg10
+			echo "Russian" >> $DC_s/cnfg10
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
 			
@@ -344,44 +339,44 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 		fi
 
 		if cat "$cnf1" | sed -n 14p | grep "English" && [ English != $lgsl ] ; then
-			echo "en" > $DC_s/langt
-			echo "english" >> $DC_s/langt
+			echo "en" > $DC_s/cnfg9
+			echo "english" >> $DC_s/cnfg9
 		fi
 		if cat "$cnf1" | sed -n 14p | grep "French" && [ French != $lgsl ] ; then
-			echo "fr" > $DC_s/langt
-			echo "french" >> $DC_s/langt
+			echo "fr" > $DC_s/cnfg9
+			echo "french" >> $DC_s/cnfg9
 		fi
 		if cat "$cnf1" | sed -n 14p | grep "German" && [ German != $lgsl ] ; then
-			echo "de" > $DC_s/langt
-			echo "german" >> $DC_s/langt
+			echo "de" > $DC_s/cnfg9
+			echo "german" >> $DC_s/cnfg9
 		fi
 		if cat "$cnf1" | sed -n 14p | grep "Italian" && [ Italian != $lgsl ] ; then
-			echo "it" > $DC_s/s/langt
-			echo "italian" >> $DC_s/langt
+			echo "it" > $DC_s/s/cnfg9
+			echo "italian" >> $DC_s/cnfg9
 		fi
 		if cat "$cnf1" | sed -n 14p | grep "Japanese" && [ Japanese != $lgsl ] ; then
-			echo "ja" > $DC_s/langt
-			echo "japanese" >> $DC_s/langt
+			echo "ja" > $DC_s/cnfg9
+			echo "japanese" >> $DC_s/cnfg9
 		fi
 		if cat "$cnf1" | sed -n 14p | grep "Portuguese" && [ Portuguese != $lgsl ] ; then
-			echo "pt" > $DC_s/langt
-			echo "portuguese" >> $DC_s/langt
+			echo "pt" > $DC_s/cnfg9
+			echo "portuguese" >> $DC_s/cnfg9
 		fi
 		if cat "$cnf1" | sed -n 14p | grep "Spanish" && [ Spanish != $lgsl ] ; then
-			echo "es" > $DC_s/langt
-			echo "spanish" >> $DC_s/langt
+			echo "es" > $DC_s/cnfg9
+			echo "spanish" >> $DC_s/cnfg9
 		fi
 		if cat "$cnf1" | sed -n 14p | grep "Vietnamese" && [ Vietnamese != $lgsl ] ; then
-			echo "vi" > $DC_s/langt
-			echo "vietnamese" >> $DC_s/langt
+			echo "vi" > $DC_s/cnfg9
+			echo "vietnamese" >> $DC_s/cnfg9
 		fi
 		if cat "$cnf1" | sed -n 14p | grep "Chinese" && [ Chinese != $lgsl ] ; then
-			echo "zh-cn" > $DC_s/langt
-			echo "chinese" >> $DC_s/langt
+			echo "zh-cn" > $DC_s/cnfg9
+			echo "chinese" >> $DC_s/cnfg9
 		fi
 		if cat "$cnf1" | sed -n 14p | grep "Russian" && [ Russian != $lgsl ] ; then
-			echo "ru" > $DC_s/langt
-			echo "russian" >> $DC_s/langt
+			echo "ru" > $DC_s/cnfg9
+			echo "russian" >> $DC_s/cnfg9
 		fi
 
 		rm -f $cnf1 $cnf2 $cnf3 & exit 1

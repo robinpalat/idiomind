@@ -1,6 +1,8 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
+eht=$(sed -n 3p $DC_s/cnfg18)
+wth=$(sed -n 4p $DC_s/cnfg18)
 LOG=$DC/addons/stats/.log
 NUM=$DC/addons/stats/.num
 TPS=$DC/addons/stats/.tps
@@ -17,7 +19,7 @@ if [ "$1" = A ]; then # recopida informacion para despues mostrarla en el report
 
 	du -b -h $DM | tail -1 | awk '{print ($1)}' > $DC/addons/stats/.sz
 	echo "$tpc" > $DC/addons/stats/.tpc
-	echo $(sed -n 2p $DC_s/topic.id) >> $DC/addons/stats/.tpc
+	echo $(sed -n 2p $DC_s/cnfg8) >> $DC/addons/stats/.tpc
 	echo $(cat $DC_s/topic_m) >> $DC/addons/stats/.tpc
 	
 	#2 TOPICS MAS ACTIVOS 
@@ -72,9 +74,9 @@ if [ "$1" = A ]; then # recopida informacion para despues mostrarla en el report
 	tpc1=$(sed -n 1p $TPS) #topics mas activos
 	tpc2=$(sed -n 2p $TPS)
 	tpc3=$(sed -n 3p $TPS)
-	tok1="$DC_tl/$tpc1/.tok-inx"
-	tok2="$DC_tl/$tpc2/.tok-inx"
-	tok3="$DC_tl/$tpc3/.tok-inx"
+	tok1="$DC_tl/$tpc1/cnfg2"
+	tok2="$DC_tl/$tpc2/cnfg2"
+	tok3="$DC_tl/$tpc3/cnfg2"
 	
 	W9INX=$(cat $W9 | sort | uniq -dc | sort -n -r | sed 's/ \+/ /g')
 	
@@ -244,16 +246,16 @@ $(cat $DC/addons/stats/.sz)" >> $WKRT3
 
 echo "$(date +%F)" > "$DC/addons/stats/.udt"
 echo "- Weekly Report" > $DC_s/topic_m
-echo "$tpc" > $DC_s/topic.id
-echo wr >> $DC_s/topic.id
+echo "$tpc" > $DC_s/cnfg8
+echo wr >> $DC_s/cnfg8
 
 rm -f  $DT/.sz
 
 exit 1
 
 elif [ "$1" = T ]; then
-	eht=$(sed -n 3p $DC_s/.rd)
-	wth=$(sed -n 4p $DC_s/.rd)
+	eht=$(sed -n 3p $DC_s/cnfg18)
+	wth=$(sed -n 4p $DC_s/cnfg18)
 	tpc1=$(sed -n 1p $TPS) #topics mas activos
 	tpc2=$(sed -n 2p $TPS)
 	tpc3=$(sed -n 3p $TPS) #topics mas activos
@@ -278,18 +280,18 @@ elif [ "$1" = T ]; then
 	--tab=" Report   $(date "+%B %d") " --tab=" Probables " \
 	--buttons-layout=end --class=idiomind \
 	--image-on-top --window-icon=idiomind \
-	--width=380 --height=520 --borders=10 \
+	--width="$wth" --height="$eht" --borders=0 \
 	--button=Ok:0
 		ret=$?
 		
 		if [[ $ret -eq 0 ]]; then
 			rm $WKRT $LOG
-			tlng1="$DC_tl/$tpc1/.tlng-inx"
-			tlng2="$DC_tl/$tpc2/.tlng-inx"
-			tlng3="$DC_tl/$tpc3/.tlng-inx"
-			tok1="$DC_tl/$tpc1/.tok-inx"
-			tok2="$DC_tl/$tpc2/.tok-inx"
-			tok3="$DC_tl/$tpc3/.tok-inx"
+			tlng1="$DC_tl/$tpc1/cnfg1"
+			tlng2="$DC_tl/$tpc2/cnfg1"
+			tlng3="$DC_tl/$tpc3/cnfg1"
+			tok1="$DC_tl/$tpc1/cnfg2"
+			tok2="$DC_tl/$tpc2/cnfg2"
+			tok3="$DC_tl/$tpc3/cnfg2"
 		
 			if [[ -n "$(cat "$DC/addons/stats/w9")" ]]; then
 				list=$(cat "$DT/slt" | sed 's/|//g')
@@ -337,13 +339,13 @@ elif [ "$1" = T ]; then
 			rm $DT/*.x $DC/addons/stats/w9 $DC/addons/stats/w6 $DC/addons/practice/w9 $DC/addons/practice/w6 $DT/tmp $DT/tlng
 			
 			fi
-			echo $(sed -n 1p $DC/addons/stats/.tpc) > $DC_s/topic.id
-			echo $(sed -n 2p $DC/addons/stats/.tpc) >> $DC_s/topic.id
+			echo $(sed -n 1p $DC/addons/stats/.tpc) > $DC_s/cnfg8
+			echo $(sed -n 2p $DC/addons/stats/.tpc) >> $DC_s/cnfg8
 			echo $(sed -n 3p $DC/addons/stats/.tpc) > $DC_s/topic_m
 			rm -f $DT/slt $DT/*.x
 		else
-			echo $(sed -n 1p $DC/addons/stats/.tpc) > $DC_s/topic.id
-			echo $(sed -n 2p $DC/addons/stats/.tpc) >> $DC_s/topic.id
+			echo $(sed -n 1p $DC/addons/stats/.tpc) > $DC_s/cnfg8
+			echo $(sed -n 2p $DC/addons/stats/.tpc) >> $DC_s/cnfg8
 			echo $(sed -n 3p $DC/addons/stats/.tpc) > $DC_s/topic_m
 			rm -f $DT/slt $DT/*.x
 		fi

@@ -3,7 +3,7 @@ killall prct
 killall play
 killall lrng
 DS_pp=/usr/share/idiomind/addons/Practice
-tpc=$(sed -n 1p $HOME/.config/idiomind/s/topic.id)
+tpc=$(sed -n 1p $HOME/.config/idiomind/s/cnfg8)
 lgtl=$(sed -n 2p $HOME/.config/idiomind/s/lang)
 DIR2="$HOME/.config/idiomind/topics/$lgtl/$tpc/Practice"
 DIR3="$HOME/.config/idiomind/topics/$lgtl/$tpc"

@@ -56,8 +56,8 @@ if [ $1 = n_t ]; then
 			mkdir $DM_tl/"$jlb"/words
 			mkdir $DM_tl/"$jlb"/words/images
 			mkdir $DC_tl/"$jlb"
-			> $DC_tl/"$jlb"/.winx
-			> $DC_tl/"$jlb"/.sinx
+			> $DC_tl/"$jlb"/cnfg3
+			> $DC_tl/"$jlb"/cnfg4
 			mkdir $DC_tl/"$jlb"/Practice
 			cp $DS/addons/Practice/default/.* $DC_tl/"$jlb"/Practice
 			cd $DC_tl/"$jlb"
@@ -66,14 +66,14 @@ if [ $1 = n_t ]; then
 			cp -f *.mp3 "$DM_tl/$jlb"
 			cp -f -r ./words "$DM_tl/$jlb/"
 			cd "$DC_tl/$tpc"
-			cp -f .sinx "$DC_tl/$jlb"/.ainx
-			cp -f .sinx "$DC_tl/$jlb"/.sinx
+			cp -f cnfg4 "$DC_tl/$jlb"/cnfg5
+			cp -f cnfg4 "$DC_tl/$jlb"/cnfg4
 			cp -f tpc.sh "$DC_tl/$jlb"/tpc.sh
-			cp -f .winx "$DC_tl/$jlb"/.winx
-			cp -f .stts "$DC_tl/$jlb"/.stts
-			cp -f .t-inx "$DC_tl/$jlb"/.t-inx
-			cp -f .tlng-inx "$DC_tl/$jlb"/.tlng-inx
-			cp -f .tok-inx "$DC_tl/$jlb"/.tok-inx
+			cp -f cnfg3 "$DC_tl/$jlb"/cnfg3
+			cp -f cnfg8 "$DC_tl/$jlb"/cnfg8
+			cp -f cnfg0 "$DC_tl/$jlb"/cnfg0
+			cp -f cnfg1 "$DC_tl/$jlb"/cnfg1
+			cp -f cnfg2 "$DC_tl/$jlb"/cnfg2
 			cp -f nt "$DC_tl/$jlb"/nt
 			cp -f ./Practice/.* $DC_tl/"$jlb"/Practice
 			grep -v -x -v "$tpc" $DC_tl/.in_s > $DC_tl/in_s
@@ -146,12 +146,12 @@ if [ $1 = n_t ]; then
 			mkdir $DM_tl/"$jlb"/words
 			mkdir $DM_tl/"$jlb"/words/images
 			mkdir $DC_tl/"$jlb"
-			> $DC_tl/"$jlb"/.ainx
-			> $DC_tl/"$jlb"/.sinx
-			> $DC_tl/"$jlb"/.winx
-			> $DC_tl/"$jlb"/.t-inx
-			> $DC_tl/"$jlb"/.tlng-inx
-			echo "1" > $DC_tl/"$jlb"/.stts
+			> $DC_tl/"$jlb"/cnfg5
+			> $DC_tl/"$jlb"/cnfg4
+			> $DC_tl/"$jlb"/cnfg3
+			> $DC_tl/"$jlb"/cnfg0
+			> $DC_tl/"$jlb"/cnfg1
+			echo "1" > $DC_tl/"$jlb"/cnfg8
 			mkdir $DC_tl/"$jlb"/Practice
 			cp $DS/addons/Practice/default/.* $DC_tl/"$jlb"/Practice
 			cp -f $DS/default/tpc.sh $DC_tl/"$jlb"/tpc.sh
@@ -219,10 +219,10 @@ elif [ $1 = n_i ]; then
 		$DS/chng.sh $DS/ifs/info2 fnew & exit 1
 	fi
 	
-	ls=$((50 - $(cat "$DC_tlt/.sinx" | wc -l)))
-	lw=$((50 - $(cat "$DC_tlt/.winx" | wc -l)))
-	s=$(cat "$DC_tlt/.sinx" | wc -l)
-	w=$(cat "$DC_tlt/.winx" | wc -l)
+	ls=$((50 - $(cat "$DC_tlt/cnfg4" | wc -l)))
+	lw=$((50 - $(cat "$DC_tlt/cnfg3" | wc -l)))
+	s=$(cat "$DC_tlt/cnfg4" | wc -l)
+	w=$(cat "$DC_tlt/cnfg3" | wc -l)
 	if [ $s -ge 45 -a $s -lt 50 ]; then
 		is="S <b>$ls</b>"
 	elif [ $s -ge 50 ]; then
@@ -328,8 +328,8 @@ elif [ $1 = n_i ]; then
 			if [ "$chk" = "New*" ]; then
 				$DS/add.sh n_t
 			else
-				echo "$tpe" > $DC_s/fnewm.id
-				echo "$tpe" > $DC_s/fnew.id
+				echo "$tpe" > $DC_s/cnfg7
+				echo "$tpe" > $DC_s/cnfg6
 			fi
 			[ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ] && c=c || c=w
 			
@@ -367,7 +367,7 @@ elif [ $1 = n_s ]; then
 	
 	dct=$DS/addons/Dics/dict
 			
-	if [ $(cat "$DC_tlt/.sinx" | wc -l) -ge 50 ]; then
+	if [ $(cat "$DC_tlt/cnfg4" | wc -l) -ge 50 ]; then
 		$yad --name=idiomind --center --on-top --image=info \
 		--text=" <b>$tpe    </b>\\n\\n $(echo "$int" | sed -n 7p)" \
 		--image-on-top --fixed --sticky --title="$tpe" \
@@ -723,7 +723,7 @@ elif [ $1 = n_w ]; then
 	DM_tlt="$DM_tl/$tpe"
 	DC_tlt="$DC_tl/$tpe"
 
-	if [ $(cat "$DC_tlt/.winx" | wc -l) -ge 50 ]; then
+	if [ $(cat "$DC_tlt/cnfg3" | wc -l) -ge 50 ]; then
 		$yad --name=idiomind --center --on-top --image=info \
 		--text=" <b>$tpe    </b>\\n\\n $(echo "$int" | sed -n 6p)" \
 		--image-on-top --fixed --sticky --title="$tpe" \
@@ -872,7 +872,7 @@ elif [ $1 = edt ]; then
 	if [ "$3" = "F" ]; then
 
 		tpe="$tpc"
-		if [ $(cat "$DC_tlt/.winx" | wc -l) -ge 50 ]; then
+		if [ $(cat "$DC_tlt/cnfg3" | wc -l) -ge 50 ]; then
 		$yad --name=idiomind --center --image=info --on-top \
 		--text=" <b>$(echo "$int" | sed -n 6p)   </b>" \
 		--image-on-top --fixed --sticky --title="$tpc" \
@@ -880,7 +880,7 @@ elif [ $1 = edt ]; then
 		--skip-taskbar --window-icon=idiomind && exit 1
 		fi
 		
-		nw=$(cat "$DC_tlt/.winx" | wc -l)
+		nw=$(cat "$DC_tlt/cnfg3" | wc -l)
 		left=$((50 - $nw))
 		info=$(echo " $(echo "$int" | sed -n 11p)  <b>"$left"</b> $(echo "$int" | sed -n 12p)")
 		if [ $nw -ge 45 ]; then
@@ -937,7 +937,7 @@ elif [ $1 = edt ]; then
 		while [ $n -le "$(cat ./slts | head -50 | wc -l)" ]; do
 
 				trgt=$(sed -n "$n"p ./slts | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-			if [ $(cat "$DC_tlt/.winx" | wc -l) -ge 50 ]; then
+			if [ $(cat "$DC_tlt/cnfg3" | wc -l) -ge 50 ]; then
 				echo "$trgt
 " > logw
 				
@@ -1028,7 +1028,7 @@ elif [ $1 = prc ]; then
 		$DC_s/chng.sh $DS/ifs/info5 fnew & exit 1
 	fi
 
-	nw=$(cat "$DC_tlt/.winx" | wc -l)
+	nw=$(cat "$DC_tlt/cnfg3" | wc -l)
 	if [ $nw -ge 50 ]; then
 		$yad --name=idiomind --center \
 		--image=info --on-top \
@@ -1292,7 +1292,7 @@ elif [ $1 = snt ]; then
 		$DC_s/chng.sh $DS/ifs/info5 fnew & exit 1
 	fi
 
-	nw=$(cat "$DC_tlt/words/.winx" | wc -l)
+	nw=$(cat "$DC_tlt/words/cnfg3" | wc -l)
 	left=$((50 - $nw))
 	if [ "$left" = 0 ]; then
 		exit 1
@@ -1347,7 +1347,7 @@ elif [ $1 = snt ]; then
 	n=1
 	while [ $n -le $(cat ./slts | head -50 | wc -l) ]; do
 		trgt=$(sed -n "$n"p ./slts | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-		if [ $(cat "$DC_tlt/.winx" | wc -l) -ge 50 ]; then
+		if [ $(cat "$DC_tlt/cnfg3" | wc -l) -ge 50 ]; then
 			echo "$trgt" >> logw
 		else
 			result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
@@ -1421,9 +1421,9 @@ elif [ $1 = snt ]; then
 	
 elif [ $1 = prs ]; then
 
-	eht=$(sed -n 3p $DC_s/.rd)
-	wth=$(sed -n 4p $DC_s/.rd)
-	ns=$(cat "$DC_tlt"/.sinx | wc -l)
+	eht=$(sed -n 3p $DC_s/cnfg18)
+	wth=$(sed -n 4p $DC_s/cnfg18)
+	ns=$(cat "$DC_tlt"/cnfg4 | wc -l)
 	lvbr=$(cat $DS/default/$lgt/verbs)
 	lnns=$(cat $DS/default/$lgt/nouns)
 	ladv=$(cat $DS/default/$lgt/adverbs)
@@ -1481,7 +1481,7 @@ elif [ $1 = prs ]; then
 
 	if [ "$(echo "$prdt" | cut -d "|" -f1 | sed -n 1p)" = "audio" ]; then
 
-		left=$((50 - $(cat "$DC_tlt/.sinx" | wc -l)))
+		left=$((50 - $(cat "$DC_tlt/cnfg4" | wc -l)))
 		key=$(sed -n 2p $DC_s/cnfg3)
 		
 		if [ -z "$key" ]; then
@@ -1503,7 +1503,7 @@ elif [ $1 = prs ]; then
 			
 		else
 			if [ -z "$tpe" ]; then
-				$DC_s/chng.sh $DS/ifs/info5 fnew & exit 1
+				$DS/chng.sh $DS/ifs/info5 fnew & exit 1
 			fi
 			cd $DT_r
 			
@@ -1630,7 +1630,7 @@ $trgt" >> log
 				tcnm="$tpe"
 			fi
 
-			left=$((50 - $(cat "$DC_tlt"/.sinx | wc -l)))
+			left=$((50 - $(cat "$DC_tlt"/cnfg4 | wc -l)))
 			info=$(echo "Puedes agregar  <b>"$left"</b>  oraciones")
 			if [ $ns -ge 45 ]; then
 				info=$(echo "Puedes agregar  <span color='#EA355F'><b>"$left"</b></span>  oraciones en $tcnm")
@@ -1706,7 +1706,7 @@ $trgt" >> log
 						
 						if [ $(sed -n 1p "$sntc.txt" | wc -$c) -eq 1 ]; then
 						
-							if [ $(cat "$DC_tlt"/.winx | wc -l) -ge 50 ]; then
+							if [ $(cat "$DC_tlt"/cnfg3 | wc -l) -ge 50 ]; then
 								echo "
 $sntc" >> ./slog
 						
@@ -1723,7 +1723,7 @@ $sntc" >> ./slog
 						
 						elif [ $(sed -n 1p "$sntc.txt" | wc -$c) -ge 1 ]; then
 						
-							if [ $(cat "$DC_tlt"/.sinx | wc -l) -ge 50 ]; then
+							if [ $(cat "$DC_tlt"/cnfg4 | wc -l) -ge 50 ]; then
 								echo "
 $sntc" >> ./wlog
 						
@@ -1855,7 +1855,7 @@ $sntc" >> ./wlog
 							nme=$(echo "$exmp" | "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
 						fi # es para obtener el nobre de archivo
 					
-						if [ $(cat "$DC_tlt"/.winx | wc -l) -ge 50 ]; then
+						if [ $(cat "$DC_tlt"/cnfg3 | wc -l) -ge 50 ]; then
 							echo "
 $trgt" >> ./wlog
 					
@@ -2185,7 +2185,7 @@ $trgt" >> ./wlog
 					while [ $n -le $(cat slts | head -50 | wc -l) ]; do
 						sntc=$(sed -n "$n"p slts)
 						if [ $(echo "$sntc" | wc -$c) = 1 ]; then
-							if [ $(cat "$DC_tlt"/.winx | wc -l) -ge 50 ]; then
+							if [ $(cat "$DC_tlt"/cnfg3 | wc -l) -ge 50 ]; then
 								echo "
 $sntc" >> ./wlog
 						
@@ -2209,7 +2209,7 @@ $sntc" >> ./wlog
 						
 						elif [ $(echo "$sntc" | wc -$c) -ge 1 ]; then
 							
-							if [ $(cat "$DC_tlt"/.sinx | wc -l) -ge 50 ]; then
+							if [ $(cat "$DC_tlt"/cnfg4 | wc -l) -ge 50 ]; then
 								echo "
 $sntc" >> ./slog
 						
@@ -2427,7 +2427,7 @@ $sntc" >> ./slog
 							nme=$(echo "$exmp" | "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
 						fi
 					
-						if [ $(cat "$DC_tlt"/.winx | wc -l) -ge 50 ]; then
+						if [ $(cat "$DC_tlt"/cnfg3 | wc -l) -ge 50 ]; then
 							echo "
 $itm" >> ./wlog
 					

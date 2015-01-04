@@ -1,11 +1,8 @@
 #!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
-tpc=$(sed -n 1p $HOME/.config/idiomind/s/topic.id)
-lgtl=$(sed -n 2p $HOME/.config/idiomind/s/lang)
-DC_tlt="$HOME/.config/idiomind/topics/$lgtl/$tpc"
 DS_pp="/usr/share/idiomind/addons/Practice"
-eht=$(sed -n 13p $HOME/.config/idiomind/s/.rd)
-wth=$(sed -n 14p $HOME/.config/idiomind/s/.rd)
+eht=$(sed -n 13p $HOME/.config/idiomind/s/cnfg18)
+wth=$(sed -n 14p $HOME/.config/idiomind/s/cnfg18)
 int="$(sed -n 59p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
 btn="$(sed -n 58p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
 

@@ -62,23 +62,23 @@ elif [ $1 = updt ]; then
 	exit
 
 elif [ $1 = srch ]; then
-	if [ ! -f $DC_s/updt ]; then
-		echo `date +%d` > $DC_s/updt
+	if [ ! -f $DC_s/cnfg13 ]; then
+		echo `date +%d` > $DC_s/cnfg13
 	fi
 
-	d1=$(cat $DC_s/updt)
+	d1=$(cat $DC_s/cnfg13)
 	d2=`date +%d`
 
-	if [ $(cat $DC_s/updt) = 28 ]; then
-		rm -f $DC_s/updt_l
+	if [ $(cat $DC_s/cnfg13) = 28 ]; then
+		rm -f $DC_s/cnfg14
 	fi
 
-	[ -f $DC_s/updt_l ] && exit 1
+	[ -f $DC_s/cnfg14 ] && exit 1
 
-	if [ $(cat $DC_s/updt) -ne $(date +%d) ]; then
+	if [ $(cat $DC_s/cnfg13) -ne $(date +%d) ]; then
 		sleep 1
 	
-	echo "$d2" > $HOME/.config/idiomind/s/updt
+	echo "$d2" > $DC_s/cnfg13
 	wget -O/dev/null -q http://tmp.site50.net/uploads/recents/19Q.Adverbs%20of%20frequency.idmnd && yad --text="<b>  Esta disponible una nueva version  </b>" \
 	--image=info --title="Idiomind 1.5.0" --window-icon=idiomind \
 	--on-top --skip-taskbar --sticky \
@@ -91,9 +91,9 @@ elif [ $1 = srch ]; then
 	if [ "$ret" -eq 0 ]; then
 		xdg-open http://www.idiomind.com.ar/downloads.html & exit
 	elif [ "$ret" -eq 2 ]; then
-		echo `date +%d` > $HOME/.config/idiomind/s/updt & exit
+		echo `date +%d` > $DC_s/cnfg13 & exit
 	elif [ "$ret" -eq 1 ]; then
-		echo `date +%d` > $HOME/.config/idiomind/s/updt_l & exit
+		echo `date +%d` > $HOME/.config/idiomind/s/cnfg14 & exit
 	fi  || exit 1
 fi
 
@@ -112,8 +112,8 @@ elif [ $1 = pdf ]; then
 		mkdir $DT/mkhtml/images
 		nts=$(cat -e "$DC_tlt/nt" | sed 's/\$/<br>/g')
 		cd $DT/mkhtml
-		cp -f "$DC_tlt/.winx" w.inx.l
-		cp -f "$DC_tlt/.sinx" s.inx.l
+		cp -f "$DC_tlt/cnfg3" w.inx.l
+		cp -f "$DC_tlt/cnfg4" s.inx.l
 		iw=w.inx.l
 		is=s.inx.l
 

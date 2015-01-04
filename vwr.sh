@@ -2,8 +2,8 @@
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
 
-wth=$(sed -n 5p $DC_s/.rd)
-eht=$(sed -n 6p $DC_s/.rd)
+wth=$(sed -n 5p $DC_s/cnfg18)
+eht=$(sed -n 6p $DC_s/cnfg18)
 ap=$(cat $DC_s/cnfg1 | sed -n 5p)
 echo "_" >> $DC/addons/stats/.tmp &
 re='^[0-9]+$'
@@ -11,9 +11,9 @@ v="$1"
 now="$2" # es el nombre de la lista (file name)
 nuw="$3" # es el numero de posicion del item (file name) en la lista
 if [ "$v" = v1 ]; then
-	ind="$DC_tlt/.tlng-inx"
+	ind="$DC_tlt/cnfg1"
 elif [ "$v" = v2 ]; then
-	ind="$DC_tlt/.tok-inx"
+	ind="$DC_tlt/cnfg2"
 fi
 if ! [[ $nuw =~ $re ]]; then
 	nuw=$(cat "$ind" \

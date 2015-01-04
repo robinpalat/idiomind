@@ -61,175 +61,175 @@ if [ -z "$1" ]; then
 				echo "--new session"
 
 				# set size screen 
-				xrandr | grep '*' | awk '{ print $1 }' > $DC_s/.rd
-				sed -i 's/x/\n/' $DC_s/.rd
-				y=$(sed -n 2p $DC_s/.rd)
+				xrandr | grep '*' | awk '{ print $1 }' > $DC_s/cnfg18
+				sed -i 's/x/\n/' $DC_s/cnfg18
+				y=$(sed -n 2p $DC_s/cnfg18)
 				
 				(
 				if [ $y -gt 1200 ]; then
 					#play posicion 
-					echo 1000 > $DC_s/.pst
+					echo 1000 > $DC_s/cnfg17
 					#topic tamaño 3 - 4 
-					echo 450 >> $DC_s/.rd
-					echo 520 >> $DC_s/.rd
+					echo 450 >> $DC_s/cnfg18
+					echo 520 >> $DC_s/cnfg18
 					
 					#trgt tamanño 5 - 6 
-					echo 500 >> $DC_s/.rd
-					echo 320 >> $DC_s/.rd
+					echo 500 >> $DC_s/cnfg18
+					echo 320 >> $DC_s/cnfg18
 					
 					#edit tamaño 7 - 8
-					echo 260 >> $DC_s/.rd
-					echo 190 >> $DC_s/.rd
+					echo 260 >> $DC_s/cnfg18
+					echo 190 >> $DC_s/cnfg18
 					
 					#play tamaño  9 - 10 - 11
-					echo 125 >> $DC_s/.rd
-					echo 380 >> $DC_s/.rd
+					echo 125 >> $DC_s/cnfg18
+					echo 380 >> $DC_s/cnfg18
 					
 					#new la posicion  12 - 13
-					echo 450 >> $DC_s/.rd
-					echo 100 >> $DC_s/.rd
+					echo 450 >> $DC_s/cnfg18
+					echo 100 >> $DC_s/cnfg18
 					
 					#practice tamaño 14 - 15
-					echo 470 >> $DC_s/.rd
-					echo 300 >> $DC_s/.rd
+					echo 470 >> $DC_s/cnfg18
+					echo 300 >> $DC_s/cnfg18
 					exit
 					
 				elif [ $y -ge 1080 ]; then  # 1024 -  la mia
 					#play posicion 
-					echo 800 > $DC_s/.pst
+					echo 800 > $DC_s/cnfg17
 					#topic tamaño 3 - 4 
-					echo 450 >> $DC_s/.rd #FIXED! #w
-					echo 520 >> $DC_s/.rd #h
+					echo 450 >> $DC_s/cnfg18 #FIXED! #w
+					echo 520 >> $DC_s/cnfg18 #h
 					
 					#trgt tamanño 5 - 6 
-					echo 500 >> $DC_s/.rd
-					echo 320 >> $DC_s/.rd
+					echo 500 >> $DC_s/cnfg18
+					echo 320 >> $DC_s/cnfg18
 					
 					#edit tamaño 7 - 8
-					echo 260 >> $DC_s/.rd
-					echo 190 >> $DC_s/.rd
+					echo 260 >> $DC_s/cnfg18
+					echo 190 >> $DC_s/cnfg18
 					
 					#play tamaño  9 - 10 - 
-					echo 100 >> $DC_s/.rd
-					echo 300 >> $DC_s/.rd
+					echo 100 >> $DC_s/cnfg18
+					echo 300 >> $DC_s/cnfg18
 					
 					#new la posicion  11 - 12
-					echo 450 >> $DC_s/.rd
-					echo 100 >> $DC_s/.rd
+					echo 450 >> $DC_s/cnfg18
+					echo 100 >> $DC_s/cnfg18
 					
 					#practice tamaño 13 - 14
-					echo 470 >> $DC_s/.rd
-					echo 300 >> $DC_s/.rd
+					echo 470 >> $DC_s/cnfg18
+					echo 300 >> $DC_s/cnfg18
 					exit
 					
 				elif [ $y -ge 1024 ]; then # 1024
 					#play posicion  1 
-					echo 800 > $DC_s/.pst
+					echo 800 > $DC_s/cnfg17
 					
 					#topic tamaño 3 - 4 
-					echo 430 >> $DC_s/.rd
-					echo 490 >> $DC_s/.rd
+					echo 430 >> $DC_s/cnfg18
+					echo 490 >> $DC_s/cnfg18
 					
 					#trgt tamanño 5 - 6 
-					echo 490 >> $DC_s/.rd
-					echo 320 >> $DC_s/.rd
+					echo 490 >> $DC_s/cnfg18
+					echo 320 >> $DC_s/cnfg18
 					
 					#edit tamaño 7 - 8 
-					echo 260 >> $DC_s/.rd
-					echo 190 >> $DC_s/.rd
+					echo 260 >> $DC_s/cnfg18
+					echo 190 >> $DC_s/cnfg18
 					
 					#play tamaño  6 - 10 - 11
-					echo 100 >> $DC_s/.rd
-					echo 320 >> $DC_s/.rd
+					echo 100 >> $DC_s/cnfg18
+					echo 320 >> $DC_s/cnfg18
 					
 					#new la posicion  12 - 13
-					echo 450 >> $DC_s/.rd
-					echo 100 >> $DC_s/.rd
+					echo 450 >> $DC_s/cnfg18
+					echo 100 >> $DC_s/cnfg18
 					
 					#practice tamaño 14 - 15
-					echo 470 >> $DC_s/.rd
-					echo 300 >> $DC_s/.rd
+					echo 470 >> $DC_s/cnfg18
+					echo 300 >> $DC_s/cnfg18
 					exit
 					
 				elif [ $y -gt 700 ]; then # 720 el del negocio
 					#play posicion  1
-					echo 520 > $DC_s/.pst
+					echo 520 > $DC_s/cnfg17
 					
 					#topic tamaño 2 -3
-					echo 420 >> $DC_s/.rd
-					echo 480 >> $DC_s/.rd
+					echo 420 >> $DC_s/cnfg18
+					echo 480 >> $DC_s/cnfg18
 					
 					#trgt tamaño 4 - 5 
-					echo 470 >> $DC_s/.rd
-					echo 320 >> $DC_s/.rd
+					echo 470 >> $DC_s/cnfg18
+					echo 320 >> $DC_s/cnfg18
 					
 					#edit tamaño  6 - 7 
-					echo 230 >> $DC_s/.rd
-					echo 170 >> $DC_s/.rd
+					echo 230 >> $DC_s/cnfg18
+					echo 170 >> $DC_s/cnfg18
 					
 					#play tamaño  8 - 9 
-					echo 100 >> $DC_s/.rd
-					echo 300 >> $DC_s/.rd
+					echo 100 >> $DC_s/cnfg18
+					echo 300 >> $DC_s/cnfg18
 					
 					#new posicion  10 - 11
-					echo 200 >> $DC_s/.rd
-					echo 50 >> $DC_s/.rd
+					echo 200 >> $DC_s/cnfg18
+					echo 50 >> $DC_s/cnfg18
 					
 					#practice tamaño  12 - 13
-					echo 460 >> $DC_s/.rd
-					echo 250 >> $DC_s/.rd
+					echo 460 >> $DC_s/cnfg18
+					echo 250 >> $DC_s/cnfg18
 					exit
 					
 				elif [ $y -gt 599 ]; then # 600 · 	la de mama
 					#play position 
-					echo 520 > $DC_s/.pst
+					echo 520 > $DC_s/cnfg17
 					
 					#topic tamaño 
-					echo 400 >> $DC_s/.rd
-					echo 460 >> $DC_s/.rd
+					echo 400 >> $DC_s/cnfg18
+					echo 460 >> $DC_s/cnfg18
 					
 					#trgt tamaño 
-					echo 450 >> $DC_s/.rd
-					echo 300 >> $DC_s/.rd
+					echo 450 >> $DC_s/cnfg18
+					echo 300 >> $DC_s/cnfg18
 					
 					#edit tamaño 6 - 7
-					echo 230 >> $DC_s/.rd
-					echo 170 >> $DC_s/.rd
+					echo 230 >> $DC_s/cnfg18
+					echo 170 >> $DC_s/cnfg18
 					
 					#play tamaño 
-					echo 100 >> $DC_s/.rd
-					echo 250 >> $DC_s/.rd
+					echo 100 >> $DC_s/cnfg18
+					echo 250 >> $DC_s/cnfg18
 					
 					#new posicion 
-					echo 200 >> $DC_s/.rd
-					echo 50 >> $DC_s/.rd
+					echo 200 >> $DC_s/cnfg18
+					echo 50 >> $DC_s/cnfg18
 					
 					#practice tamaño 
-					echo 460 >> $DC_s/.rd
-					echo 250 >> $DC_s/.rd
+					echo 460 >> $DC_s/cnfg18
+					echo 250 >> $DC_s/cnfg18
 					exit
 					
 				elif [ $y -gt 400 ]; then # 400   FALTAAAAA
 					# play position 
-					echo 420 > $DC_s/.pst
+					echo 420 > $DC_s/cnfg17
 					#topic tamaño 
-					echo 400 >> $DC_s/.rd
-					echo 460 >> $DC_s/.rd
+					echo 400 >> $DC_s/cnfg18
+					echo 460 >> $DC_s/cnfg18
 					#trgt tamaño 
-					echo 400 >> $DC_s/.rd
-					echo 280 >> $DC_s/.rd
+					echo 400 >> $DC_s/cnfg18
+					echo 280 >> $DC_s/cnfg18
 					#edit tamaño 
-					echo 500 >> $DC_s/.rd
-					echo 320 >> $DC_s/.rd
+					echo 500 >> $DC_s/cnfg18
+					echo 320 >> $DC_s/cnfg18
 					#play tamañño 
-					echo 500 >> $DC_s/.rd
-					echo 320 >> $DC_s/.rd
+					echo 500 >> $DC_s/cnfg18
+					echo 320 >> $DC_s/cnfg18
 					#new posicion 
-					echo 50 >> $DC_s/.rd
-					echo 200 >> $DC_s/.rd
+					echo 50 >> $DC_s/cnfg18
+					echo 200 >> $DC_s/cnfg18
 					#practice tamaño 
-					echo 250 >> $DC_s/.rd
-					echo 420 >> $DC_s/.rd
+					echo 250 >> $DC_s/cnfg18
+					echo 420 >> $DC_s/cnfg18
 					exit
 				fi
 				)
@@ -261,40 +261,40 @@ if [ -z "$1" ]; then
 				while [ $n -le "$(cat "$DC_tl/.in" | head -30 | wc -l )" ]; do
 					tp=$(sed -n "$n"p "$DC_tl/.in")
 					
-					if [ -f "$DC_tl/$tp/.trw" ]; then
-						dte=$(cat "$DC_tl/$tp/.trw")
-						dts=$(cat "$DC_tl/$tp/.trw" | wc -l)
+					if [ -f "$DC_tl/$tp/cnfg9" ]; then
+						dte=$(cat "$DC_tl/$tp/cnfg9")
+						dts=$(cat "$DC_tl/$tp/cnfg9" | wc -l)
 						if [ $dts = 1 ]; then
-							dte=$(sed -n 1p "$DC_tl/$tp/.trw")
+							dte=$(sed -n 1p "$DC_tl/$tp/cnfg9")
 							TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 							RM=$((100*$TM/10))
 						elif [ $dts = 2 ]; then
-							dte=$(sed -n 2p "$DC_tl/$tp/.trw")
+							dte=$(sed -n 2p "$DC_tl/$tp/cnfg9")
 							TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 							RM=$((100*$TM/25))
 						elif [ $dts = 3 ]; then
-							dte=$(sed -n 3p "$DC_tl/$tp/.trw")
+							dte=$(sed -n 3p "$DC_tl/$tp/cnfg9")
 							TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 							RM=$((100*$TM/60))
 						elif [ $dts = 4 ]; then
-							dte=$(sed -n 4p "$DC_tl/$tp/.trw")
+							dte=$(sed -n 4p "$DC_tl/$tp/cnfg9")
 							TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 							RM=$((100*$TM/150))
 						fi
 						nstll=$(grep -Fxo "$tp" "$DC_tl/.nstll")
 							if [ -n "$nstll" ]; then
 								if [ "$RM" -ge 100 ]; then
-									echo "9" > "$DC_tl/$tp/.stts"
+									echo "9" > "$DC_tl/$tp/cnfg8"
 								fi
 								if [ "$RM" -ge 200 ]; then
-									echo "10" > "$DC_tl/$tp/.stts"
+									echo "10" > "$DC_tl/$tp/cnfg8"
 								fi
 							else
 								if [ "$RM" -ge 100 ]; then
-									echo "4" > "$DC_tl/$tp/.stts"
+									echo "4" > "$DC_tl/$tp/cnfg8"
 								fi
 								if [ "$RM" -ge 200 ]; then
-									echo "5" > "$DC_tl/$tp/.stts"
+									echo "5" > "$DC_tl/$tp/cnfg8"
 								fi
 							fi
 					fi
@@ -326,8 +326,8 @@ if [[ "$1" = "panel" ]]; then
 	fi
 
 elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
-	wth=$(sed -n 4p $DC_s/.rd)
-	eht=$(sed -n 3p $DC_s/.rd)
+	wth=$(sed -n 4p $DC_s/cnfg18)
+	eht=$(sed -n 3p $DC_s/cnfg18)
 	dte=$(date "+%d %B")
 	c=$(echo $(($RANDOM%1000)))
 	if [ ! -d $DT ]; then
@@ -371,12 +371,12 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 			title="$inme"
 	    fi
 		cd "$tmp"
-		ws=$(cat ".winx" | wc -l)
-		ss=$(cat ".sinx" | wc -l)
+		ws=$(cat "cnfg3" | wc -l)
+		ss=$(cat "cnfg4" | wc -l)
 		itxt="<big> <b>$title</b></big><small><small><b>\\n   $lgsli  -  $lgtli \\n   Categoty:  $cgy.\\n   $ss  Sentences  -  $ws  Words</b></small></small>\\n"
 		dlck="$DT/p1.$c"
 		
-		cat "$tmp/.t-inx" | awk '{print $0""}' | \
+		cat "$tmp/cnfg0" | awk '{print $0""}' | \
 		$yad --list --name=Idiomind --title="Idiomind" \
 		--ellipsize=END --print-all --image-on-top \
 		--text="$itxt" --class=Idiomind  --no-headers \
@@ -449,18 +449,18 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 				rm -fr./.audio
 				cp -f -r .* "$drit/"
 				cp -f .AL "$dric/.AL"
-				echo "6" > "$dric/.stts"
-				cp -f .t-inx "$dric/.t-inx"
-				cp -f .t-inx "$dric/.tlng-inx"
-				cp -f .winx "$dric/.winx"
-				cp -f .sinx "$dric/.sinx"
-				cp -f .ainx "$dric/.ainx"
+				echo "6" > "$dric/cnfg8"
+				cp -f cnfg0 "$dric/cnfg0"
+				cp -f cnfg0 "$dric/cnfg1"
+				cp -f cnfg3 "$dric/cnfg3"
+				cp -f cnfg4 "$dric/cnfg4"
+				cp -f cnfg5 "$dric/cnfg5"
 				echo "$nt" > "$dric/nt"
 				rm -r -f $DT/idmimp_$c $DT/*.$c
 				cp -f $DS/default/tpc.sh "$dric/tpc.sh"
 				chmod +x "$dric/tpc.sh"
-				echo "$lng" > $DC_s/lang
-				echo "$lgtli" >> $DC_s/lang
+				echo "$lng" > $DC_s/cnfg10
+				echo "$lgtli" >> $DC_s/cnfg10
 				cd "$dric"
 				echo $dte > .impt
 				echo "$inm" >> "$DC/topics/$lgtli/.nstll"
@@ -484,15 +484,15 @@ fi
 
 #--------------topic
 if [ "$1" = topic ]; then
-	eht=$(sed -n 3p $DC_s/.rd)
-	wth=$(sed -n 4p $DC_s/.rd)
-	mde=$(sed -n 2p $DC_s/topic.id)
+	eht=$(sed -n 3p $DC_s/cnfg18)
+	wth=$(sed -n 4p $DC_s/cnfg18)
+	mde=$(sed -n 2p $DC_s/cnfg8)
 	info=$(cat $DS/ifs/info1)
 	STT=$(cat $DC_s/topic_m)
-	title=$(sed -n 3p $DC_s/topic.id)
-	ls0="$DC_tlt/.t-inx"
-	ls1="$DC_tlt/.tlng-inx"
-	ls2="$DC_tlt/.tok-inx"
+	title=$(sed -n 3p $DC_s/cnfg8)
+	ls0="$DC_tlt/cnfg0"
+	ls1="$DC_tlt/cnfg1"
+	ls2="$DC_tlt/cnfg2"
 	nt="$DC_tlt/nt"
 	
 	if [ $(echo "$tpc" | wc -c) -gt 50 ]; then
@@ -516,8 +516,8 @@ if [ "$1" = topic ]; then
 	if echo "$mde" | grep "wn"; then
 		ICON=$DS/images/wn.png
 		cd "$DC_tlt"
-		ws=$(cat .winx | wc -l)
-		ss=$(cat .sinx | wc -l)
+		ws=$(cat cnfg3 | wc -l)
+		ss=$(cat cnfg4 | wc -l)
 		itxt="\\n<big>  <b>$ttl</b> </big> <small><small><b>\\n    $ss Sentences     $ws Words</b></small></small>\\n"
 		cd $DS
 		c=$(echo $(($RANDOM%100000)))
@@ -564,32 +564,32 @@ if [ "$1" = topic ]; then
 			
 		# 2er vista - si el topic tiene contenido para aprender
 		elif [ "$tb1" -ge 1 ]; then
-			if [ -f "$DC_tlt/.trw" ] && [ -f "$DC_tlt/.lk" ]; then
-				dts=$(cat "$DC_tlt/.trw" | wc -l)
+			if [ -f "$DC_tlt/cnfg9" ] && [ -f "$DC_tlt/.lk" ]; then
+				dts=$(cat "$DC_tlt/cnfg9" | wc -l)
 				if [ $dts = 1 ]; then
-					dte=$(sed -n 1p "$DC_tlt/.trw")
+					dte=$(sed -n 1p "$DC_tlt/cnfg9")
 					adv="<b> Hace 15 dias que aprendiste este topic\\n Deseas reiniciarlo para repasar?</b>"
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/10))
 				elif [ $dts = 2 ]; then
-					dte=$(sed -n 2p "$DC_tlt/.trw")
+					dte=$(sed -n 2p "$DC_tlt/cnfg9")
 					adv="<b> Hace 15 dias que aprendiste este topic\\n Deseas reiniciarlo para repasar?</b>"
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/25))
 				elif [ $dts = 3 ]; then
-					dte=$(sed -n 3p "$DC_tlt/.trw")
+					dte=$(sed -n 3p "$DC_tlt/cnfg9")
 					adv="<b> Hace 15 dias que aprendiste este topic\\n Deseas reiniciarlo para repasar?</b>"
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/60))
 				elif [ $dts = 4 ]; then
-					dte=$(sed -n 4p "$DC_tlt/.trw")
+					dte=$(sed -n 4p "$DC_tlt/cnfg9")
 					adv="<b> Hace 15 dias que aprendiste este topic\\n Deseas reiniciarlo para repasar?</b>"
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/150))
 				fi
 				# si el topic aprendido tiene mas de 30 dias ( 100%) entonces pone su nombre en la lista de repasar borra de la lista "ok" , actualiza la lista de topic (mngr.sh mkmn ) y muestra el cuadro con la pregunta de reiniciar para repasar o no .
 				if [ "$RM" -ge 100 ]; then
-					echo "4" > "$DC_tlt/.stts"
+					echo "4" > "$DC_tlt/cnfg8"
 					$DS/mngr.sh mkmn &
 					RM=100
 					$yad --title="$tpc" --window-icon=idiomind \
@@ -604,7 +604,7 @@ if [ "$1" = topic ]; then
 					ret=$? # si se elige reiniciar entonces quita el nomre del topic de la lista " .ok" y la agrega a la lista ".ok_R" (lista repasando) copia la lista "$lso" ( indice total del topic) a la lista "$ls1" ( lista aprendiendo) por ultimo abre el topic
 						if [ "$ret" -eq 2 ]; then
 							rm -f $DT/*.x
-							echo "3" > "$DC_tlt/.stts"
+							echo "3" > "$DC_tlt/cnfg8"
 							$DS/mngr.sh mkmn
 							rm -f "$ls2" 
 							rm -f "$DC_tlt/.lk"
@@ -684,14 +684,14 @@ if [ "$1" = topic ]; then
 						if [ "$ret" -eq 2 ]; then
 							rm -f "$DC_tlt/.lk"
 							rm -f $DT/*.x
-							echo "4" > "$DC_tlt/.stts"
+							echo "4" > "$DC_tlt/cnfg8"
 							$DS/mngr.sh mkmn
 							rm -f "$ls2"
 							cp -f "$ls0" "$ls1" && idiomind topic & exit 1
 							
 						elif [ "$ret" -eq 3 ]; then
 							rm -f $DT/*.x
-							echo "3" > "$DC_tlt/.stts"
+							echo "3" > "$DC_tlt/cnfg8"
 							rm -f "$DC_tlt/.lk" && idiomind topic & exit 1
 						fi
 					
@@ -751,36 +751,36 @@ if [ "$1" = topic ]; then
 			# actualiza la lista de topic para que se actualizen los $DS/imagesos 
 			if [ ! -f "$DC_tlt/.lk" ]; then
 				> "$DC_tlt/.lk"
-				echo "$(date +%m/%d/%Y)" > "$DC_tlt/.trw"
-				echo "7" > "$DC_tlt/.stts"
+				echo "$(date +%m/%d/%Y)" > "$DC_tlt/cnfg9"
+				echo "7" > "$DC_tlt/cnfg8"
 				$DS/mngr.sh mkmn &
 			fi
 			
-			dts=$(cat "$DC_tlt/.trw" | wc -l)
+			dts=$(cat "$DC_tlt/cnfg9" | wc -l)
 			if [ $dts = 1 ]; then
-				dte=$(sed -n 1p "$DC_tlt/.trw")
+				dte=$(sed -n 1p "$DC_tlt/cnfg9")
 				adv="<b> Hace 15 dias que aprendiste este topic\\n Deseas reiniciarlo para repasar?</b>"
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/10))
 			elif [ $dts = 2 ]; then
-				dte=$(sed -n 2p "$DC_tlt/.trw")
+				dte=$(sed -n 2p "$DC_tlt/cnfg9")
 				adv="<b> Hace 15 dias que aprendiste este topic\\n Deseas reiniciarlo para repasar?</b>"
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/25))
 			elif [ $dts = 3 ]; then
-				dte=$(sed -n 3p "$DC_tlt/.trw")
+				dte=$(sed -n 3p "$DC_tlt/cnfg9")
 				adv="<b> Hace 15 dias que aprendiste este topic\\n Deseas reiniciarlo para repasar?</b>"
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/60))
 			elif [ $dts = 4 ]; then
-				dte=$(sed -n 4p "$DC_tlt/.trw")
+				dte=$(sed -n 4p "$DC_tlt/cnfg9")
 				adv="<b> Hace 15 dias que aprendiste este topic\\n Deseas reiniciarlo para repasar?</b>"
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/150))
 			fi
 				
 			if [ "$RM" -ge 100 ]; then
-				echo "4" > "$DC_tlt/.stts"
+				echo "4" > "$DC_tlt/cnfg8"
 				$DS/mngr.sh mkmn &
 				RM=100
 				$yad --title="$tpc" --window-icon=idiomind \
@@ -796,7 +796,7 @@ if [ "$1" = topic ]; then
 					if [ "$ret" -eq 2 ]; then
 						rm -f "$DC_tlt/.lk"
 						rm -f $DT/*.x
-						echo "3" > "$DC_tlt/.stts"
+						echo "3" > "$DC_tlt/cnfg8"
 						$DS/mngr.sh mkmn
 						rm -f "$ls2" 
 						cp -f "$ls0" "$ls1" && idiomind topic & exit 1
@@ -892,8 +892,8 @@ if [ "$1" = topic ]; then
 		l4=$(sed -n 9p "$DC_tlt/.AL")
 		ICON=$DS/images/wn.png
 		cd "$DC_tlt"
-		ws=$(cat .winx | wc -l)
-		ss=$(cat .sinx | wc -l)
+		ws=$(cat cnfg3 | wc -l)
+		ss=$(cat cnfg4 | wc -l)
 		itxt="\\n<big>  <b>$ttl</b></big><small><small><b>\\n    $ss Sentences   $ws Words\\n    Category: $l4\\n    created by: $l1</b></small></small>\\n"
 		cd $DS
 		c=$(echo $(($RANDOM%100000)))
@@ -905,32 +905,32 @@ if [ "$1" = topic ]; then
 		# 1er vista - topic con contenido para aprender
 		if [ "$tb1" -ge 1 ]; then
 		
-			if [ -f "$DC_tlt/.trw" ] && [ -f "$DC_tlt/.lk" ]; then
-				dts=$(cat "$DC_tlt/.trw" | wc -l)
+			if [ -f "$DC_tlt/cnfg9" ] && [ -f "$DC_tlt/.lk" ]; then
+				dts=$(cat "$DC_tlt/cnfg9" | wc -l)
 				if [ $dts = 1 ]; then
-					dte=$(sed -n 1p "$DC_tlt/.trw")
+					dte=$(sed -n 1p "$DC_tlt/cnfg9")
 					adv="<b> Hace 15 dias que aprendiste este topic\\n Deseas reiniciarlo para repasar?</b>"
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/10))
 				elif [ $dts = 2 ]; then
-					dte=$(sed -n 2p "$DC_tlt/.trw")
+					dte=$(sed -n 2p "$DC_tlt/cnfg9")
 					adv="<b> Hace 15 dias que aprendiste este topic\\n Deseas reiniciarlo para repasar?</b>"
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/25))
 				elif [ $dts = 3 ]; then
-					dte=$(sed -n 3p "$DC_tlt/.trw")
+					dte=$(sed -n 3p "$DC_tlt/cnfg9")
 					adv="<b> Hace 15 dias que aprendiste este topic\\n Deseas reiniciarlo para repasar?</b>"
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/60))
 				elif [ $dts = 4 ]; then
-					dte=$(sed -n 4p "$DC_tlt/.trw")
+					dte=$(sed -n 4p "$DC_tlt/cnfg9")
 					adv="<b> Hace 15 dias que aprendiste este topic\\n Deseas reiniciarlo para repasar?</b>"
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/150))
 				fi
 			 # si el topic aprendido tiene mas de 30 dias ( 100%) entonces pone su nombre en la lista de repasar borra de la lista "ok" , actualiza la lista de topic (mngr.sh mkmn ) y muestra el cuadro con la pregunta de reiniciar para repasar o no .
 				if [ "$RM" -ge 100 ]; then
-					echo "4" > "$DC_tlt/.stts"
+					echo "4" > "$DC_tlt/cnfg8"
 					$DS/mngr.sh mkmn &
 					RM=100
 					$yad --title="$tpc" --window-icon=idiomind \
@@ -946,7 +946,7 @@ if [ "$1" = topic ]; then
 						if [ "$ret" -eq 2 ]; then
 							rm -f "$DC_tlt/.lk"
 							rm -f $DT/*.x
-							echo "3" > "$DC_tlt/.stts"
+							echo "3" > "$DC_tlt/cnfg8"
 							$DS/mngr.sh mkmn
 							rm -f "$ls2"
 							cp -f "$ls0" "$ls1" && idiomind topic & exit 1
@@ -1024,14 +1024,14 @@ if [ "$1" = topic ]; then
 						if [ "$ret" -eq 2 ]; then
 							rm -f "$DC_tlt/.lk"
 							rm -f $DT/*.x
-							echo "9" > "$DC_tlt/.stts"
+							echo "9" > "$DC_tlt/cnfg8"
 							$DS/mngr.sh mkmn
 							rm -f "$ls2"
 							cp -f "$ls0" "$ls1" && idiomind topic & exit 1
 							
 						elif [ "$ret" -eq 3 ]; then
 							rm -f $DT/*.x
-							echo "8" > "$DC_tlt/.stts"
+							echo "8" > "$DC_tlt/cnfg8"
 							rm -f "$DC_tlt/.lk" && idiomind topic & exit 1
 						fi
 				
@@ -1090,36 +1090,36 @@ if [ "$1" = topic ]; then
 		elif [ "$tb1" -eq 0 ]; then
 			if [ ! -f "$DC_tlt/.lk" ]; then
 				> "$DC_tlt/.lk"
-				echo "$(date +%m/%d/%Y)" > "$DC_tlt/.trw"
-				echo "7" > "$DC_tlt/.stts"
+				echo "$(date +%m/%d/%Y)" > "$DC_tlt/cnfg9"
+				echo "7" > "$DC_tlt/cnfg8"
 				$DS/mngr.sh mkmn &
 			fi
 			
-			dts=$(cat "$DC_tlt/.trw" | wc -l)
+			dts=$(cat "$DC_tlt/cnfg9" | wc -l)
 			if [ $dts = 1 ]; then
-				dte=$(sed -n 1p "$DC_tlt/.trw")
+				dte=$(sed -n 1p "$DC_tlt/cnfg9")
 				adv="<b> Hace 15 dias que aprendiste este topic\\n Deseas reiniciarlo para repasar?</b>"
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/10))
 			elif [ $dts = 2 ]; then
-				dte=$(sed -n 2p "$DC_tlt/.trw")
+				dte=$(sed -n 2p "$DC_tlt/cnfg9")
 				adv="<b> Hace 15 dias que aprendiste este topic\\n Deseas reiniciarlo para repasar?</b>"
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/25))
 			elif [ $dts = 3 ]; then
-				dte=$(sed -n 3p "$DC_tlt/.trw")
+				dte=$(sed -n 3p "$DC_tlt/cnfg9")
 				adv="<b> Hace 15 dias que aprendiste este topic\\n Deseas reiniciarlo para repasar?</b>"
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/60))
 			elif [ $dts = 4 ]; then
-				dte=$(sed -n 4p "$DC_tlt/.trw")
+				dte=$(sed -n 4p "$DC_tlt/cnfg9")
 				adv="<b> Hace 15 dias que aprendiste este topic\\n Deseas reiniciarlo para repasar?</b>"
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/150))
 			fi
 			
 			if [ "$RM" -ge 100 ]; then
-				echo "9" > "$DC_tlt/.stts"
+				echo "9" > "$DC_tlt/cnfg8"
 				$DS/mngr.sh mkmn &
 				RM=100
 				
@@ -1135,7 +1135,7 @@ if [ "$1" = topic ]; then
 					ret=$?
 					
 					if [ "$ret" -eq 2 ]; then
-						echo "8" > "$DC_tlt/.stts"
+						echo "8" > "$DC_tlt/cnfg8"
 						rm -f "$DC_tlt/.lk"
 						rm -f $DT/*.x
 						$DS/mngr.sh mkmn &
@@ -1252,7 +1252,7 @@ if [ "$1" = topic ]; then
 		--text=" <small>$info</small>" \
 		--expand-column=1 --ellipsize=END --print-all \
 		--column=Name:TEXT --dclick-action='./vwr.sh V1' &
-		cat "$DC_tl/Feeds/.t-inx" | awk '{print $0""}' \
+		cat "$DC_tl/Feeds/cnfg0" | awk '{print $0""}' \
 		| $yad --no-headers --list --listen --plug=$KEY --tabnum=2 \
 		--expand-column=1 --ellipsize=END --print-all \
 		--column=Name:TEXT --dclick-action='./vwr.sh V2' &

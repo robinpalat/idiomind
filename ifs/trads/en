@@ -1,0 +1,63 @@
+
+/ usr / bin / idiomind
+Practice|Edit|Close|Delete|Learning|Learned|Notes|Prayers|Words|Category|Created by|Learned|Weather briefing|However no new items|Review|Delete|News|Filed Content|Update|Install
+
+Error while trying to write|directory does not exist or does not have user permissions
+  corrupt file
+Hás reached the maximum number of topics
+  You have a song with the same name|is rename it to:
+  days have passed since you marked \ n this as learned Want to review it?|do not
+¿Reviewing all or only new|New|All
+Updating
+
+
+/usr/share/idiomind/play.sh
+Leaving|Nothing specified to play |
+Going|Nothing to play |
+Words|Prayers|Scored|Practice|News|Notifications|Audio|Repeat
+
+
+/usr/share/idiomind/add.sh
+Topic|Image|Add|Save Audio|A new topic|Order|Cancel|Change|delete|Add Picture |
+Thread:|Name for the new topic|Have a topic with the same name|This is appointed as:|You have reached the maximum number of threads|You have reached the maximum number of words|THE AMOUNT You reached maximum sentence|No internet|Festival can not process text|Espeak can not process text in japanese|you can add|words|word|topic|Select words to add to the topic|Prayers that were not added for exceeding the number|Selector words|Wait till it finishes \ n the above process|must provide a key \ n Try to get a new one from|here|processing file|Comprabando key|current key is no longer valid or exceeded its quota of daily orders. \ n Try to get one from|Prayers|Prayer|Failed to get text. To make the process successful audio file provided no debebá contain background noise or music because the silences are used to divide|Select|Images|Search images|Image|Prayer|Prayers|Prayer|Prayers that have not been added|not found any prayer|they were added
+
+
+/usr/share/idiomind/mngr.sh
+Erase|Image|Delete |
+Learned|Review|Rename|Delete|Share|PDF|Topic|Audio|Example|Definition|Notes|Google Search|Search Definition|Mark|Mark learned|Review|List words|Cash|Delete this word?|Delete this prayer?|Delete item |? Delete?
+
+
+/usr/share/idiomind/vwr.sh
+pronounce
+
+// usr / share / idiomind / addons / Dics / dict
+add
+Find more dictionaries|Available|Languages|Error installing |
+
+/ usr / share / idiomind / addons / Google_translation_service / cnf
+shut Down
+Using google translator |
+
+/ usr / share / idiomind / addons / Learning_with_news / add
+Save word|Save prayer|Cancel|Create|Close
+Word:|Prayer:|You have reached the maximum number of words|You have reached the maximum number of sentences|You have reached the maximum number of topics|New Topic|No internet
+
+/ usr / share / idiomind / addons / Learning_with_news / cnf
+Clear|Update|Delete|Cancel
+Active Subcripción:|Update to top|You can not delete|Delete subcripción|Name|URL|Crear_Tema|Borrar_Noticias|Borrar_guardado|Subcripciones|New subcripción
+
+/ usr / share / idiomind / addons / Learning_with_news / the
+Cancel |
+Confirm|Delete this word?|Delete|Delete this sentence |? <B> Delete All </ b> \ nThe downloads of subcripciones every 5 days will be automatically deleted?|Delete all content saved?
+
+/ usr / share / idiomind / addons / Learning_with_news / strt
+stop |
+There is an Update in Progress |. No internet|Updating ...|No news or the link are evil|Festival can not process text|Espeak can not process text in japanese|Updated |
+
+/ usr / share / idiomind / addons / Practice / strt
+Reset|Learning|Start|OK|NO|Listen|Help|Next |
+Learned|Easy|Learning|Hard |
+
+/ usr / share / idiomind / addons / Practice / prct
+reboot
+Complete Practice|Getting Started \ nYou Have 1 Word|To begin you must be at least 1 sentence

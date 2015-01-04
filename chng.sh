@@ -16,16 +16,16 @@ if [[ "$1" = chngi ]]; then
 	tlck="$DS/images/chng.mp3"
 	imgt="/$DT/FRONT_COVER.jpeg"
 	rm -f "$DT/FRONT_COVER.jpeg"
-	wth=$(sed -n 10p $DC_s/.rd)
-	eht=$(sed -n 9p $DC_s/.rd)
-	nim=$(sed -n 11p $DC_s/.rd)
+	wth=$(sed -n 10p $DC_s/cnfg18)
+	eht=$(sed -n 9p $DC_s/cnfg18)
+	nim=$(sed -n 11p $DC_s/cnfg18)
 	indp="$DT/.$user/indp"
 	br="$DS/images/br.png"
 	br2="$DS/images/br2.png"
 	br3="$DS/images/br3.png"
 	
 	if [[ -z $(sed -n 1p $DC_s/cnfg2) ]]; then
-	pst=$(sed -n 1p $DC_s/.pst)
+	pst=$(sed -n 1p $DC_s/cnfg17)
 		echo 8 > $DC_s/cnfg2
 		echo $pst >> $DC_s/cnfg2
 		bcl=$(sed -n 1p $DC_s/cnfg2)
@@ -256,11 +256,11 @@ elif [ "$1" != chngi ]; then
 		/usr/share/idiomind/ifs/1u &
 		exit 1
 	fi
-	if [ ! -f $DC_s/chng ]; then
-		> $DC_s/chng
+	if [ ! -f $DC_s/cnfg0 ]; then
+		> $DC_s/cnfg0
 		fi
-		eht=$(sed -n 3p $DC_s/.rd)
-		wth=$(sed -n 4p $DC_s/.rd)
+		eht=$(sed -n 3p $DC_s/cnfg18)
+		wth=$(sed -n 4p $DC_s/cnfg18)
 		img1=$DS/images/img1.png
 		img2=$DS/images/img2.png
 		img3=$DS/images/img3.png
@@ -280,7 +280,7 @@ elif [ "$1" != chngi ]; then
 		info2=$(cat $DC_tl/.in | wc -l)
 		cd $DC_s
 
-		VAR=$(cat $DC_s/chng | $yad --name=idiomind --ellipsize=END \
+		VAR=$(cat $DC_s/cnfg0 | $yad --name=idiomind --ellipsize=END \
 		--class=idiomind --center --separator="" \
 		"$text" --width=$wth --height=$eht \
 		--no-headers --list --window-icon=idiomind \

@@ -2,8 +2,8 @@
 source /usr/share/idiomind/ifs/c.conf
 
 if [ -z $1 ]; then
-	msj=$(sed -n 1p $DC_s/.sncardd)
-	cn=$(sed -n 2p $DC_s/.sncardd)
+	msj=$(sed -n 1p $DC_s/cnfg20)
+	cn=$(sed -n 2p $DC_s/cnfg20)
 	
 	if [ -z "$cn" ]; then
 		msj=" ( No especificado )"
@@ -88,7 +88,7 @@ elif [ $1 = rec ]; then
 	DT_r="$2"
 	t="$3"
 	killall play
-	inf=$(sed -n 1p $DC_s/.sncardd)
+	inf=$(sed -n 1p $DC_s/cnfg20)
 	rm -f $DT_r/audtm.mp3
 	
 	$yad --fixed --align=center --timeout="$t" \
@@ -227,8 +227,8 @@ elif [ $1 = chng ]; then
 		fi
 	done <<< "$(get_pacmd_section $id properties)"
 
-	echo "$message" > $DC_s/.sncardd
-	echo "$device_icon_name" >> $DC_s/.sncardd
+	echo "$message" > $DC_s/cnfg20
+	echo "$device_icon_name" >> $DC_s/cnfg20
 	exit 1
 
 fi

@@ -13,9 +13,9 @@ if [ "$2" = f ]; then
 	cd "$DC_tlt/Practice"
 	DF=$DS_pp/df.sh
 	vw=#
-	Wi="$DC_tlt/.winx"
-	Si="$DC_tlt/.sinx"
-	Li="$DC_tlt/.tlng-inx"
+	Wi="$DC_tlt/cnfg3"
+	Si="$DC_tlt/cnfg4"
+	Li="$DC_tlt/cnfg1"
 	if [ "$1" = l ]; then
 		vw=$DS_pp/lrng
 	fi
@@ -39,15 +39,13 @@ if [ "$2" = f ]; then
 		sed '/^$/d' fin.tmp > fin1
 	else
 		cd "$DC_tlt/Practice"
-		
-		if [ "$(cat "$Li" | wc -l)" < 1 ]; then
-			echo "$(grep -F -x -v -f "$Si" "$Li" | wc -l)" > idxfin
-			grep -F -x -v -f "$Si" "$Li" > fin1
-		else
-			echo "$(cat "$Wi" | wc -l)" > idxfin
-			cat "$Wi" > fin1
-		fi
-		
+			if [ "$(cat "$Si" | wc -l)" -gt 0 ]; then
+				echo "$(grep -F -x -v -f "$Si" "$Li" | wc -l)" > idxfin
+				grep -F -x -v -f "$Si" "$Li" > fin1
+			else
+				echo "$(cat "$Li" | wc -l)" > idxfin
+				cat "$Li" > fin1
+			fi
 		rm *.ok *.no
 		if [ "$(cat idxfin)" -lt 5 ]; then
 			$yad --form --center --borders=5 --image=info \
@@ -231,9 +229,9 @@ elif [ "$2" = m ]; then
 	cd "$DC_tlt/Practice"
 	DMC=$DS_pp/dmc.sh
 	vw="#"
-	Wi="$DC_tlt/.winx"
-	Si="$DC_tlt/.sinx"
-	Li="$DC_tlt/.tlng-inx"
+	Wi="$DC_tlt/cnfg3"
+	Si="$DC_tlt/cnfg4"
+	Li="$DC_tlt/cnfg1"
 	if [ "$1" = l ]; then
 		vw=$DS_pp/lrng
 	fi
@@ -256,12 +254,12 @@ elif [ "$2" = m ]; then
 		rm *.ok *.no
 		sed '/^$/d' mcin.tmp > mcin1
 	else
-		if [ "$(cat "$Li" | wc -l)" < 1 ]; then
+		if [ "$(cat "$Si" | wc -l)" -gt 0 ]; then
 			echo "$(grep -F -x -v -f "$Si" "$Li" | wc -l)" > idxmcin
 			grep -F -x -v -f "$Si" "$Li" > mcin1
 		else
-			echo "$(cat "$Wi" | wc -l)" > idxmcin
-			cat "$Wi" > mcin1
+			echo "$(cat "$Li" | wc -l)" > idxmcin
+			cat "$Li" > mcin1
 		fi
 		rm *.ok *.no
 		if [ "$(cat idxmcin)" -lt 6 ]; then
@@ -462,9 +460,9 @@ elif [ "$2" = w ]; then
 
 	cd "$DC_tlt/Practice"
 	DLW=$DS_pp/dlw.sh
-	Wi="$DC_tlt/.winx"
-	Si="$DC_tlt/.sinx"
-	Li="$DC_tlt/.tlng-inx"
+	Wi="$DC_tlt/cnfg3"
+	Si="$DC_tlt/cnfg4"
+	Li="$DC_tlt/cnfg1"
 	if [ "$1" = l ]; then
 	    vw=$DS_pp/lrng
 	fi
@@ -488,15 +486,13 @@ elif [ "$2" = w ]; then
 		sed '/^$/d' lwin.tmp > lwin1
 	else
 		cd "$DC_tlt/Practice"
-		
-		if [ "$(cat "$Li" | wc -l)" < 1 ]; then
+		if [ "$(cat "$Si" | wc -l)" -gt 0 ]; then
 			echo "$(grep -F -x -v -f "$Si" "$Li" | wc -l)" > idxlwin
 			grep -F -x -v -f "$Si" "$Li" > lwin1
 		else
-			echo "$(cat "$Wi" | wc -l)" > idxlwin
-			cat "$Wi" > lwin1
+			echo "$(cat "$Li" | wc -l)" > idxlwin
+			cat "$Li" > lwin1
 		fi
-		
 		rm *.ok *.no
 		if [ $(cat idxlwin) -lt 1 ]; then
 			$yad --form --center --borders=5 --image=info \
@@ -678,14 +674,9 @@ elif [ "$2" = s ]; then
 
 	cd "$DC_tlt/Practice"
 	DLS=$DS_pp/dls.sh
-	Wi="$DC_tlt/.winx"
-	Si="$DC_tlt/.sinx"
-	if [ -f "$DC_tlt/.tok-inx" ]; then
-		Li="$DC_tlt/.tok-inx"
-	else
-		touch "$DC_tlt/.tok-inx"
-		Li="$DC_tlt/.tok-inx"
-	fi
+	Wi="$DC_tlt/cnfg3"
+	Si="$DC_tlt/cnfg4"
+	Li="$DC_tlt/cnfg1"
 	
 	l="$1"
 	if [ -f look_ls ]; then
@@ -709,15 +700,13 @@ elif [ "$2" = s ]; then
 	else
 		cd "$DM_tlt"
 		cd "$DC_tlt/Practice"
-		
-		if [ "$(cat "$Li" | wc -l)" < 1 ]; then
+		if [ "$(cat "$Wi" | wc -l)" -gt 0 ]; then
 			echo "$(grep -F -x -v -f "$Wi" "$Li" | wc -l)" > idxlsin
-			grep -F -x -v -f "$Wi" "$Li" > lsin #SACA LA LISTA DE APRENDIDOS DE LA LISTA DE MP3'S PALABRAS
+			grep -F -x -v -f "$Wi" "$Li" > lsin
 		else
-			echo "$(cat "$Si" | wc -l)" > idxlsin
-			cat "$Si" > lsin
+			echo "$(cat "$Li" | wc -l)" > idxlsin
+			cat "$Li" > lsin
 		fi
-		
 		rm -f *.id *.ok *.no $DT/*.tp
 		if [ "$(cat lsin | wc -l)" -lt 2 ]; then # cuenta, si hay mas de 2 
 			$yad --form --center --borders=5 --skip-taskbar \

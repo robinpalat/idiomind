@@ -5,15 +5,15 @@ int="$(sed -n 27p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
 btn="$(sed -n 21p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
 
 if [ $1 = edit ]; then
-	ttl=$(sed -n 2p $DC_s/fnew.id)
+	ttl=$(sed -n 2p $DC_s/cnfg6)
 	plg1=$(sed -n 1p $DC_s/cnfg3)
 	cnfg1="$DC_s/cnfg1"
-	ti=$(cat "$DC_tl/$tpc/.t-inx" | wc -l)
-	ni="$DC_tl/$tpc/.tlng-inx"
-	bi=$(cat "$DC_tl/$tpc/.tok-inx" | wc -l)
+	ti=$(cat "$DC_tl/$tpc/cnfg0" | wc -l)
+	ni="$DC_tl/$tpc/cnfg1"
+	bi=$(cat "$DC_tl/$tpc/cnfg2" | wc -l)
 	nstll=$(grep -Fxo "$tpc" "$DC_tl"/.nstll)
-	eht=$(sed -n 7p $DC_s/.rd)
-	wth=$(sed -n 8p $DC_s/.rd)
+	eht=$(sed -n 7p $DC_s/cnfg18)
+	wth=$(sed -n 8p $DC_s/cnfg18)
 	slct=$(mktemp $DT/slct.XXXX)
 	img1=$DS/images/ok.png
 	img2=$DS/images/rw.png
@@ -80,21 +80,21 @@ elif [ $1 = inx ]; then
 	fi
 	
 	if [ "$2" = W ]; then
-		if [[ "$(cat "$DC_tlt/.t-inx" | grep "$fns")" ]] && [ -n "$fns" ]; then
+		if [[ "$(cat "$DC_tlt/cnfg0" | grep "$fns")" ]] && [ -n "$fns" ]; then
 			sed -i "s/${fns}/${fns}\n$itm/" "$DC_tlt/.tinx"
-			sed -i "s/${fns}/${fns}\n$itm/" "$DC_tlt/.t-inx"
-			sed -i "s/${fns}/${fns}\n$itm/" "$DC_tlt/.tlng-inx"
+			sed -i "s/${fns}/${fns}\n$itm/" "$DC_tlt/cnfg0"
+			sed -i "s/${fns}/${fns}\n$itm/" "$DC_tlt/cnfg1"
 		else
 			echo "$itm" >> "$DC_tlt/.tinx"
-			echo "$itm" >> "$DC_tlt/.t-inx"
-			echo "$itm" >> "$DC_tlt/.tlng-inx"
+			echo "$itm" >> "$DC_tlt/cnfg0"
+			echo "$itm" >> "$DC_tlt/cnfg1"
 		fi
-		echo "$itm" >> "$DC_tlt/.winx"
+		echo "$itm" >> "$DC_tlt/cnfg3"
 	elif [ "$2" = S ]; then
 		echo "$itm" >> "$DC_tlt"/.tinx
-		echo "$itm" >> "$DC_tlt"/.t-inx
-		echo "$itm" >> "$DC_tlt"/.tlng-inx
-		echo "$itm" >> "$DC_tlt"/.sinx
+		echo "$itm" >> "$DC_tlt"/cnfg0
+		echo "$itm" >> "$DC_tlt"/cnfg1
+		echo "$itm" >> "$DC_tlt"/cnfg4
 	fi
 	
 	lss="$DC_tlt/.tinx"
@@ -102,22 +102,22 @@ elif [ $1 = inx ]; then
 		cat "$lss" | awk '!array_temp[$0]++' > lss_inx
 		sed '/^$/d' lss_inx > "$lss"
 	fi
-	ls0="$DC_tlt/.t-inx"
+	ls0="$DC_tlt/cnfg0"
 	if [ -n "$(cat "$ls0" | sort -n | uniq -dc)" ]; then
 		cat "$ls0" | awk '!array_temp[$0]++' > ls0_inx
 		sed '/^$/d' ls0_inx > "$ls0"
 	fi
-	ls1="$DC_tlt/.tlng-inx"
+	ls1="$DC_tlt/cnfg1"
 	if [ -n "$(cat "$ls1" | sort -n | uniq -dc)" ]; then
 		cat "$ls1" | awk '!array_temp[$0]++' > ls1_inx
 		sed '/^$/d' ls1_inx > "$ls1"
 	fi
-	ls2="$DC_tlt/.winx"
+	ls2="$DC_tlt/cnfg3"
 	if [ -n "$(cat "$ls2" | sort -n | uniq -dc)" ]; then
 		cat "$ls2" | awk '!array_temp[$0]++' > ls2_inx
 		sed '/^$/d' ls2_inx > "$ls2"
 	fi
-	ls3="$DC_tlt/.sinx"
+	ls3="$DC_tlt/cnfg4"
 	if [ -n "$(cat "$ls3" | sort -n | uniq -dc)" ]; then
 		cat "$ls3" | awk '!array_temp[$0]++' > ls3_inx
 		sed '/^$/d' ls3_inx > "$ls3"
@@ -131,69 +131,69 @@ elif [ "$1" = mklg- ]; then
 	echo "# " ;
 	nstll=$(grep -Fxo "$tpc" "$DC_tl/.nstll")
 	if [ -n "$nstll" ]; then
-		if [ $(cat "$DC_tlt/.stts") = 7 ]; then
-			dts=$(cat "$DC_tlt/.trw" | wc -l)
+		if [ $(cat "$DC_tlt/cnfg8") = 7 ]; then
+			dts=$(cat "$DC_tlt/cnfg9" | wc -l)
 			if [ $dts = 1 ]; then
-				dte=$(sed -n 1p "$DC_tlt/.trw")
+				dte=$(sed -n 1p "$DC_tlt/cnfg9")
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/10))
 			elif [ $dts = 2 ]; then
-				dte=$(sed -n 2p "$DC_tlt/.trw")
+				dte=$(sed -n 2p "$DC_tlt/cnfg9")
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-				RM=$((100*$TM/25))
+				RM=$((100*$TM/15))
 			elif [ $dts = 3 ]; then
-				dte=$(sed -n 3p "$DC_tlt/.trw")
+				dte=$(sed -n 3p "$DC_tlt/cnfg9")
+				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
+				RM=$((100*$TM/30))
+			elif [ $dts = 4 ]; then
+				dte=$(sed -n 4p "$DC_tlt/cnfg9")
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/60))
-			elif [ $dts = 4 ]; then
-				dte=$(sed -n 4p "$DC_tlt/.trw")
-				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-				RM=$((100*$TM/150))
 			fi
 			if [ "$RM" -ge 50 ]; then
-				echo "8" > "$DC_tlt/.stts"
+				echo "8" > "$DC_tlt/cnfg8"
 			else
-				echo "6" > "$DC_tlt/.stts"
+				echo "6" > "$DC_tlt/cnfg8"
 			fi
 		else
-			echo "6" > "$DC_tlt/.stts"
+			echo "6" > "$DC_tlt/cnfg8"
 		fi
 		rm -f "$DC_tlt/.lk"
 	else
-		if [ $(cat "$DC_tlt/.stts") = 2 ]; then
-			dts=$(cat "$DC_tlt/.trw" | wc -l)
+		if [ $(cat "$DC_tlt/cnfg8") = 2 ]; then
+			dts=$(cat "$DC_tlt/cnfg9" | wc -l)
 			if [ $dts = 1 ]; then
-				dte=$(sed -n 1p "$DC_tlt/.trw")
+				dte=$(sed -n 1p "$DC_tlt/cnfg9")
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/10))
 			elif [ $dts = 2 ]; then
-				dte=$(sed -n 2p "$DC_tlt/.trw")
+				dte=$(sed -n 2p "$DC_tlt/cnfg9")
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-				RM=$((100*$TM/25))
+				RM=$((100*$TM/15))
 			elif [ $dts = 3 ]; then
-				dte=$(sed -n 3p "$DC_tlt/.trw")
+				dte=$(sed -n 3p "$DC_tlt/cnfg9")
+				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
+				RM=$((100*$TM/30))
+			elif [ $dts = 4 ]; then
+				dte=$(sed -n 4p "$DC_tlt/cnfg9")
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/60))
-			elif [ $dts = 4 ]; then
-				dte=$(sed -n 4p "$DC_tlt/.trw")
-				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-				RM=$((100*$TM/150))
 			fi
 			if [ "$RM" -ge 50 ]; then
-				echo "3" > "$DC_tlt/.stts"
+				echo "3" > "$DC_tlt/cnfg8"
 			else
-				echo "1" > "$DC_tlt/.stts"
+				echo "1" > "$DC_tlt/cnfg8"
 			fi
 		else
-			echo "1" > "$DC_tlt/.stts"
+			echo "1" > "$DC_tlt/cnfg8"
 		fi
 		rm -f "$DC_tlt/.lk"
 	fi
-	cat "$DC_tlt/.t-inx" | awk '!array_temp[$0]++' > $DT/.t-inx.t
-	sed '/^$/d' $DT/.t-inx.t > "$DC_tlt/.t-inx"
+	cat "$DC_tlt/cnfg0" | awk '!array_temp[$0]++' > $DT/cnfg0.t
+	sed '/^$/d' $DT/cnfg0.t > "$DC_tlt/cnfg0"
 	rm -f $DT/*.t
-	rm "$DC_tlt/.tok-inx" "$DC_tlt/.tlng-inx" "$DC_tl/ok_r" "$DC_tl/ok"
-	cp -f "$DC_tlt/.t-inx" "$DC_tlt/.tlng-inx"
+	rm "$DC_tlt/cnfg2" "$DC_tlt/cnfg1" "$DC_tl/ok_r" "$DC_tl/ok"
+	cp -f "$DC_tlt/cnfg0" "$DC_tlt/cnfg1"
 
 	$DS/mngr.sh mkmn &
 
@@ -208,57 +208,49 @@ elif [ "$1" = mklg- ]; then
 #--------------------------------
 elif [ "$1" = mkok- ]; then
 	kill -9 $(pgrep -f "$yad --icons")
-	(
-	echo "1" ; sleep 0
-	echo "# " ; sleep 0
-	if [ -f "$DC_tlt/.trw" ]; then
-		dts=$(cat "$DC_tlt/.trw" | wc -l)
+
+	if [ -f "$DC_tlt/cnfg9" ]; then
+		dts=$(cat "$DC_tlt/cnfg9" | wc -l)
 		if [ $dts = 1 ]; then
-			dte=$(sed -n 1p "$DC_tlt/.trw")
+			dte=$(sed -n 1p "$DC_tlt/cnfg9")
 			TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 			RM=$((100*$TM/10))
 		elif [ $dts = 2 ]; then
-			dte=$(sed -n 2p "$DC_tlt/.trw")
+			dte=$(sed -n 2p "$DC_tlt/cnfg9")
 			TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-			RM=$((100*$TM/25))
+			RM=$((100*$TM/15))
 		elif [ $dts = 3 ]; then
-			dte=$(sed -n 3p "$DC_tlt/.trw")
+			dte=$(sed -n 3p "$DC_tlt/cnfg9")
+			TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
+			RM=$((100*$TM/30))
+		elif [ $dts = 4 ]; then
+			dte=$(sed -n 4p "$DC_tlt/cnfg9")
 			TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 			RM=$((100*$TM/60))
-		elif [ $dts = 4 ]; then
-			dte=$(sed -n 4p "$DC_tlt/.trw")
-			TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-			RM=$((100*$TM/150))
 		fi
-		if [ "$RM" -ge 50 ]; then
-			if [ $(cat "$DC_tlt/.trw" | wc -l) = 4 ]; then
+		if [ "$RM" -ge 50 ]; then # tiempo aceptado para  establecer la marca de repaso
+			if [ $(cat "$DC_tlt/cnfg9" | wc -l) = 4 ]; then # falso ciclo para despues del cuarto
 				echo "_
 				_
 				_
-				$(date +%m/%d/%Y)" > "$DC_tlt/.trw"
+				$(date +%m/%d/%Y)" > "$DC_tlt/cnfg9"
 			else
-				echo "$(date +%m/%d/%Y)" >> "$DC_tlt/.trw"
+				echo "$(date +%m/%d/%Y)" >> "$DC_tlt/cnfg9"
 			fi
 		fi
 	else
-		echo "$(date +%m/%d/%Y)" > "$DC_tlt/.trw"
+		echo "$(date +%m/%d/%Y)" > "$DC_tlt/cnfg9"
 	fi
 	> "$DC_tlt/.lk"
 	nstll=$(grep -Fxo "$tpc" "$DC_tl/.nstll")
 	if [ -n "$nstll" ]; then
-		echo "7" > "$DC_tlt/.stts"
+		echo "7" > "$DC_tlt/cnfg8"
 	else
-		echo "2" > "$DC_tlt/.stts"
+		echo "2" > "$DC_tlt/cnfg8"
 	fi
-	rm "$DC_tlt/.tok-inx" "$DC_tlt/.tlng-inx"
-	cp -f "$DC_tlt/.t-inx" "$DC_tlt/.tok-inx"
+	rm "$DC_tlt/cnfg2" "$DC_tlt/cnfg1"
+	cp -f "$DC_tlt/cnfg0" "$DC_tlt/cnfg2"
 	$DS/mngr.sh mkmn &
-
-	) | $yad --progress \
-	--width 50 --height 35 \
-	--pulsate --auto-close \
-	--sticky --undecorated \
-	--skip-taskbar --center --no-buttons
 
 	idiomind topic & exit 1
 	
@@ -277,12 +269,12 @@ elif [ "$1" = edt ]; then
 	ff="$4"
 
 	if [ "$v" = v1 ]; then
-		ind="$DC_tlt/.tlng-inx"
-		inp="$DC_tlt/.tok-inx"
+		ind="$DC_tlt/cnfg1"
+		inp="$DC_tlt/cnfg2"
 		chk="$(echo "$int" | sed -n 15p)"
 	elif [ "$v" = v2 ]; then
-		ind="$DC_tlt/.tok-inx"
-		inp="$DC_tlt/.tlng-inx"
+		ind="$DC_tlt/cnfg2"
+		inp="$DC_tlt/cnfg1"
 		chk="$(echo "$int" | sed -n 16p)"
 	fi
 
@@ -339,11 +331,11 @@ elif [ "$1" = edt ]; then
 			if [[ $ret -eq 0 ]]; then
 				if [ "$mrk" != "$mrk2" ]; then
 					if [ "$mrk2" = "TRUE" ]; then
-						echo "$TGT" >> "$DC_tlt/.marks"
+						echo "$TGT" >> "$DC_tlt/cnfg6"
 					else
-						grep -v -x -v "$TGT" "$DC_tlt/.marks" > "$DC_tlt/.marks_"
-						sed '/^$/d' "$DC_tlt/.marks_" > "$DC_tlt/.marks"
-						rm "$DC_tlt/.marks_"
+						grep -v -x -v "$TGT" "$DC_tlt/cnfg6" > "$DC_tlt/cnfg6_"
+						sed '/^$/d' "$DC_tlt/cnfg6_" > "$DC_tlt/cnfg6"
+						rm "$DC_tlt/cnfg6_"
 					fi
 					eyeD3 -p IWI4I0I"$mrk2"IWI4I0I "$DM_tlt/words/$nme".mp3 >/dev/null 2>&1
 				fi
@@ -538,10 +530,10 @@ elif [ "$1" = edt ]; then
 					sed "s/'/ /g" | sed "s/\n/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
 				fi
 
-				sed -i "s/${nme}/${fln}/" "$DC_tlt/.sinx"
-				sed -i "s/${nme}/${fln}/" "$DC_tlt/.tlng-inx"
-				sed -i "s/${nme}/${fln}/" "$DC_tlt/.t-inx"
-				sed -i "s/${nme}/${fln}/" "$DC_tlt/.tok-inx"
+				sed -i "s/${nme}/${fln}/" "$DC_tlt/cnfg4"
+				sed -i "s/${nme}/${fln}/" "$DC_tlt/cnfg1"
+				sed -i "s/${nme}/${fln}/" "$DC_tlt/cnfg0"
+				sed -i "s/${nme}/${fln}/" "$DC_tlt/cnfg2"
 				sed -i "s/${nme}/${fln}/" "$DC_tlt/indsa"
 				sed -i "s/${nme}/${fln}/" "$DC_tlt/indse"
 				sed -i "s/${nme}/${fln}/" "$DC_tlt/Practice/lsin.tmp"
@@ -639,7 +631,7 @@ elif [ "$1" = edt ]; then
 				| sed 's/\.//g' | sed 's/  / /g' | sed 's/ /\. /g')
 				n=1
 				while [ $n -le "$(echo "$tgt" | wc -l)" ]; do
-					echo "$(echo "$tgt" | sed -n "$n"p).mp3" >> "$DC_tl/$tpc/.ainx"
+					echo "$(echo "$tgt" | sed -n "$n"p).mp3" >> "$DC_tl/$tpc/cnfg5"
 					let n++
 				done
 				$DS/mngr.sh inx S "$nme" "$tpc" &
@@ -676,18 +668,18 @@ elif [ $1 = dli ]; then
 			grep -v -x -v "$itdl" ./.tinx > ./tinx
 			sed '/^$/d' ./tinx > ./.tinx
 			rm ./tinx
-			grep -v -x -v "$itdl" ./.t-inx > ./t-inx
-			sed '/^$/d' ./t-inx > ./.t-inx
+			grep -v -x -v "$itdl" ./cnfg0 > ./t-inx
+			sed '/^$/d' ./t-inx > ./cnfg0
 			rm ./t-inx
-			grep -v -x -v "$itdl" ./.tok-inx > ./tok-inx
-			sed '/^$/d' ./tok-inx > ./.tok-inx
+			grep -v -x -v "$itdl" ./cnfg2 > ./tok-inx
+			sed '/^$/d' ./tok-inx > ./cnfg2
 			rm ./tok-inx
-			grep -v -x -v "$itdl" ./.tlng-inx > ./tlng-inx
-			sed '/^$/d' ./tlng-inx > ./.tlng-inx
+			grep -v -x -v "$itdl" ./cnfg1 > ./tlng-inx
+			sed '/^$/d' ./tlng-inx > ./cnfg1
 			rm ./tlng-inx
-			grep -v -x -v "$itdl" .winx > .winx_
-			sed '/^$/d' .winx_ > .winx
-			rm ./.winx_
+			grep -v -x -v "$itdl" cnfg3 > cnfg3_
+			sed '/^$/d' cnfg3_ > cnfg3
+			rm ./cnfg3_
 		fi
 		# delete sentence
 		file="$DM_tlt/$itdl.mp3"
@@ -699,18 +691,18 @@ elif [ $1 = dli ]; then
 			grep -v -x -v "$itdl" ./.tinx > ./tinx
 			sed '/^$/d' ./tinx > ./.tinx
 			rm ./tinx
-			grep -v -x -v "$itdl" ./.t-inx > ./t-inx
-			sed '/^$/d' ./t-inx > ./.t-inx
+			grep -v -x -v "$itdl" ./cnfg0 > ./t-inx
+			sed '/^$/d' ./t-inx > ./cnfg0
 			rm ./t-inx
-			grep -v -x -v "$itdl" ./.tok-inx > ./tok-inx
-			sed '/^$/d' ./tok-inx > ./.tok-inx
+			grep -v -x -v "$itdl" ./cnfg2 > ./tok-inx
+			sed '/^$/d' ./tok-inx > ./cnfg2
 			rm ./tok-inx
-			grep -v -x -v "$itdl" ./.tlng-inx > ./tlng-inx
-			sed '/^$/d' ./tlng-inx > ./.tlng-inx
+			grep -v -x -v "$itdl" ./cnfg1 > ./tlng-inx
+			sed '/^$/d' ./tlng-inx > ./cnfg1
 			rm ./tlng-inx
-			grep -v -x -v "$itdl" .sinx > .sinx_
-			sed '/^$/d' .sinx_ > .sinx
-			rm ./.sinx_
+			grep -v -x -v "$itdl" cnfg4 > cnfg4_
+			sed '/^$/d' cnfg4_ > cnfg4
+			rm ./cnfg4_
 		fi
 		exit 1
 	fi
@@ -746,18 +738,18 @@ elif [ $1 = dli ]; then
 				grep -v -x -v "$itdl" ./.tinx > ./tinx
 				sed '/^$/d' ./tinx > ./.tinx
 				rm ./tinx
-				grep -v -x -v "$itdl" ./.t-inx > ./t-inx
-				sed '/^$/d' ./t-inx > ./.t-inx
+				grep -v -x -v "$itdl" ./cnfg0 > ./t-inx
+				sed '/^$/d' ./t-inx > ./cnfg0
 				rm ./t-inx
-				grep -v -x -v "$itdl" ./.tok-inx > ./tok-inx
-				sed '/^$/d' ./tok-inx > ./.tok-inx
+				grep -v -x -v "$itdl" ./cnfg2 > ./tok-inx
+				sed '/^$/d' ./tok-inx > ./cnfg2
 				rm ./tok-inx
-				grep -v -x -v "$itdl" ./.tlng-inx > ./tlng-inx
-				sed '/^$/d' ./tlng-inx > ./.tlng-inx
+				grep -v -x -v "$itdl" ./cnfg1 > ./tlng-inx
+				sed '/^$/d' ./tlng-inx > ./cnfg1
 				rm ./tlng-inx
-				grep -v -x -v "$itdl" .winx > .winx_
-				sed '/^$/d' .winx_ > .winx
-				rm ./.winx_
+				grep -v -x -v "$itdl" cnfg3 > cnfg3_
+				sed '/^$/d' cnfg3_ > cnfg3
+				rm ./cnfg3_
 			else
 				exit 1
 			fi
@@ -780,18 +772,18 @@ elif [ $1 = dli ]; then
 				grep -v -x -v "$itdl" ./.tinx > ./tinx
 				sed '/^$/d' ./tinx > ./.tinx
 				rm ./tinx
-				grep -v -x -v "$itdl" ./.t-inx > ./t-inx
-				sed '/^$/d' ./t-inx > ./.t-inx
+				grep -v -x -v "$itdl" ./cnfg0 > ./t-inx
+				sed '/^$/d' ./t-inx > ./cnfg0
 				rm ./t-inx
-				grep -v -x -v "$itdl" ./.tok-inx > ./tok-inx
-				sed '/^$/d' ./tok-inx > ./.tok-inx
+				grep -v -x -v "$itdl" ./cnfg2 > ./tok-inx
+				sed '/^$/d' ./tok-inx > ./cnfg2
 				rm ./tok-inx
-				grep -v -x -v "$itdl" ./.tlng-inx > ./tlng-inx
-				sed '/^$/d' ./tlng-inx > ./.tlng-inx
+				grep -v -x -v "$itdl" ./cnfg1 > ./tlng-inx
+				sed '/^$/d' ./tlng-inx > ./cnfg1
 				rm ./tlng-inx
-				grep -v -x -v "$itdl" .sinx > .sinx_
-				sed '/^$/d' .sinx_ > .sinx
-				rm ./.sinx_
+				grep -v -x -v "$itdl" cnfg4 > cnfg4_
+				sed '/^$/d' cnfg4_ > cnfg4
+				rm ./cnfg4_
 			else
 				exit 1
 			fi
@@ -814,21 +806,21 @@ elif [ $1 = dli ]; then
 			grep -v -x -v "$itdl" ./.tinx > ./tinx
 			sed '/^$/d' ./tinx > ./.tinx
 			rm ./tinx
-			grep -v -x -v "$itdl" ./.t-inx > ./t-inx
-			sed '/^$/d' ./t-inx > ./.t-inx
+			grep -v -x -v "$itdl" ./cnfg0 > ./t-inx
+			sed '/^$/d' ./t-inx > ./cnfg0
 			rm ./t-inx
-			grep -v -x -v "$itdl" ./.tok-inx > ./tok-inx
-			sed '/^$/d' ./tok-inx > ./.tok-inx
+			grep -v -x -v "$itdl" ./cnfg2 > ./tok-inx
+			sed '/^$/d' ./tok-inx > ./cnfg2
 			rm ./tok-inx
-			grep -v -x -v "$itdl" ./.tlng-inx > ./tlng-inx
-			sed '/^$/d' ./tlng-inx > ./.tlng-inx
+			grep -v -x -v "$itdl" ./cnfg1 > ./tlng-inx
+			sed '/^$/d' ./tlng-inx > ./cnfg1
 			rm ./tlng-inx
-			grep -v -x -v "$itdl" .sinx > .sinx_
-			sed '/^$/d' .sinx_ > .sinx
-			rm ./.sinx_
-			grep -v -x -v "$itdl" .winx > .winx_
-			sed '/^$/d' .winx_ > .winx
-			rm ./.winx_
+			grep -v -x -v "$itdl" cnfg4 > cnfg4_
+			sed '/^$/d' cnfg4_ > cnfg4
+			rm ./cnfg4_
+			grep -v -x -v "$itdl" cnfg3 > cnfg3_
+			sed '/^$/d' cnfg3_ > cnfg3
+			rm ./cnfg3_
 	fi
 	
 #--------------------------------
@@ -845,10 +837,9 @@ elif [ $1 = dlt ]; then
 		if [ $ret -eq 0 ]; then
 			rm -r "$DM_tl/$tpc"
 			rm -r "$DC_tl/$tpc"
-
 			$ > $DC_s/topic_m
-			$ > $DC_s/fnew.id
-			rm $DC_s/topic.id
+			$ > $DC_s/cnfg6
+			rm $DC_s/cnfg8
 			$ > $DC_tl/.lst
 			grep -v -x -v "$tpc" $DC_tl/.in_s > $DC_tl/in_s
 			sed '/^$/d' $DC_tl/in_s > $DC_tl/.in_s
@@ -882,40 +873,38 @@ elif [ $1 = mkmn ]; then
 	[ -d ./words ] && rm -r ./words
 	[ -f ./*.mp3 ] && rm -r ./*.mp3
 	ls -t -d -N * > $DC_tl/.in
-	mv -f $DC_s/chng $DC_s/.chng_
-
+	mv -f $DC_s/cnfg0 $DC_s/cnfg16
 	n=1
 	while [ $n -le $(cat $DC_tl/.in | head -30 | wc -l) ]; do
 		tp=$(sed -n "$n"p $DC_tl/.in)
-		i=$(cat "$DC_tl/$tp/.stts")
-		if [ ! -f "$DC_tl/$tp/.stts" ] || \
+		i=$(cat "$DC_tl/$tp/cnfg8")
+		if [ ! -f "$DC_tl/$tp/cnfg8" ] || \
 		[ ! -f "$DC_tl/$tp/tpc.sh" ] || \
-		[ ! -f "$DC_tl/$tp/.t-inx" ] || \
-		[ ! -f "$DC_tl/$tp/.winx" ] || \
-		[ ! -f "$DC_tl/$tp/.sinx" ] || \
+		[ ! -f "$DC_tl/$tp/cnfg0" ] || \
+		[ ! -f "$DC_tl/$tp/cnfg3" ] || \
+		[ ! -f "$DC_tl/$tp/cnfg4" ] || \
 		[ ! -d "$DM_tl/$tp" ]; then
 			i=13
 		fi
-		echo "/usr/share/idiomind/images/img$i.png" >> $DC_s/chng
-		echo "$tp" >> $DC_s/chng
+		echo "/usr/share/idiomind/images/img$i.png" >> $DC_s/cnfg0
+		echo "$tp" >> $DC_s/cnfg0
 		let n++
 	done
-	
 	n=1
 	while [ $n -le $(cat $DC_tl/.in | tail -n+31 | wc -l) ]; do
 		ff=$(cat $DC_tl/.in | tail -n+31)
 		tp=$(echo "$ff" | sed -n "$n"p)
-		if [ ! -f "$DC_tl/$tp/.stts" ] || \
+		if [ ! -f "$DC_tl/$tp/cnfg8" ] || \
 		[ ! -f "$DC_tl/$tp/tpc.sh" ] || \
-		[ ! -f "$DC_tl/$tp/.t-inx" ] || \
-		[ ! -f "$DC_tl/$tp/.winx" ] || \
-		[ ! -f "$DC_tl/$tp/.sinx" ] || \
+		[ ! -f "$DC_tl/$tp/cnfg0" ] || \
+		[ ! -f "$DC_tl/$tp/cnfg3" ] || \
+		[ ! -f "$DC_tl/$tp/cnfg4" ] || \
 		[ ! -d "$DM_tl/$tp" ]; then
-			echo '/usr/share/idiomind/images/img13.png' >> $DC_s/chng
+			echo '/usr/share/idiomind/images/img13.png' >> $DC_s/cnfg0
 		else
-			echo '/usr/share/idiomind/images/img12.png' >> $DC_s/chng
+			echo '/usr/share/idiomind/images/img12.png' >> $DC_s/cnfg0
 		fi
-		echo "$tp" >> $DC_s/chng
+		echo "$tp" >> $DC_s/cnfg0
 		let n++
 	done
 fi

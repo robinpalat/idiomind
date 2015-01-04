@@ -23,11 +23,11 @@ if [[ $1 = dlti ]]; then
 				grep -v -x -v "$itdl" ./.inx > ./inx
 				sed '/^$/d' ./inx > ./.inx
 				rm ./inx
-				grep -v -x -v "$itdl" ./.winx > ./winx
-				sed '/^$/d' ./winx > ./.winx
+				grep -v -x -v "$itdl" ./cnfg3 > ./winx
+				sed '/^$/d' ./winx > ./cnfg3
 				rm ./winx
-				grep -v -x -v "$itdl" ./.t-inx > ./t-inx
-				sed '/^$/d' ./t-inx > ./.t-inx
+				grep -v -x -v "$itdl" ./cnfg0 > ./t-inx
+				sed '/^$/d' ./t-inx > ./cnfg0
 				rm ./t-inx
 				notify-send  -i idiomind "$itdl" "$(echo "$int" | sed -n 3p)"  -t 1500
 			fi
@@ -51,11 +51,11 @@ if [[ $1 = dlti ]]; then
 				grep -v -x -v "$itdl" ./.inx > ./inx
 				sed '/^$/d' ./inx > ./.inx
 				rm ./inx
-				grep -v -x -v "$itdl" ./.sinx > ./sinx
-				sed '/^$/d' ./sinx > ./.sinx
+				grep -v -x -v "$itdl" ./cnfg4 > ./sinx
+				sed '/^$/d' ./sinx > ./cnfg4
 				rm ./sinx
-				grep -v -x -v "$itdl" ./.t-inx > ./t-inx
-				sed '/^$/d' ./t-inx > ./.t-inx
+				grep -v -x -v "$itdl" ./cnfg0 > ./t-inx
+				sed '/^$/d' ./t-inx > ./cnfg0
 				rm ./t-inx
 				notify-send  -i idiomind "$itdl" "$(echo "$int" | sed -n 3p)"  -t 1500
 			fi
@@ -94,8 +94,8 @@ elif [[ $1 = dlkt ]]; then
 	ret=$?
 
 	if [[ $ret -eq 0 ]]; then
-		rm -r "$drtc"/.inx "$drtc"/.winx "$drtc"/.sinx "$drtc"/.t-inx
-		touch "$drtc"/.inx "$drtc"/.winx "$drtc"/.sinx "$drtc"/.t-inx
+		rm -r "$drtc"/.inx "$drtc"/cnfg3 "$drtc"/cnfg4 "$drtc"/cnfg0
+		touch "$drtc"/.inx "$drtc"/cnfg3 "$drtc"/cnfg4 "$drtc"/cnfg0
 		rm -r "$kpt"/*.mp3
 		rm -r "$kpt"/words/*.mp3
 	else

@@ -1,0 +1,44 @@
+
+/ usr / bin / idiomund
+Pratica|Modifica|Chiudi|Elimina|Apprendimento|imparato|Note|Preghiere|Parole|Categoria|Creato da|Imparato|Meteo informativi|Tuttavia non nuovi prodotti|Recensione|Elimina|News|Contenuto Filed|Aggiornamento|Installazione
+Errore durante il tentativo di scrivere|directory non esiste o non dispone di autorizzazioni utente File corrotto
+Ha raggiunto il numero massimo di articoli che hai un problema con lo stesso nome|In esso rinomina a: giorni sono passati da quando hai segnato \ n questo problema come ho imparato Vuoi rivedere|Non
+¿Rivedere tutti o solo nuovo|New|Tutto
+aggiornamento
+/usr/share/idiomind/play.sh
+Lasciando|Niente specificato per giocare |
+Andando|Niente da giocare |
+Parole|Preghiere|Gol|Pratica|News|Notifiche|Audio|Repeat
+/usr/share/idiomind/add.sh
+Topic|Immagine|Aggiungi|Salva Audio|Un nuovo topic|Ordine|Cancella|Modifica|delete|Aggiungi immagine |
+Discussione:|Nome per il nuovo topic|Non un argomento con lo stesso nome|Questo è nominato:|Hai raggiunto il numero massimo di thread|Hai raggiunto il numero massimo di parole|l'importo raggiunto la massima frase|No internet|Festival non può elaborare il testo|eSpeak non in grado di elaborare il testo in giapponese|è possibile aggiungere parole|||parola Topic|Seleziona parole da aggiungere al tema|Preghiere che non sono stati aggiunti per superare il numero|parole di selezione|Aspetta finchè rifinisce \ n il processo di cui sopra|deve fornire una chiave \ n Cercare di ottenere una nuova da|qui|lima Processing|Comprabando chiave|chiave attuale non è più valido o superato la sua quota di ordini al giorno. \ N Cercare di ottenere uno da|Preghiere|Preghiera|Impossibile ottenere il testo. Per rendere il file audio di successo processo non ha fornito debebá contiene rumore di fondo o la musica, perché i silenzi sono usati per dividere|Seleziona|Immagini|Ricerca|Immagine|Preghiera|Preghiere|Preghiera|Preghiere che non sono stati aggiunti|Non trovato alcun preghiera|cui sono stati aggiunti
+/usr/share/idiomind/mngr.sh
+Cancella|Immagine|Elimina |
+Learned|Recensione|Rinominare|Elimina|Share|PDF|Argomento|Audio|Esempio|Definizione|Note|Google Ricerca|Search Definizione|Mark|Mark imparato|Recensione|parole List|Cash|Elimina questa parola?|Elimina questa preghiera?|Elimina elemento |? Cancellare?
+/usr/share/idiomind/vwr.sh
+pronunciare
+// usr / share / idiomind / addons / Dics / dict
+aggiungere
+Trova più dizionari|Disponibile|Lingue|installazione Error |
+/ usr / share / idiomind / addons / Google_translation_service / CNF
+fermare
+Utilizzando Google Translator |
+/ usr / share / idiomind / addons / Learning_with_news / add
+Salvare parola|Salva preghiera|Annulla|Crea|Chiudi
+Parola:|Preghiera:|Hai raggiunto il numero massimo di parole|Hai raggiunto il numero massimo di frasi|È stato raggiunto il numero massimo di argomenti|Nuovo argomento|No internet
+/ usr / share / idiomind / addons / Learning_with_news / CNF
+Chiaro|Aggiornamento|Elimina|Annulla
+Subcripción Attivo:|Aggiornamento su|Non è possibile cancellare|Cancella subcripción|Nome|URL|Crear_Tema|Borrar_Noticias|Borrar_guardado|Subcripciones|Nuovo subcripción
+/ usr / share / idiomind / addons / Learning_with_news / la
+Annulla |
+Confermare|Elimina questa parola?|Elimina|Elimina questa frase?|<B> Elimina tutto </ b> \ nI download di subcripciones ogni 5 giorni verranno eliminati automaticamente |? Elimina tutto il contenuto salvato?
+/ usr / share / idiomind / addons / Learning_with_news / strt
+Stop |
+C'è una in fase di aggiornamento |. No internet|Aggiornamento ...|No notizie e link sono malvagi|Festival non in grado di elaborare il testo|eSpeak non in grado di elaborare il testo in giapponese|Aggiornato |
+/ usr / share / idiomind / addons / Pratica / strt
+
+Ripristina|Apprendimento|Start|OK|NO|Ascolta|Aiuto|Successivo |
+Imparato|Easy|Apprendimento|Disco |
+/ usr / share / idiomind / addons / Pratica / PRCT
+Reboot
+Pratica Complete|Guida introduttiva \ nHai 1 Parola|Per iniziare è necessario avere almeno 1 frase

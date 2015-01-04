@@ -7,8 +7,8 @@ ap=$(cat $DC_s/cnfg1 | sed -n 5p)
 if [[ $1 = V1 ]]; then
 
 	DS_pf="$DS/addons/Learning_with_news"
-	wth=$(sed -n 5p $DC_s/.rd)
-	eht=$(sed -n 6p $DC_s/.rd)
+	wth=$(sed -n 5p $DC_s/cnfg18)
+	eht=$(sed -n 6p $DC_s/cnfg18)
 	c=$(echo $(($RANDOM%100)))
 	re='^[0-9]+$'
 	now="$2"
@@ -68,22 +68,22 @@ elif [[ $1 = V2 ]]; then
 	DM_tlfk="$DM_tl/Feeds/kept"
 	DS_pf="$DS/addons/Learning_with_news"
 	trgt="$DS_pf/trgt1"
-	wth=$(sed -n 5p $DC_s/.rd)
-	eht=$(sed -n 6p $DC_s/.rd)
+	wth=$(sed -n 5p $DC_s/cnfg18)
+	eht=$(sed -n 6p $DC_s/cnfg18)
 	c=$(echo $(($RANDOM%100)))
 	re='^[0-9]+$'
 	now="$2"
 	nuw="$3"
 	
 	if ! [[ $nuw =~ $re ]]; then
-		nuw=$(cat "$DC_tl/Feeds/.t-inx" | grep -Fxon "$now" \
+		nuw=$(cat "$DC_tl/Feeds/cnfg0" | grep -Fxon "$now" \
 		| sed -n 's/^\([0-9]*\)[:].*/\1/p')
 		nll=" "
 	fi
 
-	nme=$(sed -n "$nuw"p "$DC_tl/Feeds/.t-inx")
+	nme=$(sed -n "$nuw"p "$DC_tl/Feeds/cnfg0")
 	if [ -z "$nme" ]; then
-		nme=$(sed -n 1p "$DC_tl/Feeds/.t-inx")
+		nme=$(sed -n 1p "$DC_tl/Feeds/cnfg0")
 		nuw=1
 	fi
 

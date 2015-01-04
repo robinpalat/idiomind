@@ -73,54 +73,54 @@ elif [[ $ret -eq 0 ]]; then
 	cp -f -r /usr/share/idiomind/default/dicts/* $DIR2/addons/dict
 	
 	if echo "$target" | grep "English"; then
-		echo "en" > $DIR2/s/langt
-		echo "english" >> $DIR2/s/langt
+		echo "en" > $DIR2/s/cnfg9
+		echo "english" >> $DIR2/s/cnfg9
 	fi
 	
 	if echo "$target" | grep "French"; then
-		echo "fr" > $DIR2/s/langt
-		echo "french" >> $DIR2/s/langt
+		echo "fr" > $DIR2/s/cnfg9
+		echo "french" >> $DIR2/s/cnfg9
 	fi
 	
 	if echo "$target" | grep "German"; then
-		echo "de" > $DIR2/s/langt
-		echo "german" >> $DIR2/s/langt
+		echo "de" > $DIR2/s/cnfg9
+		echo "german" >> $DIR2/s/cnfg9
 	fi
 	
 	if echo "$target" | grep "Italian"; then
-		echo "it" > $DIR2/s/s/langt
-		echo "italian" >> $DIR2/s/langt
+		echo "it" > $DIR2/s/s/cnfg9
+		echo "italian" >> $DIR2/s/cnfg9
 	fi
 	
 	if echo "$target" | grep "Japanese"; then
-		echo "ja" > $DIR2/s/langt
-		echo "japanese" >> $DIR2/s/langt
+		echo "ja" > $DIR2/s/cnfg9
+		echo "japanese" >> $DIR2/s/cnfg9
 	fi
 	
 	if echo "$target" | grep "Portuguese"; then
-		echo "pt" > $DIR2/s/langt
-		echo "portuguese" >> $DIR2/s/langt
+		echo "pt" > $DIR2/s/cnfg9
+		echo "portuguese" >> $DIR2/s/cnfg9
 	fi
 	
 	if echo "$target" | grep "Spanish"; then
-		echo "es" > $DIR2/s/langt
-		echo "spanish" >> $DIR2/s/langt
+		echo "es" > $DIR2/s/cnfg9
+		echo "spanish" >> $DIR2/s/cnfg9
 	fi
 	
 	if echo "$target" | grep "Vietnamese"; then
-		echo "vi" > $DIR2/s/langt
-		echo "vietnamese" >> $DIR2/s/langt
+		echo "vi" > $DIR2/s/cnfg9
+		echo "vietnamese" >> $DIR2/s/cnfg9
 	fi
 	
 	
 	if echo "$target" | grep "Chinese"; then
-		echo "zh-cn" > $DIR2/s/langt
-		echo "Chinese" >> $DIR2/s/langt
+		echo "zh-cn" > $DIR2/s/cnfg9
+		echo "Chinese" >> $DIR2/s/cnfg9
 	fi
 	
 	if echo "$target" | grep "Russian"; then
-		echo "ru" > $DIR2/s/langt
-		echo "Russian" >> $DIR2/s/langt
+		echo "ru" > $DIR2/s/cnfg9
+		echo "Russian" >> $DIR2/s/cnfg9
 	fi
 	
 	if echo "$source" | grep "English"; then
@@ -132,8 +132,8 @@ elif [[ $ret -eq 0 ]]; then
 			mkdir "$DIR4"/English/subscripts
 			cp -f "$drtf"/English "$DIR4"/English/subscripts/Example
 		fi
-		echo "en" > $DIR2/s/lang
-		echo "English" >> $DIR2/s/lang
+		echo "en" > $DIR2/s/cnfg10
+		echo "English" >> $DIR2/s/cnfg10
 	fi
 	
 	if echo "$source" | grep "French"; then
@@ -145,8 +145,8 @@ elif [[ $ret -eq 0 ]]; then
 			mkdir "$DIR4"/French/subscripts
 			cp -f "$drtf"/French "$DIR4"/French/subscripts/Example
 		fi
-		echo "fr" > $DIR2/s/lang
-		echo "French" >> $DIR2/s/lang
+		echo "fr" > $DIR2/s/cnfg10
+		echo "French" >> $DIR2/s/cnfg10
 	fi
 	
 	if echo "$source" | grep "German"; then
@@ -158,8 +158,8 @@ elif [[ $ret -eq 0 ]]; then
 			mkdir "$DIR4"/German/subscripts
 			cp -f "$drtf"/German "$DIR4"/German/subscripts/Example
 		fi
-		echo "de" > $DIR2/s/lang
-		echo "German" >> $DIR2/s/lang
+		echo "de" > $DIR2/s/cnfg10
+		echo "German" >> $DIR2/s/cnfg10
 	fi
 	
 	if echo "$source" | grep "Italian"; then
@@ -171,8 +171,8 @@ elif [[ $ret -eq 0 ]]; then
 			mkdir "$DIR4"/Italian/subscripts
 			cp -f "$drtf"/Italian "$DIR4"/Italian/subscripts/Example
 		fi
-		echo "it" > $DIR2/s/lang
-		echo "Italian" >> $DIR2/s/lang
+		echo "it" > $DIR2/s/cnfg10
+		echo "Italian" >> $DIR2/s/cnfg10
 	fi
 	
 	if echo "$source" | grep "Japanese"; then
@@ -184,8 +184,8 @@ elif [[ $ret -eq 0 ]]; then
 			mkdir "$DIR4"/Japanese/subscripts
 			cp -f "$drtf"/Japanese "$DIR4"/Japanese/subscripts/Example
 		fi
-		echo "ja" > $DIR2/s/lang
-		echo "Japanese" >> $DIR2/s/lang
+		echo "ja" > $DIR2/s/cnfg10
+		echo "Japanese" >> $DIR2/s/cnfg10
 	fi
 	
 	if echo "$source" | grep "Portuguese"; then
@@ -197,8 +197,8 @@ elif [[ $ret -eq 0 ]]; then
 			mkdir "$DIR4"/Portuguese/subscripts
 			cp -f "$drtf"/Portuguese "$DIR4"/Portuguese/subscripts/Example
 		fi
-		echo "pt" > $DIR2/s/lang
-		echo "Portuguese" >> $DIR2/s/lang
+		echo "pt" > $DIR2/s/cnfg10
+		echo "Portuguese" >> $DIR2/s/cnfg10
 	fi
 	
 	if echo "$source" | grep "Spanish"; then
@@ -210,8 +210,8 @@ elif [[ $ret -eq 0 ]]; then
 			mkdir "$DIR4"/Spanish/subscripts
 			cp -f "$drtf"/Spanish "$DIR4"/Spanish/subscripts/Example
 		fi
-		echo "es" > $DIR2/s/lang
-		echo "Spanish" >> $DIR2/s/lang
+		echo "es" > $DIR2/s/cnfg10
+		echo "Spanish" >> $DIR2/s/cnfg10
 	fi
 	
 	if echo "$source" | grep "Chinese"; then
@@ -223,8 +223,8 @@ elif [[ $ret -eq 0 ]]; then
 			mkdir "$DIR4"/Chinese/subscripts
 			cp -f "$drtf"/Chinese "$DIR4"/Chinese/subscripts/Example
 		fi
-		echo "zh-cn" > $DIR2/s/lang
-		echo "Chinese" >> $DIR2/s/lang
+		echo "zh-cn" > $DIR2/s/cnfg10
+		echo "Chinese" >> $DIR2/s/cnfg10
 	fi
 	
 	if echo "$source" | grep "Vietnamese"; then
@@ -236,8 +236,8 @@ elif [[ $ret -eq 0 ]]; then
 			mkdir "$DIR4"/Vietnamese/subscripts
 			cp -f "$drtf"/Vietnamese "$DIR4"/Vietnamese/subscripts/Example
 		fi
-		echo "vi" > $DIR2/s/lang
-		echo "Vietnamese" >> $DIR2/s/lang
+		echo "vi" > $DIR2/s/cnfg10
+		echo "Vietnamese" >> $DIR2/s/cnfg10
 	fi
 	
 	if echo "$source" | grep "Russian"; then
@@ -249,8 +249,8 @@ elif [[ $ret -eq 0 ]]; then
 			mkdir "$DIR4"/Russian/subscripts
 			cp -f "$drtf"/Russian "$DIR4"/Russian/subscripts/Example
 		fi
-		echo "ru" > $DIR2/s/lang
-		echo "Russian" >> $DIR2/s/lang
+		echo "ru" > $DIR2/s/cnfg10
+		echo "Russian" >> $DIR2/s/cnfg10
 	fi
 	
 	b=$(tr -dc a-z < /dev/urandom | head -c 1)
@@ -258,9 +258,8 @@ elif [[ $ret -eq 0 ]]; then
 	echo $c$b > $DIR2/s/cnfg4
 	cp /usr/share/idiomind/default/cnfg1 \
 	"$HOME/.config/idiomind/s/cnfg1"
-	touch $DIR2/s/topic.id
-	touch $DIR2/s/fnew.id
-	touch $DIR2/s/topic_m
+	touch $DIR2/s/cnfg8
+	touch $DIR2/s/cnfg6
 	/usr/share/idiomind/mngr.sh mkmn
 	idiomind
 	exit 1
