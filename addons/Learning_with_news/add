@@ -150,7 +150,7 @@ elif [[ $1 = n_t ]]; then
 				cp -f ./.* "$DC_tl/$jlb/Practice/"
 				cp -f $DS/default/tpc.sh $DC_tl/"$jlb"/tpc.sh
 				cd "$DC_tl/$jlb"
-				echo "$jlb" >> $DC_tl/.in_s
+				echo "$jlb" >> $DC_tl/.cnfg2
 				echo "1" > "$DC_tl/$jlb/cnfg8"
 				cd "$DM_tl/Feeds/kept"/.audio
 				ls *.mp3 > "$DC_tl/$jlb/cnfg5"

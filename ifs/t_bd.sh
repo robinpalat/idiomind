@@ -161,10 +161,10 @@ if [ -z "$1" ]; then
 						cd "$DT/.imprt/cnf/topics/$dlng"
 						echo "90"
 						echo "# Copiando datos para ${topic:0:20} ... " ; sleep 1
-						echo "$topic" >> "$DC/topics/$dlng/.nstll"
-						sed -i 's/'"$topic"'//g' "$DC/topics/$dlng/.in_s"
-						sed '/^$/d' $DM_t/$dlng/.in_s > $DM_t/$dlng/.in_s.tmp
-						mv -f $DM_t/$dlng/.in_s.tmp $DM_t/$dlng/.in_s
+						echo "$topic" >> "$DC/topics/$dlng/.cnfg3"
+						sed -i 's/'"$topic"'//g' "$DC/topics/$dlng/.cnfg2"
+						sed '/^$/d' $DM_t/$dlng/.cnfg2 > $DM_t/$dlng/.cnfg2_
+						mv -f $DM_t/$dlng/.cnfg2_ $DM_t/$dlng/.cnfg2
 						cd $DT/.imprt/topics
 						let n++
 					done

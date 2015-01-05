@@ -13,7 +13,7 @@ else
 fi
 
 if [[ $1 = 2 ]]; then
-	if cat "$DC_tl/.nstll" | grep -Fxo "$topic"; then
+	if cat "$DC_tl/.cnfg3" | grep -Fxo "$topic"; then
 		$DC_s/chng.sh $DS/ifs/info2 2 & exit 1
 	else
 		echo "$topic" > $DC_s/cnfg6
@@ -140,24 +140,24 @@ if [ -d "$DC_tlt" ]; then
 		cp -f "$in1" "$DC_tlt/cnfg1"
 	fi
 	
-	if cat "$DC_tl/.nstll" | grep -Fxo "$topic"; then
+	if cat "$DC_tl/.cnfg3" | grep -Fxo "$topic"; then
 		$ > $DC_s/cnfg6
 		echo "$topic" > $DC_s/cnfg8
 		echo istll >> $DC_s/cnfg8
 		echo "$title" >> $DC_s/cnfg8
-		echo "$topic" > $DC_tl/.lst
-		echo istll >> $DC_tl/.lst
+		echo "$topic" > $DC_tl/.cnfg8
+		echo istll >> $DC_tl/.cnfg8
 	else
 		echo "$topic" > $DC_s/cnfg8
 		echo "$topic" > $DC_s/cnfg6
 		echo "$title" >> $DC_s/cnfg6
 		echo wn >> $DC_s/cnfg8
 		echo "$title" >> $DC_s/cnfg8
-		echo "$topic" > $DC_tl/.lst
-		echo wn >> $DC_tl/.lst
+		echo "$topic" > $DC_tl/.cnfg8
+		echo wn >> $DC_tl/.cnfg8
 	fi
 	
-	if [[ $(cat "$DC_tl/.in" | grep -Fxon "$topic" \
+	if [[ $(cat "$DC_tl/.cnfg1" | grep -Fxon "$topic" \
 	| sed -n 's/^\([0-9]*\)[:].*/\1/p') -ge 31 ]]; then
 		if [ -f "$DC_tl/$topic/cnfg9" ]; then
 			dts=$(cat "$DC_tl/$topic/cnfg9" | wc -l)
@@ -178,7 +178,7 @@ if [ -d "$DC_tlt" ]; then
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/150))
 			fi
-			nstll=$(grep -Fxo "$topic" "$DC_tl/.nstll")
+			nstll=$(grep -Fxo "$topic" "$DC_tl/.cnfg3")
 			if [ -n "$nstll" ]; then
 				if [ "$RM" -ge 100 ]; then
 					echo "9" > "$DC_tl/$topic/cnfg8"

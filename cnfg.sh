@@ -9,6 +9,7 @@ text="
 Idiomind it's specifically designed for people learning one or more foreign languages. It helps you learn foreign language vocabulary. You can create and manage word lists and share them online.
 supports 4 types of exercises, including grammar and pronunciation tests.
 
+Support:
 https://sourceforge.net/projects/idiomind/support
 
 Check out the code:
@@ -115,6 +116,8 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 		else
 			if [ -f $config_dir/idiomind.desktop ]; then
 				rm $config_dir/idiomind.desktop
+			else
+				> $DC_s/cnfg8
 			fi
 		fi
 		
@@ -133,9 +136,11 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
 			
-			if [ -f "$DC/topics/English/.lst" ]; then
-				LST=$(sed -n 1p "$DC/topics/English/.lst")
+			if [ -f "$DC/topics/English/.cnfg8" ]; then
+				LST=$(sed -n 1p "$DC/topics/English/.cnfg8")
 				"$DC/topics/English/$LST/tpc.sh"
+			else
+				> $DC_s/cnfg8
 			fi
 			$DS/mngr.sh mkmn
 		fi
@@ -155,9 +160,11 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
 			
-			if [ -f "$DC/topics/Spanish/.lst" ]; then
-				LST=$(sed -n 1p "$DC/topics/Spanish/.lst")
+			if [ -f "$DC/topics/Spanish/.cnfg8" ]; then
+				LST=$(sed -n 1p "$DC/topics/Spanish/.cnfg8")
 				"$DC/topics/Spanish/$LST/tpc.sh"
+			else
+				> $DC_s/cnfg8
 			fi
 			$DS/mngr.sh mkmn
 		fi
@@ -177,9 +184,11 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
 			
-			if [ -f "$DC/topics/Italian/.lst" ]; then
-				LST=$(sed -n 1p "$DC/topics/Italian/.lst")
+			if [ -f "$DC/topics/Italian/.cnfg8" ]; then
+				LST=$(sed -n 1p "$DC/topics/Italian/.cnfg8")
 				"$DC/topics/Italian/$LST/tpc.sh"
+			else
+				> $DC_s/cnfg8
 			fi
 			$DS/mngr.sh mkmn
 		fi
@@ -199,9 +208,11 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
 			
-			if [ -f "$DC/topics/Portuguese/.lst" ]; then
-				LST=$(sed -n 1p "$DC/topics/Portuguese/.lst")
+			if [ -f "$DC/topics/Portuguese/.cnfg8" ]; then
+				LST=$(sed -n 1p "$DC/topics/Portuguese/.cnfg8")
 				"$DC/topics/Portuguese/$LST/tpc.sh"
+			else
+				> $DC_s/cnfg8
 			fi
 			$DS/mngr.sh mkmn
 		fi
@@ -221,9 +232,11 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
 			
-			if [ -f "$DC/topics/German/.lst" ]; then
-				LST=$(sed -n 1p "$DC/topics/German/.lst")
+			if [ -f "$DC/topics/German/.cnfg8" ]; then
+				LST=$(sed -n 1p "$DC/topics/German/.cnfg8")
 				"$DC/topics/German/$LST/tpc.sh"
+			else
+				> $DC_s/cnfg8
 			fi
 			$DS/mngr.sh mkmn
 		fi
@@ -243,9 +256,11 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
 			
-			if [ -f "$DC/topics/Japanese/.lst" ]; then
-				LST=$(sed -n 1p "$DC/topics/Japanese/.lst")
+			if [ -f "$DC/topics/Japanese/.cnfg8" ]; then
+				LST=$(sed -n 1p "$DC/topics/Japanese/.cnfg8")
 				"$DC/topics/Japanese/$LST/tpc.sh"
+			else
+				> $DC_s/cnfg8
 			fi
 			$DS/mngr.sh mkmn
 		fi
@@ -265,9 +280,11 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
 			
-			if [ -f "$DC/topics/French/.lst" ]; then
-				LST=$(sed -n 1p "$DC/topics/French/.lst")
+			if [ -f "$DC/topics/French/.cnfg8" ]; then
+				LST=$(sed -n 1p "$DC/topics/French/.cnfg8")
 				"$DC/topics/French/$LST/tpc.sh"
+			else
+				> $DC_s/cnfg8
 			fi
 			$DS/mngr.sh mkmn
 		fi
@@ -287,9 +304,11 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
 			
-			if [ -f "$DC/topics/Vietnamese/.lst" ]; then
-				LST=$(sed -n 1p "$DC/topics/Vietnamese/.lst")
+			if [ -f "$DC/topics/Vietnamese/.cnfg8" ]; then
+				LST=$(sed -n 1p "$DC/topics/Vietnamese/.cnfg8")
 				"$DC/topics/Vietnamese/$LST/tpc.sh"
+			else
+				> $DC_s/cnfg8
 			fi
 			$DS/mngr.sh mkmn
 		fi
@@ -309,9 +328,11 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
 			
-			if [ -f "$DC/topics/Chinese/.lst" ]; then
-				LST=$(sed -n 1p "$DC/topics/Chinese/.lst")
+			if [ -f "$DC/topics/Chinese/.cnfg8" ]; then
+				LST=$(sed -n 1p "$DC/topics/Chinese/.cnfg8")
 				"$DC/topics/Chinese/$LST/tpc.sh"
+			else
+				> $DC_s/cnfg8
 			fi
 			$DS/mngr.sh mkmn
 		fi
@@ -331,9 +352,11 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 			$DS/stop.sh L
 			$DS/addons/Learning_with_news/stp.sh
 			
-			if [ -f "$DC/topics/Russian/.lst" ]; then
-				LST=$(sed -n 1p "$DC/topics/Russian/.lst")
+			if [ -f "$DC/topics/Russian/.cnfg8" ]; then
+				LST=$(sed -n 1p "$DC/topics/Russian/.cnfg8")
 				"$DC/topics/Russian/$LST/tpc.sh"
+			else
+				> $DC_s/cnfg8
 			fi
 			$DS/mngr.sh mkmn
 		fi

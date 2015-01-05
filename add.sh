@@ -4,7 +4,7 @@ source /usr/share/idiomind/ifs/c.conf
 
 if [ $1 = n_t ]; then
 	
-	info2=$(cat $DC_tl/.in | wc -l)
+	info2=$(cat $DC_tl/.cnfg1 | wc -l)
 	int="$(sed -n 22p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
 	btn="$(sed -n 21p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
 	c=$(echo $(($RANDOM%100)))
@@ -31,7 +31,7 @@ if [ $1 = n_t ]; then
 		| sed s"/'//"g | sed 's/^[ \t]*//;s/[ \t]*$//' \
 		| sed 's/^\s*./\U&\E/g')
 		
-		snm=$(cat $DC_tl/.in | grep -Fxo "$jlb" | wc -l)
+		snm=$(cat $DC_tl/.cnfg1 | grep -Fxo "$jlb" | wc -l)
 		if [ $snm -ge 1 ]; then
 			jlb=$(echo ""$jlb" $snm")
 			$yad --name=idiomind --center --on-top \
@@ -61,7 +61,7 @@ if [ $1 = n_t ]; then
 			mkdir $DC_tl/"$jlb"/Practice
 			cp $DS/addons/Practice/default/.* $DC_tl/"$jlb"/Practice
 			cd $DC_tl/"$jlb"
-			echo "$jlb" >> $DC_tl/.in_s
+			echo "$jlb" >> $DC_tl/.cnfg2
 			cd "$DM_tl/$tpc"
 			cp -f *.mp3 "$DM_tl/$jlb"
 			cp -f -r ./words "$DM_tl/$jlb/"
@@ -76,12 +76,12 @@ if [ $1 = n_t ]; then
 			cp -f cnfg2 "$DC_tl/$jlb"/cnfg2
 			cp -f nt "$DC_tl/$jlb"/nt
 			cp -f ./Practice/.* $DC_tl/"$jlb"/Practice
-			grep -v -x -v "$tpc" $DC_tl/.in_s > $DC_tl/in_s
-			sed '/^$/d' $DC_tl/in_s > $DC_tl/.in_s
-			grep -v -x -v "$tpc" $DC_tl/.in > $DC_tl/in
-			sed '/^$/d' $DC_tl/in > $DC_tl/.in
-			grep -v -x -v "$tpc" $DC_tl/.nstll > $DC_tl/nstll
-			sed '/^$/d' $DC_tl/nstll > $DC_tl/.nstll
+			grep -v -x -v "$tpc" $DC_tl/.cnfg2 > $DC_tl/.cnfg2_
+			sed '/^$/d' $DC_tl/.cnfg2_ > $DC_tl/.cnfg2
+			grep -v -x -v "$tpc" $DC_tl/.cnfg1 > $DC_tl/.cnfg1_
+			sed '/^$/d' $DC_tl/.cnfg1_ > $DC_tl/.cnfg1
+			grep -v -x -v "$tpc" $DC_tl/.cnfg3 > $DC_tl/.cnfg3_
+			sed '/^$/d' $DC_tl/.cnfg3_ > $DC_tl/.cnfg3
 			rm $DC_tl/in_s $DC_tl/in $DC_tl/nstll
 			rm -r "$DM_tl/$tpc" "$DC_tl/$tpc"
 			if [ -f $DT/ntpc ]; then
@@ -120,7 +120,7 @@ if [ $1 = n_t ]; then
 		| sed 's/^\s*./\U&\E/g')
 		ABC=$(echo "$jlbi" | sed -n 2p)
 		
-		snme=$(cat $DC_tl/.in | grep -Fxo "$jlb" | wc -l)
+		snme=$(cat $DC_tl/.cnfg1 | grep -Fxo "$jlb" | wc -l)
 		if [ "$snme" -ge 1 ]; then
 			jlb="$jlb $snme"
 			$yad --name=idiomind --center --on-top \
@@ -156,7 +156,7 @@ if [ $1 = n_t ]; then
 			cp $DS/addons/Practice/default/.* $DC_tl/"$jlb"/Practice
 			cp -f $DS/default/tpc.sh $DC_tl/"$jlb"/tpc.sh
 			cd $DC_tl/"$jlb"
-			echo "$jlb" >> $DC_tl/.in_s
+			echo "$jlb" >> $DC_tl/.cnfg2
 			chmod +x $DC_tl/"$jlb"/tpc.sh
 			if [ -f $DT/ntpc ]; then
 				rm -f $DT/ntpc
@@ -180,7 +180,7 @@ elif [ $1 = n_i ]; then
 	fi
 	
 	dct="$DS_p/Dics/dict"
-	tpcs=$(cat "$DC_tl/.in_s" | egrep -v "$tpe" | cut -c 1-50 \
+	tpcs=$(cat "$DC_tl/.cnfg2" | egrep -v "$tpe" | cut -c 1-50 \
 	| tr "\\n" '!' | sed 's/!\+$//g')
 	ttle="${tpe:0:50}"
 	c=$(echo $(($RANDOM%1000)))
@@ -256,7 +256,7 @@ elif [ $1 = n_i ]; then
 		ret=$?
 		trgt=$(echo "$lzgpr"| head -n -1)
 		chk=$(echo "$lzgpr" | tail -1)
-		tpe=$(cat "$DC_tl/.in_s" | grep "$chk")
+		tpe=$(cat "$DC_tl/.cnfg2" | grep "$chk")
 		echo "$chk"
 	else
 		cd $HOME
@@ -279,7 +279,7 @@ elif [ $1 = n_i ]; then
 		ret=$?
 		trgt=$(echo "$lzgpr" | tail -5 | sed -n 1p | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
 		srce=$(echo "$lzgpr" | tail -5 | sed -n 3p | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-		tpe=$(cat "$DC_tl/.in_s" | grep "$(echo "$lzgpr" | tail -5 | sed -n 5p)")
+		tpe=$(cat "$DC_tl/.cnfg2" | grep "$(echo "$lzgpr" | tail -5 | sed -n 5p)")
 		chk=$(echo "$lzgpr" | tail -1)
 		echo "$chk"
 	fi
@@ -716,7 +716,7 @@ elif [ $1 = n_w ]; then
 	icnn=idiomind
 	int="$(sed -n 22p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
 	btn="$(sed -n 21p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
-	tpcs=$(cat "$DC_tl/.in_s" | cut -c 1-30 | egrep -v "$tpe" \
+	tpcs=$(cat "$DC_tl/.cnfg2" | cut -c 1-30 | egrep -v "$tpe" \
 	| tr "\\n" '!' | sed 's/!\+$//g')
 	ttle="${tpe:0:30}"
 	DT_r="$3"

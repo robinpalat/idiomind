@@ -277,7 +277,7 @@ elif [ "$1" != chngi ]; then
 		if [ -n "$1" ]; then
 			text="--text=$(cat "$1")"
 		fi
-		info2=$(cat $DC_tl/.in | wc -l)
+		info2=$(cat $DC_tl/.cnfg1 | wc -l)
 		cd $DC_s
 
 		VAR=$(cat $DC_s/cnfg0 | $yad --name=idiomind --ellipsize=END \
