@@ -208,14 +208,17 @@ elif [ $1 = n_i ]; then
 	fi
 	
 	if [ -f $DT/ntpc ]; then
+		rm -fr $DT_r
 		$DS/chng.sh $DS/ifs/info1 fnew & exit 1
 	fi
 	
 	if [ -z "$tpc" ]; then
+		rm -fr $DT_r
 		$DS/chng.sh $DS/ifs/info5 fnew & exit 1
 	fi
 
 	if [ -z "$tpe" ]; then
+		rm -fr $DT_r
 		$DS/chng.sh $DS/ifs/info2 fnew & exit 1
 	fi
 	
@@ -538,7 +541,7 @@ elif [ $1 = n_s ]; then
 				let n++
 			done
 		fi
-		rm -fr $DT_r &
+		rm -fr $DT_r $DT/twrd $DT/swrd &
 		echo "aitm.1.aitm" >> \
 		$DC/addons/stats/.log
 		exit 1
@@ -705,7 +708,7 @@ elif [ $1 = n_s ]; then
 		fi
 		echo "aitm.1.aitm" >> \
 		$DC/addons/stats/.log
-		rm -fr $DT_r & exit 1
+		rm -fr $DT_r $DT/twrd $DT/swrd & exit 1
 	fi
 
 elif [ $1 = n_w ]; then

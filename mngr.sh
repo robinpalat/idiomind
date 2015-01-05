@@ -665,18 +665,18 @@ elif [ $1 = dli ]; then
 			cd "$DC_tlt/Practice"
 			sed -i 's/'"$itdl"'//g' ./lsin.tmp
 			cd ..
-			grep -v -x -v "$itdl" ./cnfg11 > ./tinx
-			sed '/^$/d' ./tinx > ./cnfg11
-			rm ./tinx
-			grep -v -x -v "$itdl" ./cnfg0 > ./t-inx
-			sed '/^$/d' ./t-inx > ./cnfg0
-			rm ./t-inx
-			grep -v -x -v "$itdl" ./cnfg2 > ./tok-inx
-			sed '/^$/d' ./tok-inx > ./cnfg2
-			rm ./tok-inx
-			grep -v -x -v "$itdl" ./cnfg1 > ./tlng-inx
-			sed '/^$/d' ./tlng-inx > ./cnfg1
-			rm ./tlng-inx
+			grep -v -x -v "$itdl" ./cnfg11 > ./cnfg11_
+			sed '/^$/d' ./cnfg11_ > ./cnfg11
+			rm ./cnfg11_
+			grep -v -x -v "$itdl" ./cnfg0 > ./cnfg0_
+			sed '/^$/d' ./cnfg0_ > ./cnfg0
+			rm ./cnfg0_
+			grep -v -x -v "$itdl" ./cnfg2 > ./cnfg2_
+			sed '/^$/d' ./cnfg2_ > ./cnfg2
+			rm ./cnfg2_
+			grep -v -x -v "$itdl" ./cnfg1 > ./cnfg1_
+			sed '/^$/d' ./cnfg1_ > ./cnfg1
+			rm ./cnfg1_
 			grep -v -x -v "$itdl" cnfg3 > cnfg3_
 			sed '/^$/d' cnfg3_ > cnfg3
 			rm ./cnfg3_
@@ -688,18 +688,18 @@ elif [ $1 = dli ]; then
 			cd "$DC_tlt/Practice"
 			sed -i 's/'"$itdl"'//g' ./lsin.tmp
 			cd ..
-			grep -v -x -v "$itdl" ./cnfg11 > ./tinx
-			sed '/^$/d' ./tinx > ./cnfg11
-			rm ./tinx
-			grep -v -x -v "$itdl" ./cnfg0 > ./t-inx
-			sed '/^$/d' ./t-inx > ./cnfg0
-			rm ./t-inx
-			grep -v -x -v "$itdl" ./cnfg2 > ./tok-inx
-			sed '/^$/d' ./tok-inx > ./cnfg2
-			rm ./tok-inx
-			grep -v -x -v "$itdl" ./cnfg1 > ./tlng-inx
-			sed '/^$/d' ./tlng-inx > ./cnfg1
-			rm ./tlng-inx
+			grep -v -x -v "$itdl" ./cnfg11 > ./cnfg11_
+			sed '/^$/d' ./cnfg11_ > ./cnfg11
+			rm ./cnfg11_
+			grep -v -x -v "$itdl" ./cnfg0 > ./cnfg0_
+			sed '/^$/d' ./cnfg0_ > ./cnfg0
+			rm ./cnfg0_
+			grep -v -x -v "$itdl" ./cnfg2 > ./cnfg2_
+			sed '/^$/d' ./cnfg2_ > ./cnfg2
+			rm ./cnfg2_
+			grep -v -x -v "$itdl" ./cnfg1 > ./cnfg1_
+			sed '/^$/d' ./cnfg1_ > ./cnfg1
+			rm ./cnfg1_
 			grep -v -x -v "$itdl" cnfg4 > cnfg4_
 			sed '/^$/d' cnfg4_ > cnfg4
 			rm ./cnfg4_
@@ -735,18 +735,18 @@ elif [ $1 = dli ]; then
 				sed -i 's/'"$itdl"'//g' ./lwin.tmp
 				sed -i 's/'"$itdl"'//g' ./mcin.tmp
 				cd ..
-				grep -v -x -v "$itdl" ./cnfg11 > ./tinx
-				sed '/^$/d' ./tinx > ./cnfg11
-				rm ./tinx
-				grep -v -x -v "$itdl" ./cnfg0 > ./t-inx
-				sed '/^$/d' ./t-inx > ./cnfg0
-				rm ./t-inx
-				grep -v -x -v "$itdl" ./cnfg2 > ./tok-inx
-				sed '/^$/d' ./tok-inx > ./cnfg2
-				rm ./tok-inx
-				grep -v -x -v "$itdl" ./cnfg1 > ./tlng-inx
-				sed '/^$/d' ./tlng-inx > ./cnfg1
-				rm ./tlng-inx
+				grep -v -x -v "$itdl" ./cnfg11 > ./cnfg11_
+				sed '/^$/d' ./cnfg11_ > ./cnfg11
+				rm ./cnfg11_
+				grep -v -x -v "$itdl" ./cnfg0 > ./cnfg0_
+				sed '/^$/d' ./cnfg0_ > ./cnfg0
+				rm ./cnfg0_
+				grep -v -x -v "$itdl" ./cnfg2 > ./cnfg2_
+				sed '/^$/d' ./cnfg2_ > ./cnfg2
+				rm ./cnfg2_
+				grep -v -x -v "$itdl" ./cnfg1 > ./cnfg1_
+				sed '/^$/d' ./cnfg1_ > ./cnfg1
+				rm ./cnfg1_
 				grep -v -x -v "$itdl" cnfg3 > cnfg3_
 				sed '/^$/d' cnfg3_ > cnfg3
 				rm ./cnfg3_
@@ -769,18 +769,18 @@ elif [ $1 = dli ]; then
 				cd "$DC_tlt/Practice"
 				sed -i 's/'"$itdl"'//g' ./lsin.tmp
 				cd ..
-				grep -v -x -v "$itdl" ./cnfg11 > ./tinx
-				sed '/^$/d' ./tinx > ./cnfg11
-				rm ./tinx
-				grep -v -x -v "$itdl" ./cnfg0 > ./t-inx
-				sed '/^$/d' ./t-inx > ./cnfg0
-				rm ./t-inx
-				grep -v -x -v "$itdl" ./cnfg2 > ./tok-inx
-				sed '/^$/d' ./tok-inx > ./cnfg2
-				rm ./tok-inx
-				grep -v -x -v "$itdl" ./cnfg1 > ./tlng-inx
-				sed '/^$/d' ./tlng-inx > ./cnfg1
-				rm ./tlng-inx
+				grep -v -x -v "$itdl" ./cnfg11 > ./cnfg11_
+				sed '/^$/d' ./cnfg11_ > ./cnfg11
+				rm ./cnfg11_
+				grep -v -x -v "$itdl" ./cnfg0 > ./cnfg0_
+				sed '/^$/d' ./cnfg0_ > ./cnfg0
+				rm ./cnfg0_
+				grep -v -x -v "$itdl" ./cnfg2 > ./cnfg2_
+				sed '/^$/d' ./cnfg2_ > ./cnfg2
+				rm ./cnfg2_
+				grep -v -x -v "$itdl" ./cnfg1 > ./cnfg1_
+				sed '/^$/d' ./cnfg1_ > ./cnfg1
+				rm ./cnfg1_
 				grep -v -x -v "$itdl" cnfg4 > cnfg4_
 				sed '/^$/d' cnfg4_ > cnfg4
 				rm ./cnfg4_
@@ -803,18 +803,18 @@ elif [ $1 = dli ]; then
 			sed -i 's/'"$itdl"'//g' ./mcin.tmp
 			sed -i 's/'"$itdl"'//g' ./lsin.tmp
 			cd ..
-			grep -v -x -v "$itdl" ./cnfg11 > ./tinx
-			sed '/^$/d' ./tinx > ./cnfg11
-			rm ./tinx
-			grep -v -x -v "$itdl" ./cnfg0 > ./t-inx
-			sed '/^$/d' ./t-inx > ./cnfg0
-			rm ./t-inx
-			grep -v -x -v "$itdl" ./cnfg2 > ./tok-inx
-			sed '/^$/d' ./tok-inx > ./cnfg2
-			rm ./tok-inx
-			grep -v -x -v "$itdl" ./cnfg1 > ./tlng-inx
-			sed '/^$/d' ./tlng-inx > ./cnfg1
-			rm ./tlng-inx
+			grep -v -x -v "$itdl" ./cnfg11 > ./cnfg11_
+			sed '/^$/d' ./cnfg11_ > ./cnfg11
+			rm ./cnfg11_
+			grep -v -x -v "$itdl" ./cnfg0 > ./cnfg0_
+			sed '/^$/d' ./cnfg0_ > ./cnfg0
+			rm ./cnfg0_
+			grep -v -x -v "$itdl" ./cnfg2 > ./cnfg2_
+			sed '/^$/d' ./cnfg2_ > ./cnfg2
+			rm ./cnfg2_
+			grep -v -x -v "$itdl" ./cnfg1 > ./cnfg1_
+			sed '/^$/d' ./cnfg1_ > ./cnfg1
+			rm ./cnfg1_
 			grep -v -x -v "$itdl" cnfg4 > cnfg4_
 			sed '/^$/d' cnfg4_ > cnfg4
 			rm ./cnfg4_

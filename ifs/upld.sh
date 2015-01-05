@@ -7,8 +7,8 @@ if [ $1 = vsd ]; then
 	wth=$(sed -n 4p $DC_s/cnfg18)
 	eht=$(sed -n 3p $DC_s/cnfg18)
 	cd $DM_t/saved
-	ls -t *.AL > ls
-	(sed -i 's/.AL//g' ./ls)
+	ls -t *cnfg13 > ls
+	(sed -i 's/cnfg13//g' ./ls)
 
 	cat ./ls | $yad --list --on-top \
 	--window-icon=idiomind --center --skip-taskbar \
@@ -31,14 +31,14 @@ elif [ $1 = infsd ]; then
 	userid=$(sed -n 1p $DC_s/cnfg4)
 	user=$(echo "$(whoami)")
 	tpcd="$2"
-	NM=$(sed -n 1p ./"$tpcd".AL)
-	LNGT=$(sed -n 2p ./"$tpcd".AL)
-	lngs=$(sed -n 5p ./"$tpcd".AL)
-	ATR=$(sed -n 6p ./"$tpcd".AL)
-	SKP=$(sed -n 7p ./"$tpcd".AL)
-	ML=$(sed -n 8p ./"$tpcd".AL)
-	CTGY=$(sed -n 9p ./"$tpcd".AL)
-	LNK=$(sed -n 10p ./"$tpcd".AL)
+	NM=$(sed -n 1p ./"$tpcd"cnfg13)
+	LNGT=$(sed -n 2p ./"$tpcd"cnfg13)
+	lngs=$(sed -n 5p ./"$tpcd"cnfg13)
+	ATR=$(sed -n 6p ./"$tpcd"cnfg13)
+	SKP=$(sed -n 7p ./"$tpcd"cnfg13)
+	ML=$(sed -n 8p ./"$tpcd"cnfg13)
+	CTGY=$(sed -n 9p ./"$tpcd"cnfg13)
+	LNK=$(sed -n 10p ./"$tpcd"cnfg13)
 	nme=$(echo "$tpcd" | sed 's/ /_/g')
 	icon=$DS/images/idmnd.png
 	file="http://currently.url.ph/$lgs/$lgtl/$Ctgry/$nme/$userid.$tpcd.idmnd"
@@ -309,7 +309,7 @@ echo ""$tpc"
 "$Skype"
 "$Ctgry"
 "$link"
-"$Notes"" > "$DT/$tpc"/.AL
+"$Notes"" > "$DT/$tpc"/cnfg13
 echo "$userid" > $DC_s/cnfg4
 echo "$Skype" >> $DC_s/cnfg4
 echo "$Mail" >> $DC_s/cnfg4
@@ -411,12 +411,12 @@ while [[ $n -le "$(cat  $is | wc -l | awk '{print ($1)}')" ]]; do
 done
 
 #-----------------------
-lgt=$(sed -n 2p "$DT/$tpc"/.AL | awk '{print tolower($0)}')
-ls=$(sed -n 5p "$DT/$tpc"/.AL)
-cby=$(sed -n 6p "$DT/$tpc"/.AL)
-cty=$(sed -n 9p "$DT/$tpc"/.AL)
-lnk=$(sed -n 10p "$DT/$tpc"/.AL)
-nts=$(sed -n 11p "$DT/$tpc"/.AL | sed 's/https\:\/\///g' | sed 's/http\:\/\///g')
+lgt=$(sed -n 2p "$DT/$tpc"/cnfg13 | awk '{print tolower($0)}')
+ls=$(sed -n 5p "$DT/$tpc"/cnfg13)
+cby=$(sed -n 6p "$DT/$tpc"/cnfg13)
+cty=$(sed -n 9p "$DT/$tpc"/cnfg13)
+lnk=$(sed -n 10p "$DT/$tpc"/cnfg13)
+nts=$(sed -n 11p "$DT/$tpc"/cnfg13 | sed 's/https\:\/\///g' | sed 's/http\:\/\///g')
 
 l=$(sort -Ru $DM_t/saved/ls | egrep -v "$tpc" | head -4)
 echo "$l" > l
@@ -424,10 +424,10 @@ ot1=$(sed -n 1p l)
 ot2=$(sed -n 2p l)
 ot3=$(sed -n 3p l)
 ot4=$(sed -n 4p l)
-lt1=$(sed -n 10p "$DM_t/saved/$ot1".AL)
-lt2=$(sed -n 10p "$DM_t/saved/$ot2".AL)
-lt3=$(sed -n 10p "$DM_t/saved/$ot3".AL)
-lt4=$(sed -n 10p "$DM_t/saved/$ot4".AL)
+lt1=$(sed -n 10p "$DM_t/saved/$ot1"cnfg13)
+lt2=$(sed -n 10p "$DM_t/saved/$ot2"cnfg13)
+lt3=$(sed -n 10p "$DM_t/saved/$ot3"cnfg13)
+lt4=$(sed -n 10p "$DM_t/saved/$ot4"cnfg13)
 
 #-----------------------htmlquiz
 if [ -n "$(cat $iw)" ]; then
@@ -737,7 +737,7 @@ ftp://$HOST/public_html/uploads/recents/$userid."$topic".idmnd
 exit=$?
 
 if [ 0 = 0 ] ; then
-    cp -f "$DT/$tpc/.AL" "$HOME/.idiomind/topics/saved/$tpc.AL"
+    cp -f "$DT/$tpc/cnfg13" "$HOME/.idiomind/topics/saved/$tpccnfg13"
     info="El tema \\n<b> <a href='$link'>$tpc</a></b> \\n se guardo y publico con éxito"
 else
     info="Ocurrio un problema al subir el archivo"

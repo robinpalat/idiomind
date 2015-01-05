@@ -149,7 +149,7 @@ if [ -z "$1" ]; then
 						cp -f cnfg3 "$tdirc/cnfg3"
 						cp -f cnfg4 "$tdirc/cnfg4"
 						cp -f cnfg5 "$tdirc/cnfg5"
-						cp -f .AL "$tdirc/.AL"
+						cp -f cnfg13 "$tdirc/cnfg13"
 						echo "$nt" > "$tdirc/nt"
 						(cd "$DS_ppd"; cp -f .* \
 						"$DC/topics/$dlng/$topic/Practice")
