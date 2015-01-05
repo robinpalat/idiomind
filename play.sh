@@ -97,19 +97,19 @@ else
 img2=$DS/images/add.png
 fi
 if [ -z "$indm" ]; then
-img3=$DS/images/marki.png
+img3=$DS/images/addi.png
 else
-img3=$DS/images/mark.png
+img3=$DS/images/add.png
 fi
 if [ -z "$indp" ]; then
-img4=$DS/images/prtci.png
+img4=$DS/images/addi.png
 else
-img4=$DS/images/prtc.png
+img4=$DS/images/add.png
 fi
 if [ -z "$indf" ]; then
-img5=$DS/images/srssi.png
+img5=$DS/images/addi.png
 else
-img5=$DS/images/srss.png
+img5=$DS/images/add.png
 fi
 img6=$DS/images/set-26.png
 
