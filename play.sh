@@ -1,6 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
+echo "$tpc"
 tlng="$DC_tlt/cnfg1"
 winx="$DC_tlt/cnfg3"
 sinx="$DC_tlt/cnfg4"
@@ -20,21 +21,15 @@ cd "$DC_tlt/Practice"
 indp=$(cat fin.tmp mcin.tmp \
 lwin.tmp | sed '/^$/d' | sort | uniq)
 indf=$(cat $DC_tl/Feeds/cnfg0)
-uid=$(echo "$(whoami)")
+u=$(echo "$(whoami)")
 infs=$(echo "$snts Sentences" | wc -l)
 infw=$(echo "$wrds Words" | wc -l)
-#eht=$(sed -n 7p $HOME/.config/idiomind/s/cnfg18)
-#wth=$(sed -n 8p $HOME/.config/idiomind/s/cnfg18)
 
 if [[ "$1" = d ]]; then
-	uid=$(echo "$(whoami)")
+	u=$(echo "$(whoami)")
 	pst=$(sed -n 1p $DC_s/cnfg17)
-	> $DT/.$uid/INACT
-	> $DT/.$uid/ACTIV
 	slt=$(mktemp $DT/slt.XXX.s)
-	INACT=$DT/.$uid/INACT
-	ACTIV=$DT/.$uid/ACTIV
-	cd $DT/.$uid/
+	cd $DT/.$u/
 	
 	if echo "$2" | grep "Notification"; then
 		cnf1=$(mktemp $DT/cnf1.XXXX.s)
@@ -81,9 +76,9 @@ if [[ "$1" = d ]]; then
 	fi
 fi
 
-if [ ! -d $DT/.$uid ]; then
-	mkdir $DT/.$uid/
-	cd $DT/.$uid
+if [ ! -d $DT/.$u ]; then
+	mkdir $DT/.$u
+	cd $DT/.$u
 		echo "$indw" > ./indw
 		echo "$inds" > ./inds
 		echo "$indm" > ./indm
@@ -136,7 +131,7 @@ slct=$(mktemp $DT/slct.XXXX)
 
 btn1="--button=Ok:0"
 btn2="--center"
-if [ -f $DT/.p__$uid ]; then
+if [ -f $DT/.p__$u ]; then
 	btn1="--button=Ok:0"
 	btn2="--button=gtk-media-stop:2"
 fi
@@ -148,7 +143,6 @@ $yad --list --on-top \
 --height=260 --title=" " --always-print-result \
 --window-icon=idiomind --no-headers \
 --buttons-layout=end --skip-taskbar \
---dclick-action='/usr/share/idiomind/play.sh d' \
 --borders=0 $btn2 $btn1 --hide-column=1 \
 --column=Action:TEXT --column=icon:IMG \
 --column=Action:TEXT --column=icon:CHK \
@@ -163,9 +157,8 @@ $yad --list --on-top \
 ret=$?
 slt=$(cat "$slct")
 
-#=============================  continuar
 if  [[ "$ret" -eq 0 ]]; then
-	cd $DT/.$uid
+	cd $DT/.$u
 	> ./indx
 	if echo "$(echo "$slt" | sed -n 1p)" | grep TRUE; then
 		sed -i "1s/.*/TRUE/" $DC_s/cnfg5
@@ -216,20 +209,21 @@ if  [[ "$ret" -eq 0 ]]; then
 
 #-------------------------------------stop 
 elif [[ "$ret" -eq 2 ]]; then
+	rm -f "$slct"
+	[[ -d $DT/.$u ]] && rm -fr $DT/.$u
+	[[ -f $DT/.p__$u ]] && rm -f $DT/.p__$u
 	$DS/stop.sh P & exit 1
 else
-	if  [ ! -f $DT/.p__$uid ]; then
-		rm -fr $DT/.$uid
+	if  [ ! -f $DT/.p__$u ]; then
+		rm -fr $DT/.$u
 	fi
-	rm -f $slct &
+	rm -f "$slct"
 	exit 1
 fi
 
-#-----------------------------------------acondicion
 rm -f $slct
 $DS/stop.sh P
 
-#-----------------------------------------condicion 
 w=$(sed -n 1p $DC_s/cnfg5)
 s=$(sed -n 2p $DC_s/cnfg5)
 m=$(sed -n 2p $DC_s/cnfg5)
@@ -250,7 +244,7 @@ if [[ "$(cat ./indx | wc -l)" -lt 1 ]]; then
 	T="$(echo "$int" | sed -n 1p)"
 	D="$(echo "$int" | sed -n 2p)"
 	notify-send -i idiomind "$T" "$D" -t 9000 &
-	rm -f $DT/.p__$uid &
+	rm -f $DT/.p__$u &
 	$DS/stop.sh S & exit
 fi
 

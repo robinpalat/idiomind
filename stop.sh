@@ -3,10 +3,7 @@ u=$(echo "$(whoami)")
 if echo "$1" | grep "P"; then
 	[[ -n "$(ps -A | pgrep -f "/usr/share/idiomind/bcle.sh")" ]] && killall bcle.sh &
 	[[ -n "$(ps -A | pgrep -f "/usr/share/idiomind/chng.sh")" ]] && killall chng.sh &
-	[[ -d /tmp/.idmtp1.$u/.idadtmptts_$u ]] && rm -fr /tmp/.idmtp1.$u/.idadtmptts_$u
-	[[ -d $DT/.$u ]] && rm -fr $DT/.$u
-	[[ -f $slct ]] && rm -f $slct
-	[[ -f $DT/.p__$u ]] && rm -f $DT/.p__$u
+	[[ -d $DT/.idadtmptts_$u ]] && rm -fr $DT/.idadtmptts_$u
 	[[ -n "$(ps -A | pgrep -f "yad --form ")" ]] && kill -9 $(pgrep -f "yad --form ") &
 	exit
 elif echo "$1" | grep "S"; then
