@@ -3,7 +3,6 @@
 source /usr/share/idiomind/ifs/c.conf
 
 if [ $1 = n_t ]; then
-	
 	info2=$(cat $DC_tl/.cnfg1 | wc -l)
 	int="$(sed -n 22p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
 	btn="$(sed -n 21p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
@@ -18,7 +17,6 @@ if [ $1 = n_t ]; then
 			tle=$(echo "$(echo "$int" | sed -n 1p)")
 			nmt=""
 		fi
-		
 		#--------------normal
 		jlbi=$($yad --window-icon=idiomind \
 		--form --center --field="" "$nmt" --title="$tle" \

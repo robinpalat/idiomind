@@ -1,11 +1,10 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
-
 source /usr/share/idiomind/ifs/c.conf
 tlng="$DC_tlt/cnfg1"
 winx="$DC_tlt/cnfg3"
 sinx="$DC_tlt/cnfg4"
-
+[ -z "$tpc" ] && exit 1
 if [ "$(cat "$sinx" | wc -l)" -gt 0 ]; then
 indw=$(grep -F -x -v -f "$sinx" "$tlng")
 else
@@ -217,9 +216,7 @@ if  [[ "$ret" -eq 0 ]]; then
 
 #-------------------------------------stop 
 elif [[ "$ret" -eq 2 ]]; then
-	rm -fr $DT/.$uid $slct $DT/.p__$uid &
 	$DS/stop.sh P & exit 1
-	
 else
 	if  [ ! -f $DT/.p__$uid ]; then
 		rm -fr $DT/.$uid

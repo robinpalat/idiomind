@@ -1,7 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
-
 if [[ "$1" = chngi ]]; then
 	saw=$(sed -n 1p $DC_s/cnfg5) # words
 	sas=$(sed -n 2p $DC_s/cnfg5) # sentences
@@ -10,7 +9,6 @@ if [[ "$1" = chngi ]]; then
 	saf=$(sed -n 5p $DC_s/cnfg5) # feeds conten
 	nta=$(sed -n 6p $DC_s/cnfg5) # osd
 	sna=$(sed -n 7p $DC_s/cnfg5) # audio
-	user=$(echo "$(whoami)")
 	cnfg1="$DC_s/cnfg5"
 	indx="$DT/.$user/indx"
 	tlck="$DS/images/chng.mp3"
@@ -20,9 +18,6 @@ if [[ "$1" = chngi ]]; then
 	eht=$(sed -n 9p $DC_s/cnfg18)
 	nim=$(sed -n 11p $DC_s/cnfg18)
 	indp="$DT/.$user/indp"
-	br="$DS/images/br.png"
-	br2="$DS/images/br2.png"
-	br3="$DS/images/br3.png"
 	
 	if [[ -z $(sed -n 1p $DC_s/cnfg2) ]]; then
 	pst=$(sed -n 1p $DC_s/cnfg17)
@@ -33,17 +28,6 @@ if [[ "$1" = chngi ]]; then
 	else
 		bcl=$(sed -n 1p $DC_s/cnfg2)
 		pst=$(sed -n 2p $DC_s/cnfg2)
-	fi
-	if echo "$sna" | grep "TRUE"; then
-		aud=play
-	else
-		aud='#'
-	fi
-	if echo "$nta" | grep "TRUE"; then
-		osd=notify-send
-		bcl=$(sed -n 1p $DC_s/cnfg2)
-	else
-		osd="#"
 	fi
 
 	itm=$(sed -n "$2"p $indx)
@@ -96,25 +80,30 @@ if [[ "$1" = chngi ]]; then
 			fi
 			osdi=idiomind
 		fi
-		$osd -i "$osdi" "$trgt" "$srce\\n" -t 8000  &
+		if echo "$nta" | grep "TRUE"; then
+			notify-send -i "notify-sendi" "$trgt" "$srce\\n" -t 8000  &
+		fi
 		sleep 1
-		$aud "$DM_tlt/$itm".mp3 &
 		
-		if [ $bcl -ge 30 ]; then
-			(sleep 15 && $aud "$DM_tlt/$itm".mp3) &
-		fi
-		if [ $bcl -ge 45 ]; then
-			(sleep 30 && $aud "$DM_tlt/$itm".mp3) &
-		fi
-		if [ $bcl -ge 65 ]; then
-			(sleep 50 && $aud "$DM_tlt/$itm".mp3) &
+		if echo "$sna" | grep "TRUE"; then
+			play "$DM_tlt/$itm".mp3 &
+			if [ $bcl -ge 30 ]; then
+				(sleep 15 && play "$DM_tlt/$itm".mp3) &
+			fi
+			if [ $bcl -ge 45 ]; then
+				(sleep 30 && play "$DM_tlt/$itm".mp3) &
+			fi
+			if [ $bcl -ge 65 ]; then
+				(sleep 50 && play "$DM_tlt/$itm".mp3) &
+			fi
 		fi
 		
 		sleep $wmm
 	
 	elif ( [ $saw = TRUE ] || [ $sap = TRUE ] || [ $sam = TRUE ] ) && \
 	( [ $(echo "$itm" | wc -w) = 1 ] && \
-	[ -f "$DM_tlt/words/$itm.mp3" ] || [ -f "$DM_tlt/words/$itm.mp3" ] ); then
+	[ -f "$DM_tlt/words/$itm.mp3" ] ); then
+	
 		file="$DM_tlt/words/$itm.mp3"
 		if echo "$nta" | grep "TRUE"; then
 			cnt=10
@@ -156,17 +145,20 @@ if [[ "$1" = chngi ]]; then
 		else
 			trgt="$tgt"
 		fi
-
-		$osd -i "$osdi" "$trgt" "$srce\n" -t 7000 &
-		sleep 1
-		$aud "$DM_tlt/words/$itm".mp3 &
-		if [ $bcl -ge 5 ]; then
-			(sleep 2.5 && $aud "$DM_tlt/words/$itm.mp3") &
+		if echo "$nta" | grep "TRUE"; then
+			notify-send -i "notify-sendi" "$trgt" "$srce\n" -t 7000 &
 		fi
-		if [ $bcl -ge 30 ]; then
-			(sleep 10 && $aud "$DM_tlt/words/$itm.mp3"
-			sleep 10
-			$aud "$DM_tlt/words/$itm.mp3") &
+		sleep 1
+		if echo "$sna" | grep "TRUE"; then
+			play "$DM_tlt/words/$itm".mp3 &
+			if [ $bcl -ge 5 ]; then
+				(sleep 2.5 && play "$DM_tlt/words/$itm.mp3") &
+			fi
+			if [ $bcl -ge 30 ]; then
+				(sleep 10 && play "$DM_tlt/words/$itm.mp3"
+				sleep 10
+				play "$DM_tlt/words/$itm.mp3") &
+			fi
 		fi
 		rm -f $DT/*.jpeg ./.id.tmp
 		sleep $wmm
@@ -190,10 +182,13 @@ if [[ "$1" = chngi ]]; then
 			fi
 			wmm=$(($bcl + $cnt))
 			wmt=$(($wmm + 5))
-
-			$osd -i idiomind "$trgt" "$srce" -t 8000 -i idiomind &
+			if echo "$nta" | grep "TRUE"; then
+				notify-send -i idiomind "$trgt" "$srce" -t 8000 -i idiomind &
+			fi
 			sleep 1
-			$aud "$DM_tl/Feeds/kept/$itm".mp3 &
+			if echo "$sna" | grep "TRUE"; then
+				play "$DM_tl/Feeds/kept/$itm".mp3 &
+			fi
 			sleep $wmm
 					
 		elif [ -f "$DM_tl/Feeds/kept/words/$itm.mp3" ]; then
@@ -230,25 +225,38 @@ if [[ "$1" = chngi ]]; then
 			else
 				trgt="$tgt"
 			fi
-
-			$osd -i idiomind "$trgt" "$srce\\n\\n[ $exm ]" -t 7000 &
-			sleep 1
-			$aud "$DM_tl/Feeds/kept/words/$itm".mp3 &
-			if [ $bcl -ge 5 ]; then
-				(sleep 4 && $aud "$DM_tl/Feeds/kept/words/$itm.mp3") &
+			if echo "$nta" | grep "TRUE"; then
+				notify-send -i idiomind "$trgt" "$srce\\n\\n[ $exm ]" -t 7000 &
 			fi
-			if [ $bcl -ge 30 ]; then
-				(sleep 10 && $aud "$DM_tl/Feeds/kept/words/$itm.mp3"
-				sleep 10
-				$aud "$DM_tl/Feeds/kept/words/$itm.mp3") &
+			sleep 1
+			if echo "$sna" | grep "TRUE"; then
+				play "$DM_tl/Feeds/kept/words/$itm".mp3 &
+				if [ $bcl -ge 5 ]; then
+					(sleep 4 && play "$DM_tl/Feeds/kept/words/$itm.mp3") &
+				fi
+				if [ $bcl -ge 30 ]; then
+					(sleep 10 && play "$DM_tl/Feeds/kept/words/$itm.mp3"
+					sleep 10
+					play "$DM_tl/Feeds/kept/words/$itm.mp3") &
+				fi
 			fi
 			rm -f $DT/*.jpeg
 			sleep $wmm
 		else
 			exit 1
 		fi
+		[[ -f $DT/.bcle ]] && rm -f $DT/.bcle
 	else
-		exit 1
+		echo "$itm" >> $DT/.bcle
+		echo "-- no file found"
+		if [ $(cat $DT/.p__$use | wc -l) -gt 5 ]; then
+			int="$(sed -n 16p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+			T="$(echo "$int" | sed -n 1p)"
+			D="$(echo "$int" | sed -n 2p)" # reporduccion interrumpida
+			notify-send -i idiomind "$T" "$D" -t 9000 &
+			rm -fr $DT/.p__$user &
+			$DS/stop.sh S & exit 1
+		fi
 	fi
 
 elif [ "$1" != chngi ]; then
@@ -304,4 +312,3 @@ elif [ "$1" != chngi ]; then
 				exit 1
 			fi
 fi
-

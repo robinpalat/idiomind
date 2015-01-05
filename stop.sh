@@ -1,40 +1,40 @@
 #!/bin/bash
-user=$(echo "$(whoami)")
-
+u=$(echo "$(whoami)")
 if echo "$1" | grep "P"; then
-	killall bcle.sh &
-	killall chng.sh &
-	kill -9 $(pgrep -f "yad --form ")
-	exit 1
-	
+	[[ -n "$(ps -A | pgrep -f "/usr/share/idiomind/bcle.sh")" ]] && killall bcle.sh &
+	[[ -n "$(ps -A | pgrep -f "/usr/share/idiomind/chng.sh")" ]] && killall chng.sh &
+	[[ -d /tmp/.idmtp1.$u/.idadtmptts_$u ]] && rm -fr /tmp/.idmtp1.$u/.idadtmptts_$u
+	[[ -d $DT/.$u ]] && rm -fr $DT/.$u
+	[[ -f $slct ]] && rm -f $slct
+	[[ -f $DT/.p__$u ]] && rm -f $DT/.p__$u
+	[[ -n "$(ps -A | pgrep -f "yad --form ")" ]] && kill -9 $(pgrep -f "yad --form ") &
+	exit
 elif echo "$1" | grep "S"; then
-	killall bcle.sh &
-	killall notify-osd
-	killall play
-	killall play.sh
-	killall chng.sh &
-	kill -9 $(pgrep -f "yad --form ")
-	rm -f -r /tmp/.idmtp1.$user/.idadtmptts_$user
-	exit 1
-	
+	[[ -n "$(ps -A | pgrep -f "/usr/share/idiomind/bcle.sh")" ]] && killall bcle.sh &
+	[[ -n "$(ps -A | pgrep -f "notify-osd")" ]] && killall notify-osd &
+	[[ -n "$(ps -A | pgrep -f "play")" ]] && killall play &
+	[[ -n "$(ps -A | pgrep -f "/usr/share/idiomind/play.sh")" ]] && killall play.sh &
+	[[ -n "$(ps -A | pgrep -f "/usr/share/idiomind/chng.sh")" ]] && killall chng.sh &
+	[[ -n "$(ps -A | pgrep -f "yad --form ")" ]] && kill -9 $(pgrep -f "yad --form ") &
+	[[ -d /tmp/.idmtp1.$u/.idadtmptts_$u ]] && rm -fr /tmp/.idmtp1.$u/.idadtmptts_$u
+	exit
 elif echo "$1" | grep "V"; then
-	killall chng.sh &
-	kill -9 $(pgrep -f "yad --form ")
-	exit 1
-
+	[[ -n "$(ps -A | pgrep -f "/usr/share/idiomind/chng.sh")" ]] && killall chng.sh &
+	[[ -n "$(ps -A | pgrep -f "yad --form ")" ]] && kill -9 $(pgrep -f "yad --form ") &
+	exit
 elif echo "$1" | grep "L"; then
-	killall bcle.sh &
-	killall notify-osd
-	killall play
-	killall chng.sh &
-	kill -9 $(pgrep -f "yad --form ")
-	rm -f -r /tmp/.idmtp1.$user/.idadtmptts_$user
-	exit 1
-	
+	[[ -n "$(ps -A | pgrep -f "/usr/share/idiomind/bcle.sh")" ]] && killall bcle.sh &
+	[[ -n "$(ps -A | pgrep -f "notify-osd")" ]] && killall notify-osd &
+	[[ -n "$(ps -A | pgrep -f "play")" ]] && killall play &
+	[[ -n "$(ps -A | pgrep -f "/usr/share/idiomind/chng.sh")" ]] && killall chng.sh &
+	[[ -n "$(ps -A | pgrep -f "yad --form ")" ]] && kill -9 $(pgrep -f "yad --form ") &
+	[[ -d /tmp/.idmtp1.$u/.idadtmptts_$u ]] && rm -fr /tmp/.idmtp1.$u/.idadtmptts_$u
+	exit
 else
-	killall bcle.sh &
-	killall notify-osd
-	killall play
-	rm -f -r /tmp/.idmtp1.$user/.idadtmptts_$user /tmp/.idmtp1.$user/.p__$user
-	exit 1
+	[[ -n "$(ps -A | pgrep -f "/usr/share/idiomind/bcle.sh")" ]] && killall bcle.sh &
+	[[ -n "$(ps -A | pgrep -f "notify-osd")" ]] && killall notify-osd &
+	[[ -n "$(ps -A | pgrep -f "play")" ]] && killall play &
+	[[ -d /tmp/.idmtp1.$u/.idadtmptts_$u ]] && rm -fr /tmp/.idmtp1.$u/.idadtmptts_$u
+	[[ -f /tmp/.idmtp1.$u/.p__$u ]] && rm -fr  /tmp/.idmtp1.$u/.p__$u
+	exit
 fi

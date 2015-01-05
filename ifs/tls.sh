@@ -1,6 +1,6 @@
 #!/bin/bash
+# -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
-
 if [ $1 = tls ]; then
 
 $yad --form --height=150 --width=350 \
