@@ -20,8 +20,8 @@ if [ $1 = n_t ]; then
 		#--------------normal
 		jlbi=$($yad --window-icon=idiomind \
 		--form --center --field="" "$nmt" --title="$tle" \
-		--width=400 --height=80 --name=idiomind --on-top \
-		--skip-taskbar --borders=10 --button=Make:0 \
+		--width=400 --height=140 --name=idiomind --on-top \
+		--skip-taskbar --borders=5 --button=Make:0 \
 		--text="<small>  $name_for_new_topic </small>")
 		
 		jlb=$(echo "$jlbi" | cut -d "|" -f1 | sed s'/!//'g \
@@ -107,8 +107,8 @@ if [ $1 = n_t ]; then
 		
 		jlbi=$($yad --window-icon=idiomind \
 		--form --center --title="$new_topic"  --separator="\n" \
-		--width=400 --height=80 --name=idiomind --on-top \
-		--skip-taskbar --borders=10 --button=Make:0 \
+		--width=400 --height=140 --name=idiomind --on-top \
+		--skip-taskbar --borders=5 --button=Make:0 \
 		--text="<small>  $name_for_new_topic </small>" \
 		--field=" : " "$nmt")
 			
@@ -373,7 +373,7 @@ elif [ $1 = n_s ]; then
 		$yad --name=idiomind --center --on-top --image=info \
 		--text=" <b>$tpe    </b>\\n\\n $sentences_max" \
 		--image-on-top --fixed --sticky --title="$tpe" \
-		--width=230 --height=80 --borders=3 --button=gtk-ok:0 \
+		--width=350 --height=140 --borders=3 --button=gtk-ok:0 \
 		--skip-taskbar --window-icon=idiomind && exit 1
 	fi
 	
@@ -382,7 +382,7 @@ elif [ $1 = n_s ]; then
 		curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
 		$yad --window-icon=idiomind --on-top \
 		--image=info --name=idiomind \
-		--text="<b> $no_connection  \\n  </b>" \
+		--text="<b> $connection_err  \\n  </b>" \
 		--image-on-top --center --sticky \
 		--width=300 --height=50 --borders=3 \
 		--skip-taskbar --title=Idiomind \
@@ -729,7 +729,7 @@ elif [ $1 = n_w ]; then
 		$yad --name=idiomind --center --on-top --image=info \
 		--text=" <b>$tpe    </b>\\n\\n $words_max" \
 		--image-on-top --fixed --sticky --title="$tpe" \
-		--width=230 --height=80 --borders=3 --button=gtk-ok:0 \
+		--width=350 --height=1 --borders=3 --button=gtk-ok:0 \
 		--skip-taskbar --window-icon=idiomind && exit 1
 	fi
 	
@@ -878,7 +878,7 @@ elif [ $1 = edt ]; then
 		$yad --name=idiomind --center --image=info --on-top \
 		--text=" <b>$words_max   </b>" \
 		--image-on-top --fixed --sticky --title="$tpc" \
-		--width=230 --height=80 --borders=3 --button=gtk-ok:0 \
+		--width=350 --height=140 --borders=3 --button=gtk-ok:0 \
 		--skip-taskbar --window-icon=idiomind && exit 1
 		fi
 		
@@ -1568,7 +1568,7 @@ elif [ $1 = prs ]; then
 				$yad --name=idiomind --center --on-top --image=error \
 				--text="  $key_err <a href='$LNK'>Google. </a>" \
 				--image-on-top --sticky --title="Idiomind" \
-				--width=400 --height=80 --borders=3 --button=gtk-ok:0 \
+				--width=350 --height=140 --borders=3 --button=gtk-ok:0 \
 				--skip-taskbar --window-icon=idiomind && \
 				rm -fr ls $lckpr $DT_r & exit 1
 			fi
@@ -1627,18 +1627,14 @@ $trgt" >> log
 			--undecorated --auto-close --on-top \
 			--skip-taskbar --no-buttons
 			
-			if [ $(echo "$tpe" | wc -c) -gt 40 ]; then
-				tcnm="${tpe:0:40}..."
-			else
-				tcnm="$tpe"
-			fi
+			[[ $(echo "$tpe" | wc -c) -gt 40 ]] && tcnm="${tpe:0:40}..." || tcnm="$tpe"
 
 			left=$((50 - $(cat "$DC_tlt"/cnfg4 | wc -l)))
 			info=$(echo "Puedes agregar  <b>"$left"</b>  oraciones")
 			if [ $ns -ge 45 ]; then
-				info=$(echo "Puedes agregar  <span color='#EA355F'><b>"$left"</b></span>  oraciones en $tcnm")
+				info=$(echo "Puedes agregar  <b>"$left"</b>  oraciones en $tcnm")
 			elif [ $ns -ge 49 ]; then
-				info=$(echo "Puedes agregar  <span color='#EA355F'><b>"$left"</b></span>  oración en $tcnm")
+				info=$(echo "Puedes agregar  <b>"$left"</b>  oración en $tcnm")
 			fi
 			
 			if [ -z "$(cat ./ls)" ]; then
@@ -1962,7 +1958,7 @@ $trgt" >> ./wlog
 					adds=$(cat ./adds ./addw | wc -l)
 					
 					if [ $adds -ge 1 ]; then
-						notify-send -i idiomind "$tpe" "$added:\\n$sadds$S$wadds$W" -t 2000 &
+						notify-send -i idiomind "$tpe" "$added \\n$sadds$S$wadds$W" -t 2000 &
 						echo "aitm.$adds.aitm" >> \
 						$DC/addons/stats/.log
 					fi
@@ -2032,20 +2028,23 @@ $trgt" >> ./wlog
 		(
 		echo "3"
 		echo "# " ;
-		
-		curl $prdt | grep -o -P '(?<=<title>).*(?=</title>)' > ./sntsls
+		curl $prdt | grep -o -P '(?<=<title>).*(?=</title>)' > ./sntsls_
 		lynx -dump -nolist $prdt  | sed -n -e '1x;1!H;${x;s-\n- -gp}' \
 		| sed 's/\./\.\n/g' | sed 's/<[^>]*>//g' | sed 's/ \+/ /g' \
 		| sed '/^$/d' | sed 's/  / /g' | sed 's/^[ \t]*//;s/[ \t]*$//g' \
 		| sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
-		| sed 's/<[^>]\+>//g' | sed 's/\://g' >> ./sntsls
+		| sed 's/<[^>]\+>//g' | sed 's/\://g' >> ./sntsls_
 		
 		) | $yad --progress --progress-text=" " \
-		--width=250 --height=20 --geometry=250x20-2-2 \
+		--width=200 --height=20 --geometry=200x20-2-2 \
 		--pulsate --percentage="5" --on-top \
 		--undecorated --auto-close \
 		--skip-taskbar --no-buttons
 		
+		[[ $(sed -n 1p ./sntsls_ | wc -c) -gt 40 ]] \
+		&& te="$(sed -n 1p ./sntsls_ | head -50)" \
+		|| te="$(sed -n 1p ./sntsls_)"
+
 	elif [[ "$(echo "$prdt" | cut -d "|" -f1 \
 	| sed -n 1p | grep -o "image")" = image ]]; then
 		
@@ -2056,15 +2055,14 @@ $trgt" >> ./wlog
 		(
 		echo "3"
 		echo "# " ;
-		
 		mogrify -modulate 100,0 -resize 400% $SCR_IMG.png
 		tesseract $SCR_IMG.png $SCR_IMG &> /dev/null
 		cat $SCR_IMG.txt | sed 's/\\n/./g' | sed 's/\./\n/g' \
 		| sed '/^$/d' | sed 's/^[ \t]*//;s/[ \t]*$//' \
-		| sed 's/  / /g' | sed 's/\://g' > ./sntsls
+		| sed 's/  / /g' | sed 's/\://g' > ./sntsls_
 		
 		) | $yad --progress --progress-text=" " \
-		--width=250 --height=20 --geometry=250x20-2-2 \
+		--width=200 --height=20 --geometry=200x20-2-2 \
 		--pulsate --percentage="5" --on-top \
 		--undecorated --auto-close \
 		--skip-taskbar --no-buttons
@@ -2072,40 +2070,41 @@ $trgt" >> ./wlog
 		(
 		echo "3"
 		echo "# " ;
-		
 		echo "$prdt" | sed 's/\\n/./g' | sed 's/\./\n/g' \
 		| sed '/^$/d' | sed 's/^[ \t]*//;s/[ \t]*$//' \
-		| sed 's/  / /g' | sed 's/\://g' > ./sntsls
+		| sed 's/  / /g' | sed 's/\://g' > ./sntsls_
 		
 		) | $yad --progress --progress-text=" " \
-		--width=250 --height=20 --geometry=250x20-2-2 \
+		--width=200 --height=20 --geometry=200x20-2-2 \
 		--pulsate --percentage="5" --on-top \
 		--undecorated --auto-close \
 		--skip-taskbar --no-buttons
 	fi
+		while read sntnc
+		do
+			if [ $(echo "$sntnc" | wc -c) -ge 180 ]; then
+				less="$(echo "$sntnc" | sed 's/\,/\n/g')"
+				n=1
+				while [ $n -le $(echo "$less" | wc -l) ]; do
+					sn=$(echo "$less" | sed -n "$n"p)
+					echo "$sn" >> ./sntsls
+					let n++
+				done
+			else
+				echo "$sntnc" >> ./sntsls
+			fi
+		done < ./sntsls_
+		rm -f ./sntsls_
 		
-		if [ $(sed -n 1p ./sntsls | wc -c) -gt 40 ]; then
-			tle=$(sed -n 1p ./sntsls)	
-			echo "${tle:0:40}..." > te
-		else
-			tle=$(sed -n 1p ./sntsls)
-			echo "$tle" > te
-		fi
+		[[ $(echo "$tpe" | wc -c) -gt 40 ]] && tcnm="${tpe:0:40}..." || tcnm="$tpe"
 		
-		if [ $(echo "$tpe" | wc -c) -gt 40 ]; then
-			tcnm="${tpe:0:40}..."
-		else
-			tcnm="$tpe"
-		fi
-		
-		te=$(cat ./te)
 		left=$((50 - $ns))
 		info=$(echo "$remain  <b>"$left"</b>  $sentences")
 
 		if [ $ns -ge 45 ]; then
-			info=$(echo "$remain  <span color='#EA355F'><b>"$left"</b></span>  $sentences  $tcnm")
+			info=$(echo "$remain  <b>"$left"</b>  $sentences $tcnm")
 		elif [ $ns -ge 49 ]; then
-			info=$(echo "$remain  <span color='#EA355F'><b>"$left"</b></span>  $sentences $tcnm")
+			info=$(echo "$remain  <b>"$left"</b>  $sentence $tcnm")
 		fi
 		
 		if [ -z "$(cat ./sntsls)" ]; then
@@ -2113,7 +2112,7 @@ $trgt" >> ./wlog
 			$yad --text-info --center --wrap \
 			--name=idiomind --class=idiomind --window-icon=idiomind \
 			--text=" " --sticky --width=$wth --height=$eht \
-			--borders=3 --button=Ok:0 --title=selector
+			--borders=3 --button=Ok:0 --title="$selector"
 			rm -fr $lckpr $DT_r $slt & exit 1
 		
 		else
@@ -2122,20 +2121,20 @@ $trgt" >> ./wlog
 			$yad --name=idiomind --window-icon=idiomind \
 			--dclick-action='/usr/share/idiomind/add.sh prc' --sticky \
 			--list --checklist --class=idiomind --center \
-			--text="<b> $te </b> \\n<small><small> $info</small></small>\\n" \
+			--text="<b>  $te</b>\\n<sub> $info</sub>" \
 			--width=$wth --print-all --height=$eht --borders=3 \
 			--button="$cancel":1 \
 			--button="$arrange":2 \
 			--button="$to_new_topic":'/usr/share/idiomind/add.sh n_t' \
 			--button=gtk-save:0 --title="$tpe" \
-			--column="$(cat ./sntsls | wc -l)" --column="Sentences" > $slt
+			--column="$(cat ./sntsls | wc -l)" --column="$sentences" > $slt
 				ret=$?
 		fi
 				if [ $ret -eq 2 ]; then
 					rm -f $lckpr "$slt" &
 					w=`cat ./sntsls | awk '{print "\n\n\n"$0}' | \
 					$yad --text-info --editable --window-icon=idiomind \
-					--name=idiomind --wrap --margins=150 --class=idiomind \
+					--name=idiomind --wrap --margins=60 --class=idiomind \
 					--sticky --fontname=vendana --on-top --center \
 					--skip-taskbar --width=$wth \
 					--height=$eht --borders=3 \

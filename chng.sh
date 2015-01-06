@@ -20,15 +20,11 @@ if [[ "$1" = chngi ]]; then
 	nim=$(sed -n 11p $DC_s/cnfg18)
 	indp="$DT/.$user/indp"
 	
-	if [[ -z $(sed -n 1p $DC_s/cnfg2) ]]; then
-	pst=$(sed -n 1p $DC_s/cnfg17)
+	if [[ -z $(cat $DC_s/cnfg2) ]]; then
 		echo 8 > $DC_s/cnfg2
-		echo $pst >> $DC_s/cnfg2
-		bcl=$(sed -n 1p $DC_s/cnfg2)
-		pst=$(sed -n 2p $DC_s/cnfg2)
+		bcl=$(cat $DC_s/cnfg2)
 	else
-		bcl=$(sed -n 1p $DC_s/cnfg2)
-		pst=$(sed -n 2p $DC_s/cnfg2)
+		bcl=$(cat $DC_s/cnfg2)
 	fi
 
 	itm=$(sed -n "$2"p $indx)
@@ -82,7 +78,7 @@ if [[ "$1" = chngi ]]; then
 			osdi=idiomind
 		fi
 		if echo "$nta" | grep "TRUE"; then
-			notify-send -i "$osdi" "$trgt" "$srce\\n" -t 8000  &
+			notify-send -i "$osdi" "$trgt" "$srce\\n" -t 12000  &
 		fi
 		sleep 1
 		
@@ -90,12 +86,6 @@ if [[ "$1" = chngi ]]; then
 			play "$DM_tlt/$itm".mp3 &
 			if [ $bcl -ge 30 ]; then
 				(sleep 15 && play "$DM_tlt/$itm".mp3) &
-			fi
-			if [ $bcl -ge 45 ]; then
-				(sleep 30 && play "$DM_tlt/$itm".mp3) &
-			fi
-			if [ $bcl -ge 65 ]; then
-				(sleep 50 && play "$DM_tlt/$itm".mp3) &
 			fi
 		fi
 		
@@ -234,11 +224,6 @@ if [[ "$1" = chngi ]]; then
 				play "$DM_tl/Feeds/kept/words/$itm".mp3 &
 				if [ $bcl -ge 5 ]; then
 					(sleep 4 && play "$DM_tl/Feeds/kept/words/$itm.mp3") &
-				fi
-				if [ $bcl -ge 30 ]; then
-					(sleep 10 && play "$DM_tl/Feeds/kept/words/$itm.mp3"
-					sleep 10
-					play "$DM_tl/Feeds/kept/words/$itm.mp3") &
 				fi
 			fi
 			rm -f $DT/*.jpeg
