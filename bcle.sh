@@ -25,7 +25,7 @@ if [ -n "$(cat ./indx)" ] && [ $(cat ./indx | wc -l) -gt 0 ]; then
 		rm -fr $DT/.p__$user $DT/.$user
 	fi
 else
-	int="$(sed -n 16p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+	int="$(sed -n 16p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
 	T="$(echo "$int" | sed -n 1p)"
 	D="$(echo "$int" | sed -n 2p)"
 	notify-send -i idiomind "$T" "$D" -t 9000 &

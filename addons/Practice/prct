@@ -2,6 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
+source /usr/share/idiomind/ifs/trans/$lgs/practice.conf
 int="$(sed -n 63p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
 btn="$(sed -n 62p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
 DS_pp="$DS/addons/Practice/"

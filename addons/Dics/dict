@@ -1,8 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
-int="$(sed -n 35p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
-btn="$(sed -n 34p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+source /usr/share/idiomind/ifs/trans/$lgs/dicts.conf
 
 DICT="$DC/addons/dict/"
 wrd=$(echo "$1" | awk '{print tolower($0)}')
@@ -44,9 +43,9 @@ elif [ "$3" = cnf ]; then
 	fi
 	
 	if [ "$2" = f ]; then
-		tex=$(cat $1)
+		tex="<small>$1\n</small>"
 	else
-		tex="<a href='http://www.idiomind.com.ar'><sup>$(echo "$int" | sed -n 1p)</sup></a>"
+		tex="<a href='http://www.idiomind.com.ar'><sup>$more_dict</sup></a>"
 	fi
 	
 	rm -f "$DICT/.listdicts"
@@ -81,9 +80,9 @@ elif [ "$3" = cnf ]; then
 	cat "$DICT/.listdicts" | $yad --list --title=" " \
 	--center --on-top --expand-column=2 --text="$tex" --window-icon=idiomind \
 	--width=350 --height=250 --skip-taskbar --separator=" " \
-	--borders=10 --button=$(echo "$btn" | sed -n 1p):2 --print-all --button=Ok:0 \
-	--column=" ":CHK --column=$(echo "$int" | sed -n 2p):TEXT \
-	--column=$(echo "$int" | sed -n 3p):TEXT \
+	--borders=10 --button="$add":2 --print-all --button=Ok:0 \
+	--column=" ":CHK --column="$availables":TEXT \
+	--column="$languages":TEXT \
 	--buttons-layout=edge --always-print-result \
 	--dclick-action='/usr/share/idiomind/plugins/Dics/dict dlck' \
 	--title="Dictionarys" > "$D"
@@ -105,7 +104,7 @@ elif [ "$3" = cnf ]; then
 					cp -f "$add" "$DICT/no_activos/$nm.$lg"
 				else
 					$yad --name=idiomind --center --title=" " \
-					--text=" <b>$(echo "$int" | sed -n 4p) </b>\\n" --image=info \
+					--text=" <b>$install_err </b>\\n" --image=info \
 					--image-on-top --fixed --sticky --title="Info" --on-top \
 					--width=230 --height=80 --borders=3 --button="gtk-ok:0" \
 					--skip-taskbar --window-icon=idiomind

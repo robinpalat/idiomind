@@ -15,8 +15,7 @@ fi
 idmnd=$(yad --center --width=520 --height=280 --fixed \
 	--image-on-top --on-top --class=idiomind --name=idiomind \
 	--window-icon=idiomind --buttons-layout=end --image=$IMAGE  \
-	--title="Idiomind" --form --borders=10 --align=right \
-	--button=Ok:0 \
+	--title="Idiomind" --form --borders=10 --align=right --button=Ok:0 \
 	--field="<small>\\t\\t\\t\\tChose language for learning : </small>:CB" \
 	!"English!French!German!Italian!Japanese!Portuguese!Spanish!Vietnamese!Chinese!"\
 	--field="<small>\\t\\t\\t\\tYour language : </small>:CB" \
@@ -42,16 +41,16 @@ elif [[ $ret -eq 0 ]]; then
 	
 	mkdir "$HOME"/.idiomind/
 	
-	#if [ $? -ne 0 ]; then
-		#yad --name=idiomind \
-		#--image=error --button=gtk-ok:1\
-		#--text=" <b>Error al intentar escribir en /home/$user/</b>\\n" \
-		#--image-on-top --sticky --fixed \
-		#--width=320 --height=80 \
-		#--borders=2 --title=Idiomind \
-		#--skip-taskbar --center \
-		#--window-icon=idiomind & exit 1
-	#fi
+	if [ $? -ne 0 ]; then
+		yad --name=idiomind \
+		--image=error --button=gtk-ok:1\
+		--text=" <b>Error al intentar escribir en /home/$user/</b>\\n" \
+		--image-on-top --sticky --fixed \
+		--width=320 --height=80 \
+		--borders=2 --title=Idiomind \
+		--skip-taskbar --center \
+		--window-icon=idiomind & exit 1
+	fi
 	
 	mkdir "$HOME"/.idiomind/topics
 	mkdir "$HOME"/.idiomind/topics/saved

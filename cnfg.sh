@@ -2,25 +2,9 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
+source /usr/share/idiomind/ifs/trans/$lgs/settings.conf
 wth=$(sed -n 5p $DC_s/cnfg18)
 eht=$(sed -n 6p $DC_s/cnfg18)
-
-text="
-Idiomind it's specifically designed for people learning one or more foreign languages. It helps you learn foreign language vocabulary. You can create and manage word lists and share them online.
-supports 4 types of exercises, including grammar and pronunciation tests.
-
-Support:
-https://sourceforge.net/projects/idiomind/support
-
-Check out the code:
-https://github.com/robinsato/idiomind
-
-Licencia:
-GPLv3
-
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details."
 
 ICON=$DS/images/icon.png
 cd $DS/addons
@@ -55,34 +39,34 @@ img6=applications-other
 
 $yad --plug=$KEY --tabnum=1 --borders=15 --scroll \
 	--separator="\\n" --form --no-headers \
-	--field="General Options:lbl" "#1" \
+	--field="$general_options:lbl" "#1" \
 	--field=":lbl" "#2"\
-	--field="Use colors for grammar (experimental):CHK" $sttng3 \
-	--field="Show dialog word Selector:CHK" $sttng4 \
-	--field="Listen pronounce:CHK" $sttng5 \
-	--field="Start with System:CHK" $sttng6 \
+	--field="$use_g_color:CHK" $sttng3 \
+	--field="$dialog_word_Selector:CHK" $sttng4 \
+	--field="$auto_pronounce:CHK" $sttng5 \
+	--field="$start_with_system:CHK" $sttng6 \
 	--field=" :lbl" "#7"\
-	--field="<small>Voice Syntetizer\n(Defaul espeak)</small>:CB5" "$sttng8" \
-	--field="<small>Use this program\nto record audio</small>:CB5" "$sttng9" \
+	--field="<small>$voice_syntetizer</small>:CB5" "$sttng8" \
+	--field="<small>$record_audio</small>:CB5" "$sttng9" \
 	--field=" :lbl" "#10"\
-	--field="languages:lbl" "#11" \
+	--field="$languages:lbl" "#11" \
 	--field=":lbl" "#12"\
-	--field="language for learning:CB" "$lgtl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
-	--field="Your language:CB" "$lgsl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" > "$cnf1" &
+	--field="$languages_learning:CB" "$lgtl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
+	--field="$your_language:CB" "$lgsl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" > "$cnf1" &
 $yad --plug=$KEY --tabnum=2 --list --expand-column=2 \
-	--text="<small>  Double click for configure</small>" \
+	--text="<sub>  $double_click_for_configure \n</sub>" \
 	--no-headers --dclick-action="./plgcnf.sh" --print-all \
 	--column=icon:IMG --column=Action \
 	"$img1" "Google translation service" "$img2" "Learning with News" "$img4" "Dictionarys" "$img5" "Weekly Report" &
 echo "$text" | $yad --plug=$KEY --tabnum=3 --text-info \
-	--text="\\n<big><big><big><b>Idiomind 1.0 alpha</b></big></big></big>\\n<sup>Vocabulary learning tool\\n<a href='https://sourceforge.net/projects/idiomind/'>Homepage</a> © 2013-2014 Robin Palat</sup>" \
+	--text="\\n<big><big><big><b>Idiomind 1.0 alpha</b></big></big></big>\\n<sup>$vocabulary_learning_tool\\n<a href='https://sourceforge.net/projects/idiomind/'>Homepage</a> © 2013-2014 Robin Palat</sup>" \
 	--show-uri --fontname=Arial --margins=10 --wrap --text-align=center &
 $yad --notebook --key=$KEY --name=idiomind --class=idiomind \
 	--sticky --center --window-icon=$ICON --window-icon=idiomind \
-	--tab="Preferences" --tab="  Addons  " \
-	--tab="  About  " \
-	--width=450 --height=340 --title="Settings" \
-	--button=Tools:"$DS/ifs/tls.sh tls" --button=Close:0
+	--tab="$preferences" --tab="  $addons  " \
+	--tab="  $about  " \
+	--width=450 --height=340 --title="$settings" \
+	--button=$tools:"$DS/ifs/tls.sh tls" --button=$close:0
 	
 	ret=$?
 	

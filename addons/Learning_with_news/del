@@ -1,7 +1,6 @@
 #!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
-int="$(sed -n 51p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
-btn="$(sed -n 50p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+source /usr/share/idiomind/ifs/trans/$lgs/rss.conf
 itdl="$2"
 kpt="$DM_tl/Feeds/kept"
 drtc="$DC_tl/Feeds/"
@@ -9,12 +8,12 @@ drtc="$DC_tl/Feeds/"
 if [[ $1 = dlti ]]; then
 	if [ -f "$kpt/words/$itdl.mp3" ]; then
 
-		$yad --title="$(echo "$int" | sed -n 1p)" --width=320 \
+		$yad --title="$confirm" --width=320 \
 		--height=80 --on-top --center \
 		--image=dialog-question --skip-taskbar \
-		--text=" $(echo "$int" | sed -n 2p)" \
+		--text=" $delete_word" \
 		--window-icon=idiomind --borders=10 \
-		--button=gtk-delete:2 --button=$(echo "$btn" | sed -n 1p):0
+		--button=gtk-delete:2 --button="$cancel":0
 		ret=$?
 		
 			if [[ $ret -eq 2 ]]; then
@@ -29,19 +28,19 @@ if [[ $1 = dlti ]]; then
 				grep -v -x -v "$itdl" ./cnfg0 > ./t-inx
 				sed '/^$/d' ./t-inx > ./cnfg0
 				rm ./t-inx
-				notify-send  -i idiomind "$itdl" "$(echo "$int" | sed -n 3p)"  -t 1500
+				notify-send  -i idiomind "$itdl" "$deleted"  -t 1500
 			fi
 			
 			if [[ $ret -eq 1 ]]; then
 				exit
 			fi
 	else
-		$yad --title="$(echo "$int" | sed -n 1p)" --width=320 \
+		$yad --title="$confirm" --width=320 \
 		--height=80 --on-top --center \
 		--image=dialog-question --skip-taskbar \
-		--text=" $(echo "$int" | sed -n 4p)" \
+		--text=" $delete_sentence" \
 		--window-icon=idiomind --borders=10 \
-		--button=gtk-delete:2 --button=$(echo "$btn" | sed -n 1p):0
+		--button=gtk-delete:2 --button="$cancel":0
 		ret=$?
 		
 			if [[ $ret -eq 2 ]]; then
@@ -57,7 +56,7 @@ if [[ $1 = dlti ]]; then
 				grep -v -x -v "$itdl" ./cnfg0 > ./t-inx
 				sed '/^$/d' ./t-inx > ./cnfg0
 				rm ./t-inx
-				notify-send  -i idiomind "$itdl" "$(echo "$int" | sed -n 3p)"  -t 1500
+				notify-send  -i idiomind "$itdl" "$deleted"  -t 1500
 			fi
 			
 			if [[ $ret -eq 1 ]]; then
@@ -66,10 +65,10 @@ if [[ $1 = dlti ]]; then
 	fi
 
 elif [[ $1 = dlns ]]; then
-	$yad --width=400 --height=50 --title="$(echo "$int" | sed -n 1p)" \
+	$yad --width=400 --height=50 --title="$confirm" \
 	--on-top --image=dialog-question --center --geometry=400x50 --skip-taskbar \
-	--window-icon=idiomind --text="$(echo "$int" | sed -n 5p)" \
-	--borders=5 --button="gtk-delete:0" --button="$(echo "$btn" | sed -n 1p):1"
+	--window-icon=idiomind --text="$delete_all" \
+	--borders=5 --button="gtk-delete:0" --button="$cancel:1"
 		ret=$?
 
 		if [[ $ret -eq 0 ]]; then
@@ -77,7 +76,7 @@ elif [[ $1 = dlns ]]; then
 			rm -r $DM_tl/Feeds/conten/*
 			rm $DC_tl/Feeds/.updt.lst
 			rm $DC_tl/Feeds/.dt
-			notify-send  -i idiomind "$(echo "$int" | sed -n 3p)" " " -t 2000
+			notify-send  -i idiomind "$deleted" " " -t 2000
 			
 		else
 			exit 1
@@ -87,9 +86,9 @@ elif [[ $1 = dlkt ]]; then
 
 	$yad --image=dialog-question \
 	--window-icon=idiomind --width=360 --height=80  \
-	--title="$(echo "$int" | sed -n 1p)" --on-top --center --skip-taskbar \
+	--title="$confirm" --on-top --center --skip-taskbar \
 	--borders=10 --button=gtk-delete:0 --name=idiomind \
-	--button=$(echo "$btn" | sed -n 1p):1 --text=" $(echo "$int" | sed -n 6p)"
+	--button="$cancel":1 --text=" $delete_saved2"
 
 	ret=$?
 

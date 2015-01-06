@@ -1,5 +1,6 @@
 #!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
+source /usr/share/idiomind/ifs/trans/$lgs/rss.conf
 DS_pf="$DS/addons/Learning_with_news"
 vwr="$DS_pf/vwr.sh"
 ap=$(cat $DC_s/cnfg1 | sed -n 5p)
@@ -26,7 +27,7 @@ if [[ $1 = V1 ]]; then
 		nuw=1
 	fi
 
-	listen="--button=Listen:$DS_pf/audio/ply '$nme'"
+	listen="--button=$listen:$DS_pf/audio/ply '$nme'"
 	echo "$nme" > $DT/.dzmx.x
 
 	n_i="$DS_pf/add n_i '$nme'"
@@ -90,12 +91,13 @@ elif [[ $1 = V2 ]]; then
 	listen="--button=gtk-media-play:play '$DM_tlfk/$nme.mp3'"
 	lnk=$(cat "$DM_tlfk/$nme.lnk")
 	echo "$nme" > $DT/.dzmx.x
+	
 	if [ "$ap" = TRUE ]; then
 		(killall play & sleep 0.3 && play "$DM_tlfk/words/$nme.mp3") &
 	fi
 
 	if [[ "$(echo "$nme" | wc -w)" -eq 1 ]]; then
-		listen="--button=Listen:play '$DM_tlfk/words/$nme.mp3'"
+		listen="--button=$listen:play '$DM_tlfk/words/$nme.mp3'"
 		tgs=$(eyeD3 "$DM_tlfk/words/$nme.mp3")
 		trg=$(echo "$tgs" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
 		srce=$(echo "$tgs" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
@@ -113,16 +115,15 @@ elif [[ $1 = V2 ]]; then
 		--field="<i><span color='#696464'>$exmp</span></i>\\n:lbl" \
 		--field="":lbl \
 		--width="$wth" --height="$eht" --center \
-		--button=Delete:"$DS_pf/del dlti '$nme'" \
+		--button="$delete":"$DS_pf/del dlti '$nme'" \
 		"$listen" --button=gtk-go-up:3 --button=gtk-go-down:2
 
 	else
 		if [ "$ap" = TRUE ]; then
-			killall play
-			play "$DM_tlfk/$nme.mp3" &
+			(killall play & sleep 0.3 && play "$DM_tlfk/$nme.mp3") &
 		fi
 	
-		listen="--button=Listen:$DS_pf/audio/ply '$nme'"
+		listen="--button=$listen:$DS_pf/audio/ply '$nme'"
 		tgs=$(eyeD3 "$DM_tlfk/$nme.mp3")
 		trg=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
 		srce=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
@@ -136,7 +137,7 @@ elif [[ $1 = V2 ]]; then
 		--width="$wth" --height="$eht" --center \
 		--column=$lgtl:TEXT --column=$lgsl:TEXT \
 		--expand-column=0 --limit=20 \
-		--button=Delete:"$DS_pf/del dlti '$nme'" \
+		--button="$delete":"$DS_pf/del dlti '$nme'" \
 		"$listen" --button=gtk-go-up:3 --button=gtk-go-down:2 \
 		--dclick-action="$DS_pf/audio/ply.sh '.audio'"
 	fi

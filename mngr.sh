@@ -1,8 +1,9 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
-int="$(sed -n 27p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
-btn="$(sed -n 21p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+source /usr/share/idiomind/ifs/trans/$lgs/edit.conf
+int="$(sed -n 27p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
+btn="$(sed -n 21p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
 
 if [ $1 = edit ]; then
 	ttl=$(sed -n 2p $DC_s/cnfg6)
@@ -30,15 +31,15 @@ if [ $1 = edit ]; then
 	
 	if [ -z "$nstll" ]; then
 		if [ "$ti" -ge 15 ]; then
-			dd="$img1 $(echo "$int" | sed -n 1p) $st1 $img2 $(echo "$int" | sed -n 2p) $st2 $img3 $(echo "$int" | sed -n 3p) $st3 $img4 $(echo "$int" | sed -n 4p) $st4 $img5 $(echo "$int" | sed -n 5p) $st5 $img6 $(echo "$int" | sed -n 6p) $st6"
+			dd="$img1 $learned $st1 $img2 $review $st2 $img3 $rename $st3 $img4 $delete $st4 $img5 $share $st5 $img6 $topdf $st6"
 		else
-			dd="$img3 $(echo "$int" | sed -n 3p) $st3 $img4 $(echo "$int" | sed -n 4p) $st4 $img5 $(echo "$int" | sed -n 5p) $st5 $img6 $(echo "$int" | sed -n 6p) $st6"
+			dd="$img3 $rename $st3 $img4 $delete $st4 $img5 $share $st5 $img6 $topdf $st6"
 		fi
 	else
 		if [ "$ti" -ge 15 ]; then
-			dd="$img1 $(echo "$int" | sed -n 1p) $st1 $img2 $(echo "$int" | sed -n 2p) $st2 $img3 $(echo "$int" | sed -n 3p) $st3 $img4 $(echo "$int" | sed -n 4p) $st4 $img6 $(echo "$int" | sed -n 6p) $st6"
+			dd="$img1 $learned $st1 $img2 $review $st2 $img3 $rename $st3 $img4 $delete $st4 $img6 $topdf $st6"
 		else
-			dd="$img3 $(echo "$int" | sed -n 3p) $st3 $img4 $(echo "$int" | sed -n 4p) $st4 $img6 $(echo "$int" | sed -n 6p) $st6"
+			dd="$img3 $rename $st3 $img4 $delete $st4 $img6 $topdf $st6"
 		fi
 	fi
 	$yad --list --on-top --expand-column=2 --center \
@@ -50,17 +51,17 @@ if [ $1 = edit ]; then
 	ret=$?
 	slt=$(cat "$slct")
 	if  [[ "$ret" -eq 0 ]]; then
-		if echo "$slt" | grep -o $(echo "$int" | sed -n 1p); then
+		if echo "$slt" | grep -o $learned; then
 			/usr/share/idiomind/mngr.sh mkok-
-		elif echo "$slt" | grep -o $(echo "$int" | sed -n 2p); then
+		elif echo "$slt" | grep -o $review; then
 			/usr/share/idiomind/mngr.sh mklg-
-		elif echo "$slt" | grep -o $(echo "$int" | sed -n 3p); then
+		elif echo "$slt" | grep -o $rename; then
 			/usr/share/idiomind/add.sh n_t name 2
-		elif echo "$slt" | grep -o $(echo "$int" | sed -n 4p); then
+		elif echo "$slt" | grep -o $delete; then
 			/usr/share/idiomind/mngr.sh dlt
-		elif echo "$slt" | grep -o $(echo "$int" | sed -n 5p); then
+		elif echo "$slt" | grep -o $share; then
 			/usr/share/idiomind/ifs/upld.sh
-		elif echo "$slt" | grep -o $(echo "$int" | sed -n 6p); then
+		elif echo "$slt" | grep -o $topdf; then
 			/usr/share/idiomind/ifs/tls.sh pdf
 		fi
 		rm -f "$slct"
@@ -271,11 +272,11 @@ elif [ "$1" = edt ]; then
 	if [ "$v" = v1 ]; then
 		ind="$DC_tlt/cnfg1"
 		inp="$DC_tlt/cnfg2"
-		chk="$(echo "$int" | sed -n 15p)"
+		chk="$mark_as_learned"
 	elif [ "$v" = v2 ]; then
 		ind="$DC_tlt/cnfg2"
 		inp="$DC_tlt/cnfg1"
-		chk="$(echo "$int" | sed -n 16p)"
+		chk="$review"
 	fi
 
 	file="$DM_tlt/words/$nme.mp3"
@@ -303,17 +304,17 @@ elif [ "$1" = edt ]; then
 		--text-align=center --selectable-labels \
 		--field="<small>$lgtl</small>":RO "$TGT" \
 		--field="<small>$lgsl</small>" "$src" \
-		--field="<small>$(echo "$int" | sed -n 7p)</small>":CB "$topc!$tpcs" \
-		--field="<small>$(echo "$int" | sed -n 8p)</small>":FL "$AUD" \
-		--field="<small>$(echo "$int" | sed -n 9p)</small>":TXT "$exm1" \
-		--field="<small>$(echo "$int" | sed -n 10p)</small>":TXT "$dftn" \
-		--field="<small>$(echo "$int" | sed -n 11p)</small>":TXT "$ntes" \
-		--field="$(echo "$int" | sed -n 14p)"":CHK" "$mrk" \
+		--field="<small>$topic </small>":CB "$topc!$tpcs" \
+		--field="<small>$audio </small>":FL "$AUD" \
+		--field="<small>$Example </small>":TXT "$exm1" \
+		--field="<small>$definition </small>":TXT "$dftn" \
+		--field="<small>$notes </small>":TXT "$ntes" \
+		--field="$mark "":CHK" "$mrk" \
 		--field="$chk"":CHK" "$mrok" \
 		--field=" :LBL" " " \
-		--field="<a href='http://www.google.com/search?q=$TGT'>$(echo "$int" | sed -n 12p)</a>\\n\\n<a href='http://glosbe.com/en/es/$TGT'>$(echo "$int" | sed -n 13p)</a>":lbl \
-		--button=Image:"$imge" \
-		--button=Delete:"$dlte" \
+		--field="<a href='http://www.google.com/search?q=$TGT'>$search_google</a>\\n\\n<a href='http://glosbe.com/en/es/$TGT'>$search_def </a>":lbl \
+		--button="$image":"$imge" \
+		--button="$delete":"$dlte" \
 		--button=gtk-close:0 > $cnf
 			ret=$?
 			
@@ -406,11 +407,11 @@ elif [ "$1" = edt ]; then
 		--field="$chk:CHK" "$ok" \
 		--field="<small>$lgtl</small>":TXT "$tgt" \
 		--field="<small>$lgsl</small>":TXT "$src" \
-		--field="<small>$(echo "$int" | sed -n 7p)</small>":CB "$topc!$tpcs" \
-		--field="<small>$(echo "$int" | sed -n 8p)</small>":FL "$DM_tlt/$nme.mp3" \
-		--field="$(echo "$int" | sed -n 17p)":BTN "$wrds" \
-		--button=Image:"$imge" \
-		--button=Delete:"$dlte" "$edau" \
+		--field="<small>$topic </small>":CB "$topc!$tpcs" \
+		--field="<small>$audio </small>":FL "$DM_tlt/$nme.mp3" \
+		--field="$list_words":BTN "$wrds" \
+		--button="$image":"$imge" \
+		--button="$delete":"$dlte" "$edau" \
 		--button=gtk-close:1 > $cnf
 			
 			mrok=$(cat $cnf | tail -7 | sed -n 1p)
@@ -717,10 +718,10 @@ elif [ $1 = dli ]; then
 	if [ -f "$flw" ]; then
 
 		$yad --fixed --scroll --center \
-		--title="$(echo "$int" | sed -n 18p)" --width=320 --height=140 \
+		--title="$confirm" --width=320 --height=140 \
 		--on-top --image=dialog-question \
 		--skip-taskbar --window-icon=idiomind \
-		--text=" $(echo "$int" | sed -n 19p) " \
+		--text=" $delete_word " \
 		--window-icon=idiomind \
 		--button=gtk-delete:0 --button=gtk-cancel:1
 			ret=$?
@@ -756,9 +757,9 @@ elif [ $1 = dli ]; then
 			
 	elif [ -f "$fls" ]; then
 		$yad --fixed --center --scroll \
-		--title="$(echo "$int" | sed -n 17p)" --width=320 --height=140 \
+		--title="$confirm" --width=320 --height=140 \
 		--on-top --image=dialog-question --skip-taskbar \
-		--text="  $(echo "$int" | sed -n 20p)  " \
+		--text="  $delete_sentence  " \
 		--window-icon=idiomind \
 		--button=gtk-delete:0 --button=gtk-cancel:1
 			ret=$?
@@ -790,9 +791,9 @@ elif [ $1 = dli ]; then
 			
 	elif [ ! -f "$flw" ] || [ ! -f "$flw" ]; then
 		$yad --fixed --center --scroll \
-		--title="$(echo "$int" | sed -n 17p)" --width=320 --height=140 \
+		--title="$confirm" --width=320 --height=140 \
 		--on-top --image=dialog-question --skip-taskbar \
-		--text="  $(echo "$int" | sed -n 21p)  " \
+		--text="  $delete_item  " \
 		--window-icon=idiomind \
 		--button=gtk-delete:0 --button=gtk-cancel:1
 			ret=$?
@@ -827,10 +828,10 @@ elif [ $1 = dli ]; then
 elif [ $1 = dlt ]; then
 	$yad --name=idiomind --center \
 	--image=dialog-question --sticky --on-top \
-	--text="  $(echo "$int" | sed -n 22p) \\n $tpc \\n" --buttons-layout=end \
+	--text="  $delete_topic \\n $tpc \\n" --buttons-layout=end \
 	--width=420 --height=140 --borders=5 \
 	--skip-taskbar --window-icon=idiomind \
-	--title=$(echo "$int" | sed -n 17p) --button=gtk-delete:0 --button=gtk-cancel:1
+	--title="$confirm" --button=gtk-delete:0 --button=gtk-cancel:1
 
 		ret=$?
 
@@ -856,7 +857,7 @@ elif [ $1 = dlt ]; then
 			rm $DC_tl/in_s $DC_tl/in $DC_tl/nstll $DC_tl/.cnfg7_ $DC_tl/.cnfg6_ $DC_tl/ok 
 			
 			kill -9 $(pgrep -f "$yad --list ")
-			D="$(sed -n 4p $DS/ifs/trads/$lgs | sed 's/|/\n/g' | sed -n 2p)"
+			D="$(sed -n 4p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g' | sed -n 2p)"
 			notify-send  -i idiomind "$tpc" "$D"  -t 1000
 			
 			$DS/mngr.sh mkmn

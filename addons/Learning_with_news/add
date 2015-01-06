@@ -1,7 +1,6 @@
 #!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
-int="$(sed -n 43p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
-btn="$(sed -n 42p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+source /usr/share/idiomind/ifs/trans/$lgs/add.conf
 
 if [[ $1 = n_i ]]; then
 	trgt=$(cat $DT/.dzmxx.x | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
@@ -24,22 +23,22 @@ if [[ $1 = n_i ]]; then
 	fi
 
 	if [[ -f $DT/.dzmxx.x ]]; then
-		bttn=$(echo --button="$(echo "$btn" | sed -n 1p):0")
-		txt=$(echo "<b>$(echo "$int" | sed -n 1p) </b>")
+		bttn=$(echo --button="$save_word:0")
+		txt=$(echo "<b>$word </b>")
 	fi
 
 	$yad --width=320 --height=90 --window-icon=idiomind \
 	--title="Save " --center --on-top --borders=15 \
 	--image=dialog-question --skip-taskbar \
-	--text="<b>$(echo "$int" | sed -n 2p) </b>\\n<i>$var</i>\\n\\n$txt\\n<i>$trgt\\n</i>" \
-	--button="$(echo "$btn" | sed -n 2p):2" "$bttn" \
-	--button="$(echo "$btn" | sed -n 5p):1"
+	--text="<b>$sentence </b>\\n<i>$var</i>\\n\\n$txt\\n<i>$trgt\\n</i>" \
+	--button="$save_sentence:2" "$bttn" \
+	--button="$cancel:1"
 		ret=$?
 		
 		if [[ $ret -eq 0 ]]; then
 			if [ $(cat "$DC_tl/Feeds/cnfg3" | wc -l) -ge 50 ]; then
 				$yad --name=idiomind --center --on-top --image=info \
-				--text=" <b>$tpe    </b>\\n\\n $(echo "$int" | sed -n 3p)  \\n" \
+				--text=" <b>$tpe    </b>\\n\\n $words_max  \\n" \
 				--image-on-top --fixed --sticky --title="$tpe" \
 				--width=230 --height=120 --borders=3 --button=gtk-ok:0 \
 				--skip-taskbar --window-icon=idiomind && exit 1
@@ -48,7 +47,7 @@ if [[ $1 = n_i ]]; then
 			curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
 			$yad --window-icon=idiomind --on-top \
 			--image="info" --name=idiomind \
-			--text="<b> $(echo "$int" | sed -n 7p)  \\n  </b>" \
+			--text="<b> $connection_err  \\n  </b>" \
 			--image-on-top --center --sticky \
 			--width=300 --height=120 --borders=3 \
 			--skip-taskbar --title="Idiomind" \
@@ -78,7 +77,7 @@ if [[ $1 = n_i ]]; then
 		elif [[ $ret -eq 2 ]]; then
 			if [ $(cat "$DC_tl/Feeds/cnfg4" | wc -l) -ge 50 ]; then
 				$yad --name=idiomind --center --on-top --image=info \
-				--text=" <b>$tpe    </b>\\n\\n $(echo "$int" | sed -n 4p) \\n" \
+				--text=" <b>$tpe    </b>\\n\\n $sentences_max \\n" \
 				--image-on-top --fixed --sticky --title="$tpe" \
 				--width=230 --height=120 --borders=3 --button=gtk-ok:0 \
 				--skip-taskbar --window-icon=idiomind && exit 1
@@ -87,7 +86,7 @@ if [[ $1 = n_i ]]; then
 			curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
 			$yad --window-icon=idiomind --on-top \
 			--image="info" --name=idiomind \
-			--text="<b> $(echo "$int" | sed -n 7p)  \\n  </b>" \
+			--text="<b> $connection_err  \\n  </b>" \
 			--image-on-top --center --sticky \
 			--width=300 --height=120 --borders=3 \
 			--skip-taskbar --title="Idiomind" \
@@ -118,10 +117,10 @@ if [[ $1 = n_i ]]; then
 		fi
 elif [[ $1 = n_t ]]; then
 	dte=$(date "+%a %d %B")
-	if [ $(cat "$DC_tl/.t-in" | wc -l) -ge 20 ]; then
+	if [ $(cat "$DC_tl/cnfg0" | wc -l) -ge 20 ]; then
 		$yad --fixed --image=info --title=Idiomind \
 		--name=idiomind --center --skip-taskbar \
-		--text=" <b>$(echo "$int" | sed -n 5p)  </b>" \
+		--text=" <b>$topics_max  </b>" \
 		--image-on-top --fixed --sticky --on-top \
 		--width=230 --height=120 --borders=3 \
 		--window-icon=idiomind \
@@ -134,7 +133,7 @@ elif [[ $1 = n_t ]]; then
 	--fixed --width=400 --height=120 \
 	--on-top --center --skip-taskbar \
 	--field=" : " "News - $dte" \
-	--button=$(echo "$btn" | sed -n 4p):0 --title="$(echo "$int" | sed -n 6p)" )
+	--button=$create:0 --title="$new_topic" )
 
 		if [ -z "$jlbi" ];then
 			exit 0

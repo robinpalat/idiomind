@@ -1,28 +1,27 @@
 #!/bin/bash
-DIR1=$HOME/.config/idiomind/s/
+
 source /usr/share/idiomind/ifs/c.conf
-sttng4=$(sed -n 1p $DIR1/cnfg3)
-sttng5=$(sed -n 2p $DIR1/cnfg3)
-int="$(sed -n 39p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
-btn="$(sed -n 38p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+source /usr/share/idiomind/ifs/trans/$lgs/others.conf
+sttng4=$(sed -n 1p $DC_s/cnfg3)
+sttng5=$(sed -n 2p $DC_s/cnfg3)
 
 if [ -z $sttng4 ]; then
-	echo 'FALSE' > $DIR1/cnfg3
-	echo ' ' >> $DIR1/cnfg3
-	sttng4=$(sed -n 1p $DIR1/cnfg3)
+	echo 'FALSE' > $DC_s/cnfg3
+	echo ' ' >> $DC_s/cnfg3
+	sttng4=$(sed -n 1p $DC_s/cnfg3)
 fi
 
 CNFG=$(yad --center --form --on-top \
 	--skip-taskbar --borders=15 --expand-column=3 --no-headers \
-	--print-all --button=$(echo "$btn" | sed -n 1p):0 --width=350 --height=250 \
+	--print-all --button=$close:0 --width=350 --height=250 \
 	--always-print-result --editable \
 	--title="Google translation service" --window-icon=idiomind \
-	--field="$(echo "$int" | sed -n 1p):CHK" "$sttng4" \
-	--field="key::TXT" "$sttng5");
+	--field="\n$used_google\n":CHK "$sttng4" \
+	--field="$key::TXT" "$sttng5");
 
 		sttng4=$(echo "$CNFG" | cut -d "|" -f1)
 		sttng5=$(echo "$CNFG" | cut -d "|" -f2)
-		echo "$sttng4" > $DIR1/cnfg3
-		echo "$sttng5" >>  $DIR1/cnfg3
+		echo "$sttng4" > $DC_s/cnfg3
+		echo "$sttng5" >>  $DC_s/cnfg3
 		exit
 

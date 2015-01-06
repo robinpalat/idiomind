@@ -1,6 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
+source /usr/share/idiomind/ifs/trans/$lgs/play.conf
 echo "$tpc"
 tlng="$DC_tlt/cnfg1"
 winx="$DC_tlt/cnfg3"
@@ -136,7 +137,6 @@ if [ -f $DT/.p__$u ]; then
 	btn2="--button=gtk-media-stop:2"
 fi
 
-int="$(sed -n 17p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
 $yad --list --on-top \
 --expand-column=3 --print-all --center \
 --width=190 --name=idiomind --class=idmnd \
@@ -146,14 +146,14 @@ $yad --list --on-top \
 --borders=0 $btn2 $btn1 --hide-column=1 \
 --column=Action:TEXT --column=icon:IMG \
 --column=Action:TEXT --column=icon:CHK \
-"Words" "$img1" "$(echo "$int" | sed -n 1p)" $st1 \
-"Sentences" "$img2" "$(echo "$int" | sed -n 2p)" $st2 \
-"Marks" "$img3" "$(echo "$int" | sed -n 3p)" $st3 \
-"Practice" "$img4" "$(echo "$int" | sed -n 4p)" $st4 \
-"Feeds" "$img5" "$(echo "$int" | sed -n 5p)" $st5 \
-"Notification" "$img6" "$(echo "$int" | sed -n 6p)" $st6 \
-"Audio" "$img6" "$(echo "$int" | sed -n 7p)" $st7 \
-"Repeat" "$img6" "$(echo "$int" | sed -n 8p)" $st8 > "$slct"
+"Words" "$img1" "$words" $st1 \
+"Sentences" "$img2" "$sentences" $st2 \
+"Marks" "$img3" "$marks" $st3 \
+"Practice" "$img4" "$practice" $st4 \
+"Feeds" "$img5" "$news" $st5 \
+"Notification" "$img6" "$osd" $st6 \
+"Audio" "$img6" "$audio" $st7 \
+"Repeat" "$img6" "$repeat" $st8 > "$slct"
 ret=$?
 slt=$(cat "$slct")
 
@@ -231,19 +231,13 @@ p=$(sed -n 3p $DC_s/cnfg5)
 f=$(sed -n 4p $DC_s/cnfg5)
 
 if [ -z "$(echo "$w""$s""$m""$f""$p" | grep -o "TRUE")" ]; then
-	int="$(sed -n 15p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
-	T="$(echo "$int" | sed -n 1p)"
-	D="$(echo "$int" | sed -n 2p)"
-	notify-send "$T" "$D" -i idiomind -t 2000 &&
+	notify-send "$exiting" "$no_items" -i idiomind -t 2000 &&
 	sleep 5
 	$DS/stop.sh
 fi
 
 if [[ "$(cat ./indx | wc -l)" -lt 1 ]]; then
-	int="$(sed -n 16p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
-	T="$(echo "$int" | sed -n 1p)"
-	D="$(echo "$int" | sed -n 2p)"
-	notify-send -i idiomind "$T" "$D" -t 9000 &
+	notify-send -i idiomind "$exiting" "$no_items2" -t 9000 &
 	rm -f $DT/.p__$u &
 	$DS/stop.sh S & exit
 fi

@@ -1,11 +1,11 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
-
+source /usr/share/idiomind/ifs/trans/$lgs/add.conf
 if [ $1 = n_t ]; then
 	info2=$(cat $DC_tl/.cnfg1 | wc -l)
-	int="$(sed -n 22p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
-	btn="$(sed -n 21p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+	int="$(sed -n 22p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
+	btn="$(sed -n 21p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
 	c=$(echo $(($RANDOM%100)))
 
 	if [ "$3" = 2 ]; then
@@ -14,7 +14,7 @@ if [ $1 = n_t ]; then
 		if [ -n "$nmt" ];then
 			nmt="$nmt"
 		else
-			tle=$(echo "$(echo "$int" | sed -n 1p)")
+			tle=$(echo "$new_topic")
 			nmt=""
 		fi
 		#--------------normal
@@ -22,7 +22,7 @@ if [ $1 = n_t ]; then
 		--form --center --field="" "$nmt" --title="$tle" \
 		--width=400 --height=80 --name=idiomind --on-top \
 		--skip-taskbar --borders=10 --button=Make:0 \
-		--text="<small>  $(echo "$int" | sed -n 2p)</small>")
+		--text="<small>  $name_for_new_topic </small>")
 		
 		jlb=$(echo "$jlbi" | cut -d "|" -f1 | sed s'/!//'g \
 		| sed s'/&//'g | sed s'/\://'g | sed s'/\&//'g \
@@ -34,10 +34,10 @@ if [ $1 = n_t ]; then
 			jlb=$(echo ""$jlb" $snm")
 			$yad --name=idiomind --center --on-top \
 			--image=info --sticky \
-			--text=" <b>$(echo "$int" | sed -n 3p)   </b>\\n $(echo "$int" | sed -n 4p)  <b>$jlb</b>   \\n" \
+			--text=" <b>$name_eq   </b>\\n $name_eq2  <b>$jlb</b>   \\n" \
 			--image-on-top --width=400 --height=120 --borders=3 \
 			--skip-taskbar --window-icon=idiomind \
-			--title=Idiomind --button="$(echo "$btn" | sed -n 7p)":1 --button=gtk-ok:0
+			--title=Idiomind --button="$cancel":1 --button=gtk-ok:0
 				ret=$?
 				
 				if [ "$ret" -eq 1 ]; then
@@ -98,7 +98,7 @@ if [ $1 = n_t ]; then
 		
 		if [ $info2 -ge 50 ]; then
 			$yad --name=idiomind --center --image=info \
-			--text=" <b>$(echo "$int" | sed -n 5p) </b>" \
+			--text=" <b>$topics_max </b>" \
 			--image-on-top --sticky --on-top \
 			--width=430 --height=120 --borders=3 \
 			--skip-taskbar --window-icon=idiomind --title=Idiomind \
@@ -106,10 +106,10 @@ if [ $1 = n_t ]; then
 		fi
 		
 		jlbi=$($yad --window-icon=idiomind \
-		--form --center --title="$(echo "$int" | sed -n 1p)"  --separator="\n" \
+		--form --center --title="$new_topic"  --separator="\n" \
 		--width=400 --height=80 --name=idiomind --on-top \
 		--skip-taskbar --borders=10 --button=Make:0 \
-		--text="<small>  $(echo "$int" | sed -n 2p)</small>" \
+		--text="<small>  $name_for_new_topic </small>" \
 		--field=" : " "$nmt")
 			
 		jlb=$(echo "$jlbi" | sed -n 1p | cut -d "|" -f1 | sed s'/!//'g \
@@ -123,10 +123,10 @@ if [ $1 = n_t ]; then
 			jlb="$jlb $snme"
 			$yad --name=idiomind --center --on-top \
 			--image=info --sticky \
-			--text=" <b>$(echo "$int" | sed -n 3p)   </b>\\n $(echo "$int" | sed -n 4p)  <b>$jlb</b>   \\n" \
+			--text=" <b>$name_eq   </b>\\n $name_eq2  <b>$jlb</b>   \\n" \
 			--image-on-top --width=400 --height=120 --borders=3 \
 			--skip-taskbar --window-icon=idiomind \
-			--title=Idiomind --button="$(echo "$btn" | sed -n 7p)":1 --button=gtk-ok:0
+			--title=Idiomind --button="$cancel":1 --button=gtk-ok:0
 			ret=$?
 			
 			if [ "$ret" -eq 1 ]; then
@@ -168,11 +168,10 @@ if [ $1 = n_t ]; then
 	exit 1
 	
 elif [ $1 = n_i ]; then
-	int="$(sed -n 21p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
-	int="$(sed -n 22p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
 	[[ ! -f $DC/addons/dict/.dicts ]] && touch $DC/addons/dict/.dicts
 	if  [ -z "$(cat $DC/addons/dict/.dicts)" ]; then
-		$DS/addons/Dics/dict $DS/ifs/info6 f cnf
+		source /usr/share/idiomind/ifs/trans/$lgs/topics_lists.conf
+		$DS/addons/Dics/dict "$no_dictionary" f cnf
 		if  [ -z "$(cat $DC/addons/dict/.dicts)" ]; then
 			exit 1
 		fi
@@ -202,17 +201,20 @@ elif [ $1 = n_i ]; then
 	
 	if [ -f $DT/ntpc ]; then
 		rm -fr $DT_r
-		$DS/chng.sh $DS/ifs/info1 fnew & exit 1
+		source /usr/share/idiomind/ifs/trans/$lgs/topics_lists.conf
+		$DS/chng.sh "$no_topic" fnew & exit 1
 	fi
 	
 	if [ -z "$tpc" ]; then
 		rm -fr $DT_r
-		$DS/chng.sh $DS/ifs/info5 fnew & exit 1
+		source /usr/share/idiomind/ifs/trans/$lgs/topics_lists.conf
+		$DS/chng.sh "$no_topic" fnew & exit 1
 	fi
 
 	if [ -z "$tpe" ]; then
 		rm -fr $DT_r
-		$DS/chng.sh $DS/ifs/info2 fnew & exit 1
+		source /usr/share/idiomind/ifs/trans/$lgs/topics_lists.conf
+		$DS/chng.sh "$no_edit" fnew & exit 1
 	fi
 	
 	ls=$((50 - $(cat "$DC_tlt/cnfg4" | wc -l)))
@@ -237,9 +239,9 @@ elif [ $1 = n_i ]; then
 		info="\\n$is $iw"
 	fi
 	if [ "$tpe" != "$tpc" ]; then
-		topic="<span color='#CE6F1C'>"$(echo "$int" | sed -n 14p)":</span>$info"
+		topic="<span color='#CE6F1C'>$topic</span>$info"
 	else
-		topic="$(echo "$int" | sed -n 14p):$info"
+		topic="$topic $info"
 	fi
 	
 	if sed -n 1p $DC_s/cnfg3 | grep TRUE; then
@@ -251,7 +253,7 @@ elif [ $1 = n_i ]; then
 		--borders=0 --title="$tpe" --width=360 --height=160 \
 		--field="  <small><small>$lgtl / $lgsl</small></small>":TXT "$txt" \
 		--field="<small><small>$topic</small></small>:CB" "$ttle!New*!$tpcs" "$field" \
-		--button="$(echo "$int" | sed -n 30p)":3 \
+		--button="$image":3 \
 		--button=gtk-ok:0)
 		ret=$?
 		trgt=$(echo "$lzgpr"| head -n -1)
@@ -268,7 +270,7 @@ elif [ $1 = n_i ]; then
 		lzgpr=$($yad --separator="\\n" --skip-taskbar \
 		--width=400 --height=220 --form --on-top --name=idiomind \
 		--class=idiomind --window-icon=idiomind "$img" --center "$ls" "$rec" \
-		--button="$(echo "$int" | sed -n 30p)":3 --always-print-result --align=right \
+		--button="$image":3 --always-print-result --align=right \
 		--button=gtk-ok:0 --borders=2 --title="$tpe" \
 		--field="  <small><small>$lgtl</small></small>":TXT "$txt" \
 		--field=":lbl" "" \
@@ -359,8 +361,8 @@ elif [ $1 = n_s ]; then
 	lprn=$(cat $DS/default/$lgt/pronouns)
 	lpre=$(cat $DS/default/$lgt/prepositions)
 	ladj=$(cat $DS/default/$lgt/adjetives)
-	btn="$(sed -n 21p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
-	int="$(sed -n 22p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+	btn="$(sed -n 21p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
+	int="$(sed -n 22p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
 	DM_tlt="$DM_tl/$tpe"
 	DC_tlt="$DC_tl/$tpe"
 	icnn=idiomind
@@ -369,7 +371,7 @@ elif [ $1 = n_s ]; then
 			
 	if [ $(cat "$DC_tlt/cnfg4" | wc -l) -ge 50 ]; then
 		$yad --name=idiomind --center --on-top --image=info \
-		--text=" <b>$tpe    </b>\\n\\n $(echo "$int" | sed -n 7p)" \
+		--text=" <b>$tpe    </b>\\n\\n $sentences_max" \
 		--image-on-top --fixed --sticky --title="$tpe" \
 		--width=230 --height=80 --borders=3 --button=gtk-ok:0 \
 		--skip-taskbar --window-icon=idiomind && exit 1
@@ -380,7 +382,7 @@ elif [ $1 = n_s ]; then
 		curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
 		$yad --window-icon=idiomind --on-top \
 		--image=info --name=idiomind \
-		--text="<b> $(echo "$int" | sed -n 8p)  \\n  </b>" \
+		--text="<b> $no_connection  \\n  </b>" \
 		--image-on-top --center --sticky \
 		--width=300 --height=50 --borders=3 \
 		--skip-taskbar --title=Idiomind \
@@ -653,7 +655,7 @@ elif [ $1 = n_s ]; then
 					sox $DT_r/s.wav "$DM_tlt/$nme.mp3"
 					else
 						$yad --image=error --button=gtk-ok:1 \
-						--text=" <b>$(echo "$int" | sed -n 9p) $lgtl " \
+						--text=" <b>$festival_err $lgtl " \
 						--on-top --skip-taskbar & exit 1
 					fi
 				else
@@ -671,7 +673,7 @@ elif [ $1 = n_s ]; then
 					lg=Mandarin
 				elif [ $lg = japanese ]; then
 					$yad --image=error --button=gtk-ok:1 \
-					--text=" <b>$(echo "$int" | sed -n 10p) " \
+					--text=" <b>$espeak_err " \
 					--on-top --skip-taskbar & exit 1
 				fi
 				espeak "$trgt" -v $lg -k 1 -p 65 -a 80 -s 120 -w $DT_r/s.wav
@@ -714,8 +716,8 @@ elif [ $1 = n_w ]; then
 	srce="$4"
 	dct="$DS/addons/Dics/dict"
 	icnn=idiomind
-	int="$(sed -n 22p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
-	btn="$(sed -n 21p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+	int="$(sed -n 22p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
+	btn="$(sed -n 21p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
 	tpcs=$(cat "$DC_tl/.cnfg2" | cut -c 1-30 | egrep -v "$tpe" \
 	| tr "\\n" '!' | sed 's/!\+$//g')
 	ttle="${tpe:0:30}"
@@ -725,7 +727,7 @@ elif [ $1 = n_w ]; then
 
 	if [ $(cat "$DC_tlt/cnfg3" | wc -l) -ge 50 ]; then
 		$yad --name=idiomind --center --on-top --image=info \
-		--text=" <b>$tpe    </b>\\n\\n $(echo "$int" | sed -n 6p)" \
+		--text=" <b>$tpe    </b>\\n\\n $words_max" \
 		--image-on-top --fixed --sticky --title="$tpe" \
 		--width=230 --height=80 --borders=3 --button=gtk-ok:0 \
 		--skip-taskbar --window-icon=idiomind && exit 1
@@ -734,7 +736,7 @@ elif [ $1 = n_w ]; then
 	curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
 	$yad --window-icon=idiomind --on-top \
 	--image=info --name=idiomind \
-	--text="<b>$(echo "$int" | sed -n 8p)  \\n  </b>" \
+	--text="<b>$connection_err  \\n  </b>" \
 	--image-on-top --center --fixed --sticky \
 	--width=220 --height=50 --borders=3 \
 	--skip-taskbar --title=Idiomind \
@@ -816,7 +818,7 @@ elif [ $1 = n_w ]; then
 							sox $DT_r/s.wav "$DM_tlt/$nme.mp3"
 						else
 							$yad --image=error --button=gtk-ok:1 \
-							--text=" <b>$(echo "$int" | sed -n 9p) $lgtl </b>" \
+							--text=" <b>$festival_err $lgtl </b>" \
 							--on-top --skip-taskbar & exit 1
 						fi
 					else
@@ -834,7 +836,7 @@ elif [ $1 = n_w ]; then
 						lg=Mandarin
 					elif [ $lg = japanese ]; then
 						$yad --image=error --button=gtk-ok:1 \
-						--text=" <b>$(echo "$int" | sed -n 10p)</b>" \
+						--text=" <b>$espeak_err </b>" \
 						--on-top --skip-taskbar & exit 1
 					fi
 					espeak "$trgt" -v $lg -k 1 -p 45 -a 80 -s 110 -w $DT_r/s.wav
@@ -866,15 +868,15 @@ elif [ $1 = edt ]; then
 
 	c="$4"
 	DIC=$DS/addons/Dics/dict
-	int="$(sed -n 22p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
-	btn="$(sed -n 21p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+	int="$(sed -n 22p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
+	btn="$(sed -n 21p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
 
 	if [ "$3" = "F" ]; then
 
 		tpe="$tpc"
 		if [ $(cat "$DC_tlt/cnfg3" | wc -l) -ge 50 ]; then
 		$yad --name=idiomind --center --image=info --on-top \
-		--text=" <b>$(echo "$int" | sed -n 6p)   </b>" \
+		--text=" <b>$words_max   </b>" \
 		--image-on-top --fixed --sticky --title="$tpc" \
 		--width=230 --height=80 --borders=3 --button=gtk-ok:0 \
 		--skip-taskbar --window-icon=idiomind && exit 1
@@ -882,11 +884,11 @@ elif [ $1 = edt ]; then
 		
 		nw=$(cat "$DC_tlt/cnfg3" | wc -l)
 		left=$((50 - $nw))
-		info=$(echo " $(echo "$int" | sed -n 11p)  <b>"$left"</b> $(echo "$int" | sed -n 12p)")
+		info=$(echo " $remain  <b>"$left"</b> $remain-1")
 		if [ $nw -ge 45 ]; then
-			info=$(echo " $(echo "$int" | sed -n 11p)  <span color='#EA355F'><b>"$left"</b></span>  $(echo "$int" | sed -n 12p)")
+			info=$(echo " $remain  <span color='#EA355F'><b>"$left"</b></span>  $remain-1")
 		elif [ $nw -ge 49 ]; then
-			info=$(echo " $(echo "$int" | sed -n 11p)  <span color='#EA355F'><b>"$left"</b></span>  $(echo "$int" | sed -n 13p) ")
+			info=$(echo " $remain-1  <span color='#EA355F'><b>"$left"</b></span>  $remain-3 ")
 		fi
 
 		mkdir $DT/$c
@@ -912,8 +914,8 @@ elif [ $1 = edt ]; then
 		--buttons-layout=end --skip-taskbar --width=400 \
 		--height=280 --borders=10 --window-icon=idiomind \
 		--button=gtk-close:1 \
-		--button="$(echo "$btn" | sed -n 1p)":0 \
-		--title="$(echo "$int" | sed -n 15p)" \
+		--button="$add":0 \
+		--title="$selector" \
 		--column="" --column="Select" > "$slt"
 
 			if [ $? -eq 0 ]; then
@@ -966,7 +968,7 @@ elif [ $1 = edt ]; then
 								sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
 							else
 								$yad --image=error --button=gtk-ok:1 \
-								--text=" <b> $(echo "$int" | sed -n 9p) $lgtl </b> " \
+								--text=" <b> $festival_err $lgtl </b> " \
 								--on-top --skip-taskbar & exit 1
 							fi
 						else
@@ -984,7 +986,7 @@ elif [ $1 = edt ]; then
 							lg=Mandarin
 						elif [ $lg = japanese ]; then
 							$yad --image=error --button=gtk-ok:1 \
-							--text=" <b>$(echo "$int" | sed -n 10p)</b> " \
+							--text=" <b>$espeak_err </b> " \
 							--on-top --skip-taskbar & exit 1
 						fi
 						espeak "$trgt" -v $lg -k 1 -p 45 -a 80 -s 110 -w $DT_r/s.wav
@@ -1008,7 +1010,7 @@ elif [ $1 = edt ]; then
 				--width=400 --height=280 --on-top --margins=4 \
 				--fontname=vendana --window-icon=idiomind \
 				--button=Ok:0 --borders=0 --filename=logw --title="$ttl" \
-				--text=" <span color='#C7664B'><b>  ! </b></span><small><small> $(echo "$int" | sed -n 16p)</small></small>" \
+				--text=" <b>  ! </b><small><small> $items_rest </small></small>" \
 				--field=":lbl" "" >/dev/null 2>&1
 			fi
 			rm -fr logw $DT/*.$c $DT_r & exit 1
@@ -1019,8 +1021,8 @@ elif [ $1 = prc ]; then
 	DM_tlt="$DM_tl/$tpe"
 	DC_tlt="$DC_tl/$tpe"
 	DT_r=$(cat $DT/.n_s_pr)
-	int="$(sed -n 22p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
-	btn="$(sed -n 21p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+	int="$(sed -n 22p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
+	btn="$(sed -n 21p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
 	cd $DT_r
 	echo "$3" > ./lstws
 
@@ -1032,20 +1034,20 @@ elif [ $1 = prc ]; then
 	if [ $nw -ge 50 ]; then
 		$yad --name=idiomind --center \
 		--image=info --on-top \
-		--text=" <b>$(echo "$int" | sed -n 6p)   </b>" \
+		--text=" <b>$words_max  </b>" \
 		--image-on-top --fixed --sticky --title="$tpe" \
 		--width=230 --height=120 --borders=3 --button=gtk-ok:0 \
 		--skip-taskbar --window-icon=idiomind && exit 1
 	fi
 
 	left=$((50 - $nw))
-	info=$(echo " $(echo "$int" | sed -n 11p)  <b>"$left"</b> $(echo "$int" | sed -n 12p)")
+	info=$(echo " $remain  <b>"$left"</b> $words")
 	if [ $nw -ge 45 ]; then
-		info=$(echo " $(echo "$int" | sed -n 11p)  <span color='#EA355F'>\
-		<b>"$left"</b></span>  $(echo "$int" | sed -n 12p)")
+		info=$(echo " $remain  <span color='#EA355F'>\
+		<b>"$left"</b></span>  $words")
 	elif [ $nw -ge 49 ]; then
-		info=$(echo " $(echo "$int" | sed -n 11p)  <span color='#EA355F'>\
-		<b>"$left"</b></span>  $(echo "$int" | sed -n 13p) ")
+		info=$(echo " $remain  <span color='#EA355F'>\
+		<b>"$left"</b></span>  $word ")
 	fi
 
 	cat ./lstws | tr -c "[:alnum:]" '\n' | sed '/^$/d' | sed '/"("/d' \
@@ -1102,8 +1104,8 @@ elif [ $1 = prc ]; then
 		--buttons-layout=end --skip-taskbar --width=400 \
 		--height=280 --borders=10 \
 		--button="gtk-close":1 \
-		--button="$(echo "$btn" | sed -n 3p)":0 \
-		--title="$(echo "$int" | sed -n 27p)" \
+		--button="$add":0 \
+		--title="$title_selector" \
 		--column="" --column="Select"`
 		
 		if [ $? -eq 0 ]
@@ -1282,8 +1284,8 @@ elif [ $1 = snt ]; then
 	DM_tlt="$DM_tl/$tpe"
 	DC_tlt="$DC_tl/$tpe"
 	DIC=$DS/addons/Dics/dict
-	int="$(sed -n 22p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
-	btn="$(sed -n 21p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+	int="$(sed -n 22p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
+	btn="$(sed -n 21p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
 	c=$(echo $(($RANDOM%100)))
 	DT_r=$(mktemp -d $DT/XXXXXX)
 	cd $DT_r
@@ -1296,11 +1298,11 @@ elif [ $1 = snt ]; then
 	left=$((50 - $nw))
 	if [ "$left" = 0 ]; then
 		exit 1
-		info=$(echo " $(echo "$int" | sed -n 11p)  <b>"$left"</b>  $(echo "$int" | sed -n 12p)")
+		info=$(echo " $remain  <b>"$left"</b>  $words")
 	elif [ $nw -ge 45 ]; then
-		info=$(echo " $(echo "$int" | sed -n 11p)  <span color='#EA355F'><b>"$left"</b></span>  $(echo "$int" | sed -n 12p)")
+		info=$(echo " $remain  <span color='#EA355F'><b>"$left"</b></span>  $words")
 	elif [ $nw -ge 49 ]; then
-		info=$(echo " $(echo "$int" | sed -n 11p)  <span color='#EA355F'><b>"$left"</b></span>  $(echo "$int" | sed -n 13p) ")
+		info=$(echo " $remain  <span color='#EA355F'><b>"$left"</b></span>  $word)")
 	fi
 
 	if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]; then
@@ -1322,8 +1324,8 @@ elif [ $1 = snt ]; then
 	--buttons-layout=end --skip-taskbar --width=400 \
 	--height=280 --borders=10 \
 	--button=gtk-close:1 \
-	--button="$(echo "$btn" | sed -n 3p)":0 \
-	--title="$(echo "$int" | sed -n 27p) - $tpe" \
+	--button="$add":0 \
+	--title="$title_selector - $tpe" \
 	--column="" --column="Select" > "$slt"
 		
 		ret=$?
@@ -1371,7 +1373,7 @@ elif [ $1 = snt ]; then
 								sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
 							else
 								$yad --image=error --button=gtk-ok:1 \
-								--text=" <b>$(echo "$int" | sed -n 9p) $lgtl</b> " \
+								--text=" <b>$festival_err $lgtl</b> " \
 								--on-top --skip-taskbar & exit 1
 							fi
 						else
@@ -1389,7 +1391,7 @@ elif [ $1 = snt ]; then
 							lg=Mandarin
 						elif [ $lg = japanese ]; then
 							$yad --image=error --button=gtk-ok:1 \
-							--text=" <b>$(echo "$int" | sed -n 10p)</b> " \
+							--text=" <b>$espeak_err</b> " \
 							--on-top --skip-taskbar & exit 1
 						fi
 						espeak "$trgt" -v $lg -k 1 -p 45 -a 80 -s 110 -w $DT_r/s.wav
@@ -1413,7 +1415,7 @@ elif [ $1 = snt ]; then
 		--width=400 --height=280 --on-top --margins=4 \
 		--fontname=vendana --window-icon=idiomind \
 		--button="Ok:0" --borders=0 --filename=logw --title="$ttl" \
-		--text=" <span color='#C7664B'><b>  ! </b></span><small><small> $(echo "$int" | sed -n 16p)</small></small>" \
+		--text=" <b>  ! </b><small><small> $items_rest</small></small>" \
 		--field=":lbl" "" >/dev/null 2>&1
 	fi
 	rm -f $DT/*."$c" 
@@ -1431,8 +1433,8 @@ elif [ $1 = prs ]; then
 	lpre=$(cat $DS/default/$lgt/prepositions)
 	ladj=$(cat $DS/default/$lgt/adjetives)
 	nspr='/usr/share/idiomind/add.sh prs'
-	int="$(sed -n 22p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
-	btn="$(sed -n 21p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+	int="$(sed -n 22p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
+	btn="$(sed -n 21p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
 	LNK='http://www.chromium.org/developers/how-tos/api-keys'
 	dct=$DS/addons/Dics/dict
 	lckpr=$DT/.n_s_pr
@@ -1442,12 +1444,13 @@ elif [ $1 = prs ]; then
 	cd "$DT_r"
 
 	if [ -z "$tpe" ]; then
-		$DC_s/chng.sh $DS/ifs/info5 fnew & exit 1
+		source /usr/share/idiomind/ifs/trans/$lgs/topics_lists.conf
+		$DC_s/chng.sh "$no_edit" fnew & exit 1
 	fi
 
 	if [ $ns -ge 50 ]; then
 		$yad --name=idiomind --center --on-top --image=info \
-		--text=" <b>$(echo "$int" | sed -n 5p)</b>" \
+		--text=" <b>$sentences_max </b>" \
 		--image-on-top --fixed --sticky --title="$tpe" \
 		--width=350 --height=150 --button=gtk-ok:0 \
 		--skip-taskbar --window-icon=idiomind && \
@@ -1457,7 +1460,7 @@ elif [ $1 = prs ]; then
 	if [ -f $lckpr ]; then
 		$yad --fixed --center --on-top \
 		--image=info --name=idiomind \
-		--text=" <i>$(echo "$int" | sed -n 18p)</i> " \
+		--text=" <i>$current_pros </i> " \
 		--fixed --sticky --buttons-layout=edge \
 		--width=250 --height=150  \
 		--skip-taskbar --window-icon=idiomind \
@@ -1486,7 +1489,7 @@ elif [ $1 = prs ]; then
 		
 		if [ -z "$key" ]; then
 			$yad --name=idiomind --center --on-top --image=error \
-			--text="  $(echo "$int" | sed -n 19p) <a href='$LNK'>$(echo "$int" | sed -n 20p). </a>" \
+			--text="  $no_key <a href='$LNK'> Google.</a>" \
 			--image-on-top --sticky --title="Idiomind" \
 			--width=400 --height=150 --button=gtk-ok:0 \
 			--skip-taskbar --window-icon=idiomind && \
@@ -1509,7 +1512,7 @@ elif [ $1 = prs ]; then
 			
 			(
 			echo "2"
-			echo "# $(echo "$int" | sed -n 21p)" ; sleep 1
+			echo "# $file_pros" ; sleep 1
 			cp -f "$FL" $DT_r/rv.mp3
 			cd $DT_r
 			eyeD3 -P itunes-podcast --remove "$DT_r"/rv.mp3
@@ -1536,7 +1539,7 @@ elif [ $1 = prs ]; then
 			curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
 			$yad --window-icon=idiomind --on-top \
 			--image=info --name=idiomind \
-			--text=" <b>$(echo "$int" | sed -n 8p)  \\n  </b>" \
+			--text=" <b>$connection_err  \\n  </b>" \
 			--image-on-top --center --fixed --sticky \
 			--width=220 --height=150 \
 			--skip-taskbar --title=Idiomind \
@@ -1544,7 +1547,7 @@ elif [ $1 = prs ]; then
 			 >&2; exit 1;}
 			 
 			echo "3"
-			echo "# $(echo "$int" | sed -n 22p)... " ; sleep 1
+			echo "# $check_key... " ; sleep 1
 			
 			wget -q -U "Mozilla/5.0" --post-file $DS/addons/Google_translation_service/test.flac \
 			--header="Content-Type: audio/x-flac; rate=16000" \
@@ -1563,14 +1566,14 @@ elif [ $1 = prs ]; then
 			fi
 			if [ -z "$(cat info.ret)" ]; then
 				$yad --name=idiomind --center --on-top --image=error \
-				--text="  $(echo "$int" | sed -n 23p) <a href='$LNK'>$(echo "$int" | sed -n 20p). </a>" \
+				--text="  $key_err <a href='$LNK'>Google. </a>" \
 				--image-on-top --sticky --title="Idiomind" \
 				--width=400 --height=80 --borders=3 --button=gtk-ok:0 \
 				--skip-taskbar --window-icon=idiomind && \
 				rm -fr ls $lckpr $DT_r & exit 1
 			fi
 			
-			echo "# $(echo "$int" | sed -n 22p)... " ; sleep 0.2
+			echo "# $file_pros... " ; sleep 0.2
 			#-----------------------------------------
 			
 			n=1
@@ -1584,7 +1587,7 @@ elif [ $1 = prs ]; then
 				
 				if [ -z "$(cat info.ret)" ]; then
 					$yad --name=idiomind --center --on-top --image=error \
-					--text="  $(echo "$int" | sed -n 23p) <a href='$LNK'>$(echo "$int" | sed -n 20p). </a>" \
+					--text="  $key_err <a href='$LNK'>Google. </a>" \
 					--image-on-top --sticky --title="Idiomind" \
 					--width=400 --height=150 --button=gtk-ok:0 \
 					--skip-taskbar --window-icon=idiomind &
@@ -1639,10 +1642,10 @@ $trgt" >> log
 			fi
 			
 			if [ -z "$(cat ./ls)" ]; then
-				echo "$(echo "$int" | sed -n 26p)" | $yad --text-info --center --wrap \
+				echo "$gettext_err" | $yad --text-info --center --wrap \
 				--name=idiomind --class=idiomind --window-icon=idiomind \
 				--text=" " --sticky --width=$wth --height=$eht \
-				--margins=8 --borders=3 --button=gtk-ok:0 --title="$(echo "$int" | sed -n 31p)" && \
+				--margins=8 --borders=3 --button=gtk-ok:0 --title="$Title_sentences" && \
 				rm -fr $lckpr $DT_r & exit 1
 				
 			else
@@ -1654,8 +1657,8 @@ $trgt" >> log
 				--list --checklist --window-icon=idiomind \
 				--width=$wth --text="$info" \
 				--height=$eht --borders=3 --button=gtk-cancel:1 \
-				--button="$(echo "$btn" | sed -n 5p)":'/usr/share/idiomind/add.sh n_t' \
-				--button=gtk-save:0 --title="$(echo "$int" | sed -n 31p)" \
+				--button="$to_new_topic":'/usr/share/idiomind/add.sh n_t' \
+				--button=gtk-save:0 --title="$Title_sentences" \
 				--column="$(cat ./ls | wc -l)" --column="Items" > "$slt"
 			fi
 			
@@ -1677,7 +1680,7 @@ $trgt" >> log
 					curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
 					$yad --window-icon=idiomind --on-top \
 					--image=info --name=idiomind \
-					--text="<b>$(echo "$int" | sed -n 8p) \\n  </b>" \
+					--text="<b>$connection_err \\n  </b>" \
 					--image-on-top --center --fixed --sticky \
 					--width=220 --height=150 --borders=3 \
 					--skip-taskbar --title=Idiomind \
@@ -1883,7 +1886,7 @@ $trgt" >> ./wlog
 										sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
 										else
 											$yad --image=error --button=gtk-ok:1 \
-											--text=" <b>$(echo "$int" | sed -n 9p) $lgtl</b> " \
+											--text=" <b>$festival_err $lgtl</b> " \
 											--on-top --skip-taskbar & exit 1
 										fi
 									else
@@ -1901,7 +1904,7 @@ $trgt" >> ./wlog
 										lg=Mandarin
 									elif [ $lg = japanese ]; then
 										$yad --image=error --button=gtk-ok:1 \
-										--text=" <b>$(echo "$int" | sed -n 10p)</b> " \
+										--text=" <b>$espeak_err </b> " \
 										--on-top --skip-taskbar & exit 1
 									fi
 									espeak "$trgt" -v $lg -k 1 -p 45 -a 80 -s 110 -w $DT_r/s.wav
@@ -1929,29 +1932,29 @@ $trgt" >> ./wlog
 					
 					if [ -f ./wlog ]; then
 						wadds=" $(($(cat ./addw | wc -l) - $(cat ./wlog | sed '/^$/d' | wc -l)))"
-						W=" $(echo "$int" | sed -n 12p)"
+						W=" $words"
 						if [ $(echo $wadds) = 1 ]; then
-							W=" $(echo "$int" | sed -n 13p)"
+							W=" $word"
 						fi
 					else
 						wadds=" $(cat ./addw | wc -l)"
-						W=" $(echo "$int" | sed -n 12p)"
+						W=" $words"
 						if [ $(echo $wadds) = 1 ]; then
 							wadds=" $(cat ./addw | wc -l)"
-							W=" $(echo "$int" | sed -n 13p)"
+							W=" $word"
 						fi
 					fi
 					if [ -f ./slog ]; then
 						sadds=" $(($(cat ./adds | wc -l) - $(cat ./slog | sed '/^$/d' | wc -l)))"
-						S=" $(echo "$int" | sed -n 32p)"
+						S=" $sentences"
 						if [ $(echo $sadds) = 1 ]; then
-							S=" $(echo "$int" | sed -n 33p)"
+							S=" $sentence"
 						fi
 					else
-						sadds=" $(cat ./adds | wc -l) oraciones"
-						S=" $(echo "$int" | sed -n 32p)"
+						sadds=" $(cat ./adds | wc -l) $sentences"
+						S=" $sentences"
 						if [ $(echo $sadds) = 1 ]; then
-							S=" $(echo "$int" | sed -n 33p)"
+							S=" $sentence"
 						fi
 					fi
 					
@@ -1959,21 +1962,21 @@ $trgt" >> ./wlog
 					adds=$(cat ./adds ./addw | wc -l)
 					
 					if [ $adds -ge 1 ]; then
-						notify-send -i idiomind "$tpe" "$(echo "$int" | sed -n 36p):\\n$sadds$S$wadds$W" -t 2000 &
+						notify-send -i idiomind "$tpe" "$added:\\n$sadds$S$wadds$W" -t 2000 &
 						echo "aitm.$adds.aitm" >> \
 						$DC/addons/stats/.log
 					fi
 					
 					if [ -f ./log ]; then
 						if [ $(ls ./*.mp3 | wc -l) -ge 1 ]; then
-							btn="--button=$(echo "$btn" | sed -n 4p):0"
+							btn="--button=$save:0"
 						fi
 						$yad --form --name=idiomind --class=idiomind \
 						--center --skip-taskbar --on-top \
 						--width=350 --height=300 --on-top --margins=4 \
 						--window-icon=idiomind \
 						--borders=0 --title="$tpe" \
-						--field="<span color='#C7664B'><b>  ! </b></span><small><small> $(echo "$int" | sed -n 34p)</small> </small><small><small>$logn</small></small>":txt "$log" \
+						--field="<b>  ! </b><small><small> $items_rest</small> </small><small><small>$logn</small></small>":txt "$log" \
 						--field=":lbl"\
 						"$btn" --button=Ok:1 >/dev/null 2>&1
 							ret=$?
@@ -2019,7 +2022,7 @@ $trgt" >> ./wlog
 		| grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
 		$yad --window-icon=idiomind --on-top \
 		--image=info --name=idiomind \
-		--text="<b> $(echo "$int" | sed -n 8p)  \\n  </b>" \
+		--text="<b> $connection_err  \\n  </b>" \
 		--image-on-top --center --sticky \
 		--width=300 --height=150 \
 		--skip-taskbar --title=Idiomind \
@@ -2097,16 +2100,16 @@ $trgt" >> ./wlog
 		
 		te=$(cat ./te)
 		left=$((50 - $ns))
-		info=$(echo "$(echo "$int" | sed -n 11p)  <b>"$left"</b>  $(echo "$int" | sed -n 32p)")
+		info=$(echo "$remain  <b>"$left"</b>  $sentences")
 
 		if [ $ns -ge 45 ]; then
-			info=$(echo "$(echo "$int" | sed -n 11p)  <span color='#EA355F'><b>"$left"</b></span>  $(echo "$int" | sed -n 32p) en $tcnm")
+			info=$(echo "$remain  <span color='#EA355F'><b>"$left"</b></span>  $sentences  $tcnm")
 		elif [ $ns -ge 49 ]; then
-			info=$(echo "$(echo "$int" | sed -n 11p)  <span color='#EA355F'><b>"$left"</b></span>  $(echo "$int" | sed -n 33p) en $tcnm")
+			info=$(echo "$remain  <span color='#EA355F'><b>"$left"</b></span>  $sentences $tcnm")
 		fi
 		
 		if [ -z "$(cat ./sntsls)" ]; then
-			echo "  $(echo "$int" | sed -n 35p). " | \
+			echo "  $gettext_err1 " | \
 			$yad --text-info --center --wrap \
 			--name=idiomind --class=idiomind --window-icon=idiomind \
 			--text=" " --sticky --width=$wth --height=$eht \
@@ -2121,9 +2124,9 @@ $trgt" >> ./wlog
 			--list --checklist --class=idiomind --center \
 			--text="<b> $te </b> \\n<small><small> $info</small></small>\\n" \
 			--width=$wth --print-all --height=$eht --borders=3 \
-			--button="$(echo "$btn" | sed -n 7p)":1 \
-			--button="$(echo "$btn" | sed -n 6p)":2 \
-			--button="$(echo "$btn" | sed -n 5p)":'/usr/share/idiomind/add.sh n_t' \
+			--button="$cancel":1 \
+			--button="$arrange":2 \
+			--button="$to_new_topic":'/usr/share/idiomind/add.sh n_t' \
 			--button=gtk-save:0 --title="$tpe" \
 			--column="$(cat ./sntsls | wc -l)" --column="Sentences" > $slt
 				ret=$?
@@ -2164,7 +2167,7 @@ $trgt" >> ./wlog
 					curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
 					$yad --window-icon=idiomind --on-top \
 					--image=info --name=idiomind \
-					--text="<b> $(echo "$int" | sed -n 8p)  \\n  </b>" \
+					--text="<b> $connection_err  \\n  </b>" \
 					--image-on-top --center --fixed --sticky \
 					--width=220 --height=150 \
 					--skip-taskbar --title=Idiomind \
@@ -2279,7 +2282,7 @@ $sntc" >> ./slog
 													sox $DT_r/s.wav "$DM_tlt/$nme.mp3"
 												else
 													$yad --image=error --button=gtk-ok:1 \
-													--text=" <b>$(echo "$int" | sed -n 9p) $lgtl</b> " \
+													--text=" <b>$festival_err $lgtl</b> " \
 													--on-top --skip-taskbar & exit 1
 												fi
 											else
@@ -2297,7 +2300,7 @@ $sntc" >> ./slog
 												lg=Mandarin
 											elif [ $lg = japanese ]; then
 												$yad --image=error --button=gtk-ok:1 \
-												--text=" <b>$(echo "$int" | sed -n 10p)</b> " \
+												--text=" <b>$espeak_err</b> " \
 												--on-top --skip-taskbar & exit 1
 											fi
 											espeak "$trgt" -v $lg -k 1 -p 65 -a 80 -s 120 -w $DT_r/s.wav
@@ -2467,29 +2470,29 @@ $itm" >> ./wlog
 					
 					if [ -f ./wlog ]; then
 						wadds=" $(($(cat ./addw | wc -l) - $(cat ./wlog | sed '/^$/d' | wc -l)))"
-						W=" $(echo "$int" | sed -n 12p)"
+						W=" $words"
 						if [ $(echo $wadds) = 1 ]; then
-							W=" $(echo "$int" | sed -n 13p)"
+							W=" $word"
 						fi
 					else
 						wadds=" $(cat ./addw | wc -l)"
-						W=" $(echo "$int" | sed -n 12p)"
+						W=" $words"
 						if [ $(echo $wadds) = 1 ]; then
 							wadds=" $(cat ./addw | wc -l)"
-							W=" $(echo "$int" | sed -n 13p)"
+							W=" $word"
 						fi
 					fi
 					if [ -f ./slog ]; then
 						sadds=" $(($(cat ./adds | wc -l) - $(cat ./slog | sed '/^$/d' | wc -l)))"
-						S=" $(echo "$int" | sed -n 32p)"
+						S=" $sentences"
 						if [ $(echo $sadds) = 1 ]; then
-							S=" $(echo "$int" | sed -n 33p)"
+							S=" $sentence"
 						fi
 					else
-						sadds=" $(cat ./adds | wc -l) oraciones"
-						S=" $(echo "$int" | sed -n 32p)"
+						sadds=" $(cat ./adds | wc -l) $sentences"
+						S=" $sentences"
 						if [ $(echo $sadds) = 1 ]; then
-							S=" $(echo "$int" | sed -n 33p)"
+							S=" $sentence"
 						fi
 					fi
 					
@@ -2497,7 +2500,7 @@ $itm" >> ./wlog
 					adds=$(cat ./adds ./addw | wc -l)
 					
 					if [ $adds -ge 1 ]; then
-						notify-send -i idiomind "$tpe" "$(echo "$int" | sed -n 36p):\\n$sadds$S$wadds$W" -t 2000 &
+						notify-send -i idiomind "$tpe" "$added \\n$sadds$S$wadds$W" -t 2000 &
 						echo "aitm.$adds.aitm" >> \
 						$DC/addons/stats/.log
 					fi
@@ -2508,7 +2511,7 @@ $itm" >> ./wlog
 						--width=350 --height=300 --on-top --margins=4 \
 						--fontname=vendana --window-icon=idiomind \
 						--button=Ok:0 --borders=0 --title="$tpe" \
-						--text=" <span color='#C7664B'><b>  ! </b></span><small><small> $(echo "$int" | sed -n 34p)</small></small>" \
+						--text=" <b>  ! </b><small><small> $items_rest</small></small>" \
 						--field=":lbl" "" >/dev/null 2>&1
 					fi
 					
@@ -2532,8 +2535,8 @@ $itm" >> ./wlog
 				fi
 				
 elif [ $1 = img ]; then
-	int="$(sed -n 22p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
-	btn="$(sed -n 21p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+	int="$(sed -n 22p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
+	btn="$(sed -n 21p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
 	cd $DT
 	wrd="$2"
 	echo '<html>
@@ -2549,7 +2552,7 @@ elif [ $1 = img ]; then
 	mv -f html s.html
 	chmod +x s.html
 	ICON=$DS/icon/nw.png
-	btnn=$(echo --button=$(echo "$btn" | sed -n 10p):3)
+	btnn=$(echo --button=$add_image:3)
 	
 	if [ "$3" = w ]; then
 		
@@ -2559,10 +2562,10 @@ elif [ $1 = img ]; then
 		
 		if [ -f "$DM_tlt/words/images/$wrd.jpg" ]; then
 			ICON="--image=$DM_tlt/words/images/$wrd.jpg"
-			btnn=$(echo --button=$(echo "$btn" | sed -n 8p):3)
-			btn2=$(echo --button=$(echo "$btn" | sed -n 9p):2)
+			btnn=$(echo --button=$change:3)
+			btn2=$(echo --button=$delete:2)
 		else
-			txt="--text=<small>$(echo "$int" | sed -n 28p)  <a href='file://$DT/s.html'>$wrd</a></small>"
+			txt="--text=<small>$images_for  <a href='file://$DT/s.html'>$wrd</a></small>"
 		fi
 		
 		$yad --form --align=center --center \
@@ -2601,17 +2604,17 @@ elif [ $1 = img ]; then
 			file="$DM_tlt/$wrd.mp3"
 		fi
 		
-		btnn=$(echo "--button=$(echo "$btn" | sed -n 10p):3")
+		btnn=$(echo "--button=$add_image:3")
 		eyeD3 --write-images=$DT "$file" >/dev/null 2>&1
 		
 		if [ -f "$DT/ILLUSTRATION".jpeg ]; then
 			mv -f "$DT/ILLUSTRATION".jpeg "$DT/imgsw".jpeg
 			ICON="--image=$DT/imgsw.jpeg"
-			btnn=$(echo --button=$(echo "$btn" | sed -n 8p):3)
-			btn2=$(echo --button=$(echo "$btn" | sed -n 9p):2)
+			btnn=$(echo --button=$change:3)
+			btn2=$(echo --button=$delete:2)
 			
 		else
-			txt="--text=<small>$(echo "$int" | sed -n 29p) \\n<a href='file://$DT/s.html'>$wrd</a></small>"
+			txt="--text=<small>$search_images \\n<a href='file://$DT/s.html'>$wrd</a></small>"
 		fi
 		
 		$yad --form --text-align=center \

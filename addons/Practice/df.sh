@@ -1,6 +1,5 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
-
 tpc=$(sed -n 1p ~/.config/idiomind/s/cnfg8)
 lgtl=$(sed -n 2p ~/.config/idiomind/s/cnfg10)
 lgsl=$(sed -n 2p ~/.config/idiomind/s/cnfg9)

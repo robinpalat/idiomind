@@ -1,6 +1,8 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
+source /usr/share/idiomind/ifs/trans/$lgs/report.conf
+
 eht=$(sed -n 3p $DC_s/cnfg18)
 wth=$(sed -n 4p $DC_s/cnfg18)
 LOG=$DC/addons/stats/.log
@@ -149,22 +151,10 @@ if [ "$1" = A ]; then
 		let n++
 	done)
 
-	if [[ "$(echo "$tpc1" | wc -c)" -gt 40 ]]; then
-		tle1="${tpc1:0:37}..."
-	else
-		tle1="$tpc1"
-	fi
-	if [[ "$(echo "$tpc2" | wc -c)" -gt 40 ]]; then
-		tle2="${tpc2:0:37}..."
-	else
-		tle2="$tpc2"
-	fi
-	if [[ "$(echo "$tpc3" | wc -c)" -gt 40 ]]; then
-		tle3="${tpc3:0:37}..."
-	else
-		tle3="$tpc3"
-	fi
-	
+	[[ "$(echo "$tpc1" | wc -c)" -gt 40 ]] && tle1="${tpc1:0:37}..." || tle1="$tpc1"
+	[[ "$(echo "$tpc2" | wc -c)" -gt 40 ]] && tle2="${tpc2:0:37}..." || tle2="$tpc2"
+	[[ "$(echo "$tpc3" | wc -c)" -gt 40 ]] && tle3="${tpc3:0:37}..." || tle3="$tpc3"
+
 	echo "<small><sup><span background='#F3C879'>$ext1</span><span background='#6E9FD4'>$ext2</span><span background='#76A862'><span color='#FFFFFF'><b>$ext3$real% </b></span><span background='#E8E8E8'>$ext4</span></span></sup></small>" >> $DC/addons/stats/.wks_
 	cat $DC/addons/stats/.wks | head -n 12 >> $DC/addons/stats/.wks_
 	mv -f $DC/addons/stats/.wks_ $DC/addons/stats/.wks
@@ -172,23 +162,23 @@ if [ "$1" = A ]; then
 	echo "<big><big><b>$real%</b></big></big>  Performance
 " > $WKRT
 if [ -n "$tpc3" ]; then
-	echo "Topics mas activos:
+	echo "$topics:
 <b>$tle1</b>
 <b>$tle2</b>
 <b>$tle3</b>
 ">> $WKRT
 elif [ -n "$tpc2" ]; then
-	echo "Topics mas activos:
+	echo "$topics:
 <b>$tle1</b>
 <b>$tle2</b>
 ">> $WKRT
 else
-	echo "Topic mas activo:
+	echo "$topic:
 <b>$tle1</b>
 ">> $WKRT
 fi
-echo "<big><span font='ultralight'>$CTW9</span></big>  Items que podrian marcarse como aprendidos" >> $WKRT
-echo "<big><span font='ultralight'>$OKIM</span></big>  Items marcados como aprendidos
+echo "<big><span font='ultralight'>$CTW9</span></big>  $items_to_mark_ok" >> $WKRT
+echo "<big><span font='ultralight'>$OKIM</span></big>  $items_ok
 
 " >> $WKRT
 cat "$DC/addons/stats/.wks" >> $WKRT2
@@ -217,12 +207,12 @@ elif [ "$1" = T ]; then
 	--list --ellipsize=END --print-all \
 	--plug=$KEY --tabnum=2 --always-print-result \
 	--column="$(cat $DC/addons/stats/w9.tmp | wc -l)" \
-	--column="Items que se pueden marcar como aprendidos" \
+	--column="$items_to_mark_ok" \
 	--checklist --class=idiomind --center > "$DT/slt" &
 	$yad --notebook --on-top --name=idiomind --center \
 	--class=idiomind --align=right --key=$KEY \
-	--tab-borders=0 --center --title="Weekly Report" \
-	--tab=" Report   $(date "+%B %d") " --tab=" Probables " \
+	--tab-borders=0 --center --title="$weekly_report" \
+	--tab=" $report   $(date "+%B %d") " --tab=" $items " \
 	--buttons-layout=end --class=idiomind \
 	--image-on-top --window-icon=idiomind \
 	--width="$wth" --height="$eht" --borders=0 \
@@ -328,12 +318,12 @@ elif [ "$1" = C ]; then
 		SW=" "
 	fi
 	
-	CNFG=$($yad --title="Weekly Report" --borders=10 --print-all \
+	CNFG=$($yad --title="$weekly_report" --borders=10 --print-all \
 	--center --form --on-top --scroll --skip-taskbar --align=center \
 	--always-print-result --window-icon=idiomind \
 	--button=Close:0 --width=350 --height=250 --fixed \
-	--text="<sup>Una vista rápida de los progresos</sup>" \
-	--field="Used This:CHK" $sttng \
+	--text="<sup>$description</sup>" \
+	--field="$active:CHK" $sttng \
 	--field="$SW:LBL")
 		ret=$?
 		

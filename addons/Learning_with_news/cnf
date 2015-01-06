@@ -1,7 +1,6 @@
 #!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
-int="$(sed -n 47p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
-btn="$(sed -n 46p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+source /usr/share/idiomind/ifs/trans/$lgs/rss.conf
 dir2="$DC/addons/Learning with news"
 DIR3="$DS/addons/Learning_with_news"
 FEED=$(sed -n 1p "$dir2/$lgtl/.rss")
@@ -37,11 +36,11 @@ if [[ -z "$1" ]]; then
 		--window-icon=idiomind --skip-taskbar --borders=15 \
 		--width=350 --height=250 --always-print-result \
 		--title="Feeds - $lgtl " "$text" \
-		--button="$(echo "$btn" | sed -n 1p):2" \
+		--button="$delete:2" \
 		--button="gtk-add:5" \
-		--button="$(echo "$btn" | sed -n 2p):4" \
-		--field="  <small>$(echo "$int" | sed -n 1p): </small>:CB" "$FEED!$scrp" \
-		--field="$(echo "$int" | sed -n 2p):CHK" $st2)
+		--button="$update:4" \
+		--field="  <small>$current_subcription: </small>:CB" "$FEED!$scrp" \
+		--field="$update_at_start:CHK" $st2)
 		ret=$?
 		
 		st1="$(echo "$CNFG" | cut -d "|" -f1)"
@@ -55,21 +54,21 @@ if [[ -z "$1" ]]; then
 				$yad --title="Info" \
 				--center --on-top --window-icon=idiomind \
 				--width=350 --height=120 --fixed --image=info --skip-taskbar \
-				--text="  Sample subscription\\n  $(echo "$int" | sed -n 3p)" \
+				--text="  Sample subscription\\n  $delete_no" \
 				--borders=10 --button=OK:1
 				$DIR3/cnf & exit
 			elif echo "$st1" | grep "Example"; then
 				$yad --title="Info" --center --on-top --window-icon=idiomind \
 				--width=350 --height=120 --fixed --image=info --skip-taskbar \
-				--text="  Sample subscription\\n  $(echo "$int" | sed -n 3p)" \
+				--text="  Sample subscription\\n  $delete_no" \
 				--borders=10 --button=OK:1
 				$DIR3/cnf & exit
 			else
-				$yad --show-uri --center \
+				$yad --center \
 				--title=Confirm --window-icon=idiomind \
 				--on-top --width=350 --height=120 --fixed --image=dialog-question \
-				--skip-taskbar --text="  $(echo "$int" | sed -n 4p)   <b>$st1 </b> ?" \
-				--borders=8 --button=$(echo "$btn" | sed -n 1p):0 --button=$(echo "$btn" | sed -n 4p):1
+				--skip-taskbar --text="  $delete_subcription   <b>$st1 </b> ?" \
+				--borders=8 --button="$delete":0 --button="$cancel":1
 					ret=$?
 					
 					if [[ $ret -eq 1 ]]; then
@@ -88,10 +87,10 @@ if [[ -z "$1" ]]; then
 			dirs="$dir2/$lgtl/subscripts"
 			nwfd=$($yad --width=480 --height=100 \
 				--center --on-top --window-icon=idiomind --align=right \
-				--skip-taskbar --button=$(echo "$btn" | sed -n 4p):1 --button=Ok:0 \
-				--form --title=" $(echo "$int" | sed -n 11p)" --borders=5 \
-				--field="<small>$(echo "$int" | sed -n 5p):</small>: " "" \
-				--field="<small>$(echo "$int" | sed -n 6p):</small>: " "" \ )
+				--skip-taskbar --button=$cancel:1 --button=Ok:0 \
+				--form --title=" $new_subcription" --borders=5 \
+				--field="<small>$name:</small>: " "" \
+				--field="<small>$url:</small>: " "" \ )
 			
 				if [[ -z "$(echo "$nwfd" | cut -d "|" -f1)" ]]; then
 					$DIR3/cnf & exit
@@ -144,9 +143,9 @@ elif [[ $1 = edit ]]; then
 	st4=FALSE
 
 	if [[ "$(cat "$drtc/cnfg0" | wc -l)" -ge 20 ]]; then
-		dd="$img3 $(echo "$int" | sed -n 7p) $st1 $img1 $(echo "$int" | sed -n 8p) $st2 $img2 $(echo "$int" | sed -n 9p) $st3 $img4 $(echo "$int" | sed -n 10p) $st4"
+		dd="$img3 $create_topic $st1 $img1 $delete_news $st2 $img2 $delete_saved $st3 $img4 $subcriptions $st4"
 	else
-		dd="$img1 $(echo "$int" | sed -n 8p) $st1 $img2 $(echo "$int" | sed -n 9p) $st2 $img4 $(echo "$int" | sed -n 10p) $st3"
+		dd="$img1 $delete_news $st1 $img2 $delete_saved $st2 $img4 $subcriptions $st3"
 	fi
 
 	$yad --list --on-top \
@@ -160,13 +159,13 @@ elif [[ $1 = edit ]]; then
 	ret=$?
 	slt=$(cat "$slct")
 	if  [[ "$ret" -eq 0 ]]; then
-		if echo "$slt" | grep -o "$(echo "$int" | sed -n 7p)"; then
+		if echo "$slt" | grep -o "$create_topic"; then
 			$DIR3/del dlns
-		elif echo "$slt" | grep -o "$(echo "$int" | sed -n 8p)"; then
+		elif echo "$slt" | grep -o "$delete_news"; then
 			$DIR3/del dlkt
-		elif echo "$slt" | grep -o "$(echo "$int" | sed -n 9p)"; then
+		elif echo "$slt" | grep -o "$delete_saved"; then
 			$DIR3/add n_t
-		elif echo "$slt" | grep -o "$(echo "$int" | sed -n 10p)"; then
+		elif echo "$slt" | grep -o "$subcriptions"; then
 			$DIR3/cnf
 		fi
 		rm -f "$slct"

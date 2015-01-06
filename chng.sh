@@ -1,6 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
+source /usr/share/idiomind/ifs/trans/$lgs/topics_lists.conf
 if [[ "$1" = chngi ]]; then
 	saw=$(sed -n 1p $DC_s/cnfg5) # words
 	sas=$(sed -n 2p $DC_s/cnfg5) # sentences
@@ -81,7 +82,7 @@ if [[ "$1" = chngi ]]; then
 			osdi=idiomind
 		fi
 		if echo "$nta" | grep "TRUE"; then
-			notify-send -i "notify-sendi" "$trgt" "$srce\\n" -t 8000  &
+			notify-send -i "$osdi" "$trgt" "$srce\\n" -t 8000  &
 		fi
 		sleep 1
 		
@@ -146,7 +147,7 @@ if [[ "$1" = chngi ]]; then
 			trgt="$tgt"
 		fi
 		if echo "$nta" | grep "TRUE"; then
-			notify-send -i "notify-sendi" "$trgt" "$srce\n" -t 7000 &
+			notify-send -i "$osdi" "$trgt" "$srce\n" -t 7000 &
 		fi
 		sleep 1
 		if echo "$sna" | grep "TRUE"; then
@@ -250,7 +251,7 @@ if [[ "$1" = chngi ]]; then
 		echo "$itm" >> $DT/.bcle
 		echo "-- no file found"
 		if [ $(cat $DT/.p__$use | wc -l) -gt 5 ]; then
-			int="$(sed -n 16p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+			int="$(sed -n 16p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
 			T="$(echo "$int" | sed -n 1p)"
 			D="$(echo "$int" | sed -n 2p)" # reporduccion interrumpida
 			notify-send -i idiomind "$T" "$D" -t 9000 &
@@ -270,21 +271,10 @@ elif [ "$1" != chngi ]; then
 		fi
 		eht=$(sed -n 3p $DC_s/cnfg18)
 		wth=$(sed -n 4p $DC_s/cnfg18)
-		img1=$DS/images/img1.png
-		img2=$DS/images/img2.png
-		img3=$DS/images/img3.png
-		img4=$DS/images/img4.png
-		img5=$DS/images/img5.png
-		img6=$DS/images/img6.png
-		img7=$DS/images/img7.png
-		img8=$DS/images/img8.png
-		img9=$DS/images/img9.png
-		img10=$DS/images/img10.png
-		img11=$DS/images/img11.png
-		img12=$DS/images/img12.png
+
 		text=--class=idm
 		if [ -n "$1" ]; then
-			text="--text=$(cat "$1")"
+			text="--text=<small>$1\n</small>"
 		fi
 		[[ -f $DC_tl/.cnfg1 ]] && info2=$(cat $DC_tl/.cnfg1 | wc -l) || info2=""
 		cd $DC_s
@@ -294,8 +284,8 @@ elif [ "$1" != chngi ]; then
 		"$text" --width=$wth --height=$eht \
 		--no-headers --list --window-icon=idiomind \
 		--button="gtk-preferences":$DS/cnfg.sh \
-		--button="gtk-add":3 --button="gtk-ok":0 --button="gtk-close":1 \
-		--borders=5 --title "Topics" --column=img:img --column=File:TEXT)
+		--button="gtk-add":3 --button="$ok":0 --button="$close":1 \
+		--borders=5 --title="$topics" --column=img:img --column=File:TEXT)
 			ret=$?
 
 			if [ $ret -eq 3 ]; then
