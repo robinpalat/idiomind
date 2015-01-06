@@ -260,7 +260,10 @@ elif [[ $ret -eq 0 ]]; then
 	"$HOME/.config/idiomind/s/cnfg1"
 	touch $DIR2/s/cnfg8
 	touch $DIR2/s/cnfg6
-	/usr/share/idiomind/mngr.sh mkmn
+	touch "$DIR4/.cnf"
+	touch $DIR2/addons/stats/cnf
+	touch $DIR2/s/cnfg12
+	#/usr/share/idiomind/mngr.sh mkmn
 	idiomind
 	exit 1
 else

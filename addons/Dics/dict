@@ -10,11 +10,10 @@ Wrd="$1"
 DT_r="$2"
 
 if [ ! -f $DT_r/.topic ]; then
-	topic=$(sed -n 1p $DC_s/cnfg7)
-	echo "$topic" > $DT_r/.topic
+	[[ -f $DC_s/cnfg7 ]] && topic=$(sed -n 1p $DC_s/cnfg7) || topic=""
+	[[ -f $DT_r/.topic ]] && echo "$topic" > $DT_r/.topic
 fi
-
-tpe=$(cat $DT_r/.topic)
+[[ -f $DT_r/.topic ]] && tpe=$(cat $DT_r/.topic)
 DM_tlt="$DM_tl/$tpe"
 DC_tlt="$DC_tl/$tpe"
 
@@ -51,7 +50,7 @@ elif [ "$3" = cnf ]; then
 	fi
 	
 	rm -f "$DICT/.listdicts"
-	cd "$DICT/activos"	
+	cd "$DICT/activos"
 	find . -not -name "*.$lgt" -and -not -name "*.auto" -type f \
 	-exec mv --target-directory="$DICT/no_activos" {} +
 	

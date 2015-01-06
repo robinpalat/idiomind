@@ -109,8 +109,8 @@ if [[ -z "$1" ]]; then
 						nme="$name"
 					fi
 					echo '#!/bin/bash
-					lgtl=$(sed -n 2p ~/.config/idiomind/s/lang)
-					cd "$HOME/.config/idiomind/addons/Learning with news/$lgtl/subscripts"
+					source /usr/share/idiomind/ifs/c.conf
+					cd "$DC_a/Learning with news/$lgtl/subscripts"
 					echo "'$nme'" > ../.rss
 					echo '$link' > ../link
 					exit' > "$dirs/$nme"
@@ -131,8 +131,8 @@ if [[ -z "$1" ]]; then
 		fi
 		
 elif [[ $1 = edit ]]; then
-	lnglbl=$(sed -n 2p ~/.config/idiomind/s/lang)
-	drtc="$HOME/.config/idiomind/topics/$lnglbl/Feeds/"
+
+	drtc="$DC_tl/Feeds/"
 	slct=$(mktemp $DT/slct.XXXX)
 	img1=$DIR3/img/del.png
 	img2=$DIR3/img/del.png

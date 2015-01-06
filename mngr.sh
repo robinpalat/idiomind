@@ -868,12 +868,14 @@ elif [ $1 = dlt ]; then
 		fi
 		
 elif [ $1 = mkmn ]; then
+	[[ ! -f $DC_tl/.cnfg1 ]] && exit 1
 	cd "$DC_tl"
+	echo "mk menu"
 	[ -d ./images ] && rm -r ./images
 	[ -d ./words ] && rm -r ./words
 	[ -f ./*.mp3 ] && rm -r ./*.mp3
 	ls -t -d -N * > $DC_tl/.cnfg1
-	mv -f $DC_s/cnfg0 $DC_s/cnfg16
+	[[ -f $DC_s/cnfg0 ]] && mv -f $DC_s/cnfg0 $DC_s/cnfg16
 	n=1
 	while [ $n -le $(cat $DC_tl/.cnfg1 | head -30 | wc -l) ]; do
 		tp=$(sed -n "$n"p $DC_tl/.cnfg1)

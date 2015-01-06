@@ -170,20 +170,15 @@ if [ $1 = n_t ]; then
 elif [ $1 = n_i ]; then
 	int="$(sed -n 21p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
 	int="$(sed -n 22p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
+	[[ ! -f $DC/addons/dict/.dicts ]] && touch $DC/addons/dict/.dicts
 	if  [ -z "$(cat $DC/addons/dict/.dicts)" ]; then
 		$DS/addons/Dics/dict $DS/ifs/info6 f cnf
 		if  [ -z "$(cat $DC/addons/dict/.dicts)" ]; then
 			exit 1
 		fi
 	fi
-	
-	dct="$DS_p/Dics/dict"
-	tpcs=$(cat "$DC_tl/.cnfg2" | egrep -v "$tpe" | cut -c 1-50 \
-	| tr "\\n" '!' | sed 's/!\+$//g')
-	ttle="${tpe:0:50}"
 	c=$(echo $(($RANDOM%1000)))
 	txt="$4"
-
 	if [ -z "$txt" ]; then
 		txt="$(xclip -selection primary -o)"
 	fi
@@ -222,6 +217,10 @@ elif [ $1 = n_i ]; then
 	
 	ls=$((50 - $(cat "$DC_tlt/cnfg4" | wc -l)))
 	lw=$((50 - $(cat "$DC_tlt/cnfg3" | wc -l)))
+	dct="$DS_p/Dics/dict"
+	tpcs=$(cat "$DC_tl/.cnfg2" | egrep -v "$tpe" | cut -c 1-50 \
+	| tr "\\n" '!' | sed 's/!\+$//g')
+	ttle="${tpe:0:50}"
 	s=$(cat "$DC_tlt/cnfg4" | wc -l)
 	w=$(cat "$DC_tlt/cnfg3" | wc -l)
 	if [ $s -ge 45 -a $s -lt 50 ]; then

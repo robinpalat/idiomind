@@ -260,6 +260,7 @@ if [[ "$1" = chngi ]]; then
 	fi
 
 elif [ "$1" != chngi ]; then
+	
 	if [ ! -d $DC_s ]; then
 		/usr/share/idiomind/ifs/1u &
 		exit 1
@@ -285,7 +286,7 @@ elif [ "$1" != chngi ]; then
 		if [ -n "$1" ]; then
 			text="--text=$(cat "$1")"
 		fi
-		info2=$(cat $DC_tl/.cnfg1 | wc -l)
+		[[ -f $DC_tl/.cnfg1 ]] && info2=$(cat $DC_tl/.cnfg1 | wc -l) || info2=""
 		cd $DC_s
 
 		VAR=$(cat $DC_s/cnfg0 | $yad --name=idiomind --ellipsize=END \
