@@ -1,6 +1,3 @@
-![alt tag](https://github.com/sniparse/sniparse.github.io/blob/master/images/shot.png)
-
-
 
 <b>Dependencias:</b>
 
