@@ -61,7 +61,7 @@ $yad --plug=$KEY --tabnum=2 --list --expand-column=2 \
 echo "$text" | $yad --plug=$KEY --tabnum=3 --text-info \
 	--text="\\n<big><big><big><b>Idiomind 1.0 alpha</b></big></big></big>\\n<sup>$vocabulary_learning_tool\\n<a href='https://sourceforge.net/projects/idiomind/'>Homepage</a> © 2013-2014 Robin Palat</sup>" \
 	--show-uri --fontname=Arial --margins=10 --wrap --text-align=center &
-$yad --notebook --key=$KEY --name=idiomind --class=idiomind \
+$yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 	--sticky --center --window-icon=$ICON --window-icon=idiomind \
 	--tab="$preferences" --tab="  $addons  " \
 	--tab="  $about  " \
