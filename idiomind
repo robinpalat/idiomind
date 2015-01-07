@@ -25,7 +25,7 @@ if [ -z "$1" ]; then
 
 			$yad --name=idiomind \
 			--image=error --button=gtk-ok:1\
-			--text=" <b>$dlg1</b>" \
+			--text=" <b>$write_err</b>" \
 			--image-on-top --sticky  \
 			--width=320 --height=80 \
 			--borders=2 --title=Idiomind \
@@ -325,7 +325,7 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 	int="$(sed -n 6p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
 		cstn=$($yad --name=idiomind \
 		--image=error --button=gtk-ok:1\
-		--text=" <b>$dlg2</b>\\n" \
+		--text=" <b>$file_err</b>\\n" \
 		--image-on-top  --sticky \
 		--width=280 --height=120 \
 		--title=Idiomind \
@@ -365,7 +365,7 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 				if [ $if2 -ge 50 ]; then
 					$yad  --name=idiomind --center \
 					--image=info --class=idiomind \
-					--text=" <b>$dlg3</b>\\n" \
+					--text=" <b>$topics_max</b>\\n" \
 					--image-on-top --sticky --skip-taskbar \
 					--width=340 --height=120 \
 					--title=Idiomind \
@@ -379,7 +379,7 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 					inm="$inme $snm"
 					$yad  --name=idiomind \
 					--image=info --sticky \
-					--text=" $dlg4  \\n $dlg4_1 <b>$inm</b>  \\n" \
+					--text=" $name_eq  \\n $name_eq2 <b>$inm</b>  \\n" \
 					--class=idiomind --center --skip-taskbar \
 					--image-on-top --width=340 --height=120 \
 					--window-icon=idiomind \
@@ -526,25 +526,25 @@ if [ "$1" = topic ]; then
 				dts=$(cat "$DC_tlt/cnfg9" | wc -l)
 				if [ $dts = 1 ]; then
 					dte=$(sed -n 1p "$DC_tlt/cnfg9")
-					adv="<b>  10 $dlg5 </b>"
+					adv="<b>  10 $cuestion_review </b>"
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/10))
 					tdays=10
 				elif [ $dts = 2 ]; then
 					dte=$(sed -n 2p "$DC_tlt/cnfg9")
-					adv="<b>  15 $dlg5 </b>"
+					adv="<b>  15 $cuestion_review </b>"
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/15))
 					tdays=15
 				elif [ $dts = 3 ]; then
 					dte=$(sed -n 3p "$DC_tlt/cnfg9")
-					adv="<b>  30 $dlg5 </b>"
+					adv="<b>  30 $cuestion_review </b>"
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/30))
 					tdays=30
 				elif [ $dts = 4 ]; then
 					dte=$(sed -n 4p "$DC_tlt/cnfg9")
-					adv="<b>  60 $dlg5 </b>"
+					adv="<b>  60 $cuestion_review </b>"
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/60))
 					tdays=60
@@ -574,7 +574,7 @@ if [ "$1" = topic ]; then
 				fi
 				
 				$yad --align=center --borders=80 \
-				--text="<u><b>$learned</b></u>   * $info1 ($tb1).\\n$timeforreview: $tdays" \
+				--text="<u><b>$learned</b></u>   * $new_items ($tb1).\\n$time_review: $tdays" \
 				--bar="":NORM $RM \
 				--multi-progress --plug=$KEY --tabnum=1 &
 				cat "$ls2" | awk '{print $0"\n"}' | $yad \
@@ -638,7 +638,7 @@ if [ "$1" = topic ]; then
 					--center --class=idiomind \
 					--button="$onlynews":3 \
 					--button="$all":2 \
-					--text="  $dlg6" \
+					--text="  $cuestion_review2" \
 					--width=360 --height=120
 						ret=$? 
 						if [ "$ret" -eq 2 ]; then
@@ -718,25 +718,25 @@ if [ "$1" = topic ]; then
 			dts=$(cat "$DC_tlt/cnfg9" | wc -l)
 			if [ $dts = 1 ]; then
 				dte=$(sed -n 1p "$DC_tlt/cnfg9")
-				adv="<b>  10 $dlg5 </b>"
+				adv="<b>  10 $cuestion_review </b>"
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/10))
 				tdays=10
 			elif [ $dts = 2 ]; then
 				dte=$(sed -n 2p "$DC_tlt/cnfg9")
-				adv="<b>  15 $dlg5 </b>"
+				adv="<b>  15 $cuestion_review </b>"
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/15))
 				tdays=15
 			elif [ $dts = 3 ]; then
 				dte=$(sed -n 3p "$DC_tlt/cnfg9")
-				adv="<b>  30 $dlg5 </b>"
+				adv="<b>  30 $cuestion_review </b>"
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/30))
 				tdays=30
 			elif [ $dts = 4 ]; then
 				dte=$(sed -n 4p "$DC_tlt/cnfg9")
-				adv="<b>  60 $dlg5 </b>"
+				adv="<b>  60 $cuestion_review </b>"
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/60))
 				tdays=60
@@ -766,7 +766,7 @@ if [ "$1" = topic ]; then
 			fi
 
 			$yad --align=center --borders=80 \
-			--text="<u><b>$learned</b></u>\\n$timeforreview: $tdays" \
+			--text="<u><b>$learned</b></u>\\n$time_review: $tdays" \
 			--bar="":NORM $RM \
 			--multi-progress --plug=$KEY --tabnum=1 &
 			cat "$ls2" | awk '{print $0"\n"}' | $yad \
@@ -872,25 +872,25 @@ if [ "$1" = topic ]; then
 				dts=$(cat "$DC_tlt/cnfg9" | wc -l)
 				if [ $dts = 1 ]; then
 					dte=$(sed -n 1p "$DC_tlt/cnfg9")
-					adv="<b>   10 $dlg5 </b>"
+					adv="<b>   10 $cuestion_review </b>"
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/10))
 					tdays=10
 				elif [ $dts = 2 ]; then
 					dte=$(sed -n 2p "$DC_tlt/cnfg9")
-					adv="<b> 15 $dlg5 </b>"
+					adv="<b> 15 $cuestion_review </b>"
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/15))
 					tdays=15
 				elif [ $dts = 3 ]; then
 					dte=$(sed -n 3p "$DC_tlt/cnfg9")
-					adv="<b>  30 $dlg5 </b>"
+					adv="<b>  30 $cuestion_review </b>"
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/30))
 					tdays=30
 				elif [ $dts = 4 ]; then
 					dte=$(sed -n 4p "$DC_tlt/cnfg9")
-					adv="<b>  60 $dlg5 </b>"
+					adv="<b>  60 $cuestion_review </b>"
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/60))
 					tdays=60
@@ -920,7 +920,7 @@ if [ "$1" = topic ]; then
 					fi
 
 				$yad --align=center --borders=80 \
-				--text="<u><b>$learned</b></u>\\n   * $info1 ($tb1).\\n$timeforreview: $tdays" \
+				--text="<u><b>$learned</b></u>\\n   * $new_items ($tb1).\\n$time_review: $tdays" \
 				--bar="":NORM $RM \
 				--multi-progress --plug=$KEY --tabnum=1 &
 				cat "$ls2" | awk '{print $0"\n"}' | $yad \
@@ -984,7 +984,7 @@ if [ "$1" = topic ]; then
 					--center --class=idiomind \
 					--button="$onlynews":3 \
 					--button="$all":2 \
-					--text="  $dlg6 " \
+					--text="  $cuestion_review2 " \
 					--width=360 --height=120
 						ret=$? 
 						if [ "$ret" -eq 2 ]; then
@@ -1063,25 +1063,25 @@ if [ "$1" = topic ]; then
 			dts=$(cat "$DC_tlt/cnfg9" | wc -l)
 			if [ $dts = 1 ]; then
 				dte=$(sed -n 1p "$DC_tlt/cnfg9")
-				adv="<b>  10 $dlg5 </b>"
+				adv="<b>  10 $cuestion_review </b>"
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/10))
 				tdays=10
 			elif [ $dts = 2 ]; then
 				dte=$(sed -n 2p "$DC_tlt/cnfg9")
-				adv="<b>  15 $dlg5 </b>"
+				adv="<b>  15 $cuestion_review </b>"
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/15))
 				tdays=15
 			elif [ $dts = 3 ]; then
 				dte=$(sed -n 3p "$DC_tlt/cnfg9")
-				adv="<b>  30 $dlg5 </b>"
+				adv="<b>  30 $cuestion_review </b>"
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/30))
 				tdays=30
 			elif [ $dts = 4 ]; then
 				dte=$(sed -n 4p "$DC_tlt/cnfg9")
-				adv="<b>  60 $dlg5 </b>"
+				adv="<b>  60 $cuestion_review </b>"
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/60))
 				tdays=60
@@ -1114,7 +1114,7 @@ if [ "$1" = topic ]; then
 			fi
 			
 			$yad --align=center --borders=80 \
-			--text="<u><b>$learned</b></u>\\n$timeforreview: $tdays" \
+			--text="<u><b>$learned</b></u>\\n$time_review: $tdays" \
 			--bar="":NORM $RM \
 			--multi-progress --plug=$KEY --tabnum=1 &
 			cat "$ls2" | awk '{print $0"\n"}' | $yad \

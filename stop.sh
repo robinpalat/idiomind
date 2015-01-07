@@ -1,4 +1,5 @@
 #!/bin/bash
+
 u=$(echo "$(whoami)")
 if echo "$1" | grep "P"; then
 	[[ -n "$(ps -A | pgrep -f "/usr/share/idiomind/bcle.sh")" ]] && killall bcle.sh &

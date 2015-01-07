@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
-source /usr/share/idiomind/ifs/trans/$lgs/edit.conf
+source $DS/ifs/trans/$lgs/edit.conf
 int="$(sed -n 27p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
 btn="$(sed -n 21p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
 
@@ -718,12 +718,12 @@ elif [ $1 = dli ]; then
 	if [ -f "$flw" ]; then
 
 		$yad --fixed --scroll --center \
-		--title="$confirm" --width=320 --height=140 \
+		--title="$confirm" --width=400 --height=140 \
 		--on-top --image=dialog-question \
 		--skip-taskbar --window-icon=idiomind \
-		--text=" $delete_word " \
+		--text="  <b>$delete_word</b> " \
 		--window-icon=idiomind \
-		--button=gtk-delete:0 --button=gtk-cancel:1
+		--button=gtk-delete:0 --button="$cancel":1
 			ret=$?
 			
 			if [ $ret -eq 0 ]; then
@@ -757,11 +757,11 @@ elif [ $1 = dli ]; then
 			
 	elif [ -f "$fls" ]; then
 		$yad --fixed --center --scroll \
-		--title="$confirm" --width=320 --height=140 \
+		--title="$confirm" --width=400 --height=140 \
 		--on-top --image=dialog-question --skip-taskbar \
-		--text="  $delete_sentence  " \
+		--text="  <b>$delete_sentence</b> " \
 		--window-icon=idiomind \
-		--button=gtk-delete:0 --button=gtk-cancel:1
+		--button=gtk-delete:0 --button="$cancel":1
 			ret=$?
 			
 			if [ $ret -eq 0 ]; then
@@ -791,11 +791,11 @@ elif [ $1 = dli ]; then
 			
 	elif [ ! -f "$flw" ] || [ ! -f "$flw" ]; then
 		$yad --fixed --center --scroll \
-		--title="$confirm" --width=320 --height=140 \
+		--title="$confirm" --width=400 --height=140 \
 		--on-top --image=dialog-question --skip-taskbar \
-		--text="  $delete_item  " \
+		--text="  <b>$delete_item</b> " \
 		--window-icon=idiomind \
-		--button=gtk-delete:0 --button=gtk-cancel:1
+		--button=gtk-delete:0 --button="$cancel":1
 			ret=$?
 	
 			cd "$DC_tlt/Practice"
@@ -828,10 +828,10 @@ elif [ $1 = dli ]; then
 elif [ $1 = dlt ]; then
 	$yad --name=idiomind --center \
 	--image=dialog-question --sticky --on-top \
-	--text="  $delete_topic \\n $tpc \\n" --buttons-layout=end \
-	--width=420 --height=140 --borders=5 \
+	--text="  <b>$delete_topic</b> \n\n\t$tpc \n" --buttons-layout=end \
+	--width=400 --height=140 --borders=5 \
 	--skip-taskbar --window-icon=idiomind \
-	--title="$confirm" --button=gtk-delete:0 --button=gtk-cancel:1
+	--title="$confirm" --button=gtk-delete:0 --button="$cancel":1
 
 		ret=$?
 
@@ -871,10 +871,9 @@ elif [ $1 = dlt ]; then
 elif [ $1 = mkmn ]; then
 	[[ ! -f $DC_tl/.cnfg1 ]] && exit 1
 	cd "$DC_tl"
-	echo "mk menu"
-	[ -d ./images ] && rm -r ./images
-	[ -d ./words ] && rm -r ./words
-	[ -f ./*.mp3 ] && rm -r ./*.mp3
+	[[ -d ./images ]] && rm -r ./images
+	[[ -d ./words ]] && rm -r ./words
+	[[ -f ./*.mp3 ]] && rm -r ./*.mp3
 	ls -t -d -N * > $DC_tl/.cnfg1
 	[[ -f $DC_s/cnfg0 ]] && mv -f $DC_s/cnfg0 $DC_s/cnfg16
 	n=1

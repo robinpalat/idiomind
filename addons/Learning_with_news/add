@@ -1,6 +1,6 @@
 #!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
-source /usr/share/idiomind/ifs/trans/$lgs/add.conf
+source /usr/share/idiomind/ifs/trans/$lgs/rss.conf
 
 if [[ $1 = n_i ]]; then
 	trgt=$(cat $DT/.dzmxx.x | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
@@ -23,16 +23,16 @@ if [[ $1 = n_i ]]; then
 	fi
 
 	if [[ -f $DT/.dzmxx.x ]]; then
-		bttn=$(echo --button="$save_word:0")
-		txt=$(echo "<b>$word </b>")
+		bttn="--button=$save_word:0"
+		txt="<b>$word </b>"
 	fi
 
-	$yad --width=320 --height=90 --window-icon=idiomind \
-	--title="Save " --center --on-top --borders=15 \
+	$yad --width=480 --height=200 --window-icon=idiomind \
+	--title="$save" --center --on-top --borders=10 \
 	--image=dialog-question --skip-taskbar \
-	--text="<b>$sentence </b>\\n<i>$var</i>\\n\\n$txt\\n<i>$trgt\\n</i>" \
-	--button="$save_sentence:2" "$bttn" \
-	--button="$cancel:1"
+	--text="  <b>$sentence </b>\\n  <i>$var</i>\\n\\n  $txt\\n  <i>$trgt\\n</i>" \
+	--button="$save_sentence":2 "$bttn" \
+	--button="$cancel":1
 		ret=$?
 		
 		if [[ $ret -eq 0 ]]; then

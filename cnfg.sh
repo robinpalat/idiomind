@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-source /usr/share/idiomind/ifs/trans/$lgs/settings.conf
+source $DS/ifs/trans/$lgs/settings.conf
 wth=$(sed -n 5p $DC_s/cnfg18)
 eht=$(sed -n 6p $DC_s/cnfg18)
 
@@ -63,7 +63,7 @@ echo "$text" | $yad --plug=$KEY --tabnum=3 --text-info \
 	--show-uri --fontname=Arial --margins=10 --wrap --text-align=center &
 $yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 	--sticky --center --window-icon=$ICON --window-icon=idiomind \
-	--tab="$preferences" --tab="  $addons  " \
+	--tab="$preferences" --tab="  $addons  " --borders=5 \
 	--tab="  $about  " \
 	--width=450 --height=340 --title="$settings" \
 	--button=$tools:"$DS/ifs/tls.sh tls" --button=$close:0

@@ -1,6 +1,6 @@
 #!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
-source /usr/share/idiomind/ifs/trans/$lgs/rss.conf
+source $DS/ifs/trans/$lgs/rss.conf
 dir2="$DC/addons/Learning with news"
 DIR3="$DS/addons/Learning_with_news"
 FEED=$(sed -n 1p "$dir2/$lgtl/.rss")
@@ -11,24 +11,20 @@ if [[ -z "$1" ]]; then
 	cd "$dir2/$lgtl/subscripts"
 	DIR1="$DC/addons/Learning with news"
 	st2=$(sed -n 1p "$DIR1/.cnf")
-			
 	if [ -z $st2 ]; then
 		echo FALSE > "$DIR1/.cnf"
 		st2=$(sed -n 1p "$DIR1/.cnf")
 	fi
-
 	if [ "$2" = NS ]; then
 		inf=$(cat $DS/ifs/info6)
 		txt='--text="No"'
 	fi
-
 	if [ "$1" = NS ]; then
 		inf=$(cat $DS/ifs/info7)
 		text="--text=$inf"
 	else
 		text="--class=idm"
 	fi
-
 	scrp=$(cd "$dir2/$lgtl/subscripts"; ls * | egrep -v "$FEED" \
 	| tr "\\n" '!' | sed 's/!\+$//g')
 
@@ -53,22 +49,22 @@ if [[ -z "$1" ]]; then
 			if echo "$st1" | grep "Sample subscription"; then
 				$yad --title="Info" \
 				--center --on-top --window-icon=idiomind \
-				--width=350 --height=120 --fixed --image=info --skip-taskbar \
+				--width=380 --height=140 --fixed --image=info --skip-taskbar \
 				--text="  Sample subscription\\n  $delete_no" \
-				--borders=10 --button=OK:1
+				--borders=5 --button=OK:1
 				$DIR3/cnf & exit
 			elif echo "$st1" | grep "Example"; then
 				$yad --title="Info" --center --on-top --window-icon=idiomind \
-				--width=350 --height=120 --fixed --image=info --skip-taskbar \
+				--width=380 --height=140 --fixed --image=info --skip-taskbar \
 				--text="  Sample subscription\\n  $delete_no" \
-				--borders=10 --button=OK:1
+				--borders=5 --button=OK:1
 				$DIR3/cnf & exit
 			else
 				$yad --center \
 				--title=Confirm --window-icon=idiomind \
-				--on-top --width=350 --height=120 --fixed --image=dialog-question \
-				--skip-taskbar --text="  $delete_subcription   <b>$st1 </b> ?" \
-				--borders=8 --button="$delete":0 --button="$cancel":1
+				--on-top --width=380 --height=140 --fixed --image=dialog-question \
+				--skip-taskbar --text="   <b>$delete_subcription</b>  \n\n\t$st1 " \
+				--borders=5 --button="$delete":0 --button="$cancel":1
 					ret=$?
 					
 					if [[ $ret -eq 1 ]]; then
@@ -123,14 +119,12 @@ if [[ -z "$1" ]]; then
 		elif [[ $ret -eq 4 ]]; then
 			sh "$dir2/$lgtl/subscripts/$st1"
 			"$DIR3/strt" & exit 1
-					
 		else
 			sed -i "1s/.*/$st2/" "$DIR1/.cnf"
 			exit 1
 		fi
 		
 elif [[ $1 = edit ]]; then
-
 	drtc="$DC_tl/Feeds/"
 	slct=$(mktemp $DT/slct.XXXX)
 	img1=$DIR3/img/del.png
@@ -160,11 +154,11 @@ elif [[ $1 = edit ]]; then
 	slt=$(cat "$slct")
 	if  [[ "$ret" -eq 0 ]]; then
 		if echo "$slt" | grep -o "$create_topic"; then
-			$DIR3/del dlns
-		elif echo "$slt" | grep -o "$delete_news"; then
-			$DIR3/del dlkt
-		elif echo "$slt" | grep -o "$delete_saved"; then
 			$DIR3/add n_t
+		elif echo "$slt" | grep -o "$delete_news"; then
+			$DIR3/del dlns
+		elif echo "$slt" | grep -o "$delete_saved"; then
+			$DIR3/del dlkt
 		elif echo "$slt" | grep -o "$subcriptions"; then
 			$DIR3/cnf
 		fi

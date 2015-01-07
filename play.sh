@@ -1,8 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
-source /usr/share/idiomind/ifs/trans/$lgs/play.conf
-
+source $DS/ifs/trans/$lgs/play.conf
 
 if [[ "$1" = d ]]; then
 	u=$(echo "$(whoami)")
@@ -41,16 +40,16 @@ elif [[ -z "$1" ]]; then
 	sinx="$DC_tlt/cnfg4"
 	[ -z "$tpc" ] && exit 1
 	if [ "$(cat "$sinx" | wc -l)" -gt 0 ]; then
-	indw=$(grep -F -x -v -f "$sinx" "$tlng")
+		indw=$(grep -F -x -v -f "$sinx" "$tlng")
 	else
-	indw=$(cat "$tlng")
+		indw=$(cat "$tlng")
 	fi
 	if [ "$(cat "$winx" | wc -l)" -gt 0 ]; then
-	inds=$(grep -F -x -v -f "$winx" "$tlng")
+		inds=$(grep -F -x -v -f "$winx" "$tlng")
 	else
-	inds=$(cat "$tlng")
+		inds=$(cat "$tlng")
 	fi
-	indm=$(cat "$DC_tlt/cnfg6")
+		indm=$(cat "$DC_tlt/cnfg6")
 	cd "$DC_tlt/Practice"
 	indp=$(cat fin.tmp mcin.tmp \
 	lwin.tmp | sed '/^$/d' | sort | uniq)

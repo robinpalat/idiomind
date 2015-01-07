@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
-source /usr/share/idiomind/ifs/trans/$lgs/add.conf
+source $DS/ifs/trans/$lgs/add.conf
 if [ $1 = n_t ]; then
 	info2=$(cat $DC_tl/.cnfg1 | wc -l)
 	int="$(sed -n 22p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
@@ -20,8 +20,8 @@ if [ $1 = n_t ]; then
 		#--------------normal
 		jlbi=$($yad --window-icon=idiomind \
 		--form --center --field="" "$nmt" --title="$tle" \
-		--width=400 --height=140 --name=idiomind --on-top \
-		--skip-taskbar --borders=5 --button=Make:0 \
+		--width=440 --height=140 --name=idiomind --on-top \
+		--skip-taskbar --borders=5 --button=gtk-ok:0 \
 		--text="<small>  $name_for_new_topic </small>")
 		
 		jlb=$(echo "$jlbi" | cut -d "|" -f1 | sed s'/!//'g \
@@ -107,8 +107,8 @@ if [ $1 = n_t ]; then
 		
 		jlbi=$($yad --window-icon=idiomind \
 		--form --center --title="$new_topic"  --separator="\n" \
-		--width=400 --height=140 --name=idiomind --on-top \
-		--skip-taskbar --borders=5 --button=Make:0 \
+		--width=440 --height=140 --name=idiomind --on-top \
+		--skip-taskbar --borders=5 --button=gtk-ok:0 \
 		--text="<small>  $name_for_new_topic </small>" \
 		--field=" : " "$nmt")
 			
@@ -170,7 +170,7 @@ if [ $1 = n_t ]; then
 elif [ $1 = n_i ]; then
 	[[ ! -f $DC/addons/dict/.dicts ]] && touch $DC/addons/dict/.dicts
 	if  [ -z "$(cat $DC/addons/dict/.dicts)" ]; then
-		source /usr/share/idiomind/ifs/trans/$lgs/topics_lists.conf
+		source $DS/ifs/trans/$lgs/topics_lists.conf
 		$DS/addons/Dics/dict "$no_dictionary" f cnf
 		if  [ -z "$(cat $DC/addons/dict/.dicts)" ]; then
 			exit 1
@@ -201,19 +201,19 @@ elif [ $1 = n_i ]; then
 	
 	if [ -f $DT/ntpc ]; then
 		rm -fr $DT_r
-		source /usr/share/idiomind/ifs/trans/$lgs/topics_lists.conf
+		source $DS/ifs/trans/$lgs/topics_lists.conf
 		$DS/chng.sh "$no_topic" fnew & exit 1
 	fi
 	
 	if [ -z "$tpc" ]; then
 		rm -fr $DT_r
-		source /usr/share/idiomind/ifs/trans/$lgs/topics_lists.conf
+		source $DS/ifs/trans/$lgs/topics_lists.conf
 		$DS/chng.sh "$no_topic" fnew & exit 1
 	fi
 
 	if [ -z "$tpe" ]; then
 		rm -fr $DT_r
-		source /usr/share/idiomind/ifs/trans/$lgs/topics_lists.conf
+		source $DS/ifs/trans/$lgs/topics_lists.conf
 		$DS/chng.sh "$no_edit" fnew & exit 1
 	fi
 	
@@ -335,9 +335,9 @@ elif [ $1 = n_i ]; then
 			fi
 			[ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ] && c=c || c=w
 			
-			if [ "$(echo "$trgt" | sed -n 1p | awk '{print tolower($0)}')" = image ]; then
+			if [ "$(echo "$trgt" | sed -n 1p | awk '{print tolower($0)}')" = i ]; then
 				$DS/add.sh prs image $DT_r & exit 1
-			elif [ "$(echo "$trgt" | sed -n 1p | awk '{print tolower($0)}')" = audio ]; then
+			elif [ "$(echo "$trgt" | sed -n 1p | awk '{print tolower($0)}')" = a ]; then
 				$DS/add.sh prs "$trgt" $DT_r & exit 1
 			elif [ "$(echo "$trgt" | sed -n 1p | grep -o http)" = http ]; then
 				$DS/add.sh prs "$trgt" $DT_r & exit 1
@@ -1422,7 +1422,7 @@ elif [ $1 = snt ]; then
 	rm -fr $DT_r & exit 1
 	
 elif [ $1 = prs ]; then
-
+	source $DS/ifs/trans/$lgs/add.conf
 	eht=$(sed -n 3p $DC_s/cnfg18)
 	wth=$(sed -n 4p $DC_s/cnfg18)
 	ns=$(cat "$DC_tlt"/cnfg4 | wc -l)
@@ -1444,7 +1444,7 @@ elif [ $1 = prs ]; then
 	cd "$DT_r"
 
 	if [ -z "$tpe" ]; then
-		source /usr/share/idiomind/ifs/trans/$lgs/topics_lists.conf
+		source $DS/ifs/trans/$lgs/topics_lists.conf
 		$DC_s/chng.sh "$no_edit" fnew & exit 1
 	fi
 
@@ -1462,7 +1462,7 @@ elif [ $1 = prs ]; then
 		--image=info --name=idiomind \
 		--text=" <i>$current_pros </i> " \
 		--fixed --sticky --buttons-layout=edge \
-		--width=250 --height=150  \
+		--width=350 --height=150  --borders=5 \
 		--skip-taskbar --window-icon=idiomind \
 		--title=Idiomind --button=gtk-cancel:3 --button=Ok:1
 			ret=$?
@@ -1482,7 +1482,7 @@ elif [ $1 = prs ]; then
 		prdt="$2"
 	fi
 
-	if [ "$(echo "$prdt" | cut -d "|" -f1 | sed -n 1p)" = "audio" ]; then
+	if [ "$(echo "$prdt" | cut -d "|" -f1 | sed -n 1p)" = "a" ]; then
 
 		left=$((50 - $(cat "$DC_tlt/cnfg4" | wc -l)))
 		key=$(sed -n 2p $DC_s/cnfg3)
@@ -1573,9 +1573,8 @@ elif [ $1 = prs ]; then
 				rm -fr ls $lckpr $DT_r & exit 1
 			fi
 			
-			echo "# $file_pros... " ; sleep 0.2
+			echo "# $file_pros" ; sleep 0.2
 			#-----------------------------------------
-			
 			n=1
 			while [ $n -le "$lns" ]; do
 
@@ -1672,7 +1671,6 @@ $trgt" >> log
 					
 					rm -f "$slt"
 					sed -i 's/\://g' ./slts
-					
 					curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
 					$yad --window-icon=idiomind --on-top \
 					--image=info --name=idiomind \
@@ -2046,7 +2044,7 @@ $trgt" >> ./wlog
 		|| te="$(sed -n 1p ./sntsls_)"
 
 	elif [[ "$(echo "$prdt" | cut -d "|" -f1 \
-	| sed -n 1p | grep -o "image")" = image ]]; then
+	| sed -n 1p | grep -o "i")" = i ]]; then
 		
 		SCR_IMG=`mktemp`
 		trap "rm $SCR_IMG*" EXIT
@@ -2180,7 +2178,7 @@ $trgt" >> ./wlog
 					#-----------------------------------oraciones
 					{
 					echo "5"
-					echo "# " ;
+					echo "# $pros... " ;
 					[ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ] && c=c || c=w
 					lns=$(cat ./slts ./wrds | wc -l)
 					n=1
@@ -2498,8 +2496,10 @@ $itm" >> ./wlog
 					logs=$(cat ./slog ./wlog)
 					adds=$(cat ./adds ./addw | wc -l)
 					
+					source $DS/ifs/trans/$lgs/add.conf
+					
 					if [ $adds -ge 1 ]; then
-						notify-send -i idiomind "$tpe" "$added \\n$sadds$S$wadds$W" -t 2000 &
+						notify-send -i idiomind "$tpe" "$is_added\n$sadds$S$wadds$W" -t 2000 &
 						echo "aitm.$adds.aitm" >> \
 						$DC/addons/stats/.log
 					fi
