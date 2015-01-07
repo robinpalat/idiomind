@@ -4,12 +4,12 @@ lgtl=$(sed -n 2p ~/.config/idiomind/s/cnfg10)
 drtt="$HOME/.idiomind/topics/$lgtl/$tpc/words"
 drts="/usr/share/idiomind/addons/Practice/"
 cd "$HOME/.config/idiomind/topics/$lgtl/$tpc/Practice"
-lns=$(cat stp"$1" | wc -l)
+lns=$(cat mcin"$1" | wc -l)
 n=1
 
 while [ $n -le "$lns" ]; do
 
-	w1=$(sed -n "$n"p stp"$1")
+	w1=$(sed -n "$n"p mcin"$1")
 	if [ -f "$drtt/$w1.mp3" ]; then
 		file="$drtt/$w1.mp3"
 	else
@@ -27,33 +27,33 @@ $ess" > word2.tmp
 		echo "$ells" > word2.tmp
 		sed '/^$/d' word2.tmp > word2.id
 		
-		if [ "$2" = 1 ]; then
+		if [ "$1" = 1 ]; then
 			trgt=$(echo "<span font='ultralight'>$tgt</span>")
-		elif [ "$2" = 2 ]; then
+		elif [ "$1" = 2 ]; then
 			trgt=$(echo "<span font='ultralight'><b>$tgt</b></span>")
 		fi
 		
 		dlg=$(cat word2.id | awk '{print "\n"$0}' \
 		| yad --list --list --on-top --skip-taskbar \
-		--width=350 --height=320 --center --buttons-layout=edge --undecorated \
+		--width=365 --height=320 --center --buttons-layout=edge --undecorated \
 		--text-align=center --no-headers --borders=8 --window-icon=idiomind \
 		--button=gtk-close:1 \
 		--button=" Ok ":0 --title=" " \
-		--text="<big><big><big><big><big><big><big><b>$trgt</b></big></big></big></big></big></big></big>\\n\\n\\n<small></small>" --column=Opcion --column=Opciodn)
+		--text="\\n<big><big><big><big><big><big><big><b>$trgt</b></big></big></big></big></big></big></big>\\n\\n\\n<small></small>" --column=Opcion --column=Opciodn)
 
 		ret=$?
 		if [[ $ret -eq 0 ]]; then	
 			if echo "$dlg" | grep "$wes"; then
-				if [[ $2 = 1 ]]; then
+				if [[ $1 = 1 ]]; then
 					play $drts/d.mp3 & sed -i 's/'"$w1"'//g' mcin.tmp & echo "$w1" >> ./mcin.1.ok &
 				else
 					play $drts/d.mp3 & echo "$w1" >> ./mcin.2.ok &
 				fi
 			else
-				play $drts/d.mp3 & echo "$w1" >> ./mcin.$2.no
+				play $drts/d.mp3 & echo "$w1" >> ./mcin.$1.no
 			fi	
 		else
-			$drts/cls "$2" m && exit 1
+			$drts/cls "$1" m && exit 1
 		fi
 	fi
 	let n++

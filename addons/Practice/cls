@@ -2,8 +2,7 @@
 
 killall prct
 killall play
-killall lrng
-DS_pp=/usr/share/idiomind/addons/Practice
+DSP=/usr/share/idiomind/addons/Practice
 tpc=$(sed -n 1p $HOME/.config/idiomind/s/cnfg8)
 lgtl=$(sed -n 2p $HOME/.config/idiomind/s/cnfg10)
 DIR2="$HOME/.config/idiomind/topics/$lgtl/$tpc/Practice"
@@ -16,326 +15,265 @@ if [ "$1" = df ]; then
 	rm look_f *.no *.ok fin1 fin2 fin3 iF
 	echo "1" > .iconf
 	echo "0" > f_r
-	$DS_pp/strt &
+	$DSP/strt &
 	exit 1
 elif [ "$1" = dm ]; then
 	rm look_mc *.no *.ok mcin1 mcin2 mcin3 iMC word1.idx
 	echo "1" > .iconmc
 	echo "0" > mc_r
-	$DS_pp/strt &
+	$DSP/strt &
 	exit 1
 elif [ "$1" = dw ]; then
 	rm look_lw *.no *.ok lwin iLW
 	echo "1" > .iconlw
 	echo "0" > lw_r
-	$DS_pp/strt &
+	$DSP/strt &
 	exit 1
 elif [ "$1" = ds ]; then
 	rm look_ls *.no *.ok lsin lsin.tmp iLC
 	echo "1" > .iconls
 	echo "0" > ls_r
-	$DS_pp/strt &
+	$DSP/strt &
 	exit 1
-elif [ "$2" = f ]; then
-	killall df.sh
-	cat *.no >> "$w6"
-	cat *.ok >> "$w9"
-
-	s1=$(cat  f_r)
-	s2=$(cat fin.1.ok | wc -l)
-	s3=$(($s1 + $s2))
-	echo $s3 > f_r
+fi
 	
-	var1=$((100*$(cat f_r)/$(cat idxfin)))
+if [ "$2" = f ]; then
+
+	killall df.sh
+	cd "$DIR2"
+	[[ ! -f fin.$1.ok ]] && touch fin.$1.ok
+	[[ ! -f fin.$1.no ]] && touch fin.$1.no
+	cat fin.$1.no >> "$w6"
+	cat fin.$1.ok >> "$w9"
+	[[ -f f_r ]] && s1=$(cat  f_r) || s1=1
+	s2=$(cat fin.$1.ok | wc -l)
+	s3=$(($s1+$s2))
+	s4=$(cat idxfin)
+	echo $s3 > f_r
+	var1=$((100*$s1/$s4))
 
 	if [ $var1 -lt 1 ]; then
-		echo 1 > "$DIR2"/.iconf
-	
-	elif [ $var1 -lt 1 ]; then
-		echo 1 > "$DIR2"/.iconf
-	
+		echo 1 > .iconf
 	elif [ $var1 -lt 5 ]; then
-		echo 2 > "$DIR2"/.iconf
-	
+		echo 2 > .iconf
 	elif [ $var1 -lt 10 ]; then
-		echo 3 > "$DIR2"/.iconf
-	
+		echo 3 > .iconf
 	elif [ $var1 -lt 15 ]; then
-		echo 4 > "$DIR2"/.iconf
-	
+		echo 4 > .iconf
 	elif [ $var1 -lt 20 ]; then
-		echo 5 > "$DIR2"/.iconf
-	
+		echo 5 > .iconf
 	elif [ $var1 -lt 25 ]; then
-		echo 6 > "$DIR2"/.iconf
-	
+		echo 6 > .iconf
 	elif [ $var1 -lt 30 ]; then
-		echo 7 > "$DIR2"/.iconf
-	
+		echo 7 > .iconf
 	elif [ $var1 -lt 35 ]; then
-		echo 8 > "$DIR2"/.iconf
-	
+		echo 8 > .iconf
 	elif [ $var1 -lt 40 ]; then
-		echo 9 > "$DIR2"/.iconf
-	
+		echo 9 > .iconf
 	elif [ $var1 -lt 45 ]; then
-		echo 10 > "$DIR2"/.iconf
-	
+		echo 10 > .iconf
 	elif [ $var1 -lt 50 ]; then
-		echo 11 > "$DIR2"/.iconf
-	
+		echo 11 > .iconf
 	elif [ $var1 -lt 55 ]; then
-		echo 12 > "$DIR2"/.iconf
-	
+		echo 12 > .iconf
 	elif [ $var1 -lt 60 ]; then
-		echo 13 > "$DIR2"/.iconf
-	
+		echo 13 > .iconf
 	elif [ $var1 -lt 65 ]; then
-		echo 14 > "$DIR2"/.iconf
-	
+		echo 14 > .iconf
 	elif [ $var1 -lt 70 ]; then
-		echo 15 > "$DIR2"/.iconf
-	
+		echo 15 > .iconf
 	elif [ $var1 -lt 75 ]; then
-		echo 16 > "$DIR2"/.iconf
-	
+		echo 16 > .iconf
 	elif [ $var1 -lt 80 ]; then
-		echo 17 > "$DIR2"/.iconf
-	
+		echo 17 > .iconf
 	elif [ $var1 -lt 85 ]; then
-		echo 18 > "$DIR2"/.iconf
-	
+		echo 18 > .iconf
 	elif [ $var1 -lt 90 ]; then
-		echo 19 > "$DIR2"/.iconf
-	
+		echo 19 > .iconf
 	elif [ $var1 -lt 95 ]; then
-		echo 20 > "$DIR2"/.iconf
-	
+		echo 20 > .iconf
 	elif [ $var1 -eq 100 ]; then
-		echo 21 > "$DIR2"/.iconf
+		echo 21 > .iconf
 	fi
-	$DS_pp/strt 5 "$1" & exit 1
+	$DSP/strt 5 "$1" & exit 1
 
 elif [ "$2" = m ]; then
+
 	killall dmc.sh
-	cat *.no >> "$w6"
-	cat *.ok >> "$w9"
-	s1=$(cat  mc_r)
-	s2=$(cat mcin.1.ok | wc -l)
-	s3=$(($s1 + $s2))
+	cd "$DIR2"
+	[[ ! -f mcin.$1.ok ]] && touch mcin.$1.ok
+	[[ ! -f mcin.$1.no ]] && touch mcin.$1.no
+	cat mcin.$1.no >> "$w6"
+	cat mcin.$1.ok >> "$w9"
+	[[ -f mc_r ]] && s1=$(cat  mc_r) || s1=1
+	s2=$(cat mcin.$1.ok | wc -l)
+	s3=$(($s1+$s2))
+	s4=$(cat idxmcin)
 	echo $s3 > mc_r
-	var3=$((100*$(cat "$DIR2"/mc_r)/$(cat idxmcin)))
+	var3=$((100*$s1/$s4))
 	
 	if [ $var3 -lt 1 ]; then
-		echo 1 > "$DIR2"/.iconmc
-	
+		echo 1 > .iconmc
 	elif [ $var3 -lt 5 ]; then
-		echo 2 > "$DIR2"/.iconmc
-	
+		echo 2 > .iconmc
 	elif [ $var3 -lt 10 ]; then
-		echo 3 > "$DIR2"/.iconmc
-	
+		echo 3 > .iconmc
 	elif [ $var3 -lt 15 ]; then
-		echo 4 > "$DIR2"/.iconmc
-	
+		echo 4 > .iconmc
 	elif [ $var3 -lt 20 ]; then
-		echo 5 > "$DIR2"/.iconmc
-	
+		echo 5 > .iconmc
 	elif [ $var3 -lt 25 ]; then
-		echo 6 > "$DIR2"/.iconmc
-	
+		echo 6 > .iconmc
 	elif [ $var3 -lt 30 ]; then
-		echo 7 > "$DIR2"/.iconmc
-	
+		echo 7 > .iconmc
 	elif [ $var3 -lt 35 ]; then
-		echo 8 > "$DIR2"/.iconmc
-	
+		echo 8 > .iconmc
 	elif [ $var3 -lt 40 ]; then
-		echo 9 > "$DIR2"/.iconmc
-	
+		echo 9 > .iconmc
 	elif [ $var3 -lt 45 ]; then
-		echo 10 > "$DIR2"/.iconmc
-	
+		echo 10 > .iconmc
 	elif [ $var3 -lt 50 ]; then
-		echo 11 > "$DIR2"/.iconmc
-	
+		echo 11 > .iconmc
 	elif [ $var3 -lt 55 ]; then
-		echo 12 > "$DIR2"/.iconmc
-	
+		echo 12 > .iconmc
 	elif [ $var3 -lt 60 ]; then
-		echo 13 > "$DIR2"/.iconmc
-	
+		echo 13 > .iconmc
 	elif [ $var3 -lt 65 ]; then
-		echo 14 > "$DIR2"/.iconmc
-	
+		echo 14 > .iconmc
 	elif [ $var3 -lt 70 ]; then
-		echo 15 > "$DIR2"/.iconmc
-	
+		echo 15 > .iconmc
 	elif [ $var3 -lt 75 ]; then
-		echo 16 > "$DIR2"/.iconmc
-	
+		echo 16 > .iconmc
 	elif [ $var3 -lt 80 ]; then
-		echo 17 > "$DIR2"/.iconmc
-	
+		echo 17 > .iconmc
 	elif [ $var3 -lt 85 ]; then
-		echo 18 > "$DIR2"/.iconmc
-	
+		echo 18 > .iconmc
 	elif [ $var3 -lt 90 ]; then
-		echo 19 > "$DIR2"/.iconmc
-	
+		echo 19 > .iconmc
 	elif [ $var3 -lt 95 ]; then
-		echo 20 > "$DIR2"/.iconmc
-	
+		echo 20 > .iconmc
 	elif [ $var3 -eq 100 ]; then
-		echo 21 > "$DIR2"/.iconmc
+		echo 21 > .iconmc
 	fi
-	$DS_pp/strt 6 "$1" & exit 1
+	$DSP/strt 6 "$1" & exit 1
 
 elif [ "$2" = w ]; then
+
+	cd "$DIR2"
 	killall dlw.sh
-	cat lwin.no >> "$w6"
-	cat lwin.ok >> "$w9"
-	s1=$(cat  lw_r)
-	s2=$(cat lwin.1.ok | wc -l)
-	s3=$(($s1 + $s2))
+	[[ ! -f lwin.$1.ok ]] && touch lwin.$1.ok
+	[[ ! -f lwin.$1.no ]] && touch lwin.$1.no
+	cat lwin.$1.no >> "$w6"
+	cat lwin.$1.ok >> "$w9"
+	[[ -f lw_r ]] && s1=$(cat  lw_r) || s1=1
+	s2=$(cat lwin.$1.ok | wc -l)
+	s3=$(($s1+$s2))
+	s4=$(cat idxlwin)
 	echo $s3 > lw_r
-	var2=$((100*$(cat lw_r)/$(cat idxlwin)))
+	var2=$((100*$s1/$s4))
 	
 	if [ $var2 -lt 1 ]; then
-		echo 1 > "$DIR2"/.iconlw
-	
+		echo 1 > .iconlw
 	elif [ $var2 -lt 5 ]; then
-		echo 2 > "$DIR2"/.iconlw
-	
+		echo 2 > .iconlw
 	elif [ $var2 -lt 10 ]; then
-		echo 3 > "$DIR2"/.iconlw
-	
+		echo 3 > .iconlw
 	elif [ $var2 -lt 15 ]; then
-		echo 4 > "$DIR2"/.iconlw
-	
+		echo 4 > .iconlw
 	elif [ $var2 -lt 20 ]; then
-		echo 5 > "$DIR2"/.iconlw
-	
+		echo 5 > .iconlw
 	elif [ $var2 -lt 25 ]; then
-		echo 6 > "$DIR2"/.iconlw
-	
+		echo 6 > .iconlw
 	elif [ $var2 -lt 30 ]; then
-		echo 7 > "$DIR2"/.iconlw
-	
+		echo 7 > .iconlw
 	elif [ $var2 -lt 35 ]; then
-		echo 8 > "$DIR2"/.iconlw
-	
+		echo 8 > .iconlw
 	elif [ $var2 -lt 40 ]; then
-		echo 9 > "$DIR2"/.iconlw
-	
+		echo 9 > .iconlw
 	elif [ $var2 -lt 45 ]; then
-		echo 10 > "$DIR2"/.iconlw
-	
+		echo 10 > .iconlw
 	elif [ $var2 -lt 50 ]; then
-		echo 11 > "$DIR2"/.iconlw
-	
+		echo 11 > .iconlw
 	elif [ $var2 -lt 55 ]; then
-		echo 12 > "$DIR2"/.iconlw
-	
+		echo 12 > .iconlw
 	elif [ $var2 -lt 60 ]; then
-		echo 13 > "$DIR2"/.iconlw
-	
+		echo 13 > .iconlw
 	elif [ $var2 -lt 65 ]; then
-		echo 14 > "$DIR2"/.iconlw
-	
+		echo 14 > .iconlw
 	elif [ $var2 -lt 70 ]; then
-		echo 15 > "$DIR2"/.iconlw
-	
+		echo 15 > .iconlw
 	elif [ $var2 -lt 75 ]; then
-		echo 16 > "$DIR2"/.iconlw
-	
+		echo 16 > .iconlw
 	elif [ $var2 -lt 80 ]; then
-		echo 17 > "$DIR2"/.iconlw
-	
+		echo 17 > .iconlw
 	elif [ $var2 -lt 85 ]; then
-		echo 18 > "$DIR2"/.iconlw
-	
+		echo 18 > .iconlw
 	elif [ $var2 -lt 90 ]; then
-		echo 19 > "$DIR2"/.iconlw
-	
+		echo 19 > .iconlw
 	elif [ $var2 -lt 95 ]; then
-		echo 20 > "$DIR2"/.iconlw
-	
+		echo 20 > .iconlw
 	elif [ $var2 -eq 100 ]; then
-		echo 21 > "$DIR2"/.iconlw
+		echo 21 > .iconlw
 	fi
-	$DS_pp/strt 7 "$1" & exit 1
+	$DSP/strt 7 "$1" & exit 1
 
 elif [ "$1" = s ]; then
+
 	killall dls.sh
-	echo "$(grep -F -x -v -f lsin.ok lsin.no | sort -u | uniq | wc -l)" > no.id
-	echo "$(cat lsin.ok | wc -l)" > ok.id
-	cat ./lsin.ok >> iLS
-	echo "$(cat iLS | wc -l)" > ls_r
-	var4=$((100*$(cat ls_r)/$(cat idxlsin)))
+	cd "$DIR2"
+	[[ ! -f fin.ok ]] && touch fin.ok
+	[[ ! -f fin.no ]] && touch fin.no
+	cat fin.no >> "$w6"
+	cat fin.ok >> "$w9"
+	[[ -f ls_r ]] && s1=$(cat  ls_r) || s1=1
+	s2=$(cat lsin.ok | wc -l)
+	s3=$(($s1+$s2))
+	s4=$(cat idxlsin)
+	echo $s3 > ls_r
+	var4=$((100*$s1/$s4))
 	
 	if [ $var4 -lt 1 ]; then
-		echo 1 > "$DIR2"/.iconls
-	
+		echo 1 > .iconls
 	elif [ $var4 -lt 5 ]; then
-		echo 2 > "$DIR2"/.iconls
-	
+		echo 2 > .iconls
 	elif [ $var4 -lt 10 ]; then
-		echo 3 > "$DIR2"/.iconls
-	
+		echo 3 > .iconls
 	elif [ $var4 -lt 15 ]; then
-		echo 4 > "$DIR2"/.iconls
-	
+		echo 4 > .iconls
 	elif [ $var4 -lt 20 ]; then
-		echo 5 > "$DIR2"/.iconls
-	
+		echo 5 > .iconls
 	elif [ $var4 -lt 25 ]; then
-		echo 6 > "$DIR2"/.iconls
-	
+		echo 6 > .iconls
 	elif [ $var4 -lt 30 ]; then
-		echo 7 > "$DIR2"/.iconls
-	
+		echo 7 > .iconls
 	elif [ $var4 -lt 35 ]; then
-		echo 8 > "$DIR2"/.iconls
-	
+		echo 8 > .iconls
 	elif [ $var4 -lt 40 ]; then
-		echo 9 > "$DIR2"/.iconls
-	
+		echo 9 > .iconls
 	elif [ $var4 -lt 45 ]; then
-		echo 10 > "$DIR2"/.iconls
-	
+		echo 10 > .iconls
 	elif [ $var4 -lt 50 ]; then
-		echo 11 > "$DIR2"/.iconls
-	
+		echo 11 > .iconls
 	elif [ $var4 -lt 55 ]; then
-		echo 12 > "$DIR2"/.iconls
-	
+		echo 12 > .iconls
 	elif [ $var4 -lt 60 ]; then
-		echo 13 > "$DIR2"/.iconls
-	
+		echo 13 > .iconls
 	elif [ $var4 -lt 65 ]; then
-		echo 14 > "$DIR2"/.iconls
-	
+		echo 14 > .iconls
 	elif [ $var4 -lt 70 ]; then
-		echo 15 > "$DIR2"/.iconls
-	
+		echo 15 > .iconls
 	elif [ $var4 -lt 75 ]; then
-		echo 16 > "$DIR2"/.iconls
-	
+		echo 16 > .iconls
 	elif [ $var4 -lt 80 ]; then
-		echo 17 > "$DIR2"/.iconls
-	
+		echo 17 > .iconls
 	elif [ $var4 -lt 85 ]; then
-		echo 18 > "$DIR2"/.iconls
-	
+		echo 18 > .iconls
 	elif [ $var4 -lt 90 ]; then
-		echo 19 > "$DIR2"/.iconls
-	
+		echo 19 > .iconls
 	elif [ $var4 -lt 95 ]; then
-		echo 20 > "$DIR2"/.iconls
-	
+		echo 20 > .iconls
 	elif [ $var4 -eq 100 ]; then
-		echo 21 > "$DIR2"/.iconls
+		echo 21 > .iconls
 	fi
-	$DS_pp/strt 8 & exit 1
+	$DSP/strt 8 & exit 1
 fi

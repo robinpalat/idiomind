@@ -7,17 +7,12 @@ drts="/usr/share/idiomind/addons/Practice/"
 u=$(echo "$(whoami)")
 DT=/tmp/.idmtp1.$u
 yad=yad
-vws="#"
+
 cd "$drtc"
 rm w.ok w.no
-if [ "$2" = l ]; then
-	vws=$drts/vws
-fi
-
 n=1
 while [ $n -le $(cat lsin | wc -l) ]; do
 
-	$vws 1 1 "$n"	
 	s1=$(sed -n "$n"p lsin)
 	
 	if [ -f "$drtt/$s1".mp3 ]; then

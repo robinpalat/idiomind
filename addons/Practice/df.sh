@@ -8,8 +8,8 @@ drts="/usr/share/idiomind/addons/Practice/"
 cd "$HOME/.config/idiomind/topics/$lgtl/$tpc/Practice"
 
 n=1
-while [ $n -le $(cat ./stp$1 | wc -l) ]; do
-	w1=$(sed -n "$n"p ./stp$1)
+while [ $n -le $(cat ./fin$1 | wc -l) ]; do
+	w1=$(sed -n "$n"p ./fin$1)
 	file="$drtt/$w1.mp3"
 	tgt="$w1"
 	lst=$(eyeD3 "$file" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
@@ -19,13 +19,10 @@ while [ $n -le $(cat ./stp$1 | wc -l) ]; do
 	[ $lgsl = Japanese ] || [ $lgsl = Chinese ] || [ $lgsl = Vietnamese ] && stgt=? \
 	|| stgt=$(echo "$lst" | tr aeiouy ' ')
 	
-	if [ $2 = 2 ]; then
+	if [ $1 = 2 ]; then
 		trgt=$(echo "<span font='ultralight'>$tgt</span>")
 		[ $lgsl = Japanese ] || [ $lgsl = Chinese ] || [ $lgsl = Vietnamese ] && stgt="$lst"
 	fi
-	
-	wrong=$(cat fin.$2.no | wc -l)
-	good=$(cat fin.$2.ok | wc -l)
 	
 	if [ -f "$drtt/images/$w1.jpg" ]; then
 		IMAGE="$drtt/images/$w1.jpg"
@@ -49,20 +46,20 @@ while [ $n -le $(cat ./stp$1 | wc -l) ]; do
 		--button="gtk-close":1 \
 		--button=" Got It ":3 \
 		--button=" Nope ":4 \
-		--width=365 --height=220
+		--width=365 --height=250
 	fi
 	ret=$?
 	
 	if [[ $ret -eq 3 ]]; then
-		if [[ $2 = 1 ]]; then
+		if [[ $1 = 1 ]]; then
 			play $drts/d.mp3 & sed -i 's/'"$w1"'//g' fin.tmp & echo "$w1" >> ./fin.1.ok
 		else
 			play $drts/d.mp3 & echo "$w1" >> ./fin.2.ok
 		fi
 	elif [[ $ret -eq 4 ]]; then
-		play $drts/d.mp3 & echo "$w1" >> ./fin.$2.no
+		play $drts/d.mp3 & echo "$w1" >> ./fin.$1.no
 	else
-		$drts/cls "$2" f && break & exit 1
+		$drts/cls "$1" f && break & exit 1
 	fi
 	let n++
 done

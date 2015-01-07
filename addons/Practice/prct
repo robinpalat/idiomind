@@ -4,42 +4,43 @@
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/practice.conf
 
-DS_pp="$DS/addons/Practice/"
-strt="$DS_pp/strt"
-IND='play $DS_pp/all.mp3'
+DSP="$DS/addons/Practice/"
+strt="$DSP/strt"
+IND='play $DSP/all.mp3'
 w9="$DC/addons/practice/w9"
 w6="$DC/addons/practice/w6"
 
-if [ "$2" = f ]; then
+DF=$DSP/df.sh
+DLW=$DSP/dlw.sh
+DMC=$DSP/dmc.sh
+DLS=$DSP/dls.sh
+Wi="$DC_tlt/cnfg3"
+Si="$DC_tlt/cnfg4"
+Li="$DC_tlt/cnfg1"
+
+
+if [ "$1" = f ]; then
+
 	cd "$DC_tlt/Practice"
-	DF=$DS_pp/df.sh
-	vw=#
-	Wi="$DC_tlt/cnfg3"
-	Si="$DC_tlt/cnfg4"
-	Li="$DC_tlt/cnfg1"
-	if [ "$1" = l ]; then
-		vw=$DS_pp/lrng
-	fi
 	if [ -f look_f ]; then
 		$yad --title="$tpc" \
 		--borders=15 --center --buttons-layout=edge \
 		--on-top --skip-taskbar --window-icon=idiomind \
 		--buttons-layout=edge --center --image=gtk-ok \
 		--button="$restart":0 --button=Ok:2 \
-		--text "<span color='#007D17'>$complete\\n$(cat look_f)</span>\\n\\n" \
+		--text "<big>$complete\\n$(cat look_f)</big>\\n\\n" \
 		--width=350 --height=80 --text-align=center
 		ret=$?
 			if [[ "$ret" -eq 0 ]]; then
-				$DS_pp/cls df & exit
+				$DSP/cls df & exit
 			else
-				$DS_pp/strt & exit
+				$DSP/strt & exit
 			fi
 	fi
 	if [ -f fin.tmp ]; then
 		rm *.ok *.no
 		sed '/^$/d' fin.tmp > fin1
 	else
-		cd "$DC_tlt/Practice"
 			if [ "$(cat "$Si" | wc -l)" -gt 0 ]; then
 				echo "$(grep -F -x -v -f "$Si" "$Li" | wc -l)" > idxfin
 				grep -F -x -v -f "$Si" "$Li" > fin1
@@ -58,48 +59,9 @@ if [ "$2" = f ]; then
 		fi
 	fi
 	cp fin1 fin.tmp
-	find -name 'stp*' -exec rm {} \;
-	split -d -l 5 fin1 stp --suffix-length=1
-	if [ -f stp0 ]; then
-		$vw 1 0 1
-		$DF 0 1
-	fi
-	if [ -f stp1 ]; then
-		$vw 1 1 1
-		$DF 1 1
-	fi
-	if [ -f stp2 ]; then
-		$vw 1 2 1
-		$DF 2 1
-	fi
-	if [ -f stp3 ]; then
-		$vw 1 3 1
-		$DF 3 1
-	fi
-	if [ -f stp4 ]; then
-		$vw 1 4 1
-		$DF 4 1
-	fi
-	if [ -f stp5 ]; then
-		$vw 1 5 1
-		$DF 5 1
-	fi
-	if [ -f stp6 ]; then
-		$vw 1 6 1
-		$DF 6 1
-	fi
-	if [ -f stp7 ]; then
-		$vw 1 7 1
-		$DF 7 1
-	fi
-	if [ -f stp8 ]; then
-		$vw 1 8 1
-		$DF 8 1
-	fi
-	if [ -f stp9 ]; then
-		$vw 1 9 1
-		$DF 9 1
-	fi
+
+	$DF 1 # ---------------------------
+
 	
 	s1=$(cat  f_r)
 	s2=$(cat fin.1.ok | wc -l)
@@ -117,60 +79,23 @@ if [ "$2" = f ]; then
 		rm *.ok *.no fin.tmp fin1
 		echo "$(date "+%a %d %B")" > look_f
 		echo 21 > .iconf
-		play $DS_pp/all.mp3 & $strt 1 1 &
+		play $DSP/all.mp3 & $strt 1 1 &
 		killall df.sh
 		exit 1
 	fi
 	cat fin.tmp | sed '/^$/d' > ./fin2
 	cp -f fin2 fin.tmp
-	find -name 'stp*' -exec rm {} \;
-	split -d -l 5 fin2 stp --suffix-length=1
-	if [ -f stp0 ]; then
-		$vw 1 0 2
-		$DF 0 2
-	fi
-	if [ -f ./stp1 ]; then
-		$vw 1 1 2
-		$DF 1 2
-	fi
-	if [ -f ./stp2 ]; then
-		$vw 1 2 2
-		$DF 2 2
-	fi
-	if [ -f stp3 ]; then
-		$vw 1 3 2
-		$DF 3 2
-	fi
-	if [ -f stp4 ]; then
-		$vw 1 4 2
-		$DF 4 2
-	fi
-	if [ -f stp5 ]; then
-		$vw 1 5 2
-		$DF 5 2
-	fi
-	if [ -f stp6 ]; then
-		$vw 1 6 2
-		$DF 6 2
-	fi
-	if [ -f stp7 ]; then
-		$vw 1 7 2
-		$DF 7 2
-	fi
-	if [ -f stp8 ]; then
-		$vw 1 8 2
-		$DF 8 2
-	fi
-	if [ -f stp9 ]; then
-		$vw 1 9 2
-		$DF 9 2
-	fi
 
+	$DF 2 # ---------------------------
+	
 	if [ -f fin.2.no ]; then
+	
 		cat *.no >> "$w6"
 		cat *.ok >> "$w9"
-		#cat fin.1.no >> f
-		var1=$((100*$(cat f_r)/$(cat idxfin)))
+		[[ -f f_r ]] && s1=$(cat  f_r) || s1=1
+		s4=$(cat idxfin)
+		var1=$((100*$s1/$s4))
+		
 		if [ $var1 -lt 1 ]; then
 			echo 1 > .iconf
 		elif [ $var1 -lt 5 ]; then
@@ -221,34 +146,27 @@ if [ "$2" = f ]; then
 		rm *.ok *.no fin.tmp fin1
 		echo "$(date "+%a %d %B")" > look_f
 		echo 21 > .iconf
-		play $DS_pp/all.mp3 & $strt 1 &
+		play $DSP/all.mp3 & $strt 1 &
 		killall df.sh
 		exit 1
 	fi
 
-elif [ "$2" = m ]; then
+elif [ "$1" = m ]; then
+
 	cd "$DC_tlt/Practice"
-	DMC=$DS_pp/dmc.sh
-	vw="#"
-	Wi="$DC_tlt/cnfg3"
-	Si="$DC_tlt/cnfg4"
-	Li="$DC_tlt/cnfg1"
-	if [ "$1" = l ]; then
-		vw=$DS_pp/lrng
-	fi
 	if [ -f look_mc ]; then
 		$yad --title="$tpc" \
 		--borders=15 --center --buttons-layout=edge \
 		--on-top --skip-taskbar --window-icon=idiomind \
 		--buttons-layout=edge --center --image=gtk-ok \
 		--button="$restart":0 --button=Ok:1 \
-		--text "<span color='#007D17'>$complete\\n$(cat look_mc)</span>\\n\\n" \
+		--text "<big>$complete\\n$(cat look_mc)</big>\\n\\n" \
 		--width=350 --height=80 --text-align=center
 		ret=$?
 			if [[ "$ret" -eq 0 ]]; then
-				$DS_pp/cls dm & exit
+				$DSP/cls dm & exit
 			else
-				$DS_pp/strt & exit
+				$DSP/strt & exit
 			fi
 	fi
 	if [ -f mcin.tmp ]; then
@@ -290,49 +208,9 @@ elif [ "$2" = m ]; then
 		--skip-taskbar --center --no-buttons
 	fi
 	cp mcin1 mcin.tmp
-	find -name 'stp*' -exec rm {} \;
-	split -d -l 5 mcin1 stp --suffix-length=1
-	if [ -f stp0 ]; then
-		$vw 1 0 1
-		$DMC 0 1
-	fi
-	if [ -f stp1 ]; then
-		$vw 1 1 1
-		$DMC 1 1
-	fi
-	if [ -f stp2 ]; then
-		$vw 1 2 1
-		$DMC 2 1
-	fi
-	if [ -f stp3 ]; then
-		$vw 1 3 1
-		$DMC 3 1
-	fi
-	if [ -f stp4 ]; then
-		$vw 1 4 1
-		$DMC 4 1
-	fi
-	if [ -f stp5 ]; then
-		$vw 1 5 1
-		$DMC 5 1
-	fi
-	if [ -f stp6 ]; then
-		$vw 1 6 1
-		$DMC 6 1
-	fi
-	if [ -f stp7 ]; then
-		$vw 1 7 1
-		$DMC 7 1
-	fi
-	if [ -f stp8 ]; then
-		$vw 1 8 1
-		$DMC 8 1
-	fi
-	if [ -f stp9 ]; then
-		$vw 1 9 1
-		$DMC 9 1
-	fi
 
+	$DMC 1 # ---------------------------
+	
 	s1=$(cat  mc_r)
 	s2=$(cat mcin.1.ok | wc -l)
 	s3=$(($s1 + $s2))
@@ -348,59 +226,23 @@ elif [ "$2" = m ]; then
 		rm *.ok *.no mcin1 mcin.tmp
 		echo "$(date "+%a %d %B")" > look_mc
 		echo 21 > .iconmc
-		play $DS_pp/all.mp3 & $strt 2 1 &
+		play $DSP/all.mp3 & $strt 2 1 &
 		killall dmc.sh
 		exit 1
 	fi
 	sed '/^$/d' ./mcin.tmp > ./mcin2
 	cp mcin2 mcin.tmp
-	find -name 'stp*' -exec rm {} \;
-	split -d -l 5 mcin2 stp --suffix-length=1
-	if [ -f stp0 ]; then
-		$vw 1 0 2
-		$DMC 0 2
-	fi
-	if [ -f stp1 ]; then
-		$vw 1 1 2
-		$DMC 1 2
-	fi
-	if [ -f stp2 ]; then
-		$vw 1 2 2
-		$DMC 2 2
-	fi
-	if [ -f stp3 ]; then
-		$vw 1 3 2
-		$DMC 3 2
-	fi
-	if [ -f stp4 ]; then
-		$vw 1 4 2
-		$DMC 4 2
-	fi
-	if [ -f stp5 ]; then
-		$vw 1 5 2
-		$DMC 5 2
-	fi
-	if [ -f stp6 ]; then
-		$vw 1 6 2
-		$DMC 6 2
-	fi
-	if [ -f stp7 ]; then
-		$vw 1 7 2
-		$DMC 7 2
-	fi
-	if [ -f stp8 ]; then
-		$vw 1 8 2
-		$DMC 8 2
-	fi
-	if [ -f stp9 ]; then
-		$vw 1 9 2
-		$DMC 9 2
-	fi
+
+	$DMC 2 # ---------------------------
 	
 	if [ -f mcin.2.no ]; then
+	
 		cat *.no >> "$w6"
 		cat *.ok >> "$w9"
-		var3=$((100*$(cat mc_r)/$(cat idxmcin)))
+		[[ -f mc_r ]] && s1=$(cat  mc_r) || s1=1
+		s4=$(cat idxmcin)
+		var3=$((100*$s1/$s4))
+		
 		if [ $var3 -lt 1 ]; then
 			echo 1 > .iconmc
 		elif [ $var3 -lt 5 ]; then
@@ -451,42 +293,36 @@ elif [ "$2" = m ]; then
 		rm *.ok *.no mcin2 mcin.tmp
 		echo "$(date "+%a %d %B")" > look_mc
 		echo 21 > .iconmc
-		play $DS_pp/all.mp3 & $strt 2 &
+		play $DSP/all.mp3 & $strt 2 &
 		killall dmc.sh
 		exit 1
 	fi
 	exit 1
 
-elif [ "$2" = w ]; then
+elif [ "$1" = w ]; then
 
 	cd "$DC_tlt/Practice"
-	DLW=$DS_pp/dlw.sh
-	Wi="$DC_tlt/cnfg3"
-	Si="$DC_tlt/cnfg4"
-	Li="$DC_tlt/cnfg1"
-	if [ "$1" = l ]; then
-	    vw=$DS_pp/lrng
-	fi
+	
 	if [ -f look_lw ]; then
 		$yad --title="$tpc" \
 		--borders=15 --center --buttons-layout=edge \
 		--on-top --skip-taskbar --window-icon=idiomind \
 		--buttons-layout=edge --center --image=gtk-ok \
 		--button="$restart":0 --button=Ok:1 \
-		--text "<span color='#007D17'>$complete\\n$(cat look_lw)</span>\\n\\n" \
+		--text "<big>$complete\\n$(cat look_lw)</big>\\n\\n" \
 		--width=350 --height=80 --text-align=center
 		ret=$?
 			if [[ "$ret" -eq 0 ]]; then
-				$DS_pp/cls dw & exit
+				$DSP/cls dw & exit
 			else
-				$DS_pp/strt & exit
+				$DSP/strt & exit
 			fi
 	fi
 	if [ -f lwin.tmp ]; then
 		rm *.ok *.no
 		sed '/^$/d' lwin.tmp > lwin1
 	else
-		cd "$DC_tlt/Practice"
+
 		if [ "$(cat "$Si" | wc -l)" -gt 0 ]; then
 			echo "$(grep -F -x -v -f "$Si" "$Li" | wc -l)" > idxlwin
 			grep -F -x -v -f "$Si" "$Li" > lwin1
@@ -505,48 +341,8 @@ elif [ "$2" = w ]; then
 		fi
 	fi
 	cp -f lwin1 lwin.tmp
-	find -name 'stp*' -exec rm {} \;
-	split -d -l 5 lwin1 stp --suffix-length=1
-	if [ -f stp0 ]; then
-		$vw 1 0 1
-		$DLW 0 1
-	fi
-	if [ -f stp1 ]; then
-		$vw 1 1 1
-		$DLW 1 1
-	fi
-	if [ -f stp2 ]; then
-		$vw 1 2 1
-		$DLW 2 1
-	fi
-	if [ -f stp3 ]; then
-		$vw 1 3 1
-		$DLW 3 1
-	fi
-	if [ -f stp4 ]; then
-		$vw 1 4 1
-		$DLW 4 1
-	fi
-	if [ -f stp5 ]; then
-		$vw 1 5 1
-		$DLW 5 1
-	fi
-	if [ -f stp6 ]; then
-		$vw 1 6 1
-		$DLW 6 1
-	fi
-	if [ -f stp7 ]; then
-		$vw 1 7 1
-		$DLW 7 1
-	fi
-	if [ -f stp8 ]; then
-		$vw 1 8 1
-		$DLW 8 1
-	fi
-	if [ -f stp9 ]; then
-		$vw 1 9 1
-		$DLW 9 1
-	fi
+
+	$DLW 1 # ---------------------------
 	
 	s1=$(cat  lw_r)
 	s2=$(cat lwin.1.ok | wc -l)
@@ -563,58 +359,22 @@ elif [ "$2" = w ]; then
 		rm *.ok *.no lwin.tmp lwin1
 		echo "$(date "+%a %d %B")" > look_lw
 		echo 21 > .iconlw
-		play $DS_pp/all.mp3 & $strt 3 1 &
+		play $DSP/all.mp3 & $strt 3 1 &
 		killall df.sh & exit 1
 	fi
 	cat lwin.tmp | sed '/^$/d' > ./lwin2
 	cp -f lwin2 lwin.tmp
-	find -name 'stp*' -exec rm {} \;
-	split -d -l 5 lwin2 stp --suffix-length=1
-	if [ -f stp0 ]; then
-		$vw 1 0 2
-		$DLW 0 2
-	fi
-	if [ -f stp1 ]; then
-		$vw 1 1 2
-		$DLW 1 2
-	fi
-	if [ -f stp2 ]; then
-		$vw 1 2 2
-		$DLW 2 2
-	fi
-	if [ -f stp3 ]; then
-		$vw 1 3 2
-		$DLW 3 2
-	fi
-	if [ -f stp4 ]; then
-		$vw 1 4 2
-		$DLW 4 2
-	fi
-	if [ -f stp5 ]; then
-		$vw 1 5 2
-		$DLW 5 2
-	fi
-	if [ -f stp6 ]; then
-		$vw 1 6 2
-		$DLW 6 2
-	fi
-	if [ -f stp7 ]; then
-		$vw 1 7 2
-		$DLW 7 2
-	fi
-	if [ -f stp8 ]; then
-		$vw 1 8 2
-		$DLW 8 2
-	fi
-	if [ -f stp9 ]; then
-		$vw 1 9 2
-		$DLW 9 2
-	fi
+
+	$DLW 2 # ---------------------------
 
 	if [ -f lwin.2.no ]; then
+	
 		cat *.no >> "$w6"
 		cat *.ok >> "$w9"
-		var2=$((100*$(cat lw_r)/$(cat idxlwin)));
+		[[ -f lw_r ]] && s1=$(cat  lw_r) || s1=1
+		s4=$(cat idxlwin)
+		var2=$((100*$s1/$s4))
+		
 		if [ $var2 -lt 1 ]; then
 			echo 1 > .iconlw
 		elif [ $var2 -lt 5 ]; then
@@ -665,34 +425,28 @@ elif [ "$2" = w ]; then
 		rm *.ok *.no lwin.tmp lwin
 		echo "$(date "+%a %d %B")" > look_lw
 		echo 21 > .iconlw
-		play $DS_pp/all.mp3 & $strt 3 &
+		play $DSP/all.mp3 & $strt 3 &
 		killall dlw.sh
 		exit 1
 	fi
 	exit 1
 
-elif [ "$2" = s ]; then
+elif [ "$1" = s ]; then
 
 	cd "$DC_tlt/Practice"
-	DLS=$DS_pp/dls.sh
-	Wi="$DC_tlt/cnfg3"
-	Si="$DC_tlt/cnfg4"
-	Li="$DC_tlt/cnfg1"
-	
-	l="$1"
 	if [ -f look_ls ]; then
 		$yad --title="$tpc" \
 		--borders=15 --center --buttons-layout=edge \
 		--on-top --skip-taskbar --window-icon=idiomind \
 		--buttons-layout=edge --center --image=gtk-ok \
 		--button="Reiniciar":0 --button=Ok:1 \
-		--text "<span color='#007D17'>$complete\\n$(cat look_ls)</span>\\n\\n" \
+		--text "<big>$complete\\n$(cat look_ls)</big>\\n\\n" \
 		--width=350 --height=80 --text-align=center
 		ret=$?
 			if [[ "$ret" -eq 0 ]]; then
-				$DS_pp/cls ds & exit
+				$DSP/cls ds & exit
 			else
-				$DS_pp/strt & exit
+				$DSP/strt & exit
 			fi
 	fi
 	if [ -f lsin.tmp ]; then
@@ -720,13 +474,17 @@ elif [ "$2" = s ]; then
 		fi
 	fi
 	cp -f lsin lsin.tmp
-	$DLS 1 $l
+	$DLS 1
 	sed -i '/^$/d' lsin.ok
 	sed -i '/^$/d' lsin.no
 
 	echo "$(cat iLS | wc -l)" > ls_r
 	if [ -f lsin.no ]; then
-		var4=$((100*$(cat ls_r)/$(cat idxlsin)))
+	
+		[[ -f ls_r ]] && s1=$(cat  ls_r) || s1=1
+		s4=$(cat idxlsin)
+		var4=$((100*$s1/$s4))
+
 		if [ $var4 -lt 1 ]; then
 			echo 1 > .iconls
 		elif [ $var4 -lt 5 ]; then
@@ -776,7 +534,7 @@ elif [ "$2" = s ]; then
 		echo "$(date "+%a %d %B")" > look_ls
 		echo 21 > .iconls
 		echo ok > .iiconls
-		play $DS_pp/all.mp3 & $strt 4 &
+		play $DSP/all.mp3 & $strt 4 &
 		killall dls.sh
 		killall play
 		exit 1

@@ -6,15 +6,15 @@ drts="/usr/share/idiomind/addons/Practice/"
 cd "$HOME/.config/idiomind/topics/$lgtl/$tpc/Practice"
 
 n=1
-while [ $n -le $(cat ./stp$1 | wc -l) ]; do
-	w1=$(sed -n "$n"p stp$1)
+while [ $n -le $(cat ./lwin$1 | wc -l) ]; do
+	w1=$(sed -n "$n"p lwin$1)
 	listen="play '$drtt/$w1.mp3'"
 	[ $lgtl = Japanese ] || [ $lgtl = Chinese ] && lst=? \
 	|| lst=$(echo "$w1" | awk '$1=$1' FS= OFS=" " | tr aeiouy ' ')
 	
-	if [ "$2" = 1 ]; then
+	if [ "$1" = 1 ]; then
 		trgt=$(echo "$w1" | tr aeiouy ' ')
-	elif [ "$2" = 2 ]; then
+	elif [ "$1" = 2 ]; then
 		lst="$w1"
 	fi
 	
@@ -31,7 +31,7 @@ while [ $n -le $(cat ./stp$1 | wc -l) ]; do
 		--button=gtk-close:1 \
 		--button=" Got It ":3 \
 		--button=" Nope ":4 \
-		--width=365 --height=180
+		--width=365 --height=300
 		
 	else
 		play "$drtt/$w1".mp3 &
@@ -47,20 +47,20 @@ Play
 		--button=gtk-close:1 \
 		--button=" Got It ":3 \
 		--button=" Nope ":4 \
-		--width=365 --height=220
+		--width=365 --height=250
 	fi
 	
 	ret=$?
 	if [[ $ret -eq 3 ]]; then
-		if [[ $2 = 1 ]]; then
+		if [[ $1 = 1 ]]; then
 			play $drts/d.mp3 & sed -i 's/'"$w1"'//g' lwin.tmp & echo "$w1" >> ./lwin.1.ok
 		else
 			play $drts/d.mp3 & echo "$w1" >> ./lwin.2.ok
 		fi
 	elif [[ $ret -eq 4 ]]; then
-		play $drts/d.mp3 & echo "$w1" >> ./lwin.$2.no
+		play $drts/d.mp3 & echo "$w1" >> ./lwin.$1.no
 	else
-		$drts/cls "$2" w && exit 1
+		$drts/cls "$1" w && exit 1
 	fi
 	let n++
 done
