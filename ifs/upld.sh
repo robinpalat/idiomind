@@ -1,5 +1,7 @@
 #!/bin/bash
+# -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
+source $DS/ifs/trans/$lgs/upld.conf
 
 if [ $1 = vsd ]; then
 	userid=$(sed -n 1p $HOME/.config/idiomind/s/cnfg4)
@@ -12,13 +14,14 @@ if [ $1 = vsd ]; then
 
 	cat ./ls | $yad --list --on-top \
 	--window-icon=idiomind --center --skip-taskbar \
-	--buttons-layout=edge --borders=8 --text=" <small>Double Clikfor Download \\t\\t\\t\\t</small>" \
-	--title="Topics Saved" --width=$wth --height=$eht \
+	--buttons-layout=edge --borders=8 \
+	--text=" <small>$double_click_for_download \\t\\t\\t\\t</small>" \
+	--title="topics_saved" --width=$wth --height=$eht \
 	--column=Nombre:TEXT --print-column=1 \
 	--expand-column=1 --search-column=1 \
-	--button="Mirar Otros Topic":"/usr/share/idiomind/ifs/tls web" \
-	--button=Close:1 \
-	--dclick-action='/usr/share/idiomind/ifs/upld infsd'
+	--button="$search_topics":"/usr/share/idiomind/ifs/tls.sh web" \
+	--button="$close":1 \
+	--dclick-action='/usr/share/idiomind/ifs/upld.sh infsd'
 	
 			["$?" -eq 0 ]
 				killall topic.sh
@@ -45,8 +48,8 @@ elif [ $1 = infsd ]; then
 
 	$yad --borders=15 --width=450 --height=180 --fixed \
 	--on-top --skip-taskbar --center --image=$icon --geometry=0-0-0-0 \
-	--title="idiomind" --button="   Download   :0" \
-	--button="  Close  :1" --text="<b>$NM</b>\\n<small>$LNGT language </small> \\n<small><a href='$LNK'>$NM</a></small>"
+	--title="idiomind" --button="   $download   :0" \
+	--button="  Close  :1" --text="<b>$NM</b>\\n<small>$LNGT $language </small> \\n<small><a href='$LNK'>$NM</a></small>"
 		ret=$?
 
 		if [ $ret -eq 2 ]; then
@@ -63,7 +66,7 @@ elif [ $1 = infsd ]; then
 			curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
 			$yad --window-icon=idiomind --on-top \
 			--image="info" --name=idiomind \
-			--text="<b>No hay conexión a internet  \\n  </b>" \
+			--text="<b>$conn_err  \\n  </b>" \
 			--image-on-top --center --sticky \
 			--width=320 --height=100 --borders=5 \
 			--skip-taskbar --title="Idiomind" \
@@ -82,7 +85,7 @@ elif [ $1 = infsd ]; then
 			if [ "`echo $data | grep '[0-9]*%' `" ];then
 			percent=`echo $data | grep -o "[0-9]*%" | tr -d '%'`
 			echo $percent
-			echo "#Downloading...  $percent%"
+			echo "# $downloading...  $percent%"
 			fi
 			done > $pipe &
 			wget_info=`ps ax |grep "wget.*$1" |awk '{print $1"|"$2}'`
@@ -106,11 +109,10 @@ elif [ $1 = infsd ]; then
 				
 			else
 				$yad --fixed --name=idiomind --center \
-				--image=info \
-				--text=" <b>Aún no esta listo el archivo </b> \\n Intente Luego" \
+				--image=info --text="<b>file_err</b>" \
 				--fixed --sticky --width=220 --height=80 --borders=3 \
 				--skip-taskbar --window-icon=$DS/images/icon.png \
-				--on-top --title="Idiomind" ---button="Info":3 \
+				--on-top --title="Idiomind" --button="Info":3 \
 				--button="Ok":0 && exit 1
 			fi
 			exit 1
@@ -181,8 +183,7 @@ chk5=$(cat "$DC_tlt/cnfg4" | wc -l)
 
 if [[ "$(($chk4 + $chk5))" != $chk1 \
 	|| "$(($chk2 + $chk3))" != $chk1 ]]; then
-	notify-send -i idiomind "Error en indice" \
-	"Repararando..." -t 2000 &
+	notify-send -i idiomind "index_err1" "$index_err2" -t 5000 &
 	
 	rm -f $DT/ind
 	rm -f $DT/ind_ok
@@ -263,7 +264,7 @@ function suma(){
 suma
 if [ $ALL -le 20 ]; then
 	cstn=$($yad --image=info --on-top --window-icon=idiomind \
-	--text="<b>Debés tener 20 entradas  \\n  </b>" \
+	--text="<b>$min_items  \\n  </b>" \
 	--image-on-top --center --sticky --name=idiomind \
 	--width=320 --height=100 --borders=5 \
 	--skip-taskbar --title="Idiomind" \
@@ -271,19 +272,19 @@ if [ $ALL -le 20 ]; then
 	exit 1
 fi
 
-upld=$($yad --image-on-top --width=350 \
+upld=$($yad --image-on-top --width=400 \
 --buttons-layout=end --center --window-icon=idiomind \
 --on-top --image=$DS/images/upld.png \
---height=400 --form --borders=20 --skip-taskbar --align=right \
---button=Cancel:1 --button=Upload:0 \
+--height=450 --form --borders=20 --skip-taskbar --align=right \
+--button=$cancel:1 --button=$upload:0 \
 --title="Upload" --text="<b>$tpc\\n</b>" \
 --field=" :lbl" "#1" \
---field="    <small>Autor</small>:: " "$user" \
---field="    <small>Mail</small>:: " "$mail" \
---field="    <small>Skype</small>:: " "$skp" \
---field="    <small>Category</small>::CB" \
+--field="    <small>$author</small>:: " "$user" \
+--field="    <small>$email</small>:: " "$mail" \
+--field="    <small>$skype</small>:: " "$skp" \
+--field="    <small>$category</small>::CB" \
 "!others!entertainment!history!documentary!films!internet!mathematics!music!education!nature!news!office!policy!podcats!relations!sport!religion!shopping!science!social!technology!travel!places" \
---field="<small>\\nAcerca de:</small>:TXT" " ")
+--field="<small>\\n$notes:</small>:TXT" " ")
 ret=$?
 
 if [[ "$ret" != 0 ]]; then
@@ -318,12 +319,12 @@ if [ -z $Ctgry ]; then
 
 	$yad --window-icon=idiomind --name=idiomind \
 	--image=info --on-top \
-	--text="<b>Se debe indicar una categoria  \\n</b>" \
+	--text="<b>$categry_err  \\n</b>" \
 	--image-on-top --center --sticky \
 	--width=320 --height=100 --borders=5 \
 	--skip-taskbar --title="Idiomind" \
 	--button="  Ok  ":0
-	$DS/upld &
+	$DS/ifs/upld.sh &
 	rm ./.info_u.sh
 	exit 1
 	
@@ -333,7 +334,7 @@ curl -v www.google.com 2>&1 | \
 grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
 $yad --window-icon=idiomind --on-top \
 --image="info" --name=idiomind \
---text="<b>No hay conexión a internet  \\n  </b>" \
+--text="<b>$conn_err  \\n  </b>" \
 --image-on-top --center --sticky \
 --width=320 --height=100 --borders=5 \
 --skip-taskbar --title=Idiomind \
@@ -361,7 +362,7 @@ gzip -9 "$tpc.tar"
 mv "$tpc.tar.gz" "$userid.$tpc.idmnd"
 rm -f "$tpc"/*
 
-notify-send "Uploading..." "Wait" -i idiomind -t 6000
+notify-send "$uploading..." "$wait" -i idiomind -t 6000
 
 wget http://www.idmnd.2fh.co/data/.PASS_TMP
 
@@ -738,9 +739,9 @@ exit=$?
 
 if [ 0 = 0 ] ; then
     cp -f "$DT/$tpc/cnfg13" "$HOME/.idiomind/topics/saved/$tpccnfg13"
-    info="El tema \\n<b> <a href='$link'>$tpc</a></b> \\n se guardo y publico con éxito"
+    info="$the_topic \\n<b> <a href='$link'>$tpc</a></b> \\n $saved"
 else
-    info="Ocurrio un problema al subir el archivo"
+    info="$upload_err"
 fi
 )
 

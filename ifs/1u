@@ -1,24 +1,24 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
-
+source /usr/share/idiomind/ifs/trans/es/others.conf
 IMAGE=/usr/share/idiomind/ifs/1u.png
 drtf="/usr/share/idiomind/addons/Learning_with_news/examples/"
 user=$(echo "$(whoami)")
 if [ "$1" = s ]; then
-	ins="--field=<small><b> Debes ingresar el lenguage que deseas aprender</b></small>\\t\\t:lbl"
+	ins="--field=<small><b> $no_language1</b></small>\\t\\t:lbl"
 elif [ "$1" = t ]; then
-	int="--field=<small><b> Debes ingresar el lenguage que hablas</b></small>\\t\\t:lbl"
+	int="--field=<small><b> $no_language2</b></small>\\t\\t:lbl"
 elif [ "$1" = n ]; then
-	int="--field=<small><b> Debes completar los campos</b></small>\\t\\t:lbl"
+	int="--field=<small><b> $no_language3</b></small>\\t\\t:lbl"
 fi
 
-idmnd=$(yad --center --width=520 --height=280 --fixed \
+idmnd=$(yad --center --width=520 --height=300 --fixed \
 	--image-on-top --on-top --class=idiomind --name=idiomind \
 	--window-icon=idiomind --buttons-layout=end --image=$IMAGE  \
 	--title="Idiomind" --form --borders=10 --align=right --button=Ok:0 \
-	--field="<small>\\t\\t\\t\\tChose language for learning : </small>:CB" \
+	--field="<small>\\t\\t\\t\\t$language_target : </small>:CB" \
 	!"English!French!German!Italian!Japanese!Portuguese!Spanish!Vietnamese!Chinese!"\
-	--field="<small>\\t\\t\\t\\tYour language : </small>:CB" \
+	--field="<small>\\t\\t\\t\\t$language_source : </small>:CB" \
 	!"English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
 	"$ins" "$int" --field=":lbl")
 
@@ -44,7 +44,7 @@ elif [[ $ret -eq 0 ]]; then
 	if [ $? -ne 0 ]; then
 		yad --name=idiomind \
 		--image=error --button=gtk-ok:1\
-		--text=" <b>Error al intentar escribir en /home/$user/</b>\\n" \
+		--text=" <b>$write_err /home/$user/</b>\\n" \
 		--image-on-top --sticky --fixed \
 		--width=320 --height=80 \
 		--borders=2 --title=Idiomind \

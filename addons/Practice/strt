@@ -2,12 +2,10 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-source /usr/share/idiomind/ifs/trans/$lgs/practice.conf
+source $DS/ifs/trans/$lgs/practice.conf
 DS_pp="/usr/share/idiomind/addons/Practice"
 eht=$(sed -n 13p $HOME/.config/idiomind/s/cnfg18)
 wth=$(sed -n 14p $HOME/.config/idiomind/s/cnfg18)
-int="$(sed -n 59p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
-btn="$(sed -n 58p $DS/ifs/trads/$lgs | sed 's/|/\n/g')"
 
 echo "$btn"
 /usr/share/idiomind/stop.sh &
@@ -78,7 +76,7 @@ VAR=$(yad --ellipsize=NONE --list --text-align=center \
 --image-on-top --buttons-layout=edge $img \
 --borders=5 --expand-column=2 \
 --width=340 --height=400 --text="$info" \
---no-headers --button=$restar:3 \
+--no-headers --button=$restart:3 \
 --button=$learn:2 --button=$start:0 \
 --title="Practice - $tpc" --column="Pick":IMG \
 --column="Action" $img1 "          $info1 Flashcards" $img2 \

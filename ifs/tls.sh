@@ -1,20 +1,21 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
-if [ $1 = tls ]; then
+source $DS/ifs/trans/$lgs/others.conf
 
-$yad --form --height=150 --width=350 \
+if [ $1 = tls ]; then
+$yad --form --height=190 --borders=8 --width=350 \
 	--title=" " --skip-taskbar --columns=2 \
-	--field="Topics saved :BTN" "$DS/ifs/upld.sh vsd" \
-	--field="User data :BTN" "'$DS/ifs/t_bd.sh'" \
-	--field="Audio imput :BTN" "'$DS/audio/auds'" \
-	--field="Search updates :BTN" "$DS/ifs/tls.sh updt" \
+	--field="$topics_saved :BTN" "$DS/ifs/upld.sh vsd" \
+	--field="$user_data :BTN" "'$DS/ifs/t_bd.sh'" \
+	--field="$audio_imput :BTN" "'$DS/audio/auds'" \
+	--field="$search_updates :BTN" "$DS/ifs/tls.sh updt" \
 	--button=Close:0 & exit 1
 fi
 
 if [ $1 = nt ]; then
 	if [ ! -f "$nt".odt ] || [ -z "$(cat $DC_s/nt)" ]; then
-		sv=$($yad --save --center --borders=10 --on-top \
+		sv=$(yad --save --center --borders=10 --on-top \
 		--window-icon=idiomind --skip-taskbar --title=Notes \
 		--file --width=600 --height=500 --button=gtk-ok:0)
 		echo "$sv" > $DC_s/nt
@@ -120,21 +121,16 @@ elif [ $1 = pdf ]; then
 		(
 		echo "5" ; sleep 0
 		echo "# " ; sleep 1
-
 		#-----------------------images
 		n=1
 		while [[ $n -le "$(cat $iw | wc -l | awk '{print ($1)}')" ]]; do
-
 			wnm=$(sed -n "$n"p $iw)
-			
 			if [ -f "$DM_tlt/words/images/$wnm.jpg" ]; then
 				convert "$DM_tlt/words/images/$wnm.jpg" -alpha set -virtual-pixel transparent \
 				-channel A -blur 0x10 -level 50%,100% +channel "$DT/mkhtml/images/$wnm.png"
 			fi
-			
 			let n++
 		done
-		
 		#-----------------------sentences
 		n=1
 		while [[ $n -le "$(cat  $is | wc -l | awk '{print ($1)}')" ]]; do
@@ -146,7 +142,6 @@ elif [ $1 = pdf ]; then
 			echo "$ws" >> S.gprs.x
 			let n++
 		done
-		
 		echo '<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>'$tpc'</title>
@@ -271,47 +266,37 @@ elif [ $1 = pdf ]; then
 		</td>
 		</tr>
 		</table>' > pdf
-
 		#-----------------------images
-		
 		cd "$DM_tlt/words/images"
 		cnt=`ls -1 *.jpg 2>/dev/null | wc -l`
-		
 		if [ $cnt != 0 ]; then
 			cd $DT/mkhtml/images/
 			ls *.png | sed 's/\.png//g' > $DT/mkhtml/nimg
-			
 			cd $DT/mkhtml
 			echo '<table width="90%" align="center" border="0" class="wrdimg">' >> pdf
-			
 			n=1
 			while [ $n -le "$(cat nimg | wc -l)" ]; do
 					if [ -f nnn ]; then
 					n=$(cat nnn)
 					fi
-					
 					nn=$(($n + 1))
 					nnn=$(($n + 2))
 					d1m=$(cat nimg | sed -n "$n","$nn"p | sed -n 1p)
 					d2m=$(cat nimg | sed -n "$n","$nn"p | sed -n 2p)
-					
 					if [ -n "$d1m" ]; then
 						echo '<tr>
 						<td align="center"><img src="images/'$d1m'.png" width="240" height="220"></td>' >> pdf
-
 						if [ -n "$d2m" ]; then
 							echo '<td align="center"><img src="images/'$d2m'.png" width="240" height="220"></td>
 							</tr>' >> pdf
 						else
 							echo '</tr>' >> pdf
 						fi
-						
 						echo '<tr>
 						<td align="center" valign="top"><p>'$d1m'</p>
 						<p>&nbsp;</p>
 						<p>&nbsp;</p>
 						<p>&nbsp;</p></td>' >> pdf
-						
 						if [ -n "$d2m" ]; then
 							echo '<td align="center" valign="top"><p>'$d2m'</p>
 							<p>&nbsp;</p>
@@ -321,23 +306,18 @@ elif [ $1 = pdf ]; then
 						else
 							echo '</tr>' >> pdf
 						fi
-						
 					else
 						break
 					fi
-					
 					echo $nnn > nnn
 				let n++
 			done
-			
 			echo '</table>
 			<p>&nbsp;</p>
 			<p>&nbsp;</p>' >> pdf
 		fi
-		
 		#-----------------------words
 		cd $DT/mkhtml
-
 		n=1
 		while [ $n -le "$(cat $iw | wc -l)" ]; do
 			wnm=$(sed -n "$n"p $iw)
@@ -349,13 +329,10 @@ elif [ $1 = pdf ]; then
 			exm1=$(echo "$inf" | sed -n 1p | sed 's/\\n/ /g')
 			dftn=$(echo "$inf" | sed -n 2p | sed 's/\\n/ /g')
 			ntes=$(echo "$inf" | sed -n 3p | sed 's/\\n/ /g')
-			
 			exmp1=$(echo "$exm1" \
 			| sed "s/"$hlgt"/<b>"$hlgt"<\/\b>/g")
-			
 			echo "$wt" >> W.lizt.x
 			echo "$ws" >> W.lizs.x
-			
 			if [ -n "$wt" ]; then
 				echo '<table width="55%" border="0" align="left" cellpadding="10" cellspacing="5">
 				<tr>
@@ -367,55 +344,45 @@ elif [ $1 = pdf ]; then
 				<td bgcolor="#F4FFE9"><h2>'$ws'</h2></td>
 				</tr>
 				</table>' >> pdf
-				
 				echo '<table width="100%" border="0" align="center" cellpadding="10" class="efont">
 				<tr>
 				<td width="10px"></td>' >> pdf
-				
 				if ([ -z "$dftn" ] && [ -z "$exmp1" ]); then
 				echo '<td width="466" valign="top" class="nfont" >'$ntes'</td>
 				<td width="389"</td>
 				</tr>
 				</table>' >> pdf
-				
 				else
 					echo '<td width="466">' >> pdf
-					
 					if [ -n "$dftn" ]; then
 						echo '<dl>
 						<dt>Definition:</dt>
 						<dd><dfn>'$dftn'</dfn></dd>
 						</dl>' >> pdf
 					fi
-					
 					if [ -n "$exmp1" ]; then
 						echo '<dl>
 						<dt>Example:</dt>
 						<dd><cite>'$exmp1'</cite></dd>
 						</dl>' >> pdf
 					fi 
-					
 					echo '</td>
 					<td width="389" valign="top" class="nfont">'$ntes'</td>
 					</tr>
 					</table>' >> pdf
 				fi
-				
 				echo '<p>&nbsp;</p>
 				<h1>&nbsp;</h1>' >> pdf
 			fi
 			let n++
 		done
-				
 		#-----------------------sentences
 		n=1
 		while [ $n -le "$(cat s.inx.l | wc -l)" ]; do
 				st=$(sed -n "$n"p S.gprt.x)
-				
 				if [ -n "$st" ]; then
 					ss=$(sed -n "$n"p S.gprs.x)
 					fn=$(sed -n "$n"p s.inx.l)
-				
 					echo '<table width="100%" border="0" align="left" cellpadding="10" cellspacing="5">
 					<tr>
 					<td bgcolor="#9FBFF8" class="side">&nbsp;</td>
@@ -426,11 +393,9 @@ elif [ $1 = pdf ]; then
 					<td bgcolor="#F4FFE9"><h2>'$ss'</h2></td>
 					</tr>
 					</table>' > Sgprs.tmp
-					
 					echo '<div class="wrds">
 					<table width="40%" align="left" cellpadding="5" class="wrdstable">
 					<tbody>' > Wgprs.tmp
-						
 					eyeD3 "$DM_tlt/$fn.mp3" > tgs
 					> wt
 					> ws
@@ -472,7 +437,6 @@ elif [ $1 = pdf ]; then
 					<p>&nbsp;</p>
 					<p>&nbsp;</p>
 					<h1>&nbsp;</h1>' >> Wgprs.tmp
-					
 					#echo '</tbody>
 					#</table>
 					    #<table width="40%" border="0" align="right">
@@ -484,14 +448,12 @@ elif [ $1 = pdf ]; then
 					#<p>&nbsp;</p>
 					#<p>&nbsp;</p>
 					#<h1>&nbsp;</h1>' >> Wgprs.tmp
-
 					cat Sgprt.tmp >> pdf
 					cat Sgprs.tmp >> pdf
 					cat Wgprs.tmp >> pdf
 				fi
 			let n++
 		done
-		
 		#-----------------------html
 		echo '<p>&nbsp;</p>
 		<p>&nbsp;</p>
@@ -505,7 +467,6 @@ elif [ $1 = pdf ]; then
 		mv -f pdf pdf.html
 		wkhtmltopdf -s A4 -O Portrait --ignore-load-errors pdf.html tmp.pdf
 		mv -f tmp.pdf "$pdf"
-		
 		rm -fr pdf $DT/mkhtml $DT/*.x $DT/*.l
 		
 		) | $yad --progress \

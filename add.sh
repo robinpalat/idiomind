@@ -252,7 +252,7 @@ elif [ $1 = n_i ]; then
 		--name=idiomind --class=idiomind \
 		--borders=0 --title="$tpe" --width=360 --height=160 \
 		--field="  <small><small>$lgtl / $lgsl</small></small>":TXT "$txt" \
-		--field="<small><small>$topic</small></small>:CB" "$ttle!New*!$tpcs" "$field" \
+		--field="<small><small>$topic</small></small>:CB" "$ttle!$new*!$tpcs" "$field" \
 		--button="$image":3 \
 		--button=gtk-ok:0)
 		ret=$?
@@ -277,7 +277,7 @@ elif [ $1 = n_i ]; then
 		--field="  <small><small>$lgsl</small></small>":TXT "$srce" \
 		--field=":lbl" "" \
 		--field="<small><small>$topic</small></small>:CB" \
-		"$ttle!New*!$tpcs" "$field")
+		"$ttle!$new*!$tpcs" "$field")
 		ret=$?
 		trgt=$(echo "$lzgpr" | tail -5 | sed -n 1p | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
 		srce=$(echo "$lzgpr" | tail -5 | sed -n 3p | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
@@ -884,11 +884,11 @@ elif [ $1 = edt ]; then
 		
 		nw=$(cat "$DC_tlt/cnfg3" | wc -l)
 		left=$((50 - $nw))
-		info=$(echo " $remain  <b>"$left"</b> $remain-1")
+		info=$(echo " $remain  <b>"$left"</b> $words")
 		if [ $nw -ge 45 ]; then
-			info=$(echo " $remain  <span color='#EA355F'><b>"$left"</b></span>  $remain-1")
+			info=$(echo " $remain  <span color='#EA355F'><b>"$left"</b></span>  $words")
 		elif [ $nw -ge 49 ]; then
-			info=$(echo " $remain-1  <span color='#EA355F'><b>"$left"</b></span>  $remain-3 ")
+			info=$(echo " $remain  <span color='#EA355F'><b>"$left"</b></span>  $word")
 		fi
 
 		mkdir $DT/$c

@@ -1,5 +1,7 @@
 #!/bin/bash
+# -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
+source $DS/ifs/trans/$lgs/others.conf
 $DS/stop.sh T
 
 gtdr="$(cd "$(dirname "$0")" && pwd)"
@@ -74,8 +76,7 @@ if [ -d "$DC_tlt" ]; then
 	
 	if [[ $(($chk4 + $chk5)) != $chk1 \
 	|| $(($chk2 + $chk3)) != $chk1 ]]; then
-		notify-send -i idiomind "Error en indice" \
-		"Repararando..." -t 2000 &
+		notify-send -i idiomind "$index_err1" "$index_err2" -t 3000 &
 		
 		rm -f $DT/ind
 		rm -f $DT/ind_ok
@@ -203,12 +204,12 @@ if [ -d "$DC_tlt" ]; then
 		"$DS/add.sh n_i"
 	fi
 	notify-send --icon=idiomind \
-	"$topic" "It's your topic now" -t 2000 & exit
+	"$topic" "$its_your_topic_now" -t 2000 & exit
 else
 	$yad --name=idiomind \
 	--image="error" --sticky --center \
-	--text=" <b>no se encuentra la ruta del archivo  </b>\\n para el topic : <b>$topic</b>   \\n" --on-top \
+	--text="  <b>$path_err  </b>\\n  <b>$topic</b>\\n" --on-top \
 	--image-on-top --width=400 --height=80 --borders=3 \
 	--skip-taskbar --window-icon=idiomind \
-	--title="Error" --button="gtk-ok:0" & exit
+	--title="$err" --button="Ok:0" & exit
 fi

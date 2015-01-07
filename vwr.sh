@@ -57,7 +57,7 @@ if [ -f "$DM_tlt/words/$nme.mp3" ]; then
 	--field="":lbl \
 	--field="<i><span color='#808080'>$exmp1</span></i>\\n:lbl" "$dfnts" "$ntess" \
 	--width="$wth" --height="$eht" --center \
-	--button=gtk-edit:4 --button="Listen:play '$DM_tlt/words/$nme.mp3'" \
+	--button=gtk-edit:4 --button="Play":"play '$DM_tlt/words/$nme.mp3'" \
 	--button=gtk-go-up:3 --button=gtk-go-down:2 \
 	--dclick-action=/usr/share/idiomind/audio/pl >/dev/null 2>&1
 	
@@ -86,7 +86,7 @@ elif [ -f "$DM_tlt/$nme.mp3" ]; then
 	--text="<big><big>$trgt</big></big>\\n\\n<i>$src</i>\\n\\n\\n" \
 	--width="$wth" --height="$eht" --center \
 	--column="$lgtl":TEXT --column="$lgsl":TEXT \
-	--button=gtk-edit:4 --button="Listen:$DS/audio/ply2 '$nme'" \
+	--button=gtk-edit:4 --button="play":"$DS/audio/ply2 '$nme'" \
 	--button=gtk-go-up:3 --button=gtk-go-down:2 \
 	--dclick-action=/usr/share/idiomind/audio/pl >/dev/null 2>&1
 else

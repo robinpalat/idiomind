@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/trans/$lgs/play.conf
+source $DS/ifs/trans/$lgs/others.conf
 
 if [[ "$1" = d ]]; then
 	u=$(echo "$(whoami)")
