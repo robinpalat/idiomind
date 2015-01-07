@@ -22,7 +22,7 @@ if [[ $1 = 2 ]]; then
 		echo "$title" >> $DC_s/cnfg6
 		echo "Normal" >> $DC_s/cnfg6
 		sleep 1
-		$DS/default/pnls & exit 1
+		"$DS/add.sh n_i" & exit 1
 	fi
 fi
 

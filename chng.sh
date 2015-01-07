@@ -280,7 +280,7 @@ elif [ "$1" != chngi ]; then
 				exit 1
 			elif [ $ret -eq 0 ]; then
 				if [ -n "$1" ]; then
-					$DC_tl/"$VAR/tpc.sh" && $DS/add.sh n_i & exit 1
+					$DC_tl/"$VAR/tpc.sh" 2 && $DS/add.sh n_i & exit 1
 				else
 					$DC_tl/"$VAR/tpc.sh" & exit 1
 				fi
