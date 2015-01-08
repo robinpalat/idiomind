@@ -3,13 +3,11 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/practice.conf
-
 DSP="$DS/addons/Practice/"
 strt="$DSP/strt"
 IND='play $DSP/all.mp3'
 w9="$DC/addons/practice/w9"
 w6="$DC/addons/practice/w6"
-
 DF=$DSP/df.sh
 DLW=$DSP/dlw.sh
 DMC=$DSP/dmc.sh
@@ -17,7 +15,6 @@ DLS=$DSP/dls.sh
 Wi="$DC_tlt/cnfg3"
 Si="$DC_tlt/cnfg4"
 Li="$DC_tlt/cnfg1"
-
 
 if [ "$1" = f ]; then
 
@@ -62,7 +59,6 @@ if [ "$1" = f ]; then
 
 	$DF 1 # ---------------------------
 
-	
 	s1=$(cat  f_r)
 	s2=$(cat fin.1.ok | wc -l)
 	s3=$(($s1 + $s2))

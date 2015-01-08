@@ -2,8 +2,6 @@
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/edit.conf
-int="$(sed -n 27p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
-btn="$(sed -n 21p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
 
 if [ $1 = edit ]; then
 	ttl=$(sed -n 2p $DC_s/cnfg6)
@@ -535,8 +533,6 @@ elif [ "$1" = edt ]; then
 				sed -i "s/${nme}/${fln}/" "$DC_tlt/cnfg1"
 				sed -i "s/${nme}/${fln}/" "$DC_tlt/cnfg0"
 				sed -i "s/${nme}/${fln}/" "$DC_tlt/cnfg2"
-				sed -i "s/${nme}/${fln}/" "$DC_tlt/indsa"
-				sed -i "s/${nme}/${fln}/" "$DC_tlt/indse"
 				sed -i "s/${nme}/${fln}/" "$DC_tlt/Practice/lsin.tmp"
 
 				mv -f "$DM_tlt/$nme".mp3 "$DM_tlt/$fln".mp3

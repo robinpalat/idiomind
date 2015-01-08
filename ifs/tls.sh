@@ -44,8 +44,8 @@ elif [ $1 = mkdnt ]; then
 	exit
 
 elif [ $1 = web ]; then
-	lng=$(echo "$lgt" | awk '{print tolower($0)}')
-	xdg-open http://$lgsl.idiomind.com.ar/$lng
+	lgtl=$(echo "$lgtl" | awk '{print tolower($0)}')
+	xdg-open http://tmp.site50.net/$lgs/$lgtl
 	exit
 
 elif [ $1 = isrc ]; then

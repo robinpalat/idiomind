@@ -1,9 +1,9 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
+
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/others.conf
 $DS/stop.sh T
-
 gtdr="$(cd "$(dirname "$0")" && pwd)"
 topic=$(echo "$gtdr" | sed 's|\/|\n|g' | sed -n 8p)
 DC_tlt="$DC_tl/$topic"
@@ -16,13 +16,14 @@ fi
 
 if [[ $1 = 2 ]]; then
 	if cat "$DC_tl/.cnfg3" | grep -Fxo "$topic"; then
-		$DC_s/chng.sh $DS/ifs/info2 2 & exit 1
+		source $DS/ifs/trans/$lgs/topics_lists.conf
+		$DS/chng.sh "$no_topic" 2 & exit 1
 	else
 		echo "$topic" > $DC_s/cnfg6
 		echo "$title" >> $DC_s/cnfg6
 		echo "Normal" >> $DC_s/cnfg6
 		sleep 1
-		"$DS/add.sh n_i" & exit 1
+		"$DS/add.sh" n_i & exit 1
 	fi
 fi
 
@@ -32,7 +33,7 @@ if [ -d "$DC_tlt" ]; then
 	chk3="$DC_tlt/cnfg2"
 	chk4="$DC_tlt/cnfg3"
 	chk5="$DC_tlt/cnfg4"
-	chk6="$DC_tlt/nt"
+	chk6="$DC_tlt/cnfg10"
 	
 	if [[ -z "$cat chk1" ]]; then
 		cp -f "$DC_tlt/cnfg0~" "$DC_tlt/cnfg0"
@@ -44,7 +45,7 @@ if [ -d "$DC_tlt" ]; then
 		cp -f "$DC_tlt/cnfg2~" "$DC_tlt/cnfg2"
 	fi
 	if [[ -z "$cat chk6" ]]; then
-		cp -f "$DC_tlt/.nt~" "$DC_tlt/nt"
+		cp -f "$DC_tlt/.cnfg10~" "$DC_tlt/cnfg10"
 	fi
 	
 	if [ -n "$(cat "$chk1" | sort -n | uniq -dc)" ]; then
@@ -142,7 +143,7 @@ if [ -d "$DC_tlt" ]; then
 	fi
 	
 	if cat "$DC_tl/.cnfg3" | grep -Fxo "$topic"; then
-		$ > $DC_s/cnfg6
+		> $DC_s/cnfg6
 		echo "$topic" > $DC_s/cnfg8
 		echo istll >> $DC_s/cnfg8
 		echo "$title" >> $DC_s/cnfg8
@@ -169,29 +170,29 @@ if [ -d "$DC_tlt" ]; then
 			elif [ $dts = 2 ]; then
 				dte=$(sed -n 2p "$DC_tl/$topic/cnfg9")
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-				RM=$((100*$TM/25))
+				RM=$((100*$TM/15))
 			elif [ $dts = 3 ]; then
 				dte=$(sed -n 3p "$DC_tl/$topic/cnfg9")
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-				RM=$((100*$TM/60))
+				RM=$((100*$TM/30))
 			elif [ $dts = 4 ]; then
 				dte=$(sed -n 4p "$DC_tl/$topic/cnfg9")
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-				RM=$((100*$TM/150))
+				RM=$((100*$TM/60))
 			fi
 			nstll=$(grep -Fxo "$topic" "$DC_tl/.cnfg3")
 			if [ -n "$nstll" ]; then
 				if [ "$RM" -ge 100 ]; then
 					echo "9" > "$DC_tl/$topic/cnfg8"
 				fi
-				if [ "$RM" -ge 200 ]; then
+				if [ "$RM" -ge 150 ]; then
 					echo "10" > "$DC_tl/$topic/cnfg8"
 				fi
 			else
 				if [ "$RM" -ge 100 ]; then
 					echo "4" > "$DC_tl/$topic/cnfg8"
 				fi
-				if [ "$RM" -ge 200 ]; then
+				if [ "$RM" -ge 150 ]; then
 					echo "5" > "$DC_tl/$topic/cnfg8"
 				fi
 			fi
