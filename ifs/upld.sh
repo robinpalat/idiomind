@@ -3,16 +3,15 @@
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/upld.conf
 
-if [ $1 = vsd ]; then
+if [[ $1 = vsd ]]; then
 	userid=$(sed -n 1p $HOME/.config/idiomind/s/cnfg4)
 	lng=$(echo "$lgtl" |  awk '{print tolower($0)}')
 	wth=$(sed -n 4p $DC_s/cnfg18)
 	eht=$(sed -n 3p $DC_s/cnfg18)
 	cd $DM_t/saved
-	ls -t *cnfg13 > ls
-	(sed -i 's/cnfg13//g' ./ls)
-
-	cat ./ls | $yad --list --on-top \
+	ls -t *.cnfg13 > ls
+	(sed -i 's/\.cnfg13//g' ./ls)
+	cat ./ls | $yad --list \
 	--window-icon=idiomind --center --skip-taskbar \
 	--buttons-layout=edge --borders=8 \
 	--text=" <small>$double_click_for_download \\t\\t\\t\\t</small>" \
@@ -22,34 +21,36 @@ if [ $1 = vsd ]; then
 	--button="$search_topics":"/usr/share/idiomind/ifs/tls.sh web" \
 	--button="$close":1 \
 	--dclick-action='/usr/share/idiomind/ifs/upld.sh infsd'
-	
 			["$?" -eq 0 ]
 				killall topic.sh
 				rm $DT/lista
 			[ "$?" -eq 1 ] & exit
 	exit 1
 	
-elif [ $1 = infsd ]; then
+elif [[ $1 = infsd ]]; then
+	echo "$2"
 	cd $DM_t/saved
 	userid=$(sed -n 1p $DC_s/cnfg4)
 	user=$(echo "$(whoami)")
 	tpcd="$2"
-	NM=$(sed -n 1p ./"$tpcd"cnfg13)
-	LNGT=$(sed -n 2p ./"$tpcd"cnfg13)
-	lngs=$(sed -n 5p ./"$tpcd"cnfg13)
-	ATR=$(sed -n 6p ./"$tpcd"cnfg13)
-	SKP=$(sed -n 7p ./"$tpcd"cnfg13)
-	ML=$(sed -n 8p ./"$tpcd"cnfg13)
-	CTGY=$(sed -n 9p ./"$tpcd"cnfg13)
-	LNK=$(sed -n 10p ./"$tpcd"cnfg13)
+	NM=$(sed -n 1p ./"$tpcd".cnfg13)
+	LNGT=$(sed -n 2p ./"$tpcd".cnfg13)
+	LNGS=$(sed -n 4p ./"$tpcd".cnfg13)
+	lngs=$(sed -n 5p ./"$tpcd".cnfg13)
+	ATR=$(sed -n 6p ./"$tpcd".cnfg13)
+	SKP=$(sed -n 7p ./"$tpcd".cnfg13)
+	ML=$(sed -n 8p ./"$tpcd".cnfg13)
+	CTGY=$(sed -n 9p ./"$tpcd".cnfg13)
+	LNK=$(sed -n 10p ./"$tpcd".cnfg13)
 	nme=$(echo "$tpcd" | sed 's/ /_/g')
-	icon=$DS/images/idmnd.png
-	file="http://currently.url.ph/$lgs/$lgtl/$Ctgry/$nme/$userid.$tpcd.idmnd"
+	lnglbl=$(echo $lgtl | awk '{print tolower($0)}')
+	icon=$DS/images/img6.png
+	file="$LNK"
 
-	$yad --borders=15 --width=450 --height=180 --fixed \
-	--on-top --skip-taskbar --center --image=$icon --geometry=0-0-0-0 \
-	--title="idiomind" --button="   $download   :0" \
-	--button="  Close  :1" --text="<b>$NM</b>\\n<small>$LNGT $language </small> \\n<small><a href='$LNK'>$NM</a></small>"
+	yad --borders=10 --width=400 --height=150 \
+	--on-top --skip-taskbar --center --image=$icon \
+	--title="idiomind" --button="$download:0" --button="Close:1" \
+	--text="<b><a href='$LNK'>$NM</a></b>\\n<small>$LNGS <b>></b> $LNGT </small> \\n"
 		ret=$?
 
 		if [ $ret -eq 2 ]; then
@@ -104,9 +105,7 @@ elif [ $1 = infsd ]; then
 			WGET "$file"
 			
 			if [ -f "/tmp/$userid.$tpcd.idmnd" ] ; then
-			
 				mv -f "/tmp/$userid.$tpcd.idmnd" "$sv"
-				
 			else
 				$yad --fixed --name=idiomind --center \
 				--image=info --text="<b>file_err</b>" \
@@ -134,43 +133,43 @@ chk2="$DC_tlt/cnfg1"
 chk3="$DC_tlt/cnfg2"
 chk4="$DC_tlt/cnfg3"
 chk5="$DC_tlt/cnfg4"
-chk6="$DC_tlt/nt"
+chk6="$DC_tlt/cnfg10"
 
-if [ -z "$cat chk1" ]; then
+if [[ -z "$cat chk1" ]]; then
 	cp -f "$DC_tlt/cnfg0~" "$DC_tlt/cnfg0"
 fi
-if [ -z "$cat chk2" ]; then
+if [[ -z "$cat chk2" ]]; then
 	cp -f "$DC_tlt/cnfg1~" "$DC_tlt/cnfg1"
 fi
-if [ -z "$cat chk3" ]; then
+if [[ -z "$cat chk3" ]]; then
 	cp -f "$DC_tlt/cnfg2~" "$DC_tlt/cnfg2"
 fi
-if [ -z "$cat chk4" ]; then
+if [[ -z "$cat chk4" ]]; then
 	cp -f "$DC_tlt/cnfg3~" "$DC_tlt/cnfg3"
 fi
-if [ -z "$cat chk5" ]; then
+if [[ -z "$cat chk5" ]]; then
 	cp -f "$DC_tlt/cnfg4~" "$DC_tlt/cnfg4"
 fi
-if [ -z "$cat chk6" ]; then
-	cp -f "$DC_tlt/.nt~" "$DC_tlt/nt"
+if [[ -z "$cat chk6" ]]; then
+	cp -f "$DC_tlt/.cnfg10~" "$DC_tlt/cnfg10"
 fi
-if [ -n "$(cat "$chk1" | sort -n | uniq -dc)" ]; then
+if [[ -n "$(cat "$chk1" | sort -n | uniq -dc)" ]]; then
 	cat "$chk1" | awk '!array_temp[$0]++' > $DT/ls0.x
 	sed '/^$/d' $DT/ls0.x > "$chk1"
 fi
-if [ -n "$(cat "$chk2" | sort -n | uniq -dc)" ]; then
+if [[ -n "$(cat "$chk2" | sort -n | uniq -dc)" ]]; then
 	cat "$chk2" | awk '!array_temp[$0]++' > $DT/ls1.x
 	sed '/^$/d' $DT/ls1.x > "$chk2"
 fi
-if [ -n "$(cat "$chk3" | sort -n | uniq -dc)" ]; then
+if [[ -n "$(cat "$chk3" | sort -n | uniq -dc)" ]]; then
 	cat "$chk3" | awk '!array_temp[$0]++' > $DT/ls2.x
 	sed '/^$/d' $DT/ls2.x > "$chk3"
 fi
-if [ -n "$(cat "$chk4" | sort -n | uniq -dc)" ]; then
+if [[ -n "$(cat "$chk4" | sort -n | uniq -dc)" ]]; then
 	cat "$chk4" | awk '!array_temp[$0]++' > $DT/ls1.x
 	sed '/^$/d' $DT/ls1.x > "$chk4"
 fi
-if [ -n "$(cat "$chk5" | sort -n | uniq -dc)" ]; then
+if [[ -n "$(cat "$chk5" | sort -n | uniq -dc)" ]]; then
 	cat "$chk5" | awk '!array_temp[$0]++' > $DT/ls2.x
 	sed '/^$/d' $DT/ls2.x > "$chk5"
 fi
@@ -295,7 +294,7 @@ Mail=$(echo "$upld" | cut -d "|" -f3)
 Skype=$(echo "$upld" | cut -d "|" -f4)
 Ctgry=$(echo "$upld" | cut -d "|" -f5)
 Notes=$(echo "$upld" | cut -d "|" -f6 | sed 's/\n/ /g')
-link=$(echo http://$lgs.idiomind.com.ar/$lnglbl/$Ctgry/"$userid"/"$nme")
+link="http://tmp.site50.net/$lgs/$lnglbl/$Ctgry/$userid.$nme.idmnd"
 
 mkdir "$DT/$nme"
 mkdir "$DT/$tpc"
@@ -309,7 +308,7 @@ echo ""$tpc"
 "$Skype"
 "$Ctgry"
 "$link"
-"$Notes"" > "$DT/$tpc"/cnfg13
+"$Notes"" > "$DT/$nme/cnfg13"
 echo "$userid" > $DC_s/cnfg4
 echo "$Skype" >> $DC_s/cnfg4
 echo "$Mail" >> $DC_s/cnfg4
@@ -351,6 +350,7 @@ while [ $n -le $(cat "$DC_tlt/cnfg5" | wc -l) ]; do
 	let n++
 done
 
+mv -f "$DT/$nme/cnfg13" "$DT/$tpc/cnfg13"
 cp -f "$DC_tlt/cnfg0" "$DT/$tpc/cnfg0"
 cp -f "$DC_tlt/cnfg3" "$DT/$tpc/cnfg3"
 cp -f "$DC_tlt/cnfg4" "$DT/$tpc/cnfg4"
@@ -362,24 +362,21 @@ mv "$tpc.tar.gz" "$userid.$tpc.idmnd"
 rm -f "$tpc"/*
 
 notify-send "$uploading..." "$wait" -i idiomind -t 6000
-
 wget http://www.idmnd.2fh.co/data/.PASS_TMP
-
 HOST=$(sed -n 1p .PASS_TMP)
 USER=$(sed -n 2p .PASS_TMP)
 PASS=$(sed -n 3p .PASS_TMP)
 
 #-----------------------
-NAME=$(echo "$tpc" | sed 's/ /_/g')
 dte=$(date "+%d %B %Y")
 #mkdir $DT/mkhtml
 #cp -f "$DC_tlt/cnfg3" $DT/mkhtml/w.inx.l
 #cp -f "$DC_tlt/cnfg4" $DT/mkhtml/s.inx.l
 #iw=$DT/mkhtml/w.inx.l
 #is=$DT/mkhtml/s.inx.l
-#mkdir $DT/$NAME
-#mkdir $DT/$NAME/images
-#cp -f "$DT/$userid.$tpc.idmnd" $DT/$NAME/
+
+#mkdir $DT/$nme/images
+mv -f "$DT/$userid.$tpc.idmnd" $DT/$nme/
 #cd $DT/mkhtml
 
 ##-----------------------
@@ -388,7 +385,7 @@ dte=$(date "+%d %B %Y")
 	#WL=$(sed -n "$n"p  $iw)
 	#if [ -f "$DM_tlt/words/images/$WL.jpg" ]; then
 		#convert "$DM_tlt/words/images/$WL.jpg" -font Verdana-Bold -gravity south -pointsize 35 -fill white -draw \
-		#"text 0 0 \"$WL\"" -stroke gray22 -draw "text 0 -1 $WL" "$DT/$NAME/images/$n.jpg"
+		#"text 0 0 \"$WL\"" -stroke gray22 -draw "text 0 -1 $WL" "$DT/$nme/images/$n.jpg"
 	#fi
 	#tgs=$(eyeD3 "$DM_tlt/words/$WL.mp3")
 	#wt=$(echo "$tgs" | grep -o -P "(?<=IWI1I0I).*(?=IWI1I0I)")
@@ -432,13 +429,13 @@ dte=$(date "+%d %B %Y")
 ##-----------------------htmlquiz
 #if [ -n "$(cat $iw)" ]; then
 #echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-#<html xmlns="http://www.w3.org/1999/xhtml">' > $DT/$NAME/flashcards.html
+#<html xmlns="http://www.w3.org/1999/xhtml">' > $DT/$nme/flashcards.html
 #echo '<head>
 #<title>'$tpc'</title>
 #<link rel="stylesheet" href="ln/flashcards.css" media="screen" />
 #<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
 #<script>window.jQuery || document.write("<script src="jquery-1.6.2.min.js">\x3C/script>")</script>
-#</head>' >> $DT/$NAME/flashcards.html
+#</head>' >> $DT/$nme/flashcards.html
 
 ##-----------------------htmlhome
 
@@ -474,13 +471,13 @@ dte=$(date "+%d %B %Y")
 #<script type="text/javascript">
    #var embedHeight = 440; 
    #var embedWidth =  850;
-#</script>' >> $DT/$NAME/flashcards.html
+#</script>' >> $DT/$nme/flashcards.html
 
 ##-----------------------htmlhome
 
 #echo '<script type="text/javascript">
      #//<![CDATA[
-  #var stack = {name : "'$tpc'",description : "'$tpc'",nextCardId : "50" ,numCards : "49" ,columnNames : [ "'$lgtl'","'$lgsl'"], data : [' >> $DT/$NAME/flashcards.html
+  #var stack = {name : "'$tpc'",description : "'$tpc'",nextCardId : "50" ,numCards : "49" ,columnNames : [ "'$lgtl'","'$lgsl'"], data : [' >> $DT/$nme/flashcards.html
 
 #n=1
 #while [ $n -le "$(cat $DT/mkhtml/W.lizt.x | wc -l)" ]; do
@@ -490,7 +487,7 @@ dte=$(date "+%d %B %Y")
 	#let n++
 #done
 
-#cat flashcards | tr '\n' ',' >> $DT/$NAME/flashcards.html
+#cat flashcards | tr '\n' ',' >> $DT/$nme/flashcards.html
 
 ##-----------------------
 
@@ -509,12 +506,12 @@ dte=$(date "+%d %B %Y")
 #</main>
 #<footer role="contentinfo">
 #</footer>
-#</div></html>' >> $DT/$NAME/flashcards.html
+#</div></html>' >> $DT/$nme/flashcards.html
 #fi
 ##-----------------------
 
 #echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-#<html xmlns="http://www.w3.org/1999/xhtml">' > $DT/$NAME/index.html
+#<html xmlns="http://www.w3.org/1999/xhtml">' > $DT/$nme/index.html
 
 #echo '<head>
 #<html lang="en" id="abId0.5137621304020286"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -556,7 +553,7 @@ dte=$(date "+%d %B %Y")
             #<header>
               #<h1>'$tpc'</h1>
              #</header>
-             #<div class="entry">' >> $DT/$NAME/index.html
+             #<div class="entry">' >> $DT/$nme/index.html
 
 ##-----------------------images
 
@@ -564,19 +561,19 @@ dte=$(date "+%d %B %Y")
 
 #if [ $(ls -1 *.jpg 2>/dev/null | wc -l) != 0 ]; then
 	#echo '<div class="entry">
-	#<div id="myGallery" class="spacegallery">' >> $DT/$NAME/index.html
+	#<div id="myGallery" class="spacegallery">' >> $DT/$nme/index.html
 	
-	#cd $DT/$NAME/images/
+	#cd $DT/$nme/images/
 	#ls *.jpg > $DT/mkhtml/nimg
 	#cd $DT/mkhtml/
 	#n=1
 	#while [ $n -le "$(cat nimg | wc -l)" ]; do
 		#nimg=$(sed -n "$n"p nimg)
-		#echo '<img src="images/'$nimg'" alt="" />' >> $DT/$NAME/index.html
+		#echo '<img src="images/'$nimg'" alt="" />' >> $DT/$nme/index.html
 		#let n++
 	#done
 
-	#echo '</div>' >> $DT/$NAME/index.html
+	#echo '</div>' >> $DT/$nme/index.html
 
 #fi
 
@@ -639,9 +636,9 @@ dte=$(date "+%d %B %Y")
 			#<a name="'$n'"></a>
 			#<p>&nbsp;</p>
 			#<p>&nbsp;</p>' >> ./Wgprs.tmp
-			#cat ./Sgprt.tmp >> $DT/$NAME/index.html
-			#cat ./Sgprs.tmp >> $DT/$NAME/index.html
-			#cat ./Wgprs.tmp >> $DT/$NAME/index.html
+			#cat ./Sgprt.tmp >> $DT/$nme/index.html
+			#cat ./Sgprs.tmp >> $DT/$nme/index.html
+			#cat ./Wgprs.tmp >> $DT/$nme/index.html
 		#fi
 	#let n++
 #done
@@ -671,11 +668,11 @@ dte=$(date "+%d %B %Y")
       #<p><a href="'$lt1'">'$ot1'</a></p>
       #<p><a href="'$lt2'">'$ot2'</a></p>
       #<p><a href="'$lt3'">'$ot3'</a></p>
-	  #<p><a href="'$lt4'">'$ot4'</a></p>' >> $DT/$NAME/index.html
+	  #<p><a href="'$lt4'">'$ot4'</a></p>' >> $DT/$nme/index.html
 		#if [ -n "$(cat $iw)" ]; then
 		#echo '<ul class="navigationTabs">
 		#<li><a href="./flashcards.html" target="_new" id="various1">Flashcards</a></li>
-		#</ul>' >> $DT/$NAME/index.html
+		#</ul>' >> $DT/$nme/index.html
 		#fi
       #echo '<p>&nbsp;</p>
       #<span class="buscarenelsitio">Busca en el sitio</span>
@@ -704,7 +701,7 @@ dte=$(date "+%d %B %Y")
      #</div>
     #</nav>
   #</aside>
-#</main>' >> $DT/$NAME/index.html
+#</main>' >> $DT/$nme/index.html
 
 ##-----------------------htmlhome
 
@@ -715,44 +712,40 @@ dte=$(date "+%d %B %Y")
         #<p>Copyright © 2015 Idiomind. All rights.</p>
 	#</div>
 #</footer>
-#</div></html>' >> $DT/$NAME/index.html
-#chmod 775  $DT/$NAME/index.html
+#</div></html>' >> $DT/$nme/index.html
+#chmod 775  $DT/$nme/index.html
 
 #-----------------------ftp
-(
+
 HOST=$HOST
 USER=$USER
 PASSWD=$PASS
 rm -f $DT/.PASS_TMP
-#cp -f -R $DS/ifs/ln $DT/$NAME
-#chmod 775 -R $DT/$NAME
-#lftp -u $USER,$PASS $HOST << END_SCRIPT
+cd $DT/$nme
+cp -f $DS/default/.index.php ./.index.php
+chmod 775 -R $DT/$nme
+lftp -u $USER,$PASS $HOST << END_SCRIPT
+mirror --reverse ./ public_html/$lgs/$lnglbl/$Ctgry/
+quit
+END_SCRIPT
 
-#-f $DT/$userid."$topic".idmnd public_html/$lgs/$lnglbl/$Ctgry/$userid."$topic".idmnd
-#quit
-#END_SCRIPT
-
-echo "$DT/28t.$topic.idmnd"
-curl -T "$DT/28t.$tpc.idmnd" -u $USER:$PASS \
-"ftp://$HOST/public_html/$lgs/$lnglbl/$Ctgry/28t.$tpc.idmnd"
 exit=$?
-
-if [ 0 = 0 ] ; then
-    cp -f "$DT/$tpc/cnfg13" "$HOME/.idiomind/topics/saved/$tpccnfg13"
-    info="$the_topic \\n<b> <a href='$link'>$tpc</a></b> \\n $saved"
+if [ $exit = 0 ] ; then
+    cp -f "$DT/$nme/cnfg13" "$DM_t/saved/$tpc.cnfg13"
+    info="<b><a href='link'>$tpc</a></b>\\n\\n<b>$saved</b>"
 else
     info="$upload_err"
 fi
-)
 
 yad --window-icon=idiomind --name=idiomind \
---image=info --on-top --text="$info" \
---image-on-top --center --fixed --sticky --geometry=320x150 \
---width=320 --height=120 --buttons-layout=right --borders=10 \
+--image=gtk-ok --on-top --text="$info" \
+--image-on-top --center --fixed --sticky \
+--width=360 --height=140 --borders=5 \
 --skip-taskbar --title=idiomind \
 --button="  Ok  ":0
 
-#rm -fr $DT/mkhtml/ $DT/.ti
-##rm -fr  $DT/"$tpc" $DT/.PASS_TMP $DT/$userid."$tpc".idmnd
-#rm $DT/.aud $DT/.img $DT/$userid."$tpc".idmnd \
-#$DT/"$tpc".tar $DT/"$tpc".tar.gz & exit 1
+[[ -f "$DT/$nme/cnfg13" ]] && rm -f "$DT/$tpc/cnfg13"
+rm -fr $DT/mkhtml/ $DT/.ti
+rm -fr  $DT/"$tpc"  $DT/$userid."$tpc".idmnd
+rm $DT/.aud $DT/.img $DT/$userid."$tpc".idmnd \
+$DT/"$tpc".tar $DT/"$tpc".tar.gz & exit 1

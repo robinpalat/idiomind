@@ -79,7 +79,7 @@ elif [ -f "$DM_tlt/$nme.mp3" ]; then
 		(killall play & sleep 0.3 && play "$DM_tlt/$nme.mp3") &
 	fi
 	
-	echo "$lwrd" | $yad --list --print-column=0 \
+	echo "$lwrd" | $yad --list --print-column=0 --no-headers \
 	--window-icon=idiomind --scroll --text-align=center \
 	--skip-taskbar --center --title=" " --borders=10 \
 	--on-top --selectable-labels --expand-column=0 \
