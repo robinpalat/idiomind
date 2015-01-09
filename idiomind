@@ -320,7 +320,7 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 	cc=$(sed -n 1p "$tmp/cnfg13")
 	cgy=$(sed -n 9p "$tmp/cnfg13")
 	nt=$(sed -n 11p "$tmp/cnfg13")
-	[[ $(echo "$nt" | wc -c) -gt 200 ]] && nt="${nt:0:250}..."
+
 	ICON=idiomind
 	
 	if [ "$inme" != "$cc" ]; then
@@ -340,9 +340,14 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 		cd "$tmp"
 		ws=$(cat "cnfg3" | wc -l)
 		ss=$(cat "cnfg4" | wc -l)
-		itxt="<big><b>$title</b></big><small><small><b>\\n$lgsli  -  $lgtli \\n$category:  $cgy.\\ncreated_by:  $crea.\\n$ss  $sentences  -  $ws  $words</b></small></small>\\n\\n<small>$nt\\n</small>"
+		if [[ -z "$nt" ]]; then
+			itxt="<big><b>$title</b></big><small><small><b>\\n$lgsli  -  $lgtli \\n$category:  $cgy.\\ncreated_by:  $crea.\\n$ss  $sentences  -  $ws  $words</b></small></small><small>\n</small>"
+		elif [[ ! -z "$nt" ]]; then
+			[[ $(echo "$nt" | wc -c) -gt 200 ]] \
+			&& nt="${nt:0:250}..." || nt="$nt"
+			itxt="<big><b>$title</b></big><small><small><b>\\n$lgsli  -  $lgtli \\n$category:  $cgy.\\ncreated_by:  $crea.\\n$ss  $sentences  -  $ws  $words</b></small></small><small>\n\n$nt\n</small>"
+		fi
 		dlck="$DT/p1.$c"
-		
 		cat "$tmp/cnfg0" | awk '{print $0""}' | \
 		$yad --list --name=Idiomind --title="Idiomind" \
 		--ellipsize=END --print-all --image-on-top \
