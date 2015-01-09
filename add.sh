@@ -1,5 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
+
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/add.conf
 if [ $1 = n_t ]; then
@@ -19,10 +20,9 @@ if [ $1 = n_t ]; then
 		fi
 		#--------------normal
 		jlbi=$($yad --window-icon=idiomind \
-		--form --center --field="" "$nmt" --title="$tle" \
-		--width=440 --height=140 --name=idiomind --on-top \
-		--skip-taskbar --borders=5 --button=gtk-ok:0 \
-		--text="<small>  $name_for_new_topic </small>")
+		--form --center --field="$name_for_new_topic" "$nmt" --title="$tle" \
+		--width=440 --height=100 --name=idiomind --on-top \
+		--skip-taskbar --borders=5 --button=gtk-ok:0)
 		
 		jlb=$(echo "$jlbi" | cut -d "|" -f1 | sed s'/!//'g \
 		| sed s'/&//'g | sed s'/\://'g | sed s'/\&//'g \
@@ -97,7 +97,7 @@ if [ $1 = n_t ]; then
 		fi
 		
 		if [ $info2 -ge 50 ]; then
-			$yad --name=idiomind --center --image=info \
+			yad --name=idiomind --center --image=info \
 			--text=" <b>$topics_max </b>" \
 			--image-on-top --sticky --on-top \
 			--width=430 --height=120 --borders=3 \
@@ -107,10 +107,9 @@ if [ $1 = n_t ]; then
 		
 		jlbi=$($yad --window-icon=idiomind \
 		--form --center --title="$new_topic"  --separator="\n" \
-		--width=440 --height=140 --name=idiomind --on-top \
+		--width=440 --height=100 --name=idiomind --on-top \
 		--skip-taskbar --borders=5 --button=gtk-ok:0 \
-		--text="<small>  $name_for_new_topic </small>" \
-		--field=" : " "$nmt")
+		--field=" $name_for_new_topic: " "$nmt")
 			
 		jlb=$(echo "$jlbi" | sed -n 1p | cut -d "|" -f1 | sed s'/!//'g \
 		| sed s'/&//'g | sed s'/://'g | sed s'/\&//'g \

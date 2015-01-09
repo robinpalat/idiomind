@@ -22,10 +22,10 @@ if [ "$1" = dlck ]; then
 	else
 		stts=no_activos
 	fi
-	edt=$($yad --text-info --width=350 --height=250 \
+	edt=$(yad --text-info --width=450 --height=450 \
 	--filename=$HOME/.config/idiomind/addons/dict/$stts/"$3".$lgt \
 	--editable --show-uri --wrap --on-top \
-	--fixed --skip-taskbar --center \
+	--skip-taskbar --center \
 	--title=Edit --window-icon=idiomind \
 	--button=Delete:2 --button=Save:0)
 	ret=$?
@@ -79,12 +79,12 @@ elif [ "$3" = cnf ]; then
 	D=$(mktemp $DT/D.XXXX)
 	cat "$DICT/.listdicts" | $yad --list --title=" " \
 	--center --on-top --expand-column=2 --text="$tex" --window-icon=idiomind \
-	--width=350 --height=250 --skip-taskbar --separator=" " \
+	--width=400 --height=280 --skip-taskbar --separator=" " \
 	--borders=10 --button="$add":2 --print-all --button=Ok:0 \
 	--column=" ":CHK --column="$availables":TEXT \
 	--column="$languages":TEXT \
 	--buttons-layout=edge --always-print-result \
-	--dclick-action='/usr/share/idiomind/plugins/Dics/dict dlck' \
+	--dclick-action='/usr/share/idiomind/addons/Dics/dict dlck' \
 	--title="Dictionarys" > "$D"
 	ret=$?
 	
@@ -109,7 +109,7 @@ elif [ "$3" = cnf ]; then
 					--width=230 --height=80 --borders=3 --button="gtk-ok:0" \
 					--skip-taskbar --window-icon=idiomind
 				fi
-				$DS/plugins/Dics/dict 1 1 cnf & exit
+				$DS/addons/Dics/dict 1 1 cnf & exit
 			fi
 		
 		elif [ "$ret" -eq 0 ]; then

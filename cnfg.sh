@@ -17,6 +17,14 @@ if [ ! -d "$DC" ]; then
 	$DS/cnfg & exit
 fi
 
+function confirm() {
+	$yad --form --center --borders=5 --image=dialog-warning \
+	--title="$cuestion" --on-top --window-icon=idiomind \
+	--skip-taskbar --button="cancel":1 --button=Ok:0 \
+	--text "<span color='#636363'>  <b>starting1  </b></span>" \
+	--width=310 --height=80 
+}
+
 c=$(echo $(($RANDOM%100000)))
 KEY=$c
 cnf1=$(mktemp $DT/cnf1.XXXX)
@@ -38,8 +46,8 @@ img5=applications-other
 img6=applications-other
 
 $yad --plug=$KEY --tabnum=1 --borders=15 --scroll \
-	--separator="\\n" --form --no-headers \
-	--field="$general_options:lbl" "#1" \
+	--separator="\\n" --form --no-headers --align=right \
+	--field="$general_options\t":lbl "#1" \
 	--field=":lbl" "#2"\
 	--field="$use_g_color:CHK" $sttng3 \
 	--field="$dialog_word_Selector:CHK" $sttng4 \
@@ -49,7 +57,7 @@ $yad --plug=$KEY --tabnum=1 --borders=15 --scroll \
 	--field="<small>$voice_syntetizer</small>:CB5" "$sttng8" \
 	--field="<small>$record_audio</small>:CB5" "$sttng9" \
 	--field=" :lbl" "#10"\
-	--field="$languages:lbl" "#11" \
+	--field="$languages\t":lbl "#11" \
 	--field=":lbl" "#12"\
 	--field="$languages_learning:CB" "$lgtl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
 	--field="$your_language:CB" "$lgsl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" > "$cnf1" &
@@ -346,44 +354,74 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 		fi
 
 		if cat "$cnf1" | sed -n 14p | grep "English" && [ English != $lgsl ] ; then
-			echo "en" > $DC_s/cnfg9
-			echo "english" >> $DC_s/cnfg9
+			confirm
+			if [ $? -eq 0 ]; then
+				echo "en" > $DC_s/cnfg9
+				echo "english" >> $DC_s/cnfg9
+			fi
 		fi
 		if cat "$cnf1" | sed -n 14p | grep "French" && [ French != $lgsl ] ; then
-			echo "fr" > $DC_s/cnfg9
-			echo "french" >> $DC_s/cnfg9
+			confirm
+			if [ $? -eq 0 ]; then
+				echo "fr" > $DC_s/cnfg9
+				echo "french" >> $DC_s/cnfg9
+			fi
 		fi
 		if cat "$cnf1" | sed -n 14p | grep "German" && [ German != $lgsl ] ; then
-			echo "de" > $DC_s/cnfg9
-			echo "german" >> $DC_s/cnfg9
+			confirm
+			if [ $? -eq 0 ]; then
+				echo "de" > $DC_s/cnfg9
+				echo "german" >> $DC_s/cnfg9
+			fi
 		fi
 		if cat "$cnf1" | sed -n 14p | grep "Italian" && [ Italian != $lgsl ] ; then
-			echo "it" > $DC_s/s/cnfg9
-			echo "italian" >> $DC_s/cnfg9
+			confirm
+			if [ $? -eq 0 ]; then
+				echo "it" > $DC_s/s/cnfg9
+				echo "italian" >> $DC_s/cnfg9
+			fi
 		fi
 		if cat "$cnf1" | sed -n 14p | grep "Japanese" && [ Japanese != $lgsl ] ; then
-			echo "ja" > $DC_s/cnfg9
-			echo "japanese" >> $DC_s/cnfg9
+			confirm
+			if [ $? -eq 0 ]; then
+				echo "ja" > $DC_s/cnfg9
+				echo "japanese" >> $DC_s/cnfg9
+			fi
 		fi
 		if cat "$cnf1" | sed -n 14p | grep "Portuguese" && [ Portuguese != $lgsl ] ; then
-			echo "pt" > $DC_s/cnfg9
-			echo "portuguese" >> $DC_s/cnfg9
+			confirm
+			if [ $? -eq 0 ]; then
+				echo "pt" > $DC_s/cnfg9
+				echo "portuguese" >> $DC_s/cnfg9
+			fi
 		fi
 		if cat "$cnf1" | sed -n 14p | grep "Spanish" && [ Spanish != $lgsl ] ; then
-			echo "es" > $DC_s/cnfg9
-			echo "spanish" >> $DC_s/cnfg9
+			confirm
+			if [ $? -eq 0 ]; then
+				echo "es" > $DC_s/cnfg9
+				echo "spanish" >> $DC_s/cnfg9
+			fi
 		fi
 		if cat "$cnf1" | sed -n 14p | grep "Vietnamese" && [ Vietnamese != $lgsl ] ; then
-			echo "vi" > $DC_s/cnfg9
-			echo "vietnamese" >> $DC_s/cnfg9
+			confirm
+			if [ $? -eq 0 ]; then
+				echo "vi" > $DC_s/cnfg9
+				echo "vietnamese" >> $DC_s/cnfg9
+			fi
 		fi
 		if cat "$cnf1" | sed -n 14p | grep "Chinese" && [ Chinese != $lgsl ] ; then
-			echo "zh-cn" > $DC_s/cnfg9
-			echo "chinese" >> $DC_s/cnfg9
+			confirm
+			if [ $? -eq 0 ]; then
+				echo "zh-cn" > $DC_s/cnfg9
+				echo "chinese" >> $DC_s/cnfg9
+			fi
 		fi
 		if cat "$cnf1" | sed -n 14p | grep "Russian" && [ Russian != $lgsl ] ; then
-			echo "ru" > $DC_s/cnfg9
-			echo "russian" >> $DC_s/cnfg9
+			confirm
+			if [ $? -eq 0 ]; then
+				echo "ru" > $DC_s/cnfg9
+				echo "russian" >> $DC_s/cnfg9
+			fi
 		fi
 
 		rm -f $cnf1 $cnf2 $cnf3 & exit 1

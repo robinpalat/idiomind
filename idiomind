@@ -67,7 +67,7 @@ if [ -z "$1" ]; then
 				#topic size 3 - 4 
 				echo 450 >> $DC_s/cnfg18
 				echo 520 >> $DC_s/cnfg18
-				#trgt tamanño 5 - 6 
+				#trgt size 5 - 6 
 				echo 500 >> $DC_s/cnfg18
 				echo 320 >> $DC_s/cnfg18
 				#edit size 7 - 8
@@ -90,7 +90,7 @@ if [ -z "$1" ]; then
 				#topic size 3 - 4 
 				echo 450 >> $DC_s/cnfg18 #FIXED! #w
 				echo 520 >> $DC_s/cnfg18 #h
-				#trgt tamanño 5 - 6 
+				#trgt size 5 - 6 
 				echo 500 >> $DC_s/cnfg18
 				echo 320 >> $DC_s/cnfg18
 				#edit size 7 - 8
@@ -113,7 +113,7 @@ if [ -z "$1" ]; then
 				#topic size 3 - 4 
 				echo 430 >> $DC_s/cnfg18
 				echo 490 >> $DC_s/cnfg18
-				#trgt tamanño 5 - 6 
+				#trgt size 5 - 6 
 				echo 490 >> $DC_s/cnfg18
 				echo 320 >> $DC_s/cnfg18
 				#edit size 7 - 8 
@@ -188,7 +188,7 @@ if [ -z "$1" ]; then
 				#edit size 
 				echo 500 >> $DC_s/cnfg18
 				echo 320 >> $DC_s/cnfg18
-				#play tamañño 
+				#play size 
 				echo 500 >> $DC_s/cnfg18
 				echo 320 >> $DC_s/cnfg18
 				#new posicion 
@@ -316,9 +316,11 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 	lgtli=$(sed -n 2p "$tmp/cnfg13")
 	lng=$(sed -n 3p "$tmp/cnfg13")
 	lgsli=$(sed -n 4p "$tmp/cnfg13")
+	crea=$(sed -n 6p "$tmp/cnfg13")
 	cc=$(sed -n 1p "$tmp/cnfg13")
 	cgy=$(sed -n 9p "$tmp/cnfg13")
 	nt=$(sed -n 11p "$tmp/cnfg13")
+	[[ $(echo "$nt" | wc -c) -gt 200 ]] && nt="${nt:0:250}..."
 	ICON=idiomind
 	
 	if [ "$inme" != "$cc" ]; then
@@ -334,21 +336,17 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 		rm -fr $DT/idmimp_$c $DT/*.$c \
 		$DT/import.tar.gz
 	else
-		if [ $(echo "$inme" | wc -c) -gt 40 ]; then
-			title="${inme:0:40}..."
-		else
-			title="$inme"
-	    fi
+		[[ $(echo "$inme" | wc -c) -gt 40 ]] && title="${inme:0:40}..." || title="$inme"
 		cd "$tmp"
 		ws=$(cat "cnfg3" | wc -l)
 		ss=$(cat "cnfg4" | wc -l)
-		itxt="<big> <b>$title</b></big><small><small><b>\\n   $lgsli  -  $lgtli \\n   $category:  $cgy.\\n   $ss  $sentences  -  $ws  $words</b></small></small>\\n"
+		itxt="<big><b>$title</b></big><small><small><b>\\n$lgsli  -  $lgtli \\n$category:  $cgy.\\ncreated_by:  $crea.\\n$ss  $sentences  -  $ws  $words</b></small></small>\\n\\n<small>$nt\\n</small>"
 		dlck="$DT/p1.$c"
 		
 		cat "$tmp/cnfg0" | awk '{print $0""}' | \
 		$yad --list --name=Idiomind --title="Idiomind" \
 		--ellipsize=END --print-all --image-on-top \
-		--text="$itxt" --class=Idiomind  --no-headers \
+		--text="$itxt" --class=Idiomind  --scroll --no-headers \
 		--width="$wth" --height="$eht" --image-on-top \
 		--window-icon=idiomind --column=Items --center \
 		--dclick-action="$dlck" --image=$ICON \
@@ -452,8 +450,10 @@ if [ "$1" = topic ]; then
 	eht=$(sed -n 3p $DC_s/cnfg18)
 	wth=$(sed -n 4p $DC_s/cnfg18)
 	mde=$(sed -n 2p $DC_s/cnfg8)
-	info=$(cat $DS/ifs/info1)
 	title=$(sed -n 3p $DC_s/cnfg8)
+	[[ ! -f "$DC_tlt/cnfg0" ]] && touch "$DC_tlt/cnfg0"
+	[[ ! -f "$DC_tlt/cnfg1" ]] && touch "$DC_tlt/cnfg1"
+	[[ ! -f "$DC_tlt/cnfg2" ]] && touch "$DC_tlt/cnfg2"
 	ls0="$DC_tlt/cnfg0"
 	ls1="$DC_tlt/cnfg1"
 	ls2="$DC_tlt/cnfg2"
@@ -628,7 +628,7 @@ if [ "$1" = topic ]; then
 					./mngr.sh edit &
 					
 				elif [ $ret -eq 5 ]; then
-					$DS/addons/Practice/strt & killall topic.sh &
+					$DS/addons/Practice/strt &
 					
 				elif [ $ret -eq 4 ]; then
 					$yad --title="$tpc" --window-icon=idiomind \
@@ -793,7 +793,7 @@ if [ "$1" = topic ]; then
 					./mngr.sh edit &
 					
 				elif [ $ret -eq 5 ]; then
-					$DS/addons/Practice/strt & killall topic.sh &
+					$DS/addons/Practice/strt &
 				
 				elif [ $ret -eq 2 ]; then
 					if [ -f "$cnf3" ]; then
@@ -974,7 +974,7 @@ if [ "$1" = topic ]; then
 				
 				elif [ $ret -eq 5 ]; then
 					rm -f $DT/*.x
-					$DS/addons/Practice/strt & killall topic.sh &
+					$DS/addons/Practice/strt &
 					
 				elif [ $ret -eq 4 ]; then
 					$yad --title="$tpc" --window-icon=idiomind \
@@ -1141,7 +1141,7 @@ if [ "$1" = topic ]; then
 				
 				elif [ $ret -eq 5 ]; then
 					rm -f $DT/*.x
-					$DS/addons/Practice/strt & killall topic.sh &
+					$DS/addons/Practice/strt &
 				
 				elif [ $ret -eq 2 ]; then
 					if [ -f "$cnf3" ]; then
