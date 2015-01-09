@@ -64,7 +64,7 @@ if [ $1 = n_t ]; then
 			cp -f *.mp3 "$DM_tl/$jlb"
 			cp -f -r ./words "$DM_tl/$jlb/"
 			cd "$DC_tl/$tpc"
-			cp -f cnfg4 "$DC_tl/$jlb"/cnfg5
+			cp -f cnfg5 "$DC_tl/$jlb"/cnfg5
 			cp -f cnfg4 "$DC_tl/$jlb"/cnfg4
 			cp -f tpc.sh "$DC_tl/$jlb"/tpc.sh
 			cp -f cnfg3 "$DC_tl/$jlb"/cnfg3
