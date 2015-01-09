@@ -13,15 +13,13 @@ while [ $n -le $(cat ./fin$1 | wc -l) ]; do
 	file="$drtt/$w1.mp3"
 	tgt="$w1"
 	lst=$(eyeD3 "$file" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
-	
+	if [ $1 = 1 ]; then
 	trgt=$(echo "<span font='ultralight'>$tgt</span>")
-	
-	[ $lgsl = Japanese ] || [ $lgsl = Chinese ] || [ $lgsl = Vietnamese ] && stgt=? \
-	|| stgt=$(echo "$lst" | tr aeiouy ' ')
-	
-	if [ $1 = 2 ]; then
+	[[ $lgsl = Japanese ]] || [[ $lgsl = Chinese ]] || [[ $lgsl = Vietnamese ]] && stgt=? \
+	|| stgt="<span color='#949494'><span font='monospace'><b>$(echo "$lst" | tr aeiouy ' ')</b></span></span>"
+	elif [ $1 = 2 ]; then
 		trgt=$(echo "<span font='ultralight'>$tgt</span>")
-		[ $lgsl = Japanese ] || [ $lgsl = Chinese ] || [ $lgsl = Vietnamese ] && stgt="$lst"
+		[ $lgsl = Japanese ] || [ $lgsl = Chinese ] || [ $lgsl = Vietnamese ] && stgt="$lst" || stgt="<span color='#949494'><big><b>$lst</b></big></span>"
 	fi
 	
 	if [ -f "$drtt/images/$w1.jpg" ]; then
@@ -31,7 +29,7 @@ while [ $n -le $(cat ./fin$1 | wc -l) ]; do
 		--skip-taskbar --text-align=center --title=" "  \
 		--window-icon=idiomind --buttons-layout=edge --borders=0 \
 		--field="<big><big><big><big><big><big><big><big><b>$trgt</b></big></big></big></big></big></big></big></big>":lbl \
-		--field="<span color='#949494'><span font='monospace'><b> $stgt </b></span></span>":lbl \
+		--field="$stgt":lbl \
 		--button="gtk-close":1 \
 		--button=" Got It ":3 \
 		--button=" Nope ":4 \
@@ -42,7 +40,7 @@ while [ $n -le $(cat ./fin$1 | wc -l) ]; do
 		--skip-taskbar --text-align=center --title=" " \
 		--window-icon=idiomind --buttons-layout=edge --borders=0 \
 		--field="\\n\\n<big><big><big><big><big><big><big><big><b>$trgt</b></big></big></big></big></big></big></big></big>":lbl \
-		--field="<span color='#949494'><span font='monospace'><b>$stgt</b></span></span>\\n\\n\\n":lbl \
+		--field="$stgt\\n\\n\\n":lbl \
 		--button="gtk-close":1 \
 		--button=" Got It ":3 \
 		--button=" Nope ":4 \

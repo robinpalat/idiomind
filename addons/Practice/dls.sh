@@ -26,7 +26,7 @@ while [ $n -le $(cat lsin | wc -l) ]; do
 
 		if [ -f "$DT/ILLUSTRATION".jpeg ]; then
 			IMAGE="$DT/ILLUSTRATION".jpeg
-			(sleep 1.5 && play "$drtt/$s1".mp3) &
+			(sleep 0.5 && play "$drtt/$s1".mp3) &
 			SE=$(yad --center --text-info --image="$IMAGE" \
 			--fontname="Verdana Black" --justify=fill --editable --wrap \
 			--buttons-layout=end --borders=0 --title=" " --image-on-top \
@@ -36,7 +36,7 @@ while [ $n -le $(cat lsin | wc -l) ]; do
 			--button=Listen:"play '$drtt/$s1.mp3'" \
 			--button=" Ok ":0)
 		else
-			(sleep 1.5 && play "$drtt/$s1".mp3) &
+			(sleep 0.5 && play "$drtt/$s1".mp3) &
 			SE=$(yad --center --text-info --fore=4A4A4A \
 			--fontname="Verdana Black" --justify=fill --editable --wrap \
 			--buttons-layout=end --borders=0 --title=" " \

@@ -46,8 +46,8 @@ img5=applications-other
 img6=applications-other
 
 $yad --plug=$KEY --tabnum=1 --borders=15 --scroll \
-	--separator="\\n" --form --no-headers \
-	--field="$general_options:lbl" "#1" \
+	--separator="\\n" --form --no-headers --align=right \
+	--field="$general_options\t":lbl "#1" \
 	--field=":lbl" "#2"\
 	--field="$use_g_color:CHK" $sttng3 \
 	--field="$dialog_word_Selector:CHK" $sttng4 \
@@ -57,7 +57,7 @@ $yad --plug=$KEY --tabnum=1 --borders=15 --scroll \
 	--field="<small>$voice_syntetizer</small>:CB5" "$sttng8" \
 	--field="<small>$record_audio</small>:CB5" "$sttng9" \
 	--field=" :lbl" "#10"\
-	--field="$languages:lbl" "#11" \
+	--field="$languages\t":lbl "#11" \
 	--field=":lbl" "#12"\
 	--field="$languages_learning:CB" "$lgtl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
 	--field="$your_language:CB" "$lgsl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" > "$cnf1" &

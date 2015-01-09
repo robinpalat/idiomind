@@ -20,13 +20,12 @@ if [ "$1" = f ]; then
 
 	cd "$DC_tlt/Practice"
 	if [ -f look_f ]; then
-		$yad --title="$tpc" \
-		--borders=15 --center --buttons-layout=edge \
+		$yad --title="$tpc" --borders=5 --center \
 		--on-top --skip-taskbar --window-icon=idiomind \
 		--buttons-layout=edge --center --image=gtk-ok \
 		--button="$restart":0 --button=Ok:2 \
-		--text "<big>$complete\\n$(cat look_f)</big>\\n\\n" \
-		--width=350 --height=80 --text-align=center
+		--text "<span color='#797979'><b>$complete\\n$(cat look_f)</b></span>\\n\\n" \
+		--width=360 --height=120 --text-align=center
 		ret=$?
 			if [[ "$ret" -eq 0 ]]; then
 				$DSP/cls df & exit
@@ -46,12 +45,12 @@ if [ "$1" = f ]; then
 				cat "$Li" > fin1
 			fi
 		rm *.ok *.no
-		if [ "$(cat idxfin)" -lt 5 ]; then
+		if [ "$(cat idxfin)" -lt 6 ]; then
 			$yad --form --center --borders=5 --image=info \
 			--title="Info" --on-top --window-icon=idiomind \
-			--button=Ok:1 --text-align=center --skip-taskbar \
-			--text "<span color='#636363'>  <b>$starting1  </b></span>" \
-			--width=310 --height=80
+			--button=Ok:1 --skip-taskbar \
+			--text "<span color='#797979'><b>$starting1</b></span>" \
+			--width=360 --height=120
 			$strt & killall prct.sh & exit
 		fi
 	fi
@@ -151,13 +150,12 @@ elif [ "$1" = m ]; then
 
 	cd "$DC_tlt/Practice"
 	if [ -f look_mc ]; then
-		$yad --title="$tpc" \
-		--borders=15 --center --buttons-layout=edge \
+		$yad --title="$tpc" --borders=5 --center  \
 		--on-top --skip-taskbar --window-icon=idiomind \
 		--buttons-layout=edge --center --image=gtk-ok \
 		--button="$restart":0 --button=Ok:1 \
-		--text "<big>$complete\\n$(cat look_mc)</big>\\n\\n" \
-		--width=350 --height=80 --text-align=center
+		--text "<span color='#797979'><b>$complete\\n$(cat look_mc)</b></span>\\n\\n" \
+		--width=360 --height=120 --text-align=center
 		ret=$?
 			if [[ "$ret" -eq 0 ]]; then
 				$DSP/cls dm & exit
@@ -177,13 +175,12 @@ elif [ "$1" = m ]; then
 			cat "$Li" > mcin1
 		fi
 		rm *.ok *.no
-		if [ "$(cat idxmcin)" -lt 5 ]; then
-			($yad --form --center --borders=5 \
+		if [ "$(cat idxmcin)" -lt 6 ]; then
+			yad --form --center --borders=5 \
 			--title="Info" --on-top --image=info \
-			--window-icon=idiomind --skip-taskbar \
-			--button=Ok:1 --text-align=center \
-			--text "<span color='#636363'><b>  $starting1  </b></span>" \
-			--width=310 --height=80)
+			--window-icon=idiomind --skip-taskbar --button=Ok:1 \
+			--text="<span color='#797979'><b>$starting1</b></span>" \
+			--width=360 --height=120
 			$strt & killall prct & exit 1
 		fi
 	fi
@@ -300,13 +297,12 @@ elif [ "$1" = w ]; then
 	cd "$DC_tlt/Practice"
 	
 	if [ -f look_lw ]; then
-		$yad --title="$tpc" \
-		--borders=15 --center --buttons-layout=edge \
+		$yad --title="$tpc" --borders=5 --center \
 		--on-top --skip-taskbar --window-icon=idiomind \
 		--buttons-layout=edge --center --image=gtk-ok \
 		--button="$restart":0 --button=Ok:1 \
-		--text "<big>$complete\\n$(cat look_lw)</big>\\n\\n" \
-		--width=350 --height=80 --text-align=center
+		--text "<span color='#797979'><b>$complete\\n$(cat look_lw)</b></span>\\n\\n" \
+		--width=360 --height=120 --text-align=center
 		ret=$?
 			if [[ "$ret" -eq 0 ]]; then
 				$DSP/cls dw & exit
@@ -327,12 +323,12 @@ elif [ "$1" = w ]; then
 			cat "$Li" > lwin1
 		fi
 		rm *.ok *.no
-		if [ $(cat idxlwin) -lt 5 ]; then
+		if [ $(cat idxlwin) -lt 6 ]; then
 			$yad --form --center --borders=5 --image=info \
 			--title="Info" --on-top --window-icon=idiomind \
-			--button=Ok:1 --text-align=center --skip-taskbar \
-			--text "<span color='#636363'><b>  $starting1  </b></span>" \
-			--width=310 --height=80
+			--button=Ok:1 --skip-taskbar \
+			--text "<span color='#797979'><b>$starting1</b></span>" \
+			--width=360 --height=120
 			$strt & killall prct & exit
 		fi
 	fi
@@ -431,13 +427,12 @@ elif [ "$1" = s ]; then
 
 	cd "$DC_tlt/Practice"
 	if [ -f look_ls ]; then
-		$yad --title="$tpc" \
-		--borders=15 --center --buttons-layout=edge \
+		yad --title="$tpc" --borders=5 --center  \
 		--on-top --skip-taskbar --window-icon=idiomind \
 		--buttons-layout=edge --center --image=gtk-ok \
 		--button="Reiniciar":0 --button=Ok:1 \
-		--text "<big>$complete\\n$(cat look_ls)</big>\\n\\n" \
-		--width=350 --height=80 --text-align=center
+		--text "<span color='#797979'><b>$complete\\n$(cat look_ls)</b></span>\\n\\n" \
+		--width=360 --height=120 --text-align=center
 		ret=$?
 			if [[ "$ret" -eq 0 ]]; then
 				$DSP/cls ds & exit
@@ -459,12 +454,12 @@ elif [ "$1" = s ]; then
 			cat "$Li" > lsin
 		fi
 		rm -f *.id *.ok *.no $DT/*.tp
-		if [ "$(cat lsin | wc -l)" -lt 2 ]; then # cuenta, si hay mas de 2 
-			$yad --form --center --borders=5 --skip-taskbar \
+		if [ "$(cat lsin | wc -l)" -lt 1 ]; then
+			yad --form --center --borders=5 --skip-taskbar \
 			--title="Info" --on-top --window-icon=idiomind \
 			--button=Ok:1 --image=info \
-			--text "<span color='#636363'><b> $starting2  </b></span>" \
-			--width=310 --height=80
+			--text "<span color='#797979'><b>$starting2</b></span>" \
+			--width=360 --height=120
 			rm -f $DT/text.tmp
 			$strt & killall prct & exit
 		fi

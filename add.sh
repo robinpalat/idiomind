@@ -20,10 +20,9 @@ if [ $1 = n_t ]; then
 		fi
 		#--------------normal
 		jlbi=$($yad --window-icon=idiomind \
-		--form --center --field="" "$nmt" --title="$tle" \
-		--width=440 --height=120 --name=idiomind --on-top \
-		--skip-taskbar --borders=5 --button=gtk-ok:0 \
-		--text="<small>  $name_for_new_topic </small>")
+		--form --center --field="$name_for_new_topic" "$nmt" --title="$tle" \
+		--width=440 --height=100 --name=idiomind --on-top \
+		--skip-taskbar --borders=5 --button=gtk-ok:0)
 		
 		jlb=$(echo "$jlbi" | cut -d "|" -f1 | sed s'/!//'g \
 		| sed s'/&//'g | sed s'/\://'g | sed s'/\&//'g \
@@ -108,10 +107,9 @@ if [ $1 = n_t ]; then
 		
 		jlbi=$($yad --window-icon=idiomind \
 		--form --center --title="$new_topic"  --separator="\n" \
-		--width=440 --height=120 --name=idiomind --on-top \
+		--width=440 --height=100 --name=idiomind --on-top \
 		--skip-taskbar --borders=5 --button=gtk-ok:0 \
-		--text="<small>  $name_for_new_topic </small>" \
-		--field=" : " "$nmt")
+		--field=" $name_for_new_topic: " "$nmt")
 			
 		jlb=$(echo "$jlbi" | sed -n 1p | cut -d "|" -f1 | sed s'/!//'g \
 		| sed s'/&//'g | sed s'/://'g | sed s'/\&//'g \

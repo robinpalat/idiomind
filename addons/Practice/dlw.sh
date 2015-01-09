@@ -9,17 +9,14 @@ n=1
 while [ $n -le $(cat ./lwin$1 | wc -l) ]; do
 	w1=$(sed -n "$n"p lwin$1)
 	listen="play '$drtt/$w1.mp3'"
-	[ $lgtl = Japanese ] || [ $lgtl = Chinese ] && lst=? \
-	|| lst=$(echo "$w1" | awk '$1=$1' FS= OFS=" " | tr aeiouy ' ')
 	
 	if [ "$1" = 1 ]; then
-		trgt=$(echo "$w1" | tr aeiouy ' ')
+		[[ $lgtl = Japanese ]] || [[ $lgtl = Chinese ]] && lst=? || lst="${w1:0:1}"
 	elif [ "$1" = 2 ]; then
-		lst="$w1"
+		[[ $lgtl = Japanese ]] || [[ $lgtl = Chinese ]] && lst=? || lst=$(echo "$w1" | awk '$1=$1' FS= OFS=" " | tr aeiouy ' ')
 	fi
 	
 	if [ -f "$drtt/images/$w1".jpg ]; then
-	
 		IMAGE="$drtt/images/$w1".jpg
 		play "$drtt/$w1".mp3 &
 		yad --form --align=center \

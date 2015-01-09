@@ -94,11 +94,11 @@ ret=$?
 		elif echo "$VAR" | grep "Listening Sentences"; then
 			$DSP/prct s & exit 1
 		else
-			yad --form --center --borders=8 \
+			yad --form --center --borders=5 \
 			--title="Info" --on-top --window-icon=idiomind \
 			--button=Ok:1 --skip-taskbar \
-			--text "$no_choice  " \
-			--width=310 --height=80
+			--text="<span color='#797979'><b>  $no_choice</b></span>" \
+			--width=360 --height=120
 			$DSP/strt & exit 1
 		fi
 	elif [ $ret -eq 3 ]; then

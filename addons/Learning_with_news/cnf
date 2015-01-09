@@ -29,13 +29,14 @@ if [[ -z "$1" ]]; then
 	| tr "\\n" '!' | sed 's/!\+$//g')
 
 	CNFG=$($yad --on-top --form --center \
+		--text="$feeds <span color='#797979'><b>$lgtl</b></span>\n" \
 		--window-icon=idiomind --skip-taskbar --borders=15 \
 		--width=350 --height=250 --always-print-result \
 		--title="Feeds - $lgtl " "$text" \
 		--button="$delete:2" \
 		--button="gtk-add:5" \
 		--button="$update:4" \
-		--field="  <small>$current_subcription: </small>:CB" "$FEED!$scrp" \
+		--field="  <small>$current_subcription</small>:CB" "$FEED!$scrp" \
 		--field="$update_at_start:CHK" $st2)
 		ret=$?
 		
