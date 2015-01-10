@@ -10,12 +10,12 @@ fi
 
 source /usr/share/idiomind/ifs/c.conf
 source /usr/share/idiomind/ifs/trans/$lgs/items_lists.conf
+
 if [ -z "$1" ]; then
 	if [ -f $DT/.upt ]; then
 		rm -f $DT/.upt
 	fi
 	
-	# check if program is active 
 	if [ -z "$(ps -A | pgrep -f "/usr/bin/idiomind panel")" ]; then
 		# write in /tmp
 		if [ ! -d $DT ]; then
@@ -33,7 +33,7 @@ if [ -z "$1" ]; then
 			--window-icon=idiomind & exit 1
 		fi
 		
-		#check if there directories
+		# check directories
 		if [ -f $DC_tl/.cnfg1 ]; then
 			if [[ "$(cat $DC_tl/.cnfg1 | wc -l)" -lt 1 ]]; then
 				touch "$DT/ntpc"
@@ -42,185 +42,142 @@ if [ -z "$1" ]; then
 		
 		idiomind panel &
 		
-		# init count for log (weekly report stats)
+		# init count for log weekly report
 		echo "strt.1.strt" >> \
 		$DC/addons/stats/.log &
 		
-		# ------------------------------------------------check session
+		# ------------------------------------------------ new session
 		d1="$(date +%d)"
 		[[ -f $DC_s/cnfg15 ]] && d2=$(cat $DC_s/cnfg15)
 		
-		# si las fechas no coinciden o no esta el archivo cnfg15 
 		if [ "$d1" != "$d2" ] || [ ! -f $DC_s/cnfg15 ]; then
 			echo "$(date +%d)" > $DC_s/cnfg15
 			echo "--new session"
 
-			# set size screen 
+			# size screen 
 			xrandr | grep '*' | awk '{ print $1 }' > $DC_s/cnfg18
 			sed -i 's/x/\n/' $DC_s/cnfg18
 			y=$(sed -n 2p $DC_s/cnfg18)
 			
 			(
 			if [ $y -gt 1200 ]; then
-				#play posicion 
 				echo 1000 > $DC_s/cnfg17
-				#topic size 3 - 4 
 				echo 450 >> $DC_s/cnfg18
 				echo 520 >> $DC_s/cnfg18
-				#trgt size 5 - 6 
 				echo 500 >> $DC_s/cnfg18
 				echo 320 >> $DC_s/cnfg18
-				#edit size 7 - 8
 				echo 260 >> $DC_s/cnfg18
 				echo 190 >> $DC_s/cnfg18
-				#play size  9 - 10 - 11
 				echo 125 >> $DC_s/cnfg18
 				echo 380 >> $DC_s/cnfg18
-				#new la posicion  12 - 13
 				echo 450 >> $DC_s/cnfg18
 				echo 100 >> $DC_s/cnfg18
-				#practice size 14 - 15
-				echo 470 >> $DC_s/cnfg18
-				echo 300 >> $DC_s/cnfg18
+				echo 400 >> $DC_s/cnfg18
+				echo 400 >> $DC_s/cnfg18
 				exit
 				
-			elif [ $y -ge 1080 ]; then  # 1024
-				#play posicion 
+			elif [ $y -ge 1080 ]; then
 				echo 800 > $DC_s/cnfg17
-				#topic size 3 - 4 
 				echo 450 >> $DC_s/cnfg18 #FIXED! #w
 				echo 520 >> $DC_s/cnfg18 #h
-				#trgt size 5 - 6 
 				echo 500 >> $DC_s/cnfg18
 				echo 320 >> $DC_s/cnfg18
-				#edit size 7 - 8
 				echo 260 >> $DC_s/cnfg18
 				echo 190 >> $DC_s/cnfg18
-				#play size  9 - 10 - 
 				echo 100 >> $DC_s/cnfg18
 				echo 300 >> $DC_s/cnfg18
-				#new la posicion  11 - 12
 				echo 450 >> $DC_s/cnfg18
 				echo 100 >> $DC_s/cnfg18
-				#practice size 13 - 14
-				echo 470 >> $DC_s/cnfg18
-				echo 300 >> $DC_s/cnfg18
+				echo 400 >> $DC_s/cnfg18
+				echo 400 >> $DC_s/cnfg18
 				exit
 				
-			elif [ $y -ge 1024 ]; then # 1024
-				#play posicion  1 
+			elif [ $y -ge 1024 ]; then
 				echo 800 > $DC_s/cnfg17
-				#topic size 3 - 4 
 				echo 430 >> $DC_s/cnfg18
 				echo 490 >> $DC_s/cnfg18
-				#trgt size 5 - 6 
 				echo 490 >> $DC_s/cnfg18
 				echo 320 >> $DC_s/cnfg18
-				#edit size 7 - 8 
 				echo 260 >> $DC_s/cnfg18
 				echo 190 >> $DC_s/cnfg18
-				#play size  6 - 10 - 11
 				echo 100 >> $DC_s/cnfg18
 				echo 320 >> $DC_s/cnfg18
-				#new la posicion  12 - 13
 				echo 450 >> $DC_s/cnfg18
 				echo 100 >> $DC_s/cnfg18
-				#practice size 14 - 15
-				echo 470 >> $DC_s/cnfg18
-				echo 300 >> $DC_s/cnfg18
+				echo 380 >> $DC_s/cnfg18
+				echo 400 >> $DC_s/cnfg18
 				exit
 				
-			elif [ $y -gt 700 ]; then # 720
-				#play posicion  1
+			elif [ $y -gt 700 ]; then
 				echo 520 > $DC_s/cnfg17
-				#topic size 2 -3
 				echo 420 >> $DC_s/cnfg18
 				echo 480 >> $DC_s/cnfg18
-				#trgt size 4 - 5 
 				echo 470 >> $DC_s/cnfg18
 				echo 320 >> $DC_s/cnfg18
-				#edit size  6 - 7 
 				echo 230 >> $DC_s/cnfg18
 				echo 170 >> $DC_s/cnfg18
-				#play size  8 - 9 
 				echo 100 >> $DC_s/cnfg18
 				echo 300 >> $DC_s/cnfg18
-				#new posicion  10 - 11
 				echo 200 >> $DC_s/cnfg18
 				echo 50 >> $DC_s/cnfg18
-				#practice size  12 - 13
-				echo 460 >> $DC_s/cnfg18
-				echo 250 >> $DC_s/cnfg18
+				echo 350 >> $DC_s/cnfg18
+				echo 380 >> $DC_s/cnfg18
 				exit
 				
-			elif [ $y -gt 599 ]; then # 600
-				#play position 
+			elif [ $y -gt 599 ]; then
 				echo 520 > $DC_s/cnfg17
-				#topic size 
 				echo 400 >> $DC_s/cnfg18
 				echo 460 >> $DC_s/cnfg18
-				#trgt size 
 				echo 450 >> $DC_s/cnfg18
 				echo 300 >> $DC_s/cnfg18
-				#edit size 6 - 7
 				echo 230 >> $DC_s/cnfg18
 				echo 170 >> $DC_s/cnfg18
-				#play size 
 				echo 100 >> $DC_s/cnfg18
 				echo 250 >> $DC_s/cnfg18
-				#new posicion 
 				echo 200 >> $DC_s/cnfg18
 				echo 50 >> $DC_s/cnfg18
-				#practice size 
-				echo 460 >> $DC_s/cnfg18
-				echo 250 >> $DC_s/cnfg18
+				echo 350 >> $DC_s/cnfg18
+				echo 380 >> $DC_s/cnfg18
 				exit
 				
-			elif [ $y -gt 400 ]; then # 400
-				# play position 
+			elif [ $y -gt 400 ]; then
 				echo 420 > $DC_s/cnfg17
-				#topic size 
 				echo 400 >> $DC_s/cnfg18
 				echo 460 >> $DC_s/cnfg18
-				#trgt size 
 				echo 400 >> $DC_s/cnfg18
 				echo 280 >> $DC_s/cnfg18
-				#edit size 
 				echo 500 >> $DC_s/cnfg18
 				echo 320 >> $DC_s/cnfg18
-				#play size 
 				echo 500 >> $DC_s/cnfg18
 				echo 320 >> $DC_s/cnfg18
-				#new posicion 
 				echo 50 >> $DC_s/cnfg18
 				echo 200 >> $DC_s/cnfg18
-				#practice size 
-				echo 250 >> $DC_s/cnfg18
-				echo 420 >> $DC_s/cnfg18
+				echo 330 >> $DC_s/cnfg18
+				echo 360 >> $DC_s/cnfg18
 				exit
 			fi
 			)
 			
-			# set weekly report
+			# weekly report
 			if ([ "$(date +%u)" = 7 ] && \
 			[ "$(sed -n 1p $DC/addons/stats/cnf)" = "TRUE" ]); then
 				$DS/addons/Stats/rprt A &
 			fi
 			
-			# set feed update at starting
+			# rss feed auto-update
 			if [ "$(sed -n 1p "$DC/addons/Learning with news/.cnf")" = "TRUE" ]; then
 				(sleep 200
 				$DS/addons/Learning_with_news/strt A
 				) &
 			fi
 			
-			# set baskup
+			# backup
 			if ([ "$(date +%u)" = 6 ] && \
 			[ "$(sed -n 1p $DC_s/cnfg12)" = "TRUE" ]); then
 				$DS/addons/User_data/t_bd.sh C &
 			fi
 			
-			#search updates
+			# search updates
 			$DS/ifs/tls.sh srch &
 			
 			# update topics status
@@ -290,6 +247,11 @@ if [[ "$1" = "panel" ]]; then
 	else
 		$DS/ifs/1u
 	fi
+    
+elif [[ "$1" = "--version" ]]; then
+    echo "2.1-alpha" & exit 1
+elif [[ "$1" = "-v" ]]; then
+    echo "2.1-alpha" & exit 1
 
 elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 	wth=$(sed -n 4p $DC_s/cnfg18)
@@ -309,7 +271,6 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 	cd ./idmimp_$c
 	tar -xzvf ../import.tar.gz
 	ls -t -d -N * > $DT/idmimp_$c/ls
-	
 	inme=$(sed -n 1p $DT/idmimp_$c/ls)
 	echo "$inme"
 	tmp="$DT/idmimp_$c/$inme"
@@ -320,8 +281,6 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 	cc=$(sed -n 1p "$tmp/cnfg12")
 	cgy=$(sed -n 9p "$tmp/cnfg12")
 	nt=$(sed -n 11p "$tmp/cnfg12")
-
-	ICON=idiomind
 	
 	if [ "$inme" != "$cc" ]; then
 	int="$(sed -n 6p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
@@ -351,7 +310,7 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 		cat "$tmp/cnfg0" | awk '{print $0""}' | \
 		$yad --list --name=Idiomind --title="Idiomind" \
 		--ellipsize=END --print-all --image-on-top \
-		--text="$itxt" --class=Idiomind  --scroll --no-headers \
+		--text="$itxt" --class=Idiomind --scroll --no-headers \
 		--width="$wth" --height="$eht" --image-on-top \
 		--window-icon=idiomind --column=Items --center \
 		--dclick-action="$dlck" --image=$DS/images/trans.png \
@@ -396,7 +355,7 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 				else
 					inm="$inme"
 				fi
-				#installing
+
 				if [ ! -d "$DM_t/$lgtli" ]; then
 					mkdir "$DM_t/$lgtli"
 					mkdir "$DM_t/$lgtli/.share"
@@ -449,7 +408,7 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 	exit 1
 fi
 
-#--------------topic
+# topic
 if [ "$1" = topic ]; then
 	
 	if [ -n "$tpc" ]; then
@@ -476,10 +435,9 @@ if [ "$1" = topic ]; then
 		tb2=$(cat "$ls2" | wc -l)
 	fi
 
-	#--------------topic own
+	# own
 	if echo "$mde" | grep "wn"; then
 		[ -z "$tpc" ] && exit 1
-		ICON=$DS/images/wn.png
 		cd "$DC_tlt"
 		ws=$(cat cnfg3 | wc -l)
 		ss=$(cat cnfg4 | wc -l)
@@ -491,7 +449,6 @@ if [ "$1" = topic ]; then
 		cnf2=$(mktemp $DT/cnf2.XXXX.x)
 		cnf3=$(mktemp $DT/cnf3.XXXX.x)
 		
-		# 1er vista - si el topic esta vacio 
 		if [ "$inx" -lt 1 ]; then
 			
 			$yad --text-info --plug=$KEY --margins=14 \
@@ -527,7 +484,6 @@ if [ "$1" = topic ]; then
 				rm -f $DT/*.x
 				fi
 			
-		# 2er vista - si el topic tiene contenido para aprender
 		elif [ "$tb1" -ge 1 ]; then
 			if [ -f "$DC_tlt/cnfg9" ] && [ -f "$DC_tlt/cnfg7" ]; then
 				dts=$(cat "$DC_tlt/cnfg9" | wc -l)
@@ -556,7 +512,7 @@ if [ "$1" = topic ]; then
 					RM=$((100*$TM/60))
 					tdays=60
 				fi
-				# si el topic aprendido tiene mas de 30 dias ( 100%) entonces pone su nombre en la lista de repasar borra de la lista "ok" , actualiza la lista de topic (mngr.sh mkmn ) y muestra el cuadro con la pregunta de reiniciar para repasar o no .
+
 				if [ "$RM" -ge 100 ]; then
 					echo "4" > "$DC_tlt/cnfg8"
 					$DS/mngr.sh mkmn &
@@ -570,7 +526,7 @@ if [ "$1" = topic ]; then
 					--button="        $review        ":2 \
 					--text="$adv" \
 					--width=410 --height=150
-					ret=$? # si se elige reiniciar entonces quita el nomre del topic de la lista " .ok" y la agrega a la lista ".ok_R" (lista repasando) copia la lista "$lso" ( indice total del topic) a la lista "$ls1" ( lista aprendiendo) por ultimo abre el topic
+					ret=$?
 						if [ "$ret" -eq 2 ]; then
 							echo "3" > "$DC_tlt/cnfg8"
 							$DS/mngr.sh mkmn
@@ -635,6 +591,7 @@ if [ "$1" = topic ]; then
 					./mngr.sh edit &
 					
 				elif [ $ret -eq 5 ]; then
+					rm -f $DT/*.x
 					$DS/addons/Practice/strt &
 					
 				elif [ $ret -eq 4 ]; then
@@ -651,14 +608,14 @@ if [ "$1" = topic ]; then
 						if [ "$ret" -eq 2 ]; then
 							rm -f "$DC_tlt/cnfg7"
 							rm -f $DT/*.x
-							echo "4" > "$DC_tlt/cnfg8"
+							echo "3" > "$DC_tlt/cnfg8"
 							$DS/mngr.sh mkmn
 							rm -f "$ls2"
 							cp -f "$ls0" "$ls1" && idiomind topic & exit 1
 							
 						elif [ "$ret" -eq 3 ]; then
 							rm -f $DT/*.x
-							echo "3" > "$DC_tlt/cnfg8"
+							#echo "3" > "$DC_tlt/cnfg8"
 							rm -f "$DC_tlt/cnfg7" && idiomind topic & exit 1
 						fi
 					
@@ -678,7 +635,6 @@ if [ "$1" = topic ]; then
 						cnt=$(cat "$cnf1" | wc -l)
 						grep -F -x -v -f "$cnf1" "$ls1" > $DT/ls1.x
 						mv -f $DT/ls1.x "$ls1"
-						# se ocupa de sacar lineas repetidas del indice 
 						if [ -n "$(cat "$ls1" | sort -n | uniq -dc)" ]; then
 							cat "$ls1" | awk '!array_temp[$0]++' > $DT/ls1.x
 							sed '/^$/d' $DT/ls1.x > "$ls1"
@@ -696,7 +652,6 @@ if [ "$1" = topic ]; then
 						cnt=$(cat "$cnf2" | wc -l)
 						grep -F -x -v -f "$cnf2" "$ls2" > $DT/ls2.x
 						mv -f $DT/ls2.x "$ls2"
-						# se ocupa de sacar lineas repetidas del indice 
 						if [ -n "$(cat "$ls2" | sort -n | uniq -dc)" ]; then
 							cat "$ls2" | awk '!array_temp[$0]++' > $DT/ls2.x
 							sed '/^$/d' $DT/ls2.x > "$ls2"
@@ -713,9 +668,7 @@ if [ "$1" = topic ]; then
 				rm -f $DT/*.x
 				fi
 			
-		#  3er vista - si el topic esta aprendido 
 		elif [ "$tb1" -eq 0 ]; then
-			# actualiza la lista de topic para que se actualizen los $DS/imagesos 
 			if [ ! -f "$DC_tlt/cnfg7" ]; then
 				> "$DC_tlt/cnfg7"
 				echo "$(date +%m/%d/%Y)" > "$DC_tlt/cnfg9"
@@ -761,7 +714,7 @@ if [ "$1" = topic ]; then
 				--button="        $review        ":2 \
 				--text="$adv" \
 				--width=410 --height=150
-				ret=$? # si se elige reiniciar entonces quita el nomre del topic de la lista " .ok" y la agrega a la lista ".ok_R" (lista repasando) copia la lista "$lso" ( indice total del topic) a la lista "$ls1" ( lista aprendiendo) por ultimo abre el topic
+				ret=$? 
 					if [ "$ret" -eq 2 ]; then
 						rm -f "$DC_tlt/cnfg7"
 						rm -f $DT/*.x
@@ -820,7 +773,7 @@ if [ "$1" = topic ]; then
 						mv -f $DT/ls1.x "$ls1"
 						if [ -n "$(cat "$ls1" | sort -n | uniq -dc)" ]; then
 							cat "$ls1" | awk '!array_temp[$0]++' > $DT/ls1.x
-							sed '/^$/d' $DT/ls1.x > "$ls1" # se ocupa de sacar lineas repetidas del indice 
+							sed '/^$/d' $DT/ls1.x > "$ls1"
 						fi
 						echo "okim.$cnt.okim" >> \
 						$DC/addons/stats/.log &
@@ -837,7 +790,7 @@ if [ "$1" = topic ]; then
 						mv -f $DT/ls2.x "$ls2"
 						if [ -n "$(cat "$ls2" | sort -n | uniq -dc)" ]; then
 							cat "$ls2" | awk '!array_temp[$0]++' > $DT/ls2.x
-							sed '/^$/d' $DT/ls2.x > "$ls2" # se ocupa de sacar lineas repetidas del indice pricipal del topic
+							sed '/^$/d' $DT/ls2.x > "$ls2"
 						fi
 						echo "reim.$cnt.reim" >> \
 						$DC/addons/stats/.log &
@@ -853,14 +806,13 @@ if [ "$1" = topic ]; then
 			rm -f $DT/*.x
 			fi
 		
-	##--------------topic nstll
+	# nstll
 	elif echo "$mde" | grep "istll"; then
 		[ -z "$tpc" ] && exit 1
 		l1=$(sed -n 6p "$DC_tlt/cnfg12")
 		l2=$(sed -n 7p "$DC_tlt/cnfg12")
 		l3=$(sed -n 8p "$DC_tlt/cnfg12")
 		l4=$(sed -n 9p "$DC_tlt/cnfg12")
-		ICON=$DS/images/wn.png
 		cd "$DC_tlt"
 		ws=$(cat cnfg3 | wc -l)
 		ss=$(cat cnfg4 | wc -l)
@@ -872,7 +824,6 @@ if [ "$1" = topic ]; then
 		cnf2=$(mktemp $DT/cnf2.XXXX.x)
 		cnf3=$(mktemp $DT/cnf3.XXXX.x)
 		
-		# 1er vista - topic con contenido para aprender
 		if [ "$tb1" -ge 1 ]; then
 		
 			if [ -f "$DC_tlt/cnfg9" ] && [ -f "$DC_tlt/cnfg7" ]; then
@@ -902,7 +853,7 @@ if [ "$1" = topic ]; then
 					RM=$((100*$TM/60))
 					tdays=60
 				fi
-			 # si el topic aprendido tiene mas de 30 dias ( 100%) entonces pone su nombre en la lista de repasar borra de la lista "ok" , actualiza la lista de topic (mngr.sh mkmn ) y muestra el cuadro con la pregunta de reiniciar para repasar o no .
+			
 				if [ "$RM" -ge 100 ]; then
 					echo "4" > "$DC_tlt/cnfg8"
 					$DS/mngr.sh mkmn &
@@ -915,7 +866,7 @@ if [ "$1" = topic ]; then
 					--button="        $review        ":2 \
 					--text="$adv" \
 					--width=410 --height=150
-					ret=$? # si se elige reiniciar entonces quita el nomre del topic de la lista " .ok" y la agrega a la lista ".ok_R" (lista repasando) copia la lista "$lso" ( indice total del topic) a la lista "$ls1" ( lista aprendiendo) por ultimo abre el topic
+					ret=$?
 						if [ "$ret" -eq 2 ]; then
 							rm -f "$DC_tlt/cnfg7"
 							rm -f $DT/*.x
@@ -985,7 +936,7 @@ if [ "$1" = topic ]; then
 					
 				elif [ $ret -eq 4 ]; then
 					$yad --title="$tpc" --window-icon=idiomind \
-					--borders=20 --name=idiomind \
+					--borders=5 --name=idiomind \
 					--image=dialog-question \
 					--on-top --window-icon=idiomind \
 					--center --class=idiomind \
@@ -997,14 +948,14 @@ if [ "$1" = topic ]; then
 						if [ "$ret" -eq 2 ]; then
 							rm -f "$DC_tlt/cnfg7"
 							rm -f $DT/*.x
-							echo "9" > "$DC_tlt/cnfg8"
+							echo "8" > "$DC_tlt/cnfg8"
 							$DS/mngr.sh mkmn
 							rm -f "$ls2"
 							cp -f "$ls0" "$ls1" && idiomind topic & exit 1
 							
 						elif [ "$ret" -eq 3 ]; then
 							rm -f $DT/*.x
-							echo "8" > "$DC_tlt/cnfg8"
+							#echo "8" > "$DC_tlt/cnfg8"
 							rm -f "$DC_tlt/cnfg7" && idiomind topic & exit 1
 						fi
 				
@@ -1042,7 +993,6 @@ if [ "$1" = topic ]; then
 						cnt=$(cat "$cnf2" | wc -l)
 						grep -F -x -v -f "$cnf2" "$ls2" > $DT/ls2.x
 						mv -f $DT/ls2.x "$ls2"
-						# se ocupa de sacar lineas repetidas del indice pricipal del topic
 						if [ -n "$(cat "$ls2" | sort -n | uniq -dc)" ]; then
 							cat "$ls2" | awk '!array_temp[$0]++' > $DT/ls2.x
 							sed '/^$/d' $DT/ls2.x > "$ls2"
@@ -1059,7 +1009,6 @@ if [ "$1" = topic ]; then
 				rm -f $DT/*.x
 				fi
 		
-		# 3er vista - si el topic esta aprendido
 		elif [ "$tb1" -eq 0 ]; then
 			if [ ! -f "$DC_tlt/cnfg7" ]; then
 				> "$DC_tlt/cnfg7"
@@ -1181,7 +1130,6 @@ if [ "$1" = topic ]; then
 						cnt=$(cat "$cnf2" | wc -l)
 						grep -F -x -v -f "$cnf2" "$ls2" > $DT/ls2.x
 						mv -f $DT/ls2.x "$ls2"
-						# se ocupa de sacar lineas repetidas del indice pricipal del topic
 						if [ -n "$(cat "$ls2" | sort -n | uniq -dc)" ]; then
 							cat "$ls2" | awk '!array_temp[$0]++' > $DT/ls2.x
 							sed '/^$/d' $DT/ls2.x > "$ls2"
@@ -1200,7 +1148,7 @@ if [ "$1" = topic ]; then
 			rm -f $DT/*.x & exit 1
 			fi
 	
-	#--------------feeds
+	#feeds
 	elif echo "$mde" | grep "fd"; then
 		dir1="$DM_tl/Feeds"
 		dir2="$DC/addons/Learning with news"
@@ -1234,7 +1182,7 @@ if [ "$1" = topic ]; then
 		--column=Name:TEXT --dclick-action='./vwr.sh V2' &
 		$yad --notebook --name=Idiomind --center \
 		--class=Idiomind --align=right --key=$KEY \
-		--text=" <big><b>Feeds </b></big>\\n <small>$FEED \\n</small>" \
+		--text=" <big><b>$title_rss </b></big>\\n <small>$FEED \\n</small>" \
 		--image=$ICON --image-on-top  \
 		--tab-borders=0 --center --title="$FEED" \
 		--tab="  $news  " --tab="   $saved_conten   " \

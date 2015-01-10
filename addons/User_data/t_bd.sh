@@ -8,14 +8,10 @@ D_cps=$(sed -n 2p $DC_s/cnfg12)
 udt=$(cat "$D_cps/.udt")
 dte=$(date +%F)
 
-# dialogo "user data"
+#dialog user data
 if [ -z "$1" ]; then
-	(echo "#"; sleep 0
+
 	du -b -h $DM | tail -1 | awk '{print ($1)}' > $DT/.sz
-	) | $yad --center --on-top --fixed --progress \
-	--width=35 --height=20 --geometry=20x20-2-2 \
-	--pulsate --percentage=5 --auto-close --no-buttons \
-	--sticky --on-top --undecorated --skip-taskbar
 
 	sz=$(cat $DT/.sz)
 	D=$($yad --list --title="$user_data" \
@@ -35,7 +31,7 @@ if [ -z "$1" ]; then
 		in=$(echo "$D" | sed -n 1p)
 		ex=$(echo "$D" | sed -n 2p)
 		
-		# exportar datos
+		# export
 		if echo "$ex" | grep "TRUE $export"; then
 			
 			cd $HOME &&
@@ -63,7 +59,7 @@ if [ -z "$1" ]; then
 				mv -f backup.tar.gz $DT/"$user"_idiomind_data.tar.gz
 				
 				) | $yad --center --on-top --fixed --progress \
-				--width=30 --height=20 --geometry=20x20-2-2 \
+				--width=200 --height=20 --geometry=200x20-2-2 \
 				--pulsate --percentage="5" --auto-close \
 				--sticky --on-top --undecorated --skip-taskbar --no-buttons
 				mv -f $DT/"$user"_idiomind_data.tar.gz "$exp"
@@ -77,7 +73,7 @@ if [ -z "$1" ]; then
 				exit 1
 			fi
 
-		# importar datos 
+		# import
 		elif echo "$in" | grep "TRUE $import"; then
 			cd $HOME &&
 			add=$($yad --center --on-top \
@@ -89,7 +85,6 @@ if [ -z "$1" ]; then
 				if [[ -z "$add" || ! -d "$DM" ]]; then
 					exit 1
 				fi
-					
 				(
 				rm -f $DT/*.XXXXXXXX
 				echo "5"
@@ -131,13 +126,13 @@ if [ -z "$1" ]; then
 						topic=$(cat $lts | sed -n "$n"p)
 						echo "5"
 						echo "# $setting_topic ${topic:0:20} ... " ; sleep 1
-						# mp3's
+						# mp3s
 						mkdir "$DM_t/$dlng/$topic"
 						cd "$DT/.imprt/topics/$dlng/$topic/"
 						cp -f -r * "$DM_t/$dlng/$topic/"
 						echo "25"
 						echo "# $setting_topic ${topic:0:20} ... " ; sleep 1
-						# indices, configuraciones
+						# index, setting
 						mkdir "$DC/topics/$dlng/$topic"
 						mkdir "$DC/topics/$dlng/$topic/Practice"
 						tdirc="$DC/topics/$dlng/$topic"
@@ -184,7 +179,7 @@ if [ -z "$1" ]; then
 				rm -f -r $DT/.imprt
 				
 				) | $yad --on-top --progress \
-				--width=300 --height=20 --geometry=300x40-2-2 \
+				--width=200 --height=20 --geometry=200x20-2-2 \
 				--percentage="5" --auto-close \
 				--sticky --on-top --undecorated --on-top \
 				--skip-taskbar --center --no-buttons
@@ -200,7 +195,7 @@ if [ -z "$1" ]; then
 			fi
 		fi
 
-	# se ha elegido " backup" 
+	# backup
 	elif [ "$ret" -eq 2 ]; then
 		sttng=$(sed -n 1p $DC_s/cnfg12)
 		D_cps=$(sed -n 2p $DC_s/cnfg12)
@@ -222,7 +217,7 @@ if [ -z "$1" ]; then
 		--field=" :LBL" " " )
 		
 		ret=$?
-		# seconfigurado para el backup" 
+		# backup config
 		if [ "$ret" -eq 0 ]; then
 			sttng=$(echo "$CNFG" | cut -d "|" -f1)
 			dircy=$(echo "$CNFG" | cut -d "|" -f2)
@@ -279,7 +274,7 @@ if [ -z "$1" ]; then
 						rm -r  "$D_cps/topics"
 						mv -f "$D_cps/backup.tar.gz" "$D_cps/idiomind.backup"
 						) | $yad --on-top \
-						--width=200 --height=20 --geometry=200x40-2-2 \
+						--width=200 --height=20 --geometry=200x20-2-2 \
 						--pulsate --percentage="5" --auto-close \
 						--sticky --on-top --undecorated --skip-taskbar \
 						--center --no-buttons --fixed --progress
@@ -298,7 +293,6 @@ if [ -z "$1" ]; then
 		exit 1
 	fi
 
-# copia de seguridad cada 7 dias 
 elif ([ "$1" = C ] && [ "$dte" != "$udt" ]); then
 	sleep 3
 	while true; do

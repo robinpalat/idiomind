@@ -1,10 +1,11 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
+
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/upld.conf
 
 if [[ $1 = vsd ]]; then
-	userid=$(sed -n 1p $HOME/.config/idiomind/s/cnfg4)
+	U=$(sed -n 1p $HOME/.config/idiomind/s/cnfg4)
 	lng=$(echo "$lgtl" |  awk '{print tolower($0)}')
 	wth=$(sed -n 4p $DC_s/cnfg18)
 	eht=$(sed -n 3p $DC_s/cnfg18)
@@ -30,7 +31,7 @@ if [[ $1 = vsd ]]; then
 elif [[ $1 = infsd ]]; then
 	echo "$2"
 	cd $DM_t/saved
-	userid=$(sed -n 1p $DC_s/cnfg4)
+	U=$(sed -n 1p $DC_s/cnfg4)
 	user=$(echo "$(whoami)")
 	tpcd="$2"
 	NM=$(sed -n 1p ./"$tpcd".cnfg12)
@@ -72,8 +73,11 @@ elif [[ $1 = infsd ]]; then
 			--width=320 --height=100 --borders=5 \
 			--skip-taskbar --title="Idiomind" \
 			--button="  Ok  ":0 >&2; exit 1;}
-
-			rm $HOME/$userid."$tpcd".idmnd
+			cd $DT
+			wget http://idiomind.sourceforge.net/info/SITE_TMP
+			HOST=$(sed -n 4p ./SITE_TMP)
+			file="$HOST/$LNK"
+			rm $HOME/$U."$tpcd".idmnd
 
 			WGET() {
 			rand="$RANDOM `date`"
@@ -91,8 +95,8 @@ elif [[ $1 = infsd ]]; then
 			done > $pipe &
 			wget_info=`ps ax |grep "wget.*$1" |awk '{print $1"|"$2}'`
 			wget_pid=`echo $wget_info|cut -d'|' -f1 `
-			$yad --progress --timeout=100 --borders=10 --auto-close \
-			--geometry=240x40-5-5 --no-buttons --skip-taskbar --undecorated \
+			$yad --progress --timeout=100 --auto-close --width=200 --height=20 \
+			--geometry=200x20-2-2 --no-buttons --skip-taskbar --undecorated --on-top \
 			--title="Downloading"< $pipe
 			if [ "`ps -A |grep "$wget_pid"`" ];then
 			kill $wget_pid
@@ -100,17 +104,17 @@ elif [[ $1 = infsd ]]; then
 			rm -f $pipe
 			}
 			cd /tmp
-			[ -f "/tmp/$userid.$tpcd.idmnd" ] && rm -f "/tmp/$userid.$tpcd.idmnd"
+			[ -f "/tmp/$U.$tpcd.idmnd" ] && rm -f "/tmp/$U.$tpcd.idmnd"
 			
 			WGET "$file"
 			
-			if [ -f "/tmp/$userid.$tpcd.idmnd" ] ; then
-				mv -f "/tmp/$userid.$tpcd.idmnd" "$sv"
+			if [ -f "/tmp/$U.$tpcd.idmnd" ] ; then
+				mv -f "/tmp/$U.$tpcd.idmnd" "$sv"
 			else
 				$yad --fixed --name=idiomind --center \
 				--image=info --text="<b>file_err</b>" \
 				--fixed --sticky --width=220 --height=80 --borders=3 \
-				--skip-taskbar --window-icon=$DS/images/icon.png \
+				--skip-taskbar --window-icon=idiomind \
 				--on-top --title="Idiomind" --button="Info":3 \
 				--button="Ok":0 && exit 1
 			fi
@@ -123,7 +127,7 @@ fi
 lnglbl=$(echo $lgtl | awk '{print tolower($0)}')
 nt=$(sed -n 2p $DC_s/cnfg4)
 user=$(echo "$(whoami)")
-userid=$(sed -n 1p $DC_s/cnfg4)
+U=$(sed -n 1p $DC_s/cnfg4)
 mail=$(sed -n 2p $DC_s/cnfg4)
 skp=$(sed -n 3p $DC_s/cnfg4)
 nme=$(echo "$tpc" | sed 's/ /_/g' \
@@ -246,12 +250,12 @@ if [[ "$(($chk4 + $chk5))" != $chk1 \
 	cp -f "$in1" "$DC_tlt/cnfg1"
 fi
 
-if cat "$DM_t/saved/ls" \
-| grep "$tpc"; then
-	inf="Actualizado"
-else
-	inf="Subido"
-fi
+#if cat "$DM_t/saved/ls" \
+#| grep "$tpc"; then
+	#inf="update"
+#else
+	#inf="share"
+#fi
 
 cd "$DM_tlt"
 MP3=$(ls *.mp3 | wc -l)
@@ -281,20 +285,65 @@ upld=$($yad --image-on-top --width=400 \
 --field="    <small>$email</small>:: " "$mail" \
 --field="    <small>$skype</small>:: " "$skp" \
 --field="    <small>$category</small>::CB" \
-"!others!entertainment!history!documentary!films!internet!mathematics!music!education!nature!news!office!policy!podcats!relations!sport!religion!shopping!science!social!technology!travel!places" \
+"!$others!$entertainment!$history!$documentary!$films!$internet!$music!$events!$nature!$news!$office!$relations!$sport!$shopping!$social!$technology!$travel" \
 --field="<small>\\n$notes:</small>:TXT" " ")
 ret=$?
 
+
+Ctgry=$(echo "$upld" | cut -d "|" -f5)
+[[ $Ctgry = $others ]] && Ctgry=others
+[[ $Ctgry = $entertainment ]] && Ctgry=entertainment
+[[ $Ctgry = $history ]] && Ctgry=history
+[[ $Ctgry = $documentary ]] && Ctgry=documentary
+[[ $Ctgry = $films ]] && Ctgry=films
+[[ $Ctgry = $internet ]] && Ctgry=internet
+[[ $Ctgry = $music ]] && Ctgry=music
+[[ $Ctgry = $events ]] && Ctgry=events
+[[ $Ctgry = $nature ]] && Ctgry=nature
+[[ $Ctgry = $news ]] && Ctgry=news
+[[ $Ctgry = $relations ]] && Ctgry=relations
+[[ $Ctgry = $sport ]] && Ctgry=sport
+[[ $Ctgry = $shopping ]] && Ctgry=shopping
+[[ $Ctgry = $technology ]] && Ctgry=technology
+[[ $Ctgry = $travel ]] && Ctgry=travel
+
+
 if [[ "$ret" != 0 ]]; then
+	exit 1
+fi
+
+curl -v www.google.com 2>&1 | \
+grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
+$yad --window-icon=idiomind --on-top \
+--image="info" --name=idiomind \
+--text="<b>$conn_err  \\n  </b>" \
+--image-on-top --center --sticky \
+--width=320 --height=100 --borders=5 \
+--skip-taskbar --title=Idiomind \
+--button="  Ok  ":0
+ >&2; exit 1;}
+
+cd $DT
+[[ -f ./SITE_TMP ]] && rm -f ./SITE_TMP
+wget http://idiomind.sourceforge.net/info/SITE_TMP
+HOST=$(sed -n 4p ./SITE_TMP)
+
+if [ -z "$HOST" ]; then
+	$yad --window-icon=idiomind --name=idiomind \
+	--image=error --on-top \
+	--text="<b>$site_err\\n</b>" \
+	--image-on-top --center --sticky \
+	--width=320 --height=100 --borders=5 \
+	--skip-taskbar --title="Idiomind" \
+	--button="  Ok  ":0 &
 	exit 1
 fi
 
 Autor=$(echo "$upld" | cut -d "|" -f2)
 Mail=$(echo "$upld" | cut -d "|" -f3)
 Skype=$(echo "$upld" | cut -d "|" -f4)
-Ctgry=$(echo "$upld" | cut -d "|" -f5)
 Notes=$(echo "$upld" | cut -d "|" -f6 | sed 's/\n/ /g')
-link="http://tmp.site50.net/$lgs/$lnglbl/$Ctgry/$userid.$tpc.idmnd"
+link="$HOST/$lgs/$lnglbl/$Ctgry/$U.$tpc.idmnd"
 
 mkdir "$DT/$nme"
 mkdir "$DT/$tpc"
@@ -309,12 +358,11 @@ echo ""$tpc"
 "$Ctgry"
 "$link"
 "$Notes"" > "$DT/cnfg12"
-echo "$userid" > $DC_s/cnfg4
+echo "$U" > $DC_s/cnfg4
 echo "$Skype" >> $DC_s/cnfg4
 echo "$Mail" >> $DC_s/cnfg4
 
 if [ -z $Ctgry ]; then
-
 	$yad --window-icon=idiomind --name=idiomind \
 	--image=info --on-top \
 	--text="<b>$categry_err  \\n</b>" \
@@ -323,21 +371,8 @@ if [ -z $Ctgry ]; then
 	--skip-taskbar --title="Idiomind" \
 	--button="  Ok  ":0
 	$DS/ifs/upld.sh &
-	rm ./.info_u.sh
 	exit 1
-	
 fi
-
-curl -v www.google.com 2>&1 | \
-grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
-$yad --window-icon=idiomind --on-top \
---image="info" --name=idiomind \
---text="<b>$conn_err  \\n  </b>" \
---image-on-top --center --sticky \
---width=320 --height=100 --borders=5 \
---skip-taskbar --title=Idiomind \
---button="  Ok  ":0
- >&2; exit 1;}
 
 cd "$DM_tlt"
 cp -r * $DT/"$tpc/"
@@ -358,369 +393,24 @@ cp -f "$DC_tlt/cnfg5" "$DT/$tpc/cnfg5"
 cd $DT
 tar -cvf "$tpc.tar" "$tpc"
 gzip -9 "$tpc.tar"
-mv "$tpc.tar.gz" "$userid.$tpc.idmnd"
+mv "$tpc.tar.gz" "$U.$tpc.idmnd"
 rm -f "$tpc"/*
 
 notify-send "$uploading..." "$wait" -i idiomind -t 6000
-wget http://www.idmnd.2fh.co/data/.PASS_TMP
-HOST=$(sed -n 1p .PASS_TMP)
-USER=$(sed -n 2p .PASS_TMP)
-PASS=$(sed -n 3p .PASS_TMP)
+#wget http://idiomind.sourceforge.net/info/SITE_TMP
+HOST=$(sed -n 1p $DT/SITE_TMP)
+USER=$(sed -n 2p $DT/SITE_TMP)
+PASS=$(sed -n 3p $DT/SITE_TMP)
 
 #-----------------------
 dte=$(date "+%d %B %Y")
-#mkdir $DT/mkhtml
-#cp -f "$DC_tlt/cnfg3" $DT/mkhtml/w.inx.l
-#cp -f "$DC_tlt/cnfg4" $DT/mkhtml/s.inx.l
-#iw=$DT/mkhtml/w.inx.l
-#is=$DT/mkhtml/s.inx.l
+mv -f "$DT/$U.$tpc.idmnd" $DT/$nme/
 
-#mkdir $DT/$nme/images
-mv -f "$DT/$userid.$tpc.idmnd" $DT/$nme/
-#cd $DT/mkhtml
-
-##-----------------------
-#n=1
-#while [ $n -le $(cat $iw | wc -l | awk '{print ($1)}') ]; do
-	#WL=$(sed -n "$n"p  $iw)
-	#if [ -f "$DM_tlt/words/images/$WL.jpg" ]; then
-		#convert "$DM_tlt/words/images/$WL.jpg" -font Verdana-Bold -gravity south -pointsize 35 -fill white -draw \
-		#"text 0 0 \"$WL\"" -stroke gray22 -draw "text 0 -1 $WL" "$DT/$nme/images/$n.jpg"
-	#fi
-	#tgs=$(eyeD3 "$DM_tlt/words/$WL.mp3")
-	#wt=$(echo "$tgs" | grep -o -P "(?<=IWI1I0I).*(?=IWI1I0I)")
-	#ws=$(echo "$tgs" | grep -o -P "(?<=IWI2I0I).*(?=IWI2I0I)")
-	#echo "$wt" >> W.lizt.x
-	#echo "$ws" >> W.lizs.x
-	#let n++
-#done
-
-##-----------------------
-#n=1
-#while [[ $n -le "$(cat  $is | wc -l | awk '{print ($1)}')" ]]; do
-	#WL=$(sed -n "$n"p $is)
-	#tgs=$(eyeD3 "$DM_tlt/$WL.mp3")
-	#wt=$(echo "$tgs" | grep -o -P "(?<=ISI1I0I).*(?=ISI1I0I)")
-	#ws=$(echo "$tgs" | grep -o -P "(?<=ISI2I0I).*(?=ISI2I0I)")
-	#echo "$wt" >> S.gprt.x
-	#echo "$ws" >> S.gprs.x
-	#let n++
-#done
-
-##-----------------------
-#lgt=$(sed -n 2p "$DT/$tpc"/cnfg12 | awk '{print tolower($0)}')
-#ls=$(sed -n 5p "$DT/$tpc"/cnfg12)
-#cby=$(sed -n 6p "$DT/$tpc"/cnfg12)
-#cty=$(sed -n 9p "$DT/$tpc"/cnfg12)
-#lnk=$(sed -n 10p "$DT/$tpc"/cnfg12)
-#nts=$(sed -n 11p "$DT/$tpc"/cnfg12 | sed 's/https\:\/\///g' | sed 's/http\:\/\///g')
-
-#l=$(sort -Ru $DM_t/saved/ls | egrep -v "$tpc" | head -4)
-#echo "$l" > l
-#ot1=$(sed -n 1p l)
-#ot2=$(sed -n 2p l)
-#ot3=$(sed -n 3p l)
-#ot4=$(sed -n 4p l)
-#lt1=$(sed -n 10p "$DM_t/saved/$ot1"cnfg12)
-#lt2=$(sed -n 10p "$DM_t/saved/$ot2"cnfg12)
-#lt3=$(sed -n 10p "$DM_t/saved/$ot3"cnfg12)
-#lt4=$(sed -n 10p "$DM_t/saved/$ot4"cnfg12)
-
-##-----------------------htmlquiz
-#if [ -n "$(cat $iw)" ]; then
-#echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-#<html xmlns="http://www.w3.org/1999/xhtml">' > $DT/$nme/flashcards.html
-#echo '<head>
-#<title>'$tpc'</title>
-#<link rel="stylesheet" href="ln/flashcards.css" media="screen" />
-#<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
-#<script>window.jQuery || document.write("<script src="jquery-1.6.2.min.js">\x3C/script>")</script>
-#</head>' >> $DT/$nme/flashcards.html
-
-##-----------------------htmlhome
-
-#echo '<script src="ln/utils.js" type="text/javascript"></script>
-#<div id="fc_container" class="noprint">
-  #<div id="incorrectBox" class="cardBox" onClick="doAction( MOVE_TO_INCORRECT )">incorrect cards (0)</div>
-  #<div id="correctBox" class="cardBox" onClick="doAction( MOVE_TO_CORRECT )">correct cards (0)</div>
-  #<div id="remainingBox" class="cardBox" onClick="doAction( MOVE_TO_REMAINING )">remaining cards (0)</div>
-  #<div id="correctCards"   class="cardPile" onClick="doAction( UNDO_CORRECT )" ></div>
-  #<div id="incorrectCards" class="cardPile" onClick="doAction( UNDO_INCORRECT )"></div>
-  #<div id="remainingCards" class="cardPile" onClick="doAction( MOVE_TO_REMAINING )"></div>
-  #<div id="currentCard" onClick="doAction( FLIP_CARD )"></div>
-  #<div id="reverseOrder">
-      #<input type="checkbox" id="reverseOrderCheckBox" value="reverse" onClick="reverseOrder()" />
-              #<label class="action" for="reverseOrderCheckBox"> show Answer first</label>
-  #</div>
-  #<div id="autoPlayArea" title="Check to flip through cards automatically">
-      #<input id="autoPlayCheckBox" type="checkbox" onclick="doAction( TOGGLE_AUTO_PLAY )" id="autoPlay">
-      #<label id="autoPlayLabel" class="action" for="autoPlayCheckBox">auto play</label>
-      #<div id="speedBarArea">
-         #<div id="speedBar" title="Click to set auto play speed" onMouseDown="alert( "speed" );"></div>
-         #<div id="speedMarker" ></div>
-         #<div id="delayDescription" ></div>
-      #</div>
-  #</div>
-  #<div id="restartLink" class="action" onClick="doAction( START_OVER )" title="Move all cards back to the "remaining" box">restart</div>
-  #<table id="infoCard"   class="infoMessage" onClick="doAction( CLOSE_HELP )" title="click to hide" >
-    #<tr style="height: 326px;  " ><td id="infoCardContent" >
-     #</td></tr>
-#</table>
-#</div>
-
-#<script type="text/javascript">
-   #var embedHeight = 440; 
-   #var embedWidth =  850;
-#</script>' >> $DT/$nme/flashcards.html
-
-##-----------------------htmlhome
-
-#echo '<script type="text/javascript">
-     #//<![CDATA[
-  #var stack = {name : "'$tpc'",description : "'$tpc'",nextCardId : "50" ,numCards : "49" ,columnNames : [ "'$lgtl'","'$lgsl'"], data : [' >> $DT/$nme/flashcards.html
-
-#n=1
-#while [ $n -le "$(cat $DT/mkhtml/W.lizt.x | wc -l)" ]; do
-	#wt=$(sed -n "$n"p $DT/mkhtml/W.lizt.x)
-	#ws=$(sed -n "$n"p $DT/mkhtml/W.lizs.x)
-	#echo '["'$wt'","'$ws'"]' >> flashcards
-	#let n++
-#done
-
-#cat flashcards | tr '\n' ',' >> $DT/$nme/flashcards.html
-
-##-----------------------
-
-#echo ']};;
-  #// 
-  #var savedSessionData = "";
-  #var logonId = "";
-      #//]]>
-#</script>
-#<script src="ln/flashcard.js" type="text/javascript"></script></div>
-#<p>&nbsp;</p>
-#</section>
-   #</div>
-        #</article>
-    #</div>
-#</main>
-#<footer role="contentinfo">
-#</footer>
-#</div></html>' >> $DT/$nme/flashcards.html
-#fi
-##-----------------------
-
-#echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-#<html xmlns="http://www.w3.org/1999/xhtml">' > $DT/$nme/index.html
-
-#echo '<head>
-#<html lang="en" id="abId0.5137621304020286"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-#<meta charset="utf-8">
-#<title>'$tpc'</title>
-#<link rel="stylesheet" href="./ln/style.css" media="screen" />
-#<link rel="stylesheet" type="text/css" href="ln/jquery.fancybox-1.3.4.css" media="screen" />
-#<link rel="stylesheet" href="./ln/spacegallery.css" media="screen" />
-#<link rel="stylesheet" href="./ln/custom.css" media="screen" />
-#<script type="text/javascript" src="http://www.idiomind.com.ar/default/js/jquery.js"></script>
-#<script type="text/javascript" src="http://www.idiomind.com.ar/default/js/eye.js"></script>
-#<script type="text/javascript" src="http://www.idiomind.com.ar/default/js/utils.js"></script>
-#<script type="text/javascript" src="http://www.idiomind.com.ar/default/js/spacegallery.js"></script>
-#<script type="text/javascript" src="http://www.idiomind.com.ar/default/js/layout.js"></script>
-#<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
-#<script type="text/javascript" src="ln/jquery.fancybox-1.3.4.pack.js"></script>
-
-#<script type="text/javascript">
-#$(document).ready(function() {
-#$("#various1").fancybox({
-#"width"			: "100%",
-#"height"		: "100%",
-#"autoScale"		: false,
-#"transitionIn"		: "none",
-#"transitionOut"		: "none",
-#"overlayColor"		: "#2B2B2B",
-#"overlayOpacity"	: 9.9,
-#"scrolling"	        : "no",
-#"type"			: "iframe"
-#});
-#});
-
-#</script>
-
-#</head>
-#<main id="content" class="group" role="main">
-    #<div class="main">
-        #<article class="post group">
-            #<header>
-              #<h1>'$tpc'</h1>
-             #</header>
-             #<div class="entry">' >> $DT/$nme/index.html
-
-##-----------------------images
-
-#cd "$DM_tlt/words/images"
-
-#if [ $(ls -1 *.jpg 2>/dev/null | wc -l) != 0 ]; then
-	#echo '<div class="entry">
-	#<div id="myGallery" class="spacegallery">' >> $DT/$nme/index.html
-	
-	#cd $DT/$nme/images/
-	#ls *.jpg > $DT/mkhtml/nimg
-	#cd $DT/mkhtml/
-	#n=1
-	#while [ $n -le "$(cat nimg | wc -l)" ]; do
-		#nimg=$(sed -n "$n"p nimg)
-		#echo '<img src="images/'$nimg'" alt="" />' >> $DT/$nme/index.html
-		#let n++
-	#done
-
-	#echo '</div>' >> $DT/$nme/index.html
-
-#fi
-
-##-----------------------htmlhome
-#cd $DT/mkhtml/
-#n=1
-#while [ $n -le $(cat s.inx.l | wc -l) ]; do
-		#st=$(sed -n "$n"p S.gprt.x)
-		
-		#if [ -n "$st" ]; then
-			#ss=$(sed -n "$n"p S.gprs.x)
-			#fn=$(sed -n "$n"p s.inx.l)
-	
-			#echo '<a href="#'$n'">
-			#<div class="callout sentence">
-			#<p>'$st'</p>' > Sgprt.tmp
-			#echo '<pre>'$ss'</pre>
-			#</div></a>' > Sgprs.tmp
-			#echo '<table>
-			#<tbody>' > Wgprs.tmp
-					
-			#eyeD3 "$DM_tlt/$fn.mp3" > tgs
-			#> wt
-			#> ws
-			#(
-			#n=1
-			#while [ $n -le "$(echo "$st" | sed 's/ /\n/g' \
-			#| grep -v '^.$' | grep -v '^..$' | wc -l)" ]; do
-				#cat tgs | grep -o -P '(?<=ISTI'$n'I0I).*(?=ISTI'$n'I0I)' >> wt
-				#cat tgs | grep -o -P '(?<=ISSI'$n'I0I).*(?=ISSI'$n'I0I)' >> ws
-				#let n++
-			#done
-			#)
-	
-			#(
-			#n=1
-			#while [ $n -le "$(cat wt | wc -l)" ]; do
-				#wt=$(sed -n "$n"p wt)
-				#ws=$(sed -n "$n"p ws)
-				#wt2=$(sed -n "$n"p wt)
-				
-				#if cat W.lizt.x | grep "$wt2"; then
-					#echo '<tr>
-					#<td><mark'$n'>'$wt'</mark></td>
-					#<td><mark'$n'>'$ws'</mark></td>
-					#</tr>' >> ./Wgprs.tmp
-				#else
-					#echo '<tr>
-					#<td>'$wt'</td>
-					#<td>'$ws'</td>
-					#</tr>' >> ./Wgprs.tmp
-				#fi
-				
-				#let n++
-			#done
-			#)
-			
-			#echo '</tbody>
-			#</table>
-			#<a name="'$n'"></a>
-			#<p>&nbsp;</p>
-			#<p>&nbsp;</p>' >> ./Wgprs.tmp
-			#cat ./Sgprt.tmp >> $DT/$nme/index.html
-			#cat ./Sgprs.tmp >> $DT/$nme/index.html
-			#cat ./Wgprs.tmp >> $DT/$nme/index.html
-		#fi
-	#let n++
-#done
-
-##-----------------------htmlhome
-
-#echo '<a href="#top">Ir Arriba</a>
-#<p>&nbsp;</p>
-#</section>
-    #</div>
-    #</article>
-    #</div>
-#<aside class="secondary">    
-    #<nav class="ui-tabs mod">
-    #<div>
-       #<p> '$nts' </p>
-       #<p>&nbsp;</p>
-       #<p>Subido por '$cby',  el '$dte'</p>
-    #</div>
-    #<p>&nbsp;</p>
-    #<div class="tab" id="articles">
-  #<p class="btn"><a href="'$lnk'">Download this Topic</a>  </p>
-  #<div class="area"></div>
-  #<p class="buscarenelsitio">&nbsp;</p>
-  #<p class="buscarenelsitio">Otros topics del autor
-  #</p>
-      #<p><a href="'$lt1'">'$ot1'</a></p>
-      #<p><a href="'$lt2'">'$ot2'</a></p>
-      #<p><a href="'$lt3'">'$ot3'</a></p>
-	  #<p><a href="'$lt4'">'$ot4'</a></p>' >> $DT/$nme/index.html
-		#if [ -n "$(cat $iw)" ]; then
-		#echo '<ul class="navigationTabs">
-		#<li><a href="./flashcards.html" target="_new" id="various1">Flashcards</a></li>
-		#</ul>' >> $DT/$nme/index.html
-		#fi
-      #echo '<p>&nbsp;</p>
-      #<span class="buscarenelsitio">Busca en el sitio</span>
-          #<div>
-            #<script>
-			  #(function() {
-			    #var cx = "002081832494466994751:1linpaag-om";
-			    #var gcse = document.createElement("script");
-			    #gcse.type = "text/javascript";
-			    #gcse.async = true;
-			    #gcse.src = (document.location.protocol == "https:" ? "https:" : "http:") +
-			        #"//www.google.com/cse/cse.js?cx=" + cx;
-			    #var s = document.getElementsByTagName("script")[0];
-			    #s.parentNode.insertBefore(gcse, s);
-			  #})();
-            #</script>
-            #<gcse:search></gcse:search>
-        #</div>
-      #<tr>
-        #<td width="15%" height="29">&nbsp;</td>
-          #<td width="23%" align="center">&nbsp;</td>
-        #<td>&nbsp;</td>
-      #</tr>
-          #<p><a href="http://'$ls'.idiomind.com.ar/'$lgt'/'$cty'">Buscar en esta categoria</a></p>
-          #<p>&nbsp;</p>
-     #</div>
-    #</nav>
-  #</aside>
-#</main>' >> $DT/$nme/index.html
-
-##-----------------------htmlhome
-
-#echo '<footer role="contentinfo">
-	#<div class="inner">
-    	#<img width="64" height="64" class="w3c-logo" alt="W3C HTML5 logo (not CSS3!)" src="/usr/share/idiomind/images/cnn.png">
-		#<p id="copyright">This site is licensed under a <a href="http://creativecommons.org/licenses/by-nc/2.0/uk/" rel="license">Creative Commons Attribution-Non-Commercial 2.0</a> share alike license. Feel free to change, reuse modify and extend it. Some authors will retain their copyright on certain articles.</p>
-        #<p>Copyright © 2015 Idiomind. All rights.</p>
-	#</div>
-#</footer>
-#</div></html>' >> $DT/$nme/index.html
-#chmod 775  $DT/$nme/index.html
-
-#-----------------------ftp
-
+#ftp
 HOST=$HOST
 USER=$USER
 PASSWD=$PASS
-rm -f $DT/.PASS_TMP
+rm -f $DT/SITE_TMP
 cd $DT/$nme
 cp -f $DS/default/index.php ./.index.php
 chmod 775 -R $DT/$nme
@@ -732,7 +422,7 @@ END_SCRIPT
 exit=$?
 if [ $exit = 0 ] ; then
     cp -f "$DT/cnfg12" "$DM_t/saved/$tpc.cnfg12"
-    info="<b><a href='link'>$tpc</a></b>\\n\\n<b>$saved</b>"
+    info="<big><b> $tpc </b</big>\\n\\n<b>  $saved</b>"
 else
     info="$upload_err"
 fi
@@ -740,12 +430,12 @@ fi
 yad --window-icon=idiomind --name=idiomind \
 --image=gtk-ok --on-top --text="$info" \
 --image-on-top --center --fixed --sticky \
---width=360 --height=140 --borders=5 \
+--width=380 --height=150 --borders=5 \
 --skip-taskbar --title=idiomind \
 --button="  Ok  ":0
 
 [[ -f "$DT/$nme/cnfg12" ]] && rm -f "$DT/$tpc/cnfg12"
-rm -fr $DT/mkhtml/ $DT/.ti
-rm -fr  $DT/"$tpc"  $DT/$userid."$tpc".idmnd
-rm $DT/.aud $DT/.img $DT/$userid."$tpc".idmnd \
+rm -fr $DT/mkhtml/ $DT/.ti $DT/SITE_TMP
+rm -fr  $DT/"$tpc"  $DT/$U."$tpc".idmnd
+rm $DT/.aud $DT/.img $DT/$U."$tpc".idmnd \
 $DT/"$tpc".tar $DT/"$tpc".tar.gz & exit 1

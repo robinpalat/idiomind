@@ -3,6 +3,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/practice.conf
+
 DSP="$DS/addons/Practice/"
 strt="$DSP/strt"
 IND='play $DSP/all.mp3'
@@ -56,7 +57,7 @@ if [ "$1" = f ]; then
 	fi
 	cp fin1 fin.tmp
 
-	$DF 1 # ---------------------------
+	$DF 1
 
 	s1=$(cat  f_r)
 	s2=$(cat fin.1.ok | wc -l)
@@ -81,7 +82,7 @@ if [ "$1" = f ]; then
 	cat fin.tmp | sed '/^$/d' > ./fin2
 	cp -f fin2 fin.tmp
 
-	$DF 2 # ---------------------------
+	$DF 2
 	
 	if [ -f fin.2.no ]; then
 	
@@ -202,7 +203,7 @@ elif [ "$1" = m ]; then
 	fi
 	cp mcin1 mcin.tmp
 
-	$DMC 1 # ---------------------------
+	$DMC 1
 	
 	s1=$(cat  mc_r)
 	s2=$(cat mcin.1.ok | wc -l)
@@ -226,7 +227,7 @@ elif [ "$1" = m ]; then
 	sed '/^$/d' ./mcin.tmp > ./mcin2
 	cp mcin2 mcin.tmp
 
-	$DMC 2 # ---------------------------
+	$DMC 2
 	
 	if [ -f mcin.2.no ]; then
 	
@@ -334,7 +335,7 @@ elif [ "$1" = w ]; then
 	fi
 	cp -f lwin1 lwin.tmp
 
-	$DLW 1 # ---------------------------
+	$DLW 1
 	
 	s1=$(cat  lw_r)
 	s2=$(cat lwin.1.ok | wc -l)
@@ -358,7 +359,7 @@ elif [ "$1" = w ]; then
 	cat lwin.tmp | sed '/^$/d' > ./lwin2
 	cp -f lwin2 lwin.tmp
 
-	$DLW 2 # ---------------------------
+	$DLW 2
 
 	if [ -f lwin.2.no ]; then
 	

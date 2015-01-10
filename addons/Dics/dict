@@ -144,7 +144,7 @@ elif [ "$3" = cnf ]; then
 		ls -d -1 $PWD/*.auto >> "$DICT/.dicts"
 		rm -f "$D" & exit 1
 		
-# para palabra
+# word
 elif [ "$3" = swrd ]; then
 	cd $DT_r
 	if [ -f "$DM_tl/.share/$wrd.mp3" ]; then
@@ -160,7 +160,7 @@ elif [ "$3" = swrd ]; then
 			let n++
 		done
 	fi
-# palara la lista de palabras de la las oraciones
+# words lists
 else
 	cd $DT_r
 	if [ -f "$DM_tl/.share/$wrd.mp3" ]; then

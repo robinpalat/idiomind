@@ -1,5 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
+
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/edit.conf
 
@@ -126,8 +127,7 @@ elif [ $1 = inx ]; then
 #--------------------------------
 elif [ "$1" = mklg- ]; then
 	kill -9 $(pgrep -f "$yad --icons")
-	(
-	echo "# " ;
+
 	nstll=$(grep -Fxo "$tpc" "$DC_tl/.cnfg3")
 	if [ -n "$nstll" ]; then
 		if [ $(cat "$DC_tlt/cnfg8") = 7 ]; then
@@ -196,12 +196,6 @@ elif [ "$1" = mklg- ]; then
 
 	$DS/mngr.sh mkmn &
 
-	) | $yad --progress \
-	--width=50 --height= 35 \
-	--pulsate --auto-close \
-	--sticky --undecorated \
-	--skip-taskbar --center --no-buttons
-
 	idiomind topic & exit 1
 	
 #--------------------------------
@@ -227,8 +221,8 @@ elif [ "$1" = mkok- ]; then
 			TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 			RM=$((100*$TM/60))
 		fi
-		if [ "$RM" -ge 50 ]; then # tiempo aceptado para  establecer la marca de repaso
-			if [ $(cat "$DC_tlt/cnfg9" | wc -l) = 4 ]; then # falso ciclo para despues del cuarto
+		if [ "$RM" -ge 50 ]; then
+			if [ $(cat "$DC_tlt/cnfg9" | wc -l) = 4 ]; then
 				echo "_
 				_
 				_
