@@ -217,7 +217,7 @@ if [ -z "$1" ]; then
 			# set baskup
 			if ([ "$(date +%u)" = 6 ] && \
 			[ "$(sed -n 1p $DC_s/cnfg12)" = "TRUE" ]); then
-				$DS/ifs/t_bd.sh C &
+				$DS/addons/User_data/t_bd.sh C &
 			fi
 			
 			#search updates
@@ -313,13 +313,13 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 	inme=$(sed -n 1p $DT/idmimp_$c/ls)
 	echo "$inme"
 	tmp="$DT/idmimp_$c/$inme"
-	lgtli=$(sed -n 2p "$tmp/cnfg13")
-	lng=$(sed -n 3p "$tmp/cnfg13")
-	lgsli=$(sed -n 4p "$tmp/cnfg13")
-	crea=$(sed -n 6p "$tmp/cnfg13")
-	cc=$(sed -n 1p "$tmp/cnfg13")
-	cgy=$(sed -n 9p "$tmp/cnfg13")
-	nt=$(sed -n 11p "$tmp/cnfg13")
+	lgtli=$(sed -n 2p "$tmp/cnfg12")
+	lng=$(sed -n 3p "$tmp/cnfg12")
+	lgsli=$(sed -n 4p "$tmp/cnfg12")
+	crea=$(sed -n 6p "$tmp/cnfg12")
+	cc=$(sed -n 1p "$tmp/cnfg12")
+	cgy=$(sed -n 9p "$tmp/cnfg12")
+	nt=$(sed -n 11p "$tmp/cnfg12")
 
 	ICON=idiomind
 	
@@ -340,12 +340,12 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 		cd "$tmp"
 		ws=$(cat "cnfg3" | wc -l)
 		ss=$(cat "cnfg4" | wc -l)
-		if [[ -z "$nt" ]]; then
-			itxt="<big><b>$title</b></big><small><small><b>\\n$lgsli  -  $lgtli \\n$category:  $cgy.\\ncreated_by:  $crea.\\n$ss  $sentences  -  $ws  $words</b></small></small><small>\n</small>"
-		elif [[ ! -z "$nt" ]]; then
+		if [ $(echo "$nt" | wc -c) -ge 10 ] ; then
 			[[ $(echo "$nt" | wc -c) -gt 200 ]] \
-			&& nt="${nt:0:250}..." || nt="$nt"
-			itxt="<big><b>$title</b></big><small><small><b>\\n$lgsli  -  $lgtli \\n$category:  $cgy.\\ncreated_by:  $crea.\\n$ss  $sentences  -  $ws  $words</b></small></small><small>\n\n$nt\n</small>"
+			&& nt="${nt:0:270}..." || nt="$nt"
+			itxt="<big><b>$title</b></big><small><small><b>\\n$lgsli  <b>></b>  $lgtli\\n$ss  $sentences  -  $ws  $words\\n$category:  $cgy.\\n$created_by:  $crea.</b></small></small><small>\n\n$nt\n</small>"
+		else
+			itxt="<big><b>$title</b></big><small><small><b>\\n$lgsli  <b>></b>  $lgtli \\n$ss  $sentences  -  $ws  $words\\n$category:  $cgy.\\n$created_by:  $crea.</b></small></small><small>\n</small>"
 		fi
 		dlck="$DT/p1.$c"
 		cat "$tmp/cnfg0" | awk '{print $0""}' | \
@@ -354,7 +354,7 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 		--text="$itxt" --class=Idiomind  --scroll --no-headers \
 		--width="$wth" --height="$eht" --image-on-top \
 		--window-icon=idiomind --column=Items --center \
-		--dclick-action="$dlck" --image=$ICON \
+		--dclick-action="$dlck" --image=$DS/images/trans.png \
 		--button="$install":0 --button="$close":1
 			ret=$?
 			
@@ -418,7 +418,7 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 				cp -n ./.audio/*.mp3 "$DM_t/$lgtli/.share/"
 				rm -fr ./.audio
 				cp -fr ./.* "$drit/"
-				cp -f cnfg13 "$dric/cnfg13"
+				cp -f cnfg12 "$dric/cnfg12"
 				echo "6" > "$dric/cnfg8"
 				cp -f cnfg0 "$dric/cnfg0"
 				cp -f cnfg0 "$dric/cnfg1"
@@ -432,7 +432,7 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 				echo "$lng" > $DC_s/cnfg10
 				echo "$lgtli" >> $DC_s/cnfg10
 				cd "$dric"
-				echo $dte > cnfg12
+				echo $dte > cnfg13
 				echo "$inm" >> "$DC/topics/$lgtli/.cnfg3"
 				sed -i 's/'"$inm"'//g' "$DC/topics/$lgtli/.cnfg2"
 				sed '/^$/d' $DC/topics/$lgtli/.cnfg2 > $DC/topics/$lgtli/.cnfg2_
@@ -452,27 +452,29 @@ fi
 #--------------topic
 if [ "$1" = topic ]; then
 	
-	eht=$(sed -n 3p $DC_s/cnfg18)
-	wth=$(sed -n 4p $DC_s/cnfg18)
-	mde=$(sed -n 2p $DC_s/cnfg8)
-	title=$(sed -n 3p $DC_s/cnfg8)
-	[[ ! -f "$DC_tlt/cnfg0" ]] && touch "$DC_tlt/cnfg0"
-	[[ ! -f "$DC_tlt/cnfg1" ]] && touch "$DC_tlt/cnfg1"
-	[[ ! -f "$DC_tlt/cnfg2" ]] && touch "$DC_tlt/cnfg2"
-	ls0="$DC_tlt/cnfg0"
-	ls1="$DC_tlt/cnfg1"
-	ls2="$DC_tlt/cnfg2"
-	nt="$DC_tlt/cnfg10"
-	if [ $(echo "$tpc" | wc -c) -gt 50 ]; then
-		ttl="${tpc:0:50}..."
-	else
-		ttl="$tpc"
+	if [ -n "$tpc" ]; then
+		eht=$(sed -n 3p $DC_s/cnfg18)
+		wth=$(sed -n 4p $DC_s/cnfg18)
+		mde=$(sed -n 2p $DC_s/cnfg8)
+		title=$(sed -n 3p $DC_s/cnfg8)
+		[[ ! -f "$DC_tlt/cnfg0" ]] && touch "$DC_tlt/cnfg0"
+		[[ ! -f "$DC_tlt/cnfg1" ]] && touch "$DC_tlt/cnfg1"
+		[[ ! -f "$DC_tlt/cnfg2" ]] && touch "$DC_tlt/cnfg2"
+		ls0="$DC_tlt/cnfg0"
+		ls1="$DC_tlt/cnfg1"
+		ls2="$DC_tlt/cnfg2"
+		nt="$DC_tlt/cnfg10"
+		if [ $(echo "$tpc" | wc -c) -gt 50 ]; then
+			ttl="${tpc:0:50}..."
+		else
+			ttl="$tpc"
+		fi
+		echo "tpcs.$tpc.tpcs" >> \
+		$DC/addons/stats/.log &
+		inx=$(cat "$ls0" | wc -l)
+		tb1=$(cat "$ls1" | wc -l)
+		tb2=$(cat "$ls2" | wc -l)
 	fi
-	echo "tpcs.$tpc.tpcs" >> \
-	$DC/addons/stats/.log &
-	inx=$(cat "$ls0" | wc -l)
-	tb1=$(cat "$ls1" | wc -l)
-	tb2=$(cat "$ls2" | wc -l)
 
 	#--------------topic own
 	if echo "$mde" | grep "wn"; then
@@ -644,7 +646,7 @@ if [ "$1" = topic ]; then
 					--button="$onlynews":3 \
 					--button="$all":2 \
 					--text="  $cuestion_review2" \
-					--width=360 --height=120
+					--width=370 --height=140
 						ret=$? 
 						if [ "$ret" -eq 2 ]; then
 							rm -f "$DC_tlt/cnfg7"
@@ -854,10 +856,10 @@ if [ "$1" = topic ]; then
 	##--------------topic nstll
 	elif echo "$mde" | grep "istll"; then
 		[ -z "$tpc" ] && exit 1
-		l1=$(sed -n 6p "$DC_tlt/cnfg13")
-		l2=$(sed -n 7p "$DC_tlt/cnfg13")
-		l3=$(sed -n 8p "$DC_tlt/cnfg13")
-		l4=$(sed -n 9p "$DC_tlt/cnfg13")
+		l1=$(sed -n 6p "$DC_tlt/cnfg12")
+		l2=$(sed -n 7p "$DC_tlt/cnfg12")
+		l3=$(sed -n 8p "$DC_tlt/cnfg12")
+		l4=$(sed -n 9p "$DC_tlt/cnfg12")
 		ICON=$DS/images/wn.png
 		cd "$DC_tlt"
 		ws=$(cat cnfg3 | wc -l)
@@ -990,7 +992,7 @@ if [ "$1" = topic ]; then
 					--button="$onlynews":3 \
 					--button="$all":2 \
 					--text="  $cuestion_review2 " \
-					--width=360 --height=120
+					--width=370 --height=140
 						ret=$? 
 						if [ "$ret" -eq 2 ]; then
 							rm -f "$DC_tlt/cnfg7"

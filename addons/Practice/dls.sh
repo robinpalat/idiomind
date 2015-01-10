@@ -75,6 +75,9 @@ while [ $n -le $(cat lsin | wc -l) ]; do
 				play $drts/all.mp3 & sed -i 's/'"$s1"'//g' ./lsin.tmp
 				echo "$s1" >> lsin.ok
 				prc="$porc% <b>OK!</b>"
+			elif [ $porc -ge 50 ]; then
+				echo "$s1" >> lsin.1.no
+				prc="$porc%"
 			else
 				echo "$s1" >> lsin.no
 				prc="$porc%"

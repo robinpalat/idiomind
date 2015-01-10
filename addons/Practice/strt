@@ -42,7 +42,7 @@ info="<b><big>$learned </big></b><small>$s_learned</small>\\t<span color='#3AB45
 		info2="* "
 	elif [ $1 = 7 ]; then
 		easys=$(cat lwin.1.ok | wc -l)
-		learning=$(cat lwin.2.ok| wc -l)
+		learning=$(cat lwin.2.ok | wc -l)
 		hards=$(cat lwin.$2.no | wc -l)
 		learned=$(($(cat lw_r)-$easys))
 info="<b><big>$learned </big></b><small>$s_learned</small>\\t<span color='#3AB451'><b><big>$easys </big></b></span><small>$s_easy</small>\\t<span color='#E78C1E'><b><big>$learning </big></b></span><small>$s_learning</small>\\t<span color='#D11B5D'><b><big>$hards </big></b></span><small>$s_hard</small>\\n"
@@ -50,9 +50,10 @@ info="<b><big>$learned </big></b><small>$s_learned</small>\\t<span color='#3AB45
 		info3="* "
 
 	elif [ $1 = 8 ]; then
-		wrong=$(cat lsin.no | wc -l)
-		good=$(cat lsin.ok| wc -l)
-		learned=$(($(cat ls_r)-$good))
+		easys=$(cat lsin.ok | wc -l)
+		learning=$(cat lsin.1.no | wc -l)
+		hards=$(cat lsin.no | wc -l)
+		learned=$(($(cat ls_r)-$easys))
 info="<b><big>$learned </big></b><small>$s_learned</small>\\t<span color='#3AB451'><b><big>$easys </big></b></span><small>$s_easy</small>\\t<span color='#E78C1E'><b><big>$learning </big></b></span><small>$s_learning</small>\\t<span color='#D11B5D'><b><big>$hards </big></b></span><small>$s_hard</small>\\n"
 		num=$(cat .iconls)
 		info4="* "

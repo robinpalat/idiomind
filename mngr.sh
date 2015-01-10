@@ -29,15 +29,15 @@ if [ $1 = edit ]; then
 	
 	if [ -z "$nstll" ]; then
 		if [ "$ti" -ge 15 ]; then
-			dd="$img1 $learned $st1 $img2 $review $st2 $img3 $rename $st3 $img4 $delete $st4 $img5 $share $st5 $img6 $topdf $st6"
+			dd="$img1 $learned $img2 $review $img3 $rename $img4 $delete $img5 $share $img6 $topdf"
 		else
-			dd="$img3 $rename $st3 $img4 $delete $st4 $img5 $share $st5 $img6 $topdf $st6"
+			dd="$img3 $rename $img4 $delete $img5 $share $img6 $topdf"
 		fi
 	else
 		if [ "$ti" -ge 15 ]; then
-			dd="$img1 $learned $st1 $img2 $review $st2 $img3 $rename $st3 $img4 $delete $st4 $img6 $topdf $st6"
+			dd="$img1 $learned $img2 $review $img3 $rename $img4 $delete $img6 $topdf"
 		else
-			dd="$img3 $rename $st3 $img4 $delete $st4 $img6 $topdf $st6"
+			dd="$img3 $rename $img4 $delete $img6 $topdf"
 		fi
 	fi
 	$yad --list --on-top --expand-column=2 --center \
@@ -45,7 +45,7 @@ if [ $1 = edit ]; then
 	--height=260 --title=" " --window-icon=idiomind --no-headers \
 	--buttons-layout=end --skip-taskbar \
 	--borders=0 --button=Ok:0 --column=icon:IMG \
-	--column=Action:TEXT --column=icon:RD $dd > "$slct"
+	--column=Action:TEXT $dd > "$slct"
 	ret=$?
 	slt=$(cat "$slct")
 	if  [[ "$ret" -eq 0 ]]; then
@@ -206,7 +206,7 @@ elif [ "$1" = mklg- ]; then
 	
 #--------------------------------
 elif [ "$1" = mkok- ]; then
-	kill -9 $(pgrep -f "$yad --icons")
+	kill -9 $(pgrep -f "yad --icons")
 
 	if [ -f "$DC_tlt/cnfg9" ]; then
 		dts=$(cat "$DC_tlt/cnfg9" | wc -l)
@@ -285,6 +285,7 @@ elif [ "$1" = edt ]; then
 		tgs=$(eyeD3 "$file")
 		SRC=$(echo "$tgs" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
 		inf=$(echo "$tgs" | grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' | tr '_' '\n')
+		echo "$inf"
 		mrk=$(echo "$tgs" | grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)')
 		src=$(echo "$SRC")
 		ok=$(echo "FALSE")
@@ -848,9 +849,9 @@ elif [ $1 = dlt ]; then
 			sed '/^$/d' $DC_tl/.cnfg7_ > $DC_tl/.cnfg7
 			grep -v -x -v "$tpc" $DC_tl/.cnfg6 > $DC_tl/.cnfg6_
 			sed '/^$/d' $DC_tl/.cnfg6_ > $DC_tl/.cnfg6
-			grep -v -x -v "$tpc" $DC_tl/.cnfg3 > $DC_tl/ok
-			sed '/^$/d' $DC_tl/ok > $DC_tl/.ok
-			rm $DC_tl/in_s $DC_tl/in $DC_tl/nstll $DC_tl/.cnfg7_ $DC_tl/.cnfg6_ $DC_tl/ok 
+			grep -v -x -v "$tpc" $DC_tl/.cnfg5 > $DC_tl/.cnfg5_
+			sed '/^$/d' $DC_tl/.cnfg5_ > $DC_tl/.cnfg5
+			rm $DC_tl/.cnfg1_ $DC_tl/.cnfg2_ $DC_tl/.cnfg3_ DC_tl/.cnfg5_ DC_tl/.cnfg6_ DC_tl/.cnfg7_
 			
 			kill -9 $(pgrep -f "$yad --list ")
 			D="$(sed -n 4p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g' | sed -n 2p)"
@@ -870,6 +871,11 @@ elif [ $1 = mkmn ]; then
 	[[ -d ./images ]] && rm -r ./images
 	[[ -d ./words ]] && rm -r ./words
 	[[ -f ./*.mp3 ]] && rm -r ./*.mp3
+	[[ -f ./cnfg0 ]] && rm ./cnfg0
+	[[ -f ./cnfg1 ]] && rm ./cnfg1
+	[[ -f ./cnfg2 ]] && rm ./cnfg2
+	[[ -f ./cnfg3 ]] && rm ./cnfg3
+	[[ -f ./cnfg11 ]] && rm ./cnfg11
 	ls -t -d -N * > $DC_tl/.cnfg1
 	[[ -f $DC_s/cnfg0 ]] && mv -f $DC_s/cnfg0 $DC_s/cnfg16
 	n=1

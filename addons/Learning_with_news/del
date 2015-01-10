@@ -21,12 +21,12 @@ if [[ $1 = dlti ]]; then
 				grep -v -x -v "$itdl" ./.inx > ./inx
 				sed '/^$/d' ./inx > ./.inx
 				rm ./inx
-				grep -v -x -v "$itdl" ./cnfg3 > ./winx
-				sed '/^$/d' ./winx > ./cnfg3
-				rm ./winx
-				grep -v -x -v "$itdl" ./cnfg0 > ./t-inx
-				sed '/^$/d' ./t-inx > ./cnfg0
-				rm ./t-inx
+				grep -v -x -v "$itdl" ./cnfg3 > ./cnfg3_
+				sed '/^$/d' ./cnfg3_ > ./cnfg3
+				rm ./cnfg3_
+				grep -v -x -v "$itdl" ./cnfg0 > ./cnfg0_
+				sed '/^$/d' ./cnfg0_ > ./cnfg0
+				rm ./cnfg0_
 				notify-send  -i idiomind "$itdl" "$deleted"  -t 1500
 			fi
 			if [[ $ret -eq 1 ]]; then
@@ -48,12 +48,12 @@ if [[ $1 = dlti ]]; then
 				grep -v -x -v "$itdl" ./.inx > ./inx
 				sed '/^$/d' ./inx > ./.inx
 				rm ./inx
-				grep -v -x -v "$itdl" ./cnfg4 > ./sinx
-				sed '/^$/d' ./sinx > ./cnfg4
-				rm ./sinx
-				grep -v -x -v "$itdl" ./cnfg0 > ./t-inx
-				sed '/^$/d' ./t-inx > ./cnfg0
-				rm ./t-inx
+				grep -v -x -v "$itdl" ./cnfg4 > ./cnfg4_
+				sed '/^$/d' ./cnfg4_ > ./cnfg4
+				rm ./cnfg4_
+				grep -v -x -v "$itdl" ./cnfg0 > ./cnfg0_
+				sed '/^$/d' ./cnfg0_ > ./cnfg0
+				rm ./cnfg0_
 				notify-send  -i idiomind "$itdl" "$deleted"  -t 1500
 			fi
 			if [[ $ret -eq 1 ]]; then
@@ -74,15 +74,15 @@ if [[ $1 = dlti ]]; then
 				grep -v -x -v "$itdl" ./.inx > ./inx
 				sed '/^$/d' ./inx > ./.inx
 				rm ./inx
-				grep -v -x -v "$itdl" ./cnfg3 > ./winx
-				sed '/^$/d' ./winx > ./cnfg3
-				rm ./winx
-				grep -v -x -v "$itdl" ./cnfg4 > ./sinx
-				sed '/^$/d' ./sinx > ./cnfg4
-				rm ./sinx
-				grep -v -x -v "$itdl" ./cnfg0 > ./t-inx
-				sed '/^$/d' ./t-inx > ./cnfg0
-				rm ./t-inx
+				grep -v -x -v "$itdl" ./cnfg3 > ./cnfg3_
+				sed '/^$/d' ./cnfg3_ > ./cnfg3
+				rm ./cnfg3_
+				grep -v -x -v "$itdl" ./cnfg4 > ./cnfg4_
+				sed '/^$/d' ./cnfg4_ > ./cnfg4
+				rm ./cnfg4_
+				grep -v -x -v "$itdl" ./cnfg0 > ./cnfg0_
+				sed '/^$/d' ./cnfg0_ > ./cnfg0
+				rm ./cnfg0_
 				notify-send  -i idiomind "$itdl" "$deleted"  -t 1500
 			fi
 			if [[ $ret -eq 1 ]]; then

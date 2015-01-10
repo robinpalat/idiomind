@@ -5,8 +5,6 @@ source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/add.conf
 if [ $1 = n_t ]; then
 	info2=$(cat $DC_tl/.cnfg1 | wc -l)
-	int="$(sed -n 22p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
-	btn="$(sed -n 21p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
 	c=$(echo $(($RANDOM%100)))
 
 	if [ "$3" = 2 ]; then
@@ -201,19 +199,22 @@ elif [ $1 = n_i ]; then
 	if [ -f $DT/ntpc ]; then
 		rm -fr $DT_r
 		source $DS/ifs/trans/$lgs/topics_lists.conf
-		$DS/chng.sh "$no_topic" fnew & exit 1
+		$DS/chng.sh "$no_topic" & exit 1
 	fi
-	
-	if [ -z "$tpc" ]; then
+	if ([ -z "$tpc" ] && [ -z "$tpe" ]); then
 		rm -fr $DT_r
 		source $DS/ifs/trans/$lgs/topics_lists.conf
-		$DS/chng.sh "$no_topic" fnew & exit 1
+		$DS/chng.sh "$no_topic2" 3 & exit 1
 	fi
-
+	#if [ -z "$tpc" ]; then
+		#rm -fr $DT_r
+		#source $DS/ifs/trans/$lgs/topics_lists.conf
+		#$DS/chng.sh "$no_topic2" 3 & exit 1
+	#fi
 	if [ -z "$tpe" ]; then
 		rm -fr $DT_r
 		source $DS/ifs/trans/$lgs/topics_lists.conf
-		$DS/chng.sh "$no_edit" fnew & exit 1
+		$DS/chng.sh "$no_edit" & exit 1
 	fi
 	
 	ls=$((50 - $(cat "$DC_tlt/cnfg4" | wc -l)))
@@ -251,7 +252,7 @@ elif [ $1 = n_i ]; then
 		--name=idiomind --class=idiomind \
 		--borders=0 --title="$tpe" --width=360 --height=160 \
 		--field="  <small><small>$lgtl / $lgsl</small></small>":TXT "$txt" \
-		--field="<small><small>$topic</small></small>:CB" "$ttle!$new*!$tpcs" "$field" \
+		--field="<small><small>$topic</small></small>:CB" "$ttle!$new *!$tpcs" "$field" \
 		--button="$image":3 \
 		--button=gtk-ok:0)
 		ret=$?
@@ -276,7 +277,7 @@ elif [ $1 = n_i ]; then
 		--field="  <small><small>$lgsl</small></small>":TXT "$srce" \
 		--field=":lbl" "" \
 		--field="<small><small>$topic</small></small>:CB" \
-		"$ttle!$new*!$tpcs" "$field")
+		"$ttle!$new *!$tpcs" "$field")
 		ret=$?
 		trgt=$(echo "$lzgpr" | tail -5 | sed -n 1p | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
 		srce=$(echo "$lzgpr" | tail -5 | sed -n 3p | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
@@ -326,7 +327,7 @@ elif [ $1 = n_i ]; then
 					tpe=$(echo "$slt" | sed -n 2p)
 				fi
 			fi
-			if [ "$chk" = "New*" ]; then
+			if [[ "$chk" = "$new *" ]]; then
 				$DS/add.sh n_t
 			else
 				echo "$tpe" > $DC_s/cnfg7
@@ -360,8 +361,6 @@ elif [ $1 = n_s ]; then
 	lprn=$(cat $DS/default/$lgt/pronouns)
 	lpre=$(cat $DS/default/$lgt/prepositions)
 	ladj=$(cat $DS/default/$lgt/adjetives)
-	btn="$(sed -n 21p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
-	int="$(sed -n 22p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
 	DM_tlt="$DM_tl/$tpe"
 	DC_tlt="$DC_tl/$tpe"
 	icnn=idiomind
@@ -715,8 +714,6 @@ elif [ $1 = n_w ]; then
 	srce="$4"
 	dct="$DS/addons/Dics/dict"
 	icnn=idiomind
-	int="$(sed -n 22p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
-	btn="$(sed -n 21p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
 	tpcs=$(cat "$DC_tl/.cnfg2" | cut -c 1-30 | egrep -v "$tpe" \
 	| tr "\\n" '!' | sed 's/!\+$//g')
 	ttle="${tpe:0:30}"
@@ -1020,15 +1017,15 @@ elif [ $1 = prc ]; then
 	DM_tlt="$DM_tl/$tpe"
 	DC_tlt="$DC_tl/$tpe"
 	DT_r=$(cat $DT/.n_s_pr)
-	int="$(sed -n 22p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
-	btn="$(sed -n 21p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
 	cd $DT_r
 	echo "$3" > ./lstws
-
+	
 	if [ -z "$tpe" ]; then
-		$DC_s/chng.sh $DS/ifs/info5 fnew & exit 1
+		rm -fr $DT_r
+		source $DS/ifs/trans/$lgs/topics_lists.conf
+		$DS/chng.sh "$no_edit" & exit 1
 	fi
-
+	
 	nw=$(cat "$DC_tlt/cnfg3" | wc -l)
 	if [ $nw -ge 50 ]; then
 		$yad --name=idiomind --center \
@@ -1283,16 +1280,14 @@ elif [ $1 = snt ]; then
 	DM_tlt="$DM_tl/$tpe"
 	DC_tlt="$DC_tl/$tpe"
 	DIC=$DS/addons/Dics/dict
-	int="$(sed -n 22p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
-	btn="$(sed -n 21p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
 	c=$(echo $(($RANDOM%100)))
 	DT_r=$(mktemp -d $DT/XXXXXX)
 	cd $DT_r
-
 	if [ -z "$tpe" ]; then
-		$DC_s/chng.sh $DS/ifs/info5 fnew & exit 1
+		rm -fr $DT_r
+		source $DS/ifs/trans/$lgs/topics_lists.conf
+		$DS/chng.sh "$no_edit" & exit 1
 	fi
-
 	nw=$(cat "$DC_tlt/words/cnfg3" | wc -l)
 	left=$((50 - $nw))
 	if [ "$left" = 0 ]; then
@@ -1432,8 +1427,6 @@ elif [ $1 = prs ]; then
 	lpre=$(cat $DS/default/$lgt/prepositions)
 	ladj=$(cat $DS/default/$lgt/adjetives)
 	nspr='/usr/share/idiomind/add.sh prs'
-	int="$(sed -n 22p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
-	btn="$(sed -n 21p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
 	LNK='http://www.chromium.org/developers/how-tos/api-keys'
 	dct=$DS/addons/Dics/dict
 	lckpr=$DT/.n_s_pr
@@ -1443,8 +1436,9 @@ elif [ $1 = prs ]; then
 	cd "$DT_r"
 
 	if [ -z "$tpe" ]; then
+		rm -fr $DT_r
 		source $DS/ifs/trans/$lgs/topics_lists.conf
-		$DC_s/chng.sh "$no_edit" fnew & exit 1
+		$DS/chng.sh "$no_edit" & exit 1
 	fi
 
 	if [ $ns -ge 50 ]; then
@@ -1505,7 +1499,9 @@ elif [ $1 = prs ]; then
 			
 		else
 			if [ -z "$tpe" ]; then
-				$DS/chng.sh $DS/ifs/info5 fnew & exit 1
+				rm -fr $DT_r
+				source $DS/ifs/trans/$lgs/topics_lists.conf
+				$DS/chng.sh "$no_edit" & exit 1
 			fi
 			cd $DT_r
 			
@@ -2533,8 +2529,6 @@ $itm" >> ./wlog
 				fi
 				
 elif [ $1 = img ]; then
-	int="$(sed -n 22p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
-	btn="$(sed -n 21p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
 	cd $DT
 	wrd="$2"
 	echo '<html>

@@ -121,7 +121,7 @@ elif [ $1 = pdf ]; then
 		(
 		echo "5" ; sleep 0
 		echo "# " ; sleep 1
-		#-----------------------images
+		#images
 		n=1
 		while [[ $n -le "$(cat $iw | wc -l | awk '{print ($1)}')" ]]; do
 			wnm=$(sed -n "$n"p $iw)
@@ -131,7 +131,7 @@ elif [ $1 = pdf ]; then
 			fi
 			let n++
 		done
-		#-----------------------sentences
+		#sentences
 		n=1
 		while [[ $n -le "$(cat  $is | wc -l | awk '{print ($1)}')" ]]; do
 			wnm=$(sed -n "$n"p $is)
@@ -252,7 +252,7 @@ elif [ $1 = pdf ]; then
 		</style>
 		</head>
 		<body>
-		<div><p>Created by Idiomind </p>
+		<div><p></p>
 		</div>
 		<div>
 		<h3>'$tpc'</h3>
@@ -266,7 +266,7 @@ elif [ $1 = pdf ]; then
 		</td>
 		</tr>
 		</table>' > pdf
-		#-----------------------images
+		#images
 		cd "$DM_tlt/words/images"
 		cnt=`ls -1 *.jpg 2>/dev/null | wc -l`
 		if [ $cnt != 0 ]; then
@@ -316,7 +316,7 @@ elif [ $1 = pdf ]; then
 			<p>&nbsp;</p>
 			<p>&nbsp;</p>' >> pdf
 		fi
-		#-----------------------words
+		#words
 		cd $DT/mkhtml
 		n=1
 		while [ $n -le "$(cat $iw | wc -l)" ]; do
@@ -360,9 +360,9 @@ elif [ $1 = pdf ]; then
 						<dd><dfn>'$dftn'</dfn></dd>
 						</dl>' >> pdf
 					fi
-					if [ -n "$exmp1" ]; then
+					if [ -n "$exmp1" ]; then #Example: <dt> </dt>
 						echo '<dl>
-						<dt>Example:</dt>
+						<dt> </dt>
 						<dd><cite>'$exmp1'</cite></dd>
 						</dl>' >> pdf
 					fi 
@@ -376,7 +376,7 @@ elif [ $1 = pdf ]; then
 			fi
 			let n++
 		done
-		#-----------------------sentences
+		#sentences
 		n=1
 		while [ $n -le "$(cat s.inx.l | wc -l)" ]; do
 				st=$(sed -n "$n"p S.gprt.x)
@@ -454,7 +454,7 @@ elif [ $1 = pdf ]; then
 				fi
 			let n++
 		done
-		#-----------------------html
+		#html
 		echo '<p>&nbsp;</p>
 		<p>&nbsp;</p>
 		<h3>&nbsp;</h3>

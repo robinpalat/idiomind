@@ -65,7 +65,7 @@ $yad --plug=$KEY --tabnum=2 --list --expand-column=2 \
 	--text="<sub>  $double_click_for_configure \n</sub>" \
 	--no-headers --dclick-action="./plgcnf.sh" --print-all \
 	--column=icon:IMG --column=Action \
-	"$img1" "Google translation service" "$img2" "Learning with News" "$img4" "Dictionarys" "$img5" "Weekly Report" &
+	"$img1" "Google translation service" "$img2" "Learning with News" "$img4" "Dictionarys" "$img5" "Weekly Report" "$img5" "User data" &
 echo "$text" | $yad --plug=$KEY --tabnum=3 --text-info \
 	--text="\\n<big><big><big><b>Idiomind v2.1-alpha</b></big></big></big>\\n<sup>$vocabulary_learning_tool\\n<a href='https://sourceforge.net/projects/idiomind/'>Homepage</a> © 2013-2014 Robin Palat</sup>" \
 	--show-uri --fontname=Arial --margins=10 --wrap --text-align=center &

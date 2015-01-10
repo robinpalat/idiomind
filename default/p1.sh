@@ -78,7 +78,7 @@ else
 	lwrd=$(echo "$tgs" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' | tr '_' '\n')
 	
 	echo "$lwrd" | awk '{print $0""}' | $YAD --list \
-	--window-icon=idiomind --scroll \
+	--window-icon=idiomind --scroll --no-headers \
 	--skip-taskbar --center --title=" " --borders=5 \
 	--on-top --selectable-labels --expand-column=0 \
 	--text="<big><big>$trgt</big></big>\\n\\n<i>$src</i>\\n\\n" \
