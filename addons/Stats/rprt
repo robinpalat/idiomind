@@ -191,7 +191,7 @@ exit 1
 elif [ "$1" = T ]; then
 	eht=$(sed -n 3p $DC_s/cnfg18)
 	wth=$(sed -n 4p $DC_s/cnfg18)
-	tpc1=$(sed -n 1p $TPS) #topics mas activos
+	tpc1=$(sed -n 1p $TPS) #topics
 	tpc2=$(sed -n 2p $TPS)
 	tpc3=$(sed -n 3p $TPS)
 	tpcr=$(cat $DC/addons/stats/tpc.tmp)

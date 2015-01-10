@@ -1,5 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
+
 source /usr/share/idiomind/ifs/c.conf
 
 wth=$(sed -n 5p $DC_s/cnfg18)
@@ -8,15 +9,15 @@ ap=$(cat $DC_s/cnfg1 | sed -n 5p)
 echo "_" >> $DC/addons/stats/.tmp &
 re='^[0-9]+$'
 v="$1"
-now="$2" # es el nombre de la lista (file name)
-nuw="$3" # es el numero de posicion del item (file name) en la lista
+now="$2"
+nuw="$3"
 [[ "$v" = v1 ]] && ind="$DC_tlt/cnfg1"
 [[ "$v" = v2 ]] && ind="$DC_tlt/cnfg2"
 
 if ! [[ $nuw =~ $re ]]; then
 	nuw=$(cat "$ind" \
 	| grep -Fxon "$now" \
-	| sed -n 's/^\([0-9]*\)[:].*/\1/p') # busca el numero de posicion del item (file name) en la lista
+	| sed -n 's/^\([0-9]*\)[:].*/\1/p')
 	nll=" "
 fi
 nme=$(sed -n "$nuw"p "$ind")

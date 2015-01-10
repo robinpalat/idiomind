@@ -3,13 +3,13 @@
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/topics_lists.conf
 if [[ "$1" = chngi ]]; then
-	saw=$(sed -n 1p $DC_s/cnfg5) # words
-	sas=$(sed -n 2p $DC_s/cnfg5) # sentences
-	sam=$(sed -n 3p $DC_s/cnfg5) # marks
-	sap=$(sed -n 4p $DC_s/cnfg5) # practice
-	saf=$(sed -n 5p $DC_s/cnfg5) # feeds conten
-	nta=$(sed -n 6p $DC_s/cnfg5) # osd
-	sna=$(sed -n 7p $DC_s/cnfg5) # audio
+	saw=$(sed -n 1p $DC_s/cnfg5)
+	sas=$(sed -n 2p $DC_s/cnfg5)
+	sam=$(sed -n 3p $DC_s/cnfg5)
+	sap=$(sed -n 4p $DC_s/cnfg5)
+	saf=$(sed -n 5p $DC_s/cnfg5)
+	nta=$(sed -n 6p $DC_s/cnfg5)
+	sna=$(sed -n 7p $DC_s/cnfg5)
 	cnfg1="$DC_s/cnfg5"
 	indx="$DT/.$user/indx"
 	tlck="$DS/images/chng.mp3"
@@ -238,7 +238,7 @@ if [[ "$1" = chngi ]]; then
 		if [ $(cat $DT/.p__$use | wc -l) -gt 5 ]; then
 			int="$(sed -n 16p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
 			T="$(echo "$int" | sed -n 1p)"
-			D="$(echo "$int" | sed -n 2p)" # reporduccion interrumpida
+			D="$(echo "$int" | sed -n 2p)" #interrupt
 			notify-send -i idiomind "$T" "$D" -t 9000 &
 			rm -fr $DT/.p__$user &
 			$DS/stop.sh S & exit 1

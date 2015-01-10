@@ -1,5 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
+
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/others.conf
 
@@ -54,16 +55,19 @@ elif [ $1 = isrc ]; then
 	exit
 
 elif [ $1 = updt ]; then
+
 	cd $DT
-	wget -O/dev/null -q http://sourceforge.net/projects/idiomind/files/README.md/download
-	cat README.md | grep release
-	 && yad --text="<b>  Esta disponible una nueva version  </b>" \
-		--image=info --title="Idiomind 1.5.0" --window-icon=idiomind \
+	[[ -f release ]] && rm -f release
+	wget http://idiomind.sourceforge.net/release
+	
+	if [ $(cat ./release) ! = $(idiomind -v) ]; then
+		yad --text="<big><b> $new_version </b></big>\n\n" \
+		--image=info --title="Idiomind 2.1" --window-icon=idiomind \
 		--on-top --skip-taskbar --sticky \
-		--center --name=idiomind --borders=15 \
-		--button="Cancel":1 \
-		--button="Recordarmelo después":2 \
-		--button="   Download   ":0 \
+		--center --name=idiomind --borders=10 \
+		--button="$cancel":1 \
+		--button="$later":2 \
+		--button="$download":0 \
 		--width=400 --height=150
 		ret=$?
 		if [ "$ret" -eq 0 ]; then
@@ -72,9 +76,15 @@ elif [ $1 = updt ]; then
 			echo `date +%d` > $DC_s/cnfg13 & exit
 		elif [ "$ret" -eq 1 ]; then
 			echo `date +%d` > $HOME/.config/idiomind/s/cnfg14 & exit
-		fi  || exit 1
+		fi
+	else
+		yad --text="<big><b> $nonew_version  </b></big>\n\n  $nonew_version2" \
+		--image=info --title="Idiomind 2.1" --window-icon=idiomind \
+		--on-top --skip-taskbar --sticky --width=400 --height=150 \
+		--center --name=idiomind --borders=10 \
+		--button="$close":1
 	fi
-		exit
+	[[ -f release ]] && rm -f release
 
 elif [ $1 = srch ]; then
 	if [ ! -f $DC_s/cnfg13 ]; then
@@ -94,24 +104,33 @@ elif [ $1 = srch ]; then
 		sleep 1
 	
 	echo "$d2" > $DC_s/cnfg13
-	wget -O/dev/null -q http://tmp.site50.net/uploads/recents/19Q.Adverbs%20of%20frequency.idmnd && yad --text="<b>  Esta disponible una nueva version  </b>" \
-	--image=info --title="Idiomind 1.5.0" --window-icon=idiomind \
-	--on-top --skip-taskbar --sticky \
-	--center --name=idiomind --borders=15 \
-	--button="Cancel":1 \
-	--button="Recordarmelo después":2 \
-	--button="   Download   ":0 \
-	--width=400 --height=150
-	ret=$?
-	if [ "$ret" -eq 0 ]; then
-		xdg-open https://sourceforge.net/projects/idiomind/files/idiomind.deb/download & exit
-	elif [ "$ret" -eq 2 ]; then
-		echo `date +%d` > $DC_s/cnfg13 & exit
-	elif [ "$ret" -eq 1 ]; then
-		echo `date +%d` > $HOME/.config/idiomind/s/cnfg14 & exit
-	fi  || exit 1
-fi
-
+	
+	cd $DT
+	[[ -f release ]] && rm -f release
+	wget http://idiomind.sourceforge.net/release
+	
+	if [ $(cat ./release) ! = $(idiomind -v) ]; then
+		yad --text="<big><b> $new_version  </b></big>\n\n" \
+		--image=info --title="Idiomind 2.1" --window-icon=idiomind \
+		--on-top --skip-taskbar --sticky \
+		--center --name=idiomind --borders=10 \
+		--button="$cancel":1 \
+		--button="$later":2 \
+		--button="$download":0 \
+		--width=400 --height=150
+		ret=$?
+		if [ "$ret" -eq 0 ]; then
+			xdg-open https://sourceforge.net/projects/idiomind/files/idiomind.deb/download & exit
+		elif [ "$ret" -eq 2 ]; then
+			echo `date +%d` > $DC_s/cnfg13 & exit
+		elif [ "$ret" -eq 1 ]; then
+			echo `date +%d` > $HOME/.config/idiomind/s/cnfg14 & exit
+		fi
+	fi
+	
+	fi
+	[[ -f release ]] && rm -f release
+	
 elif [ $1 = pdf ]; then
 	cd $HOME &&
 
@@ -132,9 +151,6 @@ elif [ $1 = pdf ]; then
 		iw=w.inx.l
 		is=s.inx.l
 
-		(
-		echo "5" ; sleep 0
-		echo "# " ; sleep 1
 		#images
 		n=1
 		while [[ $n -le "$(cat $iw | wc -l | awk '{print ($1)}')" ]]; do
@@ -482,12 +498,7 @@ elif [ $1 = pdf ]; then
 		wkhtmltopdf -s A4 -O Portrait --ignore-load-errors pdf.html tmp.pdf
 		mv -f tmp.pdf "$pdf"
 		rm -fr pdf $DT/mkhtml $DT/*.x $DT/*.l
-		
-		) | $yad --progress \
-		--width=20 --height=20 --geometry=20x20-2-2 \
-		--pulsate --percentage="5" --auto-close \
-		--sticky --on-top --undecorated \
-		--skip-taskbar --center --no-buttons exit
+
 	else
 		exit 1
 	fi

@@ -1,7 +1,9 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
+
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/rss.conf
+
 itdl="$2"
 kpt="$DM_tl/Feeds/kept"
 drtc="$DC_tl/Feeds/"

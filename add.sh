@@ -3,6 +3,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/add.conf
+
 if [ $1 = n_t ]; then
 	info2=$(cat $DC_tl/.cnfg1 | wc -l)
 	c=$(echo $(($RANDOM%100)))
@@ -16,7 +17,6 @@ if [ $1 = n_t ]; then
 			tle=$(echo "$new_topic")
 			nmt=""
 		fi
-		#--------------normal
 		jlbi=$($yad --window-icon=idiomind \
 		--form --center --field="$name_for_new_topic" "$nmt" --title="$tle" \
 		--width=440 --height=100 --name=idiomind --on-top \
@@ -206,11 +206,7 @@ elif [ $1 = n_i ]; then
 		source $DS/ifs/trans/$lgs/topics_lists.conf
 		$DS/chng.sh "$no_topic2" 3 & exit 1
 	fi
-	#if [ -z "$tpc" ]; then
-		#rm -fr $DT_r
-		#source $DS/ifs/trans/$lgs/topics_lists.conf
-		#$DS/chng.sh "$no_topic2" 3 & exit 1
-	#fi
+
 	if [ -z "$tpe" ]; then
 		rm -fr $DT_r
 		source $DS/ifs/trans/$lgs/topics_lists.conf
@@ -301,7 +297,7 @@ elif [ $1 = n_i ]; then
 			if [ -z "$trgt" ]; then
 				rm -fr $DT_r & exit 1
 			fi
-			# si coincide con otro nombre de topic
+
 			if [ $(echo "$tpe" | wc -l) -ge 2 ]; then
 				
 				if [[ $(echo "$tpe" | sed -n 1p | wc -w) \
@@ -642,7 +638,7 @@ elif [ $1 = n_s ]; then
 					eyeD3 --add-image imgs.jpg:ILLUSTRATION "$DM_tlt/$nme.mp3"
 				fi
 				
-		else # si no hay audio
+		else
 			vs=$(sed -n 7p $DC_s/cnfg1)
 			if [ -n "$vs" ]; then
 				if ([ $vs = "festival" ] || [ $vs = "text2wave" ]); then
@@ -1617,7 +1613,7 @@ $trgt" >> log
 				let n++
 			done
 			) | $yad --progress --progress-text=" " \
-			--width=250 --height=20 --geometry=250x20-2-2 \
+			--width=200 --height=20 --geometry=200x20-2-2 \
 			--undecorated --auto-close --on-top \
 			--skip-taskbar --no-buttons
 			
@@ -1831,7 +1827,7 @@ $sntc" >> ./wlog
 						let n++
 					done
 					
-					#-----------------------------------------palabras
+					#-words
 					if [ -n "$(cat wrds)" ]; then
 						nwrds=" y $(cat wrds | head -50 | wc -l) Palabras"
 					fi
@@ -1845,7 +1841,7 @@ $sntc" >> ./wlog
 							nme="$(echo "$exmp" | sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g' | cut -c 1-70)..."
 						else
 							nme=$(echo "$exmp" | "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-						fi # es para obtener el nobre de archivo
+						fi # get name
 					
 						if [ $(cat "$DC_tlt"/cnfg3 | wc -l) -ge 50 ]; then
 							echo "
@@ -1862,8 +1858,7 @@ $trgt" >> ./wlog
 								mv -f "$DT_r/$trgt.mp3" "$DM_tlt/words/$trgt.mp3"
 								eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" -A "IWI3I0I${exmp}IWI3I0I" \
 								"$DM_tlt/words/$trgt.mp3"
-							
-							#-----------------if not audio
+
 							else
 								vs=$(sed -n 7p $DC_s/cnfg1)
 								if [ -n "$vs" ]; then
@@ -1913,7 +1908,7 @@ $trgt" >> ./wlog
 						let n++
 					done
 					) | $yad --progress --progress-text=" " \
-					--width=250 --height=20 --geometry=250x20-2-2 \
+					--width=200 --height=20 --geometry=200x20-2-2 \
 					--undecorated --auto-close --on-top \
 					--skip-taskbar --no-buttons
 					
@@ -2054,7 +2049,7 @@ $trgt" >> ./wlog
 		| sed '/^$/d' | sed 's/^[ \t]*//;s/[ \t]*$//' \
 		| sed 's/  / /g' | sed 's/\://g' > ./sntsls_
 		
-		) | $yad --progress --progress-text=" " \
+		) | yad --progress --progress-text=" " \
 		--width=200 --height=20 --geometry=200x20-2-2 \
 		--pulsate --percentage="5" --on-top \
 		--undecorated --auto-close \
@@ -2170,7 +2165,7 @@ $trgt" >> ./wlog
 					> ./wlog
 					> ./slog
 					
-					#-----------------------------------oraciones
+					#sentences
 					{
 					echo "5"
 					echo "# $pros... " ;
@@ -2409,7 +2404,7 @@ $sntc" >> ./slog
 						let n++
 					done
 					
-					#----------------------------------palabras
+					#words
 					n=1
 					while [ $n -le $(cat wrds | head -50 | wc -l) ]; do
 					
@@ -2454,7 +2449,7 @@ $itm" >> ./wlog
 						let n++
 					done
 					} | $yad --progress --progress-text=" " \
-					--width=250 --height=20 --geometry=250x20-2-2 \
+					--width=200 --height=20 --geometry=200x20-2-2 \
 					--undecorated --auto-close --on-top \
 					--skip-taskbar --no-buttons
 					

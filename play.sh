@@ -1,5 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
+
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/others.conf
 
@@ -29,7 +30,6 @@ if [[ "$1" = time ]]; then
 		[[ "$?" -eq 1 ]] & rm -f $cnf1 & exit 1
 		exit 1
 
-
 elif [[ -z "$1" ]]; then
 
 	echo "$tpc"
@@ -47,7 +47,7 @@ elif [[ -z "$1" ]]; then
 	else
 		inds=$(cat "$tlng")
 	fi
-		indm=$(cat "$DC_tlt/cnfg6")
+	indm=$(cat "$DC_tlt/cnfg6")
 	cd "$DC_tlt/Practice"
 	indp=$(cat fin.tmp mcin.tmp \
 	lwin.tmp | sed '/^$/d' | sort | uniq)
