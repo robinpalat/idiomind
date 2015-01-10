@@ -261,7 +261,7 @@ elif [ "$1" != chngi ]; then
 			align="--text-align=left"
 		else
 			lgtl=$(echo "$lgtl" | awk '{print tolower($0)}')
-			text="--text=<small><small><a href='http://tmp.site50.net/$lgs/$lgtl'>Encuentra otros temas</a>\t</small></small>"
+			text="--text=<small><small><a href='http://tmp.site50.net/$lgs/$lgtl'>$find_topics</a>\t</small></small>"
 			align="--text-align=right"
 		fi
 		[[ -f $DC_tl/.cnfg1 ]] && info2=$(cat $DC_tl/.cnfg1 | wc -l) || info2=""
@@ -283,13 +283,13 @@ elif [ "$1" != chngi ]; then
 			elif [ $ret -eq 0 ]; then
 				if [ -n "$1" ]; then
 					if [ "$2" = 3 ]; then
-						$DC_tl/"$VAR/tpc.sh"
+						$DC_tl/"$VAR"/tpc.sh
 						$DS/add.sh n_i  & exit
 					else
-						$DC_tl/"$VAR/tpc.sh" 2 & exit
+						$DC_tl/"$VAR"/tpc.sh 2 & exit
 					fi
 				else
-					$DC_tl/"$VAR/tpc.sh" & exit
+					$DC_tl/"$VAR"/tpc.sh & exit
 				fi
 			else
 				exit 0

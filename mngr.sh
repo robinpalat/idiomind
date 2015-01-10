@@ -41,8 +41,8 @@ if [ $1 = edit ]; then
 		fi
 	fi
 	$yad --list --on-top --expand-column=2 --center \
-	--width=190 --name=idiomind --class=idmnd \
-	--height=260 --title=" " --window-icon=idiomind --no-headers \
+	--width=160 --name=idiomind --class=idmnd \
+	--height=220 --title=" " --window-icon=idiomind --no-headers \
 	--buttons-layout=end --skip-taskbar \
 	--borders=0 --button=Ok:0 --column=icon:IMG \
 	--column=Action:TEXT $dd > "$slct"
