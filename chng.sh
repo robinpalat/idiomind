@@ -256,23 +256,25 @@ elif [ "$1" != chngi ]; then
 		fi
 		eht=$(sed -n 3p $DC_s/cnfg18)
 		wth=$(sed -n 4p $DC_s/cnfg18)
-
-		text=--class=idm
 		if [ -n "$1" ]; then
 			text="--text=<small>$1\n</small>"
+			align="--text-align=left"
+		else
+			lgtl=$(echo "$lgtl" | awk '{print tolower($0)}')
+			text="--text=<small><small><a href='http://tmp.site50.net/$lgs/$lgtl'>Encuentra otros temas</a>\t</small></small>"
+			align="--text-align=right"
 		fi
 		[[ -f $DC_tl/.cnfg1 ]] && info2=$(cat $DC_tl/.cnfg1 | wc -l) || info2=""
 		cd $DC_s
 
 		VAR=$(cat $DC_s/cnfg0 | $yad --name=idiomind --ellipsize=END \
-		--class=idiomind --center --separator="" \
+		--class=idiomind --center --separator="" $align\
 		"$text" --width=$wth --height=$eht \
 		--no-headers --list --window-icon=idiomind \
 		--button="gtk-preferences":$DS/cnfg.sh \
 		--button="gtk-add":3 --button="$ok":0 --button="$close":1 \
 		--borders=5 --title="$topics" --column=img:img --column=File:TEXT)
 			ret=$?
-
 			if [ $ret -eq 3 ]; then
 				$DS/add.sh n_t
 				exit 1
@@ -280,11 +282,16 @@ elif [ "$1" != chngi ]; then
 				exit 1
 			elif [ $ret -eq 0 ]; then
 				if [ -n "$1" ]; then
-					$DC_tl/"$VAR/tpc.sh" 2 && $DS/add.sh n_i & exit 1
+					if [ "$2" = 3 ]; then
+						$DC_tl/"$VAR/tpc.sh"
+						$DS/add.sh n_i  & exit
+					else
+						$DC_tl/"$VAR/tpc.sh" 2 & exit
+					fi
 				else
-					$DC_tl/"$VAR/tpc.sh" & exit 1
+					$DC_tl/"$VAR/tpc.sh" & exit
 				fi
 			else
-				exit 1
+				exit 0
 			fi
 fi

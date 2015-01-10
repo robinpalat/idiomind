@@ -16,6 +16,6 @@ elif echo "$CMD" | grep "Learning with News"; then
 	$DS/addons/"Learning_with_news"/cnf
 elif echo "$CMD" | grep "Dictionary"; then
 	$DS/addons/Dics/dict 1 1 cnf
-elif echo "$CMD" | grep "Learning with Tweets"; then
-	$DS/addons/"Learning_with_tweets"/cnf
+elif echo "$CMD" | grep "User data"; then
+	$DS/addons/"User_data"/t_bd.sh
 fi

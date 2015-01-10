@@ -117,7 +117,7 @@ if [[ $1 = n_i ]]; then
 		fi
 elif [[ $1 = n_t ]]; then
 	dte=$(date "+%a %d %B")
-	if [ $(cat "$DC_tl/cnfg0" | wc -l) -ge 20 ]; then
+	if [ $(cat "$DC_tl/.cnfg1" | wc -l) -ge 50 ]; then
 		$yad --fixed --image=info --title=Idiomind \
 		--name=idiomind --center --skip-taskbar \
 		--text=" <b>$topics_max  </b>" \
@@ -139,40 +139,40 @@ elif [[ $1 = n_t ]]; then
 			exit 0
 		else
 			jlb=$(echo "$jlbi" | cut -d "|" -f1 | sed s'/!//'g)
-			(
-				mkdir $DM_tl/"$jlb"
-				mkdir $DM_tl/"$jlb"/words
-				mkdir $DM_tl/"$jlb"/words/images
-				mkdir $DC_tl/"$jlb"
-				mkdir $DC_tl/"$jlb"/Practice
-				cd $DS/addons/Practice/default/
-				cp -f ./.* "$DC_tl/$jlb/Practice/"
-				cp -f $DS/default/tpc.sh $DC_tl/"$jlb"/tpc.sh
-				cd "$DC_tl/$jlb"
-				echo "$jlb" >> $DC_tl/.cnfg2
-				echo "1" > "$DC_tl/$jlb/cnfg8"
-				cd "$DM_tl/Feeds/kept"/.audio
-				ls *.mp3 > "$DC_tl/$jlb/cnfg5"
-				mv -f "$DC_tl/Feeds/cnfg3" "$DC_tl/$jlb/cnfg3"
-				mv -f "$DC_tl/Feeds/cnfg4" "$DC_tl/$jlb/cnfg4"
-				mv -f "$DC_tl/Feeds/cnfg0" "$DC_tl/$jlb/cnfg11"
-				cp -f "$DC_tl/$jlb/cnfg11" "$DC_tl/$jlb/cnfg0"
-				cp -f "$DC_tl/$jlb/cnfg11" "$DC_tl/$jlb/cnfg1"
-				rm "$DC_tl/Feeds/indfa"
-				rm "$DC_tl/Feeds/indfe"
-				cd "$DM_tl/Feeds/kept"
-				mv -f ./* "$DM_tl/$jlb/"
-				cd "$DM_tl/Feeds/kept/.audio"
-				mv ./* "$DM_tl/.share/"
-				cd "$DM_tl/Feeds/kept/words/"
-				mv -f ./* "$DM_tl/$jlb/words/"
-				chmod +x $DC_tl/"$jlb"/tpc.sh
-				$DC_tl/"$jlb"/tpc.sh
-				cnt=$(cat "$DC_tl/$jlb/cnfg0" | wc -l)
-				echo "aitm.$cnt.aitm" >> \
-				$DC/addons/stats/.log &
-				$DS/mngr mkmn
-			)
+			mkdir $DM_tl/"$jlb"
+			mkdir $DM_tl/"$jlb"/words
+			mkdir $DM_tl/"$jlb"/words/images
+			mkdir $DC_tl/"$jlb"
+			mkdir $DC_tl/"$jlb"/Practice
+			cd $DS/addons/Practice/default/
+			cp -f ./.* "$DC_tl/$jlb/Practice/"
+			cp -f $DS/default/tpc.sh $DC_tl/"$jlb"/tpc.sh
+			cd "$DC_tl/$jlb"
+			echo "$jlb" >> $DC_tl/.cnfg2
+			echo "1" > "$DC_tl/$jlb/cnfg8"
+			cd "$DM_tl/Feeds/kept"/.audio
+			ls *.mp3 > "$DC_tl/$jlb/cnfg5"
+			mv -f "$DC_tl/Feeds/cnfg0" "$DC_tl/$jlb/cnfg0"
+			mv -f "$DC_tl/Feeds/cnfg3" "$DC_tl/$jlb/cnfg3"
+			mv -f "$DC_tl/Feeds/cnfg4" "$DC_tl/$jlb/cnfg4"
+			mv -f "$DC_tl/Feeds/cnfg11" "$DC_tl/$jlb/cnfg11"
+			cd "$DM_tl/Feeds/kept"
+			mv -f ./* "$DM_tl/$jlb/"
+			cd "$DM_tl/Feeds/kept/.audio"
+			mv ./* "$DM_tl/.share/"
+			cd "$DM_tl/Feeds/kept/words/"
+			mv -f ./* "$DM_tl/$jlb/words/"
+			touch "$DC_tl/Feeds/cnfg0"
+			touch "$DC_tl/Feeds/cnfg3"
+			touch "$DC_tl/Feeds/cnfg4"
+			touch "$DC_tl/$jlb/cnfg1"
+			touch "$DC_tl/$jlb/cnfg2"
+			chmod +x $DC_tl/"$jlb"/tpc.sh
+			$DC_tl/"$jlb"/tpc.sh
+			cnt=$(cat "$DC_tl/$jlb/cnfg0" | wc -l)
+			echo "aitm.$cnt.aitm" >> \
+			$DC/addons/stats/.log &
+			$DS/mngr.sh mkmn
 		fi
 		[ "$?" -eq 1 ] && exit
 

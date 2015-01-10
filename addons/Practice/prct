@@ -62,7 +62,7 @@ if [ "$1" = f ]; then
 	s2=$(cat fin.1.ok | wc -l)
 	s3=$(($s1 + $s2))
 	echo $s3 > f_r
-	
+
 	if [ -f ./fin.1.no ]; then
 		cat *.no >> "$w6"
 		cat *.ok >> "$w9"
@@ -352,7 +352,8 @@ elif [ "$1" = w ]; then
 		echo "$(date "+%a %d %B")" > look_lw
 		echo 21 > .iconlw
 		play $DSP/all.mp3 & $strt 3 1 &
-		killall df.sh & exit 1
+		killall df.sh
+		exit 1
 	fi
 	cat lwin.tmp | sed '/^$/d' > ./lwin2
 	cp -f lwin2 lwin.tmp
@@ -466,16 +467,16 @@ elif [ "$1" = s ]; then
 	fi
 	cp -f lsin lsin.tmp
 	$DLS 1
-	sed -i '/^$/d' lsin.ok
-	sed -i '/^$/d' lsin.no
-
-	echo "$(cat iLS | wc -l)" > ls_r
-	if [ -f lsin.no ]; then
 	
+	[[ ! -f lsin.ok ]] && sed -i '/^$/d' lsin.ok
+	[[ ! -f lsin.no ]] && sed -i '/^$/d' lsin.no
+	[[ ! -f lsin.1.no ]] && sed -i '/^$/d' lsin.1.no
+	echo "$(cat lsin.ok | wc -l)" > ls_r
+	
+	if ([ -f lsin.no ] || [ -f lsin.1.no ]); then
 		[[ -f ls_r ]] && s1=$(cat  ls_r) || s1=1
 		s4=$(cat idxlsin)
 		var4=$((100*$s1/$s4))
-
 		if [ $var4 -lt 1 ]; then
 			echo 1 > .iconls
 		elif [ $var4 -lt 5 ]; then
@@ -519,7 +520,7 @@ elif [ "$1" = s ]; then
 		elif [ $var4 -eq 100 ]; then
 			echo 21 > .iconls
 		fi
-		$strt 8
+		$strt 8 1
 	else
 		rm *.ok *.no lsin.tmp lsin
 		echo "$(date "+%a %d %B")" > look_ls

@@ -132,15 +132,11 @@ elif [[ $1 = edit ]]; then
 	img2=$DIR3/img/del.png
 	img3=$DIR3/img/save.png
 	img4=$DIR3/img/rss.png
-	st1=FALSE
-	st2=FALSE
-	st3=FALSE
-	st4=FALSE
 
 	if [[ "$(cat "$drtc/cnfg0" | wc -l)" -ge 20 ]]; then
-		dd="$img3 $create_topic $st1 $img1 $delete_news $st2 $img2 $delete_saved $st3 $img4 $subcriptions $st4"
+		dd="$img3 $create_topic $img1 $delete_news $img2 $delete_saved $img4 $subcriptions"
 	else
-		dd="$img1 $delete_news $st1 $img2 $delete_saved $st2 $img4 $subcriptions $st3"
+		dd="$img1 $delete_news $img2 $delete_saved $img4 $subcriptions"
 	fi
 
 	$yad --list --on-top \
@@ -150,7 +146,7 @@ elif [[ $1 = edit ]]; then
 	--window-icon=idiomind --no-headers \
 	--buttons-layout=end --skip-taskbar \
 	--borders=0 --button=Ok:0 --column=icon:IMG \
-	--column=Action:TEXT --column=icon:RD $dd > "$slct"
+	--column=Action:TEXT $dd > "$slct"
 	ret=$?
 	slt=$(cat "$slct")
 	if  [[ "$ret" -eq 0 ]]; then

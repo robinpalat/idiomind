@@ -151,7 +151,7 @@ if [ -z "$1" ]; then
 						cp -f cnfg3 "$tdirc/cnfg3"
 						cp -f cnfg4 "$tdirc/cnfg4"
 						cp -f cnfg5 "$tdirc/cnfg5"
-						cp -f cnfg13 "$tdirc/cnfg13"
+						cp -f cnfg12 "$tdirc/cnfg12"
 						echo "$nt" > "$tdirc/nt"
 						(cd "$DS_ppd"; cp -f .* \
 						"$DC/topics/$dlng/$topic/Practice")
@@ -322,7 +322,7 @@ elif ([ "$1" = C ] && [ "$dte" != "$udt" ]); then
 		if [ "$ret" -eq 0 ]; then
 		exit 1
 		elif [ "$ret" -eq 3 ]; then
-		/usr/share/idiomind/ifs/t_bd.sh
+		/usr/share/idiomind/addons/User_data/t_bd.sh
 		fi
 	fi
 	

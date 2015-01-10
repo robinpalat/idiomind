@@ -45,11 +45,18 @@ if [ "$2" = f ]; then
 	[[ ! -f fin.$1.no ]] && touch fin.$1.no
 	cat fin.$1.no >> "$w6"
 	cat fin.$1.ok >> "$w9"
-	[[ -f f_r ]] && s1=$(cat  f_r) || s1=1
 	s2=$(cat fin.$1.ok | wc -l)
-	s3=$(($s1+$s2))
+	if [ -f f_r ]; then
+		s1=$(cat f_r)
+		s3=$(($s1+$s2))
+		echo $s3 > f_r
+	else
+		s1=1
+		s3=$(($s1+$s2))
+		echo "$(($s3-1))" > f_r
+	fi
+
 	s4=$(cat idxfin)
-	echo $s3 > f_r
 	var1=$((100*$s1/$s4))
 
 	if [ $var1 -lt 1 ]; then
@@ -105,11 +112,17 @@ elif [ "$2" = m ]; then
 	[[ ! -f mcin.$1.no ]] && touch mcin.$1.no
 	cat mcin.$1.no >> "$w6"
 	cat mcin.$1.ok >> "$w9"
-	[[ -f mc_r ]] && s1=$(cat  mc_r) || s1=1
 	s2=$(cat mcin.$1.ok | wc -l)
-	s3=$(($s1+$s2))
+	if [ -f mc_r ]; then
+		s1=$(cat mc_r)
+		s3=$(($s1+$s2))
+		echo $s3 > mc_r
+	else
+		s1=1
+		s3=$(($s1+$s2))
+		echo "$(($s3-1))" > mc_r
+	fi
 	s4=$(cat idxmcin)
-	echo $s3 > mc_r
 	var3=$((100*$s1/$s4))
 	
 	if [ $var3 -lt 1 ]; then
@@ -159,17 +172,23 @@ elif [ "$2" = m ]; then
 
 elif [ "$2" = w ]; then
 
-	cd "$DIR2"
 	killall dlw.sh
+	cd "$DIR2"
 	[[ ! -f lwin.$1.ok ]] && touch lwin.$1.ok
 	[[ ! -f lwin.$1.no ]] && touch lwin.$1.no
 	cat lwin.$1.no >> "$w6"
 	cat lwin.$1.ok >> "$w9"
-	[[ -f lw_r ]] && s1=$(cat  lw_r) || s1=1
 	s2=$(cat lwin.$1.ok | wc -l)
-	s3=$(($s1+$s2))
+	if [ -f lw_r ]; then
+		s1=$(cat lw_r)
+		s3=$(($s1+$s2))
+		echo $s3 > lw_r
+	else
+		s1=1
+		s3=$(($s1+$s2))
+		echo "$(($s3-1))" > lw_r
+	fi
 	s4=$(cat idxlwin)
-	echo $s3 > lw_r
 	var2=$((100*$s1/$s4))
 	
 	if [ $var2 -lt 1 ]; then
@@ -221,15 +240,23 @@ elif [ "$1" = s ]; then
 
 	killall dls.sh
 	cd "$DIR2"
-	[[ ! -f fin.ok ]] && touch fin.ok
-	[[ ! -f fin.no ]] && touch fin.no
-	cat fin.no >> "$w6"
-	cat fin.ok >> "$w9"
-	[[ -f ls_r ]] && s1=$(cat  ls_r) || s1=1
+	[[ ! -f lsin.ok ]] && touch lsin.ok
+	[[ ! -f lsin.no ]] && touch lsin.no
+	[[ ! -f lsin.1.no ]] && touch lsin.1.no
+	cat lsin.1.no >> "$w6"
+	cat lsin.no >> "$w6"
+	cat lsin.ok >> "$w9"
 	s2=$(cat lsin.ok | wc -l)
-	s3=$(($s1+$s2))
+	if [ -f ls_r ]; then
+		s1=$(cat ls_r)
+		s3=$(($s1+$s2))
+		echo $s3 > ls_r
+	else
+		s1=1
+		s3=$(($s1+$s2))
+		echo "$(($s3-1))" > ls_r
+	fi
 	s4=$(cat idxlsin)
-	echo $s3 > ls_r
 	var4=$((100*$s1/$s4))
 	
 	if [ $var4 -lt 1 ]; then

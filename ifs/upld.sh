@@ -9,8 +9,8 @@ if [[ $1 = vsd ]]; then
 	wth=$(sed -n 4p $DC_s/cnfg18)
 	eht=$(sed -n 3p $DC_s/cnfg18)
 	cd $DM_t/saved
-	ls -t *.cnfg13 > ls
-	(sed -i 's/\.cnfg13//g' ./ls)
+	ls -t *.cnfg12 > ls
+	(sed -i 's/\.cnfg12//g' ./ls)
 	cat ./ls | $yad --list \
 	--window-icon=idiomind --center --skip-taskbar \
 	--buttons-layout=edge --borders=8 \
@@ -33,15 +33,15 @@ elif [[ $1 = infsd ]]; then
 	userid=$(sed -n 1p $DC_s/cnfg4)
 	user=$(echo "$(whoami)")
 	tpcd="$2"
-	NM=$(sed -n 1p ./"$tpcd".cnfg13)
-	LNGT=$(sed -n 2p ./"$tpcd".cnfg13)
-	LNGS=$(sed -n 4p ./"$tpcd".cnfg13)
-	lngs=$(sed -n 5p ./"$tpcd".cnfg13)
-	ATR=$(sed -n 6p ./"$tpcd".cnfg13)
-	SKP=$(sed -n 7p ./"$tpcd".cnfg13)
-	ML=$(sed -n 8p ./"$tpcd".cnfg13)
-	CTGY=$(sed -n 9p ./"$tpcd".cnfg13)
-	LNK=$(sed -n 10p ./"$tpcd".cnfg13)
+	NM=$(sed -n 1p ./"$tpcd".cnfg12)
+	LNGT=$(sed -n 2p ./"$tpcd".cnfg12)
+	LNGS=$(sed -n 4p ./"$tpcd".cnfg12)
+	lngs=$(sed -n 5p ./"$tpcd".cnfg12)
+	ATR=$(sed -n 6p ./"$tpcd".cnfg12)
+	SKP=$(sed -n 7p ./"$tpcd".cnfg12)
+	ML=$(sed -n 8p ./"$tpcd".cnfg12)
+	CTGY=$(sed -n 9p ./"$tpcd".cnfg12)
+	LNK=$(sed -n 10p ./"$tpcd".cnfg12)
 	nme=$(echo "$tpcd" | sed 's/ /_/g')
 	lnglbl=$(echo $lgtl | awk '{print tolower($0)}')
 	icon=$DS/images/img6.png
@@ -273,7 +273,7 @@ fi
 upld=$($yad --image-on-top --width=400 \
 --buttons-layout=end --center --window-icon=idiomind \
 --on-top --image=$DS/images/upld.png \
---height=450 --form --borders=20 --skip-taskbar --align=right \
+--height=450 --form --borders=15 --skip-taskbar --align=right \
 --button=$cancel:1 --button=$upload:0 \
 --title="Upload" --text="<b>$tpc\\n</b>" \
 --field=" :lbl" "#1" \
@@ -294,7 +294,7 @@ Mail=$(echo "$upld" | cut -d "|" -f3)
 Skype=$(echo "$upld" | cut -d "|" -f4)
 Ctgry=$(echo "$upld" | cut -d "|" -f5)
 Notes=$(echo "$upld" | cut -d "|" -f6 | sed 's/\n/ /g')
-link="http://tmp.site50.net/$lgs/$lnglbl/$Ctgry/$userid.$nme.idmnd"
+link="http://tmp.site50.net/$lgs/$lnglbl/$Ctgry/$userid.$tpc.idmnd"
 
 mkdir "$DT/$nme"
 mkdir "$DT/$tpc"
@@ -308,7 +308,7 @@ echo ""$tpc"
 "$Skype"
 "$Ctgry"
 "$link"
-"$Notes"" > "$DT/$nme/cnfg13"
+"$Notes"" > "$DT/cnfg12"
 echo "$userid" > $DC_s/cnfg4
 echo "$Skype" >> $DC_s/cnfg4
 echo "$Mail" >> $DC_s/cnfg4
@@ -350,7 +350,7 @@ while [ $n -le $(cat "$DC_tlt/cnfg5" | wc -l) ]; do
 	let n++
 done
 
-mv -f "$DT/$nme/cnfg13" "$DT/$tpc/cnfg13"
+cp -f "$DT/cnfg12" "$DT/$tpc/cnfg12"
 cp -f "$DC_tlt/cnfg0" "$DT/$tpc/cnfg0"
 cp -f "$DC_tlt/cnfg3" "$DT/$tpc/cnfg3"
 cp -f "$DC_tlt/cnfg4" "$DT/$tpc/cnfg4"
@@ -408,12 +408,12 @@ mv -f "$DT/$userid.$tpc.idmnd" $DT/$nme/
 #done
 
 ##-----------------------
-#lgt=$(sed -n 2p "$DT/$tpc"/cnfg13 | awk '{print tolower($0)}')
-#ls=$(sed -n 5p "$DT/$tpc"/cnfg13)
-#cby=$(sed -n 6p "$DT/$tpc"/cnfg13)
-#cty=$(sed -n 9p "$DT/$tpc"/cnfg13)
-#lnk=$(sed -n 10p "$DT/$tpc"/cnfg13)
-#nts=$(sed -n 11p "$DT/$tpc"/cnfg13 | sed 's/https\:\/\///g' | sed 's/http\:\/\///g')
+#lgt=$(sed -n 2p "$DT/$tpc"/cnfg12 | awk '{print tolower($0)}')
+#ls=$(sed -n 5p "$DT/$tpc"/cnfg12)
+#cby=$(sed -n 6p "$DT/$tpc"/cnfg12)
+#cty=$(sed -n 9p "$DT/$tpc"/cnfg12)
+#lnk=$(sed -n 10p "$DT/$tpc"/cnfg12)
+#nts=$(sed -n 11p "$DT/$tpc"/cnfg12 | sed 's/https\:\/\///g' | sed 's/http\:\/\///g')
 
 #l=$(sort -Ru $DM_t/saved/ls | egrep -v "$tpc" | head -4)
 #echo "$l" > l
@@ -421,10 +421,10 @@ mv -f "$DT/$userid.$tpc.idmnd" $DT/$nme/
 #ot2=$(sed -n 2p l)
 #ot3=$(sed -n 3p l)
 #ot4=$(sed -n 4p l)
-#lt1=$(sed -n 10p "$DM_t/saved/$ot1"cnfg13)
-#lt2=$(sed -n 10p "$DM_t/saved/$ot2"cnfg13)
-#lt3=$(sed -n 10p "$DM_t/saved/$ot3"cnfg13)
-#lt4=$(sed -n 10p "$DM_t/saved/$ot4"cnfg13)
+#lt1=$(sed -n 10p "$DM_t/saved/$ot1"cnfg12)
+#lt2=$(sed -n 10p "$DM_t/saved/$ot2"cnfg12)
+#lt3=$(sed -n 10p "$DM_t/saved/$ot3"cnfg12)
+#lt4=$(sed -n 10p "$DM_t/saved/$ot4"cnfg12)
 
 ##-----------------------htmlquiz
 #if [ -n "$(cat $iw)" ]; then
@@ -722,7 +722,7 @@ USER=$USER
 PASSWD=$PASS
 rm -f $DT/.PASS_TMP
 cd $DT/$nme
-cp -f $DS/default/.index.php ./.index.php
+cp -f $DS/default/index.php ./.index.php
 chmod 775 -R $DT/$nme
 lftp -u $USER,$PASS $HOST << END_SCRIPT
 mirror --reverse ./ public_html/$lgs/$lnglbl/$Ctgry/
@@ -731,7 +731,7 @@ END_SCRIPT
 
 exit=$?
 if [ $exit = 0 ] ; then
-    cp -f "$DT/$nme/cnfg13" "$DM_t/saved/$tpc.cnfg13"
+    cp -f "$DT/cnfg12" "$DM_t/saved/$tpc.cnfg12"
     info="<b><a href='link'>$tpc</a></b>\\n\\n<b>$saved</b>"
 else
     info="$upload_err"
@@ -744,7 +744,7 @@ yad --window-icon=idiomind --name=idiomind \
 --skip-taskbar --title=idiomind \
 --button="  Ok  ":0
 
-[[ -f "$DT/$nme/cnfg13" ]] && rm -f "$DT/$tpc/cnfg13"
+[[ -f "$DT/$nme/cnfg12" ]] && rm -f "$DT/$tpc/cnfg12"
 rm -fr $DT/mkhtml/ $DT/.ti
 rm -fr  $DT/"$tpc"  $DT/$userid."$tpc".idmnd
 rm $DT/.aud $DT/.img $DT/$userid."$tpc".idmnd \

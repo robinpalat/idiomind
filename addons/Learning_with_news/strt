@@ -4,7 +4,6 @@ source /usr/share/idiomind/ifs/c.conf
 source /usr/share/idiomind/ifs/trans/$lgs/rss.conf
 
 STT=$(cat $DT/.uptf)
-
 if  [[ -z "$(cat $DC/addons/dict/.dicts)" ]]; then
 	sleep 1
 	$DS/addons/Dics/dict \
@@ -19,10 +18,8 @@ if echo "$STT" | grep "Actualizando..."; then
 	--on-top --skip-taskbar --button=$(echo "$btn" | sed -n 1p):2 \
 	--button=Ok:1 --text=" <i>$(echo "$int" | sed -n 1p)</i>"
 		ret=$?
-		
 		if [ $ret -eq 1 ]; then
 			exit 1
-		
 		elif [ $ret -eq 2 ]; then
 			$DS/addons/Learning_with_news/stp.sh
 			$DS/addons/Learning_with_news/cnf
