@@ -3,34 +3,32 @@
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/others.conf
 
-if [[ "$1" = d ]]; then
+if [[ "$1" = time ]]; then
 	u=$(echo "$(whoami)")
 	cd $DT/.$u/
-	
-	if (echo "$2" | grep "Notification") || (echo "$2" | grep "Audio"); then
-		cnf1=$(mktemp $DT/cnf1.XXXX.s)
-		bcl=$(cat $DC_s/cnfg2)
+	cnf1=$(mktemp $DT/cnf1.XXXX.s)
+	bcl=$(cat $DC_s/cnfg2)
 
-		if [[ -z "$bcl" ]]; then
-			echo 8 > $DC_s/cnfg2
-			bcl=$(sed -n 1p $DC_s/cnfg2)
-		fi
-			yad --fixed --mark="8 s":8 \
-			--mark="60 s":60 --mark="120 s":120 \
-			--borders=20 --scale --min-value=2 \
-			--max-value=128 --value="$bcl" --step 2 \
-			--name=idiomind --on-top --sticky --skip-taskbar \
-			--window-icon=idiomind --borders=10 --text="Time" \
-		    --title=" " --width=300 --height=200 \
-		    --button="Ok":0 > $cnf1
-		
-			if [[ "$?" -eq 0 ]]; then
-				cat "$cnf1" > $DC_s/cnfg2
-			fi
-				rm -f $cnf1
-			[[ "$?" -eq 1 ]] & rm -f $cnf1 & exit 1
-			exit 1
+	if [[ -z "$bcl" ]]; then
+		echo 8 > $DC_s/cnfg2
+		bcl=$(sed -n 1p $DC_s/cnfg2)
 	fi
+		yad --fixed --mark="8 s":8 \
+		--mark="60 s":60 --mark="120 s":120 \
+		--borders=20 --scale --min-value=2 \
+		--max-value=128 --value="$bcl" --step 2 \
+		--name=idiomind --on-top --sticky --skip-taskbar \
+		--window-icon=idiomind --borders=10 --text="Time" \
+	    --title=" " --width=300 --height=200 \
+	    --button="Ok":0 > $cnf1
+	
+		if [[ "$?" -eq 0 ]]; then
+			cat "$cnf1" > $DC_s/cnfg2
+		fi
+			rm -f $cnf1
+		[[ "$?" -eq 1 ]] & rm -f $cnf1 & exit 1
+		exit 1
+
 
 elif [[ -z "$1" ]]; then
 
@@ -99,11 +97,11 @@ elif [[ -z "$1" ]]; then
 
 	$yad --list --on-top \
 	--expand-column=3 --print-all --center \
-	--width=190 --name=idiomind --class=idmnd \
-	--height=260 --title=" " --always-print-result \
+	--width=160 --name=idiomind --class=idmnd \
+	--height=220 --title=" " \
 	--window-icon=idiomind --no-headers \
 	--buttons-layout=end --skip-taskbar \
-	--dclick-action="$DS/play.sh d" \
+	--dclick-action="---" \
 	--borders=0 $btn2 $btn1 --hide-column=1 \
 	--column=Action:TEXT --column=icon:IMG \
 	--column=Action:TEXT --column=icon:CHK \

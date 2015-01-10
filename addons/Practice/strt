@@ -26,7 +26,7 @@ if [[ -n "$1" ]]; then
 
 	elif [ $1 = 5 ]; then
 		easys=$(cat fin.1.ok | wc -l)
-		learning=$(cat fin.2.ok| wc -l)
+		learning=$(cat fin.2.ok | wc -l)
 		hards=$(cat fin.$2.no | wc -l)
 		learned=$(($(cat f_r)-$easys))
 info="<b><big>$learned </big></b><small>$s_learned</small>\\t<span color='#3AB451'><b><big>$easys </big></b></span><small>$s_easy</small>\\t<span color='#E78C1E'><b><big>$learning </big></b></span><small>$s_learning</small>\\t<span color='#D11B5D'><b><big>$hards </big></b></span><small>$s_hard</small>\\n"
@@ -34,7 +34,7 @@ info="<b><big>$learned </big></b><small>$s_learned</small>\\t<span color='#3AB45
 		info1="* "
 	elif [ $1 = 6 ]; then
 		easys=$(cat mcin.1.ok | wc -l)
-		learning=$(cat mcin.2.ok| wc -l)
+		learning=$(cat mcin.2.ok | wc -l)
 		hards=$(cat mcin.$2.no | wc -l)
 		learned=$(($(cat mc_r)-$easys))
 info="<b><big>$learned </big></b><small>$s_learned</small>\\t<span color='#3AB451'><b><big>$easys </big></b></span><small>$s_easy</small>\\t<span color='#E78C1E'><b><big>$learning </big></b></span><small>$s_learning</small>\\t<span color='#D11B5D'><b><big>$hards </big></b></span><small>$s_hard</small>\\n"
