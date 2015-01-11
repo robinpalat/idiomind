@@ -457,7 +457,7 @@ elif [ $1 = n_s ]; then
 		cd $DT_r
 		> swrd
 		> twrd
-		if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]; then
+		if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 			vrbl="$srce"; lg=$lgt; aw=$DT/swrd; bw=$DT/twrd
 		else
 			vrbl="$trgt"; lg=$lgs; aw=$DT/twrd; bw=$DT/swrd
@@ -500,7 +500,7 @@ elif [ $1 = n_s ]; then
 			let n++
 		done
 		
-		if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]; then
+		if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 			n=1
 			while [ $n -le "$(cat $aw | wc -l)" ]; do
 				s=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
@@ -531,7 +531,7 @@ elif [ $1 = n_s ]; then
 		fi
 		) &
 		
-		if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]; then
+		if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 			n=1
 			while [ $n -le $(cat $bw | wc -l) ]; do
 				$dct $(sed -n "$n"p $bw) $DT_r
@@ -571,7 +571,7 @@ elif [ $1 = n_s ]; then
 		trgt="$(cat trgt)"
 		> swrd
 		> twrd
-		if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]; then
+		if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 			vrbl="$srce"; lg=$lgt; aw=$DT/swrd; bw=$DT/twrd
 		else
 			vrbl="$trgt"; lg=$lgs; aw=$DT/twrd; bw=$DT/swrd
@@ -614,7 +614,7 @@ elif [ $1 = n_s ]; then
 			let n++
 		done
 		
-		if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]; then
+		if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 			n=1
 			while [ $n -le "$(cat $aw | wc -l)" ]; do
 				s=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
@@ -696,7 +696,7 @@ elif [ $1 = n_s ]; then
 		notify-send -i "$icnn" "$trgt" "$srce \\n($tpe)" -t 10000
 		$DS/mngr.sh inx S "$nme" "$tpe"
 		
-		if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]; then
+		if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 			n=1
 			while [ $n -le $(cat $bw | wc -l) ]; do
 				$dct $(sed -n "$n"p $bw) $DT_r
@@ -1738,7 +1738,7 @@ $sntc" >> ./wlog
 								r=$(echo $(($RANDOM%1000)))
 								> twrd_$r
 								> swrd_$r
-								if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt =ru ]; then
+								if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 									vrbl="$srce"; lg=$lgt; aw=$DT/swrd_$r; bw=$DT/twrd_$r
 								else
 									vrbl="$trgt"; lg=$lgs; aw=$DT/twrd_$r; bw=$DT/swrd_$r
@@ -1783,7 +1783,7 @@ $sntc" >> ./wlog
 									let n++
 								done
 								
-								if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]; then
+								if ([ "$lgt" = ja ] || [ "$lgt" = 'zh-cn' ] || [ "$lgt" = ru ]); then
 									n=1
 									while [ $n -le "$(cat $aw | wc -l)" ]; do
 										s=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
@@ -1807,7 +1807,7 @@ $sntc" >> ./wlog
 								pwrds=$(cat B_$r | tr '\n' '_')
 								eyeD3 --set-encoding=utf8 -A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0IIGMI3I0I"$grmrk"IGMI3I0I "$DM_tlt/$nme.mp3"
 
-								if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]; then
+								if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 									n=1
 									while [ $n -le $(cat $bw | wc -l) ]; do
 										$dct $(sed -n "$n"p $bw) $DT_r
@@ -2307,12 +2307,11 @@ $sntc" >> ./slog
 									
 									echo "$nme" >> adds
 									$DS/mngr.sh inx S "$nme" "$tpe"
-									
-									(
+									(	
 										r=$(echo $(($RANDOM%1000)))
 										> twrd_$r
 										> swrd_$r
-										if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]; then
+										if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 											vrbl="$srce"; lg=$lgt; aw=$DT/swrd_$r; bw=$DT/twrd_$r
 										else
 											vrbl="$trgt"; lg=$lgs; aw=$DT/twrd_$r; bw=$DT/swrd_$r
@@ -2357,7 +2356,7 @@ $sntc" >> ./slog
 											let n++
 										done
 										
-										if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]; then
+										if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 											n=1
 											while [ $n -le "$(cat $aw | wc -l)" ]; do
 												s=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
@@ -2382,7 +2381,7 @@ $sntc" >> ./slog
 										pwrds=$(cat B_$r | tr '\n' '_')
 										eyeD3 --set-encoding=utf8 -A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0IIGMI3I0I"$grmrk"IGMI3I0I "$DM_tlt/$nme.mp3"
 										
-										if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt =ru ]; then
+										if ([ "$lgt" = ja ] || [ "$lgt" = 'zh-cn' ] || [ "$lgt" = ru ]); then
 											n=1
 											while [ $n -le $(cat $bw | wc -l) ]; do
 												$dct $(sed -n "$n"p $bw) $DT_r
@@ -2395,8 +2394,8 @@ $sntc" >> ./slog
 												let n++
 											done
 										fi
-										
 										echo "__" >> x
+										rm -f $aw $bw 
 										
 									) &
 									

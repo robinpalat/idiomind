@@ -10,6 +10,7 @@ NUM=$DC/addons/stats/num.tmp
 TPS=$DC/addons/stats/tpcs.tmp
 WKRT=$DC/addons/stats/wkrt.tmp
 WKRT2=$DC/addons/stats/wkrt2.tmp
+[[ ! -f "$DC/addons/stats/.udt" ]] && touch "$DC/addons/stats/.udt"
 udt=$(cat "$DC/addons/stats/.udt")
 [ ! -d "$DC/addons/stats" ] && mkdir "$DC/addons/stats"
 
