@@ -31,8 +31,8 @@ while [ $n -le $(cat ./fin$1 | wc -l) ]; do
 		--field="<big><big><big><big><big><big><big><big><b>$trgt</b></big></big></big></big></big></big></big></big>":lbl \
 		--field="$stgt":lbl \
 		--button="gtk-close":1 \
-		--button=" Got It ":3 \
-		--button=" Nope ":4 \
+		--button="  Got It  ":3 \
+		--button="  Nope  ":4 \
 		--width=365 --height=300
 	else
 		yad --form --align=center \
@@ -42,8 +42,8 @@ while [ $n -le $(cat ./fin$1 | wc -l) ]; do
 		--field="\\n\\n<big><big><big><big><big><big><big><big><b>$trgt</b></big></big></big></big></big></big></big></big>":lbl \
 		--field="$stgt\\n\\n\\n":lbl \
 		--button="gtk-close":1 \
-		--button=" Got It ":3 \
-		--button=" Nope ":4 \
+		--button="  Got It  ":3 \
+		--button="  Nope  ":4 \
 		--width=365 --height=250
 	fi
 	ret=$?
