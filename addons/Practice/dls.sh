@@ -34,7 +34,7 @@ while [ $n -le $(cat lsin | wc -l) ]; do
 			--align=left --window-icon=idiomind --fore=4A4A4A \
 			--button=Hint:"/usr/share/idiomind/addons/Practice/hint.sh '$n'" \
 			--button=Listen:"play '$drtt/$s1.mp3'" \
-			--button=" Ok ":0)
+			--button="  Ok  ":0)
 		else
 			(sleep 0.5 && play "$drtt/$s1".mp3) &
 			SE=$(yad --center --text-info --fore=4A4A4A \
@@ -44,7 +44,7 @@ while [ $n -le $(cat lsin | wc -l) ]; do
 			--align=left --window-icon=idiomind \
 			--button=Hint:"/usr/share/idiomind/addons/Practice/hint.sh '$n'" \
 			--button="Listen":"play '$drtt/$s1.mp3'" \
-			--button=" Ok ":0)
+			--button="  Ok  ":0)
 		fi
 		ret=$?
 		

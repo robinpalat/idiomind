@@ -286,7 +286,7 @@ upld=$($yad --image-on-top --width=400 \
 --field="    <small>$category</small>::CB" \
 "!$others!$entertainment!$history!$documentary!$films!$internet!$music!$events!$nature!$news!$office!$relations!$sport!$shopping!$social!$technology!$travel" \
 --field="<small>\\n$notes:</small>:TXT" " " \
---field="<small>set_image:</small>:FL")
+--field="<small>$add_image</small>:FL")
 ret=$?
 
 Ctgry=$(echo "$upld" | cut -d "|" -f5)
