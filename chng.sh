@@ -260,7 +260,7 @@ elif [ "$1" != chngi ]; then
 			text="--text=<small>$1\n</small>"
 			align="--text-align=left"
 		else
-			host="http://tmp.site50.net"
+			host="http://idiomind.sourceforge.net"
 			lgtl=$(echo "$lgtl" | awk '{print tolower($0)}')
 			text="--text=<small><small><a href='$host/$lgs/$lgtl'>$find_topics</a>\t</small></small>"
 			align="--text-align=right"

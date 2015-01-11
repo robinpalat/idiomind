@@ -45,7 +45,7 @@ if [ -z "$1" ]; then
 		echo "strt.1.strt" >> \
 		$DC/addons/stats/.log &
 		
-		# ------------------------------------------------ new session
+		# _______________new session
 		d1="$(date +%d)"
 		[[ -f $DC_s/cnfg15 ]] && d2=$(cat $DC_s/cnfg15)
 		
@@ -68,10 +68,10 @@ if [ -z "$1" ]; then
 				echo 190 >> $wh
 				echo 125 >> $wh
 				echo 380 >> $wh
-				echo 450 >> $wh
-				echo 100 >> $wh
+				echo 120 >> $wh
+				echo 460 >> $wh
 				echo 400 >> $wh
-				echo 400 >> $wh
+				echo 410 >> $wh
 				exit
 				
 			elif [ $y -ge 1080 ]; then
@@ -83,10 +83,10 @@ if [ -z "$1" ]; then
 				echo 190 >> $wh
 				echo 100 >> $wh
 				echo 300 >> $wh
-				echo 450 >> $wh
-				echo 100 >> $wh
+				echo 120 >> $wh
+				echo 460 >> $wh
 				echo 400 >> $wh
-				echo 400 >> $wh
+				echo 410 >> $wh
 				exit
 				
 			elif [ $y -ge 1024 ]; then
@@ -98,10 +98,10 @@ if [ -z "$1" ]; then
 				echo 190 >> $wh
 				echo 100 >> $wh
 				echo 320 >> $wh
-				echo 450 >> $wh
-				echo 100 >> $wh
-				echo 320 >> $wh
-				echo 360 >> $wh
+				echo 120 >> $wh
+				echo 460 >> $wh
+				echo 390 >> $wh
+				echo 410 >> $wh
 				exit
 				
 			elif [ $y -gt 700 ]; then
@@ -113,10 +113,10 @@ if [ -z "$1" ]; then
 				echo 170 >> $wh
 				echo 100 >> $wh
 				echo 300 >> $wh
-				echo 200 >> $wh
-				echo 50 >> $wh
-				echo 320 >> $wh
-				echo 360 >> $wh
+				echo 120 >> $wh
+				echo 460 >> $wh
+				echo 390 >> $wh
+				echo 410 >> $wh
 				exit
 				
 			elif [ $y -gt 599 ]; then
@@ -128,10 +128,10 @@ if [ -z "$1" ]; then
 				echo 170 >> $wh
 				echo 100 >> $wh
 				echo 250 >> $wh
-				echo 200 >> $wh
-				echo 50 >> $wh
-				echo 320 >> $wh
-				echo 350 >> $wh
+				echo 120 >> $wh
+				echo 460 >> $wh
+				echo 390 >> $wh
+				echo 410 >> $wh
 				exit
 				
 			elif [ $y -gt 400 ]; then
@@ -143,10 +143,10 @@ if [ -z "$1" ]; then
 				echo 320 >> $wh
 				echo 500 >> $wh
 				echo 320 >> $wh
-				echo 50 >> $wh
-				echo 200 >> $wh
-				echo 300 >> $wh
-				echo 340 >> $wh
+				echo 120 >> $wh
+				echo 460 >> $wh
+				echo 380 >> $wh
+				echo 400 >> $wh
 				exit
 			fi
 			
@@ -227,8 +227,10 @@ fi
 
 if [[ "$1" = "panel" ]]; then
 	if [ -d $DM ]; then
-		yad --geometry=185x318-120-420 --width=160 --name=idiomind\
-			--height=220 --fixed --title=" Idiomind" --no-buttons \
+		#wth=$(sed -n 11p $DC_s/cnfg18)
+		#hgt=$(sed -n 12p $DC_s/cnfg18)
+		yad --geometry=185x318-200-450 --width=160 --height=220 \
+			--name=idiomind --fixed --title=" Idiomind" --no-buttons \
 			--icons --single-click --on-top --borders=0 \
 			--read-dir=$DS/default/new --item-width=60 --skip-taskbar \
 			--window-icon=idiomind --class=idiomind
@@ -1141,14 +1143,14 @@ if [ "$1" = topic ]; then
 				fi
 			rm -f $DT/*.x & exit 1
 			fi
-	
+
 	#feeds
 	elif echo "$mde" | grep "fd"; then
 		dir1="$DM_tl/Feeds"
 		dir2="$DC/addons/Learning with news"
 		DF="$DS/addons/Learning_with_news"
 		FEED=$(cat "$dir2/$lgtl/.rss")
-		ICON=$DF/img/icon.png
+		ICON=$DF/img/rss.png
 		c=$(echo $(($RANDOM%100000)))
 		STT="$(cat $DT/.uptf)"
 		
