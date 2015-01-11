@@ -281,6 +281,9 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 	cc=$(sed -n 1p "$tmp/cnfg12")
 	cgy=$(sed -n 9p "$tmp/cnfg12")
 	nt=$(sed -n 11p "$tmp/cnfg12")
+	[[ -f "$tmp/words/images/img.png" ]] && \
+	img="$tmp/words/images/img.png" || \
+	img="$DS/images/trans.png"
 	
 	if [ "$inme" != "$cc" ]; then
 	int="$(sed -n 6p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
@@ -299,21 +302,16 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 		cd "$tmp"
 		ws=$(cat "cnfg3" | wc -l)
 		ss=$(cat "cnfg4" | wc -l)
-		if [ $(echo "$nt" | wc -c) -ge 10 ] ; then
-			[[ $(echo "$nt" | wc -c) -gt 200 ]] \
-			&& nt="${nt:0:270}..." || nt="$nt"
-			itxt="<big><b>$title</b></big><small><small><b>\\n$lgsli  <b>></b>  $lgtli\\n$ss  $sentences  -  $ws  $words\\n$category:  $cgy.\\n$created_by:  $crea.</b></small></small><small>\n\n$nt\n</small>"
-		else
-			itxt="<big><b>$title</b></big><small><small><b>\\n$lgsli  <b>></b>  $lgtli \\n$ss  $sentences  -  $ws  $words\\n$category:  $cgy.\\n$created_by:  $crea.</b></small></small><small>\n</small>"
-		fi
+		itxt="<big><b>$title</b></big><small><small><b>\\n$lgsli  <b>></b>  $lgtli \\n$ss  $sentences  -  $ws  $words\\n$category:  $cgy.\\n$created_by:  $crea.</b></small></small><small><small>\n</small></small>"
 		dlck="$DT/p1.$c"
 		cat "$tmp/cnfg0" | awk '{print $0""}' | \
 		$yad --list --name=Idiomind --title="Idiomind" \
 		--ellipsize=END --print-all --image-on-top \
-		--text="$itxt" --class=Idiomind --scroll --no-headers \
+		--image="$img" --text="<b>$itxt</b>"  --class=Idiomind \
+		--scroll --no-headers \
 		--width="$wth" --height="$eht" --image-on-top \
 		--window-icon=idiomind --column=Items --center \
-		--dclick-action="$dlck" --image=$DS/images/trans.png \
+		--dclick-action="$dlck" \
 		--button="$install":0 --button="$close":1
 			ret=$?
 			
@@ -428,6 +426,12 @@ if [ "$1" = topic ]; then
 		else
 			ttl="$tpc"
 		fi
+		if [ -f "$DM_tlt/words/images/img.png" ]; then
+		img="$DM_tlt/words/images/img.png"
+		s="\n"
+		else
+		img=$DS/images/trans.png
+		fi
 		echo "tpcs.$tpc.tpcs" >> \
 		$DC/addons/stats/.log &
 		inx=$(cat "$ls0" | wc -l)
@@ -441,7 +445,7 @@ if [ "$1" = topic ]; then
 		cd "$DC_tlt"
 		ws=$(cat cnfg3 | wc -l)
 		ss=$(cat cnfg4 | wc -l)
-		itxt="\\n<big>  <b>$ttl</b> </big> <small><small><b>\\n    $ss $sentences     $ws $words</b></small></small>\\n"
+		itxt="<big><b> $ttl </b> </big> <small><small><b>\\n   $ss $sentences\n   $ws $words</b></small></small>$s"
 		cd $DS
 		c=$(echo $(($RANDOM%100000)))
 		KEY=$c
@@ -454,7 +458,8 @@ if [ "$1" = topic ]; then
 			echo "$nt" | $yad --text-info --plug=$KEY --margins=14 \
 			--wrap --editable --text="$itxt" --fore=gray40 \
 			--show-uri --fontname=vendana > "$cnf3" &
-			$yad --notebook --name=idiomind --center --title="$tpc" \
+			$yad --notebook --name=idiomind --center --title="Idiomind" \
+			--image="$img" --text="  <b>$tpc</b>" \
 			--class=idiomind --align=right --key=$KEY  \
 			--tab-borders=0 --center --always-print-result \
 			--tab="  $notes  " --window-icon=idiomind \
@@ -544,12 +549,12 @@ if [ "$1" = topic ]; then
 				--column=Name:TEXT --column=Review:CHK \
 				--dclick-action='./vwr.sh v2' > "$cnf2" &
 				echo "$nt" | $yad --text-info --plug=$KEY --margins=14 \
-				--wrap --editable --text="$itxt" \
-				--tabnum=3 --fore='gray40' \
+				--wrap --editable --tabnum=3 --fore='gray40' \
 				--show-uri --fontname=vendana > "$cnf3" &
 				$yad --notebook --name=Idiomind --center \
 				--class=Idiomind --align=right --key=$KEY \
-				--tab-borders=0 --center --title="$tpc" \
+				--tab-borders=0 --center --title="Idiomind" \
+				--image="$img" --text="<b>$itxt</b>" \
 				--tab=" $review " --window-icon=idiomind \
 				--tab=" $learned ($tb2) " --tab=" $notes " \
 				--ellipsize=END --image-on-top --always-print-result \
@@ -567,11 +572,12 @@ if [ "$1" = topic ]; then
 				--column=Name:TEXT --column=Review:CHK \
 				--dclick-action='./vwr.sh v2' > "$cnf2" &
 				echo "$nt" | $yad --text-info --plug=$KEY --margins=14 \
-				--text="$itxt" --tabnum=3 --fore='gray40' --wrap \
+				--tabnum=3 --fore='gray40' --wrap \
 				--show-uri --fontname=vendana --editable > "$cnf3" &
 				$yad --notebook --name=Idiomind --center --key=$KEY \
 				--class=Idiomind --align=right --window-icon=idiomind \
-				--tab-borders=0 --center --title="$tpc" \
+				--tab-borders=0 --center --title="Idiomind" \
+				--image="$img" --text="<b>$itxt</b>" \
 				--tab="  $learning ($tb1) " \
 				--tab="  $learned ($tb2) " --tab=" $notes " \
 				--ellipsize=END --image-on-top --always-print-result \
@@ -729,11 +735,12 @@ if [ "$1" = topic ]; then
 			--column=Name:TEXT --column=Review:CHK \
 			--dclick-action='./vwr.sh v2' > "$cnf2" &
 			echo "$nt" | $yad --text-info --plug=$KEY --margins=14 \
-			--text="$itxt" --tabnum=3 --fore='gray40' --wrap \
+			--tabnum=3 --fore='gray40' --wrap \
 			--show-uri --fontname=vendana --editable > "$cnf3" &
 			$yad --notebook --name=Idiomind --center \
 			--class=Idiomind --align=right --key=$KEY \
-			--tab-borders=0 --center --title="$tpc" \
+			--tab-borders=0 --center --title="Idiomind" \
+			--image="$img" --text="<b>$itxt</b>" \
 			--tab=" $review " --window-icon=idiomind \
 			--tab=" $learned ($tb2) " --tab=" $notes " \
 			--ellipsize=END --image-on-top --always-print-result \
@@ -808,7 +815,7 @@ if [ "$1" = topic ]; then
 		cd "$DC_tlt"
 		ws=$(cat cnfg3 | wc -l)
 		ss=$(cat cnfg4 | wc -l)
-		itxt="\\n<big>  <b>$ttl</b></big><small><small><b>\\n    $ss $sentences   $ws $words\\n    $category: $l4\\n    $created_by: $l1</b></small></small>\\n"
+		itxt="<big>  <b>$ttl</b></big><small><small><b>\\n    $ss $sentences   $ws $words\\n    $category: $l4\\n    $created_by: $l1</b></small></small>$s"
 		cd $DS
 		c=$(echo $(($RANDOM%100000)))
 		KEY=$c
@@ -879,11 +886,12 @@ if [ "$1" = topic ]; then
 				--column=Name:TEXT --column=Review:CHK \
 				--dclick-action='./vwr.sh v2' > "$cnf2" &
 				echo "$nt" | $yad --text-info --plug=$KEY --margins=14 \
-				--text="$itxt" --tabnum=3 --fore='gray40' --wrap \
+				--tabnum=3 --fore='gray40' --wrap \
 				--show-uri --fontname=vendana --editable > "$cnf3" &
 				$yad --notebook --name=Idiomind --center \
 				--class=Idiomind --align=right --key=$KEY \
-				--tab-borders=0 --center --title="$tpc" \
+				--tab-borders=0 --center --title="Idiomind" \
+				--image="$img" --text="<b>$itxt</b>" \
 				--tab=" $review " --window-icon=idiomind \
 				--tab=" $learned ($tb2) " --tab=" $notes " \
 				--ellipsize=END --image-on-top --always-print-result \
@@ -901,11 +909,12 @@ if [ "$1" = topic ]; then
 				--column=Name:TEXT --column=Review:CHK \
 				--dclick-action='./vwr.sh v2' > "$cnf2" &
 				echo "$nt" | $yad --text-info --plug=$KEY --margins=14 \
-				--text="$itxt" --tabnum=3 --fore='gray40' --wrap \
+				--tabnum=3 --fore='gray40' --wrap \
 				--show-uri --fontname=vendana --editable > "$cnf3" &
 				$yad --notebook --name=Idiomind --center  \
 				--class=Idiomind --align=right --key=$KEY \
-				--tab-borders=0 --center --title="$tpc" \
+				--tab-borders=0 --center --title="Idiomind" \
+				--image="$img" --text="<b>$itxt</b>" \
 				--tab=" $learning ($tb1) " --always-print-result \
 				--tab=" $learned ($tb2) " --tab=" $notes " \
 				--ellipsize=END --image-on-top --window-icon=idiomind \
@@ -1067,11 +1076,12 @@ if [ "$1" = topic ]; then
 			--column=Name:TEXT --column=Review:CHK \
 			--dclick-action='./vwr.sh v2' > "$cnf2" &
 			echo "$nt" | $yad --text-info --plug=$KEY --margins=14 \
-			--text="$itxt" --tabnum=3 --fore='gray40' --wrap \
+			--tabnum=3 --fore='gray40' --wrap \
 			--show-uri --fontname=vendana --editable > "$cnf3" &
 			$yad --notebook --name=Idiomind --center  \
 			--class=Idiomind --align=right --key=$KEY \
-			--tab-borders=0 --center --title="$tpc" \
+			--tab-borders=0 --center --title="Idiomind" \
+			--image="$img" --text="<b>$itxt</b>" \
 			--tab=" $review " --window-icon=idiomind \
 			--tab=" $learned ($tb2) " --tab=" $notes " \
 			--ellipsize=END --image-on-top --always-print-result \

@@ -46,12 +46,11 @@ elif [[ $1 = infsd ]]; then
 	nme=$(echo "$tpcd" | sed 's/ /_/g')
 	lnglbl=$(echo $lgtl | awk '{print tolower($0)}')
 	icon=$DS/images/img6.png
-	file="$LNK"
 
 	yad --borders=10 --width=400 --height=150 \
 	--on-top --skip-taskbar --center --image=$icon \
 	--title="idiomind" --button="$download:0" --button="Close:1" \
-	--text="<b><a href='$LNK'>$NM</a></b>\\n<small>$LNGS <b>></b> $LNGT </small> \\n"
+	--text="<b>$NM</b>\\n<small>$LNGS <b>></b> $LNGT </small> \\n"
 		ret=$?
 
 		if [ $ret -eq 2 ]; then
@@ -59,7 +58,7 @@ elif [[ $1 = infsd ]]; then
 		exit 1
 
 		elif [ $ret -eq 0 ]; then
-			sv=$($yad --save --center --borders=10 \
+			sv=$(yad --save --center --borders=10 \
 			--on-top --filename="$tpcd.idmnd" \
 			--window-icon=idiomind --skip-taskbar --title="Save" \
 			--file --width=600 --height=500 --button=gtk-ok:0 )
@@ -76,9 +75,8 @@ elif [[ $1 = infsd ]]; then
 			cd $DT
 			wget http://idiomind.sourceforge.net/info/SITE_TMP
 			HOST=$(sed -n 4p ./SITE_TMP)
-			file="$HOST/$LNK"
-			rm $HOME/$U."$tpcd".idmnd
-
+			file="$HOST/$lngs/$lnglbl/$CTGY/$LNK"
+			
 			WGET() {
 			rand="$RANDOM `date`"
 			pipe="/tmp/pipe.`echo '$rand' | md5sum | tr -d ' -'`"
@@ -109,6 +107,7 @@ elif [[ $1 = infsd ]]; then
 			WGET "$file"
 			
 			if [ -f "/tmp/$U.$tpcd.idmnd" ] ; then
+				[[ -f "$sv" ]] && rm "$sv"
 				mv -f "/tmp/$U.$tpcd.idmnd" "$sv"
 			else
 				$yad --fixed --name=idiomind --center \
@@ -273,7 +272,7 @@ if [ $ALL -le 20 ]; then
 	--button="Ok:0")
 	exit 1
 fi
-
+cd $HOME
 upld=$($yad --image-on-top --width=400 \
 --buttons-layout=end --center --window-icon=idiomind \
 --on-top --image=$DS/images/upld.png \
@@ -286,9 +285,9 @@ upld=$($yad --image-on-top --width=400 \
 --field="    <small>$skype</small>:: " "$skp" \
 --field="    <small>$category</small>::CB" \
 "!$others!$entertainment!$history!$documentary!$films!$internet!$music!$events!$nature!$news!$office!$relations!$sport!$shopping!$social!$technology!$travel" \
---field="<small>\\n$notes:</small>:TXT" " ")
+--field="<small>\\n$notes:</small>:TXT" " " \
+--field="<small>set_image:</small>:FL")
 ret=$?
-
 
 Ctgry=$(echo "$upld" | cut -d "|" -f5)
 [[ $Ctgry = $others ]] && Ctgry=others
@@ -306,7 +305,6 @@ Ctgry=$(echo "$upld" | cut -d "|" -f5)
 [[ $Ctgry = $shopping ]] && Ctgry=shopping
 [[ $Ctgry = $technology ]] && Ctgry=technology
 [[ $Ctgry = $travel ]] && Ctgry=travel
-
 
 if [[ "$ret" != 0 ]]; then
 	exit 1
@@ -343,7 +341,8 @@ Autor=$(echo "$upld" | cut -d "|" -f2)
 Mail=$(echo "$upld" | cut -d "|" -f3)
 Skype=$(echo "$upld" | cut -d "|" -f4)
 Notes=$(echo "$upld" | cut -d "|" -f6 | sed 's/\n/ /g')
-link="$HOST/$lgs/$lnglbl/$Ctgry/$U.$tpc.idmnd"
+img=$(echo "$upld" | cut -d "|" -f7)
+link="$U.$tpc.idmnd"
 
 mkdir "$DT/$nme"
 mkdir "$DT/$tpc"
@@ -361,6 +360,9 @@ echo ""$tpc"
 echo "$U" > $DC_s/cnfg4
 echo "$Skype" >> $DC_s/cnfg4
 echo "$Mail" >> $DC_s/cnfg4
+
+[[ -f "$img" ]] && /usr/bin/convert -scale 64x54! \
+-border 0.5 -bordercolor '#ADADAD' "$img" "$DM_tlt/words/images/img.png"
 
 if [ -z $Ctgry ]; then
 	$yad --window-icon=idiomind --name=idiomind \
@@ -397,7 +399,6 @@ mv "$tpc.tar.gz" "$U.$tpc.idmnd"
 rm -f "$tpc"/*
 
 notify-send "$uploading..." "$wait" -i idiomind -t 6000
-#wget http://idiomind.sourceforge.net/info/SITE_TMP
 HOST=$(sed -n 1p $DT/SITE_TMP)
 USER=$(sed -n 2p $DT/SITE_TMP)
 PASS=$(sed -n 3p $DT/SITE_TMP)
@@ -422,7 +423,7 @@ END_SCRIPT
 exit=$?
 if [ $exit = 0 ] ; then
     cp -f "$DT/cnfg12" "$DM_t/saved/$tpc.cnfg12"
-    info="<big><b> $tpc </b</big>\\n\\n<b>  $saved</b>"
+    info="<big><b> $tpc </b></big>\\n\\n<b>  $saved</b>"
 else
     info="$upload_err"
 fi
