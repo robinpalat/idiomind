@@ -7,7 +7,6 @@ if [ ! -d "$HOME/.idiomind" ]; then
 		exit 1
 	fi
 fi
-
 source /usr/share/idiomind/ifs/c.conf
 source /usr/share/idiomind/ifs/trans/$lgs/items_lists.conf
 
