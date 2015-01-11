@@ -54,108 +54,101 @@ if [ -z "$1" ]; then
 			echo "--new session"
 
 			# screen size
-			xrandr | grep '*' | awk '{ print $1 }' > $DC_s/cnfg18
-			sed -i 's/x/\n/' $DC_s/cnfg18
-			y=$(sed -n 2p $DC_s/cnfg18)
-			
-			(
+			wh=$DC_s/cnfg18
+			xrandr | grep '*' | awk '{ print $1 }' > $wh
+			sed -i 's/x/\n/' $wh
+			y=$(sed -n 2p $wh)
+
 			if [ $y -gt 1200 ]; then
-				echo 1000 > $DC_s/cnfg17
-				echo 450 >> $DC_s/cnfg18
-				echo 520 >> $DC_s/cnfg18
-				echo 500 >> $DC_s/cnfg18
-				echo 320 >> $DC_s/cnfg18
-				echo 260 >> $DC_s/cnfg18
-				echo 190 >> $DC_s/cnfg18
-				echo 125 >> $DC_s/cnfg18
-				echo 380 >> $DC_s/cnfg18
-				echo 450 >> $DC_s/cnfg18
-				echo 100 >> $DC_s/cnfg18
-				echo 400 >> $DC_s/cnfg18
-				echo 400 >> $DC_s/cnfg18
+				echo 450 >> $wh
+				echo 520 >> $wh
+				echo 500 >> $wh
+				echo 320 >> $wh
+				echo 260 >> $wh
+				echo 190 >> $wh
+				echo 125 >> $wh
+				echo 380 >> $wh
+				echo 450 >> $wh
+				echo 100 >> $wh
+				echo 400 >> $wh
+				echo 400 >> $wh
 				exit
 				
 			elif [ $y -ge 1080 ]; then
-				echo 800 > $DC_s/cnfg17
-				echo 450 >> $DC_s/cnfg18
-				echo 520 >> $DC_s/cnfg18
-				echo 500 >> $DC_s/cnfg18
-				echo 320 >> $DC_s/cnfg18
-				echo 260 >> $DC_s/cnfg18
-				echo 190 >> $DC_s/cnfg18
-				echo 100 >> $DC_s/cnfg18
-				echo 300 >> $DC_s/cnfg18
-				echo 450 >> $DC_s/cnfg18
-				echo 100 >> $DC_s/cnfg18
-				echo 400 >> $DC_s/cnfg18
-				echo 400 >> $DC_s/cnfg18
+				echo 450 >> $wh
+				echo 520 >> $wh
+				echo 500 >> $wh
+				echo 320 >> $wh
+				echo 260 >> $wh
+				echo 190 >> $wh
+				echo 100 >> $wh
+				echo 300 >> $wh
+				echo 450 >> $wh
+				echo 100 >> $wh
+				echo 400 >> $wh
+				echo 400 >> $wh
 				exit
 				
 			elif [ $y -ge 1024 ]; then
-				echo 800 > $DC_s/cnfg17
-				echo 430 >> $DC_s/cnfg18
-				echo 490 >> $DC_s/cnfg18
-				echo 490 >> $DC_s/cnfg18
-				echo 320 >> $DC_s/cnfg18
-				echo 260 >> $DC_s/cnfg18
-				echo 190 >> $DC_s/cnfg18
-				echo 100 >> $DC_s/cnfg18
-				echo 320 >> $DC_s/cnfg18
-				echo 450 >> $DC_s/cnfg18
-				echo 100 >> $DC_s/cnfg18
-				echo 360 >> $DC_s/cnfg18
-				echo 320 >> $DC_s/cnfg18
+				echo 430 >> $wh
+				echo 490 >> $wh
+				echo 490 >> $wh
+				echo 320 >> $wh
+				echo 260 >> $wh
+				echo 190 >> $wh
+				echo 100 >> $wh
+				echo 320 >> $wh
+				echo 450 >> $wh
+				echo 100 >> $wh
+				echo 320 >> $wh
+				echo 360 >> $wh
 				exit
 				
 			elif [ $y -gt 700 ]; then
-				echo 520 > $DC_s/cnfg17
-				echo 420 >> $DC_s/cnfg18
-				echo 480 >> $DC_s/cnfg18
-				echo 470 >> $DC_s/cnfg18
-				echo 320 >> $DC_s/cnfg18
-				echo 230 >> $DC_s/cnfg18
-				echo 170 >> $DC_s/cnfg18
-				echo 100 >> $DC_s/cnfg18
-				echo 300 >> $DC_s/cnfg18
-				echo 200 >> $DC_s/cnfg18
-				echo 50 >> $DC_s/cnfg18
-				echo 360 >> $DC_s/cnfg18
-				echo 320 >> $DC_s/cnfg18
+				echo 420 >> $wh
+				echo 480 >> $wh
+				echo 470 >> $wh
+				echo 320 >> $wh
+				echo 230 >> $wh
+				echo 170 >> $wh
+				echo 100 >> $wh
+				echo 300 >> $wh
+				echo 200 >> $wh
+				echo 50 >> $wh
+				echo 320 >> $wh
+				echo 360 >> $wh
 				exit
 				
 			elif [ $y -gt 599 ]; then
-				echo 520 > $DC_s/cnfg17
-				echo 400 >> $DC_s/cnfg18
-				echo 460 >> $DC_s/cnfg18
-				echo 450 >> $DC_s/cnfg18
-				echo 300 >> $DC_s/cnfg18
-				echo 230 >> $DC_s/cnfg18
-				echo 170 >> $DC_s/cnfg18
-				echo 100 >> $DC_s/cnfg18
-				echo 250 >> $DC_s/cnfg18
-				echo 200 >> $DC_s/cnfg18
-				echo 50 >> $DC_s/cnfg18
-				echo 350 >> $DC_s/cnfg18
-				echo 320 >> $DC_s/cnfg18
+				echo 400 >> $wh
+				echo 460 >> $wh
+				echo 450 >> $wh
+				echo 300 >> $wh
+				echo 230 >> $wh
+				echo 170 >> $wh
+				echo 100 >> $wh
+				echo 250 >> $wh
+				echo 200 >> $wh
+				echo 50 >> $wh
+				echo 320 >> $wh
+				echo 350 >> $wh
 				exit
 				
 			elif [ $y -gt 400 ]; then
-				echo 420 > $DC_s/cnfg17
-				echo 400 >> $DC_s/cnfg18
-				echo 460 >> $DC_s/cnfg18
-				echo 400 >> $DC_s/cnfg18
-				echo 280 >> $DC_s/cnfg18
-				echo 500 >> $DC_s/cnfg18
-				echo 320 >> $DC_s/cnfg18
-				echo 500 >> $DC_s/cnfg18
-				echo 320 >> $DC_s/cnfg18
-				echo 50 >> $DC_s/cnfg18
-				echo 200 >> $DC_s/cnfg18
-				echo 340 >> $DC_s/cnfg18
-				echo 300 >> $DC_s/cnfg18
+				echo 400 >> $wh
+				echo 460 >> $wh
+				echo 400 >> $wh
+				echo 280 >> $wh
+				echo 500 >> $wh
+				echo 320 >> $wh
+				echo 500 >> $wh
+				echo 320 >> $wh
+				echo 50 >> $wh
+				echo 200 >> $wh
+				echo 300 >> $wh
+				echo 340 >> $wh
 				exit
 			fi
-			)
 			
 			# weekly report
 			if ([ "$(date +%u)" = 7 ] && \
@@ -253,8 +246,8 @@ elif [[ "$1" = "-v" ]]; then
     echo "2.1-alpha" & exit 1
 
 elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
-	wth=$(sed -n 4p $DC_s/cnfg18)
-	eht=$(sed -n 3p $DC_s/cnfg18)
+	wth=$(sed -n 4p $wh)
+	eht=$(sed -n 3p $wh)
 	dte=$(date "+%d %B")
 	c=$(echo $(($RANDOM%1000)))
 	if [ ! -d $DT ]; then
