@@ -74,9 +74,8 @@ elif [[ $1 = infsd ]]; then
 			--button="  Ok  ":0 >&2; exit 1;}
 			cd $DT
 			wget http://idiomind.sourceforge.net/info/SITE_TMP
-			HOST=$(sed -n 4p ./SITE_TMP)
-			file="$HOST/$lngs/$lnglbl/$CTGY/$LNK"
-			
+			source $DT/SITE_TMP && rm -f $DT/SITE_TMP
+			file="$DOWNLOADS/$lngs/$lnglbl/$CTGY/$LNK"
 			WGET() {
 			rand="$RANDOM `date`"
 			pipe="/tmp/pipe.`echo '$rand' | md5sum | tr -d ' -'`"
@@ -322,11 +321,10 @@ $yad --window-icon=idiomind --on-top \
  >&2; exit 1;}
 
 cd $DT
-[[ -f ./SITE_TMP ]] && rm -f ./SITE_TMP
 wget http://idiomind.sourceforge.net/info/SITE_TMP
-HOST=$(sed -n 4p ./SITE_TMP)
+source $DT/SITE_TMP && rm -f $DT/SITE_TMP
 
-if [ -z "$HOST" ]; then
+if [ -z "$FTPHOST" ]; then
 	$yad --window-icon=idiomind --name=idiomind \
 	--image=error --on-top \
 	--text="<b>$site_err\\n</b>" \
@@ -392,6 +390,7 @@ cp -f "$DC_tlt/cnfg0" "$DT/$tpc/cnfg0"
 cp -f "$DC_tlt/cnfg3" "$DT/$tpc/cnfg3"
 cp -f "$DC_tlt/cnfg4" "$DT/$tpc/cnfg4"
 cp -f "$DC_tlt/cnfg5" "$DT/$tpc/cnfg5"
+cp -f "$DC_tlt/cnfg10" "$DT/$tpc/cnfg10"
 cd $DT
 tar -cvf "$tpc.tar" "$tpc"
 gzip -9 "$tpc.tar"
@@ -399,23 +398,18 @@ mv "$tpc.tar.gz" "$U.$tpc.idmnd"
 rm -f "$tpc"/*
 
 notify-send "$uploading..." "$wait" -i idiomind -t 6000
-HOST=$(sed -n 1p $DT/SITE_TMP)
-USER=$(sed -n 2p $DT/SITE_TMP)
-PASS=$(sed -n 3p $DT/SITE_TMP)
+
 
 #-----------------------
 dte=$(date "+%d %B %Y")
 mv -f "$DT/$U.$tpc.idmnd" $DT/$nme/
 
 #ftp
-HOST=$HOST
-USER=$USER
-PASSWD=$PASS
 rm -f $DT/SITE_TMP
 cd $DT/$nme
 cp -f $DS/default/index.php ./.index.php
 chmod 775 -R $DT/$nme
-lftp -u $USER,$PASS $HOST << END_SCRIPT
+lftp -u $USER,$KEY $FTPHOST << END_SCRIPT
 mirror --reverse ./ public_html/$lgs/$lnglbl/$Ctgry/
 quit
 END_SCRIPT

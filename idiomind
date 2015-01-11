@@ -104,8 +104,8 @@ if [ -z "$1" ]; then
 				echo 320 >> $DC_s/cnfg18
 				echo 450 >> $DC_s/cnfg18
 				echo 100 >> $DC_s/cnfg18
-				echo 380 >> $DC_s/cnfg18
-				echo 400 >> $DC_s/cnfg18
+				echo 360 >> $DC_s/cnfg18
+				echo 320 >> $DC_s/cnfg18
 				exit
 				
 			elif [ $y -gt 700 ]; then
@@ -120,8 +120,8 @@ if [ -z "$1" ]; then
 				echo 300 >> $DC_s/cnfg18
 				echo 200 >> $DC_s/cnfg18
 				echo 50 >> $DC_s/cnfg18
-				echo 350 >> $DC_s/cnfg18
-				echo 380 >> $DC_s/cnfg18
+				echo 360 >> $DC_s/cnfg18
+				echo 320 >> $DC_s/cnfg18
 				exit
 				
 			elif [ $y -gt 599 ]; then
@@ -137,7 +137,7 @@ if [ -z "$1" ]; then
 				echo 200 >> $DC_s/cnfg18
 				echo 50 >> $DC_s/cnfg18
 				echo 350 >> $DC_s/cnfg18
-				echo 380 >> $DC_s/cnfg18
+				echo 320 >> $DC_s/cnfg18
 				exit
 				
 			elif [ $y -gt 400 ]; then
@@ -152,8 +152,8 @@ if [ -z "$1" ]; then
 				echo 320 >> $DC_s/cnfg18
 				echo 50 >> $DC_s/cnfg18
 				echo 200 >> $DC_s/cnfg18
-				echo 330 >> $DC_s/cnfg18
-				echo 360 >> $DC_s/cnfg18
+				echo 340 >> $DC_s/cnfg18
+				echo 300 >> $DC_s/cnfg18
 				exit
 			fi
 			)
@@ -382,6 +382,7 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 				cp -f cnfg3 "$dric/cnfg3"
 				cp -f cnfg4 "$dric/cnfg4"
 				cp -f cnfg5 "$dric/cnfg5"
+				cp -f cnfg10 "$dric/cnfg10"
 				echo "$nt" > "$dric/nt"
 				rm -r -f $DT/idmimp_$c $DT/*.$c
 				cp -f $DS/default/tpc.sh "$dric/tpc.sh"
