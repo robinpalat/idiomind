@@ -54,7 +54,7 @@ if [ -z "$1" ]; then
 			echo "$(date +%d)" > $DC_s/cnfg15
 			echo "--new session"
 
-			# size screen 
+			# screen size
 			xrandr | grep '*' | awk '{ print $1 }' > $DC_s/cnfg18
 			sed -i 's/x/\n/' $DC_s/cnfg18
 			y=$(sed -n 2p $DC_s/cnfg18)
@@ -78,8 +78,8 @@ if [ -z "$1" ]; then
 				
 			elif [ $y -ge 1080 ]; then
 				echo 800 > $DC_s/cnfg17
-				echo 450 >> $DC_s/cnfg18 #FIXED! #w
-				echo 520 >> $DC_s/cnfg18 #h
+				echo 450 >> $DC_s/cnfg18
+				echo 520 >> $DC_s/cnfg18
 				echo 500 >> $DC_s/cnfg18
 				echo 320 >> $DC_s/cnfg18
 				echo 260 >> $DC_s/cnfg18
@@ -239,7 +239,7 @@ if [[ "$1" = "panel" ]]; then
 			--height=220 --fixed --title=" Idiomind" --no-buttons \
 			--icons --single-click --on-top --borders=0 \
 			--read-dir=$DS/default/new --item-width=60 --skip-taskbar \
-			--always-print-result --window-icon=idiomind --class=idiomind
+			--window-icon=idiomind --class=idiomind
 			ret=$?
 			if  [[ "$ret" -eq 0 ]]; then
 				exit 1 & rm "$DC_tlt/lstntry"
@@ -422,7 +422,7 @@ if [ "$1" = topic ]; then
 		ls0="$DC_tlt/cnfg0"
 		ls1="$DC_tlt/cnfg1"
 		ls2="$DC_tlt/cnfg2"
-		nt="$DC_tlt/cnfg10"
+		nt="$(cat "$DC_tlt/cnfg10")"
 		if [ $(echo "$tpc" | wc -c) -gt 50 ]; then
 			ttl="${tpc:0:50}..."
 		else
@@ -451,34 +451,32 @@ if [ "$1" = topic ]; then
 		
 		if [ "$inx" -lt 1 ]; then
 			
-			$yad --text-info --plug=$KEY --margins=14 \
-			--wrap --editable --text="$itxt" \
-			--tabnum=1 --fore=gray40 \
-			--show-uri --fontname=vendana --print-column=1 \
-			--column="" --filename="$nt" > "$cnf3" &
-			$yad --notebook --name=idiomind --center \
+			echo "$nt" | $yad --text-info --plug=$KEY --margins=14 \
+			--wrap --editable --text="$itxt" --fore=gray40 \
+			--show-uri --fontname=vendana > "$cnf3" &
+			$yad --notebook --name=idiomind --center --title="$tpc" \
 			--class=idiomind --align=right --key=$KEY  \
-			--tab-borders=0 --center --title="$tpc" \
+			--tab-borders=0 --center --always-print-result \
 			--tab="  $notes  " --window-icon=idiomind \
 			--buttons-layout=edge --image-on-top --class=idiomind \
 			--width="$wth" --height="$eht" --borders=0  \
 			--button="$delete":"$DS/mngr.sh dlt" \
-			--button="$close":2 --always-print-result
+			--button="$close":2 
 			ret=$?
 					
 				if [ $ret -eq 2 ]; then
 					
 					if [ -f "$cnf3" ]; then
-						if [ "$cnf3" != "$nt" ]; then
-							cat "$cnf3" > "$nt"
+						if [ "$(cat $cnf3)" != "$nt" ]; then
+							cat $cnf3 > "$DC_tlt/cnfg10"
 						fi
 					fi
 					rm -f "$cnf3" &
 					
 				else
 					if [ -f "$cnf3" ]; then
-						if [ "$cnf3" != "$nt" ]; then
-							cat "$cnf3" > "$nt"
+						if [ "$(cat $cnf3)" != "$nt" ]; then
+							cat $cnf3 > "$DC_tlt/cnfg10"
 						fi
 					fi
 				rm -f $DT/*.x
@@ -535,7 +533,7 @@ if [ "$1" = topic ]; then
 							cp -f "$ls0" "$ls1" && idiomind topic & exit 1
 						fi 
 				fi
-				
+				echo "$nt"
 				$yad --align=center --borders=80 \
 				--text="<u><b>$learned</b></u>   * $new_items ($tb1).\\n$time_review: $tdays" \
 				--bar="":NORM $RM \
@@ -545,19 +543,17 @@ if [ "$1" = topic ]; then
 				--expand-column=1 --ellipsize=END --print-all \
 				--column=Name:TEXT --column=Review:CHK \
 				--dclick-action='./vwr.sh v2' > "$cnf2" &
-				$yad --text-info --plug=$KEY --margins=14 \
+				echo "$nt" | $yad --text-info --plug=$KEY --margins=14 \
 				--wrap --editable --text="$itxt" \
 				--tabnum=3 --fore='gray40' \
-				--show-uri --fontname=vendana --print-column=1 \
-				--column="" --filename="$nt" > "$cnf3" &
+				--show-uri --fontname=vendana > "$cnf3" &
 				$yad --notebook --name=Idiomind --center \
 				--class=Idiomind --align=right --key=$KEY \
 				--tab-borders=0 --center --title="$tpc" \
 				--tab=" $review " --window-icon=idiomind \
 				--tab=" $learned ($tb2) " --tab=" $notes " \
-				--ellipsize=END --image-on-top  \
-				--width="$wth" --height="$eht" \
-				--borders=0 --always-print-result \
+				--ellipsize=END --image-on-top --always-print-result \
+				--width="$wth" --height="$eht" --borders=0 \
 				--button="$review":4 --button="$edit":3 --button="$close":2
 			else
 				cat "$ls1" | awk '{print $0"\n"}' | $yad \
@@ -570,20 +566,18 @@ if [ "$1" = topic ]; then
 				--expand-column=1 --ellipsize=END --print-all \
 				--column=Name:TEXT --column=Review:CHK \
 				--dclick-action='./vwr.sh v2' > "$cnf2" &
-				$yad --text-info --plug=$KEY --margins=14 \
-				--text="$itxt" \
-				--tabnum=3 --fore='gray40' --wrap --editable \
-				--show-uri --fontname=vendana --print-column=1 \
-				--column="" --filename="$nt" > "$cnf3" &
+				echo "$nt" | $yad --text-info --plug=$KEY --margins=14 \
+				--text="$itxt" --tabnum=3 --fore='gray40' --wrap \
+				--show-uri --fontname=vendana --editable > "$cnf3" &
 				$yad --notebook --name=Idiomind --center --key=$KEY \
 				--class=Idiomind --align=right --window-icon=idiomind \
 				--tab-borders=0 --center --title="$tpc" \
 				--tab="  $learning ($tb1) " \
 				--tab="  $learned ($tb2) " --tab=" $notes " \
-				--ellipsize=END --image-on-top \
+				--ellipsize=END --image-on-top --always-print-result \
 				--width="$wth" --height="$eht" --borders=0 \
 				--button="$practice":5 \
-				--button="$edit":3 --button="$close":2 --always-print-result
+				--button="$edit":3 --button="$close":2
 			fi
 				ret=$?
 				
@@ -620,9 +614,9 @@ if [ "$1" = topic ]; then
 						fi
 					
 				elif [ $ret -eq 2 ]; then
-					if [ -f "$cnf3" ]; then
-						if [ "$cnf3" != "$nt" ]; then
-							cat "$cnf3" > "$nt"
+					if [ -f $cnf3 ]; then
+						if [ "$(cat $cnf3)" != "$nt" ]; then
+							cat $cnf3 > "$DC_tlt/cnfg10"
 						fi
 					fi
 					if [ -n "$(cat "$cnf1" | grep -o TRUE)" ]; then
@@ -661,8 +655,8 @@ if [ "$1" = topic ]; then
 					fi
 				else
 					if [ -f "$cnf3" ]; then
-						if [ "$cnf3" != "$nt" ]; then
-							cat "$cnf3" > "$nt"
+						if [ "$(cat $cnf3)" != "$nt" ]; then
+							cat $cnf3 > "$DC_tlt/cnfg10"
 						fi
 					fi
 				rm -f $DT/*.x
@@ -734,19 +728,17 @@ if [ "$1" = topic ]; then
 			--expand-column=1 --ellipsize=END --print-all \
 			--column=Name:TEXT --column=Review:CHK \
 			--dclick-action='./vwr.sh v2' > "$cnf2" &
-			$yad --text-info --plug=$KEY --margins=14 \
-			--wrap --editable --text="$itxt" \
-			--tabnum=3 --fore='gray40' \
-			--show-uri --fontname=vendana --print-column=1 \
-			--column="" --filename="$nt" > "$cnf3" &
+			echo "$nt" | $yad --text-info --plug=$KEY --margins=14 \
+			--text="$itxt" --tabnum=3 --fore='gray40' --wrap \
+			--show-uri --fontname=vendana --editable > "$cnf3" &
 			$yad --notebook --name=Idiomind --center \
 			--class=Idiomind --align=right --key=$KEY \
 			--tab-borders=0 --center --title="$tpc" \
 			--tab=" $review " --window-icon=idiomind \
 			--tab=" $learned ($tb2) " --tab=" $notes " \
-			--ellipsize=END --image-on-top  \
+			--ellipsize=END --image-on-top --always-print-result \
 			--width="$wth" --height="$eht" --borders=0 \
-			--button="$edit":3 --button="$close":2 --always-print-result
+			--button="$edit":3 --button="$close":2 # -------------------------------
 				ret=$?
 				
 				if [ $ret -eq 3 ]; then
@@ -757,8 +749,8 @@ if [ "$1" = topic ]; then
 				
 				elif [ $ret -eq 2 ]; then
 					if [ -f "$cnf3" ]; then
-						if [ "$cnf3" != "$nt" ]; then
-							cat "$cnf3" > "$nt"
+						if [ "$(cat $cnf3)" != "$nt" ]; then
+							cat $cnf3 > "$DC_tlt/cnfg10"
 						fi
 					fi
 					if [ -n "$(cat "$cnf1" | grep -o TRUE)" ]; then
@@ -797,8 +789,8 @@ if [ "$1" = topic ]; then
 					fi
 				else
 					if [ -f "$cnf3" ]; then
-						if [ "$cnf3" != "$nt" ]; then
-							cat "$cnf3" > "$nt"
+						if [ "$(cat $cnf3)" != "$nt" ]; then
+							cat $cnf3 > "$DC_tlt/cnfg10"
 						fi
 					fi
 				rm -f $DT/*.x
@@ -886,19 +878,16 @@ if [ "$1" = topic ]; then
 				--expand-column=1 --ellipsize=END --print-all \
 				--column=Name:TEXT --column=Review:CHK \
 				--dclick-action='./vwr.sh v2' > "$cnf2" &
-				$yad --text-info --plug=$KEY --margins=14 \
-				--wrap --editable --text="$itxt" \
-				--tabnum=3 --fore='gray40' \
-				--show-uri --fontname=vendana --print-column=1 \
-				--column="" --filename="$nt" > "$cnf3" &
+				echo "$nt" | $yad --text-info --plug=$KEY --margins=14 \
+				--text="$itxt" --tabnum=3 --fore='gray40' --wrap \
+				--show-uri --fontname=vendana --editable > "$cnf3" &
 				$yad --notebook --name=Idiomind --center \
 				--class=Idiomind --align=right --key=$KEY \
 				--tab-borders=0 --center --title="$tpc" \
 				--tab=" $review " --window-icon=idiomind \
 				--tab=" $learned ($tb2) " --tab=" $notes " \
-				--ellipsize=END --image-on-top  \
-				--width="$wth" --height="$eht" \
-				--borders=0 --always-print-result \
+				--ellipsize=END --image-on-top --always-print-result \
+				--width="$wth" --height="$eht" --borders=0  \ # ----------------------------------------------
 				--button="$review":4 --button="$edit":3 --button="$close":2 
 			else
 				cat "$ls1" | awk '{print $0"\n"}' | $yad \
@@ -911,19 +900,18 @@ if [ "$1" = topic ]; then
 				--expand-column=1 --ellipsize=END --print-all \
 				--column=Name:TEXT --column=Review:CHK \
 				--dclick-action='./vwr.sh v2' > "$cnf2" &
-				$yad --text-info --plug=$KEY --margins=14 \
-				--editable --wrap --text="$itxt" \
-				--tabnum=3 --fore='gray40' --column="" --filename="$nt" \
-				--show-uri --fontname=vendana --print-column=1 > "$cnf3" &
+				echo "$nt" | $yad --text-info --plug=$KEY --margins=14 \
+				--text="$itxt" --tabnum=3 --fore='gray40' --wrap \
+				--show-uri --fontname=vendana --editable > "$cnf3" &
 				$yad --notebook --name=Idiomind --center  \
 				--class=Idiomind --align=right --key=$KEY \
 				--tab-borders=0 --center --title="$tpc" \
-				--tab=" $learning ($tb1) " \
+				--tab=" $learning ($tb1) " --always-print-result \
 				--tab=" $learned ($tb2) " --tab=" $notes " \
 				--ellipsize=END --image-on-top --window-icon=idiomind \
 				--width="$wth" --height="$eht" --borders=0 \
 				--button="$practice":5 \
-				--button="$edit":3 --button="$close":2 --always-print-result
+				--button="$edit":3 --button="$close":2 # --------------------------------
 			fi
 				ret=$?
 				
@@ -961,8 +949,8 @@ if [ "$1" = topic ]; then
 				
 				elif [ $ret -eq 2 ]; then
 					if [ -f "$cnf3" ]; then
-						if [ "$cnf3" != "$nt" ]; then
-							cat "$cnf3" > "$nt"
+						if [ "$(cat $cnf3)" != "$nt" ]; then
+							cat $cnf3 > "$DC_tlt/cnfg10"
 						fi
 					fi
 					if [ -n "$(cat "$cnf1" | grep -o TRUE)" ]; then
@@ -1002,8 +990,8 @@ if [ "$1" = topic ]; then
 					fi
 				else
 					if [ -f "$cnf3" ]; then
-						if [ "$cnf3" != "$nt" ]; then
-							cat "$cnf3" > "$nt"
+						if [ "$(cat $cnf3)" != "$nt" ]; then
+							cat $cnf3 > "$DC_tlt/cnfg10"
 						fi
 					fi
 				rm -f $DT/*.x
@@ -1078,18 +1066,17 @@ if [ "$1" = topic ]; then
 			--expand-column=1 --ellipsize=END --print-all \
 			--column=Name:TEXT --column=Review:CHK \
 			--dclick-action='./vwr.sh v2' > "$cnf2" &
-			$yad --text-info --plug=$KEY --margins=14 \
-			--editable --wrap --text="$itxt" \
-			--tabnum=3 --fore='gray40' --column="" --filename="$nt" \
-			--show-uri --fontname=vendana --print-column=1 > "$cnf3" &
+			echo "$nt" | $yad --text-info --plug=$KEY --margins=14 \
+			--text="$itxt" --tabnum=3 --fore='gray40' --wrap \
+			--show-uri --fontname=vendana --editable > "$cnf3" &
 			$yad --notebook --name=Idiomind --center  \
 			--class=Idiomind --align=right --key=$KEY \
 			--tab-borders=0 --center --title="$tpc" \
 			--tab=" $review " --window-icon=idiomind \
 			--tab=" $learned ($tb2) " --tab=" $notes " \
-			--ellipsize=END --image-on-top \
+			--ellipsize=END --image-on-top --always-print-result \
 			--width="$wth" --height="$eht" --borders=0 \
-			--button="$edit":3 --button="$close":2 --always-print-result
+			--button="$edit":3 --button="$close":2 # ----------------------------
 				ret=$?
 				
 				if [ $ret -eq 3 ]; then
@@ -1101,8 +1088,8 @@ if [ "$1" = topic ]; then
 				
 				elif [ $ret -eq 2 ]; then
 					if [ -f "$cnf3" ]; then
-						if [ "$cnf3" != "$nt" ]; then
-							cat "$cnf3" > "$nt"
+						if [ "$(cat $cnf3)" != "$nt" ]; then
+							cat $cnf3 > "$DC_tlt/cnfg10"
 						fi
 					fi
 					if [ -n "$(cat "$cnf1" | grep -o TRUE)" ]; then
@@ -1139,8 +1126,8 @@ if [ "$1" = topic ]; then
 					fi
 				else
 					if [ -f "$cnf3" ]; then
-						if [ "$cnf3" != "$nt" ]; then
-							cat "$cnf3" > "$nt"
+						if [ "$(cat $cnf3)" != "$nt" ]; then
+							cat $cnf3 > "$DC_tlt/cnfg10"
 						fi
 					fi
 				rm -f $DT/*.x

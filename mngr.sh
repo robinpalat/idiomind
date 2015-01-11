@@ -860,7 +860,7 @@ elif [ $1 = dlt ]; then
 		fi
 		
 elif [ $1 = mkmn ]; then
-	[[ ! -f $DC_tl/.cnfg1 ]] && exit 1
+	#[[ ! -f $DC_tl/.cnfg1 ]] && exit 1
 	cd "$DC_tl"
 	[[ -d ./images ]] && rm -r ./images
 	[[ -d ./words ]] && rm -r ./words

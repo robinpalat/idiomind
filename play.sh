@@ -101,7 +101,6 @@ elif [[ -z "$1" ]]; then
 	--height=220 --title=" " \
 	--window-icon=idiomind --no-headers \
 	--buttons-layout=end --skip-taskbar \
-	--dclick-action="---" \
 	--borders=0 $btn2 $btn1 --hide-column=1 \
 	--column=Action:TEXT --column=icon:IMG \
 	--column=Action:TEXT --column=icon:CHK \

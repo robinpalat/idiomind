@@ -21,8 +21,8 @@ function confirm() {
 	$yad --form --center --borders=5 --image=dialog-warning \
 	--title="$cuestion" --on-top --window-icon=idiomind \
 	--skip-taskbar --button="cancel":1 --button=Ok:0 \
-	--text "<span color='#636363'>  <b>starting1  </b></span>" \
-	--width=310 --height=80 
+	--text "<b>$change_source_language</b>" \
+	--width=450 --height=180 
 }
 
 c=$(echo $(($RANDOM%100000)))

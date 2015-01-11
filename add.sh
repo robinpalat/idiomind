@@ -247,7 +247,7 @@ elif [ $1 = n_i ]; then
 		--separator="\n" --align=right "$img" \
 		--name=idiomind --class=idiomind \
 		--borders=0 --title="$tpe" --width=360 --height=160 \
-		--field="  <small><small>$lgtl / $lgsl</small></small>":TXT "$txt" \
+		--field="  <small><small>$lgtl</small></small>":TXT "$txt" \
 		--field="<small><small>$topic</small></small>:CB" "$ttle!$new *!$tpcs" "$field" \
 		--button="$image":3 \
 		--button=gtk-ok:0)
@@ -329,7 +329,6 @@ elif [ $1 = n_i ]; then
 				echo "$tpe" > $DC_s/cnfg7
 				echo "$tpe" > $DC_s/cnfg6
 			fi
-			[ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ] && c=c || c=w
 			
 			if [ "$(echo "$trgt" | sed -n 1p | awk '{print tolower($0)}')" = i ]; then
 				$DS/add.sh prs image $DT_r & exit 1
@@ -337,12 +336,23 @@ elif [ $1 = n_i ]; then
 				$DS/add.sh prs "$trgt" $DT_r & exit 1
 			elif [ "$(echo "$trgt" | sed -n 1p | grep -o http)" = http ]; then
 				$DS/add.sh prs "$trgt" $DT_r & exit 1
-			elif [ $(echo "$trgt" | wc -$c) = 1 ]; then
-				$DS/add.sh n_w "$trgt" $DT_r "$srce" & exit 1
-			elif [ $(echo "$trgt" | wc -$c) -ge 1 -a $(echo "$trgt" | wc -c) -le 180 ]; then
-				$DS/add.sh n_s "$trgt" $DT_r "$srce" & exit 1
 			elif [ $(echo "$trgt" | wc -c) -gt 180 ]; then
 				$DS/add.sh prs "$trgt" $DT_r & exit 1
+			elif ([ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]); then
+				result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
+				encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
+				srce=$(iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 | sed ':a;N;$!ba;s/\n/ /g')
+				if [ $(echo "$srce" | wc -w) = 1 ]; then
+					$DS/add.sh n_w "$trgt" $DT_r "$srce" & exit 1
+				elif [ $(echo "$srce" | wc -w) -ge 1 -a $(echo "$srce" | wc -c) -le 180 ]; then
+					$DS/add.sh n_s "$trgt" $DT_r "$srce" & exit 1
+				fi
+			elif ([ $lgt != ja ] || [ $lgt != zh-cn ] || [ $lgt != ru ]); then
+				if [ $(echo "$trgt" | wc -w) = 1 ]; then
+					$DS/add.sh n_w "$trgt" $DT_r "$srce" & exit 1
+				elif [ $(echo "$trgt" | wc -w) -ge 1 -a $(echo "$trgt" | wc -c) -le 180 ]; then
+					$DS/add.sh n_s "$trgt" $DT_r "$srce" & exit 1
+				fi
 			fi
 		else
 			rm -fr $DT_r & exit 1
@@ -876,11 +886,11 @@ elif [ $1 = edt ]; then
 		
 		nw=$(cat "$DC_tlt/cnfg3" | wc -l)
 		left=$((50 - $nw))
-		info=$(echo " $remain  <b>"$left"</b> $words")
+		info=$(echo " $remain "$left" $words")
 		if [ $nw -ge 45 ]; then
-			info=$(echo " $remain  <span color='#EA355F'><b>"$left"</b></span>  $words")
+			info=$(echo " $remain "$left" $words")
 		elif [ $nw -ge 49 ]; then
-			info=$(echo " $remain  <span color='#EA355F'><b>"$left"</b></span>  $word")
+			info=$(echo " $remain "$left" $word")
 		fi
 
 		mkdir $DT/$c
@@ -1033,13 +1043,11 @@ elif [ $1 = prc ]; then
 	fi
 
 	left=$((50 - $nw))
-	info=$(echo " $remain  <b>"$left"</b> $words")
+	info=$(echo " $remain "$left" $words")
 	if [ $nw -ge 45 ]; then
-		info=$(echo " $remain  <span color='#EA355F'>\
-		<b>"$left"</b></span>  $words")
+		info=$(echo " $remain "$left" $words")
 	elif [ $nw -ge 49 ]; then
-		info=$(echo " $remain  <span color='#EA355F'>\
-		<b>"$left"</b></span>  $word ")
+		info=$(echo " $remain "$left" $word ")
 	fi
 
 	cat ./lstws | tr -c "[:alnum:]" '\n' | sed '/^$/d' | sed '/"("/d' \
@@ -1288,11 +1296,11 @@ elif [ $1 = snt ]; then
 	left=$((50 - $nw))
 	if [ "$left" = 0 ]; then
 		exit 1
-		info=$(echo " $remain  <b>"$left"</b>  $words")
+		info=$(echo " $remain "$left" $words")
 	elif [ $nw -ge 45 ]; then
-		info=$(echo " $remain  <span color='#EA355F'><b>"$left"</b></span>  $words")
+		info=$(echo " $remain "$left" $words")
 	elif [ $nw -ge 49 ]; then
-		info=$(echo " $remain  <span color='#EA355F'><b>"$left"</b></span>  $word)")
+		info=$(echo " $remain "$left" $word)")
 	fi
 
 	if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]; then
@@ -1620,11 +1628,11 @@ $trgt" >> log
 			[[ $(echo "$tpe" | wc -c) -gt 40 ]] && tcnm="${tpe:0:40}..." || tcnm="$tpe"
 
 			left=$((50 - $(cat "$DC_tlt"/cnfg4 | wc -l)))
-			info=$(echo "Puedes agregar  <b>"$left"</b>  oraciones")
+			info=$(echo "$remain "$left" $sentences")
 			if [ $ns -ge 45 ]; then
-				info=$(echo "Puedes agregar  <b>"$left"</b>  oraciones en $tcnm")
+				info=$(echo "$remain "$left" $sentences")
 			elif [ $ns -ge 49 ]; then
-				info=$(echo "Puedes agregar  <b>"$left"</b>  oración en $tcnm")
+				info=$(echo "$remain "$left" $sentence")
 			fi
 			
 			if [ -z "$(cat ./ls)" ]; then
@@ -2087,12 +2095,12 @@ $trgt" >> ./wlog
 		[[ $(echo "$tpe" | wc -c) -gt 40 ]] && tcnm="${tpe:0:40}..." || tcnm="$tpe"
 		
 		left=$((50 - $ns))
-		info=$(echo "$remain  <b>"$left"</b>  $sentences")
+		info=$(echo "$remain "$left" $sentences")
 
 		if [ $ns -ge 45 ]; then
-			info=$(echo "$remain  <b>"$left"</b>  $sentences $tcnm")
+			info=$(echo "$remain "$left" $sentences $tcnm")
 		elif [ $ns -ge 49 ]; then
-			info=$(echo "$remain  <b>"$left"</b>  $sentence $tcnm")
+			info=$(echo "$remain "$left" $sentence $tcnm")
 		fi
 		
 		if [ -z "$(cat ./sntsls)" ]; then

@@ -57,6 +57,16 @@ elif [ $1 = isrc ]; then
 elif [ $1 = updt ]; then
 
 	cd $DT
+	curl -v www.google.com 2>&1 | \
+	grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
+	$yad --window-icon=idiomind --on-top \
+	--image="info" --name=idiomind \
+	--text="<b>$conn_err  \\n  </b>" \
+	--image-on-top --center --sticky \
+	--width=320 --height=100 --borders=5 \
+	--skip-taskbar --title=Idiomind \
+	--button="  Ok  ":0
+	 >&2; exit 1;}
 	[[ -f release ]] && rm -f release
 	wget http://idiomind.sourceforge.net/release
 	
@@ -107,6 +117,8 @@ elif [ $1 = srch ]; then
 	
 	cd $DT
 	[[ -f release ]] && rm -f release
+	curl -v www.google.com 2>&1 | \
+	grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
 	wget http://idiomind.sourceforge.net/release
 	
 	if [ $(cat ./release) ! = $(idiomind -v) ]; then
