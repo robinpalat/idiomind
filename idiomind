@@ -38,7 +38,7 @@ if [ -z "$1" ]; then
 		fi
 	fi
 	
-	yad --geometry=185x318-200-450 --width=180 --height=220 \
+	yad --geometry=185x318-200-450 --width=175 --height=220 \
 	--name=idiomind --fixed --title="Idiomind" --no-buttons \
 	--icons --single-click --on-top --borders=0 \
 	--read-dir=$DS/default/new --item-width=68 \
@@ -579,7 +579,7 @@ if [ "$1" = topic ]; then
 				--tab="  $learned ($tb2) " --tab=" $notes " \
 				--ellipsize=END --image-on-top --always-print-result \
 				--width="$wth" --height="$eht" --borders=0 \
-				--button="$practice":5 \
+				--button="Play":$DS/play.sh --button="$practice":5 \
 				--button="$edit":3 --button="$close":2
 			fi
 				ret=$?
@@ -894,7 +894,7 @@ if [ "$1" = topic ]; then
 				--tab=" $review " --window-icon=idiomind \
 				--tab=" $learned ($tb2) " --tab=" $notes " \
 				--ellipsize=END --image-on-top --always-print-result \
-				--width="$wth" --height="$eht" --borders=0  \ # ----------------------------------------------
+				--width="$wth" --height="$eht" --borders=0  \
 				--button="$review":4 --button="$edit":3 --button="$close":2 
 			else
 				cat "$ls1" | awk '{print $0"\n"}' | $yad \
@@ -919,8 +919,8 @@ if [ "$1" = topic ]; then
 				--tab=" $learned ($tb2) " --tab=" $notes " \
 				--ellipsize=END --image-on-top --window-icon=idiomind \
 				--width="$wth" --height="$eht" --borders=0 \
-				--button="$practice":5 \
-				--button="$edit":3 --button="$close":2 # --------------------------------
+				--button="Play":$DS/play.sh --button="$practice":5 \
+				--button="$edit":3 --button="$close":2
 			fi
 				ret=$?
 				
@@ -1186,6 +1186,7 @@ if [ "$1" = topic ]; then
 		--tab="  $news  " --tab="   $saved_conten   " \
 		--ellipsize=END --image-on-top --window-icon=idiomind \
 		--width="$wth" --height="$eht" --borders=0 \
+		--button="Play":4 \
 		--button="$update":2 \
 		--button="$edit":3 \
 		--button="$close":1

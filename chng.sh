@@ -272,7 +272,6 @@ elif [ "$1" != chngi ]; then
 		--class=idiomind --center --separator="" $align\
 		"$text" --width=$wth --height=$eht \
 		--no-headers --list --window-icon=idiomind \
-		--button="gtk-preferences":$DS/cnfg.sh \
 		--button="gtk-add":3 --button="$ok":0 --button="$close":1 \
 		--borders=5 --title="$topics" --column=img:img --column=File:TEXT)
 			ret=$?
