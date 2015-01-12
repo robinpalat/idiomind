@@ -143,7 +143,7 @@ elif [[ $1 = edit ]]; then
 
 	$yad --list --on-top \
 	--expand-column=2 --center \
-	--width=170 --name=idiomind --class=idmnd \
+	--width=180 --name=idiomind --class=idmnd \
 	--height=240 --title="Edit" \
 	--window-icon=idiomind --no-headers \
 	--buttons-layout=end --fixed \
