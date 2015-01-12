@@ -16,9 +16,9 @@ if [ -z "$1" ]; then
 	sz=$(cat $DT/.sz)
 	D=$($yad --list --title="$user_data" \
 	--center --on-top --radiolist --expand-column=2 \
-	--text=" $size: $sz \\n" --width=380 --height=250 \
+	--text=" $size: $sz \\n" --width=440 --height=340 \
 	--skip-taskbar --image=folder --separator=" " \
-	--borders=10 --print-all --window-icon=idiomind \
+	--borders=15 --print-all --window-icon=idiomind \
 	--button=Backup:2 --button=Ok:0 --image-on-top --column="" \
 	--column=Options "FALSE" "$import" "FALSE" \
 	"$export"  \

@@ -79,8 +79,8 @@ elif [ "$3" = cnf ]; then
 	D=$(mktemp $DT/D.XXXX)
 	cat "$DICT/.listdicts" | $yad --list --title=" " \
 	--center --on-top --expand-column=2 --text="$tex" --window-icon=idiomind \
-	--width=400 --height=280 --skip-taskbar --separator=" " \
-	--borders=10 --button="$add":2 --print-all --button=Ok:0 \
+	--width=440 --height=340 --skip-taskbar --separator=" " \
+	--borders=15 --button="$add":2 --print-all --button=Ok:0 \
 	--column=" ":CHK --column="$availables":TEXT \
 	--column="$languages":TEXT \
 	--buttons-layout=edge --always-print-result \

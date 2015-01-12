@@ -33,7 +33,7 @@ if [[ -z "$1" ]]; then
 	CNFG=$($yad --on-top --form --center \
 		--text="$feeds <span color='#797979'><b>$lgtl</b></span>\n" \
 		--window-icon=idiomind --skip-taskbar --borders=15 \
-		--width=350 --height=250 --always-print-result \
+		--width=440 --height=340 --always-print-result \
 		--title="Feeds - $lgtl " "$text" \
 		--button="$delete:2" \
 		--button="gtk-add:5" \
