@@ -1180,13 +1180,13 @@ if [ "$1" = topic ]; then
 		--column=Name:TEXT --dclick-action='./vwr.sh V2' &
 		$yad --notebook --name=Idiomind --center \
 		--class=Idiomind --align=right --key=$KEY \
-		--text=" <big><b>$title_rss </b></big>\\n <small>$FEED \\n</small>" \
+		--text=" <big><b>$title_rss </b></big>\\n <small>$FEED</small>" \
 		--image=$ICON --image-on-top  \
 		--tab-borders=0 --center --title="$FEED" \
 		--tab="  $news  " --tab="   $saved_conten   " \
 		--ellipsize=END --image-on-top --window-icon=idiomind \
 		--width="$wth" --height="$eht" --borders=0 \
-		--button="Play":4 \
+		--button="Play":$DS/play.sh \
 		--button="$update":2 \
 		--button="$edit":3 \
 		--button="$close":1
