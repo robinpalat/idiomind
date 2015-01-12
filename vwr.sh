@@ -2,7 +2,6 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-
 wth=$(sed -n 5p $DC_s/cnfg18)
 eht=$(sed -n 6p $DC_s/cnfg18)
 ap=$(cat $DC_s/cnfg1 | sed -n 5p)
@@ -58,7 +57,7 @@ if [ -f "$DM_tlt/words/$nme.mp3" ]; then
 	
 elif [ -f "$DM_tlt/$nme.mp3" ]; then
 	tgs=$(eyeD3 "$DM_tlt/$nme.mp3")
-	[[ $(sed -n 4p $DC_s/cnfg1) = TRUE ]] \
+	[[ $(sed -n 3p $DC_s/cnfg1) = TRUE ]] \
 	&& trgt=$(echo "$tgs" | grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)') \
 	|| trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
 	src=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
