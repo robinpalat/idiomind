@@ -31,27 +31,11 @@ if [ $1 = nt ]; then
 		xdg-open "$nt".odt
 		exit
 	fi
-		
-elif [ $1 = rpsg ]; then
-	xdg-open https://www.idiomind.com.ar/contact.html
-	exit
-
-elif [ $1 = how ]; then
-	xdg-open https://www.idiomind.com.ar/manual.html
-	exit
-
-elif [ $1 = mkdnt ]; then
-	xdg-open https://www.idiomind.com.ar/makedonate.html
-	exit
 
 elif [ $1 = web ]; then
+	host=http://idiomind.sourceforge.net
 	lgtl=$(echo "$lgtl" | awk '{print tolower($0)}')
-	xdg-open http://tmp.site50.net/$lgs/$lgtl
-	exit
-
-elif [ $1 = isrc ]; then
-	lng=$(echo "$lgsl" | awk '{print tolower($0)}')
-	xdg-open http://$lgt.idiomind.com.ar/$lng
+	xdg-open $host/$lgs/$lgtl
 	exit
 
 elif [ $1 = updt ]; then
@@ -63,14 +47,14 @@ elif [ $1 = updt ]; then
 	--image="info" --name=idiomind \
 	--text="<b>$conn_err  \\n  </b>" \
 	--image-on-top --center --sticky \
-	--width=320 --height=100 --borders=5 \
+	--width=340 --height=120 --borders=5 \
 	--skip-taskbar --title=Idiomind \
 	--button="  Ok  ":0
 	 >&2; exit 1;}
 	[[ -f release ]] && rm -f release
-	wget http://idiomind.sourceforge.net/release
+	wget http://idiomind.sourceforge.net/info/release
 	
-	if [ $(cat ./release) ! = $(idiomind -v) ]; then
+	if [ $(sed -n 1p ./release) ! = $(idiomind -v) ]; then
 		yad --text="<big><b> $new_version </b></big>\n\n" \
 		--image=info --title="Idiomind 2.1" --window-icon=idiomind \
 		--on-top --skip-taskbar --sticky \
@@ -78,70 +62,70 @@ elif [ $1 = updt ]; then
 		--button="$cancel":1 \
 		--button="$later":2 \
 		--button="$download":0 \
-		--width=400 --height=150
+		--width=420 --height=180
 		ret=$?
 		if [ "$ret" -eq 0 ]; then
 			xdg-open https://sourceforge.net/projects/idiomind/files/idiomind.deb/download & exit
 		elif [ "$ret" -eq 2 ]; then
 			echo `date +%d` > $DC_s/cnfg13 & exit
 		elif [ "$ret" -eq 1 ]; then
-			echo `date +%d` > $HOME/.config/idiomind/s/cnfg14 & exit
+			echo `date +%d` > $DC_s/cnfg14
+			echo "$(sed -n 2p ./release)" >> $DC_s/cnfg14 & exit
 		fi
 	else
 		yad --text="<big><b> $nonew_version  </b></big>\n\n  $nonew_version2" \
 		--image=info --title="Idiomind 2.1" --window-icon=idiomind \
-		--on-top --skip-taskbar --sticky --width=400 --height=150 \
+		--on-top --skip-taskbar --sticky --width=420 --height=180 \
 		--center --name=idiomind --borders=10 \
 		--button="$close":1
 	fi
 	[[ -f release ]] && rm -f release
 
 elif [ $1 = srch ]; then
-	if [ ! -f $DC_s/cnfg13 ]; then
-		echo `date +%d` > $DC_s/cnfg13
-	fi
+
+	[[ ! -f $DC_s/cnfg13 ]] && echo `date +%d` > $DC_s/cnfg13
 
 	d1=$(cat $DC_s/cnfg13)
 	d2=`date +%d`
 
-	if [ $(cat $DC_s/cnfg13) = 28 ]; then
-		rm -f $DC_s/cnfg14
-	fi
+	[[ $(cat $DC_s/cnfg13) = 28 ]] && rm -f $DC_s/cnfg14
 
-	[ -f $DC_s/cnfg14 ] && exit 1
+	[[ -f $DC_s/cnfg14 ]] && exit 1
 
-	if [ $(cat $DC_s/cnfg13) -ne $(date +%d) ]; then
+	if [[ $(cat $DC_s/cnfg13) -ne $(date +%d) ]]; then
+	
 		sleep 1
-	
-	echo "$d2" > $DC_s/cnfg13
-	
-	cd $DT
-	[[ -f release ]] && rm -f release
-	curl -v www.google.com 2>&1 | \
-	grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
-	wget http://idiomind.sourceforge.net/release
-	
-	if [ $(cat ./release) ! = $(idiomind -v) ]; then
-		yad --text="<big><b> $new_version  </b></big>\n\n" \
-		--image=info --title="Idiomind 2.1" --window-icon=idiomind \
-		--on-top --skip-taskbar --sticky \
-		--center --name=idiomind --borders=10 \
-		--button="$cancel":1 \
-		--button="$later":2 \
-		--button="$download":0 \
-		--width=400 --height=150
-		ret=$?
-		if [ "$ret" -eq 0 ]; then
-			xdg-open https://sourceforge.net/projects/idiomind/files/idiomind.deb/download & exit
-		elif [ "$ret" -eq 2 ]; then
-			echo `date +%d` > $DC_s/cnfg13 & exit
-		elif [ "$ret" -eq 1 ]; then
-			echo `date +%d` > $HOME/.config/idiomind/s/cnfg14 & exit
+		echo "$d2" > $DC_s/cnfg13
+		cd $DT
+		[[ -f release ]] && rm -f release
+		curl -v www.google.com 2>&1 | \
+		grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
+		wget http://idiomind.sourceforge.net/info/release
+		pkg=https://sourceforge.net/projects/idiomind/files/idiomind.deb/download
+		
+		if [ $(sed -n 1p ./release) ! = $(idiomind -v) ]; then
+			yad --text="<big><b> $new_version  </b></big>\n\n" \
+			--image=info --title="Idiomind 2.1" --window-icon=idiomind \
+			--on-top --skip-taskbar --sticky \
+			--center --name=idiomind --borders=10 \
+			--button="$cancel":1 \
+			--button="$later":2 \
+			--button="$download":0 \
+			--width=400 --height=150
+			ret=$?
+			if [ "$ret" -eq 0 ]; then
+				xdg-open $pkg & exit
+			elif [ "$ret" -eq 2 ]; then
+				echo `date +%d` > $DC_s/cnfg13 & exit
+			elif [ "$ret" -eq 1 ]; then
+				echo `date +%d` > $DC_s/cnfg14 & exit
+			fi
+		else
+			exit 0
 		fi
+		[[ -f release ]] && rm -f release
 	fi
 	
-	fi
-	[[ -f release ]] && rm -f release
 	
 elif [ $1 = pdf ]; then
 	cd $HOME &&

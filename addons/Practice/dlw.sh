@@ -26,8 +26,8 @@ while [ $n -le $(cat ./lwin$1 | wc -l) ]; do
 		--field="Play:BTN" "$listen" \
 		--field="<big><big><big><big><big><b><span color='#949494'>$lst</span></b></big></big></big></big></big>\n":lbl \
 		--button=gtk-close:1 \
-		--button=" Got It ":3 \
-		--button=" Nope ":4 \
+		--button="  Got It  ":3 \
+		--button="  Nope  ":4 \
 		--width=365 --height=300
 		
 	else
@@ -42,8 +42,8 @@ Play
 		--text="\\n\\n\\n<big><big><big><big><big><b><span color='#949494'>$lst</span></b></big></big></big></big></big>" \
 		--field=" ":lbl \
 		--button=gtk-close:1 \
-		--button=" Got It ":3 \
-		--button=" Nope ":4 \
+		--button="  Got It  ":3 \
+		--button="  Nope  ":4 \
 		--width=365 --height=250
 	fi
 	

@@ -42,7 +42,7 @@ if [[ $1 = V1 ]]; then
 	echo "$lwrd" | awk '{print $0""}' | $yad --list \
 	--window-icon=idiomind --scroll --quoted-output \
 	--skip-taskbar --center --title=" " --borders=10 \
-	--text="<big>$trg </big><a href='$lnk'><small>More</small></a>\\n\\n<small><i>$srce</i></small>\\n\\n\\n" \
+	--text="<big><big>$trg</big></big> <a href='$lnk'>More</a>\\n\\n<i>$srce</i>\\n\\n\\n" \
 	--width="$wth" --height="$eht" --center --no-headers \
 	--column=$lgtl:TEXT --column=$lgsl:TEXT \
 	--expand-column=0 --limit=20 --text-align=center \
@@ -127,7 +127,7 @@ elif [[ $1 = V2 ]]; then
 		--window-icon=idiomind --scroll --text-align=center \
 		--skip-taskbar --center --title=" " --borders=10 \
 		--quoted-output --selectable-labels --no-headers \
-		--text="<big>$trg </big><a href='$lnk'><small>More</small></a>\\n\\n<i>$srce</i>\\n\\n\\n" \
+		--text="<big><big>$trg</big></big> <a href='$lnk'>More</a>\\n\\n<i>$srce</i>\\n\\n\\n" \
 		--width="$wth" --height="$eht" --center \
 		--column=$lgtl:TEXT --column=$lgsl:TEXT \
 		--expand-column=0 --limit=20 \

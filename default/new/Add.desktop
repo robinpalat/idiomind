@@ -1,9 +1,28 @@
 [Desktop Entry]
 Exec=/usr/share/idiomind/add.sh n_i
 Icon=/usr/share/idiomind/images/pencil.png
-Version=3
+Version=1.0
 Encoding=UTF-8
 Type=Application
-Comment=Add new
 Terminal=false
 Name[en]=Add
+Name[es]=Agregar
+Name[fr]=Ajouter
+Name[it]=Aggiungere
+Name[pt]=Adicionar
+Name[ja]=加える
+Name[vi]=thêm vào
+Name[de]=Anfügen
+Name[ru]=добавлять
+Name[zn-cn]=添加
+Comment[en]=Add new item
+Comment[es]=Añadir un nuevo item al tema
+Comment[pt]=Adicionar um novo item
+Comment[fr]=Ajouter un nouvel élément
+Comment[de]=Fügen Sie einen neuen Einzelteil
+Comment[it]=Aggiungi un nuovo elemento
+Comment[vi]=Thêm một mục mới
+Comment[ja]=新しい項目を追加
+Comment[ru]=Добавить новый элемент
+Comment[zn-cn]=添加新项
+

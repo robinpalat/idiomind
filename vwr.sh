@@ -11,6 +11,7 @@ re='^[0-9]+$'
 v="$1"
 now="$2"
 nuw="$3"
+
 [[ "$v" = v1 ]] && ind="$DC_tlt/cnfg1"
 [[ "$v" = v2 ]] && ind="$DC_tlt/cnfg2"
 

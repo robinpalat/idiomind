@@ -260,8 +260,9 @@ elif [ "$1" != chngi ]; then
 			text="--text=<small>$1\n</small>"
 			align="--text-align=left"
 		else
+			host="http://idiomind.sourceforge.net"
 			lgtl=$(echo "$lgtl" | awk '{print tolower($0)}')
-			text="--text=<small><small><a href='http://tmp.site50.net/$lgs/$lgtl'>$find_topics</a>\t</small></small>"
+			text="--text=<small><small><a href='$host/$lgs/$lgtl'>$find_topics</a>\t</small></small>"
 			align="--text-align=right"
 		fi
 		[[ -f $DC_tl/.cnfg1 ]] && info2=$(cat $DC_tl/.cnfg1 | wc -l) || info2=""

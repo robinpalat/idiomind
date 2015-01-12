@@ -38,7 +38,7 @@ $ess" > word2.tmp
 		--width=365 --height=320 --center --buttons-layout=edge --undecorated \
 		--text-align=center --no-headers --borders=8 --window-icon=idiomind \
 		--button=gtk-close:1 \
-		--button=" Ok ":0 --title=" " \
+		--button="  Ok  ":0 --title=" " \
 		--text="\\n<big><big><big><big><big><big><big><b>$trgt</b></big></big></big></big></big></big></big>\\n\\n\\n<small></small>" --column=Opcion --column=Opciodn)
 
 		ret=$?

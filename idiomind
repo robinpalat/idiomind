@@ -7,7 +7,6 @@ if [ ! -d "$HOME/.idiomind" ]; then
 		exit 1
 	fi
 fi
-
 source /usr/share/idiomind/ifs/c.conf
 source /usr/share/idiomind/ifs/trans/$lgs/items_lists.conf
 
@@ -46,7 +45,7 @@ if [ -z "$1" ]; then
 		echo "strt.1.strt" >> \
 		$DC/addons/stats/.log &
 		
-		# ------------------------------------------------ new session
+		# _______________new session
 		d1="$(date +%d)"
 		[[ -f $DC_s/cnfg15 ]] && d2=$(cat $DC_s/cnfg15)
 		
@@ -55,108 +54,101 @@ if [ -z "$1" ]; then
 			echo "--new session"
 
 			# screen size
-			xrandr | grep '*' | awk '{ print $1 }' > $DC_s/cnfg18
-			sed -i 's/x/\n/' $DC_s/cnfg18
-			y=$(sed -n 2p $DC_s/cnfg18)
-			
-			(
+			wh=$DC_s/cnfg18
+			xrandr | grep '*' | awk '{ print $1 }' > $wh
+			sed -i 's/x/\n/' $wh
+			y=$(sed -n 2p $wh)
+
 			if [ $y -gt 1200 ]; then
-				echo 1000 > $DC_s/cnfg17
-				echo 450 >> $DC_s/cnfg18
-				echo 520 >> $DC_s/cnfg18
-				echo 500 >> $DC_s/cnfg18
-				echo 320 >> $DC_s/cnfg18
-				echo 260 >> $DC_s/cnfg18
-				echo 190 >> $DC_s/cnfg18
-				echo 125 >> $DC_s/cnfg18
-				echo 380 >> $DC_s/cnfg18
-				echo 450 >> $DC_s/cnfg18
-				echo 100 >> $DC_s/cnfg18
-				echo 400 >> $DC_s/cnfg18
-				echo 400 >> $DC_s/cnfg18
+				echo 450 >> $wh
+				echo 520 >> $wh
+				echo 500 >> $wh
+				echo 320 >> $wh
+				echo 260 >> $wh
+				echo 190 >> $wh
+				echo 125 >> $wh
+				echo 380 >> $wh
+				echo 120 >> $wh
+				echo 460 >> $wh
+				echo 400 >> $wh
+				echo 410 >> $wh
 				exit
 				
 			elif [ $y -ge 1080 ]; then
-				echo 800 > $DC_s/cnfg17
-				echo 450 >> $DC_s/cnfg18
-				echo 520 >> $DC_s/cnfg18
-				echo 500 >> $DC_s/cnfg18
-				echo 320 >> $DC_s/cnfg18
-				echo 260 >> $DC_s/cnfg18
-				echo 190 >> $DC_s/cnfg18
-				echo 100 >> $DC_s/cnfg18
-				echo 300 >> $DC_s/cnfg18
-				echo 450 >> $DC_s/cnfg18
-				echo 100 >> $DC_s/cnfg18
-				echo 400 >> $DC_s/cnfg18
-				echo 400 >> $DC_s/cnfg18
+				echo 450 >> $wh
+				echo 520 >> $wh
+				echo 500 >> $wh
+				echo 320 >> $wh
+				echo 260 >> $wh
+				echo 190 >> $wh
+				echo 100 >> $wh
+				echo 300 >> $wh
+				echo 120 >> $wh
+				echo 460 >> $wh
+				echo 400 >> $wh
+				echo 410 >> $wh
 				exit
 				
 			elif [ $y -ge 1024 ]; then
-				echo 800 > $DC_s/cnfg17
-				echo 430 >> $DC_s/cnfg18
-				echo 490 >> $DC_s/cnfg18
-				echo 490 >> $DC_s/cnfg18
-				echo 320 >> $DC_s/cnfg18
-				echo 260 >> $DC_s/cnfg18
-				echo 190 >> $DC_s/cnfg18
-				echo 100 >> $DC_s/cnfg18
-				echo 320 >> $DC_s/cnfg18
-				echo 450 >> $DC_s/cnfg18
-				echo 100 >> $DC_s/cnfg18
-				echo 380 >> $DC_s/cnfg18
-				echo 400 >> $DC_s/cnfg18
+				echo 430 >> $wh
+				echo 490 >> $wh
+				echo 490 >> $wh
+				echo 320 >> $wh
+				echo 260 >> $wh
+				echo 190 >> $wh
+				echo 100 >> $wh
+				echo 320 >> $wh
+				echo 120 >> $wh
+				echo 460 >> $wh
+				echo 390 >> $wh
+				echo 410 >> $wh
 				exit
 				
 			elif [ $y -gt 700 ]; then
-				echo 520 > $DC_s/cnfg17
-				echo 420 >> $DC_s/cnfg18
-				echo 480 >> $DC_s/cnfg18
-				echo 470 >> $DC_s/cnfg18
-				echo 320 >> $DC_s/cnfg18
-				echo 230 >> $DC_s/cnfg18
-				echo 170 >> $DC_s/cnfg18
-				echo 100 >> $DC_s/cnfg18
-				echo 300 >> $DC_s/cnfg18
-				echo 200 >> $DC_s/cnfg18
-				echo 50 >> $DC_s/cnfg18
-				echo 350 >> $DC_s/cnfg18
-				echo 380 >> $DC_s/cnfg18
+				echo 420 >> $wh
+				echo 480 >> $wh
+				echo 470 >> $wh
+				echo 320 >> $wh
+				echo 230 >> $wh
+				echo 170 >> $wh
+				echo 100 >> $wh
+				echo 300 >> $wh
+				echo 120 >> $wh
+				echo 460 >> $wh
+				echo 390 >> $wh
+				echo 410 >> $wh
 				exit
 				
 			elif [ $y -gt 599 ]; then
-				echo 520 > $DC_s/cnfg17
-				echo 400 >> $DC_s/cnfg18
-				echo 460 >> $DC_s/cnfg18
-				echo 450 >> $DC_s/cnfg18
-				echo 300 >> $DC_s/cnfg18
-				echo 230 >> $DC_s/cnfg18
-				echo 170 >> $DC_s/cnfg18
-				echo 100 >> $DC_s/cnfg18
-				echo 250 >> $DC_s/cnfg18
-				echo 200 >> $DC_s/cnfg18
-				echo 50 >> $DC_s/cnfg18
-				echo 350 >> $DC_s/cnfg18
-				echo 380 >> $DC_s/cnfg18
+				echo 400 >> $wh
+				echo 460 >> $wh
+				echo 450 >> $wh
+				echo 300 >> $wh
+				echo 230 >> $wh
+				echo 170 >> $wh
+				echo 100 >> $wh
+				echo 250 >> $wh
+				echo 120 >> $wh
+				echo 460 >> $wh
+				echo 390 >> $wh
+				echo 410 >> $wh
 				exit
 				
 			elif [ $y -gt 400 ]; then
-				echo 420 > $DC_s/cnfg17
-				echo 400 >> $DC_s/cnfg18
-				echo 460 >> $DC_s/cnfg18
-				echo 400 >> $DC_s/cnfg18
-				echo 280 >> $DC_s/cnfg18
-				echo 500 >> $DC_s/cnfg18
-				echo 320 >> $DC_s/cnfg18
-				echo 500 >> $DC_s/cnfg18
-				echo 320 >> $DC_s/cnfg18
-				echo 50 >> $DC_s/cnfg18
-				echo 200 >> $DC_s/cnfg18
-				echo 330 >> $DC_s/cnfg18
-				echo 360 >> $DC_s/cnfg18
+				echo 400 >> $wh
+				echo 460 >> $wh
+				echo 400 >> $wh
+				echo 280 >> $wh
+				echo 500 >> $wh
+				echo 320 >> $wh
+				echo 500 >> $wh
+				echo 320 >> $wh
+				echo 120 >> $wh
+				echo 460 >> $wh
+				echo 380 >> $wh
+				echo 400 >> $wh
 				exit
 			fi
-			)
 			
 			# weekly report
 			if ([ "$(date +%u)" = 7 ] && \
@@ -235,8 +227,10 @@ fi
 
 if [[ "$1" = "panel" ]]; then
 	if [ -d $DM ]; then
-		yad --geometry=185x318-120-420 --width=160 --name=idiomind\
-			--height=220 --fixed --title=" Idiomind" --no-buttons \
+		#wth=$(sed -n 11p $DC_s/cnfg18)
+		#hgt=$(sed -n 12p $DC_s/cnfg18)
+		yad --geometry=185x318-200-450 --width=160 --height=220 \
+			--name=idiomind --fixed --title=" Idiomind" --no-buttons \
 			--icons --single-click --on-top --borders=0 \
 			--read-dir=$DS/default/new --item-width=60 --skip-taskbar \
 			--window-icon=idiomind --class=idiomind
@@ -281,9 +275,12 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 	cc=$(sed -n 1p "$tmp/cnfg12")
 	cgy=$(sed -n 9p "$tmp/cnfg12")
 	nt=$(sed -n 11p "$tmp/cnfg12")
-	[[ -f "$tmp/words/images/img.png" ]] && \
-	img="$tmp/words/images/img.png" || \
+	if [ -f "$tmp/words/images/img.png" ]; then
+	img="$tmp/words/images/img.png"
+	s="\n"
+	else
 	img="$DS/images/trans.png"
+	fi
 	
 	if [ "$inme" != "$cc" ]; then
 	int="$(sed -n 6p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
@@ -302,12 +299,12 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 		cd "$tmp"
 		ws=$(cat "cnfg3" | wc -l)
 		ss=$(cat "cnfg4" | wc -l)
-		itxt="<big><b>$title</b></big><small><small><b>\\n$lgsli  <b>></b>  $lgtli \\n$ss  $sentences  -  $ws  $words\\n$category:  $cgy.\\n$created_by:  $crea.</b></small></small><small><small>\n</small></small>"
+		itxt="<big><b> $title</b></big><small>\\n ${lgsli^} <b>></b> $lgtli\\n $category: ${cgy^}</small>$s"
 		dlck="$DT/p1.$c"
 		cat "$tmp/cnfg0" | awk '{print $0""}' | \
 		$yad --list --name=Idiomind --title="Idiomind" \
 		--ellipsize=END --print-all --image-on-top \
-		--image="$img" --text="<b>$itxt</b>"  --class=Idiomind \
+		--image="$img" --text="$itxt"  --class=Idiomind \
 		--scroll --no-headers \
 		--width="$wth" --height="$eht" --image-on-top \
 		--window-icon=idiomind --column=Items --center \
@@ -382,6 +379,7 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 				cp -f cnfg3 "$dric/cnfg3"
 				cp -f cnfg4 "$dric/cnfg4"
 				cp -f cnfg5 "$dric/cnfg5"
+				cp -f cnfg10 "$dric/cnfg10"
 				echo "$nt" > "$dric/nt"
 				rm -r -f $DT/idmimp_$c $DT/*.$c
 				cp -f $DS/default/tpc.sh "$dric/tpc.sh"
@@ -445,7 +443,7 @@ if [ "$1" = topic ]; then
 		cd "$DC_tlt"
 		ws=$(cat cnfg3 | wc -l)
 		ss=$(cat cnfg4 | wc -l)
-		itxt="<big><b> $ttl </b> </big> <small><small><b>\\n   $ss $sentences\n   $ws $words</b></small></small>$s"
+		itxt="<big><b> $ttl </b> </big> <small>\\n  $ss $sentences$s  $ws $words</small>$s"
 		cd $DS
 		c=$(echo $(($RANDOM%100000)))
 		KEY=$c
@@ -554,7 +552,7 @@ if [ "$1" = topic ]; then
 				$yad --notebook --name=Idiomind --center \
 				--class=Idiomind --align=right --key=$KEY \
 				--tab-borders=0 --center --title="Idiomind" \
-				--image="$img" --text="<b>$itxt</b>" \
+				--image="$img" --text="$itxt" \
 				--tab=" $review " --window-icon=idiomind \
 				--tab=" $learned ($tb2) " --tab=" $notes " \
 				--ellipsize=END --image-on-top --always-print-result \
@@ -577,7 +575,7 @@ if [ "$1" = topic ]; then
 				$yad --notebook --name=Idiomind --center --key=$KEY \
 				--class=Idiomind --align=right --window-icon=idiomind \
 				--tab-borders=0 --center --title="Idiomind" \
-				--image="$img" --text="<b>$itxt</b>" \
+				--image="$img" --text="$itxt" \
 				--tab="  $learning ($tb1) " \
 				--tab="  $learned ($tb2) " --tab=" $notes " \
 				--ellipsize=END --image-on-top --always-print-result \
@@ -740,7 +738,7 @@ if [ "$1" = topic ]; then
 			$yad --notebook --name=Idiomind --center \
 			--class=Idiomind --align=right --key=$KEY \
 			--tab-borders=0 --center --title="Idiomind" \
-			--image="$img" --text="<b>$itxt</b>" \
+			--image="$img" --text="$itxt" \
 			--tab=" $review " --window-icon=idiomind \
 			--tab=" $learned ($tb2) " --tab=" $notes " \
 			--ellipsize=END --image-on-top --always-print-result \
@@ -812,10 +810,11 @@ if [ "$1" = topic ]; then
 		l2=$(sed -n 7p "$DC_tlt/cnfg12")
 		l3=$(sed -n 8p "$DC_tlt/cnfg12")
 		l4=$(sed -n 9p "$DC_tlt/cnfg12")
+		echo "$l4"
 		cd "$DC_tlt"
 		ws=$(cat cnfg3 | wc -l)
 		ss=$(cat cnfg4 | wc -l)
-		itxt="<big>  <b>$ttl</b></big><small><small><b>\\n    $ss $sentences   $ws $words\\n    $category: $l4\\n    $created_by: $l1</b></small></small>$s"
+		itxt="<big><b> $ttl </b> </big> <small>\\n  $ss $sentences$s  $ws $words</small>$s"
 		cd $DS
 		c=$(echo $(($RANDOM%100000)))
 		KEY=$c
@@ -886,12 +885,13 @@ if [ "$1" = topic ]; then
 				--column=Name:TEXT --column=Review:CHK \
 				--dclick-action='./vwr.sh v2' > "$cnf2" &
 				echo "$nt" | $yad --text-info --plug=$KEY --margins=14 \
+				--text="<small>  $created_by: $l1  -  $category: ${l4^} </small>" \
 				--tabnum=3 --fore='gray40' --wrap \
 				--show-uri --fontname=vendana --editable > "$cnf3" &
 				$yad --notebook --name=Idiomind --center \
 				--class=Idiomind --align=right --key=$KEY \
 				--tab-borders=0 --center --title="Idiomind" \
-				--image="$img" --text="<b>$itxt</b>" \
+				--image="$img" --text="$itxt" \
 				--tab=" $review " --window-icon=idiomind \
 				--tab=" $learned ($tb2) " --tab=" $notes " \
 				--ellipsize=END --image-on-top --always-print-result \
@@ -909,12 +909,13 @@ if [ "$1" = topic ]; then
 				--column=Name:TEXT --column=Review:CHK \
 				--dclick-action='./vwr.sh v2' > "$cnf2" &
 				echo "$nt" | $yad --text-info --plug=$KEY --margins=14 \
+				--text="<small>  $created_by: $l1  -  $category: ${l4^} </small>" \
 				--tabnum=3 --fore='gray40' --wrap \
 				--show-uri --fontname=vendana --editable > "$cnf3" &
 				$yad --notebook --name=Idiomind --center  \
 				--class=Idiomind --align=right --key=$KEY \
 				--tab-borders=0 --center --title="Idiomind" \
-				--image="$img" --text="<b>$itxt</b>" \
+				--image="$img" --text="$itxt" \
 				--tab=" $learning ($tb1) " --always-print-result \
 				--tab=" $learned ($tb2) " --tab=" $notes " \
 				--ellipsize=END --image-on-top --window-icon=idiomind \
@@ -1076,12 +1077,13 @@ if [ "$1" = topic ]; then
 			--column=Name:TEXT --column=Review:CHK \
 			--dclick-action='./vwr.sh v2' > "$cnf2" &
 			echo "$nt" | $yad --text-info --plug=$KEY --margins=14 \
+			--text="<small>  $created_by: $l1  -  $category: ${l4^} </small>" \
 			--tabnum=3 --fore='gray40' --wrap \
 			--show-uri --fontname=vendana --editable > "$cnf3" &
 			$yad --notebook --name=Idiomind --center  \
 			--class=Idiomind --align=right --key=$KEY \
 			--tab-borders=0 --center --title="Idiomind" \
-			--image="$img" --text="<b>$itxt</b>" \
+			--image="$img" --text="$itxt" \
 			--tab=" $review " --window-icon=idiomind \
 			--tab=" $learned ($tb2) " --tab=" $notes " \
 			--ellipsize=END --image-on-top --always-print-result \
@@ -1144,14 +1146,14 @@ if [ "$1" = topic ]; then
 				fi
 			rm -f $DT/*.x & exit 1
 			fi
-	
+
 	#feeds
 	elif echo "$mde" | grep "fd"; then
 		dir1="$DM_tl/Feeds"
 		dir2="$DC/addons/Learning with news"
 		DF="$DS/addons/Learning_with_news"
 		FEED=$(cat "$dir2/$lgtl/.rss")
-		ICON=$DF/img/icon.png
+		ICON=$DF/img/rss.png
 		c=$(echo $(($RANDOM%100000)))
 		STT="$(cat $DT/.uptf)"
 		

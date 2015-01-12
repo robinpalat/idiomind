@@ -235,7 +235,7 @@ elif [ $1 = n_i ]; then
 		info="\\n$is $iw"
 	fi
 	if [ "$tpe" != "$tpc" ]; then
-		topic="<span color='#CE6F1C'>$topic</span>$info"
+		topic="<span color='#007322'>$topic</span>$info"
 	else
 		topic="$topic $info"
 	fi
@@ -457,7 +457,7 @@ elif [ $1 = n_s ]; then
 		cd $DT_r
 		> swrd
 		> twrd
-		if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]; then
+		if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 			vrbl="$srce"; lg=$lgt; aw=$DT/swrd; bw=$DT/twrd
 		else
 			vrbl="$trgt"; lg=$lgs; aw=$DT/twrd; bw=$DT/swrd
@@ -500,7 +500,7 @@ elif [ $1 = n_s ]; then
 			let n++
 		done
 		
-		if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]; then
+		if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 			n=1
 			while [ $n -le "$(cat $aw | wc -l)" ]; do
 				s=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
@@ -531,7 +531,7 @@ elif [ $1 = n_s ]; then
 		fi
 		) &
 		
-		if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]; then
+		if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 			n=1
 			while [ $n -le $(cat $bw | wc -l) ]; do
 				$dct $(sed -n "$n"p $bw) $DT_r
@@ -571,7 +571,7 @@ elif [ $1 = n_s ]; then
 		trgt="$(cat trgt)"
 		> swrd
 		> twrd
-		if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]; then
+		if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 			vrbl="$srce"; lg=$lgt; aw=$DT/swrd; bw=$DT/twrd
 		else
 			vrbl="$trgt"; lg=$lgs; aw=$DT/twrd; bw=$DT/swrd
@@ -614,7 +614,7 @@ elif [ $1 = n_s ]; then
 			let n++
 		done
 		
-		if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]; then
+		if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 			n=1
 			while [ $n -le "$(cat $aw | wc -l)" ]; do
 				s=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
@@ -696,7 +696,7 @@ elif [ $1 = n_s ]; then
 		notify-send -i "$icnn" "$trgt" "$srce \\n($tpe)" -t 10000
 		$DS/mngr.sh inx S "$nme" "$tpe"
 		
-		if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]; then
+		if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 			n=1
 			while [ $n -le $(cat $bw | wc -l) ]; do
 				$dct $(sed -n "$n"p $bw) $DT_r
@@ -886,11 +886,11 @@ elif [ $1 = edt ]; then
 		
 		nw=$(cat "$DC_tlt/cnfg3" | wc -l)
 		left=$((50 - $nw))
-		info=$(echo " $remain "$left" $words")
+		info=$(echo " $remain"$left"$words")
 		if [ $nw -ge 45 ]; then
-			info=$(echo " $remain "$left" $words")
+			info=$(echo " $remain"$left"$words")
 		elif [ $nw -ge 49 ]; then
-			info=$(echo " $remain "$left" $word")
+			info=$(echo " $remain"$left"$word")
 		fi
 
 		mkdir $DT/$c
@@ -911,7 +911,7 @@ elif [ $1 = edt ]; then
 		slt=$(mktemp $DT/slt.XXXX.x)
 		cat idlst | awk '{print "FALSE\n"$0}' | \
 		$yad --list --checklist \
-		--on-top --text="<small> $info </small>\\n" \
+		--on-top --text="<small> $info </small>" \
 		--center --sticky --no-headers \
 		--buttons-layout=end --skip-taskbar --width=400 \
 		--height=280 --borders=10 --window-icon=idiomind \
@@ -1043,11 +1043,11 @@ elif [ $1 = prc ]; then
 	fi
 
 	left=$((50 - $nw))
-	info=$(echo " $remain "$left" $words")
+	info=$(echo " $remain"$left"$words")
 	if [ $nw -ge 45 ]; then
-		info=$(echo " $remain "$left" $words")
+		info=$(echo " $remain"$left"$words")
 	elif [ $nw -ge 49 ]; then
-		info=$(echo " $remain "$left" $word ")
+		info=$(echo " $remain"$left"$word ")
 	fi
 
 	cat ./lstws | tr -c "[:alnum:]" '\n' | sed '/^$/d' | sed '/"("/d' \
@@ -1099,7 +1099,7 @@ elif [ $1 = prc ]; then
 
 	w=`cat ./lst | awk '{print "FALSE\n"$0}' | \
 		$yad --list --checklist --window-icon=idiomind \
-		--on-top --text="<small> $info </small>\\n" \
+		--on-top --text="<small> $info </small>" \
 		--center --sticky --no-headers \
 		--buttons-layout=end --skip-taskbar --width=400 \
 		--height=280 --borders=10 \
@@ -1296,11 +1296,11 @@ elif [ $1 = snt ]; then
 	left=$((50 - $nw))
 	if [ "$left" = 0 ]; then
 		exit 1
-		info=$(echo " $remain "$left" $words")
+		info=$(echo " $remain"$left"$words")
 	elif [ $nw -ge 45 ]; then
-		info=$(echo " $remain "$left" $words")
+		info=$(echo " $remain"$left"$words")
 	elif [ $nw -ge 49 ]; then
-		info=$(echo " $remain "$left" $word)")
+		info=$(echo " $remain"$left"$word)")
 	fi
 
 	if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]; then
@@ -1317,7 +1317,7 @@ elif [ $1 = snt ]; then
 	sleep 0.5
 	cat $DT_r/wrds | awk '{print "FALSE\n"$0}' | \
 	$yad --list --checklist \
-	--on-top --text="<small> $info </small>\\n" \
+	--on-top --text="<small> $info </small>" \
 	--fixed --sticky --no-headers --center --window-icon=idiomind \
 	--buttons-layout=end --skip-taskbar --width=400 \
 	--height=280 --borders=10 \
@@ -1628,11 +1628,11 @@ $trgt" >> log
 			[[ $(echo "$tpe" | wc -c) -gt 40 ]] && tcnm="${tpe:0:40}..." || tcnm="$tpe"
 
 			left=$((50 - $(cat "$DC_tlt"/cnfg4 | wc -l)))
-			info=$(echo "$remain "$left" $sentences")
+			info=$(echo "$remain"$left"$sentences")
 			if [ $ns -ge 45 ]; then
-				info=$(echo "$remain "$left" $sentences")
+				info=$(echo "$remain"$left"$sentences")
 			elif [ $ns -ge 49 ]; then
-				info=$(echo "$remain "$left" $sentence")
+				info=$(echo "$remain"$left"$sentence")
 			fi
 			
 			if [ -z "$(cat ./ls)" ]; then
@@ -1649,7 +1649,7 @@ $trgt" >> log
 				--name=idiomind --class=idiomind \
 				--dclick-action='/usr/share/idiomind/add.sh prc' \
 				--list --checklist --window-icon=idiomind \
-				--width=$wth --text="$info" \
+				--width=$wth --text="<small>$info</small>" \
 				--height=$eht --borders=3 --button=gtk-cancel:1 \
 				--button="$to_new_topic":'/usr/share/idiomind/add.sh n_t' \
 				--button=gtk-save:0 --title="$Title_sentences" \
@@ -1738,7 +1738,7 @@ $sntc" >> ./wlog
 								r=$(echo $(($RANDOM%1000)))
 								> twrd_$r
 								> swrd_$r
-								if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt =ru ]; then
+								if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 									vrbl="$srce"; lg=$lgt; aw=$DT/swrd_$r; bw=$DT/twrd_$r
 								else
 									vrbl="$trgt"; lg=$lgs; aw=$DT/twrd_$r; bw=$DT/swrd_$r
@@ -1783,7 +1783,7 @@ $sntc" >> ./wlog
 									let n++
 								done
 								
-								if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]; then
+								if ([ "$lgt" = ja ] || [ "$lgt" = 'zh-cn' ] || [ "$lgt" = ru ]); then
 									n=1
 									while [ $n -le "$(cat $aw | wc -l)" ]; do
 										s=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
@@ -1807,7 +1807,7 @@ $sntc" >> ./wlog
 								pwrds=$(cat B_$r | tr '\n' '_')
 								eyeD3 --set-encoding=utf8 -A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0IIGMI3I0I"$grmrk"IGMI3I0I "$DM_tlt/$nme.mp3"
 
-								if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]; then
+								if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 									n=1
 									while [ $n -le $(cat $bw | wc -l) ]; do
 										$dct $(sed -n "$n"p $bw) $DT_r
@@ -2024,7 +2024,7 @@ $trgt" >> ./wlog
 		(
 		echo "3"
 		echo "# " ;
-		curl $prdt | grep -o -P '(?<=<title>).*(?=</title>)' > ./sntsls_
+		#curl $prdt | grep -o -P '(?<=<title>).*(?=</title>)' > ./sntsls_
 		lynx -dump -nolist $prdt  | sed -n -e '1x;1!H;${x;s-\n- -gp}' \
 		| sed 's/\./\.\n/g' | sed 's/<[^>]*>//g' | sed 's/ \+/ /g' \
 		| sed '/^$/d' | sed 's/  / /g' | sed 's/^[ \t]*//;s/[ \t]*$//g' \
@@ -2037,9 +2037,11 @@ $trgt" >> ./wlog
 		--undecorated --auto-close \
 		--skip-taskbar --no-buttons
 		
-		[[ $(sed -n 1p ./sntsls_ | wc -c) -gt 40 ]] \
-		&& te="$(sed -n 1p ./sntsls_ | head -50)" \
-		|| te="$(sed -n 1p ./sntsls_)"
+		#if [ -n "$(sed -n 1p ./sntsls_)" ]; then 
+		#[[ $(sed -n 1p ./sntsls_ | wc -c) -gt 40 ]] \
+		#&& te="$(sed -n 1p ./sntsls_ | head -50)" \
+		#|| te="$(sed -n 1p ./sntsls_)"
+		#fi
 
 	elif [[ "$(echo "$prdt" | cut -d "|" -f1 \
 	| sed -n 1p | grep -o "i")" = i ]]; then
@@ -2095,12 +2097,12 @@ $trgt" >> ./wlog
 		[[ $(echo "$tpe" | wc -c) -gt 40 ]] && tcnm="${tpe:0:40}..." || tcnm="$tpe"
 		
 		left=$((50 - $ns))
-		info=$(echo "$remain "$left" $sentences")
+		info=$(echo "$remain$left$sentences")
 
 		if [ $ns -ge 45 ]; then
-			info=$(echo "$remain "$left" $sentences $tcnm")
+			info=$(echo "$remain$left$sentences")
 		elif [ $ns -ge 49 ]; then
-			info=$(echo "$remain "$left" $sentence $tcnm")
+			info=$(echo "$remain$left$sentence")
 		fi
 		
 		if [ -z "$(cat ./sntsls)" ]; then
@@ -2117,7 +2119,7 @@ $trgt" >> ./wlog
 			$yad --name=idiomind --window-icon=idiomind \
 			--dclick-action='/usr/share/idiomind/add.sh prc' --sticky \
 			--list --checklist --class=idiomind --center \
-			--text="<b>  $te</b>\\n<sub> $info</sub>" \
+			--text="<small> $info</small>" \
 			--width=$wth --print-all --height=$eht --borders=3 \
 			--button="$cancel":1 \
 			--button="$arrange":2 \
@@ -2307,12 +2309,11 @@ $sntc" >> ./slog
 									
 									echo "$nme" >> adds
 									$DS/mngr.sh inx S "$nme" "$tpe"
-									
-									(
+									(	
 										r=$(echo $(($RANDOM%1000)))
 										> twrd_$r
 										> swrd_$r
-										if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]; then
+										if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 											vrbl="$srce"; lg=$lgt; aw=$DT/swrd_$r; bw=$DT/twrd_$r
 										else
 											vrbl="$trgt"; lg=$lgs; aw=$DT/twrd_$r; bw=$DT/swrd_$r
@@ -2357,7 +2358,7 @@ $sntc" >> ./slog
 											let n++
 										done
 										
-										if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]; then
+										if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 											n=1
 											while [ $n -le "$(cat $aw | wc -l)" ]; do
 												s=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
@@ -2382,7 +2383,7 @@ $sntc" >> ./slog
 										pwrds=$(cat B_$r | tr '\n' '_')
 										eyeD3 --set-encoding=utf8 -A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0IIGMI3I0I"$grmrk"IGMI3I0I "$DM_tlt/$nme.mp3"
 										
-										if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt =ru ]; then
+										if ([ "$lgt" = ja ] || [ "$lgt" = 'zh-cn' ] || [ "$lgt" = ru ]); then
 											n=1
 											while [ $n -le $(cat $bw | wc -l) ]; do
 												$dct $(sed -n "$n"p $bw) $DT_r
@@ -2395,8 +2396,8 @@ $sntc" >> ./slog
 												let n++
 											done
 										fi
-										
 										echo "__" >> x
+										rm -f $aw $bw 
 										
 									) &
 									
