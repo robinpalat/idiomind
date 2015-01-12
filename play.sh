@@ -87,21 +87,18 @@ elif [[ -z "$1" ]]; then
 	st9=$(cat $DC_s/cnfg5 | sed -n 9p)
 	st10=$(cat $DC_s/cnfg5 | sed -n 10p)
 	slct=$(mktemp $DT/slct.XXXX)
-
-	btn1="--button=Ok:0"
-	btn2="--center"
-	if [ -f $DT/.p__$u ]; then
-		btn1="--button=Ok:0"
-		btn2="--button=gtk-media-stop:2"
+	if [ ! -f $DT/.p__$u ]; then
+		btn="--button=Ok:0"
+	else
+		btn="--button=gtk-media-stop:2"
 	fi
-
 	$yad --list --on-top --fixed \
 	--expand-column=3 --print-all --center \
 	--width=170 --name=idiomind --class=idmnd \
 	--height=240 --title="$tpc" \
 	--window-icon=idiomind --no-headers \
 	--buttons-layout=end \
-	--borders=0 $btn2 $btn1 --hide-column=1 \
+	--borders=0 $btn --hide-column=1 \
 	--column=Action:TEXT --column=icon:IMG \
 	--column=Action:TEXT --column=icon:CHK \
 	"Words" "$img1" "$words" $st1 \
