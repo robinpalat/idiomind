@@ -42,7 +42,7 @@ if [ $1 = edit ]; then
 		fi
 	fi
 	$yad --list --on-top --expand-column=2 --center \
-	--width=180 --name=idiomind --class=idmnd --fixed \
+	--width=180 --name=idiomind --class=idmnd \
 	--height=240 --title="$tpc" --window-icon=idiomind \
 	--buttons-layout=end --no-headers \
 	--borders=0 --button=Ok:0 --column=icon:IMG \

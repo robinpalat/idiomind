@@ -92,7 +92,7 @@ elif [[ -z "$1" ]]; then
 	else
 		btn="--button=gtk-media-stop:2"
 	fi
-	$yad --list --on-top --fixed \
+	$yad --list --on-top \
 	--expand-column=3 --print-all --center \
 	--width=180 --name=idiomind --class=idmnd \
 	--height=240 --title="$tpc" \
