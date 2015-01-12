@@ -42,9 +42,9 @@ if [ $1 = edit ]; then
 		fi
 	fi
 	$yad --list --on-top --expand-column=2 --center \
-	--width=160 --name=idiomind --class=idmnd \
-	--height=220 --title=" " --window-icon=idiomind --no-headers \
-	--buttons-layout=end --skip-taskbar \
+	--width=170 --name=idiomind --class=idmnd --fixed \
+	--height=240 --title="$tpc" --window-icon=idiomind \
+	--buttons-layout=end --no-headers \
 	--borders=0 --button=Ok:0 --column=icon:IMG \
 	--column=Action:TEXT $dd > "$slct"
 	ret=$?

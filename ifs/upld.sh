@@ -16,7 +16,7 @@ if [[ $1 = vsd ]]; then
 	--window-icon=idiomind --center --skip-taskbar \
 	--buttons-layout=edge --borders=8 \
 	--text=" <small>$double_click_for_download \\t\\t\\t\\t</small>" \
-	--title="topics_saved" --width=$wth --height=$eht \
+	--title="$topics_saved" --width=$wth --height=$eht \
 	--column=Nombre:TEXT --print-column=1 \
 	--expand-column=1 --search-column=1 \
 	--button="$search_topics":"/usr/share/idiomind/ifs/tls.sh web" \
@@ -110,10 +110,10 @@ elif [[ $1 = infsd ]]; then
 				mv -f "/tmp/$U.$tpcd.idmnd" "$sv"
 			else
 				$yad --fixed --name=idiomind --center \
-				--image=info --text="<b>file_err</b>" \
-				--fixed --sticky --width=220 --height=80 --borders=3 \
+				--image=info --text="<b>$file_err</b>" \
+				--fixed --sticky --width=320 --height=140 --borders=3 \
 				--skip-taskbar --window-icon=idiomind \
-				--on-top --title="Idiomind" --button="Info":3 \
+				--on-top --title="Idiomind" \
 				--button="Ok":0 && exit 1
 			fi
 			exit 1

@@ -229,10 +229,10 @@ if [[ "$1" = "panel" ]]; then
 	if [ -d $DM ]; then
 		#wth=$(sed -n 11p $DC_s/cnfg18)
 		#hgt=$(sed -n 12p $DC_s/cnfg18)
-		yad --geometry=185x318-200-450 --width=160 --height=220 \
-			--name=idiomind --fixed --title=" Idiomind" --no-buttons \
+		yad --geometry=185x318-200-450 --width=170 --height=240 \
+			--name=idiomind --fixed --title="Idiomind" --no-buttons \
 			--icons --single-click --on-top --borders=0 \
-			--read-dir=$DS/default/new --item-width=60 --skip-taskbar \
+			--read-dir=$DS/default/new --item-width=65 \
 			--window-icon=idiomind --class=idiomind
 			ret=$?
 			if  [[ "$ret" -eq 0 ]]; then
@@ -299,7 +299,7 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 		cd "$tmp"
 		ws=$(cat "cnfg3" | wc -l)
 		ss=$(cat "cnfg4" | wc -l)
-		itxt="<big><b> $title</b></big><small>\\n ${lgsli^} <b>></b> $lgtli\\n $category: ${cgy^}</small>$s"
+		itxt="<big><b> $title</b></big><small>\\n ${lgsli^} <b>></b> $lgtli\\n $category: ${cgy^}</small>"
 		dlck="$DT/p1.$c"
 		cat "$tmp/cnfg0" | awk '{print $0""}' | \
 		$yad --list --name=Idiomind --title="Idiomind" \
@@ -443,7 +443,7 @@ if [ "$1" = topic ]; then
 		cd "$DC_tlt"
 		ws=$(cat cnfg3 | wc -l)
 		ss=$(cat cnfg4 | wc -l)
-		itxt="<big><b> $ttl </b> </big> <small>\\n  $ss $sentences$s  $ws $words</small>$s"
+		itxt="<big><b> $ttl </b> </big> <small>\\n  $ss $sentences$s  $ws $words</small>"
 		cd $DS
 		c=$(echo $(($RANDOM%100000)))
 		KEY=$c
@@ -743,7 +743,7 @@ if [ "$1" = topic ]; then
 			--tab=" $learned ($tb2) " --tab=" $notes " \
 			--ellipsize=END --image-on-top --always-print-result \
 			--width="$wth" --height="$eht" --borders=0 \
-			--button="$edit":3 --button="$close":2 # -------------------------------
+			--button="$edit":3 --button="$close":2
 				ret=$?
 				
 				if [ $ret -eq 3 ]; then
@@ -814,7 +814,7 @@ if [ "$1" = topic ]; then
 		cd "$DC_tlt"
 		ws=$(cat cnfg3 | wc -l)
 		ss=$(cat cnfg4 | wc -l)
-		itxt="<big><b> $ttl </b> </big> <small>\\n  $ss $sentences$s  $ws $words</small>$s"
+		itxt="<big><b> $ttl </b> </big> <small>\\n  $ss $sentences$s  $ws $words</small>"
 		cd $DS
 		c=$(echo $(($RANDOM%100000)))
 		KEY=$c

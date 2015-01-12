@@ -95,12 +95,12 @@ elif [[ -z "$1" ]]; then
 		btn2="--button=gtk-media-stop:2"
 	fi
 
-	$yad --list --on-top \
+	$yad --list --on-top --fixed \
 	--expand-column=3 --print-all --center \
-	--width=160 --name=idiomind --class=idmnd \
-	--height=220 --title=" " \
+	--width=170 --name=idiomind --class=idmnd \
+	--height=240 --title="$tpc" \
 	--window-icon=idiomind --no-headers \
-	--buttons-layout=end --skip-taskbar \
+	--buttons-layout=end \
 	--borders=0 $btn2 $btn1 --hide-column=1 \
 	--column=Action:TEXT --column=icon:IMG \
 	--column=Action:TEXT --column=icon:CHK \

@@ -143,10 +143,10 @@ elif [[ $1 = edit ]]; then
 
 	$yad --list --on-top \
 	--expand-column=2 --center \
-	--width=160 --name=idiomind --class=idmnd \
-	--height=220 --title=" " \
+	--width=170 --name=idiomind --class=idmnd \
+	--height=240 --title="Edit" \
 	--window-icon=idiomind --no-headers \
-	--buttons-layout=end --skip-taskbar \
+	--buttons-layout=end --fixed \
 	--borders=0 --button=Ok:0 --column=icon:IMG \
 	--column=Action:TEXT $dd > "$slct"
 	ret=$?
