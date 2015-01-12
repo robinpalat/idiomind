@@ -2,7 +2,6 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-
 wth=$(sed -n 5p $DC_s/cnfg18)
 eht=$(sed -n 6p $DC_s/cnfg18)
 ap=$(cat $DC_s/cnfg1 | sed -n 5p)
