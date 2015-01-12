@@ -18,4 +18,4 @@ Agregando el repositorio de Launchpad (recomendado).
 
 O descarga el paquete:
 
-https://github.com/robinsato/idiomind/releases
+https://sourceforge.net/projects/idiomind/files
