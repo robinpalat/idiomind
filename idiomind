@@ -248,8 +248,8 @@ elif [[ "$1" = "-v" ]]; then
     echo "2.1-alpha" & exit 1
 
 elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
-	wth=$(sed -n 4p $wh)
-	eht=$(sed -n 3p $wh)
+	wth=$(sed -n 4p $DC_s/cnfg18)
+	eht=$(sed -n 3p $DC_s/cnfg18)
 	dte=$(date "+%d %B")
 	c=$(echo $(($RANDOM%1000)))
 	if [ ! -d $DT ]; then
@@ -275,9 +275,12 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 	cc=$(sed -n 1p "$tmp/cnfg12")
 	cgy=$(sed -n 9p "$tmp/cnfg12")
 	nt=$(sed -n 11p "$tmp/cnfg12")
-	[[ -f "$tmp/words/images/img.png" ]] && \
-	img="$tmp/words/images/img.png" || \
+	if [ -f "$tmp/words/images/img.png" ]; then
+	img="$tmp/words/images/img.png"
+	s="\n"
+	else
 	img="$DS/images/trans.png"
+	fi
 	
 	if [ "$inme" != "$cc" ]; then
 	int="$(sed -n 6p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
@@ -296,7 +299,7 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 		cd "$tmp"
 		ws=$(cat "cnfg3" | wc -l)
 		ss=$(cat "cnfg4" | wc -l)
-		itxt="<big><b>$title</b></big><small>\\n$lgsli  <b>></b>  $lgtli \\n$ss  $sentences  -  $ws  $words\\n$category:  $cgy.\\n$created_by:  $crea.</small>\n"
+		itxt="<big><b> $title</b></big><small>\\n ${lgsli^} <b>></b> $lgtli\\n $category: ${cgy^}</small>$s"
 		dlck="$DT/p1.$c"
 		cat "$tmp/cnfg0" | awk '{print $0""}' | \
 		$yad --list --name=Idiomind --title="Idiomind" \
@@ -882,7 +885,7 @@ if [ "$1" = topic ]; then
 				--column=Name:TEXT --column=Review:CHK \
 				--dclick-action='./vwr.sh v2' > "$cnf2" &
 				echo "$nt" | $yad --text-info --plug=$KEY --margins=14 \
-				--text="<small> $created_by: $l1  -  $category: $l4 </small>" \
+				--text="<small>  $created_by: $l1  -  $category: ${l4^} </small>" \
 				--tabnum=3 --fore='gray40' --wrap \
 				--show-uri --fontname=vendana --editable > "$cnf3" &
 				$yad --notebook --name=Idiomind --center \
@@ -906,7 +909,7 @@ if [ "$1" = topic ]; then
 				--column=Name:TEXT --column=Review:CHK \
 				--dclick-action='./vwr.sh v2' > "$cnf2" &
 				echo "$nt" | $yad --text-info --plug=$KEY --margins=14 \
-				--text="<small> $created_by: $l1  -  $category: $l4 </small>" \
+				--text="<small>  $created_by: $l1  -  $category: ${l4^} </small>" \
 				--tabnum=3 --fore='gray40' --wrap \
 				--show-uri --fontname=vendana --editable > "$cnf3" &
 				$yad --notebook --name=Idiomind --center  \
@@ -1074,7 +1077,7 @@ if [ "$1" = topic ]; then
 			--column=Name:TEXT --column=Review:CHK \
 			--dclick-action='./vwr.sh v2' > "$cnf2" &
 			echo "$nt" | $yad --text-info --plug=$KEY --margins=14 \
-			--text="<small> $created_by: $l1  -  $category: $l4 </small>" \
+			--text="<small>  $created_by: $l1  -  $category: ${l4^} </small>" \
 			--tabnum=3 --fore='gray40' --wrap \
 			--show-uri --fontname=vendana --editable > "$cnf3" &
 			$yad --notebook --name=Idiomind --center  \

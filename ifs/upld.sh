@@ -274,11 +274,11 @@ if [ $ALL -le 20 ]; then
 	exit 1
 fi
 cd $HOME
-upld=$($yad --form --width=400 --height=450 --on-top \
+upld=$($yad --form --width=400 --height=420 --on-top \
 --buttons-layout=end --center --window-icon=idiomind \
 --borders=15 --skip-taskbar --align=right \
 --button=$cancel:1 --button=$upload:0 \
---title="Upload" --text="   <b>$ttpc\\n</b>" \
+--title="Upload" --text="   <b>$ttpc</b>" \
 --field=" :lbl" "#1" \
 --field="    <small>$author</small>:: " "$user" \
 --field="    <small>$email</small>:: " "$mail" \

@@ -14,7 +14,7 @@ elif [ "$1" = n ]; then
 	int="--field=<small><b> $no_language3</b></small>\\t\\t:lbl"
 fi
 
-idmnd=$(yad --center --width=520 --height=300 --fixed \
+dialog=$(yad --center --width=520 --height=300 --fixed \
 	--image-on-top --on-top --class=idiomind --name=idiomind \
 	--window-icon=idiomind --buttons-layout=end --image=$IMAGE  \
 	--title="Idiomind" --form --borders=10 --align=right --button=Ok:0 \
@@ -30,10 +30,10 @@ if [[ $ret -eq 1 ]]; then
 	killall 1u & exit 1
 
 elif [[ $ret -eq 0 ]]; then
-	source=$(echo "$idmnd" | cut -d "|" -f1)
-	target=$(echo "$idmnd" | cut -d "|" -f2)
+	source=$(echo "$dialog" | cut -d "|" -f1)
+	target=$(echo "$dialog" | cut -d "|" -f2)
 	
-	if [ -z "$idmnd" ]; then
+	if [ -z "$dialog" ]; then
 		/usr/share/idiomind/ifs/1u n & exit 1
 	elif [ -z $source ]; then
 		/usr/share/idiomind/ifs/1u s & exit 1
