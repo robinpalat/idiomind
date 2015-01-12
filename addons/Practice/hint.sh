@@ -8,7 +8,7 @@ s1=$(sed -n "$1"p lsin)
 
 prsw=$(eyeD3 "$drtt/$s1".mp3 | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' \
 | awk '{print tolower($0)}' | sed "s/\b\(.\)/\u\1/g" \
-| sed "s|[a-z]|"\*"|g" | sed "s| |\t  |g")
+| sed "s|[a-z]|"\*"|g" | sed "s| |\t|g")
 #| tr "?!;," ' '
 echo "$prsw" | yad --center --text-info \
 --justify=left --margins=5 --fontname=verdana \
