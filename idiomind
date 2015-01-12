@@ -41,7 +41,7 @@ if [ -z "$1" ]; then
 	yad --geometry=185x318-200-450 --width=170 --height=220 \
 	--name=idiomind --fixed --title="Idiomind" --no-buttons \
 	--icons --single-click --on-top --borders=0 \
-	--read-dir=$DS/default/new --item-width=65 \
+	--read-dir=$DS/default/new --item-width=68 \
 	--window-icon=idiomind --class=idiomind &
 	
 	# init count for log weekly report
