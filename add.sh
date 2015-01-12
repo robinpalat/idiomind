@@ -246,7 +246,7 @@ elif [ $1 = n_i ]; then
 		--text-info --on-top --window-icon=idiomind --skip-taskbar \
 		--separator="\n" --align=right "$img" \
 		--name=idiomind --class=idiomind \
-		--borders=0 --title="$tpe" --width=360 --height=160 \
+		--borders=0 --title="$tpe" --width=360 --height=170 \
 		--field="  <small><small>$lgtl</small></small>":TXT "$txt" \
 		--field="<small><small>$topic</small></small>:CB" "$ttle!$new *!$tpcs" "$field" \
 		--button="$image":3 \
@@ -264,7 +264,7 @@ elif [ $1 = n_i ]; then
 		rec="--button=gtk-media-record:$DS/audio/auds rec '$DT_r' '10'"
 		ls="--button=Play:play $DT_r/audtm.mp3"
 		lzgpr=$($yad --separator="\\n" --skip-taskbar \
-		--width=400 --height=220 --form --on-top --name=idiomind \
+		--width=400 --height=260 --form --on-top --name=idiomind \
 		--class=idiomind --window-icon=idiomind "$img" --center "$ls" "$rec" \
 		--button="$image":3 --always-print-result --align=right \
 		--button=gtk-ok:0 --borders=2 --title="$tpe" \

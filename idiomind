@@ -15,229 +15,223 @@ if [ -z "$1" ]; then
 		rm -f $DT/.upt
 	fi
 	
-	if [ -z "$(ps -A | pgrep -f "/usr/bin/idiomind panel")" ]; then
 		# write in /tmp
-		if [ ! -d $DT ]; then
-			mkdir $DT
-		fi
-		if [ $? -ne 0 ]; then
+	if [ ! -d $DT ]; then
+		mkdir $DT
+	fi
+	if [ $? -ne 0 ]; then
 
-			$yad --name=idiomind \
-			--image=error --button=gtk-ok:1\
-			--text=" <b>$write_err</b>" \
-			--image-on-top --sticky  \
-			--width=320 --height=80 \
-			--borders=2 --title=Idiomind \
-			--skip-taskbar --center \
-			--window-icon=idiomind & exit 1
+		$yad --name=idiomind \
+		--image=error --button=gtk-ok:1\
+		--text=" <b>$write_err</b>" \
+		--image-on-top --sticky  \
+		--width=320 --height=80 \
+		--borders=2 --title=Idiomind \
+		--skip-taskbar --center \
+		--window-icon=idiomind & exit 1
+	fi
+	
+	# check directories
+	if [ -f $DC_tl/.cnfg1 ]; then
+		if [[ "$(cat $DC_tl/.cnfg1 | wc -l)" -lt 1 ]]; then
+			touch "$DT/ntpc"
 		fi
-		
-		# check directories
-		if [ -f $DC_tl/.cnfg1 ]; then
-			if [[ "$(cat $DC_tl/.cnfg1 | wc -l)" -lt 1 ]]; then
-				touch "$DT/ntpc"
-			fi
-		fi
-		
-		idiomind panel &
-		
-		# init count for log weekly report
-		echo "strt.1.strt" >> \
-		$DC/addons/stats/.log &
-		
-		# ------------------------------------------------ new session
-		d1="$(date +%d)"
-		[[ -f $DC_s/cnfg15 ]] && d2=$(cat $DC_s/cnfg15)
-		
-		if [ "$d1" != "$d2" ] || [ ! -f $DC_s/cnfg15 ]; then
-			echo "$(date +%d)" > $DC_s/cnfg15
-			echo "--new session"
+	fi
+	
+	yad --geometry=185x318-200-450 --width=170 --height=220 \
+	--name=idiomind --fixed --title="Idiomind" --no-buttons \
+	--icons --single-click --on-top --borders=0 \
+	--read-dir=$DS/default/new --item-width=65 \
+	--window-icon=idiomind --class=idiomind &
+	
+	# init count for log weekly report
+	echo "strt.1.strt" >> \
+	$DC/addons/stats/.log &
+	
+	# _______________new session
+	d1="$(date +%d)"
+	[[ -f $DC_s/cnfg15 ]] && d2=$(cat $DC_s/cnfg15)
+	
+	if [ "$d1" != "$d2" ] || [ ! -f $DC_s/cnfg15 ]; then
+		echo "$(date +%d)" > $DC_s/cnfg15
+		echo "--new session"
 
-			# screen size
-			xrandr | grep '*' | awk '{ print $1 }' > $DC_s/cnfg18
-			sed -i 's/x/\n/' $DC_s/cnfg18
-			y=$(sed -n 2p $DC_s/cnfg18)
+		# screen size
+		wh=$DC_s/cnfg18
+		xrandr | grep '*' | awk '{ print $1 }' > $wh
+		sed -i 's/x/\n/' $wh
+		y=$(sed -n 2p $wh)
+
+		if [ $y -gt 1200 ]; then
+			echo 450 >> $wh
+			echo 520 >> $wh
+			echo 500 >> $wh
+			echo 320 >> $wh
+			echo 260 >> $wh
+			echo 190 >> $wh
+			echo 125 >> $wh
+			echo 380 >> $wh
+			echo 120 >> $wh
+			echo 460 >> $wh
+			echo 400 >> $wh
+			echo 410 >> $wh
+			exit
 			
-			(
-			if [ $y -gt 1200 ]; then
-				echo 1000 > $DC_s/cnfg17
-				echo 450 >> $DC_s/cnfg18
-				echo 520 >> $DC_s/cnfg18
-				echo 500 >> $DC_s/cnfg18
-				echo 320 >> $DC_s/cnfg18
-				echo 260 >> $DC_s/cnfg18
-				echo 190 >> $DC_s/cnfg18
-				echo 125 >> $DC_s/cnfg18
-				echo 380 >> $DC_s/cnfg18
-				echo 450 >> $DC_s/cnfg18
-				echo 100 >> $DC_s/cnfg18
-				echo 400 >> $DC_s/cnfg18
-				echo 400 >> $DC_s/cnfg18
-				exit
-				
-			elif [ $y -ge 1080 ]; then
-				echo 800 > $DC_s/cnfg17
-				echo 450 >> $DC_s/cnfg18
-				echo 520 >> $DC_s/cnfg18
-				echo 500 >> $DC_s/cnfg18
-				echo 320 >> $DC_s/cnfg18
-				echo 260 >> $DC_s/cnfg18
-				echo 190 >> $DC_s/cnfg18
-				echo 100 >> $DC_s/cnfg18
-				echo 300 >> $DC_s/cnfg18
-				echo 450 >> $DC_s/cnfg18
-				echo 100 >> $DC_s/cnfg18
-				echo 400 >> $DC_s/cnfg18
-				echo 400 >> $DC_s/cnfg18
-				exit
-				
-			elif [ $y -ge 1024 ]; then
-				echo 800 > $DC_s/cnfg17
-				echo 430 >> $DC_s/cnfg18
-				echo 490 >> $DC_s/cnfg18
-				echo 490 >> $DC_s/cnfg18
-				echo 320 >> $DC_s/cnfg18
-				echo 260 >> $DC_s/cnfg18
-				echo 190 >> $DC_s/cnfg18
-				echo 100 >> $DC_s/cnfg18
-				echo 320 >> $DC_s/cnfg18
-				echo 450 >> $DC_s/cnfg18
-				echo 100 >> $DC_s/cnfg18
-				echo 360 >> $DC_s/cnfg18
-				echo 320 >> $DC_s/cnfg18
-				exit
-				
-			elif [ $y -gt 700 ]; then
-				echo 520 > $DC_s/cnfg17
-				echo 420 >> $DC_s/cnfg18
-				echo 480 >> $DC_s/cnfg18
-				echo 470 >> $DC_s/cnfg18
-				echo 320 >> $DC_s/cnfg18
-				echo 230 >> $DC_s/cnfg18
-				echo 170 >> $DC_s/cnfg18
-				echo 100 >> $DC_s/cnfg18
-				echo 300 >> $DC_s/cnfg18
-				echo 200 >> $DC_s/cnfg18
-				echo 50 >> $DC_s/cnfg18
-				echo 360 >> $DC_s/cnfg18
-				echo 320 >> $DC_s/cnfg18
-				exit
-				
-			elif [ $y -gt 599 ]; then
-				echo 520 > $DC_s/cnfg17
-				echo 400 >> $DC_s/cnfg18
-				echo 460 >> $DC_s/cnfg18
-				echo 450 >> $DC_s/cnfg18
-				echo 300 >> $DC_s/cnfg18
-				echo 230 >> $DC_s/cnfg18
-				echo 170 >> $DC_s/cnfg18
-				echo 100 >> $DC_s/cnfg18
-				echo 250 >> $DC_s/cnfg18
-				echo 200 >> $DC_s/cnfg18
-				echo 50 >> $DC_s/cnfg18
-				echo 350 >> $DC_s/cnfg18
-				echo 320 >> $DC_s/cnfg18
-				exit
-				
-			elif [ $y -gt 400 ]; then
-				echo 420 > $DC_s/cnfg17
-				echo 400 >> $DC_s/cnfg18
-				echo 460 >> $DC_s/cnfg18
-				echo 400 >> $DC_s/cnfg18
-				echo 280 >> $DC_s/cnfg18
-				echo 500 >> $DC_s/cnfg18
-				echo 320 >> $DC_s/cnfg18
-				echo 500 >> $DC_s/cnfg18
-				echo 320 >> $DC_s/cnfg18
-				echo 50 >> $DC_s/cnfg18
-				echo 200 >> $DC_s/cnfg18
-				echo 340 >> $DC_s/cnfg18
-				echo 300 >> $DC_s/cnfg18
-				exit
-			fi
-			)
+		elif [ $y -ge 1080 ]; then
+			echo 450 >> $wh
+			echo 520 >> $wh
+			echo 500 >> $wh
+			echo 320 >> $wh
+			echo 260 >> $wh
+			echo 190 >> $wh
+			echo 100 >> $wh
+			echo 300 >> $wh
+			echo 120 >> $wh
+			echo 460 >> $wh
+			echo 400 >> $wh
+			echo 410 >> $wh
+			exit
 			
-			# weekly report
-			if ([ "$(date +%u)" = 7 ] && \
-			[ "$(sed -n 1p $DC/addons/stats/cnf)" = "TRUE" ]); then
-				$DS/addons/Stats/rprt A &
-			fi
+		elif [ $y -ge 1024 ]; then
+			echo 430 >> $wh
+			echo 490 >> $wh
+			echo 490 >> $wh
+			echo 320 >> $wh
+			echo 260 >> $wh
+			echo 190 >> $wh
+			echo 100 >> $wh
+			echo 320 >> $wh
+			echo 120 >> $wh
+			echo 460 >> $wh
+			echo 390 >> $wh
+			echo 410 >> $wh
+			exit
 			
-			# rss feed auto-update
-			if [ "$(sed -n 1p "$DC/addons/Learning with news/.cnf")" = "TRUE" ]; then
-				(sleep 200
-				$DS/addons/Learning_with_news/strt A
-				) &
-			fi
+		elif [ $y -gt 700 ]; then
+			echo 420 >> $wh
+			echo 480 >> $wh
+			echo 470 >> $wh
+			echo 320 >> $wh
+			echo 230 >> $wh
+			echo 170 >> $wh
+			echo 100 >> $wh
+			echo 300 >> $wh
+			echo 120 >> $wh
+			echo 460 >> $wh
+			echo 390 >> $wh
+			echo 410 >> $wh
+			exit
 			
-			# backup
-			if ([ "$(date +%u)" = 6 ] && \
-			[ "$(sed -n 1p $DC_s/cnfg12)" = "TRUE" ]); then
-				$DS/addons/User_data/t_bd.sh C &
-			fi
+		elif [ $y -gt 599 ]; then
+			echo 400 >> $wh
+			echo 460 >> $wh
+			echo 450 >> $wh
+			echo 300 >> $wh
+			echo 230 >> $wh
+			echo 170 >> $wh
+			echo 100 >> $wh
+			echo 250 >> $wh
+			echo 120 >> $wh
+			echo 460 >> $wh
+			echo 390 >> $wh
+			echo 410 >> $wh
+			exit
 			
-			# search updates
-			$DS/ifs/tls.sh srch &
+		elif [ $y -gt 400 ]; then
+			echo 400 >> $wh
+			echo 460 >> $wh
+			echo 400 >> $wh
+			echo 280 >> $wh
+			echo 500 >> $wh
+			echo 320 >> $wh
+			echo 500 >> $wh
+			echo 320 >> $wh
+			echo 120 >> $wh
+			echo 460 >> $wh
+			echo 380 >> $wh
+			echo 400 >> $wh
+			exit
+		fi
+		
+		# weekly report
+		if ([ "$(date +%u)" = 7 ] && \
+		[ "$(sed -n 1p $DC/addons/stats/cnf)" = "TRUE" ]); then
+			$DS/addons/Stats/rprt A &
+		fi
+		
+		# rss feed auto-update
+		if [ "$(sed -n 1p "$DC/addons/Learning with news/.cnf")" = "TRUE" ]; then
+			(sleep 200
+			$DS/addons/Learning_with_news/strt A
+			) &
+		fi
+		
+		# backup
+		if ([ "$(date +%u)" = 6 ] && \
+		[ "$(sed -n 1p $DC_s/cnfg12)" = "TRUE" ]); then
+			$DS/addons/User_data/t_bd.sh C &
+		fi
+		
+		# search updates
+		$DS/ifs/tls.sh srch &
+		
+		# update topics status
+		[[ ! -f "$DC_tl/.cnfg1" ]] && touch "$DC_tl/.cnfg1"
+		n=1
+		while [ $n -le "$(cat "$DC_tl/.cnfg1" | head -30 | wc -l )" ]; do
+			tp=$(sed -n "$n"p "$DC_tl/.cnfg1")
 			
-			# update topics status
-			[[ ! -f "$DC_tl/.cnfg1" ]] && touch "$DC_tl/.cnfg1"
-			n=1
-			while [ $n -le "$(cat "$DC_tl/.cnfg1" | head -30 | wc -l )" ]; do
-				tp=$(sed -n "$n"p "$DC_tl/.cnfg1")
-				
-				if [ -f "$DC_tl/$tp/cnfg9" ]; then
-					dte=$(cat "$DC_tl/$tp/cnfg9")
-					dts=$(cat "$DC_tl/$tp/cnfg9" | wc -l)
-					if [ $dts = 1 ]; then
-						dte=$(sed -n 1p "$DC_tl/$tp/cnfg9")
-						TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-						RM=$((100*$TM/10))
-					elif [ $dts = 2 ]; then
-						dte=$(sed -n 2p "$DC_tl/$tp/cnfg9")
-						TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-						RM=$((100*$TM/15))
-					elif [ $dts = 3 ]; then
-						dte=$(sed -n 3p "$DC_tl/$tp/cnfg9")
-						TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-						RM=$((100*$TM/30))
-					elif [ $dts = 4 ]; then
-						dte=$(sed -n 4p "$DC_tl/$tp/cnfg9")
-						TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-						RM=$((100*$TM/60))
+			if [ -f "$DC_tl/$tp/cnfg9" ]; then
+				dte=$(cat "$DC_tl/$tp/cnfg9")
+				dts=$(cat "$DC_tl/$tp/cnfg9" | wc -l)
+				if [ $dts = 1 ]; then
+					dte=$(sed -n 1p "$DC_tl/$tp/cnfg9")
+					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
+					RM=$((100*$TM/10))
+				elif [ $dts = 2 ]; then
+					dte=$(sed -n 2p "$DC_tl/$tp/cnfg9")
+					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
+					RM=$((100*$TM/15))
+				elif [ $dts = 3 ]; then
+					dte=$(sed -n 3p "$DC_tl/$tp/cnfg9")
+					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
+					RM=$((100*$TM/30))
+				elif [ $dts = 4 ]; then
+					dte=$(sed -n 4p "$DC_tl/$tp/cnfg9")
+					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
+					RM=$((100*$TM/60))
+				fi
+				nstll=$(grep -Fxo "$tp" "$DC_tl/.cnfg3")
+				if [ -n "$nstll" ]; then
+					if [ "$RM" -ge 100 ]; then
+						echo "9" > "$DC_tl/$tp/cnfg8"
 					fi
-					nstll=$(grep -Fxo "$tp" "$DC_tl/.cnfg3")
-					if [ -n "$nstll" ]; then
-						if [ "$RM" -ge 100 ]; then
-							echo "9" > "$DC_tl/$tp/cnfg8"
-						fi
-						if [ "$RM" -ge 150 ]; then
-							echo "10" > "$DC_tl/$tp/cnfg8"
-						fi
-					else
-						if [ "$RM" -ge 100 ]; then
-							echo "4" > "$DC_tl/$tp/cnfg8"
-						fi
-						if [ "$RM" -ge 150 ]; then
-							echo "5" > "$DC_tl/$tp/cnfg8"
-						fi
+					if [ "$RM" -ge 150 ]; then
+						echo "10" > "$DC_tl/$tp/cnfg8"
+					fi
+				else
+					if [ "$RM" -ge 100 ]; then
+						echo "4" > "$DC_tl/$tp/cnfg8"
+					fi
+					if [ "$RM" -ge 150 ]; then
+						echo "5" > "$DC_tl/$tp/cnfg8"
 					fi
 				fi
-				let n++
-			done
-			$DS/mngr.sh mkmn & exit 1
-		fi
-		
-	else
-		idiomind topic
+			fi
+			let n++
+		done
+		$DS/mngr.sh mkmn & exit 1
 	fi
 fi
 
 if [[ "$1" = "panel" ]]; then
 	if [ -d $DM ]; then
-		yad --geometry=185x318-120-420 --width=160 --name=idiomind\
-			--height=220 --fixed --title=" Idiomind" --no-buttons \
+		#wth=$(sed -n 11p $DC_s/cnfg18)
+		#hgt=$(sed -n 12p $DC_s/cnfg18)
+		yad --geometry=185x318-200-450 --width=170 --height=220 \
+			--name=idiomind --fixed --title="Idiomind" --no-buttons \
 			--icons --single-click --on-top --borders=0 \
-			--read-dir=$DS/default/new --item-width=60 --skip-taskbar \
+			--read-dir=$DS/default/new --item-width=65 \
 			--window-icon=idiomind --class=idiomind
 			ret=$?
 			if  [[ "$ret" -eq 0 ]]; then
@@ -280,9 +274,12 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 	cc=$(sed -n 1p "$tmp/cnfg12")
 	cgy=$(sed -n 9p "$tmp/cnfg12")
 	nt=$(sed -n 11p "$tmp/cnfg12")
-	[[ -f "$tmp/words/images/img.png" ]] && \
-	img="$tmp/words/images/img.png" || \
+	if [ -f "$tmp/words/images/img.png" ]; then
+	img="$tmp/words/images/img.png"
+	s="\n"
+	else
 	img="$DS/images/trans.png"
+	fi
 	
 	if [ "$inme" != "$cc" ]; then
 	int="$(sed -n 6p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
@@ -301,7 +298,7 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 		cd "$tmp"
 		ws=$(cat "cnfg3" | wc -l)
 		ss=$(cat "cnfg4" | wc -l)
-		itxt="<big><b>$title</b></big><small>\\n$lgsli  <b>></b>  $lgtli \\n$ss  $sentences  -  $ws  $words\\n$category:  $cgy.\\n$created_by:  $crea.</small>\n"
+		itxt="<big><b> $title</b></big><small>\\n ${lgsli^} <b>></b> $lgtli\\n $category: ${cgy^}</small>"
 		dlck="$DT/p1.$c"
 		cat "$tmp/cnfg0" | awk '{print $0""}' | \
 		$yad --list --name=Idiomind --title="Idiomind" \
@@ -445,7 +442,7 @@ if [ "$1" = topic ]; then
 		cd "$DC_tlt"
 		ws=$(cat cnfg3 | wc -l)
 		ss=$(cat cnfg4 | wc -l)
-		itxt="<big><b> $ttl </b> </big> <small>\\n  $ss $sentences$s  $ws $words</small>$s"
+		itxt="<big><b> $ttl </b> </big> <small>\\n  $ss $sentences$s  $ws $words</small>"
 		cd $DS
 		c=$(echo $(($RANDOM%100000)))
 		KEY=$c
@@ -745,7 +742,7 @@ if [ "$1" = topic ]; then
 			--tab=" $learned ($tb2) " --tab=" $notes " \
 			--ellipsize=END --image-on-top --always-print-result \
 			--width="$wth" --height="$eht" --borders=0 \
-			--button="$edit":3 --button="$close":2 # -------------------------------
+			--button="$edit":3 --button="$close":2
 				ret=$?
 				
 				if [ $ret -eq 3 ]; then
@@ -816,7 +813,7 @@ if [ "$1" = topic ]; then
 		cd "$DC_tlt"
 		ws=$(cat cnfg3 | wc -l)
 		ss=$(cat cnfg4 | wc -l)
-		itxt="<big><b> $ttl </b> </big> <small>\\n  $ss $sentences$s  $ws $words</small>$s"
+		itxt="<big><b> $ttl </b> </big> <small>\\n  $ss $sentences$s  $ws $words</small>"
 		cd $DS
 		c=$(echo $(($RANDOM%100000)))
 		KEY=$c
@@ -887,7 +884,7 @@ if [ "$1" = topic ]; then
 				--column=Name:TEXT --column=Review:CHK \
 				--dclick-action='./vwr.sh v2' > "$cnf2" &
 				echo "$nt" | $yad --text-info --plug=$KEY --margins=14 \
-				--text="<small> $created_by: $l1  -  $category: $l4 </small>" \
+				--text="<small>  $created_by: $l1  -  $category: ${l4^} </small>" \
 				--tabnum=3 --fore='gray40' --wrap \
 				--show-uri --fontname=vendana --editable > "$cnf3" &
 				$yad --notebook --name=Idiomind --center \
@@ -911,7 +908,7 @@ if [ "$1" = topic ]; then
 				--column=Name:TEXT --column=Review:CHK \
 				--dclick-action='./vwr.sh v2' > "$cnf2" &
 				echo "$nt" | $yad --text-info --plug=$KEY --margins=14 \
-				--text="<small> $created_by: $l1  -  $category: $l4 </small>" \
+				--text="<small>  $created_by: $l1  -  $category: ${l4^} </small>" \
 				--tabnum=3 --fore='gray40' --wrap \
 				--show-uri --fontname=vendana --editable > "$cnf3" &
 				$yad --notebook --name=Idiomind --center  \
@@ -1079,7 +1076,7 @@ if [ "$1" = topic ]; then
 			--column=Name:TEXT --column=Review:CHK \
 			--dclick-action='./vwr.sh v2' > "$cnf2" &
 			echo "$nt" | $yad --text-info --plug=$KEY --margins=14 \
-			--text="<small> $created_by: $l1  -  $category: $l4 </small>" \
+			--text="<small>  $created_by: $l1  -  $category: ${l4^} </small>" \
 			--tabnum=3 --fore='gray40' --wrap \
 			--show-uri --fontname=vendana --editable > "$cnf3" &
 			$yad --notebook --name=Idiomind --center  \
@@ -1148,14 +1145,14 @@ if [ "$1" = topic ]; then
 				fi
 			rm -f $DT/*.x & exit 1
 			fi
-	
+
 	#feeds
 	elif echo "$mde" | grep "fd"; then
 		dir1="$DM_tl/Feeds"
 		dir2="$DC/addons/Learning with news"
 		DF="$DS/addons/Learning_with_news"
 		FEED=$(cat "$dir2/$lgtl/.rss")
-		ICON=$DF/img/icon.png
+		ICON=$DF/img/rss.png
 		c=$(echo $(($RANDOM%100000)))
 		STT="$(cat $DT/.uptf)"
 		

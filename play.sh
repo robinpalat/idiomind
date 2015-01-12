@@ -87,19 +87,17 @@ elif [[ -z "$1" ]]; then
 	st9=$(cat $DC_s/cnfg5 | sed -n 9p)
 	st10=$(cat $DC_s/cnfg5 | sed -n 10p)
 	slct=$(mktemp $DT/slct.XXXX)
-
-	if [ -f $DT/.p__$u ]; then
-		btn="--button=gtk-media-stop:2"
-	else
+	if [ ! -f $DT/.p__$u ]; then
 		btn="--button=Ok:0"
+	else
+		btn="--button=gtk-media-stop:2"
 	fi
-	
-	$yad --list --on-top \
+	$yad --list --on-top --fixed \
 	--expand-column=3 --print-all --center \
-	--width=160 --name=idiomind --class=idmnd \
-	--height=220 --title=" " \
+	--width=170 --name=idiomind --class=idmnd \
+	--height=240 --title="$tpc" \
 	--window-icon=idiomind --no-headers \
-	--buttons-layout=end --skip-taskbar \
+	--buttons-layout=end \
 	--borders=0 $btn --hide-column=1 \
 	--column=Action:TEXT --column=icon:IMG \
 	--column=Action:TEXT --column=icon:CHK \
