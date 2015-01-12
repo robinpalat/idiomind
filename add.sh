@@ -235,7 +235,7 @@ elif [ $1 = n_i ]; then
 		info="\\n$is $iw"
 	fi
 	if [ "$tpe" != "$tpc" ]; then
-		topic="<span color='#007322'>$topic</span>$info"
+		topic="<b><span background='#F5F2BD'>$topic</span></b>$info"
 	else
 		topic="$topic $info"
 	fi
