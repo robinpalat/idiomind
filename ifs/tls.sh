@@ -33,7 +33,7 @@ if [ $1 = nt ]; then
 	fi
 
 elif [ $1 = web ]; then
-	host=http://tmp.site50.net
+	host=http://idiomind.sourceforge.net
 	lgtl=$(echo "$lgtl" | awk '{print tolower($0)}')
 	xdg-open $host/$lgs/$lgtl
 	exit

@@ -4,10 +4,11 @@
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/practice.conf
 
-DSP="/usr/share/idiomind/addons/Practice"
-eht=$(sed -n 13p $HOME/.config/idiomind/s/cnfg18)
-wth=$(sed -n 14p $HOME/.config/idiomind/s/cnfg18)
-/usr/share/idiomind/stop.sh &
+DSP="$DS/addons/Practice"
+wth=$(sed -n 13p $DC_s/cnfg18)
+hgt=$(sed -n 14p $DC_s/cnfg18)
+
+$DS/stop.sh &
 cd "$DC_tlt/Practice"
 
 if [[ -n "$1" ]]; then
@@ -75,7 +76,7 @@ VAR=$(yad --ellipsize=NONE --list --text-align=center \
 --center --window-icon=idiomind --skip-taskbar \
 --image-on-top --buttons-layout=edge $img \
 --borders=5 --expand-column=2 \
---width=$wth --height=$eht --text="$info" \
+--width=$wth --height=$hgt --text="$info" \
 --no-headers --button=$restart:3 --button=$start:0 \
 --title="Practice - $tpc" --column="Pick":IMG \
 --column="Action" $img1 "          $info1 Flashcards" $img2 \
@@ -86,7 +87,7 @@ ret=$?
 
 	if [ $ret -eq 0 ]; then
 		echo "prctc.$tpc.prctc" >> \
-		$HOME/.config/idiomind/addons/stats/.log &
+		$DC/addons/stats/.log &
 		if echo "$VAR" | grep "Flashcards"; then
 			$DSP/prct f & exit 1
 		elif echo "$VAR" | grep "Multiple Choisse"; then
@@ -108,12 +109,12 @@ ret=$?
 		echo "#" ;
 		cd "$DC_tlt/Practice"
 		rm *
-		cp -f /usr/share/idiomind/addons/Practice/default/.* "$DC_tlt/Practice"
+		cp -f $DS/addons/Practice/default/.* "$DC_tlt/Practice"
 		) | yad --progress \
 		--width 50 --height 35 --center \
 		--pulsate --auto-close --no-buttons \
 		--sticky --undecorated --skip-taskbar
-		/usr/share/idiomind/addons/Practice/strt & exit 1
+		$DS/addons/Practice/strt & exit 1
 	else
 		[[ -f fin1 ]] && rm fin1; [[ -f fin2 ]] && rm fin2;
 		[[ -f mcin1 ]] && rm mcin1; [[ -f mcin2 ]] && rm mcin2;

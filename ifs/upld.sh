@@ -130,6 +130,8 @@ mail=$(sed -n 2p $DC_s/cnfg4)
 skp=$(sed -n 3p $DC_s/cnfg4)
 nme=$(echo "$tpc" | sed 's/ /_/g' \
 | sed 's/"//g' | sed 's/’//g')
+[[ $(echo "$tpc" | wc -c) -gt 40 ]] \
+&& ttpc="${tpc:0:40}..." || ttpc="$tpc"
 chk1="$DC_tlt/cnfg0"
 chk2="$DC_tlt/cnfg1"
 chk3="$DC_tlt/cnfg2"
@@ -272,12 +274,11 @@ if [ $ALL -le 20 ]; then
 	exit 1
 fi
 cd $HOME
-upld=$($yad --image-on-top --width=400 \
+upld=$($yad --form --width=400 --height=420 --on-top \
 --buttons-layout=end --center --window-icon=idiomind \
---on-top --image=$DS/images/upld.png \
---height=450 --form --borders=15 --skip-taskbar --align=right \
+--borders=15 --skip-taskbar --align=right \
 --button=$cancel:1 --button=$upload:0 \
---title="Upload" --text="<b>$tpc\\n</b>" \
+--title="Upload" --text="   <b>$ttpc</b>" \
 --field=" :lbl" "#1" \
 --field="    <small>$author</small>:: " "$user" \
 --field="    <small>$email</small>:: " "$mail" \
@@ -399,7 +400,6 @@ rm -f "$tpc"/*
 
 notify-send "$uploading..." "$wait" -i idiomind -t 6000
 
-
 #-----------------------
 dte=$(date "+%d %B %Y")
 mv -f "$DT/$U.$tpc.idmnd" $DT/$nme/
@@ -417,7 +417,7 @@ END_SCRIPT
 exit=$?
 if [ $exit = 0 ] ; then
     cp -f "$DT/cnfg12" "$DM_t/saved/$tpc.cnfg12"
-    info="<big><b> $tpc </b></big>\\n\\n<b>  $saved</b>"
+    info="\n<big><b> $saved</b></big>\n"
 else
     info="$upload_err"
 fi

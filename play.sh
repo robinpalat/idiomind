@@ -88,20 +88,19 @@ elif [[ -z "$1" ]]; then
 	st10=$(cat $DC_s/cnfg5 | sed -n 10p)
 	slct=$(mktemp $DT/slct.XXXX)
 
-	btn1="--button=Ok:0"
-	btn2="--center"
 	if [ -f $DT/.p__$u ]; then
-		btn1="--button=Ok:0"
-		btn2="--button=gtk-media-stop:2"
+		btn="--button=gtk-media-stop:2"
+	else
+		btn="--button=Ok:0"
 	fi
-
+	
 	$yad --list --on-top \
 	--expand-column=3 --print-all --center \
 	--width=160 --name=idiomind --class=idmnd \
 	--height=220 --title=" " \
 	--window-icon=idiomind --no-headers \
 	--buttons-layout=end --skip-taskbar \
-	--borders=0 $btn2 $btn1 --hide-column=1 \
+	--borders=0 $btn --hide-column=1 \
 	--column=Action:TEXT --column=icon:IMG \
 	--column=Action:TEXT --column=icon:CHK \
 	"Words" "$img1" "$words" $st1 \
