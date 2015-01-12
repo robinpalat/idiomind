@@ -18,34 +18,20 @@ while [ $n -le $(cat ./lwin$1 | wc -l) ]; do
 	
 	if [ -f "$drtt/images/$w1".jpg ]; then
 		IMAGE="$drtt/images/$w1".jpg
+	else
+		IMAGE="/usr/share/idiomind/images/lw.png".jpg
+	fi
 		play "$drtt/$w1".mp3 &
 		yad --form --align=center \
 		--center --on-top --image="$IMAGE" --image-on-top \
 		--window-icon=idiomind --buttons-layout=edge --borders=0 \
 		--skip-taskbar --title=" " --undecorated \
-		--field="Play:BTN" "$listen" \
 		--field="<big><big><big><big><big><b><span color='#949494'>$lst</span></b></big></big></big></big></big>\n":lbl \
 		--button=gtk-close:1 \
-		--button="  Got It  ":3 \
-		--button="  Nope  ":4 \
-		--width=365 --height=300
-		
-	else
-		play "$drtt/$w1".mp3 &
-		yad --form --align=center --undecorated \
-		--center --on-top --text-align=center --name=idiomind \
-		--window-icon=idiomind --buttons-layout=edge --borders=0 \
-		--skip-taskbar  --title=" " --class=idiomind \
-		--field="
-Play
-:BTN" "$listen" \
-		--text="\\n\\n\\n<big><big><big><big><big><b><span color='#949494'>$lst</span></b></big></big></big></big></big>" \
-		--field=" ":lbl \
-		--button=gtk-close:1 \
-		--button="  Got It  ":3 \
-		--button="  Nope  ":4 \
-		--width=365 --height=250
-	fi
+		--button=" Play ":"$listen" \
+		--button=" Got It ":3 \
+		--button=" Nope ":4 \
+		--width=365 --height=350
 	
 	ret=$?
 	if [[ $ret -eq 3 ]]; then
