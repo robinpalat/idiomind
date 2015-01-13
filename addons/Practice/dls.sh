@@ -16,7 +16,6 @@ f=0
 function score() {
 
 	if [ "$1" -ge "$all" ] ; then
-	
 		rm lsin lsin1 lsin2 lsin3 ok.s
 		echo "$(date "+%a %d %B")" > look_ls
 		echo 21 > .iconls
@@ -28,7 +27,6 @@ function score() {
 		[[ -f l_ls ]] && echo "$(($(cat l_ls)+$easy))" > l_ls || echo $easy > l_ls
 		s=$(cat l_ls)
 		v=$((100*$s/$all))
-		
 		if [ $v -le 1 ]; then
 			echo 1 > .iconls
 		elif [ $v -le 5 ]; then

@@ -15,7 +15,7 @@ ling=0
 
 function score() {
 
-	if [ "$1" -ge "$all" ] ; then
+	if [ "$(($(cat l_mc)+$1))" -ge "$all" ]; then
 		rm mcin mcin1 mcin2 mcin3 ok.m
 		echo "$(date "+%a %d %B")" > look_mc
 		echo 21 > .iconmc

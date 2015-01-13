@@ -11,26 +11,14 @@ $yad --form --height=190 --borders=5 --width=350 \
 	--field="$play_time:BTN" "$DS/play.sh time" \
 	--field="$audio_imput:BTN" "$DS/audio/auds" \
 	--field="$search_updates:BTN" "$DS/ifs/tls.sh updt" \
+	--field="$help:BTN" "$DS/ifs/tls.sh help" \
 	--button=Close:0 & exit 1
 fi
 
-if [ $1 = nt ]; then
-	if [ ! -f "$nt".odt ] || [ -z "$(cat $DC_s/nt)" ]; then
-		sv=$(yad --save --center --borders=10 --on-top \
-		--window-icon=idiomind --skip-taskbar --title=Notes \
-		--file --width=600 --height=500 --button=gtk-ok:0)
-		echo "$sv" > $DC_s/nt
-		cp -f $DS/default/notes.odt "$sv".odt
-		nt="$(cat $DC_s/nt)"
-		
-		[[ -z "$nt" ]] && exit 1
-		xdg-open "$nt".odt
-		exit
-	else
-		nt="$(cat $DC_s/nt)"
-		xdg-open "$nt".odt
-		exit
-	fi
+if [ $1 = help ]; then
+
+	xdg-open $DS/ifs/trans/$lgs/help.pdf & exit
+
 
 elif [ $1 = web ]; then
 	host=http://idiomind.sourceforge.net

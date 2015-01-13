@@ -15,20 +15,18 @@ ling=0
 
 function score() {
 
-	if [ "$1" -ge "$all" ] ; then
-	
+	if [ "$(($(cat l_w)+$1))" -ge "$all" ] ; then
 		rm lwin lwin1 lwin2 lwin3 ok.w
 		echo "$(date "+%a %d %B")" > look_lw
 		echo 21 > .iconlw
-		play $drts/all.mp3 & $strt 1 &
+		play $drts/all.mp3 & $strt 3 &
 		killall dlw.sh
 		exit 1
 		
 	else
-		[[ -f l_f ]] && echo "$(($(cat l_f)+$easy))" > l_f || echo $easy > l_f
-		s=$(cat l_f)
+		[[ -f l_w ]] && echo "$(($(cat l_w)+$easy))" > l_w || echo $easy > l_w
+		s=$(cat l_w)
 		v=$((100*$s/$all))
-		
 		if [ $v -le 1 ]; then
 			echo 1 > .iconlw
 		elif [ $v -le 5 ]; then

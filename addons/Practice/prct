@@ -3,15 +3,15 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/practice.conf
-DSP="$DS/addons/Practice/"
-strt="$DSP/strt"
-IND='play $DSP/all.mp3'
-w9="$DC/addons/practice/w9"
-w6="$DC/addons/practice/w6"
-DF=$DSP/df.sh
-DLW=$DSP/dlw.sh
-DMC=$DSP/dmc.sh
-DLS=$DSP/dls.sh
+strt=$DS/addons/Practice/strt
+cls=$DS/addons/Practice/cls
+w9=$DC/addons/practice/w9
+w6=$DC/addons/practice/w6
+DF=$DS/addons/Practice/df.sh
+DLW=$DS/addons/Practice/dlw.sh
+DMC=$DS/addons/Practice/dmc.sh
+DLS=$DS/addons/Practice/dls.sh
+IND='play $DS/addons/Practice/all.mp3'
 Wi="$DC_tlt/cnfg3"
 Si="$DC_tlt/cnfg4"
 Li="$DC_tlt/cnfg1"
@@ -68,6 +68,10 @@ function starting() {
 		$strt & killall prct.sh & exit 1
 }
 
+
+
+
+
 if [[ "$1" = f ]]; then
 
 	cd "$DC_tlt/Practice"
@@ -75,21 +79,28 @@ if [[ "$1" = f ]]; then
 	if [[ -f look_f ]]; then
 		look "look_f"
 		ret=$(echo "$?")
-		[[ "$ret" -eq 0 ]] && $DSP/cls df & exit || $DSP/strt & exit
+		if [[ "$ret" -eq 0 ]]; then
+		$cls df & exit
+		else
+		$strt & exit
+		fi
 	fi
 
 	if ([ -f fin ] && [ -f ok.f ]); then
 		grep -F -x -v -f ok.f fin > fin1
-		echo "-- recomenzando session"
+		echo "-- restarting session"
 	else
 		get_list fin && cp -f fin fin1
 		[[ "$(cat fin  | wc -l)" -lt 4 ]] && starting "$starting1"
-		echo "-- nueva session"
+		echo "-- new session"
 	fi
 	
 	$DF
-	
-	
+
+
+
+
+
 elif [[ "$1" = m ]]; then
 
 	cd "$DC_tlt/Practice"
@@ -97,12 +108,16 @@ elif [[ "$1" = m ]]; then
 	if [[ -f look_mc ]]; then
 		look "look_mc"
 		ret=$(echo "$?")
-		[[ "$ret" -eq 0 ]] && $DSP/cls mc & exit || $DSP/strt & exit
+		if [[ "$ret" -eq 0 ]]; then
+		$cls mc & exit
+		else
+		$strt & exit
+		fi
 	fi
 
 	if ([ -f mcin ] && [ -f ok.m ]); then
 		grep -F -x -v -f ok.m mcin > mcin1
-		echo "-- recomenzando session"
+		echo "-- restarting session"
 		
 	else
 		get_list mcin && cp -f mcin mcin1
@@ -110,12 +125,14 @@ elif [[ "$1" = m ]]; then
 			get_list2
 		fi
 		[[ "$(cat mcin  | wc -l)" -lt 4 ]] && starting "$starting1"
-		 echo "-- nueva session"
+		 echo "-- new session"
 	fi
 
 	$DMC
-	
-	
+
+
+
+
 elif [[ "$1" = w ]]; then
 
 	cd "$DC_tlt/Practice"
@@ -123,21 +140,28 @@ elif [[ "$1" = w ]]; then
 	if [[ -f look_lw ]]; then
 		look "look_lw"
 		ret=$(echo "$?")
-		[[ "$ret" -eq 0 ]] && $DSP/cls dw & exit || $DSP/strt & exit
+		if [[ "$ret" -eq 0 ]]; then
+		$cls dw & exit
+		else
+		$strt & exit
+		fi
 	fi
 
 	if ([ -f lwin ] && [ -f ok.w ]); then
 		grep -F -x -v -f ok.w lwin > lwin1
-		echo "-- recomenzando session"
+		echo "-- restarting session"
 	else
 		get_list lwin && cp -f lwin lwin1
 		[[ "$(cat lwin  | wc -l)" -lt 4 ]] && starting "$starting1"
-		echo "-- nueva session"
+		echo "-- new session"
 	fi
 	
 	$DLW
-	
-	
+
+
+
+
+
 elif [[ "$1" = s ]]; then
 
 	cd "$DC_tlt/Practice"
@@ -145,16 +169,20 @@ elif [[ "$1" = s ]]; then
 	if [[ -f look_ls ]]; then
 		look "look_ls"
 		ret=$(echo "$?")
-		[[ "$ret" -eq 0 ]] && $DSP/cls ds & exit || $DSP/strt & exit
+		if [[ "$ret" -eq 0 ]]; then
+		$cls ds & exit
+		else
+		$strt & exit
+		fi
 	fi
 
 	if ([ -f lsin ] && [ -f ok.s ]); then
 		grep -F -x -v -f ok.s lsin > lsin1
-		echo "-- recomenzando session"
+		echo "-- restarting session"
 	else
 		get_list3 lsin && cp -f lsin lsin1
 		[[ "$(cat lsin  | wc -l)" -lt 1 ]] && starting "$starting2"
-		echo "-- nueva session"
+		echo "-- new session"
 	fi
 	
 	$DLS
