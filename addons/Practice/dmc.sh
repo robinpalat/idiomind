@@ -1,4 +1,5 @@
 #!/bin/bash
+# -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
 drtt="$DM_tlt/words"
@@ -95,9 +96,9 @@ function mchoise() {
 	| yad --list --on-top --skip-taskbar \
 	--width=365 --height=340 --center --buttons-layout=edge --undecorated \
 	--text-align=center --no-headers --borders=5 --window-icon=idiomind \
-	--button=gtk-close:1 \
-	--button="  Ok  ":0 --title=" " \
-	--text="\\n$trgts\\n\\n\\n" \
+	--button=gtk-media-stop:1 \
+	--button="    Ok    ":0 --title=" " \
+	--text="\\n\\n$trgts\\n\\n\\n" \
 	--column=Opcion --column=Opciodn)
 }
 

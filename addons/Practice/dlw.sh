@@ -90,7 +90,7 @@ function fonts() {
 	tr="<big><big><big><big><b>$1</b></big></big></big></big>"
 	else
 	img="/usr/share/idiomind/images/fc.png"
-	trgts="<big><big><big><big><big><big><big><b>$lst</b></big></big></big></big></big></big></big>"
+	trgts="<big><big><big><big><big><big><b>$lst</b></big></big></big></big></big></big>"
 	tr="<big><big><big><big><big><big><big><b>$1</b></big></big></big></big></big></big></big>"
 	fi
 	}
@@ -103,10 +103,11 @@ function cuestion() {
 	--center --on-top --image-on-top --image="$img" \
 	--skip-taskbar --title=" " --borders=0 \
 	--window-icon=idiomind --buttons-layout=edge \
-	--field="$trgts":lbl --width=365 --height=360 \
+	--field="<span color='#808080'>$trgts</span>":lbl \
+	--width=365 --height=280 \
 	--button="gtk-media-stop":1 \
 	--button="Play":"$listen" \
-	--button="  Show Answer  ":0
+	--button="Show Answer":0
 	}
 
 function answer() {
@@ -115,10 +116,10 @@ function answer() {
 	--center --on-top --image-on-top --image="$img" \
 	--skip-taskbar --title=" " --borders=0 \
 	--window-icon=idiomind --buttons-layout=spread \
-	--field="$tr":lbl --width=365 --height=360 \
+	--field="$tr":lbl --width=365 --height=280 \
 	--button="Play":"$listen" \
-	--button="  I Know it  ":2 \
-	--button="  I Don't Know  ":3
+	--button="I Know it":2 \
+	--button="I Don't Know":3
 	}
 
 n=1

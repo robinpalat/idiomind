@@ -97,7 +97,7 @@ function cuestion() {
 	--center --on-top --image-on-top --image="$img" \
 	--skip-taskbar --title=" " --borders=0 \
 	--window-icon=idiomind --buttons-layout=edge \
-	--field="$trgts":lbl --width=365 --height=360 \
+	--field="$trgts":lbl --width=365 --height=280 \
 	--button="gtk-media-stop":1 \
 	--button="      Show Answer      ":0
 	}
@@ -108,7 +108,7 @@ function answer() {
 	--center --on-top --image-on-top --image="$img" \
 	--skip-taskbar --title=" " --borders=0 \
 	--window-icon=idiomind --buttons-layout=spread \
-	--field="<i>$srces</i>":lbl --width=365 --height=360 \
+	--field="<i>$srces</i>":lbl --width=365 --height=280 \
 	--button="      I Know it      ":2 \
 	--button="      I Don't Know      ":3
 	}
