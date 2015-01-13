@@ -11,6 +11,7 @@ all=$(cat lsin | wc -l)
 easy=0
 hard=0
 ling=0
+f=0
 
 function score() {
 
@@ -78,27 +79,27 @@ function score() {
 
 
 function dialog1() {
-
-	SE=$(yad --center --text-info --image="$IMAGE" \
+	
+	SE=$(yad --center --text-info --image="$IMAGE" "$info" \
 	--fontname="Verdana Black" --justify=fill --editable --wrap \
 	--buttons-layout=end --borders=0 --title=" " --image-on-top \
-	--skip-taskbar --margins=8 --text-align=right --height=400 --width=460 \
+	--skip-taskbar --margins=8 --text-align=left --height=400 --width=460 \
 	--align=left --window-icon=idiomind --fore=4A4A4A \
 	--button=Hint:"/usr/share/idiomind/addons/Practice/hint.sh '$n'" \
 	--button=Listen:"play '$DM_tlt/$1.mp3'" \
-	--button="  Ok  ":0)
+	--button="  Ok >> ":0)
 	}
 	
 function dialog2() {
-	
+
 	SE=$(yad --center --text-info --fore=4A4A4A \
 	--fontname="Verdana Black" --justify=fill --editable --wrap \
-	--buttons-layout=end --borders=0 --title=" " \
-	--skip-taskbar --margins=8 --text-align=right --height=160 --width=460 \
+	--buttons-layout=end --borders=0 --title=" " "$info" \
+	--skip-taskbar --margins=8 --text-align=left --height=160 --width=460 \
 	--align=left --window-icon=idiomind \
 	--button=Hint:"/usr/share/idiomind/addons/Practice/hint.sh '$n'" \
 	--button="Listen":"play '$DM_tlt/$1.mp3'" \
-	--button="  Ok  ":0)
+	--button="  Ok >> ":0)
 	}
 	
 function get_image_text() {
@@ -166,6 +167,11 @@ n=1
 while [ $n -le $(cat lsin | wc -l) ]; do
 
 	namefile=$(sed -n "$n"p lsin)
+	if [[ $n = 1 ]]; then
+	info="--text=<sup>  Escribe la oración que estás escuchando...</sup>"
+	else
+	info=""
+	fi
 	
 	if [ -f "$DM_tlt/$namefile".mp3 ]; then
 		if [ -f "$DT/ILLUSTRATION".jpeg ]; then

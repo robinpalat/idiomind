@@ -33,9 +33,9 @@ if [ -f "$DM_tlt/words/$nme.mp3" ]; then
 	exmp=$(echo "$tgs" | grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' | tr '_' '\n')
 	mrk=$(echo "$tgs" | grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)')
 	[[ $(echo "$exmp" | sed -n 2p) ]] \
-	&& dfnts="--field=<span color='#696464'>$(echo "$exmp" | sed -n 2p)</span>\\n:lbl"
+	&& dfnts="--field=$(echo "$exmp" | sed -n 2p)\\n:lbl"
 	[[ $(echo "$exmp" | sed -n 3p) ]] \
-	&& ntess="--field=<span color='#868686'>$(echo "$exmp" | sed -n 3p)</span>\\n:lbl"
+	&& ntess="--field=$(echo "$exmp" | sed -n 3p)\\n:lbl"
 	hlgt=$(echo $trgt | awk '{print tolower($0)}')
 	exmp1=$(echo "$(echo "$exmp" | sed -n 1p)" | sed "s/"$(echo $trgt \
 	| awk '{print tolower($0)}')"/<span background='#CFFF8B'>"$(echo $trgt \
@@ -47,9 +47,9 @@ if [ -f "$DM_tlt/words/$nme.mp3" ]; then
 	yad --form --window-icon=idiomind --scroll --text-align=center \
 	--skip-taskbar --center --title=" " --borders=10 \
 	--quoted-output --on-top --selectable-labels \
-	--text="<big><big><big>$trgt</big></big></big>\\n\\n<i>$src</i>\\n\\n" \
+	--text="<big><big><big><b>$trgt</b></big></big></big>\\n\\n<i>$src</i>\\n\\n" \
 	--field="":lbl \
-	--field="<i><span color='#808080'>$exmp1</span></i>:lbl" "$dfnts" "$ntess" \
+	--field="<i><span color='#7D7D7D'>$exmp1</span></i>:lbl" "$dfnts" "$ntess" \
 	--width="$wth" --height="$eht" --center \
 	--button=gtk-edit:4 --button="Play":"play '$DM_tlt/words/$nme.mp3'" \
 	--button=gtk-go-up:3 --button=gtk-go-down:2 \

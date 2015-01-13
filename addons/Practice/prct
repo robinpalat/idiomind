@@ -22,7 +22,7 @@ function look() {
 		--on-top --skip-taskbar --window-icon=idiomind \
 		--center --image=gtk-ok --button=Ok:2 \
 		--button="   $restart   ":0 --width=360 --height=120 \
-		--text="<b>   $complete\\n   $(cat look_f)</b>\\n\\n"
+		--text="<b>   $complete\\n   $(cat $1)</b>\\n\\n"
 }
 
 function get_list() {

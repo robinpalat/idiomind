@@ -82,11 +82,11 @@ function fonts() {
 	s=$(eyeD3 "$drtt/$1.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
 	if [[ -f "$drtt/images/$1.jpg" ]]; then
 	img="$drtt/images/$1.jpg"
-	trgts="<big><big><big><big><b>$1</b></big></big></big></big>"
+	trgts="<big><big><big><big>$1</big></big></big></big>   <sup>Significa...</sup>"
 	srces="<big><big><big><big><b>$s</b></big></big></big></big>"
 	else
 	img="/usr/share/idiomind/images/fc.png"
-	trgts="<big><big><big><big><big><big><big><b>$1</b></big></big></big></big></big></big></big>"
+	trgts="<big><big><big><big><big><big><big>$1</big></big></big></big></big></big></big>   <sup>Significa...</sup>"
 	srces="<big><big><big><big><big><big><big><b>$s</b></big></big></big></big></big></big></big>"
 	fi
 	}
@@ -99,7 +99,7 @@ function cuestion() {
 	--window-icon=idiomind --buttons-layout=edge \
 	--field="$trgts":lbl --width=365 --height=280 \
 	--button="gtk-media-stop":1 \
-	--button="      Show Answer      ":0
+	--button="      Show Answer >>     ":0
 	}
 
 function answer() {
@@ -108,7 +108,7 @@ function answer() {
 	--center --on-top --image-on-top --image="$img" \
 	--skip-taskbar --title=" " --borders=0 \
 	--window-icon=idiomind --buttons-layout=spread \
-	--field="<i>$srces</i>":lbl --width=365 --height=280 \
+	--field="$srces":lbl --width=365 --height=280 \
 	--button="      I Know it      ":2 \
 	--button="      I Don't Know      ":3
 	}

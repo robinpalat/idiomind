@@ -94,11 +94,11 @@ function mchoise() {
 	
 	dlg=$(cat word2.id | awk '{print "\n"$0}' \
 	| yad --list --on-top --skip-taskbar \
-	--width=365 --height=340 --center --buttons-layout=edge --undecorated \
+	--width=365 --height=340 --center --undecorated \
 	--text-align=center --no-headers --borders=5 --window-icon=idiomind \
 	--button=gtk-media-stop:1 \
-	--button="    Ok    ":0 --title=" " \
-	--text="\\n\\n$trgts\\n\\n\\n" \
+	--title=" " \
+	--text="\\n\\n$trgts   \\n<sup>Significa...</sup>\\n\\n" \
 	--column=Opcion --column=Opciodn)
 }
 

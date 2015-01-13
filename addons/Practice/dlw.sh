@@ -86,11 +86,11 @@ function fonts() {
 	#fi
 	if [[ -f "$drtt/images/$1.jpg" ]]; then
 	img="$drtt/images/$1.jpg"
-	trgts="<big><big><big><big><b>$lst</b></big></big></big></big>"
+	trgts="<big><big><big><big>$lst</big></big></big></big>"
 	tr="<big><big><big><big><b>$1</b></big></big></big></big>"
 	else
 	img="/usr/share/idiomind/images/fc.png"
-	trgts="<big><big><big><big><big><big><b>$lst</b></big></big></big></big></big></big>"
+	trgts="<big><big><big><big><big><big>$lst</big></big></big></big></big></big>"
 	tr="<big><big><big><big><big><big><big><b>$1</b></big></big></big></big></big></big></big>"
 	fi
 	}
@@ -107,7 +107,7 @@ function cuestion() {
 	--width=365 --height=280 \
 	--button="gtk-media-stop":1 \
 	--button="Play":"$listen" \
-	--button="Show Answer":0
+	--button="   Answer >>   ":0
 	}
 
 function answer() {
