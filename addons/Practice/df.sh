@@ -7,89 +7,70 @@ drtt="$HOME/.idiomind/topics/$lgtl/$tpc/words"
 drts="/usr/share/idiomind/addons/Practice/"
 cd "$HOME/.config/idiomind/topics/$lgtl/$tpc/Practice"
 
-
 function cuestion() {
 		yad --form --align=center --undecorated \
-		--center --on-top --image-on-top --image="$2" \
-		--skip-taskbar --text-align=center --title=" "  \
+		--center --on-top --image-on-top --image="$3" \
+		--skip-taskbar --title=" "  \
 		--window-icon=idiomind --buttons-layout=edge --borders=0 \
-		--field="<big><big><big><big><big><big><big><big><b>$1</b></big></big></big></big></big></big></big></big>":lbl \
+		--field="$1":lbl \
 		--button="gtk-close":1 \
-		--button=" Answer ":5 \
-		--button="  Got It  ":3 \
-		--button="  Nope  ":4 \
-		--width=365 --height=350
-		
-			ret=$?
-		if [[ $ret -eq 5 ]]; then 
-			answer "$3"
-	
-		elif [[ $ret -eq 3 ]]; then
-			if [[ $1 = 1 ]]; then
-				play $drts/d.mp3 & sed -i 's/'"$w1"'//g' fin.tmp & echo "$w1" >> ./fin.1.ok
-			else
-				play $drts/d.mp3 & echo "$w1" >> ./fin.2.ok
-			fi
-		elif [[ $ret -eq 4 ]]; then
-			play $drts/d.mp3 & echo "$w1" >> ./fin.$1.no
-		else
-			$drts/cls "$1" f && break & exit 1
-		fi
+		--button="     Answer     ":0 \
+		--width=365 --height=360
 }
-
 
 function answer() {
 		yad --form --align=center --undecorated \
-		--center --on-top --image-on-top \
-		--skip-taskbar --text-align=center --title=" "  \
-		--window-icon=idiomind --buttons-layout=edge --borders=0 \
-		--field="<big><big><big><big><big><big><big><big><b>$1</b></big></big></big></big></big></big></big></big>":lbl \
-		--button="  Got It  ":3 \
-		--button="  Nope  ":4 \
-		--width=365 --height=350
-		
-			ret=$?
-	
-		if [[ $ret -eq 3 ]]; then
-			if [[ $1 = 1 ]]; then
-				play $drts/d.mp3 & sed -i 's/'"$w1"'//g' fin.tmp & echo "$w1" >> ./fin.1.ok
-			else
-				play $drts/d.mp3 & echo "$w1" >> ./fin.2.ok
-			fi
-		elif [[ $ret -eq 4 ]]; then
-			play $drts/d.mp3 & echo "$w1" >> ./fin.$1.no
-		else
-			$drts/cls "$1" f && break & exit 1
-		fi
+		--center --on-top --image-on-top --image="$3" \
+		--skip-taskbar --title=" "  \
+		--window-icon=idiomind --borders=0 \
+		--field="$2":lbl \
+		--buttons-layout=spread \
+		--button="      I Know it      ":2 \
+		--button="      I Don't Know      ":3 \
+		--width=365 --height=360
 }
-
-
 
 n=1
 while [ $n -le $(cat ./fin$1 | wc -l) ]; do
-	w1=$(sed -n "$n"p ./fin$1)
-	file="$drtt/$w1.mp3"
-	tgt="$w1"
-	lst=$(eyeD3 "$file" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
-	#if [ $1 = 1 ]; then
-	#trgt=$(echo "<span font='ultralight'>$tgt</span>")
-	#[[ $lgsl = Japanese ]] || [[ $lgsl = Chinese ]] || [[ $lgsl = Vietnamese ]] && stgt=? \
-	#|| stgt="<span color='#949494'><span font='monospace'><b>$(echo "$lst" | tr aeiouy ' ')</b></span></span>"
-	#elif [ $1 = 2 ]; then
-	trgt=$(echo "<span font='ultralight'>$tgt</span>")
-		#[ $lgsl = Japanese ] || [ $lgsl = Chinese ] || [ $lgsl = Vietnamese ] && stgt="$lst" || stgt="<span color='#949494'><big><b>$lst</b></big></span>"
-	
-	if [ -f "$drtt/images/$w1".jpg ]; then
-		IMAGE="$drtt/images/$w1".jpg
+
+	trgt=$(sed -n "$n"p ./fin$1)
+	srce=$(eyeD3 "$drtt/$trgt.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
+	step=$1
+	if [[ -f "$drtt/images/$trgt.jpg" ]]; then
+	img="$drtt/images/$trgt.jpg"
+	trgt="<big><big><big><big><b>$trgt</b></big></big></big></big>"
+	srce="<big><big><big><big><b>$srce</b></big></big></big></big>"
 	else
-		IMAGE="/usr/share/idiomind/images/fc.png".jpg
+	img="/usr/share/idiomind/images/fc.png"
+	trgt="<big><big><big><big><big><big><big><b>$trgt</b></big></big></big></big></big></big></big>"
+	srce="<big><big><big><big><big><big><big><b>$srce</b></big></big></big></big></big></big></big>"
+	fi
+
+	cuestion "$trgt" "$srce" "$img"
+	ret=$(echo "$?")
+	
+	if [[ $ret = 0 ]]; then # ------------------------------
+	
+		answer "$trgt" "$srce" "$img"
+		ans=$(echo "$?")
+		
+		if [[ $ans = 2 ]]; then
+			if [[ $step = 1 ]]; then
+				sed -i 's/'"$trgt"'//g' fin.tmp & echo "$trgt" >> ./fin.1.ok
+			else
+				echo "$trgt" >> ./fin.2.ok
+			fi
+		elif [[ $ans = 3 ]]; then
+		
+			echo "$trgt" >> ./fin.$step.no
+		fi
+		
+	elif [[ $ret = 1 ]]; then # ------------------------------
+	
+		$drts/cls "$step" f &
+		break &
+		exit 1
 	fi
 	
-	cuestion "$trgt" "$IMAGE" "$lst"
-
-
-
 	let n++
 done
-
-

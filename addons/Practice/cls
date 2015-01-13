@@ -39,7 +39,7 @@ fi
 	
 if [ "$2" = f ]; then
 
-	killall df.sh
+	killall $DSP/df.sh
 	cd "$DIR2"
 	[[ ! -f fin.$1.ok ]] && touch fin.$1.ok
 	[[ ! -f fin.$1.no ]] && touch fin.$1.no
@@ -102,6 +102,8 @@ if [ "$2" = f ]; then
 	elif [ $var1 -eq 100 ]; then
 		echo 21 > .iconf
 	fi
+	
+	killall $DSP/prct
 	$DSP/strt 5 "$1" & exit 1
 
 elif [ "$2" = m ]; then

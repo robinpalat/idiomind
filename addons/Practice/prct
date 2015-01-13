@@ -23,10 +23,10 @@ if [ "$1" = f ]; then
 	if [ -f look_f ]; then
 		$yad --title="$tpc" --borders=5 --center \
 		--on-top --skip-taskbar --window-icon=idiomind \
-		--buttons-layout=edge --center --image=gtk-ok \
-		--button="$restart":0 --button=Ok:2 \
-		--text "<span color='#797979'><b>$complete\\n$(cat look_f)</b></span>\\n\\n" \
-		--width=360 --height=120 --text-align=center
+		--center --image=gtk-ok \
+		--button="   $restart   ":0 --button=Ok:2 \
+		--text "<b>   $complete\\n   $(cat look_f)</b>\\n\\n" \
+		--width=360 --height=120
 		ret=$?
 			if [[ "$ret" -eq 0 ]]; then
 				$DSP/cls df & exit
@@ -153,10 +153,10 @@ elif [ "$1" = m ]; then
 	if [ -f look_mc ]; then
 		$yad --title="$tpc" --borders=5 --center  \
 		--on-top --skip-taskbar --window-icon=idiomind \
-		--buttons-layout=edge --center --image=gtk-ok \
-		--button="$restart":0 --button=Ok:1 \
-		--text "<span color='#797979'><b>$complete\\n$(cat look_mc)</b></span>\\n\\n" \
-		--width=360 --height=120 --text-align=center
+		--center --image=gtk-ok \
+		--button="   $restart   ":0 --button=Ok:1 \
+		--text "<b>   $complete\\n   $(cat look_mc)</b>\\n\\n" \
+		--width=360 --height=120
 		ret=$?
 			if [[ "$ret" -eq 0 ]]; then
 				$DSP/cls dm & exit
@@ -300,10 +300,10 @@ elif [ "$1" = w ]; then
 	if [ -f look_lw ]; then
 		$yad --title="$tpc" --borders=5 --center \
 		--on-top --skip-taskbar --window-icon=idiomind \
-		--buttons-layout=edge --center --image=gtk-ok \
-		--button="$restart":0 --button=Ok:1 \
-		--text "<span color='#797979'><b>$complete\\n$(cat look_lw)</b></span>\\n\\n" \
-		--width=360 --height=120 --text-align=center
+		--center --image=gtk-ok \
+		--button="   $restart    ":0 --button=Ok:1 \
+		--text "<b>   $complete\\n   $(cat look_lw)</b>\\n\\n" \
+		--width=360 --height=120
 		ret=$?
 			if [[ "$ret" -eq 0 ]]; then
 				$DSP/cls dw & exit
@@ -431,10 +431,10 @@ elif [ "$1" = s ]; then
 	if [ -f look_ls ]; then
 		yad --title="$tpc" --borders=5 --center  \
 		--on-top --skip-taskbar --window-icon=idiomind \
-		--buttons-layout=edge --center --image=gtk-ok \
-		--button="Reiniciar":0 --button=Ok:1 \
-		--text "<span color='#797979'><b>$complete\\n$(cat look_ls)</b></span>\\n\\n" \
-		--width=360 --height=120 --text-align=center
+		--center --image=gtk-ok \
+		--button="   $restart   ":0 --button=Ok:1 \
+		--text "<b>   $complete\\n   $(cat look_ls)</b>\\n\\n" \
+		--width=360 --height=120
 		ret=$?
 			if [[ "$ret" -eq 0 ]]; then
 				$DSP/cls ds & exit
