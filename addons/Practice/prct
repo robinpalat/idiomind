@@ -3,7 +3,6 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/practice.conf
-
 DSP="$DS/addons/Practice/"
 strt="$DSP/strt"
 IND='play $DSP/all.mp3'
@@ -16,414 +15,130 @@ DLS=$DSP/dls.sh
 Wi="$DC_tlt/cnfg3"
 Si="$DC_tlt/cnfg4"
 Li="$DC_tlt/cnfg1"
+cd "$DC_tlt/Practice"
 
-if [ "$1" = f ]; then
-
-	cd "$DC_tlt/Practice"
-	if [ -f look_f ]; then
-		$yad --title="$tpc" --borders=5 --center \
+function look() {
+		yad --title="$tpc" --borders=5 --center \
 		--on-top --skip-taskbar --window-icon=idiomind \
-		--center --image=gtk-ok \
-		--button="   $restart   ":0 --button=Ok:2 \
-		--text "<b>   $complete\\n   $(cat look_f)</b>\\n\\n" \
-		--width=360 --height=120
-		ret=$?
-			if [[ "$ret" -eq 0 ]]; then
-				$DSP/cls df & exit
-			else
-				$DSP/strt & exit
-			fi
-	fi
-	if [ -f fin.tmp ]; then
-		rm *.ok *.no
-		sed '/^$/d' fin.tmp > fin1
-	else
-			if [ "$(cat "$Si" | wc -l)" -gt 0 ]; then
-				echo "$(grep -F -x -v -f "$Si" "$Li" | wc -l)" > idxfin
-				grep -F -x -v -f "$Si" "$Li" > fin1
-			else
-				echo "$(cat "$Li" | wc -l)" > idxfin
-				cat "$Li" > fin1
-			fi
-		rm *.ok *.no
-		if [ "$(cat idxfin)" -lt 6 ]; then
-			$yad --form --center --borders=5 --image=info \
-			--title="Info" --on-top --window-icon=idiomind \
-			--button=Ok:1 --skip-taskbar \
-			--text "<span color='#797979'><b>$starting1</b></span>" \
-			--width=360 --height=120
-			$strt & killall prct.sh & exit
-		fi
-	fi
-	cp fin1 fin.tmp
+		--center --image=gtk-ok --button=Ok:2 \
+		--button="   $restart   ":0 --width=360 --height=120 \
+		--text="<b>   $complete\\n   $(cat look_f)</b>\\n\\n"
+}
 
-	$DF 1
-
-	s1=$(cat  f_r)
-	s2=$(cat fin.1.ok | wc -l)
-	s3=$(($s1 + $s2))
-	echo $s3 > f_r
-
-	if [ -f ./fin.1.no ]; then
-		cat *.no >> "$w6"
-		cat *.ok >> "$w9"
-		#cat fin.1.no >> f
-		rm fin1
-	else
-		cat *.no >> "$w6"
-		cat *.ok >> "$w9"
-		rm *.ok *.no fin.tmp fin1
-		echo "$(date "+%a %d %B")" > look_f
-		echo 21 > .iconf
-		play $DSP/all.mp3 & $strt 1 1 &
-		killall df.sh
-		exit 1
-	fi
-	cat fin.tmp | sed '/^$/d' > ./fin2
-	cp -f fin2 fin.tmp
-
-	$DF 2
-	
-	if [ -f fin.2.no ]; then
-	
-		cat *.no >> "$w6"
-		cat *.ok >> "$w9"
-		[[ -f f_r ]] && s1=$(cat  f_r) || s1=1
-		s4=$(cat idxfin)
-		var1=$((100*$s1/$s4))
-		
-		if [ $var1 -lt 1 ]; then
-			echo 1 > .iconf
-		elif [ $var1 -lt 5 ]; then
-			echo 2 > .iconf
-		elif [ $var1 -lt 10 ]; then
-			echo 3 > .iconf
-		elif [ $var1 -lt 15 ]; then
-			echo 4 > .iconf
-		elif [ $var1 -lt 20 ]; then
-			echo 5 > .iconf
-		elif [ $var1 -lt 25 ]; then
-			echo 6 > .iconf
-		elif [ $var1 -lt 30 ]; then
-			echo 7 > .iconf
-		elif [ $var1 -lt 35 ]; then
-			echo 8 > .iconf
-		elif [ $var1 -lt 40 ]; then
-			echo 9 > .iconf
-		elif [ $var1 -lt 45 ]; then
-			echo 10 > .iconf
-		elif [ $var1 -lt 50 ]; then
-			echo 11 > .iconf
-		elif [ $var1 -lt 55 ]; then
-			echo 12 > .iconf
-		elif [ $var1 -lt 60 ]; then
-			echo 13 > .iconf
-		elif [ $var1 -lt 65 ]; then
-			echo 14 > .iconf
-		elif [ $var1 -lt 70 ]; then
-			echo 15 > .iconf
-		elif [ $var1 -lt 75 ]; then
-			echo 16 > .iconf
-		elif [ $var1 -lt 80 ]; then
-			echo 17 > .iconf
-		elif [ $var1 -lt 85 ]; then
-			echo 18 > .iconf
-		elif [ $var1 -lt 90 ]; then
-			echo 19 > .iconf
-		elif [ $var1 -lt 95 ]; then
-			echo 20 > .iconf
-		elif [ $var1 -eq 100 ]; then
-			echo 21 > .iconf
-		fi
-		$strt 5 2 & exit 1
-	else
-		cat *.no >> "$w6"
-		cat *.ok >> "$w9"
-		rm *.ok *.no fin.tmp fin1
-		echo "$(date "+%a %d %B")" > look_f
-		echo 21 > .iconf
-		play $DSP/all.mp3 & $strt 1 &
-		killall df.sh
-		exit 1
-	fi
-
-elif [ "$1" = m ]; then
-
-	cd "$DC_tlt/Practice"
-	if [ -f look_mc ]; then
-		$yad --title="$tpc" --borders=5 --center  \
-		--on-top --skip-taskbar --window-icon=idiomind \
-		--center --image=gtk-ok \
-		--button="   $restart   ":0 --button=Ok:1 \
-		--text "<b>   $complete\\n   $(cat look_mc)</b>\\n\\n" \
-		--width=360 --height=120
-		ret=$?
-			if [[ "$ret" -eq 0 ]]; then
-				$DSP/cls dm & exit
-			else
-				$DSP/strt & exit
-			fi
-	fi
-	if [ -f mcin.tmp ]; then
-		rm *.ok *.no
-		sed '/^$/d' mcin.tmp > mcin1
-	else
+function get_list() {
 		if [ "$(cat "$Si" | wc -l)" -gt 0 ]; then
-			echo "$(grep -F -x -v -f "$Si" "$Li" | wc -l)" > idxmcin
-			grep -F -x -v -f "$Si" "$Li" > mcin1
+			grep -F -x -v -f "$Si" "$Li" > $1
 		else
-			echo "$(cat "$Li" | wc -l)" > idxmcin
-			cat "$Li" > mcin1
+			cat "$Li" > $1
 		fi
-		rm *.ok *.no
-		if [ "$(cat idxmcin)" -lt 6 ]; then
-			yad --form --center --borders=5 \
-			--title="Info" --on-top --image=info \
-			--window-icon=idiomind --skip-taskbar --button=Ok:1 \
-			--text="<span color='#797979'><b>$starting1</b></span>" \
-			--width=360 --height=120
-			$strt & killall prct & exit 1
-		fi
-	fi
-	if [ ! -f word1.idx ]; then
-		(
-		echo "5" ; sleep 0
-		echo "# " ; sleep 0
-		n=1
-		while [[ $n -le "$(cat mcin1 | sed 's/mcin1//g' | wc -l)" ]]; do
-			word=$(sed -n "$n"p mcin1)
-			file="$DM_tlt/words/$word.mp3"
-			echo "$(eyeD3 "$file" | grep -o -P "(?<=IWI2I0I).*(?=IWI2I0I)")" >> word1.idx
-			let n++
-		done
-		) | yad --progress \
-		--width 50 --height 35 --undecorated \
-		--pulsate --auto-close \
-		--skip-taskbar --center --no-buttons
-	fi
-	cp mcin1 mcin.tmp
+}
 
-	$DMC 1
-	
-	s1=$(cat  mc_r)
-	s2=$(cat mcin.1.ok | wc -l)
-	s3=$(($s1 + $s2))
-	echo $s3 > mc_r
-	
-	if [ -f mcin.1.no ]; then
-		cat *.no >> "$w6"
-		cat *.ok >> "$w9"
-		rm mcin1
-	else
-		cat *.no >> "$w6"
-		cat *.ok >> "$w9"
-		rm *.ok *.no mcin1 mcin.tmp
-		echo "$(date "+%a %d %B")" > look_mc
-		echo 21 > .iconmc
-		play $DSP/all.mp3 & $strt 2 1 &
-		killall dmc.sh
-		exit 1
-	fi
-	sed '/^$/d' ./mcin.tmp > ./mcin2
-	cp mcin2 mcin.tmp
+function get_list2() {
 
-	$DMC 2
-	
-	if [ -f mcin.2.no ]; then
-	
-		cat *.no >> "$w6"
-		cat *.ok >> "$w9"
-		[[ -f mc_r ]] && s1=$(cat  mc_r) || s1=1
-		s4=$(cat idxmcin)
-		var3=$((100*$s1/$s4))
-		
-		if [ $var3 -lt 1 ]; then
-			echo 1 > .iconmc
-		elif [ $var3 -lt 5 ]; then
-			echo 2 > .iconmc
-		elif [ $var3 -lt 10 ]; then
-			echo 3 > .iconmc
-		elif [ $var3 -lt 15 ]; then
-			echo 4 > .iconmc
-		elif [ $var3 -lt 20 ]; then
-			echo 5 > .iconmc
-		elif [ $var3 -lt 25 ]; then
-			echo 6 > .iconmc
-		elif [ $var3 -lt 30 ]; then
-			echo 7 > .iconmc
-		elif [ $var3 -lt 35 ]; then
-			echo 8 > .iconmc
-		elif [ $var3 -lt 40 ]; then
-			echo 9 > .iconmc
-		elif [ $var3 -lt 45 ]; then
-			echo 10 > .iconmc
-		elif [ $var3 -lt 50 ]; then
-			echo 11 > .iconmc
-		elif [ $var3 -lt 55 ]; then
-			echo 12 > .iconmc
-		elif [ $var3 -lt 60 ]; then
-			echo 13 > .iconmc
-		elif [ $var3 -lt 65 ]; then
-			echo 14 > .iconmc
-		elif [ $var3 -lt 70 ]; then
-			echo 15 > .iconmc
-		elif [ $var3 -lt 75 ]; then
-			echo 16 > .iconmc
-		elif [ $var3 -lt 80 ]; then
-			echo 17 > .iconmc
-		elif [ $var3 -lt 85 ]; then
-			echo 18 > .iconmc
-		elif [ $var3 -lt 90 ]; then
-			echo 19 > .iconmc
-		elif [ $var3 -lt 95 ]; then
-			echo 20 > .iconmc
-		elif [ $var3 -eq 100 ]; then
-			echo 21 > .iconmc
-		fi
-		$strt 6 2 & exit 1
-	else
-		cat *.no >> "$w6"
-		cat *.ok >> "$w9"
-		rm *.ok *.no mcin2 mcin.tmp
-		echo "$(date "+%a %d %B")" > look_mc
-		echo 21 > .iconmc
-		play $DSP/all.mp3 & $strt 2 &
-		killall dmc.sh
-		exit 1
-	fi
-	exit 1
+	(
+	echo "5" ; sleep 0
+	echo "# " ; sleep 0
+	n=1
+	while [[ $n -le "$(cat mcin | sed 's/mcin//g' | wc -l)" ]]; do
+		word=$(sed -n "$n"p mcin)
+		file="$DM_tlt/words/$word.mp3"
+		echo "$(eyeD3 "$file" | grep -o -P "(?<=IWI2I0I).*(?=IWI2I0I)")" >> word1.idx
+		let n++
+	done
+	) | yad --progress \
+	--width 50 --height 35 --undecorated \
+	--pulsate --auto-close \
+	--skip-taskbar --center --no-buttons
 
-elif [ "$1" = w ]; then
+}
+
+function starting() {
+		yad --form --center --borders=5 --image=info \
+		--title="Info" --on-top --window-icon=idiomind \
+		--button=Ok:1 --skip-taskbar --width=360 --height=120 \
+		--text "<span color='#797979'><b>$1</b></span>"
+		$strt & killall prct.sh & exit 1
+}
+
+if [[ "$1" = f ]]; then
 
 	cd "$DC_tlt/Practice"
 	
-	if [ -f look_lw ]; then
-		$yad --title="$tpc" --borders=5 --center \
-		--on-top --skip-taskbar --window-icon=idiomind \
-		--center --image=gtk-ok \
-		--button="   $restart    ":0 --button=Ok:1 \
-		--text "<b>   $complete\\n   $(cat look_lw)</b>\\n\\n" \
-		--width=360 --height=120
-		ret=$?
-			if [[ "$ret" -eq 0 ]]; then
-				$DSP/cls dw & exit
-			else
-				$DSP/strt & exit
-			fi
+	if [[ -f look_f ]]; then
+		look "look_f"
+		ret=$(echo "$?")
+		[[ "$ret" -eq 0 ]] && $DSP/cls df & exit || $DSP/strt & exit
 	fi
-	if [ -f lwin.tmp ]; then
-		rm *.ok *.no
-		sed '/^$/d' lwin.tmp > lwin1
+
+	if ([ -f fin ] && [ -f ok.f ]); then
+		grep -F -x -v -f ok.f fin > fin1
+		echo "-- recomenzando session"
 	else
-
-		if [ "$(cat "$Si" | wc -l)" -gt 0 ]; then
-			echo "$(grep -F -x -v -f "$Si" "$Li" | wc -l)" > idxlwin
-			grep -F -x -v -f "$Si" "$Li" > lwin1
-		else
-			echo "$(cat "$Li" | wc -l)" > idxlwin
-			cat "$Li" > lwin1
-		fi
-		rm *.ok *.no
-		if [ $(cat idxlwin) -lt 6 ]; then
-			$yad --form --center --borders=5 --image=info \
-			--title="Info" --on-top --window-icon=idiomind \
-			--button=Ok:1 --skip-taskbar \
-			--text "<span color='#797979'><b>$starting1</b></span>" \
-			--width=360 --height=120
-			$strt & killall prct & exit
-		fi
+		get_list fin && cp -f fin fin1
+		[[ "$(cat fin  | wc -l)" -lt 4 ]] && starting "$starting1"
+		echo "-- nueva session"
 	fi
-	cp -f lwin1 lwin.tmp
-
-	$DLW 1
 	
-	s1=$(cat  lw_r)
-	s2=$(cat lwin.1.ok | wc -l)
-	s3=$(($s1 + $s2))
-	echo $s3 > lw_r
+	$DF
+	
+	
+	
+elif [[ "$1" = m ]]; then
 
-	if [ -f lwin.1.no ]; then
-		cat *.no >> "$w6"
-		cat *.ok >> "$w9"
-		rm lwin1
-	else
-		cat *.no >> "$w6"
-		cat *.ok >> "$w9"
-		rm *.ok *.no lwin.tmp lwin1
-		echo "$(date "+%a %d %B")" > look_lw
-		echo 21 > .iconlw
-		play $DSP/all.mp3 & $strt 3 1 &
-		killall df.sh
-		exit 1
+	cd "$DC_tlt/Practice"
+	
+	if [[ -f look_mc ]]; then
+		look "look_mc"
+		ret=$(echo "$?")
+		[[ "$ret" -eq 0 ]] && $DSP/cls mc & exit || $DSP/strt & exit
 	fi
-	cat lwin.tmp | sed '/^$/d' > ./lwin2
-	cp -f lwin2 lwin.tmp
 
-	$DLW 2
-
-	if [ -f lwin.2.no ]; then
-	
-		cat *.no >> "$w6"
-		cat *.ok >> "$w9"
-		[[ -f lw_r ]] && s1=$(cat  lw_r) || s1=1
-		s4=$(cat idxlwin)
-		var2=$((100*$s1/$s4))
+	if ([ -f mcin ] && [ -f ok.m ]); then
+		grep -F -x -v -f ok.m mcin > mcin1
+		echo "-- recomenzando session"
 		
-		if [ $var2 -lt 1 ]; then
-			echo 1 > .iconlw
-		elif [ $var2 -lt 5 ]; then
-			echo 2 > .iconlw
-		elif [ $var2 -lt 10 ]; then
-			echo 3 > .iconlw
-		elif [ $var2 -lt 15 ]; then
-			echo 4 > .iconlw
-		elif [ $var2 -lt 20 ]; then
-			echo 5 > .iconlw
-		elif [ $var2 -lt 25 ]; then
-			echo 6 > .iconlw
-		elif [ $var2 -lt 30 ]; then
-			echo 7 > .iconlw
-		elif [ $var2 -lt 35 ]; then
-			echo 8 > .iconlw
-		elif [ $var2 -lt 40 ]; then
-			echo 9 > .iconlw
-		elif [ $var2 -lt 45 ]; then
-			echo 10 > .iconlw
-		elif [ $var2 -lt 50 ]; then
-			echo 11 > .iconlw
-		elif [ $var2 -lt 55 ]; then
-			echo 12 > .iconlw
-		elif [ $var2 -lt 60 ]; then
-			echo 13 > .iconlw
-		elif [ $var2 -lt 65 ]; then
-			echo 14 > .iconlw
-		elif [ $var2 -lt 70 ]; then
-			echo 15 > .iconlw
-		elif [ $var2 -lt 75 ]; then
-			echo 16 > .iconlw
-		elif [ $var2 -lt 80 ]; then
-			echo 17 > .iconlw
-		elif [ $var2 -lt 85 ]; then
-			echo 18 > .iconlw
-		elif [ $var2 -lt 90 ]; then
-			echo 19 > .iconlw
-		elif [ $var2 -lt 95 ]; then
-			echo 20 > .iconlw
-		elif [ $var2 -eq 100 ]; then
-			echo 21 > .iconlw
-		fi
-		$strt 7 2 & exit 1
 	else
-		cat *.no >> "$w6"
-		cat *.ok >> "$w9"
-		rm *.ok *.no lwin.tmp lwin
-		echo "$(date "+%a %d %B")" > look_lw
-		echo 21 > .iconlw
-		play $DSP/all.mp3 & $strt 3 &
-		killall dlw.sh
-		exit 1
+		get_list mcin && cp -f mcin mcin1
+		if [ ! -f word1.idx ]; then
+			get_list2
+		fi
+		[[ "$(cat mcin  | wc -l)" -lt 4 ]] && starting "$starting1"
+		 echo "-- nueva session"
 	fi
-	exit 1
+
+	$DMC
+	
+	
+	
+	
+
+	
+elif [[ "$1" = w ]]; then
+
+	cd "$DC_tlt/Practice"
+	
+	if [[ -f look_lw ]]; then
+		look "look_lw"
+		ret=$(echo "$?")
+		[[ "$ret" -eq 0 ]] && $DSP/cls dw & exit || $DSP/strt & exit
+	fi
+
+	if ([ -f lwin ] && [ -f ok.w ]); then
+		grep -F -x -v -f ok.w lwin > lwin1
+		echo "-- recomenzando session"
+	else
+		get_list lwin && cp -f lwin lwin1
+		[[ "$(cat lwin  | wc -l)" -lt 4 ]] && starting "$starting1"
+		echo "-- nueva session"
+	fi
+	
+	$DLW
+	
+	
+	
+	
+	
+	
 
 elif [ "$1" = s ]; then
 

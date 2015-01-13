@@ -12,9 +12,9 @@ w6="$HOME/.config/idiomind/addons/practice/w6"
 cd "$DIR2"
 
 if [ "$1" = df ]; then
-	rm look_f *.no *.ok fin1 fin2 fin3 iF
+	rm look_f fin fin1 fin2 fin3 ok.f
 	echo "1" > .iconf
-	echo "0" > f_r
+	echo "0" > l_f
 	$DSP/strt &
 	exit 1
 elif [ "$1" = dm ]; then
@@ -24,9 +24,9 @@ elif [ "$1" = dm ]; then
 	$DSP/strt &
 	exit 1
 elif [ "$1" = dw ]; then
-	rm look_lw *.no *.ok lwin iLW
+	rm look_lw lwin lwin1 lwin2 lwin3 ok.w
 	echo "1" > .iconlw
-	echo "0" > lw_r
+	echo "0" > l_lw
 	$DSP/strt &
 	exit 1
 elif [ "$1" = ds ]; then
@@ -37,206 +37,191 @@ elif [ "$1" = ds ]; then
 	exit 1
 fi
 	
-if [ "$2" = f ]; then
+if [ "$1" = f ]; then
 
 	killall $DSP/df.sh
+	killall $DSP/prct
+	killall $DSP/strt
 	cd "$DIR2"
-	[[ ! -f fin.$1.ok ]] && touch fin.$1.ok
-	[[ ! -f fin.$1.no ]] && touch fin.$1.no
-	cat fin.$1.no >> "$w6"
-	cat fin.$1.ok >> "$w9"
-	s2=$(cat fin.$1.ok | wc -l)
-	if [ -f f_r ]; then
-		s1=$(cat f_r)
-		s3=$(($s1+$s2))
-		echo $s3 > f_r
-	else
-		s1=1
-		s3=$(($s1+$s2))
-		echo "$(($s3-1))" > f_r
-	fi
+	
+	easy=$2
+	ling=$3
+	hard=$4
+	all=$5
+	
+	[[ -f ok.f ]] && cat ok.f >> "$w9"
+	[[ -f l_f ]] && echo $(($(cat l_f)+$easy)) > l_f || echo $easy > l_f
+	s=$(cat l_f)
+	v=$((100*$s/$all))
 
-	s4=$(cat idxfin)
-	var1=$((100*$s1/$s4))
-
-	if [ $var1 -lt 1 ]; then
+	if [ $v -le 1 ]; then
 		echo 1 > .iconf
-	elif [ $var1 -lt 5 ]; then
+	elif [ $v -le 5 ]; then
 		echo 2 > .iconf
-	elif [ $var1 -lt 10 ]; then
+	elif [ $v -le 10 ]; then
 		echo 3 > .iconf
-	elif [ $var1 -lt 15 ]; then
+	elif [ $v -le 15 ]; then
 		echo 4 > .iconf
-	elif [ $var1 -lt 20 ]; then
+	elif [ $v -le 20 ]; then
 		echo 5 > .iconf
-	elif [ $var1 -lt 25 ]; then
+	elif [ $v -le 25 ]; then
 		echo 6 > .iconf
-	elif [ $var1 -lt 30 ]; then
+	elif [ $v -le 30 ]; then
 		echo 7 > .iconf
-	elif [ $var1 -lt 35 ]; then
+	elif [ $v -le 35 ]; then
 		echo 8 > .iconf
-	elif [ $var1 -lt 40 ]; then
+	elif [ $v -le 40 ]; then
 		echo 9 > .iconf
-	elif [ $var1 -lt 45 ]; then
+	elif [ $v -le 45 ]; then
 		echo 10 > .iconf
-	elif [ $var1 -lt 50 ]; then
+	elif [ $v -le 50 ]; then
 		echo 11 > .iconf
-	elif [ $var1 -lt 55 ]; then
+	elif [ $v -le 55 ]; then
 		echo 12 > .iconf
-	elif [ $var1 -lt 60 ]; then
+	elif [ $v -le 60 ]; then
 		echo 13 > .iconf
-	elif [ $var1 -lt 65 ]; then
+	elif [ $v -le 65 ]; then
 		echo 14 > .iconf
-	elif [ $var1 -lt 70 ]; then
+	elif [ $v -le 70 ]; then
 		echo 15 > .iconf
-	elif [ $var1 -lt 75 ]; then
+	elif [ $v -le 75 ]; then
 		echo 16 > .iconf
-	elif [ $var1 -lt 80 ]; then
+	elif [ $v -le 80 ]; then
 		echo 17 > .iconf
-	elif [ $var1 -lt 85 ]; then
+	elif [ $v -le 85 ]; then
 		echo 18 > .iconf
-	elif [ $var1 -lt 90 ]; then
+	elif [ $v -le 90 ]; then
 		echo 19 > .iconf
-	elif [ $var1 -lt 95 ]; then
+	elif [ $v -le 95 ]; then
 		echo 20 > .iconf
-	elif [ $var1 -eq 100 ]; then
+	elif [ $v -eq 100 ]; then
 		echo 21 > .iconf
 	fi
 	
-	killall $DSP/prct
-	$DSP/strt 5 "$1" & exit 1
+	$DSP/strt 5 $easy $ling $hard & exit 1
 
-elif [ "$2" = m ]; then
+elif [ "$1" = m ]; then
 
 	killall dmc.sh
 	cd "$DIR2"
-	[[ ! -f mcin.$1.ok ]] && touch mcin.$1.ok
-	[[ ! -f mcin.$1.no ]] && touch mcin.$1.no
-	cat mcin.$1.no >> "$w6"
-	cat mcin.$1.ok >> "$w9"
-	s2=$(cat mcin.$1.ok | wc -l)
-	if [ -f mc_r ]; then
-		s1=$(cat mc_r)
-		s3=$(($s1+$s2))
-		echo $s3 > mc_r
-	else
-		s1=1
-		s3=$(($s1+$s2))
-		echo "$(($s3-1))" > mc_r
-	fi
-	s4=$(cat idxmcin)
-	var3=$((100*$s1/$s4))
 	
-	if [ $var3 -lt 1 ]; then
+	easy=$2
+	ling=$3
+	hard=$4
+	all=$5
+	
+	[[ -f ok.m ]] && cat ok.m >> "$w9"
+	[[ -f l_mc ]] && echo $(($(cat l_mc)+$easy)) > l_mc || echo $easy > l_mc
+	s=$(cat l_mc)
+	v=$((100*$s/$all))
+
+	if [ $v -le 1 ]; then
 		echo 1 > .iconmc
-	elif [ $var3 -lt 5 ]; then
+	elif [ $v -le 5 ]; then
 		echo 2 > .iconmc
-	elif [ $var3 -lt 10 ]; then
+	elif [ $v -le 10 ]; then
 		echo 3 > .iconmc
-	elif [ $var3 -lt 15 ]; then
+	elif [ $v -le 15 ]; then
 		echo 4 > .iconmc
-	elif [ $var3 -lt 20 ]; then
+	elif [ $v -le 20 ]; then
 		echo 5 > .iconmc
-	elif [ $var3 -lt 25 ]; then
+	elif [ $v -le 25 ]; then
 		echo 6 > .iconmc
-	elif [ $var3 -lt 30 ]; then
+	elif [ $v -le 30 ]; then
 		echo 7 > .iconmc
-	elif [ $var3 -lt 35 ]; then
+	elif [ $v -le 35 ]; then
 		echo 8 > .iconmc
-	elif [ $var3 -lt 40 ]; then
+	elif [ $v -le 40 ]; then
 		echo 9 > .iconmc
-	elif [ $var3 -lt 45 ]; then
+	elif [ $v -le 45 ]; then
 		echo 10 > .iconmc
-	elif [ $var3 -lt 50 ]; then
+	elif [ $v -le 50 ]; then
 		echo 11 > .iconmc
-	elif [ $var3 -lt 55 ]; then
+	elif [ $v -le 55 ]; then
 		echo 12 > .iconmc
-	elif [ $var3 -lt 60 ]; then
+	elif [ $v -le 60 ]; then
 		echo 13 > .iconmc
-	elif [ $var3 -lt 65 ]; then
+	elif [ $v -le 65 ]; then
 		echo 14 > .iconmc
-	elif [ $var3 -lt 70 ]; then
+	elif [ $v -le 70 ]; then
 		echo 15 > .iconmc
-	elif [ $var3 -lt 75 ]; then
+	elif [ $v -le 75 ]; then
 		echo 16 > .iconmc
-	elif [ $var3 -lt 80 ]; then
+	elif [ $v -le 80 ]; then
 		echo 17 > .iconmc
-	elif [ $var3 -lt 85 ]; then
+	elif [ $v -le 85 ]; then
 		echo 18 > .iconmc
-	elif [ $var3 -lt 90 ]; then
+	elif [ $v -le 90 ]; then
 		echo 19 > .iconmc
-	elif [ $var3 -lt 95 ]; then
+	elif [ $v -le 95 ]; then
 		echo 20 > .iconmc
-	elif [ $var3 -eq 100 ]; then
+	elif [ $v -eq 100 ]; then
 		echo 21 > .iconmc
 	fi
-	$DSP/strt 6 "$1" & exit 1
 
-elif [ "$2" = w ]; then
+	$DSP/strt 6 $easy $ling $hard & exit 1
+
+elif [ "$1" = w ]; then
 
 	killall dlw.sh
 	cd "$DIR2"
-	[[ ! -f lwin.$1.ok ]] && touch lwin.$1.ok
-	[[ ! -f lwin.$1.no ]] && touch lwin.$1.no
-	cat lwin.$1.no >> "$w6"
-	cat lwin.$1.ok >> "$w9"
-	s2=$(cat lwin.$1.ok | wc -l)
-	if [ -f lw_r ]; then
-		s1=$(cat lw_r)
-		s3=$(($s1+$s2))
-		echo $s3 > lw_r
-	else
-		s1=1
-		s3=$(($s1+$s2))
-		echo "$(($s3-1))" > lw_r
-	fi
-	s4=$(cat idxlwin)
-	var2=$((100*$s1/$s4))
+	cd "$DIR2"
 	
-	if [ $var2 -lt 1 ]; then
+	easy=$2
+	ling=$3
+	hard=$4
+	all=$5
+	
+	[[ -f ok.w ]] && cat ok.w >> "$w9"
+	[[ -f l_lw ]] && echo $(($(cat l_lw)+$easy)) > l_lw || echo $easy > l_lw
+	s=$(cat l_lw)
+	v=$((100*$s/$all))
+	
+	if [ $v -le 1 ]; then
 		echo 1 > .iconlw
-	elif [ $var2 -lt 5 ]; then
+	elif [ $v -le 5 ]; then
 		echo 2 > .iconlw
-	elif [ $var2 -lt 10 ]; then
+	elif [ $v -le 10 ]; then
 		echo 3 > .iconlw
-	elif [ $var2 -lt 15 ]; then
+	elif [ $v -le 15 ]; then
 		echo 4 > .iconlw
-	elif [ $var2 -lt 20 ]; then
+	elif [ $v -le 20 ]; then
 		echo 5 > .iconlw
-	elif [ $var2 -lt 25 ]; then
+	elif [ $v -le 25 ]; then
 		echo 6 > .iconlw
-	elif [ $var2 -lt 30 ]; then
+	elif [ $v -le 30 ]; then
 		echo 7 > .iconlw
-	elif [ $var2 -lt 35 ]; then
+	elif [ $v -le 35 ]; then
 		echo 8 > .iconlw
-	elif [ $var2 -lt 40 ]; then
+	elif [ $v -le 40 ]; then
 		echo 9 > .iconlw
-	elif [ $var2 -lt 45 ]; then
+	elif [ $v -le 45 ]; then
 		echo 10 > .iconlw
-	elif [ $var2 -lt 50 ]; then
+	elif [ $v -le 50 ]; then
 		echo 11 > .iconlw
-	elif [ $var2 -lt 55 ]; then
+	elif [ $v -le 55 ]; then
 		echo 12 > .iconlw
-	elif [ $var2 -lt 60 ]; then
+	elif [ $v -le 60 ]; then
 		echo 13 > .iconlw
-	elif [ $var2 -lt 65 ]; then
+	elif [ $v -le 65 ]; then
 		echo 14 > .iconlw
-	elif [ $var2 -lt 70 ]; then
+	elif [ $v -le 70 ]; then
 		echo 15 > .iconlw
-	elif [ $var2 -lt 75 ]; then
+	elif [ $v -le 75 ]; then
 		echo 16 > .iconlw
-	elif [ $var2 -lt 80 ]; then
+	elif [ $v -le 80 ]; then
 		echo 17 > .iconlw
-	elif [ $var2 -lt 85 ]; then
+	elif [ $v -le 85 ]; then
 		echo 18 > .iconlw
-	elif [ $var2 -lt 90 ]; then
+	elif [ $v -le 90 ]; then
 		echo 19 > .iconlw
-	elif [ $var2 -lt 95 ]; then
+	elif [ $v -le 95 ]; then
 		echo 20 > .iconlw
-	elif [ $var2 -eq 100 ]; then
+	elif [ $v -eq 100 ]; then
 		echo 21 > .iconlw
 	fi
-	$DSP/strt 7 "$1" & exit 1
+	
+	$DSP/strt 7 $easy $ling $hard & exit 1
 
 elif [ "$1" = s ]; then
 
