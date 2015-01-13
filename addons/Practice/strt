@@ -30,17 +30,17 @@ if [[ -n "$1" ]]; then
 	elif [ $1 = 5 ]; then
 		
 		learned=$(cat l_f)
-info="  <b><big>$learned </big></b><small>$s_learned</small>  <span color='#3AB451'><b><big>$easys </big></b></span><small>$s_easy</small>  <span color='#E78C1E'><b><big>$learning </big></b></span><small>$s_learning</small>  <span color='#D11B5D'><b><big>$hards </big></b></span><small>$s_hard  </small>\\n"
+info="  <b><big>$learned </big></b><small>$s_learned</small>   <span color='#3AB451'><b><big>$easys </big></b></span><small>$s_easy</small>   <span color='#E78C1E'><b><big>$learning </big></b></span><small>$s_learning</small>   <span color='#D11B5D'><b><big>$hards </big></b></span><small>$s_hard  </small>\\n"
 		num=$(cat .iconf)
 		info1="* "
 	elif [ $1 = 6 ]; then
 		learned=$(cat l_mc)
-info="  <b><big>$learned </big></b><small>$s_learned</small>  <span color='#3AB451'><b><big>$easys </big></b></span><small>$s_easy</small>  <span color='#E78C1E'><b><big>$learning </big></b></span><small>$s_learning</small>  <span color='#D11B5D'><b><big>$hards </big></b></span><small>$s_hard  </small>\\n"
+info="  <b><big>$learned </big></b><small>$s_learned</small>   <span color='#3AB451'><b><big>$easys </big></b></span><small>$s_easy</small>   <span color='#E78C1E'><b><big>$learning </big></b></span><small>$s_learning</small>   <span color='#D11B5D'><b><big>$hards </big></b></span><small>$s_hard  </small>\\n"
 		num=$(cat .iconmc)
 		info2="* "
 	elif [ $1 = 7 ]; then
 		learned=$(cat l_lw)
-info="  <b><big>$learned </big></b><small>$s_learned</small>  <span color='#3AB451'><b><big>$easys </big></b></span><small>$s_easy</small>  <span color='#E78C1E'><b><big>$learning </big></b></span><small>$s_learning</small>  <span color='#D11B5D'><b><big>$hards </big></b></span><small>$s_hard  </small>\\n"
+info="  <b><big>$learned </big></b><small>$s_learned</small>   <span color='#3AB451'><b><big>$easys </big></b></span><small>$s_easy</small>   <span color='#E78C1E'><b><big>$learning </big></b></span><small>$s_learning</small>   <span color='#D11B5D'><b><big>$hards </big></b></span><small>$s_hard  </small>\\n"
 		num=$(cat .iconlw)
 		info3="* "
 	elif [ $1 = 8 ]; then
@@ -48,7 +48,7 @@ info="  <b><big>$learned </big></b><small>$s_learned</small>  <span color='#3AB4
 		learning=$(cat lsin.1.no | wc -l)
 		hards=$(cat lsin.no | wc -l)
 		learned=$(cat ls_r)
-info="  <b><big>$learned </big></b><small>$s_learned</small>  <span color='#3AB451'><b><big>$easys </big></b></span><small>$s_easy</small>  <span color='#E78C1E'><b><big>$learning </big></b></span><small>$s_learning</small>  <span color='#D11B5D'><b><big>$hards </big></b></span><small>$s_hard  </small>\\n"
+info="  <b><big>$learned </big></b><small>$s_learned</small>   <span color='#3AB451'><b><big>$easys </big></b></span><small>$s_easy</small>   <span color='#E78C1E'><b><big>$learning </big></b></span><small>$s_learning</small>   <span color='#D11B5D'><b><big>$hards </big></b></span><small>$s_hard  </small>\\n"
 		num=$(cat .iconls)
 		info4="* "
 	fi
@@ -63,19 +63,34 @@ img2=$DSP/icons_st/$iconmc.png
 img3=$DSP/icons_st/$iconlw.png
 img4=$DSP/icons_st/$iconls.png
 
+#VAR=$(yad --ellipsize=NONE --list --text-align=center \
+#--on-top --class=idiomind --name=idiomind \
+#--center --window-icon=idiomind --skip-taskbar \
+#--image-on-top --buttons-layout=edge $img \
+#--borders=5 --expand-column=1 --print-column=1 \
+#--width=$wth --height=$hgt --text="$info" \
+#--no-headers --button=$restart:3 --button=$start:0 \
+#--title="Practice - $tpc" \
+#--column="Action" --column="Pick":IMG \
+#"  $info1 Flashcards" $img1 \
+#"  $info2 Multiple Choisse" $img2 \
+#"  $info3 Listening Words" $img3 \
+#"  $info4 Listening Sentences" $img4 )
+#ret=$?
+
 VAR=$(yad --ellipsize=NONE --list --text-align=center \
 --on-top --class=idiomind --name=idiomind \
 --center --window-icon=idiomind --skip-taskbar \
 --image-on-top --buttons-layout=edge $img \
---borders=5 --expand-column=1 --print-column=1 \
+--borders=5 --expand-column=1 --print-column=2 \
 --width=$wth --height=$hgt --text="$info" \
 --no-headers --button=$restart:3 --button=$start:0 \
 --title="Practice - $tpc" \
---column="Action" --column="Pick":IMG \
-"  $info1 Flashcards" $img1 \
-"  $info2 Multiple Choisse" $img2 \
-"  $info3 Listening Words" $img3 \
-"  $info4 Listening Sentences" $img4 )
+--column="Pick":IMG --column="Action" \
+$img1 "     $info1 Flashcards" \
+$img2 "     $info2 Multiple Choisse" \
+$img3 "     $info3 Listening Words" \
+$img4 "     $info4 Listening Sentences" )
 ret=$?
 
 	if [ $ret -eq 0 ]; then
