@@ -165,6 +165,7 @@ if [ $1 = n_t ]; then
 			> $DC_tl/"$jlb"/cnfg3
 			> $DC_tl/"$jlb"/cnfg0
 			> $DC_tl/"$jlb"/cnfg1
+			echo "$(date +%F)" > $DC_tl/"$jlb"/cnfg12
 			echo "1" > $DC_tl/"$jlb"/cnfg8
 			mkdir $DC_tl/"$jlb"/Practice
 			cp $DS/addons/Practice/default/.* $DC_tl/"$jlb"/Practice

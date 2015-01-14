@@ -829,7 +829,6 @@ elif [ $1 = dlt ]; then
 		if [ $ret -eq 0 ]; then
 			rm -r "$DM_tl/$tpc"
 			rm -r "$DC_tl/$tpc"
-			$ > $DC_s/topic_m
 			$ > $DC_s/cnfg6
 			rm $DC_s/cnfg8
 			$ > $DC_tl/.cnfg8

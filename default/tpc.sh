@@ -29,6 +29,7 @@ if [[ $1 = 2 ]]; then
 fi
 
 if [ -d "$DC_tlt" ]; then
+	
 	chk1="$DC_tlt/cnfg0"
 	chk2="$DC_tlt/cnfg1"
 	chk3="$DC_tlt/cnfg2"
@@ -141,6 +142,8 @@ if [ -d "$DC_tlt" ]; then
 			sed '/^$/d' $DT/ind > "$in3"
 		fi
 		cp -f "$in1" "$DC_tlt/cnfg1"
+		
+		$DS/mngr.sh mkmn
 	fi
 	
 	if cat "$DC_tl/.cnfg3" | grep -Fxo "$topic"; then

@@ -158,6 +158,7 @@ elif [[ $1 = n_t ]]; then
 			mv -f "$DC_tl/Feeds/cnfg3" "$DC_tl/$jlb/cnfg3"
 			mv -f "$DC_tl/Feeds/cnfg4" "$DC_tl/$jlb/cnfg4"
 			mv -f "$DC_tl/Feeds/cnfg11" "$DC_tl/$jlb/cnfg11"
+			echo "$(date +%F)" > "$DC_tl/$jlb/cnfg12"
 			cd "$DM_tl/Feeds/kept"
 			mv -f ./* "$DM_tl/$jlb/"
 			cd "$DM_tl/Feeds/kept/.audio"

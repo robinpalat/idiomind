@@ -47,10 +47,11 @@ elif [[ $1 = infsd ]]; then
 	lnglbl=$(echo $lgtl | awk '{print tolower($0)}')
 	icon=$DS/images/img6.png
 
-	yad --borders=10 --width=400 --height=150 \
+	yad --borders=10 --width=400 --height=160 \
 	--on-top --skip-taskbar --center --image=$icon \
 	--title="idiomind" --button="$download:0" --button="Close:1" \
-	--text="<b>$NM</b>\\n<small>$LNGS <b>></b> $LNGT </small> \\n"
+	--text="<b>$NM</b>\\n<small>$LNGS <b>></b> $LNGT </small> \\n" \
+	--window-icon=idiomind
 		ret=$?
 
 		if [ $ret -eq 2 ]; then
@@ -61,13 +62,13 @@ elif [[ $1 = infsd ]]; then
 			sv=$(yad --save --center --borders=10 \
 			--on-top --filename="$tpcd.idmnd" \
 			--window-icon=idiomind --skip-taskbar --title="Save" \
-			--file --width=600 --height=500 --button=gtk-ok:0 )
+			--file --width=600 --height=500 --button="Ok":0 )
 			ret=$?
 			
 			curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
 			$yad --window-icon=idiomind --on-top \
 			--image="info" --name=idiomind \
-			--text="<b>$conn_err  \\n  </b>" \
+			--text="  $conn_err  \\n" \
 			--image-on-top --center --sticky \
 			--width=320 --height=100 --borders=5 \
 			--skip-taskbar --title="Idiomind" \
@@ -110,7 +111,7 @@ elif [[ $1 = infsd ]]; then
 				mv -f "/tmp/$U.$tpcd.idmnd" "$sv"
 			else
 				$yad --fixed --name=idiomind --center \
-				--image=info --text="<b>$file_err</b>" \
+				--image=dialog-warning --text="$file_err" \
 				--fixed --sticky --width=320 --height=140 --borders=3 \
 				--skip-taskbar --window-icon=idiomind \
 				--on-top --title="Idiomind" \
@@ -123,11 +124,11 @@ elif [[ $1 = infsd ]]; then
 fi
 
 lnglbl=$(echo $lgtl | awk '{print tolower($0)}')
-nt=$(sed -n 2p $DC_s/cnfg4)
 user=$(echo "$(whoami)")
 U=$(sed -n 1p $DC_s/cnfg4)
 mail=$(sed -n 2p $DC_s/cnfg4)
 skp=$(sed -n 3p $DC_s/cnfg4)
+nt=$(cat "$DC_tlt/cnfg10")
 nme=$(echo "$tpc" | sed 's/ /_/g' \
 | sed 's/"//g' | sed 's/’//g')
 [[ $(echo "$tpc" | wc -c) -gt 40 ]] \
@@ -265,8 +266,8 @@ function suma(){
 }
 suma
 if [ $ALL -le 20 ]; then
-	cstn=$($yad --image=info --on-top --window-icon=idiomind \
-	--text="<b>$min_items  \\n  </b>" \
+	cstn=$($yad --image=info --on-top \
+	--text=" $min_items\\n " --window-icon=idiomind \
 	--image-on-top --center --sticky --name=idiomind \
 	--width=320 --height=100 --borders=5 \
 	--skip-taskbar --title="Idiomind" \
@@ -282,14 +283,13 @@ upld=$($yad --form --width=400 --height=420 --on-top \
 --field=" :lbl" "#1" \
 --field="    <small>$author</small>:: " "$user" \
 --field="    <small>$email</small>:: " "$mail" \
---field="    <small>$skype</small>:: " "$skp" \
 --field="    <small>$category</small>::CB" \
 "!$others!$entertainment!$history!$documentary!$films!$internet!$music!$events!$nature!$news!$office!$relations!$sport!$shopping!$social!$technology!$travel" \
---field="<small>\\n$notes:</small>:TXT" " " \
+--field="<small>\\n$notes:</small>:TXT" "$nt" \
 --field="<small>$add_image</small>:FL")
 ret=$?
 
-Ctgry=$(echo "$upld" | cut -d "|" -f5)
+Ctgry=$(echo "$upld" | cut -d "|" -f4)
 [[ $Ctgry = $others ]] && Ctgry=others
 [[ $Ctgry = $entertainment ]] && Ctgry=entertainment
 [[ $Ctgry = $history ]] && Ctgry=history
@@ -306,6 +306,18 @@ Ctgry=$(echo "$upld" | cut -d "|" -f5)
 [[ $Ctgry = $technology ]] && Ctgry=technology
 [[ $Ctgry = $travel ]] && Ctgry=travel
 
+if [ -z $Ctgry ]; then
+	$yad --window-icon=idiomind --name=idiomind \
+	--image=info --on-top \
+	--text="  $categry_err\\n  " \
+	--image-on-top --center --sticky \
+	--width=320 --height=100 --borders=5 \
+	--skip-taskbar --title="Idiomind" \
+	--button="  Ok  ":0
+	$DS/ifs/upld.sh &
+	exit 1
+fi
+
 if [[ "$ret" != 0 ]]; then
 	exit 1
 fi
@@ -314,7 +326,7 @@ curl -v www.google.com 2>&1 | \
 grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
 $yad --window-icon=idiomind --on-top \
 --image="info" --name=idiomind \
---text="<b>$conn_err  \\n  </b>" \
+--text="  $conn_err  \\n" \
 --image-on-top --center --sticky \
 --width=320 --height=100 --borders=5 \
 --skip-taskbar --title=Idiomind \
@@ -327,8 +339,8 @@ source $DT/SITE_TMP && rm -f $DT/SITE_TMP
 
 if [ -z "$FTPHOST" ]; then
 	$yad --window-icon=idiomind --name=idiomind \
-	--image=error --on-top \
-	--text="<b>$site_err\\n</b>" \
+	--image=dialog-warning --on-top \
+	--text=" $site_err\\n " \
 	--image-on-top --center --sticky \
 	--width=320 --height=100 --borders=5 \
 	--skip-taskbar --title="Idiomind" \
@@ -338,42 +350,57 @@ fi
 
 Autor=$(echo "$upld" | cut -d "|" -f2)
 Mail=$(echo "$upld" | cut -d "|" -f3)
-Skype=$(echo "$upld" | cut -d "|" -f4)
-Notes=$(echo "$upld" | cut -d "|" -f6 | sed 's/\n/ /g')
-img=$(echo "$upld" | cut -d "|" -f7)
+notes=$(echo "$upld" | cut -d "|" -f5 | sed 's/\n/ /g')
+img=$(echo "$upld" | cut -d "|" -f6)
 link="$U.$tpc.idmnd"
 
 mkdir "$DT/$nme"
 mkdir "$DT/$tpc"
-echo ""$tpc"
-"$lgtl"
-"$lgt"
-"$lgsl"
-"$lgs"
-"$Autor"
-"$Mail"
-"$Skype"
-"$Ctgry"
-"$link"
-"$Notes"" > "$DT/cnfg12"
+
+cd "$DM_tlt/words/images"
+if [ $(ls -1 *.jpg 2>/dev/null | wc -l) != 0 ]; then
+	images=$(ls *.jpg | wc -l)
+else
+	images=0
+fi
+[[ -f "$DC_tlt"/cnfg3 ]] && words=$(cat "$DC_tlt"/cnfg3 | wc -l)
+[[ -f "$DC_tlt"/cnfg4 ]] && sentences=$(cat "$DC_tlt"/cnfg4 | wc -l)
+[[ -f "$DM_tlt"/cnfg12 ]] && date_c=$(cat "$DM_tlt"/cnfg12)
+date_u=$(date +%F)
+
+echo '
+name="01"
+language_source="02"
+language_target="03"
+author="04"
+contact="05"
+category="06"
+link="07"
+date_c="08"
+date_u="09"
+nwords="10"
+nsentences="11"
+nimages="12"
+' > "$DT/cnfg12"
+
+sed -i "s/01/$tpc/g" "$DT/cnfg12"
+sed -i "s/02/$lgsl/g" "$DT/cnfg12"
+sed -i "s/03/$lgtl/g" "$DT/cnfg12"
+sed -i "s/04/$Author/g" "$DT/cnfg12"
+sed -i "s/05/$Mail/g" "$DT/cnfg12"
+sed -i "s/06/$Ctgry/g" "$DT/cnfg12"
+sed -i "s/07/$link/g" "$DT/cnfg12"
+sed -i "s/08/$date_c/g" "$DT/cnfg12"
+sed -i "s/09/$date_u/g" "$DT/cnfg12"
+sed -i "s/10/$words/g" "$DT/cnfg12"
+sed -i "s/11/$sentences/g" "$DT/cnfg12"
+sed -i "s/12/$images/g" "$DT/cnfg12"
+
 echo "$U" > $DC_s/cnfg4
-echo "$Skype" >> $DC_s/cnfg4
 echo "$Mail" >> $DC_s/cnfg4
 
 [[ -f "$img" ]] && /usr/bin/convert -scale 64x54! \
 -border 0.5 -bordercolor '#ADADAD' "$img" "$DM_tlt/words/images/img.png"
-
-if [ -z $Ctgry ]; then
-	$yad --window-icon=idiomind --name=idiomind \
-	--image=info --on-top \
-	--text="<b>$categry_err  \\n</b>" \
-	--image-on-top --center --sticky \
-	--width=320 --height=100 --borders=5 \
-	--skip-taskbar --title="Idiomind" \
-	--button="  Ok  ":0
-	$DS/ifs/upld.sh &
-	exit 1
-fi
 
 cd "$DM_tlt"
 cp -r * $DT/"$tpc/"
@@ -392,6 +419,9 @@ cp -f "$DC_tlt/cnfg3" "$DT/$tpc/cnfg3"
 cp -f "$DC_tlt/cnfg4" "$DT/$tpc/cnfg4"
 cp -f "$DC_tlt/cnfg5" "$DT/$tpc/cnfg5"
 cp -f "$DC_tlt/cnfg10" "$DT/$tpc/cnfg10"
+echo "$notes" > "$DC_tlt/cnfg10"
+echo "$notes" > "$DT/$tpc/cnfg10"
+
 cd $DT
 tar -cvf "$tpc.tar" "$tpc"
 gzip -9 "$tpc.tar"
@@ -417,13 +447,15 @@ END_SCRIPT
 exit=$?
 if [ $exit = 0 ] ; then
     cp -f "$DT/cnfg12" "$DM_t/saved/$tpc.cnfg12"
-    info="\n<big><b> $saved</b></big>\n"
+    info="  $tpc\n\n<b> $saved</b>\n"
+    image=dialog-ok
 else
-    info="$upload_err"
+    info=" $upload_err"
+    image=dialog-warning
 fi
 
 yad --window-icon=idiomind --name=idiomind \
---image=gtk-ok --on-top --text="$info" \
+--image=$image --on-top --text="$info" \
 --image-on-top --center --fixed --sticky \
 --width=380 --height=150 --borders=5 \
 --skip-taskbar --title=idiomind \
