@@ -2,6 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
+source $DS/ifs/trans/$lgs/practice.conf
 drtt="$DM_tlt/words"
 drts="$DS/addons/Practice/"
 strt="$drts/strt"
@@ -11,11 +12,12 @@ easy=0
 hard=0
 ling=0
 
-[[ ! -f mcin2 ]] && rm mcin2
+[[ -f mcin2 ]] && rm mcin2
+[[ -f mcin3 ]] && rm mcin3
 
 function score() {
 
-	if [ "$(($(cat l_mc)+$1))" -ge "$all" ]; then
+	if [ "$(($(cat l_m)+$1))" -ge "$all" ]; then
 		rm mcin mcin1 mcin2 mcin3 ok.m
 		echo "$(date "+%a %d %B")" > look_mc
 		echo 21 > .iconmc
@@ -24,8 +26,8 @@ function score() {
 		exit 1
 		
 	else
-		[[ -f l_mc ]] && echo "$(($(cat l_mc)+$easy))" > l_mc || echo $easy > l_mc
-		s=$(cat l_mc)
+		[[ -f l_m ]] && echo "$(($(cat l_m)+$easy))" > l_m || echo $easy > l_m
+		s=$(cat l_m)
 		v=$((100*$s/$all))
 		if [ $v -le 1 ]; then
 			echo 1 > .iconmc
@@ -71,6 +73,8 @@ function score() {
 			echo 21 > .iconmc
 		fi
 		
+		[[ -f mcin2 ]] && rm mcin2
+		[[ -f mcin3 ]] && rm mcin3
 		$strt 6 $easy $ling $hard & exit 1
 	fi
 }
@@ -98,7 +102,7 @@ function mchoise() {
 	--text-align=center --no-headers --borders=5 --window-icon=idiomind \
 	--button=gtk-media-stop:1 \
 	--title=" " \
-	--text="\\n\\n$trgts   \\n<sup>Significa...</sup>\\n\\n" \
+	--text="\\n\\n$trgts   \\n\\n<sup><tt>$means</tt>...</sup>\\n\\n" \
 	--column=Opcion --column=Opciodn)
 }
 

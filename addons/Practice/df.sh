@@ -2,6 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
+source $DS/ifs/trans/$lgs/practice.conf
 drtt="$DM_tlt/words"
 drts="$DS/addons/Practice/"
 strt="$drts/strt"
@@ -11,7 +12,8 @@ easy=0
 hard=0
 ling=0
 
-[[ ! -f fin2 ]] && rm fin2
+[[ -f fin2 ]] && rm fin2
+[[ -f fin3 ]] && rm fin3
 
 function score() {
 
@@ -73,6 +75,8 @@ function score() {
 			echo 21 > .iconf
 		fi
 		
+		[[ -f fin2 ]] && rm fin2
+		[[ -f fin3 ]] && rm fin3
 		$strt 5 $easy $ling $hard & exit 1
 	fi
 }
@@ -82,11 +86,11 @@ function fonts() {
 	s=$(eyeD3 "$drtt/$1.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
 	if [[ -f "$drtt/images/$1.jpg" ]]; then
 	img="$drtt/images/$1.jpg"
-	trgts="<big><big><big><big>$1</big></big></big></big>   <sup>Significa...</sup>"
+	trgts="<big><big><big><big>$1</big></big></big></big>   <small><tt>$means</tt>...</small>"
 	srces="<big><big><big><big><b>$s</b></big></big></big></big>"
 	else
 	img="/usr/share/idiomind/images/fc.png"
-	trgts="<big><big><big><big><big><big><big>$1</big></big></big></big></big></big></big>   <sup>Significa...</sup>"
+	trgts="<big><big><big><big><big><big><big>$1</big></big></big></big></big></big></big>   <small><tt>$means</tt>...</small>"
 	srces="<big><big><big><big><big><big><big><b>$s</b></big></big></big></big></big></big></big>"
 	fi
 	}
@@ -99,7 +103,7 @@ function cuestion() {
 	--window-icon=idiomind --buttons-layout=edge \
 	--field="$trgts":lbl --width=365 --height=280 \
 	--button="gtk-media-stop":1 \
-	--button="      Show Answer >>     ":0
+	--button="      $answer1 >     ":0
 	}
 
 function answer() {
@@ -109,8 +113,8 @@ function answer() {
 	--skip-taskbar --title=" " --borders=0 \
 	--window-icon=idiomind --buttons-layout=spread \
 	--field="$srces":lbl --width=365 --height=280 \
-	--button="      I Know it      ":2 \
-	--button="      I Don't Know      ":3
+	--button="      $ok_know      ":2 \
+	--button="      $no_know      ":3
 	}
 
 n=1

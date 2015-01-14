@@ -414,6 +414,7 @@ if [ "$1" = topic ]; then
 		[[ ! -f "$DC_tlt/cnfg0" ]] && touch "$DC_tlt/cnfg0"
 		[[ ! -f "$DC_tlt/cnfg1" ]] && touch "$DC_tlt/cnfg1"
 		[[ ! -f "$DC_tlt/cnfg2" ]] && touch "$DC_tlt/cnfg2"
+		[[ ! -f "$DC_tlt/cnfg10" ]] && touch "$DC_tlt/cnfg10"
 		ls0="$DC_tlt/cnfg0"
 		ls1="$DC_tlt/cnfg1"
 		ls2="$DC_tlt/cnfg2"
@@ -453,18 +454,16 @@ if [ "$1" = topic ]; then
 		if [ "$inx" -lt 1 ]; then
 			
 			echo "$nt" | $yad --text-info --plug=$KEY --margins=14 \
-			--wrap --editable --text="$itxt" --fore=gray40 \
-			--show-uri --fontname=vendana > "$cnf3" &
-			$yad --notebook --name=idiomind --center --title="Idiomind" \
-			--image="$img" --text="  <b>$tpc</b>" \
-			--class=idiomind --align=right --key=$KEY  \
-			--tab-borders=0 --center --always-print-result \
-			--tab="  $notes  " --window-icon=idiomind \
-			--buttons-layout=edge --image-on-top --class=idiomind \
-			--width="$wth" --height="$eht" --borders=0  \
-			--button="$delete":"$DS/mngr.sh dlt" \
-			--button="$close":2 
-			ret=$?
+			--tabnum=1 --fore='gray40' --wrap \
+			--show-uri --fontname=vendana --editable > "$cnf3" &
+			$yad --notebook --name=Idiomind --center --key=$KEY \
+			--class=Idiomind --align=right --window-icon=idiomind \
+			--tab-borders=0 --center --title="Idiomind" \
+			--image="$img" --text="$itxt" --tab=" $notes " \
+			--ellipsize=END --image-on-top --always-print-result \
+			--width="$wth" --height="$eht" --borders=0 \
+			--button="Play":$DS/play.sh \
+			--button="$delete":"$DS/mngr.sh dlt" --button="$close":2
 					
 				if [ $ret -eq 2 ]; then
 					

@@ -8,7 +8,7 @@ wth=$(sed -n 13p $DC_s/cnfg18)
 hgt=$(sed -n 14p $DC_s/cnfg18)
 easys=$2
 learning=$3
-hards=$4
+[[ $4 -lt 0 ]] && hards=0 || hards=$4
 $DS/stop.sh &
 cd "$DC_tlt/Practice"
 
@@ -34,20 +34,17 @@ info="  <b><big>$learned </big></b><small>$s_learned</small>   <span color='#3AB
 		num=$(cat .iconf)
 		info1="* "
 	elif [ $1 = 6 ]; then
-		learned=$(cat l_mc)
+		learned=$(cat l_m)
 info="  <b><big>$learned </big></b><small>$s_learned</small>   <span color='#3AB451'><b><big>$easys </big></b></span><small>$s_easy</small>   <span color='#E78C1E'><b><big>$learning </big></b></span><small>$s_learning</small>   <span color='#D11B5D'><b><big>$hards </big></b></span><small>$s_hard  </small>\\n"
 		num=$(cat .iconmc)
 		info2="* "
 	elif [ $1 = 7 ]; then
-		learned=$(cat l_lw)
+		learned=$(cat l_w)
 info="  <b><big>$learned </big></b><small>$s_learned</small>   <span color='#3AB451'><b><big>$easys </big></b></span><small>$s_easy</small>   <span color='#E78C1E'><b><big>$learning </big></b></span><small>$s_learning</small>   <span color='#D11B5D'><b><big>$hards </big></b></span><small>$s_hard  </small>\\n"
 		num=$(cat .iconlw)
 		info3="* "
 	elif [ $1 = 8 ]; then
-		easys=$(cat lsin.ok | wc -l)
-		learning=$(cat lsin.1.no | wc -l)
-		hards=$(cat lsin.no | wc -l)
-		learned=$(cat ls_r)
+		learned=$(cat l_s)
 info="  <b><big>$learned </big></b><small>$s_learned</small>   <span color='#3AB451'><b><big>$easys </big></b></span><small>$s_easy</small>   <span color='#E78C1E'><b><big>$learning </big></b></span><small>$s_learning</small>   <span color='#D11B5D'><b><big>$hards </big></b></span><small>$s_hard  </small>\\n"
 		num=$(cat .iconls)
 		info4="* "
@@ -88,7 +85,7 @@ VAR=$(yad --ellipsize=NONE --list --text-align=center \
 --title="Practice - $tpc" \
 --column="Pick":IMG --column="Action" \
 $img1 "     $info1 Flashcards" \
-$img2 "     $info2 Multiple Choisse" \
+$img2 "     $info2 Multiple Choice" \
 $img3 "     $info3 Listening Words" \
 $img4 "     $info4 Listening Sentences" )
 ret=$?
@@ -98,7 +95,7 @@ ret=$?
 		$DC/addons/stats/.log &
 		if echo "$VAR" | grep "Flashcards"; then
 			$DSP/prct f & exit 1
-		elif echo "$VAR" | grep "Multiple Choisse"; then
+		elif echo "$VAR" | grep "Multiple Choice"; then
 			$DSP/prct m & exit 1
 		elif echo "$VAR" | grep "Listening Words"; then
 			$DSP/prct w & exit 1

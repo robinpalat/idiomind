@@ -2,6 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
+source $DS/ifs/trans/$lgs/practice.conf
 drtt="$DM_tlt/words"
 drts="$DS/addons/Practice/"
 strt="$drts/strt"
@@ -11,7 +12,8 @@ easy=0
 hard=0
 ling=0
 
-[[ ! -f lwin2 ]] && rm lwin2
+[[ -f lwin2 ]] && rm lwin2
+[[ -f lwin3 ]] && rm lwin3
 
 function score() {
 
@@ -71,7 +73,9 @@ function score() {
 			echo 21 > .iconlw
 		fi
 		
-		$strt 5 $easy $ling $hard & exit 1
+		[[ -f lwin2 ]] && rm lwin2
+		[[ -f lwin3 ]] && rm lwin3
+		$strt 7 $easy $ling $hard & exit 1
 	fi
 }
 
@@ -84,11 +88,11 @@ function fonts() {
 	#fi
 	if [[ -f "$drtt/images/$1.jpg" ]]; then
 	img="$drtt/images/$1.jpg"
-	trgts="<big><big><big><big>$lst</big></big></big></big>"
+	trgts="<big><big>$lst ?</big></big>"
 	tr="<big><big><big><big><b>$1</b></big></big></big></big>"
 	else
 	img="/usr/share/idiomind/images/fc.png"
-	trgts="<big><big><big><big><big><big>$lst</big></big></big></big></big></big>"
+	trgts="<big><big><big>$lst ?</big></big></big>"
 	tr="<big><big><big><big><big><big><big><b>$1</b></big></big></big></big></big></big></big>"
 	fi
 	}
@@ -105,7 +109,7 @@ function cuestion() {
 	--width=365 --height=280 \
 	--button="gtk-media-stop":1 \
 	--button="Play":"$listen" \
-	--button="   Answer >>   ":0
+	--button="   $answer2 >   ":0
 	}
 
 function answer() {
@@ -116,8 +120,8 @@ function answer() {
 	--window-icon=idiomind --buttons-layout=spread \
 	--field="$tr":lbl --width=365 --height=280 \
 	--button="Play":"$listen" \
-	--button="I Know it":2 \
-	--button="I Don't Know":3
+	--button="$ok_know":2 \
+	--button="$no_know":3
 	}
 
 n=1

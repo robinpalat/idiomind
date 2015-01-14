@@ -2,6 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
+source $DS/ifs/trans/$lgs/practice.conf
 drts="$DS/addons/Practice/"
 strt="$drts/strt"
 u=$(echo "$(whoami)")
@@ -16,7 +17,7 @@ f=0
 function score() {
 
 	if [ "$1" -ge "$all" ] ; then
-		rm lsin lsin1 lsin2 lsin3 ok.s
+		rm lsin ok.s
 		echo "$(date "+%a %d %B")" > look_ls
 		echo 21 > .iconls
 		play $drts/all.mp3 & $strt 4 &
@@ -24,8 +25,8 @@ function score() {
 		exit 1
 		
 	else
-		[[ -f l_ls ]] && echo "$(($(cat l_ls)+$easy))" > l_ls || echo $easy > l_ls
-		s=$(cat l_ls)
+		[[ -f l_s ]] && echo "$(($(cat l_s)+$easy))" > l_s || echo $easy > l_s
+		s=$(cat l_s)
 		v=$((100*$s/$all))
 		if [ $v -le 1 ]; then
 			echo 1 > .iconls
@@ -70,7 +71,7 @@ function score() {
 		elif [ $v -eq 100 ]; then
 			echo 21 > .iconls
 		fi
-		
+
 		$strt 8 $easy $ling $hard & exit 1
 	fi
 }
@@ -95,9 +96,9 @@ function dialog2() {
 	--buttons-layout=end --borders=0 --title=" " "$info" \
 	--skip-taskbar --margins=8 --text-align=left --height=160 --width=460 \
 	--align=left --window-icon=idiomind \
-	--button=Hint:"/usr/share/idiomind/addons/Practice/hint.sh '$n'" \
-	--button="Listen":"play '$DM_tlt/$1.mp3'" \
-	--button="  Ok >> ":0)
+	--button=$hint:"/usr/share/idiomind/addons/Practice/hint.sh '$n'" \
+	--button="$listen":"play '$DM_tlt/$1.mp3'" \
+	--button="      Ok >     ":0)
 	}
 	
 function get_image_text() {
@@ -137,11 +138,9 @@ function result() {
 		
 	elif [ $porc -ge 50 ]; then
 		ling=$(($ling+1))
-		echo "$1" >> lsin2
 		prc="$porc%"
 		
 	else
-		echo "$1" >> lsin3
 		hard=$(($hard+1))
 		prc="$porc%"
 	fi
@@ -154,8 +153,8 @@ function check() {
 	--class=idiomind $aut --wrap --window-icon=idiomind \
 	--buttons-layout=end --title="" \
 	--text-align=left --borders=5 --selectable-labels \
-	--button=Listen:"play '$DM_tlt/$1.mp3'" \
-	--button="Next Sentence:2" \
+	--button=$listen:"play '$DM_tlt/$1.mp3'" \
+	--button="$next__sentence:2" \
 	--field="<big>$WEN</big>\\n":lbl \
 	--field="":lbl \
 	--field="$OK\\n<sup>$prc</sup>\\n":lbl
@@ -166,7 +165,7 @@ while [ $n -le $(cat lsin | wc -l) ]; do
 
 	namefile=$(sed -n "$n"p lsin)
 	if [[ $n = 1 ]]; then
-	info="--text=<sup>  Escribe la oración que estás escuchando...</sup>"
+	info="--text=<sup><tt>  $write_sentence...</tt></sup>"
 	else
 	info=""
 	fi
@@ -213,7 +212,5 @@ while [ $n -le $(cat lsin | wc -l) ]; do
 	let n++
 done
 
-if [[ ! -f fin2 ]]; then
+score $easy
 
-	score $easy
-fi

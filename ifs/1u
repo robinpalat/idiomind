@@ -265,7 +265,6 @@ elif [[ $ret -eq 0 ]]; then
 	touch $DIR2/addons/stats/cnf
 	touch $DIR2/s/cnfg12
 	#/usr/share/idiomind/mngr.sh mkmn
-	idiomind
 	exit 1
 else
 	killall 1u & exit 1

@@ -4,6 +4,29 @@
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/add.conf
 
+function msg() {
+	
+	yad --window-icon=idiomind --name=idiomind \
+	--image=info --on-top --text="  $1  " \
+	--image-on-top --center --sticky --button="Ok":0 \
+	--width=400 --height=130 --borders=5 \
+	--skip-taskbar --title="Idiomind"
+}
+
+function internet() {
+
+		curl -v www.google.com 2>&1 \
+		| grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
+		yad --window-icon=idiomind --on-top \
+		--image=info --name=idiomind \
+		--text=" $connection_err  \\n  " \
+		--image-on-top --center --sticky \
+		--width=300 --height=50 --borders=3 \
+		--skip-taskbar --title=Idiomind \
+		--button="  Ok  ":0 >&2; exit 1;}
+}
+
+
 if [ $1 = n_t ]; then
 	info2=$(cat $DC_tl/.cnfg1 | wc -l)
 	c=$(echo $(($RANDOM%100)))
@@ -95,12 +118,8 @@ if [ $1 = n_t ]; then
 		fi
 		
 		if [ $info2 -ge 50 ]; then
-			yad --name=idiomind --center --image=info \
-			--text=" <b>$topics_max </b>" \
-			--image-on-top --sticky --on-top \
-			--width=430 --height=120 --borders=3 \
-			--skip-taskbar --window-icon=idiomind --title=Idiomind \
-			--button=Ok:0 && rm "$DM_tl/.rn" & exit 1
+			msg "$topics_max"
+			rm "$DM_tl/.rn" & exit 1
 		fi
 		
 		jlbi=$($yad --window-icon=idiomind \
@@ -165,6 +184,7 @@ if [ $1 = n_t ]; then
 	exit 1
 	
 elif [ $1 = n_i ]; then
+
 	[[ ! -f $DC/addons/dict/.dicts ]] && touch $DC/addons/dict/.dicts
 	if  [ -z "$(cat $DC/addons/dict/.dicts)" ]; then
 		source $DS/ifs/trans/$lgs/topics_lists.conf
@@ -196,28 +216,36 @@ elif [ $1 = n_i ]; then
 		img="--on-top"
 	fi
 	
-	if [ -f $DT/ntpc ]; then
+	
+	if [ "$(cat $DC_tl/.cnfg1 | wc -l)" -lt 1 ]; then
 		rm -fr $DT_r
 		source $DS/ifs/trans/$lgs/topics_lists.conf
 		$DS/chng.sh "$no_topic" & exit 1
 	fi
-	if ([ -z "$tpc" ] && [ -z "$tpe" ]); then
-		rm -fr $DT_r
-		source $DS/ifs/trans/$lgs/topics_lists.conf
-		$DS/chng.sh "$no_topic2" 3 & exit 1
-	fi
+	
+	
+	#if ([ -z "$tpc" ] && [ -z "$tpe" ]); then
+		#rm -fr $DT_r
+		#source $DS/ifs/trans/$lgs/topics_lists.conf
+		#$DS/chng.sh "$no_topic2" 3 & exit 1
+	#fi
 
-	if [ -z "$tpe" ]; then
-		rm -fr $DT_r
-		source $DS/ifs/trans/$lgs/topics_lists.conf
-		$DS/chng.sh "$no_edit" & exit 1
-	fi
+	#if [ -z "$tpe" ]; then
+		#rm -fr $DT_r
+		#source $DS/ifs/trans/$lgs/topics_lists.conf
+		#$DS/chng.sh "$no_edit" & exit 1
+	#fi
 	
 	ls=$((50 - $(cat "$DC_tlt/cnfg4" | wc -l)))
 	lw=$((50 - $(cat "$DC_tlt/cnfg3" | wc -l)))
 	dct="$DS_p/Dics/dict"
+	if [[ -z "$tpe" ]]; then
+	tpcs=$(cat "$DC_tl/.cnfg2" | cut -c 1-50 \
+	| tr "\\n" '!' | sed 's/!\+$//g')
+	else
 	tpcs=$(cat "$DC_tl/.cnfg2" | egrep -v "$tpe" | cut -c 1-50 \
 	| tr "\\n" '!' | sed 's/!\+$//g')
+	fi
 	ttle="${tpe:0:50}"
 	s=$(cat "$DC_tlt/cnfg4" | wc -l)
 	w=$(cat "$DC_tlt/cnfg3" | wc -l)
@@ -235,7 +263,7 @@ elif [ $1 = n_i ]; then
 		info="\\n$is $iw"
 	fi
 	if [ "$tpe" != "$tpc" ]; then
-		topic="<b><u>$topic</u></b>$info"
+		topic="<b><span color='#4F851C'>$topic</span></b>$info"
 	else
 		topic="$topic $info"
 	fi
@@ -293,6 +321,11 @@ elif [ $1 = n_i ]; then
 			$DS/add.sh n_i $DT_r 2 "$trgt" "$srce" && exit 1
 		
 		elif [ $ret -eq 0 ]; then
+		
+			if [ -z "$tpe" ]; then
+				msg " $no_topic_msg\n\n "
+				$DS/add.sh n_i $DT_r 2 && exit 1
+			fi
 		
 			if [ -z "$trgt" ]; then
 				rm -fr $DT_r & exit 1
@@ -360,6 +393,11 @@ elif [ $1 = n_i ]; then
 		
 elif [ $1 = n_s ]; then
 
+	if [ -z "$tpe" ]; then
+		msg "$no_topic_msg."
+		rm -f $DT_r & exit 1
+	fi
+		
 	DT_r="$3"
 	lvbr=$(cat $DS/default/$lgt/verbs)
 	lnns=$(cat $DS/default/$lgt/nouns)
@@ -374,23 +412,13 @@ elif [ $1 = n_s ]; then
 	dct=$DS/addons/Dics/dict
 			
 	if [ $(cat "$DC_tlt/cnfg4" | wc -l) -ge 50 ]; then
-		$yad --name=idiomind --center --on-top --image=info \
-		--text=" <b>$tpe    </b>\\n\\n $sentences_max" \
-		--image-on-top --fixed --sticky --title="$tpe" \
-		--width=350 --height=140 --borders=3 --button=gtk-ok:0 \
-		--skip-taskbar --window-icon=idiomind && exit 1
+		msg " <b>$tpe    </b>\\n\\n $sentences_max"
+		rm -f $DT_r & exit 1
 	fi
 	
 	if sed -n 1p $DC_s/cnfg3 | grep TRUE; then
 	
-		curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
-		$yad --window-icon=idiomind --on-top \
-		--image=info --name=idiomind \
-		--text="<b> $connection_err  \\n  </b>" \
-		--image-on-top --center --sticky \
-		--width=300 --height=50 --borders=3 \
-		--skip-taskbar --title=Idiomind \
-		--button="  Ok  ":0 >&2; exit 1;}
+		internet
 	
 		cd $DT_r
 		echo "$2" > ./txt2
@@ -550,6 +578,15 @@ elif [ $1 = n_s ]; then
 		exit 1
 		
 	else
+		
+		if [ -z "$4" ]; then
+			msg "$no_text$lgsl."
+			rm -f $DT_r & exit 1
+		elif [ -z "$2" ]; then
+			msg "$no_text$lgtl."
+			rm -f $DT_r & exit 1
+		fi
+		
 		cd $DT_r
 		echo "$2" > trgt_
 		sed -i ':a;N;$!ba;s/\n/ /g' trgt_
@@ -726,23 +763,13 @@ elif [ $1 = n_w ]; then
 	DT_r="$3"
 	DM_tlt="$DM_tl/$tpe"
 	DC_tlt="$DC_tl/$tpe"
-
+	
 	if [ $(cat "$DC_tlt/cnfg3" | wc -l) -ge 50 ]; then
-		$yad --name=idiomind --center --on-top --image=info \
-		--text=" <b>$tpe    </b>\\n\\n $words_max" \
-		--image-on-top --fixed --sticky --title="$tpe" \
-		--width=350 --height=1 --borders=3 --button=gtk-ok:0 \
-		--skip-taskbar --window-icon=idiomind && exit 1
+		msg " <b>$tpe    </b>\\n\\n $words_max"
+		rm -f $DT_r & exit 1
 	fi
 	
-	curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
-	$yad --window-icon=idiomind --on-top \
-	--image=info --name=idiomind \
-	--text="<b>$connection_err  \\n  </b>" \
-	--image-on-top --center --fixed --sticky \
-	--width=220 --height=50 --borders=3 \
-	--skip-taskbar --title=Idiomind \
-	--button="  Ok  ":0 >&2; rm -f -r $DT_r & exit 1;}
+	internet
 			
 	if sed -n 1p $DC_s/cnfg3 | grep TRUE; then
 		result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lgt" --data-urlencode "text=$trgt" https://translate.google.com)
@@ -779,6 +806,14 @@ elif [ $1 = n_w ]; then
 		rm -f -r *.jpg $DT_r
 		
 	else
+		if [ -z "$4" ]; then
+			msg "$no_text$lgsl."
+			rm -f $DT_r & exit 1
+		elif [ -z "$2" ]; then
+			msg "$no_text$lgtl."
+			rm -f $DT_r & exit 1
+		fi
+		
 		if [ -f audtm.mp3 ]; then
 			mv -f audtm.mp3 "$DM_tlt/words/$trgt.mp3"
 			eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" \
@@ -877,11 +912,8 @@ elif [ $1 = edt ]; then
 
 		tpe="$tpc"
 		if [ $(cat "$DC_tlt/cnfg3" | wc -l) -ge 50 ]; then
-		$yad --name=idiomind --center --image=info --on-top \
-		--text=" <b>$words_max   </b>" \
-		--image-on-top --fixed --sticky --title="$tpc" \
-		--width=350 --height=140 --borders=3 --button=gtk-ok:0 \
-		--skip-taskbar --window-icon=idiomind && exit 1
+			msg " <b>$tpe    </b>\\n\\n $words_max"
+			rm -f $DT_r & exit 1
 		fi
 		
 		nw=$(cat "$DC_tlt/cnfg3" | wc -l)
@@ -1033,13 +1065,10 @@ elif [ $1 = prc ]; then
 	fi
 	
 	nw=$(cat "$DC_tlt/cnfg3" | wc -l)
-	if [ $nw -ge 50 ]; then
-		$yad --name=idiomind --center \
-		--image=info --on-top \
-		--text=" <b>$words_max  </b>" \
-		--image-on-top --fixed --sticky --title="$tpe" \
-		--width=230 --height=120 --borders=3 --button=gtk-ok:0 \
-		--skip-taskbar --window-icon=idiomind && exit 1
+	
+	if [ $(cat "$DC_tlt/cnfg3" | wc -l) -ge 50 ]; then
+		msg " <b>$tpe    </b>\\n\\n $words_max"
+		rm -f $DT_r & exit 1
 	fi
 
 	left=$((50 - $nw))
@@ -1446,11 +1475,7 @@ elif [ $1 = prs ]; then
 	fi
 
 	if [ $ns -ge 50 ]; then
-		$yad --name=idiomind --center --on-top --image=info \
-		--text=" <b>$sentences_max </b>" \
-		--image-on-top --fixed --sticky --title="$tpe" \
-		--width=350 --height=150 --button=gtk-ok:0 \
-		--skip-taskbar --window-icon=idiomind && \
+		msg " <b>$tpe    </b>\\n\\n $sentences_max"
 		rm -fr ls $lckpr $DT_r & exit 1
 	fi
 
@@ -1535,15 +1560,7 @@ elif [ $1 = prs ]; then
 			ls *.mp3 > lst
 			lns=$(cat ./lst | head -50 | wc -l)
 			
-			curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
-			$yad --window-icon=idiomind --on-top \
-			--image=info --name=idiomind \
-			--text=" <b>$connection_err  \\n  </b>" \
-			--image-on-top --center --fixed --sticky \
-			--width=220 --height=150 \
-			--skip-taskbar --title=Idiomind \
-			--button="  Ok  ":0
-			 >&2; exit 1;}
+			internet
 			 
 			echo "3"
 			echo "# $check_key... " ; sleep 1
@@ -1670,15 +1687,8 @@ $trgt" >> log
 					
 					rm -f "$slt"
 					sed -i 's/\://g' ./slts
-					curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
-					$yad --window-icon=idiomind --on-top \
-					--image=info --name=idiomind \
-					--text="<b>$connection_err \\n  </b>" \
-					--image-on-top --center --fixed --sticky \
-					--width=220 --height=150 --borders=3 \
-					--skip-taskbar --title=Idiomind \
-					--button="  Ok  ":0 & exit 1
-					>&2; exit 1;}
+					
+					internet
 					
 					#-----------------------------------------
 					(
@@ -2010,16 +2020,7 @@ $trgt" >> ./wlog
 	if [ "$(echo "$prdt" | cut -d "|" -f1 \
 	| sed -n 1p | grep -o "http")" = "http" ]; then
 		
-		curl -v www.google.com 2>&1 \
-		| grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
-		$yad --window-icon=idiomind --on-top \
-		--image=info --name=idiomind \
-		--text="<b> $connection_err  \\n  </b>" \
-		--image-on-top --center --sticky \
-		--width=300 --height=150 \
-		--skip-taskbar --title=Idiomind \
-		--button="  Ok  ":0
-		>&2; exit 1;}
+		internet
 		
 		(
 		echo "3"
@@ -2161,15 +2162,7 @@ $trgt" >> ./wlog
 					
 					rm -f $slt
 					
-					curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
-					$yad --window-icon=idiomind --on-top \
-					--image=info --name=idiomind \
-					--text="<b> $connection_err  \\n  </b>" \
-					--image-on-top --center --fixed --sticky \
-					--width=220 --height=150 \
-					--skip-taskbar --title=Idiomind \
-					--button="  Ok  ":0
-					>&2; exit 1;}
+					internet
 					
 					cd $DT_r
 					> ./wlog
