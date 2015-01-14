@@ -57,6 +57,7 @@ if [ -z "$1" ]; then
 				cd ..
 				tar cvzf backup.tar.gz *
 				mv -f backup.tar.gz $DT/"$user"_idiomind_data.tar.gz
+				rm -r "$DM/cnf/"
 				
 				) | $yad --center --on-top --fixed --progress \
 				--width=200 --height=20 --geometry=200x20-2-2 \
@@ -66,7 +67,7 @@ if [ -z "$1" ]; then
 				$yad --fixed --name=idiomind --center --class=idiomind \
 				--image=info --sticky \
 				--text=" $export_ok  \\n" \
-				--image-on-top --fixed --width=240 --height=80 --borders=3 \
+				--image-on-top --fixed --width=360 --height=140 --borders=3 \
 				--skip-taskbar --window-icon=idiomind \
 				--title=Idiomind --button=gtk-ok:0 && exit 1
 			else
@@ -187,7 +188,7 @@ if [ -z "$1" ]; then
 				$yad --fixed --name=idiomind --center --class=idiomind \
 				--image=info --sticky \
 				--text=" $import_ok   \\n" \
-				--image-on-top --fixed --width=240 --height=80 --borders=3 \
+				--image-on-top --fixed --width=360 --height=140 --borders=3 \
 				--skip-taskbar --window-icon=idiomind \
 				--title=Idiomind --button=gtk-ok:0 && exit 1
 			else

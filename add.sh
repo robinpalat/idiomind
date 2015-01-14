@@ -1964,7 +1964,7 @@ $trgt" >> ./wlog
 							S=" $sentence"
 						fi
 					else
-						sadds=" $(cat ./adds | wc -l) $sentences"
+						sadds=" $(cat ./adds | wc -l)"
 						S=" $sentences"
 						if [ $(echo $sadds) = 1 ]; then
 							S=" $sentence"
@@ -1975,7 +1975,7 @@ $trgt" >> ./wlog
 					adds=$(cat ./adds ./addw | wc -l)
 					
 					if [ $adds -ge 1 ]; then
-						notify-send -i idiomind "$tpe" "$added \\n$sadds$S$wadds$W" -t 2000 &
+						notify-send -i idiomind "$tpe" "$is_added\n$sadds$S$wadds$W" -t 2000 &
 						echo "aitm.$adds.aitm" >> \
 						$DC/addons/stats/.log
 					fi
@@ -2489,7 +2489,7 @@ $itm" >> ./wlog
 							S=" $sentence"
 						fi
 					else
-						sadds=" $(cat ./adds | wc -l) $sentences"
+						sadds=" $(cat ./adds | wc -l)"
 						S=" $sentences"
 						if [ $(echo $sadds) = 1 ]; then
 							S=" $sentence"

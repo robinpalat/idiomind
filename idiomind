@@ -810,11 +810,7 @@ if [ "$1" = topic ]; then
 	# nstll
 	elif echo "$mde" | grep "istll"; then
 		[ -z "$tpc" ] && exit 1
-		l1=$(sed -n 6p "$DC_tlt/cnfg12")
-		l2=$(sed -n 7p "$DC_tlt/cnfg12")
-		l3=$(sed -n 8p "$DC_tlt/cnfg12")
-		l4=$(sed -n 9p "$DC_tlt/cnfg12")
-		echo "$l4"
+		source "$DC_tlt/cnfg12"
 		cd "$DC_tlt"
 		ws=$(cat cnfg3 | wc -l)
 		ss=$(cat cnfg4 | wc -l)
@@ -889,7 +885,7 @@ if [ "$1" = topic ]; then
 				--column=Name:TEXT --column=Review:CHK \
 				--dclick-action='./vwr.sh v2' > "$cnf2" &
 				echo "$nt" | $yad --text-info --plug=$KEY --margins=14 \
-				--text="<small>  $created_by: $l1 en <span color='#6E9FD4'>${l4^}</span></small>" \
+				--text="<small>  $created_by: $author en <span color='#6E9FD4'>${category^}</span></small>" \
 				--tabnum=3 --fore='gray40' --wrap \
 				--show-uri --fontname=vendana --editable > "$cnf3" &
 				$yad --notebook --name=Idiomind --center \
@@ -913,7 +909,7 @@ if [ "$1" = topic ]; then
 				--column=Name:TEXT --column=Review:CHK \
 				--dclick-action='./vwr.sh v2' > "$cnf2" &
 				echo "$nt" | $yad --text-info --plug=$KEY --margins=14 \
-				--text="<small>  $created_by: $l1 en <span color='#6E9FD4'>${l4^}</span></small>" \
+				--text="<small>  $created_by: $author en <span color='#6E9FD4'>${category^}</span></small>" \
 				--tabnum=3 --fore='gray40' --wrap \
 				--show-uri --fontname=vendana --editable > "$cnf3" &
 				$yad --notebook --name=Idiomind --center  \
@@ -1081,7 +1077,7 @@ if [ "$1" = topic ]; then
 			--column=Name:TEXT --column=Review:CHK \
 			--dclick-action='./vwr.sh v2' > "$cnf2" &
 			echo "$nt" | $yad --text-info --plug=$KEY --margins=14 \
-			--text="<small>  $created_by: $l1 en <span color='#6E9FD4'>${l4^}</span></small>" \
+			--text="<small>  $created_by: $author en <span color='#6E9FD4'>${category^}</span></small>" \
 			--tabnum=3 --fore='gray40' --wrap \
 			--show-uri --fontname=vendana --editable > "$cnf3" &
 			$yad --notebook --name=Idiomind --center  \
@@ -1092,7 +1088,7 @@ if [ "$1" = topic ]; then
 			--tab=" $learned ($tb2) " --tab=" $notes " \
 			--ellipsize=END --image-on-top --always-print-result \
 			--width="$wth" --height="$eht" --borders=0 \
-			--button="$edit":3 --button="$close":2 # ----------------------------
+			--button="$edit":3 --button="$close":2
 				ret=$?
 				
 				if [ $ret -eq 3 ]; then

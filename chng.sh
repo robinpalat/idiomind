@@ -26,7 +26,9 @@ if [[ "$1" = chngi ]]; then
 	else
 		bcl=$(cat $DC_s/cnfg2)
 	fi
-
+	[[ -z $bcl ]] && bcl = 5
+	[[ $bcl -lt 3 ]] && bcl = 3
+	
 	itm=$(sed -n "$2"p $indx)
 	
 	if ( [ $sas = TRUE ] ) && \
