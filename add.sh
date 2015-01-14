@@ -372,6 +372,15 @@ elif [ $1 = n_i ]; then
 			elif [ $(echo "$trgt" | wc -c) -gt 180 ]; then
 				$DS/add.sh prs "$trgt" $DT_r & exit 1
 			elif ([ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]); then
+				if sed -n 1p $DC_s/cnfg3 | grep FALSE; then
+					if [ -z "$4" ]; then
+						msg "$no_text$lgsl."
+						rm -f $DT_r & exit 1
+					elif [ -z "$2" ]; then
+						msg "$no_text$lgtl."
+						rm -f $DT_r & exit 1
+					fi
+				fi
 				result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
 				encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
 				srce=$(iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 | sed ':a;N;$!ba;s/\n/ /g')
@@ -578,7 +587,6 @@ elif [ $1 = n_s ]; then
 		exit 1
 		
 	else
-		
 		if [ -z "$4" ]; then
 			msg "$no_text$lgsl."
 			rm -f $DT_r & exit 1

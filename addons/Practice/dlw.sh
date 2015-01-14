@@ -84,7 +84,7 @@ function fonts() {
 	#if [ "$1" = 1 ]; then
 		#[[ $lgtl = Japanese ]] || [[ $lgtl = Chinese ]] && lst=? || lst="${w1:0:1}"
 	#elif [ "$1" = 2 ]; then
-	[[ $lgtl = Japanese ]] || [[ $lgtl = Chinese ]] && lst=? || lst=$(echo "$1" | awk '$1=$1' FS= OFS=" " | tr aeiouy ' ')
+	[[ $lgtl = Japanese ]] || [[ $lgtl = Chinese ]] && lst="" || lst=$(echo "$1" | awk '$1=$1' FS= OFS=" " | tr aeiouy ' ')
 	#fi
 	if [[ -f "$drtt/images/$1.jpg" ]]; then
 	img="$drtt/images/$1.jpg"
