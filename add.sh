@@ -1606,7 +1606,8 @@ elif [ $1 = prs ]; then
 				wget -q -U "Mozilla/5.0" \
 				--post-file info.flac \
 				--header="Content-Type: audio/x-flac; rate=16000" \
-				-O - "https://www.google.com/speech-api/v2/recognize?&lang="$lgt"-"$lgt"&key=$key" | sed 's/","confidence.*//' > ./info.ret
+				-O - "https://www.google.com/speech-api/v2/recognize?&lang="$lgt"-"$lgt"&key=$key" \
+				| sed 's/","confidence.*//' > ./info.ret
 				
 				if [ -z "$(cat info.ret)" ]; then
 					$yad --name=idiomind --center --on-top --image=error \
@@ -1617,7 +1618,8 @@ elif [ $1 = prs ]; then
 					rm -fr ls $lckpr $DT_r & break & exit 1
 				fi
 				
-				cat ./info.ret | sed '1d' | sed 's/.*transcript":"//' | sed 's/"}],"final":true}],"result_index":0}//g' > ./tgt
+				cat ./info.ret | sed '1d' | sed 's/.*transcript":"//' \
+				| sed 's/"}],"final":true}],"result_index":0}//g' > ./tgt
 				trgt=$(cat ./tgt)
 				
 				if [ $(echo "$trgt" | wc -c) -gt 180 ]; then
@@ -2011,7 +2013,7 @@ $trgt" >> ./wlog
 					fi
 					
 					n=1
-					while [ $n -le 20 ]; do
+					while [[ $n -le 20 ]]; do
 						 sleep 5
 						 if ([ $(cat ./x | wc -l) = $rm ] || [ $n = 20 ]); then
 							rm -fr $DT_r $lckpr & break & exit 1
@@ -2521,7 +2523,7 @@ $itm" >> ./wlog
 					fi
 					
 					n=1
-					while [ $n -le 20 ]; do
+					while [[ $n -le 20 ]]; do
 						 sleep 5
 						 if ([ $(cat ./x | wc -l) = $rm ] || [ $n = 20 ]); then
 							rm -fr $DT_r $lckpr & break & exit 1
