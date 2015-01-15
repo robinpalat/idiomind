@@ -4,9 +4,9 @@
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/practice.conf
 drtt="$DM_tlt/words"
-drts="$DS/addons/Practice/"
+drts="$DS/practice/"
 strt="$drts/strt"
-cd "$DC_tlt/Practice"
+cd "$DC_tlt/practice"
 all=$(cat lwin | wc -l)
 easy=0
 hard=0
@@ -86,20 +86,25 @@ function fonts() {
 	#elif [ "$1" = 2 ]; then
 	[[ $lgtl = Japanese ]] || [[ $lgtl = Chinese ]] && lst="" || lst=$(echo "$1" | awk '$1=$1' FS= OFS=" " | tr aeiouy ' ')
 	#fi
+	
+	#lt="$1"
+	#[[ $(echo "$lt" | wc -c) -ge 8 ]] && lt="${lt:0:40}..."
+	#[[ $(echo "$lt" | wc -c) -ge 8 ]] && lt="${lt:0:40}..."
+	
 	if [[ -f "$drtt/images/$1.jpg" ]]; then
 	img="$drtt/images/$1.jpg"
-	trgts="<big><big>$lst ?</big></big>"
+	trgts="<big>$lst</big>"
 	tr="<big><big><big><big><b>$1</b></big></big></big></big>"
 	else
 	img="/usr/share/idiomind/images/fc.png"
-	trgts="<big><big><big>$lst ?</big></big></big>"
+	trgts="<big><big>$lst</big></big>"
 	tr="<big><big><big><big><big><big><big><b>$1</b></big></big></big></big></big></big></big>"
 	fi
 	}
 
 function cuestion() {
 	
-	listen="play '$drtt/$1.mp3'"
+	play="play '$drtt/$1.mp3'"
 	play "$drtt/$1".mp3 &
 	yad --form --align=center --undecorated \
 	--center --on-top --image-on-top --image="$img" \
@@ -108,7 +113,7 @@ function cuestion() {
 	--field="<span color='#808080'>$trgts</span>":lbl \
 	--width=365 --height=280 \
 	--button="gtk-media-stop":1 \
-	--button="Play":"$listen" \
+	--button="$listen":"$play" \
 	--button="$answer2 >":0
 	}
 
@@ -119,7 +124,7 @@ function answer() {
 	--skip-taskbar --title=" " --borders=0 \
 	--window-icon=idiomind --buttons-layout=spread \
 	--field="$tr":lbl --width=365 --height=280 \
-	--button="Play":"$listen" \
+	--button="$listen":"$play" \
 	--button="$ok_know":2 \
 	--button="$no_know":3
 	}

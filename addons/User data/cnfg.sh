@@ -318,7 +318,7 @@ elif ([ "$1" = C ] && [ "$dte" != "$udt" ]); then
 		if [ "$ret" -eq 0 ]; then
 		exit 1
 		elif [ "$ret" -eq 3 ]; then
-		/usr/share/idiomind/addons/User_data/t_bd.sh
+		"/usr/share/idiomind/addons/User data/cnfg.sh.sh"
 		fi
 	fi
 	

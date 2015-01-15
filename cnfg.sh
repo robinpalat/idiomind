@@ -38,12 +38,6 @@ sttng8=$(sed -n 8p $DC_s/cnfg1)
 sttng9=$(sed -n 9p $DC_s/cnfg1)
 sttng10=$(sed -n 10p $DC_s/cnfg1)
 sttng11=$(sed -n 11p $DC_s/cnfg1)
-img1=$DS/addons/Google_translation_service/icon.png
-img2=$DS/addons/Learning_with_news/img/icon.png
-img3=applications-other
-img4=applications-other
-img5=applications-other
-img6=applications-other
 
 $yad --plug=$KEY --tabnum=1 --borders=15 --scroll \
 	--separator="\\n" --form --no-headers --align=right \
@@ -61,11 +55,10 @@ $yad --plug=$KEY --tabnum=1 --borders=15 --scroll \
 	--field=":lbl" "#12"\
 	--field="$languages_learning:CB" "$lgtl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
 	--field="$your_language:CB" "$lgsl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" > "$cnf1" &
-$yad --plug=$KEY --tabnum=2 --list --expand-column=2 \
+cat $DC_s/cnfg21 | yad --plug=$KEY --tabnum=2 --list --expand-column=2 \
 	--text="<sub>  $double_click_for_configure </sub>" \
-	--no-headers --dclick-action="./plgcnf.sh" --print-all \
-	--column=icon:IMG --column=Action \
-	"$img1" "Google translation service" "$img2" "Learning with News" "$img4" "Dictionarys" "$img5" "Weekly Report" "$img5" "User data" &
+	--no-headers --dclick-action="/usr/share/idiomind/ifs/dclik.sh" --print-all \
+	--column=icon:IMG --column=Action &
 echo "$text" | $yad --plug=$KEY --tabnum=3 --text-info \
 	--text="\\n<big><big><big><b>Idiomind v2.1-alpha</b></big></big></big>\\n<sup>$vocabulary_learning_tool\\n<a href='https://sourceforge.net/projects/idiomind/'>Homepage</a> © 2013-2014 Robin Palat</sup>\\n" \
 	--show-uri --fontname=Arial --margins=10 --wrap --text-align=center &
@@ -120,13 +113,13 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 				mkdir "$DC/topics"/English
 				mkdir "$DC_a/Learning with news"/English
 				mkdir "$DC_a/Learning with news"/English/subscripts
-				cp -f "$DS/addons/Learning_with_news/examples/English" \
+				cp -f "$DS/addons/Learning with news/examples/English" \
 				"$DC_a/Learning with news/English/subscripts/Example"
 			fi
 			echo "en" > $DC_s/cnfg10
 			echo "English" >> $DC_s/cnfg10
 			$DS/stop.sh L
-			$DS/addons/Learning_with_news/stp.sh
+			$DS/addons/Learning with news/stp.sh
 			
 			if [ -f "$DC/topics/English/.cnfg8" ]; then
 				LST=$(sed -n 1p "$DC/topics/English/.cnfg8")
@@ -144,13 +137,13 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 				mkdir "$DC/topics"/Spanish
 				mkdir "$DC_a/Learning with news"/Spanish
 				mkdir "$DC_a/Learning with news"/Spanish/subscripts
-				cp -f "$DS/addons/Learning_with_news/examples/Spanish" \
+				cp -f "$DS/addons/Learning with news/examples/Spanish" \
 				"$DC_a/Learning with news/Spanish/subscripts/Example"
 			fi
 			echo "es" > $DC_s/cnfg10
 			echo "Spanish" >> $DC_s/cnfg10
 			$DS/stop.sh L
-			$DS/addons/Learning_with_news/stp.sh
+			$DS/addons/Learning with news/stp.sh
 			
 			if [ -f "$DC/topics/Spanish/.cnfg8" ]; then
 				LST=$(sed -n 1p "$DC/topics/Spanish/.cnfg8")
@@ -168,13 +161,13 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 				mkdir "$DC/topics"/Italian
 				mkdir "$DC_a/Learning with news"/Italian
 				mkdir "$DC_a/Learning with news"/Italian/subscripts
-				cp -f "$DS/addons/Learning_with_news/examples/Italian" \
+				cp -f "$DS/addons/Learning with news/examples/Italian" \
 				"$DC_a/Learning with news/Italian/subscripts/Example"
 			fi
 			echo "it" > $DC_s/cnfg10
 			echo "Italian" >> $DC_s/cnfg10
 			$DS/stop.sh L
-			$DS/addons/Learning_with_news/stp.sh
+			$DS/addons/Learning with news/stp.sh
 			
 			if [ -f "$DC/topics/Italian/.cnfg8" ]; then
 				LST=$(sed -n 1p "$DC/topics/Italian/.cnfg8")
@@ -192,13 +185,13 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 				mkdir "$DC/topics"/Portuguese
 				mkdir "$DC_a/Learning with news"/Portuguese
 				mkdir "$DC_a/Learning with news"/Portuguese/subscripts
-				cp -f "$DS/addons/Learning_with_news/examples/Portuguese" \
+				cp -f "$DS/addons/Learning with news/examples/Portuguese" \
 				"$DC_a/Learning with news/Portuguese/subscripts/Example"
 			fi
 			echo "pt" > $DC_s/cnfg10
 			echo "Portuguese" >> $DC_s/cnfg10
 			$DS/stop.sh L
-			$DS/addons/Learning_with_news/stp.sh
+			$DS/addons/Learning with news/stp.sh
 			
 			if [ -f "$DC/topics/Portuguese/.cnfg8" ]; then
 				LST=$(sed -n 1p "$DC/topics/Portuguese/.cnfg8")
@@ -216,13 +209,13 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 				mkdir "$DC/topics"/German
 				mkdir "$DC_a/Learning with news"/German
 				mkdir "$DC_a/Learning with news"/German/subscripts
-				cp -f "$DS/addons/Learning_with_news/examples/German" \
+				cp -f "$DS/addons/Learning with news/examples/German" \
 				"$DC_a/Learning with news/German/subscripts/Example"
 			fi
 			echo "de" > $DC_s/cnfg10
 			echo "German" >> $DC_s/cnfg10
 			$DS/stop.sh L
-			$DS/addons/Learning_with_news/stp.sh
+			$DS/addons/Learning with news/stp.sh
 			
 			if [ -f "$DC/topics/German/.cnfg8" ]; then
 				LST=$(sed -n 1p "$DC/topics/German/.cnfg8")
@@ -240,13 +233,13 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 				mkdir "$DC/topics"/Japanese
 				mkdir "$DC_a/Learning with news"/Japanese
 				mkdir "$DC_a/Learning with news"/Japanese/subscripts
-				cp -f "$DS/addons/Learning_with_news/examples/Japanese" \
+				cp -f "$DS/addons/Learning with news/examples/Japanese" \
 				"$DC_a/Learning with news/Japanese/subscripts/Example"
 			fi
 			echo "ja" > $DC_s/cnfg10
 			echo "Japanese" >> $DC_s/cnfg10
 			$DS/stop.sh L
-			$DS/addons/Learning_with_news/stp.sh
+			$DS/addons/Learning with news/stp.sh
 			
 			if [ -f "$DC/topics/Japanese/.cnfg8" ]; then
 				LST=$(sed -n 1p "$DC/topics/Japanese/.cnfg8")
@@ -264,13 +257,13 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 				mkdir "$DC/topics"/French
 				mkdir "$DC_a/Learning with news"/French
 				mkdir "$DC_a/Learning with news"/French/subscripts
-				cp -f "$DS/addons/Learning_with_news/examples/French" \
+				cp -f "$DS/addons/Learning with news/examples/French" \
 				"$DC_a/Learning with news/French/subscripts/Example"
 			fi
 			echo "fr" > $DC_s/cnfg10
 			echo "French" >> $DC_s/cnfg10
 			$DS/stop.sh L
-			$DS/addons/Learning_with_news/stp.sh
+			$DS/addons/Learning with news/stp.sh
 			
 			if [ -f "$DC/topics/French/.cnfg8" ]; then
 				LST=$(sed -n 1p "$DC/topics/French/.cnfg8")
@@ -288,13 +281,13 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 				mkdir "$DC/topics"/Vietnamese
 				mkdir "$DC_a/Learning with news"/Vietnamese
 				mkdir "$DC_a/Learning with news"/Vietnamese/subscripts
-				cp -f "$DS/addons/Learning_with_news/examples/Vietnamese" \
+				cp -f "$DS/addons/Learning with news/examples/Vietnamese" \
 				"$DC_a/Learning with news/Vietnamese/subscripts/Example"
 			fi
 			echo "vi" > $DC_s/cnfg10
 			echo "Vietnamese" >> $DC_s/cnfg10
 			$DS/stop.sh L
-			$DS/addons/Learning_with_news/stp.sh
+			$DS/addons/Learning with news/stp.sh
 			
 			if [ -f "$DC/topics/Vietnamese/.cnfg8" ]; then
 				LST=$(sed -n 1p "$DC/topics/Vietnamese/.cnfg8")
@@ -312,13 +305,13 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 				mkdir "$DC/topics"/Chinese
 				mkdir "$DC_a/Learning with news"/Chinese
 				mkdir "$DC_a/Learning with news"/Chinese/subscripts
-				cp -f "$DS/addons/Learning_with_news/examples/Chinese" \
+				cp -f "$DS/addons/Learning with news/examples/Chinese" \
 				"$DC_a/Learning with news/Chinese/subscripts/Example"
 			fi
 			echo "zh-cn" > $DC_s/cnfg10
 			echo "Chinese" >> $DC_s/cnfg10
 			$DS/stop.sh L
-			$DS/addons/Learning_with_news/stp.sh
+			$DS/addons/Learning with news/stp.sh
 			
 			if [ -f "$DC/topics/Chinese/.cnfg8" ]; then
 				LST=$(sed -n 1p "$DC/topics/Chinese/.cnfg8")
@@ -336,13 +329,13 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 				mkdir "$DC/topics"/Russian
 				mkdir "$DC_a/Learning with news"/Russian
 				mkdir "$DC_a/Learning with news"/Russian/subscripts
-				cp -f "$DS/addons/Learning_with_news/examples/Russian" \
+				cp -f "$DS/addons/Learning with news/examples/Russian" \
 				"$DC_a/Learning with news/Russian/subscripts/Example"
 			fi
 			echo "ru" > $DC_s/cnfg10
 			echo "Russian" >> $DC_s/cnfg10
 			$DS/stop.sh L
-			$DS/addons/Learning_with_news/stp.sh
+			$DS/addons/Learning with news/stp.sh
 			
 			if [ -f "$DC/topics/Russian/.cnfg8" ]; then
 				LST=$(sed -n 1p "$DC/topics/Russian/.cnfg8")

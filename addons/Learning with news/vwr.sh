@@ -3,13 +3,13 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/rss.conf
-DS_pf="$DS/addons/Learning_with_news"
+DS_pf="$DS/addons/Learning with news"
 vwr="$DS_pf/vwr.sh"
 ap=$(cat $DC_s/cnfg1 | sed -n 5p)
 
 if [[ $1 = V1 ]]; then
 
-	DS_pf="$DS/addons/Learning_with_news"
+	DS_pf="$DS/addons/Learning with news"
 	wth=$(sed -n 5p $DC_s/cnfg18)
 	eht=$(sed -n 6p $DC_s/cnfg18)
 	c=$(echo $(($RANDOM%100)))
@@ -50,10 +50,10 @@ if [[ $1 = V1 ]]; then
 		--width="$wth" --height="$eht" --center --no-headers \
 		--column=$lgtl:TEXT --column=$lgsl:TEXT \
 		--expand-column=0 --limit=20 --text-align=center \
-		--button=gtk-save:"$DS_pf/add n_i '$nme'" \
-		--button=$listen:"$DS_pf/audio/ply '$nme'" \
+		--button=gtk-save:"'$DS_pf/add' n_i '$nme'" \
+		--button=$listen:"'$DS_pf/audio/ply' '$nme'" \
 		--button=gtk-go-up:3 --button=gtk-go-down:2 \
-		--dclick-action="$DS_pf/audio/ply.sh '$nme'"
+		--dclick-action="'$DS_pf/audio/ply.sh' '$nme'"
 		
 	else
 		ff=$(($nuw + 1))
@@ -63,10 +63,10 @@ if [[ $1 = V1 ]]; then
 		ret=$?
 		if [[ $ret -eq 2 ]]; then
 			ff=$(($nuw + 1))
-			$vwr V1 "$nll" "$ff" &
+			"$vwr" V1 "$nll" "$ff" &
 		elif [[ $ret -eq 3 ]]; then
 			ff=$(($nuw - 1))
-			$vwr V1 "$nll" "$ff" &
+			"$vwr" V1 "$nll" "$ff" &
 		else
 			rm -f $DT/.*.x &
 		exit 1
@@ -75,7 +75,7 @@ if [[ $1 = V1 ]]; then
 elif [[ $1 = V2 ]]; then
 	
 	DM_tlfk="$DM_tl/Feeds/kept"
-	DS_pf="$DS/addons/Learning_with_news"
+	DS_pf="$DS/addons/Learning with news"
 	trgt="$DS_pf/trgt1"
 	wth=$(sed -n 5p $DC_s/cnfg18)
 	eht=$(sed -n 6p $DC_s/cnfg18)
@@ -118,7 +118,7 @@ elif [[ $1 = V2 ]]; then
 		--field="":lbl \
 		--field="<i>$exmp</i>\\n:lbl" \
 		--width="$wth" --height="$eht" --center \
-		--button="$delete":"$DS_pf/del dlti '$nme'" \
+		--button="$delete":"'$DS_pf/del dlti' '$nme'" \
 		--button="$listen":"play '$DM_tlfk/words/$nme.mp3'" \
 		--button=gtk-go-up:3 --button=gtk-go-down:2
 
@@ -139,23 +139,23 @@ elif [[ $1 = V2 ]]; then
 		--width="$wth" --height="$eht" --center \
 		--column=$lgtl:TEXT --column=$lgsl:TEXT \
 		--expand-column=0 --limit=20 \
-		--button="$delete":"$DS_pf/del dlti '$nme'" \
-		--button=$listen:"$DS_pf/audio/ply '$nme'" \
+		--button="$delete":"'$DS_pf/del' dlti '$nme'" \
+		--button=$listen:"'$DS_pf/audio/ply' '$nme'" \
 		--button=gtk-go-up:3 --button=gtk-go-down:2 \
-		--dclick-action="$DS_pf/audio/ply.sh '.audio'"
+		--dclick-action="'$DS_pf/audio/ply.sh' '.audio'"
 		
 	else
 		ff=$(($nuw + 1))
-		$vwr V2 "$nll" "$ff" & exit 1
+		"$vwr" V2 "$nll" "$ff" & exit 1
 	fi
 	
 		ret=$?
 		if [[ $ret -eq 2 ]]; then
 			ff=$(($nuw + 1))
-			$vwr V2 "$nll" "$ff" &
+			"$vwr" V2 "$nll" "$ff" &
 		elif [[ $ret -eq 3 ]]; then
 			ff=$(($nuw - 1))
-			$vwr V2 "$nll" "$ff" &
+			"$vwr" V2 "$nll" "$ff" &
 		else
 			rm -f $DT/.*.x & exit 1
 		fi

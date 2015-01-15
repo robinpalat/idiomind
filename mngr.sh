@@ -249,7 +249,7 @@ elif [ "$1" = mkok- ]; then
 	
 #--------------------------------
 elif [ "$1" = edt ]; then
-	dct="$DS/addons/Dics/dict"
+	dct="$DS/addons/Dics/cnfg.sh"
 	cnf=$(mktemp $DT/cnf.XXXX)
 	edta=$(sed -n 17p ~/.config/idiomind/s/cnfg1)
 	tpcs=$(cat "$DC_tl/.cnfg2" | egrep -v "$tpc" | cut -c 1-40 \
@@ -528,7 +528,7 @@ elif [ "$1" = edt ]; then
 				sed -i "s/${nme}/${fln}/" "$DC_tlt/cnfg1"
 				sed -i "s/${nme}/${fln}/" "$DC_tlt/cnfg0"
 				sed -i "s/${nme}/${fln}/" "$DC_tlt/cnfg2"
-				sed -i "s/${nme}/${fln}/" "$DC_tlt/Practice/lsin.tmp"
+				sed -i "s/${nme}/${fln}/" "$DC_tlt/practice/lsin.tmp"
 
 				mv -f "$DM_tlt/$nme".mp3 "$DM_tlt/$fln".mp3
 				eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I "$DM_tlt/$fln".mp3 >/dev/null 2>&1
@@ -654,7 +654,7 @@ elif [ $1 = dli ]; then
 		file="$DM_tlt/words/$itdl.mp3"
 		if [ -f "$file" ]; then
 			rm "$file"
-			cd "$DC_tlt/Practice"
+			cd "$DC_tlt/practice"
 			sed -i 's/'"$itdl"'//g' ./lsin.tmp
 			cd ..
 			grep -v -x -v "$itdl" ./cnfg11 > ./cnfg11_
@@ -677,7 +677,7 @@ elif [ $1 = dli ]; then
 		file="$DM_tlt/$itdl.mp3"
 		if [ -f "$file" ]; then
 			rm "$file"
-			cd "$DC_tlt/Practice"
+			cd "$DC_tlt/practice"
 			sed -i 's/'"$itdl"'//g' ./lsin.tmp
 			cd ..
 			grep -v -x -v "$itdl" ./cnfg11 > ./cnfg11_
@@ -722,7 +722,7 @@ elif [ $1 = dli ]; then
 				(sleep 1 && kill -9 $(pgrep -f "$yad --form "))
 				killall edt1 edt2
 				rm -f "$flw"
-				cd "$DC_tlt/Practice"
+				cd "$DC_tlt/practice"
 				sed -i 's/'"$itdl"'//g' ./fin.tmp
 				sed -i 's/'"$itdl"'//g' ./lwin.tmp
 				sed -i 's/'"$itdl"'//g' ./mcin.tmp
@@ -758,7 +758,7 @@ elif [ $1 = dli ]; then
 			if [ $ret -eq 0 ]; then
 				(sleep 1 && kill -9 $(pgrep -f "$yad --form "))
 				rm -f "$fls"
-				cd "$DC_tlt/Practice"
+				cd "$DC_tlt/practice"
 				sed -i 's/'"$itdl"'//g' ./lsin.tmp
 				cd ..
 				grep -v -x -v "$itdl" ./cnfg11 > ./cnfg11_
@@ -789,7 +789,7 @@ elif [ $1 = dli ]; then
 		--button=gtk-delete:0 --button="$cancel":1
 			ret=$?
 	
-			cd "$DC_tlt/Practice"
+			cd "$DC_tlt/practice"
 			sed -i 's/'"$itdl"'//g' ./fin.tmp
 			sed -i 's/'"$itdl"'//g' ./lwin.tmp
 			sed -i 's/'"$itdl"'//g' ./mcin.tmp

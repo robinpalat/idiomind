@@ -48,13 +48,24 @@ if [ -z "$1" ]; then
 	echo "strt.1.strt" >> \
 	$DC/addons/stats/.log &
 	
-	# _______________new session
+	
 	d1="$(date +%d)"
 	[[ -f $DC_s/cnfg15 ]] && d2=$(cat $DC_s/cnfg15)
 	
-	if [ "$d1" != "$d2" ] || [ ! -f $DC_s/cnfg15 ]; then
+	if [ "$d1" != "$d2" ] || [ ! -f $DC_s/cnfg15 ]; then # _______________new session
 		echo "$(date +%d)" > $DC_s/cnfg15
 		echo "--new session"
+		
+		# look for addons
+		addons="$(cd $DS/addons; ls -d *)"
+		rm $DC_s/cnfg21
+		n=1
+		while [ $n -le $(echo "$addons" | wc -l ) ]; do
+			set=$(echo "$addons" | sed -n "$n"p)
+			echo "/usr/share/idiomind/addons/$set/icon.png" >> $DC_s/cnfg21
+			echo "$set" >> $DC_s/cnfg21
+			let n++
+		done
 
 		# screen size
 		wh=$DC_s/cnfg18
@@ -155,21 +166,21 @@ if [ -z "$1" ]; then
 		
 		# weekly report
 		if ([ "$(date +%u)" = 7 ] && \
-		[ "$(sed -n 1p $DC/addons/stats/cnf)" = "TRUE" ]); then
+		[ "$(sed -n 1p $DC/addons/stats/cnfg.sh)" = "TRUE" ]); then
 			$DS/addons/Stats/rprt A &
 		fi
 		
 		# rss feed auto-update
 		if [ "$(sed -n 1p "$DC/addons/Learning with news/.cnf")" = "TRUE" ]; then
 			(sleep 200
-			$DS/addons/Learning_with_news/strt A
+			"$DS/addons/Learning with news/strt" A
 			) &
 		fi
 		
 		# backup
 		if ([ "$(date +%u)" = 6 ] && \
 		[ "$(sed -n 1p $DC_s/cnfg12)" = "TRUE" ]); then
-			$DS/addons/User_data/t_bd.sh C &
+			"$DS/addons/User data/cnfg.sh" C &
 		fi
 		
 		# search updates
@@ -220,6 +231,7 @@ if [ -z "$1" ]; then
 			fi
 			let n++
 		done
+		
 		$DS/mngr.sh mkmn & exit 1
 	fi
 fi
@@ -229,7 +241,7 @@ if [[ "$1" = "panel" ]]; then
 		#wth=$(sed -n 11p $DC_s/cnfg18)
 		#hgt=$(sed -n 12p $DC_s/cnfg18)
 		yad --geometry=185x318-200-450 --width=170 --height=220 \
-			--name=idiomind --fixed --title="Idiomind" --no-buttons \
+			--name=Idiomind --fixed --title="Idiomind" --no-buttons \
 			--icons --single-click --on-top --borders=0 \
 			--read-dir=$DS/default/new --item-width=65 \
 			--window-icon=idiomind --class=idiomind
@@ -362,17 +374,17 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 					mkdir "$DC/topics/$language_target"
 					mkdir "$DC_a/Learning with news/$language_target"
 					mkdir "$DC_a/Learning with news/$language_target/subscripts"
-					"$DS/addons/Learning_with_news/examples/$language_target"
-					cp -f "$DS/addons/Learning_with_news/examples/$language_target" \
+					"$DS/addons/Learning with news/examples/$language_target"
+					cp -f "$DS/addons/Learning with news/examples/$language_target" \
 					"$DC_a/Learning with news/$language_target/subscripts/Example"
 				fi
 				mkdir "$DM/topics/$language_target/$inm"
 				mkdir "$DC/topics/$language_target/$inm"
 				drit="$DM/topics/$language_target/$inm"
 				dric="$DC/topics/$language_target/$inm"
-				mkdir "$dric/Practice"
-				cp -f $DS/addons/Practice/default/.* \
-				"$dric/Practice"
+				mkdir "$dric/practice"
+				cp -f $DS/practice/default/.* \
+				"$dric/practice"
 				cd "$tmp"
 				cp -n ./.audio/*.mp3 "$DM_t/$language_target/.share/"
 				rm -fr ./.audio
@@ -602,7 +614,7 @@ if [ "$1" = topic ]; then
 					
 				elif [ $ret -eq 5 ]; then
 					rm -f $DT/*.x
-					$DS/addons/Practice/strt &
+					$DS/practice/strt &
 					
 				elif [ $ret -eq 4 ]; then
 					$yad --title="$tpc" --window-icon=idiomind \
@@ -767,7 +779,7 @@ if [ "$1" = topic ]; then
 					./mngr.sh edit &
 					
 				elif [ $ret -eq 5 ]; then
-					$DS/addons/Practice/strt &
+					$DS/practice/strt &
 				
 				elif [ $ret -eq 2 ]; then
 					if [ -f $cnf3 ]; then
@@ -949,7 +961,7 @@ if [ "$1" = topic ]; then
 				
 				elif [ $ret -eq 5 ]; then
 					rm -f $DT/*.x
-					$DS/addons/Practice/strt &
+					$DS/practice/strt &
 					
 				elif [ $ret -eq 4 ]; then
 					$yad --title="$tpc" --window-icon=idiomind \
@@ -1118,7 +1130,7 @@ if [ "$1" = topic ]; then
 				
 				elif [ $ret -eq 5 ]; then
 					rm -f $DT/*.x
-					$DS/addons/Practice/strt &
+					$DS/practice/strt &
 				
 				elif [ $ret -eq 2 ]; then
 					if [ -f $cnf3 ]; then
@@ -1173,9 +1185,9 @@ if [ "$1" = topic ]; then
 	elif echo "$mde" | grep "fd"; then
 		dir1="$DM_tl/Feeds"
 		dir2="$DC/addons/Learning with news"
-		DF="$DS/addons/Learning_with_news"
+		DF="$DS/addons/Learning with news"
 		FEED=$(cat "$dir2/$lgtl/.rss")
-		ICON=$DF/img/rss.png
+		ICON="$DF/img/rss.png"
 		c=$(echo $(($RANDOM%100000)))
 		STT="$(cat $DT/.uptf)"
 		
@@ -1191,7 +1203,7 @@ if [ "$1" = topic ]; then
 		ls -t *.mp3 > "$DC_tl/Feeds/.lst"
 		(sed -i 's/.mp3//g' "$DC_tl/Feeds/.lst")
 		
-		cd $DF
+		cd "$DF"
 		cat "$DC_tl/Feeds/.lst" | $yad \
 		--no-headers --list --listen --plug=$KEY --tabnum=1 \
 		--text=" <small>$info</small>" \
@@ -1204,7 +1216,7 @@ if [ "$1" = topic ]; then
 		$yad --notebook --name=Idiomind --center \
 		--class=Idiomind --align=right --key=$KEY \
 		--text=" <big><b>$title_rss </b></big>\\n <small>$FEED</small>" \
-		--image=$ICON --image-on-top  \
+		--image="$ICON" --image-on-top  \
 		--tab-borders=0 --center --title="$FEED" \
 		--tab="  $news  " \
 		--tab=" $saved_conten " \
@@ -1219,22 +1231,22 @@ if [ "$1" = topic ]; then
 			
 			if [ $ret -eq 0 ]; then
 				rm -f $DT/*.x
-				$DF/cnf & killall topic.sh & exit 1
+				"$DF/cnfg.sh" & killall topic.sh & exit 1
 			
 			elif [ $ret -eq 3 ]; then
 				rm -f $DT/*.x
-				$DF/cnf edit & exit 1
+				"$DF/cnfg.sh" edit & exit 1
 			
 			elif [ $ret -eq 2 ]; then
 				rm -f $DT/*.x
-				$DF/strt & exit 1
+				"$DF/strt" & exit 1
 			else
 				rm -f $DT/*.x
 				exit 1
 			fi
 			
 	elif echo "$mde" | grep "wr"; then
-		$DS/addons/Stats/rprt T & exit 1
+		$DS/addons/Stats/cnfg.sh T & exit 1
 	fi
 	rm -f $DT/*.x
 fi

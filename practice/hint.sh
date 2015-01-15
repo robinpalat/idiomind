@@ -2,8 +2,8 @@
 tpc=$(sed -n 1p ~/.config/idiomind/s/cnfg8)
 lgtl=$(sed -n 2p ~/.config/idiomind/s/cnfg10)
 drtt="$HOME/.idiomind/topics/$lgtl/$tpc/"
-drtc="$HOME/.config/idiomind/topics/$lgtl/$tpc/Practice"
-drts="/usr/share/idiomind/addons/Practice/"
+drtc="$HOME/.config/idiomind/topics/$lgtl/$tpc/practice"
+drts="/usr/share/idiomind//practice/"
 s1=$(sed -n "$1"p lsin)
 
 prsw=$(eyeD3 "$drtt/$s1".mp3 | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' \

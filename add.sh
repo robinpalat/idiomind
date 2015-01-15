@@ -189,7 +189,7 @@ elif [ $1 = n_i ]; then
 	[[ ! -f $DC/addons/dict/.dicts ]] && touch $DC/addons/dict/.dicts
 	if  [ -z "$(cat $DC/addons/dict/.dicts)" ]; then
 		source $DS/ifs/trans/$lgs/topics_lists.conf
-		$DS/addons/Dics/dict "$no_dictionary" f cnf
+		$DS/addons/Dics/cnfg.sh "$no_dictionary" f cnf
 		if  [ -z "$(cat $DC/addons/dict/.dicts)" ]; then
 			exit 1
 		fi
@@ -223,23 +223,10 @@ elif [ $1 = n_i ]; then
 		source $DS/ifs/trans/$lgs/topics_lists.conf
 		$DS/chng.sh "$no_topic" & exit 1
 	fi
-	
-	
-	#if ([ -z "$tpc" ] && [ -z "$tpe" ]); then
-		#rm -fr $DT_r
-		#source $DS/ifs/trans/$lgs/topics_lists.conf
-		#$DS/chng.sh "$no_topic2" 3 & exit 1
-	#fi
 
-	#if [ -z "$tpe" ]; then
-		#rm -fr $DT_r
-		#source $DS/ifs/trans/$lgs/topics_lists.conf
-		#$DS/chng.sh "$no_edit" & exit 1
-	#fi
-	
 	ls=$((50 - $(cat "$DC_tlt/cnfg4" | wc -l)))
 	lw=$((50 - $(cat "$DC_tlt/cnfg3" | wc -l)))
-	dct="$DS_p/Dics/dict"
+	dct="$DS_p/Dics/cnfg.sh"
 	if [[ -z "$tpe" ]]; then
 	tpcs=$(cat "$DC_tl/.cnfg2" | cut -c 1-50 \
 	| tr "\\n" '!' | sed 's/!\+$//g')
@@ -275,8 +262,8 @@ elif [ $1 = n_i ]; then
 		--text-info --on-top --window-icon=idiomind --skip-taskbar \
 		--separator="\n" --align=right "$img" \
 		--name=idiomind --class=idiomind \
-		--borders=0 --title="$tpe" --width=360 --height=170 \
-		--field="  <small><small>$lgtl</small></small>":TXT "$txt" \
+		--borders=0 --title=" " --width=360 --height=170 \
+		--field=" <small><small>$lgtl</small></small>":TXT "$txt" \
 		--field="<small><small>$topic</small></small>:CB" "$ttle!$new *!$tpcs" "$field" \
 		--button="$image":3 \
 		--button=gtk-ok:0)
@@ -296,10 +283,10 @@ elif [ $1 = n_i ]; then
 		--width=400 --height=260 --form --on-top --name=idiomind \
 		--class=idiomind --window-icon=idiomind "$img" --center "$ls" "$rec" \
 		--button="$image":3 --always-print-result --align=right \
-		--button=gtk-ok:0 --borders=2 --title="$tpe" \
-		--field="  <small><small>$lgtl</small></small>":TXT "$txt" \
+		--button=gtk-ok:0 --borders=2 --title=" " \
+		--field=" <small><small>$lgtl</small></small>":TXT "$txt" \
 		--field=":lbl" "" \
-		--field="  <small><small>$lgsl</small></small>":TXT "$srce" \
+		--field=" <small><small>$lgsl</small></small>":TXT "$srce" \
 		--field=":lbl" "" \
 		--field="<small><small>$topic</small></small>:CB" \
 		"$ttle!$new *!$tpcs" "$field")
@@ -419,7 +406,7 @@ elif [ $1 = n_s ]; then
 	DC_tlt="$DC_tl/$tpe"
 	icnn=idiomind
 	
-	dct=$DS/addons/Dics/dict
+	dct=$DS/addons/Dics/cnfg.sh
 			
 	if [ $(cat "$DC_tlt/cnfg4" | wc -l) -ge 50 ]; then
 		msg " <b>$tpe    </b>\\n\\n $sentences_max"
@@ -764,7 +751,7 @@ elif [ $1 = n_w ]; then
 
 	trgt="$2"
 	srce="$4"
-	dct="$DS/addons/Dics/dict"
+	dct="$DS/addons/Dics/cnfg.sh"
 	icnn=idiomind
 	tpcs=$(cat "$DC_tl/.cnfg2" | cut -c 1-30 | egrep -v "$tpe" \
 	| tr "\\n" '!' | sed 's/!\+$//g')
@@ -913,7 +900,7 @@ elif [ $1 = n_w ]; then
 elif [ $1 = edt ]; then
 
 	c="$4"
-	DIC=$DS/addons/Dics/dict
+	DIC=$DS/addons/Dics/cnfg.sh
 	int="$(sed -n 22p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
 	btn="$(sed -n 21p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
 
@@ -1321,7 +1308,7 @@ elif [ $1 = snt ]; then
 
 	DM_tlt="$DM_tl/$tpe"
 	DC_tlt="$DC_tl/$tpe"
-	DIC=$DS/addons/Dics/dict
+	DIC=$DS/addons/Dics/cnfg.sh
 	c=$(echo $(($RANDOM%100)))
 	DT_r=$(mktemp -d $DT/XXXXXX)
 	cd $DT_r
@@ -1470,7 +1457,7 @@ elif [ $1 = prs ]; then
 	ladj=$(cat $DS/default/$lgt/adjetives)
 	nspr='/usr/share/idiomind/add.sh prs'
 	LNK='http://www.chromium.org/developers/how-tos/api-keys'
-	dct=$DS/addons/Dics/dict
+	dct=$DS/addons/Dics/cnfg.sh
 	lckpr=$DT/.n_s_pr
 	DM_tlt="$DM_tl/$tpe"
 	DC_tlt="$DC_tl/$tpe"

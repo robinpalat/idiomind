@@ -3,11 +3,11 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/practice.conf
-drts="$DS/addons/Practice/"
+drts="$DS/practice/"
 strt="$drts/strt"
 u=$(echo "$(whoami)")
 DT=/tmp/.idmtp1.$u
-cd "$DC_tlt/Practice"
+cd "$DC_tlt/practice"
 all=$(cat lsin | wc -l)
 easy=0
 hard=0
@@ -84,7 +84,7 @@ function dialog1() {
 	--buttons-layout=end --borders=0 --title=" " --image-on-top \
 	--skip-taskbar --margins=8 --text-align=left --height=400 --width=460 \
 	--align=left --window-icon=idiomind --fore=4A4A4A \
-	--button=Hint:"/usr/share/idiomind/addons/Practice/hint.sh '$n'" \
+	--button=Hint:"/usr/share/idiomind//practice/hint.sh '$n'" \
 	--button=Listen:"play '$DM_tlt/$1.mp3'" \
 	--button="  Ok >> ":0)
 	}
@@ -96,7 +96,7 @@ function dialog2() {
 	--buttons-layout=end --borders=0 --title=" " "$info" \
 	--skip-taskbar --margins=8 --text-align=left --height=160 --width=460 \
 	--align=left --window-icon=idiomind \
-	--button=$hint:"/usr/share/idiomind/addons/Practice/hint.sh '$n'" \
+	--button=$hint:"/usr/share/idiomind//practice/hint.sh '$n'" \
 	--button="$listen":"play '$DM_tlt/$1.mp3'" \
 	--button="      Ok >     ":0)
 	}

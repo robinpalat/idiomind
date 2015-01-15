@@ -14,7 +14,7 @@ if [[ "$1" = time ]]; then
 		echo 8 > $DC_s/cnfg2
 		bcl=$(sed -n 1p $DC_s/cnfg2)
 	fi
-		yad --fixed --mark="8 s":8 \
+		yad --mark="8 s":8 \
 		--mark="60 s":60 --mark="120 s":120 \
 		--borders=20 --scale --min-value=2 \
 		--max-value=128 --value="$bcl" --step 2 \
@@ -48,7 +48,7 @@ elif [[ -z "$1" ]]; then
 		inds=$(cat "$tlng")
 	fi
 	indm=$(cat "$DC_tlt/cnfg6")
-	cd "$DC_tlt/Practice"
+	cd "$DC_tlt/practice"
 	indp=$(cat fin.tmp mcin.tmp \
 	lwin.tmp | sed '/^$/d' | sort | uniq)
 	indf=$(cat $DC_tl/Feeds/cnfg0)
@@ -104,7 +104,7 @@ elif [[ -z "$1" ]]; then
 	"Words" "$img1" "$words" $st1 \
 	"Sentences" "$img2" "$sentences" $st2 \
 	"Marks" "$img3" "$marks" $st3 \
-	"Practice" "$img4" "$practice" $st4 \
+	"practice" "$img4" "$practice" $st4 \
 	"Feeds" "$img5" "$news" $st5 \
 	"Notification" "$img6" "$osd" $st6 \
 	"Audio" "$img6" "$audio" $st7 \

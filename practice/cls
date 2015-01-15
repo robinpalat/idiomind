@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-DSP=$DS/addons/Practice
+DSP=$DS/practice
 [[ -n "$(ps -A | pgrep -f "$DSP/df.sh")" ]] && killall "$DSP/df.sh" &
 [[ -n "$(ps -A | pgrep -f "$DSP/dmc.sh")" ]] && killall "$DSP/dmc.sh" &
 [[ -n "$(ps -A | pgrep -f "$DSP/dlw.sh")" ]] && killall "$DSP/dlw.sh" &
@@ -12,7 +12,7 @@ DSP=$DS/addons/Practice
 [[ -n "$(ps -A | pgrep -f play)" ]] && killall play &
 w9="$DC_a/practice/w9"
 w6="$DC_a/practice/w6"
-cd "$DC_tlt/Practice"
+cd "$DC_tlt/practice"
 easy=$2
 ling=$3
 hard=$4
@@ -46,7 +46,7 @@ fi
 	
 if [ "$1" = f ]; then
 
-	cd "$DC_tlt/Practice"
+	cd "$DC_tlt/practice"
 	
 	[[ -f ok.f ]] && cat ok.f >> "$w9"
 	[[ -f l_f ]] && echo $(($(cat l_f)+$easy)) > l_f || echo $easy > l_f
@@ -101,7 +101,7 @@ if [ "$1" = f ]; then
 
 elif [ "$1" = m ]; then
 
-	cd "$DC_tlt/Practice"
+	cd "$DC_tlt/practice"
 	
 	[[ -f ok.m ]] && cat ok.m >> "$w9"
 	[[ -f l_m ]] && echo $(($(cat l_m)+$easy)) > l_m || echo $easy > l_m
@@ -156,7 +156,7 @@ elif [ "$1" = m ]; then
 
 elif [ "$1" = w ]; then
 
-	cd "$DC_tlt/Practice"
+	cd "$DC_tlt/practice"
 	
 	[[ -f ok.w ]] && cat ok.w >> "$w9"
 	[[ -f l_w ]] && echo $(($(cat l_w)+$easy)) > l_w || echo $easy > l_w
@@ -211,7 +211,7 @@ elif [ "$1" = w ]; then
 
 elif [ "$1" = s ]; then
 
-	cd "$DC_tlt/Practice"
+	cd "$DC_tlt/practice"
 
 	[[ -f ok.s ]] && cat ok.s >> "$w9"
 	[[ -f l_s ]] && echo $(($(cat l_s)+$easy)) > l_s || echo $easy > l_s

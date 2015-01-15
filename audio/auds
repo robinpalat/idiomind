@@ -11,7 +11,7 @@ if [ -z $1 ]; then
 	else
 		img="$cn"
 	fi
-	$yad --fixed --center --align=center \
+	$yad --center --align=center \
 	--text="   $recording: $msj" \
 	---name=idiomind --geometry=0-0-0-0 \
 	--width=350 --height=120 --center \
@@ -39,7 +39,7 @@ if [ $1 = pnl ]; then
 	ls="play $DT_r/audtm.mp3"
 	rec="--button=gtk-media-record:$DS/audio/auds rec '$DT_r' '$t'"
 	
-	FLAS=$($yad --fixed --buttons-layout=spread \
+	FLAS=$($yad --buttons-layout=spread \
 	--width=480 --height=224  --form --on-top --name=idiomind \
 	--class=idiomind --window-icon=idiomind --center \
 	--button="gtk-preferences":$inp "$rec" --button="Play":"$ls" \
@@ -76,7 +76,7 @@ elif [ $1 = rec ]; then
 	killall play
 	inf=$(sed -n 1p $DC_s/cnfg20)
 	rm -f $DT_r/audtm.mp3
-	$yad --fixed --align=center --timeout="$t" \
+	$yad --align=center --timeout="$t" \
 	--text=" $inf  $recording2...\n\n" \
 	--timeout-indicator=bottom --geometry=0-0-0-0 \
 	--image-on-top --width=350 --height=100 \
@@ -93,7 +93,7 @@ elif [ $1 = rec ]; then
 elif [ $1 = add ]; then
 	NM=$(cat $DT/.titl)
 	cd ~/
-	FILE=$($yad --fixed --center \
+	FILE=$($yad  --center \
 	--borders=10 --file-filter="*.mp3" --on-top --title=" " \
 	--window-icon=idiomind --skip-taskbar --title="add_audio" \
 	--file --width=600 --height=500 )

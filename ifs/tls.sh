@@ -7,6 +7,7 @@ source $DS/ifs/trans/$lgs/others.conf
 if [ $1 = tls ]; then
 $yad --form --height=190 --borders=5 --width=350 \
 	--title=" " --skip-taskbar --columns=1 \
+	--window-icon=idiomind \
 	--field="$topics_saved:BTN" "$DS/ifs/upld.sh vsd" \
 	--field="$play_time:BTN" "$DS/play.sh time" \
 	--field="$audio_imput:BTN" "$DS/audio/auds" \

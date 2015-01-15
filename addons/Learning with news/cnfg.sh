@@ -4,7 +4,7 @@ source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/rss.conf
 
 dir2="$DC/addons/Learning with news"
-DIR3="$DS/addons/Learning_with_news"
+DIR3="$DS/addons/Learning with news"
 FEED=$(sed -n 1p "$dir2/$lgtl/.rss")
 if [[ -z "$1" ]]; then
 	if [[ -z "$FEED" ]]; then
@@ -55,13 +55,13 @@ if [[ -z "$1" ]]; then
 				--width=380 --height=140 --fixed --image=info --skip-taskbar \
 				--text="  Sample subscription\\n  $delete_no" \
 				--borders=5 --button=OK:1
-				$DIR3/cnf & exit
+				$DIR3/cnfg.sh & exit
 			elif echo "$st1" | grep "Example"; then
 				$yad --title="Info" --center --on-top --window-icon=idiomind \
 				--width=380 --height=140 --fixed --image=info --skip-taskbar \
 				--text="  Sample subscription\\n  $delete_no" \
 				--borders=5 --button=OK:1
-				$DIR3/cnf & exit
+				$DIR3/cnfg.sh & exit
 			else
 				$yad --center \
 				--title=Confirm --window-icon=idiomind \
@@ -71,14 +71,14 @@ if [[ -z "$1" ]]; then
 					ret=$?
 					
 					if [[ $ret -eq 1 ]]; then
-						$DIR3/cnf & exit
+						$DIR3/cnfg.sh & exit
 					
 					elif [[ $ret -eq 0 ]]; then
 						if [[ "$(cat "$dir2/$lgtl/.rss")" = "$st1" ]]; then
 							rm "$dir2/$lgtl/.rss" "$dir2/$lgtl/link"
 						fi
 						rm "$dir2/$lgtl/subscripts/$st1"
-						$DIR3/cnf & exit
+						$DIR3/cnfg.sh & exit
 					fi
 			fi
 					
@@ -92,9 +92,9 @@ if [[ -z "$1" ]]; then
 				--field="<small>$url:</small>: " "" \ )
 			
 				if [[ -z "$(echo "$nwfd" | cut -d "|" -f1)" ]]; then
-					$DIR3/cnf & exit
+					$DIR3/cnfg.sh & exit
 				elif [[ -z "$(echo "$nwfd" | cut -d "|" -f2)" ]]; then
-					$DIR3/cnf & exit
+					$DIR3/cnfg.sh & exit
 				fi
 			
 				if [ "$?" -eq 0 ]; then
@@ -113,10 +113,10 @@ if [[ -z "$1" ]]; then
 					echo '$link' > ../link
 					exit' > "$dirs/$nme"
 					chmod +x  "$dirs/$nme"
-					$DIR3/cnf & exit
+					$DIR3/cnfg.sh & exit
 					
 				elif [ "$?" -eq 1 ]; then
-					$DIR3/cnf & exit
+					$DIR3/cnfg.sh & exit
 				fi
 		
 		elif [[ $ret -eq 4 ]]; then
@@ -130,15 +130,15 @@ if [[ -z "$1" ]]; then
 elif [[ $1 = edit ]]; then
 	drtc="$DC_tl/Feeds/"
 	slct=$(mktemp $DT/slct.XXXX)
-	img1=$DIR3/img/del.png
-	img2=$DIR3/img/del.png
-	img3=$DIR3/img/save.png
-	img4=$DIR3/img/rss.png
+	img1="$DIR3/img/del.png"
+	img2="$DIR3/img/del.png"
+	img3="$DIR3/img/save.png"
+	img4="$DIR3/img/rss.png"
 
 	if [[ "$(cat "$drtc/cnfg0" | wc -l)" -ge 20 ]]; then
-		dd="$img3 $create_topic $img1 $delete_news $img2 $delete_saved $img4 $subcriptions"
+		dd="'$img3' $create_topic '$img1' $delete_news '$img2' $delete_saved '$img4' $subcriptions"
 	else
-		dd="$img1 $delete_news $img2 $delete_saved $img4 $subcriptions"
+		dd="'$img1' $delete_news '$img2' $delete_saved '$img4' $subcriptions"
 	fi
 
 	$yad --list --on-top \
@@ -153,13 +153,13 @@ elif [[ $1 = edit ]]; then
 	slt=$(cat "$slct")
 	if  [[ "$ret" -eq 0 ]]; then
 		if echo "$slt" | grep -o "$create_topic"; then
-			$DIR3/add n_t
+			"$DIR3/add" n_t
 		elif echo "$slt" | grep -o "$delete_news"; then
-			$DIR3/del dlns
+			"$DIR3/del" dlns
 		elif echo "$slt" | grep -o "$delete_saved"; then
-			$DIR3/del dlkt
+			"$DIR3/del" dlkt
 		elif echo "$slt" | grep -o "$subcriptions"; then
-			$DIR3/cnf
+			"$DIR3/cnfg.sh"
 		fi
 		rm -f "$slct"
 

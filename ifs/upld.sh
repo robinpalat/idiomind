@@ -34,23 +34,25 @@ elif [[ $1 = infsd ]]; then
 	U=$(sed -n 1p $DC_s/cnfg4)
 	user=$(echo "$(whoami)")
 	tpcd="$2"
-	NM=$(sed -n 1p ./"$tpcd".cnfg12)
-	LNGT=$(sed -n 2p ./"$tpcd".cnfg12)
-	LNGS=$(sed -n 4p ./"$tpcd".cnfg12)
-	lngs=$(sed -n 5p ./"$tpcd".cnfg12)
-	ATR=$(sed -n 6p ./"$tpcd".cnfg12)
-	SKP=$(sed -n 7p ./"$tpcd".cnfg12)
-	ML=$(sed -n 8p ./"$tpcd".cnfg12)
-	CTGY=$(sed -n 9p ./"$tpcd".cnfg12)
-	LNK=$(sed -n 10p ./"$tpcd".cnfg12)
+	source "./$tpcd.cnfg12"
+	[[ $language_target = English ]] && lng=en
+	[[ $language_target = French ]] && lng=fr
+	[[ $language_target = German ]] && lng=de
+	[[ $language_target = Chinese ]] && lng=zn-cn
+	[[ $language_target = Italian ]] && lng=it
+	[[ $language_target = Japanese ]] && lng=ja
+	[[ $language_target = Portuguese ]] && lng=pt
+	[[ $language_target = Spanish ]] && lng=es
+	[[ $language_target = Vietnamese ]] && lng=vi
+	[[ $language_target = Russian ]] && lng=ru
 	nme=$(echo "$tpcd" | sed 's/ /_/g')
-	lnglbl=$(echo $lgtl | awk '{print tolower($0)}')
+	lnglbl=$(echo $language_target | awk '{print tolower($0)}')
 	icon=$DS/images/img6.png
 
 	yad --borders=10 --width=400 --height=160 \
 	--on-top --skip-taskbar --center --image=$icon \
 	--title="idiomind" --button="$download:0" --button="Close:1" \
-	--text="<b>$NM</b>\\n<small>$LNGS <b>></b> $LNGT </small> \\n" \
+	--text="<b>$name</b>\\n<small>$language_source <b>></b> $language_target </small> \\n" \
 	--window-icon=idiomind
 		ret=$?
 
@@ -76,7 +78,7 @@ elif [[ $1 = infsd ]]; then
 			cd $DT
 			wget http://idiomind.sourceforge.net/info/SITE_TMP
 			source $DT/SITE_TMP && rm -f $DT/SITE_TMP
-			file="$DOWNLOADS/$lngs/$lnglbl/$CTGY/$LNK"
+			file="$DOWNLOADS/$lng/$lnglbl/$category/$link"
 			WGET() {
 			rand="$RANDOM `date`"
 			pipe="/tmp/pipe.`echo '$rand' | md5sum | tr -d ' -'`"
@@ -306,6 +308,10 @@ Ctgry=$(echo "$upld" | cut -d "|" -f4)
 [[ $Ctgry = $technology ]] && Ctgry=technology
 [[ $Ctgry = $travel ]] && Ctgry=travel
 
+if [[ "$ret" != 0 ]]; then
+	exit 1
+fi
+
 if [ -z $Ctgry ]; then
 	$yad --window-icon=idiomind --name=idiomind \
 	--image=info --on-top \
@@ -315,10 +321,6 @@ if [ -z $Ctgry ]; then
 	--skip-taskbar --title="Idiomind" \
 	--button="  Ok  ":0
 	$DS/ifs/upld.sh &
-	exit 1
-fi
-
-if [[ "$ret" != 0 ]]; then
 	exit 1
 fi
 
@@ -445,6 +447,8 @@ quit
 END_SCRIPT
 
 exit=$?
+
+[[ $(echo "$tpc" | wc -c) -gt 40 ]] && tpc="${tpc:0:40}..."
 if [ $exit = 0 ] ; then
     cp -f "$DT/cnfg12" "$DM_t/saved/$tpc.cnfg12"
     info="  $tpc\n\n<b> $saved</b>\n"
@@ -456,7 +460,7 @@ fi
 
 yad --window-icon=idiomind --name=idiomind \
 --image=$image --on-top --text="$info" \
---image-on-top --center --fixed --sticky \
+--image-on-top --center --sticky \
 --width=380 --height=150 --borders=5 \
 --skip-taskbar --title=idiomind \
 --button="  Ok  ":0

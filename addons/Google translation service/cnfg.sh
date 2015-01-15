@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-source /usr/share/idiomind/ifs/trans/$lgs/others.conf
+source $DS/ifs/trans/$lgs/others.conf
 
 sttng4=$(sed -n 1p $DC_s/cnfg3)
 sttng5=$(sed -n 2p $DC_s/cnfg3)

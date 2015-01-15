@@ -35,7 +35,7 @@ if [ "$1" = dlck ]; then
 			echo "$edt" > $DICT/$stts/"$3".$lgt & exit 1
 		fi
 		
-elif [ "$3" = cnf ]; then
+elif [ -z "$1" ]; then
 	if [ ! -d "$DICT" ]; then
 		mkdir "$DICT"
 		mkdir "$DICT/activos"

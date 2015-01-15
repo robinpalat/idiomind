@@ -1,0 +1,7 @@
+#!/bin/bash
+drtu="/usr/share/idiomind/addons/Learning with news"
+if [[ "$(ps -A | grep -o plst)" = plst ]]; then
+	"$drtu/audio/plwd" "$1"
+else
+	"$drtu/audio/plst" "$1"
+fi

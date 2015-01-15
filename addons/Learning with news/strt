@@ -7,8 +7,8 @@ source /usr/share/idiomind/ifs/trans/$lgs/rss.conf
 STT=$(cat $DT/.uptf)
 if  [[ -z "$(cat $DC/addons/dict/.dicts)" ]]; then
 	sleep 1
-	$DS/addons/Dics/dict \
-	$DS/addons/Learning_with_news/info1 f cnf
+	$DS/addons/Dics/cnfg.sh \
+	$DS/addons/Learning with news/info1 f cnf # FIX
 	if  [[ -z "$(cat $DC/addons/dict/.dicts)" ]]; then
 		exit 1
 	fi
@@ -22,17 +22,17 @@ if echo "$STT" | grep "Actualizando..."; then
 		if [ $ret -eq 1 ]; then
 			exit 1
 		elif [ $ret -eq 2 ]; then
-			$DS/addons/Learning_with_news/stp.sh
-			$DS/addons/Learning_with_news/cnf
+			$DS/addons/Learning with news/stp.sh
+			$DS/addons/Learning with news/cnf
 		fi
 	exit 1
 fi
 sleep 1
 
-dct="$DS/addons/Dics/dict"
+dct="$DS/addons/Dics/cnfg.sh"
 feed=$(sed -n 1p "$DC/addons/Learning with news/$lgtl/link")
 rsrc=$(cat "$DC/addons/Learning with news/$lgtl/.rss")
-DS_pf="$DS/addons/Learning_with_news"
+DS_pf="$DS/addons/Learning with news"
 icon=$DS/images/cnn.png
 date=$(date "+%a %d %B")
 c=$(echo $(($RANDOM%1000)))

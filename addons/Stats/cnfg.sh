@@ -307,7 +307,7 @@ elif [ "$1" = T ]; then
 		fi
 
 #-----------------------------------------------------------------------
-elif [ "$1" = C ]; then
+elif [ -z "$1" ]; then
 	sttng=$(sed -n 1p $DC/addons/stats/cnf)
 	if [ -z $sttng ]; then
 		echo FALSE > $DC/addons/stats/cnf
@@ -321,10 +321,10 @@ elif [ "$1" = C ]; then
 	CNFG=$($yad --title="$weekly_report" --borders=10 --print-all \
 	--center --form --on-top --scroll --skip-taskbar --align=center \
 	--always-print-result --window-icon=idiomind \
-	--button=Close:0 --width=440 --height=340 --fixed \
+	--button=Close:0 --width=440 --height=340 \
 	--text="<sup>$description</sup>" \
 	--field="$active:CHK" $sttng \
-	--field="$SW:LBL")
+	--field="\n$SW:LBL")
 		ret=$?
 		
 		if [ $ret -eq 0 ]; then

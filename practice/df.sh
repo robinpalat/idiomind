@@ -4,9 +4,9 @@
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/practice.conf
 drtt="$DM_tlt/words"
-drts="$DS/addons/Practice/"
+drts="$DS/practice/"
 strt="$drts/strt"
-cd "$DC_tlt/Practice"
+cd "$DC_tlt/practice"
 all=$(cat fin | wc -l)
 easy=0
 hard=0
