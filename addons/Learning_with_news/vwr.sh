@@ -1,4 +1,6 @@
 #!/bin/bash
+# -*- ENCODING: UTF-8 -*-
+
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/rss.conf
 DS_pf="$DS/addons/Learning_with_news"
@@ -35,21 +37,28 @@ if [[ $1 = V1 ]]; then
 	lwrd=$(echo "$tgs" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' | tr '_' '\n')
 	lnk=$(cat "$DM_tl/Feeds/conten/$nme.lnk")
 	
-	if [ "$ap" = TRUE ]; then
-		(killall play & sleep 0.3 && play "$DM_tl/Feeds/conten/$nme.mp3") &
+	if [[ -f "$DM_tl/Feeds/conten/$nme.mp3" ]]; then
+	
+		if [ "$ap" = TRUE ]; then
+			(killall play & sleep 0.3 && play "$DM_tl/Feeds/conten/$nme.mp3") &
+		fi
+		
+		echo "$lwrd" | awk '{print $0""}' | $yad --list \
+		--window-icon=idiomind --scroll --quoted-output \
+		--skip-taskbar --center --title=" " --borders=10 \
+		--text="<big><big>$trg</big></big> <a href='$lnk'>More</a>\\n\\n<i>$srce</i>\\n\\n\\n" \
+		--width="$wth" --height="$eht" --center --no-headers \
+		--column=$lgtl:TEXT --column=$lgsl:TEXT \
+		--expand-column=0 --limit=20 --text-align=center \
+		--button=gtk-save:"$DS_pf/add n_i '$nme'" \
+		--button=$listen:"$DS_pf/audio/ply '$nme'" \
+		--button=gtk-go-up:3 --button=gtk-go-down:2 \
+		--dclick-action="$DS_pf/audio/ply.sh '$nme'"
+		
+	else
+		ff=$(($nuw + 1))
+		$vwr V1 "$nll" "$ff" & exit 1
 	fi
-
-	echo "$lwrd" | awk '{print $0""}' | $yad --list \
-	--window-icon=idiomind --scroll --quoted-output \
-	--skip-taskbar --center --title=" " --borders=10 \
-	--text="<big><big>$trg</big></big> <a href='$lnk'>More</a>\\n\\n<i>$srce</i>\\n\\n\\n" \
-	--width="$wth" --height="$eht" --center --no-headers \
-	--column=$lgtl:TEXT --column=$lgsl:TEXT \
-	--expand-column=0 --limit=20 --text-align=center \
-	--button=gtk-save:"$DS_pf/add n_i '$nme'" \
-	--button=$listen:"$DS_pf/audio/ply '$nme'" \
-	--button=gtk-go-up:3 --button=gtk-go-down:2 \
-	--dclick-action="$DS_pf/audio/ply.sh '$nme'"
 
 		ret=$?
 		if [[ $ret -eq 2 ]]; then
@@ -93,7 +102,7 @@ elif [[ $1 = V2 ]]; then
 		(killall play & sleep 0.3 && play "$DM_tlfk/words/$nme.mp3") &
 	fi
 
-	if [[ "$(echo "$nme" | wc -w)" -eq 1 ]]; then
+	if [[ -f "$DM_tlfk/words/$nme.mp3" ]]; then
 		tgs=$(eyeD3 "$DM_tlfk/words/$nme.mp3")
 		trg=$(echo "$tgs" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
 		srce=$(echo "$tgs" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
@@ -101,20 +110,19 @@ elif [[ $1 = V2 ]]; then
 		exm=$(echo "$lswd" | sed -n 1p)
 		exmp=$(echo "$exm" | sed "s/"$trg"/<span background='#CFFF8B'>"$trg"<\/\span>/g")
 		
-		echo "$lwrd" | awk '{print $0""}' | yad --columns=2 --form \
+		echo "$lwrd" | awk '{print $0""}' | yad --form \
 		--window-icon=idiomind --scroll --text-align=center \
 		--skip-taskbar --center --title="$MPG " --borders=10 \
 		--quoted-output --selectable-labels \
 		--text="<big><big>$trg</big></big>\\n\\n<i>$srce</i>\\n\\n" \
 		--field="":lbl \
 		--field="<i>$exmp</i>\\n:lbl" \
-		--field="":lbl \
 		--width="$wth" --height="$eht" --center \
 		--button="$delete":"$DS_pf/del dlti '$nme'" \
 		--button="$listen":"play '$DM_tlfk/words/$nme.mp3'" \
 		--button=gtk-go-up:3 --button=gtk-go-down:2
 
-	else
+	elif [[ -f "$DM_tlfk/$nme.mp3" ]]; then
 		if [ "$ap" = TRUE ]; then
 			(killall play & sleep 0.3 && play "$DM_tlfk/$nme.mp3") &
 		fi
@@ -135,6 +143,10 @@ elif [[ $1 = V2 ]]; then
 		--button=$listen:"$DS_pf/audio/ply '$nme'" \
 		--button=gtk-go-up:3 --button=gtk-go-down:2 \
 		--dclick-action="$DS_pf/audio/ply.sh '.audio'"
+		
+	else
+		ff=$(($nuw + 1))
+		$vwr V2 "$nll" "$ff" & exit 1
 	fi
 	
 		ret=$?

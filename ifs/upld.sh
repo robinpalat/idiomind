@@ -348,9 +348,9 @@ if [ -z "$FTPHOST" ]; then
 	exit 1
 fi
 
-Autor=$(echo "$upld" | cut -d "|" -f2)
+Author=$(echo "$upld" | cut -d "|" -f2)
 Mail=$(echo "$upld" | cut -d "|" -f3)
-notes=$(echo "$upld" | cut -d "|" -f5 | sed 's/\n/ /g')
+notes=$(echo "$upld" | cut -d "|" -f5)
 img=$(echo "$upld" | cut -d "|" -f6)
 link="$U.$tpc.idmnd"
 
@@ -419,8 +419,8 @@ cp -f "$DC_tlt/cnfg3" "$DT/$tpc/cnfg3"
 cp -f "$DC_tlt/cnfg4" "$DT/$tpc/cnfg4"
 cp -f "$DC_tlt/cnfg5" "$DT/$tpc/cnfg5"
 cp -f "$DC_tlt/cnfg10" "$DT/$tpc/cnfg10"
-echo "$notes" > "$DC_tlt/cnfg10"
-echo "$notes" > "$DT/$tpc/cnfg10"
+printf "$notes" > "$DC_tlt/cnfg10"
+printf "$notes" > "$DT/$tpc/cnfg10"
 
 cd $DT
 tar -cvf "$tpc.tar" "$tpc"
@@ -461,8 +461,8 @@ yad --window-icon=idiomind --name=idiomind \
 --skip-taskbar --title=idiomind \
 --button="  Ok  ":0
 
-[[ -f "$DT/$nme/cnfg12" ]] && rm -f "$DT/$tpc/cnfg12"
-rm -fr $DT/mkhtml/ $DT/.ti $DT/SITE_TMP
-rm -fr  $DT/"$tpc"  $DT/$U."$tpc".idmnd
+[[ -d "$DT/$nme" ]] && rm -fr "$DT/$nme"
+[[ -d "$DT/$tpc" ]] && rm -fr "$DT/$tpc"
+rm -fr $DT/SITE_TMP
 rm $DT/.aud $DT/.img $DT/$U."$tpc".idmnd \
 $DT/"$tpc".tar $DT/"$tpc".tar.gz & exit 1

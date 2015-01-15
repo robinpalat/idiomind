@@ -1,5 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
+
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/topics_lists.conf
 if [[ "$1" = chngi ]]; then
