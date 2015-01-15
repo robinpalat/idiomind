@@ -45,7 +45,7 @@ elif [ -z "$1" ]; then
 	if [ "$2" = f ]; then
 		tex="<small>$1\n</small>"
 	else
-		tex="<a href='http://www.idiomind.com.ar'><sup>$more_dict</sup></a>"
+		tex="<a href='http://www.dicts.com'><sup>$more_dict</sup></a>"
 	fi
 	
 	rm -f "$DICT/.listdicts"
@@ -84,7 +84,7 @@ elif [ -z "$1" ]; then
 	--column=" ":CHK --column="$availables":TEXT \
 	--column="$languages":TEXT \
 	--buttons-layout=edge --always-print-result \
-	--dclick-action='/usr/share/idiomind/addons/Dics/dict dlck' \
+	--dclick-action='/usr/share/idiomind/addons/Dics/cnfg.sh dlck' \
 	--title="Dictionarys" > "$D"
 	ret=$?
 	
@@ -109,7 +109,7 @@ elif [ -z "$1" ]; then
 					--width=230 --height=80 --borders=3 --button="gtk-ok:0" \
 					--skip-taskbar --window-icon=idiomind
 				fi
-				$DS/addons/Dics/dict 1 1 cnf & exit
+				$DS/addons/Dics/cnfg.sh 1 1 cnf & exit
 			fi
 		
 		elif [ "$ret" -eq 0 ]; then

@@ -31,14 +31,14 @@ if [[ -z "$1" ]]; then
 	| tr "\\n" '!' | sed 's/!\+$//g')
 
 	CNFG=$($yad --on-top --form --center \
-		--text="$feeds <span color='#797979'><b>$lgtl</b></span>\n" \
+		--text="$feeds $lgtl\n\n" \
 		--window-icon=idiomind --skip-taskbar --borders=15 \
 		--width=440 --height=340 --always-print-result \
 		--title="Feeds - $lgtl " "$text" \
 		--button="$delete:2" \
 		--button="gtk-add:5" \
 		--button="$update:4" \
-		--field="  <small>$current_subcription</small>:CB" "$FEED!$scrp" \
+		--field="  $current_subcription:CB" "$FEED!$scrp" \
 		--field="$update_at_start:CHK" $st2)
 		ret=$?
 		
@@ -52,33 +52,33 @@ if [[ -z "$1" ]]; then
 			if echo "$st1" | grep "Sample subscription"; then
 				$yad --title="Info" \
 				--center --on-top --window-icon=idiomind \
-				--width=380 --height=140 --fixed --image=info --skip-taskbar \
-				--text="  Sample subscription\\n  $delete_no" \
+				--width=380 --height=140 --image=info --skip-taskbar \
+				--text="  Sample subscription\\n  $delete_no." \
 				--borders=5 --button=OK:1
-				$DIR3/cnfg.sh & exit
+				"$DIR3/cnfg.sh" & exit
 			elif echo "$st1" | grep "Example"; then
 				$yad --title="Info" --center --on-top --window-icon=idiomind \
-				--width=380 --height=140 --fixed --image=info --skip-taskbar \
+				--width=380 --height=140 --image=info --skip-taskbar \
 				--text="  Sample subscription\\n  $delete_no" \
 				--borders=5 --button=OK:1
-				$DIR3/cnfg.sh & exit
+				"$DIR3/cnfg.sh" & exit
 			else
 				$yad --center \
 				--title=Confirm --window-icon=idiomind \
-				--on-top --width=380 --height=140 --fixed --image=dialog-question \
+				--on-top --width=380 --height=140 --image=dialog-question \
 				--skip-taskbar --text="   <b>$delete_subcription</b>  \n\n\t$st1 " \
 				--borders=5 --button="$delete":0 --button="$cancel":1
 					ret=$?
 					
 					if [[ $ret -eq 1 ]]; then
-						$DIR3/cnfg.sh & exit
+						"$DIR3/cnfg.sh" & exit
 					
 					elif [[ $ret -eq 0 ]]; then
 						if [[ "$(cat "$dir2/$lgtl/.rss")" = "$st1" ]]; then
 							rm "$dir2/$lgtl/.rss" "$dir2/$lgtl/link"
 						fi
 						rm "$dir2/$lgtl/subscripts/$st1"
-						$DIR3/cnfg.sh & exit
+						"$DIR3/cnfg.sh" & exit
 					fi
 			fi
 					
@@ -88,13 +88,13 @@ if [[ -z "$1" ]]; then
 				--center --on-top --window-icon=idiomind --align=right \
 				--skip-taskbar --button=$cancel:1 --button=Ok:0 \
 				--form --title=" $new_subcription" --borders=5 \
-				--field="<small>$name:</small>: " "" \
-				--field="<small>$url:</small>: " "" \ )
+				--field="$name:: " "" \
+				--field="$url:: " "" \ )
 			
 				if [[ -z "$(echo "$nwfd" | cut -d "|" -f1)" ]]; then
-					$DIR3/cnfg.sh & exit
+					"$DIR3/cnfg.sh" & exit
 				elif [[ -z "$(echo "$nwfd" | cut -d "|" -f2)" ]]; then
-					$DIR3/cnfg.sh & exit
+					"$DIR3/cnfg.sh" & exit
 				fi
 			
 				if [ "$?" -eq 0 ]; then
@@ -113,10 +113,10 @@ if [[ -z "$1" ]]; then
 					echo '$link' > ../link
 					exit' > "$dirs/$nme"
 					chmod +x  "$dirs/$nme"
-					$DIR3/cnfg.sh & exit
+					"$DIR3/cnfg.sh" & exit
 					
 				elif [ "$?" -eq 1 ]; then
-					$DIR3/cnfg.sh & exit
+					"$DIR3/cnfg.sh" & exit
 				fi
 		
 		elif [[ $ret -eq 4 ]]; then
@@ -130,25 +130,32 @@ if [[ -z "$1" ]]; then
 elif [[ $1 = edit ]]; then
 	drtc="$DC_tl/Feeds/"
 	slct=$(mktemp $DT/slct.XXXX)
-	img1="$DIR3/img/del.png"
-	img2="$DIR3/img/del.png"
-	img3="$DIR3/img/save.png"
-	img4="$DIR3/img/rss.png"
 
-	if [[ "$(cat "$drtc/cnfg0" | wc -l)" -ge 20 ]]; then
-		dd="'$img3' $create_topic '$img1' $delete_news '$img2' $delete_saved '$img4' $subcriptions"
-	else
-		dd="'$img1' $delete_news '$img2' $delete_saved '$img4' $subcriptions"
-	fi
+if [[ "$(cat "$drtc/cnfg0" | wc -l)" -ge 20 ]]; then
+dd="$DIR3/img/save.png
+$create_topic
+$DIR3/img/del.png
+$delete_news
+$DIR3/img/del.png
+$delete_saved
+$DIR3/img/rss.png
+$subcriptions"
+else
+dd="$DIR3/img/del.png
+$delete_news
+$DIR3/img/del.png
+$delete_saved
+$DIR3/img/rss.png
+$subcriptions"
+fi
 
-	$yad --list --on-top \
+	echo "$dd" | yad --list --on-top \
 	--expand-column=2 --center \
-	--width=180 --name=idiomind --class=idmnd \
+	--width=180 --name=idiomind --class=idiomind \
 	--height=240 --title="Edit" \
 	--window-icon=idiomind --no-headers \
-	--buttons-layout=end \
-	--borders=0 --button=Ok:0 --column=icon:IMG \
-	--column=Action:TEXT $dd > "$slct"
+	--buttons-layout=end --borders=0 --button=Ok:0 \
+	--column=icon:IMG --column=Action:TEXT > "$slct"
 	ret=$?
 	slt=$(cat "$slct")
 	if  [[ "$ret" -eq 0 ]]; then
