@@ -102,7 +102,7 @@ function mchoise() {
 	--text-align=center --no-headers --borders=5 --window-icon=idiomind \
 	--button=gtk-media-stop:1 \
 	--title=" " \
-	--text="\\n\\n$trgts   \\n\\n<sup><tt>$means</tt>...</sup>\\n\\n" \
+	--text="\\n$trgts   \\n\\n<sup><tt>$means</tt>...</sup>\\n\\n" \
 	--column=Opcion --column=Opciodn)
 }
 

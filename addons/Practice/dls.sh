@@ -134,15 +134,15 @@ function result() {
 	if [ $porc -ge 70 ]; then
 		echo "$trgt" >> ok.f
 		easy=$(($easy+1))
-		prc="$porc% <b>OK!</b>"
+		prc="<span background='#3AB452'><span color='#FFFFFF'> $porc% <b>Pass! </b></span></span>"
 		
 	elif [ $porc -ge 50 ]; then
 		ling=$(($ling+1))
-		prc="$porc%"
+		prc="<span background='#E5801D'><span color='#FFFFFF'> $porc% </span></span>"
 		
 	else
 		hard=$(($hard+1))
-		prc="$porc%"
+		prc="<span background='#D11B5D'><span color='#FFFFFF'> $porc% </span></span>"
 	fi
 	rm allc sentc
 	}
@@ -157,7 +157,7 @@ function check() {
 	--button="$next__sentence:2" \
 	--field="<big>$WEN</big>\\n":lbl \
 	--field="":lbl \
-	--field="$OK\\n<sup>$prc</sup>\\n":lbl
+	--field="$OK\\n<small><small>$prc</small></small>\\n":lbl
 	}
 
 n=1
@@ -165,7 +165,7 @@ while [ $n -le $(cat lsin | wc -l) ]; do
 
 	namefile=$(sed -n "$n"p lsin)
 	if [[ $n = 1 ]]; then
-	info="--text=<sup><tt>  $write_sentence...</tt></sup>"
+	info="--text=<sup><tt> $write_sentence...</tt></sup>"
 	else
 	info=""
 	fi

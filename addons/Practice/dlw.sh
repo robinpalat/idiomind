@@ -109,7 +109,7 @@ function cuestion() {
 	--width=365 --height=280 \
 	--button="gtk-media-stop":1 \
 	--button="Play":"$listen" \
-	--button="   $answer2 >   ":0
+	--button="$answer2 >":0
 	}
 
 function answer() {
