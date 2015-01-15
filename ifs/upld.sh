@@ -265,7 +265,7 @@ function suma(){
  let ALL=$MP3+$WORDS
 }
 suma
-if [ $ALL -le 20 ]; then
+if [ $ALL -le 15 ]; then
 	cstn=$($yad --image=info --on-top \
 	--text=" $min_items\\n " --window-icon=idiomind \
 	--image-on-top --center --sticky --name=idiomind \

@@ -1,12 +1,12 @@
 #!/bin/bash
 
-lngt=$(sed -n 2p ~/.config/idiomind/s/lang)
-if [ -f "$HOME/.idiomind/topics/$lngt/Feeds/conten/$1.mp3" ]; then
-	drtx="$HOME/.idiomind/topics/$lngt/Feeds/conten/$1"
-	fle="$HOME/.idiomind/topics/$lngt/Feeds/conten/$1.mp3"
-elif [ -f "$HOME/.idiomind/topics/$lngt/Feeds/kept/$1.mp3" ]; then
-	drtx="$HOME/.idiomind/topics/$lngt/Feeds/kept/.audio"
-	fle="$HOME/.idiomind/topics/$lngt/Feeds/kept/$1.mp3"
+source /usr/share/idiomind/ifs/c.conf
+if [ -f "$DM_tl/Feeds/conten/$1.mp3" ]; then
+	drtx="$DM_tl/Feeds/conten/$1"
+	fle="$DM_tl/Feeds/conten/$1.mp3"
+elif [ -f "$DM_tl/Feeds/kept/$1.mp3" ]; then
+	drtx="$DM_tl/Feeds/kept/.audio"
+	fle="$DM_tl/Feeds/kept/$1.mp3"
 else
 	exit 1
 fi

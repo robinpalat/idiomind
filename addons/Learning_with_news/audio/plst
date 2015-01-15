@@ -1,15 +1,12 @@
 #!/bin/bash
 
-lngt=$(sed -n 2p ~/.config/idiomind/s/lang)
-
-if [ -f "$HOME/.idiomind/topics/$lngt/Feeds/conten/$1.mp3" ]; then
-	drtx="$HOME/.idiomind/topics/$lngt/Feeds/conten/"
-elif [ -f "$HOME/.idiomind/topics/$lngt/Feeds/kept/$1.mp3" ]; then
-	drtx="$HOME/.idiomind/topics/$lngt/Feeds/kept"
+source /usr/share/idiomind/ifs/c.conf
+if [ -f "$DM_tl/Feeds/conten/$1.mp3" ]; then
+	drtx="$DM_tl/Feeds/conten"
+elif [ -f "$DM_tl/Feeds/kept/$1.mp3" ]; then
+	drtx="$DM_tl/Feeds/kept"
 fi
-
 sleep 0.5
-
 if [[ "$(ps -A | grep -o "plwd")" = "plwd" ]]; then
 	exit 1
 else

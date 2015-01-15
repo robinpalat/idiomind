@@ -1653,6 +1653,7 @@ $trgt" >> log
 			--undecorated --auto-close --on-top \
 			--skip-taskbar --no-buttons
 			
+			sed -i '/^$/d' ./ls
 			[[ $(echo "$tpe" | wc -c) -gt 40 ]] && tcnm="${tpe:0:40}..." || tcnm="$tpe"
 
 			left=$((50 - $(cat "$DC_tlt"/cnfg4 | wc -l)))
@@ -1663,16 +1664,17 @@ $trgt" >> log
 				info=$(echo "$remain"$left"$sentence")
 			fi
 			
-			if [ -z "$(cat ./ls)" ]; then
+			if [ -z "$(cat ls)" ]; then
 				echo "$gettext_err" | $yad --text-info --center --wrap \
 				--name=idiomind --class=idiomind --window-icon=idiomind \
 				--text=" " --sticky --width=$wth --height=$eht \
-				--margins=8 --borders=3 --button=gtk-ok:0 --title="$Title_sentences" && \
+				--margins=8 --borders=3 --button=gtk-ok:0 \
+				--title="$Title_sentences" && \
 				rm -fr $lckpr $DT_r & exit 1
 				
 			else
 				slt=$(mktemp $DT/slt.XXXX.x)
-				cat ./ls | awk '{print "FALSE\n"$0}' | \
+				cat lss | awk '{print "FALSE\n"$0}' | \
 				$yad --center --sticky --no-headers \
 				--name=idiomind --class=idiomind \
 				--dclick-action='/usr/share/idiomind/add.sh prc' \
@@ -2104,8 +2106,8 @@ $trgt" >> ./wlog
 				echo "$sntnc" >> ./sntsls
 			fi
 		done < ./sntsls_
-		rm -f ./sntsls_
-		
+
+		sed -i '/^$/d' ./sntsls
 		[[ $(echo "$tpe" | wc -c) -gt 40 ]] && tcnm="${tpe:0:40}..." || tcnm="$tpe"
 		
 		left=$((50 - $ns))
@@ -2118,7 +2120,7 @@ $trgt" >> ./wlog
 		fi
 		
 		if [ -z "$(cat ./sntsls)" ]; then
-			echo "  $gettext_err1 " | \
+			echo "  $gettext_err1. " | \
 			$yad --text-info --center --wrap \
 			--name=idiomind --class=idiomind --window-icon=idiomind \
 			--text=" " --sticky --width=$wth --height=$eht \
