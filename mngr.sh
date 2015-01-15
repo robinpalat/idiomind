@@ -15,38 +15,58 @@ if [ $1 = edit ]; then
 	eht=$(sed -n 7p $DC_s/cnfg18)
 	wth=$(sed -n 8p $DC_s/cnfg18)
 	slct=$(mktemp $DT/slct.XXXX)
-	img1=$DS/images/ok.png
-	img2=$DS/images/rw.png
-	img3=$DS/images/rn.png
-	img4=$DS/images/dlt.png
-	img5=$DS/images/upd.png
-	img6=$DS/images/pdf.png
-	st1=FALSE
-	st2=FALSE
-	st3=FALSE
-	st4=FALSE
-	st5=FALSE
-	st6=FALSE
 	
-	if [ -z "$nstll" ]; then
-		if [ "$ti" -ge 15 ]; then
-			dd="$img1 $learned $img2 $review $img3 $rename $img4 $delete $img5 $share $img6 $topdf"
-		else
-			dd="$img3 $rename $img4 $delete $img5 $share $img6 $topdf"
-		fi
-	else
-		if [ "$ti" -ge 15 ]; then
-			dd="$img1 $learned $img2 $review $img3 $rename $img4 $delete $img6 $topdf"
-		else
-			dd="$img3 $rename $img4 $delete $img6 $topdf"
-		fi
-	fi
-	$yad --list --on-top --expand-column=2 --center \
-	--width=180 --name=idiomind --class=idmnd \
-	--height=240 --title="$tpc" --window-icon=idiomind \
+if [ -z "$nstll" ]; then
+if [ "$ti" -ge 15 ]; then
+dd="$DS/images/ok.png
+$learned
+$DS/images/rw.png
+$review
+$DS/images/rn.png
+$rename
+$DS/images/dlt.png
+$delete
+$DS/images/upd.png
+$share
+$DS/images/pdf.png
+$topdf"
+else
+dd="$DS/images/rn.png
+$rename
+$DS/images/dlt.png
+$delete
+$DS/images/upd.png
+$share
+$DS/images/pdf.png
+$topdf"
+fi
+else
+if [ "$ti" -ge 15 ]; then
+dd="$DS/images/ok.png
+$learned
+$DS/images/rw.png
+$review
+$DS/images/rn.png
+$rename
+$DS/images/dlt.png
+$delete
+$DS/images/pdf.png
+$topdf"
+else
+dd="$DS/images/rn.png
+$rename
+$DS/images/dlt.png
+$delete
+$DS/images/pdf.png
+$topdf"
+fi
+fi
+	echo "$dd" | yad --list --on-top --expand-column=2 --center \
+	--width=220 --name=idiomind --class=idmnd \
+	--height=220 --title="$tpc" --window-icon=idiomind \
 	--buttons-layout=end --no-headers \
 	--borders=0 --button=Ok:0 --column=icon:IMG \
-	--column=Action:TEXT $dd > "$slct"
+	--column=Action:TEXT > "$slct"
 	ret=$?
 	slt=$(cat "$slct")
 	if  [[ "$ret" -eq 0 ]]; then

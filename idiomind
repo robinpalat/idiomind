@@ -38,7 +38,7 @@ if [ -z "$1" ]; then
 		fi
 	fi
 	
-	yad --geometry=185x318-200-450 --width=175 --height=220 \
+	yad --width=175 --height=220 \
 	--name=idiomind --fixed --title="Idiomind" --no-buttons \
 	--icons --single-click --on-top --borders=0 \
 	--read-dir=$DS/default/new --item-width=68 \
