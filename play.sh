@@ -94,7 +94,7 @@ elif [[ -z "$1" ]]; then
 	fi
 	$yad --list --on-top \
 	--expand-column=3 --print-all --center \
-	--width=180 --name=idiomind --class=idmnd \
+	--width=240 --name=idiomind --class=idmnd \
 	--height=240 --title="$tpc" \
 	--window-icon=idiomind --no-headers \
 	--buttons-layout=end \

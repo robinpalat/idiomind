@@ -401,8 +401,27 @@ sed -i "s/12/$images/g" "$DT/cnfg12"
 echo "$U" > $DC_s/cnfg4
 echo "$Mail" >> $DC_s/cnfg4
 
-[[ -f "$img" ]] && /usr/bin/convert -scale 64x54! \
--border 0.5 -bordercolor '#ADADAD' "$img" "$DM_tlt/words/images/img.png"
+if [[ -f "$img" ]]; then
+/usr/bin/convert -scale 120x90! "$img" $DT/img1.png
+convert $DT/img1.png -alpha opaque -channel a -evaluate set 15% +channel $DT/img.png
+bo=/usr/share/idiomind/images/bo.png
+convert $bo -edge .5 -blur 0x.5 $DT/bo_.png
+convert $DT/img.png \( $DT/bo_.png -negate \) -geometry +1+1 -compose multiply -composite -crop 120x90+1+1 +repage $DT/bo_outline.png
+convert $DT/img.png -crop 120x90+1+1\! -background none -flatten +repage \( $bo +matte \) -compose CopyOpacity -composite +repage $DT/boim.png
+# bevel
+convert $DT/boim.png \
+           \( +clone -channel A -separate +channel -negate \
+              -background black -virtual-pixel background \
+              -blur 0x4 -shade 110x21.78 -contrast-stretch 0% \
+              +sigmoidal-contrast 7x50% -fill grey50 -colorize 10% \
+              +clone +swap -compose overlay -composite \) \
+          -compose In -composite $DT/boim1.png
+
+convert $DT/boim1.png \
+            \( +clone -background Black -shadow 30x3+4+4 \) \
+            -background none -compose DstOver -flatten \
+            "$DM_tlt/words/images/img.png" 
+fi
 
 cd "$DM_tlt"
 cp -r * $DT/"$tpc/"
@@ -440,11 +459,11 @@ mv -f "$DT/$U.$tpc.idmnd" $DT/$nme/
 rm -f $DT/SITE_TMP
 cd $DT/$nme
 cp -f $DS/default/index.php ./.index.php
-chmod 775 -R $DT/$nme
-lftp -u $USER,$KEY $FTPHOST << END_SCRIPT
-mirror --reverse ./ public_html/$lgs/$lnglbl/$Ctgry/
-quit
-END_SCRIPT
+#chmod 775 -R $DT/$nme
+#lftp -u $USER,$KEY $FTPHOST << END_SCRIPT
+#mirror --reverse ./ public_html/$lgs/$lnglbl/$Ctgry/
+#quit
+#END_SCRIPT
 
 exit=$?
 
@@ -465,8 +484,8 @@ yad --window-icon=idiomind --name=idiomind \
 --skip-taskbar --title=idiomind \
 --button="  Ok  ":0
 
-[[ -d "$DT/$nme" ]] && rm -fr "$DT/$nme"
-[[ -d "$DT/$tpc" ]] && rm -fr "$DT/$tpc"
-rm -fr $DT/SITE_TMP
-rm $DT/.aud $DT/.img $DT/$U."$tpc".idmnd \
-$DT/"$tpc".tar $DT/"$tpc".tar.gz & exit 1
+#[[ -d "$DT/$nme" ]] && rm -fr "$DT/$nme"
+#[[ -d "$DT/$tpc" ]] && rm -fr "$DT/$tpc"
+#rm -fr $DT/SITE_TMP
+#rm $DT/.aud $DT/.img $DT/$U."$tpc".idmnd \
+#$DT/"$tpc".tar $DT/"$tpc".tar.gz & exit 1

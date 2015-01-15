@@ -316,7 +316,7 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 		cd "$tmp"
 		ws=$(cat "cnfg3" | wc -l)
 		ss=$(cat "cnfg4" | wc -l)
-		itxt="<big><b> $title</b></big><small>\\n ${category^}. ${language_source^} <b>></b> $language_target\\n $nwords $words $nsentences $sentences $nimages $images</small>"
+		itxt="<big><b>$title</b></big><small>\\n${category^}. ${language_source^} <b>></b> $language_target\\n$nwords $words $nsentences $sentences $nimages $images</small>\n\n"
 		dlck="$DT/p1.$c"
 		cat "$tmp/cnfg0" | awk '{print $0""}' | \
 		$yad --list --name=Idiomind --title="Idiomind" \
@@ -462,7 +462,7 @@ if [ "$1" = topic ]; then
 		cd "$DC_tlt"
 		ws=$(cat cnfg3 | wc -l)
 		ss=$(cat cnfg4 | wc -l)
-		itxt="<big><b> $ttl </b> </big><small>\\n  $ss $sentences$s  $ws $words</small>"
+		itxt="<big><b>$ttl </b></big><small>\\n$ss $sentences$s$ws $words</small>\n\n"
 		cd $DS
 		c=$(echo $(($RANDOM%100000)))
 		KEY=$c

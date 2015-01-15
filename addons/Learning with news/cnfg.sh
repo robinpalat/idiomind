@@ -151,8 +151,8 @@ fi
 
 	echo "$dd" | yad --list --on-top \
 	--expand-column=2 --center \
-	--width=220 --name=idiomind --class=idiomind \
-	--height=220 --title="Edit" \
+	--width=240 --name=idiomind --class=idiomind \
+	--height=240 --title="Edit" \
 	--window-icon=idiomind --no-headers \
 	--buttons-layout=end --borders=0 --button=Ok:0 \
 	--column=icon:IMG --column=Action:TEXT > "$slct"

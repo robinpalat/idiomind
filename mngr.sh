@@ -62,8 +62,8 @@ $topdf"
 fi
 fi
 	echo "$dd" | yad --list --on-top --expand-column=2 --center \
-	--width=220 --name=idiomind --class=idmnd \
-	--height=220 --title="$tpc" --window-icon=idiomind \
+	--width=240 --name=idiomind --class=idmnd \
+	--height=240 --title="$tpc" --window-icon=idiomind \
 	--buttons-layout=end --no-headers \
 	--borders=0 --button=Ok:0 --column=icon:IMG \
 	--column=Action:TEXT > "$slct"
