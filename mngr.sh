@@ -274,7 +274,6 @@ elif [ "$1" = edt ]; then
 	edta=$(sed -n 17p ~/.config/idiomind/s/cnfg1)
 	tpcs=$(cat "$DC_tl/.cnfg2" | egrep -v "$tpc" | cut -c 1-40 \
 	| tr "\\n" '!' | sed 's/!\+$//g')
-	topc=$(echo "$tpc" | cut -c 1-40)
 	c=$(echo $(($RANDOM%10000)))
 	re='^[0-9]+$'
 	v="$2"
@@ -317,7 +316,7 @@ elif [ "$1" = edt ]; then
 		--text-align=center --selectable-labels \
 		--field="<small>$lgtl</small>":RO "$TGT" \
 		--field="<small>$lgsl</small>" "$src" \
-		--field="<small>$topic </small>":CB "$topc!$tpcs" \
+		--field="<small>$topic </small>":CB "$tpc!$tpcs" \
 		--field="<small>$audio </small>":FL "$AUD" \
 		--field="<small>$example </small>":TXT "$exm1" \
 		--field="<small>$definition </small>":TXT "$dftn" \
@@ -332,8 +331,7 @@ elif [ "$1" = edt ]; then
 			ret=$?
 			
 			srce=$(cat $cnf | tail -12 | sed -n 2p)
-			tp=$(cat $cnf | tail -12 | sed -n 3p)
-			tpc=$(cat "$DC_tl/.cnfg1" | grep "$tp")
+			topc=$(cat $cnf | tail -12 | sed -n 3p)
 			audo=$(cat $cnf | tail -12 | sed -n 4p)
 			exm1=$(cat $cnf | tail -12 | sed -n 5p)
 			dftn=$(cat $cnf | tail -12 | sed -n 6p)
@@ -343,6 +341,7 @@ elif [ "$1" = edt ]; then
 			rm -f $cnf
 			
 			if [[ $ret -eq 0 ]]; then
+				source /usr/share/idiomind/ifs/c.conf
 				if [ "$mrk" != "$mrk2" ]; then
 					if [ "$mrk2" = "TRUE" ]; then
 						echo "$TGT" >> "$DC_tlt/cnfg6"
@@ -379,10 +378,10 @@ elif [ "$1" = edt ]; then
 
 				mv -f "$DT/$nme.mp3" "$file"
 
-				if [ "$(echo $tpc | cut -c 1-40)" != "$topc" ]; then
-					cp -f "$audo" "$DM_tl/$tpc/words/$nme.mp3"
-					$DS/mngr.sh inx W "$nme" "$tpc" &
-					if [ -n "$(cat "$DC_tl/.cnfg2" | grep "$tpc")" ]; then
+				if [ "$tpc" != "$topc" ]; then
+					cp -f "$audo" "$DM_tl/$topc/words/$nme.mp3"
+					$DS/mngr.sh inx W "$nme" "$topc" &
+					if [ -n "$(cat "$DC_tl/.cnfg2" | grep "$topc")" ]; then
 						$DS/mngr.sh dli "$nme" C
 					fi
 				fi
@@ -420,7 +419,7 @@ elif [ "$1" = edt ]; then
 		--field="$chk:CHK" "$ok" \
 		--field="<small>$lgtl</small>":TXT "$tgt" \
 		--field="<small>$lgsl</small>":TXT "$src" \
-		--field="<small>$topic </small>":CB "$topc!$tpcs" \
+		--field="<small>$topic </small>":CB "$tpc!$tpcs" \
 		--field="<small>$audio </small>":FL "$DM_tlt/$nme.mp3" \
 		--field="$list_words":BTN "$wrds" \
 		--button="$image":"$imge" \
@@ -430,9 +429,9 @@ elif [ "$1" = edt ]; then
 			mrok=$(cat $cnf | tail -7 | sed -n 1p)
 			trgt=$(cat $cnf | tail -7 | sed -n 2p)
 			srce=$(cat $cnf | tail -7 | sed -n 3p)
-			tp=$(cat $cnf | tail -7 | sed -n 4p)
-			tpc=$(cat "$DC_tl/.cnfg1" | grep "$tp")
+			topc=$(cat $cnf | tail -7 | sed -n 4p)
 			audo=$(cat $cnf | tail -7 | sed -n 5p)
+			source /usr/share/idiomind/ifs/c.conf
 			rm -f $cnf
 			
 			if [ -n "$audo" ]; then
@@ -632,9 +631,9 @@ elif [ "$1" = edt ]; then
 				eyeD3 --set-encoding=utf8 -a ISI2I0I"$srce"ISI2I0I "$file" >/dev/null 2>&1
 			fi
 			
-			if [ "$(echo $tpc | cut -c 1-40)" != "$topc" ]; then
-				cp -f "$audo" "$DM_tl/$tpc/$nme.mp3"
-				tgt=$(eyeD3 "$DM_tl/$tpc/$nme.mp3" \
+			if [ "$tpc" != "$topc" ]; then
+				cp -f "$audo" "$DM_tl/$topc/$nme.mp3"
+				tgt=$(eyeD3 "$DM_tl/$topc/$nme.mp3" \
 				| grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' \
 				| sed 's/ /\n/g' | grep -v '^.$' | grep -v '^..$' \
 				| sed -n 1,40p | sed s'/&//'g | sed 's/,//g' | sed 's/\?//g' \
@@ -643,11 +642,11 @@ elif [ "$1" = edt ]; then
 				| sed 's/\.//g' | sed 's/  / /g' | sed 's/ /\. /g')
 				n=1
 				while [ $n -le "$(echo "$tgt" | wc -l)" ]; do
-					echo "$(echo "$tgt" | sed -n "$n"p).mp3" >> "$DC_tl/$tpc/cnfg5"
+					echo "$(echo "$tgt" | sed -n "$n"p).mp3" >> "$DC_tl/$topc/cnfg5"
 					let n++
 				done
-				$DS/mngr.sh inx S "$nme" "$tpc" &
-				if [ -n "$(cat "$DC_tl/.cnfg2" | grep "$tpc")" ]; then
+				$DS/mngr.sh inx S "$nme" "$topc" &
+				if [ -n "$(cat "$DC_tl/.cnfg2" | grep "$topc")" ]; then
 					$DS/mngr.sh dli "$nme" C
 				fi
 			fi

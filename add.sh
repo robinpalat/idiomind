@@ -276,8 +276,8 @@ elif [ $1 = n_i ]; then
 		cd $HOME
 		txt2="$5"
 		sx='180x160'
-		auds="--button=Audio:$DS/audio/auds pnl '$DT_r' 10"
-		rec="--button=gtk-media-record:$DS/audio/auds rec '$DT_r' '10'"
+		auds="--button=Audio:$DS/audio/cnfg.sh pnl '$DT_r' 10"
+		rec="--button=gtk-media-record:$DS/audio/cnfg.sh rec '$DT_r' '10'"
 		ls="--button=Play:play $DT_r/audtm.mp3"
 		lzgpr=$($yad --separator="\\n" --skip-taskbar \
 		--width=400 --height=260 --form --on-top --name=idiomind \

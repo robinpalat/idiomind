@@ -10,7 +10,7 @@ $yad --form --height=190 --borders=5 --width=350 \
 	--window-icon=idiomind \
 	--field="$topics_saved:BTN" "$DS/ifs/upld.sh vsd" \
 	--field="$play_time:BTN" "$DS/play.sh time" \
-	--field="$audio_imput:BTN" "$DS/audio/auds" \
+	--field="$audio_imput:BTN" "/usr/share/idiomind/audio/cnfg.sh" \
 	--field="$search_updates:BTN" "$DS/ifs/tls.sh updt" \
 	--field="$help:BTN" "$DS/ifs/tls.sh help" \
 	--button=Close:0 & exit 1

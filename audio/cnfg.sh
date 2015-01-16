@@ -1,72 +1,33 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
+
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/others.conf
 
 if [ -z $1 ]; then
 	msj=$(sed -n 1p $DC_s/cnfg20)
 	cn=$(sed -n 2p $DC_s/cnfg20)
-	if [ -z "$cn" ]; then
-		msj=" ( $no_defined )"
-	else
-		img="$cn"
-	fi
-	$yad --center --align=center \
-	--text="   $recording: $msj" \
-	---name=idiomind --geometry=0-0-0-0 \
-	--width=350 --height=120 --center \
-	--on-top --skip-taskbar \
-	--button="$change":2 --button=gtk-apply:3 \
-	--window-icon=idiomind --borders=10 \
-	--title=" "
+	[[ -z "$cn" ]] && msj=" ( $no_defined )" || img="$cn"
+
+	yad --center --align=center --text="  $recording: $msj" \
+	---name=idiomind --geometry=0-0-0-0 --width=350 --height=120 \
+	--on-top --skip-taskbar --center --window-icon=idiomind \
+	--button="$change":2 --button=gtk-apply:3 --borders=10 --title=" "
 	ret=$?
-	if [[ $ret -eq 3 ]]; then
-		exit 1
-	elif [[ $ret -eq 2 ]]; then
-		$DS/audio/auds chng
-		$DS/audio/auds
-	else
+
+	if [[ $ret -eq 2 ]]; then
+		$DS/audio/cnfg.sh chng
+		$DS/audio/cnfg.sh
 		exit 1
 	fi
-	exit
 fi
 
-if [ $1 = pnl ]; then
-	DT_r="$2"
-	t="$3"
-	cd ~/
-	inp="$DS/audio/auds"
-	ls="play $DT_r/audtm.mp3"
-	rec="--button=gtk-media-record:$DS/audio/auds rec '$DT_r' '$t'"
-	
-	FLAS=$($yad --buttons-layout=spread \
-	--width=480 --height=224  --form --on-top --name=idiomind \
-	--class=idiomind --window-icon=idiomind --center \
-	--button="gtk-preferences":$inp "$rec" --button="Play":"$ls" \
-	--button=gtk-save:0 --borders=10 --title="$ttl" --skip-taskbar \
-	--field=":lbl" "" \
-	--field=" <small>   $add_audio     </small>":FL \
-	--field="\\n\\n:lbl" "" \
-	--field=":lbl" "" \
-	--field="  <small>Or record</small>:lbl" "" )
-	ret=$?
-		audio=$(echo "$FLAS" | cut -d "|" -f2)
-		if [[ $ret -eq 0 ]]; then
-			if echo "$audio" | grep -o ".mp3"; then
-				cp -f "$audio" $DT_r/audtm.mp3
-			fi
-		else
-			exit 1
-		fi
-
-elif [ $1 = edt ]; then
+if [ $1 = edt ]; then
 	prm=$(sed -n 17p $DC_s/cnfg1)
 	aud="$1"
 	dir="$2"
-	(
-	cd "$aud"
-	$edta "$aud"
-	) & exit 1
+	(cd "$aud"
+	$edta "$aud") & exit 1
 	
 elif [ $1 = rec ]; then
 
@@ -84,7 +45,8 @@ elif [ $1 = rec ]; then
 	--window-icon=idiomind --center --borders=10 \
 	--title=" " \
 	--field="\\n\\n$NAME":lbl &
-	sox -t alsa default $DT_r/audtm.mp3 silence 1 0.1 5% 1 1.0 5% &
+	sox -t alsa default $DT_r/audtm.mp3 \
+	silence 1 0.1 5% 1 1.0 5% &
 	sleep 10
 	killall -9 sox
 	killall sox & killall rec
@@ -93,14 +55,13 @@ elif [ $1 = rec ]; then
 elif [ $1 = add ]; then
 	NM=$(cat $DT/.titl)
 	cd ~/
-	FILE=$($yad  --center \
-	--borders=10 --file-filter="*.mp3" --on-top --title=" " \
+	file=$(yad --center --borders=10 --file-filter="*.mp3" \
 	--window-icon=idiomind --skip-taskbar --title="add_audio" \
-	--file --width=600 --height=500 )
-		if [ -z "$FILE" ];then
+	--on-top --title=" " --file --width=600 --height=500 )
+		if [ -z "$file" ];then
 			exit 1
 		else
-			cp -f "$FILE" $DT_r/audtm.mp3
+			cp -f "$file" $DT_r/audtm.mp3
 		fi
 elif [ $1 = chng ]; then
 
