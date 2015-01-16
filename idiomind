@@ -8,53 +8,27 @@ if [ ! -d "$HOME/.idiomind" ]; then
 	fi
 fi
 source /usr/share/idiomind/ifs/c.conf
-source /usr/share/idiomind/ifs/trans/$lgs/items_lists.conf
+source $DS/ifs/trans/$lgs/items_lists.conf
+[[ -f $DT/.upt ]] && rm -f $DT/.upt
 
 if [ -z "$1" ]; then
-	if [ -f $DT/.upt ]; then
-		rm -f $DT/.upt
-	fi
-	
-		# write in /tmp
-	if [ ! -d $DT ]; then
-		mkdir $DT
-	fi
-	if [ $? -ne 0 ]; then
 
-		$yad --name=idiomind \
-		--image=error --button=gtk-ok:1\
-		--text=" <b>$write_err</b>" \
-		--image-on-top --sticky  \
-		--width=320 --height=80 \
-		--borders=2 --title=Idiomind \
-		--skip-taskbar --center \
-		--window-icon=idiomind & exit 1
-	fi
-	
-	# check directories
-	if [ -f $DC_tl/.cnfg1 ]; then
-		if [[ "$(cat $DC_tl/.cnfg1 | wc -l)" -lt 1 ]]; then
-			touch "$DT/ntpc"
-		fi
-	fi
-	
-	yad --width=175 --height=220 \
-	--name=idiomind --fixed --title="Idiomind" --no-buttons \
-	--icons --single-click --on-top --borders=0 \
-	--read-dir=$DS/default/new --item-width=68 \
-	--window-icon=idiomind --class=idiomind &
-	
-	# init count for log weekly report
-	echo "strt.1.strt" >> \
-	$DC/addons/stats/.log &
-	
-	
-	d1="$(date +%d)"
-	[[ -f $DC_s/cnfg15 ]] && d2=$(cat $DC_s/cnfg15)
-	
-	if [ "$d1" != "$d2" ] || [ ! -f $DC_s/cnfg15 ]; then # _______________new session
-		echo "$(date +%d)" > $DC_s/cnfg15
+	function new_session() {
+		
 		echo "--new session"
+		
+		# write in /tmp
+		if [[ ! -d $DT ]]; then
+			mkdir $DT
+		fi
+		
+		if [ $? -ne 0 ]; then
+			killall yad &
+			yad --name=idiomind --image=error --button=gtk-ok:1\
+			--text=" $write_err\n\n" --image-on-top --sticky  \
+			--width=380 --height=120 --borders=5 --title=Idiomind \
+			--skip-taskbar --center --window-icon=idiomind & exit 1
+		fi
 		
 		# look for addons
 		addons="$(cd $DS/addons; ls -d *)"
@@ -86,8 +60,6 @@ if [ -z "$1" ]; then
 			echo 460 >> $wh
 			echo 400 >> $wh
 			echo 410 >> $wh
-			exit
-			
 		elif [ $y -ge 1080 ]; then
 			echo 450 >> $wh
 			echo 520 >> $wh
@@ -101,8 +73,6 @@ if [ -z "$1" ]; then
 			echo 460 >> $wh
 			echo 400 >> $wh
 			echo 410 >> $wh
-			exit
-			
 		elif [ $y -ge 1024 ]; then
 			echo 430 >> $wh
 			echo 490 >> $wh
@@ -116,8 +86,6 @@ if [ -z "$1" ]; then
 			echo 460 >> $wh
 			echo 390 >> $wh
 			echo 410 >> $wh
-			exit
-			
 		elif [ $y -gt 700 ]; then
 			echo 420 >> $wh
 			echo 480 >> $wh
@@ -131,8 +99,6 @@ if [ -z "$1" ]; then
 			echo 460 >> $wh
 			echo 390 >> $wh
 			echo 410 >> $wh
-			exit
-			
 		elif [ $y -gt 599 ]; then
 			echo 400 >> $wh
 			echo 460 >> $wh
@@ -146,8 +112,6 @@ if [ -z "$1" ]; then
 			echo 460 >> $wh
 			echo 390 >> $wh
 			echo 410 >> $wh
-			exit
-			
 		elif [ $y -gt 400 ]; then
 			echo 400 >> $wh
 			echo 460 >> $wh
@@ -161,7 +125,6 @@ if [ -z "$1" ]; then
 			echo 460 >> $wh
 			echo 380 >> $wh
 			echo 400 >> $wh
-			exit
 		fi
 		
 		# weekly report
@@ -193,7 +156,7 @@ if [ -z "$1" ]; then
 			tp=$(sed -n "$n"p "$DC_tl/.cnfg1")
 			
 			if [ -f "$DC_tl/$tp/cnfg9" ]; then
-				dte=$(cat "$DC_tl/$tp/cnfg9")
+
 				dts=$(cat "$DC_tl/$tp/cnfg9" | wc -l)
 				if [ $dts = 1 ]; then
 					dte=$(sed -n 1p "$DC_tl/$tp/cnfg9")
@@ -231,29 +194,37 @@ if [ -z "$1" ]; then
 			fi
 			let n++
 		done
-		
-		$DS/mngr.sh mkmn & exit 1
+		echo "$(date +%d)" > $DC_s/cnfg15
+		$DS/mngr.sh mkmn &
+	}
+	
+	## check directories
+	#if [ -f $DC_tl/.cnfg1 ]; then
+		#if [[ "$(cat $DC_tl/.cnfg1 | wc -l)" -lt 1 ]]; then
+			#touch "$DT/ntpc"
+		#fi
+	#fi
+	
+	yad --width=175 --height=220 \
+	--name=idiomind --fixed --title="Idiomind" --no-buttons \
+	--icons --single-click --on-top --borders=0 \
+	--read-dir=$DS/default/new --item-width=68 \
+	--window-icon=idiomind --class=idiomind &
+	
+	echo "strt.1.strt" >> \
+	$DC/addons/stats/.log &
+	
+	if [[ ! -d $DT ]]; then
+		new_session & exit
+	fi
+	
+	[[ -f $DC_s/cnfg15 ]] && d2=$(cat $DC_s/cnfg15)
+	if [ "$(date +%d)" != "$d2" ] || [ ! -f $DC_s/cnfg15 ]; then
+		new_session
 	fi
 fi
 
-if [[ "$1" = "panel" ]]; then
-	if [ -d $DM ]; then
-		#wth=$(sed -n 11p $DC_s/cnfg18)
-		#hgt=$(sed -n 12p $DC_s/cnfg18)
-		yad --geometry=185x318-200-450 --width=170 --height=220 \
-			--name=Idiomind --fixed --title="Idiomind" --no-buttons \
-			--icons --single-click --on-top --borders=0 \
-			--read-dir=$DS/default/new --item-width=65 \
-			--window-icon=idiomind --class=idiomind
-			ret=$?
-			if  [[ "$ret" -eq 0 ]]; then
-				exit 1 & rm "$DC_tlt/lstntry"
-			fi
-	else
-		$DS/ifs/1u
-	fi
-    
-elif [[ "$1" = "--version" ]]; then
+if [[ "$1" = "--version" ]]; then
     echo "2.1-alpha" & exit 1
 elif [[ "$1" = "-v" ]]; then
     echo "2.1-alpha" & exit 1
@@ -270,9 +241,9 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 	(cp -f $DS/default/p1.sh $DT/p1.$c
 	cp -f $DS/default/p2.sh $DT/p2.$c
 	sed -i 's/X015x/'$c'/g' $DT/*.$c) &
-	cp "$1" $DT/import.tem
+	cp "$1" $DT/import.tmp
 	cd $DT
-	mv ./import.tem ./import.tar.gz
+	mv ./import.tmp ./import.tar.gz
 	cd ./idmimp_$c
 	tar -xzvf ../import.tar.gz
 	ls -t -d -N * > $DT/idmimp_$c/ls
@@ -301,7 +272,7 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 	
 	if [ "$inme" != "$name" ]; then
 	int="$(sed -n 6p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
-		cstn=$($yad --name=idiomind \
+		cstn=$(yad --name=idiomind \
 		--image=error --button=gtk-ok:1\
 		--text=" <b>$file_err</b>\\n" \
 		--image-on-top  --sticky \
@@ -319,15 +290,14 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 		itxt="<big><b>$title</b></big><small>\\n${category^}. ${language_source^} <b>></b> $language_target\\n$nwords $words $nsentences $sentences $nimages $images</small>\n\n"
 		dlck="$DT/p1.$c"
 		cat "$tmp/cnfg0" | awk '{print $0""}' | \
-		$yad --list --name=Idiomind --title="Idiomind" \
+		yad --list --name=Idiomind --title="Idiomind" \
 		--ellipsize=END --print-all --image-on-top \
 		--image="$img" --text="$itxt"  --class=Idiomind \
-		--scroll --no-headers \
+		--scroll --no-headers --dclick-action="$dlck" \
 		--width="$wth" --height="$eht" --image-on-top \
 		--window-icon=idiomind --column=Items --center \
-		--dclick-action="$dlck" \
 		--button="$install":0 --button="$close":1
-			ret=$?
+		ret=$?
 			
 			if [ "$ret" -eq 1 ]; then
 				rm -fr "$DT/idmimp_$c" $DT/*.$c \
@@ -337,28 +307,24 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 				snm=$(cat $DC/topics/$language_target/.cnfg1 | grep -Fo "$inme" | wc -l)
 				
 				if [ $if2 -ge 50 ]; then
-					$yad  --name=idiomind --center \
+					yad  --name=idiomind --center \
 					--image=info --class=idiomind \
 					--text=" <b>$topics_max</b>\\n" \
 					--image-on-top --sticky --skip-taskbar \
-					--width=340 --height=120 \
-					--title=Idiomind \
-					--window-icon=idiomind \
-					--button=gtk-ok:1
+					--width=340 --height=120 --title=Idiomind \
+					--window-icon=idiomind --button=gtk-ok:1
 					rm -rf $DT/idmimp_$c $DT/*.$c \
 					$DT/import.tar.gz & exit 1
 				fi
 		
 				if [ "$snm" -ge 1 ]; then
 					inm="$inme $snm"
-					$yad  --name=idiomind \
-					--image=info --sticky \
+					yad  --name=idiomind --image=info --sticky \
 					--text=" $name_eq  \\n $name_eq2 <b>$inm</b>  \\n" \
 					--class=idiomind --center --skip-taskbar \
 					--image-on-top --width=340 --height=120 \
-					--window-icon=idiomind \
-					--title=Idiomind --button=Cancel:1 \
-					--button=gtk-ok:0
+					--window-icon=idiomind --title=Idiomind \
+					--button=Cancel:1 --button=gtk-ok:0
 						ret=$?
 					if [ $ret != 0 ]; then
 						rm -fr $DT/idmimp_$c $DT/*.$c \
@@ -392,12 +358,12 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 				cp -f cnfg12 "$dric/cnfg12"
 				echo "6" > "$dric/cnfg8"
 				cp -f cnfg0 "$dric/cnfg0"
+				cp -f cnfg0 "$dric/.cnfg11"
 				cp -f cnfg0 "$dric/cnfg1"
 				cp -f cnfg3 "$dric/cnfg3"
 				cp -f cnfg4 "$dric/cnfg4"
 				cp -f cnfg5 "$dric/cnfg5"
 				cp -f cnfg10 "$dric/cnfg10"
-				echo "$nt" > "$dric/nt"
 				rm -r -f $DT/idmimp_$c $DT/*.$c
 				cp -f $DS/default/tpc.sh "$dric/tpc.sh"
 				chmod +x "$dric/tpc.sh"
@@ -444,10 +410,8 @@ if [ "$1" = topic ]; then
 		fi
 		if [ -f "$DM_tlt/words/images/img.png" ]; then
 		img="$DM_tlt/words/images/img.png"
-		s="\n"
 		else
 		img=$DS/images/trans.png
-		s=" "
 		fi
 		echo "tpcs.$tpc.tpcs" >> \
 		$DC/addons/stats/.log &
@@ -458,11 +422,12 @@ if [ "$1" = topic ]; then
 
 	# own
 	if echo "$mde" | grep "wn"; then
+	
 		[ -z "$tpc" ] && exit 1
 		cd "$DC_tlt"
 		ws=$(cat cnfg3 | wc -l)
 		ss=$(cat cnfg4 | wc -l)
-		itxt="<big><b>$ttl </b></big><small>\\n$ss $sentences$s$ws $words</small>\n\n"
+		itxt="<big><big>$ttl </big></big><small>\\n$ss $sentences $ws $words\n</small>\n\n"
 		cd $DS
 		c=$(echo $(($RANDOM%100000)))
 		KEY=$c
@@ -475,7 +440,7 @@ if [ "$1" = topic ]; then
 			yad --text-info --plug=$KEY --margins=14 \
 			--tabnum=1 --fore='gray40' --wrap --filename="$nt" \
 			--show-uri --fontname=vendana --editable > "$cnf3" &
-			$yad --notebook --name=Idiomind --center --key=$KEY \
+			yad --notebook --name=Idiomind --center --key=$KEY \
 			--class=Idiomind --align=right \
 			--window-icon=$DS/images/idiomind.png \
 			--tab-borders=0 --center --title="Idiomind" \
@@ -504,7 +469,9 @@ if [ "$1" = topic ]; then
 				fi
 			
 		elif [ "$tb1" -ge 1 ]; then
+		
 			if [ -f "$DC_tlt/cnfg9" ] && [ -f "$DC_tlt/cnfg7" ]; then
+			
 				dts=$(cat "$DC_tlt/cnfg9" | wc -l)
 				if [ $dts = 1 ]; then
 					dte=$(sed -n 1p "$DC_tlt/cnfg9")
@@ -536,7 +503,7 @@ if [ "$1" = topic ]; then
 					echo "4" > "$DC_tlt/cnfg8"
 					$DS/mngr.sh mkmn &
 					RM=100
-					$yad --title="$tpc" --window-icon=idiomind \
+					yad --title="$tpc" --window-icon=idiomind \
 					--borders=20 --buttons-layout=edge --name=idiomind \
 					--image=dialog-question --on-top \
 					--window-icon=$DS/images/idiomind.png \
@@ -555,11 +522,11 @@ if [ "$1" = topic ]; then
 						fi 
 				fi
 				echo "$nt"
-				$yad --align=center --borders=80 \
+				yad --align=center --borders=80 \
 				--text="<u><b>$learned</b></u>   * $new_items ($tb1).\\n$time_review: $tdays" \
 				--bar="":NORM $RM \
 				--multi-progress --plug=$KEY --tabnum=1 &
-				cat "$ls2" | awk '{print $0"\n"}' | $yad \
+				cat "$ls2" | awk '{print $0"\n"}' | yad \
 				--no-headers --list --plug=$KEY --tabnum=2 \
 				--expand-column=1 --ellipsize=END --print-all \
 				--column=Name:TEXT --column=Review:CHK \
@@ -567,7 +534,7 @@ if [ "$1" = topic ]; then
 				yad --text-info --plug=$KEY --margins=14 \
 				--wrap --text="$itxt" --editable --tabnum=3 --fore='gray40' \
 				--show-uri --fontname=vendana --filename="$nt" > "$cnf3" &
-				$yad --notebook --name=Idiomind --center \
+				yad --notebook --name=Idiomind --center \
 				--class=Idiomind --align=right --key=$KEY \
 				--tab-borders=0 --center --title="Idiomind" \
 				--image="$img" --text="$itxt" \
@@ -589,11 +556,11 @@ if [ "$1" = topic ]; then
 				--expand-column=1 --ellipsize=END --print-all \
 				--column=Name:TEXT --column=Review:CHK \
 				--dclick-action='./vwr.sh v2' > "$cnf2" &
-				$yad --text-info --plug=$KEY --margins=14 \
+				yad --text-info --plug=$KEY --margins=14 \
 				--tabnum=3 --text="$note" --fore='gray40' --wrap --editable \
 				--show-uri --fontname=vendana \
 				--filename="$nt" > "$cnf3" &
-				$yad --notebook --name=Idiomind --center --key=$KEY \
+				yad --notebook --name=Idiomind --center --key=$KEY \
 				--class=Idiomind --align=right \
 				--window-icon=$DS/images/idiomind.png \
 				--tab-borders=0 --center --title="Idiomind" \
@@ -617,7 +584,7 @@ if [ "$1" = topic ]; then
 					$DS/practice/strt &
 					
 				elif [ $ret -eq 4 ]; then
-					$yad --title="$tpc" --window-icon=idiomind \
+					yad --title="$tpc" --window-icon=idiomind \
 					--borders=5 --name=idiomind \
 					--image=dialog-question \
 					--on-top --window-icon=idiomind \
@@ -693,6 +660,7 @@ if [ "$1" = topic ]; then
 				fi
 			
 		elif [ "$tb1" -eq 0 ]; then
+		
 			if [ ! -f "$DC_tlt/cnfg7" ]; then
 				> "$DC_tlt/cnfg7"
 				echo "$(date +%m/%d/%Y)" > "$DC_tlt/cnfg9"
@@ -730,7 +698,7 @@ if [ "$1" = topic ]; then
 				echo "4" > "$DC_tlt/cnfg8"
 				$DS/mngr.sh mkmn &
 				RM=100
-				$yad --title="$tpc" \
+				yad --title="$tpc" \
 				--borders=20 --buttons-layout=edge --name=idiomind \
 				--image=dialog-question --on-top \
 				--window-icon=$DS/images/idiomind.png \
@@ -750,11 +718,11 @@ if [ "$1" = topic ]; then
 					fi 
 			fi
 
-			$yad --align=center --borders=80 \
+			yad --align=center --borders=80 \
 			--text="<u><b>$learned</b></u>\\n$time_review: $tdays" \
 			--bar="":NORM $RM \
 			--multi-progress --plug=$KEY --tabnum=1 &
-			cat "$ls2" | awk '{print $0"\n"}' | $yad \
+			cat "$ls2" | awk '{print $0"\n"}' | yad \
 			--no-headers --list --plug=$KEY --tabnum=2 \
 			--expand-column=1 --ellipsize=END --print-all \
 			--column=Name:TEXT --column=Review:CHK \
@@ -762,7 +730,7 @@ if [ "$1" = topic ]; then
 			yad --text-info --plug=$KEY --margins=14 \
 			--tabnum=3 --fore='gray40' --wrap --filename="$nt" \
 			--show-uri --fontname=vendana --editable > "$cnf3" &
-			$yad --notebook --name=Idiomind --center \
+			yad --notebook --name=Idiomind --center \
 			--class=Idiomind --align=right --key=$KEY \
 			--tab-borders=0 --center --title="Idiomind" \
 			--image="$img" --text="$itxt" \
@@ -834,12 +802,13 @@ if [ "$1" = topic ]; then
 		
 	# nstll
 	elif echo "$mde" | grep "istll"; then
+	
 		[ -z "$tpc" ] && exit 1
 		source "$DC_tlt/cnfg12"
 		cd "$DC_tlt"
 		ws=$(cat cnfg3 | wc -l)
 		ss=$(cat cnfg4 | wc -l)
-		itxt="<big><b> $ttl </b> </big> <small>\\n  $ss $sentences$s  $ws $words</small>"
+		itxt="<big><big>$ttl </big></big><small>\\n$ss $sentences $ws $words\n</small>\n\n"
 		itxt2="<small> $created_by $author $on <span color='#6E9FD4'>${category^}</span>  $date_u</small>"
 		cd $DS
 		c=$(echo $(($RANDOM%100000)))
@@ -851,6 +820,7 @@ if [ "$1" = topic ]; then
 		if [ "$tb1" -ge 1 ]; then
 		
 			if [ -f "$DC_tlt/cnfg9" ] && [ -f "$DC_tlt/cnfg7" ]; then
+			
 				dts=$(cat "$DC_tlt/cnfg9" | wc -l)
 				if [ $dts = 1 ]; then
 					dte=$(sed -n 1p "$DC_tlt/cnfg9")
@@ -882,7 +852,7 @@ if [ "$1" = topic ]; then
 					echo "4" > "$DC_tlt/cnfg8"
 					$DS/mngr.sh mkmn &
 					RM=100
-					$yad --title="$tpc" \
+					yad --title="$tpc" \
 					--window-icon=$DS/images/idiomind.png \
 					--borders=20 --buttons-layout=edge --name=idiomind \
 					--image=dialog-question --on-top \
@@ -902,11 +872,11 @@ if [ "$1" = topic ]; then
 						fi 
 					fi
 
-				$yad --align=center --borders=80 \
+				yad --align=center --borders=80 \
 				--text="<u><b>$learned</b></u>\\n   * $new_items ($tb1).\\n$time_review: $tdays" \
 				--bar="":NORM $RM \
 				--multi-progress --plug=$KEY --tabnum=1 &
-				cat "$ls2" | awk '{print $0"\n"}' | $yad \
+				cat "$ls2" | awk '{print $0"\n"}' | yad \
 				--no-headers --list --plug=$KEY --tabnum=2 \
 				--expand-column=1 --ellipsize=END --print-all \
 				--column=Name:TEXT --column=Review:CHK \
@@ -915,7 +885,7 @@ if [ "$1" = topic ]; then
 				--text="$itxt2" \
 				--tabnum=3 --fore='gray40' --wrap --filename="$nt" \
 				--show-uri --fontname=vendana --editable > "$cnf3" &
-				$yad --notebook --name=Idiomind --center \
+				yad --notebook --name=Idiomind --center \
 				--class=Idiomind --align=right --key=$KEY \
 				--tab-borders=0 --center --title="Idiomind" \
 				--image="$img" --text="$itxt" \
@@ -927,12 +897,12 @@ if [ "$1" = topic ]; then
 				--width="$wth" --height="$eht" --borders=0  \
 				--button="$review":4 --button="$edit":3 --button="$close":2 
 			else
-				cat "$ls1" | awk '{print $0"\n"}' | $yad \
+				cat "$ls1" | awk '{print $0"\n"}' | yad \
 				--no-headers --list --plug=$KEY --tabnum=1 $t \
 				--expand-column=1 --ellipsize=END --print-all \
 				--column=Name:TEXT --column=Learned:CHK \
 				--dclick-action='./vwr.sh v1' > "$cnf1" &
-				cat "$ls2" | awk '{print $0"\n"}' | $yad \
+				cat "$ls2" | awk '{print $0"\n"}' | yad \
 				--no-headers --list --plug=$KEY --tabnum=2 \
 				--expand-column=1 --ellipsize=END --print-all \
 				--column=Name:TEXT --column=Review:CHK \
@@ -941,7 +911,7 @@ if [ "$1" = topic ]; then
 				--text="$itxt2" \
 				--tabnum=3 --fore='gray40' --wrap --filename="$nt" \
 				--show-uri --fontname=vendana --editable > "$cnf3" &
-				$yad --notebook --name=Idiomind --center  \
+				yad --notebook --name=Idiomind --center  \
 				--class=Idiomind --align=right --key=$KEY \
 				--tab-borders=0 --center --title="Idiomind" \
 				--image="$img" --text="$itxt" --always-print-result \
@@ -964,7 +934,7 @@ if [ "$1" = topic ]; then
 					$DS/practice/strt &
 					
 				elif [ $ret -eq 4 ]; then
-					$yad --title="$tpc" --window-icon=idiomind \
+					yad --title="$tpc" --window-icon=idiomind \
 					--borders=5 --name=idiomind \
 					--image=dialog-question \
 					--on-top --window-icon=idiomind \
@@ -1039,6 +1009,7 @@ if [ "$1" = topic ]; then
 				fi
 		
 		elif [ "$tb1" -eq 0 ]; then
+		
 			if [ ! -f "$DC_tlt/cnfg7" ]; then
 				> "$DC_tlt/cnfg7"
 				echo "$(date +%m/%d/%Y)" > "$DC_tlt/cnfg9"
@@ -1077,7 +1048,7 @@ if [ "$1" = topic ]; then
 				$DS/mngr.sh mkmn &
 				RM=100
 				
-				$yad --title="$tpc" \
+				yad --title="$tpc" \
 				--borders=20 --buttons-layout=edge --class=idiomind \
 				--image=dialog-question \
 				--window-icon=$DS/images/idiomind.png \
@@ -1099,11 +1070,11 @@ if [ "$1" = topic ]; then
 					fi
 			fi
 			
-			$yad --align=center --borders=80 \
+			yad --align=center --borders=80 \
 			--text="<u><b>$learned</b></u>\\n$time_review: $tdays" \
 			--bar="":NORM $RM \
 			--multi-progress --plug=$KEY --tabnum=1 &
-			cat "$ls2" | awk '{print $0"\n"}' | $yad \
+			cat "$ls2" | awk '{print $0"\n"}' | yad \
 			--no-headers --list --plug=$KEY --tabnum=2 \
 			--expand-column=1 --ellipsize=END --print-all \
 			--column=Name:TEXT --column=Review:CHK \
@@ -1112,7 +1083,7 @@ if [ "$1" = topic ]; then
 			--text="<small>  $created_by: $author en <span color='#6E9FD4'>${category^}</span></small>" \
 			--tabnum=3 --fore='gray40' --wrap --filename="$nt" \
 			--show-uri --fontname=vendana --editable > "$cnf3" &
-			$yad --notebook --name=Idiomind --center  \
+			yad --notebook --name=Idiomind --center  \
 			--class=Idiomind --align=right --key=$KEY \
 			--tab-borders=0 --center --title="Idiomind" \
 			--image="$img" --text="$itxt" \
@@ -1204,18 +1175,18 @@ if [ "$1" = topic ]; then
 		(sed -i 's/.mp3//g' "$DC_tl/Feeds/.lst")
 		
 		cd "$DF"
-		cat "$DC_tl/Feeds/.lst" | $yad \
+		cat "$DC_tl/Feeds/.lst" | yad \
 		--no-headers --list --listen --plug=$KEY --tabnum=1 \
 		--text=" <small>$info</small>" \
 		--expand-column=1 --ellipsize=END --print-all \
 		--column=Name:TEXT --dclick-action='./vwr.sh V1' &
 		cat "$DC_tl/Feeds/cnfg0" | awk '{print $0""}' \
-		| $yad --no-headers --list --listen --plug=$KEY --tabnum=2 \
+		| yad --no-headers --list --listen --plug=$KEY --tabnum=2 \
 		--expand-column=1 --ellipsize=END --print-all \
 		--column=Name:TEXT --dclick-action='./vwr.sh V2' &
-		$yad --notebook --name=Idiomind --center \
+		yad --notebook --name=Idiomind --center \
 		--class=Idiomind --align=right --key=$KEY \
-		--text=" <big><b>$title_rss </b></big>\\n <small>$FEED</small>" \
+		--text=" <big><big>$title_rss </big></big>\\n <small>$FEED</small>\n\n" \
 		--image="$ICON" --image-on-top  \
 		--tab-borders=0 --center --title="$FEED" \
 		--tab="  $news  " \

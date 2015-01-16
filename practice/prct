@@ -33,7 +33,7 @@ function get_list() {
 		fi
 }
 
-function get_list2() {
+function get_list_mchoice() {
 
 	(
 	echo "5" ; sleep 0
@@ -52,7 +52,7 @@ function get_list2() {
 
 }
 
-function get_list3() {
+function get_list_sentences() {
 		if [ "$(cat "$Wi" | wc -l)" -gt 0 ]; then
 			grep -F -x -v -f "$Wi" "$Li" > $1
 		else
@@ -67,10 +67,6 @@ function starting() {
 		--text " $1  "
 		$strt & killall prct.sh & exit 1
 }
-
-
-
-
 
 if [[ "$1" = f ]]; then
 
@@ -97,10 +93,6 @@ if [[ "$1" = f ]]; then
 	
 	$DF
 
-
-
-
-
 elif [[ "$1" = m ]]; then
 
 	cd "$DC_tlt/practice"
@@ -122,16 +114,13 @@ elif [[ "$1" = m ]]; then
 	else
 		get_list mcin && cp -f mcin mcin1
 		if [ ! -f word1.idx ]; then
-			get_list2
+			get_list_mchoice
 		fi
 		[[ "$(cat mcin  | wc -l)" -lt 4 ]] && starting "$starting1"
 		 echo "-- new session"
 	fi
 
 	$DMC
-
-
-
 
 elif [[ "$1" = w ]]; then
 
@@ -158,10 +147,6 @@ elif [[ "$1" = w ]]; then
 	
 	$DLW
 
-
-
-
-
 elif [[ "$1" = s ]]; then
 
 	cd "$DC_tlt/practice"
@@ -180,11 +165,10 @@ elif [[ "$1" = s ]]; then
 		grep -F -x -v -f ok.s lsin > lsin1
 		echo "-- restarting session"
 	else
-		get_list3 lsin && cp -f lsin lsin1
+		get_list_sentences lsin && cp -f lsin lsin1
 		[[ "$(cat lsin  | wc -l)" -lt 1 ]] && starting "$starting2"
 		echo "-- new session"
 	fi
 	
 	$DLS
-	
 fi

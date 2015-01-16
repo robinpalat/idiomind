@@ -52,7 +52,6 @@ if [ "$1" = f ]; then
 	[[ -f l_f ]] && echo $(($(cat l_f)+$easy)) > l_f || echo $easy > l_f
 	s=$(cat l_f)
 	v=$((100*$s/$all))
-
 	if [ $v -le 1 ]; then
 		echo 1 > .iconf
 	elif [ $v -le 5 ]; then
@@ -107,7 +106,6 @@ elif [ "$1" = m ]; then
 	[[ -f l_m ]] && echo $(($(cat l_m)+$easy)) > l_m || echo $easy > l_m
 	s=$(cat l_m)
 	v=$((100*$s/$all))
-
 	if [ $v -le 1 ]; then
 		echo 1 > .iconmc
 	elif [ $v -le 5 ]; then
@@ -162,7 +160,6 @@ elif [ "$1" = w ]; then
 	[[ -f l_w ]] && echo $(($(cat l_w)+$easy)) > l_w || echo $easy > l_w
 	s=$(cat l_w)
 	v=$((100*$s/$all))
-	
 	if [ $v -le 1 ]; then
 		echo 1 > .iconlw
 	elif [ $v -le 5 ]; then
@@ -217,7 +214,6 @@ elif [ "$1" = s ]; then
 	[[ -f l_s ]] && echo $(($(cat l_s)+$easy)) > l_s || echo $easy > l_s
 	s=$(cat l_s)
 	v=$((100*$s/$all))
-	
 	if [ $v -le 1 ]; then
 		echo 1 > .iconls
 	elif [ $v -le 5 ]; then

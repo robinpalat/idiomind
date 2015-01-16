@@ -87,9 +87,6 @@ if [[ "$1" = chngi ]]; then
 		
 		if echo "$sna" | grep "TRUE"; then
 			play "$DM_tlt/$itm".mp3 &
-			if [ $bcl -ge 30 ]; then
-				(sleep 15 && play "$DM_tlt/$itm".mp3) &
-			fi
 		fi
 		
 		sleep $wmm
@@ -145,14 +142,6 @@ if [[ "$1" = chngi ]]; then
 		sleep 1
 		if echo "$sna" | grep "TRUE"; then
 			play "$DM_tlt/words/$itm".mp3 &
-			if [ $bcl -ge 5 ]; then
-				(sleep 2.5 && play "$DM_tlt/words/$itm.mp3") &
-			fi
-			if [ $bcl -ge 30 ]; then
-				(sleep 10 && play "$DM_tlt/words/$itm.mp3"
-				sleep 10
-				play "$DM_tlt/words/$itm.mp3") &
-			fi
 		fi
 		rm -f $DT/*.jpeg ./.id.tmp
 		sleep $wmm
@@ -225,9 +214,6 @@ if [[ "$1" = chngi ]]; then
 			sleep 1
 			if echo "$sna" | grep "TRUE"; then
 				play "$DM_tl/Feeds/kept/words/$itm".mp3 &
-				if [ $bcl -ge 5 ]; then
-					(sleep 4 && play "$DM_tl/Feeds/kept/words/$itm.mp3") &
-				fi
 			fi
 			rm -f $DT/*.jpeg
 			sleep $wmm

@@ -113,8 +113,9 @@ function answer() {
 	--skip-taskbar --title=" " --borders=0 \
 	--window-icon=idiomind --buttons-layout=spread \
 	--field="$srces":lbl --width=365 --height=280 \
-	--button="      $ok_know      ":2 \
-	--button="      $no_know      ":3
+	--button="      $no_know      ":3 \
+	--button="      $ok_know      ":2
+	
 	}
 
 n=1

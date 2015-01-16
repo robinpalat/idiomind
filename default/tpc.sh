@@ -3,33 +3,15 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/others.conf
-
 $DS/stop.sh T
 gtdr="$(cd "$(dirname "$0")" && pwd)"
 topic=$(echo "$gtdr" | sed 's|\/|\n|g' | sed -n 8p)
 DC_tlt="$DC_tl/$topic"
-if [[ "$(echo "$topic" \
-| wc -c)" -gt 38 ]]; then
-	title="${topic:0:40}..."
-else
-	title="$topic"
-fi
-
-if [[ $1 = 2 ]]; then
-	if cat "$DC_tl/.cnfg3" | grep -Fxo "$topic"; then
-		source $DS/ifs/trans/$lgs/topics_lists.conf
-		$DS/chng.sh "$no_topic" 2 & exit 1
-	else
-		echo "$topic" > $DC_s/cnfg6
-		echo "$title" >> $DC_s/cnfg6
-		echo "Normal" >> $DC_s/cnfg6
-		sleep 1
-		"$DS/add.sh" n_i & exit 1
-	fi
-fi
+[[ "$(echo "$topic" | wc -c)" -gt 38 ]] \
+&& title="${topic:0:40}..." || title="$topic"
 
 if [ -d "$DC_tlt" ]; then
-	
+	# check index ------------
 	chk1="$DC_tlt/cnfg0"
 	chk2="$DC_tlt/cnfg1"
 	chk3="$DC_tlt/cnfg2"
@@ -76,13 +58,15 @@ if [ -d "$DC_tlt" ]; then
 	chk3=$(cat "$DC_tlt/cnfg2" | wc -l)
 	chk4=$(cat "$DC_tlt/cnfg3" | wc -l)
 	chk5=$(cat "$DC_tlt/cnfg4" | wc -l)
+	stts=$(cat "$DC_tlt/cnfg8")
 	
+	# try repair if something wrong ------------
 	if [[ $(($chk4 + $chk5)) != $chk1 \
-	|| $(($chk2 + $chk3)) != $chk1 ]]; then
+	|| $(($chk2 + $chk3)) != $chk1 || $stts = 13 ]]; then
+		sleep 1
 		notify-send -i idiomind "$index_err1" "$index_err2" -t 3000 &
 		
-		rm -f $DT/ind
-		rm -f $DT/ind_ok
+		rm -f $DT/ind $DT/ind_ok
 		
 		cd "$DM_tl/$topic"
 		for i in *.mp3 ; do [[ ! -s ${i} ]] && rm ${i} ; done
@@ -94,23 +78,49 @@ if [ -d "$DC_tlt" ]; then
 		if [ -f ".mp3" ]; then rm .mp3; fi
 		ls *.mp3 | sed 's/.mp3//g' >> $DT/ind
 		
-		rm "$DC_tlt/cnfg3"
-		rm "$DC_tlt/cnfg4"
-		n=1
-		while [[ $n -le $(cat "$DT/ind" | wc -l) ]]; do
-			chk1=$(sed -n "$n"p "$DC_tlt/cnfg0")
-			if cat "$DT/ind" | grep -Fxo "$chk1"; then
+		rm "$DC_tlt/cnfg3" "$DC_tlt/cnfg4"
+		
+		if [[ -f "$DC_tlt/.cnfg11" ]]; then
+		
+			cp -f "$DC_tlt/.cnfg11" "$DC_tlt/cnfg0"
+			n=1
+			while [[ $n -le $(cat "$DT/ind" | wc -l) ]]; do
+			
+				chk1=$(sed -n "$n"p "$DC_tlt/cnfg0")
+				if cat "$DT/ind" | grep -Fxo "$chk1"; then
+						if [[ "$(echo "$chk1" | wc -w)" -eq 1 ]]; then
+							echo "$chk1" >> "$DC_tlt/cnfg3"
+						elif [[ "$(echo "$chk1" | wc -w)" -gt 1 ]]; then
+							echo "$chk1" >> "$DC_tlt/cnfg4"
+						fi
+					echo "$chk1" >> $DT/ind_ok
+					grep -v -x -v "$chk1" $DT/ind > $DT/ind_
+					sed '/^$/d' $DT/ind_ > $DT/ind
+				fi
+				let n++
+			done
+		else
+			n=1
+			while [[ $n -le $(cat "$DT/ind" | wc -l) ]]; do
+			
+				chk1=$(sed -n "$n"p "$DT/ind")
 					if [[ "$(echo "$chk1" | wc -w)" -eq 1 ]]; then
 						echo "$chk1" >> "$DC_tlt/cnfg3"
 					elif [[ "$(echo "$chk1" | wc -w)" -gt 1 ]]; then
 						echo "$chk1" >> "$DC_tlt/cnfg4"
 					fi
-				echo "$chk1" >> $DT/ind_ok
-				grep -v -x -v "$chk1" $DT/ind > $DT/ind_
-				sed '/^$/d' $DT/ind_ > $DT/ind
-			fi
-			let n++
-		done
+					echo "$chk1" >> $DT/ind_ok
+				let n++
+			done
+		fi
+		
+		if [ $? -ne 0 ]; then
+			yad --name=idiomind --image=error --button=gtk-ok:1\
+			--text=" $files_err\n\n" --image-on-top --sticky  \
+			--width=380 --height=120 --borders=5 --title=Idiomind \
+			--skip-taskbar --center --window-icon=idiomind
+			$DS/mngr.sh dlt & exit
+		fi
 		
 		n=1
 		while [[ $n -le $(cat "$DT/ind" | wc -l) ]]; do
@@ -143,26 +153,29 @@ if [ -d "$DC_tlt" ]; then
 		fi
 		cp -f "$in1" "$DC_tlt/cnfg1"
 		
+		if [[ $stts = "13" ]]; then
+			if cat "$DC_tl/.cnfg3" | grep -Fxo "$topic"; then
+				echo "6" > "$DC_tlt/cnfg8"
+			elif cat "$DC_tl/.cnfg2" | grep -Fxo "$topic"; then
+				echo "1" > "$DC_tlt/cnfg8"
+			fi
+		fi
+		
 		$DS/mngr.sh mkmn
 	fi
-	
+	# set ------------
 	if cat "$DC_tl/.cnfg3" | grep -Fxo "$topic"; then
-		> $DC_s/cnfg6
 		echo "$topic" > $DC_s/cnfg8
 		echo istll >> $DC_s/cnfg8
-		echo "$title" >> $DC_s/cnfg8
 		echo "$topic" > $DC_tl/.cnfg8
 		echo istll >> $DC_tl/.cnfg8
 	else
 		echo "$topic" > $DC_s/cnfg8
-		echo "$topic" > $DC_s/cnfg6
-		echo "$title" >> $DC_s/cnfg6
 		echo wn >> $DC_s/cnfg8
-		echo "$title" >> $DC_s/cnfg8
 		echo "$topic" > $DC_tl/.cnfg8
 		echo wn >> $DC_tl/.cnfg8
 	fi
-	
+	# look status ------------
 	if [[ $(cat "$DC_tl/.cnfg1" | grep -Fxon "$topic" \
 	| sed -n 's/^\([0-9]*\)[:].*/\1/p') -ge 31 ]]; then
 		if [ -f "$DC_tl/$topic/cnfg9" ]; then
@@ -201,6 +214,7 @@ if [ -d "$DC_tlt" ]; then
 				fi
 			fi
 		fi
+		$DS/mngr.sh mkmn
 	fi
 	
 	sleep 1
@@ -209,11 +223,10 @@ if [ -d "$DC_tlt" ]; then
 		"$DS/add.sh n_i"
 	fi
 	notify-send --icon=idiomind \
-	"$topic" "$its_your_topic_now" -t 2000 & exit
+	"$topic" "$its_your_topic_now" -t 2000 & exit 1
 else
-	$yad --name=idiomind \
-	--image="error" --sticky --center \
-	--text="  <b>$path_err  </b>\\n  <b>$topic</b>\\n" --on-top \
+	yad --name=idiomind --image="error" --sticky --center \
+	--text="  <b>$path_err  </b>\\n  $topic\\n" --on-top \
 	--image-on-top --width=400 --height=80 --borders=3 \
 	--skip-taskbar --window-icon=idiomind \
 	--title="$err" --button="Ok:0" & exit

@@ -77,8 +77,8 @@ if [ $1 = n_t ]; then
 			mkdir $DC_tl/"$jlb"
 			> $DC_tl/"$jlb"/cnfg3
 			> $DC_tl/"$jlb"/cnfg4
-			mkdir $DC_tl/"$jlb"/Practice
-			cp $DS/addons/Practice/default/.* $DC_tl/"$jlb"/Practice
+			mkdir $DC_tl/"$jlb"/practice
+			cp $DS/practice/default/.* $DC_tl/"$jlb"/practice
 			cd $DC_tl/"$jlb"
 			echo "$jlb" >> $DC_tl/.cnfg2
 			cd "$DM_tl/$tpc"
@@ -94,7 +94,7 @@ if [ $1 = n_t ]; then
 			cp -f cnfg1 "$DC_tl/$jlb"/cnfg1
 			cp -f cnfg2 "$DC_tl/$jlb"/cnfg2
 			cp -f nt "$DC_tl/$jlb"/nt
-			cp -f ./Practice/.* $DC_tl/"$jlb"/Practice
+			cp -f ./practice/.* $DC_tl/"$jlb"/practice
 			grep -v -x -v "$tpc" $DC_tl/.cnfg2 > $DC_tl/.cnfg2_
 			sed '/^$/d' $DC_tl/.cnfg2_ > $DC_tl/.cnfg2
 			grep -v -x -v "$tpc" $DC_tl/.cnfg1 > $DC_tl/.cnfg1_
@@ -167,8 +167,8 @@ if [ $1 = n_t ]; then
 			> $DC_tl/"$jlb"/cnfg1
 			echo "$(date +%F)" > $DC_tl/"$jlb"/cnfg12
 			echo "1" > $DC_tl/"$jlb"/cnfg8
-			mkdir $DC_tl/"$jlb"/Practice
-			cp $DS/addons/Practice/default/.* $DC_tl/"$jlb"/Practice
+			mkdir $DC_tl/"$jlb"/practice
+			cp $DS/practice/default/.* $DC_tl/"$jlb"/practice
 			cp -f $DS/default/tpc.sh $DC_tl/"$jlb"/tpc.sh
 			cd $DC_tl/"$jlb"
 			echo "$jlb" >> $DC_tl/.cnfg2

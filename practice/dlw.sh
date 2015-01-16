@@ -125,8 +125,9 @@ function answer() {
 	--window-icon=idiomind --buttons-layout=spread \
 	--field="$tr":lbl --width=365 --height=280 \
 	--button="$listen":"$play" \
-	--button="$ok_know":2 \
-	--button="$no_know":3
+	--button="$no_know":3 \
+	--button="$ok_know":2
+	
 	}
 
 n=1
