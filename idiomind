@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 if [ ! -d "$HOME/.idiomind" ]; then
-	/usr/share/idiomind/ifs/1u && exit
+	/usr/share/idiomind/ifs/1u.sh && exit
 	if [ ! -d "$HOME/.idiomind" ]; then
 		exit 1
 	fi

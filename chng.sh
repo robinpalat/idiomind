@@ -264,7 +264,7 @@ if [[ "$1" = chngi ]]; then
 elif [ "$1" != chngi ]; then
 	
 	if [ ! -d $DC_s ]; then
-		/usr/share/idiomind/ifs/1u &
+		/usr/share/idiomind/ifs/1u.sh &
 		exit 1
 	fi
 	if [ ! -f $DC_s/cnfg0 ]; then

@@ -459,11 +459,11 @@ mv -f "$DT/$U.$tpc.idmnd" $DT/$nme/
 rm -f $DT/SITE_TMP
 cd $DT/$nme
 cp -f $DS/default/index.php ./.index.php
-#chmod 775 -R $DT/$nme
-#lftp -u $USER,$KEY $FTPHOST << END_SCRIPT
-#mirror --reverse ./ public_html/$lgs/$lnglbl/$Ctgry/
-#quit
-#END_SCRIPT
+chmod 775 -R $DT/$nme
+lftp -u $USER,$KEY $FTPHOST << END_SCRIPT
+mirror --reverse ./ public_html/$lgs/$lnglbl/$Ctgry/
+quit
+END_SCRIPT
 
 exit=$?
 
@@ -484,8 +484,8 @@ yad --window-icon=idiomind --name=idiomind \
 --skip-taskbar --title=idiomind \
 --button="  Ok  ":0
 
-#[[ -d "$DT/$nme" ]] && rm -fr "$DT/$nme"
-#[[ -d "$DT/$tpc" ]] && rm -fr "$DT/$tpc"
-#rm -fr $DT/SITE_TMP
-#rm $DT/.aud $DT/.img $DT/$U."$tpc".idmnd \
-#$DT/"$tpc".tar $DT/"$tpc".tar.gz & exit 1
+[[ -d "$DT/$nme" ]] && rm -fr "$DT/$nme"
+[[ -d "$DT/$tpc" ]] && rm -fr "$DT/$tpc"
+rm -fr $DT/SITE_TMP
+rm $DT/.aud $DT/.img $DT/$U."$tpc".idmnd \
+$DT/"$tpc".tar $DT/"$tpc".tar.gz & exit 1

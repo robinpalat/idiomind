@@ -10,7 +10,7 @@ ICON=$DS/images/icon.png
 cd $DS/addons
 
 if [ ! -d "$DC" ]; then
-	$DS/ifs/1u
+	$DS/ifs/1u.sh
 	cp $DS/default/cnfg1 \
 	"$DC_s/cnfg1"
 	sleep 1
