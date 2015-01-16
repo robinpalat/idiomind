@@ -14,7 +14,7 @@ if [ ! -d "$DC" ]; then
 	cp $DS/default/cnfg1 \
 	"$DC_s/cnfg1"
 	sleep 1
-	$DS/cnfg & exit
+	$DS/cnfg.sh & exit
 fi
 
 function confirm() {
@@ -101,8 +101,6 @@ $yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 		else
 			if [ -f $config_dir/idiomind.desktop ]; then
 				rm $config_dir/idiomind.desktop
-			else
-				> $DC_s/cnfg8
 			fi
 		fi
 		
