@@ -7,8 +7,8 @@ DSP=$DS/practice
 [[ -n "$(ps -A | pgrep -f "$DSP/dmc.sh")" ]] && killall "$DSP/dmc.sh" &
 [[ -n "$(ps -A | pgrep -f "$DSP/dlw.sh")" ]] && killall "$DSP/dlw.sh" &
 [[ -n "$(ps -A | pgrep -f "$DSP/dls.sh")" ]] && killall "$DSP/dls.sh" &
-[[ -n "$(ps -A | pgrep -f "$DSP/prct")" ]] && killall "$DSP/prct" &
-[[ -n "$(ps -A | pgrep -f "$DSP/strt")" ]] && killall "$DSP/strt" &
+[[ -n "$(ps -A | pgrep -f "$DSP/prct.sh")" ]] && killall "$DSP/prct.sh" &
+[[ -n "$(ps -A | pgrep -f "$DSP/strt.sh")" ]] && killall "$DSP/strt.sh" &
 [[ -n "$(ps -A | pgrep -f play)" ]] && killall play &
 w9="$DC_a/practice/w9"
 w6="$DC_a/practice/w6"
@@ -22,25 +22,25 @@ if [ "$1" = df ]; then
 	rm look_f fin fin1 fin2 fin3 ok.f
 	echo "1" > .iconf
 	echo "0" > l_f
-	$DSP/strt &
+	$DSP/strt.sh &
 	exit 1
 elif [ "$1" = dm ]; then
 	rm look_mc mcin1 mcin2 mcin3 word1.idx ok.m
 	echo "1" > .iconmc
 	echo "0" > l_m
-	$DSP/strt &
+	$DSP/strt.sh &
 	exit 1
 elif [ "$1" = dw ]; then
 	rm look_lw lwin lwin1 lwin2 lwin3 ok.w
 	echo "1" > .iconlw
 	echo "0" > l_w
-	$DSP/strt &
+	$DSP/strt.sh &
 	exit 1
 elif [ "$1" = ds ]; then
 	rm look_ls lsin ok.s
 	echo "1" > .iconls
 	echo "0" > l_s
-	$DSP/strt &
+	$DSP/strt.sh &
 	exit 1
 fi
 	
@@ -96,7 +96,7 @@ if [ "$1" = f ]; then
 		echo 21 > .iconf
 	fi
 	
-	$DSP/strt 5 $easy $ling $hard & exit 1
+	$DSP/strt.sh 5 $easy $ling $hard & exit 1
 
 elif [ "$1" = m ]; then
 
@@ -150,7 +150,7 @@ elif [ "$1" = m ]; then
 		echo 21 > .iconmc
 	fi
 
-	$DSP/strt 6 $easy $ling $hard & exit 1
+	$DSP/strt.sh 6 $easy $ling $hard & exit 1
 
 elif [ "$1" = w ]; then
 
@@ -204,7 +204,7 @@ elif [ "$1" = w ]; then
 		echo 21 > .iconlw
 	fi
 	
-	$DSP/strt 7 $easy $ling $hard & exit 1
+	$DSP/strt.sh 7 $easy $ling $hard & exit 1
 
 elif [ "$1" = s ]; then
 
@@ -258,5 +258,5 @@ elif [ "$1" = s ]; then
 		echo 21 > .iconls
 	fi
 	
-	$DSP/strt 8 $easy $ling $hard & exit 1
+	$DSP/strt.sh 8 $easy $ling $hard & exit 1
 fi

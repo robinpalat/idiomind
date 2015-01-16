@@ -4,7 +4,7 @@
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/practice.conf
 drts="$DS/practice/"
-strt="$drts/strt"
+strt="$drts/strt.sh"
 u=$(echo "$(whoami)")
 DT=/tmp/.idmtp1.$u
 cd "$DC_tlt/practice"

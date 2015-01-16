@@ -95,23 +95,23 @@ $img4 "     $info4 Listening Sentences" )
 ret=$?
 
 if [ $ret -eq 0 ]; then
-	echo "prctc.$tpc.prctc" >> \
+	echo "prct.shc.$tpc.prct.shc" >> \
 	$DC/addons/stats/.log &
 	if echo "$VAR" | grep "Flashcards"; then
-		$DSP/prct f & exit 1
+		$DSP/prct.sh f & exit 1
 	elif echo "$VAR" | grep "Multiple Choice"; then
-		$DSP/prct m & exit 1
+		$DSP/prct.sh m & exit 1
 	elif echo "$VAR" | grep "Listening Words"; then
-		$DSP/prct w & exit 1
+		$DSP/prct.sh w & exit 1
 	elif echo "$VAR" | grep "Listening Sentences"; then
-		$DSP/prct s & exit 1
+		$DSP/prct.sh s & exit 1
 	else
 		yad --form --center --borders=5 \
 		--title="Info" --on-top --window-icon=idiomind \
 		--button=Ok:1 --skip-taskbar \
 		--text="<span color='#797979'><b>  $no_choice</b></span>" \
 		--width=360 --height=120
-		$DSP/strt & exit 1
+		$DSP/strt.sh & exit 1
 	fi
 elif [ $ret -eq 3 ]; then
 	(
@@ -123,7 +123,7 @@ elif [ $ret -eq 3 ]; then
 	--width 50 --height 35 --center \
 	--pulsate --auto-close --no-buttons \
 	--sticky --undecorated --skip-taskbar
-	$DS/practice/strt & exit 1
+	$DS/practice/strt.sh & exit 1
 else
 	[[ -f fin1 ]] && rm fin1; [[ -f fin2 ]] && rm fin2;
 	[[ -f mcin1 ]] && rm mcin1; [[ -f mcin2 ]] && rm mcin2;

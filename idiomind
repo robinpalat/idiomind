@@ -549,11 +549,11 @@ if [ "$1" = topic ]; then
 				cat "$ls1" | awk '{print $0"\n"}' | yad \
 				--no-headers --list --plug=$KEY --tabnum=1 \
 				--dclick-action='./vwr.sh v1'\
-				--expand-column=1 --ellipsize=END --print-all \
+				--expand-column=1 --ellipsize=END \
 				--column=Name:TEXT --column=Learned:CHK > "$cnf1" &
 				cat "$ls2" | awk '{print $0"\n"}' | yad \
 				--no-headers --list --plug=$KEY --tabnum=2 \
-				--expand-column=1 --ellipsize=END --print-all \
+				--expand-column=1 --ellipsize=END \
 				--column=Name:TEXT --column=Review:CHK \
 				--dclick-action='./vwr.sh v2' > "$cnf2" &
 				yad --text-info --plug=$KEY --margins=14 \
@@ -581,7 +581,7 @@ if [ "$1" = topic ]; then
 					
 				elif [ $ret -eq 5 ]; then
 					rm -f $DT/*.x
-					$DS/practice/strt &
+					$DS/practice/strt.sh &
 					
 				elif [ $ret -eq 4 ]; then
 					yad --title="$tpc" --window-icon=idiomind \
@@ -608,7 +608,7 @@ if [ "$1" = topic ]; then
 							rm -f "$DC_tlt/cnfg7" && idiomind topic & exit 1
 						fi
 					
-				elif [ $ret -eq 2 ]; then
+				elif [ $ret -eq 2 ]; then # -----------------------------------------------------------------------------------------------------------------------------
 				
 					if [ -f $cnf3 ]; then
 						if [ "$(cat $cnf3)" != "$(cat "$nt")" ]; then
@@ -621,8 +621,11 @@ if [ "$1" = topic ]; then
 							 sed '/|FALSE|/d' "$cnf1" > tmpf1
 							 mv tmpf1 $tab1
 						done
+						
 						sed -i 's/|TRUE|//g' "$cnf1"
 						cat "$cnf1" >> "$ls2"
+						
+						
 						cnt=$(cat "$cnf1" | wc -l)
 						grep -F -x -v -f "$cnf1" "$ls1" > $DT/ls1.x
 						mv -f $DT/ls1.x "$ls1"
@@ -747,7 +750,7 @@ if [ "$1" = topic ]; then
 					./mngr.sh edit &
 					
 				elif [ $ret -eq 5 ]; then
-					$DS/practice/strt &
+					$DS/practice/strt.sh &
 				
 				elif [ $ret -eq 2 ]; then
 					if [ -f $cnf3 ]; then
@@ -931,7 +934,7 @@ if [ "$1" = topic ]; then
 				
 				elif [ $ret -eq 5 ]; then
 					rm -f $DT/*.x
-					$DS/practice/strt &
+					$DS/practice/strt.sh &
 					
 				elif [ $ret -eq 4 ]; then
 					yad --title="$tpc" --window-icon=idiomind \
@@ -1101,7 +1104,7 @@ if [ "$1" = topic ]; then
 				
 				elif [ $ret -eq 5 ]; then
 					rm -f $DT/*.x
-					$DS/practice/strt &
+					$DS/practice/strt.sh &
 				
 				elif [ $ret -eq 2 ]; then
 					if [ -f $cnf3 ]; then
@@ -1219,5 +1222,5 @@ if [ "$1" = topic ]; then
 	elif echo "$mde" | grep "wr"; then
 		$DS/addons/Stats/cnfg.sh T & exit 1
 	fi
-	rm -f $DT/*.x
+	#rm -f $DT/*.x
 fi

@@ -5,7 +5,7 @@ source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/practice.conf
 drtt="$DM_tlt/words"
 drts="$DS/practice/"
-strt="$drts/strt"
+strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
 all=$(cat mcin | wc -l)
 easy=0

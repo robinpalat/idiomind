@@ -3,7 +3,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/practice.conf
-strt=$DS/practice/strt
+strt.sh=$DS/practice/strt.sh
 cls=$DS/practice/cls
 w9=$DC/addons/practice/w9
 w6=$DC/addons/practice/w6
@@ -65,7 +65,7 @@ function starting() {
 		--title="$practice" --on-top --window-icon=idiomind \
 		--button=Ok:1 --skip-taskbar --width=360 --height=120 \
 		--text " $1  "
-		$strt & killall prct.sh & exit 1
+		$strt & killall prct.sh.sh & exit 1
 }
 
 if [[ "$1" = f ]]; then
