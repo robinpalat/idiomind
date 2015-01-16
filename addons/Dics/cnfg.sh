@@ -43,7 +43,7 @@ elif [ -z "$1" ]; then
 	fi
 	
 	if [ "$2" = f ]; then
-		tex="<small>$1\n</small>"
+		tex="<small>$3\n</small>"
 	else
 		tex="<a href='http://www.dicts.com'><sup>$more_dict</sup></a>"
 	fi

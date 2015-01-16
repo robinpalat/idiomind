@@ -14,9 +14,8 @@ if [[ "$1" = time ]]; then
 		echo 8 > $DC_s/cnfg2
 		bcl=$(sed -n 1p $DC_s/cnfg2)
 	fi
-		yad --mark="8 s":8 \
-		--mark="60 s":60 --mark="120 s":120 \
-		--borders=20 --scale --min-value=2 \
+		yad --mark="8 s":8 --mark="60 s":60 \
+		--mark="120 s":120 --borders=20 --scale --min-value=2 \
 		--max-value=128 --value="$bcl" --step 2 \
 		--name=idiomind --on-top --sticky --skip-taskbar \
 		--window-icon=idiomind --borders=10 --text="Time" \
@@ -49,9 +48,10 @@ elif [[ -z "$1" ]]; then
 	fi
 	indm=$(cat "$DC_tlt/cnfg6")
 	cd "$DC_tlt/practice"
-	indp=$(cat fin.tmp mcin.tmp \
-	lwin.tmp | sed '/^$/d' | sort | uniq)
+	indp=$(cat fin3 mcin3 \
+	lwin3 | sed '/^$/d' | sort | uniq)
 	indf=$(cat $DC_tl/Feeds/cnfg0)
+	nnews=$(cat $DC_tl/Feeds/cnfg1 | head -n 8)
 	u=$(echo "$(whoami)")
 	infs=$(echo "$snts Sentences" | wc -l)
 	infw=$(echo "$wrds Words" | wc -l)
@@ -64,6 +64,8 @@ elif [[ -z "$1" ]]; then
 		echo "$indm" > ./indm
 		echo "$indp" > ./indp
 		echo "$indf" > ./indf
+		echo "$nnews" >> ./indf
+		
 	fi
 	[[ -z "$indw" ]] && img1=$DS/images/addi.png || img1=$DS/images/add.png
 	[[ -z "$inds" ]] && img2=$DS/images/addi.png || img2=$DS/images/add.png
@@ -181,20 +183,20 @@ elif [[ -z "$1" ]]; then
 
 	w=$(sed -n 1p $DC_s/cnfg5)
 	s=$(sed -n 2p $DC_s/cnfg5)
-	m=$(sed -n 2p $DC_s/cnfg5)
-	p=$(sed -n 3p $DC_s/cnfg5)
-	f=$(sed -n 4p $DC_s/cnfg5)
+	m=$(sed -n 3p $DC_s/cnfg5)
+	p=$(sed -n 4p $DC_s/cnfg5)
+	f=$(sed -n 5p $DC_s/cnfg5)
 
-	if [ -z "$(echo "$w""$s""$m""$f""$p" | grep -o "TRUE")" ]; then
-		notify-send "$exiting" "$no_items" -i idiomind -t 2000 &&
+	if ! [ "$(echo "$w""$s""$m""$f""$p" | grep -o "TRUE")" ]; then
+		notify-send "$exiting" "$no_items" -i idiomind -t 3000 &&
 		sleep 5
 		$DS/stop.sh
 	fi
 
-	if [[ "$(cat ./indx | wc -l)" -lt 1 ]]; then
-		notify-send -i idiomind "$exiting" "$no_items2" -t 9000 &
+	if [[ -z "$(cat ./indx)" ]]; then
+		notify-send -i idiomind "$exiting" "$no_items2" -t 3000 &
 		rm -f $DT/.p__$u &
-		$DS/stop.sh S & exit
+		$DS/stop.sh S & exit 1
 	fi
 
 	echo "$(date '+%Y %m %d %l %M') -plyrt $tpc -plyrt" >> \

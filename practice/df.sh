@@ -84,14 +84,28 @@ function score() {
 function fonts() {
 	
 	s=$(eyeD3 "$drtt/$1.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
+	if [ $(echo "$1" | wc -c) -le 8 ]; then
+	c="<big><big><big><big>$1</big></big></big></big>"
+	elif [ $(echo "$1" | wc -c) -le 16 ]; then
+	c="<big><big><big>$1</big></big></big>"
+	elif [ $(echo "$1" | wc -c) -gt 16 ]; then
+	c="<big>$1</big>"
+	fi
+	if [ $(echo "$s" | wc -c) -le 8 ]; then
+	a="<big><big><big><big><b>$s</b></big></big></big></big>"
+	elif [ $(echo "$s" | wc -c) -le 16 ]; then
+	a="<big><big><big><b>$s</b></big></big></big>"
+	elif [ $(echo "$s" | wc -c) -gt 16 ]; then
+	a="<b>$s</b>"
+	fi
 	if [[ -f "$drtt/images/$1.jpg" ]]; then
 	img="$drtt/images/$1.jpg"
-	trgts="<big><big><big><big>$1</big></big></big></big>   <small><tt>$means</tt>...</small>"
-	srces="<big><big><big><big><b>$s</b></big></big></big></big>"
+	trgts="$c   <small><tt>$means</tt>...</small>"
+	srces="<b>$a</b>"
 	else
 	img="/usr/share/idiomind/images/fc.png"
-	trgts="<big><big><big><big><big><big><big>$1</big></big></big></big></big></big></big>   <small><tt>$means</tt>...</small>"
-	srces="<big><big><big><big><big><big><big><b>$s</b></big></big></big></big></big></big></big>"
+	trgts="<big><big><big>$c</big></big></big>   <small><tt>$means</tt>...</small>"
+	srces="<big><big><big><b>$a</b></big></big></big>"
 	fi
 	}
 
@@ -100,7 +114,7 @@ function cuestion() {
 	yad --form --align=center --undecorated \
 	--center --on-top --image-on-top --image="$img" \
 	--skip-taskbar --title=" " --borders=0 \
-	--window-icon=idiomind --buttons-layout=edge \
+	--buttons-layout=edge \
 	--field="$trgts":lbl --width=365 --height=280 \
 	--button="gtk-media-stop":1 \
 	--button="      $answer1 >     ":0
@@ -111,7 +125,7 @@ function answer() {
 	yad --form --align=center --undecorated \
 	--center --on-top --image-on-top --image="$img" \
 	--skip-taskbar --title=" " --borders=0 \
-	--window-icon=idiomind --buttons-layout=spread \
+	--buttons-layout=spread \
 	--field="$srces":lbl --width=365 --height=280 \
 	--button="      $no_know      ":3 \
 	--button="      $ok_know      ":2
@@ -119,9 +133,9 @@ function answer() {
 	}
 
 n=1
-while [ $n -le $(cat ./fin1 | wc -l) ]; do
+while [ $n -le $(cat fin1 | wc -l) ]; do
 
-	trgt=$(sed -n "$n"p ./fin1)
+	trgt=$(sed -n "$n"p fin1)
 	fonts "$trgt"
 	cuestion
 	ret=$(echo "$?")
@@ -154,9 +168,9 @@ if [[ ! -f fin2 ]]; then
 	
 else
 	n=1
-	while [ $n -le $(cat ./fin2 | wc -l) ]; do
+	while [ $n -le $(cat fin2 | wc -l) ]; do
 
-		trgt=$(sed -n "$n"p ./fin2)
+		trgt=$(sed -n "$n"p fin2)
 		fonts "$trgt"
 		cuestion
 		ret=$(echo "$?")

@@ -18,14 +18,14 @@ if [[ $1 = V1 ]]; then
 	nuw="$3"
 
 	if ! [[ $nuw =~ $re ]]; then
-		nuw=$(cat "$DC_tl/Feeds/.lst" | grep -Fxon "$now" \
+		nuw=$(cat "$DC_tl/Feeds/cnfg1" | grep -Fxon "$now" \
 		| sed -n 's/^\([0-9]*\)[:].*/\1/p')
 		nll=" "
 	fi
 
-	nme=$(sed -n "$nuw"p "$DC_tl/Feeds/.lst")
+	nme=$(sed -n "$nuw"p "$DC_tl/Feeds/cnfg1")
 	if [ -z "$nme" ]; then
-		nme=$(sed -n 1p "$DC_tl/Feeds/.lst")
+		nme=$(sed -n 1p "$DC_tl/Feeds/cnfg1")
 		nuw=1
 	fi
 	
@@ -48,7 +48,7 @@ if [[ $1 = V1 ]]; then
 		--skip-taskbar --center --title=" " --borders=10 \
 		--text="<big><big>$trg</big></big> <a href='$lnk'>More</a>\\n\\n<i>$srce</i>\\n\\n\\n" \
 		--width="$wth" --height="$eht" --center --no-headers \
-		--column=$lgtl:TEXT --column=$lgsl:TEXT \
+		--column=$lgtl:TEXT --column=$lgsl:TEXT --selectable-labels \
 		--expand-column=0 --limit=20 --text-align=center \
 		--button=gtk-save:"'$DS_pf/add' n_i '$nme'" \
 		--button=$listen:"'$DS_pf/audio/ply' '$nme'" \
@@ -138,7 +138,7 @@ elif [[ $1 = V2 ]]; then
 		--text="<big><big>$trg</big></big> <a href='$lnk'>More</a>\\n\\n<i>$srce</i>\\n\\n\\n" \
 		--width="$wth" --height="$eht" --center \
 		--column=$lgtl:TEXT --column=$lgsl:TEXT \
-		--expand-column=0 --limit=20 \
+		--expand-column=0 --limit=20 --selectable-labels \
 		--button="$delete":"'$DS_pf/del' dlti '$nme'" \
 		--button=$listen:"'$DS_pf/audio/ply' '$nme'" \
 		--button=gtk-go-up:3 --button=gtk-go-down:2 \

@@ -189,7 +189,7 @@ elif [ $1 = n_i ]; then
 	[[ ! -f $DC/addons/dict/.dicts ]] && touch $DC/addons/dict/.dicts
 	if  [ -z "$(cat $DC/addons/dict/.dicts)" ]; then
 		source $DS/ifs/trans/$lgs/topics_lists.conf
-		$DS/addons/Dics/cnfg.sh "$no_dictionary" f cnf
+		$DS/addons/Dics/cnfg.sh "" f "$no_dictionary"
 		if  [ -z "$(cat $DC/addons/dict/.dicts)" ]; then
 			exit 1
 		fi
@@ -216,7 +216,6 @@ elif [ $1 = n_i ]; then
 	else
 		img="--on-top"
 	fi
-	
 	
 	if [ "$(cat $DC_tl/.cnfg1 | wc -l)" -lt 1 ]; then
 		rm -fr $DT_r

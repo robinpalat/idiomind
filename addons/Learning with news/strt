@@ -4,26 +4,26 @@
 source /usr/share/idiomind/ifs/c.conf
 source /usr/share/idiomind/ifs/trans/$lgs/rss.conf
 
-STT=$(cat $DT/.uptf)
+[[ -f $DT/.uptf ]] && STT=$(cat $DT/.uptf) || STT=""
 if  [[ -z "$(cat $DC/addons/dict/.dicts)" ]]; then
 	sleep 1
 	$DS/addons/Dics/cnfg.sh \
-	$DS/addons/Learning with news/info1 f cnf # FIX
+	"$DS/addons/Learning with news/"info1 f cnf # FIX
 	if  [[ -z "$(cat $DC/addons/dict/.dicts)" ]]; then
 		exit 1
 	fi
 fi
 if echo "$STT" | grep "Actualizando..."; then
-	$yad --image=info --geometry=350x80 --window-icon=idiomind \
+	yad --image=info --geometry=350x80 --window-icon=idiomind \
 	--title=Info --center --borders=15 \
 	--on-top --skip-taskbar --button=$(echo "$btn" | sed -n 1p):2 \
 	--button=Ok:1 --text=" <i>$(echo "$int" | sed -n 1p)</i>"
-		ret=$?
+	ret=$?
 		if [ $ret -eq 1 ]; then
 			exit 1
 		elif [ $ret -eq 2 ]; then
-			$DS/addons/Learning with news/stp.sh
-			$DS/addons/Learning with news/cnf
+			"$DS/addons/Learning with news/stp.sh"
+			"$DS/addons/Learning with news/cnfg.sh"
 		fi
 	exit 1
 fi
@@ -100,7 +100,6 @@ if [ -n "$feed" ]; then
 	| sed 's/^[ \t]*//;s/[ \t]*$//g' > rss
 	
 	if [ $(cat rss | wc -l) = 0 ]; then
-		echo "- feed Mode" > $DC_s/topic_m
 		$yad --window-icon=idiomind --on-top \
 		--image=info --name=idiomind \
 		--text="<b>$link_err</b>" \
@@ -179,10 +178,11 @@ if [ -n "$feed" ]; then
 			fi
 			
 			eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I "$nme.mp3"
+			echo "$(echo "$nme" | sed 's/.mp3//g')" >> "$DC_tl/Feeds/cnfg1"
 			
 			> swrd
 			> twrd
-			if [ $lgt = ja ] || [ $lgt = zh-cn ]; then
+			if [[ $lgt = ja ]] || [[ $lgt = 'zh-cn' ]]; then
 				vrbl="$srce"; lg=$lgt; aw=$DT/swrd; bw=$DT/twrd
 			else
 				vrbl="$trgt"; lg=$lgs; aw=$DT/twrd; bw=$DT/swrd
@@ -197,7 +197,7 @@ if [ -n "$feed" ]; then
 			sed -i 's/\. /\n/g' $bw
 			sed -i 's/\. /\n/g' $aw
 
-			if [ $lgt = ja ] || [ $lgt = zh-cn ]; then
+			if [[ $lgt = ja ]] || [[ $lgt = 'zh-cn' ]]; then
 				(
 				n=1
 				while [ $n -le "$(cat $aw | wc -l)" ]; do
@@ -224,7 +224,7 @@ if [ -n "$feed" ]; then
 			pwrds=$(cat B | tr '\n' '_')
 			eyeD3 --set-encoding=utf8 -A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0I "$nme".mp3
 			(
-			if [ $lgt = ja ] || [ $lgt = zh-cn ]; then
+			if [[ $lgt = ja ]] || [[ $lgt = 'zh-cn' ]]; then
 				n=1
 				while [ $n -le $(cat $bw | wc -l) ]; do
 					t=$(sed -n "$n"p $bw)
@@ -257,7 +257,10 @@ if [ -n "$feed" ]; then
 	rm -fr $DT_r $DT/.uptf $DT/.rss
 	cd "$DM_tl/Feeds/conten"
 	find ./* -mtime +5 -exec rm -r {} \; &
-	
+
+	ls -t *.mp3 > "$DC_tl/Feeds/cnfg1"
+	sed -i 's/.mp3//g' "$DC_tl/Feeds/cnfg1"
+
 	if [ "$1" != A ]; then
 		notify-send -i idiomind "$rsrc" " $updateok" -t 3000
 	fi
@@ -265,5 +268,5 @@ if [ -n "$feed" ]; then
 	exit 1
 else
 	sleep 1
-	$DS_pf/cnf NS & exit 1
+	"$DS_pf/cnfg.sh" NS & exit 1
 fi

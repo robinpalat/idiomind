@@ -39,7 +39,7 @@ sttng9=$(sed -n 9p $DC_s/cnfg1)
 sttng10=$(sed -n 10p $DC_s/cnfg1)
 sttng11=$(sed -n 11p $DC_s/cnfg1)
 
-$yad --plug=$KEY --tabnum=1 --borders=15 --scroll \
+yad --plug=$KEY --tabnum=1 --borders=15 --scroll \
 	--separator="\\n" --form --no-headers --align=right \
 	--field="$general_options\t":lbl "#1" \
 	--field=":lbl" "#2"\
@@ -59,10 +59,10 @@ cat $DC_s/cnfg21 | yad --plug=$KEY --tabnum=2 --list --expand-column=2 \
 	--text="<sub>  $double_click_for_configure </sub>" \
 	--no-headers --dclick-action="/usr/share/idiomind/ifs/dclik.sh" --print-all \
 	--column=icon:IMG --column=Action &
-echo "$text" | $yad --plug=$KEY --tabnum=3 --text-info \
+echo "$text" | yad --plug=$KEY --tabnum=3 --text-info \
 	--text="\\n<big><big><big><b>Idiomind v2.1-alpha</b></big></big></big>\\n<sup>$vocabulary_learning_tool\\n<a href='https://sourceforge.net/projects/idiomind/'>Homepage</a> © 2013-2014 Robin Palat</sup>\\n" \
 	--show-uri --fontname=Arial --margins=10 --wrap --text-align=center &
-$yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
+yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 	--sticky --center --window-icon=$ICON --window-icon=idiomind \
 	--tab="$preferences" --tab="  $addons  " --borders=5 \
 	--tab="  $about  " \

@@ -6,7 +6,7 @@ DIR1="$HOME/.idiomind/topics/$lngt/$topic"
 
 sleep 0.5
 
-if [[ "$(ps -A | grep -o "wrds.sh")" = "wrds.sh" ]]; then
+if [[ "$(ps -A | grep -Fxo "wrds.sh")" = "wrds.sh" ]]; then
 exit 1
 else
 

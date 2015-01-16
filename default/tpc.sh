@@ -164,6 +164,7 @@ if [ -d "$DC_tlt" ]; then
 		$DS/mngr.sh mkmn
 	fi
 	# set ------------
+	
 	if cat "$DC_tl/.cnfg3" | grep -Fxo "$topic"; then
 		echo "$topic" > $DC_s/cnfg8
 		echo istll >> $DC_s/cnfg8
@@ -174,6 +175,7 @@ if [ -d "$DC_tlt" ]; then
 		echo wn >> $DC_s/cnfg8
 		echo "$topic" > $DC_tl/.cnfg8
 		echo wn >> $DC_tl/.cnfg8
+		echo "$topic" > $DC_s/cnfg6
 	fi
 	# look status ------------
 	if [[ $(cat "$DC_tl/.cnfg1" | grep -Fxon "$topic" \

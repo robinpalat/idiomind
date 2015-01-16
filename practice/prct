@@ -20,9 +20,9 @@ cd "$DC_tlt/practice"
 function look() {
 		yad --title="$practice - $tpc" --borders=5 --center \
 		--on-top --skip-taskbar --window-icon=idiomind \
-		--center --image=gtk-ok --button=Ok:2 \
+		--center --image=dialog-ok --button=Ok:2 \
 		--button="   $restart   ":0 --width=360 --height=120 \
-		--text="<b>   $complete\\n   $(cat $1)</b>\\n\\n"
+		--text="<b>   $complete</b>\\n    $(cat $1)\\n\\n"
 }
 
 function get_list() {
@@ -101,7 +101,7 @@ elif [[ "$1" = m ]]; then
 		look "look_mc"
 		ret=$(echo "$?")
 		if [[ "$ret" -eq 0 ]]; then
-		$cls mc & exit
+		$cls dm & exit
 		else
 		$strt & exit
 		fi

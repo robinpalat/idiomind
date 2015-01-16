@@ -91,18 +91,24 @@ $ess" > word2.tmp
 	ells=$(sort -Ru word2.tmp | head -6)
 	echo "$ells" > word2.tmp
 	sed '/^$/d' word2.tmp > word2.id
-	trgts="<big><big><big><big><big><big><big><b>$1</b></big></big></big></big></big></big></big>"
+	if [ $(echo "$1" | wc -c) -le 8 ]; then
+	a="<big><big><big><big><big><big><big><b>$1</b></big></big></big></big></big></big></big>"
+	elif [ $(echo "$1" | wc -c) -le 16 ]; then
+	a="<big><big><big><big><big><b>$1</b></big></big></big></big></big>"
+	elif [ $(echo "$1" | wc -c) -gt 16 ]; then
+	a="<big><big><b>$1</b></big></big>"
+	fi
+
 	}
 
 function mchoise() {
 	
 	dlg=$(cat word2.id | awk '{print "\n"$0}' \
-	| yad --list --on-top --skip-taskbar \
+	| yad --list --on-top --skip-taskbar --title=" " \
 	--width=365 --height=340 --center --undecorated \
-	--text-align=center --no-headers --borders=5 --window-icon=idiomind \
+	--text-align=center --no-headers --borders=5 \
 	--button=gtk-media-stop:1 \
-	--title=" " \
-	--text="\\n$trgts   \\n\\n<sup><tt>$means</tt>...</sup>\\n\\n" \
+	--text="\\n$a   \\n\\n<sup><tt>$means</tt>...</sup>\\n\\n" \
 	--column=Opcion --column=Opciodn)
 }
 

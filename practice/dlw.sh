@@ -87,18 +87,28 @@ function fonts() {
 	[[ $lgtl = Japanese ]] || [[ $lgtl = Chinese ]] && lst="" || lst=$(echo "$1" | awk '$1=$1' FS= OFS=" " | tr aeiouy ' ')
 	#fi
 	
-	#lt="$1"
-	#[[ $(echo "$lt" | wc -c) -ge 8 ]] && lt="${lt:0:40}..."
-	#[[ $(echo "$lt" | wc -c) -ge 8 ]] && lt="${lt:0:40}..."
-	
+	if [ $(echo "$1" | wc -c) -le 8 ]; then
+	a="<big><big><big><big><big>$1</big></big></big></big></big>"
+	elif [ $(echo "$1" | wc -c) -le 16 ]; then
+	a="<big><big><big>$1</big></big></big>"
+	elif [ $(echo "$1" | wc -c) -gt 16 ]; then
+	a="$1"
+	fi
+	if [ $(echo "$lst" | wc -c) -le 8 ]; then
+	c="<big><big><big><big><b>$lst</b></big></big></big></big>"
+	elif [ $(echo "$lst" | wc -c) -le 16 ]; then
+	c="<big><big><b>$lst</b></big></big>"
+	elif [ $(echo "$lst" | wc -c) -gt 16 ]; then
+	c="<b>$lst</b>"
+	fi
 	if [[ -f "$drtt/images/$1.jpg" ]]; then
 	img="$drtt/images/$1.jpg"
-	trgts="<big>$lst</big>"
-	tr="<big><big><big><big><b>$1</b></big></big></big></big>"
+	trgts="<big>$c</big>"
+	tr="<b>$a</b>"
 	else
 	img="/usr/share/idiomind/images/fc.png"
-	trgts="<big><big>$lst</big></big>"
-	tr="<big><big><big><big><big><big><big><b>$1</b></big></big></big></big></big></big></big>"
+	trgts="<big><big>$c</big></big>"
+	tr="<big><big><big><b>$a</b></big></big></big>"
 	fi
 	}
 
@@ -109,7 +119,7 @@ function cuestion() {
 	yad --form --align=center --undecorated \
 	--center --on-top --image-on-top --image="$img" \
 	--skip-taskbar --title=" " --borders=0 \
-	--window-icon=idiomind --buttons-layout=edge \
+	--buttons-layout=edge \
 	--field="<span color='#808080'>$trgts</span>":lbl \
 	--width=365 --height=280 \
 	--button="gtk-media-stop":1 \
@@ -122,7 +132,7 @@ function answer() {
 	yad --form --align=center --undecorated \
 	--center --on-top --image-on-top --image="$img" \
 	--skip-taskbar --title=" " --borders=0 \
-	--window-icon=idiomind --buttons-layout=spread \
+	--buttons-layout=spread \
 	--field="$tr":lbl --width=365 --height=280 \
 	--button="$listen":"$play" \
 	--button="$no_know":3 \

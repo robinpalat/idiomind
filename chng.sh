@@ -147,9 +147,36 @@ if [[ "$1" = chngi ]]; then
 		sleep $wmm
 				
 	elif ([ $saf = TRUE ]) && \
-	([ -f "$DM_tl/Feeds/kept/words/$itm.mp3" ] || [ -f "$DM_tl/Feeds/kept/$itm.mp3" ]); then
+	([ -f "$DM_tl/Feeds/kept/words/$itm.mp3" ] \
+	|| [ -f "$DM_tl/Feeds/kept/$itm.mp3" ] \
+	|| [ -f "$DM_tl/Feeds/conten/$itm.mp3" ]); then
 	
-		if [ -f "$DM_tl/Feeds/kept/$itm.mp3" ]; then
+		if [ -f "$DM_tl/Feeds/conten/$itm.mp3" ]; then
+			file="$DM_tl/Feeds/conten/$itm.mp3"
+			tgs=$(eyeD3 "$file")
+			trgt=$(echo "$tgs" | \
+			grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
+			srce=$(echo "$tgs" | \
+			grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
+			cnt=$(echo "$trgt" | wc -w)
+			if [ -z "$trgt" ]; then
+				trgt="$itm"
+			fi
+			if echo "$nta" | grep "TRUE"; then
+				cnt=10
+			fi
+			wmm=$(($bcl + $cnt))
+			wmt=$(($wmm + 5))
+			if echo "$nta" | grep "TRUE"; then
+				notify-send -i idiomind "$trgt" "$srce" -t 8000 -i idiomind &
+			fi
+			sleep 1
+			if echo "$sna" | grep "TRUE"; then
+				play "$DM_tl/Feeds/conten/$itm".mp3 &
+			fi
+			sleep $wmm
+	
+		elif [ -f "$DM_tl/Feeds/kept/$itm.mp3" ]; then
 			file="$DM_tl/Feeds/kept/$itm.mp3"
 			tgs=$(eyeD3 "$file")
 			trgt=$(echo "$tgs" | \

@@ -32,7 +32,7 @@ if [ -z "$1" ]; then
 		
 		# look for addons
 		addons="$(cd $DS/addons; ls -d *)"
-		rm $DC_s/cnfg21
+		[[ -f $DC_s/cnfg21 ]] && rm $DC_s/cnfg21
 		n=1
 		while [ $n -le $(echo "$addons" | wc -l ) ]; do
 			set=$(echo "$addons" | sed -n "$n"p)
@@ -1169,13 +1169,13 @@ if [ "$1" = topic ]; then
 		else
 			info=$(cat $DC_tl/Feeds/.dt)
 		fi
-		
+		if [[ ! -f "$DC_tl/Feeds/cnfg1" ]]; then
 		cd "$dir1/conten"
-		ls -t *.mp3 > "$DC_tl/Feeds/.lst"
-		(sed -i 's/.mp3//g' "$DC_tl/Feeds/.lst")
-		
+		ls -t *.mp3 > "$DC_tl/Feeds/cnfg1"
+		sed -i 's/.mp3//g' "$DC_tl/Feeds/cnfg1"
+		fi
 		cd "$DF"
-		cat "$DC_tl/Feeds/.lst" | yad \
+		cat "$DC_tl/Feeds/cnfg1" | yad \
 		--no-headers --list --listen --plug=$KEY --tabnum=1 \
 		--text=" <small>$info</small>" \
 		--expand-column=1 --ellipsize=END --print-all \
