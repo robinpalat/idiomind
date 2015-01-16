@@ -60,12 +60,6 @@ source /usr/share/idiomind/ifs/c.conf
 uid=$(sed -n 1p $DC_s/cnfg4)
 FEED=$(cat "$DC/addons/Learning with news/$lgtl/.rss")
 sleep 1
-if [ -f $DT/.uptf ]; then
-	infmn=$(cat $DT/.uptf)
-	echo "$infmn" > $DC_s/topic_m
-else
-	echo "- Feed Mode" > $DC_s/topic_m
-fi
 echo "$tpc" > $DC_s/cnfg8
 echo fd >> $DC_s/cnfg8
 notify-send -i idiomind "Feed Mode" " $FEED" -t 3000
