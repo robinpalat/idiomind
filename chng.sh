@@ -3,253 +3,77 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/topics_lists.conf
+
 if [[ "$1" = chngi ]]; then
-	saw=$(sed -n 1p $DC_s/cnfg5)
-	sas=$(sed -n 2p $DC_s/cnfg5)
-	sam=$(sed -n 3p $DC_s/cnfg5)
-	sap=$(sed -n 4p $DC_s/cnfg5)
-	saf=$(sed -n 5p $DC_s/cnfg5)
+
 	nta=$(sed -n 6p $DC_s/cnfg5)
 	sna=$(sed -n 7p $DC_s/cnfg5)
 	cnfg1="$DC_s/cnfg5"
 	indx="$DT/.$user/indx"
-	tlck="$DS/images/chng.mp3"
-	imgt="/$DT/FRONT_COVER.jpeg"
-	rm -f "$DT/FRONT_COVER.jpeg"
-	wth=$(sed -n 10p $DC_s/cnfg18)
-	eht=$(sed -n 9p $DC_s/cnfg18)
-	nim=$(sed -n 11p $DC_s/cnfg18)
+	imgt="/$DT/ILLUSTRATION.jpeg"
+	[[ -f "$DT/ILLUSTRATION.jpeg" ]] && rm -f "$DT/ILLUSTRATION.jpeg"
 	indp="$DT/.$user/indp"
-	
-	if [[ -z $(cat $DC_s/cnfg2) ]]; then
-		echo 8 > $DC_s/cnfg2
-		bcl=$(cat $DC_s/cnfg2)
-	else
-		bcl=$(cat $DC_s/cnfg2)
-	fi
+	[[ -z $(cat $DC_s/cnfg2) ]] && echo 8 > $DC_s/cnfg2 \
+	&& bcl=$(cat $DC_s/cnfg2) || bcl=$(cat $DC_s/cnfg2)
 	[[ -z $bcl ]] && bcl = 5
 	[[ $bcl -lt 3 ]] && bcl = 3
 	
-	itm=$(sed -n "$2"p $indx)
+	item=$(sed -n "$2"p $indx)
 	
-	if ( [ $sas = TRUE ] ) && \
-	( [ $(echo "$itm" | wc -w) != 1 ] && \
-	[ -f "$DM_tlt/$itm.mp3" ] || [ -f "$DM_tlt/$itm.omd" ] ); then
-
-		if [ -f "$DM_tlt/$itm.mp3" ]; then
-			file="$DM_tlt/$itm.mp3"
-		else
-			file="$DM_tlt/$itm.omd"
-		fi
+	[[ -f "$DM_tlt/$item.mp3" ]] && file="$DM_tlt/$item.mp3" && t=2
+	[[ -f "$DM_tlt/words/$item.mp3" ]] && file="$DM_tlt/words/$item.mp3" && t=1
+	[[ -f "$DM_tl/Feeds/kept/words/$item.mp3" ]] && file="$DM_tl/Feeds/kept/words/$item.mp3" && t=1
+	[[ -f "$DM_tl/Feeds/kept/$item.mp3" ]] && file="$DM_tl/Feeds/kept/$item.mp3" && t=2
+	[[ -f "$DM_tl/Feeds/conten/$item.mp3" ]] && file="$DM_tl/Feeds/conten/$item.mp3" && t=2
+	
+	if [ -f "$file" ]; then
 		
+		if [ "$t" = 2 ]; then
 		tgs=$(eyeD3 "$file")
+		trgt=$(echo "$tgs" | \
+		grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
 		srce=$(echo "$tgs" | \
 		grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
-		gmmk=$(echo "$tgs" | \
-		grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)')
 		
-		if [ -z "$trgt" ]; then
-			trgt="$itm"
+		elif [ "$t" = 1 ]; then
+		tgs=$(eyeD3 "$file")
+		trgt=$(echo "$tgs" | \
+		grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
+		srce=$(echo "$tgs" | \
+		grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
 		fi
-		
-		if [ -z "$srce" ]; then
-			srce=" 
-			- - - - "
+
+		if [ -z "$trgt" ]; then
+			trgt="$item"
 		fi
 		
 		cnt=$(echo "$trgt" | wc -w)
-		
 		if echo "$nta" | grep "TRUE"; then
 			cnt=10
 		fi
 		
 		wmm=$(($bcl + $cnt / 2 ))
 		wmt=$(($wmm + 5))
+		
 		rm -f $imgt
 		eyeD3 --write-images=$DT "$file"
-		imgt=$DT/FRONT_COVER.jpeg
-		if [ -f $imgt ]; then
-			img=$imgt
-			osdi=$imgt
-		else
-			if [[ -n "$(cat "$indp" | grep "$itm")" ]] \
-			&& [[ $sap = TRUE ]]; then
-				img=$br2
-			else
-				img=$br
-			fi
-			osdi=idiomind
-		fi
+		imgt=$DT/ILLUSTRATION.jpeg
+		[[ -f $imgt ]] && osdi=$imgt || osdi=idiomind
+		
 		if echo "$nta" | grep "TRUE"; then
 			notify-send -i "$osdi" "$trgt" "$srce\\n" -t 12000  &
 		fi
 		sleep 1
-		
 		if echo "$sna" | grep "TRUE"; then
-			play "$DM_tlt/$itm".mp3 &
+			play "$file" &
 		fi
 		
 		sleep $wmm
-	
-	elif ( [ $saw = TRUE ] || [ $sap = TRUE ] || [ $sam = TRUE ] ) && \
-	( [ $(echo "$itm" | wc -w) = 1 ] && \
-	[ -f "$DM_tlt/words/$itm.mp3" ] ); then
-	
-		file="$DM_tlt/words/$itm.mp3"
-		if echo "$nta" | grep "TRUE"; then
-			cnt=10
-		else
-			cnt=1
-		fi
-		wmm=$(($bcl + $cnt))
-		wmt=$(($wmm + 5))
-		rm -f $imgt
-		eyeD3 --write-images=$DT "$file"
-		imgt=$DT/FRONT_COVER.jpeg
-		if [ -f $imgt ]; then
-			img=$imgt
-			osdi=$imgt
-		else
-			if [[ -n "$(cat "$indp" | grep "$itm")" ]] \
-			&& [[ $sap = TRUE ]]; then
-				img=$br2
-			else
-				img=$br
-			fi
-			osdi=idiomind
-		fi
-		tgs=$(eyeD3 "$file")
-		tgt=$(echo "$tgs" | \
-		grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
-		srce=$(echo "$tgs" | \
-		grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
-		mrk=$(echo "$tgs" | \
-		grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)')
-		if [ -z "$tgt" ]; then
-			tgt="$itm"
-		fi
-		if [ -z "$srce" ]; then
-			srce=" - - - "
-		fi
-		if [ "$mrk" = TRUE ]; then
-			trgt="$tgt"
-		else
-			trgt="$tgt"
-		fi
-		if echo "$nta" | grep "TRUE"; then
-			notify-send -i "$osdi" "$trgt" "$srce\n" -t 7000 &
-		fi
-		sleep 1
-		if echo "$sna" | grep "TRUE"; then
-			play "$DM_tlt/words/$itm".mp3 &
-		fi
-		rm -f $DT/*.jpeg ./.id.tmp
-		sleep $wmm
-				
-	elif ([ $saf = TRUE ]) && \
-	([ -f "$DM_tl/Feeds/kept/words/$itm.mp3" ] \
-	|| [ -f "$DM_tl/Feeds/kept/$itm.mp3" ] \
-	|| [ -f "$DM_tl/Feeds/conten/$itm.mp3" ]); then
-	
-		if [ -f "$DM_tl/Feeds/conten/$itm.mp3" ]; then
-			file="$DM_tl/Feeds/conten/$itm.mp3"
-			tgs=$(eyeD3 "$file")
-			trgt=$(echo "$tgs" | \
-			grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
-			srce=$(echo "$tgs" | \
-			grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
-			cnt=$(echo "$trgt" | wc -w)
-			if [ -z "$trgt" ]; then
-				trgt="$itm"
-			fi
-			if echo "$nta" | grep "TRUE"; then
-				cnt=10
-			fi
-			wmm=$(($bcl + $cnt))
-			wmt=$(($wmm + 5))
-			if echo "$nta" | grep "TRUE"; then
-				notify-send -i idiomind "$trgt" "$srce" -t 8000 -i idiomind &
-			fi
-			sleep 1
-			if echo "$sna" | grep "TRUE"; then
-				play "$DM_tl/Feeds/conten/$itm".mp3 &
-			fi
-			sleep $wmm
-	
-		elif [ -f "$DM_tl/Feeds/kept/$itm.mp3" ]; then
-			file="$DM_tl/Feeds/kept/$itm.mp3"
-			tgs=$(eyeD3 "$file")
-			trgt=$(echo "$tgs" | \
-			grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
-			srce=$(echo "$tgs" | \
-			grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
-			cnt=$(echo "$trgt" | wc -w)
-			if [ -z "$trgt" ]; then
-				trgt="$itm"
-			fi
-			if echo "$nta" | grep "TRUE"; then
-				cnt=10
-			fi
-			wmm=$(($bcl + $cnt))
-			wmt=$(($wmm + 5))
-			if echo "$nta" | grep "TRUE"; then
-				notify-send -i idiomind "$trgt" "$srce" -t 8000 -i idiomind &
-			fi
-			sleep 1
-			if echo "$sna" | grep "TRUE"; then
-				play "$DM_tl/Feeds/kept/$itm".mp3 &
-			fi
-			sleep $wmm
-					
-		elif [ -f "$DM_tl/Feeds/kept/words/$itm.mp3" ]; then
-			
-			file="$DM_tl/Feeds/kept/words/$itm.mp3"
-			if echo "$nta" | grep "TRUE"; then
-				cnt=10
-			else
-				cnt=1
-			fi
-			wmm=$(($bcl + $cnt))
-			wmt=$(($wmm + 5))
-			tgs=$(eyeD3 "$file")
-			tgt=$(echo "$tgs" | \
-			grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
-			srce=$(echo "$tgs" | \
-			grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
-			mrk=$(echo "$tgs" | \
-			grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)')
-			exm=$(echo "$tgs" | \
-			grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)')
-			exmm=$(echo "$exm" | \
-			sed "s/"$tgt"/<b>"$tgt"<\/\b>/g")
-			if [ -z "$tgt" ]; then
-				tgt="$itm"
-			fi
-			if [ -n "$exm" ]; then
-				exmp=$(echo "<i><small>"$exmm"\\n</small></i>")
-			else
-				exmp=$(echo " ")
-			fi
-			if [ "$mrk" = TRUE ]; then
-				trgt="* $tgt"
-			else
-				trgt="$tgt"
-			fi
-			if echo "$nta" | grep "TRUE"; then
-				notify-send -i idiomind "$trgt" "$srce\\n\\n[ $exm ]" -t 7000 &
-			fi
-			sleep 1
-			if echo "$sna" | grep "TRUE"; then
-				play "$DM_tl/Feeds/kept/words/$itm".mp3 &
-			fi
-			rm -f $DT/*.jpeg
-			sleep $wmm
-		else
-			exit 1
-		fi
+
 		[[ -f $DT/.bcle ]] && rm -f $DT/.bcle
+		
 	else
-		echo "$itm" >> $DT/.bcle
+		echo "$item" >> $DT/.bcle
 		echo "-- no file found"
 		if [ $(cat $DT/.p__$use | wc -l) -gt 5 ]; then
 			int="$(sed -n 16p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"

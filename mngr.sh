@@ -359,7 +359,7 @@ elif [ "$1" = edt ]; then
 					eyeD3 --set-encoding=utf8 -t "IWI1I0I${TGT}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" -A "IWI3I0I${exm1}IWI3I0I" \
 					"$DM_tlt/words/$nme.mp3" >/dev/null 2>&1
 					
-					eyeD3 --add-image $DT/FRONT_COVER.jpeg:FRONT_COVER \
+					eyeD3 --add-image $DT/ILLUSTRATION.jpeg:ILLUSTRATION \
 					"$DM_tlt/words/$nme.mp3" >/dev/null 2>&1
 					rm -fr $DT/idadtmptts
 				fi
