@@ -90,7 +90,7 @@ fi
 	fi
 #--------------------------------
 elif [ $1 = inx ]; then
-	[ $lgt = ja ] || [ $lgt = zh-cn ] && c=c || c=w
+	[ $lgt = ja ] || [ $lgt = "zh-cn" ] && c=c || c=w
 	itm="$3"
 	fns="$5"
 	DC_tlt="$DC_tl/$4"
@@ -361,7 +361,7 @@ elif [ "$1" = edt ]; then
 					
 					eyeD3 --add-image $DT/ILLUSTRATION.jpeg:ILLUSTRATION \
 					"$DM_tlt/words/$nme.mp3" >/dev/null 2>&1
-					rm -fr $DT/idadtmptts
+					[[ -d $DT/idadtmptts ]] && rm -fr $DT/idadtmptts
 				fi
 				
 				if [ "$srce" != "$SRC" ]; then
@@ -519,7 +519,7 @@ elif [ "$1" = edt ]; then
 						let n++
 					done
 					
-					rm -fr $DT_r
+					[[ -d $DT_r ]] && rm -fr $DT_r
 					) &
 				fi
 			fi
@@ -620,7 +620,7 @@ elif [ "$1" = edt ]; then
 						let n++
 					done
 				
-					rm -fr $DT_r
+					[[ -d $DT_r ]] && rm -fr $DT_r
 				) &
 				
 				nme="$fln"
@@ -846,8 +846,9 @@ elif [ $1 = dlt ]; then
 		ret=$?
 
 		if [ $ret -eq 0 ]; then
-			rm -r "$DM_tl/$tpc"
-			rm -r "$DC_tl/$tpc"
+		
+			[[ -d "$DM_tl/$tpc" ]] && rm -r "$DM_tl/$tpc"
+			[[ -d "$DC_tl/$tpc" ]] && rm -r "$DC_tl/$tpc"
 			$ > $DC_s/cnfg6
 			rm $DC_s/cnfg8
 			$ > $DC_tl/.cnfg8
@@ -882,7 +883,7 @@ elif [ $1 = mkmn ]; then
 	cd "$DC_tl"
 	[[ -d ./images ]] && rm -r ./images
 	[[ -d ./words ]] && rm -r ./words
-	[[ -f ./*.mp3 ]] && rm -r ./*.mp3
+	[[ -f ./*.mp3 ]] && rm ./*.mp3
 	[[ -f ./cnfg0 ]] && rm ./cnfg0
 	[[ -f ./cnfg1 ]] && rm ./cnfg1
 	[[ -f ./cnfg2 ]] && rm ./cnfg2

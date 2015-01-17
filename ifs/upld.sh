@@ -68,7 +68,7 @@ elif [[ $1 = infsd ]]; then
 			ret=$?
 			
 			curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
-			$yad --window-icon=idiomind --on-top \
+			yad --window-icon=idiomind --on-top \
 			--image="info" --name=idiomind \
 			--text="  $conn_err  \\n" \
 			--image-on-top --center --sticky \
@@ -112,7 +112,7 @@ elif [[ $1 = infsd ]]; then
 				[[ -f "$sv" ]] && rm "$sv"
 				mv -f "/tmp/$U.$tpcd.idmnd" "$sv"
 			else
-				$yad --fixed --name=idiomind --center \
+				yad --fixed --name=idiomind --center \
 				--image=dialog-warning --text="$file_err" \
 				--fixed --sticky --width=320 --height=140 --borders=3 \
 				--skip-taskbar --window-icon=idiomind \
@@ -135,6 +135,8 @@ nme=$(echo "$tpc" | sed 's/ /_/g' \
 | sed 's/"//g' | sed 's/’//g')
 [[ $(echo "$tpc" | wc -c) -gt 40 ]] \
 && ttpc="${tpc:0:40}..." || ttpc="$tpc"
+
+
 chk1="$DC_tlt/cnfg0"
 chk2="$DC_tlt/cnfg1"
 chk3="$DC_tlt/cnfg2"
@@ -151,32 +153,27 @@ fi
 if [[ -z "$cat chk3" ]]; then
 	cp -f "$DC_tlt/cnfg2~" "$DC_tlt/cnfg2"
 fi
-if [[ -z "$cat chk4" ]]; then
-	cp -f "$DC_tlt/cnfg3~" "$DC_tlt/cnfg3"
-fi
-if [[ -z "$cat chk5" ]]; then
-	cp -f "$DC_tlt/cnfg4~" "$DC_tlt/cnfg4"
-fi
 if [[ -z "$cat chk6" ]]; then
 	cp -f "$DC_tlt/.cnfg10~" "$DC_tlt/cnfg10"
 fi
-if [[ -n "$(cat "$chk1" | sort -n | uniq -dc)" ]]; then
+
+if [ -n "$(cat "$chk1" | sort -n | uniq -dc)" ]; then
 	cat "$chk1" | awk '!array_temp[$0]++' > $DT/ls0.x
 	sed '/^$/d' $DT/ls0.x > "$chk1"
 fi
-if [[ -n "$(cat "$chk2" | sort -n | uniq -dc)" ]]; then
+if [ -n "$(cat "$chk2" | sort -n | uniq -dc)" ]; then
 	cat "$chk2" | awk '!array_temp[$0]++' > $DT/ls1.x
 	sed '/^$/d' $DT/ls1.x > "$chk2"
 fi
-if [[ -n "$(cat "$chk3" | sort -n | uniq -dc)" ]]; then
+if [ -n "$(cat "$chk3" | sort -n | uniq -dc)" ]; then
 	cat "$chk3" | awk '!array_temp[$0]++' > $DT/ls2.x
 	sed '/^$/d' $DT/ls2.x > "$chk3"
 fi
-if [[ -n "$(cat "$chk4" | sort -n | uniq -dc)" ]]; then
+if [ -n "$(cat "$chk4" | sort -n | uniq -dc)" ]; then
 	cat "$chk4" | awk '!array_temp[$0]++' > $DT/ls1.x
 	sed '/^$/d' $DT/ls1.x > "$chk4"
 fi
-if [[ -n "$(cat "$chk5" | sort -n | uniq -dc)" ]]; then
+if [ -n "$(cat "$chk5" | sort -n | uniq -dc)" ]; then
 	cat "$chk5" | awk '!array_temp[$0]++' > $DT/ls2.x
 	sed '/^$/d' $DT/ls2.x > "$chk5"
 fi
@@ -186,47 +183,75 @@ chk2=$(cat "$DC_tlt/cnfg1" | wc -l)
 chk3=$(cat "$DC_tlt/cnfg2" | wc -l)
 chk4=$(cat "$DC_tlt/cnfg3" | wc -l)
 chk5=$(cat "$DC_tlt/cnfg4" | wc -l)
+stts=$(cat "$DC_tlt/cnfg8")
 
-if [[ "$(($chk4 + $chk5))" != $chk1 \
-	|| "$(($chk2 + $chk3))" != $chk1 ]]; then
-	notify-send -i idiomind "index_err1" "$index_err2" -t 5000 &
+if [[ $(($chk4 + $chk5)) != $chk1 \
+|| $(($chk2 + $chk3)) != $chk1 || $stts = 13 ]]; then
+	sleep 1
+	notify-send -i idiomind "$index_err1" "$index_err2" -t 3000 &
 	
-	rm -f $DT/ind
-	rm -f $DT/ind_ok
+	rm -f $DT/ind $DT/ind_ok
 	
-	cd "$DM_tlt/"
+	cd "$DM_tl/$topic"
 	for i in *.mp3 ; do [[ ! -s ${i} ]] && rm ${i} ; done
 	if [ -f ".mp3" ]; then rm .mp3; fi
 	ls *.mp3 | sed 's/.mp3//g' > $DT/ind
-	cd "$DM_tlt/words/"
+		
+	cd "$DM_tl/$topic/words/"
 	for i in *.mp3 ; do [ ! -s ${i} ] && rm ${i} ; done
 	if [ -f ".mp3" ]; then rm .mp3; fi
 	ls *.mp3 | sed 's/.mp3//g' >> $DT/ind
-	rm "$DC_tlt/cnfg3"
-	rm "$DC_tlt/cnfg4"
 	
-	n=1
-	while [ $n -le $(cat "$DT/ind" | wc -l) ]; do
-		chk1=$(sed -n "$n"p "$DC_tlt/cnfg0")
-		if cat "$DT/ind" | grep -Fxo "$chk1"; then
+	rm "$DC_tlt/cnfg3" "$DC_tlt/cnfg4"
+	
+	if [[ -f "$DC_tlt/.cnfg11" ]]; then
+	
+		cp -f "$DC_tlt/.cnfg11" "$DC_tlt/cnfg0"
+		n=1
+		while [[ $n -le $(cat "$DT/ind" | wc -l) ]]; do
+		
+			chk1=$(sed -n "$n"p "$DC_tlt/cnfg0")
+			if cat "$DT/ind" | grep -Fxo "$chk1"; then
+					if [[ "$(echo "$chk1" | wc -w)" -eq 1 ]]; then
+						echo "$chk1" >> "$DC_tlt/cnfg3"
+					elif [[ "$(echo "$chk1" | wc -w)" -gt 1 ]]; then
+						echo "$chk1" >> "$DC_tlt/cnfg4"
+					fi
+				echo "$chk1" >> $DT/ind_ok
+				grep -v -x -v "$chk1" $DT/ind > $DT/ind_
+				sed '/^$/d' $DT/ind_ > $DT/ind
+			fi
+			let n++
+		done
+	else
+		n=1
+		while [[ $n -le $(cat "$DT/ind" | wc -l) ]]; do
+		
+			chk1=$(sed -n "$n"p "$DT/ind")
 				if [[ "$(echo "$chk1" | wc -w)" -eq 1 ]]; then
 					echo "$chk1" >> "$DC_tlt/cnfg3"
 				elif [[ "$(echo "$chk1" | wc -w)" -gt 1 ]]; then
 					echo "$chk1" >> "$DC_tlt/cnfg4"
 				fi
-			echo "$chk1" >> $DT/ind_ok
-			grep -v -x -v "$chk1" $DT/ind > $DT/ind_
-			sed '/^$/d' $DT/ind_ > $DT/ind
-		fi
-		let n++
-	done
+				echo "$chk1" >> $DT/ind_ok
+			let n++
+		done
+	fi
+	
+	if [ $? -ne 0 ]; then
+		yad --name=idiomind --image=error --button=gtk-ok:1\
+		--text=" $files_err\n\n" --image-on-top --sticky  \
+		--width=380 --height=120 --borders=5 --title=Idiomind \
+		--skip-taskbar --center --window-icon=idiomind
+		$DS/mngr.sh dlt & exit
+	fi
 	
 	n=1
-	while [ $n -le $(cat "$DT/ind" | wc -l) ]; do
+	while [[ $n -le $(cat "$DT/ind" | wc -l) ]]; do
 		chk2=$(sed -n "$n"p "$DT/ind")
-		if [ $(echo "$chk2" | wc -w) -eq 1 ]; then
+		if [[ "$(echo "$chk2" | wc -w)" -eq 1 ]]; then
 			echo "$chk2" >> "$DC_tlt/cnfg3"
-		elif [ $(echo "$chk2" | wc -w) -gt 1 ]; then
+		elif [[ "$(echo "$chk2" | wc -w)" -gt 1 ]]; then
 			echo "$chk2" >> "$DC_tlt/cnfg4"
 		fi
 		let n++
@@ -251,14 +276,15 @@ if [[ "$(($chk4 + $chk5))" != $chk1 \
 		sed '/^$/d' $DT/ind > "$in3"
 	fi
 	cp -f "$in1" "$DC_tlt/cnfg1"
+	
+	if [[ $stts = "13" ]]; then
+		if cat "$DC_tl/.cnfg3" | grep -Fxo "$topic"; then
+			echo "6" > "$DC_tlt/cnfg8"
+		elif cat "$DC_tl/.cnfg2" | grep -Fxo "$topic"; then
+			echo "1" > "$DC_tlt/cnfg8"
+		fi
+	fi
 fi
-
-#if cat "$DM_t/saved/ls" \
-#| grep "$tpc"; then
-	#inf="update"
-#else
-	#inf="share"
-#fi
 
 cd "$DM_tlt"
 MP3=$(ls *.mp3 | wc -l)
@@ -313,8 +339,8 @@ if [[ "$ret" != 0 ]]; then
 fi
 
 if [ -z $Ctgry ]; then
-	$yad --window-icon=idiomind --name=idiomind \
-	--image=info --on-top \
+	yad --window-icon=idiomind \
+	--image=info --on-top --name=idiomind \
 	--text="  $categry_err\\n  " \
 	--image-on-top --center --sticky \
 	--width=320 --height=100 --borders=5 \
@@ -326,7 +352,7 @@ fi
 
 curl -v www.google.com 2>&1 | \
 grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
-$yad --window-icon=idiomind --on-top \
+yad --window-icon=idiomind --on-top \
 --image="info" --name=idiomind \
 --text="  $conn_err  \\n" \
 --image-on-top --center --sticky \
@@ -340,7 +366,7 @@ wget http://idiomind.sourceforge.net/info/SITE_TMP
 source $DT/SITE_TMP && rm -f $DT/SITE_TMP
 
 if [ -z "$FTPHOST" ]; then
-	$yad --window-icon=idiomind --name=idiomind \
+	yad --window-icon=idiomind --name=idiomind \
 	--image=dialog-warning --on-top \
 	--text=" $site_err\\n " \
 	--image-on-top --center --sticky \
@@ -424,8 +450,8 @@ convert $DT/boim1.png \( +clone -background Black \
 fi
 
 cd "$DM_tlt"
-cp -r * $DT/"$tpc/"
-mkdir $DT/"$tpc"/.audio
+cp -r * "$DT/$tpc/"
+mkdir "$DT/$tpc/.audio"
 
 n=1
 while [ $n -le $(cat "$DC_tlt/cnfg5" | wc -l) ]; do
@@ -447,13 +473,13 @@ cd $DT
 tar -cvf "$tpc.tar" "$tpc"
 gzip -9 "$tpc.tar"
 mv "$tpc.tar.gz" "$U.$tpc.idmnd"
-rm -f "$tpc"/*
+[[ -d "$DT/$tpc" ]] && rm -fr "$DT/$tpc"/.*
+dte=$(date "+%d %B %Y")
+mv -f "$DT/$U.$tpc.idmnd" "$DT/$nme/"
 
 notify-send "$uploading..." "$wait" -i idiomind -t 6000
 
 #-----------------------
-dte=$(date "+%d %B %Y")
-mv -f "$DT/$U.$tpc.idmnd" $DT/$nme/
 
 #ftp
 rm -f $DT/SITE_TMP
@@ -465,10 +491,11 @@ mirror --reverse ./ public_html/$lgs/$lnglbl/$Ctgry/
 quit
 END_SCRIPT
 
+
 exit=$?
 
-[[ $(echo "$tpc" | wc -c) -gt 40 ]] && tpc="${tpc:0:40}..."
 if [ $exit = 0 ] ; then
+	[[ $(echo "$tpc" | wc -c) -gt 40 ]] && tpc="${tpc:0:40}..."
     cp -f "$DT/cnfg12" "$DM_t/saved/$tpc.cnfg12"
     info="  $tpc\n\n<b> $saved</b>\n"
     image=dialog-ok
@@ -486,6 +513,11 @@ yad --window-icon=idiomind --name=idiomind \
 
 [[ -d "$DT/$nme" ]] && rm -fr "$DT/$nme"
 [[ -d "$DT/$tpc" ]] && rm -fr "$DT/$tpc"
-rm -fr $DT/SITE_TMP
-rm $DT/.aud $DT/.img $DT/$U."$tpc".idmnd \
-$DT/"$tpc".tar $DT/"$tpc".tar.gz & exit 1
+[[ -f "$DT/SITE_TMP" ]] && rm -f "$DT/SITE_TMP"
+[[ -f "$DT/.aud" ]] && rm -f "$DT/.aud"
+[[ -f "$DT/$U.$tpc.idmnd" ]] && rm -f "$DT/$U.$tpc.idmnd"
+[[ -f "$DT/$tpc.tar" ]] && rm -f "$DT/$tpc.tar"
+[[ -f "$DT/$tpc.tar.gz" ]] && rm -f "$DT/$tpc.tar.gz"
+[[ -d "$DT/$nme" ]] && rm -fr "$DT/$nme"
+
+exit

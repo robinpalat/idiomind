@@ -171,7 +171,7 @@ elif [[ -z "$1" ]]; then
 		$DS/stop.sh P & exit 1
 	else
 		if  [ ! -f $DT/.p__$u ]; then
-			rm -fr $DT/.$u
+			[[ -d $DT/.$u ]] && rm -fr $DT/.$u
 		fi
 		rm -f "$slct"
 		exit 1

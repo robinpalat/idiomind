@@ -49,8 +49,6 @@ if [[ -n "$1" ]]; then
 		info4="* "
 		info="  <b><big>$learned </big></b><small>$s_learned</small>   <span color='#3AB451'><b><big>$easys </big></b></span><small>$s_easy</small>   <span color='#E78C1E'><b><big>$learning </big></b></span><small>$s_learning</small>   <span color='#D11B5D'><b><big>$hards </big></b></span><small>$s_hard</small>  \\n"
 	fi
-	
-
 fi
 
 iconf=$(cat .iconf)
@@ -76,8 +74,6 @@ img4=$DSP/icons_st/$iconls.png
 #"  $info3 Listening Words" $img3 \
 #"  $info4 Listening Sentences" $img4 )
 #ret=$?
-
-
 
 VAR=$(yad --ellipsize=NONE --list \
 --on-top --class=idiomind --name=idiomind \

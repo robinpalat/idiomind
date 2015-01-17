@@ -42,7 +42,7 @@ if [ -f "$DM_tlt/words/$nme.mp3" ]; then
 	| awk '{print tolower($0)}')"<\/\span>/g")
 	[[ "$(echo "$tgs" | grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)')" = TRUE ]] \
 	&& trgt=$(echo "<big><u><b>"$trgt"</b></u></big>")
-	[[ "$ap" = TRUE ]] && (killall play & sleep 0.8 && play "$DM_tlt/words/$nme.mp3") &
+	[[ "$ap" = TRUE ]] && (killall play & sleep 1 && play "$DM_tlt/words/$nme.mp3") &
 	
 	yad --form --window-icon=idiomind --scroll --text-align=center \
 	--skip-taskbar --center --title=" " --borders=10 \
@@ -63,7 +63,7 @@ elif [ -f "$DM_tlt/$nme.mp3" ]; then
 	src=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
 	lwrd=$(echo "$tgs" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' | tr '_' '\n')
 	[[ ! -f "$DM_tlt/$nme.mp3" ]] && exit 1
-	[[ "$ap" = TRUE ]] && (killall play & sleep 0.8 && play "$DM_tlt/$nme.mp3") &
+	[[ "$ap" = TRUE ]] && (killall play & sleep 1 && play "$DM_tlt/$nme.mp3") &
 	
 	echo "$lwrd" | yad --list --print-column=0 --no-headers \
 	--window-icon=idiomind --scroll --text-align=center \

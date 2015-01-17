@@ -64,17 +64,13 @@ if [[ "$1" = chngi ]]; then
 			T="$(echo "$int" | sed -n 1p)"
 			D="$(echo "$int" | sed -n 2p)" #interrupt
 			notify-send -i idiomind "$T" "$D" -t 9000 &
-			rm -fr $DT/.p__$user &
+			rm -f $DT/.p__$user &
 			$DS/stop.sh S & exit 1
 		fi
 	fi
 
 elif [ "$1" != chngi ]; then
 	
-	if [ ! -d $DC_s ]; then
-		/usr/share/idiomind/ifs/1u.sh &
-		exit 1
-	fi
 	if [ ! -f $DC_s/cnfg0 ]; then
 		> $DC_s/cnfg0
 		fi
@@ -84,20 +80,19 @@ elif [ "$1" != chngi ]; then
 			text="--text=<small>$1\n</small>"
 			align="--text-align=left"
 		else
-			host="http://idiomind.sourceforge.net"
 			lgtl=$(echo "$lgtl" | awk '{print tolower($0)}')
-			text="--text=<small><small><a href='$host/$lgs/$lgtl'>$find_topics</a>\t</small></small>"
+			text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/$lgtl'>$find_topics</a>\t</small></small>"
 			align="--text-align=right"
 		fi
 		[[ -f $DC_tl/.cnfg1 ]] && info2=$(cat $DC_tl/.cnfg1 | wc -l) || info2=""
 		cd $DC_s
 
-		VAR=$(cat $DC_s/cnfg0 | $yad --name=idiomind --ellipsize=END \
+		VAR=$(cat $DC_s/cnfg0 | $yad --name=idiomind \
 		--class=idiomind --center --separator="" $align\
-		"$text" --width=$wth --height=$eht \
-		--no-headers --list --window-icon=idiomind \
+		"$text" --width=$wth --height=$eht --ellipsize=END \
+		--no-headers --list --window-icon=idiomind --borders=5 \
 		--button="gtk-add":3 --button="$ok":0 --button="$close":1 \
-		--borders=5 --title="$topics" --column=img:img --column=File:TEXT)
+		--title="$topics" --column=img:img --column=File:TEXT)
 			ret=$?
 			if [ $ret -eq 3 ]; then
 				$DS/add.sh n_t

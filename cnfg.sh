@@ -25,6 +25,33 @@ function confirm() {
 	--width=400 --height=180 
 }
 
+
+function set_lang() {
+	
+	if [ ! -d "$DM_t"/$1 ]; then
+		mkdir "$DM_t"/$1
+		mkdir "$DM_t"/$1/.share
+		mkdir "$DC/topics"/$1
+		mkdir "$DC_a/Learning with news"/$1
+		mkdir "$DC_a/Learning with news"/$1/subscripts
+		cp -f "$DS/addons/Learning with news/examples/$1" \
+		"$DC_a/Learning with news/$1/subscripts/Example"
+	fi
+	echo "$2" > $DC_s/cnfg10
+	echo "$1" >> $DC_s/cnfg10
+	$DS/stop.sh L
+	$DS/addons/Learning with news/stp.sh
+	
+	if [ -f "$DC/topics/$1/.cnfg8" ]; then
+		LST=$(sed -n 1p "$DC/topics/$1/.cnfg8")
+		"$DC/topics/$1/$LST/tpc.sh"
+	else
+		rm $DC_s/cnfg8 && touch $DC_s/cnfg8
+	fi
+	$DS/mngr.sh mkmn
+
+}
+
 c=$(echo $(($RANDOM%100000)))
 KEY=$c
 cnf1=$(mktemp $DT/cnf1.XXXX)
@@ -105,243 +132,43 @@ yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 		fi
 		
 		if cat "$cnf1" | sed -n 13p | grep "English" && [ English != $lgtl ] ; then
-			if [ ! -d "$DM_t"/English ]; then
-				mkdir "$DM_t"/English
-				mkdir "$DM_t"/English/.share
-				mkdir "$DC/topics"/English
-				mkdir "$DC_a/Learning with news"/English
-				mkdir "$DC_a/Learning with news"/English/subscripts
-				cp -f "$DS/addons/Learning with news/examples/English" \
-				"$DC_a/Learning with news/English/subscripts/Example"
-			fi
-			echo "en" > $DC_s/cnfg10
-			echo "English" >> $DC_s/cnfg10
-			$DS/stop.sh L
-			$DS/addons/Learning with news/stp.sh
-			
-			if [ -f "$DC/topics/English/.cnfg8" ]; then
-				LST=$(sed -n 1p "$DC/topics/English/.cnfg8")
-				"$DC/topics/English/$LST/tpc.sh"
-			else
-				rm $DC_s/cnfg8 && touch $DC_s/cnfg8
-			fi
-			$DS/mngr.sh mkmn
+			set_lang English en
 		fi
 		
 		if cat "$cnf1" | sed -n 13p | grep "Spanish" && [ Spanish != $lgtl ] ; then
-			if [ ! -d "$DM_t"/Spanish ]; then
-				mkdir "$DM_t"/Spanish
-				mkdir "$DM_t"/Spanish/.share
-				mkdir "$DC/topics"/Spanish
-				mkdir "$DC_a/Learning with news"/Spanish
-				mkdir "$DC_a/Learning with news"/Spanish/subscripts
-				cp -f "$DS/addons/Learning with news/examples/Spanish" \
-				"$DC_a/Learning with news/Spanish/subscripts/Example"
-			fi
-			echo "es" > $DC_s/cnfg10
-			echo "Spanish" >> $DC_s/cnfg10
-			$DS/stop.sh L
-			$DS/addons/Learning with news/stp.sh
-			
-			if [ -f "$DC/topics/Spanish/.cnfg8" ]; then
-				LST=$(sed -n 1p "$DC/topics/Spanish/.cnfg8")
-				"$DC/topics/Spanish/$LST/tpc.sh"
-			else
-				rm $DC_s/cnfg8 && touch $DC_s/cnfg8
-			fi
-			$DS/mngr.sh mkmn
+			set_lang Spanish es
 		fi
 		
 		if cat "$cnf1" | sed -n 13p | grep "Italian" && [ Italian != $lgtl ] ; then
-			if [ ! -d "$DM_t"/Italian ]; then
-				mkdir "$DM_t"/Italian
-				mkdir "$DM_t"/Italian/.share
-				mkdir "$DC/topics"/Italian
-				mkdir "$DC_a/Learning with news"/Italian
-				mkdir "$DC_a/Learning with news"/Italian/subscripts
-				cp -f "$DS/addons/Learning with news/examples/Italian" \
-				"$DC_a/Learning with news/Italian/subscripts/Example"
-			fi
-			echo "it" > $DC_s/cnfg10
-			echo "Italian" >> $DC_s/cnfg10
-			$DS/stop.sh L
-			$DS/addons/Learning with news/stp.sh
-			
-			if [ -f "$DC/topics/Italian/.cnfg8" ]; then
-				LST=$(sed -n 1p "$DC/topics/Italian/.cnfg8")
-				"$DC/topics/Italian/$LST/tpc.sh"
-			else
-				rm $DC_s/cnfg8 && touch $DC_s/cnfg8
-			fi
-			$DS/mngr.sh mkmn
+			set_lang Italian it
 		fi
 		
 		if cat "$cnf1" | sed -n 13p | grep "Portuguese" && [ Portuguese != $lgtl ] ; then
-			if [ ! -d "$DM_t"/Portuguese ]; then
-				mkdir "$DM_t"/Portuguese
-				mkdir "$DM_t"/Portuguese/.share
-				mkdir "$DC/topics"/Portuguese
-				mkdir "$DC_a/Learning with news"/Portuguese
-				mkdir "$DC_a/Learning with news"/Portuguese/subscripts
-				cp -f "$DS/addons/Learning with news/examples/Portuguese" \
-				"$DC_a/Learning with news/Portuguese/subscripts/Example"
-			fi
-			echo "pt" > $DC_s/cnfg10
-			echo "Portuguese" >> $DC_s/cnfg10
-			$DS/stop.sh L
-			$DS/addons/Learning with news/stp.sh
-			
-			if [ -f "$DC/topics/Portuguese/.cnfg8" ]; then
-				LST=$(sed -n 1p "$DC/topics/Portuguese/.cnfg8")
-				"$DC/topics/Portuguese/$LST/tpc.sh"
-			else
-				rm $DC_s/cnfg8 && touch $DC_s/cnfg8
-			fi
-			$DS/mngr.sh mkmn
+			set_lang Portuguese pt
 		fi
 		
 		if cat "$cnf1" | sed -n 13p | grep "German" && [ German != $lgtl ] ; then
-			if [ ! -d "$DM_t"/German ]; then
-				mkdir "$DM_t"/German
-				mkdir "$DM_t"/German/.share
-				mkdir "$DC/topics"/German
-				mkdir "$DC_a/Learning with news"/German
-				mkdir "$DC_a/Learning with news"/German/subscripts
-				cp -f "$DS/addons/Learning with news/examples/German" \
-				"$DC_a/Learning with news/German/subscripts/Example"
-			fi
-			echo "de" > $DC_s/cnfg10
-			echo "German" >> $DC_s/cnfg10
-			$DS/stop.sh L
-			$DS/addons/Learning with news/stp.sh
-			
-			if [ -f "$DC/topics/German/.cnfg8" ]; then
-				LST=$(sed -n 1p "$DC/topics/German/.cnfg8")
-				"$DC/topics/German/$LST/tpc.sh"
-			else
-				rm $DC_s/cnfg8 && touch $DC_s/cnfg8
-			fi
-			$DS/mngr.sh mkmn
+			set_lang German de
 		fi
 		
 		if cat "$cnf1" | sed -n 13p | grep "Japanese" && [ Japanese != $lgtl ] ; then
-			if [ ! -d "$DM_t"/Japanese ]; then
-				mkdir "$DM_t"/Japanese
-				mkdir "$DM_t"/Japanese/.share
-				mkdir "$DC/topics"/Japanese
-				mkdir "$DC_a/Learning with news"/Japanese
-				mkdir "$DC_a/Learning with news"/Japanese/subscripts
-				cp -f "$DS/addons/Learning with news/examples/Japanese" \
-				"$DC_a/Learning with news/Japanese/subscripts/Example"
-			fi
-			echo "ja" > $DC_s/cnfg10
-			echo "Japanese" >> $DC_s/cnfg10
-			$DS/stop.sh L
-			$DS/addons/Learning with news/stp.sh
-			
-			if [ -f "$DC/topics/Japanese/.cnfg8" ]; then
-				LST=$(sed -n 1p "$DC/topics/Japanese/.cnfg8")
-				"$DC/topics/Japanese/$LST/tpc.sh"
-			else
-				rm $DC_s/cnfg8 && touch $DC_s/cnfg8
-			fi
-			$DS/mngr.sh mkmn
+			set_lang Japanese ja
 		fi
 		
 		if cat "$cnf1" | sed -n 13p | grep "French" && [ French != $lgtl ] ; then
-			if [ ! -d "$DM_t"/French ]; then
-				mkdir "$DM_t"/French
-				mkdir "$DM_t"/French/.share
-				mkdir "$DC/topics"/French
-				mkdir "$DC_a/Learning with news"/French
-				mkdir "$DC_a/Learning with news"/French/subscripts
-				cp -f "$DS/addons/Learning with news/examples/French" \
-				"$DC_a/Learning with news/French/subscripts/Example"
-			fi
-			echo "fr" > $DC_s/cnfg10
-			echo "French" >> $DC_s/cnfg10
-			$DS/stop.sh L
-			$DS/addons/Learning with news/stp.sh
-			
-			if [ -f "$DC/topics/French/.cnfg8" ]; then
-				LST=$(sed -n 1p "$DC/topics/French/.cnfg8")
-				"$DC/topics/French/$LST/tpc.sh"
-			else
-				rm $DC_s/cnfg8 && touch $DC_s/cnfg8
-			fi
-			$DS/mngr.sh mkmn
+			set_lang French fr
 		fi
 		
 		if cat "$cnf1" | sed -n 13p | grep "Vietnamese" && [ Vietnamese != $lgtl ] ; then
-			if [ ! -d "$DM_t"/Vietnamese ]; then
-				mkdir "$DM_t"/Vietnamese
-				mkdir "$DM_t"/Vietnamese/.share
-				mkdir "$DC/topics"/Vietnamese
-				mkdir "$DC_a/Learning with news"/Vietnamese
-				mkdir "$DC_a/Learning with news"/Vietnamese/subscripts
-				cp -f "$DS/addons/Learning with news/examples/Vietnamese" \
-				"$DC_a/Learning with news/Vietnamese/subscripts/Example"
-			fi
-			echo "vi" > $DC_s/cnfg10
-			echo "Vietnamese" >> $DC_s/cnfg10
-			$DS/stop.sh L
-			$DS/addons/Learning with news/stp.sh
-			
-			if [ -f "$DC/topics/Vietnamese/.cnfg8" ]; then
-				LST=$(sed -n 1p "$DC/topics/Vietnamese/.cnfg8")
-				"$DC/topics/Vietnamese/$LST/tpc.sh"
-			else
-				rm $DC_s/cnfg8 && touch $DC_s/cnfg8
-			fi
-			$DS/mngr.sh mkmn
+			set_lang Vietnamese vi
 		fi
 		
 		if cat "$cnf1" | sed -n 13p | grep "Chinese" && [ Chinese != $lgtl ] ; then
-			if [ ! -d "$DM_t"/Chinese ]; then
-				mkdir "$DM_t"/Chinese
-				mkdir "$DM_t"/Chinese/.share
-				mkdir "$DC/topics"/Chinese
-				mkdir "$DC_a/Learning with news"/Chinese
-				mkdir "$DC_a/Learning with news"/Chinese/subscripts
-				cp -f "$DS/addons/Learning with news/examples/Chinese" \
-				"$DC_a/Learning with news/Chinese/subscripts/Example"
-			fi
-			echo "zh-cn" > $DC_s/cnfg10
-			echo "Chinese" >> $DC_s/cnfg10
-			$DS/stop.sh L
-			$DS/addons/Learning with news/stp.sh
-			
-			if [ -f "$DC/topics/Chinese/.cnfg8" ]; then
-				LST=$(sed -n 1p "$DC/topics/Chinese/.cnfg8")
-				"$DC/topics/Chinese/$LST/tpc.sh"
-			else
-				rm $DC_s/cnfg8 && touch $DC_s/cnfg8
-			fi
-			$DS/mngr.sh mkmn
+			set_lang Chinese "zh-cn"
 		fi
 		
 		if cat "$cnf1" | sed -n 13p | grep "Russian" && [ Russian != $lgtl ] ; then
-			if [ ! -d "$DM_t"/Russian ]; then
-				mkdir "$DM_t"/Russian
-				mkdir "$DM_t"/Russian/.share
-				mkdir "$DC/topics"/Russian
-				mkdir "$DC_a/Learning with news"/Russian
-				mkdir "$DC_a/Learning with news"/Russian/subscripts
-				cp -f "$DS/addons/Learning with news/examples/Russian" \
-				"$DC_a/Learning with news/Russian/subscripts/Example"
-			fi
-			echo "ru" > $DC_s/cnfg10
-			echo "Russian" >> $DC_s/cnfg10
-			$DS/stop.sh L
-			$DS/addons/Learning with news/stp.sh
-			
-			if [ -f "$DC/topics/Russian/.cnfg8" ]; then
-				LST=$(sed -n 1p "$DC/topics/Russian/.cnfg8")
-				"$DC/topics/Russian/$LST/tpc.sh"
-			else
-				rm $DC_s/cnfg8 && touch $DC_s/cnfg8
-			fi
-			$DS/mngr.sh mkmn
+			set_lang Russian ru
 		fi
 
 		if cat "$cnf1" | sed -n 14p | grep "English" && [ English != $lgsl ] ; then

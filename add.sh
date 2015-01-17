@@ -102,7 +102,10 @@ if [ $1 = n_t ]; then
 			grep -v -x -v "$tpc" $DC_tl/.cnfg3 > $DC_tl/.cnfg3_
 			sed '/^$/d' $DC_tl/.cnfg3_ > $DC_tl/.cnfg3
 			rm $DC_tl/in_s $DC_tl/in $DC_tl/nstll
-			rm -r "$DM_tl/$tpc" "$DC_tl/$tpc"
+			
+			[[ -d "$DC_tl/$tpc" ]] && rm -r "$DC_tl/$tpc"
+			[[ -d "$DM_tl/$tpc" ]] && rm -r "$DM_tl/$tpc"
+			
 			if [ -f $DT/ntpc ]; then
 				rm -f $DT/ntpc
 			fi
@@ -218,7 +221,7 @@ elif [ $1 = n_i ]; then
 	fi
 	
 	if [ "$(cat $DC_tl/.cnfg1 | wc -l)" -lt 1 ]; then
-		rm -fr $DT_r
+		[[ -d $DT_r ]] && rm -fr $DT_r
 		source $DS/ifs/trans/$lgs/topics_lists.conf
 		$DS/chng.sh "$no_topic" & exit 1
 	fi
@@ -315,7 +318,8 @@ elif [ $1 = n_i ]; then
 			fi
 		
 			if [ -z "$trgt" ]; then
-				rm -fr $DT_r & exit 1
+				[[ -d $DT_r ]] && rm -fr $DT_r
+				exit
 			fi
 
 			if [ $(echo "$tpe" | wc -l) -ge 2 ]; then
@@ -384,7 +388,8 @@ elif [ $1 = n_i ]; then
 				fi
 			fi
 		else
-			rm -fr $DT_r & exit 1
+			[[ -d $DT_r ]] && rm -fr $DT_r
+			exit
 		fi
 		
 elif [ $1 = n_s ]; then
@@ -568,7 +573,8 @@ elif [ $1 = n_s ]; then
 				let n++
 			done
 		fi
-		rm -fr $DT_r $DT/twrd $DT/swrd &
+		[[ -d $DT_r ]] && rm -fr $DT_r
+		rm -f $DT/twrd $DT/swrd &
 		echo "aitm.1.aitm" >> \
 		$DC/addons/stats/.log
 		exit 1
@@ -743,7 +749,8 @@ elif [ $1 = n_s ]; then
 		fi
 		echo "aitm.1.aitm" >> \
 		$DC/addons/stats/.log
-		rm -fr $DT_r $DT/twrd $DT/swrd & exit 1
+		[[ -d $DT_r ]] && rm -fr $DT_r
+		rm -f $DT/twrd $DT/swrd & exit 1
 	fi
 
 elif [ $1 = n_w ]; then
@@ -893,7 +900,8 @@ elif [ $1 = n_w ]; then
 		$DS/mngr.sh inx W "$trgt" "$tpe"
 		echo "aitm.1.aitm" >> \
 		$DC/addons/stats/.log
-		rm -fr $DT_r & exit 1
+		[[ -d $DT_r ]] && rm -fr $DT_r
+		exit
 	fi
 	
 elif [ $1 = edt ]; then
@@ -985,7 +993,7 @@ elif [ $1 = edt ]; then
 					mv -f $DT_r/"$trgt.mp3" "$DM_tlt/words/$trgt.mp3"
 					eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${UNI}IWI2I0I" -A IWI3I0I"$5"IWI3I0I \
 					"$DM_tlt/words/$trgt.mp3" >/dev/null 2>&1
-				#----------------------si no hay audio
+					
 				else
 					vs=$(sed -n 7p $DC_s/cnfg1)
 					if [ -n "$vs" ]; then
@@ -1042,7 +1050,8 @@ elif [ $1 = edt ]; then
 				--text=" <b>  ! </b><small><small> $items_rest </small></small>" \
 				--field=":lbl" "" >/dev/null 2>&1
 			fi
-			rm -fr logw $DT/*.$c $DT_r & exit 1
+			[[ -d $DT_r ]] && rm -fr $DT_r
+			rm -f logw $DT/*.$c & exit 1
 	fi
 	
 elif [ $1 = prc ]; then
@@ -1054,7 +1063,7 @@ elif [ $1 = prc ]; then
 	echo "$3" > ./lstws
 	
 	if [ -z "$tpe" ]; then
-		rm -fr $DT_r
+		[[ -d $DT_r ]] && rm -fr $DT_r
 		source $DS/ifs/trans/$lgs/topics_lists.conf
 		$DS/chng.sh "$no_edit" & exit 1
 	fi
@@ -1312,7 +1321,7 @@ elif [ $1 = snt ]; then
 	DT_r=$(mktemp -d $DT/XXXXXX)
 	cd $DT_r
 	if [ -z "$tpe" ]; then
-		rm -fr $DT_r
+		[[ -d $DT_r ]] && rm -fr $DT_r
 		source $DS/ifs/trans/$lgs/topics_lists.conf
 		$DS/chng.sh "$no_edit" & exit 1
 	fi
@@ -1340,13 +1349,12 @@ elif [ $1 = snt ]; then
 	slt=$(mktemp $DT/slt.XXXX.x)
 	sleep 0.5
 	cat $DT_r/wrds | awk '{print "FALSE\n"$0}' | \
-	$yad --list --checklist \
+	yad --list --checklist \
 	--on-top --text="<small> $info </small>" \
-	--fixed --sticky --no-headers --center --window-icon=idiomind \
+	--fixed --sticky --no-headers --center \
 	--buttons-layout=end --skip-taskbar --width=400 \
-	--height=280 --borders=10 \
-	--button=gtk-close:1 \
-	--button="$add":0 \
+	--height=280 --borders=10 --window-icon=idiomind \
+	--button=gtk-close:1 --button="$add":0 \
 	--title="$title_selector - $tpe" \
 	--column="" --column="Select" > "$slt"
 		
@@ -1363,7 +1371,8 @@ elif [ $1 = snt ]; then
 			rm -f "$slt"
 		elif [ "$ret" -eq 1 ]; then
 			rm -f $DT/*."$c"
-			rm -fr $DT_r & exit 1
+			[[ -d $DT_r ]] && rm -fr $DT_r
+			exit
 		fi
 			
 	EX=$(echo "$2")
@@ -1441,7 +1450,8 @@ elif [ $1 = snt ]; then
 		--field=":lbl" "" >/dev/null 2>&1
 	fi
 	rm -f $DT/*."$c" 
-	rm -fr $DT_r & exit 1
+	[[ -d $DT_r ]] && rm -fr $DT_r
+	exit
 	
 elif [ $1 = prs ]; then
 	source $DS/ifs/trans/$lgs/add.conf
@@ -1464,14 +1474,15 @@ elif [ $1 = prs ]; then
 	cd "$DT_r"
 
 	if [ -z "$tpe" ]; then
-		rm -fr $DT_r
+		[[ -d $DT_r ]] && rm -fr $DT_r
 		source $DS/ifs/trans/$lgs/topics_lists.conf
 		$DS/chng.sh "$no_edit" & exit 1
 	fi
 
 	if [ $ns -ge 50 ]; then
 		msg " <b>$tpe    </b>\\n\\n $sentences_max"
-		rm -fr ls $lckpr $DT_r & exit 1
+		[[ -d $DT_r ]] && rm -fr $DT_r
+		rm -f ls $lckpr & exit
 	fi
 
 	if [ -f $lckpr ]; then
@@ -1510,7 +1521,8 @@ elif [ $1 = prs ]; then
 			--image-on-top --sticky --title="Idiomind" \
 			--width=400 --height=150 --button=gtk-ok:0 \
 			--skip-taskbar --window-icon=idiomind && \
-			rm -fr ls $lckpr $DT_r & exit 1
+			[[ -d $DT_r ]] && rm -fr $DT_r
+			rm -f ls $lckpr & exit 1
 		fi
 		
 		cd $HOME
@@ -1519,11 +1531,12 @@ elif [ $1 = prs ]; then
 			--window-icon=idiomind --file --width=600 --height=450)
 		
 		if [ -z "$FL" ];then
-			rm -fr $lckpr $DT_r & exit 1
+			[[ -d $DT_r ]] && rm -fr $DT_r
+			rm -f $lckpr & exit 1
 			
 		else
 			if [ -z "$tpe" ]; then
-				rm -fr $DT_r
+				[[ -d $DT_r ]] && rm -fr $DT_r
 				source $DS/ifs/trans/$lgs/topics_lists.conf
 				$DS/chng.sh "$no_edit" & exit 1
 			fi
@@ -1581,7 +1594,8 @@ elif [ $1 = prs ]; then
 				--image-on-top --sticky --title="Idiomind" \
 				--width=350 --height=140 --borders=3 --button=gtk-ok:0 \
 				--skip-taskbar --window-icon=idiomind && \
-				rm -fr ls $lckpr $DT_r & exit 1
+				[[ -d $DT_r ]] && rm -fr $DT_r
+				rm -f ls $lckpr & exit 1
 			fi
 			
 			echo "# $file_pros" ; sleep 0.2
@@ -1602,7 +1616,8 @@ elif [ $1 = prs ]; then
 					--image-on-top --sticky --title="Idiomind" \
 					--width=400 --height=150 --button=gtk-ok:0 \
 					--skip-taskbar --window-icon=idiomind &
-					rm -fr ls $lckpr $DT_r & break & exit 1
+					[[ -d $DT_r ]] && rm -fr $DT_r
+					rm -f ls $lckpr & break & exit 1
 				fi
 				
 				cat ./info.ret | sed '1d' | sed 's/.*transcript":"//' \
@@ -1656,7 +1671,8 @@ $trgt" >> log
 				--text=" " --sticky --width=$wth --height=$eht \
 				--margins=8 --borders=3 --button=gtk-ok:0 \
 				--title="$Title_sentences" && \
-				rm -fr $lckpr $DT_r & exit 1
+				[[ -d $DT_r ]] && rm -fr $DT_r
+				rm -f $lckpr & exit 1
 				
 			else
 				slt=$(mktemp $DT/slt.XXXX.x)
@@ -2005,13 +2021,15 @@ $trgt" >> ./wlog
 					while [[ $n -le 20 ]]; do
 						 sleep 5
 						 if ([ $(cat ./x | wc -l) = $rm ] || [ $n = 20 ]); then
-							rm -fr $DT_r $lckpr & break & exit 1
+							[[ -d $DT_r ]] && rm -fr $DT_r
+							rm -f $lckpr & break & exit 1
 						 fi
 						let n++
 					done
 					exit 1
 				else
-					rm -fr $DT_r $lckpr $slt & exit 1
+					[[ -d $DT_r ]] && rm -fr $DT_r
+					rm -f $lckpr $slt & exit 1
 				fi
 		fi
 	fi
@@ -2111,7 +2129,8 @@ $trgt" >> ./wlog
 			--name=idiomind --class=idiomind --window-icon=idiomind \
 			--text=" " --sticky --width=$wth --height=$eht \
 			--borders=3 --button=Ok:0 --title="$selector"
-			rm -fr $lckpr $DT_r $slt & exit 1
+			[[ -d $DT_r ]] && rm -fr $DT_r
+			rm -f $lckpr $slt & exit 1
 		
 		else
 			slt=$(mktemp $DT/slt.XXXX.x)
@@ -2143,7 +2162,8 @@ $trgt" >> ./wlog
 							$nspr "$w" $DT_r "$tpe" &
 							exit 1
 						else
-							rm -fr $lckpr $DT_r $slt & exit 1
+							[[ -d $DT_r ]] && rm -fr $DT_r
+							rm -f $lckpr $slt & exit 1
 						fi
 				
 				elif [ $ret -eq 0 ]; then
@@ -2515,13 +2535,15 @@ $itm" >> ./wlog
 					while [[ $n -le 20 ]]; do
 						 sleep 5
 						 if ([ $(cat ./x | wc -l) = $rm ] || [ $n = 20 ]); then
-							rm -fr $DT_r $lckpr & break & exit 1
+							[[ -d $DT_r ]] && rm -fr $DT_r
+							rm -f $lckpr & break & exit 1
 						 fi
 						let n++
 					done
 					
 				else
-					rm -rf $lckpr $DT_r $slt & exit 1
+					[[ -d $DT_r ]] && rm -fr $DT_r
+					 rm -f $lckpr $slt & exit 1
 				fi
 				
 elif [ $1 = img ]; then
