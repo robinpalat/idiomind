@@ -30,9 +30,10 @@ elif echo "$1" | grep "L"; then
 	exit
 else
 	[[ -n "$(ps -A | pgrep -f "/usr/share/idiomind/bcle.sh")" ]] && killall bcle.sh &
+	[[ -n "$(ps -A | pgrep -f "/usr/share/idiomind/chng.sh")" ]] && killall chng.sh &
 	[[ -n "$(ps -A | pgrep -f "notify-osd")" ]] && killall notify-osd &
 	[[ -n "$(ps -A | pgrep -f "play")" ]] && killall play &
 	[[ -d /tmp/.idmtp1.$u/.idadtmptts_$u ]] && rm -fr /tmp/.idmtp1.$u/.idadtmptts_$u
-	[[ -f /tmp/.idmtp1.$u/.p__$u ]] && rm -fr  /tmp/.idmtp1.$u/.p__$u
+	[[ -f /tmp/.idmtp1.$u/.p__$u ]] && rm -fr /tmp/.idmtp1.$u/.p__$u
 	exit
 fi

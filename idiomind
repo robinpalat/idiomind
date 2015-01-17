@@ -204,9 +204,9 @@ if [ -z "$1" ]; then
 			#touch "$DT/ntpc"
 		#fi
 	#fi
-	
-	yad --width=175 --height=220 \
-	--name=idiomind --fixed --title="Idiomind" --no-buttons \
+	yad --width=175 --height=220 --name=idiomind \
+	--geometry=185x318-300-$(sed -n 12p $DC_s/cnfg18) \
+	--fixed --title="Idiomind" --no-buttons \
 	--icons --single-click --on-top --borders=0 \
 	--read-dir=$DS/default/new --item-width=68 \
 	--window-icon=idiomind --class=idiomind &
@@ -389,7 +389,7 @@ fi
 
 # topic
 if [ "$1" = topic ]; then
-	
+
 	if [ -n "$tpc" ]; then
 		eht=$(sed -n 3p $DC_s/cnfg18)
 		wth=$(sed -n 4p $DC_s/cnfg18)
@@ -418,6 +418,13 @@ if [ "$1" = topic ]; then
 		inx=$(cat "$ls0" | wc -l)
 		tb1=$(cat "$ls1" | wc -l)
 		tb2=$(cat "$ls2" | wc -l)
+	else
+		yad --window-icon=idiomind --name=idiomind \
+		--image=idiomind --on-top --text="$there_are_no_topics ($lgtl)\n" \
+		--image-on-top --center --sticky \
+		--width=380 --height=150 --borders=5 \
+		--skip-taskbar --title="$nothing" \
+		--button="  Ok  ":0
 	fi
 
 	# own
@@ -1222,5 +1229,5 @@ if [ "$1" = topic ]; then
 	elif echo "$mde" | grep "wr"; then
 		$DS/addons/Stats/cnfg.sh T & exit 1
 	fi
-	#rm -f $DT/*.x
+	rm -f $DT/*.x
 fi

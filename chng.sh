@@ -10,13 +10,11 @@ if [[ "$1" = chngi ]]; then
 	sna=$(sed -n 7p $DC_s/cnfg5)
 	cnfg1="$DC_s/cnfg5"
 	indx="$DT/.$user/indx"
-	imgt="/$DT/ILLUSTRATION.jpeg"
-	[[ -f "$DT/ILLUSTRATION.jpeg" ]] && rm -f "$DT/ILLUSTRATION.jpeg"
-	indp="$DT/.$user/indp"
 	[[ -z $(cat $DC_s/cnfg2) ]] && echo 8 > $DC_s/cnfg2 \
 	&& bcl=$(cat $DC_s/cnfg2) || bcl=$(cat $DC_s/cnfg2)
-	[[ -z $bcl ]] && bcl = 5
-	[[ $bcl -lt 3 ]] && bcl = 3
+	[[ -z $bcl ]] && bcl = 4
+	[[ $bcl -lt 4 ]] && bcl = 4 && echo 8 > $DC_s/cnfg2
+	if [ -n $(echo "$nta" | grep "TRUE") ] && [ $bcl -lt 10 ]; then bcl=10; fi
 	
 	item=$(sed -n "$2"p $indx)
 	
@@ -43,33 +41,19 @@ if [[ "$1" = chngi ]]; then
 		grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
 		fi
 
-		if [ -z "$trgt" ]; then
-			trgt="$item"
-		fi
-		
-		cnt=$(echo "$trgt" | wc -w)
-		if echo "$nta" | grep "TRUE"; then
-			cnt=10
-		fi
-		
-		wmm=$(($bcl + $cnt / 2 ))
-		wmt=$(($wmm + 5))
-		
-		rm -f $imgt
-		eyeD3 --write-images=$DT "$file"
-		imgt=$DT/ILLUSTRATION.jpeg
+		[[ -z "$trgt" ]] && trgt="$item"
+		[[ -f "$DM_tl/Feeds/kept/words/$item.mp3" ]] && \
+		osdi="$DM_tl/Feeds/kept/words/$item.mp3" || osdi=idiomind
 		[[ -f $imgt ]] && osdi=$imgt || osdi=idiomind
 		
-		if echo "$nta" | grep "TRUE"; then
-			notify-send -i "$osdi" "$trgt" "$srce\\n" -t 12000  &
-		fi
+		[[ -n $(echo "$nta" | grep "TRUE") ]] && notify-send -i "$osdi" "$trgt" "$srce" -t 12000  &
 		sleep 1
-		if echo "$sna" | grep "TRUE"; then
-			play "$file" &
-		fi
+		[[ -n $(echo "$sna" | grep "TRUE") ]] && play "$file" &
 		
-		sleep $wmm
-
+		cnt=$(echo "$trgt" | wc -c)
+		echo "TOTAL=$(($bcl+$cnt/20)) ____ loop=$bcl  ____  characters=$cnt"
+		sleep $(($bcl+$cnt/20))
+		
 		[[ -f $DT/.bcle ]] && rm -f $DT/.bcle
 		
 	else

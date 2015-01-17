@@ -21,7 +21,7 @@ function confirm() {
 	$yad --form --center --borders=5 --image=dialog-warning \
 	--title="$warning" --on-top --window-icon=idiomind \
 	--skip-taskbar --button="cancel":1 --button=Ok:0 \
-	--text "<b>  $warning</b>\n  $change_source_language" \
+	--text "<b>  $warning</b>\n\n  $change_source_language" \
 	--width=400 --height=180 
 }
 
@@ -123,7 +123,7 @@ yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 				LST=$(sed -n 1p "$DC/topics/English/.cnfg8")
 				"$DC/topics/English/$LST/tpc.sh"
 			else
-				> $DC_s/cnfg8
+				rm $DC_s/cnfg8 && touch $DC_s/cnfg8
 			fi
 			$DS/mngr.sh mkmn
 		fi
@@ -147,7 +147,7 @@ yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 				LST=$(sed -n 1p "$DC/topics/Spanish/.cnfg8")
 				"$DC/topics/Spanish/$LST/tpc.sh"
 			else
-				> $DC_s/cnfg8
+				rm $DC_s/cnfg8 && touch $DC_s/cnfg8
 			fi
 			$DS/mngr.sh mkmn
 		fi
@@ -171,7 +171,7 @@ yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 				LST=$(sed -n 1p "$DC/topics/Italian/.cnfg8")
 				"$DC/topics/Italian/$LST/tpc.sh"
 			else
-				> $DC_s/cnfg8
+				rm $DC_s/cnfg8 && touch $DC_s/cnfg8
 			fi
 			$DS/mngr.sh mkmn
 		fi
@@ -195,7 +195,7 @@ yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 				LST=$(sed -n 1p "$DC/topics/Portuguese/.cnfg8")
 				"$DC/topics/Portuguese/$LST/tpc.sh"
 			else
-				> $DC_s/cnfg8
+				rm $DC_s/cnfg8 && touch $DC_s/cnfg8
 			fi
 			$DS/mngr.sh mkmn
 		fi
@@ -219,7 +219,7 @@ yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 				LST=$(sed -n 1p "$DC/topics/German/.cnfg8")
 				"$DC/topics/German/$LST/tpc.sh"
 			else
-				> $DC_s/cnfg8
+				rm $DC_s/cnfg8 && touch $DC_s/cnfg8
 			fi
 			$DS/mngr.sh mkmn
 		fi
@@ -243,7 +243,7 @@ yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 				LST=$(sed -n 1p "$DC/topics/Japanese/.cnfg8")
 				"$DC/topics/Japanese/$LST/tpc.sh"
 			else
-				> $DC_s/cnfg8
+				rm $DC_s/cnfg8 && touch $DC_s/cnfg8
 			fi
 			$DS/mngr.sh mkmn
 		fi
@@ -267,7 +267,7 @@ yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 				LST=$(sed -n 1p "$DC/topics/French/.cnfg8")
 				"$DC/topics/French/$LST/tpc.sh"
 			else
-				> $DC_s/cnfg8
+				rm $DC_s/cnfg8 && touch $DC_s/cnfg8
 			fi
 			$DS/mngr.sh mkmn
 		fi
@@ -291,7 +291,7 @@ yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 				LST=$(sed -n 1p "$DC/topics/Vietnamese/.cnfg8")
 				"$DC/topics/Vietnamese/$LST/tpc.sh"
 			else
-				> $DC_s/cnfg8
+				rm $DC_s/cnfg8 && touch $DC_s/cnfg8
 			fi
 			$DS/mngr.sh mkmn
 		fi
@@ -315,7 +315,7 @@ yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 				LST=$(sed -n 1p "$DC/topics/Chinese/.cnfg8")
 				"$DC/topics/Chinese/$LST/tpc.sh"
 			else
-				> $DC_s/cnfg8
+				rm $DC_s/cnfg8 && touch $DC_s/cnfg8
 			fi
 			$DS/mngr.sh mkmn
 		fi
@@ -339,7 +339,7 @@ yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 				LST=$(sed -n 1p "$DC/topics/Russian/.cnfg8")
 				"$DC/topics/Russian/$LST/tpc.sh"
 			else
-				> $DC_s/cnfg8
+				rm $DC_s/cnfg8 && touch $DC_s/cnfg8
 			fi
 			$DS/mngr.sh mkmn
 		fi

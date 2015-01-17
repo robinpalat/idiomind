@@ -64,7 +64,7 @@ fi
 	echo "$dd" | yad --list --on-top --expand-column=2 --center \
 	--width=240 --name=idiomind --class=idmnd \
 	--height=240 --title="$tpc" --window-icon=idiomind \
-	--buttons-layout=end --no-headers \
+	--buttons-layout=end --no-headers --skip-taskbar \
 	--borders=0 --button=Ok:0 --column=icon:IMG \
 	--column=Action:TEXT > "$slct"
 	ret=$?

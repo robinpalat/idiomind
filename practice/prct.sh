@@ -3,7 +3,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/practice.conf
-strt.sh=$DS/practice/strt.sh
+strt=$DS/practice/strt.sh
 cls=$DS/practice/cls
 w9=$DC/addons/practice/w9
 w6=$DC/addons/practice/w6
@@ -11,7 +11,6 @@ DF=$DS/practice/df.sh
 DLW=$DS/practice/dlw.sh
 DMC=$DS/practice/dmc.sh
 DLS=$DS/practice/dls.sh
-IND='play $DS/practice/all.mp3'
 Wi="$DC_tlt/cnfg3"
 Si="$DC_tlt/cnfg4"
 Li="$DC_tlt/cnfg1"

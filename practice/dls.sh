@@ -148,12 +148,11 @@ function result() {
 	}
 	
 function check() {
-	yad --form --center --name=idiomind \
+	yad --form --center --name=idiomind --buttons-layout=end \
 	--width=470 --height=230 --on-top --skip-taskbar --scroll \
 	--class=idiomind $aut --wrap --window-icon=idiomind \
-	--buttons-layout=end --title="" \
 	--text-align=left --borders=5 --selectable-labels \
-	--button=$listen:"play '$DM_tlt/$1.mp3'" \
+	--title="" --button=$listen:"play '$DM_tlt/$1.mp3'" \
 	--button="$next__sentence:2" \
 	--field="<big>$WEN</big>\\n":lbl \
 	--field="":lbl \

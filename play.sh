@@ -65,7 +65,6 @@ elif [[ -z "$1" ]]; then
 		echo "$indp" > ./indp
 		echo "$indf" > ./indf
 		echo "$nnews" >> ./indf
-		
 	fi
 	[[ -z "$indw" ]] && img1=$DS/images/addi.png || img1=$DS/images/add.png
 	[[ -z "$inds" ]] && img2=$DS/images/addi.png || img2=$DS/images/add.png
