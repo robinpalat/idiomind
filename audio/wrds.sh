@@ -4,7 +4,7 @@ lngt=$(sed -n 2p ~/.config/idiomind/s/cnfg10)
 lngs=$(sed -n 2p ~/.config/idiomind/s/cnfg9)
 DIR1="$HOME/.idiomind/topics/$lngt/$topic"
 SHR="$HOME/.idiomind/topics/$lngt/.share"
-killall play
+killall play sntnc.sh
 
 file="$DIR1/$1.mp3"
 lwrd=$(eyeD3 "$file" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' \

@@ -419,12 +419,17 @@ if [ "$1" = topic ]; then
 		tb1=$(cat "$ls1" | wc -l)
 		tb2=$(cat "$ls2" | wc -l)
 	else
-		yad --window-icon=idiomind --name=idiomind \
-		--image=idiomind --on-top --text="$there_are_no_topics ($lgtl)\n" \
-		--image-on-top --center --sticky \
-		--width=380 --height=150 --borders=5 \
-		--skip-taskbar --title="$nothing" \
-		--button="  Ok  ":0
+		if [ "$(cat $DC_tl/.cnfg1 | wc -l)" -ge 1 ]; then
+			exit
+		else
+			yad --window-icon=idiomind --name=idiomind \
+			--image=idiomind --on-top --skip-taskbar \
+			--text="$there_are_no_topics ($lgtl)\n" \
+			--image-on-top --center --sticky \
+			--width=380 --height=150 --borders=5 \
+			--skip-taskbar --title="$nothing" \
+			--button="  Ok  ":0 & exit
+		fi
 	fi
 
 	# own
