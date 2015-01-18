@@ -433,13 +433,13 @@ elif [ $1 = pdf ]; then
 						
 						if cat W.lizt.x | grep "$wt2"; then
 							echo '<tr>
-							<td bgcolor="#C9D8F4"><ma>'$wt'</ma></td>
-							<td bgcolor="#D4E7C1"><ma>'$ws'</ma></td>
+							<td><ma>'$wt'</ma></td>
+							<td><ma>'$ws'</ma></td>
 							</tr>' >> ./Wgprs.tmp
 						else
 							echo '<tr>
-							<td bgcolor="#E7EFFD">'$wt'</td>
-							<td bgcolor="#F4FFE9">'$ws'</td>
+							<td>'$wt'</td>
+							<td>'$ws'</td>
 							</tr>' >> ./Wgprs.tmp
 						fi
 						

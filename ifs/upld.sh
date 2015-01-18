@@ -312,16 +312,29 @@ upld=$($yad --form --width=400 --height=420 --on-top \
 --field="    <small>$author</small>:: " "$user" \
 --field="    <small>$email</small>:: " "$mail" \
 --field="    <small>$category</small>::CB" \
-"!$others!$entertainment!$history!$documentary!$films!$internet!$music!$events!$nature!$news!$office!$relations!$sport!$shopping!$social!$technology!$travel" \
+"!$others!$comics!$culture!$entertainment!$family!$grammar!$history!$films!$in_the_city!$internet!$music!$nature!$news!$office!$relations!$sport!$shopping!$social!$technology!$travel" \
 --field="<small>\\n$notes:</small>:TXT" "$nt" \
 --field="<small>$add_image</small>:FL")
 ret=$?
 
 Ctgry=$(echo "$upld" | cut -d "|" -f4)
 [[ $Ctgry = $others ]] && Ctgry=others
+
+[[ $Ctgry = $comics ]] && Ctgry=comics
+[[ $Ctgry = $culture ]] && Ctgry=culture
+[[ $Ctgry = $family ]] && Ctgry=family
+
+
+
 [[ $Ctgry = $entertainment ]] && Ctgry=entertainment
+
+[[ $Ctgry = $family ]] && Ctgry=family
+[[ $Ctgry = $grammar ]] && Ctgry=grammar
+
 [[ $Ctgry = $history ]] && Ctgry=history
 [[ $Ctgry = $documentary ]] && Ctgry=documentary
+[[ $Ctgry = $in_the_city ]] && Ctgry=in_the_city
+
 [[ $Ctgry = $films ]] && Ctgry=films
 [[ $Ctgry = $internet ]] && Ctgry=internet
 [[ $Ctgry = $music ]] && Ctgry=music

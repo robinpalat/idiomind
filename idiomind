@@ -198,12 +198,6 @@ if [ -z "$1" ]; then
 		$DS/mngr.sh mkmn &
 	}
 	
-	## check directories
-	#if [ -f $DC_tl/.cnfg1 ]; then
-		#if [[ "$(cat $DC_tl/.cnfg1 | wc -l)" -lt 1 ]]; then
-			#touch "$DT/ntpc"
-		#fi
-	#fi
 	yad --width=175 --height=220 --name=idiomind \
 	--geometry=185x318-300-$(sed -n 12p $DC_s/cnfg18) \
 	--fixed --title="Idiomind" --no-buttons \
@@ -224,12 +218,8 @@ if [ -z "$1" ]; then
 	fi
 fi
 
-if [[ "$1" = "--version" ]]; then
-    echo "2.1-alpha" & exit 1
-elif [[ "$1" = "-v" ]]; then
-    echo "2.1-alpha" & exit 1
+if [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 
-elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 	wth=$(sed -n 4p $DC_s/cnfg18)
 	eht=$(sed -n 3p $DC_s/cnfg18)
 	dte=$(date "+%d %B")
@@ -283,11 +273,10 @@ elif [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 		[[ -d $DT/idmimp_$c ]] && rm -fr $DT/idmimp_$c
 		rm -f $DT/*.$c $DT/import.tar.gz & exit
 	else
-		[[ $(echo "$inme" | wc -c) -gt 40 ]] && title="${inme:0:40}..." || title="$inme"
 		cd "$tmp"
 		ws=$(cat "cnfg3" | wc -l)
 		ss=$(cat "cnfg4" | wc -l)
-		itxt="<big><b>$title</b></big><small>\\n${category^}. ${language_source^} <b>></b> $language_target\\n$nwords $words $nsentences $sentences $nimages $images</small>\n\n"
+		itxt="<big><big>$inme</big></big><small>\\n${category^}. ${language_source^} <b>></b> $language_target\\n$nwords $words $nsentences $sentences $nimages $images</small>\n\n"
 		dlck="$DT/p1.$c"
 		cat "$tmp/cnfg0" | awk '{print $0""}' | \
 		yad --list --name=Idiomind --title="Idiomind" \
@@ -402,11 +391,16 @@ if [ "$1" = topic ]; then
 		ls1="$DC_tlt/cnfg1"
 		ls2="$DC_tlt/cnfg2"
 		nt="$DC_tlt/cnfg10"
-		if [ $(echo "$tpc" | wc -c) -gt 50 ]; then
-			ttl="${tpc:0:50}..."
-		else
-			ttl="$tpc"
-		fi
+		cd "$DC_tlt"
+		ws=$(cat cnfg3 | wc -l)
+		ss=$(cat cnfg4 | wc -l)
+		c=$(echo $(($RANDOM%100000)))
+		KEY=$c
+		cnf1=$(mktemp $DT/cnf1.XXXX.x)
+		cnf2=$(mktemp $DT/cnf2.XXXX.x)
+		cnf3=$(mktemp $DT/cnf3.XXXX.x)
+		cd $DS
+
 		if [ -f "$DM_tlt/words/images/img.png" ]; then
 		img="$DM_tlt/words/images/img.png"
 		else
@@ -435,17 +429,10 @@ if [ "$1" = topic ]; then
 	if echo "$mde" | grep "wn"; then
 	
 		[ -z "$tpc" ] && exit 1
-		cd "$DC_tlt"
-		ws=$(cat cnfg3 | wc -l)
-		ss=$(cat cnfg4 | wc -l)
-		itxt="<big><big>$ttl </big></big><small>\\n$ss $sentences $ws $words\n</small>\n\n"
-		cd $DS
-		c=$(echo $(($RANDOM%100000)))
-		KEY=$c
-		cnf1=$(mktemp $DT/cnf1.XXXX.x)
-		cnf2=$(mktemp $DT/cnf2.XXXX.x)
-		cnf3=$(mktemp $DT/cnf3.XXXX.x)
-		
+
+		itxt="<big><big>$tpc </big></big><small>\\n$ss $sentences $ws $words\n</small>\n"
+		itxt2="<span color='#ABABAB'><small> $created_by $author $on ${category^}  $date_u</small></span>"
+
 		if [ "$inx" -lt 1 ]; then
 			
 			yad --text-info --plug=$KEY --margins=14 \
@@ -543,7 +530,7 @@ if [ "$1" = topic ]; then
 				--column=Name:TEXT --column=Review:CHK \
 				--dclick-action='./vwr.sh v2' > "$cnf2" &
 				yad --text-info --plug=$KEY --margins=14 \
-				--wrap --text="$itxt" --editable --tabnum=3 --fore='gray40' \
+				--wrap --text="$itxt2" --editable --tabnum=3 --fore='gray40' \
 				--show-uri --fontname=vendana --filename="$nt" > "$cnf3" &
 				yad --notebook --name=Idiomind --center \
 				--class=Idiomind --align=right --key=$KEY \
@@ -568,7 +555,7 @@ if [ "$1" = topic ]; then
 				--column=Name:TEXT --column=Review:CHK \
 				--dclick-action='./vwr.sh v2' > "$cnf2" &
 				yad --text-info --plug=$KEY --margins=14 \
-				--tabnum=3 --text="$note" --fore='gray40' --wrap --editable \
+				--tabnum=3 --text="$itxt2" --fore='gray40' --wrap --editable \
 				--show-uri --fontname=vendana \
 				--filename="$nt" > "$cnf3" &
 				yad --notebook --name=Idiomind --center --key=$KEY \
@@ -582,7 +569,7 @@ if [ "$1" = topic ]; then
 				--ellipsize=END --image-on-top --always-print-result \
 				--width="$wth" --height="$eht" --borders=0 \
 				--button="Play":$DS/play.sh --button="$practice":5 \
-				--button="$edit":3 --button="$close":2 >/dev/null 2>&1
+				--button="$edit":3 --button="$close":2
 				
 			fi
 				ret=$?
@@ -619,7 +606,7 @@ if [ "$1" = topic ]; then
 							rm -f "$DC_tlt/cnfg7" && idiomind topic & exit 1
 						fi
 					
-				elif [ $ret -eq 2 ]; then # -----------------------------------------------------------------------------------------------------------------------------
+				elif [ $ret -eq 2 ]; then
 				
 					if [ -f $cnf3 ]; then
 						if [ "$(cat $cnf3)" != "$(cat "$nt")" ]; then
@@ -733,7 +720,7 @@ if [ "$1" = topic ]; then
 			fi
 
 			yad --align=center --borders=80 \
-			--text="<u><b>$learned</b></u>\\n$time_review: $tdays" \
+			--text="<u><b>$learned</b></u>\\n$time_review ($tdays $days)" \
 			--bar="":NORM $RM \
 			--multi-progress --plug=$KEY --tabnum=1 &
 			cat "$ls2" | awk '{print $0"\n"}' | yad \
@@ -741,7 +728,7 @@ if [ "$1" = topic ]; then
 			--expand-column=1 --ellipsize=END --print-all \
 			--column=Name:TEXT --column=Review:CHK \
 			--dclick-action='./vwr.sh v2' > "$cnf2" &
-			yad --text-info --plug=$KEY --margins=14 \
+			yad --text-info --plug=$KEY --margins=14 --text="$itxt2" \
 			--tabnum=3 --fore='gray40' --wrap --filename="$nt" \
 			--show-uri --fontname=vendana --editable > "$cnf3" &
 			yad --notebook --name=Idiomind --center \
@@ -818,18 +805,10 @@ if [ "$1" = topic ]; then
 	elif echo "$mde" | grep "istll"; then
 	
 		[ -z "$tpc" ] && exit 1
+		
 		source "$DC_tlt/cnfg12"
-		cd "$DC_tlt"
-		ws=$(cat cnfg3 | wc -l)
-		ss=$(cat cnfg4 | wc -l)
-		itxt="<big><big>$ttl </big></big><small>\\n$ss $sentences $ws $words\n</small>\n\n"
+		itxt="<big><big>$tpc </big></big><small>\\n$ss $sentences $ws $words\n</small>\n"
 		itxt2="<small> $created_by $author $on <span color='#6E9FD4'>${category^}</span>  $date_u</small>"
-		cd $DS
-		c=$(echo $(($RANDOM%100000)))
-		KEY=$c
-		cnf1=$(mktemp $DT/cnf1.XXXX.x)
-		cnf2=$(mktemp $DT/cnf2.XXXX.x)
-		cnf3=$(mktemp $DT/cnf3.XXXX.x)
 		
 		if [ "$tb1" -ge 1 ]; then
 		
@@ -1085,7 +1064,7 @@ if [ "$1" = topic ]; then
 			fi
 			
 			yad --align=center --borders=80 \
-			--text="<u><b>$learned</b></u>\\n$time_review: $tdays" \
+			--text="<u><b>$learned</b></u>\\n$time_review ($tdays $days)" \
 			--bar="":NORM $RM \
 			--multi-progress --plug=$KEY --tabnum=1 &
 			cat "$ls2" | awk '{print $0"\n"}' | yad \
@@ -1094,7 +1073,7 @@ if [ "$1" = topic ]; then
 			--column=Name:TEXT --column=Review:CHK \
 			--dclick-action='./vwr.sh v2' > "$cnf2" &
 			yad --text-info --plug=$KEY --margins=14 \
-			--text="<small>  $created_by: $author en <span color='#6E9FD4'>${category^}</span></small>" \
+			--text="$itxt2" \
 			--tabnum=3 --fore='gray40' --wrap --filename="$nt" \
 			--show-uri --fontname=vendana --editable > "$cnf3" &
 			yad --notebook --name=Idiomind --center  \
@@ -1165,7 +1144,7 @@ if [ "$1" = topic ]; then
 				fi
 			rm -f $DT/*.x & exit 1
 			fi
-
+			
 	#feeds
 	elif echo "$mde" | grep "fd"; then
 		dir1="$DM_tl/Feeds"
@@ -1234,4 +1213,9 @@ if [ "$1" = topic ]; then
 		$DS/addons/Stats/cnfg.sh T & exit 1
 	fi
 	rm -f $DT/*.x
+	
+elif [[ "$1" = "--version" ]]; then
+    echo "2.1-alpha" & exit
+elif [[ "$1" = "-v" ]]; then
+    echo "2.1-alpha" & exit
 fi

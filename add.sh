@@ -15,15 +15,15 @@ function msg() {
 
 function internet() {
 
-		curl -v www.google.com 2>&1 \
-		| grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
-		yad --window-icon=idiomind --on-top \
-		--image=info --name=idiomind \
-		--text=" $connection_err  \\n  " \
-		--image-on-top --center --sticky \
-		--width=300 --height=50 --borders=3 \
-		--skip-taskbar --title=Idiomind \
-		--button="  Ok  ":0 >&2; exit 1;}
+	curl -v www.google.com 2>&1 \
+	| grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
+	yad --window-icon=idiomind --on-top \
+	--image=info --name=idiomind \
+	--text=" $connection_err  \\n  " \
+	--image-on-top --center --sticky \
+	--width=300 --height=50 --borders=3 \
+	--skip-taskbar --title=Idiomind \
+	--button="  Ok  ":0 >&2; exit 1;}
 }
 
 
@@ -40,8 +40,8 @@ if [ $1 = n_t ]; then
 			tle=$(echo "$new_topic")
 			nmt=""
 		fi
-		jlbi=$($yad --window-icon=idiomind \
-		--form --center --field="$name_for_new_topic" "$nmt" --title="$tle" \
+		jlbi=$($yad --window-icon=idiomind --form --center \
+		--field="$name_for_new_topic" "$nmt" --title="$tle" \
 		--width=440 --height=100 --name=idiomind --on-top \
 		--skip-taskbar --borders=5 --button=gtk-ok:0)
 		
@@ -53,13 +53,12 @@ if [ $1 = n_t ]; then
 		snm=$(cat $DC_tl/.cnfg1 | grep -Fxo "$jlb" | wc -l)
 		if [ $snm -ge 1 ]; then
 			jlb=$(echo ""$jlb" $snm")
-			$yad --name=idiomind --center --on-top \
-			--image=info --sticky \
+			$yad --name=idiomind --center --on-top --image=info \
 			--text=" <b>$name_eq   </b>\\n $name_eq2  <b>$jlb</b>   \\n" \
 			--image-on-top --width=400 --height=120 --borders=3 \
-			--skip-taskbar --window-icon=idiomind \
+			--skip-taskbar --window-icon=idiomind --sticky \
 			--title=Idiomind --button="$cancel":1 --button=gtk-ok:0
-				ret=$?
+			ret=$?
 				
 				if [ "$ret" -eq 1 ]; then
 					exit 1
@@ -140,11 +139,10 @@ if [ $1 = n_t ]; then
 		snme=$(cat $DC_tl/.cnfg1 | grep -Fxo "$jlb" | wc -l)
 		if [ "$snme" -ge 1 ]; then
 			jlb="$jlb $snme"
-			$yad --name=idiomind --center --on-top \
-			--image=info --sticky \
+			$yad --name=idiomind --center --on-top --image=info \
 			--text=" <b>$name_eq   </b>\\n $name_eq2  <b>$jlb</b>   \\n" \
 			--image-on-top --width=400 --height=120 --borders=3 \
-			--skip-taskbar --window-icon=idiomind \
+			--skip-taskbar --window-icon=idiomind --sticky \
 			--title=Idiomind --button="$cancel":1 --button=gtk-ok:0
 			ret=$?
 			
