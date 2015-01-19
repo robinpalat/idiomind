@@ -129,8 +129,8 @@ if [ -z "$1" ]; then
 		
 		# weekly report
 		if ([ "$(date +%u)" = 7 ] && \
-		[ "$(sed -n 1p $DC/addons/stats/cnfg.sh)" = "TRUE" ]); then
-			$DS/addons/Stats/rprt A &
+		[ "$(sed -n 1p $DC/addons/stats/cnf)" = "TRUE" ]); then
+			"$DS/addons/weekly report/rprt" A &
 		fi
 		
 		# rss feed auto-update
@@ -1217,7 +1217,7 @@ if [ "$1" = topic ]; then
 			fi
 			
 	elif echo "$mde" | grep "wr"; then
-		$DS/addons/Stats/cnfg.sh T & exit 1
+		"$DS/addons/weekly report/cnfg.sh" T & exit 1
 	fi
 	rm -f $DT/*.x
 	
