@@ -92,6 +92,7 @@ if [ $1 = n_t ]; then
 			cp -f cnfg0 "$DC_tl/$jlb"/cnfg0
 			cp -f cnfg1 "$DC_tl/$jlb"/cnfg1
 			cp -f cnfg2 "$DC_tl/$jlb"/cnfg2
+			cp -f .cnfg11 "$DC_tl/$jlb"/.cnfg11
 			cp -f nt "$DC_tl/$jlb"/nt
 			cp -f ./practice/.* $DC_tl/"$jlb"/practice
 			grep -v -x -v "$tpc" $DC_tl/.cnfg2 > $DC_tl/.cnfg2_
@@ -161,11 +162,11 @@ if [ $1 = n_t ]; then
 			mkdir $DM_tl/"$jlb"/words
 			mkdir $DM_tl/"$jlb"/words/images
 			mkdir $DC_tl/"$jlb"
-			> $DC_tl/"$jlb"/cnfg5
-			> $DC_tl/"$jlb"/cnfg4
-			> $DC_tl/"$jlb"/cnfg3
-			> $DC_tl/"$jlb"/cnfg0
-			> $DC_tl/"$jlb"/cnfg1
+			touch $DC_tl/"$jlb"/cnfg5
+			touch $DC_tl/"$jlb"/cnfg4
+			touch $DC_tl/"$jlb"/cnfg3
+			touch $DC_tl/"$jlb"/cnfg0
+			touch $DC_tl/"$jlb"/cnfg1
 			echo "$(date +%F)" > $DC_tl/"$jlb"/cnfg12
 			echo "1" > $DC_tl/"$jlb"/cnfg8
 			mkdir $DC_tl/"$jlb"/practice
@@ -218,7 +219,7 @@ elif [ $1 = n_i ]; then
 		img="--on-top"
 	fi
 	
-	if [ "$(cat $DC_tl/.cnfg1 | wc -l)" -lt 1 ]; then
+	if [ "$(cat $DC_tl/.cnfg1 | grep -v 'Feeds' | wc -l)" -lt 1 ]; then
 		[[ -d $DT_r ]] && rm -fr $DT_r
 		source $DS/ifs/trans/$lgs/topics_lists.conf
 		$DS/chng.sh "$no_topic" & exit 1
@@ -257,12 +258,13 @@ elif [ $1 = n_i ]; then
 	fi
 	
 	if sed -n 1p $DC_s/cnfg3 | grep TRUE; then
-	sx='120x100'
+		sx='120x100'
+		[[ $(echo "$txt" | wc -c) -ge 180 ]] && h=260 || h=170
 		lzgpr=$($yad --form --center --always-print-result \
 		--text-info --on-top --window-icon=idiomind --skip-taskbar \
 		--separator="\n" --align=right "$img" \
 		--name=idiomind --class=idiomind \
-		--borders=0 --title=" " --width=360 --height=170 \
+		--borders=0 --title=" " --width=360 --height=$h \
 		--field=" <small><small>$lgtl</small></small>":TXT "$txt" \
 		--field="<small><small>$topic</small></small>:CB" "$ttle!$new *!$tpcs" "$field" \
 		--button="$image":3 \
@@ -276,11 +278,12 @@ elif [ $1 = n_i ]; then
 		cd $HOME
 		txt2="$5"
 		sx='180x160'
+		[[ $(echo "$txt" | wc -c) -ge 180 ]] && h=360 || h=260
 		auds="--button=Audio:$DS/audio/cnfg.sh pnl '$DT_r' 10"
 		rec="--button=gtk-media-record:$DS/audio/cnfg.sh rec '$DT_r' '10'"
 		ls="--button=Play:play $DT_r/audtm.mp3"
 		lzgpr=$($yad --separator="\\n" --skip-taskbar \
-		--width=400 --height=260 --form --on-top --name=idiomind \
+		--width=400 --height=$h --form --on-top --name=idiomind \
 		--class=idiomind --window-icon=idiomind "$img" --center "$ls" "$rec" \
 		--button="$image":3 --always-print-result --align=right \
 		--button=gtk-ok:0 --borders=2 --title=" " \
@@ -340,7 +343,7 @@ elif [ $1 = n_i ]; then
 					--button=Save:0 --title="selector" --borders=3 \
 					--column=" " --column="Sentences"`
 					if [ -z "$(echo "$slt" | sed -n 2p)" ]; then
-						killall add.sh & exit 1
+						killall add.sh & exit
 					fi
 					tpe=$(echo "$slt" | sed -n 2p)
 				fi
@@ -353,36 +356,36 @@ elif [ $1 = n_i ]; then
 			fi
 			
 			if [ "$(echo "$trgt" | sed -n 1p | awk '{print tolower($0)}')" = i ]; then
-				$DS/add.sh prs image $DT_r & exit 1
+				$DS/add.sh prs image $DT_r & exit
 			elif [ "$(echo "$trgt" | sed -n 1p | awk '{print tolower($0)}')" = a ]; then
-				$DS/add.sh prs "$trgt" $DT_r & exit 1
+				$DS/add.sh prs "$trgt" $DT_r & exit
 			elif [ "$(echo "$trgt" | sed -n 1p | grep -o http)" = http ]; then
-				$DS/add.sh prs "$trgt" $DT_r & exit 1
+				$DS/add.sh prs "$trgt" $DT_r & exit
 			elif [ $(echo "$trgt" | wc -c) -gt 180 ]; then
 				$DS/add.sh prs "$trgt" $DT_r & exit 1
 			elif ([ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]); then
 				if sed -n 1p $DC_s/cnfg3 | grep FALSE; then
 					if [ -z "$4" ]; then
 						msg "$no_text$lgsl."
-						rm -f $DT_r & exit 1
+						rm -f $DT_r & exit
 					elif [ -z "$2" ]; then
 						msg "$no_text$lgtl."
-						rm -f $DT_r & exit 1
+						rm -f $DT_r & exit
 					fi
 				fi
 				result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
 				encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
 				srce=$(iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 | sed ':a;N;$!ba;s/\n/ /g')
 				if [ $(echo "$srce" | wc -w) = 1 ]; then
-					$DS/add.sh n_w "$trgt" $DT_r "$srce" & exit 1
+					$DS/add.sh n_w "$trgt" $DT_r "$srce" & exit
 				elif [ $(echo "$srce" | wc -w) -ge 1 -a $(echo "$srce" | wc -c) -le 180 ]; then
-					$DS/add.sh n_s "$trgt" $DT_r "$srce" & exit 1
+					$DS/add.sh n_s "$trgt" $DT_r "$srce" & exit
 				fi
 			elif ([ $lgt != ja ] || [ $lgt != zh-cn ] || [ $lgt != ru ]); then
 				if [ $(echo "$trgt" | wc -w) = 1 ]; then
-					$DS/add.sh n_w "$trgt" $DT_r "$srce" & exit 1
+					$DS/add.sh n_w "$trgt" $DT_r "$srce" & exit
 				elif [ $(echo "$trgt" | wc -w) -ge 1 -a $(echo "$trgt" | wc -c) -le 180 ]; then
-					$DS/add.sh n_s "$trgt" $DT_r "$srce" & exit 1
+					$DS/add.sh n_s "$trgt" $DT_r "$srce" & exit
 				fi
 			fi
 		else
@@ -394,7 +397,7 @@ elif [ $1 = n_s ]; then
 
 	if [ -z "$tpe" ]; then
 		msg "$no_topic_msg."
-		rm -f $DT_r & exit 1
+		rm -f $DT_r & exit
 	fi
 		
 	DT_r="$3"

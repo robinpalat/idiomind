@@ -378,39 +378,43 @@ fi
 # topic
 if [ "$1" = topic ]; then
 
-	if [ -n "$tpc" ]; then
-		eht=$(sed -n 3p $DC_s/cnfg18)
-		wth=$(sed -n 4p $DC_s/cnfg18)
-		mde=$(sed -n 2p $DC_s/cnfg8)
-		title=$(sed -n 3p $DC_s/cnfg8)
-		[[ ! -f "$DC_tlt/cnfg0" ]] && touch "$DC_tlt/cnfg0"
-		[[ ! -f "$DC_tlt/cnfg1" ]] && touch "$DC_tlt/cnfg1"
-		[[ ! -f "$DC_tlt/cnfg2" ]] && touch "$DC_tlt/cnfg2"
-		[[ ! -f "$DC_tlt/cnfg10" ]] && touch "$DC_tlt/cnfg10"
-		ls0="$DC_tlt/cnfg0"
-		ls1="$DC_tlt/cnfg1"
-		ls2="$DC_tlt/cnfg2"
-		nt="$DC_tlt/cnfg10"
-		cd "$DC_tlt"
-		ws=$(cat cnfg3 | wc -l)
-		ss=$(cat cnfg4 | wc -l)
-		c=$(echo $(($RANDOM%100000)))
-		KEY=$c
-		cnf1=$(mktemp $DT/cnf1.XXXX.x)
-		cnf2=$(mktemp $DT/cnf2.XXXX.x)
-		cnf3=$(mktemp $DT/cnf3.XXXX.x)
-		cd $DS
+	eht=$(sed -n 3p $DC_s/cnfg18)
+	wth=$(sed -n 4p $DC_s/cnfg18)
+	mde=$(sed -n 2p $DC_s/cnfg8)
 
-		if [ -f "$DM_tlt/words/images/img.png" ]; then
-		img="$DM_tlt/words/images/img.png"
-		else
-		img=$DS/images/trans.png
+	if ([ -n "$tpc" ] || [ $(echo "$mde" | grep "fd") ]); then
+	
+		if [ -n "$tpc" ]; then
+			[[ ! -f "$DC_tlt/cnfg0" ]] && touch "$DC_tlt/cnfg0"
+			[[ ! -f "$DC_tlt/cnfg1" ]] && touch "$DC_tlt/cnfg1"
+			[[ ! -f "$DC_tlt/cnfg2" ]] && touch "$DC_tlt/cnfg2"
+			[[ ! -f "$DC_tlt/cnfg10" ]] && touch "$DC_tlt/cnfg10"
+			
+			ls0="$DC_tlt/cnfg0"
+			ls1="$DC_tlt/cnfg1"
+			ls2="$DC_tlt/cnfg2"
+			nt="$DC_tlt/cnfg10"
+			cd "$DC_tlt"
+			ws=$(cat cnfg3 | wc -l)
+			ss=$(cat cnfg4 | wc -l)
+			c=$(echo $(($RANDOM%100000)))
+			KEY=$c
+			cnf1=$(mktemp $DT/cnf1.XXX.x)
+			cnf2=$(mktemp $DT/cnf2.XXX.x)
+			cnf3=$(mktemp $DT/cnf3.XXX.x)
+			cd $DS
+
+			if [ -f "$DM_tlt/words/images/img.png" ]; then
+			img="$DM_tlt/words/images/img.png"
+			else
+			img=$DS/images/trans.png
+			fi
+			echo "tpcs.$tpc.tpcs" >> \
+			$DC/addons/stats/.log &
+			inx=$(cat "$ls0" | wc -l)
+			tb1=$(cat "$ls1" | wc -l)
+			tb2=$(cat "$ls2" | wc -l)
 		fi
-		echo "tpcs.$tpc.tpcs" >> \
-		$DC/addons/stats/.log &
-		inx=$(cat "$ls0" | wc -l)
-		tb1=$(cat "$ls1" | wc -l)
-		tb2=$(cat "$ls2" | wc -l)
 	else
 		if [ "$(cat $DC_tl/.cnfg1 | wc -l)" -ge 1 ]; then
 			exit
@@ -546,12 +550,12 @@ if [ "$1" = topic ]; then
 			else
 				cat "$ls1" | awk '{print $0"\n"}' | yad \
 				--no-headers --list --plug=$KEY --tabnum=1 \
-				--dclick-action='./vwr.sh v1'\
+				--dclick-action='./vwr.sh v1' --print-all \
 				--expand-column=1 --ellipsize=END \
 				--column=Name:TEXT --column=Learned:CHK > "$cnf1" &
 				cat "$ls2" | awk '{print $0"\n"}' | yad \
 				--no-headers --list --plug=$KEY --tabnum=2 \
-				--expand-column=1 --ellipsize=END \
+				--expand-column=1 --ellipsize=END --print-all \
 				--column=Name:TEXT --column=Review:CHK \
 				--dclick-action='./vwr.sh v2' > "$cnf2" &
 				yad --text-info --plug=$KEY --margins=14 \
@@ -780,7 +784,7 @@ if [ "$1" = topic ]; then
 						done
 						sed -i 's/|TRUE|//g' "$cnf2"
 						cat "$cnf2" >> "$ls1"
-						cnt=$(cat "$cnf2" | wc -l)
+						cnt=$(cat "$cnf2" | wc -ltitle)
 						grep -F -x -v -f "$cnf2" "$ls2" > $DT/ls2.x
 						mv -f $DT/ls2.x "$ls2"
 						if [ -n "$(cat "$ls2" | sort -n | uniq -dc)" ]; then

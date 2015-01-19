@@ -108,7 +108,12 @@ elif [ "$1" != chngi ]; then
 						$DC_tl/"$VAR"/tpc.sh 2 & exit
 					fi
 				else
-					$DC_tl/"$VAR"/tpc.sh & exit
+					if [[ -f $DC_tl/"$VAR"/tpc.sh ]]; then
+						$DC_tl/"$VAR"/tpc.sh & exit
+					else
+						cp -f $DS/default/tpc.sh $DC_tl/"$VAR"/tpc.sh
+						$DC_tl/"$VAR"/tpc.sh & exit
+					fi
 				fi
 			else
 				exit 0

@@ -7,9 +7,8 @@ dir2="$DC/addons/Learning with news"
 DIR3="$DS/addons/Learning with news"
 FEED=$(sed -n 1p "$dir2/$lgtl/.rss")
 if [[ -z "$1" ]]; then
-	if [[ -z "$FEED" ]]; then
-	FEED=" "
-	fi
+
+	[[ -z "$FEED" ]] && FEED=" "
 	cd "$dir2/$lgtl/subscripts"
 	DIR1="$DC/addons/Learning with news"
 	st2=$(sed -n 1p "$DIR1/.cnf")
@@ -17,24 +16,15 @@ if [[ -z "$1" ]]; then
 		echo FALSE > "$DIR1/.cnf"
 		st2=$(sed -n 1p "$DIR1/.cnf")
 	fi
-	if [ "$2" = NS ]; then
-		inf=$(cat $DS/ifs/info6)
-		txt='--text="No"'
-	fi
-	if [ "$1" = NS ]; then
-		inf=$(cat $DS/ifs/info7)
-		text="--text=$inf"
-	else
-		text="--class=idm"
-	fi
+
 	scrp=$(cd "$dir2/$lgtl/subscripts"; ls * | egrep -v "$FEED" \
 	| tr "\\n" '!' | sed 's/!\+$//g')
 
 	CNFG=$($yad --on-top --form --center \
-		--text="$feeds $lgtl\n\n" \
-		--window-icon=idiomind --skip-taskbar --borders=15 \
+		--text="$feeds$lgtl\n\n" --borders=15 \
+		--window-icon=idiomind --skip-taskbar \
 		--width=440 --height=340 --always-print-result \
-		--title="Feeds - $lgtl " "$text" \
+		--title="Feeds - $lgtl " \
 		--button="$delete:2" \
 		--button="gtk-add:5" \
 		--button="$update:4" \
@@ -127,11 +117,20 @@ if [[ -z "$1" ]]; then
 			exit 1
 		fi
 		
+elif [ "$1" = NS ]; then
+
+	yad --window-icon=idiomind --name=idiomind \
+	--image=info --on-top --text="$no_url" \
+	--image-on-top --center --sticky \
+	--width=380 --height=150 --borders=5 \
+	--skip-taskbar --title=idiomind \
+	--button="  Ok  ":0
+
 elif [[ $1 = edit ]]; then
 	drtc="$DC_tl/Feeds/"
 	slct=$(mktemp $DT/slct.XXXX)
 
-if [[ "$(cat "$drtc/cnfg0" | wc -l)" -ge 20 ]]; then
+if [[ "$(cat "$drtc/cnfg0" | wc -l)" -ge 4 ]]; then
 dd="$DIR3/img/save.png
 $create_topic
 $DIR3/img/del.png

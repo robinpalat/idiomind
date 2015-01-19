@@ -7,8 +7,7 @@ source /usr/share/idiomind/ifs/trans/$lgs/rss.conf
 [[ -f $DT/.uptf ]] && STT=$(cat $DT/.uptf) || STT=""
 if  [[ -z "$(cat $DC/addons/dict/.dicts)" ]]; then
 	sleep 1
-	$DS/addons/Dics/cnfg.sh \
-	"$DS/addons/Learning with news/"info1 f cnf # FIX
+	(sleep 2 && $DS/addons/Dics/cnfg.sh "" f "$select_dicts")
 	if  [[ -z "$(cat $DC/addons/dict/.dicts)" ]]; then
 		exit 1
 	fi
@@ -75,16 +74,17 @@ fi
 
 if [ -n "$feed" ]; then
 	curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
-	$yad --window-icon=idiomind --on-top \
+	yad --window-icon=idiomind --on-top \
 	--image=info --name=idiomind \
-	--text="<b> $connection_err  \\n</b>" \
+	--text=" $connection_err  \\n" \
 	--image-on-top --center --sticky \
 	--width=340 --height=50 --borders=3 \
 	--skip-taskbar --title=Idiomind \
 	--button=Ok:0 >&2; exit 1;}
 	
+	echo "- Feeds Mode ( Actualizando... 5% )" > $DT/.uptf
+	
 	if [ "$1" != A ]; then
-		echo "- Feeds Mode ( Actualizando... 5% )" > $DT/.uptf
 		echo "$tpc" > $DC_s/cnfg8
 		echo fd >> $DC_s/cnfg8
 		notify-send -i idiomind "$rsrc" "$updating" -t 3000 &
@@ -264,9 +264,8 @@ if [ -n "$feed" ]; then
 	if [ "$1" != A ]; then
 		notify-send -i idiomind "$rsrc" " $updateok" -t 3000
 	fi
-
-	exit 1
+	
+	exit 0
 else
-	sleep 1
-	"$DS_pf/cnfg.sh" NS & exit 1
+	exit 0
 fi

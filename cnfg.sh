@@ -48,7 +48,9 @@ function set_lang() {
 	else
 		rm $DC_s/cnfg8 && touch $DC_s/cnfg8
 	fi
+	(sleep 2 && $DS/addons/Dics/cnfg.sh "" f "$select_dicts") &
 	$DS/mngr.sh mkmn
+	
 
 }
 
