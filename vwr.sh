@@ -42,6 +42,7 @@ if [ -f "$DM_tlt/words/$nme.mp3" ]; then
 	| awk '{print tolower($0)}')"<\/\span>/g")
 	[[ "$(echo "$tgs" | grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)')" = TRUE ]] \
 	&& trgt=$(echo "<big><u><b>"$trgt"</b></u></big>")
+	
 	[[ "$ap" = TRUE ]] && (killall play & sleep 1 && play "$DM_tlt/words/$nme.mp3") &
 	
 	yad --form --window-icon=idiomind --scroll --text-align=center \
@@ -53,7 +54,7 @@ if [ -f "$DM_tlt/words/$nme.mp3" ]; then
 	--width="$wth" --height="$eht" --center \
 	--button=gtk-edit:4 --button="Play":"play '$DM_tlt/words/$nme.mp3'" \
 	--button=gtk-go-up:3 --button=gtk-go-down:2 \
-	--dclick-action=/usr/share/idiomind/audio/dclik.sh >/dev/null 2>&1
+	--dclick-action=/usr/share/idiomind/ifs/audio/dclik.sh >/dev/null 2>&1
 	
 elif [ -f "$DM_tlt/$nme.mp3" ]; then
 	tgs=$(eyeD3 "$DM_tlt/$nme.mp3")
@@ -63,6 +64,7 @@ elif [ -f "$DM_tlt/$nme.mp3" ]; then
 	src=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
 	lwrd=$(echo "$tgs" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' | tr '_' '\n')
 	[[ ! -f "$DM_tlt/$nme.mp3" ]] && exit 1
+	
 	[[ "$ap" = TRUE ]] && (killall play & sleep 1 && play "$DM_tlt/$nme.mp3") &
 	
 	echo "$lwrd" | yad --list --print-column=0 --no-headers \
@@ -72,9 +74,9 @@ elif [ -f "$DM_tlt/$nme.mp3" ]; then
 	--text="<big><big>$trgt</big></big>\\n\\n<i>$src</i>\\n\\n\\n" \
 	--width="$wth" --height="$eht" --center \
 	--column="$lgtl":TEXT --column="$lgsl":TEXT \
-	--button=gtk-edit:4 --button="play":"$DS/audio/swth.sh '$nme'" \
+	--button=gtk-edit:4 --button="play":"$DS/ifs/audio/swth.sh '$nme'" \
 	--button=gtk-go-up:3 --button=gtk-go-down:2 \
-	--dclick-action=/usr/share/idiomind/audio/dclik.sh >/dev/null 2>&1
+	--dclick-action=/usr/share/idiomind/ifs/audio/dclik.sh >/dev/null 2>&1
 else
 	ff=$(($nuw + 1))
 	$DS/vwr.sh "$v" "$nll" "$ff" & exit 1

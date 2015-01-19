@@ -407,7 +407,7 @@ elif [ "$1" = edt ]; then
 		pwrds=$(echo "$tgs" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)')
 		wrds="$DS/add.sh edt '$nme' F $c"
 		
-		edau="--button=Edit Audio:/usr/share/idiomind/audio/auds edt '$DM_tlt/$nme.mp3' '$DM_tlt'"
+		edau="--button=Edit Audio:/usr/share/idiomind/ifs/audio/auds edt '$DM_tlt/$nme.mp3' '$DM_tlt'"
 		dlte="$DS/mngr.sh dli '$nme'"
 		imge="$DS/add.sh img '$nme' s"
 		

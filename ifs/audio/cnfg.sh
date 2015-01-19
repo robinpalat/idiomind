@@ -16,8 +16,8 @@ if [ -z $1 ]; then
 	ret=$?
 
 	if [[ $ret -eq 2 ]]; then
-		$DS/audio/cnfg.sh chng
-		$DS/audio/cnfg.sh
+		$DS/ifs/audio/cnfg.sh chng
+		$DS/ifs/audio/cnfg.sh
 		exit 1
 	fi
 fi
@@ -65,7 +65,7 @@ elif [ $1 = add ]; then
 		fi
 elif [ $1 = chng ]; then
 
-	cd $DS/audio/
+	cd $DS/ifs/audio/
 	IFS=''
 	grep_index="egrep '^[*\ ]*index:\ +[[:digit:]]+$' | egrep -o '[[:digit:]]+'"
 	pacmd_set_default_command="pacmd set-default-source"
