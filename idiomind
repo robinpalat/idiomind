@@ -57,7 +57,7 @@ if [ -z "$1" ]; then
 			echo 125 >> $wh
 			echo 380 >> $wh
 			echo 120 >> $wh
-			echo 460 >> $wh
+			echo 480 >> $wh
 			echo 400 >> $wh
 			echo 410 >> $wh
 		elif [ $y -ge 1080 ]; then
@@ -83,7 +83,7 @@ if [ -z "$1" ]; then
 			echo 100 >> $wh
 			echo 320 >> $wh
 			echo 120 >> $wh
-			echo 460 >> $wh
+			echo 420 >> $wh
 			echo 390 >> $wh
 			echo 410 >> $wh
 		elif [ $y -gt 700 ]; then
@@ -95,8 +95,8 @@ if [ -z "$1" ]; then
 			echo 170 >> $wh
 			echo 100 >> $wh
 			echo 300 >> $wh
-			echo 120 >> $wh
-			echo 460 >> $wh
+			echo 110 >> $wh
+			echo 380 >> $wh
 			echo 390 >> $wh
 			echo 410 >> $wh
 		elif [ $y -gt 599 ]; then
@@ -108,8 +108,8 @@ if [ -z "$1" ]; then
 			echo 170 >> $wh
 			echo 100 >> $wh
 			echo 250 >> $wh
-			echo 120 >> $wh
-			echo 460 >> $wh
+			echo 100 >> $wh
+			echo 350 >> $wh
 			echo 390 >> $wh
 			echo 410 >> $wh
 		elif [ $y -gt 400 ]; then
@@ -121,8 +121,8 @@ if [ -z "$1" ]; then
 			echo 320 >> $wh
 			echo 500 >> $wh
 			echo 320 >> $wh
-			echo 120 >> $wh
-			echo 460 >> $wh
+			echo 100 >> $wh
+			echo 350 >> $wh
 			echo 380 >> $wh
 			echo 400 >> $wh
 		fi

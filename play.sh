@@ -15,12 +15,12 @@ if [[ "$1" = time ]]; then
 		bcl=$(sed -n 1p $DC_s/cnfg2)
 	fi
 		yad --mark="8 s":8 --mark="60 s":60 \
-		--mark="120 s":120 --borders=20 --scale --min-value=2 \
+		--mark="120 s":120 --borders=20 --scale \
 		--max-value=128 --value="$bcl" --step 2 \
 		--name=idiomind --on-top --sticky --skip-taskbar \
 		--window-icon=idiomind --borders=10 --text="Time" \
 	    --title=" " --width=300 --height=200 \
-	    --button="Ok":0 > $cnf1
+	    --min-value=2 --button="Ok":0 > $cnf1
 	
 		if [[ "$?" -eq 0 ]]; then
 			cat "$cnf1" > $DC_s/cnfg2
@@ -168,7 +168,7 @@ elif [[ -z "$1" ]]; then
 		rm -f "$slct"
 		[[ -d $DT/.$u ]] && rm -fr $DT/.$u
 		[[ -f $DT/.p__$u ]] && rm -f $DT/.p__$u
-		$DS/stop.sh P & exit 1
+		$DS/stop.sh P & exit
 	else
 		if  [ ! -f $DT/.p__$u ]; then
 			[[ -d $DT/.$u ]] && rm -fr $DT/.$u
@@ -200,6 +200,6 @@ elif [[ -z "$1" ]]; then
 
 	echo "$(date '+%Y %m %d %l %M') -plyrt $tpc -plyrt" >> \
 	$DC/addons/stats/.log &
-
-	$DS/bcle.sh & exit 1
+	sleep 1
+	$DS/bcle.sh & exit
 fi

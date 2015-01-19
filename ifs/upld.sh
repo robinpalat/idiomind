@@ -13,13 +13,11 @@ if [[ $1 = vsd ]]; then
 	ls -t *.cnfg12 > ls
 	(sed -i 's/\.cnfg12//g' ./ls)
 	cat ./ls | $yad --list \
-	--window-icon=idiomind --center --skip-taskbar \
-	--buttons-layout=edge --borders=8 \
+	--window-icon=idiomind --center --skip-taskbar --borders=8 \
 	--text=" <small>$double_click_for_download \\t\\t\\t\\t</small>" \
 	--title="$topics_saved" --width=$wth --height=$eht \
 	--column=Nombre:TEXT --print-column=1 \
 	--expand-column=1 --search-column=1 \
-	--button="$search_topics":"/usr/share/idiomind/ifs/tls.sh web" \
 	--button="$close":1 \
 	--dclick-action='/usr/share/idiomind/ifs/upld.sh infsd'
 			["$?" -eq 0 ]

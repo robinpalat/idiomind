@@ -846,8 +846,8 @@ elif [ $1 = dlt ]; then
 			rm $DC_tl/.*._ 
 			
 			kill -9 $(pgrep -f "$yad --list ")
-			D="$(sed -n 4p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g' | sed -n 2p)"
-			notify-send  -i idiomind "$tpc" "$D"  -t 1000
+			
+			notify-send  -i idiomind "$tpc" "$deleted"  -t 1000
 			
 			$DS/mngr.sh mkmn
 			

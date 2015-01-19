@@ -7,7 +7,7 @@ source $DS/ifs/trans/$lgs/add.conf
 function msg() {
 	
 	yad --window-icon=idiomind --name=idiomind \
-	--image=info --on-top --text="  $1  " \
+	--image=$2 --on-top --text=" $1 " \
 	--image-on-top --center --sticky --button="Ok":0 \
 	--width=400 --height=130 --borders=5 \
 	--skip-taskbar --title="Idiomind"
@@ -121,7 +121,7 @@ if [ $1 = n_t ]; then
 		fi
 		
 		if [ $info2 -ge 50 ]; then
-			msg "$topics_max"
+			msg "$topics_max" info
 			rm "$DM_tl/.rn" & exit 1
 		fi
 		
@@ -314,7 +314,7 @@ elif [ $1 = n_i ]; then
 		elif [ $ret -eq 0 ]; then
 		
 			if [ -z "$tpe" ]; then
-				msg " $no_topic_msg\n\n "
+				msg " $no_topic_msg\n\n " info
 				$DS/add.sh n_i $DT_r 2 && exit 1
 			fi
 		
@@ -366,10 +366,10 @@ elif [ $1 = n_i ]; then
 			elif ([ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]); then
 				if sed -n 1p $DC_s/cnfg3 | grep FALSE; then
 					if [ -z "$4" ]; then
-						msg "$no_text$lgsl."
+						msg "$no_text$lgsl." info
 						rm -f $DT_r & exit
 					elif [ -z "$2" ]; then
-						msg "$no_text$lgtl."
+						msg "$no_text$lgtl." info
 						rm -f $DT_r & exit
 					fi
 				fi
@@ -396,7 +396,7 @@ elif [ $1 = n_i ]; then
 elif [ $1 = n_s ]; then
 
 	if [ -z "$tpe" ]; then
-		msg "$no_topic_msg."
+		msg "$no_topic_msg." info
 		rm -f $DT_r & exit
 	fi
 		
@@ -414,7 +414,7 @@ elif [ $1 = n_s ]; then
 	dct=$DS/addons/Dics/cnfg.sh
 			
 	if [ $(cat "$DC_tlt/cnfg4" | wc -l) -ge 50 ]; then
-		msg " <b>$tpe    </b>\\n\\n $sentences_max"
+		msg " <b>$tpe    </b>\\n\\n $sentences_max" info
 		rm -f $DT_r & exit 1
 	fi
 	
@@ -582,10 +582,10 @@ elif [ $1 = n_s ]; then
 		
 	else
 		if [ -z "$4" ]; then
-			msg "$no_text$lgsl."
+			msg "$no_text$lgsl." info
 			rm -f $DT_r & exit 1
 		elif [ -z "$2" ]; then
-			msg "$no_text$lgtl."
+			msg "$no_text$lgtl." info
 			rm -f $DT_r & exit 1
 		fi
 		
@@ -697,9 +697,8 @@ elif [ $1 = n_s ]; then
 					echo "$trgt" | text2wave -o $DT_r/s.wav
 					sox $DT_r/s.wav "$DM_tlt/$nme.mp3"
 					else
-						$yad --image=error --button=gtk-ok:1 \
-						--text=" <b>$festival_err $lgtl " \
-						--on-top --skip-taskbar & exit 1
+						msg "$festival_err $lgtl" error
+						exit
 					fi
 				else
 					cd $DT_r
@@ -715,9 +714,8 @@ elif [ $1 = n_s ]; then
 				if [ $lg = chinese ]; then
 					lg=Mandarin
 				elif [ $lg = japanese ]; then
-					$yad --image=error --button=gtk-ok:1 \
-					--text=" <b>$espeak_err " \
-					--on-top --skip-taskbar & exit 1
+					msg "$espeak_err $lgtl" error
+					exit
 				fi
 				espeak "$trgt" -v $lg -k 1 -p 65 -a 80 -s 120 -w $DT_r/s.wav
 				sox $DT_r/s.wav "$DM_tlt/$nme.mp3"
@@ -768,7 +766,7 @@ elif [ $1 = n_w ]; then
 	DC_tlt="$DC_tl/$tpe"
 	
 	if [ $(cat "$DC_tlt/cnfg3" | wc -l) -ge 50 ]; then
-		msg " <b>$tpe    </b>\\n\\n $words_max"
+		msg " <b>$tpe    </b>\\n\\n $words_max" info
 		rm -f $DT_r & exit 1
 	fi
 	
@@ -810,10 +808,10 @@ elif [ $1 = n_w ]; then
 		
 	else
 		if [ -z "$4" ]; then
-			msg "$no_text$lgsl."
+			msg "$no_text$lgsl." info
 			rm -f $DT_r & exit 1
 		elif [ -z "$2" ]; then
-			msg "$no_text$lgtl."
+			msg "$no_text$lgtl." info
 			rm -f $DT_r & exit 1
 		fi
 		
@@ -857,9 +855,8 @@ elif [ $1 = n_w ]; then
 							echo "$trgt" | text2wave -o $DT_r/s.wav
 							sox $DT_r/s.wav "$DM_tlt/$nme.mp3"
 						else
-							$yad --image=error --button=gtk-ok:1 \
-							--text=" <b>$festival_err $lgtl </b>" \
-							--on-top --skip-taskbar & exit 1
+							msg "$festival_err $lgtl" error
+							exit
 						fi
 					else
 						cd $DT_r
@@ -875,9 +872,8 @@ elif [ $1 = n_w ]; then
 					if [ $lg = chinese ]; then
 						lg=Mandarin
 					elif [ $lg = japanese ]; then
-						$yad --image=error --button=gtk-ok:1 \
-						--text=" <b>$espeak_err </b>" \
-						--on-top --skip-taskbar & exit 1
+						msg "$espeak_err $lgtl" error
+						exit
 					fi
 					espeak "$trgt" -v $lg -k 1 -p 45 -a 80 -s 110 -w $DT_r/s.wav
 					sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
@@ -916,7 +912,7 @@ elif [ $1 = edt ]; then
 
 		tpe="$tpc"
 		if [ $(cat "$DC_tlt/cnfg3" | wc -l) -ge 50 ]; then
-			msg " <b>$tpe    </b>\\n\\n $words_max"
+			msg " <b>$tpe    </b>\\n\\n $words_max" info
 			rm -f $DT_r & exit 1
 		fi
 		
@@ -1005,9 +1001,8 @@ elif [ $1 = edt ]; then
 								echo "$trgt" | text2wave -o $DT_r/s.wav
 								sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
 							else
-								$yad --image=error --button=gtk-ok:1 \
-								--text=" <b> $festival_err $lgtl </b> " \
-								--on-top --skip-taskbar & exit 1
+								msg "$festival_err $lgtl" error
+								exit
 							fi
 						else
 							cd $DT_r
@@ -1023,9 +1018,8 @@ elif [ $1 = edt ]; then
 						if [ $lg = chinese ]; then
 							lg=Mandarin
 						elif [ $lg = japanese ]; then
-							$yad --image=error --button=gtk-ok:1 \
-							--text=" <b>$espeak_err </b> " \
-							--on-top --skip-taskbar & exit 1
+							msg "$espeak_err $lgtl" error
+							exit
 						fi
 						espeak "$trgt" -v $lg -k 1 -p 45 -a 80 -s 110 -w $DT_r/s.wav
 						sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
@@ -1072,7 +1066,7 @@ elif [ $1 = prc ]; then
 	nw=$(cat "$DC_tlt/cnfg3" | wc -l)
 	
 	if [ $(cat "$DC_tlt/cnfg3" | wc -l) -ge 50 ]; then
-		msg " <b>$tpe    </b>\\n\\n $words_max"
+		msg " <b>$tpe    </b>\\n\\n $words_max" info
 		rm -f $DT_r & exit 1
 	fi
 
@@ -1404,9 +1398,8 @@ elif [ $1 = snt ]; then
 								echo "$trgt" | text2wave -o $DT_r/s.wav
 								sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
 							else
-								$yad --image=error --button=gtk-ok:1 \
-								--text=" <b>$festival_err $lgtl</b> " \
-								--on-top --skip-taskbar & exit 1
+								msg "$festival_err $lgtl" error
+								exit
 							fi
 						else
 							cd $DT_r
@@ -1422,9 +1415,8 @@ elif [ $1 = snt ]; then
 						if [ $lg = chinese ]; then
 							lg=Mandarin
 						elif [ $lg = japanese ]; then
-							$yad --image=error --button=gtk-ok:1 \
-							--text=" <b>$espeak_err</b> " \
-							--on-top --skip-taskbar & exit 1
+							msg "$espeak_err $lgtl" error
+							exit
 						fi
 						espeak "$trgt" -v $lg -k 1 -p 45 -a 80 -s 110 -w $DT_r/s.wav
 						sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
@@ -1481,7 +1473,7 @@ elif [ $1 = prs ]; then
 	fi
 
 	if [ $ns -ge 50 ]; then
-		msg " <b>$tpe    </b>\\n\\n $sentences_max"
+		msg " <b>$tpe    </b>\\n\\n $sentences_max" info
 		[[ -d $DT_r ]] && rm -fr $DT_r
 		rm -f ls $lckpr & exit
 	fi
@@ -1903,9 +1895,8 @@ $trgt" >> ./wlog
 										echo "$trgt" | text2wave -o $DT_r/s.wav
 										sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
 										else
-											$yad --image=error --button=gtk-ok:1 \
-											--text=" <b>$festival_err $lgtl</b> " \
-											--on-top --skip-taskbar & exit 1
+											msg "$festival_err $lgtl" error
+											exit
 										fi
 									else
 										cd $DT_r
@@ -1921,9 +1912,8 @@ $trgt" >> ./wlog
 									if [ $lg = chinese ]; then
 										lg=Mandarin
 									elif [ $lg = japanese ]; then
-										$yad --image=error --button=gtk-ok:1 \
-										--text=" <b>$espeak_err </b> " \
-										--on-top --skip-taskbar & exit 1
+										msg "$espeak_err $lgtl" error
+										exit
 									fi
 									espeak "$trgt" -v $lg -k 1 -p 45 -a 80 -s 110 -w $DT_r/s.wav
 									sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
@@ -2291,9 +2281,8 @@ $sntc" >> ./slog
 													echo "$trgt" | text2wave -o $DT_r/s.wav
 													sox $DT_r/s.wav "$DM_tlt/$nme.mp3"
 												else
-													$yad --image=error --button=gtk-ok:1 \
-													--text=" <b>$festival_err $lgtl</b> " \
-													--on-top --skip-taskbar & exit 1
+													msg "$festival_err $lgtl" error
+													exit
 												fi
 											else
 												cd $DT_r
@@ -2309,9 +2298,8 @@ $sntc" >> ./slog
 											if [ $lg = chinese ]; then
 												lg=Mandarin
 											elif [ $lg = japanese ]; then
-												$yad --image=error --button=gtk-ok:1 \
-												--text=" <b>$espeak_err</b> " \
-												--on-top --skip-taskbar & exit 1
+												msg "$espeak_err $lgtl" error
+												exit
 											fi
 											espeak "$trgt" -v $lg -k 1 -p 65 -a 80 -s 120 -w $DT_r/s.wav
 											sox $DT_r/s.wav "$DM_tlt/$nme.mp3"
