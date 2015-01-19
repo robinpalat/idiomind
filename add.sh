@@ -280,7 +280,7 @@ elif [ $1 = n_i ]; then
 		sx='180x160'
 		[[ $(echo "$txt" | wc -c) -ge 180 ]] && h=360 || h=260
 		auds="--button=Audio:$DS/ifs/audio/cnfg.sh pnl '$DT_r' 10"
-		rec="--button=gtk-media-record:$DS/ifs/audio/cnfg.sh rec '$DT_r' '10'"
+		rec="--button=gtk-media-record:$DS/ifs/tls.sh rec '$DT_r' '10'"
 		ls="--button=Play:play $DT_r/audtm.mp3"
 		lzgpr=$($yad --separator="\\n" --skip-taskbar \
 		--width=400 --height=$h --form --on-top --name=idiomind \

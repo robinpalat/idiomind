@@ -53,8 +53,7 @@ if [ -f "$DM_tlt/words/$nme.mp3" ]; then
 	--field="<i><span color='#7D7D7D'>$exmp1</span></i>:lbl" "$dfnts" "$ntess" \
 	--width="$wth" --height="$eht" --center \
 	--button=gtk-edit:4 --button="Play":"play '$DM_tlt/words/$nme.mp3'" \
-	--button=gtk-go-up:3 --button=gtk-go-down:2 \
-	--dclick-action=/usr/share/idiomind/ifs/audio/dclik.sh >/dev/null 2>&1
+	--button=gtk-go-up:3 --button=gtk-go-down:2 >/dev/null 2>&1
 	
 elif [ -f "$DM_tlt/$nme.mp3" ]; then
 	tgs=$(eyeD3 "$DM_tlt/$nme.mp3")
@@ -74,9 +73,9 @@ elif [ -f "$DM_tlt/$nme.mp3" ]; then
 	--text="<big><big>$trgt</big></big>\\n\\n<i>$src</i>\\n\\n\\n" \
 	--width="$wth" --height="$eht" --center \
 	--column="$lgtl":TEXT --column="$lgsl":TEXT \
-	--button=gtk-edit:4 --button="play":"$DS/ifs/audio/swth.sh '$nme'" \
+	--button=gtk-edit:4 --button="play":"/usr/share/idiomind/ifs/tls.sh s '$nme'" \
 	--button=gtk-go-up:3 --button=gtk-go-down:2 \
-	--dclick-action=/usr/share/idiomind/ifs/audio/dclik.sh >/dev/null 2>&1
+	--dclick-action="/usr/share/idiomind/ifs/tls.sh dclik" >/dev/null 2>&1
 else
 	ff=$(($nuw + 1))
 	$DS/vwr.sh "$v" "$nll" "$ff" & exit 1

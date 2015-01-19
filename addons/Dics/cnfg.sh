@@ -22,12 +22,10 @@ if [ "$1" = dlck ]; then
 	else
 		stts=disables
 	fi
-	edt=$(yad --text-info --width=450 --height=450 \
+	edt=$(yad --text-info --width=450 --height=450 --title=Edit \
 	--filename=$HOME/.config/idiomind/addons/dict/$stts/"$3".$lgt \
-	--editable --show-uri --wrap --on-top \
-	--skip-taskbar --center \
-	--title=Edit --window-icon=idiomind \
-	--button=Delete:2 --button=Save:0)
+	--editable --show-uri --wrap --on-top --skip-taskbar --center \
+	--window-icon=idiomind --button=Delete:2 --button=Save:0)
 	ret=$?
 		if [ $ret -eq 2 ]; then
 			rm $dir/$stts/"$3".$lgt & exit 1
