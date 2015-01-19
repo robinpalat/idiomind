@@ -131,8 +131,8 @@ skp=$(sed -n 3p $DC_s/cnfg4)
 nt=$(cat "$DC_tlt/cnfg10")
 nme=$(echo "$tpc" | sed 's/ /_/g' \
 | sed 's/"//g' | sed 's/’//g')
-[[ $(echo "$tpc" | wc -c) -gt 40 ]] \
-&& ttpc="${tpc:0:40}..." || ttpc="$tpc"
+#[[ $(echo "$tpc" | wc -c) -gt 40 ]] \
+#&& ttpc="${tpc:0:40}..." || ttpc="$tpc"
 
 
 chk1="$DC_tlt/cnfg0"
@@ -305,34 +305,32 @@ upld=$($yad --form --width=400 --height=420 --on-top \
 --buttons-layout=end --center --window-icon=idiomind \
 --borders=15 --skip-taskbar --align=right \
 --button=$cancel:1 --button=$upload:0 \
---title="Upload" --text="   <b>$ttpc</b>" \
+--title="Upload" --text="   <b>$tpc</b>" \
 --field=" :lbl" "#1" \
 --field="    <small>$author</small>:: " "$user" \
 --field="    <small>$email</small>:: " "$mail" \
 --field="    <small>$category</small>::CB" \
 "!$others!$comics!$culture!$entertainment!$family!$grammar!$history!$films!$in_the_city!$internet!$music!$nature!$news!$office!$relations!$sport!$shopping!$social!$technology!$travel" \
+--field="    <small>$level</small>::CB" "!$beginner!$intermediate!$advanced" \
 --field="<small>\\n$notes:</small>:TXT" "$nt" \
 --field="<small>$add_image</small>:FL")
 ret=$?
 
+if [[ "$ret" != 0 ]]; then
+	exit 1
+fi
+
 Ctgry=$(echo "$upld" | cut -d "|" -f4)
 [[ $Ctgry = $others ]] && Ctgry=others
-
 [[ $Ctgry = $comics ]] && Ctgry=comics
 [[ $Ctgry = $culture ]] && Ctgry=culture
 [[ $Ctgry = $family ]] && Ctgry=family
-
-
-
 [[ $Ctgry = $entertainment ]] && Ctgry=entertainment
-
 [[ $Ctgry = $family ]] && Ctgry=family
 [[ $Ctgry = $grammar ]] && Ctgry=grammar
-
 [[ $Ctgry = $history ]] && Ctgry=history
 [[ $Ctgry = $documentary ]] && Ctgry=documentary
 [[ $Ctgry = $in_the_city ]] && Ctgry=in_the_city
-
 [[ $Ctgry = $films ]] && Ctgry=films
 [[ $Ctgry = $internet ]] && Ctgry=internet
 [[ $Ctgry = $music ]] && Ctgry=music
@@ -345,9 +343,10 @@ Ctgry=$(echo "$upld" | cut -d "|" -f4)
 [[ $Ctgry = $technology ]] && Ctgry=technology
 [[ $Ctgry = $travel ]] && Ctgry=travel
 
-if [[ "$ret" != 0 ]]; then
-	exit 1
-fi
+level=$(echo "$upld" | cut -d "|" -f5)
+[[ $level = $beginner ]] && level=1
+[[ $level = $intermediate ]] && level=2
+[[ $level = $advanced ]] && level=3
 
 if [ -z $Ctgry ]; then
 	yad --window-icon=idiomind \
@@ -389,8 +388,8 @@ fi
 
 Author=$(echo "$upld" | cut -d "|" -f2)
 Mail=$(echo "$upld" | cut -d "|" -f3)
-notes=$(echo "$upld" | cut -d "|" -f5)
-img=$(echo "$upld" | cut -d "|" -f6)
+notes=$(echo "$upld" | cut -d "|" -f6)
+img=$(echo "$upld" | cut -d "|" -f7)
 link="$U.$tpc.idmnd"
 
 mkdir "$DT/$nme"
@@ -420,6 +419,7 @@ date_u="09"
 nwords="10"
 nsentences="11"
 nimages="12"
+level=13
 ' > "$DT/cnfg12"
 
 sed -i "s/01/$tpc/g" "$DT/cnfg12"
@@ -434,6 +434,7 @@ sed -i "s/09/$date_u/g" "$DT/cnfg12"
 sed -i "s/10/$words/g" "$DT/cnfg12"
 sed -i "s/11/$sentences/g" "$DT/cnfg12"
 sed -i "s/12/$images/g" "$DT/cnfg12"
+sed -i "s/13/$level/g" "$DT/cnfg12"
 
 echo "$U" > $DC_s/cnfg4
 echo "$Mail" >> $DC_s/cnfg4
@@ -530,5 +531,6 @@ yad --window-icon=idiomind --name=idiomind \
 [[ -f "$DT/$tpc.tar" ]] && rm -f "$DT/$tpc.tar"
 [[ -f "$DT/$tpc.tar.gz" ]] && rm -f "$DT/$tpc.tar.gz"
 [[ -d "$DT/$nme" ]] && rm -fr "$DT/$nme"
+[[ -d "$DT" ]] && rm -f "$DT/*.png"
 
 exit

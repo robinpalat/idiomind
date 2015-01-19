@@ -363,7 +363,7 @@ elif [ $1 = n_i ]; then
 				$DS/add.sh prs "$trgt" $DT_r & exit
 			elif [ $(echo "$trgt" | wc -c) -gt 180 ]; then
 				$DS/add.sh prs "$trgt" $DT_r & exit 1
-			elif ([ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]); then
+			elif ([ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]); then
 				if sed -n 1p $DC_s/cnfg3 | grep FALSE; then
 					if [ -z "$4" ]; then
 						msg "$no_text$lgsl." info
@@ -381,7 +381,7 @@ elif [ $1 = n_i ]; then
 				elif [ $(echo "$srce" | wc -w) -ge 1 -a $(echo "$srce" | wc -c) -le 180 ]; then
 					$DS/add.sh n_s "$trgt" $DT_r "$srce" & exit
 				fi
-			elif ([ $lgt != ja ] || [ $lgt != zh-cn ] || [ $lgt != ru ]); then
+			elif ([ $lgt != ja ] || [ $lgt != 'zh-cn' ] || [ $lgt != ru ]); then
 				if [ $(echo "$trgt" | wc -w) = 1 ]; then
 					$DS/add.sh n_w "$trgt" $DT_r "$srce" & exit
 				elif [ $(echo "$trgt" | wc -w) -ge 1 -a $(echo "$trgt" | wc -c) -le 180 ]; then
@@ -930,7 +930,7 @@ elif [ $1 = edt ]; then
 		cd $DT_r
 		file="$DM_tlt/$2.mp3"
 		
-		if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]; then
+		if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
 			eyeD3 "$file" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' \
 			| tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > idlst
 		else
@@ -1331,7 +1331,7 @@ elif [ $1 = snt ]; then
 		info=$(echo " $remain"$left"$word)")
 	fi
 
-	if [ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ]; then
+	if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
 		eyeD3 "$DM_tl/$3/$2.mp3" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' \
 		| tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > $DT_r/wrds
 	else
@@ -1481,7 +1481,7 @@ elif [ $1 = prs ]; then
 	if [ -f $lckpr ]; then
 		$yad --fixed --center --on-top \
 		--image=info --name=idiomind \
-		--text=" <i>$current_pros </i> " \
+		--text=" $current_pros  " \
 		--fixed --sticky --buttons-layout=edge \
 		--width=350 --height=150  --borders=5 \
 		--skip-taskbar --window-icon=idiomind \
@@ -1512,7 +1512,7 @@ elif [ $1 = prs ]; then
 			$yad --name=idiomind --center --on-top --image=error \
 			--text="  $no_key <a href='$LNK'> Google.</a>" \
 			--image-on-top --sticky --title="Idiomind" \
-			--width=400 --height=150 --button=gtk-ok:0 \
+			--width=450 --height=150 --button=gtk-ok:0 \
 			--skip-taskbar --window-icon=idiomind && \
 			[[ -d $DT_r ]] && rm -fr $DT_r
 			rm -f ls $lckpr & exit 1
@@ -1566,26 +1566,29 @@ elif [ $1 = prs ]; then
 			echo "3"
 			echo "# $check_key... " ; sleep 1
 			
-			wget -q -U "Mozilla/5.0" --post-file $DS/addons/Google_translation_service/test.flac \
+			wget -q -U "Mozilla/5.0" --post-file "$DS/addons/Google translation service/test.flac" \
 			--header="Content-Type: audio/x-flac; rate=16000" \
 			-O - "https://www.google.com/speech-api/v2/recognize?&lang="$lgt"-"$lgt"&key=$key" > info.ret
+			
 			if [ -z "$(cat info.ret)" ]; then
 				key=$(sed -n 3p $DC_s/cnfg3)
-				wget -q -U "Mozilla/5.0" --post-file $DS/addons/Google_translation_service/test.flac \
+				wget -q -U "Mozilla/5.0" --post-file "$DS/addons/Google translation service/test.flac" \
 				--header="Content-Type: audio/x-flac; rate=16000" \
 				-O - "https://www.google.com/speech-api/v2/recognize?&lang="$lgt"-"$lgt"&key=$key" > info.ret
 			fi
+			
 			if [ -z "$(cat info.ret)" ]; then
 				key=$(sed -n 4p $DC_s/cnfg3)
-				wget -q -U "Mozilla/5.0" --post-file $DS/addons/Google_translation_service/test.flac \
+				wget -q -U "Mozilla/5.0" --post-file "$DS/addons/Google translation service/test.flac" \
 				--header="Content-Type: audio/x-flac; rate=16000" \
 				-O - "https://www.google.com/speech-api/v2/recognize?&lang="$lgt"-"$lgt"&key=$key" > info.ret
 			fi
+			
 			if [ -z "$(cat info.ret)" ]; then
 				$yad --name=idiomind --center --on-top --image=error \
 				--text="  $key_err <a href='$LNK'>Google. </a>" \
 				--image-on-top --sticky --title="Idiomind" \
-				--width=350 --height=140 --borders=3 --button=gtk-ok:0 \
+				--width=450 --height=140 --borders=3 --button=gtk-ok:0 \
 				--skip-taskbar --window-icon=idiomind && \
 				[[ -d $DT_r ]] && rm -fr $DT_r
 				rm -f ls $lckpr & exit 1
@@ -1607,7 +1610,7 @@ elif [ $1 = prs ]; then
 					$yad --name=idiomind --center --on-top --image=error \
 					--text="  $key_err <a href='$LNK'>Google. </a>" \
 					--image-on-top --sticky --title="Idiomind" \
-					--width=400 --height=150 --button=gtk-ok:0 \
+					--width=450 --height=150 --button=gtk-ok:0 \
 					--skip-taskbar --window-icon=idiomind &
 					[[ -d $DT_r ]] && rm -fr $DT_r
 					rm -f ls $lckpr & break & exit 1
@@ -1669,7 +1672,7 @@ $trgt" >> log
 				
 			else
 				slt=$(mktemp $DT/slt.XXXX.x)
-				cat lss | awk '{print "FALSE\n"$0}' | \
+				cat ls | awk '{print "FALSE\n"$0}' | \
 				$yad --center --sticky --no-headers \
 				--name=idiomind --class=idiomind \
 				--dclick-action='/usr/share/idiomind/add.sh prc' \
@@ -1702,7 +1705,7 @@ $trgt" >> log
 					(
 					echo "2"
 					echo "# " ;
-					[ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ] && c=c || c=w
+					[ $lgt = ja ] || [ $lgt = "zh-cn" ] || [ $lgt = ru ] && c=c || c=w
 					lns=$(cat ./slts ./wrds | wc -l)
 					n=1
 					while [ $n -le $(cat ./slts | head -50 | wc -l) ]; do
@@ -2182,7 +2185,7 @@ $trgt" >> ./wlog
 					{
 					echo "5"
 					echo "# $pros... " ;
-					[ $lgt = ja ] || [ $lgt = zh-cn ] || [ $lgt = ru ] && c=c || c=w
+					[ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ] && c=c || c=w
 					lns=$(cat ./slts ./wrds | wc -l)
 					n=1
 					while [ $n -le $(cat slts | head -50 | wc -l) ]; do

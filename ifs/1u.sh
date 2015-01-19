@@ -23,7 +23,7 @@ function set_lang() {
 			mkdir "$DIR3"/$1
 			mkdir "$DIR4"/$1
 			mkdir "$DIR4"/$1/subscripts
-			cp -f "$drtf"/$1 "$DIR4"/Italian/subscripts/Example
+			cp -f "$drtf"/$1 "$DIR4"/$1/subscripts/Example
 		fi
 		echo $2 > $DIR2/s/cnfg10
 		echo $1 >> $DIR2/s/cnfg10

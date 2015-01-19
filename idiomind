@@ -252,6 +252,9 @@ if [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 	[[ $language_target = Spanish ]] && lng=es
 	[[ $language_target = Vietnamese ]] && lng=vi
 	[[ $language_target = Russian ]] && lng=ru
+	[[ $level = 1 ]] && level=$beginner
+	[[ $level = 2 ]] && level=$intermediate
+	[[ $level = 3 ]] && level=$advanced
 
 	if [ -f "$tmp/words/images/img.png" ]; then
 	img="$tmp/words/images/img.png"
@@ -276,7 +279,7 @@ if [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 		cd "$tmp"
 		ws=$(cat "cnfg3" | wc -l)
 		ss=$(cat "cnfg4" | wc -l)
-		itxt="<big><big>$inme</big></big><small>\\n${category^}. ${language_source^} <b>></b> $language_target\\n$nwords $words $nsentences $sentences $nimages $images</small>\n\n"
+		itxt="<big><big>$inme</big></big><small>\\n${language_source^} <b>></b> $language_target\\n$nwords $words $nsentences $sentences $nimages $images\n$llevel $level </small>\n"
 		dlck="$DT/p1.$c"
 		cat "$tmp/cnfg0" | awk '{print $0""}' | \
 		yad --list --name=Idiomind --title="Idiomind" \

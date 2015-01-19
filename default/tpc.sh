@@ -160,6 +160,8 @@ if [ -d "$DC_tlt" ]; then
 				echo "1" > "$DC_tlt/cnfg8"
 			fi
 		fi
+		[[ ! -f "$DC_tlt/cnfg.11" ]] && cp "$DC_tlt/cnfg0" "$DC_tlt/.cnfg11"
+		touch "$DC_tlt/cnfg3" "$DC_tlt/cnfg4"
 		
 		$DS/mngr.sh mkmn
 	fi
