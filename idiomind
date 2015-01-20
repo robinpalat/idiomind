@@ -455,23 +455,12 @@ if [ "$1" = topic ]; then
 			--button="Play":$DS/play.sh \
 			--button="$delete":"$DS/mngr.sh dlt"
 					
-				if [ $ret -eq 2 ]; then
-					
-					if [ -f $cnf3 ]; then
-						if [ "$(cat $cnf3)" != "$(cat "$nt")" ]; then
-							mv -f $cnf3 "$nt"
-						fi
+				if [ -f $cnf3 ]; then
+					if [ "$(cat $cnf3)" != "$(cat "$nt")" ]; then
+						mv -f $cnf3 "$nt"
 					fi
-					rm -f "$cnf3" &
-					
-				else
-					if [ -f $cnf3 ]; then
-						if [ "$(cat $cnf3)" != "$(cat "$nt")" ]; then
-							mv -f $cnf3 "$nt"
-						fi
-					fi
-				rm -f $DT/*.x
 				fi
+			rm -f $DT/*.x
 			
 		elif [ "$tb1" -ge 1 ]; then
 		
@@ -608,7 +597,6 @@ if [ "$1" = topic ]; then
 							
 						elif [ "$ret" -eq 3 ]; then
 							rm -f $DT/*.x
-							#echo "3" > "$DC_tlt/cnfg8"
 							rm -f "$DC_tlt/cnfg7" && idiomind topic & exit 1
 						fi
 					
@@ -940,7 +928,6 @@ if [ "$1" = topic ]; then
 							
 						elif [ "$ret" -eq 3 ]; then
 							rm -f $DT/*.x
-							#echo "8" > "$DC_tlt/cnfg8"
 							rm -f "$DC_tlt/cnfg7" && idiomind topic & exit 1
 						fi
 				

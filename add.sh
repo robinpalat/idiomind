@@ -1868,7 +1868,7 @@ $sntc" >> ./wlog
 							nme="$(echo "$exmp" | sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g' | cut -c 1-70)..."
 						else
 							nme=$(echo "$exmp" | "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-						fi # get name
+						fi
 					
 						if [ $(cat "$DC_tlt"/cnfg3 | wc -l) -ge 50 ]; then
 							echo "
@@ -2034,7 +2034,6 @@ $trgt" >> ./wlog
 		(
 		echo "3"
 		echo "# " ;
-		#curl $prdt | grep -o -P '(?<=<title>).*(?=</title>)' > ./sntsls_
 		lynx -dump -nolist $prdt  | sed -n -e '1x;1!H;${x;s-\n- -gp}' \
 		| sed 's/\./\.\n/g' | sed 's/<[^>]*>//g' | sed 's/ \+/ /g' \
 		| sed '/^$/d' | sed 's/  / /g' | sed 's/^[ \t]*//;s/[ \t]*$//g' \
@@ -2046,12 +2045,6 @@ $trgt" >> ./wlog
 		--pulsate --percentage="5" --on-top \
 		--undecorated --auto-close \
 		--skip-taskbar --no-buttons
-		
-		#if [ -n "$(sed -n 1p ./sntsls_)" ]; then 
-		#[[ $(sed -n 1p ./sntsls_ | wc -c) -gt 40 ]] \
-		#&& te="$(sed -n 1p ./sntsls_ | head -50)" \
-		#|| te="$(sed -n 1p ./sntsls_)"
-		#fi
 
 	elif [[ "$(echo "$prdt" | cut -d "|" -f1 \
 	| sed -n 1p | grep -o "i")" = i ]]; then

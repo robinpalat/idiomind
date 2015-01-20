@@ -50,7 +50,6 @@ elif [ -z "$1" ]; then
 	fi
 	
 	rm -f "$dir/.listdicts"
-	
 	cd "$dir/enables"
 	find . -not -name "*.$lgt" -and -not -name "*.auto" -type f \
 	-exec mv --target-directory="$dir/disables" {} +
@@ -142,7 +141,6 @@ elif [ -z "$1" ]; then
 		ls -d -1 $PWD/*.auto >> "$dir/.dicts"
 		rm -f "$D" & exit 1
 
-
 # word
 elif [ "$3" = swrd ]; then
 	cd $DT_r
@@ -177,4 +175,3 @@ else
 		done
 	fi
 fi
-

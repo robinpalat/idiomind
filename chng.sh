@@ -51,7 +51,7 @@ if [[ "$1" = chngi ]]; then
 		[[ -n $(echo "$sna" | grep "TRUE") ]] && play "$file" &
 		
 		cnt=$(echo "$trgt" | wc -c)
-		echo "TOTAL=$(($bcl+$cnt/20)) ____ loop=$bcl  ____  characters=$cnt"
+		echo "TOTAL=$(($bcl+$cnt/20)) ____ loop=$bcl  ____  characters=$cnt "
 		sleep $(($bcl+$cnt/20))
 		
 		[[ -f $DT/.bcle ]] && rm -f $DT/.bcle
