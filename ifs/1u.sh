@@ -30,13 +30,13 @@ function set_lang() {
 	fi
 }
 
-dialog=$(yad --center --width=520 --height=300 --fixed \
+dialog=$(yad --center --width=520 --height=280 --fixed \
 	--image-on-top --on-top --class=idiomind --name=idiomind \
 	--window-icon=idiomind --buttons-layout=end --image=$IMAGE  \
 	--title="Idiomind" --form --borders=10 --align=right --button=Ok:0 \
-	--field="<small>\\t\\t\\t\\t$language_target : </small>:CB" \
-	!"English!French!German!Italian!Japanese!Portuguese!Spanish!Vietnamese!Chinese!"\
-	--field="<small>\\t\\t\\t\\t$language_source : </small>:CB" \
+	--field="\\t\\t\\t\\t$language_target :CB" \
+	!"English!French!German!Italian!Japanese!Portuguese!Spanish!Vietnamese!Chinese"\
+	--field="\\t\\t\\t\\t$language_source :CB" \
 	!"English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
 	"$ins" "$int" --field=":lbl")
 

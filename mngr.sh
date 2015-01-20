@@ -869,6 +869,7 @@ elif [ $1 = mkmn ]; then
 	[[ -f ./cnfg3 ]] && rm ./cnfg3
 	[[ -f ./cnfg5 ]] && rm ./cnfg5
 	[[ -f ./cnfg4 ]] && rm ./cnfg4
+	[[ -f ./tpc.sh ]] && rm ./tpc.sh
 	[[ -f ./.cnfg11 ]] && rm ./.cnfg11
 	ls -t -d -N * > $DC_tl/.cnfg1
 	[[ -f $DC_s/cnfg0 ]] && mv -f $DC_s/cnfg0 $DC_s/cnfg16
