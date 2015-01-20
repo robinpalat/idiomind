@@ -268,9 +268,8 @@ elif [ "$1" = mkok- ]; then
 #--------------------------------
 elif [ "$1" = edt ]; then
 
-	eht=$(sed -n 7p $DC_s/cnfg18)
-	wth=$(sed -n 8p $DC_s/cnfg18)
-	
+	wth=$(sed -n 7p $DC_s/cnfg18)
+	eht=$(sed -n 8p $DC_s/cnfg18)
 	dct="$DS/addons/Dics/cnfg.sh"
 	cnf=$(mktemp $DT/cnf.XXXX)
 	edta=$(sed -n 17p ~/.config/idiomind/s/cnfg1)
@@ -312,7 +311,7 @@ elif [ "$1" = edt ]; then
 
 		$yad --form --wrap --center --name=idiomind --class=idmnd \
 		--width=$wth --height=$eht --always-print-result \
-		--borders=15 --columns=2 --align=center \
+		--borders=15 --columns=2 --align=center --skip-taskbar \
 		--buttons-layout=end --title=" $nme" --separator="\\n" \
 		--fontname="Arial" --scroll --window-icon=idiomind \
 		--text-align=center --selectable-labels \
@@ -342,63 +341,62 @@ elif [ "$1" = edt ]; then
 			mrk2=$(cat $cnf | tail -12 | sed -n 8p)
 			rm -f $cnf
 			
-			if [[ $ret -eq 0 ]]; then
-				source /usr/share/idiomind/ifs/c.conf
-				if [ "$mrk" != "$mrk2" ]; then
-					if [ "$mrk2" = "TRUE" ]; then
-						echo "$TGT" >> "$DC_tlt/cnfg6"
-					else
-						grep -v -x -v "$TGT" "$DC_tlt/cnfg6" > "$DC_tlt/cnfg6._"
-						sed '/^$/d' "$DC_tlt/cnfg6._" > "$DC_tlt/cnfg6"
-						rm "$DC_tlt/cnfg6._"
-					fi
-					eyeD3 -p IWI4I0I"$mrk2"IWI4I0I "$DM_tlt/words/$nme".mp3 >/dev/null 2>&1
+			source /usr/share/idiomind/ifs/c.conf
+			if [ "$mrk" != "$mrk2" ]; then
+				if [ "$mrk2" = "TRUE" ]; then
+					echo "$TGT" >> "$DC_tlt/cnfg6"
+				else
+					grep -v -x -v "$TGT" "$DC_tlt/cnfg6" > "$DC_tlt/cnfg6._"
+					sed '/^$/d' "$DC_tlt/cnfg6._" > "$DC_tlt/cnfg6"
+					rm "$DC_tlt/cnfg6._"
 				fi
-				
-				if [ "$audo" != "$file" ]; then
-					eyeD3 --write-images=$DT "$file"
-					cp -f "$audo" "$DM_tlt/words/$nme.mp3"
-					eyeD3 --set-encoding=utf8 -t "IWI1I0I${TGT}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" -A "IWI3I0I${exm1}IWI3I0I" \
-					"$DM_tlt/words/$nme.mp3" >/dev/null 2>&1
-					
-					eyeD3 --add-image $DT/ILLUSTRATION.jpeg:ILLUSTRATION \
-					"$DM_tlt/words/$nme.mp3" >/dev/null 2>&1
-					[[ -d $DT/idadtmptts ]] && rm -fr $DT/idadtmptts
-				fi
-				
-				if [ "$srce" != "$SRC" ]; then
-					eyeD3 --set-encoding=utf8 -a IWI2I0I"$srce"IWI2I0I "$file" >/dev/null 2>&1
-				fi
-				
-				infm="$(echo $exm1 && echo $dftn && echo $ntes)"
-				if [ "$infm" != "$inf" ]; then
-					impr=$(echo "$infm" | tr '\n' '_')
-					eyeD3 --set-encoding=utf8 -A IWI3I0I"$impr"IWI3I0I "$file" >/dev/null 2>&1
-					echo "eitm.$tpc.eitm" >> \
-					$DC/addons/stats/.log &
-				fi
-
-				mv -f "$DT/$nme.mp3" "$file"
-
-				if [ "$tpc" != "$topc" ]; then
-					cp -f "$audo" "$DM_tl/$topc/words/$nme.mp3"
-					$DS/mngr.sh inx W "$nme" "$topc" &
-					if [ -n "$(cat "$DC_tl/.cnfg2" | grep "$topc")" ]; then
-						$DS/mngr.sh dli "$nme" C
-					fi
-				fi
-				
-				if [ "$mrok" = "TRUE" ]; then
-					grep -v -x -v "$nme" "$ind" > $DT/tx
-					sed '/^$/d' $DT/tx > "$ind"
-					rm $DT/tx
-					echo "$nme" >> "$inp"
-					echo "okim.1.okim" >> \
-					$DC/addons/stats/.log &
-					./vwr.sh "$v" "nll" $ff & exit 1
-				fi
-				./vwr.sh "$v" "$nme" $ff & exit 1
+				eyeD3 -p IWI4I0I"$mrk2"IWI4I0I "$DM_tlt/words/$nme".mp3 >/dev/null 2>&1
 			fi
+			
+			if [ "$audo" != "$file" ]; then
+				eyeD3 --write-images=$DT "$file"
+				cp -f "$audo" "$DM_tlt/words/$nme.mp3"
+				eyeD3 --set-encoding=utf8 -t "IWI1I0I${TGT}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" -A "IWI3I0I${exm1}IWI3I0I" \
+				"$DM_tlt/words/$nme.mp3" >/dev/null 2>&1
+				
+				eyeD3 --add-image $DT/ILLUSTRATION.jpeg:ILLUSTRATION \
+				"$DM_tlt/words/$nme.mp3" >/dev/null 2>&1
+				[[ -d $DT/idadtmptts ]] && rm -fr $DT/idadtmptts
+			fi
+			
+			if [ "$srce" != "$SRC" ]; then
+				eyeD3 --set-encoding=utf8 -a IWI2I0I"$srce"IWI2I0I "$file" >/dev/null 2>&1
+			fi
+			
+			infm="$(echo $exm1 && echo $dftn && echo $ntes)"
+			if [ "$infm" != "$inf" ]; then
+				impr=$(echo "$infm" | tr '\n' '_')
+				eyeD3 --set-encoding=utf8 -A IWI3I0I"$impr"IWI3I0I "$file" >/dev/null 2>&1
+				echo "eitm.$tpc.eitm" >> \
+				$DC/addons/stats/.log &
+			fi
+
+			mv -f "$DT/$nme.mp3" "$file"
+
+			if [ "$tpc" != "$topc" ]; then
+				cp -f "$audo" "$DM_tl/$topc/words/$nme.mp3"
+				$DS/mngr.sh inx W "$nme" "$topc" &
+				if [ -n "$(cat "$DC_tl/.cnfg2" | grep "$topc")" ]; then
+					$DS/mngr.sh dli "$nme" C
+				fi
+			fi
+			
+			if [ "$mrok" = "TRUE" ]; then
+				grep -v -x -v "$nme" "$ind" > $DT/tx
+				sed '/^$/d' $DT/tx > "$ind"
+				rm $DT/tx
+				echo "$nme" >> "$inp"
+				echo "okim.1.okim" >> \
+				$DC/addons/stats/.log &
+				./vwr.sh "$v" "nll" $ff & exit 1
+			fi
+			./vwr.sh "$v" "$nme" $ff & exit 1
+		fi
 			
 	else 
 		file="$DM_tlt/$nme.mp3"
@@ -414,10 +412,10 @@ elif [ "$1" = edt ]; then
 		imge="$DS/add.sh img '$nme' s"
 		
 		$yad --form --wrap --center --name=idiomind --class=idmnd \
-		--width=600 --height=450 --always-print-result \
+		--width=$wth --height=$eht --always-print-result \
 		--separator="\\n" --borders=15 --align=center --align=center \
 		--buttons-layout=end --title=" $nme" --fontname="Arial" \
-		--selectable-labels --window-icon=idiomind \
+		--selectable-labels --window-icon=idiomind --skip-taskbar \
 		--field="$chk:CHK" "$ok" \
 		--field="<small>$lgtl</small>":TXT "$tgt" \
 		--field="<small>$lgsl</small>":TXT "$src" \

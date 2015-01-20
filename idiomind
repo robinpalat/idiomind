@@ -11,6 +11,30 @@ source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/items_lists.conf
 [[ -f $DT/.upt ]] && rm -f $DT/.upt
 
+
+function sizes() {
+	
+	wh=$DC_s/cnfg18
+	xrandr | grep '*' | awk '{ print $1 }' > $wh
+	sed -i 's/x/\n/' $wh
+	y=$(sed -n 2p $wh)
+	[[ $y -lt 950 ]] && y=950
+	echo $(($y*42/100)) >> $wh
+	echo $(($y*48/100)) >> $wh
+	echo $(($y*46/100)) >> $wh
+	echo $(($y*30/100)) >> $wh
+	echo $(($y*63/100)) >> $wh
+	echo $(($y*46/100)) >> $wh
+	echo $(($y*12/100)) >> $wh
+	echo $(($y*35/100)) >> $wh
+	echo $(($y*11/100)) >> $wh
+	echo $(($y*44/100)) >> $wh
+	echo $(($y*37/100)) >> $wh
+	echo $(($y*38/100)) >> $wh
+}
+
+[[ ! -f $DC_s/cnfg18 ]] && sizes
+
 if [ -z "$1" ]; then
 
 	function new_session() {
@@ -42,23 +66,7 @@ if [ -z "$1" ]; then
 		done
 
 		# screen size
-		[[ ! -f $DC_s/cnfg18 ]] && touch $DC_s/cnfg18
-		wh=$DC_s/cnfg18
-		xrandr | grep '*' | awk '{ print $1 }' > $wh
-		sed -i 's/x/\n/' $wh
-		y=$(sed -n 2p $wh)
-		echo $(($y*42/100)) >> $wh
-		echo $(($y*48/100)) >> $wh
-		echo $(($y*46/100)) >> $wh
-		echo $(($y*30/100)) >> $wh
-		echo $(($y*24/100)) >> $wh
-		echo $(($y*18/100)) >> $wh
-		echo $(($y*12/100)) >> $wh
-		echo $(($y*35/100)) >> $wh
-		echo $(($y*11/100)) >> $wh
-		echo $(($y*44/100)) >> $wh
-		echo $(($y*37/100)) >> $wh
-		echo $(($y*38/100)) >> $wh
+		sizes
 		
 		# weekly report
 		if ([ "$(date +%u)" = 7 ] && \
