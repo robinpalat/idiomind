@@ -26,7 +26,7 @@ if [ -z "$1" ]; then
 			killall yad &
 			yad --name=idiomind --image=error --button=gtk-ok:1\
 			--text=" $write_err\n\n" --image-on-top --sticky  \
-			--width=380 --height=120 --borders=5 --title=Idiomind \
+			--width=420 --height=150 --borders=5 --title=Idiomind \
 			--skip-taskbar --center --window-icon=idiomind & exit 1
 		fi
 		
@@ -303,7 +303,7 @@ if [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 					--image=info --class=idiomind \
 					--text=" <b>$topics_max</b>\\n" \
 					--image-on-top --sticky --skip-taskbar \
-					--width=340 --height=120 --title=Idiomind \
+					--width=420 --height=150 --title=Idiomind \
 					--window-icon=idiomind --button=gtk-ok:1
 					[[ -d $DT/idmimp_$c ]] && rm -fr $DT/idmimp_$c
 					rm -f $DT/*.$c $DT/import.tar.gz & exit
@@ -312,9 +312,9 @@ if [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 				if [ "$snm" -ge 1 ]; then
 					inm="$inme $snm"
 					yad  --name=idiomind --image=info --sticky \
-					--text=" $name_eq  \\n $name_eq2 <b>$inm</b>  \\n" \
+					--text=" $name_eq  \\n $name_eq2 <b>$inm    </b>\n" \
 					--class=idiomind --center --skip-taskbar \
-					--image-on-top --width=340 --height=120 \
+					--image-on-top --width=420 --height=150 \
 					--window-icon=idiomind --title=Idiomind \
 					--button=Cancel:1 --button=gtk-ok:0
 						ret=$?
@@ -426,7 +426,7 @@ if [ "$1" = topic ]; then
 			--image=idiomind --on-top --skip-taskbar \
 			--text="$there_are_no_topics ($lgtl)\n" \
 			--image-on-top --center --sticky \
-			--width=380 --height=150 --borders=5 \
+			--width=420 --height=150 --borders=5 \
 			--skip-taskbar --title="$nothing" \
 			--button="  Ok  ":0 & exit
 		fi
@@ -516,7 +516,7 @@ if [ "$1" = topic ]; then
 					--button="       $notyet       ":1 \
 					--button="        $review        ":2 \
 					--text="$adv" \
-					--width=410 --height=150
+					--width=420 --height=150
 					ret=$?
 						if [ "$ret" -eq 2 ]; then
 							echo "3" > "$DC_tlt/cnfg8"
@@ -596,7 +596,7 @@ if [ "$1" = topic ]; then
 					--button="$onlynews":3 \
 					--button="$all":2 \
 					--text="  $cuestion_review2" \
-					--width=370 --height=140
+					--width=420 --height=150
 						ret=$? 
 						if [ "$ret" -eq 2 ]; then
 							rm -f "$DC_tlt/cnfg7"
@@ -706,7 +706,7 @@ if [ "$1" = topic ]; then
 				--button="       $notyet       ":1 \
 				--button="        $review        ":2 \
 				--text="$adv" \
-				--width=410 --height=150
+				--width=420 --height=150
 				ret=$? 
 					if [ "$ret" -eq 2 ]; then
 						rm -f "$DC_tlt/cnfg7"
@@ -846,7 +846,7 @@ if [ "$1" = topic ]; then
 					--button="       $notyet       ":1 \
 					--button="        $review        ":2 \
 					--text="$adv" \
-					--width=410 --height=150
+					--width=420 --height=150
 					ret=$?
 						if [ "$ret" -eq 2 ]; then
 							rm -f "$DC_tlt/cnfg7"
@@ -928,7 +928,7 @@ if [ "$1" = topic ]; then
 					--button="$onlynews":3 \
 					--button="$all":2 \
 					--text="  $cuestion_review2 " \
-					--width=370 --height=140
+					--width=420 --height=150
 						ret=$? 
 						if [ "$ret" -eq 2 ]; then
 							rm -f "$DC_tlt/cnfg7"
@@ -1037,7 +1037,7 @@ if [ "$1" = topic ]; then
 				--button="       $notyet       ":1 \
 				--button="        $review        ":2 \
 				--text="$adv" \
-				--width=410 --height=150
+				--width=420 --height=150
 					ret=$?
 					
 					if [ "$ret" -eq 2 ]; then

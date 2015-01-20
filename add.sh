@@ -9,7 +9,7 @@ function msg() {
 	yad --window-icon=idiomind --name=idiomind \
 	--image=$2 --on-top --text=" $1 " \
 	--image-on-top --center --sticky --button="Ok":0 \
-	--width=400 --height=130 --borders=5 \
+	--width=420 --height=150 --borders=5 \
 	--skip-taskbar --title="Idiomind"
 }
 
@@ -21,7 +21,7 @@ function internet() {
 	--image=info --name=idiomind \
 	--text=" $connection_err  \\n  " \
 	--image-on-top --center --sticky \
-	--width=300 --height=50 --borders=3 \
+	--width=420 --height=150 --borders=3 \
 	--skip-taskbar --title=Idiomind \
 	--button="  Ok  ":0 >&2; exit 1;}
 }
@@ -55,7 +55,7 @@ if [ $1 = n_t ]; then
 			jlb=$(echo ""$jlb" $snm")
 			$yad --name=idiomind --center --on-top --image=info \
 			--text=" <b>$name_eq   </b>\\n $name_eq2  <b>$jlb</b>   \\n" \
-			--image-on-top --width=400 --height=120 --borders=3 \
+			--image-on-top --width=420 --height=150 --borders=3 \
 			--skip-taskbar --window-icon=idiomind --sticky \
 			--title=Idiomind --button="$cancel":1 --button=gtk-ok:0
 			ret=$?
@@ -142,7 +142,7 @@ if [ $1 = n_t ]; then
 			jlb="$jlb $snme"
 			$yad --name=idiomind --center --on-top --image=info \
 			--text=" <b>$name_eq   </b>\\n $name_eq2  <b>$jlb</b>   \\n" \
-			--image-on-top --width=400 --height=120 --borders=3 \
+			--image-on-top --width=420 --height=150 --borders=3 \
 			--skip-taskbar --window-icon=idiomind --sticky \
 			--title=Idiomind --button="$cancel":1 --button=gtk-ok:0
 			ret=$?
@@ -1481,7 +1481,7 @@ elif [ $1 = prs ]; then
 		--image=info --name=idiomind \
 		--text=" $current_pros  " \
 		--fixed --sticky --buttons-layout=edge \
-		--width=350 --height=150  --borders=5 \
+		--width=420 --height=150  --borders=5 \
 		--skip-taskbar --window-icon=idiomind \
 		--title=Idiomind --button=gtk-cancel:3 --button=Ok:1
 			ret=$?
@@ -1508,9 +1508,9 @@ elif [ $1 = prs ]; then
 		
 		if [ -z "$key" ]; then
 			$yad --name=idiomind --center --on-top --image=error \
-			--text="  $no_key <a href='$LNK'> Google.</a>" \
+			--text="$no_key <a href='$LNK'> Google.</a>" \
 			--image-on-top --sticky --title="Idiomind" \
-			--width=450 --height=150 --button=gtk-ok:0 \
+			--width=420 --height=150 --button=gtk-ok:0 \
 			--skip-taskbar --window-icon=idiomind && \
 			[[ -d $DT_r ]] && rm -fr $DT_r
 			rm -f ls $lckpr & exit 1
@@ -1584,9 +1584,9 @@ elif [ $1 = prs ]; then
 			
 			if [ -z "$(cat info.ret)" ]; then
 				$yad --name=idiomind --center --on-top --image=error \
-				--text="  $key_err <a href='$LNK'>Google. </a>" \
+				--text="$key_err <a href='$LNK'>Google. </a>" \
 				--image-on-top --sticky --title="Idiomind" \
-				--width=450 --height=140 --borders=3 --button=gtk-ok:0 \
+				--width=420 --height=150 --borders=3 --button=gtk-ok:0 \
 				--skip-taskbar --window-icon=idiomind && \
 				[[ -d $DT_r ]] && rm -fr $DT_r
 				rm -f ls $lckpr & exit 1
@@ -1606,9 +1606,9 @@ elif [ $1 = prs ]; then
 				
 				if [ -z "$(cat info.ret)" ]; then
 					$yad --name=idiomind --center --on-top --image=error \
-					--text="  $key_err <a href='$LNK'>Google. </a>" \
+					--text="$key_err <a href='$LNK'>Google. </a>" \
 					--image-on-top --sticky --title="Idiomind" \
-					--width=450 --height=150 --button=gtk-ok:0 \
+					--width=420 --height=150 --button=gtk-ok:0 \
 					--skip-taskbar --window-icon=idiomind &
 					[[ -d $DT_r ]] && rm -fr $DT_r
 					rm -f ls $lckpr & break & exit 1
@@ -1982,7 +1982,7 @@ $trgt" >> ./wlog
 						fi
 						$yad --form --name=idiomind --class=idiomind \
 						--center --skip-taskbar --on-top \
-						--width=350 --height=300 --on-top --margins=4 \
+						--width=420 --height=150 --on-top --margins=4 \
 						--window-icon=idiomind \
 						--borders=0 --title="$tpe" \
 						--field="<b>  ! </b><small><small> $items_rest</small> </small><small><small>$logn</small></small>":txt "$log" \
@@ -2508,7 +2508,7 @@ $itm" >> ./wlog
 					if [ $(cat ./slog ./wlog | wc -l) -ge 1 ]; then
 						echo "$logs" | $yad --name=idiomind --class=idiomind \
 						--center --wrap --text-info --editable --skip-taskbar \
-						--width=350 --height=300 --on-top --margins=4 \
+						--width=420 --height=150 --on-top --margins=4 \
 						--fontname=vendana --window-icon=idiomind \
 						--button=Ok:0 --borders=0 --title="$tpe" \
 						--text=" <b>  ! </b><small><small> $items_rest</small></small>" \
