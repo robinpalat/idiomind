@@ -30,7 +30,7 @@ if [[ $1 = V1 ]]; then
 	fi
 	
 	echo "$nme" > $DT/.dzmx.x
-	n_i="$DS_pf/add n_i '$nme'"
+	n_i="$DS_pf/add.sh n_i '$nme'"
 	tgs=$(eyeD3 "$DM_tl/Feeds/conten/$nme.mp3")
 	trg=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
 	srce=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
@@ -50,10 +50,10 @@ if [[ $1 = V1 ]]; then
 		--width="$wth" --height="$eht" --center --no-headers \
 		--column=$lgtl:TEXT --column=$lgsl:TEXT --selectable-labels \
 		--expand-column=0 --limit=20 --text-align=center \
-		--button=gtk-save:"'$DS_pf/add' n_i '$nme'" \
-		--button=$listen:"'$DS_pf/audio/ply' '$nme'" \
+		--button=gtk-save:"'$DS_pf/add.sh' n_i '$nme'" \
+		--button=$listen:"'$DS_pf/tls.sh' s '$nme'" \
 		--button=gtk-go-up:3 --button=gtk-go-down:2 \
-		--dclick-action="'$DS_pf/audio/ply.sh' '$nme'"
+		--dclick-action="'$DS/addons/Learning with news/tls.sh' dclk '.audio'"
 		
 	else
 		ff=$(($nuw + 1))
@@ -118,7 +118,7 @@ elif [[ $1 = V2 ]]; then
 		--field="":lbl \
 		--field="<i>$exmp</i>\\n:lbl" \
 		--width="$wth" --height="$eht" --center \
-		--button="$delete":"'$DS_pf/del dlti' '$nme'" \
+		--button="$delete":"'$DS_pf/mngr.sh' dlti '$nme'" \
 		--button="$listen":"play '$DM_tlfk/words/$nme.mp3'" \
 		--button=gtk-go-up:3 --button=gtk-go-down:2
 
@@ -139,10 +139,10 @@ elif [[ $1 = V2 ]]; then
 		--width="$wth" --height="$eht" --center \
 		--column=$lgtl:TEXT --column=$lgsl:TEXT \
 		--expand-column=0 --limit=20 --selectable-labels \
-		--button="$delete":"'$DS_pf/del' dlti '$nme'" \
-		--button=$listen:"'$DS_pf/audio/ply' '$nme'" \
+		--button="$delete":"'$DS_pf/mngr.sh' dlti '$nme'" \
+		--button=$listen:"'$DS_pf/tls.sh' s '$nme'" \
 		--button=gtk-go-up:3 --button=gtk-go-down:2 \
-		--dclick-action="'$DS_pf/audio/ply.sh' '.audio'"
+		--dclick-action="'$DS/addons/Learning with news/tls.sh' dclk '.audio'"
 		
 	else
 		ff=$(($nuw + 1))

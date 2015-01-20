@@ -40,7 +40,7 @@ function set_lang() {
 	echo "$2" > $DC_s/cnfg10
 	echo "$1" >> $DC_s/cnfg10
 	$DS/stop.sh L
-	$DS/addons/Learning with news/stp.sh
+	"$DS/addons/Learning with news/tls.sh stop"
 	
 	if [ -f "$DC/topics/$1/.cnfg8" ]; then
 		LST=$(sed -n 1p "$DC/topics/$1/.cnfg8")

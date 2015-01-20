@@ -136,7 +136,7 @@ if [ -z "$1" ]; then
 		# rss feed auto-update
 		if [ "$(sed -n 1p "$DC/addons/Learning with news/.cnf")" = "TRUE" ]; then
 			(sleep 200
-			"$DS/addons/Learning with news/strt" A
+			"$DS/addons/Learning with news/strt.sh" A
 			) &
 		fi
 		
@@ -1119,7 +1119,7 @@ if [ "$1" = topic ]; then
 		dir2="$DC/addons/Learning with news"
 		DF="$DS/addons/Learning with news"
 		FEED=$(cat "$dir2/$lgtl/.rss")
-		ICON="$DF/img/rss.png"
+		ICON="$DF/images/rss.png"
 		c=$(echo $(($RANDOM%100000)))
 		STT="$(cat $DT/.uptf)"
 		
@@ -1168,9 +1168,9 @@ if [ "$1" = topic ]; then
 				rm -f $DT/*.x
 				"$DF/cnfg.sh" edit & exit 1
 			
-			else
+			elif [ $ret -eq 2 ]; then
 				rm -f $DT/*.x
-				"$DF/strt" & exit 1
+				"$DF/strt.sh" & exit 1
 			fi
 			
 	elif echo "$mde" | grep "wr"; then

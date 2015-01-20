@@ -21,7 +21,7 @@ if echo "$STT" | grep "Actualizando..."; then
 		if [ $ret -eq 1 ]; then
 			exit 1
 		elif [ $ret -eq 2 ]; then
-			"$DS/addons/Learning with news/stp.sh"
+			"$DS/addons/Learning with news/tls.sh stop"
 			"$DS/addons/Learning with news/cnfg.sh"
 		fi
 	exit 1

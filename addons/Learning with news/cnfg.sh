@@ -111,7 +111,7 @@ if [[ -z "$1" ]]; then
 		
 		elif [[ $ret -eq 4 ]]; then
 			sh "$dir2/$lgtl/subscripts/$st1"
-			"$DIR3/strt" & exit 1
+			"$DIR3/strt.sh" & exit 1
 		else
 			sed -i "1s/.*/$st2/" "$DIR1/.cnf"
 			exit 1
@@ -131,20 +131,20 @@ elif [[ $1 = edit ]]; then
 	slct=$(mktemp $DT/slct.XXXX)
 
 if [[ "$(cat "$drtc/cnfg0" | wc -l)" -ge 4 ]]; then
-dd="$DIR3/img/save.png
+dd="$DIR3/images/save.png
 $create_topic
-$DIR3/img/del.png
+$DIR3/images/del.png
 $delete_news
-$DIR3/img/del.png
+$DIR3/images/del.png
 $delete_saved
-$DIR3/img/rss.png
+$DIR3/images/rss.png
 $subcriptions"
 else
-dd="$DIR3/img/del.png
+dd="$DIR3/images/del.png
 $delete_news
-$DIR3/img/del.png
+$DIR3/images/del.png
 $delete_saved
-$DIR3/img/rss.png
+$DIR3/images/rss.png
 $subcriptions"
 fi
 
@@ -159,11 +159,11 @@ fi
 	slt=$(cat "$slct")
 	if  [[ "$ret" -eq 0 ]]; then
 		if echo "$slt" | grep -o "$create_topic"; then
-			"$DIR3/add" n_t
+			"$DIR3/add.sh" n_t
 		elif echo "$slt" | grep -o "$delete_news"; then
-			"$DIR3/del" dlns
+			"$DIR3/mngr.sh" dlns
 		elif echo "$slt" | grep -o "$delete_saved"; then
-			"$DIR3/del" dlkt
+			"$DIR3/mngr.sh" dlkt
 		elif echo "$slt" | grep -o "$subcriptions"; then
 			"$DIR3/cnfg.sh"
 		fi
