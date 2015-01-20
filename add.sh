@@ -131,60 +131,43 @@ if [ $1 = n_t ]; then
 		--skip-taskbar --borders=5 --button=gtk-ok:0 \
 		--field=" $name_for_new_topic: " "$nmt")
 			
-		jlb=$(echo "$jlbi" | sed -n 1p | cut -d "|" -f1 | sed s'/!//'g \
-		| sed s'/&//'g | sed s'/://'g | sed s'/\&//'g \
-		| sed s"/'//"g | sed 's/^[ \t]*//;s/[ \t]*$//' \
-		| sed 's/^\s*./\U&\E/g')
-		ABC=$(echo "$jlbi" | sed -n 2p)
-		
-		snme=$(cat $DC_tl/.cnfg1 | grep -Fxo "$jlb" | wc -l)
-		if [ "$snme" -ge 1 ]; then
-			jlb="$jlb $snme"
-			$yad --name=idiomind --center --on-top --image=info \
-			--text=" <b>$name_eq   </b>\\n $name_eq2  <b>$jlb</b>   \\n" \
-			--image-on-top --width=420 --height=150 --borders=3 \
-			--skip-taskbar --window-icon=idiomind --sticky \
-			--title=Idiomind --button="$cancel":1 --button=gtk-ok:0
-			ret=$?
+			jlb=$(echo "$jlbi" | sed -n 1p | cut -d "|" -f1 | sed s'/!//'g \
+			| sed s'/&//'g | sed s'/://'g | sed s'/\&//'g \
+			| sed s"/'//"g | sed 's/^[ \t]*//;s/[ \t]*$//' \
+			| sed 's/^\s*./\U&\E/g')
+			ABC=$(echo "$jlbi" | sed -n 2p)
 			
-			if [ "$ret" -eq 1 ]; then
-				rm "$DM_tl"/.rn & exit 1
+			snme=$(cat $DC_tl/.cnfg1 | grep -Fxo "$jlb" | wc -l)
+			if [ "$snme" -ge 1 ]; then
+				jlb="$jlb $snme"
+				$yad --name=idiomind --center --on-top --image=info \
+				--text=" <b>$name_eq   </b>\\n $name_eq2  <b>$jlb</b>   \\n" \
+				--image-on-top --width=420 --height=150 --borders=3 \
+				--skip-taskbar --window-icon=idiomind --sticky \
+				--title=Idiomind --button="$cancel":1 --button=gtk-ok:0
+				ret=$?
+				
+				[[ "$ret" -eq 1 ]] && rm "$DM_tl"/.rn && exit 1
+				
+			else
+				jlb="$jlb"
 			fi
-		else
-			jlb="$jlb"
-		fi
-		
-		if [ -z "$jlb" ]; then
-			rm "$DM_tl"/.rn & exit 1
 			
-		else
-			mkdir $DM_tl/"$jlb"
-			mkdir $DM_tl/"$jlb"/words
-			mkdir $DM_tl/"$jlb"/words/images
-			mkdir $DC_tl/"$jlb"
-			touch $DC_tl/"$jlb"/cnfg5
-			touch $DC_tl/"$jlb"/cnfg4
-			touch $DC_tl/"$jlb"/cnfg3
-			touch $DC_tl/"$jlb"/cnfg0
-			touch $DC_tl/"$jlb"/cnfg1
-			echo "$(date +%F)" > $DC_tl/"$jlb"/cnfg12
-			echo "1" > $DC_tl/"$jlb"/cnfg8
-			mkdir $DC_tl/"$jlb"/practice
-			cp $DS/practice/default/.* $DC_tl/"$jlb"/practice
-			cp -f $DS/default/tpc.sh $DC_tl/"$jlb"/tpc.sh
-			cd $DC_tl/"$jlb"
-			echo "$jlb" >> $DC_tl/.cnfg2
-			chmod +x $DC_tl/"$jlb"/tpc.sh
-			if [ -f $DT/ntpc ]; then
-				rm -f $DT/ntpc
+			if [[ -z "$jlb" ]]; then
+				rm "$DM_tl"/.rn && exit 1
+				
+			else
+				mkdir "$DC_tl/$jlb"
+				cp -f "$DS/default/tpc.sh" "$DC_tl/$jlb/tpc.sh"
+				chmod +x "$DC_tl/$jlb/tpc.sh"
+				[[ -f $DT/ntpc ]] && rm -f $DT/ntpc
+				
+				echo "$jlb" >> $DC_tl/.cnfg2
+				"$DC_tl/$jlb/tpc.sh"
+				$DS/mngr.sh mkmn
 			fi
-			$DC_tl/"$jlb"/tpc.sh
-			$DS/mngr.sh mkmn
-		fi
 		
-		[ "$?" -eq 1 ] && exit
 	fi
-	exit 1
 	
 elif [ $1 = n_i ]; then
 

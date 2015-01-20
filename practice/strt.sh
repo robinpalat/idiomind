@@ -14,6 +14,11 @@ $DS/stop.sh &
 && mv "$DC_tlt/Practice" "$DC_tlt/practice"
 cd "$DC_tlt/practice"
 
+[[ ! -f .iconf ]] && echo '1' > .iconf
+[[ ! -f .iconmc ]] && echo '1' > .iconmc
+[[ ! -f .iconlw ]] && echo '1' > .iconlw
+[[ ! -f .iconls ]] && echo '1' > .iconls
+
 if [[ -n "$1" ]]; then
 
 	if [ $1 = 1 ]; then

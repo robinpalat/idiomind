@@ -1,36 +1,35 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
-
+#0
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/others.conf
+
 $DS/stop.sh T
 gtdr="$(cd "$(dirname "$0")" && pwd)"
 topic=$(echo "$gtdr" | sed 's|\/|\n|g' | sed -n 8p)
 DC_tlt="$DC_tl/$topic"
-[[ "$(echo "$topic" | wc -c)" -gt 38 ]] \
-&& title="${topic:0:40}..." || title="$topic"
+DM_tlt="$DM_tl/$topic"
+
 
 if [ -d "$DC_tlt" ]; then
-	# check index ------------
+
+	if [ ! -d "$DM_tlt" ]; then
+		
+		mkdir "$DM_tlt" "$DM_tlt/words" "$DM_tlt/words/images"
+		cd "$DC_tlt"; touch cnfg0 cnfg1 cnfg2 cnfg3 cnfg4 cnfg5
+		mkdir ./practice
+		echo "$(date +%F)" > cnfg12
+		echo "1" > cnfg8
+		echo "--make dir"
+	fi
+
+	# check index
 	chk1="$DC_tlt/cnfg0"
 	chk2="$DC_tlt/cnfg1"
 	chk3="$DC_tlt/cnfg2"
 	chk4="$DC_tlt/cnfg3"
 	chk5="$DC_tlt/cnfg4"
 	chk6="$DC_tlt/cnfg10"
-	
-	if [[ -z "$cat chk1" ]]; then
-		cp -f "$DC_tlt/cnfg0~" "$DC_tlt/cnfg0"
-	fi
-	if [[ -z "$cat chk2" ]]; then
-		cp -f "$DC_tlt/cnfg1~" "$DC_tlt/cnfg1"
-	fi
-	if [[ -z "$cat chk3" ]]; then
-		cp -f "$DC_tlt/cnfg2~" "$DC_tlt/cnfg2"
-	fi
-	if [[ -z "$cat chk6" ]]; then
-		cp -f "$DC_tlt/.cnfg10~" "$DC_tlt/cnfg10"
-	fi
 	
 	if [ -n "$(cat "$chk1" | sort -n | uniq -dc)" ]; then
 		cat "$chk1" | awk '!array_temp[$0]++' > $DT/ls0.x
@@ -60,13 +59,14 @@ if [ -d "$DC_tlt" ]; then
 	chk5=$(cat "$DC_tlt/cnfg4" | wc -l)
 	stts=$(cat "$DC_tlt/cnfg8")
 	
-	# try repair if something wrong ------------
+	# try fix if something is wrong
 	if [[ $(($chk4 + $chk5)) != $chk1 \
 	|| $(($chk2 + $chk3)) != $chk1 || $stts = 13 ]]; then
 		sleep 1
 		notify-send -i idiomind "$index_err1" "$index_err2" -t 3000 &
 		
-		rm -f $DT/ind $DT/ind_ok
+		[[ -f $DT/ind ]] && rm -f $DT/ind
+		[[ -f $DT/ind_ok ]] && rm -f $DT/ind_ok
 		
 		cd "$DM_tl/$topic"
 		for i in *.mp3 ; do [[ ! -s ${i} ]] && rm ${i} ; done
@@ -117,7 +117,7 @@ if [ -d "$DC_tlt" ]; then
 		if [ $? -ne 0 ]; then
 			yad --name=idiomind --image=error --button=gtk-ok:1\
 			--text=" $files_err\n\n" --image-on-top --sticky  \
-			--width=380 --height=120 --borders=5 --title=Idiomind \
+			--width=420 --height=150 --borders=5 --title=Idiomind \
 			--skip-taskbar --center --window-icon=idiomind
 			$DS/mngr.sh dlt & exit
 		fi
@@ -165,13 +165,14 @@ if [ -d "$DC_tlt" ]; then
 		
 		$DS/mngr.sh mkmn
 	fi
-	# set ------------
 	
+	# set
 	if cat "$DC_tl/.cnfg3" | grep -Fxo "$topic"; then
 		echo "$topic" > $DC_s/cnfg8
 		echo istll >> $DC_s/cnfg8
 		echo "$topic" > $DC_tl/.cnfg8
 		echo istll >> $DC_tl/.cnfg8
+		echo "$topic" > $DC_s/cnfg6
 	else
 		echo "$topic" > $DC_s/cnfg8
 		echo wn >> $DC_s/cnfg8
@@ -179,7 +180,8 @@ if [ -d "$DC_tlt" ]; then
 		echo wn >> $DC_tl/.cnfg8
 		echo "$topic" > $DC_s/cnfg6
 	fi
-	# look status ------------
+	
+	# look status
 	if [[ $(cat "$DC_tl/.cnfg1" | grep -Fxon "$topic" \
 	| sed -n 's/^\([0-9]*\)[:].*/\1/p') -ge 31 ]]; then
 		if [ -f "$DC_tl/$topic/cnfg9" ]; then
@@ -223,15 +225,11 @@ if [ -d "$DC_tlt" ]; then
 	
 	sleep 1
 
-	if [ "$1" = n_i ]; then
-		"$DS/add.sh n_i"
-	fi
 	notify-send --icon=idiomind \
 	"$topic" "$its_your_topic_now" -t 2000 & exit 1
 else
-	yad --name=idiomind --image="error" --sticky --center \
-	--text="  <b>$path_err  </b>\\n  $topic\\n" --on-top \
-	--image-on-top --width=400 --height=80 --borders=3 \
-	--skip-taskbar --window-icon=idiomind \
-	--title="$err" --button="Ok:0" & exit
+	yad --name=idiomind --image=error --sticky --center \
+	--text=" $path_err\n $topic\n" --on-top --image-on-top \
+	--width=420 --height=150 --skip-taskbar --window-icon=idiomind \
+	--title="$err" --button="Ok:0" & exit 1
 fi

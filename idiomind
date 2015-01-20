@@ -42,90 +42,23 @@ if [ -z "$1" ]; then
 		done
 
 		# screen size
+		[[ ! -f $DC_s/cnfg18 ]] && touch $DC_s/cnfg18
 		wh=$DC_s/cnfg18
 		xrandr | grep '*' | awk '{ print $1 }' > $wh
 		sed -i 's/x/\n/' $wh
 		y=$(sed -n 2p $wh)
-		
-		if [ $y -gt 1200 ]; then
-			echo 450 >> $wh
-			echo 520 >> $wh
-			echo 500 >> $wh
-			echo 320 >> $wh
-			echo 260 >> $wh
-			echo 190 >> $wh
-			echo 125 >> $wh
-			echo 380 >> $wh
-			echo 120 >> $wh
-			echo 480 >> $wh
-			echo 400 >> $wh
-			echo 410 >> $wh
-		elif [ $y -ge 1080 ]; then
-			echo 450 >> $wh
-			echo 520 >> $wh
-			echo 500 >> $wh
-			echo 320 >> $wh
-			echo 260 >> $wh
-			echo 190 >> $wh
-			echo 100 >> $wh
-			echo 300 >> $wh
-			echo 120 >> $wh
-			echo 460 >> $wh
-			echo 400 >> $wh
-			echo 410 >> $wh
-		elif [ $y -ge 1024 ]; then
-			echo 430 >> $wh
-			echo 490 >> $wh
-			echo 490 >> $wh
-			echo 320 >> $wh
-			echo 260 >> $wh
-			echo 190 >> $wh
-			echo 100 >> $wh
-			echo 320 >> $wh
-			echo 120 >> $wh
-			echo 420 >> $wh
-			echo 390 >> $wh
-			echo 410 >> $wh
-		elif [ $y -gt 700 ]; then
-			echo 420 >> $wh
-			echo 480 >> $wh
-			echo 470 >> $wh
-			echo 320 >> $wh
-			echo 230 >> $wh
-			echo 170 >> $wh
-			echo 100 >> $wh
-			echo 300 >> $wh
-			echo 110 >> $wh
-			echo 380 >> $wh
-			echo 390 >> $wh
-			echo 410 >> $wh
-		elif [ $y -gt 599 ]; then
-			echo 400 >> $wh
-			echo 460 >> $wh
-			echo 450 >> $wh
-			echo 300 >> $wh
-			echo 230 >> $wh
-			echo 170 >> $wh
-			echo 100 >> $wh
-			echo 250 >> $wh
-			echo 100 >> $wh
-			echo 350 >> $wh
-			echo 390 >> $wh
-			echo 410 >> $wh
-		elif [ $y -gt 400 ]; then
-			echo 400 >> $wh
-			echo 460 >> $wh
-			echo 400 >> $wh
-			echo 280 >> $wh
-			echo 500 >> $wh
-			echo 320 >> $wh
-			echo 500 >> $wh
-			echo 320 >> $wh
-			echo 100 >> $wh
-			echo 350 >> $wh
-			echo 380 >> $wh
-			echo 400 >> $wh
-		fi
+		echo $(($y*42/100)) >> $wh
+		echo $(($y*48/100)) >> $wh
+		echo $(($y*46/100)) >> $wh
+		echo $(($y*30/100)) >> $wh
+		echo $(($y*24/100)) >> $wh
+		echo $(($y*18/100)) >> $wh
+		echo $(($y*12/100)) >> $wh
+		echo $(($y*35/100)) >> $wh
+		echo $(($y*11/100)) >> $wh
+		echo $(($y*44/100)) >> $wh
+		echo $(($y*37/100)) >> $wh
+		echo $(($y*38/100)) >> $wh
 		
 		# weekly report
 		if ([ "$(date +%u)" = 7 ] && \
@@ -197,7 +130,7 @@ if [ -z "$1" ]; then
 		echo "$(date +%d)" > $DC_s/cnfg15
 		$DS/mngr.sh mkmn &
 	}
-	
+
 	yad --width=175 --height=220 --name=idiomind \
 	--geometry=185x318-300-$(sed -n 12p $DC_s/cnfg18) \
 	--fixed --title="Idiomind" --no-buttons \

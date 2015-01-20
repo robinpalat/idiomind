@@ -349,15 +349,15 @@ level=$(echo "$upld" | cut -d "|" -f5)
 [[ $level = $advanced ]] && level=3
 
 if [ -z $Ctgry ]; then
-	yad --window-icon=idiomind \
-	--image=info --on-top --name=idiomind \
-	--text="  $categry_err\\n  " \
-	--image-on-top --center --sticky \
-	--width=320 --height=100 --borders=5 \
-	--skip-taskbar --title="Idiomind" \
-	--button="  Ok  ":0
-	$DS/ifs/upld.sh &
-	exit 1
+yad --window-icon=idiomind \
+--image=info --on-top --name=idiomind \
+--text="  $categry_err\\n  " \
+--image-on-top --center --sticky \
+--width=320 --height=100 --borders=5 \
+--skip-taskbar --title="Idiomind" \
+--button="  Ok  ":0
+$DS/ifs/upld.sh &
+exit 1
 fi
 
 curl -v www.google.com 2>&1 | \
@@ -376,14 +376,14 @@ wget http://idiomind.sourceforge.net/info/SITE_TMP
 source $DT/SITE_TMP && rm -f $DT/SITE_TMP
 
 if [ -z "$FTPHOST" ]; then
-	yad --window-icon=idiomind --name=idiomind \
-	--image=dialog-warning --on-top \
-	--text=" $site_err\\n " \
-	--image-on-top --center --sticky \
-	--width=320 --height=100 --borders=5 \
-	--skip-taskbar --title="Idiomind" \
-	--button="  Ok  ":0 &
-	exit 1
+yad --window-icon=idiomind --name=idiomind \
+--image=dialog-warning --on-top \
+--text=" $site_err\\n " \
+--image-on-top --center --sticky \
+--width=320 --height=100 --borders=5 \
+--skip-taskbar --title="Idiomind" \
+--button="  Ok  ":0 &
+exit 1
 fi
 
 Author=$(echo "$upld" | cut -d "|" -f2)
@@ -468,7 +468,7 @@ mkdir "$DT/$tpc/.audio"
 n=1
 while [ $n -le $(cat "$DC_tlt/cnfg5" | wc -l) ]; do
 	cp=$(sed -n "$n"p "$DC_tlt/cnfg5")
-	cp "$DM/topics/$lgtl/.share/$cp" "$DT/$tpc/.audio/$cp"
+	cp "$DM_tl/.share/$cp" "$DT/$tpc/.audio/$cp"
 	let n++
 done
 
@@ -507,13 +507,13 @@ END_SCRIPT
 exit=$?
 
 if [ $exit = 0 ] ; then
-	[[ $(echo "$tpc" | wc -c) -gt 40 ]] && tpc="${tpc:0:40}..."
-    cp -f "$DT/cnfg12" "$DM_t/saved/$tpc.cnfg12"
-    info="  $tpc\n\n<b> $saved</b>\n"
-    image=dialog-ok
+[[ $(echo "$tpc" | wc -c) -gt 40 ]] && tpc="${tpc:0:40}..."
+cp -f "$DT/cnfg12" "$DM_t/saved/$tpc.cnfg12"
+info="  $tpc\n\n<b> $saved</b>\n"
+image=dialog-ok
 else
-    info=" $upload_err"
-    image=dialog-warning
+info=" $upload_err"
+image=dialog-warning
 fi
 
 yad --window-icon=idiomind --name=idiomind \

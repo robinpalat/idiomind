@@ -4,34 +4,46 @@
 source /usr/share/idiomind/ifs/c.conf
 source /usr/share/idiomind/ifs/trans/$lgs/rss.conf
 
+DSF="$DS/addons/Learning with news"
+DCF="$DC/addons/Learning with news"
+
+function msg() {
+	
+	yad --window-icon=idiomind --name=idiomind \
+	--image=$2 --on-top --text=" $1 " \
+	--image-on-top --center --sticky --button="Ok":0 \
+	--width=420 --height=150 --borders=5 \
+	--skip-taskbar --title="Idiomind"
+}
+
 [[ -f $DT/.uptf ]] && STT=$(cat $DT/.uptf) || STT=""
 if  [[ -z "$(cat $DC/addons/dict/.dicts)" ]]; then
 	sleep 1
-	(sleep 2 && $DS/addons/Dics/cnfg.sh "" f "$select_dicts")
+	(sleep 2 && $DS/addons/Dics/cnfg.sh "" f "$no_dictionary")
 	if  [[ -z "$(cat $DC/addons/dict/.dicts)" ]]; then
 		exit 1
 	fi
 fi
 if echo "$STT" | grep "Actualizando..."; then
-	yad --image=info --geometry=350x80 --window-icon=idiomind \
-	--title=Info --center --borders=15 \
-	--on-top --skip-taskbar --button=$(echo "$btn" | sed -n 1p):2 \
-	--button=Ok:1 --text=" <i>$(echo "$int" | sed -n 1p)</i>"
+	yad --image=info --width=420 --height=150 \
+	--window-icon=idiomind \
+	--title=Info --center --borders=5 \
+	--on-top --skip-taskbar --button="$cancel":2 \
+	--button=Ok:1 --text=" $updating"
 	ret=$?
 		if [ $ret -eq 1 ]; then
 			exit 1
 		elif [ $ret -eq 2 ]; then
-			"$DS/addons/Learning with news/tls.sh stop"
-			"$DS/addons/Learning with news/cnfg.sh"
+			"$DSF/tls.sh stop"
 		fi
 	exit 1
 fi
 sleep 1
 
 dct="$DS/addons/Dics/cnfg.sh"
-feed=$(sed -n 1p "$DC/addons/Learning with news/$lgtl/link")
-rsrc=$(cat "$DC/addons/Learning with news/$lgtl/.rss")
-DS_pf="$DS/addons/Learning with news"
+feed=$(sed -n 1p "$DCF/$lgtl/link")
+rsrc=$(cat "$DCF/$lgtl/.rss")
+
 icon=$DS/images/cnn.png
 date=$(date "+%a %d %B")
 c=$(echo $(($RANDOM%1000)))
@@ -45,13 +57,13 @@ if [ ! -d $DM_tl/Feeds ]; then
 	mkdir $DM_tl/Feeds/kept/words
 	mkdir $DC_tl/Feeds/
 	
-	if [ ! -d "$DC/addons/Learning with news/$lgtl" ]; then
-		mkdir "$DC/addons/Learning with news/$lgtl"
-		mkdir "$DC/addons/Learning with news/$lgtl/subscripts"
-		cp $DS_pf/examples/$lgtl \
-		"$DC/addons/Learning with news/$lgtl/subscripts/Example"
-		cp $DS_pf/examples/$lgtl.txt \
-		"$DC/addons/Learning with news/$lgtl/subscripts/Example.txt"
+	if [ ! -d "$DCF/$lgtl" ]; then
+		mkdir "$DCF/$lgtl"
+		mkdir "$DCF/$lgtl/subscripts"
+		cp $DSF/examples/$lgtl \
+		"$DCF/$lgtl/subscripts/Example"
+		cp $DSF/examples/$lgtl.txt \
+		"$DCF/$lgtl/subscripts/Example.txt"
 	fi
 	
 	echo '#!/bin/bash
@@ -73,12 +85,13 @@ exit 1' > $DC_tl/Feeds/tpc.sh
 fi
 
 if [ -n "$feed" ]; then
-	curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
+	curl -v www.google.com 2>&1 | \
+	grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
 	yad --window-icon=idiomind --on-top \
 	--image=info --name=idiomind \
 	--text=" $connection_err  \\n" \
 	--image-on-top --center --sticky \
-	--width=340 --height=50 --borders=3 \
+	--width=420 --height=150 --borders=3 \
 	--skip-taskbar --title=Idiomind \
 	--button=Ok:0 >&2; exit 1;}
 	
@@ -104,7 +117,7 @@ if [ -n "$feed" ]; then
 		--image=info --name=idiomind \
 		--text="<b>$link_err</b>" \
 		--image-on-top --center --sticky \
-		--width=380 --height=50 --borders=3 \
+		--width=420 --height=150 --borders=3 \
 		--skip-taskbar --title=Idiomind \
 		--button=Ok:0 &
 		rm -fr $DT_r .rss & exit 1
@@ -146,9 +159,8 @@ if [ -n "$feed" ]; then
 							sox $DT_r/s.wav "$nme.mp3"
 						else
 							rm -fr $DT_r $DT/.uptf $DT/.rss
-							$yad --image=error --button=gtk-ok:1 \
-							--text=" <b>$festival_err $lgtl</b> " \
-							--on-top --skip-taskbar & break & exit 1
+							msg "$festival_err $lgtl" error
+							break && exit
 						fi
 					else
 						cd $DT_r
@@ -166,9 +178,8 @@ if [ -n "$feed" ]; then
 					elif [ $lg = japanese ]; then
 
 						rm -fr $DT_r $DT/.uptf $DT/.rss
-						$yad --image=error --button=gtk-ok:1 \
-						--text=" <b>$espeak_err</b> " \
-						--on-top --skip-taskbar & break & exit 1
+						msg "$espeak_err $lgtl" error
+						break && exit
 					fi
 					espeak "$trgt" -v $lg -k 1 -p 65 -a 80 -s 120 -w $DT_r/s.wav
 					sox $DT_r/s.wav "$nme.mp3"

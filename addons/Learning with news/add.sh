@@ -14,7 +14,7 @@ if [[ $1 = n_i ]]; then
 	if [ $info2 -ge 50 ]; then
 		$yad --center --fixed --image=info \
 		--image-on-top --on-top --fixed --sticky \
-		--width=220 --height=120 \
+		--width=420 --height=150 \
 		--skip-taskbar --window-icon=idiomind --title=" " \
 		--button=Ok:1 && exit 1
 	fi
@@ -42,7 +42,7 @@ if [[ $1 = n_i ]]; then
 				$yad --name=idiomind --center --on-top --image=info \
 				--text=" <b>$tpe    </b>\\n\\n $words_max  \\n" \
 				--image-on-top --fixed --sticky --title="$tpe" \
-				--width=230 --height=120 --borders=3 --button=gtk-ok:0 \
+				--width=420 --height=150 --borders=3 --button=gtk-ok:0 \
 				--skip-taskbar --window-icon=idiomind && exit 1
 			fi
 		
@@ -51,7 +51,7 @@ if [[ $1 = n_i ]]; then
 			--image="info" --name=idiomind \
 			--text="<b> $connection_err  \\n  </b>" \
 			--image-on-top --center --sticky \
-			--width=300 --height=120 --borders=3 \
+			--width=420 --height=150 --borders=3 \
 			--skip-taskbar --title="Idiomind" \
 			--button="  Ok  ":0 & exit 1
 			 >&2; exit 1;}
@@ -83,7 +83,7 @@ if [[ $1 = n_i ]]; then
 				$yad --name=idiomind --center --on-top --image=info \
 				--text=" <b>$tpe    </b>\\n\\n $sentences_max \\n" \
 				--image-on-top --fixed --sticky --title="$tpe" \
-				--width=230 --height=120 --borders=3 --button=gtk-ok:0 \
+				--width=420 --height=150 --borders=3 --button=gtk-ok:0 \
 				--skip-taskbar --window-icon=idiomind && exit 1
 			fi
 			
@@ -92,7 +92,7 @@ if [[ $1 = n_i ]]; then
 			--image="info" --name=idiomind \
 			--text="<b> $connection_err  \\n  </b>" \
 			--image-on-top --center --sticky \
-			--width=300 --height=120 --borders=3 \
+			--width=420 --height=150 --borders=3 \
 			--skip-taskbar --title="Idiomind" \
 			--button="  Ok  ":0 & exit 1
 			 >&2; exit 1;}
@@ -129,7 +129,7 @@ elif [[ $1 = n_t ]]; then
 		--name=idiomind --center --skip-taskbar \
 		--text=" <b>$topics_max  </b>" \
 		--image-on-top --fixed --sticky --on-top \
-		--width=230 --height=120 --borders=3 \
+		--width=420 --height=150 --borders=3 \
 		--window-icon=idiomind \
 		--button=gtk-ok:0
 		exit 1

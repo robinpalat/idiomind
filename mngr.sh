@@ -12,8 +12,6 @@ if [ $1 = edit ]; then
 	ni="$DC_tl/$tpc/cnfg1"
 	bi=$(cat "$DC_tl/$tpc/cnfg2" | wc -l)
 	nstll=$(grep -Fxo "$tpc" "$DC_tl"/.cnfg3)
-	eht=$(sed -n 7p $DC_s/cnfg18)
-	wth=$(sed -n 8p $DC_s/cnfg18)
 	slct=$(mktemp $DT/slct.XXXX)
 	
 if [ -z "$nstll" ]; then
@@ -61,8 +59,8 @@ $DS/images/pdf.png
 $topdf"
 fi
 fi
-	echo "$dd" | yad --list --on-top --expand-column=2 --center \
-	--width=240 --name=idiomind --class=idmnd \
+	echo "$dd" | yad --list --on-top --expand-column=2 \
+	--width=240 --name=idiomind --center \
 	--height=240 --title="$tpc" --window-icon=idiomind \
 	--buttons-layout=end --no-headers --skip-taskbar \
 	--borders=0 --button=Ok:0 --column=icon:IMG \
@@ -269,6 +267,10 @@ elif [ "$1" = mkok- ]; then
 	
 #--------------------------------
 elif [ "$1" = edt ]; then
+
+	eht=$(sed -n 7p $DC_s/cnfg18)
+	wth=$(sed -n 8p $DC_s/cnfg18)
+	
 	dct="$DS/addons/Dics/cnfg.sh"
 	cnf=$(mktemp $DT/cnf.XXXX)
 	edta=$(sed -n 17p ~/.config/idiomind/s/cnfg1)
@@ -309,7 +311,7 @@ elif [ "$1" = edt ]; then
 		imge="$DS/add.sh img '$nme' w"
 
 		$yad --form --wrap --center --name=idiomind --class=idmnd \
-		--width=600 --height=450 --always-print-result \
+		--width=$wth --height=$eht --always-print-result \
 		--borders=15 --columns=2 --align=center \
 		--buttons-layout=end --title=" $nme" --separator="\\n" \
 		--fontname="Arial" --scroll --window-icon=idiomind \
@@ -720,7 +722,7 @@ elif [ $1 = dli ]; then
 	if [ -f "$flw" ]; then
 
 		$yad --fixed --scroll --center \
-		--title="$confirm" --width=400 --height=140 \
+		--title="$confirm" --width=420 --height=150 \
 		--on-top --image=dialog-question \
 		--skip-taskbar --window-icon=idiomind \
 		--text="  <b>$delete_word</b> " \
@@ -755,7 +757,7 @@ elif [ $1 = dli ]; then
 			
 	elif [ -f "$fls" ]; then
 		$yad --fixed --center --scroll \
-		--title="$confirm" --width=400 --height=140 \
+		--title="$confirm" --width=420 --height=150 \
 		--on-top --image=dialog-question --skip-taskbar \
 		--text="  <b>$delete_sentence</b> " \
 		--window-icon=idiomind \
@@ -785,7 +787,7 @@ elif [ $1 = dli ]; then
 			
 	elif [ ! -f "$flw" ] || [ ! -f "$flw" ]; then
 		$yad --fixed --center --scroll \
-		--title="$confirm" --width=400 --height=140 \
+		--title="$confirm" --width=420 --height=150 \
 		--on-top --image=dialog-question --skip-taskbar \
 		--text="  <b>$delete_item</b> " \
 		--window-icon=idiomind \
@@ -818,7 +820,7 @@ elif [ $1 = dlt ]; then
 	$yad --name=idiomind --center \
 	--image=dialog-question --sticky --on-top \
 	--text="  <b>$delete_topic</b> \n\n\t$tpc \n" --buttons-layout=end \
-	--width=400 --height=140 --borders=5 \
+	--width=420 --height=150 --borders=5 \
 	--skip-taskbar --window-icon=idiomind \
 	--title="$confirm" --button=gtk-delete:0 --button="$cancel":1
 
@@ -869,6 +871,9 @@ elif [ $1 = mkmn ]; then
 	[[ -f ./cnfg3 ]] && rm ./cnfg3
 	[[ -f ./cnfg5 ]] && rm ./cnfg5
 	[[ -f ./cnfg4 ]] && rm ./cnfg4
+	[[ -f ./cnfg8 ]] && rm ./cnfg8
+	[[ -f ./cnfg12 ]] && rm ./cnfg12
+	[[ -d ./practice ]] && rm -r ./practice
 	[[ -f ./tpc.sh ]] && rm ./tpc.sh
 	[[ -f ./.cnfg11 ]] && rm ./.cnfg11
 	ls -t -d -N * > $DC_tl/.cnfg1
