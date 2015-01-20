@@ -1,5 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
+
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/others.conf
 
@@ -87,8 +88,8 @@ elif [ -z "$1" ]; then
 	
 		if [ "$ret" -eq 2 ]; then
 			cd ~/
-			add=$($yad --center --on-top --title=" " \
-				--borders=5 --file-filter="*.en *.es *.de *.pt *.it *.fr *.ja" \
+			add=$($yad --center --on-top --title=" " --borders=5 \
+				--file-filter="*.en *.es *.de *.pt *.it *.fr *.ja" \
 				--window-icon=idiomind --skip-taskbar --title=" " \
 				--file --width=600 --height=500)
 				
@@ -100,7 +101,7 @@ elif [ -z "$1" ]; then
 					lg=$(sed -n 2p "$add" | sed 's/\.//g' | awk '{print ($3)}')
 					cp -f "$add" "$dir/disables/$nm.$lg"
 				else
-					$yad --name=idiomind --center --title=" " \
+					yad --name=idiomind --center --title=" " \
 					--text=" <b>$install_err </b>\\n" --image=info \
 					--image-on-top --fixed --sticky --title="Info" --on-top \
 					--width=230 --height=80 --borders=3 --button="gtk-ok:0" \

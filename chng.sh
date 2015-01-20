@@ -81,7 +81,7 @@ elif [ "$1" != chngi ]; then
 			align="--text-align=left"
 		else
 			lgtl=$(echo "$lgtl" | awk '{print tolower($0)}')
-			text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/$lgtl'>$find_topics</a>\t</small></small>"
+			text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/$lgtl'>$find_topics</a>   </small></small>"
 			align="--text-align=right"
 		fi
 		[[ -f $DC_tl/.cnfg1 ]] && info2=$(cat $DC_tl/.cnfg1 | wc -l) || info2=""
@@ -91,13 +91,11 @@ elif [ "$1" != chngi ]; then
 		--class=idiomind --center --separator="" $align\
 		"$text" --width=$wth --height=$eht --ellipsize=END \
 		--no-headers --list --window-icon=idiomind --borders=5 \
-		--button="gtk-add":3 --button="$ok":0 --button="$close":1 \
+		--button="gtk-add":3 --button="$ok":0 \
 		--title="$topics" --column=img:img --column=File:TEXT)
 			ret=$?
 			if [ $ret -eq 3 ]; then
 				$DS/add.sh n_t
-				exit 1
-			elif [ $ret -eq 1 ]; then
 				exit 1
 			elif [ $ret -eq 0 ]; then
 				if [ -n "$1" ]; then

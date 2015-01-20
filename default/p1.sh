@@ -48,17 +48,15 @@ if [[ "$(echo "$nms" | wc -w)" -eq "1" ]]; then
 	exmp1=$(echo "$exm1" \
 	| sed "s/"$trgt"/<span background='#CFFF8B'>"$trgt"<\/\span>/g")
 	
-	$YAD --columns=1 --form \
+	YAD --columns=1 --form --width=$wth --height=$eht --center \
 	--window-icon=idiomind --scroll --text-align=center \
 	--skip-taskbar --center --title="$MPG " --borders=5 \
 	--quoted-output --on-top --selectable-labels \
-	--text="<big><big><big>$trgt</big></big></big>\\n\\n\
-<i>$src</i>\\n\\n" \
+	--text="<big><big><big>$trgt</big></big></big>\n\n<i>$src</i>\n\n" \
 	--field="":lbl \
 	--field="<i><span color='#808080'>$exmp1\
 	</span></i>\\n:lbl" "$dfnts" \
 	"$ntess" \
-	--width=$wth --height=$eht --center \
 	"$listen" --button=gtk-go-up:3 --button=gtk-go-down:2
 	
 else
@@ -77,7 +75,7 @@ else
 	src=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
 	lwrd=$(echo "$tgs" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' | tr '_' '\n')
 	
-	echo "$lwrd" | awk '{print $0""}' | $YAD --list \
+	echo "$lwrd" | awk '{print $0""}' | yad --list \
 	--window-icon=idiomind --scroll --no-headers \
 	--skip-taskbar --center --title=" " --borders=5 \
 	--on-top --selectable-labels --expand-column=0 \

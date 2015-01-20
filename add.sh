@@ -259,12 +259,11 @@ elif [ $1 = n_i ]; then
 	
 	if sed -n 1p $DC_s/cnfg3 | grep TRUE; then
 		sx='120x100'
-		[[ $(echo "$txt" | wc -c) -ge 180 ]] && h=260 || h=170
 		lzgpr=$($yad --form --center --always-print-result \
 		--text-info --on-top --window-icon=idiomind --skip-taskbar \
 		--separator="\n" --align=right "$img" \
 		--name=idiomind --class=idiomind \
-		--borders=0 --title=" " --width=360 --height=$h \
+		--borders=0 --title=" " --width=360 --height=170 \
 		--field=" <small><small>$lgtl</small></small>":TXT "$txt" \
 		--field="<small><small>$topic</small></small>:CB" "$ttle!$new *!$tpcs" "$field" \
 		--button="$image":3 \
@@ -278,12 +277,11 @@ elif [ $1 = n_i ]; then
 		cd $HOME
 		txt2="$5"
 		sx='180x160'
-		[[ $(echo "$txt" | wc -c) -ge 180 ]] && h=360 || h=260
 		auds="--button=Audio:$DS/ifs/audio/cnfg.sh pnl '$DT_r' 10"
 		rec="--button=gtk-media-record:$DS/ifs/tls.sh rec '$DT_r' '10'"
 		ls="--button=Play:play $DT_r/audtm.mp3"
 		lzgpr=$($yad --separator="\\n" --skip-taskbar \
-		--width=400 --height=$h --form --on-top --name=idiomind \
+		--width=400 --height=260 --form --on-top --name=idiomind \
 		--class=idiomind --window-icon=idiomind "$img" --center "$ls" "$rec" \
 		--button="$image":3 --always-print-result --align=right \
 		--button=gtk-ok:0 --borders=2 --title=" " \

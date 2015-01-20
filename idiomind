@@ -46,7 +46,7 @@ if [ -z "$1" ]; then
 		xrandr | grep '*' | awk '{ print $1 }' > $wh
 		sed -i 's/x/\n/' $wh
 		y=$(sed -n 2p $wh)
-
+		
 		if [ $y -gt 1200 ]; then
 			echo 450 >> $wh
 			echo 520 >> $wh
@@ -327,14 +327,14 @@ if [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
 				fi
 
 				if [ ! -d "$DM_t/$language_target" ]; then
-					mkdir "$DM_t/$language_target"
-					mkdir "$DM_t/$language_target/.share"
-					mkdir "$DC/topics/$language_target"
-					mkdir "$DC_a/Learning with news/$language_target"
-					mkdir "$DC_a/Learning with news/$language_target/subscripts"
-					"$DS/addons/Learning with news/examples/$language_target"
-					cp -f "$DS/addons/Learning with news/examples/$language_target" \
-					"$DC_a/Learning with news/$language_target/subscripts/Example"
+				mkdir "$DM_t/$language_target"
+				mkdir "$DM_t/$language_target/.share"
+				mkdir "$DC/topics/$language_target"
+				mkdir "$DC_a/Learning with news/$language_target"
+				mkdir "$DC_a/Learning with news/$language_target/subscripts"
+				"$DS/addons/Learning with news/examples/$language_target"
+				cp -f "$DS/addons/Learning with news/examples/$language_target" \
+				"$DC_a/Learning with news/$language_target/subscripts/Example"
 				fi
 				mkdir "$DM/topics/$language_target/$inm"
 				mkdir "$DC/topics/$language_target/$inm"
@@ -453,7 +453,7 @@ if [ "$1" = topic ]; then
 			--ellipsize=END --image-on-top --always-print-result \
 			--width="$wth" --height="$eht" --borders=0 \
 			--button="Play":$DS/play.sh \
-			--button="$delete":"$DS/mngr.sh dlt" --button="$close":2
+			--button="$delete":"$DS/mngr.sh dlt"
 					
 				if [ $ret -eq 2 ]; then
 					
@@ -526,7 +526,6 @@ if [ "$1" = topic ]; then
 							cp -f "$ls0" "$ls1" && idiomind topic & exit 1
 						fi 
 				fi
-				echo "$nt"
 				yad --align=center --borders=80 \
 				--text="<u><b>$learned</b></u>   * $new_items ($tb1).\\n$time_review: $tdays" \
 				--bar="":NORM $RM \
@@ -549,7 +548,7 @@ if [ "$1" = topic ]; then
 				--tab=" $notes " \
 				--ellipsize=END --image-on-top --always-print-result \
 				--width="$wth" --height="$eht" --borders=0 \
-				--button="$review":4 --button="$edit":3 --button="$close":2 >/dev/null 2>&1
+				--button="$review":4 --button="$edit":3 >/dev/null 2>&1
 			else
 				cat "$ls1" | awk '{print $0"\n"}' | yad \
 				--no-headers --list --plug=$KEY --tabnum=1 \
@@ -576,7 +575,7 @@ if [ "$1" = topic ]; then
 				--ellipsize=END --image-on-top --always-print-result \
 				--width="$wth" --height="$eht" --borders=0 \
 				--button="Play":$DS/play.sh --button="$practice":5 \
-				--button="$edit":3 --button="$close":2
+				--button="$edit":3
 				
 			fi
 				ret=$?
@@ -613,8 +612,7 @@ if [ "$1" = topic ]; then
 							rm -f "$DC_tlt/cnfg7" && idiomind topic & exit 1
 						fi
 					
-				elif [ $ret -eq 2 ]; then
-				
+				else
 					if [ -f $cnf3 ]; then
 						if [ "$(cat $cnf3)" != "$(cat "$nt")" ]; then
 							mv -f $cnf3 "$nt"
@@ -658,13 +656,7 @@ if [ "$1" = topic ]; then
 						echo "reim.$cnt.reim" >> \
 						$DC/addons/stats/.log &
 					fi
-				else
-					if [ -f $cnf3 ]; then
-						if [ "$(cat $cnf3)" != "$(cat "$nt")" ]; then
-							mv -f $cnf3 "$nt"
-						fi
-					fi
-				rm -f $DT/*.x
+					rm -f $DT/*.x
 				fi
 			
 		elif [ "$tb1" -eq 0 ]; then
@@ -748,7 +740,7 @@ if [ "$1" = topic ]; then
 			--tab=" $notes " \
 			--ellipsize=END --image-on-top --always-print-result \
 			--width="$wth" --height="$eht" --borders=0 \
-			--button="$edit":3 --button="$close":2
+			--button="$edit":3
 				ret=$?
 				
 				if [ $ret -eq 3 ]; then
@@ -757,7 +749,7 @@ if [ "$1" = topic ]; then
 				elif [ $ret -eq 5 ]; then
 					$DS/practice/strt.sh &
 				
-				elif [ $ret -eq 2 ]; then
+				else
 					if [ -f $cnf3 ]; then
 						if [ "$(cat $cnf3)" != "$(cat "$nt")" ]; then
 							mv -f $cnf3 "$nt"
@@ -796,12 +788,6 @@ if [ "$1" = topic ]; then
 						fi
 						echo "reim.$cnt.reim" >> \
 						$DC/addons/stats/.log &
-					fi
-				else
-					if [ -f $cnf3 ]; then
-						if [ "$(cat $cnf3)" != "$(cat "$nt")" ]; then
-							mv -f $cnf3 "$nt"
-						fi
 					fi
 				rm -f $DT/*.x
 				fi
@@ -895,7 +881,7 @@ if [ "$1" = topic ]; then
 				--tab=" $notes " \
 				--ellipsize=END --image-on-top --always-print-result \
 				--width="$wth" --height="$eht" --borders=0  \
-				--button="$review":4 --button="$edit":3 --button="$close":2 
+				--button="$review":4 --button="$edit":3
 			else
 				cat "$ls1" | awk '{print $0"\n"}' | yad \
 				--no-headers --list --plug=$KEY --tabnum=1 $t \
@@ -922,7 +908,7 @@ if [ "$1" = topic ]; then
 				--window-icon=$DS/images/idiomind.png \
 				--width="$wth" --height="$eht" --borders=0 \
 				--button="Play":$DS/play.sh --button="$practice":5 \
-				--button="$edit":3 --button="$close":2
+				--button="$edit":3
 			fi
 				ret=$?
 				
@@ -958,7 +944,7 @@ if [ "$1" = topic ]; then
 							rm -f "$DC_tlt/cnfg7" && idiomind topic & exit 1
 						fi
 				
-				elif [ $ret -eq 2 ]; then
+				else
 					if [ -f $cnf3 ]; then
 						if [ "$(cat $cnf3)" != "$(cat "$nt")" ]; then
 							mv -f $cnf3 "$nt"
@@ -998,12 +984,6 @@ if [ "$1" = topic ]; then
 						fi
 						echo "reim.$cnt.reim" >> \
 						$DC/addons/stats/.log &
-					fi
-				else
-					if [ -f $cnf3 ]; then
-						if [ "$(cat $cnf3)" != "$(cat "$nt")" ]; then
-							mv -f $cnf3 "$nt"
-						fi
 					fi
 				rm -f $DT/*.x
 				fi
@@ -1093,7 +1073,7 @@ if [ "$1" = topic ]; then
 			--tab=" $notes " \
 			--ellipsize=END --image-on-top --always-print-result \
 			--width="$wth" --height="$eht" --borders=0 \
-			--button="$edit":3 --button="$close":2
+			--button="$edit":3
 				ret=$?
 				
 				if [ $ret -eq 3 ]; then
@@ -1103,7 +1083,7 @@ if [ "$1" = topic ]; then
 					rm -f $DT/*.x
 					$DS/practice/strt.sh &
 				
-				elif [ $ret -eq 2 ]; then
+				else
 					if [ -f $cnf3 ]; then
 						if [ "$(cat $cnf3)" != "$(cat "$nt")" ]; then
 							mv -f $cnf3 "$nt"
@@ -1140,12 +1120,6 @@ if [ "$1" = topic ]; then
 						fi
 						echo "reim.$cnt.reim" >> \
 						$DC/addons/stats/.log &
-					fi
-				else
-					if [ -f $cnf3 ]; then
-						if [ "$(cat $cnf3)" != "$(cat "$nt")" ]; then
-							mv -f $cnf3 "$nt"
-						fi
 					fi
 				rm -f $DT/*.x
 				fi
@@ -1196,8 +1170,7 @@ if [ "$1" = topic ]; then
 		--width="$wth" --height="$eht" --borders=0 \
 		--button="Play":$DS/play.sh \
 		--button="$update":2 \
-		--button="$edit":3 \
-		--button="$close":1
+		--button="$edit":3
 			ret=$?
 			
 			if [ $ret -eq 0 ]; then
@@ -1208,12 +1181,9 @@ if [ "$1" = topic ]; then
 				rm -f $DT/*.x
 				"$DF/cnfg.sh" edit & exit 1
 			
-			elif [ $ret -eq 2 ]; then
-				rm -f $DT/*.x
-				"$DF/strt" & exit 1
 			else
 				rm -f $DT/*.x
-				exit 1
+				"$DF/strt" & exit 1
 			fi
 			
 	elif echo "$mde" | grep "wr"; then
