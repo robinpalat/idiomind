@@ -73,10 +73,15 @@ elif [[ -z "$1" ]]; then
 	[[ -z "$indf" ]] && img5=$DS/images/addi.png || img5=$DS/images/add.png
 	img6=$DS/images/set-26.png
 
-	if [ ! -f $DC_s/cnfg5 ]; then
-		cp $DS/default/cnfg5 $DC_s/cnfg5
-	fi
-
+	if [[ ! -f $DC_s/cnfg5 ]]; then
+	echo 'FALSE
+FALSE
+FALSE
+FALSE
+FALSE
+TRUE
+TRUE
+FALSE' > $DC_s/cnfg5; fi
 	st1=$(cat $DC_s/cnfg5 | sed -n 1p)
 	st2=$(cat $DC_s/cnfg5 | sed -n 2p)
 	st3=$(cat $DC_s/cnfg5 | sed -n 3p)

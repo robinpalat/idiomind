@@ -25,7 +25,6 @@ function confirm() {
 	--width=400 --height=180 
 }
 
-
 function set_lang() {
 	
 	if [ ! -d "$DM_t"/$1 ]; then
@@ -54,6 +53,22 @@ function set_lang() {
 
 }
 
+if [[ ! -f $DC_s/cnfg1 ]]; then
+	echo '
+
+FALSE
+FALSE
+FALSE
+FALSE
+
+
+
+
+
+
+
+
+' > $DC_s/cnfg1; fi
 c=$(echo $(($RANDOM%100000)))
 KEY=$c
 cnf1=$(mktemp $DT/cnf1.XXXX)

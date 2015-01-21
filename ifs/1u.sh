@@ -7,11 +7,11 @@ IMAGE=/usr/share/idiomind/ifs/1u.png
 drtf="/usr/share/idiomind/addons/Learning with news/examples/"
 user=$(echo "$(whoami)")
 if [ "$1" = s ]; then
-	ins="--field=<small><b> $no_language1</b></small>\\t\\t:lbl"
+	ins="--text=<small><b> $no_language1</b></small>"
 elif [ "$1" = t ]; then
-	int="--field=<small><b> $no_language2</b></small>\\t\\t:lbl"
+	int="--text=<small><b> $no_language2</b></small>"
 elif [ "$1" = n ]; then
-	int="--field=<small><b> $no_language3</b></small>\\t\\t:lbl"
+	int="--text=<small><b> $no_language3</b></small>"
 fi
 
 function set_lang() {
@@ -33,28 +33,28 @@ function set_lang() {
 dialog=$(yad --center --width=520 --height=280 --fixed \
 	--image-on-top --on-top --class=idiomind --name=idiomind \
 	--window-icon=idiomind --buttons-layout=end --image=$IMAGE  \
-	--title="Idiomind" --form --borders=10 --align=right --button=Ok:0 \
+	--title="Idiomind" --form --borders=10 --align=right --button=Cancel:1 --button=Ok:0 \
 	--field="\\t\\t\\t\\t$language_target :CB" \
 	!"English!French!German!Italian!Japanese!Portuguese!Spanish!Vietnamese!Chinese"\
 	--field="\\t\\t\\t\\t$language_source :CB" \
 	!"English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
-	"$ins" "$int" --field=":lbl")
+	--field=":lbl")
 
 ret=$?
 
 if [[ $ret -eq 1 ]]; then
-	killall 1u & exit 1
+	killall 1u.sh & exit 1
 
 elif [[ $ret -eq 0 ]]; then
 	source=$(echo "$dialog" | cut -d "|" -f1)
 	target=$(echo "$dialog" | cut -d "|" -f2)
 	
 	if [ -z "$dialog" ]; then
-		/usr/share/idiomind/ifs/1u n & exit 1
+		/usr/share/idiomind/ifs/1u.sh n & exit 1
 	elif [ -z $source ]; then
-		/usr/share/idiomind/ifs/1u s & exit 1
+		/usr/share/idiomind/ifs/1u.sh s & exit 1
 	elif [ -z $target ]; then
-		/usr/share/idiomind/ifs/1u t & exit 1
+		/usr/share/idiomind/ifs/1u.sh t & exit 1
 	fi
 	
 	mkdir "$HOME"/.idiomind/
@@ -181,8 +181,6 @@ elif [[ $ret -eq 0 ]]; then
 	b=$(tr -dc a-z < /dev/urandom | head -c 1)
 	c=$(echo $(($RANDOM%100)))
 	echo $c$b > $DIR2/s/cnfg4
-	cp /usr/share/idiomind/default/cnfg1 \
-	"$HOME/.config/idiomind/s/cnfg1"
 	touch $DIR2/s/cnfg8
 	touch $DIR2/s/cnfg6
 	touch "$DIR4/.cnf"
@@ -191,5 +189,5 @@ elif [[ $ret -eq 0 ]]; then
 	#/usr/share/idiomind/mngr.sh mkmn
 	exit 1
 else
-	killall 1u & exit 1
+	killall 1u.sh & exit 1
 fi

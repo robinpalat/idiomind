@@ -4,7 +4,64 @@
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/edit.conf
 
-if [ $1 = edit ]; then
+if [ $1 = mkmn ]; then
+	#[[ ! -f $DC_tl/.cnfg1 ]] && exit 1
+	cd "$DC_tl"
+	[[ -d ./images ]] && rm -r ./images
+	[[ -d ./words ]] && rm -r ./words
+	[[ -f ./*.mp3 ]] && rm ./*.mp3
+	[[ -f ./cnfg0 ]] && rm ./cnfg0
+	[[ -f ./cnfg1 ]] && rm ./cnfg1
+	[[ -f ./cnfg2 ]] && rm ./cnfg2
+	[[ -f ./cnfg3 ]] && rm ./cnfg3
+	[[ -f ./cnfg5 ]] && rm ./cnfg5
+	[[ -f ./cnfg4 ]] && rm ./cnfg4
+	[[ -f ./cnfg8 ]] && rm ./cnfg8
+	[[ -f ./cnfg12 ]] && rm ./cnfg12
+	[[ -d ./practice ]] && rm -r ./practice
+	[[ -f ./tpc.sh ]] && rm ./tpc.sh
+	[[ -f ./.cnfg11 ]] && rm ./.cnfg11
+	ls -t -d -N * > $DC_tl/.cnfg1
+	[[ -f $DC_s/cnfg0 ]] && mv -f $DC_s/cnfg0 $DC_s/cnfg16
+	n=1
+	while [ $n -le $(cat $DC_tl/.cnfg1 | head -30 | wc -l) ]; do
+		tp=$(sed -n "$n"p $DC_tl/.cnfg1)
+		i=$(cat "$DC_tl/$tp/cnfg8")
+		
+		if [ ! -f "$DC_tl/$tp/cnfg8" ] || \
+		[ ! -f "$DC_tl/$tp/tpc.sh" ] || \
+		[ ! -f "$DC_tl/$tp/cnfg0" ] || \
+		[ ! -f "$DC_tl/$tp/cnfg3" ] || \
+		[ ! -f "$DC_tl/$tp/cnfg4" ] || \
+		[ ! -d "$DM_tl/$tp" ]; then
+			i=13
+			echo "13" > "$DC_tl/$tp/cnfg8"
+			cp -f $DS/default/tpc.sh "$DC_tl/$tp/tpc.sh"
+		fi
+		echo "/usr/share/idiomind/images/img$i.png" >> $DC_s/cnfg0
+		echo "$tp" >> $DC_s/cnfg0
+		let n++
+	done
+	n=1
+	while [ $n -le $(cat $DC_tl/.cnfg1 | tail -n+31 | wc -l) ]; do
+		ff=$(cat $DC_tl/.cnfg1 | tail -n+31)
+		tp=$(echo "$ff" | sed -n "$n"p)
+		if [ ! -f "$DC_tl/$tp/cnfg8" ] || \
+		[ ! -f "$DC_tl/$tp/tpc.sh" ] || \
+		[ ! -f "$DC_tl/$tp/cnfg0" ] || \
+		[ ! -f "$DC_tl/$tp/cnfg3" ] || \
+		[ ! -f "$DC_tl/$tp/cnfg4" ] || \
+		[ ! -d "$DM_tl/$tp" ]; then
+			echo '/usr/share/idiomind/images/img13.png' >> $DC_s/cnfg0
+		else
+			echo '/usr/share/idiomind/images/img12.png' >> $DC_s/cnfg0
+		fi
+		echo "$tp" >> $DC_s/cnfg0
+		let n++
+	done
+	exit
+
+elif [ $1 = edit ]; then
 	ttl=$(sed -n 2p $DC_s/cnfg6)
 	plg1=$(sed -n 1p $DC_s/cnfg3)
 	cnfg1="$DC_s/cnfg1"
@@ -86,6 +143,7 @@ fi
 	elif [[ "$ret" -eq 1 ]]; then
 		exit 1
 	fi
+	
 #--------------------------------
 elif [ $1 = inx ]; then
 	[ $lgt = ja ] || [ $lgt = "zh-cn" ] && c=c || c=w
@@ -309,7 +367,7 @@ elif [ "$1" = edt ]; then
 		dlte="$DS/mngr.sh dli '$nme'"
 		imge="$DS/add.sh img '$nme' w"
 
-		$yad --form --wrap --center --name=idiomind --class=idmnd \
+		yad --form --wrap --center --name=idiomind --class=idmnd \
 		--width=$wth --height=$eht --always-print-result \
 		--borders=15 --columns=2 --align=center --skip-taskbar \
 		--buttons-layout=end --title=" $nme" --separator="\\n" \
@@ -396,7 +454,6 @@ elif [ "$1" = edt ]; then
 				./vwr.sh "$v" "nll" $ff & exit 1
 			fi
 			./vwr.sh "$v" "$nme" $ff & exit 1
-		fi
 			
 	else 
 		file="$DM_tlt/$nme.mp3"
@@ -411,7 +468,7 @@ elif [ "$1" = edt ]; then
 		dlte="$DS/mngr.sh dli '$nme'"
 		imge="$DS/add.sh img '$nme' s"
 		
-		$yad --form --wrap --center --name=idiomind --class=idmnd \
+		yad --form --wrap --center --name=idiomind --class=idmnd \
 		--width=$wth --height=$eht --always-print-result \
 		--separator="\\n" --borders=15 --align=center --align=center \
 		--buttons-layout=end --title=" $nme" --fontname="Arial" \
@@ -664,252 +721,4 @@ elif [ "$1" = edt ]; then
 			[ -d "$DT/$c" ] && $DS/add.sh edt "$nme" S $c "$trgt" &
 			./vwr.sh "$v" "$nme" $ff & exit 1
 	fi
-	
-#--------------------------------
-elif [ $1 = dli ]; then
-	itdl=$(echo "$2")
-	if [ "$3" = "C" ]; then
-		# delete word
-		file="$DM_tlt/words/$itdl.mp3"
-		if [ -f "$file" ]; then
-			rm "$file"
-			cd "$DC_tlt/practice"
-			sed -i 's/'"$itdl"'//g' ./lsin.tmp
-			cd ..
-			grep -v -x -v "$itdl" ./.cnfg11 > ./cnfg11._
-			sed '/^$/d' ./cnfg11._ > ./.cnfg11
-			grep -v -x -v "$itdl" ./cnfg0 > ./cnfg0_
-			sed '/^$/d' ./cnfg0_ > ./cnfg0
-			grep -v -x -v "$itdl" ./cnfg2 > ./cnfg2._
-			sed '/^$/d' ./cnfg2._ > ./cnfg2
-			grep -v -x -v "$itdl" ./cnfg1 > ./cnfg1._
-			sed '/^$/d' ./cnfg1._ > ./cnfg1
-			grep -v -x -v "$itdl" cnfg3 > cnfg3._
-			sed '/^$/d' cnfg3._ > cnfg3
-			rm ./*._
-		fi
-		# delete sentence
-		file="$DM_tlt/$itdl.mp3"
-		if [ -f "$file" ]; then
-			rm "$file"
-			cd "$DC_tlt/practice"
-			sed -i 's/'"$itdl"'//g' ./lsin.tmp
-			cd ..
-			grep -v -x -v "$itdl" ./.cnfg11 > ./cnfg11._
-			sed '/^$/d' ./cnfg11._ > ./.cnfg11
-			grep -v -x -v "$itdl" ./cnfg0 > ./cnfg0_
-			sed '/^$/d' ./cnfg0_ > ./cnfg0
-			grep -v -x -v "$itdl" ./cnfg2 > ./cnfg2._
-			sed '/^$/d' ./cnfg2._ > ./cnfg2
-			grep -v -x -v "$itdl" ./cnfg1 > ./cnfg1._
-			sed '/^$/d' ./cnfg1._ > ./cnfg1
-			grep -v -x -v "$itdl" cnfg4 > cnfg4._
-			sed '/^$/d' cnfg4._ > cnfg4
-			rm ./*._
-		fi
-		exit 1
-	fi
-	
-	# delete word
-	if [ -f "$DM_tlt/words/$itdl.mp3" ]; then
-		flw="$DM_tlt/words/$itdl.mp3"
-	elif [ -f "$DM_tlt/$itdl.mp3" ]; then
-		fls="$DM_tlt/$itdl.mp3"
-	fi
-
-	if [ -f "$flw" ]; then
-
-		$yad --fixed --scroll --center \
-		--title="$confirm" --width=420 --height=150 \
-		--on-top --image=dialog-question \
-		--skip-taskbar --window-icon=idiomind \
-		--text="  <b>$delete_word</b> " \
-		--window-icon=idiomind \
-		--button=gtk-delete:0 --button="$cancel":1
-			ret=$?
-			
-			if [ $ret -eq 0 ]; then
-			
-				(sleep 1 && kill -9 $(pgrep -f "$yad --form "))
-				killall edt1 edt2
-				rm -f "$flw"
-				cd "$DC_tlt/practice"
-				sed -i 's/'"$itdl"'//g' ./fin.tmp
-				sed -i 's/'"$itdl"'//g' ./lwin.tmp
-				sed -i 's/'"$itdl"'//g' ./mcin.tmp
-				cd ..
-				grep -v -x -v "$itdl" ./.cnfg11 > ./cnfg11._
-				sed '/^$/d' ./cnfg11._ > ./.cnfg11
-				grep -v -x -v "$itdl" ./cnfg0 > ./cnfg0_
-				sed '/^$/d' ./cnfg0_ > ./cnfg0
-				grep -v -x -v "$itdl" ./cnfg2 > ./cnfg2._
-				sed '/^$/d' ./cnfg2._ > ./cnfg2
-				grep -v -x -v "$itdl" ./cnfg1 > ./cnfg1._
-				sed '/^$/d' ./cnfg1._ > ./cnfg1
-				grep -v -x -v "$itdl" cnfg3 > cnfg3._
-				sed '/^$/d' cnfg3._ > cnfg3
-				rm ./*._
-			else
-				exit 1
-			fi
-			
-	elif [ -f "$fls" ]; then
-		$yad --fixed --center --scroll \
-		--title="$confirm" --width=420 --height=150 \
-		--on-top --image=dialog-question --skip-taskbar \
-		--text="  <b>$delete_sentence</b> " \
-		--window-icon=idiomind \
-		--button=gtk-delete:0 --button="$cancel":1
-			ret=$?
-			
-			if [ $ret -eq 0 ]; then
-				(sleep 1 && kill -9 $(pgrep -f "$yad --form "))
-				rm -f "$fls"
-				cd "$DC_tlt/practice"
-				sed -i 's/'"$itdl"'//g' ./lsin.tmp
-				cd ..
-				grep -v -x -v "$itdl" ./.cnfg11 > ./cnfg11._
-				sed '/^$/d' ./cnfg11._ > ./.cnfg11
-				grep -v -x -v "$itdl" ./cnfg0 > ./cnfg0_
-				sed '/^$/d' ./cnfg0_ > ./cnfg0
-				grep -v -x -v "$itdl" ./cnfg2 > ./cnfg2._
-				sed '/^$/d' ./cnfg2._ > ./cnfg2
-				grep -v -x -v "$itdl" ./cnfg1 > ./cnfg1._
-				sed '/^$/d' ./cnfg1._ > ./cnfg1
-				grep -v -x -v "$itdl" cnfg4 > cnfg4._
-				sed '/^$/d' cnfg4._ > cnfg4
-				rm ./*._
-			else
-				exit 1
-			fi
-			
-	elif [ ! -f "$flw" ] || [ ! -f "$flw" ]; then
-		$yad --fixed --center --scroll \
-		--title="$confirm" --width=420 --height=150 \
-		--on-top --image=dialog-question --skip-taskbar \
-		--text="  <b>$delete_item</b> " \
-		--window-icon=idiomind \
-		--button=gtk-delete:0 --button="$cancel":1
-			ret=$?
-	
-			cd "$DC_tlt/practice"
-			sed -i 's/'"$itdl"'//g' ./fin.tmp
-			sed -i 's/'"$itdl"'//g' ./lwin.tmp
-			sed -i 's/'"$itdl"'//g' ./mcin.tmp
-			sed -i 's/'"$itdl"'//g' ./lsin.tmp
-			cd ..
-			grep -v -x -v "$itdl" ./.cnfg11 > ./cnfg11._
-			sed '/^$/d' ./cnfg11._ > ./.cnfg11
-			grep -v -x -v "$itdl" ./cnfg0 > ./cnfg0_
-			sed '/^$/d' ./cnfg0_ > ./cnfg0
-			grep -v -x -v "$itdl" ./cnfg2 > ./cnfg2._
-			sed '/^$/d' ./cnfg2._ > ./cnfg2
-			grep -v -x -v "$itdl" ./cnfg1 > ./cnfg1._
-			sed '/^$/d' ./cnfg1._ > ./cnfg1
-			grep -v -x -v "$itdl" cnfg4 > cnfg4._
-			sed '/^$/d' cnfg4._ > cnfg4
-			grep -v -x -v "$itdl" cnfg3 > cnfg3._
-			sed '/^$/d' cnfg3._ > cnfg3
-			rm ./*._
-	fi
-	
-#--------------------------------
-elif [ $1 = dlt ]; then
-	$yad --name=idiomind --center \
-	--image=dialog-question --sticky --on-top \
-	--text="  <b>$delete_topic</b> \n\n\t$tpc \n" --buttons-layout=end \
-	--width=420 --height=150 --borders=5 \
-	--skip-taskbar --window-icon=idiomind \
-	--title="$confirm" --button=gtk-delete:0 --button="$cancel":1
-
-		ret=$?
-
-		if [ $ret -eq 0 ]; then
-		
-			[[ -d "$DM_tl/$tpc" ]] && rm -r "$DM_tl/$tpc"
-			[[ -d "$DC_tl/$tpc" ]] && rm -r "$DC_tl/$tpc"
-			$ > $DC_s/cnfg6
-			rm $DC_s/cnfg8
-			$ > $DC_tl/.cnfg8
-			grep -v -x -v "$tpc" $DC_tl/.cnfg2 > $DC_tl/.cnfg2._
-			sed '/^$/d' $DC_tl/.cnfg2._ > $DC_tl/.cnfg2
-			grep -v -x -v "$tpc" $DC_tl/.cnfg1 > $DC_tl/.cnfg1._
-			sed '/^$/d' $DC_tl/.cnfg1._ > $DC_tl/.cnfg1
-			grep -v -x -v "$tpc" $DC_tl/.cnfg3 > $DC_tl/.cnfg3._
-			sed '/^$/d' $DC_tl/.cnfg3._ > $DC_tl/.cnfg3
-			grep -v -x -v "$tpc" $DC_tl/.cnfg7 > $DC_tl/.cnfg7._
-			sed '/^$/d' $DC_tl/.cnfg7._ > $DC_tl/.cnfg7
-			grep -v -x -v "$tpc" $DC_tl/.cnfg6 > $DC_tl/.cnfg6._
-			sed '/^$/d' $DC_tl/.cnfg6._ > $DC_tl/.cnfg6
-			grep -v -x -v "$tpc" $DC_tl/.cnfg5 > $DC_tl/.cnfg5._
-			sed '/^$/d' $DC_tl/.cnfg5._ > $DC_tl/.cnfg5
-			rm $DC_tl/.*._ 
-			
-			kill -9 $(pgrep -f "$yad --list ")
-			
-			notify-send  -i idiomind "$tpc" "$deleted"  -t 1000
-			
-			$DS/mngr.sh mkmn
-			
-		elif [ $ret -eq 1 ]; then
-			exit
-		else
-			exit
-		fi
-		
-elif [ $1 = mkmn ]; then
-	#[[ ! -f $DC_tl/.cnfg1 ]] && exit 1
-	cd "$DC_tl"
-	[[ -d ./images ]] && rm -r ./images
-	[[ -d ./words ]] && rm -r ./words
-	[[ -f ./*.mp3 ]] && rm ./*.mp3
-	[[ -f ./cnfg0 ]] && rm ./cnfg0
-	[[ -f ./cnfg1 ]] && rm ./cnfg1
-	[[ -f ./cnfg2 ]] && rm ./cnfg2
-	[[ -f ./cnfg3 ]] && rm ./cnfg3
-	[[ -f ./cnfg5 ]] && rm ./cnfg5
-	[[ -f ./cnfg4 ]] && rm ./cnfg4
-	[[ -f ./cnfg8 ]] && rm ./cnfg8
-	[[ -f ./cnfg12 ]] && rm ./cnfg12
-	[[ -d ./practice ]] && rm -r ./practice
-	[[ -f ./tpc.sh ]] && rm ./tpc.sh
-	[[ -f ./.cnfg11 ]] && rm ./.cnfg11
-	ls -t -d -N * > $DC_tl/.cnfg1
-	[[ -f $DC_s/cnfg0 ]] && mv -f $DC_s/cnfg0 $DC_s/cnfg16
-	n=1
-	while [ $n -le $(cat $DC_tl/.cnfg1 | head -30 | wc -l) ]; do
-		tp=$(sed -n "$n"p $DC_tl/.cnfg1)
-		i=$(cat "$DC_tl/$tp/cnfg8")
-		
-		if [ ! -f "$DC_tl/$tp/cnfg8" ] || \
-		[ ! -f "$DC_tl/$tp/tpc.sh" ] || \
-		[ ! -f "$DC_tl/$tp/cnfg0" ] || \
-		[ ! -f "$DC_tl/$tp/cnfg3" ] || \
-		[ ! -f "$DC_tl/$tp/cnfg4" ] || \
-		[ ! -d "$DM_tl/$tp" ]; then
-			i=13
-			echo "13" > "$DC_tl/$tp/cnfg8"
-			cp -f $DS/default/tpc.sh "$DC_tl/$tp/tpc.sh"
-		fi
-		echo "/usr/share/idiomind/images/img$i.png" >> $DC_s/cnfg0
-		echo "$tp" >> $DC_s/cnfg0
-		let n++
-	done
-	n=1
-	while [ $n -le $(cat $DC_tl/.cnfg1 | tail -n+31 | wc -l) ]; do
-		ff=$(cat $DC_tl/.cnfg1 | tail -n+31)
-		tp=$(echo "$ff" | sed -n "$n"p)
-		if [ ! -f "$DC_tl/$tp/cnfg8" ] || \
-		[ ! -f "$DC_tl/$tp/tpc.sh" ] || \
-		[ ! -f "$DC_tl/$tp/cnfg0" ] || \
-		[ ! -f "$DC_tl/$tp/cnfg3" ] || \
-		[ ! -f "$DC_tl/$tp/cnfg4" ] || \
-		[ ! -d "$DM_tl/$tp" ]; then
-			echo '/usr/share/idiomind/images/img13.png' >> $DC_s/cnfg0
-		else
-			echo '/usr/share/idiomind/images/img12.png' >> $DC_s/cnfg0
-		fi
-		echo "$tp" >> $DC_s/cnfg0
-		let n++
-	done
 fi

@@ -7,10 +7,9 @@ if [ ! -d "$HOME/.idiomind" ]; then
 		exit 1
 	fi
 fi
+
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/items_lists.conf
-[[ -f $DT/.upt ]] && rm -f $DT/.upt
-
 
 function sizes() {
 	
@@ -74,7 +73,7 @@ if [ -z "$1" ]; then
 			"$DS/addons/weekly report/rprt" A &
 		fi
 		
-		# rss feed auto-update
+		# news auto-update
 		if [ "$(sed -n 1p "$DC/addons/Learning with news/.cnf")" = "TRUE" ]; then
 			(sleep 200
 			"$DS/addons/Learning with news/strt.sh" A
@@ -154,12 +153,12 @@ if [ -z "$1" ]; then
 	fi
 	
 	[[ -f $DC_s/cnfg15 ]] && d2=$(cat $DC_s/cnfg15)
-	if [ "$(date +%d)" != "$d2" ] || [ ! -f $DC_s/cnfg15 ]; then
+	if ([ "$(date +%d)" != "$d2" ] || [ ! -f $DC_s/cnfg15 ]); then
 		new_session
 	fi
 fi
 
-if [[ $(echo "$1" | grep -o '.idmnd') = '.idmnd' ]]; then
+if [[ $(echo "$1" | grep -o '.idmnd') ]]; then
 
 	wth=$(sed -n 4p $DC_s/cnfg18)
 	eht=$(sed -n 3p $DC_s/cnfg18)
