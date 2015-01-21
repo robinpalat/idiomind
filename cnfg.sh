@@ -148,110 +148,104 @@ yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 			fi
 		fi
 		
-		if cat "$cnf1" | sed -n 13p | grep "English" && [ English != $lgtl ] ; then
+		ln=$(cat "$cnf1" | sed -n 13p)
+		ls=$(cat "$cnf1" | sed -n 14p)
+		
+		if echo $ln | grep "English" && [ English != $lgtl ] ; then
 			set_lang English en
 		fi
-		
-		if cat "$cnf1" | sed -n 13p | grep "Spanish" && [ Spanish != $lgtl ] ; then
+		if echo $ln | grep "Spanish" && [ Spanish != $lgtl ] ; then
 			set_lang Spanish es
 		fi
-		
-		if cat "$cnf1" | sed -n 13p | grep "Italian" && [ Italian != $lgtl ] ; then
+		if echo $ln | grep "Italian" && [ Italian != $lgtl ] ; then
 			set_lang Italian it
 		fi
-		
-		if cat "$cnf1" | sed -n 13p | grep "Portuguese" && [ Portuguese != $lgtl ] ; then
+		if echo $ln | grep "Portuguese" && [ Portuguese != $lgtl ] ; then
 			set_lang Portuguese pt
 		fi
-		
-		if cat "$cnf1" | sed -n 13p | grep "German" && [ German != $lgtl ] ; then
+		if echo $ln | grep "German" && [ German != $lgtl ] ; then
 			set_lang German de
 		fi
-		
-		if cat "$cnf1" | sed -n 13p | grep "Japanese" && [ Japanese != $lgtl ] ; then
+		if echo $ln | grep "Japanese" && [ Japanese != $lgtl ] ; then
 			set_lang Japanese ja
 		fi
-		
-		if cat "$cnf1" | sed -n 13p | grep "French" && [ French != $lgtl ] ; then
+		if echo $ln | grep "French" && [ French != $lgtl ] ; then
 			set_lang French fr
 		fi
-		
-		if cat "$cnf1" | sed -n 13p | grep "Vietnamese" && [ Vietnamese != $lgtl ] ; then
+		if echo $ln | grep "Vietnamese" && [ Vietnamese != $lgtl ] ; then
 			set_lang Vietnamese vi
 		fi
-		
-		if cat "$cnf1" | sed -n 13p | grep "Chinese" && [ Chinese != $lgtl ] ; then
+		if echo $ln | grep "Chinese" && [ Chinese != $lgtl ] ; then
 			set_lang Chinese "zh-cn"
 		fi
-		
-		if cat "$cnf1" | sed -n 13p | grep "Russian" && [ Russian != $lgtl ] ; then
+		if echo $ln | grep "Russian" && [ Russian != $lgtl ] ; then
 			set_lang Russian ru
 		fi
 
-		if cat "$cnf1" | sed -n 14p | grep "English" && [ English != $lgsl ] ; then
+		if echo $ls | grep "English" && [ English != $lgsl ] ; then
 			confirm
 			if [ $? -eq 0 ]; then
 				echo "en" > $DC_s/cnfg9
 				echo "english" >> $DC_s/cnfg9
 			fi
 		fi
-		if cat "$cnf1" | sed -n 14p | grep "French" && [ French != $lgsl ] ; then
+		if echo $ls | grep "French" && [ French != $lgsl ] ; then
 			confirm
 			if [ $? -eq 0 ]; then
 				echo "fr" > $DC_s/cnfg9
 				echo "french" >> $DC_s/cnfg9
 			fi
 		fi
-		if cat "$cnf1" | sed -n 14p | grep "German" && [ German != $lgsl ] ; then
+		if echo $ls | grep "German" && [ German != $lgsl ] ; then
 			confirm
 			if [ $? -eq 0 ]; then
 				echo "de" > $DC_s/cnfg9
 				echo "german" >> $DC_s/cnfg9
 			fi
 		fi
-		if cat "$cnf1" | sed -n 14p | grep "Italian" && [ Italian != $lgsl ] ; then
+		if echo $ls | grep "Italian" && [ Italian != $lgsl ] ; then
 			confirm
 			if [ $? -eq 0 ]; then
 				echo "it" > $DC_s/s/cnfg9
 				echo "italian" >> $DC_s/cnfg9
 			fi
 		fi
-		if cat "$cnf1" | sed -n 14p | grep "Japanese" && [ Japanese != $lgsl ] ; then
+		if echo $ls | grep "Japanese" && [ Japanese != $lgsl ] ; then
 			confirm
 			if [ $? -eq 0 ]; then
 				echo "ja" > $DC_s/cnfg9
 				echo "japanese" >> $DC_s/cnfg9
 			fi
 		fi
-		if cat "$cnf1" | sed -n 14p | grep "Portuguese" && [ Portuguese != $lgsl ] ; then
+		if echo $ls | grep "Portuguese" && [ Portuguese != $lgsl ] ; then
 			confirm
 			if [ $? -eq 0 ]; then
 				echo "pt" > $DC_s/cnfg9
 				echo "portuguese" >> $DC_s/cnfg9
 			fi
 		fi
-		if cat "$cnf1" | sed -n 14p | grep "Spanish" && [ Spanish != $lgsl ] ; then
+		if echo $ls | grep "Spanish" && [ Spanish != $lgsl ] ; then
 			confirm
 			if [ $? -eq 0 ]; then
 				echo "es" > $DC_s/cnfg9
 				echo "spanish" >> $DC_s/cnfg9
 			fi
 		fi
-		if cat "$cnf1" | sed -n 14p | grep "Vietnamese" && [ Vietnamese != $lgsl ] ; then
+		if echo $ls | grep "Vietnamese" && [ Vietnamese != $lgsl ] ; then
 			confirm
 			if [ $? -eq 0 ]; then
 				echo "vi" > $DC_s/cnfg9
 				echo "vietnamese" >> $DC_s/cnfg9
 			fi
 		fi
-		if cat "$cnf1" | sed -n 14p | grep "Chinese" && [ Chinese != $lgsl ] ; then
+		if echo $ls | grep "Chinese" && [ Chinese != $lgsl ] ; then
 			confirm
 			if [ $? -eq 0 ]; then
 				echo "zh-cn" > $DC_s/cnfg9
 				echo "chinese" >> $DC_s/cnfg9
 			fi
 		fi
-		if cat "$cnf1" | sed -n 14p | grep "Russian" && [ Russian != $lgsl ] ; then
+		if echo $ls | grep "Russian" && [ Russian != $lgsl ] ; then
 			confirm
 			if [ $? -eq 0 ]; then
 				echo "ru" > $DC_s/cnfg9
