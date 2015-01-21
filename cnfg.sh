@@ -143,8 +143,8 @@ yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 			fi
 		fi
 		
-		ln=$(cat "$cnf1" | sed -n 18p)
-		ls=$(cat "$cnf1" | sed -n 19p)
+		ln=$(cat "$cnf1" | sed -n 23p)
+		ls=$(cat "$cnf1" | sed -n 24p)
 		
 		if echo $ln | grep "English" && [ English != $lgtl ] ; then
 			set_lang English en
