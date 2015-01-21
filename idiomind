@@ -28,7 +28,7 @@ function sizes() {
 	echo $(($y*35/100)) >> $wh
 	echo $(($y*11/100)) >> $wh
 	echo $(($y*44/100)) >> $wh
-	echo $(($y*37/100)) >> $wh
+	echo $(($y*41/100)) >> $wh
 	echo $(($y*38/100)) >> $wh
 }
 

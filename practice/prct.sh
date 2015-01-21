@@ -19,7 +19,7 @@ cd "$DC_tlt/practice"
 function look() {
 		yad --title="$practice - $tpc" --borders=5 --center \
 		--on-top --skip-taskbar --window-icon=idiomind \
-		--center --image=dialog-ok --button=Ok:2 \
+		--center --image="$DS/practice/icons_st/21.png" --button=Ok:2 \
 		--button="   $restart   ":0 --width=360 --height=120 \
 		--text="<b>   $complete</b>\\n    $(cat $1)\\n\\n"
 }
