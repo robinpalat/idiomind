@@ -74,8 +74,8 @@ elif [ "$1" != chngi ]; then
 	if [ ! -f $DC_s/cnfg0 ]; then
 		> $DC_s/cnfg0
 		fi
-		eht=$(sed -n 3p $DC_s/cnfg18)
-		wth=$(sed -n 4p $DC_s/cnfg18)
+		wth=$(sed -n 3p $DC_s/cnfg18)
+		eht=$(sed -n 4p $DC_s/cnfg18)
 		if [ -n "$1" ]; then
 			text="--text=<small>$1\n</small>"
 			align="--text-align=left"

@@ -18,9 +18,9 @@ function sizes() {
 	sed -i 's/x/\n/' $wh
 	y=$(sed -n 2p $wh)
 	[[ $y -lt 950 ]] && y=950
-	echo $(($y*48/100)) >> $wh
-	echo $(($y*54/100)) >> $wh
+	echo $(($y*56/100)) >> $wh
 	echo $(($y*50/100)) >> $wh
+	echo $(($y*56/100)) >> $wh
 	echo $(($y*34/100)) >> $wh
 	echo $(($y*63/100)) >> $wh
 	echo $(($y*46/100)) >> $wh
@@ -160,8 +160,8 @@ fi
 
 if [[ $(echo "$1" | grep -o '.idmnd') ]]; then
 
-	wth=$(sed -n 4p $DC_s/cnfg18)
-	eht=$(sed -n 3p $DC_s/cnfg18)
+	wth=$(sed -n 3p $DC_s/cnfg18)
+	eht=$(sed -n 4p $DC_s/cnfg18)
 	dte=$(date "+%d %B")
 	c=$(echo $(($RANDOM%1000)))
 	if [ ! -d $DT ]; then
@@ -319,10 +319,10 @@ if [[ $(echo "$1" | grep -o '.idmnd') ]]; then
 fi
 
 # topic
-if [ "$1" = topic ]; then
+if [[ $1 = topic ]]; then
 
-	eht=$(sed -n 3p $DC_s/cnfg18)
-	wth=$(sed -n 4p $DC_s/cnfg18)
+	wth=$(sed -n 3p $DC_s/cnfg18)
+	eht=$(sed -n 4p $DC_s/cnfg18)
 	mde=$(sed -n 2p $DC_s/cnfg8)
 
 	if ([ -n "$tpc" ] || [ $(echo "$mde" | grep "fd") ]); then
