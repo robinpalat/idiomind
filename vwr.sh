@@ -46,9 +46,9 @@ if [ -f "$DM_tlt/words/$nme.mp3" ]; then
 	[[ "$ap" = TRUE ]] && (killall play & sleep 1 && play "$DM_tlt/words/$nme.mp3") &
 	
 	yad --form --window-icon=idiomind --scroll --text-align=center \
-	--skip-taskbar --center --title=" " --borders=10 \
+	--skip-taskbar --center --title=" " --borders=15 \
 	--quoted-output --on-top --selectable-labels \
-	--text="<big><big><big><b>$trgt</b></big></big></big>\\n\\n<i>$src</i>\\n\\n" \
+	--text="<big><big><big><b>$trgt</b></big></big></big>\n\n<i>$src</i>\n\n" \
 	--field="":lbl \
 	--field="<i><span color='#7D7D7D'>$exmp1</span></i>:lbl" "$dfnts" "$ntess" \
 	--width="$wth" --height="$eht" --center \
@@ -67,12 +67,12 @@ elif [ -f "$DM_tlt/$nme.mp3" ]; then
 	[[ "$ap" = TRUE ]] && (killall play & sleep 1 && play "$DM_tlt/$nme.mp3") &
 	
 	echo "$lwrd" | yad --list --print-column=0 --no-headers \
-	--window-icon=idiomind --scroll --text-align=center \
-	--skip-taskbar --center --title=" " --borders=10 \
+	--window-icon=idiomind --scroll  \
+	--skip-taskbar --center --title=" " --borders=15 \
 	--on-top --selectable-labels --expand-column=0 \
-	--text="<big><big>$trgt</big></big>\\n\\n<i>$src</i>\\n\\n\\n" \
+	--text="<big><big>$trgt</big></big>\n\n<i>$src</i>\n\n\n" \
 	--width="$wth" --height="$eht" --center \
-	--column="$lgtl":TEXT --column="$lgsl":TEXT \
+	--column="":TEXT --column="":TEXT \
 	--button=gtk-edit:4 --button="play":"/usr/share/idiomind/ifs/tls.sh s '$nme'" \
 	--button=gtk-go-up:3 --button=gtk-go-down:2 \
 	--dclick-action="/usr/share/idiomind/ifs/tls.sh dclik" >/dev/null 2>&1

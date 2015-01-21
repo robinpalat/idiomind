@@ -77,23 +77,14 @@ if [ $1 = n_t ]; then
 			> $DC_tl/"$jlb"/cnfg3
 			> $DC_tl/"$jlb"/cnfg4
 			mkdir $DC_tl/"$jlb"/practice
-			cp $DS/practice/default/.* $DC_tl/"$jlb"/practice
+
 			cd $DC_tl/"$jlb"
 			echo "$jlb" >> $DC_tl/.cnfg2
 			cd "$DM_tl/$tpc"
 			cp -f *.mp3 "$DM_tl/$jlb"
 			cp -f -r ./words "$DM_tl/$jlb/"
 			cd "$DC_tl/$tpc"
-			cp -f cnfg5 "$DC_tl/$jlb"/cnfg5
-			cp -f cnfg4 "$DC_tl/$jlb"/cnfg4
-			cp -f tpc.sh "$DC_tl/$jlb"/tpc.sh
-			cp -f cnfg3 "$DC_tl/$jlb"/cnfg3
-			cp -f cnfg8 "$DC_tl/$jlb"/cnfg8
-			cp -f cnfg0 "$DC_tl/$jlb"/cnfg0
-			cp -f cnfg1 "$DC_tl/$jlb"/cnfg1
-			cp -f cnfg2 "$DC_tl/$jlb"/cnfg2
-			cp -f .cnfg11 "$DC_tl/$jlb"/.cnfg11
-			cp -f nt "$DC_tl/$jlb"/nt
+			cp -f ./* "$DC_tl/$jlb"/
 			cp -f ./practice/.* $DC_tl/"$jlb"/practice
 			grep -v -x -v "$tpc" $DC_tl/.cnfg2 > $DC_tl/.cnfg2_
 			sed '/^$/d' $DC_tl/.cnfg2_ > $DC_tl/.cnfg2
@@ -273,7 +264,7 @@ elif [ $1 = n_i ]; then
 		--field=" <small><small>$lgsl</small></small>":TXT "$srce" \
 		--field=":lbl" "" \
 		--field="<small><small>$topic</small></small>:CB" \
-		"$ttle!$new *!$tpcs" "$field")
+		"$ttle!"$new *"!$tpcs" "$field")
 		ret=$?
 		trgt=$(echo "$lzgpr" | tail -5 | sed -n 1p | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
 		srce=$(echo "$lzgpr" | tail -5 | sed -n 3p | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
@@ -293,11 +284,6 @@ elif [ $1 = n_i ]; then
 			$DS/add.sh n_i $DT_r 2 "$trgt" "$srce" && exit 1
 		
 		elif [ $ret -eq 0 ]; then
-		
-			if [ -z "$tpe" ]; then
-				msg " $no_topic_msg\n\n " info
-				$DS/add.sh n_i $DT_r 2 && exit 1
-			fi
 		
 			if [ -z "$trgt" ]; then
 				[[ -d $DT_r ]] && rm -fr $DT_r
@@ -1654,7 +1640,7 @@ $trgt" >> log
 			else
 				slt=$(mktemp $DT/slt.XXXX.x)
 				cat ls | awk '{print "FALSE\n"$0}' | \
-				$yad --center --sticky --no-headers \
+				yad --center --sticky \
 				--name=idiomind --class=idiomind \
 				--dclick-action='/usr/share/idiomind/add.sh prc' \
 				--list --checklist --window-icon=idiomind \
