@@ -18,10 +18,10 @@ function sizes() {
 	sed -i 's/x/\n/' $wh
 	y=$(sed -n 2p $wh)
 	[[ $y -lt 950 ]] && y=950
-	echo $(($y*42/100)) >> $wh
 	echo $(($y*48/100)) >> $wh
-	echo $(($y*46/100)) >> $wh
-	echo $(($y*30/100)) >> $wh
+	echo $(($y*54/100)) >> $wh
+	echo $(($y*50/100)) >> $wh
+	echo $(($y*34/100)) >> $wh
 	echo $(($y*63/100)) >> $wh
 	echo $(($y*46/100)) >> $wh
 	echo $(($y*12/100)) >> $wh
