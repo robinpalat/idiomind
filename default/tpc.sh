@@ -20,7 +20,7 @@ if [ -d "$DC_tlt" ]; then
 		mkdir ./practice
 		echo "$(date +%F)" > cnfg12
 		echo "1" > cnfg8
-		echo "--make dir"
+		cd $HOME
 	fi
 
 	# check index
