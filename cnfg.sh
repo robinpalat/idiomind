@@ -3,6 +3,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/settings.conf
+
 wth=$(sed -n 5p $DC_s/cnfg18)
 eht=$(sed -n 6p $DC_s/cnfg18)
 
@@ -49,39 +50,24 @@ function set_lang() {
 	fi
 	(sleep 2 && $DS/addons/Dics/cnfg.sh "" f "$select_dicts") &
 	$DS/mngr.sh mkmn
-	
-
 }
 
-if [[ ! -f $DC_s/cnfg1 ]]; then
-	echo '
-
-FALSE
-FALSE
-FALSE
-FALSE
-
-
-
-
-
-
-
-
-' > $DC_s/cnfg1; fi
 c=$(echo $(($RANDOM%100000)))
 KEY=$c
 cnf1=$(mktemp $DT/cnf1.XXXX)
 cnf3=$(mktemp $DT/cnf3.XXXX)
 sttng3=$(sed -n 3p $DC_s/cnfg1)
+[[ -z $sttng3 ]] && sttng3=FALSE
 sttng4=$(sed -n 4p $DC_s/cnfg1)
+[[ -z $sttng4 ]] && sttng4=FALSE
 sttng5=$(sed -n 5p $DC_s/cnfg1)
-sttng6=$(sed -n 6p $DC_s/cnfg1)
-sttng7=$(sed -n 7p $DC_s/cnfg1)
-sttng8=$(sed -n 8p $DC_s/cnfg1) 
-sttng9=$(sed -n 9p $DC_s/cnfg1)
+[[ -z $sttng5 ]] && sttng5=FALSE
 sttng10=$(sed -n 10p $DC_s/cnfg1)
+[[ -z $sttng10 ]] && sttng10=FALSE
 sttng11=$(sed -n 11p $DC_s/cnfg1)
+[[ -z $sttng11 ]] && sttng11=""
+sttng12=$(sed -n 12p $DC_s/cnfg1)
+[[ -z $sttng12 ]] && sttng12=""
 
 yad --plug=$KEY --tabnum=1 --borders=15 --scroll \
 	--separator="\\n" --form --no-headers --align=right \
@@ -89,11 +75,21 @@ yad --plug=$KEY --tabnum=1 --borders=15 --scroll \
 	--field=":lbl" "#2"\
 	--field="$use_g_color:CHK" $sttng3 \
 	--field="$dialog_word_Selector:CHK" $sttng4 \
-	--field="$auto_pronounce:CHK" $sttng5 \
-	--field="$start_with_system:CHK" $sttng6 \
+	--field="$start_with_system:CHK" $sttng5 \
+	--field="$play_time:BTN" "$DS/play.sh time" \
 	--field=" :lbl" "#7"\
-	--field="<small>$voice_syntetizer</small>:CB5" "$sttng8" \
-	--field="<small>$record_audio</small>:CB5" "$sttng9" \
+	--field="$audio\t":lbl "#8" \
+	--field=":lbl" "#9" \
+	--field="$auto_pronounce:CHK" $sttng10 \
+	--field="<small>$voice_syntetizer</small>:CB5" "$sttng11" \
+	--field="<small>$record_audio</small>:CB5" "$sttng12" \
+	--field="$audio_imput:BTN" "/usr/share/idiomind/ifs/tls.sh cnfg" \
+	--field=" :lbl" "#10"\
+	--field="$help\t":lbl "#11" \
+	--field=":lbl" "#9" \
+	--field="$search_updates:BTN" "/usr/share/idiomind/ifs/tls.sh updt" \
+	--field="$quickstart:BTN" "/usr/share/idiomind/ifs/tls.sh help" \
+	--field="$topics_saved:BTN" "/usr/share/idiomind/ifs/upld.sh vsd" \
 	--field=" :lbl" "#10"\
 	--field="$languages\t":lbl "#11" \
 	--field=":lbl" "#12"\
@@ -110,8 +106,7 @@ yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 	--sticky --center --window-icon=$ICON --window-icon=idiomind \
 	--tab="$preferences" --tab="  $addons  " --borders=5 \
 	--tab="  $about  " \
-	--width=450 --height=340 --title="$settings" \
-	--button=$tools:"$DS/ifs/tls.sh tls" --button=$close:0
+	--width=450 --height=340 --title="$settings" --button=$close:0
 	
 	ret=$?
 	
@@ -148,8 +143,8 @@ yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 			fi
 		fi
 		
-		ln=$(cat "$cnf1" | sed -n 13p)
-		ls=$(cat "$cnf1" | sed -n 14p)
+		ln=$(cat "$cnf1" | sed -n 18p)
+		ls=$(cat "$cnf1" | sed -n 19p)
 		
 		if echo $ln | grep "English" && [ English != $lgtl ] ; then
 			set_lang English en

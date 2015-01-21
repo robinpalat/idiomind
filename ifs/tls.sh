@@ -183,18 +183,6 @@ elif [ $1 = add ]; then
 			cp -f "$file" $DT_r/audtm.mp3
 		fi
 		
-elif [ $1 = tls ]; then
-
-$yad --form --height=190 --borders=5 --width=350 \
-	--title=" " --skip-taskbar --columns=1 \
-	--window-icon=idiomind \
-	--field="$topics_saved:BTN" "$DS/ifs/upld.sh vsd" \
-	--field="$play_time:BTN" "$DS/play.sh time" \
-	--field="$audio_imput:BTN" "/usr/share/idiomind/ifs/tls.sh cnfg" \
-	--field="$search_updates:BTN" "$DS/ifs/tls.sh updt" \
-	--field="$help:BTN" "$DS/ifs/tls.sh help" \
-	--button=Close:0 & exit
-
 elif [ $1 = help ]; then
 
 	xdg-open $DS/ifs/trans/$lgs/help.pdf & exit
