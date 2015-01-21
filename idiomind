@@ -17,7 +17,7 @@ function sizes() {
 	xrandr | grep '*' | awk '{ print $1 }' > $wh
 	sed -i 's/x/\n/' $wh
 	y=$(sed -n 2p $wh)
-	[[ $y -lt 950 ]] && y=950
+	[[ $y -lt 1020 ]] && y=1020
 	echo $(($y*56/100)) >> $wh
 	echo $(($y*50/100)) >> $wh
 	echo $(($y*56/100)) >> $wh
