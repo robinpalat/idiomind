@@ -1,487 +1,2284 @@
-cosa
-anno
-uomo
-giorno
-volta
-casa
-parte
-vita
-tempo
-donna
-mano
-occhio
-ora
-signore
-paese
-momento
-modo
-mondo
-parola
-padre
-punto
-lavoro
-stato
-caso
-città
-guerra
-strada
-figlio
-notte
-voce
-nome
-sera
-acqua
-amico
-fatto
-gente
-amore
-storia
-aria
-forza
-testa
-ragione
-mare
-mese
-capo
-luce
-sole
-famiglia
-piede
-persona
-via
-signora
-governo
-senso
-opera
-prodotto
-festa
-gioco
-prova
-campagna
-fiore
-sala
-misura
-posizione
-natura
-ufficio
-specie
-successo
-zona
-fuoco
-soldato
-vista
-libertà
-risultato
-importanza
-dubbio
-ricerca
-dio
-figura
-piazza
-questione
-nemico
-pena
-motivo
-esperienza
-ricordo
-albero
-politica
-processo
-vino
-porta
-sud
-sogno
-cane
-isola
-movimento
-mente
-occasione
-prezzo
-causa
-periodo
-sviluppo
-sorella
-effetto
-giardino
-attività
-volontà
-volto
-base
-carattere
-coscienza
-guardia
-memoria
-terreno
-animale
-direzione
-eccellenza
-malattia
-scienza
-funzione
-conseguenza
-parete
-dente
-distanza
-gusto
-impressione
-istituto
-quadro
-attenzione
-autore
-difficoltà
-passione
-commissione
-dito
-inizio
-programma
-spettacolo
-titolo
-comunicazione
-fenomeno
-maggio
-stampa
-denaro
-destino
-dovere
-ferro
-punta
-regno
-epoca
-luna
-provincia
-voglia
-differenza
-controllo
-grazia
-passato
-spazio
-stella
-corsa
-erba
-massa
-origine
-polizia
-soluzione
-chilometro
-madre
-paura
-cuore
-idea
-fondo
-esempio
-ordine
-posto
-campo
-faccia
-moglie
-ragazzo
-bisogno
-cielo
-letto
-fronte
-conto
-corpo
-numero
-ministro
-problema
-chiesa
-braccio
-bambino
-pensiero
-pace
-morte
-fine
-forma
-resto
-popolo
-società
-studio
-legge
-libro
-figlia
-resto
-luogo
-condizione
-professore
-marito
-verità
-segno
-diritto
-lettera
-ragazza
-scuola
-camera
-gruppo
-lira
-discorso
-centro
-secolo
-mezzo
-tipo
-colpa
-rispetto
-scena
-don
-oggetto
-possibilità
-mamma
-presenza
-teatro
-caffè
-principio
-termine
-lingua
-pezzo
-capello
-regione
-monte
-università
-treno
-inverno
-nazione
-pagina
-scopo
-compagno
-necessità
-potere
-musica
-dottore
-sentimento
-nave
-pietra
-produzione
-speranza
-dolore
-carne
-generale
-proposito
-elemento
-stazione
-materia
-scala
-maniera
-arma
-autorità
-gamba
-patria
-albergo
-gioia
-argomento
-sguardo
-relazione
-classe
-battaglia
-viso
-gesto
-mattino
-opinione
-ponte
-sorriso
-frase
-limite
-ritorno
-bosco
-esame
-lato
-operazione
-pranzo
-costa
-prato
-repubblica
-valle
-nord
-fatica
-odore
-articolo
-costruzione
-rivoluzione
-zia
-confronto
-potenza
-sforzo
-sicurezza
-ufficiale
-crisi
-cucina
-gatto
-pietà
-territorio
-attimo
-civiltà
-contatto
-errore
-fretta
-intenzione
-cultura
-giudizio
-spesa
+
+
+accontamento
+acconto
+accoppiabilità
+accoppiamento
+accoppiatore
+accoppiatura
+accoramento
+accorataggine
+accorazione
+accorciabilità
+accorciamento
+accorciativo
+accordabilità
+accordamento
+accordanza
+accordatore
+accordatura
+accordio
+accordo
+accordo prematrimoniale
+accordo solenne
+accorgimento
+accorpamento
+accortezza
+accosciata
+accostamento
+accosto
+accostumanza
+accotonatura
+account
+accozzaglia
+accozzamento
+accozzo
+accreditabilità
+accreditamento
+accrescimento
+accrescitivo
+accrezione
+accrocco
+accudimento
+acculturamento
+acculturazione
+accumulabilità
+accumulamento
+accumulatore
+accumulazione
+accuratezza
+accusa
+accusabilità
+accusativo
+accusato
+accusatore
+accusatrice
+accusazione
+acefalia
+acemeti
+acenaftalene
+acenaftene
+acenaftilene
+aceraia
+acerbità
+acereta
+acereto
+acero
+acero americano
+acero bianco
+acero campestre
+A cont.
+acero da zucchero
+acero di monte
+acero giapponese
+acero montano
+acero nero
+acero platanoide
+acero riccio
+acero rosso
+acero saccarino
+acerra
+acescenza
+acetabolo
+acetaio
+acetaldeide
+acetalizzazione
+acetammide
+acetato
+acetato di magnesio
+acetato di potassio
+acetato di sodio
+acetificatore
+acetificazione
+acetificio
+acetilazione
+acetilcellulosa
+acetilcloruro
+acetilcolina
+acetilcolinesterasi
+acetile
+acetilene
+acetilgalattosamina
+acetilglucosammina
+acetilspermidina
+acetilspermina
+aceto
+acetoarsenito
+acetobatterio
+acetofenone
+acetone
+acetonemia
+acetonitrile
+acetonuria
+acetosa
+acetosella
+acetosità
+achenio
+acheo
+Acheronte
+achille
+achillea
+acidatura
+acidezza
+acidificazione
+acidimetria
+acidimetro
+acidità
+aciditá
+acido
+acido acetico
+acido acetilsalicilico
+acido acrilico
+acido adipico
+acido alginico
+acido arachico
+acido arachidico
+acido ascorbico
+acido aspartico
+A cont.
+acido barbiturico
+acido benzoico
+acido biliare
+acido borico
+acido bromico
+acido bromidrico
+acido butanoico
+acido butirrico
+acido caprico
+acido caprilico
+acido caprinico
+acido caproico
+acido carbolico
+acido carbonico
+acido carbossilico
+acido cerotico
+acido cianidrico
+acido citrico
+acido clorico
+acido cloridrico
+acido cloroso
+acido coniugato
+acido crotonico
+acido decanoico
+acido deossiribonucleico
+acido desossiribonucleico
+acido domoico
+acido eicosapentaenoico
+acido fluoridrico
+acido folico
+acido formico
+acido fosfonico
+acido fosforico
+acido fosforoso
+acido ftalico
+acido fulminico
+acido fumarico
+acido galatturonico
+acido gallico
+acido glicolico
+acido gluconico
+acido glucuronico
+acido glutammico
+acido glutarico
+acido grasso
+acido ialuronico
+acido idrocinnamico
+acido iodico
+acido iodidrico
+acido ipobromoso
+acido ipocloroso
+acido ipofluoroso
+acido ipofosforoso
+acido iponitroso
+acido ippurico
+acido jasmonico
+acido kainico
+acido lattico
+acido laurico
+acido linoleico
+acido linolenico
+acido lipoico
+acido lisergico
+acido maleico
+acido malico
+acido malonico
+(previous 200) (next 200)
+
+accontamento
+acconto
+accoppiabilità
+accoppiamento
+accoppiatore
+accoppiatura
+accoramento
+accorataggine
+accorazione
+accorciabilità
+accorciamento
+accorciativo
+accordabilità
+accordamento
+accordanza
+accordatore
+accordatura
+accordio
+accordo
+accordo prematrimoniale
+accordo solenne
+accorgimento
+accorpamento
+accortezza
+accosciata
+accostamento
+accosto
+accostumanza
+accotonatura
+account
+accozzaglia
+accozzamento
+accozzo
+accreditabilità
+accreditamento
+accrescimento
+accrescitivo
+accrezione
+accrocco
+accudimento
+acculturamento
+acculturazione
+accumulabilità
+accumulamento
+accumulatore
+accumulazione
+accuratezza
+accusa
+accusabilità
+accusativo
+accusato
+accusatore
+accusatrice
+accusazione
+acefalia
+acemeti
+acenaftalene
+acenaftene
+acenaftilene
+aceraia
+acerbità
+acereta
+acereto
+acero
+acero americano
+acero bianco
+ac
+alcool etilico
+Contents
+1 Italian
+1.1 Etymology
+1.2 Pronunciation
+1.3 Noun
+Italian[edit]
+Etymology[edit]
+alcool + etilico
+
+Pronunciation[edit]
+Audio	(file)
+Noun[edit]
+alcool etilico m
+
+ethyl alcohol, ethanol
+Categories: Italian terms with audio linksItalian lemmasItalian nouns
+Navigation menu
+Create accountLog inEntryDiscussionReadEditHistory
+
+Navigation
+Main Page
+Community portal
+Preferences
+Requested entries
+Recent changes
+Random entry
+Help
+Donations
+Contact us
+Tools
+What links here
+Related changes
+Upload file
+Special pages
+Printable version
+Permanent link
+Page information
+Cite this page
+In other languages
+Italiano
+This page was last modified on 26 March 2014, at 23:00.
+Text is available under the Creative Commons Attribution-ShareAlike License; adagroecosistema
+agrofarmaco
+agroglifo
+agroindustria
+agroingegneria
+agrologia
+agrometeorologia
+agrometeorologo
+agronica
+agronoma
+agronomia
+agronomo
+agropirata
+agrore
+agrosilvicoltore
+agrosilvicoltura
+agrosilvopastoralismo
+agrosistema
+agrostemma
+agrostide
+agrotecnico
+agrozootecnia
+agrume
+agrumeto
+agrumicoltore
+agrumicoltrice
+agrumicoltura
+aguato
+aguglia
+agugliata
+agugliatore
+aguglieria
+agumento
+agumina
+aguti
+agutoli
+aguzzina
+aguzzino
+agyrofobia
+aia
+aiale
+aicmofobia
+aiducco
+aiduco
+ailanto
+aio
+aiola
+aiolo
+airbag
+aire
+airone
+airone bianco maggiore
+airone cenerino
+airone guardabuoi
+airone rosso
+aiuola
+aiuolo
+aiutante
+aiutino
 aiuto
-ambiente
-animo
-bestia
-cortile
-pelle
-proposta
-riva
-segretario
-abito
-chiave
-corrente
-operaio
-corso
-finestra
-arte
-sistema
-piano
-bocca
-anima
-palazzo
-passo
-giornata
-servizio
-rapporto
-milione
-stanza
-valore
-colpo
-sangue
-interesse
-spalla
-silenzio
-signorina
-ombra
-azione
-vento
-mattina
-colore
-presidente
-consiglio
-principe
-viaggio
-genere
-giornale
-spirito
-cavallo
-muro
-situazione
-linea
-giro
-automobile
-atto
-aspetto
-età
-fortuna
-oro
-partito
-macchina
-carta
-minuto
-tratto
-settimana
-notizia
-fratello
-realtà
-industria
-piacere
-maestro
-personaggio
-pomeriggio
-fianco
-bambina
-bellezza
-domanda
-pianta
-pubblico
-sede
-affare
-bene
-metà
-papà
-fiume
-lotta
-mercato
-angolo
-compagnia
-espressione
-labbro
-villa
-desiderio
-serie
-visita
-coraggio
-direttore
-esercito
-grado
-padrone
-risposta
-tavola
-immagine
-montagna
-energia
-fede
-pane
-seguito
-estate
-film
-frutto
-onore
-pericolo
-scrittore
-collina
-zio
-difesa
-metro
-collo
-cura
-disposizione
-Domenica
-giovanotto
-poeta
-stagione
-peso
-tono
-croce
-decisione
-poesia
-fiducia
-filo
-folla
-qualità
-roba
-conoscenza
-favore
-popolazione
-strumento
-uso
-vestito
-commercio
-fabbrica
-giugno
-giustizia
-avvocato
-messa
-orecchio
-sonno
-congresso
-porto
-calcio
-fantasia
-matrimonio
-medico
-ospedale
-pianura
-tavolo
-fame
-latte
-merito
-attore
-ricchezza
-sacrificio
-atteggiamento
-concetto
-mestiere
-attesa
-bagno
-foglia
-istante
-lago
+aiutorio
+aizzamento
+aizzatore
+aizzatrice
+ala
+ala a delta
+ala portante
+A cont.
+alabamio
+alabardiere
+alabastro
+alaccia
+alacrità
+alaese
+alaggio
+alamaro
+alambicco
+alameticina
+alanina
+alano
+alare
+alba
+albagia
+albagio
+albanella
+albanella minore
+albanella reale
+albanese
+albastrello
+albatro
+albatro urlatore
+albedo
+albeggiamento
+alberaggio
+alberatura
+alberello
+alberese
+albereta
+albereto
+albergaccio
+albergagione
+albergatore
+albergatrice
+alberghetto
+albergo
+albero
+albero cavo
+albero da frutto
+albero del paradiso
+albero della cuccagna
+albero della manna
+albero di Giuda
+albero di Natale
+albero di trinchetto
+albero genealogico
+albero maestro
+albero matricino
+alberobellese
+albicocca
+albicoccheto
+albicocco
+albigese
+albinismo
+albino
+albo
+albore
+alborella
+alboretto
+albugine
+albula
+album
+album fotografico
+albume
+albumina
+albuminato
+A cont.
+albuminoide
+alburno
+alcalescenza
+alcali
+alcalimetria
+alcalimetro
+alcalinità
+alcalinizzazione
+alcaloide
+alcalosi
+alcanna
+alcano
+alce
+alchechengi
+alchene
+alchermes
+alchilammide
+alchilammina
+alchilazione
+alchilcarbossammide
+alchile
+alchilimmina
+alchimia
+alchìmia
+alchimista
+alchino
+alcione
+alcol
+alcol assoluto
+alcol denaturato
+alcol etilico
+alcol primario
+alcol secondario
+alcol terziario
+alcolato
+alcoldipendente
+alcole
+alcolemia
+alcolicità
+alcolico
+alcolimetria
+alcolimetro
+alcolismo
+alcolista
+alcolizzazione
+alcologia
+alcolometria
+alcolometro
+alcoltest
+alcool
+alcool etilico
+alcoolato
+alcooldipendente
+alcoole
+alcoolemia
+alcoolicità
+alcoolico
+alcoolimetria
+alcoolimetro
+alcoolismo
+alcoolista
+alcoolizzato
+alcooltest
+alcossido
+alcova
+aldebaranio
+(previous 200) (next 200)ditional terms may apply. By using this site, you agree to the Terms of Use and Privacy Policy.ero campestre
+A cont.
+acero da zucchero
+acero di monte
+acero giapponese
+acero montano
+acero nero
+acero platanoide
+acero riccio
+acero rosso
+acero saccarino
+acerra
+acescenza
+acetabolo
+acetaio
+acetaldeide
+acetalizzazione
+acetammide
+acetato
+acetato di magnesio
+acetato di potassio
+acetato di sodio
+acetificatore
+acetificazione
+acetificio
+acetilazione
+acetilcellulosa
+acetilcloruro
+acetilcolina
+acetilcolinesterasi
+acetile
+acetilene
+acetilgalattosamina
+acetilglucosammina
+acetilspermidina
+acetilspermina
+aceto
+acetoarsenito
+acetobatterio
+acetofenone
+acetone
+acetonemia
+acetonitrile
+acetonuria
+acetosa
+acetosella
+acetosità
+achenio
+acheo
+Acheronte
+achille
+achillea
+acidatura
+acidezza
+acidificazione
+acidimetria
+acidimetro
+acidità
+aciditá
+acido
+acido acetico
+acido acetilsalicilico
+acido acrilico
+acido adipico
+acido alginico
+acido arachico
+acido arachidico
+acido ascorbico
+acido aspartico
+A cont.
+acido barbiturico
+acido benzoico
+acido biliare
+acido borico
+acido bromico
+acido bromidrico
+acido butanoico
+acido butirrico
+acido caprico
+acido caprilico
+acido caprinico
+acido caproico
+acido carbolico
+acido carbonico
+acido carbossilico
+acido cerotico
+acido cianidrico
+acido citrico
+acido clorico
+acido cloridrico
+acido cloroso
+acido coniugato
+acido crotonico
+acido decanoico
+acido deossiribonucleico
+acido desossiribonucleico
+acido domoico
+acido eicosapentaenoico
+acido fluoridrico
+acido folico
+acido formico
+acido fosfonico
+acido fosforico
+acido fosforoso
+acido ftalico
+acido fulminico
+acido fumarico
+acido galatturonico
+acido gallico
+acido glicolico
+acido gluconico
+acido glucuronico
+acido glutammico
+acido glutarico
+acido grasso
+acido ialuronico
+acido idrocinnamico
+acido iodico
+acido iodidrico
+acido ipobromoso
+acido ipocloroso
+acido ipofluoroso
+acido ipofosforoso
+acido iponitroso
+acido ippurico
+acido jasmonico
+acido kainico
+acido lattico
+acido laurico
+acido linoleico
+acido linolenico
+acido lipoico
+acido lisergico
+acido maleico
+acido malico
+acido malonico
+(previous 200) (next 200)
+
+accontamento
+acconto
+accoppiabilità
+accoppiamento
+accoppiatore
+accoppiatura
+accoramento
+accorataggine
+accorazione
+accorciabilità
+accorciamento
+accorciativo
+accordabilità
+accordamento
+accordanza
+accordatore
+accordatura
+accordio
+accordo
+accordo prematrimoniale
+accordo solenne
+accorgimento
+accorpamento
+accortezza
+accosciata
+accostamento
+accosto
+accostumanza
+accotonatura
+account
+accozzaglia
+accozzamento
+accozzo
+accreditabilità
+accreditamento
+accrescimento
+accrescitivo
+accrezione
+accrocco
+accudimento
+acculturamento
+acculturazione
+accumulabilità
+accumulamento
+accumulatore
+accumulazione
+accuratezza
+accusa
+accusabilità
+accusativo
+accusato
+accusatore
+accusatrice
+accusazione
+acefalia
+acemeti
+acenaftalene
+acenaftene
+acenaftilene
+aceraia
+acerbità
+acereta
+acereto
+acero
+acero americano
+acero bianco
+acero campestre
+A cont.
+acero da zucchero
+acero di monte
+acero giapponese
+acero montano
+acero nero
+acero platanoide
+acero riccio
+acero rosso
+acero saccarino
+acerra
+acescenza
+acetabolo
+acetaio
+acetaldeide
+acetalizzazione
+acetammide
+acetato
+acetato di magnesio
+acetato di potassio
+acetato di sodio
+acetificatore
+acetificazione
+acetificio
+acetilazione
+acetilcellulosa
+acetilcloruro
+acetilcolina
+acetilcolinesterasi
+acetile
+acetilene
+acetilgalattosamina
+acetilglucosammina
+acetilspermidina
+acetilspermina
+aceto
+acetoarsenito
+acetobatterio
+acetofenone
+acetone
+acetonemia
+acetonitrile
+acetonuria
+acetosa
+acetosella
+acetosità
+achenio
+acheo
+Acheronte
+achille
+achillea
+acidatura
+acidezza
+acidificazione
+acidimetria
+acidimetro
+acidità
+aciditá
+acido
+acido acetico
+acido acetilsalicilico
+acido acrilico
+acido adipico
+acido alginico
+acido arachico
+acido arachidico
+acido ascorbico
+acido aspartico
+A cont.
+acido barbiturico
+acido benzoico
+acido biliare
+acido borico
+acido bromico
+acido bromidrico
+acido butanoico
+acido butirrico
+acido caprico
+acido caprilico
+acido caprinico
+acido caproico
+acido carbolico
+acido carbonico
+acido carbossilico
+acido cerotico
+acido cianidrico
+acido citrico
+acido clorico
+acido cloridrico
+acido cloroso
+acido coniugato
+acido crotonico
+acido decanoico
+acido deossiribonucleico
+acido desossiribonucleico
+acido domoico
+acido eicosapentaenoico
+acido fluoridrico
+acido folico
+acido formico
+acido fosfonico
+acido fosforico
+acido fosforoso
+acido ftalico
+acido fulminico
+acido fumarico
+acido galatturonico
+acido gallico
+acido glicolico
+acido gluconico
+acido glucuronico
+acido glutammico
+acido glutarico
+acido grasso
+acido ialuronico
+acido idrocinnamico
+acido iodico
+acido iodidrico
+acido ipobromoso
+acido ipocloroso
+acido ipofluoroso
+acido ipofosforoso
+acido iponitroso
+acido ippurico
+acido jasmonico
+acido kainico
+acido lattico
+acido laurico
+acido linoleico
+acido linolenico
+acido lipoico
+acido lisergico
+acido maleico
+acido malico
+acido malonico
+(previous 200) (next 200)
+
+accontamento
+acconto
+accoppiabilità
+accoppiamento
+accoppiatore
+accoppiatura
+accoramento
+accorataggine
+accorazione
+accorciabilità
+accorciamento
+accorciativo
+accordabilità
+accordamento
+accordanza
+accordatore
+accordatura
+accordio
+accordo
+accordo prematrimoniale
+accordo solenne
+accorgimento
+accorpamento
+accortezza
+accosciata
+accostamento
+accosto
+accostumanza
+accotonatura
+account
+accozzaglia
+accozzamento
+accozzo
+accreditabilità
+accreditamento
+accrescimento
+accrescitivo
+accrezione
+accrocco
+accudimento
+acculturamento
+acculturazione
+accumulabilità
+accumulamento
+accumulatore
+accumulazione
+accuratezza
+accusa
+accusabilità
+accusativo
+accusato
+accusatore
+accusatrice
+accusazione
+acefalia
+acemeti
+acenaftalene
+acenaftene
+acenaftilene
+aceraia
+acerbità
+acereta
+acereto
+acero
+acero americano
+acero bianco
+acero campestre
+A cont.
+acero da zucchero
+acero di monte
+acero giapponese
+acero montano
+acero nero
+acero platanoide
+acero riccio
+acero rosso
+acero saccarino
+acerra
+acescenza
+acetabolo
+acetaio
+acetaldeide
+acetalizzazione
+acetammide
+acetato
+acetato di magnesio
+acetato di potassio
+acetato di sodio
+acetificatore
+acetificazione
+acetificio
+acetilazione
+acetilcellulosa
+acetilcloruro
+acetilcolina
+acetilcolinesterasi
+acetile
+acetilene
+acetilgalattosamina
+acetilglucosammina
+acetilspermidina
+acetilspermina
+aceto
+acetoarsenito
+acetobatterio
+acetofenone
+acetone
+acetonemia
+acetonitrile
+acetonuria
+acetosa
+acetosella
+acetosità
+achenio
+acheo
+Acheronte
+achille
+achillea
+acidatura
+acidezza
+acidificazione
+acidimetria
+acidimetro
+acidità
+aciditá
+acido
+acido acetico
+acido acetilsalicilico
+acido acrilico
+acido adipico
+acido alginico
+acido arachico
+acido arachidico
+acido ascorbico
+acido aspartico
+A cont.
+acido barbiturico
+acido benzoico
+acido biliare
+acido borico
+acido bromico
+acido bromidrico
+acido butanoico
+acido butirrico
+acido caprico
+acido caprilico
+acido caprinico
+acido caproico
+acido carbolico
+acido carbonico
+acido carbossilico
+acido cerotico
+acido cianidrico
+acido citrico
+acido clorico
+acido cloridrico
+acido cloroso
+acido coniugato
+acido crotonico
+acido decanoico
+acido deossiribonucleico
+acido desossiribonucleico
+acido domoico
+acido eicosapentaenoico
+acido fluoridrico
+acido folico
+acido formico
+acido fosfonico
+acido fosforico
+acido fosforoso
+acido ftalico
+acido fulminico
+acido fumarico
+acido galatturonico
+acido gallico
+acido glicolico
+acido gluconico
+acido glucuronico
+acido glutammico
+acido glutarico
+acido grasso
+acido ialuronico
+acido idrocinnamico
+acido iodico
+acido iodidrico
+acido ipobromoso
+acido ipocloroso
+acido ipofluoroso
+acido ipofosforoso
+acido iponitroso
+acido ippurico
+acido jasmonico
+acido kainico
+acido lattico
+acido laurico
+acido linoleico
+acido linolenico
+acido lipoico
+acido lisergico
+acido maleico
+acido malico
+acido malonico
+(previous 200) (next 200)
+
+accontamento
+acconto
+accoppiabilità
+accoppiamento
+accoppiatore
+accoppiatura
+accoramento
+accorataggine
+accorazione
+accorciabilità
+accorciamento
+accorciativo
+accordabilità
+accordamento
+accordanza
+accordatore
+accordatura
+accordio
+accordo
+accordo prematrimoniale
+accordo solenne
+accorgimento
+accorpamento
+accortezza
+accosciata
+accostamento
+accosto
+accostumanza
+accotonatura
+account
+accozzaglia
+accozzamento
+accozzo
+accreditabilità
+accreditamento
+accrescimento
+accrescitivo
+accrezione
+accrocco
+accudimento
+acculturamento
+acculturazione
+accumulabilità
+accumulamento
+accumulatore
+accumulazione
+accuratezza
+accusa
+accusabilità
+accusativo
+accusato
+accusatore
+accusatrice
+accusazione
+acefalia
+acemeti
+acenaftalene
+acenaftene
+acenaftilene
+aceraia
+acerbità
+acereta
+acereto
+acero
+acero americano
+acero bianco
+acero campestre
+A cont.
+acero da zucchero
+acero di monte
+acero giapponese
+acero montano
+acero nero
+acero platanoide
+acero riccio
+acero rosso
+acero saccarino
+acerra
+acescenza
+acetabolo
+acetaio
+acetaldeide
+acetalizzazione
+acetammide
+acetato
+acetato di magnesio
+acetato di potassio
+acetato di sodio
+acetificatore
+acetificazione
+acetificio
+acetilazione
+acetilcellulosa
+acetilcloruro
+acetilcolina
+acetilcolinesterasi
+acetile
+acetilene
+acetilgalattosamina
+acetilglucosammina
+acetilspermidina
+acetilspermina
+aceto
+acetoarsenito
+acetobatterio
+acetofenone
+acetone
+acetonemia
+acetonitrile
+acetonuria
+acetosa
+acetosella
+acetosità
+achenio
+acheo
+Acheronte
+achille
+achillea
+acidatura
+acidezza
+acidificazione
+acidimetria
+acidimetro
+acidità
+aciditá
+acido
+acido acetico
+acido acetilsalicilico
+acido acrilico
+acido adipico
+acido alginico
+acido arachico
+acido arachidico
+acido ascorbico
+acido aspartico
+A cont.
+acido barbiturico
+acido benzoico
+acido biliare
+acido borico
+acido bromico
+acido bromidrico
+acido butanoico
+acido butirrico
+acido caprico
+acido caprilico
+acido caprinico
+acido caproico
+acido carbolico
+acido carbonico
+acido carbossilico
+acido cerotico
+acido cianidrico
+acido citrico
+acido clorico
+acido cloridrico
+acido cloroso
+acido coniugato
+acido crotonico
+acido decanoico
+acido deossiribonucleico
+acido desossiribonucleico
+acido domoico
+acido eicosapentaenoico
+acido fluoridrico
+acido folico
+acido formico
+acido fosfonico
+acido fosforico
+acido fosforoso
+acido ftalico
+acido fulminico
+acido fumarico
+acido galatturonico
+acido gallico
+acido glicolico
+acido gluconico
+acido glucuronico
+acido glutammico
+acido glutarico
+acido grasso
+acido ialuronico
+acido idrocinnamico
+acido iodico
+acido iodidrico
+acido ipobromoso
+acido ipocloroso
+acido ipofluoroso
+acido ipofosforoso
+acido iponitroso
+acido ippurico
+acido jasmonico
+acido kainico
+acido lattico
+acido laurico
+acido linoleico
+acido linolenico
+acido lipoico
+acido lisergico
+acido maleico
+acido malico
+acido malonico
+(previous 200) (next 200)
+
+accontamento
+acconto
+accoppiabilità
+accoppiamento
+accoppiatore
+accoppiatura
+accoramento
+accorataggine
+accorazione
+accorciabilità
+accorciamento
+accorciativo
+accordabilità
+accordamento
+accordanza
+accordatore
+accordatura
+accordio
+accordo
+accordo prematrimoniale
+accordo solenne
+accorgimento
+accorpamento
+accortezza
+accosciata
+accostamento
+accosto
+accostumanza
+accotonatura
+account
+accozzaglia
+accozzamento
+accozzo
+accreditabilità
+accreditamento
+accrescimento
+accrescitivo
+accrezione
+accrocco
+accudimento
+acculturamento
+acculturazione
+accumulabilità
+accumulamento
+accumulatore
+accumulazione
+accuratezza
+accusa
+accusabilità
+accusativo
+accusato
+accusatore
+accusatrice
+accusazione
+acefalia
+acemeti
+acenaftalene
+acenaftene
+acenaftilene
+aceraia
+acerbità
+acereta
+acereto
+acero
+acero americano
+acero bianco
+acero campestre
+A cont.
+acero da zucchero
+acero di monte
+acero giapponese
+acero montano
+acero nero
+acero platanoide
+acero riccio
+acero rosso
+acero saccarino
+acerra
+acescenza
+acetabolo
+acetaio
+acetaldeide
+acetalizzazione
+acetammide
+acetato
+acetato di magnesio
+acetato di potassio
+acetato di sodio
+acetificatore
+acetificazione
+acetificio
+acetilazione
+acetilcellulosa
+acetilcloruro
+acetilcolina
+acetilcolinesterasi
+acetile
+acetilene
+acetilgalattosamina
+acetilglucosammina
+acetilspermidina
+acetilspermina
+aceto
+acetoarsenito
+acetobatterio
+acetofenone
+acetone
+acetonemia
+acetonitrile
+acetonuria
+acetosa
+acetosella
+acetosità
+achenio
+acheo
+Acheronte
+achille
+achillea
+acidatura
+acidezza
+acidificazione
+acidimetria
+acidimetro
+acidità
+aciditá
+acido
+acido acetico
+acido acetilsalicilico
+acido acrilico
+acido adipico
+acido alginico
+acido arachico
+acido arachidico
+acido ascorbico
+acido aspartico
+A cont.
+acido barbiturico
+acido benzoico
+acido biliare
+acido borico
+acido bromico
+acido bromidrico
+acido butanoico
+acido butirrico
+acido caprico
+acido caprilico
+acido caprinico
+acido caproico
+acido carbolico
+acido carbonico
+acido carbossilico
+acido cerotico
+acido cianidrico
+acido citrico
+acido clorico
+acido cloridrico
+acido cloroso
+acido coniugato
+acido crotonico
+acido decanoico
+acido deossiribonucleico
+acido desossiribonucleico
+acido domoico
+acido eicosapentaenoico
+acido fluoridrico
+acido folico
+acido formico
+acido fosfonico
+acido fosforico
+acido fosforoso
+acido ftalico
+acido fulminico
+acido fumarico
+acido galatturonico
+acido gallico
+acido glicolico
+acido gluconico
+acido glucuronico
+acido glutammico
+acido glutarico
+acido grasso
+acido ialuronico
+acido idrocinnamico
+acido iodico
+acido iodidrico
+acido ipobromoso
+acido ipocloroso
+acido ipofluoroso
+acido ipofosforoso
+acido iponitroso
+acido ippurico
+acido jasmonico
+acido kainico
+acido lattico
+acido laurico
+acido linoleico
+acido linolenico
+acido lipoico
+acido lisergico
+acido maleico
+acido malico
+acido malonico
+(previous 200) (next 200)
+
+accontamento
+acconto
+accoppiabilità
+accoppiamento
+accoppiatore
+accoppiatura
+accoramento
+accorataggine
+accorazione
+accorciabilità
+accorciamento
+accorciativo
+accordabilità
+accordamento
+accordanza
+accordatore
+accordatura
+accordio
+accordo
+accordo prematrimoniale
+accordo solenne
+accorgimento
+accorpamento
+accortezza
+accosciata
+accostamento
+accosto
+accostumanza
+accotonatura
+account
+accozzaglia
+accozzamento
+accozzo
+accreditabilità
+accreditamento
+accrescimento
+accrescitivo
+accrezione
+accrocco
+accudimento
+acculturamento
+acculturazione
+accumulabilità
+accumulamento
+accumulatore
+accumulazione
+accuratezza
+accusa
+accusabilità
+accusativo
+accusato
+accusatore
+accusatrice
+accusazione
+acefalia
+acemeti
+acenaftalene
+acenaftene
+acenaftilene
+aceraia
+acerbità
+acereta
+acereto
+acero
+acero americano
+acero bianco
+acero campestre
+A cont.
+acero da zucchero
+acero di monte
+acero giapponese
+acero montano
+acero nero
+acero platanoide
+acero riccio
+acero rosso
+acero saccarino
+acerra
+acescenza
+acetabolo
+acetaio
+acetaldeide
+acetalizzazione
+acetammide
+acetato
+acetato di magnesio
+acetato di potassio
+acetato di sodio
+acetificatore
+acetificazione
+acetificio
+acetilazione
+acetilcellulosa
+acetilcloruro
+acetilcolina
+acetilcolinesterasi
+acetile
+acetilene
+acetilgalattosamina
+acetilglucosammina
+acetilspermidina
+acetilspermina
+aceto
+acetoarsenito
+acetobatterio
+acetofenone
+acetone
+acetonemia
+acetonitrile
+acetonuria
+acetosa
+acetosella
+acetosità
+achenio
+acheo
+Acheronte
+achille
+achillea
+acidatura
+acidezza
+acidificazione
+acidimetria
+acidimetro
+acidità
+aciditá
+acido
+acido acetico
+acido acetilsalicilico
+acido acrilico
+acido adipico
+acido alginico
+acido arachico
+acido arachidico
+acido ascorbico
+acido aspartico
+A cont.
+acido barbiturico
+acido benzoico
+acido biliare
+acido borico
+acido bromico
+acido bromidrico
+acido butanoico
+acido butirrico
+acido caprico
+acido caprilico
+acido caprinico
+acido caproico
+acido carbolico
+acido carbonico
+acido carbossilico
+acido cerotico
+acido cianidrico
+acido citrico
+acido clorico
+acido cloridrico
+acido cloroso
+acido coniugato
+acido crotonico
+acido decanoico
+acido deossiribonucleico
+acido desossiribonucleico
+acido domoico
+acido eicosapentaenoico
+acido fluoridrico
+acido folico
+acido formico
+acido fosfonico
+acido fosforico
+acido fosforoso
+acido ftalico
+acido fulminico
+acido fumarico
+acido galatturonico
+acido gallico
+acido glicolico
+acido gluconico
+acido glucuronico
+acido glutammico
+acido glutarico
+acido grasso
+acido ialuronico
+acido idrocinnamico
+acido iodico
+acido iodidrico
+acido ipobromoso
+acido ipocloroso
+acido ipofluoroso
+acido ipofosforoso
+acido iponitroso
+acido ippurico
+acido jasmonico
+acido kainico
+acido lattico
+acido laurico
+acido linoleico
+acido linolenico
+acido lipoico
+acido lisergico
+acido maleico
+acido malico
+acido malonico
+(previous 200) (next 200)
+accontamento
+acconto
+accoppiabilità
+accoppiamento
+accoppiatore
+accoppiatura
+accoramento
+accorataggine
+accorazione
+accorciabilità
+accorciamento
+accorciativo
+accordabilità
+accordamento
+accordanza
+accordatore
+accordatura
+accordio
+accordo
+accordo prematrimoniale
+accordo solenne
+accorgimento
+accorpamento
+accortezza
+accosciata
+accostamento
+accosto
+accostumanza
+accotonatura
+account
+accozzaglia
+accozzamento
+accozzo
+accreditabilità
+accreditamento
+accrescimento
+accrescitivo
+accrezione
+accrocco
+accudimento
+acculturamento
+acculturazione
+accumulabilità
+accumulamento
+accumulatore
+accumulazione
+accuratezza
+accusa
+accusabilità
+accusativo
+accusato
+accusatore
+accusatrice
+accusazione
+acefalia
+acemeti
+acenaftalene
+acenaftene
+acenaftilene
+aceraia
+acerbità
+acereta
+acereto
+acero
+acero americano
+acero bianco
+acero campestre
+A cont.
+acero da zucchero
+acero di monte
+acero giapponese
+acero montano
+acero nero
+acero platanoide
+acero riccio
+acero rosso
+acero saccarino
+acerra
+acescenza
+acetabolo
+acetaio
+acetaldeide
+acetalizzazione
+acetammide
+acetato
+acetato di magnesio
+acetato di potassio
+acetato di sodio
+acetificatore
+acetificazione
+acetificio
+acetilazione
+acetilcellulosa
+acetilcloruro
+acetilcolina
+acetilcolinesterasi
+acetile
+acetilene
+acetilgalattosamina
+acetilglucosammina
+acetilspermidina
+acetilspermina
+aceto
+acetoarsenito
+acetobatterio
+acetofenone
+acetone
+acetonemia
+acetonitrile
+acetonuria
+acetosa
+acetosella
+acetosità
+achenio
+acheo
+Acheronte
+achille
+achillea
+acidatura
+acidezza
+acidificazione
+acidimetria
+acidimetro
+acidità
+aciditá
+acido
+acido acetico
+acido acetilsalicilico
+acido acrilico
+acido adipico
+acido alginico
+acido arachico
+acido arachidico
+acido ascorbico
+acido aspartico
+A cont.
+acido barbiturico
+acido benzoico
+acido biliare
+acido borico
+acido bromico
+acido bromidrico
+acido butanoico
+acido butirrico
+acido caprico
+acido caprilico
+acido caprinico
+acido caproico
+acido carbolico
+acido carbonico
+acido carbossilico
+acido cerotico
+acido cianidrico
+acido citrico
+acido clorico
+acido cloridrico
+acido cloroso
+acido coniugato
+acido crotonico
+acido decanoico
+acido deossiribonucleico
+acido desossiribonucleico
+acido domoico
+acido eicosapentaenoico
+acido fluoridrico
+acido folico
+acido formico
+acido fosfonico
+acido fosforico
+acido fosforoso
+acido ftalico
+acido fulminico
+acido fumarico
+acido galatturonico
+
+acido gallico
+acido glicolico
+acido gluconico
+acido glucuronico
+acido glutammico
+acido glutarico
+acido grasso
+acido ialuronico
+acido idrocinnamico
+acido iodico
+acido iodidrico
+acido ipobromoso
+acido ipocloroso
+acido ipofluoroso
+acido ipofosforoso
+acido iponitroso
+acido ippurico
+acido jasmonico
+acido kainico
+acido lattico
+acido laurico
+acido linoleico
+acido linolenico
+acido lipoico
+acido lisergico
+acido maleico
+acido malico
+acido malonico
+(previous 200) (next 200)
+actinomiosina
+actinorriza
+acufene
+acuità
+aculeo
+acume
+acusma
+acustica
+acusticofobia
+acustoelettricità
+acutezza
+acutizzazione
+acuto
+adacquamento
+adacquatore
+adacquatura
+adagietto
+adagio
+adamita
+adangme
+adattabilità
+adattamento
+adattatore
+adattatore USB
+addebitabilità
+addebitamento
+addebito
+addecimamento
+addecimatore
+addecimazione
+addendo
+addensamento
+addensante
+addensatore
+addestrabilità
+addestramento
+addestratore
+addestratrice
+addetto
+addetto diplomatico
+addetto stampa
+addiaccio
+addiettivo
+addio
+addio al celibato
+addio al nubilato
+additivazione
+additività
+additivo
+additivo alimentare
+addizionale
+addizionatore
+addizionatrice
+addizione
+addizzione
+addobbamento
+addobbo
+addolcimento
+addolcitore
+addome
+addomesticabilità
+addomesticamento
+addomesticatore
+addomesticazione
+addominale
+addomine
+addominoplastica
+A cont.
+addormentamento
+addossamento
+addottrinamento
+adduttore
+adduzione
+adefago
+adeguamento
+adeguatezza
+adeguazione
+adelfia
+adempimento
+ademprivio
+adenilato
+adenilciclasi
+adenina
+adenite
+adenocarcinoma
+adenoide
+adenoidectomia
+adenoidismo
+adenoipofisi
+adenoma
+adenomegalia
+adenopatia
+adenosin
+adenosina
+adenosinatrifosfato
+adenosintrifosfato
+adenotomia
+adepta
+adepto
+adequazione
+aderente
+aderenza
+aderizzazione
+adescamento
+adescatore
+adesina
+adesione
+adesività
+adesivo
+adhocrazia
+adiacenza
+adibizione
+adinato
+adipe
+adipoblasto
+adipocita
+adipocito
+adiponectina
+adiposità
+adito
+adizione
+Admiralissimo
+adolescente
+adolescenza
+adombramento
+adone
+adorabilità
+adoratore
+adoratrice
+adorazione
+adorcismo
+adornamento
+adottabilità
+adottazione
+adozione
+A cont.
+adrenalectomia
+adrenalina
+adrenarca
+adrenoleucodistrofia
+adrenomieloneuropatia
+adrenosterone
+adrone
+adrosauro
+adroterapia
+adsorbimento
+adualismo
+aduggiamento
+adulatore
+adulatrice
+adulazione
+adulta
+adultera
+adulteratore
+adulterazione
+adulterio
+adultero
+adulto
+adunanza
+adunata
+adunazione
+aedo
+aennino
+aeratore
+aerautodromo
+aerazione
+aereazione
+aeremoto
+aereo
+aereoplano
+aeroacrofobia
+aeroambulanza
+aerobica
+aerobio
+aerobiologia
+aerobiosi
+aerobox
+aerobrigata
+aerobus
+aerocartografia
+aerocentro
+aerocinematografia
+aerocinesi
+aerocisterna
+aeroclub
+aerocooperazione
+aerodina
+aerodinamica
+aerodinamicità
+aerodromo
+aeroelasticità
+aeroelettronica
+aeroembolismo
+aerofagia
+aerofaro
+aerofisica
+aerofobia
+aerofonista
+aerofono
+aeroforo
+aerofotografia
+aerofotogramma
+(pagroecosistema
+agrofarmaco
+agroglifo
+agroindustria
+agroingegneria
+agrologia
+agrometeorologia
+agrometeorologo
+agronica
+agronoma
+agronomia
+agronomo
+agropirata
+agrore
+agrosilvicoltore
+agrosilvicoltura
+agrosilvopastoralismo
+agrosistema
+agrostemma
+agrostide
+agrotecnico
+agrozootecnia
+agrume
+agrumeto
+agrumicoltore
+agrumicoltrice
+agrumicoltura
+aguato
+aguglia
+agugliata
+agugliatore
+aguglieria
+agumento
+agumina
+aguti
+agutoli
+aguzzina
+aguzzino
+agyrofobia
+aia
+aiale
+aicmofobia
+aiducco
+aiduco
+ailanto
+aio
+aiola
+aiolo
+airbag
+aire
+airone
+airone bianco maggiore
+airone cenerino
+airone guardabuoi
+airone rosso
+aiuola
+aiuolo
+aiutante
+aiutino
+aiuto
+aiutorio
+aizzamento
+aizzatore
+aizzatrice
+ala
+ala a delta
+ala portante
+A cont.
+alabamio
+alabardiere
+alabastro
+alaccia
+alacrità
+alaese
+alaggio
+alamaro
+alambicco
+alameticina
+alanina
+alano
+alare
+alba
+albagia
+albagio
+albanella
+albanella minore
+albanella reale
+albanese
+albastrello
+albatro
+albatro urlatore
+albedo
+albeggiamento
+alberaggio
+alberatura
+alberello
+alberese
+albereta
+albereto
+albergaccio
+albergagione
+albergatore
+albergatrice
+alberghetto
+albergo
+albero
+albero cavo
+albero da frutto
+albero del paradiso
+albero della cuccagna
+albero della manna
+albero di Giuda
+albero di Natale
+albero di trinchetto
+albero genealogico
+albero maestro
+albero matricino
+alberobellese
+albicocca
+albicoccheto
+albicocco
+albigese
+albinismo
+albino
+albo
+albore
+alborella
+alboretto
+albugine
+albula
+album
+album fotografico
+albume
+albumina
+albuminato
+A cont.
+albuminoide
+alburno
+alcalescenza
+alcali
+alcalimetria
+alcalimetro
+alcalinità
+alcalinizzazione
+alcaloide
+alcalosi
+alcanna
+alcano
+alce
+alchechengi
+alchene
+alchermes
+alchilammide
+alchilammina
+alchilazione
+alchilcarbossammide
+alchile
+alchilimmina
+alchimia
+alchìmia
+alchimista
+alchino
+alcione
+alcol
+alcol assoluto
+alcol denaturato
+alcol etilico
+alcol primario
+alcol secondario
+alcol terziario
+alcolato
+alcoldipendente
+alcole
+alcolemia
+alcolicità
+alcolico
+alcolimetria
+alcolimetro
+alcolismo
+alcolista
+alcolizzazione
+alcologia
+alcolometria
+alcolometro
+alcoltest
+alcool
+alcool etilico
+alcoolato
+alcooldipendente
+alcoole
+alcoolemia
+alcoolicità
+alcoolico
+alcoolimetria
+alcoolimetro
+alcoolismo
+alcoolista
+alcoolizzato
+alcooltest
+alcossido
+alcova
+aldebaranio
+(previous 200) (next 200)revious 200) (next 200)
+
