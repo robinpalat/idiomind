@@ -48,11 +48,11 @@ if [[ "$(echo "$nms" | wc -w)" -eq "1" ]]; then
 	exmp1=$(echo "$exm1" \
 	| sed "s/"$trgt"/<span background='#CFFF8B'>"$trgt"<\/\span>/g")
 	
-	YAD --columns=1 --form --width=$wth --height=$eht --center \
+	yad --columns=1 --form --width=$wth --height=$eht --center \
 	--window-icon=idiomind --scroll --text-align=center \
-	--skip-taskbar --center --title="$MPG " --borders=5 \
+	--skip-taskbar --center --title="$MPG " --borders=15 \
 	--quoted-output --on-top --selectable-labels \
-	--text="<big><big><big>$trgt</big></big></big>\n\n<i>$src</i>\n\n" \
+	--text="<big><big><big><b>$trgt</b></big></big></big>\n\n<i>$src</i>\n\n" \
 	--field="":lbl \
 	--field="<i><span color='#808080'>$exmp1\
 	</span></i>\\n:lbl" "$dfnts" \
@@ -77,10 +77,10 @@ else
 	
 	echo "$lwrd" | awk '{print $0""}' | yad --list \
 	--window-icon=idiomind --scroll --no-headers \
-	--skip-taskbar --center --title=" " --borders=5 \
+	--skip-taskbar --center --title=" " --borders=15 \
 	--on-top --selectable-labels --expand-column=0 \
 	--text="<big><big>$trgt</big></big>\\n\\n<i>$src</i>\\n\\n" \
-	--width=$wth --height=$eht --center --text-align=center \
+	--width=$wth --height=$eht --center \
 	--column=$lnglbl:TEXT --column=$lngs:TEXT \
 	"$listen" --button=gtk-go-up:3 --button=gtk-go-down:2 \
 	--dclick-action="$dwck"

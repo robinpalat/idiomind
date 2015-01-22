@@ -97,8 +97,8 @@ if [[ $1 = n_i ]]; then
 			--button="  Ok  ":0 & exit 1
 			 >&2; exit 1;}
 			
-			if [[ $(echo "$var" | wc -c) -ge 73 ]]; then
-				nme="$(echo "$var" | cut -c 1-70 | sed 's/[ \t]*$//' | \
+			if [[ $(echo "$var" | wc -c) -ge 100 ]]; then
+				nme="$(echo "$var" | cut -c 1-100 | sed 's/[ \t]*$//' | \
 				sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')..."
 			else
 				nme=$(echo "$var" | sed 's/[ \t]*$//' | \

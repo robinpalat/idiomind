@@ -62,6 +62,8 @@ elif [ -f "$DM_tlt/$nme.mp3" ]; then
 	|| trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
 	src=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
 	lwrd=$(echo "$tgs" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' | tr '_' '\n')
+	[[ "$(echo "$tgs" | grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)')" = TRUE ]] \
+	&& trgt=$(echo "<u>"$trgt"</u>")
 	[[ ! -f "$DM_tlt/$nme.mp3" ]] && exit 1
 	
 	[[ "$ap" = TRUE ]] && (killall play & sleep 1 && play "$DM_tlt/$nme.mp3") &

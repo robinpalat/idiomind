@@ -10,11 +10,10 @@ if [[ "$1" = chngi ]]; then
 	sna=$(sed -n 7p $DC_s/cnfg5)
 	cnfg1="$DC_s/cnfg5"
 	indx="$DT/.$user/indx"
-	[[ -z $(cat $DC_s/cnfg2) ]] && echo 8 > $DC_s/cnfg2 \
-	&& bcl=$(cat $DC_s/cnfg2) || bcl=$(cat $DC_s/cnfg2)
-	[[ -z $bcl ]] && bcl = 4
-	[[ $bcl -lt 4 ]] && bcl = 4 && echo 8 > $DC_s/cnfg2
-	if [ -n $(echo "$nta" | grep "TRUE") ] && [ $bcl -lt 10 ]; then bcl=10; fi
+	[[ -z $(cat $DC_s/cnfg2) ]] && echo 8 > $DC_s/cnfg2
+	bcl=$(cat $DC_s/cnfg2)
+	[[ $bcl -lt 2 ]] && bcl = 2 && echo 2 > $DC_s/cnfg2
+	if ([ $(echo "$nta" | grep "TRUE") ] && [ $bcl -lt 10 ]); then bcl=10; fi
 	
 	item=$(sed -n "$2"p $indx)
 	
@@ -47,8 +46,19 @@ if [[ "$1" = chngi ]]; then
 		[[ -f $imgt ]] && osdi=$imgt || osdi=idiomind
 		
 		[[ -n $(echo "$nta" | grep "TRUE") ]] && notify-send -i "$osdi" "$trgt" "$srce" -t 12000  &
-		sleep 1
-		[[ -n $(echo "$sna" | grep "TRUE") ]] && play "$file" &
+		sleep 0.5
+		if [[ -n $(echo "$sna" | grep "TRUE") ]]; then
+			if ps -A | pgrep -f 'tls.sh'; then
+				
+				while [ $(ps -A | pgrep -f tls.sh) ]; do
+					sleep 0.5
+				done
+				
+				$DS/ifs/tls.sh play "$file" &
+			else
+				$DS/ifs/tls.sh play "$file" &
+			fi
+		fi
 		
 		cnt=$(echo "$trgt" | wc -c)
 		echo "TOTAL=$(($bcl+$cnt/20)) ____ loop=$bcl  ____  characters=$cnt "

@@ -134,8 +134,8 @@ if [ -n "$feed" ]; then
 		lnk=$(sed -n "$n"p lnk)
 		
 		if [[ "$trgt" != "$(grep "$trgt" $DC_tl/Feeds/.updt.lst)" ]]; then
-			if [ $(echo "$trgt" | wc -c) -ge 73 ]; then
-				nme="$(echo "$trgt" | cut -c 1-70 | sed 's/[ \t]*$//' | \
+			if [ $(echo "$trgt" | wc -c) -ge 100 ]; then
+				nme="$(echo "$trgt" | cut -c 1-100 | sed 's/[ \t]*$//' | \
 				sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')..."
 			else
 				nme=$(echo "$trgt" | sed 's/[ \t]*$//' | \

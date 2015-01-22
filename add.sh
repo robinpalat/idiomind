@@ -404,8 +404,8 @@ elif [ $1 = n_s ]; then
 		sed -i 's/  / /g' ./.en
 		sed -i 's/  / /g' ./.en
 		
-		if [ $(cat ./.en | wc -c) -ge 73 ]; then
-			nme="$(cat ./.en | cut -c 1-70 | sed 's/[ \t]*$//' | \
+		if [ $(cat ./.en | wc -c) -ge 100 ]; then
+			nme="$(cat ./.en | cut -c 1-100 | sed 's/[ \t]*$//' | \
 			sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')..."
 		else
 			nme=$(cat ./.en | sed 's/[ \t]*$//' | \
@@ -564,8 +564,8 @@ elif [ $1 = n_s ]; then
 		sed -i 's/"//g' trgt_
 		sed 's/^[ \t]*//;s/[ \t]*$//' trgt_ > trgt
 		
-		if [ "$(cat ./trgt | wc -c)" -ge 73 ]; then
-			nme="$(cat trgt | cut -c 1-70 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g \
+		if [ "$(cat ./trgt | wc -c)" -ge 100 ]; then
+			nme="$(cat trgt | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g \
 			sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')..."
 		else
 			nme=$(cat trgt | sed 's/[ \t]*$//' | \
@@ -1592,8 +1592,8 @@ elif [ $1 = prs ]; then
 $trgt" >> log
 				
 				else
-					if [ $(cat ./tgt | wc -c) -ge 73 ]; then
-						nme="$(cat ./tgt | cut -c 1-70 | sed 's/[ \t]*$//' | \
+					if [ $(cat ./tgt | wc -c) -ge 100 ]; then
+						nme="$(cat ./tgt | cut -c 1-100 | sed 's/[ \t]*$//' | \
 						sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')..."
 					else
 						nme=$(cat ./tgt | sed 's/[ \t]*$//' | \
@@ -1680,8 +1680,8 @@ $trgt" >> log
 						sntc=$(sed -n "$n"p ./slts)
 						trgt=$(cat "./$sntc.txt")
 						
-						if [ $(echo "$sntc" | wc -c) -ge 73 ]; then
-							nme="$(echo "$sntc" | cut -c 1-70 | sed 's/[ \t]*$//' | \
+						if [ $(echo "$sntc" | wc -c) -ge 100 ]; then
+							nme="$(echo "$sntc" | cut -c 1-100 | sed 's/[ \t]*$//' | \
 							sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')..."
 						else
 							nme=$(echo "$sntc" | sed 's/[ \t]*$//' | \
@@ -1833,8 +1833,8 @@ $sntc" >> ./wlog
 						trgt=$(sed -n "$n"p wrds | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
 						exmp=$(sed -n "$n"p wrdsls)
 						
-						if [ $(echo "$exmp" | wc -c) -ge 73 ]; then # es para obtener el nobre de archivo
-							nme="$(echo "$exmp" | sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g' | cut -c 1-70)..."
+						if [ $(echo "$exmp" | wc -c) -ge 100 ]; then # es para obtener el nobre de archivo
+							nme="$(echo "$exmp" | sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g' | cut -c 1-100)..."
 						else
 							nme=$(echo "$exmp" | "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
 						fi
@@ -2196,8 +2196,8 @@ $sntc" >> ./slog
 									sed -i 's/  / /g' ./trgt
 									sed -i 's/  / /g' ./trgt
 									
-									if [ $(cat ./trgt | wc -c) -ge 73 ]; then
-										nme="$(cat ./trgt | cut -c 1-70 | sed 's/[ \t]*$//' | \
+									if [ $(cat ./trgt | wc -c) -ge 100 ]; then
+										nme="$(cat ./trgt | cut -c 1-100 | sed 's/[ \t]*$//' | \
 										sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')..."
 									else
 										nme=$(cat ./trgt | sed 's/[ \t]*$//' | \
@@ -2384,8 +2384,8 @@ $sntc" >> ./slog
 						exmp=$(sed -n "$n"p wrdsls)
 						itm=$(sed -n "$n"p wrds | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
 						
-						if [ $(echo "$exmp" | wc -c) -ge 73 ]; then
-							nme="$(echo "$exmp" | sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g' | cut -c 1-70)..."
+						if [ $(echo "$exmp" | wc -c) -ge 100 ]; then
+							nme="$(echo "$exmp" | sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g' | cut -c 1-100)..."
 						else
 							nme=$(echo "$exmp" | "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
 						fi

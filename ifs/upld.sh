@@ -462,7 +462,9 @@ convert $DT/boim1.png \( +clone -background Black \
 fi
 
 cd "$DM_tlt"
-cp -r * "$DT/$tpc/"
+cp -r ./* "$DT/$tpc/"
+cp -r "./words" "$DT/$tpc/"
+cp -r "./words/images" "$DT/$tpc/words"
 mkdir "$DT/$tpc/.audio"
 
 n=1
@@ -477,7 +479,7 @@ cp -f "$DC_tlt/cnfg0" "$DT/$tpc/cnfg0"
 cp -f "$DC_tlt/cnfg3" "$DT/$tpc/cnfg3"
 cp -f "$DC_tlt/cnfg4" "$DT/$tpc/cnfg4"
 cp -f "$DC_tlt/cnfg5" "$DT/$tpc/cnfg5"
-cp -f "$DC_tlt/cnfg10" "$DT/$tpc/cnfg10"
+#cp -f "$DC_tlt/cnfg10" "$DT/$tpc/cnfg10"
 printf "$notes" > "$DC_tlt/cnfg10"
 printf "$notes" > "$DT/$tpc/cnfg10"
 
@@ -492,7 +494,6 @@ mv -f "$DT/$U.$tpc.idmnd" "$DT/$nme/"
 notify-send "$uploading..." "$wait" -i idiomind -t 6000
 
 #-----------------------
-
 #ftp
 rm -f $DT/SITE_TMP
 cd $DT/$nme

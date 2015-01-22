@@ -4,7 +4,11 @@
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/others.conf
 
-if [ $1 = cnfg ]; then
+if [ $1 = play ]; then
+
+play "$2" && sleep 0.5 & exit
+
+elif [ $1 = cnfg ]; then
 
 	msj=$(sed -n 1p $DC_s/cnfg20)
 	cn=$(sed -n 2p $DC_s/cnfg20)

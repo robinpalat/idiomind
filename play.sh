@@ -100,7 +100,7 @@ FALSE' > $DC_s/cnfg5; fi
 	fi
 	$yad --list --on-top \
 	--expand-column=3 --print-all --center \
-	--width=240 --name=idiomind --class=idmnd \
+	--width=280 --name=idiomind --class=idmnd \
 	--height=240 --title="$tpc" \
 	--window-icon=idiomind --no-headers \
 	--buttons-layout=end \
@@ -183,7 +183,7 @@ FALSE' > $DC_s/cnfg5; fi
 	fi
 
 	rm -f $slct
-	$DS/stop.sh P
+	$DS/stop.sh play
 
 	w=$(sed -n 1p $DC_s/cnfg5)
 	s=$(sed -n 2p $DC_s/cnfg5)
@@ -194,13 +194,13 @@ FALSE' > $DC_s/cnfg5; fi
 	if ! [ "$(echo "$w""$s""$m""$f""$p" | grep -o "TRUE")" ]; then
 		notify-send "$exiting" "$no_items" -i idiomind -t 3000 &&
 		sleep 5
-		$DS/stop.sh
+		$DS/stop.sh play
 	fi
 
 	if [[ -z "$(cat ./indx)" ]]; then
 		notify-send -i idiomind "$exiting" "$no_items2" -t 3000 &
 		rm -f $DT/.p__$u &
-		$DS/stop.sh S & exit 1
+		$DS/stop.sh play & exit 1
 	fi
 
 	echo "$(date '+%Y %m %d %l %M') -plyrt $tpc -plyrt" >> \

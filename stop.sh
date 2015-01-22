@@ -28,12 +28,17 @@ elif echo "$1" | grep "L"; then
 	[[ -n "$(ps -A | pgrep -f "yad --form ")" ]] && kill -9 $(pgrep -f "yad --form ") &
 	[[ -d /tmp/.idmtp1.$u/.idadtmptts_$u ]] && rm -fr /tmp/.idmtp1.$u/.idadtmptts_$u
 	exit
-else
+elif echo "$1" | grep "play"; then
 	[[ -n "$(ps -A | pgrep -f "/usr/share/idiomind/bcle.sh")" ]] && killall bcle.sh &
 	[[ -n "$(ps -A | pgrep -f "/usr/share/idiomind/chng.sh")" ]] && killall chng.sh &
+	[[ -n "$(ps -A | pgrep -f "tls.sh")" ]] && killall tls.sh &
 	[[ -n "$(ps -A | pgrep -f "notify-osd")" ]] && killall notify-osd &
 	[[ -n "$(ps -A | pgrep -f "play")" ]] && killall play &
 	[[ -d /tmp/.idmtp1.$u/.idadtmptts_$u ]] && rm -fr /tmp/.idmtp1.$u/.idadtmptts_$u
 	[[ -f /tmp/.idmtp1.$u/.p__$u ]] && rm -fr /tmp/.idmtp1.$u/.p__$u
+	exit
+elif echo "$1" | grep "feed"; then
+	[[ -n "$(ps -A | pgrep -f "rsstail")" ]] && killall rsstail &
+	[[ -n "$(ps -A | pgrep -f "/usr/share/idiomind/addons/Learning with news/strt.sh")" ]] && killall strt.sh &
 	exit
 fi

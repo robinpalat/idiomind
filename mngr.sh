@@ -117,7 +117,7 @@ $topdf"
 fi
 fi
 	echo "$dd" | yad --list --on-top --expand-column=2 \
-	--width=240 --name=idiomind --center \
+	--width=280 --name=idiomind --center \
 	--height=240 --title="$tpc" --window-icon=idiomind \
 	--buttons-layout=end --no-headers --skip-taskbar \
 	--borders=0 --button=Ok:0 --column=icon:IMG \
@@ -650,6 +650,7 @@ elif [ "$1" = edt ]; then
 	else 
 		file="$DM_tlt/$nme.mp3"
 		tgs=$(eyeD3 "$file")
+		mrk=$(echo "$tgs" | grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)')
 		tgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
 		src=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
 		lwrd=$(echo "$tgs" | grep -o -P '(?<=IWI3I0I).*(?=IPWI3I0I)')
@@ -666,6 +667,7 @@ elif [ "$1" = edt ]; then
 		--buttons-layout=end --title=" $nme" --fontname="Arial" \
 		--selectable-labels --window-icon=idiomind --skip-taskbar \
 		--field="$chk:CHK" "$ok" \
+		--field="$mark "":CHK" "$mrk" \
 		--field="<small>$lgtl</small>":TXT "$tgt" \
 		--field="<small>$lgsl</small>":TXT "$src" \
 		--field="<small>$topic </small>":CB "$tpc!$tpcs" \
@@ -675,13 +677,25 @@ elif [ "$1" = edt ]; then
 		--button="$delete":"$dlte" "$edau" \
 		--button=gtk-close:1 > $cnf
 			
-			mrok=$(cat $cnf | tail -7 | sed -n 1p)
-			trgt=$(cat $cnf | tail -7 | sed -n 2p)
-			srce=$(cat $cnf | tail -7 | sed -n 3p)
-			topc=$(cat $cnf | tail -7 | sed -n 4p)
-			audo=$(cat $cnf | tail -7 | sed -n 5p)
+			mrok=$(cat $cnf | tail -8 | sed -n 1p)
+			mrk2=$(cat $cnf | tail -8 | sed -n 2p)
+			trgt=$(cat $cnf | tail -8 | sed -n 3p)
+			srce=$(cat $cnf | tail -8 | sed -n 4p)
+			topc=$(cat $cnf | tail -8 | sed -n 5p)
+			audo=$(cat $cnf | tail -8 | sed -n 6p)
 			source /usr/share/idiomind/ifs/c.conf
 			rm -f $cnf
+			
+			if [ "$mrk" != "$mrk2" ]; then
+				if [ "$mrk2" = "TRUE" ]; then
+					echo "$nme" >> "$DC_tlt/cnfg6"
+				else
+					grep -v -x -v "$nme" "$DC_tlt/cnfg6" > "$DC_tlt/cnfg6._"
+					sed '/^$/d' "$DC_tlt/cnfg6._" > "$DC_tlt/cnfg6"
+					rm "$DC_tlt/cnfg6._"
+				fi
+				eyeD3 -p ISI4I0I"$mrk2"ISI4I0I "$DM_tlt/$nme".mp3 >/dev/null 2>&1
+			fi
 			
 			if [ -n "$audo" ]; then
 			
@@ -782,8 +796,8 @@ elif [ "$1" = edt ]; then
 
 			if [ "$trgt" != "$tgt" ]; then
 			
-				if [[ "$(echo "$trgt" | wc -c)" -ge 73 ]]; then
-					fl=$(echo "$trgt" | cut -c 1-70 | sed 's/[ \t]*$//' | \
+				if [[ "$(echo "$trgt" | wc -c)" -ge 100 ]]; then
+					fl=$(echo "$trgt" | cut -c 1-100 | sed 's/[ \t]*$//' | \
 					sed "s/'/ /g" | sed "s/\n/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
 					n="..."
 					fln="$fl$n"
