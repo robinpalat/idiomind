@@ -70,6 +70,11 @@ if [ ! -d $DM_tl/Feeds ]; then
 source /usr/share/idiomind/ifs/c.conf
 uid=$(sed -n 1p $DC_s/cnfg4)
 FEED=$(cat "$DC/addons/Learning with news/$lgtl/.rss")
+[ ! -f $DC_tl/Feeds/cnfg8 ] && echo "11" > $DC_tl/Feeds/cnfg8
+[ ! -f $DC_tl/Feeds/cnfg0 ] && touch $DC_tl/Feeds/cnfg0
+[ ! -f $DC_tl/Feeds/cnfg1 ] && touch $DC_tl/Feeds/cnfg1
+[ ! -f $DC_tl/Feeds/cnfg3 ] && touch $DC_tl/Feeds/cnfg3
+[ ! -f $DC_tl/Feeds/cnfg4 ] && touch $DC_tl/Feeds/cnfg4
 sleep 1
 echo "$tpc" > $DC_s/cnfg8
 echo fd >> $DC_s/cnfg8
@@ -77,10 +82,8 @@ notify-send -i idiomind "Feed Mode" " $FEED" -t 3000
 exit 1' > $DC_tl/Feeds/tpc.sh
 	chmod +x $DC_tl/Feeds/tpc.sh
 	echo "11" > $DC_tl/Feeds/cnfg8
-	touch $DC_tl/Feeds/cnfg0
-	touch $DC_tl/Feeds/cnfg4
-	touch $DC_tl/Feeds/cnfg3
-	touch $DC_tl/Feeds/.updt.lst
+	cd $DC_tl/Feeds
+	touch cnfg0 cnfg1 cnfg3 cnfg4 .updt.lst
 	$DS/mngr.sh mkmn
 fi
 

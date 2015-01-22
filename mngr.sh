@@ -31,6 +31,7 @@ if [ $1 = mkmn ]; then
 		if [ ! -f "$DC_tl/$tp/cnfg8" ] || \
 		[ ! -f "$DC_tl/$tp/tpc.sh" ] || \
 		[ ! -f "$DC_tl/$tp/cnfg0" ] || \
+		[ ! -f "$DC_tl/$tp/cnfg1" ] || \
 		[ ! -f "$DC_tl/$tp/cnfg3" ] || \
 		[ ! -f "$DC_tl/$tp/cnfg4" ] || \
 		[ ! -d "$DM_tl/$tp" ]; then
@@ -49,6 +50,7 @@ if [ $1 = mkmn ]; then
 		if [ ! -f "$DC_tl/$tp/cnfg8" ] || \
 		[ ! -f "$DC_tl/$tp/tpc.sh" ] || \
 		[ ! -f "$DC_tl/$tp/cnfg0" ] || \
+		[ ! -f "$DC_tl/$tp/cnfg1" ] || \
 		[ ! -f "$DC_tl/$tp/cnfg3" ] || \
 		[ ! -f "$DC_tl/$tp/cnfg4" ] || \
 		[ ! -d "$DM_tl/$tp" ]; then

@@ -45,15 +45,15 @@ if [[ $1 = V1 ]]; then
 		
 		echo "$lwrd" | awk '{print $0""}' | $yad --list \
 		--window-icon=idiomind --scroll --quoted-output \
-		--skip-taskbar --center --title=" " --borders=10 \
+		--skip-taskbar --center --title=" " --borders=15 \
 		--text="<big><big>$trg</big></big> <a href='$lnk'>More</a>\\n\\n<i>$srce</i>\\n\\n\\n" \
 		--width="$wth" --height="$eht" --center --no-headers \
 		--column=$lgtl:TEXT --column=$lgsl:TEXT --selectable-labels \
-		--expand-column=0 --limit=20 --text-align=center \
+		--expand-column=0 --limit=20 \
 		--button=gtk-save:"'$DS_pf/add.sh' n_i '$nme'" \
 		--button=$listen:"'$DS_pf/tls.sh' s '$nme'" \
 		--button=gtk-go-up:3 --button=gtk-go-down:2 \
-		--dclick-action="'$DS/addons/Learning with news/tls.sh' dclk '.audio'"
+		--dclick-action="'$DS/addons/Learning with news/tls.sh' dclk '$nme'"
 		
 	else
 		ff=$(($nuw + 1))
@@ -112,7 +112,7 @@ elif [[ $1 = V2 ]]; then
 		
 		echo "$lwrd" | awk '{print $0""}' | yad --form \
 		--window-icon=idiomind --scroll --text-align=center \
-		--skip-taskbar --center --title="$MPG " --borders=10 \
+		--skip-taskbar --center --title="$MPG " --borders=15 \
 		--quoted-output --selectable-labels \
 		--text="<big><big>$trg</big></big>\\n\\n<i>$srce</i>\\n\\n" \
 		--field="":lbl \
@@ -132,8 +132,8 @@ elif [[ $1 = V2 ]]; then
 		lwrd=$(echo "$tgs" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' | tr '_' '\n')
 		
 		echo "$lwrd" | awk '{print $0""}' | yad --list \
-		--window-icon=idiomind --scroll --text-align=center \
-		--skip-taskbar --center --title=" " --borders=10 \
+		--window-icon=idiomind --scroll \
+		--skip-taskbar --center --title=" " --borders=15 \
 		--quoted-output --selectable-labels --no-headers \
 		--text="<big><big>$trg</big></big> <a href='$lnk'>More</a>\\n\\n<i>$srce</i>\\n\\n\\n" \
 		--width="$wth" --height="$eht" --center \
