@@ -137,13 +137,10 @@ if [ -n "$feed" ]; then
 		lnk=$(sed -n "$n"p lnk)
 		
 		if [[ "$trgt" != "$(grep "$trgt" $DC_tl/Feeds/.updt.lst)" ]]; then
-			if [ $(echo "$trgt" | wc -c) -ge 100 ]; then
-				nme="$(echo "$trgt" | cut -c 1-100 | sed 's/[ \t]*$//' | \
-				sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')..."
-			else
-				nme=$(echo "$trgt" | sed 's/[ \t]*$//' | \
-				sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-			fi
+
+			nme="$(echo "$trgt" | cut -c 1-100 | sed 's/[ \t]*$//' | \
+			sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')"
+
 			mkdir "$nme"
 			result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
 			encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
@@ -192,7 +189,7 @@ if [ -n "$feed" ]; then
 			fi
 			
 			eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I "$nme.mp3"
-			echo "$(echo "$nme" | sed 's/.mp3//g')" >> "$DC_tl/Feeds/cnfg1"
+			echo "$trgt" >> "$DC_tl/Feeds/cnfg1"
 			
 			> swrd
 			> twrd

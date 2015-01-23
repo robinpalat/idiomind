@@ -97,7 +97,8 @@ $share
 $DS/images/pdf.png
 $topdf"
 fi
-else
+elsenme="$(echo "$3" | cut -c 1-100 | sed 's/[ \t]*$//' | \
+	sed "s/'/ /g" | awk '{print tolower($0)}')"
 if [ "$ti" -ge 15 ]; then
 dd="$DS/images/ok.png
 $learned
@@ -327,10 +328,13 @@ elif [ "$1" = mkok- ]; then
 	
 	
 elif [ $1 = dli ]; then
-	itdl=$(echo "$2")
+	itdl="$2"
+	nme="$(echo "$2" | cut -c 1-100 | sed 's/[ \t]*$//' | \
+	sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')"
+	
 	if [ "$3" = "C" ]; then
 		# delete word
-		file="$DM_tlt/words/$itdl.mp3"
+		file="$DM_tlt/words/$nme.mp3"
 		if [ -f "$file" ]; then
 			rm "$file"
 			cd "$DC_tlt/practice"
@@ -349,7 +353,7 @@ elif [ $1 = dli ]; then
 			rm ./*._
 		fi
 		# delete sentence
-		file="$DM_tlt/$itdl.mp3"
+		file="$DM_tlt/$nme.mp3"
 		if [ -f "$file" ]; then
 			rm "$file"
 			cd "$DC_tlt/practice"
@@ -371,10 +375,10 @@ elif [ $1 = dli ]; then
 	fi
 	
 	# delete word
-	if [ -f "$DM_tlt/words/$itdl.mp3" ]; then
-		flw="$DM_tlt/words/$itdl.mp3"
-	elif [ -f "$DM_tlt/$itdl.mp3" ]; then
-		fls="$DM_tlt/$itdl.mp3"
+	if [ -f "$DM_tlt/words/$nme.mp3" ]; then
+		flw="$DM_tlt/words/$nme.mp3"
+	elif [ -f "$DM_tlt/$nme.mp3" ]; then
+		fls="$DM_tlt/$nme.mp3"
 	fi
 
 	if [ -f "$flw" ]; then
@@ -530,7 +534,8 @@ elif [ "$1" = edt ]; then
 	c=$(echo $(($RANDOM%10000)))
 	re='^[0-9]+$'
 	v="$2"
-	nme="$3"
+	nme="$(echo "$3" | cut -c 1-100 | sed 's/[ \t]*$//' | \
+	sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')"
 	ff="$4"
 
 	if [ "$v" = v1 ]; then
@@ -910,7 +915,7 @@ elif [ "$1" = edt ]; then
 					echo "$(echo "$tgt" | sed -n "$n"p).mp3" >> "$DC_tl/$topc/cnfg5"
 					let n++
 				done
-				$DS/mngr.sh inx S "$nme" "$topc" &
+				$DS/mngr.sh inx S "$trgt" "$topc" &
 				if [ -n "$(cat "$DC_tl/.cnfg2" | grep "$topc")" ]; then
 					$DS/mngr.sh dli "$nme" C
 				fi

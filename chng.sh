@@ -14,8 +14,9 @@ if [[ "$1" = chngi ]]; then
 	bcl=$(cat $DC_s/cnfg2)
 	[[ $bcl -lt 2 ]] && bcl = 2 && echo 2 > $DC_s/cnfg2
 	if ([ $(echo "$nta" | grep "TRUE") ] && [ $bcl -lt 10 ]); then bcl=10; fi
-	
-	item=$(sed -n "$2"p $indx)
+
+	item="$(sed -n "$2"p $indx | cut -c 1-100 | sed 's/[ \t]*$//' | \
+	sed "s/'/ /g" | awk '{print tolower($0)}')"
 	
 	[[ -f "$DM_tlt/$item.mp3" ]] && file="$DM_tlt/$item.mp3" && t=2
 	[[ -f "$DM_tlt/words/$item.mp3" ]] && file="$DM_tlt/words/$item.mp3" && t=1

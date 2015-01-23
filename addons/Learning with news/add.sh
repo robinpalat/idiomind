@@ -68,9 +68,9 @@ if [[ $1 = n_i ]]; then
 			
 			eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" -A IWI3I0I"$var"IWI3I0I \
 			"$DM_tl/Feeds/kept/words/$nme.mp3"
-			echo "$nme" >> "$DC_tl/Feeds/cnfg0"
-			echo "$nme" >> "$DC_tl/Feeds/.cnfg11"
-			echo "$nme" >> "$DC_tl/Feeds/cnfg3"
+			echo "$trgt" >> "$DC_tl/Feeds/cnfg0"
+			echo "$trgt" >> "$DC_tl/Feeds/.cnfg11"
+			echo "$trgt" >> "$DC_tl/Feeds/cnfg3"
 			
 			if [ -n "$(cat "$DC_tl/Feeds/cnfg0" | sort -n | uniq -dc)" ]; then
 				cat "$DC_tl/Feeds/cnfg0" | awk '!array_temp[$0]++' > $DT/.ls.x
@@ -113,9 +113,9 @@ if [[ $1 = n_i ]]; then
 				cat "$DC_tl/Feeds/cnfg0" | awk '!array_temp[$0]++' > $DT/.ls.x
 				sed '/^$/d' $DT/.ls.x > "$DC_tl/Feeds/cnfg0"
 			fi
-				echo "$nme" >> "$DC_tl/Feeds/cnfg0"
-				echo "$nme" >> "$DC_tl/Feeds/.cnfg11"
-				echo "$nme" >> "$DC_tl/Feeds/cnfg4"
+				echo "$trgt" >> "$DC_tl/Feeds/cnfg0"
+				echo "$trgt" >> "$DC_tl/Feeds/.cnfg11"
+				echo "$trgt" >> "$DC_tl/Feeds/cnfg4"
 				rm -f -r $DT/.dzmxx.x $DT/rss_$ & exit 1
 		else
 			rm -f -r $DT/.dzmxx.x $DT/rss_$ & exit 1

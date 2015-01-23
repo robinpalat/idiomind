@@ -20,7 +20,10 @@ if ! [[ $nuw =~ $re ]]; then
 	| sed -n 's/^\([0-9]*\)[:].*/\1/p')
 	nll=" "
 fi
-nme=$(sed -n "$nuw"p "$ind")
+
+nme="$(sed -n "$nuw"p "$ind" | cut -c 1-100 | sed 's/[ \t]*$//' \
+| sed "s/'/ /g" | awk '{print tolower($0)}')"
+
 if [ -z "$nme" ]; then
 	nme=$(sed -n 1p "$ind")
 	nuw=1

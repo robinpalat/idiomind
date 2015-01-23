@@ -84,7 +84,7 @@ if [ $1 = n_t ]; then
 			cp -f *.mp3 "$DM_tl/$jlb"
 			cp -f -r ./words "$DM_tl/$jlb/"
 			cd "$DC_tl/$tpc"
-			cp -f ./* "$DC_tl/$jlb"/
+			cp -f ./.* "$DC_tl/$jlb"/
 			cp -f ./practice/.* $DC_tl/"$jlb"/practice
 			grep -v -x -v "$tpc" $DC_tl/.cnfg2 > $DC_tl/.cnfg2_
 			sed '/^$/d' $DC_tl/.cnfg2_ > $DC_tl/.cnfg2
@@ -404,13 +404,9 @@ elif [ $1 = n_s ]; then
 		sed -i 's/  / /g' ./.en
 		sed -i 's/  / /g' ./.en
 		
-		if [ $(cat ./.en | wc -c) -ge 100 ]; then
-			nme="$(cat ./.en | cut -c 1-100 | sed 's/[ \t]*$//' | \
-			sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')..."
-		else
-			nme=$(cat ./.en | sed 's/[ \t]*$//' | \
-			sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-		fi
+		nme="$(cat ./.en | cut -c 1-100 | sed 's/[ \t]*$//' | \
+		sed "s/'/ /g" | awk '{print tolower($0)}')"
+		
 		result=$(curl -s -i --user-agent "" -d "sl=$lgt" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
 		encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
 		iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 > ./.es
@@ -449,7 +445,7 @@ elif [ $1 = n_s ]; then
 		fi
 		
 		notify-send -i "$icnn" "$trgt" "$srce \\n($tpe)" -t 10000
-		$DS/mngr.sh inx S "$nme" "$tpe"
+		$DS/mngr.sh inx S "$trgt" "$tpe"
 		
 		cd $DT_r
 		> swrd
@@ -564,14 +560,9 @@ elif [ $1 = n_s ]; then
 		sed -i 's/"//g' trgt_
 		sed 's/^[ \t]*//;s/[ \t]*$//' trgt_ > trgt
 		
-		if [ "$(cat ./trgt | wc -c)" -ge 100 ]; then
-			nme="$(cat trgt | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g \
-			sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')..."
-		else
-			nme=$(cat trgt | sed 's/[ \t]*$//' | \
-			sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-		fi
-		
+		nme="$(cat trgt | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g \
+		sed "s/'/ /g" | awk '{print tolower($0)}')"
+
 		#-----------------------------------------
 		srce="$4"
 		trgt="$(cat trgt)"
@@ -698,7 +689,7 @@ elif [ $1 = n_s ]; then
 		fi
 		sleep 1
 		notify-send -i "$icnn" "$trgt" "$srce \\n($tpe)" -t 10000
-		$DS/mngr.sh inx S "$nme" "$tpe"
+		$DS/mngr.sh inx S "$trgt" "$tpe"
 		
 		if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 			n=1
@@ -1592,13 +1583,8 @@ elif [ $1 = prs ]; then
 $trgt" >> log
 				
 				else
-					if [ $(cat ./tgt | wc -c) -ge 100 ]; then
-						nme="$(cat ./tgt | cut -c 1-100 | sed 's/[ \t]*$//' | \
-						sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')..."
-					else
-						nme=$(cat ./tgt | sed 's/[ \t]*$//' | \
-						sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-					fi
+					nme="$(cat ./tgt | cut -c 1-100 | sed 's/[ \t]*$//' | \
+					sed "s/'/ /g" | awk '{print tolower($0)}')"
 					
 					mv -f ./"$n".mp3 ./"$nme".mp3
 					echo "$trgt" > ./"$nme".txt
@@ -1680,13 +1666,8 @@ $trgt" >> log
 						sntc=$(sed -n "$n"p ./slts)
 						trgt=$(cat "./$sntc.txt")
 						
-						if [ $(echo "$sntc" | wc -c) -ge 100 ]; then
-							nme="$(echo "$sntc" | cut -c 1-100 | sed 's/[ \t]*$//' | \
-							sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')..."
-						else
-							nme=$(echo "$sntc" | sed 's/[ \t]*$//' | \
-							sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-						fi
+						nme="$(echo "$sntc" | cut -c 1-100 | sed 's/[ \t]*$//' | \
+						sed "s/'/ /g" | awk '{print tolower($0)}')"
 						
 						if [ $(sed -n 1p "$sntc.txt" | wc -$c) -eq 1 ]; then
 						
@@ -1719,7 +1700,7 @@ $sntc" >> ./wlog
 								"$sntc.mp3"
 
 								mv -f "$sntc.mp3" "$DM_tlt/$nme.mp3"
-								$DS/mngr.sh inx S "$nme" "$tpe"
+								$DS/mngr.sh inx S "$trgt" "$tpe"
 								echo "$nme" >> adds
 								
 								(
@@ -1833,12 +1814,8 @@ $sntc" >> ./wlog
 						trgt=$(sed -n "$n"p wrds | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
 						exmp=$(sed -n "$n"p wrdsls)
 						
-						if [ $(echo "$exmp" | wc -c) -ge 100 ]; then # es para obtener el nobre de archivo
-							nme="$(echo "$exmp" | sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g' | cut -c 1-100)..."
-						else
-							nme=$(echo "$exmp" | "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-						fi
-					
+						nme="$(echo "$exmp" | sed "s/'/ /g" | awk '{print tolower($0)}' | cut -c 1-100)"
+
 						if [ $(cat "$DC_tlt"/cnfg3 | wc -l) -ge 50 ]; then
 							echo "
 $trgt" >> ./wlog
@@ -2196,14 +2173,9 @@ $sntc" >> ./slog
 									sed -i 's/  / /g' ./trgt
 									sed -i 's/  / /g' ./trgt
 									
-									if [ $(cat ./trgt | wc -c) -ge 100 ]; then
-										nme="$(cat ./trgt | cut -c 1-100 | sed 's/[ \t]*$//' | \
-										sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')..."
-									else
-										nme=$(cat ./trgt | sed 's/[ \t]*$//' | \
-										sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-									fi
-								
+									nme="$(cat ./trgt | cut -c 1-100 | sed 's/[ \t]*$//' | \
+									sed "s/'/ /g" | awk '{print tolower($0)}')"
+										
 									result=$(curl -s -i --user-agent "" -d "sl=$lgt" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
 									encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
 									srce=$(iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 | sed ':a;N;$!ba;s/\n/ /g')
@@ -2272,7 +2244,7 @@ $sntc" >> ./slog
 									eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I "$DM_tlt/$nme.mp3"
 									
 									echo "$nme" >> adds
-									$DS/mngr.sh inx S "$nme" "$tpe"
+									$DS/mngr.sh inx S "$trgt" "$tpe"
 									(	
 										r=$(echo $(($RANDOM%1000)))
 										> twrd_$r
@@ -2384,12 +2356,9 @@ $sntc" >> ./slog
 						exmp=$(sed -n "$n"p wrdsls)
 						itm=$(sed -n "$n"p wrds | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
 						
-						if [ $(echo "$exmp" | wc -c) -ge 100 ]; then
-							nme="$(echo "$exmp" | sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g' | cut -c 1-100)..."
-						else
-							nme=$(echo "$exmp" | "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-						fi
-					
+
+						nme="$(echo "$exmp" | sed "s/'/ /g" | awk '{print tolower($0)}' | cut -c 1-100)"
+
 						if [ $(cat "$DC_tlt"/cnfg3 | wc -l) -ge 50 ]; then
 							echo "
 $itm" >> ./wlog
