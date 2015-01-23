@@ -13,7 +13,7 @@ source $DS/ifs/trans/$lgs/items_lists.conf
 
 function sizes() {
 	
-	wh=$DC_s/cnfg18
+	wh=$DC_s/cfg.18
 	xrandr | grep '*' | awk '{ print $1 }' > $wh
 	sed -i 's/x/\n/' $wh
 	y=$(sed -n 2p $wh)
@@ -32,7 +32,7 @@ function sizes() {
 	echo $(($y*38/100)) >> $wh
 }
 
-[[ ! -f $DC_s/cnfg18 ]] && sizes
+[[ ! -f $DC_s/cfg.18 ]] && sizes
 
 if [ -z "$1" ]; then
 
@@ -55,12 +55,12 @@ if [ -z "$1" ]; then
 		
 		# look for addons
 		addons="$(cd $DS/addons; ls -d *)"
-		[[ -f $DC_s/cnfg21 ]] && rm $DC_s/cnfg21
+		[[ -f $DC_s/cfg.21 ]] && rm $DC_s/cfg.21
 		n=1
 		while [ $n -le $(echo "$addons" | wc -l ) ]; do
 			set=$(echo "$addons" | sed -n "$n"p)
-			echo "/usr/share/idiomind/addons/$set/icon.png" >> $DC_s/cnfg21
-			echo "$set" >> $DC_s/cnfg21
+			echo "/usr/share/idiomind/addons/$set/icon.png" >> $DC_s/cfg.21
+			echo "$set" >> $DC_s/cfg.21
 			let n++
 		done
 
@@ -82,7 +82,7 @@ if [ -z "$1" ]; then
 		
 		# backup
 		if ([ "$(date +%u)" = 6 ] && \
-		[ "$(sed -n 1p $DC_s/cnfg12)" = "TRUE" ]); then
+		[ "$(sed -n 1p $DC_s/cfg.12)" = "TRUE" ]); then
 			"$DS/addons/User data/cnfg.sh" C &
 		fi
 		
@@ -90,56 +90,56 @@ if [ -z "$1" ]; then
 		$DS/ifs/tls.sh srch &
 		
 		# update topics status
-		[[ ! -f "$DC_tl/.cnfg1" ]] && touch "$DC_tl/.cnfg1"
+		[[ ! -f "$DC_tl/.cfg.1" ]] && touch "$DC_tl/.cfg.1"
 		n=1
-		while [ $n -le "$(cat "$DC_tl/.cnfg1" | head -30 | wc -l )" ]; do
-			tp=$(sed -n "$n"p "$DC_tl/.cnfg1")
+		while [ $n -le "$(cat "$DC_tl/.cfg.1" | head -30 | wc -l )" ]; do
+			tp=$(sed -n "$n"p "$DC_tl/.cfg.1")
 			
-			if [ -f "$DC_tl/$tp/cnfg9" ]; then
+			if [ -f "$DC_tl/$tp/cfg.9" ]; then
 
-				dts=$(cat "$DC_tl/$tp/cnfg9" | wc -l)
+				dts=$(cat "$DC_tl/$tp/cfg.9" | wc -l)
 				if [ $dts = 1 ]; then
-					dte=$(sed -n 1p "$DC_tl/$tp/cnfg9")
+					dte=$(sed -n 1p "$DC_tl/$tp/cfg.9")
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/10))
 				elif [ $dts = 2 ]; then
-					dte=$(sed -n 2p "$DC_tl/$tp/cnfg9")
+					dte=$(sed -n 2p "$DC_tl/$tp/cfg.9")
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/15))
 				elif [ $dts = 3 ]; then
-					dte=$(sed -n 3p "$DC_tl/$tp/cnfg9")
+					dte=$(sed -n 3p "$DC_tl/$tp/cfg.9")
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/30))
 				elif [ $dts = 4 ]; then
-					dte=$(sed -n 4p "$DC_tl/$tp/cnfg9")
+					dte=$(sed -n 4p "$DC_tl/$tp/cfg.9")
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/60))
 				fi
-				nstll=$(grep -Fxo "$tp" "$DC_tl/.cnfg3")
+				nstll=$(grep -Fxo "$tp" "$DC_tl/.cfg.3")
 				if [ -n "$nstll" ]; then
 					if [ "$RM" -ge 100 ]; then
-						echo "9" > "$DC_tl/$tp/cnfg8"
+						echo "9" > "$DC_tl/$tp/cfg.8"
 					fi
 					if [ "$RM" -ge 150 ]; then
-						echo "10" > "$DC_tl/$tp/cnfg8"
+						echo "10" > "$DC_tl/$tp/cfg.8"
 					fi
 				else
 					if [ "$RM" -ge 100 ]; then
-						echo "4" > "$DC_tl/$tp/cnfg8"
+						echo "4" > "$DC_tl/$tp/cfg.8"
 					fi
 					if [ "$RM" -ge 150 ]; then
-						echo "5" > "$DC_tl/$tp/cnfg8"
+						echo "5" > "$DC_tl/$tp/cfg.8"
 					fi
 				fi
 			fi
 			let n++
 		done
-		echo "$(date +%d)" > $DC_s/cnfg15
+		echo "$(date +%d)" > $DC_s/cfg.15
 		$DS/mngr.sh mkmn &
 	}
 
 	yad --width=175 --height=220 --name=idiomind \
-	--geometry=185x318-300-$(sed -n 12p $DC_s/cnfg18) \
+	--geometry=185x318-300-$(sed -n 12p $DC_s/cfg.18) \
 	--fixed --title="Idiomind" --no-buttons \
 	--icons --single-click --on-top --borders=0 \
 	--read-dir=$DS/default/new --item-width=68 \
@@ -152,16 +152,16 @@ if [ -z "$1" ]; then
 		new_session & exit
 	fi
 	
-	[[ -f $DC_s/cnfg15 ]] && d2=$(cat $DC_s/cnfg15)
-	if ([ "$(date +%d)" != "$d2" ] || [ ! -f $DC_s/cnfg15 ]); then
+	[[ -f $DC_s/cfg.15 ]] && d2=$(cat $DC_s/cfg.15)
+	if ([ "$(date +%d)" != "$d2" ] || [ ! -f $DC_s/cfg.15 ]); then
 		new_session
 	fi
 fi
 
 if [[ $(echo "$1" | grep -o '.idmnd') ]]; then
 
-	wth=$(sed -n 3p $DC_s/cnfg18)
-	eht=$(sed -n 4p $DC_s/cnfg18)
+	wth=$(sed -n 3p $DC_s/cfg.18)
+	eht=$(sed -n 4p $DC_s/cfg.18)
 	dte=$(date "+%d %B")
 	c=$(echo $(($RANDOM%1000)))
 	if [ ! -d $DT ]; then
@@ -181,7 +181,7 @@ if [[ $(echo "$1" | grep -o '.idmnd') ]]; then
 	echo "$inme"
 	tmp="$DT/idmimp_$c/$inme"
 	
-	source "$tmp/cnfg12"
+	source "$tmp/cfg.12"
 	[[ $language_target = English ]] && lng=en
 	[[ $language_target = French ]] && lng=fr
 	[[ $language_target = German ]] && lng=de
@@ -214,11 +214,11 @@ if [[ $(echo "$1" | grep -o '.idmnd') ]]; then
 		rm -f $DT/*.$c $DT/import.tar.gz & exit
 	else
 		cd "$tmp"
-		ws=$(cat "cnfg3" | wc -l)
-		ss=$(cat "cnfg4" | wc -l)
+		ws=$(cat "cfg.3" | wc -l)
+		ss=$(cat "cfg.4" | wc -l)
 		itxt="<big><big>$inme</big></big><small>\\n${language_source^} <b>></b> $language_target\\n$nwords $words $nsentences $sentences $nimages $images\n$llevel $level </small>\n"
 		dlck="$DT/p1.$c"
-		cat "$tmp/cnfg0" | awk '{print $0""}' | \
+		cat "$tmp/cfg.0" | awk '{print $0""}' | \
 		yad --list --name=Idiomind --title="Idiomind" \
 		--ellipsize=END --print-all --image-on-top \
 		--image="$img" --text="$itxt"  --class=Idiomind \
@@ -232,8 +232,8 @@ if [[ $(echo "$1" | grep -o '.idmnd') ]]; then
 				[[ -d $DT/idmimp_$c ]] && rm -fr $DT/idmimp_$c
 				rm -f $DT/*.$c $DT/import.tar.gz & exit
 			elif [ "$ret" -eq 0 ]; then
-				if2=$(cat $DC/topics/$language_target/.cnfg1 | wc -l)
-				snm=$(cat $DC/topics/$language_target/.cnfg1 | grep -Fo "$inme" | wc -l)
+				if2=$(cat $DC/topics/$language_target/.cfg.1 | wc -l)
+				snm=$(cat $DC/topics/$language_target/.cfg.1 | grep -Fo "$inme" | wc -l)
 				
 				if [ $if2 -ge 50 ]; then
 					yad  --name=idiomind --center \
@@ -284,25 +284,25 @@ if [[ $(echo "$1" | grep -o '.idmnd') ]]; then
 				cp -n ./.audio/*.mp3 "$DM_t/$language_target/.share/"
 				[[ -d ./.audio ]] && rm -fr ./.audio
 				cp -fr ./.* "$drit/"
-				cp -f cnfg12 "$dric/cnfg12"
-				echo "6" > "$dric/cnfg8"
-				cp -f cnfg0 "$dric/cnfg0"
-				cp -f cnfg0 "$dric/.cnfg11"
-				cp -f cnfg0 "$dric/cnfg1"
-				cp -f cnfg3 "$dric/cnfg3"
-				cp -f cnfg4 "$dric/cnfg4"
-				cp -f cnfg5 "$dric/cnfg5"
-				cp -f cnfg10 "$dric/cnfg10"
+				cp -f cfg.12 "$dric/cfg.12"
+				echo "6" > "$dric/cfg.8"
+				cp -f cfg.0 "$dric/cfg.0"
+				cp -f cfg.0 "$dric/.cfg.11"
+				cp -f cfg.0 "$dric/cfg.1"
+				cp -f cfg.3 "$dric/cfg.3"
+				cp -f cfg.4 "$dric/cfg.4"
+				cp -f cfg.5 "$dric/cfg.5"
+				cp -f cfg.10 "$dric/cfg.10"
 				cp -f $DS/default/tpc.sh "$dric/tpc.sh"
 				chmod +x "$dric/tpc.sh"
-				echo "$lng" > $DC_s/cnfg10
-				echo "$language_target" >> $DC_s/cnfg10
+				echo "$lng" > $DC_s/cfg.10
+				echo "$language_target" >> $DC_s/cfg.10
 				cd "$dric"
-				echo $dte > cnfg13
-				echo "$inm" >> "$DC/topics/$language_target/.cnfg3"
-				sed -i 's/'"$inm"'//g' "$DC/topics/$language_target/.cnfg2"
-				sed '/^$/d' $DC/topics/$language_target/.cnfg2 > $DC/topics/$language_target/.cnfg2_
-				mv -f $DC/topics/$language_target/.cnfg2_ $DC/topics/$language_target/.cnfg2
+				echo $dte > cfg.13
+				echo "$inm" >> "$DC/topics/$language_target/.cfg.3"
+				sed -i 's/'"$inm"'//g' "$DC/topics/$language_target/.cfg.2"
+				sed '/^$/d' $DC/topics/$language_target/.cfg.2 > $DC/topics/$language_target/.cfg.2_
+				mv -f $DC/topics/$language_target/.cfg.2_ $DC/topics/$language_target/.cfg.2
 				$DS/mngr.sh mkmn &&
 				"$dric/tpc.sh" &
 				[[ -d $DT/idmimp_$c ]] && rm -fr $DT/idmimp_$c
@@ -318,25 +318,25 @@ fi
 # topic
 if [[ $1 = topic ]]; then
 
-	wth=$(sed -n 3p $DC_s/cnfg18)
-	eht=$(sed -n 4p $DC_s/cnfg18)
-	mde=$(sed -n 2p $DC_s/cnfg8)
+	wth=$(sed -n 3p $DC_s/cfg.18)
+	eht=$(sed -n 4p $DC_s/cfg.18)
+	mde=$(sed -n 2p $DC_s/cfg.8)
 
 	if ([ -n "$tpc" ] || [ $(echo "$mde" | grep "fd") ]); then
 	
 		if [ -n "$tpc" ]; then
-			[[ ! -f "$DC_tlt/cnfg0" ]] && touch "$DC_tlt/cnfg0"
-			[[ ! -f "$DC_tlt/cnfg1" ]] && touch "$DC_tlt/cnfg1"
-			[[ ! -f "$DC_tlt/cnfg2" ]] && touch "$DC_tlt/cnfg2"
-			[[ ! -f "$DC_tlt/cnfg10" ]] && touch "$DC_tlt/cnfg10"
+			[[ ! -f "$DC_tlt/cfg.0" ]] && touch "$DC_tlt/cfg.0"
+			[[ ! -f "$DC_tlt/cfg.1" ]] && touch "$DC_tlt/cfg.1"
+			[[ ! -f "$DC_tlt/cfg.2" ]] && touch "$DC_tlt/cfg.2"
+			[[ ! -f "$DC_tlt/cfg.10" ]] && touch "$DC_tlt/cfg.10"
 			
-			ls0="$DC_tlt/cnfg0"
-			ls1="$DC_tlt/cnfg1"
-			ls2="$DC_tlt/cnfg2"
-			nt="$DC_tlt/cnfg10"
+			ls0="$DC_tlt/cfg.0"
+			ls1="$DC_tlt/cfg.1"
+			ls2="$DC_tlt/cfg.2"
+			nt="$DC_tlt/cfg.10"
 			cd "$DC_tlt"
-			ws=$(cat cnfg3 | wc -l)
-			ss=$(cat cnfg4 | wc -l)
+			ws=$(cat cfg.3 | wc -l)
+			ss=$(cat cfg.4 | wc -l)
 			c=$(echo $(($RANDOM%100000)))
 			KEY=$c
 			cnf1=$(mktemp $DT/cnf1.XXX.x)
@@ -356,7 +356,7 @@ if [[ $1 = topic ]]; then
 			tb2=$(cat "$ls2" | wc -l)
 		fi
 	else
-		if [ "$(cat $DC_tl/.cnfg1 | wc -l)" -ge 1 ]; then
+		if [ "$(cat $DC_tl/.cfg.1 | wc -l)" -ge 1 ]; then
 			exit
 		else
 			yad --window-icon=idiomind --name=idiomind \
@@ -401,29 +401,29 @@ if [[ $1 = topic ]]; then
 			
 		elif [ "$tb1" -ge 1 ]; then
 		
-			if [ -f "$DC_tlt/cnfg9" ] && [ -f "$DC_tlt/cnfg7" ]; then
+			if [ -f "$DC_tlt/cfg.9" ] && [ -f "$DC_tlt/cfg.7" ]; then
 			
-				dts=$(cat "$DC_tlt/cnfg9" | wc -l)
+				dts=$(cat "$DC_tlt/cfg.9" | wc -l)
 				if [ $dts = 1 ]; then
-					dte=$(sed -n 1p "$DC_tlt/cnfg9")
+					dte=$(sed -n 1p "$DC_tlt/cfg.9")
 					adv="<b>  10 $cuestion_review </b>"
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/10))
 					tdays=10
 				elif [ $dts = 2 ]; then
-					dte=$(sed -n 2p "$DC_tlt/cnfg9")
+					dte=$(sed -n 2p "$DC_tlt/cfg.9")
 					adv="<b>  15 $cuestion_review </b>"
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/15))
 					tdays=15
 				elif [ $dts = 3 ]; then
-					dte=$(sed -n 3p "$DC_tlt/cnfg9")
+					dte=$(sed -n 3p "$DC_tlt/cfg.9")
 					adv="<b>  30 $cuestion_review </b>"
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/30))
 					tdays=30
 				elif [ $dts = 4 ]; then
-					dte=$(sed -n 4p "$DC_tlt/cnfg9")
+					dte=$(sed -n 4p "$DC_tlt/cfg.9")
 					adv="<b>  60 $cuestion_review </b>"
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/60))
@@ -431,7 +431,7 @@ if [[ $1 = topic ]]; then
 				fi
 
 				if [ "$RM" -ge 100 ]; then
-					echo "4" > "$DC_tlt/cnfg8"
+					echo "4" > "$DC_tlt/cfg.8"
 					$DS/mngr.sh mkmn &
 					RM=100
 					yad --title="$tpc" --window-icon=idiomind \
@@ -445,10 +445,10 @@ if [[ $1 = topic ]]; then
 					--width=420 --height=150
 					ret=$?
 						if [ "$ret" -eq 2 ]; then
-							echo "3" > "$DC_tlt/cnfg8"
+							echo "3" > "$DC_tlt/cfg.8"
 							$DS/mngr.sh mkmn
 							rm -f "$ls2" 
-							rm -f "$DC_tlt/cnfg7"
+							rm -f "$DC_tlt/cfg.7"
 							cp -f "$ls0" "$ls1" && idiomind topic & exit 1
 						fi 
 				fi
@@ -525,16 +525,16 @@ if [[ $1 = topic ]]; then
 					--width=420 --height=150
 						ret=$? 
 						if [ "$ret" -eq 2 ]; then
-							rm -f "$DC_tlt/cnfg7"
+							rm -f "$DC_tlt/cfg.7"
 							rm -f $DT/*.x
-							echo "3" > "$DC_tlt/cnfg8"
+							echo "3" > "$DC_tlt/cfg.8"
 							$DS/mngr.sh mkmn
 							rm -f "$ls2"
 							cp -f "$ls0" "$ls1" && idiomind topic & exit 1
 							
 						elif [ "$ret" -eq 3 ]; then
 							rm -f $DT/*.x
-							rm -f "$DC_tlt/cnfg7" && idiomind topic & exit 1
+							rm -f "$DC_tlt/cfg.7" && idiomind topic & exit 1
 						fi
 					
 				else
@@ -586,33 +586,33 @@ if [[ $1 = topic ]]; then
 			
 		elif [ "$tb1" -eq 0 ]; then
 		
-			if [ ! -f "$DC_tlt/cnfg7" ]; then
-				> "$DC_tlt/cnfg7"
-				echo "$(date +%m/%d/%Y)" > "$DC_tlt/cnfg9"
-				echo "2" > "$DC_tlt/cnfg8"
+			if [ ! -f "$DC_tlt/cfg.7" ]; then
+				> "$DC_tlt/cfg.7"
+				echo "$(date +%m/%d/%Y)" > "$DC_tlt/cfg.9"
+				echo "2" > "$DC_tlt/cfg.8"
 				$DS/mngr.sh mkmn &
 			fi
-			dts=$(cat "$DC_tlt/cnfg9" | wc -l)
+			dts=$(cat "$DC_tlt/cfg.9" | wc -l)
 			if [ $dts = 1 ]; then
-				dte=$(sed -n 1p "$DC_tlt/cnfg9")
+				dte=$(sed -n 1p "$DC_tlt/cfg.9")
 				adv="<b>  10 $cuestion_review </b>"
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/10))
 				tdays=10
 			elif [ $dts = 2 ]; then
-				dte=$(sed -n 2p "$DC_tlt/cnfg9")
+				dte=$(sed -n 2p "$DC_tlt/cfg.9")
 				adv="<b>  15 $cuestion_review </b>"
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/15))
 				tdays=15
 			elif [ $dts = 3 ]; then
-				dte=$(sed -n 3p "$DC_tlt/cnfg9")
+				dte=$(sed -n 3p "$DC_tlt/cfg.9")
 				adv="<b>  30 $cuestion_review </b>"
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/30))
 				tdays=30
 			elif [ $dts = 4 ]; then
-				dte=$(sed -n 4p "$DC_tlt/cnfg9")
+				dte=$(sed -n 4p "$DC_tlt/cfg.9")
 				adv="<b>  60 $cuestion_review </b>"
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/60))
@@ -620,7 +620,7 @@ if [[ $1 = topic ]]; then
 			fi
 				
 			if [ "$RM" -ge 100 ]; then
-				echo "4" > "$DC_tlt/cnfg8"
+				echo "4" > "$DC_tlt/cfg.8"
 				$DS/mngr.sh mkmn &
 				RM=100
 				yad --title="$tpc" \
@@ -633,9 +633,9 @@ if [[ $1 = topic ]]; then
 				--text="$adv" --width=420 --height=150
 				ret=$? 
 					if [ "$ret" -eq 2 ]; then
-						rm -f "$DC_tlt/cnfg7"
+						rm -f "$DC_tlt/cfg.7"
 						rm -f $DT/*.x
-						echo "3" > "$DC_tlt/cnfg8"
+						echo "3" > "$DC_tlt/cfg.8"
 						$DS/mngr.sh mkmn
 						rm -f "$ls2" 
 						cp -f "$ls0" "$ls1" && idiomind topic & exit 1
@@ -723,35 +723,35 @@ if [[ $1 = topic ]]; then
 	
 		[ -z "$tpc" ] && exit 1
 		
-		source "$DC_tlt/cnfg12"
+		source "$DC_tlt/cfg.12"
 		itxt="<big><big>$tpc </big></big><small>\\n$ss $sentences $ws $words\n</small>\n"
 		itxt2="<small> $created_by $author $on <span color='#6E9FD4'>${category^}</span>  $date_u</small>"
 		
 		if [ "$tb1" -ge 1 ]; then
 		
-			if [ -f "$DC_tlt/cnfg9" ] && [ -f "$DC_tlt/cnfg7" ]; then
+			if [ -f "$DC_tlt/cfg.9" ] && [ -f "$DC_tlt/cfg.7" ]; then
 			
-				dts=$(cat "$DC_tlt/cnfg9" | wc -l)
+				dts=$(cat "$DC_tlt/cfg.9" | wc -l)
 				if [ $dts = 1 ]; then
-					dte=$(sed -n 1p "$DC_tlt/cnfg9")
+					dte=$(sed -n 1p "$DC_tlt/cfg.9")
 					adv="<b>   10 $cuestion_review </b>"
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/10))
 					tdays=10
 				elif [ $dts = 2 ]; then
-					dte=$(sed -n 2p "$DC_tlt/cnfg9")
+					dte=$(sed -n 2p "$DC_tlt/cfg.9")
 					adv="<b> 15 $cuestion_review </b>"
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/15))
 					tdays=15
 				elif [ $dts = 3 ]; then
-					dte=$(sed -n 3p "$DC_tlt/cnfg9")
+					dte=$(sed -n 3p "$DC_tlt/cfg.9")
 					adv="<b>  30 $cuestion_review </b>"
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/30))
 					tdays=30
 				elif [ $dts = 4 ]; then
-					dte=$(sed -n 4p "$DC_tlt/cnfg9")
+					dte=$(sed -n 4p "$DC_tlt/cfg.9")
 					adv="<b>  60 $cuestion_review </b>"
 					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 					RM=$((100*$TM/60))
@@ -759,7 +759,7 @@ if [[ $1 = topic ]]; then
 				fi
 			
 				if [ "$RM" -ge 100 ]; then
-					echo "4" > "$DC_tlt/cnfg8"
+					echo "4" > "$DC_tlt/cfg.8"
 					$DS/mngr.sh mkmn &
 					RM=100
 					yad --title="$tpc" \
@@ -773,9 +773,9 @@ if [[ $1 = topic ]]; then
 					--width=420 --height=150
 					ret=$?
 						if [ "$ret" -eq 2 ]; then
-							rm -f "$DC_tlt/cnfg7"
+							rm -f "$DC_tlt/cfg.7"
 							rm -f $DT/*.x
-							echo "3" > "$DC_tlt/cnfg8"
+							echo "3" > "$DC_tlt/cfg.8"
 							$DS/mngr.sh mkmn
 							rm -f "$ls2"
 							cp -f "$ls0" "$ls1" && idiomind topic & exit 1
@@ -855,16 +855,16 @@ if [[ $1 = topic ]]; then
 					--width=420 --height=150
 						ret=$? 
 						if [ "$ret" -eq 2 ]; then
-							rm -f "$DC_tlt/cnfg7"
+							rm -f "$DC_tlt/cfg.7"
 							rm -f $DT/*.x
-							echo "8" > "$DC_tlt/cnfg8"
+							echo "8" > "$DC_tlt/cfg.8"
 							$DS/mngr.sh mkmn
 							rm -f "$ls2"
 							cp -f "$ls0" "$ls1" && idiomind topic & exit 1
 							
 						elif [ "$ret" -eq 3 ]; then
 							rm -f $DT/*.x
-							rm -f "$DC_tlt/cnfg7" && idiomind topic & exit 1
+							rm -f "$DC_tlt/cfg.7" && idiomind topic & exit 1
 						fi
 				
 				else
@@ -913,33 +913,33 @@ if [[ $1 = topic ]]; then
 		
 		elif [ "$tb1" -eq 0 ]; then
 		
-			if [ ! -f "$DC_tlt/cnfg7" ]; then
-				> "$DC_tlt/cnfg7"
-				echo "$(date +%m/%d/%Y)" > "$DC_tlt/cnfg9"
-				echo "7" > "$DC_tlt/cnfg8"
+			if [ ! -f "$DC_tlt/cfg.7" ]; then
+				> "$DC_tlt/cfg.7"
+				echo "$(date +%m/%d/%Y)" > "$DC_tlt/cfg.9"
+				echo "7" > "$DC_tlt/cfg.8"
 				$DS/mngr.sh mkmn &
 			fi
-			dts=$(cat "$DC_tlt/cnfg9" | wc -l)
+			dts=$(cat "$DC_tlt/cfg.9" | wc -l)
 			if [ $dts = 1 ]; then
-				dte=$(sed -n 1p "$DC_tlt/cnfg9")
+				dte=$(sed -n 1p "$DC_tlt/cfg.9")
 				adv="<b>  10 $cuestion_review </b>"
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/10))
 				tdays=10
 			elif [ $dts = 2 ]; then
-				dte=$(sed -n 2p "$DC_tlt/cnfg9")
+				dte=$(sed -n 2p "$DC_tlt/cfg.9")
 				adv="<b>  15 $cuestion_review </b>"
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/15))
 				tdays=15
 			elif [ $dts = 3 ]; then
-				dte=$(sed -n 3p "$DC_tlt/cnfg9")
+				dte=$(sed -n 3p "$DC_tlt/cfg.9")
 				adv="<b>  30 $cuestion_review </b>"
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/30))
 				tdays=30
 			elif [ $dts = 4 ]; then
-				dte=$(sed -n 4p "$DC_tlt/cnfg9")
+				dte=$(sed -n 4p "$DC_tlt/cfg.9")
 				adv="<b>  60 $cuestion_review </b>"
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/60))
@@ -947,7 +947,7 @@ if [[ $1 = topic ]]; then
 			fi
 			
 			if [ "$RM" -ge 100 ]; then
-				echo "9" > "$DC_tlt/cnfg8"
+				echo "9" > "$DC_tlt/cfg.8"
 				$DS/mngr.sh mkmn &
 				RM=100
 				
@@ -964,8 +964,8 @@ if [[ $1 = topic ]]; then
 					ret=$?
 					
 					if [ "$ret" -eq 2 ]; then
-						echo "8" > "$DC_tlt/cnfg8"
-						rm -f "$DC_tlt/cnfg7"
+						echo "8" > "$DC_tlt/cfg.8"
+						rm -f "$DC_tlt/cfg.7"
 						rm -f $DT/*.x
 						$DS/mngr.sh mkmn &
 						rm -f "$ls2"
@@ -1066,18 +1066,18 @@ if [[ $1 = topic ]]; then
 		else
 			info=$(cat $DC_tl/Feeds/.dt)
 		fi
-		if [[ ! -f "$DC_tl/Feeds/cnfg1" ]]; then
+		if [[ ! -f "$DC_tl/Feeds/cfg.1" ]]; then
 		cd "$dir1/conten"
-		ls -t *.mp3 > "$DC_tl/Feeds/cnfg1"
-		sed -i 's/.mp3//g' "$DC_tl/Feeds/cnfg1"
+		ls -t *.mp3 > "$DC_tl/Feeds/cfg.1"
+		sed -i 's/.mp3//g' "$DC_tl/Feeds/cfg.1"
 		fi
 		cd "$DF"
-		cat "$DC_tl/Feeds/cnfg1" | yad \
+		cat "$DC_tl/Feeds/cfg.1" | yad \
 		--no-headers --list --listen --plug=$KEY --tabnum=1 \
 		--text=" <small>$info</small>" \
 		--expand-column=1 --ellipsize=END --print-all \
 		--column=Name:TEXT --dclick-action='./vwr.sh V1' &
-		cat "$DC_tl/Feeds/cnfg0" | awk '{print $0""}' \
+		cat "$DC_tl/Feeds/cfg.0" | awk '{print $0""}' \
 		| yad --no-headers --list --listen --plug=$KEY --tabnum=2 \
 		--expand-column=1 --ellipsize=END --print-all \
 		--column=Name:TEXT --dclick-action='./vwr.sh V2' &

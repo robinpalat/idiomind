@@ -4,25 +4,25 @@ YAD=yad
 u=$(echo "$(whoami)")
 nmt=$(sed -n 1p /tmp/.idmtp1.$u/idmimp_X015x/ls)
 dir="/tmp/.idmtp1.$u/idmimp_X015x/$nmt"
-lnglbl=$(sed -n 2p "/tmp/.idmtp1.$u/idmimp_X015x/$nmt/cnfg13")
-lng=$(sed -n 3p "/tmp/.idmtp1.$u/idmimp_X015x/$nmt/cnfg13")
-lngs=$(sed -n 4p "/tmp/.idmtp1.$u/idmimp_X015x/$nmt/cnfg13")
-var2=$(sed -n 1p "/tmp/.idmtp1.$u/idmimp_X015x/$nmt/cnfg13")
-wth=$(sed -n 5p $HOME/.config/idiomind/s/cnfg18)
-eht=$(sed -n 6p $HOME/.config/idiomind/s/cnfg18)
+lnglbl=$(sed -n 2p "/tmp/.idmtp1.$u/idmimp_X015x/$nmt/cfg.13")
+lng=$(sed -n 3p "/tmp/.idmtp1.$u/idmimp_X015x/$nmt/cfg.13")
+lngs=$(sed -n 4p "/tmp/.idmtp1.$u/idmimp_X015x/$nmt/cfg.13")
+var2=$(sed -n 1p "/tmp/.idmtp1.$u/idmimp_X015x/$nmt/cfg.13")
+wth=$(sed -n 5p $HOME/.config/idiomind/s/cfg.18)
+eht=$(sed -n 6p $HOME/.config/idiomind/s/cfg.18)
 re='^[0-9]+$'
 now="$1"
 nuw="$2"
 cd "$dir"
 
 if ! [[ $nuw =~ $re ]]; then
-nuw=$(cat "$dir/cnfg0" | grep -Fxon "$now" \
+nuw=$(cat "$dir/cfg.0" | grep -Fxon "$now" \
 | sed -n 's/^\([0-9]*\)[:].*/\1/p')
 nll='echo  " "'
 fi
-nms=$(sed -n "$nuw"p "$dir/cnfg0")
+nms=$(sed -n "$nuw"p "$dir/cfg.0")
 if [ -z "$nms" ]; then
-nms=$(sed -n 1p "$dir/cnfg0")
+nms=$(sed -n 1p "$dir/cfg.0")
 nuw=1
 fi
 

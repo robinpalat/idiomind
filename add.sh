@@ -28,7 +28,7 @@ function internet() {
 
 
 if [ $1 = n_t ]; then
-	info2=$(cat $DC_tl/.cnfg1 | wc -l)
+	info2=$(cat $DC_tl/.cfg.1 | wc -l)
 	c=$(echo $(($RANDOM%100)))
 
 	if [ "$3" = 2 ]; then
@@ -50,7 +50,7 @@ if [ $1 = n_t ]; then
 		| sed s"/'//"g | sed 's/^[ \t]*//;s/[ \t]*$//' \
 		| sed 's/^\s*./\U&\E/g')
 		
-		snm=$(cat $DC_tl/.cnfg1 | grep -Fxo "$jlb" | wc -l)
+		snm=$(cat $DC_tl/.cfg.1 | grep -Fxo "$jlb" | wc -l)
 		if [ $snm -ge 1 ]; then
 			jlb=$(echo ""$jlb" $snm")
 			$yad --name=idiomind --center --on-top --image=info \
@@ -74,24 +74,24 @@ if [ $1 = n_t ]; then
 			mkdir $DM_tl/"$jlb"/words
 			mkdir $DM_tl/"$jlb"/words/images
 			mkdir $DC_tl/"$jlb"
-			> $DC_tl/"$jlb"/cnfg3
-			> $DC_tl/"$jlb"/cnfg4
+			> $DC_tl/"$jlb"/cfg.3
+			> $DC_tl/"$jlb"/cfg.4
 			mkdir $DC_tl/"$jlb"/practice
 
 			cd $DC_tl/"$jlb"
-			echo "$jlb" >> $DC_tl/.cnfg2
+			echo "$jlb" >> $DC_tl/.cfg.2
 			cd "$DM_tl/$tpc"
 			cp -f *.mp3 "$DM_tl/$jlb"
 			cp -f -r ./words "$DM_tl/$jlb/"
 			cd "$DC_tl/$tpc"
 			cp -f ./.* "$DC_tl/$jlb"/
 			cp -f ./practice/.* $DC_tl/"$jlb"/practice
-			grep -v -x -v "$tpc" $DC_tl/.cnfg2 > $DC_tl/.cnfg2_
-			sed '/^$/d' $DC_tl/.cnfg2_ > $DC_tl/.cnfg2
-			grep -v -x -v "$tpc" $DC_tl/.cnfg1 > $DC_tl/.cnfg1_
-			sed '/^$/d' $DC_tl/.cnfg1_ > $DC_tl/.cnfg1
-			grep -v -x -v "$tpc" $DC_tl/.cnfg3 > $DC_tl/.cnfg3_
-			sed '/^$/d' $DC_tl/.cnfg3_ > $DC_tl/.cnfg3
+			grep -v -x -v "$tpc" $DC_tl/.cfg.2 > $DC_tl/.cfg.2_
+			sed '/^$/d' $DC_tl/.cfg.2_ > $DC_tl/.cfg.2
+			grep -v -x -v "$tpc" $DC_tl/.cfg.1 > $DC_tl/.cfg.1_
+			sed '/^$/d' $DC_tl/.cfg.1_ > $DC_tl/.cfg.1
+			grep -v -x -v "$tpc" $DC_tl/.cfg.3 > $DC_tl/.cfg.3_
+			sed '/^$/d' $DC_tl/.cfg.3_ > $DC_tl/.cfg.3
 			rm $DC_tl/in_s $DC_tl/in $DC_tl/nstll
 			
 			[[ -d "$DC_tl/$tpc" ]] && rm -r "$DC_tl/$tpc"
@@ -128,7 +128,7 @@ if [ $1 = n_t ]; then
 			| sed 's/^\s*./\U&\E/g')
 			ABC=$(echo "$jlbi" | sed -n 2p)
 			
-			snme=$(cat $DC_tl/.cnfg1 | grep -Fxo "$jlb" | wc -l)
+			snme=$(cat $DC_tl/.cfg.1 | grep -Fxo "$jlb" | wc -l)
 			if [ "$snme" -ge 1 ]; then
 				jlb="$jlb $snme"
 				$yad --name=idiomind --center --on-top --image=info \
@@ -153,7 +153,7 @@ if [ $1 = n_t ]; then
 				chmod +x "$DC_tl/$jlb/tpc.sh"
 				[[ -f $DT/ntpc ]] && rm -f $DT/ntpc
 				
-				echo "$jlb" >> $DC_tl/.cnfg2
+				echo "$jlb" >> $DC_tl/.cfg.2
 				"$DC_tl/$jlb/tpc.sh"
 				$DS/mngr.sh mkmn
 			fi
@@ -179,7 +179,7 @@ elif [ $1 = n_i ]; then
 	if [ "$3" = 2 ]; then
 		DT_r="$2"
 		cd $DT_r
-		if ! [ sed -n 1p $DC_s/cnfg3 | grep TRUE ]; then
+		if ! [ sed -n 1p $DC_s/cfg.3 | grep TRUE ]; then
 			srce="$5"
 		fi
 	else
@@ -193,25 +193,25 @@ elif [ $1 = n_i ]; then
 		img="--on-top"
 	fi
 	
-	if [ "$(cat $DC_tl/.cnfg1 | grep -v 'Feeds' | wc -l)" -lt 1 ]; then
+	if [ "$(cat $DC_tl/.cfg.1 | grep -v 'Feeds' | wc -l)" -lt 1 ]; then
 		[[ -d $DT_r ]] && rm -fr $DT_r
 		source $DS/ifs/trans/$lgs/topics_lists.conf
 		$DS/chng.sh "$no_topic" & exit 1
 	fi
 
-	ls=$((50 - $(cat "$DC_tlt/cnfg4" | wc -l)))
-	lw=$((50 - $(cat "$DC_tlt/cnfg3" | wc -l)))
+	ls=$((50 - $(cat "$DC_tlt/cfg.4" | wc -l)))
+	lw=$((50 - $(cat "$DC_tlt/cfg.3" | wc -l)))
 	dct="$DS_p/Dics/cnfg.sh"
 	if [[ -z "$tpe" ]]; then
-	tpcs=$(cat "$DC_tl/.cnfg2" | cut -c 1-50 \
+	tpcs=$(cat "$DC_tl/.cfg.2" | cut -c 1-50 \
 	| tr "\\n" '!' | sed 's/!\+$//g')
 	else
-	tpcs=$(cat "$DC_tl/.cnfg2" | egrep -v "$tpe" | cut -c 1-50 \
+	tpcs=$(cat "$DC_tl/.cfg.2" | egrep -v "$tpe" | cut -c 1-50 \
 	| tr "\\n" '!' | sed 's/!\+$//g')
 	fi
 	ttle="${tpe:0:50}"
-	s=$(cat "$DC_tlt/cnfg4" | wc -l)
-	w=$(cat "$DC_tlt/cnfg3" | wc -l)
+	s=$(cat "$DC_tlt/cfg.4" | wc -l)
+	w=$(cat "$DC_tlt/cfg.3" | wc -l)
 	if [ $s -ge 45 -a $s -lt 50 ]; then
 		is="S <b>$ls</b>"
 	elif [ $s -ge 50 ]; then
@@ -231,7 +231,7 @@ elif [ $1 = n_i ]; then
 		topic="$topic $info"
 	fi
 	
-	if sed -n 1p $DC_s/cnfg3 | grep TRUE; then
+	if sed -n 1p $DC_s/cfg.3 | grep TRUE; then
 		sx='120x100'
 		lzgpr=$($yad --form --center --always-print-result \
 		--text-info --on-top --window-icon=idiomind --skip-taskbar \
@@ -245,7 +245,7 @@ elif [ $1 = n_i ]; then
 		ret=$?
 		trgt=$(echo "$lzgpr"| head -n -1)
 		chk=$(echo "$lzgpr" | tail -1)
-		tpe=$(cat "$DC_tl/.cnfg2" | grep "$chk")
+		tpe=$(cat "$DC_tl/.cfg.2" | grep "$chk")
 		echo "$chk"
 	else
 		cd $HOME
@@ -268,13 +268,13 @@ elif [ $1 = n_i ]; then
 		ret=$?
 		trgt=$(echo "$lzgpr" | tail -5 | sed -n 1p | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
 		srce=$(echo "$lzgpr" | tail -5 | sed -n 3p | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-		tpe=$(cat "$DC_tl/.cnfg2" | grep "$(echo "$lzgpr" | tail -5 | sed -n 5p)")
+		tpe=$(cat "$DC_tl/.cfg.2" | grep "$(echo "$lzgpr" | tail -5 | sed -n 5p)")
 		chk=$(echo "$lzgpr" | tail -1)
 		echo "$chk"
 	fi
 		
 		if [ $ret -eq 3 ]; then
-			if sed -n 1p $DC_s/cnfg3 | grep TRUE; then
+			if sed -n 1p $DC_s/cfg.3 | grep TRUE; then
 				trgt=$(echo "$lzgpr" | head -n -1)
 			fi
 			cd $DT_r
@@ -318,8 +318,8 @@ elif [ $1 = n_i ]; then
 			if [[ "$chk" = "$new *" ]]; then
 				$DS/add.sh n_t
 			else
-				echo "$tpe" > $DC_s/cnfg7
-				echo "$tpe" > $DC_s/cnfg6
+				echo "$tpe" > $DC_s/cfg.7
+				echo "$tpe" > $DC_s/cfg.6
 			fi
 			
 			if [ "$(echo "$trgt" | sed -n 1p | awk '{print tolower($0)}')" = i ]; then
@@ -331,7 +331,7 @@ elif [ $1 = n_i ]; then
 			elif [ $(echo "$trgt" | wc -c) -gt 180 ]; then
 				$DS/add.sh prs "$trgt" $DT_r & exit 1
 			elif ([ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]); then
-				if sed -n 1p $DC_s/cnfg3 | grep FALSE; then
+				if sed -n 1p $DC_s/cfg.3 | grep FALSE; then
 					if [ -z "$4" ]; then
 						msg "$no_text$lgsl." info
 						rm -f $DT_r & exit
@@ -380,12 +380,12 @@ elif [ $1 = n_s ]; then
 	
 	dct=$DS/addons/Dics/cnfg.sh
 			
-	if [ $(cat "$DC_tlt/cnfg4" | wc -l) -ge 50 ]; then
+	if [ $(cat "$DC_tlt/cfg.4" | wc -l) -ge 50 ]; then
 		msg " <b>$tpe    </b>\\n\\n $sentences_max" info
 		rm -f $DT_r & exit 1
 	fi
 	
-	if sed -n 1p $DC_s/cnfg3 | grep TRUE; then
+	if sed -n 1p $DC_s/cfg.3 | grep TRUE; then
 	
 		internet
 	
@@ -404,8 +404,7 @@ elif [ $1 = n_s ]; then
 		sed -i 's/  / /g' ./.en
 		sed -i 's/  / /g' ./.en
 		
-		nme="$(cat ./.en | cut -c 1-100 | sed 's/[ \t]*$//' | \
-		sed "s/'/ /g" | awk '{print tolower($0)}')"
+		nme="$(cat ./.en | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
 		
 		result=$(curl -s -i --user-agent "" -d "sl=$lgt" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
 		encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
@@ -519,7 +518,7 @@ elif [ $1 = n_s ]; then
 		eyeD3 --set-encoding=utf8 -A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0IIGMI3I0I"$grmrk"IGMI3I0I "$DM_tlt/$nme.mp3"
 		
 		(
-		if [ $(sed -n 4p $DC_s/cnfg1) = TRUE ]; then
+		if [ $(sed -n 4p $DC_s/cfg.1) = TRUE ]; then
 		$DS/add.sh snt "$nme" "$tpe"
 		fi
 		) &
@@ -559,9 +558,8 @@ elif [ $1 = n_s ]; then
 		sed -i 's/   / /g' trgt_
 		sed -i 's/"//g' trgt_
 		sed 's/^[ \t]*//;s/[ \t]*$//' trgt_ > trgt
-		
-		nme="$(cat trgt | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g \
-		sed "s/'/ /g" | awk '{print tolower($0)}')"
+
+		nme="$(cat trgt | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
 
 		#-----------------------------------------
 		srce="$4"
@@ -646,7 +644,7 @@ elif [ $1 = n_s ]; then
 				fi
 				
 		else
-			vs=$(sed -n 7p $DC_s/cnfg1)
+			vs=$(sed -n 7p $DC_s/cfg.1)
 			if [ -n "$vs" ]; then
 				if ([ $vs = "festival" ] || [ $vs = "text2wave" ]); then
 					lg=$(echo $lgtl | awk '{print tolower($0)}')
@@ -716,21 +714,21 @@ elif [ $1 = n_w ]; then
 	srce="$4"
 	dct="$DS/addons/Dics/cnfg.sh"
 	icnn=idiomind
-	tpcs=$(cat "$DC_tl/.cnfg2" | cut -c 1-30 | egrep -v "$tpe" \
+	tpcs=$(cat "$DC_tl/.cfg.2" | cut -c 1-30 | egrep -v "$tpe" \
 	| tr "\\n" '!' | sed 's/!\+$//g')
 	ttle="${tpe:0:30}"
 	DT_r="$3"
 	DM_tlt="$DM_tl/$tpe"
 	DC_tlt="$DC_tl/$tpe"
 	
-	if [ $(cat "$DC_tlt/cnfg3" | wc -l) -ge 50 ]; then
+	if [ $(cat "$DC_tlt/cfg.3" | wc -l) -ge 50 ]; then
 		msg " <b>$tpe    </b>\\n\\n $words_max" info
 		rm -f $DT_r & exit 1
 	fi
 	
 	internet
 			
-	if sed -n 1p $DC_s/cnfg3 | grep TRUE; then
+	if sed -n 1p $DC_s/cfg.3 | grep TRUE; then
 		result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lgt" --data-urlencode "text=$trgt" https://translate.google.com)
 		encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); \
 		sub(/[ "'\''].*$/,""); print}' <<<"$result")
@@ -804,7 +802,7 @@ elif [ $1 = n_w ]; then
 				fi
 				
 			else
-				vs=$(sed -n 7p $DC_s/cnfg1)
+				vs=$(sed -n 7p $DC_s/cfg.1)
 				if [ -n "$vs" ]; then
 					if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
 						lg=$(echo $lgtl | awk '{print tolower($0)}')
@@ -869,12 +867,12 @@ elif [ $1 = edt ]; then
 	if [ "$3" = "F" ]; then
 
 		tpe="$tpc"
-		if [ $(cat "$DC_tlt/cnfg3" | wc -l) -ge 50 ]; then
+		if [ $(cat "$DC_tlt/cfg.3" | wc -l) -ge 50 ]; then
 			msg " <b>$tpe    </b>\\n\\n $words_max" info
 			rm -f $DT_r & exit 1
 		fi
 		
-		nw=$(cat "$DC_tlt/cnfg3" | wc -l)
+		nw=$(cat "$DC_tlt/cfg.3" | wc -l)
 		left=$((50 - $nw))
 		info=$(echo " $remain"$left"$words")
 		if [ $nw -ge 45 ]; then
@@ -931,7 +929,7 @@ elif [ $1 = edt ]; then
 		while [ $n -le "$(cat ./slts | head -50 | wc -l)" ]; do
 
 				trgt=$(sed -n "$n"p ./slts | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-			if [ $(cat "$DC_tlt/cnfg3" | wc -l) -ge 50 ]; then
+			if [ $(cat "$DC_tlt/cfg.3" | wc -l) -ge 50 ]; then
 				echo "$trgt
 " > logw
 				
@@ -950,7 +948,7 @@ elif [ $1 = edt ]; then
 					"$DM_tlt/words/$trgt.mp3" >/dev/null 2>&1
 					
 				else
-					vs=$(sed -n 7p $DC_s/cnfg1)
+					vs=$(sed -n 7p $DC_s/cfg.1)
 					if [ -n "$vs" ]; then
 						if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
 							lg=$(echo $lgtl | awk '{print tolower($0)}')
@@ -1021,9 +1019,9 @@ elif [ $1 = prc ]; then
 		$DS/chng.sh "$no_edit" & exit 1
 	fi
 	
-	nw=$(cat "$DC_tlt/cnfg3" | wc -l)
+	nw=$(cat "$DC_tlt/cfg.3" | wc -l)
 	
-	if [ $(cat "$DC_tlt/cnfg3" | wc -l) -ge 50 ]; then
+	if [ $(cat "$DC_tlt/cfg.3" | wc -l) -ge 50 ]; then
 		msg " <b>$tpe    </b>\\n\\n $words_max" info
 		rm -f $DT_r & exit 1
 	fi
@@ -1278,7 +1276,7 @@ elif [ $1 = snt ]; then
 		source $DS/ifs/trans/$lgs/topics_lists.conf
 		$DS/chng.sh "$no_edit" & exit 1
 	fi
-	nw=$(cat "$DC_tlt/words/cnfg3" | wc -l)
+	nw=$(cat "$DC_tlt/words/cfg.3" | wc -l)
 	left=$((50 - $nw))
 	if [ "$left" = 0 ]; then
 		exit 1
@@ -1333,7 +1331,7 @@ elif [ $1 = snt ]; then
 	n=1
 	while [ $n -le $(cat ./slts | head -50 | wc -l) ]; do
 		trgt=$(sed -n "$n"p ./slts | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-		if [ $(cat "$DC_tlt/cnfg3" | wc -l) -ge 50 ]; then
+		if [ $(cat "$DC_tlt/cfg.3" | wc -l) -ge 50 ]; then
 			echo "$trgt" >> logw
 		else
 			result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
@@ -1347,7 +1345,7 @@ elif [ $1 = snt ]; then
 				"$DM_tlt/words/$trgt.mp3"
 				# si no hay audio
 				else
-					vs=$(sed -n 7p $DC_s/cnfg1)
+					vs=$(sed -n 7p $DC_s/cfg.1)
 					if [ -n "$vs" ]; then
 						if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
 							lg=$(echo $lgtl | awk '{print tolower($0)}')
@@ -1406,9 +1404,9 @@ elif [ $1 = snt ]; then
 	
 elif [ $1 = prs ]; then
 	source $DS/ifs/trans/$lgs/add.conf
-	eht=$(sed -n 3p $DC_s/cnfg18)
-	wth=$(sed -n 4p $DC_s/cnfg18)
-	ns=$(cat "$DC_tlt"/cnfg4 | wc -l)
+	eht=$(sed -n 3p $DC_s/cfg.18)
+	wth=$(sed -n 4p $DC_s/cfg.18)
+	ns=$(cat "$DC_tlt"/cfg.4 | wc -l)
 	lvbr=$(cat $DS/default/$lgt/verbs)
 	lnns=$(cat $DS/default/$lgt/nouns)
 	ladv=$(cat $DS/default/$lgt/adverbs)
@@ -1463,8 +1461,8 @@ elif [ $1 = prs ]; then
 
 	if [ "$(echo "$prdt" | cut -d "|" -f1 | sed -n 1p)" = "a" ]; then
 
-		left=$((50 - $(cat "$DC_tlt/cnfg4" | wc -l)))
-		key=$(sed -n 2p $DC_s/cnfg3)
+		left=$((50 - $(cat "$DC_tlt/cfg.4" | wc -l)))
+		key=$(sed -n 2p $DC_s/cfg.3)
 		
 		if [ -z "$key" ]; then
 			$yad --name=idiomind --center --on-top --image=error \
@@ -1529,14 +1527,14 @@ elif [ $1 = prs ]; then
 			-O - "https://www.google.com/speech-api/v2/recognize?&lang="$lgt"-"$lgt"&key=$key" > info.ret
 			
 			if [ -z "$(cat info.ret)" ]; then
-				key=$(sed -n 3p $DC_s/cnfg3)
+				key=$(sed -n 3p $DC_s/cfg.3)
 				wget -q -U "Mozilla/5.0" --post-file "$DS/addons/Google translation service/test.flac" \
 				--header="Content-Type: audio/x-flac; rate=16000" \
 				-O - "https://www.google.com/speech-api/v2/recognize?&lang="$lgt"-"$lgt"&key=$key" > info.ret
 			fi
 			
 			if [ -z "$(cat info.ret)" ]; then
-				key=$(sed -n 4p $DC_s/cnfg3)
+				key=$(sed -n 4p $DC_s/cfg.3)
 				wget -q -U "Mozilla/5.0" --post-file "$DS/addons/Google translation service/test.flac" \
 				--header="Content-Type: audio/x-flac; rate=16000" \
 				-O - "https://www.google.com/speech-api/v2/recognize?&lang="$lgt"-"$lgt"&key=$key" > info.ret
@@ -1583,8 +1581,7 @@ elif [ $1 = prs ]; then
 $trgt" >> log
 				
 				else
-					nme="$(cat ./tgt | cut -c 1-100 | sed 's/[ \t]*$//' | \
-					sed "s/'/ /g" | awk '{print tolower($0)}')"
+					nme="$(cat ./tgt | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
 					
 					mv -f ./"$n".mp3 ./"$nme".mp3
 					echo "$trgt" > ./"$nme".txt
@@ -1606,7 +1603,7 @@ $trgt" >> log
 			sed -i '/^$/d' ./ls
 			[[ $(echo "$tpe" | wc -c) -gt 40 ]] && tcnm="${tpe:0:40}..." || tcnm="$tpe"
 
-			left=$((50 - $(cat "$DC_tlt"/cnfg4 | wc -l)))
+			left=$((50 - $(cat "$DC_tlt"/cfg.4 | wc -l)))
 			info=$(echo "$remain"$left"$sentences")
 			if [ $ns -ge 45 ]; then
 				info=$(echo "$remain"$left"$sentences")
@@ -1666,12 +1663,11 @@ $trgt" >> log
 						sntc=$(sed -n "$n"p ./slts)
 						trgt=$(cat "./$sntc.txt")
 						
-						nme="$(echo "$sntc" | cut -c 1-100 | sed 's/[ \t]*$//' | \
-						sed "s/'/ /g" | awk '{print tolower($0)}')"
+						nme="$(echo "$sntc" | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
 						
 						if [ $(sed -n 1p "$sntc.txt" | wc -$c) -eq 1 ]; then
 						
-							if [ $(cat "$DC_tlt"/cnfg3 | wc -l) -ge 50 ]; then
+							if [ $(cat "$DC_tlt"/cfg.3 | wc -l) -ge 50 ]; then
 								echo "
 $sntc" >> ./slog
 						
@@ -1688,7 +1684,7 @@ $sntc" >> ./slog
 						
 						elif [ $(sed -n 1p "$sntc.txt" | wc -$c) -ge 1 ]; then
 						
-							if [ $(cat "$DC_tlt"/cnfg4 | wc -l) -ge 50 ]; then
+							if [ $(cat "$DC_tlt"/cfg.4 | wc -l) -ge 50 ]; then
 								echo "
 $sntc" >> ./wlog
 						
@@ -1814,9 +1810,9 @@ $sntc" >> ./wlog
 						trgt=$(sed -n "$n"p wrds | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
 						exmp=$(sed -n "$n"p wrdsls)
 						
-						nme="$(echo "$exmp" | sed "s/'/ /g" | awk '{print tolower($0)}' | cut -c 1-100)"
+						nme="$(echo "$exmp" | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
 
-						if [ $(cat "$DC_tlt"/cnfg3 | wc -l) -ge 50 ]; then
+						if [ $(cat "$DC_tlt"/cfg.3 | wc -l) -ge 50 ]; then
 							echo "
 $trgt" >> ./wlog
 					
@@ -1833,7 +1829,7 @@ $trgt" >> ./wlog
 								"$DM_tlt/words/$trgt.mp3"
 
 							else
-								vs=$(sed -n 7p $DC_s/cnfg1)
+								vs=$(sed -n 7p $DC_s/cfg.1)
 								if [ -n "$vs" ]; then
 									if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
 										lg=$(echo $lgtl | awk '{print tolower($0)}')
@@ -2128,7 +2124,7 @@ $trgt" >> ./wlog
 					while [ $n -le $(cat slts | head -50 | wc -l) ]; do
 						sntc=$(sed -n "$n"p slts)
 						if [ $(echo "$sntc" | wc -$c) = 1 ]; then
-							if [ $(cat "$DC_tlt"/cnfg3 | wc -l) -ge 50 ]; then
+							if [ $(cat "$DC_tlt"/cfg.3 | wc -l) -ge 50 ]; then
 								echo "
 $sntc" >> ./wlog
 						
@@ -2152,7 +2148,7 @@ $sntc" >> ./wlog
 						
 						elif [ $(echo "$sntc" | wc -$c) -ge 1 ]; then
 							
-							if [ $(cat "$DC_tlt"/cnfg4 | wc -l) -ge 50 ]; then
+							if [ $(cat "$DC_tlt"/cfg.4 | wc -l) -ge 50 ]; then
 								echo "
 $sntc" >> ./slog
 						
@@ -2173,14 +2169,13 @@ $sntc" >> ./slog
 									sed -i 's/  / /g' ./trgt
 									sed -i 's/  / /g' ./trgt
 									
-									nme="$(cat ./trgt | cut -c 1-100 | sed 's/[ \t]*$//' | \
-									sed "s/'/ /g" | awk '{print tolower($0)}')"
+									nme="$(cat trgt | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
 										
 									result=$(curl -s -i --user-agent "" -d "sl=$lgt" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
 									encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
 									srce=$(iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 | sed ':a;N;$!ba;s/\n/ /g')
 									
-									if sed -n 1p $DC_s/cnfg3 | grep TRUE; then
+									if sed -n 1p $DC_s/cfg.3 | grep TRUE; then
 										sed -i 's/,/ /g' ./trgt
 										sed -i "s/'/ /g" ./trgt
 										sed -i 's/’/ /g' ./trgt
@@ -2207,7 +2202,7 @@ $sntc" >> ./slog
 										mv -f "./$nme.mp3" "$DM_tlt/$nme.mp3"
 										
 									else
-										vs=$(sed -n 7p $DC_s/cnfg1)
+										vs=$(sed -n 7p $DC_s/cfg.1)
 										if [ -n "$vs" ]; then
 											if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
 												lg=$(echo $lgtl | awk '{print tolower($0)}')
@@ -2356,10 +2351,9 @@ $sntc" >> ./slog
 						exmp=$(sed -n "$n"p wrdsls)
 						itm=$(sed -n "$n"p wrds | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
 						
+						nme="$(echo "$exmp" | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
 
-						nme="$(echo "$exmp" | sed "s/'/ /g" | awk '{print tolower($0)}' | cut -c 1-100)"
-
-						if [ $(cat "$DC_tlt"/cnfg3 | wc -l) -ge 50 ]; then
+						if [ $(cat "$DC_tlt"/cfg.3 | wc -l) -ge 50 ]; then
 							echo "
 $itm" >> ./wlog
 					

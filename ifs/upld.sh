@@ -5,13 +5,13 @@ source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/upld.conf
 
 if [[ $1 = vsd ]]; then
-	U=$(sed -n 1p $HOME/.config/idiomind/s/cnfg4)
+	U=$(sed -n 1p $HOME/.config/idiomind/s/cfg.4)
 	lng=$(echo "$lgtl" |  awk '{print tolower($0)}')
-	wth=$(sed -n 4p $DC_s/cnfg18)
-	eht=$(sed -n 3p $DC_s/cnfg18)
+	wth=$(sed -n 4p $DC_s/cfg.18)
+	eht=$(sed -n 3p $DC_s/cfg.18)
 	cd $DM_t/saved
-	ls -t *.cnfg12 > ls
-	(sed -i 's/\.cnfg12//g' ./ls)
+	ls -t *.cfg.12 > ls
+	(sed -i 's/\.cfg.12//g' ./ls)
 	cat ./ls | $yad --list \
 	--window-icon=idiomind --center --skip-taskbar --borders=8 \
 	--text=" <small>$double_click_for_download \\t\\t\\t\\t</small>" \
@@ -29,10 +29,10 @@ if [[ $1 = vsd ]]; then
 elif [[ $1 = infsd ]]; then
 	echo "$2"
 	cd $DM_t/saved
-	U=$(sed -n 1p $DC_s/cnfg4)
+	U=$(sed -n 1p $DC_s/cfg.4)
 	user=$(echo "$(whoami)")
 	tpcd="$2"
-	source "./$tpcd.cnfg12"
+	source "./$tpcd.cfg.12"
 	[[ $language_target = English ]] && lng=en
 	[[ $language_target = French ]] && lng=fr
 	[[ $language_target = German ]] && lng=de
@@ -125,34 +125,34 @@ fi
 
 lnglbl=$(echo $lgtl | awk '{print tolower($0)}')
 user=$(echo "$(whoami)")
-U=$(sed -n 1p $DC_s/cnfg4)
-mail=$(sed -n 2p $DC_s/cnfg4)
-skp=$(sed -n 3p $DC_s/cnfg4)
-nt=$(cat "$DC_tlt/cnfg10")
+U=$(sed -n 1p $DC_s/cfg.4)
+mail=$(sed -n 2p $DC_s/cfg.4)
+skp=$(sed -n 3p $DC_s/cfg.4)
+nt=$(cat "$DC_tlt/cfg.10")
 nme=$(echo "$tpc" | sed 's/ /_/g' \
 | sed 's/"//g' | sed 's/’//g')
 #[[ $(echo "$tpc" | wc -c) -gt 40 ]] \
 #&& ttpc="${tpc:0:40}..." || ttpc="$tpc"
 
 
-chk1="$DC_tlt/cnfg0"
-chk2="$DC_tlt/cnfg1"
-chk3="$DC_tlt/cnfg2"
-chk4="$DC_tlt/cnfg3"
-chk5="$DC_tlt/cnfg4"
-chk6="$DC_tlt/cnfg10"
+chk1="$DC_tlt/cfg.0"
+chk2="$DC_tlt/cfg.1"
+chk3="$DC_tlt/cfg.2"
+chk4="$DC_tlt/cfg.3"
+chk5="$DC_tlt/cfg.4"
+chk6="$DC_tlt/cfg.10"
 
 if [[ -z "$cat chk1" ]]; then
-	cp -f "$DC_tlt/cnfg0~" "$DC_tlt/cnfg0"
+	cp -f "$DC_tlt/cfg.0~" "$DC_tlt/cfg.0"
 fi
 if [[ -z "$cat chk2" ]]; then
-	cp -f "$DC_tlt/cnfg1~" "$DC_tlt/cnfg1"
+	cp -f "$DC_tlt/cfg.1~" "$DC_tlt/cfg.1"
 fi
 if [[ -z "$cat chk3" ]]; then
-	cp -f "$DC_tlt/cnfg2~" "$DC_tlt/cnfg2"
+	cp -f "$DC_tlt/cfg.2~" "$DC_tlt/cfg.2"
 fi
 if [[ -z "$cat chk6" ]]; then
-	cp -f "$DC_tlt/.cnfg10~" "$DC_tlt/cnfg10"
+	cp -f "$DC_tlt/.cfg.10~" "$DC_tlt/cfg.10"
 fi
 
 if [ -n "$(cat "$chk1" | sort -n | uniq -dc)" ]; then
@@ -176,12 +176,12 @@ if [ -n "$(cat "$chk5" | sort -n | uniq -dc)" ]; then
 	sed '/^$/d' $DT/ls2.x > "$chk5"
 fi
 
-chk1=$(cat "$DC_tlt/cnfg0" | wc -l)
-chk2=$(cat "$DC_tlt/cnfg1" | wc -l)
-chk3=$(cat "$DC_tlt/cnfg2" | wc -l)
-chk4=$(cat "$DC_tlt/cnfg3" | wc -l)
-chk5=$(cat "$DC_tlt/cnfg4" | wc -l)
-stts=$(cat "$DC_tlt/cnfg8")
+chk1=$(cat "$DC_tlt/cfg.0" | wc -l)
+chk2=$(cat "$DC_tlt/cfg.1" | wc -l)
+chk3=$(cat "$DC_tlt/cfg.2" | wc -l)
+chk4=$(cat "$DC_tlt/cfg.3" | wc -l)
+chk5=$(cat "$DC_tlt/cfg.4" | wc -l)
+stts=$(cat "$DC_tlt/cfg.8")
 
 if [[ $(($chk4 + $chk5)) != $chk1 \
 || $(($chk2 + $chk3)) != $chk1 || $stts = 13 ]]; then
@@ -200,20 +200,20 @@ if [[ $(($chk4 + $chk5)) != $chk1 \
 	if [ -f ".mp3" ]; then rm .mp3; fi
 	ls *.mp3 | sed 's/.mp3//g' >> $DT/ind
 	
-	rm "$DC_tlt/cnfg3" "$DC_tlt/cnfg4"
+	rm "$DC_tlt/cfg.3" "$DC_tlt/cfg.4"
 	
-	if [[ -f "$DC_tlt/.cnfg11" ]]; then
+	if [[ -f "$DC_tlt/.cfg.11" ]]; then
 	
-		cp -f "$DC_tlt/.cnfg11" "$DC_tlt/cnfg0"
+		cp -f "$DC_tlt/.cfg.11" "$DC_tlt/cfg.0"
 		n=1
 		while [[ $n -le $(cat "$DT/ind" | wc -l) ]]; do
 		
-			chk1=$(sed -n "$n"p "$DC_tlt/cnfg0")
+			chk1=$(sed -n "$n"p "$DC_tlt/cfg.0")
 			if cat "$DT/ind" | grep -Fxo "$chk1"; then
 					if [[ "$(echo "$chk1" | wc -w)" -eq 1 ]]; then
-						echo "$chk1" >> "$DC_tlt/cnfg3"
+						echo "$chk1" >> "$DC_tlt/cfg.3"
 					elif [[ "$(echo "$chk1" | wc -w)" -gt 1 ]]; then
-						echo "$chk1" >> "$DC_tlt/cnfg4"
+						echo "$chk1" >> "$DC_tlt/cfg.4"
 					fi
 				echo "$chk1" >> $DT/ind_ok
 				grep -v -x -v "$chk1" $DT/ind > $DT/ind_
@@ -227,9 +227,9 @@ if [[ $(($chk4 + $chk5)) != $chk1 \
 		
 			chk1=$(sed -n "$n"p "$DT/ind")
 				if [[ "$(echo "$chk1" | wc -w)" -eq 1 ]]; then
-					echo "$chk1" >> "$DC_tlt/cnfg3"
+					echo "$chk1" >> "$DC_tlt/cfg.3"
 				elif [[ "$(echo "$chk1" | wc -w)" -gt 1 ]]; then
-					echo "$chk1" >> "$DC_tlt/cnfg4"
+					echo "$chk1" >> "$DC_tlt/cfg.4"
 				fi
 				echo "$chk1" >> $DT/ind_ok
 			let n++
@@ -248,38 +248,38 @@ if [[ $(($chk4 + $chk5)) != $chk1 \
 	while [[ $n -le $(cat "$DT/ind" | wc -l) ]]; do
 		chk2=$(sed -n "$n"p "$DT/ind")
 		if [[ "$(echo "$chk2" | wc -w)" -eq 1 ]]; then
-			echo "$chk2" >> "$DC_tlt/cnfg3"
+			echo "$chk2" >> "$DC_tlt/cfg.3"
 		elif [[ "$(echo "$chk2" | wc -w)" -gt 1 ]]; then
-			echo "$chk2" >> "$DC_tlt/cnfg4"
+			echo "$chk2" >> "$DC_tlt/cfg.4"
 		fi
 		let n++
 	done
 
 	cat $DT/ind >> $DT/ind_ok
-	cp -f $DT/ind_ok "$DC_tlt/cnfg0"
-	rm "$DC_tlt/cnfg2"
-	in1="$DC_tlt/cnfg0"
+	cp -f $DT/ind_ok "$DC_tlt/cfg.0"
+	rm "$DC_tlt/cfg.2"
+	in1="$DC_tlt/cfg.0"
 	if [ -n "$(cat "$in1" | sort -n | uniq -dc)" ]; then
 		cat "$in1" | awk '!array_temp[$0]++' > $DT/ind
 		sed '/^$/d' $DT/ind > "$in1"
 	fi
-	in2="$DC_tlt/cnfg4"
+	in2="$DC_tlt/cfg.4"
 	if [ -n "$(cat "$in2" | sort -n | uniq -dc)" ]; then
 		cat "$in2" | awk '!array_temp[$0]++' > $DT/ind
 		sed '/^$/d' $DT/ind > "$in2"
 	fi
-	in3="$DC_tlt/cnfg4"
+	in3="$DC_tlt/cfg.4"
 	if [ -n "$(cat "$in3" | sort -n | uniq -dc)" ]; then
 		cat "$in3" | awk '!array_temp[$0]++' > $DT/ind
 		sed '/^$/d' $DT/ind > "$in3"
 	fi
-	cp -f "$in1" "$DC_tlt/cnfg1"
+	cp -f "$in1" "$DC_tlt/cfg.1"
 	
 	if [[ $stts = "13" ]]; then
-		if cat "$DC_tl/.cnfg3" | grep -Fxo "$topic"; then
-			echo "6" > "$DC_tlt/cnfg8"
-		elif cat "$DC_tl/.cnfg2" | grep -Fxo "$topic"; then
-			echo "1" > "$DC_tlt/cnfg8"
+		if cat "$DC_tl/.cfg.3" | grep -Fxo "$topic"; then
+			echo "6" > "$DC_tlt/cfg.8"
+		elif cat "$DC_tl/.cfg.2" | grep -Fxo "$topic"; then
+			echo "1" > "$DC_tlt/cfg.8"
 		fi
 	fi
 fi
@@ -401,9 +401,9 @@ if [ $(ls -1 *.jpg 2>/dev/null | wc -l) != 0 ]; then
 else
 	images=0
 fi
-[[ -f "$DC_tlt"/cnfg3 ]] && words=$(cat "$DC_tlt"/cnfg3 | wc -l)
-[[ -f "$DC_tlt"/cnfg4 ]] && sentences=$(cat "$DC_tlt"/cnfg4 | wc -l)
-[[ -f "$DM_tlt"/cnfg12 ]] && date_c=$(cat "$DM_tlt"/cnfg12)
+[[ -f "$DC_tlt"/cfg.3 ]] && words=$(cat "$DC_tlt"/cfg.3 | wc -l)
+[[ -f "$DC_tlt"/cfg.4 ]] && sentences=$(cat "$DC_tlt"/cfg.4 | wc -l)
+[[ -f "$DM_tlt"/cfg.12 ]] && date_c=$(cat "$DM_tlt"/cfg.12)
 date_u=$(date +%F)
 
 echo '
@@ -420,24 +420,24 @@ nwords="10"
 nsentences="11"
 nimages="12"
 level=13
-' > "$DT/cnfg12"
+' > "$DT/cfg.12"
 
-sed -i "s/01/$tpc/g" "$DT/cnfg12"
-sed -i "s/02/$lgsl/g" "$DT/cnfg12"
-sed -i "s/03/$lgtl/g" "$DT/cnfg12"
-sed -i "s/04/$Author/g" "$DT/cnfg12"
-sed -i "s/05/$Mail/g" "$DT/cnfg12"
-sed -i "s/06/$Ctgry/g" "$DT/cnfg12"
-sed -i "s/07/$link/g" "$DT/cnfg12"
-sed -i "s/08/$date_c/g" "$DT/cnfg12"
-sed -i "s/09/$date_u/g" "$DT/cnfg12"
-sed -i "s/10/$words/g" "$DT/cnfg12"
-sed -i "s/11/$sentences/g" "$DT/cnfg12"
-sed -i "s/12/$images/g" "$DT/cnfg12"
-sed -i "s/13/$level/g" "$DT/cnfg12"
+sed -i "s/01/$tpc/g" "$DT/cfg.12"
+sed -i "s/02/$lgsl/g" "$DT/cfg.12"
+sed -i "s/03/$lgtl/g" "$DT/cfg.12"
+sed -i "s/04/$Author/g" "$DT/cfg.12"
+sed -i "s/05/$Mail/g" "$DT/cfg.12"
+sed -i "s/06/$Ctgry/g" "$DT/cfg.12"
+sed -i "s/07/$link/g" "$DT/cfg.12"
+sed -i "s/08/$date_c/g" "$DT/cfg.12"
+sed -i "s/09/$date_u/g" "$DT/cfg.12"
+sed -i "s/10/$words/g" "$DT/cfg.12"
+sed -i "s/11/$sentences/g" "$DT/cfg.12"
+sed -i "s/12/$images/g" "$DT/cfg.12"
+sed -i "s/13/$level/g" "$DT/cfg.12"
 
-echo "$U" > $DC_s/cnfg4
-echo "$Mail" >> $DC_s/cnfg4
+echo "$U" > $DC_s/cfg.4
+echo "$Mail" >> $DC_s/cfg.4
 
 if [[ -f "$img" ]]; then
 /usr/bin/convert -scale 120x90! "$img" $DT/img1.png
@@ -468,20 +468,20 @@ cp -r "./words/images" "$DT/$tpc/words"
 mkdir "$DT/$tpc/.audio"
 
 n=1
-while [ $n -le $(cat "$DC_tlt/cnfg5" | wc -l) ]; do
-	cp=$(sed -n "$n"p "$DC_tlt/cnfg5")
+while [ $n -le $(cat "$DC_tlt/cfg.5" | wc -l) ]; do
+	cp=$(sed -n "$n"p "$DC_tlt/cfg.5")
 	cp "$DM_tl/.share/$cp" "$DT/$tpc/.audio/$cp"
 	let n++
 done
 
-cp -f "$DT/cnfg12" "$DT/$tpc/cnfg12"
-cp -f "$DC_tlt/cnfg0" "$DT/$tpc/cnfg0"
-cp -f "$DC_tlt/cnfg3" "$DT/$tpc/cnfg3"
-cp -f "$DC_tlt/cnfg4" "$DT/$tpc/cnfg4"
-cp -f "$DC_tlt/cnfg5" "$DT/$tpc/cnfg5"
-#cp -f "$DC_tlt/cnfg10" "$DT/$tpc/cnfg10"
-printf "$notes" > "$DC_tlt/cnfg10"
-printf "$notes" > "$DT/$tpc/cnfg10"
+cp -f "$DT/cfg.12" "$DT/$tpc/cfg.12"
+cp -f "$DC_tlt/cfg.0" "$DT/$tpc/cfg.0"
+cp -f "$DC_tlt/cfg.3" "$DT/$tpc/cfg.3"
+cp -f "$DC_tlt/cfg.4" "$DT/$tpc/cfg.4"
+cp -f "$DC_tlt/cfg.5" "$DT/$tpc/cfg.5"
+#cp -f "$DC_tlt/cfg.10" "$DT/$tpc/cfg.10"
+printf "$notes" > "$DC_tlt/cfg.10"
+printf "$notes" > "$DT/$tpc/cfg.10"
 
 cd $DT
 tar -cvf "$tpc.tar" "$tpc"
@@ -509,7 +509,7 @@ exit=$?
 
 if [ $exit = 0 ] ; then
 [[ $(echo "$tpc" | wc -c) -gt 40 ]] && tpc="${tpc:0:40}..."
-cp -f "$DT/cnfg12" "$DM_t/saved/$tpc.cnfg12"
+cp -f "$DT/cfg.12" "$DM_t/saved/$tpc.cfg.12"
 info="  $tpc\n\n<b> $saved</b>\n"
 image=dialog-ok
 else

@@ -25,8 +25,8 @@ function set_lang() {
 			mkdir "$DIR4"/$1/subscripts
 			cp -f "$drtf"/$1 "$DIR4"/$1/subscripts/Example
 		fi
-		echo $2 > $DIR2/s/cnfg10
-		echo $1 >> $DIR2/s/cnfg10
+		echo $2 > $DIR2/s/cfg.10
+		echo $1 >> $DIR2/s/cfg.10
 	fi
 }
 
@@ -88,54 +88,54 @@ elif [[ $ret -eq 0 ]]; then
 	cp -f -r /usr/share/idiomind/default/dicts/* $DIR2/addons/dict
 	
 	if echo "$target" | grep "English"; then
-		echo "en" > $DIR2/s/cnfg9
-		echo "english" >> $DIR2/s/cnfg9
+		echo "en" > $DIR2/s/cfg.9
+		echo "english" >> $DIR2/s/cfg.9
 	fi
 	
 	if echo "$target" | grep "French"; then
-		echo "fr" > $DIR2/s/cnfg9
-		echo "french" >> $DIR2/s/cnfg9
+		echo "fr" > $DIR2/s/cfg.9
+		echo "french" >> $DIR2/s/cfg.9
 	fi
 	
 	if echo "$target" | grep "German"; then
-		echo "de" > $DIR2/s/cnfg9
-		echo "german" >> $DIR2/s/cnfg9
+		echo "de" > $DIR2/s/cfg.9
+		echo "german" >> $DIR2/s/cfg.9
 	fi
 	
 	if echo "$target" | grep "Italian"; then
-		echo "it" > $DIR2/s/s/cnfg9
-		echo "italian" >> $DIR2/s/cnfg9
+		echo "it" > $DIR2/s/s/cfg.9
+		echo "italian" >> $DIR2/s/cfg.9
 	fi
 	
 	if echo "$target" | grep "Japanese"; then
-		echo "ja" > $DIR2/s/cnfg9
-		echo "japanese" >> $DIR2/s/cnfg9
+		echo "ja" > $DIR2/s/cfg.9
+		echo "japanese" >> $DIR2/s/cfg.9
 	fi
 	
 	if echo "$target" | grep "Portuguese"; then
-		echo "pt" > $DIR2/s/cnfg9
-		echo "portuguese" >> $DIR2/s/cnfg9
+		echo "pt" > $DIR2/s/cfg.9
+		echo "portuguese" >> $DIR2/s/cfg.9
 	fi
 	
 	if echo "$target" | grep "Spanish"; then
-		echo "es" > $DIR2/s/cnfg9
-		echo "spanish" >> $DIR2/s/cnfg9
+		echo "es" > $DIR2/s/cfg.9
+		echo "spanish" >> $DIR2/s/cfg.9
 	fi
 	
 	if echo "$target" | grep "Vietnamese"; then
-		echo "vi" > $DIR2/s/cnfg9
-		echo "vietnamese" >> $DIR2/s/cnfg9
+		echo "vi" > $DIR2/s/cfg.9
+		echo "vietnamese" >> $DIR2/s/cfg.9
 	fi
 	
 	
 	if echo "$target" | grep "Chinese"; then
-		echo "zh-cn" > $DIR2/s/cnfg9
-		echo "Chinese" >> $DIR2/s/cnfg9
+		echo "zh-cn" > $DIR2/s/cfg.9
+		echo "Chinese" >> $DIR2/s/cfg.9
 	fi
 	
 	if echo "$target" | grep "Russian"; then
-		echo "ru" > $DIR2/s/cnfg9
-		echo "Russian" >> $DIR2/s/cnfg9
+		echo "ru" > $DIR2/s/cfg.9
+		echo "Russian" >> $DIR2/s/cfg.9
 	fi
 	
 	if echo "$source" | grep "English"; then
@@ -180,12 +180,12 @@ elif [[ $ret -eq 0 ]]; then
 	
 	b=$(tr -dc a-z < /dev/urandom | head -c 1)
 	c=$(echo $(($RANDOM%100)))
-	echo $c$b > $DIR2/s/cnfg4
-	touch $DIR2/s/cnfg8
-	touch $DIR2/s/cnfg6
+	echo $c$b > $DIR2/s/cfg.4
+	touch $DIR2/s/cfg.8
+	touch $DIR2/s/cfg.6
 	touch "$DIR4/.cnf"
 	touch $DIR2/addons/stats/cnf
-	touch $DIR2/s/cnfg12
+	touch $DIR2/s/cfg.12
 	#/usr/share/idiomind/mngr.sh mkmn
 	exit 1
 else

@@ -23,12 +23,12 @@ if [[ $1 = dlti ]]; then
 				grep -v -x -v "$itdl" ./.inx > ./inx
 				sed '/^$/d' ./inx > ./.inx
 				rm ./inx
-				grep -v -x -v "$itdl" ./cnfg3 > ./cnfg3_
-				sed '/^$/d' ./cnfg3_ > ./cnfg3
-				rm ./cnfg3_
-				grep -v -x -v "$itdl" ./cnfg0 > ./cnfg0_
-				sed '/^$/d' ./cnfg0_ > ./cnfg0
-				rm ./cnfg0_
+				grep -v -x -v "$itdl" ./cfg.3 > ./cfg.3_
+				sed '/^$/d' ./cfg.3_ > ./cfg.3
+				rm ./cfg.3_
+				grep -v -x -v "$itdl" ./cfg.0 > ./cfg.0_
+				sed '/^$/d' ./cfg.0_ > ./cfg.0
+				rm ./cfg.0_
 				notify-send  -i idiomind "$itdl" "$deleted"  -t 1500
 			fi
 			if [[ $ret -eq 1 ]]; then
@@ -50,12 +50,12 @@ if [[ $1 = dlti ]]; then
 				grep -v -x -v "$itdl" ./.inx > ./inx
 				sed '/^$/d' ./inx > ./.inx
 				rm ./inx
-				grep -v -x -v "$itdl" ./cnfg4 > ./cnfg4_
-				sed '/^$/d' ./cnfg4_ > ./cnfg4
-				rm ./cnfg4_
-				grep -v -x -v "$itdl" ./cnfg0 > ./cnfg0_
-				sed '/^$/d' ./cnfg0_ > ./cnfg0
-				rm ./cnfg0_
+				grep -v -x -v "$itdl" ./cfg.4 > ./cfg.4_
+				sed '/^$/d' ./cfg.4_ > ./cfg.4
+				rm ./cfg.4_
+				grep -v -x -v "$itdl" ./cfg.0 > ./cfg.0_
+				sed '/^$/d' ./cfg.0_ > ./cfg.0
+				rm ./cfg.0_
 				notify-send  -i idiomind "$itdl" "$deleted"  -t 1500
 			fi
 			if [[ $ret -eq 1 ]]; then
@@ -76,15 +76,15 @@ if [[ $1 = dlti ]]; then
 				grep -v -x -v "$itdl" ./.inx > ./inx
 				sed '/^$/d' ./inx > ./.inx
 				rm ./inx
-				grep -v -x -v "$itdl" ./cnfg3 > ./cnfg3_
-				sed '/^$/d' ./cnfg3_ > ./cnfg3
-				rm ./cnfg3_
-				grep -v -x -v "$itdl" ./cnfg4 > ./cnfg4_
-				sed '/^$/d' ./cnfg4_ > ./cnfg4
-				rm ./cnfg4_
-				grep -v -x -v "$itdl" ./cnfg0 > ./cnfg0_
-				sed '/^$/d' ./cnfg0_ > ./cnfg0
-				rm ./cnfg0_
+				grep -v -x -v "$itdl" ./cfg.3 > ./cfg.3_
+				sed '/^$/d' ./cfg.3_ > ./cfg.3
+				rm ./cfg.3_
+				grep -v -x -v "$itdl" ./cfg.4 > ./cfg.4_
+				sed '/^$/d' ./cfg.4_ > ./cfg.4
+				rm ./cfg.4_
+				grep -v -x -v "$itdl" ./cfg.0 > ./cfg.0_
+				sed '/^$/d' ./cfg.0_ > ./cfg.0
+				rm ./cfg.0_
 				notify-send  -i idiomind "$itdl" "$deleted"  -t 1500
 			fi
 			if [[ $ret -eq 1 ]]; then
@@ -114,8 +114,8 @@ elif [[ $1 = dlkt ]]; then
 	--button="$cancel":1 --text="$delete_saved2"
 	ret=$?
 	if [[ $ret -eq 0 ]]; then
-		rm -r "$drtc"/.inx "$drtc"/cnfg3 "$drtc"/cnfg4 "$drtc"/cnfg0
-		touch "$drtc"/.inx "$drtc"/cnfg3 "$drtc"/cnfg4 "$drtc"/cnfg0
+		rm -r "$drtc"/.inx "$drtc"/cfg.3 "$drtc"/cfg.4 "$drtc"/cfg.0
+		touch "$drtc"/.inx "$drtc"/cfg.3 "$drtc"/cfg.4 "$drtc"/cfg.0
 		rm -r "$kpt"/*.mp3
 		rm -r "$kpt"/words/*.mp3
 	else

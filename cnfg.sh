@@ -4,16 +4,16 @@
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/settings.conf
 
-wth=$(sed -n 5p $DC_s/cnfg18)
-eht=$(sed -n 6p $DC_s/cnfg18)
+wth=$(sed -n 5p $DC_s/cfg.18)
+eht=$(sed -n 6p $DC_s/cfg.18)
 
 ICON=$DS/images/icon.png
 cd $DS/addons
 
 if [ ! -d "$DC" ]; then
 	$DS/ifs/1u.sh
-	cp $DS/default/cnfg1 \
-	"$DC_s/cnfg1"
+	cp $DS/default/cfg.1 \
+	"$DC_s/cfg.1"
 	sleep 1
 	$DS/cnfg.sh & exit
 fi
@@ -37,16 +37,16 @@ function set_lang() {
 		cp -f "$DS/addons/Learning with news/examples/$1" \
 		"$DC_a/Learning with news/$1/subscripts/Example"
 	fi
-	echo "$2" > $DC_s/cnfg10
-	echo "$1" >> $DC_s/cnfg10
+	echo "$2" > $DC_s/cfg.10
+	echo "$1" >> $DC_s/cfg.10
 	$DS/stop.sh L
 	"$DS/addons/Learning with news/tls.sh stop"
 	
-	if [ -f "$DC/topics/$1/.cnfg8" ]; then
-		LST=$(sed -n 1p "$DC/topics/$1/.cnfg8")
+	if [ -f "$DC/topics/$1/.cfg.8" ]; then
+		LST=$(sed -n 1p "$DC/topics/$1/.cfg.8")
 		"$DC/topics/$1/$LST/tpc.sh"
 	else
-		rm $DC_s/cnfg8 && touch $DC_s/cnfg8
+		rm $DC_s/cfg.8 && touch $DC_s/cfg.8
 	fi
 	(sleep 2 && $DS/addons/Dics/cnfg.sh "" f "$select_dicts") &
 	$DS/mngr.sh mkmn
@@ -56,17 +56,17 @@ c=$(echo $(($RANDOM%100000)))
 KEY=$c
 cnf1=$(mktemp $DT/cnf1.XXXX)
 cnf3=$(mktemp $DT/cnf3.XXXX)
-sttng3=$(sed -n 3p $DC_s/cnfg1)
+sttng3=$(sed -n 3p $DC_s/cfg.1)
 [[ -z $sttng3 ]] && sttng3=FALSE
-sttng4=$(sed -n 4p $DC_s/cnfg1)
+sttng4=$(sed -n 4p $DC_s/cfg.1)
 [[ -z $sttng4 ]] && sttng4=FALSE
-sttng5=$(sed -n 5p $DC_s/cnfg1)
+sttng5=$(sed -n 5p $DC_s/cfg.1)
 [[ -z $sttng5 ]] && sttng5=FALSE
-sttng10=$(sed -n 10p $DC_s/cnfg1)
+sttng10=$(sed -n 10p $DC_s/cfg.1)
 [[ -z $sttng10 ]] && sttng10=FALSE
-sttng11=$(sed -n 11p $DC_s/cnfg1)
+sttng11=$(sed -n 11p $DC_s/cfg.1)
 [[ -z $sttng11 ]] && sttng11=""
-sttng12=$(sed -n 12p $DC_s/cnfg1)
+sttng12=$(sed -n 12p $DC_s/cfg.1)
 [[ -z $sttng12 ]] && sttng12=""
 
 yad --plug=$KEY --tabnum=1 --borders=15 --scroll \
@@ -95,7 +95,7 @@ yad --plug=$KEY --tabnum=1 --borders=15 --scroll \
 	--field=":lbl" "#12"\
 	--field="$languages_learning:CB" "$lgtl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
 	--field="$your_language:CB" "$lgsl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" > "$cnf1" &
-cat $DC_s/cnfg21 | yad --plug=$KEY --tabnum=2 --list --expand-column=2 \
+cat $DC_s/cfg.21 | yad --plug=$KEY --tabnum=2 --list --expand-column=2 \
 	--text="<sub>  $double_click_for_configure </sub>" \
 	--no-headers --dclick-action="/usr/share/idiomind/ifs/dclik.sh" --print-all \
 	--column=icon:IMG --column=Action &
@@ -112,11 +112,11 @@ yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 	
 	if [ $ret -eq 0 ]; then
 		rm -f $DT/.lc
-		cp -f "$cnf1" $DC_s/cnfg1
+		cp -f "$cnf1" $DC_s/cfg.1
 		
 		[ ! -d  $HOME/.config/autostart ] && mkdir $HOME/.config/autostart
 		config_dir=$HOME/.config/autostart
-		if [[ "$(sed -n 6p $DC_s/cnfg1)" = "TRUE" ]]; then
+		if [[ "$(sed -n 6p $DC_s/cfg.1)" = "TRUE" ]]; then
 			if [ ! -f $config_dir/idiomind.desktop ]; then
 			
 				if [ ! -d "$HOME/.config/autostart" ]; then
@@ -180,71 +180,71 @@ yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 		if echo $ls | grep "English" && [ English != $lgsl ] ; then
 			confirm
 			if [ $? -eq 0 ]; then
-				echo "en" > $DC_s/cnfg9
-				echo "english" >> $DC_s/cnfg9
+				echo "en" > $DC_s/cfg.9
+				echo "english" >> $DC_s/cfg.9
 			fi
 		fi
 		if echo $ls | grep "French" && [ French != $lgsl ] ; then
 			confirm
 			if [ $? -eq 0 ]; then
-				echo "fr" > $DC_s/cnfg9
-				echo "french" >> $DC_s/cnfg9
+				echo "fr" > $DC_s/cfg.9
+				echo "french" >> $DC_s/cfg.9
 			fi
 		fi
 		if echo $ls | grep "German" && [ German != $lgsl ] ; then
 			confirm
 			if [ $? -eq 0 ]; then
-				echo "de" > $DC_s/cnfg9
-				echo "german" >> $DC_s/cnfg9
+				echo "de" > $DC_s/cfg.9
+				echo "german" >> $DC_s/cfg.9
 			fi
 		fi
 		if echo $ls | grep "Italian" && [ Italian != $lgsl ] ; then
 			confirm
 			if [ $? -eq 0 ]; then
-				echo "it" > $DC_s/s/cnfg9
-				echo "italian" >> $DC_s/cnfg9
+				echo "it" > $DC_s/s/cfg.9
+				echo "italian" >> $DC_s/cfg.9
 			fi
 		fi
 		if echo $ls | grep "Japanese" && [ Japanese != $lgsl ] ; then
 			confirm
 			if [ $? -eq 0 ]; then
-				echo "ja" > $DC_s/cnfg9
-				echo "japanese" >> $DC_s/cnfg9
+				echo "ja" > $DC_s/cfg.9
+				echo "japanese" >> $DC_s/cfg.9
 			fi
 		fi
 		if echo $ls | grep "Portuguese" && [ Portuguese != $lgsl ] ; then
 			confirm
 			if [ $? -eq 0 ]; then
-				echo "pt" > $DC_s/cnfg9
-				echo "portuguese" >> $DC_s/cnfg9
+				echo "pt" > $DC_s/cfg.9
+				echo "portuguese" >> $DC_s/cfg.9
 			fi
 		fi
 		if echo $ls | grep "Spanish" && [ Spanish != $lgsl ] ; then
 			confirm
 			if [ $? -eq 0 ]; then
-				echo "es" > $DC_s/cnfg9
-				echo "spanish" >> $DC_s/cnfg9
+				echo "es" > $DC_s/cfg.9
+				echo "spanish" >> $DC_s/cfg.9
 			fi
 		fi
 		if echo $ls | grep "Vietnamese" && [ Vietnamese != $lgsl ] ; then
 			confirm
 			if [ $? -eq 0 ]; then
-				echo "vi" > $DC_s/cnfg9
-				echo "vietnamese" >> $DC_s/cnfg9
+				echo "vi" > $DC_s/cfg.9
+				echo "vietnamese" >> $DC_s/cfg.9
 			fi
 		fi
 		if echo $ls | grep "Chinese" && [ Chinese != $lgsl ] ; then
 			confirm
 			if [ $? -eq 0 ]; then
-				echo "zh-cn" > $DC_s/cnfg9
-				echo "chinese" >> $DC_s/cnfg9
+				echo "zh-cn" > $DC_s/cfg.9
+				echo "chinese" >> $DC_s/cfg.9
 			fi
 		fi
 		if echo $ls | grep "Russian" && [ Russian != $lgsl ] ; then
 			confirm
 			if [ $? -eq 0 ]; then
-				echo "ru" > $DC_s/cnfg9
-				echo "russian" >> $DC_s/cnfg9
+				echo "ru" > $DC_s/cfg.9
+				echo "russian" >> $DC_s/cfg.9
 			fi
 		fi
 

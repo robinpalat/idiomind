@@ -11,9 +11,9 @@ DF=$DS/practice/df.sh
 DLW=$DS/practice/dlw.sh
 DMC=$DS/practice/dmc.sh
 DLS=$DS/practice/dls.sh
-Wi="$DC_tlt/cnfg3"
-Si="$DC_tlt/cnfg4"
-Li="$DC_tlt/cnfg1"
+Wi="$DC_tlt/cfg.3"
+Si="$DC_tlt/cfg.4"
+Li="$DC_tlt/cfg.1"
 cd "$DC_tlt/practice"
 
 function look() {

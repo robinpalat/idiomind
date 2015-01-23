@@ -8,11 +8,11 @@ if [[ "$1" = time ]]; then
 	u=$(echo "$(whoami)")
 	cd $DT/.$u/
 	cnf1=$(mktemp $DT/cnf1.XXXX.s)
-	bcl=$(cat $DC_s/cnfg2)
+	bcl=$(cat $DC_s/cfg.2)
 
 	if [[ -z "$bcl" ]]; then
-		echo 8 > $DC_s/cnfg2
-		bcl=$(sed -n 1p $DC_s/cnfg2)
+		echo 8 > $DC_s/cfg.2
+		bcl=$(sed -n 1p $DC_s/cfg.2)
 	fi
 		yad --mark="8 s":8 --mark="60 s":60 \
 		--mark="120 s":120 --borders=20 --scale \
@@ -23,7 +23,7 @@ if [[ "$1" = time ]]; then
 	    --min-value=2 --button="Ok":0 > $cnf1
 	
 		if [[ "$?" -eq 0 ]]; then
-			cat "$cnf1" > $DC_s/cnfg2
+			cat "$cnf1" > $DC_s/cfg.2
 		fi
 			rm -f $cnf1
 		[[ "$?" -eq 1 ]] & rm -f $cnf1 & exit 1
@@ -32,9 +32,9 @@ if [[ "$1" = time ]]; then
 elif [[ -z "$1" ]]; then
 
 	echo "$tpc"
-	tlng="$DC_tlt/cnfg1"
-	winx="$DC_tlt/cnfg3"
-	sinx="$DC_tlt/cnfg4"
+	tlng="$DC_tlt/cfg.1"
+	winx="$DC_tlt/cfg.3"
+	sinx="$DC_tlt/cfg.4"
 	[ -z "$tpc" ] && exit 1
 	if [ "$(cat "$sinx" | wc -l)" -gt 0 ]; then
 		indw=$(grep -F -x -v -f "$sinx" "$tlng")
@@ -46,12 +46,12 @@ elif [[ -z "$1" ]]; then
 	else
 		inds=$(cat "$tlng")
 	fi
-	indm=$(cat "$DC_tlt/cnfg6")
+	indm=$(cat "$DC_tlt/cfg.6")
 	cd "$DC_tlt/practice"
 	indp=$(cat fin3 mcin3 \
 	lwin3 | sed '/^$/d' | sort | uniq)
-	indf=$(cat $DC_tl/Feeds/cnfg0)
-	nnews=$(cat $DC_tl/Feeds/cnfg1 | head -n 8)
+	indf=$(cat $DC_tl/Feeds/cfg.0)
+	nnews=$(cat $DC_tl/Feeds/cfg.1 | head -n 8)
 	u=$(echo "$(whoami)")
 	infs=$(echo "$snts Sentences" | wc -l)
 	infw=$(echo "$wrds Words" | wc -l)
@@ -73,7 +73,7 @@ elif [[ -z "$1" ]]; then
 	[[ -z "$indf" ]] && img5=$DS/images/addi.png || img5=$DS/images/add.png
 	img6=$DS/images/set-26.png
 
-	if [[ ! -f $DC_s/cnfg5 ]]; then
+	if [[ ! -f $DC_s/cfg.5 ]]; then
 	echo 'FALSE
 FALSE
 FALSE
@@ -81,17 +81,17 @@ FALSE
 FALSE
 TRUE
 TRUE
-FALSE' > $DC_s/cnfg5; fi
-	st1=$(cat $DC_s/cnfg5 | sed -n 1p)
-	st2=$(cat $DC_s/cnfg5 | sed -n 2p)
-	st3=$(cat $DC_s/cnfg5 | sed -n 3p)
-	st4=$(cat $DC_s/cnfg5 | sed -n 4p)
-	st5=$(cat $DC_s/cnfg5 | sed -n 5p)
-	st6=$(cat $DC_s/cnfg5 | sed -n 6p)
-	st7=$(cat $DC_s/cnfg5 | sed -n 7p)
-	st8=$(cat $DC_s/cnfg5 | sed -n 8p)
-	st9=$(cat $DC_s/cnfg5 | sed -n 9p)
-	st10=$(cat $DC_s/cnfg5 | sed -n 10p)
+FALSE' > $DC_s/cfg.5; fi
+	st1=$(cat $DC_s/cfg.5 | sed -n 1p)
+	st2=$(cat $DC_s/cfg.5 | sed -n 2p)
+	st3=$(cat $DC_s/cfg.5 | sed -n 3p)
+	st4=$(cat $DC_s/cfg.5 | sed -n 4p)
+	st5=$(cat $DC_s/cfg.5 | sed -n 5p)
+	st6=$(cat $DC_s/cfg.5 | sed -n 6p)
+	st7=$(cat $DC_s/cfg.5 | sed -n 7p)
+	st8=$(cat $DC_s/cfg.5 | sed -n 8p)
+	st9=$(cat $DC_s/cfg.5 | sed -n 9p)
+	st10=$(cat $DC_s/cfg.5 | sed -n 10p)
 	slct=$(mktemp $DT/slct.XXXX)
 	if [ ! -f $DT/.p__$u ]; then
 		btn="--button=Ok:0"
@@ -122,49 +122,49 @@ FALSE' > $DC_s/cnfg5; fi
 		cd $DT/.$u
 		> ./indx
 		if echo "$(echo "$slt" | sed -n 1p)" | grep TRUE; then
-			sed -i "1s/.*/TRUE/" $DC_s/cnfg5
+			sed -i "1s/.*/TRUE/" $DC_s/cfg.5
 			cat ./indw >> ./indx
 		else
-			sed -i "1s/.*/FALSE/" $DC_s/cnfg5
+			sed -i "1s/.*/FALSE/" $DC_s/cfg.5
 		fi
 		if echo "$(echo "$slt" | sed -n 2p)" | grep TRUE; then
-			sed -i "2s/.*/TRUE/" $DC_s/cnfg5
+			sed -i "2s/.*/TRUE/" $DC_s/cfg.5
 			cat ./inds >> ./indx
 		else
-			sed -i "2s/.*/FALSE/" $DC_s/cnfg5
+			sed -i "2s/.*/FALSE/" $DC_s/cfg.5
 		fi
 		if echo "$(echo "$slt" | sed -n 3p)" | grep TRUE; then
-			sed -i "3s/.*/TRUE/" $DC_s/cnfg5
+			sed -i "3s/.*/TRUE/" $DC_s/cfg.5
 			cat ./indm >> ./indx
 		else
-			sed -i "3s/.*/FALSE/" $DC_s/cnfg5
+			sed -i "3s/.*/FALSE/" $DC_s/cfg.5
 		fi
 		if echo "$(echo "$slt" | sed -n 4p)" | grep TRUE; then
-			sed -i "4s/.*/TRUE/" $DC_s/cnfg5
+			sed -i "4s/.*/TRUE/" $DC_s/cfg.5
 			cat ./indp >> ./indx
 		else
-			sed -i "4s/.*/FALSE/" $DC_s/cnfg5
+			sed -i "4s/.*/FALSE/" $DC_s/cfg.5
 		fi
 		if echo "$(echo "$slt" | sed -n 5p)" | grep TRUE; then
-			sed -i "5s/.*/TRUE/" $DC_s/cnfg5
+			sed -i "5s/.*/TRUE/" $DC_s/cfg.5
 			cat ./indf >> ./indx
 		else
-			sed -i "5s/.*/FALSE/" $DC_s/cnfg5
+			sed -i "5s/.*/FALSE/" $DC_s/cfg.5
 		fi
 		if echo "$(echo "$slt" | sed -n 6p)" | grep TRUE; then
-			sed -i "6s/.*/TRUE/" $DC_s/cnfg5
+			sed -i "6s/.*/TRUE/" $DC_s/cfg.5
 		else
-			sed -i "6s/.*/FALSE/" $DC_s/cnfg5
+			sed -i "6s/.*/FALSE/" $DC_s/cfg.5
 		fi
 		if echo "$(echo "$slt" | sed -n 7p)" | grep TRUE; then
-			sed -i "7s/.*/TRUE/" $DC_s/cnfg5
+			sed -i "7s/.*/TRUE/" $DC_s/cfg.5
 		else
-			sed -i "7s/.*/FALSE/" $DC_s/cnfg5
+			sed -i "7s/.*/FALSE/" $DC_s/cfg.5
 		fi
 		if echo "$(echo "$slt" | sed -n 8p)" | grep TRUE; then
-			sed -i "8s/.*/TRUE/" $DC_s/cnfg5
+			sed -i "8s/.*/TRUE/" $DC_s/cfg.5
 		else
-			sed -i "8s/.*/FALSE/" $DC_s/cnfg5
+			sed -i "8s/.*/FALSE/" $DC_s/cfg.5
 		fi
 		rm -f "$slct"
 
@@ -185,11 +185,11 @@ FALSE' > $DC_s/cnfg5; fi
 	rm -f $slct
 	$DS/stop.sh play
 
-	w=$(sed -n 1p $DC_s/cnfg5)
-	s=$(sed -n 2p $DC_s/cnfg5)
-	m=$(sed -n 3p $DC_s/cnfg5)
-	p=$(sed -n 4p $DC_s/cnfg5)
-	f=$(sed -n 5p $DC_s/cnfg5)
+	w=$(sed -n 1p $DC_s/cfg.5)
+	s=$(sed -n 2p $DC_s/cfg.5)
+	m=$(sed -n 3p $DC_s/cfg.5)
+	p=$(sed -n 4p $DC_s/cfg.5)
+	f=$(sed -n 5p $DC_s/cfg.5)
 
 	if ! [ "$(echo "$w""$s""$m""$f""$p" | grep -o "TRUE")" ]; then
 		notify-send "$exiting" "$no_items" -i idiomind -t 3000 &&

@@ -6,7 +6,7 @@ source /usr/share/idiomind/ifs/c.conf
 cd $DT/.$user
 
 if [ -n "$(cat ./indx)" ] && [ $(cat ./indx | wc -l) -gt 0 ]; then
-	if [ "$(sed -n 7p $DC_s/cnfg5)" = "TRUE" ]; then
+	if [ "$(sed -n 7p $DC_s/cfg.5)" = "TRUE" ]; then
 			echo "--repeat"
 			while [ 1 ]
 			do

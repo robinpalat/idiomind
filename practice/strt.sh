@@ -4,8 +4,8 @@
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/practice.conf
 DSP="$DS/practice"
-wth=$(sed -n 13p $DC_s/cnfg18)
-hgt=$(sed -n 14p $DC_s/cnfg18)
+wth=$(sed -n 13p $DC_s/cfg.18)
+hgt=$(sed -n 14p $DC_s/cfg.18)
 easys=$2
 learning=$3
 [[ $4 -lt 0 ]] && hards=0 || hards=$4

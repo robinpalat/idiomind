@@ -68,22 +68,22 @@ if [ ! -d $DM_tl/Feeds ]; then
 	
 	echo '#!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
-uid=$(sed -n 1p $DC_s/cnfg4)
+uid=$(sed -n 1p $DC_s/cfg.4)
 FEED=$(cat "$DC/addons/Learning with news/$lgtl/.rss")
-[ ! -f $DC_tl/Feeds/cnfg8 ] && echo "11" > $DC_tl/Feeds/cnfg8
-[ ! -f $DC_tl/Feeds/cnfg0 ] && touch $DC_tl/Feeds/cnfg0
-[ ! -f $DC_tl/Feeds/cnfg1 ] && touch $DC_tl/Feeds/cnfg1
-[ ! -f $DC_tl/Feeds/cnfg3 ] && touch $DC_tl/Feeds/cnfg3
-[ ! -f $DC_tl/Feeds/cnfg4 ] && touch $DC_tl/Feeds/cnfg4
+[ ! -f $DC_tl/Feeds/cfg.8 ] && echo "11" > $DC_tl/Feeds/cfg.8
+[ ! -f $DC_tl/Feeds/cfg.0 ] && touch $DC_tl/Feeds/cfg.0
+[ ! -f $DC_tl/Feeds/cfg.1 ] && touch $DC_tl/Feeds/cfg.1
+[ ! -f $DC_tl/Feeds/cfg.3 ] && touch $DC_tl/Feeds/cfg.3
+[ ! -f $DC_tl/Feeds/cfg.4 ] && touch $DC_tl/Feeds/cfg.4
 sleep 1
-echo "$tpc" > $DC_s/cnfg8
-echo fd >> $DC_s/cnfg8
+echo "$tpc" > $DC_s/cfg.8
+echo fd >> $DC_s/cfg.8
 notify-send -i idiomind "Feed Mode" " $FEED" -t 3000
 exit 1' > $DC_tl/Feeds/tpc.sh
 	chmod +x $DC_tl/Feeds/tpc.sh
-	echo "11" > $DC_tl/Feeds/cnfg8
+	echo "11" > $DC_tl/Feeds/cfg.8
 	cd $DC_tl/Feeds
-	touch cnfg0 cnfg1 cnfg3 cnfg4 .updt.lst
+	touch cfg.0 cfg.1 cfg.3 cfg.4 .updt.lst
 	$DS/mngr.sh mkmn
 fi
 
@@ -101,8 +101,9 @@ if [ -n "$feed" ]; then
 	echo "- Feeds Mode ( Actualizando... 5% )" > $DT/.uptf
 	
 	if [ "$1" != A ]; then
-		echo "$tpc" > $DC_s/cnfg8
-		echo fd >> $DC_s/cnfg8
+		echo "$tpc" > $DC_s/cfg.8
+		echo fd >> $DC_s/cfg.8
+		echo "11" > $DC_tl/Feeds/cfg.8
 		notify-send -i idiomind "$rsrc" "$updating" -t 3000 &
 	fi
 	
@@ -138,8 +139,7 @@ if [ -n "$feed" ]; then
 		
 		if [[ "$trgt" != "$(grep "$trgt" $DC_tl/Feeds/.updt.lst)" ]]; then
 
-			nme="$(echo "$trgt" | cut -c 1-100 | sed 's/[ \t]*$//' | \
-			sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')"
+			nme="$(echo "$trgt" | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
 
 			mkdir "$nme"
 			result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
@@ -147,8 +147,8 @@ if [ -n "$feed" ]; then
 			iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 | sed 's/\n/ /g' > srce
 			srce=$(cat srce | sed ':a;N;$!ba;s/\n/ /g')
 			
-			if [[ $(sed -n 1p $DC_s/cnfg3) != TRUE ]]; then
-				vs=$(sed -n 7p $DC_s/cnfg1)
+			if [[ $(sed -n 1p $DC_s/cfg.3) != TRUE ]]; then
+				vs=$(sed -n 7p $DC_s/cfg.1)
 				if [ -n "$vs" ]; then
 					if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
 						lg=$(echo $lgtl | awk '{print tolower($0)}')
@@ -189,7 +189,7 @@ if [ -n "$feed" ]; then
 			fi
 			
 			eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I "$nme.mp3"
-			echo "$trgt" >> "$DC_tl/Feeds/cnfg1"
+			echo "$trgt" >> "$DC_tl/Feeds/cfg.1"
 			
 			> swrd
 			> twrd
@@ -269,8 +269,8 @@ if [ -n "$feed" ]; then
 	cd "$DM_tl/Feeds/conten"
 	find ./* -mtime +5 -exec rm -r {} \; &
 
-	ls -t *.mp3 > "$DC_tl/Feeds/cnfg1"
-	sed -i 's/.mp3//g' "$DC_tl/Feeds/cnfg1"
+	ls -t *.mp3 > "$DC_tl/Feeds/cfg.1"
+	sed -i 's/.mp3//g' "$DC_tl/Feeds/cfg.1"
 
 	if [ "$1" != A ]; then
 		notify-send -i idiomind "$rsrc" " $updateok" -t 3000

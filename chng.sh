@@ -6,13 +6,13 @@ source $DS/ifs/trans/$lgs/topics_lists.conf
 
 if [[ "$1" = chngi ]]; then
 
-	nta=$(sed -n 6p $DC_s/cnfg5)
-	sna=$(sed -n 7p $DC_s/cnfg5)
-	cnfg1="$DC_s/cnfg5"
+	nta=$(sed -n 6p $DC_s/cfg.5)
+	sna=$(sed -n 7p $DC_s/cfg.5)
+	cfg.1="$DC_s/cfg.5"
 	indx="$DT/.$user/indx"
-	[[ -z $(cat $DC_s/cnfg2) ]] && echo 8 > $DC_s/cnfg2
-	bcl=$(cat $DC_s/cnfg2)
-	[[ $bcl -lt 2 ]] && bcl = 2 && echo 2 > $DC_s/cnfg2
+	[[ -z $(cat $DC_s/cfg.2) ]] && echo 8 > $DC_s/cfg.2
+	bcl=$(cat $DC_s/cfg.2)
+	[[ $bcl -lt 2 ]] && bcl = 2 && echo 2 > $DC_s/cfg.2
 	if ([ $(echo "$nta" | grep "TRUE") ] && [ $bcl -lt 10 ]); then bcl=10; fi
 
 	item="$(sed -n "$2"p $indx | cut -c 1-100 | sed 's/[ \t]*$//' | \
@@ -81,11 +81,11 @@ if [[ "$1" = chngi ]]; then
 
 elif [ "$1" != chngi ]; then
 	
-	if [ ! -f $DC_s/cnfg0 ]; then
-		> $DC_s/cnfg0
+	if [ ! -f $DC_s/cfg.0 ]; then
+		> $DC_s/cfg.0
 		fi
-		wth=$(sed -n 3p $DC_s/cnfg18)
-		eht=$(sed -n 4p $DC_s/cnfg18)
+		wth=$(sed -n 3p $DC_s/cfg.18)
+		eht=$(sed -n 4p $DC_s/cfg.18)
 		if [ -n "$1" ]; then
 			text="--text=<small>$1\n</small>"
 			align="--text-align=left"
@@ -94,10 +94,10 @@ elif [ "$1" != chngi ]; then
 			text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/$lgtl'>$find_topics</a>   </small></small>"
 			align="--text-align=right"
 		fi
-		[[ -f $DC_tl/.cnfg1 ]] && info2=$(cat $DC_tl/.cnfg1 | wc -l) || info2=""
+		[[ -f $DC_tl/.cfg.1 ]] && info2=$(cat $DC_tl/.cfg.1 | wc -l) || info2=""
 		cd $DC_s
 
-		VAR=$(cat $DC_s/cnfg0 | $yad --name=idiomind \
+		VAR=$(cat $DC_s/cfg.0 | $yad --name=idiomind \
 		--class=idiomind --center --separator="" $align\
 		"$text" --width=$wth --height=$eht --ellipsize=END \
 		--no-headers --list --window-icon=idiomind --borders=5 \

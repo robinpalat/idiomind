@@ -130,7 +130,7 @@ elif [[ $1 = edit ]]; then
 	drtc="$DC_tl/Feeds/"
 	slct=$(mktemp $DT/slct.XXXX)
 
-if [[ "$(cat "$drtc/cnfg0" | wc -l)" -ge 4 ]]; then
+if [[ "$(cat "$drtc/cfg.0" | wc -l)" -ge 4 ]]; then
 dd="$DIR3/images/save.png
 $create_topic
 $DIR3/images/del.png

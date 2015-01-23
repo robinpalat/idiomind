@@ -2,17 +2,17 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-wth=$(sed -n 5p $DC_s/cnfg18)
-eht=$(sed -n 6p $DC_s/cnfg18)
-ap=$(cat $DC_s/cnfg1 | sed -n 5p)
+wth=$(sed -n 5p $DC_s/cfg.18)
+eht=$(sed -n 6p $DC_s/cfg.18)
+ap=$(cat $DC_s/cfg.1 | sed -n 5p)
 echo "_" >> $DC/addons/stats/.tmp &
 re='^[0-9]+$'
 v="$1"
 now="$2"
 nuw="$3"
 
-[[ "$v" = v1 ]] && ind="$DC_tlt/cnfg1"
-[[ "$v" = v2 ]] && ind="$DC_tlt/cnfg2"
+[[ "$v" = v1 ]] && ind="$DC_tlt/cfg.1"
+[[ "$v" = v2 ]] && ind="$DC_tlt/cfg.2"
 
 if ! [[ $nuw =~ $re ]]; then
 	nuw=$(cat "$ind" \
@@ -21,11 +21,12 @@ if ! [[ $nuw =~ $re ]]; then
 	nll=" "
 fi
 
-nme="$(sed -n "$nuw"p "$ind" | cut -c 1-100 | sed 's/[ \t]*$//' \
-| sed "s/'/ /g" | awk '{print tolower($0)}')"
+nme="$(sed -n "$nuw"p "$ind" | cut -c 1-100 \
+| sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
 
 if [ -z "$nme" ]; then
-	nme=$(sed -n 1p "$ind")
+	nme="$(sed -n 1p "$ind" | cut -c 1-100 \
+	| sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
 	nuw=1
 fi
 
@@ -60,7 +61,7 @@ if [ -f "$DM_tlt/words/$nme.mp3" ]; then
 	
 elif [ -f "$DM_tlt/$nme.mp3" ]; then
 	tgs=$(eyeD3 "$DM_tlt/$nme.mp3")
-	[[ $(sed -n 3p $DC_s/cnfg1) = TRUE ]] \
+	[[ $(sed -n 3p $DC_s/cfg.1) = TRUE ]] \
 	&& trgt=$(echo "$tgs" | grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)') \
 	|| trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
 	src=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')

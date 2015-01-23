@@ -5,27 +5,30 @@ source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/rss.conf
 DS_pf="$DS/addons/Learning with news"
 vwr="$DS_pf/vwr.sh"
-ap=$(cat $DC_s/cnfg1 | sed -n 5p)
+ap=$(cat $DC_s/cfg.1 | sed -n 5p)
 
 if [[ $1 = V1 ]]; then
 
 	DS_pf="$DS/addons/Learning with news"
-	wth=$(sed -n 5p $DC_s/cnfg18)
-	eht=$(sed -n 6p $DC_s/cnfg18)
+	wth=$(sed -n 5p $DC_s/cfg.18)
+	eht=$(sed -n 6p $DC_s/cfg.18)
 	c=$(echo $(($RANDOM%100)))
 	re='^[0-9]+$'
 	now="$2"
 	nuw="$3"
 
 	if ! [[ $nuw =~ $re ]]; then
-		nuw=$(cat "$DC_tl/Feeds/cnfg1" | grep -Fxon "$now" \
+		nuw=$(cat "$DC_tl/Feeds/cfg.1" | grep -Fxon "$now" \
 		| sed -n 's/^\([0-9]*\)[:].*/\1/p')
 		nll=" "
 	fi
 
-	nme=$(sed -n "$nuw"p "$DC_tl/Feeds/cnfg1")
+	nme="$(sed -n "$nuw"p "$DC_tl/Feeds/cfg.1" | cut -c 1-100 \
+	| sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
+
 	if [ -z "$nme" ]; then
-		nme=$(sed -n 1p "$DC_tl/Feeds/cnfg1")
+		nme="$(sed -n 1p "$DC_tl/Feeds/cfg.1" | cut -c 1-100 \
+		| sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
 		nuw=1
 	fi
 	
@@ -77,22 +80,22 @@ elif [[ $1 = V2 ]]; then
 	DM_tlfk="$DM_tl/Feeds/kept"
 	DS_pf="$DS/addons/Learning with news"
 	trgt="$DS_pf/trgt1"
-	wth=$(sed -n 5p $DC_s/cnfg18)
-	eht=$(sed -n 6p $DC_s/cnfg18)
+	wth=$(sed -n 5p $DC_s/cfg.18)
+	eht=$(sed -n 6p $DC_s/cfg.18)
 	c=$(echo $(($RANDOM%100)))
 	re='^[0-9]+$'
 	now="$2"
 	nuw="$3"
 	
 	if ! [[ $nuw =~ $re ]]; then
-		nuw=$(cat "$DC_tl/Feeds/cnfg0" | grep -Fxon "$now" \
+		nuw=$(cat "$DC_tl/Feeds/cfg.0" | grep -Fxon "$now" \
 		| sed -n 's/^\([0-9]*\)[:].*/\1/p')
 		nll=" "
 	fi
 
-	nme=$(sed -n "$nuw"p "$DC_tl/Feeds/cnfg0")
+	nme=$(sed -n "$nuw"p "$DC_tl/Feeds/cfg.0")
 	if [ -z "$nme" ]; then
-		nme=$(sed -n 1p "$DC_tl/Feeds/cnfg0")
+		nme=$(sed -n 1p "$DC_tl/Feeds/cfg.0")
 		nuw=1
 	fi
 

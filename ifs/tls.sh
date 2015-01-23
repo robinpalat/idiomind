@@ -8,10 +8,39 @@ if [ $1 = play ]; then
 
 play "$2" && sleep 0.5 & exit
 
+
+
+
+elif [ $1 = info ]; then
+
+	wth=$(sed -n 5p $DC_s/cfg.18)
+	eht=$(sed -n 6p $DC_s/cfg.18)
+
+	var2="$2"
+
+	page=/tmp/$var2
+
+	wget -O $page http://$lgt.wikipedia.org/wiki/$var2
+	
+	
+
+	if [ -s "$page" ]; then
+		echo $(grep -B 10 'div id="toc"' $page | sed '/<p.*p>/! {d};s/<[^>]*>//g') \
+		| yad --text-info --on-top --skip-taskbar --title=" " \
+		--center --window-icon=idiomin --width="$wth" --height="$eht" --wrap
+	else
+		echo -e "No Wikipedia page for\n$var2" | yad --title=" " --text-info --on-top \
+		--skip-taskbar --center --window-icon=idiomin --geometry=300x100+900+600
+	fi
+
+	rm $page
+	exit
+
+
 elif [ $1 = cnfg ]; then
 
-	msj=$(sed -n 1p $DC_s/cnfg20)
-	cn=$(sed -n 2p $DC_s/cnfg20)
+	msj=$(sed -n 1p $DC_s/cfg.20)
+	cn=$(sed -n 2p $DC_s/cfg.20)
 	[[ -z "$cn" ]] && msj=" ( $no_defined )" || img="$cn"
 
 	yad --center --align=center --text="  $recording: $msj" \
@@ -41,7 +70,7 @@ elif [ $1 = dclik ]; then
 	
 elif [ $1 = edta ]; then
 
-	prm=$(sed -n 9p $DC_s/cnfg1)
+	prm=$(sed -n 9p $DC_s/cfg.1)
 	(cd "$3"
 	"$prm" "$2") & exit
 	
@@ -147,18 +176,18 @@ elif [ $1 = chng ]; then
 		fi
 	done <<< "$(get_pacmd_section $id properties)"
 
-	echo "$message" > $DC_s/cnfg20
-	echo "$device_icon_name" >> $DC_s/cnfg20
+	echo "$message" > $DC_s/cfg.20
+	echo "$device_icon_name" >> $DC_s/cfg.20
 	exit 1
 
 
 elif [ $1 = rec ]; then
 
-	paud=$(sed -n 17p $DC_s/cnfg1)
+	paud=$(sed -n 17p $DC_s/cfg.1)
 	DT_r="$2"
 	t="$3"
 	killall play
-	inf=$(sed -n 1p $DC_s/cnfg20)
+	inf=$(sed -n 1p $DC_s/cfg.20)
 	rm -f $DT_r/audtm.mp3
 	$yad --align=center --timeout="$t" \
 	--text=" $inf  $recording2...\n\n" \
@@ -227,10 +256,10 @@ elif [ $1 = updt ]; then
 		if [ "$ret" -eq 0 ]; then
 			xdg-open https://sourceforge.net/projects/idiomind/files/idiomind.deb/download & exit
 		elif [ "$ret" -eq 2 ]; then
-			echo `date +%d` > $DC_s/cnfg13 & exit
+			echo `date +%d` > $DC_s/cfg.13 & exit
 		elif [ "$ret" -eq 1 ]; then
-			echo `date +%d` > $DC_s/cnfg14
-			echo "$(sed -n 2p ./release)" >> $DC_s/cnfg14 & exit
+			echo `date +%d` > $DC_s/cfg.14
+			echo "$(sed -n 2p ./release)" >> $DC_s/cfg.14 & exit
 		fi
 	else
 		yad --text="<big><b> $nonew_version  </b></big>\n\n  $nonew_version2" \
@@ -243,19 +272,19 @@ elif [ $1 = updt ]; then
 
 elif [ $1 = srch ]; then
 
-	[[ ! -f $DC_s/cnfg13 ]] && echo `date +%d` > $DC_s/cnfg13
+	[[ ! -f $DC_s/cfg.13 ]] && echo `date +%d` > $DC_s/cfg.13
 
-	d1=$(cat $DC_s/cnfg13)
+	d1=$(cat $DC_s/cfg.13)
 	d2=`date +%d`
 
-	[[ $(cat $DC_s/cnfg13) = 28 ]] && rm -f $DC_s/cnfg14
+	[[ $(cat $DC_s/cfg.13) = 28 ]] && rm -f $DC_s/cfg.14
 
-	[[ -f $DC_s/cnfg14 ]] && exit 1
+	[[ -f $DC_s/cfg.14 ]] && exit 1
 
-	if [[ $(cat $DC_s/cnfg13) -ne $(date +%d) ]]; then
+	if [[ $(cat $DC_s/cfg.13) -ne $(date +%d) ]]; then
 	
 		sleep 1
-		echo "$d2" > $DC_s/cnfg13
+		echo "$d2" > $DC_s/cfg.13
 		cd $DT
 		[[ -f release ]] && rm -f release
 		curl -v www.google.com 2>&1 | \
@@ -276,9 +305,9 @@ elif [ $1 = srch ]; then
 			if [ "$ret" -eq 0 ]; then
 				xdg-open $pkg & exit
 			elif [ "$ret" -eq 2 ]; then
-				echo `date +%d` > $DC_s/cnfg13 & exit
+				echo `date +%d` > $DC_s/cfg.13 & exit
 			elif [ "$ret" -eq 1 ]; then
-				echo `date +%d` > $DC_s/cnfg14 & exit
+				echo `date +%d` > $DC_s/cfg.14 & exit
 			fi
 		else
 			exit 0
@@ -302,8 +331,8 @@ elif [ $1 = pdf ]; then
 		mkdir $DT/mkhtml/images
 		nts=$(cat -e "$DC_tlt/nt" | sed 's/\$/<br>/g')
 		cd $DT/mkhtml
-		cp -f "$DC_tlt/cnfg3" w.inx.l
-		cp -f "$DC_tlt/cnfg4" s.inx.l
+		cp -f "$DC_tlt/cfg.3" w.inx.l
+		cp -f "$DC_tlt/cfg.4" s.inx.l
 		iw=w.inx.l
 		is=s.inx.l
 

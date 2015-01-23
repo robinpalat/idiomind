@@ -103,8 +103,8 @@ function dialog2() {
 	
 function get_image_text() {
 	
-	nme="$(echo "$1" | cut -c 1-100 | sed 's/[ \t]*$//' | \
-	sed "s/'/ /g" | awk '{print tolower($0)}')"
+	nme="$(echo "$1" | cut -c 1-100 | sed 's/[ \t]*$//' \
+	| sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
 	WEN=$(eyeD3 "$DM_tlt/$nme".mp3 | \
 	grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
 	eyeD3 --write-images=$DT "$DM_tlt/$1.mp3"
@@ -164,8 +164,9 @@ function check() {
 n=1
 while [ $n -le $(cat lsin | wc -l) ]; do
 
-	namefile="$(sed -n "$n"p lsin | cut -c 1-100 | sed 's/[ \t]*$//' | \
-	sed "s/'/ /g" | awk '{print tolower($0)}')"
+	namefile="$(sed -n "$n"p lsin | cut -c 1-100 | sed 's/[ \t]*$//' \
+	| sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
+	
 	if [[ $n = 1 ]]; then
 	info="--text=<sup><tt> $write_sentence...</tt></sup>"
 	else

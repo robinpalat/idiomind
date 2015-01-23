@@ -5,7 +5,7 @@ source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/t_bd.conf
 DS_ppd="$DS/addons/Practice/default"
 user=$(echo "$(whoami)")
-D_cps=$(sed -n 2p $DC_s/cnfg12)
+D_cps=$(sed -n 2p $DC_s/cfg.12)
 udt=$(cat "$D_cps/.udt")
 dte=$(date +%F)
 
@@ -142,17 +142,17 @@ if [ -z "$1" ]; then
 						echo "50"
 						echo "# $coping_data ${topic:0:20} ... " ; sleep 1
 						cd "$sdirc"
-						echo "6" > "$tdirc/cnfg8"
-						cp -f cnfg0 "$tdirc/cnfg0"
-						cp -f cnfg0 "$tdirc/cnfg1"
-						cp -f cnfg3 "$tdirc/cnfg3"
-						cp -f cnfg4 "$tdirc/cnfg4"
-						cp -f cnfg5 "$tdirc/cnfg5"
-						cp -f cnfg12 "$tdirc/cnfg12"
+						echo "6" > "$tdirc/cfg.8"
+						cp -f cfg.0 "$tdirc/cfg.0"
+						cp -f cfg.0 "$tdirc/cfg.1"
+						cp -f cfg.3 "$tdirc/cfg.3"
+						cp -f cfg.4 "$tdirc/cfg.4"
+						cp -f cfg.5 "$tdirc/cfg.5"
+						cp -f cfg.12 "$tdirc/cfg.12"
 						echo "$nt" > "$tdirc/nt"
 						(cd "$DS_ppd"; cp -f .* \
 						"$DC/topics/$dlng/$topic/Practice")
-						echo $dte > cnfg12
+						echo $dte > cfg.12
 						cp -f $DS/default/tpc.sh "$tdirc/tpc.sh"
 						chmod +x "$tdirc/tpc.sh"
 						echo "80"
@@ -160,10 +160,10 @@ if [ -z "$1" ]; then
 						cd "$DT/.imprt/cnf/topics/$dlng"
 						echo "90"
 						echo "# $coping_data ${topic:0:20} ... " ; sleep 1
-						echo "$topic" >> "$DC/topics/$dlng/.cnfg3"
-						sed -i 's/'"$topic"'//g' "$DC/topics/$dlng/.cnfg2"
-						sed '/^$/d' $DM_t/$dlng/.cnfg2 > $DM_t/$dlng/.cnfg2_
-						mv -f $DM_t/$dlng/.cnfg2_ $DM_t/$dlng/.cnfg2
+						echo "$topic" >> "$DC/topics/$dlng/.cfg.3"
+						sed -i 's/'"$topic"'//g' "$DC/topics/$dlng/.cfg.2"
+						sed '/^$/d' $DM_t/$dlng/.cfg.2 > $DM_t/$dlng/.cfg.2_
+						mv -f $DM_t/$dlng/.cfg.2_ $DM_t/$dlng/.cfg.2
 						cd $DT/.imprt/topics
 						let n++
 					done
@@ -199,12 +199,12 @@ if [ -z "$1" ]; then
 
 	# backup
 	elif [ "$ret" -eq 2 ]; then
-		sttng=$(sed -n 1p $DC_s/cnfg12)
-		D_cps=$(sed -n 2p $DC_s/cnfg12)
+		sttng=$(sed -n 1p $DC_s/cfg.12)
+		D_cps=$(sed -n 2p $DC_s/cfg.12)
 		
 		if [ -z $sttng ]; then
-			echo FALSE > $DC_s/cnfg12
-			echo " " > $DC_s/cnfg12
+			echo FALSE > $DC_s/cfg.12
+			echo " " > $DC_s/cfg.12
 		fi
 
 		cd ~/
@@ -223,8 +223,8 @@ if [ -z "$1" ]; then
 		if [ "$ret" -eq 0 ]; then
 			sttng=$(echo "$CNFG" | cut -d "|" -f1)
 			dircy=$(echo "$CNFG" | cut -d "|" -f2)
-			echo "$sttng" > $DC_s/cnfg12
-			echo "$dircy" >> $DC_s/cnfg12
+			echo "$sttng" > $DC_s/cfg.12
+			echo "$dircy" >> $DC_s/cfg.12
 
 		elif [ "$ret" -eq 3 ]; then
 		
@@ -258,7 +258,7 @@ if [ -z "$1" ]; then
 						(
 						rm -f $DT/*.XXXXXXXX
 						echo "#" ; sleep 0
-						cp "$DC_s/cnfg12"  "$DT/.SC.bk"
+						cp "$DC_s/cfg.12"  "$DT/.SC.bk"
 						mv "$DC/" "$DT/.s2.bk"
 						mv "$DM/" "$DT/.idm2.bk"
 						mkdir "$DC/"
@@ -288,8 +288,8 @@ if [ -z "$1" ]; then
 		else
 			sttng=$(echo "$CNFG" | cut -d "|" -f1)
 			dircy=$(echo "$CNFG" | cut -d "|" -f2)
-			echo "$sttng" > $DC_s/cnfg12
-			echo "$dircy" >> $DC_s/cnfg12
+			echo "$sttng" > $DC_s/cfg.12
+			echo "$dircy" >> $DC_s/cfg.12
 		fi	
 	else
 		exit 1

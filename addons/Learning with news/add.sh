@@ -38,7 +38,7 @@ if [[ $1 = n_i ]]; then
 		ret=$?
 		
 		if [[ $ret -eq 0 ]]; then
-			if [ $(cat "$DC_tl/Feeds/cnfg3" | wc -l) -ge 50 ]; then
+			if [ $(cat "$DC_tl/Feeds/cfg.3" | wc -l) -ge 50 ]; then
 				$yad --name=idiomind --center --on-top --image=info \
 				--text=" <b>$tpe    </b>\\n\\n $words_max  \\n" \
 				--image-on-top --fixed --sticky --title="$tpe" \
@@ -68,18 +68,18 @@ if [[ $1 = n_i ]]; then
 			
 			eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" -A IWI3I0I"$var"IWI3I0I \
 			"$DM_tl/Feeds/kept/words/$nme.mp3"
-			echo "$trgt" >> "$DC_tl/Feeds/cnfg0"
-			echo "$trgt" >> "$DC_tl/Feeds/.cnfg11"
-			echo "$trgt" >> "$DC_tl/Feeds/cnfg3"
+			echo "$trgt" >> "$DC_tl/Feeds/cfg.0"
+			echo "$trgt" >> "$DC_tl/Feeds/.cfg.11"
+			echo "$trgt" >> "$DC_tl/Feeds/cfg.3"
 			
-			if [ -n "$(cat "$DC_tl/Feeds/cnfg0" | sort -n | uniq -dc)" ]; then
-				cat "$DC_tl/Feeds/cnfg0" | awk '!array_temp[$0]++' > $DT/.ls.x
-				sed '/^$/d' $DT/.ls.x > "$DC_tl/Feeds/cnfg0"
+			if [ -n "$(cat "$DC_tl/Feeds/cfg.0" | sort -n | uniq -dc)" ]; then
+				cat "$DC_tl/Feeds/cfg.0" | awk '!array_temp[$0]++' > $DT/.ls.x
+				sed '/^$/d' $DT/.ls.x > "$DC_tl/Feeds/cfg.0"
 			fi
 			rm -rf $DT/rss_$c
 			
 		elif [[ $ret -eq 2 ]]; then
-			if [ $(cat "$DC_tl/Feeds/cnfg4" | wc -l) -ge 50 ]; then
+			if [ $(cat "$DC_tl/Feeds/cfg.4" | wc -l) -ge 50 ]; then
 				$yad --name=idiomind --center --on-top --image=info \
 				--text=" <b>$tpe    </b>\\n\\n $sentences_max \\n" \
 				--image-on-top --fixed --sticky --title="$tpe" \
@@ -97,25 +97,19 @@ if [[ $1 = n_i ]]; then
 			--button="  Ok  ":0 & exit 1
 			 >&2; exit 1;}
 			
-			if [[ $(echo "$var" | wc -c) -ge 100 ]]; then
-				nme="$(echo "$var" | cut -c 1-100 | sed 's/[ \t]*$//' | \
-				sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')..."
-			else
-				nme=$(echo "$var" | sed 's/[ \t]*$//' | \
-				sed "s/'/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-			fi
+			nme="$(echo "$var" | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
 			
 			cp "$DM_tl/Feeds/conten/$var.mp3" "$DM_tl/Feeds/kept/$nme.mp3"
 			cp "$DM_tl/Feeds/conten/$var.lnk" "$DM_tl/Feeds/kept/$nme.lnk"
 			cp $DM_tl/Feeds/conten/"$var"/*.mp3 "$DM_tl/Feeds/kept/.audio/"
 			
-			if [ -n "$(cat "$DC_tl/Feeds/cnfg0" | sort -n | uniq -dc)" ]; then
-				cat "$DC_tl/Feeds/cnfg0" | awk '!array_temp[$0]++' > $DT/.ls.x
-				sed '/^$/d' $DT/.ls.x > "$DC_tl/Feeds/cnfg0"
+			if [ -n "$(cat "$DC_tl/Feeds/cfg.0" | sort -n | uniq -dc)" ]; then
+				cat "$DC_tl/Feeds/cfg.0" | awk '!array_temp[$0]++' > $DT/.ls.x
+				sed '/^$/d' $DT/.ls.x > "$DC_tl/Feeds/cfg.0"
 			fi
-				echo "$trgt" >> "$DC_tl/Feeds/cnfg0"
-				echo "$trgt" >> "$DC_tl/Feeds/.cnfg11"
-				echo "$trgt" >> "$DC_tl/Feeds/cnfg4"
+				echo "$trgt" >> "$DC_tl/Feeds/cfg.0"
+				echo "$trgt" >> "$DC_tl/Feeds/.cfg.11"
+				echo "$trgt" >> "$DC_tl/Feeds/cfg.4"
 				rm -f -r $DT/.dzmxx.x $DT/rss_$ & exit 1
 		else
 			rm -f -r $DT/.dzmxx.x $DT/rss_$ & exit 1
@@ -124,7 +118,7 @@ if [[ $1 = n_i ]]; then
 elif [[ $1 = n_t ]]; then
 
 	dte=$(date "+%a %d %B")
-	if [ $(cat "$DC_tl/.cnfg1" | wc -l) -ge 50 ]; then
+	if [ $(cat "$DC_tl/.cfg.1" | wc -l) -ge 50 ]; then
 		$yad --fixed --image=info --title=Idiomind \
 		--name=idiomind --center --skip-taskbar \
 		--text=" <b>$topics_max  </b>" \
@@ -154,17 +148,17 @@ elif [[ $1 = n_t ]]; then
 			cd $DS/practice/default/
 			cp -f ./.* "$DC_tl/$jlb/practice/"
 			
-			[[ -f "$DC_tl/Feeds/cnfg0" ]] && mv -f "$DC_tl/Feeds/cnfg0" "$DC_tl/$jlb/cnfg0" || "touch $DC_tl/$jlb/cnfg0"
-			[[ -f "$DC_tl/Feeds/cnfg3" ]] && mv -f "$DC_tl/Feeds/cnfg3" "$DC_tl/$jlb/cnfg3" || "touch $DC_tl/$jlb/cnfg3"
-			[[ -f "$DC_tl/Feeds/cnfg4" ]] && mv -f "$DC_tl/Feeds/cnfg4" "$DC_tl/$jlb/cnfg4" || "touch $DC_tl/$jlb/cnfg4"
-			[[ -f "$DC_tl/Feeds/.cnfg11" ]] && mv -f "$DC_tl/Feeds/.cnfg11" "$DC_tl/$jlb/.cnfg11" || "touch $DC_tl/$jlb/.cnfg11"
+			[[ -f "$DC_tl/Feeds/cfg.0" ]] && mv -f "$DC_tl/Feeds/cfg.0" "$DC_tl/$jlb/cfg.0" || "touch $DC_tl/$jlb/cfg.0"
+			[[ -f "$DC_tl/Feeds/cfg.3" ]] && mv -f "$DC_tl/Feeds/cfg.3" "$DC_tl/$jlb/cfg.3" || "touch $DC_tl/$jlb/cfg.3"
+			[[ -f "$DC_tl/Feeds/cfg.4" ]] && mv -f "$DC_tl/Feeds/cfg.4" "$DC_tl/$jlb/cfg.4" || "touch $DC_tl/$jlb/cfg.4"
+			[[ -f "$DC_tl/Feeds/.cfg.11" ]] && mv -f "$DC_tl/Feeds/.cfg.11" "$DC_tl/$jlb/.cfg.11" || "touch $DC_tl/$jlb/.cfg.11"
 			
 			cd "$DM_tl/Feeds/kept"
 			cp -f *.mp3 "$DM_tl/$jlb/" && rm *.mp3
 			cp -f *.lnk "$DM_tl/$jlb/" && rm *.lnk
 			
 			cd "$DM_tl/Feeds/kept/.audio"
-			ls *.mp3 > "$DC_tl/$jlb/cnfg5"
+			ls *.mp3 > "$DC_tl/$jlb/cfg.5"
 			mv *.mp3 "$DM_tl/.share/"
 			
 			mkdir "$DM_tl/$jlb/words"
@@ -173,23 +167,23 @@ elif [[ $1 = n_t ]]; then
 			
 			mkdir "$DM_tl/$jlb/words/images"
 			
-			touch "$DC_tl/Feeds/cnfg0"
-			touch "$DC_tl/Feeds/cnfg3"
-			touch "$DC_tl/Feeds/cnfg4"
-			touch "$DC_tl/$jlb/cnfg2"
+			touch "$DC_tl/Feeds/cfg.0"
+			touch "$DC_tl/Feeds/cfg.3"
+			touch "$DC_tl/Feeds/cfg.4"
+			touch "$DC_tl/$jlb/cfg.2"
 			
-			cnt=$(cat "$DC_tl/$jlb/cnfg0" | wc -l)
+			cnt=$(cat "$DC_tl/$jlb/cfg.0" | wc -l)
 			echo "aitm.$cnt.aitm" >> \
 			$DC/addons/stats/.log &
 			
 			[[ -f $DT/ntpc ]] && rm -f $DT/ntpc
 			
-			cp -f "$DC_tl/$jlb/cnfg0" "$DC_tl/$jlb/cnfg1"
+			cp -f "$DC_tl/$jlb/cfg.0" "$DC_tl/$jlb/cfg.1"
 			cp -f $DS/default/tpc.sh "$DC_tl/$jlb/tpc.sh"
 			chmod +x "$DC_tl/$jlb/tpc.sh"
-			echo "$(date +%F)" > "$DC_tl/$jlb/cnfg12"
-			echo "1" > "$DC_tl/$jlb/cnfg8"
-			echo "$jlb" >> $DC_tl/.cnfg2
+			echo "$(date +%F)" > "$DC_tl/$jlb/cfg.12"
+			echo "1" > "$DC_tl/$jlb/cfg.8"
+			echo "$jlb" >> $DC_tl/.cfg.2
 			
 			"$DC_tl/$jlb/tpc.sh"
 			$DS/mngr.sh mkmn
