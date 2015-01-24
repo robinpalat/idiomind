@@ -293,7 +293,7 @@ if [ $ALL -le 20 ]; then
 	cstn=$($yad --image=info --on-top \
 	--text=" $min_items\\n " --window-icon=idiomind \
 	--image-on-top --center --sticky --name=idiomind \
-	--width=320 --height=100 --borders=5 \
+	--width=420 --height=150 --borders=3 \
 	--skip-taskbar --title="Idiomind" \
 	--button="Ok:0")
 	exit 1
@@ -351,7 +351,7 @@ yad --window-icon=idiomind \
 --image=info --on-top --name=idiomind \
 --text="  $categry_err\\n  " \
 --image-on-top --center --sticky \
---width=320 --height=100 --borders=5 \
+--width=420 --height=150 --borders=3 \
 --skip-taskbar --title="Idiomind" \
 --button="  Ok  ":0
 $DS/ifs/upld.sh &
@@ -378,7 +378,7 @@ yad --window-icon=idiomind --name=idiomind \
 --image=dialog-warning --on-top \
 --text=" $site_err\\n " \
 --image-on-top --center --sticky \
---width=320 --height=100 --borders=5 \
+--width=420 --height=150 --borders=3 \
 --skip-taskbar --title="Idiomind" \
 --button="  Ok  ":0 &
 exit 1
@@ -517,7 +517,7 @@ fi
 yad --window-icon=idiomind --name=idiomind \
 --image=$image --on-top --text="$info" \
 --image-on-top --center --sticky \
---width=380 --height=150 --borders=5 \
+--width=420 --height=150 --borders=5 \
 --skip-taskbar --title=idiomind \
 --button="  Ok  ":0
 

@@ -88,6 +88,7 @@ elif [ "$1" != chngi ]; then
 		if [ -n "$1" ]; then
 			text="--text=<small>$1\n</small>"
 			align="--text-align=left"
+			img="--image=info"
 		else
 			lgtl=$(echo "$lgtl" | awk '{print tolower($0)}')
 			text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/$lgtl'>$find_topics</a>   </small></small>"
@@ -97,7 +98,7 @@ elif [ "$1" != chngi ]; then
 		cd $DC_s
 
 		VAR=$(cat $DC_s/cfg.0 | $yad --name=idiomind \
-		--class=idiomind --center --separator="" $align\
+		--class=idiomind --center $img --image-on-top --separator="" $align\
 		"$text" --width=$wth --height=$eht --ellipsize=END \
 		--no-headers --list --window-icon=idiomind --borders=5 \
 		--button="gtk-add":3 --button="$ok":0 \

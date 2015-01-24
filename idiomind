@@ -138,8 +138,8 @@ if [ -z "$1" ]; then
 		$DS/mngr.sh mkmn &
 	}
 
-	yad --width=175 --height=220 --name=idiomind \
-	--geometry=185x318-300-$(sed -n 12p $DC_s/cfg.18) \
+	yad --width=175 --height=190 --name=idiomind \
+	--geometry=175x190-300-$(sed -n 12p $DC_s/cfg.18) \
 	--fixed --title="Idiomind" --no-buttons \
 	--icons --single-click --on-top --borders=0 \
 	--read-dir=$DS/default/new --item-width=68 \
@@ -685,7 +685,7 @@ if [[ $1 = topic ]]; then
 				rm -f $DT/*.x
 				fi
 			rm -f $DT/*.x
-			fi
+			
 		
 	# nstll
 	elif echo "$mde" | grep "istll"; then

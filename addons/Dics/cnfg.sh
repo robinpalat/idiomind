@@ -44,6 +44,7 @@ elif [ -z "$1" ]; then
 	if [ "$2" = f ]; then
 		tex="<small>$3\n</small>"
 		align="--text-align=left"
+		img="--image=info"
 	else
 		tex="<a href='http://www.dicts.com'><sup>$more_dict</sup></a>  "
 		align="--text-align=right"
@@ -76,8 +77,8 @@ elif [ -z "$1" ]; then
 	
 	D=$(mktemp $DT/D.XXXX)
 	cat "$dir/.listdicts" | $yad --list --title="Idiomind - $dictionaries" \
-	--center --on-top --expand-column=2 --text="$tex" $align \
-	--width=440 --height=340 --skip-taskbar --separator=" " \
+	--center --on-top --expand-column=2 $img --text="$tex" $align \
+	--width=440 --height=340 --skip-taskbar --separator=" " --image-on-top \
 	--borders=15 --button="$add":2 --print-all --button=Ok:0 \
 	--column=" ":CHK --column="$availables":TEXT \
 	--column="$languages":TEXT --window-icon=idiomind \

@@ -8,9 +8,6 @@ if [ $1 = play ]; then
 
 play "$2" && sleep 0.5 & exit
 
-
-
-
 elif [ $1 = info ]; then
 
 	wth=$(sed -n 5p $DC_s/cfg.18)
@@ -25,7 +22,7 @@ elif [ $1 = info ]; then
 		--center --window-icon=idiomin --width="$wth" --height="$eht" --wrap
 	else
 		echo -e "No Wikipedia page for\n$var2" | yad --title=" " --text-info --on-top \
-		--skip-taskbar --center --window-icon=idiomin --geometry=300x100+900+600
+		--skip-taskbar --center --window-icon=idiomin --geometry=450x150
 	fi
 	rm $page
 	exit
@@ -37,7 +34,7 @@ elif [ $1 = cnfg ]; then
 	[[ -z "$cn" ]] && msj=" ( $no_defined )" || img="$cn"
 
 	yad --center --align=center --text="  $recording: $msj" \
-	---name=idiomind --geometry=0-0-0-0 --width=350 --height=120 \
+	---name=idiomind --width=420 --height=150 \
 	--on-top --skip-taskbar --center --window-icon=idiomind \
 	--button="$change":2 --button=gtk-apply:3 --borders=10 --title=" "
 	ret=$?
@@ -185,7 +182,7 @@ elif [ $1 = rec ]; then
 	$yad --align=center --timeout="$t" \
 	--text=" $inf  $recording2...\n\n" \
 	--timeout-indicator=bottom --geometry=0-0-0-0 \
-	--image-on-top --width=350 --height=100 \
+	--image-on-top --width=420 --height=150 \
 	--on-top --skip-taskbar --no-buttons --center \
 	--window-icon=idiomind --center --borders=10 \
 	--title=" " \
@@ -229,7 +226,7 @@ elif [ $1 = updt ]; then
 	--image="info" --name=idiomind \
 	--text="<b>$conn_err  \\n  </b>" \
 	--image-on-top --center --sticky \
-	--width=340 --height=120 --borders=5 \
+	--width=420 --height=150 --borders=5 \
 	--skip-taskbar --title=Idiomind \
 	--button="  Ok  ":0
 	 >&2; exit 1;}
@@ -293,7 +290,7 @@ elif [ $1 = srch ]; then
 			--button="$cancel":1 \
 			--button="$later":2 \
 			--button="$download":0 \
-			--width=400 --height=150
+			--width=420 --height=150
 			ret=$?
 			if [ "$ret" -eq 0 ]; then
 				xdg-open $pkg & exit
