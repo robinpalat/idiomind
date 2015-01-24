@@ -543,7 +543,7 @@ if [[ $1 = topic ]]; then
 							mv -f $cnf3 "$nt"
 						fi
 					fi
-					
+					# --------------------------------------------------------
 					if [ -n "$(cat "$cnf1" | grep -o TRUE)" ]; then
 						grep -Rl "|FALSE|" "$cnf1" | while read tab1 ; do
 							 sed '/|FALSE|/d' "$cnf1" > tmpf1
@@ -578,6 +578,8 @@ if [[ $1 = topic ]]; then
 							cat "$ls2" | awk '!array_temp[$0]++' > $DT/ls2.x
 							sed '/^$/d' $DT/ls2.x > "$ls2"
 						fi
+						# --------------------------------------------------------
+						
 						echo "reim.$cnt.reim" >> \
 						$DC/addons/stats/.log &
 					fi

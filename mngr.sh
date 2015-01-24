@@ -159,20 +159,21 @@ elif [ $1 = inx ]; then
 	
 	if [ "$2" = W ]; then
 		if [[ "$(cat "$DC_tlt/cfg.0" | grep "$fns")" ]] && [ -n "$fns" ]; then
-			sed -i "s/${fns}/${fns}\n$itm/" "$DC_tlt/.cfg.11"
 			sed -i "s/${fns}/${fns}\n$itm/" "$DC_tlt/cfg.0"
 			sed -i "s/${fns}/${fns}\n$itm/" "$DC_tlt/cfg.1"
+			sed -i "s/${fns}/${fns}\n$itm/" "$DC_tlt/.cfg.11"
 		else
-			echo "$itm" >> "$DC_tlt/.cfg.11"
 			echo "$itm" >> "$DC_tlt/cfg.0"
 			echo "$itm" >> "$DC_tlt/cfg.1"
+			echo "$itm" >> "$DC_tlt/.cfg.11"
 		fi
 		echo "$itm" >> "$DC_tlt/cfg.3"
+		
 	elif [ "$2" = S ]; then
-		echo "$itm" >> "$DC_tlt"/.cfg.11
-		echo "$itm" >> "$DC_tlt"/cfg.0
-		echo "$itm" >> "$DC_tlt"/cfg.1
-		echo "$itm" >> "$DC_tlt"/cfg.4
+		echo "$itm" >> "$DC_tlt/cfg.0"
+		echo "$itm" >> "$DC_tlt/cfg.1"
+		echo "$itm" >> "$DC_tlt/cfg.4"
+		echo "$itm" >> "$DC_tlt/.cfg.11"
 	fi
 	
 	lss="$DC_tlt/.cfg.11"
@@ -800,21 +801,15 @@ elif [ "$1" = edt ]; then
 			fi
 
 			if [ "$trgt" != "$tgt" ]; then
-			
-				if [[ "$(echo "$trgt" | wc -c)" -ge 100 ]]; then
-					fl=$(echo "$trgt" | cut -c 1-100 | sed 's/[ \t]*$//' | \
-					sed "s/'/ /g" | sed "s/\n/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-					n="..."
-					fln="$fl$n"
-				else
-					fln=$(echo "$trgt" | sed 's/[ \t]*$//' | \
-					sed "s/'/ /g" | sed "s/\n/ /g" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-				fi
-
+				
+				fln="$(echo "$trgt" | cut -c 1-100 | sed 's/[ \t]*$//' \
+				| sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
+				
 				sed -i "s/${nme}/${fln}/" "$DC_tlt/cfg.4"
 				sed -i "s/${nme}/${fln}/" "$DC_tlt/cfg.1"
 				sed -i "s/${nme}/${fln}/" "$DC_tlt/cfg.0"
 				sed -i "s/${nme}/${fln}/" "$DC_tlt/cfg.2"
+				sed -i "s/${nme}/${fln}/" "$DC_tlt/.cfg.11"
 				sed -i "s/${nme}/${fln}/" "$DC_tlt/practice/lsin.tmp"
 
 				mv -f "$DM_tlt/$nme".mp3 "$DM_tlt/$fln".mp3

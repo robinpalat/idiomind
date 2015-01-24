@@ -100,6 +100,7 @@ elif [[ $1 = dlns ]]; then
 		if [[ $ret -eq 0 ]]; then
 			rm -r $DM_tl/Feeds/conten/*
 			rm $DC_tl/Feeds/.updt.lst
+			rm $DC_tl/Feeds/cfg.1
 			rm $DC_tl/Feeds/.dt
 			notify-send  -i idiomind "$deleted" " " -t 2000
 		else

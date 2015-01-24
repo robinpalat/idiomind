@@ -17,13 +17,16 @@ function msg() {
 }
 
 [[ -f $DT/.uptf ]] && STT=$(cat $DT/.uptf) || STT=""
-if  [[ -z "$(cat $DC/addons/dict/.dicts)" ]]; then
-	sleep 1
-	(sleep 2 && $DS/addons/Dics/cnfg.sh "" f "$no_dictionary")
-	if  [[ -z "$(cat $DC/addons/dict/.dicts)" ]]; then
+
+[[ ! -f $DC/addons/dict/.dicts ]] && touch $DC/addons/dict/.dicts
+if  [ -z "$(cat $DC/addons/dict/.dicts)" ]; then
+	source $DS/ifs/trans/$lgs/topics_lists.conf
+	$DS/addons/Dics/cnfg.sh "" f "$no_dictionary"
+	if  [ -z "$(cat $DC/addons/dict/.dicts)" ]; then
 		exit 1
 	fi
 fi
+
 if echo "$STT" | grep "Actualizando..."; then
 	yad --image=info --width=420 --height=150 \
 	--window-icon=idiomind \
@@ -267,16 +270,27 @@ if [ -n "$feed" ]; then
 	mv -f $DT_r/rss "$DC_tl/Feeds/.updt.lst"
 	rm -fr $DT_r $DT/.uptf $DT/.rss
 	cd "$DM_tl/Feeds/conten"
+	find *.mp3 -mtime +5 -exec ls > ls {} \;
+	
+	n=1
+	while [ $n -le $(cat ls | wc -l) ]; do
+		nmfile=$(sed -n "$n"p ls)
+		tgs=$(eyeD3 "$DM_tl/Feeds/conten/$nmfile")
+		trg=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
+		grep -v -x -v "$trg" "$DC_tl/Feeds/cfg.1" > "$DC_tl/Feeds/cfg.1._"
+		sed '/^$/d' "$DC_tl/Feeds/cfg.1._" > "$DC_tl/Feeds/cfg.1"
+		let n++
+	done
+	rm "$DC_tl/Feeds/cfg.1._"
+	
+	[[ -d "$DM_tl/Feeds/conten" ]] && cd "$DM_tl/Feeds/conten"
 	find ./* -mtime +5 -exec rm -r {} \; &
-
-	ls -t *.mp3 > "$DC_tl/Feeds/cfg.1"
-	sed -i 's/.mp3//g' "$DC_tl/Feeds/cfg.1"
 
 	if [ "$1" != A ]; then
 		notify-send -i idiomind "$rsrc" " $updateok" -t 3000
 	fi
 	
-	exit 0
+	exit
 else
-	exit 0
+	exit
 fi

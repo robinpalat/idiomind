@@ -30,7 +30,8 @@ function internet() {
 if [ $1 = n_t ]; then
 	info2=$(cat $DC_tl/.cfg.1 | wc -l)
 	c=$(echo $(($RANDOM%100)))
-
+	
+	# rename ------------------------
 	if [ "$3" = 2 ]; then
 		nmt="$tpc"
 		tle="$tpc"
@@ -41,7 +42,7 @@ if [ $1 = n_t ]; then
 			nmt=""
 		fi
 		jlbi=$($yad --window-icon=idiomind --form --center \
-		--field="$name_for_new_topic" "$nmt" --title="$tle" \
+		--field="ggggg$name_for_new_topic" "$nmt" --title="$tle" \
 		--width=440 --height=100 --name=idiomind --on-top \
 		--skip-taskbar --borders=5 --button=gtk-ok:0)
 		
@@ -66,7 +67,7 @@ if [ $1 = n_t ]; then
 		else
 			jlb=$(echo "$jlb")
 		fi
-		#--------------
+		
 		if [ -z "$jlb" ]; then
 			exit 1
 		else		
@@ -74,38 +75,33 @@ if [ $1 = n_t ]; then
 			mkdir $DM_tl/"$jlb"/words
 			mkdir $DM_tl/"$jlb"/words/images
 			mkdir $DC_tl/"$jlb"
-			> $DC_tl/"$jlb"/cfg.3
-			> $DC_tl/"$jlb"/cfg.4
 			mkdir $DC_tl/"$jlb"/practice
-
-			cd $DC_tl/"$jlb"
-			echo "$jlb" >> $DC_tl/.cfg.2
+			
 			cd "$DM_tl/$tpc"
-			cp -f *.mp3 "$DM_tl/$jlb"
-			cp -f -r ./words "$DM_tl/$jlb/"
+			cp -fr ./* "$DM_tl/$jlb"
+
 			cd "$DC_tl/$tpc"
-			cp -f ./.* "$DC_tl/$jlb"/
-			cp -f ./practice/.* $DC_tl/"$jlb"/practice
+			cp -fr ./.* "$DC_tl/$jlb"/
+			
+			echo "$jlb" >> $DC_tl/.cfg.2
 			grep -v -x -v "$tpc" $DC_tl/.cfg.2 > $DC_tl/.cfg.2_
 			sed '/^$/d' $DC_tl/.cfg.2_ > $DC_tl/.cfg.2
 			grep -v -x -v "$tpc" $DC_tl/.cfg.1 > $DC_tl/.cfg.1_
 			sed '/^$/d' $DC_tl/.cfg.1_ > $DC_tl/.cfg.1
 			grep -v -x -v "$tpc" $DC_tl/.cfg.3 > $DC_tl/.cfg.3_
 			sed '/^$/d' $DC_tl/.cfg.3_ > $DC_tl/.cfg.3
-			rm $DC_tl/in_s $DC_tl/in $DC_tl/nstll
-			
+
 			[[ -d "$DC_tl/$tpc" ]] && rm -r "$DC_tl/$tpc"
 			[[ -d "$DM_tl/$tpc" ]] && rm -r "$DM_tl/$tpc"
 			
-			if [ -f $DT/ntpc ]; then
-				rm -f $DT/ntpc
-			fi
 			$DS/mngr.sh mkmn
-			"$DC_tl/$jlb"/tpc.sh & exit 1
+			"$DC_tl/$jlb/tpc.sh" & exit 1
 		fi
+		
 		[ "$?" -eq 1 ] && exit
 
 	else
+		# new ------------------------
 		nmt="$2"
 		if [ -z "$2" ]; then
 			nmt=""
@@ -1404,8 +1400,8 @@ elif [ $1 = snt ]; then
 	
 elif [ $1 = prs ]; then
 	source $DS/ifs/trans/$lgs/add.conf
-	eht=$(sed -n 3p $DC_s/cfg.18)
-	wth=$(sed -n 4p $DC_s/cfg.18)
+	wth=$(sed -n 3p $DC_s/cfg.18)
+	eht=$(sed -n 4p $DC_s/cfg.18)
 	ns=$(cat "$DC_tlt"/cfg.4 | wc -l)
 	lvbr=$(cat $DS/default/$lgt/verbs)
 	lnns=$(cat $DS/default/$lgt/nouns)
@@ -1499,17 +1495,10 @@ elif [ $1 = prs ]; then
 			eyeD3 -P itunes-podcast --remove "$DT_r"/rv.mp3
 			eyeD3 --remove-all "$DT_r"/rv.mp3
 			sox "$DT_r"/rv.mp3 "$DT_r"/c_rv.mp3 \
-			remix - \
-			highpass 100 \
-			norm \
+			remix - highpass 100 norm \
 			compand 0.05,0.2 6:-54,-90,-36,-36,-24,-24,0,-12 0 -90 0.1 \
-			vad -T 0.6 -p 0.2 -t 5 \
-			fade 0.1 \
-			reverse \
-			vad -T 0.6 -p 0.2 -t 5 \
-			fade 0.1 \
-			reverse \
-			norm -0.5
+			vad -T 0.6 -p 0.2 -t 5 fade 0.1 reverse \
+			vad -T 0.6 -p 0.2 -t 5 fade 0.1 reverse norm -0.5
 			rm -f "$DT_r"/rv.mp3
 			mp3splt -s -o @n *.mp3
 			rename 's/^0*//' *.mp3

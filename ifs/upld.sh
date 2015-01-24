@@ -10,15 +10,13 @@ if [[ $1 = vsd ]]; then
 	wth=$(sed -n 4p $DC_s/cfg.18)
 	eht=$(sed -n 3p $DC_s/cfg.18)
 	cd $DM_t/saved
-	ls -t *.cfg.12 > ls
-	(sed -i 's/\.cfg.12//g' ./ls)
-	cat ./ls | $yad --list \
+	
+	ls -t *.cfg.12 | sed 's/\.cfg.12//g' | yad --list \
 	--window-icon=idiomind --center --skip-taskbar --borders=8 \
-	--text=" <small>$double_click_for_download \\t\\t\\t\\t</small>" \
+	--text=" <small>$double_click_for_download \t\t\t\t</small>" \
 	--title="$topics_saved" --width=$wth --height=$eht \
 	--column=Nombre:TEXT --print-column=1 \
-	--expand-column=1 --search-column=1 \
-	--button="$close":1 \
+	--expand-column=1 --search-column=1 --button="$close":1 \
 	--dclick-action='/usr/share/idiomind/ifs/upld.sh infsd'
 			["$?" -eq 0 ]
 				killall topic.sh
@@ -291,7 +289,7 @@ function suma(){
  let ALL=$MP3+$WORDS
 }
 suma
-if [ $ALL -le 15 ]; then
+if [ $ALL -le 20 ]; then
 	cstn=$($yad --image=info --on-top \
 	--text=" $min_items\\n " --window-icon=idiomind \
 	--image-on-top --center --sticky --name=idiomind \
@@ -494,7 +492,6 @@ mv -f "$DT/$U.$tpc.idmnd" "$DT/$nme/"
 notify-send "$uploading..." "$wait" -i idiomind -t 6000
 
 #-----------------------
-#ftp
 rm -f $DT/SITE_TMP
 cd $DT/$nme
 cp -f $DS/default/index.php ./.index.php
