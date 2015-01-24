@@ -275,8 +275,7 @@ elif [ $1 = n_i ]; then
 			fi
 			cd $DT_r
 			scrot -s --quality 70 img.jpg
-			/usr/bin/convert -scale $sx! -border 0.5 \
-			-bordercolor '#9A9A9A' img.jpg ico.jpg
+			/usr/bin/convert -scale $sx! img.jpg ico.jpg
 			$DS/add.sh n_i $DT_r 2 "$trgt" "$srce" && exit 1
 		
 		elif [ $ret -eq 0 ]; then
@@ -394,13 +393,11 @@ elif [ $1 = n_s ]; then
 		encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
 		iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 > ./.en
 		sed -i ':a;N;$!ba;s/\n/ /g' ./.en
+		sed -i 's/  / /g' ./.en
+		sed -i 's/  / /g' ./.en
 		
 		trgt=$(cat ./.en | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-		
-		sed -i 's/  / /g' ./.en
-		sed -i 's/  / /g' ./.en
-		
-		nme="$(cat ./.en | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
+		nme="$(echo "$trgt" | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
 		
 		result=$(curl -s -i --user-agent "" -d "sl=$lgt" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
 		encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
@@ -433,8 +430,7 @@ elif [ $1 = n_s ]; then
 		eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I "$DM_tlt/$nme.mp3"
 
 		if [ -f img.jpg ]; then
-			/usr/bin/convert -scale 450x270! -border 0.5 \
-			-bordercolor '#9A9A9A' img.jpg imgs.jpg
+			/usr/bin/convert -scale 450x270! img.jpg imgs.jpg
 			eyeD3 --add-image imgs.jpg:ILLUSTRATION "$DM_tlt/$nme".mp3
 			icnn=img.jpg
 		fi
@@ -548,18 +544,14 @@ elif [ $1 = n_s ]; then
 		fi
 		
 		cd $DT_r
-		echo "$2" > trgt_
-		sed -i ':a;N;$!ba;s/\n/ /g' trgt_
-		sed -i 's/  / /g' trgt_
-		sed -i 's/   / /g' trgt_
-		sed -i 's/"//g' trgt_
-		sed 's/^[ \t]*//;s/[ \t]*$//' trgt_ > trgt
-
-		nme="$(cat trgt | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
-
-		#-----------------------------------------
-		srce="$4"
+		echo "$2" | sed ':a;N;$!ba;s/\n/ /g' \
+		| sed 's/  / /g' | sed 's/   / /g' \
+		| sed 's/"//g' | sed 's/^[ \t]*//;s/[ \t]*$//' > trgt
+		
 		trgt="$(cat trgt)"
+		nme="$(cat trgt | cut -c 1-100 | sed 's/[ \t]*$//' \
+		| sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
+		srce="$4"
 		> swrd
 		> twrd
 		if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
@@ -634,8 +626,7 @@ elif [ $1 = n_s ]; then
 			eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I \
 			-A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0IIGMI3I0I"$grmrk"IGMI3I0I "$DM_tlt/$nme.mp3"
 				if [ -f img.jpg ]; then
-					/usr/bin/convert -scale 450x270! -border 0.5 \
-					-bordercolor '#9A9A9A' img.jpg imgs.jpg
+					/usr/bin/convert -scale 450x270! img.jpg imgs.jpg
 					eyeD3 --add-image imgs.jpg:ILLUSTRATION "$DM_tlt/$nme.mp3"
 				fi
 				
@@ -675,8 +666,7 @@ elif [ $1 = n_s ]; then
 			eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I \
 			-A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0IIGMI3I0I"$grmrk"IGMI3I0I "$DM_tlt/$nme.mp3"
 				if [ -f img.jpg ]; then
-					/usr/bin/convert -scale 450x270! -border 0.5 \
-					-bordercolor '#9A9A9A' img.jpg imgs.jpg
+					/usr/bin/convert -scale 450x270! img.jpg imgs.jpg
 					eyeD3 --add-image imgs.jpg:ILLUSTRATION "$DM_tlt/$nme.mp3"
 					icnn=img.jpg
 				fi
@@ -744,8 +734,7 @@ elif [ $1 = n_w ]; then
 		fi
 		
 		if [ -f img.jpg ]; then
-			/usr/bin/convert -scale 100x90! -border 0.5 \
-			-bordercolor '#9A9A9A' img.jpg imgs.jpg
+			/usr/bin/convert -scale 100x90! img.jpg imgs.jpg
 			/usr/bin/convert -scale 360x240! img.jpg imgt.jpg
 			eyeD3 --set-encoding=utf8 --add-image imgs.jpg:ILLUSTRATION "$DM_tlt/words/$nme.mp3"
 			mv -f imgt.jpg "$DM_tlt/words/images/$nme.jpg"
@@ -773,8 +762,7 @@ elif [ $1 = n_w ]; then
 			"$DM_tlt/words/$trgt.mp3"
 			
 			if [ -f img.jpg ]; then
-				/usr/bin/convert -scale 100x90! -border 0.5 \
-				-bordercolor '#9A9A9A' img.jpg imgs.jpg
+				/usr/bin/convert -scale 100x90! img.jpg imgs.jpg
 				/usr/bin/convert -scale 360x240! img.jpg imgt.jpg
 				eyeD3 --add-image imgs.jpg:ILLUSTRATION "$DM_tlt/words/$trgt.mp3"
 				mv -f imgt.jpg "$DM_tlt/words/images/$trgt.jpg"
@@ -790,8 +778,7 @@ elif [ $1 = n_w ]; then
 				"$DM_tlt/words/$trgt.mp3"
 			
 				if [ -f img.jpg ]; then
-					/usr/bin/convert -scale 100x90! -border 0.5 \
-					-bordercolor '#9A9A9A' img.jpg imgs.jpg
+					/usr/bin/convert -scale 100x90! img.jpg imgs.jpg
 					/usr/bin/convert -scale 360x240! img.jpg imgt.jpg
 					eyeD3 --add-image imgs.jpg:ILLUSTRATION "$DM_tlt/words/$trgt.mp3"
 					mv -f imgt.jpg "$DM_tlt/words/images/$trgt.jpg"
@@ -2494,8 +2481,7 @@ elif [ $1 = img ]; then
 			
 				rm -f *.l
 				scrot -s --quality 70 "$wrd.temp.jpeg"
-				/usr/bin/convert -scale 100x90! -border 0.5 \
-				-bordercolor '#9A9A9A' "$wrd.temp.jpeg" "$wrd"_temp.jpeg
+				/usr/bin/convert -scale 100x90! "$wrd.temp.jpeg" "$wrd"_temp.jpeg
 				/usr/bin/convert -scale 360x240! "$wrd.temp.jpeg" "$DM_tlt/words/images/$wrd.jpg"
 				eyeD3 --remove-images "$file" >/dev/null 2>&1
 				eyeD3 --add-image "$wrd"_temp.jpeg:ILLUSTRATION "$file" >/dev/null 2>&1
@@ -2542,8 +2528,7 @@ elif [ $1 = img ]; then
 			
 				rm -f $DT/*.l
 				scrot -s --quality 70 "$wrd.temp.jpeg"
-				/usr/bin/convert -scale 450x270! -border 0.5 \
-				-bordercolor '#9A9A9A' "$wrd.temp.jpeg" "$wrd"_temp.jpeg
+				/usr/bin/convert -scale 450x270! "$wrd.temp.jpeg" "$wrd"_temp.jpeg
 				eyeD3 --remove-image "$file" >/dev/null 2>&1
 				eyeD3 --add-image "$wrd"_temp.jpeg:ILLUSTRATION "$file" >/dev/null 2>&1 &&
 				rm -f *.jpeg

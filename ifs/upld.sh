@@ -7,8 +7,8 @@ source $DS/ifs/trans/$lgs/upld.conf
 if [[ $1 = vsd ]]; then
 	U=$(sed -n 1p $HOME/.config/idiomind/s/cfg.4)
 	lng=$(echo "$lgtl" |  awk '{print tolower($0)}')
-	wth=$(sed -n 4p $DC_s/cfg.18)
-	eht=$(sed -n 3p $DC_s/cfg.18)
+	wth=$(sed -n 3p $DC_s/cfg.18)
+	eht=$(sed -n 4p $DC_s/cfg.18)
 	cd $DM_t/saved
 	
 	ls -t *.cfg.12 | sed 's/\.cfg.12//g' | yad --list \

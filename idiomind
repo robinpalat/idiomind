@@ -340,7 +340,6 @@ if [[ $1 = topic ]]; then
 			c=$(echo $(($RANDOM%100000)))
 			KEY=$c
 			cnf1=$(mktemp $DT/cnf1.XXX.x)
-			cnf2=$(mktemp $DT/cnf2.XXX.x)
 			cnf3=$(mktemp $DT/cnf3.XXX.x)
 			cd $DS
 
@@ -456,11 +455,11 @@ if [[ $1 = topic ]]; then
 				--text="<u><b>$learned</b></u>   * $new_items ($tb1).\\n$time_review: $tdays" \
 				--bar="":NORM $RM \
 				--multi-progress --plug=$KEY --tabnum=1 &
-				cat "$ls2" | awk '{print $0"\n"}' | yad \
+				cat "$ls2" | yad \
 				--no-headers --list --plug=$KEY --tabnum=2 \
 				--expand-column=1 --ellipsize=END --print-all \
 				--column=Name:TEXT --column=Review:CHK \
-				--dclick-action='./vwr.sh v2' > "$cnf2" &
+				--dclick-action='./vwr.sh v2' &
 				yad --text-info --plug=$KEY --margins=14 \
 				--wrap --text="$itxt2" --editable --tabnum=3 --fore='gray40' \
 				--show-uri --fontname=vendana --filename="$nt" > "$cnf3" &
@@ -481,11 +480,11 @@ if [[ $1 = topic ]]; then
 				--dclick-action='./vwr.sh v1' --print-all \
 				--expand-column=1 --ellipsize=END \
 				--column=Name:TEXT --column=Learned:CHK > "$cnf1" &
-				cat "$ls2" | awk '{print $0"\n"}' | yad \
+				cat "$ls2" | yad \
 				--no-headers --list --plug=$KEY --tabnum=2 \
-				--expand-column=1 --ellipsize=END --print-all \
-				--column=Name:TEXT --column=Review:CHK \
-				--dclick-action='./vwr.sh v2' > "$cnf2" &
+				--expand-column=0 --ellipsize=END --print-all \
+				--column=Name:TEXT  \
+				--dclick-action='./vwr.sh v2' &
 				yad --text-info --plug=$KEY --margins=14 \
 				--tabnum=3 --text="$itxt2" --fore='gray40' --wrap --editable \
 				--show-uri --fontname=vendana \
@@ -564,24 +563,8 @@ if [[ $1 = topic ]]; then
 						echo "okim.$cnt.okim" >> \
 						$DC/addons/stats/.log &	
 					fi
-					if [ -n "$(cat "$cnf2" | grep -o TRUE)" ]; then
-						grep -Rl "|FALSE|" "$cnf2" | while read tab2 ; do
-							 sed '/|FALSE|/d' "$cnf2" > tmpf2
-							 mv tmpf2 $tab2
-						done
-						sed -i 's/|TRUE|//g' "$cnf2"
-						cat "$cnf2" >> "$ls1"
-						cnt=$(cat "$cnf2" | wc -l)
-						grep -F -x -v -f "$cnf2" "$ls2" > $DT/ls2.x
-						mv -f $DT/ls2.x "$ls2"
-						if [ -n "$(cat "$ls2" | sort -n | uniq -dc)" ]; then
-							cat "$ls2" | awk '!array_temp[$0]++' > $DT/ls2.x
-							sed '/^$/d' $DT/ls2.x > "$ls2"
-						fi
 						# --------------------------------------------------------
-						
-						echo "reim.$cnt.reim" >> \
-						$DC/addons/stats/.log &
+
 					fi
 					rm -f $DT/*.x
 				fi
@@ -648,11 +631,11 @@ if [[ $1 = topic ]]; then
 			--text="<u><b>$learned</b></u>\\n$time_review ($tdays $days)" \
 			--bar="":NORM $RM \
 			--multi-progress --plug=$KEY --tabnum=1 &
-			cat "$ls2" | awk '{print $0"\n"}' | yad \
+			cat "$ls2" | yad \
 			--no-headers --list --plug=$KEY --tabnum=2 \
 			--expand-column=1 --ellipsize=END --print-all \
 			--column=Name:TEXT --column=Review:CHK \
-			--dclick-action='./vwr.sh v2' > "$cnf2" &
+			--dclick-action='./vwr.sh v2' &
 			yad --text-info --plug=$KEY --margins=14 --text="$itxt2" \
 			--tabnum=3 --fore='gray40' --wrap --filename="$nt" \
 			--show-uri --fontname=vendana --editable > "$cnf3" &
@@ -698,23 +681,7 @@ if [[ $1 = topic ]]; then
 						echo "okim.$cnt.okim" >> \
 						$DC/addons/stats/.log &
 					fi
-					if [ -n "$(cat "$cnf2" | grep -o TRUE)" ]; then
-						grep -Rl "|FALSE|" "$cnf2" | while read tab2 ; do
-							 sed '/|FALSE|/d' "$cnf2" > tmpf2
-							 mv tmpf2 $tab2
-						done
-						sed -i 's/|TRUE|//g' "$cnf2"
-						cat "$cnf2" >> "$ls1"
-						cnt=$(cat "$cnf2" | wc -ltitle)
-						grep -F -x -v -f "$cnf2" "$ls2" > $DT/ls2.x
-						mv -f $DT/ls2.x "$ls2"
-						if [ -n "$(cat "$ls2" | sort -n | uniq -dc)" ]; then
-							cat "$ls2" | awk '!array_temp[$0]++' > $DT/ls2.x
-							sed '/^$/d' $DT/ls2.x > "$ls2"
-						fi
-						echo "reim.$cnt.reim" >> \
-						$DC/addons/stats/.log &
-					fi
+					
 				rm -f $DT/*.x
 				fi
 			rm -f $DT/*.x
@@ -788,11 +755,11 @@ if [[ $1 = topic ]]; then
 				--text="<u><b>$learned</b></u>\\n   * $new_items ($tb1).\\n$time_review: $tdays" \
 				--bar="":NORM $RM \
 				--multi-progress --plug=$KEY --tabnum=1 &
-				cat "$ls2" | awk '{print $0"\n"}' | yad \
+				cat "$ls2" | yad \
 				--no-headers --list --plug=$KEY --tabnum=2 \
 				--expand-column=1 --ellipsize=END --print-all \
 				--column=Name:TEXT --column=Review:CHK \
-				--dclick-action='./vwr.sh v2' > "$cnf2" &
+				--dclick-action='./vwr.sh v2' &
 				yad --text-info --plug=$KEY --margins=14 \
 				--text="$itxt2" \
 				--tabnum=3 --fore='gray40' --wrap --filename="$nt" \
@@ -814,11 +781,11 @@ if [[ $1 = topic ]]; then
 				--expand-column=1 --ellipsize=END --print-all \
 				--column=Name:TEXT --column=Learned:CHK \
 				--dclick-action='./vwr.sh v1' > "$cnf1" &
-				cat "$ls2" | awk '{print $0"\n"}' | yad \
+				cat "$ls2" | yad \
 				--no-headers --list --plug=$KEY --tabnum=2 \
 				--expand-column=1 --ellipsize=END --print-all \
 				--column=Name:TEXT --column=Review:CHK \
-				--dclick-action='./vwr.sh v2' > "$cnf2" &
+				--dclick-action='./vwr.sh v2' &
 				yad --text-info --plug=$KEY --margins=14 \
 				--text="$itxt2" \
 				--tabnum=3 --fore='gray40' --wrap --filename="$nt" \
@@ -893,23 +860,7 @@ if [[ $1 = topic ]]; then
 						$DC/addons/stats/.log &
 					fi
 					
-					if [ -n "$(cat "$cnf2" | grep -o TRUE)" ]; then
-						grep -Rl "|FALSE|" "$cnf2" | while read tab2 ; do
-							 sed '/|FALSE|/d' "$cnf2" > tmpf2
-							 mv tmpf2 $tab2
-						done
-						sed -i 's/|TRUE|//g' "$cnf2"
-						cat "$cnf2" >> "$ls1"
-						cnt=$(cat "$cnf2" | wc -l)
-						grep -F -x -v -f "$cnf2" "$ls2" > $DT/ls2.x
-						mv -f $DT/ls2.x "$ls2"
-						if [ -n "$(cat "$ls2" | sort -n | uniq -dc)" ]; then
-							cat "$ls2" | awk '!array_temp[$0]++' > $DT/ls2.x
-							sed '/^$/d' $DT/ls2.x > "$ls2"
-						fi
-						echo "reim.$cnt.reim" >> \
-						$DC/addons/stats/.log &
-					fi
+					
 				rm -f $DT/*.x
 				fi
 		
@@ -979,11 +930,11 @@ if [[ $1 = topic ]]; then
 			--text="<u><b>$learned</b></u>\\n$time_review ($tdays $days)" \
 			--bar="":NORM $RM \
 			--multi-progress --plug=$KEY --tabnum=1 &
-			cat "$ls2" | awk '{print $0"\n"}' | yad \
+			cat "$ls2" | yad \
 			--no-headers --list --plug=$KEY --tabnum=2 \
 			--expand-column=1 --ellipsize=END --print-all \
 			--column=Name:TEXT --column=Review:CHK \
-			--dclick-action='./vwr.sh v2' > "$cnf2" &
+			--dclick-action='./vwr.sh v2' &
 			yad --text-info --plug=$KEY --margins=14 \
 			--text="$itxt2" \
 			--tabnum=3 --fore='gray40' --wrap --filename="$nt" \
@@ -1028,28 +979,16 @@ if [[ $1 = topic ]]; then
 							cat "$ls1" | awk '!array_temp[$0]++' > $DT/ls1.x
 							sed '/^$/d' $DT/ls1.x > "$ls1"
 						fi
-					fi
-					if [ -n "$(cat "$cnf2" | grep -o TRUE)" ]; then
-						grep -Rl "|FALSE|" "$cnf2" | while read tab2 ; do
-							 sed '/|FALSE|/d' "$cnf2" > tmpf2
-							 mv tmpf2 $tab2
-						done
-						sed -i 's/|TRUE|//g' "$cnf2"
-						cat "$cnf2" >> "$ls1"
-						cnt=$(cat "$cnf2" | wc -l)
-						grep -F -x -v -f "$cnf2" "$ls2" > $DT/ls2.x
-						mv -f $DT/ls2.x "$ls2"
-						if [ -n "$(cat "$ls2" | sort -n | uniq -dc)" ]; then
-							cat "$ls2" | awk '!array_temp[$0]++' > $DT/ls2.x
-							sed '/^$/d' $DT/ls2.x > "$ls2"
-						fi
-						echo "reim.$cnt.reim" >> \
+						
+						cho "okim.$cnt.okim" >> \
 						$DC/addons/stats/.log &
 					fi
+					
+				fi
 				rm -f $DT/*.x
 				fi
 			rm -f $DT/*.x & exit 1
-			fi
+		fi
 			
 	#feeds
 	elif echo "$mde" | grep "fd"; then

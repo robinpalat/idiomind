@@ -15,15 +15,10 @@ elif [ $1 = info ]; then
 
 	wth=$(sed -n 5p $DC_s/cfg.18)
 	eht=$(sed -n 6p $DC_s/cfg.18)
-
 	var2="$2"
-
 	page=/tmp/$var2
-
 	wget -O $page http://$lgt.wikipedia.org/wiki/$var2
 	
-	
-
 	if [ -s "$page" ]; then
 		echo $(grep -B 10 'div id="toc"' $page | sed '/<p.*p>/! {d};s/<[^>]*>//g') \
 		| yad --text-info --on-top --skip-taskbar --title=" " \
@@ -32,10 +27,8 @@ elif [ $1 = info ]; then
 		echo -e "No Wikipedia page for\n$var2" | yad --title=" " --text-info --on-top \
 		--skip-taskbar --center --window-icon=idiomin --geometry=300x100+900+600
 	fi
-
 	rm $page
 	exit
-
 
 elif [ $1 = cnfg ]; then
 
@@ -362,24 +355,44 @@ elif [ $1 = pdf ]; then
 		<title>'$tpc'</title>
 		<head>
 		<style type="text/css">
+		w1 {
+			margin-top: 0;
+			padding-right: 5px;
+			padding-left: 5px;
+			color: #5E5A54;
+			font-size: 20px;
+			font-weight: bold;
+			font-family: Verdana, Geneva, sans-serif;
+		}
+		w2 {
+			margin-top: 0;
+			padding-right: 5px;
+			padding-left: 5px;
+			color: #61615B;
+			font-size: 18px;
+			font-style: normal;
+			font-family: Verdana, Geneva, sans-serif;
+		}
 		h1 {
 			margin-top: 0;
 			padding-right: 5px;
 			padding-left: 5px;
-			color: #696F79;
-			font-size: 18px;
-			font-weight: bold;
+			color: #595754;
+			font-size: 20px;
+			font-weight: normal;
 			font-family: Verdana, Geneva, sans-serif;
 		}
 		h2 {
 			margin-top: 0;
 			padding-right: 5px;
 			padding-left: 5px;
-			color: #7A7B7A;
-			font-size: 18px;
+			color: #61615B;
+			font-size: 15px;
 			font-weight: normal;
+			font-style: normal;
 			font-family: Verdana, Geneva, sans-serif;
 		}
+		
 		h3 {
 			margin-top: 0;
 			padding-right: 5px;
@@ -456,7 +469,7 @@ elif [ $1 = pdf ]; then
 			color: #666;
 		}
 		.side {
-			width: 5px;
+			width: 3px;
 		}
 		body {
 			margin-left: 20px;
@@ -551,12 +564,12 @@ elif [ $1 = pdf ]; then
 			if [ -n "$wt" ]; then
 				echo '<table width="55%" border="0" align="left" cellpadding="10" cellspacing="5">
 				<tr>
-				<td bgcolor="#B7C9E9" class="side"></td>
-				<td bgcolor="#E7EFFD"><h1>'$wt'</h1></td>
+				<td bgcolor="#F8D49F" class="side"></td>
+				<td bgcolor="#F7EDDF"><w1>'$wt'</w1></td>
 				</tr>
 				<tr>
-				<td bgcolor="#C6E3A8" class="side"></td>
-				<td bgcolor="#F4FFE9"><h2>'$ws'</h2></td>
+				<td bgcolor="#EAE5A0" class="side"></td>
+				<td bgcolor="#FAF9F4"><w2>'$ws'</w2></td>
 				</tr>
 				</table>' >> pdf
 				echo '<table width="100%" border="0" align="center" cellpadding="10" class="efont">
@@ -600,72 +613,17 @@ elif [ $1 = pdf ]; then
 					fn=$(sed -n "$n"p s.inx.l)
 					echo '<table width="100%" border="0" align="left" cellpadding="10" cellspacing="5">
 					<tr>
-					<td bgcolor="#9FBFF8" class="side">&nbsp;</td>
-					<td bgcolor="#E7EFFD"><h1>'$st'</h1></td>
+					<td bgcolor="#FAF9F4"><h1>'$st'</h1></td>
 					</tr>' > Sgprt.tmp
 					echo '<tr>
-					<td bgcolor="#B5DA8F" class="side">&nbsp;</td>
-					<td bgcolor="#F4FFE9"><h2>'$ss'</h2></td>
+					<td ><h2>'$ss'</h2></td>
 					</tr>
-					</table>' > Sgprs.tmp
-					echo '<div class="wrds">
-					<table width="40%" align="left" cellpadding="5" class="wrdstable">
-					<tbody>' > Wgprs.tmp
-					eyeD3 "$DM_tlt/$fn.mp3" > tgs
-					> wt
-					> ws
-					(
-					n=1
-					while [ $n -le "$(echo "$st" | sed 's/ /\n/g' \
-					| grep -v '^.$' | grep -v '^..$' | wc -l)" ]; do
-						cat tgs | grep -o -P '(?<=ISTI'$n'I0I).*(?=ISTI'$n'I0I)' >> wt
-						cat tgs | grep -o -P '(?<=ISSI'$n'I0I).*(?=ISSI'$n'I0I)' >> ws
-						let n++
-					done
-					)
-			
-					(
-					n=1
-					while [ $n -le "$(cat wt | wc -l)" ]; do
-						wt=$(sed -n "$n"p wt)
-						ws=$(sed -n "$n"p ws)
-						wt2=$(sed -n "$n"p wt)
-						
-						if cat W.lizt.x | grep "$wt2"; then
-							echo '<tr>
-							<td><ma>'$wt'</ma></td>
-							<td><ma>'$ws'</ma></td>
-							</tr>' >> ./Wgprs.tmp
-						else
-							echo '<tr>
-							<td>'$wt'</td>
-							<td>'$ws'</td>
-							</tr>' >> ./Wgprs.tmp
-						fi
-						
-						let n++
-					done
-					)
-					echo '</tbody>
 					</table>
-					</div>
-					<p>&nbsp;</p>
-					<p>&nbsp;</p>
-					<h1>&nbsp;</h1>' >> Wgprs.tmp
-					#echo '</tbody>
-					#</table>
-					    #<table width="40%" border="0" align="right">
-						#<tr align="center" valign="top">
-						#<td><p>   <img src="./images/Until.png" width="360" height="240" align="middle"></p></td>
-						#</tr>
-					#</table>
-					#</div>
-					#<p>&nbsp;</p>
-					#<p>&nbsp;</p>
-					#<h1>&nbsp;</h1>' >> Wgprs.tmp
+					<h1>&nbsp;</h1>
+					<h1>&nbsp;</h1>
+					<h1>&nbsp;</h1>' > Sgprs.tmp
 					cat Sgprt.tmp >> pdf
 					cat Sgprs.tmp >> pdf
-					cat Wgprs.tmp >> pdf
 				fi
 			let n++
 		done
