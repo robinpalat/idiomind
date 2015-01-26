@@ -141,9 +141,9 @@ if [ -z "$1" ]; then
 	yad --width=175 --height=190 --name=idiomind \
 	--geometry=175x190-300-$(sed -n 12p $DC_s/cfg.18) \
 	--fixed --title="Idiomind" --no-buttons \
-	--icons --single-click --on-top --borders=0 \
+	--icons --on-top --borders=0 \
 	--read-dir=$DS/default/new --item-width=68 \
-	--window-icon=idiomind --class=idiomind &
+	--window-icon=idiomind --compact --class=idiomind &
 	
 	echo "strt.1.strt" >> \
 	$DC/addons/stats/.log &
