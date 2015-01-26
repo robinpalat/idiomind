@@ -83,7 +83,6 @@ yad --plug=$KEY --tabnum=1 --borders=15 --scroll \
 	--field="$auto_pronounce:CHK" $sttng10 \
 	--field="<small>$voice_syntetizer</small>:CB5" "$sttng11" \
 	--field="<small>$record_audio</small>:CB5" "$sttng12" \
-	--field="$audio_imput:BTN" "/usr/share/idiomind/ifs/tls.sh cnfg" \
 	--field=" :lbl" "#10"\
 	--field="$help\t":lbl "#11" \
 	--field=":lbl" "#9" \
@@ -143,8 +142,8 @@ yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 			fi
 		fi
 		
-		ln=$(cat "$cnf1" | sed -n 23p)
-		ls=$(cat "$cnf1" | sed -n 24p)
+		ln=$(cat "$cnf1" | sed -n 22p)
+		ls=$(cat "$cnf1" | sed -n 23p)
 		
 		if echo $ln | grep "English" && [ English != $lgtl ] ; then
 			set_lang English en

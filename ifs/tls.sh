@@ -45,6 +45,28 @@ elif [ $1 = cnfg ]; then
 		exit
 	fi
 
+
+elif [ $1 = pnl ]; then
+
+cd $HOME
+inp=/usr/share/idiomind/ifs/tls.sh cnfg
+DT="$2"
+ls="play $DT/audtm.mp3"
+rec="--button=gtk-media-record:/usr/share/idiomind/ifs/tls.sh rec '$c' '$t'"
+FLAS=$(yad --width=620 --height=400 --file --on-top --name=idiomind \
+	--class=idiomind --window-icon=idiomind --center --file-filter="*.mp3" \
+	--button=Ok:0 --borders=0 --title="$ttl" --skip-taskbar \
+	--field=" <small>   Add audio     </small>":FL \
+	--field="\\n\\n:lbl" "")
+ret=$?
+audio=$(echo "$FLAS" | cut -d "|" -f1)
+cd $DT
+if [[ $ret -eq 0 ]]; then
+if  [[ -f "$audio" ]]; then
+cp -f "$audio" $DT/audtm.mp3 >/dev/null 2>&1 & exit
+fi
+fi
+
 elif [ $1 = s ]; then
 
 	if [[ "$(ps -A | grep -o "play")" = "play" ]]; then

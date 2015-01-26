@@ -185,8 +185,9 @@ elif [ $1 = n_i ]; then
 	
 	if [ -f $DT_r/ico.jpg ]; then
 		img="--image=$DT_r/ico.jpg"
+		
 	else
-		img="--on-top"
+		img="--image=$DS/images/nw.png"
 	fi
 	
 	if [ "$(cat $DC_tl/.cfg.1 | grep -v 'Feeds' | wc -l)" -lt 1 ]; then
@@ -199,10 +200,10 @@ elif [ $1 = n_i ]; then
 	lw=$((50 - $(cat "$DC_tlt/cfg.3" | wc -l)))
 	dct="$DS_p/Dics/cnfg.sh"
 	if [[ -z "$tpe" ]]; then
-	tpcs=$(cat "$DC_tl/.cfg.2" | cut -c 1-50 \
+	tpcs=$(cat "$DC_tl/.cfg.2" | cut -c 1-40 \
 	| tr "\\n" '!' | sed 's/!\+$//g')
 	else
-	tpcs=$(cat "$DC_tl/.cfg.2" | egrep -v "$tpe" | cut -c 1-50 \
+	tpcs=$(cat "$DC_tl/.cfg.2" | egrep -v "$tpe" | cut -c 1-40 \
 	| tr "\\n" '!' | sed 's/!\+$//g')
 	fi
 	ttle="${tpe:0:50}"
@@ -222,52 +223,36 @@ elif [ $1 = n_i ]; then
 		info="\\n$is $iw"
 	fi
 	if [ "$tpe" != "$tpc" ]; then
-		topic="<b><span color='#4F851C'>$topic</span></b>$info"
+		topic="$topic <b>*</b> $info"
 	else
 		topic="$topic $info"
 	fi
 	
 	if sed -n 1p $DC_s/cfg.3 | grep TRUE; then
-		sx='120x100'
-		lzgpr=$($yad --form --center --always-print-result \
-		--text-info --on-top --window-icon=idiomind --skip-taskbar \
-		--separator="\n" --align=right "$img" \
-		--name=idiomind --class=idiomind \
-		--borders=0 --title=" " --width=360 --height=170 \
-		--field=" <small><small>$lgtl</small></small>":TXT "$txt" \
-		--field="<small><small>$topic</small></small>:CB" "$ttle!$new *!$tpcs" "$field" \
-		--button="$image":3 \
-		--button=gtk-ok:0)
-		ret=$?
-		trgt=$(echo "$lzgpr"| head -n -1)
-		chk=$(echo "$lzgpr" | tail -1)
-		tpe=$(cat "$DC_tl/.cfg.2" | grep "$chk")
-		echo "$chk"
-	else
-		cd $HOME
-		txt2="$5"
-		sx='180x160'
-		auds="--button=Audio:$DS/ifs/audio/cnfg.sh pnl '$DT_r' 10"
-		rec="--button=gtk-media-record:$DS/ifs/tls.sh rec '$DT_r' '10'"
-		ls="--button=Play:play $DT_r/audtm.mp3"
-		lzgpr=$($yad --separator="\\n" --skip-taskbar \
-		--width=400 --height=260 --form --on-top --name=idiomind \
-		--class=idiomind --window-icon=idiomind "$img" --center "$ls" "$rec" \
-		--button="$image":3 --always-print-result --align=right \
-		--button=gtk-ok:0 --borders=2 --title=" " \
-		--field=" <small><small>$lgtl</small></small>":TXT "$txt" \
-		--field=":lbl" "" \
-		--field=" <small><small>$lgsl</small></small>":TXT "$srce" \
-		--field=":lbl" "" \
-		--field="<small><small>$topic</small></small>:CB" \
-		"$ttle!"$new *"!$tpcs" "$field")
-		ret=$?
-		trgt=$(echo "$lzgpr" | tail -5 | sed -n 1p | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-		srce=$(echo "$lzgpr" | tail -5 | sed -n 3p | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-		tpe=$(cat "$DC_tl/.cfg.2" | grep "$(echo "$lzgpr" | tail -5 | sed -n 5p)")
-		chk=$(echo "$lzgpr" | tail -1)
-		echo "$chk"
+		RO=RO
+		LS=""
+	elif sed -n 1p $DC_s/cfg.3 | grep FALSE; then
+		RO=" "
+		LS=${lgsl^}
 	fi
+	
+	auds="--button=Audio:$DS/ifs/tls.sh pnl '$DT_r'"
+	lzgpr=$(yad --form --center --always-print-result \
+	--on-top --window-icon=idiomind --skip-taskbar \
+	--separator="\n" --align=right $img \
+	--name=idiomind --class=idiomind \
+	--borders=0 --title=" " --width=200 --height=170 \
+	--field=" <small><small>$lgtl</small></small>: " "$txt" \
+	--field=" <small><small>$LS</small></small>:$RO" "$srce" \
+	--field=" <small><small>$topic</small></small>:CB" "$ttle!$new *!$tpcs" "$field" \
+	--button="$image":3 "$auds" --button=gtk-ok:0)
+	ret=$?
+
+	trgt=$(echo "$lzgpr" | head -n -1 | sed -n 1p | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
+	srce=$(echo "$lzgpr" | sed -n 2p | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
+	chk=$(echo "$lzgpr" | tail -1)
+	tpe=$(cat "$DC_tl/.cfg.2" | grep "$chk")
+	echo "$chk"
 		
 		if [ $ret -eq 3 ]; then
 			if sed -n 1p $DC_s/cfg.3 | grep TRUE; then
@@ -275,7 +260,7 @@ elif [ $1 = n_i ]; then
 			fi
 			cd $DT_r
 			scrot -s --quality 70 img.jpg
-			/usr/bin/convert -scale $sx! img.jpg ico.jpg
+			/usr/bin/convert -scale 110x90! img.jpg ico.jpg
 			$DS/add.sh n_i $DT_r 2 "$trgt" "$srce" && exit 1
 		
 		elif [ $ret -eq 0 ]; then
@@ -301,7 +286,7 @@ elif [ $1 = n_i ]; then
 					--list --radiolist --on-top --fixed --no-headers \
 					--text="<b>  $te </b> <small><small> --window-icon=idiomind \
 					$info</small></small>" --sticky --skip-taskbar \
-					--height="300" --width="350" --separator="\\n" \
+					--height="420" --width="150" --separator="\\n" \
 					--button=Save:0 --title="selector" --borders=3 \
 					--column=" " --column="Sentences"`
 					if [ -z "$(echo "$slt" | sed -n 2p)" ]; then
@@ -408,25 +393,28 @@ elif [ $1 = n_s ]; then
 		sed -i 's/,/ /g' .en
 		sed -i "s/'/ /g" .en
 		sed -i 's/’/ /g' .en
-		xargs -n10 < .en > ./temp
-		srce1=$(sed -n 1p ./temp)
-		srce2=$(sed -n 2p ./temp)
-		srce3=$(sed -n 3p ./temp)
-		srce4=$(sed -n 4p ./temp)
-		srce5=$(sed -n 5p ./temp)
 		
-		wget -q -U Mozilla -O $DT_r/tmp01.mp3 "https://translate.google.com/translate_tts?ie=UTF-8&tl=$lgt&q=$srce1"
-		if [ -n "$srce2" ]; then
-			wget -q -U Mozilla -O $DT_r/tmp02.mp3 "https://translate.google.com/translate_tts?ie=UTF-8&tl=$lgt&q=$srce2"
+		if [ ! -f $DT_r/audtm.mp3 ]; then
+			xargs -n10 < .en > ./temp
+			srce1=$(sed -n 1p ./temp)
+			srce2=$(sed -n 2p ./temp)
+			srce3=$(sed -n 3p ./temp)
+			srce4=$(sed -n 4p ./temp)
+			srce5=$(sed -n 5p ./temp)
+			wget -q -U Mozilla -O $DT_r/tmp01.mp3 "https://translate.google.com/translate_tts?ie=UTF-8&tl=$lgt&q=$srce1"
+			if [ -n "$srce2" ]; then
+				wget -q -U Mozilla -O $DT_r/tmp02.mp3 "https://translate.google.com/translate_tts?ie=UTF-8&tl=$lgt&q=$srce2"
+			fi
+			if [ -n "$srce3" ]; then
+				wget -q -U Mozilla -O $DT_r/tmp03.mp3 "https://translate.google.com/translate_tts?ie=UTF-8&tl=$lgt&q=$srce3"
+			fi
+			if [ -n "$srce4" ]; then
+				wget -q -U Mozilla -O $DT_r/tmp04.mp3 "https://translate.google.com/translate_tts?ie=UTF-8&tl=$lgt&q=$srce4"
+			fi
+			cat tmp01.mp3 tmp02.mp3 tmp03.mp3 tmp04.mp3 > "$DM_tlt/$nme.mp3"
+		else
+			cp -f $DT_r/audtm.mp3 "$DM_tlt/$nme.mp3"
 		fi
-		if [ -n "$srce3" ]; then
-			wget -q -U Mozilla -O $DT_r/tmp03.mp3 "https://translate.google.com/translate_tts?ie=UTF-8&tl=$lgt&q=$srce3"
-		fi
-		if [ -n "$srce4" ]; then
-			wget -q -U Mozilla -O $DT_r/tmp04.mp3 "https://translate.google.com/translate_tts?ie=UTF-8&tl=$lgt&q=$srce4"
-		fi
-		
-		cat tmp01.mp3 tmp02.mp3 tmp03.mp3 tmp04.mp3 > "$DM_tlt/$nme.mp3"
 		eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I "$DM_tlt/$nme.mp3"
 
 		if [ -f img.jpg ]; then
