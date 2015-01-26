@@ -267,9 +267,9 @@ elif [ "$1" = mklg- ]; then
 		fi
 		rm -f "$DC_tlt/cfg.7"
 	fi
-	cat "$DC_tlt/cfg.0" | awk '!array_temp[$0]++' > $DT/cfg.0.t
-	sed '/^$/d' $DT/cfg.0.t > "$DC_tlt/cfg.0"
-	rm -f $DT/*.t
+	cat "$DC_tlt/cfg.0" | awk '!array_temp[$0]++' > $DT/cfg.0._
+	sed '/^$/d' $DT/cfg.0._ > "$DC_tlt/cfg.0"
+	rm -f $DT/*._
 	rm "$DC_tlt/cfg.2" "$DC_tlt/cfg.1" "$DC_tl/.cfg.6"
 	cp -f "$DC_tlt/cfg.0" "$DC_tlt/cfg.1"
 

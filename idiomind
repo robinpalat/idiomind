@@ -70,7 +70,7 @@ if [ -z "$1" ]; then
 		# weekly report
 		if ([ "$(date +%u)" = 7 ] && \
 		[ "$(sed -n 1p $DC/addons/stats/cnf)" = "TRUE" ]); then
-			"$DS/addons/weekly report/rprt" A &
+			"$DS/addons/weekly report/cnfg.sh" A &
 		fi
 		
 		# news auto-update
@@ -138,12 +138,12 @@ if [ -z "$1" ]; then
 		$DS/mngr.sh mkmn &
 	}
 
-	yad --width=175 --height=200 --name=idiomind \
+	yad --width=175 --height=190 --name=idiomind \
 	--geometry=175x190-300-$(sed -n 12p $DC_s/cfg.18) \
-	--fixed --title="Idiomind" --no-buttons \
-	--icons --on-top --borders=0 --single-click \
+	--fixed --title="Idiomind" --no-buttons --skip-taskbar \
+	--icons --single-click --on-top --borders=0 \
 	--read-dir=$DS/default/new --item-width=68 \
-	--window-icon=idiomind --skip-taskbar --class=idiomind &
+	--window-icon=idiomind --class=idiomind &
 	
 	echo "strt.1.strt" >> \
 	$DC/addons/stats/.log &
@@ -216,7 +216,7 @@ if [[ $(echo "$1" | grep -o '.idmnd') ]]; then
 		cd "$tmp"
 		ws=$(cat "cfg.3" | wc -l)
 		ss=$(cat "cfg.4" | wc -l)
-		itxt="<big><big>$inme</big></big><small>\\n${language_source^} <b></b> $language_target\\n$nwords $words $nsentences $sentences $nimages $images\n$llevel $level </small>\n"
+		itxt="<big><big>$inme</big></big><small>\\n${language_source^} <b>></b> $language_target\\n$nwords $words $nsentences $sentences $nimages $images\n$llevel $level </small>\n"
 		dlck="$DT/p1.$c"
 		cat "$tmp/cfg.0" | awk '{print $0""}' | \
 		yad --list --name=Idiomind --title="Idiomind" \

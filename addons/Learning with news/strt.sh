@@ -19,13 +19,16 @@ function msg() {
 [[ -f $DT/.uptf ]] && STT=$(cat $DT/.uptf) || STT=""
 
 [[ ! -f $DC/addons/dict/.dicts ]] && touch $DC/addons/dict/.dicts
-if  [ -z "$(cat $DC/addons/dict/.dicts)" ]; then
+
+
+if [[ -z "$(cat $DC/addons/dict/.dicts)" ]]; then
 	source $DS/ifs/trans/$lgs/topics_lists.conf
 	$DS/addons/Dics/cnfg.sh "" f "$no_dictionary"
-	if  [ -z "$(cat $DC/addons/dict/.dicts)" ]; then
+	if  [[ -z "$(cat $DC/addons/dict/.dicts)" ]]; then
 		exit 1
 	fi
 fi
+
 
 if echo "$STT" | grep "Actualizando..."; then
 	yad --image=info --width=420 --height=150 \
