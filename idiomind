@@ -144,7 +144,7 @@ if [ -z "$1" ]; then
 	--icons --single-click --on-top --borders=0 \
 	--read-dir=$DS/default/new --item-width=68 \
 	--window-icon=idiomind --class=idiomind &
-	
+	[[ -n "$tpc" ]] && echo "$tpc" > $DC_s/cfg.6
 	echo "strt.1.strt" >> \
 	$DC/addons/stats/.log &
 	
@@ -311,12 +311,11 @@ if [[ $(echo "$1" | grep -o '.idmnd') ]]; then
 				[[ -d $DT/idmimp_$c ]] && rm -fr $DT/idmimp_$c
 				rm -f $DT/*.$c $DT/import.tar.gz & exit
 			fi
-		fi
-	exit 1
-fi
-
+	exit 0
+	fi
+	
 # topic
-if [[ $1 = topic ]]; then
+elif [[ $1 = topic ]]; then
 
 	wth=$(sed -n 3p $DC_s/cfg.18)
 	eht=$(sed -n 4p $DC_s/cfg.18)
@@ -537,6 +536,7 @@ if [[ $1 = topic ]]; then
 						fi
 					
 				else
+				
 					if [ -f $cnf3 ]; then
 						if [ "$(cat $cnf3)" != "$(cat "$nt")" ]; then
 							mv -f $cnf3 "$nt"
@@ -551,8 +551,7 @@ if [[ $1 = topic ]]; then
 						
 						sed -i 's/|TRUE|//g' "$cnf1"
 						cat "$cnf1" >> "$ls2"
-						
-						
+
 						cnt=$(cat "$cnf1" | wc -l)
 						grep -F -x -v -f "$cnf1" "$ls1" > $DT/ls1.x
 						mv -f $DT/ls1.x "$ls1"
@@ -564,8 +563,6 @@ if [[ $1 = topic ]]; then
 						$DC/addons/stats/.log &	
 					fi
 						# --------------------------------------------------------
-
-					fi
 					rm -f $DT/*.x
 				fi
 			
@@ -681,12 +678,9 @@ if [[ $1 = topic ]]; then
 						echo "okim.$cnt.okim" >> \
 						$DC/addons/stats/.log &
 					fi
-					
-				rm -f $DT/*.x
 				fi
 			rm -f $DT/*.x
-			
-		
+		fi	
 	# nstll
 	elif echo "$mde" | grep "istll"; then
 	
@@ -859,8 +853,6 @@ if [[ $1 = topic ]]; then
 						echo "okim.$cnt.okim" >> \
 						$DC/addons/stats/.log &
 					fi
-					
-					
 				rm -f $DT/*.x
 				fi
 		
@@ -985,11 +977,8 @@ if [[ $1 = topic ]]; then
 					fi
 					
 				fi
-				rm -f $DT/*.x
-				fi
-			rm -f $DT/*.x & exit 1
-		fi
-			
+			fi
+			rm -f $DT/*.x & exit
 	#feeds
 	elif echo "$mde" | grep "fd"; then
 		dir1="$DM_tl/Feeds"
@@ -1053,10 +1042,11 @@ if [[ $1 = topic ]]; then
 	elif echo "$mde" | grep "wr"; then
 		"$DS/addons/weekly report/cnfg.sh" T & exit 1
 	fi
+	
 	rm -f $DT/*.x
 	
 elif [[ "$1" = "--version" ]]; then
-    echo "2.1-alpha" & exit
+	echo "2.1-alpha" & exit
 elif [[ "$1" = "-v" ]]; then
-    echo "2.1-alpha" & exit
+	echo "2.1-alpha" & exit
 fi

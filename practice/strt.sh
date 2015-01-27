@@ -115,21 +115,14 @@ if [ $ret -eq 0 ]; then
 		$DSP/strt.sh & exit 1
 	fi
 elif [ $ret -eq 3 ]; then
-	(
-	echo "#" ;
 	cd "$DC_tlt/practice"
-	rm *
-	cp -f $DS/practice/default/.* "$DC_tlt/practice"
-	) | yad --progress \
-	--width 50 --height 35 --center \
-	--pulsate --auto-close --no-buttons \
-	--sticky --undecorated --skip-taskbar
-	$DS/practice/strt.sh & exit 1
+	rm .*
+	$DS/practice/strt.sh & exit
 else
 	[[ -f fin1 ]] && rm fin1; [[ -f fin2 ]] && rm fin2;
 	[[ -f mcin1 ]] && rm mcin1; [[ -f mcin2 ]] && rm mcin2;
 	[[ -f lwin1 ]] && rm lwin1; [[ -f lwin2 ]] && rm lwin2;
 	[[ -f lsin ]] && rm lsin; rm *.no *.ok
 	kill -9 $(pgrep -f "yad --form ")
-	exit 1
+	exit
 fi

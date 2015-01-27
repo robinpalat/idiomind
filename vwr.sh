@@ -42,10 +42,10 @@ if [ -f "$DM_tlt/words/$nme.mp3" ]; then
 	&& ntess="--field=$(echo "$exmp" | sed -n 3p)\\n:lbl"
 	hlgt=$(echo $trgt | awk '{print tolower($0)}')
 	exmp1=$(echo "$(echo "$exmp" | sed -n 1p)" | sed "s/"$(echo $trgt \
-	| awk '{print tolower($0)}')"/<span background='#CFFF8B'>"$(echo $trgt \
+	| awk '{print tolower($0)}')"/<span background='#F8F4A2'>"$(echo $trgt \
 	| awk '{print tolower($0)}')"<\/\span>/g")
 	[[ "$(echo "$tgs" | grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)')" = TRUE ]] \
-	&& trgt=$(echo "<big><u><b>"$trgt"</b></u></big>")
+	&& trgt=$(echo "<span background='#F8F4A2'> "$trgt" <\/\span>")
 	
 	[[ "$ap" = TRUE ]] && (killall play & sleep 1 && play "$DM_tlt/words/$nme.mp3") &
 	
@@ -67,7 +67,7 @@ elif [ -f "$DM_tlt/$nme.mp3" ]; then
 	src=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
 	lwrd=$(echo "$tgs" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' | tr '_' '\n')
 	[[ "$(echo "$tgs" | grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)')" = TRUE ]] \
-	&& trgt=$(echo "<u>"$trgt"</u>")
+	&& trgt=$(echo "<span background='#F8F4A2'>  </span> "$trgt"")
 	[[ ! -f "$DM_tlt/$nme.mp3" ]] && exit 1
 	
 	[[ "$ap" = TRUE ]] && (killall play & sleep 1 && play "$DM_tlt/$nme.mp3") &

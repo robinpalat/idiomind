@@ -108,8 +108,8 @@ if [ $1 = n_t ]; then
 		fi
 		
 		if [ $info2 -ge 50 ]; then
-			msg "$topics_max" info
-			rm "$DM_tl/.rn" & exit 1
+			rm "$DM_tl/.rn"
+			msg "$topics_max" info & exit
 		fi
 		
 		jlbi=$($yad --window-icon=idiomind \
@@ -229,23 +229,25 @@ elif [ $1 = n_i ]; then
 	fi
 	
 	if sed -n 1p $DC_s/cfg.3 | grep TRUE; then
-		RO=RO
-		LS=""
-	elif sed -n 1p $DC_s/cfg.3 | grep FALSE; then
-		RO=" "
-		LS=${lgsl^}
-	fi
-	
-	auds="--button=Audio:$DS/ifs/tls.sh pnl '$DT_r'"
 	lzgpr=$(yad --form --center --always-print-result \
+	--on-top --window-icon=idiomind --skip-taskbar \
+	--separator="\n" --align=right $img \
+	--name=idiomind --class=idiomind \
+	--borders=0 --title=" " --width=200 --height=140 \
+	--field=" <small><small>$lgtl</small></small>: " "$txt" \
+	--field=" <small><small>$topic</small></small>:CB" "$ttle!$new *!$tpcs" "$field" \
+	--button="$image":3 --button=Audio:2 --button=gtk-ok:0)
+	elif sed -n 1p $DC_s/cfg.3 | grep FALSE; then
+		lzgpr=$(yad --form --center --always-print-result \
 	--on-top --window-icon=idiomind --skip-taskbar \
 	--separator="\n" --align=right $img \
 	--name=idiomind --class=idiomind \
 	--borders=0 --title=" " --width=200 --height=170 \
 	--field=" <small><small>$lgtl</small></small>: " "$txt" \
-	--field=" <small><small>$LS</small></small>:$RO" "$srce" \
+	--field=" <small><small>${lgsl^}</small></small>: " "$srce" \
 	--field=" <small><small>$topic</small></small>:CB" "$ttle!$new *!$tpcs" "$field" \
-	--button="$image":3 "$auds" --button=gtk-ok:0)
+	--button="$image":3 --button=Audio:2 --button=gtk-ok:0)
+	fi
 	ret=$?
 
 	trgt=$(echo "$lzgpr" | head -n -1 | sed -n 1p | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
@@ -255,12 +257,18 @@ elif [ $1 = n_i ]; then
 	echo "$chk"
 		
 		if [ $ret -eq 3 ]; then
+		
 			if sed -n 1p $DC_s/cfg.3 | grep TRUE; then
 				trgt=$(echo "$lzgpr" | head -n -1)
 			fi
 			cd $DT_r
 			scrot -s --quality 70 img.jpg
 			/usr/bin/convert -scale 110x90! img.jpg ico.jpg
+			$DS/add.sh n_i $DT_r 2 "$trgt" "$srce" && exit 1
+		
+		elif [ $ret -eq 2 ]; then
+		
+			$DS/ifs/tls.sh pnl $DT_r
 			$DS/add.sh n_i $DT_r 2 "$trgt" "$srce" && exit 1
 		
 		elif [ $ret -eq 0 ]; then
@@ -313,11 +321,11 @@ elif [ $1 = n_i ]; then
 			elif ([ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]); then
 				if sed -n 1p $DC_s/cfg.3 | grep FALSE; then
 					if [ -z "$4" ]; then
-						msg "$no_text$lgsl." info
-						rm -f $DT_r & exit
+						[[ -d $DT_r ]] && rm -fr $DT_r
+						msg "$no_text$lgsl." info & exit
 					elif [ -z "$2" ]; then
-						msg "$no_text$lgtl." info
-						rm -f $DT_r & exit
+						[[ -d $DT_r ]] && rm -fr $DT_r
+						msg "$no_text$lgtl." info & exit
 					fi
 				fi
 				result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
@@ -343,8 +351,8 @@ elif [ $1 = n_i ]; then
 elif [ $1 = n_s ]; then
 
 	if [ -z "$tpe" ]; then
-		msg "$no_topic_msg." info
-		rm -f $DT_r & exit
+		[[ -d $DT_r ]] && rm -fr $DT_r
+		msg "$no_topic_msg." info & exit
 	fi
 		
 	DT_r="$3"
@@ -361,8 +369,8 @@ elif [ $1 = n_s ]; then
 	dct=$DS/addons/Dics/cnfg.sh
 			
 	if [ $(cat "$DC_tlt/cfg.4" | wc -l) -ge 50 ]; then
-		msg " <b>$tpe    </b>\\n\\n $sentences_max" info
-		rm -f $DT_r & exit 1
+		[[ -d $DT_r ]] && rm -fr $DT_r
+		msg "$tpe    \\n$sentences_max" info & exit
 	fi
 	
 	if sed -n 1p $DC_s/cfg.3 | grep TRUE; then
@@ -524,11 +532,11 @@ elif [ $1 = n_s ]; then
 		
 	else
 		if [ -z "$4" ]; then
-			msg "$no_text$lgsl." info
-			rm -f $DT_r & exit 1
+			[[ -d $DT_r ]] && rm -fr $DT_r
+			msg "$no_text$lgsl." info & exit
 		elif [ -z "$2" ]; then
-			msg "$no_text$lgtl." info
-			rm -f $DT_r & exit 1
+			[[ -d $DT_r ]] && rm -fr $DT_r
+			msg "$no_text$lgtl." info & exit
 		fi
 		
 		cd $DT_r
@@ -696,12 +704,12 @@ elif [ $1 = n_w ]; then
 	DC_tlt="$DC_tl/$tpe"
 	
 	if [ $(cat "$DC_tlt/cfg.3" | wc -l) -ge 50 ]; then
-		msg " <b>$tpe    </b>\\n\\n $words_max" info
-		rm -f $DT_r & exit 1
+		[[ -d $DT_r ]] && rm -fr $DT_r
+		msg "$tpe    \\n$words_max" info & exit 1
 	fi
 	
 	internet
-			
+	
 	if sed -n 1p $DC_s/cfg.3 | grep TRUE; then
 		result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lgt" --data-urlencode "text=$trgt" https://translate.google.com)
 		encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); \
@@ -733,15 +741,16 @@ elif [ $1 = n_w ]; then
 		$DS/mngr.sh inx W "$nme" "$tpe"
 		echo "aitm.1.aitm" >> \
 		$DC/addons/stats/.log
-		rm -f -r *.jpg $DT_r
+		[[ -d $DT_r ]] && rm -fr $DT_r
+		rm -f *.jpg
 		
 	else
 		if [ -z "$4" ]; then
-			msg "$no_text$lgsl." info
-			rm -f $DT_r & exit 1
+			[[ -d $DT_r ]] && rm -fr $DT_r
+			msg "$no_text$lgsl." info & exit
 		elif [ -z "$2" ]; then
-			msg "$no_text$lgtl." info
-			rm -f $DT_r & exit 1
+			[[ -d $DT_r ]] && rm -fr $DT_r
+			msg "$no_text$lgtl." info & exit 1
 		fi
 		
 		if [ -f audtm.mp3 ]; then
@@ -839,8 +848,8 @@ elif [ $1 = edt ]; then
 
 		tpe="$tpc"
 		if [ $(cat "$DC_tlt/cfg.3" | wc -l) -ge 50 ]; then
-			msg " <b>$tpe    </b>\\n\\n $words_max" info
-			rm -f $DT_r & exit 1
+			[[ -d $DT_r ]] && rm -fr $DT_r
+			msg "$tpe    \\n$words_max" info & exit
 		fi
 		
 		nw=$(cat "$DC_tlt/cfg.3" | wc -l)
@@ -993,8 +1002,8 @@ elif [ $1 = prc ]; then
 	nw=$(cat "$DC_tlt/cfg.3" | wc -l)
 	
 	if [ $(cat "$DC_tlt/cfg.3" | wc -l) -ge 50 ]; then
-		msg " <b>$tpe    </b>\\n\\n $words_max" info
-		rm -f $DT_r & exit 1
+		[[ -d $DT_r ]] && rm -fr $DT_r
+		msg "$tpe    \\n$words_max" info & exit
 	fi
 
 	left=$((50 - $nw))
@@ -1400,7 +1409,7 @@ elif [ $1 = prs ]; then
 	fi
 
 	if [ $ns -ge 50 ]; then
-		msg " <b>$tpe    </b>\\n\\n $sentences_max" info
+		msg "$tpe    \\n$sentences_max" info
 		[[ -d $DT_r ]] && rm -fr $DT_r
 		rm -f ls $lckpr & exit
 	fi
