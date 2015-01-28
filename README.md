@@ -7,7 +7,7 @@ bash (>=4.1), rsstail, scrot, imagemagick, wkhtmltopdf, lynx, eyed3, curl, html2
 
 <b>Pruébalo (alpha) en Ubuntu y derivados:</b>
 
-Agregando el repositorio de Launchpad (recomendado).
+Agregando su repositorio en Launchpad (recomendado).
 
       sudo add-apt-repository ppa:robinpala/idiomind
       
@@ -16,6 +16,3 @@ Agregando el repositorio de Launchpad (recomendado).
       sudo apt-get install idiomind
       
 
-O descarga el paquete:
-
-https://sourceforge.net/projects/idiomind/files
