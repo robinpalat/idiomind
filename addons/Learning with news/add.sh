@@ -4,27 +4,41 @@
 source /usr/share/idiomind/ifs/c.conf
 source /usr/share/idiomind/ifs/trans/$lgs/rss.conf
 
+function msg() {
+	
+	yad --window-icon=idiomind --name=idiomind \
+	--image=$2 --on-top --text=" $1 " \
+	--image-on-top --center --sticky --button="Ok":0 \
+	--width=420 --height=150 --borders=5 \
+	--skip-taskbar --title="Idiomind"
+}
+
+function internet() {
+
+	curl -v www.google.com 2>&1 \
+	| grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
+	yad --window-icon=idiomind --on-top \
+	--image=info --name=idiomind \
+	--text=" $connection_err  \n" \
+	--image-on-top --center --sticky \
+	--width=420 --height=150 --borders=3 \
+	--skip-taskbar --title=Idiomind \
+	--button="  Ok  ":0 >&2; exit 1;}
+}
+
 if [[ $1 = n_i ]]; then
-	trgt=$(cat $DT/.dzmxx.x | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-	nm=$(cat $DT/.dzmxx.x)
-	info2=$(cat $DT/list | wc -l)
+
+	trgt=$(cat $DT/word.x)
+	nm=$(cat $DT/word.x)
 	c=$(echo $(($RANDOM%100)))
 	var="$2"
-
-	if [ $info2 -ge 50 ]; then
-		$yad --center --fixed --image=info \
-		--image-on-top --on-top --fixed --sticky \
-		--width=420 --height=150 \
-		--skip-taskbar --window-icon=idiomind --title=" " \
-		--button=Ok:1 && exit 1
-	fi
 
 	if [[ ! -d "$DM_tl/Feeds"/kept ]]; then
 		mkdir "$DM_tl/Feeds"/kept
 		mkdir "$DM_tl/Feeds"/kept/words
 	fi
 
-	if [[ -f $DT/.dzmxx.x ]]; then
+	if [[ -f $DT/word.x ]]; then
 		bttn="--button=$save_word:0"
 		txt="<b>$word </b>"
 	fi
@@ -39,38 +53,26 @@ if [[ $1 = n_i ]]; then
 		
 		if [[ $ret -eq 0 ]]; then
 			if [ $(cat "$DC_tl/Feeds/cfg.3" | wc -l) -ge 50 ]; then
-				$yad --name=idiomind --center --on-top --image=info \
-				--text=" <b>$tpe    </b>\\n\\n $words_max  \\n" \
-				--image-on-top --fixed --sticky --title="$tpe" \
-				--width=420 --height=150 --borders=3 --button=gtk-ok:0 \
-				--skip-taskbar --window-icon=idiomind && exit 1
+				msg "$tpe  \n$words_max " info & exit
 			fi
 		
-			curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
-			$yad --window-icon=idiomind --on-top \
-			--image="info" --name=idiomind \
-			--text="<b> $connection_err  \\n  </b>" \
-			--image-on-top --center --sticky \
-			--width=420 --height=150 --borders=3 \
-			--skip-taskbar --title="Idiomind" \
-			--button="  Ok  ":0 & exit 1
-			 >&2; exit 1;}
+			internet
 			
 			mkdir $DT/rss_$c
 			cd $DT/rss_$c
 			result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
 			encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
 			srce=$(iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8)
-			nme=$(echo "$trgt" | sed 's/[ \t]*$//' | sed "s/'/ /g")
+			nme="$(echo "$trgt" | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
 			
 			[[ ! -d "$DM_tl/Feeds/kept/words" ]] && mkdir "$DM_tl/Feeds/kept/words"
-			cp "$DM_tl/Feeds/conten/$var/$nm.mp3" "$DM_tl/Feeds/kept/words/$nme.mp3"
+			cp "$DM_tl/Feeds/conten/$var/$nm.mp3" "$DM_tl/Feeds/kept/words/${nm^}.mp3"
 			
-			eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" -A IWI3I0I"$var"IWI3I0I \
-			"$DM_tl/Feeds/kept/words/$nme.mp3"
-			echo "$trgt" >> "$DC_tl/Feeds/cfg.0"
-			echo "$trgt" >> "$DC_tl/Feeds/.cfg.11"
-			echo "$trgt" >> "$DC_tl/Feeds/cfg.3"
+			eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt^}IWI1I0I" -a "IWI2I0I${srce^}IWI2I0I" -A IWI3I0I"$var"IWI3I0I \
+			"$DM_tl/Feeds/kept/words/${nm^}.mp3"
+			echo "${trgt^}" >> "$DC_tl/Feeds/cfg.0"
+			echo "${trgt^}" >> "$DC_tl/Feeds/.cfg.11"
+			echo "${trgt^}" >> "$DC_tl/Feeds/cfg.3"
 			
 			if [ -n "$(cat "$DC_tl/Feeds/cfg.0" | sort -n | uniq -dc)" ]; then
 				cat "$DC_tl/Feeds/cfg.0" | awk '!array_temp[$0]++' > $DT/.ls.x
@@ -80,28 +82,20 @@ if [[ $1 = n_i ]]; then
 			
 		elif [[ $ret -eq 2 ]]; then
 			if [ $(cat "$DC_tl/Feeds/cfg.4" | wc -l) -ge 50 ]; then
-				$yad --name=idiomind --center --on-top --image=info \
-				--text=" <b>$tpe    </b>\\n\\n $sentences_max \\n" \
-				--image-on-top --fixed --sticky --title="$tpe" \
-				--width=420 --height=150 --borders=3 --button=gtk-ok:0 \
-				--skip-taskbar --window-icon=idiomind && exit 1
+				msg "$tpe  \n$sentences_max" info & exit
 			fi
 			
-			curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
-			$yad --window-icon=idiomind --on-top \
-			--image="info" --name=idiomind \
-			--text="<b> $connection_err  \\n  </b>" \
-			--image-on-top --center --sticky \
-			--width=420 --height=150 --borders=3 \
-			--skip-taskbar --title="Idiomind" \
-			--button="  Ok  ":0 & exit 1
-			 >&2; exit 1;}
+			internet
 			
 			nme="$(echo "$var" | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
 			
-			cp "$DM_tl/Feeds/conten/$var.mp3" "$DM_tl/Feeds/kept/$nme.mp3"
-			cp "$DM_tl/Feeds/conten/$var.lnk" "$DM_tl/Feeds/kept/$nme.lnk"
-			cp $DM_tl/Feeds/conten/"$var"/*.mp3 "$DM_tl/Feeds/kept/.audio/"
+			tgs=$(eyeD3 "$DM_tl/Feeds/conten/$nme.mp3")
+			trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
+
+			
+			cp "$DM_tl/Feeds/conten/$nme.mp3" "$DM_tl/Feeds/kept/$nme.mp3"
+			cp "$DM_tl/Feeds/conten/$nme.lnk" "$DM_tl/Feeds/kept/$nme.lnk"
+			cp $DM_tl/Feeds/conten/"$nme"/*.mp3 "$DM_tl/Feeds/kept/.audio/"
 			
 			if [ -n "$(cat "$DC_tl/Feeds/cfg.0" | sort -n | uniq -dc)" ]; then
 				cat "$DC_tl/Feeds/cfg.0" | awk '!array_temp[$0]++' > $DT/.ls.x
@@ -110,23 +104,16 @@ if [[ $1 = n_i ]]; then
 				echo "$trgt" >> "$DC_tl/Feeds/cfg.0"
 				echo "$trgt" >> "$DC_tl/Feeds/.cfg.11"
 				echo "$trgt" >> "$DC_tl/Feeds/cfg.4"
-				rm -f -r $DT/.dzmxx.x $DT/rss_$ & exit 1
+				rm -f -r $DT/word.x $DT/rss_$ & exit
 		else
-			rm -f -r $DT/.dzmxx.x $DT/rss_$ & exit 1
+			rm -fr $DT/word.x $DT/rss_$c & exit
 		fi
 		
 elif [[ $1 = n_t ]]; then
 
 	dte=$(date "+%a %d %B")
 	if [ $(cat "$DC_tl/.cfg.1" | wc -l) -ge 50 ]; then
-		$yad --fixed --image=info --title=Idiomind \
-		--name=idiomind --center --skip-taskbar \
-		--text=" <b>$topics_max  </b>" \
-		--image-on-top --fixed --sticky --on-top \
-		--width=420 --height=150 --borders=3 \
-		--window-icon=idiomind \
-		--button=gtk-ok:0
-		exit 1
+		msg "$topics_max " info & exit
 	fi
 
 	jlbi=$($yad --form \

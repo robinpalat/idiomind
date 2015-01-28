@@ -41,9 +41,7 @@ if [ -f "$DM_tlt/words/$nme.mp3" ]; then
 	[[ $(echo "$exmp" | sed -n 3p) ]] \
 	&& ntess="--field=$(echo "$exmp" | sed -n 3p)\\n:lbl"
 	hlgt=$(echo $trgt | awk '{print tolower($0)}')
-	exmp1=$(echo "$(echo "$exmp" | sed -n 1p)" | sed "s/"$(echo $trgt \
-	| awk '{print tolower($0)}')"/<span background='#F8F4A2'>"$(echo $trgt \
-	| awk '{print tolower($0)}')"<\/\span>/g")
+	exmp1=$(echo "$(echo "$exmp" | sed -n 1p)" | sed "s/"${trgt,,}"/<span background='#F8F4A2'>"${trgt,,}"<\/\span>/g")
 	[[ "$(echo "$tgs" | grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)')" = TRUE ]] \
 	&& trgt=$(echo "<span background='#F8F4A2'> "$trgt" <\/\span>")
 	
@@ -79,9 +77,9 @@ elif [ -f "$DM_tlt/$nme.mp3" ]; then
 	--text="<big><big>$trgt</big></big>\n\n<i>$src</i>\n\n\n" \
 	--width="$wth" --height="$eht" --center \
 	--column="":TEXT --column="":TEXT \
-	--button=gtk-edit:4 --button="play":"/usr/share/idiomind/ifs/tls.sh s '$nme'" \
+	--button=gtk-edit:4 --button="play":"$DS/ifs/tls.sh s '$nme'" \
 	--button=gtk-go-up:3 --button=gtk-go-down:2 \
-	--dclick-action="/usr/share/idiomind/ifs/tls.sh dclik" >/dev/null 2>&1
+	--dclick-action="$DS/ifs/tls.sh dclik" >/dev/null 2>&1
 else
 	ff=$(($nuw + 1))
 	$DS/vwr.sh "$v" "$nll" "$ff" & exit 1

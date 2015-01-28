@@ -24,7 +24,7 @@ if [ $1 = mkmn ]; then
 	ls -t -d -N * > $DC_tl/.cfg.1
 	[[ -f $DC_s/cfg.0 ]] && mv -f $DC_s/cfg.0 $DC_s/cfg.16
 	n=1
-	while [ $n -le $(cat $DC_tl/.cfg.1 | head -30 | wc -l) ]; do
+	while [ $n -le $(cat $DC_tl/.cfg.1 | head -40 | wc -l) ]; do
 		tp=$(sed -n "$n"p $DC_tl/.cfg.1)
 		i=$(cat "$DC_tl/$tp/cfg.8")
 		
@@ -39,13 +39,13 @@ if [ $1 = mkmn ]; then
 			echo "13" > "$DC_tl/$tp/cfg.8"
 			cp -f $DS/default/tpc.sh "$DC_tl/$tp/tpc.sh"
 		fi
-		echo "/usr/share/idiomind/images/img$i.png" >> $DC_s/cfg.0
+		echo "/usr/share/idiomind/images/img.$i.png" >> $DC_s/cfg.0
 		echo "$tp" >> $DC_s/cfg.0
 		let n++
 	done
 	n=1
-	while [ $n -le $(cat $DC_tl/.cfg.1 | tail -n+31 | wc -l) ]; do
-		ff=$(cat $DC_tl/.cfg.1 | tail -n+31)
+	while [ $n -le $(cat $DC_tl/.cfg.1 | tail -n+21 | wc -l) ]; do
+		ff=$(cat $DC_tl/.cfg.1 | tail -n+21)
 		tp=$(echo "$ff" | sed -n "$n"p)
 		if [ ! -f "$DC_tl/$tp/cfg.8" ] || \
 		[ ! -f "$DC_tl/$tp/tpc.sh" ] || \
@@ -54,9 +54,9 @@ if [ $1 = mkmn ]; then
 		[ ! -f "$DC_tl/$tp/cfg.3" ] || \
 		[ ! -f "$DC_tl/$tp/cfg.4" ] || \
 		[ ! -d "$DM_tl/$tp" ]; then
-			echo '/usr/share/idiomind/images/img13.png' >> $DC_s/cfg.0
+			echo '/usr/share/idiomind/images/img.13.png' >> $DC_s/cfg.0
 		else
-			echo '/usr/share/idiomind/images/img12.png' >> $DC_s/cfg.0
+			echo '/usr/share/idiomind/images/img.12.png' >> $DC_s/cfg.0
 		fi
 		echo "$tp" >> $DC_s/cfg.0
 		let n++

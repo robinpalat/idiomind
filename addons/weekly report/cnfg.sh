@@ -3,8 +3,8 @@
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/others.conf
 
-eht=$(sed -n 3p $DC_s/cfg.18)
-wth=$(sed -n 4p $DC_s/cfg.18)
+wth=$(sed -n 3p $DC_s/cfg.18)
+eht=$(sed -n 4p $DC_s/cfg.18)
 LOG=$DC/addons/stats/.log
 NUM=$DC/addons/stats/num.tmp
 TPS=$DC/addons/stats/tpcs.tmp

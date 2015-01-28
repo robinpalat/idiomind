@@ -32,7 +32,7 @@ if [[ $1 = V1 ]]; then
 		nuw=1
 	fi
 	
-	echo "$nme" > $DT/.dzmx.x
+	echo "$nme" > $DT/item.x
 	n_i="$DS_pf/add.sh n_i '$nme'"
 	tgs=$(eyeD3 "$DM_tl/Feeds/conten/$nme.mp3")
 	trg=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
@@ -92,15 +92,18 @@ elif [[ $1 = V2 ]]; then
 		| sed -n 's/^\([0-9]*\)[:].*/\1/p')
 		nll=" "
 	fi
-
-	nme=$(sed -n "$nuw"p "$DC_tl/Feeds/cfg.0")
+	nme="$(sed -n "$nuw"p "$DC_tl/Feeds/cfg.0" | cut -c 1-100 \
+	| sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
+	
 	if [ -z "$nme" ]; then
-		nme=$(sed -n 1p "$DC_tl/Feeds/cfg.0")
+		nme="$(sed -n 1p "$DC_tl/Feeds/cfg.0" | cut -c 1-100 \
+		| sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
 		nuw=1
 	fi
 
 	lnk=$(cat "$DM_tlfk/$nme.lnk")
-	echo "$nme" > $DT/.dzmx.x
+	echo "$nme" > $DT/item.x
+	
 	if [ "$ap" = TRUE ]; then
 		(killall play & sleep 0.3 && play "$DM_tlfk/words/$nme.mp3") &
 	fi
@@ -111,8 +114,8 @@ elif [[ $1 = V2 ]]; then
 		srce=$(echo "$tgs" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
 		lswd=$(echo "$tgs" | grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' | tr '_' '\n')
 		exm=$(echo "$lswd" | sed -n 1p)
-		exmp=$(echo "$exm" | sed "s/"$trg"/<span background='#CFFF8B'>"$trg"<\/\span>/g")
-		
+		exmp=$(echo "$exm" | sed "s/"${trg,,}"/<span background='#CFFF8B'>"${trg,,}"<\/\span>/g")
+
 		echo "$lwrd" | awk '{print $0""}' | yad --form \
 		--window-icon=idiomind --scroll --text-align=center \
 		--skip-taskbar --center --title="$MPG " --borders=15 \

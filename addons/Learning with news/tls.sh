@@ -19,7 +19,7 @@ audio="$DM_tl/Feeds/kept/.audio"
 contn="$DM_tl/Feeds/conten"
 
 wdr="$(echo $3 | awk '{print tolower($0)}')"
-echo "$wdr" > $DT/.dzmxx.x
+echo "$wdr" > $DT/word.x
 var="$2"
 
 if [ -f "$audio/$wdr.mp3" ]; then 

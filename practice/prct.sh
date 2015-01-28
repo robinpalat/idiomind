@@ -26,7 +26,7 @@ function look() {
 
 function get_list() {
 		if [ "$(cat "$Si" | wc -l)" -gt 0 ]; then
-			grep -F -x -v -f "$Si" "$Li" > $1
+			grep -Fxvf "$Si" "$Li" > $1
 		else
 			cat "$Li" > $1
 		fi
@@ -53,7 +53,7 @@ function get_list_mchoice() {
 
 function get_list_sentences() {
 		if [ "$(cat "$Wi" | wc -l)" -gt 0 ]; then
-			grep -F -x -v -f "$Wi" "$Li" > $1
+			grep -Fxvf "$Wi" "$Li" > $1
 		else
 			cat "$Li" > $1
 		fi
@@ -82,7 +82,7 @@ if [[ "$1" = f ]]; then
 	fi
 
 	if ([ -f fin ] && [ -f ok.f ]); then
-		grep -F -x -v -f ok.f fin > fin1
+		grep -Fxvf ok.f fin > fin1
 		echo "-- restarting session"
 	else
 		get_list fin && cp -f fin fin1
@@ -107,7 +107,7 @@ elif [[ "$1" = m ]]; then
 	fi
 
 	if ([ -f mcin ] && [ -f ok.m ]); then
-		grep -F -x -v -f ok.m mcin > mcin1
+		grep -Fxvf ok.m mcin > mcin1
 		echo "-- restarting session"
 		
 	else
@@ -136,7 +136,7 @@ elif [[ "$1" = w ]]; then
 	fi
 
 	if ([ -f lwin ] && [ -f ok.w ]); then
-		grep -F -x -v -f ok.w lwin > lwin1
+		grep -Fxvf ok.w lwin > lwin1
 		echo "-- restarting session"
 	else
 		get_list lwin && cp -f lwin lwin1
@@ -161,7 +161,7 @@ elif [[ "$1" = s ]]; then
 	fi
 
 	if ([ -f lsin ] && [ -f ok.s ]); then
-		grep -F -x -v -f ok.s lsin > lsin1
+		grep -Fxvf ok.s lsin > lsin1
 		echo "-- restarting session"
 	else
 		get_list_sentences lsin && cp -f lsin lsin1

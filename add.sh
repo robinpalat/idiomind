@@ -42,7 +42,7 @@ if [ $1 = n_t ]; then
 			nmt=""
 		fi
 		jlbi=$($yad --window-icon=idiomind --form --center \
-		--field="ggggg$name_for_new_topic" "$nmt" --title="$tle" \
+		--field="$name_for_new_topic" "$nmt" --title="$tle" \
 		--width=440 --height=100 --name=idiomind --on-top \
 		--skip-taskbar --borders=5 --button=gtk-ok:0)
 		
@@ -109,7 +109,8 @@ if [ $1 = n_t ]; then
 		
 		if [ $info2 -ge 50 ]; then
 			rm "$DM_tl/.rn"
-			msg "$topics_max" info & exit
+			msg "$topics_max" info &&
+			killall add.sh & exit 1
 		fi
 		
 		jlbi=$($yad --window-icon=idiomind \
@@ -253,14 +254,11 @@ elif [ $1 = n_i ]; then
 	trgt=$(echo "$lzgpr" | head -n -1 | sed -n 1p | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
 	srce=$(echo "$lzgpr" | sed -n 2p | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
 	chk=$(echo "$lzgpr" | tail -1)
-	tpe=$(cat "$DC_tl/.cfg.2" | grep "$chk")
+	tpe=$(cat "$DC_tl/.cfg.1" | grep "$chk")
 	echo "$chk"
 		
 		if [ $ret -eq 3 ]; then
 		
-			if sed -n 1p $DC_s/cfg.3 | grep TRUE; then
-				trgt=$(echo "$lzgpr" | head -n -1)
-			fi
 			cd $DT_r
 			scrot -s --quality 70 img.jpg
 			/usr/bin/convert -scale 110x90! img.jpg ico.jpg

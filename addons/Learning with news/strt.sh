@@ -286,8 +286,10 @@ if [ -n "$feed" ]; then
 	done
 	rm "$DC_tl/Feeds/cfg.1._"
 	
-	[[ -d "$DM_tl/Feeds/conten" ]] && cd "$DM_tl/Feeds/conten"
+	if [[ -d "$DM_tl/Feeds/conten" ]]; then
+	cd "$DM_tl/Feeds/conten"
 	find ./* -mtime +5 -exec rm -r {} \; &
+	fi
 
 	if [ "$1" != A ]; then
 		notify-send -i idiomind "$rsrc" " $updateok" -t 3000
