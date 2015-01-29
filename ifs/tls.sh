@@ -190,7 +190,6 @@ elif [ $1 = chng ]; then
 	echo "$device_icon_name" >> $DC_s/cfg.20
 	exit 1
 
-
 elif [ $1 = rec ]; then
 
 	paud=$(sed -n 17p $DC_s/cfg.1)
@@ -213,6 +212,18 @@ elif [ $1 = rec ]; then
 	killall -9 sox
 	killall sox & killall rec
 	exit 1
+
+elif [ $1 = remove_items ]; then
+
+	[[ -f $DT/rm ]] && sed -i 's/^$/d' $DT/rm
+	n=1
+	while [[ $n -le $(cat  $DT/rm | wc -l) ]]; do
+		rm=$(sed -n "$n"p $DT/rm)
+		$DS/mngr.sh dli "$rm" C
+		let n++
+	done
+	notify-send -i info "Info" "a few bad items are removed" -t 3000
+	rm $DT/rm
 
 elif [ $1 = add ]; then
 	NM=$(cat $DT/.titl)
@@ -339,7 +350,8 @@ elif [ $1 = pdf ]; then
 		dte=$(date "+%d %B %Y")
 		mkdir $DT/mkhtml
 		mkdir $DT/mkhtml/images
-		nts=$(cat -e "$DC_tlt/nt" | sed 's/\$/<br>/g')
+		nts=$(cat -e "$DC_tlt/cfg.10" | sed 's/\$/<br>/g')
+		echo "$nts ----------------"
 		cd $DT/mkhtml
 		cp -f "$DC_tlt/cfg.3" w.inx.l
 		cp -f "$DC_tlt/cfg.4" s.inx.l
@@ -501,6 +513,8 @@ elif [ $1 = pdf ]; then
 		</div>
 		<div>
 		<h3>'$tpc'</h3>
+		<p>&nbsp;</p>
+		<hr>
 		<table width="80%" align="left" border="0" class="ifont">
 		<tr>
 		<td>
@@ -628,7 +642,8 @@ elif [ $1 = pdf ]; then
 				if [ -n "$st" ]; then
 					ss=$(sed -n "$n"p S.gprs.x)
 					fn=$(sed -n "$n"p s.inx.l)
-					echo '<table width="100%" border="0" align="left" cellpadding="10" cellspacing="5">
+					echo '<h1>&nbsp;</h1>
+					<table width="100%" border="0" align="left" cellpadding="10" cellspacing="5">
 					<tr>
 					<td bgcolor="#FAF9F4"><h1>'$st'</h1></td>
 					</tr>' > Sgprt.tmp
@@ -636,8 +651,6 @@ elif [ $1 = pdf ]; then
 					<td ><h2>'$ss'</h2></td>
 					</tr>
 					</table>
-					<h1>&nbsp;</h1>
-					<h1>&nbsp;</h1>
 					<h1>&nbsp;</h1>' > Sgprs.tmp
 					cat Sgprt.tmp >> pdf
 					cat Sgprs.tmp >> pdf

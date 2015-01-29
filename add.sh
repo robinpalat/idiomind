@@ -26,6 +26,163 @@ function internet() {
 	--button="  Ok  ":0 >&2; exit 1;}
 }
 
+function grammar() {
+	
+	cd $2; n=1
+	while [ $n -le $(echo "$1" | wc -l) ]; do
+		grmrk=$(echo "$1" | sed -n "$n"p)
+		chck=$(echo "$1" | sed -n "$n"p | awk '{print tolower($0)}' \
+		| sed 's/,//g' | sed 's/\.//g')
+		if echo "$conjunctions" | grep -Fxq $chck; then
+			echo "<span color='#3BB393'>$grmrk</span>" >> g_$3
+		elif echo "$nouns_verbs" | grep -Fxq $chck; then
+			echo "<span color='#896E7A'>$grmrk</span>" >> g_$3
+		elif echo "$conjunctions" | grep -Fxq $chck; then
+			echo "<span color='#3BB393'>$grmrk</span>" >> g_$3
+		elif echo "$verbs" | grep -Fxq $chck; then
+			echo "<span color='#CD4484'>$grmrk</span>" >> g_$3
+		elif echo "$prepositions" | grep -Fxq $chck; then
+			echo "<span color='#E08434'>$grmrk</span>" >> g_$3
+		elif echo "$adverbs" | grep -Fxq $chck; then
+			echo "<span color='#9C68BD'>$grmrk</span>" >> g_$3
+		elif echo "$pronouns" | grep -Fxq $chck; then
+			echo "<span color='#4665A9'>$grmrk</span>" >> g_$3
+		elif echo "$nouns_adjetives" | grep -Fxq $chck; then
+			echo "<span color='#496E60'>$grmrk</span>" >> g_$3
+		elif echo "$adjetives" | grep -Fxq $chck; then
+			echo "<span color='#41873F'>$grmrk</span>" >> g_$3
+		else
+			echo "$grmrk" >> g_$3
+		fi
+		let n++
+	done
+}
+
+function tts() {
+	
+	cd $3; xargs -n10 < "$1" > ./temp
+	[[ -n "$(sed -n 1p ./temp)" ]] && wget -q -U Mozilla -O $DT_r/tmp01.mp3 \
+	"https://translate.google.com/translate_tts?ie=UTF-8&tl=$2&q=$(sed -n 1p ./temp)"
+	[[ -n "$(sed -n 2p ./temp)" ]] && wget -q -U Mozilla -O $DT_r/tmp02.mp3 \
+	"https://translate.google.com/translate_tts?ie=UTF-8&tl=$2&q=$(sed -n 2p ./temp)"
+	[[ -n "$(sed -n 3p ./temp)" ]] && wget -q -U Mozilla -O $DT_r/tmp03.mp3 \
+	"https://translate.google.com/translate_tts?ie=UTF-8&tl=$2&q=$(sed -n 3p ./temp)"
+	[[ -n "$(sed -n 4p ./temp)" ]] && wget -q -U Mozilla -O $DT_r/tmp04.mp3 \
+	"https://translate.google.com/translate_tts?ie=UTF-8&tl=$2&q=$(sed -n 4p ./temp)"
+	cat tmp01.mp3 tmp02.mp3 tmp03.mp3 tmp04.mp3 > "$DM_tlt/$4.mp3"
+	
+}
+
+function audio_recognize() {
+	
+	echo "$(wget -q -U "Mozilla/5.0" --post-file "$1" --header="Content-Type: audio/x-flac; rate=16000" \
+	-O - "https://www.google.com/speech-api/v2/recognize?&lang="$2"-"$3"&key=$4")"
+	
+}
+
+function translate() {
+	
+	result=$(curl -s -i --user-agent "" -d "sl=$2" -d "tl=$3" --data-urlencode text="$1" https://translate.google.com)
+	encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
+	t=$(iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8)
+	echo "$t"
+}
+
+function nmfile() {
+	
+	echo "$(echo "$1" | cut -c 1-100 | sed 's/[ \t]*$//' \
+	| sed s'/&//'g | sed s'/://'g | sed "s/'/ /g" | sed "s/’/ /g")"
+}
+
+function clean_1() {
+	
+	echo "$(echo "$1" | sed ':a;N;$!ba;s/\n/ /g' \
+	| sed 's/"//g' | sed 's/“//g' | sed s'/&//'g \
+	| sed 's/”//g' | sed s'/://'g | sed "s/’/'/g" \
+	| sed 's/^[ \t]*//;s/[ \t]*$//')"
+}
+
+function clean_word_list() {
+	
+	echo "$(echo "$1" | sed 's/ /\n/g' | grep -v '^.$' \
+	| grep -v '^..$' | sed -n 1,40p | sed s'/&//'g \
+	| sed 's/,//g' | sed 's/\?//g' | sed 's/\¿//g' \
+	| sed 's/;//g' | sed 's/\!//g' | sed 's/\¡//g' \
+	| tr -d ')' | tr -d '(' | sed 's/\]//g' | sed 's/\[//g' \
+	| sed 's/\.//g' | sed 's/  / /g' | sed 's/ /\. /g')"
+}
+
+function tags_1() {
+	
+	eyeD3 --set-encoding=utf8 \
+	-t I$1I1I0I"$2"I$1I1I0I \
+	-a I$1I2I0I"$3"I$1I2I0I "$4"
+	
+}
+
+function tags_2() {
+	
+	eyeD3 --set-encoding=utf8 \
+	-t IWI1I0I"$2"IWI1I0I \
+	-a IWI2I0I"$3"IWI2I0I \
+	-A IWI3I0I"$4"IWI3I0I "$5"
+	
+}
+
+function tags_3() {
+	
+	eyeD3 --set-encoding=utf8 \
+	-A IWI3I0I"$2"IWI3I0IIPWI3I0I"$3"IPWI3I0IIGMI3I0I"$4"IGMI3I0I "$5"
+	
+}
+
+function tags_4() {
+	
+	eyeD3 --set-encoding=utf8 \
+	-t ISI1I0I"$2"ISI1I0I \
+	-a ISI2I0I"$3"ISI2I0I \
+	-A IWI3I0I"$4"IWI3I0IIPWI3I0I"$5"IPWI3I0IIGMI3I0I"$6"IGMI3I0I "$7"
+	
+}
+
+function voice() {
+	
+	cd $DT_r; vs=$(sed -n 7p $DC_s/cfg.1)
+	if [ -n "$vs" ]; then
+	
+		if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
+			lg=$(echo $lgtl | awk '{print tolower($0)}')
+
+			if ([ $lg = "english" ] \
+			|| [ $lg = "spanish" ] \
+			|| [ $lg = "russian" ]); then
+			echo "$1" | text2wave -o $DT_r/s.wav
+			sox $DT_r/s.wav "$2"
+			else
+				msg "$festival_err $lgtl" error
+				exit
+			fi
+		else
+			echo "$1" | "$vs"
+			if [ -f *.mp3 ]; then
+				mv -f *.mp3 "$2"
+			elif [ -f *.wav ]; then
+				sox *.wav "$2"
+			fi
+		fi
+	else
+		lg=$(echo $lgtl | awk '{print tolower($0)}')
+		if [ $lg = chinese ]; then
+			lg=Mandarin
+		elif [ $lg = japanese ]; then
+			msg "$espeak_err $lgtl" error
+			exit
+		fi
+		espeak "$1" -v $lg -k 1 -p 45 -a 80 -s 110 -w $DT_r/s.wav
+		sox $DT_r/s.wav "$2"
+	fi
+	
+}
 
 if [ $1 = n_t ]; then
 	info2=$(cat $DC_tl/.cfg.1 | wc -l)
@@ -169,9 +326,8 @@ elif [ $1 = n_i ]; then
 	fi
 	c=$(echo $(($RANDOM%1000)))
 	txt="$4"
-	if [ -z "$txt" ]; then
-		txt="$(xclip -selection primary -o)"
-	fi
+	
+	[[ -z "$txt" ]] && txt="$(xclip -selection primary -o)"
 
 	if [ "$3" = 2 ]; then
 		DT_r="$2"
@@ -184,12 +340,9 @@ elif [ $1 = n_i ]; then
 		cd $DT_r
 	fi
 	
-	if [ -f $DT_r/ico.jpg ]; then
-		img="--image=$DT_r/ico.jpg"
-		
-	else
-		img="--image=$DS/images/nw.png"
-	fi
+	[[ -f $DT_r/ico.jpg ]] && img="--image=$DT_r/ico.jpg" \
+	|| img="--image=$DS/images/nw.png"
+	
 	
 	if [ "$(cat $DC_tl/.cfg.1 | grep -v 'Feeds' | wc -l)" -lt 1 ]; then
 		[[ -d $DT_r ]] && rm -fr $DT_r
@@ -199,7 +352,9 @@ elif [ $1 = n_i ]; then
 
 	ls=$((50 - $(cat "$DC_tlt/cfg.4" | wc -l)))
 	lw=$((50 - $(cat "$DC_tlt/cfg.3" | wc -l)))
+	
 	dct="$DS_p/Dics/cnfg.sh"
+	
 	if [[ -z "$tpe" ]]; then
 	tpcs=$(cat "$DC_tl/.cfg.2" | cut -c 1-40 \
 	| tr "\\n" '!' | sed 's/!\+$//g')
@@ -210,6 +365,7 @@ elif [ $1 = n_i ]; then
 	ttle="${tpe:0:50}"
 	s=$(cat "$DC_tlt/cfg.4" | wc -l)
 	w=$(cat "$DC_tlt/cfg.3" | wc -l)
+	
 	if [ $s -ge 45 -a $s -lt 50 ]; then
 		is="S <b>$ls</b>"
 	elif [ $s -ge 50 ]; then
@@ -236,17 +392,19 @@ elif [ $1 = n_i ]; then
 	--name=idiomind --class=idiomind \
 	--borders=0 --title=" " --width=200 --height=140 \
 	--field=" <small><small>$lgtl</small></small>: " "$txt" \
-	--field=" <small><small>$topic</small></small>:CB" "$ttle!$new *!$tpcs" "$field" \
+	--field=" <small><small>$topic</small></small>:CB" \
+	"$ttle!$new *!$tpcs" "$field" \
 	--button="$image":3 --button=Audio:2 --button=gtk-ok:0)
 	elif sed -n 1p $DC_s/cfg.3 | grep FALSE; then
-		lzgpr=$(yad --form --center --always-print-result \
+	lzgpr=$(yad --form --center --always-print-result \
 	--on-top --window-icon=idiomind --skip-taskbar \
 	--separator="\n" --align=right $img \
 	--name=idiomind --class=idiomind \
 	--borders=0 --title=" " --width=200 --height=170 \
 	--field=" <small><small>$lgtl</small></small>: " "$txt" \
 	--field=" <small><small>${lgsl^}</small></small>: " "$srce" \
-	--field=" <small><small>$topic</small></small>:CB" "$ttle!$new *!$tpcs" "$field" \
+	--field=" <small><small>$topic</small></small>:CB" \
+	"$ttle!$new *!$tpcs" "$field" \
 	--button="$image":3 --button=Audio:2 --button=gtk-ok:0)
 	fi
 	ret=$?
@@ -309,11 +467,11 @@ elif [ $1 = n_i ]; then
 			fi
 			
 			if [ "$(echo "$trgt" | sed -n 1p | awk '{print tolower($0)}')" = i ]; then
-				$DS/add.sh prs image $DT_r & exit
+				$DS/add.sh prs image $DT_r & exit 1
 			elif [ "$(echo "$trgt" | sed -n 1p | awk '{print tolower($0)}')" = a ]; then
-				$DS/add.sh prs "$trgt" $DT_r & exit
-			elif [ "$(echo "$trgt" | sed -n 1p | grep -o http)" = http ]; then
-				$DS/add.sh prs "$trgt" $DT_r & exit
+				$DS/add.sh prs audio $DT_r & exit 1
+			elif [ $(echo ${trgt:0:4}) = 'Http' ]; then
+				$DS/add.sh prs "$trgt" $DT_r & exit 1
 			elif [ $(echo "$trgt" | wc -c) -gt 180 ]; then
 				$DS/add.sh prs "$trgt" $DT_r & exit 1
 			elif ([ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]); then
@@ -326,9 +484,9 @@ elif [ $1 = n_i ]; then
 						msg "$no_text$lgtl." info & exit
 					fi
 				fi
-				result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
-				encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
-				srce=$(iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 | sed ':a;N;$!ba;s/\n/ /g')
+
+				srce=$(translate "$trgt" auto $lgs)
+				
 				if [ $(echo "$srce" | wc -w) = 1 ]; then
 					$DS/add.sh n_w "$trgt" $DT_r "$srce" & exit
 				elif [ $(echo "$srce" | wc -w) -ge 1 -a $(echo "$srce" | wc -c) -le 180 ]; then
@@ -354,12 +512,8 @@ elif [ $1 = n_s ]; then
 	fi
 		
 	DT_r="$3"
-	lvbr=$(cat $DS/default/$lgt/verbs)
-	lnns=$(cat $DS/default/$lgt/nouns)
-	ladv=$(cat $DS/default/$lgt/adverbs)
-	lprn=$(cat $DS/default/$lgt/pronouns)
-	lpre=$(cat $DS/default/$lgt/prepositions)
-	ladj=$(cat $DS/default/$lgt/adjetives)
+	source $DS/default/$lgt/grammar
+
 	DM_tlt="$DM_tl/$tpe"
 	DC_tlt="$DC_tl/$tpe"
 	icnn=idiomind
@@ -376,23 +530,21 @@ elif [ $1 = n_s ]; then
 		internet
 	
 		cd $DT_r
-		echo "$2" > ./txt2
-		cat ./txt2 | sed ':a;N;$!ba;s/\n/ /g' | sed 's/"//g' | sed 's/“//g' | sed s'/&//'g \
-		| sed 's/”//g' | sed s'/://'g | sed "s/’/'/g" | sed 's/^[ \t]*//;s/[ \t]*$//' > txt
-		txt=$(cat ./txt)
-		result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lgt" --data-urlencode text="$txt" https://translate.google.com)
-		encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
-		iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 > ./.en
+		
+		txt="$(clean_1 "$2")"
+
+		translate "$txt" auto $lgt > ./.en
+		
 		sed -i ':a;N;$!ba;s/\n/ /g' ./.en
 		sed -i 's/  / /g' ./.en
 		sed -i 's/  / /g' ./.en
 		
 		trgt=$(cat ./.en | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-		nme="$(echo "$trgt" | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
 		
-		result=$(curl -s -i --user-agent "" -d "sl=$lgt" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
-		encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
-		iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 > ./.es
+		nme="$(nmfile "$trgt")"
+
+		translate "$trgt" $lgt $lgs > ./.es
+		
 		sed -i ':a;N;$!ba;s/\n/ /g' ./.es
 		srce=$(cat ./.es)
 		
@@ -401,27 +553,12 @@ elif [ $1 = n_s ]; then
 		sed -i 's/’/ /g' .en
 		
 		if [ ! -f $DT_r/audtm.mp3 ]; then
-			xargs -n10 < .en > ./temp
-			srce1=$(sed -n 1p ./temp)
-			srce2=$(sed -n 2p ./temp)
-			srce3=$(sed -n 3p ./temp)
-			srce4=$(sed -n 4p ./temp)
-			srce5=$(sed -n 5p ./temp)
-			wget -q -U Mozilla -O $DT_r/tmp01.mp3 "https://translate.google.com/translate_tts?ie=UTF-8&tl=$lgt&q=$srce1"
-			if [ -n "$srce2" ]; then
-				wget -q -U Mozilla -O $DT_r/tmp02.mp3 "https://translate.google.com/translate_tts?ie=UTF-8&tl=$lgt&q=$srce2"
-			fi
-			if [ -n "$srce3" ]; then
-				wget -q -U Mozilla -O $DT_r/tmp03.mp3 "https://translate.google.com/translate_tts?ie=UTF-8&tl=$lgt&q=$srce3"
-			fi
-			if [ -n "$srce4" ]; then
-				wget -q -U Mozilla -O $DT_r/tmp04.mp3 "https://translate.google.com/translate_tts?ie=UTF-8&tl=$lgt&q=$srce4"
-			fi
-			cat tmp01.mp3 tmp02.mp3 tmp03.mp3 tmp04.mp3 > "$DM_tlt/$nme.mp3"
+		
+			tts .en $lgt $DT_r "$nme"
 		else
 			cp -f $DT_r/audtm.mp3 "$DM_tlt/$nme.mp3"
 		fi
-		eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I "$DM_tlt/$nme.mp3"
+		tags_1 S "$trgt" "$srce" "$DM_tlt/$nme.mp3"
 
 		if [ -f img.jpg ]; then
 			/usr/bin/convert -scale 450x270! img.jpg imgs.jpg
@@ -441,42 +578,19 @@ elif [ $1 = n_s ]; then
 			vrbl="$trgt"; lg=$lgs; aw=$DT/twrd; bw=$DT/swrd
 		fi
 		
-		echo "$vrbl" | sed 's/ /\n/g' | grep -v '^.$' | grep -v '^..$' \
-		| sed -n 1,40p | sed s'/&//'g | sed 's/,//g' | sed 's/\?//g' \
-		| sed 's/\¿//g' | sed 's/;//g' | sed 's/\!//g' | sed 's/\¡//g' \
-		| tr -d ')' | tr -d '(' | sed 's/\]//g' | sed 's/\[//g' \
-		| sed 's/\.//g' | sed 's/  / /g' | sed 's/ /\. /g' > $aw
+		clean_word_list "$vrbl" > $aw
+
 		twrd=$(cat $aw | sed '/^$/d')
+
+		src=$(translate "$twrd" auto $lg)
 		
-		result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lg" --data-urlencode text="$twrd" https://translate.google.com)
-		encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
-		iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 | sed 's/,//g' | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
+		echo "$src" | sed 's/,//g' | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
 		sed -i 's/\. /\n/g' $bw
 		sed -i 's/\. /\n/g' $aw
 
 		snmk=$(echo "$trgt"  | sed 's/ /\n/g')
-		n=1
-		while [ $n -le $(echo "$snmk" | wc -l) ]; do
-			grmrk=$(echo "$snmk" | sed -n "$n"p)
-			chck=$(echo "$snmk" | sed -n "$n"p | awk '{print tolower($0)}' \
-			| sed 's/,//g' | sed 's/\.//g')
-			if echo "$lnns" | grep -Fxq $chck; then
-				echo "$grmrk" >> grmrk
-			elif echo "$lvbr" | grep -Fxq $chck; then
-				echo "<span color='#D14D8B'>$grmrk</span>" >> grmrk
-			elif echo "$lpre" | grep -Fxq $chck; then
-				echo "<span color='#E08434'>$grmrk</span>" >> grmrk
-			elif echo "$ladv" | grep -Fxq $chck; then
-				echo "<span color='#9C68BD'>$grmrk</span>" >> grmrk
-			elif echo "$lprn" | grep -Fxq $chck; then
-				echo "<span color='#5473B8'>$grmrk</span>" >> grmrk
-			elif echo "$ladj" | grep -Fxq $chck; then
-				echo "<span color='#368F68'>$grmrk</span>" >> grmrk
-			else
-				echo "$grmrk" >> grmrk
-			fi
-			let n++
-		done
+		
+		grammar "$snmk" $DT_r
 		
 		if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 			n=1
@@ -498,10 +612,10 @@ elif [ $1 = n_s ]; then
 			done
 		fi
 
-		grmrk=$(cat grmrk | sed ':a;N;$!ba;s/\n/ /g')
+		grmrk=$(cat g_ | sed ':a;N;$!ba;s/\n/ /g')
 		lwrds=$(cat A)
 		pwrds=$(cat B | tr '\n' '_')
-		eyeD3 --set-encoding=utf8 -A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0IIGMI3I0I"$grmrk"IGMI3I0I "$DM_tlt/$nme.mp3"
+		tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$nme.mp3"
 		
 		(
 		if [ $(sed -n 4p $DC_s/cfg.1) = TRUE ]; then
@@ -543,8 +657,7 @@ elif [ $1 = n_s ]; then
 		| sed 's/"//g' | sed 's/^[ \t]*//;s/[ \t]*$//' > trgt
 		
 		trgt="$(cat trgt)"
-		nme="$(cat trgt | cut -c 1-100 | sed 's/[ \t]*$//' \
-		| sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
+		nme="$(nmfile "$(cat ./trgt)")"
 		srce="$4"
 		> swrd
 		> twrd
@@ -553,43 +666,20 @@ elif [ $1 = n_s ]; then
 		else
 			vrbl="$trgt"; lg=$lgs; aw=$DT/twrd; bw=$DT/swrd
 		fi
+
+		clean_word_list "$vrbl" > $aw
 		
-		echo "$vrbl" | sed 's/ /\n/g' | grep -v '^.$' | grep -v '^..$' \
-		| sed -n 1,40p | sed s'/&//'g | sed 's/,//g' | sed 's/\?//g' \
-		| sed 's/\¿//g' | sed 's/;//g' | sed 's/\!//g' | sed 's/\¡//g' \
-		| tr -d ')' | tr -d '(' | sed 's/\]//g' | sed 's/\[//g' \
-		| sed 's/\.//g' | sed 's/  / /g' | sed 's/ /\. /g' > $aw
 		twrd=$(cat $aw | sed '/^$/d')
 		
-		result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lg" --data-urlencode text="$twrd" https://translate.google.com)
-		encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
-		iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 | sed 's/,//g' | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
+		src=$(translate "$twrd" auto $lg)
+		echo "$src" | sed 's/,//g' | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
+
 		sed -i 's/\. /\n/g' $bw
 		sed -i 's/\. /\n/g' $aw
 
 		snmk=$(echo "$trgt"  | sed 's/ /\n/g')
-		n=1
-		while [ $n -le $(echo "$snmk" | wc -l) ]; do
-			grmrk=$(echo "$snmk" | sed -n "$n"p)
-			chck=$(echo "$snmk" | sed -n "$n"p | awk '{print tolower($0)}' \
-			| sed 's/,//g' | sed 's/\.//g')
-			if echo "$lnns" | grep -Fxq $chck; then
-				echo "$grmrk" >> grmrk
-			elif echo "$lvbr" | grep -Fxq $chck; then
-				echo "<span color='#D14D8B'>$grmrk</span>" >> grmrk
-			elif echo "$lpre" | grep -Fxq $chck; then
-				echo "<span color='#E08434'>$grmrk</span>" >> grmrk
-			elif echo "$ladv" | grep -Fxq $chck; then
-				echo "<span color='#9C68BD'>$grmrk</span>" >> grmrk
-			elif echo "$lprn" | grep -Fxq $chck; then
-				echo "<span color='#5473B8'>$grmrk</span>" >> grmrk
-			elif echo "$ladj" | grep -Fxq $chck; then
-				echo "<span color='#368F68'>$grmrk</span>" >> grmrk
-			else
-				echo "$grmrk" >> grmrk
-			fi
-			let n++
-		done
+		
+		grammar "$snmk" $DT_r
 		
 		if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 			n=1
@@ -611,61 +701,31 @@ elif [ $1 = n_s ]; then
 			done
 		fi
 
-		grmrk=$(cat grmrk | sed ':a;N;$!ba;s/\n/ /g')
+		grmrk=$(cat g_ | sed ':a;N;$!ba;s/\n/ /g')
 		lwrds=$(cat A)
 		pwrds=$(cat B | tr '\n' '_')
 		
 		if [ -f $DT_r/audtm.mp3 ]; then
+		
 			mv -f $DT_r/audtm.mp3 "$DM_tlt/$nme.mp3"
-			eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I \
-			-A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0IIGMI3I0I"$grmrk"IGMI3I0I "$DM_tlt/$nme.mp3"
+
 				if [ -f img.jpg ]; then
 					/usr/bin/convert -scale 450x270! img.jpg imgs.jpg
 					eyeD3 --add-image imgs.jpg:ILLUSTRATION "$DM_tlt/$nme.mp3"
 				fi
 				
 		else
-			vs=$(sed -n 7p $DC_s/cfg.1)
-			if [ -n "$vs" ]; then
-				if ([ $vs = "festival" ] || [ $vs = "text2wave" ]); then
-					lg=$(echo $lgtl | awk '{print tolower($0)}')
-
-					if ([ $lg = "english" ] || [ $lg = "spanish" ] || [ $lg = "russian" ]); then
-					echo "$trgt" | text2wave -o $DT_r/s.wav
-					sox $DT_r/s.wav "$DM_tlt/$nme.mp3"
-					else
-						msg "$festival_err $lgtl" error
-						exit
-					fi
-				else
-					cd $DT_r
-					echo "$trgt" | $vs
-					if [ -f *.mp3 ]; then
-						mv -f *.mp3 "$DM_tlt/$nme.mp3"
-					elif [ -f *.wav ]; then
-						sox *.wav "$DM_tlt/$nme.mp3"
-					fi
-				fi
-			else
-				lg=$(echo $lgtl | awk '{print tolower($0)}')
-				if [ $lg = chinese ]; then
-					lg=Mandarin
-				elif [ $lg = japanese ]; then
-					msg "$espeak_err $lgtl" error
-					exit
-				fi
-				espeak "$trgt" -v $lg -k 1 -p 65 -a 80 -s 120 -w $DT_r/s.wav
-				sox $DT_r/s.wav "$DM_tlt/$nme.mp3"
-			fi
-			eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I \
-			-A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0IIGMI3I0I"$grmrk"IGMI3I0I "$DM_tlt/$nme.mp3"
+			voice "$trgt" "$DM_tlt/$nme.mp3"
+			
 				if [ -f img.jpg ]; then
 					/usr/bin/convert -scale 450x270! img.jpg imgs.jpg
 					eyeD3 --add-image imgs.jpg:ILLUSTRATION "$DM_tlt/$nme.mp3"
 					icnn=img.jpg
 				fi
 		fi
-		sleep 1
+		
+		tags_4 S "$trgt" "$srce" "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$nme.mp3"
+		
 		notify-send -i "$icnn" "$trgt" "$srce \\n($tpe)" -t 10000
 		$DS/mngr.sh inx S "$trgt" "$tpe"
 		
@@ -698,6 +758,7 @@ elif [ $1 = n_w ]; then
 	| tr "\\n" '!' | sed 's/!\+$//g')
 	ttle="${tpe:0:30}"
 	DT_r="$3"
+	cd $DT_r
 	DM_tlt="$DM_tl/$tpe"
 	DC_tlt="$DC_tl/$tpe"
 	
@@ -709,22 +770,15 @@ elif [ $1 = n_w ]; then
 	internet
 	
 	if sed -n 1p $DC_s/cfg.3 | grep TRUE; then
-		result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lgt" --data-urlencode "text=$trgt" https://translate.google.com)
-		encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); \
-		sub(/[ "'\''].*$/,""); print}' <<<"$result")
-		iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 > .tgt
-		trgt=$(cat .tgt | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-		result=$(curl -s -i --user-agent "" -d "sl=$lgt" -d "tl=$lgs" --data-urlencode "text=$trgt" https://translate.google.com)
-		encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); \
-		sub(/[ "'\''].*$/,""); print}' <<<"$result")
-		iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 > .src
-		src=$(cat .src)
+
+		trgt="$(translate "$trgt" auto $lgt)"
+		srce="$(translate "$trgt" $lgt $lgs)"
 		$dct "$trgt" $DT_r swrd
 		nme=$(echo "$trgt" | sed "s/'//g")
 
 		if [ -f "$DT_r/$trgt.mp3" ]; then
 			cp -f "$DT_r/$trgt.mp3" "$DM_tlt/words/$nme.mp3"
-			eyeD3 --set-encoding=utf8 -t IWI1I0I"$trgt"IWI1I0I -a IWI2I0I"$src"IWI2I0I "$DM_tlt/words/$nme.mp3"
+			tags_1 W "$trgt" "$srce" "$DM_tlt/words/$nme.mp3"
 		fi
 		
 		if [ -f img.jpg ]; then
@@ -735,7 +789,7 @@ elif [ $1 = n_w ]; then
 			icnn=img.jpg
 		fi
 		
-		notify-send -i "$icnn" "$trgt" "$src\\n  ($tpe)" -t 5000
+		notify-send -i "$icnn" "$trgt" "$srce\\n  ($tpe)" -t 5000
 		$DS/mngr.sh inx W "$nme" "$tpe"
 		echo "aitm.1.aitm" >> \
 		$DC/addons/stats/.log
@@ -753,9 +807,9 @@ elif [ $1 = n_w ]; then
 		
 		if [ -f audtm.mp3 ]; then
 			mv -f audtm.mp3 "$DM_tlt/words/$trgt.mp3"
-			eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" \
-			"$DM_tlt/words/$trgt.mp3"
 			
+			tags_1 W "$trgt" "$srce" "$DM_tlt/words/$trgt.mp3"
+
 			if [ -f img.jpg ]; then
 				/usr/bin/convert -scale 100x90! img.jpg imgs.jpg
 				/usr/bin/convert -scale 360x240! img.jpg imgt.jpg
@@ -768,10 +822,9 @@ elif [ $1 = n_w ]; then
 			$dct "$trgt" $DT_r swrd
 			
 			if [ -f "$DT_r/$trgt.mp3" ]; then
-				mv -f "$DT_r/$trgt.mp3" "$DM_tlt/words/$trgt.mp3"
-				eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" \
-				"$DM_tlt/words/$trgt.mp3"
 			
+				mv -f "$DT_r/$trgt.mp3" "$DM_tlt/words/$trgt.mp3"
+
 				if [ -f img.jpg ]; then
 					/usr/bin/convert -scale 100x90! img.jpg imgs.jpg
 					/usr/bin/convert -scale 360x240! img.jpg imgt.jpg
@@ -780,40 +833,7 @@ elif [ $1 = n_w ]; then
 				fi
 				
 			else
-				vs=$(sed -n 7p $DC_s/cfg.1)
-				if [ -n "$vs" ]; then
-					if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
-						lg=$(echo $lgtl | awk '{print tolower($0)}')
-						
-						if ([ $lg = "english" ] || [ $lg = "spanish" ] || [ $lg = "russian" ]); then
-							echo "$trgt" | text2wave -o $DT_r/s.wav
-							sox $DT_r/s.wav "$DM_tlt/$nme.mp3"
-						else
-							msg "$festival_err $lgtl" error
-							exit
-						fi
-					else
-						cd $DT_r
-						echo "$trgt" | "$vs"
-						if [ -f *.mp3 ]; then
-							mv -f *.mp3 "$DM_tlt/words/$trgt.mp3"
-						elif [ -f *.wav ]; then
-							sox *.wav "$DM_tlt/words/$trgt.mp3"
-						fi
-					fi
-				else
-					lg=$(echo $lgtl | awk '{print tolower($0)}')
-					if [ $lg = chinese ]; then
-						lg=Mandarin
-					elif [ $lg = japanese ]; then
-						msg "$espeak_err $lgtl" error
-						exit
-					fi
-					espeak "$trgt" -v $lg -k 1 -p 45 -a 80 -s 110 -w $DT_r/s.wav
-					sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
-				fi
-				eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" \
-				"$DM_tlt/words/$trgt.mp3"
+				voice "$trgt" "$DM_tlt/words/$trgt.mp3"
 				
 				if [ -f img.jpg ]; then
 					/usr/bin/convert -scale 100x90! -border 0.5 \
@@ -821,12 +841,12 @@ elif [ $1 = n_w ]; then
 					/usr/bin/convert -scale 360x240! img.jpg imgt.jpg
 					eyeD3 --add-image imgs.jpg:ILLUSTRATION "$DM_tlt/words/$trgt.mp3"
 					mv -f imgt.jpg "$DM_tlt/words/images/$trgt.jpg"
-					icnn="$DM_tlt/words/images/$trgt.jpg"
 				fi
 			fi
 		fi
+		tags_1 W "$trgt" "$srce" "$DM_tlt/words/$trgt.mp3"
 		
-		sleep 2
+		icnn="$DM_tlt/words/images/$trgt.jpg"
 		notify-send -i "$icnn" "$trgt" "$srce\\n ($tpe)" -t 3000
 		$DS/mngr.sh inx W "$trgt" "$tpe"
 		echo "aitm.1.aitm" >> \
@@ -839,8 +859,6 @@ elif [ $1 = edt ]; then
 
 	c="$4"
 	DIC=$DS/addons/Dics/cnfg.sh
-	int="$(sed -n 22p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
-	btn="$(sed -n 21p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
 
 	if [ "$3" = "F" ]; then
 
@@ -912,55 +930,22 @@ elif [ $1 = edt ]; then
 " > logw
 				
 			else
-				result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
-				encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
-				iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 > tr."$c"
+				translate "$trgt" auto $lgs > tr."$c"
+				
 				UNI=$(cat tr."$c")
 				
-				trgt=$(echo "$trgt")
 				$DIC "$trgt" $DT_r swrd
 				
 				if [ -f "$trgt.mp3" ]; then
+				
 					mv -f $DT_r/"$trgt.mp3" "$DM_tlt/words/$trgt.mp3"
-					eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${UNI}IWI2I0I" -A IWI3I0I"$5"IWI3I0I \
-					"$DM_tlt/words/$trgt.mp3" >/dev/null 2>&1
-					
 				else
-					vs=$(sed -n 7p $DC_s/cfg.1)
-					if [ -n "$vs" ]; then
-						if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
-							lg=$(echo $lgtl | awk '{print tolower($0)}')
-							
-							if ([ $lg = "english" ] || [ $lg = "spanish" ] || [ $lg = "russian" ]); then
-								echo "$trgt" | text2wave -o $DT_r/s.wav
-								sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
-							else
-								msg "$festival_err $lgtl" error
-								exit
-							fi
-						else
-							cd $DT_r
-							echo "$trgt" | "$vs"
-							if [ -f *.mp3 ]; then
-								mv -f *.mp3 "$DM_tlt/words/$trgt.mp3"
-							elif [ -f *.wav ]; then
-								sox *.wav "$DM_tlt/words/$trgt.mp3"
-							fi
-						fi
-					else
-						lg=$(echo $lgtl | awk '{print tolower($0)}')
-						if [ $lg = chinese ]; then
-							lg=Mandarin
-						elif [ $lg = japanese ]; then
-							msg "$espeak_err $lgtl" error
-							exit
-						fi
-						espeak "$trgt" -v $lg -k 1 -p 45 -a 80 -s 110 -w $DT_r/s.wav
-						sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
-					fi
-					eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${UNI}IWI2I0I" -A IWI3I0I"$5"IWI3I0I \
-					"$DM_tlt/words/$trgt.mp3" >/dev/null 2>&1
+				
+					voice "$trgt" "$DM_tlt/words/$trgt.mp3"
 				fi
+				
+				tags_2 W "$trgt" "$UNI" "$5" "$DM_tlt/words/$trgt.mp3" >/dev/null 2>&1
+				
 				$DS/mngr.sh inx W "$trgt" "$tpc" "$nme"
 			fi
 			
@@ -1015,8 +1000,8 @@ elif [ $1 = prc ]; then
 	cat ./lstws | tr -c "[:alnum:]" '\n' | sed '/^$/d' | sed '/"("/d' \
 	| sed '/")"/d' | sed '/":"/d' | sort -u \
 	| head -n40 | egrep -v "FALSE" | egrep -v "TRUE" > lst
-	nme=$(cat ./lstws | sed 's/FALSE//g' | \
-	sed 's/TRUE//g' | sed 's/^ *//' | sed 's/[ \t]*$//')
+	
+	nme="$(nmfile "$(cat ./lstws)")"
 
 	ws1=$(sed -n 1p lst)
 	ws2=$(sed -n 2p lst)
@@ -1312,55 +1297,23 @@ elif [ $1 = snt ]; then
 		if [ $(cat "$DC_tlt/cfg.3" | wc -l) -ge 50 ]; then
 			echo "$trgt" >> logw
 		else
-			result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
-			encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
-			iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 > tr."$c"
+			translate "$trgt" auto $lgs > tr."$c"
+			
 			UNI=$(cat ./tr."$c")
 			$DIC "$trgt" $DT_r swrd
+			
 			if [ -f "$trgt.mp3" ]; then
+			
 				mv -f "$DT_r/$trgt.mp3" "$DM_tlt/words/$trgt.mp3"
-				eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${UNI}IWI2I0I" -A IWI3I0I"$2"IWI3I0I \
-				"$DM_tlt/words/$trgt.mp3"
-				# si no hay audio
-				else
-					vs=$(sed -n 7p $DC_s/cfg.1)
-					if [ -n "$vs" ]; then
-						if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
-							lg=$(echo $lgtl | awk '{print tolower($0)}')
-
-							if ([ $lg = "english" ] || [ $lg = "spanish" ] || [ $lg = "russian" ]); then
-								echo "$trgt" | text2wave -o $DT_r/s.wav
-								sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
-							else
-								msg "$festival_err $lgtl" error
-								exit
-							fi
-						else
-							cd $DT_r
-							echo "$trgt" | "$vs"
-							if [ -f *.mp3 ]; then
-								mv -f *.mp3 "$DM_tlt/words/$trgt.mp3"
-							elif [ -f *.wav ]; then
-								sox *.wav "$DM_tlt/words/$trgt.mp3"
-							fi
-						fi
-					else
-						lg=$(echo $lgtl | awk '{print tolower($0)}')
-						if [ $lg = chinese ]; then
-							lg=Mandarin
-						elif [ $lg = japanese ]; then
-							msg "$espeak_err $lgtl" error
-							exit
-						fi
-						espeak "$trgt" -v $lg -k 1 -p 45 -a 80 -s 110 -w $DT_r/s.wav
-						sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
-					fi
-
-				eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${UNI}IWI2I0I" -A IWI3I0I"$2"IWI3I0I \
-				"$DM_tlt/words/$trgt.mp3"
+				
+			else
+				voice "$trgt" "$DM_tlt/words/$trgt.mp3"
 			fi
+			
+			tags_2 W "$trgt" "$UNI" "$2" "$DM_tlt/words/$trgt.mp3" >/dev/null 2>&1
+			
 			$DS/mngr.sh inx W "$trgt" "$3"
-			fi
+		fi
 		let n++
 	done
 
@@ -1381,16 +1334,12 @@ elif [ $1 = snt ]; then
 	exit
 	
 elif [ $1 = prs ]; then
+
 	source $DS/ifs/trans/$lgs/add.conf
 	wth=$(sed -n 3p $DC_s/cfg.18)
 	eht=$(sed -n 4p $DC_s/cfg.18)
 	ns=$(cat "$DC_tlt"/cfg.4 | wc -l)
-	lvbr=$(cat $DS/default/$lgt/verbs)
-	lnns=$(cat $DS/default/$lgt/nouns)
-	ladv=$(cat $DS/default/$lgt/adverbs)
-	lprn=$(cat $DS/default/$lgt/pronouns)
-	lpre=$(cat $DS/default/$lgt/prepositions)
-	ladj=$(cat $DS/default/$lgt/adjetives)
+	source $DS/default/$lgt/grammar
 	nspr='/usr/share/idiomind/add.sh prs'
 	LNK='http://www.chromium.org/developers/how-tos/api-keys'
 	dct=$DS/addons/Dics/cnfg.sh
@@ -1437,7 +1386,7 @@ elif [ $1 = prs ]; then
 		prdt="$2"
 	fi
 
-	if [ "$(echo "$prdt" | cut -d "|" -f1 | sed -n 1p)" = "a" ]; then
+	if [ "$(echo "$prdt")" = "audio" ]; then
 
 		left=$((50 - $(cat "$DC_tlt/cfg.4" | wc -l)))
 		key=$(sed -n 2p $DC_s/cfg.3)
@@ -1453,9 +1402,9 @@ elif [ $1 = prs ]; then
 		fi
 		
 		cd $HOME
-		FL=$($yad --borders=0 --name=idiomind --file-filter="*.mp3" \
-			--skip-taskbar --on-top --title="Speech recognize" --center \
-			--window-icon=idiomind --file --width=600 --height=450)
+		FL=$(yad --borders=0 --name=idiomind --file-filter="*.mp3" \
+		--skip-taskbar --on-top --title="Speech recognize" --center \
+		--window-icon=idiomind --file --width=600 --height=450)
 		
 		if [ -z "$FL" ];then
 			[[ -d $DT_r ]] && rm -fr $DT_r
@@ -1476,8 +1425,7 @@ elif [ $1 = prs ]; then
 			cd $DT_r
 			eyeD3 -P itunes-podcast --remove "$DT_r"/rv.mp3
 			eyeD3 --remove-all "$DT_r"/rv.mp3
-			sox "$DT_r"/rv.mp3 "$DT_r"/c_rv.mp3 \
-			remix - highpass 100 norm \
+			sox "$DT_r"/rv.mp3 "$DT_r"/c_rv.mp3 remix - highpass 100 norm \
 			compand 0.05,0.2 6:-54,-90,-36,-36,-24,-24,0,-12 0 -90 0.1 \
 			vad -T 0.6 -p 0.2 -t 5 fade 0.1 reverse \
 			vad -T 0.6 -p 0.2 -t 5 fade 0.1 reverse norm -0.5
@@ -1493,25 +1441,19 @@ elif [ $1 = prs ]; then
 			echo "3"
 			echo "# $check_key... " ; sleep 1
 			
-			wget -q -U "Mozilla/5.0" --post-file "$DS/addons/Google translation service/test.flac" \
-			--header="Content-Type: audio/x-flac; rate=16000" \
-			-O - "https://www.google.com/speech-api/v2/recognize?&lang="$lgt"-"$lgt"&key=$key" > info.ret
+			data="$(audio_recognize "$DS/addons/Google translation service/test.flac" $lgt $lgt $key)"
 			
-			if [ -z "$(cat info.ret)" ]; then
+			if [ -z "$data" ]; then
 				key=$(sed -n 3p $DC_s/cfg.3)
-				wget -q -U "Mozilla/5.0" --post-file "$DS/addons/Google translation service/test.flac" \
-				--header="Content-Type: audio/x-flac; rate=16000" \
-				-O - "https://www.google.com/speech-api/v2/recognize?&lang="$lgt"-"$lgt"&key=$key" > info.ret
+				data="$(audio_recognize "$DS/addons/Google translation service/test.flac" $lgt $lgt $key)"
 			fi
 			
-			if [ -z "$(cat info.ret)" ]; then
+			if [ -z "$data" ]; then
 				key=$(sed -n 4p $DC_s/cfg.3)
-				wget -q -U "Mozilla/5.0" --post-file "$DS/addons/Google translation service/test.flac" \
-				--header="Content-Type: audio/x-flac; rate=16000" \
-				-O - "https://www.google.com/speech-api/v2/recognize?&lang="$lgt"-"$lgt"&key=$key" > info.ret
+				data="$(audio_recognize "$DS/addons/Google translation service/test.flac" $lgt $lgt $key)"
 			fi
 			
-			if [ -z "$(cat info.ret)" ]; then
+			if [ -z "$data" ]; then
 				$yad --name=idiomind --center --on-top --image=error \
 				--text="$key_err <a href='$LNK'>Google. </a>" \
 				--image-on-top --sticky --title="Idiomind" \
@@ -1522,37 +1464,33 @@ elif [ $1 = prs ]; then
 			fi
 			
 			echo "# $file_pros" ; sleep 0.2
-			#-----------------------------------------
+			#----------------------
 			n=1
 			while [ $n -le "$lns" ]; do
 
 				sox "$n".mp3 info.flac rate 16k
-				wget -q -U "Mozilla/5.0" \
-				--post-file info.flac \
-				--header="Content-Type: audio/x-flac; rate=16000" \
-				-O - "https://www.google.com/speech-api/v2/recognize?&lang="$lgt"-"$lgt"&key=$key" \
-				| sed 's/","confidence.*//' > ./info.ret
 				
-				if [ -z "$(cat info.ret)" ]; then
+				data="$(audio_recognize info.flac $lgt $lgt $key)"
+
+				if [ -z "$data" ]; then
 					$yad --name=idiomind --center --on-top --image=error \
-					--text="$key_err <a href='$LNK'>Google. </a>" \
+					--text="$key_err <a href='$LNK'>Google</a>" \
 					--image-on-top --sticky --title="Idiomind" \
 					--width=420 --height=150 --button=gtk-ok:0 \
 					--skip-taskbar --window-icon=idiomind &
 					[[ -d $DT_r ]] && rm -fr $DT_r
 					rm -f ls $lckpr & break & exit 1
 				fi
-				
-				cat ./info.ret | sed '1d' | sed 's/.*transcript":"//' \
-				| sed 's/"}],"final":true}],"result_index":0}//g' > ./tgt
-				trgt=$(cat ./tgt)
+
+				trgt="$(echo "$data" | sed '1d' | sed 's/.*transcript":"//' \
+				| sed 's/"}],"final":true}],"result_index":0}//g')"
 				
 				if [ $(echo "$trgt" | wc -c) -gt 180 ]; then
 					echo "
 $trgt" >> log
 				
 				else
-					nme="$(cat ./tgt | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
+					nme="$(nmfile "$trgt")"
 					
 					mv -f ./"$n".mp3 ./"$nme".mp3
 					echo "$trgt" > ./"$nme".txt
@@ -1566,6 +1504,7 @@ $trgt" >> log
 				
 				let n++
 			done
+			
 			) | $yad --progress --progress-text=" " \
 			--width=200 --height=20 --geometry=200x20-2-2 \
 			--undecorated --auto-close --on-top \
@@ -1622,10 +1561,10 @@ $trgt" >> log
 					
 					internet
 					
-					#-----------------------------------------
+					#---------------
 					(
-					echo "2"
-					echo "# " ;
+					echo "1"
+					echo "# $pros... " ;
 					[ $lgt = ja ] || [ $lgt = "zh-cn" ] || [ $lgt = ru ] && c=c || c=w
 					lns=$(cat ./slts ./wrds | wc -l)
 					n=1
@@ -1633,8 +1572,7 @@ $trgt" >> log
 						
 						sntc=$(sed -n "$n"p ./slts)
 						trgt=$(cat "./$sntc.txt")
-						
-						nme="$(echo "$sntc" | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
+						nme="$(nmfile "$sntc")"
 						
 						if [ $(sed -n 1p "$sntc.txt" | wc -$c) -eq 1 ]; then
 						
@@ -1643,10 +1581,9 @@ $trgt" >> log
 $sntc" >> ./slog
 						
 							else
-								result=$(curl -s -i --user-agent "" -d "sl=$lgt" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
-								encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
-								srce=$(iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8)
-								eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" "$sntc".mp3
+								srce="$(translate "$trgt" $lgt $lgs)"
+
+								tags_1 W "$trgt" "$srce" "$DT_r/$sntc.mp3"
 								
 								mv -f "$sntc".mp3 "$DM_tlt/words/$nme".mp3
 								$DS/mngr.sh inx W "$nme" "$tpe"
@@ -1660,11 +1597,9 @@ $sntc" >> ./slog
 $sntc" >> ./wlog
 						
 							else
-								result=$(curl -s -i --user-agent "" -d "sl=$lgt" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
-								encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
-								srce=$(iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 | sed ':a;N;$!ba;s/\n/ /g')
-								eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I \
-								"$sntc.mp3"
+								srce="$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')"
+								
+								tags_1 S "$trgt" "$srce" "$DT_r/$sntc.mp3"
 
 								mv -f "$sntc.mp3" "$DM_tlt/$nme.mp3"
 								$DS/mngr.sh inx S "$trgt" "$tpe"
@@ -1680,44 +1615,21 @@ $sntc" >> ./wlog
 									vrbl="$trgt"; lg=$lgs; aw=$DT/twrd_$r; bw=$DT/swrd_$r
 								fi
 
-								echo "$vrbl" | sed 's/ /\n/g' | grep -v '^.$' | grep -v '^..$' \
-								| sed -n 1,40p | sed s'/&//'g | sed 's/,//g' | sed 's/\?//g' \
-								| sed 's/\¿//g' | sed 's/;//g' | sed 's/\!//g' | sed 's/\¡//g' \
-								| tr -d ')' | tr -d '(' | sed 's/\]//g' | sed 's/\[//g' \
-								| sed 's/\.//g' | sed 's/  / /g' | sed 's/ /\. /g' > $aw
+								clean_word_list "$vrbl" > $aw
 								
 								twrd=$(cat $aw | sed '/^$/d')
-								result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lg" --data-urlencode text="$twrd" https://translate.google.com)
-								encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
-								iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 | sed 's/,//g' | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
+
+								srce="$(translate "$twrd" auto $lg)"
+								
+								echo "$srce" | sed 's/,//g' | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
+								
 								> A_$r
 								> B_$r
-								> C_$r
+								> g_$r
 								sed -i 's/\. /\n/g' $bw
 								sed -i 's/\. /\n/g' $aw
 								snmk=$(echo "$trgt"  | sed 's/ /\n/g')
-								n=1
-								while [ $n -le $(echo "$snmk" | wc -l) ]; do
-									grmrk=$(echo "$snmk" | sed -n "$n"p)
-									chck=$(echo "$snmk" | sed -n "$n"p | awk '{print tolower($0)}' \
-									| sed 's/,//g' | sed 's/\.//g')
-									if echo "$lnns" | grep -Fxq $chck; then
-										echo "$grmrk" >> C_$r
-									elif echo "$lvbr" | grep -Fxq $chck; then
-										echo "<span color='#D14D8B'>$grmrk</span>" >> C_$r
-									elif echo "$lpre" | grep -Fxq $chck; then
-										echo "<span color='#E08434'>$grmrk</span>" >> C_$r
-									elif echo "$ladv" | grep -Fxq $chck; then
-										echo "<span color='#9C68BD'>$grmrk</span>" >> C_$r
-									elif echo "$lprn" | grep -Fxq $chck; then
-										echo "<span color='#5473B8'>$grmrk</span>" >> C_$r
-									elif echo "$ladj" | grep -Fxq $chck; then
-										echo "<span color='#368F68'>$grmrk</span>" >> C_$r
-									else
-										echo "$grmrk" >> C_$r
-									fi
-									let n++
-								done
+								grammar "$snmk" $DT_r $r
 								
 								if ([ "$lgt" = ja ] || [ "$lgt" = 'zh-cn' ] || [ "$lgt" = ru ]); then
 									n=1
@@ -1738,10 +1650,11 @@ $sntc" >> ./wlog
 										let n++
 									done
 								fi
-								grmrk=$(cat C_$r | sed ':a;N;$!ba;s/\n/ /g')
+								grmrk=$(cat g_$r | sed ':a;N;$!ba;s/\n/ /g')
 								lwrds=$(cat A_$r)
 								pwrds=$(cat B_$r | tr '\n' '_')
-								eyeD3 --set-encoding=utf8 -A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0IIGMI3I0I"$grmrk"IGMI3I0I "$DM_tlt/$nme.mp3"
+
+								tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$nme.mp3"
 
 								if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 									n=1
@@ -1780,61 +1693,27 @@ $sntc" >> ./wlog
 					while [ $n -le "$(cat wrds | head -50 | wc -l)" ]; do
 						trgt=$(sed -n "$n"p wrds | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
 						exmp=$(sed -n "$n"p wrdsls)
-						
-						nme="$(echo "$exmp" | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
+
+						nme="$(nmfile "$exmp")"
 
 						if [ $(cat "$DC_tlt"/cfg.3 | wc -l) -ge 50 ]; then
 							echo "
 $trgt" >> ./wlog
 					
 						else
-							result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
-							encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
-							srce=$(iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8)
+							srce="$(translate "$trgt" auto $lgs)"
 
 							$dct "$trgt" $DT_r swrd
 							
 							if [ -f "$trgt".mp3 ]; then
+							
 								mv -f "$DT_r/$trgt.mp3" "$DM_tlt/words/$trgt.mp3"
-								eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" -A "IWI3I0I${exmp}IWI3I0I" \
-								"$DM_tlt/words/$trgt.mp3"
-
 							else
-								vs=$(sed -n 7p $DC_s/cfg.1)
-								if [ -n "$vs" ]; then
-									if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
-										lg=$(echo $lgtl | awk '{print tolower($0)}')
-
-										if ([ $lg = "english" ] || [ $lg = "spanish" ] || [ $lg = "russian" ]); then
-										echo "$trgt" | text2wave -o $DT_r/s.wav
-										sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
-										else
-											msg "$festival_err $lgtl" error
-											exit
-										fi
-									else
-										cd $DT_r
-										echo "$trgt" | "$vs"
-										if [ -f *.mp3 ]; then
-											mv -f *.mp3 "$DM_tlt/words/$trgt.mp3"
-										elif [ -f *.wav ]; then
-											sox *.wav "$DM_tlt/words/$trgt.mp3"
-										fi
-									fi
-								else
-									lg=$(echo $lgtl | awk '{print tolower($0)}')
-									if [ $lg = chinese ]; then
-										lg=Mandarin
-									elif [ $lg = japanese ]; then
-										msg "$espeak_err $lgtl" error
-										exit
-									fi
-									espeak "$trgt" -v $lg -k 1 -p 45 -a 80 -s 110 -w $DT_r/s.wav
-									sox $DT_r/s.wav "$DM_tlt/words/$trgt.mp3"
-								fi
-								eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${UNI}IWI2I0I" -A "IWI3I0I${exmp}IWI3I0I" \
-								"$DM_tlt/words/$trgt.mp3"
+								voice "$trgt" "$DM_tlt/words/$trgt.mp3"
+								
 							fi
+							tags_2 W "$trgt" "$srce" "$exmp" "$DM_tlt/words/$trgt.mp3" >/dev/null 2>&1
+							
 							echo "$trgt" >> addw
 							$DS/mngr.sh inx W "$trgt" "$tpe" "$nme"
 						fi
@@ -1939,15 +1818,14 @@ $trgt" >> ./wlog
 		fi
 	fi
 
-	if [ "$(echo "$prdt" | cut -d "|" -f1 \
-	| sed -n 1p | grep -o "http")" = "http" ]; then
-		
+	if [ $(echo ${2:0:4}) = 'Http' ]; then
+	
 		internet
 		
 		(
-		echo "3"
-		echo "# " ;
-		lynx -dump -nolist $prdt  | sed -n -e '1x;1!H;${x;s-\n- -gp}' \
+		echo "1"
+		echo "# $pros..." ;
+		lynx -dump -nolist $2  | sed -n -e '1x;1!H;${x;s-\n- -gp}' \
 		| sed 's/\./\.\n/g' | sed 's/<[^>]*>//g' | sed 's/ \+/ /g' \
 		| sed '/^$/d' | sed 's/  / /g' | sed 's/^[ \t]*//;s/[ \t]*$//g' \
 		| sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
@@ -1959,16 +1837,15 @@ $trgt" >> ./wlog
 		--undecorated --auto-close \
 		--skip-taskbar --no-buttons
 
-	elif [[ "$(echo "$prdt" | cut -d "|" -f1 \
-	| sed -n 1p | grep -o "i")" = i ]]; then
+	elif [[ "$(echo "$2" | grep -o "i")" = i ]]; then
 		
 		SCR_IMG=`mktemp`
 		trap "rm $SCR_IMG*" EXIT
 		scrot -s $SCR_IMG.png
 		
 		(
-		echo "3"
-		echo "# " ;
+		echo "1"
+		echo "# $pros..." ;
 		mogrify -modulate 100,0 -resize 400% $SCR_IMG.png
 		tesseract $SCR_IMG.png $SCR_IMG &> /dev/null
 		cat $SCR_IMG.txt | sed 's/\\n/./g' | sed 's/\./\n/g' \
@@ -1982,8 +1859,8 @@ $trgt" >> ./wlog
 		--skip-taskbar --no-buttons
 	else
 		(
-		echo "3"
-		echo "# " ;
+		echo "1"
+		echo "# $pros..." ;
 		echo "$prdt" | sed 's/\\n/./g' | sed 's/\./\n/g' \
 		| sed '/^$/d' | sed 's/^[ \t]*//;s/[ \t]*$//' \
 		| sed 's/  / /g' | sed 's/\://g' > ./sntsls_
@@ -2085,7 +1962,7 @@ $trgt" >> ./wlog
 					> ./wlog
 					> ./slog
 					
-					#sentences
+					#words
 					{
 					echo "5"
 					echo "# $pros... " ;
@@ -2100,23 +1977,20 @@ $trgt" >> ./wlog
 $sntc" >> ./wlog
 						
 							else
-								result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lgt" --data-urlencode text="$sntc" https://translate.google.com)
-								encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
-								iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 > ./trgt
-								trgt=$(cat ./trgt)
-								result=$(curl -s -i --user-agent "" -d "sl=$lgt" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
-								encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
-								srce=$(iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8)
+								trgt="$(translate "$sntc" auto $lgt)"
 
+								srce="$(translate "$trgt" $lgt $lgs)"
+								
 								wget -q -U Mozilla -O $DT_r/$trgt.mp3 "https://translate.google.com/translate_tts?ie=UTF-8&tl=$lgt&q=$trgt"
-								eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" "$trgt".mp3
+								
+								tags_1 W "$trgt" "$srce" "$DT_r/$trgt.mp3"
 
 								mv -f "$trgt".mp3 "$DM_tlt/words/$trgt".mp3
 								echo "$trgt" >> addw
 								
 								$DS/mngr.sh inx W "$trgt" "$tpe"
 							fi
-						
+						#words
 						elif [ $(echo "$sntc" | wc -$c) -ge 1 ]; then
 							
 							if [ $(cat "$DC_tlt"/cfg.4 | wc -l) -ge 50 ]; then
@@ -2129,85 +2003,27 @@ $sntc" >> ./slog
 $sntc" >> ./slog
 							
 								else
-									txt=$(echo "$sntc" | sed ':a;N;$!ba;s/\n/ /g' | sed 's/"//g' | sed 's/“//g' \
-									| sed 's/”//g' | sed "s/’/'/g" | sed 's/^[ \t]*//;s/[ \t]*$//')
-									result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lgt" --data-urlencode text="$txt" https://translate.google.com)
-									encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
-									iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 > ./trgt
+									txt="$(clean_1 "$sntc")"
 									
+									translate "$txt" > ./trgt
+
 									sed -i ':a;N;$!ba;s/\n/ /g' ./trgt
 									trgt=$(cat ./trgt | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-									sed -i 's/  / /g' ./trgt
-									sed -i 's/  / /g' ./trgt
 									
-									nme="$(cat trgt | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
-										
-									result=$(curl -s -i --user-agent "" -d "sl=$lgt" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
-									encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
-									srce=$(iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 | sed ':a;N;$!ba;s/\n/ /g')
+									nme="$(nmfile "$trgt")" #sed -i 's/,/ /g' ./trgt
+									
+									srce="$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')"
 									
 									if sed -n 1p $DC_s/cfg.3 | grep TRUE; then
-										sed -i 's/,/ /g' ./trgt
-										sed -i "s/'/ /g" ./trgt
-										sed -i 's/’/ /g' ./trgt
-										xargs -n10 < ./trgt > ./temp
-										SRC1=$(sed -n 1p ./temp)
-										SRC2=$(sed -n 2p ./temp)
-										SRC3=$(sed -n 3p ./temp)
-										SRC4=$(sed -n 4p ./temp)
-										
-										if [ -n "$SRC1" ]; then
-											wget -q -U Mozilla -O $DT_r/TMP1.mp3 "https://translate.google.com/translate_tts?ie=UTF-8&tl=$lgt&q=$SRC1"
-										fi
-										if [ -n "$SRC2" ]; then
-											wget -q -U Mozilla -O $DT_r/TMP2.mp3 "https://translate.google.com/translate_tts?ie=UTF-8&tl=$lgt&q=$SRC2"
-										fi
-										if [ -n "$SRC3" ]; then
-											wget -q -U Mozilla -O $DT_r/TMP3.mp3 "https://translate.google.com/translate_tts?ie=UTF-8&tl=$lgt&q=$SRC3"
-										fi
-										if [ -n "$SRC4" ]; then
-											wget -q -U Mozilla -O $DT_r/TMP4.mp3 "https://translate.google.com/translate_tts?ie=UTF-8&tl=$lgt&q=$SRC4"
-										fi
-										
-										cat TMP1.mp3 TMP2.mp3 TMP3.mp3 TMP4.mp3 > "./$nme.mp3"
-										mv -f "./$nme.mp3" "$DM_tlt/$nme.mp3"
+									
+										tts ./trgt $lgt $DT_r "$nme"
 										
 									else
-										vs=$(sed -n 7p $DC_s/cfg.1)
-										if [ -n "$vs" ]; then
-											if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
-												lg=$(echo $lgtl | awk '{print tolower($0)}')
-
-												if ([ $lg = "english" ] || [ $lg = "spanish" ] || [ $lg = "russian" ]); then
-													echo "$trgt" | text2wave -o $DT_r/s.wav
-													sox $DT_r/s.wav "$DM_tlt/$nme.mp3"
-												else
-													msg "$festival_err $lgtl" error
-													exit
-												fi
-											else
-												cd $DT_r
-												echo "$trgt" | $vs
-												if [ -f *.mp3 ]; then
-													mv -f *.mp3 "$DM_tlt/$nme.mp3"
-												elif [ -f *.wav ]; then
-													sox *.wav "$DM_tlt/$nme.mp3"
-												fi
-											fi
-										else
-											lg=$(echo $lgtl | awk '{print tolower($0)}')
-											if [ $lg = chinese ]; then
-												lg=Mandarin
-											elif [ $lg = japanese ]; then
-												msg "$espeak_err $lgtl" error
-												exit
-											fi
-											espeak "$trgt" -v $lg -k 1 -p 65 -a 80 -s 120 -w $DT_r/s.wav
-											sox $DT_r/s.wav "$DM_tlt/$nme.mp3"
-										fi
+										voice "$trgt" "$DM_tlt/$nme.mp3"
+										
 									fi
 
-									eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I "$DM_tlt/$nme.mp3"
+									tags S "$trgt" "$srce" "$DM_tlt/$nme.mp3"
 									
 									echo "$nme" >> adds
 									$DS/mngr.sh inx S "$trgt" "$tpe"
@@ -2221,44 +2037,19 @@ $sntc" >> ./slog
 											vrbl="$trgt"; lg=$lgs; aw=$DT/twrd_$r; bw=$DT/swrd_$r
 										fi
 
-										echo "$vrbl" | sed 's/ /\n/g' | grep -v '^.$' | grep -v '^..$' \
-										| sed -n 1,40p | sed s'/&//'g | sed 's/,//g' | sed 's/\?//g' \
-										| sed 's/\¿//g' | sed 's/;//g' | sed 's/\!//g' | sed 's/\¡//g' \
-										| tr -d ')' | tr -d '(' | sed 's/\]//g' | sed 's/\[//g' \
-										| sed 's/\.//g' | sed 's/  / /g' | sed 's/ /\. /g' > $aw
+										clean_word_list "$vrbl" > $aw
 										twrd=$(cat $aw | sed '/^$/d')
-										result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lg" --data-urlencode text="$twrd" https://translate.google.com)
-										encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
-										iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 | sed 's/,//g' | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
+										
+										translate "$twrd" auto $lg | sed 's/,//g' | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
 										
 										> A_$r
 										> B_$r
-										> C_$r
+										> g_$r
 										sed -i 's/\. /\n/g' $bw
 										sed -i 's/\. /\n/g' $aw
 										snmk=$(echo "$trgt"  | sed 's/ /\n/g')
-										n=1
-										while [ $n -le $(echo "$snmk" | wc -l) ]; do
-											grmrk=$(echo "$snmk" | sed -n "$n"p)
-											chck=$(echo "$snmk" | sed -n "$n"p | awk '{print tolower($0)}' \
-											| sed 's/,//g' | sed 's/\.//g')
-											if echo "$lnns" | grep -Fxq $chck; then
-												echo "$grmrk" >> C_$r
-											elif echo "$lvbr" | grep -Fxq $chck; then
-												echo "<span color='#D14D8B'>$grmrk</span>" >> C_$r
-											elif echo "$lpre" | grep -Fxq $chck; then
-												echo "<span color='#E08434'>$grmrk</span>" >> C_$r
-											elif echo "$ladv" | grep -Fxq $chck; then
-												echo "<span color='#9C68BD'>$grmrk</span>" >> C_$r
-											elif echo "$lprn" | grep -Fxq $chck; then
-												echo "<span color='#5473B8'>$grmrk</span>" >> C_$r
-											elif echo "$ladj" | grep -Fxq $chck; then
-												echo "<span color='#368F68'>$grmrk</span>" >> C_$r
-											else
-												echo "$grmrk" >> C_$r
-											fi
-											let n++
-										done
+										
+										grammar "$snmk" $DT_r $r
 										
 										if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 											n=1
@@ -2280,10 +2071,10 @@ $sntc" >> ./slog
 											done
 										fi
 										
-										grmrk=$(cat C_$r | sed ':a;N;$!ba;s/\n/ /g')
+										grmrk=$(cat g_$r | sed ':a;N;$!ba;s/\n/ /g')
 										lwrds=$(cat A_$r)
 										pwrds=$(cat B_$r | tr '\n' '_')
-										eyeD3 --set-encoding=utf8 -A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0IIGMI3I0I"$grmrk"IGMI3I0I "$DM_tlt/$nme.mp3"
+										tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$nme.mp3"
 										
 										if ([ "$lgt" = ja ] || [ "$lgt" = 'zh-cn' ] || [ "$lgt" = ru ]); then
 											n=1
@@ -2321,28 +2112,23 @@ $sntc" >> ./slog
 					
 						exmp=$(sed -n "$n"p wrdsls)
 						itm=$(sed -n "$n"p wrds | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-						
-						nme="$(echo "$exmp" | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
+						nme="$(nmfile "$exmp")"
 
 						if [ $(cat "$DC_tlt"/cfg.3 | wc -l) -ge 50 ]; then
 							echo "
 $itm" >> ./wlog
 					
 						else
-							result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lgs" --data-urlencode text="$itm" https://translate.google.com)
-							encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
-							srce=$(iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8)
-
+							
+							srce="$(translate "$itm" auto $lgs)"
+							
 							$dct "$itm" $DT_r swrd
 							
 							if [ -f "$itm".mp3 ]; then
 								mv -f "$DT_r/$itm.mp3" "$DM_tlt/words/$itm.mp3"
-								eyeD3 --set-encoding=utf8 -t "IWI1I0I${itm}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" -A "IWI3I0I${exmp}IWI3I0I" \
-								"$DM_tlt/words/$itm.mp3"
-							else
-								cp -f $DS/ifs/w "$DM_tlt/words/$itm.mp3"
-								eyeD3 --set-encoding=utf8 -t "IWI1I0I${itm}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" -A "IWI3I0I${exmp}IWI3I0I" \
-								"$DM_tlt/words/$itm.mp3"
+								
+								tags_2 W "$itm" "$srce" "$exmp" "$DM_tlt/words/$itm.mp3"
+
 							fi
 							echo "$itm" >> addw
 							$DS/mngr.sh inx  W "$itm" "$tpe" "$nme"

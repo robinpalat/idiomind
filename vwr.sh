@@ -82,6 +82,7 @@ elif [ -f "$DM_tlt/$nme.mp3" ]; then
 	--dclick-action="$DS/ifs/tls.sh dclik" >/dev/null 2>&1
 else
 	ff=$(($nuw + 1))
+	echo "$(sed -n "$nuw"p "$ind")" >> $DT/rm
 	$DS/vwr.sh "$v" "$nll" "$ff" & exit 1
 fi
 		ret=$?
@@ -96,5 +97,6 @@ fi
 		else 
 			echo "vwr.$(cat $DC/addons/stats/.tmp | wc -l).vwr" >> \
 			$DC/addons/stats/.log
+			[[ -f $DT/rm ]] && $DS/ifs/tls.sh remove_items
 			rm $DC/addons/stats/.tmp & exit 1
 		fi
