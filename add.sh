@@ -99,30 +99,30 @@ function clean_word_list() {
 function tags_1() {
 	
 	eyeD3 --set-encoding=utf8 \
-	-t I$1I1I0I${2}I$1I1I0I \
-	-a I$1I2I0I${3}I$1I2I0I "$4"
+	-t I$1I1I0I"$2"I$1I1I0I \
+	-a I$1I2I0I"$3"I$1I2I0I "$4"
 }
 
 function tags_2() {
 	
 	eyeD3 --set-encoding=utf8 \
-	-t IWI1I0I${2}IWI1I0I \
-	-a IWI2I0I${3}IWI2I0I \
-	-A IWI3I0I${4}IWI3I0I "$5"
+	-t IWI1I0I"$2"IWI1I0I \
+	-a IWI2I0I"$3"IWI2I0I \
+	-A IWI3I0I"$4"IWI3I0I "$5"
 }
 
 function tags_3() {
 	
 	eyeD3 --set-encoding=utf8 \
-	-A IWI3I0I${2}IWI3I0IIPWI3I0I${3}IPWI3I0IIGMI3I0I${4}IGMI3I0I "$5"
+	-A IWI3I0I"$2"IWI3I0IIPWI3I0I"$3"IPWI3I0IIGMI3I0I"$4"IGMI3I0I "$5"
 }
 
 function tags_4() {
 	
 	eyeD3 --set-encoding=utf8 \
-	-t ISI1I0I${2}ISI1I0I \
-	-a ISI2I0I${3}ISI2I0I \
-	-A IWI3I0I${4}IWI3I0IIPWI3I0I${5}IPWI3I0IIGMI3I0I${6}IGMI3I0I "$7"
+	-t ISI1I0I"$2"ISI1I0I \
+	-a ISI2I0I"$3"ISI2I0I \
+	-A IWI3I0I"$4"IWI3I0IIPWI3I0I"$5"IPWI3I0IIGMI3I0I"$6"IGMI3I0I "$7"
 }
 
 function voice() {
@@ -1330,7 +1330,7 @@ elif [ $1 = other_ways ]; then
 	wth=$(sed -n 3p $DC_s/cfg.18)
 	eht=$(sed -n 4p $DC_s/cfg.18)
 	ns=$(cat "$DC_tlt"/cfg.4 | wc -l)
-	source $DS/default/$lgt/grammar
+	source $DS/default/dicts/$lgt
 	nspr='/usr/share/idiomind/add.sh other_ways'
 	LNK='http://www.chromium.org/developers/how-tos/api-keys'
 	dct=$DS/addons/Dics/cnfg.sh
@@ -1996,7 +1996,7 @@ $sntc" >> ./slog
 								else
 									txt="$(clean_1 "$sntc")"
 									
-									translate "$txt" > ./trgt
+									translate "$txt" auto $lgt > ./trgt
 
 									sed -i ':a;N;$!ba;s/\n/ /g' ./trgt
 									trgt=$(cat ./trgt | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
@@ -2014,7 +2014,7 @@ $sntc" >> ./slog
 										
 									fi
 
-									tags S "$trgt" "$srce" "$DM_tlt/$nme.mp3"
+									tags_1 S "$trgt" "$srce" "$DM_tlt/$nme.mp3"
 									
 									echo "$nme" >> adds
 									$DS/mngr.sh inx S "$trgt" "$tpe"
