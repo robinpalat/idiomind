@@ -6,7 +6,7 @@ source /usr/share/idiomind/ifs/c.conf
 cd $DT/.$user
 
 if [ -n "$(cat ./indx)" ] && [ $(cat ./indx | wc -l) -gt 0 ]; then
-	if [ "$(sed -n 7p $DC_s/cfg.5)" = "TRUE" ]; then
+	if [ "$(sed -n 8p $DC_s/cfg.5)" = "TRUE" ]; then
 			echo "--repeat"
 			while [ 1 ]
 			do
@@ -25,9 +25,7 @@ if [ -n "$(cat ./indx)" ] && [ $(cat ./indx | wc -l) -gt 0 ]; then
 		rm -fr $DT/.p__$user $DT/.$user
 	fi
 else
-	int="$(sed -n 16p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
-	T="$(echo "$int" | sed -n 1p)"
-	D="$(echo "$int" | sed -n 2p)"
-	notify-send -i idiomind "$T" "$D" -t 9000 &
+	
+	notify-send -i idiomind "T" "D" -t 9000 &
 	exit 1
 fi

@@ -582,7 +582,7 @@ elif [ "$1" = edt ]; then
 		dftn=$(echo "$inf" | sed -n 2p)
 		ntes=$(echo "$inf" | sed -n 3p)
 		dlte="$DS/mngr.sh dli '$nme'"
-		imge="$DS/add.sh img '$nme' w"
+		imge="$DS/add.sh add_image '$nme' word"
 
 		yad --form --wrap --center --name=idiomind --class=idmnd \
 		--width=$wth --height=$eht --always-print-result \
@@ -680,11 +680,11 @@ elif [ "$1" = edt ]; then
 		src=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
 		lwrd=$(echo "$tgs" | grep -o -P '(?<=IWI3I0I).*(?=IPWI3I0I)')
 		pwrds=$(echo "$tgs" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)')
-		wrds="$DS/add.sh edt '$nme' F $c"
+		wrds="$DS/add.sh selecting_words_edit '$nme' F $c"
 		
 		edau="--button=Edit Audio:/usr/share/idiomind/ifs/tls.sh edta '$DM_tlt/$nme.mp3' '$DM_tlt'"
 		dlte="$DS/mngr.sh dli '$nme'"
-		imge="$DS/add.sh img '$nme' s"
+		imge="$DS/add.sh add_image '$nme' sentence"
 		
 		yad --form --wrap --center --name=idiomind --class=idmnd \
 		--width=$wth --height=$eht --always-print-result \
@@ -943,7 +943,7 @@ elif [ "$1" = edt ]; then
 				./vwr.sh "$v" "nll" $ff & exit 1
 			fi
 			
-			[ -d "$DT/$c" ] && $DS/add.sh edt "$nme" S $c "$trgt" &
+			[ -d "$DT/$c" ] && $DS/add.sh selecting_words_edit "$nme" S $c "$trgt" &
 			./vwr.sh "$v" "$nme" $ff & exit 1
 	fi
 fi

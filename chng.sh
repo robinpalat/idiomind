@@ -71,7 +71,7 @@ if [[ "$1" = chngi ]]; then
 		if [ $(cat $DT/.p__$use | wc -l) -gt 5 ]; then
 			int="$(sed -n 16p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
 			T="$(echo "$int" | sed -n 1p)"
-			D="$(echo "$int" | sed -n 2p)" #interrupt
+			D="$(echo "$int" | sed -n 2p)"
 			notify-send -i idiomind "$T" "$D" -t 9000 &
 			rm -f $DT/.p__$user &
 			$DS/stop.sh S & exit 1
@@ -105,13 +105,13 @@ elif [ "$1" != chngi ]; then
 		--title="$topics" --column=img:img --column=File:TEXT)
 			ret=$?
 			if [ $ret -eq 3 ]; then
-				$DS/add.sh n_t
+				$DS/add.sh new_topic
 				exit 1
 			elif [ $ret -eq 0 ]; then
 				if [ -n "$1" ]; then
 					if [ "$2" = 3 ]; then
 						$DC_tl/"$VAR"/tpc.sh
-						$DS/add.sh n_i  & exit
+						$DS/add.sh new_items  & exit
 					else
 						$DC_tl/"$VAR"/tpc.sh 2 & exit
 					fi

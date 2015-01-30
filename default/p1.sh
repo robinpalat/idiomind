@@ -20,9 +20,11 @@ nuw=$(cat "$dir/cfg.0" | grep -Fxon "$now" \
 | sed -n 's/^\([0-9]*\)[:].*/\1/p')
 nll='echo  " "'
 fi
-nms=$(sed -n "$nuw"p "$dir/cfg.0")
+nms="$(sed -n "$nuw"p "$dir/cfg.0" | cut -c 1-100 \
+| sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
 if [ -z "$nms" ]; then
-nms=$(sed -n 1p "$dir/cfg.0")
+nms="$(sed -n 1p "$dir/cfg.0" | cut -c 1-100 \
+| sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
 nuw=1
 fi
 

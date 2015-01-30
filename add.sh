@@ -70,22 +70,6 @@ function tts() {
 	[[ -n "$(sed -n 4p ./temp)" ]] && wget -q -U Mozilla -O $DT_r/tmp04.mp3 \
 	"https://translate.google.com/translate_tts?ie=UTF-8&tl=$2&q=$(sed -n 4p ./temp)"
 	cat tmp01.mp3 tmp02.mp3 tmp03.mp3 tmp04.mp3 > "$DM_tlt/$4.mp3"
-	
-}
-
-function audio_recognize() {
-	
-	echo "$(wget -q -U "Mozilla/5.0" --post-file "$1" --header="Content-Type: audio/x-flac; rate=16000" \
-	-O - "https://www.google.com/speech-api/v2/recognize?&lang="$2"-"$3"&key=$4")"
-	
-}
-
-function translate() {
-	
-	result=$(curl -s -i --user-agent "" -d "sl=$2" -d "tl=$3" --data-urlencode text="$1" https://translate.google.com)
-	encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
-	t=$(iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8)
-	echo "$t"
 }
 
 function nmfile() {
@@ -115,34 +99,30 @@ function clean_word_list() {
 function tags_1() {
 	
 	eyeD3 --set-encoding=utf8 \
-	-t I$1I1I0I"$2"I$1I1I0I \
-	-a I$1I2I0I"$3"I$1I2I0I "$4"
-	
+	-t I$1I1I0I${2}I$1I1I0I \
+	-a I$1I2I0I${3}I$1I2I0I "$4"
 }
 
 function tags_2() {
 	
 	eyeD3 --set-encoding=utf8 \
-	-t IWI1I0I"$2"IWI1I0I \
-	-a IWI2I0I"$3"IWI2I0I \
-	-A IWI3I0I"$4"IWI3I0I "$5"
-	
+	-t IWI1I0I${2}IWI1I0I \
+	-a IWI2I0I${3}IWI2I0I \
+	-A IWI3I0I${4}IWI3I0I "$5"
 }
 
 function tags_3() {
 	
 	eyeD3 --set-encoding=utf8 \
-	-A IWI3I0I"$2"IWI3I0IIPWI3I0I"$3"IPWI3I0IIGMI3I0I"$4"IGMI3I0I "$5"
-	
+	-A IWI3I0I${2}IWI3I0IIPWI3I0I${3}IPWI3I0IIGMI3I0I${4}IGMI3I0I "$5"
 }
 
 function tags_4() {
 	
 	eyeD3 --set-encoding=utf8 \
-	-t ISI1I0I"$2"ISI1I0I \
-	-a ISI2I0I"$3"ISI2I0I \
-	-A IWI3I0I"$4"IWI3I0IIPWI3I0I"$5"IPWI3I0IIGMI3I0I"$6"IGMI3I0I "$7"
-	
+	-t ISI1I0I${2}ISI1I0I \
+	-a ISI2I0I${3}ISI2I0I \
+	-A IWI3I0I${4}IWI3I0IIPWI3I0I${5}IPWI3I0IIGMI3I0I${6}IGMI3I0I "$7"
 }
 
 function voice() {
@@ -160,7 +140,7 @@ function voice() {
 			sox $DT_r/s.wav "$2"
 			else
 				msg "$festival_err $lgtl" error
-				exit
+				exit 1
 			fi
 		else
 			echo "$1" | "$vs"
@@ -176,15 +156,29 @@ function voice() {
 			lg=Mandarin
 		elif [ $lg = japanese ]; then
 			msg "$espeak_err $lgtl" error
-			exit
+			exit 1
 		fi
 		espeak "$1" -v $lg -k 1 -p 45 -a 80 -s 110 -w $DT_r/s.wav
 		sox $DT_r/s.wav "$2"
 	fi
-	
 }
 
-if [ $1 = n_t ]; then
+function audio_recognize() {
+	
+	echo "$(wget -q -U "Mozilla/5.0" --post-file "$1" --header="Content-Type: audio/x-flac; rate=16000" \
+	-O - "https://www.google.com/speech-api/v2/recognize?&lang="$2"-"$3"&key=$4")"
+}
+
+function translate() {
+	
+	result=$(curl -s -i --user-agent "" -d "sl=$2" -d "tl=$3" --data-urlencode text="$1" https://translate.google.com)
+	encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
+	t=$(iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8)
+	echo "$t"
+}
+
+if [ $1 = new_topic ]; then
+
 	info2=$(cat $DC_tl/.cfg.1 | wc -l)
 	c=$(echo $(($RANDOM%100)))
 	
@@ -227,7 +221,7 @@ if [ $1 = n_t ]; then
 		
 		if [ -z "$jlb" ]; then
 			exit 1
-		else		
+		else
 			mkdir $DM_tl/"$jlb"
 			mkdir $DM_tl/"$jlb"/words
 			mkdir $DM_tl/"$jlb"/words/images
@@ -258,11 +252,8 @@ if [ $1 = n_t ]; then
 		[ "$?" -eq 1 ] && exit
 
 	else
-		# new ------------------------
-		nmt="$2"
-		if [ -z "$2" ]; then
-			nmt=""
-		fi
+		
+		[[ -z "$2" ]] && nmt="" || nmt="$2"
 		
 		if [ $info2 -ge 50 ]; then
 			rm "$DM_tl/.rn"
@@ -299,7 +290,7 @@ if [ $1 = n_t ]; then
 			fi
 			
 			if [[ -z "$jlb" ]]; then
-				rm "$DM_tl"/.rn && exit 1
+				rm "$DM_tl/.rn" && exit 1
 				
 			else
 				mkdir "$DC_tl/$jlb"
@@ -311,10 +302,9 @@ if [ $1 = n_t ]; then
 				"$DC_tl/$jlb/tpc.sh"
 				$DS/mngr.sh mkmn
 			fi
-		
 	fi
 	
-elif [ $1 = n_i ]; then
+elif [ $1 = new_items ]; then
 
 	[[ ! -f $DC/addons/dict/.dicts ]] && touch $DC/addons/dict/.dicts
 	if  [ -z "$(cat $DC/addons/dict/.dicts)" ]; then
@@ -420,12 +410,12 @@ elif [ $1 = n_i ]; then
 			cd $DT_r
 			scrot -s --quality 70 img.jpg
 			/usr/bin/convert -scale 110x90! img.jpg ico.jpg
-			$DS/add.sh n_i $DT_r 2 "$trgt" "$srce" && exit 1
+			$DS/add.sh new_items $DT_r 2 "$trgt" "$srce" && exit 1
 		
 		elif [ $ret -eq 2 ]; then
 		
-			$DS/ifs/tls.sh pnl $DT_r
-			$DS/add.sh n_i $DT_r 2 "$trgt" "$srce" && exit 1
+			$DS/ifs/tls.sh add_audio $DT_r
+			$DS/add.sh new_items $DT_r 2 "$trgt" "$srce" && exit 1
 		
 		elif [ $ret -eq 0 ]; then
 		
@@ -460,20 +450,20 @@ elif [ $1 = n_i ]; then
 				fi
 			fi
 			if [[ "$chk" = "$new *" ]]; then
-				$DS/add.sh n_t
+				$DS/add.sh new_topic
 			else
 				echo "$tpe" > $DC_s/cfg.7
 				echo "$tpe" > $DC_s/cfg.6
 			fi
 			
 			if [ "$(echo "$trgt" | sed -n 1p | awk '{print tolower($0)}')" = i ]; then
-				$DS/add.sh prs image $DT_r & exit 1
+				$DS/add.sh other_ways image $DT_r & exit 1
 			elif [ "$(echo "$trgt" | sed -n 1p | awk '{print tolower($0)}')" = a ]; then
-				$DS/add.sh prs audio $DT_r & exit 1
+				$DS/add.sh other_ways audio $DT_r & exit 1
 			elif [ $(echo ${trgt:0:4}) = 'Http' ]; then
-				$DS/add.sh prs "$trgt" $DT_r & exit 1
+				$DS/add.sh other_ways "$trgt" $DT_r & exit 1
 			elif [ $(echo "$trgt" | wc -c) -gt 180 ]; then
-				$DS/add.sh prs "$trgt" $DT_r & exit 1
+				$DS/add.sh other_ways "$trgt" $DT_r & exit 1
 			elif ([ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]); then
 				if sed -n 1p $DC_s/cfg.3 | grep FALSE; then
 					if [ -z "$4" ]; then
@@ -488,15 +478,15 @@ elif [ $1 = n_i ]; then
 				srce=$(translate "$trgt" auto $lgs)
 				
 				if [ $(echo "$srce" | wc -w) = 1 ]; then
-					$DS/add.sh n_w "$trgt" $DT_r "$srce" & exit
+					$DS/add.sh new_word "$trgt" $DT_r "$srce" & exit
 				elif [ $(echo "$srce" | wc -w) -ge 1 -a $(echo "$srce" | wc -c) -le 180 ]; then
-					$DS/add.sh n_s "$trgt" $DT_r "$srce" & exit
+					$DS/add.sh new_sentence "$trgt" $DT_r "$srce" & exit
 				fi
 			elif ([ $lgt != ja ] || [ $lgt != 'zh-cn' ] || [ $lgt != ru ]); then
 				if [ $(echo "$trgt" | wc -w) = 1 ]; then
-					$DS/add.sh n_w "$trgt" $DT_r "$srce" & exit
+					$DS/add.sh new_word "$trgt" $DT_r "$srce" & exit
 				elif [ $(echo "$trgt" | wc -w) -ge 1 -a $(echo "$trgt" | wc -c) -le 180 ]; then
-					$DS/add.sh n_s "$trgt" $DT_r "$srce" & exit
+					$DS/add.sh new_sentence "$trgt" $DT_r "$srce" & exit
 				fi
 			fi
 		else
@@ -504,7 +494,7 @@ elif [ $1 = n_i ]; then
 			exit
 		fi
 		
-elif [ $1 = n_s ]; then
+elif [ $1 = new_sentence ]; then
 
 	if [ -z "$tpe" ]; then
 		[[ -d $DT_r ]] && rm -fr $DT_r
@@ -512,7 +502,8 @@ elif [ $1 = n_s ]; then
 	fi
 		
 	DT_r="$3"
-	source $DS/default/$lgt/grammar
+	source $DS/default/dicts/$lgt
+
 
 	DM_tlt="$DM_tl/$tpe"
 	DC_tlt="$DC_tl/$tpe"
@@ -619,7 +610,7 @@ elif [ $1 = n_s ]; then
 		
 		(
 		if [ $(sed -n 4p $DC_s/cfg.1) = TRUE ]; then
-		$DS/add.sh snt "$nme" "$tpe"
+		$DS/add.sh selecting_words "$nme" "$tpe"
 		fi
 		) &
 		
@@ -748,7 +739,7 @@ elif [ $1 = n_s ]; then
 		rm -f $DT/twrd $DT/swrd & exit 1
 	fi
 
-elif [ $1 = n_w ]; then
+elif [ $1 = new_word ]; then
 
 	trgt="$2"
 	srce="$4"
@@ -855,7 +846,7 @@ elif [ $1 = n_w ]; then
 		exit
 	fi
 	
-elif [ $1 = edt ]; then
+elif [ $1 = selecting_words_edit ]; then
 
 	c="$4"
 	DIC=$DS/addons/Dics/cnfg.sh
@@ -968,7 +959,7 @@ elif [ $1 = edt ]; then
 			rm -f logw $DT/*.$c & exit 1
 	fi
 	
-elif [ $1 = prc ]; then
+elif [ $1 = selecting_words_dclik ]; then
 
 	DM_tlt="$DM_tl/$tpe"
 	DC_tlt="$DC_tl/$tpe"
@@ -1226,7 +1217,7 @@ elif [ $1 = prc ]; then
 	$? >/dev/null 2>&1
 	exit 1
 
-elif [ $1 = snt ]; then
+elif [ $1 = selecting_words ]; then
 
 	DM_tlt="$DM_tl/$tpe"
 	DC_tlt="$DC_tl/$tpe"
@@ -1333,14 +1324,14 @@ elif [ $1 = snt ]; then
 	[[ -d $DT_r ]] && rm -fr $DT_r
 	exit
 	
-elif [ $1 = prs ]; then
+elif [ $1 = other_ways ]; then
 
 	source $DS/ifs/trans/$lgs/add.conf
 	wth=$(sed -n 3p $DC_s/cfg.18)
 	eht=$(sed -n 4p $DC_s/cfg.18)
 	ns=$(cat "$DC_tlt"/cfg.4 | wc -l)
 	source $DS/default/$lgt/grammar
-	nspr='/usr/share/idiomind/add.sh prs'
+	nspr='/usr/share/idiomind/add.sh other_ways'
 	LNK='http://www.chromium.org/developers/how-tos/api-keys'
 	dct=$DS/addons/Dics/cnfg.sh
 	lckpr=$DT/.n_s_pr
@@ -1535,11 +1526,11 @@ $trgt" >> log
 				cat ls | awk '{print "FALSE\n"$0}' | \
 				yad --center --sticky \
 				--name=idiomind --class=idiomind \
-				--dclick-action='/usr/share/idiomind/add.sh prc' \
+				--dclick-action='/usr/share/idiomind/add.sh selecting_words_dclik' \
 				--list --checklist --window-icon=idiomind \
 				--width=$wth --text="<small>$info</small>" \
 				--height=$eht --borders=3 --button=gtk-cancel:1 \
-				--button="$to_new_topic":'/usr/share/idiomind/add.sh n_t' \
+				--button="$to_new_topic":'/usr/share/idiomind/add.sh new_topic' \
 				--button=gtk-save:0 --title="$Title_sentences" \
 				--column="$(cat ./ls | wc -l)" --column="Items" > "$slt"
 			fi
@@ -1911,13 +1902,13 @@ $trgt" >> ./wlog
 			slt=$(mktemp $DT/slt.XXXX.x)
 			cat ./sntsls | awk '{print "FALSE\n"$0}' | \
 			$yad --name=idiomind --window-icon=idiomind \
-			--dclick-action='/usr/share/idiomind/add.sh prc' --sticky \
-			--list --checklist --class=idiomind --center \
+			--dclick-action='/usr/share/idiomind/add.sh selecting_words_dclik' \
+			--list --checklist --class=idiomind --center --sticky \
 			--text="<small> $info</small>" \
 			--width=$wth --print-all --height=$eht --borders=3 \
 			--button="$cancel":1 \
 			--button="$arrange":2 \
-			--button="$to_new_topic":'/usr/share/idiomind/add.sh n_t' \
+			--button="$to_new_topic":'/usr/share/idiomind/add.sh new_topic' \
 			--button=gtk-save:0 --title="$tpe" \
 			--column="$(cat ./sntsls | wc -l)" --column="$sentences" > $slt
 				ret=$?
@@ -2218,7 +2209,7 @@ $itm" >> ./wlog
 					 rm -f $lckpr $slt & exit 1
 				fi
 				
-elif [ $1 = img ]; then
+elif [ $1 = add_image ]; then
 	cd $DT
 	wrd="$2"
 	echo '<html>
@@ -2236,7 +2227,7 @@ elif [ $1 = img ]; then
 	ICON=$DS/icon/nw.png
 	btnn=$(echo --button=$add_image:3)
 	
-	if [ "$3" = w ]; then
+	if [ "$3" = word ]; then
 		
 		if [ ! -f "$DT/$wrd.*" ]; then
 			file="$DM_tlt/words/$wrd.mp3"
@@ -2279,7 +2270,7 @@ elif [ $1 = img ]; then
 				rm -f *.jpeg s.html
 			fi
 			
-	elif [ "$3" = s ]; then
+	elif [ "$3" = sentence ]; then
 	
 		if [ ! -f "$DT/$wrd.*" ]; then
 			file="$DM_tlt/$wrd.mp3"

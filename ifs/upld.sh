@@ -43,7 +43,7 @@ elif [[ $1 = infsd ]]; then
 	[[ $language_target = Russian ]] && lng=ru
 	nme=$(echo "$tpcd" | sed 's/ /_/g')
 	lnglbl=$(echo $language_target | awk '{print tolower($0)}')
-	icon=$DS/images/img6.png
+	icon=$DS/images/img.6.png
 
 	yad --borders=10 --width=400 --height=160 \
 	--on-top --skip-taskbar --center --image=$icon \

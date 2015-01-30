@@ -46,7 +46,7 @@ elif [ $1 = cnfg ]; then
 	fi
 
 
-elif [ $1 = pnl ]; then
+elif [ $1 = add_audio ]; then
 
 cd $HOME
 inp=/usr/share/idiomind/ifs/tls.sh cnfg
@@ -61,7 +61,9 @@ audio=$(echo "$FLAS" | cut -d "|" -f1)
 cd $DT
 if [[ $ret -eq 0 ]]; then
 if  [[ -f "$audio" ]]; then
-cp -f "$audio" $DT/audtm.mp3 >/dev/null 2>&1 & exit
+cp -f "$audio" $DT/audtm.mp3 >/dev/null 2>&1
+eyeD3 -P itunes-podcast --remove $DT/audtm.mp3
+eyeD3 --remove-all $DT/audtm.mp3 & exit
 fi
 fi
 
