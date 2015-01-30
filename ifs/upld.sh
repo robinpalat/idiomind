@@ -292,18 +292,18 @@ if [ $(cat "$DC_tlt/cfg.0" | wc -l) -le 20 ]; then
 	exit 1
 fi
 cd $HOME
-upld=$($yad --form --width=400 --height=420 --on-top \
+upld=$($yad --form --width=420 --height=460 --on-top \
 --buttons-layout=end --center --window-icon=idiomind \
 --borders=15 --skip-taskbar --align=right \
 --button=$cancel:1 --button=$upload:0 \
---title="Upload" --text="   <b>$tpc</b>" \
+--title="$upload" --text="   <b>$tpc</b>" \
 --field=" :lbl" "#1" \
---field="    <small>$author</small>:: " "$user" \
---field="    <small>$email</small>:: " "$mail" \
---field="    <small>$category</small>::CB" \
+--field="    <small>$author</small>" "$user" \
+--field="    <small>$email</small>" "$mail" \
+--field="    <small>$category</small>:CB" \
 "!$others!$comics!$culture!$entertainment!$family!$grammar!$history!$films!$in_the_city!$internet!$music!$nature!$news!$office!$relations!$sport!$shopping!$social!$technology!$travel" \
---field="    <small>$level</small>::CB" "!$beginner!$intermediate!$advanced" \
---field="<small>\\n$notes:</small>:TXT" "$nt" \
+--field="    <small>$level</small>:CB" "!$beginner!$intermediate!$advanced" \
+--field="<small>\\n$notes</small>:TXT" "$nt" \
 --field="<small>$add_image</small>:FL")
 ret=$?
 

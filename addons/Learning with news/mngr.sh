@@ -20,13 +20,13 @@ if [[ $1 = dlti ]]; then
 			if [[ $ret -eq 2 ]]; then
 				rm "$kpt/words/$itdl.mp3"
 				cd "$drtc"
-				grep -v -x -v "$itdl" ./.inx > ./inx
+				grep -v -x -F "$itdl" ./.inx > ./inx
 				sed '/^$/d' ./inx > ./.inx
 				rm ./inx
-				grep -v -x -v "$itdl" ./cfg.3 > ./cfg.3_
+				grep -v -x -F "$itdl" ./cfg.3 > ./cfg.3_
 				sed '/^$/d' ./cfg.3_ > ./cfg.3
 				rm ./cfg.3_
-				grep -v -x -v "$itdl" ./cfg.0 > ./cfg.0_
+				grep -v -x -F "$itdl" ./cfg.0 > ./cfg.0_
 				sed '/^$/d' ./cfg.0_ > ./cfg.0
 				rm ./cfg.0_
 				notify-send  -i idiomind "$itdl" "$deleted"  -t 1500
@@ -47,13 +47,13 @@ if [[ $1 = dlti ]]; then
 				rm "$kpt/$itdl.mp3"
 				rm "$kpt/$itdl.lnk"
 				cd "$drtc"
-				grep -v -x -v "$itdl" ./.inx > ./inx
+				grep -v -x -F "$itdl" ./.inx > ./inx
 				sed '/^$/d' ./inx > ./.inx
 				rm ./inx
-				grep -v -x -v "$itdl" ./cfg.4 > ./cfg.4_
+				grep -v -x -F "$itdl" ./cfg.4 > ./cfg.4_
 				sed '/^$/d' ./cfg.4_ > ./cfg.4
 				rm ./cfg.4_
-				grep -v -x -v "$itdl" ./cfg.0 > ./cfg.0_
+				grep -v -x -F "$itdl" ./cfg.0 > ./cfg.0_
 				sed '/^$/d' ./cfg.0_ > ./cfg.0
 				rm ./cfg.0_
 				notify-send  -i idiomind "$itdl" "$deleted"  -t 1500
@@ -73,16 +73,16 @@ if [[ $1 = dlti ]]; then
 				rm "$kpt/$itdl.mp3"
 				rm "$kpt/$itdl.lnk"
 				cd "$drtc"
-				grep -v -x -v "$itdl" ./.inx > ./inx
+				grep -v -x -F "$itdl" ./.inx > ./inx
 				sed '/^$/d' ./inx > ./.inx
 				rm ./inx
-				grep -v -x -v "$itdl" ./cfg.3 > ./cfg.3_
+				grep -v -x -F "$itdl" ./cfg.3 > ./cfg.3_
 				sed '/^$/d' ./cfg.3_ > ./cfg.3
 				rm ./cfg.3_
-				grep -v -x -v "$itdl" ./cfg.4 > ./cfg.4_
+				grep -v -x -F "$itdl" ./cfg.4 > ./cfg.4_
 				sed '/^$/d' ./cfg.4_ > ./cfg.4
 				rm ./cfg.4_
-				grep -v -x -v "$itdl" ./cfg.0 > ./cfg.0_
+				grep -v -x -F "$itdl" ./cfg.0 > ./cfg.0_
 				sed '/^$/d' ./cfg.0_ > ./cfg.0
 				rm ./cfg.0_
 				notify-send  -i idiomind "$itdl" "$deleted"  -t 1500

@@ -244,11 +244,11 @@ if [ $1 = new_topic ]; then
 			cp -fr ./.* "$DC_tl/$jlb"/
 			
 			echo "$jlb" >> $DC_tl/.cfg.2
-			grep -v -x -v "$tpc" $DC_tl/.cfg.2 > $DC_tl/.cfg.2_
+			grep -v -x -F "$tpc" $DC_tl/.cfg.2 > $DC_tl/.cfg.2_
 			sed '/^$/d' $DC_tl/.cfg.2_ > $DC_tl/.cfg.2
-			grep -v -x -v "$tpc" $DC_tl/.cfg.1 > $DC_tl/.cfg.1_
+			grep -v -x -F "$tpc" $DC_tl/.cfg.1 > $DC_tl/.cfg.1_
 			sed '/^$/d' $DC_tl/.cfg.1_ > $DC_tl/.cfg.1
-			grep -v -x -v "$tpc" $DC_tl/.cfg.3 > $DC_tl/.cfg.3_
+			grep -v -x -F "$tpc" $DC_tl/.cfg.3 > $DC_tl/.cfg.3_
 			sed '/^$/d' $DC_tl/.cfg.3_ > $DC_tl/.cfg.3
 
 			[[ -d "$DC_tl/$tpc" ]] && rm -r "$DC_tl/$tpc"
@@ -259,7 +259,6 @@ if [ $1 = new_topic ]; then
 		fi
 		
 		[ "$?" -eq 1 ] && exit
-
 	else
 		
 		[[ -z "$2" ]] && nmt="" || nmt="$2"
@@ -356,11 +355,12 @@ elif [ $1 = new_items ]; then
 	
 	if [[ -z "$tpe" ]]; then
 	tpcs=$(cat "$DC_tl/.cfg.2" | cut -c 1-40 \
-	| tr "\\n" '!' | sed 's/!\+$//g')
+	| tr "\\n" '!' | sed 's/\!*$//g')
 	else
 	tpcs=$(cat "$DC_tl/.cfg.2" | egrep -v "$tpe" | cut -c 1-40 \
-	| tr "\\n" '!' | sed 's/!\+$//g')
+	| tr "\\n" '!' | sed 's/\!*$//g')
 	fi
+	[ -n "$tpcs" ] && e='!'
 	ttle="${tpe:0:50}"
 	s=$(cat "$DC_tlt/cfg.4" | wc -l)
 	w=$(cat "$DC_tlt/cfg.3" | wc -l)
@@ -392,7 +392,7 @@ elif [ $1 = new_items ]; then
 	--borders=0 --title=" " --width=440 --height=140 \
 	--field=" <small><small>$lgtl</small></small>: " "$txt" \
 	--field=" <small><small>$topic</small></small>:CB" \
-	"$ttle!$new *!$tpcs" "$field" \
+	"$ttle!$new *$e$tpcs" "$field" \
 	--button="$image":3 --button=Audio:2 --button=gtk-ok:0)
 	elif sed -n 1p $DC_s/cfg.3 | grep FALSE; then
 	lzgpr=$(yad --form --center --always-print-result \
@@ -403,7 +403,7 @@ elif [ $1 = new_items ]; then
 	--field=" <small><small>$lgtl</small></small>: " "$txt" \
 	--field=" <small><small>${lgsl^}</small></small>: " "$srce" \
 	--field=" <small><small>$topic</small></small>:CB" \
-	"$ttle!$new *!$tpcs" "$field" \
+	"$ttle!$new *$e$tpcs" "$field" \
 	--button="$image":3 --button=Audio:2 --button=gtk-ok:0)
 	fi
 	ret=$?
