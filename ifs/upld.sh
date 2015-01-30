@@ -432,23 +432,23 @@ echo "$U" > $DC_s/cfg.4
 echo "$Mail" >> $DC_s/cfg.4
 
 if [[ -f "$img" ]]; then
-/usr/bin/convert -scale 120x90! "$img" $DT/img1.png
-convert $DT/img1.png -alpha opaque -channel a \
--evaluate set 15% +channel $DT/img.png
+/usr/bin/convert -scale 120x90! "$img" $DT_u/img1.png
+convert $DT_u/img1.png -alpha opaque -channel a \
+-evaluate set 15% +channel $DT_u/img.png
 bo=/usr/share/idiomind/images/bo.png
-convert $bo -edge .5 -blur 0x.5 $DT/bo_.png
-convert $DT/img.png \( $DT/bo_.png -negate \) \
+convert $bo -edge .5 -blur 0x.5 $DT_u/bo_.png
+convert $DT_u/img.png \( $DT_u/bo_.png -negate \) \
 -geometry +1+1 -compose multiply -composite \
--crop 120x90+1+1 +repage $DT/bo_outline.png
-convert $DT/img.png -crop 120x90+1+1\! \
+-crop 120x90+1+1 +repage $DT_u/bo_outline.png
+convert $DT_u/img.png -crop 120x90+1+1\! \
 -background none -flatten +repage \( $bo +matte \) \
--compose CopyOpacity -composite +repage $DT/boim.png
-convert $DT/boim.png \( +clone -channel A -separate +channel \
+-compose CopyOpacity -composite +repage $DT_u/boim.png
+convert $DT_u/boim.png \( +clone -channel A -separate +channel \
 -negate -background black -virtual-pixel background \
 -blur 0x4 -shade 110x21.78 -contrast-stretch 0% +sigmoidal-contrast 7x50% \
 -fill grey50 -colorize 10% +clone +swap -compose overlay -composite \) \
--compose In -composite $DT/boim1.png
-convert $DT/boim1.png \( +clone -background Black \
+-compose In -composite $DT_u/boim1.png
+convert $DT_u/boim1.png \( +clone -background Black \
 -shadow 30x3+4+4 \) -background none \
 -compose DstOver -flatten "$DM_tlt/words/images/img.png" 
 fi

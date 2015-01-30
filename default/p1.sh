@@ -52,7 +52,7 @@ if [[ "$(echo "$nms" | wc -w)" -eq "1" ]]; then
 	
 	yad --columns=1 --form --width=$wth --height=$eht --center \
 	--window-icon=idiomind --scroll --text-align=center \
-	--skip-taskbar --center --title="$MPG " --borders=15 \
+	--skip-taskbar --center --title="$MPG " --borders=20 \
 	--quoted-output --on-top --selectable-labels \
 	--text="<big><big><big><b>$trgt</b></big></big></big>\n\n<i>$src</i>\n\n" \
 	--field="":lbl \

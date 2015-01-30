@@ -352,8 +352,7 @@ elif [ $1 = pdf ]; then
 		dte=$(date "+%d %B %Y")
 		mkdir $DT/mkhtml
 		mkdir $DT/mkhtml/images
-		nts=$(cat -e "$DC_tlt/cfg.10" | sed 's/\$/<br>/g')
-		echo "$nts ----------------"
+		nts=$(cat "$DC_tlt/cfg.10" | sed 's/\./\.<br>/g')
 		cd $DT/mkhtml
 		cp -f "$DC_tlt/cfg.3" w.inx.l
 		cp -f "$DC_tlt/cfg.4" s.inx.l
@@ -520,13 +519,14 @@ elif [ $1 = pdf ]; then
 		<table width="80%" align="left" border="0" class="ifont">
 		<tr>
 		<td>
-		'$nts'
-		<p>&nbsp;</p>
+		<br>' > pdf
+		printf "$nts" >> pdf
+		echo '<p>&nbsp;</p>
 		<p>&nbsp;</p>
 		<p>&nbsp;</p>
 		</td>
 		</tr>
-		</table>' > pdf
+		</table>' >> pdf
 		#images
 		cd "$DM_tlt/words/images"
 		cnt=`ls -1 *.jpg 2>/dev/null | wc -l`
@@ -589,7 +589,6 @@ elif [ $1 = pdf ]; then
 			hlgt=$(echo $wt | awk '{print tolower($0)}')
 			exm1=$(echo "$inf" | sed -n 1p | sed 's/\\n/ /g')
 			dftn=$(echo "$inf" | sed -n 2p | sed 's/\\n/ /g')
-			ntes=$(echo "$inf" | sed -n 3p | sed 's/\\n/ /g')
 			exmp1=$(echo "$exm1" \
 			| sed "s/"$hlgt"/<b>"$hlgt"<\/\b>/g")
 			echo "$wt" >> W.lizt.x
@@ -617,7 +616,6 @@ elif [ $1 = pdf ]; then
 					echo '<td width="466">' >> pdf
 					if [ -n "$dftn" ]; then
 						echo '<dl>
-						<dt>Definition:</dt>
 						<dd><dfn>'$dftn'</dfn></dd>
 						</dl>' >> pdf
 					fi

@@ -26,36 +26,46 @@ function internet() {
 	--button="  Ok  ":0 >&2; exit 1;}
 }
 
-function grammar() {
+function grammar_1() {
 	
 	cd $2; n=1
 	while [ $n -le $(echo "$1" | wc -l) ]; do
 		grmrk=$(echo "$1" | sed -n "$n"p)
 		chck=$(echo "$1" | sed -n "$n"p | awk '{print tolower($0)}' \
 		| sed 's/,//g' | sed 's/\.//g')
-		if echo "$conjunctions" | grep -Fxq $chck; then
-			echo "<span color='#3BB393'>$grmrk</span>" >> g_$3
+		if echo "$pronouns" | grep -Fxq $chck; then
+			echo "<span color='#35559C'>$grmrk</span>" >> g_$3
 		elif echo "$nouns_verbs" | grep -Fxq $chck; then
 			echo "<span color='#896E7A'>$grmrk</span>" >> g_$3
 		elif echo "$conjunctions" | grep -Fxq $chck; then
-			echo "<span color='#3BB393'>$grmrk</span>" >> g_$3
+			echo "<span color='#90B33B'>$grmrk</span>" >> g_$3
 		elif echo "$verbs" | grep -Fxq $chck; then
-			echo "<span color='#CD4484'>$grmrk</span>" >> g_$3
+			echo "<span color='#CF387F'>$grmrk</span>" >> g_$3
 		elif echo "$prepositions" | grep -Fxq $chck; then
-			echo "<span color='#E08434'>$grmrk</span>" >> g_$3
+			echo "<span color='#D67B2D'>$grmrk</span>" >> g_$3
 		elif echo "$adverbs" | grep -Fxq $chck; then
 			echo "<span color='#9C68BD'>$grmrk</span>" >> g_$3
-		elif echo "$pronouns" | grep -Fxq $chck; then
-			echo "<span color='#4665A9'>$grmrk</span>" >> g_$3
 		elif echo "$nouns_adjetives" | grep -Fxq $chck; then
 			echo "<span color='#496E60'>$grmrk</span>" >> g_$3
 		elif echo "$adjetives" | grep -Fxq $chck; then
-			echo "<span color='#41873F'>$grmrk</span>" >> g_$3
+			echo "<span color='#3E8A3B'>$grmrk</span>" >> g_$3
 		else
 			echo "$grmrk" >> g_$3
 		fi
 		let n++
 	done
+}
+
+function grammar_2() {
+
+	if echo "$pronouns" | grep -Fxq "${1,,}"; then echo 'Pron. ';
+	elif echo "$conjunctions" | grep -Fxq "${1,,}"; then echo 'Conj. ';
+	elif echo "$prepositions" | grep -Fxq "${1,,}"; then echo 'Prep. ';
+	elif echo "$adverbs" | grep -Fxq "${1,,}"; then echo 'adv. ';
+	elif echo "$nouns_adjetives" | grep -Fxq "${1,,}"; then echo 'Noun, Adj. ';
+	elif echo "$nouns_verbs" | grep -Fxq "${1,,}"; then echo 'Noun, Verb ';
+	elif echo "$verbs" | grep -Fxq "${1,,}"; then echo 'verb. ';
+	elif echo "$adjetives" | grep -Fxq "${1,,}"; then echo 'adj. '; fi
 }
 
 function tts() {
@@ -158,7 +168,7 @@ function voice() {
 			msg "$espeak_err $lgtl" error
 			exit 1
 		fi
-		espeak "$1" -v $lg -k 1 -p 45 -a 80 -s 110 -w $DT_r/s.wav
+		espeak "$1" -v $lg -k 1 -p 40 -a 80 -s 110 -w $DT_r/s.wav
 		sox $DT_r/s.wav "$2"
 	fi
 }
@@ -182,7 +192,6 @@ if [ $1 = new_topic ]; then
 	info2=$(cat $DC_tl/.cfg.1 | wc -l)
 	c=$(echo $(($RANDOM%100)))
 	
-	# rename ------------------------
 	if [ "$3" = 2 ]; then
 		nmt="$tpc"
 		tle="$tpc"
@@ -380,7 +389,7 @@ elif [ $1 = new_items ]; then
 	--on-top --window-icon=idiomind --skip-taskbar \
 	--separator="\n" --align=right $img \
 	--name=idiomind --class=idiomind \
-	--borders=0 --title=" " --width=200 --height=140 \
+	--borders=0 --title=" " --width=440 --height=140 \
 	--field=" <small><small>$lgtl</small></small>: " "$txt" \
 	--field=" <small><small>$topic</small></small>:CB" \
 	"$ttle!$new *!$tpcs" "$field" \
@@ -390,7 +399,7 @@ elif [ $1 = new_items ]; then
 	--on-top --window-icon=idiomind --skip-taskbar \
 	--separator="\n" --align=right $img \
 	--name=idiomind --class=idiomind \
-	--borders=0 --title=" " --width=200 --height=170 \
+	--borders=0 --title=" " --width=440 --height=170 \
 	--field=" <small><small>$lgtl</small></small>: " "$txt" \
 	--field=" <small><small>${lgsl^}</small></small>: " "$srce" \
 	--field=" <small><small>$topic</small></small>:CB" \
@@ -581,7 +590,7 @@ elif [ $1 = new_sentence ]; then
 
 		snmk=$(echo "$trgt"  | sed 's/ /\n/g')
 		
-		grammar "$snmk" $DT_r
+		grammar_1 "$snmk" $DT_r
 		
 		if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 			n=1
@@ -670,7 +679,7 @@ elif [ $1 = new_sentence ]; then
 
 		snmk=$(echo "$trgt"  | sed 's/ /\n/g')
 		
-		grammar "$snmk" $DT_r
+		grammar_1 "$snmk" $DT_r
 		
 		if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 			n=1
@@ -744,6 +753,7 @@ elif [ $1 = new_word ]; then
 	trgt="$2"
 	srce="$4"
 	dct="$DS/addons/Dics/cnfg.sh"
+	source $DS/default/dicts/$lgt
 	icnn=idiomind
 	tpcs=$(cat "$DC_tl/.cfg.2" | cut -c 1-30 | egrep -v "$tpe" \
 	| tr "\\n" '!' | sed 's/!\+$//g')
@@ -766,11 +776,16 @@ elif [ $1 = new_word ]; then
 		srce="$(translate "$trgt" $lgt $lgs)"
 		$dct "$trgt" $DT_r swrd
 		nme=$(echo "$trgt" | sed "s/'//g")
-
+		
 		if [ -f "$DT_r/$trgt.mp3" ]; then
+
 			cp -f "$DT_r/$trgt.mp3" "$DM_tlt/words/$nme.mp3"
 			tags_1 W "$trgt" "$srce" "$DM_tlt/words/$nme.mp3"
-		fi
+			
+			nt="$(echo "_$(grammar_2 $trgt)" | tr '\n' '_')"
+			eyeD3 --set-encoding=utf8 -A IWI3I0I"$nt"IWI3I0I "$DM_tlt/words/$nme.mp3"
+			
+		else exit 1; fi
 		
 		if [ -f img.jpg ]; then
 			/usr/bin/convert -scale 100x90! img.jpg imgs.jpg
@@ -780,8 +795,11 @@ elif [ $1 = new_word ]; then
 			icnn=img.jpg
 		fi
 		
+		
+		
 		notify-send -i "$icnn" "$trgt" "$srce\\n  ($tpe)" -t 5000
 		$DS/mngr.sh inx W "$nme" "$tpe"
+		
 		echo "aitm.1.aitm" >> \
 		$DC/addons/stats/.log
 		[[ -d $DT_r ]] && rm -fr $DT_r
@@ -837,9 +855,13 @@ elif [ $1 = new_word ]; then
 		fi
 		tags_1 W "$trgt" "$srce" "$DM_tlt/words/$trgt.mp3"
 		
+		nt="$(echo "_$(grammar_2 $trgt)" | tr '\n' '_')"
+		eyeD3 --set-encoding=utf8 -A IWI3I0I"$nt"IWI3I0I "$DM_tlt/words/$trgt.mp3"
+			
 		icnn="$DM_tlt/words/images/$trgt.jpg"
 		notify-send -i "$icnn" "$trgt" "$srce\\n ($tpe)" -t 3000
 		$DS/mngr.sh inx W "$trgt" "$tpe"
+		
 		echo "aitm.1.aitm" >> \
 		$DC/addons/stats/.log
 		[[ -d $DT_r ]] && rm -fr $DT_r
@@ -988,9 +1010,13 @@ elif [ $1 = selecting_words_dclik ]; then
 		info=$(echo " $remain"$left"$word ")
 	fi
 
-	cat ./lstws | tr -c "[:alnum:]" '\n' | sed '/^$/d' | sed '/"("/d' \
-	| sed '/")"/d' | sed '/":"/d' | sort -u \
-	| head -n40 | egrep -v "FALSE" | egrep -v "TRUE" > lst
+	if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
+	    cat ./lstws | tr ' ' '\n' | sed -n 1~2p | sed '/^$/d' > lst
+	else
+	    cat ./lstws | tr -c "[:alnum:]" '\n' | sed '/^$/d' | sed '/"("/d' \
+	    | sed '/")"/d' | sed '/":"/d' | sort -u \
+	    | head -n40 | egrep -v "FALSE" | egrep -v "TRUE" > lst
+	fi
 	
 	nme="$(nmfile "$(cat ./lstws)")"
 
@@ -1620,7 +1646,7 @@ $sntc" >> ./wlog
 								sed -i 's/\. /\n/g' $bw
 								sed -i 's/\. /\n/g' $aw
 								snmk=$(echo "$trgt"  | sed 's/ /\n/g')
-								grammar "$snmk" $DT_r $r
+								grammar_1 "$snmk" $DT_r $r
 								
 								if ([ "$lgt" = ja ] || [ "$lgt" = 'zh-cn' ] || [ "$lgt" = ru ]); then
 									n=1
@@ -2040,7 +2066,7 @@ $sntc" >> ./slog
 										sed -i 's/\. /\n/g' $aw
 										snmk=$(echo "$trgt"  | sed 's/ /\n/g')
 										
-										grammar "$snmk" $DT_r $r
+										grammar_1 "$snmk" $DT_r $r
 										
 										if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 											n=1

@@ -48,7 +48,7 @@ if [ -f "$DM_tlt/words/$nme.mp3" ]; then
 	[[ "$ap" = TRUE ]] && (killall play & sleep 1 && play "$DM_tlt/words/$nme.mp3") &
 	
 	yad --form --window-icon=idiomind --scroll --text-align=center \
-	--skip-taskbar --center --title=" " --borders=15 \
+	--skip-taskbar --center --title=" " --borders=20 \
 	--quoted-output --on-top --selectable-labels \
 	--text="<big><big><big><b>$trgt</b></big></big></big>\n\n<i>$src</i>\n\n" \
 	--field="":lbl \
@@ -72,7 +72,7 @@ elif [ -f "$DM_tlt/$nme.mp3" ]; then
 	
 	echo "$lwrd" | yad --list --print-column=0 --no-headers \
 	--window-icon=idiomind --scroll  \
-	--skip-taskbar --center --title=" " --borders=15 \
+	--skip-taskbar --center --title=" " --borders=20 \
 	--on-top --selectable-labels --expand-column=0 \
 	--text="<big><big>$trgt</big></big>\n\n<i>$src</i>\n\n\n" \
 	--width="$wth" --height="$eht" --center \

@@ -24,7 +24,7 @@ if [ $1 = mkmn ]; then
 	ls -t -d -N * > $DC_tl/.cfg.1
 	[[ -f $DC_s/cfg.0 ]] && mv -f $DC_s/cfg.0 $DC_s/cfg.16
 	n=1
-	while [ $n -le $(cat $DC_tl/.cfg.1 | head -40 | wc -l) ]; do
+	while [ $n -le $(cat $DC_tl/.cfg.1 | head -50 | wc -l) ]; do
 		tp=$(sed -n "$n"p $DC_tl/.cfg.1)
 		i=$(cat "$DC_tl/$tp/cfg.8")
 		
@@ -148,6 +148,7 @@ fi
 	
 #--------------------------------
 elif [ $1 = inx ]; then
+
 	[ $lgt = ja ] || [ $lgt = "zh-cn" ] && c=c || c=w
 	itm="$3"
 	fns="$5"
@@ -600,7 +601,7 @@ elif [ "$1" = edt ]; then
 		--field="$mark "":CHK" "$mrk" \
 		--field="$chk"":CHK" "$mrok" \
 		--field=" :LBL" " " \
-		--field="<a href='http://www.google.com/search?q=$TGT'>$search_google</a>\\n\\n<a href='http://glosbe.com/en/es/$TGT'>$search_def </a>":lbl \
+		--field="\\n\\n<a href='http://glosbe.com/$lgs/$lgt/$TGT'>$search_def </a>":lbl \
 		--button="$image":"$imge" \
 		--button="$delete":"$dlte" \
 		--button=gtk-close:0 > $cnf

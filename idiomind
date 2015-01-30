@@ -92,7 +92,7 @@ if [ -z "$1" ]; then
 		# update topics status
 		[[ ! -f "$DC_tl/.cfg.1" ]] && touch "$DC_tl/.cfg.1"
 		n=1
-		while [ $n -le "$(cat "$DC_tl/.cfg.1" | head -40 | wc -l )" ]; do
+		while [ $n -le "$(cat "$DC_tl/.cfg.1" | head -50 | wc -l )" ]; do
 			tp=$(sed -n "$n"p "$DC_tl/.cfg.1")
 			stts=$(echo "$(cat "$DC_tl/$tp/cfg.8")")
 
@@ -142,7 +142,7 @@ if [ -z "$1" ]; then
 		$DS/mngr.sh mkmn &
 	}
 
-	yad --width=175 --height=190 --name=idiomind \
+	yad --width=175 --height=210 --name=idiomind \
 	--geometry=175x190-300-$(sed -n 12p $DC_s/cfg.18) \
 	--fixed --title="Idiomind" --no-buttons --skip-taskbar \
 	--icons --single-click --on-top --borders=0 \
@@ -546,7 +546,7 @@ elif [[ $1 = topic ]]; then
 							mv -f $cnf3 "$nt"
 						fi
 					fi
-					# --------------------------------------------------------
+					
 					if [ -n "$(cat "$cnf1" | grep -o TRUE)" ]; then
 						grep -Rl "|FALSE|" "$cnf1" | while read tab1 ; do
 							 sed '/|FALSE|/d' "$cnf1" > tmpf1
@@ -566,7 +566,7 @@ elif [[ $1 = topic ]]; then
 						echo "okim.$cnt.okim" >> \
 						$DC/addons/stats/.log &	
 					fi
-						# --------------------------------------------------------
+					
 					rm -f $DT/*.x
 				fi
 			

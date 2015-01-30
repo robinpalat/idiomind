@@ -18,8 +18,8 @@ if [[ "$1" = time ]]; then
 		--mark="120 s":120 --borders=20 --scale \
 		--max-value=128 --value="$bcl" --step 2 \
 		--name=idiomind --on-top --sticky --skip-taskbar \
-		--window-icon=idiomind --borders=10 --text="Time" \
-	    --title=" " --width=300 --height=200 \
+		--window-icon=idiomind --borders=10 \
+	    --title=" " --width=300 --height=100 \
 	    --min-value=2 --button="Ok":0 > $cnf1
 	
 		if [[ "$?" -eq 0 ]]; then
