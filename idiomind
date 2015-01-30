@@ -242,7 +242,7 @@ if [[ $(echo "$1" | grep -o '.idmnd') ]]; then
 				if [ $if2 -ge 50 ]; then
 					yad  --name=idiomind --center \
 					--image=info --class=idiomind \
-					--text=" <b>$topics_max</b>\\n" \
+					--text="   <b>$language_target</b>\n\n\t$topics_max\\n" \
 					--image-on-top --sticky --skip-taskbar \
 					--width=420 --height=150 --title=Idiomind \
 					--window-icon=idiomind --button=gtk-ok:1

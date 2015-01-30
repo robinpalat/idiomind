@@ -201,7 +201,7 @@ if [ $1 = new_topic ]; then
 			tle=$(echo "$new_topic")
 			nmt=""
 		fi
-		jlbi=$($yad --window-icon=idiomind --form --center \
+		jlbi=$(yad --window-icon=idiomind --form --center \
 		--field="$name_for_new_topic" "$nmt" --title="$tle" \
 		--width=440 --height=100 --name=idiomind --on-top \
 		--skip-taskbar --borders=5 --button=gtk-ok:0)
@@ -214,7 +214,7 @@ if [ $1 = new_topic ]; then
 		snm=$(cat $DC_tl/.cfg.1 | grep -Fxo "$jlb" | wc -l)
 		if [ $snm -ge 1 ]; then
 			jlb=$(echo ""$jlb" $snm")
-			$yad --name=idiomind --center --on-top --image=info \
+			yad --name=idiomind --center --on-top --image=info \
 			--text=" <b>$name_eq   </b>\\n $name_eq2  <b>$jlb</b>   \\n" \
 			--image-on-top --width=420 --height=150 --borders=3 \
 			--skip-taskbar --window-icon=idiomind --sticky \
@@ -269,7 +269,7 @@ if [ $1 = new_topic ]; then
 			killall add.sh & exit 1
 		fi
 		
-		jlbi=$($yad --window-icon=idiomind \
+		jlbi=$(yad --window-icon=idiomind \
 		--form --center --title="$new_topic"  --separator="\n" \
 		--width=440 --height=100 --name=idiomind --on-top \
 		--skip-taskbar --borders=5 --button=gtk-ok:0 \
@@ -284,7 +284,7 @@ if [ $1 = new_topic ]; then
 			snme=$(cat $DC_tl/.cfg.1 | grep -Fxo "$jlb" | wc -l)
 			if [ "$snme" -ge 1 ]; then
 				jlb="$jlb $snme"
-				$yad --name=idiomind --center --on-top --image=info \
+				yad --name=idiomind --center --on-top --image=info \
 				--text=" <b>$name_eq   </b>\\n $name_eq2  <b>$jlb</b>   \\n" \
 				--image-on-top --width=420 --height=150 --borders=3 \
 				--skip-taskbar --window-icon=idiomind --sticky \
@@ -318,21 +318,15 @@ elif [ $1 = new_items ]; then
 	if  [ -z "$(cat $DC/addons/dict/.dicts)" ]; then
 		source $DS/ifs/trans/$lgs/topics_lists.conf
 		$DS/addons/Dics/cnfg.sh "" f "$no_dictionary"
-		if  [ -z "$(cat $DC/addons/dict/.dicts)" ]; then
-			exit 1
-		fi
+		[[ -z "$(cat $DC/addons/dict/.dicts)" ]] && exit 1
 	fi
 	c=$(echo $(($RANDOM%1000)))
-	txt="$4"
-	
-	[[ -z "$txt" ]] && txt="$(xclip -selection primary -o)"
+	txt="$4"; [[ -z "$txt" ]] && txt="$(xclip -selection primary -o)"
 
 	if [ "$3" = 2 ]; then
 		DT_r="$2"
 		cd $DT_r
-		if ! [ sed -n 1p $DC_s/cfg.3 | grep TRUE ]; then
-			srce="$5"
-		fi
+		[[ ! $(sed -n 1p $DC_s/cfg.3 | grep TRUE) ]] && srce="$5"
 	else
 		DT_r=$(mktemp -d $DT/XXXXXX)
 		cd $DT_r
@@ -347,11 +341,6 @@ elif [ $1 = new_items ]; then
 		source $DS/ifs/trans/$lgs/topics_lists.conf
 		$DS/chng.sh "$no_topic" & exit 1
 	fi
-
-	ls=$((50 - $(cat "$DC_tlt/cfg.4" | wc -l)))
-	lw=$((50 - $(cat "$DC_tlt/cfg.3" | wc -l)))
-	
-	dct="$DS_p/Dics/cnfg.sh"
 	
 	if [[ -z "$tpe" ]]; then
 	tpcs=$(cat "$DC_tl/.cfg.2" | cut -c 1-40 \
@@ -362,27 +351,8 @@ elif [ $1 = new_items ]; then
 	fi
 	[ -n "$tpcs" ] && e='!'
 	ttle="${tpe:0:50}"
-	s=$(cat "$DC_tlt/cfg.4" | wc -l)
-	w=$(cat "$DC_tlt/cfg.3" | wc -l)
-	
-	if [ $s -ge 45 -a $s -lt 50 ]; then
-		is="S <b>$ls</b>"
-	elif [ $s -ge 50 ]; then
-		is="S <b>0</b>"
-	fi
-	if [ $w -ge 45 -a $w -lt 50 ]; then
-		iw="W <b>$lw</b>"
-	elif [ $w -ge 50 ]; then
-		iw="W <b>0</b>"
-	fi
-	if [ -n "$is" ] || [ -n "$iw" ]; then
-		info="\\n$is $iw"
-	fi
-	if [ "$tpe" != "$tpc" ]; then
-		topic="$topic <b>*</b> $info"
-	else
-		topic="$topic $info"
-	fi
+	[[ "$tpe" != "$tpc" ]] && topic="$topic <b>*</b>" || topic="$topic"
+
 	
 	if sed -n 1p $DC_s/cfg.3 | grep TRUE; then
 	lzgpr=$(yad --form --center --always-print-result \
@@ -445,7 +415,7 @@ elif [ $1 = new_items ]; then
 					tpe="$slt"
 				else
 					slt=`echo "$tpe" | awk '{print "FALSE\n"$0}' | \
-					$yad --name=idiomind --class=idiomind --center \
+					yad --name=idiomind --class=idiomind --center \
 					--list --radiolist --on-top --fixed --no-headers \
 					--text="<b>  $te </b> <small><small> --window-icon=idiomind \
 					$info</small></small>" --sticky --skip-taskbar \
@@ -907,7 +877,7 @@ elif [ $1 = selecting_words_edit ]; then
 
 		slt=$(mktemp $DT/slt.XXXX.x)
 		cat idlst | awk '{print "FALSE\n"$0}' | \
-		$yad --list --checklist \
+		yad --list --checklist \
 		--on-top --text="<small> $info </small>" \
 		--center --sticky --no-headers \
 		--buttons-layout=end --skip-taskbar --width=400 \
@@ -969,7 +939,7 @@ elif [ $1 = selecting_words_edit ]; then
 		$DC/addons/stats/.log &
 
 			if [ -f $DT_r/logw ]; then
-				$yad --name=idiomind --class=idiomind \
+				yad --name=idiomind --class=idiomind \
 				--center --wrap --text-info --skip-taskbar \
 				--width=400 --height=280 --on-top --margins=4 \
 				--fontname=vendana --window-icon=idiomind \
@@ -1062,7 +1032,7 @@ elif [ $1 = selecting_words_dclik ]; then
 	ws40=$(sed -n 40p lst)
 
 	w=`cat ./lst | awk '{print "FALSE\n"$0}' | \
-		$yad --list --checklist --window-icon=idiomind \
+		yad --list --checklist --window-icon=idiomind \
 		--on-top --text="<small> $info </small>" \
 		--center --sticky --no-headers \
 		--buttons-layout=end --skip-taskbar --width=400 \
@@ -1338,7 +1308,7 @@ elif [ $1 = selecting_words ]; then
 	$DC/addons/stats/.log &
 
 	if [ -f $DT_r/logw ]; then
-		$yad --name=idiomind --class=idiomind \
+		yad --name=idiomind --class=idiomind \
 		--center --wrap --text-info --skip-taskbar \
 		--width=400 --height=280 --on-top --margins=4 \
 		--fontname=vendana --window-icon=idiomind \
@@ -1379,7 +1349,7 @@ elif [ $1 = other_ways ]; then
 	fi
 
 	if [ -f $lckpr ]; then
-		$yad --fixed --center --on-top \
+		yad --fixed --center --on-top \
 		--image=info --name=idiomind \
 		--text=" $current_pros  " \
 		--fixed --sticky --buttons-layout=edge \
@@ -1409,7 +1379,7 @@ elif [ $1 = other_ways ]; then
 		key=$(sed -n 2p $DC_s/cfg.3)
 		
 		if [ -z "$key" ]; then
-			$yad --name=idiomind --center --on-top --image=error \
+			yad --name=idiomind --center --on-top --image=error \
 			--text="$no_key <a href='$LNK'> Google.</a>" \
 			--image-on-top --sticky --title="Idiomind" \
 			--width=420 --height=150 --button=gtk-ok:0 \
@@ -1471,7 +1441,7 @@ elif [ $1 = other_ways ]; then
 			fi
 			
 			if [ -z "$data" ]; then
-				$yad --name=idiomind --center --on-top --image=error \
+				yad --name=idiomind --center --on-top --image=error \
 				--text="$key_err <a href='$LNK'>Google. </a>" \
 				--image-on-top --sticky --title="Idiomind" \
 				--width=420 --height=150 --borders=3 --button=gtk-ok:0 \
@@ -1490,7 +1460,7 @@ elif [ $1 = other_ways ]; then
 				data="$(audio_recognize info.flac $lgt $lgt $key)"
 
 				if [ -z "$data" ]; then
-					$yad --name=idiomind --center --on-top --image=error \
+					yad --name=idiomind --center --on-top --image=error \
 					--text="$key_err <a href='$LNK'>Google</a>" \
 					--image-on-top --sticky --title="Idiomind" \
 					--width=420 --height=150 --button=gtk-ok:0 \
@@ -1522,7 +1492,7 @@ $trgt" >> log
 				let n++
 			done
 			
-			) | $yad --progress --progress-text=" " \
+			) | yad --progress --progress-text=" " \
 			--width=200 --height=20 --geometry=200x20-2-2 \
 			--undecorated --auto-close --on-top \
 			--skip-taskbar --no-buttons
@@ -1539,7 +1509,7 @@ $trgt" >> log
 			fi
 			
 			if [ -z "$(cat ls)" ]; then
-				echo "$gettext_err" | $yad --text-info --center --wrap \
+				echo "$gettext_err" | yad --text-info --center --wrap \
 				--name=idiomind --class=idiomind --window-icon=idiomind \
 				--text=" " --sticky --width=$wth --height=$eht \
 				--margins=8 --borders=3 --button=gtk-ok:0 \
@@ -1741,7 +1711,7 @@ $trgt" >> ./wlog
 						
 						let n++
 					done
-					) | $yad --progress --progress-text=" " \
+					) | yad --progress --progress-text=" " \
 					--width=200 --height=20 --geometry=200x20-2-2 \
 					--undecorated --auto-close --on-top \
 					--skip-taskbar --no-buttons
@@ -1789,20 +1759,20 @@ $trgt" >> ./wlog
 						if [ $(ls ./*.mp3 | wc -l) -ge 1 ]; then
 							btn="--button=$save:0"
 						fi
-						$yad --form --name=idiomind --class=idiomind \
+						yad --form --name=idiomind --class=idiomind \
 						--center --skip-taskbar --on-top \
 						--width=420 --height=150 --on-top --margins=4 \
 						--window-icon=idiomind \
-						--borders=0 --title="$tpe" \
-						--field="<b>  ! </b><small><small> $items_rest</small> </small><small><small>$logn</small></small>":txt "$log" \
+						--borders=0 --title="Idiomind" \
+						--field="<small><small> $items_rest $logn</small></small>":txt "$log" \
 						--field=":lbl"\
 						"$btn" --button=Ok:1 >/dev/null 2>&1
 							ret=$?
 						
 							if  [ "$ret" -eq 0 ]; then
-								aud=$($yad --save --center --borders=10 \
+								aud=$(yad --save --center --borders=10 \
 								--on-top --filename="$(date +%m/%d/%Y)"_audio.tar.gz \
-								--window-icon=idiomind --skip-taskbar --title="Save " \
+								--window-icon=idiomind --skip-taskbar --title="Save" \
 								--file --width=600 --height=500 --button=gtk-ok:0 )
 									ret=$?
 									if [ "$ret" -eq 0 ]; then
@@ -1848,7 +1818,7 @@ $trgt" >> ./wlog
 		| sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
 		| sed 's/<[^>]\+>//g' | sed 's/\://g' >> ./sntsls_
 		
-		) | $yad --progress --progress-text=" " \
+		) | yad --progress --progress-text=" " \
 		--width=200 --height=20 --geometry=200x20-2-2 \
 		--pulsate --percentage="5" --on-top \
 		--undecorated --auto-close \
@@ -1882,7 +1852,7 @@ $trgt" >> ./wlog
 		| sed '/^$/d' | sed 's/^[ \t]*//;s/[ \t]*$//' \
 		| sed 's/  / /g' | sed 's/\://g' > ./sntsls_
 		
-		) | $yad --progress --progress-text=" " \
+		) | yad --progress --progress-text=" " \
 		--width=200 --height=20 --geometry=200x20-2-2 \
 		--pulsate --percentage="5" --on-top \
 		--undecorated --auto-close \
@@ -1917,7 +1887,7 @@ $trgt" >> ./wlog
 		
 		if [ -z "$(cat ./sntsls)" ]; then
 			echo "  $gettext_err1. " | \
-			$yad --text-info --center --wrap \
+			yad --text-info --center --wrap \
 			--name=idiomind --class=idiomind --window-icon=idiomind \
 			--text=" " --sticky --width=$wth --height=$eht \
 			--borders=3 --button=Ok:0 --title="$selector"
@@ -1927,7 +1897,7 @@ $trgt" >> ./wlog
 		else
 			slt=$(mktemp $DT/slt.XXXX.x)
 			cat ./sntsls | awk '{print "FALSE\n"$0}' | \
-			$yad --name=idiomind --window-icon=idiomind \
+			yad --name=idiomind --window-icon=idiomind \
 			--dclick-action='/usr/share/idiomind/add.sh selecting_words_dclik' \
 			--list --checklist --class=idiomind --center --sticky \
 			--text="<small> $info</small>" \
@@ -1942,7 +1912,7 @@ $trgt" >> ./wlog
 				if [ $ret -eq 2 ]; then
 					rm -f $lckpr "$slt" &
 					w=`cat ./sntsls | awk '{print "\n\n\n"$0}' | \
-					$yad --text-info --editable --window-icon=idiomind \
+					yad --text-info --editable --window-icon=idiomind \
 					--name=idiomind --wrap --margins=60 --class=idiomind \
 					--sticky --fontname=vendana --on-top --center \
 					--skip-taskbar --width=$wth \
@@ -2158,7 +2128,7 @@ $itm" >> ./wlog
 						
 						let n++
 					done
-					} | $yad --progress --progress-text=" " \
+					} | yad --progress --progress-text=" " \
 					--width=200 --height=20 --geometry=200x20-2-2 \
 					--undecorated --auto-close --on-top \
 					--skip-taskbar --no-buttons
@@ -2205,12 +2175,12 @@ $itm" >> ./wlog
 					fi
 					
 					if [ $(cat ./slog ./wlog | wc -l) -ge 1 ]; then
-						echo "$logs" | $yad --name=idiomind --class=idiomind \
+						echo "$logs" | yad --name=idiomind --class=idiomind \
 						--center --wrap --text-info --editable --skip-taskbar \
 						--width=420 --height=150 --on-top --margins=4 \
 						--fontname=vendana --window-icon=idiomind \
-						--button=Ok:0 --borders=0 --title="$tpe" \
-						--text=" <b>  ! </b><small><small> $items_rest</small></small>" \
+						--button=Ok:0 --borders=0 --title="Idiomind" \
+						--text=" <small><small> $items_rest</small></small>" \
 						--field=":lbl" "" >/dev/null 2>&1
 					fi
 					
@@ -2267,7 +2237,7 @@ elif [ $1 = add_image ]; then
 			txt="--text=<small>$images_for  <a href='file://$DT/s.html'>$wrd</a></small>"
 		fi
 		
-		$yad --form --align=center --center \
+		yad --form --align=center --center \
 		--width=340 --text-align=center --height=280 \
 		--on-top --skip-taskbar --image-on-top "$txt">/dev/null 2>&1 \
 		"$btnn" --window-icon=idiomind --borders=0 \
@@ -2315,7 +2285,7 @@ elif [ $1 = add_image ]; then
 			txt="--text=<small>$search_images \\n<a href='file://$DT/s.html'>$wrd</a></small>"
 		fi
 		
-		$yad --form --text-align=center \
+		yad --form --text-align=center \
 		--center --width=470 --height=280 \
 		--on-top --skip-taskbar --image-on-top \
 		"$txt" "$btnn" --window-icon=idiomind --borders=0 \

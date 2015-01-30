@@ -43,10 +43,10 @@ if [[ $1 = n_i ]]; then
 		txt="<b>$word </b>"
 	fi
 
-	$yad --width=480 --height=250 --window-icon=idiomind \
+	$yad --width=480 --height=210 --window-icon=idiomind \
 	--title="$save" --center --on-top --borders=10 \
 	--image=dialog-question --skip-taskbar \
-	--text="  <b>$sentence </b>\\n  <i>$var</i>\\n\\n  $txt\\n  <i>$trgt\\n</i>" \
+	--text="  <b>$sentence </b>\n  $var\n\n  $txt\n  $trgt\n" \
 	--button="$save_sentence":2 "$bttn" 
 		ret=$?
 		

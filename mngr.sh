@@ -132,7 +132,7 @@ fi
 		elif echo "$slt" | grep -o $review; then
 			/usr/share/idiomind/mngr.sh mklg-
 		elif echo "$slt" | grep -o $rename; then
-			/usr/share/idiomind/add.sh n_t name 2
+			/usr/share/idiomind/add.sh new_topic name 2
 		elif echo "$slt" | grep -o $delete; then
 			/usr/share/idiomind/mngr.sh dlt
 		elif echo "$slt" | grep -o $share; then
@@ -404,12 +404,12 @@ elif [ $1 = dli ]; then
 	if [ -f "$flw" ]; then
 
 		$yad --fixed --scroll --center \
-		--title="$confirm" --width=400 --height=140 \
+		--title="$confirm" --width=420 --height=150 \
 		--on-top --image=dialog-question \
 		--skip-taskbar --window-icon=idiomind \
-		--text="  <b>$delete_word</b> " \
+		--text=" $delete_word" --borders=5 \
 		--window-icon=idiomind \
-		--button=gtk-delete:0 --button="$cancel":1
+		--button="$yes":0 --button="$no":1
 			ret=$?
 			
 			if [ $ret -eq 0 ]; then
@@ -439,11 +439,11 @@ elif [ $1 = dli ]; then
 			
 	elif [ -f "$fls" ]; then
 		$yad --fixed --center --scroll \
-		--title="$confirm" --width=400 --height=140 \
+		--title="$confirm" --width=420 --height=150 \
 		--on-top --image=dialog-question --skip-taskbar \
-		--text="  <b>$delete_sentence</b> " \
+		--text=" $delete_sentence " --borders=5 \
 		--window-icon=idiomind \
-		--button=gtk-delete:0 --button="$cancel":1
+		--button="$yes":0 --button="$no":1
 			ret=$?
 			
 			if [ $ret -eq 0 ]; then
@@ -469,11 +469,11 @@ elif [ $1 = dli ]; then
 			
 	elif [ ! -f "$flw" ] || [ ! -f "$flw" ]; then
 		$yad --fixed --center --scroll \
-		--title="$confirm" --width=400 --height=140 \
+		--title="$confirm" --width=420 --height=150 \
 		--on-top --image=dialog-question --skip-taskbar \
-		--text="  <b>$delete_item</b> " \
+		--text=" $delete_item " --borders=5 \
 		--window-icon=idiomind \
-		--button=gtk-delete:0 --button="$cancel":1
+		--button="$yes":0 --button="$no":1
 			ret=$?
 	
 			cd "$DC_tlt/practice"
@@ -501,10 +501,10 @@ elif [ $1 = dli ]; then
 elif [ $1 = dlt ]; then
 	$yad --name=idiomind --center \
 	--image=dialog-question --sticky --on-top \
-	--text="  <b>$delete_topic</b> \n\n\t$tpc \n" --buttons-layout=end \
-	--width=400 --height=140 --borders=5 \
+	--text=" $delete_topic " --buttons-layout=end \
+	--width=420 --height=150 --borders=5 \
 	--skip-taskbar --window-icon=idiomind \
-	--title="$confirm" --button=gtk-delete:0 --button="$cancel":1
+	--title="$confirm" --button="$yes":0 --button="$no":1
 
 		ret=$?
 
@@ -600,8 +600,8 @@ elif [ "$1" = edt ]; then
 		--field="<small>$notes </small>":TXT "$ntes" \
 		--field="$mark "":CHK" "$mrk" \
 		--field="$chk"":CHK" "$mrok" \
+		--field="<a href='http://glosbe.com/$lgs/$lgt/$TGT'>$search_def </a>":lbl \
 		--field=" :LBL" " " \
-		--field="\\n\\n<a href='http://glosbe.com/$lgs/$lgt/$TGT'>$search_def </a>":lbl \
 		--button="$image":"$imge" \
 		--button="$delete":"$dlte" \
 		--button=gtk-close:0 > $cnf

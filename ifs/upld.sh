@@ -45,7 +45,7 @@ elif [[ $1 = infsd ]]; then
 	lnglbl=$(echo $language_target | awk '{print tolower($0)}')
 	icon=$DS/images/img.6.png
 
-	yad --borders=10 --width=400 --height=160 \
+	yad --borders=10 --width=420 --height=150 \
 	--on-top --skip-taskbar --center --image=$icon \
 	--title="idiomind" --button="$download:0" --button="Close:1" \
 	--text="<b>$name</b>\\n<small>$language_source <b>></b> $language_target </small> \\n" \

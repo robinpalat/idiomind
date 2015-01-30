@@ -10,14 +10,15 @@ drtc="$DC_tl/Feeds/"
 
 if [[ $1 = dlti ]]; then
 	if [ -f "$kpt/words/$itdl.mp3" ]; then
-		$yad --title="$confirm" --width=400 \
-		--height=140 --on-top --center \
+		$yad --title="$confirm" --width=420 \
+		--height=150 --on-top --center \
 		--image=dialog-question --skip-taskbar \
-		--text="$delete_word" \
+		--text=" $delete_word" \
 		--window-icon=idiomind --borders=5 \
-		--button=gtk-delete:2 --button="$cancel":0
+		--button="$yes":0 --button="$no":1
+
 		ret=$?
-			if [[ $ret -eq 2 ]]; then
+			if [[ $ret -eq 0 ]]; then
 				rm "$kpt/words/$itdl.mp3"
 				cd "$drtc"
 				grep -v -x -F "$itdl" ./.inx > ./inx
@@ -36,14 +37,14 @@ if [[ $1 = dlti ]]; then
 			fi
 	
 	elif [ -f "$kpt/$itdl.mp3" ]; then
-		$yad --title="$confirm" --width=400 \
-		--height=140 --on-top --center \
+		$yad --title="$confirm" --width=420 \
+		--height=150 --on-top --center \
 		--image=dialog-question --skip-taskbar \
-		--text="$delete_sentence" \
+		--text=" $delete_sentence" \
 		--window-icon=idiomind --borders=5 \
-		--button=gtk-delete:2 --button="$cancel":0
+		--button="$yes":0 --button="$no":1
 		ret=$?
-			if [[ $ret -eq 2 ]]; then
+			if [[ $ret -eq 0 ]]; then
 				rm "$kpt/$itdl.mp3"
 				rm "$kpt/$itdl.lnk"
 				cd "$drtc"
@@ -62,14 +63,14 @@ if [[ $1 = dlti ]]; then
 				exit
 			fi
 	else
-		yad --title="$confirm" --width=400 \
-		--height=140 --on-top --center \
+		yad --title="$confirm" --width=420 \
+		--height=150 --on-top --center \
 		--image=dialog-question --skip-taskbar \
-		--text="$delete_item" \
+		--text=" $delete_item" \
 		--window-icon=idiomind --borders=5 \
-		--button=gtk-delete:2 --button="$cancel":0
+		--button="$yes":0 --button="$no":1
 		ret=$?
-			if [[ $ret -eq 2 ]]; then
+			if [[ $ret -eq 0 ]]; then
 				rm "$kpt/$itdl.mp3"
 				rm "$kpt/$itdl.lnk"
 				cd "$drtc"
@@ -92,10 +93,10 @@ if [[ $1 = dlti ]]; then
 			fi
 	fi
 elif [[ $1 = dlns ]]; then
-	$yad --width=400 --height=150 --title="$confirm" \
+	$yad --width=420 --height=150 --title="$confirm" \
 	--on-top --image=dialog-question --center --skip-taskbar \
-	--window-icon=idiomind --text="$delete_all" \
-	--borders=5 --button="gtk-delete:0" --button="$cancel:1"
+	--window-icon=idiomind --text=" $delete_all" \
+	--borders=5 --button="$yes":0 --button="$no":1
 		ret=$?
 		if [[ $ret -eq 0 ]]; then
 			rm -r $DM_tl/Feeds/conten/*
@@ -111,8 +112,8 @@ elif [[ $1 = dlkt ]]; then
 	$yad --image=dialog-question \
 	--window-icon=idiomind --width=400 --height=140  \
 	--title="$confirm" --on-top --center --skip-taskbar \
-	--borders=5 --button=gtk-delete:0 --name=idiomind \
-	--button="$cancel":1 --text="$delete_saved2"
+	--borders=5 --text=" $delete_saved2" --name=idiomind \
+	--button="$yes":0 --button="$no":1
 	ret=$?
 	if [[ $ret -eq 0 ]]; then
 		rm -r "$drtc"/.inx "$drtc"/cfg.3 "$drtc"/cfg.4 "$drtc"/cfg.0
