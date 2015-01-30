@@ -282,14 +282,7 @@ if [[ $(($chk4 + $chk5)) != $chk1 \
 	fi
 fi
 
-cd "$DM_tlt"
-MP3=$(ls *.mp3 | wc -l)
-WORDS=$(ls ./words/*.mp3 | wc -l)
-function suma(){
- let ALL=$MP3+$WORDS
-}
-suma
-if [ $ALL -le 20 ]; then
+if [ $(cat "$DC_tlt/cfg.0" | wc -l) -le 20 ]; then
 	cstn=$($yad --image=info --on-top \
 	--text=" $min_items\\n " --window-icon=idiomind \
 	--image-on-top --center --sticky --name=idiomind \
@@ -390,8 +383,9 @@ notes=$(echo "$upld" | cut -d "|" -f6)
 img=$(echo "$upld" | cut -d "|" -f7)
 link="$U.$tpc.idmnd"
 
-mkdir "$DT/$nme"
-mkdir "$DT/$tpc"
+mkdir "$DT/upload"
+DT_u="$DT/upload"
+mkdir "$DT/upload/$tpc"
 
 cd "$DM_tlt/words/images"
 if [ $(ls -1 *.jpg 2>/dev/null | wc -l) != 0 ]; then
@@ -418,21 +412,21 @@ nwords="10"
 nsentences="11"
 nimages="12"
 level=13
-' > "$DT/cfg.12"
+' > "$DT_u/$tpc/cfg.12"
 
-sed -i "s/01/$tpc/g" "$DT/cfg.12"
-sed -i "s/02/$lgsl/g" "$DT/cfg.12"
-sed -i "s/03/$lgtl/g" "$DT/cfg.12"
-sed -i "s/04/$Author/g" "$DT/cfg.12"
-sed -i "s/05/$Mail/g" "$DT/cfg.12"
-sed -i "s/06/$Ctgry/g" "$DT/cfg.12"
-sed -i "s/07/$link/g" "$DT/cfg.12"
-sed -i "s/08/$date_c/g" "$DT/cfg.12"
-sed -i "s/09/$date_u/g" "$DT/cfg.12"
-sed -i "s/10/$words/g" "$DT/cfg.12"
-sed -i "s/11/$sentences/g" "$DT/cfg.12"
-sed -i "s/12/$images/g" "$DT/cfg.12"
-sed -i "s/13/$level/g" "$DT/cfg.12"
+sed -i "s/01/$tpc/g" "$DT_u/$tpc/cfg.12"
+sed -i "s/02/$lgsl/g" "$DT_u/$tpc/cfg.12"
+sed -i "s/03/$lgtl/g" "$DT_u/$tpc/cfg.12"
+sed -i "s/04/$Author/g" "$DT_u/$tpc/cfg.12"
+sed -i "s/05/$Mail/g" "$DT_u/$tpc/cfg.12"
+sed -i "s/06/$Ctgry/g" "$DT_u/$tpc/cfg.12"
+sed -i "s/07/$link/g" "$DT_u/$tpc/cfg.12"
+sed -i "s/08/$date_c/g" "$DT_u/$tpc/cfg.12"
+sed -i "s/09/$date_u/g" "$DT_u/$tpc/cfg.12"
+sed -i "s/10/$words/g" "$DT_u/$tpc/cfg.12"
+sed -i "s/11/$sentences/g" "$DT_u/$tpc/cfg.12"
+sed -i "s/12/$images/g" "$DT_u/$tpc/cfg.12"
+sed -i "s/13/$level/g" "$DT_u/$tpc/cfg.12"
 
 echo "$U" > $DC_s/cfg.4
 echo "$Mail" >> $DC_s/cfg.4
@@ -460,47 +454,42 @@ convert $DT/boim1.png \( +clone -background Black \
 fi
 
 cd "$DM_tlt"
-cp -r ./* "$DT/$tpc/"
-cp -r "./words" "$DT/$tpc/"
-cp -r "./words/images" "$DT/$tpc/words"
-mkdir "$DT/$tpc/.audio"
+cp -r ./* "$DT_u/$tpc/"
+cp -r "./words" "$DT_u/$tpc/"
+cp -r "./words/images" "$DT_u/$tpc/words"
+mkdir "$DT_u/$tpc/.audio"
 
 n=1
 while [ $n -le $(cat "$DC_tlt/cfg.5" | wc -l) ]; do
 	cp=$(sed -n "$n"p "$DC_tlt/cfg.5")
-	cp "$DM_tl/.share/$cp" "$DT/$tpc/.audio/$cp"
+	cp "$DM_tl/.share/$cp" "$DT_u/$tpc/.audio/$cp"
 	let n++
 done
 
-cp -f "$DT/cfg.12" "$DT/$tpc/cfg.12"
-cp -f "$DC_tlt/cfg.0" "$DT/$tpc/cfg.0"
-cp -f "$DC_tlt/cfg.3" "$DT/$tpc/cfg.3"
-cp -f "$DC_tlt/cfg.4" "$DT/$tpc/cfg.4"
-cp -f "$DC_tlt/cfg.5" "$DT/$tpc/cfg.5"
-#cp -f "$DC_tlt/cfg.10" "$DT/$tpc/cfg.10"
+cp -f "$DC_tlt/cfg.0" "$DT_u/$tpc/cfg.0"
+cp -f "$DC_tlt/cfg.3" "$DT_u/$tpc/cfg.3"
+cp -f "$DC_tlt/cfg.4" "$DT_u/$tpc/cfg.4"
+cp -f "$DC_tlt/cfg.5" "$DT_u/$tpc/cfg.5"
 printf "$notes" > "$DC_tlt/cfg.10"
-printf "$notes" > "$DT/$tpc/cfg.10"
+printf "$notes" > "$DT_u/$tpc/cfg.10"
 
-cd $DT
+cd $DT_u
 tar -cvf "$tpc.tar" "$tpc"
 gzip -9 "$tpc.tar"
 mv "$tpc.tar.gz" "$U.$tpc.idmnd"
-[[ -d "$DT/$tpc" ]] && rm -fr "$DT/$tpc"/.*
+[[ -d "$DT_u/$tpc" ]] && rm -fr "$DT_u/$tpc"
 dte=$(date "+%d %B %Y")
-mv -f "$DT/$U.$tpc.idmnd" "$DT/$nme/"
-
 notify-send "$uploading..." "$wait" -i idiomind -t 6000
 
 #-----------------------
 rm -f $DT/SITE_TMP
-cd $DT/$nme
-cp -f $DS/default/index.php ./.index.php
-chmod 775 -R $DT/$nme
+cd $DT_u
+
+chmod 775 -R $DT_u
 lftp -u $USER,$KEY $FTPHOST << END_SCRIPT
 mirror --reverse ./ public_html/$lgs/$lnglbl/$Ctgry/
 quit
 END_SCRIPT
-
 
 exit=$?
 
@@ -521,14 +510,12 @@ yad --window-icon=idiomind --name=idiomind \
 --skip-taskbar --title=idiomind \
 --button="  Ok  ":0
 
-[[ -d "$DT/$nme" ]] && rm -fr "$DT/$nme"
-[[ -d "$DT/$tpc" ]] && rm -fr "$DT/$tpc"
-[[ -f "$DT/SITE_TMP" ]] && rm -f "$DT/SITE_TMP"
-[[ -f "$DT/.aud" ]] && rm -f "$DT/.aud"
-[[ -f "$DT/$U.$tpc.idmnd" ]] && rm -f "$DT/$U.$tpc.idmnd"
-[[ -f "$DT/$tpc.tar" ]] && rm -f "$DT/$tpc.tar"
-[[ -f "$DT/$tpc.tar.gz" ]] && rm -f "$DT/$tpc.tar.gz"
-[[ -d "$DT/$nme" ]] && rm -fr "$DT/$nme"
-[[ -d "$DT" ]] && rm -f "$DT/*.png"
+[[ -d "$DT_u/$tpc" ]] && rm -fr "$DT_u/$tpc"
+[[ -f "$DT_u/SITE_TMP" ]] && rm -f "$DT_u/SITE_TMP"
+[[ -f "$DT_u/.aud" ]] && rm -f "$DT_u/.aud"
+[[ -f "$DT_u/$U.$tpc.idmnd" ]] && rm -f "$DT_u/$U.$tpc.idmnd"
+[[ -f "$DT_u/$tpc.tar" ]] && rm -f "$DT_u/$tpc.tar"
+[[ -f "$DT_u/$tpc.tar.gz" ]] && rm -f "$DT_u/$tpc.tar.gz"
+[[ -d "$DT_u" ]] && rm -fr "$DT_u"
 
 exit
