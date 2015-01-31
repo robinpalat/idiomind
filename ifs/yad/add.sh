@@ -126,7 +126,7 @@ function dlg_checklist_1() {
         --buttons-layout=end --skip-taskbar --width=400 \
         --height=280 --borders=10 --window-icon=idiomind \
         --button=gtk-close:1 --button="$add":0 \
-        --column="" --column="Select" > "$3"
+        --column="" --column="Select" > "$slt"
 }
 
 

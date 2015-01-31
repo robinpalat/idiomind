@@ -2,7 +2,13 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/trans/es/others.conf
-IMAGE=/usr/share/idiomind/ifs/1u.png
+
+text="<big><big><big><big>  Welcome</big></big></big></big>
+
+\tIdiomind is a small program to help you lern words in 
+\tothers languages. this greatly helps you when you need to remember
+\tlots of new vocabulary in whatever language you're studyng.
+"
 
 drtf="/usr/share/idiomind/addons/Learning with news/examples/"
 user=$(echo "$(whoami)")
@@ -30,9 +36,9 @@ function set_lang() {
 	fi
 }
 
-dialog=$(yad --center --width=520 --height=280 --fixed \
+dialog=$(yad --center --width=520 --height=280 \
 	--image-on-top --on-top --class=idiomind --name=idiomind \
-	--window-icon=idiomind --buttons-layout=end --image=$IMAGE  \
+	--window-icon=idiomind --buttons-layout=end --text="$text" \
 	--title="Idiomind" --form --borders=10 --align=right --button=Cancel:1 --button=Ok:0 \
 	--field="\\t\\t\\t\\t$language_target :CB" \
 	!"English!French!German!Italian!Japanese!Portuguese!Spanish!Vietnamese!Chinese"\

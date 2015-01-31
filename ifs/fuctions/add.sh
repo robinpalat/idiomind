@@ -144,6 +144,33 @@ function tags_4() {
 }
 
 
+function tags_5() {
+	
+	eyeD3 --set-encoding=utf8 \
+	-a I$1I2I0I"$2"I$I2I0I "$3"
+}
+
+
+function tags_6() {
+	
+	eyeD3 --set-encoding=utf8 \
+	-A IWI3I0I"$2"IWI3I0I "$3"
+}
+
+
+function tags_7() {
+	
+	eyeD3 --set-encoding=utf8 \
+	-t ISI1I0I"$2"ISI1I0I "$3"
+}
+
+
+function tags_8() {
+	
+	eyeD3 -p I$1I4I0I"$2"I$1I4I0I "$3"
+}
+
+
 function voice() {
 	
 	cd $DT_r; vs=$(sed -n 7p $DC_s/cfg.1)

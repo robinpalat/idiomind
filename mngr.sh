@@ -329,8 +329,9 @@ elif [ "$1" = mkok- ]; then
 	
 	
 elif [ $1 = dli ]; then
+
+	source $DS/ifs/yad/mngr.sh
 	itdl="$2"
-	
 	nme="$(echo "$2" | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
 	
 	if [ "$3" = "C" ]; then
@@ -403,14 +404,8 @@ elif [ $1 = dli ]; then
 
 	if [ -f "$flw" ]; then
 
-		$yad --fixed --scroll --center \
-		--title="$confirm" --width=420 --height=150 \
-		--on-top --image=dialog-question \
-		--skip-taskbar --window-icon=idiomind \
-		--text=" $delete_word" --borders=5 \
-		--window-icon=idiomind \
-		--button="$yes":0 --button="$no":1
-			ret=$?
+			dlg_msg_1 " $delete_word "
+			ret=$(echo "$?")
 			
 			if [ $ret -eq 0 ]; then
 			
@@ -438,13 +433,9 @@ elif [ $1 = dli ]; then
 			fi
 			
 	elif [ -f "$fls" ]; then
-		$yad --fixed --center --scroll \
-		--title="$confirm" --width=420 --height=150 \
-		--on-top --image=dialog-question --skip-taskbar \
-		--text=" $delete_sentence " --borders=5 \
-		--window-icon=idiomind \
-		--button="$yes":0 --button="$no":1
-			ret=$?
+
+			dlg_msg_1 " $delete_sentence "
+			ret=$(echo "$?")
 			
 			if [ $ret -eq 0 ]; then
 				(sleep 1 && kill -9 $(pgrep -f "$yad --form "))
@@ -468,46 +459,42 @@ elif [ $1 = dli ]; then
 			fi
 			
 	elif [ ! -f "$flw" ] || [ ! -f "$flw" ]; then
-		$yad --fixed --center --scroll \
-		--title="$confirm" --width=420 --height=150 \
-		--on-top --image=dialog-question --skip-taskbar \
-		--text=" $delete_item " --borders=5 \
-		--window-icon=idiomind \
-		--button="$yes":0 --button="$no":1
-			ret=$?
-	
-			cd "$DC_tlt/practice"
-			sed -i 's/'"$itdl"'//g' ./fin.tmp
-			sed -i 's/'"$itdl"'//g' ./lwin.tmp
-			sed -i 's/'"$itdl"'//g' ./mcin.tmp
-			sed -i 's/'"$itdl"'//g' ./lsin.tmp
-			cd ..
-			grep -v -x -F "$itdl" ./.cfg.11 > ./cfg.11._
-			sed '/^$/d' ./cfg.11._ > ./.cfg.11
-			grep -v -x -F "$itdl" ./cfg.0 > ./cfg.0_
-			sed '/^$/d' ./cfg.0_ > ./cfg.0
-			grep -v -x -F "$itdl" ./cfg.2 > ./cfg.2._
-			sed '/^$/d' ./cfg.2._ > ./cfg.2
-			grep -v -x -F "$itdl" ./cfg.1 > ./cfg.1._
-			sed '/^$/d' ./cfg.1._ > ./cfg.1
-			grep -v -x -F "$itdl" cfg.4 > cfg.4._
-			sed '/^$/d' cfg.4._ > cfg.4
-			grep -v -x -F "$itdl" cfg.3 > cfg.3._
-			sed '/^$/d' cfg.3._ > cfg.3
-			rm ./*._
+
+			dlg_msg_1 " $delete_item "
+			ret=$(echo "$?")
+			
+			if [ $ret -eq 0 ]; then
+				(sleep 1 && kill -9 $(pgrep -f "$yad --form "))
+				cd "$DC_tlt/practice"
+				sed -i 's/'"$itdl"'//g' ./fin.tmp
+				sed -i 's/'"$itdl"'//g' ./lwin.tmp
+				sed -i 's/'"$itdl"'//g' ./mcin.tmp
+				sed -i 's/'"$itdl"'//g' ./lsin.tmp
+				cd ..
+				grep -v -x -F "$itdl" ./.cfg.11 > ./cfg.11._
+				sed '/^$/d' ./cfg.11._ > ./.cfg.11
+				grep -v -x -F "$itdl" ./cfg.0 > ./cfg.0_
+				sed '/^$/d' ./cfg.0_ > ./cfg.0
+				grep -v -x -F "$itdl" ./cfg.2 > ./cfg.2._
+				sed '/^$/d' ./cfg.2._ > ./cfg.2
+				grep -v -x -F "$itdl" ./cfg.1 > ./cfg.1._
+				sed '/^$/d' ./cfg.1._ > ./cfg.1
+				grep -v -x -F "$itdl" cfg.4 > cfg.4._
+				sed '/^$/d' cfg.4._ > cfg.4
+				grep -v -x -F "$itdl" cfg.3 > cfg.3._
+				sed '/^$/d' cfg.3._ > cfg.3
+				rm ./*._
+			else
+				exit 1
+			fi
 	fi
 	
 #--------------------------------
 elif [ $1 = dlt ]; then
-	$yad --name=idiomind --center \
-	--image=dialog-question --sticky --on-top \
-	--text=" $delete_topic " --buttons-layout=end \
-	--width=420 --height=150 --borders=5 \
-	--skip-taskbar --window-icon=idiomind \
-	--title="$confirm" --button="$yes":0 --button="$no":1
-
-		ret=$?
-
+	source $DS/ifs/yad/mngr.sh
+	dlg_msg_1 " $delete_topic "
+	ret=$(echo "$?")
+		
 		if [ $ret -eq 0 ]; then
 		
 			[[ -d "$DM_tl/$tpc" ]] && rm -r "$DM_tl/$tpc"
@@ -530,21 +517,18 @@ elif [ $1 = dlt ]; then
 			rm $DC_tl/.*._ 
 			
 			kill -9 $(pgrep -f "$yad --list ")
-			
 			notify-send  -i idiomind "$tpc" "$deleted"  -t 1000
-			
 			$DS/mngr.sh mkmn
 			
-		elif [ $ret -eq 1 ]; then
-			exit
 		else
-			exit
+			exit 0
 		fi
 
 #--------------------------------
 elif [ "$1" = edt ]; then
 
 	source /usr/share/idiomind/ifs/ifs.sh
+	source $DS/ifs/yad/mngr.sh
 	wth=$(sed -n 7p $DC_s/cfg.18)
 	eht=$(sed -n 8p $DC_s/cfg.18)
 	dct="$DS/addons/Dics/cnfg.sh"
@@ -586,27 +570,8 @@ elif [ "$1" = edt ]; then
 		dlte="$DS/mngr.sh dli '$nme'"
 		imge="$DS/add.sh set_image '$nme' word"
 
-		yad --form --wrap --center --name=idiomind --class=idmnd \
-		--width=$wth --height=$eht --always-print-result \
-		--borders=15 --columns=2 --align=center --skip-taskbar \
-		--buttons-layout=end --title=" $nme" --separator="\\n" \
-		--fontname="Arial" --scroll --window-icon=idiomind \
-		--text-align=center --selectable-labels \
-		--field="<small>$lgtl</small>":RO "$TGT" \
-		--field="<small>$lgsl</small>" "$src" \
-		--field="<small>$topic </small>":CB "$tpc!$tpcs" \
-		--field="<small>$audio </small>":FL "$AUD" \
-		--field="<small>$example </small>":TXT "$exm1" \
-		--field="<small>$definition </small>":TXT "$dftn" \
-		--field="<small>$notes </small>":TXT "$ntes" \
-		--field="$mark "":CHK" "$mrk" \
-		--field="$chk"":CHK" "$mrok" \
-		--field="<a href='http://glosbe.com/$lgs/$lgt/$TGT'>$search_def </a>":lbl \
-		--field=" :LBL" " " \
-		--button="$image":"$imge" \
-		--button="$delete":"$dlte" \
-		--button=gtk-close:0 > $cnf
-			ret=$?
+		dlg_form_1 $cnf
+		ret=$(echo "$?")
 			
 			srce=$(cat $cnf | tail -12 | sed -n 2p)
 			topc=$(cat $cnf | tail -12 | sed -n 3p)
@@ -614,11 +579,14 @@ elif [ "$1" = edt ]; then
 			exm1=$(cat $cnf | tail -12 | sed -n 5p)
 			dftn=$(cat $cnf | tail -12 | sed -n 6p)
 			ntes=$(cat $cnf | tail -12 | sed -n 7p)
-			mrok=$(cat $cnf | tail -12 | sed -n 9p)
 			mrk2=$(cat $cnf | tail -12 | sed -n 8p)
+			mrok=$(cat $cnf | tail -12 | sed -n 9p)
+			
 			rm -f $cnf
 			
 			source /usr/share/idiomind/ifs/c.conf
+			source $DS/ifs/fuctions/add.sh
+			source $DS/ifs/yad/add.sh
 			
 			if [[ "$mrk" != "$mrk2" ]]; then
 				if [[ "$mrk2" = "TRUE" ]]; then
@@ -628,28 +596,26 @@ elif [ "$1" = edt ]; then
 					sed '/^$/d' "$DC_tlt/cfg.6._" > "$DC_tlt/cfg.6"
 					rm "$DC_tlt/cfg.6._"
 				fi
-				eyeD3 -p IWI4I0I"$mrk2"IWI4I0I "$DM_tlt/words/$nme".mp3 >/dev/null 2>&1
+				tags_8 W "$mrk2" "$DM_tlt/words/$nme".mp3 >/dev/null 2>&1
 			fi
 			
 			if [[ "$audo" != "$file" ]]; then
 				eyeD3 --write-images=$DT "$file"
 				cp -f "$audo" "$DM_tlt/words/$nme.mp3"
-				eyeD3 --set-encoding=utf8 -t "IWI1I0I${TGT}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" -A "IWI3I0I${exm1}IWI3I0I" \
-				"$DM_tlt/words/$nme.mp3" >/dev/null 2>&1
-				
+				tags_2 W "$TGT" "$srce" "$DM_tlt/words/$nme.mp3" >/dev/null 2>&1
 				eyeD3 --add-image $DT/ILLUSTRATION.jpeg:ILLUSTRATION \
 				"$DM_tlt/words/$nme.mp3" >/dev/null 2>&1
 				[[ -d $DT/idadtmptts ]] && rm -fr $DT/idadtmptts
 			fi
 			
 			if [[ "$srce" != "$SRC" ]]; then
-				eyeD3 --set-encoding=utf8 -a IWI2I0I"$srce"IWI2I0I "$file" >/dev/null 2>&1
+				tags_5 W "$srce" "$file" >/dev/null 2>&1
 			fi
 			
 			infm="$(echo $exm1 && echo $dftn && echo $ntes)"
 			if [ "$infm" != "$inf" ]; then
 				impr=$(echo "$infm" | tr '\n' '_')
-				eyeD3 --set-encoding=utf8 -A IWI3I0I"$impr"IWI3I0I "$file" >/dev/null 2>&1
+				tags_6 W "$impr" "$file" >/dev/null 2>&1
 				echo "eitm.$tpc.eitm" >> \
 				$DC/addons/stats/.log &
 			fi
@@ -689,21 +655,8 @@ elif [ "$1" = edt ]; then
 		dlte="$DS/mngr.sh dli '$nme'"
 		imge="$DS/add.sh set_image '$nme' sentence"
 		
-		yad --form --wrap --center --name=idiomind --class=idmnd \
-		--width=$wth --height=$eht --always-print-result \
-		--separator="\\n" --borders=15 --align=center --align=center \
-		--buttons-layout=end --title=" $nme" --fontname="Arial" \
-		--selectable-labels --window-icon=idiomind --skip-taskbar \
-		--field="$chk:CHK" "$ok" \
-		--field="$mark "":CHK" "$mrk" \
-		--field="<small>$lgtl</small>":TXT "$tgt" \
-		--field="<small>$lgsl</small>":TXT "$src" \
-		--field="<small>$topic </small>":CB "$tpc!$tpcs" \
-		--field="<small>$audio </small>":FL "$DM_tlt/$nme.mp3" \
-		--field="$list_words":BTN "$wrds" \
-		--button="$image":"$imge" \
-		--button="$delete":"$dlte" "$edau" \
-		--button=gtk-close:1 > $cnf
+		dlg_form_2 $cnf
+		ret=$(echo "$?")
 			
 			mrok=$(cat $cnf | tail -8 | sed -n 1p)
 			mrk2=$(cat $cnf | tail -8 | sed -n 2p)
@@ -714,7 +667,7 @@ elif [ "$1" = edt ]; then
 			
 			source /usr/share/idiomind/ifs/c.conf
 			source $DS/ifs/fuctions/add.sh
-			source $DS/ifs/yad/add.sh
+
 			rm -f $cnf
 			
 			if [ "$mrk" != "$mrk2" ]; then
@@ -725,7 +678,7 @@ elif [ "$1" = edt ]; then
 					sed '/^$/d' "$DC_tlt/cfg.6._" > "$DC_tlt/cfg.6"
 					rm "$DC_tlt/cfg.6._"
 				fi
-				eyeD3 -p ISI4I0I"$mrk2"ISI4I0I "$DM_tlt/$nme".mp3 >/dev/null 2>&1
+				tags_8 S "$mrk2" "$DM_tlt/$nme.mp3" >/dev/null 2>&1
 			fi
 			
 			if [ -n "$audo" ]; then
@@ -734,8 +687,7 @@ elif [ "$1" = edt ]; then
 				
 					cp -f "$audo" "$DM_tlt/$nme.mp3"
 					eyeD3 --remove-all "$DM_tlt/$nme.mp3"
-					eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I \
-					"$DM_tlt/$nme.mp3" >/dev/null 2>&1
+					tags_1 S "$trgt" "$srce" "$DM_tlt/$nme.mp3" >/dev/null 2>&1
 					
 					(
 						DT_r=$(mktemp -d $DT/XXXXXX)
@@ -749,7 +701,6 @@ elif [ "$1" = edt ]; then
 						fi
 						
 						clean_3 "$vrbl" > $aw
-						#twrd=$(cat $aw | sed '/^$/d')
 						src=$(translate "$(cat $aw | sed '/^$/d')" auto $lg)
 						echo "$src" | sed 's/,//g' | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
 						sed -i 's/\. /\n/g' $bw
@@ -773,8 +724,7 @@ elif [ "$1" = edt ]; then
 			
 			if [ -f $DT/tmpau.mp3 ]; then
 				cp -f $DT/tmpau.mp3 "$DM_tlt/$nme.mp3"
-				eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I \
-				"$DM_tlt/$nme.mp3" >/dev/null 2>&1
+				tags_1 S "$trgt" "$srce" "$DM_tlt/$nme.mp3" >/dev/null 2>&1
 				rm -f $DT/tmpau.mp3
 			fi
 
@@ -789,7 +739,7 @@ elif [ "$1" = edt ]; then
 				sed -i "s/${nme}/${fln}/" "$DC_tlt/.cfg.11"
 				sed -i "s/${nme}/${fln}/" "$DC_tlt/practice/lsin.tmp"
 				mv -f "$DM_tlt/$nme".mp3 "$DM_tlt/$fln".mp3
-				eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I "$DM_tlt/$fln".mp3 >/dev/null 2>&1
+				tags_7 S "$trgt" "$DM_tlt/$fln.mp3" >/dev/null 2>&1
 
 				(
 					DT_r=$(mktemp -d $DT/XXXXXX)
@@ -827,7 +777,7 @@ elif [ "$1" = edt ]; then
 			
 			if [ "$srce" != "$src" ]; then
 				file="$DM_tlt/$nme.mp3"
-				eyeD3 --set-encoding=utf8 -a ISI2I0I"$srce"ISI2I0I "$file" >/dev/null 2>&1
+				tags_5 S "$srce" "$file"
 			fi
 			
 			if [ "$tpc" != "$topc" ]; then
@@ -835,7 +785,6 @@ elif [ "$1" = edt ]; then
 				cp -f "$audo" "$DM_tl/$topc/$nme.mp3"
 				tag="$(eyeD3 "$DM_tl/$topc/$nme.mp3" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')"
 				trgt="$(clean_3 "$tag")"
-				
 				n=1
 				while [ $n -le "$(echo "$trgt" | wc -l)" ]; do
 					echo "$(echo "$tgt" | sed -n "$n"p).mp3" >> "$DC_tl/$topc/cfg.5"
