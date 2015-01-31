@@ -150,6 +150,7 @@ function result() {
 	}
 	
 function check() {
+	
 	yad --form --center --name=idiomind --buttons-layout=end \
 	--width=470 --height=230 --on-top --skip-taskbar --scroll \
 	--class=idiomind $aut --wrap --window-icon=idiomind \

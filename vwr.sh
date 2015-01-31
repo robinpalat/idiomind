@@ -43,7 +43,7 @@ if [ -f "$DM_tlt/words/$nme.mp3" ]; then
 	hlgt=$(echo $trgt | awk '{print tolower($0)}')
 	exmp1=$(echo "$(echo "$exmp" | sed -n 1p)" | sed "s/"${trgt,,}"/<span background='#F8F4A2'>"${trgt,,}"<\/\span>/g")
 	[[ "$(echo "$tgs" | grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)')" = TRUE ]] \
-	&& trgt=$(echo "<span color='#F8F4A2'><big><b>*</b></big></span> "$trgt"")
+	&& trgt=$(echo "<span color='#797979'><big><b>*</b></big></span> "$trgt"")
 	
 	[[ "$ap" = TRUE ]] && (killall play & sleep 1 && play "$DM_tlt/words/$nme.mp3") &
 	
@@ -65,7 +65,7 @@ elif [ -f "$DM_tlt/$nme.mp3" ]; then
 	src=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
 	lwrd=$(echo "$tgs" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' | tr '_' '\n')
 	[[ "$(echo "$tgs" | grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)')" = TRUE ]] \
-	&& trgt=$(echo "<span color='#F8F4A2'><big><b>*</b></big></span> "$trgt"")
+	&& trgt=$(echo "<span color='#797979'><big><b>*</b></big></span> "$trgt"")
 	[[ ! -f "$DM_tlt/$nme.mp3" ]] && exit 1
 	
 	[[ "$ap" = TRUE ]] && (killall play & sleep 1 && play "$DM_tlt/$nme.mp3") &
@@ -97,6 +97,6 @@ fi
 		else 
 			echo "vwr.$(cat $DC/addons/stats/.tmp | wc -l).vwr" >> \
 			$DC/addons/stats/.log
-			[[ -f $DT/rm ]] && $DS/ifs/tls.sh remove_items
+			#[[ -f $DT/rm ]] && $DS/ifs/tls.sh remove_items
 			rm $DC/addons/stats/.tmp & exit 1
 		fi

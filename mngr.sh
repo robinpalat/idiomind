@@ -515,17 +515,17 @@ elif [ $1 = dlt ]; then
 			$ > $DC_s/cfg.6
 			rm $DC_s/cfg.8
 			$ > $DC_tl/.cfg.8
-			grep -v -x -v "$tpc" $DC_tl/.cfg.2 > $DC_tl/.cfg.2._
+			grep -v -x -F "$tpc" $DC_tl/.cfg.2 > $DC_tl/.cfg.2._
 			sed '/^$/d' $DC_tl/.cfg.2._ > $DC_tl/.cfg.2
-			grep -v -x -v "$tpc" $DC_tl/.cfg.1 > $DC_tl/.cfg.1._
+			grep -v -x -F "$tpc" $DC_tl/.cfg.1 > $DC_tl/.cfg.1._
 			sed '/^$/d' $DC_tl/.cfg.1._ > $DC_tl/.cfg.1
-			grep -v -x -v "$tpc" $DC_tl/.cfg.3 > $DC_tl/.cfg.3._
+			grep -v -x -F "$tpc" $DC_tl/.cfg.3 > $DC_tl/.cfg.3._
 			sed '/^$/d' $DC_tl/.cfg.3._ > $DC_tl/.cfg.3
-			grep -v -x -v "$tpc" $DC_tl/.cfg.7 > $DC_tl/.cfg.7._
+			grep -v -x -F "$tpc" $DC_tl/.cfg.7 > $DC_tl/.cfg.7._
 			sed '/^$/d' $DC_tl/.cfg.7._ > $DC_tl/.cfg.7
-			grep -v -x -v "$tpc" $DC_tl/.cfg.6 > $DC_tl/.cfg.6._
+			grep -v -x -F "$tpc" $DC_tl/.cfg.6 > $DC_tl/.cfg.6._
 			sed '/^$/d' $DC_tl/.cfg.6._ > $DC_tl/.cfg.6
-			grep -v -x -v "$tpc" $DC_tl/.cfg.5 > $DC_tl/.cfg.5._
+			grep -v -x -F "$tpc" $DC_tl/.cfg.5 > $DC_tl/.cfg.5._
 			sed '/^$/d' $DC_tl/.cfg.5._ > $DC_tl/.cfg.5
 			rm $DC_tl/.*._ 
 			
@@ -544,6 +544,7 @@ elif [ $1 = dlt ]; then
 #--------------------------------
 elif [ "$1" = edt ]; then
 
+	source /usr/share/idiomind/ifs/ifs.sh
 	wth=$(sed -n 7p $DC_s/cfg.18)
 	eht=$(sed -n 8p $DC_s/cfg.18)
 	dct="$DS/addons/Dics/cnfg.sh"
@@ -583,7 +584,7 @@ elif [ "$1" = edt ]; then
 		dftn=$(echo "$inf" | sed -n 2p)
 		ntes=$(echo "$inf" | sed -n 3p)
 		dlte="$DS/mngr.sh dli '$nme'"
-		imge="$DS/add.sh add_image '$nme' word"
+		imge="$DS/add.sh set_image '$nme' word"
 
 		yad --form --wrap --center --name=idiomind --class=idmnd \
 		--width=$wth --height=$eht --always-print-result \
@@ -618,8 +619,9 @@ elif [ "$1" = edt ]; then
 			rm -f $cnf
 			
 			source /usr/share/idiomind/ifs/c.conf
-			if [ "$mrk" != "$mrk2" ]; then
-				if [ "$mrk2" = "TRUE" ]; then
+			
+			if [[ "$mrk" != "$mrk2" ]]; then
+				if [[ "$mrk2" = "TRUE" ]]; then
 					echo "$TGT" >> "$DC_tlt/cfg.6"
 				else
 					grep -v -x -v "$TGT" "$DC_tlt/cfg.6" > "$DC_tlt/cfg.6._"
@@ -629,7 +631,7 @@ elif [ "$1" = edt ]; then
 				eyeD3 -p IWI4I0I"$mrk2"IWI4I0I "$DM_tlt/words/$nme".mp3 >/dev/null 2>&1
 			fi
 			
-			if [ "$audo" != "$file" ]; then
+			if [[ "$audo" != "$file" ]]; then
 				eyeD3 --write-images=$DT "$file"
 				cp -f "$audo" "$DM_tlt/words/$nme.mp3"
 				eyeD3 --set-encoding=utf8 -t "IWI1I0I${TGT}IWI1I0I" -a "IWI2I0I${srce}IWI2I0I" -A "IWI3I0I${exm1}IWI3I0I" \
@@ -640,7 +642,7 @@ elif [ "$1" = edt ]; then
 				[[ -d $DT/idadtmptts ]] && rm -fr $DT/idadtmptts
 			fi
 			
-			if [ "$srce" != "$SRC" ]; then
+			if [[ "$srce" != "$SRC" ]]; then
 				eyeD3 --set-encoding=utf8 -a IWI2I0I"$srce"IWI2I0I "$file" >/dev/null 2>&1
 			fi
 			
@@ -654,7 +656,7 @@ elif [ "$1" = edt ]; then
 
 			mv -f "$DT/$nme.mp3" "$file"
 
-			if [ "$tpc" != "$topc" ]; then
+			if [[ "$tpc" != "$topc" ]]; then
 				cp -f "$audo" "$DM_tl/$topc/words/$nme.mp3"
 				$DS/mngr.sh inx W "$nme" "$topc" &
 				if [ -n "$(cat "$DC_tl/.cfg.2" | grep "$topc")" ]; then
@@ -662,7 +664,7 @@ elif [ "$1" = edt ]; then
 				fi
 			fi
 			
-			if [ "$mrok" = "TRUE" ]; then
+			if [[ "$mrok" = "TRUE" ]]; then
 				grep -v -x -v "$nme" "$ind" > $DT/tx
 				sed '/^$/d' $DT/tx > "$ind"
 				rm $DT/tx
@@ -685,7 +687,7 @@ elif [ "$1" = edt ]; then
 		
 		edau="--button=Edit Audio:/usr/share/idiomind/ifs/tls.sh edta '$DM_tlt/$nme.mp3' '$DM_tlt'"
 		dlte="$DS/mngr.sh dli '$nme'"
-		imge="$DS/add.sh add_image '$nme' sentence"
+		imge="$DS/add.sh set_image '$nme' sentence"
 		
 		yad --form --wrap --center --name=idiomind --class=idmnd \
 		--width=$wth --height=$eht --always-print-result \
@@ -709,7 +711,10 @@ elif [ "$1" = edt ]; then
 			srce=$(cat $cnf | tail -8 | sed -n 4p)
 			topc=$(cat $cnf | tail -8 | sed -n 5p)
 			audo=$(cat $cnf | tail -8 | sed -n 6p)
+			
 			source /usr/share/idiomind/ifs/c.conf
+			source $DS/ifs/fuctions/add.sh
+			source $DS/ifs/yad/add.sh
 			rm -f $cnf
 			
 			if [ "$mrk" != "$mrk2" ]; then
@@ -733,82 +738,35 @@ elif [ "$1" = edt ]; then
 					"$DM_tlt/$nme.mp3" >/dev/null 2>&1
 					
 					(
-					DT_r=$(mktemp -d $DT/XXXXXX)
-					cd $DT_r
-					> swrd
-					> twrd
-					if [ $lgt = ja ] || [ $lgt = zh-cn ]; then
-						vrbl="$srce"; lg=$lgt; aw=$DT/swrd; bw=$DT/twrd
-					else
-						vrbl="$trgt"; lg=$lgs; aw=$DT/twrd; bw=$DT/swrd
-					fi
-					
-					echo "$vrbl" | sed 's/ /\n/g' | grep -v '^.$' | grep -v '^..$' \
-					| sed -n 1,40p | sed s'/&//'g | sed 's/,//g' | sed 's/\?//g' \
-					| sed 's/\¿//g' | sed 's/;//g' | sed 's/\!//g' | sed 's/\¡//g' \
-					| tr -d ')' | tr -d '(' | sed 's/\]//g' | sed 's/\[//g' \
-					| sed 's/\.//g' | sed 's/  / /g' | sed 's/ /\. /g' > $aw
-					twrd=$(cat $aw | sed '/^$/d')
-					result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lg" --data-urlencode text="$twrd" https://translate.google.com)
-					encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
-					iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 | sed 's/,//g' | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
-					sed -i 's/\. /\n/g' $bw
-					sed -i 's/\. /\n/g' $aw
-					snmk=$(echo "$trgt"  | sed 's/ /\n/g')
-					n=1
-					while [ $n -le $(echo "$snmk" | wc -l) ]; do
-						grmrk=$(echo "$snmk" | sed -n "$n"p)
-						chck=$(echo "$snmk" | sed -n "$n"p | awk '{print tolower($0)}' \
-						| sed 's/,//g' | sed 's/\.//g')
-						if echo "$lnns" | grep -Fxq $chck; then
-							echo "$grmrk" >> grmrk
-						elif echo "$lvbr" | grep -Fxq $chck; then
-							echo "<span color='#D14D8B'>$grmrk</span>" >> grmrk
-						elif echo "$lpre" | grep -Fxq $chck; then
-							echo "<span color='#E08434'>$grmrk</span>" >> grmrk
-						elif echo "$ladv" | grep -Fxq $chck; then
-							echo "<span color='#9C68BD'>$grmrk</span>" >> grmrk
-						elif echo "$lprn" | grep -Fxq $chck; then
-							echo "<span color='#5473B8'>$grmrk</span>" >> grmrk
-						elif echo "$ladj" | grep -Fxq $chck; then
-							echo "<span color='#368F68'>$grmrk</span>" >> grmrk
+						DT_r=$(mktemp -d $DT/XXXXXX)
+						cd $DT_r
+						> swrd
+						> twrd
+						if [ $lgt = ja ] || [ $lgt = zh-cn ]; then
+							vrbl="$srce"; lg=$lgt; aw=$DT/swrd; bw=$DT/twrd
 						else
-							echo "$grmrk" >> grmrk
+							vrbl="$trgt"; lg=$lgs; aw=$DT/twrd; bw=$DT/swrd
 						fi
-						let n++
-					done
-					
-					if [ $lgt = ja ] || [ $lgt = zh-cn ]; then
-						n=1
-						while [ $n -le "$(cat $aw | wc -l)" ]; do
-							s=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-							t=$(sed -n "$n"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-							echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> A
-							echo "$t"_"$s""" >> B
-							let n++
-						done
-					else
-						n=1
-						while [ $n -le "$(cat $aw | wc -l)" ]; do
-							t=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-							s=$(sed -n "$n"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-							echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> A
-							echo "$t"_"$s""" >> B
-							let n++
-						done
-					fi
-					
-					eyeD3 --set-encoding=utf8 -A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0IIGMI3I0I"$grmrk"IGMI3I0I \
-					"$DM_tlt/$nme.mp3" >/dev/null 2>&1
-					rm -f grmrk
-					
-					n=1
-					while [ $n -le $(cat $bw | wc -l) ]; do
-						$dct $(sed -n "$n"p $bw | awk '{print tolower($0)}') $DT_r
-						let n++
-					done
-					
-					[[ -d $DT_r ]] && rm -fr $DT_r
+						
+						clean_3 "$vrbl" > $aw
+						#twrd=$(cat $aw | sed '/^$/d')
+						src=$(translate "$(cat $aw | sed '/^$/d')" auto $lg)
+						echo "$src" | sed 's/,//g' | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
+						sed -i 's/\. /\n/g' $bw
+						sed -i 's/\. /\n/g' $aw
+						snmk=$(echo "$trgt"  | sed 's/ /\n/g')
+						source $DS/default/dicts/$lgt
+						grammar_1 "$snmk" $DT_r
+						list_words $aw $bw $DT_r
+						grmrk=$(cat g_ | sed ':a;N;$!ba;s/\n/ /g')
+						lwrds=$(cat A_)
+						pwrds=$(cat B_ | tr '\n' '_')
+						tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$nme.mp3" >/dev/null 2>&1
+						rm -f grmrk
+						get_words $aw $bw
+						
+						[[ -d $DT_r ]] && rm -fr $DT_r
+						rm -f $DT/twrd $DT/swrd
 					) &
 				fi
 			fi
@@ -824,84 +782,42 @@ elif [ "$1" = edt ]; then
 				
 				fln="$(echo "$trgt" | cut -c 1-100 | sed 's/[ \t]*$//' \
 				| sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
-				
 				sed -i "s/${nme}/${fln}/" "$DC_tlt/cfg.4"
 				sed -i "s/${nme}/${fln}/" "$DC_tlt/cfg.1"
 				sed -i "s/${nme}/${fln}/" "$DC_tlt/cfg.0"
 				sed -i "s/${nme}/${fln}/" "$DC_tlt/cfg.2"
 				sed -i "s/${nme}/${fln}/" "$DC_tlt/.cfg.11"
 				sed -i "s/${nme}/${fln}/" "$DC_tlt/practice/lsin.tmp"
-
 				mv -f "$DM_tlt/$nme".mp3 "$DM_tlt/$fln".mp3
 				eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I "$DM_tlt/$fln".mp3 >/dev/null 2>&1
 
 				(
 					DT_r=$(mktemp -d $DT/XXXXXX)
 					cd $DT_r
-					echo "$trgt" | sed 's/ /\n/g' | grep -v '^.$' | grep -v '^..$' \
-					| sed -n 1,40p | sed s'/&//'g \
-					| sed 's/\.//g' | sed 's/  / /g' | sed 's/ /\. /g' > twrd
-					sed -i '/^$/d' twrd
-					twrd=$(cat twrd)
-					result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lgs" --data-urlencode text="$twrd" https://translate.google.com)
-					encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
-					iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 > swrd
-				
-					sed -i 's/\. /\n/g' swrd
-					lines=$(cat twrd | wc -l)
-					lvbr=$(cat $DS/default/$lgt/verbs)
-					lnns=$(cat $DS/default/$lgt/nouns)
-					ladv=$(cat $DS/default/$lgt/adverbs)
-					lprn=$(cat $DS/default/$lgt/pronouns)
-					lpre=$(cat $DS/default/$lgt/prepositions)
-					ladj=$(cat $DS/default/$lgt/adjetives)
-					snmk=$(echo "$trgt" | sed 's/ /\n/g')
+					> swrd
+					> twrd
+					if [ $lgt = ja ] || [ $lgt = zh-cn ]; then
+						vrbl="$srce"; lg=$lgt; aw=$DT/swrd; bw=$DT/twrd
+					else
+						vrbl="$trgt"; lg=$lgs; aw=$DT/twrd; bw=$DT/swrd
+					fi
 					
-					n=1
-					while [ $n -le $(echo "$snmk" | wc -l) ]; do
-						grmrk=$(echo "$snmk" | sed -n "$n"p)
-						chck=$(echo "$snmk" | sed -n "$n"p | awk '{print tolower($0)}' \
-						| sed 's/,//g' | sed 's/\.//g')
-						if echo "$lnns" | grep -Fxq $chck; then
-							echo "$grmrk" >> grmrk
-						elif echo "$lvbr" | grep -Fxq $chck; then
-							echo "<span color='#D14D8B'>$grmrk</span>" >> grmrk
-						elif echo "$lpre" | grep -Fxq $chck; then
-							echo "<span color='#E08434'>$grmrk</span>" >> grmrk
-						elif echo "$ladv" | grep -Fxq $chck; then
-							echo "<span color='#9C68BD'>$grmrk</span>" >> grmrk
-						elif echo "$lprn" | grep -Fxq $chck; then
-							echo "<span color='#5473B8'>$grmrk</span>" >> grmrk
-						elif echo "$ladj" | grep -Fxq $chck; then
-							echo "<span color='#368F68'>$grmrk</span>" >> grmrk
-						else
-							echo "$grmrk" >> grmrk
-						fi
-						let n++
-					done
-					
-					> A
-					n=1
-					while [ $n -le "$lines" ]; do
-						t=$(sed -n "$n"p twrd | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-						s=$(sed -n "$n"p swrd | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-						echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> A
-						echo "$t"_"$s""" >> B
-						let n++
-					done
-					
-					grmrk=$(cat grmrk | sed ':a;N;$!ba;s/\n/ /g')
-					lwrds=$(cat A)
-					pwrds=$(cat B | tr '\n' '_')
-					eyeD3 --set-encoding=utf8 -A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0IIGMI3I0I"$grmrk"IGMI3I0I \
-					"$DM_tlt/$fln.mp3" >/dev/null 2>&1
-					
-					n=1
-					while [ $n -le $(cat twrd | wc -l) ]; do
-						t=$(sed -n "$n"p twrd | awk '{print tolower($0)}')
-						$dct "$t" $DT_r
-						let n++
-					done
+					clean_3 "$vrbl" > $aw
+					twrd=$(cat $aw | sed '/^$/d')
+					src=$(translate "$twrd" auto $lg)
+					echo "$src" | sed 's/,//g' | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
+					sed -i 's/\. /\n/g' $bw
+					sed -i 's/\. /\n/g' $aw
+					snmk=$(echo "$trgt"  | sed 's/ /\n/g')
+					source $DS/default/dicts/$lgt
+					grammar_1 "$snmk" $DT_r
+					list_words $aw $bw $DT_r
+					grmrk=$(cat g_ | sed ':a;N;$!ba;s/\n/ /g')
+					lwrds=$(cat A_)
+					pwrds=$(cat B_ | tr '\n' '_')
+					tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fln".mp3 >/dev/null 2>&1
+					rm -f grmrk
+					get_words $aw $bw
 				
 					[[ -d $DT_r ]] && rm -fr $DT_r
 				) &
@@ -915,16 +831,13 @@ elif [ "$1" = edt ]; then
 			fi
 			
 			if [ "$tpc" != "$topc" ]; then
+			
 				cp -f "$audo" "$DM_tl/$topc/$nme.mp3"
-				tgt=$(eyeD3 "$DM_tl/$topc/$nme.mp3" \
-				| grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' \
-				| sed 's/ /\n/g' | grep -v '^.$' | grep -v '^..$' \
-				| sed -n 1,40p | sed s'/&//'g | sed 's/,//g' | sed 's/\?//g' \
-				| sed 's/\¿//g' | sed 's/;//g' | sed 's/\!//g' | sed 's/\¡//g' \
-				| tr -d ')' | tr -d '(' | sed 's/\]//g' | sed 's/\[//g' \
-				| sed 's/\.//g' | sed 's/  / /g' | sed 's/ /\. /g')
+				tag="$(eyeD3 "$DM_tl/$topc/$nme.mp3" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')"
+				trgt="$(clean_3 "$tag")"
+				
 				n=1
-				while [ $n -le "$(echo "$tgt" | wc -l)" ]; do
+				while [ $n -le "$(echo "$trgt" | wc -l)" ]; do
 					echo "$(echo "$tgt" | sed -n "$n"p).mp3" >> "$DC_tl/$topc/cfg.5"
 					let n++
 				done
