@@ -3,28 +3,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source /usr/share/idiomind/ifs/trans/$lgs/rss.conf
-
-function msg() {
-	
-	yad --window-icon=idiomind --name=idiomind \
-	--image=$2 --on-top --text=" $1 " \
-	--image-on-top --center --sticky --button="Ok":0 \
-	--width=420 --height=150 --borders=5 \
-	--skip-taskbar --title="Idiomind"
-}
-
-function internet() {
-
-	curl -v www.google.com 2>&1 \
-	| grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
-	yad --window-icon=idiomind --on-top \
-	--image=info --name=idiomind \
-	--text=" $connection_err  \n" \
-	--image-on-top --center --sticky \
-	--width=420 --height=150 --borders=3 \
-	--skip-taskbar --title=Idiomind \
-	--button="  Ok  ":0 >&2; exit 1;}
-}
+source $DS/ifs/comms.sh
 
 if [[ $1 = n_i ]]; then
 
@@ -86,7 +65,7 @@ if [[ $1 = n_i ]]; then
 			
 			internet
 			
-			nme="$(echo "$var" | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
+			nme="$(nmfile "$var")"
 			
 			tgs=$(eyeD3 "$DM_tl/Feeds/conten/$nme.mp3")
 			trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')

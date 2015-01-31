@@ -3,7 +3,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/add.conf
-source $DS/ifs/fuctions/add.sh
+source $DS/ifs/add.sh
 source $DS/ifs/yad/add.sh
 
 if [ $1 = new_topic ]; then
@@ -1549,20 +1549,28 @@ elif [ $1 = set_image ]; then
 			txt="--text=<small>$images_for  <a href='file://$DT/s.html'>$wrd</a></small>"
 		fi
 		
-		dlg_form_5 "$btnn" "$btn2" "$ICON" "$txt"
-		ret=$(echo "$?")
-
+		yad --form --align=center --center \
+		--width=340 --text-align=center --height=280 \
+		--on-top --skip-taskbar --image-on-top "$txt">/dev/null 2>&1 \
+		"$btnn" --window-icon=idiomind --borders=0 \
+		--title=Image "$ICON" "$btn2" \
+		--button=gtk-close:1
+			ret=$? >/dev/null 2>&1
+			
 			if [ $ret -eq 3 ]; then
 			
 				rm -f *.l
-				scrot_4 "$wrd" "$file" "$DM_tlt/words/images/$wrd.jpg" &&
-
+				scrot -s --quality 70 "$wrd.temp.jpeg"
+				/usr/bin/convert -scale 100x90! "$wrd.temp.jpeg" "$wrd"_temp.jpeg
+				/usr/bin/convert -scale 360x240! "$wrd.temp.jpeg" "$DM_tlt/words/images/$wrd.jpg"
+				eyeD3 --remove-images "$file" >/dev/null 2>&1
+				eyeD3 --add-image "$wrd"_temp.jpeg:ILLUSTRATION "$file" >/dev/null 2>&1
 				rm -f *.jpeg
-				$DS/add.sh set_image "$wrd" w
+				$DS/add.sh set_image "$wrd" word
 				
 			elif [ $ret -eq 2 ]; then
 			
-				eyeD3 --remove-image "$file"
+				eyeD3 --remove-image "$file" >/dev/null 2>&1
 				rm -f "$DM_tlt/words/images/$wrd.jpg"
 				rm -f *.jpeg s.html
 				
@@ -1584,24 +1592,28 @@ elif [ $1 = set_image ]; then
 			ICON="--image=$DT/imgsw.jpeg"
 			btnn=$(echo --button=$change:3)
 			btn2=$(echo --button=$delete:2)
-			
 		else
 			txt="--text=<small>$search_images \\n<a href='file://$DT/s.html'>$wrd</a></small>"
 		fi
-		dlg_form_6 "$btnn" "$btn2" "$ICON" "$txt"
-
-			ret=$(echo "$?")
+		
+		yad --form --text-align=center \
+		--center --width=470 --height=280 \
+		--on-top --skip-taskbar --image-on-top \
+		"$txt" "$btnn" --window-icon=idiomind --borders=0 \
+		--title="Image" "$ICON" "$btn2" --button=gtk-close:1
+			ret=$? >/dev/null 2>&1
 				
 			if [ $ret -eq 3 ]; then
 			
 				rm -f $DT/*.l
-				
-				scrot_5 "$wrd" "$file" &&
-
+				scrot -s --quality 70 "$wrd.temp.jpeg"
+				/usr/bin/convert -scale 450x270! "$wrd.temp.jpeg" "$wrd"_temp.jpeg
+				eyeD3 --remove-image "$file" >/dev/null 2>&1
+				eyeD3 --add-image "$wrd"_temp.jpeg:ILLUSTRATION "$file" >/dev/null 2>&1 &&
 				rm -f *.jpeg
 				echo "aimg.$tpc.aimg" >> \
 				$DC/addons/stats/.log &
-				$DS/add.sh set_image "$wrd" s
+				$DS/add.sh set_image "$wrd" sentence
 				
 			elif [ $ret -eq 2 ]; then
 				eyeD3 --remove-images "$file" >/dev/null 2>&1

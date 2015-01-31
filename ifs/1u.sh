@@ -36,7 +36,7 @@ function set_lang() {
 	fi
 }
 
-dialog=$(yad --center --width=520 --height=280 \
+dialog=$(yad --center --width=520 --height=260 \
 	--image-on-top --on-top --class=idiomind --name=idiomind \
 	--window-icon=idiomind --buttons-layout=end --text="$text" \
 	--title="Idiomind" --form --borders=10 --align=right --button=Cancel:1 --button=Ok:0 \

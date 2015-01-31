@@ -42,22 +42,22 @@ if [[ -z "$1" ]]; then
 			if echo "$st1" | grep "Sample subscription"; then
 				$yad --title="Info" \
 				--center --on-top --window-icon=idiomind \
-				--width=380 --height=140 --image=info --skip-taskbar \
+				--width=420 --height=150 --image=info --skip-taskbar \
 				--text="  Sample subscription\\n  $delete_no." \
 				--borders=5 --button=OK:1
 				"$DIR3/cnfg.sh" & exit
 			elif echo "$st1" | grep "Example"; then
 				$yad --title="Info" --center --on-top --window-icon=idiomind \
-				--width=380 --height=140 --image=info --skip-taskbar \
+				--width=420 --height=150 --image=info --skip-taskbar \
 				--text="  Sample subscription\\n  $delete_no" \
 				--borders=5 --button=OK:1
 				"$DIR3/cnfg.sh" & exit
 			else
 				$yad --center \
-				--title=Confirm --window-icon=idiomind \
-				--on-top --width=380 --height=140 --image=dialog-question \
-				--skip-taskbar --text="   <b>$delete_subcription</b>  \n\n\t$st1 " \
-				--borders=5 --button="$delete":0 --button="$cancel":1
+				--title="$confirm" --window-icon=idiomind \
+				--on-top --width=420 --height=150 --image=dialog-question \
+				--skip-taskbar --text="  $delete_subcription \n\n" \
+				--borders=5 --button="$yes":0 --button="$no":1
 					ret=$?
 					
 					if [[ $ret -eq 1 ]]; then
@@ -122,7 +122,7 @@ elif [ "$1" = NS ]; then
 	yad --window-icon=idiomind --name=idiomind \
 	--image=info --on-top --text="$no_url" \
 	--image-on-top --center --sticky \
-	--width=380 --height=150 --borders=5 \
+	--width=420 --height=150 --borders=5 \
 	--skip-taskbar --title=idiomind \
 	--button="  Ok  ":0
 

@@ -3,6 +3,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/edit.conf
+source $DS/ifs/comms.sh
 
 if [ $1 = mkmn ]; then
 	#[[ ! -f $DC_tl/.cfg.1 ]] && exit 1
@@ -332,10 +333,13 @@ elif [ $1 = dli ]; then
 
 	source $DS/ifs/yad/mngr.sh
 	itdl="$2"
-	nme="$(echo "$2" | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
+	
+	[[ -z "$itdl" ]] && exit
+	
+	nme="$(nmfile "$itdl")"
 	
 	if [ "$3" = "C" ]; then
-		# delete word
+		# rm word
 		if [ -f "$DM_tlt/words/$nme.mp3" ]; then
 			rm "$DM_tlt/words/$nme.mp3"
 			cd "$DC_tlt/practice"
@@ -353,8 +357,8 @@ elif [ $1 = dli ]; then
 			sed '/^$/d' ./cfg.1._ > ./cfg.1
 			grep -v -x -F "$itdl" cfg.3 > cfg.3._
 			sed '/^$/d' cfg.3._ > cfg.3
-			#rm ./*._
-		# delete sentence
+			rm ./*._
+		# rm sentence
 		elif [ -f "$DM_tlt/$nme.mp3" ]; then
 			rm "$DM_tlt/$nme.mp3"
 			cd "$DC_tlt/practice"
@@ -395,7 +399,7 @@ elif [ $1 = dli ]; then
 		exit 1
 	fi
 	
-	# delete word
+	# rm word
 	if [ -f "$DM_tlt/words/$nme.mp3" ]; then
 		flw="$DM_tlt/words/$nme.mp3"
 	elif [ -f "$DM_tlt/$nme.mp3" ]; then
@@ -492,6 +496,7 @@ elif [ $1 = dli ]; then
 #--------------------------------
 elif [ $1 = dlt ]; then
 	source $DS/ifs/yad/mngr.sh
+	
 	dlg_msg_1 " $delete_topic "
 	ret=$(echo "$?")
 		
@@ -539,7 +544,7 @@ elif [ "$1" = edt ]; then
 	c=$(echo $(($RANDOM%10000)))
 	re='^[0-9]+$'
 	v="$2"
-	nme="$(echo "$3" | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
+	nme="$(nmfile "$3")"
 	ff="$4"
 
 	if [ "$v" = v1 ]; then
@@ -585,7 +590,7 @@ elif [ "$1" = edt ]; then
 			rm -f $cnf
 			
 			source /usr/share/idiomind/ifs/c.conf
-			source $DS/ifs/fuctions/add.sh
+			source $DS/ifs/add.sh
 			source $DS/ifs/yad/add.sh
 			
 			if [[ "$mrk" != "$mrk2" ]]; then
@@ -666,7 +671,7 @@ elif [ "$1" = edt ]; then
 			audo=$(cat $cnf | tail -8 | sed -n 6p)
 			
 			source /usr/share/idiomind/ifs/c.conf
-			source $DS/ifs/fuctions/add.sh
+			source $DS/ifs/add.sh
 
 			rm -f $cnf
 			

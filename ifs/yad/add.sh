@@ -83,25 +83,47 @@ function dlg_form_2() {
 }
 
 
-function dlg_form_5() {
+#function dlg_form_5() {
     
-        yad --form --align=center --center \
-        --width=340 --text-align=center --height=280 \
-        --on-top --skip-taskbar --image-on-top "$4" \
-        "$1" --window-icon=idiomind --borders=0 \
-        --title=Image "$3" "$2" \
-        --button=gtk-close:1
-}
+    
+    #if [ -f "$DT/ILLUSTRATION".jpeg ]; then
+			#mv -f "$DT/ILLUSTRATION".jpeg "$DT/imgsw".jpeg
+			#ICON="--image=$DT/imgsw.jpeg"
+			#btn1="--button=$change:3"
+			#btn2="--button=$delete:2"
+			
+		#else
+			#txt="--text=<small>$search_images \\n<a href='file://$DT/s.html'>$wrd</a></small>"
+		#fi
+    
+        #yad --form --align=center --center \
+        #--width=340 --text-align=center --height=280 \
+        #--on-top --skip-taskbar --image-on-top "$4" \
+        #"$1" --window-icon=idiomind --borders=0 \
+        #--title=Image "$3" "$2" \
+        #--button=gtk-close:1
+#}
 
 
-function dlg_form_6() {
+#function dlg_form_6() { #sin  image
     
-        yad --form --text-align=center \
-        --center --width=470 --height=280 \
-        --on-top --skip-taskbar --image-on-top \
-        "$4" "$1" --window-icon=idiomind --borders=0 \
-        --title="Image" "$3" "$2" --button=gtk-close:1
-}
+        #yad --form --text-align=center \
+        #--center --width=470 --height=280 \
+        #--on-top --skip-taskbar --image-on-top \
+        #--text="$1" --window-icon=idiomind --borders=0 \
+        #--title="Image" --button="$add_image":3 --button=gtk-close:1
+#}
+
+#function dlg_form_6_1() { # con image
+    
+        #yad --form --text-align=center \
+        #--center --width=470 --height=280 \
+        #--on-top --skip-taskbar --image-on-top \
+        #--button="$change":3 --window-icon=idiomind --borders=0 \
+        #--title="Image" --image="$1" \
+        #--button="$delete":2 --button=gtk-close:1
+    
+#}
 
 
 function dlg_radiolist_1() {
