@@ -71,7 +71,7 @@ function tts() {
 	"https://translate.google.com/translate_tts?ie=UTF-8&tl=$2&q=$(sed -n 3p ./temp)"
 	[[ -n "$(sed -n 4p ./temp)" ]] && wget -q -U Mozilla -O $DT_r/tmp04.mp3 \
 	"https://translate.google.com/translate_tts?ie=UTF-8&tl=$2&q=$(sed -n 4p ./temp)"
-	cat tmp01.mp3 tmp02.mp3 tmp03.mp3 tmp04.mp3 > "$DM_tlt/$4.mp3"
+	cat tmp01.mp3 tmp02.mp3 tmp03.mp3 tmp04.mp3 > "$4"
 }
 
 
@@ -168,6 +168,12 @@ function tags_7() {
 function tags_8() {
 	
 	eyeD3 -p I$1I4I0I"$2"I$1I4I0I "$3"
+}
+
+
+function tags_9() {
+	
+	eyeD3 --set-encoding=utf8 -A IWI3I0I"$2"IWI3I0IIPWI3I0I"$3"IPWI3I0I "$4"
 }
 
 
@@ -270,69 +276,92 @@ function scrot_5() {
 
 function list_words() {
     
-    cd $3
-    if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
-        n=1
-        while [ $n -le "$(cat $1 | wc -l)" ]; do
-            s=$(sed -n "$n"p $1 | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-            t=$(sed -n "$n"p $2 | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-            echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> A_$4
-            echo "$t"_"$s""" >> B_$4
-            let n++
-        done
-    else
-        n=1
-        while [ $n -le "$(cat $1 | wc -l)" ]; do
-            t=$(sed -n "$n"p $1 | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-            s=$(sed -n "$n"p $2 | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-            echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> A_$4
-            echo "$t"_"$s""" >> B_$4
-            let n++
-        done
-    fi
+	cd $3
+	if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
+		n=1
+		while [ $n -le "$(cat $1 | wc -l)" ]; do
+			s=$(sed -n "$n"p $1 | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
+			t=$(sed -n "$n"p $2 | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
+			echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> A_$4
+			echo "$t"_"$s""" >> B_$4
+			let n++
+		done
+	else
+		n=1
+		while [ $n -le "$(cat $1 | wc -l)" ]; do
+			t=$(sed -n "$n"p $1 | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
+			s=$(sed -n "$n"p $2 | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
+			echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> A_$4
+			echo "$t"_"$s""" >> B_$4
+			let n++
+		done
+	fi
 }
 
 
 function get_words() {
     
-    if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
-        n=1
-        while [ $n -le $(cat $2 | wc -l) ]; do
-            $dct $(sed -n "$n"p $2) $DT_r
-            let n++
-        done
-    else
-        n=1
-        while [ $n -le $(cat $1 | wc -l) ]; do
-            $dct $(sed -n "$n"p $1) $DT_r
-            let n++
-        done
-    fi
+	if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
+		n=1
+		while [ $n -le $(cat $2 | wc -l) ]; do
+			$dct $(sed -n "$n"p $2) $DT_r
+			let n++
+		done
+	else
+		n=1
+		while [ $n -le $(cat $1 | wc -l) ]; do
+			$dct $(sed -n "$n"p $1) $DT_r
+			let n++
+		done
+	fi
+}
+
+
+function get_words_2() {
+	
+	if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
+		n=1
+		while [ $n -le $(cat $bw | wc -l) ]; do
+			t=$(sed -n "$n"p $bw)
+			$dct "$t" $DT_r swrd
+			mv "$t.mp3" "$nme/$t.mp3"
+			let n++
+		done
+	else
+		n=1
+		while [ $n -le $(cat $aw | wc -l) ]; do
+			t=$(sed -n "$n"p $aw)
+			$dct "$t" $DT_r swrd
+			mv "$t.mp3" "$nme/$t.mp3"
+			let n++
+		done
+	fi
+
 }
 
 
 function list_words_2() {
 
-    if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
-        eyeD3 "$1" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' \
-        | tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > idlst
-    else
-        list=$(eyeD3 "$1" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
-        echo "$list" | tr -c "[:alnum:]" '\n' | sed '/^$/d' | sed '/"("/d' \
-        | sed '/")"/d' | sed '/":"/d' | sort -u \
-        | head -n40 > idlst
-    fi
+	    if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
+			eyeD3 "$1" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' \
+			| tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > idlst
+	    else
+			list=$(eyeD3 "$1" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
+			echo "$list" | tr -c "[:alnum:]" '\n' | sed '/^$/d' | sed '/"("/d' \
+			| sed '/")"/d' | sed '/":"/d' | sort -u \
+			| head -n40 > idlst
+	    fi
 }
 
 
 function list_words_3() {
 
 	if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
-	    cat "$1" | tr ' ' '\n' | sed -n 1~2p | sed '/^$/d' > lst
+		cat "$1" | tr ' ' '\n' | sed -n 1~2p | sed '/^$/d' > lst
 	else
-	    cat "$1" | tr -c "[:alnum:]" '\n' | sed '/^$/d' | sed '/"("/d' \
-	    | sed '/")"/d' | sed '/":"/d' | sort -u \
-	    | head -n40 | egrep -v "FALSE" | egrep -v "TRUE" > lst
+		cat "$1" | tr -c "[:alnum:]" '\n' | sed '/^$/d' | sed '/"("/d' \
+		| sed '/")"/d' | sed '/":"/d' | sort -u \
+		| head -n40 | egrep -v "FALSE" | egrep -v "TRUE" > lst
 	fi
 }
 

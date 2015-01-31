@@ -3,7 +3,7 @@
 
 source /usr/share/idiomind/ifs/trans/es/others.conf
 
-text="<big><big><big><big>  Welcome</big></big></big></big>
+text="<big><big><big><big>  Welcome  </big></big></big></big>
 
 \tIdiomind is a small program to help you lern words in 
 \tothers languages. this greatly helps you when you need to remember

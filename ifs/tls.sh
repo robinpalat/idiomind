@@ -70,7 +70,7 @@ fi
 elif [ $1 = s ]; then
 
 	if [[ "$(ps -A | grep -o "play")" = "play" ]]; then
-		exit
+		killall play
 	fi
 	
 	play "$DM_tlt/$2.mp3" & sleep 0.2 && exit

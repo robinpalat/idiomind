@@ -3,6 +3,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source /usr/share/idiomind/ifs/trans/$lgs/rss.conf
+source $DS/ifs/fuctions/add.sh
 
 DSF="$DS/addons/Learning with news"
 DCF="$DC/addons/Learning with news"
@@ -145,125 +146,75 @@ if [ -n "$feed" ]; then
 		
 		if [[ "$trgt" != "$(grep "$trgt" $DC_tl/Feeds/.updt.lst)" ]]; then
 
-			nme="$(echo "$trgt" | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
+			nme="$(nmfile "$trgt")"
 
 			mkdir "$nme"
-			result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
-			encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
-			iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 | sed 's/\n/ /g' > srce
-			srce=$(cat srce | sed ':a;N;$!ba;s/\n/ /g')
+			#result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
+			#encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
+			#iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 | sed 's/\n/ /g' > srce
+			#srce=$(cat srce | sed ':a;N;$!ba;s/\n/ /g')
 			
-			if [[ $(sed -n 1p $DC_s/cfg.3) != TRUE ]]; then
-				vs=$(sed -n 7p $DC_s/cfg.1)
-				if [ -n "$vs" ]; then
-					if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
-						lg=$(echo $lgtl | awk '{print tolower($0)}')
-						
-						if ([ $lg = "english" ] || [ $lg = "spanish" ] || [ $lg = "russian" ]); then
-
-							echo "$trgt" | text2wave -o $DT_r/s.wav
-							sox $DT_r/s.wav "$nme.mp3"
-						else
-							rm -fr $DT_r $DT/.uptf $DT/.rss
-							msg "$festival_err $lgtl" error
-							break && exit
-						fi
-					else
-						cd $DT_r
-						echo "$trgt" | $vs
-						if [ -f *.mp3 ]; then
-							mv -f *.mp3 "$nme.mp3"
-						elif [ -f *.wav ]; then
-							sox *.wav "$nme.mp3"
-						fi
-					fi
-				else
-					lg=$(echo $lgtl | awk '{print tolower($0)}')
-					if [ $lg = chinese ]; then
-						lg=Mandarin
-					elif [ $lg = japanese ]; then
-
-						rm -fr $DT_r $DT/.uptf $DT/.rss
-						msg "$espeak_err $lgtl" error
-						break && exit
-					fi
-					espeak "$trgt" -v $lg -k 1 -p 65 -a 80 -s 120 -w $DT_r/s.wav
-					sox $DT_r/s.wav "$nme.mp3"
-				fi
+			
+			
+			srce="$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')"
+			
+			if sed -n 1p $DC_s/cfg.3 | grep TRUE; then
+			
+				tts ./trgt $lgt $DT_r "$nme.mp3"
+				
 			else
-				wget -q -U Mozilla -O ./"$nme.mp3" "https://translate.google.com/translate_tts?ie=UTF-8&tl=$lgt&q=$trgt"
+				voice "$trgt" "$nme.mp3"
+				
 			fi
-			
-			eyeD3 --set-encoding=utf8 -t ISI1I0I"$trgt"ISI1I0I -a ISI2I0I"$srce"ISI2I0I "$nme.mp3"
-			echo "$trgt" >> "$DC_tl/Feeds/cfg.1"
-			
-			> swrd
-			> twrd
-			if [[ $lgt = ja ]] || [[ $lgt = 'zh-cn' ]]; then
-				vrbl="$srce"; lg=$lgt; aw=$DT/swrd; bw=$DT/twrd
+
+			if ( [ -f "./$nme.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
+					tags_1 S "$trgt" "$srce" "./$nme.mp3"
+			fi
+
+			(
+			r=$(echo $(($RANDOM%1000)))
+			> twrd_$r
+			> swrd_$r
+			if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
+				vrbl="$srce"; lg=$lgt; aw=$DT/swrd_$r; bw=$DT/twrd_$r
 			else
-				vrbl="$trgt"; lg=$lgs; aw=$DT/twrd; bw=$DT/swrd
+				vrbl="$trgt"; lg=$lgs; aw=$DT/twrd_$r; bw=$DT/swrd_$r
 			fi
-			echo  "$vrbl" | sed 's/ /\n/g' | grep -v '^.$' | grep -v '^..$' \
-			| sed -n 1,20p | sed s'/&//'g | sed 's/\.//g' | sed 's/,//g' \
-			| sed 's/ /\. /g'  | awk '{print tolower($0)}' > $aw
+			clean_3 "$vrbl" > $aw
 			twrd=$(cat $aw | sed '/^$/d')
-			result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lg" --data-urlencode text="$twrd" https://translate.google.com)
-			encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
-			iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 > $bw
+			translate "$twrd" auto $lg | sed 's/,//g' | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
+			> A_$r
+			> B_$r
+			> g_$r
 			sed -i 's/\. /\n/g' $bw
 			sed -i 's/\. /\n/g' $aw
+			snmk=$(echo "$trgt"  | sed 's/ /\n/g')
+			list_words $aw $bw $DT_r $r
+			lwrds=$(cat A_$r)
+			pwrds=$(cat B_$r | tr '\n' '_')
+			
+			
+			if ( [ ! -f "./$nme.mp3" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ] ); then
+				
+				[ -f "./$nme.mp3" ] && rm "./$nme.mp3"
+				[ -d "./$nme" ] && rm -r "./$nme"
+			else
+			
+				tags_9 W "$lwrds" "$pwrds" "./$nme.mp3"
+				echo "$trgt" >> "$DC_tl/Feeds/cfg.1"
+				get_words_2 $aw $bw
+				cp -fr "./$nme" "$DM_tl/Feeds/conten/$nme"
+				mv -f "$nme.mp3" "$DM_tl/Feeds/conten/$nme.mp3"
+				echo "$lnk" > "$DM_tl/Feeds/conten/$nme.lnk"
+				notify-send -i idiomind "$trgt" "$srce" -t 12000 &
+			fi
 
-			if [[ $lgt = ja ]] || [[ $lgt = 'zh-cn' ]]; then
-				(
-				n=1
-				while [ $n -le "$(cat $aw | wc -l)" ]; do
-					s=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-					t=$(sed -n "$n"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-					echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> A
-					echo "$t"_"$s""" >> B
-					let n++
-				done
-				)
-			else
-				(
-				n=1
-				while [ $n -le "$(cat $aw | wc -l)" ]; do
-					t=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-					s=$(sed -n "$n"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-					echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> A
-					echo "$t"_"$s""" >> B
-					let n++
-				done
-				)
-			fi
-			lwrds=$(cat A)
-			pwrds=$(cat B | tr '\n' '_')
-			eyeD3 --set-encoding=utf8 -A IWI3I0I"$lwrds"IWI3I0IIPWI3I0I"$pwrds"IPWI3I0I "$nme".mp3
-			(
-			if [[ $lgt = ja ]] || [[ $lgt = 'zh-cn' ]]; then
-				n=1
-				while [ $n -le $(cat $bw | wc -l) ]; do
-					t=$(sed -n "$n"p $bw)
-					$dct "$t" $DT_r swrd
-					mv "$t.mp3" "$nme/$t.mp3"
-					let n++
-				done
-			else
-				n=1
-				while [ $n -le $(cat $aw | wc -l) ]; do
-					t=$(sed -n "$n"p $aw)
-					$dct "$t" $DT_r swrd
-					mv "$t.mp3" "$nme/$t.mp3"
-					let n++
-				done
-			fi
+			echo "__" >> x
+			rm -f $aw $bw 
+				
 			)
-			cp -fr "./$nme" "$DM_tl/Feeds/conten/$nme"
-			mv -f "$nme.mp3" "$DM_tl/Feeds/conten/$nme.mp3"
-			echo "$lnk" > "$DM_tl/Feeds/conten/$nme.lnk"
+			
 			rm -f A B twrd swrd srce
-			notify-send -i idiomind "$trgt" "$srce" -t 12000 &
 			echo "$date" > $DC_tl/Feeds/.dt
 		fi
 		

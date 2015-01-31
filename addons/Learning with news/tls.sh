@@ -30,5 +30,6 @@ fi
 elif [ $1 = stop ]; then
 killall rsstail
 killall strt.sh
+rm -f $DT/.uptf
 exit
 fi

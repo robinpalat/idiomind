@@ -290,7 +290,7 @@ elif [ $1 = new_sentence ]; then
 		
 		if [ ! -f $DT_r/audtm.mp3 ]; then
 		
-			tts .en $lgt $DT_r "$nme"
+			tts .en $lgt $DT_r "$DM_tlt/$nme.mp3"
 		else
 			cp -f $DT_r/audtm.mp3 "$DM_tlt/$nme.mp3"
 		fi
@@ -669,14 +669,6 @@ elif [ $1 = selecting_words_dclik ]; then
 	list_words_3 ./lstws
 	nme="$(nmfile "$(cat lstws)")"
 
-	n=1
-	while [ $n -le $(cat lst | wc -l) ]; do
-	
-	    ws$n=$(sed -n "$n"p lst)
-	    echo ws$n
-	    let n++
-	done
-	
 	slt=$(mktemp $DT/slt.XXXX.x)
 	dlg_checklist_1 ./lst info "$slt"
 	ret=$(echo "$?")
@@ -1013,8 +1005,8 @@ $sntc" >> ./wlog
 								
 								if ( [ -f "$DM_tlt/$nme.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
 								    tags_1 S "$trgt" "$srce" "$DM_tlt/$nme.mp3"
-								    $DS/mngr.sh inx S "$trgt" "$tpe"
-								    echo "$nme" >> adds
+								    #$DS/mngr.sh inx S "$trgt" "$tpe"
+								    #echo "$nme" >> adds
 								fi
 
 								(
@@ -1042,8 +1034,17 @@ $sntc" >> ./wlog
 								grmrk=$(cat g_$r | sed ':a;N;$!ba;s/\n/ /g')
 								lwrds=$(cat A_$r)
 								pwrds=$(cat B_$r | tr '\n' '_')
-								tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$nme.mp3"
-								get_words $aw $bw
+								
+								if ( [ ! -f "$DM_tlt/$nme.mp3" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ] || [ -z "$grmrk" ] ); then
+									
+									[ -f "$DM_tlt/$nme.mp3" ] && rm "$DM_tlt/$nme.mp3"
+								else
+									echo "$nme" >> adds
+									$DS/mngr.sh inx S "$trgt" "$tpe"
+									tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$nme.mp3"
+									get_words $aw $bw
+								fi
+
 
 								echo "__" >> x
 								) &
@@ -1265,7 +1266,7 @@ $trgt" >> ./wlog
 		fi
 				if [ $ret -eq 2 ]; then
 					rm -f $lckpr "$slt" &
-					w=`dlg_text_dlg_info_1 ./sntsls`
+					w=`dlg_text_info_1 ./sntsls`
 						ret=$(echo "$?")
 						if [ $ret -eq 0 ]; then
 							$nspr "$w" $DT_r "$tpe" &
@@ -1313,9 +1314,14 @@ $sntc" >> ./wlog
 							else
 								trgt="$(translate "$sntc" auto $lgt)"
 								srce="$(translate "$trgt" $lgt $lgs)"
-								wget -q -U Mozilla -O $DT_r/$trgt.mp3 "https://translate.google.com/translate_tts?ie=UTF-8&tl=$lgt&q=$trgt"
-								mv -f "$trgt".mp3 "$DM_tlt/words/$trgt".mp3
 								
+								if sed -n 1p $DC_s/cfg.3 | grep TRUE; then
+			
+									tts "$trgt" $lgt $DT_r "$DM_tlt/words/$trgt".mp3
+								else
+									voice "$trgt" "$DM_tlt/words/$trgt".mp3
+								fi
+
 								if ( [ -f "$DM_tlt/words/$trgt".mp3 ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
 								    tags_1 W "$trgt" "$srce" "$DM_tlt/words/$trgt".mp3
 								    echo "$trgt" >> addw
@@ -1344,7 +1350,7 @@ $sntc" >> ./slog
 									
 									if sed -n 1p $DC_s/cfg.3 | grep TRUE; then
 									
-										tts ./trgt $lgt $DT_r "$nme"
+										tts ./trgt $lgt $DT_r "$DM_tlt/$nme.mp3"
 										
 									else
 										voice "$trgt" "$DM_tlt/$nme.mp3"
@@ -1353,8 +1359,7 @@ $sntc" >> ./slog
 									
 									if ( [ -f "$DM_tlt/$nme.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
 									    tags_1 S "$trgt" "$srce" "$DM_tlt/$nme.mp3"
-									    echo "$nme" >> adds
-									    $DS/mngr.sh inx S "$trgt" "$tpe"
+									
 									fi
 									
 									
@@ -1381,9 +1386,17 @@ $sntc" >> ./slog
 									grmrk=$(cat g_$r | sed ':a;N;$!ba;s/\n/ /g')
 									lwrds=$(cat A_$r)
 									pwrds=$(cat B_$r | tr '\n' '_')
-									tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$nme.mp3"
-									get_words $aw $bw
-
+									
+									if ( [ ! -f "$DM_tlt/$nme.mp3" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ] || [ -z "$grmrk" ] ); then
+									
+										[ -f "$DM_tlt/$nme.mp3" ] && rm "$DM_tlt/$nme.mp3"
+									else
+										echo "$nme" >> adds
+										$DS/mngr.sh inx S "$trgt" "$tpe"
+										tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$nme.mp3"
+										get_words $aw $bw
+									fi
+									
 									echo "__" >> x
 									rm -f $aw $bw 
 										
