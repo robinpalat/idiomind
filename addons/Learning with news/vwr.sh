@@ -5,7 +5,7 @@ source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/rss.conf
 DS_pf="$DS/addons/Learning with news"
 vwr="$DS_pf/vwr.sh"
-ap=$(cat $DC_s/cfg.1 | sed -n 5p)
+ap=$(cat $DC_s/cfg.1 | sed -n 11p)
 
 if [[ $1 = V1 ]]; then
 

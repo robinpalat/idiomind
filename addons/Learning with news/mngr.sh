@@ -57,7 +57,7 @@ if [[ $1 = dlti ]]; then
 				grep -v -x -F "$itdl" ./cfg.0 > ./cfg.0_
 				sed '/^$/d' ./cfg.0_ > ./cfg.0
 				rm ./cfg.0_
-				notify-send  -i idiomind "$itdl" "$deleted"  -t 1500
+				
 			fi
 			if [[ $ret -eq 1 ]]; then
 				exit
@@ -86,7 +86,7 @@ if [[ $1 = dlti ]]; then
 				grep -v -x -F "$itdl" ./cfg.0 > ./cfg.0_
 				sed '/^$/d' ./cfg.0_ > ./cfg.0
 				rm ./cfg.0_
-				notify-send  -i idiomind "$itdl" "$deleted"  -t 1500
+			
 			fi
 			if [[ $ret -eq 1 ]]; then
 				exit

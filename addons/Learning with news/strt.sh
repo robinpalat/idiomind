@@ -141,91 +141,79 @@ if [ -n "$feed" ]; then
 			| grep -o "Actualizando...")" = "Actualizando..." ]]; then
 				echo "- feeds Mode ( Actualizando... $n$f% )" > $DT/.uptf
 			fi
-		trgt=$(sed -n "$n"p rss)
-		lnk=$(sed -n "$n"p lnk)
+			trgt=$(sed -n "$n"p rss)
+			lnk=$(sed -n "$n"p lnk)
 		
-		if [[ "$trgt" != "$(grep "$trgt" $DC_tl/Feeds/.updt.lst)" ]]; then
+			if [[ "$trgt" != "$(grep "$trgt" $DC_tl/Feeds/.updt.lst)" ]]; then
 
-			nme="$(nmfile "$trgt")"
-
-			mkdir "$nme"
-			#result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
-			#encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
-			#iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8 | sed 's/\n/ /g' > srce
-			#srce=$(cat srce | sed ':a;N;$!ba;s/\n/ /g')
-			
-			
-			
-			srce="$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')"
-			
-			if sed -n 1p $DC_s/cfg.3 | grep TRUE; then
-			
-				tts ./trgt $lgt $DT_r "$nme.mp3"
+				nme="$(nmfile "$trgt")"
+				mkdir "$nme"
+				srce="$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')"
 				
-			else
-				voice "$trgt" "$nme.mp3"
+				if sed -n 1p $DC_s/cfg.3 | grep TRUE; then
 				
-			fi
+					echo "$trgt" > ./trgt
+					
+					tts ./trgt $lgt $DT_r "./$nme.mp3"
+				else
+					voice "$trgt" "$nme.mp3"
+				fi
 
-			if ( [ -f "./$nme.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
-					tags_1 S "$trgt" "$srce" "./$nme.mp3"
-			fi
+				if ( [ -f "./$nme.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
+						tags_1 S "$trgt" "$srce" "./$nme.mp3"
+				fi
 
-			(
-			r=$(echo $(($RANDOM%1000)))
-			> twrd_$r
-			> swrd_$r
-			if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
-				vrbl="$srce"; lg=$lgt; aw=$DT/swrd_$r; bw=$DT/twrd_$r
-			else
-				vrbl="$trgt"; lg=$lgs; aw=$DT/twrd_$r; bw=$DT/swrd_$r
-			fi
-			clean_3 "$vrbl" > $aw
-			twrd=$(cat $aw | sed '/^$/d')
-			translate "$twrd" auto $lg | sed 's/,//g' | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
-			> A_$r
-			> B_$r
-			> g_$r
-			sed -i 's/\. /\n/g' $bw
-			sed -i 's/\. /\n/g' $aw
-			snmk=$(echo "$trgt"  | sed 's/ /\n/g')
-			list_words $aw $bw $DT_r $r
-			lwrds=$(cat A_$r)
-			pwrds=$(cat B_$r | tr '\n' '_')
-			
-			
-			if ( [ ! -f "./$nme.mp3" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ] ); then
+				(
+				r=$(echo $(($RANDOM%1000)))
+				> twrd_$r
+				> swrd_$r
+				if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
+					vrbl="$srce"; lg=$lgt; aw=$DT/swrd_$r; bw=$DT/twrd_$r
+				else
+					vrbl="$trgt"; lg=$lgs; aw=$DT/twrd_$r; bw=$DT/swrd_$r
+				fi
+				clean_3 "$vrbl" > $aw
+				twrd=$(cat $aw | sed '/^$/d')
+				translate "$twrd" auto $lg | sed 's/,//g' | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
+				> A_$r
+				> B_$r
+				> g_$r
+				sed -i 's/\. /\n/g' $bw
+				sed -i 's/\. /\n/g' $aw
+				snmk=$(echo "$trgt"  | sed 's/ /\n/g')
+				list_words $aw $bw $DT_r $r
+				lwrds=$(cat A_$r)
+				pwrds=$(cat B_$r | tr '\n' '_')
 				
-				[ -f "./$nme.mp3" ] && rm "./$nme.mp3"
-				[ -d "./$nme" ] && rm -r "./$nme"
-			else
-			
-				tags_9 W "$lwrds" "$pwrds" "./$nme.mp3"
-				echo "$trgt" >> "$DC_tl/Feeds/cfg.1"
-				get_words_2 $aw $bw
-				cp -fr "./$nme" "$DM_tl/Feeds/conten/$nme"
-				mv -f "$nme.mp3" "$DM_tl/Feeds/conten/$nme.mp3"
-				echo "$lnk" > "$DM_tl/Feeds/conten/$nme.lnk"
-				notify-send -i idiomind "$trgt" "$srce" -t 12000 &
-			fi
-
-			echo "__" >> x
-			rm -f $aw $bw 
+				if ( [ ! -f "./$nme.mp3" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ] ); then
+					
+					[ -f "./$nme.mp3" ] && rm "./$nme.mp3"
+					[ -d "./$nme" ] && rm -r "./$nme"
+				else
 				
-			)
-			
-			rm -f A B twrd swrd srce
-			echo "$date" > $DC_tl/Feeds/.dt
-		fi
-		
-		let n++
+					tags_9 W "$lwrds" "$pwrds" "./$nme.mp3"
+					echo "$trgt" >> "$DC_tl/Feeds/cfg.1"
+					get_words_2 $aw $bw
+					cp -fr "./$nme" "$DM_tl/Feeds/conten/$nme"
+					mv -f "$nme.mp3" "$DM_tl/Feeds/conten/$nme.mp3"
+					echo "$lnk" > "$DM_tl/Feeds/conten/$nme.lnk"
+					notify-send -i idiomind "$trgt" "$srce" -t 12000 &
+				fi
+
+				echo "__" >> x
+				rm -f $aw $bw 
+				)
+				
+				rm -f A B twrd swrd srce
+				echo "$date" > $DC_tl/Feeds/.dt
+			fi
+			let n++
 	done
 
 	mv -f $DT_r/rss "$DC_tl/Feeds/.updt.lst"
 	rm -fr $DT_r $DT/.uptf $DT/.rss
 	cd "$DM_tl/Feeds/conten"
 	find *.mp3 -mtime +5 -exec ls > ls {} \;
-	
 	n=1
 	while [ $n -le $(cat ls | wc -l) ]; do
 		nmfile=$(sed -n "$n"p ls)
