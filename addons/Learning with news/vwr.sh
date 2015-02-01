@@ -53,7 +53,7 @@ if [[ $1 = V1 ]]; then
 		--width="$wth" --height="$eht" --center --no-headers \
 		--column=$lgtl:TEXT --column=$lgsl:TEXT --selectable-labels \
 		--expand-column=0 --limit=20 \
-		--button=gtk-save:"'$DS_pf/add.sh' n_i '$nme'" \
+		--button="$save":"'$DS_pf/add.sh' n_i '$nme'" \
 		--button=$listen:"'$DS_pf/tls.sh' s '$nme'" \
 		--button=gtk-go-up:3 --button=gtk-go-down:2 \
 		--dclick-action="'$DS/addons/Learning with news/tls.sh' dclk '$nme'"
