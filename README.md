@@ -1,13 +1,13 @@
 
-<b>Dependencias:</b>
+<b>Dependencies:</b>
 
-bash (>=4.1), rsstail, scrot, imagemagick, wkhtmltopdf, lynx, eyed3, curl, html2text, sox, libsox-fmt-mp3, libnotify-bin, wget, xdg-utils, mp3splt, xclip, tesseract-ocr, lftp, libc6, libgtk-3-0, yad
+bash (>=4.1), rsstail, scrot, imagemagick, wkhtmltopdf, lynx, eyed3, curl, html2text, sox, libsox-fmt-mp3, libnotify-bin, wget, xdg-utils, mp3splt, xclip, tesseract-ocr, lftp, GTK+, yad
 
 
 
-<b>Pruébalo (alpha) en Ubuntu y derivados:</b>
+<b>Try it (beta) on Ubuntu and derivatives</b>
 
-Agregando su repositorio en Launchpad (recomendado).
+Adding Launchpad repository
 
       sudo add-apt-repository ppa:robinpala/idiomind
       
@@ -15,4 +15,3 @@ Agregando su repositorio en Launchpad (recomendado).
       
       sudo apt-get install idiomind
       
-
