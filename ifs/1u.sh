@@ -6,19 +6,11 @@ source /usr/share/idiomind/ifs/trans/es/others.conf
 text="<big><big><big><big>  Welcome  </big></big></big></big>
 
 \tIdiomind is a program that will help you learn new words.
-
 \tPlease set the following options:
 "
 
 drtf="/usr/share/idiomind/addons/Learning with news/examples/"
 user=$(echo "$(whoami)")
-if [ "$1" = s ]; then
-	ins="--text=<small><b> $no_language1</b></small>"
-elif [ "$1" = t ]; then
-	int="--text=<small><b> $no_language2</b></small>"
-elif [ "$1" = n ]; then
-	int="--text=<small><b> $no_language3</b></small>"
-fi
 
 function set_lang() {
 	
@@ -54,12 +46,16 @@ fi
 dialog=$(yad --center --width=520 --height=260 \
 	--image-on-top --on-top --class=idiomind --name=idiomind \
 	--window-icon=idiomind --buttons-layout=end --text="$text" \
-	--title="Idiomind" --form --borders=10 --align=right --button=Cancel:1 --button=Ok:0 \
-	--field="\\t\\t\\t\\tSelect the language you are studying:CB" \
+	--title="Idiomind" --form --borders=10 --align=center --button=Cancel:1 --button=Ok:0 \
+	--field="Select the language you are studying":lbl \
+	--field=":CB" \
 	!"English!French!German!Italian!Japanese!Portuguese!Spanish!Vietnamese!Chinese"\
-	--field="\\t\\t\\t\\tSelect your native language:CB" \
+	--field="Select your native language":lbl \
+	--field=":CB" \
 	!"English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
-	--field=":lbl")
+	--field=":lbl" \
+	!"English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
+	!"English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese")
 
 ret=$?
 
@@ -71,9 +67,9 @@ elif [[ $ret -eq 0 ]]; then
 	target=$(echo "$dialog" | cut -d "|" -f2)
 	
 	if [ -z "$dialog" ]; then
-		/usr/share/idiomind/ifs/1u.sh n & exit 1
+		/usr/share/idiomind/ifs/1u.sh & exit 1
 	elif [ -z $source ]; then
-		/usr/share/idiomind/ifs/1u.sh s & exit 1
+		/usr/share/idiomind/ifs/1u.sh & exit 1
 	elif [ -z $target ]; then
 		/usr/share/idiomind/ifs/1u.sh t & exit 1
 	fi
