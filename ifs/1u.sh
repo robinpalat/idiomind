@@ -5,9 +5,9 @@ source /usr/share/idiomind/ifs/trans/es/others.conf
 
 text="<big><big><big><big>  Welcome  </big></big></big></big>
 
-\tIdiomind is a small program to help you lern words in 
-\tothers languages. this greatly helps you when you need to remember
-\tlots of new vocabulary in whatever language you're studyng.
+\tIdiomind is a program that will help you learn new words.
+
+\tPlease set the following options:
 "
 
 drtf="/usr/share/idiomind/addons/Learning with news/examples/"
@@ -36,13 +36,28 @@ function set_lang() {
 	fi
 }
 
+
+if [[ ! -f /usr/bin/yad ]]; then
+zenity --info --window-icon=idiomind \
+ --text="Missing a dependency to start.
+It seems that you have no installed on your system the program YAD.\t
+You can get it from here:  www.sourceforge.net/projects/yad-dialog
+or install it using the following commands:
+
+sudo add-apt-repository ppa:robinpala/idiomind
+sudo apt-get update
+sudo apt-get install yad" \
+--title="Idiomind" --no-wrap & exit
+fi
+
+
 dialog=$(yad --center --width=520 --height=260 \
 	--image-on-top --on-top --class=idiomind --name=idiomind \
 	--window-icon=idiomind --buttons-layout=end --text="$text" \
 	--title="Idiomind" --form --borders=10 --align=right --button=Cancel:1 --button=Ok:0 \
-	--field="\\t\\t\\t\\t$language_target :CB" \
+	--field="\\t\\t\\t\\tSelect the language you are studying:CB" \
 	!"English!French!German!Italian!Japanese!Portuguese!Spanish!Vietnamese!Chinese"\
-	--field="\\t\\t\\t\\t$language_source :CB" \
+	--field="\\t\\t\\t\\tSelect your native language:CB" \
 	!"English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
 	--field=":lbl")
 

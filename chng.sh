@@ -105,15 +105,15 @@ elif [ "$1" != chngi ]; then
 		--title="$topics" --column=img:img --column=File:TEXT)
 			ret=$?
 			if [ $ret -eq 3 ]; then
-				$DS/add.sh new_topic
-				exit 1
+				$DS/add.sh new_topic &&
+				$DS/add.sh new_items & exit
 			elif [ $ret -eq 0 ]; then
 				if [ -n "$1" ]; then
 					if [ "$2" = 3 ]; then
 						$DC_tl/"$VAR"/tpc.sh
-						$DS/add.sh new_items  & exit
+						$DS/add.sh new_items & exit
 					else
-						$DC_tl/"$VAR"/tpc.sh 2 & exit
+						$DC_tl/"$VAR"/tpc.sh &
 					fi
 				else
 					if [[ -f $DC_tl/"$VAR"/tpc.sh ]]; then

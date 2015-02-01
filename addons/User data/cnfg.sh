@@ -39,38 +39,34 @@ if [ -z "$1" ]; then
 			exp=$($yad --save --center --borders=10 \
 			--on-top --filename="$user"_idiomind_data.tar.gz \
 			--window-icon=idiomind --skip-taskbar --title="$export " \
-			--file --width=600 --height=500 --button=gtk-ok:0 )
+			--file --width=600 --height=500 --button=Ok:0 )
 			ret=$?
 				
 			if [ "$ret" -eq 0 ]; then
-			
+				(sleep 1 && notify-send -i idiomind "$t_export_data" "$t_wait") &
 				(
-				echo "#"; sleep 0
+				echo "# $t_copying..." ; sleep 0.1
 				mkdir "$DM/cnf/"
 				cp -r "$DC/topics/" "$DM/cnf/"
 				cd "$DM/cnf/"
-				find . -type f \( -name "indpe" -o -name "indpa" \
-				-o -name "inds" -o -name "indsa" -o -name "indse" \
-				-o -name "indw" -o -name "indwa" -o -name "indwe" \
-				-o -name "indf" -o -name "indfa" -o -name "indfe" \) -exec rm {} \;
 				shopt -s globstar
 				rm ./**/*Practice*/.*
-				cd ..
+				cd "$DM"
 				tar cvzf backup.tar.gz *
 				mv -f backup.tar.gz $DT/"$user"_idiomind_data.tar.gz
 				rm -r "$DM/cnf/"
-				
-				) | $yad --center --on-top --fixed --progress \
+				mv -f $DT/"$user"_idiomind_data.tar.gz "$exp"
+				echo "# $finished" ; sleep 1
+				) | yad --center --on-top --fixed --progress \
 				--width=200 --height=20 --geometry=200x20-2-2 \
 				--pulsate --percentage="5" --auto-close \
 				--sticky --on-top --undecorated --skip-taskbar --no-buttons
-				mv -f $DT/"$user"_idiomind_data.tar.gz "$exp"
-				$yad --fixed --name=idiomind --center --class=idiomind \
-				--image=info --sticky \
-				--text=" $export_ok  \\n" \
+				
+				yad --fixed --name=idiomind --center --class=idiomind \
+				--image=info --sticky --text="$t_export_ok \\n" \
 				--image-on-top --fixed --width=360 --height=140 --borders=3 \
 				--skip-taskbar --window-icon=idiomind \
-				--title=Idiomind --button=gtk-ok:0 && exit 1
+				--title=Idiomind --button=Ok:0 && exit 1
 			else
 				exit 1
 			fi
@@ -79,7 +75,7 @@ if [ -z "$1" ]; then
 		elif echo "$in" | grep "TRUE $import"; then
 			cd $HOME &&
 			add=$($yad --center --on-top \
-			--borders=10 --file-filter="*.gz" --button=gtk-ok:0 \
+			--borders=10 --file-filter="*.gz" --button=Ok:0 \
 			--window-icon=idiomind --skip-taskbar --title="$import" \
 			--window-icon=$ICON --file --width=600 --height=500)
 			
@@ -90,7 +86,7 @@ if [ -z "$1" ]; then
 				(
 				rm -f $DT/*.XXXXXXXX
 				echo "5"
-				echo "# $coping..." ; sleep 2
+				echo "# $t_copying..." ; sleep 0.1
 				mkdir $DT/.imprt
 				cp -f "$add" $DT/.imprt/.import.tar.gz
 				cd $DT/.imprt
@@ -106,7 +102,6 @@ if [ -z "$1" ]; then
 					mkdir "$DM_t/$lng/.share"
 					mv -f ./$lng/.share/* "$DM_t/$lng/.share/"
 					echo $lng >> lenguages
-						
 					let n++
 				done
 						
@@ -118,29 +113,29 @@ if [ -z "$1" ]; then
 					$DT/.imprt/topics/$dlng/.lista_topics
 					lts=$DT/.imprt/topics/$dlng/.lista_topics
 					echo "55"
-					echo "# $setting_language $dlng " ; sleep 1
+					echo "# $setting_language $dlng " ; sleep 0.1
 					echo "95"
-					echo "# $setting_language $dlng " ; sleep 1
+					echo "# $setting_language $dlng " ; sleep 0.1
 					
 					(
 					n=1
 					while [ $n -le "$(cat $lts | wc -l)" ]; do
 						topic=$(cat $lts | sed -n "$n"p)
 						echo "5"
-						echo "# $setting_topic ${topic:0:20} ... " ; sleep 1
+						echo "# $setting_topic ${topic:0:20} ... " ; sleep 0.1
 						# mp3s
 						mkdir "$DM_t/$dlng/$topic"
 						cd "$DT/.imprt/topics/$dlng/$topic/"
 						cp -f -r * "$DM_t/$dlng/$topic/"
 						echo "25"
-						echo "# $setting_topic ${topic:0:20} ... " ; sleep 1
+						echo "# $setting_topic ${topic:0:20} ... " ; sleep 0.2
 						# index, setting
 						mkdir "$DC/topics/$dlng/$topic"
 						mkdir "$DC/topics/$dlng/$topic/Practice"
 						tdirc="$DC/topics/$dlng/$topic"
 						sdirc="$DT/.imprt/cnf/topics/$dlng/$topic/"
 						echo "50"
-						echo "# $coping_data ${topic:0:20} ... " ; sleep 1
+						echo "# $copying_data ${topic:0:20} ... " ; sleep 0.3
 						cd "$sdirc"
 						echo "6" > "$tdirc/cfg.8"
 						cp -f cfg.0 "$tdirc/cfg.0"
@@ -156,10 +151,10 @@ if [ -z "$1" ]; then
 						cp -f $DS/default/tpc.sh "$tdirc/tpc.sh"
 						chmod +x "$tdirc/tpc.sh"
 						echo "80"
-						echo "# $coping_data ${topic:0:20} ... " ; sleep 1
+						echo "# $copying_data ${topic:0:20} ... " ; sleep 0.1
 						cd "$DT/.imprt/cnf/topics/$dlng"
 						echo "90"
-						echo "# $coping_data ${topic:0:20} ... " ; sleep 1
+						echo "# $copying_data ${topic:0:20} ... " ; sleep 0.2
 						echo "$topic" >> "$DC/topics/$dlng/.cfg.3"
 						sed -i 's/'"$topic"'//g' "$DC/topics/$dlng/.cfg.2"
 						sed '/^$/d' $DM_t/$dlng/.cfg.2 > $DM_t/$dlng/.cfg.2_
@@ -173,9 +168,9 @@ if [ -z "$1" ]; then
 				done
 				
 				echo "95"
-				echo "# $finished." ; sleep 2
+				echo "# $finished" ; sleep 1
 				echo "100"
-				$DS/mngr mkmn
+				$DS/mngr.sh mkmn
 				chmod -R +x "$DC"/topics/
 				cp -f $DS/default/README.txt "$DM"/README.txt
 				rm -f -r $DT/.imprt
@@ -188,10 +183,10 @@ if [ -z "$1" ]; then
 				
 				$yad --fixed --name=idiomind --center --class=idiomind \
 				--image=info --sticky \
-				--text=" $import_ok   \\n" \
+				--text=" $t_import_ok   \\n" \
 				--image-on-top --fixed --width=360 --height=140 --borders=3 \
 				--skip-taskbar --window-icon=idiomind \
-				--title=Idiomind --button=gtk-ok:0 && exit 1
+				--title=Idiomind --button=Ok:0 && exit 1
 			else
 				exit 1
 			fi
@@ -232,26 +227,25 @@ if [ -z "$1" ]; then
 				$yad --fixed --name=idiomind --center \
 				--image=info --sticky --class=idiomind \
 				--text="$dir_err " \
-				--image-on-top --fixed --width=240 --height=140 --borders=3 \
+				--image-on-top --fixed --width=340 --height=130 --borders=3 \
 				--skip-taskbar --window-icon=idiomind \
-				--title=Idiomind --button=gtk-ok:0 & exit 1
+				--title=Idiomind --button=Ok:0 & exit 1
 				
 			elif [ ! -f "$D_cps/idiomind.backup" ]; then
 				$yad --fixed --name=idiomind --center \
 				--image=info --sticky --class=idiomind \
 				--text="$no_backup  \\n" \
-				--image-on-top --fixed --width=240 --height=140 --borders=3 \
+				--image-on-top --fixed --width=340 --height=130 --borders=3 \
 				--skip-taskbar --window-icon=idiomind \
-				--title=Idiomind --button=gtk-ok:0 & exit 1
-				
+				--title=Idiomind --button=Ok:0 & exit 1
 			else
 				udt=$(cat "$D_cps/.udt")
 				$yad --fixed --name=idiomind --center \
 				--image=info --sticky --class=idiomind \
 				--text="$restore_to $udt  \\n" \
-				--image-on-top --fixed --width=280 --height=160 --borders=3 \
+				--image-on-top --fixed --width=340 --height=130 --borders=3 \
 				--skip-taskbar --window-icon=idiomind \
-				--title=Idiomind --button="$cancel":1 --button=gtk-ok:0
+				--title=Idiomind --button="$cancel":1 --button=Ok:0
 					ret=$?
 				
 					if [ "$ret" -eq 0 ]; then
@@ -310,28 +304,33 @@ elif ([ "$1" = C ] && [ "$dte" != "$udt" ]); then
 		$yad --fixed --name=idiomind --center \
 		--image=info --sticky --class=idiomind \
 		--text="$dir_err2 " \
-		--image-on-top --fixed --width=280 --height=130 --borders=3 \
+		--image-on-top --fixed --width=420 --height=130 --borders=3 \
 		--skip-taskbar --window-icon=idiomind --buttons-layout=edge \
-		--title=Idiomind --button="$configure":3 --button=gtk-ok:0
+		--title=Idiomind --button="$configure":3 --button=Ok:0
 		ret=$?
 		
-		if [ "$ret" -eq 0 ]; then
+		if [ $ret -eq 0 ]; then
 		exit 1
-		elif [ "$ret" -eq 3 ]; then
-		"/usr/share/idiomind/addons/User data/cnfg.sh.sh"
+		elif [ $ret -eq 3 ]; then
+		"/usr/share/idiomind/addons/User data/cnfg.sh"
 		fi
 	fi
 	
 	if [ -f "$D_cps/idiomind.backup" ]; then
-		rm "$D_cps/idiomind.backup"
+		mv -f "$D_cps/idiomind.backup" "$D_cps/idiomind.bk"
 	fi
 
-	notify-send -i idiomind "$starting_backup"
 	cp -r "$DC" "$DM"
 	cd $DM
 	tar cvzf backup.tar.gz *
 	mv -f backup.tar.gz "$D_cps/idiomind.backup"
+	exit=$?
+	if [ $exit = 0 ] ; then
 	echo "$dte" > "$D_cps/.udt"
+	rm "$D_cps/idiomind.bk"
+	else
+	mv -f "$D_cps/idiomind.bk" "$D_cps/idiomind.backup"
+	fi
 	rm -r "$DM/idiomind"
 	exit
 
