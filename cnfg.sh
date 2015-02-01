@@ -62,12 +62,12 @@ sttng4=$(sed -n 4p $DC_s/cfg.1)
 [[ -z $sttng4 ]] && sttng4=FALSE
 sttng5=$(sed -n 5p $DC_s/cfg.1)
 [[ -z $sttng5 ]] && sttng5=FALSE
+sttng9=$(sed -n 9p $DC_s/cfg.1)
+[[ -z $sttng9 ]] && sttng9=FALSE
 sttng10=$(sed -n 10p $DC_s/cfg.1)
-[[ -z $sttng10 ]] && sttng10=FALSE
+[[ -z $sttng10 ]] && sttng10=""
 sttng11=$(sed -n 11p $DC_s/cfg.1)
 [[ -z $sttng11 ]] && sttng11=""
-sttng12=$(sed -n 12p $DC_s/cfg.1)
-[[ -z $sttng12 ]] && sttng12=""
 
 yad --plug=$KEY --tabnum=1 --borders=15 --scroll \
 	--separator="\\n" --form --no-headers --align=right \
@@ -76,22 +76,21 @@ yad --plug=$KEY --tabnum=1 --borders=15 --scroll \
 	--field="$use_g_color:CHK" $sttng3 \
 	--field="$dialog_word_Selector:CHK" $sttng4 \
 	--field="$start_with_system:CHK" $sttng5 \
-	--field="$play_time:BTN" "$DS/play.sh time" \
-	--field=" :lbl" "#7"\
-	--field="$audio\t":lbl "#8" \
-	--field=":lbl" "#9" \
-	--field="$auto_pronounce:CHK" $sttng10 \
-	--field="<small>$voice_syntetizer</small>:CB5" "$sttng11" \
-	--field="<small>$record_audio</small>:CB5" "$sttng12" \
-	--field=" :lbl" "#10"\
-	--field="$help\t":lbl "#11" \
-	--field=":lbl" "#9" \
+	--field=" :lbl" "#6"\
+	--field="$audio\t":lbl "#7" \
+	--field=":lbl" "#8" \
+	--field="$auto_pronounce:CHK" $sttng9 \
+	--field="<small>$voice_syntetizer</small>:CB5" "$sttng10" \
+	--field="<small>$record_audio</small>:CB5" "$sttng11" \
+	--field=" :lbl" "#12"\
+	--field="$help\t":lbl "#13" \
+	--field=":lbl" "#14" \
 	--field="$search_updates:BTN" "/usr/share/idiomind/ifs/tls.sh updt" \
 	--field="$quickstart:BTN" "/usr/share/idiomind/ifs/tls.sh help" \
 	--field="$topics_saved:BTN" "/usr/share/idiomind/ifs/upld.sh vsd" \
-	--field=" :lbl" "#10"\
-	--field="$languages\t":lbl "#11" \
-	--field=":lbl" "#12"\
+	--field=" :lbl" "#18"\
+	--field="$languages\t":lbl "#19" \
+	--field=":lbl" "#20"\
 	--field="$languages_learning:CB" "$lgtl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
 	--field="$your_language:CB" "$lgsl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" > "$cnf1" &
 cat $DC_s/cfg.21 | yad --plug=$KEY --tabnum=2 --list --expand-column=2 \
@@ -142,8 +141,8 @@ yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 			fi
 		fi
 		
-		ln=$(cat "$cnf1" | sed -n 22p)
-		ls=$(cat "$cnf1" | sed -n 23p)
+		ln=$(cat "$cnf1" | sed -n 21p)
+		ls=$(cat "$cnf1" | sed -n 22p)
 		
 		if echo $ln | grep "English" && [ English != $lgtl ] ; then
 			set_lang English en

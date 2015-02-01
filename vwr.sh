@@ -4,7 +4,7 @@
 source /usr/share/idiomind/ifs/c.conf
 wth=$(sed -n 5p $DC_s/cfg.18)
 eht=$(sed -n 6p $DC_s/cfg.18)
-ap=$(cat $DC_s/cfg.1 | sed -n 11p)
+ap=$(cat $DC_s/cfg.1 | sed -n 10p)
 echo "_" >> $DC/addons/stats/.tmp &
 re='^[0-9]+$'
 v="$1"

@@ -14,10 +14,10 @@ if [[ "$1" = time ]]; then
 		echo 8 > $DC_s/cfg.2
 		bcl=$(sed -n 1p $DC_s/cfg.2)
 	fi
-		yad --mark="8 s":8 --mark="60 s":60 \
+		yad --mark="8 s":8 --mark="60 s":60 --fixed \
 		--mark="120 s":120 --borders=20 --scale \
 		--max-value=128 --value="$bcl" --step 2 \
-		--name=idiomind --on-top --sticky --skip-taskbar \
+		--name=idiomind --on-top --skip-taskbar \
 		--window-icon=idiomind --borders=10 \
 	    --title=" " --width=300 --height=100 \
 	    --min-value=2 --button="Ok":0 > $cnf1
@@ -103,7 +103,7 @@ FALSE' > $DC_s/cfg.5; fi
 	--width=280 --name=idiomind --class=idmnd \
 	--height=240 --title="$tpc" \
 	--window-icon=idiomind --no-headers \
-	--buttons-layout=end \
+	--button=Time:"$DS/play.sh 'time'" \
 	--borders=0 $btn --hide-column=1 \
 	--column=Action:TEXT --column=icon:IMG \
 	--column=Action:TEXT --column=icon:CHK \
