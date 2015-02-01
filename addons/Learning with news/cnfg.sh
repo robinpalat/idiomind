@@ -137,14 +137,14 @@ $DIR3/images/del.png
 $delete_news
 $DIR3/images/del.png
 $delete_saved
-$DIR3/images/rss.png
+$DIR3/images/edit.png
 $subcriptions"
 else
 dd="$DIR3/images/del.png
 $delete_news
 $DIR3/images/del.png
 $delete_saved
-$DIR3/images/rss.png
+$DIR3/images/edit.png
 $subcriptions"
 fi
 
