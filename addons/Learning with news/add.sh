@@ -4,6 +4,7 @@
 source /usr/share/idiomind/ifs/c.conf
 source /usr/share/idiomind/ifs/trans/$lgs/rss.conf
 source $DS/ifs/comms.sh
+source $DS/ifs/add.sh
 
 if [[ $1 = n_i ]]; then
 
@@ -19,7 +20,7 @@ if [[ $1 = n_i ]]; then
 
 	if [[ -f $DT/word.x ]]; then
 		bttn="--button=$save_word:0"
-		txt="<b>$word </b>"
+		txt="<b>$word</b>"
 	fi
 
 	$yad --width=480 --height=210 --window-icon=idiomind \
@@ -35,19 +36,16 @@ if [[ $1 = n_i ]]; then
 			fi
 		
 			internet
-			
 			mkdir $DT/rss_$c
 			cd $DT/rss_$c
-			result=$(curl -s -i --user-agent "" -d "sl=auto" -d "tl=$lgs" --data-urlencode text="$trgt" https://translate.google.com)
-			encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
-			srce=$(iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8)
-			nme="$(echo "$trgt" | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
-			
+			srce="$(translate "$trgt" auto $lgs)"
+			nme="$(nmfile "$trgt")"
+
 			[[ ! -d "$DM_tl/Feeds/kept/words" ]] && mkdir "$DM_tl/Feeds/kept/words"
 			cp "$DM_tl/Feeds/conten/$var/$nm.mp3" "$DM_tl/Feeds/kept/words/${nm^}.mp3"
 			
-			eyeD3 --set-encoding=utf8 -t "IWI1I0I${trgt^}IWI1I0I" -a "IWI2I0I${srce^}IWI2I0I" -A IWI3I0I"$var"IWI3I0I \
-			"$DM_tl/Feeds/kept/words/${nm^}.mp3"
+			tags_2 W "${trgt^}" "${srce^}" "$var" "$DM_tl/Feeds/kept/words/${nm^}.mp3"
+			
 			echo "${trgt^}" >> "$DC_tl/Feeds/cfg.0"
 			echo "${trgt^}" >> "$DC_tl/Feeds/.cfg.11"
 			echo "${trgt^}" >> "$DC_tl/Feeds/cfg.3"
@@ -66,10 +64,8 @@ if [[ $1 = n_i ]]; then
 			internet
 			
 			nme="$(nmfile "$var")"
-			
 			tgs=$(eyeD3 "$DM_tl/Feeds/conten/$nme.mp3")
 			trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
-
 			
 			cp "$DM_tl/Feeds/conten/$nme.mp3" "$DM_tl/Feeds/kept/$nme.mp3"
 			cp "$DM_tl/Feeds/conten/$nme.lnk" "$DM_tl/Feeds/kept/$nme.lnk"

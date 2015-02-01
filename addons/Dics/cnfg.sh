@@ -23,7 +23,7 @@ if [ "$1" = dlck ]; then
 	else
 		stts=disables
 	fi
-	edt=$(yad --text-info --width=450 --height=450 --title=Edit \
+	edt=$(yad --text-info --width=450 --height=340 --title=Edit \
 	--filename=$HOME/.config/idiomind/addons/dict/$stts/"$3".$lgt \
 	--editable --show-uri --wrap --on-top --skip-taskbar --center \
 	--window-icon=idiomind --button=Delete:2 --button=Save:0)
@@ -78,7 +78,7 @@ elif [ -z "$1" ]; then
 	D=$(mktemp $DT/D.XXXX)
 	cat "$dir/.listdicts" | $yad --list --title="Idiomind - $dictionaries" \
 	--center --on-top --expand-column=2 $img --text="$tex" $align \
-	--width=440 --height=340 --skip-taskbar --separator=" " --image-on-top \
+	--width=420 --height=250 --skip-taskbar --separator=" " --image-on-top \
 	--borders=15 --button="$add":2 --print-all --button=Ok:0 \
 	--column=" ":CHK --column="$availables":TEXT \
 	--column="$languages":TEXT --window-icon=idiomind \
@@ -146,7 +146,7 @@ elif [ -z "$1" ]; then
 elif [ "$3" = swrd ]; then
 	cd $DT_r
 	if [ -f "$DM_tl/.share/$wrd.mp3" ]; then
-			cp -f "$DM_tl/.share/$wrd.mp3" "$Wrd.mp3" && exit 1
+			cp -f "$DM_tl/.share/$wrd.mp3" "$Wrd.mp3" && exit
 	else
 		n=1
 		while [ $n -le $(cat "$dir/.dicts" | wc -l) ]; do
@@ -162,7 +162,7 @@ elif [ "$3" = swrd ]; then
 else
 	cd $DT_r
 	if [ -f "$DM_tl/.share/$wrd.mp3" ]; then
-		echo "$wrd.mp3" >> "$DC_tlt/cfg.5" && exit 1
+		echo "$wrd.mp3" >> "$DC_tlt/cfg.5" && exit
 	else
 		n=1
 		while [ $n -le $(cat "$dir/.dicts" | wc -l) ]; do

@@ -4,23 +4,13 @@
 source /usr/share/idiomind/ifs/c.conf
 source /usr/share/idiomind/ifs/trans/$lgs/rss.conf
 source $DS/ifs/add.sh
+source $DS/ifs/comms.sh
 
 DSF="$DS/addons/Learning with news"
 DCF="$DC/addons/Learning with news"
 
-function msg() {
-	
-	yad --window-icon=idiomind --name=idiomind \
-	--image=$2 --on-top --text=" $1 " \
-	--image-on-top --center --sticky --button="Ok":0 \
-	--width=420 --height=150 --borders=5 \
-	--skip-taskbar --title="Idiomind"
-}
-
 [[ -f $DT/.uptf ]] && STT=$(cat $DT/.uptf) || STT=""
-
 [[ ! -f $DC/addons/dict/.dicts ]] && touch $DC/addons/dict/.dicts
-
 
 if [[ -z "$(cat $DC/addons/dict/.dicts)" ]]; then
 	source $DS/ifs/trans/$lgs/topics_lists.conf
@@ -95,15 +85,8 @@ exit 1' > $DC_tl/Feeds/tpc.sh
 fi
 
 if [ -n "$feed" ]; then
-	curl -v www.google.com 2>&1 | \
-	grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
-	yad --window-icon=idiomind --on-top \
-	--image=info --name=idiomind \
-	--text=" $connection_err  \\n" \
-	--image-on-top --center --sticky \
-	--width=420 --height=150 --borders=3 \
-	--skip-taskbar --title=Idiomind \
-	--button=Ok:0 >&2; exit 1;}
+	
+	internet
 	
 	echo "- Feeds Mode ( Actualizando... 5% )" > $DT/.uptf
 	
@@ -124,23 +107,19 @@ if [ -n "$feed" ]; then
 	| sed 's/^[ \t]*//;s/[ \t]*$//g' > rss
 	
 	if [ $(cat rss | wc -l) = 0 ]; then
-		$yad --window-icon=idiomind --on-top \
-		--image=info --name=idiomind \
-		--text="<b>$link_err</b>" \
-		--image-on-top --center --sticky \
-		--width=420 --height=150 --borders=3 \
-		--skip-taskbar --title=Idiomind \
-		--button=Ok:0 &
+	
+		msg "<b>$link_err</b>" info &
 		rm -fr $DT_r .rss & exit 1
 	fi
 	
 	n=1
 	while [ $n -le $(cat rss | wc -l) ]; do
-			f="5"
+			
 			if [[ "$(cat $DT/.uptf \
 			| grep -o "Actualizando...")" = "Actualizando..." ]]; then
-				echo "- feeds Mode ( Actualizando... $n$f% )" > $DT/.uptf
+				echo "- feeds Mode ( Actualizando... )" > $DT/.uptf
 			fi
+			
 			trgt=$(sed -n "$n"p rss)
 			lnk=$(sed -n "$n"p lnk)
 		
@@ -153,8 +132,8 @@ if [ -n "$feed" ]; then
 				if sed -n 1p $DC_s/cfg.3 | grep TRUE; then
 				
 					echo "$trgt" > ./trgt
-					
 					tts ./trgt $lgt $DT_r "./$nme.mp3"
+					
 				else
 					voice "$trgt" "$nme.mp3"
 				fi
@@ -174,7 +153,8 @@ if [ -n "$feed" ]; then
 				fi
 				clean_3 "$vrbl" > $aw
 				twrd=$(cat $aw | sed '/^$/d')
-				translate "$twrd" auto $lg | sed 's/,//g' | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
+				translate "$twrd" auto $lg | sed 's/,//g' \
+				| sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
 				> A_$r
 				> B_$r
 				> g_$r
@@ -184,13 +164,10 @@ if [ -n "$feed" ]; then
 				list_words $aw $bw $DT_r $r
 				lwrds=$(cat A_$r)
 				pwrds=$(cat B_$r | tr '\n' '_')
-				
 				if ( [ ! -f "./$nme.mp3" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ] ); then
-					
 					[ -f "./$nme.mp3" ] && rm "./$nme.mp3"
 					[ -d "./$nme" ] && rm -r "./$nme"
 				else
-				
 					tags_9 W "$lwrds" "$pwrds" "./$nme.mp3"
 					echo "$trgt" >> "$DC_tl/Feeds/cfg.1"
 					get_words_2 $aw $bw
