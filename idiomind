@@ -1050,7 +1050,7 @@ elif [[ $1 = topic ]]; then
 	rm -f $DT/*.x
 	
 elif [[ "$1" = "--version" ]]; then
-	echo "2.1-alpha" & exit
+	echo "2.2-beta" & exit
 elif [[ "$1" = "-v" ]]; then
-	echo "2.1-alpha" & exit
+	echo "2.2-beta" & exit
 fi
