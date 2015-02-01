@@ -25,7 +25,5 @@ if [ -n "$(cat ./indx)" ] && [ $(cat ./indx | wc -l) -gt 0 ]; then
 		rm -fr $DT/.p__$user $DT/.$user
 	fi
 else
-	
-	notify-send -i idiomind "T" "D" -t 9000 &
 	exit 1
 fi
