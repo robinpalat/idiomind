@@ -48,7 +48,7 @@ elif [[ $1 = infsd ]]; then
 	yad --borders=10 --width=420 --height=150 \
 	--on-top --skip-taskbar --center --image=$icon \
 	--title="idiomind" --button="$download:0" --button="Close:1" \
-	--text="<b>$name</b>\\n<small>$language_source <b>></b> $language_target </small> \\n" \
+	--text="<span font='ultralight'>$name</span>\\n<sub>${language_source^} $language_target </sub> \\n" \
 	--window-icon=idiomind
 		ret=$?
 
@@ -57,6 +57,7 @@ elif [[ $1 = infsd ]]; then
 		exit 1
 
 		elif [ $ret -eq 0 ]; then
+			cd $HOME
 			sv=$(yad --save --center --borders=10 \
 			--on-top --filename="$tpcd.idmnd" \
 			--window-icon=idiomind --skip-taskbar --title="Save" \
@@ -109,8 +110,8 @@ elif [[ $1 = infsd ]]; then
 				mv -f "/tmp/$U.$tpcd.idmnd" "$sv"
 			else
 				yad --fixed --name=idiomind --center \
-				--image=dialog-warning --text="$file_err" \
-				--fixed --sticky --width=320 --height=140 --borders=3 \
+				--image=info --text="$file_err" \
+				--fixed --sticky --width=420 --height=150 --borders=3 \
 				--skip-taskbar --window-icon=idiomind \
 				--on-top --title="Idiomind" \
 				--button="Ok":0 && exit 1

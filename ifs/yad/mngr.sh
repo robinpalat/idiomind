@@ -18,7 +18,7 @@ function dlg_form_1() {
         --field="<small>$notes </small>":TXT "$ntes" \
         --field="$mark "":CHK" "$mrk" \
         --field="$chk"":CHK" "$mrok" \
-        --field="<a href='http://glosbe.com/$lgs/$lgt/$TGT'>$search_def </a>":lbl \
+        --field="<a href='http://glosbe.com/$lgs/$lgt/$TGT'>$search_def</a>":lbl \
         --field=" :LBL" " " \
         --button="$image":"$imge" \
         --button="$delete":"$dlte" \
