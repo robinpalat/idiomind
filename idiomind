@@ -20,8 +20,10 @@ function sizes() {
 	[[ $y -lt 1020 ]] && y=1020
 	echo $(($y*58/100)) >> $wh
 	echo $(($y*50/100)) >> $wh
-	echo $(($y*56/100)) >> $wh
+	
+	echo $(($y*58/100)) >> $wh
 	echo $(($y*34/100)) >> $wh
+	
 	echo $(($y*63/100)) >> $wh
 	echo $(($y*46/100)) >> $wh
 	echo $(($y*12/100)) >> $wh
