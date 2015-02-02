@@ -286,7 +286,7 @@ elif [ $1 = updt ]; then
 		fi
 	else
 		yad --text="<big><b> $nonew_version  </b></big>\n\n  $nonew_version2" \
-		--image=info --title="Idiomind 2.1" --window-icon=idiomind \
+		--image=info --title="Idiomind 2.2" --window-icon=idiomind \
 		--on-top --skip-taskbar --sticky --width=420 --height=180 \
 		--center --name=idiomind --borders=10 \
 		--button="$close":1

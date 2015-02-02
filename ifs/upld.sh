@@ -428,7 +428,7 @@ sed -i "s/11/$sentences/g" "$DT_u/$tpc/cfg.12"
 sed -i "s/12/$images/g" "$DT_u/$tpc/cfg.12"
 sed -i "s/13/$level/g" "$DT_u/$tpc/cfg.12"
 
-echo "$U" > $DC_s/cfg.4
+echo "$Author" > $DC_s/cfg.4
 echo "$Mail" >> $DC_s/cfg.4
 
 if [[ -f "$img" ]]; then
