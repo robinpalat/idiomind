@@ -14,7 +14,7 @@ fi
 
 CNFG=$(yad --center --form --on-top \
 	--skip-taskbar --borders=15 --expand-column=3 --no-headers \
-	--print-all --button=$close:0 --width=420 --height=250 \
+	--print-all --button=$close:0 --width=420 --height=300 \
 	--always-print-result --editable \
 	--title="Google translation service" --window-icon=idiomind \
 	--field="\n$used_google\n":CHK "$sttng4" \

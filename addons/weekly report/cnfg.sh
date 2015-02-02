@@ -321,8 +321,8 @@ elif [ -z "$1" ]; then
 	CNFG=$($yad --title="$weekly_report" --borders=10 --print-all \
 	--center --form --on-top --scroll --skip-taskbar --align=center \
 	--always-print-result --window-icon=idiomind \
-	--button=Close:0 --width=420 --height=250 \
-	--text="<sup>$description</sup>" \
+	--button=Close:0 --width=420 --height=300 \
+	--text="$description" \
 	--field="$active:CHK" $sttng \
 	--field="\n$SW:LBL")
 		ret=$?

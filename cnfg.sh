@@ -21,8 +21,8 @@ fi
 function confirm() {
 	$yad --form --center --borders=5 --image=dialog-warning \
 	--title="$warning" --on-top --window-icon=idiomind \
-	--skip-taskbar --button="cancel":1 --button=Ok:0 \
-	--text "<b>  $warning</b>\n\n  $change_source_language" \
+	--skip-taskbar --button="$no":1 --button="$yes":0 \
+	--text "<b>  $warning</b>\n\n    $change_source_language  " \
 	--width=400 --height=180 
 }
 
@@ -62,12 +62,12 @@ sttng4=$(sed -n 4p $DC_s/cfg.1)
 [[ -z $sttng4 ]] && sttng4=FALSE
 sttng5=$(sed -n 5p $DC_s/cfg.1)
 [[ -z $sttng5 ]] && sttng5=FALSE
+sttng6=$(sed -n 6p $DC_s/cfg.1)
+[[ -z $sttng6 ]] && sttng6=FALSE
+sttng8=$(sed -n 8p $DC_s/cfg.1)
+[[ -z $sttng8 ]] && sttng8=""
 sttng9=$(sed -n 9p $DC_s/cfg.1)
-[[ -z $sttng9 ]] && sttng9=FALSE
-sttng10=$(sed -n 10p $DC_s/cfg.1)
-[[ -z $sttng10 ]] && sttng10=""
-sttng11=$(sed -n 11p $DC_s/cfg.1)
-[[ -z $sttng11 ]] && sttng11=""
+[[ -z $sttng9 ]] && sttng9=""
 
 yad --plug=$KEY --tabnum=1 --borders=15 --scroll \
 	--separator="\\n" --form --no-headers --align=right \
@@ -76,21 +76,17 @@ yad --plug=$KEY --tabnum=1 --borders=15 --scroll \
 	--field="$use_g_color:CHK" $sttng3 \
 	--field="$dialog_word_Selector:CHK" $sttng4 \
 	--field="$start_with_system:CHK" $sttng5 \
-	--field=" :lbl" "#6"\
-	--field="$audio\t":lbl "#7" \
-	--field=":lbl" "#8" \
-	--field="$auto_pronounce:CHK" $sttng9 \
-	--field="<small>$voice_syntetizer</small>:CB5" "$sttng10" \
-	--field="<small>$record_audio</small>:CB5" "$sttng11" \
-	--field=" :lbl" "#12"\
-	--field="$help\t":lbl "#13" \
-	--field=":lbl" "#14" \
+	--field="$auto_pronounce:CHK" $sttng6 \
+	--field=" :lbl" "#7"\
+	--field="<small>$voice_syntetizer</small>:CB5" "$sttng8" \
+	--field="<small>$record_audio</small>:CB5" "$sttng9" \
+	--field=" :lbl" "#10"\
 	--field="$search_updates:BTN" "/usr/share/idiomind/ifs/tls.sh updt" \
 	--field="$quickstart:BTN" "/usr/share/idiomind/ifs/tls.sh help" \
 	--field="$topics_saved:BTN" "/usr/share/idiomind/ifs/upld.sh vsd" \
-	--field=" :lbl" "#18"\
-	--field="$languages\t":lbl "#19" \
-	--field=":lbl" "#20"\
+	--field=" :lbl" "#14"\
+	--field="$languages\t":lbl "#15" \
+	--field=":lbl" "#16"\
 	--field="$languages_learning:CB" "$lgtl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
 	--field="$your_language:CB" "$lgsl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" > "$cnf1" &
 cat $DC_s/cfg.21 | yad --plug=$KEY --tabnum=2 --list --expand-column=2 \
@@ -141,8 +137,8 @@ yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 			fi
 		fi
 		
-		ln=$(cat "$cnf1" | sed -n 21p)
-		ls=$(cat "$cnf1" | sed -n 22p)
+		ln=$(cat "$cnf1" | sed -n 17p)
+		ls=$(cat "$cnf1" | sed -n 18p)
 		
 		if echo $ln | grep "English" && [ English != $lgtl ] ; then
 			set_lang English en

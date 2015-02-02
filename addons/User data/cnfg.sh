@@ -17,7 +17,7 @@ if [ -z "$1" ]; then
 	sz=$(cat $DT/.sz)
 	D=$($yad --list --title="$user_data" \
 	--center --on-top --radiolist --expand-column=2 \
-	--text=" $size: $sz \\n" --width=420 --height=250 \
+	--text=" $size: $sz \\n" --width=420 --height=300 \
 	--skip-taskbar --image=folder --separator=" " \
 	--borders=15 --print-all --window-icon=idiomind \
 	--button=Backup:2 --button=Ok:0 --image-on-top --column="" \
@@ -201,14 +201,13 @@ if [ -z "$1" ]; then
 			echo FALSE > $DC_s/cfg.12
 			echo " " > $DC_s/cfg.12
 		fi
-
+		# --text="$text1\n" \
 		cd ~/
 		CNFG=$($yad --center --form --on-top --window-icon=idiomind \
 		--borders=15 --expand-column=3 --no-headers \
 		--print-all --button=$restore:3 --always-print-result \
-		--button=$close:0 --width=350 --height=250 \
+		--button=$close:0 --width=420 --height=300 \
 		--title=Backup --columns=2 \
-		--text="$text1\\n" \
 		--field="$text2:CHK" $sttng \
 		--field=" Folder Path::CDIR" "$D_cps" \
 		--field=" :LBL" " " )

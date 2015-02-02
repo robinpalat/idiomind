@@ -82,7 +82,7 @@ elif [ $1 = dclik ]; then
 	
 elif [ $1 = edta ]; then
 
-	prm=$(sed -n 11p $DC_s/cfg.1)
+	prm=$(sed -n 9p $DC_s/cfg.1)
 	(cd "$3"
 	"$prm" "$2") & exit
 	

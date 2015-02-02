@@ -226,12 +226,12 @@ elif [ $1 = new_items ]; then
 				$DS/add.sh other_ways "$trgt" $DT_r & exit 1
 			elif ([ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]); then
 				if sed -n 1p $DC_s/cfg.3 | grep FALSE; then
-					if [ -z "$4" ]; then
+					if [ -z "$srce" ]; then
 						[[ -d $DT_r ]] && rm -fr $DT_r
-						msg "$no_text$lgsl." info & exit
-					elif [ -z "$2" ]; then
+						msg "$no_text $lgsl." info & exit
+					elif [ -z "$trgt" ]; then
 						[[ -d $DT_r ]] && rm -fr $DT_r
-						msg "$no_text$lgtl." info & exit
+						msg "$no_text $lgtl." info & exit
 					fi
 				fi
 

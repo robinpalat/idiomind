@@ -179,7 +179,7 @@ function tags_9() {
 
 function voice() {
 	
-	cd $DT_r; vs=$(sed -n 10p $DC_s/cfg.1)
+	cd $DT_r; vs=$(sed -n 8p $DC_s/cfg.1)
 	if [ -n "$vs" ]; then
 	
 		if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then

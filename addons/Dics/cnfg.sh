@@ -46,7 +46,8 @@ elif [ -z "$1" ]; then
 		align="--text-align=left"
 		img="--image=info"
 	else
-		tex="<a href='http://www.dicts.com'><sup>$more_dict</sup></a>  "
+		tex=" "
+		#tex="<a href='http://www.dicts.com'><sup>$more_dict</sup></a>  "
 		align="--text-align=right"
 	fi
 	
@@ -78,7 +79,7 @@ elif [ -z "$1" ]; then
 	D=$(mktemp $DT/D.XXXX)
 	cat "$dir/.listdicts" | $yad --list --title="Idiomind - $dictionaries" \
 	--center --on-top --expand-column=2 $img --text="$tex" $align \
-	--width=420 --height=250 --skip-taskbar --separator=" " --image-on-top \
+	--width=420 --height=300 --skip-taskbar --separator=" " --image-on-top \
 	--borders=15 --button="$add":2 --print-all --button=Ok:0 \
 	--column=" ":CHK --column="$availables":TEXT \
 	--column="$languages":TEXT --window-icon=idiomind \
@@ -104,7 +105,7 @@ elif [ -z "$1" ]; then
 					yad --name=idiomind --center --title=" " \
 					--text=" <b>$install_err </b>\\n" --image=info \
 					--image-on-top --fixed --sticky --title="Info" --on-top \
-					--width=230 --height=80 --borders=3 --button="gtk-ok:0" \
+					--width=420 --height=150 --borders=3 --button="Ok:0" \
 					--skip-taskbar --window-icon=idiomind
 				fi
 				$DS/addons/Dics/cnfg.sh 1 1 cnf & exit

@@ -21,9 +21,9 @@ if [[ -z "$1" ]]; then
 	| tr "\\n" '!' | sed 's/!\+$//g')
 
 	CNFG=$($yad --on-top --form --center \
-		--text="$feeds$lgtl\n" --borders=15 \
+		--text="$feeds $lgtl\n" --borders=15 \
 		--window-icon=idiomind --skip-taskbar \
-		--width=420 --height=250 --always-print-result \
+		--width=420 --height=300 --always-print-result \
 		--title="Feeds - $lgtl" \
 		--button="$delete:2" \
 		--button="gtk-add:5" \
