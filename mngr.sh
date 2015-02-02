@@ -71,10 +71,10 @@ elif [ $1 = edit ]; then
 	ti=$(cat "$DC_tl/$tpc/cfg.0" | wc -l)
 	ni="$DC_tl/$tpc/cfg.1"
 	bi=$(cat "$DC_tl/$tpc/cfg.2" | wc -l)
-	nstll=$(grep -Fxo "$tpc" "$DC_tl"/.cfg.3)
+	nstll=$(grep -Fxo "$tpc" $DC_tl/.cfg.3)
 	slct=$(mktemp $DT/slct.XXXX)
 	
-if [ -z "$nstll" ]; then
+if ! grep -Fxo "$tpc" $DC_tl/.cfg.3; then
 if [ "$ti" -ge 15 ]; then
 dd="$DS/images/ok.png
 $learned

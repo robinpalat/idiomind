@@ -266,15 +266,14 @@ elif [ $1 = updt ]; then
 	[[ -f release ]] && rm -f release
 	wget http://idiomind.sourceforge.net/info/release
 	
-	if [ $(sed -n 1p ./release) ! = $(idiomind -v) ]; then
+	if [ "$(sed -n 1p $DT/release)" != "$(idiomind -v)" ]; then
 		yad --text="<big><b> $new_version </b></big>\n\n" \
 		--image=info --title="Idiomind 2.1" --window-icon=idiomind \
-		--on-top --skip-taskbar --sticky \
+		--on-top --skip-taskbar --sticky --fixed \
 		--center --name=idiomind --borders=10 \
-		--button="$cancel":1 \
 		--button="$later":2 \
 		--button="$download":0 \
-		--width=420 --height=180
+		--width=430 --height=130
 		ret=$?
 		if [ "$ret" -eq 0 ]; then
 			xdg-open https://sourceforge.net/projects/idiomind/files/idiomind.deb/download & exit
@@ -286,9 +285,9 @@ elif [ $1 = updt ]; then
 		fi
 	else
 		yad --text="<big><b> $nonew_version  </b></big>\n\n  $nonew_version2" \
-		--image=info --title="Idiomind 2.2" --window-icon=idiomind \
-		--on-top --skip-taskbar --sticky --width=420 --height=180 \
-		--center --name=idiomind --borders=10 \
+		--image=info --title="Idiomind 2.1" --window-icon=idiomind \
+		--on-top --skip-taskbar --sticky --width=430 --height=130 \
+		--center --name=idiomind --fixed --borders=10 \
 		--button="$close":1
 	fi
 	[[ -f release ]] && rm -f release
@@ -315,7 +314,7 @@ elif [ $1 = srch ]; then
 		wget http://idiomind.sourceforge.net/info/release
 		pkg=https://sourceforge.net/projects/idiomind/files/idiomind.deb/download
 		
-		if [ $(sed -n 1p ./release) ! = $(idiomind -v) ]; then
+		if [ "$(sed -n 1p $DT/release)" != "$(idiomind -v)" ]; then
 			yad --text="<big><b> $new_version  </b></big>\n\n" \
 			--image=info --title="Idiomind 2.1" --window-icon=idiomind \
 			--on-top --skip-taskbar --sticky \
@@ -337,6 +336,7 @@ elif [ $1 = srch ]; then
 		fi
 		[[ -f release ]] && rm -f release
 	fi
+	
 	
 	
 elif [ $1 = pdf ]; then

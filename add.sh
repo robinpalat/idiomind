@@ -54,7 +54,12 @@ if [ $1 = new_topic ]; then
 			cd "$DC_tl/$tpc"
 			cp -fr ./.* "$DC_tl/$jlb"/
 			
-			echo "$jlb" >> $DC_tl/.cfg.2
+			if grep -Fxo "$tpc" $DC_tl/.cfg.3; then
+				echo "$jlb" >> $DC_tl/.cfg.3
+			else
+				echo "$jlb" >> $DC_tl/.cfg.2
+			fi
+			
 			grep -v -x -F "$tpc" $DC_tl/.cfg.2 > $DC_tl/.cfg.2_
 			sed '/^$/d' $DC_tl/.cfg.2_ > $DC_tl/.cfg.2
 			grep -v -x -F "$tpc" $DC_tl/.cfg.1 > $DC_tl/.cfg.1_
