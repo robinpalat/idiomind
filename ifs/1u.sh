@@ -4,9 +4,8 @@
 source /usr/share/idiomind/ifs/trans/es/others.conf
 
 text="<big><big><big><big>  Welcome  </big></big></big></big>
-
-\tIdiomind is a program that will help you learn new words.
-\tPlease set the following options:
+    Idiomind is a program that will help you learn new words.
+    To get started, please configure the following:
 "
 
 drtf="/usr/share/idiomind/addons/Learning with news/examples/"
@@ -43,17 +42,16 @@ sudo apt-get install yad" \
 fi
 
 
-dialog=$(yad --center --width=520 --height=260 \
+dialog=$(yad --center --width=520 --height=300 --fixed \
 	--image-on-top --on-top --class=idiomind --name=idiomind \
 	--window-icon=idiomind --buttons-layout=end --text="$text" \
-	--title="Idiomind" --form --borders=10 --align=center --button=Cancel:1 --button=Ok:0 \
+	--title="Idiomind" --form --borders=15 --align=center --button=Cancel:1 --button=Ok:0 \
 	--field="Select the language you are studying":lbl \
 	--field=":CB" \
 	!"English!French!German!Italian!Japanese!Portuguese!Spanish!Vietnamese!Chinese"\
 	--field="Select your native language":lbl \
 	--field=":CB" \
 	!"English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
-	--field=":lbl" \
 	!"English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
 	!"English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese")
 
@@ -63,8 +61,14 @@ if [[ $ret -eq 1 ]]; then
 	killall 1u.sh & exit 1
 
 elif [[ $ret -eq 0 ]]; then
-	source=$(echo "$dialog" | cut -d "|" -f1)
-	target=$(echo "$dialog" | cut -d "|" -f2)
+	source=$(echo "$dialog" | cut -d "|" -f2)
+	target=$(echo "$dialog" | cut -d "|" -f4)
+	
+	echo "$dialog"
+	
+	echo "$source ......"
+	
+	echo "$target ............"
 	
 	if [ -z "$dialog" ]; then
 		/usr/share/idiomind/ifs/1u.sh & exit 1
