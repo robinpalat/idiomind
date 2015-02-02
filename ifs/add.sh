@@ -147,7 +147,7 @@ function tags_4() {
 function tags_5() {
 	
 	eyeD3 --set-encoding=utf8 \
-	-a I$1I2I0I"$2"I$I2I0I "$3"
+	-a I$1I2I0I"$2"I$1I2I0I "$3"
 }
 
 

@@ -301,7 +301,7 @@ upld=$($yad --form --width=420 --height=460 --on-top \
 --field="    <small>$author</small>" "$user" \
 --field="    <small>$email</small>" "$mail" \
 --field="    <small>$category</small>:CB" \
-"!$others!$comics!$culture!$entertainment!$family!$grammar!$history!$films!$in_the_city!$internet!$music!$nature!$news!$office!$relations!$sport!$shopping!$social!$technology!$travel" \
+"!$others!$comics!$culture!$entertainment!$family!$grammar!$history!$movies!$in_the_city!$internet!$music!$nature!$news!$office!$relations!$sport!$shopping!$social!$technology!$travel" \
 --field="    <small>$level</small>:CB" "!$beginner!$intermediate!$advanced" \
 --field="<small>\\n$notes</small>:TXT" "$nt" \
 --field="<small>$add_image</small>:FL")
@@ -322,7 +322,7 @@ Ctgry=$(echo "$upld" | cut -d "|" -f4)
 [[ $Ctgry = $history ]] && Ctgry=history
 [[ $Ctgry = $documentary ]] && Ctgry=documentary
 [[ $Ctgry = $in_the_city ]] && Ctgry=in_the_city
-[[ $Ctgry = $films ]] && Ctgry=films
+[[ $Ctgry = $movies ]] && Ctgry=movies
 [[ $Ctgry = $internet ]] && Ctgry=internet
 [[ $Ctgry = $music ]] && Ctgry=music
 [[ $Ctgry = $events ]] && Ctgry=events

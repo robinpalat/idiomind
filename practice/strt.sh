@@ -65,21 +65,6 @@ img2=$DSP/icons_st/$iconmc.png
 img3=$DSP/icons_st/$iconlw.png
 img4=$DSP/icons_st/$iconls.png
 
-#VAR=$(yad --ellipsize=NONE --list --text-align=center \
-#--on-top --class=idiomind --name=idiomind \
-#--center --window-icon=idiomind --skip-taskbar \
-#--image-on-top --buttons-layout=edge $img \
-#--borders=5 --expand-column=1 --print-column=1 \
-#--width=$wth --height=$hgt --text="$info" \
-#--no-headers --button=$restart:3 --button=$start:0 \
-#--title="practice - $tpc" \
-#--column="Action" --column="Pick":IMG \
-#"  $info1 Flashcards" $img1 \
-#"  $info2 Multiple Choisse" $img2 \
-#"  $info3 Listening Words" $img3 \
-#"  $info4 Listening Sentences" $img4 )
-#ret=$?
-
 VAR=$(yad --ellipsize=NONE --list \
 --on-top --class=idiomind --name=idiomind \
 --center --window-icon=idiomind --skip-taskbar \
@@ -115,14 +100,16 @@ if [ $ret -eq 0 ]; then
 		$DSP/strt.sh & exit 1
 	fi
 elif [ $ret -eq 3 ]; then
+	if [ -d "$DC_tlt/practice" ]; then
 	cd "$DC_tlt/practice"
-	rm .*
+	rm .*; rm *; fi
 	$DS/practice/strt.sh & exit
 else
+	cd "$DC_tlt/practice"
 	[[ -f fin1 ]] && rm fin1; [[ -f fin2 ]] && rm fin2;
 	[[ -f mcin1 ]] && rm mcin1; [[ -f mcin2 ]] && rm mcin2;
 	[[ -f lwin1 ]] && rm lwin1; [[ -f lwin2 ]] && rm lwin2;
-	[[ -f lsin ]] && rm lsin; rm *.no *.ok
+	[[ -f lsin1 ]] && rm lsin1
 	kill -9 $(pgrep -f "yad --form ")
 	exit
 fi

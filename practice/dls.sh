@@ -106,37 +106,39 @@ function get_image_text() {
 	nme="$(echo "$1" | cut -c 1-100 | sed 's/[ \t]*$//' \
 	| sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
 	WEN=$(eyeD3 "$DM_tlt/$nme".mp3 | \
-	grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
+	grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' | sed 's/^ *//; s/ *$//')
 	eyeD3 --write-images=$DT "$DM_tlt/$1.mp3"
-	echo "$WEN" | awk '{print tolower($0)}' > ./sentc
+	echo "$WEN" | awk '{print tolower($0)}' > quote
+
 	}
 
 function result() {
 	
 	echo "$SE" | awk '{print tolower($0)}' | sed 's/ /\n/g' | grep -v '^.$' > ing
-	cat sentc | awk '{print tolower($0)}' | sed 's/ /\n/g' | grep -v '^.$' > all
+	cat quote | awk '{print tolower($0)}' | sed 's/ /\n/g' | grep -v '^.$' > all
 	(
 	ff="$(cat ing | sed 's/ /\n/g')"
 	n=1
 	while [ $n -le $(echo "$ff" | wc -l) ]; do
 		line="$(echo "$ff" | sed -n "$n"p )"
-		if cat all | grep -o "$line"; then
-			[[ -n "$line" ]] && echo "<span color='#3A9000'>$line</span>" >> wrds
+		if cat all | grep -oFx "$line"; then
+			sed -i "s/"$line"/<b>"$line"<\/b>/g" quote
+			[[ -n "$line" ]] && echo "<span color='#3A9000'><b>${line^}</b></span>,  " >> wrds
 			[[ -n "$line" ]] && echo "$line" >> w.ok
 		else
-			[[ -n "$line" ]] && echo "<span color='#9E3E18'>$line</span>" >> wrds
+			[[ -n "$line" ]] && echo "<span color='#7B4A44'><b>${line^}</b></span>,  " >> wrds
 		fi
 		let n++
 	done
 	)
 	OK=$(cat wrds | tr '\n' ' ')
-	cat sentc | sed 's/ /\n/g' > all
+	cat quote | sed 's/ /\n/g' > all
 	porc=$((100*$(cat w.ok | wc -l)/$(cat all | wc -l)))
 	
 	if [ $porc -ge 70 ]; then
-		echo "$trgt" >> ok.s
+		echo "$WEN" >> ok.s
 		easy=$(($easy+1))
-		prc="<span background='#3AB452'><span color='#FFFFFF'> <b>$porc% Pass! </b></span></span>"
+		prc="<span background='#3AB452'><span color='#FFFFFF'> <b>$porc%</b></span></span>"
 		
 	elif [ $porc -ge 50 ]; then
 		ling=$(($ling+1))
@@ -146,26 +148,29 @@ function result() {
 		hard=$(($hard+1))
 		prc="<span background='#D11B5D'><span color='#FFFFFF'> <b>$porc%</b> </span></span>"
 	fi
-	rm allc sentc
+	
+	wes="$(cat quote)"
+	
+	rm allc quote
 	}
 	
 function check() {
 	
+	
 	yad --form --center --name=idiomind --buttons-layout=end \
 	--width=470 --height=230 --on-top --skip-taskbar --scroll \
 	--class=idiomind $aut --wrap --window-icon=idiomind \
-	--text-align=left --borders=5 --selectable-labels \
+	--text-align=left --borders=12 --selectable-labels \
 	--title="" --button=$listen:"play '$DM_tlt/$1.mp3'" \
-	--button="$next__sentence:2" \
-	--field="<big>$WEN</big>\\n":lbl \
+	--button="$next__sentence:2" --text="<big>$wes</big>\\n" \
 	--field="":lbl \
-	--field="$OK  <small>$prc</small>\\n":lbl
+	--field="<small>$(echo $OK | sed 's/\,*$/\./g')  $prc</small>\\n":lbl
 	}
 
 n=1
-while [ $n -le $(cat lsin | wc -l) ]; do
+while [ $n -le $(cat lsin1 | wc -l) ]; do
 
-	namefile="$(sed -n "$n"p lsin | cut -c 1-100 | sed 's/[ \t]*$//' \
+	namefile="$(sed -n "$n"p lsin1 | cut -c 1-100 | sed 's/[ \t]*$//' \
 	| sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
 	
 	if [[ $n = 1 ]]; then
@@ -207,7 +212,7 @@ while [ $n -le $(cat lsin | wc -l) ]; do
 			rm -f w.ok wrds $DT/*.jpeg *.png &
 			killall play &
 		else
-			rm -f w.ok wrds $DT/*.jpeg *.png
+			rm -f w.ok all ing wrds $DT/*.jpeg *.png
 			$drts/cls s $easy $ling $hard $all &
 			break &
 			exit 1
