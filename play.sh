@@ -19,7 +19,7 @@ if [[ "$1" = time ]]; then
 		--max-value=128 --value="$bcl" --step 2 \
 		--name=idiomind --on-top --skip-taskbar \
 		--window-icon=idiomind --borders=10 \
-	    --title=" " --width=300 --height=100 \
+	    --title=" " --width=300 --height=140 \
 	    --min-value=2 --button="Ok":0 > $cnf1
 	
 		if [[ "$?" -eq 0 ]]; then

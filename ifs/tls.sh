@@ -49,10 +49,8 @@ elif [ $1 = cnfg ]; then
 elif [ $1 = add_audio ]; then
 
 cd $HOME
-inp=/usr/share/idiomind/ifs/tls.sh cnfg
 DT="$2"
 ls="play $DT/audtm.mp3"
-rec="--button=gtk-media-record:/usr/share/idiomind/ifs/tls.sh rec '$c' '$t'"
 FLAS=$(yad --width=620 --height=400 --file --on-top --name=idiomind \
 	--class=idiomind --window-icon=idiomind --center --file-filter="*.mp3" \
 	--button=Ok:0 --borders=0 --title="$ttl" --skip-taskbar)
