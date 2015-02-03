@@ -36,113 +36,122 @@ function sizes() {
 
 [[ ! -f $DC_s/cfg.18 ]] && sizes
 
-if [ -z "$1" ]; then
 
-	function new_session() {
-		
-		echo "--new session"
-		
-		# write in /tmp
-		if [[ ! -d $DT ]]; then
-			mkdir $DT
-		fi
-		
-		if [ $? -ne 0 ]; then
-			killall yad &
-			yad --name=idiomind --image=error --button=gtk-ok:1\
-			--text=" $write_err\n\n" --image-on-top --sticky  \
-			--width=420 --height=150 --borders=5 --title=Idiomind \
-			--skip-taskbar --center --window-icon=idiomind & exit 1
-		fi
-		
-		# look for addons
-		addons="$(cd $DS/addons; ls -d *)"
-		[[ -f $DC_s/cfg.21 ]] && rm $DC_s/cfg.21
-		n=1
-		while [ $n -le $(echo "$addons" | wc -l ) ]; do
-			set=$(echo "$addons" | sed -n "$n"p)
-			echo "/usr/share/idiomind/addons/$set/icon.png" >> $DC_s/cfg.21
-			echo "$set" >> $DC_s/cfg.21
-			let n++
-		done
 
-		# screen size
-		sizes
-		
-		# weekly report
-		if ([ "$(date +%u)" = 7 ] && \
-		[ "$(sed -n 1p $DC/addons/stats/cnf)" = "TRUE" ]); then
-			"$DS/addons/weekly report/cnfg.sh" A &
-		fi
-		
-		# news auto-update
-		if [ "$(sed -n 1p "$DC/addons/Learning with news/.cnf")" = "TRUE" ]; then
-			(sleep 200
-			"$DS/addons/Learning with news/strt.sh" A
-			) &
-		fi
-		
-		# backup
-		if ([ "$(date +%u)" = 6 ] && \
-		[ "$(sed -n 1p $DC_s/cfg.12)" = "TRUE" ]); then
-			"$DS/addons/User data/cnfg.sh" C &
-		fi
-		
-		# search updates
-		$DS/ifs/tls.sh srch &
-		
-		# update topics status
-		[[ ! -f "$DC_tl/.cfg.1" ]] && touch "$DC_tl/.cfg.1"
-		n=1
-		while [ $n -le "$(cat "$DC_tl/.cfg.1" | head -50 | wc -l )" ]; do
-			tp=$(sed -n "$n"p "$DC_tl/.cfg.1")
-			stts=$(echo "$(cat "$DC_tl/$tp/cfg.8")")
-
-			if [ "$stts" = 2 ] || [ "$stts" = 7 ]; then
-			
-				if [ -f "$DC_tl/$tp/cfg.9" ]; then
+function new_session() {
 	
-					dts=$(cat "$DC_tl/$tp/cfg.9" | wc -l)
-					if [ $dts = 1 ]; then
-						dte=$(sed -n 1p "$DC_tl/$tp/cfg.9")
-						TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-						RM=$((100*$TM/10))
-					elif [ $dts = 2 ]; then
-						dte=$(sed -n 2p "$DC_tl/$tp/cfg.9")
-						TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-						RM=$((100*$TM/15))
-					elif [ $dts = 3 ]; then
-						dte=$(sed -n 3p "$DC_tl/$tp/cfg.9")
-						TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-						RM=$((100*$TM/30))
-					elif [ $dts = 4 ]; then
-						dte=$(sed -n 4p "$DC_tl/$tp/cfg.9")
-						TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-						RM=$((100*$TM/60))
+	echo "--new session"
+	touch $DT/ps_lk
+	
+	# write in /tmp
+	if [[ ! -d $DT ]]; then
+		mkdir $DT
+	fi
+	
+	if [ $? -ne 0 ]; then
+		killall yad &
+		yad --name=idiomind --image=error --button=gtk-ok:1\
+		--text=" $write_err\n\n" --image-on-top --sticky  \
+		--width=420 --height=150 --borders=5 --title=Idiomind \
+		--skip-taskbar --center --window-icon=idiomind & exit 1
+	fi
+	
+	# look for addons
+	addons="$(cd $DS/addons; ls -d *)"
+	[[ -f $DC_s/cfg.21 ]] && rm $DC_s/cfg.21
+	n=1
+	while [ $n -le $(echo "$addons" | wc -l ) ]; do
+		set=$(echo "$addons" | sed -n "$n"p)
+		echo "/usr/share/idiomind/addons/$set/icon.png" >> $DC_s/cfg.21
+		echo "$set" >> $DC_s/cfg.21
+		let n++
+	done
+
+	# screen size
+	sizes
+	
+	# weekly report
+	if ([ "$(date +%u)" = 7 ] && \
+	[ "$(sed -n 1p $DC/addons/stats/cnf)" = "TRUE" ]); then
+		"$DS/addons/weekly report/cnfg.sh" A &
+	fi
+	
+	# news auto-update
+	if [ "$(sed -n 1p "$DC/addons/Learning with news/.cnf")" = "TRUE" ]; then
+		(sleep 200
+		"$DS/addons/Learning with news/strt.sh" A
+		) &
+	fi
+	
+	# backup
+	if ([ "$(date +%u)" = 6 ] && \
+	[ "$(sed -n 1p $DC_s/cfg.12)" = "TRUE" ]); then
+		"$DS/addons/User data/cnfg.sh" C &
+	fi
+	
+	# search updates
+	$DS/ifs/tls.sh srch &
+	
+	# update topics status
+	[[ ! -f "$DC_tl/.cfg.1" ]] && touch "$DC_tl/.cfg.1"
+	n=1
+	while [ $n -le "$(cat "$DC_tl/.cfg.1" | head -50 | wc -l )" ]; do
+		tp=$(sed -n "$n"p "$DC_tl/.cfg.1")
+		stts=$(echo "$(cat "$DC_tl/$tp/cfg.8")")
+
+		if [ "$stts" = 2 ] || [ "$stts" = 7 ]; then
+		
+			if [ -f "$DC_tl/$tp/cfg.9" ]; then
+
+				dts=$(cat "$DC_tl/$tp/cfg.9" | wc -l)
+				if [ $dts = 1 ]; then
+					dte=$(sed -n 1p "$DC_tl/$tp/cfg.9")
+					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
+					RM=$((100*$TM/10))
+				elif [ $dts = 2 ]; then
+					dte=$(sed -n 2p "$DC_tl/$tp/cfg.9")
+					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
+					RM=$((100*$TM/15))
+				elif [ $dts = 3 ]; then
+					dte=$(sed -n 3p "$DC_tl/$tp/cfg.9")
+					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
+					RM=$((100*$TM/30))
+				elif [ $dts = 4 ]; then
+					dte=$(sed -n 4p "$DC_tl/$tp/cfg.9")
+					TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
+					RM=$((100*$TM/60))
+				fi
+
+				nstll=$(grep -Fxo "$tp" "$DC_tl/.cfg.3")
+				if [ -n "$nstll" ]; then
+					if [ "$RM" -ge 100 ]; then
+						echo "9" >> "$DC_tl/$tp/cfg.8"
+						echo "$tp" >> $DT/notify
 					fi
-					nstll=$(grep -Fxo "$tp" "$DC_tl/.cfg.3")
-					if [ -n "$nstll" ]; then
-						if [ "$RM" -ge 100 ]; then
-							echo "9" > "$DC_tl/$tp/cfg.8"
-						fi
-						if [ "$RM" -ge 150 ]; then
-							echo "10" > "$DC_tl/$tp/cfg.8"
-						fi
-					else
-						if [ "$RM" -ge 100 ]; then
-							echo "4" > "$DC_tl/$tp/cfg.8"
-						fi
-						if [ "$RM" -ge 150 ]; then
-							echo "5" > "$DC_tl/$tp/cfg.8"
-						fi
+					if [ "$RM" -ge 150 ]; then
+						echo "10" > "$DC_tl/$tp/cfg.8"
+						echo "$tp" >> $DT/notify
+					fi
+				else
+					if [ "$RM" -ge 100 ]; then
+						echo "4" > "$DC_tl/$tp/cfg.8"
+						echo "$tp" >> $DT/notify
+					fi
+					if [ "$RM" -ge 150 ]; then
+						echo "5" > "$DC_tl/$tp/cfg.8"
+						echo "$tp" >> $DT/notify
 					fi
 				fi
 			fi
-			let n++
-		done
-		echo "$(date +%d)" > $DC_s/cfg.15
-		$DS/mngr.sh mkmn &
-	}
+		fi
+		let n++
+	done
+	echo "$(date +%d)" > $DC_s/cfg.15
+	rm -f  $DT/ps_lk
+	$DS/mngr.sh mkmn &
+}
+
+if [ -z "$1" ]; then
 
 	yad --width=185 --height=210 --name=idiomind \
 	--geometry=175x190-300-$(sed -n 12p $DC_s/cfg.18) \
@@ -164,7 +173,18 @@ if [ -z "$1" ]; then
 	fi
 fi
 
-if [[ $(echo "$1" | grep -o '.idmnd') ]]; then
+if [[ $(echo "$1" | grep -o 'autostart') ]]; then
+	
+	sleep 50
+	[[ ! -f $DT/ps_lk ]] && new_session
+	if [ -f $DT/notify ]; then
+	info=$(cat $DT/notify)
+	(sleep 100 && notify-send -i idiomind "Reminders" "$info") &
+	rm -f $DT/notify &
+	fi
+	exit 0
+
+elif [[ $(echo "$1" | grep -o '.idmnd') ]]; then
 
 	wth=$(sed -n 3p $DC_s/cfg.18)
 	eht=$(sed -n 4p $DC_s/cfg.18)

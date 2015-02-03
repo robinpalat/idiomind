@@ -39,6 +39,6 @@ elif echo "$1" | grep "play"; then
 	exit
 elif echo "$1" | grep "feed"; then
 	[[ -n "$(ps -A | pgrep -f "rsstail")" ]] && killall rsstail &
-	[[ -n "$(ps -A | pgrep -f "/usr/share/idiomind/addons/Learning with news/strt.sh")" ]] && killall strt.sh &
+	[[ -n "$(ps -A | pgrep -f "strt.sh")" ]] && killall strt.sh &
 	exit
 fi

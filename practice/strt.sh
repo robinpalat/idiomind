@@ -11,7 +11,7 @@ learning=$3
 [[ $4 -lt 0 ]] && hards=0 || hards=$4
 $DS/stop.sh &
 [[ ! -d "$DC_tlt/practice" ]] \
-&& mv "$DC_tlt/Practice" "$DC_tlt/practice"
+&& mkdir "$DC_tlt/practice"
 cd "$DC_tlt/practice"
 
 [[ ! -f .iconf ]] && echo '1' > .iconf

@@ -6,7 +6,8 @@ source $DS/ifs/trans/$lgs/settings.conf
 
 wth=$(sed -n 5p $DC_s/cfg.18)
 eht=$(sed -n 6p $DC_s/cfg.18)
-
+info1="<b>$warning</b>\n"$(echo "$change_source_language " | xargs -n6)""
+info2="$(echo "$confirm_target_language" | xargs -n6)"
 ICON=$DS/images/icon.png
 cd $DS/addons
 
@@ -19,11 +20,10 @@ if [ ! -d "$DC" ]; then
 fi
 
 function confirm() {
-	$yad --form --center --borders=5 --image=dialog-warning \
-	--title="$warning" --on-top --window-icon=idiomind \
+	$yad --form --center --borders=8 --image=$2 \
+	--title="Idiomind" --on-top --window-icon=idiomind \
 	--skip-taskbar --button="$no":1 --button="$yes":0 \
-	--text "<b>  $warning</b>\n\n    $change_source_language  " \
-	--width=400 --height=180 
+	--text="$1" --width=340 --height=150
 }
 
 function set_lang() {
@@ -40,8 +40,8 @@ function set_lang() {
 	echo "$2" > $DC_s/cfg.10
 	echo "$1" >> $DC_s/cfg.10
 	$DS/stop.sh L
-	"$DS/addons/Learning with news/tls.sh stop"
-	
+	$DS/stop.sh feed
+		
 	if [ -f "$DC/topics/$1/.cfg.8" ]; then
 		LST=$(sed -n 1p "$DC/topics/$1/.cfg.8")
 		"$DC/topics/$1/$LST/tpc.sh"
@@ -110,25 +110,24 @@ yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 		
 		[ ! -d  $HOME/.config/autostart ] && mkdir $HOME/.config/autostart
 		config_dir=$HOME/.config/autostart
-		if [[ "$(sed -n 6p $DC_s/cfg.1)" = "TRUE" ]]; then
+		if [[ "$(sed -n 5p $DC_s/cfg.1)" = "TRUE" ]]; then
 			if [ ! -f $config_dir/idiomind.desktop ]; then
 			
 				if [ ! -d "$HOME/.config/autostart" ]; then
 					mkdir "$HOME/.config/autostart"
 				fi
-				echo '[Desktop Entry]' > $config_dir/idiomind.desktop
-				echo 'Version=1.0
-				Name=idiomind
-				GenericName=idiomind
-				Comment=Learning languages
-				Exec=idiomind
-				Terminal=false
-				Type=Application
-				Categories=languages;Education;
-				Icon=idiomind
-				MimeType=application/x-idmnd;
-				StartupNotify=true
-				Encoding=UTF-8' >> $config_dir/idiomind.desktop
+echo '[Desktop Entry]' > $config_dir/idiomind.desktop
+echo 'Name=Idiomind
+GenericName=idiomind
+Comment=Vocabulary learning tool
+Exec=idiomind autostart
+Terminal=false
+Type=Application
+Categories=languages;Education;
+Icon=idiomind
+MimeType=application/x-idmnd;
+StartupNotify=true
+Encoding=UTF-8' >> $config_dir/idiomind.desktop
 				chmod +x $config_dir/idiomind.desktop
 			fi
 		else
@@ -141,101 +140,111 @@ yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 		ls=$(cat "$cnf1" | sed -n 18p)
 		
 		if echo $ln | grep "English" && [ English != $lgtl ] ; then
-			set_lang English en
+			confirm "$info2" dialog-question
+			[[ $? -eq 0 ]] && set_lang English en
 		fi
 		if echo $ln | grep "Spanish" && [ Spanish != $lgtl ] ; then
-			set_lang Spanish es
+			confirm "$info2" dialog-question
+			[[ $? -eq 0 ]] && set_lang English es
 		fi
 		if echo $ln | grep "Italian" && [ Italian != $lgtl ] ; then
-			set_lang Italian it
+			confirm "$info2" dialog-question
+			[[ $? -eq 0 ]] && set_lang English it
 		fi
 		if echo $ln | grep "Portuguese" && [ Portuguese != $lgtl ] ; then
-			set_lang Portuguese pt
+			confirm "$info2" dialog-question
+			[[ $? -eq 0 ]] && set_lang English pt
 		fi
 		if echo $ln | grep "German" && [ German != $lgtl ] ; then
-			set_lang German de
+			confirm "$info2" dialog-question
+			[[ $? -eq 0 ]] && set_lang English de
 		fi
 		if echo $ln | grep "Japanese" && [ Japanese != $lgtl ] ; then
-			set_lang Japanese ja
+			confirm "$info2" dialog-question
+			[[ $? -eq 0 ]] && set_lang English ja
 		fi
 		if echo $ln | grep "French" && [ French != $lgtl ] ; then
-			set_lang French fr
+			confirm "$info2" dialog-question
+			[[ $? -eq 0 ]] && set_lang English fr
 		fi
 		if echo $ln | grep "Vietnamese" && [ Vietnamese != $lgtl ] ; then
-			set_lang Vietnamese vi
+			confirm "$info2" dialog-question
+			[[ $? -eq 0 ]] && set_lang English vi
 		fi
 		if echo $ln | grep "Chinese" && [ Chinese != $lgtl ] ; then
-			set_lang Chinese "zh-cn"
+			confirm "$info2" dialog-question
+			[[ $? -eq 0 ]] && set_lang English zh-cn
 		fi
 		if echo $ln | grep "Russian" && [ Russian != $lgtl ] ; then
-			set_lang Russian ru
+			confirm "$info2" dialog-question
+			[[ $? -eq 0 ]] && set_lang English ru
 		fi
 
 		if echo $ls | grep "English" && [ English != $lgsl ] ; then
-			confirm
+			confirm "$info1" dialog-warning
 			if [ $? -eq 0 ]; then
 				echo "en" > $DC_s/cfg.9
 				echo "english" >> $DC_s/cfg.9
 			fi
 		fi
 		if echo $ls | grep "French" && [ French != $lgsl ] ; then
-			confirm
+			confirm "$info1" dialog-warning
 			if [ $? -eq 0 ]; then
 				echo "fr" > $DC_s/cfg.9
 				echo "french" >> $DC_s/cfg.9
 			fi
 		fi
 		if echo $ls | grep "German" && [ German != $lgsl ] ; then
-			confirm
+			confirm "$info1" dialog-warning
 			if [ $? -eq 0 ]; then
 				echo "de" > $DC_s/cfg.9
 				echo "german" >> $DC_s/cfg.9
 			fi
 		fi
 		if echo $ls | grep "Italian" && [ Italian != $lgsl ] ; then
-			confirm
+			confirm "$info1" dialog-warning
 			if [ $? -eq 0 ]; then
 				echo "it" > $DC_s/s/cfg.9
 				echo "italian" >> $DC_s/cfg.9
 			fi
 		fi
 		if echo $ls | grep "Japanese" && [ Japanese != $lgsl ] ; then
-			confirm
+			confirm "$info1" dialog-warning
 			if [ $? -eq 0 ]; then
 				echo "ja" > $DC_s/cfg.9
 				echo "japanese" >> $DC_s/cfg.9
 			fi
 		fi
 		if echo $ls | grep "Portuguese" && [ Portuguese != $lgsl ] ; then
-			confirm
+			confirm "$info1" dialog-warning
 			if [ $? -eq 0 ]; then
 				echo "pt" > $DC_s/cfg.9
 				echo "portuguese" >> $DC_s/cfg.9
 			fi
 		fi
 		if echo $ls | grep "Spanish" && [ Spanish != $lgsl ] ; then
-			confirm
+			confirm "$info1" dialog-warning
 			if [ $? -eq 0 ]; then
 				echo "es" > $DC_s/cfg.9
 				echo "spanish" >> $DC_s/cfg.9
 			fi
 		fi
 		if echo $ls | grep "Vietnamese" && [ Vietnamese != $lgsl ] ; then
-			confirm
+			confirm "$info1" dialog-warning
 			if [ $? -eq 0 ]; then
 				echo "vi" > $DC_s/cfg.9
 				echo "vietnamese" >> $DC_s/cfg.9
 			fi
 		fi
 		if echo $ls | grep "Chinese" && [ Chinese != $lgsl ] ; then
-			confirm
+			confirm "$info1" dialog-warning
 			if [ $? -eq 0 ]; then
 				echo "zh-cn" > $DC_s/cfg.9
 				echo "chinese" >> $DC_s/cfg.9
 			fi
 		fi
 		if echo $ls | grep "Russian" && [ Russian != $lgsl ] ; then
-			confirm
+			confirm "$info1" dialog-warning
 			if [ $? -eq 0 ]; then
 				echo "ru" > $DC_s/cfg.9
 				echo "russian" >> $DC_s/cfg.9
