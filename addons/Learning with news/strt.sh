@@ -5,7 +5,6 @@ source /usr/share/idiomind/ifs/c.conf
 source /usr/share/idiomind/ifs/trans/$lgs/rss.conf
 source $DS/ifs/add.sh
 source $DS/ifs/comms.sh
-
 DSF="$DS/addons/Learning with news"
 DCF="$DC/addons/Learning with news"
 
@@ -21,7 +20,7 @@ if [[ -z "$(cat $DC/addons/dict/.dicts)" ]]; then
 fi
 
 
-if echo "$STT" | grep "Actualizando..."; then
+if echo "$STT" | grep "updating..."; then
 	yad --image=info --width=420 --height=150 \
 	--window-icon=idiomind \
 	--title=Info --center --borders=5 \
@@ -88,7 +87,7 @@ if [ -n "$feed" ]; then
 	
 	internet
 	
-	echo "- Feeds Mode ( Actualizando... 5% )" > $DT/.uptf
+	echo "- Feeds Mode updating... " > $DT/.uptf
 	
 	if [ "$1" != A ]; then
 		echo "$tpc" > $DC_s/cfg.8
@@ -116,8 +115,8 @@ if [ -n "$feed" ]; then
 	while [ $n -le $(cat rss | wc -l) ]; do
 			
 			if [[ "$(cat $DT/.uptf \
-			| grep -o "Actualizando...")" = "Actualizando..." ]]; then
-				echo "- feeds Mode ( Actualizando... )" > $DT/.uptf
+			| grep -o "updating...")" = "updating..." ]]; then
+				echo "- feeds Mode updating ... )" > $DT/.uptf
 			fi
 			
 			trgt=$(sed -n "$n"p rss)

@@ -3,26 +3,24 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/upld.conf
+source $DS/ifs/comms.sh
 
 if [[ $1 = vsd ]]; then
 	U=$(sed -n 1p $HOME/.config/idiomind/s/cfg.4)
 	lng=$(echo "$lgtl" |  awk '{print tolower($0)}')
 	wth=$(sed -n 3p $DC_s/cfg.18)
 	eht=$(sed -n 4p $DC_s/cfg.18)
-	cd $DM_t/saved
 	
-	ls -t *.cfg.12 | sed 's/\.cfg.12//g' | yad --list \
+	
+	cd $DM_t/saved; ls -t *.id | sed 's/\.id//g' | yad --list \
 	--window-icon=idiomind --center --skip-taskbar --borders=8 \
 	--text=" <small>$double_click_for_download \t\t\t\t</small>" \
 	--title="$topics_saved" --width=$wth --height=$eht \
-	--column=Nombre:TEXT --print-column=1 \
+	--column=Nombre:TEXT --print-column=1 --no-headers \
 	--expand-column=1 --search-column=1 --button="$close":1 \
-	--dclick-action='/usr/share/idiomind/ifs/upld.sh infsd'
-			["$?" -eq 0 ]
-				killall topic.sh
-				rm $DT/lista
-			[ "$?" -eq 1 ] & exit
-	exit 1
+	--dclick-action='/usr/share/idiomind/ifs/upld.sh infsd' >/dev/null 2>&1
+	[ "$?" -eq 1 ] & exit
+	exit
 	
 elif [[ $1 = infsd ]]; then
 	echo "$2"
@@ -30,17 +28,17 @@ elif [[ $1 = infsd ]]; then
 	U=$(sed -n 1p $DC_s/cfg.4)
 	user=$(echo "$(whoami)")
 	tpcd="$2"
-	source "./$tpcd.cfg.12"
-	[[ $language_target = English ]] && lng=en
-	[[ $language_target = French ]] && lng=fr
-	[[ $language_target = German ]] && lng=de
-	[[ $language_target = Chinese ]] && lng=zn-cn
-	[[ $language_target = Italian ]] && lng=it
-	[[ $language_target = Japanese ]] && lng=ja
-	[[ $language_target = Portuguese ]] && lng=pt
-	[[ $language_target = Spanish ]] && lng=es
-	[[ $language_target = Vietnamese ]] && lng=vi
-	[[ $language_target = Russian ]] && lng=ru
+	source "./$tpcd.id"
+	[[ $language_source = english ]] && lng=en
+	[[ $language_source = french ]] && lng=fr
+	[[ $language_source = german ]] && lng=de
+	[[ $language_source = chinese ]] && lng=zh-cn
+	[[ $language_source = italian ]] && lng=it
+	[[ $language_source = japanese ]] && lng=ja
+	[[ $language_source = portuguese ]] && lng=pt
+	[[ $language_source = spanish ]] && lng=es
+	[[ $language_source = vietnamese ]] && lng=vi
+	[[ $language_source = russian ]] && lng=ru
 	nme=$(echo "$tpcd" | sed 's/ /_/g')
 	lnglbl=$(echo $language_target | awk '{print tolower($0)}')
 	icon=$DS/images/img.6.png
@@ -48,15 +46,11 @@ elif [[ $1 = infsd ]]; then
 	yad --borders=10 --width=420 --height=150 \
 	--on-top --skip-taskbar --center --image=$icon \
 	--title="idiomind" --button="$download:0" --button="Close:1" \
-	--text="<span font='ultralight'>$name</span>\\n<sub>${language_source^} $language_target </sub> \\n" \
+	--text="<span font='ultralight'>$name</span>\\n<small>${language_source^} $language_target </small> \\n" \
 	--window-icon=idiomind
 		ret=$?
 
-		if [ $ret -eq 2 ]; then
-			xdg-open "$LNK"
-		exit 1
-
-		elif [ $ret -eq 0 ]; then
+		if [ $ret -eq 0 ]; then
 			cd $HOME
 			sv=$(yad --save --center --borders=10 \
 			--on-top --filename="$tpcd.idmnd" \
@@ -64,17 +58,12 @@ elif [[ $1 = infsd ]]; then
 			--file --width=600 --height=500 --button="Ok":0 )
 			ret=$?
 			
-			curl -v www.google.com 2>&1 | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
-			yad --window-icon=idiomind --on-top \
-			--image="info" --name=idiomind \
-			--text="  $conn_err  \\n" \
-			--image-on-top --center --sticky \
-			--width=320 --height=100 --borders=5 \
-			--skip-taskbar --title="Idiomind" \
-			--button="  Ok  ":0 >&2; exit 1;}
+			internet
 			cd $DT
 			wget http://idiomind.sourceforge.net/info/SITE_TMP
 			source $DT/SITE_TMP && rm -f $DT/SITE_TMP
+			[[ -z "$DOWNLOADS" ]] && msg "$err_link" dialog-warning && exit
+			
 			file="$DOWNLOADS/$lng/$lnglbl/$category/$link"
 			WGET() {
 			rand="$RANDOM `date`"
@@ -101,38 +90,32 @@ elif [[ $1 = infsd ]]; then
 			rm -f $pipe
 			}
 			cd /tmp
-			[ -f "/tmp/$U.$tpcd.idmnd" ] && rm -f "/tmp/$U.$tpcd.idmnd"
+			[ -f "/tmp/$link" ] && rm -f "/tmp/$link"
 			
 			WGET "$file"
 			
-			if [ -f "/tmp/$U.$tpcd.idmnd" ] ; then
+			if [ -f "/tmp/$link" ] ; then
 				[[ -f "$sv" ]] && rm "$sv"
-				mv -f "/tmp/$U.$tpcd.idmnd" "$sv"
+				mv -f "/tmp/$link" "$sv"
 			else
-				yad --fixed --name=idiomind --center \
-				--image=info --text="$file_err" \
-				--fixed --sticky --width=420 --height=150 --borders=3 \
-				--skip-taskbar --window-icon=idiomind \
-				--on-top --title="Idiomind" \
-				--button="Ok":0 && exit 1
+				msg "$file_err" info && exit
 			fi
-			exit 1
+			exit
 		else
-			exit 1
+			exit
 		fi
 fi
 
 lnglbl=$(echo $lgtl | awk '{print tolower($0)}')
-user=$(echo "$(whoami)")
 U=$(sed -n 1p $DC_s/cfg.4)
 mail=$(sed -n 2p $DC_s/cfg.4)
-skp=$(sed -n 3p $DC_s/cfg.4)
+user=$(sed -n 3p $DC_s/cfg.4)
+[[ -z "$user" ]] && user=$(echo "$(whoami)")
 nt=$(cat "$DC_tlt/cfg.10")
 nme=$(echo "$tpc" | sed 's/ /_/g' \
 | sed 's/"//g' | sed 's/’//g')
 #[[ $(echo "$tpc" | wc -c) -gt 40 ]] \
 #&& ttpc="${tpc:0:40}..." || ttpc="$tpc"
-
 
 chk1="$DC_tlt/cfg.0"
 chk2="$DC_tlt/cfg.1"
@@ -236,10 +219,7 @@ if [[ $(($chk4 + $chk5)) != $chk1 \
 	fi
 	
 	if [ $? -ne 0 ]; then
-		yad --name=idiomind --image=error --button=gtk-ok:1\
-		--text=" $files_err\n\n" --image-on-top --sticky  \
-		--width=380 --height=120 --borders=5 --title=Idiomind \
-		--skip-taskbar --center --window-icon=idiomind
+		msg " $files_err\n\n" error
 		$DS/mngr.sh dlt & exit
 	fi
 	
@@ -284,14 +264,10 @@ if [[ $(($chk4 + $chk5)) != $chk1 \
 fi
 
 if [ $(cat "$DC_tlt/cfg.0" | wc -l) -le 20 ]; then
-	cstn=$($yad --image=info --on-top \
-	--text=" $min_items\\n " --window-icon=idiomind \
-	--image-on-top --center --sticky --name=idiomind \
-	--width=420 --height=150 --borders=3 \
-	--skip-taskbar --title="Idiomind" \
-	--button="Ok:0")
-	exit 1
+	msg " $min_items\\n " info &
+	exit
 fi
+
 cd $HOME
 upld=$($yad --form --width=420 --height=460 --on-top \
 --buttons-layout=end --center --window-icon=idiomind \
@@ -341,42 +317,17 @@ level=$(echo "$upld" | cut -d "|" -f5)
 [[ $level = $advanced ]] && level=3
 
 if [ -z $Ctgry ]; then
-yad --window-icon=idiomind \
---image=info --on-top --name=idiomind \
---text="  $categry_err\\n  " \
---image-on-top --center --sticky \
---width=420 --height=150 --borders=3 \
---skip-taskbar --title="Idiomind" \
---button="  Ok  ":0
+msg " $categry_err\\n " info
 $DS/ifs/upld.sh &
 exit 1
 fi
 
-curl -v www.google.com 2>&1 | \
-grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
-yad --window-icon=idiomind --on-top \
---image="info" --name=idiomind \
---text="  $conn_err  \\n" \
---image-on-top --center --sticky \
---width=320 --height=100 --borders=5 \
---skip-taskbar --title=Idiomind \
---button="  Ok  ":0
- >&2; exit 1;}
+internet
 
 cd $DT
 wget http://idiomind.sourceforge.net/info/SITE_TMP
 source $DT/SITE_TMP && rm -f $DT/SITE_TMP
-
-if [ -z "$FTPHOST" ]; then
-yad --window-icon=idiomind --name=idiomind \
---image=dialog-warning --on-top \
---text=" $site_err\\n " \
---image-on-top --center --sticky \
---width=420 --height=150 --borders=3 \
---skip-taskbar --title="Idiomind" \
---button="  Ok  ":0 &
-exit 1
-fi
+[[ -z "$FTPHOST" ]] && msg " $site_err\\n " dialog-warning && exit
 
 Author=$(echo "$upld" | cut -d "|" -f2)
 Mail=$(echo "$upld" | cut -d "|" -f3)
@@ -428,9 +379,11 @@ sed -i "s/10/$words/g" "$DT_u/$tpc/cfg.12"
 sed -i "s/11/$sentences/g" "$DT_u/$tpc/cfg.12"
 sed -i "s/12/$images/g" "$DT_u/$tpc/cfg.12"
 sed -i "s/13/$level/g" "$DT_u/$tpc/cfg.12"
+cp -f "$DT_u/$tpc/cfg.12" "$DT/cfg.12"
 
-echo "$Author" > $DC_s/cfg.4
+echo "$U" > $DC_s/cfg.4
 echo "$Mail" >> $DC_s/cfg.4
+echo "$Author" >> $DC_s/cfg.4
 
 if [[ -f "$img" ]]; then
 /usr/bin/convert -scale 120x90! "$img" $DT_u/img1.png
@@ -452,6 +405,7 @@ convert $DT_u/boim.png \( +clone -channel A -separate +channel \
 convert $DT_u/boim1.png \( +clone -background Black \
 -shadow 30x3+4+4 \) -background none \
 -compose DstOver -flatten "$DM_tlt/words/images/img.png" 
+cd $DT_u; rm -f *.png
 fi
 
 cd "$DM_tlt"
@@ -480,12 +434,10 @@ gzip -9 "$tpc.tar"
 mv "$tpc.tar.gz" "$U.$tpc.idmnd"
 [[ -d "$DT_u/$tpc" ]] && rm -fr "$DT_u/$tpc"
 dte=$(date "+%d %B %Y")
-notify-send "$uploading..." "$wait" -i idiomind -t 6000
+notify-send "$uploading" "$wait..." -i idiomind -t 6000
 
 #-----------------------
-rm -f $DT/SITE_TMP
 cd $DT_u
-
 chmod 775 -R $DT_u
 lftp -u $USER,$KEY $FTPHOST << END_SCRIPT
 mirror --reverse ./ public_html/$lgs/$lnglbl/$Ctgry/
@@ -493,10 +445,9 @@ quit
 END_SCRIPT
 
 exit=$?
-
-if [ $exit = 0 ] ; then
+if [[ $exit = 0 ]] ; then
 [[ $(echo "$tpc" | wc -c) -gt 40 ]] && tpc="${tpc:0:40}..."
-cp -f "$DT/cfg.12" "$DM_t/saved/$tpc.cfg.12"
+mv -f "$DT/cfg.12" "$DM_t/saved/$tpc.id"
 info="  $tpc\n\n<b> $saved</b>\n"
 image=dialog-ok
 else
@@ -504,12 +455,7 @@ info=" $upload_err"
 image=dialog-warning
 fi
 
-yad --window-icon=idiomind --name=idiomind \
---image=$image --on-top --text="$info" \
---image-on-top --center --sticky \
---width=420 --height=150 --borders=5 \
---skip-taskbar --title=idiomind \
---button="  Ok  ":0
+msg "$info" $image
 
 [[ -d "$DT_u/$tpc" ]] && rm -fr "$DT_u/$tpc"
 [[ -f "$DT_u/SITE_TMP" ]] && rm -f "$DT_u/SITE_TMP"

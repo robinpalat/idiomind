@@ -268,9 +268,9 @@ elif [ $1 = updt ]; then
 	
 	if [ "$(sed -n 1p $DT/release)" != "$(idiomind -v)" ]; then
 		yad --text="<big><b> $new_version </b></big>\n\n" \
-		--image=info --title="Idiomind 2.1" --window-icon=idiomind \
+		--image=info --title="Idiomind" --window-icon=idiomind \
 		--on-top --skip-taskbar --sticky --fixed \
-		--center --name=idiomind --borders=10 \
+		--center --name=idiomind --borders=10 --always-print-result \
 		--button="$later":2 \
 		--button="$download":0 \
 		--width=430 --height=130
@@ -285,7 +285,7 @@ elif [ $1 = updt ]; then
 		fi
 	else
 		yad --text="<big><b> $nonew_version  </b></big>\n\n  $nonew_version2" \
-		--image=info --title="Idiomind 2.1" --window-icon=idiomind \
+		--image=info --title="Idiomind" --window-icon=idiomind \
 		--on-top --skip-taskbar --sticky --width=430 --height=130 \
 		--center --name=idiomind --fixed --borders=10 \
 		--button="$close":1
@@ -316,13 +316,12 @@ elif [ $1 = srch ]; then
 		
 		if [ "$(sed -n 1p $DT/release)" != "$(idiomind -v)" ]; then
 			yad --text="<big><b> $new_version  </b></big>\n\n" \
-			--image=info --title="Idiomind 2.1" --window-icon=idiomind \
-			--on-top --skip-taskbar --sticky \
+			--image=info --title="Idiomind" --window-icon=idiomind \
+			--on-top --skip-taskbar --sticky --always-print-result \
 			--center --name=idiomind --borders=10 \
-			--button="$cancel":1 \
 			--button="$later":2 \
 			--button="$download":0 \
-			--width=420 --height=150
+			--width=430 --height=130
 			ret=$?
 			if [ "$ret" -eq 0 ]; then
 				xdg-open $pkg & exit

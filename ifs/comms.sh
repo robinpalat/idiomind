@@ -20,7 +20,7 @@ function msg() {
 	
         yad --window-icon=idiomind --name=idiomind \
         --image=$2 --on-top --text=" $1 " \
-        --image-on-top --center --sticky --button="Ok":0 \
+        --image-on-top --center --sticky --button="  Ok  ":0 \
         --width=420 --height=150 --borders=5 \
         --skip-taskbar --title="Idiomind"
 }

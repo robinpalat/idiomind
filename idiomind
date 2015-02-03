@@ -191,7 +191,7 @@ if [[ $(echo "$1" | grep -o '.idmnd') ]]; then
 	[[ $language_target = English ]] && lng=en
 	[[ $language_target = French ]] && lng=fr
 	[[ $language_target = German ]] && lng=de
-	[[ $language_target = Chinese ]] && lng=zn-cn
+	[[ $language_target = Chinese ]] && lng=zh-cn
 	[[ $language_target = Italian ]] && lng=it
 	[[ $language_target = Japanese ]] && lng=ja
 	[[ $language_target = Portuguese ]] && lng=pt
@@ -996,7 +996,7 @@ elif [[ $1 = topic ]]; then
 		STT="$(cat $DT/.uptf)"
 		
 		KEY=$c
-		if echo "$STT" | grep "Actualizando"; then
+		if echo "$STT" | grep "updating..."; then
 			info=$(echo "<i>"$updating"...</i>")
 			FEED=$(cat "$DT/.rss")
 		else

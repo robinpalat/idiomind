@@ -301,11 +301,11 @@ elif [ $1 = new_sentence ]; then
 		fi
 		
 		if [[ ! -f "$DM_tlt/$nme.mp3" ]]; then
-		    msg "$error1" dialog-advert & exit 1
+		    msg "$error1" dialog-warning & exit 1
 		elif [[ -z "$trgt" ]]; then
-		    msg "$error1" dialog-advert & exit 1
+		    msg "$error1" dialog-warning & exit 1
 		elif [[ -z "$srce" ]]; then
-		    msg "$error1" dialog-advert & exit 1
+		    msg "$error1" dialog-warning & exit 1
 		fi
 		
 		tags_1 S "$trgt" "$srce" "$DM_tlt/$nme.mp3"
@@ -413,11 +413,11 @@ elif [ $1 = new_sentence ]; then
 				fi
 		fi
 		if [[ ! -f "$DM_tlt/$nme.mp3" ]]; then
-		    msg "$error1" dialog-advert & exit 1
+		    msg "$error1" dialog-warning & exit 1
 		elif [[ -z "$trgt" ]]; then
-		    msg "$error1" dialog-advert & exit 1
+		    msg "$error1" dialog-warning & exit 1
 		elif [[ -z "$srce" ]]; then
-		    msg "$error1" dialog-advert & exit 1
+		    msg "$error1" dialog-warning & exit 1
 		fi
 		if ([ -z "$grmrk" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ]); then
 		    rm "$DM_tlt/$nme.mp3"
@@ -469,11 +469,11 @@ elif [ $1 = new_word ]; then
 			cp -f "$DT_r/$trgt.mp3" "$DM_tlt/words/$nme.mp3"
 			
 			if [[ ! -f "$DM_tlt/words/$nme.mp3" ]]; then
-			    msg "$error1" dialog-advert & exit 1
+			    msg "$error1" dialog-warning & exit 1
 			elif [[ -z "$trgt" ]]; then
-			    msg "$error1" dialog-advert & exit 1
+			    msg "$error1" dialog-warning & exit 1
 			elif [[ -z "$srce" ]]; then
-			    msg "$error1" dialog-advert & exit 1
+			    msg "$error1" dialog-warning & exit 1
 			fi
 			
 			tags_1 W "$trgt" "$srce" "$DM_tlt/words/$nme.mp3"
@@ -536,11 +536,11 @@ elif [ $1 = new_word ]; then
 		fi
 		
 		if [[ ! -f "$DM_tlt/words/$trgt.mp3" ]]; then
-		    msg "$error1" dialog-advert & exit 1
+		    msg "$error1" dialog-warning & exit 1
 		elif [[ -z "$trgt" ]]; then
-		    msg "$error1" dialog-advert & exit 1
+		    msg "$error1" dialog-warning & exit 1
 		elif [[ -z "$srce" ]]; then
-		    msg "$error1" dialog-advert & exit 1
+		    msg "$error1" dialog-warning & exit 1
 		fi
 		
 		tags_1 W "$trgt" "$srce" "$DM_tlt/words/$trgt.mp3"

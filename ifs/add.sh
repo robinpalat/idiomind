@@ -196,20 +196,14 @@ function voice() {
 			fi
 		else
 			echo "$1" | "$vs"
-			if [ -f *.mp3 ]; then
-				mv -f *.mp3 "$2"
-			elif [ -f *.wav ]; then
-				sox *.wav "$2"
-			fi
+			[[ -f *.mp3 ]] && mv -f *.mp3 "$2"
+			[[ -f *.wav ]] && sox *.wav "$2"
 		fi
 	else
+	
 		lg=$(echo $lgtl | awk '{print tolower($0)}')
-		if [ $lg = chinese ]; then
-			lg=Mandarin
-		elif [ $lg = japanese ]; then
-			msg "$espeak_err $lgtl" error
-			exit 1
-		fi
+		[[ $lg = chinese ]] && lg=Mandarin
+		[[ $lg = japanese ]] && (msg "$espeak_err $lgtl" error) & exit 1
 		espeak "$1" -v $lg -k 1 -p 40 -a 80 -s 110 -w $DT_r/s.wav
 		sox $DT_r/s.wav "$2"
 	fi
