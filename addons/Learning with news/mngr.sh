@@ -21,16 +21,12 @@ if [[ $1 = dlti ]]; then
 			if [[ $ret -eq 0 ]]; then
 				rm "$kpt/words/$itdl.mp3"
 				cd "$drtc"
-				grep -v -x -F "$itdl" ./.inx > ./inx
-				sed '/^$/d' ./inx > ./.inx
-				rm ./inx
-				grep -v -x -F "$itdl" ./cfg.3 > ./cfg.3_
-				sed '/^$/d' ./cfg.3_ > ./cfg.3
-				rm ./cfg.3_
-				grep -v -x -F "$itdl" ./cfg.0 > ./cfg.0_
-				sed '/^$/d' ./cfg.0_ > ./cfg.0
-				rm ./cfg.0_
-				notify-send  -i idiomind "$itdl" "$deleted"  -t 1500
+				grep -v -x -F "$itdl" ./cfg.3 > ./cfg.3.tmp
+				sed '/^$/d' ./cfg.3.tmp > ./cfg.3
+				grep -v -x -F "$itdl" ./cfg.0 > ./cfg.0.tmp
+				sed '/^$/d' ./cfg.0.tmp > ./cfg.0
+				rm ./*.tmp
+				notify-send -i idiomind "$itdl" "$deleted"  -t 1500
 			fi
 			if [[ $ret -eq 1 ]]; then
 				exit
@@ -48,15 +44,11 @@ if [[ $1 = dlti ]]; then
 				rm "$kpt/$itdl.mp3"
 				rm "$kpt/$itdl.lnk"
 				cd "$drtc"
-				grep -v -x -F "$itdl" ./.inx > ./inx
-				sed '/^$/d' ./inx > ./.inx
-				rm ./inx
-				grep -v -x -F "$itdl" ./cfg.4 > ./cfg.4_
-				sed '/^$/d' ./cfg.4_ > ./cfg.4
-				rm ./cfg.4_
-				grep -v -x -F "$itdl" ./cfg.0 > ./cfg.0_
-				sed '/^$/d' ./cfg.0_ > ./cfg.0
-				rm ./cfg.0_
+				grep -v -x -F "$itdl" ./cfg.4 > ./cfg.4.tmp
+				sed '/^$/d' ./cfg.4.tmp > ./cfg.4
+				grep -v -x -F "$itdl" ./cfg.0 > ./cfg.0.tmp
+				sed '/^$/d' ./cfg.0.tmp > ./cfg.0
+				rm ./*.tmp
 				
 			fi
 			if [[ $ret -eq 1 ]]; then
@@ -74,19 +66,13 @@ if [[ $1 = dlti ]]; then
 				rm "$kpt/$itdl.mp3"
 				rm "$kpt/$itdl.lnk"
 				cd "$drtc"
-				grep -v -x -F "$itdl" ./.inx > ./inx
-				sed '/^$/d' ./inx > ./.inx
-				rm ./inx
-				grep -v -x -F "$itdl" ./cfg.3 > ./cfg.3_
-				sed '/^$/d' ./cfg.3_ > ./cfg.3
-				rm ./cfg.3_
-				grep -v -x -F "$itdl" ./cfg.4 > ./cfg.4_
-				sed '/^$/d' ./cfg.4_ > ./cfg.4
-				rm ./cfg.4_
-				grep -v -x -F "$itdl" ./cfg.0 > ./cfg.0_
-				sed '/^$/d' ./cfg.0_ > ./cfg.0
-				rm ./cfg.0_
-			
+				grep -v -x -F "$itdl" ./cfg.3 > ./cfg.3.tmp
+				sed '/^$/d' ./cfg.3.tmp > ./cfg.3
+				grep -v -x -F "$itdl" ./cfg.4 > ./cfg.4.tmp
+				sed '/^$/d' ./cfg.4.tmp > ./cfg.4
+				grep -v -x -F "$itdl" ./cfg.0 > ./cfg.0.tmp
+				sed '/^$/d' ./cfg.0.tmp > ./cfg.0
+				rm ./*.tmp
 			fi
 			if [[ $ret -eq 1 ]]; then
 				exit
@@ -103,9 +89,8 @@ elif [[ $1 = dlns ]]; then
 			rm $DC_tl/Feeds/.updt.lst
 			rm $DC_tl/Feeds/cfg.1
 			rm $DC_tl/Feeds/.dt
-			notify-send  -i idiomind "$deleted" " " -t 2000
 		else
-			exit 1
+			exit 0
 		fi
 elif [[ $1 = dlkt ]]; then
 
@@ -116,12 +101,12 @@ elif [[ $1 = dlkt ]]; then
 	--button="$yes":0 --button="$no":1
 	ret=$?
 	if [[ $ret -eq 0 ]]; then
-		rm -r "$drtc"/.inx "$drtc"/cfg.3 "$drtc"/cfg.4 "$drtc"/cfg.0
-		touch "$drtc"/.inx "$drtc"/cfg.3 "$drtc"/cfg.4 "$drtc"/cfg.0
+		rm -r "$drtc"/cfg.3 "$drtc"/cfg.4 "$drtc"/cfg.0
+		touch "$drtc"/cfg.3 "$drtc"/cfg.4 "$drtc"/cfg.0
 		rm -r "$kpt"/*.mp3
 		rm -r "$kpt"/words/*.mp3
 	else
-		exit 1
+		exit 0
 	fi
 
 fi

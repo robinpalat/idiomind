@@ -295,7 +295,7 @@ elif [ $1 = new_sentence ]; then
 		
 		if [ ! -f $DT_r/audtm.mp3 ]; then
 		
-			tts .en $lgt $DT_r "$DM_tlt/$nme.mp3"
+			tts ./.en $lgt $DT_r "$DM_tlt/$nme.mp3"
 		else
 			cp -f $DT_r/audtm.mp3 "$DM_tlt/$nme.mp3"
 		fi
@@ -317,25 +317,29 @@ elif [ $1 = new_sentence ]; then
 		fi
 		
 		cd $DT_r
-		> swrd
-		> twrd
+		r=$(echo $(($RANDOM%1000)))
+		touch swrd.$r
+		touch twrd.$r
 		if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
-			vrbl="$srce"; lg=$lgt; aw=$DT/swrd; bw=$DT/twrd
+			vrbl="$srce"; lg=$lgt; aw=$DT/swrd.$r; bw=$DT/twrd.$r
 		else
-			vrbl="$trgt"; lg=$lgs; aw=$DT/twrd; bw=$DT/swrd
+			vrbl="$trgt"; lg=$lgs; aw=$DT/twrd.$r; bw=$DT/swrd.$r
 		fi
 		clean_3 "$vrbl" > $aw
 		twrd=$(cat $aw | sed '/^$/d')
 		src=$(translate "$twrd" auto $lg)
 		echo "$src" | sed 's/,//g' | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
+		touch A.$r
+		touch B.$r
+		touch g.$r
 		sed -i 's/\. /\n/g' $bw
 		sed -i 's/\. /\n/g' $aw
 		snmk=$(echo "$trgt"  | sed 's/ /\n/g')
-		grammar_1 "$snmk" $DT_r
-		list_words $aw $bw $DT_r
-		grmrk=$(cat g_ | sed ':a;N;$!ba;s/\n/ /g')
-		lwrds=$(cat A_)
-		pwrds=$(cat B_ | tr '\n' '_')
+		grammar_1 "$snmk" $DT_r $r
+		list_words $aw $bw $DT_r $r
+		grmrk=$(cat g.$r | sed ':a;N;$!ba;s/\n/ /g')
+		lwrds=$(cat A.$r)
+		pwrds=$(cat B.$r | tr '\n' '_')
 		if ([ -z "$grmrk" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ]); then
 		    rm "$DM_tlt/$nme.mp3"
 		    msg "$error1" dialog-warning & exit 1
@@ -353,7 +357,7 @@ elif [ $1 = new_sentence ]; then
 		get_words $aw $bw
 		
 		[[ -d $DT_r ]] && rm -fr $DT_r
-		rm -f $DT/twrd $DT/swrd &
+		rm -f $DT/*.$r  &
 		echo "aitm.1.aitm" >> \
 		$DC/addons/stats/.log
 		exit 1
@@ -375,25 +379,29 @@ elif [ $1 = new_sentence ]; then
 		trgt="$(cat trgt)"
 		nme="$(nmfile "$(cat ./trgt)")"
 		srce="$4"
-		> swrd
-		> twrd
+		r=$(echo $(($RANDOM%1000)))
+		touch twrd.$r
+		touch swrd.$r
 		if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
-			vrbl="$srce"; lg=$lgt; aw=$DT/swrd; bw=$DT/twrd
+			vrbl="$srce"; lg=$lgt; aw=$DT/swrd.$r; bw=$DT/twrd.$r
 		else
-			vrbl="$trgt"; lg=$lgs; aw=$DT/twrd; bw=$DT/swrd
+			vrbl="$trgt"; lg=$lgs; aw=$DT/twrd.$r; bw=$DT/swrd.$r
 		fi
 		clean_3 "$vrbl" > $aw
 		twrd=$(cat $aw | sed '/^$/d')
 		src=$(translate "$twrd" auto $lg)
 		echo "$src" | sed 's/,//g' | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
+		touch A.$r
+		touch B.$r
+		touch g.$r
 		sed -i 's/\. /\n/g' $bw
 		sed -i 's/\. /\n/g' $aw
 		snmk=$(echo "$trgt"  | sed 's/ /\n/g')
-		grammar_1 "$snmk" $DT_r
-		list_words $aw $bw $DT_r
-		grmrk=$(cat g_ | sed ':a;N;$!ba;s/\n/ /g')
-		lwrds=$(cat A_)
-		pwrds=$(cat B_ | tr '\n' '_')
+		grammar_1 "$snmk" $DT_r $r
+		list_words $aw $bw $DT_r $r
+		grmrk=$(cat g.$r | sed ':a;N;$!ba;s/\n/ /g')
+		lwrds=$(cat A.$r)
+		pwrds=$(cat B.$r | tr '\n' '_')
 		
 		if [ -f $DT_r/audtm.mp3 ]; then
 		
@@ -431,7 +439,7 @@ elif [ $1 = new_sentence ]; then
 		echo "aitm.1.aitm" >> \
 		$DC/addons/stats/.log
 		[[ -d $DT_r ]] && rm -fr $DT_r
-		rm -f $DT/twrd $DT/swrd & exit 1
+		rm -f $DT/*.$r & exit 1
 	fi
 
 elif [ $1 = new_word ]; then
@@ -697,6 +705,15 @@ elif [ $1 = selecting_words_dclik ]; then
 	$? >/dev/null 2>&1
 	exit 1
 
+
+elif [ $1 = show_item_for_edit ]; then
+
+	DT_r=$(cat $DT/.n_s_pr)
+	cd $DT_r
+	dlg_text_info_5 "$3" "$(nmfile "$3")"
+	$? >/dev/null 2>&1
+
+
 elif [ $1 = selecting_words ]; then
 
 	DM_tlt="$DM_tl/$tpe"
@@ -872,7 +889,7 @@ elif [ $1 = other_ways ]; then
 			rename 's/^0*//' *.mp3
 			rm -f "$DT_r"/c_rv.mp3
 			ls *.mp3 > lst
-			lns=$(cat ./lst | head -50 | wc -l)
+			lns=$(cat ./lst | head -50 | wc -l) # 50--------------------------------------------------------------------------------------------------------------
 			
 			internet
 			 
@@ -910,14 +927,13 @@ elif [ $1 = other_ways ]; then
 				trgt="$(echo "$data" | sed '1d' | sed 's/.*transcript":"//' \
 				| sed 's/"}],"final":true}],"result_index":0}//g')"
 				
-				if [ $(echo "$trgt" | wc -c) -ge 150 ]; then
-					echo "
-$trgt" >> log
+				if [ $(echo "$trgt" | wc -c) -ge 150 ]; then # 150--------------------------------------------------------------------------------------
+					printf "\n- $trgt" >> log
 				
 				else
 					nme="$(nmfile "$trgt")"
-					mv -f ./"$n".mp3 ./"$nme".mp3
-					echo "$trgt" > ./"$nme".txt
+					mv -f "./$n.mp3" "./$nme.mp3"
+					echo "$trgt" > "./$nme.txt"
 					echo "$nme" >> ./ls
 					rm -f info.flac info.ret
 				fi
@@ -934,16 +950,13 @@ $trgt" >> log
 			[[ $(echo "$tpe" | wc -c) -gt 40 ]] && tcnm="${tpe:0:40}..." || tcnm="$tpe"
 
 			left=$((50 - $(cat "$DC_tlt"/cfg.4 | wc -l)))
-			info=$(echo "$remain"$left"$sentences")
-			if [ $ns -ge 45 ]; then
-				info=$(echo "$remain"$left"$sentences")
-			elif [ $ns -ge 49 ]; then
-				info=$(echo "$remain"$left"$sentence")
-			fi
+			info=$(printf "$remain$left$sentences. $dclik_for_edit")
+			[[ $ns -ge 45 ]] && info=$(printf "$remain$left$sentences. $dclik_for_edit ")
+			[[ $ns -ge 49 ]] && info=$(printf "$remain$left$sentence. $dclik_for_edit ")
 			
 			if [ -z "$(cat ls)" ]; then
 			
-				dlg_text_info_5 "$gettext_err"
+				dlg_msg_2 "$gettext_err"
 				[[ -d $DT_r ]] && rm -fr $DT_r
 				rm -f $lckpr & exit 1
 				
@@ -978,13 +991,12 @@ $trgt" >> log
 						
 						sntc=$(sed -n "$n"p ./slts)
 						trgt=$(cat "./$sntc.txt")
-						nme="$(nmfile "$sntc")"
+						nme="$(nmfile "$trgt")"
 						
 						if [ $(sed -n 1p "$sntc.txt" | wc -$c) -eq 1 ]; then
 						
-							if [ $(cat "$DC_tlt"/cfg.3 | wc -l) -ge 50 ]; then
-								echo "
-$sntc" >> ./slog
+							if [ $(cat "$DC_tlt"/cfg.3 | wc -l) -ge 50 ]; then # 50 --------------------------------------------------------------------------
+								printf "\n- $sntc" >> ./slog
 						
 							else
 								srce="$(translate "$trgt" $lgt $lgs)"
@@ -999,9 +1011,8 @@ $sntc" >> ./slog
 						
 						elif [ $(sed -n 1p "$sntc.txt" | wc -$c) -ge 1 ]; then
 						
-							if [ $(cat "$DC_tlt"/cfg.4 | wc -l) -ge 50 ]; then
-								echo "
-$sntc" >> ./wlog
+							if [ $(cat "$DC_tlt"/cfg.4 | wc -l) -ge 50 ]; then # 50 --------------------------------------------------------------------------
+								printf "\n- $sntc" >> ./wlog
 						
 							else
 								srce="$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')"
@@ -1010,35 +1021,33 @@ $sntc" >> ./wlog
 								
 								if ( [ -f "$DM_tlt/$nme.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
 								    tags_1 S "$trgt" "$srce" "$DM_tlt/$nme.mp3"
-								    #$DS/mngr.sh inx S "$trgt" "$tpe"
-								    #echo "$nme" >> adds
 								fi
 
 								(
 								r=$(echo $(($RANDOM%1000)))
-								> twrd_$r
-								> swrd_$r
+								touch twrd.$r
+								touch swrd.$r
 								if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
-									vrbl="$srce"; lg=$lgt; aw=$DT/swrd_$r; bw=$DT/twrd_$r
+									vrbl="$srce"; lg=$lgt; aw=$DT/swrd.$r; bw=$DT/twrd.$r
 								else
-									vrbl="$trgt"; lg=$lgs; aw=$DT/twrd_$r; bw=$DT/swrd_$r
+									vrbl="$trgt"; lg=$lgs; aw=$DT/twrd.$r; bw=$DT/swrd.$r
 								fi
 
 								clean_3 "$vrbl" > $aw
 								twrd=$(cat $aw | sed '/^$/d')
 								srce="$(translate "$twrd" auto $lg)"
 								echo "$srce" | sed 's/,//g' | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
-								> A_$r
-								> B_$r
-								> g_$r
+								touch A.$r
+								touch B.$r
+								touch g.$r
 								sed -i 's/\. /\n/g' $bw
 								sed -i 's/\. /\n/g' $aw
 								snmk=$(echo "$trgt"  | sed 's/ /\n/g')
 								grammar_1 "$snmk" $DT_r $r
 								list_words $aw $bw $DT_r $r
-								grmrk=$(cat g_$r | sed ':a;N;$!ba;s/\n/ /g')
-								lwrds=$(cat A_$r)
-								pwrds=$(cat B_$r | tr '\n' '_')
+								grmrk=$(cat g.$r | sed ':a;N;$!ba;s/\n/ /g')
+								lwrds=$(cat A.$r)
+								pwrds=$(cat B.$r | tr '\n' '_')
 								
 								if ( [ ! -f "$DM_tlt/$nme.mp3" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ] || [ -z "$grmrk" ] ); then
 									
@@ -1050,11 +1059,12 @@ $sntc" >> ./wlog
 									get_words $aw $bw
 								fi
 
-
 								echo "__" >> x
+								rm -f $DT/*.$r
+								rm -f $aw $bw
 								) &
 						
-								rm -f "$nme".mp3 TMP1.mp3 TMP2.mp3 TMP3.mp3 TMP4.mp3 
+								rm -f "$nme".mp3
 							fi
 						fi
 					
@@ -1076,9 +1086,8 @@ $sntc" >> ./wlog
 						exmp=$(sed -n "$n"p wrdsls)
 						nme="$(nmfile "$exmp")"
 
-						if [ $(cat "$DC_tlt"/cfg.3 | wc -l) -ge 50 ]; then
-							echo "
-$trgt" >> ./wlog
+						if [ $(cat "$DC_tlt"/cfg.3 | wc -l) -ge 50 ]; then # 50 --------------------------------------------------------------------------
+							printf "\n- $trgt" >> ./wlog
 					
 						else
 							srce="$(translate "$trgt" auto $lgs)"
@@ -1137,7 +1146,7 @@ $trgt" >> ./wlog
 						fi
 					fi
 					
-					logs=$(cat ./slog ./wlog)
+					logs=$(cat ./slog ./wlog ./log)
 					adds=$(cat ./adds ./addw | wc -l)
 					
 					if [ $adds -ge 1 ]; then
@@ -1146,22 +1155,31 @@ $trgt" >> ./wlog
 						$DC/addons/stats/.log
 					fi
 					
-					if [ -f ./log ]; then
-						if [ $(ls ./*.mp3 | wc -l) -ge 1 ]; then
-							btn="--button=$save:0"
-						fi
-						dlg_msg_2 "$items_rest $logn" "$btn" >/dev/null 2>&1
+					if ( [ -n "$logs" ] || [ $(ls [0-9]* | wc -l) -ge 1 ] ); then # rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
 
-							ret=$(echo "$?")
+						if [ -n "$logs" ]; then
+							text_r1="$items_rest\n\n$logs"
+						fi
+						
+						if [ $(ls [0-9]* | wc -l) -ge 1 ]; then
+							btn="--button=$btn_save_audio:0"
+							text_r2="$audio_rest\n"
+						fi
+						dlg_text_info_3 "$text_r2$text_r1" "$btn" >/dev/null 2>&1
+						ret=$(echo "$?")
 						
 							if  [ "$ret" -eq 0 ]; then
 								aud=$(dlg_file_2)
-									ret=$(echo "$?")
+								ret=$(echo "$?")
 									if [ "$ret" -eq 0 ]; then
-									    tar cvzf audio.tar.gz ./*.mp3, *.txt
-									    mv -f audio.tar.gz "$aud"
+										mkdir rest
+										mv -f *.mp3 ./rest/
+										cd ./rest
+										tar cvzf audio.tar.gz *
+										mv -f audio.tar.gz "$aud"
 									fi
 							fi
+							
 					fi
 					
 					if  [ -f ./log ]; then
@@ -1173,15 +1191,15 @@ $trgt" >> ./wlog
 					n=1
 					while [[ $n -le 20 ]]; do
 						 sleep 5
-						 if ([ $(cat ./x | wc -l) = $rm ] || [ $n = 20 ]); then
-							[[ -d $DT_r ]] && rm -fr $DT_r
+						 if ( [ "$(cat ./x | wc -l)" = "$rm" ] || [ "$n" = 20 ] ); then
+							[[ -d "$DT_r" ]] && rm -fr $DT_r
 							rm -f $lckpr & break & exit 1
 						 fi
 						let n++
 					done
 					exit 1
 				else
-					[[ -d $DT_r ]] && rm -fr $DT_r
+					[[ -d "$DT_r" ]] && rm -fr $DT_r
 					rm -f $lckpr $slt & exit 1
 				fi
 		fi
@@ -1249,12 +1267,12 @@ $trgt" >> ./wlog
 		[[ $(echo "$tpe" | wc -c) -gt 40 ]] && tcnm="${tpe:0:40}..." || tcnm="$tpe"
 		
 		left=$((50 - $ns))
-		info=$(echo "$remain$left$sentences")
+		info=$(echo "$remain$left$sentences.")
 
 		if [ $ns -ge 45 ]; then
-			info=$(echo "$remain$left$sentences")
+			info=$(echo "$remain$left$sentences.")
 		elif [ $ns -ge 49 ]; then
-			info=$(echo "$remain$left$sentence")
+			info=$(echo "$remain$left$sentence.")
 		fi
 		
 		if [ -z "$(cat ./sntsls)" ]; then
@@ -1299,8 +1317,7 @@ $trgt" >> ./wlog
 					internet
 					
 					cd $DT_r
-					> ./wlog
-					> ./slog
+					touch ./wlog ./slog
 					
 					#words
 					{
@@ -1313,8 +1330,7 @@ $trgt" >> ./wlog
 						sntc=$(sed -n "$n"p slts)
 						if [ $(echo "$sntc" | wc -$c) = 1 ]; then
 							if [ $(cat "$DC_tlt"/cfg.3 | wc -l) -ge 50 ]; then
-								echo "
-$sntc" >> ./wlog
+								printf "\n- $sntc" >> ./wlog
 						
 							else
 								trgt="$(translate "$sntc" auto $lgt)"
@@ -1337,13 +1353,11 @@ $sntc" >> ./wlog
 						elif [ $(echo "$sntc" | wc -$c) -ge 1 ]; then
 							
 							if [ $(cat "$DC_tlt"/cfg.4 | wc -l) -ge 50 ]; then
-								echo "
-$sntc" >> ./slog
+								printf "\n- $sntc" >> ./slog
 						
 							else
 								if [ $(echo "$sntc" | wc -c) -ge 150 ]; then
-									echo "
-$sntc" >> ./slog
+									printf "\n- $sntc" >> ./slog
 							
 								else
 									txt="$(clean_1 "$sntc")"
@@ -1370,27 +1384,27 @@ $sntc" >> ./slog
 									
 									(
 									r=$(echo $(($RANDOM%1000)))
-									> twrd_$r
-									> swrd_$r
+									touch twrd.$r
+									touch swrd.$r
 									if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
-										vrbl="$srce"; lg=$lgt; aw=$DT/swrd_$r; bw=$DT/twrd_$r
+										vrbl="$srce"; lg=$lgt; aw=$DT/swrd.$r; bw=$DT/twrd.$r
 									else
-										vrbl="$trgt"; lg=$lgs; aw=$DT/twrd_$r; bw=$DT/swrd_$r
+										vrbl="$trgt"; lg=$lgs; aw=$DT/twrd.$r; bw=$DT/swrd.$r
 									fi
 									clean_3 "$vrbl" > $aw
 									twrd=$(cat $aw | sed '/^$/d')
 									translate "$twrd" auto $lg | sed 's/,//g' | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
-									> A_$r
-									> B_$r
-									> g_$r
+									touch A.$r
+									touch B.$r
+									touch g.$r
 									sed -i 's/\. /\n/g' $bw
 									sed -i 's/\. /\n/g' $aw
 									snmk=$(echo "$trgt"  | sed 's/ /\n/g')
 									grammar_1 "$snmk" $DT_r $r
 									list_words $aw $bw $DT_r $r
-									grmrk=$(cat g_$r | sed ':a;N;$!ba;s/\n/ /g')
-									lwrds=$(cat A_$r)
-									pwrds=$(cat B_$r | tr '\n' '_')
+									grmrk=$(cat g.$r | sed ':a;N;$!ba;s/\n/ /g')
+									lwrds=$(cat A.$r)
+									pwrds=$(cat B.$r | tr '\n' '_')
 									
 									if ( [ ! -f "$DM_tlt/$nme.mp3" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ] || [ -z "$grmrk" ] ); then
 									
@@ -1403,11 +1417,12 @@ $sntc" >> ./slog
 									fi
 									
 									echo "__" >> x
-									rm -f $aw $bw 
-										
+									rm -f $DT/*.$r
+									rm -f $aw $bw
+									
 									) &
 									
-									rm -f "$nme".mp3 TMP1.mp3 TMP2.mp3 TMP3.mp3 TMP4.mp3 
+									rm -f "$nme".mp3
 								fi
 							fi
 						fi
@@ -1428,8 +1443,7 @@ $sntc" >> ./slog
 						nme="$(nmfile "$exmp")"
 
 						if [ $(cat "$DC_tlt"/cfg.3 | wc -l) -ge 50 ]; then
-							echo "
-$itm" >> ./wlog
+							printf "\n- $itm" >> ./wlog
 					
 						else
 							srce="$(translate "$itm" auto $lgs)"
@@ -1498,7 +1512,7 @@ $itm" >> ./wlog
 					
 					if [ $(cat ./slog ./wlog | wc -l) -ge 1 ]; then
 						
-						dlg_text_info_3 "$items_rest" "$logs" >/dev/null 2>&1
+						dlg_text_info_3 "$items_rest\n\n$logs" >/dev/null 2>&1
 						
 					fi
 					if  [ $(cat ./slog ./wlog | wc -l) -ge 1 ]; then

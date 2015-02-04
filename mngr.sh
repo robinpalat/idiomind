@@ -269,9 +269,9 @@ elif [ "$1" = mklg- ]; then
 		fi
 		rm -f "$DC_tlt/cfg.7"
 	fi
-	cat "$DC_tlt/cfg.0" | awk '!array_temp[$0]++' > $DT/cfg.0._
-	sed '/^$/d' $DT/cfg.0._ > "$DC_tlt/cfg.0"
-	rm -f $DT/*._
+	cat "$DC_tlt/cfg.0" | awk '!array_temp[$0]++' > $DT/cfg.0.tmp
+	sed '/^$/d' $DT/cfg.0.tmp > "$DC_tlt/cfg.0"
+	rm -f $DT/*.tmp
 	rm "$DC_tlt/cfg.2" "$DC_tlt/cfg.1" "$DC_tl/.cfg.6"
 	cp -f "$DC_tlt/cfg.0" "$DC_tlt/cfg.1"
 
@@ -347,34 +347,34 @@ elif [ $1 = dli ]; then
 			sed -i 's/'"$itdl"'//g' ./mcin
 			sed -i 's/'"$itdl"'//g' ./lwin
 			cd ..
-			grep -v -x -F "$itdl" ./.cfg.11 > ./cfg.11._
-			sed '/^$/d' ./cfg.11._ > ./.cfg.11
-			grep -v -x -F "$itdl" ./cfg.0 > ./cfg.0_
-			sed '/^$/d' ./cfg.0_ > ./cfg.0
-			grep -v -x -F "$itdl" ./cfg.2 > ./cfg.2._
-			sed '/^$/d' ./cfg.2._ > ./cfg.2
-			grep -v -x -F "$itdl" ./cfg.1 > ./cfg.1._
-			sed '/^$/d' ./cfg.1._ > ./cfg.1
-			grep -v -x -F "$itdl" cfg.3 > cfg.3._
-			sed '/^$/d' cfg.3._ > cfg.3
-			rm ./*._
+			grep -v -x -F "$itdl" ./.cfg.11 > ./cfg.11.tmp
+			sed '/^$/d' ./cfg.11.tmp > ./.cfg.11
+			grep -v -x -F "$itdl" ./cfg.0 > ./cfg.0.tmp
+			sed '/^$/d' ./cfg.0.tmp > ./cfg.0
+			grep -v -x -F "$itdl" ./cfg.2 > ./cfg.2.tmp
+			sed '/^$/d' ./cfg.2.tmp > ./cfg.2
+			grep -v -x -F "$itdl" ./cfg.1 > ./cfg.1.tmp
+			sed '/^$/d' ./cfg.1.tmp > ./cfg.1
+			grep -v -x -F "$itdl" cfg.3 > cfg.3.tmp
+			sed '/^$/d' cfg.3.tmp > cfg.3
+			rm ./*.tmp
 		# rm sentence
 		elif [ -f "$DM_tlt/$nme.mp3" ]; then
 			rm "$DM_tlt/$nme.mp3"
 			cd "$DC_tlt/practice"
 			sed -i 's/'"$itdl"'//g' ./lsin
 			cd ..
-			grep -v -x -F "$itdl" ./.cfg.11 > ./cfg.11._
-			sed '/^$/d' ./cfg.11._ > ./.cfg.11
-			grep -v -x -F "$itdl" ./cfg.0 > ./cfg.0_
-			sed '/^$/d' ./cfg.0_ > ./cfg.0
-			grep -v -x -F "$itdl" ./cfg.2 > ./cfg.2._
-			sed '/^$/d' ./cfg.2._ > ./cfg.2
-			grep -v -x -F "$itdl" ./cfg.1 > ./cfg.1._
-			sed '/^$/d' ./cfg.1._ > ./cfg.1
-			grep -v -x -F "$itdl" cfg.4 > cfg.4._
-			sed '/^$/d' cfg.4._ > cfg.4
-			rm ./*._
+			grep -v -x -F "$itdl" ./.cfg.11 > ./cfg.11.tmp
+			sed '/^$/d' ./cfg.11.tmp > ./.cfg.11
+			grep -v -x -F "$itdl" ./cfg.0 > ./cfg.0.tmp
+			sed '/^$/d' ./cfg.0.tmp > ./cfg.0
+			grep -v -x -F "$itdl" ./cfg.2 > ./cfg.2.tmp
+			sed '/^$/d' ./cfg.2.tmp > ./cfg.2
+			grep -v -x -F "$itdl" ./cfg.1 > ./cfg.1.tmp
+			sed '/^$/d' ./cfg.1.tmp > ./cfg.1
+			grep -v -x -F "$itdl" cfg.4 > cfg.4.tmp
+			sed '/^$/d' cfg.4.tmp > cfg.4
+			rm ./*.tmp
 		else
 			cd "$DC_tlt/practice"
 			sed -i 's/'"$itdl"'//g' ./fin
@@ -382,19 +382,19 @@ elif [ $1 = dli ]; then
 			sed -i 's/'"$itdl"'//g' ./lwin
 			sed -i 's/'"$itdl"'//g' ./lsin
 			cd ..
-			grep -v -x -F "$itdl" ./.cfg.11 > ./cfg.11._
-			sed '/^$/d' ./cfg.11._ > ./.cfg.11
-			grep -v -x -F "$itdl" ./cfg.0 > ./cfg.0_
-			sed '/^$/d' ./cfg.0_ > ./cfg.0
-			grep -v -x -F "$itdl" ./cfg.2 > ./cfg.2._
-			sed '/^$/d' ./cfg.2._ > ./cfg.2
-			grep -v -x -F "$itdl" ./cfg.1 > ./cfg.1._
-			sed '/^$/d' ./cfg.1._ > ./cfg.1
-			grep -v -x -F "$itdl" cfg.3 > cfg.3._
-			sed '/^$/d' cfg.3._ > cfg.3
-			grep -v -x -F "$itdl" cfg.4 > cfg.4._
-			sed '/^$/d' cfg.4._ > cfg.4
-			rm ./*._
+			grep -v -x -F "$itdl" ./.cfg.11 > ./cfg.11.tmp
+			sed '/^$/d' ./cfg.11.tmp > ./.cfg.11
+			grep -v -x -F "$itdl" ./cfg.0 > ./cfg.0.tmp
+			sed '/^$/d' ./cfg.0.tmp > ./cfg.0
+			grep -v -x -F "$itdl" ./cfg.2 > ./cfg.2.tmp
+			sed '/^$/d' ./cfg.2.tmp > ./cfg.2
+			grep -v -x -F "$itdl" ./cfg.1 > ./cfg.1.tmp
+			sed '/^$/d' ./cfg.1.tmp > ./cfg.1
+			grep -v -x -F "$itdl" cfg.3 > cfg.3.tmp
+			sed '/^$/d' cfg.3.tmp > cfg.3
+			grep -v -x -F "$itdl" cfg.4 > cfg.4.tmp
+			sed '/^$/d' cfg.4.tmp > cfg.4
+			rm ./*.tmp
 		fi
 		exit 1
 	fi
@@ -421,17 +421,17 @@ elif [ $1 = dli ]; then
 				sed -i 's/'"$itdl"'//g' ./lwin.tmp
 				sed -i 's/'"$itdl"'//g' ./mcin.tmp
 				cd ..
-				grep -v -x -F "$itdl" ./.cfg.11 > ./cfg.11._
-				sed '/^$/d' ./cfg.11._ > ./.cfg.11
-				grep -v -x -F "$itdl" ./cfg.0 > ./cfg.0_
-				sed '/^$/d' ./cfg.0_ > ./cfg.0
-				grep -v -x -F "$itdl" ./cfg.2 > ./cfg.2._
-				sed '/^$/d' ./cfg.2._ > ./cfg.2
-				grep -v -x -F "$itdl" ./cfg.1 > ./cfg.1._
-				sed '/^$/d' ./cfg.1._ > ./cfg.1
-				grep -v -x -F "$itdl" cfg.3 > cfg.3._
-				sed '/^$/d' cfg.3._ > cfg.3
-				rm ./*._
+				grep -v -x -F "$itdl" ./.cfg.11 > ./cfg.11.tmp
+				sed '/^$/d' ./cfg.11.tmp > ./.cfg.11
+				grep -v -x -F "$itdl" ./cfg.0 > ./cfg.0.tmp
+				sed '/^$/d' ./cfg.0.tmp > ./cfg.0
+				grep -v -x -F "$itdl" ./cfg.2 > ./cfg.2.tmp
+				sed '/^$/d' ./cfg.2.tmp > ./cfg.2
+				grep -v -x -F "$itdl" ./cfg.1 > ./cfg.1.tmp
+				sed '/^$/d' ./cfg.1.tmp > ./cfg.1
+				grep -v -x -F "$itdl" cfg.3 > cfg.3.tmp
+				sed '/^$/d' cfg.3.tmp > cfg.3
+				rm ./*.tmp
 			else
 				exit 1
 			fi
@@ -447,17 +447,17 @@ elif [ $1 = dli ]; then
 				cd "$DC_tlt/practice"
 				sed -i 's/'"$itdl"'//g' ./lsin.tmp
 				cd ..
-				grep -v -x -F "$itdl" ./.cfg.11 > ./cfg.11._
-				sed '/^$/d' ./cfg.11._ > ./.cfg.11
-				grep -v -x -F "$itdl" ./cfg.0 > ./cfg.0_
-				sed '/^$/d' ./cfg.0_ > ./cfg.0
-				grep -v -x -F "$itdl" ./cfg.2 > ./cfg.2._
-				sed '/^$/d' ./cfg.2._ > ./cfg.2
-				grep -v -x -F "$itdl" ./cfg.1 > ./cfg.1._
-				sed '/^$/d' ./cfg.1._ > ./cfg.1
-				grep -v -x -F "$itdl" cfg.4 > cfg.4._
-				sed '/^$/d' cfg.4._ > cfg.4
-				rm ./*._
+				grep -v -x -F "$itdl" ./.cfg.11 > ./cfg.11.tmp
+				sed '/^$/d' ./cfg.11.tmp > ./.cfg.11
+				grep -v -x -F "$itdl" ./cfg.0 > ./cfg.0.tmp
+				sed '/^$/d' ./cfg.0.tmp > ./cfg.0
+				grep -v -x -F "$itdl" ./cfg.2 > ./cfg.2.tmp
+				sed '/^$/d' ./cfg.2.tmp > ./cfg.2
+				grep -v -x -F "$itdl" ./cfg.1 > ./cfg.1.tmp
+				sed '/^$/d' ./cfg.1.tmp > ./cfg.1
+				grep -v -x -F "$itdl" cfg.4 > cfg.4.tmp
+				sed '/^$/d' cfg.4.tmp > cfg.4
+				rm ./*.tmp
 			else
 				exit 1
 			fi
@@ -475,19 +475,19 @@ elif [ $1 = dli ]; then
 				sed -i 's/'"$itdl"'//g' ./mcin.tmp
 				sed -i 's/'"$itdl"'//g' ./lsin.tmp
 				cd ..
-				grep -v -x -F "$itdl" ./.cfg.11 > ./cfg.11._
-				sed '/^$/d' ./cfg.11._ > ./.cfg.11
-				grep -v -x -F "$itdl" ./cfg.0 > ./cfg.0_
-				sed '/^$/d' ./cfg.0_ > ./cfg.0
-				grep -v -x -F "$itdl" ./cfg.2 > ./cfg.2._
-				sed '/^$/d' ./cfg.2._ > ./cfg.2
-				grep -v -x -F "$itdl" ./cfg.1 > ./cfg.1._
-				sed '/^$/d' ./cfg.1._ > ./cfg.1
-				grep -v -x -F "$itdl" cfg.4 > cfg.4._
-				sed '/^$/d' cfg.4._ > cfg.4
-				grep -v -x -F "$itdl" cfg.3 > cfg.3._
-				sed '/^$/d' cfg.3._ > cfg.3
-				rm ./*._
+				grep -v -x -F "$itdl" ./.cfg.11 > ./cfg.11.tmp
+				sed '/^$/d' ./cfg.11.tmp > ./.cfg.11
+				grep -v -x -F "$itdl" ./cfg.0 > ./cfg.0.tmp
+				sed '/^$/d' ./cfg.0.tmp > ./cfg.0
+				grep -v -x -F "$itdl" ./cfg.2 > ./cfg.2.tmp
+				sed '/^$/d' ./cfg.2.tmp > ./cfg.2
+				grep -v -x -F "$itdl" ./cfg.1 > ./cfg.1.tmp
+				sed '/^$/d' ./cfg.1.tmp > ./cfg.1
+				grep -v -x -F "$itdl" cfg.4 > cfg.4.tmp
+				sed '/^$/d' cfg.4.tmp > cfg.4
+				grep -v -x -F "$itdl" cfg.3 > cfg.3.tmp
+				sed '/^$/d' cfg.3.tmp > cfg.3
+				rm ./*.tmp
 			else
 				exit 1
 			fi
@@ -504,25 +504,24 @@ elif [ $1 = dlt ]; then
 		
 			[[ -d "$DM_tl/$tpc" ]] && rm -r "$DM_tl/$tpc"
 			[[ -d "$DC_tl/$tpc" ]] && rm -r "$DC_tl/$tpc"
-			$ > $DC_s/cfg.6
+			> $DC_s/cfg.6
 			rm $DC_s/cfg.8
-			$ > $DC_tl/.cfg.8
-			grep -v -x -F "$tpc" $DC_tl/.cfg.2 > $DC_tl/.cfg.2._
-			sed '/^$/d' $DC_tl/.cfg.2._ > $DC_tl/.cfg.2
-			grep -v -x -F "$tpc" $DC_tl/.cfg.1 > $DC_tl/.cfg.1._
-			sed '/^$/d' $DC_tl/.cfg.1._ > $DC_tl/.cfg.1
-			grep -v -x -F "$tpc" $DC_tl/.cfg.3 > $DC_tl/.cfg.3._
-			sed '/^$/d' $DC_tl/.cfg.3._ > $DC_tl/.cfg.3
-			grep -v -x -F "$tpc" $DC_tl/.cfg.7 > $DC_tl/.cfg.7._
-			sed '/^$/d' $DC_tl/.cfg.7._ > $DC_tl/.cfg.7
-			grep -v -x -F "$tpc" $DC_tl/.cfg.6 > $DC_tl/.cfg.6._
-			sed '/^$/d' $DC_tl/.cfg.6._ > $DC_tl/.cfg.6
-			grep -v -x -F "$tpc" $DC_tl/.cfg.5 > $DC_tl/.cfg.5._
-			sed '/^$/d' $DC_tl/.cfg.5._ > $DC_tl/.cfg.5
-			rm $DC_tl/.*._ 
+			> $DC_tl/.cfg.8
+			grep -v -x -F "$tpc" $DC_tl/.cfg.2 > $DC_tl/.cfg.2.tmp
+			sed '/^$/d' $DC_tl/.cfg.2.tmp > $DC_tl/.cfg.2
+			grep -v -x -F "$tpc" $DC_tl/.cfg.1 > $DC_tl/.cfg.1.tmp
+			sed '/^$/d' $DC_tl/.cfg.1.tmp > $DC_tl/.cfg.1
+			grep -v -x -F "$tpc" $DC_tl/.cfg.3 > $DC_tl/.cfg.3.tmp
+			sed '/^$/d' $DC_tl/.cfg.3.tmp > $DC_tl/.cfg.3
+			grep -v -x -F "$tpc" $DC_tl/.cfg.7 > $DC_tl/.cfg.7.tmp
+			sed '/^$/d' $DC_tl/.cfg.7.tmp > $DC_tl/.cfg.7
+			grep -v -x -F "$tpc" $DC_tl/.cfg.6 > $DC_tl/.cfg.6.tmp
+			sed '/^$/d' $DC_tl/.cfg.6.tmp > $DC_tl/.cfg.6
+			grep -v -x -F "$tpc" $DC_tl/.cfg.5 > $DC_tl/.cfg.5.tmp
+			sed '/^$/d' $DC_tl/.cfg.5.tmp > $DC_tl/.cfg.5
+			rm $DC_tl/.*.tmp 
 			
 			kill -9 $(pgrep -f "$yad --list ")
-			notify-send  -i idiomind "$tpc" "$deleted"  -t 1000
 			$DS/mngr.sh mkmn
 			
 		else
@@ -597,9 +596,9 @@ elif [ "$1" = edt ]; then
 				if [[ "$mrk2" = "TRUE" ]]; then
 					echo "$TGT" >> "$DC_tlt/cfg.6"
 				else
-					grep -v -x -v "$TGT" "$DC_tlt/cfg.6" > "$DC_tlt/cfg.6._"
-					sed '/^$/d' "$DC_tlt/cfg.6._" > "$DC_tlt/cfg.6"
-					rm "$DC_tlt/cfg.6._"
+					grep -v -x -v "$TGT" "$DC_tlt/cfg.6" > "$DC_tlt/cfg.6.tmp"
+					sed '/^$/d' "$DC_tlt/cfg.6.tmp" > "$DC_tlt/cfg.6"
+					rm "$DC_tlt/cfg.6.tmp"
 				fi
 				tags_8 W "$mrk2" "$DM_tlt/words/$nme".mp3 >/dev/null 2>&1
 			fi
@@ -679,9 +678,9 @@ elif [ "$1" = edt ]; then
 				if [ "$mrk2" = "TRUE" ]; then
 					echo "$nme" >> "$DC_tlt/cfg.6"
 				else
-					grep -v -x -v "$nme" "$DC_tlt/cfg.6" > "$DC_tlt/cfg.6._"
-					sed '/^$/d' "$DC_tlt/cfg.6._" > "$DC_tlt/cfg.6"
-					rm "$DC_tlt/cfg.6._"
+					grep -v -x -v "$nme" "$DC_tlt/cfg.6" > "$DC_tlt/cfg.6.tmp"
+					sed '/^$/d' "$DC_tlt/cfg.6.tmp" > "$DC_tlt/cfg.6"
+					rm "$DC_tlt/cfg.6.tmp"
 				fi
 				tags_8 S "$mrk2" "$DM_tlt/$nme.mp3" >/dev/null 2>&1
 			fi
@@ -697,8 +696,8 @@ elif [ "$1" = edt ]; then
 					(
 						DT_r=$(mktemp -d $DT/XXXXXX)
 						cd $DT_r
-						> swrd
-						> twrd
+						touch swrd
+						touch twrd
 						if [ $lgt = ja ] || [ $lgt = zh-cn ]; then
 							vrbl="$srce"; lg=$lgt; aw=$DT/swrd; bw=$DT/twrd
 						else
@@ -749,8 +748,8 @@ elif [ "$1" = edt ]; then
 				(
 					DT_r=$(mktemp -d $DT/XXXXXX)
 					cd $DT_r
-					> swrd
-					> twrd
+					touch swrd
+					touch twrd
 					if [ $lgt = ja ] || [ $lgt = zh-cn ]; then
 						vrbl="$srce"; lg=$lgt; aw=$DT/swrd; bw=$DT/twrd
 					else

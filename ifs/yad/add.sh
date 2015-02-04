@@ -13,12 +13,10 @@ function msg() {
 
 function dlg_msg_2() {
 
-        yad --form --name=idiomind --title="Idiomind" \
-        --center --skip-taskbar --on-top \
+        printf "$1" | yad --text-info --center --wrap \
+        --center --skip-taskbar --on-top --title="Idiomind" \
         --width=420 --height=150 --on-top --margins=4 \
-        --window-icon=idiomind --borders=0 \
-        --field="<small><small> $1</small></small>":txt "$log" \
-        --field=":lbl"\
+        --window-icon=idiomind --borders=0 --name=idiomind \
         "$2" --button=Ok:1
 }
 
@@ -83,48 +81,6 @@ function dlg_form_2() {
 }
 
 
-#function dlg_form_5() {
-    
-    
-    #if [ -f "$DT/ILLUSTRATION".jpeg ]; then
-			#mv -f "$DT/ILLUSTRATION".jpeg "$DT/imgsw".jpeg
-			#ICON="--image=$DT/imgsw.jpeg"
-			#btn1="--button=$change:3"
-			#btn2="--button=$delete:2"
-			
-		#else
-			#txt="--text=<small>$search_images \\n<a href='file://$DT/s.html'>$wrd</a></small>"
-		#fi
-    
-        #yad --form --align=center --center \
-        #--width=340 --text-align=center --height=280 \
-        #--on-top --skip-taskbar --image-on-top "$4" \
-        #"$1" --window-icon=idiomind --borders=0 \
-        #--title=Image "$3" "$2" \
-        #--button=gtk-close:1
-#}
-
-
-#function dlg_form_6() { #sin  image
-    
-        #yad --form --text-align=center \
-        #--center --width=470 --height=280 \
-        #--on-top --skip-taskbar --image-on-top \
-        #--text="$1" --window-icon=idiomind --borders=0 \
-        #--title="Image" --button="$add_image":3 --button=gtk-close:1
-#}
-
-#function dlg_form_6_1() { # con image
-    
-        #yad --form --text-align=center \
-        #--center --width=470 --height=280 \
-        #--on-top --skip-taskbar --image-on-top \
-        #--button="$change":3 --window-icon=idiomind --borders=0 \
-        #--title="Image" --image="$1" \
-        #--button="$delete":2 --button=gtk-close:1
-    
-#}
-
 
 function dlg_radiolist_1() {
     
@@ -152,19 +108,6 @@ function dlg_checklist_1() {
 }
 
 
-#function dlg_checklist_2() {
-
-        #cat "$1" | awk '{print "FALSE\n"$0}' | \
-        #yad --list --checklist --window-icon=idiomind \
-        #--on-top --text="<small> $2 </small>" \
-        #--center --sticky --no-headers --title="$title_selector" \
-        #--buttons-layout=end --skip-taskbar --width=400 \
-        #--height=280 --borders=10 \
-        #--button="gtk-close":1 \
-        #--button="$add":0 \
-        #--column="" --column="Select"
-#}
-
 
 function dlg_checklist_3() {
 
@@ -182,20 +125,6 @@ function dlg_checklist_3() {
 }
 
 
-#function dlg_checklist_4() {
-    
-        #slt=$(mktemp $DT/slt.XXXX.x)
-        #cat $1 | awk '{print "FALSE\n"$0}' | \
-        #yad --list --checklist \
-        #--on-top --text="<small> $info </small>" \
-        #--fixed --sticky --no-headers --center \
-        #--buttons-layout=end --skip-taskbar --width=400 \
-        #--height=280 --borders=10 --window-icon=idiomind \
-        #--button=gtk-close:1 --button="$add":0 \
-        #--title="$title_selector - $tpe" \
-        #--column="" --column="Select" > "$slt"
-#}
-
 
 function dlg_checklist_5() {
     
@@ -203,10 +132,10 @@ function dlg_checklist_5() {
         cat "$1" | awk '{print "FALSE\n"$0}' | \
         yad --center --sticky \
         --name=idiomind --class=idiomind \
-        --dclick-action='/usr/share/idiomind/add.sh selecting_words_dclik' \
+        --dclick-action='/usr/share/idiomind/add.sh show_item_for_edit' \
         --list --checklist --window-icon=idiomind \
         --width=$wth --text="<small>$info</small>" \
-        --height=$eht --borders=3 --button=gtk-cancel:1 \
+        --height=$eht --borders=3 --button="$cancel":1 \
         --button="$to_new_topic":'/usr/share/idiomind/add.sh new_topic' \
         --button=gtk-save:0 --title="$Title_sentences" \
         --column="$(cat "$1" | wc -l)" --column="Items" > "$slt"
@@ -237,16 +166,16 @@ function dlg_text_info_2() {
 }
 
 
-function dlg_text_info_3() {
-    
-        echo "$2" | yad --name=idiomind --class=idiomind \
-        --center --wrap --text-info --editable --skip-taskbar \
+
+function dlg_text_info_3() { 
+
+        printf "$1" | yad --text-info --center --wrap \
+        --center --skip-taskbar --on-top --title="Idiomind" \
         --width=420 --height=150 --on-top --margins=4 \
-        --fontname=vendana --window-icon=idiomind \
-        --button=Ok:0 --borders=0 --title="Idiomind" \
-        --text=" <small><small> $1</small></small>" \
-        --field=":lbl" ""
+        --window-icon=idiomind --borders=0 --name=idiomind \
+        "$2" --button=Ok:1
 }
+
 
 
 function dlg_text_info_4() {
@@ -259,6 +188,18 @@ function dlg_text_info_4() {
 }
 
 
+# edit item audio processing
+function dlg_text_info_5() {
+    
+        echo "$1" | yad --text-info --center --wrap \
+        --name=idiomind --class=idiomind --window-icon=idiomind \
+        --sticky --width=520 --height=110 --editable \
+        --margins=8 --borders=0 --button=Ok:0 \
+        --title="$edit_item" > "$2".txt
+}
+
+
+
 function dlg_progress_1() {
     
         yad --progress --progress-text=" " \
@@ -267,6 +208,7 @@ function dlg_progress_1() {
         --undecorated --auto-close \
         --skip-taskbar --no-buttons
 }
+
 
 
 function dlg_progress_2() {

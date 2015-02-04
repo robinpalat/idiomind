@@ -114,7 +114,7 @@ elif [[ $1 = V2 ]]; then
 		srce=$(echo "$tgs" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
 		lswd=$(echo "$tgs" | grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' | tr '_' '\n')
 		exm=$(echo "$lswd" | sed -n 1p)
-		exmp=$(echo "$exm" | sed "s/"${trg,,}"/<span background='#CFFF8B'>"${trg,,}"<\/\span>/g")
+		exmp=$(echo "$exm" | sed "s/"${trg,,}"/<span background='#F8F4A2'>"${trg,,}"<\/\span>/g")
 
 		echo "$lwrd" | awk '{print $0""}' | yad --form \
 		--window-icon=idiomind --scroll --text-align=center \

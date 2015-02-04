@@ -39,6 +39,7 @@ elif echo "$1" | grep "play"; then
 	exit
 elif echo "$1" | grep "feed"; then
 	[[ -n "$(ps -A | pgrep -f "rsstail")" ]] && killall rsstail &
-	[[ -n "$(ps -A | pgrep -f "strt.sh")" ]] && killall strt.sh &
+	killall strt.sh &
+	[[ -f /tmp/.idmtp1.$u/.uptf ]] && rm -fr /tmp/.idmtp1.$u/.uptf
 	exit
 fi

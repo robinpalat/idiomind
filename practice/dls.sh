@@ -5,8 +5,6 @@ source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/practice.conf
 drts="$DS/practice/"
 strt="$drts/strt.sh"
-u=$(echo "$(whoami)")
-DT=/tmp/.idmtp1.$u
 cd "$DC_tlt/practice"
 all=$(cat lsin | wc -l)
 easy=0
@@ -138,17 +136,16 @@ function result() {
 	if [ $porc -ge 70 ]; then
 		echo "$WEN" >> ok.s
 		easy=$(($easy+1))
-		prc="<span background='#3AB452'><span color='#FFFFFF'> <b>$porc%</b></span></span>"
-		
+		clr=3AB452
 	elif [ $porc -ge 50 ]; then
 		ling=$(($ling+1))
-		prc="<span background='#E5801D'><span color='#FFFFFF'> <b>$porc%</b> </span></span>"
-		
+		clr=E5801D
 	else
 		hard=$(($hard+1))
-		prc="<span background='#D11B5D'><span color='#FFFFFF'> <b>$porc%</b> </span></span>"
+		clr=D11B5D
 	fi
 	
+	prc="<span background='#$clr'><span color='#FFFFFF'> <b>$porc%</b> </span></span>"
 	wes="$(cat quote)"
 	
 	rm allc quote
@@ -176,13 +173,11 @@ while [ $n -le $(cat lsin1 | wc -l) ]; do
 	if [[ $n = 1 ]]; then
 	info="--text=<sup><tt> $write_sentence...</tt></sup>"
 	else
-	info=""
-	fi
+	info=""; fi
 	
 	if [ -f "$DM_tlt/$namefile".mp3 ]; then
 		if [ -f "$DT/ILLUSTRATION".jpeg ]; then
-			rm -f "$DT/ILLUSTRATION".jpeg
-		fi
+			rm -f "$DT/ILLUSTRATION".jpeg; fi
 		
 		get_image_text "$namefile"
 
@@ -202,8 +197,7 @@ while [ $n -le $(cat lsin1 | wc -l) ]; do
 		else
 			$drts/cls s $easy $ling $hard $all &
 			break &
-			exit 1
-		fi
+			exit 0; fi
 	
 		check "$namefile"
 		ret=$(echo "$?")
@@ -215,8 +209,7 @@ while [ $n -le $(cat lsin1 | wc -l) ]; do
 			rm -f w.ok all ing wrds $DT/*.jpeg *.png
 			$drts/cls s $easy $ling $hard $all &
 			break &
-			exit 1
-		fi
+			exit 0; fi
 	fi
 	let n++
 done

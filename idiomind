@@ -36,8 +36,6 @@ function sizes() {
 
 [[ ! -f $DC_s/cfg.18 ]] && sizes
 
-
-
 function new_session() {
 	
 	echo "--new session"
@@ -126,20 +124,20 @@ function new_session() {
 				if [ -n "$nstll" ]; then
 					if [ "$RM" -ge 100 ]; then
 						echo "9" >> "$DC_tl/$tp/cfg.8"
-						echo "$tp" >> $DT/notify
+						printf "$tp\n" >> $DT/notify
 					fi
 					if [ "$RM" -ge 150 ]; then
 						echo "10" > "$DC_tl/$tp/cfg.8"
-						echo "$tp" >> $DT/notify
+						printf "$tp\n" >> $DT/notify
 					fi
 				else
 					if [ "$RM" -ge 100 ]; then
 						echo "4" > "$DC_tl/$tp/cfg.8"
-						echo "$tp" >> $DT/notify
+						printf "$tp\n" >> $DT/notify
 					fi
 					if [ "$RM" -ge 150 ]; then
 						echo "5" > "$DC_tl/$tp/cfg.8"
-						echo "$tp" >> $DT/notify
+						printf "$tp\n" >> $DT/notify
 					fi
 				fi
 			fi
@@ -1054,19 +1052,19 @@ elif [[ $1 = topic ]]; then
 			
 			if [ $ret -eq 0 ]; then
 				rm -f $DT/*.x
-				"$DF/cnfg.sh" & killall topic.sh & exit 1
+				"$DF/cnfg.sh" & killall topic.sh & exit
 			
 			elif [ $ret -eq 3 ]; then
 				rm -f $DT/*.x
-				"$DF/cnfg.sh" edit & exit 1
+				"$DF/cnfg.sh" edit & exit
 			
 			elif [ $ret -eq 2 ]; then
 				rm -f $DT/*.x
-				"$DF/strt.sh" & exit 1
+				"$DF/strt.sh" & exit
 			fi
 			
 	elif echo "$mde" | grep "wr"; then
-		"$DS/addons/weekly report/cnfg.sh" T & exit 1
+		"$DS/addons/weekly report/cnfg.sh" T & exit
 	fi
 	
 	rm -f $DT/*.x

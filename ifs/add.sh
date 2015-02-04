@@ -24,23 +24,23 @@ function grammar_1() {
 		chck=$(echo "$1" | sed -n "$n"p | awk '{print tolower($0)}' \
 		| sed 's/,//g' | sed 's/\.//g')
 		if echo "$pronouns" | grep -Fxq $chck; then
-			echo "<span color='#35559C'>$grmrk</span>" >> g_$3
+			echo "<span color='#35559C'>$grmrk</span>" >> g.$3
 		elif echo "$nouns_verbs" | grep -Fxq $chck; then
-			echo "<span color='#896E7A'>$grmrk</span>" >> g_$3
+			echo "<span color='#896E7A'>$grmrk</span>" >> g.$3
 		elif echo "$conjunctions" | grep -Fxq $chck; then
-			echo "<span color='#90B33B'>$grmrk</span>" >> g_$3
+			echo "<span color='#90B33B'>$grmrk</span>" >> g.$3
 		elif echo "$verbs" | grep -Fxq $chck; then
-			echo "<span color='#CF387F'>$grmrk</span>" >> g_$3
+			echo "<span color='#CF387F'>$grmrk</span>" >> g.$3
 		elif echo "$prepositions" | grep -Fxq $chck; then
-			echo "<span color='#D67B2D'>$grmrk</span>" >> g_$3
+			echo "<span color='#D67B2D'>$grmrk</span>" >> g.$3
 		elif echo "$adverbs" | grep -Fxq $chck; then
-			echo "<span color='#9C68BD'>$grmrk</span>" >> g_$3
+			echo "<span color='#9C68BD'>$grmrk</span>" >> g.$3
 		elif echo "$nouns_adjetives" | grep -Fxq $chck; then
-			echo "<span color='#496E60'>$grmrk</span>" >> g_$3
+			echo "<span color='#496E60'>$grmrk</span>" >> g.$3
 		elif echo "$adjetives" | grep -Fxq $chck; then
-			echo "<span color='#3E8A3B'>$grmrk</span>" >> g_$3
+			echo "<span color='#3E8A3B'>$grmrk</span>" >> g.$3
 		else
-			echo "$grmrk" >> g_$3
+			echo "$grmrk" >> g.$3
 		fi
 		let n++
 	done
@@ -72,6 +72,8 @@ function tts() {
 	[[ -n "$(sed -n 4p ./temp)" ]] && wget -q -U Mozilla -O $DT_r/tmp04.mp3 \
 	"https://translate.google.com/translate_tts?ie=UTF-8&tl=$2&q=$(sed -n 4p ./temp)"
 	cat tmp01.mp3 tmp02.mp3 tmp03.mp3 tmp04.mp3 > "$4"
+	find . -name "tmp*.mp3" -exec rm -rf {} \;
+
 }
 
 
@@ -276,8 +278,8 @@ function list_words() {
 		while [ $n -le "$(cat $1 | wc -l)" ]; do
 			s=$(sed -n "$n"p $1 | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
 			t=$(sed -n "$n"p $2 | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-			echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> A_$4
-			echo "$t"_"$s""" >> B_$4
+			echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> A.$4
+			echo "$t"_"$s""" >> B.$4
 			let n++
 		done
 	else
@@ -285,8 +287,8 @@ function list_words() {
 		while [ $n -le "$(cat $1 | wc -l)" ]; do
 			t=$(sed -n "$n"p $1 | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
 			s=$(sed -n "$n"p $2 | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-			echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> A_$4
-			echo "$t"_"$s""" >> B_$4
+			echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> A.$4
+			echo "$t"_"$s""" >> B.$4
 			let n++
 		done
 	fi

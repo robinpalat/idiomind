@@ -2,8 +2,6 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/trans/$lgs/others.conf
-
 dir="$DC/addons/dict/"
 wrd=$(echo "$1" | awk '{print tolower($0)}')
 Wrd="$1"
@@ -18,6 +16,7 @@ DM_tlt="$DM_tl/$tpe"
 DC_tlt="$DC_tl/$tpe"
 
 if [ "$1" = dlck ]; then
+	source $DS/ifs/trans/$lgs/others.conf
 	if [ "$2" = TRUE ]; then
 		stts=enables
 	else
@@ -35,6 +34,8 @@ if [ "$1" = dlck ]; then
 		fi
 		
 elif [ -z "$1" ]; then
+
+	source $DS/ifs/trans/$lgs/others.conf
 	if [ ! -d "$dir" ]; then
 		mkdir "$dir"
 		mkdir "$dir/enables"

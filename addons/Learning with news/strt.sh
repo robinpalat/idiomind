@@ -20,19 +20,21 @@ if [[ -z "$(cat $DC/addons/dict/.dicts)" ]]; then
 fi
 
 
-if echo "$STT" | grep "updating..."; then
+if ( [ -f $DT/.uptf ] && [ -z "$1" ] ); then
 	yad --image=info --width=420 --height=150 \
 	--window-icon=idiomind \
 	--title=Info --center --borders=5 \
 	--on-top --skip-taskbar --button="$cancel":2 \
-	--button=Ok:1 --text=" $updating"
+	--button=Ok:1 --text="$updating_pros"
 	ret=$?
 		if [ $ret -eq 1 ]; then
 			exit 1
 		elif [ $ret -eq 2 ]; then
-			"$DSF/tls.sh stop"
+			$DS/stop.sh feed
 		fi
 	exit 1
+elif ( [ -f $DT/.uptf ] && [ "$1" = A ] ); then
+	exit
 fi
 sleep 1
 
@@ -87,7 +89,7 @@ if [ -n "$feed" ]; then
 	
 	internet
 	
-	echo "- Feeds Mode updating... " > $DT/.uptf
+	echo "Feeds Mode updating... " > $DT/.uptf
 	
 	if [ "$1" != A ]; then
 		echo "$tpc" > $DC_s/cfg.8
@@ -114,10 +116,10 @@ if [ -n "$feed" ]; then
 	n=1
 	while [ $n -le $(cat rss | wc -l) ]; do
 			
-			if [[ "$(cat $DT/.uptf \
-			| grep -o "updating...")" = "updating..." ]]; then
-				echo "- feeds Mode updating ... )" > $DT/.uptf
-			fi
+			#if [[ "$(cat $DT/.uptf \
+			#| grep -o "updating...")" = "updating..." ]]; then
+				#echo "feeds Mode updating ..." > $DT/.uptf
+			#fi
 			
 			trgt=$(sed -n "$n"p rss)
 			lnk=$(sed -n "$n"p lnk)
@@ -143,26 +145,26 @@ if [ -n "$feed" ]; then
 
 				(
 				r=$(echo $(($RANDOM%1000)))
-				> twrd_$r
-				> swrd_$r
+				touch twrd.$r
+				touch swrd.$r
 				if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
-					vrbl="$srce"; lg=$lgt; aw=$DT/swrd_$r; bw=$DT/twrd_$r
+					vrbl="$srce"; lg=$lgt; aw=$DT/swrd.$r; bw=$DT/twrd.$r
 				else
-					vrbl="$trgt"; lg=$lgs; aw=$DT/twrd_$r; bw=$DT/swrd_$r
+					vrbl="$trgt"; lg=$lgs; aw=$DT/twrd.$r; bw=$DT/swrd.$r
 				fi
 				clean_3 "$vrbl" > $aw
 				twrd=$(cat $aw | sed '/^$/d')
 				translate "$twrd" auto $lg | sed 's/,//g' \
 				| sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
-				> A_$r
-				> B_$r
-				> g_$r
+				touch A.$r
+				touch B.$r
+				touch g.$r
 				sed -i 's/\. /\n/g' $bw
 				sed -i 's/\. /\n/g' $aw
 				snmk=$(echo "$trgt"  | sed 's/ /\n/g')
 				list_words $aw $bw $DT_r $r
-				lwrds=$(cat A_$r)
-				pwrds=$(cat B_$r | tr '\n' '_')
+				lwrds=$(cat A.$r)
+				pwrds=$(cat B.$r | tr '\n' '_')
 				if ( [ ! -f "./$nme.mp3" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ] ); then
 					[ -f "./$nme.mp3" ] && rm "./$nme.mp3"
 					[ -d "./$nme" ] && rm -r "./$nme"
@@ -195,11 +197,11 @@ if [ -n "$feed" ]; then
 		nmfile=$(sed -n "$n"p ls)
 		tgs=$(eyeD3 "$DM_tl/Feeds/conten/$nmfile")
 		trg=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
-		grep -v -x -v "$trg" "$DC_tl/Feeds/cfg.1" > "$DC_tl/Feeds/cfg.1._"
-		sed '/^$/d' "$DC_tl/Feeds/cfg.1._" > "$DC_tl/Feeds/cfg.1"
+		grep -v -x -v "$trg" "$DC_tl/Feeds/cfg.1" > "$DC_tl/Feeds/cfg.1.tmp"
+		sed '/^$/d' "$DC_tl/Feeds/cfg.1.tmp" > "$DC_tl/Feeds/cfg.1"
 		let n++
 	done
-	rm "$DC_tl/Feeds/cfg.1._"
+	rm "$DC_tl/Feeds/*.tmp"
 	
 	if [[ -d "$DM_tl/Feeds/conten" ]]; then
 	cd "$DM_tl/Feeds/conten"
@@ -212,5 +214,5 @@ if [ -n "$feed" ]; then
 	
 	exit
 else
-	exit
+	exit 0
 fi
