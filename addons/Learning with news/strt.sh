@@ -4,7 +4,7 @@
 source /usr/share/idiomind/ifs/c.conf
 source /usr/share/idiomind/ifs/trans/$lgs/rss.conf
 source $DS/ifs/add.sh
-source $DS/ifs/comms.sh
+source $DS/ifs/cmns.sh
 DSF="$DS/addons/Learning with news"
 DCF="$DC/addons/Learning with news"
 

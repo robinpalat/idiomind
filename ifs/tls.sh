@@ -3,7 +3,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/others.conf
-source $DS/ifs/comms.sh
+source $DS/ifs/cmns.sh
 
 if [ $1 = play ]; then
 
