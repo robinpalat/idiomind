@@ -421,7 +421,7 @@ elif [ $1 = new_sentence ]; then
 				fi
 		fi
 		if [[ ! -f "$DM_tlt/$nme.mp3" ]]; then
-		    msg "$error1" dialog-warning & exit 1
+		    msg "$error1" dialog-warning & exit
 		elif [[ -z "$trgt" ]]; then
 		    msg "$error1" dialog-warning & exit 1
 		elif [[ -z "$srce" ]]; then
@@ -569,7 +569,7 @@ elif [ $1 = new_word ]; then
 elif [ $1 = selecting_words_edit ]; then
 
 	c="$4"
-	DIC=$DS/addons/Dics/cnfg.sh
+	dct=$DS/addons/Dics/cnfg.sh
 
 	if [ "$3" = "F" ]; then
 
@@ -599,7 +599,7 @@ elif [ $1 = selecting_words_edit ]; then
 				list=$(cat "$slt" | sed 's/|//g')
 				n=1
 				while [ $n -le "$(cat "$slt" | head -50 | wc -l)" ]; do
-					chkst=$(echo "$list" |sed -n "$n"p)
+					chkst=$(echo "$list" | sed -n "$n"p)
 					echo "$chkst" | sed 's/TRUE//g' >> ./slts
 					let n++
 				done
@@ -622,8 +622,8 @@ elif [ $1 = selecting_words_edit ]; then
 				
 			else
 				translate "$trgt" auto $lgs > tr."$c"
-				UNI=$(cat tr."$c")
-				$DIC "$trgt" $DT_r swrd
+				srce=$(cat tr."$c")
+				$dct "$trgt" $DT_r swrd
 				
 				if [ -f "$trgt.mp3" ]; then
 				
@@ -633,7 +633,7 @@ elif [ $1 = selecting_words_edit ]; then
 					voice "$trgt" "$DM_tlt/words/$trgt.mp3"
 				fi
 				
-				tags_2 W "$trgt" "$UNI" "$5" "$DM_tlt/words/$trgt.mp3" >/dev/null 2>&1
+				tags_2 W "$trgt" "$srce" "$5" "$DM_tlt/words/$trgt.mp3" >/dev/null 2>&1
 				$DS/mngr.sh inx W "$trgt" "$tpc" "$nme"
 			fi
 			
@@ -718,7 +718,7 @@ elif [ $1 = selecting_words ]; then
 
 	DM_tlt="$DM_tl/$tpe"
 	DC_tlt="$DC_tl/$tpe"
-	DIC=$DS/addons/Dics/cnfg.sh
+	dct=$DS/addons/Dics/cnfg.sh
 	c=$(echo $(($RANDOM%100)))
 	DT_r=$(mktemp -d $DT/XXXXXX)
 	cd $DT_r
@@ -766,8 +766,8 @@ elif [ $1 = selecting_words ]; then
 			echo "$trgt" >> logw
 		else
 			translate "$trgt" auto $lgs > tr."$c"
-			UNI=$(cat ./tr."$c")
-			$DIC "$trgt" $DT_r swrd
+			srce=$(cat ./tr."$c")
+			$dct "$trgt" $DT_r swrd
 			
 			if [ -f "$trgt.mp3" ]; then
 			
@@ -778,7 +778,7 @@ elif [ $1 = selecting_words ]; then
 			fi
 			
 			if ( [ -f "$DM_tlt/words/$trgt.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
-			    tags_2 W "$trgt" "$UNI" "$2" "$DM_tlt/words/$trgt.mp3" >/dev/null 2>&1
+			    tags_2 W "$trgt" "$srce" "$2" "$DM_tlt/words/$trgt.mp3" >/dev/null 2>&1
 			    $DS/mngr.sh inx W "$trgt" "$3"
 			fi
 		fi

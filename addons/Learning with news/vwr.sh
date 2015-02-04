@@ -49,7 +49,7 @@ if [[ $1 = V1 ]]; then
 		echo "$lwrd" | awk '{print $0""}' | $yad --list \
 		--window-icon=idiomind --scroll --quoted-output \
 		--skip-taskbar --center --title=" " --borders=20 \
-		--text="<big><big>$trg</big></big> <a href='$lnk'>More</a>\\n\\n<i>$srce</i>\\n\\n\\n" \
+		--text="<big><big>$trg</big></big> <a href='$lnk'>$more</a>\\n\\n<i>$srce</i>\\n\\n\\n" \
 		--width="$wth" --height="$eht" --center --no-headers \
 		--column=$lgtl:TEXT --column=$lgsl:TEXT --selectable-labels \
 		--expand-column=0 --limit=20 \

@@ -3,6 +3,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/others.conf
+source $DS/ifs/comms.sh
 
 if [ $1 = play ]; then
 
@@ -26,6 +27,7 @@ elif [ $1 = info ]; then
 	fi
 	rm $page
 	exit
+
 
 elif [ $1 = cnfg ]; then
 
@@ -251,27 +253,19 @@ elif [ $1 = web ]; then
 elif [ $1 = updt ]; then
 
 	cd $DT
-	curl -v www.google.com 2>&1 | \
-	grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
-	$yad --window-icon=idiomind --on-top \
-	--image="info" --name=idiomind \
-	--text="<b>$conn_err  \\n  </b>" \
-	--image-on-top --center --sticky \
-	--width=420 --height=150 --borders=5 \
-	--skip-taskbar --title=Idiomind \
-	--button="  Ok  ":0
-	 >&2; exit 1;}
+	internet
+	
 	[[ -f release ]] && rm -f release
 	wget http://idiomind.sourceforge.net/info/release
 	
 	if [ "$(sed -n 1p $DT/release)" != "$(idiomind -v)" ]; then
 		yad --text="<big><b> $new_version </b></big>\n\n" \
-		--image=info --title="Idiomind" --window-icon=idiomind \
+		--image=info --title=" " --window-icon=idiomind \
 		--on-top --skip-taskbar --sticky --fixed \
 		--center --name=idiomind --borders=10 --always-print-result \
 		--button="$later":2 \
 		--button="$download":0 \
-		--width=430 --height=130
+		--width=430 --height=140
 		ret=$?
 		if [ "$ret" -eq 0 ]; then
 			xdg-open https://sourceforge.net/projects/idiomind/files/idiomind.deb/download & exit
@@ -283,8 +277,8 @@ elif [ $1 = updt ]; then
 		fi
 	else
 		yad --text="<big><b> $nonew_version  </b></big>\n\n  $nonew_version2" \
-		--image=info --title="Idiomind" --window-icon=idiomind \
-		--on-top --skip-taskbar --sticky --width=430 --height=130 \
+		--image=info --title=" " --window-icon=idiomind \
+		--on-top --skip-taskbar --sticky --width=430 --height=140 \
 		--center --name=idiomind --fixed --borders=10 \
 		--button="$close":1
 	fi
@@ -314,12 +308,12 @@ elif [ $1 = srch ]; then
 		
 		if [ "$(sed -n 1p $DT/release)" != "$(idiomind -v)" ]; then
 			yad --text="<big><b> $new_version  </b></big>\n\n" \
-			--image=info --title="Idiomind" --window-icon=idiomind \
+			--image=info --title=" " --window-icon=idiomind \
 			--on-top --skip-taskbar --sticky --always-print-result \
 			--center --name=idiomind --borders=10 \
 			--button="$later":2 \
 			--button="$download":0 \
-			--width=430 --height=130
+			--width=430 --height=140
 			ret=$?
 			if [ "$ret" -eq 0 ]; then
 				xdg-open $pkg & exit

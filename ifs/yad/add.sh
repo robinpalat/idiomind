@@ -98,7 +98,7 @@ function dlg_radiolist_1() {
 function dlg_checklist_1() {
     
         cat "$1" | awk '{print "FALSE\n"$0}' | \
-        yad --list --checklist --title="$selector" \
+        yad --list --checklist --title="$word_selector" \
         --on-top --text="<small> $2 </small>" \
         --center --sticky --no-headers \
         --buttons-layout=end --skip-taskbar --width=400 \

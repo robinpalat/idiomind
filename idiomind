@@ -481,7 +481,7 @@ elif [[ $1 = topic ]]; then
 				cat "$ls2" | yad \
 				--no-headers --list --plug=$KEY --tabnum=2 \
 				--expand-column=1 --ellipsize=END --print-all \
-				--column=Name:TEXT --column=Review:CHK \
+				--column=Name:TEXT \
 				--dclick-action='./vwr.sh v2' &
 				yad --text-info --plug=$KEY --margins=14 \
 				--wrap --text="$itxt2" --editable --tabnum=3 --fore='gray40' \
@@ -506,7 +506,7 @@ elif [[ $1 = topic ]]; then
 				cat "$ls2" | yad \
 				--no-headers --list --plug=$KEY --tabnum=2 \
 				--expand-column=0 --ellipsize=END --print-all \
-				--column=Name:TEXT  \
+				--column=Name:TEXT \
 				--dclick-action='./vwr.sh v2' &
 				yad --text-info --plug=$KEY --margins=14 \
 				--tabnum=3 --text="$itxt2" --fore='gray40' --wrap --editable \
@@ -655,7 +655,7 @@ elif [[ $1 = topic ]]; then
 			cat "$ls2" | yad \
 			--no-headers --list --plug=$KEY --tabnum=2 \
 			--expand-column=1 --ellipsize=END --print-all \
-			--column=Name:TEXT --column=Review:CHK \
+			--column=Name:TEXT \
 			--dclick-action='./vwr.sh v2' &
 			yad --text-info --plug=$KEY --margins=14 --text="$itxt2" \
 			--tabnum=3 --fore='gray40' --wrap --filename="$nt" \
@@ -776,7 +776,7 @@ elif [[ $1 = topic ]]; then
 				cat "$ls2" | yad \
 				--no-headers --list --plug=$KEY --tabnum=2 \
 				--expand-column=1 --ellipsize=END --print-all \
-				--column=Name:TEXT --column=Review:CHK \
+				--column=Name:TEXT \
 				--dclick-action='./vwr.sh v2' &
 				yad --text-info --plug=$KEY --margins=14 \
 				--text="$itxt2" \
@@ -802,7 +802,7 @@ elif [[ $1 = topic ]]; then
 				cat "$ls2" | yad \
 				--no-headers --list --plug=$KEY --tabnum=2 \
 				--expand-column=1 --ellipsize=END --print-all \
-				--column=Name:TEXT --column=Review:CHK \
+				--column=Name:TEXT \
 				--dclick-action='./vwr.sh v2' &
 				yad --text-info --plug=$KEY --margins=14 \
 				--text="$itxt2" \
@@ -949,7 +949,7 @@ elif [[ $1 = topic ]]; then
 			cat "$ls2" | yad \
 			--no-headers --list --plug=$KEY --tabnum=2 \
 			--expand-column=1 --ellipsize=END --print-all \
-			--column=Name:TEXT --column=Review:CHK \
+			--column=Name:TEXT \
 			--dclick-action='./vwr.sh v2' &
 			yad --text-info --plug=$KEY --margins=14 \
 			--text="$itxt2" \

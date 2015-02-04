@@ -41,7 +41,6 @@ sleep 1
 dct="$DS/addons/Dics/cnfg.sh"
 feed=$(sed -n 1p "$DCF/$lgtl/link")
 rsrc=$(cat "$DCF/$lgtl/.rss")
-
 icon=$DS/images/cnn.png
 date=$(date "+%a %d %B")
 c=$(echo $(($RANDOM%1000)))
@@ -115,11 +114,6 @@ if [ -n "$feed" ]; then
 	
 	n=1
 	while [ $n -le $(cat rss | wc -l) ]; do
-			
-			#if [[ "$(cat $DT/.uptf \
-			#| grep -o "updating...")" = "updating..." ]]; then
-				#echo "feeds Mode updating ..." > $DT/.uptf
-			#fi
 			
 			trgt=$(sed -n "$n"p rss)
 			lnk=$(sed -n "$n"p lnk)
