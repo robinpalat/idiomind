@@ -17,7 +17,6 @@ if [ -d "$DC_tlt" ]; then
 		
 		mkdir "$DM_tlt" "$DM_tlt/words" "$DM_tlt/words/images"
 		cd "$DC_tlt"; touch cfg.0 cfg.1 cfg.2 cfg.3 cfg.4 cfg.5
-		mkdir ./practice
 		echo "$(date +%F)" > cfg.12
 		echo "1" > cfg.8
 		cd $HOME
