@@ -17,15 +17,12 @@ elif [ $1 = dclk ]; then
 
 audio="$DM_tl/Feeds/kept/.audio"
 contn="$DM_tl/Feeds/conten"
-
-wdr="$(echo $3 | awk '{print tolower($0)}')"
-echo "$wdr" > $DT/word.x
+echo "$3" > $DT/word.x
 var="$2"
-
-if [ -f "$audio/$wdr.mp3" ]; then 
-	play "$audio/$wdr.mp3"
+if [ -f "$audio/$3.mp3" ]; then 
+	play "$audio/$3.mp3"
 else
-	play "$contn/$var/$wdr.mp3"
+	play "$contn/$var/$3.mp3"
 fi
 elif [ $1 = stop ]; then
 killall rsstail

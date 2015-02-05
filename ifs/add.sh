@@ -16,38 +16,39 @@ function internet() {
 }
 
 
-function grammar_1() {
+function check_grammar_1() {
 	
-	cd $2; n=1
-	while [ $n -le $(echo "$1" | wc -l) ]; do
-		grmrk=$(echo "$1" | sed -n "$n"p)
-		chck=$(echo "$1" | sed -n "$n"p | awk '{print tolower($0)}' \
+	g=$(echo "$trgt"  | sed 's/ /\n/g')
+	cd $1; touch A.$r B.$r g.$r; n=1
+	while [ $n -le $(echo "$g" | wc -l) ]; do
+		grmrk=$(echo "$g" | sed -n "$n"p)
+		chck=$(echo "$g" | sed -n "$n"p | awk '{print tolower($0)}' \
 		| sed 's/,//g' | sed 's/\.//g')
 		if echo "$pronouns" | grep -Fxq $chck; then
-			echo "<span color='#35559C'>$grmrk</span>" >> g.$3
+			echo "<span color='#35559C'>$grmrk</span>" >> g.$2
 		elif echo "$nouns_verbs" | grep -Fxq $chck; then
-			echo "<span color='#896E7A'>$grmrk</span>" >> g.$3
+			echo "<span color='#896E7A'>$grmrk</span>" >> g.$2
 		elif echo "$conjunctions" | grep -Fxq $chck; then
-			echo "<span color='#90B33B'>$grmrk</span>" >> g.$3
+			echo "<span color='#90B33B'>$grmrk</span>" >> g.$2
 		elif echo "$verbs" | grep -Fxq $chck; then
-			echo "<span color='#CF387F'>$grmrk</span>" >> g.$3
+			echo "<span color='#CF387F'>$grmrk</span>" >> g.$2
 		elif echo "$prepositions" | grep -Fxq $chck; then
-			echo "<span color='#D67B2D'>$grmrk</span>" >> g.$3
+			echo "<span color='#D67B2D'>$grmrk</span>" >> g.$2
 		elif echo "$adverbs" | grep -Fxq $chck; then
-			echo "<span color='#9C68BD'>$grmrk</span>" >> g.$3
+			echo "<span color='#9C68BD'>$grmrk</span>" >> g.$2
 		elif echo "$nouns_adjetives" | grep -Fxq $chck; then
-			echo "<span color='#496E60'>$grmrk</span>" >> g.$3
+			echo "<span color='#496E60'>$grmrk</span>" >> g.$2
 		elif echo "$adjetives" | grep -Fxq $chck; then
-			echo "<span color='#3E8A3B'>$grmrk</span>" >> g.$3
+			echo "<span color='#3E8A3B'>$grmrk</span>" >> g.$2
 		else
-			echo "$grmrk" >> g.$3
+			echo "$grmrk" >> g.$2
 		fi
 		let n++
 	done
 }
 
 
-function grammar_2() {
+function check_grammar_2() {
 
 	if echo "$pronouns" | grep -Fxq "${1,,}"; then echo 'Pron. ';
 	elif echo "$conjunctions" | grep -Fxq "${1,,}"; then echo 'Conj. ';
@@ -89,7 +90,7 @@ function clean_1() {
 	echo "$(echo "$1" | sed ':a;N;$!ba;s/\n/ /g' \
 	| sed 's/"//g' | sed 's/“//g' | sed s'/&//'g \
 	| sed 's/”//g' | sed s'/://'g | sed "s/’/'/g" \
-	| sed 's/^[ \t]*//;s/[ \t]*$//')"
+	| sed 's/  / /g' | sed 's/   / /g' | sed 's/^[ \t]*//;s/[ \t]*$//')"
 }
 
 
@@ -104,16 +105,22 @@ function clean_2() { # name topic
 
 function clean_3() {
 	
-	echo "$(echo "$1" | sed 's/ /\n/g' | grep -v '^.$' \
+	cd $1; touch swrd.$2 twrd.$2
+	if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
+		vrbl="$srce"; lg=$lgt; aw=swrd.$2; bw=twrd.$2
+	else
+		vrbl="$trgt"; lg=$lgs; aw=twrd.$2; bw=swrd.$2
+	fi
+	echo "$vrbl" | sed 's/ /\n/g' | grep -v '^.$' \
 	| grep -v '^..$' | sed -n 1,40p | sed s'/&//'g \
 	| sed 's/,//g' | sed 's/\?//g' | sed 's/\¿//g' \
 	| sed 's/;//g' | sed 's/\!//g' | sed 's/\¡//g' \
 	| tr -d ')' | tr -d '(' | sed 's/\]//g' | sed 's/\[//g' \
-	| sed 's/\.//g' | sed 's/  / /g' | sed 's/ /\. /g')"
+	| sed 's/\.//g' | sed 's/  / /g' | sed 's/ /\. /g' > $aw
 }
 
 
-function tags_1() {
+function add_tags_1() {
 	
 	eyeD3 --set-encoding=utf8 \
 	-t I$1I1I0I"$2"I$1I1I0I \
@@ -121,7 +128,7 @@ function tags_1() {
 }
 
 
-function tags_2() {
+function add_tags_2() {
 	
 	eyeD3 --set-encoding=utf8 \
 	-t IWI1I0I"$2"IWI1I0I \
@@ -130,14 +137,14 @@ function tags_2() {
 }
 
 
-function tags_3() {
+function add_tags_3() {
 	
 	eyeD3 --set-encoding=utf8 \
 	-A IWI3I0I"$2"IWI3I0IIPWI3I0I"$3"IPWI3I0IIGMI3I0I"$4"IGMI3I0I "$5"
 }
 
 
-function tags_4() {
+function add_tags_4() {
 	
 	eyeD3 --set-encoding=utf8 \
 	-t ISI1I0I"$2"ISI1I0I \
@@ -146,34 +153,34 @@ function tags_4() {
 }
 
 
-function tags_5() {
+function add_tags_5() {
 	
 	eyeD3 --set-encoding=utf8 \
 	-a I$1I2I0I"$2"I$1I2I0I "$3"
 }
 
 
-function tags_6() {
+function add_tags_6() {
 	
 	eyeD3 --set-encoding=utf8 \
 	-A IWI3I0I"$2"IWI3I0I "$3"
 }
 
 
-function tags_7() {
+function add_tags_7() {
 	
 	eyeD3 --set-encoding=utf8 \
 	-t ISI1I0I"$2"ISI1I0I "$3"
 }
 
 
-function tags_8() {
+function add_tags_8() {
 	
 	eyeD3 -p I$1I4I0I"$2"I$1I4I0I "$3"
 }
 
 
-function tags_9() {
+function add_tags_9() {
 	
 	eyeD3 --set-encoding=utf8 -A IWI3I0I"$2"IWI3I0IIPWI3I0I"$3"IPWI3I0I "$4"
 }
@@ -212,7 +219,7 @@ function voice() {
 }
 
 
-function audio_recognize() {
+function audio_recognizer() {
 	
 	echo "$(wget -q -U "Mozilla/5.0" --post-file "$1" --header="Content-Type: audio/x-flac; rate=16000" \
 	-O - "https://www.google.com/speech-api/v2/recognize?&lang="$2"-"$3"&key=$4")"
@@ -223,26 +230,26 @@ function translate() {
 	
 	result=$(curl -s -i --user-agent "" -d "sl=$2" -d "tl=$3" --data-urlencode text="$1" https://translate.google.com)
 	encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
-	t=$(iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8)
-	echo "$t"
+	trd=$(iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8)
+	echo "$trd"
 }
 
 
-function scrot_1() {
+function set_image_1() {
 	
-	scrot -s --quality 70 img.jpg
+	set_image -s --quality 70 img.jpg
 	/usr/bin/convert -scale 110x90! img.jpg ico.jpg
 }
 
 
-function scrot_2() {
+function set_image_2() {
 	
 	/usr/bin/convert -scale 450x270! img.jpg imgs.jpg
 	eyeD3 --add-image imgs.jpg:ILLUSTRATION "$1"
 }
 
 
-function scrot_3() {
+function set_image_3() {
 	
 	/usr/bin/convert -scale 100x90! img.jpg imgs.jpg
 	/usr/bin/convert -scale 360x240! img.jpg imgt.jpg
@@ -251,7 +258,7 @@ function scrot_3() {
 }
 
 
-function scrot_4() {
+function set_image_4() {
 
 	scrot -s --quality 70 "$1.temp.jpeg"
 	/usr/bin/convert -scale 100x90! "$1.temp.jpeg" "$1"_temp.jpeg
@@ -261,7 +268,7 @@ function scrot_4() {
 }
 
 
-function scrot_5() {
+function set_image_5() {
 	
 	scrot -s --quality 70 "$1.temp.jpeg"
 	/usr/bin/convert -scale 450x270! "$1.temp.jpeg" "$1"_temp.jpeg
@@ -271,40 +278,39 @@ function scrot_5() {
 
 
 function list_words() {
-    
-	cd $3
+	
+	sed -i 's/\. /\n/g' $bw
+	sed -i 's/\. /\n/g' $aw
+	cd $1; touch A.$2 B.$2 g.$2; n=1
 	if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
-		n=1
-		while [ $n -le "$(cat $1 | wc -l)" ]; do
-			s=$(sed -n "$n"p $1 | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-			t=$(sed -n "$n"p $2 | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-			echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> A.$4
-			echo "$t"_"$s""" >> B.$4
+		while [ $n -le "$(cat $aw | wc -l)" ]; do
+			s=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
+			t=$(sed -n "$n"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
+			echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> A.$2
+			echo "$t"_"$s""" >> B.$2
 			let n++
 		done
 	else
-		n=1
-		while [ $n -le "$(cat $1 | wc -l)" ]; do
-			t=$(sed -n "$n"p $1 | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-			s=$(sed -n "$n"p $2 | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-			echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> A.$4
-			echo "$t"_"$s""" >> B.$4
+		while [ $n -le "$(cat $aw | wc -l)" ]; do
+			t=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
+			s=$(sed -n "$n"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
+			echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> A.$2
+			echo "$t"_"$s""" >> B.$2
 			let n++
 		done
 	fi
 }
 
 
-function get_words() {
-    
+function fetch_audio() {
+	
+	n=1
 	if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
-		n=1
 		while [ $n -le $(cat $2 | wc -l) ]; do
 			$dct $(sed -n "$n"p $2) $DT_r
 			let n++
 		done
 	else
-		n=1
 		while [ $n -le $(cat $1 | wc -l) ]; do
 			$dct $(sed -n "$n"p $1) $DT_r
 			let n++
@@ -313,22 +319,21 @@ function get_words() {
 }
 
 
-function get_words_2() {
+function fetch_audio_2() {
 	
+	n=1
 	if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
-		n=1
-		while [ $n -le $(cat $bw | wc -l) ]; do
-			t=$(sed -n "$n"p $bw)
-			$dct "$t" $DT_r swrd
-			mv "$t.mp3" "$nme/$t.mp3"
+		while [ $n -le $(cat $2 | wc -l) ]; do
+			fl=$(sed -n "$n"p $2)
+			$dct "$fl" $DT_r swrd
+			mv "${fl^}.mp3" "./$nme/${fl^}.mp3"
 			let n++
 		done
 	else
-		n=1
-		while [ $n -le $(cat $aw | wc -l) ]; do
-			t=$(sed -n "$n"p $aw)
-			$dct "$t" $DT_r swrd
-			mv "$t.mp3" "$nme/$t.mp3"
+		while [ $n -le $(cat $1 | wc -l) ]; do
+			fl=$(sed -n "$n"p $1)
+			$dct "$fl" $DT_r swrd
+			mv "${fl^}.mp3" "./$nme/${fl^}.mp3"
 			let n++
 		done
 	fi
@@ -360,4 +365,17 @@ function list_words_3() {
 		| head -n40 | egrep -v "FALSE" | egrep -v "TRUE" > lst
 	fi
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 

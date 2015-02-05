@@ -1,5 +1,4 @@
 #!/bin/bash
-YAD=yad
 
 u=$(echo "$(whoami)")
 nmt=$(sed -n 1p /tmp/.idmtp1.$u/idmimp_X015x/ls)

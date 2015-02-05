@@ -3,8 +3,9 @@
 
 source /usr/share/idiomind/ifs/c.conf
 dir="$DC/addons/dict/"
-wrd=$(echo "$1" | awk '{print tolower($0)}')
-Wrd="$1"
+
+wrd="$1"
+Wrd="${wrd^}"
 DT_r="$2"
 
 if [ ! -f $DT_r/.topic ]; then
@@ -144,37 +145,41 @@ elif [ -z "$1" ]; then
 		ls -d -1 $PWD/*.auto >> "$dir/.dicts"
 		rm -f "$D" & exit 1
 
-# word
+
 elif [ "$3" = swrd ]; then
+
 	cd $DT_r
-	if [ -f "$DM_tl/.share/$wrd.mp3" ]; then
-			cp -f "$DM_tl/.share/$wrd.mp3" "$Wrd.mp3" && exit
+	if [ -f "$DM_tl/.share/$Wrd.mp3" ]; then
+			cp -f "$DM_tl/.share/$Wrd.mp3" "$Wrd.mp3" && exit
 	else
 		n=1
 		while [ $n -le $(cat "$dir/.dicts" | wc -l) ]; do
-			dict=$(sed -n "$n"p "$dir/.dicts")
-			"$dict" "$wrd"
+			sh "$(sed -n "$n"p $dir/.dicts)" "$wrd"
 			if [ -f "$wrd.mp3" ]; then
-				cp -f "$wrd.mp3" "$Wrd.mp3" && break
+				mv "$wrd.mp3" "$Wrd.mp3"
+				break && exit
 			fi
 			let n++
 		done
+		exit
 	fi
-# words lists
+
 else
+
 	cd $DT_r
-	if [ -f "$DM_tl/.share/$wrd.mp3" ]; then
-		echo "$wrd.mp3" >> "$DC_tlt/cfg.5" && exit
+	if [ -f "$DM_tl/.share/$Wrd.mp3" ]; then
+		echo "$Wrd.mp3" >> "$DC_tlt/cfg.5" && exit
 	else
 		n=1
-		while [ $n -le $(cat "$dir/.dicts" | wc -l) ]; do
-			dict=$(sed -n "$n"p "$dir/.dicts")
-			"$dict" "$wrd"
+		while [ $n -le $(cat $dir/.dicts | wc -l) ]; do
+			sh "$(sed -n "$n"p $dir/.dicts)" "$wrd"
 			if [ -f "$wrd.mp3" ]; then
-				mv "$wrd.mp3" "$DM_tl/.share/$wrd.mp3"
-				echo "$wrd.mp3" >> "$DC_tlt/cfg.5" && break
+				mv "$wrd.mp3" "$DM_tl/.share/$Wrd.mp3"
+				echo "$Wrd.mp3" >> "$DC_tlt/cfg.5"
+				break && exit
 			fi
 			let n++
 		done
+		exit
 	fi
 fi

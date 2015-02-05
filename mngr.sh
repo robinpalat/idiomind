@@ -417,9 +417,9 @@ elif [ $1 = dli ]; then
 				killall edt1 edt2
 				rm -f "$flw"
 				cd "$DC_tlt/practice"
-				sed -i 's/'"$itdl"'//g' ./fin.tmp
-				sed -i 's/'"$itdl"'//g' ./lwin.tmp
-				sed -i 's/'"$itdl"'//g' ./mcin.tmp
+				sed -i 's/'"$itdl"'//g' ./fin
+				sed -i 's/'"$itdl"'//g' ./mcin
+				sed -i 's/'"$itdl"'//g' ./lwin
 				cd ..
 				grep -v -x -F "$itdl" ./.cfg.11 > ./cfg.11.tmp
 				sed '/^$/d' ./cfg.11.tmp > ./.cfg.11
@@ -445,7 +445,7 @@ elif [ $1 = dli ]; then
 				(sleep 1 && kill -9 $(pgrep -f "$yad --form "))
 				rm -f "$fls"
 				cd "$DC_tlt/practice"
-				sed -i 's/'"$itdl"'//g' ./lsin.tmp
+				sed -i 's/'"$itdl"'//g' ./lsin
 				cd ..
 				grep -v -x -F "$itdl" ./.cfg.11 > ./cfg.11.tmp
 				sed '/^$/d' ./cfg.11.tmp > ./.cfg.11
@@ -470,10 +470,10 @@ elif [ $1 = dli ]; then
 			if [ $ret -eq 0 ]; then
 				(sleep 1 && kill -9 $(pgrep -f "$yad --form "))
 				cd "$DC_tlt/practice"
-				sed -i 's/'"$itdl"'//g' ./fin.tmp
-				sed -i 's/'"$itdl"'//g' ./lwin.tmp
-				sed -i 's/'"$itdl"'//g' ./mcin.tmp
-				sed -i 's/'"$itdl"'//g' ./lsin.tmp
+				sed -i 's/'"$itdl"'//g' ./fin
+				sed -i 's/'"$itdl"'//g' ./mcin
+				sed -i 's/'"$itdl"'//g' ./lwin
+				sed -i 's/'"$itdl"'//g' ./lsin
 				cd ..
 				grep -v -x -F "$itdl" ./.cfg.11 > ./cfg.11.tmp
 				sed '/^$/d' ./cfg.11.tmp > ./.cfg.11
@@ -600,26 +600,26 @@ elif [ "$1" = edt ]; then
 					sed '/^$/d' "$DC_tlt/cfg.6.tmp" > "$DC_tlt/cfg.6"
 					rm "$DC_tlt/cfg.6.tmp"
 				fi
-				tags_8 W "$mrk2" "$DM_tlt/words/$nme".mp3 >/dev/null 2>&1
+				add_tags_8 W "$mrk2" "$DM_tlt/words/$nme".mp3 >/dev/null 2>&1
 			fi
 			
 			if [[ "$audo" != "$file" ]]; then
 				eyeD3 --write-images=$DT "$file"
 				cp -f "$audo" "$DM_tlt/words/$nme.mp3"
-				tags_2 W "$TGT" "$srce" "$DM_tlt/words/$nme.mp3" >/dev/null 2>&1
+				add_tags_2 W "$TGT" "$srce" "$DM_tlt/words/$nme.mp3" >/dev/null 2>&1
 				eyeD3 --add-image $DT/ILLUSTRATION.jpeg:ILLUSTRATION \
 				"$DM_tlt/words/$nme.mp3" >/dev/null 2>&1
 				[[ -d $DT/idadtmptts ]] && rm -fr $DT/idadtmptts
 			fi
 			
 			if [[ "$srce" != "$SRC" ]]; then
-				tags_5 W "$srce" "$file" >/dev/null 2>&1
+				add_tags_5 W "$srce" "$file" >/dev/null 2>&1
 			fi
 			
 			infm="$(echo $exm1 && echo $dftn && echo $ntes)"
 			if [ "$infm" != "$inf" ]; then
 				impr=$(echo "$infm" | tr '\n' '_')
-				tags_6 W "$impr" "$file" >/dev/null 2>&1
+				add_tags_6 W "$impr" "$file" >/dev/null 2>&1
 				echo "eitm.$tpc.eitm" >> \
 				$DC/addons/stats/.log &
 			fi
@@ -682,7 +682,7 @@ elif [ "$1" = edt ]; then
 					sed '/^$/d' "$DC_tlt/cfg.6.tmp" > "$DC_tlt/cfg.6"
 					rm "$DC_tlt/cfg.6.tmp"
 				fi
-				tags_8 S "$mrk2" "$DM_tlt/$nme.mp3" >/dev/null 2>&1
+				add_tags_8 S "$mrk2" "$DM_tlt/$nme.mp3" >/dev/null 2>&1
 			fi
 			
 			if [ -n "$audo" ]; then
@@ -691,44 +691,32 @@ elif [ "$1" = edt ]; then
 				
 					cp -f "$audo" "$DM_tlt/$nme.mp3"
 					eyeD3 --remove-all "$DM_tlt/$nme.mp3"
-					tags_1 S "$trgt" "$srce" "$DM_tlt/$nme.mp3" >/dev/null 2>&1
+					add_tags_1 S "$trgt" "$srce" "$DM_tlt/$nme.mp3" >/dev/null 2>&1
+					source $DS/default/dicts/$lgt
 					
 					(
-						DT_r=$(mktemp -d $DT/XXXXXX)
-						cd $DT_r
-						touch swrd
-						touch twrd
-						if [ $lgt = ja ] || [ $lgt = zh-cn ]; then
-							vrbl="$srce"; lg=$lgt; aw=$DT/swrd; bw=$DT/twrd
-						else
-							vrbl="$trgt"; lg=$lgs; aw=$DT/twrd; bw=$DT/swrd
-						fi
-						
-						clean_3 "$vrbl" > $aw
-						src=$(translate "$(cat $aw | sed '/^$/d')" auto $lg)
-						echo "$src" | sed 's/,//g' | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
-						sed -i 's/\. /\n/g' $bw
-						sed -i 's/\. /\n/g' $aw
-						snmk=$(echo "$trgt"  | sed 's/ /\n/g')
-						source $DS/default/dicts/$lgt
-						grammar_1 "$snmk" $DT_r
-						list_words $aw $bw $DT_r
-						grmrk=$(cat g_ | sed ':a;N;$!ba;s/\n/ /g')
-						lwrds=$(cat A_)
-						pwrds=$(cat B_ | tr '\n' '_')
-						tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$nme.mp3" >/dev/null 2>&1
-						rm -f grmrk
-						get_words $aw $bw
-						
-						[[ -d $DT_r ]] && rm -fr $DT_r
-						rm -f $DT/twrd $DT/swrd
+					DT_r=$(mktemp -d $DT/XXXXXX)
+					cd $DT_r
+					r=$(echo $(($RANDOM%1000)))
+					clean_3 $DT_r $r
+					translate "$(cat $aw | sed '/^$/d')" auto $lg | sed 's/,//g' \
+					| sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
+					check_grammar_1 $DT_r $r
+					list_words $DT_r $r
+					grmrk=$(cat g.$r | sed ':a;N;$!ba;s/\n/ /g')
+					lwrds=$(cat A.$r)
+					pwrds=$(cat B.$r | tr '\n' '_')
+					add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$nme.mp3" >/dev/null 2>&1
+					fetch_audio $aw $bw
+					
+					[[ -d $DT_r ]] && rm -fr $DT_r
 					) &
 				fi
 			fi
 			
 			if [ -f $DT/tmpau.mp3 ]; then
 				cp -f $DT/tmpau.mp3 "$DM_tlt/$nme.mp3"
-				tags_1 S "$trgt" "$srce" "$DM_tlt/$nme.mp3" >/dev/null 2>&1
+				add_tags_1 S "$trgt" "$srce" "$DM_tlt/$nme.mp3" >/dev/null 2>&1
 				rm -f $DT/tmpau.mp3
 			fi
 
@@ -743,37 +731,25 @@ elif [ "$1" = edt ]; then
 				sed -i "s/${nme}/${fln}/" "$DC_tlt/.cfg.11"
 				sed -i "s/${nme}/${fln}/" "$DC_tlt/practice/lsin.tmp"
 				mv -f "$DM_tlt/$nme".mp3 "$DM_tlt/$fln".mp3
-				tags_7 S "$trgt" "$DM_tlt/$fln.mp3" >/dev/null 2>&1
+				add_tags_7 S "$trgt" "$DM_tlt/$fln.mp3" >/dev/null 2>&1
+				source $DS/default/dicts/$lgt
 
 				(
-					DT_r=$(mktemp -d $DT/XXXXXX)
-					cd $DT_r
-					touch swrd
-					touch twrd
-					if [ $lgt = ja ] || [ $lgt = zh-cn ]; then
-						vrbl="$srce"; lg=$lgt; aw=$DT/swrd; bw=$DT/twrd
-					else
-						vrbl="$trgt"; lg=$lgs; aw=$DT/twrd; bw=$DT/swrd
-					fi
-					
-					clean_3 "$vrbl" > $aw
-					twrd=$(cat $aw | sed '/^$/d')
-					src=$(translate "$twrd" auto $lg)
-					echo "$src" | sed 's/,//g' | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
-					sed -i 's/\. /\n/g' $bw
-					sed -i 's/\. /\n/g' $aw
-					snmk=$(echo "$trgt"  | sed 's/ /\n/g')
-					source $DS/default/dicts/$lgt
-					grammar_1 "$snmk" $DT_r
-					list_words $aw $bw $DT_r
-					grmrk=$(cat g_ | sed ':a;N;$!ba;s/\n/ /g')
-					lwrds=$(cat A_)
-					pwrds=$(cat B_ | tr '\n' '_')
-					tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fln".mp3 >/dev/null 2>&1
-					rm -f grmrk
-					get_words $aw $bw
-				
-					[[ -d $DT_r ]] && rm -fr $DT_r
+				DT_r=$(mktemp -d $DT/XXXXXX)
+				cd $DT_r
+				r=$(echo $(($RANDOM%1000)))
+				clean_3 $DT_r $r
+				translate "$(cat $aw | sed '/^$/d')" auto $lg | sed 's/,//g' \
+				| sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
+				check_grammar_1 $DT_r $r
+				list_words $DT_r $r
+				grmrk=$(cat g.$r | sed ':a;N;$!ba;s/\n/ /g')
+				lwrds=$(cat A.$r)
+				pwrds=$(cat B.$r | tr '\n' '_')
+				add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fln".mp3 >/dev/null 2>&1
+				fetch_audio $aw $bw
+			
+				[[ -d $DT_r ]] && rm -fr $DT_r
 				) &
 				
 				nme="$fln"
@@ -781,7 +757,7 @@ elif [ "$1" = edt ]; then
 			
 			if [ "$srce" != "$src" ]; then
 				file="$DM_tlt/$nme.mp3"
-				tags_5 S "$srce" "$file"
+				add_tags_5 S "$srce" "$file"
 			fi
 			
 			if [ "$tpc" != "$topc" ]; then

@@ -134,38 +134,30 @@ if [ -n "$feed" ]; then
 				fi
 
 				if ( [ -f "./$nme.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
-						tags_1 S "$trgt" "$srce" "./$nme.mp3"
+						add_tags_1 S "$trgt" "$srce" "./$nme.mp3"
 				fi
 
 				(
+
 				r=$(echo $(($RANDOM%1000)))
-				touch twrd.$r
-				touch swrd.$r
-				if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
-					vrbl="$srce"; lg=$lgt; aw=$DT/swrd.$r; bw=$DT/twrd.$r
-				else
-					vrbl="$trgt"; lg=$lgs; aw=$DT/twrd.$r; bw=$DT/swrd.$r
-				fi
-				clean_3 "$vrbl" > $aw
-				twrd=$(cat $aw | sed '/^$/d')
-				translate "$twrd" auto $lg | sed 's/,//g' \
+				clean_3 $DT_r $r
+				translate "$(cat $aw | sed '/^$/d')" auto $lg | sed 's/,//g' \
 				| sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
-				touch A.$r
-				touch B.$r
-				touch g.$r
-				sed -i 's/\. /\n/g' $bw
-				sed -i 's/\. /\n/g' $aw
-				snmk=$(echo "$trgt"  | sed 's/ /\n/g')
-				list_words $aw $bw $DT_r $r
+				check_grammar_1 $DT_r $r
+				list_words $DT_r $r
+				grmrk=$(cat g.$r | sed ':a;N;$!ba;s/\n/ /g')
 				lwrds=$(cat A.$r)
 				pwrds=$(cat B.$r | tr '\n' '_')
+				
 				if ( [ ! -f "./$nme.mp3" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ] ); then
 					[ -f "./$nme.mp3" ] && rm "./$nme.mp3"
 					[ -d "./$nme" ] && rm -r "./$nme"
 				else
-					tags_9 W "$lwrds" "$pwrds" "./$nme.mp3"
+					add_tags_9 W "$lwrds" "$pwrds" "./$nme.mp3"
 					echo "$trgt" >> "$DC_tl/Feeds/cfg.1"
-					get_words_2 $aw $bw
+					
+					fetch_audio_2 $aw $bw
+
 					cp -fr "./$nme" "$DM_tl/Feeds/conten/$nme"
 					mv -f "$nme.mp3" "$DM_tl/Feeds/conten/$nme.mp3"
 					echo "$lnk" > "$DM_tl/Feeds/conten/$nme.lnk"
@@ -176,7 +168,6 @@ if [ -n "$feed" ]; then
 				rm -f $aw $bw 
 				)
 				
-				rm -f A B twrd swrd srce
 				echo "$date" > $DC_tl/Feeds/.dt
 			fi
 			let n++

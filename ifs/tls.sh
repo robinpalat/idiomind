@@ -77,8 +77,7 @@ elif [ $1 = s ]; then
 	
 elif [ $1 = dclik ]; then
 
-	wdr=$(echo "$2" | awk '{print tolower($0)}')
-	play "$DM_tl/.share/$wdr".mp3 & exit
+	play "$DM_tl/.share/$2".mp3 & exit
 	
 elif [ $1 = edta ]; then
 
