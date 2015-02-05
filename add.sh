@@ -186,12 +186,18 @@ elif [ $1 = new_items ]; then
 		elif [[ $ret -eq 0 ]]; then
 		
 			if [ -z "$chk" ]; then
+				[[ -d $DT_r ]] && rm -fr $DT_r
+				msg "$topic_err\n" info & exit 1
+			fi
+			
+			if [ -z "$tpe" ]; then
+				[[ -d $DT_r ]] && rm -fr $DT_r
 				msg "$topic_err\n" info & exit 1
 			fi
 		
 			if [ -z "$trgt" ]; then
 				[[ -d $DT_r ]] && rm -fr $DT_r
-				exit
+				exit 1
 			fi
 
 			if [ $(echo "$tpe" | wc -l) -ge 2 ]; then
@@ -208,7 +214,7 @@ elif [ $1 = new_items ]; then
 					slt=`dlg_radiolist_1 "$tpe"`
 					
 					if [ -z "$(echo "$slt" | sed -n 2p)" ]; then
-						killall add.sh & exit
+						killall add.sh & exit 1
 					fi
 					tpe=$(echo "$slt" | sed -n 2p)
 				fi
@@ -219,10 +225,6 @@ elif [ $1 = new_items ]; then
 				echo "$tpe" > $DC_s/cfg.7
 				echo "$tpe" > $DC_s/cfg.6
 			fi
-			
-			
-			
-			
 			
 			if [ "$(echo "$trgt" | sed -n 1p | awk '{print tolower($0)}')" = i ]; then
 				$DS/add.sh process image $DT_r & exit
@@ -266,11 +268,6 @@ elif [ $1 = new_items ]; then
 		fi
 		
 elif [ $1 = new_sentence ]; then
-
-	if [ -z "$tpe" ]; then
-		[[ -d $DT_r ]] && rm -fr $DT_r
-		msg "$no_topic_msg." info & exit
-	fi
 		
 	DT_r="$3"
 	source $DS/default/dicts/$lgt
@@ -1284,11 +1281,19 @@ elif [ $1 = process ]; then
 					echo "5"
 					echo "# $pros... " ;
 					[ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ] && c=c || c=w
+					
 					lns=$(cat ./slts ./wrds | wc -l)
+					
+					
 					n=1
 					while [ $n -le $(cat slts | head -50 | wc -l) ]; do
-						sntc=$(sed -n "$n"p slts)
-						
+					
+					sntc=$(sed -n "$n"p slts)
+					trgt=$(translate "$(clean_1 "$sntc")" auto $lgt | sed 's/^\s*./\U&\E/g')
+					srce=$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')
+					echo "$trgt" > ./trgt
+					fname="$(nmfile "$trgt")"
+					
 						if [ $(echo "$sntc" | wc -$c) = 1 ]; then
 							if [ $(cat "$DC_tlt"/cfg.3 | wc -l) -ge 50 ]; then
 								printf "\n- $sntc" >> ./wlog
@@ -1299,8 +1304,10 @@ elif [ $1 = process ]; then
 								
 								if sed -n 1p $DC_s/cfg.3 | grep TRUE; then
 			
-									tts "$trgt" $lgt $DT_r "$DM_tlt/words/$trgt".mp3
+			
+									tts ./trgt $lgt $DT_r "$DM_tlt/words/$trgt".mp3
 								else
+								
 									voice "$trgt" "$DM_tlt/words/$trgt".mp3
 								fi
 
@@ -1321,12 +1328,6 @@ elif [ $1 = process ]; then
 									printf "\n- $sntc" >> ./slog
 							
 								else
-									trgt=$(translate "$(clean_1 "$sntc")" auto $lgt | sed 's/^\s*./\U&\E/g')
-									srce=$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')
-									echo "$trgt" > trgt
-									fname="$(nmfile "$trgt")"
-									echo "$trgt \n$srce \n$fname hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"
-
 									if sed -n 1p $DC_s/cfg.3 | grep TRUE; then
 									
 										tts ./trgt $lgt $DT_r "$DM_tlt/$fname.mp3"
@@ -1336,10 +1337,7 @@ elif [ $1 = process ]; then
 										
 									fi
 									
-									if ( [ -f "$DM_tlt/$fname.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
-									    add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3"
-									
-									fi
+									add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3"
 									
 									(
 									cd $DT_r
