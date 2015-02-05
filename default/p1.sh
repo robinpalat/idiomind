@@ -1,12 +1,9 @@
 #!/bin/bash
+# -*- ENCODING: UTF-8 -*-
 
 u=$(echo "$(whoami)")
 nmt=$(sed -n 1p /tmp/.idmtp1.$u/idmimp_X015x/ls)
 dir="/tmp/.idmtp1.$u/idmimp_X015x/$nmt"
-lnglbl=$(sed -n 2p "/tmp/.idmtp1.$u/idmimp_X015x/$nmt/cfg.13")
-lng=$(sed -n 3p "/tmp/.idmtp1.$u/idmimp_X015x/$nmt/cfg.13")
-lngs=$(sed -n 4p "/tmp/.idmtp1.$u/idmimp_X015x/$nmt/cfg.13")
-var2=$(sed -n 1p "/tmp/.idmtp1.$u/idmimp_X015x/$nmt/cfg.13")
 wth=$(sed -n 5p $HOME/.config/idiomind/s/cfg.18)
 eht=$(sed -n 6p $HOME/.config/idiomind/s/cfg.18)
 re='^[0-9]+$'
@@ -46,20 +43,16 @@ if [[ "$(echo "$nms" | wc -w)" -eq "1" ]]; then
 	ntes=$(echo "$exmp" | sed -n 3p)
 	dfnts="--field=<i><span color='#696464'>$dftn</span></i>\\n:lbl"
 	ntess="--field=<span color='#868686'>$ntes</span>\\n:lbl"
-	exmp1=$(echo "$exm1" \
-	| sed "s/"$trgt"/<span background='#CFFF8B'>"$trgt"<\/\span>/g")
+	exmp1=$(echo "$exm1" | sed "s/"$trgt"/<span background='#CFFF8B'>"$trgt"<\/\span>/g")
 	
 	yad --columns=1 --form --width=$wth --height=$eht --center \
 	--window-icon=idiomind --scroll --text-align=center \
 	--skip-taskbar --center --title="$MPG " --borders=20 \
 	--quoted-output --on-top --selectable-labels \
 	--text="<big><big><big><b>$trgt</b></big></big></big>\n\n<i>$src</i>\n\n" \
-	--field="":lbl \
-	--field="<i><span color='#808080'>$exmp1\
-	</span></i>\\n:lbl" "$dfnts" \
-	"$ntess" \
+	--field="":lbl --field="<i><span color='#808080'>$exmp1 \
+</span></i>\\n:lbl" "$dfnts" "$ntess" \
 	"$listen" --button=gtk-go-up:3 --button=gtk-go-down:2
-	
 else
 
 	if [ -f "$dir/$nms.mp3" ]; then
@@ -82,7 +75,6 @@ else
 	--on-top --selectable-labels --expand-column=0 \
 	--text="<big><big>$trgt</big></big>\\n\\n<i>$src</i>\\n\\n" \
 	--width=$wth --height=$eht --center \
-	--column=$lnglbl:TEXT --column=$lngs:TEXT \
 	"$listen" --button=gtk-go-up:3 --button=gtk-go-down:2 \
 	--dclick-action="$dwck"
 fi
