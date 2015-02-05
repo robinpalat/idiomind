@@ -114,7 +114,7 @@ function dlg_checklist_3() {
         slt=$(mktemp $DT/slt.XXXX.x)
         cat "$1" | awk '{print "FALSE\n"$0}' | \
         yad --name=idiomind --window-icon=idiomind \
-        --dclick-action='/usr/share/idiomind/add.sh selecting_words_dclik' \
+        --dclick-action='/usr/share/idiomind/add.sh dclik_list_words' \
         --list --checklist --class=idiomind --center --sticky \
         --text="<small> $info</small>" --title="$tpe" \
         --width=$wth --print-all --height=$eht --borders=3 \
@@ -150,7 +150,7 @@ function dlg_text_info_1() {
         --sticky --fontname=vendana --on-top --center \
         --skip-taskbar --width=$wth \
         --height=$eht --borders=3 \
-        --button=gtk-ok:0 --title="$tpe"
+        --button=gtk-ok:0 --title="$tpe" > ./sort
 }
 
 

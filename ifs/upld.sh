@@ -46,7 +46,7 @@ elif [[ $1 = infsd ]]; then
 	yad --borders=10 --width=420 --height=150 \
 	--on-top --skip-taskbar --center --image=$icon \
 	--title="idiomind" --button="$download:0" --button="Close:1" \
-	--text="<span font='ultralight'>$name</span>\\n<small>${language_source^} $language_target </small> \\n" \
+	--text="$name\n<small>${language_source^} $language_target </small> \n" \
 	--window-icon=idiomind
 		ret=$?
 

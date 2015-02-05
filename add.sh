@@ -170,7 +170,7 @@ elif [ $1 = new_items ]; then
 	srce=$(echo "$lzgpr" | sed -n 2p | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
 	chk=$(echo "$lzgpr" | tail -1)
 	tpe=$(cat "$DC_tl/.cfg.1" | grep "$chk")
-		
+	
 		if [[ $ret -eq 3 ]]; then
 		
 			cd $DT_r
@@ -184,6 +184,10 @@ elif [ $1 = new_items ]; then
 			$DS/add.sh new_items $DT_r 2 "$trgt" "$srce" && exit
 		
 		elif [[ $ret -eq 0 ]]; then
+		
+			if [ -z "$chk" ]; then
+				msg "$topic_err\n" info & exit 1
+			fi
 		
 			if [ -z "$trgt" ]; then
 				[[ -d $DT_r ]] && rm -fr $DT_r
@@ -215,6 +219,10 @@ elif [ $1 = new_items ]; then
 				echo "$tpe" > $DC_s/cfg.7
 				echo "$tpe" > $DC_s/cfg.6
 			fi
+			
+			
+			
+			
 			
 			if [ "$(echo "$trgt" | sed -n 1p | awk '{print tolower($0)}')" = i ]; then
 				$DS/add.sh process image $DT_r & exit
@@ -282,7 +290,7 @@ elif [ $1 = new_sentence ]; then
 		internet
 	
 		cd $DT_r
-		trgt=$(translate "$(clean_1 "$2")" auto $lgt | sed 's/^\s*./\U&\E/g')
+		trgt=$(translate "$(clean_1 "$2")" auto $lgt)
 		srce=$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')
 		echo "trgt" > trgt
 		fname="$(nmfile "$trgt")"
@@ -1196,6 +1204,8 @@ elif [ $1 = process ]; then
 		
 		) | dlg_progress_1
 		
+		[[ -f ./sntsls ]] && rm -f ./sntsls
+		
 	fi
 		while read sntnc
 		do
@@ -1238,10 +1248,11 @@ elif [ $1 = process ]; then
 		fi
 				if [ $ret -eq 2 ]; then
 					rm -f $lckpr "$slt" &
-					w=`dlg_text_info_1 ./sntsls`
+					dlg_text_info_1 ./sntsls
 						ret=$(echo "$?")
+						
 						if [ $ret -eq 0 ]; then
-							$nspr "$w" $DT_r "$tpe" &
+							$nspr "$(cat ./sort)" $DT_r "$tpe" &
 							exit 1
 						else
 							[[ -d $DT_r ]] && rm -fr $DT_r
@@ -1268,7 +1279,7 @@ elif [ $1 = process ]; then
 					cd $DT_r
 					touch ./wlog ./slog
 					
-					#words
+					
 					{
 					echo "5"
 					echo "# $pros... " ;
@@ -1277,6 +1288,7 @@ elif [ $1 = process ]; then
 					n=1
 					while [ $n -le $(cat slts | head -50 | wc -l) ]; do
 						sntc=$(sed -n "$n"p slts)
+						
 						if [ $(echo "$sntc" | wc -$c) = 1 ]; then
 							if [ $(cat "$DC_tlt"/cfg.3 | wc -l) -ge 50 ]; then
 								printf "\n- $sntc" >> ./wlog
@@ -1298,7 +1310,7 @@ elif [ $1 = process ]; then
 								    $DS/mngr.sh inx W "$trgt" "$tpe"
 								fi
 							fi
-						#words
+						
 						elif [ $(echo "$sntc" | wc -$c) -ge 1 ]; then
 							
 							if [ $(cat "$DC_tlt"/cfg.4 | wc -l) -ge 50 ]; then
@@ -1311,8 +1323,9 @@ elif [ $1 = process ]; then
 								else
 									trgt=$(translate "$(clean_1 "$sntc")" auto $lgt | sed 's/^\s*./\U&\E/g')
 									srce=$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')
-									echo "trgt" > trgt
+									echo "$trgt" > trgt
 									fname="$(nmfile "$trgt")"
+									echo "$trgt \n$srce \n$fname hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"
 
 									if sed -n 1p $DC_s/cfg.3 | grep TRUE; then
 									

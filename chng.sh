@@ -13,7 +13,7 @@ if [[ "$1" = chngi ]]; then
 	[[ -z $(cat $DC_s/cfg.2) ]] && echo 8 > $DC_s/cfg.2
 	bcl=$(cat $DC_s/cfg.2)
 	[[ $bcl -lt 2 ]] && bcl = 2 && echo 2 > $DC_s/cfg.2
-	if ([ $(echo "$nta" | grep "TRUE") ] && [ $bcl -lt 10 ]); then bcl=10; fi
+	if ([ $(echo "$nta" | grep "TRUE") ] && [ $bcl -lt 12 ]); then bcl=12; fi
 
 	item="$(sed -n "$2"p $indx | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
 	
@@ -41,12 +41,12 @@ if [[ "$1" = chngi ]]; then
 		fi
 
 		[[ -z "$trgt" ]] && trgt="$item"
-		[[ -f "$DM_tl/Feeds/kept/words/$item.mp3" ]] && \
-		osdi="$DM_tl/Feeds/kept/words/$item.mp3" || osdi=idiomind
+		#[[ -f "$DM_tl/Feeds/kept/words/$item.mp3" ]] && osdi="$DM_tl/Feeds/kept/words/$item.mp3" || osdi=idiomind
+		imgt="$DM_tlt/words/images/$item.jpg"
 		[[ -f $imgt ]] && osdi=$imgt || osdi=idiomind
 		
-		[[ -n $(echo "$nta" | grep "TRUE") ]] && notify-send -i "$osdi" "$trgt" "$srce" -t 12000  &
-		sleep 0.5
+		[[ -n $(echo "$nta" | grep "TRUE") ]] && notify-send -i "$osdi" "$trgt" "$srce" -t 10000  &
+		sleep 0.7
 		if [[ -n $(echo "$sna" | grep "TRUE") ]]; then
 			if ps -A | pgrep -f 'tls.sh'; then
 				

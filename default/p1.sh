@@ -75,6 +75,7 @@ else
 	--on-top --selectable-labels --expand-column=0 \
 	--text="<big><big>$trgt</big></big>\\n\\n<i>$src</i>\\n\\n" \
 	--width=$wth --height=$eht --center \
+	--column="":TEXT --column="":TEXT \
 	"$listen" --button=gtk-go-up:3 --button=gtk-go-down:2 \
 	--dclick-action="$dwck"
 fi

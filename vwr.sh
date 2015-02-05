@@ -29,6 +29,7 @@ if [ -z "$nme" ]; then
 	| sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
 	nuw=1
 fi
+[[ "$(echo "$nme" | wc -c)" -le 50 ]] && align=center || align=left
 
 if [ -f "$DM_tlt/words/$nme.mp3" ]; then
 	tgs=$(eyeD3 "$DM_tlt/words/$nme.mp3")
@@ -47,7 +48,7 @@ if [ -f "$DM_tlt/words/$nme.mp3" ]; then
 	
 	[[ "$ap" = TRUE ]] && (killall play & sleep 1 && play "$DM_tlt/words/$nme.mp3") &
 	
-	yad --form --window-icon=idiomind --scroll --text-align=center \
+	yad --form --window-icon=idiomind --scroll --text-align=$align \
 	--skip-taskbar --center --title=" " --borders=20 \
 	--quoted-output --on-top --selectable-labels \
 	--text="<big><big><big><b>$trgt</b></big></big></big>\n\n<i>$src</i>\n\n" \
@@ -71,7 +72,7 @@ elif [ -f "$DM_tlt/$nme.mp3" ]; then
 	[[ "$ap" = TRUE ]] && (killall play & sleep 1 && play "$DM_tlt/$nme.mp3") &
 	
 	echo "$lwrd" | yad --list --print-column=0 --no-headers \
-	--window-icon=idiomind --scroll  \
+	--window-icon=idiomind --scroll --text-align=$align \
 	--skip-taskbar --center --title=" " --borders=20 \
 	--on-top --selectable-labels --expand-column=0 \
 	--text="<big><big>$trgt</big></big>\n\n<i>$src</i>\n\n\n" \

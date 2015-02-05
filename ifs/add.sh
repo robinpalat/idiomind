@@ -237,7 +237,7 @@ function translate() {
 
 function set_image_1() {
 	
-	set_image -s --quality 70 img.jpg
+	scrot -s --quality 70 img.jpg
 	/usr/bin/convert -scale 110x90! img.jpg ico.jpg
 }
 

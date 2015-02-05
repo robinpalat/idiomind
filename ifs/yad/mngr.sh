@@ -48,7 +48,7 @@ function dlg_form_2() {
 
 function dlg_msg_1() {
     
-        yad --fixed --center --scroll \
+        yad --center --scroll \
         --title="$confirm" --width=420 --height=150 \
         --on-top --image=dialog-question --skip-taskbar \
         --text=" $1 " --borders=5 \
