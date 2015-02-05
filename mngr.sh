@@ -330,11 +330,12 @@ elif [ "$1" = mkok- ]; then
 	
 	
 elif [ $1 = dli ]; then
+	touch $DT/ps_lk
 
 	source $DS/ifs/yad/mngr.sh
 	itdl="$2"
 	
-	[[ -z "$itdl" ]] && exit
+	[[ -z "$itdl" ]] && rm -f $DT/ps_lk && exit
 	
 	nme="$(nmfile "$itdl")"
 	
@@ -396,6 +397,7 @@ elif [ $1 = dli ]; then
 			sed '/^$/d' cfg.4.tmp > cfg.4
 			rm ./*.tmp
 		fi
+		rm -f $DT/ps_lk
 		exit 1
 	fi
 	
@@ -432,8 +434,9 @@ elif [ $1 = dli ]; then
 				grep -v -x -F "$itdl" cfg.3 > cfg.3.tmp
 				sed '/^$/d' cfg.3.tmp > cfg.3
 				rm ./*.tmp
+				rm -f $DT/ps_lk & exit
 			else
-				exit 1
+				rm -f $DT/ps_lk & exit
 			fi
 			
 	elif [ -f "$fls" ]; then
@@ -458,8 +461,9 @@ elif [ $1 = dli ]; then
 				grep -v -x -F "$itdl" cfg.4 > cfg.4.tmp
 				sed '/^$/d' cfg.4.tmp > cfg.4
 				rm ./*.tmp
+				rm -f $DT/ps_lk & exit
 			else
-				exit 1
+				rm -f $DT/ps_lk & exit
 			fi
 			
 	elif [ ! -f "$flw" ] || [ ! -f "$flw" ]; then
@@ -488,8 +492,9 @@ elif [ $1 = dli ]; then
 				grep -v -x -F "$itdl" cfg.3 > cfg.3.tmp
 				sed '/^$/d' cfg.3.tmp > cfg.3
 				rm ./*.tmp
+				rm -f $DT/ps_lk & exit
 			else
-				exit 1
+				rm -f $DT/ps_lk & exit
 			fi
 	fi
 	
@@ -523,9 +528,9 @@ elif [ $1 = dlt ]; then
 			
 			kill -9 $(pgrep -f "$yad --list ")
 			$DS/mngr.sh mkmn
-			
+			rm -f $DT/ps_lk & exit
 		else
-			exit 0
+			rm -f $DT/ps_lk & exit
 		fi
 
 #--------------------------------

@@ -200,7 +200,7 @@ elif [[ $(echo "$1" | grep -o '.idmnd') ]]; then
 	mv ./import.tmp ./import.tar.gz
 	cd ./idmimp_$c
 	tar -xzvf ../import.tar.gz
-	ls -t -d -N * > $DT/idmimp_$c/ls
+	ls -tdN * > $DT/idmimp_$c/ls
 	inme=$(sed -n 1p $DT/idmimp_$c/ls)
 	echo "$inme"
 	tmp="$DT/idmimp_$c/$inme"
@@ -560,31 +560,32 @@ elif [[ $1 = topic ]]; then
 						fi
 					
 				else
-				
-					if [ -f $cnf3 ]; then
-						if [ "$(cat $cnf3)" != "$(cat "$nt")" ]; then
-							mv -f $cnf3 "$nt"
+					if [ ! -f $DT/ps_lk ]; then
+						if [ -f $cnf3 ]; then
+							if [ "$(cat $cnf3)" != "$(cat "$nt")" ]; then
+								mv -f $cnf3 "$nt"
+							fi
 						fi
-					fi
-					
-					if [ -n "$(cat "$cnf1" | grep -o TRUE)" ]; then
-						grep -Rl "|FALSE|" "$cnf1" | while read tab1 ; do
-							 sed '/|FALSE|/d' "$cnf1" > tmpf1
-							 mv tmpf1 $tab1
-						done
 						
-						sed -i 's/|TRUE|//g' "$cnf1"
-						cat "$cnf1" >> "$ls2"
+						if [ -n "$(cat "$cnf1" | grep -o TRUE)" ]; then
+							grep -Rl "|FALSE|" "$cnf1" | while read tab1 ; do
+								 sed '/|FALSE|/d' "$cnf1" > tmpf1
+								 mv tmpf1 $tab1
+							done
+							
+							sed -i 's/|TRUE|//g' "$cnf1"
+							cat "$cnf1" >> "$ls2"
 
-						cnt=$(cat "$cnf1" | wc -l)
-						grep -F -x -v -f "$cnf1" "$ls1" > $DT/ls1.x
-						mv -f $DT/ls1.x "$ls1"
-						if [ -n "$(cat "$ls1" | sort -n | uniq -dc)" ]; then
-							cat "$ls1" | awk '!array_temp[$0]++' > $DT/ls1.x
-							sed '/^$/d' $DT/ls1.x > "$ls1"
+							cnt=$(cat "$cnf1" | wc -l)
+							grep -F -x -v -f "$cnf1" "$ls1" > $DT/ls1.x
+							mv -f $DT/ls1.x "$ls1"
+							if [ -n "$(cat "$ls1" | sort -n | uniq -dc)" ]; then
+								cat "$ls1" | awk '!array_temp[$0]++' > $DT/ls1.x
+								sed '/^$/d' $DT/ls1.x > "$ls1"
+							fi
+							echo "okim.$cnt.okim" >> \
+							$DC/addons/stats/.log &	
 						fi
-						echo "okim.$cnt.okim" >> \
-						$DC/addons/stats/.log &	
 					fi
 					
 					rm -f $DT/*.x
@@ -680,27 +681,29 @@ elif [[ $1 = topic ]]; then
 					$DS/practice/strt.sh &
 				
 				else
-					if [ -f $cnf3 ]; then
-						if [ "$(cat $cnf3)" != "$(cat "$nt")" ]; then
-							mv -f $cnf3 "$nt"
+					if [ ! -f $DT/ps_lk ]; then
+						if [ -f $cnf3 ]; then
+							if [ "$(cat $cnf3)" != "$(cat "$nt")" ]; then
+								mv -f $cnf3 "$nt"
+							fi
 						fi
-					fi
-					if [ -n "$(cat "$cnf1" | grep -o TRUE)" ]; then
-						grep -Rl "|FALSE|" "$cnf1" | while read tab1 ; do
-							 sed '/|FALSE|/d' "$cnf1" > tmpf1
-							 mv tmpf1 $tab1
-						done
-						sed -i 's/|TRUE|//g' "$cnf1"
-						cat "$cnf1" >> "$ls2"
-						cnt=$(cat "$cnf1" | wc -l)
-						grep -F -x -v -f "$cnf1" "$ls1" > $DT/ls1.x
-						mv -f $DT/ls1.x "$ls1"
-						if [ -n "$(cat "$ls1" | sort -n | uniq -dc)" ]; then
-							cat "$ls1" | awk '!array_temp[$0]++' > $DT/ls1.x
-							sed '/^$/d' $DT/ls1.x > "$ls1"
+						if [ -n "$(cat "$cnf1" | grep -o TRUE)" ]; then
+							grep -Rl "|FALSE|" "$cnf1" | while read tab1 ; do
+								 sed '/|FALSE|/d' "$cnf1" > tmpf1
+								 mv tmpf1 $tab1
+							done
+							sed -i 's/|TRUE|//g' "$cnf1"
+							cat "$cnf1" >> "$ls2"
+							cnt=$(cat "$cnf1" | wc -l)
+							grep -F -x -v -f "$cnf1" "$ls1" > $DT/ls1.x
+							mv -f $DT/ls1.x "$ls1"
+							if [ -n "$(cat "$ls1" | sort -n | uniq -dc)" ]; then
+								cat "$ls1" | awk '!array_temp[$0]++' > $DT/ls1.x
+								sed '/^$/d' $DT/ls1.x > "$ls1"
+							fi
+							echo "okim.$cnt.okim" >> \
+							$DC/addons/stats/.log &
 						fi
-						echo "okim.$cnt.okim" >> \
-						$DC/addons/stats/.log &
 					fi
 				fi
 			rm -f $DT/*.x
@@ -855,27 +858,29 @@ elif [[ $1 = topic ]]; then
 						fi
 				
 				else
-					if [ -f $cnf3 ]; then
-						if [ "$(cat $cnf3)" != "$(cat "$nt")" ]; then
-							mv -f $cnf3 "$nt"
+					if [ ! -f $DT/ps_lk ]; then
+						if [ -f $cnf3 ]; then
+							if [ "$(cat $cnf3)" != "$(cat "$nt")" ]; then
+								mv -f $cnf3 "$nt"
+							fi
 						fi
-					fi
-					if [ -n "$(cat "$cnf1" | grep -o TRUE)" ]; then
-						grep -Rl "|FALSE|" "$cnf1" | while read tab1 ; do
-							 sed '/|FALSE|/d' "$cnf1" > tmpf1
-							 mv tmpf1 $tab1
-						done
-						sed -i 's/|TRUE|//g' "$cnf1"
-						cat "$cnf1" >> "$ls2"
-						cnt=$(cat "$cnf1" | wc -l)
-						grep -F -x -v -f "$cnf1" "$ls1" > $DT/ls1.x
-						mv -f $DT/ls1.x "$ls1"
-						if [ -n "$(cat "$ls1" | sort -n | uniq -dc)" ]; then
-							cat "$ls1" | awk '!array_temp[$0]++' > $DT/ls1.x
-							sed '/^$/d' $DT/ls1.x > "$ls1"
+						if [ -n "$(cat "$cnf1" | grep -o TRUE)" ]; then
+							grep -Rl "|FALSE|" "$cnf1" | while read tab1 ; do
+								 sed '/|FALSE|/d' "$cnf1" > tmpf1
+								 mv tmpf1 $tab1
+							done
+							sed -i 's/|TRUE|//g' "$cnf1"
+							cat "$cnf1" >> "$ls2"
+							cnt=$(cat "$cnf1" | wc -l)
+							grep -F -x -v -f "$cnf1" "$ls1" > $DT/ls1.x
+							mv -f $DT/ls1.x "$ls1"
+							if [ -n "$(cat "$ls1" | sort -n | uniq -dc)" ]; then
+								cat "$ls1" | awk '!array_temp[$0]++' > $DT/ls1.x
+								sed '/^$/d' $DT/ls1.x > "$ls1"
+							fi
+							echo "okim.$cnt.okim" >> \
+							$DC/addons/stats/.log &
 						fi
-						echo "okim.$cnt.okim" >> \
-						$DC/addons/stats/.log &
 					fi
 				rm -f $DT/*.x
 				fi
@@ -976,28 +981,30 @@ elif [[ $1 = topic ]]; then
 					$DS/practice/strt.sh &
 				
 				else
-					if [ -f $cnf3 ]; then
-						if [ "$(cat $cnf3)" != "$(cat "$nt")" ]; then
-							mv -f $cnf3 "$nt"
+					if [ ! -f $DT/ps_lk ]; then
+						if [ -f $cnf3 ]; then
+							if [ "$(cat $cnf3)" != "$(cat "$nt")" ]; then
+								mv -f $cnf3 "$nt"
+							fi
 						fi
-					fi
-					if [ -n "$(cat "$cnf1" | grep -o TRUE)" ]; then
-						grep -Rl "|FALSE|" "$cnf1" | while read tab1 ; do
-							 sed '/|FALSE|/d' "$cnf1" > tmpf1
-							 mv tmpf1 $tab1
-						done
-						sed -i 's/|TRUE|//g' "$cnf1"
-						cat "$cnf1" >> "$ls2"
-						cnt=$(cat "$cnf1" | wc -l)
-						grep -F -x -v -f "$cnf1" "$ls1" > $DT/ls1.x
-						mv -f $DT/ls1.x "$ls1"
-						if [ -n "$(cat "$ls1" | sort -n | uniq -dc)" ]; then
-							cat "$ls1" | awk '!array_temp[$0]++' > $DT/ls1.x
-							sed '/^$/d' $DT/ls1.x > "$ls1"
+						if [ -n "$(cat "$cnf1" | grep -o TRUE)" ]; then
+							grep -Rl "|FALSE|" "$cnf1" | while read tab1 ; do
+								 sed '/|FALSE|/d' "$cnf1" > tmpf1
+								 mv tmpf1 $tab1
+							done
+							sed -i 's/|TRUE|//g' "$cnf1"
+							cat "$cnf1" >> "$ls2"
+							cnt=$(cat "$cnf1" | wc -l)
+							grep -F -x -v -f "$cnf1" "$ls1" > $DT/ls1.x
+							mv -f $DT/ls1.x "$ls1"
+							if [ -n "$(cat "$ls1" | sort -n | uniq -dc)" ]; then
+								cat "$ls1" | awk '!array_temp[$0]++' > $DT/ls1.x
+								sed '/^$/d' $DT/ls1.x > "$ls1"
+							fi
+							
+							cho "okim.$cnt.okim" >> \
+							$DC/addons/stats/.log &
 						fi
-						
-						cho "okim.$cnt.okim" >> \
-						$DC/addons/stats/.log &
 					fi
 					
 				fi

@@ -9,6 +9,8 @@ kpt="$DM_tl/Feeds/kept"
 drtc="$DC_tl/Feeds/"
 
 if [[ $1 = dlti ]]; then
+	touch $DT/ps_lk
+	
 	if [ -f "$kpt/words/$itdl.mp3" ]; then
 		$yad --title="$confirm" --width=420 \
 		--height=150 --on-top --center \
@@ -26,9 +28,11 @@ if [[ $1 = dlti ]]; then
 				grep -v -x -F "$itdl" ./cfg.0 > ./cfg.0.tmp
 				sed '/^$/d' ./cfg.0.tmp > ./cfg.0
 				rm ./*.tmp
+				rm -f $DT/ps_lk
 				notify-send -i idiomind "$itdl" "$deleted"  -t 1500
 			fi
 			if [[ $ret -eq 1 ]]; then
+				rm -f $DT/ps_lk
 				exit
 			fi
 	
@@ -49,9 +53,11 @@ if [[ $1 = dlti ]]; then
 				grep -v -x -F "$itdl" ./cfg.0 > ./cfg.0.tmp
 				sed '/^$/d' ./cfg.0.tmp > ./cfg.0
 				rm ./*.tmp
+				rm -f $DT/ps_lk
 				
 			fi
 			if [[ $ret -eq 1 ]]; then
+				rm -f $DT/ps_lk
 				exit
 			fi
 	else
@@ -73,12 +79,17 @@ if [[ $1 = dlti ]]; then
 				grep -v -x -F "$itdl" ./cfg.0 > ./cfg.0.tmp
 				sed '/^$/d' ./cfg.0.tmp > ./cfg.0
 				rm ./*.tmp
+				rm -f $DT/ps_lk
 			fi
 			if [[ $ret -eq 1 ]]; then
+				rm -f $DT/ps_lk
 				exit
 			fi
 	fi
+rm -f $DT/ps_lk
+
 elif [[ $1 = dlns ]]; then
+	
 	$yad --width=420 --height=150 --title="$confirm" \
 	--on-top --image=dialog-question --center --skip-taskbar \
 	--window-icon=idiomind --text=" $delete_all" \
