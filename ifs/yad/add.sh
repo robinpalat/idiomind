@@ -87,7 +87,7 @@ function dlg_radiolist_1() {
         echo "$1" | awk '{print "FALSE\n"$0}' | \
         yad --name=idiomind --class=idiomind --center \
         --list --radiolist --on-top --fixed --no-headers \
-        --text="<b>  $te </b> <small><small> --window-icon=idiomind \
+        --text="<b>$te</b> <small><small> --window-icon=idiomind \
         $info</small></small>" --sticky --skip-taskbar \
         --height="420" --width="150" --separator="\\n" \
         --button=Save:0 --title="selector" --borders=3 \
@@ -99,7 +99,7 @@ function dlg_checklist_1() {
     
         cat "$1" | awk '{print "FALSE\n"$0}' | \
         yad --list --checklist --title="$word_selector" \
-        --on-top --text="<small> $2 </small>" \
+        --on-top --text="<small>$2</small>" \
         --center --sticky --no-headers \
         --buttons-layout=end --skip-taskbar --width=400 \
         --height=280 --borders=10 --window-icon=idiomind \
@@ -116,7 +116,7 @@ function dlg_checklist_3() {
         yad --name=idiomind --window-icon=idiomind \
         --dclick-action='/usr/share/idiomind/add.sh dclik_list_words' \
         --list --checklist --class=idiomind --center --sticky \
-        --text="<small> $info</small>" --title="$tpe" \
+        --text="<small>$info</small>" --title="$tpe" \
         --width=$wth --print-all --height=$eht --borders=3 \
         --button="$cancel":1 --button="$arrange":2 \
         --button="$to_new_topic":'/usr/share/idiomind/add.sh new_topic' \
@@ -161,7 +161,7 @@ function dlg_text_info_2() {
         --width=400 --height=280 --on-top --margins=4 \
         --fontname=vendana --window-icon=idiomind \
         --button=Ok:0 --borders=0 --filename=logw \
-        --text=" <small><small> $1 </small></small>" \
+        --text=" <small><small>$1</small></small>" \
         --field=":lbl" "" >/dev/null 2>&1
 }
 

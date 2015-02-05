@@ -658,7 +658,7 @@ elif [ "$1" = edt ]; then
 		src=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
 		lwrd=$(echo "$tgs" | grep -o -P '(?<=IWI3I0I).*(?=IPWI3I0I)')
 		pwrds=$(echo "$tgs" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)')
-		wrds="$DS/add.sh selecting_words_edit '$nme' F $c"
+		wrds="$DS/add.sh edit_list_words '$nme' F $c"
 		
 		edau="--button=Edit Audio:/usr/share/idiomind/ifs/tls.sh edta '$DM_tlt/$nme.mp3' '$DM_tlt'"
 		dlte="$DS/mngr.sh dli '$nme'"

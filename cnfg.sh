@@ -94,7 +94,7 @@ cat $DC_s/cfg.21 | yad --plug=$KEY --tabnum=2 --list --expand-column=2 \
 	--no-headers --dclick-action="/usr/share/idiomind/ifs/dclik.sh" --print-all \
 	--column=icon:IMG --column=Action &
 echo "$text" | yad --plug=$KEY --tabnum=3 --text-info \
-	--text="\\n<big><b>Idiomind v2.2-beta</b></big>\\n<sup>$vocabulary_learning_tool\\n<a href='https://sourceforge.net/projects/idiomind/'>Homepage</a> © 2013-2015 Robin Palat</sup>\\n" \
+	--text="\\n<big><big><b>Idiomind v2.2-beta</b></big></big>\\n<sup>$vocabulary_learning_tool\\n<a href='https://sourceforge.net/projects/idiomind/'>Homepage</a> © 2013-2015 Robin Palat</sup>\\n" \
 	--show-uri --fontname=Arial --margins=10 --wrap --text-align=center &
 yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
 	--sticky --center --window-icon=$ICON --window-icon=idiomind \
