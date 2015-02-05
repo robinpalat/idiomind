@@ -101,7 +101,7 @@ FALSE' > $DC_s/cfg.5; fi
 	$yad --list --on-top \
 	--expand-column=3 --print-all --center \
 	--width=280 --name=idiomind --class=idmnd \
-	--height=240 --title="$tpc" \
+	--height=240 --title="$tpc" --skip-taskbar \
 	--window-icon=idiomind --no-headers \
 	--button=Time:"$DS/play.sh 'time'" \
 	--borders=0 $btn --hide-column=1 \

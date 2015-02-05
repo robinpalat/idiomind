@@ -155,7 +155,7 @@ if [ -z "$1" ]; then
 	--geometry=175x190-300-$(sed -n 12p $DC_s/cfg.18) \
 	--fixed --title="Idiomind" --no-buttons --skip-taskbar \
 	--icons --single-click --on-top --borders=0 \
-	--read-dir=$DS/default/new --item-width=65 \
+	--read-dir=$DS/default/new --item-width=68 \
 	--window-icon=idiomind --class=idiomind &
 	[[ -n "$tpc" ]] && echo "$tpc" > $DC_s/cfg.6
 	echo "strt.1.strt" >> \

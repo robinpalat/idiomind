@@ -260,11 +260,11 @@ elif [ $1 = updt ]; then
 	if [ "$(sed -n 1p $DT/release)" != "$(idiomind -v)" ]; then
 		yad --text="<big><b> $new_version </b></big>\n\n" \
 		--image=info --title=" " --window-icon=idiomind \
-		--on-top --skip-taskbar --sticky --fixed \
+		--on-top --skip-taskbar --sticky \
 		--center --name=idiomind --borders=10 --always-print-result \
 		--button="$later":2 \
 		--button="$download":0 \
-		--width=430 --height=140
+		--width=430 --height=145
 		ret=$?
 		if [ "$ret" -eq 0 ]; then
 			xdg-open https://sourceforge.net/projects/idiomind/files/idiomind.deb/download & exit
@@ -277,8 +277,8 @@ elif [ $1 = updt ]; then
 	else
 		yad --text="<big><b> $nonew_version  </b></big>\n\n  $nonew_version2" \
 		--image=info --title=" " --window-icon=idiomind \
-		--on-top --skip-taskbar --sticky --width=430 --height=140 \
-		--center --name=idiomind --fixed --borders=10 \
+		--on-top --skip-taskbar --sticky --width=430 --height=145 \
+		--center --name=idiomind --borders=10 \
 		--button="$close":1
 	fi
 	[[ -f release ]] && rm -f release
@@ -312,7 +312,7 @@ elif [ $1 = srch ]; then
 			--center --name=idiomind --borders=10 \
 			--button="$later":2 \
 			--button="$download":0 \
-			--width=430 --height=140
+			--width=430 --height=145
 			ret=$?
 			if [ "$ret" -eq 0 ]; then
 				xdg-open $pkg & exit

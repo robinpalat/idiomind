@@ -33,14 +33,14 @@ if [ $1 = new_topic ]; then
 			ret=$(echo "$?")
 
 				if [ "$ret" -eq 1 ]; then
-					exit
+					exit 1
 				fi
 		else
 			jlb=$(echo "$jlb")
 		fi
 		
 		if [ -z "$jlb" ]; then
-			exit
+			exit 1
 		else
 			mkdir $DM_tl/"$jlb"
 			mkdir $DM_tl/"$jlb"/words
@@ -71,10 +71,10 @@ if [ $1 = new_topic ]; then
 			[[ -d "$DM_tl/$tpc" ]] && rm -r "$DM_tl/$tpc"
 			
 			$DS/mngr.sh mkmn
-			"$DC_tl/$jlb/tpc.sh" & exit
+			"$DC_tl/$jlb/tpc.sh" & exit 1
 		fi
 		
-		[ "$ret" -eq 1 ] && exit
+		[ "$ret" -eq 1 ] && exit 
 	else
 		
 		[[ -z "$2" ]] && nmt="" || nmt="$2"
@@ -82,7 +82,7 @@ if [ $1 = new_topic ]; then
 		if [ $info2 -ge 50 ]; then
 			rm "$DM_tl/.rn"
 			msg "$topics_max" info &&
-			killall add.sh & exit
+			killall add.sh & exit 1
 		fi
 		jlbi=$(dlg_form_0 "$new_topic" "$nmt")
 		ret=$(echo "$?")
@@ -96,14 +96,14 @@ if [ $1 = new_topic ]; then
 				dlg_msg_6 " <b>$name_eq   </b>\\n $name_eq2  <b>$jlb</b>   \\n"
 				ret=$(echo "$?")
 				
-				[[ "$ret" -eq 1 ]] && rm "$DM_tl"/.rn && exit
+				[[ "$ret" -eq 1 ]] && rm "$DM_tl"/.rn && exit 1
 				
 			else
 				jlb="$jlb"
 			fi
 			
 			if [[ -z "$jlb" ]]; then
-				rm "$DM_tl/.rn" && exit
+				rm "$DM_tl/.rn" && exit 1
 				
 			else
 				mkdir "$DC_tl/$jlb"
