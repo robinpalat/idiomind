@@ -227,44 +227,44 @@ elif [ $1 = new_items ]; then
 			fi
 			
 			if [ "$(echo "$trgt" | sed -n 1p | awk '{print tolower($0)}')" = i ]; then
-				$DS/add.sh process image $DT_r & exit
+				$DS/add.sh process image $DT_r & exit 1
 			elif [ "$(echo "$trgt" | sed -n 1p | awk '{print tolower($0)}')" = a ]; then
-				$DS/add.sh process audio $DT_r & exit
+				$DS/add.sh process audio $DT_r & exit 1
 			elif [[ "$(echo ${trgt:0:4})" = 'Http' ]]; then
-				$DS/add.sh process "$trgt" $DT_r & exit
+				$DS/add.sh process "$trgt" $DT_r & exit 1
 			elif [ $(echo "$trgt" | wc -c) -gt 150 ]; then
-				$DS/add.sh process "$trgt" $DT_r & exit
+				$DS/add.sh process "$trgt" $DT_r & exit 1
 				
 			elif ([ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]); then
 			
 				if sed -n 1p $DC_s/cfg.3 | grep FALSE; then
 					if [ -z "$srce" ]; then
 						[[ -d $DT_r ]] && rm -fr $DT_r
-						msg "$no_text $lgsl." info & exit
+						msg "$no_text $lgsl." info & exit 1
 					elif [ -z "$trgt" ]; then
 						[[ -d $DT_r ]] && rm -fr $DT_r
-						msg "$no_text $lgtl." info & exit
+						msg "$no_text $lgtl." info & exit 1
 					fi
 				fi
 
 				srce=$(translate "$trgt" auto $lgs)
 				
 				if [ $(echo "$srce" | wc -w) = 1 ]; then
-					$DS/add.sh new_word "$trgt" $DT_r "$srce" & exit
+					$DS/add.sh new_word "$trgt" $DT_r "$srce" & exit 1
 				elif [ $(echo "$srce" | wc -w) -ge 1 -a $(echo "$srce" | wc -c) -le 150 ]; then
-					$DS/add.sh new_sentence "$trgt" $DT_r "$srce" & exit
+					$DS/add.sh new_sentence "$trgt" $DT_r "$srce" & exit 1
 				fi
 			elif ([ $lgt != ja ] || [ $lgt != 'zh-cn' ] || [ $lgt != ru ]); then
 			
 				if [ $(echo "$trgt" | wc -w) = 1 ]; then
-					$DS/add.sh new_word "$trgt" $DT_r "$srce" & exit
+					$DS/add.sh new_word "$trgt" $DT_r "$srce" & exit 1
 				elif [ $(echo "$trgt" | wc -w) -ge 1 -a $(echo "$trgt" | wc -c) -le 150 ]; then
-					$DS/add.sh new_sentence "$trgt" $DT_r "$srce" & exit
+					$DS/add.sh new_sentence "$trgt" $DT_r "$srce" & exit 1
 				fi
 			fi
 		else
 			[[ -d $DT_r ]] && rm -fr $DT_r
-			exit
+			exit 1
 		fi
 		
 elif [ $1 = new_sentence ]; then
@@ -1294,6 +1294,7 @@ elif [ $1 = process ]; then
 					echo "$trgt" > ./trgt
 					fname="$(nmfile "$trgt")"
 					
+						# words
 						if [ $(echo "$sntc" | wc -$c) = 1 ]; then
 							if [ $(cat "$DC_tlt"/cfg.3 | wc -l) -ge 50 ]; then
 								printf "\n- $sntc" >> ./wlog
@@ -1318,6 +1319,7 @@ elif [ $1 = process ]; then
 								fi
 							fi
 						
+						#sentences 
 						elif [ $(echo "$sntc" | wc -$c) -ge 1 ]; then
 							
 							if [ $(cat "$DC_tlt"/cfg.4 | wc -l) -ge 50 ]; then
