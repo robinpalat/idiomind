@@ -114,7 +114,8 @@ elif [[ $1 = V2 ]]; then
 		srce=$(echo "$tgs" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
 		lswd=$(echo "$tgs" | grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' | tr '_' '\n')
 		exm=$(echo "$lswd" | sed -n 1p)
-		exmp=$(echo "$exm" | sed "s/"${trg,,}"/<span background='#F8F4A2'>"${trg,,}"<\/\span>/g")
+		exmp=$(echo "$exm" | sed "s/"${trg,,}"/<span background='#F8F4A2'>"${trg,,}"<\/\span>/g" \
+		| sed "s/"${trg}"/<span background='#F8F4A2'>"${trg}"<\/\span>/g")
 
 		echo "$lwrd" | awk '{print $0""}' | yad --form \
 		--window-icon=idiomind --scroll --text-align=center \
@@ -122,7 +123,7 @@ elif [[ $1 = V2 ]]; then
 		--quoted-output --selectable-labels \
 		--text="<big><big>$trg</big></big>\\n\\n<i>$srce</i>\\n\\n" \
 		--field="":lbl \
-		--field="<i>$exmp</i>\\n:lbl" \
+		--field="<i><span color='#7D7D7D'>$exmp</span></i>\\n:lbl" \
 		--width="$wth" --height="$eht" --center \
 		--button="$delete":"'$DS_pf/mngr.sh' dlti '$nme'" \
 		--button="$listen":"play '$DM_tlfk/words/$nme.mp3'" \

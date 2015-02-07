@@ -148,9 +148,8 @@ fi
 	fi
 	
 #--------------------------------
-elif [ $1 = inx ]; then
+elif [ $1 = index ]; then
 
-	[ $lgt = ja ] || [ $lgt = "zh-cn" ] && c=c || c=w
 	itm="$3"
 	fns="$5"
 	DC_tlt="$DC_tl/$4"
@@ -180,28 +179,28 @@ elif [ $1 = inx ]; then
 	
 	lss="$DC_tlt/.cfg.11"
 	if [ -n "$(cat "$lss" | sort -n | uniq -dc)" ]; then
-		cat "$lss" | awk '!array_temp[$0]++' > lss_inx
-		sed '/^$/d' lss_inx > "$lss"
+		cat "$lss" | awk '!array_temp[$0]++' > lss.tmp
+		sed '/^$/d' lss.tmp > "$lss"
 	fi
 	ls0="$DC_tlt/cfg.0"
 	if [ -n "$(cat "$ls0" | sort -n | uniq -dc)" ]; then
-		cat "$ls0" | awk '!array_temp[$0]++' > ls0_inx
-		sed '/^$/d' ls0_inx > "$ls0"
+		cat "$ls0" | awk '!array_temp[$0]++' > ls0.tmp
+		sed '/^$/d' ls0.tmp > "$ls0"
 	fi
 	ls1="$DC_tlt/cfg.1"
 	if [ -n "$(cat "$ls1" | sort -n | uniq -dc)" ]; then
-		cat "$ls1" | awk '!array_temp[$0]++' > ls1_inx
-		sed '/^$/d' ls1_inx > "$ls1"
+		cat "$ls1" | awk '!array_temp[$0]++' > ls1.tmp
+		sed '/^$/d' ls1.tmp > "$ls1"
 	fi
 	ls2="$DC_tlt/cfg.3"
 	if [ -n "$(cat "$ls2" | sort -n | uniq -dc)" ]; then
-		cat "$ls2" | awk '!array_temp[$0]++' > ls2_inx
-		sed '/^$/d' ls2_inx > "$ls2"
+		cat "$ls2" | awk '!array_temp[$0]++' > ls2.tmp
+		sed '/^$/d' ls2.tmp > "$ls2"
 	fi
 	ls3="$DC_tlt/cfg.4"
 	if [ -n "$(cat "$ls3" | sort -n | uniq -dc)" ]; then
-		cat "$ls3" | awk '!array_temp[$0]++' > ls3_inx
-		sed '/^$/d' ls3_inx > "$ls3"
+		cat "$ls3" | awk '!array_temp[$0]++' > ls3.tmp
+		sed '/^$/d' ls3.tmp > "$ls3"
 	fi
 
 	exit 1
@@ -500,7 +499,7 @@ elif [ $1 = dli ]; then
 	
 #--------------------------------
 elif [ $1 = dlt ]; then
-	source $DS/ifs/yad/mngr.sh
+	source $DS/ifs/mods/mngr.sh
 	
 	dlg_msg_1 " $delete_topic "
 	ret=$(echo "$?")
@@ -537,7 +536,7 @@ elif [ $1 = dlt ]; then
 elif [ "$1" = edt ]; then
 
 	source /usr/share/idiomind/ifs/ifs.sh
-	source $DS/ifs/yad/mngr.sh
+	source $DS/ifs/mods/mngr.sh
 	wth=$(sed -n 7p $DC_s/cfg.18)
 	eht=$(sed -n 8p $DC_s/cfg.18)
 	dct="$DS/addons/Dics/cnfg.sh"
@@ -594,8 +593,8 @@ elif [ "$1" = edt ]; then
 			rm -f $cnf
 			
 			source /usr/share/idiomind/ifs/c.conf
-			source $DS/ifs/add.sh
-			source $DS/ifs/yad/add.sh
+			source $DS/ifs/mods/add.sh
+			#source $DS/ifs/mods/add_yad.sh
 			
 			if [[ "$mrk" != "$mrk2" ]]; then
 				if [[ "$mrk2" = "TRUE" ]]; then
@@ -633,7 +632,7 @@ elif [ "$1" = edt ]; then
 
 			if [[ "$tpc" != "$topc" ]]; then
 				cp -f "$audo" "$DM_tl/$topc/words/$nme.mp3"
-				$DS/mngr.sh inx W "$nme" "$topc" &
+				$DS/mngr.sh index W "$nme" "$topc" &
 				if [ -n "$(cat "$DC_tl/.cfg.2" | grep "$topc")" ]; then
 					$DS/mngr.sh dli "$nme" C
 				fi
@@ -675,7 +674,7 @@ elif [ "$1" = edt ]; then
 			audo=$(cat $cnf | tail -8 | sed -n 6p)
 			
 			source /usr/share/idiomind/ifs/c.conf
-			source $DS/ifs/add.sh
+			source $DS/ifs/mods/add.sh
 
 			rm -f $cnf
 			
@@ -775,7 +774,7 @@ elif [ "$1" = edt ]; then
 					echo "$(echo "$tgt" | sed -n "$n"p).mp3" >> "$DC_tl/$topc/cfg.5"
 					let n++
 				done
-				$DS/mngr.sh inx S "$trgt" "$topc" &
+				$DS/mngr.sh index S "$trgt" "$topc" &
 				if [ -n "$(cat "$DC_tl/.cfg.2" | grep "$topc")" ]; then
 					$DS/mngr.sh dli "$nme" C
 				fi

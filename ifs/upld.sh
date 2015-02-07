@@ -3,7 +3,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/upld.conf
-source $DS/ifs/cmns.sh
+source $DS/ifs/mods/cmns.sh
 
 if [[ $1 = vsd ]]; then
 	U=$(sed -n 1p $HOME/.config/idiomind/s/cfg.4)

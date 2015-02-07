@@ -2,20 +2,6 @@
 # -*- ENCODING: UTF-8 -*-
 
 
-function internet() {
-
-	curl -v www.google.com 2>&1 \
-	| grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
-	yad --window-icon=idiomind --on-top \
-	--image=info --name=idiomind \
-	--text=" $connection_err  \\n  " \
-	--image-on-top --center --sticky \
-	--width=420 --height=150 --borders=3 \
-	--skip-taskbar --title=Idiomind \
-	--button="  Ok  ":0 >&2; exit 1;}
-}
-
-
 function check_grammar_1() {
 	
 	g=$(echo "$trgt"  | sed 's/ /\n/g')
@@ -231,7 +217,7 @@ function translate() {
 	result=$(curl -s -i --user-agent "" -d "sl=$2" -d "tl=$3" --data-urlencode text="$1" https://translate.google.com)
 	encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"$result")
 	trd=$(iconv -f $encoding <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8)
-	echo "$trd"
+	echo "$trd" | tr '\n' ' ' | sed '/^$/d'
 }
 
 
@@ -365,17 +351,3 @@ function list_words_3() {
 		| head -n40 | egrep -v "FALSE" | egrep -v "TRUE" > lst
 	fi
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

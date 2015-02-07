@@ -83,8 +83,9 @@ elif [ -f "$DM_tlt/$nme.mp3" ]; then
 	--dclick-action="$DS/ifs/tls.sh dclik" >/dev/null 2>&1
 else
 	ff=$(($nuw + 1))
-	#echo "$(sed -n "$nuw"p "$ind")" >> $DT/rm
-	$DS/vwr.sh "$v" "$nll" "$ff" & exit 1
+	echo "_" >> $DT/sc
+	[[ $(cat $DT/sc | wc -l) -ge 5 ]] && rm -f $DT/sc & exit 1 \
+	|| $DS/vwr.sh "$v" "$nll" "$ff" & exit 1
 fi
 		ret=$?
 		if [[ $ret -eq 4 ]]; then

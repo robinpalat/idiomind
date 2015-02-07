@@ -3,8 +3,8 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source /usr/share/idiomind/ifs/trans/$lgs/rss.conf
-source $DS/ifs/add.sh
-source $DS/ifs/cmns.sh
+source $DS/ifs/mods/add.sh
+source $DS/ifs/mods/cmns.sh
 DSF="$DS/addons/Learning with news"
 DCF="$DC/addons/Learning with news"
 

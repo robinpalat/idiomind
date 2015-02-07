@@ -49,7 +49,7 @@ function dlg_form_2() {
 function dlg_msg_1() {
     
         yad --center --scroll \
-        --title="$confirm" --width=420 --height=150 \
+        --title="$confirm" --width=360 --height=120 \
         --on-top --image=dialog-question --skip-taskbar \
         --text=" $1 " --borders=5 \
         --window-icon=idiomind \

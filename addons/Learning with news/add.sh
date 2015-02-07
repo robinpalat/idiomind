@@ -3,8 +3,8 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source /usr/share/idiomind/ifs/trans/$lgs/rss.conf
-source $DS/ifs/comms.sh
-source $DS/ifs/add.sh
+source $DS/ifs/mods/comms.sh
+source $DS/ifs/mods/add.sh
 
 if [[ $1 = n_i ]]; then
 
@@ -44,7 +44,7 @@ if [[ $1 = n_i ]]; then
 			[[ ! -d "$DM_tl/Feeds/kept/words" ]] && mkdir "$DM_tl/Feeds/kept/words"
 			cp "$DM_tl/Feeds/conten/$var/$nm.mp3" "$DM_tl/Feeds/kept/words/${nm^}.mp3"
 			
-			tags_2 W "${trgt^}" "${srce^}" "$var" "$DM_tl/Feeds/kept/words/${nm^}.mp3"
+			add_tags_2 W "${trgt^}" "${srce^}" "$var" "$DM_tl/Feeds/kept/words/${nm^}.mp3"
 			
 			echo "${trgt^}" >> "$DC_tl/Feeds/cfg.0"
 			echo "${trgt^}" >> "$DC_tl/Feeds/.cfg.11"
