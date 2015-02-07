@@ -53,16 +53,13 @@ if [ ! -d $DM_tl/Feeds ]; then
 	mkdir $DM_tl/Feeds/kept/.audio
 	mkdir $DM_tl/Feeds/kept/words
 	mkdir $DC_tl/Feeds/
+	mkdir "$DC_a/Learning with news"
+	mkdir "$DC_a/Learning with news/$lgtl/rss"
+	cp -f "$DSF/examples/$lgtl" "$DCF/rss/$lgtl"
+fi
 	
-	if [ ! -d "$DCF/$lgtl" ]; then
-		mkdir "$DCF/$lgtl"
-		mkdir "$DCF/$lgtl/subscripts"
-		cp $DSF/examples/$lgtl \
-		"$DCF/$lgtl/subscripts/Example"
-		cp $DSF/examples/$lgtl.txt \
-		"$DCF/$lgtl/subscripts/Example.txt"
-	fi
-	
+if [ ! -f $DC_tl/Feeds/tpc.sh ]; then
+
 	echo '#!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
 uid=$(sed -n 1p $DC_s/cfg.4)

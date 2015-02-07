@@ -82,7 +82,7 @@ function dialog1() {
 	--buttons-layout=end --borders=0 --title=" " --image-on-top \
 	--skip-taskbar --margins=8 --text-align=left --height=400 --width=460 \
 	--align=left --window-icon=idiomind --fore=4A4A4A \
-	--button=$hint:"/usr/share/idiomind//practice/hint.sh '$n'" \
+	--button=$hint:"/usr/share/idiomind/practice/hint.sh '$n'" \
 	--button=Listen:"play '$DM_tlt/$1.mp3'" \
 	--button="  Ok >> ":0)
 	}
@@ -93,8 +93,8 @@ function dialog2() {
 	--fontname="Verdana Black" --justify=fill --editable --wrap \
 	--buttons-layout=end --borders=0 --title=" " "$info" \
 	--skip-taskbar --margins=8 --text-align=left --height=160 --width=460 \
-	--align=left --window-icon=idiomind \
-	--button=$hint:"/usr/share/idiomind//practice/hint.sh '$n'" \
+	--align=left --window-icon=idiomind --image-on-top \
+	--button=$hint:"/usr/share/idiomind/practice/hint.sh '$n'" \
 	--button="$listen":"play '$DM_tlt/$1.mp3'" \
 	--button="      Ok >     ":0)
 	}

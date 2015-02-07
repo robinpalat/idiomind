@@ -229,8 +229,16 @@ elif [ $1 = new_items ]; then
 			
 			if [ "$(echo "$trgt" | sed -n 1p | awk '{print tolower($0)}')" = i ]; then
 				$DS/add.sh process image $DT_r & exit 1
-			elif [ "$(echo "$trgt" | sed -n 1p | awk '{print tolower($0)}')" = a ]; then
-				$DS/add.sh process audio $DT_r & exit 1
+				
+				
+				
+			elif [ $(echo $trgt | wc -c) = 2 ]; then
+				$DS/add.sh process ${trgt:0:1} $DT_r & exit 1
+				
+				
+				
+				
+				
 			elif [[ "$(echo ${trgt:0:4})" = 'Http' ]]; then
 				$DS/add.sh process "$trgt" $DT_r & exit 1
 			elif [ $(echo "$trgt" | wc -c) -gt 150 ]; then
@@ -779,15 +787,16 @@ elif [ $1 = sentence_list_words ]; then
 	exit
 	
 elif [ $1 = process ]; then
-
+	
 	source $DS/ifs/trans/$lgs/add.conf
+	
 	wth=$(sed -n 3p $DC_s/cfg.18)
 	eht=$(sed -n 4p $DC_s/cfg.18)
 	ns=$(cat "$DC_tlt"/cfg.4 | wc -l)
 	source $DS/default/dicts/$lgt
 	nspr='/usr/share/idiomind/add.sh process'
 	LNK='http://www.chromium.org/developers/how-tos/api-keys'
-	dct=$DS/addons/Dics/cnfg.sh
+	#dct=$DS/addons/Dics/cnfg.sh
 	lckpr=$DT/.n_s_pr
 	DM_tlt="$DM_tl/$tpe"
 	DC_tlt="$DC_tl/$tpe"
@@ -826,7 +835,8 @@ elif [ $1 = process ]; then
 		lckpr=$DT/.n_s_pr
 		prdt="$2"
 	fi
-
+	
+	include $DS/ifs/mods/add
 	if [ $(echo ${2:0:4}) = 'Http' ]; then
 	
 		internet

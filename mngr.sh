@@ -3,7 +3,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/edit.conf
-source $DS/ifs/cmns.sh
+source $DS/ifs/mods/cmns.sh
 
 if [ $1 = mkmn ]; then
 	#[[ ! -f $DC_tl/.cfg.1 ]] && exit 1
@@ -11,6 +11,7 @@ if [ $1 = mkmn ]; then
 	[[ -d ./images ]] && rm -r ./images
 	[[ -d ./words ]] && rm -r ./words
 	[[ -f ./*.mp3 ]] && rm ./*.mp3
+	
 	[[ -f ./cfg.0 ]] && rm ./cfg.0
 	[[ -f ./cfg.1 ]] && rm ./cfg.1
 	[[ -f ./cfg.2 ]] && rm ./cfg.2
@@ -19,9 +20,11 @@ if [ $1 = mkmn ]; then
 	[[ -f ./cfg.4 ]] && rm ./cfg.4
 	[[ -f ./cfg.8 ]] && rm ./cfg.8
 	[[ -f ./cfg.12 ]] && rm ./cfg.12
+	
 	[[ -d ./practice ]] && rm -r ./practice
 	[[ -f ./tpc.sh ]] && rm ./tpc.sh
 	[[ -f ./.cfg.11 ]] && rm ./.cfg.11
+	
 	ls -t -d -N * > $DC_tl/.cfg.1
 	[[ -f $DC_s/cfg.0 ]] && mv -f $DC_s/cfg.0 $DC_s/cfg.16
 	n=1

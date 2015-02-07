@@ -47,30 +47,6 @@ function check_grammar_2() {
 }
 
 
-function tts() {
-	
-	cd $3; xargs -n10 < "$1" > ./temp
-	[[ -n "$(sed -n 1p ./temp)" ]] && wget -q -U Mozilla -O $DT_r/tmp01.mp3 \
-	"https://translate.google.com/translate_tts?ie=UTF-8&tl=$2&q=$(sed -n 1p ./temp)"
-	[[ -n "$(sed -n 2p ./temp)" ]] && wget -q -U Mozilla -O $DT_r/tmp02.mp3 \
-	"https://translate.google.com/translate_tts?ie=UTF-8&tl=$2&q=$(sed -n 2p ./temp)"
-	[[ -n "$(sed -n 3p ./temp)" ]] && wget -q -U Mozilla -O $DT_r/tmp03.mp3 \
-	"https://translate.google.com/translate_tts?ie=UTF-8&tl=$2&q=$(sed -n 3p ./temp)"
-	[[ -n "$(sed -n 4p ./temp)" ]] && wget -q -U Mozilla -O $DT_r/tmp04.mp3 \
-	"https://translate.google.com/translate_tts?ie=UTF-8&tl=$2&q=$(sed -n 4p ./temp)"
-	cat tmp01.mp3 tmp02.mp3 tmp03.mp3 tmp04.mp3 > "$4"
-	find . -name "tmp*.mp3" -exec rm -rf {} \;
-
-}
-
-
-function nmfile() {
-	
-	echo "$(echo "$1" | cut -c 1-100 | sed 's/[ \t]*$//' \
-	| sed s'/&//'g | sed s'/://'g | sed "s/'/ /g" | sed "s/’/ /g")"
-}
-
-
 function clean_1() {
 	
 	echo "$(echo "$1" | sed ':a;N;$!ba;s/\n/ /g' \

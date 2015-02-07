@@ -37,10 +37,11 @@ if [ "$1" = dlck ]; then
 elif [ -z "$1" ]; then
 
 	source $DS/ifs/trans/$lgs/others.conf
-	if [ ! -d "$dir" ]; then
-		mkdir "$dir"
-		mkdir "$dir/enables"
-		mkdir "$dir/disables"
+	if [ ! -d "$DC_a/dict/" ]; then
+		mkdir "$DC_a/dict/"
+		mkdir "$DC_a/dict/enables"
+		mkdir "$DC_a/dict/disables"
+		cp -f $DS/addons/Dics/disables/* $DC_a/dict/disables/
 	fi
 	
 	if [ "$2" = f ]; then

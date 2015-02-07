@@ -1,4 +1,4 @@
 #!/bin/bash
-cd "$HOME/.config/idiomind/addons/Learning with news/English/subscripts"
-echo "News Yahoo.com - Sample subscription" > ../.rss
+cd "$HOME/.config/idiomind/addons/Learning with news/English/rss"
+echo "News Yahoo.com - Sample" > ../.rss
 echo "http://rss.news.yahoo.com/rss/world" > ../link

@@ -17,8 +17,23 @@ function audio_recognizer() {
 }
 
 
+function tts() {
+	
+	cd $3; xargs -n10 < "$1" > ./temp
+	[[ -n "$(sed -n 1p ./temp)" ]] && wget -q -U Mozilla -O $DT_r/tmp01.mp3 \
+	"https://translate.google.com/translate_tts?ie=UTF-8&tl=$2&q=$(sed -n 1p ./temp)"
+	[[ -n "$(sed -n 2p ./temp)" ]] && wget -q -U Mozilla -O $DT_r/tmp02.mp3 \
+	"https://translate.google.com/translate_tts?ie=UTF-8&tl=$2&q=$(sed -n 2p ./temp)"
+	[[ -n "$(sed -n 3p ./temp)" ]] && wget -q -U Mozilla -O $DT_r/tmp03.mp3 \
+	"https://translate.google.com/translate_tts?ie=UTF-8&tl=$2&q=$(sed -n 3p ./temp)"
+	[[ -n "$(sed -n 4p ./temp)" ]] && wget -q -U Mozilla -O $DT_r/tmp04.mp3 \
+	"https://translate.google.com/translate_tts?ie=UTF-8&tl=$2&q=$(sed -n 4p ./temp)"
+	cat tmp01.mp3 tmp02.mp3 tmp03.mp3 tmp04.mp3 > "$4"
+	find . -name "tmp*.mp3" -exec rm -rf {} \;
 
-if [ "$(echo "$prdt")" = "audio" ]; then
+}
+
+if [ "$prdt" = a ]; then
 
 		left=$((50 - $(cat "$DC_tlt/cfg.4" | wc -l)))
 		key=$(sed -n 2p $DC_s/cfg.3)
@@ -62,7 +77,7 @@ if [ "$(echo "$prdt")" = "audio" ]; then
 			rename 's/^0*//' *.mp3
 			rm -f "$DT_r"/c_rv.mp3
 			ls *.mp3 > lst
-			lns=$(cat ./lst | head -50 | wc -l) # 50------------------------------
+			lns=$(cat ./lst | head -50 | wc -l)
 			
 			internet
 			 
@@ -84,7 +99,7 @@ if [ "$(echo "$prdt")" = "audio" ]; then
 			fi
 			
 			echo "# $file_pros" ; sleep 0.2
-			#----------------------
+
 			n=1
 			while [ $n -le "$lns" ]; do
 
@@ -100,7 +115,7 @@ if [ "$(echo "$prdt")" = "audio" ]; then
 				trgt="$(echo "$data" | sed '1d' | sed 's/.*transcript":"//' \
 				| sed 's/"}],"final":true}],"result_index":0}//g')"
 				
-				if [ $(echo "$trgt" | wc -c) -ge 150 ]; then # 150-----------------------------------
+				if [ $(echo "$trgt" | wc -c) -ge 150 ]; then
 					printf "\n- $trgt" >> log
 				
 				else
@@ -169,7 +184,7 @@ if [ "$(echo "$prdt")" = "audio" ]; then
 						
 						if [ $(sed -n 1p "$sntc.txt" | wc -$c) -eq 1 ]; then
 						
-							if [ $(cat "$DC_tlt"/cfg.3 | wc -l) -ge 50 ]; then # 50 ---------------------------
+							if [ $(cat "$DC_tlt"/cfg.3 | wc -l) -ge 50 ]; then
 								printf "\n- $sntc" >> ./slog
 						
 							else
@@ -185,7 +200,7 @@ if [ "$(echo "$prdt")" = "audio" ]; then
 						
 						elif [ $(sed -n 1p "$sntc.txt" | wc -$c) -ge 1 ]; then
 						
-							if [ $(cat "$DC_tlt"/cfg.4 | wc -l) -ge 50 ]; then # 50 -------------------------------
+							if [ $(cat "$DC_tlt"/cfg.4 | wc -l) -ge 50 ]; then
 								printf "\n- $sntc" >> ./wlog
 						
 							else
@@ -245,7 +260,7 @@ if [ "$(echo "$prdt")" = "audio" ]; then
 						exmp=$(sed -n "$n"p wrdsls)
 						fname="$(nmfile "$exmp")"
 
-						if [ $(cat "$DC_tlt"/cfg.3 | wc -l) -ge 50 ]; then # 50 -------------------------------------
+						if [ $(cat "$DC_tlt"/cfg.3 | wc -l) -ge 50 ]; then
 							printf "\n- $trgt" >> ./wlog
 					
 						else

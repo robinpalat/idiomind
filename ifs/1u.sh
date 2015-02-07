@@ -18,9 +18,9 @@ function set_lang() {
 			mkdir "$DIR1"/$1
 			mkdir "$DIR1"/$1/.share
 			mkdir "$DIR3"/$1
-			mkdir "$DIR4"/$1
-			mkdir "$DIR4"/$1/subscripts
-			cp -f "$drtf"/$1 "$DIR4"/$1/subscripts/Example
+			#mkdir "$DIR4"/$1
+			#mkdir "$DIR4"/$1/subscripts
+			#cp -f "$drtf"/$1 "$DIR4"/$1/subscripts/Example
 		fi
 		echo $2 > $DIR2/s/cfg.10
 		echo $1 >> $DIR2/s/cfg.10
@@ -64,11 +64,8 @@ elif [[ $ret -eq 0 ]]; then
 	source=$(echo "$dialog" | cut -d "|" -f2)
 	target=$(echo "$dialog" | cut -d "|" -f4)
 	
-	echo "$dialog"
-	
 	echo "$source ......"
-	
-	echo "$target ............"
+	echo "$target ............."
 	
 	if [ -z "$dialog" ]; then
 		/usr/share/idiomind/ifs/1u.sh & exit 1
@@ -99,14 +96,14 @@ elif [[ $ret -eq 0 ]]; then
 	DIR2="$HOME"/.config/idiomind
 	mkdir "$DIR2"/s
 	mkdir "$DIR2"/addons
-	mkdir "$DIR2"/addons/stats
-	mkdir "$DIR2"/addons/dict
+	#mkdir "$DIR2"/addons/stats
+	#mkdir "$DIR2"/addons/dict
 	mkdir "$DIR2"/addons/practice
 	mkdir "$DIR2"/topics
 	DIR3="$HOME"/.config/idiomind/topics
-	mkdir "$HOME/.config/idiomind/addons/Learning with news"
-	DIR4="$HOME/.config/idiomind/addons/Learning with news"
-	cp -f -r /usr/share/idiomind/default/dicts/* $DIR2/addons/dict
+	#mkdir "$HOME/.config/idiomind/addons/Learning with news"
+	#DIR4="$HOME/.config/idiomind/addons/Learning with news"
+	#cp -f -r /usr/share/idiomind/default/dicts/* $DIR2/addons/dict
 	
 	if echo "$target" | grep "English"; then
 		echo "en" > $DIR2/s/cfg.9

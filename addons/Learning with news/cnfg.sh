@@ -3,13 +3,32 @@
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/rss.conf
 
-dir2="$DC/addons/Learning with news"
-DIR3="$DS/addons/Learning with news"
-FEED=$(sed -n 1p "$dir2/$lgtl/.rss")
+DCF="$DC/addons/Learning with news"
+DSF="$DS/addons/Learning with news"
+
+if [ ! -d $DM_tl/Feeds ]; then
+
+	mkdir $DM_tl/Feeds
+	mkdir $DM_tl/Feeds/conten
+	mkdir $DM_tl/Feeds/kept
+	mkdir $DM_tl/Feeds/kept/.audio
+	mkdir $DM_tl/Feeds/kept/words
+	mkdir $DC_tl/Feeds/
+	mkdir "$DC_a/Learning with news"
+fi
+
+if [ ! -d "$DC_a/Learning with news/$lgtl" ]; then
+	mkdir "$DC_a/Learning with news/$lgtl"
+	mkdir "$DC_a/Learning with news/$lgtl/rss"
+	cp -f "$DSF/examples/$lgtl" "$DCF/$lgtl/rss/$sample"
+fi
+
+
+FEED=$(sed -n 1p "$DCF/$lgtl/.rss")
 if [[ -z "$1" ]]; then
 
 	[[ -z "$FEED" ]] && FEED=" "
-	cd "$dir2/$lgtl/subscripts"
+	cd "$DCF/$lgtl/rss"
 	DIR1="$DC/addons/Learning with news"
 	st2=$(sed -n 1p "$DIR1/.cnf")
 	if [ -z $st2 ]; then
@@ -17,7 +36,7 @@ if [[ -z "$1" ]]; then
 		st2=$(sed -n 1p "$DIR1/.cnf")
 	fi
 
-	scrp=$(cd "$dir2/$lgtl/subscripts"; ls * | egrep -v "$FEED" \
+	scrp=$(cd "$DCF/$lgtl/rss"; ls * | egrep -v "$FEED" \
 	| tr "\\n" '!' | sed 's/!\+$//g')
 
 	CNFG=$($yad --on-top --form --center \
@@ -39,41 +58,41 @@ if [[ -z "$1" ]]; then
 			sed -i "1s/.*/$st2/" "$DIR1/.cnf" & exit 1
 
 		elif [[ $ret -eq 2 ]]; then
-			if echo "$st1" | grep "Sample subscription"; then
+			if echo "$st1" | grep -o "Sample"; then
 				$yad --title="Info" \
 				--center --on-top --window-icon=idiomind \
-				--width=420 --height=150 --image=info --skip-taskbar \
+				--width=360 --height=120 --image=info --skip-taskbar \
 				--text="  Sample subscription\\n  $delete_no." \
 				--borders=5 --button=OK:1
-				"$DIR3/cnfg.sh" & exit
-			elif echo "$st1" | grep "Example"; then
+				"$DSF/cnfg.sh" & exit
+			elif echo "$st1" | grep -o "Sample"; then
 				$yad --title="Info" --center --on-top --window-icon=idiomind \
-				--width=420 --height=150 --image=info --skip-taskbar \
+				--width=360 --height=120 --image=info --skip-taskbar \
 				--text="  Sample subscription\\n  $delete_no" \
 				--borders=5 --button=OK:1
-				"$DIR3/cnfg.sh" & exit
+				"$DSF/cnfg.sh" & exit
 			else
 				$yad --center \
 				--title="$confirm" --window-icon=idiomind \
-				--on-top --width=420 --height=150 --image=dialog-question \
+				--on-top --width=360 --height=120 --image=dialog-question \
 				--skip-taskbar --text="  $delete_subcription \n\n" \
 				--borders=5 --button="$yes":0 --button="$no":1
 					ret=$?
 					
 					if [[ $ret -eq 1 ]]; then
-						"$DIR3/cnfg.sh" & exit
+						"$DSF/cnfg.sh" & exit
 					
 					elif [[ $ret -eq 0 ]]; then
-						if [[ "$(cat "$dir2/$lgtl/.rss")" = "$st1" ]]; then
-							rm "$dir2/$lgtl/.rss" "$dir2/$lgtl/link"
+						if [[ "$(cat "$DCF/$lgtl/.rss")" = "$st1" ]]; then
+							rm "$DCF/$lgtl/.rss" "$DCF/$lgtl/link"
 						fi
-						rm "$dir2/$lgtl/subscripts/$st1"
-						"$DIR3/cnfg.sh" & exit
+						rm "$DCF/$lgtl/rss/$st1"
+						"$DSF/cnfg.sh" & exit
 					fi
 			fi
 					
 		elif [[ $ret -eq 5 ]]; then
-			dirs="$dir2/$lgtl/subscripts"
+			dirs="$DCF/$lgtl/rss"
 			nwfd=$($yad --width=480 --height=100 \
 				--center --on-top --window-icon=idiomind --align=right \
 				--skip-taskbar --button=$cancel:1 --button=Ok:0 \
@@ -82,9 +101,9 @@ if [[ -z "$1" ]]; then
 				--field="$url:: " "" \ )
 			
 				if [[ -z "$(echo "$nwfd" | cut -d "|" -f1)" ]]; then
-					"$DIR3/cnfg.sh" & exit
+					"$DSF/cnfg.sh" & exit
 				elif [[ -z "$(echo "$nwfd" | cut -d "|" -f2)" ]]; then
-					"$DIR3/cnfg.sh" & exit
+					"$DSF/cnfg.sh" & exit
 				fi
 			
 				if [ "$?" -eq 0 ]; then
@@ -98,20 +117,20 @@ if [[ -z "$1" ]]; then
 					fi
 					echo '#!/bin/bash
 					source /usr/share/idiomind/ifs/c.conf
-					cd "$DC_a/Learning with news/$lgtl/subscripts"
+					cd "$DC_a/Learning with news/$lgtl/rss"
 					echo "'$nme'" > ../.rss
 					echo '$link' > ../link
 					exit' > "$dirs/$nme"
 					chmod +x  "$dirs/$nme"
-					"$DIR3/cnfg.sh" & exit
+					"$DSF/cnfg.sh" & exit
 					
 				elif [ "$?" -eq 1 ]; then
-					"$DIR3/cnfg.sh" & exit
+					"$DSF/cnfg.sh" & exit
 				fi
 		
 		elif [[ $ret -eq 4 ]]; then
-			sh "$dir2/$lgtl/subscripts/$st1"
-			"$DIR3/strt.sh" & exit 1
+			sh "$DCF/$lgtl/rss/$st1"
+			"$DSF/strt.sh" & exit 1
 		else
 			sed -i "1s/.*/$st2/" "$DIR1/.cnf"
 			exit 1
@@ -122,7 +141,7 @@ elif [ "$1" = NS ]; then
 	yad --window-icon=idiomind --name=idiomind \
 	--image=info --on-top --text="$no_url" \
 	--image-on-top --center --sticky \
-	--width=420 --height=150 --borders=5 \
+	--width=360 --height=120 --borders=5 \
 	--skip-taskbar --title=idiomind \
 	--button="  Ok  ":0
 
@@ -131,20 +150,20 @@ elif [[ $1 = edit ]]; then
 	slct=$(mktemp $DT/slct.XXXX)
 
 if [[ "$(cat "$drtc/cfg.0" | wc -l)" -ge 20 ]]; then
-dd="$DIR3/images/save.png
+dd="$DSF/images/save.png
 $create_topic
-$DIR3/images/del.png
+$DSF/images/del.png
 $delete_news
-$DIR3/images/del.png
+$DSF/images/del.png
 $delete_saved
-$DIR3/images/edit.png
+$DSF/images/edit.png
 $subcriptions"
 else
-dd="$DIR3/images/del.png
+dd="$DSF/images/del.png
 $delete_news
-$DIR3/images/del.png
+$DSF/images/del.png
 $delete_saved
-$DIR3/images/edit.png
+$DSF/images/edit.png
 $subcriptions"
 fi
 
@@ -159,13 +178,13 @@ fi
 	slt=$(cat "$slct")
 	if  [[ "$ret" -eq 0 ]]; then
 		if echo "$slt" | grep -o "$create_topic"; then
-			"$DIR3/add.sh" n_t
+			"$DSF/add.sh" n_t
 		elif echo "$slt" | grep -o "$delete_news"; then
-			"$DIR3/mngr.sh" dlns
+			"$DSF/mngr.sh" dlns
 		elif echo "$slt" | grep -o "$delete_saved"; then
-			"$DIR3/mngr.sh" dlkt
+			"$DSF/mngr.sh" dlkt
 		elif echo "$slt" | grep -o "$subcriptions"; then
-			"$DIR3/cnfg.sh"
+			"$DSF/cnfg.sh"
 		fi
 		rm -f "$slct"
 

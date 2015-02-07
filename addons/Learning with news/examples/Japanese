@@ -1,4 +1,4 @@
 #!/bin/bash
-cd "$HOME/.config/idiomind/addons/Learning with news/Japanese/subscripts"
-echo "Nishinippon.co.jp - Sample subscription" > ../.rss
+cd "$HOME/.config/idiomind/addons/Learning with news/Japanese/rss"
+echo "Nishinippon.co.jp - Sample" > ../.rss
 echo "http://www.nishinippon.co.jp/rss/lifestyle" > ../link
