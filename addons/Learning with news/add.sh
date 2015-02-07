@@ -4,7 +4,7 @@
 source /usr/share/idiomind/ifs/c.conf
 source /usr/share/idiomind/ifs/trans/$lgs/rss.conf
 source $DS/ifs/mods/comms.sh
-source $DS/ifs/mods/add.sh
+include $DS/ifs/mods/add
 
 if [[ $1 = n_i ]]; then
 

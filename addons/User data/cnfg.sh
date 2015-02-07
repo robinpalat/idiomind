@@ -304,7 +304,7 @@ elif ([ "$1" = C ] && [ "$dte" != "$udt" ]); then
 		--image=info --sticky --class=idiomind \
 		--text="$dir_err2 " \
 		--image-on-top --fixed --width=420 --height=130 --borders=3 \
-		--skip-taskbar --window-icon=idiomind --buttons-layout=edge \
+		--skip-taskbar --window-icon=idiomind \
 		--title=Idiomind --button="$configure":3 --button=Ok:0
 		ret=$?
 		

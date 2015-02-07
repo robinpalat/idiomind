@@ -24,7 +24,7 @@ if [ "$1" = dlck ]; then
 		stts=disables
 	fi
 	edt=$(yad --text-info --width=450 --height=340 --title=Edit \
-	--filename=$HOME/.config/idiomind/addons/dict/$stts/"$3".$lgt \
+	--filename=$dir/$stts/"$3".$lgt --fontname=monospace \
 	--editable --show-uri --wrap --on-top --skip-taskbar --center \
 	--window-icon=idiomind --button=Delete:2 --button=Save:0)
 	ret=$?

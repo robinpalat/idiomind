@@ -150,31 +150,29 @@ fi
 #--------------------------------
 elif [ $1 = index ]; then
 
-	itm="$3"
-	fns="$5"
 	DC_tlt="$DC_tl/$4"
 
-	if [ -z "$itm" ]; then
+	if [ -z "$3" ]; then
 		exit 1
 	fi
 	
 	if [ "$2" = W ]; then
-		if [[ "$(cat "$DC_tlt/cfg.0" | grep "$fns")" ]] && [ -n "$fns" ]; then
-			sed -i "s/${fns}/${fns}\n$itm/" "$DC_tlt/cfg.0"
-			sed -i "s/${fns}/${fns}\n$itm/" "$DC_tlt/cfg.1"
-			sed -i "s/${fns}/${fns}\n$itm/" "$DC_tlt/.cfg.11"
+		if [[ "$(cat "$DC_tlt/cfg.0" | grep "$5")" ]] && [ -n "$5" ]; then
+			sed -i "s/${5}/${5}\n$3/" "$DC_tlt/cfg.0"
+			sed -i "s/${5}/${5}\n$3/" "$DC_tlt/cfg.1"
+			sed -i "s/${5}/${5}\n$3/" "$DC_tlt/.cfg.11"
 		else
-			echo "$itm" >> "$DC_tlt/cfg.0"
-			echo "$itm" >> "$DC_tlt/cfg.1"
-			echo "$itm" >> "$DC_tlt/.cfg.11"
+			echo "$3" >> "$DC_tlt/cfg.0"
+			echo "$3" >> "$DC_tlt/cfg.1"
+			echo "$3" >> "$DC_tlt/.cfg.11"
 		fi
-		echo "$itm" >> "$DC_tlt/cfg.3"
+		echo "$3" >> "$DC_tlt/cfg.3"
 		
 	elif [ "$2" = S ]; then
-		echo "$itm" >> "$DC_tlt/cfg.0"
-		echo "$itm" >> "$DC_tlt/cfg.1"
-		echo "$itm" >> "$DC_tlt/cfg.4"
-		echo "$itm" >> "$DC_tlt/.cfg.11"
+		echo "$3" >> "$DC_tlt/cfg.0"
+		echo "$3" >> "$DC_tlt/cfg.1"
+		echo "$3" >> "$DC_tlt/cfg.4"
+		echo "$3" >> "$DC_tlt/.cfg.11"
 	fi
 	
 	lss="$DC_tlt/.cfg.11"
@@ -499,7 +497,7 @@ elif [ $1 = dli ]; then
 	
 #--------------------------------
 elif [ $1 = dlt ]; then
-	source $DS/ifs/mods/mngr.sh
+	include $DS/ifs/mods/mngr
 	
 	dlg_msg_1 " $delete_topic "
 	ret=$(echo "$?")
@@ -536,7 +534,7 @@ elif [ $1 = dlt ]; then
 elif [ "$1" = edt ]; then
 
 	source /usr/share/idiomind/ifs/ifs.sh
-	source $DS/ifs/mods/mngr.sh
+	include $DS/ifs/mods/mngr
 	wth=$(sed -n 7p $DC_s/cfg.18)
 	eht=$(sed -n 8p $DC_s/cfg.18)
 	dct="$DS/addons/Dics/cnfg.sh"
@@ -593,7 +591,7 @@ elif [ "$1" = edt ]; then
 			rm -f $cnf
 			
 			source /usr/share/idiomind/ifs/c.conf
-			source $DS/ifs/mods/add.sh
+			include $DS/ifs/mods/add
 			#source $DS/ifs/mods/add_yad.sh
 			
 			if [[ "$mrk" != "$mrk2" ]]; then
@@ -674,7 +672,7 @@ elif [ "$1" = edt ]; then
 			audo=$(cat $cnf | tail -8 | sed -n 6p)
 			
 			source /usr/share/idiomind/ifs/c.conf
-			source $DS/ifs/mods/add.sh
+			include $DS/ifs/mods/add
 
 			rm -f $cnf
 			

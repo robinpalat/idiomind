@@ -32,3 +32,10 @@ function nmfile() {
 	| sed s'/&//'g | sed s'/://'g | sed "s/'/ /g" \
 	| sed "s/’/ /g")"
 }
+
+
+function include() {
+	
+for f in $1/*; do source "$f"; done
+
+}
