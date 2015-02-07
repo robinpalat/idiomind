@@ -270,6 +270,7 @@ elif [ $1 = new_items ]; then
 		    
 				if [ $(echo "$trgt" | wc -w) = 1 ]; then
 					$DS/add.sh new_word "$trgt" $DT_r "$srce" & exit 1
+					
 				elif [ $(echo "$trgt" | wc -w) -ge 1 -a $(echo "$trgt" | wc -c) -le 150 ]; then
 					$DS/add.sh new_sentence "$trgt" $DT_r "$srce" & exit 1
 					
@@ -300,7 +301,7 @@ elif [ $1 = new_sentence ]; then
 		internet
 	
 		cd $DT_r
-		trgt=$(translate "$(clean_1 "$2")" auto $lgt)
+		trgt=$(translate "$(clean_1 "$2")" auto $lgt | tr '\n' ' ' | sed '/^$/d')
 		srce=$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')
 		echo "$trgt" > trgt
 		fname="$(nmfile "$trgt")"
@@ -1305,10 +1306,10 @@ elif [ $1 = process ]; then
 					while [ $n -le $(cat slts | head -50 | wc -l) ]; do
 					
 						sntc=$(sed -n "$n"p slts)
-						trgt=$(translate "$(clean_1 "$sntc")" auto $lgt | sed 's/^\s*./\U&\E/g')
+						trgt=$(translate "$(clean_1 "$sntc")" auto $lgt | sed ':a;N;$!ba;s/\n/ /g' | sed 's/^\s*./\U&\E/g')
 						srce=$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')
 						echo "$trgt" > ./trgt
-						fname="$(echo "$trgt" | nmfile)"
+						fname="$(nmfile "$trgt")"
 					
 						# words
 						if [ $(echo "$sntc" | wc -$c) = 1 ]; then
