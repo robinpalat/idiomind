@@ -18,7 +18,7 @@ if [[ "$1" = time ]]; then
 		--mark="120 s":120 --borders=20 --scale \
 		--max-value=128 --value="$bcl" --step 2 \
 		--name=idiomind --on-top --skip-taskbar \
-		--window-icon=idiomind --borders=10 \
+		--window-icon=idiomind --borders=5 \
 	    --title=" " --width=280 --height=240 \
 	    --min-value=2 --button="Ok":0 > $cnf1
 	

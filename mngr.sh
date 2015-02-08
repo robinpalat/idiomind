@@ -330,9 +330,9 @@ elif [ "$1" = mkok- ]; then
 	
 	
 elif [ $1 = dli ]; then
-	touch $DT/ps_lk
 
-	source $DS/ifs/yad/mngr.sh
+	touch $DT/ps_lk
+	include $DS/ifs/mods/mngr
 	itdl="$2"
 	
 	[[ -z "$itdl" ]] && rm -f $DT/ps_lk && exit
@@ -536,7 +536,6 @@ elif [ $1 = dlt ]; then
 #--------------------------------
 elif [ "$1" = edt ]; then
 
-	source /usr/share/idiomind/ifs/ifs.sh
 	include $DS/ifs/mods/mngr
 	wth=$(sed -n 7p $DC_s/cfg.18)
 	eht=$(sed -n 8p $DC_s/cfg.18)
@@ -595,7 +594,6 @@ elif [ "$1" = edt ]; then
 			
 			source /usr/share/idiomind/ifs/c.conf
 			include $DS/ifs/mods/add
-			#source $DS/ifs/mods/add_yad.sh
 			
 			if [[ "$mrk" != "$mrk2" ]]; then
 				if [[ "$mrk2" = "TRUE" ]]; then

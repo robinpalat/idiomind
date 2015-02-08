@@ -39,7 +39,7 @@ function dlg_form_1() { # imput text
         --on-top --window-icon=idiomind --skip-taskbar \
         --separator="\n" --align=right $img \
         --name=idiomind --class=idiomind \
-        --borders=0 --title=" " --width=440 --height=140 \
+        --borders=0 --title=" " --width=420 --height=140 \
         --field=" <small><small>$lgtl</small></small>: " "$txt" \
         --field=" <small><small>$topic</small></small>:CB" \
         "$ttle!$new *$e$tpcs" "$field" \
@@ -53,7 +53,7 @@ function dlg_form_2() { # imput text
         --on-top --window-icon=idiomind --skip-taskbar \
         --separator="\n" --align=right $img \
         --name=idiomind --class=idiomind \
-        --borders=0 --title=" " --width=440 --height=170 \
+        --borders=0 --title=" " --width=420 --height=170 \
         --field=" <small><small>$lgtl</small></small>: " "$txt" \
         --field=" <small><small>${lgsl^}</small></small>: " "$srce" \
         --field=" <small><small>$topic</small></small>:CB" \
