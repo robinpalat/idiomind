@@ -47,7 +47,7 @@ if [[ -z "$1" ]]; then
 		--button="$delete:2" \
 		--button="gtk-add:5" \
 		--button="$update:4" \
-		--field="  $current_subcription:CB" "$FEED!$scrp" \
+		--field="  $current_subscription:CB" "$FEED!$scrp" \
 		--field="$update_at_start:CHK" $st2)
 		ret=$?
 		
@@ -75,7 +75,7 @@ if [[ -z "$1" ]]; then
 				$yad --center \
 				--title="$confirm" --window-icon=idiomind \
 				--on-top --width=360 --height=120 --image=dialog-question \
-				--skip-taskbar --text="  $delete_subcription \n\n" \
+				--skip-taskbar --text="  $delete_subscription \n\n" \
 				--borders=5 --button="$yes":0 --button="$no":1
 					ret=$?
 					
@@ -96,7 +96,7 @@ if [[ -z "$1" ]]; then
 			nwfd=$($yad --width=480 --height=100 \
 				--center --on-top --window-icon=idiomind --align=right \
 				--skip-taskbar --button=$cancel:1 --button=Ok:0 \
-				--form --title=" $new_subcription" --borders=5 \
+				--form --title=" $new_subscription" --borders=5 \
 				--field="$name:: " "" \
 				--field="$url:: " "" \ )
 			
@@ -157,14 +157,14 @@ $delete_news
 $DSF/images/del.png
 $delete_saved
 $DSF/images/edit.png
-$subcriptions"
+$subscriptions"
 else
 dd="$DSF/images/del.png
 $delete_news
 $DSF/images/del.png
 $delete_saved
 $DSF/images/edit.png
-$subcriptions"
+$subscriptions"
 fi
 
 	echo "$dd" | yad --list --on-top \
@@ -183,7 +183,7 @@ fi
 			"$DSF/mngr.sh" dlns
 		elif echo "$slt" | grep -o "$delete_saved"; then
 			"$DSF/mngr.sh" dlkt
-		elif echo "$slt" | grep -o "$subcriptions"; then
+		elif echo "$slt" | grep -o "$subscriptions"; then
 			"$DSF/cnfg.sh"
 		fi
 		rm -f "$slct"

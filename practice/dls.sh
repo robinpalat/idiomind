@@ -181,7 +181,7 @@ while [ $n -le $(cat lsin1 | wc -l) ]; do
 		
 		get_image_text "$namefile"
 
-		if [ -f "$DT/ILLUSTRATION".jpeg ]; then
+		if ( [ -f "$DT/ILLUSTRATION".jpeg ] && [ $n != 1 ] ); then
 			IMAGE="$DT/ILLUSTRATION".jpeg
 			(sleep 0.5 && play "$DM_tlt/$namefile".mp3) &
 			dialog1 "$namefile"

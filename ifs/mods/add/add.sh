@@ -270,14 +270,14 @@ function fetch_audio_2() {
 	n=1
 	if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 		while [ $n -le $(cat $2 | wc -l) ]; do
-			fl=$(sed -n "$n"p $2)
+			fl=$(sed -n "$n"p "$2")
 			$dct "$fl" $DT_r swrd
 			mv "${fl^}.mp3" "./$nme/${fl^}.mp3"
 			let n++
 		done
 	else
 		while [ $n -le $(cat $1 | wc -l) ]; do
-			fl=$(sed -n "$n"p $1)
+			fl=$(sed -n "$n"p "$1")
 			$dct "$fl" $DT_r swrd
 			mv "${fl^}.mp3" "./$nme/${fl^}.mp3"
 			let n++
