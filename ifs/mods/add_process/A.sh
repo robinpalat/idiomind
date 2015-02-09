@@ -16,6 +16,7 @@ if [[ "$prdt" = A ]]; then
 	cd $DT_r
 	left=$((50 - $(cat "$DC_tlt/cfg.4" | wc -l)))
 	key=$(sed -n 2p $DC_s/cfg.3)
+	test="$DS/addons/Google translation service/test.flac"
 	
 	if [ -z "$key" ]; then
 		
@@ -62,14 +63,14 @@ if [[ "$prdt" = A ]]; then
 		 
 		echo "3"
 		echo "# $check_key... " ; sleep 1
-		data="$(audio_recognizer "$DS/addons/Google translation service/test.flac" $lgt $lgt $key)"
+		data="$(audio_recognizer "$test" $lgt $lgt $key)"
 		if [ -z "$data" ]; then
 			key=$(sed -n 3p $DC_s/cfg.3)
-			data="$(audio_recognizer "$DS/addons/Google translation service/test.flac" $lgt $lgt $key)"
+			data="$(audio_recognizer "$test" $lgt $lgt $key)"
 		fi
 		if [ -z "$data" ]; then
 			key=$(sed -n 4p $DC_s/cfg.3)
-			data="$(audio_recognizer "$DS/addons/Google translation service/test.flac" $lgt $lgt $key)"
+			data="$(audio_recognizer "$test" $lgt $lgt $key)"
 		fi
 		if [ -z "$data" ]; then
 		    msg "$key_err <a href='$LNK'>Google. </a>" error
@@ -235,7 +236,7 @@ if [[ "$prdt" = A ]]; then
 				
 				n=1
 				while [ $n -le "$(cat wrds | head -50 | wc -l)" ]; do
-					trgt=$(sed -n "$n"p wrds | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
+					trgt=$(sed -n "$n"p wrds | sed ':a;N;$!ba;s/\n/ /g' | sed 's/^\s*./\U&\E/g')
 					exmp=$(sed -n "$n"p wrdsls)
 					fname="$(nmfile "$exmp")"
 

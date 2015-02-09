@@ -18,9 +18,6 @@ function set_lang() {
 			mkdir "$DIR1"/$1
 			mkdir "$DIR1"/$1/.share
 			mkdir "$DIR3"/$1
-			#mkdir "$DIR4"/$1
-			#mkdir "$DIR4"/$1/subscripts
-			#cp -f "$drtf"/$1 "$DIR4"/$1/subscripts/Example
 		fi
 		echo $2 > $DIR2/s/cfg.10
 		echo $1 >> $DIR2/s/cfg.10
@@ -96,14 +93,9 @@ elif [[ $ret -eq 0 ]]; then
 	DIR2="$HOME"/.config/idiomind
 	mkdir "$DIR2"/s
 	mkdir "$DIR2"/addons
-	#mkdir "$DIR2"/addons/stats
-	#mkdir "$DIR2"/addons/dict
 	mkdir "$DIR2"/addons/practice
 	mkdir "$DIR2"/topics
 	DIR3="$HOME"/.config/idiomind/topics
-	#mkdir "$HOME/.config/idiomind/addons/Learning with news"
-	#DIR4="$HOME/.config/idiomind/addons/Learning with news"
-	#cp -f -r /usr/share/idiomind/default/dicts/* $DIR2/addons/dict
 	
 	if echo "$target" | grep "English"; then
 		echo "en" > $DIR2/s/cfg.9
@@ -201,8 +193,6 @@ elif [[ $ret -eq 0 ]]; then
 	echo $c$b > $DIR2/s/cfg.4
 	touch $DIR2/s/cfg.8
 	touch $DIR2/s/cfg.6
-	touch "$DIR4/.cnf"
-	touch $DIR2/addons/stats/cnf
 	touch $DIR2/s/cfg.12
 	#/usr/share/idiomind/mngr.sh mkmn
 	exit 1

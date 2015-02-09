@@ -28,7 +28,7 @@ function tts() {
 	"https://translate.google.com/translate_tts?ie=UTF-8&tl=$2&q=$(sed -n 3p ./temp)"
 	[[ -n "$(sed -n 4p ./temp)" ]] && wget -q -U Mozilla -O $DT_r/tmp04.mp3 \
 	"https://translate.google.com/translate_tts?ie=UTF-8&tl=$2&q=$(sed -n 4p ./temp)"
-	cat tmp01.mp3 tmp02.mp3 tmp03.mp3 tmp04.mp3 > "$4"
+	cat $(ls tmp[0-9]*.mp3 | sort -n | tr '\n' ' ') > "$4"
 	find . -name "tmp*.mp3" -exec rm -rf {} \;
 
 }

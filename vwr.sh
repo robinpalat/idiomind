@@ -31,7 +31,7 @@ if [ -z "$nme" ]; then
 fi
 [[ "$(echo "$nme" | wc -c)" -le 50 ]] && align=center || align=left
 
-if [ -f "$DM_tlt/words/$nme.mp3" ]; then
+if ( [ -f "$DM_tlt/words/$nme.mp3" ] || [ "$5" = w_fix ] ); then
 	tgs=$(eyeD3 "$DM_tlt/words/$nme.mp3")
 	trgt="$nme"
 	src=$(echo "$tgs" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
@@ -58,7 +58,7 @@ if [ -f "$DM_tlt/words/$nme.mp3" ]; then
 	--button=gtk-edit:4 --button="Play":"play '$DM_tlt/words/$nme.mp3'" \
 	--button=gtk-go-up:3 --button=gtk-go-down:2 >/dev/null 2>&1
 	
-elif [ -f "$DM_tlt/$nme.mp3" ]; then
+elif ( [ -f "$DM_tlt/$nme.mp3" ] || [ "$5" = s_fix ] ); then
 	tgs=$(eyeD3 "$DM_tlt/$nme.mp3")
 	[[ $(sed -n 3p $DC_s/cfg.1) = TRUE ]] \
 	&& trgt=$(echo "$tgs" | grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)') \
@@ -89,7 +89,7 @@ else
 fi
 		ret=$?
 		if [[ $ret -eq 4 ]]; then
-			$DS/mngr.sh edt "$v" "$nme" $nuw & exit 1
+			$DS/mngr.sh edt "$v" "$nme"
 		elif [[ $ret -eq 2 ]]; then
 			ff=$(($nuw + 1))
 			$DS/vwr.sh "$v" "$nll" $ff &

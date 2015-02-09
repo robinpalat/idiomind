@@ -1,6 +1,8 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+
+
 function dlg_form_1() {
 	
         yad --form --wrap --center --name=idiomind --class=idmnd \
@@ -27,7 +29,7 @@ function dlg_form_1() {
 
 
 function dlg_form_2() {
-
+        
         yad --form --wrap --center --name=idiomind --class=idmnd \
         --width=$wth --height=$eht --always-print-result \
         --separator="\\n" --borders=15 --align=center --align=center \
@@ -42,7 +44,7 @@ function dlg_form_2() {
         --field="$list_words":BTN "$wrds" \
         --button="$image":"$imge" \
         --button="$delete":"$dlte" "$edau" \
-        --button=gtk-close:1 > $1
+        --button=gtk-close:0 > $1
 }
 
 
@@ -54,4 +56,14 @@ function dlg_msg_1() {
         --text=" $1 " --borders=5 \
         --window-icon=idiomind \
         --button="$yes":0 --button="$no":1
+}
+
+
+function dlg_msg_9() { # same name - topic 
+    
+        yad --name=idiomind --center --on-top --image=info \
+        --text="$1" \
+        --image-on-top --width=360 --height=120 --borders=3 \
+        --skip-taskbar --window-icon=idiomind --sticky \
+        --title=Idiomind --button="$3":1 --button="$2":0 
 }

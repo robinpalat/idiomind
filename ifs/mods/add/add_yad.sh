@@ -13,6 +13,14 @@ function dlg_msg_3() { # current process
         --title=Idiomind --button=gtk-cancel:3 --button=Ok:1
 }
 
+function dlg_msg_2() { # s
+    
+        yad --name=idiomind --center --on-top --image=info \
+        --text="$item_err\n" \
+        --image-on-top --width=360 --height=120 --borders=3 \
+        --skip-taskbar --window-icon=idiomind --sticky \
+        --title=Idiomind --button="$delete":1 --button="$fix_item":0 
+}
 
 function dlg_msg_6() { # same name - topic 
     

@@ -52,7 +52,8 @@ function clean_1() {
 	echo "$(echo "$1" | sed ':a;N;$!ba;s/\n/ /g' \
 	| sed 's/"//g' | sed 's/“//g' | sed s'/&//'g \
 	| sed 's/”//g' | sed s'/://'g | sed "s/’/'/g" \
-	| sed 's/  / /g' | sed 's/   / /g' | sed 's/^[ \t]*//;s/[ \t]*$//')"
+	| sed 's/ \+/ /g' | sed 's/^[ \t]*//;s/[ \t]*$//'\
+	| sed 's/^ *//; s/ *$//g'| sed 's/^\s*./\U&\E/g')"
 }
 
 
@@ -61,7 +62,7 @@ function clean_2() { # name topic
     echo "$(echo "$1" | cut -d "|" -f1 | sed s'/!//'g \
     | sed s'/&//'g | sed s'/\://'g | sed s'/\&//'g \
     | sed s"/'//"g | sed 's/^[ \t]*//;s/[ \t]*$//' \
-    | sed 's/^\s*./\U&\E/g')"
+    | sed s'|/||'g | sed 's/^\s*./\U&\E/g')"
 }    
 
 

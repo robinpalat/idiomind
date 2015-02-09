@@ -126,8 +126,15 @@ elif [ $1 = new_items ]; then
 		$DS/addons/Dics/cnfg.sh "" f "$no_dictionary"
 		[[ -z "$(cat $DC/addons/dict/.dicts)" ]] && exit 1
 	fi
+	
+	if [ "$(cat $DC_tl/.cfg.1 | grep -v 'Feeds' | wc -l)" -lt 1 ]; then
+		[[ -d $DT_r ]] && rm -fr $DT_r
+		source $DS/ifs/trans/$lgs/topics_lists.conf
+		$DS/chng.sh "$no_topic" & exit 1
+	fi
+	
 	c=$(echo $(($RANDOM%1000)))
-	txt="$4"; [[ -z "$txt" ]] && txt="$(xclip -selection primary -o | tr '\n' ' ' | sed '/^$/d')"
+	txt="$4"; [[ -z "$txt" ]] && txt="$(xclip -selection primary -o | sed ':a;N;$!ba;s/\n/ /g' | sed '/^$/d')"
 
 	if [ "$3" = 2 ]; then
 		DT_r="$2"
@@ -140,13 +147,6 @@ elif [ $1 = new_items ]; then
 	
 	[[ -f $DT_r/ico.jpg ]] && img="--image=$DT_r/ico.jpg" \
 	|| img="--image=$DS/images/nw.png"
-	
-	
-	if [ "$(cat $DC_tl/.cfg.1 | grep -v 'Feeds' | wc -l)" -lt 1 ]; then
-		[[ -d $DT_r ]] && rm -fr $DT_r
-		source $DS/ifs/trans/$lgs/topics_lists.conf
-		$DS/chng.sh "$no_topic" & exit 1
-	fi
 	
 	if [[ -z "$tpe" ]]; then
 	tpcs=$(cat "$DC_tl/.cfg.2" | cut -c 1-40 \
@@ -304,7 +304,8 @@ elif [ $1 = new_sentence ]; then
 		internet
 	
 		cd $DT_r
-		trgt=$(translate "$(clean_1 "$2")" auto $lgt | tr '\n' ' ' | sed '/^$/d')
+
+		trgt=$(translate "$(clean_1 "$2")" auto $lgt | sed ':a;N;$!ba;s/\n/ /g')
 		srce=$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')
 		echo "$trgt" > trgt
 		fname="$(nmfile "$trgt")"
@@ -376,8 +377,8 @@ elif [ $1 = new_sentence ]; then
 			msg "$no_text$lgtl." info & exit
 		fi
 		
-		trgt=$(echo "$2" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-		srce=$(echo "$4" | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
+		trgt=$(echo "$(clean_1 "$2")" | sed ':a;N;$!ba;s/\n/ /g')
+		srce=$(echo "$(clean_1 "$4")" | sed ':a;N;$!ba;s/\n/ /g')
 		fname="$(nmfile "$trgt")"
 		
 		cd $DT_r
@@ -964,7 +965,7 @@ elif [ $1 = process ]; then
 					while [ $n -le $(cat slts | head -50 | wc -l) ]; do
 					
 						sntc=$(sed -n "$n"p slts)
-						trgt=$(translate "$(clean_1 "$sntc")" auto $lgt | sed ':a;N;$!ba;s/\n/ /g' | sed 's/^\s*./\U&\E/g')
+						trgt=$(translate "$(clean_1 "$sntc")" auto $lgt | sed ':a;N;$!ba;s/\n/ /g')
 						srce=$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')
 						echo "$trgt" > ./trgt
 						fname="$(nmfile "$trgt")"
@@ -1261,4 +1262,39 @@ elif [ $1 = set_image ]; then
 				rm -f s.html *.jpeg
 			fi
 	fi
+
+
+elif [[ "$1" = fix_item ]]; then
+
+	kill -9 $(pgrep -f "$yad --form ")
+	trgt="$2"
+	DT_r=$(mktemp -d $DT/XXXXXX)
+	cd $DT_r
+	
+
+	if ([ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]); then
+
+		srce=$(translate "$trgt" auto $lgs)
+		
+		if [ $(echo "$srce" | wc -w) = 1 ]; then
+			$DS/add.sh new_word "$trgt" $DT_r "$srce" & exit 1
+			
+		elif [ $(echo "$srce" | wc -w) -ge 1 -a $(echo "$srce" | wc -c) -le 150 ]; then
+			$DS/add.sh new_sentence "$trgt" $DT_r "$srce" & exit 1
+		fi
+		
+	elif ([ $lgt != ja ] || [ $lgt != 'zh-cn' ] || [ $lgt != ru ]); then
+	
+    
+		if [ $(echo "$trgt" | wc -w) = 1 ]; then
+			$DS/add.sh new_word "$trgt" $DT_r "$srce" & exit 1
+			
+		elif [ $(echo "$trgt" | wc -w) -ge 1 -a $(echo "$trgt" | wc -c) -le 150 ]; then
+			$DS/add.sh new_sentence "$trgt" $DT_r "$srce" & exit 1
+			
+		fi
+	fi
+	
+	$DS/vwr.sh "$trgt" "v1"
+	
 fi

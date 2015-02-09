@@ -97,17 +97,20 @@ elif [ "$1" != chngi ]; then
 		[[ -f $DC_tl/.cfg.1 ]] && info2=$(cat $DC_tl/.cfg.1 | wc -l) || info2=""
 		cd $DC_s
 
-		VAR=$(cat $DC_s/cfg.0 | $yad --name=idiomind \
+		VAR=$(cat $DC_s/cfg.0 | yad --name=idiomind \
 		--class=idiomind --center $img --image-on-top --separator="" $align\
 		"$text" --width=$wth --height=$eht --ellipsize=END \
 		--no-headers --list --window-icon=idiomind --borders=5 \
 		--button="gtk-add":3 --button="$ok":0 \
 		--title="$topics" --column=img:img --column=File:TEXT)
 			ret=$?
+			
 			if [ $ret -eq 3 ]; then
 				$DS/add.sh new_topic &&
 				$DS/add.sh new_items & exit
+				
 			elif [ $ret -eq 0 ]; then
+			
 				if [ -n "$1" ]; then
 					if [ "$2" = 3 ]; then
 						$DC_tl/"$VAR"/tpc.sh
@@ -115,6 +118,7 @@ elif [ "$1" != chngi ]; then
 					else
 						$DC_tl/"$VAR"/tpc.sh &
 					fi
+					
 				else
 					if [[ -f $DC_tl/"$VAR"/tpc.sh ]]; then
 						$DC_tl/"$VAR"/tpc.sh & exit
