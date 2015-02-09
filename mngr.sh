@@ -6,6 +6,7 @@ source $DS/ifs/trans/$lgs/edit.conf
 source $DS/ifs/mods/cmns.sh
 
 if [ $1 = mkmn ]; then
+	
 	#[[ ! -f $DC_tl/.cfg.1 ]] && exit 1
 	cd "$DC_tl"
 	[[ -d ./images ]] && rm -r ./images
@@ -159,7 +160,7 @@ elif [ $1 = index ]; then
 		exit 1
 	fi
 	
-	if [ "$2" = W ]; then
+	if [ "$2" = word ]; then
 		if [[ "$(cat "$DC_tlt/cfg.0" | grep "$5")" ]] && [ -n "$5" ]; then
 			sed -i "s/${5}/${5}\n$3/" "$DC_tlt/cfg.0"
 			sed -i "s/${5}/${5}\n$3/" "$DC_tlt/cfg.1"
@@ -171,7 +172,7 @@ elif [ $1 = index ]; then
 		fi
 		echo "$3" >> "$DC_tlt/cfg.3"
 		
-	elif [ "$2" = S ]; then
+	elif [ "$2" = sentence ]; then
 		echo "$3" >> "$DC_tlt/cfg.0"
 		echo "$3" >> "$DC_tlt/cfg.1"
 		echo "$3" >> "$DC_tlt/cfg.4"
@@ -631,7 +632,7 @@ elif [ "$1" = edt ]; then
 
 			if [[ "$tpc" != "$topc" ]]; then
 				cp -f "$audo" "$DM_tl/$topc/words/$nme.mp3"
-				$DS/mngr.sh index W "$nme" "$topc" &
+				$DS/mngr.sh index word "$nme" "$topc" &
 				if [ -n "$(cat "$DC_tl/.cfg.2" | grep "$topc")" ]; then
 					$DS/mngr.sh dli "$nme" C
 				fi
@@ -773,7 +774,7 @@ elif [ "$1" = edt ]; then
 					echo "$(echo "$tgt" | sed -n "$n"p).mp3" >> "$DC_tl/$topc/cfg.5"
 					let n++
 				done
-				$DS/mngr.sh index S "$trgt" "$topc" &
+				$DS/mngr.sh index sentence "$trgt" "$topc" &
 				if [ -n "$(cat "$DC_tl/.cfg.2" | grep "$topc")" ]; then
 					$DS/mngr.sh dli "$nme" C
 				fi

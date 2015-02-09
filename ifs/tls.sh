@@ -294,7 +294,7 @@ elif [ $1 = srch ]; then
 
 	[[ -f $DC_s/cfg.14 ]] && exit 1
 
-	if [[ $(cat $DC_s/cfg.13) -ne $(date +%d) ]]; then
+	if [[ $(cat $DC_s/cfg.13) != $(date +%d) ]]; then
 	
 		sleep 1
 		echo "$d2" > $DC_s/cfg.13

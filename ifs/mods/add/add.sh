@@ -253,12 +253,12 @@ function fetch_audio() {
 	n=1
 	if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 		while [ $n -le $(cat $2 | wc -l) ]; do
-			$dct $(sed -n "$n"p $2) $DT_r
+			$dct $(sed -n "$n"p "$2") $DT_r
 			let n++
 		done
 	else
 		while [ $n -le $(cat $1 | wc -l) ]; do
-			$dct $(sed -n "$n"p $1) $DT_r
+			$dct $(sed -n "$n"p "$1") $DT_r
 			let n++
 		done
 	fi
