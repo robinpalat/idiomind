@@ -241,8 +241,12 @@ elif [ $1 = new_items ]; then
 				
 			elif [[ "$(echo ${trgt:0:4})" = 'Http' ]]; then
 				$DS/add.sh process "$trgt" $DT_r & exit 1
-			elif [ $(echo "$trgt" | wc -c) -gt 150 ]; then
-				$DS/add.sh process "$trgt" $DT_r & exit 1
+				
+				
+			elif [[ $(printf $trgt | wc -c) = 1 ]]; then
+				$DS/add.sh process ${trgt:0:2} $DT_r & exit 1
+				
+				
 				
 			elif ([ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]); then
 			
@@ -836,7 +840,7 @@ elif [ $1 = process ]; then
 		prdt="$2"
 	fi
 	
-	include $DS/ifs/mods/add
+	include $DS/ifs/mods/add/process
 	if [ $(echo ${2:0:4}) = 'Http' ]; then
 	
 		internet
