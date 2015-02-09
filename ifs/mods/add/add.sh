@@ -151,7 +151,7 @@ function add_tags_9() {
 
 function voice() {
 	
-	cd $DT_r; vs=$(sed -n 8p $DC_s/cfg.1)
+	cd "$2"; vs=$(sed -n 8p $DC_s/cfg.1)
 	if [ -n "$vs" ]; then
 	
 		if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
@@ -160,24 +160,24 @@ function voice() {
 			if ([ $lg = "english" ] \
 			|| [ $lg = "spanish" ] \
 			|| [ $lg = "russian" ]); then
-			echo "$1" | text2wave -o $DT_r/s.wav
-			sox $DT_r/s.wav "$2"
+			echo "$1" | text2wave -o ./s.wav
+			sox ./s.wav "$3"
 			else
 				msg "$festival_err $lgtl" error
 				exit 1
 			fi
 		else
 			echo "$1" | "$vs"
-			[[ -f *.mp3 ]] && mv -f *.mp3 "$2"
-			[[ -f *.wav ]] && sox *.wav "$2"
+			[[ -f *.mp3 ]] && mv -f *.mp3 "$3"
+			[[ -f *.wav ]] && sox *.wav "$3"
 		fi
 	else
 	
 		lg=$(echo $lgtl | awk '{print tolower($0)}')
 		[[ $lg = chinese ]] && lg=Mandarin
-		[[ $lg = japanese ]] && (msg "$espeak_err $lgtl" error) & exit 1
-		espeak "$1" -v $lg -k 1 -p 40 -a 80 -s 110 -w $DT_r/s.wav
-		sox $DT_r/s.wav "$2"
+		[[ $lg = japanese ]] && (msg "$espeak_err $lgtl" error)
+		espeak "$1" -v $lg -k 1 -p 40 -a 80 -s 110 -w ./s.wav
+		sox ./s.wav "$3"
 	fi
 }
 

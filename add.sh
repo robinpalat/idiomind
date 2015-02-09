@@ -397,7 +397,7 @@ elif [ $1 = new_sentence ]; then
 			mv -f $DT_r/audtm.mp3 "$DM_tlt/$fname.mp3"
 			
 		else
-			voice "$trgt" "$DM_tlt/$fname.mp3"
+			voice "$trgt" $DT_r "$DM_tlt/$fname.mp3"
 		fi
 		
 		if [ -f img.jpg ]; then
@@ -518,7 +518,7 @@ elif [ $1 = new_word ]; then
 				mv -f "$DT_r/$trgt.mp3" "$DM_tlt/words/$trgt.mp3"
 				
 			else
-				voice "$trgt" "$DM_tlt/words/$trgt.mp3"
+				voice "$trgt" $DT_r "$DM_tlt/words/$trgt.mp3"
 				
 			fi
 			
@@ -615,7 +615,7 @@ elif [ $1 = edit_list_words ]; then
 					mv -f $DT_r/"$trgt.mp3" "$DM_tlt/words/$trgt.mp3"
 				else
 				
-					voice "$trgt" "$DM_tlt/words/$trgt.mp3"
+					voice "$trgt" $DT_r "$DM_tlt/words/$trgt.mp3"
 				fi
 				
 				add_tags_2 W "$trgt" "$srce" "$5" "$DM_tlt/words/$trgt.mp3" >/dev/null 2>&1
@@ -759,7 +759,7 @@ elif [ $1 = sentence_list_words ]; then
 				mv -f "$DT_r/$trgt.mp3" "$DM_tlt/words/$trgt.mp3"
 				
 			else
-				voice "$trgt" "$DM_tlt/words/$trgt.mp3"
+				voice "$trgt" $DT_r "$DM_tlt/words/$trgt.mp3"
 			fi
 			
 			if ( [ -f "$DM_tlt/words/$trgt.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
@@ -832,8 +832,9 @@ elif [ $1 = process ]; then
 		lckpr=$DT/.n_s_pr
 		prdt="$2"
 	fi
-	
+	include $DS/ifs/mods/add
 	include $DS/ifs/mods/add_process
+	
 	
 	if [ $(echo ${2:0:4}) = 'Http' ]; then
 	
@@ -983,7 +984,7 @@ elif [ $1 = process ]; then
 									tts ./trgt $lgt $DT_r "$DM_tlt/words/$trgt".mp3
 								else
 								
-									voice "$trgt" "$DM_tlt/words/$trgt".mp3
+									voice "$trgt" $DT_r "$DM_tlt/words/$trgt".mp3
 								fi
 
 								if ( [ -f "$DM_tlt/words/$trgt".mp3 ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
@@ -1009,7 +1010,7 @@ elif [ $1 = process ]; then
 										tts ./trgt $lgt $DT_r "$DM_tlt/$fname.mp3"
 										
 									else
-										voice "$trgt" "$DM_tlt/$fname.mp3"
+										voice "$trgt" $DT_r "$DM_tlt/$fname.mp3"
 										
 									fi
 									

@@ -251,7 +251,7 @@ if [[ "$prdt" = A ]]; then
 						
 							mv -f "$DT_r/$trgt.mp3" "$DM_tlt/words/$trgt.mp3"
 						else
-							voice "$trgt" "$DM_tlt/words/$trgt.mp3"
+							voice "$trgt" $DT_r "$DM_tlt/words/$trgt.mp3"
 							
 						fi
 						if ( [ -f "$DM_tlt/words/$trgt.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then

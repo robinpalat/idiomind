@@ -68,7 +68,7 @@ function new_session() {
 		echo "$set" >> $DC_s/cfg.21
 		let n++
 	done
-	for f in $DS/ifs/mods/start/*; do "$f"; done
+	for s in $DS/ifs/mods/start/*; do "$s"; done &
 
 	# screen size
 	sizes

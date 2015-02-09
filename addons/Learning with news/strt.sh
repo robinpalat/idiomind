@@ -127,7 +127,7 @@ if [ -n "$feed" ]; then
 					tts ./trgt $lgt $DT_r "./$nme.mp3"
 					
 				else
-					voice "$trgt" "$nme.mp3"
+					voice "$trgt" $DT_r "$nme.mp3"
 				fi
 
 				if ( [ -f "./$nme.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
