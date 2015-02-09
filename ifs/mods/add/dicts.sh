@@ -2,12 +2,15 @@
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
 
-wrd="$1"
-Wrd="${wrd^}"
-DT_r="$2"
-dir="$DC/addons/dict/"
+
 
 function dict() {
+	
+	wrd="$1"
+	Wrd="${wrd^}"
+	DT_r="$2"
+	dir="$DC/addons/dict/"
+
 	if [ "$3" = swrd ]; then
 
 		cd $DT_r

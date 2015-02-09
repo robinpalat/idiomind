@@ -796,7 +796,7 @@ elif [ $1 = process ]; then
 	source $DS/default/dicts/$lgt
 	nspr='/usr/share/idiomind/add.sh process'
 	LNK='http://www.chromium.org/developers/how-tos/api-keys'
-	#dct=$DS/addons/Dics/cnfg.sh
+	dct=$DS/addons/Dics/cnfg.sh
 	lckpr=$DT/.n_s_pr
 	DM_tlt="$DM_tl/$tpe"
 	DC_tlt="$DC_tl/$tpe"
