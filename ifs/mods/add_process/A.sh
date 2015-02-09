@@ -9,15 +9,18 @@ function audio_recognizer() {
 	-O - "https://www.google.com/speech-api/v2/recognize?&lang="$2"-"$3"&key=$4")"
 }
 
-if [[ "$(echo $prdt)" = a ]]; then
 
+
+if [[ "$prdt" = A ]]; then
+
+	cd $DT_r
 	left=$((50 - $(cat "$DC_tlt/cfg.4" | wc -l)))
 	key=$(sed -n 2p $DC_s/cfg.3)
 	
 	if [ -z "$key" ]; then
 		
 		msg "$no_key <a href='$LNK'>Web</a>\n" dialog-warning
-		[[ -d $DT_r2 ]] && rm -fr $DT_r2
+		[[ -d $DT_r ]] && rm -fr $DT_r
 		rm -f ls $lckpr & exit 1
 	fi
 	
@@ -26,32 +29,32 @@ if [[ "$(echo $prdt)" = a ]]; then
 	FL="$(dlg_file_1)"
 	
 	if [ -z "$FL" ];then
-		[[ -d $DT_r2 ]] && rm -fr $DT_r2
+		[[ -d $DT_r ]] && rm -fr $DT_r
 		rm -f $lckpr & exit 1
 		
 	else
 		if [ -z "$tpe" ]; then
-			[[ -d $DT_r2 ]] && rm -fr $DT_r2
+			[[ -d $DT_r ]] && rm -fr $DT_r
 			source $DS/ifs/trans/$lgs/topics_lists.conf
 			$DS/chng.sh "$no_edit" & exit 1
 		fi
-		DT_r2=$(mktemp -d $DT/XXXXXX); cd $DT_r2
+		
 		
 		(
 		echo "2"
 		echo "# $file_pros" ; sleep 1
-		cp -f "$FL" $DT_r2/rv.mp3
-		cd $DT_r2
-		eyeD3 -P itunes-podcast --remove "$DT_r2"/rv.mp3
-		eyeD3 --remove-all "$DT_r2"/rv.mp3
-		sox "$DT_r2"/rv.mp3 "$DT_r2"/c_rv.mp3 remix - highpass 100 norm \
+		cp -f "$FL" $DT_r/rv.mp3
+		cd $DT_r
+		eyeD3 -P itunes-podcast --remove "$DT_r"/rv.mp3
+		eyeD3 --remove-all "$DT_r"/rv.mp3
+		sox "$DT_r"/rv.mp3 "$DT_r"/c_rv.mp3 remix - highpass 100 norm \
 		compand 0.05,0.2 6:-54,-90,-36,-36,-24,-24,0,-12 0 -90 0.1 \
 		vad -T 0.6 -p 0.2 -t 5 fade 0.1 reverse \
 		vad -T 0.6 -p 0.2 -t 5 fade 0.1 reverse norm -0.5
-		rm -f "$DT_r2"/rv.mp3
+		rm -f "$DT_r"/rv.mp3
 		mp3splt -s -o @n *.mp3
 		rename 's/^0*//' *.mp3
-		rm -f "$DT_r2"/c_rv.mp3
+		rm -f "$DT_r"/c_rv.mp3
 		ls *.mp3 > lst
 		lns=$(cat ./lst | head -50 | wc -l)
 		
@@ -70,7 +73,7 @@ if [[ "$(echo $prdt)" = a ]]; then
 		fi
 		if [ -z "$data" ]; then
 		    msg "$key_err <a href='$LNK'>Google. </a>" error
-			[[ -d $DT_r2 ]] && rm -fr $DT_r2
+			[[ -d $DT_r ]] && rm -fr $DT_r
 			rm -f ls $lckpr & exit 1
 		fi
 		
@@ -84,7 +87,7 @@ if [[ "$(echo $prdt)" = a ]]; then
 			if [ -z "$data" ]; then
 			
 				msg "$key_err <a href='$LNK'>Google</a>" error
-				[[ -d $DT_r2 ]] && rm -fr $DT_r2
+				[[ -d $DT_r ]] && rm -fr $DT_r
 				rm -f ls $lckpr & break & exit 1
 			fi
 
@@ -109,7 +112,7 @@ if [[ "$(echo $prdt)" = a ]]; then
 		done
 		
 		) | dlg_progress_2
-		
+		cd $DT_r
 		sed -i '/^$/d' ./ls
 		[[ $(echo "$tpe" | wc -c) -gt 40 ]] && tcnm="${tpe:0:40}..." || tcnm="$tpe"
 
@@ -118,20 +121,20 @@ if [[ "$(echo $prdt)" = a ]]; then
 		[[ $ns -ge 45 ]] && info=$(printf "$remain$left$sentences. ")
 		[[ $ns -ge 49 ]] && info=$(printf "$remain$left$sentence. ")
 		
-		if [ -z "$(cat ls)" ]; then
+		if [ -z "$(cat $DT_r/ls)" ]; then
 		
 			dlg_text_info_4 "$gettext_err"
-			[[ -d $DT_r2 ]] && rm -fr $DT_r2
+			[[ -d $DT_r ]] && rm -fr $DT_r
 			rm -f $lckpr & exit 1
 			
 		else
-			dlg_checklist_5 ./ls
+			dlg_checklist_5 $DT_r/ls
 		fi
 		
 			if [ $? -eq 0 ]; then
 			
 				source /usr/share/idiomind/ifs/c.conf
-				cd $DT_r2
+				cd $DT_r
 				list=$(cat "$slt" | sed 's/|//g')
 				n=1
 				while [ $n -le "$(cat "$slt" | head -50 | wc -l)" ]; do
@@ -190,11 +193,11 @@ if [[ "$(echo $prdt)" = a ]]; then
 
 							(
 							r=$(echo $(($RANDOM%1000)))
-							clean_3 $DT_r2 $r
+							clean_3 $DT_r $r
 							translate "$(cat $aw | sed '/^$/d')" auto $lg | sed 's/,//g' \
 							| sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
-							check_grammar_1 $DT_r2 $r
-							list_words $DT_r2 $r
+							check_grammar_1 $DT_r $r
+							list_words $DT_r $r
 							grmrk=$(cat g.$r | sed ':a;N;$!ba;s/\n/ /g')
 							lwrds=$(cat A.$r)
 							pwrds=$(cat B.$r | tr '\n' '_')
@@ -241,11 +244,11 @@ if [[ "$(echo $prdt)" = a ]]; then
 				
 					else
 						srce="$(translate "$trgt" auto $lgs)"
-						$dct "$trgt" $DT_r2 swrd
+						$dct "$trgt" $DT_r swrd
 						
 						if [ -f "$trgt".mp3 ]; then
 						
-							mv -f "$DT_r2/$trgt.mp3" "$DM_tlt/words/$trgt.mp3"
+							mv -f "$DT_r/$trgt.mp3" "$DM_tlt/words/$trgt.mp3"
 						else
 							voice "$trgt" "$DM_tlt/words/$trgt.mp3"
 							
@@ -266,7 +269,7 @@ if [[ "$(echo $prdt)" = a ]]; then
 				done
 				) | dlg_progress_2
 
-				cd $DT_r2
+				cd $DT_r
 				
 				if [ -f ./wlog ]; then
 					wadds=" $(($(cat ./addw | wc -l) - $(cat ./wlog | sed '/^$/d' | wc -l)))"
@@ -334,6 +337,7 @@ if [[ "$(echo $prdt)" = a ]]; then
 						
 				fi
 				
+				cd $DT_r
 				if  [ -f ./log ]; then
 					rm=$(($(cat ./adds) - $(cat ./log | sed '/^$/d' | wc -l)))
 				else
@@ -344,14 +348,14 @@ if [[ "$(echo $prdt)" = a ]]; then
 				while [[ $n -le 20 ]]; do
 					 sleep 5
 					 if ( [ "$(cat ./x | wc -l)" = "$rm" ] || [ "$n" = 20 ] ); then
-						[[ -d "$DT_r2" ]] && rm -fr $DT_r2
+						[[ -d "$DT_r" ]] && rm -fr $DT_r
 						rm -f $lckpr & break & exit 1
 					 fi
 					let n++
 				done
 				exit 1
 			else
-				[[ -d "$DT_r2" ]] && rm -fr $DT_r2
+				[[ -d "$DT_r" ]] && rm -fr $DT_r
 				rm -f $lckpr $slt & exit 1
 			fi
 		fi

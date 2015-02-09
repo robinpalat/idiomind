@@ -160,6 +160,7 @@ elif [ $1 = new_items ]; then
 	[[ "$tpe" != "$tpc" ]] && topic="$topic <b>*</b>" || topic="$topic"
 	
 	[[ ! -f $DC_s/cfg.3 ]] && echo 'FALSE' > $DC_s/cfg.3
+	
 	if sed -n 1p $DC_s/cfg.3 | grep 'TRUE'; then
 	lzgpr="$(dlg_form_1)"
 	elif sed -n 1p $DC_s/cfg.3 | grep 'FALSE'; then
@@ -174,9 +175,7 @@ elif [ $1 = new_items ]; then
 	
 		if [[ $ret -eq 3 ]]; then
 		
-			cd $DT_r
-			set_image_1
-			
+			cd $DT_r; set_image_1
 			$DS/add.sh new_items $DT_r 2 "$trgt" "$srce" && exit
 		
 		elif [[ $ret -eq 2 ]]; then
@@ -227,27 +226,15 @@ elif [ $1 = new_items ]; then
 				echo "$tpe" > $DC_s/cfg.6
 			fi
 			
-			if [ "$(echo "$trgt" | sed -n 1p | awk '{print tolower($0)}')" = i ]; then
+			if [ "$(echo "$trgt" | sed -n 1p)" = I ]; then
 				$DS/add.sh process image $DT_r & exit 1
-				
-				
-				
-			elif [ $(echo $trgt | wc -c) = 2 ]; then
-				$DS/add.sh process ${trgt:0:1} $DT_r & exit 1
-				
-				
-				
-				
-				
-			elif [[ "$(echo ${trgt:0:4})" = 'Http' ]]; then
-				$DS/add.sh process "$trgt" $DT_r & exit 1
-				
-				
+
 			elif [[ $(printf $trgt | wc -c) = 1 ]]; then
 				$DS/add.sh process ${trgt:0:2} $DT_r & exit 1
-				
-				
-				
+
+			elif [[ "$(echo ${trgt:0:4})" = 'Http' ]]; then
+				$DS/add.sh process "$trgt" $DT_r & exit 1
+
 			elif ([ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]); then
 			
 				if sed -n 1p $DC_s/cfg.3 | grep FALSE; then
@@ -264,6 +251,7 @@ elif [ $1 = new_items ]; then
 				
 				if [ $(echo "$srce" | wc -w) = 1 ]; then
 					$DS/add.sh new_word "$trgt" $DT_r "$srce" & exit 1
+					
 				elif [ $(echo "$srce" | wc -w) -ge 1 -a $(echo "$srce" | wc -c) -le 150 ]; then
 					$DS/add.sh new_sentence "$trgt" $DT_r "$srce" & exit 1
 				fi
@@ -273,6 +261,7 @@ elif [ $1 = new_items ]; then
 					if [ -z "$srce" ]; then
 						[[ -d $DT_r ]] && rm -fr $DT_r
 						msg "$no_text $lgsl." info & exit 1
+						
 					elif [ -z "$trgt" ]; then
 						[[ -d $DT_r ]] && rm -fr $DT_r
 						msg "$no_text $lgtl." info & exit 1
@@ -840,7 +829,8 @@ elif [ $1 = process ]; then
 		prdt="$2"
 	fi
 	
-	include $DS/ifs/mods/add/process
+	include $DS/ifs/mods/add_process
+	
 	if [ $(echo ${2:0:4}) = 'Http' ]; then
 	
 		internet
@@ -856,7 +846,7 @@ elif [ $1 = process ]; then
 		
 		) | dlg_progress_1
 
-	elif [[ "$(echo "$2" | grep -o "i")" = i ]]; then
+	elif echo "$2" | grep -o "image"; then
 		
 		SCR_IMG=`mktemp`
 		trap "rm $SCR_IMG*" EXIT
