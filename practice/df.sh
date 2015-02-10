@@ -7,6 +7,7 @@ drtt="$DM_tlt/words"
 drts="$DS/practice/"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
+w9=$DC_s/cfg.22
 all=$(cat fin | wc -l)
 easy=0
 hard=0
@@ -18,7 +19,7 @@ ling=0
 function score() {
 
 	if [ "$(($(cat l_f)+$1))" -ge "$all" ]; then
-	
+		
 		rm fin fin1 fin2 fin3 ok.f
 		echo "$(date "+%a %d %B")" > look_f
 		echo 21 > .iconf
@@ -129,7 +130,6 @@ function answer() {
 	--field="$srces":lbl --width=365 --height=280 \
 	--button="      $no_know      ":3 \
 	--button="      $ok_know      ":2
-	
 	}
 
 n=1
@@ -145,7 +145,7 @@ while [ $n -le $(cat fin1 | wc -l) ]; do
 		ans=$(echo "$?")
 
 		if [[ $ans = 2 ]]; then
-			echo "$trgt" >> ok.f
+			echo "$trgt" | tee -a ok.f $w9
 			easy=$(($easy+1))
 
 		elif [[ $ans = 3 ]]; then

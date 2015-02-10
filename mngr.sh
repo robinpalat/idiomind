@@ -669,8 +669,8 @@ elif [ "$1" = edt ]; then
 			if [ "$infm" != "$inf" ]; then
 				impr=$(echo "$infm" | tr '\n' '_')
 				add_tags_6 W "$impr" "$file" >/dev/null 2>&1
-				echo "eitm.$tpc.eitm" >> \
-				$DC/addons/stats/.log &
+				printf "eitm.$tpc.eitm" >> \
+				$DC_a/stats/.log &
 			fi
 
 			mv -f "$DT/$nme.mp3" "$file"
@@ -688,8 +688,8 @@ elif [ "$1" = edt ]; then
 				sed '/^$/d' $DT/tx > "$ind"
 				rm $DT/tx
 				echo "$nme" >> "$inp"
-				echo "okim.1.okim" >> \
-				$DC/addons/stats/.log &
+				printf "okim.1.okim" >> \
+				$DC_a/stats/.log &
 				./vwr.sh "$v" "nll" $ff & exit 1
 			fi
 			./vwr.sh "$v" "$nme" $ff & exit 1
@@ -832,8 +832,8 @@ elif [ "$1" = edt ]; then
 				sed '/^$/d' $DT/tx > "$ind"
 				rm $DT/tx
 				echo "$trgt" >> "$inp"
-				echo "okim.1.okim" >> \
-				$DC/addons/stats/.log &
+				printf "okim.1.okim" >> \
+				$DC_a/stats/.log &
 				./vwr.sh "$v" "nll" $ff & exit 1
 			fi
 			

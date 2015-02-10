@@ -98,7 +98,7 @@ FALSE' > $DC_s/cfg.5; fi
 	else
 		btn="--button=gtk-media-stop:2"
 	fi
-	$yad --list --on-top \
+	yad --list --on-top \
 	--expand-column=3 --print-all --center \
 	--width=290 --name=idiomind --class=idmnd \
 	--height=240 --title="$tpc" --skip-taskbar \
@@ -203,8 +203,8 @@ FALSE' > $DC_s/cfg.5; fi
 		$DS/stop.sh play & exit 1
 	fi
 
-	echo "$(date '+%Y %m %d %l %M') -plyrt $tpc -plyrt" >> \
-	$DC/addons/stats/.log &
+	printf "plyrt.$tpc.plyrt" >> \
+	$DC_a/stats/.log &
 	sleep 1
 	$DS/bcle.sh & exit
 fi

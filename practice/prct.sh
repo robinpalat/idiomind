@@ -5,8 +5,8 @@ source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/practice.conf
 strt=$DS/practice/strt.sh
 cls=$DS/practice/cls
-w9=$DC/addons/practice/w9
-w6=$DC/addons/practice/w6
+w9=$DC_s/cfg.22
+w6=$DC_s/cfg.23
 DF=$DS/practice/df.sh
 DLW=$DS/practice/dlw.sh
 DMC=$DS/practice/dmc.sh
@@ -16,6 +16,7 @@ Si="$DC_tlt/cfg.4"
 Li="$DC_tlt/cfg.1"
 cd "$DC_tlt/practice"
 
+
 function look() {
 		yad --title="$practice - $tpc" --borders=5 --center \
 		--on-top --skip-taskbar --window-icon=idiomind \
@@ -24,6 +25,7 @@ function look() {
 		--text="<b>   $complete</b>\\n    $(cat $1)\\n\\n"
 }
 
+
 function get_list() {
 		if [ "$(cat "$Si" | wc -l)" -gt 0 ]; then
 			grep -Fxvf "$Si" "$Li" > $1
@@ -31,6 +33,7 @@ function get_list() {
 			cat "$Li" > $1
 		fi
 }
+
 
 function get_list_mchoice() {
 
@@ -48,8 +51,8 @@ function get_list_mchoice() {
 	--width 50 --height 35 --undecorated \
 	--pulsate --auto-close \
 	--skip-taskbar --center --no-buttons
-
 }
+
 
 function get_list_sentences() {
 		if [ "$(cat "$Wi" | wc -l)" -gt 0 ]; then
@@ -59,6 +62,7 @@ function get_list_sentences() {
 		fi
 }
 
+
 function starting() {
 		yad --form --center --borders=5 --image=info \
 		--title="$practice" --on-top --window-icon=idiomind \
@@ -67,6 +71,8 @@ function starting() {
 		$strt & killall prct.sh.sh & exit 1
 }
 
+
+# --------------------------------------------
 if [[ "$1" = f ]]; then
 
 	cd "$DC_tlt/practice"

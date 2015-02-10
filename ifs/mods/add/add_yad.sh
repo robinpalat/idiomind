@@ -208,7 +208,7 @@ function dlg_file_1() { # load
 function dlg_file_2() { # save
     
         yad --save --center --borders=10 \
-        --on-top --filename="$(date +%m/%d/%Y)"_audio.tar.gz \
+        --on-top --filename="$(date +%m-%d-%Y)"_audio.tar.gz \
         --window-icon=idiomind --skip-taskbar --title="Save" \
         --file --width=600 --height=500 --button=gtk-ok:0
 }

@@ -568,8 +568,8 @@ elif [ $1 = edit_list_words ]; then
 			let n++
 		done
 
-		echo "aitm.$lns.aitm" >> \
-		$DC/addons/stats/.log &
+		printf "aitm.$lns.aitm" >> \
+		$DC_a/stats/.log &
 
 			if [ -f $DT_r/logw ]; then
 				dlg_info_1 "$items_rest"
@@ -720,8 +720,8 @@ elif [ $1 = sentence_list_words ]; then
 		let n++
 	done
 
-	echo "aitm.$lns.aitm" >> \
-	$DC/addons/stats/.log &
+	printf "aitm.$lns.aitm" >> \
+	$DC_a/stats/.log &
 
 	if [ -f  $DT_r/logw ]; then
 		logs="$(cat $DT_r/logw)"
@@ -1221,8 +1221,8 @@ elif [ $1 = set_image ]; then
 				eyeD3 --remove-image "$file" >/dev/null 2>&1
 				eyeD3 --add-image "$wrd"_temp.jpeg:ILLUSTRATION "$file" >/dev/null 2>&1 &&
 				rm -f *.jpeg
-				echo "aimg.$tpc.aimg" >> \
-				$DC/addons/stats/.log &
+				printf "aimg.$tpc.aimg" >> \
+				$DC_a/stats/.log &
 				$DS/add.sh set_image "$wrd" sentence
 				
 			elif [ $ret -eq 2 ]; then

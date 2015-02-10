@@ -144,8 +144,8 @@ if [ -z "$1" ]; then
 	--read-dir=$DS/default/new --item-width=68 \
 	--window-icon=idiomind --class=idiomind &
 	[[ -n "$tpc" ]] && echo "$tpc" > $DC_s/cfg.6
-	echo "strt.1.strt" >> \
-	$DC/addons/stats/.log &
+	printf "strt.1.strt" >> \
+	$DC_a/stats/.log &
 	
 	if [[ ! -d $DT ]]; then
 		new_session & exit
@@ -359,8 +359,8 @@ elif [[ $1 = topic ]]; then
 			else
 			img=$DS/images/trans.png
 			fi
-			echo "tpcs.$tpc.tpcs" >> \
-			$DC/addons/stats/.log &
+			printf "tpcs.$tpc.tpcs" >> \
+			$DC_a/stats/.log &
 			inx=$(cat "$ls0" | wc -l)
 			tb1=$(cat "$ls1" | wc -l)
 			tb2=$(cat "$ls2" | wc -l)
@@ -571,8 +571,8 @@ elif [[ $1 = topic ]]; then
 								cat "$ls1" | awk '!array_temp[$0]++' > $DT/ls1.x
 								sed '/^$/d' $DT/ls1.x > "$ls1"
 							fi
-							echo "okim.$cnt.okim" >> \
-							$DC/addons/stats/.log &	
+							printf "okim.$cnt.okim" >> \
+							$DC_a/stats/.log &
 						fi
 					fi
 					
@@ -689,8 +689,8 @@ elif [[ $1 = topic ]]; then
 								cat "$ls1" | awk '!array_temp[$0]++' > $DT/ls1.x
 								sed '/^$/d' $DT/ls1.x > "$ls1"
 							fi
-							echo "okim.$cnt.okim" >> \
-							$DC/addons/stats/.log &
+							printf "okim.$cnt.okim" >> \
+							$DC_a/stats/.log &
 						fi
 					fi
 				fi
@@ -866,8 +866,8 @@ elif [[ $1 = topic ]]; then
 								cat "$ls1" | awk '!array_temp[$0]++' > $DT/ls1.x
 								sed '/^$/d' $DT/ls1.x > "$ls1"
 							fi
-							echo "okim.$cnt.okim" >> \
-							$DC/addons/stats/.log &
+							printf "okim.$cnt.okim" >> \
+							$DC_a/stats/.log &
 						fi
 					fi
 				rm -f $DT/*.x
@@ -990,8 +990,8 @@ elif [[ $1 = topic ]]; then
 								sed '/^$/d' $DT/ls1.x > "$ls1"
 							fi
 							
-							cho "okim.$cnt.okim" >> \
-							$DC/addons/stats/.log &
+							printf "okim.$cnt.okim" >> \
+							$DC_a/stats/.log &
 						fi
 					fi
 					

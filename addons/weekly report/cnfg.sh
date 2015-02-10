@@ -65,7 +65,7 @@ if [ "$1" = A ]; then
 		touch "$DC_tl/$tpc1/cfg.2" && tok1="$DC_tl/$tpc1/cfg.2"
 	fi
 
-	W9=$DC/addons/practice/w9
+	W9=$DC_s/cfg.22
 	W9INX=$(cat $W9 | sort | uniq -dc | sort -n -r | sed 's/ \+/ /g')
 	n=1
 	while [ $n -le 15 ]; do
@@ -82,14 +82,14 @@ if [ "$1" = A ]; then
 				elif cat "$tlng3" | grep -o "$fwk"; then
 					echo "$fwk" >> $DC/addons/stats/w9.tmp
 				fi
-			elif [ -n "$tpc2" ];then
+			elif [ -n "$tpc2" ]; then
 				if cat "$tlng1" | grep -o "$fwk"; then
 					echo "$fwk" >> $DC/addons/stats/w9.tmp
 					
 				elif cat "$tlng2" | grep -o "$fwk"; then
 					echo "$fwk" >> $DC/addons/stats/w9.tmp
 				fi
-			elif [ -n "$tpc1" ];then
+			elif [ -n "$tpc1" ]; then
 				if cat "$tlng1" | grep -o "$fwk"; then
 				echo "$fwk" >> $DC/addons/stats/w9.tmp
 				fi
@@ -130,33 +130,32 @@ if [ "$1" = A ]; then
 	flD=$(($DDC*$real/$ttl))
 	flS=$(($STDY*$real/$ttl))
 	flL=$(($ARCH*$real/$ttl))
+	[[ $flD -gt 0 ]] && d=1 || d=0
+	[[ $flS -gt 0 ]] && s=1 || s=0
+	[[ $flL -gt 0 ]] && l=1 || l=0
+	FIX=$(($d+$s+$l))
 	
 	if [ "$real" -le 10 ]; then
 	real=10
 	fi
 	rm "$LOG"
-	ext1=$(n=1
-	while [ $n -le $flD ]; do printf " ";
-		let n++
-	done)
-	ext2=$(n=1
-	while [ $n -le $flS ]; do printf " ";
-		let n++
-	done)
-	ext3=$(n=1
-	while [ $n -le $flL ]; do printf " ";
-		let n++
-	done)
-	ext4=$(n=1
-	while [ $n -le $acrm ]; do printf " ";
-		let n++
-	done)
+	ext1="$(n=1; while [ $n -le $flD ]; do printf " "; let n++; done)"
+	ext2="$(n=1; while [ $n -le $flS ]; do printf " "; let n++; done)"
+	ext3="$(n=1; while [ $n -le $flL ]; do printf " "; let n++; done)"
+	ext4="$(n=1; while [ $n -le $acrm ]; do printf " "; let n++; done)"
+	ext5="$(n=1; while [ $n -le $FIX ]; do printf " "; let n++; done)"
+	
+	[[ "$(echo "$tpc1" | wc -c)" -gt 60 ]] && tle1="${tpc1:0:60}..." || tle1="$tpc1"
+	[[ "$(echo "$tpc2" | wc -c)" -gt 60 ]] && tle2="${tpc2:0:60}..." || tle2="$tpc2"
+	[[ "$(echo "$tpc3" | wc -c)" -gt 60 ]] && tle3="${tpc3:0:60}..." || tle3="$tpc3"
 
-	[[ "$(echo "$tpc1" | wc -c)" -gt 40 ]] && tle1="${tpc1:0:37}..." || tle1="$tpc1"
-	[[ "$(echo "$tpc2" | wc -c)" -gt 40 ]] && tle2="${tpc2:0:37}..." || tle2="$tpc2"
-	[[ "$(echo "$tpc3" | wc -c)" -gt 40 ]] && tle3="${tpc3:0:37}..." || tle3="$tpc3"
+	if [ $(cat $DC/addons/stats/.wks | wc -l) -lt 12 ]; then
+	ext=$(n=1; while [ $n -le 111 ]; do printf " "; let n++; done)
+	seq 0 15 | xargs -Iz echo "<small><sup><span background='#E8E8E8'>$ext</span></sup></small>" > $DC/addons/stats/.wks
+	sed -i '/^$/d' $DC/addons/stats/.wks
+	fi
 
-	echo "<small><sup><span background='#F3C879'>$ext1</span><span background='#6E9FD4'>$ext2</span><span background='#76A862'><span color='#FFFFFF'><b>$ext3$real% </b></span><span background='#E8E8E8'>$ext4</span></span></sup></small>" >> $DC/addons/stats/.wks_
+	echo "<small><sup><span background='#F3C879'>$ext1</span><span background='#6E9FD4'>$ext2</span><span background='#76A862'><span color='#FFFFFF'><b>$ext3$real% </b></span><span background='#E8E8E8'>$ext4$ext5</span></span></sup></small>" >> $DC/addons/stats/.wks_
 	cat $DC/addons/stats/.wks | head -n 12 >> $DC/addons/stats/.wks_
 	mv -f $DC/addons/stats/.wks_ $DC/addons/stats/.wks
 	
@@ -164,18 +163,18 @@ if [ "$1" = A ]; then
 " > $WKRT
 if [ -n "$tpc3" ]; then
 	echo "$topics:
-<b>$tle1</b>
-<b>$tle2</b>
-<b>$tle3</b>
+ <b>$tle1</b>
+ <b>$tle2</b>
+ <b>$tle3</b>
 ">> $WKRT
 elif [ -n "$tpc2" ]; then
 	echo "$topics:
-<b>$tle1</b>
-<b>$tle2</b>
+ <b>$tle1</b>
+ <b>$tle2</b>
 ">> $WKRT
 else
 	echo "$topic:
-<b>$tle1</b>
+ <b>$tle1</b>
 ">> $WKRT
 fi
 echo "<big><span font='ultralight'>$CTW9</span></big>  $items_to_mark_ok" >> $WKRT
@@ -191,18 +190,19 @@ exit 1
 
 #-----------------------------------------------------------------------
 elif [ -z "$1" ]; then
-	sttng=$(sed -n 1p $DC/addons/stats/cnf)
+	sttng=$(sed -n 1p $DC/addons/stats/cnfg)
 	if [ -z $sttng ]; then
-		echo FALSE > $DC/addons/stats/cnf
-		sttng=$(sed -n 1p $DC/addons/stats/cnf)
+		echo FALSE > $DC/addons/stats/cnfg
+		sttng=$(sed -n 1p $DC/addons/stats/cnfg)
 	fi
 	if [ $sttng = TRUE ]; then
 		SW=$(cat $DC/addons/stats/.wks | head -n 8)
 	else
 		SW=" "
 	fi
-	CNFG=$($yad --title="$weekly_report" --borders=10 --print-all \
-	--center --form --on-top --scroll --skip-taskbar --align=center \
+	CNFG=$(yad --print-all --align=center \
+	--title="$weekly_report" --borders=10 \
+	--center --form --on-top --scroll --skip-taskbar \
 	--always-print-result --window-icon=idiomind \
 	--button=Close:0 --width=420 --height=300 \
 	--text="$description" \
@@ -212,12 +212,12 @@ elif [ -z "$1" ]; then
 		
 		if [ $ret -eq 0 ]; then
 			sttng=$(echo "$CNFG" | cut -d "|" -f1)
-			sed -i "1s/.*/$sttng/" $DC/addons/stats/cnf
+			sed -i "1s/.*/$sttng/" $DC/addons/stats/cnfg
 			rm -f $DT/*.r
 			exit
 		else
 			sttng=$(echo "$CNFG" | cut -d "|" -f1)
-			sed -i "1s/.*/$sttng/" $DC/addons/stats/cnf
+			sed -i "1s/.*/$sttng/" $DC/addons/stats/cnfg
 			exit
 		fi
 fi

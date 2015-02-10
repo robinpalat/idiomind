@@ -192,7 +192,7 @@ if [ -d "$DC_tlt" ]; then
 	
 	# look status
 	if [[ $(cat "$DC_tl/.cfg.1" | grep -Fxon "$topic" \
-	| sed -n 's/^\([0-9]*\)[:].*/\1/p') -ge 31 ]]; then
+	| sed -n 's/^\([0-9]*\)[:].*/\1/p') -ge 50 ]]; then
 		if [ -f "$DC_tl/$topic/cfg.9" ]; then
 			dts=$(cat "$DC_tl/$topic/cfg.9" | wc -l)
 			if [ $dts = 1 ]; then

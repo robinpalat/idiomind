@@ -133,7 +133,7 @@ function result() {
 	porc=$((100*$(cat w.ok | wc -l)/$(cat all | wc -l)))
 	
 	if [ $porc -ge 70 ]; then
-		echo "$WEN" >> ok.s
+		echo "$WEN" | tee -a ok.s $w9
 		easy=$(($easy+1))
 		clr=3AB452
 	elif [ $porc -ge 50 ]; then

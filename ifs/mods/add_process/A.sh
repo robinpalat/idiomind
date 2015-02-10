@@ -170,7 +170,9 @@ if [[ "$prdt" = A ]]; then
 							srce="$(translate "$trgt" $lgt $lgs)"
 							mv -f "$sntc".mp3 "$DM_tlt/words/$fname".mp3
 							
-							if ( [ -n $(file -ib "$DM_tlt/words/$fname".mp3 | grep -o 'binary') ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
+							if ( [ -n $(file -ib "$DM_tlt/words/$fname".mp3 | grep -o 'binary') ] \
+							&& [ -n "$trgt" ] && [ -n "$srce" ] ); then
+							
 								add_tags_1 W "$trgt" "$srce" "$DM_tlt/words/$fname".mp3
 								$DS/mngr.sh index word "$fname" "$tpe"
 								echo "$fname" >> addw
@@ -205,7 +207,8 @@ if [[ "$prdt" = A ]]; then
 							lwrds=$(cat A.$r)
 							pwrds=$(cat B.$r | tr '\n' '_')
 							
-							if ( [ -n $(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary') ] && [ -n "$lwrds" ] && [ -n "$pwrds" ] && [ -n "$grmrk" ] ); then
+							if ( [ -n $(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary') ] \
+							&& [ -n "$lwrds" ] && [ -n "$pwrds" ] && [ -n "$grmrk" ] ); then
 								
 								echo "$fname" >> adds
 								$DS/mngr.sh index sentence "$trgt" "$tpe"
@@ -258,7 +261,9 @@ if [[ "$prdt" = A ]]; then
 							voice "$trgt" $DT_r "$DM_tlt/words/$fname.mp3"
 							
 						fi
-						if ( [ -n $(file -ib "$DM_tlt/words/$fname.mp3" | grep -o 'binary') ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
+						if ( [ -n $(file -ib "$DM_tlt/words/$fname.mp3" | grep -o 'binary') ] \
+						&& [ -n "$trgt" ] && [ -n "$srce" ] ); then
+						
 							add_tags_2 W "$trgt" "$srce" "$exmp" "$DM_tlt/words/$fname.mp3" >/dev/null 2>&1
 							$DS/mngr.sh index word "$trgt" "$tpe" "$sname"
 							echo "$trgt" >> addw
@@ -339,6 +344,7 @@ if [[ "$prdt" = A ]]; then
 									mv -f [0-9]*.mp3 ./rest/
 									cd ./rest
 									cat $(ls [0-9]*.mp3 | sort -n | tr '\n' ' ') > audio.mp3
+									rm -f $(ls [0-9]*.mp3)
 									tar cvzf audio.tar.gz *
 									mv -f audio.tar.gz "$aud"
 								fi

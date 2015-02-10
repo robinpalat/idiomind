@@ -446,7 +446,7 @@ END_SCRIPT
 
 exit=$?
 if [[ $exit = 0 ]] ; then
-[[ $(echo "$tpc" | wc -c) -gt 40 ]] && tpc="${tpc:0:40}..."
+[[ $(echo "$tpc" | wc -c) -gt 100 ]] && mtpc="${tpc:0:80}..." || mtpc="$tpc"
 mv -f "$DT/cfg.12" "$DM_t/saved/$tpc.id"
 info="  $tpc\n\n<b> $saved</b>\n"
 image=dialog-ok

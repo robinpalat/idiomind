@@ -154,7 +154,7 @@ while [ $n -le $(cat ./lwin1 | wc -l) ]; do
 		ans=$(echo "$?")
 
 		if [[ $ans = 2 ]]; then
-			echo "$trgt" >> ok.w
+			echo "$trgt" | tee -a ok.w $w9
 			easy=$(($easy+1))
 
 		elif [[ $ans = 3 ]]; then

@@ -123,7 +123,7 @@ while [ $n -le $(cat ./mcin1 | wc -l) ]; do
 	if [[ $ret = 0 ]]; then
 	
 		if echo "$dlg" | grep "$wes"; then
-			echo "$trgt" >> ok.m
+			echo "$trgt" | tee -a ok.m $w9
 			easy=$(($easy+1))
 			
 		else
