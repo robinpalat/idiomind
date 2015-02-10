@@ -566,11 +566,11 @@ elif [ $1 = edit_list_words ]; then
 		
 		nw=$(cat "$DC_tlt/cfg.3" | wc -l)
 		left=$((50 - $nw))
-		info=$(echo " $remain"$left"$words")
+		info=$(echo " $remain$left$words")
 		if [ $nw -ge 45 ]; then
-			info=$(echo " $remain"$left"$words")
+			info=$(echo " $remain$left$words")
 		elif [ $nw -ge 49 ]; then
-			info=$(echo " $remain"$left"$word")
+			info=$(echo " $remain$left$word")
 		fi
 
 		mkdir $DT/$c; DT_r=$DT/$c; cd $DT_r
@@ -657,11 +657,11 @@ elif [ $1 = dclik_list_words ]; then
 	fi
 
 	left=$((50 - $nw))
-	info=$(echo " $remain"$left"$words")
+	info=$(echo " $remain$left$words")
 	if [ $nw -ge 45 ]; then
-		info=$(echo " $remain"$left"$words")
+		info=$(echo " $remain$left$words")
 	elif [ $nw -ge 49 ]; then
-		info=$(echo " $remain"$left"$word ")
+		info=$(echo " $remain$left$word")
 	fi
 
 	list_words_3 ./lstws
@@ -716,11 +716,11 @@ elif [ $1 = sentence_list_words ]; then
 	left=$((50 - $nw))
 	if [ "$left" = 0 ]; then
 		exit 1
-		info=$(echo " $remain"$left"$words")
+		info=$(echo " $remain$left$words")
 	elif [ $nw -ge 45 ]; then
-		info=$(echo " $remain"$left"$words")
+		info=$(echo " $remain$left$words")
 	elif [ $nw -ge 49 ]; then
-		info=$(echo " $remain"$left"$word)")
+		info=$(echo " $remain$left$word")
 	fi
 
 	list_words_2 "$DM_tl/$3/$2.mp3"

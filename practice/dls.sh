@@ -82,7 +82,7 @@ function dialog1() {
 	--buttons-layout=end --borders=0 --title=" " --image-on-top \
 	--skip-taskbar --margins=8 --text-align=left --height=400 --width=460 \
 	--align=left --window-icon=idiomind --fore=4A4A4A \
-	--button=$hint:"/usr/share/idiomind/practice/hint.sh '$n'" \
+	--button=$hint:"/usr/share/idiomind/practice/hint.sh '$1'" \
 	--button=Listen:"play '$DM_tlt/$1.mp3'" \
 	--button="  Ok >> ":0)
 	}
@@ -94,7 +94,7 @@ function dialog2() {
 	--buttons-layout=end --borders=0 --title=" " "$info" \
 	--skip-taskbar --margins=8 --text-align=left --height=160 --width=460 \
 	--align=left --window-icon=idiomind --image-on-top \
-	--button=$hint:"/usr/share/idiomind/practice/hint.sh '$n'" \
+	--button=$hint:"/usr/share/idiomind/practice/hint.sh '$1'" \
 	--button="$listen":"play '$DM_tlt/$1.mp3'" \
 	--button="      Ok >     ":0)
 	}
@@ -103,8 +103,7 @@ function get_image_text() {
 	
 	nme="$(echo "$1" | cut -c 1-100 | sed 's/[ \t]*$//' \
 	| sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
-	WEN=$(eyeD3 "$DM_tlt/$nme".mp3 | \
-	grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' | sed 's/^ *//; s/ *$//')
+	WEN=$(echo "$1" | sed 's/^ *//; s/ *$//')
 	eyeD3 --write-images=$DT "$DM_tlt/$1.mp3"
 	echo "$WEN" | awk '{print tolower($0)}' > quote
 
