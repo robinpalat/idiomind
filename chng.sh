@@ -87,18 +87,18 @@ elif [ "$1" != chngi ]; then
 		eht=$(sed -n 4p $DC_s/cfg.18)
 		if [ -n "$1" ]; then
 			text="--text=<small>$1\n</small>"
-			align="--text-align=left"
+			align="left"; h=1
 			img="--image=info"
 		else
 			lgtl=$(echo "$lgtl" | awk '{print tolower($0)}')
 			text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/$lgtl'>$find_topics</a>   </small></small>"
-			align="--text-align=right"
+			align="right"
 		fi
 		[[ -f $DC_tl/.cfg.1 ]] && info2=$(cat $DC_tl/.cfg.1 | wc -l) || info2=""
 		cd $DC_s
 
-		VAR=$(cat $DC_s/cfg.0 | yad --name=idiomind \
-		--class=idiomind --center $img --image-on-top --separator="" $align\
+		VAR=$(cat $DC_s/cfg.0 | yad --name=idiomind --text-align=$align \
+		--class=idiomind --center $img --image-on-top --separator="" \
 		"$text" --width=$wth --height=$eht --ellipsize=END \
 		--no-headers --list --window-icon=idiomind --borders=5 \
 		--button="gtk-add":3 --button="$ok":0 \
@@ -106,27 +106,22 @@ elif [ "$1" != chngi ]; then
 			ret=$?
 			
 			if [ $ret -eq 3 ]; then
-				$DS/add.sh new_topic &&
-				$DS/add.sh new_items & exit
-				
-			elif [ $ret -eq 0 ]; then
 			
-				if [ -n "$1" ]; then
-					if [ "$2" = 3 ]; then
-						$DC_tl/"$VAR"/tpc.sh
-						$DS/add.sh new_items & exit
+					if [ "$h" = 1 ]; then
+						$DS/add.sh new_topic & exit
+						
 					else
-						$DC_tl/"$VAR"/tpc.sh &
+						$DS/add.sh new_topic & exit
 					fi
-					
-				else
+			
+			elif [ $ret -eq 0 ]; then
+				
 					if [[ -f $DC_tl/"$VAR"/tpc.sh ]]; then
 						$DC_tl/"$VAR"/tpc.sh & exit
 					else
 						cp -f $DS/default/tpc.sh $DC_tl/"$VAR"/tpc.sh
 						$DC_tl/"$VAR"/tpc.sh & exit
 					fi
-				fi
 			else
 				exit 0
 			fi

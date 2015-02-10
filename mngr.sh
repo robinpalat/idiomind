@@ -11,7 +11,7 @@ if [ $1 = mkmn ]; then
 	[[ -d ./images ]] && rm -r ./images
 	[[ -d ./words ]] && rm -r ./words
 	[[ -d ./practice ]] && rm -r ./practice
-	for i in "$(ls -d */ | sed 's/\///g')"; do echo "${i%%/}"; done > $DC_tl/.cfg.1
+	for i in "$(ls -t -N -d */ | sed 's/\///g')"; do echo "${i%%/}"; done > $DC_tl/.cfg.1
 	sed -i '/^$/d' $DC_tl/.cfg.1
 	[[ -f $DC_s/cfg.0 ]] && mv -f $DC_s/cfg.0 $DC_s/cfg.16
 	
@@ -36,8 +36,8 @@ if [ $1 = mkmn ]; then
 		let n++
 	done
 	n=1
-	while [ $n -le $(cat $DC_tl/.cfg.1 | tail -n+21 | wc -l) ]; do
-		ff=$(cat $DC_tl/.cfg.1 | tail -n+21)
+	while [ $n -le $(cat $DC_tl/.cfg.1 | tail -n+51 | wc -l) ]; do
+		ff=$(cat $DC_tl/.cfg.1 | tail -n+51)
 		tp=$(echo "$ff" | sed -n "$n"p)
 		if [ ! -f "$DC_tl/$tp/cfg.8" ] || \
 		[ ! -f "$DC_tl/$tp/tpc.sh" ] || \
@@ -111,7 +111,7 @@ $topdf"
 fi
 fi
 	echo "$dd" | yad --list --on-top --expand-column=2 \
-	--width=280 --name=idiomind --center \
+	--width=290 --name=idiomind --center \
 	--height=240 --title="$tpc" --window-icon=idiomind \
 	--buttons-layout=end --no-headers --skip-taskbar \
 	--borders=0 --button=Ok:0 --column=icon:IMG \
@@ -321,6 +321,7 @@ elif [ $1 = dli ]; then
 
 	touch $DT/ps_lk
 	include $DS/ifs/mods/mngr
+	source $DS/ifs/mods/cmns.sh
 	trgt="$2"
 	
 	[[ -z "$trgt" ]] && rm -f $DT/ps_lk && exit
@@ -423,7 +424,7 @@ elif [ $1 = dli ]; then
 	# rm word
 	if [ -f "$flw" ]; then 
 
-			dlg_msg_1 " $delete_word "
+			msg_2 " $delete_word\n\n" dialog-question "$yes" "$no" "$confirm"
 			ret=$(echo "$?")
 			
 			if [ $ret -eq 0 ]; then 
@@ -464,7 +465,7 @@ elif [ $1 = dli ]; then
 	# rm sentence
 	elif [ -f "$fls" ]; then
 
-			dlg_msg_1 " $delete_sentence "
+			msg_2 " $delete_sentence\n\n" dialog-question "$yes" "$no" "$confirm"
 			ret=$(echo "$?")
 			
 			if [ $ret -eq 0 ]; then
@@ -496,7 +497,7 @@ elif [ $1 = dli ]; then
 	# rm any
 	elif ( [ ! -f "$flw" ] && [ ! -f "$flw" ] ); then
 
-			dlg_msg_1 " $delete_item "
+			msg_2 " $delete_item\n\n" dialog-question "$yes" "$no" "$confirm"
 			ret=$(echo "$?")
 			
 			if [ $ret -eq 0 ]; then
@@ -544,7 +545,7 @@ elif [ $1 = dli ]; then
 elif [ $1 = dlt ]; then
 	include $DS/ifs/mods/mngr
 	
-	dlg_msg_1 " $delete_topic "
+	msg_2 " $delete_topic\n\n" dialog-question "$yes" "$no" "$confirm"
 	ret=$(echo "$?")
 		
 		if [ $ret -eq 0 ]; then

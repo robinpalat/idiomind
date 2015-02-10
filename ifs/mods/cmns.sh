@@ -26,6 +26,15 @@ function msg() {
 }
 
 
+function msg_2() { # decide
+    
+        yad --name=idiomind --on-top --text="$1" --image="$2" \
+        --image-on-top --width=360 --height=120 --borders=3 \
+        --skip-taskbar --window-icon=idiomind --sticky --center \
+        --title=Idiomind --button="$4":1 --button="$3":0
+}
+
+
 function nmfile() {
 	
 	echo "$(echo "$1" | cut -c 1-100 | sed 's/[ \t]*$//' \

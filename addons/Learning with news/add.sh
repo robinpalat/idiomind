@@ -86,7 +86,7 @@ if [[ $1 = n_i ]]; then
 elif [[ $1 = n_t ]]; then
 
 	dte=$(date "+%a %d %B")
-	if [ $(cat "$DC_tl/.cfg.1" | wc -l) -ge 50 ]; then
+	if [ $(cat "$DC_tl/.cfg.1" | wc -l) -ge 80 ]; then
 		msg "$topics_max " info & exit
 	fi
 

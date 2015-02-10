@@ -10,7 +10,6 @@ function audio_recognizer() {
 }
 
 
-
 if [[ "$prdt" = A ]]; then
 
 	cd $DT_r
@@ -165,23 +164,26 @@ if [[ "$prdt" = A ]]; then
 					if [ $(sed -n 1p "$sntc.txt" | wc -$c) -eq 1 ]; then
 					
 						if [ $(cat "$DC_tlt"/cfg.3 | wc -l) -ge 50 ]; then
-							printf "\n- $sntc" >> ./slog
+							printf "\n- $sntc" >> ./wlog
 					
 						else
 							srce="$(translate "$trgt" $lgt $lgs)"
 							mv -f "$sntc".mp3 "$DM_tlt/words/$fname".mp3
 							
-							if ( [ -f "$DM_tlt/words/$fname".mp3 ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
-							    add_tags_1 W "$trgt" "$srce" "$DM_tlt/words/$fname".mp3
-							    $DS/mngr.sh index word "$fname" "$tpe"
-							    echo "$fname" >> addw
+							if ( [ -n $(file -ib "$DM_tlt/words/$fname".mp3 | grep -o 'binary') ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
+								add_tags_1 W "$trgt" "$srce" "$DM_tlt/words/$fname".mp3
+								$DS/mngr.sh index word "$fname" "$tpe"
+								echo "$fname" >> addw
+							else
+								[ -f "$DM_tlt/words/$fname".mp3 ] && rm "$DM_tlt/words/$fname".mp3
+								printf "\n- $sntc" >> ./wlog
 							fi
 						fi
 					
 					elif [ $(sed -n 1p "$sntc.txt" | wc -$c) -ge 1 ]; then
 					
 						if [ $(cat "$DC_tlt"/cfg.4 | wc -l) -ge 50 ]; then
-							printf "\n- $sntc" >> ./wlog
+							printf "\n- $sntc" >> ./slog
 					
 						else
 							srce="$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')"
@@ -203,14 +205,15 @@ if [[ "$prdt" = A ]]; then
 							lwrds=$(cat A.$r)
 							pwrds=$(cat B.$r | tr '\n' '_')
 							
-							if ( [ ! -f "$DM_tlt/$fname.mp3" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ] || [ -z "$grmrk" ] ); then
+							if ( [ -n $(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary') ] && [ -n "$lwrds" ] && [ -n "$pwrds" ] && [ -n "$grmrk" ] ); then
 								
-								[ -f "$DM_tlt/$fname.mp3" ] && rm "$DM_tlt/$fname.mp3"
-							else
 								echo "$fname" >> adds
 								$DS/mngr.sh index sentence "$trgt" "$tpe"
 								add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3"
 								fetch_audio $aw $bw
+							else
+								printf "\n- $sntc" >> ./slog
+								[ -f "$DM_tlt/$fname.mp3" ] && rm "$DM_tlt/$fname.mp3"
 							fi
 
 							echo "__" >> x
@@ -229,6 +232,7 @@ if [[ "$prdt" = A ]]; then
 					let n++
 				done
 				
+				
 				#-words
 				if [ -n "$(cat wrds)" ]; then
 					nwrds=" $(cat wrds | head -50 | wc -l) Palabras"
@@ -237,8 +241,8 @@ if [[ "$prdt" = A ]]; then
 				n=1
 				while [ $n -le "$(cat wrds | head -50 | wc -l)" ]; do
 					trgt=$(sed -n "$n"p wrds | sed ':a;N;$!ba;s/\n/ /g' | sed 's/^\s*./\U&\E/g')
-					exmp=$(sed -n "$n"p wrdsls)
-					fname="$(nmfile "$exmp")"
+					sname=$(sed -n "$n"p wrdsls)
+					fname="$(nmfile "$trgt")"
 
 					if [ $(cat "$DC_tlt"/cfg.3 | wc -l) -ge 50 ]; then
 						printf "\n- $trgt" >> ./wlog
@@ -249,17 +253,21 @@ if [[ "$prdt" = A ]]; then
 						
 						if [ -f "$trgt".mp3 ]; then
 						
-							mv -f "$DT_r/$trgt.mp3" "$DM_tlt/words/$trgt.mp3"
+							mv -f "$DT_r/$trgt.mp3" "$DM_tlt/words/$fname.mp3"
 						else
-							voice "$trgt" $DT_r "$DM_tlt/words/$trgt.mp3"
+							voice "$trgt" $DT_r "$DM_tlt/words/$fname.mp3"
 							
 						fi
-						if ( [ -f "$DM_tlt/words/$trgt.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
-						    add_tags_2 W "$trgt" "$srce" "$exmp" "$DM_tlt/words/$trgt.mp3" >/dev/null 2>&1
-						    $DS/mngr.sh index word "$trgt" "$tpe" "$fname"
-						    echo "$trgt" >> addw
+						if ( [ -n $(file -ib "$DM_tlt/words/$fname.mp3" | grep -o 'binary') ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
+							add_tags_2 W "$trgt" "$srce" "$exmp" "$DM_tlt/words/$fname.mp3" >/dev/null 2>&1
+							$DS/mngr.sh index word "$trgt" "$tpe" "$sname"
+							echo "$trgt" >> addw
+						else
+							[ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
+							printf "\n- $trgt" >> ./wlog
 						fi
 					fi
+					
 					
 					nn=$(($n+$(cat ./slts | wc -l)-1))
 					prg=$((100*$nn/$lns))

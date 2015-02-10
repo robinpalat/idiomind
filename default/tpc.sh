@@ -122,7 +122,7 @@ if [ -d "$DC_tlt" ]; then
 			if [ $? -ne 0 ]; then
 				yad --name=idiomind --image=error --button=gtk-ok:1\
 				--text=" $files_err\n\n" --image-on-top --sticky  \
-				--width=420 --height=150 --borders=5 --title=Idiomind \
+				--width=360 --height=120 --borders=3 --title=Idiomind \
 				--skip-taskbar --center --window-icon=idiomind
 				$DS/mngr.sh dlt & exit
 			fi
@@ -233,12 +233,11 @@ if [ -d "$DC_tlt" ]; then
 	fi
 	
 	sleep 1
-
 	notify-send --icon=idiomind \
 	"$topic" "$its_your_topic_now" -t 2000 & exit 1
 else
 	yad --name=idiomind --image=error --sticky --center \
 	--text=" $path_err\n $topic\n" --on-top --image-on-top \
-	--width=420 --height=150 --skip-taskbar --window-icon=idiomind \
-	--title="$err" --button="Ok:0" & exit 1
+	--width=360 --height=120 --skip-taskbar --window-icon=idiomind \
+	--title="$err" --button="Ok:0" --borders=3 & exit 1
 fi
