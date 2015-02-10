@@ -5,20 +5,20 @@ source $DS/ifs/trans/$lgs/others.conf
 
 wth=$(sed -n 3p $DC_s/cfg.18)
 eht=$(sed -n 4p $DC_s/cfg.18)
-LOG=$DC/addons/stats/.log
-NUM=$DC/addons/stats/num.tmp
-TPS=$DC/addons/stats/tpcs.tmp
-WKRT=$DC/addons/stats/wkrt.tmp
-WKRT2=$DC/addons/stats/wkrt2.tmp
-[[ ! -f "$DC/addons/stats/.udt" ]] && touch "$DC/addons/stats/.udt"
-udt=$(cat "$DC/addons/stats/.udt")
-[ ! -d "$DC/addons/stats" ] && mkdir "$DC/addons/stats"
+LOG=$DC_a/stats/.log
+NUM=$DC_a/stats/num.tmp
+TPS=$DC_a/stats/tpcs.tmp
+WKRT=$DC_a/stats/wkrt.tmp
+WKRT2=$DC_a/stats/wkrt2.tmp
+[[ ! -f "$DC_a/stats/.udt" ]] && touch "$DC_a/stats/.udt"
+udt=$(cat "$DC_a/stats/.udt")
+[ ! -d "$DC_a/stats" ] && mkdir "$DC_a/stats"
 
 #-----------------------------------------------------------------------
 if [ "$1" = A ]; then
-	#[[ "$(date +%F)" = "$udt" ]] && exit 1
-	echo "$tpc" > $DC/addons/stats/tpc.tmp
-	echo $(sed -n 2p $DC_s/cfg.8) >> $DC/addons/stats/tpc.tmp
+	[[ "$(date +%F)" = "$udt" ]] && exit 1
+	echo "$tpc" > $DC_a/stats/tpc.tmp
+	echo $(sed -n 2p $DC_s/cfg.8) >> $DC_a/stats/tpc.tmp
 	TPCS=$(cat "$LOG" | grep -o -P '(?<=tpcs.).*(?=\.tpcs)' \
 	| sort | uniq -dc | sort -n -r | head -3 | sed -e 's/^ *//' -e 's/ *$//')
 	tpc1=$(echo "$TPCS" | sed -n 1p | cut -d " " -f2-)
@@ -74,32 +74,32 @@ if [ "$1" = A ]; then
 			fwk=$(echo "$W9INX" | sed -n "$n"p | awk '{print ($2)}')
 			if [ -n "$tpc3" ];then
 				if cat "$tlng1" | grep -o "$fwk"; then
-					echo "$fwk" >> $DC/addons/stats/w9.tmp
+					echo "$fwk" >> $DC_a/stats/w9.tmp
 					
 				elif cat "$tlng2" | grep -o "$fwk"; then
-					echo "$fwk" >> $DC/addons/stats/w9.tmp
+					echo "$fwk" >> $DC_a/stats/w9.tmp
 					
 				elif cat "$tlng3" | grep -o "$fwk"; then
-					echo "$fwk" >> $DC/addons/stats/w9.tmp
+					echo "$fwk" >> $DC_a/stats/w9.tmp
 				fi
 			elif [ -n "$tpc2" ]; then
 				if cat "$tlng1" | grep -o "$fwk"; then
-					echo "$fwk" >> $DC/addons/stats/w9.tmp
+					echo "$fwk" >> $DC_a/stats/w9.tmp
 					
 				elif cat "$tlng2" | grep -o "$fwk"; then
-					echo "$fwk" >> $DC/addons/stats/w9.tmp
+					echo "$fwk" >> $DC_a/stats/w9.tmp
 				fi
 			elif [ -n "$tpc1" ]; then
 				if cat "$tlng1" | grep -o "$fwk"; then
-				echo "$fwk" >> $DC/addons/stats/w9.tmp
+				echo "$fwk" >> $DC_a/stats/w9.tmp
 				fi
 			fi
 		fi
 		let n++
 	done
-	sed -i '/^$/d' $DC/addons/stats/w9.tmp
+	sed -i '/^$/d' $DC_a/stats/w9.tmp
 	
-	CTW9=$(cat $DC/addons/stats/w9.tmp | wc -l)
+	CTW9=$(cat $DC_a/stats/w9.tmp | wc -l)
 	echo "$CTW9" >> "$NUM"
 	OKIM=$(cat "$LOG" \
 	| grep -o -P '(?<=okim.).*(?=.okim)' | tr '\n' '+')
@@ -149,15 +149,15 @@ if [ "$1" = A ]; then
 	[[ "$(echo "$tpc2" | wc -c)" -gt 60 ]] && tle2="${tpc2:0:60}..." || tle2="$tpc2"
 	[[ "$(echo "$tpc3" | wc -c)" -gt 60 ]] && tle3="${tpc3:0:60}..." || tle3="$tpc3"
 
-	if [ $(cat $DC/addons/stats/.wks | wc -l) -lt 12 ]; then
+	if [ $(cat $DC_a/stats/.wks | wc -l) -lt 12 ]; then
 	ext=$(n=1; while [ $n -le 111 ]; do printf " "; let n++; done)
-	seq 0 15 | xargs -Iz echo "<small><sup><span background='#E8E8E8'>$ext</span></sup></small>" > $DC/addons/stats/.wks
-	sed -i '/^$/d' $DC/addons/stats/.wks
+	seq 0 15 | xargs -Iz echo "<small><sup><span background='#E8E8E8'>$ext</span></sup></small>" > $DC_a/stats/.wks
+	sed -i '/^$/d' $DC_a/stats/.wks
 	fi
 
-	echo "<small><sup><span background='#F3C879'>$ext1</span><span background='#6E9FD4'>$ext2</span><span background='#76A862'><span color='#FFFFFF'><b>$ext3$real% </b></span><span background='#E8E8E8'>$ext4$ext5</span></span></sup></small>" >> $DC/addons/stats/.wks_
-	cat $DC/addons/stats/.wks | head -n 12 >> $DC/addons/stats/.wks_
-	mv -f $DC/addons/stats/.wks_ $DC/addons/stats/.wks
+	echo "<small><sup><span background='#F3C879'>$ext1</span><span background='#6E9FD4'>$ext2</span><span background='#76A862'><span color='#FFFFFF'><b>$ext3$real% </b></span><span background='#E8E8E8'>$ext4$ext5</span></span></sup></small>" >> $DC_a/stats/.wks.tmp
+	cat $DC_a/stats/.wks | head -n 12 >> $DC_a/stats/.wks.tmp
+	mv -f $DC_a/stats/.wks.tmp $DC_a/stats/.wks
 	
 	echo "<big><big><b>$real%</b></big></big>  Performance
 " > $WKRT
@@ -181,8 +181,8 @@ echo "<big><span font='ultralight'>$CTW9</span></big>  $items_to_mark_ok" >> $WK
 echo "<big><span font='ultralight'>$OKIM</span></big>  $items_ok
 
 " >> $WKRT
-cat "$DC/addons/stats/.wks" >> $WKRT2
-echo "$(date +%F)" > "$DC/addons/stats/.udt"
+cat "$DC_a/stats/.wks" >> $WKRT2
+echo "$(date +%F)" > "$DC_a/stats/.udt"
 echo "$tpc" > $DC_s/cfg.8
 echo wr >> $DC_s/cfg.8
 exit 1
@@ -190,13 +190,13 @@ exit 1
 
 #-----------------------------------------------------------------------
 elif [ -z "$1" ]; then
-	sttng=$(sed -n 1p $DC/addons/stats/cnfg)
+	sttng=$(sed -n 1p $DC_a/stats/cnfg)
 	if [ -z $sttng ]; then
-		echo FALSE > $DC/addons/stats/cnfg
-		sttng=$(sed -n 1p $DC/addons/stats/cnfg)
+		echo FALSE > $DC_a/stats/cnfg
+		sttng=$(sed -n 1p $DC_a/stats/cnfg)
 	fi
 	if [ $sttng = TRUE ]; then
-		SW=$(cat $DC/addons/stats/.wks | head -n 8)
+		SW=$(cat $DC_a/stats/.wks | head -n 8)
 	else
 		SW=" "
 	fi
@@ -212,12 +212,12 @@ elif [ -z "$1" ]; then
 		
 		if [ $ret -eq 0 ]; then
 			sttng=$(echo "$CNFG" | cut -d "|" -f1)
-			sed -i "1s/.*/$sttng/" $DC/addons/stats/cnfg
+			sed -i "1s/.*/$sttng/" $DC_a/stats/cnfg
 			rm -f $DT/*.r
 			exit
 		else
 			sttng=$(echo "$CNFG" | cut -d "|" -f1)
-			sed -i "1s/.*/$sttng/" $DC/addons/stats/cnfg
+			sed -i "1s/.*/$sttng/" $DC_a/stats/cnfg
 			exit
 		fi
 fi

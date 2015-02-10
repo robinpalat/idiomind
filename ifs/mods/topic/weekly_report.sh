@@ -6,24 +6,24 @@ function weeklyreport() {
 	
 	wth=$(sed -n 3p $DC_s/cfg.18)
 	eht=$(sed -n 4p $DC_s/cfg.18)
-	TPS=$DC/addons/stats/tpcs.tmp
+	TPS=$DC_a/stats/tpcs.tmp
 	tpc1=$(sed -n 1p $TPS)
 	tpc2=$(sed -n 2p $TPS)
 	tpc3=$(sed -n 3p $TPS)
-	tpcr=$(cat $DC/addons/stats/tpc.tmp)
+	tpcr=$(cat $DC_a/stats/tpc.tmp)
 	c=$(echo $(($RANDOM%100000)))
-	WKRT=$DC/addons/stats/wkrt.tmp
+	WKRT=$DC_a/stats/wkrt.tmp
 	KEY=$c
 	cd $DS
 	yad --form --align=center --scroll \
 	--borders=12 --plug=$KEY --tabnum=1 \
 	--print-all --text="$(cat $WKRT)" \
-	--field="\n$(cat $DC/addons/stats/.wks)":lbl &
-	cat $DC/addons/stats/w9.tmp \
+	--field="\n$(cat $DC_a/stats/.wks)":lbl &
+	cat $DC_a/stats/w9.tmp \
 	| awk '{print "TRUE\n"$0}' | yad \
 	--list --ellipsize=END --print-all \
 	--plug=$KEY --tabnum=2 --always-print-result \
-	--column="$(cat $DC/addons/stats/w9.tmp | wc -l)" \
+	--column="$(cat $DC_a/stats/w9.tmp | wc -l)" \
 	--column="$items_to_mark_ok" \
 	--checklist --class=idiomind --center > "$DT/slt" &
 	yad --notebook --on-top --name=idiomind --center \
@@ -55,7 +55,7 @@ function weeklyreport() {
 				touch "$DC_tl/$tpc1/cfg.2" && tok1="$DC_tl/$tpc1/cfg.2"
 			fi
 			
-			if [[ -n "$(cat "$DC/addons/stats/w9.tmp")" ]]; then
+			if [[ -n "$(cat "$DC_a/stats/w9.tmp")" ]]; then
 				list=$(cat "$DT/slt" | sed 's/TRUE//g' | sed 's/|//g')
 				echo "$list" > $DT/t.tmp
 				n=1
@@ -111,13 +111,13 @@ function weeklyreport() {
 					let n++
 				done
 			fi
-			echo $(sed -n 1p $DC/addons/stats/tpc.tmp) > $DC_s/cfg.8
-			echo $(sed -n 2p $DC/addons/stats/tpc.tmp) >> $DC_s/cfg.8
+			echo "$(sed -n 1p $DC_a/stats/tpc.tmp)" > $DC_s/cfg.8
+			echo "$(sed -n 2p $DC_a/stats/tpc.tmp)" >> $DC_s/cfg.8
 			rm -f $DT/*.tmp
-			rm $DC/addons/stats/*.tmp $DC_s/cfg.22
+			rm $DC_a/stats/*.tmp $DC_s/cfg.22
 		else
-			echo $(sed -n 1p $DC/addons/stats/tpc.tmp) > $DC_s/cfg.8
-			echo $(sed -n 2p $DC/addons/stats/tpc.tmp) >> $DC_s/cfg.8
+			echo "$(sed -n 1p $DC_a/stats/tpc.tmp)" > $DC_s/cfg.8
+			echo "$(sed -n 2p $DC_a/stats/tpc.tmp)" >> $DC_s/cfg.8
 			rm -f $DT/*.tmp
 		fi
 }
