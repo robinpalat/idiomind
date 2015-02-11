@@ -16,24 +16,18 @@ nuw=$(cat "$dir/cfg.0" | grep -Fxon "$now" \
 | sed -n 's/^\([0-9]*\)[:].*/\1/p')
 nll='echo  " "'
 fi
-nms="$(sed -n "$nuw"p "$dir/cfg.0" | cut -c 1-100 \
-| sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
-if [ -z "$nms" ]; then
-nms="$(sed -n 1p "$dir/cfg.0" | cut -c 1-100 \
-| sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
+item="$(sed -n "$nuw"p "$dir/cfg.0")"
+if [ -z "$item" ]; then
+item="$(sed -n 1p "$dir/cfg.0")"
 nuw=1
 fi
 
-if [[ "$(echo "$nms" | wc -w)" -eq "1" ]]; then
+fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
 
-	if [ -f "$dir/words/$nms.mp3" ]; then
-		file="$dir/words/$nms.mp3"
-		listen="--button=Listen:play '$dir/words/$nms.mp3'"
-	else
-		file="$dir/words/$nms.omd"
-		listen="--form"
-	fi
-	
+if [ -f "$dir/words/$fname.mp3" ]; then
+		file="$dir/words/$fname.mp3"
+		listen="--button=Listen:play '$dir/words/$fname.mp3'"
+
 	tgs=$(eyeD3 "$file")
 	trgt=$(echo "$tgs" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
 	src=$(echo "$tgs" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
@@ -53,15 +47,10 @@ if [[ "$(echo "$nms" | wc -w)" -eq "1" ]]; then
 	--field="":lbl --field="<i><span color='#808080'>$exmp1 \
 </span></i>\\n:lbl" "$dfnts" "$ntess" \
 	"$listen" --button=gtk-go-up:3 --button=gtk-go-down:2
-else
 
-	if [ -f "$dir/$nms.mp3" ]; then
-		file="$dir/$nms.mp3"
-		listen="--button=Listen:play '$dir/$nms.mp3'"
-	elif [ -f "$dir/$nms.omd" ]; then
-		file="$dir/$nms.omd"
-		listen="--list"
-	fi
+elif [ -f "$dir/$fname.mp3" ]; then
+		file="$dir/$fname.mp3"
+		listen="--button=Listen:play '$dir/$fname.mp3'"
 	
 	dwck="/tmp/.idmtp1.$u/p2.X015x"
 	tgs=$(eyeD3 "$file")
@@ -78,6 +67,12 @@ else
 	--column="":TEXT --column="":TEXT \
 	"$listen" --button=gtk-go-up:3 --button=gtk-go-down:2 \
 	--dclick-action="$dwck"
+	
+else
+	ff=$(($nuw + 1))
+	echo "_" >> $DT/sc
+	[[ $(cat $DT/sc | wc -l) -ge 5 ]] && rm -f $DT/sc & exit 1 \
+	|| /tmp/.idmtp1.$u/p1.X015x "$nll" "$ff" & exit 1
 fi
 
 ret=$?

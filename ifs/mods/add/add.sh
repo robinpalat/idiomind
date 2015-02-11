@@ -291,11 +291,10 @@ function fetch_audio_2() {
 function list_words_2() {
 
 	    if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
-			eyeD3 "$1" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' \
+			eyeD3 "$2" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' \
 			| tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > idlst
 	    else
-			list=$(eyeD3 "$1" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
-			echo "$list" | tr -c "[:alnum:]" '\n' | sed '/^$/d' | sed '/"("/d' \
+			echo "$1" | tr -c "[:alnum:]" '\n' | sed '/^$/d' | sed '/"("/d' \
 			| sed '/")"/d' | sed '/":"/d' | sort -u \
 			| head -n40 > idlst
 	    fi
@@ -305,7 +304,7 @@ function list_words_2() {
 function list_words_3() {
 
 	if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
-		cat "$1" | tr ' ' '\n' | sed -n 1~2p | sed '/^$/d' > lst
+		echo "$2" | tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > lst
 	else
 		cat "$1" | tr -c "[:alnum:]" '\n' | sed '/^$/d' | sed '/"("/d' \
 		| sed '/")"/d' | sed '/":"/d' | sort -u \

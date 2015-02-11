@@ -58,23 +58,23 @@ if [ -d "$DC_tlt" ]; then
 	chk4=$(cat "$DC_tlt/cfg.3" | wc -l)
 	chk5=$(cat "$DC_tlt/cfg.4" | wc -l)
 	stts=$(cat "$DC_tlt/cfg.8")
-	mp3s="$(find "$DM_tl/$topic/" * \
-	| sort -k 1n,1 -k 7 | cut -d' ' -f2- | wc -l)"
+	mp3s="$(cd "$DM_tlt/"; find . -maxdepth 2 -name '*.mp3' \
+	| sort -k 1n,1 -k 7 | wc -l)"
 	
 	# fix index
 	if [[ $(($chk4 + $chk5)) != $chk1 || $(($chk2 + $chk3)) != $chk1 \
-	|| $(($mp3s - 2)) != $chk1 || $stts = 13 ]]; then
+	|| $mp3s != $chk1 || $stts = 13 ]]; then
 		sleep 1
 		notify-send -i idiomind "$index_err1" "$index_err2" -t 3000 &
 		> $DT/ps_lk
-		cd "$DM_tl/$topic/words/"
+		cd "$DM_tlt/words/"
 		for i in *.mp3 ; do [ ! -s ${i} ] && rm ${i} ; done
 		if [ -f ".mp3" ]; then rm .mp3; fi
-		cd "$DM_tl/$topic"
+		cd "$DM_tlt/"
 		for i in *.mp3 ; do [[ ! -s ${i} ]] && rm ${i} ; done
 		if [ -f ".mp3" ]; then rm .mp3; fi
-		find . | sort -k 1n,1 -k 7 | sed s'/words\///'g \
-		| sed s'/images\///'g | sed s'|\.\/words\/||'g \
+		cd "$DM_tlt/"; find . -maxdepth 2 -name '*.mp3' \
+		| sort -k 1n,1 -k 7 | sed s'|\.\/words\/||'g \
 		| sed s'|\.\/||'g | sed s'|\.mp3||'g > $DT/index
 		
 		touch "$DC_tlt/cfg.0.tmp" "$DC_tlt/cfg.3.tmp" "$DC_tlt/cfg.4.tmp"
@@ -187,39 +187,39 @@ if [ -d "$DC_tlt" ]; then
 	# look status
 	if [[ $(cat "$DC_tl/.cfg.1" | grep -Fxon "$topic" \
 	| sed -n 's/^\([0-9]*\)[:].*/\1/p') -ge 50 ]]; then
-		if [ -f "$DC_tl/$topic/cfg.9" ]; then
-			dts=$(cat "$DC_tl/$topic/cfg.9" | wc -l)
+		if [ -f "$DC_tlt/cfg.9" ]; then
+			dts=$(cat "$DC_tlt/cfg.9" | wc -l)
 			if [ $dts = 1 ]; then
-				dte=$(sed -n 1p "$DC_tl/$topic/cfg.9")
+				dte=$(sed -n 1p "$DC_tlt/cfg.9")
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/10))
 			elif [ $dts = 2 ]; then
-				dte=$(sed -n 2p "$DC_tl/$topic/cfg.9")
+				dte=$(sed -n 2p "$DC_tlt/cfg.9")
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/15))
 			elif [ $dts = 3 ]; then
-				dte=$(sed -n 3p "$DC_tl/$topic/cfg.9")
+				dte=$(sed -n 3p "$DC_tlt/cfg.9")
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/30))
 			elif [ $dts = 4 ]; then
-				dte=$(sed -n 4p "$DC_tl/$topic/cfg.9")
+				dte=$(sed -n 4p "$DC_tlt/cfg.9")
 				TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
 				RM=$((100*$TM/60))
 			fi
 			nstll=$(grep -Fxo "$topic" "$DC_tl/.cfg.3")
 			if [ -n "$nstll" ]; then
 				if [ "$RM" -ge 100 ]; then
-					echo "9" > "$DC_tl/$topic/cfg.8"
+					echo "9" > "$DC_tlt/cfg.8"
 				fi
 				if [ "$RM" -ge 150 ]; then
-					echo "10" > "$DC_tl/$topic/cfg.8"
+					echo "10" > "$DC_tlt/cfg.8"
 				fi
 			else
 				if [ "$RM" -ge 100 ]; then
-					echo "4" > "$DC_tl/$topic/cfg.8"
+					echo "4" > "$DC_tlt/cfg.8"
 				fi
 				if [ "$RM" -ge 150 ]; then
-					echo "5" > "$DC_tl/$topic/cfg.8"
+					echo "5" > "$DC_tlt/cfg.8"
 				fi
 			fi
 		fi

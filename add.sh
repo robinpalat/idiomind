@@ -381,7 +381,7 @@ elif [ $1 = new_sentence ]; then
 	
 	(
 	if [ $(sed -n 4p $DC_s/cfg.1) = TRUE ]; then
-	$DS/add.sh sentence_list_words "$fname" "$tpe"
+	$DS/add.sh sentence_list_words "$trgt" "$tpe"
 	fi
 	) &
 
@@ -530,7 +530,7 @@ elif [ $1 = edit_list_words ]; then
 		
 	elif [ "$3" = "S" ]; then
 	
-		sname="$2"
+		sname="$5"
 		DT_r="$DT/$c"
 		cd $DT_r
 		
@@ -610,12 +610,30 @@ elif [ $1 = dclik_list_words ]; then
 	elif [ $nw -ge 49 ]; then
 		info=$(echo " $remain$left$word")
 	fi
+	
+	if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
+		(
+			echo "1"
+			echo "# $pros..." ;
+			srce="$(translate "$(cat lstws)" $lgtl $lgsl)"
+			cd $DT_r
+			r=$(echo $(($RANDOM%1000)))
+			clean_3 $DT_r $r
+			translate "$(cat $aw | sed '/^$/d')" auto $lg | sed 's/,//g' \
+			| sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
+			list_words $DT_r $r
+			pwrds=$(cat B.$r | tr '\n' '_')
+			echo "$pwrds"
+			list_words_3 ./lstws "$pwrds"
+		) | dlg_progress_1
+	
+	else
+		list_words_3 ./lstws
+	fi
 
-	list_words_3 ./lstws
 	sname="$(cat lstws)"
-
 	slt=$(mktemp $DT/slt.XXXX.x)
-	dlg_checklist_1 ./lst info "$slt"
+	dlg_checklist_1 ./lst " " "$slt"
 	ret=$(echo "$?")
 	
 	if [ $? -eq 0 ]; then
@@ -672,8 +690,9 @@ elif [ $1 = sentence_list_words ]; then
 	elif [ $nw -ge 49 ]; then
 		info=$(echo " $remain$left$word")
 	fi
-
-	list_words_2 "$DM_tl/$3/$2.mp3"
+	
+	fname="$(nmfile "$2")"
+	list_words_2 "$2" "$DM_tlt/$fname.mp3"
 
 	slt=$(mktemp $DT/slt.XXXX.x)
 	dlg_checklist_1 ./idlst "$info" "$slt"
@@ -840,9 +859,6 @@ elif [ $1 = process ]; then
 		| sed '/^$/d' > ./sntsls_
 		
 		) | dlg_progress_1
-		
-		
-		
 	fi
 	
 		[[ -f ./sntsls ]] && rm -f ./sntsls

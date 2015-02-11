@@ -21,7 +21,7 @@ function audio_recognizer() {
 
 function tts() {
 	
-	cd $3; xargs -0 -n10 < "${1}" > ./temp
+	cd $3; xargs -n10 < "${1}" > ./temp
 	[[ -n "$(sed -n 1p ./temp)" ]] && wget -q -U Mozilla -O $DT_r/tmp01.mp3 \
 	"https://translate.google.com/translate_tts?ie=UTF-8&tl=$2&q=$(sed -n 1p ./temp)"
 	[[ -n "$(sed -n 2p ./temp)" ]] && wget -q -U Mozilla -O $DT_r/tmp02.mp3 \

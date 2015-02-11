@@ -845,7 +845,7 @@ elif [ "$1" = edt ]; then
 				$DS/vwr.sh "$v" "null" $ff & exit 1
 			fi
 			
-			[ -d "$DT/$c" ] && $DS/add.sh selecting_words_edit "$fname" S $c "$trgt" &
+			[ -d "$DT/$c" ] && $DS/add.sh edit_list_words "$fname" S $c "$trgt" &
 			$DS/vwr.sh "$v" "$trgt" $ff & exit 1
 	fi
 	
