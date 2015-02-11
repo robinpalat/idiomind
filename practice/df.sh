@@ -116,9 +116,9 @@ function cuestion() {
 	
 	yad --form --align=center --undecorated \
 	--center --on-top --image-on-top --image="$img" \
-	--skip-taskbar --title=" " --borders=0 \
-	--buttons-layout=edge \
-	--field="$trgts":lbl --width=365 --height=280 \
+	--skip-taskbar --title=" " --borders=3 \
+	--buttons-layout=spread \
+	--field="$trgts":lbl --width=371 --height=280 \
 	--button="gtk-media-stop":1 \
 	--button="      $answer1 >     ":0
 	}
@@ -127,9 +127,9 @@ function answer() {
 	
 	yad --form --align=center --undecorated \
 	--center --on-top --image-on-top --image="$img" \
-	--skip-taskbar --title=" " --borders=0 \
+	--skip-taskbar --title=" " --borders=3 \
 	--buttons-layout=spread \
-	--field="$srces":lbl --width=365 --height=280 \
+	--field="$srces":lbl --width=371 --height=280 \
 	--button="      $no_know      ":3 \
 	--button="      $ok_know      ":2
 	}

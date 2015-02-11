@@ -37,12 +37,24 @@ function msg_2() { # decide
 
 function nmfile() {
 	
-	echo "$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
+  echo "$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
 }
 
 
 function include() {
 	
-for f in $1/*; do source "$f"; done
+  for f in $1/*; do source "$f"; done
 
+}
+
+
+function try {
+	
+    "$@"
+    code=$?
+    if [ $code -ne 0 ]
+    then
+        msg "prlonema " info
+        exit 1
+    fi
 }

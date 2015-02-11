@@ -1,6 +1,10 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+set -x
+exec 1>/home/robin/WORK/work/log
+exec 2>&1
+
 if [ ! -d "$HOME/.idiomind" ]; then
 	/usr/share/idiomind/ifs/1u.sh && exit
 	if [ ! -d "$HOME/.idiomind" ]; then
@@ -10,6 +14,12 @@ fi
 
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/items_lists.conf
+
+if [ -f $DT/ps_lk ]; then
+	sleep 15 &&
+	[[ ! -f $DT/ps_lk ]] && rm -f $DT/ps_lk
+	exit 1
+fi
 
 function sizes() {
 	
@@ -137,6 +147,7 @@ function new_session() {
 
 if [ -z "$1" ]; then
 
+	printf "strt.1.strt\n" >> $DC_a/stats/.log
 	yad --width=185 --height=210 --name=idiomind \
 	--geometry=175x190-300-$(sed -n 12p $DC_s/cfg.18) \
 	--fixed --title="Idiomind" --no-buttons --skip-taskbar \
@@ -144,8 +155,6 @@ if [ -z "$1" ]; then
 	--read-dir=$DS/default/new --item-width=68 \
 	--window-icon=idiomind --class=idiomind &
 	[[ -n "$tpc" ]] && echo "$tpc" > $DC_s/cfg.6
-	printf "strt.1.strt\n" >> \
-	$DC_a/stats/.log &
 	
 	if [[ ! -d $DT ]]; then
 		new_session & exit
@@ -277,19 +286,11 @@ elif [[ $(echo "$1" | grep -o '.idmnd') ]]; then
 				mkdir "$DM_t/$language_target"
 				mkdir "$DM_t/$language_target/.share"
 				mkdir "$DC/topics/$language_target"
-				mkdir "$DC_a/Learning with news/$language_target"
-				mkdir "$DC_a/Learning with news/$language_target/subscripts"
-				"$DS/addons/Learning with news/examples/$language_target"
-				cp -f "$DS/addons/Learning with news/examples/$language_target" \
-				"$DC_a/Learning with news/$language_target/subscripts/Example"
 				fi
 				mkdir "$DM/topics/$language_target/$inm"
 				mkdir "$DC/topics/$language_target/$inm"
 				drit="$DM/topics/$language_target/$inm"
 				dric="$DC/topics/$language_target/$inm"
-				mkdir "$dric/practice"
-				cp -f $DS/practice/default/.* \
-				"$dric/practice"
 				cd "$tmp"
 				cp -n ./.audio/*.mp3 "$DM_t/$language_target/.share/"
 				[[ -d ./.audio ]] && rm -fr ./.audio

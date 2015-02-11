@@ -307,7 +307,6 @@ elif [ $1 = new_sentence ]; then
 		internet
 	
 		cd $DT_r
-
 		trgt=$(translate "$(clean_1 "$2")" auto $lgt | sed ':a;N;$!ba;s/\n/ /g')
 		srce=$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')
 		echo "$trgt" > trgt
@@ -316,6 +315,7 @@ elif [ $1 = new_sentence ]; then
 		if [ ! -f $DT_r/audtm.mp3 ]; then
 		
 			tts ./trgt $lgt $DT_r "$DM_tlt/$fname.mp3"
+			
 		else
 			cp -f $DT_r/audtm.mp3 "$DM_tlt/$fname.mp3"
 		fi
@@ -338,6 +338,7 @@ elif [ $1 = new_sentence ]; then
 			mv -f $DT_r/audtm.mp3 "$DM_tlt/$fname.mp3"
 			
 		else
+		
 			voice "$trgt" $DT_r "$DM_tlt/$fname.mp3"
 		fi
 	fi
@@ -425,7 +426,9 @@ elif [ $1 = new_word ]; then
 		if [ -f "$DT_r/$trgt.mp3" ]; then
 
 			cp -f "$DT_r/$trgt.mp3" "$DM_tlt/words/$fname.mp3"
+			
 		else
+		
 			voice "$trgt" $DT_r "$DM_tlt/words/$fname.mp3"
 		fi
 	else # -------------------
@@ -445,14 +448,16 @@ elif [ $1 = new_word ]; then
 			$dct "$trgt" $DT_r swrd
 			
 			if [ -f "$DT_r/$trgt.mp3" ]; then
+			
 				mv -f "$DT_r/$trgt.mp3" "$DM_tlt/words/$fname.mp3"
 				
 			else
+			
 				voice "$trgt" $DT_r "$DM_tlt/words/$fname.mp3"
 			fi
 		fi
 	fi
-	# --------------------------------------------------------------
+	# --------------------
 	if [ -f img.jpg ]; then
 		set_image_3 "$DM_tlt/words/$fname.mp3" "$DM_tlt/words/images/$fname.jpg"
 		icnn=img.jpg
@@ -508,6 +513,7 @@ elif [ $1 = edit_list_words ]; then
 
 		list_words_2 "$DM_tlt/$2.mp3"
 		slt=$(mktemp $DT/slt.XXXX.x)
+		
 		dlg_checklist_1 ./idlst "$info" "$slt"
 		ret=$(echo "$?")
 
@@ -546,6 +552,7 @@ elif [ $1 = edit_list_words ]; then
 				if [ -f "$trgt.mp3" ]; then
 				
 					mv -f $DT_r/"$trgt.mp3" "$DM_tlt/words/$fname.mp3"
+					
 				else
 				
 					voice "$trgt" $DT_r "$DM_tlt/words/$fname.mp3"
@@ -612,16 +619,19 @@ elif [ $1 = dclik_list_words ]; then
 	ret=$(echo "$?")
 	
 	if [ $? -eq 0 ]; then
-		list=$(cat "$slt" | sed 's/|//g')
-		n=1
+	
+			list=$(cat "$slt" | sed 's/|//g')
+			n=1
 		    while [ $n -le $(cat "$slt" | head -50 | wc -l) ]; do
-			chkst=$(echo "$list" |sed -n "$n"p)
-			echo "$chkst" | sed 's/TRUE//g' >> ./wrds
-			echo "$sname" >> wrdsls
-			let n++
+				chkst=$(echo "$list" |sed -n "$n"p)
+				echo "$chkst" | sed 's/TRUE//g' >> ./wrds
+				echo "$sname" >> wrdsls
+				let n++
 		    done
 		    rm -f "$slt"
+		    
 	    elif [ "$ret" -eq 1 ]; then
+	    
 		rm -f $DT/*."$c"
 		[[ -d $DT_r ]] && rm -fr $DT_r
 		exit
@@ -647,15 +657,16 @@ elif [ $1 = sentence_list_words ]; then
 	c=$(echo $(($RANDOM%100)))
 	DT_r=$(mktemp -d $DT/XXXXXX)
 	cd $DT_r
+	
 	if [ -z "$tpe" ]; then
 		[[ -d $DT_r ]] && rm -fr $DT_r
 		msg "$topic_err\n" info & exit 1
 	fi
+	
 	nw=$(cat "$DC_tlt/words/cfg.3" | wc -l)
 	left=$((50 - $nw))
 	if [ "$left" = 0 ]; then
 		exit 1
-		info=$(echo " $remain$left$words")
 	elif [ $nw -ge 45 ]; then
 		info=$(echo " $remain$left$words")
 	elif [ $nw -ge 49 ]; then
@@ -669,6 +680,7 @@ elif [ $1 = sentence_list_words ]; then
 	ret=$(echo "$?")
 		
 		if [ $ret -eq 0 ]; then
+		
 			list=$(cat "$slt" | sed 's/|//g')
 			n=1
 			while [ $n -le $(cat "$slt" | head -50 | wc -l) ]; do
@@ -677,10 +689,12 @@ elif [ $1 = sentence_list_words ]; then
 				let n++
 			done
 			rm -f "$slt"
+			
 		elif [ "$ret" -eq 1 ]; then
+		
 			rm -f $DT/*."$c"
 			[[ -d $DT_r ]] && rm -fr $DT_r
-			exit
+			exit 1
 		fi
 
 	n=1
@@ -701,6 +715,7 @@ elif [ $1 = sentence_list_words ]; then
 				mv -f "$DT_r/$trgt.mp3" "$DM_tlt/words/$fname.mp3"
 				
 			else
+			
 				voice "$trgt" $DT_r "$DM_tlt/words/$fname.mp3"
 			fi
 			
@@ -729,12 +744,12 @@ elif [ $1 = sentence_list_words ]; then
 	
 	rm -f $DT/*."$c" 
 	[[ -d $DT_r ]] && rm -fr $DT_r
-	exit
+	exit 1
+	
 	
 elif [ $1 = process ]; then
 	
 	source $DS/ifs/trans/$lgs/add.conf
-	
 	wth=$(sed -n 3p $DC_s/cfg.18)
 	eht=$(sed -n 4p $DC_s/cfg.18)
 	ns=$(cat "$DC_tlt"/cfg.4 | wc -l)
@@ -753,9 +768,9 @@ elif [ $1 = process ]; then
 		msg "$topic_err\n" info & exit 1
 	fi
 	if [ $ns -ge 50 ]; then
-		msg "$tpe    \\n$sentences_max" info
 		[[ -d $DT_r ]] && rm -fr $DT_r
-		rm -f ls $lckpr & exit
+		msg "$tpe    \\n$sentences_max" info
+		rm -f ls $lckpr & exit 1
 	fi
 
 	if [ -f $lckpr ]; then
@@ -767,10 +782,8 @@ elif [ $1 = process ]; then
 				rm=$(cat $lckpr)
 				rm fr $rm $lckpr
 				$DS/mngr.sh index R && killall add.sh
-				exit 1
-			else
-				exit 1
 			fi
+		exit 1
 	fi
 	
 	if [ -n "$2" ]; then
@@ -850,7 +863,8 @@ elif [ $1 = process ]; then
 		#done < ./sntsls_
 
 		sed -i '/^$/d' ./sntsls_
-		[[ $(echo "$tpe" | wc -c) -gt 60 ]] && tcnm="${tpe:0:60}..." || tcnm="$tpe"
+		[[ $(echo "$tpe" | wc -c) -gt 60 ]] \
+		&& tcnm="${tpe:0:60}..." || tcnm="$tpe"
 		
 		left=$((50 - $ns))
 		info=$(echo "$remain$left$sentences.")
@@ -869,14 +883,16 @@ elif [ $1 = process ]; then
 			rm -f $lckpr $slt & exit 1
 		
 		else
+		
 			dlg_checklist_3 ./sntsls_
-
-				ret=$(echo "$?")
+			ret=$(echo "$?")
+			
 		fi
 				if [ $ret -eq 2 ]; then
 					rm -f $lckpr "$slt" &
+					
 					dlg_text_info_1 ./sntsls_
-						ret=$(echo "$?")
+					ret=$(echo "$?")
 						
 						if [ $ret -eq 0 ]; then
 							$nspr "$(cat ./sort)" $DT_r "$tpe" &
@@ -898,7 +914,6 @@ elif [ $1 = process ]; then
 						fi
 						let n++
 					done
-					
 					rm -f $slt
 					
 					internet
@@ -933,6 +948,7 @@ elif [ $1 = process ]; then
 								if sed -n 1p $DC_s/cfg.3 | grep TRUE; then
 			
 									tts ./trgt $lgt $DT_r "$DM_tlt/words/$fname.mp3"
+									
 								else
 								
 									voice "$trgt" $DT_r "$DM_tlt/words/$fname.mp3"
@@ -968,6 +984,7 @@ elif [ $1 = process ]; then
 										tts ./trgt $lgt $DT_r "$DM_tlt/$fname.mp3"
 										
 									else
+									
 										voice "$trgt" $DT_r "$DM_tlt/$fname.mp3"
 										
 									fi
@@ -1115,12 +1132,14 @@ elif [ $1 = process ]; then
 						 sleep 5
 						 if ([ $(cat ./x | wc -l) = $rm ] || [ $n = 20 ]); then
 							[[ -d $DT_r ]] && rm -fr $DT_r
+							cp -f "$DC_tlt/cfg.0" "$DC_tlt/.cfg.11"
 							rm -f $lckpr & break & exit 1
 						 fi
 						let n++
 					done
 					
 				else
+					cp -f "$DC_tlt/cfg.0" "$DC_tlt/.cfg.11"
 					[[ -d $DT_r ]] && rm -fr $DT_r
 					 rm -f $lckpr $slt & exit 1
 				fi

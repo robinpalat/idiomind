@@ -31,7 +31,6 @@ fi
 
 fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
 
-
 [[ "$(echo "$item" | wc -c)" -le 50 ]] && align=center || align=left
 
 if ( [ -f "$DM_tlt/words/$fname.mp3" ] || [ "$5" = w_fix ] ); then

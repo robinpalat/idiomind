@@ -59,20 +59,20 @@ if [[ -z "$1" ]]; then
 
 		elif [[ $ret -eq 2 ]]; then
 			if echo "$st1" | grep -o "Sample"; then
-				$yad --title="Info" \
+				yad --title="Info" \
 				--center --on-top --window-icon=idiomind \
 				--width=360 --height=120 --image=info --skip-taskbar \
 				--text=" $delete_no.\n\n" \
 				--borders=5 --button=OK:1
 				"$DSF/cnfg.sh" & exit
 			elif echo "$st1" | grep -o "Sample"; then
-				$yad --title="Info" --center --on-top --window-icon=idiomind \
+				yad --title="Info" --center --on-top --window-icon=idiomind \
 				--width=360 --height=120 --image=info --skip-taskbar \
 				--text=" $delete_no \n\n" \
 				--borders=5 --button=OK:1
 				"$DSF/cnfg.sh" & exit
 			else
-				$yad --center \
+				yad --center \
 				--title="$confirm" --window-icon=idiomind \
 				--on-top --width=360 --height=120 --image=dialog-question \
 				--skip-taskbar --text=" $delete_subscription \n\n" \

@@ -79,8 +79,7 @@ elif [[ $ret -eq 0 ]]; then
 		--window-icon=idiomind & exit 1
 	fi
 	
-	mkdir "$HOME"/.idiomind/topics
-	mkdir "$HOME"/.idiomind/topics/saved
+	mkdir -p "$HOME"/.idiomind/topics/saved
 	DIR1="$HOME"/.idiomind/topics
 	[ ! -d  "$HOME"/.config ] && mkdir "$HOME"/.config
 	mkdir "$HOME"/.config/idiomind

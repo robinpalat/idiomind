@@ -195,11 +195,9 @@ elif [ -z "$1" ]; then
 		echo FALSE > $DC_a/stats/cnfg
 		sttng=$(sed -n 1p $DC_a/stats/cnfg)
 	fi
-	if [ $sttng = TRUE ]; then
-		SW=$(cat $DC_a/stats/.wks | head -n 8)
-	else
-		SW=" "
-	fi
+	[ $sttng = TRUE ] \
+	&& SW=$(cat $DC_a/stats/.wks | head -n 8) || SW=" "
+
 	CNFG=$(yad --print-all --align=center \
 	--title="$weekly_report" --borders=10 \
 	--center --form --on-top --scroll --skip-taskbar \

@@ -364,6 +364,7 @@ if [[ "$prdt" = A ]]; then
 					 sleep 5
 					 if ( [ "$(cat ./x | wc -l)" = "$rm" ] || [ "$n" = 20 ] ); then
 						[[ -d "$DT_r" ]] && rm -fr $DT_r
+						cp -f "$DC_tlt/cfg.0" "$DC_tlt/.cfg.11"
 						rm -f $lckpr & break & exit 1
 					 fi
 					let n++
@@ -371,6 +372,7 @@ if [[ "$prdt" = A ]]; then
 				exit 1
 			else
 				[[ -d "$DT_r" ]] && rm -fr $DT_r
+				cp -f "$DC_tlt/cfg.0" "$DC_tlt/.cfg.11"
 				rm -f $lckpr $slt & exit 1
 			fi
 		fi

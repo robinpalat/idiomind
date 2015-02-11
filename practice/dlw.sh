@@ -89,14 +89,14 @@ function fonts() {
 	#fi
 	
 	if [ $(echo "$1" | wc -c) -le 8 ]; then
-	a="<big><big><big><big><big>$1</big></big></big></big></big>"
+	a="<big><big><big><big>$1</big></big></big></big>"
 	elif [ $(echo "$1" | wc -c) -le 16 ]; then
 	a="<big><big><big>$1</big></big></big>"
 	elif [ $(echo "$1" | wc -c) -gt 16 ]; then
 	a="$1"
 	fi
 	if [ $(echo "$lst" | wc -c) -le 8 ]; then
-	c="<big><big><big><big><b>$lst</b></big></big></big></big>"
+	c="<big><big><big><b>$lst</b></big></big></big>"
 	elif [ $(echo "$lst" | wc -c) -le 16 ]; then
 	c="<big><big><b>$lst</b></big></big>"
 	elif [ $(echo "$lst" | wc -c) -gt 16 ]; then
@@ -104,11 +104,11 @@ function fonts() {
 	fi
 	if [[ -f "$drtt/images/$fname.jpg" ]]; then
 	img="$drtt/images/$fname.jpg"
-	trgts="<big>$c</big>"
+	trgts="<b>$c</b>"
 	tr="<b>$a</b>"
 	else
 	img="/usr/share/idiomind/images/fc.png"
-	trgts="<big><big>$c</big></big>"
+	trgts="<big><big><big>$c</big></big></big>"
 	tr="<big><big><big><b>$a</b></big></big></big>"
 	fi
 	}
@@ -120,10 +120,10 @@ function cuestion() {
 	play "$drtt/$fname".mp3 &
 	yad --form --align=center --undecorated \
 	--center --on-top --image-on-top --image="$img" \
-	--skip-taskbar --title=" " --borders=0 \
+	--skip-taskbar --title=" " --borders=3 \
 	--buttons-layout=spread \
 	--field="<span color='#808080'>$trgts</span>":lbl \
-	--width=365 --height=280 \
+	--width=371 --height=280 \
 	--button="gtk-media-stop":1 \
 	--button="$listen":"$play" \
 	--button="$answer2 >":0
@@ -133,9 +133,9 @@ function answer() {
 	
 	yad --form --align=center --undecorated \
 	--center --on-top --image-on-top --image="$img" \
-	--skip-taskbar --title=" " --borders=0 \
+	--skip-taskbar --title=" " --borders=3 \
 	--buttons-layout=spread \
-	--field="$tr":lbl --width=365 --height=280 \
+	--field="$tr":lbl --width=371 --height=280 \
 	--button="$listen":"$play" \
 	--button="$no_know":3 \
 	--button="$ok_know":2
