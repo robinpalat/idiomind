@@ -62,20 +62,20 @@ if [[ -z "$1" ]]; then
 				$yad --title="Info" \
 				--center --on-top --window-icon=idiomind \
 				--width=360 --height=120 --image=info --skip-taskbar \
-				--text="  Sample subscription\\n  $delete_no." \
+				--text=" $delete_no.\n\n" \
 				--borders=5 --button=OK:1
 				"$DSF/cnfg.sh" & exit
 			elif echo "$st1" | grep -o "Sample"; then
 				$yad --title="Info" --center --on-top --window-icon=idiomind \
 				--width=360 --height=120 --image=info --skip-taskbar \
-				--text="  Sample subscription\\n  $delete_no" \
+				--text=" $delete_no \n\n" \
 				--borders=5 --button=OK:1
 				"$DSF/cnfg.sh" & exit
 			else
 				$yad --center \
 				--title="$confirm" --window-icon=idiomind \
 				--on-top --width=360 --height=120 --image=dialog-question \
-				--skip-taskbar --text="  $delete_subscription \n\n" \
+				--skip-taskbar --text=" $delete_subscription \n\n" \
 				--borders=5 --button="$yes":0 --button="$no":1
 					ret=$?
 					

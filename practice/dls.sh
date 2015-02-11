@@ -83,7 +83,7 @@ function dialog1() {
 	--skip-taskbar --margins=8 --text-align=left --height=400 --width=460 \
 	--align=left --window-icon=idiomind --fore=4A4A4A \
 	--button=$hint:"/usr/share/idiomind/practice/hint.sh '$1'" \
-	--button=Listen:"play '$DM_tlt/$1.mp3'" \
+	--button="$listen":"play '$DM_tlt/$fname.mp3'" \
 	--button="  Ok >> ":0)
 	}
 	
@@ -95,16 +95,14 @@ function dialog2() {
 	--skip-taskbar --margins=8 --text-align=left --height=160 --width=460 \
 	--align=left --window-icon=idiomind --image-on-top \
 	--button=$hint:"/usr/share/idiomind/practice/hint.sh '$1'" \
-	--button="$listen":"play '$DM_tlt/$1.mp3'" \
+	--button="$listen":"play '$DM_tlt/$fname.mp3'" \
 	--button="      Ok >     ":0)
 	}
 	
 function get_image_text() {
 	
-	nme="$(echo "$1" | cut -c 1-100 | sed 's/[ \t]*$//' \
-	| sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
 	WEN=$(echo "$1" | sed 's/^ *//; s/ *$//')
-	eyeD3 --write-images=$DT "$DM_tlt/$1.mp3"
+	eyeD3 --write-images=$DT "$DM_tlt/$fname.mp3"
 	echo "$WEN" | awk '{print tolower($0)}' > quote
 
 	}
@@ -166,39 +164,39 @@ function check() {
 n=1
 while [ $n -le $(cat lsin1 | wc -l) ]; do
 
-	namefile="$(sed -n "$n"p lsin1 | cut -c 1-100 | sed 's/[ \t]*$//' \
-	| sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
+	trgt="$(sed -n "$n"p lsin1)"
+	fname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
 	
 	if [[ $n = 1 ]]; then
 	info="--text=<sup><tt> $write_sentence...</tt></sup>"
 	else
 	info=""; fi
 	
-	if [ -f "$DM_tlt/$namefile".mp3 ]; then
+	if [ -f "$DM_tlt/$fname".mp3 ]; then
 		if [ -f "$DT/ILLUSTRATION".jpeg ]; then
 			rm -f "$DT/ILLUSTRATION".jpeg; fi
 		
-		get_image_text "$namefile"
+		get_image_text "$trgt"
 
 		if ( [ -f "$DT/ILLUSTRATION".jpeg ] && [ $n != 1 ] ); then
 			IMAGE="$DT/ILLUSTRATION".jpeg
-			(sleep 0.5 && play "$DM_tlt/$namefile".mp3) &
-			dialog1 "$namefile"
+			(sleep 0.5 && play "$DM_tlt/$fname".mp3) &
+			dialog1 "$trgt"
 		else
-			(sleep 0.5 && play "$DM_tlt/$namefile".mp3) &
-			dialog2 "$namefile"
+			(sleep 0.5 && play "$DM_tlt/$fname".mp3) &
+			dialog2 "$trgt"
 		fi
 		ret=$(echo "$?")
 		
 		if [[ $ret -eq 0 ]]; then
 			killall play
-			result "$namefile"
+			result "$trgt"
 		else
 			$drts/cls s $easy $ling $hard $all &
 			break &
 			exit 0; fi
 	
-		check "$namefile"
+		check "$trgt"
 		ret=$(echo "$?")
 		
 		if [[ $ret -eq 2 ]]; then

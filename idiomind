@@ -144,7 +144,7 @@ if [ -z "$1" ]; then
 	--read-dir=$DS/default/new --item-width=68 \
 	--window-icon=idiomind --class=idiomind &
 	[[ -n "$tpc" ]] && echo "$tpc" > $DC_s/cfg.6
-	printf "strt.1.strt" >> \
+	printf "strt.1.strt\n" >> \
 	$DC_a/stats/.log &
 	
 	if [[ ! -d $DT ]]; then
@@ -359,7 +359,7 @@ elif [[ $1 = topic ]]; then
 			else
 			img=$DS/images/trans.png
 			fi
-			printf "tpcs.$tpc.tpcs" >> \
+			printf "tpcs.$tpc.tpcs\n" >> \
 			$DC_a/stats/.log &
 			inx=$(cat "$ls0" | wc -l)
 			tb1=$(cat "$ls1" | wc -l)
@@ -571,7 +571,7 @@ elif [[ $1 = topic ]]; then
 								cat "$ls1" | awk '!array_temp[$0]++' > $DT/ls1.x
 								sed '/^$/d' $DT/ls1.x > "$ls1"
 							fi
-							printf "okim.$cnt.okim" >> \
+							printf "okim.$cnt.okim\n" >> \
 							$DC_a/stats/.log &
 						fi
 					fi
@@ -689,7 +689,7 @@ elif [[ $1 = topic ]]; then
 								cat "$ls1" | awk '!array_temp[$0]++' > $DT/ls1.x
 								sed '/^$/d' $DT/ls1.x > "$ls1"
 							fi
-							printf "okim.$cnt.okim" >> \
+							printf "okim.$cnt.okim\n" >> \
 							$DC_a/stats/.log &
 						fi
 					fi
@@ -866,7 +866,7 @@ elif [[ $1 = topic ]]; then
 								cat "$ls1" | awk '!array_temp[$0]++' > $DT/ls1.x
 								sed '/^$/d' $DT/ls1.x > "$ls1"
 							fi
-							printf "okim.$cnt.okim" >> \
+							printf "okim.$cnt.okim\n" >> \
 							$DC_a/stats/.log &
 						fi
 					fi
@@ -990,7 +990,7 @@ elif [[ $1 = topic ]]; then
 								sed '/^$/d' $DT/ls1.x > "$ls1"
 							fi
 							
-							printf "okim.$cnt.okim" >> \
+							printf "okim.$cnt.okim\n" >> \
 							$DC_a/stats/.log &
 						fi
 					fi

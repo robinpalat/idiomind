@@ -84,7 +84,9 @@ function score() {
 
 function fonts() {
 	
-	s=$(eyeD3 "$drtt/$1.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
+	fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
+	s=$(eyeD3 "$drtt/$fname.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
+	
 	if [ $(echo "$1" | wc -c) -le 8 ]; then
 	c="<big><big><big><big>$1</big></big></big></big>"
 	elif [ $(echo "$1" | wc -c) -le 16 ]; then
@@ -99,8 +101,8 @@ function fonts() {
 	elif [ $(echo "$s" | wc -c) -gt 16 ]; then
 	a="<b>$s</b>"
 	fi
-	if [[ -f "$drtt/images/$1.jpg" ]]; then
-	img="$drtt/images/$1.jpg"
+	if [[ -f "$drtt/images/$fname.jpg" ]]; then
+	img="$drtt/images/$fname.jpg"
 	trgts="$c   <small><tt>$means</tt>...</small>"
 	srces="<b>$a</b>"
 	else

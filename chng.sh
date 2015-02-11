@@ -15,13 +15,14 @@ if [[ "$1" = chngi ]]; then
 	[[ $bcl -lt 2 ]] && bcl = 2 && echo 2 > $DC_s/cfg.2
 	if ([ $(echo "$nta" | grep "TRUE") ] && [ $bcl -lt 12 ]); then bcl=12; fi
 
-	item="$(sed -n "$2"p $indx | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
+	item="$(sed -n "$2"p $indx)"
+	fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
 	
-	[[ -f "$DM_tlt/$item.mp3" ]] && file="$DM_tlt/$item.mp3" && t=2
-	[[ -f "$DM_tlt/words/$item.mp3" ]] && file="$DM_tlt/words/$item.mp3" && t=1
-	[[ -f "$DM_tl/Feeds/kept/words/$item.mp3" ]] && file="$DM_tl/Feeds/kept/words/$item.mp3" && t=1
-	[[ -f "$DM_tl/Feeds/kept/$item.mp3" ]] && file="$DM_tl/Feeds/kept/$item.mp3" && t=2
-	[[ -f "$DM_tl/Feeds/conten/$item.mp3" ]] && file="$DM_tl/Feeds/conten/$item.mp3" && t=2
+	[[ -f "$DM_tlt/$fname.mp3" ]] && file="$DM_tlt/$fname.mp3" && t=2
+	[[ -f "$DM_tlt/words/$fname.mp3" ]] && file="$DM_tlt/words/$fname.mp3" && t=1
+	[[ -f "$DM_tl/Feeds/kept/words/$fname.mp3" ]] && file="$DM_tl/Feeds/kept/words/$fname.mp3" && t=1
+	[[ -f "$DM_tl/Feeds/kept/$fname.mp3" ]] && file="$DM_tl/Feeds/kept/$fname.mp3" && t=2
+	[[ -f "$DM_tl/Feeds/conten/$fname.mp3" ]] && file="$DM_tl/Feeds/conten/$fname.mp3" && t=2
 	
 	if [ -f "$file" ]; then
 		
@@ -42,7 +43,7 @@ if [[ "$1" = chngi ]]; then
 
 		[[ -z "$trgt" ]] && trgt="$item"
 		#[[ -f "$DM_tl/Feeds/kept/words/$item.mp3" ]] && osdi="$DM_tl/Feeds/kept/words/$item.mp3" || osdi=idiomind
-		imgt="$DM_tlt/words/images/$item.jpg"
+		imgt="$DM_tlt/words/images/$fname.jpg"
 		[[ -f $imgt ]] && osdi=$imgt || osdi=idiomind
 		
 		[[ -n $(echo "$nta" | grep "TRUE") ]] && notify-send -i "$osdi" "$trgt" "$srce" -t 10000  &

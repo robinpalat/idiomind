@@ -37,9 +37,7 @@ function msg_2() { # decide
 
 function nmfile() {
 	
-	echo "$(echo "$1" | cut -c 1-100 | sed 's/[ \t]*$//' \
-	| sed s'/&//'g | sed s'/://'g | sed "s/'/ /g" \
-	| sed "s/’/ /g")"
+	echo "$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
 }
 
 

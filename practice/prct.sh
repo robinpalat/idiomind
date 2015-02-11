@@ -41,9 +41,10 @@ function get_list_mchoice() {
 	echo "5" ; sleep 0
 	echo "# " ; sleep 0
 	n=1
-	while [[ $n -le "$(cat mcin | sed 's/mcin//g' | wc -l)" ]]; do
+	while [[ $n -le "$(cat mcin | wc -l)" ]]; do
 		word=$(sed -n "$n"p mcin)
-		file="$DM_tlt/words/$word.mp3"
+		fname="$(echo -n "$word" | md5sum | rev | cut -c 4- | rev)"
+		file="$DM_tlt/words/$fname.mp3"
 		echo "$(eyeD3 "$file" | grep -o -P "(?<=IWI2I0I).*(?=IWI2I0I)")" >> word1.idx
 		let n++
 	done

@@ -387,7 +387,7 @@ elif [ $1 = new_sentence ]; then
 	fetch_audio $aw $bw
 	
 	[[ -d $DT_r ]] && rm -fr $DT_r
-	echo "aitm.1.aitm" >> \
+	printf "aitm.1.aitm\n" >> \
 	$DC/addons/stats/.log
 	exit 1
 	
@@ -419,10 +419,8 @@ elif [ $1 = new_word ]; then
 
 		trgt="$(translate "$trgt" auto $lgt)"
 		srce="$(translate "$trgt" $lgt $lgs)"
-		fname="$(nmfile "$trgt")"
+		fname="$(nmfile "${trgt^}")"
 		$dct "$trgt" $DT_r swrd
-
-		fname=$(echo "$trgt" | sed "s/'//g")
 		
 		if [ -f "$DT_r/$trgt.mp3" ]; then
 
@@ -468,7 +466,7 @@ elif [ $1 = new_word ]; then
 		eyeD3 --set-encoding=utf8 -A IWI3I0I"$nt"IWI3I0I "$DM_tlt/words/$fname.mp3"
 		notify-send -i "$icnn" "$trgt" "$srce\\n($tpe)" -t 5000
 		$DS/mngr.sh index word "$trgt" "$tpe"
-		echo "aitm.1.aitm" >> \
+		printf "aitm.1.aitm\n" >> \
 		$DC/addons/stats/.log
 	
 	else
@@ -568,7 +566,7 @@ elif [ $1 = edit_list_words ]; then
 			let n++
 		done
 
-		printf "aitm.$lns.aitm" >> \
+		printf "aitm.$lns.aitm\n" >> \
 		$DC_a/stats/.log &
 
 			if [ -f $DT_r/logw ]; then
@@ -720,7 +718,7 @@ elif [ $1 = sentence_list_words ]; then
 		let n++
 	done
 
-	printf "aitm.$lns.aitm" >> \
+	printf "aitm.$lns.aitm\n" >> \
 	$DC_a/stats/.log &
 
 	if [ -f  $DT_r/logw ]; then
@@ -852,7 +850,7 @@ elif [ $1 = process ]; then
 		#done < ./sntsls_
 
 		sed -i '/^$/d' ./sntsls_
-		[[ $(echo "$tpe" | wc -c) -gt 40 ]] && tcnm="${tpe:0:40}..." || tcnm="$tpe"
+		[[ $(echo "$tpe" | wc -c) -gt 60 ]] && tcnm="${tpe:0:60}..." || tcnm="$tpe"
 		
 		left=$((50 - $ns))
 		info=$(echo "$remain$left$sentences.")
@@ -1041,7 +1039,7 @@ elif [ $1 = process ]; then
 							
 							if ( [ -n $(file -ib "$DM_tlt/words/$fname.mp3" | grep -o 'binary') ] \
 							&& [ -f "$DM_tlt/words/$fname.mp3" ] && [ -n "$itm" ] && [ -n "$srce" ] ); then
-								add_tags_2 W "$itm" "$srce" "$exmp" "$DM_tlt/words/$fname.mp3"
+								add_tags_2 W "$itm" "$srce" "$sname" "$DM_tlt/words/$fname.mp3"
 								$DS/mngr.sh index word "$itm" "$tpe" "$sname"
 								echo "$itm" >> addw
 							else
@@ -1097,7 +1095,7 @@ elif [ $1 = process ]; then
 					
 					if [ $adds -ge 1 ]; then
 						notify-send -i idiomind "$tpe" "$is_added\n$sadds$S$wadds$W" -t 2000 &
-						echo "aitm.$adds.aitm" >> \
+						printf "aitm.$adds.aitm\n" >> \
 						$DC/addons/stats/.log
 					fi
 					
@@ -1130,6 +1128,7 @@ elif [ $1 = process ]; then
 elif [ $1 = set_image ]; then
 	cd $DT
 	wrd="$2"
+	fname="$(nmfile "$wrd")"
 	echo '<html>
 <head>
 <meta http-equiv="Refresh" content="0;url=https://www.google.com/search?q=XxXx&tbm=isch">
@@ -1147,12 +1146,12 @@ elif [ $1 = set_image ]; then
 	
 	if [ "$3" = word ]; then
 		
-		if [ ! -f "$DT/$wrd.*" ]; then
-			file="$DM_tlt/words/$wrd.mp3"
+		if [ ! -f "$DT/$fname.*" ]; then
+			file="$DM_tlt/words/$fname.mp3"
 		fi
 		
-		if [ -f "$DM_tlt/words/images/$wrd.jpg" ]; then
-			ICON="--image=$DM_tlt/words/images/$wrd.jpg"
+		if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
+			ICON="--image=$DM_tlt/words/images/$fname.jpg"
 			btnn=$(echo --button=$change:3)
 			btn2=$(echo --button=$delete:2)
 		else
@@ -1161,7 +1160,7 @@ elif [ $1 = set_image ]; then
 		
 		yad --form --align=center --center \
 		--width=340 --text-align=center --height=280 \
-		--on-top --skip-taskbar --image-on-top "$txt">/dev/null 2>&1 \
+		--on-top --skip-taskbar --image-on-top "$txt" >/dev/null 2>&1 \
 		"$btnn" --window-icon=idiomind --borders=0 \
 		--title=Image "$ICON" "$btn2" \
 		--button=gtk-close:1
@@ -1170,18 +1169,18 @@ elif [ $1 = set_image ]; then
 			if [ $ret -eq 3 ]; then
 			
 				rm -f *.l
-				scrot -s --quality 70 "$wrd.temp.jpeg"
-				/usr/bin/convert -scale 100x90! "$wrd.temp.jpeg" "$wrd"_temp.jpeg
-				/usr/bin/convert -scale 360x240! "$wrd.temp.jpeg" "$DM_tlt/words/images/$wrd.jpg"
+				scrot -s --quality 70 "$fname.temp.jpeg"
+				/usr/bin/convert -scale 100x90! "$fname.temp.jpeg" "$wrd"_temp.jpeg
+				/usr/bin/convert -scale 360x240! "$fname.temp.jpeg" "$DM_tlt/words/images/$fname.jpg"
 				eyeD3 --remove-images "$file" >/dev/null 2>&1
-				eyeD3 --add-image "$wrd"_temp.jpeg:ILLUSTRATION "$file" >/dev/null 2>&1
+				eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file" >/dev/null 2>&1
 				rm -f *.jpeg
 				$DS/add.sh set_image "$wrd" word
 				
 			elif [ $ret -eq 2 ]; then
 			
 				eyeD3 --remove-image "$file" >/dev/null 2>&1
-				rm -f "$DM_tlt/words/images/$wrd.jpg"
+				rm -f "$DM_tlt/words/images/$fname.jpg"
 				rm -f *.jpeg s.html
 				
 			else
@@ -1191,7 +1190,7 @@ elif [ $1 = set_image ]; then
 	elif [ "$3" = sentence ]; then
 	
 		if [ ! -f "$DT/$wrd.*" ]; then
-			file="$DM_tlt/$wrd.mp3"
+			file="$DM_tlt/$fname.mp3"
 		fi
 		
 		btnn=$(echo "--button=$add_image:3")
@@ -1216,12 +1215,12 @@ elif [ $1 = set_image ]; then
 			if [ $ret -eq 3 ]; then
 			
 				rm -f $DT/*.l
-				scrot -s --quality 70 "$wrd.temp.jpeg"
-				/usr/bin/convert -scale 450x270! "$wrd.temp.jpeg" "$wrd"_temp.jpeg
+				scrot -s --quality 70 "$fname.temp.jpeg"
+				/usr/bin/convert -scale 450x270! "$fname.temp.jpeg" "$fname"_temp.jpeg
 				eyeD3 --remove-image "$file" >/dev/null 2>&1
-				eyeD3 --add-image "$wrd"_temp.jpeg:ILLUSTRATION "$file" >/dev/null 2>&1 &&
+				eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file" >/dev/null 2>&1 &&
 				rm -f *.jpeg
-				printf "aimg.$tpc.aimg" >> \
+				printf "aimg.$tpc.aimg\n" >> \
 				$DC_a/stats/.log &
 				$DS/add.sh set_image "$wrd" sentence
 				

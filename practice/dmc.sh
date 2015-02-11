@@ -81,8 +81,9 @@ function score() {
 
 function fonts() {
 	
-	tgt="$1"
-	file="$drtt/$1.mp3"
+
+	fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
+	file="$drtt/$fname.mp3"
 	wes=$(eyeD3 "$file" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
 	ras=$(sort -Ru word1.idx | egrep -v "$wes" | head -4)
 	ess=$(grep "$wes" word1.idx)

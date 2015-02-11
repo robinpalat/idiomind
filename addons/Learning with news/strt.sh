@@ -176,7 +176,7 @@ if [ -n "$feed" ]; then
 	find *.mp3 -mtime +5 -exec ls > ls {} \;
 	n=1
 	while [ $n -le $(cat ls | wc -l) ]; do
-		nmfile=$(sed -n "$n"p ls)
+		nmfile=$(sed -n "$n"p ./ls)
 		tgs=$(eyeD3 "$DM_tl/Feeds/conten/$nmfile")
 		trg=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
 		grep -v -x -v "$trg" "$DC_tl/Feeds/cfg.1" > "$DC_tl/Feeds/cfg.1.tmp"

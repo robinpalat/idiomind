@@ -102,8 +102,8 @@ function fonts() {
 	elif [ $(echo "$lst" | wc -c) -gt 16 ]; then
 	c="<b>$lst</b>"
 	fi
-	if [[ -f "$drtt/images/$1.jpg" ]]; then
-	img="$drtt/images/$1.jpg"
+	if [[ -f "$drtt/images/$fname.jpg" ]]; then
+	img="$drtt/images/$fname.jpg"
 	trgts="<big>$c</big>"
 	tr="<b>$a</b>"
 	else
@@ -115,12 +115,13 @@ function fonts() {
 
 function cuestion() {
 	
-	play="play '$drtt/$1.mp3'"
-	play "$drtt/$1".mp3 &
+	fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
+	play="play '$drtt/$fname.mp3'"
+	play "$drtt/$fname".mp3 &
 	yad --form --align=center --undecorated \
 	--center --on-top --image-on-top --image="$img" \
 	--skip-taskbar --title=" " --borders=0 \
-	--buttons-layout=edge \
+	--buttons-layout=spread \
 	--field="<span color='#808080'>$trgts</span>":lbl \
 	--width=365 --height=280 \
 	--button="gtk-media-stop":1 \
@@ -138,7 +139,6 @@ function answer() {
 	--button="$listen":"$play" \
 	--button="$no_know":3 \
 	--button="$ok_know":2
-	
 	}
 
 n=1

@@ -203,7 +203,7 @@ FALSE' > $DC_s/cfg.5; fi
 		$DS/stop.sh play & exit 1
 	fi
 
-	printf "plyrt.$tpc.plyrt" >> \
+	printf "plyrt.$tpc.plyrt\n" >> \
 	$DC_a/stats/.log &
 	sleep 1
 	$DS/bcle.sh & exit
