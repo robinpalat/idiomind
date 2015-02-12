@@ -6,11 +6,11 @@ source $DS/ifs/trans/$lgs/upld.conf
 source $DS/ifs/mods/cmns.sh
 
 if [[ $1 = vsd ]]; then
+
 	U=$(sed -n 1p $HOME/.config/idiomind/s/cfg.4)
 	lng=$(echo "$lgtl" |  awk '{print tolower($0)}')
 	wth=$(sed -n 3p $DC_s/cfg.18)
 	eht=$(sed -n 4p $DC_s/cfg.18)
-	
 	
 	cd $DM_t/saved; ls -t *.id | sed 's/\.id//g' | yad --list \
 	--window-icon=idiomind --center --skip-taskbar --borders=8 \
@@ -23,12 +23,10 @@ if [[ $1 = vsd ]]; then
 	exit
 	
 elif [[ $1 = infsd ]]; then
-	echo "$2"
-	cd $DM_t/saved
+
 	U=$(sed -n 1p $DC_s/cfg.4)
 	user=$(echo "$(whoami)")
-	tpcd="$2"
-	source "./$tpcd.id"
+	source "$DM_t/saved/$2.id"
 	[[ $language_source = english ]] && lng=en
 	[[ $language_source = french ]] && lng=fr
 	[[ $language_source = german ]] && lng=de
@@ -39,7 +37,7 @@ elif [[ $1 = infsd ]]; then
 	[[ $language_source = spanish ]] && lng=es
 	[[ $language_source = vietnamese ]] && lng=vi
 	[[ $language_source = russian ]] && lng=ru
-	nme=$(echo "$tpcd" | sed 's/ /_/g')
+	nme=$(echo "$2" | sed 's/ /_/g')
 	lnglbl=$(echo $language_target | awk '{print tolower($0)}')
 	icon=$DS/images/img.6.png
 
@@ -48,12 +46,12 @@ elif [[ $1 = infsd ]]; then
 	--title="idiomind" --button="$download:0" --button="Close:1" \
 	--text="$name\n<small>${language_source^} $language_target </small> \n" \
 	--window-icon=idiomind
-		ret=$?
+	ret=$?
 
 		if [ $ret -eq 0 ]; then
 			cd $HOME
 			sv=$(yad --save --center --borders=10 \
-			--on-top --filename="$tpcd.idmnd" \
+			--on-top --filename="$2.idmnd" \
 			--window-icon=idiomind --skip-taskbar --title="Save" \
 			--file --width=600 --height=500 --button="Ok":0 )
 			ret=$?
@@ -114,9 +112,6 @@ user=$(sed -n 3p $DC_s/cfg.4)
 nt=$(cat "$DC_tlt/cfg.10")
 nme=$(echo "$tpc" | sed 's/ /_/g' \
 | sed 's/"//g' | sed 's/’//g')
-#[[ $(echo "$tpc" | wc -c) -gt 40 ]] \
-#&& ttpc="${tpc:0:40}..." || ttpc="$tpc"
-
 
 # check index
 [[ ! -f "$DC_tlt/cfg.0" ]] && touch "$DC_tlt/cfg.0"
@@ -133,25 +128,20 @@ chk5="$DC_tlt/cfg.4"
 chk6="$DC_tlt/cfg.10"
 
 if [ -n "$(cat "$chk1" | sort -n | uniq -dc)" ]; then
-cat "$chk1" | awk '!array_temp[$0]++' > $DT/ls0.x
-sed '/^$/d' $DT/ls0.x > "$chk1"
-fi
+	cat "$chk1" | awk '!array_temp[$0]++' > $DT/ls0.x
+	sed '/^$/d' $DT/ls0.x > "$chk1"; fi
 if [ -n "$(cat "$chk2" | sort -n | uniq -dc)" ]; then
-cat "$chk2" | awk '!array_temp[$0]++' > $DT/ls1.x
-sed '/^$/d' $DT/ls1.x > "$chk2"
-fi
+	cat "$chk2" | awk '!array_temp[$0]++' > $DT/ls1.x
+	sed '/^$/d' $DT/ls1.x > "$chk2"; fi
 if [ -n "$(cat "$chk3" | sort -n | uniq -dc)" ]; then
-cat "$chk3" | awk '!array_temp[$0]++' > $DT/ls2.x
-sed '/^$/d' $DT/ls2.x > "$chk3"
-fi
+	cat "$chk3" | awk '!array_temp[$0]++' > $DT/ls2.x
+	sed '/^$/d' $DT/ls2.x > "$chk3"; fi
 if [ -n "$(cat "$chk4" | sort -n | uniq -dc)" ]; then
-cat "$chk4" | awk '!array_temp[$0]++' > $DT/ls1.x
-sed '/^$/d' $DT/ls1.x > "$chk4"
-fi
+	cat "$chk4" | awk '!array_temp[$0]++' > $DT/ls1.x
+	sed '/^$/d' $DT/ls1.x > "$chk4"; fi
 if [ -n "$(cat "$chk5" | sort -n | uniq -dc)" ]; then
-cat "$chk5" | awk '!array_temp[$0]++' > $DT/ls2.x
-sed '/^$/d' $DT/ls2.x > "$chk5"
-fi
+	cat "$chk5" | awk '!array_temp[$0]++' > $DT/ls2.x
+	sed '/^$/d' $DT/ls2.x > "$chk5"; fi
 
 chk1=$(cat "$DC_tlt/cfg.0" | wc -l)
 chk2=$(cat "$DC_tlt/cfg.1" | wc -l)
@@ -159,99 +149,104 @@ chk3=$(cat "$DC_tlt/cfg.2" | wc -l)
 chk4=$(cat "$DC_tlt/cfg.3" | wc -l)
 chk5=$(cat "$DC_tlt/cfg.4" | wc -l)
 stts=$(cat "$DC_tlt/cfg.8")
+mp3s="$(cd "$DM_tlt/"; find . -maxdepth 2 -name '*.mp3' \
+| sort -k 1n,1 -k 7 | wc -l)"
 
-# try fix if something is wrong
-if [[ $(($chk4 + $chk5)) != $chk1 \
-	|| $(($chk2 + $chk3)) != $chk1 || $stts = 13 ]]; then
+# fix index
+if [[ $(($chk4 + $chk5)) != $chk1 || $(($chk2 + $chk3)) != $chk1 \
+|| $mp3s != $chk1 || $stts = 13 ]]; then
 	sleep 1
 	notify-send -i idiomind "$index_err1" "$index_err2" -t 3000 &
-
-	[[ -f $DT/trgt_s ]] && rm -f $DT/trgt_s
-	[[ -f $DT/trgt_w ]] && rm -f $DT/trgt_w
-	[[ -f $DT/cfg.5 ]] && rm -f $DT/cfg.5
-
-	cd "$DM_tl/$topic"
-	for i in *.mp3 ; do [[ ! -s ${i} ]] && rm ${i} ; done
-	if [ -f ".mp3" ]; then rm .mp3; fi
-	ls *.mp3 > $DT/ind_s
-		
-	cd "$DM_tl/$topic/words/"
+	> $DT/ps_lk
+	cd "$DM_tlt/words/"
 	for i in *.mp3 ; do [ ! -s ${i} ] && rm ${i} ; done
 	if [ -f ".mp3" ]; then rm .mp3; fi
-	ls *.mp3  >> $DT/ind_w
-
-	n=1
-	while [[ $n -le $(cat "$DT/ind_s" | wc -l) ]]; do
-		
-			fname=$(sed -n "$n"p "$DT/ind_s")
-			tgs=$(eyeD3 "$DM_tlt/$fname")
-			trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
-			lwrd=$(echo "$tgs" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' | tr '_' '\n')
-			echo "$trgt" >> $DT/trgt_s
-			echo "$lwrd" >> $DT/cfg.5
-			let n++
-	done
-	n=1
-	while [[ $n -le $(cat "$DT/ind_w" | wc -l) ]]; do
-		
-			fname=$(sed -n "$n"p "$DT/ind_w")
-			trgt=$(eyeD3 "$DM_tlt/words/$fname" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
-			echo "$trgt" >> $DT/trgt_w
-			let n++
-	done
-
-	rm "$DC_tlt/cfg.3" "$DC_tlt/cfg.4"
-	if [[ -f "$DC_tlt/.cfg.11" ]]; then
-
-		cp -f "$DC_tlt/.cfg.11" "$DC_tlt/cfg.0"
-		cp -f "$DC_tlt/.cfg.11" "$DC_tlt/cfg.1"
-		mv -f $DT/cfg.5 "$DC_tlt/cfg.5"
-		n=1
-		while [[ $n -le $(cat "$DC_tlt/cfg.0" | wc -l) ]]; do
-			chk1=$(sed -n "$n"p "$DC_tlt/cfg.0")
-			if cat "$DT/trgt_s" | grep -Fxo "$chk1"; then
-				echo "$chk1" >> "$DC_tlt/cfg.4"
-			fi
-			if cat "$DT/trgt_w" | grep -Fxo "$chk1"; then
-					echo "$chk1" >> "$DC_tlt/cfg.3"
-			fi
-			let n++
-		done
-
+	cd "$DM_tlt/"
+	for i in *.mp3 ; do [[ ! -s ${i} ]] && rm ${i} ; done
+	if [ -f ".mp3" ]; then rm .mp3; fi
+	cd "$DM_tlt/"; find . -maxdepth 2 -name '*.mp3' \
+	| sort -k 1n,1 -k 7 | sed s'|\.\/words\/||'g \
+	| sed s'|\.\/||'g | sed s'|\.mp3||'g > $DT/index
+	
+	touch "$DC_tlt/cfg.0.tmp" "$DC_tlt/cfg.3.tmp" "$DC_tlt/cfg.4.tmp"
+	
+	if ([ -f "$DC_tlt/.cfg.11" ] && \
+	[ -n $(cat "$DC_tlt/.cfg.11") ]); then
+	index="$DC_tlt/.cfg.11"
 	else
-		cat $DT/trgt_s $DT/trgt_w > "$DC_tlt/.cfg.11"
-		cp -f "$DC_tlt/.cfg.11" "$DC_tlt/cfg.0"
-		cp -f "$DC_tlt/.cfg.11" "$DC_tlt/cfg.1"
-		mv -f $DT/trgt_s "$DC_tlt/cfg.4"
-		mv -f $DT/trgt_w "$DC_tlt/cfg.3"
-		mv -f $DT/cfg.5 "$DC_tlt/cfg.5"
+	index="$DT/index"
 	fi
 
+	n=1
+	while [ $n -le $(cat "$index" | wc -l) ]; do
+	
+		name="$(sed -n "$n"p "$index")"
+		sfname="$(nmfile "$name")"
+		wfname="$(nmfile "$name")"
+
+		if [ -f "$DM_tlt/$name.mp3" ]; then
+			tgs="$(eyeD3 "$DM_tlt/$name.mp3")"
+			trgt="$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')"
+			xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
+			mv -f "$DM_tlt/$name.mp3" "$DM_tlt/$xname.mp3"
+			echo "$trgt" >> "$DC_tlt/cfg.0.tmp"
+			echo "$trgt" >> "$DC_tlt/cfg.4.tmp"
+		elif [ -f "$DM_tlt/$sfname.mp3" ]; then
+			tgs=$(eyeD3 "$DM_tlt/$sfname.mp3")
+			trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
+			xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
+			mv -f "$DM_tlt/$sfname.mp3" "$DM_tlt/$xname.mp3"
+			echo "$trgt" >> "$DC_tlt/cfg.0.tmp"
+			echo "$trgt" >> "$DC_tlt/cfg.4.tmp"
+		elif [ -f "$DM_tlt/words/$name.mp3" ]; then
+			tgs="$(eyeD3 "$DM_tlt/words/$name.mp3")"
+			trgt="$(echo "$tgs" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')"
+			xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
+			mv -f "$DM_tlt/words/$name.mp3" "$DM_tlt/words/$xname.mp3"
+			echo "$trgt" >> "$DC_tlt/cfg.0.tmp"
+			echo "$trgt" >> "$DC_tlt/cfg.3.tmp"
+		elif [ -f "$DM_tlt/words/$wfname.mp3" ]; then
+			tgs="$(eyeD3 "$DM_tlt/words/$wfname.mp3")"
+			trgt="$(echo "$tgs" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')"
+			xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
+			mv -f "$DM_tlt/words/$wfname.mp3" "$DM_tlt/words/$xname.mp3"
+			echo "$trgt" >> "$DC_tlt/cfg.0.tmp"
+			echo "$trgt" >> "$DC_tlt/cfg.3.tmp"
+		fi
+		let n++
+	done
+
+	cp -f "$DC_tlt/cfg.0.tmp" "$DC_tlt/cfg.0"
+	cp -f "$DC_tlt/cfg.3.tmp" "$DC_tlt/cfg.3"
+	cp -f "$DC_tlt/cfg.4.tmp" "$DC_tlt/cfg.4"
+	cp -f "$DC_tlt/cfg.0" "$DC_tlt/cfg.1"
+	rm "$DC_tlt/cfg.0.tmp" "$DC_tlt/cfg.3.tmp" "$DC_tlt/cfg.4.tmp"
+	
 	if [ $? -ne 0 ]; then
-		yad --name=idiomind --image=error --button=gtk-ok:1 \
-		--text=" $files_err\n\n" --image-on-top --sticky  \
-		--width=360 --height=120 --borders=3 --title=Idiomind \
-		--skip-taskbar --center --window-icon=idiomind & exit 1
+		[[ -f $DT/ps_lk ]] && rm -f $DT/ps_lk
+		msg " $files_err\n\n" error & exit 1
 	fi
-
-	rm "$DC_tlt/cfg.2"
-	in1="$DC_tlt/cfg.0"
+	
+	in0="$DC_tlt/cfg.0"
+	if [ -n "$(cat "$in0" | sort -n | uniq -dc)" ]; then
+		cat "$in0" | awk '!array_temp[$0]++' > $DT/ind
+		sed '/^$/d' $DT/ind > "$in0"; fi
+	in1="$DC_tlt/cfg.1"
 	if [ -n "$(cat "$in1" | sort -n | uniq -dc)" ]; then
 		cat "$in1" | awk '!array_temp[$0]++' > $DT/ind
-		sed '/^$/d' $DT/ind > "$in1"
-	fi
-	in2="$DC_tlt/cfg.4"
+		sed '/^$/d' $DT/ind > "$in1"; fi
+	in2="$DC_tlt/cfg.2"
 	if [ -n "$(cat "$in2" | sort -n | uniq -dc)" ]; then
 		cat "$in2" | awk '!array_temp[$0]++' > $DT/ind
-		sed '/^$/d' $DT/ind > "$in2"
-	fi
-	in3="$DC_tlt/cfg.4"
+		sed '/^$/d' $DT/ind > "$in2"; fi
+	in3="$DC_tlt/cfg.3"
 	if [ -n "$(cat "$in3" | sort -n | uniq -dc)" ]; then
 		cat "$in3" | awk '!array_temp[$0]++' > $DT/ind
-		sed '/^$/d' $DT/ind > "$in3"
-	fi
-	cp -f "$in1" "$DC_tlt/cfg.1"
-
+		sed '/^$/d' $DT/ind > "$in3"; fi
+	in4="$DC_tlt/cfg.4"
+	if [ -n "$(cat "$in4" | sort -n | uniq -dc)" ]; then
+		cat "$in4" | awk '!array_temp[$0]++' > $DT/ind
+		sed '/^$/d' $DT/ind > "$in4"; fi
 	if [[ $stts = "13" ]]; then
 		if cat "$DC_tl/.cfg.3" | grep -Fxo "$topic"; then
 			echo "6" > "$DC_tlt/cfg.8"
@@ -261,6 +256,7 @@ if [[ $(($chk4 + $chk5)) != $chk1 \
 			echo "1" > "$DC_tlt/cfg.8"
 		fi
 	fi
+	[[ -f $DT/ps_lk ]] && rm -f $DT/ps_lk
 fi
 
 if [ $(cat "$DC_tlt/cfg.0" | wc -l) -le 20 ]; then
@@ -446,13 +442,12 @@ END_SCRIPT
 
 exit=$?
 if [[ $exit = 0 ]] ; then
-[[ $(echo "$tpc" | wc -c) -gt 100 ]] && mtpc="${tpc:0:80}..." || mtpc="$tpc"
-mv -f "$DT/cfg.12" "$DM_t/saved/$tpc.id"
-info="  $tpc\n\n<b> $saved</b>\n"
-image=dialog-ok
+	mv -f "$DT/cfg.12" "$DM_t/saved/$tpc.id"
+	info="  $tpc\n\n<b> $saved</b>\n"
+	image=dialog-ok
 else
-info=" $upload_err"
-image=dialog-warning
+	info=" $upload_err"
+	image=dialog-warning
 fi
 
 msg "$info" $image

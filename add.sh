@@ -120,13 +120,7 @@ if [ $1 = new_topic ]; then
 	
 elif [ $1 = new_items ]; then
 
-	[[ ! -f $DC/addons/dict/.dicts ]] && touch $DC/addons/dict/.dicts
-	if  [ -z "$(cat $DC/addons/dict/.dicts)" ]; then
-		source $DS/ifs/trans/$lgs/topics_lists.conf
-		$DS/addons/Dics/cnfg.sh "" f "$no_dictionary"
-		[[ -z "$(cat $DC/addons/dict/.dicts)" ]] && exit 1
-	fi
-	
+
 	if [ "$(cat $DC_tl/.cfg.1 | grep -v 'Feeds' | wc -l)" -lt 1 ]; then
 		[[ -d $DT_r ]] && rm -fr $DT_r
 		source $DS/ifs/trans/$lgs/topics_lists.conf
@@ -290,7 +284,6 @@ elif [ $1 = new_sentence ]; then
 	DM_tlt="$DM_tl/$tpe"
 	DC_tlt="$DC_tl/$tpe"
 	icnn=idiomind
-	dct=$DS/addons/Dics/cnfg.sh
 
 	if [ $(cat "$DC_tlt/cfg.4" | wc -l) -ge 50 ]; then
 		[[ -d $DT_r ]] && rm -fr $DT_r
@@ -397,7 +390,6 @@ elif [ $1 = new_word ]; then
 
 	trgt="$2"
 	srce="$4"
-	dct="$DS/addons/Dics/cnfg.sh"
 	source $DS/default/dicts/$lgt
 	icnn=idiomind
 	DT_r="$3"
@@ -421,7 +413,7 @@ elif [ $1 = new_word ]; then
 		trgt="$(translate "$trgt" auto $lgt)"
 		srce="$(translate "$trgt" $lgt $lgs)"
 		fname="$(nmfile "${trgt^}")"
-		$dct "$trgt" $DT_r swrd
+		dictt "$trgt" $DT_r swrd
 		
 		if [ -f "$DT_r/$trgt.mp3" ]; then
 
@@ -445,7 +437,7 @@ elif [ $1 = new_word ]; then
 			mv -f audtm.mp3 "$DM_tlt/words/$fname.mp3"
 		else
 		
-			$dct "$trgt" $DT_r swrd
+			dictt "$trgt" $DT_r swrd
 			
 			if [ -f "$DT_r/$trgt.mp3" ]; then
 			
@@ -486,7 +478,6 @@ elif [ $1 = new_word ]; then
 elif [ $1 = edit_list_words ]; then
 
 	c="$4"
-	dct=$DS/addons/Dics/cnfg.sh
 
 	if [ "$3" = "F" ]; then
 
@@ -547,7 +538,7 @@ elif [ $1 = edit_list_words ]; then
 			else
 				translate "$trgt" auto $lgs > tr."$c"
 				srce=$(cat tr."$c")
-				$dct "$trgt" $DT_r swrd
+				dictt "$trgt" $DT_r swrd
 				
 				if [ -f "$trgt.mp3" ]; then
 				
@@ -671,7 +662,6 @@ elif [ $1 = sentence_list_words ]; then
 
 	DM_tlt="$DM_tl/$tpe"
 	DC_tlt="$DC_tl/$tpe"
-	dct=$DS/addons/Dics/cnfg.sh
 	c=$(echo $(($RANDOM%100)))
 	DT_r=$(mktemp -d $DT/XXXXXX)
 	cd $DT_r
@@ -681,7 +671,7 @@ elif [ $1 = sentence_list_words ]; then
 		msg "$topic_err\n" info & exit 1
 	fi
 	
-	nw=$(cat "$DC_tlt/words/cfg.3" | wc -l)
+	nw=$(cat "$DC_tlt/cfg.3" | wc -l)
 	left=$((50 - $nw))
 	if [ "$left" = 0 ]; then
 		exit 1
@@ -727,7 +717,7 @@ elif [ $1 = sentence_list_words ]; then
 		else
 			translate "$trgt" auto $lgs > tr."$c"
 			srce=$(cat ./tr."$c")
-			$dct "$trgt" $DT_r swrd
+			dictt "$trgt" $DT_r swrd
 			
 			if [ -f "$trgt.mp3" ]; then
 			
@@ -775,7 +765,6 @@ elif [ $1 = process ]; then
 	source $DS/default/dicts/$lgt
 	nspr='/usr/share/idiomind/add.sh process'
 	LNK='http://www.chromium.org/developers/how-tos/api-keys'
-	dct=$DS/addons/Dics/cnfg.sh
 	lckpr=$DT/.n_s_pr
 	DM_tlt="$DM_tl/$tpe"
 	DC_tlt="$DC_tl/$tpe"
@@ -1064,7 +1053,7 @@ elif [ $1 = process ]; then
 					
 						else
 							srce="$(translate "$itm" auto $lgs)"
-							$dct "$itm" $DT_r swrd
+							dictt "$itm" $DT_r swrd
 							
 							if [ -f "$itm".mp3 ]; then
 								mv -f "$DT_r/$itm.mp3" "$DM_tlt/words/$fname.mp3"

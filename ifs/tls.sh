@@ -5,11 +5,11 @@ source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/others.conf
 source $DS/ifs/mods/cmns.sh
 
-if [ $1 = play ]; then
+if [ "$1" = play ]; then
 
 play "$2" && sleep 0.5 & exit
 
-elif [ $1 = info ]; then
+elif [ "$1" = info ]; then
 
 	wth=$(sed -n 5p $DC_s/cfg.18)
 	eht=$(sed -n 6p $DC_s/cfg.18)
@@ -29,7 +29,7 @@ elif [ $1 = info ]; then
 	exit
 
 
-elif [ $1 = cnfg ]; then
+elif [ "$1" = cnfg ]; then
 
 	msj=$(sed -n 1p $DC_s/cfg.20)
 	cn=$(sed -n 2p $DC_s/cfg.20)
@@ -48,7 +48,7 @@ elif [ $1 = cnfg ]; then
 	fi
 
 
-elif [ $1 = add_audio ]; then
+elif [ "$1" = add_audio ]; then
 
 cd $HOME
 DT="$2"
@@ -67,7 +67,7 @@ eyeD3 --remove-all $DT/audtm.mp3 & exit
 fi
 fi
 
-elif [ $1 = s ]; then
+elif [ "$1" = s ]; then
 
 	if [[ "$(ps -A | grep -o "play")" = "play" ]]; then
 		killall play
@@ -75,17 +75,16 @@ elif [ $1 = s ]; then
 	
 	play "$DM_tlt/$2.mp3" & sleep 0.2 && exit
 	
-elif [ $1 = dclik ]; then
+elif [ "$1" = dclik ]; then
 
 	play "$DM_tl/.share/$2".mp3 & exit
 	
-elif [ $1 = edta ]; then
+elif [ "$1" = edta ]; then
 
 	prm=$(sed -n 9p $DC_s/cfg.1)
-	(cd "$3"
-	"$prm" "$2") & exit
+	(cd "$3"; "$prm" "$2") & exit
 	
-elif [ $1 = chng ]; then
+elif [ "$1" = chng ]; then
 
 	cd $DS/ifs/audio/
 	IFS=''
@@ -191,7 +190,7 @@ elif [ $1 = chng ]; then
 	echo "$device_icon_name" >> $DC_s/cfg.20
 	exit 1
 
-elif [ $1 = rec ]; then
+elif [ "$1" = rec ]; then
 
 	paud=$(sed -n 17p $DC_s/cfg.1)
 	DT_r="$2"
@@ -214,7 +213,7 @@ elif [ $1 = rec ]; then
 	killall sox & killall rec
 	exit 1
 
-elif [ $1 = remove_items ]; then
+elif [ "$1" = remove_items ]; then
 
 	[[ -f $DT/rm ]] && sed -i 's/^$/d' $DT/rm
 	n=1
@@ -226,7 +225,7 @@ elif [ $1 = remove_items ]; then
 	notify-send -i info "Info" "a few bad items are removed" -t 3000
 	rm $DT/rm
 
-elif [ $1 = add ]; then
+elif [ "$1" = add ]; then
 	NM=$(cat $DT/.titl)
 	cd ~/
 	file=$(yad --center --borders=10 --file-filter="*.mp3" \
@@ -238,18 +237,18 @@ elif [ $1 = add ]; then
 			cp -f "$file" $DT_r/audtm.mp3
 		fi
 		
-elif [ $1 = help ]; then
+elif [ "$1" = help ]; then
 
-	xdg-open $DS/ifs/trans/$lgs/help.pdf & exit
+	xdg-open /usr/share/idiomind/ifs/help.pdf & exit
 
-elif [ $1 = web ]; then
+elif [ "$1" = web ]; then
 
 	host=http://idiomind.sourceforge.net
 	lgtl=$(echo "$lgtl" | awk '{print tolower($0)}')
 	xdg-open $host/$lgs/$lgtl
 	exit
 
-elif [ $1 = updt ]; then
+elif [ "$1" = updt ]; then
 
 	cd $DT
 	internet
@@ -283,7 +282,7 @@ elif [ $1 = updt ]; then
 	fi
 	[[ -f release ]] && rm -f release
 
-elif [ $1 = srch ]; then
+elif [ "$1" = srch ]; then
 
 	[[ ! -f $DC_s/cfg.13 ]] && echo `date +%d` > $DC_s/cfg.13
 
@@ -329,7 +328,7 @@ elif [ $1 = srch ]; then
 	
 	
 	
-elif [ $1 = pdf ]; then
+elif [ "$1" = pdf ]; then
 	cd $HOME &&
 
 	pdf=$($yad --save --center --borders=10 \

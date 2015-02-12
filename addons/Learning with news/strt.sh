@@ -38,7 +38,7 @@ elif ( [ -f $DT/.uptf ] && [ "$1" = A ] ); then
 fi
 sleep 1
 
-dct="$DS/addons/Dics/cnfg.sh"
+#dct="$DS/addons/Dics/cnfg.sh"
 feed=$(sed -n 1p "$DCF/$lgtl/link")
 rsrc=$(cat "$DCF/$lgtl/.rss")
 icon=$DS/images/cnn.png

@@ -16,7 +16,7 @@ udt=$(cat "$DC_a/stats/.udt")
 
 #-----------------------------------------------------------------------
 if [ "$1" = A ]; then
-	[[ "$(date +%F)" = "$udt" ]] && exit 1
+	#[[ "$(date +%F)" = "$udt" ]] && exit 1
 	echo "$tpc" > $DC_a/stats/tpc.tmp
 	echo $(sed -n 2p $DC_s/cfg.8) >> $DC_a/stats/tpc.tmp
 	TPCS=$(cat "$LOG" | grep -o -P '(?<=tpcs.).*(?=\.tpcs)' \
@@ -150,7 +150,7 @@ if [ "$1" = A ]; then
 	[[ "$(echo "$tpc3" | wc -c)" -gt 60 ]] && tle3="${tpc3:0:60}..." || tle3="$tpc3"
 
 	if [ $(cat $DC_a/stats/.wks | wc -l) -lt 12 ]; then
-	ext=$(n=1; while [ $n -le 111 ]; do printf " "; let n++; done)
+	ext=$(n=1; while [ $n -le 112 ]; do printf " "; let n++; done)
 	seq 0 15 | xargs -Iz echo "<small><sup><span background='#E8E8E8'>$ext</span></sup></small>" > $DC_a/stats/.wks
 	sed -i '/^$/d' $DC_a/stats/.wks
 	fi

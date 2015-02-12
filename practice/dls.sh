@@ -80,19 +80,19 @@ function dialog1() {
 	SE=$(yad --center --text-info --image="$IMAGE" "$info" \
 	--fontname="Verdana Black" --justify=fill --editable --wrap \
 	--buttons-layout=end --borders=0 --title=" " --image-on-top \
-	--skip-taskbar --margins=8 --text-align=left --height=400 --width=460 \
-	--align=left --window-icon=idiomind --fore=4A4A4A \
+	--margins=8 --text-align=left --height=400 --width=460 \
+	--align=left --window-icon=idiomind --fore=4A4A4A --skip-taskbar \
 	--button=$hint:"/usr/share/idiomind/practice/hint.sh '$1'" \
 	--button="$listen":"play '$DM_tlt/$fname.mp3'" \
-	--button="  Ok >> ":0)
+	--button="  Ok > ":0)
 	}
 	
 function dialog2() {
 
-	SE=$(yad --center --text-info --fore=4A4A4A \
+	SE=$(yad --center --text-info --fore=4A4A4A --skip-taskbar \
 	--fontname="Verdana Black" --justify=fill --editable --wrap \
 	--buttons-layout=end --borders=0 --title=" " "$info" \
-	--skip-taskbar --margins=8 --text-align=left --height=160 --width=460 \
+	--margins=8 --text-align=left --height=160 --width=460 \
 	--align=left --window-icon=idiomind --image-on-top \
 	--button=$hint:"/usr/share/idiomind/practice/hint.sh '$1'" \
 	--button="$listen":"play '$DM_tlt/$fname.mp3'" \
@@ -109,8 +109,10 @@ function get_image_text() {
 
 function result() {
 	
-	echo "$SE" | awk '{print tolower($0)}' | sed 's/ /\n/g' | grep -v '^.$' > ing
-	cat quote | awk '{print tolower($0)}' | sed 's/ /\n/g' | grep -v '^.$' > all
+	echo "$SE" | awk '{print tolower($0)}' \
+	| sed 's/ /\n/g' | grep -v '^.$' > ing
+	cat quote | awk '{print tolower($0)}' \
+	| sed 's/ /\n/g' | grep -v '^.$' > all
 	(
 	ff="$(cat ing | sed 's/ /\n/g')"
 	n=1
@@ -118,10 +120,12 @@ function result() {
 		line="$(echo "$ff" | sed -n "$n"p )"
 		if cat all | grep -oFx "$line"; then
 			sed -i "s/"$line"/<b>"$line"<\/b>/g" quote
-			[[ -n "$line" ]] && echo "<span color='#3A9000'><b>${line^}</b></span>,  " >> wrds
+			[[ -n "$line" ]] && echo \
+			"<span color='#3A9000'><b>${line^}</b></span>,  " >> wrds
 			[[ -n "$line" ]] && echo "$line" >> w.ok
 		else
-			[[ -n "$line" ]] && echo "<span color='#7B4A44'><b>${line^}</b></span>,  " >> wrds
+			[[ -n "$line" ]] && echo \
+			"<span color='#7B4A44'><b>${line^}</b></span>,  " >> wrds
 		fi
 		let n++
 	done
@@ -150,12 +154,11 @@ function result() {
 	
 function check() {
 	
-	
 	yad --form --center --name=idiomind --buttons-layout=end \
 	--width=470 --height=230 --on-top --skip-taskbar --scroll \
 	--class=idiomind $aut --wrap --window-icon=idiomind \
-	--text-align=left --borders=12 --selectable-labels \
-	--title="" --button=$listen:"play '$DM_tlt/$1.mp3'" \
+	--text-align=left --borders=5 --selectable-labels \
+	--title="" --button=$listen:"play '$DM_tlt/$fname.mp3'" \
 	--button="$next__sentence:2" --text="<big>$wes</big>\\n" \
 	--field="":lbl \
 	--field="<small>$(echo $OK | sed 's/\,*$/\./g')  $prc</small>\\n":lbl
@@ -189,9 +192,10 @@ while [ $n -le $(cat lsin1 | wc -l) ]; do
 		ret=$(echo "$?")
 		
 		if [[ $ret -eq 0 ]]; then
-			killall play
+			killall play &
 			result "$trgt"
 		else
+			killall play &
 			$drts/cls s $easy $ling $hard $all &
 			break &
 			exit 0; fi
@@ -200,9 +204,10 @@ while [ $n -le $(cat lsin1 | wc -l) ]; do
 		ret=$(echo "$?")
 		
 		if [[ $ret -eq 2 ]]; then
-			rm -f w.ok wrds $DT/*.jpeg *.png &
 			killall play &
+			rm -f w.ok wrds $DT/*.jpeg *.png &
 		else
+			killall play &
 			rm -f w.ok all ing wrds $DT/*.jpeg *.png
 			$drts/cls s $easy $ling $hard $all &
 			break &
@@ -212,4 +217,3 @@ while [ $n -le $(cat lsin1 | wc -l) ]; do
 done
 
 score $easy
-

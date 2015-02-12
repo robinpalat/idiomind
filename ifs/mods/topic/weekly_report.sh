@@ -1,6 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
-items=items
+items=" Items "
 
 function weeklyreport() {
 	
@@ -110,11 +110,13 @@ function weeklyreport() {
 					fi
 					let n++
 				done
+			rm $DC_s/cfg.22
 			fi
+			
 			echo "$(sed -n 1p $DC_a/stats/tpc.tmp)" > $DC_s/cfg.8
 			echo "$(sed -n 2p $DC_a/stats/tpc.tmp)" >> $DC_s/cfg.8
 			rm -f $DT/*.tmp
-			rm $DC_a/stats/*.tmp $DC_s/cfg.22
+			rm $DC_a/stats/*.tmp
 		else
 			echo "$(sed -n 1p $DC_a/stats/tpc.tmp)" > $DC_s/cfg.8
 			echo "$(sed -n 2p $DC_a/stats/tpc.tmp)" >> $DC_s/cfg.8
