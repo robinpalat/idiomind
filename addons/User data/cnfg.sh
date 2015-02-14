@@ -6,7 +6,7 @@ source $DS/ifs/trans/$lgs/t_bd.conf
 DS_ppd="$DS/addons/Practice/default"
 user=$(echo "$(whoami)")
 D_cps=$(sed -n 2p $DC_s/cfg.12)
-udt=$(cat "$D_cps/.udt")
+[ -f "$D_cps/.udt" ] && udt=$(cat "$D_cps/.udt") || udt=" "
 dte=$(date +%F)
 
 #dialog user data

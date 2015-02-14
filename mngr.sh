@@ -58,7 +58,7 @@ if [ $1 = mkmn ]; then
 elif [ $1 = edit ]; then
 	ttl=$(sed -n 2p $DC_s/cfg.6)
 	plg1=$(sed -n 1p $DC_s/cfg.3)
-	cfg.1="$DC_s/cfg.1"
+	#cfg.1="$DC_s/cfg.1"
 	ti=$(cat "$DC_tl/$tpc/cfg.0" | wc -l)
 	ni="$DC_tl/$tpc/cfg.1"
 	bi=$(cat "$DC_tl/$tpc/cfg.2" | wc -l)
@@ -706,7 +706,7 @@ elif [ "$1" = edt ]; then
 		src=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
 		lwrd=$(echo "$tgs" | grep -o -P '(?<=IWI3I0I).*(?=IPWI3I0I)')
 		pwrds=$(echo "$tgs" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)')
-		wrds="$DS/add.sh edit_list_words '$fname' F $c"
+		wrds="$DS/add.sh edit_list_words '$file' F $c"
 		edau="--button=Edit Audio:/usr/share/idiomind/ifs/tls.sh edta \
 		'$DM_tlt/$fname.mp3' '$DM_tlt'"
 		dlte="$DS/mngr.sh dli '$tgt'"

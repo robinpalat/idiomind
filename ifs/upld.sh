@@ -409,14 +409,9 @@ cp -r ./* "$DT_u/$tpc/"
 cp -r "./words" "$DT_u/$tpc/"
 cp -r "./words/images" "$DT_u/$tpc/words"
 mkdir "$DT_u/$tpc/.audio"
-
-n=1
-while [ $n -le $(cat "$DC_tlt/cfg.5" | wc -l) ]; do
-	cp=$(sed -n "$n"p "$DC_tlt/cfg.5")
-	cp "$DM_tl/.share/$cp" "$DT_u/$tpc/.audio/$cp"
-	let n++
-done
-
+while read audio; do
+	cp -f "$DM_tl/.share/$audio" "$DT_u/$tpc/.audio/$audio"
+done < "$DC_tlt/cfg.5"
 cp -f "$DC_tlt/cfg.0" "$DT_u/$tpc/cfg.0"
 cp -f "$DC_tlt/cfg.3" "$DT_u/$tpc/cfg.3"
 cp -f "$DC_tlt/cfg.4" "$DT_u/$tpc/cfg.4"

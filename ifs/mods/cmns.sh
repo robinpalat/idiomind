@@ -49,7 +49,6 @@ function include() {
 
 
 function try {
-	
     "$@"
     code=$?
     if [ $code -ne 0 ]

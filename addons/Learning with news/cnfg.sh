@@ -36,7 +36,7 @@ if [[ -z "$1" ]]; then
 		st2=$(sed -n 1p "$DIR1/.cnf")
 	fi
 
-	scrp=$(cd "$DCF/$lgtl/rss"; ls * | egrep -v "$FEED" \
+	scrp=$(cd "$DCF/$lgtl/rss/"; ls * | egrep -v "$FEED" \
 	| tr "\\n" '!' | sed 's/!\+$//g')
 
 	CNFG=$($yad --on-top --form --center \

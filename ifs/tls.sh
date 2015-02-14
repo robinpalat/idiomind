@@ -77,7 +77,7 @@ elif [ "$1" = s ]; then
 	
 elif [ "$1" = dclik ]; then
 
-	play "$DM_tl/.share/$2".mp3 & exit
+	play "$DM_tls/${2,,}".mp3 & exit
 	
 elif [ "$1" = edta ]; then
 
@@ -244,8 +244,7 @@ elif [ "$1" = help ]; then
 elif [ "$1" = web ]; then
 
 	host=http://idiomind.sourceforge.net
-	lgtl=$(echo "$lgtl" | awk '{print tolower($0)}')
-	xdg-open $host/$lgs/$lgtl
+	xdg-open "$host/$lgs/${lgtl,,}"
 	exit
 
 elif [ "$1" = updt ]; then
@@ -352,8 +351,9 @@ elif [ "$1" = pdf ]; then
 		n=1
 		while [[ $n -le "$(cat $iw | wc -l | awk '{print ($1)}')" ]]; do
 			wnm=$(sed -n "$n"p $iw)
-			if [ -f "$DM_tlt/words/images/$wnm.jpg" ]; then
-				convert "$DM_tlt/words/images/$wnm.jpg" -alpha set -virtual-pixel transparent \
+			fname="$(nmfile "$wnm")"
+			if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
+				convert "$DM_tlt/words/images/$fname.jpg" -alpha set -virtual-pixel transparent \
 				-channel A -blur 0x10 -level 50%,100% +channel "$DT/mkhtml/images/$wnm.png"
 			fi
 			let n++
@@ -362,7 +362,8 @@ elif [ "$1" = pdf ]; then
 		n=1
 		while [[ $n -le "$(cat  $is | wc -l | awk '{print ($1)}')" ]]; do
 			wnm=$(sed -n "$n"p $is)
-			tgs=$(eyeD3 "$DM_tlt/$wnm.mp3")
+			fname="$(nmfile "$wnm")"
+			tgs=$(eyeD3 "$DM_tlt/$fname.mp3")
 			wt=$(echo "$tgs" | grep -o -P "(?<=ISI1I0I).*(?=ISI1I0I)")
 			ws=$(echo "$tgs" | grep -o -P "(?<=ISI2I0I).*(?=ISI2I0I)")
 			echo "$wt" >> S.gprt.x
@@ -571,11 +572,12 @@ elif [ "$1" = pdf ]; then
 		n=1
 		while [ $n -le "$(cat $iw | wc -l)" ]; do
 			wnm=$(sed -n "$n"p $iw)
-			tgs=$(eyeD3 "$DM_tlt/words/$wnm.mp3")
+			fname="$(nmfile "$wnm")"
+			tgs=$(eyeD3 "$DM_tlt/words/$fname.mp3")
 			wt=$(echo "$tgs" | grep -o -P "(?<=IWI1I0I).*(?=IWI1I0I)")
 			ws=$(echo "$tgs" | grep -o -P "(?<=IWI2I0I).*(?=IWI2I0I)")
 			inf=$(echo "$tgs" | grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' | tr '_' '\n')
-			hlgt=$(echo $wt | awk '{print tolower($0)}')
+			hlgt="${wt,,}"
 			exm1=$(echo "$inf" | sed -n 1p | sed 's/\\n/ /g')
 			dftn=$(echo "$inf" | sed -n 2p | sed 's/\\n/ /g')
 			exmp1=$(echo "$exm1" \

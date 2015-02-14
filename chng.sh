@@ -106,6 +106,8 @@ elif [ "$1" != chngi ]; then
 		--title="$topics" --column=img:img --column=File:TEXT)
 			ret=$?
 			
+			
+			
 			if [ $ret -eq 3 ]; then
 			
 					if [ "$h" = 1 ]; then
@@ -116,7 +118,9 @@ elif [ "$1" != chngi ]; then
 					fi
 			
 			elif [ $ret -eq 0 ]; then
-				
+			
+					[ -z "$VAR" ] && exit 1
+					
 					if [[ -f $DC_tl/"$VAR"/tpc.sh ]]; then
 						$DC_tl/"$VAR"/tpc.sh & exit
 					else

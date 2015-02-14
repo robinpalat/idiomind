@@ -1,6 +1,10 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+#set -e
+#u pipefail
+#IFS=$'\n\t'
+
 if [ ! -d "$HOME/.idiomind" ]; then
 	/usr/share/idiomind/ifs/1u.sh && exit
 	if [ ! -d "$HOME/.idiomind" ]; then

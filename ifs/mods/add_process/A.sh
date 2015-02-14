@@ -20,7 +20,7 @@ if [[ "$prdt" = A ]]; then
 	if [ -z "$key" ]; then
 		
 		msg "$no_key <a href='$LNK'>Web</a>\n" dialog-warning
-		[[ -d $DT_r ]] && rm -fr $DT_r
+		[ -d $DT_r ] && rm -fr $DT_r
 		rm -f ls $lckpr & exit 1
 	fi
 	
@@ -34,18 +34,17 @@ if [[ "$prdt" = A ]]; then
 		
 	else
 		if [ -z "$tpe" ]; then
-			[[ -d $DT_r ]] && rm -fr $DT_r
+			[ -d $DT_r ] && rm -fr $DT_r
 			source $DS/ifs/trans/$lgs/topics_lists.conf
 			$DS/chng.sh "$no_edit" & exit 1
 		fi
-		
 		
 		(
 		echo "2"
 		echo "# $file_pros" ; sleep 1
 		cp -f "$FL" $DT_r/rv.mp3
 		cd $DT_r
-		eyeD3 -P itunes-podcast --remove "$DT_r"/rv.mp3
+		#eyeD3 -P itunes-podcast --remove "$DT_r"/rv.mp3
 		eyeD3 --remove-all "$DT_r"/rv.mp3
 		sox "$DT_r"/rv.mp3 "$DT_r"/c_rv.mp3 remix - highpass 100 norm \
 		compand 0.05,0.2 6:-54,-90,-36,-36,-24,-24,0,-12 0 -90 0.1 \
@@ -118,8 +117,8 @@ if [[ "$prdt" = A ]]; then
 
 		left=$((50 - $(cat "$DC_tlt"/cfg.4 | wc -l)))
 		info=$(printf "$remain$left$sentences. ")
-		[[ $ns -ge 45 ]] && info=$(printf "$remain$left$sentences. ")
-		[[ $ns -ge 49 ]] && info=$(printf "$remain$left$sentence. ")
+		[ $ns -ge 45 ] && info=$(printf "$remain$left$sentences. ")
+		[ $ns -ge 49 ] && info=$(printf "$remain$left$sentence. ")
 		
 		if [ -z "$(cat $DT_r/ls)" ]; then
 		
@@ -213,7 +212,7 @@ if [[ "$prdt" = A ]]; then
 								echo "$fname" >> adds
 								$DS/mngr.sh index sentence "$trgt" "$tpe"
 								add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3"
-								fetch_audio $aw $bw
+								fetch_audio $aw $bw $DT_r $DM_tls
 							else
 								printf "\n- $sntc" >> ./slog
 								[ -f "$DM_tlt/$fname.mp3" ] && rm "$DM_tlt/$fname.mp3"
@@ -349,7 +348,6 @@ if [[ "$prdt" = A ]]; then
 									mv -f audio.tar.gz "$aud"
 								fi
 						fi
-						
 				fi
 				
 				cd $DT_r
@@ -360,7 +358,7 @@ if [[ "$prdt" = A ]]; then
 				fi
 				
 				n=1
-				while [[ $n -le 20 ]]; do
+				while [ $n -le 20 ]; do
 					 sleep 5
 					 if ( [ "$(cat ./x | wc -l)" = "$rm" ] || [ "$n" = 20 ] ); then
 						[[ -d "$DT_r" ]] && rm -fr $DT_r
@@ -371,7 +369,7 @@ if [[ "$prdt" = A ]]; then
 				done
 				exit 1
 			else
-				[[ -d "$DT_r" ]] && rm -fr $DT_r
+				[ -d "$DT_r" ] && rm -fr $DT_r
 				cp -f "$DC_tlt/cfg.0" "$DC_tlt/.cfg.11"
 				rm -f $lckpr $slt & exit 1
 			fi
