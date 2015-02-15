@@ -73,7 +73,7 @@ function new_session() {
 		if [ -f "/usr/share/idiomind/addons/$set/icon.png" ]; then 
 			echo "/usr/share/idiomind/addons/$set/icon.png" >> $DC_s/cfg.21
 		else
-			echo "/usr/share/idiomind/images/thumbup.png" >> $DC_s/cfg.21
+			echo "/usr/share/idiomind/images/thumb.png" >> $DC_s/cfg.21
 		fi
 		echo "$set" >> $DC_s/cfg.21
 		let n++

@@ -137,8 +137,8 @@ function answer() {
 	--buttons-layout=spread \
 	--field="$tr":lbl --width=371 --height=280 \
 	--button="$listen":"$play" \
-	--button="$no_know":3 \
-	--button="$ok_know":2
+	--button="<b>$no_know</b>":3 \
+	--button="<b>$ok_know</b>":2
 	}
 
 n=1
@@ -158,7 +158,7 @@ while [ $n -le $(cat ./lwin1 | wc -l) ]; do
 			easy=$(($easy+1))
 
 		elif [[ $ans = 3 ]]; then
-			echo "$trgt" >> lwin2
+			echo "$trgt" | tee -a lwin2 w6
 			hard=$(($hard+1))
 		fi
 
@@ -193,7 +193,7 @@ else
 				ling=$(($ling+1))
 				
 			elif [[ $ans = 3 ]]; then
-				echo "$trgt" >> lwin3
+				echo "$trgt" | tee -a lwin3 w6
 			fi
 			
 		elif [[ $ret = 1 ]]; then

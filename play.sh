@@ -48,8 +48,7 @@ elif [[ -z "$1" ]]; then
 	fi
 	indm=$(cat "$DC_tlt/cfg.6")
 	cd "$DC_tlt/practice"
-	indp=$(cat fin3 mcin3 \
-	lwin3 | sed '/^$/d' | sort | uniq)
+	indp=$(cat w6 | sed '/^$/d' | sort | uniq)
 	indf=$(cat $DC_tl/Feeds/cfg.0)
 	nnews=$(cat $DC_tl/Feeds/cfg.1 | head -n 8)
 	u=$(echo "$(whoami)")
@@ -71,7 +70,7 @@ elif [[ -z "$1" ]]; then
 	[[ -z "$indm" ]] && img3=$DS/images/addi.png || img3=$DS/images/add.png
 	[[ -z "$indp" ]] && img4=$DS/images/addi.png || img4=$DS/images/add.png
 	[[ -z "$indf" ]] && img5=$DS/images/addi.png || img5=$DS/images/add.png
-	img6=$DS/images/set-26.png
+	img6=$DS/images/set.png
 
 	if [[ ! -f $DC_s/cfg.5 ]]; then
 	echo 'FALSE

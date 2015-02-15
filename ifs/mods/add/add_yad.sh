@@ -51,7 +51,8 @@ function dlg_form_1() { # imput text
         --field=" <small><small>$lgtl</small></small>: " "$txt" \
         --field=" <small><small>$topic</small></small>:CB" \
         "$ttle!$new *$e$tpcs" \
-        --button="$image":3 --button=Audio:2 --button=gtk-ok:0
+        --button="<small>$image</small>":3 \
+        --button="<small>Audio</small>":2 --button=gtk-ok:0
 }
 
 
@@ -66,7 +67,8 @@ function dlg_form_2() { # imput text
         --field=" <small><small>${lgsl^}</small></small>: " "$srce" \
         --field=" <small><small>$topic</small></small>:CB" \
         "$ttle!$new *$e$tpcs" \
-        --button="$image":3 --button=Audio:2 --button=gtk-ok:0
+        --button="<small>$image</small>":3 \
+        --button="<small>Audio</small>":2 --button=gtk-ok:0
 }
 
 

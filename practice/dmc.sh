@@ -125,7 +125,7 @@ while [ $n -le $(cat ./mcin1 | wc -l) ]; do
 			easy=$(($easy+1))
 			
 		else
-			echo "$trgt" >> mcin2
+			echo "$trgt" | tee -a mcin2 w6
 			hard=$(($hard+1))
 		fi	
 			
@@ -157,8 +157,8 @@ else
 				ling=$(($ling+1))
 				
 			else
-				echo "$trgt" >> mcin3
-			fi	
+				echo "$trgt" | tee -a mcin3 w6
+			fi
 
 		elif [[ $ret = 1 ]]; then
 			$drts/cls m $easy $ling $hard $all &

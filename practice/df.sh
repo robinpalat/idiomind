@@ -130,8 +130,8 @@ function answer() {
 	--skip-taskbar --title=" " --borders=3 \
 	--buttons-layout=spread \
 	--field="$srces":lbl --width=371 --height=280 \
-	--button="      $no_know      ":3 \
-	--button="      $ok_know      ":2
+	--button="<b>      $no_know      </b>":3 \
+	--button="<b>      $ok_know      </b>":2
 	}
 
 n=1
@@ -151,7 +151,7 @@ while [ $n -le $(cat fin1 | wc -l) ]; do
 			easy=$(($easy+1))
 
 		elif [[ $ans = 3 ]]; then
-			echo "$trgt" >> fin2
+			echo "$trgt" | tee -a fin2 w6
 			hard=$(($hard+1))
 		fi
 
@@ -186,7 +186,7 @@ else
 				ling=$(($ling+1))
 				
 			elif [[ $ans = 3 ]]; then
-				echo "$trgt" >> fin3
+				echo "$trgt" | tee -a fin3 w6
 			fi
 			
 		elif [[ $ret = 1 ]]; then

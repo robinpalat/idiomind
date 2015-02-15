@@ -1,0 +1,35 @@
+#! /bin/bash
+
+username="bulder"
+password="++++++ro"
+savedir=/tmp
+cookie=/tmp/pronounce_cookiee
+
+# Logging in, if required
+if [ -e "$cookie" ]
+then
+    echo "Using existing cookie"
+else
+    wget -q http://forvo.com/login/ --post-data "login=$username&password=$password" --save-cookies=$cookie --keep-session-cookies -O /dev/null
+    echo "Logging in.."
+fi
+
+# Find the list of pronunciations
+list=$(wget -q www.forvo.com/word/$1 -O - | grep -o '"/download/mp3/[^"]*"' | sed 's/"//g')
+
+# Select and play
+select item in $list
+do
+    id=$(echo $item | sed -r 's|.*/([a-z]*)/([0-9]*)/$|pronounce_\1_\2.mp3|')
+    dest=$savedir/$id
+
+    # Download the pronunciation if necessary
+    if [ ! -e "$dest" ]
+    then
+        wget -q --load-cookies=$cookie http://forvo.com$item -O $dest
+        echo "Saved pronunciation to $dest"
+    fi
+
+    echo Playing $dest
+    aoss mplayer -really-quiet $dest
+done
