@@ -190,22 +190,26 @@ exit 1
 
 #-----------------------------------------------------------------------
 elif [ -z "$1" ]; then
+
 	sttng=$(sed -n 1p $DC_a/stats/cnfg)
 	if [ -z $sttng ]; then
 		echo FALSE > $DC_a/stats/cnfg
 		sttng=$(sed -n 1p $DC_a/stats/cnfg)
 	fi
-	[ $sttng = TRUE ] \
-	&& SW=$(cat $DC_a/stats/.wks | head -n 8) || SW=" "
+	if [ $sttng = TRUE ]; then
+	SW=$(cat $DC_a/stats/.wks | head -n 8)
+	LG="<small><small><span background='#F3C879'>   </span> Dedication  <span background='#6E9FD4'>   </span> Study  <span background='#76A862'>   </span> Achieves </small></small>"
+	else
+	SW=" "; fi
 
 	CNFG=$(yad --print-all --align=center \
 	--title="$weekly_report" --borders=10 \
 	--center --form --on-top --scroll --skip-taskbar \
 	--always-print-result --window-icon=idiomind \
 	--button=Close:0 --width=420 --height=300 \
-	--text="$description" \
 	--field="$active:CHK" $sttng \
-	--field="\n$SW:LBL")
+	--field="\n$SW:LBL" \
+	--field="\n$LG:LBL")
 		ret=$?
 		
 		if [ $ret -eq 0 ]; then
