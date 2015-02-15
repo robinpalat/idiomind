@@ -475,7 +475,7 @@ elif [ $1 = new_word ]; then
 		msg "$error1" dialog-warning & exit 1
 	fi
 
-	[[ -d $DT_r ]] && rm -fr $DT_r
+	#[[ -d $DT_r ]] && rm -fr $DT_r
 	rm -f *.jpg
 	exit 1
 	

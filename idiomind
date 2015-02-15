@@ -396,7 +396,7 @@ elif [ "$1" = topic ]; then
 			--ellipsize=END --image-on-top --always-print-result \
 			--width="$wth" --height="$eht" --borders=0 \
 			--button="Play":$DS/play.sh \
-			--button="$delete":"$DS/mngr.sh dlt"
+			--button="$delete":"$DS/mngr.sh delete_topic"
 					
 				if [ -f $cnf3 ]; then
 					if [ "$(cat $cnf3)" != "$(cat "$nt")" ]; then

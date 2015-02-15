@@ -1,6 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+/usr/share/idiomind/ifs/trans/$lgs/comons.conf
 
 function internet() {
 

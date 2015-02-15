@@ -126,7 +126,7 @@ fi
 		elif echo "$slt" | grep -o $rename; then
 			/usr/share/idiomind/add.sh new_topic name 2
 		elif echo "$slt" | grep -o $delete; then
-			/usr/share/idiomind/mngr.sh dlt
+			/usr/share/idiomind/mngr.sh delete_topic
 		elif echo "$slt" | grep -o $share; then
 			/usr/share/idiomind/ifs/upld.sh
 		elif echo "$slt" | grep -o $topdf; then
@@ -165,32 +165,28 @@ elif [ $1 = index ]; then
 		echo "$3" >> "$DC_tlt/cfg.4"
 		echo "$3" >> "$DC_tlt/.cfg.11"
 	fi
-	
+	tmp=$DT/tmp
 	lss="$DC_tlt/.cfg.11"
 	if [ -n "$(cat "$lss" | sort -n | uniq -dc)" ]; then
-		cat "$lss" | awk '!array_temp[$0]++' > lss.tmp
-		sed '/^$/d' lss.tmp > "$lss"
-	fi
+		cat "$lss" | awk '!array_temp[$0]++' > $tmp
+		sed '/^$/d' $tmp > "$lss"; fi
 	ls0="$DC_tlt/cfg.0"
 	if [ -n "$(cat "$ls0" | sort -n | uniq -dc)" ]; then
-		cat "$ls0" | awk '!array_temp[$0]++' > ls0.tmp
-		sed '/^$/d' ls0.tmp > "$ls0"
-	fi
+		cat "$ls0" | awk '!array_temp[$0]++' > $tmp
+		sed '/^$/d' $tmp > "$ls0"; fi
 	ls1="$DC_tlt/cfg.1"
 	if [ -n "$(cat "$ls1" | sort -n | uniq -dc)" ]; then
-		cat "$ls1" | awk '!array_temp[$0]++' > ls1.tmp
-		sed '/^$/d' ls1.tmp > "$ls1"
-	fi
+		cat "$ls1" | awk '!array_temp[$0]++' > $tmp
+		sed '/^$/d' $tmp > "$ls1"; fi
 	ls2="$DC_tlt/cfg.3"
 	if [ -n "$(cat "$ls2" | sort -n | uniq -dc)" ]; then
-		cat "$ls2" | awk '!array_temp[$0]++' > ls2.tmp
-		sed '/^$/d' ls2.tmp > "$ls2"
-	fi
+		cat "$ls2" | awk '!array_temp[$0]++' > $tmp
+		sed '/^$/d' $tmp > "$ls2"; fi
 	ls3="$DC_tlt/cfg.4"
 	if [ -n "$(cat "$ls3" | sort -n | uniq -dc)" ]; then
-		cat "$ls3" | awk '!array_temp[$0]++' > ls3.tmp
-		sed '/^$/d' ls3.tmp > "$ls3"
-	fi
+		cat "$ls3" | awk '!array_temp[$0]++' > $tmp
+		sed '/^$/d' $tmp > "$ls3"; fi
+	rm -f $tmp
 
 	exit 1
 #--------------------------------
@@ -317,232 +313,118 @@ elif [ "$1" = mkok- ]; then
 	idiomind topic & exit 1
 	
 	
-elif [ $1 = dli ]; then
+elif [ "$1" = delete_item_confirm ]; then
 
 	touch $DT/ps_lk
 	include $DS/ifs/mods/mngr
 	source $DS/ifs/mods/cmns.sh
-	trgt="$2"
-	
-	[[ -z "$trgt" ]] && rm -f $DT/ps_lk && exit
-	
-	fname="$(nmfile "$trgt")"
-	
-	if [ "$3" = "C" ]; then
-		# rm word
-		if [ -f "$DM_tlt/words/$fname.mp3" ]; then
-			rm "$DM_tlt/words/$fname.mp3"
-			cd "$DC_tlt/practice"
-			grep -v -x -F "$trgt" ./fin > ./fin.tmp
-			sed '/^$/d' ./fin.tmp > ./fin
-			grep -v -x -F "$trgt" ./mcin > ./mcin.tmp
-			sed '/^$/d' ./mcin.tmp > ./mcin
-			grep -v -x -F "$trgt" ./lwin > ./lwin.tmp
-			sed '/^$/d' ./lwin.tmp > ./lwin
-			grep -v -x -F "$trgt" ./fin1 > ./fin.tmp
-			sed '/^$/d' ./fin1.tmp > ./fin1
-			grep -v -x -F "$trgt" ./mcin1 > ./mcin1.tmp
-			sed '/^$/d' ./mcin1.tmp > ./mcin1
-			grep -v -x -F "$trgt" ./lwin1 > ./lwin1.tmp
-			sed '/^$/d' ./lwin1.tmp > ./lwin1
-			rm ./*.tmp; cd "$DC_tlt"
-			grep -v -x -F "$trgt" ./.cfg.11 > ./cfg.11.tmp
-			sed '/^$/d' ./cfg.11.tmp > ./.cfg.11
-			grep -v -x -F "$trgt" ./cfg.0 > ./cfg.0.tmp
-			sed '/^$/d' ./cfg.0.tmp > ./cfg.0
-			grep -v -x -F "$trgt" ./cfg.2 > ./cfg.2.tmp
-			sed '/^$/d' ./cfg.2.tmp > ./cfg.2
-			grep -v -x -F "$trgt" ./cfg.1 > ./cfg.1.tmp
-			sed '/^$/d' ./cfg.1.tmp > ./cfg.1
-			grep -v -x -F "$trgt" cfg.3 > cfg.3.tmp
-			sed '/^$/d' cfg.3.tmp > cfg.3
-			rm ./*.tmp
-		# rm sentence
-		elif [ -f "$DM_tlt/$fname.mp3" ]; then
-			rm "$DM_tlt/$fname.mp3"
-			cd "$DC_tlt/practice"
-			grep -v -x -F "$trgt" ./lsin > ./lsin.tmp
-			sed '/^$/d' ./lsin.tmp > ./lsin
-			grep -v -x -F "$trgt" ./lsin1 > ./lsin1.tmp
-			sed '/^$/d' ./lsin1.tmp > ./lsin1
-			rm ./*.tmp; cd "$DC_tlt"
-			grep -v -x -F "$trgt" ./.cfg.11 > ./cfg.11.tmp
-			sed '/^$/d' ./cfg.11.tmp > ./.cfg.11
-			grep -v -x -F "$trgt" ./cfg.0 > ./cfg.0.tmp
-			sed '/^$/d' ./cfg.0.tmp > ./cfg.0
-			grep -v -x -F "$trgt" ./cfg.2 > ./cfg.2.tmp
-			sed '/^$/d' ./cfg.2.tmp > ./cfg.2
-			grep -v -x -F "$trgt" ./cfg.1 > ./cfg.1.tmp
-			sed '/^$/d' ./cfg.1.tmp > ./cfg.1
-			grep -v -x -F "$trgt" cfg.4 > cfg.4.tmp
-			sed '/^$/d' cfg.4.tmp > cfg.4
-			rm ./*.tmp
-		# rm any
-		elif ( [ ! -f "$DM_tlt/$fname.mp3" ] && [ ! -f "$DM_tlt/words/$fname.mp3" ] ); then
-			cd "$DC_tlt/practice"
-			grep -v -x -F "$trgt" ./fin > ./fin.tmp
-			sed '/^$/d' ./fin.tmp > ./fin
-			grep -v -x -F "$trgt" ./mcin > ./mcin.tmp
-			sed '/^$/d' ./mcin.tmp > ./mcin
-			grep -v -x -F "$trgt" ./lwin > ./lwin.tmp
-			sed '/^$/d' ./lwin.tmp > ./lwin
-			grep -v -x -F "$trgt" ./lsin > ./lsin.tmp
-			sed '/^$/d' ./lsin.tmp > ./lsin
-			grep -v -x -F "$trgt" ./fin1 > ./fin.tmp
-			sed '/^$/d' ./fin1.tmp > ./fin1
-			grep -v -x -F "$trgt" ./mcin1 > ./mcin1.tmp
-			sed '/^$/d' ./mcin1.tmp > ./mcin1
-			grep -v -x -F "$trgt" ./lwin1 > ./lwin1.tmp
-			sed '/^$/d' ./lwin1.tmp > ./lwin1
-			grep -v -x -F "$trgt" ./lsin1 > ./lsin1.tmp
-			sed '/^$/d' ./lsin1.tmp > ./lsin1
-			rm ./*.tmp; cd "$DC_tlt"
-			grep -v -x -F "$trgt" ./.cfg.11 > ./cfg.11.tmp
-			sed '/^$/d' ./cfg.11.tmp > ./.cfg.11
-			grep -v -x -F "$trgt" ./cfg.0 > ./cfg.0.tmp
-			sed '/^$/d' ./cfg.0.tmp > ./cfg.0
-			grep -v -x -F "$trgt" ./cfg.2 > ./cfg.2.tmp
-			sed '/^$/d' ./cfg.2.tmp > ./cfg.2
-			grep -v -x -F "$trgt" ./cfg.1 > ./cfg.1.tmp
-			sed '/^$/d' ./cfg.1.tmp > ./cfg.1
-			grep -v -x -F "$trgt" cfg.3 > cfg.3.tmp
-			sed '/^$/d' cfg.3.tmp > cfg.3
-			grep -v -x -F "$trgt" cfg.4 > cfg.4.tmp
-			sed '/^$/d' cfg.4.tmp > cfg.4
-			rm ./*.tmp
-		fi
-		(sleep 1 && rm -f $DT/ps_lk) & exit 1
-	fi
-	
-	# --------------------------------------------
-	if [ -f "$DM_tlt/words/$fname.mp3" ]; then
-		flw="$DM_tlt/words/$fname.mp3"
+	fname="${2}"
+
+	if [ -f "$DM_tlt/words/$fname.mp3" ]; then 
+		file="$DM_tlt/words/$fname.mp3"
+		trgt=$(eyeD3 "$file" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
 	elif [ -f "$DM_tlt/$fname.mp3" ]; then
-		fls="$DM_tlt/$fname.mp3"
+		file="$DM_tlt/$fname.mp3"
+		trgt=$(eyeD3 "$file" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
+	else
+		trgt="${3}"
 	fi
 
-	# rm word
-	if [ -f "$flw" ]; then 
+	[ -f "$file" ] && rm "$file"
+	
+	cd "$DC_tlt/practice"
+	
+	[ -f ./fin ] && grep -vxF "$trgt" ./fin > \
+	./fin.tmp && sed '/^$/d' ./fin.tmp > ./fin
+	[ -f ./mcin ] && grep -vxF "$trgt" ./mcin > \
+	./mcin.tmp && sed '/^$/d' ./mcin.tmp > ./mcin
+	[ -f ./lwin ] && grep -vxF "$trgt" ./lwin > \
+	./lwin.tmp && sed '/^$/d' ./lwin.tmp > ./lwin
+	[ -f ./lsin ] && grep -vxF "$trgt" ./lsin > \
+	./lsin.tmp && sed '/^$/d' ./lsin.tmp > ./lsin
+	rm ./*.tmp; cd "$DC_tlt"
+	[ -f .cfg.11 ] && grep -vxF "$trgt" ./.cfg.11 > \
+	./cfg.11.tmp && sed '/^$/d' ./cfg.11.tmp > ./.cfg.11
+	[ -f cfg.0 ] && grep -vxF "$trgt" ./cfg.0 > \
+	./cfg.0.tmp && sed '/^$/d' ./cfg.0.tmp > ./cfg.0
+	[ -f cfg.1 ] && grep -vxF "$trgt" ./cfg.1 > \
+	./cfg.1.tmp && sed '/^$/d' ./cfg.1.tmp > ./cfg.1
+	[ -f cfg.2 ] && grep -vxF "$trgt" ./cfg.2 > \
+	./cfg.2.tmp && sed '/^$/d' ./cfg.2.tmp > ./cfg.2
+	[ -f cfg.3 ] && grep -vxF "$trgt" ./cfg.3 > \
+	./cfg.3.tmp && sed '/^$/d' ./cfg.3.tmp > ./cfg.3
+	[ -f cfg.4 ] && grep -vxF "$trgt" ./cfg.4 > \
+	./cfg.4.tmp && sed '/^$/d' ./cfg.4.tmp > ./cfg.4
+	rm ./*.tmp
 
-			msg_2 " $delete_word\n\n" dialog-question "$yes" "$no" "$confirm"
-			ret=$(echo "$?")
-			
-			if [ $ret -eq 0 ]; then 
-			
-				(sleep 0.5 && kill -9 $(pgrep -f "$yad --form "))
-				rm -f "$flw"
-				cd "$DC_tlt/practice"
-				
-				grep -v -x -F "$trgt" ./fin > ./fin.tmp
-				sed '/^$/d' ./fin.tmp > ./fin
-				grep -v -x -F "$trgt" ./mcin > ./mcin.tmp
-				sed '/^$/d' ./mcin.tmp > ./mcin
-				grep -v -x -F "$trgt" ./lwin > ./lwin.tmp
-				sed '/^$/d' ./lwin.tmp > ./lwin
-				grep -v -x -F "$trgt" ./fin1 > ./fin.tmp
-				sed '/^$/d' ./fin1.tmp > ./fin1
-				grep -v -x -F "$trgt" ./mcin1 > ./mcin1.tmp
-				sed '/^$/d' ./mcin1.tmp > ./mcin1
-				grep -v -x -F "$trgt" ./lwin1 > ./lwin1.tmp
-				sed '/^$/d' ./lwin1.tmp > ./lwin1
-				rm ./*.tmp; cd "$DC_tlt"
-				grep -v -x -F "$trgt" ./.cfg.11 > ./cfg.11.tmp
-				sed '/^$/d' ./cfg.11.tmp > ./.cfg.11
-				grep -v -x -F "$trgt" ./cfg.0 > ./cfg.0.tmp
-				sed '/^$/d' ./cfg.0.tmp > ./cfg.0
-				grep -v -x -F "$trgt" ./cfg.2 > ./cfg.2.tmp
-				sed '/^$/d' ./cfg.2.tmp > ./cfg.2
-				grep -v -x -F "$trgt" ./cfg.1 > ./cfg.1.tmp
-				sed '/^$/d' ./cfg.1.tmp > ./cfg.1
-				grep -v -x -F "$trgt" cfg.3 > cfg.3.tmp
-				sed '/^$/d' cfg.3.tmp > cfg.3
-				rm ./*.tmp
-				(sleep 1 && rm -f $DT/ps_lk) & exit 1
-				
-			else
-				rm -f $DT/ps_lk & exit 1
-			fi
-	# rm sentence
-	elif [ -f "$fls" ]; then
+	(sleep 1 && rm -f $DT/ps_lk) & exit 1
+	
+	rm -f $DT/ps_lk & exit 1
+	
+	
+elif [ "$1" = delete_item ]; then
 
-			msg_2 " $delete_sentence\n\n" dialog-question "$yes" "$no" "$confirm"
-			ret=$(echo "$?")
-			
-			if [ $ret -eq 0 ]; then
-			
-				(sleep 0.5 && kill -9 $(pgrep -f "$yad --form "))
-				rm -f "$fls"
-				cd "$DC_tlt/practice"
-				grep -v -x -F "$trgt" ./lsin > ./lsin.tmp
-				sed '/^$/d' ./lsin.tmp > ./lsin
-				grep -v -x -F "$trgt" ./lsin1 > ./lsin1.tmp
-				sed '/^$/d' ./lsin1.tmp > ./lsin1
-				rm ./*.tmp; cd "$DC_tlt"
-				grep -v -x -F "$trgt" ./.cfg.11 > ./cfg.11.tmp
-				sed '/^$/d' ./cfg.11.tmp > ./.cfg.11
-				grep -v -x -F "$trgt" ./cfg.0 > ./cfg.0.tmp
-				sed '/^$/d' ./cfg.0.tmp > ./cfg.0
-				grep -v -x -F "$trgt" ./cfg.2 > ./cfg.2.tmp
-				sed '/^$/d' ./cfg.2.tmp > ./cfg.2
-				grep -v -x -F "$trgt" ./cfg.1 > ./cfg.1.tmp
-				sed '/^$/d' ./cfg.1.tmp > ./cfg.1
-				grep -v -x -F "$trgt" cfg.4 > cfg.4.tmp
-				sed '/^$/d' cfg.4.tmp > cfg.4
-				rm ./*.tmp
-				(sleep 1 && rm -f $DT/ps_lk) & exit 1
-				
-			else
-				rm -f $DT/ps_lk & exit 1
-			fi
-	# rm any
-	elif ( [ ! -f "$flw" ] && [ ! -f "$flw" ] ); then
+	touch $DT/ps_lk
+	include $DS/ifs/mods/mngr
+	source $DS/ifs/mods/cmns.sh
+	fname="${2}"
+	
+	
+	if [ -f "$DM_tlt/words/$fname.mp3" ]; then 
+		msg_2 " $delete_word\n\n" \
+		dialog-question "$yes" "$no" "$confirm"
+		file="$DM_tlt/words/$fname.mp3"
+		trgt=$(eyeD3 "$file" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
+	elif [ -f "$DM_tlt/$fname.mp3" ]; then
+		msg_2 " $delete_sentence\n\n" \
+		dialog-question "$yes" "$no" "$confirm"
+		file="$DM_tlt/$fname.mp3"
+		trgt=$(eyeD3 "$file" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
+	else
+		msg_2 " $delete_item\n\n" \
+		dialog-question "$yes" "$no" "$confirm"
+		trgt="${3}"
+	fi
+	ret=$(echo "$?")
+		
+	if [ $ret -eq 0 ]; then 
+	
+		(sleep 0.5 && kill -9 $(pgrep -f "$yad --form "))
 
-			msg_2 " $delete_item\n\n" dialog-question "$yes" "$no" "$confirm"
-			ret=$(echo "$?")
-			
-			if [ $ret -eq 0 ]; then
-			
-				(sleep 0.5 && kill -9 $(pgrep -f "$yad --form "))
-				
-				cd "$DC_tlt/practice"
-				grep -v -x -F "$trgt" ./fin > ./fin.tmp
-				sed '/^$/d' ./fin.tmp > ./fin
-				grep -v -x -F "$trgt" ./mcin > ./mcin.tmp
-				sed '/^$/d' ./mcin.tmp > ./mcin
-				grep -v -x -F "$trgt" ./lwin > ./lwin.tmp
-				sed '/^$/d' ./lwin.tmp > ./lwin
-				grep -v -x -F "$trgt" ./lsin > ./lsin.tmp
-				sed '/^$/d' ./lsin.tmp > ./lsin
-				grep -v -x -F "$trgt" ./fin1 > ./fin.tmp
-				sed '/^$/d' ./fin1.tmp > ./fin1
-				grep -v -x -F "$trgt" ./mcin1 > ./mcin1.tmp
-				sed '/^$/d' ./mcin1.tmp > ./mcin1
-				grep -v -x -F "$trgt" ./lwin1 > ./lwin1.tmp
-				sed '/^$/d' ./lwin1.tmp > ./lwin1
-				grep -v -x -F "$trgt" ./lsin1 > ./lsin1.tmp
-				sed '/^$/d' ./lsin1.tmp > ./lsin1
-				rm ./*.tmp; cd "$DC_tlt"
-				grep -v -x -F "$trgt" ./.cfg.11 > ./cfg.11.tmp
-				sed '/^$/d' ./cfg.11.tmp > ./.cfg.11
-				grep -v -x -F "$trgt" ./cfg.0 > ./cfg.0.tmp
-				sed '/^$/d' ./cfg.0.tmp > ./cfg.0
-				grep -v -x -F "$trgt" ./cfg.2 > ./cfg.2.tmp
-				sed '/^$/d' ./cfg.2.tmp > ./cfg.2
-				grep -v -x -F "$trgt" ./cfg.1 > ./cfg.1.tmp
-				sed '/^$/d' ./cfg.1.tmp > ./cfg.1
-				grep -v -x -F "$trgt" cfg.4 > cfg.4.tmp
-				sed '/^$/d' cfg.4.tmp > cfg.4
-				grep -v -x -F "$trgt" cfg.3 > cfg.3.tmp
-				sed '/^$/d' cfg.3.tmp > cfg.3
-				rm ./*.tmp
-				(sleep 1 && rm -f $DT/ps_lk) & exit 1
-			else
-				rm -f $DT/ps_lk & exit 1
-			fi
+		[ -f "$file" ] && rm "$file"
+		
+		cd "$DC_tlt/practice"
+		[ -f ./fin ] && grep -vxF "$trgt" ./fin > \
+		./fin.tmp && sed '/^$/d' ./fin.tmp > ./fin
+		[ -f ./mcin ] && grep -vxF "$trgt" ./mcin > \
+		./mcin.tmp && sed '/^$/d' ./mcin.tmp > ./mcin
+		[ -f ./lwin ] && grep -vxF "$trgt" ./lwin > \
+		./lwin.tmp && sed '/^$/d' ./lwin.tmp > ./lwin
+		[ -f ./lsin ] && grep -vxF "$trgt" ./lsin > \
+		./lsin.tmp && sed '/^$/d' ./lsin.tmp > ./lsin
+		rm ./*.tmp; cd "$DC_tlt"
+		[ -f .cfg.11 ] && grep -vxF "$trgt" ./.cfg.11 > \
+		./cfg.11.tmp && sed '/^$/d' ./cfg.11.tmp > ./.cfg.11
+		[ -f cfg.0 ] && grep -vxF "$trgt" ./cfg.0 > \
+		./cfg.0.tmp && sed '/^$/d' ./cfg.0.tmp > ./cfg.0
+		[ -f cfg.1 ] && grep -vxF "$trgt" ./cfg.1 > \
+		./cfg.1.tmp && sed '/^$/d' ./cfg.1.tmp > ./cfg.1
+		[ -f cfg.2 ] && grep -vxF "$trgt" ./cfg.2 > \
+		./cfg.2.tmp && sed '/^$/d' ./cfg.2.tmp > ./cfg.2
+		[ -f cfg.3 ] && grep -vxF "$trgt" ./cfg.3 > \
+		./cfg.3.tmp && sed '/^$/d' ./cfg.3.tmp > ./cfg.3
+		[ -f cfg.4 ] && grep -vxF "$trgt" ./cfg.4 > \
+		./cfg.4.tmp && sed '/^$/d' ./cfg.4.tmp > ./cfg.4
+		rm ./*.tmp
+
+		(sleep 1 && rm -f $DT/ps_lk) & exit 1
+		
+	else
+		rm -f $DT/ps_lk & exit 1
 	fi
 	
 #--------------------------------
-elif [ $1 = dlt ]; then
+elif [ $1 = delete_topic ]; then
 	include $DS/ifs/mods/mngr
 	
 	msg_2 " $delete_topic\n\n" dialog-question "$yes" "$no" "$confirm"
@@ -552,24 +434,26 @@ elif [ $1 = dlt ]; then
 		
 			[[ -d "$DM_tl/$tpc" ]] && rm -r "$DM_tl/$tpc"
 			[[ -d "$DC_tl/$tpc" ]] && rm -r "$DC_tl/$tpc"
+			
 			> $DC_s/cfg.6
 			rm $DC_s/cfg.8
 			> $DC_tl/.cfg.8
-			grep -v -x -F "$tpc" $DC_tl/.cfg.2 > $DC_tl/.cfg.2.tmp
-			sed '/^$/d' $DC_tl/.cfg.2.tmp > $DC_tl/.cfg.2
-			grep -v -x -F "$tpc" $DC_tl/.cfg.1 > $DC_tl/.cfg.1.tmp
-			sed '/^$/d' $DC_tl/.cfg.1.tmp > $DC_tl/.cfg.1
-			grep -v -x -F "$tpc" $DC_tl/.cfg.3 > $DC_tl/.cfg.3.tmp
-			sed '/^$/d' $DC_tl/.cfg.3.tmp > $DC_tl/.cfg.3
-			grep -v -x -F "$tpc" $DC_tl/.cfg.7 > $DC_tl/.cfg.7.tmp
-			sed '/^$/d' $DC_tl/.cfg.7.tmp > $DC_tl/.cfg.7
-			grep -v -x -F "$tpc" $DC_tl/.cfg.6 > $DC_tl/.cfg.6.tmp
-			sed '/^$/d' $DC_tl/.cfg.6.tmp > $DC_tl/.cfg.6
-			grep -v -x -F "$tpc" $DC_tl/.cfg.5 > $DC_tl/.cfg.5.tmp
-			sed '/^$/d' $DC_tl/.cfg.5.tmp > $DC_tl/.cfg.5
+
+			cd $DC_tl
+			[ -f ./.cfg.1 ] && grep -vxF "$trgt" ./.cfg.1 > \
+			./.cfg.1.tmp && sed '/^$/d' ./.cfg.1.tmp > ./.cfg.1
+			[ -f ./.cfg.2 ] && grep -vxF "$trgt" ./.cfg.2 > \
+			./.cfg.2.tmp && sed '/^$/d' ./.cfg.2.tmp > ./.cfg.2
+			[ -f ./.cfg.3 ] && grep -vxF "$trgt" ./.cfg.3 > \
+			./.cfg.3.tmp && sed '/^$/d' ./.cfg.3.tmp > ./.cfg.3
+			[ -f ./.cfg.5 ] && grep -vxF "$trgt" ./.cfg.5 > \
+			./.cfg.5.tmp && sed '/^$/d' ./.cfg.5.tmp > ./.cfg.5
+			[ -f ./.cfg.6 ] && grep -vxF "$trgt" ./.cfg.6 > \
+			./.cfg.6.tmp && sed '/^$/d' ./.cfg.6.tmp > ./.cfg.6
+			[ -f ./.cfg.7 ] && grep -vxF "$trgt" ./.cfg.7 > \
+			./.cfg.7.tmp && sed '/^$/d' ./.cfg.7.tmp > ./.cfg.7
 			rm $DC_tl/.*.tmp 
 			
-			kill -9 $(pgrep -f "$yad --list ")
 			(sleep 1 && rm -f $DT/ps_lk) &
 			$DS/mngr.sh mkmn
 			exit 1
@@ -619,7 +503,7 @@ elif [ "$1" = edt ]; then
 		exm1=$(echo "$inf" | sed -n 1p)
 		dftn=$(echo "$inf" | sed -n 2p)
 		ntes=$(echo "$inf" | sed -n 3p)
-		dlte="$DS/mngr.sh dli '$tgt'"
+		dlte="$DS/mngr.sh delete_item ${fname}"
 		imge="$DS/add.sh set_image '$TGT' word"
 		
 		# ===============================================
@@ -678,7 +562,7 @@ elif [ "$1" = edt ]; then
 				cp -f "$audo" "$DM_tl/$topc/words/$fname.mp3"
 				$DS/mngr.sh index word "$TGT" "$topc" &
 				if [ -n "$(cat "$DC_tl/.cfg.2" | grep "$topc")" ]; then
-					$DS/mngr.sh dli "$TGT" C
+					$DS/mngr.sh delete_item_confirm "$fname"
 				fi
 				
 				$DS/vwr.sh "$v" "nll" $ff & exit 1
@@ -692,9 +576,10 @@ elif [ "$1" = edt ]; then
 				printf "okim.1.okim\n" >> \
 				$DC_a/stats/.log &
 				
-				$DS/vwr.sh "$v" "nll" $ff & exit 1
+				$DS/vwr.sh "$v" "nll" $ff & exit 0
 			fi
-			$DS/vwr.sh "$v" "$TGT" $ff & exit 1
+			
+			$DS/vwr.sh "$v" "$TGT" $ff & exit 0
 	
 	
 	elif [ -f "$sfile" ]; then
@@ -709,7 +594,7 @@ elif [ "$1" = edt ]; then
 		wrds="$DS/add.sh edit_list_words '$file' F $c"
 		edau="--button=Edit Audio:/usr/share/idiomind/ifs/tls.sh edta \
 		'$DM_tlt/$fname.mp3' '$DM_tlt'"
-		dlte="$DS/mngr.sh dli '$tgt'"
+		dlte="$DS/mngr.sh delete_item ${fname}"
 		imge="$DS/add.sh set_image '$tgt' sentence"
 		
 		# ===============================================
@@ -742,6 +627,7 @@ elif [ "$1" = edt ]; then
 				source $DS/default/dicts/$lgt
 
 				(
+
 					DT_r=$(mktemp -d $DT/XXXXXX)
 					cd $DT_r
 					r=$(echo $(($RANDOM%1000)))
@@ -828,7 +714,7 @@ elif [ "$1" = edt ]; then
 				done
 				$DS/mngr.sh index sentence "$trgt" "$topc" &
 				if [ -n "$(cat "$DC_tl/.cfg.2" | grep "$topc")" ]; then
-					$DS/mngr.sh dli "$trgt" C
+					$DS/mngr.sh delete_item_confirm "$fname"
 				fi
 				
 				$DS/vwr.sh "$v" "null" $ff & exit 1
@@ -846,7 +732,7 @@ elif [ "$1" = edt ]; then
 			fi
 			
 			[ -d "$DT/$c" ] && $DS/add.sh edit_list_words "$fname" S $c "$trgt" &
-			$DS/vwr.sh "$v" "$trgt" $ff & exit 1
+			echo '$DS/vwr.sh "$v" "$nll" $((ff+1)) & exit 1'
 	fi
 	
 fi

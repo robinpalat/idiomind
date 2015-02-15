@@ -38,7 +38,6 @@ elif ( [ -f $DT/.uptf ] && [ "$1" = A ] ); then
 fi
 sleep 1
 
-
 feed=$(sed -n 1p "$DCF/$lgtl/link")
 rsrc=$(cat "$DCF/$lgtl/.rss")
 icon=$DS/images/cnn.png
@@ -58,7 +57,8 @@ if [ ! -d $DM_tl/Feeds ]; then
 	cp -f "$DSF/examples/$lgtl" "$DCF/rss/$lgtl"
 fi
 	
-if [ ! -f $DC_tl/Feeds/tpc.sh ]; then
+if ([ ! -f $DC_tl/Feeds/tpc.sh ] || \
+[ "$(cat $DC_tl/Feeds/tpc.sh | wc -l)" -ge 15 ]); then
 
 	echo '#!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
@@ -177,15 +177,12 @@ if [ -n "$feed" ]; then
 	rm -fr $DT_r $DT/.uptf $DT/.rss
 	cd "$DM_tl/Feeds/conten"
 	find *.mp3 -mtime +5 -exec ls > ls {} \;
-	n=1
-	while [ $n -le $(cat ls | wc -l) ]; do
-		nmfile=$(sed -n "$n"p ./ls)
+	while read nmfile; do
 		tgs=$(eyeD3 "$DM_tl/Feeds/conten/$nmfile")
 		trg=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
 		grep -v -x -v "$trg" "$DC_tl/Feeds/cfg.1" > "$DC_tl/Feeds/cfg.1.tmp"
 		sed '/^$/d' "$DC_tl/Feeds/cfg.1.tmp" > "$DC_tl/Feeds/cfg.1"
-		let n++
-	done
+	done < ./ls
 	rm "$DC_tl/Feeds/*.tmp"
 	
 	if [[ -d "$DM_tl/Feeds/conten" ]]; then

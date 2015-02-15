@@ -255,7 +255,6 @@ function list_words() {
 #ARGS 2 and 2 words list to process, 3 dir work, 4 dir target
 function fetch_audio() { 
 	
-
 	if ([ $lgt = ja ] || [ $lgt = "zh-cn" ] || [ $lgt = ru ]); then
 	words_list="$2"; else words_list="$1"; fi
 	
@@ -266,7 +265,12 @@ function fetch_audio() {
 			dictt "${word,,}" $3
 			
 			if [ -f "$3/${word,,}.mp3" ]; then
-					mv -f "$3/${word,,}.mp3" "$4/${word,,}.mp3"; fi
+					mv -f "$3/${word,,}.mp3" "$4/${word,,}.mp3"
+			else
+				voice "$word" "$4/${word,,}.mp3"; fi
+			
+			[ "$4" = "$DM_tl/.share" ] \
+			&& echo "${word,,}.mp3" >> "$DC_tlt/cfg.5"
 
 		fi
 		
@@ -282,10 +286,6 @@ function list_words_2() {
 	    else
 			eyeD3 "$1" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' \
 			| tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > idlst
-	    
-			#echo "$1" | tr -c "[:alnum:]" '\n' | sed '/^$/d' | sed '/"("/d' \
-			#| sed '/")"/d' | sed '/":"/d' | sort -u \
-			#| head -n40 > idlst
 	    fi
 }
 

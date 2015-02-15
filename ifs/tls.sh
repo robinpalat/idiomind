@@ -53,18 +53,18 @@ elif [ "$1" = add_audio ]; then
 cd $HOME
 DT="$2"
 ls="play $DT/audtm.mp3"
-FLAS=$(yad --width=620 --height=400 --file --on-top --name=idiomind \
-	--class=idiomind --window-icon=idiomind --center --file-filter="*.mp3" \
-	--button=Ok:0 --borders=0 --title="$ttl" --skip-taskbar)
+AU=$(yad --width=620 --height=400 --file --on-top --name=idiomind \
+--class=idiomind --window-icon=idiomind --center --file-filter="*.mp3" \
+--button=Ok:0 --borders=0 --title="$ttl" --skip-taskbar)
 ret=$?
-audio=$(echo "$FLAS" | cut -d "|" -f1)
+audio=$(echo "$AU" | cut -d "|" -f1)
 cd $DT
 if [[ $ret -eq 0 ]]; then
-if  [[ -f "$audio" ]]; then
-cp -f "$audio" $DT/audtm.mp3 >/dev/null 2>&1
-eyeD3 -P itunes-podcast --remove $DT/audtm.mp3
-eyeD3 --remove-all $DT/audtm.mp3 & exit
-fi
+	if  [[ -f "$audio" ]]; then
+		cp -f "$audio" $DT/audtm.mp3 >/dev/null 2>&1
+		eyeD3 -P itunes-podcast --remove $DT/audtm.mp3
+		eyeD3 --remove-all $DT/audtm.mp3 & exit
+	fi
 fi
 
 elif [ "$1" = s ]; then
@@ -225,17 +225,6 @@ elif [ "$1" = remove_items ]; then
 	notify-send -i info "Info" "a few bad items are removed" -t 3000
 	rm $DT/rm
 
-elif [ "$1" = add ]; then
-	NM=$(cat $DT/.titl)
-	cd ~/
-	file=$(yad --center --borders=10 --file-filter="*.mp3" \
-	--window-icon=idiomind --skip-taskbar --title="add_audio" \
-	--on-top --title=" " --file --width=600 --height=500 )
-		if [ -z "$file" ];then
-			exit 1
-		else
-			cp -f "$file" $DT_r/audtm.mp3
-		fi
 		
 elif [ "$1" = help ]; then
 
@@ -328,8 +317,8 @@ elif [ "$1" = srch ]; then
 	
 	
 elif [ "$1" = pdf ]; then
-	cd $HOME &&
 
+	cd $HOME
 	pdf=$($yad --save --center --borders=10 \
 	--on-top --filename="$HOME/$tpc.pdf" \
 	--window-icon=idiomind --skip-taskbar --title="Export " \

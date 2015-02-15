@@ -83,8 +83,8 @@ if [[ "$prdt" = A ]]; then
 
 			sox "$n".mp3 info.flac rate 16k
 			data="$(audio_recognizer info.flac $lgt $lgt $key)"
-			if [ -z "$data" ]; then
 			
+			if [ -z "$data" ]; then
 				msg "$key_err <a href='$LNK'>Google</a>" error
 				[[ -d $DT_r ]] && rm -fr $DT_r
 				rm -f ls $lckpr & break & exit 1
@@ -100,7 +100,7 @@ if [[ "$prdt" = A ]]; then
 				fname="$(nmfile "$trgt")"
 				mv -f "./$n.mp3" "./$fname.mp3"
 				echo "$trgt" > "./$fname.txt"
-				echo "$fname" >> ./ls
+				echo "$trgt" >> ./ls
 				rm -f info.flac info.ret
 			fi
 			prg=$((100*$n/$lns))
@@ -157,17 +157,17 @@ if [[ "$prdt" = A ]]; then
 				while [ $n -le $(cat ./slts | head -50 | wc -l) ]; do
 					
 					sntc=$(sed -n "$n"p ./slts)
-					trgt=$(cat "./$sntc.txt")
-					fname="$(nmfile "$trgt")"
+					fname="$(nmfile "$sntc")"
+					trgt=$(cat "./$fname.txt")
 					
-					if [ $(sed -n 1p "$sntc.txt" | wc -$c) -eq 1 ]; then
+					if [ $(sed -n 1p "$fname.txt" | wc -$c) -eq 1 ]; then
 					
 						if [ $(cat "$DC_tlt"/cfg.3 | wc -l) -ge 50 ]; then
 							printf "\n- $sntc" >> ./wlog
 					
 						else
 							srce="$(translate "$trgt" $lgt $lgs)"
-							mv -f "$sntc".mp3 "$DM_tlt/words/$fname".mp3
+							mv -f "$fname".mp3 "$DM_tlt/words/$fname".mp3
 							
 							if ( [ -n $(file -ib "$DM_tlt/words/$fname".mp3 | grep -o 'binary') ] \
 							&& [ -n "$trgt" ] && [ -n "$srce" ] ); then
@@ -181,7 +181,7 @@ if [[ "$prdt" = A ]]; then
 							fi
 						fi
 					
-					elif [ $(sed -n 1p "$sntc.txt" | wc -$c) -ge 1 ]; then
+					elif [ $(sed -n 1p "$fname.txt" | wc -$c) -ge 1 ]; then
 					
 						if [ $(cat "$DC_tlt"/cfg.4 | wc -l) -ge 50 ]; then
 							printf "\n- $sntc" >> ./slog
@@ -189,7 +189,7 @@ if [[ "$prdt" = A ]]; then
 						else
 							srce="$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')"
 							
-							mv -f "$sntc.mp3" "$DM_tlt/$fname.mp3"
+							mv -f "$fname.mp3" "$DM_tlt/$fname.mp3"
 							
 							if ( [ -f "$DM_tlt/$fname.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
 							    add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3"
@@ -256,9 +256,9 @@ if [[ "$prdt" = A ]]; then
 						if [ -f "$trgt".mp3 ]; then
 						
 							mv -f "$DT_r/$trgt.mp3" "$DM_tlt/words/$fname.mp3"
+							
 						else
 							voice "$trgt" $DT_r "$DM_tlt/words/$fname.mp3"
-							
 						fi
 						if ( [ -n $(file -ib "$DM_tlt/words/$fname.mp3" | grep -o 'binary') ] \
 						&& [ -n "$trgt" ] && [ -n "$srce" ] ); then

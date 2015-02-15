@@ -53,7 +53,7 @@ if [ "$1" = edit_dlg ]; then
 	
 	if [ "$rt" -eq 5 ]; then
 
-		printf "$code" > "$disables/$name.$lang"
+		printf "${code}" > "$disables/$name.$lang"
 		$DS_a/Dics/cnfg.sh
 		
 	elif [ "$rt" -eq 4 ]; then
@@ -65,7 +65,7 @@ if [ "$1" = edit_dlg ]; then
 		rm -f /tmp/yes.mp3 /tmp/test.sh
 		$DS_a/Dics/cnfg.sh edit_dlg "$code"
 		r=$(echo $?)
-		[ $r -eq 0 ] && printf "$code" > "$disables/$name.$lang"
+		[ $r -eq 0 ] && echo "${code}" > "$disables/$name.$lang"
 		
 	else
 	
@@ -107,18 +107,18 @@ elif [ "$1" = dlck ]; then
 		
 		[ -z "$name" ] && name="d_$(($RANDOM%10))"
 		[ -z "$lang" ] && lang="$lgt"
-		printf "$code" > "$dir/$stts/$name.$lang" & exit 1
+		printf "${code}" > "$dir/$stts/$name.$lang" & exit 1
 		
 	elif [ $ret -eq 4 ]; then
 	
-		printf "$term -e \n$code" > "/tmp/test.sh"
+		printf "${code}" > "/tmp/test.sh"
 		chmod +x "/tmp/test.sh"
 		cd /tmp; sh "/tmp/test.sh" yes
 		[ -f "/tmp/yes.mp3" ]] && play "/tmp/yes.mp3" || msg 'Fail\n' info
 		rm -f "/tmp/yes.mp3" "/tmp/test.sh"
 		$DS_a/Dics/cnfg.sh dlck TRUE "$name" "$name"
 		r=$(echo $?)
-		[ $r -eq 0 ] && printf "$code" > "$dir/$stts/$name.$lang" & exit 1
+		[ $r -eq 0 ] && echo "${code}" > "$dir/$stts/$name.$lang" & exit 1
 		
 	else
 		exit 1
@@ -136,7 +136,6 @@ elif [ -z "$1" ]; then
 	if [ "$2" = f ]; then
 		tex="<small>$3\n</small>"
 		align="--text-align=left"
-		img="--image=info"
 	else
 		tex=" "
 		align="--text-align=right"
@@ -144,7 +143,7 @@ elif [ -z "$1" ]; then
 	
 	D=$(mktemp $DT/D.XXXX)
 	dict_list | $yad --list --title="Idiomind - $dictionaries" \
-	--center --on-top --expand-column=2 $img --text="$tex" $align \
+	--center --on-top --expand-column=2 --text="$tex" $align \
 	--width=420 --height=300 --skip-taskbar --separator=" " \
 	--borders=15 --button="$add":2 --print-all --button=Ok:0 \
 	--column=" ":CHK --column="$availables":TEXT \
