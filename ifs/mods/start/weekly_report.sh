@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-if ([ "$(date +%u)" = 7 ] && \
-	[ "$(sed -n 1p $DC/addons/stats/cnf)" = "TRUE" ]); then
-	"$DS/addons/weekly report/cnfg.sh" A &
+if ([ "$(date +%u)" = '4' ] && \
+	[ "$(sed -n 1p $DC_a/stats/cnfg)" = "TRUE" ]); then
+	(sleep 10 && "$DS/addons/weekly report/cnfg.sh" A) &
 fi

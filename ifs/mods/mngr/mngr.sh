@@ -8,13 +8,13 @@ function dlg_form_1() {
         yad --form --wrap --center --name=idiomind --class=idmnd \
         --width=$wth --height=$eht --always-print-result \
         --borders=15 --columns=2 --align=center --skip-taskbar \
-        --buttons-layout=end --title=" $nme" --separator="\\n" \
+        --buttons-layout=end --title=" $TGT" --separator="\\n" \
         --fontname="Arial" --scroll --window-icon=idiomind \
         --text-align=center --selectable-labels \
         --field="<small>$lgtl</small>":RO "$TGT" \
         --field="<small>$lgsl</small>" "$src" \
         --field="<small>$topic </small>":CB "$tpc!$tpcs" \
-        --field="<small>$audio </small>":FL "$AUD" \
+        --field="<small>$audio </small>":FL "$DM_tlt/words/$fname.mp3" \
         --field="<small>$example </small>":TXT "$exm1" \
         --field="<small>$definition </small>":TXT "$dftn" \
         --field="<small>$notes </small>":TXT "$ntes" \
@@ -33,37 +33,16 @@ function dlg_form_2() {
         yad --form --wrap --center --name=idiomind --class=idmnd \
         --width=$wth --height=$eht --always-print-result \
         --separator="\\n" --borders=15 --align=center --align=center \
-        --buttons-layout=end --title=" $nme" --fontname="Arial" \
+        --buttons-layout=end --title=" $tgt" --fontname="Arial" \
         --selectable-labels --window-icon=idiomind --skip-taskbar \
         --field="$chk:CHK" "$ok" \
         --field="$mark "":CHK" "$mrk" \
         --field="<small>$lgtl</small>":TXT "$tgt" \
         --field="<small>$lgsl</small>":TXT "$src" \
         --field="<small>$topic </small>":CB "$tpc!$tpcs" \
-        --field="<small>$audio </small>":FL "$DM_tlt/$nme.mp3" \
+        --field="<small>$audio </small>":FL "$DM_tlt/$fname.mp3" \
         --field="$list_words":BTN "$wrds" \
         --button="$image":"$imge" \
         --button="$delete":"$dlte" "$edau" \
         --button=gtk-close:0 > $1
-}
-
-
-function dlg_msg_1() {
-    
-        yad --center --scroll \
-        --title="$confirm" --width=360 --height=120 \
-        --on-top --image=dialog-question --skip-taskbar \
-        --text=" $1 " --borders=5 \
-        --window-icon=idiomind \
-        --button="$yes":0 --button="$no":1
-}
-
-
-function dlg_msg_9() { # same name - topic 
-    
-        yad --name=idiomind --center --on-top --image=info \
-        --text="$1" \
-        --image-on-top --width=360 --height=120 --borders=3 \
-        --skip-taskbar --window-icon=idiomind --sticky \
-        --title=Idiomind --button="$3":1 --button="$2":0 
 }

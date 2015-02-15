@@ -9,7 +9,7 @@ include $DS/ifs/mods/add
 if [[ $1 = n_i ]]; then
 
 	trgt=$(cat $DT/word.x)
-	nm=$(cat $DT/word.x)
+	dir=$(cat $DT/item.x)
 	c=$(echo $(($RANDOM%100)))
 	var="$2"
 
@@ -39,12 +39,12 @@ if [[ $1 = n_i ]]; then
 			mkdir $DT/rss_$c
 			cd $DT/rss_$c
 			srce="$(translate "$trgt" auto $lgs)"
-			nme="$(nmfile "$trgt")"
+			fname="$(nmfile "${trgt^}")"
 
 			[[ ! -d "$DM_tl/Feeds/kept/words" ]] && mkdir "$DM_tl/Feeds/kept/words"
-			cp "$DM_tl/Feeds/conten/$var/$nm.mp3" "$DM_tl/Feeds/kept/words/${nm^}.mp3"
+			cp "$DM_tl/Feeds/conten/$dir/$trgt.mp3" "$DM_tl/Feeds/kept/words/$fname.mp3"
 			
-			add_tags_2 W "${trgt^}" "${srce^}" "$var" "$DM_tl/Feeds/kept/words/${nm^}.mp3"
+			add_tags_2 W "${trgt^}" "${srce^}" "$var" "$DM_tl/Feeds/kept/words/$fname.mp3"
 			
 			echo "${trgt^}" >> "$DC_tl/Feeds/cfg.0"
 			echo "${trgt^}" >> "$DC_tl/Feeds/.cfg.11"
@@ -63,13 +63,13 @@ if [[ $1 = n_i ]]; then
 			
 			internet
 			
-			nme="$(nmfile "$var")"
-			tgs=$(eyeD3 "$DM_tl/Feeds/conten/$nme.mp3")
+			fname="$(nmfile "$var")"
+			tgs=$(eyeD3 "$DM_tl/Feeds/conten/$fname.mp3")
 			trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
 			
-			cp "$DM_tl/Feeds/conten/$nme.mp3" "$DM_tl/Feeds/kept/$nme.mp3"
-			cp "$DM_tl/Feeds/conten/$nme.lnk" "$DM_tl/Feeds/kept/$nme.lnk"
-			cp $DM_tl/Feeds/conten/"$nme"/*.mp3 "$DM_tl/Feeds/kept/.audio/"
+			cp "$DM_tl/Feeds/conten/$fname.mp3" "$DM_tl/Feeds/kept/$fname.mp3"
+			cp "$DM_tl/Feeds/conten/$fname.lnk" "$DM_tl/Feeds/kept/$fname.lnk"
+			cp $DM_tl/Feeds/conten/"$fname"/*.mp3 "$DM_tl/Feeds/kept/.audio/"
 			
 			if [ -n "$(cat "$DC_tl/Feeds/cfg.0" | sort -n | uniq -dc)" ]; then
 				cat "$DC_tl/Feeds/cfg.0" | awk '!array_temp[$0]++' > $DT/.ls.x
@@ -86,7 +86,7 @@ if [[ $1 = n_i ]]; then
 elif [[ $1 = n_t ]]; then
 
 	dte=$(date "+%a %d %B")
-	if [ $(cat "$DC_tl/.cfg.1" | wc -l) -ge 50 ]; then
+	if [ $(cat "$DC_tl/.cfg.1" | wc -l) -ge 80 ]; then
 		msg "$topics_max " info & exit
 	fi
 

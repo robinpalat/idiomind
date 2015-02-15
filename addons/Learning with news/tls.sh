@@ -19,10 +19,10 @@ audio="$DM_tl/Feeds/kept/.audio"
 contn="$DM_tl/Feeds/conten"
 echo "$3" > $DT/word.x
 var="$2"
-if [ -f "$audio/$3.mp3" ]; then 
-	play "$audio/$3.mp3"
+if [ -f "$audio/${3,,}.mp3" ]; then 
+	play "$audio/${3,,}.mp3"
 else
-	play "$contn/$var/$3.mp3"
+	play "$contn/$var/${3,,}.mp3"
 fi
 elif [ $1 = stop ]; then
 killall rsstail

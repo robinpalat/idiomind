@@ -15,13 +15,14 @@ if [[ "$1" = chngi ]]; then
 	[[ $bcl -lt 2 ]] && bcl = 2 && echo 2 > $DC_s/cfg.2
 	if ([ $(echo "$nta" | grep "TRUE") ] && [ $bcl -lt 12 ]); then bcl=12; fi
 
-	item="$(sed -n "$2"p $indx | cut -c 1-100 | sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
+	item="$(sed -n "$2"p $indx)"
+	fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
 	
-	[[ -f "$DM_tlt/$item.mp3" ]] && file="$DM_tlt/$item.mp3" && t=2
-	[[ -f "$DM_tlt/words/$item.mp3" ]] && file="$DM_tlt/words/$item.mp3" && t=1
-	[[ -f "$DM_tl/Feeds/kept/words/$item.mp3" ]] && file="$DM_tl/Feeds/kept/words/$item.mp3" && t=1
-	[[ -f "$DM_tl/Feeds/kept/$item.mp3" ]] && file="$DM_tl/Feeds/kept/$item.mp3" && t=2
-	[[ -f "$DM_tl/Feeds/conten/$item.mp3" ]] && file="$DM_tl/Feeds/conten/$item.mp3" && t=2
+	[[ -f "$DM_tlt/$fname.mp3" ]] && file="$DM_tlt/$fname.mp3" && t=2
+	[[ -f "$DM_tlt/words/$fname.mp3" ]] && file="$DM_tlt/words/$fname.mp3" && t=1
+	[[ -f "$DM_tl/Feeds/kept/words/$fname.mp3" ]] && file="$DM_tl/Feeds/kept/words/$fname.mp3" && t=1
+	[[ -f "$DM_tl/Feeds/kept/$fname.mp3" ]] && file="$DM_tl/Feeds/kept/$fname.mp3" && t=2
+	[[ -f "$DM_tl/Feeds/conten/$fname.mp3" ]] && file="$DM_tl/Feeds/conten/$fname.mp3" && t=2
 	
 	if [ -f "$file" ]; then
 		
@@ -42,7 +43,7 @@ if [[ "$1" = chngi ]]; then
 
 		[[ -z "$trgt" ]] && trgt="$item"
 		#[[ -f "$DM_tl/Feeds/kept/words/$item.mp3" ]] && osdi="$DM_tl/Feeds/kept/words/$item.mp3" || osdi=idiomind
-		imgt="$DM_tlt/words/images/$item.jpg"
+		imgt="$DM_tlt/words/images/$fname.jpg"
 		[[ -f $imgt ]] && osdi=$imgt || osdi=idiomind
 		
 		[[ -n $(echo "$nta" | grep "TRUE") ]] && notify-send -i "$osdi" "$trgt" "$srce" -t 10000  &
@@ -87,46 +88,45 @@ elif [ "$1" != chngi ]; then
 		eht=$(sed -n 4p $DC_s/cfg.18)
 		if [ -n "$1" ]; then
 			text="--text=<small>$1\n</small>"
-			align="--text-align=left"
+			align="left"; h=1
 			img="--image=info"
 		else
 			lgtl=$(echo "$lgtl" | awk '{print tolower($0)}')
 			text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/$lgtl'>$find_topics</a>   </small></small>"
-			align="--text-align=right"
+			align="right"
 		fi
 		[[ -f $DC_tl/.cfg.1 ]] && info2=$(cat $DC_tl/.cfg.1 | wc -l) || info2=""
 		cd $DC_s
 
-		VAR=$(cat $DC_s/cfg.0 | yad --name=idiomind \
-		--class=idiomind --center $img --image-on-top --separator="" $align\
+		VAR=$(cat $DC_s/cfg.0 | yad --name=idiomind --text-align=$align \
+		--class=idiomind --center $img --image-on-top --separator="" \
 		"$text" --width=$wth --height=$eht --ellipsize=END \
 		--no-headers --list --window-icon=idiomind --borders=5 \
 		--button="gtk-add":3 --button="$ok":0 \
 		--title="$topics" --column=img:img --column=File:TEXT)
 			ret=$?
 			
+			
+			
 			if [ $ret -eq 3 ]; then
-				$DS/add.sh new_topic &&
-				$DS/add.sh new_items & exit
-				
+			
+					if [ "$h" = 1 ]; then
+						$DS/add.sh new_topic & exit
+						
+					else
+						$DS/add.sh new_topic & exit
+					fi
+			
 			elif [ $ret -eq 0 ]; then
 			
-				if [ -n "$1" ]; then
-					if [ "$2" = 3 ]; then
-						$DC_tl/"$VAR"/tpc.sh
-						$DS/add.sh new_items & exit
-					else
-						$DC_tl/"$VAR"/tpc.sh &
-					fi
+					[ -z "$VAR" ] && exit 1
 					
-				else
 					if [[ -f $DC_tl/"$VAR"/tpc.sh ]]; then
 						$DC_tl/"$VAR"/tpc.sh & exit
 					else
 						cp -f $DS/default/tpc.sh $DC_tl/"$VAR"/tpc.sh
 						$DC_tl/"$VAR"/tpc.sh & exit
 					fi
-				fi
 			else
 				exit 0
 			fi

@@ -5,11 +5,11 @@ source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/others.conf
 source $DS/ifs/mods/cmns.sh
 
-if [ $1 = play ]; then
+if [ "$1" = play ]; then
 
 play "$2" && sleep 0.5 & exit
 
-elif [ $1 = info ]; then
+elif [ "$1" = info ]; then
 
 	wth=$(sed -n 5p $DC_s/cfg.18)
 	eht=$(sed -n 6p $DC_s/cfg.18)
@@ -29,7 +29,7 @@ elif [ $1 = info ]; then
 	exit
 
 
-elif [ $1 = cnfg ]; then
+elif [ "$1" = cnfg ]; then
 
 	msj=$(sed -n 1p $DC_s/cfg.20)
 	cn=$(sed -n 2p $DC_s/cfg.20)
@@ -48,26 +48,26 @@ elif [ $1 = cnfg ]; then
 	fi
 
 
-elif [ $1 = add_audio ]; then
+elif [ "$1" = add_audio ]; then
 
 cd $HOME
 DT="$2"
 ls="play $DT/audtm.mp3"
-FLAS=$(yad --width=620 --height=400 --file --on-top --name=idiomind \
-	--class=idiomind --window-icon=idiomind --center --file-filter="*.mp3" \
-	--button=Ok:0 --borders=0 --title="$ttl" --skip-taskbar)
+AU=$(yad --width=620 --height=400 --file --on-top --name=idiomind \
+--class=idiomind --window-icon=idiomind --center --file-filter="*.mp3" \
+--button=Ok:0 --borders=0 --title="$ttl" --skip-taskbar)
 ret=$?
-audio=$(echo "$FLAS" | cut -d "|" -f1)
+audio=$(echo "$AU" | cut -d "|" -f1)
 cd $DT
 if [[ $ret -eq 0 ]]; then
-if  [[ -f "$audio" ]]; then
-cp -f "$audio" $DT/audtm.mp3 >/dev/null 2>&1
-eyeD3 -P itunes-podcast --remove $DT/audtm.mp3
-eyeD3 --remove-all $DT/audtm.mp3 & exit
-fi
+	if  [[ -f "$audio" ]]; then
+		cp -f "$audio" $DT/audtm.mp3 >/dev/null 2>&1
+		eyeD3 -P itunes-podcast --remove $DT/audtm.mp3
+		eyeD3 --remove-all $DT/audtm.mp3 & exit
+	fi
 fi
 
-elif [ $1 = s ]; then
+elif [ "$1" = s ]; then
 
 	if [[ "$(ps -A | grep -o "play")" = "play" ]]; then
 		killall play
@@ -75,17 +75,16 @@ elif [ $1 = s ]; then
 	
 	play "$DM_tlt/$2.mp3" & sleep 0.2 && exit
 	
-elif [ $1 = dclik ]; then
+elif [ "$1" = dclik ]; then
 
-	play "$DM_tl/.share/$2".mp3 & exit
+	play "$DM_tls/${2,,}".mp3 & exit
 	
-elif [ $1 = edta ]; then
+elif [ "$1" = edta ]; then
 
 	prm=$(sed -n 9p $DC_s/cfg.1)
-	(cd "$3"
-	"$prm" "$2") & exit
+	(cd "$3"; "$prm" "$2") & exit
 	
-elif [ $1 = chng ]; then
+elif [ "$1" = chng ]; then
 
 	cd $DS/ifs/audio/
 	IFS=''
@@ -191,7 +190,7 @@ elif [ $1 = chng ]; then
 	echo "$device_icon_name" >> $DC_s/cfg.20
 	exit 1
 
-elif [ $1 = rec ]; then
+elif [ "$1" = rec ]; then
 
 	paud=$(sed -n 17p $DC_s/cfg.1)
 	DT_r="$2"
@@ -214,7 +213,7 @@ elif [ $1 = rec ]; then
 	killall sox & killall rec
 	exit 1
 
-elif [ $1 = remove_items ]; then
+elif [ "$1" = remove_items ]; then
 
 	[[ -f $DT/rm ]] && sed -i 's/^$/d' $DT/rm
 	n=1
@@ -226,30 +225,18 @@ elif [ $1 = remove_items ]; then
 	notify-send -i info "Info" "a few bad items are removed" -t 3000
 	rm $DT/rm
 
-elif [ $1 = add ]; then
-	NM=$(cat $DT/.titl)
-	cd ~/
-	file=$(yad --center --borders=10 --file-filter="*.mp3" \
-	--window-icon=idiomind --skip-taskbar --title="add_audio" \
-	--on-top --title=" " --file --width=600 --height=500 )
-		if [ -z "$file" ];then
-			exit 1
-		else
-			cp -f "$file" $DT_r/audtm.mp3
-		fi
 		
-elif [ $1 = help ]; then
+elif [ "$1" = help ]; then
 
-	xdg-open $DS/ifs/trans/$lgs/help.pdf & exit
+	xdg-open /usr/share/idiomind/ifs/help.pdf & exit
 
-elif [ $1 = web ]; then
+elif [ "$1" = web ]; then
 
 	host=http://idiomind.sourceforge.net
-	lgtl=$(echo "$lgtl" | awk '{print tolower($0)}')
-	xdg-open $host/$lgs/$lgtl
+	xdg-open "$host/$lgs/${lgtl,,}"
 	exit
 
-elif [ $1 = updt ]; then
+elif [ "$1" = updt ]; then
 
 	cd $DT
 	internet
@@ -283,7 +270,7 @@ elif [ $1 = updt ]; then
 	fi
 	[[ -f release ]] && rm -f release
 
-elif [ $1 = srch ]; then
+elif [ "$1" = srch ]; then
 
 	[[ ! -f $DC_s/cfg.13 ]] && echo `date +%d` > $DC_s/cfg.13
 
@@ -329,9 +316,9 @@ elif [ $1 = srch ]; then
 	
 	
 	
-elif [ $1 = pdf ]; then
-	cd $HOME &&
+elif [ "$1" = pdf ]; then
 
+	cd $HOME
 	pdf=$($yad --save --center --borders=10 \
 	--on-top --filename="$HOME/$tpc.pdf" \
 	--window-icon=idiomind --skip-taskbar --title="Export " \
@@ -353,8 +340,9 @@ elif [ $1 = pdf ]; then
 		n=1
 		while [[ $n -le "$(cat $iw | wc -l | awk '{print ($1)}')" ]]; do
 			wnm=$(sed -n "$n"p $iw)
-			if [ -f "$DM_tlt/words/images/$wnm.jpg" ]; then
-				convert "$DM_tlt/words/images/$wnm.jpg" -alpha set -virtual-pixel transparent \
+			fname="$(nmfile "$wnm")"
+			if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
+				convert "$DM_tlt/words/images/$fname.jpg" -alpha set -virtual-pixel transparent \
 				-channel A -blur 0x10 -level 50%,100% +channel "$DT/mkhtml/images/$wnm.png"
 			fi
 			let n++
@@ -363,7 +351,8 @@ elif [ $1 = pdf ]; then
 		n=1
 		while [[ $n -le "$(cat  $is | wc -l | awk '{print ($1)}')" ]]; do
 			wnm=$(sed -n "$n"p $is)
-			tgs=$(eyeD3 "$DM_tlt/$wnm.mp3")
+			fname="$(nmfile "$wnm")"
+			tgs=$(eyeD3 "$DM_tlt/$fname.mp3")
 			wt=$(echo "$tgs" | grep -o -P "(?<=ISI1I0I).*(?=ISI1I0I)")
 			ws=$(echo "$tgs" | grep -o -P "(?<=ISI2I0I).*(?=ISI2I0I)")
 			echo "$wt" >> S.gprt.x
@@ -572,11 +561,12 @@ elif [ $1 = pdf ]; then
 		n=1
 		while [ $n -le "$(cat $iw | wc -l)" ]; do
 			wnm=$(sed -n "$n"p $iw)
-			tgs=$(eyeD3 "$DM_tlt/words/$wnm.mp3")
+			fname="$(nmfile "$wnm")"
+			tgs=$(eyeD3 "$DM_tlt/words/$fname.mp3")
 			wt=$(echo "$tgs" | grep -o -P "(?<=IWI1I0I).*(?=IWI1I0I)")
 			ws=$(echo "$tgs" | grep -o -P "(?<=IWI2I0I).*(?=IWI2I0I)")
 			inf=$(echo "$tgs" | grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' | tr '_' '\n')
-			hlgt=$(echo $wt | awk '{print tolower($0)}')
+			hlgt="${wt,,}"
 			exm1=$(echo "$inf" | sed -n 1p | sed 's/\\n/ /g')
 			dftn=$(echo "$inf" | sed -n 2p | sed 's/\\n/ /g')
 			exmp1=$(echo "$exm1" \

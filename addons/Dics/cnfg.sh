@@ -2,87 +2,149 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-dir="$DC/addons/dict/"
+source $DS/ifs/trans/$lgs/others.conf
+source $DS/ifs/mods/cmns.sh
+dir="$DC/addons/dict"
+enables="$DC/addons/dict/enables"
+disables="$DC/addons/dict/disables"
 
-wrd="$1"
-Wrd="${wrd^}"
-DT_r="$2"
 
-if [ ! -f $DT_r/.topic ]; then
-	[[ -f $DC_s/cfg.7 ]] && topic=$(sed -n 1p $DC_s/cfg.7) || topic=""
-	[[ -f $DT_r/.topic ]] && echo "$topic" > $DT_r/.topic
-fi
-[[ -f $DT_r/.topic ]] && tpe=$(cat $DT_r/.topic)
-DM_tlt="$DM_tl/$tpe"
-DC_tlt="$DC_tl/$tpe"
+function dict_list() {
 
-if [ "$1" = dlck ]; then
-	source $DS/ifs/trans/$lgs/others.conf
-	if [ "$2" = TRUE ]; then
-		stts=enables
-	else
-		stts=disables
-	fi
-	edt=$(yad --text-info --width=450 --height=340 --title=Edit \
-	--filename=$dir/$stts/"$3".$lgt --fontname=monospace \
-	--editable --show-uri --wrap --on-top --skip-taskbar --center \
-	--window-icon=idiomind --button=Delete:2 --button=Save:0)
-	ret=$?
-		if [ $ret -eq 2 ]; then
-			rm $dir/$stts/"$3".$lgt & exit 1
-		elif [ $ret -eq 0 ]; then
-			echo "$edt" > $dir/$stts/"$3".$lgt & exit 1
+	cd "$enables/"
+	find . -not -name "*.$lgt" -and -not -name "*.auto" -type f \
+	-exec mv --target-directory="$disables/" {} +
+	
+	ls * > .dicts
+	while read dict; do
+		echo 'TRUE'
+		echo "$dict" | sed 's/\./\n/g'
+	done < .dicts
+	
+	cd "$disables/"; ls * > .dicts
+	while read dict; do
+		if [ $(echo "$dict" | grep ".$lgt") ] \
+		|| [ $(echo "$dict" | grep '.auto') ]; then
+			echo 'FALSE'
+			echo "$dict" | sed 's/\./\n/g'
 		fi
+	done < .dicts
+}
+
+
+if [ "$1" = edit_dlg ]; then
+	
+	[ -z "$2" ] && code="#!/bin/bash" || code="$2"
+	
+	ss=$(mktemp $DT/D.XXXX)
+	yad --form --width=420 --height=450 --on-top --print-all \
+	--buttons-layout=end --center --window-icon=idiomind \
+	--borders=0 --skip-taskbar --align=right --always-print-result \
+	--button=Cancel:1 --button=Test:4 --button=Save:5 --title="script"\
+	--field="<small>Argument 1: \"\$1\" = \"word\"</small>":TXT "$code" \
+	--field="<small>Name</small>" "$name" \
+	--field="<small>Language</small>:CB" "!en!es!pt!it!fr!de!ru" > "$ss"
+	rt=$?
+	code=$(cat "$ss" | cut -d "|" -f1)
+	name=$(cat "$ss" | cut -d "|" -f2 | sed s'/ /_/'g)
+	lang=$(cat "$ss" | cut -d "|" -f3)
+	[ -z "$name" ] && name="d_$(($RANDOM%10))"
+	[ -z "$lang" ] && lang="$lgt"
+	
+	if [ "$rt" -eq 5 ]; then
+
+		printf "${code}" > "$disables/$name.$lang"
+		$DS_a/Dics/cnfg.sh
 		
+	elif [ "$rt" -eq 4 ]; then
+	
+		printf "$code" > /tmp/test.sh
+		chmod +x /tmp/test.sh
+		cd /tmp; sh /tmp/test.sh yes
+		[ -f /tmp/yes.mp3 ] && play /tmp/yes.mp3 || msg Fail info
+		rm -f /tmp/yes.mp3 /tmp/test.sh
+		$DS_a/Dics/cnfg.sh edit_dlg "$code"
+		r=$(echo $?)
+		[ $r -eq 0 ] && echo "${code}" > "$disables/$name.$lang"
+		
+	else
+	
+		$DS_a/Dics/cnfg.sh
+	fi
+
+
+elif [ "$1" = dlck ]; then
+
+	[ "$2" = TRUE ] && stts=enables || stts=disables
+	code="$(cat $dir/$stts/$3.$lgt)"
+	name="$3"
+	lang="$lgt"
+	
+	ss=$(mktemp $DT/D.XXXX)
+	yad --form --width=420 --height=450 --on-top --print-all \
+	--buttons-layout=end --center --window-icon=idiomind \
+	--borders=0 --skip-taskbar --align=right --always-print-result \
+	--button=Cancel:1 --button=Remove:2 --button=Test:4 \
+	--button=Save:0 --title="script"\
+	--field="<small>Argument 1: \"\$1\" = \"word\"</small>":TXT "$code" \
+	--field="<small>Name</small>":RO "$name" \
+	--field="<small>Language</small>":RO "$lgt" > "$ss"
+	ret=$?
+	
+	code=$(cat "$ss" | cut -d "|" -f1)
+	name=$(cat "$ss" | cut -d "|" -f2 | sed s'/ /_/'g)
+	lang=$(cat "$ss" | cut -d "|" -f3)
+	[ -z "$name" ] && name="dict_$(($RANDOM%100))"
+	[ -z "$lang" ] && lang="$lgt"
+	
+	if [ $ret -eq 2 ]; then
+	
+		msg_2 " Confirm removal\n $3.$lgt\n" dialog-question yes no
+		rt=$(echo $?)
+		[ $rt -eq 0 ] && rm "$dir/$stts/$3.$lgt" & exit 1
+			
+	elif [ $ret -eq 0 ]; then
+		
+		[ -z "$name" ] && name="d_$(($RANDOM%10))"
+		[ -z "$lang" ] && lang="$lgt"
+		printf "${code}" > "$dir/$stts/$name.$lang" & exit 1
+		
+	elif [ $ret -eq 4 ]; then
+	
+		printf "${code}" > "/tmp/test.sh"
+		chmod +x "/tmp/test.sh"
+		cd /tmp; sh "/tmp/test.sh" yes
+		[ -f "/tmp/yes.mp3" ]] && play "/tmp/yes.mp3" || msg 'Fail\n' info
+		rm -f "/tmp/yes.mp3" "/tmp/test.sh"
+		$DS_a/Dics/cnfg.sh dlck TRUE "$name" "$name"
+		r=$(echo $?)
+		[ $r -eq 0 ] && echo "${code}" > "$dir/$stts/$name.$lang" & exit 1
+		
+	else
+		exit 1
+	fi
+
+	
 elif [ -z "$1" ]; then
 
-	source $DS/ifs/trans/$lgs/others.conf
 	if [ ! -d "$DC_a/dict/" ]; then
-		mkdir "$DC_a/dict/"
-		mkdir "$DC_a/dict/enables"
-		mkdir "$DC_a/dict/disables"
-		cp -f $DS/addons/Dics/disables/* $DC_a/dict/disables/
+		mkdir -p "$enables"
+		mkdir -p "$disables"
+		cp -f $DS/addons/Dics/disables/* "$disables/"
 	fi
 	
 	if [ "$2" = f ]; then
 		tex="<small>$3\n</small>"
 		align="--text-align=left"
-		img="--image=info"
 	else
 		tex=" "
-		#tex="<a href='http://www.dicts.com'><sup>$more_dict</sup></a>  "
 		align="--text-align=right"
 	fi
 	
-	rm -f "$dir/.listdicts"
-	cd "$dir/enables"
-	find . -not -name "*.$lgt" -and -not -name "*.auto" -type f \
-	-exec mv --target-directory="$dir/disables" {} +
-	ls * > .dicts
-	n=1
-	while [ $n -le $(cat ".dicts" | wc -l) ]; do
-		dict=$(sed -n "$n"p ".dicts")
-		echo 'TRUE' >> "$dir/.listdicts"
-		echo "$dict" | sed 's/\./\n/g' >> "$dir/.listdicts"
-		let n++
-	done
-	cd "$dir/disables"
-	ls * > .dicts
-	n=1
-	while [ $n -le $(cat ".dicts" | wc -l) ]; do
-		dict=$(sed -n "$n"p ".dicts")
-		if [ $(echo "$dict" | grep $lgt) ] \
-		|| [ $(echo "$dict" | grep auto) ]; then
-			echo 'FALSE' >> "$dir/.listdicts"
-			echo "$dict" | sed 's/\./\n/g' >> "$dir/.listdicts"
-		fi
-		let n++
-	done
-	
 	D=$(mktemp $DT/D.XXXX)
-	cat "$dir/.listdicts" | $yad --list --title="Idiomind - $dictionaries" \
-	--center --on-top --expand-column=2 $img --text="$tex" $align \
-	--width=420 --height=300 --skip-taskbar --separator=" " --image-on-top \
+	dict_list | $yad --list --title="Idiomind - $dictionaries" \
+	--center --on-top --expand-column=2 --text="$tex" $align \
+	--width=420 --height=300 --skip-taskbar --separator=" " \
 	--borders=15 --button="$add":2 --print-all --button=Ok:0 \
 	--column=" ":CHK --column="$availables":TEXT \
 	--column="$languages":TEXT --window-icon=idiomind \
@@ -91,96 +153,47 @@ elif [ -z "$1" ]; then
 	ret=$?
 	
 		if [ "$ret" -eq 2 ]; then
-			cd ~/
-			add=$($yad --center --on-top --title=" " --borders=5 \
-				--file-filter="*.en *.es *.de *.pt *.it *.fr *.ja" \
-				--window-icon=idiomind --skip-taskbar --title=" " \
-				--file --width=600 --height=500)
-				
-			if [ -z "$add" ];then
-				exit 1
-			else
-				if [ $(sed -n 2p "$add" | wc -w) = 3 ]; then
-					nm=$(sed -n 2p "$add" | sed 's/\.//g' | awk '{print ($2)}')
-					lg=$(sed -n 2p "$add" | sed 's/\.//g' | awk '{print ($3)}')
-					cp -f "$add" "$dir/disables/$nm.$lg"
-				else
-					yad --name=idiomind --center --title=" " \
-					--text=" <b>$install_err </b>\\n" --image=info \
-					--image-on-top --fixed --sticky --title="Info" --on-top \
-					--width=420 --height=150 --borders=3 --button="Ok:0" \
-					--skip-taskbar --window-icon=idiomind
-				fi
-				$DS/addons/Dics/cnfg.sh 1 1 cnf & exit
-			fi
+		
+				$DS_a/Dics/cnfg.sh edit_dlg
 		
 		elif [ "$ret" -eq 0 ]; then
-			lines=$(cat "$D" | wc -l)
+		
 			n=1
-			while [ $n -le "$lines" ]; do
+			while [ $n -le "$(cat "$D" | wc -l)" ]; do
+			
 				dict=$(sed -n "$n"p "$D")
-				mvd=$(echo "$dict" | awk '{print ($2)}')
+				d=$(echo "$dict" | awk '{print ($2)}')
+				
 				if echo "$dict" | grep FALSE; then
-					if [ ! -f "$dir/disables/$mvd.$lgt" ]; then
-						mv "$dir/enables/$mvd.$lgt" "$dir/disables/$mvd.$lgt"
+					if [ ! -f "$disables/$d.$lgt" ]; then
+						[ -f "$enables/$d.$lgt" ] \
+						&& mv -f "$enables/$d.$lgt" "$disables/$d.$lgt"
 					fi
-					if [ ! -f "$dir/disables/$mvd.auto" ]; then
-						mv "$dir/enables/$mvd.auto" "$dir/disables/$mvd.auto"
+					if [ ! -f "$disables/$d.auto" ]; then
+						[ -f "$enables/$d.auto" ] \
+						&& mv -f "$enables/$d.auto" "$disables/$d.auto"
 					fi
 				fi
 				if echo "$dict" | grep TRUE; then
-					if [ ! -f "$dir/enables/$mvd.$lgt" ]; then
-						mv "$dir/disables/$mvd.$lgt" "$dir/enables/$mvd.$lgt"
+					if [ ! -f "$enables/$d.$lgt" ]; then
+						[ -f "$disables/$d.$lgt" ] \
+						&& mv -f "$disables/$d.$lgt" "$enables/$d.$lgt"
 					fi
-					if [ ! -f "$dir/enables/$mvd.auto" ]; then
-						mv "$dir/disables/$mvd.auto" "$dir/enables/$mvd.auto"
+					if [ ! -f "$enables/$d.auto" ]; then
+						[ -f "$disables/$d.auto" ] \
+						&& mv -f "$disables/$d.auto" "$enables/$d.auto"
 					fi
 				fi
 				let n++
 			done
 			
+			cd "$enables/"
+			#[ -f *.$lgt ] && ls -d -1 $PWD/*.$lgt > "$dir/.dicts"
+			#[ -f *.auto ] && ls -d -1 $PWD/*.auto >> "$dir/.dicts"
+			ls -d -1 $PWD/*.$lgt > "$dir/.dicts"
+			ls -d -1 $PWD/*.auto >> "$dir/.dicts"
+		
 		fi
 		
-		cd "$dir/enables"
-		ls -d -1 $PWD/*.$lgt > "$dir/.dicts"
-		ls -d -1 $PWD/*.auto >> "$dir/.dicts"
 		rm -f "$D" & exit 1
-
-
-elif [ "$3" = swrd ]; then
-
-	cd $DT_r
-	if [ -f "$DM_tl/.share/$Wrd.mp3" ]; then
-			cp -f "$DM_tl/.share/$Wrd.mp3" "$Wrd.mp3" && exit
-	else
-		n=1
-		while [ $n -le $(cat "$dir/.dicts" | wc -l) ]; do
-			sh "$(sed -n "$n"p $dir/.dicts)" "$wrd"
-			if [ -f "$wrd.mp3" ]; then
-				mv "$wrd.mp3" "$Wrd.mp3"
-				break && exit
-			fi
-			let n++
-		done
-		exit
-	fi
-
-else
-
-	cd $DT_r
-	if [ -f "$DM_tl/.share/$Wrd.mp3" ]; then
-		echo "$Wrd.mp3" >> "$DC_tlt/cfg.5" && exit
-	else
-		n=1
-		while [ $n -le $(cat $dir/.dicts | wc -l) ]; do
-			sh "$(sed -n "$n"p $dir/.dicts)" "$wrd"
-			if [ -f "$wrd.mp3" ]; then
-				mv "$wrd.mp3" "$DM_tl/.share/$Wrd.mp3"
-				echo "$Wrd.mp3" >> "$DC_tlt/cfg.5"
-				break && exit
-			fi
-			let n++
-		done
-		exit
-	fi
 fi

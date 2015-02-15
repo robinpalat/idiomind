@@ -48,8 +48,7 @@ elif [[ -z "$1" ]]; then
 	fi
 	indm=$(cat "$DC_tlt/cfg.6")
 	cd "$DC_tlt/practice"
-	indp=$(cat fin3 mcin3 \
-	lwin3 | sed '/^$/d' | sort | uniq)
+	indp=$(cat w6 | sed '/^$/d' | sort | uniq)
 	indf=$(cat $DC_tl/Feeds/cfg.0)
 	nnews=$(cat $DC_tl/Feeds/cfg.1 | head -n 8)
 	u=$(echo "$(whoami)")
@@ -71,7 +70,7 @@ elif [[ -z "$1" ]]; then
 	[[ -z "$indm" ]] && img3=$DS/images/addi.png || img3=$DS/images/add.png
 	[[ -z "$indp" ]] && img4=$DS/images/addi.png || img4=$DS/images/add.png
 	[[ -z "$indf" ]] && img5=$DS/images/addi.png || img5=$DS/images/add.png
-	img6=$DS/images/set-26.png
+	img6=$DS/images/set.png
 
 	if [[ ! -f $DC_s/cfg.5 ]]; then
 	echo 'FALSE
@@ -98,9 +97,9 @@ FALSE' > $DC_s/cfg.5; fi
 	else
 		btn="--button=gtk-media-stop:2"
 	fi
-	$yad --list --on-top \
+	yad --list --on-top \
 	--expand-column=3 --print-all --center \
-	--width=280 --name=idiomind --class=idmnd \
+	--width=290 --name=idiomind --class=idmnd \
 	--height=240 --title="$tpc" --skip-taskbar \
 	--window-icon=idiomind --no-headers \
 	--button=Time:"$DS/play.sh 'time'" \
@@ -203,8 +202,8 @@ FALSE' > $DC_s/cfg.5; fi
 		$DS/stop.sh play & exit 1
 	fi
 
-	echo "$(date '+%Y %m %d %l %M') -plyrt $tpc -plyrt" >> \
-	$DC/addons/stats/.log &
+	printf "plyrt.$tpc.plyrt\n" >> \
+	$DC_a/stats/.log &
 	sleep 1
 	$DS/bcle.sh & exit
 fi

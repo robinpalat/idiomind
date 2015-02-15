@@ -3,6 +3,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/rss.conf
+source $DS/ifs/mods/cmns.sh
 
 itdl="$2"
 kpt="$DM_tl/Feeds/kept"
@@ -12,14 +13,10 @@ if [[ $1 = dlti ]]; then
 	touch $DT/ps_lk
 	
 	if [ -f "$kpt/words/$itdl.mp3" ]; then
-		$yad --title="$confirm" --width=420 \
-		--height=150 --on-top --center \
-		--image=dialog-question --skip-taskbar \
-		--text=" $delete_word" \
-		--window-icon=idiomind --borders=5 \
-		--button="$yes":0 --button="$no":1
+	
+		msg_2 " $delete_word\n\n" dialog-question "$yes" "$no" "$confirm"
+		ret=$(echo "$?")
 
-		ret=$?
 			if [[ $ret -eq 0 ]]; then
 				rm "$kpt/words/$itdl.mp3"
 				cd "$drtc"
@@ -31,19 +28,17 @@ if [[ $1 = dlti ]]; then
 				rm -f $DT/ps_lk
 				notify-send -i idiomind "$itdl" "$deleted"  -t 1500
 			fi
+			
 			if [[ $ret -eq 1 ]]; then
 				rm -f $DT/ps_lk
 				exit
 			fi
 	
 	elif [ -f "$kpt/$itdl.mp3" ]; then
-		$yad --title="$confirm" --width=420 \
-		--height=150 --on-top --center \
-		--image=dialog-question --skip-taskbar \
-		--text=" $delete_sentence" \
-		--window-icon=idiomind --borders=5 \
-		--button="$yes":0 --button="$no":1
-		ret=$?
+	
+		msg_2 " $delete_sentence\n\n" dialog-question "$yes" "$no" "$confirm"
+		ret=$(echo "$?")
+		
 			if [[ $ret -eq 0 ]]; then
 				rm "$kpt/$itdl.mp3"
 				rm "$kpt/$itdl.lnk"
@@ -56,18 +51,16 @@ if [[ $1 = dlti ]]; then
 				rm -f $DT/ps_lk
 				
 			fi
+			
 			if [[ $ret -eq 1 ]]; then
 				rm -f $DT/ps_lk
 				exit
 			fi
 	else
-		yad --title="$confirm" --width=420 \
-		--height=150 --on-top --center \
-		--image=dialog-question --skip-taskbar \
-		--text=" $delete_item" \
-		--window-icon=idiomind --borders=5 \
-		--button="$yes":0 --button="$no":1
-		ret=$?
+	
+		msg_2 " $delete_item\n\n" dialog-question "$yes" "$no" "$confirm"
+		ret=$(echo "$?")
+		
 			if [[ $ret -eq 0 ]]; then
 				rm "$kpt/$itdl.mp3"
 				rm "$kpt/$itdl.lnk"
@@ -81,6 +74,7 @@ if [[ $1 = dlti ]]; then
 				rm ./*.tmp
 				rm -f $DT/ps_lk
 			fi
+			
 			if [[ $ret -eq 1 ]]; then
 				rm -f $DT/ps_lk
 				exit
@@ -90,11 +84,9 @@ rm -f $DT/ps_lk
 
 elif [[ $1 = dlns ]]; then
 	
-	$yad --width=420 --height=150 --title="$confirm" \
-	--on-top --image=dialog-question --center --skip-taskbar \
-	--window-icon=idiomind --text=" $delete_all" \
-	--borders=5 --button="$yes":0 --button="$no":1
-		ret=$?
+	msg_2 " $delete_all" dialog-question "$yes" "$no" "$confirm"
+	ret=$(echo "$?")
+
 		if [[ $ret -eq 0 ]]; then
 			rm -r $DM_tl/Feeds/conten/*
 			rm $DC_tl/Feeds/.updt.lst
@@ -103,14 +95,12 @@ elif [[ $1 = dlns ]]; then
 		else
 			exit 0
 		fi
+		
 elif [[ $1 = dlkt ]]; then
 
-	$yad --image=dialog-question \
-	--window-icon=idiomind --width=400 --height=140  \
-	--title="$confirm" --on-top --center --skip-taskbar \
-	--borders=5 --text=" $delete_saved2" --name=idiomind \
-	--button="$yes":0 --button="$no":1
-	ret=$?
+		msg_2 " $delete_saved2\n\n" dialog-question "$yes" "$no" "$confirm"
+		ret=$(echo "$?")
+
 	if [[ $ret -eq 0 ]]; then
 		rm -r "$drtc"/cfg.3 "$drtc"/cfg.4 "$drtc"/cfg.0
 		touch "$drtc"/cfg.3 "$drtc"/cfg.4 "$drtc"/cfg.0

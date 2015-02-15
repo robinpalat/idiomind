@@ -8,7 +8,7 @@ function check_grammar_1() {
 	cd $1; touch A.$r B.$r g.$r; n=1
 	while [ $n -le $(echo "$g" | wc -l) ]; do
 		grmrk=$(echo "$g" | sed -n "$n"p)
-		chck=$(echo "$g" | sed -n "$n"p | awk '{print tolower($0)}' \
+		chck=$(echo "$g,," | sed -n "$n"p \
 		| sed 's/,//g' | sed 's/\.//g')
 		if echo "$pronouns" | grep -Fxq $chck; then
 			echo "<span color='#35559C'>$grmrk</span>" >> g.$2
@@ -42,8 +42,8 @@ function check_grammar_2() {
 	elif echo "$adverbs" | grep -Fxq "${1,,}"; then echo 'adv. ';
 	elif echo "$nouns_adjetives" | grep -Fxq "${1,,}"; then echo 'Noun, Adj. ';
 	elif echo "$nouns_verbs" | grep -Fxq "${1,,}"; then echo 'Noun, Verb ';
-	elif echo "$verbs" | grep -Fxq "${1,,}"; then echo 'verb. ';
-	elif echo "$adjetives" | grep -Fxq "${1,,}"; then echo 'adj. '; fi
+	elif echo "$adjetives" | grep -Fxq "${1,,}"; then echo 'adj. ';
+	elif echo "$verbs" | grep -Fxq "${1,,}"; then echo 'verb. '; fi
 }
 
 
@@ -155,7 +155,7 @@ function voice() {
 	if [ -n "$vs" ]; then
 	
 		if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
-			lg=$(echo $lgtl | awk '{print tolower($0)}')
+			lg="${lgtl,,}"
 
 			if ([ $lg = "english" ] \
 			|| [ $lg = "spanish" ] \
@@ -164,6 +164,7 @@ function voice() {
 			sox ./s.wav "$3"
 			else
 				msg "$festival_err $lgtl" error
+				[[ -d $DT_r ]] && rm -fr $DT_r
 				exit 1
 			fi
 		else
@@ -173,9 +174,10 @@ function voice() {
 		fi
 	else
 	
-		lg=$(echo $lgtl | awk '{print tolower($0)}')
+		lg="${lgtl,,}"
 		[[ $lg = chinese ]] && lg=Mandarin
-		[[ $lg = japanese ]] && (msg "$espeak_err $lgtl" error)
+		[[ $lg = japanese ]] && (msg "$espeak_err $lgtl" error \
+		&& exit 1 && [[ -d $DT_r ]] && rm -fr $DT_r)
 		espeak "$1" -v $lg -k 1 -p 40 -a 80 -s 110 -w ./s.wav
 		sox ./s.wav "$3"
 	fi
@@ -229,6 +231,7 @@ function list_words() {
 	sed -i 's/\. /\n/g' $bw
 	sed -i 's/\. /\n/g' $aw
 	cd $1; touch A.$2 B.$2 g.$2; n=1
+	
 	if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
 		while [ $n -le "$(cat $aw | wc -l)" ]; do
 			s=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
@@ -249,42 +252,29 @@ function list_words() {
 }
 
 
-function fetch_audio() {
+#ARGS 2 and 2 words list to process, 3 dir work, 4 dir target
+function fetch_audio() { 
 	
-	n=1
-	if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
-		while [ $n -le $(cat $2 | wc -l) ]; do
-			$dct $(sed -n "$n"p "$2") $DT_r
-			let n++
-		done
-	else
-		while [ $n -le $(cat $1 | wc -l) ]; do
-			$dct $(sed -n "$n"p "$1") $DT_r
-			let n++
-		done
-	fi
-}
-
-
-function fetch_audio_2() {
+	if ([ $lgt = ja ] || [ $lgt = "zh-cn" ] || [ $lgt = ru ]); then
+	words_list="$2"; else words_list="$1"; fi
 	
-	n=1
-	if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
-		while [ $n -le $(cat $2 | wc -l) ]; do
-			fl=$(sed -n "$n"p "$2")
-			$dct "$fl" $DT_r swrd
-			mv "${fl^}.mp3" "./$nme/${fl^}.mp3"
-			let n++
-		done
-	else
-		while [ $n -le $(cat $1 | wc -l) ]; do
-			fl=$(sed -n "$n"p "$1")
-			$dct "$fl" $DT_r swrd
-			mv "${fl^}.mp3" "./$nme/${fl^}.mp3"
-			let n++
-		done
-	fi
+	while read word; do
+		
+		if [ ! -f "$DM_tls/${word,,}.mp3" ]; then
+		
+			dictt "${word,,}" $3
+			
+			if [ -f "$3/${word,,}.mp3" ]; then
+					mv -f "$3/${word,,}.mp3" "$4/${word,,}.mp3"
+			else
+				voice "$word" "$4/${word,,}.mp3"; fi
+			
+			[ "$4" = "$DM_tl/.share" ] \
+			&& echo "${word,,}.mp3" >> "$DC_tlt/cfg.5"
 
+		fi
+		
+	done < "$words_list"
 }
 
 
@@ -294,10 +284,8 @@ function list_words_2() {
 			eyeD3 "$1" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' \
 			| tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > idlst
 	    else
-			list=$(eyeD3 "$1" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
-			echo "$list" | tr -c "[:alnum:]" '\n' | sed '/^$/d' | sed '/"("/d' \
-			| sed '/")"/d' | sed '/":"/d' | sort -u \
-			| head -n40 > idlst
+			eyeD3 "$1" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' \
+			| tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > idlst
 	    fi
 }
 
@@ -305,7 +293,7 @@ function list_words_2() {
 function list_words_3() {
 
 	if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
-		cat "$1" | tr ' ' '\n' | sed -n 1~2p | sed '/^$/d' > lst
+		echo "$2" | tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > lst
 	else
 		cat "$1" | tr -c "[:alnum:]" '\n' | sed '/^$/d' | sed '/"("/d' \
 		| sed '/")"/d' | sed '/":"/d' | sort -u \

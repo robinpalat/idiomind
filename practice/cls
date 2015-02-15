@@ -10,9 +10,8 @@ DSP=$DS/practice
 [[ -n "$(ps -A | pgrep -f "$DSP/prct.sh")" ]] && killall "$DSP/prct.sh" &
 [[ -n "$(ps -A | pgrep -f "$DSP/strt.sh")" ]] && killall "$DSP/strt.sh" &
 [[ -n "$(ps -A | pgrep -f play)" ]] && killall play &
-w9="$DC_a/practice/w9"
-w6="$DC_a/practice/w6"
 cd "$DC_tlt/practice"
+
 easy=$2
 ling=$3
 hard=$4
@@ -48,7 +47,6 @@ if [ "$1" = f ]; then
 
 	cd "$DC_tlt/practice"
 	
-	[[ -f ok.f ]] && cat ok.f >> "$w9"
 	[[ -f l_f ]] && echo $(($(cat l_f)+$easy)) > l_f || echo $easy > l_f
 	s=$(cat l_f)
 	v=$((100*$s/$all))
@@ -102,7 +100,6 @@ elif [ "$1" = m ]; then
 
 	cd "$DC_tlt/practice"
 	
-	[[ -f ok.m ]] && cat ok.m >> "$w9"
 	[[ -f l_m ]] && echo $(($(cat l_m)+$easy)) > l_m || echo $easy > l_m
 	s=$(cat l_m)
 	v=$((100*$s/$all))
@@ -156,7 +153,6 @@ elif [ "$1" = w ]; then
 
 	cd "$DC_tlt/practice"
 	
-	[[ -f ok.w ]] && cat ok.w >> "$w9"
 	[[ -f l_w ]] && echo $(($(cat l_w)+$easy)) > l_w || echo $easy > l_w
 	s=$(cat l_w)
 	v=$((100*$s/$all))
@@ -210,7 +206,6 @@ elif [ "$1" = s ]; then
 
 	cd "$DC_tlt/practice"
 
-	[[ -f ok.s ]] && cat ok.s >> "$w9"
 	[[ -f l_s ]] && echo $(($(cat l_s)+$easy)) > l_s || echo $easy > l_s
 	s=$(cat l_s)
 	v=$((100*$s/$all))

@@ -32,10 +32,6 @@ function set_lang() {
 		mkdir "$DM_t"/$1
 		mkdir "$DM_t"/$1/.share
 		mkdir "$DC/topics"/$1
-		mkdir "$DC_a/Learning with news"/$1
-		mkdir "$DC_a/Learning with news"/$1/subscripts
-		cp -f "$DS/addons/Learning with news/examples/$1" \
-		"$DC_a/Learning with news/$1/subscripts/Example"
 	fi
 	echo "$2" > $DC_s/cfg.10
 	echo "$1" >> $DC_s/cfg.10
@@ -48,7 +44,7 @@ function set_lang() {
 	else
 		rm $DC_s/cfg.8 && touch $DC_s/cfg.8
 	fi
-	(sleep 2 && $DS/addons/Dics/cnfg.sh "" f "$select_dicts") &
+
 	$DS/mngr.sh mkmn
 }
 
@@ -145,39 +141,39 @@ Encoding=UTF-8' >> $config_dir/idiomind.desktop
 		fi
 		if echo $ln | grep "Spanish" && [ Spanish != $lgtl ] ; then
 			confirm "$info2" dialog-question
-			[[ $? -eq 0 ]] && set_lang English es
+			[[ $? -eq 0 ]] && set_lang Spanish es
 		fi
 		if echo $ln | grep "Italian" && [ Italian != $lgtl ] ; then
 			confirm "$info2" dialog-question
-			[[ $? -eq 0 ]] && set_lang English it
+			[[ $? -eq 0 ]] && set_lang Italian it
 		fi
 		if echo $ln | grep "Portuguese" && [ Portuguese != $lgtl ] ; then
 			confirm "$info2" dialog-question
-			[[ $? -eq 0 ]] && set_lang English pt
+			[[ $? -eq 0 ]] && set_lang Portuguese pt
 		fi
 		if echo $ln | grep "German" && [ German != $lgtl ] ; then
 			confirm "$info2" dialog-question
-			[[ $? -eq 0 ]] && set_lang English de
+			[[ $? -eq 0 ]] && set_lang German de
 		fi
 		if echo $ln | grep "Japanese" && [ Japanese != $lgtl ] ; then
 			confirm "$info2" dialog-question
-			[[ $? -eq 0 ]] && set_lang English ja
+			[[ $? -eq 0 ]] && set_lang Japanese ja
 		fi
 		if echo $ln | grep "French" && [ French != $lgtl ] ; then
 			confirm "$info2" dialog-question
-			[[ $? -eq 0 ]] && set_lang English fr
+			[[ $? -eq 0 ]] && set_lang French fr
 		fi
 		if echo $ln | grep "Vietnamese" && [ Vietnamese != $lgtl ] ; then
 			confirm "$info2" dialog-question
-			[[ $? -eq 0 ]] && set_lang English vi
+			[[ $? -eq 0 ]] && set_lang Vietnamese vi
 		fi
 		if echo $ln | grep "Chinese" && [ Chinese != $lgtl ] ; then
 			confirm "$info2" dialog-question
-			[[ $? -eq 0 ]] && set_lang English zh-cn
+			[[ $? -eq 0 ]] && set_lang Chinese zh-cn
 		fi
 		if echo $ln | grep "Russian" && [ Russian != $lgtl ] ; then
 			confirm "$info2" dialog-question
-			[[ $? -eq 0 ]] && set_lang English ru
+			[[ $? -eq 0 ]] && set_lang Russian ru
 		fi
 
 		if echo $ls | grep "English" && [ English != $lgsl ] ; then

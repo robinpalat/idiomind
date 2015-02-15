@@ -89,40 +89,41 @@ function fonts() {
 	#fi
 	
 	if [ $(echo "$1" | wc -c) -le 8 ]; then
-	a="<big><big><big><big><big>$1</big></big></big></big></big>"
+	a="<big><big><big><big>$1</big></big></big></big>"
 	elif [ $(echo "$1" | wc -c) -le 16 ]; then
 	a="<big><big><big>$1</big></big></big>"
 	elif [ $(echo "$1" | wc -c) -gt 16 ]; then
 	a="$1"
 	fi
 	if [ $(echo "$lst" | wc -c) -le 8 ]; then
-	c="<big><big><big><big><b>$lst</b></big></big></big></big>"
+	c="<big><big><big><b>$lst</b></big></big></big>"
 	elif [ $(echo "$lst" | wc -c) -le 16 ]; then
 	c="<big><big><b>$lst</b></big></big>"
 	elif [ $(echo "$lst" | wc -c) -gt 16 ]; then
 	c="<b>$lst</b>"
 	fi
-	if [[ -f "$drtt/images/$1.jpg" ]]; then
-	img="$drtt/images/$1.jpg"
-	trgts="<big>$c</big>"
+	if [[ -f "$drtt/images/$fname.jpg" ]]; then
+	img="$drtt/images/$fname.jpg"
+	trgts="<b>$c</b>"
 	tr="<b>$a</b>"
 	else
 	img="/usr/share/idiomind/images/fc.png"
-	trgts="<big><big>$c</big></big>"
+	trgts="<big><big><big>$c</big></big></big>"
 	tr="<big><big><big><b>$a</b></big></big></big>"
 	fi
 	}
 
 function cuestion() {
 	
-	play="play '$drtt/$1.mp3'"
-	play "$drtt/$1".mp3 &
+	fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
+	play="play '$drtt/$fname.mp3'"
+	play "$drtt/$fname".mp3 &
 	yad --form --align=center --undecorated \
 	--center --on-top --image-on-top --image="$img" \
-	--skip-taskbar --title=" " --borders=0 \
-	--buttons-layout=edge \
+	--skip-taskbar --title=" " --borders=3 \
+	--buttons-layout=spread \
 	--field="<span color='#808080'>$trgts</span>":lbl \
-	--width=365 --height=280 \
+	--width=371 --height=280 \
 	--button="gtk-media-stop":1 \
 	--button="$listen":"$play" \
 	--button="$answer2 >":0
@@ -132,13 +133,12 @@ function answer() {
 	
 	yad --form --align=center --undecorated \
 	--center --on-top --image-on-top --image="$img" \
-	--skip-taskbar --title=" " --borders=0 \
+	--skip-taskbar --title=" " --borders=3 \
 	--buttons-layout=spread \
-	--field="$tr":lbl --width=365 --height=280 \
+	--field="$tr":lbl --width=371 --height=280 \
 	--button="$listen":"$play" \
-	--button="$no_know":3 \
-	--button="$ok_know":2
-	
+	--button="<b>$no_know</b>":3 \
+	--button="<b>$ok_know</b>":2
 	}
 
 n=1
@@ -154,11 +154,11 @@ while [ $n -le $(cat ./lwin1 | wc -l) ]; do
 		ans=$(echo "$?")
 
 		if [[ $ans = 2 ]]; then
-			echo "$trgt" >> ok.w
+			echo "$trgt" | tee -a ok.w $w9
 			easy=$(($easy+1))
 
 		elif [[ $ans = 3 ]]; then
-			echo "$trgt" >> lwin2
+			echo "$trgt" | tee -a lwin2 w6
 			hard=$(($hard+1))
 		fi
 
@@ -193,7 +193,7 @@ else
 				ling=$(($ling+1))
 				
 			elif [[ $ans = 3 ]]; then
-				echo "$trgt" >> lwin3
+				echo "$trgt" | tee -a lwin3 w6
 			fi
 			
 		elif [[ $ret = 1 ]]; then

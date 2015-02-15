@@ -36,7 +36,7 @@ if [[ -z "$1" ]]; then
 		st2=$(sed -n 1p "$DIR1/.cnf")
 	fi
 
-	scrp=$(cd "$DCF/$lgtl/rss"; ls * | egrep -v "$FEED" \
+	scrp=$(cd "$DCF/$lgtl/rss/"; ls * | egrep -v "$FEED" \
 	| tr "\\n" '!' | sed 's/!\+$//g')
 
 	CNFG=$($yad --on-top --form --center \
@@ -59,23 +59,23 @@ if [[ -z "$1" ]]; then
 
 		elif [[ $ret -eq 2 ]]; then
 			if echo "$st1" | grep -o "Sample"; then
-				$yad --title="Info" \
+				yad --title="Info" \
 				--center --on-top --window-icon=idiomind \
 				--width=360 --height=120 --image=info --skip-taskbar \
-				--text="  Sample subscription\\n  $delete_no." \
+				--text=" $delete_no.\n\n" \
 				--borders=5 --button=OK:1
 				"$DSF/cnfg.sh" & exit
 			elif echo "$st1" | grep -o "Sample"; then
-				$yad --title="Info" --center --on-top --window-icon=idiomind \
+				yad --title="Info" --center --on-top --window-icon=idiomind \
 				--width=360 --height=120 --image=info --skip-taskbar \
-				--text="  Sample subscription\\n  $delete_no" \
+				--text=" $delete_no \n\n" \
 				--borders=5 --button=OK:1
 				"$DSF/cnfg.sh" & exit
 			else
-				$yad --center \
+				yad --center \
 				--title="$confirm" --window-icon=idiomind \
 				--on-top --width=360 --height=120 --image=dialog-question \
-				--skip-taskbar --text="  $delete_subscription \n\n" \
+				--skip-taskbar --text=" $delete_subscription \n\n" \
 				--borders=5 --button="$yes":0 --button="$no":1
 					ret=$?
 					
@@ -169,7 +169,7 @@ fi
 
 	echo "$dd" | yad --list --on-top \
 	--expand-column=2 --center \
-	--width=280 --name=idiomind --class=idiomind \
+	--width=290 --name=idiomind --class=idiomind \
 	--height=240 --title="Edit" --skip-taskbar \
 	--window-icon=idiomind --no-headers \
 	--buttons-layout=end --borders=0 --button=Ok:0 \

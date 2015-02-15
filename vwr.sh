@@ -10,6 +10,7 @@ re='^[0-9]+$'
 v="$1"
 now="$2"
 nuw="$3"
+listen="▷"
 
 [[ "$v" = v1 ]] && ind="$DC_tlt/cfg.1"
 [[ "$v" = v2 ]] && ind="$DC_tlt/cfg.2"
@@ -21,19 +22,20 @@ if ! [[ $nuw =~ $re ]]; then
 	nll=" "
 fi
 
-nme="$(sed -n "$nuw"p "$ind" | cut -c 1-100 \
-| sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
+item="$(sed -n "$nuw"p "$ind")"
 
-if [ -z "$nme" ]; then
-	nme="$(sed -n 1p "$ind" | cut -c 1-100 \
-	| sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
+if [ -z "$item" ]; then
+	item="$(sed -n 1p "$ind")"
 	nuw=1
 fi
-[[ "$(echo "$nme" | wc -c)" -le 50 ]] && align=center || align=left
 
-if ( [ -f "$DM_tlt/words/$nme.mp3" ] || [ "$5" = w_fix ] ); then
-	tgs=$(eyeD3 "$DM_tlt/words/$nme.mp3")
-	trgt="$nme"
+fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
+
+[[ "$(echo "$item" | wc -c)" -le 50 ]] && align=center || align=left
+
+if ( [ -f "$DM_tlt/words/$fname.mp3" ] || [ "$5" = w_fix ] ); then
+	tgs=$(eyeD3 "$DM_tlt/words/$fname.mp3")
+	trgt="$item"
 	src=$(echo "$tgs" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
 	exmp=$(echo "$tgs" | grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' | tr '_' '\n')
 	mrk=$(echo "$tgs" | grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)')
@@ -46,7 +48,7 @@ if ( [ -f "$DM_tlt/words/$nme.mp3" ] || [ "$5" = w_fix ] ); then
 	[[ "$(echo "$tgs" | grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)')" = TRUE ]] \
 	&& trgt=$(echo "<span color='#797979'><big><b>*</b></big></span> "$trgt"")
 	
-	[[ "$ap" = TRUE ]] && (killall play & sleep 1 && play "$DM_tlt/words/$nme.mp3") &
+	[[ "$ap" = TRUE ]] && (killall play & sleep 1 && play "$DM_tlt/words/$fname.mp3") &
 	
 	yad --form --window-icon=idiomind --scroll --text-align=$align \
 	--skip-taskbar --center --title=" " --borders=20 \
@@ -55,11 +57,11 @@ if ( [ -f "$DM_tlt/words/$nme.mp3" ] || [ "$5" = w_fix ] ); then
 	--field="":lbl \
 	--field="<i><span color='#7D7D7D'>$exmp1</span></i>:lbl" "$dfnts" "$ntess" \
 	--width="$wth" --height="$eht" --center \
-	--button=gtk-edit:4 --button="Play":"play '$DM_tlt/words/$nme.mp3'" \
+	--button=gtk-edit:4 --button="$listen":"play '$DM_tlt/words/$fname.mp3'" \
 	--button=gtk-go-up:3 --button=gtk-go-down:2 >/dev/null 2>&1
 	
-elif ( [ -f "$DM_tlt/$nme.mp3" ] || [ "$5" = s_fix ] ); then
-	tgs=$(eyeD3 "$DM_tlt/$nme.mp3")
+elif ( [ -f "$DM_tlt/$fname.mp3" ] || [ "$5" = s_fix ] ); then
+	tgs=$(eyeD3 "$DM_tlt/$fname.mp3")
 	[[ $(sed -n 3p $DC_s/cfg.1) = TRUE ]] \
 	&& trgt=$(echo "$tgs" | grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)') \
 	|| trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
@@ -67,9 +69,9 @@ elif ( [ -f "$DM_tlt/$nme.mp3" ] || [ "$5" = s_fix ] ); then
 	lwrd=$(echo "$tgs" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' | tr '_' '\n')
 	[[ "$(echo "$tgs" | grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)')" = TRUE ]] \
 	&& trgt=$(echo "<span color='#797979'><big><b>*</b></big></span> "$trgt"")
-	[[ ! -f "$DM_tlt/$nme.mp3" ]] && exit 1
+	[[ ! -f "$DM_tlt/$fname.mp3" ]] && exit 1
 	
-	[[ "$ap" = TRUE ]] && (killall play & sleep 1 && play "$DM_tlt/$nme.mp3") &
+	[[ "$ap" = TRUE ]] && (killall play & sleep 1 && play "$DM_tlt/$fname.mp3") &
 	
 	echo "$lwrd" | yad --list --print-column=0 --no-headers \
 	--window-icon=idiomind --scroll --text-align=$align \
@@ -78,7 +80,7 @@ elif ( [ -f "$DM_tlt/$nme.mp3" ] || [ "$5" = s_fix ] ); then
 	--text="<big><big>$trgt</big></big>\n\n<i>$src</i>\n\n\n" \
 	--width="$wth" --height="$eht" --center \
 	--column="":TEXT --column="":TEXT \
-	--button=gtk-edit:4 --button="play":"$DS/ifs/tls.sh s '$nme'" \
+	--button=gtk-edit:4 --button="$listen":"$DS/ifs/tls.sh s '$fname'" \
 	--button=gtk-go-up:3 --button=gtk-go-down:2 \
 	--dclick-action="$DS/ifs/tls.sh dclik" >/dev/null 2>&1
 else
@@ -89,7 +91,7 @@ else
 fi
 		ret=$?
 		if [[ $ret -eq 4 ]]; then
-			$DS/mngr.sh edt "$v" "$nme"
+			$DS/mngr.sh edt "$v" "$fname"
 		elif [[ $ret -eq 2 ]]; then
 			ff=$(($nuw + 1))
 			$DS/vwr.sh "$v" "$nll" $ff &
@@ -97,7 +99,7 @@ fi
 			ff=$(($nuw - 1))
 			$DS/vwr.sh "$v" "$nll" $ff &
 		else 
-			echo "vwr.$(cat $DC/addons/stats/.tmp | wc -l).vwr" >> \
+			printf "vwr.$(cat $DC/addons/stats/.tmp | wc -l).vwr\n" >> \
 			$DC/addons/stats/.log
 			#[[ -f $DT/rm ]] && $DS/ifs/tls.sh remove_items
 			rm $DC/addons/stats/.tmp & exit 1

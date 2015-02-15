@@ -81,13 +81,13 @@ function score() {
 
 function fonts() {
 	
-	tgt="$1"
-	file="$drtt/$1.mp3"
+
+	fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
+	file="$drtt/$fname.mp3"
 	wes=$(eyeD3 "$file" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
-	ras=$(sort -Ru word1.idx | egrep -v "$wes" | head -4)
+	ras=$(sort -Ru word1.idx | egrep -v "$wes" | head -5)
 	ess=$(grep "$wes" word1.idx)
-	echo "$ras
-$ess" > word2.tmp
+	printf "$ras\n$ess" > word2.tmp
 	ells=$(sort -Ru word2.tmp | head -6)
 	echo "$ells" > word2.tmp
 	sed '/^$/d' word2.tmp > word2.id
@@ -96,9 +96,7 @@ $ess" > word2.tmp
 	elif [ $(echo "$1" | wc -c) -le 16 ]; then
 	a="<big><big><big><big><big><b>$1</b></big></big></big></big></big>"
 	elif [ $(echo "$1" | wc -c) -gt 16 ]; then
-	a="<big><big><b>$1</b></big></big>"
-	fi
-
+	a="<big><big><b>$1</b></big></big>"; fi
 	}
 
 function mchoise() {
@@ -123,11 +121,11 @@ while [ $n -le $(cat ./mcin1 | wc -l) ]; do
 	if [[ $ret = 0 ]]; then
 	
 		if echo "$dlg" | grep "$wes"; then
-			echo "$trgt" >> ok.m
+			echo "$trgt" | tee -a ok.m $w9
 			easy=$(($easy+1))
 			
 		else
-			echo "$trgt" >> mcin2
+			echo "$trgt" | tee -a mcin2 w6
 			hard=$(($hard+1))
 		fi	
 			
@@ -159,8 +157,8 @@ else
 				ling=$(($ling+1))
 				
 			else
-				echo "$trgt" >> mcin3
-			fi	
+				echo "$trgt" | tee -a mcin3 w6
+			fi
 
 		elif [[ $ret = 1 ]]; then
 			$drts/cls m $easy $ling $hard $all &

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+w="$1"
+c=$(printf $w | wc -c)
+[ $c = 7 ] && r=1
+[ $c = 6 ] && r=01
+[ $c = 5 ] && r=001
+[ $c = 4 ] && r=0001
+[ $c = 3 ] && r=00001
+[ $c = 2 ] && r=000001
+f="$(echo $w | head -c 1)"
+
+wget http://media.merriam-webster.com/soundc11/$f/$w$r.wav
+sox $w$r.wav $w.mp3
+exit

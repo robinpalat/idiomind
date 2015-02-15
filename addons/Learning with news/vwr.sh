@@ -23,27 +23,27 @@ if [[ $1 = V1 ]]; then
 		nll=" "
 	fi
 
-	nme="$(sed -n "$nuw"p "$DC_tl/Feeds/cfg.1" | cut -c 1-100 \
-	| sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
+	item="$(sed -n "$nuw"p "$DC_tl/Feeds/cfg.1")"
 
-	if [ -z "$nme" ]; then
-		nme="$(sed -n 1p "$DC_tl/Feeds/cfg.1" | cut -c 1-100 \
-		| sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
+	if [ -z "$item" ]; then
+		item="$(sed -n 1p "$DC_tl/Feeds/cfg.1")"
 		nuw=1
 	fi
 	
-	echo "$nme" > $DT/item.x
-	n_i="$DS_pf/add.sh n_i '$nme'"
-	tgs=$(eyeD3 "$DM_tl/Feeds/conten/$nme.mp3")
+	fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
+
+	echo "$fname" > $DT/item.x
+	n_i="$DS_pf/add.sh n_i '$fname'"
+	tgs=$(eyeD3 "$DM_tl/Feeds/conten/$fname.mp3")
 	trg=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
 	srce=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
 	lwrd=$(echo "$tgs" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' | tr '_' '\n')
-	lnk=$(cat "$DM_tl/Feeds/conten/$nme.lnk")
+	lnk=$(cat "$DM_tl/Feeds/conten/$fname.lnk")
 	
-	if [[ -f "$DM_tl/Feeds/conten/$nme.mp3" ]]; then
+	if [[ -f "$DM_tl/Feeds/conten/$fname.mp3" ]]; then
 	
 		if [ "$ap" = TRUE ]; then
-			(killall play & sleep 0.3 && play "$DM_tl/Feeds/conten/$nme.mp3") &
+			(killall play & sleep 0.3 && play "$DM_tl/Feeds/conten/$fname.mp3") &
 		fi
 		
 		echo "$lwrd" | awk '{print $0""}' | $yad --list \
@@ -53,10 +53,10 @@ if [[ $1 = V1 ]]; then
 		--width="$wth" --height="$eht" --center --no-headers \
 		--column=$lgtl:TEXT --column=$lgsl:TEXT --selectable-labels \
 		--expand-column=0 --limit=20 \
-		--button="$save":"'$DS_pf/add.sh' n_i '$nme'" \
-		--button=$listen:"'$DS_pf/tls.sh' s '$nme'" \
+		--button="$save":"'$DS_pf/add.sh' n_i '$item'" \
+		--button="$listen":"'$DS_pf/tls.sh' s '$fname'" \
 		--button=gtk-go-up:3 --button=gtk-go-down:2 \
-		--dclick-action="'$DS/addons/Learning with news/tls.sh' dclk '$nme'"
+		--dclick-action="'$DS/addons/Learning with news/tls.sh' dclk '$fname'"
 		
 	else
 		ff=$(($nuw + 1))
@@ -92,24 +92,24 @@ elif [[ $1 = V2 ]]; then
 		| sed -n 's/^\([0-9]*\)[:].*/\1/p')
 		nll=" "
 	fi
-	nme="$(sed -n "$nuw"p "$DC_tl/Feeds/cfg.0" | cut -c 1-100 \
-	| sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
+	item="$(sed -n "$nuw"p "$DC_tl/Feeds/cfg.0")"
 	
-	if [ -z "$nme" ]; then
-		nme="$(sed -n 1p "$DC_tl/Feeds/cfg.0" | cut -c 1-100 \
-		| sed 's/[ \t]*$//' | sed s'/&//'g | sed s'/://'g | sed "s/'/ /g")"
+	if [ -z "$item" ]; then
+		item="$(sed -n 1p "$DC_tl/Feeds/cfg.0")"
 		nuw=1
 	fi
-
-	lnk=$(cat "$DM_tlfk/$nme.lnk")
-	echo "$nme" > $DT/item.x
+	
+	fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
+	
+	lnk=$(cat "$DM_tlfk/$fname.lnk")
+	echo "$fname" > $DT/item.x
 	
 	if [ "$ap" = TRUE ]; then
-		(killall play & sleep 0.3 && play "$DM_tlfk/words/$nme.mp3") &
+		(killall play & sleep 0.3 && play "$DM_tlfk/words/$fname.mp3") &
 	fi
 
-	if [[ -f "$DM_tlfk/words/$nme.mp3" ]]; then
-		tgs=$(eyeD3 "$DM_tlfk/words/$nme.mp3")
+	if [[ -f "$DM_tlfk/words/$fname.mp3" ]]; then
+		tgs=$(eyeD3 "$DM_tlfk/words/$fname.mp3")
 		trg=$(echo "$tgs" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
 		srce=$(echo "$tgs" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
 		lswd=$(echo "$tgs" | grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' | tr '_' '\n')
@@ -126,14 +126,14 @@ elif [[ $1 = V2 ]]; then
 		--field="<i><span color='#7D7D7D'>$exmp</span></i>\\n:lbl" \
 		--width="$wth" --height="$eht" --center \
 		--button="$delete":"'$DS_pf/mngr.sh' dlti '$nme'" \
-		--button="$listen":"play '$DM_tlfk/words/$nme.mp3'" \
+		--button="$listen":"play '$DM_tlfk/words/$fname.mp3'" \
 		--button=gtk-go-up:3 --button=gtk-go-down:2
 
-	elif [[ -f "$DM_tlfk/$nme.mp3" ]]; then
+	elif [[ -f "$DM_tlfk/$fname.mp3" ]]; then
 		if [ "$ap" = TRUE ]; then
-			(killall play & sleep 0.3 && play "$DM_tlfk/$nme.mp3") &
+			(killall play & sleep 0.3 && play "$DM_tlfk/$fname.mp3") &
 		fi
-		tgs=$(eyeD3 "$DM_tlfk/$nme.mp3")
+		tgs=$(eyeD3 "$DM_tlfk/$fname.mp3")
 		trg=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
 		srce=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
 		lwrd=$(echo "$tgs" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' | tr '_' '\n')
@@ -146,8 +146,8 @@ elif [[ $1 = V2 ]]; then
 		--width="$wth" --height="$eht" --center \
 		--column=$lgtl:TEXT --column=$lgsl:TEXT \
 		--expand-column=0 --limit=20 --selectable-labels \
-		--button="$delete":"'$DS_pf/mngr.sh' dlti '$nme'" \
-		--button=$listen:"'$DS_pf/tls.sh' s '$nme'" \
+		--button="$delete":"'$DS_pf/mngr.sh' dlti '$item'" \
+		--button="$listen":"'$DS_pf/tls.sh' s '$fname'" \
 		--button=gtk-go-up:3 --button=gtk-go-down:2 \
 		--dclick-action="'$DS/addons/Learning with news/tls.sh' dclk '.audio'"
 		

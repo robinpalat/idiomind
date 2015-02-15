@@ -7,6 +7,7 @@ drtt="$DM_tlt/words"
 drts="$DS/practice/"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
+w9=$DC_s/cfg.22
 all=$(cat fin | wc -l)
 easy=0
 hard=0
@@ -18,7 +19,7 @@ ling=0
 function score() {
 
 	if [ "$(($(cat l_f)+$1))" -ge "$all" ]; then
-	
+		
 		rm fin fin1 fin2 fin3 ok.f
 		echo "$(date "+%a %d %B")" > look_f
 		echo 21 > .iconf
@@ -83,23 +84,25 @@ function score() {
 
 function fonts() {
 	
-	s=$(eyeD3 "$drtt/$1.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
+	fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
+	s=$(eyeD3 "$drtt/$fname.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
+	
 	if [ $(echo "$1" | wc -c) -le 8 ]; then
 	c="<big><big><big><big>$1</big></big></big></big>"
-	elif [ $(echo "$1" | wc -c) -le 16 ]; then
+	elif [ $(echo "$1" | wc -c) -le 14 ]; then
 	c="<big><big><big>$1</big></big></big>"
-	elif [ $(echo "$1" | wc -c) -gt 16 ]; then
+	elif [ $(echo "$1" | wc -c) -gt 14 ]; then
 	c="<big>$1</big>"
 	fi
 	if [ $(echo "$s" | wc -c) -le 8 ]; then
 	a="<big><big><big><big><b>$s</b></big></big></big></big>"
-	elif [ $(echo "$s" | wc -c) -le 16 ]; then
+	elif [ $(echo "$s" | wc -c) -le 14 ]; then
 	a="<big><big><big><b>$s</b></big></big></big>"
-	elif [ $(echo "$s" | wc -c) -gt 16 ]; then
+	elif [ $(echo "$s" | wc -c) -gt 14 ]; then
 	a="<b>$s</b>"
 	fi
-	if [[ -f "$drtt/images/$1.jpg" ]]; then
-	img="$drtt/images/$1.jpg"
+	if [[ -f "$drtt/images/$fname.jpg" ]]; then
+	img="$drtt/images/$fname.jpg"
 	trgts="$c   <small><tt>$means</tt>...</small>"
 	srces="<b>$a</b>"
 	else
@@ -113,9 +116,9 @@ function cuestion() {
 	
 	yad --form --align=center --undecorated \
 	--center --on-top --image-on-top --image="$img" \
-	--skip-taskbar --title=" " --borders=0 \
-	--buttons-layout=edge \
-	--field="$trgts":lbl --width=365 --height=280 \
+	--skip-taskbar --title=" " --borders=3 \
+	--buttons-layout=spread \
+	--field="$trgts":lbl --width=371 --height=280 \
 	--button="gtk-media-stop":1 \
 	--button="      $answer1 >     ":0
 	}
@@ -124,12 +127,11 @@ function answer() {
 	
 	yad --form --align=center --undecorated \
 	--center --on-top --image-on-top --image="$img" \
-	--skip-taskbar --title=" " --borders=0 \
+	--skip-taskbar --title=" " --borders=3 \
 	--buttons-layout=spread \
-	--field="$srces":lbl --width=365 --height=280 \
-	--button="      $no_know      ":3 \
-	--button="      $ok_know      ":2
-	
+	--field="$srces":lbl --width=371 --height=280 \
+	--button="<b>      $no_know      </b>":3 \
+	--button="<b>      $ok_know      </b>":2
 	}
 
 n=1
@@ -145,11 +147,11 @@ while [ $n -le $(cat fin1 | wc -l) ]; do
 		ans=$(echo "$?")
 
 		if [[ $ans = 2 ]]; then
-			echo "$trgt" >> ok.f
+			echo "$trgt" | tee -a ok.f $w9
 			easy=$(($easy+1))
 
 		elif [[ $ans = 3 ]]; then
-			echo "$trgt" >> fin2
+			echo "$trgt" | tee -a fin2 w6
 			hard=$(($hard+1))
 		fi
 
@@ -184,7 +186,7 @@ else
 				ling=$(($ling+1))
 				
 			elif [[ $ans = 3 ]]; then
-				echo "$trgt" >> fin3
+				echo "$trgt" | tee -a fin3 w6
 			fi
 			
 		elif [[ $ret = 1 ]]; then

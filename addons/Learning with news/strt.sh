@@ -38,7 +38,6 @@ elif ( [ -f $DT/.uptf ] && [ "$1" = A ] ); then
 fi
 sleep 1
 
-dct="$DS/addons/Dics/cnfg.sh"
 feed=$(sed -n 1p "$DCF/$lgtl/link")
 rsrc=$(cat "$DCF/$lgtl/.rss")
 icon=$DS/images/cnn.png
@@ -58,7 +57,8 @@ if [ ! -d $DM_tl/Feeds ]; then
 	cp -f "$DSF/examples/$lgtl" "$DCF/rss/$lgtl"
 fi
 	
-if [ ! -f $DC_tl/Feeds/tpc.sh ]; then
+if ([ ! -f $DC_tl/Feeds/tpc.sh ] || \
+[ "$(cat $DC_tl/Feeds/tpc.sh | wc -l)" -ge 15 ]); then
 
 	echo '#!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
@@ -135,7 +135,7 @@ if [ -n "$feed" ]; then
 				fi
 
 				(
-
+				cd $DT_r
 				r=$(echo $(($RANDOM%1000)))
 				clean_3 $DT_r $r
 				translate "$(cat $aw | sed '/^$/d')" auto $lg | sed 's/,//g' \
@@ -145,26 +145,29 @@ if [ -n "$feed" ]; then
 				grmrk=$(cat g.$r | sed ':a;N;$!ba;s/\n/ /g')
 				lwrds=$(cat A.$r)
 				pwrds=$(cat B.$r | tr '\n' '_')
+
+				if ( [ -n $(file -ib "./$nme.mp3" | grep -o 'binary') ] \
+				&& [ -f "./$nme.mp3" ] && [ -n "$lwrds" ] && [ -n "$pwrds" ] ); then
 				
-				if ( [ ! -f "./$nme.mp3" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ] ); then
-					[ -f "./$nme.mp3" ] && rm "./$nme.mp3"
-					[ -d "./$nme" ] && rm -r "./$nme"
-				else
 					add_tags_9 W "$lwrds" "$pwrds" "./$nme.mp3"
 					echo "$trgt" >> "$DC_tl/Feeds/cfg.1"
 					
-					fetch_audio_2 $aw $bw
-
-					cp -fr "./$nme" "$DM_tl/Feeds/conten/$nme"
+					fetch_audio $aw $bw "$DT_r" "$DT_r/$nme"
+					
+					mv -f "$DT_r/$nme" "$DM_tl/Feeds/conten/$nme"
 					mv -f "$nme.mp3" "$DM_tl/Feeds/conten/$nme.mp3"
 					echo "$lnk" > "$DM_tl/Feeds/conten/$nme.lnk"
 					notify-send -i idiomind "$trgt" "$srce" -t 12000 &
+				
+				else
+					[ -f "./$nme.mp3" ] && rm "./$nme.mp3"
+					[ -d "./$nme" ] && rm -r "./$nme"
 				fi
 
 				echo "__" >> x
 				rm -f $aw $bw 
 				)
-				
+
 				echo "$date" > $DC_tl/Feeds/.dt
 			fi
 			let n++
@@ -174,15 +177,12 @@ if [ -n "$feed" ]; then
 	rm -fr $DT_r $DT/.uptf $DT/.rss
 	cd "$DM_tl/Feeds/conten"
 	find *.mp3 -mtime +5 -exec ls > ls {} \;
-	n=1
-	while [ $n -le $(cat ls | wc -l) ]; do
-		nmfile=$(sed -n "$n"p ls)
+	while read nmfile; do
 		tgs=$(eyeD3 "$DM_tl/Feeds/conten/$nmfile")
 		trg=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
 		grep -v -x -v "$trg" "$DC_tl/Feeds/cfg.1" > "$DC_tl/Feeds/cfg.1.tmp"
 		sed '/^$/d' "$DC_tl/Feeds/cfg.1.tmp" > "$DC_tl/Feeds/cfg.1"
-		let n++
-	done
+	done < ./ls
 	rm "$DC_tl/Feeds/*.tmp"
 	
 	if [[ -d "$DM_tl/Feeds/conten" ]]; then

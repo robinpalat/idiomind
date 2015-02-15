@@ -50,8 +50,9 @@ function dlg_form_1() { # imput text
         --borders=0 --title=" " --width=420 --height=140 \
         --field=" <small><small>$lgtl</small></small>: " "$txt" \
         --field=" <small><small>$topic</small></small>:CB" \
-        "$ttle!$new *$e$tpcs" "$field" \
-        --button="$image":3 --button=Audio:2 --button=gtk-ok:0
+        "$ttle!$new *$e$tpcs" \
+        --button="<small>$image</small>":3 \
+        --button="<small>Audio</small>":2 --button=gtk-ok:0
 }
 
 
@@ -65,8 +66,9 @@ function dlg_form_2() { # imput text
         --field=" <small><small>$lgtl</small></small>: " "$txt" \
         --field=" <small><small>${lgsl^}</small></small>: " "$srce" \
         --field=" <small><small>$topic</small></small>:CB" \
-        "$ttle!$new *$e$tpcs" "$field" \
-        --button="$image":3 --button=Audio:2 --button=gtk-ok:0
+        "$ttle!$new *$e$tpcs" \
+        --button="<small>$image</small>":3 \
+        --button="<small>Audio</small>":2 --button=gtk-ok:0
 }
 
 
@@ -208,7 +210,7 @@ function dlg_file_1() { # load
 function dlg_file_2() { # save
     
         yad --save --center --borders=10 \
-        --on-top --filename="$(date +%m/%d/%Y)"_audio.tar.gz \
+        --on-top --filename="$(date +%m-%d-%Y)"_audio.tar.gz \
         --window-icon=idiomind --skip-taskbar --title="Save" \
         --file --width=600 --height=500 --button=gtk-ok:0
 }

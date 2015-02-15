@@ -1,6 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+/usr/share/idiomind/ifs/trans/$lgs/comons.conf
 
 function internet() {
 
@@ -26,16 +27,34 @@ function msg() {
 }
 
 
+function msg_2() { # decide
+    
+        yad --name=idiomind --on-top --text="$1" --image="$2" \
+        --image-on-top --width=360 --height=120 --borders=3 \
+        --skip-taskbar --window-icon=idiomind --sticky --center \
+        --title=Idiomind --button="$4":1 --button="$3":0
+}
+
+
 function nmfile() {
 	
-	echo "$(echo "$1" | cut -c 1-100 | sed 's/[ \t]*$//' \
-	| sed s'/&//'g | sed s'/://'g | sed "s/'/ /g" \
-	| sed "s/’/ /g")"
+  echo "$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
 }
 
 
 function include() {
 	
-for f in $1/*; do source "$f"; done
+  for f in $1/*; do source "$f"; done
 
+}
+
+
+function try {
+    "$@"
+    code=$?
+    if [ $code -ne 0 ]
+    then
+        msg "prlonema " info
+        exit 1
+    fi
 }

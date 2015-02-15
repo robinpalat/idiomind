@@ -1,6 +1,10 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+#set -e
+#u pipefail
+#IFS=$'\n\t'
+
 if [ ! -d "$HOME/.idiomind" ]; then
 	/usr/share/idiomind/ifs/1u.sh && exit
 	if [ ! -d "$HOME/.idiomind" ]; then
@@ -10,6 +14,12 @@ fi
 
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/items_lists.conf
+
+if [ -f $DT/ps_lk ]; then
+	sleep 15
+	[[ -f $DT/ps_lk ]] && rm -f $DT/ps_lk
+	exit 1
+fi
 
 function sizes() {
 	
@@ -63,11 +73,12 @@ function new_session() {
 		if [ -f "/usr/share/idiomind/addons/$set/icon.png" ]; then 
 			echo "/usr/share/idiomind/addons/$set/icon.png" >> $DC_s/cfg.21
 		else
-			echo "/usr/share/idiomind/images/thumbup.png" >> $DC_s/cfg.21
+			echo "/usr/share/idiomind/images/thumb.png" >> $DC_s/cfg.21
 		fi
 		echo "$set" >> $DC_s/cfg.21
 		let n++
 	done
+	
 	for s in $DS/ifs/mods/start/*; do "$s"; done &
 
 	# screen size
@@ -137,6 +148,7 @@ function new_session() {
 
 if [ -z "$1" ]; then
 
+	printf "strt.1.strt\n" >> $DC_a/stats/.log
 	yad --width=185 --height=210 --name=idiomind \
 	--geometry=175x190-300-$(sed -n 12p $DC_s/cfg.18) \
 	--fixed --title="Idiomind" --no-buttons --skip-taskbar \
@@ -144,8 +156,6 @@ if [ -z "$1" ]; then
 	--read-dir=$DS/default/new --item-width=68 \
 	--window-icon=idiomind --class=idiomind &
 	[[ -n "$tpc" ]] && echo "$tpc" > $DC_s/cfg.6
-	echo "strt.1.strt" >> \
-	$DC/addons/stats/.log &
 	
 	if [[ ! -d $DT ]]; then
 		new_session & exit
@@ -157,7 +167,7 @@ if [ -z "$1" ]; then
 	fi
 fi
 
-if [[ $(echo "$1" | grep -o 'autostart') ]]; then
+if [ $(echo "$1" | grep -o 'autostart') ]; then
 	
 	sleep 50
 	[[ ! -f $DT/ps_lk ]] && new_session
@@ -168,7 +178,7 @@ if [[ $(echo "$1" | grep -o 'autostart') ]]; then
 	fi
 	exit 0
 
-elif [[ $(echo "$1" | grep -o '.idmnd') ]]; then
+elif [ $(echo "$1" | grep -o '.idmnd') ]; then
 
 	wth=$(sed -n 3p $DC_s/cfg.18)
 	eht=$(sed -n 4p $DC_s/cfg.18)
@@ -187,9 +197,8 @@ elif [[ $(echo "$1" | grep -o '.idmnd') ]]; then
 	cd ./idmimp_$c
 	tar -xzvf ../import.tar.gz
 	ls -tdN * > $DT/idmimp_$c/ls
-	inme=$(sed -n 1p $DT/idmimp_$c/ls)
-	echo "$inme"
-	tmp="$DT/idmimp_$c/$inme"
+	tpc_i=$(sed -n 1p $DT/idmimp_$c/ls)
+	tmp="$DT/idmimp_$c/$tpc_i"
 	
 	source "$tmp/cfg.12"
 	[[ $language_target = English ]] && lng=en
@@ -207,13 +216,10 @@ elif [[ $(echo "$1" | grep -o '.idmnd') ]]; then
 	[[ $level = 3 ]] && level=$advanced
 
 	if [ -f "$tmp/words/images/img.png" ]; then
-	img="$tmp/words/images/img.png"
-	s="\n"
-	else
-	img="$DS/images/trans.png"
-	fi
+	img="$tmp/words/images/img.png"; else
+	img="$DS/images/trans.png"; fi
 	
-	if [ "$inme" != "$name" ]; then
+	if [ "$tpc_i" != "$name" ]; then
 	
 		cstn=$(yad --name=idiomind --image=error --button=gtk-ok:1\
 		--text=" <b>$file_err</b>\\n" --image-on-top --sticky \
@@ -226,7 +232,7 @@ elif [[ $(echo "$1" | grep -o '.idmnd') ]]; then
 		cd "$tmp"
 		ws=$(cat "cfg.3" | wc -l)
 		ss=$(cat "cfg.4" | wc -l)
-		itxt="<big><big>$inme</big></big><small>\\n${language_source^} <b>></b> $language_target\\n$nwords $words $nsentences $sentences $nimages $images\n$llevel $level </small>\n"
+		itxt="<big><big>$tpc_i</big></big><small>\\n${language_source^} <b>></b> $language_target\\n$nwords $words $nsentences $sentences $nimages $images\n$llevel $level </small>\n"
 		dlck="$DT/p1.$c"
 		cat "$tmp/cfg.0" | awk '{print $0""}' | \
 		yad --list --name=Idiomind --title="Idiomind" \
@@ -243,9 +249,9 @@ elif [[ $(echo "$1" | grep -o '.idmnd') ]]; then
 				rm -f $DT/*.$c $DT/import.tar.gz & exit
 			elif [ "$ret" -eq 0 ]; then
 				if2=$(cat $DC/topics/$language_target/.cfg.1 | wc -l)
-				snm=$(cat $DC/topics/$language_target/.cfg.1 | grep -Fo "$inme" | wc -l)
+				chck=$(cat $DC/topics/$language_target/.cfg.1 | grep -Fo "$tpc_i" | wc -l)
 				
-				if [ $if2 -ge 50 ]; then
+				if [ $if2 -ge 80 ]; then
 					yad  --name=idiomind --center \
 					--image=info --class=idiomind \
 					--text=" \n$topics_max\n\n" \
@@ -256,10 +262,10 @@ elif [[ $(echo "$1" | grep -o '.idmnd') ]]; then
 					rm -f $DT/*.$c $DT/import.tar.gz & exit
 				fi
 		
-				if [ "$snm" -ge 1 ]; then
-					inm="$inme $snm"
+				if [ "$chck" -ge 1 ]; then
+					tpc_i="$tpc_i $chck"
 					yad  --name=idiomind --image=info --sticky \
-					--text=" $name_eq  \\n $name_eq2 <b>$inm    </b>\n" \
+					--text=" $name_eq  \\n $name_eq2 <b>$tpc_i    </b>\n" \
 					--class=idiomind --center --skip-taskbar \
 					--image-on-top --width=420 --height=150 \
 					--window-icon=idiomind --title=Idiomind \
@@ -267,54 +273,44 @@ elif [[ $(echo "$1" | grep -o '.idmnd') ]]; then
 						ret=$?
 					if [ $ret != 0 ]; then
 						[[ -d $DT/idmimp_$c ]] && rm -fr $DT/idmimp_$c
-						rm -f $DT/*.$c $DT/import.tar.gz & exit
+						rm -f $DT/*.$c $DT/import.tar.gz & exit 1
 					fi
-				else
-					inm="$inme"
 				fi
 
 				if [ ! -d "$DM_t/$language_target" ]; then
 				mkdir "$DM_t/$language_target"
 				mkdir "$DM_t/$language_target/.share"
 				mkdir "$DC/topics/$language_target"
-				mkdir "$DC_a/Learning with news/$language_target"
-				mkdir "$DC_a/Learning with news/$language_target/subscripts"
-				"$DS/addons/Learning with news/examples/$language_target"
-				cp -f "$DS/addons/Learning with news/examples/$language_target" \
-				"$DC_a/Learning with news/$language_target/subscripts/Example"
 				fi
-				mkdir "$DM/topics/$language_target/$inm"
-				mkdir "$DC/topics/$language_target/$inm"
-				drit="$DM/topics/$language_target/$inm"
-				dric="$DC/topics/$language_target/$inm"
-				mkdir "$dric/practice"
-				cp -f $DS/practice/default/.* \
-				"$dric/practice"
+				mkdir "$DM/topics/$language_target/$tpc_i"
+				mkdir "$DC/topics/$language_target/$tpc_i"
+				DI_m="$DM/topics/$language_target/$tpc_i"
+				DI_c="$DC/topics/$language_target/$tpc_i"
 				cd "$tmp"
 				cp -n ./.audio/*.mp3 "$DM_t/$language_target/.share/"
 				[[ -d ./.audio ]] && rm -fr ./.audio
-				cp -fr ./.* "$drit/"
-				cp -f cfg.12 "$dric/cfg.12"
-				echo "6" > "$dric/cfg.8"
-				cp -f cfg.0 "$dric/cfg.0"
-				cp -f cfg.0 "$dric/.cfg.11"
-				cp -f cfg.0 "$dric/cfg.1"
-				cp -f cfg.3 "$dric/cfg.3"
-				cp -f cfg.4 "$dric/cfg.4"
-				cp -f cfg.5 "$dric/cfg.5"
-				cp -f cfg.10 "$dric/cfg.10"
-				cp -f $DS/default/tpc.sh "$dric/tpc.sh"
-				chmod +x "$dric/tpc.sh"
+				cp -fr ./.* "$DI_m/"
+				cp -f cfg.12 "$DI_c/cfg.12"
+				echo "6" > "$DI_c/cfg.8"
+				cp -f cfg.0 "$DI_c/cfg.0"
+				cp -f cfg.0 "$DI_c/.cfg.11"
+				cp -f cfg.0 "$DI_c/cfg.1"
+				cp -f cfg.3 "$DI_c/cfg.3"
+				cp -f cfg.4 "$DI_c/cfg.4"
+				cp -f cfg.5 "$DI_c/cfg.5"
+				cp -f cfg.10 "$DI_c/cfg.10"
+				cp -f $DS/default/tpc.sh "$DI_c/tpc.sh"
+				chmod +x "$DI_c/tpc.sh"
 				echo "$lng" > $DC_s/cfg.10
 				echo "$language_target" >> $DC_s/cfg.10
-				cd "$dric"
+				cd "$DI_c"
 				echo $dte > cfg.13
-				echo "$inm" >> "$DC/topics/$language_target/.cfg.3"
-				sed -i 's/'"$inm"'//g' "$DC/topics/$language_target/.cfg.2"
+				echo "$tpc_i" >> "$DC/topics/$language_target/.cfg.3"
+				sed -i 's/'"$tpc_i"'//g' "$DC/topics/$language_target/.cfg.2"
 				sed '/^$/d' $DC/topics/$language_target/.cfg.2 > $DC/topics/$language_target/.cfg.2_
 				mv -f $DC/topics/$language_target/.cfg.2_ $DC/topics/$language_target/.cfg.2
-				$DS/mngr.sh mkmn &&
-				"$dric/tpc.sh" &
+				$DS/mngr.sh mkmn
+				"$DI_c/tpc.sh" &
 				[[ -d $DT/idmimp_$c ]] && rm -fr $DT/idmimp_$c
 				rm -f $DT/*.$c $DT/import.tar.gz & exit
 			else
@@ -325,7 +321,7 @@ elif [[ $(echo "$1" | grep -o '.idmnd') ]]; then
 	fi
 	
 # topic
-elif [[ $1 = topic ]]; then
+elif [ "$1" = topic ]; then
 
 	wth=$(sed -n 3p $DC_s/cfg.18)
 	eht=$(sed -n 4p $DC_s/cfg.18)
@@ -359,8 +355,8 @@ elif [[ $1 = topic ]]; then
 			else
 			img=$DS/images/trans.png
 			fi
-			echo "tpcs.$tpc.tpcs" >> \
-			$DC/addons/stats/.log &
+			printf "tpcs.$tpc.tpcs\n" >> \
+			$DC_a/stats/.log &
 			inx=$(cat "$ls0" | wc -l)
 			tb1=$(cat "$ls1" | wc -l)
 			tb2=$(cat "$ls2" | wc -l)
@@ -400,7 +396,7 @@ elif [[ $1 = topic ]]; then
 			--ellipsize=END --image-on-top --always-print-result \
 			--width="$wth" --height="$eht" --borders=0 \
 			--button="Play":$DS/play.sh \
-			--button="$delete":"$DS/mngr.sh dlt"
+			--button="$delete":"$DS/mngr.sh delete_topic"
 					
 				if [ -f $cnf3 ]; then
 					if [ "$(cat $cnf3)" != "$(cat "$nt")" ]; then
@@ -571,8 +567,8 @@ elif [[ $1 = topic ]]; then
 								cat "$ls1" | awk '!array_temp[$0]++' > $DT/ls1.x
 								sed '/^$/d' $DT/ls1.x > "$ls1"
 							fi
-							echo "okim.$cnt.okim" >> \
-							$DC/addons/stats/.log &	
+							printf "okim.$cnt.okim\n" >> \
+							$DC_a/stats/.log &
 						fi
 					fi
 					
@@ -689,8 +685,8 @@ elif [[ $1 = topic ]]; then
 								cat "$ls1" | awk '!array_temp[$0]++' > $DT/ls1.x
 								sed '/^$/d' $DT/ls1.x > "$ls1"
 							fi
-							echo "okim.$cnt.okim" >> \
-							$DC/addons/stats/.log &
+							printf "okim.$cnt.okim\n" >> \
+							$DC_a/stats/.log &
 						fi
 					fi
 				fi
@@ -866,8 +862,8 @@ elif [[ $1 = topic ]]; then
 								cat "$ls1" | awk '!array_temp[$0]++' > $DT/ls1.x
 								sed '/^$/d' $DT/ls1.x > "$ls1"
 							fi
-							echo "okim.$cnt.okim" >> \
-							$DC/addons/stats/.log &
+							printf "okim.$cnt.okim\n" >> \
+							$DC_a/stats/.log &
 						fi
 					fi
 				rm -f $DT/*.x
@@ -990,8 +986,8 @@ elif [[ $1 = topic ]]; then
 								sed '/^$/d' $DT/ls1.x > "$ls1"
 							fi
 							
-							cho "okim.$cnt.okim" >> \
-							$DC/addons/stats/.log &
+							printf "okim.$cnt.okim\n" >> \
+							$DC_a/stats/.log &
 						fi
 					fi
 					
