@@ -99,7 +99,7 @@ function fonts() {
 	elif [ $(echo "$s" | wc -c) -le 14 ]; then
 	a="<big><big><big><b>$s</b></big></big></big>"
 	elif [ $(echo "$s" | wc -c) -gt 14 ]; then
-	a="<b>$s</b>"
+	a="<b><big>$s</big></b>"
 	fi
 	if [[ -f "$drtt/images/$fname.jpg" ]]; then
 	img="$drtt/images/$fname.jpg"

@@ -37,7 +37,7 @@ if [ -f "$dir/words/$fname.mp3" ]; then
 	ntes=$(echo "$exmp" | sed -n 3p)
 	dfnts="--field=<i><span color='#696464'>$dftn</span></i>\\n:lbl"
 	ntess="--field=<span color='#868686'>$ntes</span>\\n:lbl"
-	exmp1=$(echo "$exm1" | sed "s/"$trgt"/<span background='#CFFF8B'>"$trgt"<\/\span>/g")
+	exmp1=$(echo "$exm1" | sed "s/"$trgt"/<span background='#F8F4A2'>"$trgt"<\/\span>/g")
 	
 	yad --columns=1 --form --width=$wth --height=$eht --center \
 	--window-icon=idiomind --scroll --text-align=center \

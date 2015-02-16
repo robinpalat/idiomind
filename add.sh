@@ -659,14 +659,6 @@ elif [ $1 = dclik_list_words ]; then
 	exit 1
 
 
-elif [ $1 = show_item_for_edit ]; then
-
-	DT_r=$(cat $DT/.n_s_pr)
-	cd $DT_r
-	dlg_text_info_5 "$3" "$(nmfile "$3")"
-	$? >/dev/null 2>&1
-
-
 elif [ $1 = sentence_list_words ]; then
 
 	DM_tlt="$DM_tl/$4"
