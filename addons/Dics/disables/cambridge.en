@@ -1,0 +1,12 @@
+#!/bin/bash
+cd "$2"
+word="$1"
+a="$(echo $word | head -c 1)"
+b="$(echo $word | head -c 3)"
+c="$(echo $word | head -c 5)"
+
+wget "http://dictionary.cambridge.org/media/british/us_pron/$a/$b/$c/$word.mp3"
+
+[ -f ./"$word"*.mp3 ] && mv ./"$word"*.mp3 ./"$word".mp3
+
+exit

@@ -1,8 +1,9 @@
 #!/bin/bash
+cd "$2"
 word="$1"
-w1="$(echo $word | head -c 1)"
-w3="$(echo $word | head -c 1)"
-w5="$(echo $word | head -c 1)"
-wget http://www.macmillandictionary.com/media/british/uk_pron/$w1/$w3/$w5/"$word"_British_English_pronunciation.mp3
-mv -f "$word"_British_English_pronunciation.mp3 "$word".mp3
+a="$(echo $word | head -c 1)"
+b="$(echo $word | head -c 3)"
+c="$(echo $word | head -c 5)"
+wget http://www.macmillandictionary.com/media/british/uk_pron/$a/$b/$c/"$word"_British_English_pronunciation.mp3
+mv -f ./"$word"_British_English_pronunciation.mp3 ./"$word".mp3
 exit

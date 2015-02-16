@@ -119,8 +119,8 @@ function cuestion() {
 	--skip-taskbar --title=" " --borders=3 \
 	--buttons-layout=spread \
 	--field="$trgts":lbl --width=371 --height=280 \
-	--button="gtk-media-stop":1 \
-	--button="      $answer1 >     ":0
+	--button="$exit":1 \
+	--button=" $answer1 > ":0
 	}
 
 function answer() {
@@ -130,8 +130,8 @@ function answer() {
 	--skip-taskbar --title=" " --borders=3 \
 	--buttons-layout=spread \
 	--field="$srces":lbl --width=371 --height=280 \
-	--button="<b>      $no_know      </b>":3 \
-	--button="<b>      $ok_know      </b>":2
+	--button="<span color='#D0573E'><tt> $no_know </tt></span>":3 \
+	--button="<span color='#3D9B2B'><tt> $ok_know </tt></span>":2
 	}
 
 n=1
