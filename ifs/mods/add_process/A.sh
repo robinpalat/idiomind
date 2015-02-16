@@ -3,6 +3,31 @@
 source /usr/share/idiomind/ifs/c.conf
 
 
+function dlg_checklist_5() {
+    
+        slt=$(mktemp $DT/slt.XXXX.x)
+        cat "$1" | awk '{print "FALSE\n"$0}' | \
+        yad --center --sticky --name=idiomind --class=idiomind \
+        --dclick-action='/usr/share/idiomind/ifs/mods/add_process/A.sh show_item_for_edit' \
+        --list --checklist --window-icon=idiomind \
+        --width=$wth --text="<small>$info</small>" \
+        --height=$eht --borders=3 --button="$cancel":1 \
+        --button="$to_new_topic":'/usr/share/idiomind/add.sh new_topic' \
+        --button=gtk-save:0 --title="$Title_sentences" \
+        --column="$(cat "$1" | wc -l)" --column="Items" > "$slt"
+}
+
+
+function dlg_text_info_5() {
+    
+        echo "$1" | yad --text-info --center --wrap \
+        --name=idiomind --class=idiomind --window-icon=idiomind \
+        --sticky --width=520 --height=110 --editable \
+        --margins=8 --borders=0 --button=Ok:0 \
+        --title="$edit_item" > "$1".txt
+}
+
+
 function audio_recognizer() {
 	
 	echo "$(wget -q -U "Mozilla/5.0" --post-file "$1" --header="Content-Type: audio/x-flac; rate=16000" \
@@ -10,6 +35,7 @@ function audio_recognizer() {
 }
 
 
+# --------------------------------------
 if [[ "$prdt" = A ]]; then
 
 	cd $DT_r
@@ -20,7 +46,7 @@ if [[ "$prdt" = A ]]; then
 	if [ -z "$key" ]; then
 		
 		msg "$no_key <a href='$LNK'>Web</a>\n" dialog-warning
-		[ -d $DT_r ] && rm -fr $DT_r
+		[[ -d $DT_r ]] && rm -fr $DT_r
 		rm -f ls $lckpr & exit 1
 	fi
 	
@@ -34,10 +60,11 @@ if [[ "$prdt" = A ]]; then
 		
 	else
 		if [ -z "$tpe" ]; then
-			[ -d $DT_r ] && rm -fr $DT_r
+			[[ -d $DT_r ]] && rm -fr $DT_r
 			source $DS/ifs/trans/$lgs/topics_lists.conf
 			$DS/chng.sh "$no_edit" & exit 1
 		fi
+		
 		
 		(
 		echo "2"
@@ -56,7 +83,7 @@ if [[ "$prdt" = A ]]; then
 		rm -f "$DT_r"/c_rv.mp3
 		ls *.mp3 > lst
 		lns=$(cat ./lst | head -50 | wc -l)
-		
+		# --------------------------------------
 		internet
 		 
 		echo "3"
@@ -83,8 +110,8 @@ if [[ "$prdt" = A ]]; then
 
 			sox "$n".mp3 info.flac rate 16k
 			data="$(audio_recognizer info.flac $lgt $lgt $key)"
-			
 			if [ -z "$data" ]; then
+			
 				msg "$key_err <a href='$LNK'>Google</a>" error
 				[[ -d $DT_r ]] && rm -fr $DT_r
 				rm -f ls $lckpr & break & exit 1
@@ -93,13 +120,13 @@ if [[ "$prdt" = A ]]; then
 			trgt="$(echo "$data" | sed '1d' | sed 's/.*transcript":"//' \
 			| sed 's/"}],"final":true}],"result_index":0}//g')"
 			
-			if [ $(echo "$trgt" | wc -c) -ge 150 ]; then
+			if [ $(echo "$trgt" | wc -c) -ge 180 ]; then
 				printf "\n- $trgt" >> log
 			
 			else
-				fname="$(nmfile "$trgt")"
-				mv -f "./$n.mp3" "./$fname.mp3"
-				echo "$trgt" > "./$fname.txt"
+				#fname="$(nmfile "$trgt")"
+				mv -f "./$n.mp3" "./$trgt.mp3"
+				echo "$trgt" > "./$trgt.txt"
 				echo "$trgt" >> ./ls
 				rm -f info.flac info.ret
 			fi
@@ -111,6 +138,7 @@ if [[ "$prdt" = A ]]; then
 		done
 		
 		) | dlg_progress_2
+		# --------------------------------------
 		cd $DT_r
 		sed -i '/^$/d' ./ls
 		[[ $(echo "$tpe" | wc -c) -gt 40 ]] && tcnm="${tpe:0:40}..." || tcnm="$tpe"
@@ -146,42 +174,43 @@ if [[ "$prdt" = A ]]; then
 				sed -i 's/\://g' ./slts
 				
 				internet
-
+				
+				# --------------------------------------
 				(
 				echo "1"
 				echo "# $pros... " ;
 				[ $lgt = ja ] || [ $lgt = "zh-cn" ] || [ $lgt = ru ] && c=c || c=w
 				lns=$(cat ./slts ./wrds | wc -l)
-				
+
 				n=1
 				while [ $n -le $(cat ./slts | head -50 | wc -l) ]; do
 					
 					sntc=$(sed -n "$n"p ./slts)
-					fname="$(nmfile "$sntc")"
-					trgt=$(cat "./$fname.txt")
+					trgt=$(cat "./$sntc.txt" | sed 's/^\s*./\U&\E/g')
+					fname="$(nmfile "$trgt")"
 					
-					if [ $(sed -n 1p "$fname.txt" | wc -$c) -eq 1 ]; then
+					if [ $(sed -n 1p "$sntc.txt" | wc -$c) -eq 1 ]; then
 					
 						if [ $(cat "$DC_tlt"/cfg.3 | wc -l) -ge 50 ]; then
 							printf "\n- $sntc" >> ./wlog
 					
 						else
 							srce="$(translate "$trgt" $lgt $lgs)"
-							mv -f "$fname".mp3 "$DM_tlt/words/$fname".mp3
+							mv -f "$sntc".mp3 "$DM_tlt/words/$fname".mp3
 							
 							if ( [ -n $(file -ib "$DM_tlt/words/$fname".mp3 | grep -o 'binary') ] \
 							&& [ -n "$trgt" ] && [ -n "$srce" ] ); then
 							
 								add_tags_1 W "$trgt" "$srce" "$DM_tlt/words/$fname".mp3
 								$DS/mngr.sh index word "$fname" "$tpe"
-								echo "$fname" >> addw
+								echo "$sntc" >> addw
 							else
 								[ -f "$DM_tlt/words/$fname".mp3 ] && rm "$DM_tlt/words/$fname".mp3
 								printf "\n- $sntc" >> ./wlog
 							fi
 						fi
 					
-					elif [ $(sed -n 1p "$fname.txt" | wc -$c) -ge 1 ]; then
+					elif [ $(sed -n 1p "$sntc.txt" | wc -$c) -ge 1 ]; then
 					
 						if [ $(cat "$DC_tlt"/cfg.4 | wc -l) -ge 50 ]; then
 							printf "\n- $sntc" >> ./slog
@@ -189,7 +218,7 @@ if [[ "$prdt" = A ]]; then
 						else
 							srce="$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')"
 							
-							mv -f "$fname.mp3" "$DM_tlt/$fname.mp3"
+							mv -f "$sntc.mp3" "$DM_tlt/$fname.mp3"
 							
 							if ( [ -f "$DM_tlt/$fname.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
 							    add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3"
@@ -209,7 +238,7 @@ if [[ "$prdt" = A ]]; then
 							if ( [ -n $(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary') ] \
 							&& [ -n "$lwrds" ] && [ -n "$pwrds" ] && [ -n "$grmrk" ] ); then
 								
-								echo "$fname" >> adds
+								echo "$sntc" >> adds
 								$DS/mngr.sh index sentence "$trgt" "$tpe"
 								add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3"
 								fetch_audio $aw $bw $DT_r $DM_tls
@@ -223,7 +252,7 @@ if [[ "$prdt" = A ]]; then
 							rm -f $aw $bw
 							) &
 					
-							rm -f "$fname.mp3"
+							rm -f "$sntc.mp3"
 						fi
 					fi
 				
@@ -234,7 +263,7 @@ if [[ "$prdt" = A ]]; then
 					let n++
 				done
 				
-				
+				# --------------------------------------
 				#-words
 				if [ -n "$(cat wrds)" ]; then
 					nwrds=" $(cat wrds | head -50 | wc -l) Palabras"
@@ -281,7 +310,8 @@ if [[ "$prdt" = A ]]; then
 					let n++
 				done
 				) | dlg_progress_2
-
+				
+				# --------------------------------------
 				cd $DT_r
 				
 				if [ -f ./wlog ]; then
@@ -349,7 +379,7 @@ if [[ "$prdt" = A ]]; then
 								fi
 						fi
 				fi
-				
+				# --------------------------------------
 				cd $DT_r
 				if  [ -f ./log ]; then
 					rm=$(($(cat ./adds) - $(cat ./log | sed '/^$/d' | wc -l)))
@@ -375,4 +405,12 @@ if [[ "$prdt" = A ]]; then
 			fi
 		fi
 	exit 1
+	
+elif [ $1 = show_item_for_edit ]; then
+
+	DT_r=$(cat $DT/.n_s_pr)
+	cd $DT_r
+	dlg_text_info_5 "$3"
+	$? >/dev/null 2>&1
+	
 fi

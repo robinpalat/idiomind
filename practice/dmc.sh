@@ -105,7 +105,7 @@ function mchoise() {
 	| yad --list --on-top --skip-taskbar --title=" " \
 	--width=365 --height=340 --center --undecorated \
 	--text-align=center --no-headers --borders=5 \
-	--button=gtk-media-stop:1 \
+	--button="$exit":1 \
 	--text="\\n$a   \\n\\n<sup><tt>$means</tt>...</sup>\\n\\n" \
 	--column=Opcion --column=Opciodn)
 }

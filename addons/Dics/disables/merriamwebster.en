@@ -13,3 +13,5 @@ f="$(echo $w | head -c 1)"
 wget http://media.merriam-webster.com/soundc11/$f/$w$r.wav
 sox $w$r.wav $w.mp3
 exit
+
+

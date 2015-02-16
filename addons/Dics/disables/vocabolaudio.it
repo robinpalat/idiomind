@@ -1,0 +1,4 @@
+#! /bin/bash
+cd "$2"
+wget "http://www.vocabolaudio.com/audio-it/$1.mp3"
+exit

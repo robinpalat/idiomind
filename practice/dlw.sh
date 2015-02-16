@@ -124,7 +124,7 @@ function cuestion() {
 	--buttons-layout=spread \
 	--field="<span color='#808080'>$trgts</span>":lbl \
 	--width=371 --height=280 \
-	--button="gtk-media-stop":1 \
+	--button="$exit":1 \
 	--button="$listen":"$play" \
 	--button="$answer2 >":0
 	}
@@ -137,8 +137,8 @@ function answer() {
 	--buttons-layout=spread \
 	--field="$tr":lbl --width=371 --height=280 \
 	--button="$listen":"$play" \
-	--button="<b>$no_know</b>":3 \
-	--button="<b>$ok_know</b>":2
+	--button="<span color='#D0573E'><tt>$no_know</tt></span>":3 \
+	--button="<span color='#3D9B2B'><tt>$ok_know</tt></span>":2
 	}
 
 n=1

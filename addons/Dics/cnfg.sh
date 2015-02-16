@@ -23,11 +23,8 @@ function dict_list() {
 	
 	cd "$disables/"; ls * > .dicts
 	while read dict; do
-		if [ $(echo "$dict" | grep ".$lgt") ] \
-		|| [ $(echo "$dict" | grep '.auto') ]; then
-			echo 'FALSE'
-			echo "$dict" | sed 's/\./\n/g'
-		fi
+		echo 'FALSE'
+		echo "$dict" | sed 's/\./\n/g'
 	done < .dicts
 }
 

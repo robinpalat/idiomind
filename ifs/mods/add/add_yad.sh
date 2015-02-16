@@ -1,8 +1,8 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-
-function dlg_msg_3() { # current process
+# current process
+function dlg_msg_3() {
     
         yad --fixed --center --on-top \
         --image=info --name=idiomind \
@@ -13,7 +13,9 @@ function dlg_msg_3() { # current process
         --title=Idiomind --button=gtk-cancel:3 --button=Ok:1
 }
 
-function dlg_msg_2() { # s
+
+# s
+function dlg_msg_2() {
     
         yad --name=idiomind --center --on-top --image=info \
         --text="$item_err\n" \
@@ -22,7 +24,9 @@ function dlg_msg_2() { # s
         --title=Idiomind --button="$delete":1 --button="$fix_item":0 
 }
 
-function dlg_msg_6() { # same name - topic 
+
+# same name - topic 
+function dlg_msg_6() {
     
         yad --name=idiomind --center --on-top --image=info \
         --text=" $1" \
@@ -32,7 +36,8 @@ function dlg_msg_6() { # same name - topic
 }
 
 
-function dlg_form_0() { # new topic
+# new topic
+function dlg_form_0() {
     
         yad --window-icon=idiomind --form --center \
         --field="$name_for_new_topic" "$2" --title="$1" \
@@ -41,7 +46,8 @@ function dlg_form_0() { # new topic
 }
 
 
-function dlg_form_1() { # imput text 
+# imput text 
+function dlg_form_1() {
     
         yad --form --center --always-print-result \
         --on-top --window-icon=idiomind --skip-taskbar \
@@ -56,7 +62,8 @@ function dlg_form_1() { # imput text
 }
 
 
-function dlg_form_2() { # imput text 
+# imput text 
+function dlg_form_2() {
     
         yad --form --center --always-print-result \
         --on-top --window-icon=idiomind --skip-taskbar \
@@ -72,8 +79,8 @@ function dlg_form_2() { # imput text
 }
 
 
-
-function dlg_radiolist_1() { # check_tpe
+# check_tpe
+function dlg_radiolist_1() {
     
         echo "$1" | awk '{print "FALSE\n"$0}' | \
         yad --name=idiomind --class=idiomind --center \
@@ -86,7 +93,8 @@ function dlg_radiolist_1() { # check_tpe
 }
 
 
-function dlg_checklist_1() { #edit_word_list
+#edit_word_list
+function dlg_checklist_1() {
     
         cat "$1" | awk '{print "FALSE\n"$0}' | \
         yad --list --checklist --title="$word_selector" \
@@ -99,8 +107,8 @@ function dlg_checklist_1() { #edit_word_list
 }
 
 
-
-function dlg_checklist_3() { # process no audio
+# process no audio
+function dlg_checklist_3() {
 
         slt=$(mktemp $DT/slt.XXXX.x)
         cat "$1" | awk '{print "FALSE\n"$0}' | \
@@ -116,24 +124,8 @@ function dlg_checklist_3() { # process no audio
 }
 
 
-
-function dlg_checklist_5() { # process audio
-    
-        slt=$(mktemp $DT/slt.XXXX.x)
-        cat "$1" | awk '{print "FALSE\n"$0}' | \
-        yad --center --sticky \
-        --name=idiomind --class=idiomind \
-        --dclick-action='/usr/share/idiomind/add.sh show_item_for_edit' \
-        --list --checklist --window-icon=idiomind \
-        --width=$wth --text="<small>$info</small>" \
-        --height=$eht --borders=3 --button="$cancel":1 \
-        --button="$to_new_topic":'/usr/share/idiomind/add.sh new_topic' \
-        --button=gtk-save:0 --title="$Title_sentences" \
-        --column="$(cat "$1" | wc -l)" --column="Items" > "$slt"
-}
-
-
-function dlg_text_info_1() { # sort
+# sort
+function dlg_text_info_1() {
     
         cat "$1" | awk '{print "\n\n\n"$0}' | \
         yad --text-info --editable --window-icon=idiomind \
@@ -145,8 +137,8 @@ function dlg_text_info_1() { # sort
 }
 
 
-
-function dlg_text_info_3() { # for log
+# for log
+function dlg_text_info_3() {
 
         printf "$1" | yad --text-info --center --wrap \
         --center --skip-taskbar --on-top --title=Idiomind \
@@ -156,25 +148,14 @@ function dlg_text_info_3() { # for log
 }
 
 
-
-function dlg_text_info_4() { # no get text
+# no get text
+function dlg_text_info_4() {
     
         echo "$1" | yad --text-info --center --wrap \
         --name=idiomind --class=idiomind --window-icon=idiomind \
         --text=" " --sticky --width=$wth --height=$eht \
         --margins=8 --borders=3 --button=Ok:0 \
         --title=Idiomind
-}
-
-
-
-function dlg_text_info_5() { # edit item audio processing
-    
-        echo "$1" | yad --text-info --center --wrap \
-        --name=idiomind --class=idiomind --window-icon=idiomind \
-        --sticky --width=520 --height=110 --editable \
-        --margins=8 --borders=0 --button=Ok:0 \
-        --title="$edit_item" > "$2".txt
 }
 
 
@@ -199,7 +180,8 @@ function dlg_progress_2() {
 }
 
 
-function dlg_file_1() { # load
+# load
+function dlg_file_1() {
     
         echo "$(yad --borders=0 --name=idiomind --file-filter="*.mp3" \
         --skip-taskbar --on-top --title="Speech recognize" --center \
@@ -207,7 +189,8 @@ function dlg_file_1() { # load
 }
 
 
-function dlg_file_2() { # save
+# save
+function dlg_file_2() {
     
         yad --save --center --borders=10 \
         --on-top --filename="$(date +%m-%d-%Y)"_audio.tar.gz \
