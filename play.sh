@@ -5,8 +5,8 @@ source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/others.conf
 
 if [[ "$1" = time ]]; then
-	u=$(echo "$(whoami)")
-	cd $DT/.$u/
+
+	cd $DT/p
 	cnf1=$(mktemp $DT/cnf1.XXXX.s)
 	bcl=$(cat $DC_s/cfg.2)
 
@@ -14,20 +14,20 @@ if [[ "$1" = time ]]; then
 		echo 8 > $DC_s/cfg.2
 		bcl=$(sed -n 1p $DC_s/cfg.2)
 	fi
-		yad --mark="8 s":8 --mark="60 s":60 \
-		--mark="120 s":120 --borders=20 --scale \
-		--max-value=128 --value="$bcl" --step 2 \
-		--name=idiomind --on-top --skip-taskbar \
-		--window-icon=idiomind --borders=5 \
-	    --title=" " --width=280 --height=240 \
-	    --min-value=2 --button="Ok":0 > $cnf1
-	
-		if [[ "$?" -eq 0 ]]; then
-			cat "$cnf1" > $DC_s/cfg.2
-		fi
-			rm -f $cnf1
-		[[ "$?" -eq 1 ]] & rm -f $cnf1 & exit 1
-		exit 1
+	yad --mark="8 s":8 --mark="60 s":60 \
+	--mark="120 s":120 --borders=20 --scale \
+	--max-value=128 --value="$bcl" --step 1 \
+	--name=idiomind --on-top --skip-taskbar \
+	--window-icon=idiomind --borders=5 \
+    --title=" " --width=280 --height=240 \
+    --min-value=0 --button="Ok":0 > $cnf1
+
+	if [[ "$?" -eq 0 ]]; then
+		cat "$cnf1" > $DC_s/cfg.2
+	fi
+		rm -f $cnf1
+	[[ "$?" -eq 1 ]] & rm -f $cnf1 & exit 1
+	exit 1
 
 elif [[ -z "$1" ]]; then
 
@@ -55,9 +55,9 @@ elif [[ -z "$1" ]]; then
 	infs=$(echo "$snts Sentences" | wc -l)
 	infw=$(echo "$wrds Words" | wc -l)
 
-	if [ ! -d $DT/.$u ]; then
-		mkdir $DT/.$u
-		cd $DT/.$u
+	if [ ! -d $DT/p ]; then
+		mkdir $DT/p
+		cd $DT/p
 		echo "$indw" > ./indw
 		echo "$inds" > ./inds
 		echo "$indm" > ./indm
@@ -92,18 +92,16 @@ FALSE' > $DC_s/cfg.5; fi
 	st9=$(cat $DC_s/cfg.5 | sed -n 9p)
 	st10=$(cat $DC_s/cfg.5 | sed -n 10p)
 	slct=$(mktemp $DT/slct.XXXX)
-	if [ ! -f $DT/.p__$u ]; then
-		btn="--button=Ok:0"
+	if [ ! -f $DT/.p_ ]; then
+		btn="--button=Time:$DS/play.sh time"
 	else
-		btn="--button=gtk-media-stop:2"
-	fi
+		btn="--button=gtk-media-stop:2"; fi
 	yad --list --on-top \
 	--expand-column=3 --print-all --center \
 	--width=290 --name=idiomind --class=idmnd \
 	--height=240 --title="$tpc" --skip-taskbar \
 	--window-icon=idiomind --no-headers \
-	--button=Time:"$DS/play.sh 'time'" \
-	--borders=0 $btn --hide-column=1 \
+	--borders=0 "$btn" --button=Ok:0 --hide-column=1 \
 	--column=Action:TEXT --column=icon:IMG \
 	--column=Action:TEXT --column=icon:CHK \
 	"Words" "$img1" "$words" $st1 \
@@ -118,7 +116,7 @@ FALSE' > $DC_s/cfg.5; fi
 	slt=$(cat "$slct")
 
 	if  [[ "$ret" -eq 0 ]]; then
-		cd $DT/.$u
+		cd $DT/p
 		> ./indx
 		if echo "$(echo "$slt" | sed -n 1p)" | grep TRUE; then
 			sed -i "1s/.*/TRUE/" $DC_s/cfg.5
@@ -170,19 +168,19 @@ FALSE' > $DC_s/cfg.5; fi
 	#-------------------------------------stop 
 	elif [[ "$ret" -eq 2 ]]; then
 		rm -f "$slct"
-		[[ -d $DT/.$u ]] && rm -fr $DT/.$u
-		[[ -f $DT/.p__$u ]] && rm -f $DT/.p__$u
-		$DS/stop.sh P & exit
+		[[ -d $DT/p ]] && rm -fr $DT/p
+		[[ -f $DT/.p_ ]] && rm -f $DT/.p_
+		/usr/share/idiomind/stop.sh play & exit
 	else
-		if  [ ! -f $DT/.p__$u ]; then
-			[[ -d $DT/.$u ]] && rm -fr $DT/.$u
+		if  [ ! -f $DT/.p_ ]; then
+			[[ -d $DT/p ]] && rm -fr $DT/p
 		fi
 		rm -f "$slct"
 		exit 1
 	fi
 
 	rm -f $slct
-	$DS/stop.sh play
+	$DS/stop.sh playm
 
 	w=$(sed -n 1p $DC_s/cfg.5)
 	s=$(sed -n 2p $DC_s/cfg.5)
@@ -196,9 +194,10 @@ FALSE' > $DC_s/cfg.5; fi
 		$DS/stop.sh play
 	fi
 
-	if [[ -z "$(cat ./indx)" ]]; then
+	if [[ -z "$(cat $DT/p/indx)" ]]; then
+		echo "$(cat $DT/p/indx)"
 		notify-send -i idiomind "$exiting" "$no_items2" -t 3000 &
-		rm -f $DT/.p__$u &
+		rm -f $DT/.p_ &
 		$DS/stop.sh play & exit 1
 	fi
 

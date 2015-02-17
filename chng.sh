@@ -8,11 +8,11 @@ if [[ "$1" = chngi ]]; then
 
 	nta=$(sed -n 6p $DC_s/cfg.5)
 	sna=$(sed -n 7p $DC_s/cfg.5)
-	cfg.1="$DC_s/cfg.5"
-	indx="$DT/.$user/indx"
+	cfg1="$DC_s/cfg.5"
+	indx="$DT/p/indx"
 	[[ -z $(cat $DC_s/cfg.2) ]] && echo 8 > $DC_s/cfg.2
 	bcl=$(cat $DC_s/cfg.2)
-	[[ $bcl -lt 2 ]] && bcl = 2 && echo 2 > $DC_s/cfg.2
+	[[ $bcl -le 0 ]] && bcl = 0.3 && echo 0.3 > $DC_s/cfg.2
 	if ([ $(echo "$nta" | grep "TRUE") ] && [ $bcl -lt 12 ]); then bcl=12; fi
 
 	item="$(sed -n "$2"p $indx)"
@@ -42,40 +42,26 @@ if [[ "$1" = chngi ]]; then
 		fi
 
 		[[ -z "$trgt" ]] && trgt="$item"
-		#[[ -f "$DM_tl/Feeds/kept/words/$item.mp3" ]] && osdi="$DM_tl/Feeds/kept/words/$item.mp3" || osdi=idiomind
 		imgt="$DM_tlt/words/images/$fname.jpg"
 		[[ -f $imgt ]] && osdi=$imgt || osdi=idiomind
 		
-		[[ -n $(echo "$nta" | grep "TRUE") ]] && notify-send -i "$osdi" "$trgt" "$srce" -t 10000  &
-		sleep 0.7
+		[[ -n $(echo "$nta" | grep "TRUE") ]] && \
+		(notify-send -i "$osdi" "$trgt" "$srce" -t 10000 && sleep 0.5) &
+		
 		if [[ -n $(echo "$sna" | grep "TRUE") ]]; then
-			if ps -A | pgrep -f 'tls.sh'; then
-				
-				while [ $(ps -A | pgrep -f tls.sh) ]; do
-					sleep 0.5
-				done
-				
-				$DS/ifs/tls.sh play "$file" &
-			else
-				$DS/ifs/tls.sh play "$file" &
-			fi
+
+				$DS/ifs/tls.sh play "$file"
 		fi
-		
-		cnt=$(echo "$trgt" | wc -c)
-		sleep $(($bcl+$cnt/20))
-		
+		#cnt=$(soxi -D "$file")
+		sleep $bcl
 		[[ -f $DT/.bcle ]] && rm -f $DT/.bcle
 		
 	else
 		echo "$item" >> $DT/.bcle
 		echo "-- no file found"
-		if [ $(cat $DT/.p__$use | wc -l) -gt 5 ]; then
-			int="$(sed -n 16p $DS/ifs/trans/$lgs/$lgs | sed 's/|/\n/g')"
-			T="$(echo "$int" | sed -n 1p)"
-			D="$(echo "$int" | sed -n 2p)"
-			notify-send -i idiomind "$T" "$D" -t 9000 &
-			rm -f $DT/.p__$user &
-			$DS/stop.sh S & exit 1
+		if [ $(cat $DT/.bcle | wc -l) -gt 5 ]; then
+			rm -f $DT/.p_ &
+			$DS/stop.sh play & exit 1
 		fi
 	fi
 
@@ -104,30 +90,30 @@ elif [ "$1" != chngi ]; then
 		--no-headers --list --window-icon=idiomind --borders=5 \
 		--button="gtk-add":3 --button="$ok":0 \
 		--title="$topics" --column=img:img --column=File:TEXT)
-			ret=$?
+		ret=$?
 			
-			
-			
-			if [ $ret -eq 3 ]; then
-			
-					if [ "$h" = 1 ]; then
-						$DS/add.sh new_topic & exit
-						
-					else
-						$DS/add.sh new_topic & exit
-					fi
-			
-			elif [ $ret -eq 0 ]; then
-			
-					[ -z "$VAR" ] && exit 1
+		if [ $ret -eq 3 ]; then
+		
+				if [ "$h" = 1 ]; then
+					$DS/add.sh new_topic & exit
 					
-					if [[ -f $DC_tl/"$VAR"/tpc.sh ]]; then
-						$DC_tl/"$VAR"/tpc.sh & exit
-					else
-						cp -f $DS/default/tpc.sh $DC_tl/"$VAR"/tpc.sh
-						$DC_tl/"$VAR"/tpc.sh & exit
-					fi
-			else
-				exit 0
-			fi
+				else
+					$DS/add.sh new_topic & exit
+				fi
+		
+		elif [ $ret -eq 0 ]; then
+		
+				$DS/stop.sh play &
+				
+				[ -z "$VAR" ] && exit 1
+				
+				if [[ -f $DC_tl/"$VAR"/tpc.sh ]]; then
+					$DC_tl/"$VAR"/tpc.sh & exit
+				else
+					cp -f $DS/default/tpc.sh $DC_tl/"$VAR"/tpc.sh
+					$DC_tl/"$VAR"/tpc.sh & exit
+				fi
+		else
+			exit 1
+		fi
 fi

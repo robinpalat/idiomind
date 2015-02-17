@@ -35,6 +35,25 @@ function audio_recognizer() {
 }
 
 
+# load
+function dlg_file_1() {
+    
+        echo "$(yad --borders=0 --name=idiomind --file-filter="*.mp3 *.tar *.zip" \
+        --skip-taskbar --on-top --title="Speech recognize" --center \
+        --window-icon=idiomind --file --width=600 --height=450)"
+}
+
+
+# save
+function dlg_file_2() {
+    
+        yad --save --center --borders=10 \
+        --on-top --filename="$(date +%m-%d-%Y)"_audio.tar.gz \
+        --window-icon=idiomind --skip-taskbar --title="Save" \
+        --file --width=600 --height=500 --button=gtk-ok:0
+}
+
+
 # --------------------------------------
 if [[ "$prdt" = A ]]; then
 
@@ -69,18 +88,33 @@ if [[ "$prdt" = A ]]; then
 		(
 		echo "2"
 		echo "# $file_pros" ; sleep 1
-		cp -f "$FL" $DT_r/rv.mp3
 		cd $DT_r
-		#eyeD3 -P itunes-podcast --remove "$DT_r"/rv.mp3
-		eyeD3 --remove-all "$DT_r"/rv.mp3
-		sox "$DT_r"/rv.mp3 "$DT_r"/c_rv.mp3 remix - highpass 100 norm \
-		compand 0.05,0.2 6:-54,-90,-36,-36,-24,-24,0,-12 0 -90 0.1 \
-		vad -T 0.6 -p 0.2 -t 5 fade 0.1 reverse \
-		vad -T 0.6 -p 0.2 -t 5 fade 0.1 reverse norm -0.5
-		rm -f "$DT_r"/rv.mp3
-		mp3splt -s -o @n *.mp3
-		rename 's/^0*//' *.mp3
-		rm -f "$DT_r"/c_rv.mp3
+		
+		if echo "$FL" | grep '.mp3'; then
+		
+			cp -f "$FL" $DT_r/rv.mp3
+			#eyeD3 -P itunes-podcast --remove "$DT_r"/rv.mp3
+			eyeD3 --remove-all "$DT_r"/rv.mp3
+			sox "$DT_r"/rv.mp3 "$DT_r"/c_rv.mp3 remix - highpass 100 norm \
+			compand 0.05,0.2 6:-54,-90,-36,-36,-24,-24,0,-12 0 -90 0.1 \
+			vad -T 0.6 -p 0.2 -t 5 fade 0.1 reverse \
+			vad -T 0.6 -p 0.2 -t 5 fade 0.1 reverse norm -0.5
+			rm -f "$DT_r"/rv.mp3
+			mp3splt -s -o @n *.mp3
+			rename 's/^0*//' *.mp3
+			rm -f "$DT_r"/c_rv.mp3
+			
+		elif echo "$FL" | grep '.tar'; then
+		
+			cp -f "$FL" $DT_r/rv.tar
+			tar -xvf $DT_r/rv.tar
+			
+		elif echo "$FL" | grep '.zip'; then
+		
+			cp -f "$FL" $DT_r/rv.zip
+			unzip $DT_r/rv.zip
+		fi
+
 		ls *.mp3 > lst
 		lns=$(cat ./lst | head -50 | wc -l)
 		# --------------------------------------

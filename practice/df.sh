@@ -130,8 +130,8 @@ function answer() {
 	--skip-taskbar --title=" " --borders=3 \
 	--buttons-layout=spread \
 	--field="$srces":lbl --width=371 --height=280 \
-	--button="<span color='#D0573E'><tt> $no_know </tt></span>":3 \
-	--button="<span color='#3D9B2B'><tt> $ok_know </tt></span>":2
+	--button="<span color='#AC8D86'><tt><b> $no_know </b></tt></span>":3 \
+	--button="<span color='#819C7B'><tt><b> $ok_know </b></tt></span>":2
 	}
 
 n=1

@@ -30,6 +30,7 @@ if [[ $1 = n_i ]]; then
 	--button="$save_sentence":2 "$bttn" 
 		ret=$?
 		
+		# -------------------------------------------------------------
 		if [[ $ret -eq 0 ]]; then
 			if [ $(cat "$DC_tl/Feeds/cfg.3" | wc -l) -ge 50 ]; then
 				msg "$tpe  \n$words_max " info & exit
@@ -42,7 +43,7 @@ if [[ $1 = n_i ]]; then
 			fname="$(nmfile "${trgt^}")"
 
 			[[ ! -d "$DM_tl/Feeds/kept/words" ]] && mkdir "$DM_tl/Feeds/kept/words"
-			cp "$DM_tl/Feeds/conten/$dir/$trgt.mp3" "$DM_tl/Feeds/kept/words/$fname.mp3"
+			cp "$DM_tl/Feeds/conten/$dir/${trgt,,}.mp3" "$DM_tl/Feeds/kept/words/$fname.mp3"
 			
 			add_tags_2 W "${trgt^}" "${srce^}" "$var" "$DM_tl/Feeds/kept/words/$fname.mp3"
 			
@@ -55,7 +56,7 @@ if [[ $1 = n_i ]]; then
 				sed '/^$/d' $DT/.ls.x > "$DC_tl/Feeds/cfg.0"
 			fi
 			rm -rf $DT/rss_$c
-			
+		# -------------------------------------------------------------
 		elif [[ $ret -eq 2 ]]; then
 			if [ $(cat "$DC_tl/Feeds/cfg.4" | wc -l) -ge 50 ]; then
 				msg "$tpe  \n$sentences_max" info & exit
@@ -69,7 +70,7 @@ if [[ $1 = n_i ]]; then
 			
 			cp "$DM_tl/Feeds/conten/$fname.mp3" "$DM_tl/Feeds/kept/$fname.mp3"
 			cp "$DM_tl/Feeds/conten/$fname.lnk" "$DM_tl/Feeds/kept/$fname.lnk"
-			cp $DM_tl/Feeds/conten/"$fname"/*.mp3 "$DM_tl/Feeds/kept/.audio/"
+			cp "$DM_tl/Feeds/conten/$fname/*.mp3" "$DM_tl/Feeds/kept/.audio/"
 			
 			if [ -n "$(cat "$DC_tl/Feeds/cfg.0" | sort -n | uniq -dc)" ]; then
 				cat "$DC_tl/Feeds/cfg.0" | awk '!array_temp[$0]++' > $DT/.ls.x
@@ -83,8 +84,9 @@ if [[ $1 = n_i ]]; then
 			rm -fr $DT/word.x $DT/rss_$c & exit
 		fi
 		
+# -------------------------------------------------------------
 elif [[ $1 = n_t ]]; then
-
+	
 	dte=$(date "+%a %d %B")
 	if [ $(cat "$DC_tl/.cfg.1" | wc -l) -ge 80 ]; then
 		msg "$topics_max " info & exit
@@ -109,10 +111,18 @@ elif [[ $1 = n_t ]]; then
 			cd $DS/practice/default/
 			cp -f ./.* "$DC_tl/$jlb/practice/"
 			
-			[[ -f "$DC_tl/Feeds/cfg.0" ]] && mv -f "$DC_tl/Feeds/cfg.0" "$DC_tl/$jlb/cfg.0" || "touch $DC_tl/$jlb/cfg.0"
-			[[ -f "$DC_tl/Feeds/cfg.3" ]] && mv -f "$DC_tl/Feeds/cfg.3" "$DC_tl/$jlb/cfg.3" || "touch $DC_tl/$jlb/cfg.3"
-			[[ -f "$DC_tl/Feeds/cfg.4" ]] && mv -f "$DC_tl/Feeds/cfg.4" "$DC_tl/$jlb/cfg.4" || "touch $DC_tl/$jlb/cfg.4"
-			[[ -f "$DC_tl/Feeds/.cfg.11" ]] && mv -f "$DC_tl/Feeds/.cfg.11" "$DC_tl/$jlb/.cfg.11" || "touch $DC_tl/$jlb/.cfg.11"
+			[[ -f "$DC_tl/Feeds/cfg.0" ]] && \
+			mv -f "$DC_tl/Feeds/cfg.0" "$DC_tl/$jlb/cfg.0" || \
+			"touch $DC_tl/$jlb/cfg.0"
+			[[ -f "$DC_tl/Feeds/cfg.3" ]] && \
+			mv -f "$DC_tl/Feeds/cfg.3" "$DC_tl/$jlb/cfg.3" || \
+			"touch $DC_tl/$jlb/cfg.3"
+			[[ -f "$DC_tl/Feeds/cfg.4" ]] && \
+			mv -f "$DC_tl/Feeds/cfg.4" "$DC_tl/$jlb/cfg.4" || \
+			"touch $DC_tl/$jlb/cfg.4"
+			[[ -f "$DC_tl/Feeds/.cfg.11" ]] && \
+			mv -f "$DC_tl/Feeds/.cfg.11" "$DC_tl/$jlb/.cfg.11" || \
+			"touch $DC_tl/$jlb/.cfg.11"
 			
 			cd "$DM_tl/Feeds/kept"
 			cp -f *.mp3 "$DM_tl/$jlb/" && rm *.mp3

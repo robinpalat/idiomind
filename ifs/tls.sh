@@ -7,7 +7,8 @@ source $DS/ifs/mods/cmns.sh
 
 if [ "$1" = play ]; then
 
-play "$2" && sleep 0.5 & exit
+play "$2"
+wait
 
 elif [ "$1" = info ]; then
 
@@ -67,13 +68,14 @@ if [[ $ret -eq 0 ]]; then
 	fi
 fi
 
-elif [ "$1" = s ]; then
+elif [ "$1" = listen_sntnc ]; then
 
-	if [[ "$(ps -A | grep -o "play")" = "play" ]]; then
-		killall play
-	fi
 	
-	play "$DM_tlt/$2.mp3" & sleep 0.2 && exit
+	killall play
+
+	
+	play "$DM_tlt/$2.mp3"
+	exit 1
 	
 elif [ "$1" = dclik ]; then
 

@@ -34,24 +34,19 @@ if [ "$1" = edit_dlg ]; then
 	[ -z "$2" ] && code="#!/bin/bash" || code="$2"
 	
 	ss=$(mktemp $DT/D.XXXX)
-	yad --form --width=420 --height=450 --on-top --print-all \
+	yad --text-info --width=420 --height=450 --on-top --print-all \
 	--buttons-layout=end --center --window-icon=idiomind \
 	--borders=0 --skip-taskbar --align=right --always-print-result \
-	--button=Cancel:1 --button=Test:4 --button=Save:5 --title="script"\
-	--field="<small>Argument 1: \"\$1\" = \"word\"</small>":TXT "$code" \
-	--field="<small>Name</small>" "$name" \
-	--field="<small>Language</small>:CB" "!en!es!pt!it!fr!de!ru" > "$ss"
+	--button=Cancel:1 --button=Test:4 --button=Save:5 --title="script" > "$ss"
 	rt=$?
-	code=$(cat "$ss" | cut -d "|" -f1)
-	name=$(cat "$ss" | cut -d "|" -f2 | sed s'/ /_/'g)
-	lang=$(cat "$ss" | cut -d "|" -f3)
+	source 
 	[ -z "$name" ] && name="d_$(($RANDOM%10))"
 	[ -z "$lang" ] && lang="$lgt"
 	
 	if [ "$rt" -eq 5 ]; then
 
 		printf "${code}" > "$disables/$name.$lang"
-		$DS_a/Dics/cnfg.sh
+		$DS_a/Dics/cnfg.sh;
 		
 	elif [ "$rt" -eq 4 ]; then
 	
@@ -62,13 +57,13 @@ if [ "$1" = edit_dlg ]; then
 		rm -f /tmp/yes.mp3 /tmp/test.sh
 		$DS_a/Dics/cnfg.sh edit_dlg "$code"
 		r=$(echo $?)
-		[ $r -eq 0 ] && echo "${code}" > "$disables/$name.$lang"
+		[ $r -eq 0 ] && echo "${code}" > "$disables/$name.$lang";
 		
 	else
 	
-		$DS_a/Dics/cnfg.sh
+		$DS_a/Dics/cnfg.sh;
 	fi
-
+	rm -f "$ss" & exit
 
 elif [ "$1" = dlck ]; then
 
@@ -82,15 +77,15 @@ elif [ "$1" = dlck ]; then
 	--buttons-layout=end --center --window-icon=idiomind \
 	--borders=0 --skip-taskbar --align=right --always-print-result \
 	--button=Cancel:1 --button=Remove:2 --button=Test:4 \
-	--button=Save:0 --title="script"\
+	--button=Save:0 --title="script" --separator=: \
 	--field="<small>Argument 1: \"\$1\" = \"word\"</small>":TXT "$code" \
 	--field="<small>Name</small>":RO "$name" \
 	--field="<small>Language</small>":RO "$lgt" > "$ss"
 	ret=$?
 	
-	code=$(cat "$ss" | cut -d "|" -f1)
-	name=$(cat "$ss" | cut -d "|" -f2 | sed s'/ /_/'g)
-	lang=$(cat "$ss" | cut -d "|" -f3)
+	code=$(cat "$ss" | cut -d ":" -f1)
+	name=$(cat "$ss" | cut -d ":" -f2 | sed s'/ /_/'g)
+	lang=$(cat "$ss" | cut -d ":" -f3)
 	[ -z "$name" ] && name="dict_$(($RANDOM%100))"
 	[ -z "$lang" ] && lang="$lgt"
 	
@@ -98,13 +93,13 @@ elif [ "$1" = dlck ]; then
 	
 		msg_2 " Confirm removal\n $3.$lgt\n" dialog-question yes no
 		rt=$(echo $?)
-		[ $rt -eq 0 ] && rm "$dir/$stts/$3.$lgt" & exit 1
+		[ $rt -eq 0 ] && rm "$dir/$stts/$3.$lgt";
 			
 	elif [ $ret -eq 0 ]; then
 		
 		[ -z "$name" ] && name="d_$(($RANDOM%10))"
 		[ -z "$lang" ] && lang="$lgt"
-		printf "${code}" > "$dir/$stts/$name.$lang" & exit 1
+		printf "${code}" > "$dir/$stts/$name.$lang";
 		
 	elif [ $ret -eq 4 ]; then
 	
@@ -115,12 +110,10 @@ elif [ "$1" = dlck ]; then
 		rm -f "/tmp/yes.mp3" "/tmp/test.sh"
 		$DS_a/Dics/cnfg.sh dlck TRUE "$name" "$name"
 		r=$(echo $?)
-		[ $r -eq 0 ] && echo "${code}" > "$dir/$stts/$name.$lang" & exit 1
-		
-	else
-		exit 1
+		[ $r -eq 0 ] && echo "${code}" > "$dir/$stts/$name.$lang";
 	fi
-
+	
+	rm -f "$ss" & exit 1
 	
 elif [ -z "$1" ]; then
 
@@ -151,7 +144,7 @@ elif [ -z "$1" ]; then
 	
 		if [ "$ret" -eq 2 ]; then
 		
-				$DS_a/Dics/cnfg.sh edit_dlg
+				$DS_a/Dics/cnfg.sh edit_dlg; 
 		
 		elif [ "$ret" -eq 0 ]; then
 		
@@ -188,9 +181,9 @@ elif [ -z "$1" ]; then
 			#[ -f *.$lgt ] && ls -d -1 $PWD/*.$lgt > "$dir/.dicts"
 			#[ -f *.auto ] && ls -d -1 $PWD/*.auto >> "$dir/.dicts"
 			ls -d -1 $PWD/*.$lgt > "$dir/.dicts"
-			ls -d -1 $PWD/*.auto >> "$dir/.dicts"
+			ls -d -1 $PWD/*.auto >> "$dir/.dicts"; 
 		
 		fi
 		
-		rm -f "$D" & exit 1
+	rm -f "$D" & exit 1
 fi
