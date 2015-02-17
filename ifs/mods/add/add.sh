@@ -2,6 +2,57 @@
 # -*- ENCODING: UTF-8 -*-
 
 
+function index() {
+
+	DC_tlt="$DC_tl/$3"
+
+	if [ ! -z "$2" ]; then
+	
+		if [ "$1" = word ]; then
+		
+			if [[ "$(cat "$DC_tlt/cfg.0" | grep "$4")" ]] && [ -n "$4" ]; then
+				sed -i "s/${4}/${4}\n$2/" "$DC_tlt/cfg.0"
+				sed -i "s/${4}/${4}\n$2/" "$DC_tlt/cfg.1"
+				sed -i "s/${4}/${4}\n$2/" "$DC_tlt/.cfg.11"
+			else
+				echo "$2" >> "$DC_tlt/cfg.0"
+				echo "$2" >> "$DC_tlt/cfg.1"
+				echo "$2" >> "$DC_tlt/.cfg.11"; fi
+			echo "$2" >> "$DC_tlt/cfg.3"
+			
+		elif [ "$1" = sentence ]; then
+			echo "$2" >> "$DC_tlt/cfg.0"
+			echo "$2" >> "$DC_tlt/cfg.1"
+			echo "$2" >> "$DC_tlt/cfg.4"
+			echo "$2" >> "$DC_tlt/.cfg.11"; fi
+		
+		tmp=$DT/tmp
+		lss="$DC_tlt/.cfg.11"
+		if [ -n "$(cat "$lss" | sort -n | uniq -dc)" ]; then
+			cat "$lss" | awk '!array_temp[$0]++' > $tmp
+			sed '/^$/d' $tmp > "$lss"; fi
+		ls0="$DC_tlt/cfg.0"
+		if [ -n "$(cat "$ls0" | sort -n | uniq -dc)" ]; then
+			cat "$ls0" | awk '!array_temp[$0]++' > $tmp
+			sed '/^$/d' $tmp > "$ls0"; fi
+		ls1="$DC_tlt/cfg.1"
+		if [ -n "$(cat "$ls1" | sort -n | uniq -dc)" ]; then
+			cat "$ls1" | awk '!array_temp[$0]++' > $tmp
+			sed '/^$/d' $tmp > "$ls1"; fi
+		ls2="$DC_tlt/cfg.3"
+		if [ -n "$(cat "$ls2" | sort -n | uniq -dc)" ]; then
+			cat "$ls2" | awk '!array_temp[$0]++' > $tmp
+			sed '/^$/d' $tmp > "$ls2"; fi
+		ls3="$DC_tlt/cfg.4"
+		if [ -n "$(cat "$ls3" | sort -n | uniq -dc)" ]; then
+			cat "$ls3" | awk '!array_temp[$0]++' > $tmp
+			sed '/^$/d' $tmp > "$ls3"; fi
+		rm -f $tmp
+	fi
+}
+
+
+
 function check_grammar_1() {
 	
 	g=$(echo "$trgt"  | sed 's/ /\n/g')
@@ -130,11 +181,11 @@ function add_tags_6() {
 }
 
 
-function add_tags_7() {
+#function add_tags_7() {
 	
-	eyeD3 --set-encoding=utf8 \
-	-t ISI1I0I"$2"ISI1I0I "$3"
-}
+	#eyeD3 --set-encoding=utf8 \
+	#-t ISI1I0I"$2"ISI1I0I "$3"
+#}
 
 
 function add_tags_8() {
@@ -267,7 +318,7 @@ function fetch_audio() {
 			if [ -f "$3/${word,,}.mp3" ]; then
 					mv -f "$3/${word,,}.mp3" "$4/${word,,}.mp3"
 			else
-				voice "$word" "$4/${word,,}.mp3"; fi
+				voice "$word" "$3" "$4/${word,,}.mp3"; fi
 			
 			[ "$4" = "$DM_tl/.share" ] \
 			&& echo "${word,,}.mp3" >> "$DC_tlt/cfg.5"
@@ -299,4 +350,181 @@ function list_words_3() {
 		| sed '/")"/d' | sed '/":"/d' | sort -u \
 		| head -n40 | egrep -v "FALSE" | egrep -v "TRUE" > lst
 	fi
+}
+
+
+# current process
+function dlg_msg_3() {
+    
+        yad --fixed --center --on-top \
+        --image=info --name=idiomind \
+        --text=" $current_pros  " \
+        --fixed --sticky --buttons-layout=edge \
+        --width=360 --height=120 --borders=5 \
+        --skip-taskbar --window-icon=idiomind \
+        --title=Idiomind --button=gtk-cancel:3 --button=Ok:1
+}
+
+
+# s
+function dlg_msg_2() {
+    
+        yad --name=idiomind --center --on-top --image=info \
+        --text="$item_err\n" \
+        --image-on-top --width=360 --height=120 --borders=3 \
+        --skip-taskbar --window-icon=idiomind --sticky \
+        --title=Idiomind --button="$delete":1 --button="$fix_item":0 
+}
+
+
+# same name - topic 
+function dlg_msg_6() {
+    
+        yad --name=idiomind --center --on-top --image=info \
+        --text=" $1" \
+        --image-on-top --width=420 --height=120 --borders=3 \
+        --skip-taskbar --window-icon=idiomind --sticky \
+        --title=Idiomind --button="$cancel":1 --button=Ok:0
+}
+
+
+# new topic
+function dlg_form_0() {
+    
+        yad --window-icon=idiomind --form --center \
+        --field="$name_for_new_topic" "$2" --title="$1" \
+        --width=440 --height=100 --name=idiomind --on-top \
+        --skip-taskbar --borders=5 --button=gtk-ok:0
+}
+
+
+# imput text 
+function dlg_form_1() {
+    
+        yad --form --center --always-print-result \
+        --on-top --window-icon=idiomind --skip-taskbar \
+        --separator="\n" --align=right $img \
+        --name=idiomind --class=idiomind \
+        --borders=0 --title=" " --width=420 --height=140 \
+        --field=" <small><small>$lgtl</small></small>: " "$txt" \
+        --field=" <small><small>$topic</small></small>:CB" \
+        "$ttle!$new *$e$tpcs" \
+        --button="<small>$image</small>":3 \
+        --button="<small>Audio</small>":2 --button=gtk-ok:0
+}
+
+
+# imput text 
+function dlg_form_2() {
+    
+        yad --form --center --always-print-result \
+        --on-top --window-icon=idiomind --skip-taskbar \
+        --separator="\n" --align=right $img \
+        --name=idiomind --class=idiomind \
+        --borders=0 --title=" " --width=420 --height=170 \
+        --field=" <small><small>$lgtl</small></small>: " "$txt" \
+        --field=" <small><small>${lgsl^}</small></small>: " "$srce" \
+        --field=" <small><small>$topic</small></small>:CB" \
+        "$ttle!$new *$e$tpcs" \
+        --button="<small>$image</small>":3 \
+        --button="<small>Audio</small>":2 --button=gtk-ok:0
+}
+
+
+# check_tpe
+function dlg_radiolist_1() {
+    
+        echo "$1" | awk '{print "FALSE\n"$0}' | \
+        yad --name=idiomind --class=idiomind --center \
+        --list --radiolist --on-top --fixed --no-headers \
+        --text="<b>$te</b> <small><small> --window-icon=idiomind \
+        $info</small></small>" --sticky --skip-taskbar \
+        --height=420 --width=150 --separator="\\n" \
+        --button=Save:0 --title="selector" --borders=3 \
+        --column=" " --column="Sentences"
+}
+
+
+#edit_word_list
+function dlg_checklist_1() {
+    
+        cat "$1" | awk '{print "FALSE\n"$0}' | \
+        yad --list --checklist --title="$word_selector" \
+        --on-top --text="<small>$2</small>" \
+        --center --sticky --no-headers \
+        --buttons-layout=end --skip-taskbar --width=400 \
+        --height=280 --borders=10 --window-icon=idiomind \
+        --button=gtk-close:1 --button="$add":0 \
+        --column="" --column="Select" > "$slt"
+}
+
+
+# process no audio
+function dlg_checklist_3() {
+
+        slt=$(mktemp $DT/slt.XXXX.x)
+        cat "$1" | awk '{print "FALSE\n"$0}' | \
+        yad --name=idiomind --window-icon=idiomind \
+        --dclick-action='/usr/share/idiomind/add.sh dclik_list_words' \
+        --list --checklist --class=idiomind --center --sticky \
+        --text="<small>$info</small>" --title="$tpe" \
+        --width=$wth --print-all --height=$eht --borders=3 \
+        --button="$cancel":1 --button="$arrange":2 \
+        --button="$to_new_topic":'/usr/share/idiomind/add.sh new_topic' \
+        --button=gtk-save:0 \
+        --column="$(cat "$1" | wc -l)" --column="$sentences" > $slt
+}
+
+
+# sort
+function dlg_text_info_1() {
+    
+        cat "$1" | awk '{print "\n\n\n"$0}' | \
+        yad --text-info --editable --window-icon=idiomind \
+        --name=idiomind --wrap --margins=60 --class=idiomind \
+        --sticky --fontname=vendana --on-top --center \
+        --skip-taskbar --width=$wth \
+        --height=$eht --borders=3 \
+        --button=gtk-ok:0 --title="$tpe" > ./sort
+}
+
+
+# for log
+function dlg_text_info_3() {
+
+        printf "$1" | yad --text-info --center --wrap \
+        --center --skip-taskbar --on-top --title=Idiomind \
+        --width=420 --height=150 --on-top --margins=4 \
+        --window-icon=idiomind --borders=0 --name=idiomind \
+        "$2" --button=Ok:1
+}
+
+
+# no get text
+function dlg_text_info_4() {
+    
+        echo "$1" | yad --text-info --center --wrap \
+        --name=idiomind --class=idiomind --window-icon=idiomind \
+        --text=" " --sticky --width=$wth --height=$eht \
+        --margins=8 --borders=3 --button=Ok:0 \
+        --title=Idiomind
+}
+
+
+function dlg_progress_1() {
+    
+        yad --progress --progress-text=" " \
+        --width=200 --height=20 --geometry=200x20-2-2 \
+        --pulsate --percentage="5" --on-top \
+        --undecorated --auto-close \
+        --skip-taskbar --no-buttons
+}
+
+
+function dlg_progress_2() {
+
+        yad --progress --progress-text=" " \
+        --width=200 --height=20 --geometry=200x20-2-2 \
+        --undecorated --auto-close --on-top \
+        --skip-taskbar --no-buttons
 }

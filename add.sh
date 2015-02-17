@@ -361,7 +361,7 @@ elif [ $1 = new_sentence ]; then
 	
 	add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3"
 	notify-send -i "$icnn" "$trgt" "$srce\\n($tpe)" -t 10000
-	$DS/mngr.sh index sentence "$trgt" "$tpe"
+	index sentence "$trgt" "$tpe"
 	
 	(
 	if [ $(sed -n 4p $DC_s/cfg.1) = TRUE ]; then
@@ -466,7 +466,7 @@ elif [ $1 = new_word ]; then
 		nt="$(echo "_$(check_grammar_2 $trgt)" | tr '\n' '_')"
 		eyeD3 --set-encoding=utf8 -A IWI3I0I"$nt"IWI3I0I "$DM_tlt/words/$fname.mp3"
 		notify-send -i "$icnn" "$trgt" "$srce\\n($tpe)" -t 5000
-		$DS/mngr.sh index word "$trgt" "$tpe"
+		index word "$trgt" "$tpe"
 		printf "aitm.1.aitm\n" >> \
 		$DC/addons/stats/.log
 	
@@ -475,7 +475,7 @@ elif [ $1 = new_word ]; then
 		msg "$error1" dialog-warning & exit 1
 	fi
 
-	#[[ -d $DT_r ]] && rm -fr $DT_r
+	[[ -d $DT_r ]] && rm -fr $DT_r
 	rm -f *.jpg
 	exit 1
 	
@@ -563,7 +563,7 @@ elif [ $1 = edit_list_words ]; then
 				&& [ -f "$DM_tlt/words/$fname.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
 				
 					add_tags_2 W "$trgt" "$srce" "$5" "$DM_tlt/words/$fname.mp3" >/dev/null 2>&1
-					$DS/mngr.sh index word "$trgt" "$tpc" "$sname"
+					index word "$trgt" "$tpc" "$sname"
 				
 				else
 					printf "\n- $sntc" >> ./logw
@@ -739,7 +739,7 @@ elif [ $1 = sentence_list_words ]; then
 			&& [ -f "$DM_tlt/words/$fname.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
 				
 				add_tags_2 W "$trgt" "$srce" "$3" "$DM_tlt/words/$fname.mp3" >/dev/null 2>&1
-				$DS/mngr.sh index word "$trgt" "$4"
+				index word "$trgt" "$4"
 			
 			else
 				printf "\n- $sntc" >> ./logw
@@ -796,7 +796,7 @@ elif [ $1 = process ]; then
 		if [ $ret -eq "3" ]; then
 			rm=$(cat $lckpr)
 			rm fr $rm $lckpr
-			$DS/mngr.sh index R && killall add.sh
+			index R && killall add.sh
 		fi
 		exit 1
 	fi
@@ -968,7 +968,7 @@ elif [ $1 = process ]; then
 								
 									add_tags_1 W "$trgt" "$srce" "$DM_tlt/words/$fname.mp3"
 									echo "$trgt" >> addw
-									$DS/mngr.sh index word "$trgt" "$tpe"
+									index word "$trgt" "$tpe"
 
 								else
 									printf "\n- $sntc" >> ./wlog
@@ -1015,7 +1015,7 @@ elif [ $1 = process ]; then
 									&& [ -f "$DM_tlt/$fname.mp3" ] && [ -n "$lwrds" ] && [ -n "$pwrds" ] && [ -n "$grmrk" ] ); then
 									
 										echo "$fname" >> adds
-										$DS/mngr.sh index sentence "$trgt" "$tpe"
+										index sentence "$trgt" "$tpe"
 										add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3"
 										fetch_audio $aw $bw $DT_r $DM_tls
 
@@ -1077,7 +1077,7 @@ elif [ $1 = process ]; then
 							if ( [ -n $(file -ib "$DM_tlt/words/$fname.mp3" | grep -o 'binary') ] \
 							&& [ -f "$DM_tlt/words/$fname.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
 								add_tags_2 W "$trgt" "$srce" "$sname" "$DM_tlt/words/$fname.mp3"
-								$DS/mngr.sh index word "$trgt" "$tpe" "$sname"
+								index word "$trgt" "$tpe" "$sname"
 								echo "$trgt" >> addw
 							else
 								printf "\n- $sntc" >> ./wlog

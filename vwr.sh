@@ -80,7 +80,7 @@ elif ( [ -f "$DM_tlt/$fname.mp3" ] || [ "$5" = s_fix ] ); then
 	--text="<big><big>$trgt</big></big>\n\n<i>$src</i>\n\n\n" \
 	--width="$wth" --height="$eht" --center \
 	--column="":TEXT --column="":TEXT \
-	--button=gtk-edit:4 --button="$listen":"$DS/ifs/tls.sh s '$fname'" \
+	--button=gtk-edit:4 --button="$listen":"$DS/ifs/tls.sh listen_sntnc '$fname'" \
 	--button=gtk-go-up:3 --button=gtk-go-down:2 \
 	--dclick-action="$DS/ifs/tls.sh dclik" >/dev/null 2>&1
 else
@@ -91,7 +91,7 @@ else
 fi
 		ret=$?
 		if [[ $ret -eq 4 ]]; then
-			$DS/mngr.sh edt "$v" "$fname"
+			$DS/mngr.sh edt "$v" "$fname" $nuw
 		elif [[ $ret -eq 2 ]]; then
 			ff=$(($nuw + 1))
 			$DS/vwr.sh "$v" "$nll" $ff &

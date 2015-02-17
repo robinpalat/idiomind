@@ -2,8 +2,8 @@
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
 [ -z "$tpc" ] && exit 1
-> $DT/.p__$user
-cd $DT/.$user
+> $DT/.p_
+cd $DT/p
 
 if [ -n "$(cat ./indx)" ] && [ $(cat ./indx | wc -l) -gt 0 ]; then
 	if [ "$(sed -n 8p $DC_s/cfg.5)" = "TRUE" ]; then
@@ -22,7 +22,7 @@ if [ -n "$(cat ./indx)" ] && [ $(cat ./indx | wc -l) -gt 0 ]; then
 		$DS/chng.sh chngi $n
 			let n++
 		done
-		rm -fr $DT/.p__$user $DT/.$user
+		rm -fr $DT/.p_ $DT/p
 	fi
 else
 	exit 1

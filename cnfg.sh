@@ -6,8 +6,8 @@ source $DS/ifs/trans/$lgs/settings.conf
 
 wth=$(sed -n 5p $DC_s/cfg.18)
 eht=$(sed -n 6p $DC_s/cfg.18)
-info1="<b>$warning</b>\n"$(echo "$change_source_language " | xargs -n6)""
-info2="$(echo "$confirm_target_language" | xargs -n4)"
+info1="$(echo "${change_source_language} " | xargs -n6 | sed 's/^/  /')"
+info2="$(echo "${confirm_target_language}" | xargs -n4 | sed 's/^/  /')"
 ICON=$DS/images/icon.png
 cd $DS/addons
 
@@ -20,10 +20,11 @@ if [ ! -d "$DC" ]; then
 fi
 
 function confirm() {
-	$yad --form --center --borders=8 --image=$2 \
+	yad --form --center --borders=8 --image=$2 \
 	--title="Idiomind" --on-top --window-icon=idiomind \
 	--skip-taskbar --button="$no":1 --button="$yes":0 \
-	--text="$1" --width=280 --height=150
+	--text="$1\n" \
+	--width=350 --height=120
 }
 
 function set_lang() {
