@@ -8,6 +8,30 @@ dir="$DC/addons/dict"
 enables="$DC/addons/dict/enables"
 disables="$DC/addons/dict/disables"
 
+new="#!/bin/bash
+# Argument 1: \"\$1\" = \"word\"
+
+name=\"\"
+lang=\"\""
+
+
+function dialog_edit() {
+	
+	yad --text-info --width=420 --height=450 --on-top --wrap \
+	--buttons-layout=end --center --window-icon=idiomind --margins=4 --print-all \
+	--borders=0 --skip-taskbar --editable --fontname=monospace --always-print-result --filename="$script" \
+	--button=Cancel:1 --button=Delete:2 --button=Test:4 --button=Save:5 --title="script" > $DT/script.sh
+}
+
+
+function dialog_new() {
+	
+	yad --text-info --width=420 --height=450 --on-top --wrap \
+	--buttons-layout=end --center --window-icon=idiomind --margins=4 --print-all \
+	--borders=0 --skip-taskbar --editable --fontname=monospace --always-print-result --filename="$script" \
+	--button=Cancel:1 --button=Test:4 --button=Save:5 --title="script" > $DT/script.sh
+}
+
 
 function dict_list() {
 
@@ -30,90 +54,68 @@ function dict_list() {
 
 
 if [ "$1" = edit_dlg ]; then
-	
-	[ -z "$2" ] && code="#!/bin/bash" || code="$2"
-	
-	ss=$(mktemp $DT/D.XXXX)
-	yad --text-info --width=420 --height=450 --on-top --print-all \
-	--buttons-layout=end --center --window-icon=idiomind \
-	--borders=0 --skip-taskbar --align=right --always-print-result \
-	--button=Cancel:1 --button=Test:4 --button=Save:5 --title="script" > "$ss"
-	rt=$?
-	source 
-	[ -z "$name" ] && name="d_$(($RANDOM%10))"
-	[ -z "$lang" ] && lang="$lgt"
-	
-	if [ "$rt" -eq 5 ]; then
 
-		printf "${code}" > "$disables/$name.$lang"
-		$DS_a/Dics/cnfg.sh;
+		if [[ "$2" = 2 ]]; then 
+		script="$DT/new.sh"; else
+		printf "$new" > "$DT/new.sh"
+		script="$DT/new.sh"; fi
+		name=""
+		lang=""
+		dialog_new
+		ret=$(echo $?)
 		
-	elif [ "$rt" -eq 4 ]; then
-	
-		printf "$code" > /tmp/test.sh
-		chmod +x /tmp/test.sh
-		cd /tmp; sh /tmp/test.sh yes
-		[ -f /tmp/yes.mp3 ] && play /tmp/yes.mp3 || msg Fail info
-		rm -f /tmp/yes.mp3 /tmp/test.sh
-		$DS_a/Dics/cnfg.sh edit_dlg "$code"
-		r=$(echo $?)
-		[ $r -eq 0 ] && echo "${code}" > "$disables/$name.$lang";
+	if [ $ret -eq 5 ]; then
 		
-	else
-	
-		$DS_a/Dics/cnfg.sh;
-	fi
-	rm -f "$ss" & exit
-
-elif [ "$1" = dlck ]; then
-
-	[ "$2" = TRUE ] && stts=enables || stts=disables
-	code="$(cat $dir/$stts/$3.$lgt)"
-	name="$3"
-	lang="$lgt"
-	
-	ss=$(mktemp $DT/D.XXXX)
-	yad --form --width=420 --height=450 --on-top --print-all \
-	--buttons-layout=end --center --window-icon=idiomind \
-	--borders=0 --skip-taskbar --align=right --always-print-result \
-	--button=Cancel:1 --button=Remove:2 --button=Test:4 \
-	--button=Save:0 --title="script" --separator=: \
-	--field="<small>Argument 1: \"\$1\" = \"word\"</small>":TXT "$code" \
-	--field="<small>Name</small>":RO "$name" \
-	--field="<small>Language</small>":RO "$lgt" > "$ss"
-	ret=$?
-	
-	code=$(cat "$ss" | cut -d ":" -f1)
-	name=$(cat "$ss" | cut -d ":" -f2 | sed s'/ /_/'g)
-	lang=$(cat "$ss" | cut -d ":" -f3)
-	[ -z "$name" ] && name="dict_$(($RANDOM%100))"
-	[ -z "$lang" ] && lang="$lgt"
-	
-	if [ $ret -eq 2 ]; then
-	
-		msg_2 " Confirm removal\n $3.$lgt\n" dialog-question yes no
-		rt=$(echo $?)
-		[ $rt -eq 0 ] && rm "$dir/$stts/$3.$lgt";
-			
-	elif [ $ret -eq 0 ]; then
-		
-		[ -z "$name" ] && name="d_$(($RANDOM%10))"
-		[ -z "$lang" ] && lang="$lgt"
-		printf "${code}" > "$dir/$stts/$name.$lang";
+		name=$(cat "$DT/script.sh" | grep -o -P '(?<=name=").*(?=")')
+		lang=$(cat "$DT/script.sh" | grep -o -P '(?<=lang=").*(?=")')
+		[ -z "$name" ] && name="untitled (no work)"
+		[ -z "$lang" ] && lang="__"
+		mv -f "$DT/script.sh" "$disables/$name.$lang"
+		$DS_a/Dics/cnfg.sh
 		
 	elif [ $ret -eq 4 ]; then
 	
-		printf "${code}" > "/tmp/test.sh"
-		chmod +x "/tmp/test.sh"
-		cd /tmp; sh "/tmp/test.sh" yes
-		[ -f "/tmp/yes.mp3" ]] && play "/tmp/yes.mp3" || msg 'Fail\n' info
-		rm -f "/tmp/yes.mp3" "/tmp/test.sh"
-		$DS_a/Dics/cnfg.sh dlck TRUE "$name" "$name"
-		r=$(echo $?)
-		[ $r -eq 0 ] && echo "${code}" > "$dir/$stts/$name.$lang";
+		cd  $DT; sh $DT/script.sh yes
+		[ -f $DT/yes.mp3 ] && play $DT/yes.mp3 || msg Fail info
+		rm -f $DT/yes.mp3
+		mv -f $DT/script.sh "$DT/new.sh"
+		$DS_a/Dics/cnfg.sh edit_dlg 2
+	fi
+
+
+elif [ "$1" = dlk_dlg ]; then
+
+	[ "$2" = TRUE ] && stts=enables
+	[ "$2" = FALSE ] && stts=disables
+	script="$dir/$stts/$3.$4"
+	name="$3"
+	lang="$4"
+	dialog_edit
+	ret=$(echo $?)
+	
+	if [ $ret -eq 2 ]; then
+	
+		msg_2 " Confirm removal\n $name.$lang\n" dialog-question yes no
+		rt=$(echo $?)
+		[ $rt -eq 0 ] && rm "$script"; exit
+	
+	elif [ $ret -eq 5 ]; then
+	
+		name=$(grep -F "_name=" "$script" | grep -o -P '(?<=name=").*(?=")')
+		lang=$(grep -F "_lang=" "$script" | grep -o -P '(?<=lang=").*(?=")')
+		[ -z "$name" ] && name="$3"
+		[ -z "$lang" ] && lang="$4"
+		mv -f $DT/script.sh "$dir/$stts/$name.$lang"
+		
+	elif [ $ret -eq 4 ]; then
+	
+		cd  $DT; sh $DT/script.sh yes
+		[ -f $DT/yes.mp3 ] && play $DT/yes.mp3 || msg Fail info
+		rm -f $DT/yes.mp3
+		mv -f $DT/script.sh "$dir/$stts/$name.$lang"
+		$DS_a/Dics/cnfg.sh dlk_dlg "$2" "$name" "$lang"
 	fi
 	
-	rm -f "$ss" & exit 1
 	
 elif [ -z "$1" ]; then
 
@@ -131,27 +133,26 @@ elif [ -z "$1" ]; then
 		align="--text-align=right"
 	fi
 	
-	D=$(mktemp $DT/D.XXXX)
-	dict_list | $yad --list --title="Idiomind - $dictionaries" \
+	sel="$(dict_list | yad --list --title="Idiomind - $dictionaries" \
 	--center --on-top --expand-column=2 --text="$tex" $align \
 	--width=420 --height=300 --skip-taskbar --separator=" " \
 	--borders=15 --button="$add":2 --print-all --button=Ok:0 \
 	--column=" ":CHK --column="$availables":TEXT \
 	--column="$languages":TEXT --window-icon=idiomind \
 	--buttons-layout=edge --always-print-result \
-	--dclick-action='/usr/share/idiomind/addons/Dics/cnfg.sh dlck' > "$D"
+	--dclick-action='/usr/share/idiomind/addons/Dics/cnfg.sh dlk_dlg')"
 	ret=$?
 	
 		if [ "$ret" -eq 2 ]; then
 		
-				$DS_a/Dics/cnfg.sh edit_dlg; 
+				$DS_a/Dics/cnfg.sh edit_dlg
 		
 		elif [ "$ret" -eq 0 ]; then
 		
 			n=1
-			while [ $n -le "$(cat "$D" | wc -l)" ]; do
+			while [ $n -le "$(echo "$sel" | wc -l)" ]; do
 			
-				dict=$(sed -n "$n"p "$D")
+				dict=$(echo "$sel" | sed -n "$n"p)
 				d=$(echo "$dict" | awk '{print ($2)}')
 				
 				if echo "$dict" | grep FALSE; then
@@ -185,5 +186,5 @@ elif [ -z "$1" ]; then
 		
 		fi
 		
-	rm -f "$D" & exit 1
+	exit 1
 fi

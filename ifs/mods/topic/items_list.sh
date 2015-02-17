@@ -33,34 +33,6 @@ function notebook_1() {
 }
 
 
-function notebook_3() {
-	
-	yad --align=center --borders=80 \
-	--text="<u><b>$learned</b></u>   * $new_items ($tb1).\\n$time_review: $tdays" \
-	--bar="":NORM $RM \
-	--multi-progress --plug=$KEY --tabnum=1 &
-	cat "$ls2" | yad \
-	--no-headers --list --plug=$KEY --tabnum=2 \
-	--expand-column=1 --ellipsize=END --print-all \
-	--column=Name:TEXT \
-	--dclick-action='./vwr.sh v2' &
-	yad --text-info --plug=$KEY --margins=14 \
-	--wrap --text="$itxt2" --editable --tabnum=3 --fore='gray40' \
-	--show-uri --fontname=vendana --filename="$nt" > "$cnf3" &
-	yad --notebook --name=Idiomind --center \
-	--class=Idiomind --align=right --key=$KEY \
-	--tab-borders=0 --center --title="Idiomind" \
-	--image="$img" --text="$itxt" \
-	--window-icon=$DS/images/idiomind.png \
-	--tab=" $review " \
-	--tab=" $learned ($tb2) " \
-	--tab=" $notes " \
-	--ellipsize=END --image-on-top --always-print-result \
-	--width="$wth" --height="$eht" --borders=0 \
-	--button="$review":4 --button="$edit":3 >/dev/null 2>&1
-}
-
-
 function notebook_2() {
 	
 	yad --align=center --borders=80 \
@@ -86,6 +58,34 @@ function notebook_2() {
 	--ellipsize=END --image-on-top --always-print-result \
 	--width="$wth" --height="$eht" --borders=0 \
 	--button="$edit":3
+}
+
+
+function notebook_3() {
+	
+	yad --align=center --borders=80 \
+	--text="<u><b>$learned</b></u>   * $new_items ($tb1).\\n$time_review: $tdays" \
+	--bar="":NORM $RM \
+	--multi-progress --plug=$KEY --tabnum=1 &
+	cat "$ls2" | yad \
+	--no-headers --list --plug=$KEY --tabnum=2 \
+	--expand-column=1 --ellipsize=END --print-all \
+	--column=Name:TEXT \
+	--dclick-action='./vwr.sh v2' &
+	yad --text-info --plug=$KEY --margins=14 \
+	--wrap --text="$itxt2" --editable --tabnum=3 --fore='gray40' \
+	--show-uri --fontname=vendana --filename="$nt" > "$cnf3" &
+	yad --notebook --name=Idiomind --center \
+	--class=Idiomind --align=right --key=$KEY \
+	--tab-borders=0 --center --title="Idiomind" \
+	--image="$img" --text="$itxt" \
+	--window-icon=$DS/images/idiomind.png \
+	--tab=" $review " \
+	--tab=" $learned ($tb2) " \
+	--tab=" $notes " \
+	--ellipsize=END --image-on-top --always-print-result \
+	--width="$wth" --height="$eht" --borders=0 \
+	--button="$review":4 --button="$edit":3 >/dev/null 2>&1
 }
 
 
