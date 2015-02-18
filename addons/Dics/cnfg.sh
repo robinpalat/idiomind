@@ -10,10 +10,25 @@ disables="$DC/addons/dict/disables"
 
 new="#!/bin/bash
 # Argument 1: \"\$1\" = \"word\"
-
+# 
+#
 name=\"\"
 lang=\"\""
 
+function test_() {
+	
+	[[ $lang = en ]] && test=house
+	[[ $lang = fr ]] && test=maison
+	[[ $lang = de ]] && test=Haus
+	[[ $lang = 'zh-cn' ]] && test=房子
+	[[ $lang = it ]] && test=casa
+	[[ $lang = ja ]] && test=家
+	[[ $lang = pt ]] && test=casa
+	[[ $lang = es ]] && test=casa
+	[[ $lang = vi ]] && test=nhà
+	[[ $lang = ru ]] && test=дом
+	[[ $lang = auto ]] && test=house
+}
 
 function dialog_edit() {
 	
@@ -21,15 +36,6 @@ function dialog_edit() {
 	--buttons-layout=end --center --window-icon=idiomind --margins=4 --print-all \
 	--borders=0 --skip-taskbar --editable --fontname=monospace --always-print-result --filename="$script" \
 	--button=Cancel:1 --button=Delete:2 --button=Test:4 --button=Save:5 --title="script" > $DT/script.sh
-}
-
-
-function dialog_new() {
-	
-	yad --text-info --width=420 --height=450 --on-top --wrap \
-	--buttons-layout=end --center --window-icon=idiomind --margins=4 --print-all \
-	--borders=0 --skip-taskbar --editable --fontname=monospace --always-print-result --filename="$script" \
-	--button=Cancel:1 --button=Test:4 --button=Save:5 --title="script" > $DT/script.sh
 }
 
 
@@ -61,23 +67,25 @@ if [ "$1" = edit_dlg ]; then
 		script="$DT/new.sh"; fi
 		name=""
 		lang=""
-		dialog_new
+		dialog_edit
 		ret=$(echo $?)
 		
 	if [ $ret -eq 5 ]; then
 		
 		name=$(cat "$DT/script.sh" | grep -o -P '(?<=name=").*(?=")')
 		lang=$(cat "$DT/script.sh" | grep -o -P '(?<=lang=").*(?=")')
-		[ -z "$name" ] && name="untitled (no work)"
+		[ -z "$name" ] && name="untitled"
 		[ -z "$lang" ] && lang="__"
 		mv -f "$DT/script.sh" "$disables/$name.$lang"
 		$DS_a/Dics/cnfg.sh
 		
 	elif [ $ret -eq 4 ]; then
-	
-		cd  $DT; sh $DT/script.sh yes
-		[ -f $DT/yes.mp3 ] && play $DT/yes.mp3 || msg Fail info
-		rm -f $DT/yes.mp3
+		
+		internet
+		test_
+		cd  $DT; sh $DT/script.sh $test
+		[ -f $DT/$test.mp3 ] && play $DT/$test.mp3 || msg Fail info
+		rm -f $DT/$test.mp3
 		mv -f $DT/script.sh "$DT/new.sh"
 		$DS_a/Dics/cnfg.sh edit_dlg 2
 	fi
@@ -109,9 +117,11 @@ elif [ "$1" = dlk_dlg ]; then
 		
 	elif [ $ret -eq 4 ]; then
 	
-		cd  $DT; sh $DT/script.sh yes
-		[ -f $DT/yes.mp3 ] && play $DT/yes.mp3 || msg Fail info
-		rm -f $DT/yes.mp3
+		internet
+		test_
+		cd  $DT; sh $DT/script.sh $test
+		[ -f $DT/$test.mp3 ] && play $DT/$test.mp3 || msg Fail info
+		rm -f $DT/$test.mp3
 		mv -f $DT/script.sh "$dir/$stts/$name.$lang"
 		$DS_a/Dics/cnfg.sh dlk_dlg "$2" "$name" "$lang"
 	fi
@@ -134,9 +144,9 @@ elif [ -z "$1" ]; then
 	fi
 	
 	sel="$(dict_list | yad --list --title="Idiomind - $dictionaries" \
-	--center --on-top --expand-column=2 --text="$tex" $align \
+	--center --expand-column=2 --text="$tex" $align \
 	--width=420 --height=300 --skip-taskbar --separator=" " \
-	--borders=15 --button="$add":2 --print-all --button=Ok:0 \
+	--borders=5 --button="$add":2 --print-all --button=Ok:0 \
 	--column=" ":CHK --column="$availables":TEXT \
 	--column="$languages":TEXT --window-icon=idiomind \
 	--buttons-layout=edge --always-print-result \

@@ -381,21 +381,21 @@ echo "$U" > $DC_s/cfg.4
 echo "$Mail" >> $DC_s/cfg.4
 echo "$Author" >> $DC_s/cfg.4
 
-if [[ -f "$img" ]]; then
-/usr/bin/convert -scale 120x90! "$img" $DT_u/img1.png
+if [ -f "$img" ]; then
+/usr/bin/convert -scale 110x80! "$img" $DT_u/img1.png
 convert $DT_u/img1.png -alpha opaque -channel a \
 -evaluate set 15% +channel $DT_u/img.png
 bo=/usr/share/idiomind/images/bo.png
 convert $bo -edge .5 -blur 0x.5 $DT_u/bo_.png
 convert $DT_u/img.png \( $DT_u/bo_.png -negate \) \
 -geometry +1+1 -compose multiply -composite \
--crop 120x90+1+1 +repage $DT_u/bo_outline.png
-convert $DT_u/img.png -crop 120x90+1+1\! \
+-crop 115x80+1+1 +repage $DT_u/bo_outline.png
+convert $DT_u/img.png -crop 115x80+1+1\! \
 -background none -flatten +repage \( $bo +matte \) \
 -compose CopyOpacity -composite +repage $DT_u/boim.png
 convert $DT_u/boim.png \( +clone -channel A -separate +channel \
 -negate -background black -virtual-pixel background \
--blur 0x4 -shade 110x21.78 -contrast-stretch 0% +sigmoidal-contrast 7x50% \
+-blur 0x4 -shade 115x21.78 -contrast-stretch 0% +sigmoidal-contrast 7x50% \
 -fill grey50 -colorize 10% +clone +swap -compose overlay -composite \) \
 -compose In -composite $DT_u/boim1.png
 convert $DT_u/boim1.png \( +clone -background Black \

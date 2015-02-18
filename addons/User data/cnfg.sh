@@ -43,7 +43,7 @@ if [ -z "$1" ]; then
 			ret=$?
 				
 			if [ "$ret" -eq 0 ]; then
-				(sleep 1 && notify-send -i idiomind "$t_export_data" "$t_wait") &
+				
 				(
 				echo "# $t_copying..." ; sleep 0.1
 				mkdir "$DM/cnf/"
@@ -57,10 +57,11 @@ if [ -z "$1" ]; then
 				rm -r "$DM/cnf/"
 				mv -f $DT/"$user"_idiomind_data.tar.gz "$exp"
 				echo "# $finished" ; sleep 1
-				) | yad --center --on-top --fixed --progress \
+				
+				) | yad --center --on-top --progress \
 				--width=200 --height=20 --geometry=200x20-2-2 \
 				--pulsate --percentage="5" --auto-close \
-				--sticky --on-top --undecorated --skip-taskbar --no-buttons
+				--sticky --undecorated --skip-taskbar --no-buttons
 				
 				yad --fixed --name=idiomind --center --class=idiomind \
 				--image=info --sticky --text="$t_export_ok \\n" \

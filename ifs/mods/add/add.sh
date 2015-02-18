@@ -107,8 +107,8 @@ function clean_1() {
 	| sed 's/^ *//; s/ *$//g'| sed 's/^\s*./\U&\E/g')"
 }
 
-
-function clean_2() { # name topic
+# topic name
+function clean_2() {
     
     echo "$(echo "$1" | cut -d "|" -f1 | sed s'/!//'g \
     | sed s'/&//'g | sed s'/\://'g | sed s'/\&//'g \
@@ -179,13 +179,6 @@ function add_tags_6() {
 	eyeD3 --set-encoding=utf8 \
 	-A IWI3I0I"$2"IWI3I0I "$3"
 }
-
-
-#function add_tags_7() {
-	
-	#eyeD3 --set-encoding=utf8 \
-	#-t ISI1I0I"$2"ISI1I0I "$3"
-#}
 
 
 function add_tags_8() {
@@ -303,7 +296,6 @@ function list_words() {
 }
 
 
-#ARGS 2 and 2 words list to process, 3 dir work, 4 dir target
 function fetch_audio() { 
 	
 	if ([ $lgt = ja ] || [ $lgt = "zh-cn" ] || [ $lgt = ru ]); then

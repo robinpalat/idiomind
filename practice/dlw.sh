@@ -137,8 +137,8 @@ function answer() {
 	--buttons-layout=spread \
 	--field="$tr":lbl --width=371 --height=280 \
 	--button="$listen":"$play" \
-	--button="<span color='#AC8D86'><tt><b>$no_know</b></tt></span>":3 \
-	--button="<span color='#819C7B'><tt><b>$ok_know</b></tt></span>":2
+	--button="<span color='#BE938A'><tt><b>$no_know</b></tt></span>":3 \
+	--button="<span color='#789F70'><tt><b>$ok_know</b></tt></span>":2
 	}
 
 n=1
