@@ -116,7 +116,7 @@ elif [ $1 = new_items ]; then
 
 
 	if [ "$(cat $DC_tl/.cfg.1 | grep -v 'Feeds' | wc -l)" -lt 1 ]; then
-		[[ -d $DT_r ]] && rm -fr $DT_r
+		[ -d $DT_r ] && rm -fr $DT_r
 		source $DS/ifs/trans/$lgs/topics_lists.conf
 		$DS/chng.sh "$no_topic" & exit 1
 	fi
@@ -176,12 +176,12 @@ elif [ $1 = new_items ]; then
 		elif [[ $ret -eq 0 ]]; then
 		
 			if [ -z "$chk" ]; then
-				[[ -d $DT_r ]] && rm -fr $DT_r
+				[ -d $DT_r ] && rm -fr $DT_r
 				msg "$topic_err\n" info & exit 1
 			fi
 		
 			if [ -z "$trgt" ]; then
-				[[ -d $DT_r ]] && rm -fr $DT_r
+				[ -d $DT_r ] && rm -fr $DT_r
 				exit 1
 			fi
 
@@ -227,10 +227,10 @@ elif [ $1 = new_items ]; then
 			
 				if sed -n 1p $DC_s/cfg.3 | grep FALSE; then
 					if [ -z "$srce" ]; then
-						[[ -d $DT_r ]] && rm -fr $DT_r
+						[ -d $DT_r ] && rm -fr $DT_r
 						msg "$no_text $lgsl." info & exit 1
 					elif [ -z "$trgt" ]; then
-						[[ -d $DT_r ]] && rm -fr $DT_r
+						[ -d $DT_r ] && rm -fr $DT_r
 						msg "$no_text $lgtl." info & exit 1
 					fi
 				fi
@@ -247,11 +247,11 @@ elif [ $1 = new_items ]; then
 			
 				if sed -n 1p $DC_s/cfg.3 | grep FALSE; then
 					if [ -z "$srce" ]; then
-						[[ -d $DT_r ]] && rm -fr $DT_r
+						[ -d $DT_r ] && rm -fr $DT_r
 						msg "$no_text $lgsl." info & exit 1
 						
 					elif [ -z "$trgt" ]; then
-						[[ -d $DT_r ]] && rm -fr $DT_r
+						[ -d $DT_r ] && rm -fr $DT_r
 						msg "$no_text $lgtl." info & exit 1
 					fi
 				fi
@@ -265,7 +265,7 @@ elif [ $1 = new_items ]; then
 				fi
 			fi
 		else
-			[[ -d $DT_r ]] && rm -fr $DT_r
+			[ -d $DT_r ] && rm -fr $DT_r
 			exit 1
 		fi
 		
@@ -278,11 +278,11 @@ elif [ $1 = new_sentence ]; then
 	icnn=idiomind
 
 	if [ $(cat "$DC_tlt/cfg.4" | wc -l) -ge 50 ]; then
-		[[ -d $DT_r ]] && rm -fr $DT_r
+		[ -d $DT_r ] && rm -fr $DT_r
 		msg "$tpe  \\n$sentences_max" info & exit
 	fi
 	if [ -z "$tpe" ]; then
-		[[ -d $DT_r ]] && rm -fr $DT_r
+		[ -d $DT_r ] && rm -fr $DT_r
 		msg "$topic_err\n" info & exit 1
 	fi
 	
@@ -307,10 +307,10 @@ elif [ $1 = new_sentence ]; then
 		
 	else # ---------------------
 		if [ -z "$4" ]; then
-			[[ -d $DT_r ]] && rm -fr $DT_r
+			[ -d $DT_r ] && rm -fr $DT_r
 			msg "$no_text$lgsl." info & exit
 		elif [ -z "$2" ]; then
-			[[ -d $DT_r ]] && rm -fr $DT_r
+			[ -d $DT_r ] && rm -fr $DT_r
 			msg "$no_text$lgtl." info & exit
 		fi
 		
@@ -330,7 +330,7 @@ elif [ $1 = new_sentence ]; then
 	
 	if ( [ -z $(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary') ] \
 	|| [ ! -f "$DM_tlt/$fname.mp3" ] || [ -z "$trgt" ] || [ -z "$srce" ] ); then
-		[[ -d $DT_r ]] && rm -fr $DT_r
+		[ -d $DT_r ] && rm -fr $DT_r
 		msg "$error1" dialog-warning & exit 1
 	fi
 	
@@ -355,7 +355,7 @@ elif [ $1 = new_sentence ]; then
 	if ([ -z "$grmrk" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ]); then
 	    rm "$DM_tlt/$fname.mp3"
 	    msg "$error1" dialog-warning 
-	    [[ -d $DT_r ]] && rm -fr $DT_r & exit 1
+	    [ -d $DT_r ] && rm -fr $DT_r & exit 1
 	    
 	fi
 	
@@ -371,7 +371,7 @@ elif [ $1 = new_sentence ]; then
 
 	fetch_audio $aw $bw $DT_r $DM_tls
 	
-	[[ -d $DT_r ]] && rm -fr $DT_r
+	[ -d $DT_r ] && rm -fr $DT_r
 	printf "aitm.1.aitm\n" >> \
 	$DC/addons/stats/.log
 	exit 1
@@ -389,11 +389,11 @@ elif [ $1 = new_word ]; then
 	DC_tlt="$DC_tl/$tpe"
 	
 	if [ $(cat "$DC_tlt/cfg.3" | wc -l) -ge 50 ]; then
-		[[ -d $DT_r ]] && rm -fr $DT_r
+		[ -d $DT_r ] && rm -fr $DT_r
 		msg "$tpe    \\n$words_max" info & exit 0
 	fi
 	if [ -z "$tpe" ]; then
-		[[ -d $DT_r ]] && rm -fr $DT_r
+		[ -d $DT_r ] && rm -fr $DT_r
 		msg "$topic_err\n" info & exit 1
 	fi
 	
@@ -423,12 +423,16 @@ elif [ $1 = new_word ]; then
 		
 	else # -------------------
 		if [ -z "$4" ]; then
-			[[ -d $DT_r ]] && rm -fr $DT_r
+			[ -d $DT_r ] && rm -fr $DT_r
 			msg "$no_text$lgsl." info & exit 1
 		elif [ -z "$2" ]; then
-			[[ -d $DT_r ]] && rm -fr $DT_r
+			[ -d $DT_r ] && rm -fr $DT_r
 			msg "$no_text$lgtl." info & exit 1
 		fi
+		
+		trgt="$2"
+		srce="$4"
+		fname="$(nmfile "${trgt^}")"
 		
 		if [ -f audtm.mp3 ]; then
 		
@@ -475,7 +479,7 @@ elif [ $1 = new_word ]; then
 		msg "$error1" dialog-warning & exit 1
 	fi
 
-	[[ -d $DT_r ]] && rm -fr $DT_r
+	[ -d $DT_r ] && rm -fr $DT_r
 	rm -f *.jpg
 	exit 1
 	
@@ -487,11 +491,11 @@ elif [ $1 = edit_list_words ]; then
 
 		tpe="$tpc"
 		if [ $(cat "$DC_tlt/cfg.3" | wc -l) -ge 50 ]; then
-			[[ -d $DT_r ]] && rm -fr $DT_r
+			[ -d $DT_r ] && rm -fr $DT_r
 			msg "$tpe    \\n$words_max" info & exit
 		fi
 		if [ -z "$tpe" ]; then
-			[[ -d $DT_r ]] && rm -fr $DT_r
+			[ -d $DT_r ] && rm -fr $DT_r
 			msg "$topic_err\n" info & exit 1
 		fi
 		
@@ -579,7 +583,7 @@ elif [ $1 = edit_list_words ]; then
 			if [ -f $DT_r/logw ]; then
 				dlg_info_1 "$items_rest"
 			fi
-			[[ -d $DT_r ]] && rm -fr $DT_r
+			[ -d $DT_r ] && rm -fr $DT_r
 			rm -f logw $DT/*.$c & exit 1
 	fi
 	
@@ -592,14 +596,14 @@ elif [ $1 = dclik_list_words ]; then
 	echo "$3" > ./lstws
 	
 	if [ -z "$tpe" ]; then
-		[[ -d $DT_r ]] && rm -fr $DT_r
+		[ -d $DT_r ] && rm -fr $DT_r
 		msg "$topic_err\n" info & exit 1
 	fi
 	
 	nw=$(cat "$DC_tlt/cfg.3" | wc -l)
 	
 	if [ $(cat "$DC_tlt/cfg.3" | wc -l) -ge 50 ]; then
-		[[ -d $DT_r ]] && rm -fr $DT_r
+		[ -d $DT_r ] && rm -fr $DT_r
 		msg "$tpe    \\n$words_max" info & exit
 	fi
 
@@ -651,7 +655,7 @@ elif [ $1 = dclik_list_words ]; then
 	    elif [ "$ret" -eq 1 ]; then
 	    
 		rm -f $DT/*."$c"
-		[[ -d $DT_r ]] && rm -fr $DT_r
+		[ -d $DT_r ] && rm -fr $DT_r
 		exit
 	    fi
 		
@@ -668,7 +672,7 @@ elif [ $1 = sentence_list_words ]; then
 	cd $DT_r
 	
 	if [ -z "$4" ]; then
-		[[ -d $DT_r ]] && rm -fr $DT_r
+		[ -d $DT_r ] && rm -fr $DT_r
 		msg "$topic_err\n" info & exit 1
 	fi
 	
@@ -703,7 +707,7 @@ elif [ $1 = sentence_list_words ]; then
 		elif [ "$ret" -eq 1 ]; then
 		
 			rm -f $DT/*."$c"
-			[[ -d $DT_r ]] && rm -fr $DT_r
+			[ -d $DT_r ] && rm -fr $DT_r
 			exit 1
 		fi
 
@@ -759,7 +763,7 @@ elif [ $1 = sentence_list_words ]; then
 	fi
 	
 	rm -f $DT/*."$c" 
-	[[ -d $DT_r ]] && rm -fr $DT_r
+	[ -d $DT_r ] && rm -fr $DT_r
 	exit 1
 	
 	
@@ -779,11 +783,11 @@ elif [ $1 = process ]; then
 	cd "$DT_r"
 
 	if [ -z "$tpe" ]; then
-		[[ -d $DT_r ]] && rm -fr $DT_r
+		[ -d $DT_r ] && rm -fr $DT_r
 		msg "$topic_err\n" info & exit 1
 	fi
 	if [ $ns -ge 50 ]; then
-		[[ -d $DT_r ]] && rm -fr $DT_r
+		[ -d $DT_r ] && rm -fr $DT_r
 		msg "$tpe    \\n$sentences_max" info
 		rm -f ls $lckpr & exit 1
 	fi
@@ -891,7 +895,7 @@ elif [ $1 = process ]; then
 		
 			dlg_text_info_4 " $gettext_err1."
 
-			[[ -d $DT_r ]] && rm -fr $DT_r
+			[ -d $DT_r ] && rm -fr $DT_r
 			rm -f $lckpr $slt & exit 1
 		
 		else
@@ -910,7 +914,7 @@ elif [ $1 = process ]; then
 							$nspr "$(cat ./sort)" $DT_r "$tpe" &
 							exit 1
 						else
-							[[ -d $DT_r ]] && rm -fr $DT_r
+							[ -d $DT_r ] && rm -fr $DT_r
 							rm -f $lckpr $slt & exit 1
 						fi
 				
@@ -1150,7 +1154,7 @@ elif [ $1 = process ]; then
 					while [[ $n -le 20 ]]; do
 						 sleep 5
 						 if ([ $(cat ./x | wc -l) = $rm ] || [ $n = 20 ]); then
-							[[ -d $DT_r ]] && rm -fr $DT_r
+							[ -d $DT_r ] && rm -fr $DT_r
 							cp -f "$DC_tlt/cfg.0" "$DC_tlt/.cfg.11"
 							rm -f $lckpr & break & exit 1
 						 fi
@@ -1159,7 +1163,7 @@ elif [ $1 = process ]; then
 					
 				else
 					cp -f "$DC_tlt/cfg.0" "$DC_tlt/.cfg.11"
-					[[ -d $DT_r ]] && rm -fr $DT_r
+					[ -d $DT_r ] && rm -fr $DT_r
 					 rm -f $lckpr $slt & exit 1
 				fi
 			
