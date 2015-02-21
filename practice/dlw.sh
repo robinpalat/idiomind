@@ -96,20 +96,20 @@ function fonts() {
 	a="$1"
 	fi
 	if [ $(echo "$lst" | wc -c) -le 8 ]; then
-	c="<big><big><big><b>$lst</b></big></big></big>"
+	c="<big><big><big>$lst</big></big></big>"
 	elif [ $(echo "$lst" | wc -c) -le 16 ]; then
-	c="<big><big><b>$lst</b></big></big>"
+	c="<big><big>$lst</big></big>"
 	elif [ $(echo "$lst" | wc -c) -gt 16 ]; then
-	c="<b>$lst</b>"
+	c="$lst"
 	fi
 	if [[ -f "$drtt/images/$fname.jpg" ]]; then
 	img="$drtt/images/$fname.jpg"
-	trgts="<b>$c</b>"
-	tr="<b>$a</b>"
+	trgts="$c"
+	tr="$a"
 	else
 	img="/usr/share/idiomind/images/fc.png"
 	trgts="<big><big><big>$c</big></big></big>"
-	tr="<big><big><big><b>$a</b></big></big></big>"
+	tr="<big><big><big>$a</big></big></big>"
 	fi
 	}
 
@@ -137,8 +137,8 @@ function answer() {
 	--buttons-layout=spread \
 	--field="$tr":lbl --width=371 --height=280 \
 	--button="$listen":"$play" \
-	--button="<span color='#BE938A'><tt><b>$no_know</b></tt></span>":3 \
-	--button="<span color='#789F70'><tt><b>$ok_know</b></tt></span>":2
+	--button="<span color='#CB8F83'><tt><b>$no_know</b></tt></span>":3 \
+	--button="<span color='#77A76D'><tt><b>$ok_know</b></tt></span>":2
 	}
 
 n=1

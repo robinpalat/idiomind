@@ -8,16 +8,18 @@ text="<big><big><big><big>  Welcome  </big></big></big></big>
     To get started, please configure the following:
 "
 
-drtf="/usr/share/idiomind/addons/Learning with news/examples/"
 user=$(echo "$(whoami)")
 
 function set_lang() {
 	
 	if echo "$source" | grep $1; then
+	
 		if [ ! -d "$DIR1"/$1 ]; then
 			mkdir "$DIR1"/$1
+			touch "$DIR1"/$1/.cfg.1
+			touch "$DIR1"/$1/.cfg.2
+			touch "$DIR1"/$1/.cfg.3
 			mkdir "$DIR1"/$1/.share
-			mkdir "$DIR3"/$1
 		fi
 		echo $2 > $DIR2/s/cfg.10
 		echo $1 >> $DIR2/s/cfg.10
@@ -26,8 +28,8 @@ function set_lang() {
 
 
 if [[ ! -f /usr/bin/yad ]]; then
-zenity --info --window-icon=idiomind \
- --text="Missing a dependency to start.
+zenity --info --window-icon="idiomind" \
+--text="Missing a dependency to start.
 It seems that you have no installed on your system the program YAD.\t
 You can get it from here:  www.sourceforge.net/projects/yad-dialog
 or install it using the following commands:
@@ -86,8 +88,6 @@ elif [[ $ret -eq 0 ]]; then
 	DIR2="$HOME"/.config/idiomind
 	mkdir "$DIR2"/s
 	mkdir "$DIR2"/addons
-	mkdir "$DIR2"/topics
-	DIR3="$HOME"/.config/idiomind/topics
 	
 	if echo "$target" | grep "English"; then
 		echo "en" > $DIR2/s/cfg.9
@@ -183,10 +183,11 @@ elif [[ $ret -eq 0 ]]; then
 	b=$(tr -dc a-z < /dev/urandom | head -c 1)
 	c=$(echo $(($RANDOM%100)))
 	echo $c$b > $DIR2/s/cfg.4
+	touch $DIR2/s/cfg.3
 	touch $DIR2/s/cfg.8
 	touch $DIR2/s/cfg.6
 	touch $DIR2/s/cfg.12
-	#/usr/share/idiomind/mngr.sh mkmn
+
 	exit 1
 else
 	killall 1u.sh & exit 1

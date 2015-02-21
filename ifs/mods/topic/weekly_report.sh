@@ -39,20 +39,20 @@ function weeklyreport() {
 		if [[ $ret -eq 0 ]]; then
 		
 			if [ -n "$tpc3" ];then
-				[[ -f "$DC_tl/$tpc1/cfg.1" ]] && tlng1="$DC_tl/$tpc1/cfg.1"
-				[[ -f "$DC_tl/$tpc2/cfg.1" ]] && tlng2="$DC_tl/$tpc2/cfg.1"
-				[[ -f "$DC_tl/$tpc3/cfg.1" ]] && tlng3="$DC_tl/$tpc3/cfg.1"
-				touch "$DC_tl/$tpc1/cfg.2" && tok1="$DC_tl/$tpc1/cfg.2"
-				touch "$DC_tl/$tpc2/cfg.2" && tok2="$DC_tl/$tpc2/cfg.2"
-				touch "$DC_tl/$tpc3/cfg.2" && tok3="$DC_tl/$tpc3/cfg.2"
+				[[ -f "$DM_tl/$tpc1/cfg.1" ]] && tlng1="$DM_tl/$tpc1/cfg.1"
+				[[ -f "$DM_tl/$tpc2/cfg.1" ]] && tlng2="$DM_tl/$tpc2/cfg.1"
+				[[ -f "$DM_tl/$tpc3/cfg.1" ]] && tlng3="$DM_tl/$tpc3/cfg.1"
+				touch "$DM_tl/$tpc1/cfg.2" && tok1="$DM_tl/$tpc1/cfg.2"
+				touch "$DM_tl/$tpc2/cfg.2" && tok2="$DM_tl/$tpc2/cfg.2"
+				touch "$DM_tl/$tpc3/cfg.2" && tok3="$DM_tl/$tpc3/cfg.2"
 			elif [ -n "$tpc2" ];then
-				[[ -f "$DC_tl/$tpc1/cfg.1" ]] && tlng1="$DC_tl/$tpc1/cfg.1"
-				[[ -f "$DC_tl/$tpc2/cfg.1" ]] && tlng2="$DC_tl/$tpc2/cfg.1"
-				touch "$DC_tl/$tpc1/cfg.2" && tok1="$DC_tl/$tpc1/cfg.2"
-				touch "$DC_tl/$tpc2/cfg.2" && tok2="$DC_tl/$tpc2/cfg.2"
+				[[ -f "$DM_tl/$tpc1/cfg.1" ]] && tlng1="$DM_tl/$tpc1/cfg.1"
+				[[ -f "$DM_tl/$tpc2/cfg.1" ]] && tlng2="$DM_tl/$tpc2/cfg.1"
+				touch "$DM_tl/$tpc1/cfg.2" && tok1="$DM_tl/$tpc1/cfg.2"
+				touch "$DM_tl/$tpc2/cfg.2" && tok2="$DM_tl/$tpc2/cfg.2"
 			elif [ -n "$tpc1" ];then
-				[[ -f "$DC_tl/$tpc1/cfg.1" ]] && tlng1="$DC_tl/$tpc1/cfg.1"
-				touch "$DC_tl/$tpc1/cfg.2" && tok1="$DC_tl/$tpc1/cfg.2"
+				[[ -f "$DM_tl/$tpc1/cfg.1" ]] && tlng1="$DM_tl/$tpc1/cfg.1"
+				touch "$DM_tl/$tpc1/cfg.2" && tok1="$DM_tl/$tpc1/cfg.2"
 			fi
 			
 			if [[ -n "$(cat "$DC_a/stats/w9.tmp")" ]]; then

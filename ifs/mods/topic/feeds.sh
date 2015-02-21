@@ -15,20 +15,20 @@ function feedmode() {
 			info=$(echo "<i>"$updating"...</i>")
 			FEED=$(cat "$DT/.rss")
 		else
-			info=$(cat $DC_tl/Feeds/.dt)
+			info=$(cat $DM_tl/Feeds/.conf/.dt)
 		fi
-		if [[ ! -f "$DC_tl/Feeds/cfg.1" ]]; then
+		if [[ ! -f "$DM_tl/Feeds/.conf/cfg.1" ]]; then
 		cd "$DMF/conten"
-		ls -t *.mp3 > "$DC_tl/Feeds/cfg.1"
-		sed -i 's/.mp3//g' "$DC_tl/Feeds/cfg.1"
+		ls -t *.mp3 > "$DM_tl/Feeds/.conf/cfg.1"
+		sed -i 's/.mp3//g' "$DM_tl/Feeds/.conf/cfg.1"
 		fi
 		cd "$DSF"
-		cat "$DC_tl/Feeds/cfg.1" | yad \
+		cat "$DM_tl/Feeds/.conf/cfg.1" | yad \
 		--no-headers --list --listen --plug=$KEY --tabnum=1 \
 		--text=" <small>$info</small>" \
 		--expand-column=1 --ellipsize=END --print-all \
 		--column=Name:TEXT --dclick-action='./vwr.sh V1' &
-		cat "$DC_tl/Feeds/cfg.0" | awk '{print $0""}' \
+		cat "$DM_tl/Feeds/.conf/cfg.0" | awk '{print $0""}' \
 		| yad --no-headers --list --listen --plug=$KEY --tabnum=2 \
 		--expand-column=1 --ellipsize=END --print-all \
 		--column=Name:TEXT --dclick-action='./vwr.sh V2' &

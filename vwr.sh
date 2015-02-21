@@ -41,9 +41,9 @@ if ( [ -f "$DM_tlt/words/$fname.mp3" ] || [ "$5" = w_fix ] ); then
 	[[ $(echo "$exmp" | sed -n 3p) ]] \
 	&& ntess="--field=$(echo "$exmp" | sed -n 3p)\\n:lbl"
 	hlgt=$(echo $trgt | awk '{print tolower($0)}')
-	exmp1=$(echo "$(echo "$exmp" | sed -n 1p)" | sed "s/"${trgt,,}"/<span background='#F8F4A2'>"${trgt,,}"<\/\span>/g")
+	exmp1=$(echo "$(echo "$exmp" | sed -n 1p)" | sed "s/"${trgt,,}"/<span background='#FDFBCF'>"${trgt,,}"<\/\span>/g")
 	[[ "$(echo "$tgs" | grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)')" = TRUE ]] \
-	&& trgt=$(echo "<span color='#797979'><b>*</b></span> "$trgt"")
+	&& trgt=$(echo "* "$trgt"")
 	[ "$ap" = TRUE ] && (killall play & sleep 1 && play "$DM_tlt/words/$fname.mp3") &
 	yad --form --window-icon=idiomind --scroll --text-align=$align \
 	--skip-taskbar --center --title=" " --borders=20 \
@@ -65,7 +65,7 @@ elif ( [ -f "$DM_tlt/$fname.mp3" ] || [ "$5" = s_fix ] ); then
 	src=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
 	lwrd=$(echo "$tgs" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' | tr '_' '\n')
 	[[ "$(echo "$tgs" | grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)')" = TRUE ]] \
-	&& trgt=$(echo "<span color='#797979'><b>*</b></span> "$trgt"")
+	&& trgt=$(echo "<b>*</b> "$trgt"")
 	[[ ! -f "$DM_tlt/$fname.mp3" ]] && exit 1
 	[ "$ap" = TRUE ] && (killall play & sleep 1 && play "$DM_tlt/$fname.mp3") &
 	echo "$lwrd" | yad --list --print-column=0 --no-headers \

@@ -81,7 +81,7 @@ elif [ "$1" != chngi ]; then
 			text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/$lgtl'>$find_topics</a>   </small></small>"
 			align="right"
 		fi
-		[[ -f $DC_tl/.cfg.1 ]] && info2=$(cat $DC_tl/.cfg.1 | wc -l) || info2=""
+		[[ -f $DM_tl/.cfg.1 ]] && info2=$(cat $DM_tl/.cfg.1 | wc -l) || info2=""
 		cd $DC_s
 
 		VAR=$(cat $DC_s/cfg.0 | yad --name=idiomind --text-align=$align \
@@ -107,11 +107,11 @@ elif [ "$1" != chngi ]; then
 				
 				[ -z "$VAR" ] && exit 1
 				
-				if [[ -f $DC_tl/"$VAR"/tpc.sh ]]; then
-					$DC_tl/"$VAR"/tpc.sh & exit
+				if [[ -f $DM_tl/"$VAR"/tpc.sh ]]; then
+					$DM_tl/"$VAR"/tpc.sh & exit
 				else
-					cp -f $DS/default/tpc.sh $DC_tl/"$VAR"/tpc.sh
-					$DC_tl/"$VAR"/tpc.sh & exit
+					cp -f $DS/default/tpc.sh $DM_tl/"$VAR"/tpc.sh
+					$DM_tl/"$VAR"/tpc.sh & exit
 				fi
 		else
 			exit 1

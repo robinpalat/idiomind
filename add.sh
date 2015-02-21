@@ -8,7 +8,7 @@ include $DS/ifs/mods/add
 
 if [ $1 = new_topic ]; then
 
-	info2=$(cat $DC_tl/.cfg.1 | wc -l)
+	info2=$(cat $DM_tl/.cfg.1 | wc -l)
 	c=$(echo $(($RANDOM%100)))
 	
 	if [ "$3" = 2 ]; then
@@ -25,7 +25,7 @@ if [ $1 = new_topic ]; then
 		jlbi=$(dlg_form_0 "$rename" "$nmt")
 		ret=$(echo "$?")
 		jlb="$(clean_2 "$jlbi")"
-		snm=$(cat $DC_tl/.cfg.1 | grep -Fxo "$jlb" | wc -l)
+		snm=$(cat $DM_tl/.cfg.1 | grep -Fxo "$jlb" | wc -l)
 		
 		if [ $snm -ge 1 ]; then
 		
@@ -43,30 +43,30 @@ if [ $1 = new_topic ]; then
 		if [ -z "$jlb" ]; then
 			exit 1
 		else
-			mv -f "$DC_tl/$tpc/.cfg.11" "$DT/.cfg.11"
+			mv -f "$DM_tl/$tpc/.cfg.11" "$DT/.cfg.11"
 			mv -f "$DM_tl/$tpc" "$DM_tl/$jlb"
-			mv -f "$DC_tl/$tpc" "$DC_tl/$jlb"
-			mv -f "$DT/.cfg.11" "$DC_tl/$jlb/.cfg.11"
+			mv -f "$DM_tl/$tpc" "$DM_tl/$jlb"
+			mv -f "$DT/.cfg.11" "$DM_tl/$jlb/.cfg.11"
 			
-			if grep -Fxo "$tpc" $DC_tl/.cfg.3; then
-				echo "$jlb" >> $DC_tl/.cfg.3
+			if grep -Fxo "$tpc" $DM_tl/.cfg.3; then
+				echo "$jlb" >> $DM_tl/.cfg.3
 			else
-				echo "$jlb" >> $DC_tl/.cfg.2
+				echo "$jlb" >> $DM_tl/.cfg.2
 			fi
 			
-			grep -v -x -F "$tpc" $DC_tl/.cfg.2 > $DC_tl/.cfg.2.tmp
-			sed '/^$/d' $DC_tl/.cfg.2.tmp > $DC_tl/.cfg.2
-			grep -v -x -F "$tpc" $DC_tl/.cfg.1 > $DC_tl/.cfg.1.tmp
-			sed '/^$/d' $DC_tl/.cfg.1.tmp > $DC_tl/.cfg.1
-			grep -v -x -F "$tpc" $DC_tl/.cfg.3 > $DC_tl/.cfg.3.tmp
-			sed '/^$/d' $DC_tl/.cfg.3.tmp > $DC_tl/.cfg.3
-			rm $DC_tl/.*.tmp
+			grep -v -x -F "$tpc" $DM_tl/.cfg.2 > $DM_tl/.cfg.2.tmp
+			sed '/^$/d' $DM_tl/.cfg.2.tmp > $DM_tl/.cfg.2
+			grep -v -x -F "$tpc" $DM_tl/.cfg.1 > $DM_tl/.cfg.1.tmp
+			sed '/^$/d' $DM_tl/.cfg.1.tmp > $DM_tl/.cfg.1
+			grep -v -x -F "$tpc" $DM_tl/.cfg.3 > $DM_tl/.cfg.3.tmp
+			sed '/^$/d' $DM_tl/.cfg.3.tmp > $DM_tl/.cfg.3
+			rm $DM_tl/.*.tmp
 
-			[[ -d "$DC_tl/$tpc" ]] && rm -r "$DC_tl/$tpc"
+			[[ -d "$DM_tl/$tpc" ]] && rm -r "$DM_tl/$tpc"
 			[[ -d "$DM_tl/$tpc" ]] && rm -r "$DM_tl/$tpc"
 			
 			$DS/mngr.sh mkmn
-			"$DC_tl/$jlb/tpc.sh" & exit 1
+			"$DM_tl/$jlb/tpc.sh" & exit 1
 		fi
 		
 	else
@@ -82,7 +82,7 @@ if [ $1 = new_topic ]; then
 		ret=$(echo "$?")
 
 			jlb="$(clean_2 "$jlbi")"
-			sfname=$(cat $DC_tl/.cfg.1 | grep -Fxo "$jlb" | wc -l)
+			sfname=$(cat $DM_tl/.cfg.1 | grep -Fxo "$jlb" | wc -l)
 			
 			if [ "$sfname" -ge 1 ]; then
 			
@@ -100,13 +100,13 @@ if [ $1 = new_topic ]; then
 				rm "$DM_tl/.rn" && exit 1
 				
 			else
-				mkdir "$DC_tl/$jlb"
-				cp -f "$DS/default/tpc.sh" "$DC_tl/$jlb/tpc.sh"
-				chmod +x "$DC_tl/$jlb/tpc.sh"
+				mkdir "$DM_tl/$jlb"
+				cp -f "$DS/default/tpc.sh" "$DM_tl/$jlb/tpc.sh"
+				chmod +x "$DM_tl/$jlb/tpc.sh"
 				[[ -f $DT/ntpc ]] && rm -f $DT/ntpc
 				
-				echo "$jlb" >> $DC_tl/.cfg.2
-				"$DC_tl/$jlb/tpc.sh"
+				echo "$jlb" >> $DM_tl/.cfg.2
+				"$DM_tl/$jlb/tpc.sh"
 				$DS/mngr.sh mkmn
 			fi
 	fi
@@ -115,7 +115,7 @@ if [ $1 = new_topic ]; then
 elif [ $1 = new_items ]; then
 
 
-	if [ "$(cat $DC_tl/.cfg.1 | grep -v 'Feeds' | wc -l)" -lt 1 ]; then
+	if [ "$(cat $DM_tl/.cfg.1 | grep -v 'Feeds' | wc -l)" -lt 1 ]; then
 		[ -d $DT_r ] && rm -fr $DT_r
 		source $DS/ifs/trans/$lgs/topics_lists.conf
 		$DS/chng.sh "$no_topic" & exit 1
@@ -136,10 +136,10 @@ elif [ $1 = new_items ]; then
 	|| img="--image=$DS/images/nw.png"
 	
 	if [[ -z "$tpe" ]]; then
-		tpcs=$(cat "$DC_tl/.cfg.2" | cut -c 1-40 \
+		tpcs=$(cat "$DM_tl/.cfg.2" | cut -c 1-40 \
 		| tr "\\n" '!' | sed 's/\!*$//g')
 	else
-		tpcs=$(cat "$DC_tl/.cfg.2" | egrep -v "$tpe" | cut -c 1-40 \
+		tpcs=$(cat "$DM_tl/.cfg.2" | egrep -v "$tpe" | cut -c 1-40 \
 		| tr "\\n" '!' | sed 's/\!*$//g')
 	fi
 	[ -n "$tpcs" ] && e='!'
@@ -161,7 +161,7 @@ elif [ $1 = new_items ]; then
 	trgt=$(echo "$lzgpr" | head -n -1 | sed -n 1p | sed 's/^\s*./\U&\E/g')
 	srce=$(echo "$lzgpr" | sed -n 2p | sed 's/^\s*./\U&\E/g')
 	chk=$(echo "$lzgpr" | tail -1)
-	tpe=$(cat "$DC_tl/.cfg.1" | grep "$chk")
+	tpe=$(cat "$DM_tl/.cfg.1" | grep "$chk")
 	
 		if [[ $ret -eq 3 ]]; then
 		
@@ -274,7 +274,7 @@ elif [ $1 = new_sentence ]; then
 	DT_r="$3"
 	source $DS/default/dicts/$lgt
 	DM_tlt="$DM_tl/$tpe"
-	DC_tlt="$DC_tl/$tpe"
+	DC_tlt="$DM_tl/$tpe"
 	icnn=idiomind
 
 	if [ $(cat "$DC_tlt/cfg.4" | wc -l) -ge 50 ]; then
@@ -386,7 +386,7 @@ elif [ $1 = new_word ]; then
 	DT_r="$3"
 	cd $DT_r
 	DM_tlt="$DM_tl/$tpe"
-	DC_tlt="$DC_tl/$tpe"
+	DC_tlt="$DM_tl/$tpe"
 	
 	if [ $(cat "$DC_tlt/cfg.3" | wc -l) -ge 50 ]; then
 		[ -d $DT_r ] && rm -fr $DT_r
@@ -590,7 +590,7 @@ elif [ $1 = edit_list_words ]; then
 elif [ $1 = dclik_list_words ]; then
 
 	DM_tlt="$DM_tl/$tpe"
-	DC_tlt="$DC_tl/$tpe"
+	DC_tlt="$DM_tl/$tpe"
 	DT_r=$(cat $DT/.n_s_pr)
 	cd $DT_r
 	echo "$3" > ./lstws
@@ -666,7 +666,7 @@ elif [ $1 = dclik_list_words ]; then
 elif [ $1 = sentence_list_words ]; then
 
 	DM_tlt="$DM_tl/$4"
-	DC_tlt="$DC_tl/$4"
+	DC_tlt="$DM_tl/$4"
 	c=$(echo $(($RANDOM%100)))
 	DT_r=$(mktemp -d $DT/XXXXXX)
 	cd $DT_r
@@ -772,13 +772,13 @@ elif [ $1 = process ]; then
 	source $DS/ifs/trans/$lgs/add.conf
 	wth=$(sed -n 3p $DC_s/cfg.18)
 	eht=$(sed -n 4p $DC_s/cfg.18)
-	ns=$(cat "$DC_tlt"/cfg.4 | wc -l)
+	ns=$(cat "$DC_tlt/cfg.4" | wc -l)
 	source $DS/default/dicts/$lgt
 	nspr='/usr/share/idiomind/add.sh process'
 	LNK='http://www.chromium.org/developers/how-tos/api-keys'
 	lckpr=$DT/.n_s_pr
 	DM_tlt="$DM_tl/$tpe"
-	DC_tlt="$DC_tl/$tpe"
+	DC_tlt="$DM_tl/$tpe"
 	DT_r="$3"
 	cd "$DT_r"
 
@@ -899,7 +899,6 @@ elif [ $1 = process ]; then
 			rm -f $lckpr $slt & exit 1
 		
 		else
-		
 			dlg_checklist_3 ./sntsls_
 			ret=$(echo "$?")
 			
@@ -984,7 +983,7 @@ elif [ $1 = process ]; then
 						#sentences 
 						elif [ $(echo "$sntc" | wc -$c) -ge 1 ]; then
 							
-							if [ $(cat "$DC_tlt"/cfg.4 | wc -l) -ge 50 ]; then
+							if [ $(cat "$DC_tlt/cfg.4" | wc -l) -ge 50 ]; then
 								printf "\n- $sntc" >> ./slog
 						
 							else
@@ -1055,7 +1054,7 @@ elif [ $1 = process ]; then
 						trgt=$(sed -n "$n"p wrds | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
 						fname="$(nmfile "$trgt")"
 
-						if [ $(cat "$DC_tlt"/cfg.3 | wc -l) -ge 50 ]; then
+						if [ $(cat "$DC_tlt/cfg.3" | wc -l) -ge 50 ]; then
 							printf "\n- $trgt" >> ./wlog
 					
 						else

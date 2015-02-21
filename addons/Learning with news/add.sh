@@ -6,157 +6,144 @@ source /usr/share/idiomind/ifs/trans/$lgs/rss.conf
 source $DS/ifs/mods/cmns.sh
 include $DS/ifs/mods/add
 
-if [[ $1 = n_i ]]; then
+if [[ "$1" = new_item ]]; then
 
-	trgt=$(cat $DT/word.x)
-	dir=$(cat $DT/item.x)
-	c=$(echo $(($RANDOM%100)))
-	var="$2"
+    trgt=$(cat $DT/word.x)
+    dir=$(cat $DT/item.x)
+    c=$(echo $(($RANDOM%100)))
+    dir_kept="$DM_tl/Feeds/kept"
+    dir_conten="$DM_tl/Feeds/conten"
+    dir_conf="$DM_tl/Feeds/.conf"
+    var="$2"
 
-	if [[ ! -d "$DM_tl/Feeds"/kept ]]; then
-		mkdir "$DM_tl/Feeds"/kept
-		mkdir "$DM_tl/Feeds"/kept/words
-	fi
+    if [[ ! -d "$DM_tl/Feeds"/kept ]]; then
+        mkdir -p "$DM_tl/Feeds/kept/words"
+    fi
 
-	if [[ -f $DT/word.x ]]; then
-		bttn="--button=$save_word:0"
-		txt="<b>$word</b>"
-	fi
+    if [[ -f $DT/word.x ]]; then
+        bttn="--button=$save_word:0"
+        txt="<b>$word</b>"
+    fi
 
-	$yad --width=480 --height=210 --window-icon=idiomind \
-	--title="$save" --center --on-top --borders=10 \
-	--image=dialog-question --skip-taskbar \
-	--text="  <b>$sentence </b>\n  $var\n\n  $txt\n  $trgt\n" \
-	--button="$save_sentence":2 "$bttn" 
-		ret=$?
-		
-		# -------------------------------------------------------------
-		if [[ $ret -eq 0 ]]; then
-			if [ $(cat "$DC_tl/Feeds/cfg.3" | wc -l) -ge 50 ]; then
-				msg "$tpe  \n$words_max " info & exit
-			fi
-		
-			internet
-			mkdir $DT/rss_$c
-			cd $DT/rss_$c
-			srce="$(translate "$trgt" auto $lgs)"
-			fname="$(nmfile "${trgt^}")"
-
-			[[ ! -d "$DM_tl/Feeds/kept/words" ]] && mkdir "$DM_tl/Feeds/kept/words"
-			cp "$DM_tl/Feeds/conten/$dir/${trgt,,}.mp3" "$DM_tl/Feeds/kept/words/$fname.mp3"
-			
-			add_tags_2 W "${trgt^}" "${srce^}" "$var" "$DM_tl/Feeds/kept/words/$fname.mp3"
-			
-			echo "${trgt^}" >> "$DC_tl/Feeds/cfg.0"
-			echo "${trgt^}" >> "$DC_tl/Feeds/.cfg.11"
-			echo "${trgt^}" >> "$DC_tl/Feeds/cfg.3"
-			
-			if [ -n "$(cat "$DC_tl/Feeds/cfg.0" | sort -n | uniq -dc)" ]; then
-				cat "$DC_tl/Feeds/cfg.0" | awk '!array_temp[$0]++' > $DT/.ls.x
-				sed '/^$/d' $DT/.ls.x > "$DC_tl/Feeds/cfg.0"
-			fi
-			rm -rf $DT/rss_$c
-		# -------------------------------------------------------------
-		elif [[ $ret -eq 2 ]]; then
-			if [ $(cat "$DC_tl/Feeds/cfg.4" | wc -l) -ge 50 ]; then
-				msg "$tpe  \n$sentences_max" info & exit
-			fi
-			
-			internet
-			
-			fname="$(nmfile "$var")"
-			tgs=$(eyeD3 "$DM_tl/Feeds/conten/$fname.mp3")
-			trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
-			
-			cp "$DM_tl/Feeds/conten/$fname.mp3" "$DM_tl/Feeds/kept/$fname.mp3"
-			cp "$DM_tl/Feeds/conten/$fname.lnk" "$DM_tl/Feeds/kept/$fname.lnk"
-			cp "$DM_tl/Feeds/conten/$fname/*.mp3" "$DM_tl/Feeds/kept/.audio/"
-			
-			if [ -n "$(cat "$DC_tl/Feeds/cfg.0" | sort -n | uniq -dc)" ]; then
-				cat "$DC_tl/Feeds/cfg.0" | awk '!array_temp[$0]++' > $DT/.ls.x
-				sed '/^$/d' $DT/.ls.x > "$DC_tl/Feeds/cfg.0"
-			fi
-				echo "$trgt" >> "$DC_tl/Feeds/cfg.0"
-				echo "$trgt" >> "$DC_tl/Feeds/.cfg.11"
-				echo "$trgt" >> "$DC_tl/Feeds/cfg.4"
-				rm -f -r $DT/word.x $DT/rss_$ & exit
-		else
-			rm -fr $DT/word.x $DT/rss_$c & exit
-		fi
-		
+    yad --width=480 --height=210 --window-icon=idiomind \
+    --title="$save" --center --on-top --borders=10 \
+    --image=dialog-question --skip-taskbar \
+    --text="  <b>$sentence </b>\n  $var\n\n  $txt\n  $trgt\n" \
+    --button="$save_sentence":2 "$bttn" 
+    ret=$?
+        
+        # -------------------------------------------------------------
+        if [[ $ret -eq 0 ]]; then
+        
+            if [ $(cat "$dir_conf/cfg.3" | wc -l) -ge 50 ]; then
+                msg "$tpe  \n$words_max " info & exit
+            fi
+        
+            internet
+            mkdir $DT/rss_$c
+            cd $DT/rss_$c
+            srce="$(translate "$trgt" auto $lgs)"
+            fname="$(nmfile "${trgt^}")"
+            [ ! -d "$dir_kept/words" ] && mkdir "$dir_kept/words"
+            cp "$dir_conten/$dir/${trgt,,}.mp3" "$dir_kept/words/$fname.mp3"
+            add_tags_2 W "${trgt^}" "${srce^}" "$var" "$dir_kept/words/$fname.mp3"
+            echo "${trgt^}" >> "$dir_conf/cfg.0"
+            echo "${trgt^}" >> "$dir_conf/.cfg.11"
+            echo "${trgt^}" >> "$dir_conf/cfg.3"
+            
+            check_index1 "$dir_conf/cfg.0"
+            
+            rm -rf $DT/rss_$c
+        # -------------------------------------------------------------
+        elif [ $ret -eq 2 ]; then
+        
+            if [ $(cat "$DM_tl/Feeds/.conf/cfg.4" | wc -l) -ge 50 ]; then
+                msg "$tpe  \n$sentences_max" info & exit
+            fi
+            
+            internet
+            fname="$(nmfile "${var^}")"
+            tgs=$(eyeD3 "$dir_conten/$fname.mp3")
+            trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
+            cp "$dir_conten/$fname.mp3" "$dir_kept/$fname.mp3"
+            cp "$dir_conten/$fname"/* "$dir_kept/.audio"/
+            echo "$trgt" >> "$dir_conf/cfg.0"
+            echo "$trgt" >> "$dir_conf/.cfg.11"
+            echo "$trgt" >> "$dir_conf/cfg.4"
+            check_index1 "$dir_conf/cfg.0"
+            rm -f -r $DT/word.x $DT/rss_$c & exit
+            
+        else
+            rm -fr $DT/word.x $DT/rss_$c & exit
+        fi
+        
 # -------------------------------------------------------------
-elif [[ $1 = n_t ]]; then
-	
-	dte=$(date "+%a %d %B")
-	if [ $(cat "$DC_tl/.cfg.1" | wc -l) -ge 80 ]; then
-		msg "$topics_max " info & exit
-	fi
+elif [[ "$1" = new_topic ]]; then
+    
+    dte=$(date "+%a %d %B")
+    if [ $(cat "$DC_tl/.cfg.1" | wc -l) -ge 80 ]; then
+        msg "$topics_max " info & exit
+    fi
 
-	jlbi=$($yad --form \
-	--window-icon=idiomind --borders=10 \
-	--fixed --width=400 --height=120 \
-	--on-top --center --skip-taskbar \
-	--field=" : " "News - $dte" \
-	--button=$create:0 --title="$new_topic" )
-		
-		if [ -z "$jlbi" ];then
-			exit 0
-		else
-			
-			jlb=$(echo "$jlbi" | cut -d "|" -f1 | sed s'/!//'g)
-			mkdir "$DM_tl/$jlb"
-			mkdir "$DC_tl/$jlb"
-			mkdir $DC_tl/"$jlb"/practice
-			
-			cd $DS/practice/default/
-			cp -f ./.* "$DC_tl/$jlb/practice/"
-			
-			[[ -f "$DC_tl/Feeds/cfg.0" ]] && \
-			mv -f "$DC_tl/Feeds/cfg.0" "$DC_tl/$jlb/cfg.0" || \
-			"touch $DC_tl/$jlb/cfg.0"
-			[[ -f "$DC_tl/Feeds/cfg.3" ]] && \
-			mv -f "$DC_tl/Feeds/cfg.3" "$DC_tl/$jlb/cfg.3" || \
-			"touch $DC_tl/$jlb/cfg.3"
-			[[ -f "$DC_tl/Feeds/cfg.4" ]] && \
-			mv -f "$DC_tl/Feeds/cfg.4" "$DC_tl/$jlb/cfg.4" || \
-			"touch $DC_tl/$jlb/cfg.4"
-			[[ -f "$DC_tl/Feeds/.cfg.11" ]] && \
-			mv -f "$DC_tl/Feeds/.cfg.11" "$DC_tl/$jlb/.cfg.11" || \
-			"touch $DC_tl/$jlb/.cfg.11"
-			
-			cd "$DM_tl/Feeds/kept"
-			cp -f *.mp3 "$DM_tl/$jlb/" && rm *.mp3
-			cp -f *.lnk "$DM_tl/$jlb/" && rm *.lnk
-			
-			cd "$DM_tl/Feeds/kept/.audio"
-			ls *.mp3 > "$DC_tl/$jlb/cfg.5"
-			mv *.mp3 "$DM_tl/.share/"
-			
-			mkdir "$DM_tl/$jlb/words"
-			cd "$DM_tl/Feeds/kept/words"
-			cp -f *.mp3 "$DM_tl/$jlb/words" && rm *.mp3
-			
-			mkdir "$DM_tl/$jlb/words/images"
-			
-			touch "$DC_tl/Feeds/cfg.0"
-			touch "$DC_tl/Feeds/cfg.3"
-			touch "$DC_tl/Feeds/cfg.4"
-			touch "$DC_tl/$jlb/cfg.2"
-			
-			cnt=$(cat "$DC_tl/$jlb/cfg.0" | wc -l)
-			echo "aitm.$cnt.aitm" >> \
-			$DC/addons/stats/.log &
-			
-			[[ -f $DT/ntpc ]] && rm -f $DT/ntpc
-			
-			cp -f "$DC_tl/$jlb/cfg.0" "$DC_tl/$jlb/cfg.1"
-			cp -f $DS/default/tpc.sh "$DC_tl/$jlb/tpc.sh"
-			chmod +x "$DC_tl/$jlb/tpc.sh"
-			echo "$(date +%F)" > "$DC_tl/$jlb/cfg.12"
-			echo "1" > "$DC_tl/$jlb/cfg.8"
-			echo "$jlb" >> $DC_tl/.cfg.2
-			
-			"$DC_tl/$jlb/tpc.sh"
-			$DS/mngr.sh mkmn
-		fi
+    jlbi=$($yad --form \
+    --window-icon=idiomind --borders=10 \
+    --fixed --width=400 --height=120 \
+    --on-top --center --skip-taskbar \
+    --field=" : " "News - $dte" \
+    --button=$create:0 --title="$new_topic" )
+        
+        if [ -z "$jlbi" ];then
+            exit 1
+        else
+            
+            jlb=$(echo "$jlbi" | cut -d "|" -f1 | sed s'/!//'g)
+            mkdir "$DM_tl/$jlb"
+            mkdir "$DM_tl/$jlb./conf"
+            
+            [[ -f "$DM_tl/Feeds/.conf/cfg.0" ]] && \
+            mv -f "$DM_tl/Feeds/.conf/cfg.0" "$DM_tl/$jlb/.conf/cfg.0" \
+            || touch "$DM_tl/$jlb/.conf/cfg.0"
+            [[ -f "$DM_tl/Feeds/.conf/cfg.3" ]] && \
+            mv -f "$DM_tl/Feeds/.conf/cfg.3" "$DM_tl/$jlb/.conf/cfg.3" \
+            || touch "$DM_tl/$jlb/.conf/cfg.3"
+            [[ -f "$DM_tl/Feeds/.conf/cfg.4" ]] && \
+            mv -f "$DM_tl/Feeds/.conf/cfg.4" "$DM_tl/$jlb/.conf/cfg.4" \
+            || touch "$DM_tl/$jlb/.conf/cfg.4"
+            [[ -f "$DM_tl/Feeds/.conf/.cfg.11" ]] && \
+            mv -f "$DM_tl/Feeds/.conf/.cfg.11" "$DM_tl/$jlb/.conf/.cfg.11" \
+            || touch "$DM_tl/$jlb/.conf/.cfg.11"
+            
+            cd "$DM_tl/Feeds/kept"/
+            cp -f *.mp3 "$DM_tl/$jlb"/ && rm *.mp3
+            cp -f *.lnk "$DM_tl/$jlb"/ && rm *.lnk
+            
+            cd "$DM_tl/Feeds/kept/.audio"/
+            ls *.mp3 > "$DM_tl/$jlb/.conf/cfg.5"
+            mv *.mp3 "$DM_tl/.share/"
+            
+            mkdir -p "$DM_tl/$jlb/words/images"
+            cd "$DM_tl/Feeds/kept/words"/
+            cp -f *.mp3 "$DM_tl/$jlb/words"/ && rm *.mp3
+            
+            touch "$DM_tl/Feeds/.conf/cfg.0"
+            touch "$DM_tl/Feeds/.conf/cfg.3"
+            touch "$DM_tl/Feeds/.conf/cfg.4"
+            touch "$DM_tl/$jlb/.conf/cfg.2"
+            
+            cnt=$(cat "$DM_tl/$jlb/.conf/cfg.0" | wc -l)
+            echo "aitm.$cnt.aitm" >> \
+            $DC/addons/stats/.log &
+            
+            [[ -f $DT/ntpc ]] && rm -f $DT/ntpc
+            
+            cp -f "$DM_tl/$jlb/.conf/cfg.0" "$DM_tl/$jlb/.conf/cfg.1"
+            cp -f $DS/default/tpc.sh "$DM_tl/$jlb/tpc.sh"
+            chmod +x "$DM_tl/$jlb/tpc.sh"
+            echo "$(date +%F)" > "$DM_tl/$jlb/.conf/cfg.12"
+            echo "1" > "$DM_tl/$jlb/.conf/cfg.8"
+            echo "$jlb" >> $DM_tl/.cfg.2
+            
+            "$DM_tl/$jlb/tpc.sh"
+            $DS/mngr.sh mkmn
+        fi
 fi

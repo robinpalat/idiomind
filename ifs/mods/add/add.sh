@@ -4,13 +4,13 @@
 
 function index() {
 
-	DC_tlt="$DC_tl/$3"
+	DC_tlt="$DM_tl/$3/.conf"
 
 	if [ ! -z "$2" ]; then
 	
 		if [ "$1" = word ]; then
 		
-			if [[ "$(cat "$DC_tlt/cfg.0" | grep "$4")" ]] && [ -n "$4" ]; then
+			if [ "$(cat "$DC_tlt/cfg.0" | grep "$4")" ] && [ -n "$4" ]; then
 				sed -i "s/${4}/${4}\n$2/" "$DC_tlt/cfg.0"
 				sed -i "s/${4}/${4}\n$2/" "$DC_tlt/cfg.1"
 				sed -i "s/${4}/${4}\n$2/" "$DC_tlt/.cfg.11"
@@ -25,7 +25,7 @@ function index() {
 			echo "$2" >> "$DC_tlt/cfg.1"
 			echo "$2" >> "$DC_tlt/cfg.4"
 			echo "$2" >> "$DC_tlt/.cfg.11"; fi
-		
+
 		tmp=$DT/tmp
 		lss="$DC_tlt/.cfg.11"
 		if [ -n "$(cat "$lss" | sort -n | uniq -dc)" ]; then

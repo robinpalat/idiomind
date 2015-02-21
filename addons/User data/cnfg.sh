@@ -3,9 +3,9 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/t_bd.conf
-DS_ppd="$DS/addons/Practice/default"
+source $DS/ifs/mods/cmns.sh
 user=$(echo "$(whoami)")
-D_cps=$(sed -n 2p $DC_s/cfg.12)
+[ -f $DC_s/cfg.12 ] && D_cps=$(sed -n 2p $DC_s/cfg.12)
 [ -f "$D_cps/.udt" ] && udt=$(cat "$D_cps/.udt") || udt=" "
 dte=$(date +%F)
 
@@ -14,16 +14,15 @@ if [ -z "$1" ]; then
 
 	du -b -h $DM | tail -1 | awk '{print ($1)}' > $DT/.sz
 
-	sz=$(cat $DT/.sz)
 	D=$($yad --list --title="$user_data" \
 	--center --on-top --radiolist --expand-column=2 \
-	--text=" $size: $sz \\n" --width=420 --height=300 \
+	--text=" $size: $(cat $DT/.sz) \\n" --width=420 --height=300 \
 	--skip-taskbar --image=folder --separator=" " \
 	--borders=15 --print-all --window-icon=idiomind \
 	--button=Backup:2 --button=Ok:0 --image-on-top --column="" \
 	--column=Options "FALSE" "$import" "FALSE" \
 	"$export"  \
-	--buttons-layout=end --always-print-result)
+	--buttons-layout=edge --always-print-result)
 	
 	ret=$?
 
@@ -46,15 +45,11 @@ if [ -z "$1" ]; then
 				
 				(
 				echo "# $t_copying..." ; sleep 0.1
-				mkdir "$DM/cnf/"
-				cp -r "$DC/topics/" "$DM/cnf/"
-				cd "$DM/cnf/"
-				shopt -s globstar
-				rm ./**/*Practice*/.*
+
 				cd "$DM"
 				tar cvzf backup.tar.gz *
 				mv -f backup.tar.gz $DT/"$user"_idiomind_data.tar.gz
-				rm -r "$DM/cnf/"
+
 				mv -f $DT/"$user"_idiomind_data.tar.gz "$exp"
 				echo "# $finished" ; sleep 1
 				
@@ -74,7 +69,9 @@ if [ -z "$1" ]; then
 
 		# import
 		elif echo "$in" | grep "TRUE $import"; then
+		
 			cd $HOME &&
+			
 			add=$($yad --center --on-top \
 			--borders=10 --file-filter="*.gz" --button=Ok:0 \
 			--window-icon=idiomind --skip-taskbar --title="$import" \
@@ -84,97 +81,77 @@ if [ -z "$1" ]; then
 				if [[ -z "$add" || ! -d "$DM" ]]; then
 					exit 1
 				fi
+				
 				(
 				rm -f $DT/*.XXXXXXXX
 				echo "5"
 				echo "# $t_copying..." ; sleep 0.1
-				mkdir $DT/.imprt
-				cp -f "$add" $DT/.imprt/.import.tar.gz
-				cd $DT/.imprt
-				tar -xzvf .import.tar.gz
-				cd $DT/.imprt/topics
+				mkdir $DT/import
+				cp -f "$add" $DT/import/import.tar.gz
+				cd $DT/import
+				tar -xzvf import.tar.gz
+				cd $DT/import/topics/
 				list=$(ls * -d | sed 's/saved//g' | sed '/^$/d')
-				lines=$(echo "$list" | wc -l)
-				n=1
-				while [ $n -le "$lines" ]; do
-					lng=$(echo "$list" | sed -n "$n"p)
-					mkdir "$DC/topics/$lng"
+
+				while read -r lng; do
 					mkdir "$DM_t/$lng"
 					mkdir "$DM_t/$lng/.share"
 					mv -f ./$lng/.share/* "$DM_t/$lng/.share/"
-					echo $lng >> lenguages
-					let n++
-				done
-						
-				n=1
-				while [ $n -le "$(cat $DT/.imprt/topics/lenguages | wc -l)" ]; do
-					dlng=$(cat $DT/.imprt/topics/lenguages | sed -n "$n"p)
-					cd $DT/.imprt/topics/$dlng/
-					ls * -d | sed 's/Feeds//g' | sed '/^$/d' > \
-					$DT/.imprt/topics/$dlng/.lista_topics
-					lts=$DT/.imprt/topics/$dlng/.lista_topics
-					echo "55"
-					echo "# $setting_language $dlng " ; sleep 0.1
-					echo "95"
-					echo "# $setting_language $dlng " ; sleep 0.1
+					echo $lng >> ./.languages
+				done <<< "$list"
+
+
+				while read language; do
+
+					cd $DT/import/topics/$language/
+					ls * -d | sed 's/Feeds//g' | sed '/^$/d' > $DT/import/topics/$language/.topics
+
+					echo "50"
+					echo "# $setting_language $language " ; sleep 0.1
+					echo "90"
+					echo "# $setting_language $language " ; sleep 0.1
 					
-					(
-					n=1
-					while [ $n -le "$(cat $lts | wc -l)" ]; do
-						topic=$(cat $lts | sed -n "$n"p)
+					while read topic; do
+					
 						echo "5"
 						echo "# $setting_topic ${topic:0:20} ... " ; sleep 0.1
-						# mp3s
-						mkdir "$DM_t/$dlng/$topic"
-						cd "$DT/.imprt/topics/$dlng/$topic/"
-						cp -f -r * "$DM_t/$dlng/$topic/"
-						echo "25"
-						echo "# $setting_topic ${topic:0:20} ... " ; sleep 0.2
-						# index, setting
-						mkdir "$DC/topics/$dlng/$topic"
-						mkdir "$DC/topics/$dlng/$topic/Practice"
-						tdirc="$DC/topics/$dlng/$topic"
-						sdirc="$DT/.imprt/cnf/topics/$dlng/$topic/"
+						echo "20"
+						echo "# $copying_data ${topic:0:20} ... " ; sleep 0.2
+						
+						cp -fr "$DT/import/topics/$language/$topic/" \
+						"$DM_t/$language/$topic/"
+						
+						rm "$DM_t/$language/$topic/tpc.sh"
+						rm "$DM_t/$language/$topic/.conf/cfg.1"
+						rm "$DM_t/$language/$topic/.conf/cfg.2"
+						rm -rf "$DM_t/$language/$topic/.conf/practice/"
+						cp -f "$DM_t/$language/$topic/.conf/cfg.0" \
+						"$DM_t/$language/$topic/.conf/cfg.1"
+						echo "6" > "$DM_t/$language/$topic/.conf/cfg.8"
+						
 						echo "50"
-						echo "# $copying_data ${topic:0:20} ... " ; sleep 0.3
-						cd "$sdirc"
-						echo "6" > "$tdirc/cfg.8"
-						cp -f cfg.0 "$tdirc/cfg.0"
-						cp -f cfg.0 "$tdirc/cfg.1"
-						cp -f cfg.3 "$tdirc/cfg.3"
-						cp -f cfg.4 "$tdirc/cfg.4"
-						cp -f cfg.5 "$tdirc/cfg.5"
-						cp -f cfg.12 "$tdirc/cfg.12"
-						echo "$nt" > "$tdirc/nt"
-						(cd "$DS_ppd"; cp -f .* \
-						"$DC/topics/$dlng/$topic/Practice")
-						echo $dte > cfg.12
-						cp -f $DS/default/tpc.sh "$tdirc/tpc.sh"
-						chmod +x "$tdirc/tpc.sh"
+						echo "# $copying_data ${topic:0:20} ... " ; sleep 0.2
 						echo "80"
 						echo "# $copying_data ${topic:0:20} ... " ; sleep 0.1
-						cd "$DT/.imprt/cnf/topics/$dlng"
+						
+						echo "$topic" >> "$DM_t/$language/.cfg.3"
+						sed -i 's/'"$topic"'//g' "$DM_t/$language/.cfg.2"
+						sed '/^$/d' $DM_t/$language/.cfg.2 > $DM_t/$language/.cfg.2_
+						mv -f $DM_t/$language/.cfg.2_ $DM_t/$language/.cfg.2
+						cd $DT/import/topics
 						echo "90"
 						echo "# $copying_data ${topic:0:20} ... " ; sleep 0.2
-						echo "$topic" >> "$DC/topics/$dlng/.cfg.3"
-						sed -i 's/'"$topic"'//g' "$DC/topics/$dlng/.cfg.2"
-						sed '/^$/d' $DM_t/$dlng/.cfg.2 > $DM_t/$dlng/.cfg.2_
-						mv -f $DM_t/$dlng/.cfg.2_ $DM_t/$dlng/.cfg.2
-						cd $DT/.imprt/topics
-						let n++
-					done
-					)
+
+					done < $DT/import/topics/$language/.topics
 					
-					let n++
-				done
+
+				done < $DT/import/topics/.languages
 				
 				echo "95"
 				echo "# $finished" ; sleep 1
 				echo "100"
 				$DS/mngr.sh mkmn
-				chmod -R +x "$DC"/topics/
-				cp -f $DS/default/README.txt "$DM"/README.txt
-				rm -f -r $DT/.imprt
+				rm -f -r $DT/import
 				
 				) | $yad --on-top --progress \
 				--width=200 --height=20 --geometry=200x20-2-2 \
@@ -249,6 +226,7 @@ if [ -z "$1" ]; then
 					ret=$?
 				
 					if [ "$ret" -eq 0 ]; then
+						set -e
 						(
 						rm -f $DT/*.XXXXXXXX
 						echo "#" ; sleep 0
@@ -269,12 +247,24 @@ if [ -z "$1" ]; then
 						rm -r  "$D_cps/idiomind"
 						rm -r  "$D_cps/topics"
 						mv -f "$D_cps/backup.tar.gz" "$D_cps/idiomind.backup"
+						
 						) | $yad --on-top \
 						--width=200 --height=20 --geometry=200x20-2-2 \
 						--pulsate --percentage="5" --auto-close \
 						--sticky --on-top --undecorated --skip-taskbar \
 						--center --no-buttons --fixed --progress
 						
+						exit=$?
+						
+						if [[ $exit = 0 ]] ; then
+						
+							info=" Restore succefull\n"
+							image=dialog-ok
+						else
+							info=" Restore Error"
+							image=dialog-warning
+						fi
+
 					elif [ "$ret" -eq 1 ]; then
 						exit 1
 					fi
