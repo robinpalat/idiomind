@@ -2,6 +2,17 @@
 # -*- ENCODING: UTF-8 -*-
 
 
+function delll() {
+
+    for f in "${@}"; do
+        [ -f "$f" ] && \
+        grep -vxF "$trgt" "$f" "$f.tmp" && \
+        sed '/^$/d' "$f.tmp" > "$f"
+        [ -f "$f.tmp" ] && rm "$f.tmp"
+    done
+}
+
+
 function dlg_form_1() {
     
         yad --form --wrap --center --name=idiomind --class=idmnd \
@@ -70,13 +81,26 @@ function calculate_review() {
 }
 
 
-function _del_() {
 
-    for f in "${@}"; do
-        [ -f "${f}" ] && \
-        grep -vxF "${trgt}" "${f}" "${f}.tmp" && \
-        sed '/^$/d' "${f}.tmp" > "${f}"
-        rm "${f}.tmp"
-    done
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
