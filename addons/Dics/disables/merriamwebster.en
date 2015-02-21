@@ -1,5 +1,9 @@
 #!/bin/bash
 
+name="merriamwebster"
+lang="en"
+
+
 w="$1"
 c=$(printf $w | wc -c)
 [ $c = 7 ] && r=1

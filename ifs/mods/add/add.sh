@@ -4,13 +4,13 @@
 
 function index() {
 
-	DC_tlt="$DC_tl/$3"
+	DC_tlt="$DM_tl/$3/.conf"
 
 	if [ ! -z "$2" ]; then
 	
 		if [ "$1" = word ]; then
 		
-			if [[ "$(cat "$DC_tlt/cfg.0" | grep "$4")" ]] && [ -n "$4" ]; then
+			if [ "$(cat "$DC_tlt/cfg.0" | grep "$4")" ] && [ -n "$4" ]; then
 				sed -i "s/${4}/${4}\n$2/" "$DC_tlt/cfg.0"
 				sed -i "s/${4}/${4}\n$2/" "$DC_tlt/cfg.1"
 				sed -i "s/${4}/${4}\n$2/" "$DC_tlt/.cfg.11"
@@ -25,7 +25,7 @@ function index() {
 			echo "$2" >> "$DC_tlt/cfg.1"
 			echo "$2" >> "$DC_tlt/cfg.4"
 			echo "$2" >> "$DC_tlt/.cfg.11"; fi
-		
+
 		tmp=$DT/tmp
 		lss="$DC_tlt/.cfg.11"
 		if [ -n "$(cat "$lss" | sort -n | uniq -dc)" ]; then
@@ -107,8 +107,8 @@ function clean_1() {
 	| sed 's/^ *//; s/ *$//g'| sed 's/^\s*./\U&\E/g')"
 }
 
-
-function clean_2() { # name topic
+# topic name
+function clean_2() {
     
     echo "$(echo "$1" | cut -d "|" -f1 | sed s'/!//'g \
     | sed s'/&//'g | sed s'/\://'g | sed s'/\&//'g \
@@ -179,13 +179,6 @@ function add_tags_6() {
 	eyeD3 --set-encoding=utf8 \
 	-A IWI3I0I"$2"IWI3I0I "$3"
 }
-
-
-#function add_tags_7() {
-	
-	#eyeD3 --set-encoding=utf8 \
-	#-t ISI1I0I"$2"ISI1I0I "$3"
-#}
 
 
 function add_tags_8() {
@@ -303,7 +296,6 @@ function list_words() {
 }
 
 
-#ARGS 2 and 2 words list to process, 3 dir work, 4 dir target
 function fetch_audio() { 
 	
 	if ([ $lgt = ja ] || [ $lgt = "zh-cn" ] || [ $lgt = ru ]); then

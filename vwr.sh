@@ -14,26 +14,23 @@ listen="▷"
 
 [[ "$v" = v1 ]] && ind="$DC_tlt/cfg.1"
 [[ "$v" = v2 ]] && ind="$DC_tlt/cfg.2"
-
 if ! [[ $nuw =~ $re ]]; then
 	nuw=$(cat "$ind" \
 	| grep -Fxon "$now" \
 	| sed -n 's/^\([0-9]*\)[:].*/\1/p')
 	nll=" "
 fi
-
 item="$(sed -n "$nuw"p "$ind")"
-
 if [ -z "$item" ]; then
 	item="$(sed -n 1p "$ind")"
 	nuw=1
 fi
-
 fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
+[ "$(echo "$item" | wc -c)" -le 50 ] && align=center || align=left
 
-[[ "$(echo "$item" | wc -c)" -le 50 ]] && align=center || align=left
 
 if ( [ -f "$DM_tlt/words/$fname.mp3" ] || [ "$5" = w_fix ] ); then
+
 	tgs=$(eyeD3 "$DM_tlt/words/$fname.mp3")
 	trgt="$item"
 	src=$(echo "$tgs" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
@@ -44,12 +41,10 @@ if ( [ -f "$DM_tlt/words/$fname.mp3" ] || [ "$5" = w_fix ] ); then
 	[[ $(echo "$exmp" | sed -n 3p) ]] \
 	&& ntess="--field=$(echo "$exmp" | sed -n 3p)\\n:lbl"
 	hlgt=$(echo $trgt | awk '{print tolower($0)}')
-	exmp1=$(echo "$(echo "$exmp" | sed -n 1p)" | sed "s/"${trgt,,}"/<span background='#F8F4A2'>"${trgt,,}"<\/\span>/g")
+	exmp1=$(echo "$(echo "$exmp" | sed -n 1p)" | sed "s/"${trgt,,}"/<span background='#FDFBCF'>"${trgt,,}"<\/\span>/g")
 	[[ "$(echo "$tgs" | grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)')" = TRUE ]] \
-	&& trgt=$(echo "<span color='#797979'><b>*</b></span> "$trgt"")
-	
-	[[ "$ap" = TRUE ]] && (killall play & sleep 1 && play "$DM_tlt/words/$fname.mp3") &
-	
+	&& trgt=$(echo "* "$trgt"")
+	[ "$ap" = TRUE ] && (killall play & sleep 1 && play "$DM_tlt/words/$fname.mp3") &
 	yad --form --window-icon=idiomind --scroll --text-align=$align \
 	--skip-taskbar --center --title=" " --borders=20 \
 	--quoted-output --on-top --selectable-labels \
@@ -60,7 +55,9 @@ if ( [ -f "$DM_tlt/words/$fname.mp3" ] || [ "$5" = w_fix ] ); then
 	--button=gtk-edit:4 --button="$listen":"play '$DM_tlt/words/$fname.mp3'" \
 	--button=gtk-go-up:3 --button=gtk-go-down:2 >/dev/null 2>&1
 	
+	
 elif ( [ -f "$DM_tlt/$fname.mp3" ] || [ "$5" = s_fix ] ); then
+
 	tgs=$(eyeD3 "$DM_tlt/$fname.mp3")
 	[[ $(sed -n 3p $DC_s/cfg.1) = TRUE ]] \
 	&& trgt=$(echo "$tgs" | grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)') \
@@ -68,11 +65,9 @@ elif ( [ -f "$DM_tlt/$fname.mp3" ] || [ "$5" = s_fix ] ); then
 	src=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
 	lwrd=$(echo "$tgs" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' | tr '_' '\n')
 	[[ "$(echo "$tgs" | grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)')" = TRUE ]] \
-	&& trgt=$(echo "<span color='#797979'><b>*</b></span> "$trgt"")
+	&& trgt=$(echo "<b>*</b> "$trgt"")
 	[[ ! -f "$DM_tlt/$fname.mp3" ]] && exit 1
-	
-	[[ "$ap" = TRUE ]] && (killall play & sleep 1 && play "$DM_tlt/$fname.mp3") &
-	
+	[ "$ap" = TRUE ] && (killall play & sleep 1 && play "$DM_tlt/$fname.mp3") &
 	echo "$lwrd" | yad --list --print-column=0 --no-headers \
 	--window-icon=idiomind --scroll --text-align=$align \
 	--skip-taskbar --center --title=" " --borders=20 \
@@ -83,19 +78,21 @@ elif ( [ -f "$DM_tlt/$fname.mp3" ] || [ "$5" = s_fix ] ); then
 	--button=gtk-edit:4 --button="$listen":"$DS/ifs/tls.sh listen_sntnc '$fname'" \
 	--button=gtk-go-up:3 --button=gtk-go-down:2 \
 	--dclick-action="$DS/ifs/tls.sh dclik" >/dev/null 2>&1
+	
 else
 	ff=$(($nuw + 1))
 	echo "_" >> $DT/sc
-	[[ $(cat $DT/sc | wc -l) -ge 5 ]] && rm -f $DT/sc & exit 1 \
+	[ $(cat $DT/sc | wc -l) -ge 5 ] && rm -f $DT/sc & exit 1 \
 	|| $DS/vwr.sh "$v" "$nll" "$ff" & exit 1
 fi
+
 		ret=$?
-		if [[ $ret -eq 4 ]]; then
+		if [ $ret -eq 4 ]; then
 			$DS/mngr.sh edt "$v" "$fname" $nuw
-		elif [[ $ret -eq 2 ]]; then
+		elif [ $ret -eq 2 ]; then
 			ff=$(($nuw + 1))
 			$DS/vwr.sh "$v" "$nll" $ff &
-		elif [[ $ret -eq 3 ]]; then
+		elif [ $ret -eq 3 ]; then
 			ff=$(($nuw - 1))
 			$DS/vwr.sh "$v" "$nll" $ff &
 		else 

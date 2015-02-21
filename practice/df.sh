@@ -95,26 +95,26 @@ function fonts() {
 	c="<big>$1</big>"
 	fi
 	if [ $(echo "$s" | wc -c) -le 8 ]; then
-	a="<big><big><big><big><b>$s</b></big></big></big></big>"
+	a="<big><big><big><big>$s</big></big></big></big>"
 	elif [ $(echo "$s" | wc -c) -le 14 ]; then
-	a="<big><big><big><b>$s</b></big></big></big>"
+	a="<big><big><big>$s</big></big></big>"
 	elif [ $(echo "$s" | wc -c) -gt 14 ]; then
-	a="<b><big>$s</big></b>"
+	a="<big>$s</big>"
 	fi
 	if [[ -f "$drtt/images/$fname.jpg" ]]; then
 	img="$drtt/images/$fname.jpg"
-	trgts="$c   <small><tt>$means</tt>...</small>"
-	srces="<b>$a</b>"
+	trgts="$c   <small>$means...</small>"
+	srces="$a"
 	else
 	img="/usr/share/idiomind/images/fc.png"
-	trgts="<big><big><big>$c</big></big></big>   <small><tt>$means</tt>...</small>"
-	srces="<big><big><big><b>$a</b></big></big></big>"
+	trgts="<big><big><big>$c</big></big></big>   <small>\n$means...</small>"
+	srces="<big><big><big>$a</big></big></big>"
 	fi
 	}
 
 function cuestion() {
 	
-	yad --form --align=center --undecorated \
+	yad --form --align=center --text-align=center --undecorated \
 	--center --on-top --image-on-top --image="$img" \
 	--skip-taskbar --title=" " --borders=3 \
 	--buttons-layout=spread \
@@ -125,13 +125,13 @@ function cuestion() {
 
 function answer() {
 	
-	yad --form --align=center --undecorated \
+	yad --form --align=center --text-align=center --undecorated \
 	--center --on-top --image-on-top --image="$img" \
 	--skip-taskbar --title=" " --borders=3 \
 	--buttons-layout=spread \
 	--field="$srces":lbl --width=371 --height=280 \
-	--button="<span color='#AC8D86'><tt><b> $no_know </b></tt></span>":3 \
-	--button="<span color='#819C7B'><tt><b> $ok_know </b></tt></span>":2
+	--button="<span color='#818181'>   $no_know   </span>":3 \
+	--button="<span color='#818181'>   $ok_know   </span>":2
 	}
 
 n=1

@@ -92,11 +92,11 @@ function fonts() {
 	echo "$ells" > word2.tmp
 	sed '/^$/d' word2.tmp > word2.id
 	if [ $(echo "$1" | wc -c) -le 8 ]; then
-	a="<big><big><big><big><big><big><big><b>$1</b></big></big></big></big></big></big></big>"
+	a="<big><big><big><big><big><big><big>$1</big></big></big></big></big></big></big>"
 	elif [ $(echo "$1" | wc -c) -le 16 ]; then
-	a="<big><big><big><big><big><b>$1</b></big></big></big></big></big>"
+	a="<big><big><big><big><big>$1</big></big></big></big></big>"
 	elif [ $(echo "$1" | wc -c) -gt 16 ]; then
-	a="<big><big><b>$1</b></big></big>"; fi
+	a="<big><big>$1</big></big>"; fi
 	}
 
 function mchoise() {
@@ -106,7 +106,7 @@ function mchoise() {
 	--width=365 --height=340 --center --undecorated \
 	--text-align=center --no-headers --borders=5 \
 	--button="$exit":1 \
-	--text="\\n$a   \\n\\n<sup><tt>$means</tt>...</sup>\\n\\n" \
+	--text="\\n$a   \\n\\n<sup>$means...</sup>\\n\\n" \
 	--column=Opcion --column=Opciodn)
 }
 

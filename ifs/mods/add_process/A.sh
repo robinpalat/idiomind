@@ -236,7 +236,7 @@ if [[ "$prdt" = A ]]; then
 							&& [ -n "$trgt" ] && [ -n "$srce" ] ); then
 							
 								add_tags_1 W "$trgt" "$srce" "$DM_tlt/words/$fname".mp3
-								$DS/mngr.sh index word "$fname" "$tpe"
+								index word "$fname" "$tpe"
 								echo "$sntc" >> addw
 							else
 								[ -f "$DM_tlt/words/$fname".mp3 ] && rm "$DM_tlt/words/$fname".mp3
@@ -273,7 +273,7 @@ if [[ "$prdt" = A ]]; then
 							&& [ -n "$lwrds" ] && [ -n "$pwrds" ] && [ -n "$grmrk" ] ); then
 								
 								echo "$sntc" >> adds
-								$DS/mngr.sh index sentence "$trgt" "$tpe"
+								index sentence "$trgt" "$tpe"
 								add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3"
 								fetch_audio $aw $bw $DT_r $DM_tls
 							else
@@ -327,7 +327,7 @@ if [[ "$prdt" = A ]]; then
 						&& [ -n "$trgt" ] && [ -n "$srce" ] ); then
 						
 							add_tags_2 W "$trgt" "$srce" "$exmp" "$DM_tlt/words/$fname.mp3" >/dev/null 2>&1
-							$DS/mngr.sh index word "$trgt" "$tpe" "$sname"
+							index word "$trgt" "$tpe" "$sname"
 							echo "$trgt" >> addw
 						else
 							[ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"

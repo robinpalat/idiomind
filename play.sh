@@ -49,8 +49,8 @@ elif [[ -z "$1" ]]; then
 	indm=$(cat "$DC_tlt/cfg.6")
 	cd "$DC_tlt/practice"
 	indp=$(cat w6 | sed '/^$/d' | sort | uniq)
-	indf=$(cat $DC_tl/Feeds/cfg.0)
-	nnews=$(cat $DC_tl/Feeds/cfg.1 | head -n 8)
+	indf=$(cat $DM_tl/Feeds/.conf/cfg.0)
+	nnews=$(cat $DM_tl/Feeds/.conf/cfg.1 | head -n 8)
 	u=$(echo "$(whoami)")
 	infs=$(echo "$snts Sentences" | wc -l)
 	infw=$(echo "$wrds Words" | wc -l)

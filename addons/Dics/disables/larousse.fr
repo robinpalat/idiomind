@@ -1,10 +1,10 @@
 #!/bin/bash
-wdr=$(echo "$1")
 
+name="larousse"
+lang="fr"
+
+wdr=$(echo "$1")
 http://www.larousse.com/en/dictionnaires-prononciation/francais/bourde/01759
 http://voix.larousse.fr/francais/01759.mp3
-
-
-
 
 exit

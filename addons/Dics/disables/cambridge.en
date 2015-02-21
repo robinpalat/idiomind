@@ -1,4 +1,8 @@
 #!/bin/bash
+
+name:"cambridge"
+lang:"en"
+
 cd "$2"
 word="$1"
 a="$(echo $word | head -c 1)"
