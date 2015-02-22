@@ -1,14 +1,19 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-source /usr/share/idiomind/ifs/trans/es/others.conf
+LANGUAGE=$LANGUAGE
+TEXTDOMAIN=idiomind
+export TEXTDOMAIN
+TEXTDOMAINDIR=/usr/share/locale
+export TEXTDOMAINDIR
+Encoding=UTF-8
+alias gettext='gettext "idiomind"'
+user=$(echo "$(whoami)")
 
 text="<big><big><big><big>  Welcome  </big></big></big></big>
-    Idiomind is a program that will help you learn words.
-    To get started, please configure the following:
+$(gettext "   Idiomind is a program that will help you learn words.
+   To get started, please configure the following:")
 "
-
-user=$(echo "$(whoami)")
 
 function set_lang() {
     
@@ -29,14 +34,14 @@ function set_lang() {
 
 if [[ ! -f /usr/bin/yad ]]; then
 zenity --info --window-icon="idiomind" \
---text="Missing a dependency to start.
+--text="$(gettext "Missing a dependency to start.
 It seems that you have no installed on your system the program YAD.\t
 You can get it from here:  www.sourceforge.net/projects/yad-dialog
 or install it using the following commands:
 
 sudo add-apt-repository ppa:robinpala/idiomind
 sudo apt-get update
-sudo apt-get install yad" \
+sudo apt-get install yad")" \
 --title="Idiomind" --no-wrap & exit
 fi
 

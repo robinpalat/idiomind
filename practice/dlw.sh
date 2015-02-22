@@ -8,6 +8,7 @@ drts="$DS/practice/"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
 all=$(cat lwin | wc -l)
+listen="▷"
 easy=0
 hard=0
 ling=0

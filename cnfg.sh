@@ -2,12 +2,11 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/trans/$lgs/settings.conf
 
 wth=$(sed -n 5p $DC_s/cfg.18)
 eht=$(sed -n 6p $DC_s/cfg.18)
-info1="$(echo "${change_source_language} " | xargs -n6 | sed 's/^/  /')"
-info2="$(echo "${confirm_target_language}" | xargs -n4 | sed 's/^/  /')"
+info1="$(echo "$(gettext "Do you want to change the interface language program?")" | xargs -n6 | sed 's/^/  /')"
+info2="$(echo "$(gettext "You want to change the language setting to learn?")" | xargs -n6 | sed 's/^/  /')"
 ICON=$DS/images/icon.png
 cd $DS/addons
 
@@ -18,10 +17,11 @@ if [ ! -d "$DC" ]; then
 fi
 
 function confirm() {
+    
     yad --form --center --borders=8 --image=$2 \
     --title="Idiomind" --on-top --window-icon=idiomind \
-    --skip-taskbar --button="$no":1 --button="$yes":0 \
-    --text="$1\n" \
+    --skip-taskbar --button="$(gettext "Nope")":1 \
+    --button="$(gettext "Yes")":0 --text="$1\n" \
     --width=350 --height=120
 }
 
@@ -60,36 +60,36 @@ cnf3=$(mktemp $DT/cnf3.XXXX)
 
 yad --plug=$KEY --tabnum=1 --borders=15 --scroll \
     --separator="\\n" --form --no-headers --align=right \
-    --field="$general_options\t":lbl "#1" \
+    --field="$(gettext "General Options")\t":lbl "#1" \
     --field=":lbl" "#2"\
-    --field="$use_g_color:CHK" $sttng3 \
-    --field="$dialog_word_Selector:CHK" $sttng4 \
-    --field="$start_with_system:CHK" $sttng5 \
-    --field="$auto_pronounce:CHK" $sttng6 \
+    --field="$(gettext "Colorize words to grammar (Experimental)")":CHK $sttng3 \
+    --field="$(gettext "List words after adding a sentence")":CHK $sttng4 \
+    --field="$(gettext "Perform tasks at startup")":CHK $sttng5 \
+    --field="$(gettext "Speak to pass the items")":CHK $sttng6 \
     --field=" :lbl" "#7"\
-    --field="<small>$voice_syntetizer</small>:CB5" "$sttng8" \
-    --field="<small>$record_audio</small>:CB5" "$sttng9" \
+    --field="<small>$(gettext "Speech Synthesizer\nDefault espeak")</small>":CB5 "$sttng8" \
+    --field="<small>$(gettext "Use this program\nfor audio editing")</small>":CB5 "$sttng9" \
     --field=" :lbl" "#10"\
-    --field="$search_updates:BTN" "/usr/share/idiomind/ifs/tls.sh check_updates" \
-    --field="$quickstart:BTN" "/usr/share/idiomind/ifs/tls.sh help" \
-    --field="$topics_saved:BTN" "/usr/share/idiomind/ifs/upld.sh vsd" \
+    --field="$(gettext "Check for Updates")":BTN "/usr/share/idiomind/ifs/tls.sh check_updates" \
+    --field="$(gettext "Quick Help")":BTN "/usr/share/idiomind/ifs/tls.sh help" \
+    --field="$(gettext "Topic Saved")":BTN "/usr/share/idiomind/ifs/upld.sh vsd" \
     --field=" :lbl" "#14"\
-    --field="$languages\t":lbl "#15" \
+    --field="$(gettext "Languages")\t":lbl "#15" \
     --field=":lbl" "#16"\
-    --field="$languages_learning:CB" "$lgtl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
-    --field="$your_language:CB" "$lgsl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" > "$cnf1" &
+    --field="$(gettext "Language Learning")":CB "$lgtl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
+    --field="$(gettext "Your Language")":CB "$lgsl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" > "$cnf1" &
 cat $DC_s/cfg.21 | yad --plug=$KEY --tabnum=2 --list --expand-column=2 \
-    --text="<sub>  $double_click_for_configure </sub>" \
+    --text="<sub>  $(gettext "Double click to set") </sub>" \
     --no-headers --dclick-action="/usr/share/idiomind/ifs/dclik.sh" --print-all \
     --column=icon:IMG --column=Action &
-echo "$text" | yad --plug=$KEY --tabnum=3 --text-info \
-    --text="\\n<big><big><b>Idiomind v2.2-beta</b></big></big>\\n<sup>$vocabulary_learning_tool\\n<a href='https://sourceforge.net/projects/idiomind/'>Homepage</a> © 2013-2015 Robin Palat</sup>\\n" \
+printf "$(gettext "\nIdiomind is a small program that helps you learn foreign words, this is useful when you have to remember a lot of new vocabulary in the language you are studying.\n\nLicense: GPLv3\nThis program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, Either version 3 of the License, or (at your option) any later version.\nThis program is distributed in the hope That it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\n\nCode\nhttps://github.com/robinsato/idiomind")" | yad --plug=$KEY --tabnum=3 --text-info \
+    --text="\\n<big><big><b>Idiomind v2.2-beta</b></big></big>\\n<sup>$(gettext "Vocabulary learning tool")\\n<a href='https://sourceforge.net/projects/idiomind/'>Homepage</a> © 2013-2015 Robin Palat</sup>\\n" \
     --show-uri --fontname=Arial --margins=10 --wrap --text-align=center &
 yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
     --sticky --center --window-icon=$ICON --window-icon=idiomind \
-    --tab="$preferences" --tab="  $addons  " --borders=5 \
-    --tab="  $about  " \
-    --width=450 --height=340 --title="$settings" --button=$close:0
+    --tab="$(gettext "Preferences")" --tab="  $(gettext "Addons")  " --borders=5 \
+    --tab="  $(gettext "About")  " \
+    --width=450 --height=340 --title="$(gettext "Settings")" --button="$(gettext "Close")":0
     
     ret=$?
     

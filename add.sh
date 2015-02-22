@@ -2,7 +2,6 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/trans/$lgs/add.conf
 source $DS/ifs/mods/cmns.sh
 include $DS/ifs/mods/add
 
@@ -114,8 +113,9 @@ elif [ "$1" = new_items ]; then
 
     if [ "$(cat $DM_tl/.cfg.1 | grep -v 'Feeds' | wc -l)" -lt 1 ]; then
         [ -d $DT_r ] && rm -fr $DT_r
-        source $DS/ifs/trans/$lgs/topics_lists.conf
-        $DS/chng.sh "$no_topic" & exit 1
+        notopic="$(gettext "To start adding notes you need have a topic.
+Your topics will be on this list. Create one using the button below. ")"
+        $DS/chng.sh "$notopic" & exit 1
     fi
     
     #c=$(echo $(($RANDOM%1000)))
