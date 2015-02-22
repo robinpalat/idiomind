@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/trans/$lgs/rss.conf
-
+source $DS/ifs/mods/cmns.sh
 DCF="$DC/addons/Learning with news"
 DSF="$DS/addons/Learning with news"
 
@@ -40,50 +40,44 @@ if [[ -z "$1" ]]; then
     | tr "\\n" '!' | sed 's/!\+$//g')
 
     CNFG=$($yad --on-top --form --center \
-        --text="$feeds $lgtl\n" --borders=15 \
+        --text="$(gettext "Updates RSS feeds") $lgtl\n" --borders=15 \
         --window-icon=idiomind --skip-taskbar \
         --width=420 --height=300 --always-print-result \
         --title="Feeds - $lgtl" \
-        --button="$delete:2" \
+        --button="$(gettext "Delete")":2 \
         --button="gtk-add:5" \
-        --button="$update:4" \
-        --field="  $current_subscription:CB" "$url_rss!$scrp" \
-        --field="$update_at_start:CHK" $st2)
+        --button="$(gettext "Update")":4 \
+        --field="  $(gettext "Active subscription"):CB" "$url_rss!$scrp" \
+        --field="$(gettext "Update at startup")":CHK $st2)
         ret=$?
         
         st1="$(echo "$CNFG" | cut -d "|" -f1)"
         st2="$(echo "$CNFG" | cut -d "|" -f2)"
         
-        if [[ $ret -eq 1 ]]; then
+        if [ $ret -eq 1 ]; then
             sed -i "1s/.*/$st2/" "$DIR1/.cnf" & exit 1
 
-        elif [[ $ret -eq 2 ]]; then
+        elif [ $ret -eq 2 ]; then
             if echo "$st1" | grep -o "Sample"; then
-                yad --title="Info" \
-                --center --on-top --window-icon=idiomind \
-                --width=360 --height=120 --image=info --skip-taskbar \
-                --text=" $delete_no.\n\n" \
-                --borders=5 --button=OK:1
+            
+                msg "$(gettext "Sample subscription")" Info
                 "$DSF/cnfg.sh" & exit
+                
             elif echo "$st1" | grep -o "Sample"; then
-                yad --title="Info" --center --on-top --window-icon=idiomind \
-                --width=360 --height=120 --image=info --skip-taskbar \
-                --text=" $delete_no \n\n" \
-                --borders=5 --button=OK:1
+
+                msg "$(gettext "Sample subscription")" Info
                 "$DSF/cnfg.sh" & exit
+
             else
-                yad --center \
-                --title="$confirm" --window-icon=idiomind \
-                --on-top --width=360 --height=120 --image=dialog-question \
-                --skip-taskbar --text=" $delete_subscription \n\n" \
-                --borders=5 --button="$yes":0 --button="$no":1
-                    ret=$?
+                msg_2 "$(gettext "Are you sure you want to delete this subscription?") \n\n" dialog-question "$yes" "$no"
+
+                    ret=$(echo $?)
                     
-                    if [[ $ret -eq 1 ]]; then
+                    if [ $ret -eq 1 ]; then
                         "$DSF/cnfg.sh" & exit
                     
-                    elif [[ $ret -eq 0 ]]; then
-                        if [[ "$(cat "$DCF/$lgtl/.rss")" = "$st1" ]]; then
+                    elif [ $ret -eq 0 ]; then
+                        if [ "$(cat "$DCF/$lgtl/.rss")" = "$st1" ]; then
                             rm "$DCF/$lgtl/.rss" "$DCF/$lgtl/link"
                         fi
                         rm "$DCF/$lgtl/rss/$st1"
@@ -95,10 +89,10 @@ if [[ -z "$1" ]]; then
             dirs="$DCF/$lgtl/rss"
             nwfd=$($yad --width=480 --height=100 \
                 --center --on-top --window-icon=idiomind --align=right \
-                --skip-taskbar --button=$cancel:1 --button=Ok:0 \
-                --form --title=" $new_subscription" --borders=5 \
-                --field="$name:: " "" \
-                --field="$url:: " "" \ )
+                --skip-taskbar --button="$(gettext "Cancel")":1 --button=Ok:0 \
+                --form --title=" $(gettext "New Chanel")" --borders=5 \
+                --field=""$(gettext "Name")":: " "" \
+                --field=""$(gettext "URL")":: " "" \ )
             
                 if [[ -z "$(echo "$nwfd" | cut -d "|" -f1)" ]]; then
                     "$DSF/cnfg.sh" & exit
@@ -139,7 +133,7 @@ if [[ -z "$1" ]]; then
 elif [ "$1" = NS ]; then
 
     yad --window-icon=idiomind --name=idiomind \
-    --image=info --on-top --text="$no_url" \
+    --image=info --on-top --text="$(gettext " ")" \
     --image-on-top --center --sticky \
     --width=360 --height=120 --borders=5 \
     --skip-taskbar --title=idiomind \
@@ -151,39 +145,39 @@ elif [[ $1 = edit ]]; then
 
 if [[ "$(cat "$drtc/cfg.0" | wc -l)" -ge 20 ]]; then
 dd="$DSF/images/save.png
-$create_topic
+$(gettext "Create topic")
 $DSF/images/del.png
-$delete_news
+$(gettext "Delete news")
 $DSF/images/del.png
-$delete_saved
+$(gettext "Delete saved")
 $DSF/images/edit.png
-$subscriptions"
+$(gettext "Subscriptions")"
 else
 dd="$DSF/images/del.png
-$delete_news
+$(gettext "Delete news")
 $DSF/images/del.png
-$delete_saved
+$(gettext "Delete saved")
 $DSF/images/edit.png
-$subscriptions"
+$(gettext "Subscriptions")"
 fi
 
     echo "$dd" | yad --list --on-top \
     --expand-column=2 --center \
     --width=290 --name=idiomind --class=idiomind \
-    --height=240 --title="Edit" --skip-taskbar \
+    --height=240 --title="$(gettext "Edit")" --skip-taskbar \
     --window-icon=idiomind --no-headers \
     --buttons-layout=end --borders=0 --button=Ok:0 \
     --column=icon:IMG --column=Action:TEXT > "$slct"
     ret=$?
     slt=$(cat "$slct")
     if  [[ "$ret" -eq 0 ]]; then
-        if echo "$slt" | grep -o "$create_topic"; then
+        if echo "$slt" | grep -o "$(gettext "Create topic")"; then
             "$DSF/add.sh" new_topic
-        elif echo "$slt" | grep -o "$delete_news"; then
+        elif echo "$slt" | grep -o "$(gettext "Delete news")"; then
             "$DSF/mngr.sh" delete_news
-        elif echo "$slt" | grep -o "$delete_saved"; then
+        elif echo "$slt" | grep -o "$(gettext "Delete saved")"; then
             "$DSF/mngr.sh" delete_saved
-        elif echo "$slt" | grep -o "$subscriptions"; then
+        elif echo "$slt" | grep -o "$(gettext "Subscriptions")"; then
             "$DSF/cnfg.sh"
         fi
         rm -f "$slct"

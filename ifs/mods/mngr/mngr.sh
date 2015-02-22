@@ -2,6 +2,17 @@
 # -*- ENCODING: UTF-8 -*-
 
 
+function delll() {
+
+    for f in "${@}"; do
+        [ -f "$f" ] && \
+        grep -vxF "$trgt" "$f" "$f.tmp" && \
+        sed '/^$/d' "$f.tmp" > "$f"
+        [ -f "$f.tmp" ] && rm "$f.tmp"
+    done
+}
+
+
 function dlg_form_1() {
     
         yad --form --wrap --center --name=idiomind --class=idmnd \
@@ -12,17 +23,17 @@ function dlg_form_1() {
         --text-align=center --selectable-labels \
         --field="<small>$lgtl</small>":RO "$TGT" \
         --field="<small>$lgsl</small>" "$src" \
-        --field="<small>$topic </small>":CB "$tpc!$tpcs" \
-        --field="<small>$audio </small>":FL "$DM_tlt/words/$fname.mp3" \
-        --field="<small>$example </small>":TXT "$exm1" \
-        --field="<small>$definition </small>":TXT "$dftn" \
-        --field="<small>$notes </small>":TXT "$ntes" \
-        --field="$mark "":CHK" "$mrk" \
+        --field="<small>$(gettext "Topic") </small>":CB "$tpc!$tpcs" \
+        --field="<small>$(gettext "Audio") </small>":FL "$DM_tlt/words/$fname.mp3" \
+        --field="<small>$(gettext "Example") </small>":TXT "$exm1" \
+        --field="<small>$(gettext "Definition") </small>":TXT "$dftn" \
+        --field="<small>$(gettext "Notes") </small>":TXT "$ntes" \
+        --field="$(gettext "Mark") "":CHK" "$mrk" \
         --field="$chk"":CHK" "$mrok" \
-        --field="<a href='http://glosbe.com/$lgs/$lgt/$TGT'>$search_def</a>":lbl \
+        --field="<a href='http://glosbe.com/$lgs/$lgt/$TGT'>$(gettext "Search definition")</a>":lbl \
         --field=" :LBL" " " \
-        --button="$image":"$imge" \
-        --button="$delete":"$dlte" \
+        --button="$(gettext "Image")":"$imge" \
+        --button="$(gettext "Delete")":"$dlte" \
         --button=gtk-close:0 > $1
 }
 
@@ -35,14 +46,14 @@ function dlg_form_2() {
         --buttons-layout=end --title=" $tgt" --fontname="Arial" \
         --selectable-labels --window-icon=idiomind --skip-taskbar \
         --field="$chk:CHK" "$ok" \
-        --field="$mark "":CHK" "$mrk" \
+        --field="$(gettext "Mark") "":CHK" "$mrk" \
         --field="<small>$lgtl</small>":TXT "$tgt" \
         --field="<small>$lgsl</small>":TXT "$src" \
-        --field="<small>$topic </small>":CB "$tpc!$tpcs" \
-        --field="<small>$audio </small>":FL "$DM_tlt/$fname.mp3" \
-        --field="$list_words":BTN "$wrds" \
-        --button="$image":"$imge" \
-        --button="$delete":"$dlte" "$edau" \
+        --field="<small>$(gettext "Topic") </small>":CB "$tpc!$tpcs" \
+        --field="<small>$(gettext "Audio") </small>":FL "$DM_tlt/$fname.mp3" \
+        --field="$(gettext "List Words")":BTN "$wrds" \
+        --button="$(gettext "Image")":"$imge" \
+        --button="$(gettext "Delete")":"$dlte" "$edau" \
         --button=gtk-close:0 > $1
 }
 
@@ -70,13 +81,26 @@ function calculate_review() {
 }
 
 
-function _del_() {
 
-    for f in "${@}"; do
-        [ -f "${f}" ] && \
-        grep -vxF "${trgt}" "${f}" "${f}.tmp" && \
-        sed '/^$/d' "${f}.tmp" > "${f}"
-        rm "${f}.tmp"
-    done
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

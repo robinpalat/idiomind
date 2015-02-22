@@ -2,7 +2,6 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/trans/$lgs/upld.conf
 source $DS/ifs/mods/cmns.sh
 
 if [[ $1 = vsd ]]; then
@@ -14,10 +13,10 @@ if [[ $1 = vsd ]]; then
     
     cd $DM_t/saved; ls -t *.id | sed 's/\.id//g' | yad --list \
     --window-icon=idiomind --center --skip-taskbar --borders=8 \
-    --text=" <small>$double_click_for_download \t\t\t\t</small>" \
-    --title="$topics_saved" --width=$wth --height=$eht \
+    --text=" <small>$(gettext "Double clik to download") \t\t\t\t</small>" \
+    --title="$(gettext "Topics saved")" --width=$wth --height=$eht \
     --column=Nombre:TEXT --print-column=1 --no-headers \
-    --expand-column=1 --search-column=1 --button="$close":1 \
+    --expand-column=1 --search-column=1 --button="$(gettext "Close")":1 \
     --dclick-action='/usr/share/idiomind/ifs/upld.sh infsd' >/dev/null 2>&1
     [ "$?" -eq 1 ] & exit
     exit
@@ -43,7 +42,8 @@ elif [[ $1 = infsd ]]; then
 
     yad --borders=10 --width=420 --height=150 \
     --on-top --skip-taskbar --center --image=$icon \
-    --title="idiomind" --button="$download:0" --button="Close:1" \
+    --title="idiomind" --button="$(gettext "Download")":0 \
+    --button="$(gettext "Close")":1 \
     --text="$name\n<small>${language_source^} $language_target </small> \n" \
     --window-icon=idiomind
     ret=$?
@@ -60,7 +60,7 @@ elif [[ $1 = infsd ]]; then
             cd $DT
             wget http://idiomind.sourceforge.net/info/SITE_TMP
             source $DT/SITE_TMP && rm -f $DT/SITE_TMP
-            [ -z "$DOWNLOADS" ] && msg "$err_link" dialog-warning && exit
+            [ -z "$DOWNLOADS" ] && msg "$(gettext "The server is not available at the moment.")" dialog-warning && exit
             
             file="$DOWNLOADS/$lng/$lnglbl/$category/$link"
             WGET() {
@@ -74,7 +74,7 @@ elif [[ $1 = infsd ]]; then
             if [ "`echo $data | grep '[0-9]*%' `" ];then
             percent=`echo $data | grep -o "[0-9]*%" | tr -d '%'`
             echo $percent
-            echo "# $downloading...  $percent%"
+            echo "# $(gettext "Downloading...")  $percent%"
             fi
             done > $pipe &
             wget_info=`ps ax |grep "wget.*$1" |awk '{print $1"|"$2}'`
@@ -96,7 +96,7 @@ elif [[ $1 = infsd ]]; then
                 [[ -f "$sv" ]] && rm "$sv"
                 mv -f "/tmp/$link" "$sv"
             else
-                msg "$file_err" info && exit
+                msg "$(gettext "The request is not yet available")" info && exit
             fi
             exit
         else
@@ -104,6 +104,28 @@ elif [[ $1 = infsd ]]; then
         fi
 fi
 
+others="$(gettext "Others")"
+comics="$(gettext "Comics")"
+culture="$(gettext "Culture")"
+family="$(gettext "Family")"
+entertainment="$(gettext "Entertainment")"
+grammar="$(gettext "Grammar")"
+history="$(gettext "History")"
+documentary="$(gettext "Documentary")"
+in_the_city="$(gettext "In the city")"
+movies="$(gettext "Movies")"
+internet="$(gettext "Internet")"
+music="$(gettext "Music")"
+events="$(gettext "Events")"
+nature="$(gettext "Nature")"
+news="$(gettext "News")"
+office"$(gettext "Office")"
+relations="$(gettext "Relations")"
+sport="$(gettext "Sport")"
+social="$(gettext "Social")"
+shopping="$(gettext "Shopping")"
+technology="$(gettext "Technology")"
+travel="$(gettext "Travel")"
 lnglbl=$(echo $lgtl | awk '{print tolower($0)}')
 U=$(sed -n 1p $DC_s/cfg.4)
 mail=$(sed -n 2p $DC_s/cfg.4)
@@ -139,7 +161,7 @@ mp3s="$(cd "$DM_tlt/"; find . -maxdepth 2 -name '*.mp3' \
 if [[ $(($chk3 + $chk4)) != $chk0 || $(($chk1 + $chk2)) != $chk0 \
 || $mp3s != $chk0 || $stts = 13 ]]; then
     sleep 1
-    notify-send -i idiomind "$index_err1" "$index_err2" -t 3000 &
+    notify-send -i idiomind "$(gettext "Index error")" "$(gettext "fixing...")" -t 3000 &
     > $DT/ps_lk
     [ -d "$DM_tlt/.conf" ] && mkdir "$DM_tlt/.conf"
     DC_tlt="$DM_tlt/.conf"
@@ -218,7 +240,7 @@ if [ $? -ne 0 ]; then
 fi
 
 if [ $(cat "$DC_tlt/cfg.0" | wc -l) -le 20 ]; then
-    msg " $min_items\\n " info &
+    msg "$(gettext "To upload must be at least 20 items.")\n " info &
     exit
 fi
 
@@ -226,16 +248,17 @@ cd $HOME
 upld=$($yad --form --width=420 --height=460 --on-top \
 --buttons-layout=end --center --window-icon=idiomind \
 --borders=15 --skip-taskbar --align=right \
---button=$cancel:1 --button=$upload:0 \
---title="$upload" --text="   <b>$tpc</b>" \
+--button="$(gettext "Cancel")":1 \
+--button="$(gettext "Upload")":0 \
+--title="$(gettext "Upload")" --text="   <b>$tpc</b>" \
 --field=" :lbl" "#1" \
---field="    <small>$author</small>" "$user" \
---field="    <small>$email</small>" "$mail" \
---field="    <small>$category</small>:CB" \
+--field="    <small>$(gettext "Author")</small>" "$user" \
+--field="    <small>$(gettext "Contact (Optional)")</small>" "$mail" \
+--field="    <small>$(gettext "Category")</small>:CB" \
 "!$others!$comics!$culture!$entertainment!$family!$grammar!$history!$movies!$in_the_city!$internet!$music!$nature!$news!$office!$relations!$sport!$shopping!$social!$technology!$travel" \
---field="    <small>$level</small>:CB" "!$beginner!$intermediate!$advanced" \
---field="<small>\\n$notes</small>:TXT" "$nt" \
---field="<small>$add_image</small>:FL")
+--field="    <small>$(gettext "Skill Level")</small>:CB" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
+--field="<small>\n$(gettext "Description/Notes")</small>:TXT" "$nt" \
+--field="<small>$(gettext "Add image")</small>:FL")
 ret=$?
 
 if [[ "$ret" != 0 ]]; then
@@ -248,7 +271,6 @@ Ctgry=$(echo "$upld" | cut -d "|" -f4)
 [[ $Ctgry = $culture ]] && Ctgry=culture
 [[ $Ctgry = $family ]] && Ctgry=family
 [[ $Ctgry = $entertainment ]] && Ctgry=entertainment
-[[ $Ctgry = $family ]] && Ctgry=family
 [[ $Ctgry = $grammar ]] && Ctgry=grammar
 [[ $Ctgry = $history ]] && Ctgry=history
 [[ $Ctgry = $documentary ]] && Ctgry=documentary
@@ -259,8 +281,10 @@ Ctgry=$(echo "$upld" | cut -d "|" -f4)
 [[ $Ctgry = $events ]] && Ctgry=events
 [[ $Ctgry = $nature ]] && Ctgry=nature
 [[ $Ctgry = $news ]] && Ctgry=news
+[[ $Ctgry = $office ]] && Ctgry=office
 [[ $Ctgry = $relations ]] && Ctgry=relations
 [[ $Ctgry = $sport ]] && Ctgry=sport
+[[ $Ctgry = $social ]] && Ctgry=social
 [[ $Ctgry = $shopping ]] && Ctgry=shopping
 [[ $Ctgry = $technology ]] && Ctgry=technology
 [[ $Ctgry = $travel ]] && Ctgry=travel
@@ -271,7 +295,7 @@ level=$(echo "$upld" | cut -d "|" -f5)
 [[ $level = $advanced ]] && level=3
 
 if [ -z $Ctgry ]; then
-msg " $categry_err\\n " info
+msg " $(gettext "Please indicates a category.")\n " info
 $DS/ifs/upld.sh &
 exit 1
 fi
@@ -281,7 +305,7 @@ internet
 cd $DT
 wget http://idiomind.sourceforge.net/info/SITE_TMP
 source $DT/SITE_TMP && rm -f $DT/SITE_TMP
-[[ -z "$FTPHOST" ]] && msg " $site_err\\n " dialog-warning && exit
+[[ -z "$FTPHOST" ]] && msg " $(gettext "An error occurred, please try later.")\n " dialog-warning && exit
 
 Author=$(echo "$upld" | cut -d "|" -f2)
 Mail=$(echo "$upld" | cut -d "|" -f3)
@@ -383,7 +407,7 @@ gzip -9 "$tpc.tar"
 mv "$tpc.tar.gz" "$U.$tpc.idmnd"
 [[ -d "$DT_u/$tpc" ]] && rm -fr "$DT_u/$tpc"
 dte=$(date "+%d %B %Y")
-notify-send "$uploading" "$wait..." -i idiomind -t 6000
+notify-send "$(gettext "Uploading")" "$(gettext "Wait...")" -i idiomind -t 6000
 
 #-----------------------
 cd $DT_u
@@ -396,10 +420,10 @@ END_SCRIPT
 exit=$?
 if [[ $exit = 0 ]] ; then
     mv -f "$DT/cfg.12" "$DM_t/saved/$tpc.id"
-    info="  $tpc\n\n<b> $saved</b>\n"
+    info="  $tpc\n\n<b> $(gettext "Was uploaded properly.")</b>\n"
     image=dialog-ok
 else
-    info=" $upload_err"
+    info=" $(gettext "There was a problem uploading your file.") "
     image=dialog-warning
 fi
 

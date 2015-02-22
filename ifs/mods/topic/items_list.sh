@@ -23,20 +23,20 @@ function notebook_1() {
     --window-icon=$DS/images/idiomind.png \
     --tab-borders=0 --center --title="Idiomind" \
     --image="$img" --text="$itxt" \
-    --tab="  $learning ($tb1) " \
-    --tab="  $learned ($tb2) " \
-    --tab=" $notes " \
+    --tab="  $(gettext "Learning") ($tb1) " \
+    --tab="  $(gettext "Learned") ($tb2) " \
+    --tab=" $(gettext "Notes") " \
     --ellipsize=END --image-on-top --always-print-result \
     --width="$wth" --height="$eht" --borders=0 \
-    --button="Play":$DS/play.sh --button="$practice":5 \
-    --button="$edit":3
+    --button="Play":$DS/play.sh --button="$(gettext "Practice")":5 \
+    --button="$(gettext "Edit")":3
 }
 
 
 function notebook_2() {
     
     yad --align=center --borders=80 \
-    --text="<u><b>$learned</b></u>\\n$time_review ($tdays $days)" \
+    --text="<u><b>$(gettext "Learned")</b></u>\\n$(gettext "Time to review") ($tdays $(gettext "days"))" \
     --bar="":NORM $RM \
     --multi-progress --plug=$KEY --tabnum=1 &
     cat "$ls2" | yad \
@@ -52,19 +52,19 @@ function notebook_2() {
     --tab-borders=0 --center --title="Idiomind" \
     --image="$img" --text="$itxt" \
     --window-icon=$DS/images/idiomind.png \
-    --tab=" $review " \
-    --tab=" $learned ($tb2) " \
-    --tab=" $notes " \
+    --tab=" $(gettext "Review") " \
+    --tab=" $(gettext "Learned") ($tb2) " \
+    --tab=" $(gettext "Notes") " \
     --ellipsize=END --image-on-top --always-print-result \
     --width="$wth" --height="$eht" --borders=0 \
-    --button="$edit":3
+    --button="$(gettext "Edit")":3
 }
 
 
 function notebook_3() {
     
     yad --align=center --borders=80 \
-    --text="<u><b>$learned</b></u>   * $new_items ($tb1).\\n$time_review: $tdays" \
+    --text="<u><b>$(gettext "Learned")</b></u>   * $(gettext "However there are new items") ($tb1).\\n$time_review: $tdays" $(gettext "days") \
     --bar="":NORM $RM \
     --multi-progress --plug=$KEY --tabnum=1 &
     cat "$ls2" | yad \
@@ -80,12 +80,12 @@ function notebook_3() {
     --tab-borders=0 --center --title="Idiomind" \
     --image="$img" --text="$itxt" \
     --window-icon=$DS/images/idiomind.png \
-    --tab=" $review " \
-    --tab=" $learned ($tb2) " \
-    --tab=" $notes " \
+    --tab=" $(gettext "Review") " \
+    --tab=" $(gettext "Learned") ($tb2) " \
+    --tab=" $(gettext "Notes") " \
     --ellipsize=END --image-on-top --always-print-result \
     --width="$wth" --height="$eht" --borders=0 \
-    --button="$review":4 --button="$edit":3 >/dev/null 2>&1
+    --button="$(gettext "Review")":4 --button="$(gettext "Edit")":3 >/dev/null 2>&1
 }
 
 
@@ -98,11 +98,11 @@ function notebook_0() {
     --class=Idiomind --align=right --key=$KEY \
     --window-icon=$DS/images/idiomind.png \
     --tab-borders=0 --center --title="Idiomind" \
-    --image="$img" --text="$itxt" --tab=" $notes " \
+    --image="$img" --text="$itxt" --tab=" $(gettext "Notes") " \
     --ellipsize=END --image-on-top --always-print-result \
     --width="$wth" --height="$eht" --borders=0 \
     --button="Play":$DS/play.sh \
-    --button="$delete":"$DS/mngr.sh delete_topic"
+    --button="$(gettext "Delete")":"$DS/mngr.sh delete_topic"
 }
 
 
@@ -113,10 +113,10 @@ function dialog_1() {
     --image=dialog-question --on-top --center \
     --window-icon=$DS/images/idiomind.png \
     --buttons-layout=edge --class=idiomind \
-    --button="       $notyet       ":1 \
-    --button="        $review        ":2 \
-    --text="$adv" --name=idiomind \
-    --width=420 --height=150
+    --button="       $(gettext "Not Yet")       ":1 \
+    --button="        $(gettext "Review")        ":2 \
+    --text="$(gettext "days have passed since you mark\n  this topic as learned, you want to review it?")" \
+    --name=idiomind --width=420 --height=150
 }
 
 
@@ -127,9 +127,9 @@ function dialog_2() {
     --image=dialog-question \
     --on-top --window-icon=idiomind \
     --center --class=idiomind \
-    --button="$onlynews":3 \
-    --button="$all":2 \
-    --text="  $cuestion_review2 " \
+    --button="$(gettext "Only New items")":3 \
+    --button="$(gettext "All Items")":2 \
+    --text="  $(gettext "Go over whole list or only new items?") " \
     --width=420 --height=150
 }
 

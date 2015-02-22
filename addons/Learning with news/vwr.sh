@@ -48,11 +48,11 @@ if [[ $1 = V1 ]]; then
         echo "$lwrd" | awk '{print $0""}' | $yad --list \
         --window-icon=idiomind --scroll --quoted-output \
         --skip-taskbar --center --title=" " --borders=20 \
-        --text="<big><big>$trg</big></big> <a href='$lnk'>$more</a>\\n\\n<i>$srce</i>\\n\\n\\n" \
+        --text="<big><big>$trg</big></big> <a href='$lnk'>$(gettext "More")</a>\\n\\n<i>$srce</i>\\n\\n\\n" \
         --width="$wth" --height="$eht" --center --no-headers \
         --column=$lgtl:TEXT --column=$lgsl:TEXT --selectable-labels \
         --expand-column=0 --limit=20 \
-        --button="$save":"'$DS_pf/add.sh' new_item '$item'" \
+        --button="$(gettext "Save")":"'$DS_pf/add.sh' new_item '$item'" \
         --button="$listen":"'$DS_pf/tls.sh' s '$fname'" \
         --button=gtk-go-up:3 --button=gtk-go-down:2 \
         --dclick-action="'$DS/addons/Learning with news/tls.sh' dclk '$fname'"
@@ -124,7 +124,7 @@ elif [[ $1 = V2 ]]; then
         --field="":lbl \
         --field="<i><span color='#7D7D7D'>$exmp</span></i>\\n:lbl" \
         --width="$wth" --height="$eht" --center \
-        --button="$delete":"'$DS_pf/mngr.sh' delete_item '$nme'" \
+        --button="$(gettext "Delete")":"'$DS_pf/mngr.sh' delete_item '$nme'" \
         --button="$listen":"play '$DM_tlfk/words/$fname.mp3'" \
         --button=gtk-go-up:3 --button=gtk-go-down:2
 
@@ -141,11 +141,11 @@ elif [[ $1 = V2 ]]; then
         --window-icon=idiomind --scroll \
         --skip-taskbar --center --title=" " --borders=15 \
         --quoted-output --selectable-labels --no-headers \
-        --text="<big><big>$trg</big></big> <a href='$lnk'>More</a>\\n\\n<i>$srce</i>\\n\\n\\n" \
+        --text="<big><big>$trg</big></big> <a href='$lnk'>$(gettext "More")</a>\\n\\n<i>$srce</i>\\n\\n\\n" \
         --width="$wth" --height="$eht" --center \
         --column=$lgtl:TEXT --column=$lgsl:TEXT \
         --expand-column=0 --limit=20 --selectable-labels \
-        --button="$delete":"'$DS_pf/mngr.sh' delete_item '$item'" \
+        --button="$(gettext "Delete")":"'$DS_pf/mngr.sh' delete_item '$item'" \
         --button="$listen":"'$DS_pf/tls.sh' s '$fname'" \
         --button=gtk-go-up:3 --button=gtk-go-down:2 \
         --dclick-action="'$DS/addons/Learning with news/tls.sh' dclk '.audio'"

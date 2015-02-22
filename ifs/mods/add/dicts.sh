@@ -2,19 +2,20 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
+
 if [ ! -d "$DC_a/dict/" ]; then
-mkdir -p $DC_a/dict/enables
-mkdir -p $DC_a/dict/disables
-cp -f $DS_a/Dics/disables/* $DC_a/dict/disables/; fi
+    mkdir -p $DC_a/dict/enables
+    mkdir -p $DC_a/dict/disables
+    cp -f $DS_a/Dics/disables/* $DC_a/dict/disables/; fi
 [[ ! -f $DC_a/dict/.dicts ]] && touch $DC_a/dict/.dicts
 [[ ! -f $DC_a/dict/.lng ]] && echo $lgtl > $DC_a/dict/.lng
 if  [ -z "$(cat $DC_a/dict/.dicts)" ]; then
-source $DS/ifs/trans/$lgs/topics_lists.conf
-$DS_a/Dics/cnfg.sh "" f "$no_dictionary"; fi
+    $DS_a/Dics/cnfg.sh "" f "$(gettext "Not indicated a dictionary
+Select one or more of the list")"; fi
 if [ "$(cat $DC_a/dict/.lng)" != $lgtl ]; then
-source $DS/ifs/trans/$lgs/topics_lists.conf
-$DS_a/Dics/cnfg.sh "" f "$no_dictionary2"
-echo $lgtl > $DC_a/dict/.lng; fi
+    $DS_a/Dics/cnfg.sh "" f "$(gettext "You changed the language to learn
+Please select the corresponding dictionaries")"
+    echo $lgtl > $DC_a/dict/.lng; fi
 
 function dictt() {
     
