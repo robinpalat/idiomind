@@ -14,7 +14,7 @@ DCF="$DC/addons/Learning with news"
 
 if [[ -z "$(cat $DC_a/dict/.dicts)" ]]; then
     source $DS/ifs/trans/$lgs/topics_lists.conf
-    $DS_a/Dics/cnfg.sh "" f "$no_dictionary"
+    $DS_a/Dics/cnfg.sh "" f "$(gettext "Not indicated a dictionary")"
     if  [[ -z "$(cat $DC_a/dict/.dicts)" ]]; then
         exit 1
     fi
@@ -25,8 +25,8 @@ if ( [ -f $DT/.uptf ] && [ -z "$1" ] ); then
     yad --image=info --width=420 --height=150 \
     --window-icon=idiomind \
     --title=Info --center --borders=5 \
-    --on-top --skip-taskbar --button="$cancel":2 \
-    --button=Ok:1 --text="$updating_pros"
+    --on-top --skip-taskbar --button="$(gettext "Cancel")":2 \
+    --button=Ok:1 --text="$(gettext "Wait till it finishes a previous process")"
     ret=$?
         if [ $ret -eq 1 ]; then
             exit 1
@@ -108,7 +108,7 @@ if [ -n "$feed" ]; then
     
     if [ $(cat rss | wc -l) = 0 ]; then
     
-        msg "<b>$link_err</b>" info &
+        msg "<b>$(gettext "xxx")</b>" info &
         rm -fr $DT_r .rss & exit 1
     fi
     
@@ -194,7 +194,7 @@ if [ -n "$feed" ]; then
     fi
 
     if [ "$1" != A ]; then
-        notify-send -i idiomind "$rsrc" " $updateok" -t 3000
+        notify-send -i idiomind "$rsrc" "$(gettext "Updated")" -t 3000
     fi
     exit
     

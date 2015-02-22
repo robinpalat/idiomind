@@ -162,23 +162,23 @@ if [ "$1" = A ]; then
     echo "<big><big><b>$real%</b></big></big>  Performance
 " > $WKRT
 if [ -n "$tpc3" ]; then
-    echo "$topics:
+    echo "$(gettext "Topics"):
  <b>$tle1</b>
  <b>$tle2</b>
  <b>$tle3</b>
 ">> $WKRT
 elif [ -n "$tpc2" ]; then
-    echo "$topics:
+    echo "$(gettext "Topics"):
  <b>$tle1</b>
  <b>$tle2</b>
 ">> $WKRT
 else
-    echo "$topic:
+    echo "$(gettext "Topic"):
  <b>$tle1</b>
 ">> $WKRT
 fi
-echo "<big><span font='ultralight'>$CTW9</span></big>  $items_to_mark_ok" >> $WKRT
-echo "<big><span font='ultralight'>$OKIM</span></big>  $items_ok
+echo "<big><span font='ultralight'>$CTW9</span></big>  $(gettext "Items that could be marked as learned")" >> $WKRT
+echo "<big><span font='ultralight'>$OKIM</span></big>  $(gettext "Items marked learned")
 
 " >> $WKRT
 cat "$DC_a/stats/.wks" >> $WKRT2
@@ -203,11 +203,11 @@ elif [ -z "$1" ]; then
     SW=" "; fi
 
     CNFG=$(yad --print-all --align=center \
-    --title="$weekly_report" --borders=10 \
+    --title="$(gettext "Weekly Report")" --borders=10 \
     --center --form --on-top --scroll --skip-taskbar \
     --always-print-result --window-icon=idiomind \
     --button=Close:0 --width=420 --height=300 \
-    --field="$active:CHK" $sttng \
+    --field="$(gettext "active")":CHK $sttng \
     --field="\n$SW:LBL" \
     --field="\n$LG:LBL")
         ret=$?

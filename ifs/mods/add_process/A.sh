@@ -11,10 +11,10 @@ function dlg_checklist_5() {
         --dclick-action='/usr/share/idiomind/ifs/mods/add_process/A.sh show_item_for_edit' \
         --list --checklist --window-icon=idiomind \
         --width=$wth --text="<small>$info</small>" \
-        --height=$eht --borders=3 --button="$cancel":1 \
-        --button="$to_new_topic":'/usr/share/idiomind/add.sh new_topic' \
-        --button=gtk-save:0 --title="$Title_sentences" \
-        --column="$(cat "$1" | wc -l)" --column="Items" > "$slt"
+        --height=$eht --borders=3 --button="$(gettext "Cancel")":1 \
+        --button="$(gettext "To New Topic")":'/usr/share/idiomind/add.sh new_topic' \
+        --button="$(gettext "Save")":0 --title="$tpe" \
+        --column="$(cat "$1" | wc -l)" --column="$(gettext "Items")" > "$slt"
 }
 
 
@@ -24,7 +24,7 @@ function dlg_text_info_5() {
         --name=idiomind --class=idiomind --window-icon=idiomind \
         --sticky --width=520 --height=110 --editable \
         --margins=8 --borders=0 --button=Ok:0 \
-        --title="$edit_item" > "$1".txt
+        --title=" " > "$1".txt
 }
 
 
@@ -177,9 +177,9 @@ if [[ "$prdt" = A ]]; then
         [[ $(echo "$tpe" | wc -c) -gt 40 ]] && tcnm="${tpe:0:40}..." || tcnm="$tpe"
 
         left=$((50 - $(cat "$DC_tlt"/cfg.4 | wc -l)))
-        info=$(printf "$remain$left$sentences. ")
-        [ $ns -ge 45 ] && info=$(printf "$remain$left$sentences. ")
-        [ $ns -ge 49 ] && info=$(printf "$remain$left$sentence. ")
+        info="$(gettext "You can add")$left$(gettext "Sentences.")"
+        [ $ns -ge 45 ] && info="$(gettext "You can add")$left$(gettext "Sentences.")"
+        [ $ns -ge 49 ] && info="$(gettext "You can add")$left$(gettext "Sentence.")"
         
         if [ -z "$(cat $DT_r/ls)" ]; then
         
@@ -349,29 +349,29 @@ if [[ "$prdt" = A ]]; then
                 
                 if [ -f ./wlog ]; then
                     wadds=" $(($(cat ./addw | wc -l) - $(cat ./wlog | sed '/^$/d' | wc -l)))"
-                    W=" $words"
+                    W="$(gettext " Words")"
                     if [ $(echo $wadds) = 1 ]; then
-                        W=" $word"
+                        W="$(gettext " Word")"
                     fi
                 else
                     wadds=" $(cat ./addw | wc -l)"
-                    W=" $words"
+                    W="$(gettext " Words")"
                     if [ $(echo $wadds) = 1 ]; then
                         wadds=" $(cat ./addw | wc -l)"
-                        W=" $word"
+                        W="$(gettext " Word")"
                     fi
                 fi
                 if [ -f ./slog ]; then
                     sadds=" $(($(cat ./adds | wc -l) - $(cat ./slog | sed '/^$/d' | wc -l)))"
-                    S=" $sentences"
+                    S="$(gettext " Sentences")"
                     if [ $(echo $sadds) = 1 ]; then
-                        S=" $sentence"
+                        S="$(gettext " Sentence")"
                     fi
                 else
                     sadds=" $(cat ./adds | wc -l)"
-                    S=" $sentences"
+                    S="$(gettext " Sentences")"
                     if [ $(echo $sadds) = 1 ]; then
-                        S=" $sentence"
+                        S="$(gettext " Sentence")"
                     fi
                 fi
                 
@@ -379,7 +379,7 @@ if [[ "$prdt" = A ]]; then
                 adds=$(cat ./adds ./addw | wc -l)
                 
                 if [ $adds -ge 1 ]; then
-                    notify-send -i idiomind "$tpe" "$is_added\n$sadds$S$wadds$W" -t 2000 &
+                    notify-send -i idiomind "$tpe" "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
                     echo "aitm.$adds.aitm" >> \
                     $DC/addons/stats/.log
                 fi
@@ -387,12 +387,12 @@ if [[ "$prdt" = A ]]; then
                 if ( [ -n "$logs" ] || [ $(ls [0-9]* | wc -l) -ge 1 ] ); then
                 
                     if [ -n "$logs" ]; then
-                        text_r1="$items_rest\n\n$logs"
+                        text_r1="$(gettext "Have been added:")\n\n$logs"
                     fi
                     
                     if [ $(ls [0-9]* | wc -l) -ge 1 ]; then
-                        btn="--button=$btn_save_audio:0"
-                        text_r2="$audio_rest\n"
+                        btn="--button="$(gettext "Save Audio")":0"
+                        text_r2="$(gettext "There are some audio files who were unable to add.")\n"
                     fi
                     
                     dlg_text_info_3 "$text_r2$text_r1" "$btn" >/dev/null 2>&1

@@ -71,46 +71,46 @@ elif [ $1 = edit ]; then
 if ! grep -Fxo "$tpc" $DM_tl/.cfg.3; then
 if [ "$ti" -ge 15 ]; then
 dd="$DS/images/ok.png
-$learned
+$(gettext "Mark as learned")
 $DS/images/rw.png
-$review
+$(gettext "Review")
 $DS/images/rn.png
-$rename
+$(gettext "Rename")
 $DS/images/dlt.png
-$delete
+$(gettext "Delete")
 $DS/images/upd.png
-$share
+$(gettext "Share")
 $DS/images/pdf.png
-$topdf"
+$(gettext "To PDF")"
 else
 dd="$DS/images/rn.png
-$rename
+$(gettext "Rename")
 $DS/images/dlt.png
-$delete
+$(gettext "Delete")
 $DS/images/upd.png
-$share
+$(gettext "Share")
 $DS/images/pdf.png
-$topdf"
+$(gettext "To PDF")"
 fi
 else
 if [ "$ti" -ge 15 ]; then
 dd="$DS/images/ok.png
-$learned
+$(gettext "Mark as learned")
 $DS/images/rw.png
-$review
+$(gettext "Review")
 $DS/images/rn.png
-$rename
+$(gettext "Rename")
 $DS/images/dlt.png
-$delete
+$(gettext "Delete")
 $DS/images/pdf.png
-$topdf"
+$(gettext "To PDF")"
 else
 dd="$DS/images/rn.png
-$rename
+$(gettext "Rename")
 $DS/images/dlt.png
-$delete
+$(gettext "Delete")
 $DS/images/pdf.png
-$topdf"
+$(gettext "To PDF")"
 fi
 fi
     echo "$dd" | yad --list --on-top --expand-column=2 \
@@ -122,17 +122,17 @@ fi
     ret=$?
     slt=$(cat "$slct")
     if  [[ "$ret" -eq 0 ]]; then
-        if echo "$slt" | grep -o $learned; then
+        if echo "$slt" | grep -o "$(gettext "Mark as learned")"; then
             /usr/share/idiomind/mngr.sh mkok-
-        elif echo "$slt" | grep -o $review; then
+        elif echo "$slt" | grep -o "$(gettext "Review")"; then
             /usr/share/idiomind/mngr.sh mklg-
-        elif echo "$slt" | grep -o $rename; then
+        elif echo "$slt" | grep -o "$(gettext "Rename")"; then
             /usr/share/idiomind/add.sh new_topic name 2
-        elif echo "$slt" | grep -o $delete; then
+        elif echo "$slt" | grep -o "$(gettext "Delete")"; then
             /usr/share/idiomind/mngr.sh delete_topic
-        elif echo "$slt" | grep -o $share; then
+        elif echo "$slt" | grep -o "$(gettext "Share")"; then
             /usr/share/idiomind/ifs/upld.sh
-        elif echo "$slt" | grep -o $topdf; then
+        elif echo "$slt" | grep -o "$(gettext "To PDF")"; then
             /usr/share/idiomind/ifs/tls.sh pdf_doc
         fi
         rm -f "$slct"
@@ -281,19 +281,27 @@ elif [ "$1" = delete_item ]; then
     
     
     if [ -f "$DM_tlt/words/$fname.mp3" ]; then 
-        msg_2 " $delete_word\n\n" \
-        dialog-question "$yes" "$no" "$confirm"
+    
+        msg_2 "$(gettext "Are you sure you want to delete this word?")\n\n" \
+        dialog-question "$(gettext "Yes")" "$(gettext "Not")" "$(gettext "Confirm")"
+        
         file="$DM_tlt/words/$fname.mp3"
         trgt=$(eyeD3 "$file" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
+        
     elif [ -f "$DM_tlt/$fname.mp3" ]; then
-        msg_2 " $delete_sentence\n\n" \
-        dialog-question "$yes" "$no" "$confirm"
+    
+        msg_2 "$(gettext "Are you sure you want to delete this sentence?")\n\n" \
+        dialog-question "$(gettext "Yes")" "$(gettext "Not")" "$(gettext "Confirm")"
+        
         file="$DM_tlt/$fname.mp3"
         trgt=$(eyeD3 "$file" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
+        
     else
-        msg_2 " $delete_item\n\n" \
-        dialog-question "$yes" "$no" "$confirm"
+    
+        msg_2 "$(gettext "Are you sure you want to delete this item?")\n\n" \
+        dialog-question "$(gettext "Yes")" "$(gettext "Not")" "$(gettext "Confirm")"
         trgt="${3}"
+        
     fi
     ret=$(echo "$?")
         
@@ -337,7 +345,8 @@ elif [ "$1" = delete_item ]; then
 elif [ $1 = delete_topic ]; then
     include $DS/ifs/mods/mngr
     
-    msg_2 " $delete_topic\n\n" dialog-question "$yes" "$no" "$confirm"
+    msg_2 "$(gettext "Are you sure you want to delete this Topic?")\n\n" \
+    dialog-question "$(gettext "Yes")" "$(gettext "Not")" "$(gettext "Confirm")"
     ret=$(echo "$?")
         
         if [ $ret -eq 0 ]; then
@@ -393,11 +402,11 @@ elif [ "$1" = edt ]; then
     if [ "$v" = v1 ]; then
         ind="$DC_tlt/cfg.1"
         inp="$DC_tlt/cfg.2"
-        chk="$mark_as_learned"
+        chk="$(gettext "Mark as learned")"
     elif [ "$v" = v2 ]; then
         ind="$DC_tlt/cfg.2"
         inp="$DC_tlt/cfg.1"
-        chk="$review"
+        chk="$(gettext "Review")"
     fi
 
     if [ -f "$wfile" ]; then

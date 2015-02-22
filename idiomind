@@ -60,11 +60,12 @@ function new_session() {
     if [ $? -ne 0 ]; then
         killall yad &
         yad --name=idiomind --image=error --button=gtk-ok:1\
-        --text=" $write_err\n\n" --image-on-top --sticky  \
+        --text=" $(gettext "Fail on try write in /tmp")\n\n" \
+        --image-on-top --sticky  \
         --width=420 --height=150 --borders=5 --title=Idiomind \
         --skip-taskbar --center --window-icon=idiomind & exit 1
     fi
-    
+  
     # start addons
     addons="$(cd $DS/addons; ls -d *)"
     [[ -f $DC_s/cfg.21 ]] && rm $DC_s/cfg.21
@@ -212,9 +213,9 @@ elif [ $(echo "$1" | grep -o '.idmnd') ]; then
     [[ $language_target = Spanish ]] && lng=es
     [[ $language_target = Vietnamese ]] && lng=vi
     [[ $language_target = Russian ]] && lng=ru
-    [[ $level = 1 ]] && level=$beginner
-    [[ $level = 2 ]] && level=$intermediate
-    [[ $level = 3 ]] && level=$advanced
+    [[ $level = 1 ]] && level="$(gettext "Beginner")"
+    [[ $level = 2 ]] && level="$(gettext "Intermediate")"
+    [[ $level = 3 ]] && level="$(gettext "Advanced")"
 
     if [ -f "$tmp/words/images/img.png" ]; then
     img="$tmp/words/images/img.png"; else
@@ -223,7 +224,8 @@ elif [ $(echo "$1" | grep -o '.idmnd') ]; then
     if [ "$tpc_i" != "$name" ]; then
     
         cstn=$(yad --name=idiomind --image=error --button=gtk-ok:1\
-        --text=" <b>$file_err</b>\\n" --image-on-top --sticky \
+        --text=" <b>$(gettext "The file is damaged")</b>\\n" \
+        --image-on-top --sticky \
         --width=280 --height=120 --title=Idiomind \
         --skip-taskbar --center --window-icon=idiomind)
         
@@ -233,7 +235,7 @@ elif [ $(echo "$1" | grep -o '.idmnd') ]; then
         cd "$tmp"
         ws=$(cat "cfg.3" | wc -l)
         ss=$(cat "cfg.4" | wc -l)
-        itxt="<big><big>$tpc_i</big></big><small>\\n${language_source^} <b>></b> $language_target\\n$nwords $words $nsentences $sentences $nimages $images\n$llevel $level </small>\n"
+        itxt="<big><big>$tpc_i</big></big><small>\\n${language_source^} <b>></b> $language_target\\n$nwords $(gettext "Words") $nsentences $(gettext "Sentences") $nimages $(gettext "Images")\n$(gettext "Level") $level </small>\n"
         dlck="$DT/p1.$c"
         cat "$tmp/cfg.0" | awk '{print $0""}' | \
         yad --list --name=Idiomind --title="Idiomind" \
@@ -242,7 +244,7 @@ elif [ $(echo "$1" | grep -o '.idmnd') ]; then
         --scroll --no-headers --dclick-action="$dlck" \
         --width="$wth" --height="$eht" --image-on-top \
         --window-icon=idiomind --column=Items --center \
-        --button="$install":0 --button="$close":1
+        --button="$(gettext "Install")":0 --button="$(gettext "Close")":1
         ret=$?
             
             if [ "$ret" -eq 1 ]; then
@@ -255,7 +257,7 @@ elif [ $(echo "$1" | grep -o '.idmnd') ]; then
                 if [ $if2 -ge 80 ]; then
                     yad  --name=idiomind --center \
                     --image=info --class=idiomind \
-                    --text=" \n$topics_max\n\n" \
+                    --text="$(gettext "You have reached the maximum number of topics")\n\n" \
                     --image-on-top --sticky --skip-taskbar \
                     --width=420 --height=150 --title=Idiomind \
                     --window-icon=idiomind --button=gtk-ok:1
@@ -266,7 +268,7 @@ elif [ $(echo "$1" | grep -o '.idmnd') ]; then
                 if [ "$chck" -ge 1 ]; then
                     tpc_i="$tpc_i $chck"
                     yad  --name=idiomind --image=info --sticky \
-                    --text=" $name_eq  \\n $name_eq2 <b>$tpc_i    </b>\n" \
+                    --text=" $(gettext "You have a topic with the same name")  \\n $(gettext "You rename it to") <b>$tpc_i    </b>\n" \
                     --class=idiomind --center --skip-taskbar \
                     --image-on-top --width=420 --height=150 \
                     --window-icon=idiomind --title=Idiomind \
@@ -368,11 +370,11 @@ elif [ "$1" = topic ]; then
             exit
         else
             yad --window-icon=idiomind --name=idiomind \
-            --image=idiomind --on-top --skip-taskbar \
-            --text="$there_are_no_topics ($lgtl)\n" \
+            --image=info --on-top --skip-taskbar \
+            --text="$(gettext "Nothing to display") ($lgtl)\n" \
             --image-on-top --center --sticky \
             --width=420 --height=150 --borders=5 \
-            --skip-taskbar --title="$nothing" \
+            --skip-taskbar --title="Idiomind" \
             --button="  Ok  ":0 & exit
         fi
     fi
@@ -382,8 +384,8 @@ elif [ "$1" = topic ]; then
     
         [ -z "$tpc" ] && exit 1
 
-        itxt="<big><big>$tpc </big></big><small>\\n$ss $sentences $ws $words\n</small>\n"
-        itxt2="<span color='#ABABAB'><small> $created_by $author $on ${category^}  $date_u</small></span>"
+        itxt="<big><big>$tpc </big></big><small>\\n$ss $(gettext "Sentences") $ws $(gettext "Words")\n</small>\n"
+        itxt2="<span color='#ABABAB'><small> $(gettext "Created by") $author $(gettext "on") ${category^}  $date_u</small></span>"
 
         if [ "$inx" -lt 1 ]; then
         
@@ -558,8 +560,8 @@ elif [ "$1" = topic ]; then
         [ -z "$tpc" ] && exit 1
         
         source "$DC_tlt/cfg.12"
-        itxt="<big><big>$tpc </big></big><small>\\n$ss $sentences $ws $words\n</small>\n"
-        itxt2="<small> $created_by $author $on <span color='#6E9FD4'>${category^}</span>  $date_u</small>"
+        itxt="<big><big>$tpc </big></big><small>\\n$ss $(gettext "Sentences") $ws $(gettext "Words")\n</small>\n"
+        itxt2="<small> $(gettext "Created by") $author $(gettext "on") <span color='#6E9FD4'>${category^}</span>  $date_u</small>"
         
         if [ "$tb1" -ge 1 ]; then
         

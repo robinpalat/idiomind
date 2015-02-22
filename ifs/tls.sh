@@ -240,11 +240,11 @@ elif [ "$1" = check_updates ]; then
     
     if [ "$(sed -n 1p $DT/release)" != "$(idiomind -v)" ]; then
     
-        yad --text="<big><b> $new_version </b></big>\n\n" \
+        yad --text="<big><b> $(gettext "A new version of Idiomind available") </b></big>\n\n" \
         --image=info --title=" " --window-icon=idiomind \
         --on-top --skip-taskbar --sticky \
         --center --name=idiomind --borders=10 --always-print-result \
-        --button="$later":2 --button="$download":0 \
+        --button="$later":2 --button="$(gettext "Download")":0 \
         --width=430 --height=145
         ret=$?
         
@@ -260,11 +260,11 @@ elif [ "$1" = check_updates ]; then
         fi
         
     else
-        yad --text="<big><b> $nonew_version  </b></big>\n\n  $nonew_version2" \
+        yad --text="<big><b> $(gettext "No updates available")  </b></big>\n\n  $(gettext "You have the latest version of Idiomind.")" \
         --image=info --title=" " --window-icon=idiomind \
         --on-top --skip-taskbar --sticky --width=430 --height=145 \
         --center --name=idiomind --borders=10 \
-        --button="$close":1
+        --button="$(gettext "Close")":1
     fi
     
     [ -f release ] && rm -f release
@@ -294,11 +294,11 @@ elif [ "$1" = a_check_updates ]; then
         
         if [ "$(sed -n 1p $DT/release)" != "$(idiomind -v)" ]; then
         
-            yad --text="<big><b> $new_version  </b></big>\n\n" \
+            yad --text="<big><b> $(gettext "A new version of Idiomind available") </b></big>\n\n" \
             --image=info --title=" " --window-icon=idiomind \
             --on-top --skip-taskbar --sticky --always-print-result \
             --center --name=idiomind --borders=10 \
-            --button="$later":2 --button="$download":0 \
+            --button="$later":2 --button="$(gettext "Download")":0 \
             --width=430 --height=145
             ret=$?
             

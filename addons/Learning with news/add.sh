@@ -21,22 +21,22 @@ if [[ "$1" = new_item ]]; then
     fi
 
     if [[ -f $DT/word.x ]]; then
-        bttn="--button=$save_word:0"
-        txt="<b>$word</b>"
+        bttn="--button="$(gettext "Save Word")":0"
+        txt="<b>"$(gettext "Word")"</b>"
     fi
 
     yad --width=480 --height=210 --window-icon=idiomind \
-    --title="$save" --center --on-top --borders=10 \
+    --title="$(gettext "Save")" --center --on-top --borders=10 \
     --image=dialog-question --skip-taskbar \
-    --text="  <b>$sentence </b>\n  $var\n\n  $txt\n  $trgt\n" \
-    --button="$save_sentence":2 "$bttn" 
+    --text="  <b>"$(gettext "Sentence")"</b>\n  $var\n\n  $txt\n  $trgt\n" \
+    --button="$(gettext "Save Sentence")":2 "$bttn"
     ret=$?
         
         # -------------------------------------------------------------
         if [[ $ret -eq 0 ]]; then
         
             if [ $(cat "$dir_conf/cfg.3" | wc -l) -ge 50 ]; then
-                msg "$tpe  \n$words_max " info & exit
+                msg "$tpe  \n$(gettext "You have reached the maximum number of words") " info & exit
             fi
         
             internet
@@ -58,7 +58,7 @@ if [[ "$1" = new_item ]]; then
         elif [ $ret -eq 2 ]; then
         
             if [ $(cat "$DM_tl/Feeds/.conf/cfg.4" | wc -l) -ge 50 ]; then
-                msg "$tpe  \n$sentences_max" info & exit
+                msg "$tpe  \n$(gettext "You have reached the maximum number of sentences")" info & exit
             fi
             
             internet
@@ -82,7 +82,7 @@ elif [[ "$1" = new_topic ]]; then
     
     dte=$(date "+%a %d %B")
     if [ $(cat "$DC_tl/.cfg.1" | wc -l) -ge 80 ]; then
-        msg "$topics_max " info & exit
+        msg "$(gettext "You have reached the maximum number of topics")" info & exit
     fi
 
     jlbi=$($yad --form \
@@ -90,7 +90,7 @@ elif [[ "$1" = new_topic ]]; then
     --fixed --width=400 --height=120 \
     --on-top --center --skip-taskbar \
     --field=" : " "News - $dte" \
-    --button=$create:0 --title="$new_topic" )
+    --button="$(gettext "Create")":0 --title="$(gettext "New Topic")" )
         
         if [ -z "$jlbi" ];then
             exit 1

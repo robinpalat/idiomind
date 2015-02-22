@@ -14,7 +14,8 @@ if [[ "$1" = delete_item ]]; then
     touch $DT/ps_lk
     if [ -f "$kpt/words/$itdl.mp3" ]; then
     
-        msg_2 " $delete_word\n\n" dialog-question "$yes" "$no" "$confirm"
+        msg_2 " $(gettext "Are you sure you want to delete this word?")\n\n" \
+        dialog-question "$(gettext "Yes")" "$(gettext "Not")" "$(gettext "Confirm")"
         ret=$(echo "$?")
 
             if [[ $ret -eq 0 ]]; then
@@ -37,7 +38,8 @@ if [[ "$1" = delete_item ]]; then
     
     elif [ -f "$kpt/$itdl.mp3" ]; then
     
-        msg_2 " $delete_sentence\n\n" dialog-question "$yes" "$no" "$confirm"
+        msg_2 "$(gettext "Are you sure you want to delete this Sentence?")\n\n" \
+        dialog-question "$(gettext "Yes")" "$(gettext "Not")" "$(gettext "Confirm")"
         ret=$(echo "$?")
         
             if [[ $ret -eq 0 ]]; then
@@ -60,7 +62,8 @@ if [[ "$1" = delete_item ]]; then
             fi
     else
     
-        msg_2 " $delete_item\n\n" dialog-question "$yes" "$no" "$confirm"
+        msg_2 "$(gettext "Are you sure you want to delete this Item?")\n\n" \
+        dialog-question "$(gettext "Yes")" "$(gettext "Not")" "$(gettext "Confirm")"
         ret=$(echo "$?")
         
             if [[ $ret -eq 0 ]]; then
@@ -87,7 +90,8 @@ if [[ "$1" = delete_item ]]; then
 
 elif [[ "$1" = delete_news ]]; then
     
-    msg_2 " $delete_all" dialog-question "$yes" "$no" "$confirm"
+    msg_2 "$(gettext "Are you sure you want to delete all entries?\n\(Downloads subscriptions\nevery 5 days will be automatically deleted.\)")" dialog-question \
+    "$(gettext "Yes")" "$(gettext "Not")" "$(gettext "Confirm")"
     ret=$(echo "$?")
 
         if [[ $ret -eq 0 ]]; then
@@ -102,7 +106,7 @@ elif [[ "$1" = delete_news ]]; then
         
 elif [[ "$1" = delete_saved ]]; then
 
-        msg_2 " $delete_saved2\n\n" dialog-question "$yes" "$no" "$confirm"
+        msg_2 " $(gettext "Are you sure you want to delete the saved entries?")" dialog-question "$yes" "$no" "$confirm"
         ret=$(echo "$?")
 
     if [[ $ret -eq 0 ]]; then

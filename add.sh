@@ -18,7 +18,7 @@ if [ "$1" = new_topic ]; then
         if [ -n "$nmt" ];then
             nmt="$nmt"
         else
-            tle=$(echo "$new_topic")
+            tle=$(echo "$(gettext "New Topic")")
             nmt=""
         fi
         
@@ -30,7 +30,7 @@ if [ "$1" = new_topic ]; then
         if [ $snm -ge 1 ]; then
         
             jlb=$(echo ""$jlb" $snm")
-            dlg_msg_6 " <b>$name_eq   </b>\\n $name_eq2  <b>$jlb</b>   \\n"
+            dlg_msg_6 " <b>"$(gettext "You already have a Topic has the same name")"   </b>\\n "$(gettext "You rename it to")"  <b>$jlb</b>   \\n"
             ret=$(echo "$?")
 
                 if [ "$ret" -eq 1 ]; then
@@ -74,10 +74,10 @@ if [ "$1" = new_topic ]; then
         [[ -z "$2" ]] && nmt="" || nmt="$2"
         
         if [ $info2 -ge 80 ]; then
-            msg "$topics_max" info &&
+            msg "$(gettext "You have reached the maximum number of topics")" info &&
             killall add.sh & exit 1
         fi
-        jlbi=$(dlg_form_0 "$new_topic" "$nmt")
+        jlbi=$(dlg_form_0 "$(gettext "New Topic")" "$nmt")
         ret=$(echo "$?")
 
             jlb="$(clean_2 "$jlbi")"
@@ -174,7 +174,7 @@ elif [ "$1" = new_items ]; then
         
             if [ -z "$chk" ]; then
                 [ -d $DT_r ] && rm -fr $DT_r
-                msg "$topic_err\n" info & exit 1
+                msg "$(gettext "No topic is active")\n" info & exit 1
             fi
         
             if [ -z "$trgt" ]; then
@@ -201,7 +201,7 @@ elif [ "$1" = new_items ]; then
                     tpe=$(echo "$slt" | sed -n 2p)
                 fi
             fi
-            if [[ "$chk" = "$new *" ]]; then
+            if [[ "$chk" = "$(gettext "New topic") *" ]]; then
                 $DS/add.sh new_topic
             else
                 echo "$tpe" > $DC_s/cfg.7
@@ -225,10 +225,10 @@ elif [ "$1" = new_items ]; then
                 if sed -n 1p $DC_s/cfg.3 | grep FALSE; then
                     if [ -z "$srce" ]; then
                         [ -d $DT_r ] && rm -fr $DT_r
-                        msg "$no_text $lgsl." info & exit 1
+                        msg "$(gettext "Lacking complete a text input field") $lgsl." info & exit 1
                     elif [ -z "$trgt" ]; then
                         [ -d $DT_r ] && rm -fr $DT_r
-                        msg "$no_text $lgtl." info & exit 1
+                        msg "$(gettext "Lacking complete a text input field") $lgtl." info & exit 1
                     fi
                 fi
 
@@ -245,11 +245,11 @@ elif [ "$1" = new_items ]; then
                 if sed -n 1p $DC_s/cfg.3 | grep FALSE; then
                     if [ -z "$srce" ]; then
                         [ -d $DT_r ] && rm -fr $DT_r
-                        msg "$no_text $lgsl." info & exit 1
+                        msg "$(gettext "Lacking complete a text input field") $lgsl." info & exit 1
                         
                     elif [ -z "$trgt" ]; then
                         [ -d $DT_r ] && rm -fr $DT_r
-                        msg "$no_text $lgtl." info & exit 1
+                        msg "$(gettext "Lacking complete a text input field") $lgtl." info & exit 1
                     fi
                 fi
             
@@ -276,11 +276,11 @@ elif [ $1 = new_sentence ]; then
 
     if [ $(cat "$DC_tlt/cfg.4" | wc -l) -ge 50 ]; then
         [ -d $DT_r ] && rm -fr $DT_r
-        msg "$tpe  \\n$sentences_max" info & exit
+        msg "$tpe  \\n"$(gettext "You have reached the maximum number of sentences")"" info & exit
     fi
     if [ -z "$tpe" ]; then
         [ -d $DT_r ] && rm -fr $DT_r
-        msg "$topic_err\n" info & exit 1
+        msg "$(gettext "No topic is active")\n" info & exit 1
     fi
     
     # ---------------------
@@ -306,10 +306,10 @@ elif [ $1 = new_sentence ]; then
     else 
         if [ -z "$4" ]; then
             [ -d $DT_r ] && rm -fr $DT_r
-            msg "$no_text$lgsl." info & exit
+            msg "$(gettext "Lacking complete a text input field") $lgsl." info & exit
         elif [ -z "$2" ]; then
             [ -d $DT_r ] && rm -fr $DT_r
-            msg "$no_text$lgtl." info & exit
+            msg "$(gettext "Lacking complete a text input field") $lgtl." info & exit
         fi
         
         trgt=$(echo "$(clean_1 "$2")" | sed ':a;N;$!ba;s/\n/ /g')
@@ -329,7 +329,7 @@ elif [ $1 = new_sentence ]; then
     if ( [ -z $(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary') ] \
     || [ ! -f "$DM_tlt/$fname.mp3" ] || [ -z "$trgt" ] || [ -z "$srce" ] ); then
         [ -d $DT_r ] && rm -fr $DT_r
-        msg "$error1" dialog-warning & exit 1
+        msg "$(gettext "There was a problem saving your notes, try again")" dialog-warning & exit 1
     fi
     
     add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3"
@@ -352,7 +352,7 @@ elif [ $1 = new_sentence ]; then
     
     if ([ -z "$grmrk" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ]); then
         rm "$DM_tlt/$fname.mp3"
-        msg "$error1" dialog-warning 
+        msg "$(gettext "There was a problem saving your notes, try again")" dialog-warning 
         [ -d $DT_r ] && rm -fr $DT_r & exit 1
         
     fi
@@ -388,11 +388,11 @@ elif [ $1 = new_word ]; then
     
     if [ $(cat "$DC_tlt/cfg.3" | wc -l) -ge 50 ]; then
         [ -d $DT_r ] && rm -fr $DT_r
-        msg "$tpe    \\n$words_max" info & exit 0
+        msg "$tpe    \\n"$(gettext "You have reached the maximum number of words")"" info & exit 0
     fi
     if [ -z "$tpe" ]; then
         [ -d $DT_r ] && rm -fr $DT_r
-        msg "$topic_err\n" info & exit 1
+        msg "$(gettext "No topic is active")\n" info & exit 1
     fi
     
     internet
@@ -424,10 +424,10 @@ elif [ $1 = new_word ]; then
     else
         if [ -z "$4" ]; then
             [ -d $DT_r ] && rm -fr $DT_r
-            msg "$no_text$lgsl." info & exit 1
+            msg "$(gettext "Lacking complete a text input field") $lgsl." info & exit 1
         elif [ -z "$2" ]; then
             [ -d $DT_r ] && rm -fr $DT_r
-            msg "$no_text$lgtl." info & exit 1
+            msg "$(gettext "Lacking complete a text input field") $lgtl." info & exit 1
         fi
         
         trgt="$2"
@@ -476,7 +476,7 @@ elif [ $1 = new_word ]; then
     
     else
         [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
-        msg "$error1" dialog-warning & exit 1
+        msg "$(gettext "There was a problem saving your notes, try again")" dialog-warning & exit 1
     fi
 
     [ -d $DT_r ] && rm -fr $DT_r
@@ -492,20 +492,20 @@ elif [ "$1" = edit_list_words ]; then
         tpe="$tpc"
         if [ $(cat "$DC_tlt/cfg.3" | wc -l) -ge 50 ]; then
             [ -d $DT_r ] && rm -fr $DT_r
-            msg "$tpe    \\n$words_max" info & exit
+            msg "$tpe    \\n"$(gettext "You have reached the maximum number of words")"" info & exit
         fi
         if [ -z "$tpe" ]; then
             [ -d $DT_r ] && rm -fr $DT_r
-            msg "$topic_err\n" info & exit 1
+            msg "$(gettext "No topic is active")\n" info & exit 1
         fi
         
         nw=$(cat "$DC_tlt/cfg.3" | wc -l)
         left=$((50 - $nw))
-        info=$(echo " $remain$left$words")
+        info="$(gettext "You can add")$left$(gettext "Words")"
         if [ $nw -ge 45 ]; then
-            info=$(echo " $remain$left$words")
+            info="$(gettext "You can add")$left$(gettext "Words")"
         elif [ $nw -ge 49 ]; then
-            info=$(echo " $remain$left$word")
+            info="$(gettext "You can add")$left$(gettext "Word")"
         fi
 
         mkdir $DT/$c; DT_r=$DT/$c; cd $DT_r
@@ -581,7 +581,7 @@ elif [ "$1" = edit_list_words ]; then
         $DC_a/stats/.log &
 
             if [ -f $DT_r/logw ]; then
-                dlg_info_1 "$items_rest"
+                dlg_info_1 "$(gettext "Sentences that were not added")"
             fi
             [ -d $DT_r ] && rm -fr $DT_r
             rm -f logw $DT/*.$c & exit 1
@@ -597,28 +597,28 @@ elif [ "$1" = dclik_list_words ]; then
     
     if [ -z "$tpe" ]; then
         [ -d $DT_r ] && rm -fr $DT_r
-        msg "$topic_err\n" info & exit 1
+        msg "$(gettext "No topic is active")\n" info & exit 1
     fi
     
     nw=$(cat "$DC_tlt/cfg.3" | wc -l)
     
     if [ $(cat "$DC_tlt/cfg.3" | wc -l) -ge 50 ]; then
         [ -d $DT_r ] && rm -fr $DT_r
-        msg "$tpe    \\n$words_max" info & exit
+        msg "$tpe    \\n"$(gettext "You have reached the maximum number of words")"" info & exit
     fi
 
     left=$((50 - $nw))
-    info=$(echo " $remain$left$words")
+    info="$(gettext "You can add")$left$(gettext "Words")"
     if [ $nw -ge 45 ]; then
-        info=$(echo " $remain$left$words")
+        info="$(gettext "You can add")$left$(gettext "Words")"
     elif [ $nw -ge 49 ]; then
-        info=$(echo " $remain$left$word")
+        info="$(gettext "You can add")$left$(gettext "Word")"
     fi
     
     if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
         (
             echo "1"
-            echo "# $pros..." ;
+            echo "# $(gettext "Processing")..." ;
             srce="$(translate "$(cat lstws)" $lgtl $lgsl)"
             cd $DT_r
             r=$(echo $(($RANDOM%1000)))
@@ -673,7 +673,7 @@ elif [ "$1" = sentence_list_words ]; then
     
     if [ -z "$4" ]; then
         [ -d $DT_r ] && rm -fr $DT_r
-        msg "$topic_err\n" info & exit 1
+        msg "$(gettext "No topic is active")\n" info & exit 1
     fi
     
     nw=$(cat "$DC_tlt/cfg.3" | wc -l)
@@ -681,9 +681,9 @@ elif [ "$1" = sentence_list_words ]; then
     if [ "$left" = 0 ]; then
         exit 1
     elif [ $nw -ge 45 ]; then
-        info=$(echo " $remain$left$words")
+        info="$(gettext "You can add")$left$(gettext "Words")"
     elif [ $nw -ge 49 ]; then
-        info=$(echo " $remain$left$word")
+        info="$(gettext "You can add")$left$(gettext "Word")"
     fi
     
     #fname="$(nmfile "$2")"
@@ -758,7 +758,7 @@ elif [ "$1" = sentence_list_words ]; then
 
     if [ -f  $DT_r/logw ]; then
         logs="$(cat $DT_r/logw)"
-        text_r1="$items_rest\n\n$logs"
+        text_r1="$(gettext "Sentences that were not added")\n\n$logs"
         dlg_text_info_3 "$text_r1"
     fi
     
@@ -784,11 +784,11 @@ elif [ "$1" = process ]; then
 
     if [ -z "$tpe" ]; then
         [ -d $DT_r ] && rm -fr $DT_r
-        msg "$topic_err\n" info & exit 1
+        msg "$(gettext "No topic is active")\n" info & exit 1
     fi
     if [ $ns -ge 50 ]; then
         [ -d $DT_r ] && rm -fr $DT_r
-        msg "$tpe    \\n$sentences_max" info
+        msg "$tpe    \\n"$(gettext "You have reached the maximum number of sentences")"" info
         rm -f ls $lckpr & exit 1
     fi
 
@@ -820,7 +820,7 @@ elif [ "$1" = process ]; then
         
         (
         echo "1"
-        echo "# $pros..." ;
+        echo "# $(gettext "Processing")..." ;
         lynx -dump -nolist $2  | sed -n -e '1x;1!H;${x;s-\n- -gp}' \
         | sed 's/\./\.\n/g' | sed 's/<[^>]*>//g' | sed 's/ \+/ /g' \
         | sed '/^$/d' |  sed 's/ \+/ /g' | sed 's/\://; s/"//g' \
@@ -839,7 +839,7 @@ elif [ "$1" = process ]; then
         
         (
         echo "1"
-        echo "# $pros..." ;
+        echo "# $(gettext "Processing")..." ;
         mogrify -modulate 100,0 -resize 400% $SCR_IMG.png
         tesseract $SCR_IMG.png $SCR_IMG &> /dev/null
         cat $SCR_IMG.txt | sed 's/\\n/./g' | sed 's/\./\n/g' \
@@ -852,7 +852,7 @@ elif [ "$1" = process ]; then
     else
         (
         echo "1"
-        echo "# $pros..." ;
+        echo "# $(gettext "Processing")..." ;
         echo "$prdt" | sed 's/\\n/./g' | sed 's/\./\n/g' \
         | sed 's/^ *//; s/ *$//g' | sed 's/^[ \t]*//;s/[ \t]*$//' \
         | sed 's/ \+/ /g' | sed 's/\://; s/"//g' \
@@ -883,17 +883,16 @@ elif [ "$1" = process ]; then
         && tcnm="${tpe:0:60}..." || tcnm="$tpe"
         
         left=$((50 - $ns))
-        info=$(echo "$remain$left$sentences.")
-
+        info="$(gettext "You can add")$left$(gettext "sentences")"
         if [ $ns -ge 45 ]; then
-            info=$(echo "$remain$left$sentences.")
+            info="$(gettext "You can add")$left$(gettext "sentences")"
         elif [ $ns -ge 49 ]; then
-            info=$(echo "$remain$left$sentence.")
+            info="$(gettext "You can add")$left$(gettext "sentence")"
         fi
         
         if [ -z "$(cat ./sntsls_)" ]; then
         
-            dlg_text_info_4 " $gettext_err1."
+            dlg_text_info_4 "$(gettext "Failed to retrieve text. For the process to be successful audio file must not have music or background noise.")"
 
             [ -d $DT_r ] && rm -fr $DT_r
             rm -f $lckpr $slt & exit 1
@@ -938,7 +937,7 @@ elif [ "$1" = process ]; then
                     
                     {
                     echo "5"
-                    echo "# $pros... " ;
+                    echo "# $(gettext "Processing")... " ;
                     [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ] && c=c || c=w
                     
                     lns=$(cat ./slts ./wrds | wc -l)
@@ -1102,29 +1101,29 @@ elif [ "$1" = process ]; then
                     
                     if [ -f ./wlog ]; then
                         wadds=" $(($(cat ./addw | wc -l) - $(cat ./wlog | sed '/^$/d' | wc -l)))"
-                        W=" $words"
+                        W=" $(gettext "Words")"
                         if [ $(echo $wadds) = 1 ]; then
-                            W=" $word"
+                            W=" $(gettext "Word")"
                         fi
                     else
                         wadds=" $(cat ./addw | wc -l)"
-                        W=" $words"
+                        W=" $(gettext "Words")"
                         if [ $(echo $wadds) = 1 ]; then
                             wadds=" $(cat ./addw | wc -l)"
-                            W=" $word"
+                            W=" $(gettext "Word")"
                         fi
                     fi
                     if [ -f ./slog ]; then
                         sadds=" $(($(cat ./adds | wc -l) - $(cat ./slog | sed '/^$/d' | wc -l)))"
-                        S=" $sentences"
+                        S=" $(gettext "sentences")"
                         if [ $(echo $sadds) = 1 ]; then
-                            S=" $sentence"
+                            S=" $(gettext "sentence")"
                         fi
                     else
                         sadds=" $(cat ./adds | wc -l)"
-                        S=" $sentences"
+                        S=" $(gettext "sentences")"
                         if [ $(echo $sadds) = 1 ]; then
-                            S=" $sentence"
+                            S=" $(gettext "sentence")"
                         fi
                     fi
                     
@@ -1134,14 +1133,15 @@ elif [ "$1" = process ]; then
                     source $DS/ifs/trans/$lgs/add.conf
                     
                     if [ $adds -ge 1 ]; then
-                        notify-send -i idiomind "$tpe" "$is_added\n$sadds$S$wadds$W" -t 2000 &
+                        notify-send -i idiomind "$tpe" \
+                        "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
                         printf "aitm.$adds.aitm\n" >> \
                         $DC/addons/stats/.log
                     fi
                     
                     if [ $(cat ./slog ./wlog | wc -l) -ge 1 ]; then
                         
-                        dlg_text_info_3 "$items_rest\n\n$logs" >/dev/null 2>&1
+                        dlg_text_info_3 "$(gettext "Sentences that were not added")\n\n$logs" >/dev/null 2>&1
                     fi
                     if  [ $(cat ./slog ./wlog | wc -l) -ge 1 ]; then
                         rm=$(($(cat ./addw ./adds | wc -l) - $(cat ./slog ./wlog | sed '/^$/d' | wc -l)))
@@ -1183,7 +1183,7 @@ elif [ "$" = set_image ]; then
     mv -f html s.html
     chmod +x s.html
     ICON=$DS/icon/nw.png
-    btnn=$(echo --button=$add_image:3)
+    btnn=$(echo --button=$(gettext "Add Image"):3)
     
     if [ "$3" = word ]; then
         
@@ -1193,17 +1193,17 @@ elif [ "$" = set_image ]; then
         
         if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
             ICON="--image=$DM_tlt/words/images/$fname.jpg"
-            btnn=$(echo --button=$change:3)
-            btn2=$(echo --button=$delete:2)
+            btnn=$(echo --button=$(gettext "Change"):3)
+            btn2=$(echo --button=$(gettext "Delete"):2)
         else
-            txt="--text=<small>$images_for  <a href='file://$DT/s.html'>$wrd</a></small>"
+            txt="--text=<small>$(gettext "Image")  <a href='file://$DT/s.html'>$wrd</a></small>"
         fi
         
         yad --form --align=center --center \
         --width=340 --text-align=center --height=280 \
         --on-top --skip-taskbar --image-on-top "$txt" >/dev/null 2>&1 \
         "$btnn" --window-icon=idiomind --borders=0 \
-        --title=Image "$ICON" "$btn2" \
+        --title=$(gettext "Image") "$ICON" "$btn2" \
         --button=gtk-close:1
             ret=$? >/dev/null 2>&1
             
@@ -1234,23 +1234,23 @@ elif [ "$" = set_image ]; then
             file="$DM_tlt/$fname.mp3"
         fi
         
-        btnn=$(echo "--button=$add_image:3")
+        btnn=$(echo "--button=$(gettext "Add Image"):3")
         eyeD3 --write-images=$DT "$file" >/dev/null 2>&1
         
         if [ -f "$DT/ILLUSTRATION".jpeg ]; then
             mv -f "$DT/ILLUSTRATION".jpeg "$DT/imgsw".jpeg
             ICON="--image=$DT/imgsw.jpeg"
-            btnn=$(echo --button=$change:3)
-            btn2=$(echo --button=$delete:2)
+            btnn=$(echo --button=$(gettext "Change"):3)
+            btn2=$(echo --button=$(gettext "Delete"):2)
         else
-            txt="--text=<small>$search_images \\n<a href='file://$DT/s.html'>$wrd</a></small>"
+            txt="--text=<small>"$(gettext "Search Images")" \\n<a href='file://$DT/s.html'>$wrd</a></small>"
         fi
         
         yad --form --text-align=center \
         --center --width=470 --height=280 \
         --on-top --skip-taskbar --image-on-top \
         "$txt" "$btnn" --window-icon=idiomind --borders=0 \
-        --title="Image" "$ICON" "$btn2" --button=gtk-close:1
+        --title=$(gettext "Image") "$ICON" "$btn2" --button=gtk-close:1
             ret=$? >/dev/null 2>&1
                 
             if [ $ret -eq 3 ]; then
