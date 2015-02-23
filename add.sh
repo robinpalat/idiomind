@@ -29,7 +29,7 @@ if [ "$1" = new_topic ]; then
         if [ $snm -ge 1 ]; then
         
             jlb=$(echo ""$jlb" $snm")
-            dlg_msg_6 " <b>"$(gettext "You already have a Topic has the same name")"   </b>\\n "$(gettext "You rename it to")"  <b>$jlb</b>   \\n"
+            dlg_msg_6 " <b>"$(gettext "You already have a Topic has the same name")"   </b>\\n "$(gettext "The new rename it as")"  <b>$jlb</b>   \\n"
             ret=$(echo "$?")
 
                 if [ "$ret" -eq 1 ]; then
@@ -227,10 +227,10 @@ Your topics will be on this list. Create one using the button below. ")"
                 if sed -n 1p $DC_s/cfg.3 | grep FALSE; then
                     if [ -z "$srce" ]; then
                         [ -d $DT_r ] && rm -fr $DT_r
-                        msg "$(gettext "Lacking complete a text input field") $lgsl." info & exit 1
+                        msg "$(gettext "The second field is empty.") $lgsl." info & exit 1
                     elif [ -z "$trgt" ]; then
                         [ -d $DT_r ] && rm -fr $DT_r
-                        msg "$(gettext "Lacking complete a text input field") $lgtl." info & exit 1
+                        msg "$(gettext "The first field is empty.") $lgtl." info & exit 1
                     fi
                 fi
 
@@ -247,11 +247,11 @@ Your topics will be on this list. Create one using the button below. ")"
                 if sed -n 1p $DC_s/cfg.3 | grep FALSE; then
                     if [ -z "$srce" ]; then
                         [ -d $DT_r ] && rm -fr $DT_r
-                        msg "$(gettext "Lacking complete a text input field") $lgsl." info & exit 1
+                        msg "$(gettext "The second field is empty.") $lgsl." info & exit 1
                         
                     elif [ -z "$trgt" ]; then
                         [ -d $DT_r ] && rm -fr $DT_r
-                        msg "$(gettext "Lacking complete a text input field") $lgtl." info & exit 1
+                        msg "$(gettext "The first field is empty.") $lgtl." info & exit 1
                     fi
                 fi
             
@@ -308,10 +308,10 @@ elif [ $1 = new_sentence ]; then
     else 
         if [ -z "$4" ]; then
             [ -d $DT_r ] && rm -fr $DT_r
-            msg "$(gettext "Lacking complete a text input field") $lgsl." info & exit
+            msg "$(gettext "The second field is empty.") $lgsl." info & exit
         elif [ -z "$2" ]; then
             [ -d $DT_r ] && rm -fr $DT_r
-            msg "$(gettext "Lacking complete a text input field") $lgtl." info & exit
+            msg "$(gettext "The first field is empty.") $lgtl." info & exit
         fi
         
         trgt=$(echo "$(clean_1 "$2")" | sed ':a;N;$!ba;s/\n/ /g')
@@ -331,7 +331,7 @@ elif [ $1 = new_sentence ]; then
     if ( [ -z $(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary') ] \
     || [ ! -f "$DM_tlt/$fname.mp3" ] || [ -z "$trgt" ] || [ -z "$srce" ] ); then
         [ -d $DT_r ] && rm -fr $DT_r
-        msg "$(gettext "There was a problem saving your notes, try again")" dialog-warning & exit 1
+        msg "$(gettext "Something unexpected has occurred while saving your note")" dialog-warning & exit 1
     fi
     
     add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3"
@@ -354,7 +354,7 @@ elif [ $1 = new_sentence ]; then
     
     if ([ -z "$grmrk" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ]); then
         rm "$DM_tlt/$fname.mp3"
-        msg "$(gettext "There was a problem saving your notes, try again")" dialog-warning 
+        msg "$(gettext "Something unexpected has occurred while saving your note")" dialog-warning 
         [ -d $DT_r ] && rm -fr $DT_r & exit 1
         
     fi
@@ -478,7 +478,7 @@ elif [ $1 = new_word ]; then
     
     else
         [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
-        msg "$(gettext "There was a problem saving your notes, try again")" dialog-warning & exit 1
+        msg "$(gettext "Something unexpected has occurred while saving your note")" dialog-warning & exit 1
     fi
 
     [ -d $DT_r ] && rm -fr $DT_r
