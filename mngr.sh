@@ -2,7 +2,6 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/trans/$lgs/edit.conf
 source $DS/ifs/mods/cmns.sh
 
 if [ $1 = mkmn ]; then

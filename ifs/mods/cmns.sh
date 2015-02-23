@@ -11,7 +11,7 @@ function internet() {
         --image-on-top --center --sticky \
         --width=360 --height=120 --borders=3 \
         --skip-taskbar --title=Idiomind \
-        --button=" $(gettext "OK") ":0 >&2; exit 1;}
+        --button="$(gettext "OK")":0 >&2; exit 1;}
 }
 
 

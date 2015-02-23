@@ -2,7 +2,6 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/trans/$lgs/practice.conf
 drtt="$DM_tlt/words"
 drts="$DS/practice/"
 strt="$drts/strt.sh"
@@ -125,9 +124,9 @@ function cuestion() {
     --buttons-layout=spread \
     --field="<span color='#808080'>$trgts</span>":lbl \
     --width=371 --height=280 \
-    --button="<small>$(gettext "Exit")</small>":1 \
-    --button="<small>$listen</small>":"$play" \
-    --button="<small><b>$(gettext "Check Answer") ></b></small>":0
+    --button="$(gettext "Exit")":1 \
+    --button="$listen":"$play" \
+    --button="$(gettext "Check Answer") >":0
     }
 
 function answer() {

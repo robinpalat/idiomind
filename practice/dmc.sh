@@ -2,7 +2,6 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/trans/$lgs/practice.conf
 drtt="$DM_tlt/words"
 drts="$DS/practice/"
 strt="$drts/strt.sh"

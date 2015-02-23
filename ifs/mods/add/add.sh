@@ -372,9 +372,8 @@ function dlg_msg_2() {
 function dlg_msg_6() {
     
         yad --name=idiomind --center --on-top --image=info \
-        --text=" $1" \
-        --image-on-top --width=420 --height=120 --borders=3 \
-        --skip-taskbar --window-icon=idiomind --sticky \
+        --text=" $1" --width=420 --height=120 --borders=3 \
+        --skip-taskbar --window-icon=idiomind --sticky --image-on-top \
         --title=Idiomind --button=$(gettext "Cancel"):1 --button=Ok:0
 }
 
@@ -383,7 +382,7 @@ function dlg_msg_6() {
 function dlg_form_0() {
     
         yad --window-icon=idiomind --form --center \
-        --field="$(gettext "New Name")" "$2" --title="$1" \
+        --field="$(gettext "Name")" "$2" --title="$1" \
         --width=440 --height=100 --name=idiomind --on-top \
         --skip-taskbar --borders=5 --button=gtk-ok:0
 }
@@ -401,7 +400,8 @@ function dlg_form_1() {
         --field=" <small><small>$(gettext "Topic")</small></small>:CB" \
         "$ttle!$(gettext "New topic") *$e$tpcs" \
         --button="<small>$(gettext "Image")</small>":3 \
-        --button="<small>$(gettext "Audio")</small>":2 --button=gtk-add:0
+        --button="<small>$(gettext "Audio")</small>":2 \
+        --button=gtk-add:0
 }
 
 
@@ -416,9 +416,10 @@ function dlg_form_2() {
         --field=" <small><small>$lgtl</small></small>: " "$txt" \
         --field=" <small><small>${lgsl^}</small></small>: " "$srce" \
         --field=" <small><small>$(gettext "Topic")</small></small>:CB" \
-        "$ttle!New topic *$e$tpcs" \
+        "$ttle!$(gettext "New topic") *$e$tpcs" \
         --button="<small>$(gettext "Image")</small>":3 \
-        --button="<small>$(gettext "Audio")</small>":2 --button=gtk-add:0
+        --button="<small>$(gettext "Audio")</small>":2 \
+        --button=gtk-add:0
 }
 
 
@@ -463,7 +464,8 @@ function dlg_checklist_3() {
         --button="$(gettext "Cancel")":1 --button=$(gettext "Arrange"):2 \
         --button="$(gettext "To New Topic")":'/usr/share/idiomind/add.sh new_topic' \
         --button=gtk-save:0 \
-        --column="$(cat "$1" | wc -l)" --column="$(gettext "sentences")" > $slt
+        --column="$(cat "$1" | wc -l)" \
+        --column="$(gettext "sentences")" > $slt
 }
 
 

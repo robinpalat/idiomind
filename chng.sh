@@ -3,7 +3,6 @@
 
 source /usr/share/idiomind/ifs/c.conf
 
-
 if [[ "$1" = chngi ]]; then
 
     nta=$(sed -n 6p $DC_s/cfg.5)

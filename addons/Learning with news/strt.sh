@@ -2,12 +2,10 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/trans/$lgs/rss.conf
 source $DS/ifs/mods/cmns.sh
 include $DS/ifs/mods/add
 DSF="$DS/addons/Learning with news"
 DCF="$DC/addons/Learning with news"
-
 
 [[ -f $DT/.uptf ]] && STT=$(cat $DT/.uptf) || STT=""
 [[ ! -f $DC/addons/dict/.dicts ]] && touch $DC/addons/dict/.dicts
@@ -95,7 +93,7 @@ if [ -n "$feed" ]; then
         echo "$tpc" > $DC_s/cfg.8
         echo fd >> $DC_s/cfg.8
         echo "11" > $dir_conf/cfg.8
-        notify-send -i idiomind "$rsrc" "$updating" -t 3000 &
+        notify-send -i idiomind "$rsrc" "$(gettext "Updating...")" -t 3000 &
     fi
     
     DT_r=$(mktemp -d $DT/XXXXXX); cd $DT_r

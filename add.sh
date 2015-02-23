@@ -21,7 +21,7 @@ if [ "$1" = new_topic ]; then
             nmt=""
         fi
         
-        jlbi=$(dlg_form_0 "$rename" "$nmt")
+        jlbi=$(dlg_form_0 "$(gettext "Rename")" "$nmt")
         ret=$(echo "$?")
         jlb="$(clean_2 "$jlbi")"
         snm=$(cat $DM_tl/.cfg.1 | grep -Fxo "$jlb" | wc -l)
@@ -151,6 +151,9 @@ Your topics will be on this list. Create one using the button below. ")"
     elif sed -n 1p $DC_s/cfg.3 | grep 'FALSE'; then
     
         lzgpr="$(dlg_form_2)"
+        
+    else
+        lzgpr="$(dlg_form_1)"
     fi
     
     ret=$(echo "$?")
@@ -500,11 +503,11 @@ elif [ "$1" = edit_list_words ]; then
         
         nw=$(cat "$DC_tlt/cfg.3" | wc -l)
         left=$((50 - $nw))
-        info="$(gettext "You can add")$left$(gettext "Words")"
+        info="$(gettext "You can add") $left $(gettext "Words")"
         if [ $nw -ge 45 ]; then
-            info="$(gettext "You can add")$left$(gettext "Words")"
+            info="$(gettext "You can add") $left $(gettext "Words")"
         elif [ $nw -ge 49 ]; then
-            info="$(gettext "You can add")$left$(gettext "Word")"
+            info="$(gettext "You can add") $left $(gettext "Word")"
         fi
 
         mkdir $DT/$c; DT_r=$DT/$c; cd $DT_r
@@ -607,11 +610,11 @@ elif [ "$1" = dclik_list_words ]; then
     fi
 
     left=$((50 - $nw))
-    info="$(gettext "You can add")$left$(gettext "Words")"
+    info="$(gettext "You can add") $left $(gettext "Words")"
     if [ $nw -ge 45 ]; then
-        info="$(gettext "You can add")$left$(gettext "Words")"
+        info="$(gettext "You can add") $left $(gettext "Words")"
     elif [ $nw -ge 49 ]; then
-        info="$(gettext "You can add")$left$(gettext "Word")"
+        info="$(gettext "You can add") $left $(gettext "Word")"
     fi
     
     if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
@@ -680,9 +683,9 @@ elif [ "$1" = sentence_list_words ]; then
     if [ "$left" = 0 ]; then
         exit 1
     elif [ $nw -ge 45 ]; then
-        info="$(gettext "You can add")$left$(gettext "Words")"
+        info="$(gettext "You can add") $left $(gettext "Words")"
     elif [ $nw -ge 49 ]; then
-        info="$(gettext "You can add")$left$(gettext "Word")"
+        info="$(gettext "You can add") $left $(gettext "Word")"
     fi
     
     #fname="$(nmfile "$2")"
@@ -774,7 +777,6 @@ elif [ "$1" = process ]; then
     ns=$(cat "$DC_tlt/cfg.4" | wc -l)
     source $DS/default/dicts/$lgt
     nspr='/usr/share/idiomind/add.sh process'
-    LNK='http://www.chromium.org/developers/how-tos/api-keys'
     lckpr=$DT/.n_s_pr
     DM_tlt="$DM_tl/$tpe"
     DC_tlt="$DM_tl/$tpe"
@@ -882,11 +884,11 @@ elif [ "$1" = process ]; then
         && tcnm="${tpe:0:60}..." || tcnm="$tpe"
         
         left=$((50 - $ns))
-        info="$(gettext "You can add")$left$(gettext "sentences")"
+        info="$(gettext "You can add") $left $(gettext "sentences")"
         if [ $ns -ge 45 ]; then
-            info="$(gettext "You can add")$left$(gettext "sentences")"
+            info="$(gettext "You can add") $left $(gettext "sentences")"
         elif [ $ns -ge 49 ]; then
-            info="$(gettext "You can add")$left$(gettext "sentence")"
+            info="$(gettext "You can add") $left $(gettext "sentence")"
         fi
         
         if [ -z "$(cat ./sntsls_)" ]; then
@@ -1165,7 +1167,8 @@ elif [ "$1" = process ]; then
                      rm -f $lckpr $slt & exit 1
                 fi
             
-elif [ "$" = set_image ]; then
+elif [ "$1" = set_image ]; then
+
     cd $DT
     wrd="$2"
     fname="$(nmfile "$wrd")"
@@ -1182,7 +1185,7 @@ elif [ "$" = set_image ]; then
     mv -f html s.html
     chmod +x s.html
     ICON=$DS/icon/nw.png
-    btnn=$(echo --button=$(gettext "Add Image"):3)
+    btnn="--button="$(gettext "Add Image")":3"
     
     if [ "$3" = word ]; then
         
@@ -1192,10 +1195,10 @@ elif [ "$" = set_image ]; then
         
         if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
             ICON="--image=$DM_tlt/words/images/$fname.jpg"
-            btnn=$(echo --button=$(gettext "Change"):3)
-            btn2=$(echo --button=$(gettext "Delete"):2)
+            btnn="--button="$(gettext "Change")":3"
+            btn2="--button="$(gettext "Delete")":2"
         else
-            txt="--text=<small>$(gettext "Image")  <a href='file://$DT/s.html'>$wrd</a></small>"
+            txt="--text=<small>$(gettext "Search image")\t<a href='file://$DT/s.html'>$wrd</a></small>"
         fi
         
         yad --form --align=center --center \
@@ -1233,16 +1236,16 @@ elif [ "$" = set_image ]; then
             file="$DM_tlt/$fname.mp3"
         fi
         
-        btnn=$(echo "--button=$(gettext "Add Image"):3")
+        btnn="--button="$(gettext "Add Image")":3"
         eyeD3 --write-images=$DT "$file" >/dev/null 2>&1
         
         if [ -f "$DT/ILLUSTRATION".jpeg ]; then
             mv -f "$DT/ILLUSTRATION".jpeg "$DT/imgsw".jpeg
             ICON="--image=$DT/imgsw.jpeg"
-            btnn=$(echo --button=$(gettext "Change"):3)
-            btn2=$(echo --button=$(gettext "Delete"):2)
+            btnn="--button="$(gettext "Change")":3"
+            btn2="--button="$(gettext "Delete")":2"
         else
-            txt="--text=<small>"$(gettext "Search Images")" \\n<a href='file://$DT/s.html'>$wrd</a></small>"
+            txt="--text=<small>\\n<a href='file://$DT/s.html'>"$(gettext "Search Image")"</a></small>"
         fi
         
         yad --form --text-align=center \
@@ -1250,7 +1253,7 @@ elif [ "$" = set_image ]; then
         --on-top --skip-taskbar --image-on-top \
         "$txt" "$btnn" --window-icon=idiomind --borders=0 \
         --title=$(gettext "Image") "$ICON" "$btn2" --button=gtk-close:1
-            ret=$? >/dev/null 2>&1
+        ret=$? >/dev/null 2>&1
                 
             if [ $ret -eq 3 ]; then
             

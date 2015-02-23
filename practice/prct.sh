@@ -2,7 +2,6 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/trans/$lgs/practice.conf
 strt=$DS/practice/strt.sh
 cls=$DS/practice/cls
 w9=$DC_s/cfg.22
@@ -15,7 +14,6 @@ Wi="$DC_tlt/cfg.3"
 Si="$DC_tlt/cfg.4"
 Li="$DC_tlt/cfg.1"
 cd "$DC_tlt/practice"
-
 
 function look() {
         yad --title="$practice - $tpc" --borders=5 --center \

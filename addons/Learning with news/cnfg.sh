@@ -1,7 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/trans/$lgs/rss.conf
 source $DS/ifs/mods/cmns.sh
 DCF="$DC/addons/Learning with news"
 DSF="$DS/addons/Learning with news"
@@ -60,16 +59,14 @@ if [[ -z "$1" ]]; then
         elif [ $ret -eq 2 ]; then
             if echo "$st1" | grep -o "Sample"; then
             
-                msg "$(gettext "Sample subscription")" Info
                 "$DSF/cnfg.sh" & exit
                 
             elif echo "$st1" | grep -o "Sample"; then
 
-                msg "$(gettext "Sample subscription")" Info
                 "$DSF/cnfg.sh" & exit
 
             else
-                msg_2 "$(gettext "Are you sure you want to delete this subscription?") \n\n" dialog-question "$yes" "$no"
+                msg_2 "$(gettext " Are you sure you want to delete this subscription?") \n\n" dialog-question "$(gettext "Yes")" "$(gettext "No")"
 
                     ret=$(echo $?)
                     
@@ -135,44 +132,51 @@ elif [ "$1" = NS ]; then
     msg "$(gettext "Error")" info
 
 elif [[ $1 = edit ]]; then
-    drtc="$DC_tl/Feeds/"
+
     slct=$(mktemp $DT/slct.XXXX)
 
-if [[ "$(cat "$drtc/cfg.0" | wc -l)" -ge 20 ]]; then
-dd="$DSF/images/save.png
+if [[ "$(cat "$DM_tl/Feeds/.conf/cfg.0" | wc -l)" -ge 20 ]]; then
+dd="id01
+$DSF/images/save.png
 $(gettext "Create topic")
+id02
 $DSF/images/del.png
 $(gettext "Delete news")
+id03
 $DSF/images/del.png
 $(gettext "Delete saved")
+id04
 $DSF/images/edit.png
 $(gettext "Subscriptions")"
 else
-dd="$DSF/images/del.png
+dd="id02
+$DSF/images/del.png
 $(gettext "Delete news")
+id03
 $DSF/images/del.png
 $(gettext "Delete saved")
+id04
 $DSF/images/edit.png
 $(gettext "Subscriptions")"
 fi
 
     echo "$dd" | yad --list --on-top \
-    --expand-column=2 --center \
+    --expand-column=2 --center --print-column=1 \
     --width=290 --name=idiomind --class=idiomind \
     --height=240 --title="$(gettext "Edit")" --skip-taskbar \
-    --window-icon=idiomind --no-headers \
+    --window-icon=idiomind --no-headers --hide-column=1 \
     --buttons-layout=end --borders=0 --button=Ok:0 \
-    --column=icon:IMG --column=Action:TEXT > "$slct"
+    --column=id:TEXT --column=icon:IMG --column=Action:TEXT > "$slct"
     ret=$?
     slt=$(cat "$slct")
     if  [[ "$ret" -eq 0 ]]; then
-        if echo "$slt" | grep -o "$(gettext "Create topic")"; then
+        if echo "$slt" | grep -o "id01"; then
             "$DSF/add.sh" new_topic
-        elif echo "$slt" | grep -o "$(gettext "Delete news")"; then
+        elif echo "$slt" | grep -o "id02"; then
             "$DSF/mngr.sh" delete_news
-        elif echo "$slt" | grep -o "$(gettext "Delete saved")"; then
+        elif echo "$slt" | grep -o "id03"; then
             "$DSF/mngr.sh" delete_saved
-        elif echo "$slt" | grep -o "$(gettext "Subscriptions")"; then
+        elif echo "$slt" | grep -o "id04"; then
             "$DSF/cnfg.sh"
         fi
         rm -f "$slct"

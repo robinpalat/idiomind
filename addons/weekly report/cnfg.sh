@@ -1,7 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/trans/$lgs/others.conf
 
 wth=$(sed -n 3p $DC_s/cfg.18)
 eht=$(sed -n 4p $DC_s/cfg.18)
@@ -206,7 +205,7 @@ elif [ -z "$1" ]; then
     --title="$(gettext "Weekly Report")" --borders=10 \
     --center --form --on-top --scroll --skip-taskbar \
     --always-print-result --window-icon=idiomind \
-    --button=Close:0 --width=420 --height=300 \
+    --button="$(gettext "Close")":0 --width=420 --height=300 \
     --field="$(gettext "active")":CHK $sttng \
     --field="\n$SW:LBL" \
     --field="\n$LG:LBL")

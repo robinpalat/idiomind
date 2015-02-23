@@ -1,14 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
-lgs=$(sed -n 1p $HOME/.config/idiomind/s/cfg.9)
-. gettext.sh
-LANGUAGE=$lgs
-TEXTDOMAIN=idiomind
-export TEXTDOMAIN
-TEXTDOMAINDIR=/usr/share/locale
-export TEXTDOMAINDIR
-Encoding=UTF-8
-alias gettext='gettext "idiomind"'
+
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/mods/cmns.sh
 $DS/stop.sh tpc

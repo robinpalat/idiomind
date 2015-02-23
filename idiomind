@@ -389,7 +389,7 @@ elif [ "$1" = topic ]; then
         if [ "$inx" -lt 1 ]; then
         
             # =====================================================
-            notebook_0
+            notebook_1
             ret=$(echo $?)
                     
                 if [ -f $cnf3 ]; then
@@ -397,6 +397,14 @@ elif [ "$1" = topic ]; then
                         mv -f $cnf3 "$nt"
                     fi
                 fi
+                if [ $ret -eq 3 ]; then
+                    ./mngr.sh edit &
+                    
+                elif [ $ret -eq 5 ]; then
+                    rm -f $DT/*.x
+                    $DS/practice/strt.sh &
+                fi
+
             rm -f $DT/*.x
             
         elif [ "$tb1" -ge 1 ]; then

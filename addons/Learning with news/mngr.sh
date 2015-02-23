@@ -2,7 +2,6 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/trans/$lgs/rss.conf
 source $DS/ifs/mods/cmns.sh
 
 itdl="$2"
@@ -90,7 +89,7 @@ if [[ "$1" = delete_item ]]; then
 
 elif [[ "$1" = delete_news ]]; then
     
-    msg_2 "$(gettext "Are you sure you want to delete all entries?\n\(Downloads subscriptions\nevery 5 days will be automatically deleted.\)")" dialog-question \
+    msg_2 "$(gettext " Are you sure you want to delete all entries?\n\ (Downloads subscriptions every 5 days\n will be automatically deleted\).")" dialog-question \
     "$(gettext "Yes")" "$(gettext "Not")" "$(gettext "Confirm")"
     ret=$(echo "$?")
 
@@ -106,7 +105,7 @@ elif [[ "$1" = delete_news ]]; then
         
 elif [[ "$1" = delete_saved ]]; then
 
-        msg_2 " $(gettext "Are you sure you want to delete the saved entries?")" dialog-question "$yes" "$no" "$confirm"
+        msg_2 "$(gettext " Are you sure you want\n to delete the saved entries?\n")" dialog-question "$(gettext "Yes")" "$(gettext "Not")" "$(gettext "Confirm")"
         ret=$(echo "$?")
 
     if [[ $ret -eq 0 ]]; then

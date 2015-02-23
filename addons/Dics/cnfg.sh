@@ -2,7 +2,6 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/trans/$lgs/others.conf
 source $DS/ifs/mods/cmns.sh
 dir="$DC/addons/dict"
 enables="$DC/addons/dict/enables"
@@ -146,7 +145,7 @@ elif [ -z "$1" ]; then
     sel="$(dict_list | yad --list --title="Idiomind - $(gettext "Dictionaries")" \
     --center --expand-column=2 --text="$tex" $align \
     --width=420 --height=300 --skip-taskbar --separator=" " \
-    --borders=5 --button="$(gettext "Add")":2 --print-all --button=Ok:0 \
+    --borders=10 --button="$(gettext "Add")":2 --print-all --button=Ok:0 \
     --column=" ":CHK --column="$(gettext "Availables")":TEXT \
     --column="$(gettext "Languages")":TEXT --window-icon=idiomind \
     --buttons-layout=edge --always-print-result \
