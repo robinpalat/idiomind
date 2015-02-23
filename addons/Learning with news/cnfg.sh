@@ -132,12 +132,7 @@ if [[ -z "$1" ]]; then
         
 elif [ "$1" = NS ]; then
 
-    yad --window-icon=idiomind --name=idiomind \
-    --image=info --on-top --text="$(gettext " ")" \
-    --image-on-top --center --sticky \
-    --width=360 --height=120 --borders=5 \
-    --skip-taskbar --title=idiomind \
-    --button="  Ok  ":0
+    msg "$(gettext "Error")" info
 
 elif [[ $1 = edit ]]; then
     drtc="$DC_tl/Feeds/"

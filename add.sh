@@ -110,7 +110,6 @@ if [ "$1" = new_topic ]; then
     
 elif [ "$1" = new_items ]; then
 
-
     if [ "$(cat $DM_tl/.cfg.1 | grep -v 'Feeds' | wc -l)" -lt 1 ]; then
         [ -d $DT_r ] && rm -fr $DT_r
         notopic="$(gettext "To start adding notes you need have a topic.
@@ -276,7 +275,7 @@ elif [ $1 = new_sentence ]; then
 
     if [ $(cat "$DC_tlt/cfg.4" | wc -l) -ge 50 ]; then
         [ -d $DT_r ] && rm -fr $DT_r
-        msg "$tpe  \\n"$(gettext "You have reached the maximum number of sentences")"" info & exit
+        msg "$tpe  \\n$(gettext "You have reached the maximum number of sentences")" info & exit
     fi
     if [ -z "$tpe" ]; then
         [ -d $DT_r ] && rm -fr $DT_r

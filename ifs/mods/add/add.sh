@@ -401,7 +401,7 @@ function dlg_form_1() {
         --field=" <small><small>$(gettext "Topic")</small></small>:CB" \
         "$ttle!$(gettext "New topic") *$e$tpcs" \
         --button="<small>$(gettext "Image")</small>":3 \
-        --button="<small>$(gettext "Audio")</small>":2 --button=gtk-ok:0
+        --button="<small>$(gettext "Audio")</small>":2 --button=gtk-add:0
 }
 
 
@@ -416,9 +416,9 @@ function dlg_form_2() {
         --field=" <small><small>$lgtl</small></small>: " "$txt" \
         --field=" <small><small>${lgsl^}</small></small>: " "$srce" \
         --field=" <small><small>$(gettext "Topic")</small></small>:CB" \
-        "$ttle!$(gettext "New topic") *$e$tpcs" \
-        --button="<small>$(gtext "Image")</small>":3 \
-        --button="<small>$(gtext "Audio")</small>":2 --button=gtk-ok:0
+        "$ttle!New topic *$e$tpcs" \
+        --button="<small>$(gettext "Image")</small>":3 \
+        --button="<small>$(gettext "Audio")</small>":2 --button=gtk-add:0
 }
 
 

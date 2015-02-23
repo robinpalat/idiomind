@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/trans/$lgs/others.conf
+
 
 sttng4=$(sed -n 1p $DC_s/cfg.3)
 sttng5=$(sed -n 2p $DC_s/cfg.3)
@@ -14,7 +14,7 @@ fi
 
 CNFG=$(yad --center --form --on-top \
     --skip-taskbar --borders=15 --expand-column=3 --no-headers \
-    --print-all --button=$close:0 --width=420 --height=300 \
+    --print-all --button="$(gettext "OK")":0 --width=420 --height=300 \
     --always-print-result --editable \
     --title="Google translation service" --window-icon=idiomind \
     --field="\n$(gettext "Use Google translator")\n":CHK "$sttng4" \

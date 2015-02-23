@@ -119,7 +119,7 @@ music="$(gettext "Music")"
 events="$(gettext "Events")"
 nature="$(gettext "Nature")"
 news="$(gettext "News")"
-office"$(gettext "Office")"
+office="$(gettext "Office")"
 relations="$(gettext "Relations")"
 sport="$(gettext "Sport")"
 social="$(gettext "Social")"
@@ -294,7 +294,7 @@ level=$(echo "$upld" | cut -d "|" -f5)
 [[ $level = $intermediate ]] && level=2
 [[ $level = $advanced ]] && level=3
 
-if [ -z $Ctgry ]; then
+if [ -z "$Ctgry" ]; then
 msg " $(gettext "Please indicates a category.")\n " info
 $DS/ifs/upld.sh &
 exit 1

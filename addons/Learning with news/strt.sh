@@ -108,7 +108,7 @@ if [ -n "$feed" ]; then
     
     if [ $(cat rss | wc -l) = 0 ]; then
     
-        msg "<b>$(gettext "xxx")</b>" info &
+        msg "$(gettext "Couldn't download the specified URL")" info &
         rm -fr $DT_r .rss & exit 1
     fi
     
