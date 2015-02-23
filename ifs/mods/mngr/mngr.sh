@@ -53,7 +53,8 @@ function dlg_form_2() {
         --field="<small>$(gettext "Audio") </small>":FL "$DM_tlt/$fname.mp3" \
         --field="$(gettext "List Words")":BTN "$wrds" \
         --button="$(gettext "Image")":"$imge" \
-        --button="$(gettext "Delete")":"$dlte" "$edau" \
+        --button="$(gettext "Edit Audio")":"$edau" \
+        --button="$(gettext "Delete")":"$dlte" \
         --button=gtk-close:0 > $1
 }
 

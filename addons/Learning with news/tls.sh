@@ -9,9 +9,8 @@ if [ $1 = s ]; then
     elif [ -f "$DM_tl/Feeds/kept/$2.mp3" ]; then
         drtx="$DM_tl/Feeds/kept"
     fi
-    if [ "$(ps -A | grep -o "play")" = "play" ]; then
-        exit
-    fi
+
+    killall play
     play "$drtx/$2.mp3" & sleep 0.2 && exit 1
     
 elif [ $1 = dclk ]; then

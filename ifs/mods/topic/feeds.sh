@@ -44,7 +44,7 @@ function feedmode() {
         --width="$wth" --height="$eht" --borders=0 \
         --button="Play":/usr/share/idiomind/play.sh \
         --button="$(gettext "Update")":2 \
-        --button="$edit":3
+        --button="$(gettext "Edit")":3
         ret=$?
             
             if [ $ret -eq 0 ]; then

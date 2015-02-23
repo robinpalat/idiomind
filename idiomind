@@ -14,7 +14,6 @@ if [ ! -d "$HOME/.idiomind" ]; then
 fi
 
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/trans/$lgs/items_lists.conf
 
 if [ -f $DT/ps_lk ]; then
     sleep 15

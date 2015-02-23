@@ -188,8 +188,8 @@ if [ -z "$1" ]; then
         --print-all --button="$(gettext "Restore")":3 --always-print-result \
         --button="$(gettext "Close")":0 --width=420 --height=300 \
         --title=Backup --columns=2 \
-        --field="$(gettext "Periodically run a backup")":CHK $sttng \
-        --field="$(gettext "Path")":"":CDIR "$D_cps" \
+        --field="$(gettext "Backing up periodically.")":CHK $sttng \
+        --field="$(gettext "Path to save")":"":CDIR "$D_cps" \
         --field=" :LBL" " " )
         
         ret=$?

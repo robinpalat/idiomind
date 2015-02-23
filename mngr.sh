@@ -511,7 +511,7 @@ elif [ "$1" = edt ]; then
         lwrd=$(echo "$tgs" | grep -o -P '(?<=IWI3I0I).*(?=IPWI3I0I)')
         pwrds=$(echo "$tgs" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)')
         wrds="$DS/add.sh edit_list_words '$file' F $c"
-        edau="--button=Edit Audio:/usr/share/idiomind/ifs/tls.sh edit_audio \
+        edau="/usr/share/idiomind/ifs/tls.sh edit_audio \
         '$DM_tlt/$fname.mp3' '$DM_tlt'"
         dlte="$DS/mngr.sh delete_item ${fname}"
         imge="$DS/add.sh set_image '$tgt' sentence"

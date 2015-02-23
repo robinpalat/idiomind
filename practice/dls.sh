@@ -172,7 +172,7 @@ while [ $n -le $(cat lsin1 | wc -l) ]; do
     fname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
     
     if [[ $n = 1 ]]; then
-    info="--text=<sup><tt> $(gettext "Write the sentence you are listening")...</tt></sup>"
+    info="--text=<sup><tt> $(gettext "Try to write the phrase you're listening to")...</tt></sup>"
     else
     info=""; fi
     
