@@ -3,7 +3,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 
-if [[ "$1" = chngi ]]; then
+if [ "$1" = chngi ]; then
 
     nta=$(sed -n 6p $DC_s/cfg.5)
     sna=$(sed -n 7p $DC_s/cfg.5)
@@ -11,7 +11,7 @@ if [[ "$1" = chngi ]]; then
     indx="$DT/p/indx"
     [[ -z $(cat $DC_s/cfg.2) ]] && echo 8 > $DC_s/cfg.2
     bcl=$(cat $DC_s/cfg.2)
-    [[ $bcl -le 0 ]] && bcl = 0.3 && echo 0.3 > $DC_s/cfg.2
+    [ $bcl -le 0 ] && bcl = 0.3 && echo 0.3 > $DC_s/cfg.2
     if ([ $(echo "$nta" | grep "TRUE") ] && [ $bcl -lt 12 ]); then bcl=12; fi
 
     item="$(sed -n "$2"p $indx)"
@@ -53,7 +53,7 @@ if [[ "$1" = chngi ]]; then
         fi
         #cnt=$(soxi -D "$file")
         sleep $bcl
-        [[ -f $DT/.bcle ]] && rm -f $DT/.bcle
+        [ -f $DT/.bcle ] && rm -f $DT/.bcle
         
     else
         echo "$item" >> $DT/.bcle
@@ -80,7 +80,7 @@ elif [ "$1" != chngi ]; then
             text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/$lgtl'>$(gettext "Search other topics")</a>   </small></small>"
             align="right"
         fi
-        [[ -f $DM_tl/.cfg.1 ]] && info2=$(cat $DM_tl/.cfg.1 | wc -l) || info2=""
+        [ -f $DM_tl/.cfg.1 ] && info2=$(cat $DM_tl/.cfg.1 | wc -l) || info2=""
         cd $DC_s
 
         VAR=$(cat $DC_s/cfg.0 | yad --name=idiomind --text-align=$align \

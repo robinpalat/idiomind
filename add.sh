@@ -117,7 +117,6 @@ Your topics will be on this list. Create one using the button below. ")"
         $DS/chng.sh "$notopic" & exit 1
     fi
     
-    #c=$(echo $(($RANDOM%1000)))
     [[ -z "$4" ]] && txt="$(xclip -selection primary -o \
     | sed ':a;N;$!ba;s/\n/ /g' | sed '/^$/d')" || txt="$4"
 
@@ -780,8 +779,7 @@ elif [ "$1" = process ]; then
     lckpr=$DT/.n_s_pr
     DM_tlt="$DM_tl/$tpe"
     DC_tlt="$DM_tl/$tpe"
-    DT_r="$3"
-    cd "$DT_r"
+    DT_r="$3"; cd "$DT_r"
 
     if [ -z "$tpe" ]; then
         [ -d $DT_r ] && rm -fr $DT_r
@@ -813,7 +811,6 @@ elif [ "$1" = process ]; then
     fi
     include $DS/ifs/mods/add
     include $DS/ifs/mods/add_process
-    
     
     if [ $(echo ${2:0:4}) = 'Http' ]; then
     
@@ -1276,7 +1273,7 @@ elif [ "$1" = set_image ]; then
     fi
 
 
-elif [[ "$1" = fix_item ]]; then
+elif [ "$1" = fix_item ]; then
 
     kill -9 $(pgrep -f "$yad --form ")
     trgt="$2"

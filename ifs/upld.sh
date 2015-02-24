@@ -79,7 +79,7 @@ elif [[ $1 = infsd ]]; then
             done > $pipe &
             wget_info=`ps ax |grep "wget.*$1" |awk '{print $1"|"$2}'`
             wget_pid=`echo $wget_info|cut -d'|' -f1 `
-            $yad --progress --timeout=100 --auto-close --width=200 --height=20 \
+            yad --progress --timeout=100 --auto-close --width=200 --height=20 \
             --geometry=200x20-2-2 --no-buttons --skip-taskbar --undecorated --on-top \
             --title="Downloading"< $pipe
             if [ "`ps -A |grep "$wget_pid"`" ];then
@@ -175,7 +175,6 @@ if [[ $(($chk3 + $chk4)) != $chk0 || $(($chk1 + $chk2)) != $chk0 \
     | sort -k 1n,1 -k 7 | sed s'|\.\/words\/||'g \
     | sed s'|\.\/||'g | sed s'|\.mp3||'g > $DT/index
 
-
     if ([ -f "$DC_tlt/.cfg.11" ] && \
     [ -n "$(cat "$DC_tlt/.cfg.11")" ]); then
     index="$DC_tlt/.cfg.11"
@@ -245,7 +244,7 @@ if [ $(cat "$DC_tlt/cfg.0" | wc -l) -le 20 ]; then
 fi
 
 cd $HOME
-upld=$($yad --form --width=420 --height=460 --on-top \
+upld=$(yad --form --width=420 --height=460 --on-top \
 --buttons-layout=end --center --window-icon=idiomind \
 --borders=15 --skip-taskbar --align=right \
 --button="$(gettext "Cancel")":1 \
@@ -294,6 +293,7 @@ level=$(echo "$upld" | cut -d "|" -f5)
 [[ $level = $intermediate ]] && level=2
 [[ $level = $advanced ]] && level=3
 
+echo "$Ctgry"
 if [ -z "$Ctgry" ]; then
 msg " $(gettext "Please indicates a category.")\n " info
 $DS/ifs/upld.sh &

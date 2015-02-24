@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
-source /usr/share/idiomind/ifs/c.conf
 
+source /usr/share/idiomind/ifs/c.conf
 wth=$(sed -n 3p $DC_s/cfg.18)
 eht=$(sed -n 4p $DC_s/cfg.18)
 LOG=$DC_a/stats/.log
@@ -13,9 +13,9 @@ WKRT2=$DC_a/stats/wkrt2.tmp
 udt=$(cat "$DC_a/stats/.udt")
 [ ! -d "$DC_a/stats" ] && mkdir "$DC_a/stats"
 
-#-----------------------------------------------------------------------
+#----------------------------
 if [ "$1" = A ]; then
-    #[[ "$(date +%F)" = "$udt" ]] && exit 1
+    [[ "$(date +%F)" = "$udt" ]] && exit 1
     echo "$tpc" > $DC_a/stats/tpc.tmp
     echo $(sed -n 2p $DC_s/cfg.8) >> $DC_a/stats/tpc.tmp
     TPCS=$(cat "$LOG" | grep -o -P '(?<=tpcs.).*(?=\.tpcs)' \
@@ -143,7 +143,6 @@ if [ "$1" = A ]; then
     ext3="$(n=1; while [ $n -le $flL ]; do printf " "; let n++; done)"
     ext4="$(n=1; while [ $n -le $acrm ]; do printf " "; let n++; done)"
     ext5="$(n=1; while [ $n -le $FIX ]; do printf " "; let n++; done)"
-    
     [[ "$(echo "$tpc1" | wc -c)" -gt 60 ]] && tle1="${tpc1:0:60}..." || tle1="$tpc1"
     [[ "$(echo "$tpc2" | wc -c)" -gt 60 ]] && tle2="${tpc2:0:60}..." || tle2="$tpc2"
     [[ "$(echo "$tpc3" | wc -c)" -gt 60 ]] && tle3="${tpc3:0:60}..." || tle3="$tpc3"
@@ -187,7 +186,7 @@ echo wr >> $DC_s/cfg.8
 exit 1
 
 
-#-----------------------------------------------------------------------
+#----------------------------
 elif [ -z "$1" ]; then
 
     sttng=$(sed -n 1p $DC_a/stats/cnfg)
@@ -197,7 +196,6 @@ elif [ -z "$1" ]; then
     fi
     if [ $sttng = TRUE ]; then
     SW=$(cat $DC_a/stats/.wks | head -n 8)
-    LG="<small><small><span background='#F3C879'>   </span> Dedication  <span background='#6E9FD4'>   </span> Study  <span background='#76A862'>   </span> Achieves </small></small>"
     else
     SW=" "; fi
 
@@ -208,7 +206,7 @@ elif [ -z "$1" ]; then
     --button="$(gettext "Close")":0 --width=420 --height=300 \
     --field="$(gettext "active")":CHK $sttng \
     --field="\n$SW:LBL" \
-    --field="\n$LG:LBL")
+    --field="\n:LBL")
         ret=$?
         
         if [ $ret -eq 0 ]; then

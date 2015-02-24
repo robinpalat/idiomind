@@ -30,10 +30,8 @@ if [ -d "$DM_tlt" ]; then
     [[ ! -f "$DC_tlt/cfg.3" ]] && touch "$DC_tlt/cfg.3"
     [[ ! -f "$DC_tlt/cfg.4" ]] && touch "$DC_tlt/cfg.4"
     [[ ! -f "$DC_tlt/cfg.10" ]] && touch "$DC_tlt/cfg.10"
-
     check_index1 "$DC_tlt/cfg.0" "$DC_tlt/cfg.1" \
     "$DC_tlt/cfg.2" "$DC_tlt/cfg.3" "$DC_tlt/cfg.4"
-
     chk0=$(cat "$DC_tlt/cfg.0" | wc -l)
     chk1=$(cat "$DC_tlt/cfg.1" | wc -l)
     chk2=$(cat "$DC_tlt/cfg.2" | wc -l)
@@ -61,7 +59,6 @@ if [ -d "$DM_tlt" ]; then
         cd "$DM_tlt/"; find . -maxdepth 2 -name '*.mp3' \
         | sort -k 1n,1 -k 7 | sed s'|\.\/words\/||'g \
         | sed s'|\.\/||'g | sed s'|\.mp3||'g > $DT/index
-        
         
         if ([ -f "$DC_tlt/.cfg.11" ] && \
         [ -n "$(cat "$DC_tlt/.cfg.11")" ]); then
@@ -117,7 +114,6 @@ if [ -d "$DM_tlt" ]; then
         mv -f "$DC_tlt/cfg.4.tmp" "$DC_tlt/cfg.4"
         cp -f "$DC_tlt/cfg.0" "$DC_tlt/cfg.1"
         cp -f "$DC_tlt/cfg.0" "$DC_tlt/.cfg.11"
-        
         check_index1 "$DC_tlt/cfg.0" "$DC_tlt/cfg.1" \
         "$DC_tlt/cfg.2" "$DC_tlt/cfg.3" "$DC_tlt/cfg.4"
         
@@ -181,7 +177,6 @@ if [ -d "$DM_tlt" ]; then
                 fi
             fi
         fi
-        
         $DS/mngr.sh mkmn
     fi
     

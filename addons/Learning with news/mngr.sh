@@ -8,7 +8,7 @@ itdl="$2"
 kpt="$DM_tl/Feeds/kept"
 drtc="$DM_tl/Feeds/.conf/"
 
-if [[ "$1" = delete_item ]]; then
+if [ "$1" = delete_item ]; then
 
     touch $DT/ps_lk
     if [ -f "$kpt/words/$itdl.mp3" ]; then
@@ -17,7 +17,7 @@ if [[ "$1" = delete_item ]]; then
         dialog-question "$(gettext "Yes")" "$(gettext "Not")" "$(gettext "Confirm")"
         ret=$(echo "$?")
 
-            if [[ $ret -eq 0 ]]; then
+            if [ $ret -eq 0 ]; then
                 
                 (sleep 0.2 && kill -9 $(pgrep -f "$yad --form "))
                 rm "$kpt/words/$itdl.mp3"
@@ -29,7 +29,7 @@ if [[ "$1" = delete_item ]]; then
                 rm ./*.tmp
                 rm -f $DT/ps_lk
 
-            elif [[ $ret -eq 1 ]]; then
+            elif [ $ret -eq 1 ]; then
             
                 rm -f $DT/ps_lk
                 exit 1
@@ -41,7 +41,7 @@ if [[ "$1" = delete_item ]]; then
         dialog-question "$(gettext "Yes")" "$(gettext "Not")" "$(gettext "Confirm")"
         ret=$(echo "$?")
         
-            if [[ $ret -eq 0 ]]; then
+            if [ $ret -eq 0 ]; then
             
                 (sleep 0.2 && kill -9 $(pgrep -f "$yad --form "))
                 rm "$kpt/$itdl.mp3"
@@ -54,7 +54,7 @@ if [[ "$1" = delete_item ]]; then
                 rm ./*.tmp
                 rm -f $DT/ps_lk
 
-            elif [[ $ret -eq 1 ]]; then
+            elif [ $ret -eq 1 ]; then
             
                 rm -f $DT/ps_lk
                 exit 1
@@ -65,7 +65,7 @@ if [[ "$1" = delete_item ]]; then
         dialog-question "$(gettext "Yes")" "$(gettext "Not")" "$(gettext "Confirm")"
         ret=$(echo "$?")
         
-            if [[ $ret -eq 0 ]]; then
+            if [ $ret -eq 0 ]; then
             
                 (sleep 0.2 && kill -9 $(pgrep -f "$yad --form "))
                 rm "$kpt/$itdl.mp3"
@@ -80,42 +80,41 @@ if [[ "$1" = delete_item ]]; then
                 rm ./*.tmp
                 rm -f $DT/ps_lk
             
-            elif [[ $ret -eq 1 ]]; then
+            elif [ $ret -eq 1 ]; then
             
                 rm -f $DT/ps_lk
                 exit 1
             fi
     fi
 
-elif [[ "$1" = delete_news ]]; then
+elif [ "$1" = delete_news ]; then
     
     msg_2 "$(gettext " Are you sure you want to delete all entries?\n\ (Downloads subscriptions every 5 days\n will be automatically deleted\).")" dialog-question \
     "$(gettext "Yes")" "$(gettext "Not")" "$(gettext "Confirm")"
     ret=$(echo "$?")
 
-        if [[ $ret -eq 0 ]]; then
+        if [ $ret -eq 0 ]; then
         
             rm -r $DM_tl/Feeds/conten/*
             rm $DM_tl/Feeds/.conf/.updt.lst
             rm $DM_tl/Feeds/.conf/cfg.1
             rm $DM_tl/Feeds/.conf/.dt
         else
-            exit 1
+            exit
         fi
         
-elif [[ "$1" = delete_saved ]]; then
+elif [ "$1" = delete_saved ]; then
 
         msg_2 "$(gettext " Are you sure you want\n to delete the saved entries?\n")" dialog-question "$(gettext "Yes")" "$(gettext "Not")" "$(gettext "Confirm")"
         ret=$(echo "$?")
 
-    if [[ $ret -eq 0 ]]; then
+    if [ $ret -eq 0 ]; then
     
         rm -r "$drtc"/cfg.3 "$drtc"/cfg.4 "$drtc"/cfg.0
         touch "$drtc"/cfg.3 "$drtc"/cfg.4 "$drtc"/cfg.0
         rm -r "$kpt"/*.mp3
         rm -r "$kpt"/words/*.mp3
     else
-        exit 1
+        exit
     fi
-
 fi

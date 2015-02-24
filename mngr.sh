@@ -4,7 +4,7 @@
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/mods/cmns.sh
 
-if [ $1 = mkmn ]; then
+if [ "$1" = mkmn ]; then
     
     cd "$DM_tl"
     [[ -d ./images ]] && rm -r ./images
@@ -57,7 +57,7 @@ if [ $1 = mkmn ]; then
     done
     exit 1
 
-elif [ $1 = edit ]; then
+elif [ "$1" = edit ]; then
     ttl=$(sed -n 2p $DC_s/cfg.6)
     plg1=$(sed -n 1p $DC_s/cfg.3)
     #cfg.1="$DC_s/cfg.1"
@@ -241,17 +241,20 @@ elif [ "$1" = delete_item_confirm ]; then
 
     [ -f "$file" ] && rm "$file"
     
-    cd "$DC_tlt/practice"
+    if [ -d "$DC_tlt/practice" ]; then
     
-    [ -f ./fin ] && grep -vxF "$trgt" ./fin > \
-    ./fin.tmp && sed '/^$/d' ./fin.tmp > ./fin
-    [ -f ./mcin ] && grep -vxF "$trgt" ./mcin > \
-    ./mcin.tmp && sed '/^$/d' ./mcin.tmp > ./mcin
-    [ -f ./lwin ] && grep -vxF "$trgt" ./lwin > \
-    ./lwin.tmp && sed '/^$/d' ./lwin.tmp > ./lwin
-    [ -f ./lsin ] && grep -vxF "$trgt" ./lsin > \
-    ./lsin.tmp && sed '/^$/d' ./lsin.tmp > ./lsin
-    rm ./*.tmp; cd "$DC_tlt"
+        cd "$DC_tlt/practice"
+        [ -f ./fin ] && grep -vxF "$trgt" ./fin > \
+        ./fin.tmp && sed '/^$/d' ./fin.tmp > ./fin
+        [ -f ./mcin ] && grep -vxF "$trgt" ./mcin > \
+        ./mcin.tmp && sed '/^$/d' ./mcin.tmp > ./mcin
+        [ -f ./lwin ] && grep -vxF "$trgt" ./lwin > \
+        ./lwin.tmp && sed '/^$/d' ./lwin.tmp > ./lwin
+        [ -f ./lsin ] && grep -vxF "$trgt" ./lsin > \
+        ./lsin.tmp && sed '/^$/d' ./lsin.tmp > ./lsin
+        rm ./*.tmp; fi
+    
+    cd "$DC_tlt"
     [ -f .cfg.11 ] && grep -vxF "$trgt" ./.cfg.11 > \
     ./cfg.11.tmp && sed '/^$/d' ./cfg.11.tmp > ./.cfg.11
     [ -f cfg.0 ] && grep -vxF "$trgt" ./cfg.0 > \
@@ -310,16 +313,20 @@ elif [ "$1" = delete_item ]; then
 
         [ -f "$file" ] && rm "$file"
         
-        cd "$DC_tlt/practice"
-        [ -f ./fin ] && grep -vxF "$trgt" ./fin > \
-        ./fin.tmp && sed '/^$/d' ./fin.tmp > ./fin
-        [ -f ./mcin ] && grep -vxF "$trgt" ./mcin > \
-        ./mcin.tmp && sed '/^$/d' ./mcin.tmp > ./mcin
-        [ -f ./lwin ] && grep -vxF "$trgt" ./lwin > \
-        ./lwin.tmp && sed '/^$/d' ./lwin.tmp > ./lwin
-        [ -f ./lsin ] && grep -vxF "$trgt" ./lsin > \
-        ./lsin.tmp && sed '/^$/d' ./lsin.tmp > ./lsin
-        rm ./*.tmp; cd "$DC_tlt"
+        if [ -d "$DC_tlt/practice" ]; then
+        
+            cd "$DC_tlt/practice"
+            [ -f ./fin ] && grep -vxF "$trgt" ./fin > \
+            ./fin.tmp && sed '/^$/d' ./fin.tmp > ./fin
+            [ -f ./mcin ] && grep -vxF "$trgt" ./mcin > \
+            ./mcin.tmp && sed '/^$/d' ./mcin.tmp > ./mcin
+            [ -f ./lwin ] && grep -vxF "$trgt" ./lwin > \
+            ./lwin.tmp && sed '/^$/d' ./lwin.tmp > ./lwin
+            [ -f ./lsin ] && grep -vxF "$trgt" ./lsin > \
+            ./lsin.tmp && sed '/^$/d' ./lsin.tmp > ./lsin
+            rm ./*.tmp; fi
+            
+        cd "$DC_tlt"
         [ -f .cfg.11 ] && grep -vxF "$trgt" ./.cfg.11 > \
         ./cfg.11.tmp && sed '/^$/d' ./cfg.11.tmp > ./.cfg.11
         [ -f cfg.0 ] && grep -vxF "$trgt" ./cfg.0 > \
@@ -341,7 +348,7 @@ elif [ "$1" = delete_item ]; then
     fi
     
 #--------------------------------
-elif [ $1 = delete_topic ]; then
+elif [ "$1" = delete_topic ]; then
     include $DS/ifs/mods/mngr
     
     msg_2 "$(gettext "Are you sure you want to delete this Topic?")\n\n" \
@@ -443,10 +450,11 @@ elif [ "$1" = edt ]; then
             rm -f $cnf
             
             if [[ "$mrk" != "$mrk2" ]]; then
+            
                 if [[ "$mrk2" = "TRUE" ]]; then
                     echo "$TGT" >> "$DC_tlt/cfg.6"
                 else
-                    grep -v -x -v "$TGT" "$DC_tlt/cfg.6" > "$DC_tlt/cfg.6.tmp"
+                    grep -vxv "$TGT" "$DC_tlt/cfg.6" > "$DC_tlt/cfg.6.tmp"
                     sed '/^$/d' "$DC_tlt/cfg.6.tmp" > "$DC_tlt/cfg.6"
                     rm "$DC_tlt/cfg.6.tmp"
                 fi
@@ -454,6 +462,7 @@ elif [ "$1" = edt ]; then
             fi
             
             if [[ "$audo" != "$wfile" ]]; then
+            
                 eyeD3 --write-images=$DT "$wfile"
                 cp -f "$audo" "$DM_tlt/words/$fname.mp3"
                 add_tags_2 W "$TGT" "$srce" "$DM_tlt/words/$fname.mp3" >/dev/null 2>&1
@@ -467,33 +476,31 @@ elif [ "$1" = edt ]; then
             fi
             
             infm="$(echo $exm1 && echo $dftn && echo $ntes)"
+            
             if [ "$infm" != "$inf" ]; then
+            
                 impr=$(echo "$infm" | tr '\n' '_')
                 add_tags_6 W "$impr" "$wfile" >/dev/null 2>&1
                 printf "eitm.$tpc.eitm\n" >> \
                 $DC_a/stats/.log &
             fi
 
-            #mv -f "$DT/$fname.mp3" "$wfile"
-
             if [[ "$tpc" != "$topc" ]]; then
+            
                 cp -f "$audo" "$DM_tl/$topc/words/$fname.mp3"
                 index word "$TGT" "$topc" &
-                if [ -n "$(cat "$DM_tl/.cfg.2" | grep "$topc")" ]; then
-                    $DS/mngr.sh delete_item_confirm "$fname"
-                fi
-                
+                $DS/mngr.sh delete_item_confirm "$fname"
                 $DS/vwr.sh "$v" "nll" $ff & exit 1
             fi
             
             if [[ "$mrok" = "TRUE" ]]; then
-                grep -v -x -v "$TGT" "$ind" > $DT/tx
+            
+                grep -vxv "$TGT" "$ind" > $DT/tx
                 sed '/^$/d' $DT/tx > "$ind"
                 rm $DT/tx
                 echo "$TGT" >> "$inp"
                 printf "okim.1.okim\n" >> \
                 $DC_a/stats/.log &
-                
                 $DS/vwr.sh "$v" "nll" $ff & exit 1
             fi
             
@@ -573,10 +580,11 @@ elif [ "$1" = edt ]; then
             fi
 
             if [ "$mrk" != "$mrk2" ]; then
+            
                 if [ "$mrk2" = "TRUE" ]; then
                     echo "$trgt" >> "$DC_tlt/cfg.6"
                 else
-                    grep -v -x -v "$trgt" "$DC_tlt/cfg.6" > "$DC_tlt/cfg.6.tmp"
+                    grep -vxv "$trgt" "$DC_tlt/cfg.6" > "$DC_tlt/cfg.6.tmp"
                     sed '/^$/d' "$DC_tlt/cfg.6.tmp" > "$DC_tlt/cfg.6"
                     rm "$DC_tlt/cfg.6.tmp"
                 fi
@@ -608,41 +616,42 @@ elif [ "$1" = edt ]; then
                     add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3" >/dev/null 2>&1
                     fetch_audio $aw $bw
                     
-                    [[ -d $DT_r ]] && rm -fr $DT_r
+                    [ -d $DT_r ] && rm -fr $DT_r
                     ) &
                 fi
             fi
             
             if [ -f $DT/tmpau.mp3 ]; then
+            
                 cp -f $DT/tmpau.mp3 "$DM_tlt/$fname.mp3"
                 add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3" >/dev/null 2>&1
                 rm -f $DT/tmpau.mp3
             fi
             
             if [ "$srce" != "$src" ]; then
+            
                 add_tags_5 S "$srce" "$sfile"
             fi
             
             if [ "$tpc" != "$topc" ]; then
-            
+
                 cp -f "$audo" "$DM_tl/$topc/$fname.mp3"
-            
-                trgtw="$(clean_3 "$trgt")"
-                n=1
-                while [ $n -le "$(echo "$trgtw" | wc -l)" ]; do
-                    echo "$(echo "$trgtw" | sed -n "$n"p).mp3" >> "$DM_tl/$topc/cfg.5"
-                    let n++
-                done
-                index sentence "$trgt" "$topc" &
-                if [ -n "$(cat "$DM_tl/.cfg.2" | grep "$topc")" ]; then
-                    $DS/mngr.sh delete_item_confirm "$fname"
-                fi
+                DT_r=$(mktemp -d $DT/XXXXXX); cd $DT_r
+                clean_3 $DT_r $(echo $(($RANDOM%1000)))
+
+                while read mp3; do
+                    echo "$mp3.mp3" >> "$DM_tl/$topc/cfg.5"
+                done < "$aw"
                 
+                index sentence "$trgt" "$topc" &
+                $DS/mngr.sh delete_item_confirm "$fname"
+                [ -d $DT_r ] && rm -fr $DT_r
                 $DS/vwr.sh "$v" "null" $ff & exit 1
             fi
             
             if [ "$mrok" = "TRUE" ]; then
-                grep -v -x -F "$trgt" "$ind" > $DT/tx
+            
+                grep -vxF "$trgt" "$ind" > $DT/tx
                 sed '/^$/d' $DT/tx > "$ind"
                 rm $DT/tx
                 echo "$trgt" >> "$inp"
@@ -655,6 +664,5 @@ elif [ "$1" = edt ]; then
             [ -d "$DT/$c" ] && $DS/add.sh edit_list_words "$fname" S $c "$trgt" &
             $DS/vwr.sh "$v" "$trgt" $ff & exit 1
     fi
-    
 fi
   

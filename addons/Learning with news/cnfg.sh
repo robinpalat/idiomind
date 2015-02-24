@@ -16,7 +16,6 @@ if [ ! -d $DM_tl/Feeds ]; then
     mkdir "$DC_a/Learning with news"
     cd $DM_tl/Feeds/.conf/
     touch cfg.0 cfg.1 cfg.3 cfg.4 .updt.lst
-    
 fi
 
 if [ ! -d "$DC_a/Learning with news/$lgtl" ]; then
@@ -28,27 +27,28 @@ fi
 
 
 [ -f "$DCF/$lgtl/.rss" ] && url_rss=$(sed -n 1p "$DCF/$lgtl/.rss")
-if [[ -z "$1" ]]; then
+
+if [ -z "$1" ]; then
 
     [[ -z "$url_rss" ]] && url_rss=" "
     cd "$DCF/$lgtl/rss"
     DIR1="$DC/addons/Learning with news"
-    [[ -f "$DIR1/.cnf" ]] && st2=$(sed -n 1p "$DIR1/.cnf") || st2=FALSE
+    [ -f "$DIR1/.cnf" ] && st2=$(sed -n 1p "$DIR1/.cnf") || st2=FALSE
 
     scrp=$(cd "$DCF/$lgtl/rss/"; ls * | egrep -v "$url_rss" \
     | tr "\\n" '!' | sed 's/!\+$//g')
 
     CNFG=$($yad --on-top --form --center \
-        --text="$(gettext "Updates RSS feeds") $lgtl\n" --borders=15 \
-        --window-icon=idiomind --skip-taskbar \
-        --width=420 --height=300 --always-print-result \
-        --title="Feeds - $lgtl" \
-        --button="$(gettext "Delete")":2 \
-        --button="gtk-add:5" \
-        --button="$(gettext "Update")":4 \
-        --field="  $(gettext "Active subscription"):CB" "$url_rss!$scrp" \
-        --field="$(gettext "Update at startup")":CHK $st2)
-        ret=$?
+    --text="$(gettext "Updates RSS feeds") $lgtl\n" --borders=15 \
+    --window-icon=idiomind --skip-taskbar \
+    --width=420 --height=300 --always-print-result \
+    --title="Feeds - $lgtl" \
+    --button="$(gettext "Delete")":2 \
+    --button="gtk-add:5" \
+    --button="$(gettext "Update")":4 \
+    --field="  $(gettext "Active subscription"):CB" "$url_rss!$scrp" \
+    --field="$(gettext "Update at startup")":CHK $st2)
+    ret=$?
         
         st1="$(echo "$CNFG" | cut -d "|" -f1)"
         st2="$(echo "$CNFG" | cut -d "|" -f2)"
@@ -82,14 +82,15 @@ if [[ -z "$1" ]]; then
                     fi
             fi
                     
-        elif [[ $ret -eq 5 ]]; then
+        elif [ $ret -eq 5 ]; then
+        
             dirs="$DCF/$lgtl/rss"
             nwfd=$($yad --width=480 --height=100 \
-                --center --on-top --window-icon=idiomind --align=right \
-                --skip-taskbar --button="$(gettext "Cancel")":1 --button=Ok:0 \
-                --form --title=" $(gettext "New Chanel")" --borders=5 \
-                --field=""$(gettext "Name")":: " "" \
-                --field=""$(gettext "URL")":: " "" \ )
+            --center --on-top --window-icon=idiomind --align=right \
+            --skip-taskbar --button="$(gettext "Cancel")":1 --button=Ok:0 \
+            --form --title=" $(gettext "New Chanel")" --borders=5 \
+            --field=""$(gettext "Name")":: " "" \
+            --field=""$(gettext "URL")":: " "" \ )
             
                 if [[ -z "$(echo "$nwfd" | cut -d "|" -f1)" ]]; then
                     "$DSF/cnfg.sh" & exit
@@ -101,11 +102,9 @@ if [[ -z "$1" ]]; then
                     name=$(echo "$nwfd" | cut -d "|" -f1)
                     link=$(echo "$nwfd" | cut -d "|" -f2)
                     
-                    if [[ "$(echo "$name" | wc -c)" -gt 40 ]]; then
-                        nme="${name:0:37}..."
-                    else
-                        nme="$name"
-                    fi
+                    [[ "$(echo "$name" | wc -c)" -gt 40 ]] && \
+                    nme="${name:0:37}..." || nme="$name"
+                    
                     echo '#!/bin/bash
                     source /usr/share/idiomind/ifs/c.conf
                     cd "$DC_a/Learning with news/$lgtl/rss"
@@ -119,7 +118,7 @@ if [[ -z "$1" ]]; then
                     "$DSF/cnfg.sh" & exit
                 fi
         
-        elif [[ $ret -eq 4 ]]; then
+        elif [ $ret -eq 4 ]; then
             sh "$DCF/$lgtl/rss/$st1"
             "$DSF/strt.sh" & exit 1
         else
@@ -131,7 +130,7 @@ elif [ "$1" = NS ]; then
 
     msg "$(gettext "Error")" info
 
-elif [[ $1 = edit ]]; then
+elif [ "$1" = edit ]; then
 
     slct=$(mktemp $DT/slct.XXXX)
 
@@ -169,6 +168,7 @@ fi
     --column=id:TEXT --column=icon:IMG --column=Action:TEXT > "$slct"
     ret=$?
     slt=$(cat "$slct")
+    
     if  [[ "$ret" -eq 0 ]]; then
         if echo "$slt" | grep -o "id01"; then
             "$DSF/add.sh" new_topic

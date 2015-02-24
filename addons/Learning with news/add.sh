@@ -5,7 +5,7 @@ source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/mods/cmns.sh
 include $DS/ifs/mods/add
 
-if [[ "$1" = new_item ]]; then
+if [ "$1" = new_item ]; then
 
     trgt=$(cat $DT/word.x)
     dir=$(cat $DT/item.x)
@@ -15,11 +15,11 @@ if [[ "$1" = new_item ]]; then
     dir_conf="$DM_tl/Feeds/.conf"
     var="$2"
 
-    if [[ ! -d "$DM_tl/Feeds"/kept ]]; then
+    if [ ! -d "$DM_tl/Feeds"/kept ]; then
         mkdir -p "$DM_tl/Feeds/kept/words"
     fi
 
-    if [[ -f $DT/word.x ]]; then
+    if [ -f $DT/word.x ]; then
         bttn="--button="$(gettext "Save Word")":0"
         txt="<b>"$(gettext "Word")"</b>"
     fi
@@ -32,15 +32,14 @@ if [[ "$1" = new_item ]]; then
     ret=$?
         
         # -------------------------------------------------------------
-        if [[ $ret -eq 0 ]]; then
+        if [ $ret -eq 0 ]; then
         
             if [ $(cat "$dir_conf/cfg.3" | wc -l) -ge 50 ]; then
                 msg "$tpe  \n$(gettext "You have reached the maximum number of words") " info & exit
             fi
         
             internet
-            mkdir $DT/rss_$c
-            cd $DT/rss_$c
+            mkdir $DT/rss_$c; cd $DT/rss_$c
             srce="$(translate "$trgt" auto $lgs)"
             fname="$(nmfile "${trgt^}")"
             [ ! -d "$dir_kept/words" ] && mkdir "$dir_kept/words"
@@ -49,10 +48,9 @@ if [[ "$1" = new_item ]]; then
             echo "${trgt^}" >> "$dir_conf/cfg.0"
             echo "${trgt^}" >> "$dir_conf/.cfg.11"
             echo "${trgt^}" >> "$dir_conf/cfg.3"
-            
             check_index1 "$dir_conf/cfg.0"
-            
             rm -rf $DT/rss_$c
+            
         # -------------------------------------------------------------
         elif [ $ret -eq 2 ]; then
         
@@ -77,19 +75,17 @@ if [[ "$1" = new_item ]]; then
         fi
         
 # -------------------------------------------------------------
-elif [[ "$1" = new_topic ]]; then
+elif [ "$1" = new_topic ]; then
     
     dte=$(date "+%a %d %B")
     if [ $(cat "$DC_tl/.cfg.1" | wc -l) -ge 80 ]; then
         msg "$(gettext "You have reached the maximum number of topics")" info & exit
     fi
 
-    jlbi=$($yad --form \
-    --window-icon=idiomind --borders=10 \
-    --fixed --width=400 --height=120 \
-    --on-top --center --skip-taskbar \
-    --field=" : " "News - $dte" \
-    --button="$(gettext "Create")":0 --title="$(gettext "New Topic")" )
+    jlbi=$($yad --form --window-icon=idiomind --borders=10 \
+    --fixed --width=400 --height=120 --on-top --center --skip-taskbar \
+    --field=" : " "News - $dte" --button="$(gettext "Create")":0 \
+    --title="$(gettext "New Topic")" )
         
         if [ -z "$jlbi" ];then
             exit 1
@@ -133,15 +129,13 @@ elif [[ "$1" = new_topic ]]; then
             echo "aitm.$cnt.aitm" >> \
             $DC/addons/stats/.log &
             
-            [[ -f $DT/ntpc ]] && rm -f $DT/ntpc
-            
+            [ -f $DT/ntpc ] && rm -f $DT/ntpc
             cp -f "$DM_tl/$jlb/.conf/cfg.0" "$DM_tl/$jlb/.conf/cfg.1"
             cp -f $DS/default/tpc.sh "$DM_tl/$jlb/tpc.sh"
             chmod +x "$DM_tl/$jlb/tpc.sh"
             echo "$(date +%F)" > "$DM_tl/$jlb/.conf/cfg.12"
             echo "1" > "$DM_tl/$jlb/.conf/cfg.8"
             echo "$jlb" >> $DM_tl/.cfg.2
-            
             "$DM_tl/$jlb/tpc.sh"
             $DS/mngr.sh mkmn
         fi
