@@ -30,7 +30,7 @@ function dlg_form_1() {
         --field="<small>$(gettext "Notes") </small>":TXT "$ntes" \
         --field="$(gettext "Mark") "":CHK" "$mrk" \
         --field="$chk"":CHK" "$mrok" \
-        --field="<a href='http://glosbe.com/$lgs/$lgt/$TGT'>$(gettext "Search definition")</a>":lbl \
+        --field="<small>$(gettext "Search definition") </small>":BTN "$sdefn" \
         --field=" :LBL" " " \
         --button="$(gettext "Image")":"$imge" \
         --button="$(gettext "Delete")":"$dlte" \

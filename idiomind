@@ -156,6 +156,7 @@ if [ -z "$1" ]; then
     --icons --single-click --on-top --borders=0 \
     --read-dir=$DS/default/new --item-width=68 \
     --window-icon=idiomind --class=idiomind &
+
     [[ -n "$tpc" ]] && echo "$tpc" > $DC_s/cfg.6
     
     if [[ ! -d $DT ]]; then
@@ -185,9 +186,7 @@ elif [ $(echo "$1" | grep -o '.idmnd') ]; then
     eht=$(sed -n 4p $DC_s/cfg.18)
     dte=$(date "+%d %B")
     c=$(echo $(($RANDOM%1000)))
-    if [ ! -d $DT ]; then
-        mkdir $DT
-    fi
+    [ ! -d $DT ] && mkdir $DT
     mkdir $DT/idmimp_$c
     (cp -f $DS/default/p1.sh $DT/p1.$c
     cp -f $DS/default/p2.sh $DT/p2.$c
@@ -222,20 +221,22 @@ elif [ $(echo "$1" | grep -o '.idmnd') ]; then
     
     if [ "$tpc_i" != "$name" ]; then
     
-        cstn=$(yad --name=idiomind --image=error --button=gtk-ok:1\
+        cstn=$(yad --name=idiomind --image=error \
         --text=" <b>$(gettext "The file is damaged")</b>\\n" \
-        --image-on-top --sticky \
+        --image-on-top --sticky --button=gtk-ok:1 \
         --width=280 --height=120 --title=Idiomind \
         --skip-taskbar --center --window-icon=idiomind)
         
-        [[ -d $DT/idmimp_$c ]] && rm -fr $DT/idmimp_$c
+        [ -d $DT/idmimp_$c ] && rm -fr $DT/idmimp_$c
         rm -f $DT/*.$c $DT/import.tar.gz & exit
+        
     else
         cd "$tmp"
         ws=$(cat "cfg.3" | wc -l)
         ss=$(cat "cfg.4" | wc -l)
         itxt="<big><big>$tpc_i</big></big><small>\\n${language_source^} <b>></b> $language_target\\n$nwords $(gettext "Words") $nsentences $(gettext "Sentences") $nimages $(gettext "Images")\n$(gettext "Level") $level </small>\n"
         dlck="$DT/p1.$c"
+        
         cat "$tmp/cfg.0" | awk '{print $0""}' | \
         yad --list --name=Idiomind --title="Idiomind" \
         --ellipsize=END --print-all --image-on-top \
@@ -243,38 +244,45 @@ elif [ $(echo "$1" | grep -o '.idmnd') ]; then
         --scroll --no-headers --dclick-action="$dlck" \
         --width="$wth" --height="$eht" --image-on-top \
         --window-icon=idiomind --column=Items --center \
-        --button="$(gettext "Install")":0 --button="$(gettext "Close")":1
+        --button="$(gettext "Install")":0 \
+        --button="$(gettext "Close")":1
         ret=$?
             
             if [ "$ret" -eq 1 ]; then
-                [[ -d $DT/idmimp_$c ]] && rm -fr $DT/idmimp_$c
+            
+                [ -d $DT/idmimp_$c ] && rm -fr $DT/idmimp_$c
                 rm -f $DT/*.$c $DT/import.tar.gz & exit
+                
             elif [ "$ret" -eq 0 ]; then
-                if2=$(cat $DC/topics/$language_target/.cfg.1 | wc -l)
-                chck=$(cat $DC/topics/$language_target/.cfg.1 | grep -Fo "$tpc_i" | wc -l)
+            
+                if2=$(cat $DM_t/$language_target/.cfg.1 | wc -l)
+                chck=$(cat $DM_t/$language_target/.cfg.1 | grep -Fo "$tpc_i" | wc -l)
                 
                 if [ $if2 -ge 80 ]; then
-                    yad  --name=idiomind --center \
+                
+                    yad --name=idiomind --center \
                     --image=info --class=idiomind \
                     --text="$(gettext "You have reached the maximum number of topics")\n\n" \
                     --image-on-top --sticky --skip-taskbar \
                     --width=420 --height=150 --title=Idiomind \
                     --window-icon=idiomind --button=gtk-ok:1
-                    [[ -d $DT/idmimp_$c ]] && rm -fr $DT/idmimp_$c
+                    [ -d $DT/idmimp_$c ] && rm -fr $DT/idmimp_$c
                     rm -f $DT/*.$c $DT/import.tar.gz & exit
                 fi
         
                 if [ "$chck" -ge 1 ]; then
+                
                     tpc_i="$tpc_i $chck"
-                    yad  --name=idiomind --image=info --sticky \
+                    yad --name=idiomind --image=info --sticky \
                     --text=" $(gettext "You have a topic with the same name")  \\n $(gettext "The new rename it as") <b>$tpc_i    </b>\n" \
                     --class=idiomind --center --skip-taskbar \
                     --image-on-top --width=420 --height=150 \
                     --window-icon=idiomind --title=Idiomind \
                     --button=Cancel:1 --button=gtk-ok:0
-                        ret=$?
+                    ret=$?
+                    
                     if [ $ret != 0 ]; then
-                        [[ -d $DT/idmimp_$c ]] && rm -fr $DT/idmimp_$c
+                        [ -d $DT/idmimp_$c ] && rm -fr $DT/idmimp_$c
                         rm -f $DT/*.$c $DT/import.tar.gz & exit 1
                     fi
                 fi
@@ -282,12 +290,10 @@ elif [ $(echo "$1" | grep -o '.idmnd') ]; then
                 if [ ! -d "$DM_t/$language_target" ]; then
                 mkdir "$DM_t/$language_target"
                 mkdir "$DM_t/$language_target/.share"
-                mkdir "$DC/topics/$language_target"
                 fi
-                mkdir "$DM/topics/$language_target/$tpc_i"
-                mkdir "$DC/topics/$language_target/$tpc_i"
-                DI_m="$DM/topics/$language_target/$tpc_i"
-                DI_c="$DC/topics/$language_target/$tpc_i"
+                mkdir "$DM_t/$language_target/$tpc_i"
+                DI_m="$DM_t/$language_target/$tpc_i"
+                DI_c="$DM_t/$language_target/$tpc_i/.conf"
                 cd "$tmp"
                 cp -n ./.audio/*.mp3 "$DM_t/$language_target/.share/"
                 [[ -d ./.audio ]] && rm -fr ./.audio
@@ -301,22 +307,22 @@ elif [ $(echo "$1" | grep -o '.idmnd') ]; then
                 cp -f cfg.4 "$DI_c/cfg.4"
                 cp -f cfg.5 "$DI_c/cfg.5"
                 cp -f cfg.10 "$DI_c/cfg.10"
-                cp -f $DS/default/tpc.sh "$DI_c/tpc.sh"
-                chmod +x "$DI_c/tpc.sh"
+                cp -f $DS/default/tpc.sh "$DI_m/tpc.sh"
+                chmod +x "$DI_m/tpc.sh"
                 echo "$lng" > $DC_s/cfg.10
                 echo "$language_target" >> $DC_s/cfg.10
-                cd "$DI_c"
+                cd "$DI_m"
                 echo $dte > cfg.13
-                echo "$tpc_i" >> "$DC/topics/$language_target/.cfg.3"
-                sed -i 's/'"$tpc_i"'//g' "$DC/topics/$language_target/.cfg.2"
-                sed '/^$/d' $DC/topics/$language_target/.cfg.2 > $DC/topics/$language_target/.cfg.2_
-                mv -f $DC/topics/$language_target/.cfg.2_ $DC/topics/$language_target/.cfg.2
-                $DS/mngr.sh mkmn
-                "$DI_c/tpc.sh" &
-                [[ -d $DT/idmimp_$c ]] && rm -fr $DT/idmimp_$c
+                echo "$tpc_i" >> "$DM_t/$language_target/.cfg.3"
+                sed -i 's/'"$tpc_i"'//g' "$DM_t/$language_target/.cfg.2"
+                sed '/^$/d' $DM_t/$language_target/.cfg.2 > $DM_t/$language_target/.cfg.2.tmp
+                mv -f $DM_t/$language_target/.cfg.2.tmp $DM_t/$language_target/.cfg.2
+                $DS/mngr.sh mkmn; "$DI_m/tpc.sh" &
+                [ -d $DT/idmimp_$c ] && rm -fr $DT/idmimp_$c
                 rm -f $DT/*.$c $DT/import.tar.gz & exit
+                
             else
-                [[ -d $DT/idmimp_$c ]] && rm -fr $DT/idmimp_$c
+                [ -d $DT/idmimp_$c ] && rm -fr $DT/idmimp_$c
                 rm -f $DT/*.$c $DT/import.tar.gz & exit
             fi
     exit 0
@@ -335,10 +341,10 @@ elif [ "$1" = topic ]; then
     
         if [ -n "$tpc" ]; then
         
-            [[ ! -f "$DC_tlt/cfg.0" ]] && touch "$DC_tlt/cfg.0"
-            [[ ! -f "$DC_tlt/cfg.1" ]] && touch "$DC_tlt/cfg.1"
-            [[ ! -f "$DC_tlt/cfg.2" ]] && touch "$DC_tlt/cfg.2"
-            [[ ! -f "$DC_tlt/cfg.10" ]] && touch "$DC_tlt/cfg.10"
+            [ ! -f "$DC_tlt/cfg.0" ] && touch "$DC_tlt/cfg.0"
+            [ ! -f "$DC_tlt/cfg.1" ] && touch "$DC_tlt/cfg.1"
+            [ ! -f "$DC_tlt/cfg.2" ] && touch "$DC_tlt/cfg.2"
+            [ ! -f "$DC_tlt/cfg.10" ] && touch "$DC_tlt/cfg.10"
             
             ls0="$DC_tlt/cfg.0"
             ls1="$DC_tlt/cfg.1"

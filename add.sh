@@ -839,7 +839,7 @@ elif [ "$1" = process ]; then
         echo "1"
         echo "# $(gettext "Processing")..." ;
         mogrify -modulate 100,0 -resize 400% $SCR_IMG.png
-        tesseract $SCR_IMG.png $SCR_IMG &> /dev/null
+        tesseract $SCR_IMG.png $SCR_IMG &> /dev/null # -l $lgt
         cat $SCR_IMG.txt | sed 's/\\n/./g' | sed 's/\./\n/g' \
         | sed '/^$/d' | sed 's/^[ \t]*//;s/[ \t]*$//' \
         | sed 's/ \+/ /g' | sed 's/\://; s/"//g' \

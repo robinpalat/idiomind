@@ -429,6 +429,7 @@ elif [ "$1" = edt ]; then
         ntes=$(echo "$inf" | sed -n 3p)
         dlte="$DS/mngr.sh delete_item ${fname}"
         imge="$DS/add.sh set_image '$TGT' word"
+        sdefn="/usr/share/idiomind/ifs/tls.sh definition '$TGT'"
         
         # ===============================================
         dlg_form_1 $cnf # word

@@ -2,7 +2,6 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-
 wth=$(sed -n 5p $DC_s/cfg.18)
 eht=$(sed -n 6p $DC_s/cfg.18)
 info1="$(echo "$(gettext "Do you want to change the interface language program?")" | xargs -n6 | sed 's/^/  /')"
@@ -72,6 +71,7 @@ yad --plug=$KEY --tabnum=1 --borders=15 --scroll \
     --field=" :lbl" "#10"\
     --field="$(gettext "Check for Updates")":BTN "/usr/share/idiomind/ifs/tls.sh check_updates" \
     --field="$(gettext "Quick Help")":BTN "/usr/share/idiomind/ifs/tls.sh help" \
+    --field="$(gettext "Feedback")":BTN "/usr/share/idiomind/ifs/tls.sh fback >/dev/null 2>&1" \
     --field="$(gettext "Topic Saved")":BTN "/usr/share/idiomind/ifs/upld.sh vsd" \
     --field=" :lbl" "#14"\
     --field="$(gettext "Languages")\t":lbl "#15" \
@@ -124,8 +124,8 @@ Encoding=UTF-8' >> $config_dir/idiomind.desktop
             fi
         fi
         
-        ln=$(cat "$cnf1" | sed -n 17p)
-        ls=$(cat "$cnf1" | sed -n 18p)
+        ln=$(cat "$cnf1" | sed -n 18p)
+        ls=$(cat "$cnf1" | sed -n 19p)
         
         if echo $ln | grep "English" && [ English != $lgtl ] ; then
             confirm "$info2" dialog-question

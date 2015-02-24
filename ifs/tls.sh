@@ -7,8 +7,8 @@ source $DS/ifs/mods/cmns.sh
 # -------------------------------------------------
 if [ "$1" = play ]; then
 
-play "$2"
-wait
+    play "$2"
+    wait
 
 # -------------------------------------------------
 elif [ "$1" = add_audio ]; then
@@ -55,10 +55,25 @@ elif [ "$1" = help ]; then
     xdg-open /usr/share/idiomind/ifs/help.pdf_doc & exit
 
 # -------------------------------------------------
+elif [ "$1" = definition ]; then
+
+    zenity --text-info --window-icon=idiomind \
+    --title="$(gettext "Definition")" --width=600 \
+    --height=600 --ok-label="$(gettext "OK")" \
+    --name=idiomind --editable --html --modal \
+    --url="http://glosbe.com/$lgt/$lgs/${2,,}" >/dev/null 2>&1
+
+# -------------------------------------------------
 elif [ "$1" = web ]; then
 
     host=http://idiomind.sourceforge.net
-    xdg-open "$host/$lgs/${lgtl,,}" & exit
+    xdg-open "$host/$lgs/${lgtl,,}" >/dev/null 2>&1
+
+# -------------------------------------------------
+elif [ "$1" = fback ]; then
+
+    host=http://idiomind.sourceforge.net/msg.html
+    xdg-open "$host" >/dev/null 2>&1
 
 # -------------------------------------------------
 elif [ "$1" = check_updates ]; then
@@ -98,7 +113,7 @@ elif [ "$1" = check_updates ]; then
         --button="$(gettext "Close")":1
     fi
     
-    [ -f release ] && rm -f release
+    [ -f $DT/release ] && rm -f $DT/release
 
 # -------------------------------------------------
 elif [ "$1" = a_check_updates ]; then
@@ -147,7 +162,7 @@ elif [ "$1" = a_check_updates ]; then
             exit 0
         fi
         
-        [[ -f release ]] && rm -f release
+    [ -f $DT/release ] && rm -f $DT/release
     fi
     
 # -------------------------------------------------
@@ -169,8 +184,7 @@ elif [ "$1" = pdf_doc ]; then
         cd $DT/mkhtml
         cp -f "$DC_tlt/cfg.3" w.inx.l
         cp -f "$DC_tlt/cfg.4" s.inx.l
-        iw=w.inx.l
-        is=s.inx.l
+        iw=w.inx.l; is=s.inx.l
 
         #images
         n=1
