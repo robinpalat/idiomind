@@ -58,7 +58,7 @@ elif [[ $1 = infsd ]]; then
             
             internet
             cd $DT
-            wget http://idiomind.sourceforge.net/info/SITE_TMP
+            wget http://idiomind.sourceforge.net/doc/SITE_TMP
             source $DT/SITE_TMP && rm -f $DT/SITE_TMP
             [ -z "$DOWNLOADS" ] && msg "$(gettext "The server is not available at the moment.")" dialog-warning && exit
             
@@ -303,7 +303,7 @@ fi
 internet
 
 cd $DT
-wget http://idiomind.sourceforge.net/info/SITE_TMP
+wget http://idiomind.sourceforge.net/doc/SITE_TMP
 source $DT/SITE_TMP && rm -f $DT/SITE_TMP
 [[ -z "$FTPHOST" ]] && msg " $(gettext "An error occurred, please try later.")\n " dialog-warning && exit
 

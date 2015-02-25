@@ -52,8 +52,12 @@ elif [ "$1" = edit_audio ]; then
 # -------------------------------------------------
 elif [ "$1" = help ]; then
 
-    xdg-open /usr/share/idiomind/ifs/help.pdf_doc & exit
-
+zenity --text-info --window-icon=idiomind \
+--title="$(gettext "Help")" --width=740 \
+--height=600 --ok-label="$(gettext "OK")" \
+--name=idiomind --html \
+--url="http://idiomind.sourceforge.net/doc/help.html" >/dev/null 2>&1
+    
 # -------------------------------------------------
 elif [ "$1" = definition ]; then
 
@@ -72,7 +76,7 @@ elif [ "$1" = web ]; then
 # -------------------------------------------------
 elif [ "$1" = fback ]; then
 
-    host=http://idiomind.sourceforge.net/msg.html
+    host=http://idiomind.sourceforge.net/doc/msg.html
     xdg-open "$host" >/dev/null 2>&1
 
 # -------------------------------------------------
@@ -82,7 +86,7 @@ elif [ "$1" = check_updates ]; then
     internet
     
     [ -f release ] && rm -f release
-    wget http://idiomind.sourceforge.net/info/release
+    wget http://idiomind.sourceforge.net/doc/release
     
     if [ "$(sed -n 1p $DT/release)" != "$(idiomind -v)" ]; then
     
@@ -135,7 +139,7 @@ elif [ "$1" = a_check_updates ]; then
         [ -f release ] && rm -f release
         curl -v www.google.com 2>&1 | \
         grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
-        wget http://idiomind.sourceforge.net/info/release
+        wget http://idiomind.sourceforge.net/doc/release
         pkg=https://sourceforge.net/projects/idiomind/files/idiomind.deb/download
         
         if [ "$(sed -n 1p $DT/release)" != "$(idiomind -v)" ]; then
