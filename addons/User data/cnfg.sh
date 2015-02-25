@@ -8,12 +8,12 @@ user=$(echo "$(whoami)")
 [ -f "$D_cps/.udt" ] && udt=$(cat "$D_cps/.udt") || udt=" "
 dte=$(date +%F)
 
-#dialog user data
+#dialog
 if [ -z "$1" ]; then
 
     du -b -h $DM | tail -1 | awk '{print ($1)}' > $DT/.sz
 
-    D=$($yad --list --title="$(gettext "User Data")" \
+    D=$(yad --list --title="$(gettext "User Data")" \
     --center --on-top --radiolist --expand-column=2 \
     --text=" $(gettext "Size"): $(cat $DT/.sz) \\n" --width=420 --height=300 \
     --skip-taskbar --image=folder --separator=" " \
@@ -34,7 +34,7 @@ if [ -z "$1" ]; then
         if echo "$ex" | grep "TRUE $(gettext "Export")"; then
             
             cd $HOME &&
-            exp=$($yad --save --center --borders=10 \
+            exp=$(yad --save --center --borders=10 \
             --on-top --filename="$user"_idiomind_data.tar.gz \
             --window-icon=idiomind --skip-taskbar \
             --title="$(gettext "Export")" \
@@ -73,13 +73,14 @@ if [ -z "$1" ]; then
         
             cd $HOME &&
             
-            add=$($yad --center --on-top \
+            add=$(yad --center --on-top \
             --borders=10 --file-filter="*.gz" --button=Ok:0 \
             --window-icon=idiomind --skip-taskbar \
             --title="$(gettext "Import")" \
             --window-icon=$ICON --file --width=600 --height=500)
             
             if [ "$ret" -eq 0 ]; then
+            
                 if [[ -z "$add" || ! -d "$DM" ]]; then
                     exit 1
                 fi
@@ -101,7 +102,6 @@ if [ -z "$1" ]; then
                     mv -f ./$lng/.share/* "$DM_t/$lng/.share/"
                     echo $lng >> ./.languages
                 done <<< "$list"
-
 
                 while read language; do
 
@@ -155,13 +155,13 @@ if [ -z "$1" ]; then
                 $DS/mngr.sh mkmn
                 rm -f -r $DT/import
                 
-                ) | $yad --on-top --progress \
+                ) | yad --on-top --progress \
                 --width=200 --height=20 --geometry=200x20-2-2 \
                 --percentage="5" --auto-close \
                 --sticky --on-top --undecorated --on-top \
                 --skip-taskbar --center --no-buttons
                 
-                $yad --fixed --name=idiomind --center --class=idiomind \
+                yad --fixed --name=idiomind --center --class=idiomind \
                 --image=info --sticky \
                 --text=" $(gettext "Data imported successfully")   \\n" \
                 --image-on-top --fixed --width=360 --height=140 --borders=3 \
@@ -183,7 +183,7 @@ if [ -z "$1" ]; then
         fi
 
         cd $HOME
-        CNFG=$($yad --center --form --on-top --window-icon=idiomind \
+        CNFG=$(yad --center --form --on-top --window-icon=idiomind \
         --borders=15 --expand-column=3 --no-headers \
         --print-all --button="$(gettext "Restore")":3 --always-print-result \
         --button="$(gettext "Close")":0 --width=420 --height=300 \
@@ -203,7 +203,7 @@ if [ -z "$1" ]; then
         elif [ "$ret" -eq 3 ]; then
         
             if [ ! -d "$D_cps" ]; then
-                $yad --fixed --name=idiomind --center \
+                yad --fixed --name=idiomind --center \
                 --image=info --sticky --class=idiomind \
                 --text="$(gettext "Not defined directory\nfor Backups")" \
                 --image-on-top --fixed --width=340 --height=130 --borders=3 \
@@ -211,7 +211,7 @@ if [ -z "$1" ]; then
                 --title=Idiomind --button=Ok:0 & exit 1
                 
             elif [ ! -f "$D_cps/idiomind.backup" ]; then
-                $yad --fixed --name=idiomind --center \
+                yad --fixed --name=idiomind --center \
                 --image=info --sticky --class=idiomind \
                 --text="$(gettext "No Backup")\n" \
                 --image-on-top --fixed --width=340 --height=130 --borders=3 \
@@ -219,7 +219,7 @@ if [ -z "$1" ]; then
                 --title=Idiomind --button=Ok:0 & exit 1
             else
                 udt=$(cat "$D_cps/.udt")
-                $yad --fixed --name=idiomind --center \
+                yad --fixed --name=idiomind --center \
                 --image=info --sticky --class=idiomind \
                 --text="$(gettext "Data will be restored to") $udt \n" \
                 --image-on-top --fixed --width=340 --height=130 --borders=3 \
@@ -250,7 +250,7 @@ if [ -z "$1" ]; then
                         rm -r  "$D_cps/topics"
                         mv -f "$D_cps/backup.tar.gz" "$D_cps/idiomind.backup"
                         
-                        ) | $yad --on-top \
+                        ) | yad --on-top \
                         --width=200 --height=20 --geometry=200x20-2-2 \
                         --pulsate --percentage="5" --auto-close \
                         --sticky --on-top --undecorated --skip-taskbar \
@@ -293,7 +293,7 @@ elif ([ "$1" = C ] && [ "$dte" != "$udt" ]); then
     done
     
     if [ ! -d "$D_cps" ]; then
-        $yad --fixed --name=idiomind --center \
+        yad --fixed --name=idiomind --center \
         --image=info --sticky --class=idiomind \
         --text="$(gettext "Can not find the directory\nestablished for backups")" \
         --image-on-top --fixed --width=420 --height=130 --borders=3 \

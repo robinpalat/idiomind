@@ -30,7 +30,8 @@ function dlg_text_info_5() {
 
 function audio_recognizer() {
     
-    echo "$(wget -q -U "Mozilla/5.0" --post-file "$1" --header="Content-Type: audio/x-flac; rate=16000" \
+    echo "$(wget -q -U "Mozilla/5.0" --post-file "$1" \
+    --header="Content-Type: audio/x-flac; rate=16000" \
     -O - "https://www.google.com/speech-api/v2/recognize?&lang="$2"-"$3"&key=$4")"
 }
 
@@ -61,10 +62,12 @@ if [[ "$prdt" = A ]]; then
     left=$((50 - $(cat "$DC_tlt/cfg.4" | wc -l)))
     key=$(sed -n 2p $DC_s/cfg.3)
     test="$DS/addons/Google translation service/test.flac"
+    LNK='https://console.developers.google.com'
+    
     
     if [ -z "$key" ]; then
         
-        msg "$no_key <a href='$LNK'>Web</a>\n" dialog-warning
+        msg "$(gettext "  For this feature you need to provide a key\\n   Please get one from the:\\n")   <a href='$LNK'>console.developers.google.com</a>\n" dialog-warning
         [[ -d $DT_r ]] && rm -fr $DT_r
         rm -f ls $lckpr & exit 1
     fi
@@ -131,7 +134,7 @@ if [[ "$prdt" = A ]]; then
             data="$(audio_recognizer "$test" $lgt $lgt $key)"
         fi
         if [ -z "$data" ]; then
-            msg "$key_err <a href='$LNK'>Google. </a>" error
+            msg "$(gettext "  The key is invalid or has\\n   exceeded its quota of daily requests")" error
             [[ -d $DT_r ]] && rm -fr $DT_r
             rm -f ls $lckpr & exit 1
         fi
@@ -145,7 +148,7 @@ if [[ "$prdt" = A ]]; then
             data="$(audio_recognizer info.flac $lgt $lgt $key)"
             if [ -z "$data" ]; then
             
-                msg "$key_err <a href='$LNK'>Google</a>" error
+                msg "$(gettext "  The key is invalid or has\\n   exceeded its quota of daily requests")" error
                 [[ -d $DT_r ]] && rm -fr $DT_r
                 rm -f ls $lckpr & break & exit 1
             fi
@@ -177,9 +180,9 @@ if [[ "$prdt" = A ]]; then
         [[ $(echo "$tpe" | wc -c) -gt 40 ]] && tcnm="${tpe:0:40}..." || tcnm="$tpe"
 
         left=$((50 - $(cat "$DC_tlt"/cfg.4 | wc -l)))
-        info="$(gettext "You can add")$left$(gettext "Sentences.")"
-        [ $ns -ge 45 ] && info="$(gettext "You can add")$left$(gettext "Sentences.")"
-        [ $ns -ge 49 ] && info="$(gettext "You can add")$left$(gettext "Sentence.")"
+        info="$(gettext "You can add") $left $(gettext "Sentences")"
+        [ $ns -ge 45 ] && info="$(gettext "You can add") $left $(gettext "Sentences")"
+        [ $ns -ge 49 ] && info="$(gettext "You can add") $left $(gettext "Sentence")"
         
         if [ -z "$(cat $DT_r/ls)" ]; then
         

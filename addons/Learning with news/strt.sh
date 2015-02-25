@@ -2,15 +2,13 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/trans/$lgs/rss.conf
 source $DS/ifs/mods/cmns.sh
 include $DS/ifs/mods/add
 DSF="$DS/addons/Learning with news"
 DCF="$DC/addons/Learning with news"
 
-
-[[ -f $DT/.uptf ]] && STT=$(cat $DT/.uptf) || STT=""
-[[ ! -f $DC/addons/dict/.dicts ]] && touch $DC/addons/dict/.dicts
+[ -f $DT/.uptf ] && STT=$(cat $DT/.uptf) || STT=""
+[ ! -f $DC/addons/dict/.dicts ] && touch $DC/addons/dict/.dicts
 
 if [[ -z "$(cat $DC_a/dict/.dicts)" ]]; then
     source $DS/ifs/trans/$lgs/topics_lists.conf
@@ -22,6 +20,7 @@ fi
 
 
 if ( [ -f $DT/.uptf ] && [ -z "$1" ] ); then
+
     yad --image=info --width=420 --height=150 \
     --window-icon=idiomind \
     --title=Info --center --borders=5 \
@@ -34,9 +33,11 @@ if ( [ -f $DT/.uptf ] && [ -z "$1" ] ); then
             $DS/stop.sh feed
         fi
     exit 1
+    
 elif ( [ -f $DT/.uptf ] && [ "$1" = A ] ); then
-    exit
+    exit 1
 fi
+
 sleep 1
 
 feed=$(sed -n 1p "$DCF/$lgtl/link")
@@ -92,10 +93,11 @@ if [ -n "$feed" ]; then
     echo "Feeds Mode -updating... " > $DT/.uptf
     
     if [ "$1" != A ]; then
+    
         echo "$tpc" > $DC_s/cfg.8
         echo fd >> $DC_s/cfg.8
         echo "11" > $dir_conf/cfg.8
-        notify-send -i idiomind "$rsrc" "$updating" -t 3000 &
+        notify-send -i idiomind "$rsrc" "$(gettext "Updating...")" -t 3000 &
     fi
     
     DT_r=$(mktemp -d $DT/XXXXXX); cd $DT_r
@@ -188,7 +190,7 @@ if [ -n "$feed" ]; then
     done < ./ls
     rm "$dir_conf"/*.tmp
     
-    if [[ -d "$dir_conten" ]]; then
+    if [ -d "$dir_conten" ]; then
     cd "$dir_conten/"
     find ./* -mtime +5 -exec rm -r {} \; &
     fi
@@ -199,5 +201,5 @@ if [ -n "$feed" ]; then
     exit
     
 else
-    exit 0
+    exit
 fi

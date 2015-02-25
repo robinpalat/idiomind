@@ -28,7 +28,8 @@ function notebook_1() {
     --tab=" $(gettext "Notes") " \
     --ellipsize=END --image-on-top --always-print-result \
     --width="$wth" --height="$eht" --borders=0 \
-    --button="Play":$DS/play.sh --button="$(gettext "Practice")":5 \
+    --button="$(gettext "Play")":$DS/play.sh \
+    --button="$(gettext "Practice")":5 \
     --button="$(gettext "Edit")":3
 }
 
@@ -36,8 +37,7 @@ function notebook_1() {
 function notebook_2() {
     
     yad --align=center --borders=80 \
-    --text="<u><b>$(gettext "Learned")</b></u>\\n$(gettext "Time to review") ($tdays $(gettext "days"))" \
-    --bar="":NORM $RM \
+    --text="$pres" --bar="":NORM $RM \
     --multi-progress --plug=$KEY --tabnum=1 &
     cat "$ls2" | yad \
     --no-headers --list --plug=$KEY --tabnum=2 \
@@ -58,51 +58,6 @@ function notebook_2() {
     --ellipsize=END --image-on-top --always-print-result \
     --width="$wth" --height="$eht" --borders=0 \
     --button="$(gettext "Edit")":3
-}
-
-
-function notebook_3() {
-    
-    yad --align=center --borders=80 \
-    --text="<u><b>$(gettext "Learned")</b></u>   * $(gettext "However there are new items") ($tb1).\\n$time_review: $tdays" $(gettext "days") \
-    --bar="":NORM $RM \
-    --multi-progress --plug=$KEY --tabnum=1 &
-    cat "$ls2" | yad \
-    --no-headers --list --plug=$KEY --tabnum=2 \
-    --expand-column=1 --ellipsize=END --print-all \
-    --column=Name:TEXT \
-    --dclick-action='./vwr.sh v2' &
-    yad --text-info --plug=$KEY --margins=14 \
-    --wrap --text="$itxt2" --editable --tabnum=3 --fore='gray40' \
-    --show-uri --fontname=vendana --filename="$nt" > "$cnf3" &
-    yad --notebook --name=Idiomind --center \
-    --class=Idiomind --align=right --key=$KEY \
-    --tab-borders=0 --center --title="Idiomind" \
-    --image="$img" --text="$itxt" \
-    --window-icon=$DS/images/idiomind.png \
-    --tab=" $(gettext "Review") " \
-    --tab=" $(gettext "Learned") ($tb2) " \
-    --tab=" $(gettext "Notes") " \
-    --ellipsize=END --image-on-top --always-print-result \
-    --width="$wth" --height="$eht" --borders=0 \
-    --button="$(gettext "Review")":4 --button="$(gettext "Edit")":3 >/dev/null 2>&1
-}
-
-
-function notebook_0() {
-    
-    yad --text-info --plug=$KEY --margins=14 \
-    --tabnum=1 --fore='gray40' --wrap --filename="$nt" \
-    --show-uri --fontname=vendana --editable > "$cnf3" &
-    yad --notebook --name=Idiomind --center \
-    --class=Idiomind --align=right --key=$KEY \
-    --window-icon=$DS/images/idiomind.png \
-    --tab-borders=0 --center --title="Idiomind" \
-    --image="$img" --text="$itxt" --tab=" $(gettext "Notes") " \
-    --ellipsize=END --image-on-top --always-print-result \
-    --width="$wth" --height="$eht" --borders=0 \
-    --button="Play":$DS/play.sh \
-    --button="$(gettext "Delete")":"$DS/mngr.sh delete_topic"
 }
 
 

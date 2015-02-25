@@ -2,7 +2,6 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/trans/$lgs/others.conf
 
 if [[ "$1" = time ]]; then
 
@@ -201,8 +200,7 @@ FALSE' > $DC_s/cfg.5; fi
         $DS/stop.sh play & exit 1
     fi
 
-    printf "plyrt.$tpc.plyrt\n" >> \
-    $DC_a/stats/.log &
+    printf "plyrt.$tpc.plyrt\n" >> $DC_s/cfg.30 &
     sleep 1
     $DS/bcle.sh & exit
 fi

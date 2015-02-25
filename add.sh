@@ -17,11 +17,11 @@ if [ "$1" = new_topic ]; then
         if [ -n "$nmt" ];then
             nmt="$nmt"
         else
-            tle=$(echo "$(gettext "New Topic")")
+            tle="$(gettext "New Topic")"
             nmt=""
         fi
         
-        jlbi=$(dlg_form_0 "$rename" "$nmt")
+        jlbi=$(dlg_form_0 "$(gettext "Rename")" "$nmt")
         ret=$(echo "$?")
         jlb="$(clean_2 "$jlbi")"
         snm=$(cat $DM_tl/.cfg.1 | grep -Fxo "$jlb" | wc -l)
@@ -29,7 +29,7 @@ if [ "$1" = new_topic ]; then
         if [ $snm -ge 1 ]; then
         
             jlb=$(echo ""$jlb" $snm")
-            dlg_msg_6 " <b>"$(gettext "You already have a Topic has the same name")"   </b>\\n "$(gettext "You rename it to")"  <b>$jlb</b>   \\n"
+            dlg_msg_6 " <b>"$(gettext "You already have a Topic has the same name")"   </b>\\n "$(gettext "The new rename it as")"  <b>$jlb</b>   \\n"
             ret=$(echo "$?")
 
                 if [ "$ret" -eq 1 ]; then
@@ -117,7 +117,6 @@ Your topics will be on this list. Create one using the button below. ")"
         $DS/chng.sh "$notopic" & exit 1
     fi
     
-    #c=$(echo $(($RANDOM%1000)))
     [[ -z "$4" ]] && txt="$(xclip -selection primary -o \
     | sed ':a;N;$!ba;s/\n/ /g' | sed '/^$/d')" || txt="$4"
 
@@ -151,6 +150,9 @@ Your topics will be on this list. Create one using the button below. ")"
     elif sed -n 1p $DC_s/cfg.3 | grep 'FALSE'; then
     
         lzgpr="$(dlg_form_2)"
+        
+    else
+        lzgpr="$(dlg_form_1)"
     fi
     
     ret=$(echo "$?")
@@ -224,10 +226,10 @@ Your topics will be on this list. Create one using the button below. ")"
                 if sed -n 1p $DC_s/cfg.3 | grep FALSE; then
                     if [ -z "$srce" ]; then
                         [ -d $DT_r ] && rm -fr $DT_r
-                        msg "$(gettext "Lacking complete a text input field") $lgsl." info & exit 1
+                        msg "$(gettext "The second field is empty.") $lgsl." info & exit 1
                     elif [ -z "$trgt" ]; then
                         [ -d $DT_r ] && rm -fr $DT_r
-                        msg "$(gettext "Lacking complete a text input field") $lgtl." info & exit 1
+                        msg "$(gettext "The first field is empty.") $lgtl." info & exit 1
                     fi
                 fi
 
@@ -244,11 +246,11 @@ Your topics will be on this list. Create one using the button below. ")"
                 if sed -n 1p $DC_s/cfg.3 | grep FALSE; then
                     if [ -z "$srce" ]; then
                         [ -d $DT_r ] && rm -fr $DT_r
-                        msg "$(gettext "Lacking complete a text input field") $lgsl." info & exit 1
+                        msg "$(gettext "The second field is empty.") $lgsl." info & exit 1
                         
                     elif [ -z "$trgt" ]; then
                         [ -d $DT_r ] && rm -fr $DT_r
-                        msg "$(gettext "Lacking complete a text input field") $lgtl." info & exit 1
+                        msg "$(gettext "The first field is empty.") $lgtl." info & exit 1
                     fi
                 fi
             
@@ -305,10 +307,10 @@ elif [ $1 = new_sentence ]; then
     else 
         if [ -z "$4" ]; then
             [ -d $DT_r ] && rm -fr $DT_r
-            msg "$(gettext "Lacking complete a text input field") $lgsl." info & exit
+            msg "$(gettext "The second field is empty.") $lgsl." info & exit
         elif [ -z "$2" ]; then
             [ -d $DT_r ] && rm -fr $DT_r
-            msg "$(gettext "Lacking complete a text input field") $lgtl." info & exit
+            msg "$(gettext "The first field is empty.") $lgtl." info & exit
         fi
         
         trgt=$(echo "$(clean_1 "$2")" | sed ':a;N;$!ba;s/\n/ /g')
@@ -328,7 +330,7 @@ elif [ $1 = new_sentence ]; then
     if ( [ -z $(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary') ] \
     || [ ! -f "$DM_tlt/$fname.mp3" ] || [ -z "$trgt" ] || [ -z "$srce" ] ); then
         [ -d $DT_r ] && rm -fr $DT_r
-        msg "$(gettext "There was a problem saving your notes, try again")" dialog-warning & exit 1
+        msg "$(gettext "Something unexpected has occurred while saving your note")" dialog-warning & exit 1
     fi
     
     add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3"
@@ -351,7 +353,7 @@ elif [ $1 = new_sentence ]; then
     
     if ([ -z "$grmrk" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ]); then
         rm "$DM_tlt/$fname.mp3"
-        msg "$(gettext "There was a problem saving your notes, try again")" dialog-warning 
+        msg "$(gettext "Something unexpected has occurred while saving your note")" dialog-warning 
         [ -d $DT_r ] && rm -fr $DT_r & exit 1
         
     fi
@@ -369,8 +371,7 @@ elif [ $1 = new_sentence ]; then
     fetch_audio $aw $bw $DT_r $DM_tls
     
     [ -d $DT_r ] && rm -fr $DT_r
-    printf "aitm.1.aitm\n" >> \
-    $DC/addons/stats/.log
+    printf "aitm.1.aitm\n" >> $DC_s/cfg.30
     exit 1
     
 
@@ -470,12 +471,11 @@ elif [ $1 = new_word ]; then
         eyeD3 --set-encoding=utf8 -A IWI3I0I"$nt"IWI3I0I "$DM_tlt/words/$fname.mp3"
         notify-send -i "$icnn" "$trgt" "$srce\\n($tpe)" -t 5000
         index word "$trgt" "$tpe"
-        printf "aitm.1.aitm\n" >> \
-        $DC/addons/stats/.log
+        printf "aitm.1.aitm\n" >> $DC_s/cfg.30
     
     else
         [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
-        msg "$(gettext "There was a problem saving your notes, try again")" dialog-warning & exit 1
+        msg "$(gettext "Something unexpected has occurred while saving your note")" dialog-warning & exit 1
     fi
 
     [ -d $DT_r ] && rm -fr $DT_r
@@ -500,11 +500,11 @@ elif [ "$1" = edit_list_words ]; then
         
         nw=$(cat "$DC_tlt/cfg.3" | wc -l)
         left=$((50 - $nw))
-        info="$(gettext "You can add")$left$(gettext "Words")"
+        info="$(gettext "You can add") $left $(gettext "Words")"
         if [ $nw -ge 45 ]; then
-            info="$(gettext "You can add")$left$(gettext "Words")"
+            info="$(gettext "You can add") $left $(gettext "Words")"
         elif [ $nw -ge 49 ]; then
-            info="$(gettext "You can add")$left$(gettext "Word")"
+            info="$(gettext "You can add") $left $(gettext "Word")"
         fi
 
         mkdir $DT/$c; DT_r=$DT/$c; cd $DT_r
@@ -576,8 +576,7 @@ elif [ "$1" = edit_list_words ]; then
             let n++
         done
 
-        printf "aitm.$lns.aitm\n" >> \
-        $DC_a/stats/.log &
+        printf "aitm.$lns.aitm\n" >> $DC_s/cfg.30
 
             if [ -f $DT_r/logw ]; then
                 dlg_info_1 "$(gettext "Sentences that were not added")"
@@ -607,11 +606,11 @@ elif [ "$1" = dclik_list_words ]; then
     fi
 
     left=$((50 - $nw))
-    info="$(gettext "You can add")$left$(gettext "Words")"
+    info="$(gettext "You can add") $left $(gettext "Words")"
     if [ $nw -ge 45 ]; then
-        info="$(gettext "You can add")$left$(gettext "Words")"
+        info="$(gettext "You can add") $left $(gettext "Words")"
     elif [ $nw -ge 49 ]; then
-        info="$(gettext "You can add")$left$(gettext "Word")"
+        info="$(gettext "You can add") $left $(gettext "Word")"
     fi
     
     if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
@@ -680,9 +679,9 @@ elif [ "$1" = sentence_list_words ]; then
     if [ "$left" = 0 ]; then
         exit 1
     elif [ $nw -ge 45 ]; then
-        info="$(gettext "You can add")$left$(gettext "Words")"
+        info="$(gettext "You can add") $left $(gettext "Words")"
     elif [ $nw -ge 49 ]; then
-        info="$(gettext "You can add")$left$(gettext "Word")"
+        info="$(gettext "You can add") $left $(gettext "Word")"
     fi
     
     #fname="$(nmfile "$2")"
@@ -752,8 +751,7 @@ elif [ "$1" = sentence_list_words ]; then
         let n++
     done
 
-    printf "aitm.$lns.aitm\n" >> \
-    $DC_a/stats/.log &
+    printf "aitm.$lns.aitm\n" >> $DC_s/cfg.30 &
 
     if [ -f  $DT_r/logw ]; then
         logs="$(cat $DT_r/logw)"
@@ -774,12 +772,10 @@ elif [ "$1" = process ]; then
     ns=$(cat "$DC_tlt/cfg.4" | wc -l)
     source $DS/default/dicts/$lgt
     nspr='/usr/share/idiomind/add.sh process'
-    LNK='http://www.chromium.org/developers/how-tos/api-keys'
     lckpr=$DT/.n_s_pr
     DM_tlt="$DM_tl/$tpe"
     DC_tlt="$DM_tl/$tpe"
-    DT_r="$3"
-    cd "$DT_r"
+    DT_r="$3"; cd "$DT_r"
 
     if [ -z "$tpe" ]; then
         [ -d $DT_r ] && rm -fr $DT_r
@@ -787,7 +783,7 @@ elif [ "$1" = process ]; then
     fi
     if [ $ns -ge 50 ]; then
         [ -d $DT_r ] && rm -fr $DT_r
-        msg "$tpe    \\n"$(gettext "You have reached the maximum number of sentences")"" info
+        msg "$(gettext "You have reached the maximum number of sentences")" info
         rm -f ls $lckpr & exit 1
     fi
 
@@ -811,7 +807,6 @@ elif [ "$1" = process ]; then
     fi
     include $DS/ifs/mods/add
     include $DS/ifs/mods/add_process
-    
     
     if [ $(echo ${2:0:4}) = 'Http' ]; then
     
@@ -840,7 +835,7 @@ elif [ "$1" = process ]; then
         echo "1"
         echo "# $(gettext "Processing")..." ;
         mogrify -modulate 100,0 -resize 400% $SCR_IMG.png
-        tesseract $SCR_IMG.png $SCR_IMG &> /dev/null
+        tesseract $SCR_IMG.png $SCR_IMG &> /dev/null # -l $lgt
         cat $SCR_IMG.txt | sed 's/\\n/./g' | sed 's/\./\n/g' \
         | sed '/^$/d' | sed 's/^[ \t]*//;s/[ \t]*$//' \
         | sed 's/ \+/ /g' | sed 's/\://; s/"//g' \
@@ -882,11 +877,11 @@ elif [ "$1" = process ]; then
         && tcnm="${tpe:0:60}..." || tcnm="$tpe"
         
         left=$((50 - $ns))
-        info="$(gettext "You can add")$left$(gettext "sentences")"
+        info="$(gettext "You can add") $left $(gettext "sentences")"
         if [ $ns -ge 45 ]; then
-            info="$(gettext "You can add")$left$(gettext "sentences")"
+            info="$(gettext "You can add") $left $(gettext "sentences")"
         elif [ $ns -ge 49 ]; then
-            info="$(gettext "You can add")$left$(gettext "sentence")"
+            info="$(gettext "You can add") $left $(gettext "sentence")"
         fi
         
         if [ -z "$(cat ./sntsls_)" ]; then
@@ -1134,8 +1129,7 @@ elif [ "$1" = process ]; then
                     if [ $adds -ge 1 ]; then
                         notify-send -i idiomind "$tpe" \
                         "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
-                        printf "aitm.$adds.aitm\n" >> \
-                        $DC/addons/stats/.log
+                        printf "aitm.$adds.aitm\n" >> $DC_s/cfg.30
                     fi
                     
                     if [ $(cat ./slog ./wlog | wc -l) -ge 1 ]; then
@@ -1165,7 +1159,8 @@ elif [ "$1" = process ]; then
                      rm -f $lckpr $slt & exit 1
                 fi
             
-elif [ "$" = set_image ]; then
+elif [ "$1" = set_image ]; then
+
     cd $DT
     wrd="$2"
     fname="$(nmfile "$wrd")"
@@ -1182,7 +1177,7 @@ elif [ "$" = set_image ]; then
     mv -f html s.html
     chmod +x s.html
     ICON=$DS/icon/nw.png
-    btnn=$(echo --button=$(gettext "Add Image"):3)
+    btnn="--button="$(gettext "Add Image")":3"
     
     if [ "$3" = word ]; then
         
@@ -1192,10 +1187,10 @@ elif [ "$" = set_image ]; then
         
         if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
             ICON="--image=$DM_tlt/words/images/$fname.jpg"
-            btnn=$(echo --button=$(gettext "Change"):3)
-            btn2=$(echo --button=$(gettext "Delete"):2)
+            btnn="--button="$(gettext "Change")":3"
+            btn2="--button="$(gettext "Delete")":2"
         else
-            txt="--text=<small>$(gettext "Image")  <a href='file://$DT/s.html'>$wrd</a></small>"
+            txt="--text=<small>$(gettext "Search image")\t<a href='file://$DT/s.html'>$wrd</a></small>"
         fi
         
         yad --form --align=center --center \
@@ -1233,16 +1228,16 @@ elif [ "$" = set_image ]; then
             file="$DM_tlt/$fname.mp3"
         fi
         
-        btnn=$(echo "--button=$(gettext "Add Image"):3")
+        btnn="--button="$(gettext "Add Image")":3"
         eyeD3 --write-images=$DT "$file" >/dev/null 2>&1
         
         if [ -f "$DT/ILLUSTRATION".jpeg ]; then
             mv -f "$DT/ILLUSTRATION".jpeg "$DT/imgsw".jpeg
             ICON="--image=$DT/imgsw.jpeg"
-            btnn=$(echo --button=$(gettext "Change"):3)
-            btn2=$(echo --button=$(gettext "Delete"):2)
+            btnn="--button="$(gettext "Change")":3"
+            btn2="--button="$(gettext "Delete")":2"
         else
-            txt="--text=<small>"$(gettext "Search Images")" \\n<a href='file://$DT/s.html'>$wrd</a></small>"
+            txt="--text=<small>\\n<a href='file://$DT/s.html'>"$(gettext "Search Image")"</a></small>"
         fi
         
         yad --form --text-align=center \
@@ -1250,7 +1245,7 @@ elif [ "$" = set_image ]; then
         --on-top --skip-taskbar --image-on-top \
         "$txt" "$btnn" --window-icon=idiomind --borders=0 \
         --title=$(gettext "Image") "$ICON" "$btn2" --button=gtk-close:1
-            ret=$? >/dev/null 2>&1
+        ret=$? >/dev/null 2>&1
                 
             if [ $ret -eq 3 ]; then
             
@@ -1260,8 +1255,7 @@ elif [ "$" = set_image ]; then
                 eyeD3 --remove-image "$file" >/dev/null 2>&1
                 eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file" >/dev/null 2>&1 &&
                 rm -f *.jpeg
-                printf "aimg.$tpc.aimg\n" >> \
-                $DC_a/stats/.log &
+                printf "aimg.$tpc.aimg\n" >> $DC_s/cfg.30 &
                 $DS/add.sh set_image "$wrd" sentence
                 
             elif [ $ret -eq 2 ]; then
@@ -1273,9 +1267,9 @@ elif [ "$" = set_image ]; then
     fi
 
 
-elif [[ "$1" = fix_item ]]; then
+elif [ "$1" = fix_item ]; then
 
-    kill -9 $(pgrep -f "$yad --form ")
+    kill -9 $(pgrep -f "yad --form ")
     trgt="$2"
     DT_r=$(mktemp -d $DT/XXXXXX)
     cd $DT_r

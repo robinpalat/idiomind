@@ -11,9 +11,8 @@ function internet() {
         --image-on-top --center --sticky \
         --width=360 --height=120 --borders=3 \
         --skip-taskbar --title=Idiomind \
-        --button=" $(gettext "OK") ":0 >&2; exit 1;}
+        --button="$(gettext "OK")":0 >&2; exit 1;}
 }
-
 
 function msg() {
         
@@ -24,7 +23,6 @@ function msg() {
         --skip-taskbar --title=Idiomind
 }
 
-
 function msg_2() { # decide
     
         yad --name=idiomind --on-top --text="$1" --image="$2" \
@@ -33,19 +31,16 @@ function msg_2() { # decide
         --title=Idiomind --button="$4":1 --button="$3":0
 }
 
-
 function nmfile() {
         
   echo "$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
 }
-
 
 function include() {
         
   for f in $1/*; do source "$f"; done
 
 }
-
 
 function try() {
         
@@ -57,7 +52,6 @@ function try() {
     fi
 }
 
-
 function check_index1() {
     
     for i in "${@}"; do
@@ -67,6 +61,3 @@ function check_index1() {
         fi
     done
 }
-
-
-

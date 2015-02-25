@@ -2,7 +2,6 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/trans/$lgs/practice.conf
 drtt="$DM_tlt/words"
 drts="$DS/practice/"
 strt="$drts/strt.sh"
@@ -106,7 +105,7 @@ function mchoise() {
     --width=365 --height=340 --center --undecorated \
     --text-align=center --no-headers --borders=5 \
     --button="$(gettext "Exit")":1 \
-    --text="\n$a\n\n" \
+    --text="\n<span color='#7F7F7F'><b>$a</b></span>\n\n" \
     --column=Opcion --column=Opciodn)
 }
 

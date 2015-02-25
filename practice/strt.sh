@@ -2,7 +2,6 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/trans/$lgs/practice.conf
 DSP="$DS/practice"
 wth=$(sed -n 13p $DC_s/cfg.18)
 hgt=$(sed -n 14p $DC_s/cfg.18)
@@ -82,8 +81,7 @@ $img4 "     $info4 Listening Sentences" )
 ret=$?
 
 if [ $ret -eq 0 ]; then
-    printf "prct.shc.$tpc.prct.shc\n" >> \
-    $DC_a/stats/.log &
+    printf "prct.shc.$tpc.prct.shc\n" >> $DC_s/cfg.30 &
     if echo "$VAR" | grep "Flashcards"; then
         $DSP/prct.sh f & exit 1
     elif echo "$VAR" | grep "Multiple Choice"; then

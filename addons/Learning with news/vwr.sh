@@ -5,17 +5,14 @@ source /usr/share/idiomind/ifs/c.conf
 DS_pf="$DS/addons/Learning with news"
 vwr="$DS_pf/vwr.sh"
 ap=$(cat $DC_s/cfg.1 | sed -n 6p)
+wth=$(sed -n 5p $DC_s/cfg.18)
+eht=$(sed -n 6p $DC_s/cfg.18)
 listen="▷"
+re='^[0-9]+$'
+now="$2"
+nuw="$3"
 
-if [[ $1 = V1 ]]; then
-
-    DS_pf="$DS/addons/Learning with news"
-    wth=$(sed -n 5p $DC_s/cfg.18)
-    eht=$(sed -n 6p $DC_s/cfg.18)
-    c=$(echo $(($RANDOM%100)))
-    re='^[0-9]+$'
-    now="$2"
-    nuw="$3"
+if [ "$1" = V1 ]; then
 
     if ! [[ $nuw =~ $re ]]; then
         nuw=$(cat "$DM_tl/Feeds/.conf/cfg.1" | grep -Fxon "$now" \
@@ -24,14 +21,12 @@ if [[ $1 = V1 ]]; then
     fi
 
     item="$(sed -n "$nuw"p "$DM_tl/Feeds/.conf/cfg.1")"
-
     if [ -z "$item" ]; then
         item="$(sed -n 1p "$DM_tl/Feeds/.conf/cfg.1")"
         nuw=1
     fi
     
     fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
-
     echo "$fname" > $DT/item.x
     tgs=$(eyeD3 "$DM_tl/Feeds/conten/$fname.mp3")
     trg=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
@@ -45,7 +40,7 @@ if [[ $1 = V1 ]]; then
             (killall play & sleep 0.3 && play "$DM_tl/Feeds/conten/$fname.mp3") &
         fi
         
-        echo "$lwrd" | awk '{print $0""}' | $yad --list \
+        echo "$lwrd" | awk '{print $0""}' | yad --list \
         --window-icon=idiomind --scroll --quoted-output \
         --skip-taskbar --center --title=" " --borders=20 \
         --text="<big><big>$trg</big></big> <a href='$lnk'>$(gettext "More")</a>\\n\\n<i>$srce</i>\\n\\n\\n" \
@@ -74,32 +69,24 @@ if [[ $1 = V1 ]]; then
         exit 1
         fi
         
-elif [[ $1 = V2 ]]; then
+elif [ "$1" = V2 ]; then
     
     DM_tlfk="$DM_tl/Feeds/kept"
-    DS_pf="$DS/addons/Learning with news"
     trgt="$DS_pf/trgt1"
-    wth=$(sed -n 5p $DC_s/cfg.18)
-    eht=$(sed -n 6p $DC_s/cfg.18)
-    c=$(echo $(($RANDOM%100)))
-    re='^[0-9]+$'
-    now="$2"
-    nuw="$3"
-    
-    if ! [[ $nuw =~ $re ]]; then
+
+    if ! [ $nuw =~ $re ]; then
         nuw=$(cat "$DM_tl/Feeds/.conf/cfg.0" | grep -Fxon "$now" \
         | sed -n 's/^\([0-9]*\)[:].*/\1/p')
         nll=" "
     fi
-    item="$(sed -n "$nuw"p "$DM_tl/Feeds/.conf/cfg.0")"
     
+    item="$(sed -n "$nuw"p "$DM_tl/Feeds/.conf/cfg.0")"
     if [ -z "$item" ]; then
         item="$(sed -n 1p "$DM_tl/Feeds/.conf/cfg.0")"
         nuw=1
     fi
     
     fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
-    
     lnk=$(cat "$DM_tlfk/$fname.lnk")
     echo "$fname" > $DT/item.x
     

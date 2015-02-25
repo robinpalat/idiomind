@@ -10,11 +10,11 @@ if [ ! -d "$DC_a/dict/" ]; then
 [[ ! -f $DC_a/dict/.dicts ]] && touch $DC_a/dict/.dicts
 [[ ! -f $DC_a/dict/.lng ]] && echo $lgtl > $DC_a/dict/.lng
 if  [ -z "$(cat $DC_a/dict/.dicts)" ]; then
-    $DS_a/Dics/cnfg.sh "" f "$(gettext "Not indicated a dictionary
-Select one or more of the list")"; fi
+    $DS_a/Dics/cnfg.sh "" f "$(gettext "  Not indicated a dictionary\\n
+  Select one or more of the list")"; fi
 if [ "$(cat $DC_a/dict/.lng)" != $lgtl ]; then
-    $DS_a/Dics/cnfg.sh "" f "$(gettext "You changed the language to learn
-Please select the corresponding dictionaries")"
+    $DS_a/Dics/cnfg.sh "" f "$(gettext " You changed the language to learn\\n
+  Please select the corresponding dictionaries")"
     echo $lgtl > $DC_a/dict/.lng; fi
 
 function dictt() {
