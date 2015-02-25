@@ -38,7 +38,7 @@ if [ -z "$1" ]; then
     scrp=$(cd "$DCF/$lgtl/rss/"; ls * | egrep -v "$url_rss" \
     | tr "\\n" '!' | sed 's/!\+$//g')
 
-    CNFG=$($yad --on-top --form --center \
+    CNFG=$(yad --on-top --form --center \
     --text="$(gettext "Updates RSS feeds") $lgtl\n" --borders=15 \
     --window-icon=idiomind --skip-taskbar \
     --width=420 --height=300 --always-print-result \
@@ -85,7 +85,7 @@ if [ -z "$1" ]; then
         elif [ $ret -eq 5 ]; then
         
             dirs="$DCF/$lgtl/rss"
-            nwfd=$($yad --width=480 --height=100 \
+            nwfd=$(yad --width=480 --height=100 \
             --center --on-top --window-icon=idiomind --align=right \
             --skip-taskbar --button="$(gettext "Cancel")":1 --button=Ok:0 \
             --form --title=" $(gettext "New Chanel")" --borders=5 \

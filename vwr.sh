@@ -97,7 +97,6 @@ fi
             $DS/vwr.sh "$v" "$nll" $ff &
         else 
             printf "vwr.$(cat $DC/addons/stats/.tmp | wc -l).vwr\n" >> \
-            $DC/addons/stats/.log
-            #[[ -f $DT/rm ]] && $DS/ifs/tls.sh remove_items
+            $DC_s/cfg.30 &
             rm $DC/addons/stats/.tmp & exit 1
         fi

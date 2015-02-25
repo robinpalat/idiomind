@@ -2,12 +2,28 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
+Encoding=UTF-8
 wth=$(sed -n 5p $DC_s/cfg.18)
 eht=$(sed -n 6p $DC_s/cfg.18)
 info1="$(echo "$(gettext "Do you want to change the interface language program?")" | xargs -n6 | sed 's/^/  /')"
 info2="$(echo "$(gettext "You want to change the language setting to learn?")" | xargs -n6 | sed 's/^/  /')"
 ICON=$DS/images/icon.png
 cd $DS/addons
+
+info_="$(gettext "\nIdiomind is a small program that helps you learn foreign words, this is useful when you have to remember a lot of new vocabulary in the language you are studying.\n\nLicense: GPLv3\nThis program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, Either version 3 of the License, or (at your option) any later version.\nThis program is distributed in the hope That it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\n\nCode\nhttps://github.com/robinsato/idiomind")"
+
+autostart="[Desktop Entry]
+Name=Idiomind
+GenericName=idiomind
+Comment=Vocabulary learning tool
+Exec=idiomind autostart
+Terminal=false
+Type=Application
+Categories=languages;Education;
+Icon=idiomind
+MimeType=application/x-idmnd;
+StartupNotify=true
+Encoding=UTF-8"
 
 if [ ! -d "$DC" ]; then
     $DS/ifs/1u.sh
@@ -81,7 +97,7 @@ yad --plug=$KEY --tabnum=1 --borders=15 --scroll \
 cat $DC_s/cfg.21 | yad --plug=$KEY --tabnum=2 --list --expand-column=2 \
     --text="<sub>  $(gettext "Double click to set") </sub>" \
     --no-headers --dclick-action="/usr/share/idiomind/ifs/dclik.sh" --print-all \
-    --column=icon:IMG --column=Action & printf "$(gettext "\nIdiomind is a small program that helps you learn foreign words, this is useful when you have to remember a lot of new vocabulary in the language you are studying.\n\nLicense: GPLv3\nThis program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, Either version 3 of the License, or (at your option) any later version.\nThis program is distributed in the hope That it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\n\nCode\nhttps://github.com/robinsato/idiomind")" | yad --plug=$KEY --tabnum=3 --text-info \
+    --column=icon:IMG --column=Action & printf "$info_" | yad --plug=$KEY --tabnum=3 --text-info \
     --text="\\n<big><big><b>Idiomind v2.2-beta</b></big></big>\\n<sup>$(gettext "Vocabulary learning tool")\\n<a href='https://sourceforge.net/projects/idiomind/'>Homepage</a> © 2013-2015 Robin Palat</sup>\\n" \
     --show-uri --fontname=Arial --margins=10 --wrap --text-align=center &
 yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
@@ -104,18 +120,7 @@ yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
                 if [ ! -d "$HOME/.config/autostart" ]; then
                     mkdir "$HOME/.config/autostart"
                 fi
-                echo '[Desktop Entry]' > $config_dir/idiomind.desktop
-                echo 'Name=Idiomind
-GenericName=idiomind
-Comment=Vocabulary learning tool
-Exec=idiomind autostart
-Terminal=false
-Type=Application
-Categories=languages;Education;
-Icon=idiomind
-MimeType=application/x-idmnd;
-StartupNotify=true
-Encoding=UTF-8' >> $config_dir/idiomind.desktop
+                echo "$autostart" > $config_dir/idiomind.desktop
                 chmod +x $config_dir/idiomind.desktop
             fi
         else

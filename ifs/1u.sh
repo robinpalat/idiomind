@@ -2,6 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 LANGUAGE=$LANGUAGE
+[ -z $LANGUAGE ] && LANGUAGE=en
 TEXTDOMAIN=idiomind
 export TEXTDOMAIN
 TEXTDOMAINDIR=/usr/share/locale
@@ -11,9 +12,7 @@ alias gettext='gettext "idiomind"'
 user=$(echo "$(whoami)")
 
 text="<big><big><big><big>  Welcome  </big></big></big></big>
-$(gettext "   Idiomind is a program that will help you learn words.
-   To get started, please configure the following:")
-"
+$(gettext "     To get started, please configure the following:")\n\n"
 
 function set_lang() {
     
@@ -32,7 +31,7 @@ function set_lang() {
 }
 
 
-if [[ ! -f /usr/bin/yad ]]; then
+if [ ! -f /usr/bin/yad ]; then
 zenity --info --window-icon="idiomind" \
 --text="$(gettext "Missing a dependency to start.
 It seems that you have no installed on your system the program YAD.\t

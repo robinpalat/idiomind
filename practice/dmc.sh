@@ -105,7 +105,7 @@ function mchoise() {
     --width=365 --height=340 --center --undecorated \
     --text-align=center --no-headers --borders=5 \
     --button="$(gettext "Exit")":1 \
-    --text="\n$a\n\n" \
+    --text="\n<span color='#7F7F7F'><b>$a</b></span>\n\n" \
     --column=Opcion --column=Opciodn)
 }
 

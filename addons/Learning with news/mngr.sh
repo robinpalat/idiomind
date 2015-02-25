@@ -19,7 +19,7 @@ if [ "$1" = delete_item ]; then
 
             if [ $ret -eq 0 ]; then
                 
-                (sleep 0.2 && kill -9 $(pgrep -f "$yad --form "))
+                (sleep 0.2 && kill -9 $(pgrep -f "yad --form "))
                 rm "$kpt/words/$itdl.mp3"
                 cd "$drtc"
                 grep -v -x -F "$itdl" ./cfg.3 > ./cfg.3.tmp
@@ -43,7 +43,7 @@ if [ "$1" = delete_item ]; then
         
             if [ $ret -eq 0 ]; then
             
-                (sleep 0.2 && kill -9 $(pgrep -f "$yad --form "))
+                (sleep 0.2 && kill -9 $(pgrep -f "yad --form "))
                 rm "$kpt/$itdl.mp3"
                 rm "$kpt/$itdl.lnk"
                 cd "$drtc"
@@ -67,7 +67,7 @@ if [ "$1" = delete_item ]; then
         
             if [ $ret -eq 0 ]; then
             
-                (sleep 0.2 && kill -9 $(pgrep -f "$yad --form "))
+                (sleep 0.2 && kill -9 $(pgrep -f "yad --form "))
                 rm "$kpt/$itdl.mp3"
                 rm "$kpt/$itdl.lnk"
                 cd "$drtc"

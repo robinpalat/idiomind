@@ -169,7 +169,7 @@ elif [ "$1" = a_check_updates ]; then
 elif [ "$1" = pdf_doc ]; then
 
     cd $HOME
-    pdf=$($yad --save --center --borders=10 \
+    pdf=$(yad --save --center --borders=10 \
     --on-top --filename="$HOME/$tpc.pdf" \
     --window-icon=idiomind --skip-taskbar --title="Export " \
     --file --width=600 --height=500 --button=gtk-ok:0 )

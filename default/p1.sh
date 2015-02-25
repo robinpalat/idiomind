@@ -70,8 +70,8 @@ elif [ -f "$dir/$fname.mp3" ]; then
     
 else
     ff=$(($nuw + 1))
-    echo "_" >> $DT/sc
-    [[ $(cat $DT/sc | wc -l) -ge 5 ]] && rm -f $DT/sc & exit 1 \
+    echo "_" >> /tmp/.sc
+    [[ $(cat /tmp/.sc | wc -l) -ge 5 ]] && rm -f /tmp/.sc & exit 1 \
     || /tmp/.idmtp1.$u/p1.X015x "$nll" "$ff" & exit 1
 fi
 

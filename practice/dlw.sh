@@ -122,7 +122,7 @@ function cuestion() {
     --center --on-top --image-on-top --image="$img" \
     --skip-taskbar --title=" " --borders=3 \
     --buttons-layout=spread \
-    --field="<span color='#808080'>$trgts</span>":lbl \
+    --field="<span color='#7F7F7F'><b>$trgts</b></span>":lbl \
     --width=371 --height=280 \
     --button="$(gettext "Exit")":1 \
     --button="$listen":"$play" \

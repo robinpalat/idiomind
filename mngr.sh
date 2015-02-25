@@ -143,7 +143,9 @@ fi
     
 #--------------------------------
 elif [ "$1" = mklg- ]; then
-    kill -9 $(pgrep -f "$yad --icons")
+    
+    include $DS/ifs/mods/mngr
+    kill -9 $(pgrep -f "yad --icons")
 
     nstll=$(grep -Fxo "$tpc" "$DM_tl/.cfg.3")
     if [ -n "$nstll" ]; then
@@ -188,6 +190,8 @@ elif [ "$1" = mklg- ]; then
     
 #--------------------------------
 elif [ "$1" = mkok- ]; then
+    
+    include $DS/ifs/mods/mngr
     kill -9 $(pgrep -f "yad --icons")
 
     if [ -f "$DC_tlt/cfg.9" ]; then
@@ -309,7 +313,7 @@ elif [ "$1" = delete_item ]; then
         
     if [ $ret -eq 0 ]; then 
     
-        (sleep 0.1 && kill -9 $(pgrep -f "$yad --form "))
+        (sleep 0.1 && kill -9 $(pgrep -f "yad --form "))
 
         [ -f "$file" ] && rm "$file"
         
@@ -482,8 +486,7 @@ elif [ "$1" = edt ]; then
             
                 impr=$(echo "$infm" | tr '\n' '_')
                 add_tags_6 W "$impr" "$wfile" >/dev/null 2>&1
-                printf "eitm.$tpc.eitm\n" >> \
-                $DC_a/stats/.log &
+                printf "eitm.$tpc.eitm\n" >> $DC_s/cfg.30 &
             fi
 
             if [[ "$tpc" != "$topc" ]]; then
@@ -500,8 +503,7 @@ elif [ "$1" = edt ]; then
                 sed '/^$/d' $DT/tx > "$ind"
                 rm $DT/tx
                 echo "$TGT" >> "$inp"
-                printf "okim.1.okim\n" >> \
-                $DC_a/stats/.log &
+                printf "okim.1.okim\n" >> $DC_s/cfg.30 &
                 $DS/vwr.sh "$v" "nll" $ff & exit 1
             fi
             
@@ -656,8 +658,7 @@ elif [ "$1" = edt ]; then
                 sed '/^$/d' $DT/tx > "$ind"
                 rm $DT/tx
                 echo "$trgt" >> "$inp"
-                printf "okim.1.okim\n" >> \
-                $DC_a/stats/.log &
+                printf "okim.1.okim\n" >> $DC_s/cfg.30 &
                 
                 $DS/vwr.sh "$v" "null" $ff & exit 1
             fi

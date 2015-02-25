@@ -81,8 +81,7 @@ $img4 "     $info4 Listening Sentences" )
 ret=$?
 
 if [ $ret -eq 0 ]; then
-    printf "prct.shc.$tpc.prct.shc\n" >> \
-    $DC_a/stats/.log &
+    printf "prct.shc.$tpc.prct.shc\n" >> $DC_s/cfg.30 &
     if echo "$VAR" | grep "Flashcards"; then
         $DSP/prct.sh f & exit 1
     elif echo "$VAR" | grep "Multiple Choice"; then

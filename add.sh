@@ -17,7 +17,7 @@ if [ "$1" = new_topic ]; then
         if [ -n "$nmt" ];then
             nmt="$nmt"
         else
-            tle=$(echo "$(gettext "New Topic")")
+            tle="$(gettext "New Topic")"
             nmt=""
         fi
         
@@ -371,8 +371,7 @@ elif [ $1 = new_sentence ]; then
     fetch_audio $aw $bw $DT_r $DM_tls
     
     [ -d $DT_r ] && rm -fr $DT_r
-    printf "aitm.1.aitm\n" >> \
-    $DC/addons/stats/.log
+    printf "aitm.1.aitm\n" >> $DC_s/cfg.30
     exit 1
     
 
@@ -472,8 +471,7 @@ elif [ $1 = new_word ]; then
         eyeD3 --set-encoding=utf8 -A IWI3I0I"$nt"IWI3I0I "$DM_tlt/words/$fname.mp3"
         notify-send -i "$icnn" "$trgt" "$srce\\n($tpe)" -t 5000
         index word "$trgt" "$tpe"
-        printf "aitm.1.aitm\n" >> \
-        $DC/addons/stats/.log
+        printf "aitm.1.aitm\n" >> $DC_s/cfg.30
     
     else
         [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
@@ -578,8 +576,7 @@ elif [ "$1" = edit_list_words ]; then
             let n++
         done
 
-        printf "aitm.$lns.aitm\n" >> \
-        $DC_a/stats/.log &
+        printf "aitm.$lns.aitm\n" >> $DC_s/cfg.30
 
             if [ -f $DT_r/logw ]; then
                 dlg_info_1 "$(gettext "Sentences that were not added")"
@@ -754,8 +751,7 @@ elif [ "$1" = sentence_list_words ]; then
         let n++
     done
 
-    printf "aitm.$lns.aitm\n" >> \
-    $DC_a/stats/.log &
+    printf "aitm.$lns.aitm\n" >> $DC_s/cfg.30 &
 
     if [ -f  $DT_r/logw ]; then
         logs="$(cat $DT_r/logw)"
@@ -787,7 +783,7 @@ elif [ "$1" = process ]; then
     fi
     if [ $ns -ge 50 ]; then
         [ -d $DT_r ] && rm -fr $DT_r
-        msg "$tpe    \\n"$(gettext "You have reached the maximum number of sentences")"" info
+        msg "$(gettext "You have reached the maximum number of sentences")" info
         rm -f ls $lckpr & exit 1
     fi
 
@@ -1133,8 +1129,7 @@ elif [ "$1" = process ]; then
                     if [ $adds -ge 1 ]; then
                         notify-send -i idiomind "$tpe" \
                         "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
-                        printf "aitm.$adds.aitm\n" >> \
-                        $DC/addons/stats/.log
+                        printf "aitm.$adds.aitm\n" >> $DC_s/cfg.30
                     fi
                     
                     if [ $(cat ./slog ./wlog | wc -l) -ge 1 ]; then
@@ -1260,8 +1255,7 @@ elif [ "$1" = set_image ]; then
                 eyeD3 --remove-image "$file" >/dev/null 2>&1
                 eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file" >/dev/null 2>&1 &&
                 rm -f *.jpeg
-                printf "aimg.$tpc.aimg\n" >> \
-                $DC_a/stats/.log &
+                printf "aimg.$tpc.aimg\n" >> $DC_s/cfg.30 &
                 $DS/add.sh set_image "$wrd" sentence
                 
             elif [ $ret -eq 2 ]; then
@@ -1275,7 +1269,7 @@ elif [ "$1" = set_image ]; then
 
 elif [ "$1" = fix_item ]; then
 
-    kill -9 $(pgrep -f "$yad --form ")
+    kill -9 $(pgrep -f "yad --form ")
     trgt="$2"
     DT_r=$(mktemp -d $DT/XXXXXX)
     cd $DT_r

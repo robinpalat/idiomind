@@ -82,7 +82,7 @@ elif [ "$1" = new_topic ]; then
         msg "$(gettext "You have reached the maximum number of topics")" info & exit
     fi
 
-    jlbi=$($yad --form --window-icon=idiomind --borders=10 \
+    jlbi=$(yad --form --window-icon=idiomind --borders=10 \
     --fixed --width=400 --height=120 --on-top --center --skip-taskbar \
     --field=" : " "News - $dte" --button="$(gettext "Create")":0 \
     --title="$(gettext "New Topic")" )
@@ -126,8 +126,7 @@ elif [ "$1" = new_topic ]; then
             touch "$DM_tl/$jlb/.conf/cfg.2"
             
             cnt=$(cat "$DM_tl/$jlb/.conf/cfg.0" | wc -l)
-            echo "aitm.$cnt.aitm" >> \
-            $DC/addons/stats/.log &
+            echo "aitm.$cnt.aitm" >> $DC_s/cfg.30 &
             
             [ -f $DT/ntpc ] && rm -f $DT/ntpc
             cp -f "$DM_tl/$jlb/.conf/cfg.0" "$DM_tl/$jlb/.conf/cfg.1"
