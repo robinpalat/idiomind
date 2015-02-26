@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-source /usr/share/idiomind/ifs/c.conf
+#source /usr/share/idiomind/ifs/c.conf
 strt=$DS/practice/strt.sh
 cls=$DS/practice/cls
 w9=$DC_s/cfg.22

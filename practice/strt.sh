@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-source /usr/share/idiomind/ifs/c.conf
+#source /usr/share/idiomind/ifs/c.conf
 DSP="$DS/practice"
 wth=$(sed -n 13p $DC_s/cfg.18)
 hgt=$(sed -n 14p $DC_s/cfg.18)

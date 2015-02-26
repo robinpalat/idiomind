@@ -1,6 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
-source /usr/share/idiomind/ifs/c.conf
+#source /usr/share/idiomind/ifs/c.conf
 [ -z "$tpc" ] && exit 1
 > $DT/.p_
 cd $DT/p

@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-source /usr/share/idiomind/ifs/c.conf
+#source /usr/share/idiomind/ifs/c.conf
 drts="$DS/practice/"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"

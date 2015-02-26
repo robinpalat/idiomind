@@ -13,23 +13,22 @@ if [ "$1" = play ]; then
 # -------------------------------------------------
 elif [ "$1" = add_audio ]; then
 
-cd $HOME
+    cd $HOME
+    AU=$(yad --width=620 --height=400 --file --on-top --name=idiomind \
+    --class=idiomind --window-icon=idiomind --center --file-filter="*.mp3" \
+    --button=Ok:0 --borders=0 --title="$ttl" --skip-taskbar)
 
-AU=$(yad --width=620 --height=400 --file --on-top --name=idiomind \
---class=idiomind --window-icon=idiomind --center --file-filter="*.mp3" \
---button=Ok:0 --borders=0 --title="$ttl" --skip-taskbar)
+    ret=$?
+    audio=$(echo "$AU" | cut -d "|" -f1)
 
-ret=$?
-audio=$(echo "$AU" | cut -d "|" -f1)
-
-DT="$2"; cd $DT
-if [ $ret -eq 0 ]; then
-    if  [ -f "$audio" ]; then
-        cp -f "$audio" $DT/audtm.mp3 >/dev/null 2>&1
-        #eyeD3 -P itunes-podcast --remove $DT/audtm.mp3
-        eyeD3 --remove-all $DT/audtm.mp3 & exit
+    DT="$2"; cd $DT
+    if [ $ret -eq 0 ]; then
+        if  [ -f "$audio" ]; then
+            cp -f "$audio" $DT/audtm.mp3 >/dev/null 2>&1
+            #eyeD3 -P itunes-podcast --remove $DT/audtm.mp3
+            eyeD3 --remove-all $DT/audtm.mp3 & exit
+        fi
     fi
-fi
 
 # -------------------------------------------------
 elif [ "$1" = listen_sntnc ]; then
@@ -52,11 +51,11 @@ elif [ "$1" = edit_audio ]; then
 # -------------------------------------------------
 elif [ "$1" = help ]; then
 
-zenity --text-info --window-icon=idiomind \
---title="$(gettext "Help")" --width=740 \
---height=600 --ok-label="$(gettext "OK")" \
---name=idiomind --html \
---url="http://idiomind.sourceforge.net/doc/help.html" >/dev/null 2>&1
+    zenity --text-info --window-icon=idiomind \
+    --title="$(gettext "Help")" --width=740 \
+    --height=600 --ok-label="$(gettext "OK")" \
+    --name=idiomind --html \
+    --url="http://idiomind.sourceforge.net/doc/help.html" >/dev/null 2>&1
     
 # -------------------------------------------------
 elif [ "$1" = definition ]; then
