@@ -71,7 +71,7 @@ elif ( [ -f "$DM_tlt/$fname.mp3" ] || [ "$5" = s_fix ] ); then
     --window-icon=idiomind --scroll --text-align=$align \
     --skip-taskbar --center --title=" " --borders=20 \
     --on-top --selectable-labels --expand-column=0 \
-    --text="<big><big>$trgt</big></big>\n\n<i>$src</i>\n\n\n" \
+    --text="<big><big>$trgt</big></big>\n\n<i>$src</i>\n\n\n\n\n" \
     --width="$wth" --height="$eht" --center \
     --column="":TEXT --column="":TEXT \
     --button=gtk-edit:4 --button="$listen":"$DS/ifs/tls.sh listen_sntnc '$fname'" \

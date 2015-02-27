@@ -89,7 +89,7 @@ elif [ "$1" = check_updates ]; then
     
     if [ "$(sed -n 1p $DT/release)" != "$(idiomind -v)" ]; then
     
-        yad --text="<big><b> $(gettext "A new version of Idiomind available") </b></big>\n\n" \
+        yad --text="<b> $(gettext "A new version of Idiomind available") </b>\n\n" \
         --image=info --title=" " --window-icon=idiomind \
         --on-top --skip-taskbar --sticky \
         --center --name=idiomind --borders=10 --always-print-result \
@@ -143,7 +143,7 @@ elif [ "$1" = a_check_updates ]; then
         
         if [ "$(sed -n 1p $DT/release)" != "$(idiomind -v)" ]; then
         
-            yad --text="<big><b> $(gettext "A new version of Idiomind available") </b></big>\n\n" \
+            yad --text="<b> $(gettext "A new version of Idiomind available") </b>\n\n" \
             --image=info --title=" " --window-icon=idiomind \
             --on-top --skip-taskbar --sticky --always-print-result \
             --center --name=idiomind --borders=10 \

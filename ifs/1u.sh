@@ -11,8 +11,8 @@ Encoding=UTF-8
 alias gettext='gettext "idiomind"'
 user=$(echo "$(whoami)")
 
-text="<big><big><big><big>  Welcome  </big></big></big></big>
-$(gettext "     To get started, please configure the following:")\n\n"
+text="<big><big><big>  Welcome  </big></big></big>
+$(gettext "     To get started, please configure the following:")\n"
 
 function set_lang() {
     
@@ -47,10 +47,10 @@ fi
 dialog=$(yad --center --width=500 --height=300 --fixed \
     --image-on-top --on-top --class=idiomind --name=idiomind \
     --window-icon=idiomind --buttons-layout=end --text="$text" \
-    --title="Idiomind" --form --borders=15 --align=center --button=Cancel:1 --button=Ok:0 \
-    --field="$(gettext "Select the language you are studying")":lbl \
+    --title="Idiomind" --form --borders=15 --align=center --button=Cancel:1 --button=gtk-ok:0 \
+    --field="$(gettext "Select the language you are studying:")":lbl \
     --field=":CB" !""\
-    --field="$(gettext "Select your native language")":lbl \
+    --field="$(gettext "Select your native language:")":lbl \
     --field=":CB" \
     !"English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" !"" \
     !"English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese")

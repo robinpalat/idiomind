@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-#source /usr/share/idiomind/ifs/c.conf
+source /usr/share/idiomind/ifs/c.conf
 
 if [ "$1" = chngi ]; then
 

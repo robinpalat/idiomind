@@ -116,16 +116,20 @@ in_the_city="$(gettext "In the city")"
 movies="$(gettext "Movies")"
 internet="$(gettext "Internet")"
 music="$(gettext "Music")"
-events="$(gettext "Events")"
 nature="$(gettext "Nature")"
 news="$(gettext "News")"
 office="$(gettext "Office")"
 relations="$(gettext "Relations")"
 sport="$(gettext "Sport")"
-social="$(gettext "Social")"
+social_networks="$(gettext "Social networks")"
 shopping="$(gettext "Shopping")"
 technology="$(gettext "Technology")"
 travel="$(gettext "Travel")"
+article="$(gettext "Article")"
+science="$(gettext "Science")"
+interview="$(gettext "Interview")"
+funny="$(gettext "Funny")"
+
 lnglbl=$(echo $lgtl | awk '{print tolower($0)}')
 U=$(sed -n 1p $DC_s/cfg.4)
 mail=$(sed -n 2p $DC_s/cfg.4)
@@ -254,7 +258,7 @@ upld=$(yad --form --width=420 --height=460 --on-top \
 --field="    <small>$(gettext "Author")</small>" "$user" \
 --field="    <small>$(gettext "Contact (Optional)")</small>" "$mail" \
 --field="    <small>$(gettext "Category")</small>:CB" \
-"!$others!$comics!$culture!$entertainment!$family!$grammar!$history!$movies!$in_the_city!$internet!$music!$nature!$news!$office!$relations!$sport!$shopping!$social!$technology!$travel" \
+"!$others!$article!$comics!$culture!$documentary!$entertainment!$funny!$family!$grammar!$history!$movies!$in_the_city!$interview!$internet!$music!$nature!$news!$office!$relations!$sport!$science!$shopping!$social_networks!$technology!$travel" \
 --field="    <small>$(gettext "Skill Level")</small>:CB" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
 --field="<small>\n$(gettext "Description/Notes")</small>:TXT" "$nt" \
 --field="<small>$(gettext "Add image")</small>:FL")
@@ -277,16 +281,20 @@ Ctgry=$(echo "$upld" | cut -d "|" -f4)
 [ $Ctgry = $movies ] && Ctgry=movies
 [ $Ctgry = $internet ] && Ctgry=internet
 [ $Ctgry = $music ] && Ctgry=music
-[ $Ctgry = $events ] && Ctgry=events
 [ $Ctgry = $nature ] && Ctgry=nature
 [ $Ctgry = $news ] && Ctgry=news
 [ $Ctgry = $office ] && Ctgry=office
 [ $Ctgry = $relations ] && Ctgry=relations
 [ $Ctgry = $sport ] && Ctgry=sport
-[ $Ctgry = $social ] && Ctgry=social
+[ $Ctgry = $social_networks ] && Ctgry=social_networks
 [ $Ctgry = $shopping ] && Ctgry=shopping
 [ $Ctgry = $technology ] && Ctgry=technology
+[ $Ctgry = $article ] && Ctgry=article
 [ $Ctgry = $travel ] && Ctgry=travel
+[ $Ctgry = $interview ] && Ctgry=interview
+[ $Ctgry = $science ] && Ctgry=science
+[ $Ctgry = $funny ] && Ctgry=funny
+[ $Ctgry = $others ] && Ctgry=others
 
 level=$(echo "$upld" | cut -d "|" -f5)
 [ $level = $beginner ] && level=1

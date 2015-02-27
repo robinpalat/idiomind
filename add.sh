@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-#source /usr/share/idiomind/ifs/c.conf
+source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/mods/cmns.sh
 include $DS/ifs/mods/add
 
@@ -267,12 +267,12 @@ Your topics will be on this list. Create one using the button below. ")"
             exit 1
         fi
         
-elif [ $1 = new_sentence ]; then
+elif [ "$1" = new_sentence ]; then
         
     DT_r="$3"
     source $DS/default/dicts/$lgt
     DM_tlt="$DM_tl/$tpe"
-    DC_tlt="$DM_tl/$tpe"
+    DC_tlt="$DM_tl/$tpe/.conf"
     icnn=idiomind
 
     if [ $(cat "$DC_tlt/cfg.4" | wc -l) -ge 50 ]; then
@@ -379,12 +379,11 @@ elif [ $1 = new_word ]; then
 
     trgt="$2"
     srce="$4"
-    source $DS/default/dicts/$lgt
     icnn=idiomind
     DT_r="$3"
     cd $DT_r
     DM_tlt="$DM_tl/$tpe"
-    DC_tlt="$DM_tl/$tpe"
+    DC_tlt="$DM_tl/$tpe/.conf"
     
     if [ $(cat "$DC_tlt/cfg.3" | wc -l) -ge 50 ]; then
         [ -d $DT_r ] && rm -fr $DT_r
