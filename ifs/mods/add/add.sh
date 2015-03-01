@@ -417,8 +417,8 @@ function dlg_form_2() {
         --field=" <small><small>${lgsl^}</small></small>: " "$srce" \
         --field=" <small><small>$(gettext "Topic")</small></small>:CB" \
         "$ttle!$(gettext "New topic") *$e$tpcs" \
-        --button="<small>$(gettext "Image")":3 \
-        --button="<small>$(gettext "Audio")":2 \
+        --button="$(gettext "Image")":3 \
+        --button="$(gettext "Audio")":2 \
         --button=gtk-add:0
 }
 

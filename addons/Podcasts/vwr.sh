@@ -42,13 +42,13 @@ sed 's/^ *//; s/ *$//g')"
 
 if [[ -f "$file" ]]; then
     sum="$(cat "$filetxt")"
-     printf "$sum" | yad --text-info \
+     printf "$sum" | yad --text-info --text-align=center \
     --window-icon=/usr/share/idiomind/images/idiomind.png \
     --center --title=" " --scroll --borders=10 \
-    --text="<span color='#696969'><b>$2</b></span>\n<small>By  <a href='http://idiomind.sourceforge.net/$lgs/$lgtl'>$by</a></small>\\n" \
+    --text="<span color='#5A5C5D'><b>$2</b></span>  <small> By  <a href='http://idiomind.sourceforge.net/$lgs/$lgtl'>$by</a></small>\\n" \
     --editable --always-print-result --image-on-top \
     --width="$wth" --height="$(($eht+80))" --center \
-    ---selectable-labels --margins=10 --back='#F5F9FF' \
+    ---selectable-labels --margins=10 --back='#EEF0F2' \
     --wrap --show-uri --fontname=vendana \
     --button="<small>$btnlabel</small>":"$btncmd" \
     --button="<small>Stop</small>":"killall play" \

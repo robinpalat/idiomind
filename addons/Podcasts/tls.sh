@@ -62,11 +62,8 @@ elif [ "$1" = check ]; then
     
     [ ! -f "$DCF/$lgtl/$2.xml" ] && printf "$tpl" > "$DCF/$lgtl/$2.xml"
     
-
     PODCAST_ITEMS="$(xsltproc - "$lnk" <<< "$XSLT_STYLESHEET" 2> /dev/null)"
     PODCAST_ITEMS="$(echo "$PODCAST_ITEMS" | tr '\n' ' ' | tr -s [:space:] | sed 's/EOL/\n/g' | head -n 2)"
-
-
     ITEM="$(echo "$PODCAST_ITEMS" | sed -n 1p)"
     
     [ -z "$(echo $ITEM | sed 's/^ *//; s/ *$//; /^$/d')" ] && msg "$(gettext "Couldn't download the specified URL\n")" info && exit 1
@@ -112,7 +109,7 @@ elif [ "$1" = syncronize ]; then
             [ ! -d "$DIR" ] && exit 1
     fi
 
-    notify-send -i idiomind "$(gettext "Syncing")" "$(gettext " ")" -t 3000
+    #notify-send -i idiomind "$(gettext "Syncing")" "$(gettext " ")" -t 3000
     touch $DT/l_sync
     rsync -az --delete --ignore-errors "$DM_tl/Podcasts/content" "$SYNCDIR"
 
