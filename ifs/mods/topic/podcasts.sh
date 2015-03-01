@@ -1,44 +1,46 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-function feedmode() {
+source /usr/share/idiomind/ifs/c.conf
+
+function podcast() {
     
-        DMF="$DM_tl/Feeds"
-        DCF="$DC/addons/Learning with news"
-        DSF="$DS/addons/Learning with news"
+        DMF="$DM_tl/Podcasts"
+        DCF="$DC_a/Podcasts"
+        DSF="$DS/addons/Podcasts"
         FEED=$(cat "$DCF/$lgtl/.rss")
         ICON="$DSF/images/rss.png"
         c=$(echo $(($RANDOM%100000)))
-        STT="$(cat $DT/.uptf)"
+        [ -f $DT/.uptp ] && STT="$(cat $DT/.uptp)" || STT=""
         KEY=$c
-        if echo "$STT" | grep "updating..."; then
+        if echo "$STT" | grep "updating"; then
             info=$(echo "<i>"$(gettext "Updating")"...</i>")
             FEED=$(cat "$DT/.rss")
         else
-            info=$(cat $DM_tl/Feeds/.dt)
+            info=$(cat $DM_tl/Podcasts/.dt)
         fi
-        if [[ ! -f "$DM_tl/Feeds/.conf/cfg.1" ]]; then
-        cd "$DMF/content"
-        ls -t *.mp3 > "$DM_tl/Feeds/.conf/cfg.1"
-        sed -i 's/.mp3//g' "$DM_tl/Feeds/.conf/cfg.1"
+        if [[ ! -f "$DM_tl/Podcasts/.conf/cfg.1" ]]; then
+        cp -f "$DM_tl/Podcasts/.conf/.cfg.11" \
+        "$DM_tl/Podcasts/.conf/cfg.1"
         fi
         cd "$DSF"
-        cat "$DM_tl/Feeds/.conf/cfg.1" | yad \
+
+        cat "$DM_tl/Podcasts/.conf/cfg.1" | yad \
         --no-headers --list --listen --plug=$KEY --tabnum=1 \
         --text=" <small>$info</small>" \
         --expand-column=1 --ellipsize=END --print-all \
         --column=Name:TEXT --dclick-action='./vwr.sh V1' &
-        cat "$DM_tl/Feeds/.conf/cfg.0" | awk '{print $0""}' \
-        | yad --no-headers --list --listen --plug=$KEY --tabnum=2 \
+        cat "$DMF/.conf/cfg.2" | yad --no-headers \
+        --list --listen --plug=$KEY --tabnum=2 \
         --expand-column=1 --ellipsize=END --print-all \
         --column=Name:TEXT --dclick-action='./vwr.sh V2' &
         yad --notebook --name=Idiomind --center \
         --class=Idiomind --align=right --key=$KEY \
-        --text=" <big><big>$(gettext "News") </big></big>\\n <small>$FEED</small>" \
+        --text=" <big><big>$(gettext "Podcasts") </big></big>\\n <small>$FEED</small>" \
         --image="$ICON" --image-on-top  \
         --tab-borders=0 --center --title="$FEED" \
-        --tab="  $(gettext "News")  " \
-        --tab=" $(gettext "Saved Content") " \
+        --tab="  $(gettext "Episodes")  " \
+        --tab=" $(gettext "Saved Episodes") " \
         --ellipsize=END --image-on-top \
         --window-icon=$DS/images/idiomind.png \
         --width="$wth" --height="$eht" --borders=0 \
@@ -61,7 +63,8 @@ function feedmode() {
             fi
 }
 
-if echo "$mde" | grep "fd"; then
-    feedmode
+
+if echo "$mde" | grep "pd"; then
+    podcast
     exit 1
 fi

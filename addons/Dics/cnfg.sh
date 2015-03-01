@@ -141,7 +141,7 @@ elif [ -z "$1" ]; then
     
     sel="$(dict_list | yad --title="Idiomind - $(gettext "Dictionaries")" \
     --list --center --expand-column=2 --text="$tex" $align \
-    --width=420 --height=300 --skip-taskbar --separator=" " \
+    --width=420 --height=300 --skip-taskbar --editable --separator=" " \
     --borders=10 --button="$(gettext "Add")":2 --print-all --button=OK:0 \
     --column=" ":CHK --column="$(gettext "Availables")":TEXT \
     --column="$(gettext "Languages")":TEXT --window-icon=idiomind \

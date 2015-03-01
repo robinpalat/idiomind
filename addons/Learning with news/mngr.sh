@@ -95,7 +95,7 @@ elif [ "$1" = delete_news ]; then
 
         if [ $ret -eq 0 ]; then
         
-            rm -r $DM_tl/Feeds/conten/*
+            rm -r $DM_tl/Feeds/content/*
             rm $DM_tl/Feeds/.conf/.updt.lst
             rm $DM_tl/Feeds/.conf/cfg.1
             rm $DM_tl/Feeds/.conf/.dt

@@ -49,6 +49,8 @@ elif [[ -z "$1" ]]; then
     cd "$DC_tlt/practice"
     indp=$(cat w6 | sed '/^$/d' | sort | uniq)
     indf=$(cat $DM_tl/Feeds/.conf/cfg.0)
+    indp1=$(cat $DM_tl/Podcasts/.conf/cfg.1)
+    indp2=$(cat $DM_tl/Podcasts/.conf/cfg.2)
     nnews=$(cat $DM_tl/Feeds/.conf/cfg.1 | head -n 8)
     u=$(echo "$(whoami)")
     infs=$(echo "$snts Sentences" | wc -l)
@@ -63,23 +65,20 @@ elif [[ -z "$1" ]]; then
         echo "$indp" > ./indp
         echo "$indf" > ./indf
         echo "$nnews" >> ./indf
+        echo "$indp1" >> ./indp1
+        echo "$indp2" >> ./indp2
     fi
     [[ -z "$indw" ]] && img1=$DS/images/addi.png || img1=$DS/images/add.png
     [[ -z "$inds" ]] && img2=$DS/images/addi.png || img2=$DS/images/add.png
     [[ -z "$indm" ]] && img3=$DS/images/addi.png || img3=$DS/images/add.png
     [[ -z "$indp" ]] && img4=$DS/images/addi.png || img4=$DS/images/add.png
     [[ -z "$indf" ]] && img5=$DS/images/addi.png || img5=$DS/images/add.png
-    img6=$DS/images/set.png
+    [[ -z "$indp1" ]] && img6=$DS/images/addi.png || img6=$DS/images/add.png
+    [[ -z "$indp2" ]] && img7=$DS/images/addi.png || img7=$DS/images/add.png
+    img8=$DS/images/set.png
 
     if [[ ! -f $DC_s/cfg.5 ]]; then
-    echo 'FALSE
-FALSE
-FALSE
-FALSE
-FALSE
-TRUE
-TRUE
-FALSE' > $DC_s/cfg.5; fi
+    printf 'FALSE\nFALSE\nFALSE\nFALSE\nFALSE\nFALSE\nFALSE\nTRUE\nTRUE\nFALSE' > $DC_s/cfg.5; fi
     st1=$(cat $DC_s/cfg.5 | sed -n 1p)
     st2=$(cat $DC_s/cfg.5 | sed -n 2p)
     st3=$(cat $DC_s/cfg.5 | sed -n 3p)
@@ -90,6 +89,8 @@ FALSE' > $DC_s/cfg.5; fi
     st8=$(cat $DC_s/cfg.5 | sed -n 8p)
     st9=$(cat $DC_s/cfg.5 | sed -n 9p)
     st10=$(cat $DC_s/cfg.5 | sed -n 10p)
+    st11=$(cat $DC_s/cfg.5 | sed -n 11p)
+    st12=$(cat $DC_s/cfg.5 | sed -n 12p)
     slct=$(mktemp $DT/slct.XXXX)
     if [ ! -f $DT/.p_ ]; then
         btn="--button=Time:$DS/play.sh time"
@@ -108,9 +109,11 @@ FALSE' > $DC_s/cfg.5; fi
     "Marks" "$img3" "$(gettext "Marks")" $st3 \
     "practice" "$img4" "$(gettext "Practice")" $st4 \
     "Feeds" "$img5" "$(gettext "News")" $st5 \
-    "Notification" "$img6" "$(gettext "Text")" $st6 \
-    "Audio" "$img6" "$(gettext "Audio")" $st7 \
-    "Repeat" "$img6" "$(gettext "Repeat")" $st8 > "$slct"
+    "newsepisodes" "$img6" "$(gettext "News episodes")" $st6 \
+    "savedepisodes" "$img7" "$(gettext "Saved episodes")" $st7 \
+    "Notification" "$img8" "$(gettext "Text")" $st8 \
+    "Audio" "$img8" "$(gettext "Audio")" $st9 \
+    "Repeat" "$img8" "$(gettext "Repeat")" $st10 > "$slct"
     ret=$?
     slt=$(cat "$slct")
 
@@ -149,11 +152,13 @@ FALSE' > $DC_s/cfg.5; fi
         fi
         if echo "$(echo "$slt" | sed -n 6p)" | grep TRUE; then
             sed -i "6s/.*/TRUE/" $DC_s/cfg.5
+            cat ./indp1 >> ./indx
         else
             sed -i "6s/.*/FALSE/" $DC_s/cfg.5
         fi
         if echo "$(echo "$slt" | sed -n 7p)" | grep TRUE; then
             sed -i "7s/.*/TRUE/" $DC_s/cfg.5
+            cat ./indp2 >> ./indx
         else
             sed -i "7s/.*/FALSE/" $DC_s/cfg.5
         fi
@@ -162,6 +167,17 @@ FALSE' > $DC_s/cfg.5; fi
         else
             sed -i "8s/.*/FALSE/" $DC_s/cfg.5
         fi
+        if echo "$(echo "$slt" | sed -n 9p)" | grep TRUE; then
+            sed -i "9s/.*/TRUE/" $DC_s/cfg.5
+        else
+            sed -i "9s/.*/FALSE/" $DC_s/cfg.5
+        fi
+        if echo "$(echo "$slt" | sed -n 10p)" | grep TRUE; then
+            sed -i "10s/.*/TRUE/" $DC_s/cfg.5
+        else
+            sed -i "10s/.*/FALSE/" $DC_s/cfg.5
+        fi
+        
         rm -f "$slct"
 
     #-------------------------------------stop 
@@ -186,8 +202,10 @@ FALSE' > $DC_s/cfg.5; fi
     m=$(sed -n 3p $DC_s/cfg.5)
     p=$(sed -n 4p $DC_s/cfg.5)
     f=$(sed -n 5p $DC_s/cfg.5)
+    p1=$(sed -n 6p $DC_s/cfg.5)
+    P2=$(sed -n 7p $DC_s/cfg.5)
 
-    if ! [ "$(echo "$w""$s""$m""$f""$p" | grep -o "TRUE")" ]; then
+    if ! [ "$(echo "$w""$s""$m""$f""$p""$p1""$p2" | grep -o "TRUE")" ]; then
         notify-send "$(gettext "Exiting")" "$(gettext "Nothing specified to play")" -i idiomind -t 3000 &&
         sleep 5
         $DS/stop.sh play

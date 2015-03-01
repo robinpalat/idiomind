@@ -1,12 +1,28 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#  
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#  
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+#  MA 02110-1301, USA.
+#  
+
 source /usr/share/idiomind/ifs/c.conf
 
 if [ "$1" = chngi ]; then
 
-    nta=$(sed -n 6p $DC_s/cfg.5)
-    sna=$(sed -n 7p $DC_s/cfg.5)
+    nta=$(sed -n 8p $DC_s/cfg.5)
+    sna=$(sed -n 9p $DC_s/cfg.5)
     cfg1="$DC_s/cfg.5"
     indx="$DT/p/indx"
     [[ -z $(cat $DC_s/cfg.2) ]] && echo 8 > $DC_s/cfg.2
@@ -21,7 +37,9 @@ if [ "$1" = chngi ]; then
     [[ -f "$DM_tlt/words/$fname.mp3" ]] && file="$DM_tlt/words/$fname.mp3" && t=1
     [[ -f "$DM_tl/Feeds/kept/words/$fname.mp3" ]] && file="$DM_tl/Feeds/kept/words/$fname.mp3" && t=1
     [[ -f "$DM_tl/Feeds/kept/$fname.mp3" ]] && file="$DM_tl/Feeds/kept/$fname.mp3" && t=2
-    [[ -f "$DM_tl/Feeds/conten/$fname.mp3" ]] && file="$DM_tl/Feeds/conten/$fname.mp3" && t=2
+    [[ -f "$DM_tl/Feeds/content/$fname.mp3" ]] && file="$DM_tl/Feeds/content/$fname.mp3" && t=2
+    [[ -f "$DM_tl/Podcasts/content/$fname.mp3" ]] && file="$DM_tl/Podcasts/content/$fname.mp3" && t=3
+    [[ -f "$DM_tl/Podcasts/kept/$fname.mp3" ]] && file="$DM_tl/Podcasts/kept/$fname.mp3" && t=3
     
     if [ -f "$file" ]; then
         
@@ -38,6 +56,13 @@ if [ "$1" = chngi ]; then
         grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
         srce=$(echo "$tgs" | \
         grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
+        
+        elif [ "$t" = 3 ]; then
+        trgt="$item"
+        srce="By: $(eyeD3 --no-color -v "$file" \
+        | grep artist | sed 's/artist/||/g' \
+        | sed 's/title\:[^)]*||\://g' | \
+        sed -e "s/[[:space:]]\+/ /g")"
         fi
 
         [[ -z "$trgt" ]] && trgt="$item"
@@ -51,7 +76,7 @@ if [ "$1" = chngi ]; then
 
                 $DS/ifs/tls.sh play "$file"
         fi
-        #cnt=$(soxi -D "$file")
+        
         sleep $bcl
         [ -f $DT/.bcle ] && rm -f $DT/.bcle
         

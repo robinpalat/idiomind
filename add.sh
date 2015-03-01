@@ -113,7 +113,7 @@ elif [ "$1" = new_items ]; then
     if [ "$(cat $DM_tl/.cfg.1 | grep -v 'Feeds' | wc -l)" -lt 1 ]; then
         [ -d $DT_r ] && rm -fr $DT_r
         notopic="$(gettext "To start adding notes you need have a topic.
-Your topics will be on this list. Create one using the button below. ")"
+Create one using the button below. ")"
         $DS/chng.sh "$notopic" & exit 1
     fi
     
@@ -330,7 +330,7 @@ elif [ "$1" = new_sentence ]; then
     if ( [ -z $(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary') ] \
     || [ ! -f "$DM_tlt/$fname.mp3" ] || [ -z "$trgt" ] || [ -z "$srce" ] ); then
         [ -d $DT_r ] && rm -fr $DT_r
-        msg "$(gettext "Something unexpected has occurred while saving your note")" dialog-warning & exit 1
+        msg "$(gettext "Something unexpected has occurred while saving your note.")" dialog-warning & exit 1
     fi
     
     add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3"
@@ -353,7 +353,7 @@ elif [ "$1" = new_sentence ]; then
     
     if ([ -z "$grmrk" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ]); then
         rm "$DM_tlt/$fname.mp3"
-        msg "$(gettext "Something unexpected has occurred while saving your note")" dialog-warning 
+        msg "$(gettext "Something unexpected has occurred while saving your note.")" dialog-warning 
         [ -d $DT_r ] && rm -fr $DT_r & exit 1
         
     fi
@@ -387,7 +387,7 @@ elif [ $1 = new_word ]; then
     
     if [ $(cat "$DC_tlt/cfg.3" | wc -l) -ge 50 ]; then
         [ -d $DT_r ] && rm -fr $DT_r
-        msg "$tpe    \\n"$(gettext "You have reached the maximum number of words")"" info & exit 0
+        msg "$tpe    \\n"$(gettext "You have reached the maximum number of words.")"" info & exit 0
     fi
     if [ -z "$tpe" ]; then
         [ -d $DT_r ] && rm -fr $DT_r
@@ -490,7 +490,7 @@ elif [ "$1" = edit_list_words ]; then
         tpe="$tpc"
         if [ $(cat "$DC_tlt/cfg.3" | wc -l) -ge 50 ]; then
             [ -d $DT_r ] && rm -fr $DT_r
-            msg "$tpe    \\n"$(gettext "You have reached the maximum number of words")"" info & exit
+            msg "$tpe    \\n"$(gettext "You have reached the maximum number of words.")"" info & exit
         fi
         if [ -z "$tpe" ]; then
             [ -d $DT_r ] && rm -fr $DT_r
@@ -601,7 +601,7 @@ elif [ "$1" = dclik_list_words ]; then
     
     if [ $(cat "$DC_tlt/cfg.3" | wc -l) -ge 50 ]; then
         [ -d $DT_r ] && rm -fr $DT_r
-        msg "$tpe    \\n"$(gettext "You have reached the maximum number of words")"" info & exit
+        msg "$tpe    \\n"$(gettext "You have reached the maximum number of words.")"" info & exit
     fi
 
     left=$((50 - $nw))
@@ -782,7 +782,7 @@ elif [ "$1" = process ]; then
     fi
     if [ $ns -ge 50 ]; then
         [ -d $DT_r ] && rm -fr $DT_r
-        msg "$(gettext "You have reached the maximum number of sentences")" info
+        msg "$(gettext "You have reached the maximum number of sentences.")" info
         rm -f ls $lckpr & exit 1
     fi
 

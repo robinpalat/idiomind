@@ -1,6 +1,22 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#  
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#  
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+#  MA 02110-1301, USA.
+#  
+
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/mods/cmns.sh
 include $DS/ifs/mods/add
@@ -12,7 +28,7 @@ DCF="$DC/addons/Learning with news"
 
 if [[ -z "$(cat $DC_a/dict/.dicts)" ]]; then
     source $DS/ifs/trans/$lgs/topics_lists.conf
-    $DS_a/Dics/cnfg.sh "" f "$(gettext "Not indicated a dictionary")"
+    $DS_a/Dics/cnfg.sh "" f "$(gettext "Dictionary list has not been set.")"
     if  [[ -z "$(cat $DC_a/dict/.dicts)" ]]; then
         exit 1
     fi
@@ -50,7 +66,7 @@ if [ ! -d $DM_tl/Feeds ]; then
 
     mkdir $DM_tl/Feeds
     mkdir $DM_tl/Feeds/.conf
-    mkdir $DM_tl/Feeds/conten
+    mkdir $DM_tl/Feeds/content
     mkdir $DM_tl/Feeds/kept
     mkdir $DM_tl/Feeds/kept/.audio
     mkdir $DM_tl/Feeds/kept/words
@@ -74,7 +90,7 @@ FEED=$(cat "$DC/addons/Learning with news/$lgtl/.rss")
 sleep 1
 echo "$tpc" > $DC_s/cfg.8
 echo fd >> $DC_s/cfg.8
-notify-send -i idiomind "Feed Mode" " $FEED" -t 3000
+#notify-send -i idiomind "Feed Mode" " $FEED" -t 3000
 exit 1' > $DM_tl/Feeds/tpc.sh
 
     chmod +x $DM_tl/Feeds/tpc.sh
@@ -84,7 +100,7 @@ exit 1' > $DM_tl/Feeds/tpc.sh
     $DS/mngr.sh mkmn
 fi
 
-dir_conten="$DM_tl/Feeds/conten"
+dir_content="$DM_tl/Feeds/content"
 dir_conf="$DM_tl/Feeds/.conf"
 
 if [ -n "$feed" ]; then
@@ -159,9 +175,9 @@ if [ -n "$feed" ]; then
                     
                     fetch_audio $aw $bw "$DT_r" "$DT_r/$nme"
                     
-                    mv -f "$DT_r/$nme" "$dir_conten/$nme"
-                    mv -f "$nme.mp3" "$dir_conten/$nme.mp3"
-                    echo "$lnk" > "$dir_conten/$nme.lnk"
+                    mv -f "$DT_r/$nme" "$dir_content/$nme"
+                    mv -f "$nme.mp3" "$dir_content/$nme.mp3"
+                    echo "$lnk" > "$dir_content/$nme.lnk"
                     notify-send -i idiomind "$trgt" "$srce" -t 12000 &
                 
                 else
@@ -173,25 +189,25 @@ if [ -n "$feed" ]; then
                 rm -f $aw $bw 
                 )
 
-                echo "$date" > $dir_conf/.dt
+                echo "$date" > $DM_tl/Feeds/.dt
             fi
             let n++
     done
 
     mv -f $DT_r/rss "$dir_conf/.updt.lst"
     rm -fr $DT_r $DT/.uptf $DT/.rss
-    cd "$dir_conten"
+    cd "$dir_content"
     find *.mp3 -mtime +5 -exec ls > ls {} \;
     while read nmfile; do
-        tgs=$(eyeD3 "$dir_conten/$nmfile")
+        tgs=$(eyeD3 "$dir_content/$nmfile")
         trg=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
         grep -v -x -v "$trg" "$dir_conf/cfg.1" > "$dir_conf/cfg.1.tmp"
         sed '/^$/d' "$dir_conf/cfg.1.tmp" > "$dir_conf/cfg.1"
     done < ./ls
     rm "$dir_conf"/*.tmp
     
-    if [ -d "$dir_conten" ]; then
-    cd "$dir_conten/"
+    if [ -d "$dir_content" ]; then
+    cd "$dir_content/"
     find ./* -mtime +5 -exec rm -r {} \; &
     fi
 

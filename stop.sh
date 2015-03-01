@@ -51,5 +51,6 @@ elif echo "$1" | grep "feed"; then
     [ -n "$(ps -A | pgrep -f "rsstail")" ] && killall rsstail &
     killall strt.sh &
     [ -f $DT/.uptf ] && rm -fr $DT/.uptf
+    [ -f $DT/.uptp ] && rm -fr $DT/.uptp
     exit
 fi
