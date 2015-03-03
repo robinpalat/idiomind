@@ -8,19 +8,22 @@ include $DS/ifs/mods/add
 if [ "$1" = new_item ]; then
 
     trgt="$2"
-    dir_kept="$DM_tl/Podcasts/kept"
-    dir_content="$DM_tl/Podcasts/content"
-    dir_conf="$DM_tl/Podcasts/.conf"
+    DMK="$DM_tl/Podcasts/kept"
+    DMC="$DM_tl/Podcasts/content"
+    DC="$DM_tl/Podcasts/.conf"
 
     if [ ! -d "$DM_tl/Podcasts/kept" ]; then
         mkdir -p "$DM_tl/Podcasts/kept"
     fi
 
     fname="$(nmfile "${trgt^}")"
-    cp -f "$dir_content/$fname.mp3" "$dir_kept/$fname.mp3"
-    cp -f "$dir_content/$fname.txt" "$dir_kept/$fname.txt"
-    echo "$trgt" >> "$dir_conf/cfg.2"
-    check_index1 "$dir_conf/cfg.2"
+    echo "$trgt" >> "$DC/cfg.2"
+    echo "$trgt" >> "$DC/.cfg.22"
+    cp -f "$DMC/$fname.mp3" "$DMK/$fname.mp3"
+    cp -f "$DMC/$fname.txt" "$DMK/$fname.txt"
+    cp -f "$DMC/$fname.png" "$DMK/$fname.png"
+    cp -f "$DMC/$fname" "$DMK/$fname"
+    check_index1 "$DC/cfg.2" "$DC/.cfg.22"
     notify-send -i idiomind "$(gettext "Archive")" "$trgt" -t 3000
 
     exit

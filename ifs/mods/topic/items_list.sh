@@ -18,7 +18,7 @@ function notebook_1() {
     --tabnum=3 --text="$itxt2" --fore='gray40' --wrap --editable \
     --show-uri --fontname=vendana \
     --filename="$nt" > "$cnf3" &
-    yad --notebook --name=Idiomind --center --key=$KEY \
+    yad --notebook --name=idiomind --center --key=$KEY \
     --class=Idiomind --align=right \
     --window-icon=$DS/images/idiomind.png \
     --tab-borders=0 --center --title="Idiomind" \
@@ -47,7 +47,7 @@ function notebook_2() {
     yad --text-info --plug=$KEY --margins=14 --text="$itxt2" \
     --tabnum=3 --fore='gray40' --wrap --filename="$nt" \
     --show-uri --fontname=vendana --editable > "$cnf3" &
-    yad --notebook --name=Idiomind --center \
+    yad --notebook --name=idiomind --center \
     --class=Idiomind --align=right --key=$KEY \
     --tab-borders=0 --center --title="Idiomind" \
     --image="$img" --text="$itxt" \

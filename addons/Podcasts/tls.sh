@@ -4,15 +4,45 @@ source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/mods/cmns.sh
 
 if [ "$1" = play ]; then
-
-    if [ -f "$DM_tl/Podcasts/content/$2.mp3" ]; then
-        drtx="$DM_tl/Podcasts/content"
-    elif [ -f "$DM_tl/Podcasts/kept/$2.mp3" ]; then
-        drtx="$DM_tl/Podcasts/kept"
-    fi
     
     killall play
-    play "$drtx/$2.mp3" && exit
+    DCF="$DC/addons/Podcasts"
+    [ -f "$DCF/.cnf" ] && st3=$(sed -n 2p "$DCF/.cnf") || st3=FALSE
+    [ $st3 = FALSE ] && fs="" || fs='-fs'
+    
+    # mp3
+    if [ -f "$DM_tl/Podcasts/content/$2.mp3" ]; then
+        play "$DM_tl/Podcasts/content/$2.mp3" & exit
+    
+    elif [ -f "$DM_tl/Podcasts/kept/$2.mp3" ]; then
+        play "$DM_tl/Podcasts/kept/$2.mp3" & exit
+    # ogg
+    elif [ -f "$DM_tl/Podcasts/content/$2.ogg" ]; then
+        play "$DM_tl/Podcasts/content/$2.ogg" & exit
+    
+    elif [ -f "$DM_tl/Podcasts/kept/$2.ogg" ]; then
+        play "$DM_tl/Podcasts/kept/$2.ogg" & exit
+    # mp4
+    elif [ -f "$DM_tl/Podcasts/content/$2.mp4" ]; then
+        mplayer "$fs" "$DM_tl/Podcasts/content/$2.mp4" & exit
+    
+    elif [ -f "$DM_tl/Podcasts/kept/$2.mp4" ]; then
+       mplayer "$fs" "$DM_tl/Podcasts/kept/$2.mp4" & exit
+    # m4v
+    elif [ -f "$DM_tl/Podcasts/content/$2.m4v" ]; then
+        mplayer "$fs" "$DM_tl/Podcasts/content/$2.m4v" & exit
+    
+    elif [ -f "$DM_tl/Podcasts/kept/$2.m4v" ]; then
+       mplayer "$fs" "$DM_tl/Podcasts/kept/$2.m4v" & exit
+    
+    # avi
+    elif [ -f "$DM_tl/Podcasts/content/$2.avi" ]; then
+        mplayer "$fs" "$DM_tl/Podcasts/content/$2.avi" & exit
+    
+    elif [ -f "$DM_tl/Podcasts/kept/$2.avi" ]; then
+       mplayer "$fs" "$DM_tl/Podcasts/kept/$2.avi" & exit
+    fi
+    "$?" 2> /dev/null
     
 elif [ "$1" = dclk ]; then
 
@@ -33,29 +63,27 @@ elif [ "$1" = check ]; then
     DSF="$DS/addons/Podcasts"
 
     internet
-    XSLT_STYLESHEET="<?xml version='1.0' encoding='UTF-8'?>
-    <xsl:stylesheet version='1.0'
-      xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
-      xmlns:itunes='http://www.itunes.com/dtds/podcast-1.0.dtd'
-      xmlns:media='http://search.yahoo.com/mrss/'
-      xmlns:atom='http://www.w3.org/2005/Atom'>
-      <xsl:output method='text'/>
-      <xsl:template match='/'>
-        <xsl:for-each select='/rss/channel/item'>
-          <xsl:value-of select='enclosure/@url'/><xsl:text>|</xsl:text>
-          <xsl:value-of select='media:contentt[@type=\"audio/mpeg\"]/@url'/><xsl:text>|</xsl:text>
-          <xsl:value-of select='title'/><xsl:text>|</xsl:text>
-          <xsl:value-of select='pubDate'/><xsl:text>|</xsl:text>
-          <xsl:value-of select='itunes:duration'/><xsl:text>|</xsl:text>
-          <xsl:value-of select='media:contentt[@type=\"audio/mpeg\"]/@duration'/><xsl:text>|</xsl:text>
-          <xsl:value-of select='itunes:summary'/><xsl:text>|</xsl:text>
-          <xsl:value-of select='description'/><xsl:text>EOL</xsl:text>
-        </xsl:for-each>
-      </xsl:template>
-    </xsl:stylesheet>"
+XSLT_STYLESHEET="<?xml version='1.0' encoding='UTF-8'?>
+<xsl:stylesheet version='1.0'
+  xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
+  xmlns:itunes='http://www.itunes.com/dtds/podcast-1.0.dtd'
+  xmlns:media='http://search.yahoo.com/mrss/'
+  xmlns:atom='http://www.w3.org/2005/Atom'>
+  <xsl:output method='text'/>
+  <xsl:template match='/'>
+    <xsl:for-each select='/rss/channel/item'>
+      <xsl:value-of select='enclosure/@url'/><xsl:text>][</xsl:text>
+      <xsl:value-of select='media:contentt[@type=\"audio/mpeg\"]/@url'/><xsl:text>][</xsl:text>
+      <xsl:value-of select='title'/><xsl:text>][</xsl:text>
+      <xsl:value-of select='media:contentt[@type=\"audio/mpeg\"]/@duration'/><xsl:text>][</xsl:text>
+      <xsl:value-of select='itunes:summary'/><xsl:text>][</xsl:text>
+      <xsl:value-of select='description'/><xsl:text>EOL</xsl:text>
+    </xsl:for-each>
+  </xsl:template>
+</xsl:stylesheet>"
 
-    tpl="Enclosure\n ----\nTitle\n ----\n ----\n ----\nSummary\n ----"
-    o=" ----!Title!Enclosure!Summary"
+    tpl="Enclosure\n ----\nTitle\n ----\nSummary\n ----\n ----\n ----"
+    o=" ----!Enclosure!Title!Summary"
     
     lnk=$(sed -n "$2"p $DCF/$lgtl/link)
     [ -z "$lnk" ] && exit 1
@@ -68,7 +96,7 @@ elif [ "$1" = check ]; then
     
     [ -z "$(echo $ITEM | sed 's/^ *//; s/ *$//; /^$/d')" ] && msg "$(gettext "Couldn't download the specified URL\n")" info && exit 1
 
-    field="$(echo "$ITEM" | tr -s '||' '\n')"
+    field="$(echo "$ITEM" | sed 's/\]\[/\n/g')"
 
     yad --scroll --columns=2 --skip-taskbar --separator='\n' \
     --width=800 --height=650 --form --on-top --window-icon=idiomind \
@@ -91,6 +119,23 @@ elif [ "$1" = check ]; then
     mv -f $DT/f.tmp "$DCF/$lgtl/$2.xml" & exit
 
 
+elif [ "$1" = syndlg ]; then
+
+    DCF="$DC/addons/Podcasts"
+    SYNCDIR="$(sed -n 1p $DCF/cfg.5)"
+
+    cd $HOME
+    DIR="$(yad --center --form --on-top --window-icon=idiomind \
+    --borders=10 --separator="" --title=" " --always-print-result \
+    --text="$(gettext "Mountpoint or path where new episodes should be synced.")" \
+    --print-all --button="gtk-apply":0 \
+    --width=460 --height=200 --field="":CDIR "$SYNCDIR")"
+
+    echo "$DIR" > $DT/s.tmp
+    mv -f $DT/s.tmp $DCF/cfg.5
+    exit
+
+
 elif [ "$1" = syncronize ]; then
 
     DCF="$DC/addons/Podcasts"
@@ -99,26 +144,26 @@ elif [ "$1" = syncronize ]; then
     if [ ! -d "$SYNCDIR" ]; then
             cd $HOME
             DIR="$(yad --center --form --on-top --window-icon=idiomind \
-            --borders=15 --separator="" --title=" " --always-print-result \
+            --borders=10 --separator="" --title=" " --always-print-result \
             --text="$(gettext "Set mountpoint or path where new episodes should be synced.")" \
             --print-all --button="$(gettext "Syncronize")":0 \
-            --width=420 --height=200 --field="":CDIR "$SYNCDIR")"
+            --width=460 --height=200 --field="":CDIR "$SYNCDIR")"
             echo "$DIR" > $DT/s.tmp
             mv -f $DT/s.tmp $DCF/cfg.5
-
             [ ! -d "$DIR" ] && exit 1
     fi
 
     #notify-send -i idiomind "$(gettext "Syncing")" "$(gettext " ")" -t 3000
     touch $DT/l_sync
-    rsync -az --delete --ignore-errors "$DM_tl/Podcasts/content" "$SYNCDIR"
+    rsync -az --delete --exclude="*.txt" \
+    --ignore-errors $DM_tl/Podcasts/content/ "$SYNCDIR"
 
     exit=$?
     if [ $exit = 0 ] ; then
-        log="$(cd "$DM_tl/Podcasts/content"; ls *.mp3 | wc -l)"
-        notify-send -i idiomind "$(gettext "synchronization was completed")" "$log $(gettext "synchronized episodes(s)")" -t 3000
+        log="$(cd "$SYNCDIR"; ls *.mp3 | wc -l)"
+        notify-send -i idiomind "$(gettext "synchronization was completed")" "$log $(gettext "synchronized episodes(s)")" -t 8000
     else
-        notify-send -i dialog-warning "$(gettext "Error while syncing")" " " -t 3000
+        notify-send -i dialog-warning "$(gettext "Error while syncing")" " " -t 8000
     fi
     rm -f $DT/l_sync
 fi

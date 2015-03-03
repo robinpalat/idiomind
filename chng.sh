@@ -18,76 +18,69 @@
 #  
 
 source /usr/share/idiomind/ifs/c.conf
+source $DS/ifs/mods/cmns.sh
+
+function stop_bcl() {
+    
+    if [ ! -f "$1" ]; then
+        echo "___" >> $DT/.l_bcl
+        if [ $(cat $DT/.l_bcl | wc -l) -gt 5 ]; then
+            rm -f $DT/.p_  $DT/.l_bcl &
+            $DS/stop.sh play & exit 1
+        fi
+    fi
+}
 
 if [ "$1" = chngi ]; then
-
+    
     nta=$(sed -n 8p $DC_s/cfg.5)
     sna=$(sed -n 9p $DC_s/cfg.5)
     cfg1="$DC_s/cfg.5"
     indx="$DT/p/indx"
     [[ -z $(cat $DC_s/cfg.2) ]] && echo 8 > $DC_s/cfg.2
     bcl=$(cat $DC_s/cfg.2)
-    [ $bcl -le 0 ] && bcl = 0.3 && echo 0.3 > $DC_s/cfg.2
     if ([ $(echo "$nta" | grep "TRUE") ] && [ $bcl -lt 12 ]); then bcl=12; fi
-
     item="$(sed -n "$2"p $indx)"
     fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
     
-    [[ -f "$DM_tlt/$fname.mp3" ]] && file="$DM_tlt/$fname.mp3" && t=2
-    [[ -f "$DM_tlt/words/$fname.mp3" ]] && file="$DM_tlt/words/$fname.mp3" && t=1
-    [[ -f "$DM_tl/Feeds/kept/words/$fname.mp3" ]] && file="$DM_tl/Feeds/kept/words/$fname.mp3" && t=1
-    [[ -f "$DM_tl/Feeds/kept/$fname.mp3" ]] && file="$DM_tl/Feeds/kept/$fname.mp3" && t=2
-    [[ -f "$DM_tl/Feeds/content/$fname.mp3" ]] && file="$DM_tl/Feeds/content/$fname.mp3" && t=2
-    [[ -f "$DM_tl/Podcasts/content/$fname.mp3" ]] && file="$DM_tl/Podcasts/content/$fname.mp3" && t=3
-    [[ -f "$DM_tl/Podcasts/kept/$fname.mp3" ]] && file="$DM_tl/Podcasts/kept/$fname.mp3" && t=3
+    [ -f "$DM_tlt/$fname.mp3" ] && file="$DM_tlt/$fname.mp3" && t=2
+    [ -f "$DM_tlt/words/$fname.mp3" ] && file="$DM_tlt/words/$fname.mp3" && t=1
+    [ -f "$DM_tl/Feeds/kept/words/$fname.mp3" ]] && file="$DM_tl/Feeds/kept/words/$fname.mp3" && t=1
+    [ -f "$DM_tl/Feeds/kept/$fname.mp3" ] && file="$DM_tl/Feeds/kept/$fname.mp3" && t=2
+    [ -f "$DM_tl/Feeds/content/$fname.mp3" ] && file="$DM_tl/Feeds/content/$fname.mp3" && t=2
+    include $DS/ifs/mods/play
     
-    if [ -f "$file" ]; then
-        
-        if [ "$t" = 2 ]; then
-        tgs=$(eyeD3 "$file")
-        trgt=$(echo "$tgs" | \
-        grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
-        srce=$(echo "$tgs" | \
-        grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
-        
-        elif [ "$t" = 1 ]; then
-        tgs=$(eyeD3 "$file")
-        trgt=$(echo "$tgs" | \
-        grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
-        srce=$(echo "$tgs" | \
-        grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
-        
-        elif [ "$t" = 3 ]; then
-        trgt="$item"
-        srce="By: $(eyeD3 --no-color -v "$file" \
-        | grep artist | sed 's/artist/||/g' \
-        | sed 's/title\:[^)]*||\://g' | \
-        sed -e "s/[[:space:]]\+/ /g")"
-        fi
-
-        [[ -z "$trgt" ]] && trgt="$item"
-        imgt="$DM_tlt/words/images/$fname.jpg"
-        [[ -f $imgt ]] && osdi=$imgt || osdi=idiomind
-        
-        [[ -n $(echo "$nta" | grep "TRUE") ]] && \
-        (notify-send -i "$osdi" "$trgt" "$srce" -t 10000 && sleep 0.5) &
-        
-        if [[ -n $(echo "$sna" | grep "TRUE") ]]; then
-
-                $DS/ifs/tls.sh play "$file"
-        fi
-        
-        sleep $bcl
-        [ -f $DT/.bcle ] && rm -f $DT/.bcle
-        
-    else
-        echo "$item" >> $DT/.bcle
-        echo "-- no file found"
-        if [ $(cat $DT/.bcle | wc -l) -gt 5 ]; then
-            rm -f $DT/.p_ &
-            $DS/stop.sh play & exit 1
-        fi
+    stop_blc "$file"
+    
+    if [ "$t" = 2 ]; then
+    tgs=$(eyeD3 "$file")
+    trgt=$(echo "$tgs" | \
+    grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
+    srce=$(echo "$tgs" | \
+    grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
+    play=play
+    
+    elif [ "$t" = 1 ]; then
+    tgs=$(eyeD3 "$file")
+    trgt=$(echo "$tgs" | \
+    grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
+    srce=$(echo "$tgs" | \
+    grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
+    play=play
     fi
+
+    [ -z "$trgt" ] && trgt="$item"
+    imgt="$DM_tlt/words/images/$fname.jpg"
+    [ -f $imgt ] && osdi=$imgt || osdi=idiomind
+    [ -n $(echo "$nta" | grep "TRUE") ] && \
+    (notify-send -i "$osdi" "$trgt" "$srce" -t 10000 && sleep 0.5) &
+    if [ -n $(echo "$sna" | grep "TRUE") ]; then
+    "$play" "$file" && wait
+    fi
+    
+    sleep $bcl
+    [ -f $DT/.l_bcl ] && rm -f $DT/.l_bcl
+        
 
 elif [ "$1" != chngi ]; then
     

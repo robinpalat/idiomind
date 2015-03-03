@@ -6,7 +6,7 @@
 cd $DT/p
 
 if [ -n "$(cat ./indx)" ] && [ $(cat ./indx | wc -l) -gt 0 ]; then
-    if [ "$(sed -n 8p $DC_s/cfg.5)" = "TRUE" ]; then
+    if [ "$(sed -n 10p $DC_s/cfg.5)" = "TRUE" ]; then
             echo "--repeat"
             while [ 1 ]
             do

@@ -6,40 +6,39 @@ source $DS/ifs/mods/cmns.sh
 dir="$DC/addons/dict"
 enables="$DC/addons/dict/enables"
 disables="$DC/addons/dict/disables"
-n="#!/bin/bash
-# Argument 1: \"\$1\" = \"word\"
+
+new="#!/bin/bash
+# 1 argument: \"\$1\" = \"word\"
 # 
 #
-NAME=\"\"
-LANG=\"\""
+_NAME=\"\"
+_LANG=\"\""
 
 function test_() {
     
-    [[ $lang = en ]] && test=house
-    [[ $lang = fr ]] && test=maison
-    [[ $lang = de ]] && test=Haus
-    [[ $lang = 'zh-cn' ]] && test=房子
-    [[ $lang = it ]] && test=casa
-    [[ $lang = ja ]] && test=家
-    [[ $lang = pt ]] && test=casa
-    [[ $lang = es ]] && test=casa
-    [[ $lang = vi ]] && test=nhà
-    [[ $lang = ru ]] && test=дом
-    [[ $lang = auto ]] && test=house
+    [[ $_LANG = en ]] && test=house
+    [[ $_LANG = fr ]] && test=maison
+    [[ $_LANG = de ]] && test=Haus
+    [[ $_LANG = 'zh-cn' ]] && test=房子
+    [[ $_LANG = it ]] && test=casa
+    [[ $_LANG = ja ]] && test=家
+    [[ $_LANG = pt ]] && test=casa
+    [[ $_LANG = es ]] && test=casa
+    [[ $_LANG = vi ]] && test=nhà
+    [[ $_LANG = ru ]] && test=дом
+    [[ $_LANG = auto ]] && test=house
 }
 
 function dialog_edit() {
     
-    yad --text-info --width=440 --height=340 --on-top --wrap \
-    --buttons-layout=end --window-icon=idiomind --margins=4 \
-    --borders=0 --skip-taskbar --editable --print-all \
-    --fontname=monospace --always-print-result \
-    --center --title=" " --filename="$script" \
-    --button="$(gettext "Cancel")":1 \
-    --button="$(gettext "Delete")":2 \
-    --button="$(gettext "Test")":4 \
-    --button="$(gettext "Save")":5  > $DT/script.sh
+    yad --text-info --width=420 --height=300 --on-top --wrap \
+    --buttons-layout=end --center --window-icon=idiomind \
+    --margins=4 --print-all --borders=0 --skip-taskbar \
+    --editable --fontname=monospace --always-print-result \
+    --filename="$script" --button=Cancel:1 --button=Delete:2 \
+    --button=Test:4 --button=Save:5 --title="$_NAME" > $DT/script.sh
 }
+
 
 function dict_list() {
 
@@ -65,22 +64,21 @@ if [ "$1" = edit_dlg ]; then
 
         if [[ "$2" = 2 ]]; then 
         script="$DT/new.sh"; else
-        printf "$n" > "$DT/new.sh"
+        printf "$new" > "$DT/new.sh"
         script="$DT/new.sh"; fi
-        name=""
-        lang=""
+        _NAME="untitled"
+        _LANG=""
         dialog_edit
         ret=$(echo $?)
-        
-    [ $ret -eq 1 ] && $DS_a/Dics/cnfg.sh & exit 1
-    
+         
     if [ $ret -eq 5 ]; then
         
-        name=$(cat "$DT/script.sh" | grep -o -P '(?<=NAME=").*(?=")')
-        lang=$(cat "$DT/script.sh" | grep -o -P '(?<=LANG=").*(?=")')
-        [ -z "$name" ] && name="untitled"
-        [ -z "$lang" ] && lang="__"
-        mv -f "$DT/script.sh" "$disables/$name.$lang"
+        _NAME=$(cat "$DT/script.sh" | grep -o -P '(?<=_NAME=").*(?=")')
+        _LANG=$(cat "$DT/script.sh" | grep -o -P '(?<=_LANG=").*(?=")')
+        
+        if ([ -n "$_NAME" ] && [ -n "$_LANG" ]); then
+        mv -f "$DT/script.sh" "$disables/$_NAME.$_LANG"
+        fi
         $DS_a/Dics/cnfg.sh
         
     elif [ $ret -eq 4 ]; then
@@ -92,33 +90,34 @@ if [ "$1" = edit_dlg ]; then
         rm -f $DT/$test.mp3
         mv -f $DT/script.sh "$DT/new.sh"
         $DS_a/Dics/cnfg.sh edit_dlg 2
+    else
+        $DS_a/Dics/cnfg.sh
     fi
+
 
 elif [ "$1" = dlk_dlg ]; then
 
     [ "$2" = TRUE ] && stts=enables
     [ "$2" = FALSE ] && stts=disables
     script="$dir/$stts/$3.$4"
-    name="$3"
-    lang="$4"
+    _NAME="$3"
+    _LANG="$4"
     dialog_edit
     ret=$(echo $?)
     
-    
     if [ $ret -eq 2 ]; then
     
-        msg_2 " $name.$lang\n" dialog-question \
-        "$(gettext "Delete")" "$(gettext "Cancelar")"
+        msg_2 " $(gettext "  Confirm.\n")" dialog-question yes no
         rt=$(echo $?)
         [ $rt -eq 0 ] && rm "$script"; exit
     
     elif [ $ret -eq 5 ]; then
     
-        name=$(grep -F "_name=" "$script" | grep -o -P '(?<=NAME=").*(?=")')
-        lang=$(grep -F "_lang=" "$script" | grep -o -P '(?<=LANG=").*(?=")')
-        [ -z "$name" ] && name="$3"
-        [ -z "$lang" ] && lang="$4"
-        mv -f $DT/script.sh "$dir/$stts/$name.$lang"
+        _NAME=$(grep -F "_NAME=" "$script" | grep -o -P '(?<=_NAME=").*(?=")')
+        _LANG=$(grep -F "_LANG=" "$script" | grep -o -P '(?<=_LANG=").*(?=")')
+        [ -z "$_NAME" ] && _NAME="$3"
+        [ -z "$_LANG" ] && _LANG="$4"
+        mv -f $DT/script.sh "$dir/$stts/$_NAME.$_LANG"
         
     elif [ $ret -eq 4 ]; then
     
@@ -127,24 +126,33 @@ elif [ "$1" = dlk_dlg ]; then
         cd  $DT; sh $DT/script.sh $test
         [ -f $DT/$test.mp3 ] && play $DT/$test.mp3 || msg Fail info
         rm -f $DT/$test.mp3
-        mv -f $DT/script.sh "$dir/$stts/$name.$lang"
-        $DS_a/Dics/cnfg.sh dlk_dlg "$2" "$name" "$lang"
+        mv -f $DT/script.sh "$dir/$stts/$_NAME.$_LANG"
+        $DS_a/Dics/cnfg.sh dlk_dlg "$2" "$_NAME" "$_LANG"
     fi
+    
     
 elif [ -z "$1" ]; then
 
-    if [ ! -d "$DC_a/dict" ]; then mkdir -p "$enables"; \
-    mkdir -p "$disables"; cp -f $DS/addons/Dics/disables/* "$disables/"; fi
-    if [ "$2" = f ]; then tex="<small>$3\n</small>"; \
-    align="--text-align=left"; else tex=" "; \
-    align="--text-align=right"; fi
+    if [ ! -d "$DC_a/dict/" ]; then
+        mkdir -p "$enables"
+        mkdir -p "$disables"
+        cp -f $DS/addons/Dics/disables/* "$disables/"
+    fi
     
-    sel="$(dict_list | yad --title="Idiomind - $(gettext "Dictionaries")" \
-    --list --center --expand-column=2 --text="$tex" $align \
-    --width=420 --height=300 --skip-taskbar --editable --separator=" " \
+    if [ "$2" = f ]; then
+        tex="--text=<small>$3\n</small>"
+        align="--text-align=left"
+    else
+        tex="--center"
+        align="--text-align=right"
+    fi
+    
+    sel="$(dict_list | yad --list --title="$(gettext "Dictionaries")" \
+    --expand-column=2 "$tex" $align \
+    --width=420 --height=300 --skip-taskbar --separator=" " \
     --borders=10 --button="$(gettext "Add")":2 --print-all --button=OK:0 \
-    --column=" ":CHK --column="$(gettext "Availables")":TEXT \
-    --column="$(gettext "Languages")":TEXT --window-icon=idiomind \
+    --column=" ":CHK --column="$(gettext "availables")":TEXT \
+    --column="$(gettext "languages")":TEXT --window-icon=idiomind \
     --buttons-layout=edge --always-print-result \
     --dclick-action='/usr/share/idiomind/addons/Dics/cnfg.sh dlk_dlg')"
     ret=$?
@@ -161,7 +169,7 @@ elif [ -z "$1" ]; then
                 dict=$(echo "$sel" | sed -n "$n"p)
                 d=$(echo "$dict" | awk '{print ($2)}')
                 
-                if echo "$dict" | grep 'FALSE'; then
+                if echo "$dict" | grep FALSE; then
                     if [ ! -f "$disables/$d.$lgt" ]; then
                         [ -f "$enables/$d.$lgt" ] \
                         && mv -f "$enables/$d.$lgt" "$disables/$d.$lgt"
@@ -171,7 +179,7 @@ elif [ -z "$1" ]; then
                         && mv -f "$enables/$d.auto" "$disables/$d.auto"
                     fi
                 fi
-                if echo "$dict" | grep 'TRUE'; then
+                if echo "$dict" | grep TRUE; then
                     if [ ! -f "$enables/$d.$lgt" ]; then
                         [ -f "$disables/$d.$lgt" ] \
                         && mv -f "$disables/$d.$lgt" "$enables/$d.$lgt"
@@ -185,8 +193,11 @@ elif [ -z "$1" ]; then
             done
             
             cd "$enables/"
+            #[ -f *.$lgt ] && ls -d -1 $PWD/*.$lgt > "$dir/.dicts"
+            #[ -f *.auto ] && ls -d -1 $PWD/*.auto >> "$dir/.dicts"
             ls -d -1 $PWD/*.$lgt > "$dir/.dicts"
-            ls -d -1 $PWD/*.auto >> "$dir/.dicts";
+            ls -d -1 $PWD/*.auto >> "$dir/.dicts"; 
+        
         fi
         
     exit 1

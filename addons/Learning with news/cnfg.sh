@@ -62,7 +62,7 @@ if [ -z "$1" ]; then
     --title="Feeds - $lgtl" \
     --button="$(gettext "Delete")":2 \
     --button="gtk-add:5" \
-    --button="$(gettext "Update")":4 \
+    --button="gtk-refresh":4 \
     --field="  $(gettext "Active subscription"):CB" "$url_rss!$scrp" \
     --field="$(gettext "Update at startup")":CHK $st2)
     ret=$?
@@ -178,8 +178,8 @@ fi
 
     echo "$dd" | yad --list --on-top \
     --expand-column=2 --center --print-column=1 \
-    --width=290 --name=idiomind --class=idiomind \
-    --height=240 --title="$(gettext "Edit")" --skip-taskbar \
+    --width=340 --name=idiomind --class=idiomind \
+    --height=260 --title="$(gettext "Edit")" --skip-taskbar \
     --window-icon=idiomind --no-headers --hide-column=1 \
     --buttons-layout=end --borders=0 --button=Ok:0 \
     --column=id:TEXT --column=icon:IMG --column=Action:TEXT > "$slct"

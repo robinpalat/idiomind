@@ -6,54 +6,73 @@ DS_pf="$DS/addons/Podcasts"
 ap=$(cat $DC_s/cfg.1 | sed -n 6p)
 wth=$(sed -n 5p $DC_s/cfg.18)
 eht=$(sed -n 6p $DC_s/cfg.18)
-re='^[0-9]+$'
-now="$2"
-
+D=($*)
+QTD=$((${#D[@]}-1))
+for i in $(seq 0 $QTD)
+do
+    now[$i]=${D[$i]}
+done
+now="${now[@]}"
 nuw=$(cat "$DM_tl/Podcasts/.conf/cfg.1" | grep -Fxon "$now" \
 | sed -n 's/^\([0-9]*\)[:].*/\1/p')
 nll=" "
 item="$(sed -n "$nuw"p "$DM_tl/Podcasts/.conf/cfg.1")"
 fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
+fc="$DM_tl/Podcasts/.conf/cfg.1"
 
-if [ "$1" = V1 ]; then
+btnlabel="Save"
+btncmd="'$DS_pf/add.sh' new_item '$item'"
+dirs="$(printf "content\nkept")"
 
-    fc="$DM_tl/Podcasts/.conf/cfg.1"
-    file="$DM_tl/Podcasts/content/$fname.mp3"
-    filetxt="$DM_tl/Podcasts/content/$fname.txt"
-    btnlabel="Save"
-    btncmd="'$DS_pf/add.sh' new_item '$item'"
-    
-elif [ "$1" = V2 ]; then
+while read dir; do
 
-    fc="$DM_tl/Podcasts/.conf/cfg.2"
-    file="$DM_tl/Podcasts/kept/$fname.mp3"
-    filetxt="$DM_tl/Podcasts/kept/$fname.txt"
-    btnlabel="Delete"
-    btncmd="'$DS_pf/mngr.sh' delete_item '$item'"
+if [ -f "$DM_tl/Podcasts/$dir/$fname.mp3" ]; then
+    file="$DM_tl/Podcasts/$dir/$fname.mp3"
+    ftxt="$DM_tl/Podcasts/$dir/$fname"
+
+elif [ -f "$DM_tl/Podcasts/$dir/$fname.ogg" ]; then
+    file="$DM_tl/Podcasts/$dir/$fname.ogg"
+    ftxt="$DM_tl/Podcasts/$dir/$fname"
+
+elif [ -f "$DM_tl/Podcasts/$dir/$fname.mp4" ]; then
+     file="$DM_tl/Podcasts/$dir/$fname.mp4"
+     ftxt="$DM_tl/Podcasts/$dir/$fname"
+
+elif [ -f "$DM_tl/Podcasts/$dir/$fname.m4v" ]; then
+     file="$DM_tl/Podcasts/$dir/$fname.m4v"
+     ftxt="$DM_tl/Podcasts/$dir/$fname"
+
+elif [ -f "$DM_tl/Podcasts/$dir/$fname.avi" ]; then
+     file="$DM_tl/Podcasts/$dir/$fname.avi"
+     ftxt="$DM_tl/Podcasts/$dir/$fname"
 fi
 
-cmdplay="'$DS_pf/tls.sh' play '$fname'"
+done <<< "$dirs"
 
-by="$(eyeD3 --no-color -v "$file" \
-| grep artist | sed 's/artist/||/g' \
-| sed 's/title\:[^)]*||\://g' | \
-sed -e "s/[[:space:]]\+/ /g" | \
-sed 's/^ *//; s/ *$//g')"
+#if echo "$file" | grep '/content'; then
+#btnlabel="Save"
+#btncmd="'$DS_pf/add.sh' new_item '$item'"
+#else
+#btnlabel="Delete"
+#btncmd="'$DS_pf/mngr.sh' delete_item '$item'"
+#fi
 
-if [[ -f "$file" ]]; then
-    sum="$(cat "$filetxt")"
-     printf "$sum" | yad --text-info --text-align=center \
+source "$ftxt"
+cmdplay="'$DS_pf/tls.sh' play '$fname' 2> /dev/null"
+trgt="<span color='#5A5C5D'><big>$title</big></span>\n<a href='$link'>$channel</a>"
+
+if [ -f "$file" ]; then
+    sum="$(cat "$ftxt".txt)"
+     printf "$sum" | yad --text-info \
     --window-icon=/usr/share/idiomind/images/idiomind.png \
-    --center --title=" " --scroll --borders=10 \
-    --text="<span color='#5A5C5D'><b>$2</b></span>  <small> By  <a href='http://idiomind.sourceforge.net/$lgs/$lgtl'>$by</a></small>\\n" \
+    --center --title=" " --scroll --borders=10 --text="$trgt" \
     --editable --always-print-result --image-on-top \
-    --width="$wth" --height="$(($eht+80))" --center \
-    ---selectable-labels --margins=10 --back='#EEF0F2' \
-    --wrap --show-uri --fontname=vendana \
-    --button="<small>$btnlabel</small>":"$btncmd" \
-    --button="<small>Stop</small>":"killall play" \
-    --button="<small>Play</small>":"$cmdplay" > $DT/d.tmp
-    mv -f $DT/d.tmp "$filetxt"
+    --width="$wth" --height="$(($eht+80))" --center --margins=25 \
+    --wrap --show-uri --fontname=vendana --name=idiomind \
+    --button="$btnlabel":"$btncmd" \
+    --button="Stop":"killall play" \
+    --button="Play":"$cmdplay" > $DT/d.tmp
+    mv -f $DT/d.tmp "$ftxt".txt
     
 else
     exit 1

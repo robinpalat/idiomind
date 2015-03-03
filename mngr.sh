@@ -129,8 +129,8 @@ $(gettext "To PDF")"
 fi
 fi
     echo "$dd" | yad --list --on-top --expand-column=2 \
-    --width=290 --name=idiomind --center \
-    --height=240 --title="$tpc" --window-icon=idiomind \
+    --width=340 --name=idiomind --center \
+    --height=260 --title="$tpc" --window-icon=idiomind \
     --buttons-layout=end --no-headers --skip-taskbar \
     --borders=0 --button=Ok:0 --column=icon:IMG \
     --column=Action:TEXT > "$slct"
