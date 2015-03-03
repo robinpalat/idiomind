@@ -1,10 +1,26 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#  
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#  
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+#  MA 02110-1301, USA.
+#  
+
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/mods/cmns.sh
 
-if [[ $1 = vsd ]]; then
+if [ "$1" = vsd ]; then
 
     U=$(sed -n 1p $HOME/.config/idiomind/s/cfg.4)
     lng=$(echo "$lgtl" | awk '{print tolower($0)}')
@@ -21,21 +37,21 @@ if [[ $1 = vsd ]]; then
     [ "$?" -eq 1 ] & exit
     exit
     
-elif [[ $1 = infsd ]]; then
+elif [ "$1" = infsd ]; then
 
     U=$(sed -n 1p $DC_s/cfg.4)
     user=$(echo "$(whoami)")
     source "$DM_t/saved/$2.id"
-    [[ $language_source = english ]] && lng=en
-    [[ $language_source = french ]] && lng=fr
-    [[ $language_source = german ]] && lng=de
-    [[ $language_source = chinese ]] && lng=zh-cn
-    [[ $language_source = italian ]] && lng=it
-    [[ $language_source = japanese ]] && lng=ja
-    [[ $language_source = portuguese ]] && lng=pt
-    [[ $language_source = spanish ]] && lng=es
-    [[ $language_source = vietnamese ]] && lng=vi
-    [[ $language_source = russian ]] && lng=ru
+    [ $language_source = english ] && lng=en
+    [ $language_source = french ] && lng=fr
+    [ $language_source = german ] && lng=de
+    [ $language_source = chinese ] && lng=zh-cn
+    [ $language_source = italian ] && lng=it
+    [ $language_source = japanese ] && lng=ja
+    [ $language_source = portuguese ] && lng=pt
+    [ $language_source = spanish ] && lng=es
+    [ $language_source = vietnamese ] && lng=vi
+    [ $language_source = russian ] && lng=ru
     nme=$(echo "$2" | sed 's/ /_/g')
     lnglbl=$(echo $language_target | awk '{print tolower($0)}')
     icon=$DS/images/img.6.png
@@ -58,7 +74,7 @@ elif [[ $1 = infsd ]]; then
             
             internet
             cd $DT
-            wget http://idiomind.sourceforge.net/info/SITE_TMP
+            wget http://idiomind.sourceforge.net/doc/SITE_TMP
             source $DT/SITE_TMP && rm -f $DT/SITE_TMP
             [ -z "$DOWNLOADS" ] && msg "$(gettext "The server is not available at the moment.")" dialog-warning && exit
             
@@ -93,10 +109,10 @@ elif [[ $1 = infsd ]]; then
             WGET "$file"
             
             if [ -f "/tmp/$link" ] ; then
-                [[ -f "$sv" ]] && rm "$sv"
+                [ -f "$sv" ] && rm "$sv"
                 mv -f "/tmp/$link" "$sv"
             else
-                msg "$(gettext "The request is not yet available")" info && exit
+                msg "$(gettext "The file is not yet available.\n")" info && exit
             fi
             exit
         else
@@ -116,33 +132,37 @@ in_the_city="$(gettext "In the city")"
 movies="$(gettext "Movies")"
 internet="$(gettext "Internet")"
 music="$(gettext "Music")"
-events="$(gettext "Events")"
 nature="$(gettext "Nature")"
 news="$(gettext "News")"
 office="$(gettext "Office")"
 relations="$(gettext "Relations")"
 sport="$(gettext "Sport")"
-social="$(gettext "Social")"
+social_networks="$(gettext "Social networks")"
 shopping="$(gettext "Shopping")"
 technology="$(gettext "Technology")"
 travel="$(gettext "Travel")"
+article="$(gettext "Article")"
+science="$(gettext "Science")"
+interview="$(gettext "Interview")"
+funny="$(gettext "Funny")"
+
 lnglbl=$(echo $lgtl | awk '{print tolower($0)}')
 U=$(sed -n 1p $DC_s/cfg.4)
 mail=$(sed -n 2p $DC_s/cfg.4)
 user=$(sed -n 3p $DC_s/cfg.4)
-[[ -z "$user" ]] && user=$(echo "$(whoami)")
+[ -z "$user" ] && user=$(echo "$(whoami)")
 nt=$(cat "$DC_tlt/cfg.10")
 nme=$(echo "$tpc" | sed 's/ /_/g' \
 | sed 's/"//g' | sed 's/’//g')
 
 # check index
 #------------------------------------------
-[[ ! -f "$DC_tlt/cfg.0" ]] && touch "$DC_tlt/cfg.0"
-[[ ! -f "$DC_tlt/cfg.1" ]] && touch "$DC_tlt/cfg.1"
-[[ ! -f "$DC_tlt/cfg.2" ]] && touch "$DC_tlt/cfg.2"
-[[ ! -f "$DC_tlt/cfg.3" ]] && touch "$DC_tlt/cfg.3"
-[[ ! -f "$DC_tlt/cfg.4" ]] && touch "$DC_tlt/cfg.4"
-[[ ! -f "$DC_tlt/cfg.10" ]] && touch "$DC_tlt/cfg.10"
+[ ! -f "$DC_tlt/cfg.0" ] && touch "$DC_tlt/cfg.0"
+[ ! -f "$DC_tlt/cfg.1" ] && touch "$DC_tlt/cfg.1"
+[ ! -f "$DC_tlt/cfg.2" ] && touch "$DC_tlt/cfg.2"
+[ ! -f "$DC_tlt/cfg.3" ] && touch "$DC_tlt/cfg.3"
+[ ! -f "$DC_tlt/cfg.4" ] && touch "$DC_tlt/cfg.4"
+[ ! -f "$DC_tlt/cfg.10" ] && touch "$DC_tlt/cfg.10"
 
 check_index1 "$DC_tlt/cfg.0" "$DC_tlt/cfg.1" \
 "$DC_tlt/cfg.2" "$DC_tlt/cfg.3" "$DC_tlt/cfg.4"
@@ -169,7 +189,7 @@ if [[ $(($chk3 + $chk4)) != $chk0 || $(($chk1 + $chk2)) != $chk0 \
     for i in *.mp3 ; do [ ! -s ${i} ] && rm ${i} ; done
     if [ -f ".mp3" ]; then rm ".mp3"; fi
     cd "$DM_tlt/"
-    for i in *.mp3 ; do [[ ! -s ${i} ]] && rm ${i} ; done
+    for i in *.mp3 ; do [ ! -s ${i} ] && rm ${i} ; done
     if [ -f ".mp3" ]; then rm ".mp3"; fi
     cd "$DM_tlt/"; find . -maxdepth 2 -name '*.mp3' \
     | sort -k 1n,1 -k 7 | sed s'|\.\/words\/||'g \
@@ -231,7 +251,7 @@ if [[ $(($chk3 + $chk4)) != $chk0 || $(($chk1 + $chk2)) != $chk0 \
     cp -f "$DC_tlt/cfg.0" "$DC_tlt/.cfg.11"
     check_index1 "$DC_tlt/cfg.0" "$DC_tlt/cfg.1" \
     "$DC_tlt/cfg.2" "$DC_tlt/cfg.3" "$DC_tlt/cfg.4"
-    [[ -f $DT/ps_lk ]] && rm -f $DT/ps_lk
+    [ -f $DT/ps_lk ] && rm -f $DT/ps_lk
 fi
 
 if [ $? -ne 0 ]; then
@@ -254,44 +274,48 @@ upld=$(yad --form --width=420 --height=460 --on-top \
 --field="    <small>$(gettext "Author")</small>" "$user" \
 --field="    <small>$(gettext "Contact (Optional)")</small>" "$mail" \
 --field="    <small>$(gettext "Category")</small>:CB" \
-"!$others!$comics!$culture!$entertainment!$family!$grammar!$history!$movies!$in_the_city!$internet!$music!$nature!$news!$office!$relations!$sport!$shopping!$social!$technology!$travel" \
+"!$others!$article!$comics!$culture!$documentary!$entertainment!$funny!$family!$grammar!$history!$movies!$in_the_city!$interview!$internet!$music!$nature!$news!$office!$relations!$sport!$science!$shopping!$social_networks!$technology!$travel" \
 --field="    <small>$(gettext "Skill Level")</small>:CB" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
 --field="<small>\n$(gettext "Description/Notes")</small>:TXT" "$nt" \
 --field="<small>$(gettext "Add image")</small>:FL")
 ret=$?
 
-if [[ "$ret" != 0 ]]; then
+if [ "$ret" != 0 ]; then
     exit 1
 fi
 
 Ctgry=$(echo "$upld" | cut -d "|" -f4)
-[[ $Ctgry = $others ]] && Ctgry=others
-[[ $Ctgry = $comics ]] && Ctgry=comics
-[[ $Ctgry = $culture ]] && Ctgry=culture
-[[ $Ctgry = $family ]] && Ctgry=family
-[[ $Ctgry = $entertainment ]] && Ctgry=entertainment
-[[ $Ctgry = $grammar ]] && Ctgry=grammar
-[[ $Ctgry = $history ]] && Ctgry=history
-[[ $Ctgry = $documentary ]] && Ctgry=documentary
-[[ $Ctgry = $in_the_city ]] && Ctgry=in_the_city
-[[ $Ctgry = $movies ]] && Ctgry=movies
-[[ $Ctgry = $internet ]] && Ctgry=internet
-[[ $Ctgry = $music ]] && Ctgry=music
-[[ $Ctgry = $events ]] && Ctgry=events
-[[ $Ctgry = $nature ]] && Ctgry=nature
-[[ $Ctgry = $news ]] && Ctgry=news
-[[ $Ctgry = $office ]] && Ctgry=office
-[[ $Ctgry = $relations ]] && Ctgry=relations
-[[ $Ctgry = $sport ]] && Ctgry=sport
-[[ $Ctgry = $social ]] && Ctgry=social
-[[ $Ctgry = $shopping ]] && Ctgry=shopping
-[[ $Ctgry = $technology ]] && Ctgry=technology
-[[ $Ctgry = $travel ]] && Ctgry=travel
+[ $Ctgry = $others ] && Ctgry=others
+[ $Ctgry = $comics ] && Ctgry=comics
+[ $Ctgry = $culture ] && Ctgry=culture
+[ $Ctgry = $family ] && Ctgry=family
+[ $Ctgry = $entertainment ] && Ctgry=entertainment
+[ $Ctgry = $grammar ] && Ctgry=grammar
+[ $Ctgry = $history ] && Ctgry=history
+[ $Ctgry = $documentary ] && Ctgry=documentary
+[ $Ctgry = $in_the_city ] && Ctgry=in_the_city
+[ $Ctgry = $movies ] && Ctgry=movies
+[ $Ctgry = $internet ] && Ctgry=internet
+[ $Ctgry = $music ] && Ctgry=music
+[ $Ctgry = $nature ] && Ctgry=nature
+[ $Ctgry = $news ] && Ctgry=news
+[ $Ctgry = $office ] && Ctgry=office
+[ $Ctgry = $relations ] && Ctgry=relations
+[ $Ctgry = $sport ] && Ctgry=sport
+[ $Ctgry = $social_networks ] && Ctgry=social_networks
+[ $Ctgry = $shopping ] && Ctgry=shopping
+[ $Ctgry = $technology ] && Ctgry=technology
+[ $Ctgry = $article ] && Ctgry=article
+[ $Ctgry = $travel ] && Ctgry=travel
+[ $Ctgry = $interview ] && Ctgry=interview
+[ $Ctgry = $science ] && Ctgry=science
+[ $Ctgry = $funny ] && Ctgry=funny
+[ $Ctgry = $others ] && Ctgry=others
 
 level=$(echo "$upld" | cut -d "|" -f5)
-[[ $level = $beginner ]] && level=1
-[[ $level = $intermediate ]] && level=2
-[[ $level = $advanced ]] && level=3
+[ $level = $beginner ] && level=1
+[ $level = $intermediate ] && level=2
+[ $level = $advanced ] && level=3
 
 echo "$Ctgry"
 if [ -z "$Ctgry" ]; then
@@ -303,9 +327,9 @@ fi
 internet
 
 cd $DT
-wget http://idiomind.sourceforge.net/info/SITE_TMP
+wget http://idiomind.sourceforge.net/doc/SITE_TMP
 source $DT/SITE_TMP && rm -f $DT/SITE_TMP
-[[ -z "$FTPHOST" ]] && msg " $(gettext "An error occurred, please try later.")\n " dialog-warning && exit
+[ -z "$FTPHOST" ] && msg " $(gettext "An error occurred, please try later.")\n " dialog-warning && exit
 
 Author=$(echo "$upld" | cut -d "|" -f2)
 Mail=$(echo "$upld" | cut -d "|" -f3)
@@ -323,9 +347,9 @@ if [ $(ls -1 *.jpg 2>/dev/null | wc -l) != 0 ]; then
 else
     images=0
 fi
-[[ -f "$DC_tlt"/cfg.3 ]] && words=$(cat "$DC_tlt"/cfg.3 | wc -l)
-[[ -f "$DC_tlt"/cfg.4 ]] && sentences=$(cat "$DC_tlt"/cfg.4 | wc -l)
-[[ -f "$DC_tlt"/cfg.12 ]] && date_c=$(cat "$DC_tlt"/cfg.12)
+[ -f "$DC_tlt"/cfg.3 ] && words=$(cat "$DC_tlt"/cfg.3 | wc -l)
+[ -f "$DC_tlt"/cfg.4 ] && sentences=$(cat "$DC_tlt"/cfg.4 | wc -l)
+[ -f "$DC_tlt"/cfg.12 ] && date_c=$(cat "$DC_tlt"/cfg.12)
 date_u=$(date +%F)
 
 echo '
@@ -405,20 +429,20 @@ cd $DT_u
 tar -cvf "$tpc.tar" "$tpc"
 gzip -9 "$tpc.tar"
 mv "$tpc.tar.gz" "$U.$tpc.idmnd"
-[[ -d "$DT_u/$tpc" ]] && rm -fr "$DT_u/$tpc"
+[ -d "$DT_u/$tpc" ] && rm -fr "$DT_u/$tpc"
 dte=$(date "+%d %B %Y")
 notify-send "$(gettext "Uploading")" "$(gettext "Wait...")" -i idiomind -t 6000
 
 #-----------------------
 cd $DT_u
-chmod 775 -R $DT_u
+chmod 755 -R $DT_u
 lftp -u $USER,$KEY $FTPHOST << END_SCRIPT
 mirror --reverse ./ public_html/$lgs/$lnglbl/$Ctgry/
 quit
 END_SCRIPT
 
 exit=$?
-if [[ $exit = 0 ]] ; then
+if [ $exit = 0 ] ; then
     mv -f "$DT/cfg.12" "$DM_t/saved/$tpc.id"
     info="  $tpc\n\n<b> $(gettext "Was uploaded properly.")</b>\n"
     image=dialog-ok
@@ -429,12 +453,12 @@ fi
 
 msg "$info" $image
 
-[[ -d "$DT_u/$tpc" ]] && rm -fr "$DT_u/$tpc"
-[[ -f "$DT_u/SITE_TMP" ]] && rm -f "$DT_u/SITE_TMP"
-[[ -f "$DT_u/.aud" ]] && rm -f "$DT_u/.aud"
-[[ -f "$DT_u/$U.$tpc.idmnd" ]] && rm -f "$DT_u/$U.$tpc.idmnd"
-[[ -f "$DT_u/$tpc.tar" ]] && rm -f "$DT_u/$tpc.tar"
-[[ -f "$DT_u/$tpc.tar.gz" ]] && rm -f "$DT_u/$tpc.tar.gz"
-[[ -d "$DT_u" ]] && rm -fr "$DT_u"
+[ -d "$DT_u/$tpc" ] && rm -fr "$DT_u/$tpc"
+[ -f "$DT_u/SITE_TMP" ] && rm -f "$DT_u/SITE_TMP"
+[ -f "$DT_u/.aud" ] && rm -f "$DT_u/.aud"
+[ -f "$DT_u/$U.$tpc.idmnd" ] && rm -f "$DT_u/$U.$tpc.idmnd"
+[ -f "$DT_u/$tpc.tar" ] && rm -f "$DT_u/$tpc.tar"
+[ -f "$DT_u/$tpc.tar.gz" ] && rm -f "$DT_u/$tpc.tar.gz"
+[ -d "$DT_u" ] && rm -fr "$DT_u"
 
 exit

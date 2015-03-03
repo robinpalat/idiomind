@@ -1,5 +1,22 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
+
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#  
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#  
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+#  MA 02110-1301, USA.
+#  
+
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/mods/cmns.sh
 DCF="$DC/addons/Learning with news"
@@ -9,7 +26,7 @@ if [ ! -d $DM_tl/Feeds ]; then
 
     mkdir $DM_tl/Feeds
     mkdir $DM_tl/Feeds/.conf
-    mkdir $DM_tl/Feeds/conten
+    mkdir $DM_tl/Feeds/content
     mkdir $DM_tl/Feeds/kept
     mkdir $DM_tl/Feeds/kept/.audio
     mkdir $DM_tl/Feeds/kept/words
@@ -45,7 +62,7 @@ if [ -z "$1" ]; then
     --title="Feeds - $lgtl" \
     --button="$(gettext "Delete")":2 \
     --button="gtk-add:5" \
-    --button="$(gettext "Update")":4 \
+    --button="gtk-refresh":4 \
     --field="  $(gettext "Active subscription"):CB" "$url_rss!$scrp" \
     --field="$(gettext "Update at startup")":CHK $st2)
     ret=$?
@@ -161,8 +178,8 @@ fi
 
     echo "$dd" | yad --list --on-top \
     --expand-column=2 --center --print-column=1 \
-    --width=290 --name=idiomind --class=idiomind \
-    --height=240 --title="$(gettext "Edit")" --skip-taskbar \
+    --width=340 --name=idiomind --class=idiomind \
+    --height=260 --title="$(gettext "Edit")" --skip-taskbar \
     --window-icon=idiomind --no-headers --hide-column=1 \
     --buttons-layout=end --borders=0 --button=Ok:0 \
     --column=id:TEXT --column=icon:IMG --column=Action:TEXT > "$slct"

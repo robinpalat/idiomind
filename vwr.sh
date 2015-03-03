@@ -5,15 +5,14 @@ source /usr/share/idiomind/ifs/c.conf
 wth=$(sed -n 5p $DC_s/cfg.18)
 eht=$(sed -n 6p $DC_s/cfg.18)
 ap=$(cat $DC_s/cfg.1 | sed -n 6p)
-echo "_" >> $DC/addons/stats/.tmp &
+echo "_" >> $DC_a/stats/.tmp &
 re='^[0-9]+$'
-v="$1"
 now="$2"
 nuw="$3"
 listen="▷"
 
-[[ "$v" = v1 ]] && ind="$DC_tlt/cfg.1"
-[[ "$v" = v2 ]] && ind="$DC_tlt/cfg.2"
+[ "$1" = v1 ] && ind="$DC_tlt/cfg.1"
+[ "$1" = v2 ] && ind="$DC_tlt/cfg.2"
 if ! [[ $nuw =~ $re ]]; then
     nuw=$(cat "$ind" \
     | grep -Fxon "$now" \
@@ -83,20 +82,20 @@ else
     ff=$(($nuw + 1))
     echo "_" >> $DT/sc
     [ $(cat $DT/sc | wc -l) -ge 5 ] && rm -f $DT/sc & exit 1 \
-    || $DS/vwr.sh "$v" "$nll" "$ff" & exit 1
+    || $DS/vwr.sh "$1" "$nll" "$ff" & exit 1
 fi
 
         ret=$?
         if [ $ret -eq 4 ]; then
-            $DS/mngr.sh edt "$v" "$fname" $nuw
+            $DS/mngr.sh edt "$1" "$fname" $nuw
         elif [ $ret -eq 2 ]; then
             ff=$(($nuw + 1))
-            $DS/vwr.sh "$v" "$nll" $ff &
+            $DS/vwr.sh "$1" "$nll" $ff &
         elif [ $ret -eq 3 ]; then
             ff=$(($nuw - 1))
-            $DS/vwr.sh "$v" "$nll" $ff &
+            $DS/vwr.sh "$1" "$nll" $ff &
         else 
-            printf "vwr.$(cat $DC/addons/stats/.tmp | wc -l).vwr\n" >> \
+            printf "vwr.$(cat $DC_a/stats/.tmp | wc -l).vwr\n" >> \
             $DC_s/cfg.30 &
             rm $DC/addons/stats/.tmp & exit 1
         fi

@@ -1,6 +1,22 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#  
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#  
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+#  MA 02110-1301, USA.
+#  
+
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/mods/cmns.sh
 include $DS/ifs/mods/add
@@ -11,7 +27,7 @@ if [ "$1" = new_item ]; then
     dir=$(cat $DT/item.x)
     c=$(echo $(($RANDOM%100)))
     dir_kept="$DM_tl/Feeds/kept"
-    dir_conten="$DM_tl/Feeds/conten"
+    dir_content="$DM_tl/Feeds/content"
     dir_conf="$DM_tl/Feeds/.conf"
     var="$2"
 
@@ -43,7 +59,7 @@ if [ "$1" = new_item ]; then
             srce="$(translate "$trgt" auto $lgs)"
             fname="$(nmfile "${trgt^}")"
             [ ! -d "$dir_kept/words" ] && mkdir "$dir_kept/words"
-            cp "$dir_conten/$dir/${trgt,,}.mp3" "$dir_kept/words/$fname.mp3"
+            cp "$dir_content/$dir/${trgt,,}.mp3" "$dir_kept/words/$fname.mp3"
             add_tags_2 W "${trgt^}" "${srce^}" "$var" "$dir_kept/words/$fname.mp3"
             echo "${trgt^}" >> "$dir_conf/cfg.0"
             echo "${trgt^}" >> "$dir_conf/.cfg.11"
@@ -60,10 +76,10 @@ if [ "$1" = new_item ]; then
             
             internet
             fname="$(nmfile "${var^}")"
-            tgs=$(eyeD3 "$dir_conten/$fname.mp3")
+            tgs=$(eyeD3 "$dir_content/$fname.mp3")
             trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
-            cp "$dir_conten/$fname.mp3" "$dir_kept/$fname.mp3"
-            cp "$dir_conten/$fname"/* "$dir_kept/.audio"/
+            cp "$dir_content/$fname.mp3" "$dir_kept/$fname.mp3"
+            cp "$dir_content/$fname"/* "$dir_kept/.audio"/
             echo "$trgt" >> "$dir_conf/cfg.0"
             echo "$trgt" >> "$dir_conf/.cfg.11"
             echo "$trgt" >> "$dir_conf/cfg.4"

@@ -1,6 +1,22 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#  
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#  
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+#  MA 02110-1301, USA.
+#  
+
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/mods/cmns.sh
 
@@ -13,30 +29,28 @@ if [ "$1" = play ]; then
 # -------------------------------------------------
 elif [ "$1" = add_audio ]; then
 
-cd $HOME
+    cd $HOME
+    AU=$(yad --width=620 --height=400 --file --on-top --name=idiomind \
+    --class=idiomind --window-icon=idiomind --center --file-filter="*.mp3" \
+    --button=Ok:0 --borders=0 --title="$ttl" --skip-taskbar)
 
-AU=$(yad --width=620 --height=400 --file --on-top --name=idiomind \
---class=idiomind --window-icon=idiomind --center --file-filter="*.mp3" \
---button=Ok:0 --borders=0 --title="$ttl" --skip-taskbar)
+    ret=$?
+    audio=$(echo "$AU" | cut -d "|" -f1)
 
-ret=$?
-audio=$(echo "$AU" | cut -d "|" -f1)
-
-DT="$2"; cd $DT
-if [ $ret -eq 0 ]; then
-    if  [ -f "$audio" ]; then
-        cp -f "$audio" $DT/audtm.mp3 >/dev/null 2>&1
-        #eyeD3 -P itunes-podcast --remove $DT/audtm.mp3
-        eyeD3 --remove-all $DT/audtm.mp3 & exit
+    DT="$2"; cd $DT
+    if [ $ret -eq 0 ]; then
+        if  [ -f "$audio" ]; then
+            cp -f "$audio" $DT/audtm.mp3 >/dev/null 2>&1
+            #eyeD3 -P itunes-podcast --remove $DT/audtm.mp3
+            eyeD3 --remove-all $DT/audtm.mp3 & exit
+        fi
     fi
-fi
 
 # -------------------------------------------------
 elif [ "$1" = listen_sntnc ]; then
 
-    killall play
     play "$DM_tlt/$2.mp3"
-    exit 1
+    exit
 
 # -------------------------------------------------
 elif [ "$1" = dclik ]; then
@@ -52,8 +66,12 @@ elif [ "$1" = edit_audio ]; then
 # -------------------------------------------------
 elif [ "$1" = help ]; then
 
-    xdg-open /usr/share/idiomind/ifs/help.pdf_doc & exit
-
+    zenity --text-info --window-icon=idiomind \
+    --title="$(gettext "Help")" --width=740 \
+    --height=600 --ok-label="$(gettext "OK")" \
+    --name=idiomind --html \
+    --url="http://idiomind.sourceforge.net/doc/help.html" >/dev/null 2>&1
+    
 # -------------------------------------------------
 elif [ "$1" = definition ]; then
 
@@ -72,7 +90,7 @@ elif [ "$1" = web ]; then
 # -------------------------------------------------
 elif [ "$1" = fback ]; then
 
-    host=http://idiomind.sourceforge.net/msg.html
+    host=http://idiomind.sourceforge.net/doc/msg.html
     xdg-open "$host" >/dev/null 2>&1
 
 # -------------------------------------------------
@@ -82,11 +100,11 @@ elif [ "$1" = check_updates ]; then
     internet
     
     [ -f release ] && rm -f release
-    wget http://idiomind.sourceforge.net/info/release
+    wget http://idiomind.sourceforge.net/doc/release
     
     if [ "$(sed -n 1p $DT/release)" != "$(idiomind -v)" ]; then
     
-        yad --text="<big><b> $(gettext "A new version of Idiomind available") </b></big>\n\n" \
+        yad --text="<b> $(gettext "A new version of Idiomind available") </b>\n\n" \
         --image=info --title=" " --window-icon=idiomind \
         --on-top --skip-taskbar --sticky \
         --center --name=idiomind --borders=10 --always-print-result \
@@ -135,12 +153,12 @@ elif [ "$1" = a_check_updates ]; then
         [ -f release ] && rm -f release
         curl -v www.google.com 2>&1 | \
         grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
-        wget http://idiomind.sourceforge.net/info/release
+        wget http://idiomind.sourceforge.net/doc/release
         pkg=https://sourceforge.net/projects/idiomind/files/idiomind.deb/download
         
         if [ "$(sed -n 1p $DT/release)" != "$(idiomind -v)" ]; then
         
-            yad --text="<big><b> $(gettext "A new version of Idiomind available") </b></big>\n\n" \
+            yad --text="<b> $(gettext "A new version of Idiomind available") </b>\n\n" \
             --image=info --title=" " --window-icon=idiomind \
             --on-top --skip-taskbar --sticky --always-print-result \
             --center --name=idiomind --borders=10 \

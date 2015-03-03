@@ -28,16 +28,16 @@ if [ "$1" = V1 ]; then
     
     fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
     echo "$fname" > $DT/item.x
-    tgs=$(eyeD3 "$DM_tl/Feeds/conten/$fname.mp3")
+    tgs=$(eyeD3 "$DM_tl/Feeds/content/$fname.mp3")
     trg=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
     srce=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
     lwrd=$(echo "$tgs" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' | tr '_' '\n')
-    lnk=$(cat "$DM_tl/Feeds/conten/$fname.lnk")
+    lnk=$(cat "$DM_tl/Feeds/content/$fname.lnk")
     
-    if [[ -f "$DM_tl/Feeds/conten/$fname.mp3" ]]; then
+    if [[ -f "$DM_tl/Feeds/content/$fname.mp3" ]]; then
     
         if [ "$ap" = TRUE ]; then
-            (killall play & sleep 0.3 && play "$DM_tl/Feeds/conten/$fname.mp3") &
+            (killall play & sleep 0.3 && play "$DM_tl/Feeds/content/$fname.mp3") &
         fi
         
         echo "$lwrd" | awk '{print $0""}' | yad --list \

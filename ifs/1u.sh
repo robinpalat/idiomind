@@ -1,6 +1,22 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#  
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#  
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+#  MA 02110-1301, USA.
+#  27.02.2015
+
 LANGUAGE=$LANGUAGE
 [ -z $LANGUAGE ] && LANGUAGE=en
 TEXTDOMAIN=idiomind
@@ -11,8 +27,8 @@ Encoding=UTF-8
 alias gettext='gettext "idiomind"'
 user=$(echo "$(whoami)")
 
-text="<big><big><big><big>  Welcome  </big></big></big></big>
-$(gettext "     To get started, please configure the following:")\n\n"
+text="<big><big><big>  Welcome  </big></big></big>
+$(gettext "     To get started, please configure the following:")\n"
 
 function set_lang() {
     
@@ -47,10 +63,10 @@ fi
 dialog=$(yad --center --width=500 --height=300 --fixed \
     --image-on-top --on-top --class=idiomind --name=idiomind \
     --window-icon=idiomind --buttons-layout=end --text="$text" \
-    --title="Idiomind" --form --borders=15 --align=center --button=Cancel:1 --button=Ok:0 \
-    --field="$(gettext "Select the language you are studying")":lbl \
+    --title="Idiomind" --form --borders=15 --align=center --button=Cancel:1 --button=gtk-ok:0 \
+    --field="$(gettext "Select the language you are studying:")":lbl \
     --field=":CB" !""\
-    --field="$(gettext "Select your native language")":lbl \
+    --field="$(gettext "Select your native language:")":lbl \
     --field=":CB" \
     !"English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" !"" \
     !"English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese")

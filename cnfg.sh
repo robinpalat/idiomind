@@ -1,7 +1,23 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-source /usr/share/idiomind/ifs/c.conf
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#  
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#  
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+#  MA 02110-1301, USA.
+#  
+
+#source /usr/share/idiomind/ifs/c.conf
 Encoding=UTF-8
 wth=$(sed -n 5p $DC_s/cfg.18)
 eht=$(sed -n 6p $DC_s/cfg.18)
@@ -10,7 +26,7 @@ info2="$(echo "$(gettext "You want to change the language setting to learn?")" |
 ICON=$DS/images/icon.png
 cd $DS/addons
 
-info_="$(gettext "\nIdiomind is a small program that helps you learn foreign words, this is useful when you have to remember a lot of new vocabulary in the language you are studying.\n\nLicense: GPLv3\nThis program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, Either version 3 of the License, or (at your option) any later version.\nThis program is distributed in the hope That it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\n\nCode\nhttps://github.com/robinsato/idiomind")"
+info_="$(gettext "\nIdiomind is a small program that helps you learn foreign words, this is useful when you have to remember a lot of new vocabulary in the language you are studying.\n\nLicense: GPLv3\nIdiomind is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, Either version 3 of the License, or (at your option) any later version.\nThis program is distributed in the hope That it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\nYou should have received a copy of the GNU General Public License along this program. If not, see https://www.gnu.org/licenses/gpl.html\nCode\nhttps://github.com/robinsato/idiomind")"
 
 autostart="[Desktop Entry]
 Name=Idiomind
@@ -98,7 +114,7 @@ cat $DC_s/cfg.21 | yad --plug=$KEY --tabnum=2 --list --expand-column=2 \
     --text="<sub>  $(gettext "Double click to set") </sub>" \
     --no-headers --dclick-action="/usr/share/idiomind/ifs/dclik.sh" --print-all \
     --column=icon:IMG --column=Action & printf "$info_" | yad --plug=$KEY --tabnum=3 --text-info \
-    --text="\\n<big><big><b>Idiomind v2.2-beta</b></big></big>\\n<sup>$(gettext "Vocabulary learning tool")\\n<a href='https://sourceforge.net/projects/idiomind/'>Homepage</a> © 2013-2015 Robin Palat</sup>\\n" \
+    --text="<big><big><b>Idiomind v2.2-beta</b></big></big>\\n<sup>$(gettext "Vocabulary learning tool")\\n<a href='https://sourceforge.net/projects/idiomind/'>Homepage</a> (c) 2013-2015 Robin Palat</sup>" \
     --show-uri --fontname=Arial --margins=10 --wrap --text-align=center &
 yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
     --sticky --center --window-icon=$ICON --window-icon=idiomind \

@@ -2,7 +2,6 @@
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
 
-
 function dlg_checklist_5() {
     
         slt=$(mktemp $DT/slt.XXXX.x)
@@ -17,7 +16,6 @@ function dlg_checklist_5() {
         --column="$(cat "$1" | wc -l)" --column="$(gettext "Items")" > "$slt"
 }
 
-
 function dlg_text_info_5() {
     
         echo "$1" | yad --text-info --center --wrap \
@@ -27,14 +25,12 @@ function dlg_text_info_5() {
         --title=" " > "$1".txt
 }
 
-
 function audio_recognizer() {
     
     echo "$(wget -q -U "Mozilla/5.0" --post-file "$1" \
     --header="Content-Type: audio/x-flac; rate=16000" \
     -O - "https://www.google.com/speech-api/v2/recognize?&lang="$2"-"$3"&key=$4")"
 }
-
 
 # load
 function dlg_file_1() {
@@ -43,7 +39,6 @@ function dlg_file_1() {
         --skip-taskbar --on-top --title="Speech recognize" --center \
         --window-icon=idiomind --file --width=600 --height=450)"
 }
-
 
 # save
 function dlg_file_2() {
@@ -54,8 +49,6 @@ function dlg_file_2() {
         --file --width=600 --height=500 --button=gtk-ok:0
 }
 
-
-# --------------------------------------
 if [[ "$prdt" = A ]]; then
 
     cd $DT_r

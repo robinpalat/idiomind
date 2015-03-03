@@ -7,5 +7,5 @@ do
     CMD[$i]=${DADOS[$i]}
 done
 CMD="${CMD[@]}"
-echo "$CMD"
+
 "$DS/addons/$CMD/cnfg.sh"
