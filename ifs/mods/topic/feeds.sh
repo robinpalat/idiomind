@@ -40,7 +40,7 @@ function feedmode() {
         --ellipsize=END --image-on-top \
         --window-icon=$DS/images/idiomind.png \
         --width="$wth" --height="$eht" --borders=0 \
-        --button="Play":/usr/share/idiomind/play.sh \
+        --button="Playlist":/usr/share/idiomind/play.sh \
         --button="gtk-refresh":2 \
         --button="$(gettext "Edit")":3
         ret=$?

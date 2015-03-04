@@ -86,8 +86,8 @@ cnf3=$(mktemp $DT/cnf3.XXXX)
 [[ -f $DC_s/cfg.1 ]] && sttng4=$(sed -n 4p $DC_s/cfg.1) || sttng4=FALSE
 [[ -f $DC_s/cfg.1 ]] && sttng5=$(sed -n 5p $DC_s/cfg.1) || sttng5=FALSE
 [[ -f $DC_s/cfg.1 ]] && sttng6=$(sed -n 6p $DC_s/cfg.1) || sttng6=FALSE
-[[ -f $DC_s/cfg.1 ]] && sttng8=$(sed -n 8p $DC_s/cfg.1) || sttng8=""
 [[ -f $DC_s/cfg.1 ]] && sttng9=$(sed -n 9p $DC_s/cfg.1) || sttng9=""
+[[ -f $DC_s/cfg.1 ]] && sttng10=$(sed -n 10p $DC_s/cfg.1) || sttng10=""
 
 yad --plug=$KEY --tabnum=1 --borders=15 --scroll \
     --separator="\\n" --form --no-headers --align=right \
@@ -97,9 +97,10 @@ yad --plug=$KEY --tabnum=1 --borders=15 --scroll \
     --field="$(gettext "List words after adding a sentence")":CHK $sttng4 \
     --field="$(gettext "Perform tasks at startup")":CHK $sttng5 \
     --field="$(gettext "Speak to pass the items")":CHK $sttng6 \
+    --field="$(gettext "Time for play")":BTN "/usr/share/idiomind/play.sh time" \
     --field=" :lbl" "#7"\
-    --field="<small>$(gettext "Speech Synthesizer\nDefault espeak")</small>":CB5 "$sttng8" \
-    --field="<small>$(gettext "Use this program\nfor audio editing")</small>":CB5 "$sttng9" \
+    --field="<small>$(gettext "Speech Synthesizer\nDefault espeak")</small>":CB5 "$sttng9" \
+    --field="<small>$(gettext "Use this program\nfor audio editing")</small>":CB5 "$sttng10" \
     --field=" :lbl" "#10"\
     --field="$(gettext "Check for Updates")":BTN "/usr/share/idiomind/ifs/tls.sh check_updates" \
     --field="$(gettext "Quick Help")":BTN "/usr/share/idiomind/ifs/tls.sh help" \
@@ -145,8 +146,8 @@ yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
             fi
         fi
         
-        ln=$(cat "$cnf1" | sed -n 18p)
-        ls=$(cat "$cnf1" | sed -n 19p)
+        ln=$(cat "$cnf1" | sed -n 19p)
+        ls=$(cat "$cnf1" | sed -n 20p)
         
         if echo $ln | grep "English" && [ English != $lgtl ] ; then
             confirm "$info2" dialog-question

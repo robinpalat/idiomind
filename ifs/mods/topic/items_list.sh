@@ -28,7 +28,7 @@ function notebook_1() {
     --tab=" $(gettext "Notes") " \
     --ellipsize=END --image-on-top --always-print-result \
     --width="$wth" --height="$eht" --borders=0 \
-    --button="$(gettext "Play")":$DS/play.sh \
+    --button="$(gettext "Playlist")":$DS/play.sh \
     --button="$(gettext "Practice")":5 \
     --button="$(gettext "Edit")":3
 }

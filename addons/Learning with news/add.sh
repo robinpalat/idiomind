@@ -26,13 +26,13 @@ if [ "$1" = new_item ]; then
     trgt=$(cat $DT/word.x)
     dir=$(cat $DT/item.x)
     c=$(echo $(($RANDOM%100)))
-    dir_kept="$DM_tl/Feeds/kept"
-    dir_content="$DM_tl/Feeds/content"
-    dir_conf="$DM_tl/Feeds/.conf"
+    DMK="$DM_tl/Feeds/kept"
+    DMC="$DM_tl/Feeds/content"
+    DCF="$DCF"
     var="$2"
 
-    if [ ! -d "$DM_tl/Feeds"/kept ]; then
-        mkdir -p "$DM_tl/Feeds/kept/words"
+    if [ ! -d "$DMK" ]; then
+        mkdir -p "$DMK/words"
     fi
 
     if [ -f $DT/word.x ]; then
@@ -50,40 +50,40 @@ if [ "$1" = new_item ]; then
         # -------------------------------------------------------------
         if [ $ret -eq 0 ]; then
         
-            if [ $(cat "$dir_conf/cfg.3" | wc -l) -ge 50 ]; then
+            if [ $(cat "$DCF/cfg.3" | wc -l) -ge 50 ]; then
                 msg "$tpe  \n$(gettext "You have reached the maximum number of words") " info & exit
             fi
         
             internet
             mkdir $DT/rss_$c; cd $DT/rss_$c
             srce="$(translate "$trgt" auto $lgs)"
-            fname="$(nmfile "${trgt^}")"
-            [ ! -d "$dir_kept/words" ] && mkdir "$dir_kept/words"
-            cp "$dir_content/$dir/${trgt,,}.mp3" "$dir_kept/words/$fname.mp3"
-            add_tags_2 W "${trgt^}" "${srce^}" "$var" "$dir_kept/words/$fname.mp3"
-            echo "${trgt^}" >> "$dir_conf/cfg.0"
-            echo "${trgt^}" >> "$dir_conf/.cfg.11"
-            echo "${trgt^}" >> "$dir_conf/cfg.3"
-            check_index1 "$dir_conf/cfg.0"
+            fname="$(nmfile "${trgt}")"
+            [ ! -d "$DMK/words" ] && mkdir "$DMK/words"
+            cp "$DMC/$dir/${trgt,,}.mp3" "$DMK/words/$fname.mp3"
+            add_tags_2 W "${trgt^}" "${srce^}" "$var" "$DMK/words/$fname.mp3"
+            echo "${trgt^}" >> "$DCF/cfg.0"
+            echo "${trgt^}" >> "$DCF/.cfg.11"
+            echo "${trgt^}" >> "$DCF/cfg.3"
+            check_index1 "$DCF/cfg.0"
             rm -rf $DT/rss_$c
             
         # -------------------------------------------------------------
         elif [ $ret -eq 2 ]; then
         
-            if [ $(cat "$DM_tl/Feeds/.conf/cfg.4" | wc -l) -ge 50 ]; then
+            if [ $(cat "$DCF/cfg.4" | wc -l) -ge 50 ]; then
                 msg "$tpe  \n$(gettext "You have reached the maximum number of sentences")" info & exit
             fi
             
             internet
-            fname="$(nmfile "${var^}")"
-            tgs=$(eyeD3 "$dir_content/$fname.mp3")
+            fname="$(nmfile "${var}")"
+            tgs=$(eyeD3 "$DMC/$fname.mp3")
             trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
-            cp "$dir_content/$fname.mp3" "$dir_kept/$fname.mp3"
-            cp "$dir_content/$fname"/* "$dir_kept/.audio"/
-            echo "$trgt" >> "$dir_conf/cfg.0"
-            echo "$trgt" >> "$dir_conf/.cfg.11"
-            echo "$trgt" >> "$dir_conf/cfg.4"
-            check_index1 "$dir_conf/cfg.0"
+            cp "$DMC/$fname.mp3" "$DMK/$fname.mp3"
+            cp "$DMC/$fname"/* "$DMK/.audio"/
+            echo "$trgt" >> "$DCF/cfg.0"
+            echo "$trgt" >> "$DCF/.cfg.11"
+            echo "$trgt" >> "$DCF/cfg.4"
+            check_index1 "$DCF/cfg.0"
             rm -f -r $DT/word.x $DT/rss_$c & exit
             
         else
@@ -111,24 +111,24 @@ elif [ "$1" = new_topic ]; then
             mkdir "$DM_tl/$jlb"
             mkdir "$DM_tl/$jlb./conf"
             
-            [[ -f "$DM_tl/Feeds/.conf/cfg.0" ]] && \
-            mv -f "$DM_tl/Feeds/.conf/cfg.0" "$DM_tl/$jlb/.conf/cfg.0" \
+            [[ -f "$DCF/cfg.0" ]] && \
+            mv -f "$DCF/cfg.0" "$DM_tl/$jlb/.conf/cfg.0" \
             || touch "$DM_tl/$jlb/.conf/cfg.0"
-            [[ -f "$DM_tl/Feeds/.conf/cfg.3" ]] && \
-            mv -f "$DM_tl/Feeds/.conf/cfg.3" "$DM_tl/$jlb/.conf/cfg.3" \
+            [[ -f "$DCF/cfg.3" ]] && \
+            mv -f "$DCF/cfg.3" "$DM_tl/$jlb/.conf/cfg.3" \
             || touch "$DM_tl/$jlb/.conf/cfg.3"
-            [[ -f "$DM_tl/Feeds/.conf/cfg.4" ]] && \
-            mv -f "$DM_tl/Feeds/.conf/cfg.4" "$DM_tl/$jlb/.conf/cfg.4" \
+            [[ -f "$DCF/cfg.4" ]] && \
+            mv -f "$DCF/cfg.4" "$DM_tl/$jlb/.conf/cfg.4" \
             || touch "$DM_tl/$jlb/.conf/cfg.4"
-            [[ -f "$DM_tl/Feeds/.conf/.cfg.11" ]] && \
-            mv -f "$DM_tl/Feeds/.conf/.cfg.11" "$DM_tl/$jlb/.conf/.cfg.11" \
+            [[ -f "$DCF/.cfg.11" ]] && \
+            mv -f "$DCF/.cfg.11" "$DM_tl/$jlb/.conf/.cfg.11" \
             || touch "$DM_tl/$jlb/.conf/.cfg.11"
             
-            cd "$DM_tl/Feeds/kept"/
+            cd "$DMK"/
             cp -f *.mp3 "$DM_tl/$jlb"/ && rm *.mp3
             cp -f *.lnk "$DM_tl/$jlb"/ && rm *.lnk
             
-            cd "$DM_tl/Feeds/kept/.audio"/
+            cd "$DMK/.audio"/
             ls *.mp3 > "$DM_tl/$jlb/.conf/cfg.5"
             mv *.mp3 "$DM_tl/.share/"
             
@@ -136,9 +136,9 @@ elif [ "$1" = new_topic ]; then
             cd "$DM_tl/Feeds/kept/words"/
             cp -f *.mp3 "$DM_tl/$jlb/words"/ && rm *.mp3
             
-            touch "$DM_tl/Feeds/.conf/cfg.0"
-            touch "$DM_tl/Feeds/.conf/cfg.3"
-            touch "$DM_tl/Feeds/.conf/cfg.4"
+            touch "$DCF/cfg.0"
+            touch "$DCF/cfg.3"
+            touch "$DCF/cfg.4"
             touch "$DM_tl/$jlb/.conf/cfg.2"
             
             cnt=$(cat "$DM_tl/$jlb/.conf/cfg.0" | wc -l)

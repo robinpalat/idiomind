@@ -2,26 +2,33 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-DS_pf="$DS/addons/Podcasts"
-ap=$(cat $DC_s/cfg.1 | sed -n 6p)
+DSP="$DS/addons/Podcasts"
 wth=$(sed -n 5p $DC_s/cfg.18)
 eht=$(sed -n 6p $DC_s/cfg.18)
 D=($*)
-QTD=$((${#D[@]}-1))
-for i in $(seq 0 $QTD)
-do
-    now[$i]=${D[$i]}
+Q=$((${#D[@]}-1))
+for i in $(seq 0 $Q); do
+    item[$i]=${D[$i]}
 done
-now="${now[@]}"
-nuw=$(cat "$DM_tl/Podcasts/.conf/cfg.1" | grep -Fxon "$now" \
-| sed -n 's/^\([0-9]*\)[:].*/\1/p')
-nll=" "
-item="$(sed -n "$nuw"p "$DM_tl/Podcasts/.conf/cfg.1")"
-fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
+item="${item[@]}"
+
+
+fname=$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)
 fc="$DM_tl/Podcasts/.conf/cfg.1"
 
+#echo
+#echo
+#echo
+#echo
+#echo "$item..."
+#echo "$fname..."
+#echo
+#echo
+#echo
+#echo
+
 btnlabel="Save"
-btncmd="'$DS_pf/add.sh' new_item '$item'"
+btncmd="'$DSP/add.sh' new_item '$item'"
 dirs="$(printf "content\nkept")"
 
 while read dir; do
@@ -51,14 +58,14 @@ done <<< "$dirs"
 
 #if echo "$file" | grep '/content'; then
 #btnlabel="Save"
-#btncmd="'$DS_pf/add.sh' new_item '$item'"
+#btncmd="'$DSP/add.sh' new_item '$item'"
 #else
 #btnlabel="Delete"
-#btncmd="'$DS_pf/mngr.sh' delete_item '$item'"
+#btncmd="'$DSP/mngr.sh' delete_item '$item'"
 #fi
 
-source "$ftxt"
-cmdplay="'$DS_pf/tls.sh' play '$fname' 2> /dev/null"
+source "$ftxt.i"
+cmdplay="'$DSP/tls.sh' play '$fname'"
 trgt="<span color='#5A5C5D'><big>$title</big></span>\n<a href='$link'>$channel</a>"
 
 if [ -f "$file" ]; then

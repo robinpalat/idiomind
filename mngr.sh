@@ -85,69 +85,88 @@ elif [ "$1" = edit ]; then
     
 if ! grep -Fxo "$tpc" $DM_tl/.cfg.3; then
 if [ "$ti" -ge 15 ]; then
-dd="$DS/images/ok.png
+dd="cmd1
+$DS/images/ok.png
 $(gettext "Mark as learned")
+cmd2
 $DS/images/rw.png
 $(gettext "Review")
+cmd3
 $DS/images/rn.png
 $(gettext "Rename")
+cmd4
 $DS/images/dlt.png
 $(gettext "Delete")
+cmd5
 $DS/images/upd.png
 $(gettext "Share")
+cmd6
 $DS/images/pdf.png
 $(gettext "To PDF")"
 else
-dd="$DS/images/rn.png
+dd="cmd3
+$DS/images/rn.png
 $(gettext "Rename")
+cmd4
 $DS/images/dlt.png
 $(gettext "Delete")
+cmd5
 $DS/images/upd.png
 $(gettext "Share")
+cmd6
 $DS/images/pdf.png
 $(gettext "To PDF")"
 fi
 else
 if [ "$ti" -ge 15 ]; then
-dd="$DS/images/ok.png
+dd="cmd1
+$DS/images/ok.png
 $(gettext "Mark as learned")
+cmd2
 $DS/images/rw.png
 $(gettext "Review")
+cmd3
 $DS/images/rn.png
 $(gettext "Rename")
+cmd4
 $DS/images/dlt.png
 $(gettext "Delete")
+cmd6
 $DS/images/pdf.png
 $(gettext "To PDF")"
 else
-dd="$DS/images/rn.png
+dd="cmd3
+$DS/images/rn.png
 $(gettext "Rename")
+cmd4
 $DS/images/dlt.png
 $(gettext "Delete")
+cmd6
 $DS/images/pdf.png
 $(gettext "To PDF")"
 fi
 fi
-    echo "$dd" | yad --list --on-top --expand-column=2 \
-    --width=340 --name=idiomind --center \
-    --height=260 --title="$tpc" --window-icon=idiomind \
-    --buttons-layout=end --no-headers --skip-taskbar \
-    --borders=0 --button=Ok:0 --column=icon:IMG \
-    --column=Action:TEXT > "$slct"
+    echo "$dd" | yad --list --on-top \
+    --expand-column=2 --center --print-column=1 \
+    --width=360 --name=idiomind --class=idiomind \
+    --height=300 --title="$(gettext "Edit")" --skip-taskbar \
+    --window-icon=idiomind --no-headers --hide-column=1 \
+    --buttons-layout=end --borders=5 --button=OK:0 \
+    --column=id:TEXT --column=icon:IMG --column=Action:TEXT > "$slct"
     ret=$?
     slt=$(cat "$slct")
     if  [[ "$ret" -eq 0 ]]; then
-        if echo "$slt" | grep -o "$(gettext "Mark as learned")"; then
+        if echo "$slt" | grep -o "cmd1"; then
             /usr/share/idiomind/mngr.sh mkok-
-        elif echo "$slt" | grep -o "$(gettext "Review")"; then
+        elif echo "$slt" | grep -o "cmd2"; then
             /usr/share/idiomind/mngr.sh mklg-
-        elif echo "$slt" | grep -o "$(gettext "Rename")"; then
+        elif echo "$slt" | grep -o "cmd3"; then
             /usr/share/idiomind/add.sh new_topic name 2
-        elif echo "$slt" | grep -o "$(gettext "Delete")"; then
+        elif echo "$slt" | grep -o "cmd4"; then
             /usr/share/idiomind/mngr.sh delete_topic
-        elif echo "$slt" | grep -o "$(gettext "Share")"; then
+        elif echo "$slt" | grep -o "cmd5"; then
             /usr/share/idiomind/ifs/upld.sh
-        elif echo "$slt" | grep -o "$(gettext "To PDF")"; then
+        elif echo "$slt" | grep -o "cmd6"; then
             /usr/share/idiomind/ifs/tls.sh pdf_doc
         fi
         rm -f "$slct"
@@ -452,8 +471,7 @@ elif [ "$1" = edt ]; then
         sdefn="/usr/share/idiomind/ifs/tls.sh definition '$TGT'"
         
         # ===============================================
-        dlg_form_1 $cnf # word
-        # ===============================================
+        dlg_form_1 $cnf
         ret=$(echo "$?")
         
             [ -f $DT/ps_lk ] && $DS/vwr.sh "$v" "nll" $ff && exit 1
@@ -542,8 +560,7 @@ elif [ "$1" = edt ]; then
         imge="$DS/add.sh set_image '$tgt' sentence"
         
         # ===============================================
-        dlg_form_2 $cnf # sentence
-        # ===============================================
+        dlg_form_2 $cnf
         ret=$(echo "$?")
         
             [ -f $DT/ps_lk ] && $DS/vwr.sh "$v" "nll" $ff && exit 1

@@ -70,7 +70,7 @@ function new_session() {
     
     # write in /tmp
     if [[ ! -d $DT ]]; then
-        mkdir $DT
+        mkdir $DT; chmod 775 -R $DT
     fi
     
     if [ $? -ne 0 ]; then
