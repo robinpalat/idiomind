@@ -19,7 +19,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/mods/cmns.sh
-DCF="$DC/addons/Learning with news"
+DCF="$DM_tl/Feeds/.conf"
 DSF="$DS/addons/Learning with news"
 
 if [ ! -d $DM_tl/Feeds ]; then
@@ -30,20 +30,16 @@ if [ ! -d $DM_tl/Feeds ]; then
     mkdir $DM_tl/Feeds/kept
     mkdir $DM_tl/Feeds/kept/.audio
     mkdir $DM_tl/Feeds/kept/words
-    mkdir "$DC_a/Learning with news"
     cd $DM_tl/Feeds/.conf/
     touch cfg.0 cfg.1 cfg.3 cfg.4 .updt.lst
 fi
 
-if [ ! -d "$DC_a/Learning with news/$lgtl" ]; then
 
-    mkdir "$DC_a/Learning with news/$lgtl"
-    mkdir "$DC_a/Learning with news/$lgtl/rss"
-    cp -f "$DSF/examples/$lgtl" "$DCF/$lgtl/rss/$sample"
-fi
+cp -f "$DSF/examples/$lgtl" "$DCF/$lgtl/rss/$sample" # /////////////////////////
 
 
-[ -f "$DCF/$lgtl/.rss" ] && url_rss=$(sed -n 1p "$DCF/$lgtl/.rss")
+
+[ -f "$DCF/a.rss" ] && url_rss=$(sed -n 1p "$DCF/$lgtl/.rss") # ////////////////////
 
 if [ -z "$1" ]; then
 
@@ -178,8 +174,8 @@ fi
 
     echo "$dd" | yad --list --on-top \
     --expand-column=2 --center --print-column=1 \
-    --width=400 --name=idiomind --class=idiomind \
-    --height=340 --title="$(gettext "Edit")" --skip-taskbar \
+    --width=360 --name=idiomind --class=idiomind \
+    --height=300 --title="$(gettext "Edit")" --skip-taskbar \
     --window-icon=idiomind --no-headers --hide-column=1 \
     --buttons-layout=end --borders=5 --button=OK:0 \
     --column=id:TEXT --column=icon:IMG --column=Action:TEXT > "$slct"

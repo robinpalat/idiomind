@@ -1,13 +1,13 @@
 #!/bin/bash
 
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/mods/cmns.sh
+source "$DS/ifs/mods/cmns.sh"
 
 if [ "$1" = play ]; then
     
     killall play
-    DCF="$DC/addons/Podcasts"
-    [ -f "$DCF/.cnf" ] && st3=$(sed -n 2p "$DCF/.cnf") || st3=FALSE
+    DCP="$DM_tl/Podcasts/.conf"
+    [ -f "$DCP/cfg.0" ] && st3=$(sed -n 2p "$DCP/cfg.0") || st3=FALSE
     [ $st3 = FALSE ] && fs="" || fs='-fs'
     
     # mp3
@@ -49,24 +49,12 @@ if [ "$1" = play ]; then
        >/dev/null 2>&1 & exit
     fi
     
-    
-elif [ "$1" = dclk ]; then
-
-    audio="$DM_tl/Podcasts/kept/.audio"
-    contn="$DM_tl/Podcasts/content"
-    echo "$3" > $DT/word.x
-    var="$2"
-    if [ -f "$audio/${3,,}.mp3" ]; then 
-        play "$audio/${3,,}.mp3"
-    else
-        play "$contn/$var/${3,,}.mp3"
-    fi
 
 elif [ "$1" = check ]; then
 
     source $DS/ifs/mods/cmns.sh
-    DCF="$DC/addons/Podcasts"
-    DSF="$DS/addons/Podcasts"
+    DCP="$DM_tl/Podcasts/.conf"
+    DSP="$DS_a/Podcasts"
 
     internet
 XSLT_STYLESHEET="<?xml version='1.0' encoding='UTF-8'?>
@@ -90,9 +78,9 @@ XSLT_STYLESHEET="<?xml version='1.0' encoding='UTF-8'?>
 
     tpl="Enclosure\n ----\nTitle\n ----\nSummary\n ----\n ----\n ----"
     mn=" ----!Enclosure!Title!Summary"
-    lnk=$(sed -n "$2"p $DCF/$lgtl/link)
+    lnk=$(sed -n "$2"p $DCP/cfg.4)
     [ -z "$lnk" ] && exit 1
-    [ ! -f "$DCF/$lgtl/$2.xml" ] && printf "$tpl" > "$DCF/$lgtl/$2.xml"
+    [ ! -f "$DCP/$2.xml" ] && printf "$tpl" > "$DCP/$2.xml"
     podcast_items="$(xsltproc - "$lnk" <<< "$XSLT_STYLESHEET" 2> /dev/null)"
     podcast_items="$(echo "$podcast_items" | tr '\n' ' ' | tr -s [:space:] | sed 's/EOL/\n/g' | head -n 2)"
     item="$(echo "$podcast_items" | sed -n 1p)"
@@ -103,13 +91,13 @@ XSLT_STYLESHEET="<?xml version='1.0' encoding='UTF-8'?>
     --width=800 --height=650 --form --on-top --window-icon=idiomind \
     --text="<small> $(gettext "\tIn this table you can define fields according to their content,  most of the time the default configuration is right. ")</small>" \
     --button=gtk-apply:0 --borders=5 --title="$ttl" --always-print-result \
-    --field="":CB "$(sed -n 1p $DCF/$lgtl/$2.xml)!$mn" \
-    --field="":CB "$(sed -n 2p $DCF/$lgtl/$2.xml)!$mn" \
-    --field="":CB "$(sed -n 3p $DCF/$lgtl/$2.xml)!$mn" \
-    --field="":CB "$(sed -n 4p $DCF/$lgtl/$2.xml)!$mn" \
-    --field="":CB "$(sed -n 5p $DCF/$lgtl/$2.xml)!$mn" \
-    --field="":CB "$(sed -n 6p $DCF/$lgtl/$2.xml)!$mn" \
-    --field="":CB "$(sed -n 7p $DCF/$lgtl/$2.xml)!$mn" \
+    --field="":CB "$(sed -n 1p $DCP/$2.xml)!$mn" \
+    --field="":CB "$(sed -n 2p $DCP/$2.xml)!$mn" \
+    --field="":CB "$(sed -n 3p $DCP/$2.xml)!$mn" \
+    --field="":CB "$(sed -n 4p $DCP/$2.xml)!$mn" \
+    --field="":CB "$(sed -n 5p $DCP/$2.xml)!$mn" \
+    --field="":CB "$(sed -n 6p $DCP/$2.xml)!$mn" \
+    --field="":CB "$(sed -n 7p $DCP/$2.xml)!$mn" \
     --field="":TXT "$(echo "$field" | sed -n 1p)" \
     --field="":TXT "$(echo "$field" | sed -n 2p)" \
     --field="":TXT "$(echo "$field" | sed -n 3p | sed 's/\://g')" \
@@ -117,13 +105,13 @@ XSLT_STYLESHEET="<?xml version='1.0' encoding='UTF-8'?>
     --field="":TXT "$(echo "$field" | sed -n 5p)" \
     --field="\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t":TXT "$(echo "$field" | sed -n 6p)" \
     --field="":TXT "$(echo "$field" | sed -n 7p)" | head -n 7 > $DT/f.tmp
-    mv -f $DT/f.tmp "$DCF/$lgtl/$2.xml" & exit
+    mv -f $DT/f.tmp "$DCP/$2.xml" & exit
 
 
 elif [ "$1" = syndlg ]; then
 
-    DCF="$DC/addons/Podcasts"
-    SYNCDIR="$(sed -n 1p $DCF/cfg.5)"
+    DCP="$DM_tl/Podcasts/.conf"
+    SYNCDIR="$(sed -n 1p $DCP/cfg.5)"
 
     cd $HOME
     DIR="$(yad --center --form --on-top --window-icon=idiomind \
@@ -133,14 +121,14 @@ elif [ "$1" = syndlg ]; then
     --width=460 --height=200 --field="":CDIR "$SYNCDIR")"
 
     echo "$DIR" > $DT/s.tmp
-    mv -f $DT/s.tmp $DCF/cfg.5
+    mv -f $DT/s.tmp $DCP/cfg.5
     exit
 
 
 elif [ "$1" = syncronize ]; then
 
-    DCF="$DC/addons/Podcasts"
-    SYNCDIR="$(sed -n 1p $DCF/cfg.5)"
+    DCP="$DM_tl/Podcasts/.conf"
+    SYNCDIR="$(sed -n 1p $DCP/cfg.5)"
 
     if [ ! -d "$SYNCDIR" ]; then
             cd $HOME
@@ -150,7 +138,7 @@ elif [ "$1" = syncronize ]; then
             --print-all --button="$(gettext "Syncronize")":0 \
             --width=460 --height=200 --field="":CDIR "$SYNCDIR")"
             echo "$DIR" > $DT/s.tmp
-            mv -f $DT/s.tmp $DCF/cfg.5
+            mv -f $DT/s.tmp $DCP/cfg.5
             [ ! -d "$DIR" ] && exit 1
     fi
 
@@ -161,7 +149,7 @@ elif [ "$1" = syncronize ]; then
     exit=$?
     if [ $exit = 0 ] ; then
         log="$(cd "$SYNCDIR"; ls *.mp3 | wc -l)"
-        notify-send -i idiomind "$(gettext "synchronization was completed")" "$log $(gettext "synchronized episodes(s)")" -t 8000
+        notify-send -i idiomind "$(gettext "Synchronization was completed")" "$log $(gettext "synchronized episodes(s)")" -t 8000
     else
         notify-send -i dialog-warning "$(gettext "Error while syncing")" " " -t 8000
     fi

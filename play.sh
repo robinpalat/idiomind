@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-#source /usr/share/idiomind/ifs/c.conf
+source /usr/share/idiomind/ifs/c.conf
 
 itms="Words
 Sentences
@@ -54,8 +54,8 @@ elif [ -z "$1" ]; then
     cd "$DC_tlt/practice"
     in4=$(cat w6 | sed '/^$/d' | sort | uniq)
     in5=$(cat $DM_tl/Feeds/.conf/cfg.0 | sed '/^$/d')
-    in6=$(tac $DM_tl/Podcasts/.conf/.cfg.11 | sed '/^$/d')
-    in7=$(tac $DM_tl/Podcasts/.conf/.cfg.22 | sed '/^$/d')
+    in6=$(tac $DM_tl/Podcasts/.conf/cfg.1 | sed '/^$/d')
+    in7=$(tac $DM_tl/Podcasts/.conf/cfg.2 | sed '/^$/d')
     nnews=$(tac $DM_tl/Feeds/.conf/cfg.1 | head -n 8)
     u=$(echo "$(whoami)")
     infs=$(echo "$snts Sentences" | wc -l)
@@ -84,8 +84,8 @@ elif [ -z "$1" ]; then
     [ -f $DT/.p_ ] && btn="gtk-media-stop:2" || btn="Play:0"
     setting_ | yad --list --on-top --separator="|" \
     --expand-column=2 --print-all --center \
-    --width=410 --name=idiomind --class=idmnd \
-    --height=340 --title="$tpc" --skip-taskbar \
+    --width=360 --name=idiomind --class=idmnd \
+    --height=300 --title="$tpc" --skip-taskbar \
     --window-icon=idiomind --no-headers \
     --borders=5 --button="$btn" --always-print-result \
     --column=IMG:IMG --column=TXT:TXT --column=CHK:CHK > "$slct"
@@ -95,7 +95,7 @@ elif [ -z "$1" ]; then
     
         mv -f "$slct" $DC_s/cfg.5; cd $DT/p; > ./indx; n=1
         
-        while [ $n -lt 7 ]; do
+        while [ $n -le 7 ]; do
         
             if sed -n "$n"p $DC_s/cfg.5 | grep TRUE; then
                 arr="in$n"

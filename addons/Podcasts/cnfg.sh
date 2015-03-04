@@ -2,8 +2,8 @@
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/mods/cmns.sh
-DCF="$DC/addons/Podcasts"
-DSF="$DS/addons/Podcasts"
+DCP="$DM_tl/Podcasts/.conf"
+DSP="$DS_a/Podcasts"
 
 if [ ! -d $DM_tl/Podcasts ]; then
 
@@ -31,37 +31,37 @@ fi
 
 if [ -z "$1" ]; then
 
-    [ ! -f $DCF/$lgtl/link ] && touch $DCF/$lgtl/link
-    [ -f "$DCF/.cnf" ] && st2=$(sed -n 1p "$DCF/.cnf") || st2=FALSE
-    [ -f "$DCF/.cnf" ] && st3=$(sed -n 2p "$DCF/.cnf") || st3=FALSE
+    [ ! -f $DCP/cfg.4 ] && touch $DCP/cfg.4
+    [ -f "$DCP/cfg.0" ] && st2=$(sed -n 1p "$DCP/cfg.0") || st2=FALSE
+    [ -f "$DCP/cfg.0" ] && st3=$(sed -n 2p "$DCP/cfg.0") || st3=FALSE
     
     CNFG=$(yad --form --center --columns=2 --borders=10 \
     --window-icon=idiomind --skip-taskbar --separator="\n"\
     --width=550 --height=360 --always-print-result \
     --title="$(gettext "Podcasts settings")"  \
-    --field="" "$(sed -n 1p $DCF/$lgtl/link)" \
-    --field="" "$(sed -n 2p $DCF/$lgtl/link)" \
-    --field="" "$(sed -n 3p $DCF/$lgtl/link)" \
-    --field="" "$(sed -n 4p $DCF/$lgtl/link)" \
-    --field="" "$(sed -n 5p $DCF/$lgtl/link)" \
-    --field="" "$(sed -n 6p $DCF/$lgtl/link)" \
-    --field="" "$(sed -n 7p $DCF/$lgtl/link)" \
-    --field="" "$(sed -n 8p $DCF/$lgtl/link)" \
+    --field="" "$(sed -n 1p $DCP/cfg.4)" \
+    --field="" "$(sed -n 2p $DCP/cfg.4)" \
+    --field="" "$(sed -n 3p $DCP/cfg.4)" \
+    --field="" "$(sed -n 4p $DCP/cfg.4)" \
+    --field="" "$(sed -n 5p $DCP/cfg.4)" \
+    --field="" "$(sed -n 6p $DCP/cfg.4)" \
+    --field="" "$(sed -n 7p $DCP/cfg.4)" \
+    --field="" "$(sed -n 8p $DCP/cfg.4)" \
     --field="$(gettext "Update at startup")":CHK "$st2" \
     --field="$(gettext "Videos on fullscreen")\t\t\t\t\t\t\t\t\t\t\t":CHK "$st3" \
-    --field="<small>$(gettext "Configure")</small>":BTN "$DS/addons/Podcasts/tls.sh check 1" \
-    --field="<small>$(gettext "Configure")</small>":BTN "$DS/addons/Podcasts/tls.sh check 2" \
-    --field="<small>$(gettext "Configure")</small>":BTN "$DS/addons/Podcasts/tls.sh check 3" \
-    --field="<small>$(gettext "Configure")</small>":BTN "$DS/addons/Podcasts/tls.sh check 4" \
-    --field="<small>$(gettext "Configure")</small>":BTN "$DS/addons/Podcasts/tls.sh check 5" \
-    --field="<small>$(gettext "Configure")</small>":BTN "$DS/addons/Podcasts/tls.sh check 6" \
-    --field="<small>$(gettext "Configure")</small>":BTN "$DS/addons/Podcasts/tls.sh check 7" \
-    --field="<small>$(gettext "Configure")</small>":BTN "$DS/addons/Podcasts/tls.sh check 8" \
-    --field="$(gettext "Syncronize")":BTN "$DSF/tls.sh syndlg" --field=" ":lbl \
+    --field="<small>$(gettext "Configure")</small>":BTN "$DSP/tls.sh check 1" \
+    --field="<small>$(gettext "Configure")</small>":BTN "$DSP/tls.sh check 2" \
+    --field="<small>$(gettext "Configure")</small>":BTN "$DSP/tls.sh check 3" \
+    --field="<small>$(gettext "Configure")</small>":BTN "$DSP/tls.sh check 4" \
+    --field="<small>$(gettext "Configure")</small>":BTN "$DSP/tls.sh check 5" \
+    --field="<small>$(gettext "Configure")</small>":BTN "$DSP/tls.sh check 6" \
+    --field="<small>$(gettext "Configure")</small>":BTN "$DSP/tls.sh check 7" \
+    --field="<small>$(gettext "Configure")</small>":BTN "$DSP/tls.sh check 8" \
+    --field="$(gettext "Syncronize")":BTN "$DSP/tls.sh syndlg" --field=" ":lbl \
     --button="gtk-apply":0)
 
-    printf "$CNFG" | head -n 8 | sed 's/^ *//; s/ *$//; /^$/d' > $DCF/$lgtl/link
-    printf "$CNFG" | tail -n 2 > $DCF/.cnf
+    printf "$CNFG" | head -n 8 | sed 's/^ *//; s/ *$//; /^$/d' > $DCP/cfg.4
+    printf "$CNFG" | tail -n 2 > $DCP/cfg.0
     
 elif [ "$1" = NS ]; then
 
@@ -73,60 +73,60 @@ elif [ "$1" = edit ]; then
 
 if [[ "$(cat "$DM_tl/Podcasts/.conf/cfg.0" | wc -l)" -ge 20 ]]; then
 dd="id01
-$DSF/images/edit.png
+$DSP/images/edit.png
 $(gettext "Subscriptions")
 id02
-$DSF/images/sync.png
+$DSP/images/sync.png
 $(gettext "Syncronize")
 id03
-$DSF/images/save.png
+$DSP/images/save.png
 $(gettext "Create topic")
 id04
-$DSF/images/del.png
+$DSP/images/del.png
 $(gettext "Delete episodes")
 id05
-$DSF/images/del.png
+$DSP/images/del.png
 $(gettext "Delete episodes saved")"
 else
 dd="id01
-$DSF/images/edit.png
+$DSP/images/edit.png
 $(gettext "Subscriptions")
 id02
-$DSF/images/sync.png
+$DSP/images/sync.png
 $(gettext "Syncronize")
 id04
-$DSF/images/del.png
+$DSP/images/del.png
 $(gettext "Delete episodes")
 id05
-$DSF/images/del.png
+$DSP/images/del.png
 $(gettext "Delete episodes saved")"
 fi
 
     echo "$dd" | yad --list --on-top \
     --expand-column=2 --center --print-column=1 \
-    --width=400 --name=idiomind --class=idiomind \
-    --height=340 --title="$(gettext "Edit")" --skip-taskbar \
+    --width=360 --name=idiomind --class=idiomind \
+    --height=300 --title="$(gettext "Edit")" --skip-taskbar \
     --window-icon=idiomind --no-headers --hide-column=1 \
     --buttons-layout=end --borders=5 --button=OK:0 \
     --column=id:TEXT --column=icon:IMG --column=Action:TEXT > "$slct"
     ret=$?
     slt=$(cat "$slct")
     
-    if  [[ "$ret" -eq 0 ]]; then
+    if  [ "$ret" -eq 0 ]; then
         if echo "$slt" | grep -o "id03"; then
-            "$DSF/add.sh" new_topic
+            "$DSP/add.sh" new_topic
         elif echo "$slt" | grep -o "id04"; then
-            "$DSF/mngr.sh" delete_episodes
+            "$DSP/mngr.sh" delete_episodes
         elif echo "$slt" | grep -o "id05"; then
-            "$DSF/mngr.sh" delete_episodes_saved
+            "$DSP/mngr.sh" delete_episodes_saved
         elif echo "$slt" | grep -o "id01"; then
-            "$DSF/cnfg.sh"
+            "$DSP/cnfg.sh"
         elif echo "$slt" | grep -o "id02"; then
-            "$DSF/tls.sh" syncronize
+            "$DSP/tls.sh" syncronize
         fi
         rm -f "$slct"
 
-    elif [[ "$ret" -eq 1 ]]; then
+    elif [ "$ret" -eq 1 ]; then
         exit 1
     fi
 fi
