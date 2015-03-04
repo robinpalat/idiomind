@@ -24,25 +24,31 @@ if [ "$1" = play ]; then
         play "$DM_tl/Podcasts/kept/$2.ogg" & exit
     # mp4
     elif [ -f "$DM_tl/Podcasts/content/$2.mp4" ]; then
-        mplayer "$fs" "$DM_tl/Podcasts/content/$2.mp4" & exit
+        mplayer "$fs" "$DM_tl/Podcasts/content/$2.mp4" \
+        >/dev/null 2>&1 & exit
     
     elif [ -f "$DM_tl/Podcasts/kept/$2.mp4" ]; then
-       mplayer "$fs" "$DM_tl/Podcasts/kept/$2.mp4" & exit
+       mplayer "$fs" "$DM_tl/Podcasts/kept/$2.mp4" \
+       >/dev/null 2>&1 & exit
     # m4v
     elif [ -f "$DM_tl/Podcasts/content/$2.m4v" ]; then
-        mplayer "$fs" "$DM_tl/Podcasts/content/$2.m4v" & exit
+        mplayer "$fs" "$DM_tl/Podcasts/content/$2.m4v" \
+        >/dev/null 2>&1 & exit
     
     elif [ -f "$DM_tl/Podcasts/kept/$2.m4v" ]; then
-       mplayer "$fs" "$DM_tl/Podcasts/kept/$2.m4v" & exit
+       mplayer "$fs" "$DM_tl/Podcasts/kept/$2.m4v" \
+       >/dev/null 2>&1 & exit
     
     # avi
     elif [ -f "$DM_tl/Podcasts/content/$2.avi" ]; then
-        mplayer "$fs" "$DM_tl/Podcasts/content/$2.avi" & exit
+        mplayer "$fs" "$DM_tl/Podcasts/content/$2.avi" \
+        >/dev/null 2>&1 & exit
     
     elif [ -f "$DM_tl/Podcasts/kept/$2.avi" ]; then
-       mplayer "$fs" "$DM_tl/Podcasts/kept/$2.avi" & exit
+       mplayer "$fs" "$DM_tl/Podcasts/kept/$2.avi" \
+       >/dev/null 2>&1 & exit
     fi
-    "$?" 2> /dev/null
+    
     
 elif [ "$1" = dclk ]; then
 
@@ -83,32 +89,27 @@ XSLT_STYLESHEET="<?xml version='1.0' encoding='UTF-8'?>
 </xsl:stylesheet>"
 
     tpl="Enclosure\n ----\nTitle\n ----\nSummary\n ----\n ----\n ----"
-    o=" ----!Enclosure!Title!Summary"
-    
+    mn=" ----!Enclosure!Title!Summary"
     lnk=$(sed -n "$2"p $DCF/$lgtl/link)
     [ -z "$lnk" ] && exit 1
-    
     [ ! -f "$DCF/$lgtl/$2.xml" ] && printf "$tpl" > "$DCF/$lgtl/$2.xml"
-    
-    PODCAST_ITEMS="$(xsltproc - "$lnk" <<< "$XSLT_STYLESHEET" 2> /dev/null)"
-    PODCAST_ITEMS="$(echo "$PODCAST_ITEMS" | tr '\n' ' ' | tr -s [:space:] | sed 's/EOL/\n/g' | head -n 2)"
-    ITEM="$(echo "$PODCAST_ITEMS" | sed -n 1p)"
-    
-    [ -z "$(echo $ITEM | sed 's/^ *//; s/ *$//; /^$/d')" ] && msg "$(gettext "Couldn't download the specified URL\n")" info && exit 1
-
-    field="$(echo "$ITEM" | sed 's/\]\[/\n/g')"
+    podcast_items="$(xsltproc - "$lnk" <<< "$XSLT_STYLESHEET" 2> /dev/null)"
+    podcast_items="$(echo "$podcast_items" | tr '\n' ' ' | tr -s [:space:] | sed 's/EOL/\n/g' | head -n 2)"
+    item="$(echo "$podcast_items" | sed -n 1p)"
+    [ -z "$(echo $item | sed 's/^ *//; s/ *$//; /^$/d')" ] && msg "$(gettext "Couldn't download the specified URL\n")" info && exit 1
+    field="$(echo "$item" | sed 's/\]\[/\n/g')"
 
     yad --scroll --columns=2 --skip-taskbar --separator='\n' \
     --width=800 --height=650 --form --on-top --window-icon=idiomind \
-    --text="<small> $(gettext " In this table you can define fields according to their content ")</small>" \
+    --text="<small> $(gettext "\tIn this table you can define fields according to their content,  most of the time the default configuration is right. ")</small>" \
     --button=gtk-apply:0 --borders=5 --title="$ttl" --always-print-result \
-    --field="":CB "$(sed -n 1p $DCF/$lgtl/$2.xml)!$o" \
-    --field="":CB "$(sed -n 2p $DCF/$lgtl/$2.xml)!$o" \
-    --field="":CB "$(sed -n 3p $DCF/$lgtl/$2.xml)!$o" \
-    --field="":CB "$(sed -n 4p $DCF/$lgtl/$2.xml)!$o" \
-    --field="":CB "$(sed -n 5p $DCF/$lgtl/$2.xml)!$o" \
-    --field="":CB "$(sed -n 6p $DCF/$lgtl/$2.xml)!$o" \
-    --field="":CB "$(sed -n 7p $DCF/$lgtl/$2.xml)!$o" \
+    --field="":CB "$(sed -n 1p $DCF/$lgtl/$2.xml)!$mn" \
+    --field="":CB "$(sed -n 2p $DCF/$lgtl/$2.xml)!$mn" \
+    --field="":CB "$(sed -n 3p $DCF/$lgtl/$2.xml)!$mn" \
+    --field="":CB "$(sed -n 4p $DCF/$lgtl/$2.xml)!$mn" \
+    --field="":CB "$(sed -n 5p $DCF/$lgtl/$2.xml)!$mn" \
+    --field="":CB "$(sed -n 6p $DCF/$lgtl/$2.xml)!$mn" \
+    --field="":CB "$(sed -n 7p $DCF/$lgtl/$2.xml)!$mn" \
     --field="":TXT "$(echo "$field" | sed -n 1p)" \
     --field="":TXT "$(echo "$field" | sed -n 2p)" \
     --field="":TXT "$(echo "$field" | sed -n 3p | sed 's/\://g')" \
@@ -153,10 +154,9 @@ elif [ "$1" = syncronize ]; then
             [ ! -d "$DIR" ] && exit 1
     fi
 
-    #notify-send -i idiomind "$(gettext "Syncing")" "$(gettext " ")" -t 3000
     touch $DT/l_sync
-    rsync -az --delete --exclude="*.txt" \
-    --ignore-errors $DM_tl/Podcasts/content/ "$SYNCDIR"
+    rsync -az --delete --exclude="*.txt" --exclude="*.png" \
+    --exclude="*.i" --ignore-errors $DM_tl/Podcasts/content/ "$SYNCDIR"
 
     exit=$?
     if [ $exit = 0 ] ; then

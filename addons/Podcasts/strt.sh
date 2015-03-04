@@ -4,7 +4,7 @@
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/mods/cmns.sh
 include $DS/ifs/mods/add
-DSF="$DS/addons/Podcasts"
+DSP="$DS/addons/Podcasts"
 DCF="$DC/addons/Podcasts"
 DT_r=$(mktemp -d $DT/XXXX)
 
@@ -111,7 +111,6 @@ fi
 
 dir_content="$DM_tl/Podcasts/content"
 dir_conf="$DM_tl/Podcasts/.conf"
-dir_content="$DM_tl/Podcasts/content"
 touch $TEMPRSSFILE
 cp "$RSSFILE" "$TEMPRSSFILE"
 
@@ -124,7 +123,6 @@ mediatype () {
     if echo $1 | grep -o ".m4v"; then ex="m4v"; tp="vid"; fi
 }
 
-
 fetch_podcasts() {
 
     c=1
@@ -135,13 +133,17 @@ fetch_podcasts() {
         channel_info="$(xsltproc - "$FEED" <<< "$tmplchannel" 2> /dev/null)"
         channel_items="$(echo "$channel_info" | tr '\n' ' ' \
         | tr -s [:space:] | sed 's/EOL/\n/g' | head -n 1)"
-        field="$(echo "$channel_items" | tr -s '][' '\n' | sed 's/\]\[/\n/g')"
+        field="$(echo "$channel_items" | tr -s '][' '\n' \
+        | sed 's/\]\[/\n/g' | iconv -c -f utf8 -t ascii \
+        | sed 's/\://g' | sed 's/\&/&amp;/g')"
         channel=$(echo "$field" | sed -n 1p)
         link=$(echo "$field" | sed -n 2p)
-
+        
         podcast_items="$(xsltproc - "$FEED" <<< "$tmplitem" 2> /dev/null)"
         podcast_items="$(echo "$podcast_items" | tr '\n' ' ' \
         | tr -s [:space:] | sed 's/EOL/\n/g' | head -n $nps)"
+        podcast_items="$(echo "$podcast_items" | sed '/^$/d')"
+
         n_enc=$(cat "$DCF/$lgtl/$c.xml" | grep -Fxon "Enclosure" \
         | sed -n 's/^\([0-9]*\)[:].*/\1/p')
         n_tit=$(cat "$DCF/$lgtl/$c.xml" | grep -Fxon "Title" \
@@ -151,10 +153,16 @@ fetch_podcasts() {
         
         while read -r ITEM; do
 
-            fields="$(echo "$ITEM" | sed 's/\]\[/\n/g')"
+            fields="$(echo "$ITEM" | sed 's/\]\[/\n/g')" #| sed '/^$/d'
+            #echo "$(echo "$fields" | wc -l)......"
             enclosure=$(echo "$fields" | sed -n "$n_enc"p)
+            
+            if [ -z "$enclosure" ]; then
+                continue
+            fi
+            
             title=$(echo "$fields" | sed -n "$n_tit"p \
-            | iconv -c -f utf8 -t ascii | sed 's/\://g' | sed 's/\&//g')
+            | iconv -c -f utf8 -t ascii | sed 's/\://g' | sed 's/\&/&amp;/g')
             summary=$(echo "$fields" | sed -n "$n_sum"p)
             
             if ! cat $dir_conf/cfg.1 | grep -Fxo "$title"; then
@@ -172,64 +180,68 @@ fetch_podcasts() {
                     | sed -e "s/[[:space:]]\+/ /g" \
                     | sed 's/^ *//; s/ *$//; /^$/d' | tr -s ':')"
                 fi
-                fname="$(nmfile "${title^}")"
-                
-                
-                #-------------------------------------------------
-                #images
-                cd $DT_r
-                if [ $tp = aud ]; then
+                fname="$(nmfile "${title}")"
 
-                    rm -f *.jpeg *.jpg
+                cd $DT_r; p=TRUE; rm -f *.jpeg *.jpg
+
+                if [ "$tp" = aud ]; then
+
                     eyeD3 --write-images=/$DT_r "media.$ex"
-                    
-                    if ls | grep '.jpeg'; then /usr/bin/convert -scale 48x40! *.jpeg img.png; fi
-                    if ls | grep '.jpg'; then /usr/bin/convert -scale 48x40! *.jpg img.png; fi
-                    
-                    if [ -f img.png ]; then
-                        mv -f img.png "$dir_content/$fname.png"
-                    
-                    elif [ ! -f img.png ]; then
+
+                    if ls | grep '.jpeg'; then img="$(ls | grep '.jpeg')"
+                    else img="$(ls | grep '.jpg')"; fi
+
+                    if [ ! -f $DT_r/$img ]; then
                     
                         wget -q -O- "$FEED" | grep -o '<itunes:image href="[^"]*' \
                         | grep -o '[^"]*$' | xargs wget -c
                         
-                        if ls | grep '.jpeg'; then /usr/bin/convert -scale 48x40! *.jpeg img.png; fi
-                        if ls | grep '.jpg'; then /usr/bin/convert -scale 48x40! *.jpg img.png; fi
-                        mv -f img.png "$dir_content/$fname.png"
-                        
-                    else
-                        cp -f /usr/share/idiomind/addons/Podcasts/images/audio.png "$dir_content/$fname.png"
+                        if ls | grep '.jpeg'; then img="$(ls | grep '.jpeg')"
+                        else img="$(ls | grep '.jpg')"; fi
                     fi
+                        
+                        if [ ! -f $DT_r/$img ]; then
+                        
+                            cp -f $DSP/images/audio.png "$dir_content/$fname.png"
+                            p=""
+                        fi
+                fi
 
-                elif [ $tp = vid ]; then
+                if [ "$tp" = vid ]; then
                     
                     mplayer -ss 60 -nosound -vo jpeg -frames 1 "media.$ex"
                     
-                    if ls | grep '.jpeg'; then /usr/bin/convert -scale 48x40! *.jpeg img.png; fi
-                    if ls | grep '.jpg'; then /usr/bin/convert -scale 48x40! *.jpg img.png; fi
+                    if ls | grep '.jpeg'; then img="$(ls | grep '.jpeg')"
+                    else img="$(ls | grep '.jpg')"; fi
                     
-                    if [ -f img.png ]; then
-                    
-                        mv -f img.png "$dir_content/$fname.png"
+                    if [ ! -f $DT_r/$img ]; then
                         
-                    else
-                        cp -f /usr/share/idiomind/addons/Podcasts/images/video.png "$dir_content/$fname.png"
+                        cp -f $DSP/images/video.png "$dir_content/$fname.png"
+                        p=""
                     fi
                 fi
-                rm -f *.jpeg *.jpg
-                        
-
-
-                #-------------------------------------------------
+                
+                if ([ $p = TRUE ] && [ -f $DT_r/$img ]); then
+                
+                    convert "$DT_r/$img" -interlace Plane -thumbnail 52x44^ \
+                    -gravity center -extent 52x44 -quality 100% tmp.jpg
+                    convert tmp.jpg -bordercolor white \
+                    -border 2 \( +clone -background black \
+                    -shadow 60x3+2+2 \) +swap -background transparent \
+                    -layers merge +repage "$dir_content/$fname.png"
+                    rm -f *.jpeg *.jpg
+                fi
+                
                 mv -f "media.$ex" "$dir_content/$fname.$ex"
                 printf "\n$summary" > "$dir_content/$fname.txt"
-                echo "channel=\"$channel\"" > "$dir_content/$fname"
-                echo "link=\"$link\"" >> "$dir_content/$fname"
-                echo "title=\"$title\"" >> "$dir_content/$fname"
-                echo "$title" >> "$dir_conf/cfg.1"
+                echo -e "channel=\"$channel\"" > "$dir_content/$fname.i"
+                echo -e "link=\"$link\"" >> "$dir_content/$fname.i"
+                echo -e "title=\"$title\"" >> "$dir_content/$fname.i"
+                sed -i -e "1i$title\\" "$dir_conf/cfg.1"
+                if grep '^$' "$dir_conf/cfg.1"; then
+                sed -i '/^$/d' "$dir_conf/cfg.1"; fi
                 echo "$title" >> "$dir_conf/.cfg.11"
-                echo "source" >> $DT_r/log
+                echo "$title" >> $DT_r/log
             fi
 
         done <<< "$podcast_items"
@@ -250,27 +262,33 @@ echo "14" > $dir_conf/cfg.8
 (sleep 2 && notify-send -i idiomind "$(gettext "Checking for new downloads")" "$(gettext "Updating") $nps $(gettext "feeds...")" -t 6000) &
 fi
 
-nps=3
+nps=5
 fetch_podcasts
 
 [ -f $DT_r/log ] && dd="$(cat $DT_r/log | wc -l)" || dd=0
 rm -fr $DT_r $DT/.uptp
 
 if [ "$dd" -gt 0 ]; then
-    n=20
-    while [ $n -le $(cat $dir_conf/cfg.1 | tail -n+21 | wc -l) ]; do
-        rm="$(sed -n "$n"p $dir_conf/cfg.1)"
-        fname="$(nmfile "${rm^}")"
+    n=30
+    while [ $n -le $(cat $dir_conf/.cfg.11 | tail -n+31 | wc -l) ]; do
+        rm="$(sed -n "$n"p $dir_conf/.cfg.11)"
+        fname="$(nmfile "${rm}")"
         rm "$dir_content/$fname.mp3"
         rm "$dir_content/$fname.txt"
-        grep -vxF "$rm" "$dir_content/cfg.1" > \
+        rm "$dir_content/$fname"
+        grep -vxF "$rm" "$dir_content/.cfg.11" > \
         $DT/rm.tmp && sed '/^$/d' $DT/rm.tmp > \
-        "$dir_content/cfg.1"
+        "$dir_content/.cfg.11"
         let n++
     done
 
-    check_index1 "$dir_conf/cfg.1" "$dir_conf/.cfg.11"
-    sed -i '/^$/d' "$dir_conf/cfg.1"
+    check_index1 "$dir_conf/.cfg.11"
+    tac "$dir_conf/.cfg.11" "$dir_conf/cfg.1"
+    if grep '^$' "$dir_conf/cfg.1"; then
+    sed -i '/^$/d' "$dir_conf/cfg.1"; fi
+    if grep '^$' "$dir_conf/.cfg.11"; then
+    sed -i '/^$/d' "$dir_conf/.cfg.11"; fi
+
 
     echo "$(date "+%a %d %B")" > $DM_tl/Podcasts/.dt
     notify-send -i idiomind \

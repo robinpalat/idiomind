@@ -178,10 +178,10 @@ fi
 
     echo "$dd" | yad --list --on-top \
     --expand-column=2 --center --print-column=1 \
-    --width=340 --name=idiomind --class=idiomind \
-    --height=260 --title="$(gettext "Edit")" --skip-taskbar \
+    --width=400 --name=idiomind --class=idiomind \
+    --height=340 --title="$(gettext "Edit")" --skip-taskbar \
     --window-icon=idiomind --no-headers --hide-column=1 \
-    --buttons-layout=end --borders=0 --button=Ok:0 \
+    --buttons-layout=end --borders=5 --button=OK:0 \
     --column=id:TEXT --column=icon:IMG --column=Action:TEXT > "$slct"
     ret=$?
     slt=$(cat "$slct")

@@ -33,7 +33,7 @@ function msg_2() { # decide
 
 function nmfile() {
         
-  echo "$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
+  echo -n "${1^}" | md5sum | rev | cut -c 4- | rev
 }
 
 function include() {

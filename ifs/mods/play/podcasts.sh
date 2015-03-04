@@ -1,5 +1,13 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
+DCF="$DC/addons/Podcasts"
+
+if [ -n $(sed -n 11p $DC_s/cfg.5 | grep -o "TRUE") ]; then
+    find "$DM_tl/Podcasts/content"/ -type f \( -name "*.avi" -o -name "*.mp4" -o -name "*.m4v" \) > $DT/playlist.m3u
+    [ -f "$DCF/.cnf" ] && st3=$(sed -n 2p "$DCF/.cnf") || st3=FALSE
+    [ $st3 = FALSE ] && fs="" || fs='-fs'
+    mplayer "$fs" -playlist $DT/playlist.m3u & $DS/stop.sh play & exit 1
+fi
 
 [ -f "$DM_tl/Podcasts/content/$fname.mp3" ] && file="$DM_tl/Podcasts/content/$fname.mp3" && t=3
 [ -f "$DM_tl/Podcasts/content/$fname.ogg" ] && file="$DM_tl/Podcasts/content/$fname.ogg" && t=3

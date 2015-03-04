@@ -38,7 +38,7 @@ if [ -z "$1" ]; then
     CNFG=$(yad --form --center --columns=2 --borders=10 \
     --window-icon=idiomind --skip-taskbar --separator="\n"\
     --width=550 --height=360 --always-print-result \
-    --title="$(gettext "Podcasts Subscriptions")"  \
+    --title="$(gettext "Podcasts settings")"  \
     --field="" "$(sed -n 1p $DCF/$lgtl/link)" \
     --field="" "$(sed -n 2p $DCF/$lgtl/link)" \
     --field="" "$(sed -n 3p $DCF/$lgtl/link)" \
@@ -63,8 +63,6 @@ if [ -z "$1" ]; then
     printf "$CNFG" | head -n 8 | sed 's/^ *//; s/ *$//; /^$/d' > $DCF/$lgtl/link
     printf "$CNFG" | tail -n 2 > $DCF/.cnf
     
-    
-        
 elif [ "$1" = NS ]; then
 
     msg "$(gettext "Error")" info
@@ -75,55 +73,55 @@ elif [ "$1" = edit ]; then
 
 if [[ "$(cat "$DM_tl/Podcasts/.conf/cfg.0" | wc -l)" -ge 20 ]]; then
 dd="id01
+$DSF/images/edit.png
+$(gettext "Subscriptions")
+id02
+$DSF/images/sync.png
+$(gettext "Syncronize")
+id03
 $DSF/images/save.png
 $(gettext "Create topic")
-id02
+id04
 $DSF/images/del.png
 $(gettext "Delete episodes")
-id03
-$DSF/images/del.png
-$(gettext "Delete episodes saved")
-id04
-$DSF/images/edit.png
-$(gettext "Subscriptions")
 id05
-$DSF/images/sync.png
-$(gettext "Syncronize")"
+$DSF/images/del.png
+$(gettext "Delete episodes saved")"
 else
-dd="id02
-$DSF/images/del.png
-$(gettext "Delete episodes")
-id03
-$DSF/images/del.png
-$(gettext "Delete episodes saved")
-id04
+dd="id01
 $DSF/images/edit.png
 $(gettext "Subscriptions")
-id05
+id02
 $DSF/images/sync.png
-$(gettext "Syncronize")"
+$(gettext "Syncronize")
+id04
+$DSF/images/del.png
+$(gettext "Delete episodes")
+id05
+$DSF/images/del.png
+$(gettext "Delete episodes saved")"
 fi
 
     echo "$dd" | yad --list --on-top \
     --expand-column=2 --center --print-column=1 \
-    --width=340 --name=idiomind --class=idiomind \
-    --height=260 --title="$(gettext "Edit")" --skip-taskbar \
+    --width=400 --name=idiomind --class=idiomind \
+    --height=340 --title="$(gettext "Edit")" --skip-taskbar \
     --window-icon=idiomind --no-headers --hide-column=1 \
-    --buttons-layout=end --borders=0 --button=Ok:0 \
+    --buttons-layout=end --borders=5 --button=OK:0 \
     --column=id:TEXT --column=icon:IMG --column=Action:TEXT > "$slct"
     ret=$?
     slt=$(cat "$slct")
     
     if  [[ "$ret" -eq 0 ]]; then
-        if echo "$slt" | grep -o "id01"; then
+        if echo "$slt" | grep -o "id03"; then
             "$DSF/add.sh" new_topic
-        elif echo "$slt" | grep -o "id02"; then
-            "$DSF/mngr.sh" delete_episodes
-        elif echo "$slt" | grep -o "id03"; then
-            "$DSF/mngr.sh" delete_episodes_saved
         elif echo "$slt" | grep -o "id04"; then
-            "$DSF/cnfg.sh"
+            "$DSF/mngr.sh" delete_episodes
         elif echo "$slt" | grep -o "id05"; then
+            "$DSF/mngr.sh" delete_episodes_saved
+        elif echo "$slt" | grep -o "id01"; then
+            "$DSF/cnfg.sh"
+        elif echo "$slt" | grep -o "id02"; then
             "$DSF/tls.sh" syncronize
         fi
         rm -f "$slct"
