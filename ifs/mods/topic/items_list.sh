@@ -12,11 +12,10 @@ function notebook_1() {
     cat "$ls2" | yad \
     --no-headers --list --plug=$KEY --tabnum=2 \
     --expand-column=0 --ellipsize=END --print-all \
-    --column=Name:TEXT \
-    --dclick-action='./vwr.sh v2' &
+    --column=Name:TEXT --dclick-action='./vwr.sh v2' &
     yad --text-info --plug=$KEY --margins=14 \
-    --tabnum=3 --text="$itxt2" --fore='gray40' --wrap --editable \
-    --show-uri --fontname=vendana \
+    --tabnum=3 --text="$itxt2" --fore='gray40' --wrap \
+    --show-uri --fontname=vendana --editable \
     --filename="$nt" > "$cnf3" &
     yad --notebook --name=idiomind --center --key=$KEY \
     --class=Idiomind --align=right \
@@ -42,8 +41,7 @@ function notebook_2() {
     cat "$ls2" | yad \
     --no-headers --list --plug=$KEY --tabnum=2 \
     --expand-column=1 --ellipsize=END --print-all \
-    --column=Name:TEXT \
-    --dclick-action='./vwr.sh v2' &
+    --column=Name:TEXT --dclick-action='./vwr.sh v2' &
     yad --text-info --plug=$KEY --margins=14 --text="$itxt2" \
     --tabnum=3 --fore='gray40' --wrap --filename="$nt" \
     --show-uri --fontname=vendana --editable > "$cnf3" &

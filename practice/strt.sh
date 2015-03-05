@@ -109,8 +109,8 @@ if [ $ret -eq 0 ]; then
     else
         yad --form --center --borders=5 \
         --title="Info" --on-top --window-icon=idiomind \
-        --button=Ok:1 --skip-taskbar \
-        --text="<span color='#797979'><b>  $(gettext "You must choose a practice")</b></span>" \
+        --button=Ok:1 --skip-taskbar --image=info \
+        --text=" $(gettext "You must choose a practice")\n" \
         --width=360 --height=120
         $DSP/strt.sh & exit 1
     fi

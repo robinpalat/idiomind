@@ -14,8 +14,8 @@ elif echo "$1" | grep "play"; then
     [ -n "$(ps -A | pgrep -f "tls.sh")" ] && killall tls.sh &
     [ -n "$(ps -A | pgrep -f "notify-osd")" ] && killall notify-osd &
     [ -n "$(ps -A | pgrep -f "play")" ] && killall play &
-    [ -d $DT/p ] && rm -fr $DT/p
-    [ -f $DT/.p_ ] && rm -fr $DT/.p_
+    [ -d "$DT/p" ] && rm -fr "$DT/p"
+    [ -f "$DT/.p_" ] && rm -fr "$DT/.p_"
     exit
 elif echo "$1" | grep "tpc"; then
     [ -n "$(ps -A | pgrep -f "bcle.sh")" ] && killall bcle.sh &
@@ -32,7 +32,7 @@ elif echo "$1" | grep "S"; then
     [ -n "$(ps -A | pgrep -f "play.sh")" ] && killall play.sh &
     [ -n "$(ps -A | pgrep -f "chng.sh")" ] && killall chng.sh &
     [ -n "$(ps -A | pgrep -f "yad --form ")" ] && kill -9 $(pgrep -f "yad --form ") &
-    [ -d $DT/p ] && rm -fr $DT/p
+    [ -d "$DT/p" ] && rm -fr "$DT/p"
     exit
 elif echo "$1" | grep "V"; then
     [ -n "$(ps -A | pgrep -f "chng.sh")" ] && killall chng.sh &
@@ -45,12 +45,12 @@ elif echo "$1" | grep "L"; then
     [ -n "$(ps -A | pgrep -f "play")" ] && killall play &
     [ -n "$(ps -A | pgrep -f "chng.sh")" ] && killall chng.sh &
     [ -n "$(ps -A | pgrep -f "yad --form ")" ] && kill -9 $(pgrep -f "yad --form ") &
-    [ -d $DT/p ] && rm -fr $DT/p
+    [ -d "$DT/p" ] && rm -fr "$DT/p"
     exit
 elif echo "$1" | grep "feed"; then
     [ -n "$(ps -A | pgrep -f "rsstail")" ] && killall rsstail &
     killall strt.sh &
-    [ -f $DT/.uptf ] && rm -fr $DT/.uptf
-    [ -f $DT/.uptp ] && rm -fr $DT/.uptp
+    [ -f "$DT/.uptf" ] && rm -fr "$DT/.uptf"
+    [ -f "$DT/.uptp" ] && rm -fr "$DT/.uptp"
     exit
 fi

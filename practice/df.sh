@@ -30,50 +30,13 @@ function score() {
         [[ -f l_f ]] && echo "$(($(cat l_f)+$easy))" > l_f || echo $easy > l_f
         s=$(cat l_f)
         v=$((100*$s/$all))
-        
-        if [ $v -le 1 ]; then
-            echo 1 > .iconf
-        elif [ $v -le 5 ]; then
-            echo 2 > .iconf
-        elif [ $v -le 10 ]; then
-            echo 3 > .iconf
-        elif [ $v -le 15 ]; then
-            echo 4 > .iconf
-        elif [ $v -le 20 ]; then
-            echo 5 > .iconf
-        elif [ $v -le 25 ]; then
-            echo 6 > .iconf
-        elif [ $v -le 30 ]; then
-            echo 7 > .iconf
-        elif [ $v -le 35 ]; then
-            echo 8 > .iconf
-        elif [ $v -le 40 ]; then
-            echo 9 > .iconf
-        elif [ $v -le 45 ]; then
-            echo 10 > .iconf
-        elif [ $v -le 50 ]; then
-            echo 11 > .iconf
-        elif [ $v -le 55 ]; then
-            echo 12 > .iconf
-        elif [ $v -le 60 ]; then
-            echo 13 > .iconf
-        elif [ $v -le 65 ]; then
-            echo 14 > .iconf
-        elif [ $v -le 70 ]; then
-            echo 15 > .iconf
-        elif [ $v -le 75 ]; then
-            echo 16 > .iconf
-        elif [ $v -le 80 ]; then
-            echo 17 > .iconf
-        elif [ $v -le 85 ]; then
-            echo 18 > .iconf
-        elif [ $v -le 90 ]; then
-            echo 19 > .iconf
-        elif [ $v -le 95 ]; then
-            echo 20 > .iconf
-        elif [ $v -eq 100 ]; then
-            echo 21 > .iconf
-        fi
+        n=1; c=1
+        while [ "$n" -le 21 ]; do
+                if [[ "$v" -le "$c" ]]; then
+                echo "$n" > .iconf; break; fi
+                ((c=c+5))
+            let n++
+        done
         
         [[ -f fin2 ]] && rm fin2
         [[ -f fin3 ]] && rm fin3
@@ -85,61 +48,50 @@ function fonts() {
     
     
     fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
-    s=$(eyeD3 "$drtt/$fname.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
+    src=$(eyeD3 "$drtt/$fname.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
     [[ $n = 1 ]] && info="<small> $(gettext "means")...</small>" || info=""
     
-    if [ $(echo "$1" | wc -c) -le 8 ]; then
-    c="<big><big><big><big>$1</big></big></big></big>"
-    elif [ $(echo "$1" | wc -c) -le 14 ]; then
-    c="<big><big><big>$1</big></big></big>"
-    elif [ $(echo "$1" | wc -c) -gt 14 ]; then
-    c="<big>$1</big>"
-    fi
-    if [ $(echo "$s" | wc -c) -le 8 ]; then
-    a="<big><big><big><big>$s</big></big></big></big>"
-    elif [ $(echo "$s" | wc -c) -le 14 ]; then
-    a="<big><big><big>$s</big></big></big>"
-    elif [ $(echo "$s" | wc -c) -gt 14 ]; then
-    a="<big>$s</big>"
-    fi
-    if [[ -f "$drtt/images/$fname.jpg" ]]; then
+
+    if [ -f "$drtt/images/$fname.jpg" ]; then
+    s=$((25-$(echo "$1" | wc -c)))
     img="$drtt/images/$fname.jpg"
-    trgts="$c"
-    srces="$a"
+    lcuestion="<b>$1</b>"
+    lanswer="<small><small><small>$1</small></small></small>  |  <b>$src</b>"
     else
+    s=$((40-$(echo "$1" | wc -c)))
     img="/usr/share/idiomind/images/fc.png"
-    trgts="<big><big><big>$c</big></big></big>"
-    srces="<big><big><big>$a</big></big></big>"
+    lcuestion="<b>$1</b>"
+    lanswer="<small><small><small>$1</small></small></small>\n<b>$src</b>"
     fi
     }
 
 function cuestion() {
     
-    yad --form --align=center --text-align=center --undecorated \
+    yad --form --text-align=center --undecorated \
     --center --on-top --image-on-top --image="$img" \
     --skip-taskbar --title=" " --borders=3 \
-    --buttons-layout=spread \
-    --field="<span color='#7F7F7F'><b>$trgts</b></span>":lbl \
+    --buttons-layout=spread --align=center \
+    --field="<span font_desc='Free Sans $s'>$lcuestion</span>":lbl \
     --width=371 --height=280 \
     --button="   $(gettext "Exit")   ":1 \
-    --button="   $(gettext "Check Answer") >   ":0
+    --button="   $(gettext "Check Answer") >>   ":0
     }
 
 function answer() {
     
-    yad --form --align=center --text-align=center --undecorated \
+    yad --form --text-align=center --undecorated \
     --center --on-top --image-on-top --image="$img" \
     --skip-taskbar --title=" " --borders=3 \
-    --buttons-layout=spread \
-    --field="$srces":lbl --width=371 --height=280 \
+    --buttons-layout=spread --align=center \
+    --field="<span font_desc='Free Sans $s'>$lanswer</span>":lbl \
+    --width=371 --height=280 \
     --button="    $(gettext "I don't know")    ":3 \
     --button="    $(gettext "I know")    ":2
     }
 
-n=1
-while [ $n -le $(cat fin1 | wc -l) ]; do
 
-    trgt=$(sed -n "$n"p fin1)
+while read trgt; do
+
     fonts "$trgt"
     cuestion
     ret=$(echo "$?")
@@ -163,18 +115,16 @@ while [ $n -le $(cat fin1 | wc -l) ]; do
         exit 1
         
     fi
-    let n++
-done
+done < fin1
 
 if [[ ! -f fin2 ]]; then
 
     score $easy
     
 else
-    n=1
-    while [ $n -le $(cat fin2 | wc -l) ]; do
 
-        trgt=$(sed -n "$n"p fin2)
+    while read trgt; do
+
         fonts "$trgt"
         cuestion
         ret=$(echo "$?")
@@ -196,8 +146,7 @@ else
             break &
             exit 1
         fi
-        let n++
-    done
+    done < fin2
     
     score $easy
 fi

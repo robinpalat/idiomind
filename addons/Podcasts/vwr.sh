@@ -8,74 +8,49 @@ eht=$(sed -n 6p $DC_s/cfg.18)
 D=($*)
 Q=$((${#D[@]}-1))
 for i in $(seq 0 $Q); do
-    item[$i]=${D[$i]}
-done
+item[$i]=${D[$i]}; done
 item="${item[@]}"
-
-
+dir="$DM_tl/Podcasts/content"
 fname=$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)
-fc="$DM_tl/Podcasts/.conf/cfg.1"
 
-#echo
-#echo
-#echo
-#echo
-#echo "$item..."
-#echo "$fname..."
-#echo
-#echo
-#echo
-#echo
-
+if grep -Fxo "$item" < "$DM_tl/Podcasts/.conf/cfg.2"; then
+btnlabel="Delete"
+btncmd="'$DSP/mngr.sh' delete_item '$item'"
+else
 btnlabel="Save"
 btncmd="'$DSP/add.sh' new_item '$item'"
-dirs="$(printf "content\nkept")"
-
-while read dir; do
-
-if [ -f "$DM_tl/Podcasts/$dir/$fname.mp3" ]; then
-    file="$DM_tl/Podcasts/$dir/$fname.mp3"
-    ftxt="$DM_tl/Podcasts/$dir/$fname"
-
-elif [ -f "$DM_tl/Podcasts/$dir/$fname.ogg" ]; then
-    file="$DM_tl/Podcasts/$dir/$fname.ogg"
-    ftxt="$DM_tl/Podcasts/$dir/$fname"
-
-elif [ -f "$DM_tl/Podcasts/$dir/$fname.mp4" ]; then
-     file="$DM_tl/Podcasts/$dir/$fname.mp4"
-     ftxt="$DM_tl/Podcasts/$dir/$fname"
-
-elif [ -f "$DM_tl/Podcasts/$dir/$fname.m4v" ]; then
-     file="$DM_tl/Podcasts/$dir/$fname.m4v"
-     ftxt="$DM_tl/Podcasts/$dir/$fname"
-
-elif [ -f "$DM_tl/Podcasts/$dir/$fname.avi" ]; then
-     file="$DM_tl/Podcasts/$dir/$fname.avi"
-     ftxt="$DM_tl/Podcasts/$dir/$fname"
 fi
 
-done <<< "$dirs"
-
-#if echo "$file" | grep '/content'; then
-#btnlabel="Save"
-#btncmd="'$DSP/add.sh' new_item '$item'"
-#else
-#btnlabel="Delete"
-#btncmd="'$DSP/mngr.sh' delete_item '$item'"
-#fi
+if [ -f "$dir/$fname.mp3" ]; then
+    file="$dir/$fname.mp3"
+    ftxt="$dir/$fname"
+elif [ -f "$dir/$fname.ogg" ]; then
+    file="$dir/$fname.ogg"
+    ftxt="$dir/$fname"
+elif [ -f "$dir/$fname.mp4" ]; then
+     file="$dir/$fname.mp4"
+     ftxt="$dir/$fname"
+elif [ -f "$dir/$fname.m4v" ]; then
+     file="$dir/$fname.m4v"
+     ftxt="$dir/$fname"
+elif [ -f "$dir/$fname.avi" ]; then
+     file="$dir/$fname.avi"
+     ftxt="$dir/$fname"
+fi
 
 source "$ftxt.i"
 cmdplay="'$DSP/tls.sh' play '$fname'"
-trgt="<span color='#5A5C5D'><big>$title</big></span>\n<a href='$link'>$channel</a>"
+trgt="<span font_desc='Free Sans 9' color='#5A5C5D'>\
+<big>$title</big></span>\n<a href='$link'>$channel</a>"
 
 if [ -f "$file" ]; then
     sum="$(cat "$ftxt".txt)"
-     printf "$sum" | yad --text-info \
+    printf "$sum" | yad --text-info --image="$dir/$fname".png \
     --window-icon=/usr/share/idiomind/images/idiomind.png \
-    --center --title=" " --scroll --borders=10 --text="$trgt" \
+    --center --title=" " --scroll --borders=5 --text="$trgt" \
     --editable --always-print-result --image-on-top \
-    --width="$wth" --height="$(($eht+80))" --center --margins=25 \
-    --wrap --show-uri --fontname=vendana --name=idiomind \
+    --width="$wth" --height="$(($eht+80))" --center --margins=20 \
+    --wrap --show-uri --fontname='Free Sans 13' --name=idiomind \
     --button="$btnlabel":"$btncmd" \
     --button="Stop":"killall play" \
     --button="Play":"$cmdplay" > $DT/d.tmp
@@ -84,4 +59,3 @@ if [ -f "$file" ]; then
 else
     exit 1
 fi
-

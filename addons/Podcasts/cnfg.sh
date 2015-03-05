@@ -7,11 +7,10 @@ DSP="$DS_a/Podcasts"
 
 if [ ! -d $DM_tl/Podcasts ]; then
 
-    mkdir $DM_tl/Podcasts
-    mkdir $DM_tl/Podcasts/.conf
-    mkdir $DM_tl/Podcasts/content
-    mkdir $DM_tl/Podcasts/kept
-    cd $DM_tl/Podcasts/.conf/
+    mkdir "$DM_tl/Podcasts"
+    mkdir "$DM_tl/Podcasts/.conf"
+    mkdir "$DM_tl/Podcasts/content"
+    cd "$DM_tl/Podcasts/.conf/"
     touch cfg.0 cfg.1 cfg.3 cfg.4 .updt.lst
     echo '#!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
@@ -22,19 +21,21 @@ sleep 1
 echo "$tpc" > $DC_s/cfg.8
 echo pd >> $DC_s/cfg.8
 #notify-send -i idiomind "Podcast Mode" " $FEED" -t 3000
-exit 1' > $DM_tl/Podcasts/tpc.sh
-    chmod +x $DM_tl/Podcasts/tpc.sh
-    echo "14" > $DM_tl/Podcasts/.conf/cfg.8
-    $DS/mngr.sh mkmn
+exit 1' > "$DM_tl/Podcasts/tpc.sh"
+    chmod +x "$DM_tl/Podcasts/tpc.sh"
+    echo "14" > "$DM_tl/Podcasts/.conf/cfg.8"
+    "$DS/mngr.sh" mkmn
 fi
 
 
 if [ -z "$1" ]; then
-
-    [ ! -f $DCP/cfg.4 ] && touch $DCP/cfg.4
-    [ -f "$DCP/cfg.0" ] && st2=$(sed -n 1p "$DCP/cfg.0") || st2=FALSE
-    [ -f "$DCP/cfg.0" ] && st3=$(sed -n 2p "$DCP/cfg.0") || st3=FALSE
     
+    [[ -e "$DT/cp.lock" ]] && exit || touch "$DT/cp.lock"
+    [ ! -f "$DCP/cfg.4" ] && touch "$DCP/cfg.4"
+    cp "$DCP/cfg.4" "$DCP/cfg.4_"
+    [ -f "$DCP/cfg.0" ] && st2=$(sed -n 1p "$DCP/cfg.0") || st2=FALSE
+    
+    CNF=$(gettext "Configure")
     CNFG=$(yad --form --center --columns=2 --borders=10 \
     --window-icon=idiomind --skip-taskbar --separator="\n"\
     --width=550 --height=360 --always-print-result \
@@ -47,21 +48,23 @@ if [ -z "$1" ]; then
     --field="" "$(sed -n 6p $DCP/cfg.4)" \
     --field="" "$(sed -n 7p $DCP/cfg.4)" \
     --field="" "$(sed -n 8p $DCP/cfg.4)" \
-    --field="$(gettext "Update at startup")":CHK "$st2" \
-    --field="$(gettext "Videos on fullscreen")\t\t\t\t\t\t\t\t\t\t\t":CHK "$st3" \
-    --field="<small>$(gettext "Configure")</small>":BTN "$DSP/tls.sh check 1" \
-    --field="<small>$(gettext "Configure")</small>":BTN "$DSP/tls.sh check 2" \
-    --field="<small>$(gettext "Configure")</small>":BTN "$DSP/tls.sh check 3" \
-    --field="<small>$(gettext "Configure")</small>":BTN "$DSP/tls.sh check 4" \
-    --field="<small>$(gettext "Configure")</small>":BTN "$DSP/tls.sh check 5" \
-    --field="<small>$(gettext "Configure")</small>":BTN "$DSP/tls.sh check 6" \
-    --field="<small>$(gettext "Configure")</small>":BTN "$DSP/tls.sh check 7" \
-    --field="<small>$(gettext "Configure")</small>":BTN "$DSP/tls.sh check 8" \
-    --field="$(gettext "Syncronize")":BTN "$DSP/tls.sh syndlg" --field=" ":lbl \
+    --field="$(gettext "Update at startup")\t\t\t\t\t\t\t\t\t\t\t":CHK "$st2" \
+    --field="<small>$CNF</small>":BTN "$DSP/tls.sh check 1" \
+    --field="<small>$CNF</small>":BTN "$DSP/tls.sh check 2" \
+    --field="<small>$CNF</small>":BTN "$DSP/tls.sh check 3" \
+    --field="<small>$CNF</small>":BTN "$DSP/tls.sh check 4" \
+    --field="<small>$CNF</small>":BTN "$DSP/tls.sh check 5" \
+    --field="<small>$CNF</small>":BTN "$DSP/tls.sh check 6" \
+    --field="<small>$CNF</small>":BTN "$DSP/tls.sh check 7" \
+    --field="<small>$CNF</small>":BTN "$DSP/tls.sh check 8" \
+    --field="$(gettext "Syncronize")":BTN "$DSP/tls.sh syndlg" \
     --button="gtk-apply":0)
 
-    printf "$CNFG" | head -n 8 | sed 's/^ *//; s/ *$//; /^$/d' > $DCP/cfg.4
-    printf "$CNFG" | tail -n 2 > $DCP/cfg.0
+    printf "$CNFG" | head -n 8 | sed 's/^ *//; s/ *$//; /^$/d' > "$DT/pc.tmp"
+    [[ -n "$(cat "$DT/pc.tmp")" ]] && mv -f "$DT/pc.tmp" "$DCP/cfg.4" || cp -f "$DCP/cfg.4_" "$DCP/cfg.4"
+    printf "$CNFG" | tail -n 1 > "$DCP/cfg.0"
+    [[ -f "$DCP/cfg.4_" ]] && rm "$DCP/cfg.4_"
+    [[ -e "$DT/cp.lock" ]] && rm -f "$DT/cp.lock"
     
 elif [ "$1" = NS ]; then
 

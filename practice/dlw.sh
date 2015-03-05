@@ -29,49 +29,13 @@ function score() {
         [[ -f l_w ]] && echo "$(($(cat l_w)+$easy))" > l_w || echo $easy > l_w
         s=$(cat l_w)
         v=$((100*$s/$all))
-        if [ $v -le 1 ]; then
-            echo 1 > .iconlw
-        elif [ $v -le 5 ]; then
-            echo 2 > .iconlw
-        elif [ $v -le 10 ]; then
-            echo 3 > .iconlw
-        elif [ $v -le 15 ]; then
-            echo 4 > .iconlw
-        elif [ $v -le 20 ]; then
-            echo 5 > .iconlw
-        elif [ $v -le 25 ]; then
-            echo 6 > .iconlw
-        elif [ $v -le 30 ]; then
-            echo 7 > .iconlw
-        elif [ $v -le 35 ]; then
-            echo 8 > .iconlw
-        elif [ $v -le 40 ]; then
-            echo 9 > .iconlw
-        elif [ $v -le 45 ]; then
-            echo 10 > .iconlw
-        elif [ $v -le 50 ]; then
-            echo 11 > .iconlw
-        elif [ $v -le 55 ]; then
-            echo 12 > .iconlw
-        elif [ $v -le 60 ]; then
-            echo 13 > .iconlw
-        elif [ $v -le 65 ]; then
-            echo 14 > .iconlw
-        elif [ $v -le 70 ]; then
-            echo 15 > .iconlw
-        elif [ $v -le 75 ]; then
-            echo 16 > .iconlw
-        elif [ $v -le 80 ]; then
-            echo 17 > .iconlw
-        elif [ $v -le 85 ]; then
-            echo 18 > .iconlw
-        elif [ $v -le 90 ]; then
-            echo 19 > .iconlw
-        elif [ $v -le 95 ]; then
-            echo 20 > .iconlw
-        elif [ $v -eq 100 ]; then
-            echo 21 > .iconlw
-        fi
+        n=1; c=1
+        while [ "$n" -le 21 ]; do
+                if [[ "$v" -le "$c" ]]; then
+                echo "$n" > .iconlw; break; fi
+                ((c=c+5))
+            let n++
+        done
         
         [[ -f lwin2 ]] && rm lwin2
         [[ -f lwin3 ]] && rm lwin3
@@ -88,29 +52,18 @@ function fonts() {
     && lst="${1:0:1} ${1:5:5}" || lst=$(echo "$1" | awk '$1=$1' FS= OFS=" " | tr aeiouy ' ')
     [[ $n = 1 ]] && info="<small> $(gettext "means")...</small>" || info=""
     
-    if [ $(echo "$1" | wc -c) -le 8 ]; then
-    a="<big><big><big><big>$1</big></big></big></big>"
-    elif [ $(echo "$1" | wc -c) -le 16 ]; then
-    a="<big><big><big>$1</big></big></big>"
-    elif [ $(echo "$1" | wc -c) -gt 16 ]; then
-    a="$1"
-    fi
-    if [ $(echo "$lst" | wc -c) -le 8 ]; then
-    c="<big><big><big>$lst</big></big></big>"
-    elif [ $(echo "$lst" | wc -c) -le 16 ]; then
-    c="<big><big>$lst</big></big>"
-    elif [ $(echo "$lst" | wc -c) -gt 16 ]; then
-    c="$lst"
-    fi
     if [[ -f "$drtt/images/$fname.jpg" ]]; then
-    img="$drtt/images/$fname.jpg"
-    trgts="$c"
-    tr="$a"
+        img="$drtt/images/$fname.jpg"
+        s=$((20-$(echo "$1" | wc -c)))
+        lcuestion="$lst"
+        lanswer="$1"
     else
-    img="/usr/share/idiomind/images/fc.png"
-    trgts="<big><big><big>$c</big></big></big>"
-    tr="<big><big><big>$a</big></big></big>"
+        s=$((40-$(echo "$1" | wc -c)))
+        img="/usr/share/idiomind/images/fc.png"
+        lcuestion="$lst"
+        lanswer="$1"
     fi
+    
     }
 
 function cuestion() {
@@ -122,11 +75,11 @@ function cuestion() {
     --center --on-top --image-on-top --image="$img" \
     --skip-taskbar --title=" " --borders=3 \
     --buttons-layout=spread \
-    --field="<span color='#7F7F7F'><b>$trgts</b></span>":lbl \
+    --field="<span font_desc='Free Sans $s'><b>$lcuestion</b></span>":lbl \
     --width=371 --height=280 \
     --button="$(gettext "Exit")":1 \
-    --button="$listen":"$play" \
-    --button="$(gettext "Check Answer") >":0
+    --button="Play":"$play" \
+    --button="$(gettext "Check Answer") >>":0
     }
 
 function answer() {
@@ -135,15 +88,14 @@ function answer() {
     --center --on-top --image-on-top --image="$img" \
     --skip-taskbar --title=" " --borders=3 \
     --buttons-layout=spread \
-    --field="$tr":lbl --width=371 --height=280 \
+    --field="<span font_desc='Free Sans $s'><b>$lanswer</b></span>":lbl \
+    --width=371 --height=280 \
     --button="    $(gettext "I don't know")    ":3 \
     --button="    $(gettext "I know")    ":2
     }
 
-n=1
-while [ $n -le $(cat ./lwin1 | wc -l) ]; do
+while read trgt; do
 
-    trgt=$(sed -n "$n"p ./lwin1)
     fonts "$trgt"
     cuestion "$trgt"
     ret=$(echo "$?")
@@ -167,18 +119,16 @@ while [ $n -le $(cat ./lwin1 | wc -l) ]; do
         exit 1
         
     fi
-    let n++
-done
+done < lwin1
 
 if [[ ! -f lwin2 ]]; then
 
     score $easy
     
 else
-    n=1
-    while [ $n -le $(cat ./lwin2 | wc -l) ]; do
 
-        trgt=$(sed -n "$n"p ./lwin2)
+    while read trgt; do
+
         fonts "$trgt"
         cuestion "$trgt"
         ret=$(echo "$?")
@@ -200,8 +150,7 @@ else
             break &
             exit 1
         fi
-        let n++
-    done
+    done < lwin2
     
     score $easy
 fi

@@ -4,40 +4,42 @@
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/mods/cmns.sh
 
-trgt="$2"
-DMK="$DM_tl/Podcasts/kept"
+
+DMC="$DM_tl/Podcasts/content"
 DCP="$DM_tl/Podcasts/.conf/"
-fname="$(nmfile "${trgt}")"
+
 
 if [ "$1" = delete_item ]; then
 
     touch $DT/ps_lk
-    if [ -f "$DMK/$fname.mp3" ]; then
+    trgt="$2"
+    fname="$(nmfile "${trgt}")"
     
-        msg_2 " $(gettext "Are you sure you want to delete this episode?")\n\n" \
-        dialog-question "$(gettext "Yes")" "$(gettext "Not")" "$(gettext "Confirm")"
-        ret=$(echo "$?")
+    msg_2 " $(gettext "Are you sure you want to delete this episode?")\n\n" \
+    dialog-question "$(gettext "Yes")" "$(gettext "Not")" "$(gettext "Confirm")"
+    ret=$(echo "$?")
 
-            if [ $ret -eq 0 ]; then
-                
-                (sleep 0.2 && kill -9 $(pgrep -f "yad --text-info "))
-                rm "$DMK/$fname.mp3"
-                rm "$DMK/$fname.txt"
-                rm "$DMK/$fname.png"
-                rm "$DMK/$fname.i"
-                cd "$DCP"
-                grep -v -x -F "$trgt" ./.cfg.22 > ./.cfg.22.tmp
-                sed '/^$/d' ./.cfg.22.tmp > ./.cfg.22
-                grep -v -x -F "$trgt" ./cfg.2 > ./cfg.2.tmp
-                sed '/^$/d' ./cfg.2.tmp > ./cfg.2
-
-                rm ./*.tmp
-            fi
+        if [ $ret -eq 0 ]; then
             
-            rm -f $DT/ps_lk; exit 1
-    else
-        rm -f $DT/ps_lk; exit 1
-    fi
+            (sleep 0.2 && kill -9 $(pgrep -f "yad --text-info "))
+            
+           if ! grep -Fxo "$trgt" < "$DCP/cfg.1"; then
+                rm "$DMC/$fname.mp3"
+                rm "$DMC/$fname.txt"
+                rm "$DMC/$fname.png"
+                rm "$DMC/$fname.i"
+            fi
+            cd "$DCP"
+            grep -v -x -F "$trgt" ./.cfg.22 > ./.cfg.22.tmp
+            sed '/^$/d' ./.cfg.22.tmp > ./.cfg.22
+            grep -v -x -F "$trgt" ./cfg.2 > ./cfg.2.tmp
+            sed '/^$/d' ./cfg.2.tmp > ./cfg.2
+
+            rm ./*.tmp
+        fi
+            
+    rm -f $DT/ps_lk; exit 1
+
     
 elif [ "$1" = delete_episodes ]; then
     
@@ -64,7 +66,6 @@ elif [ "$1" = delete_episodes_saved ]; then
     
         rm -r "$DCP"/cfg.2 "$DCP"/.cfg.22
         touch "$DCP"/cfg.2 "$DCP"/.cfg.22
-        rm "$DMK"/*
     fi
     exit
 fi

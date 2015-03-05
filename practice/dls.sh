@@ -6,7 +6,7 @@ drts="$DS/practice/"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
 all=$(cat lsin | wc -l)
-listen="▷"
+listen="Listen"
 easy=0
 hard=0
 ling=0
@@ -26,49 +26,13 @@ function score() {
         [[ -f l_s ]] && echo "$(($(cat l_s)+$easy))" > l_s || echo $easy > l_s
         s=$(cat l_s)
         v=$((100*$s/$all))
-        if [ $v -le 1 ]; then
-            echo 1 > .iconls
-        elif [ $v -le 5 ]; then
-            echo 2 > .iconls
-        elif [ $v -le 10 ]; then
-            echo 3 > .iconls
-        elif [ $v -le 15 ]; then
-            echo 4 > .iconls
-        elif [ $v -le 20 ]; then
-            echo 5 > .iconls
-        elif [ $v -le 25 ]; then
-            echo 6 > .iconls
-        elif [ $v -le 30 ]; then
-            echo 7 > .iconls
-        elif [ $v -le 35 ]; then
-            echo 8 > .iconls
-        elif [ $v -le 40 ]; then
-            echo 9 > .iconls
-        elif [ $v -le 45 ]; then
-            echo 10 > .iconls
-        elif [ $v -le 50 ]; then
-            echo 11 > .iconls
-        elif [ $v -le 55 ]; then
-            echo 12 > .iconls
-        elif [ $v -le 60 ]; then
-            echo 13 > .iconls
-        elif [ $v -le 65 ]; then
-            echo 14 > .iconls
-        elif [ $v -le 70 ]; then
-            echo 15 > .iconls
-        elif [ $v -le 75 ]; then
-            echo 16 > .iconls
-        elif [ $v -le 80 ]; then
-            echo 17 > .iconls
-        elif [ $v -le 85 ]; then
-            echo 18 > .iconls
-        elif [ $v -le 90 ]; then
-            echo 19 > .iconls
-        elif [ $v -le 95 ]; then
-            echo 20 > .iconls
-        elif [ $v -eq 100 ]; then
-            echo 21 > .iconls
-        fi
+        n=1; c=1
+        while [ "$n" -le 21 ]; do
+                if [[ "$v" -le "$c" ]]; then
+                echo "$n" > .iconls; break; fi
+                ((c=c+5))
+            let n++
+        done
 
         $strt 8 $easy $ling $hard & exit 1
     fi
@@ -164,10 +128,8 @@ function check() {
     --field="<small>$(echo $OK | sed 's/\,*$/\./g')  $prc</small>\\n":lbl
     }
 
-n=1
-while [ $n -le $(cat lsin1 | wc -l) ]; do
+while read trgt; do
 
-    trgt="$(sed -n "$n"p lsin1)"
     fname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
     
     if [[ $n = 1 ]]; then
@@ -213,7 +175,6 @@ while [ $n -le $(cat lsin1 | wc -l) ]; do
             break &
             exit 0; fi
     fi
-    let n++
-done
+done < lsin1
 
 score $easy

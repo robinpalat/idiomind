@@ -18,7 +18,7 @@
 #  
 
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/mods/cmns.sh
+source "$DS/ifs/mods/cmns.sh"
 
 
 if [ "$1" = chngi ]; then
@@ -26,23 +26,23 @@ if [ "$1" = chngi ]; then
     function stop_bcl() {
     
     if [ ! -f "$1" ]; then
-        echo "___" >> $DT/.l_bcl
-        if [ $(cat $DT/.l_bcl | wc -l) -gt 5 ]; then
-            rm -f $DT/.p_  $DT/.l_bcl &
-            $DS/stop.sh play & exit 1
+        echo "___" >> "$DT/.l_bcl"
+        if [ $(cat "$DT/.l_bcl" | wc -l) -gt 5 ]; then
+            rm -f "$DT/.p_"  "$DT/.l_bcl" &
+            "$DS/stop.sh" play & exit 1
         fi
     fi
     }
     
-    nta=$(sed -n 8p $DC_s/cfg.5)
-    sna=$(sed -n 9p $DC_s/cfg.5)
+    nta=$(sed -n 8p "$DC_s/cfg.5")
+    sna=$(sed -n 9p "$DC_s/cfg.5")
     
     cfg1="$DC_s/cfg.5"
     indx="$DT/p/indx"
-    [[ -z $(cat $DC_s/cfg.2) ]] && echo 8 > $DC_s/cfg.2
-    bcl=$(cat $DC_s/cfg.2)
-    if ([ $(echo "$nta" | grep "TRUE") ] && [ $bcl -lt 12 ]); then bcl=12; fi
-    item="$(sed -n "$2"p $indx)"
+    [[ -z $(cat "$DC_s/cfg.2") ]] && echo 8 > "$DC_s/cfg.2"
+    bcl=$(cat "$DC_s/cfg.2")
+    if ([ $(echo "$nta" | grep "TRUE") ] && [ "$bcl" -lt 12 ]); then bcl=12; fi
+    item="$(sed -n "$2"p "$indx")"
     fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
     
     [ -f "$DM_tlt/$fname.mp3" ] && file="$DM_tlt/$fname.mp3" && t=2
@@ -50,7 +50,7 @@ if [ "$1" = chngi ]; then
     [ -f "$DM_tl/Feeds/kept/words/$fname.mp3" ] && file="$DM_tl/Feeds/kept/words/$fname.mp3" && t=1
     [ -f "$DM_tl/Feeds/kept/$fname.mp3" ] && file="$DM_tl/Feeds/kept/$fname.mp3" && t=2
     [ -f "$DM_tl/Feeds/content/$fname.mp3" ] && file="$DM_tl/Feeds/content/$fname.mp3" && t=2
-    include $DS/ifs/mods/play
+    include "$DS/ifs/mods/play"
     
     stop_bcl "$file"
     
@@ -80,17 +80,17 @@ if [ "$1" = chngi ]; then
     "$play" "$file" && wait
     fi
     
-    sleep $bcl
-    [ -f $DT/.l_bcl ] && rm -f $DT/.l_bcl
+    sleep "$bcl"
+    [ -f "$DT/.l_bcl" ] && rm -f "$DT/.l_bcl"
         
 
 elif [ "$1" != chngi ]; then
     
-    if [ ! -f $DC_s/cfg.0 ]; then
-        > $DC_s/cfg.0
+    if [ ! -f "$DC_s/cfg.0" ]; then
+        > "$DC_s/cfg.0"
         fi
-        wth=$(sed -n 3p $DC_s/cfg.18)
-        eht=$(sed -n 4p $DC_s/cfg.18)
+        wth=$(sed -n 3p "$DC_s/cfg.18")
+        eht=$(sed -n 4p "$DC_s/cfg.18")
         if [ -n "$1" ]; then
             text="--text=<small>$1\n</small>"
             align="left"; h=1
@@ -100,12 +100,12 @@ elif [ "$1" != chngi ]; then
             text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/$lgtl'>$(gettext "Search other topics")</a>   </small></small>"
             align="right"
         fi
-        [ -f $DM_tl/.cfg.1 ] && info2=$(cat $DM_tl/.cfg.1 | wc -l) || info2=""
-        cd $DC_s
+        [ -f "$DM_tl/.cfg.1" ] && info2=$(cat "$DM_tl/.cfg.1" | wc -l) || info2=""
+        cd "$DC_s"
 
-        VAR=$(cat $DC_s/cfg.0 | yad --name=idiomind --text-align=$align \
+        VAR=$(cat "$DC_s/cfg.0" | yad --name=idiomind --text-align=$align \
         --class=idiomind --center $img --image-on-top --separator="" \
-        "$text" --width=$wth --height=$eht --ellipsize=END \
+        "$text" --width="$wth" --height="$eht" --ellipsize=END \
         --no-headers --list --window-icon=idiomind --borders=5 \
         --button="gtk-add":3 --button="$(gettext "OK")":0 \
         --title="$(gettext "Topics")" --column=img:img --column=File:TEXT)
@@ -114,23 +114,23 @@ elif [ "$1" != chngi ]; then
         if [ $ret -eq 3 ]; then
         
                 if [ "$h" = 1 ]; then
-                    $DS/add.sh new_topic & exit
+                    "$DS/add.sh" new_topic & exit
                     
                 else
-                    $DS/add.sh new_topic & exit
+                    "$DS/add.sh" new_topic & exit
                 fi
         
         elif [ $ret -eq 0 ]; then
         
-                $DS/stop.sh play &
+                "$DS/stop.sh" play &
                 
                 [ -z "$VAR" ] && exit 1
                 
-                if [[ -f $DM_tl/"$VAR"/tpc.sh ]]; then
-                    $DM_tl/"$VAR"/tpc.sh & exit
+                if [[ -f "$DM_tl/$VAR/tpc.sh" ]]; then
+                    "$DM_tl/$VAR/tpc.sh" & exit
                 else
-                    cp -f $DS/default/tpc.sh $DM_tl/"$VAR"/tpc.sh
-                    $DM_tl/"$VAR"/tpc.sh & exit
+                    cp -f "$DS/default/tpc.sh" "$DM_tl/$VAR/tpc.sh"
+                    "$DM_tl/$VAR/tpc.sh" & exit
                 fi
         else
             exit 1

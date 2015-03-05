@@ -66,32 +66,30 @@ elif [ "$1" = edit_audio ]; then
 # -------------------------------------------------
 elif [ "$1" = help ]; then
 
+    web="http://idiomind.sourceforge.net/doc/help.html"
     zenity --text-info --window-icon=idiomind \
-    --title="$(gettext "Help")" --width=740 \
-    --height=600 --ok-label="$(gettext "OK")" \
+    --title="$(gettext "Help")" --width=800 \
+    --height=680 --ok-label="$(gettext "OK")" \
     --name=idiomind --html \
-    --url="http://idiomind.sourceforge.net/doc/help.html" >/dev/null 2>&1
+    --url="$web" >/dev/null 2>&1
     
 # -------------------------------------------------
 elif [ "$1" = definition ]; then
 
-    zenity --text-info --window-icon=idiomind \
-    --title="$(gettext "Definition")" --width=600 \
-    --height=600 --ok-label="$(gettext "OK")" \
-    --name=idiomind --editable --html --modal \
-    --url="http://glosbe.com/$lgt/$lgs/${2,,}" >/dev/null 2>&1
-
+    web="http://glosbe.com/$lgt/$lgs/${2,,}"
+    xdg-open "$web" > /tmp/myword
+    
 # -------------------------------------------------
 elif [ "$1" = web ]; then
 
-    host=http://idiomind.sourceforge.net
-    xdg-open "$host/$lgs/${lgtl,,}" >/dev/null 2>&1
+    web=http://idiomind.sourceforge.net
+    xdg-open "$web/$lgs/${lgtl,,}" >/dev/null 2>&1
 
 # -------------------------------------------------
 elif [ "$1" = fback ]; then
 
-    host=http://idiomind.sourceforge.net/doc/msg.html
-    xdg-open "$host" >/dev/null 2>&1
+    web=http://idiomind.sourceforge.net/doc/msg.html
+    xdg-open "$web" >/dev/null 2>&1
 
 # -------------------------------------------------
 elif [ "$1" = check_updates ]; then

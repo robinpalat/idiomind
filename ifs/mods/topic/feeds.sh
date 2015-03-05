@@ -9,6 +9,7 @@ function feedmode() {
         FEED=$(cat "$DCF/$lgtl/.rss")
         ICON="$DSF/images/rss.png"
         c=$(echo $(($RANDOM%100000)))
+        nt="$DCP/cnf.10"; ntmp=$(mktemp $DT/XXX)
         STT="$(cat $DT/.uptf)"
         KEY=$c
         if echo "$STT" | grep "updating..."; then
@@ -32,11 +33,17 @@ function feedmode() {
         | yad --no-headers --list --listen --plug=$KEY --tabnum=2 \
         --expand-column=1 --ellipsize=END --print-all \
         --column=Name:TEXT --dclick-action='./vwr.sh V2' &
+        yad --text-info --plug=$KEY --margins=14 \
+        --tabnum=3 --fore='gray40' --wrap --editable \
+        --show-uri --fontname=vendana \
+        --text=" <small>$info | $FEED </small>" \
+        --filename="$nt" > "$ntmp" &
         yad --notebook --name=Idiomind --center \
         --class=Idiomind --align=right --key=$KEY \
         --tab-borders=0 --center --title="$(gettext "News")" \
         --tab="  $(gettext "News")  " \
         --tab=" $(gettext "Saved Content") " \
+        --tab=" $(gettext "Notes") " --always-print-result \
         --ellipsize=END --image-on-top \
         --window-icon=$DS/images/idiomind.png \
         --width="$wth" --height="$eht" --borders=0 \
@@ -46,16 +53,17 @@ function feedmode() {
         ret=$?
             
             if [ $ret -eq 0 ]; then
-                rm -f $DT/*.x
-                "$DSF/cnfg.sh" & killall topic.sh & exit
+                "$DSF/cnfg.sh" & killall topic.sh;
             
             elif [ $ret -eq 3 ]; then
-                rm -f $DT/*.x
-                "$DSF/cnfg.sh" edit & exit
+                "$DSF/cnfg.sh" edit;
             
             elif [ $ret -eq 2 ]; then
-                rm -f $DT/*.x
-                "$DSF/strt.sh" & exit
+                "$DSF/strt.sh";
+            fi
+            
+            if [ "$(cat $nt)" != "$(cat "$ntmp")" ]; then
+                mv -f "$ntmp" "$nt";
             fi
 }
 

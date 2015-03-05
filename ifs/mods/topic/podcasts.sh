@@ -13,7 +13,7 @@ function list_1() {
 
 function list_2() {
     while read list2; do
-        echo "$DMP/kept/$(nmfile "$list2").png"
+        echo "$DMP/content/$(nmfile "$list2").png"
         echo "$list2"
     done < "$DCP/cfg.2"
 }
@@ -23,27 +23,33 @@ function podcast() {
     DMP="$DM_tl/Podcasts"
     DCP="$DM_tl/Podcasts/.conf"
     DSP="$DS/addons/Podcasts"
+    nt="$DCP/cnf.10"; ntmp=$(mktemp $DT/XXX)
     c=$(echo $(($RANDOM%100000))); KEY=$c
     [ -f "$DT/.uptp" ] && \
     info=$(echo "<i>"$(gettext "Updating")"...</i>") || \
     info=$(cat "$DM_tl/Podcasts/.dt")
-    
-    cd "$DSP"; list_1 | yad \
+
+    list_1 | yad \
     --no-headers --list --plug=$KEY --tabnum=1 \
-    --text=" <small>${info^}</small>" --print-all \
+    --text="  <small>${info^}</small>" --print-all \
     --expand-column=2 --ellipsize=END \
     --column=Name:IMG --column=Name \
-    --dclick-action='./vwr.sh' &
+    --dclick-action="$DSP/vwr.sh" &
     list_2 | yad --no-headers \
     --list --plug=$KEY --tabnum=2 \
     --expand-column=2 --ellipsize=END --print-all \
     --column=Name:IMG --column=Name \
-    --dclick-action='./vwr.sh' &
+    --dclick-action="$DSP/vwr.sh" &
+    yad --text-info --plug=$KEY --margins=14 \
+    --tabnum=3 --fore='gray40' --wrap --editable \
+    --show-uri --fontname=vendana --text="  <small>${info^}</small>" \
+    --filename="$nt" > "$ntmp" &
     yad --notebook --name=idiomind --center \
     --class=Idiomind --align=right --key=$KEY \
     --tab-borders=0 --center --title="$FEED" \
     --tab=" $(gettext "Episodes") " \
     --tab=" $(gettext "Saved Episodes") " \
+    --tab=" $(gettext "Notes") " --always-print-result \
     --ellipsize=END --image-on-top \
     --window-icon=$DS/images/idiomind.png \
     --width="$wth" --height="$eht" --borders=0 \
@@ -62,7 +68,9 @@ function podcast() {
         "$DSP/strt.sh";
     fi
     
-    rm -f $DT/*.x & exit
+    if [ "$(cat $nt)" != "$(cat "$ntmp")" ]; then
+        mv -f "$ntmp" "$nt";
+    fi
 }
 
 
