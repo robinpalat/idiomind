@@ -9,40 +9,40 @@ function index() {
     
         if [ "$1" = word ]; then
         
-            if [ "$(cat "$DC_tlt/cfg.0" | grep "$4")" ] && [ -n "$4" ]; then
-                sed -i "s/${4}/${4}\n$2/" "$DC_tlt/cfg.0"
-                sed -i "s/${4}/${4}\n$2/" "$DC_tlt/cfg.1"
-                sed -i "s/${4}/${4}\n$2/" "$DC_tlt/.cfg.11"
+            if [ "$(cat "$DC_tlt/0.cfg" | grep "$4")" ] && [ -n "$4" ]; then
+                sed -i "s/${4}/${4}\n$2/" "$DC_tlt/0.cfg"
+                sed -i "s/${4}/${4}\n$2/" "$DC_tlt/1.cfg"
+                sed -i "s/${4}/${4}\n$2/" "$DC_tlt/.11.cfg"
             else
-                echo "$2" >> "$DC_tlt/cfg.0"
-                echo "$2" >> "$DC_tlt/cfg.1"
-                echo "$2" >> "$DC_tlt/.cfg.11"; fi
-            echo "$2" >> "$DC_tlt/cfg.3"
+                echo "$2" >> "$DC_tlt/0.cfg"
+                echo "$2" >> "$DC_tlt/1.cfg"
+                echo "$2" >> "$DC_tlt/.11.cfg"; fi
+            echo "$2" >> "$DC_tlt/3.cfg"
             
         elif [ "$1" = sentence ]; then
-            echo "$2" >> "$DC_tlt/cfg.0"
-            echo "$2" >> "$DC_tlt/cfg.1"
-            echo "$2" >> "$DC_tlt/cfg.4"
-            echo "$2" >> "$DC_tlt/.cfg.11"; fi
+            echo "$2" >> "$DC_tlt/0.cfg"
+            echo "$2" >> "$DC_tlt/1.cfg"
+            echo "$2" >> "$DC_tlt/4.cfg"
+            echo "$2" >> "$DC_tlt/.11.cfg"; fi
 
         tmp=$DT/tmp
-        lss="$DC_tlt/.cfg.11"
+        lss="$DC_tlt/.11.cfg"
         if [ -n "$(cat "$lss" | sort -n | uniq -dc)" ]; then
             cat "$lss" | awk '!array_temp[$0]++' > $tmp
             sed '/^$/d' $tmp > "$lss"; fi
-        ls0="$DC_tlt/cfg.0"
+        ls0="$DC_tlt/0.cfg"
         if [ -n "$(cat "$ls0" | sort -n | uniq -dc)" ]; then
             cat "$ls0" | awk '!array_temp[$0]++' > $tmp
             sed '/^$/d' $tmp > "$ls0"; fi
-        ls1="$DC_tlt/cfg.1"
+        ls1="$DC_tlt/1.cfg"
         if [ -n "$(cat "$ls1" | sort -n | uniq -dc)" ]; then
             cat "$ls1" | awk '!array_temp[$0]++' > $tmp
             sed '/^$/d' $tmp > "$ls1"; fi
-        ls2="$DC_tlt/cfg.3"
+        ls2="$DC_tlt/3.cfg"
         if [ -n "$(cat "$ls2" | sort -n | uniq -dc)" ]; then
             cat "$ls2" | awk '!array_temp[$0]++' > $tmp
             sed '/^$/d' $tmp > "$ls2"; fi
-        ls3="$DC_tlt/cfg.4"
+        ls3="$DC_tlt/4.cfg"
         if [ -n "$(cat "$ls3" | sort -n | uniq -dc)" ]; then
             cat "$ls3" | awk '!array_temp[$0]++' > $tmp
             sed '/^$/d' $tmp > "$ls3"; fi
@@ -194,7 +194,7 @@ function add_tags_9() {
 
 function voice() {
     
-    cd "$2"; vs=$(sed -n 8p $DC_s/cfg.1)
+    cd "$2"; vs=$(sed -n 8p $DC_s/1.cfg)
     if [ -n "$vs" ]; then
     
         if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
@@ -312,7 +312,7 @@ function fetch_audio() {
                 voice "$word" "$3" "$4/${word,,}.mp3"; fi
             
             [ "$4" = "$DM_tl/.share" ] \
-            && echo "${word,,}.mp3" >> "$DC_tlt/cfg.5"
+            && echo "${word,,}.mp3" >> "$DC_tlt/5.cfg"
 
         fi
         

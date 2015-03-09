@@ -6,14 +6,14 @@ drtt="$DM_tlt/words"
 drts="$DS/practice/"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
-w9=$DC_s/cfg.22
+w9=$DC_s/22.cfg
 all=$(cat fin | wc -l)
 easy=0
 hard=0
 ling=0
 
-[[ -f fin2 ]] && rm fin2
-[[ -f fin3 ]] && rm fin3
+[ -f fin2 ] && rm fin2
+[ -f fin3 ] && rm fin3
 
 function score() {
 
@@ -27,19 +27,19 @@ function score() {
         exit 1
         
     else
-        [[ -f l_f ]] && echo "$(($(cat l_f)+$easy))" > l_f || echo $easy > l_f
+        [ -f l_f ] && echo "$(($(cat l_f)+$easy))" > l_f || echo $easy > l_f
         s=$(cat l_f)
         v=$((100*$s/$all))
         n=1; c=1
         while [ "$n" -le 21 ]; do
-                if [[ "$v" -le "$c" ]]; then
+                if [ "$v" -le "$c" ]; then
                 echo "$n" > .iconf; break; fi
                 ((c=c+5))
             let n++
         done
         
-        [[ -f fin2 ]] && rm fin2
-        [[ -f fin3 ]] && rm fin3
+        [ -f fin2 ] && rm fin2
+        [ -f fin3 ] && rm fin3
         $strt 5 $easy $ling $hard & exit 1
     fi
 }
@@ -49,19 +49,16 @@ function fonts() {
     
     fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
     src=$(eyeD3 "$drtt/$fname.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
-    [[ $n = 1 ]] && info="<small> $(gettext "means")...</small>" || info=""
-    
-
     if [ -f "$drtt/images/$fname.jpg" ]; then
-    s=$((25-$(echo "$1" | wc -c)))
-    img="$drtt/images/$fname.jpg"
-    lcuestion="<b>$1</b>"
-    lanswer="<small><small><small>$1</small></small></small>  |  <b>$src</b>"
+        s=$((25-$(echo "$1" | wc -c)))
+        img="$drtt/images/$fname.jpg"
+        lcuestion="<b>$1</b>"
+        lanswer="<small><small><small>$1</small></small></small>  |  <b>$src</b>"
     else
-    s=$((40-$(echo "$1" | wc -c)))
-    img="/usr/share/idiomind/images/fc.png"
-    lcuestion="<b>$1</b>"
-    lanswer="<small><small><small>$1</small></small></small>\n<b>$src</b>"
+        s=$((40-$(echo "$1" | wc -c)))
+        img="/usr/share/idiomind/images/fc.png"
+        lcuestion="<b>$1</b>"
+        lanswer="<small><small><small>$1</small></small></small>\n<b>$src</b>"
     fi
     }
 
@@ -96,20 +93,20 @@ while read trgt; do
     cuestion
     ret=$(echo "$?")
     
-    if [[ $ret = 0 ]]; then
+    if [ $ret = 0 ]; then
         answer
         ans=$(echo "$?")
 
-        if [[ $ans = 2 ]]; then
+        if [ $ans = 2 ]; then
             echo "$trgt" | tee -a ok.f $w9
             easy=$(($easy+1))
 
-        elif [[ $ans = 3 ]]; then
+        elif [ $ans = 3 ]; then
             echo "$trgt" | tee -a fin2 w6
             hard=$(($hard+1))
         fi
 
-    elif [[ $ret = 1 ]]; then
+    elif [ $ret = 1 ]; then
         $drts/cls f $easy $ling $hard $all &
         break &
         exit 1
@@ -117,7 +114,7 @@ while read trgt; do
     fi
 done < fin1
 
-if [[ ! -f fin2 ]]; then
+if [ ! -f fin2 ]; then
 
     score $easy
     
@@ -129,19 +126,19 @@ else
         cuestion
         ret=$(echo "$?")
         
-        if [[ $ret = 0 ]]; then
+        if [ $ret = 0 ]; then
             answer
             ans=$(echo "$?")
             
-            if [[ $ans = 2 ]]; then
+            if [ $ans = 2 ]; then
                 hard=$(($hard-1))
                 ling=$(($ling+1))
                 
-            elif [[ $ans = 3 ]]; then
+            elif [ $ans = 3 ]; then
                 echo "$trgt" | tee -a fin3 w6
             fi
             
-        elif [[ $ret = 1 ]]; then
+        elif [ $ret = 1 ]; then
             $drts/cls f $easy $ling $hard $all &
             break &
             exit 1

@@ -23,12 +23,12 @@ function score() {
         exit 1
         
     else
-        [[ -f l_s ]] && echo "$(($(cat l_s)+$easy))" > l_s || echo $easy > l_s
+        [ -f l_s ] && echo "$(($(cat l_s)+$easy))" > l_s || echo $easy > l_s
         s=$(cat l_s)
         v=$((100*$s/$all))
         n=1; c=1
         while [ "$n" -le 21 ]; do
-                if [[ "$v" -le "$c" ]]; then
+                if [ "$v" -le "$c" ]; then
                 echo "$n" > .iconls; break; fi
                 ((c=c+5))
             let n++
@@ -42,25 +42,37 @@ function score() {
 function dialog1() {
     
     SE=$(yad --center --text-info --image="$IMAGE" "$info" \
-    --fontname="Verdana Black" --justify=fill --editable --wrap \
+    --fontname="Free Sans 15" --justify=fill --editable --wrap \
     --buttons-layout=end --borders=0 --title=" " --image-on-top \
-    --margins=8 --text-align=left --height=400 --width=460 \
+    --margins=8 --text-align=left --height=410 --width=460 \
     --align=left --window-icon=idiomind --fore=4A4A4A --skip-taskbar \
     --button="<small>$(gettext "Hint")</small>":"/usr/share/idiomind/practice/hint.sh '$1'" \
     --button="<small>$listen</small>":"play '$DM_tlt/$fname.mp3'" \
-    --button="<small>  $(gettext "OK") > </small>":0)
+    --button="<small>  $(gettext "OK") >> </small>":0)
     }
     
 function dialog2() {
 
     SE=$(yad --center --text-info --fore=4A4A4A --skip-taskbar \
-    --fontname="Verdana Black" --justify=fill --editable --wrap \
+    --fontname="Free Sans 15" --justify=fill --editable --wrap \
     --buttons-layout=end --borders=0 --title=" " "$info" \
-    --margins=8 --text-align=left --height=160 --width=460 \
+    --margins=8 --text-align=left --height=170 --width=460 \
     --align=left --window-icon=idiomind --image-on-top \
     --button="<small>$(gettext "Hint")</small>":"/usr/share/idiomind/practice/hint.sh '$1'" \
     --button="<small>$listen</small>":"play '$DM_tlt/$fname.mp3'" \
-    --button="<small>  $(gettext "OK") >     </small>":0)
+    --button="<small>  $(gettext "OK") >>     </small>":0)
+    }
+    
+function check() {
+    
+    yad --form --center --name=idiomind --buttons-layout=end \
+    --width=470 --height=230 --on-top --skip-taskbar --scroll \
+    --class=idiomind $aut --wrap --window-icon=idiomind \
+    --text-align=center --borders=5 --selectable-labels \
+    --title="" --button="<small>$listen</small>":"play '$DM_tlt/$fname.mp3'" \
+    --button="<small>$(gettext "Next sentence")</small>":2 \
+    --field="":lbl --text="<span font_desc='Free Sans 14'>$wes</span>\\n" \
+    --field="<span font_desc='Free Sans 9'>$(echo $OK | sed 's/\,*$/\./g')  $prc</span>\\n":lbl
     }
     
 function get_image_text() {
@@ -84,11 +96,11 @@ function result() {
         line="$(echo "$ff" | sed -n "$n"p )"
         if cat all | grep -oFx "$line"; then
             sed -i "s/"$line"/<b>"$line"<\/b>/g" quote
-            [[ -n "$line" ]] && echo \
+            [ -n "$line" ] && echo \
             "<span color='#3A9000'><b>${line^}</b></span>,  " >> wrds
-            [[ -n "$line" ]] && echo "$line" >> w.ok
+            [ -n "$line" ] && echo "$line" >> w.ok
         else
-            [[ -n "$line" ]] && echo \
+            [ -n "$line" ] && echo \
             "<span color='#7B4A44'><b>${line^}</b></span>,  " >> wrds
         fi
         let n++
@@ -116,23 +128,14 @@ function result() {
     rm allc quote
     }
     
-function check() {
     
-    yad --form --center --name=idiomind --buttons-layout=end \
-    --width=470 --height=230 --on-top --skip-taskbar --scroll \
-    --class=idiomind $aut --wrap --window-icon=idiomind \
-    --text-align=left --borders=5 --selectable-labels \
-    --title="" --button="<small>$listen</small>":"play '$DM_tlt/$fname.mp3'" \
-    --button="<small>$(gettext "Next sentence")</small>" --text="<big>$wes</big>\\n" \
-    --field="":lbl \
-    --field="<small>$(echo $OK | sed 's/\,*$/\./g')  $prc</small>\\n":lbl
-    }
+n=1
+while [ $n -le $(wc -l < lsin1) ]; do
 
-while read trgt; do
-
+    trgt="$(sed -n "$n"p lsin1)"
     fname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
     
-    if [[ $n = 1 ]]; then
+    if [ $n = 1 ]; then
     info="--text=<sup><tt> $(gettext "Try to write the phrase you're listening to")...</tt></sup>"
     else
     info=""; fi
@@ -153,7 +156,7 @@ while read trgt; do
         fi
         ret=$(echo "$?")
         
-        if [[ $ret -eq 0 ]]; then
+        if [ $ret -eq 0 ]; then
             killall play &
             result "$trgt"
         else
@@ -165,7 +168,7 @@ while read trgt; do
         check "$trgt"
         ret=$(echo "$?")
         
-        if [[ $ret -eq 2 ]]; then
+        if [ $ret -eq 2 ]; then
             killall play &
             rm -f w.ok wrds $DT/*.jpeg *.png &
         else
@@ -175,6 +178,8 @@ while read trgt; do
             break &
             exit 0; fi
     fi
-done < lsin1
+    let n++
+done
 
 score $easy
+

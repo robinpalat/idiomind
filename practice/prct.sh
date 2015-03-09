@@ -17,18 +17,18 @@
 #  MA 02110-1301, USA.
 #  
 
-#source /usr/share/idiomind/ifs/c.conf
+source /usr/share/idiomind/ifs/c.conf
 strt=$DS/practice/strt.sh
 cls=$DS/practice/cls
-w9=$DC_s/cfg.22
-w6=$DC_s/cfg.23
+w9=$DC_s/22.cfg
+w6=$DC_s/23.cfg
 DF=$DS/practice/df.sh
 DLW=$DS/practice/dlw.sh
 DMC=$DS/practice/dmc.sh
 DLS=$DS/practice/dls.sh
-Wi="$DC_tlt/cfg.3"
-Si="$DC_tlt/cfg.4"
-Li="$DC_tlt/cfg.1"
+Wi="$DC_tlt/3.cfg"
+Si="$DC_tlt/4.cfg"
+Li="$DC_tlt/1.cfg"
 cd "$DC_tlt/practice"
 
 function look() {
@@ -67,9 +67,9 @@ function get_list_mchoice() {
 
 function get_list_sentences() {
         if [ "$(cat "$Wi" | wc -l)" -gt 0 ]; then
-            grep -Fxvf "$Wi" "$Li" > $1
+            grep -Fxvf "$Wi" "$Li" > "$1"
         else
-            cat "$Li" > $1
+            cat "$Li" > "$1"
         fi
 }
 

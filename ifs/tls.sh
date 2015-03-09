@@ -17,7 +17,7 @@
 #  MA 02110-1301, USA.
 #  
 
-source /usr/share/idiomind/ifs/c.conf
+
 source $DS/ifs/mods/cmns.sh
 
 # -------------------------------------------------
@@ -60,7 +60,7 @@ elif [ "$1" = dclik ]; then
 # -------------------------------------------------
 elif [ "$1" = edit_audio ]; then
 
-    cmd="$(sed -n 9p $DC_s/cfg.1)"
+    cmd="$(sed -n 9p $DC_s/1.cfg)"
     (cd "$3"; "$cmd" "$2") & exit
 
 # -------------------------------------------------
@@ -114,11 +114,11 @@ elif [ "$1" = check_updates ]; then
             xdg-open https://sourceforge.net/projects/idiomind/files/idiomind.deb/download & exit
             
         elif [ "$ret" -eq 2 ]; then
-            echo `date +%d` > $DC_s/cfg.13 & exit
+            echo `date +%d` > $DC_s/13.cfg & exit
             
         elif [ "$ret" -eq 1 ]; then
-            echo `date +%d` > $DC_s/cfg.14
-            echo "$(sed -n 2p ./release)" >> $DC_s/cfg.14 & exit
+            echo `date +%d` > $DC_s/14.cfg
+            echo "$(sed -n 2p ./release)" >> $DC_s/14.cfg & exit
         fi
         
     else
@@ -134,19 +134,19 @@ elif [ "$1" = check_updates ]; then
 # -------------------------------------------------
 elif [ "$1" = a_check_updates ]; then
 
-    [ ! -f $DC_s/cfg.13 ] && echo `date +%d` > $DC_s/cfg.13
+    [ ! -f $DC_s/13.cfg ] && echo `date +%d` > $DC_s/13.cfg
 
-    d1=$(cat $DC_s/cfg.13)
+    d1=$(cat $DC_s/13.cfg)
     d2=$(date +%d)
 
-    [ $(cat $DC_s/cfg.13) = 28 ] && rm -f $DC_s/cfg.14
+    [ $(cat $DC_s/13.cfg) = 28 ] && rm -f $DC_s/14.cfg
 
-    [ -f $DC_s/cfg.14 ] && exit 1
+    [ -f $DC_s/14.cfg ] && exit 1
 
-    if [ $(cat $DC_s/cfg.13) != $(date +%d) ]; then
+    if [ $(cat $DC_s/13.cfg) != $(date +%d) ]; then
     
         sleep 1
-        echo "$d2" > $DC_s/cfg.13
+        echo "$d2" > $DC_s/13.cfg
         cd $DT
         [ -f release ] && rm -f release
         curl -v www.google.com 2>&1 | \
@@ -168,10 +168,10 @@ elif [ "$1" = a_check_updates ]; then
                 xdg-open $pkg & exit
                 
             elif [ "$ret" -eq 2 ]; then
-                echo `date +%d` > $DC_s/cfg.13 & exit
+                echo `date +%d` > $DC_s/13.cfg & exit
                 
             elif [ "$ret" -eq 1 ]; then
-                echo `date +%d` > $DC_s/cfg.14 & exit
+                echo `date +%d` > $DC_s/14.cfg & exit
             fi
             
         else
@@ -181,6 +181,156 @@ elif [ "$1" = a_check_updates ]; then
     [ -f $DT/release ] && rm -f $DT/release
     fi
     
+
+elif [ "$1" = check_index ]; then
+
+    source /usr/share/idiomind/ifs/c.conf
+    DC_tlt="$DM_tl/$2/.conf"
+    DM_tlt="$DM_tl/$2"
+    
+    function check() {
+
+        n=0
+        while [ $n -le 4 ]; do
+            [ ! -f "$DC_tlt/$n.cfg" ] && touch "$DC_tlt/$n.cfg"
+            check_index1 "$DC_tlt/$n.cfg"        
+            eval chk$n=$(wc -l < "$DC_tlt/$n.cfg")
+            ((n=n+1))
+        done
+        eval stts=$(cat "$DC_tlt/8.cfg")
+        eval mp3s="$(cd "$DM_tlt/"; find . -maxdepth 2 -name '*.mp3' \
+        | sort -k 1n,1 -k 7 | wc -l)"
+    }
+    
+    function fix() {
+       rm "$DC_tlt/0.cfg" "$DC_tlt/1.cfg" "$DC_tlt/2.cfg" "$DC_tlt/3.cfg" "$DC_tlt/4.cfg"
+       while read name; do
+        
+            sfname="$(nmfile "$name")"
+            wfname="$(nmfile "$name")"
+
+            if [ -f "$DM_tlt/$name.mp3" ]; then
+                tgs="$(eyeD3 "$DM_tlt/$name.mp3")"
+                trgt="$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')"
+                [ -z "$trgt" ] && rm "$DM_tlt/$name.mp3" && continue
+                xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
+                [ "$name" != "$xname" ] && \
+                mv -f "$DM_tlt/$name.mp3" "$DM_tlt/$xname.mp3"
+                echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
+                echo "$trgt" >> "$DC_tlt/4.cfg.tmp"
+            elif [ -f "$DM_tlt/$sfname.mp3" ]; then
+                tgs=$(eyeD3 "$DM_tlt/$sfname.mp3")
+                trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
+                [ -z "$trgt" ] && rm "$DM_tlt/$sfname.mp3" && continue
+                xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
+                [ "$sfname" != "$xname" ] && \
+                mv -f "$DM_tlt/$sfname.mp3" "$DM_tlt/$xname.mp3"
+                echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
+                echo "$trgt" >> "$DC_tlt/4.cfg.tmp"
+            elif [ -f "$DM_tlt/words/$name.mp3" ]; then
+                tgs="$(eyeD3 "$DM_tlt/words/$name.mp3")"
+                trgt="$(echo "$tgs" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')"
+                [ -z "$trgt" ] && rm "$DM_tlt/words/$name.mp3" && continue
+                xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
+                [ "$name" != "$xname" ] && \
+                mv -f "$DM_tlt/words/$name.mp3" "$DM_tlt/words/$xname.mp3"
+                echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
+                echo "$trgt" >> "$DC_tlt/3.cfg.tmp"
+            elif [ -f "$DM_tlt/words/$wfname.mp3" ]; then
+                tgs="$(eyeD3 "$DM_tlt/words/$wfname.mp3")"
+                trgt="$(echo "$tgs" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')"
+                [ -z "$trgt" ] && rm "$DM_tlt/words/$wfname.mp3" && continue
+                xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
+                [ "$wfname" != "$xname" ] \
+                && mv -f "$DM_tlt/words/$wfname.mp3" "$DM_tlt/words/$xname.mp3"
+                echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
+                echo "$trgt" >> "$DC_tlt/3.cfg.tmp"
+            fi
+            
+        done < "$index"
+
+        mv -f "$DC_tlt/0.cfg.tmp" "$DC_tlt/0.cfg"
+        mv -f "$DC_tlt/3.cfg.tmp" "$DC_tlt/3.cfg"
+        mv -f "$DC_tlt/4.cfg.tmp" "$DC_tlt/4.cfg"
+        cp -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"
+        cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
+        check_index1 "$DC_tlt/0.cfg" "$DC_tlt/1.cfg" \
+        "$DC_tlt/2.cfg" "$DC_tlt/3.cfg" "$DC_tlt/4.cfg"
+        
+        if [ $? -ne 0 ]; then
+            [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
+            msg " $(gettext "File not found")\n" error & exit 1
+        fi
+        
+        if [ -z "$stts" ]; then
+            echo "1" > "$DC_tlt/8.cfg"
+        elif [ "$stts" = "13" ]; then
+            if cat "$DM_tl/.3.cfg" | grep -Fxo "$topic"; then
+                echo "6" > "$DC_tlt/8.cfg"
+            elif cat "$DM_tl/.2.cfg" | grep -Fxo "$topic"; then
+                echo "1" > "$DC_tlt/8.cfg"
+            else
+                echo "1" > "$DC_tlt/8.cfg"
+            fi
+        fi
+    }
+        
+    function files() {
+        
+        cd "$DM_tlt/words/"
+        for i in *.mp3 ; do [ ! -s ${i} ] && rm ${i} ; done
+        if [ -f ".mp3" ]; then rm ".mp3"; fi
+        cd "$DM_tlt/"
+        for i in *.mp3 ; do [[ ! -s ${i} ]] && rm ${i} ; done
+        if [ -f ".mp3" ]; then rm ".mp3"; fi
+        cd "$DM_tlt/"; find . -maxdepth 2 -name '*.mp3' \
+        | sort -k 1n,1 -k 7 | sed s'|\.\/words\/||'g \
+        | sed s'|\.\/||'g | sed s'|\.mp3||'g > "$DT/index"
+    }
+
+    check
+
+    if [[ $(($chk3 + $chk4)) != $chk0 || $(($chk1 + $chk2)) != $chk0 \
+    || $mp3s != $chk0 || $stts = 13 ]]; then
+    
+        (sleep 1
+        notify-send -i idiomind "$(gettext "Index error")" "$(gettext "fixing...")" -t 3000) &
+        > "$DT/ps_lk"
+        [ ! -d "$DM_tlt/.conf" ] && mkdir "$DM_tlt/.conf"
+        DC_tlt="$DM_tlt/.conf"
+        
+        files
+        
+        if ([ -f "$DC_tlt/.11.cfg" ] && \
+        [ -n "$(cat "$DC_tlt/.11.cfg")" ]); then
+            index="$DC_tlt/.11.cfg"
+        else
+            index="$DT/index"
+        fi
+        
+        fix
+    fi
+
+    check
+    
+    if [[ $(($chk3 + $chk4)) != $chk0 || $(($chk1 + $chk2)) != $chk0 \
+    || $mp3s != $chk0 || $stts = 13 ]]; then
+
+        files
+        
+        index="$DT/index"; rm "$DC_tlt/.11.cfg"
+
+        fix
+    fi
+    
+    n=0
+    while [ $n -le 4 ]; do
+        touch "$DC_tlt/$n.cfg"
+        ((n=n+1))
+    done
+
+    "$DS/mngr.sh" mkmn & exit 1
+
 # -------------------------------------------------
 elif [ "$1" = pdf_doc ]; then
 
@@ -196,10 +346,10 @@ elif [ "$1" = pdf_doc ]; then
         dte=$(date "+%d %B %Y")
         mkdir $DT/mkhtml
         mkdir $DT/mkhtml/images
-        nts=$(cat "$DC_tlt/cfg.10" | sed 's/\./\.<br>/g')
+        nts=$(cat "$DC_tlt/10.cfg" | sed 's/\./\.<br>/g')
         cd $DT/mkhtml
-        cp -f "$DC_tlt/cfg.3" w.inx.l
-        cp -f "$DC_tlt/cfg.4" s.inx.l
+        cp -f "$DC_tlt/3.cfg" w.inx.l
+        cp -f "$DC_tlt/4.cfg" s.inx.l
         iw=w.inx.l; is=s.inx.l
 
         #images

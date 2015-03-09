@@ -1,4 +1,0 @@
-#!/bin/bash
-cd "$HOME/.config/idiomind/addons/Learning with news/Russian/rss"
-echo "Ari - Sample" > ../.rss
-echo "http://ari.ru/rss/ari" > ../link

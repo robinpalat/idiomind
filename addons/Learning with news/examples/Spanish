@@ -1,4 +1,0 @@
-#!/bin/bash
-cd "$HOME/.config/idiomind/addons/Learning with news/Spanish/rss"
-echo "Elpaís.es - Sample" > ../.rss
-echo "http://ep00.epimg.net/rss/tags/ultimas_noticias.xml" > ../link

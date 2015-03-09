@@ -14,10 +14,10 @@ Saved epidodes"
 if [ "$1" = time ]; then
 
     c=$(mktemp "$DT"/c.XXX)
-    bcl=$(cat "$DC_s/cfg.2")
+    bcl=$(cat "$DC_s/2.cfg")
     if [ -z "$bcl" ]; then
-        echo 8 > "$DC_s/cfg.2"
-        bcl=$(sed -n 1p "$DC_s/cfg.2"); fi
+        echo 8 > "$DC_s/2.cfg"
+        bcl=$(sed -n 1p "$DC_s/2.cfg"); fi
     yad --mark="8 s":8 --mark="60 s":60 \
     --mark="120 s":120 --borders=20 --scale \
     --max-value=128 --value="$bcl" --step 1 \
@@ -25,33 +25,33 @@ if [ "$1" = time ]; then
     --window-icon=idiomind --borders=5 \
     --title=" " --width=280 --height=240 \
     --min-value=0 --button="Ok":0 > $c
-    [ "$?" -eq 0 ] && cat "$c" > "$DC_s/cfg.2"
+    [ "$?" -eq 0 ] && cat "$c" > "$DC_s/2.cfg"
     rm -f "$c"; exit 1
 
 elif [ -z "$1" ]; then
 
     echo "$tpc"
-    tlng="$DC_tlt/cfg.1"
-    winx="$DC_tlt/cfg.3"
-    sinx="$DC_tlt/cfg.4"
+    tlng="$DC_tlt/1.cfg"
+    winx="$DC_tlt/3.cfg"
+    sinx="$DC_tlt/4.cfg"
     [ -z "$tpc" ] && exit 1
     if [ "$(cat "$sinx" | wc -l)" -gt 0 ]; then
-        in1=$(grep -F -x -v -f "$sinx" "$tlng")
+        in1=$(grep -Fxvf "$sinx" "$tlng")
     else
         in1=$(cat "$tlng")
     fi
     if [ "$(cat "$winx" | wc -l)" -gt 0 ]; then
-        in2=$(grep -F -x -v -f "$winx" "$tlng")
+        in2=$(grep -Fxvf "$winx" "$tlng")
     else
         in2=$(cat "$tlng")
     fi
-    in3=$(cat "$DC_tlt/cfg.6")
+    in3=$(cat "$DC_tlt/6.cfg")
     cd "$DC_tlt/practice"
     in4=$(cat w6 | sed '/^$/d' | sort | uniq)
-    in5=$(cat "$DM_tl/Feeds/.conf/cfg.0" | sed '/^$/d')
-    in6=$(cat "$DM_tl/Podcasts/.conf/cfg.1" | sed '/^$/d')
-    in7=$(cat "$DM_tl/Podcasts/.conf/cfg.2" | sed '/^$/d')
-    nnews=$(cat "$DM_tl/Feeds/.conf/cfg.1" | head -n 8)
+    in5=$(cat "$DM_tl/Feeds/.conf/0.cfg" | sed '/^$/d')
+    in6=$(cat "$DM_tl/Podcasts/.conf/1.cfg" | sed '/^$/d')
+    in7=$(cat "$DM_tl/Podcasts/.conf/2.cfg" | sed '/^$/d')
+    nnews=$(cat "$DM_tl/Feeds/.conf/1.cfg" | head -n 8)
     u=$(echo "$(whoami)")
     infs=$(echo "$snts Sentences" | wc -l)
     infw=$(echo "$wrds Words" | wc -l)
@@ -64,17 +64,11 @@ elif [ -z "$1" ]; then
                 arr="in$n"
                 [[ -z ${!arr} ]] && echo "$DS/images/addi.png" \
                 || echo "$DS/images/add.png"
-            echo "<span font_desc='Verdana 10'>$(gettext "$(echo "$itms" | sed -n "$n"p)")</span>"
-            echo $(sed -n "$n"p "$DC_s/cfg.5" | cut -d '|' -f 3)
+            echo "  <span font_desc='Verdana 10'>$(gettext "$(echo "$itms" | sed -n "$n"p)")</span>"
+            echo $(sed -n "$n"p "$DC_s/5.cfg" | cut -d '|' -f 3)
             let n++
         done
     }
-    
-    n=1
-    while [ $n -le 7 ]; do
-            declare st$n="$(sed -n "$n"p < "$DC_s/cfg.11")"
-        let n++
-    done
 
     c=$(echo $(($RANDOM%100000))); KEY=$c
     slct1=$(mktemp "$DT"/slct1.XXXX)
@@ -82,42 +76,30 @@ elif [ -z "$1" ]; then
     [ -f "$DT/.p_" ] && btn="gtk-media-stop:2" || btn="Play:0"
     setting_1 | yad --list  --separator="|" \
     --expand-column=2 --print-all \
-    --no-headers --plug=$KEY --tabnum=1 \
-    --column=IMG:IMG --column=TXT:TXT --column=CHK:CHK > "$slct1" &
-    yad --form  --separator="\n" --borders=5 \
-    --plug=$KEY --tabnum=2 --columns=2 \
-    --field=" ":SCL "$st1" \
-    --field="Texto":CHK "$st1" \
-    --field="Audio":CHK "$st2" \
-    --field="Repeat":CHK "$st3" \
-    --field="Only videos":CHK "$st4" \
-    --field="Play from select item":CHK "$st5" \
-    --field="Videos on fullscreen":CHK "$st6" \
-    --field="Time lapsus":lbl > "$slct2" &
-     yad --notebook --name=idiomind --center \
-    --class=Idiomind --align=right --key=$KEY --center  \
-    --tab=" $(gettext "Lists") " \
-    --tab=" $(gettext "Options") " \
-    --width=400 --height=330 --title="$tpc" --on-top \
-    --window-icon=idiomind --borders=0 --always-print-result \
-    --button="$btn"  --skip-taskbar
+    --no-headers --name=idiomind --center \
+    --column=IMG:IMG --column=TXT:TXT --column=CHK:CHK \
+    --class=Idiomind --align=right --center  \
+    --width=380 --height=310 --title="Playlists" --on-top \
+    --window-icon=idiomind --borders=5 --always-print-result \
+    --button="Cancel":1 --button="$btn" --skip-taskbar > "$slct1"
     ret=$?
-
-    if  [ "$ret" -eq 0 ]; then
     
-        mv -f "$slct1" "$DC_s/cfg.5"
-        mv -f "$slct2" "$DC_s/cfg.11"
+    if [ "$ret" -eq 1 ]; then exit 1; fi
+    
+    if [ "$ret" -eq 0 ]; then
+    
+        mv -f "$slct1" "$DC_s/5.cfg"
+        mv -f "$slct2" "$DC_s/11.cfg"
         cd "$DT/p"; > ./indx; n=1
         
-        while [ $n -le 7 ]; do
-        
-            if sed -n "$n"p "$DC_s/cfg.5" | grep TRUE; then
-                arr="in$n"
-                echo "${!arr}" >> ./indx
+        while read set; do
+            if grep TRUE <<< "$set"; then
+                lst="in$n"
+                echo "${!lst}" >> ./indx
             fi
             let n++
-        done
-        
+        done < "$DC_s/5.cfg"
+
     elif [ "$ret" -eq 2 ]; then
         rm -f "$slct"
         [ -d "$DT/p" ] && rm -fr "$DT/p"
@@ -127,7 +109,7 @@ elif [ -z "$1" ]; then
         if  [ ! -f "$DT/.p_" ]; then
             [ -d "$DT/p" ] && rm -fr "$DT/p"
         fi
-        mv -f "$slct2" "$DC_s/cfg.11"
+        mv -f "$slct2" "$DC_s/11.cfg"
         rm -f "$slct1" "$slct2"
         exit 1
     fi
@@ -135,7 +117,7 @@ elif [ -z "$1" ]; then
     rm -f "$slct"
     "$DS/stop.sh" playm
 
-    if ! [ "$(cat "$DC_s/cfg.5" | head -n7 | grep -o "TRUE")" ]; then
+    if ! [ "$(cat "$DC_s/5.cfg" | head -n7 | grep -o "TRUE")" ]; then
         notify-send "$(gettext "Exiting")" "$(gettext "Nothing specified to play")" -i idiomind -t 3000 &&
         sleep 5
         "$DS/stop.sh" play
@@ -147,7 +129,7 @@ elif [ -z "$1" ]; then
         "$DS/stop.sh" play & exit 1
     fi
     
-    printf "plyrt.$tpc.plyrt\n" >> "$DC_s/cfg.30" &
+    printf "plyrt.$tpc.plyrt\n" >> "$DC_s/30.cfg" &
     sleep 1
     "$DS/bcle.sh" & exit
 fi

@@ -19,20 +19,20 @@
 
 #source /usr/share/idiomind/ifs/c.conf
 DSP="$DS/practice"
-wth=$(sed -n 13p $DC_s/cfg.18)
-hgt=$(sed -n 14p $DC_s/cfg.18)
+wth=$(sed -n 13p $DC_s/18.cfg)
+hgt=$(sed -n 14p $DC_s/18.cfg)
 easys=$2
 learning=$3
-[[ $4 -lt 0 ]] && hards=0 || hards=$4
+[ $4 -lt 0 ] && hards=0 || hards=$4
 $DS/stop.sh &
-[[ ! -d "$DC_tlt/practice" ]] \
+[ ! -d "$DC_tlt/practice" ] \
 && mkdir "$DC_tlt/practice"
 cd "$DC_tlt/practice"
 
-[[ ! -f .iconf ]] && echo '1' > .iconf
-[[ ! -f .iconmc ]] && echo '1' > .iconmc
-[[ ! -f .iconlw ]] && echo '1' > .iconlw
-[[ ! -f .iconls ]] && echo '1' > .iconls
+[ ! -f .iconf ] && echo '1' > .iconf
+[ ! -f .iconmc ] && echo '1' > .iconmc
+[ ! -f .iconlw ] && echo '1' > .iconlw
+[ ! -f .iconls ] && echo '1' > .iconls
 
 if [[ -n "$1" ]]; then
 
@@ -71,14 +71,10 @@ if [[ -n "$1" ]]; then
     fi
 fi
 
-iconf=$(cat .iconf)
-iconmc=$(cat .iconmc)
-iconlw=$(cat .iconlw)
-iconls=$(cat .iconls)
-img1=$DSP/icons_st/$iconf.png
-img2=$DSP/icons_st/$iconmc.png
-img3=$DSP/icons_st/$iconlw.png
-img4=$DSP/icons_st/$iconls.png
+img1=$DSP/icons_st/$(cat .iconf).png
+img2=$DSP/icons_st/$(cat .iconmc).png
+img3=$DSP/icons_st/$(cat .iconlw).png
+img4=$DSP/icons_st/$(cat .iconls).png
 
 VAR=$(yad --ellipsize=NONE --list \
 --on-top --class=idiomind --name=idiomind \
@@ -97,7 +93,7 @@ $img4 "     $info4 Listening Sentences" )
 ret=$?
 
 if [ $ret -eq 0 ]; then
-    printf "prct.shc.$tpc.prct.shc\n" >> $DC_s/cfg.30 &
+    printf "prct.shc.$tpc.prct.shc\n" >> $DC_s/30.cfg &
     if echo "$VAR" | grep "Flashcards"; then
         $DSP/prct.sh f & exit 1
     elif echo "$VAR" | grep "Multiple Choice"; then
@@ -121,10 +117,10 @@ elif [ $ret -eq 3 ]; then
     $DS/practice/strt.sh & exit
 else
     cd "$DC_tlt/practice"
-    [[ -f fin1 ]] && rm fin1; [[ -f fin2 ]] && rm fin2;
-    [[ -f mcin1 ]] && rm mcin1; [[ -f mcin2 ]] && rm mcin2;
-    [[ -f lwin1 ]] && rm lwin1; [[ -f lwin2 ]] && rm lwin2;
-    [[ -f lsin1 ]] && rm lsin1
+    [ -f fin1 ] && rm fin1; [ -f fin2 ] && rm fin2;
+    [ -f mcin1 ] && rm mcin1; [ -f mcin2 ] && rm mcin2;
+    [ -f lwin1 ] && rm lwin1; [ -f lwin2 ] && rm lwin2;
+    [ -f lsin1 ] && rm lsin1
     kill -9 $(pgrep -f "yad --form ")
     exit
 fi

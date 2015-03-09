@@ -1,4 +1,0 @@
-#!/bin/bash
-cd "$HOME/.config/idiomind/addons/Learning with news/French/rss"
-echo "Lemonde - Sample" > ../.rss
-echo "http://rss.lemonde.fr/c/205/f/3050/index.rss" > ../link

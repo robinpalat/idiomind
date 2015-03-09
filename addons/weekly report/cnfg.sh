@@ -2,8 +2,8 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-wth=$(sed -n 3p $DC_s/cfg.18)
-eht=$(sed -n 4p $DC_s/cfg.18)
+wth=$(sed -n 3p $DC_s/18.cfg)
+eht=$(sed -n 4p $DC_s/18.cfg)
 LOG=$DC_a/stats/.log
 NUM=$DC_a/stats/num.tmp
 TPS=$DC_a/stats/tpcs.tmp
@@ -17,7 +17,7 @@ udt=$(cat "$DC_a/stats/.udt")
 if [ "$1" = A ]; then
     [[ "$(date +%F)" = "$udt" ]] && exit 1
     echo "$tpc" > $DC_a/stats/tpc.tmp
-    echo $(sed -n 2p $DC_s/cfg.8) >> $DC_a/stats/tpc.tmp
+    echo $(sed -n 2p $DC_s/8.cfg) >> $DC_a/stats/tpc.tmp
     TPCS=$(cat "$LOG" | grep -o -P '(?<=tpcs.).*(?=\.tpcs)' \
     | sort | uniq -dc | sort -n -r | head -3 | sed -e 's/^ *//' -e 's/ *$//')
     tpc1=$(echo "$TPCS" | sed -n 1p | cut -d " " -f2-)
@@ -48,23 +48,23 @@ if [ "$1" = A ]; then
     tpc3=$(sed -n 3p $TPS)
 
     if [ -n "$tpc3" ];then
-        [[ -f "$DC_tl/$tpc1/cfg.1" ]] && tlng1="$DC_tl/$tpc1/cfg.1"
-        [[ -f "$DC_tl/$tpc2/cfg.1" ]] && tlng2="$DC_tl/$tpc2/cfg.1"
-        [[ -f "$DC_tl/$tpc3/cfg.1" ]] && tlng3="$DC_tl/$tpc3/cfg.1"
-        touch "$DC_tl/$tpc1/cfg.2" && tok1="$DC_tl/$tpc1/cfg.2"
-        touch "$DC_tl/$tpc2/cfg.2" && tok2="$DC_tl/$tpc2/cfg.2"
-        touch "$DC_tl/$tpc3/cfg.2" && tok3="$DC_tl/$tpc3/cfg.2"
+        [[ -f "$DC_tl/$tpc1/1.cfg" ]] && tlng1="$DC_tl/$tpc1/1.cfg"
+        [[ -f "$DC_tl/$tpc2/1.cfg" ]] && tlng2="$DC_tl/$tpc2/1.cfg"
+        [[ -f "$DC_tl/$tpc3/1.cfg" ]] && tlng3="$DC_tl/$tpc3/1.cfg"
+        touch "$DC_tl/$tpc1/2.cfg" && tok1="$DC_tl/$tpc1/2.cfg"
+        touch "$DC_tl/$tpc2/2.cfg" && tok2="$DC_tl/$tpc2/2.cfg"
+        touch "$DC_tl/$tpc3/2.cfg" && tok3="$DC_tl/$tpc3/2.cfg"
     elif [ -n "$tpc2" ];then
-        [[ -f "$DC_tl/$tpc1/cfg.1" ]] && tlng1="$DC_tl/$tpc1/cfg.1"
-        [[ -f "$DC_tl/$tpc2/cfg.1" ]] && tlng2="$DC_tl/$tpc2/cfg.1"
-        touch "$DC_tl/$tpc1/cfg.2" && tok1="$DC_tl/$tpc1/cfg.2"
-        touch "$DC_tl/$tpc2/cfg.2" && tok2="$DC_tl/$tpc2/cfg.2"
+        [[ -f "$DC_tl/$tpc1/1.cfg" ]] && tlng1="$DC_tl/$tpc1/1.cfg"
+        [[ -f "$DC_tl/$tpc2/1.cfg" ]] && tlng2="$DC_tl/$tpc2/1.cfg"
+        touch "$DC_tl/$tpc1/2.cfg" && tok1="$DC_tl/$tpc1/2.cfg"
+        touch "$DC_tl/$tpc2/2.cfg" && tok2="$DC_tl/$tpc2/2.cfg"
     elif [ -n "$tpc1" ];then
-        [[ -f "$DC_tl/$tpc1/cfg.1" ]] && tlng1="$DC_tl/$tpc1/cfg.1"
-        touch "$DC_tl/$tpc1/cfg.2" && tok1="$DC_tl/$tpc1/cfg.2"
+        [[ -f "$DC_tl/$tpc1/1.cfg" ]] && tlng1="$DC_tl/$tpc1/1.cfg"
+        touch "$DC_tl/$tpc1/2.cfg" && tok1="$DC_tl/$tpc1/2.cfg"
     fi
 
-    W9=$DC_s/cfg.22
+    W9=$DC_s/22.cfg
     W9INX=$(cat $W9 | sort | uniq -dc | sort -n -r | sed 's/ \+/ /g')
     n=1
     while [ $n -le 15 ]; do
@@ -181,8 +181,8 @@ echo "<big><span font='ultralight'>$OKIM</span></big>  $(gettext "Items marked l
 " >> $WKRT
 cat "$DC_a/stats/.wks" >> $WKRT2
 echo "$(date +%F)" > "$DC_a/stats/.udt"
-echo "$tpc" > $DC_s/cfg.8
-echo wr >> $DC_s/cfg.8
+echo "$tpc" > $DC_s/8.cfg
+echo wr >> $DC_s/8.cfg
 exit 1
 
 

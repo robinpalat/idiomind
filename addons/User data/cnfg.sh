@@ -4,7 +4,7 @@
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/mods/cmns.sh
 user=$(echo "$(whoami)")
-[ -f $DC_s/cfg.12 ] && D_cps=$(sed -n 2p $DC_s/cfg.12)
+[ -f $DC_s/12.cfg ] && D_cps=$(sed -n 2p $DC_s/12.cfg)
 [ -f "$D_cps/.udt" ] && udt=$(cat "$D_cps/.udt") || udt=" "
 dte=$(date +%F)
 
@@ -124,22 +124,22 @@ if [ -z "$1" ]; then
                         "$DM_t/$language/$topic/"
                         
                         rm "$DM_t/$language/$topic/tpc.sh"
-                        rm "$DM_t/$language/$topic/.conf/cfg.1"
-                        rm "$DM_t/$language/$topic/.conf/cfg.2"
+                        rm "$DM_t/$language/$topic/.conf/1.cfg"
+                        rm "$DM_t/$language/$topic/.conf/2.cfg"
                         rm -rf "$DM_t/$language/$topic/.conf/practice/"
-                        cp -f "$DM_t/$language/$topic/.conf/cfg.0" \
-                        "$DM_t/$language/$topic/.conf/cfg.1"
-                        echo "6" > "$DM_t/$language/$topic/.conf/cfg.8"
+                        cp -f "$DM_t/$language/$topic/.conf/0.cfg" \
+                        "$DM_t/$language/$topic/.conf/1.cfg"
+                        echo "6" > "$DM_t/$language/$topic/.conf/8.cfg"
                         
                         echo "50"
                         echo "# $(gettext "Copying") ${topic:0:20} ... " ; sleep 0.2
                         echo "80"
                         echo "# $(gettext "Copying") ${topic:0:20} ... " ; sleep 0.1
                         
-                        echo "$topic" >> "$DM_t/$language/.cfg.3"
-                        sed -i 's/'"$topic"'//g' "$DM_t/$language/.cfg.2"
-                        sed '/^$/d' $DM_t/$language/.cfg.2 > $DM_t/$language/.cfg.2_
-                        mv -f $DM_t/$language/.cfg.2_ $DM_t/$language/.cfg.2
+                        echo "$topic" >> "$DM_t/$language/.3.cfg"
+                        sed -i 's/'"$topic"'//g' "$DM_t/$language/.2.cfg"
+                        sed '/^$/d' $DM_t/$language/.2.cfg > $DM_t/$language/.2.cfg_
+                        mv -f $DM_t/$language/.2.cfg_ $DM_t/$language/.2.cfg
                         cd $DT/import/topics
                         echo "90"
                         echo "# $(gettext "Copying") ${topic:0:20} ... " ; sleep 0.2
@@ -174,12 +174,12 @@ if [ -z "$1" ]; then
 
     # backup
     elif [ "$ret" -eq 2 ]; then
-        sttng=$(sed -n 1p $DC_s/cfg.12)
-        D_cps=$(sed -n 2p $DC_s/cfg.12)
+        sttng=$(sed -n 1p $DC_s/12.cfg)
+        D_cps=$(sed -n 2p $DC_s/12.cfg)
         
         if [ -z $sttng ]; then
-            echo FALSE > $DC_s/cfg.12
-            echo " " > $DC_s/cfg.12
+            echo FALSE > $DC_s/12.cfg
+            echo " " > $DC_s/12.cfg
         fi
 
         cd $HOME
@@ -197,8 +197,8 @@ if [ -z "$1" ]; then
         if [ "$ret" -eq 0 ]; then
             sttng=$(echo "$CNFG" | cut -d "|" -f1)
             dircy=$(echo "$CNFG" | cut -d "|" -f2)
-            echo "$sttng" > $DC_s/cfg.12
-            echo "$dircy" >> $DC_s/cfg.12
+            echo "$sttng" > $DC_s/12.cfg
+            echo "$dircy" >> $DC_s/12.cfg
 
         elif [ "$ret" -eq 3 ]; then
         
@@ -232,7 +232,7 @@ if [ -z "$1" ]; then
                         (
                         rm -f $DT/*.XXXXXXXX
                         echo "#" ; sleep 0
-                        cp "$DC_s/cfg.12"  "$DT/.SC.bk"
+                        cp "$DC_s/12.cfg"  "$DT/.SC.bk"
                         mv "$DC/" "$DT/.s2.bk"
                         mv "$DM/" "$DT/.idm2.bk"
                         mkdir "$DC/"
@@ -274,8 +274,8 @@ if [ -z "$1" ]; then
         else
             sttng=$(echo "$CNFG" | cut -d "|" -f1)
             dircy=$(echo "$CNFG" | cut -d "|" -f2)
-            echo "$sttng" > $DC_s/cfg.12
-            echo "$dircy" >> $DC_s/cfg.12
+            echo "$sttng" > $DC_s/12.cfg
+            echo "$dircy" >> $DC_s/12.cfg
         fi  
     else
         exit 1

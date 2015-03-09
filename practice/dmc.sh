@@ -11,8 +11,8 @@ easy=0
 hard=0
 ling=0
 
-[[ -f mcin2 ]] && rm mcin2
-[[ -f mcin3 ]] && rm mcin3
+[ -f mcin2 ] && rm mcin2
+[ -f mcin3 ] && rm mcin3
 
 function score() {
 
@@ -25,19 +25,19 @@ function score() {
         exit 1
         
     else
-        [[ -f l_m ]] && echo "$(($(cat l_m)+$easy))" > l_m || echo $easy > l_m
+        [ -f l_m ] && echo "$(($(cat l_m)+$easy))" > l_m || echo $easy > l_m
         s=$(cat l_m)
         v=$((100*$s/$all))
         n=1; c=1
         while [ "$n" -le 21 ]; do
-                if [[ "$v" -le "$c" ]]; then
+                if [ "$v" -le "$c" ]; then
                 echo "$n" > .iconmc; break; fi
                 ((c=c+5))
             let n++
         done
         
-        [[ -f mcin2 ]] && rm mcin2
-        [[ -f mcin3 ]] && rm mcin3
+        [ -f mcin2 ] && rm mcin2
+        [ -f mcin3 ] && rm mcin3
         $strt 6 $easy $ling $hard & exit 1
     fi
 }
@@ -80,7 +80,7 @@ while read trgt; do
     mchoise "$trgt"
     ret=$(echo "$?")
     
-    if [[ $ret = 0 ]]; then
+    if [ $ret = 0 ]; then
     
         if echo "$dlg" | grep "$wes"; then
             echo "$trgt" | tee -a ok.m $w9
@@ -91,14 +91,14 @@ while read trgt; do
             hard=$(($hard+1))
         fi  
             
-    elif [[ $ret = 1 ]]; then
+    elif [ $ret = 1 ]; then
         $drts/cls m $easy $ling $hard $all &
         break &
         exit 1
     fi
 done < mcin1
     
-if [[ ! -f mcin2 ]]; then
+if [ ! -f mcin2 ]; then
 
     score $easy
     
@@ -109,7 +109,7 @@ else
         mchoise "$trgt"
         ret=$(echo "$?")
         
-        if [[ $ret = 0 ]]; then
+        if [ $ret = 0 ]; then
         
             if echo "$dlg" | grep "$wes"; then
                 hard=$(($hard-1))
@@ -119,7 +119,7 @@ else
                 echo "$trgt" | tee -a mcin3 w6
             fi
 
-        elif [[ $ret = 1 ]]; then
+        elif [ $ret = 1 ]; then
             $drts/cls m $easy $ling $hard $all &
             break &
             exit 1

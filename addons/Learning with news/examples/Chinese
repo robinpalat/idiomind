@@ -1,4 +1,0 @@
-#!/bin/bash
-cd "$HOME/.config/idiomind/addons/Learning with news/Chinese/rss"
-echo "BBC zhongwen - Sample" > ../.rss
-echo "http://www.bbc.co.uk/zhongwen/simp/index.xml" > ../link

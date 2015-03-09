@@ -1,4 +1,0 @@
-#!/bin/bash
-cd "$HOME/.config/idiomind/addons/Learning with news/Vietnamese/rss"
-echo "vietbao - Sample" > ../.rss
-echo "http://vietbao.vn/rss2/trang-nhat.rss" > ../link

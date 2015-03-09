@@ -17,10 +17,10 @@
 #  MA 02110-1301, USA.
 #  
 
-#source /usr/share/idiomind/ifs/c.conf
+source /usr/share/idiomind/ifs/c.conf
 Encoding=UTF-8
-wth=$(sed -n 5p "$DC_s/cfg.1"8)
-eht=$(sed -n 6p "$DC_s/cfg.1"8)
+wth=$(sed -n 5p "$DC_s/18.cfg")
+eht=$(sed -n 6p "$DC_s/18.cfg")
 info1="$(echo "$(gettext "Do you want to change the interface language program?")" | xargs -n6 | sed 's/^/  /')"
 info2="$(echo "$(gettext "You want to change the language setting to learn?")" | xargs -n6 | sed 's/^/  /')"
 cd "$DS/addons"
@@ -39,6 +39,10 @@ Icon=idiomind
 MimeType=application/x-idmnd;
 StartupNotify=true
 Encoding=UTF-8"
+
+c=$(echo $(($RANDOM%100000))); KEY=$c
+cnf1=$(mktemp $DT/cnf1.XXXX)
+cnf3=$(mktemp $DT/cnf3.XXXX)
 
 if [ ! -d "$DC" ]; then
     "$DS/ifs/1u.sh"
@@ -61,75 +65,77 @@ function set_lang() {
         mkdir "$DM_t/$1"
         mkdir "$DM_t/$1/.share"
     fi
-    echo "$2" > "$DC_s/cfg.1"0
-    echo "$1" >> "$DC_s/cfg.1"0
+    echo "$2" > "$DC_s/1.cfg"0
+    echo "$1" >> "$DC_s/1.cfg"0
     "$DS/stop.sh" L
     "$DS/stop.sh" feed
-        
-    if [ -f "$DM/topics/$1/.cfg.8" ]; then
-        LST=$(sed -n 1p "$DM/topics/$1/.cfg.8")
+
+    if [ -f "$DM/topics/$1/.8.cfg" ]; then
+        LST=$(sed -n 1p "$DM/topics/$1/.8.cfg")
         "$DM/topics/$1/$LST/tpc.sh"
     else
-        rm "$DC_s/cfg.8" && touch "$DC_s/cfg.8"
+        rm "$DC_s/8.cfg" && touch "$DC_s/8.cfg"
     fi
-
+    
     "$DS/mngr.sh" mkmn
 }
 
-c=$(echo $(($RANDOM%100000)))
-KEY=$c
-cnf1=$(mktemp $DT/cnf1.XXXX)
-cnf3=$(mktemp $DT/cnf3.XXXX)
+[ ! -f "$DC_s/1.cfg" ] && touch "$DC_s/1.cfg"
+n=1
+while read val; do
+    declare set"$n"="$val"
+    ((n=n+1))
+done < "$DC_s/1.cfg"
 
-[[ -f "$DC_s/cfg.1" ]] && sttng3=$(sed -n 3p "$DC_s/cfg.1") || sttng3=FALSE
-[[ -f "$DC_s/cfg.1" ]] && sttng4=$(sed -n 4p "$DC_s/cfg.1") || sttng4=FALSE
-[[ -f "$DC_s/cfg.1" ]] && sttng5=$(sed -n 5p "$DC_s/cfg.1") || sttng5=FALSE
-[[ -f "$DC_s/cfg.1" ]] && sttng6=$(sed -n 6p "$DC_s/cfg.1") || sttng6=FALSE
-[[ -f "$DC_s/cfg.1" ]] && sttng9=$(sed -n 8p "$DC_s/cfg.1") || sttng9=""
-[[ -f "$DC_s/cfg.1" ]] && sttng10=$(sed -n 9p "$DC_s/cfg.1") || sttng10=""
 
 yad --plug=$KEY --tabnum=1 --borders=15 --scroll \
     --separator="\\n" --form --no-headers --align=right \
-    --field="$(gettext "General Options")\t":lbl "#1" \
-    --field=":lbl" "#2"\
-    --field="$(gettext "Colorize words to grammar (Experimental)")":CHK "$sttng3" \
-    --field="$(gettext "List words after adding a sentence")":CHK "$sttng4" \
-    --field="$(gettext "Perform tasks at startup")":CHK "$sttng5" \
-    --field="$(gettext "Speak to pass the items")":CHK "$sttng6" \
-    --field=" :lbl" "#7"\
-    --field="<small>$(gettext "Speech Synthesizer\nDefault espeak")</small>":CB5 "$sttng8" \
-    --field="<small>$(gettext "Use this program\nfor audio editing")</small>":CB5 "$sttng9" \
-    --field=" :lbl" "#10"\
+    --field="$(gettext "Play Options")\t":lbl "#1" \
+    --field=":lbl" "#2" \
+    --field="$(gettext "Texto")":CHK "$set3" \
+    --field="$(gettext "Audio")":CHK "$set4" \
+    --field="$(gettext "Repeat")":CHK "$set5" \
+    --field="$(gettext "Only videos")":CHK "$set6" \
+    --field="$(gettext "Videos on fullscreen")":CHK "$set7" \
+    --field=" :lbl" "#8"\
+    --field="$(gettext "General Options")\t":lbl "#9" \
+    --field=":lbl" "#10"\
+    --field="$(gettext "Colorize words to grammar (Experimental)")":CHK "$set11" \
+    --field="$(gettext "List words after adding a sentence")":CHK "$set12" \
+    --field="$(gettext "Perform tasks at startup")":CHK "$set13" \
+    --field="$(gettext "Speak to pass the items")":CHK "$set14" \
+    --field=" :lbl" "#15"\
+    --field="<small>$(gettext "Speech Synthesizer\nDefault espeak")</small>":CB5 "$set16" \
+    --field="<small>$(gettext "Use this program\nfor audio editing")</small>":CB5 "$set17" \
+    --field=" :lbl" "#18"\
     --field="$(gettext "Check for Updates")":BTN "/usr/share/idiomind/ifs/tls.sh check_updates" \
     --field="$(gettext "Quick Help")":BTN "/usr/share/idiomind/ifs/tls.sh help" \
     --field="$(gettext "Feedback")":BTN "/usr/share/idiomind/ifs/tls.sh fback >/dev/null 2>&1" \
     --field="$(gettext "Topic Saved")":BTN "/usr/share/idiomind/ifs/upld.sh vsd" \
-    --field=" :lbl" "#14"\
-    --field="$(gettext "Languages")\t":lbl "#15" \
-    --field=":lbl" "#16"\
+    --field="$(gettext "About")":BTN "/usr/share/idiomind/ifs/tls.sh about" \
+    --field=" :lbl" "#23"\
+    --field="$(gettext "Languages")\t":lbl "#24" \
+    --field=":lbl" "#25"\
     --field="$(gettext "Language Learning")":CB ""$lgtl"!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
     --field="$(gettext "Your Language")":CB ""$lgsl"!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" > "$cnf1" &
-cat "$DC_s/cfg.21" | yad --plug=$KEY --tabnum=2 --list --expand-column=2 \
+cat "$DC_s/21.cfg" | yad --plug=$KEY --tabnum=2 --list --expand-column=2 \
     --text="<sub>  $(gettext "Double click to set") </sub>" \
     --no-headers --dclick-action="/usr/share/idiomind/ifs/dclik.sh" --print-all \
-    --column=icon:IMG --column=Action & printf "$info_" | yad --plug=$KEY --tabnum=3 --text-info \
-    --text="<big><big><b>Idiomind v2.2-beta</b></big></big>\\n<sup>$(gettext "Vocabulary learning tool")\\n<a href='https://sourceforge.net/projects/idiomind/'>Homepage</a> (c) 2013-2015 Robin Palat</sup>" \
-    --show-uri --fontname=Arial --margins=10 --wrap --text-align=center &
+    --column=icon:IMG --column=Action &
 yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
     --sticky --center --window-icon=idiomind --borders=5 \
     --tab="$(gettext "Preferences")" --tab="  $(gettext "Addons")  " \
-    --tab="  $(gettext "About")  " \
-    --width=450 --height=340 --title="$(gettext "Settings")" --button="$(gettext "Close")":0
+    --width=480 --height=350 --title="$(gettext "Settings")" --button="$(gettext "Close")":0
     
     ret=$?
     
     if [ $ret -eq 0 ]; then
         rm -f "$DT/.lc"
-        cp -f "$cnf1" "$DC_s/cfg.1"
+        cp -f "$cnf1" "$DC_s/1.cfg"
         
         [ ! -d  "$HOME/.config/autostart" ] && mkdir "$HOME/.config/autostart"
         config_dir="$HOME/.config/autostart"
-        if [[ "$(sed -n 5p "$DC_s/cfg.1")" = "TRUE" ]]; then
+        if [[ "$(sed -n 5p "$DC_s/1.cfg")" = "TRUE" ]]; then
             if [ ! -f "$config_dir/idiomind.desktop" ]; then
             
                 if [ ! -d "$HOME/.config/autostart" ]; then
@@ -144,8 +150,8 @@ yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
             fi
         fi
         
-        ln=$(cat "$cnf1" | sed -n 18p)
-        ls=$(cat "$cnf1" | sed -n 19p)
+        ln=$(cat "$cnf1" | sed -n 27p)
+        ls=$(cat "$cnf1" | sed -n 28p)
         
         if echo "$ln" | grep "English" && [ English != "$lgtl" ] ; then
             confirm "$info2" dialog-question
@@ -191,71 +197,71 @@ yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
         if echo "$ls" | grep "English" && [ English != "$lgsl" ] ; then
             confirm "$info1" dialog-warning
             if [ $? -eq 0 ]; then
-                echo "en" > "$DC_s/cfg.9"
-                echo "english" >> "$DC_s/cfg.9"
+                echo "en" > "$DC_s/9.cfg"
+                echo "english" >> "$DC_s/9.cfg"
             fi
         fi
         if echo "$ls" | grep "French" && [ French != "$lgsl" ] ; then
             confirm "$info1" dialog-warning
             if [ $? -eq 0 ]; then
-                echo "fr" > "$DC_s/cfg.9"
-                echo "french" >> "$DC_s/cfg.9"
+                echo "fr" > "$DC_s/9.cfg"
+                echo "french" >> "$DC_s/9.cfg"
             fi
         fi
         if echo "$ls" | grep "German" && [ German != "$lgsl" ] ; then
             confirm "$info1" dialog-warning
             if [ $? -eq 0 ]; then
-                echo "de" > "$DC_s/cfg.9"
-                echo "german" >> "$DC_s/cfg.9"
+                echo "de" > "$DC_s/9.cfg"
+                echo "german" >> "$DC_s/9.cfg"
             fi
         fi
         if echo "$ls" | grep "Italian" && [ Italian != "$lgsl" ] ; then
             confirm "$info1" dialog-warning
             if [ $? -eq 0 ]; then
-                echo "it" > "$DC_s/cfg.9"
-                echo "italian" >> "$DC_s/cfg.9"
+                echo "it" > "$DC_s/9.cfg"
+                echo "italian" >> "$DC_s/9.cfg"
             fi
         fi
         if echo "$ls" | grep "Japanese" && [ Japanese != "$lgsl" ] ; then
             confirm "$info1" dialog-warning
             if [ $? -eq 0 ]; then
-                echo "ja" > "$DC_s/cfg.9"
-                echo "japanese" >> "$DC_s/cfg.9"
+                echo "ja" > "$DC_s/9.cfg"
+                echo "japanese" >> "$DC_s/9.cfg"
             fi
         fi
         if echo "$ls" | grep "Portuguese" && [ Portuguese != "$lgsl" ] ; then
             confirm "$info1" dialog-warning
             if [ $? -eq 0 ]; then
-                echo "pt" > "$DC_s/cfg.9"
-                echo "portuguese" >> "$DC_s/cfg.9"
+                echo "pt" > "$DC_s/9.cfg"
+                echo "portuguese" >> "$DC_s/9.cfg"
             fi
         fi
         if echo "$ls" | grep "Spanish" && [ Spanish != "$lgsl" ] ; then
             confirm "$info1" dialog-warning
             if [ $? -eq 0 ]; then
-                echo "es" > "$DC_s/cfg.9"
-                echo "spanish" >> "$DC_s/cfg.9"
+                echo "es" > "$DC_s/9.cfg"
+                echo "spanish" >> "$DC_s/9.cfg"
             fi
         fi
         if echo "$ls" | grep "Vietnamese" && [ Vietnamese != "$lgsl" ] ; then
             confirm "$info1" dialog-warning
             if [ $? -eq 0 ]; then
-                echo "vi" > "$DC_s/cfg.9"
-                echo "vietnamese" >> "$DC_s/cfg.9"
+                echo "vi" > "$DC_s/9.cfg"
+                echo "vietnamese" >> "$DC_s/9.cfg"
             fi
         fi
         if echo "$ls" | grep "Chinese" && [ Chinese != "$lgsl" ] ; then
             confirm "$info1" dialog-warning
             if [ $? -eq 0 ]; then
-                echo "zh-cn" > "$DC_s/cfg.9"
-                echo "chinese" >> "$DC_s/cfg.9"
+                echo "zh-cn" > "$DC_s/9.cfg"
+                echo "chinese" >> "$DC_s/9.cfg"
             fi
         fi
         if echo "$ls" | grep "Russian" && [ Russian != "$lgsl" ] ; then
             confirm "$info1" dialog-warning
             if [ $? -eq 0 ]; then
-                echo "ru" > "$DC_s/cfg.9"
-                echo "russian" >> "$DC_s/cfg.9"
+                echo "ru" > "$DC_s/9.cfg"
+                echo "russian" >> "$DC_s/9.cfg"
             fi
         fi
         

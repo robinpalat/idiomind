@@ -1,4 +1,0 @@
-#!/bin/bash
-cd "$HOME/.config/idiomind/addons/Learning with news/Italian/rss"
-echo "Corriere.it - Sample" > ../.rss
-echo "http://xml.corriereobjects.it/rss/editoriali.xml" > ../link

@@ -22,10 +22,10 @@ source $DS/ifs/mods/cmns.sh
 
 if [ "$1" = vsd ]; then
 
-    U=$(sed -n 1p $HOME/.config/idiomind/s/cfg.4)
+    U=$(sed -n 1p $HOME/.config/idiomind/s/4.cfg)
     lng=$(echo "$lgtl" | awk '{print tolower($0)}')
-    wth=$(sed -n 3p $DC_s/cfg.18)
-    eht=$(sed -n 4p $DC_s/cfg.18)
+    wth=$(sed -n 3p $DC_s/18.cfg)
+    eht=$(sed -n 4p $DC_s/18.cfg)
     
     cd $DM_t/saved; ls -t *.id | sed 's/\.id//g' | yad --list \
     --window-icon=idiomind --center --skip-taskbar --borders=8 \
@@ -39,7 +39,7 @@ if [ "$1" = vsd ]; then
     
 elif [ "$1" = infsd ]; then
 
-    U=$(sed -n 1p $DC_s/cfg.4)
+    U=$(sed -n 1p $DC_s/4.cfg)
     user=$(echo "$(whoami)")
     source "$DM_t/saved/$2.id"
     [ $language_source = english ] && lng=en
@@ -147,32 +147,32 @@ interview="$(gettext "Interview")"
 funny="$(gettext "Funny")"
 
 lnglbl=$(echo $lgtl | awk '{print tolower($0)}')
-U=$(sed -n 1p $DC_s/cfg.4)
-mail=$(sed -n 2p $DC_s/cfg.4)
-user=$(sed -n 3p $DC_s/cfg.4)
+U=$(sed -n 1p $DC_s/4.cfg)
+mail=$(sed -n 2p $DC_s/4.cfg)
+user=$(sed -n 3p $DC_s/4.cfg)
 [ -z "$user" ] && user=$(echo "$(whoami)")
-nt=$(cat "$DC_tlt/cfg.10")
+nt=$(cat "$DC_tlt/10.cfg")
 nme=$(echo "$tpc" | sed 's/ /_/g' \
 | sed 's/"//g' | sed 's/’//g')
 
 # check index
 #------------------------------------------
-[ ! -f "$DC_tlt/cfg.0" ] && touch "$DC_tlt/cfg.0"
-[ ! -f "$DC_tlt/cfg.1" ] && touch "$DC_tlt/cfg.1"
-[ ! -f "$DC_tlt/cfg.2" ] && touch "$DC_tlt/cfg.2"
-[ ! -f "$DC_tlt/cfg.3" ] && touch "$DC_tlt/cfg.3"
-[ ! -f "$DC_tlt/cfg.4" ] && touch "$DC_tlt/cfg.4"
-[ ! -f "$DC_tlt/cfg.10" ] && touch "$DC_tlt/cfg.10"
+[ ! -f "$DC_tlt/0.cfg" ] && touch "$DC_tlt/0.cfg"
+[ ! -f "$DC_tlt/1.cfg" ] && touch "$DC_tlt/1.cfg"
+[ ! -f "$DC_tlt/2.cfg" ] && touch "$DC_tlt/2.cfg"
+[ ! -f "$DC_tlt/3.cfg" ] && touch "$DC_tlt/3.cfg"
+[ ! -f "$DC_tlt/4.cfg" ] && touch "$DC_tlt/4.cfg"
+[ ! -f "$DC_tlt/10.cfg" ] && touch "$DC_tlt/10.cfg"
 
-check_index1 "$DC_tlt/cfg.0" "$DC_tlt/cfg.1" \
-"$DC_tlt/cfg.2" "$DC_tlt/cfg.3" "$DC_tlt/cfg.4"
+check_index1 "$DC_tlt/0.cfg" "$DC_tlt/1.cfg" \
+"$DC_tlt/2.cfg" "$DC_tlt/3.cfg" "$DC_tlt/4.cfg"
 
-chk0=$(cat "$DC_tlt/cfg.0" | wc -l)
-chk1=$(cat "$DC_tlt/cfg.1" | wc -l)
-chk2=$(cat "$DC_tlt/cfg.2" | wc -l)
-chk3=$(cat "$DC_tlt/cfg.3" | wc -l)
-chk4=$(cat "$DC_tlt/cfg.4" | wc -l)
-stts=$(cat "$DC_tlt/cfg.8")
+chk0=$(cat "$DC_tlt/0.cfg" | wc -l)
+chk1=$(cat "$DC_tlt/1.cfg" | wc -l)
+chk2=$(cat "$DC_tlt/2.cfg" | wc -l)
+chk3=$(cat "$DC_tlt/3.cfg" | wc -l)
+chk4=$(cat "$DC_tlt/4.cfg" | wc -l)
+stts=$(cat "$DC_tlt/8.cfg")
 mp3s="$(cd "$DM_tlt/"; find . -maxdepth 2 -name '*.mp3' \
 | sort -k 1n,1 -k 7 | wc -l)"
 
@@ -195,9 +195,9 @@ if [[ $(($chk3 + $chk4)) != $chk0 || $(($chk1 + $chk2)) != $chk0 \
     | sort -k 1n,1 -k 7 | sed s'|\.\/words\/||'g \
     | sed s'|\.\/||'g | sed s'|\.mp3||'g > $DT/index
 
-    if ([ -f "$DC_tlt/.cfg.11" ] && \
-    [ -n "$(cat "$DC_tlt/.cfg.11")" ]); then
-    index="$DC_tlt/.cfg.11"
+    if ([ -f "$DC_tlt/.11.cfg" ] && \
+    [ -n "$(cat "$DC_tlt/.11.cfg")" ]); then
+    index="$DC_tlt/.11.cfg"
     echo ok
     else
     index="$DT/index"
@@ -214,43 +214,43 @@ if [[ $(($chk3 + $chk4)) != $chk0 || $(($chk1 + $chk2)) != $chk0 \
             xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
             [ "$name" != "$xname" ] && \
             mv -f "$DM_tlt/$name.mp3" "$DM_tlt/$xname.mp3"
-            echo "$trgt" >> "$DC_tlt/cfg.0.tmp"
-            echo "$trgt" >> "$DC_tlt/cfg.4.tmp"
+            echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
+            echo "$trgt" >> "$DC_tlt/4.cfg.tmp"
         elif [ -f "$DM_tlt/$sfname.mp3" ]; then
             tgs=$(eyeD3 "$DM_tlt/$sfname.mp3")
             trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
             xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
             [ "$sfname" != "$xname" ] && \
             mv -f "$DM_tlt/$sfname.mp3" "$DM_tlt/$xname.mp3"
-            echo "$trgt" >> "$DC_tlt/cfg.0.tmp"
-            echo "$trgt" >> "$DC_tlt/cfg.4.tmp"
+            echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
+            echo "$trgt" >> "$DC_tlt/4.cfg.tmp"
         elif [ -f "$DM_tlt/words/$name.mp3" ]; then
             tgs="$(eyeD3 "$DM_tlt/words/$name.mp3")"
             trgt="$(echo "$tgs" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')"
             xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
             [ "$name" != "$xname" ] && \
             mv -f "$DM_tlt/words/$name.mp3" "$DM_tlt/words/$xname.mp3"
-            echo "$trgt" >> "$DC_tlt/cfg.0.tmp"
-            echo "$trgt" >> "$DC_tlt/cfg.3.tmp"
+            echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
+            echo "$trgt" >> "$DC_tlt/3.cfg.tmp"
         elif [ -f "$DM_tlt/words/$wfname.mp3" ]; then
             tgs="$(eyeD3 "$DM_tlt/words/$wfname.mp3")"
             trgt="$(echo "$tgs" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')"
             xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
             [ "$wfname" != "$xname" ] \
             && mv -f "$DM_tlt/words/$wfname.mp3" "$DM_tlt/words/$xname.mp3"
-            echo "$trgt" >> "$DC_tlt/cfg.0.tmp"
-            echo "$trgt" >> "$DC_tlt/cfg.3.tmp"
+            echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
+            echo "$trgt" >> "$DC_tlt/3.cfg.tmp"
         fi
         
     done < "$index"
 
-    mv -f "$DC_tlt/cfg.0.tmp" "$DC_tlt/cfg.0"
-    mv -f "$DC_tlt/cfg.3.tmp" "$DC_tlt/cfg.3"
-    mv -f "$DC_tlt/cfg.4.tmp" "$DC_tlt/cfg.4"
-    cp -f "$DC_tlt/cfg.0" "$DC_tlt/cfg.1"
-    cp -f "$DC_tlt/cfg.0" "$DC_tlt/.cfg.11"
-    check_index1 "$DC_tlt/cfg.0" "$DC_tlt/cfg.1" \
-    "$DC_tlt/cfg.2" "$DC_tlt/cfg.3" "$DC_tlt/cfg.4"
+    mv -f "$DC_tlt/0.cfg.tmp" "$DC_tlt/0.cfg"
+    mv -f "$DC_tlt/3.cfg.tmp" "$DC_tlt/3.cfg"
+    mv -f "$DC_tlt/4.cfg.tmp" "$DC_tlt/4.cfg"
+    cp -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"
+    cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
+    check_index1 "$DC_tlt/0.cfg" "$DC_tlt/1.cfg" \
+    "$DC_tlt/2.cfg" "$DC_tlt/3.cfg" "$DC_tlt/4.cfg"
     [ -f $DT/ps_lk ] && rm -f $DT/ps_lk
 fi
 
@@ -258,7 +258,7 @@ if [ $? -ne 0 ]; then
     msg " $files_err\n\n" error & exit 1
 fi
 
-if [ $(cat "$DC_tlt/cfg.0" | wc -l) -le 20 ]; then
+if [ $(cat "$DC_tlt/0.cfg" | wc -l) -le 20 ]; then
     msg "$(gettext "To upload must be at least 20 items.")\n " info &
     exit
 fi
@@ -347,9 +347,9 @@ if [ $(ls -1 *.jpg 2>/dev/null | wc -l) != 0 ]; then
 else
     images=0
 fi
-[ -f "$DC_tlt"/cfg.3 ] && words=$(cat "$DC_tlt"/cfg.3 | wc -l)
-[ -f "$DC_tlt"/cfg.4 ] && sentences=$(cat "$DC_tlt"/cfg.4 | wc -l)
-[ -f "$DC_tlt"/cfg.12 ] && date_c=$(cat "$DC_tlt"/cfg.12)
+[ -f "$DC_tlt"/3.cfg ] && words=$(cat "$DC_tlt"/3.cfg | wc -l)
+[ -f "$DC_tlt"/4.cfg ] && sentences=$(cat "$DC_tlt"/4.cfg | wc -l)
+[ -f "$DC_tlt"/12.cfg ] && date_c=$(cat "$DC_tlt"/12.cfg)
 date_u=$(date +%F)
 
 echo '
@@ -366,26 +366,26 @@ nwords="10"
 nsentences="11"
 nimages="12"
 level=13
-' > "$DT_u/$tpc/cfg.12"
+' > "$DT_u/$tpc/12.cfg"
 
-sed -i "s/01/$tpc/g" "$DT_u/$tpc/cfg.12"
-sed -i "s/02/$lgsl/g" "$DT_u/$tpc/cfg.12"
-sed -i "s/03/$lgtl/g" "$DT_u/$tpc/cfg.12"
-sed -i "s/04/$Author/g" "$DT_u/$tpc/cfg.12"
-sed -i "s/05/$Mail/g" "$DT_u/$tpc/cfg.12"
-sed -i "s/06/$Ctgry/g" "$DT_u/$tpc/cfg.12"
-sed -i "s/07/$link/g" "$DT_u/$tpc/cfg.12"
-sed -i "s/08/$date_c/g" "$DT_u/$tpc/cfg.12"
-sed -i "s/09/$date_u/g" "$DT_u/$tpc/cfg.12"
-sed -i "s/10/$words/g" "$DT_u/$tpc/cfg.12"
-sed -i "s/11/$sentences/g" "$DT_u/$tpc/cfg.12"
-sed -i "s/12/$images/g" "$DT_u/$tpc/cfg.12"
-sed -i "s/13/$level/g" "$DT_u/$tpc/cfg.12"
-cp -f "$DT_u/$tpc/cfg.12" "$DT/cfg.12"
+sed -i "s/01/$tpc/g" "$DT_u/$tpc/12.cfg"
+sed -i "s/02/$lgsl/g" "$DT_u/$tpc/12.cfg"
+sed -i "s/03/$lgtl/g" "$DT_u/$tpc/12.cfg"
+sed -i "s/04/$Author/g" "$DT_u/$tpc/12.cfg"
+sed -i "s/05/$Mail/g" "$DT_u/$tpc/12.cfg"
+sed -i "s/06/$Ctgry/g" "$DT_u/$tpc/12.cfg"
+sed -i "s/07/$link/g" "$DT_u/$tpc/12.cfg"
+sed -i "s/08/$date_c/g" "$DT_u/$tpc/12.cfg"
+sed -i "s/09/$date_u/g" "$DT_u/$tpc/12.cfg"
+sed -i "s/10/$words/g" "$DT_u/$tpc/12.cfg"
+sed -i "s/11/$sentences/g" "$DT_u/$tpc/12.cfg"
+sed -i "s/12/$images/g" "$DT_u/$tpc/12.cfg"
+sed -i "s/13/$level/g" "$DT_u/$tpc/12.cfg"
+cp -f "$DT_u/$tpc/12.cfg" "$DT/12.cfg"
 
-echo "$U" > $DC_s/cfg.4
-echo "$Mail" >> $DC_s/cfg.4
-echo "$Author" >> $DC_s/cfg.4
+echo "$U" > $DC_s/4.cfg
+echo "$Mail" >> $DC_s/4.cfg
+echo "$Author" >> $DC_s/4.cfg
 
 if [ -f "$img" ]; then
 /usr/bin/convert -scale 110x80! "$img" $DT_u/img1.png
@@ -417,13 +417,13 @@ cp -r "./words/images" "$DT_u/$tpc/words"
 mkdir "$DT_u/$tpc/.audio"
 while read audio; do
     cp -f "$DM_tl/.share/$audio" "$DT_u/$tpc/.audio/$audio"
-done < "$DC_tlt/cfg.5"
-cp -f "$DC_tlt/cfg.0" "$DT_u/$tpc/cfg.0"
-cp -f "$DC_tlt/cfg.3" "$DT_u/$tpc/cfg.3"
-cp -f "$DC_tlt/cfg.4" "$DT_u/$tpc/cfg.4"
-cp -f "$DC_tlt/cfg.5" "$DT_u/$tpc/cfg.5"
-printf "$notes" > "$DC_tlt/cfg.10"
-printf "$notes" > "$DT_u/$tpc/cfg.10"
+done < "$DC_tlt/5.cfg"
+cp -f "$DC_tlt/0.cfg" "$DT_u/$tpc/0.cfg"
+cp -f "$DC_tlt/3.cfg" "$DT_u/$tpc/3.cfg"
+cp -f "$DC_tlt/4.cfg" "$DT_u/$tpc/4.cfg"
+cp -f "$DC_tlt/5.cfg" "$DT_u/$tpc/5.cfg"
+printf "$notes" > "$DC_tlt/10.cfg"
+printf "$notes" > "$DT_u/$tpc/10.cfg"
 
 cd $DT_u
 tar -cvf "$tpc.tar" "$tpc"
@@ -443,7 +443,7 @@ END_SCRIPT
 
 exit=$?
 if [ $exit = 0 ] ; then
-    mv -f "$DT/cfg.12" "$DM_t/saved/$tpc.id"
+    mv -f "$DT/12.cfg" "$DM_t/saved/$tpc.id"
     info="  $tpc\n\n<b> $(gettext "Was uploaded properly.")</b>\n"
     image=dialog-ok
 else

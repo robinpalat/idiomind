@@ -1,25 +1,23 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 #source /usr/share/idiomind/ifs/c.conf
-[ -z "$tpc" ] && exit 1
+[ -z "$tpc" && -d "$DT/p" ] && exit 1
 > "$DT/.p_"
 cd "$DT/p"
+n=1
 
-if ([ -n "$(cat ./indx)" ] && [ $(cat ./indx | wc -l) -gt 0 ]); then
-    if [ "$(sed -n 10p "$DC_s/cfg.5")" = "TRUE" ]; then
+if ([ -n "$(cat ./indx)" ] && [ $(wc -l < ./indx) -gt 0 ]); then
+    if [ "$(sed -n 5p "$DC_s/1.cfg")" = "TRUE" ]; then
 
-        while [ 1 ]
-        do
-        n=1
-        while [ $n -le $(cat ./indx | wc -l) ]; do
-        "$DS/chng.sh" chngi "$n"
-        let n++
-        done
+        while [ 1 ]; do
+            while [ $n -le $(wc -l < ./indx) ]; do
+                "$DS/chng.sh" chngi "$n"
+                let n++
+            done
         done
         
     else
-        n=1
-        while [ $n -le $(cat ./indx | wc -l) ]; do
+        while [ $n -le $(wc -l < ./indx) ]; do
         "$DS/chng.sh" chngi "$n"
             let n++
         done

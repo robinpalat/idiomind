@@ -3,7 +3,7 @@
 
 
 function notebook_1() {
-    
+    nt="$(cat "$flnt")"
     cat "$ls1" | awk '{print $0"\n"}' | yad \
     --no-headers --list --plug=$KEY --tabnum=1 \
     --dclick-action='./vwr.sh v1' --print-all \
@@ -13,10 +13,15 @@ function notebook_1() {
     --no-headers --list --plug=$KEY --tabnum=2 \
     --expand-column=0 --ellipsize=END --print-all \
     --column=Name:TEXT --dclick-action='./vwr.sh v2' &
-    yad --text-info --plug=$KEY --margins=14 \
-    --tabnum=3 --text="$itxt2" --fore='gray40' --wrap \
-    --show-uri --fontname=vendana --editable \
-    --filename="$nt" > "$cnf3" &
+    yad --form --borders=10 --plug=$KEY --tabnum=3 --columns=2 \
+    --field="Notes":txt "$nt" \
+    --field=" <small>Rename</small>: " "$tpc" \
+    --field="$(gettext "Share")":BTN "/usr/share/idiomind/ifs/upld.sh" \
+    --field="\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t":lbl " " \
+    --field="TextoLorem ipsum\ndolor sit amet, \nconsectetur \nadipisicing elit, \nsed doeiusmod tempor\n incididunt ut \nlabore et dolore\n magna aliqua.\n Ut enimad \nminim veniam, qu":lbl " " \
+    --field="Marcar Como Aprendido":btn "/usr/share/idiomind/mngr.sh 'mkok-'" \
+    --field="Repasar":btn "/usr/share/idiomind/mngr.sh 'mklg-'" \
+    --field="Delete":btn "/usr/share/idiomind/mngr.sh 'delete_topic'" > "$cnf3" &
     yad --notebook --name=idiomind --center --key=$KEY \
     --class=Idiomind --align=right \
     --window-icon=$DS/images/idiomind.png \
@@ -24,12 +29,11 @@ function notebook_1() {
     --image="$img" --text="$itxt" \
     --tab="  $(gettext "Learning") ($tb1) " \
     --tab="  $(gettext "Learned") ($tb2) " \
-    --tab=" $(gettext "Notes") " \
+    --tab=" $(gettext "Edit") " \
     --ellipsize=END --image-on-top --always-print-result \
     --width="$wth" --height="$eht" --borders=0 \
     --button="$(gettext "Playlist")":$DS/play.sh \
-    --button="$(gettext "Practice")":5 \
-    --button="$(gettext "Edit")":3
+    --button="$(gettext "Practice")":5
 }
 
 
@@ -89,27 +93,27 @@ function dialog_2() {
 
 function calculate_review() {
     
-    dts=$(cat "$DC_tlt/cfg.9" | wc -l)
+    dts=$(cat "$DC_tlt/9.cfg" | wc -l)
     if [ $dts = 1 ]; then
-        dte=$(sed -n 1p "$DC_tlt/cfg.9")
+        dte=$(sed -n 1p "$DC_tlt/9.cfg")
         adv="<b>   10 $cuestion_review </b>"
         TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
         RM=$((100*$TM/10))
         tdays=10
     elif [ $dts = 2 ]; then
-        dte=$(sed -n 2p "$DC_tlt/cfg.9")
+        dte=$(sed -n 2p "$DC_tlt/9.cfg")
         adv="<b> 15 $cuestion_review </b>"
         TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
         RM=$((100*$TM/15))
         tdays=15
     elif [ $dts = 3 ]; then
-        dte=$(sed -n 3p "$DC_tlt/cfg.9")
+        dte=$(sed -n 3p "$DC_tlt/9.cfg")
         adv="<b>  30 $cuestion_review </b>"
         TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
         RM=$((100*$TM/30))
         tdays=30
     elif [ $dts = 4 ]; then
-        dte=$(sed -n 4p "$DC_tlt/cfg.9")
+        dte=$(sed -n 4p "$DC_tlt/9.cfg")
         adv="<b>  60 $cuestion_review </b>"
         TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
         RM=$((100*$TM/60))

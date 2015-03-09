@@ -17,8 +17,8 @@ function internet() {
 function msg() {
         
         yad --window-icon=idiomind --name=idiomind \
-        --image=$2 --on-top --text=" $1 " \
-        --image-on-top --center --sticky --button=" $(gettext "OK") ":0 \
+        --image=$2 --on-top --text="$1" \
+        --image-on-top --center --sticky --button="$(gettext "OK")":0 \
         --width=360 --height=120 --borders=5 \
         --skip-taskbar --title=Idiomind
 }

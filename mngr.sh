@@ -17,7 +17,7 @@
 #  MA 02110-1301, USA.
 #  
 
-#source /usr/share/idiomind/ifs/c.conf
+source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/mods/cmns.sh
 
 if [ "$1" = mkmn ]; then
@@ -26,198 +26,112 @@ if [ "$1" = mkmn ]; then
     [[ -d ./images ]] && rm -r ./images
     [[ -d ./words ]] && rm -r ./words
     [[ -d ./practice ]] && rm -r ./practice
-    for i in "$(ls -t -N -d */ | sed 's/\///g')"; do echo "${i%%/}"; done > $DM_tl/.cfg.1
-    sed -i '/^$/d' $DM_tl/.cfg.1
-    [[ -f $DC_s/cfg.0 ]] && mv -f $DC_s/cfg.0 $DC_s/cfg.16
+    for i in "$(ls -t -N -d */ | sed 's/\///g')"; do echo "${i%%/}"; done > $DM_tl/.1.cfg
+    sed -i '/^$/d' $DM_tl/.1.cfg
+    [[ -f $DC_s/0.cfg ]] && mv -f $DC_s/0.cfg $DC_s/16.cfg
     
     n=1
-    while [ $n -le $(cat $DM_tl/.cfg.1 | head -50 | wc -l) ]; do
+    while [ $n -le $(cat $DM_tl/.1.cfg | head -50 | wc -l) ]; do
     
-        tp=$(sed -n "$n"p $DM_tl/.cfg.1)
-        i=$(cat "$DM_tl/$tp/.conf/cfg.8")
-        if [ ! -f "$DM_tl/$tp/.conf/cfg.8" ] || \
-        [ ! -f "$DM_tl/$tp/.conf/cfg.0" ] || \
-        [ ! -f "$DM_tl/$tp/.conf/cfg.1" ] || \
-        [ ! -f "$DM_tl/$tp/.conf/cfg.3" ] || \
-        [ ! -f "$DM_tl/$tp/.conf/cfg.4" ] || \
+        tp=$(sed -n "$n"p $DM_tl/.1.cfg)
+        
+        cd "$DM_tl/$tp/.conf"
+        [ -f cfg.1 ] && mv cfg.1 1.cfg
+        [ -f cfg.2 ] && mv cfg.2 2.cfg
+        [ -f cfg.3 ] && mv cfg.3 3.cfg
+        [ -f cfg.4 ] && mv cfg.4 4.cfg
+        [ -f cfg.5 ] && mv cfg.5 5.cfg
+        [ -f cfg.6 ] && mv cfg.6 6.cfg
+        [ -f cfg.7 ] && mv cfg.7 7.cfg
+        [ -f cfg.8 ] && mv cfg.8 8.cfg
+        [ -f cfg.9 ] && mv cfg.9 9.cfg
+        [ -f cfg.10 ] && mv cfg.10 10.cfg
+        [ -f .cfg.11 ] && mv .cfg.11 .11.cfg
+        [ -f cfg.12 ] && mv cfg.12 12.cfg
+        
+        
+        i=$(cat "$DM_tl/$tp/.conf/8.cfg")
+        if [ ! -f "$DM_tl/$tp/.conf/8.cfg" ] || \
+        [ ! -f "$DM_tl/$tp/.conf/0.cfg" ] || \
+        [ ! -f "$DM_tl/$tp/.conf/1.cfg" ] || \
+        [ ! -f "$DM_tl/$tp/.conf/3.cfg" ] || \
+        [ ! -f "$DM_tl/$tp/.conf/4.cfg" ] || \
         [ ! -d "$DM_tl/$tp" ]; then
             i=13
-            echo "13" > "$DM_tl/$tp/.conf/cfg.8"
+            echo "13" > "$DM_tl/$tp/.conf/8.cfg"
             cp -f $DS/default/tpc.sh "$DM_tl/$tp/tpc.sh"
             chmod +x "$DM_tl/$tp/tpc.sh"
         fi
         [ ! -f "$DM_tl/$tp/tpc.sh" ] && \
         cp -f $DS/default/tpc.sh "$DM_tl/$tp/tpc.sh"
         chmod +x "$DM_tl/$tp/tpc.sh"
-        echo "/usr/share/idiomind/images/img.$i.png" >> $DC_s/cfg.0
-        echo "$tp" >> $DC_s/cfg.0
+        echo "/usr/share/idiomind/images/img.$i.png" >> $DC_s/0.cfg
+        echo "$tp" >> $DC_s/0.cfg
         let n++
     done
     n=1
-    while [ $n -le $(cat $DM_tl/.cfg.1 | tail -n+51 | wc -l) ]; do
-        ff=$(cat $DM_tl/.cfg.1 | tail -n+51)
+    while [ $n -le $(cat $DM_tl/.1.cfg | tail -n+51 | wc -l) ]; do
+        ff=$(cat $DM_tl/.1.cfg | tail -n+51)
         tp=$(echo "$ff" | sed -n "$n"p)
-        if [ ! -f "$DM_tl/$tp/.conf/cfg.8" ] || \
+        if [ ! -f "$DM_tl/$tp/.conf/8.cfg" ] || \
         [ ! -f "$DM_tl/$tp/tpc.sh" ] || \
-        [ ! -f "$DM_tl/$tp/.conf/cfg.0" ] || \
-        [ ! -f "$DM_tl/$tp/.conf/cfg.1" ] || \
-        [ ! -f "$DM_tl/$tp/.conf/cfg.3" ] || \
-        [ ! -f "$DM_tl/$tp/.conf/cfg.4" ] || \
+        [ ! -f "$DM_tl/$tp/.conf/0.cfg" ] || \
+        [ ! -f "$DM_tl/$tp/.conf/1.cfg" ] || \
+        [ ! -f "$DM_tl/$tp/.conf/3.cfg" ] || \
+        [ ! -f "$DM_tl/$tp/.conf/4.cfg" ] || \
         [ ! -d "$DM_tl/$tp" ]; then
-            echo '/usr/share/idiomind/images/img.13.png' >> $DC_s/cfg.0
+            echo '/usr/share/idiomind/images/img.13.png' >> $DC_s/0.cfg
         else
-            echo '/usr/share/idiomind/images/img.12.png' >> $DC_s/cfg.0
+            echo '/usr/share/idiomind/images/img.12.png' >> $DC_s/0.cfg
         fi
-        echo "$tp" >> $DC_s/cfg.0
+        echo "$tp" >> $DC_s/0.cfg
         let n++
     done
     exit 1
 
-elif [ "$1" = edit ]; then
-    ttl=$(sed -n 2p $DC_s/cfg.6)
-    plg1=$(sed -n 1p $DC_s/cfg.3)
-    #cfg.1="$DC_s/cfg.1"
-    ti=$(cat "$DC_tlt/cfg.0" | wc -l)
-    ni="$DC_tlt/cfg.1"
-    bi=$(cat "$DC_tlt/cfg.2" | wc -l)
-    nstll=$(grep -Fxo "$tpc" $DM_tl/.cfg.3)
-    slct=$(mktemp $DT/slct.XXXX)
-    
-if ! grep -Fxo "$tpc" $DM_tl/.cfg.3; then
-if [ "$ti" -ge 15 ]; then
-dd="cmd1
-$DS/images/ok.png
-$(gettext "Mark as learned")
-cmd2
-$DS/images/rw.png
-$(gettext "Review")
-cmd3
-$DS/images/rn.png
-$(gettext "Rename")
-cmd4
-$DS/images/dlt.png
-$(gettext "Delete")
-cmd5
-$DS/images/upd.png
-$(gettext "Share")
-cmd6
-$DS/images/pdf.png
-$(gettext "To PDF")"
-else
-dd="cmd3
-$DS/images/rn.png
-$(gettext "Rename")
-cmd4
-$DS/images/dlt.png
-$(gettext "Delete")
-cmd5
-$DS/images/upd.png
-$(gettext "Share")
-cmd6
-$DS/images/pdf.png
-$(gettext "To PDF")"
-fi
-else
-if [ "$ti" -ge 15 ]; then
-dd="cmd1
-$DS/images/ok.png
-$(gettext "Mark as learned")
-cmd2
-$DS/images/rw.png
-$(gettext "Review")
-cmd3
-$DS/images/rn.png
-$(gettext "Rename")
-cmd4
-$DS/images/dlt.png
-$(gettext "Delete")
-cmd6
-$DS/images/pdf.png
-$(gettext "To PDF")"
-else
-dd="cmd3
-$DS/images/rn.png
-$(gettext "Rename")
-cmd4
-$DS/images/dlt.png
-$(gettext "Delete")
-cmd6
-$DS/images/pdf.png
-$(gettext "To PDF")"
-fi
-fi
-    echo "$dd" | yad --list --on-top \
-    --expand-column=2 --center --print-column=1 \
-    --width=360 --name=idiomind --class=idiomind \
-    --height=300 --title="$(gettext "Edit")" --skip-taskbar \
-    --window-icon=idiomind --no-headers --hide-column=1 \
-    --buttons-layout=end --borders=5 --button=OK:0 \
-    --column=id:TEXT --column=icon:IMG --column=Action:TEXT > "$slct"
-    ret=$?
-    slt=$(cat "$slct")
-    if  [[ "$ret" -eq 0 ]]; then
-        if echo "$slt" | grep -o "cmd1"; then
-            /usr/share/idiomind/mngr.sh mkok-
-        elif echo "$slt" | grep -o "cmd2"; then
-            /usr/share/idiomind/mngr.sh mklg-
-        elif echo "$slt" | grep -o "cmd3"; then
-            /usr/share/idiomind/add.sh new_topic name 2
-        elif echo "$slt" | grep -o "cmd4"; then
-            /usr/share/idiomind/mngr.sh delete_topic
-        elif echo "$slt" | grep -o "cmd5"; then
-            /usr/share/idiomind/ifs/upld.sh
-        elif echo "$slt" | grep -o "cmd6"; then
-            /usr/share/idiomind/ifs/tls.sh pdf_doc
-        fi
-        rm -f "$slct"
 
-    elif [[ "$ret" -eq 1 ]]; then
-        exit 1
-    fi
-    
-    
 #--------------------------------
 elif [ "$1" = mklg- ]; then
     
     include $DS/ifs/mods/mngr
     kill -9 $(pgrep -f "yad --icons")
 
-    nstll=$(grep -Fxo "$tpc" "$DM_tl/.cfg.3")
+    nstll=$(grep -Fxo "$tpc" "$DM_tl/.3.cfg")
     if [ -n "$nstll" ]; then
-        if [ $(cat "$DC_tlt/cfg.8") = 7 ]; then
+        if [ $(cat "$DC_tlt/8.cfg") = 7 ]; then
         
             calculate_review
             
             if [ "$RM" -ge 50 ]; then
-                echo "8" > "$DC_tlt/cfg.8"
+                echo "8" > "$DC_tlt/8.cfg"
             else
-                echo "6" > "$DC_tlt/cfg.8"
+                echo "6" > "$DC_tlt/8.cfg"
             fi
         else
-            echo "6" > "$DC_tlt/cfg.8"
+            echo "6" > "$DC_tlt/8.cfg"
         fi
-        rm -f "$DC_tlt/cfg.7"
+        rm -f "$DC_tlt/7.cfg"
     else
-        if [ $(cat "$DC_tlt/cfg.8") = 2 ]; then
+        if [ $(cat "$DC_tlt/8.cfg") = 2 ]; then
         
             calculate_review
             
             if [ "$RM" -ge 50 ]; then
-                echo "3" > "$DC_tlt/cfg.8"
+                echo "3" > "$DC_tlt/8.cfg"
             else
-                echo "1" > "$DC_tlt/cfg.8"
+                echo "1" > "$DC_tlt/8.cfg"
             fi
         else
-            echo "1" > "$DC_tlt/cfg.8"
+            echo "1" > "$DC_tlt/8.cfg"
         fi
-        rm -f "$DC_tlt/cfg.7"
+        rm -f "$DC_tlt/7.cfg"
     fi
-    cat "$DC_tlt/cfg.0" | awk '!array_temp[$0]++' > $DT/cfg.0.tmp
-    sed '/^$/d' $DT/cfg.0.tmp > "$DC_tlt/cfg.0"
+    cat "$DC_tlt/0.cfg" | awk '!array_temp[$0]++' > $DT/0.cfg.tmp
+    sed '/^$/d' $DT/0.cfg.tmp > "$DC_tlt/0.cfg"
     rm -f $DT/*.tmp
-    rm "$DC_tlt/cfg.2" "$DC_tlt/cfg.1"
-    touch "$DC_tlt/cfg.2"
-    cp -f "$DC_tlt/cfg.0" "$DC_tlt/cfg.1"
+    rm "$DC_tlt/2.cfg" "$DC_tlt/1.cfg"
+    touch "$DC_tlt/2.cfg"
+    cp -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"
 
     $DS/mngr.sh mkmn &
 
@@ -229,33 +143,33 @@ elif [ "$1" = mkok- ]; then
     include $DS/ifs/mods/mngr
     kill -9 $(pgrep -f "yad --icons")
 
-    if [ -f "$DC_tlt/cfg.9" ]; then
+    if [ -f "$DC_tlt/9.cfg" ]; then
     
         calculate_review
         
         if [ "$RM" -ge 50 ]; then
-            if [ $(cat "$DC_tlt/cfg.9" | wc -l) = 4 ]; then
+            if [ $(cat "$DC_tlt/9.cfg" | wc -l) = 4 ]; then
                 echo "_
                 _
                 _
-                $(date +%m/%d/%Y)" > "$DC_tlt/cfg.9"
+                $(date +%m/%d/%Y)" > "$DC_tlt/9.cfg"
             else
-                echo "$(date +%m/%d/%Y)" >> "$DC_tlt/cfg.9"
+                echo "$(date +%m/%d/%Y)" >> "$DC_tlt/9.cfg"
             fi
         fi
     else
-        echo "$(date +%m/%d/%Y)" > "$DC_tlt/cfg.9"
+        echo "$(date +%m/%d/%Y)" > "$DC_tlt/9.cfg"
     fi
-    > "$DC_tlt/cfg.7"
-    nstll=$(grep -Fxo "$tpc" "$DM_tl/.cfg.3")
+    > "$DC_tlt/7.cfg"
+    nstll=$(grep -Fxo "$tpc" "$DM_tl/.3.cfg")
     if [ -n "$nstll" ]; then
-        echo "7" > "$DC_tlt/cfg.8"
+        echo "7" > "$DC_tlt/8.cfg"
     else
-        echo "2" > "$DC_tlt/cfg.8"
+        echo "2" > "$DC_tlt/8.cfg"
     fi
-    rm "$DC_tlt/cfg.2" "$DC_tlt/cfg.1"
-    touch "$DC_tlt/cfg.1"
-    cp -f "$DC_tlt/cfg.0" "$DC_tlt/cfg.2"
+    rm "$DC_tlt/2.cfg" "$DC_tlt/1.cfg"
+    touch "$DC_tlt/1.cfg"
+    cp -f "$DC_tlt/0.cfg" "$DC_tlt/2.cfg"
     $DS/mngr.sh mkmn &
 
     idiomind topic & exit 1
@@ -294,18 +208,18 @@ elif [ "$1" = delete_item_confirm ]; then
         rm ./*.tmp; fi
     
     cd "$DC_tlt"
-    [ -f .cfg.11 ] && grep -vxF "$trgt" ./.cfg.11 > \
-    ./cfg.11.tmp && sed '/^$/d' ./cfg.11.tmp > ./.cfg.11
-    [ -f cfg.0 ] && grep -vxF "$trgt" ./cfg.0 > \
-    ./cfg.0.tmp && sed '/^$/d' ./cfg.0.tmp > ./cfg.0
-    [ -f cfg.1 ] && grep -vxF "$trgt" ./cfg.1 > \
-    ./cfg.1.tmp && sed '/^$/d' ./cfg.1.tmp > ./cfg.1
-    [ -f cfg.2 ] && grep -vxF "$trgt" ./cfg.2 > \
-    ./cfg.2.tmp && sed '/^$/d' ./cfg.2.tmp > ./cfg.2
-    [ -f cfg.3 ] && grep -vxF "$trgt" ./cfg.3 > \
-    ./cfg.3.tmp && sed '/^$/d' ./cfg.3.tmp > ./cfg.3
-    [ -f cfg.4 ] && grep -vxF "$trgt" ./cfg.4 > \
-    ./cfg.4.tmp && sed '/^$/d' ./cfg.4.tmp > ./cfg.4
+    [ -f .11.cfg ] && grep -vxF "$trgt" ./.11.cfg > \
+    ./11.cfg.tmp && sed '/^$/d' ./11.cfg.tmp > ./.11.cfg
+    [ -f 0.cfg ] && grep -vxF "$trgt" ./0.cfg > \
+    ./0.cfg.tmp && sed '/^$/d' ./0.cfg.tmp > ./0.cfg
+    [ -f 1.cfg ] && grep -vxF "$trgt" ./1.cfg > \
+    ./1.cfg.tmp && sed '/^$/d' ./1.cfg.tmp > ./1.cfg
+    [ -f 2.cfg ] && grep -vxF "$trgt" ./2.cfg > \
+    ./2.cfg.tmp && sed '/^$/d' ./2.cfg.tmp > ./2.cfg
+    [ -f 3.cfg ] && grep -vxF "$trgt" ./3.cfg > \
+    ./3.cfg.tmp && sed '/^$/d' ./3.cfg.tmp > ./3.cfg
+    [ -f 4.cfg ] && grep -vxF "$trgt" ./4.cfg > \
+    ./4.cfg.tmp && sed '/^$/d' ./4.cfg.tmp > ./4.cfg
     rm ./*.tmp
 
     (sleep 1 && rm -f $DT/ps_lk) & exit 1
@@ -366,18 +280,18 @@ elif [ "$1" = delete_item ]; then
             rm ./*.tmp; fi
             
         cd "$DC_tlt"
-        [ -f .cfg.11 ] && grep -vxF "$trgt" ./.cfg.11 > \
-        ./cfg.11.tmp && sed '/^$/d' ./cfg.11.tmp > ./.cfg.11
-        [ -f cfg.0 ] && grep -vxF "$trgt" ./cfg.0 > \
-        ./cfg.0.tmp && sed '/^$/d' ./cfg.0.tmp > ./cfg.0
-        [ -f cfg.1 ] && grep -vxF "$trgt" ./cfg.1 > \
-        ./cfg.1.tmp && sed '/^$/d' ./cfg.1.tmp > ./cfg.1
-        [ -f cfg.2 ] && grep -vxF "$trgt" ./cfg.2 > \
-        ./cfg.2.tmp && sed '/^$/d' ./cfg.2.tmp > ./cfg.2
-        [ -f cfg.3 ] && grep -vxF "$trgt" ./cfg.3 > \
-        ./cfg.3.tmp && sed '/^$/d' ./cfg.3.tmp > ./cfg.3
-        [ -f cfg.4 ] && grep -vxF "$trgt" ./cfg.4 > \
-        ./cfg.4.tmp && sed '/^$/d' ./cfg.4.tmp > ./cfg.4
+        [ -f .11.cfg ] && grep -vxF "$trgt" ./.11.cfg > \
+        ./11.cfg.tmp && sed '/^$/d' ./11.cfg.tmp > ./.11.cfg
+        [ -f 0.cfg ] && grep -vxF "$trgt" ./0.cfg > \
+        ./0.cfg.tmp && sed '/^$/d' ./0.cfg.tmp > ./0.cfg
+        [ -f 1.cfg ] && grep -vxF "$trgt" ./1.cfg > \
+        ./1.cfg.tmp && sed '/^$/d' ./1.cfg.tmp > ./1.cfg
+        [ -f 2.cfg ] && grep -vxF "$trgt" ./2.cfg > \
+        ./2.cfg.tmp && sed '/^$/d' ./2.cfg.tmp > ./2.cfg
+        [ -f 3.cfg ] && grep -vxF "$trgt" ./3.cfg > \
+        ./3.cfg.tmp && sed '/^$/d' ./3.cfg.tmp > ./3.cfg
+        [ -f 4.cfg ] && grep -vxF "$trgt" ./4.cfg > \
+        ./4.cfg.tmp && sed '/^$/d' ./4.cfg.tmp > ./4.cfg
         rm ./*.tmp
 
         (sleep 1 && rm -f $DT/ps_lk) & exit 1
@@ -399,22 +313,22 @@ elif [ "$1" = delete_topic ]; then
             [[ -d "$DM_tl/$tpc" ]] && rm -r "$DM_tl/$tpc"
             [[ -d "$DC_tl/$tpc" ]] && rm -r "$DC_tl/$tpc"
             
-            > $DC_s/cfg.6; rm $DC_s/cfg.8
-            > $DC_tl/.cfg.8
+            > $DC_s/6.cfg; rm $DC_s/8.cfg
+            > $DC_tl/.8.cfg
 
             cd $DC_tl
-            [ -f ./.cfg.1 ] && grep -vxF "$tpc" ./.cfg.1 > \
-            ./.cfg.1.tmp && sed '/^$/d' ./.cfg.1.tmp > ./.cfg.1
-            [ -f ./.cfg.2 ] && grep -vxF "$tpc" ./.cfg.2 > \
-            ./.cfg.2.tmp && sed '/^$/d' ./.cfg.2.tmp > ./.cfg.2
-            [ -f ./.cfg.3 ] && grep -vxF "$tpc" ./.cfg.3 > \
-            ./.cfg.3.tmp && sed '/^$/d' ./.cfg.3.tmp > ./.cfg.3
-            [ -f ./.cfg.5 ] && grep -vxF "$tpc" ./.cfg.5 > \
-            ./.cfg.5.tmp && sed '/^$/d' ./.cfg.5.tmp > ./.cfg.5
-            [ -f ./.cfg.6 ] && grep -vxF "$tpc" ./.cfg.6 > \
-            ./.cfg.6.tmp && sed '/^$/d' ./.cfg.6.tmp > ./.cfg.6
-            [ -f ./.cfg.7 ] && grep -vxF "$tpc" ./.cfg.7 > \
-            ./.cfg.7.tmp && sed '/^$/d' ./.cfg.7.tmp > ./.cfg.7
+            [ -f ./.1.cfg ] && grep -vxF "$tpc" ./.1.cfg > \
+            ./.1.cfg.tmp && sed '/^$/d' ./.1.cfg.tmp > ./.1.cfg
+            [ -f ./.2.cfg ] && grep -vxF "$tpc" ./.2.cfg > \
+            ./.2.cfg.tmp && sed '/^$/d' ./.2.cfg.tmp > ./.2.cfg
+            [ -f ./.3.cfg ] && grep -vxF "$tpc" ./.3.cfg > \
+            ./.3.cfg.tmp && sed '/^$/d' ./.3.cfg.tmp > ./.3.cfg
+            [ -f ./.5.cfg ] && grep -vxF "$tpc" ./.5.cfg > \
+            ./.5.cfg.tmp && sed '/^$/d' ./.5.cfg.tmp > ./.5.cfg
+            [ -f ./.6.cfg ] && grep -vxF "$tpc" ./.6.cfg > \
+            ./.6.cfg.tmp && sed '/^$/d' ./.6.cfg.tmp > ./.6.cfg
+            [ -f ./.7.cfg ] && grep -vxF "$tpc" ./.7.cfg > \
+            ./.7.cfg.tmp && sed '/^$/d' ./.7.cfg.tmp > ./.7.cfg
             rm $DC_tl/.*.tmp 
             
             (sleep 1 && rm -f $DT/ps_lk) &
@@ -429,12 +343,12 @@ elif [ "$1" = delete_topic ]; then
 elif [ "$1" = edt ]; then
 
     include $DS/ifs/mods/mngr
-    wth=$(sed -n 7p $DC_s/cfg.18)
-    eht=$(sed -n 8p $DC_s/cfg.18)
+    wth=$(sed -n 7p $DC_s/18.cfg)
+    eht=$(sed -n 8p $DC_s/18.cfg)
     dct="$DS/addons/Dics/cnfg.sh"
     cnf=$(mktemp $DT/cnf.XXXX)
-    edta=$(sed -n 17p ~/.config/idiomind/s/cfg.1)
-    tpcs=$(cat "$DM_tl/.cfg.2" | egrep -v "$tpc" | cut -c 1-40 \
+    edta=$(sed -n 17p ~/.config/idiomind/s/1.cfg)
+    tpcs=$(cat "$DM_tl/.2.cfg" | egrep -v "$tpc" | cut -c 1-40 \
     | tr "\\n" '!' | sed 's/!\+$//g')
     c=$(echo $(($RANDOM%10000)))
     re='^[0-9]+$'
@@ -445,12 +359,12 @@ elif [ "$1" = edt ]; then
     sfile="$DM_tlt/$fname.mp3"
     
     if [ "$v" = v1 ]; then
-        ind="$DC_tlt/cfg.1"
-        inp="$DC_tlt/cfg.2"
+        ind="$DC_tlt/1.cfg"
+        inp="$DC_tlt/2.cfg"
         chk="$(gettext "Mark as learned")"
     elif [ "$v" = v2 ]; then
-        ind="$DC_tlt/cfg.2"
-        inp="$DC_tlt/cfg.1"
+        ind="$DC_tlt/2.cfg"
+        inp="$DC_tlt/1.cfg"
         chk="$(gettext "Review")"
     fi
 
@@ -491,11 +405,11 @@ elif [ "$1" = edt ]; then
             if [[ "$mrk" != "$mrk2" ]]; then
             
                 if [[ "$mrk2" = "TRUE" ]]; then
-                    echo "$TGT" >> "$DC_tlt/cfg.6"
+                    echo "$TGT" >> "$DC_tlt/6.cfg"
                 else
-                    grep -vxv "$TGT" "$DC_tlt/cfg.6" > "$DC_tlt/cfg.6.tmp"
-                    sed '/^$/d' "$DC_tlt/cfg.6.tmp" > "$DC_tlt/cfg.6"
-                    rm "$DC_tlt/cfg.6.tmp"
+                    grep -vxv "$TGT" "$DC_tlt/6.cfg" > "$DC_tlt/6.cfg.tmp"
+                    sed '/^$/d' "$DC_tlt/6.cfg.tmp" > "$DC_tlt/6.cfg"
+                    rm "$DC_tlt/6.cfg.tmp"
                 fi
                 add_tags_8 W "$mrk2" "$DM_tlt/words/$fname".mp3 >/dev/null 2>&1
             fi
@@ -520,7 +434,7 @@ elif [ "$1" = edt ]; then
             
                 impr=$(echo "$infm" | tr '\n' '_')
                 add_tags_6 W "$impr" "$wfile" >/dev/null 2>&1
-                printf "eitm.$tpc.eitm\n" >> $DC_s/cfg.30 &
+                printf "eitm.$tpc.eitm\n" >> $DC_s/30.cfg &
             fi
 
             if [[ "$tpc" != "$topc" ]]; then
@@ -537,7 +451,7 @@ elif [ "$1" = edt ]; then
                 sed '/^$/d' $DT/tx > "$ind"
                 rm $DT/tx
                 echo "$TGT" >> "$inp"
-                printf "okim.1.okim\n" >> $DC_s/cfg.30 &
+                printf "okim.1.okim\n" >> $DC_s/30.cfg &
                 $DS/vwr.sh "$v" "nll" $ff & exit 1
             fi
             
@@ -580,11 +494,11 @@ elif [ "$1" = edt ]; then
             
                 internet
                 fname2="$(nmfile "$trgt")"
-                sed -i "s/${tgt}/${trgt}/" "$DC_tlt/cfg.4"
-                sed -i "s/${tgt}/${trgt}/" "$DC_tlt/cfg.1"
-                sed -i "s/${tgt}/${trgt}/" "$DC_tlt/cfg.0"
-                sed -i "s/${tgt}/${trgt}/" "$DC_tlt/cfg.2"
-                sed -i "s/${tgt}/${trgt}/" "$DC_tlt/.cfg.11"
+                sed -i "s/${tgt}/${trgt}/" "$DC_tlt/4.cfg"
+                sed -i "s/${tgt}/${trgt}/" "$DC_tlt/1.cfg"
+                sed -i "s/${tgt}/${trgt}/" "$DC_tlt/0.cfg"
+                sed -i "s/${tgt}/${trgt}/" "$DC_tlt/2.cfg"
+                sed -i "s/${tgt}/${trgt}/" "$DC_tlt/.11.cfg"
                 sed -i "s/${tgt}/${trgt}/" "$DC_tlt/practice/lsin"
                 mv -f "$DM_tlt/$fname".mp3 "$DM_tlt/$fname2".mp3
                 srce=$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')
@@ -618,11 +532,11 @@ elif [ "$1" = edt ]; then
             if [ "$mrk" != "$mrk2" ]; then
             
                 if [ "$mrk2" = "TRUE" ]; then
-                    echo "$trgt" >> "$DC_tlt/cfg.6"
+                    echo "$trgt" >> "$DC_tlt/6.cfg"
                 else
-                    grep -vxv "$trgt" "$DC_tlt/cfg.6" > "$DC_tlt/cfg.6.tmp"
-                    sed '/^$/d' "$DC_tlt/cfg.6.tmp" > "$DC_tlt/cfg.6"
-                    rm "$DC_tlt/cfg.6.tmp"
+                    grep -vxv "$trgt" "$DC_tlt/6.cfg" > "$DC_tlt/6.cfg.tmp"
+                    sed '/^$/d' "$DC_tlt/6.cfg.tmp" > "$DC_tlt/6.cfg"
+                    rm "$DC_tlt/6.cfg.tmp"
                 fi
                 add_tags_8 S "$mrk2" "$DM_tlt/$fname.mp3" >/dev/null 2>&1
             fi
@@ -676,7 +590,7 @@ elif [ "$1" = edt ]; then
                 clean_3 $DT_r $(echo $(($RANDOM%1000)))
 
                 while read mp3; do
-                    echo "$mp3.mp3" >> "$DM_tl/$topc/cfg.5"
+                    echo "$mp3.mp3" >> "$DM_tl/$topc/5.cfg"
                 done < "$aw"
                 
                 index sentence "$trgt" "$topc" &
@@ -691,7 +605,7 @@ elif [ "$1" = edt ]; then
                 sed '/^$/d' $DT/tx > "$ind"
                 rm $DT/tx
                 echo "$trgt" >> "$inp"
-                printf "okim.1.okim\n" >> $DC_s/cfg.30 &
+                printf "okim.1.okim\n" >> $DC_s/30.cfg &
                 
                 $DS/vwr.sh "$v" "null" $ff & exit 1
             fi

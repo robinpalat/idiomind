@@ -61,21 +61,21 @@ function dlg_form_2() {
 
 function calculate_review() {
 
-    dts=$(cat "$DC_tlt/cfg.9" | wc -l)
+    dts=$(cat "$DC_tlt/9.cfg" | wc -l)
     if [ $dts = 1 ]; then
-        dte=$(sed -n 1p "$DC_tlt/cfg.9")
+        dte=$(sed -n 1p "$DC_tlt/9.cfg")
         TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
         RM=$((100*$TM/10))
     elif [ $dts = 2 ]; then
-        dte=$(sed -n 2p "$DC_tlt/cfg.9")
+        dte=$(sed -n 2p "$DC_tlt/9.cfg")
         TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
         RM=$((100*$TM/15))
     elif [ $dts = 3 ]; then
-        dte=$(sed -n 3p "$DC_tlt/cfg.9")
+        dte=$(sed -n 3p "$DC_tlt/9.cfg")
         TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
         RM=$((100*$TM/30))
     elif [ $dts = 4 ]; then
-        dte=$(sed -n 4p "$DC_tlt/cfg.9")
+        dte=$(sed -n 4p "$DC_tlt/9.cfg")
         TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
         RM=$((100*$TM/60))
     fi

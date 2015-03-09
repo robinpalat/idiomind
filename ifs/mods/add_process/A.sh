@@ -52,8 +52,8 @@ function dlg_file_2() {
 if [[ "$prdt" = A ]]; then
 
     cd $DT_r
-    left=$((50 - $(cat "$DC_tlt/cfg.4" | wc -l)))
-    key=$(sed -n 2p $DC_s/cfg.3)
+    left=$((50 - $(cat "$DC_tlt/4.cfg" | wc -l)))
+    key=$(sed -n 2p $DC_s/3.cfg)
     test="$DS/addons/Google translation service/test.flac"
     LNK='https://console.developers.google.com'
     
@@ -119,11 +119,11 @@ if [[ "$prdt" = A ]]; then
         echo "# $check_key... " ; sleep 1
         data="$(audio_recognizer "$test" $lgt $lgt $key)"
         if [ -z "$data" ]; then
-            key=$(sed -n 3p $DC_s/cfg.3)
+            key=$(sed -n 3p $DC_s/3.cfg)
             data="$(audio_recognizer "$test" $lgt $lgt $key)"
         fi
         if [ -z "$data" ]; then
-            key=$(sed -n 4p $DC_s/cfg.3)
+            key=$(sed -n 4p $DC_s/3.cfg)
             data="$(audio_recognizer "$test" $lgt $lgt $key)"
         fi
         if [ -z "$data" ]; then
@@ -172,7 +172,7 @@ if [[ "$prdt" = A ]]; then
         sed -i '/^$/d' ./ls
         [[ $(echo "$tpe" | wc -c) -gt 40 ]] && tcnm="${tpe:0:40}..." || tcnm="$tpe"
 
-        left=$((50 - $(cat "$DC_tlt"/cfg.4 | wc -l)))
+        left=$((50 - $(cat "$DC_tlt"/4.cfg | wc -l)))
         info="$(gettext "You can add") $left $(gettext "Sentences")"
         [ $ns -ge 45 ] && info="$(gettext "You can add") $left $(gettext "Sentences")"
         [ $ns -ge 49 ] && info="$(gettext "You can add") $left $(gettext "Sentence")"
@@ -220,7 +220,7 @@ if [[ "$prdt" = A ]]; then
                     
                     if [ $(sed -n 1p "$sntc.txt" | wc -$c) -eq 1 ]; then
                     
-                        if [ $(cat "$DC_tlt"/cfg.3 | wc -l) -ge 50 ]; then
+                        if [ $(cat "$DC_tlt"/3.cfg | wc -l) -ge 50 ]; then
                             printf "\n- $sntc" >> ./wlog
                     
                         else
@@ -241,7 +241,7 @@ if [[ "$prdt" = A ]]; then
                     
                     elif [ $(sed -n 1p "$sntc.txt" | wc -$c) -ge 1 ]; then
                     
-                        if [ $(cat "$DC_tlt"/cfg.4 | wc -l) -ge 50 ]; then
+                        if [ $(cat "$DC_tlt"/4.cfg | wc -l) -ge 50 ]; then
                             printf "\n- $sntc" >> ./slog
                     
                         else
@@ -304,7 +304,7 @@ if [[ "$prdt" = A ]]; then
                     sname=$(sed -n "$n"p wrdsls)
                     fname="$(nmfile "$trgt")"
 
-                    if [ $(cat "$DC_tlt"/cfg.3 | wc -l) -ge 50 ]; then
+                    if [ $(cat "$DC_tlt"/3.cfg | wc -l) -ge 50 ]; then
                         printf "\n- $trgt" >> ./wlog
                 
                     else
@@ -421,7 +421,7 @@ if [[ "$prdt" = A ]]; then
                      sleep 5
                      if ( [ "$(cat ./x | wc -l)" = "$rm" ] || [ "$n" = 20 ] ); then
                         [[ -d "$DT_r" ]] && rm -fr $DT_r
-                        cp -f "$DC_tlt/cfg.0" "$DC_tlt/.cfg.11"
+                        cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
                         rm -f $lckpr & break & exit 1
                      fi
                     let n++
@@ -429,7 +429,7 @@ if [[ "$prdt" = A ]]; then
                 exit 1
             else
                 [ -d "$DT_r" ] && rm -fr $DT_r
-                cp -f "$DC_tlt/cfg.0" "$DC_tlt/.cfg.11"
+                cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
                 rm -f $lckpr $slt & exit 1
             fi
         fi

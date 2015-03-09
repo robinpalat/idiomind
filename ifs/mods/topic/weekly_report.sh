@@ -4,8 +4,8 @@
 
 function weeklyreport() {
     
-    wth=$(sed -n 3p $DC_s/cfg.18)
-    eht=$(sed -n 4p $DC_s/cfg.18)
+    wth=$(sed -n 3p $DC_s/18.cfg)
+    eht=$(sed -n 4p $DC_s/18.cfg)
     TPS=$DC_a/stats/tpcs.tmp
     tpc1=$(sed -n 1p $TPS)
     tpc2=$(sed -n 2p $TPS)
@@ -39,20 +39,20 @@ function weeklyreport() {
         if [[ $ret -eq 0 ]]; then
         
             if [ -n "$tpc3" ];then
-                [[ -f "$DM_tl/$tpc1/cfg.1" ]] && tlng1="$DM_tl/$tpc1/cfg.1"
-                [[ -f "$DM_tl/$tpc2/cfg.1" ]] && tlng2="$DM_tl/$tpc2/cfg.1"
-                [[ -f "$DM_tl/$tpc3/cfg.1" ]] && tlng3="$DM_tl/$tpc3/cfg.1"
-                touch "$DM_tl/$tpc1/cfg.2" && tok1="$DM_tl/$tpc1/cfg.2"
-                touch "$DM_tl/$tpc2/cfg.2" && tok2="$DM_tl/$tpc2/cfg.2"
-                touch "$DM_tl/$tpc3/cfg.2" && tok3="$DM_tl/$tpc3/cfg.2"
+                [[ -f "$DM_tl/$tpc1/1.cfg" ]] && tlng1="$DM_tl/$tpc1/1.cfg"
+                [[ -f "$DM_tl/$tpc2/1.cfg" ]] && tlng2="$DM_tl/$tpc2/1.cfg"
+                [[ -f "$DM_tl/$tpc3/1.cfg" ]] && tlng3="$DM_tl/$tpc3/1.cfg"
+                touch "$DM_tl/$tpc1/2.cfg" && tok1="$DM_tl/$tpc1/2.cfg"
+                touch "$DM_tl/$tpc2/2.cfg" && tok2="$DM_tl/$tpc2/2.cfg"
+                touch "$DM_tl/$tpc3/2.cfg" && tok3="$DM_tl/$tpc3/2.cfg"
             elif [ -n "$tpc2" ];then
-                [[ -f "$DM_tl/$tpc1/cfg.1" ]] && tlng1="$DM_tl/$tpc1/cfg.1"
-                [[ -f "$DM_tl/$tpc2/cfg.1" ]] && tlng2="$DM_tl/$tpc2/cfg.1"
-                touch "$DM_tl/$tpc1/cfg.2" && tok1="$DM_tl/$tpc1/cfg.2"
-                touch "$DM_tl/$tpc2/cfg.2" && tok2="$DM_tl/$tpc2/cfg.2"
+                [[ -f "$DM_tl/$tpc1/1.cfg" ]] && tlng1="$DM_tl/$tpc1/1.cfg"
+                [[ -f "$DM_tl/$tpc2/1.cfg" ]] && tlng2="$DM_tl/$tpc2/1.cfg"
+                touch "$DM_tl/$tpc1/2.cfg" && tok1="$DM_tl/$tpc1/2.cfg"
+                touch "$DM_tl/$tpc2/2.cfg" && tok2="$DM_tl/$tpc2/2.cfg"
             elif [ -n "$tpc1" ];then
-                [[ -f "$DM_tl/$tpc1/cfg.1" ]] && tlng1="$DM_tl/$tpc1/cfg.1"
-                touch "$DM_tl/$tpc1/cfg.2" && tok1="$DM_tl/$tpc1/cfg.2"
+                [[ -f "$DM_tl/$tpc1/1.cfg" ]] && tlng1="$DM_tl/$tpc1/1.cfg"
+                touch "$DM_tl/$tpc1/2.cfg" && tok1="$DM_tl/$tpc1/2.cfg"
             fi
             
             if [[ -n "$(cat "$DC_a/stats/w9.tmp")" ]]; then
@@ -110,16 +110,16 @@ function weeklyreport() {
                     fi
                     let n++
                 done
-            rm $DC_s/cfg.22
+            rm $DC_s/22.cfg
             fi
             
-            echo "$(sed -n 1p $DC_a/stats/tpc.tmp)" > $DC_s/cfg.8
-            echo "$(sed -n 2p $DC_a/stats/tpc.tmp)" >> $DC_s/cfg.8
+            echo "$(sed -n 1p $DC_a/stats/tpc.tmp)" > $DC_s/8.cfg
+            echo "$(sed -n 2p $DC_a/stats/tpc.tmp)" >> $DC_s/8.cfg
             rm -f $DT/*.tmp
             rm $DC_a/stats/*.tmp
         else
-            echo "$(sed -n 1p $DC_a/stats/tpc.tmp)" > $DC_s/cfg.8
-            echo "$(sed -n 2p $DC_a/stats/tpc.tmp)" >> $DC_s/cfg.8
+            echo "$(sed -n 1p $DC_a/stats/tpc.tmp)" > $DC_s/8.cfg
+            echo "$(sed -n 2p $DC_a/stats/tpc.tmp)" >> $DC_s/8.cfg
             rm -f $DT/*.tmp
         fi
 }

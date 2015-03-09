@@ -4,21 +4,21 @@
 u=$(echo "$(whoami)")
 nmt=$(sed -n 1p /tmp/.idmtp1.$u/idmimp_X015x/ls)
 dir="/tmp/.idmtp1.$u/idmimp_X015x/$nmt"
-wth=$(sed -n 5p $HOME/.config/idiomind/s/cfg.18)
-eht=$(sed -n 6p $HOME/.config/idiomind/s/cfg.18)
+wth=$(sed -n 5p $HOME/.config/idiomind/s/18.cfg)
+eht=$(sed -n 6p $HOME/.config/idiomind/s/18.cfg)
 re='^[0-9]+$'
 now="$1"
 nuw="$2"
 cd "$dir"
 
 if ! [[ $nuw =~ $re ]]; then
-nuw=$(cat "$dir/cfg.0" | grep -Fxon "$now" \
+nuw=$(cat "$dir/0.cfg" | grep -Fxon "$now" \
 | sed -n 's/^\([0-9]*\)[:].*/\1/p')
 nll='echo  " "'
 fi
-item="$(sed -n "$nuw"p "$dir/cfg.0")"
+item="$(sed -n "$nuw"p "$dir/0.cfg")"
 if [ -z "$item" ]; then
-item="$(sed -n 1p "$dir/cfg.0")"
+item="$(sed -n 1p "$dir/0.cfg")"
 nuw=1
 fi
 

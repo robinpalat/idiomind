@@ -34,15 +34,15 @@ function set_lang() {
     
     if echo "$source" | grep $1; then
     
-        if [ ! -d "$DIR1"/$1 ]; then
-            mkdir "$DIR1"/$1
-            touch "$DIR1"/$1/.cfg.1
-            touch "$DIR1"/$1/.cfg.2
-            touch "$DIR1"/$1/.cfg.3
-            mkdir "$DIR1"/$1/.share
+        if [ ! -d "$DIR1/$1" ]; then
+            mkdir "$DIR1/$1"
+            touch "$DIR1/$1/.1.cfg"
+            touch "$DIR1/$1/.2.cfg"
+            touch "$DIR1/$1/.3.cfg"
+            mkdir "$DIR1/$1/.share"
         fi
-        echo $2 > $DIR2/s/cfg.10
-        echo $1 >> $DIR2/s/cfg.10
+        echo "$2" > "$DIR2/s/10.cfg"
+        echo "$1" >> "$DIR2/s/10.cfg"
     fi
 }
 
@@ -88,7 +88,7 @@ elif [[ $ret -eq 0 ]]; then
         /usr/share/idiomind/ifs/1u.sh t & exit 1
     fi
     
-    mkdir "$HOME"/.idiomind/
+    mkdir "$HOME/.idiomind"
     
     if [ $? -ne 0 ]; then
         yad --name=idiomind \
@@ -110,54 +110,54 @@ elif [[ $ret -eq 0 ]]; then
     mkdir "$DIR2"/addons
     
     if echo "$target" | grep "English"; then
-        echo "en" > $DIR2/s/cfg.9
-        echo "english" >> $DIR2/s/cfg.9
+        echo "en" > $DIR2/s/9.cfg
+        echo "english" >> $DIR2/s/9.cfg
     fi
     
     if echo "$target" | grep "French"; then
-        echo "fr" > $DIR2/s/cfg.9
-        echo "french" >> $DIR2/s/cfg.9
+        echo "fr" > $DIR2/s/9.cfg
+        echo "french" >> $DIR2/s/9.cfg
     fi
     
     if echo "$target" | grep "German"; then
-        echo "de" > $DIR2/s/cfg.9
-        echo "german" >> $DIR2/s/cfg.9
+        echo "de" > $DIR2/s/9.cfg
+        echo "german" >> $DIR2/s/9.cfg
     fi
     
     if echo "$target" | grep "Italian"; then
-        echo "it" > $DIR2/s/s/cfg.9
-        echo "italian" >> $DIR2/s/cfg.9
+        echo "it" > $DIR2/s/s/9.cfg
+        echo "italian" >> $DIR2/s/9.cfg
     fi
     
     if echo "$target" | grep "Japanese"; then
-        echo "ja" > $DIR2/s/cfg.9
-        echo "japanese" >> $DIR2/s/cfg.9
+        echo "ja" > $DIR2/s/9.cfg
+        echo "japanese" >> $DIR2/s/9.cfg
     fi
     
     if echo "$target" | grep "Portuguese"; then
-        echo "pt" > $DIR2/s/cfg.9
-        echo "portuguese" >> $DIR2/s/cfg.9
+        echo "pt" > $DIR2/s/9.cfg
+        echo "portuguese" >> $DIR2/s/9.cfg
     fi
     
     if echo "$target" | grep "Spanish"; then
-        echo "es" > $DIR2/s/cfg.9
-        echo "spanish" >> $DIR2/s/cfg.9
+        echo "es" > $DIR2/s/9.cfg
+        echo "spanish" >> $DIR2/s/9.cfg
     fi
     
     if echo "$target" | grep "Vietnamese"; then
-        echo "vi" > $DIR2/s/cfg.9
-        echo "vietnamese" >> $DIR2/s/cfg.9
+        echo "vi" > $DIR2/s/9.cfg
+        echo "vietnamese" >> $DIR2/s/9.cfg
     fi
     
     
     if echo "$target" | grep "Chinese"; then
-        echo "zh-cn" > $DIR2/s/cfg.9
-        echo "Chinese" >> $DIR2/s/cfg.9
+        echo "zh-cn" > $DIR2/s/9.cfg
+        echo "Chinese" >> $DIR2/s/9.cfg
     fi
     
     if echo "$target" | grep "Russian"; then
-        echo "ru" > $DIR2/s/cfg.9
-        echo "Russian" >> $DIR2/s/cfg.9
+        echo "ru" > $DIR2/s/9.cfg
+        echo "Russian" >> $DIR2/s/9.cfg
     fi
     
     if echo "$source" | grep "English"; then
@@ -202,11 +202,11 @@ elif [[ $ret -eq 0 ]]; then
     
     b=$(tr -dc a-z < /dev/urandom | head -c 1)
     c=$(echo $(($RANDOM%100)))
-    echo $c$b > $DIR2/s/cfg.4
-    touch $DIR2/s/cfg.3
-    touch $DIR2/s/cfg.8
-    touch $DIR2/s/cfg.6
-    touch $DIR2/s/cfg.12
+    echo $c$b > "$DIR2/s/4.cfg"
+    touch "$DIR2/s/3.cfg"
+    touch "$DIR2/s/8.cfg"
+    touch "$DIR2/s/6.cfg"
+    touch "$DIR2/s/12.cfg"
 
     exit 1
 else

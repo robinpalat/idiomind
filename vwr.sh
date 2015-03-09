@@ -2,17 +2,17 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-wth=$(sed -n 5p $DC_s/cfg.18)
-eht=$(sed -n 6p $DC_s/cfg.18)
-ap=$(cat $DC_s/cfg.1 | sed -n 6p)
+wth=$(sed -n 5p $DC_s/18.cfg)
+eht=$(sed -n 6p $DC_s/18.cfg)
+ap=$(cat $DC_s/1.cfg | sed -n 6p)
 echo "_" >> "$DC_a/stats/.tmp" &
 re='^[0-9]+$'
 now="$2"
 nuw="$3"
 listen="▷"
 
-[ "$1" = v1 ] && ind="$DC_tlt/cfg.1"
-[ "$1" = v2 ] && ind="$DC_tlt/cfg.2"
+[ "$1" = v1 ] && ind="$DC_tlt/1.cfg"
+[ "$1" = v2 ] && ind="$DC_tlt/2.cfg"
 if ! [[ $nuw =~ $re ]]; then
     nuw=$(cat "$ind" \
     | grep -Fxon "$now" \
@@ -47,7 +47,7 @@ if ( [ -f "$DM_tlt/words/$fname.mp3" ] || [ "$5" = w_fix ] ); then
     yad --form --window-icon=idiomind --scroll --text-align=$align \
     --skip-taskbar --center --title=" " --borders=20 \
     --quoted-output --on-top --selectable-labels \
-    --text="<big><big><big><b>$trgt</b></big></big></big>\n\n<i>$src</i>\n\n" \
+    --text="<span font_desc='Purisa Bold 22'>$trgt</span>\n\n<i>$src</i>\n" \
     --field="":lbl \
     --field="<i><span color='#7D7D7D'>$exmp1</span></i>:lbl" "$dfnts" "$ntess" \
     --width="$wth" --height="$eht" --center \
@@ -58,7 +58,7 @@ if ( [ -f "$DM_tlt/words/$fname.mp3" ] || [ "$5" = w_fix ] ); then
 elif ( [ -f "$DM_tlt/$fname.mp3" ] || [ "$5" = s_fix ] ); then
 
     tgs=$(eyeD3 "$DM_tlt/$fname.mp3")
-    [[ $(sed -n 3p $DC_s/cfg.1) = TRUE ]] \
+    [[ $(sed -n 3p $DC_s/1.cfg) = TRUE ]] \
     && trgt=$(echo "$tgs" | grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)') \
     || trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
     src=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
@@ -71,7 +71,7 @@ elif ( [ -f "$DM_tlt/$fname.mp3" ] || [ "$5" = s_fix ] ); then
     --window-icon=idiomind --scroll --text-align=$align \
     --skip-taskbar --center --title=" " --borders=20 \
     --on-top --selectable-labels --expand-column=0 \
-    --text="<big><big>$trgt</big></big>\n\n<i>$src</i>\n\n\n" \
+    --text="<span font_desc='Purisa Bold 15'>$trgt</span>\n\n<i>$src</i>\n\n" \
     --width="$wth" --height="$eht" --center \
     --column="":TEXT --column="":TEXT \
     --button=gtk-edit:4 --button="$listen":"$DS/ifs/tls.sh listen_sntnc '$fname'" \
@@ -96,6 +96,6 @@ fi
             "$DS/vwr.sh" "$1" "$nll" $ff &
         else 
             printf "vwr.$(cat "$DC_a/stats/.tmp" | wc -l).vwr\n" >> \
-            "$DC_s/cfg.30" &
+            "$DC_s/30.cfg" &
             rm "$DC/addons/stats/.tmp" & exit 1
         fi

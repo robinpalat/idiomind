@@ -7,13 +7,12 @@ drts="$DS/practice/"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
 all=$(cat lwin | wc -l)
-listen="▷"
 easy=0
 hard=0
 ling=0
 
-[[ -f lwin2 ]] && rm lwin2
-[[ -f lwin3 ]] && rm lwin3
+[ -f lwin2 ] && rm lwin2
+[ -f lwin3 ] && rm lwin3
 
 function score() {
 
@@ -26,19 +25,19 @@ function score() {
         exit 1
         
     else
-        [[ -f l_w ]] && echo "$(($(cat l_w)+$easy))" > l_w || echo $easy > l_w
+        [ -f l_w ] && echo "$(($(cat l_w)+$easy))" > l_w || echo $easy > l_w
         s=$(cat l_w)
         v=$((100*$s/$all))
         n=1; c=1
         while [ "$n" -le 21 ]; do
-                if [[ "$v" -le "$c" ]]; then
+                if [ "$v" -le "$c" ]; then
                 echo "$n" > .iconlw; break; fi
                 ((c=c+5))
             let n++
         done
         
-        [[ -f lwin2 ]] && rm lwin2
-        [[ -f lwin3 ]] && rm lwin3
+        [ -f lwin2 ] && rm lwin2
+        [ -f lwin3 ] && rm lwin3
         $strt 7 $easy $ling $hard & exit 1
     fi
 }
@@ -48,11 +47,10 @@ function fonts() {
     #if [ "$1" = 1 ]; then
         #[[ $lgtl = Japanese ]] || [[ $lgtl = Chinese ]] && lst=? || lst="${w1:0:1}"
     #elif [ "$1" = 2 ]; then
-    [[ $lgtl = Japanese ]] || [[ $lgtl = Chinese ]] || [[ $lgtl = Russian ]] \
+    [ $lgtl = Japanese ] || [ $lgtl = Chinese ] || [ $lgtl = Russian ] \
     && lst="${1:0:1} ${1:5:5}" || lst=$(echo "$1" | awk '$1=$1' FS= OFS=" " | tr aeiouy ' ')
-    [[ $n = 1 ]] && info="<small> $(gettext "means")...</small>" || info=""
     
-    if [[ -f "$drtt/images/$fname.jpg" ]]; then
+    if [ -f "$drtt/images/$fname.jpg" ]; then
         img="$drtt/images/$fname.jpg"
         s=$((20-$(echo "$1" | wc -c)))
         lcuestion="$lst"
@@ -100,15 +98,15 @@ while read trgt; do
     cuestion "$trgt"
     ret=$(echo "$?")
     
-    if [[ $ret = 0 ]]; then
+    if [ $ret = 0 ]; then
         answer "$trgt"
         ans=$(echo "$?")
 
-        if [[ $ans = 2 ]]; then
+        if [ $ans = 2 ]; then
             echo "$trgt" | tee -a ok.w $w9
             easy=$(($easy+1))
 
-        elif [[ $ans = 3 ]]; then
+        elif [ $ans = 3 ]; then
             echo "$trgt" | tee -a lwin2 w6
             hard=$(($hard+1))
         fi
@@ -121,7 +119,7 @@ while read trgt; do
     fi
 done < lwin1
 
-if [[ ! -f lwin2 ]]; then
+if [ ! -f lwin2 ]; then
 
     score $easy
     
@@ -133,19 +131,19 @@ else
         cuestion "$trgt"
         ret=$(echo "$?")
         
-        if [[ $ret = 0 ]]; then
+        if [ $ret = 0 ]; then
             answer "$trgt"
             ans=$(echo "$?")
             
-            if [[ $ans = 2 ]]; then
+            if [ $ans = 2 ]; then
                 hard=$(($hard-1))
                 ling=$(($ling+1))
                 
-            elif [[ $ans = 3 ]]; then
+            elif [ $ans = 3 ]; then
                 echo "$trgt" | tee -a lwin3 w6
             fi
             
-        elif [[ $ret = 1 ]]; then
+        elif [ $ret = 1 ]; then
             $drts/cls w $easy $ling $hard $all &
             break &
             exit 1
