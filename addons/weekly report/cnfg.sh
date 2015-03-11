@@ -9,24 +9,24 @@ NUM=$DC_a/stats/num.tmp
 TPS=$DC_a/stats/tpcs.tmp
 WKRT=$DC_a/stats/wkrt.tmp
 WKRT2=$DC_a/stats/wkrt2.tmp
-[[ ! -f "$DC_a/stats/.udt" ]] && touch "$DC_a/stats/.udt"
+[ ! -f "$DC_a/stats/.udt" ] && touch "$DC_a/stats/.udt"
 udt=$(cat "$DC_a/stats/.udt")
 [ ! -d "$DC_a/stats" ] && mkdir "$DC_a/stats"
 
 #----------------------------
 if [ "$1" = A ]; then
-    [[ "$(date +%F)" = "$udt" ]] && exit 1
+    [ "$(date +%F)" = "$udt" ] && exit 1
     echo "$tpc" > $DC_a/stats/tpc.tmp
     echo $(sed -n 2p $DC_s/8.cfg) >> $DC_a/stats/tpc.tmp
     TPCS=$(cat "$LOG" | grep -o -P '(?<=tpcs.).*(?=\.tpcs)' \
     | sort | uniq -dc | sort -n -r | head -3 | sed -e 's/^ *//' -e 's/ *$//')
     tpc1=$(echo "$TPCS" | sed -n 1p | cut -d " " -f2-)
     echo "$tpc1" > "$TPS"
-    if [[ "$(echo "$TPCS" | sed -n 2p | awk '{print ($1)}')" -ge 3 ]]; then
+    if [ "$(echo "$TPCS" | sed -n 2p | awk '{print ($1)}')" -ge 3 ]; then
         tpc2=$(echo "$TPCS" | sed -n 2p | cut -d " " -f2-)
         echo "$tpc2" >> "$TPS"
     fi
-    if [[ "$(echo "$TPCS" | sed -n 3p | awk '{print ($1)}')" -ge 3 ]]; then
+    if [ "$(echo "$TPCS" | sed -n 3p | awk '{print ($1)}')" -ge 3 ]; then
         tpc3=$(echo "$TPCS" | sed -n 3p | cut -d " " -f2-)
         echo "$tpc3" >> "$TPS"
     fi
@@ -48,19 +48,19 @@ if [ "$1" = A ]; then
     tpc3=$(sed -n 3p $TPS)
 
     if [ -n "$tpc3" ];then
-        [[ -f "$DC_tl/$tpc1/1.cfg" ]] && tlng1="$DC_tl/$tpc1/1.cfg"
-        [[ -f "$DC_tl/$tpc2/1.cfg" ]] && tlng2="$DC_tl/$tpc2/1.cfg"
-        [[ -f "$DC_tl/$tpc3/1.cfg" ]] && tlng3="$DC_tl/$tpc3/1.cfg"
+        [ -f "$DC_tl/$tpc1/1.cfg" ] && tlng1="$DC_tl/$tpc1/1.cfg"
+        [ -f "$DC_tl/$tpc2/1.cfg" ] && tlng2="$DC_tl/$tpc2/1.cfg"
+        [ -f "$DC_tl/$tpc3/1.cfg" ] && tlng3="$DC_tl/$tpc3/1.cfg"
         touch "$DC_tl/$tpc1/2.cfg" && tok1="$DC_tl/$tpc1/2.cfg"
         touch "$DC_tl/$tpc2/2.cfg" && tok2="$DC_tl/$tpc2/2.cfg"
         touch "$DC_tl/$tpc3/2.cfg" && tok3="$DC_tl/$tpc3/2.cfg"
     elif [ -n "$tpc2" ];then
-        [[ -f "$DC_tl/$tpc1/1.cfg" ]] && tlng1="$DC_tl/$tpc1/1.cfg"
-        [[ -f "$DC_tl/$tpc2/1.cfg" ]] && tlng2="$DC_tl/$tpc2/1.cfg"
+        [ -f "$DC_tl/$tpc1/1.cfg" ] && tlng1="$DC_tl/$tpc1/1.cfg"
+        [ -f "$DC_tl/$tpc2/1.cfg" ] && tlng2="$DC_tl/$tpc2/1.cfg"
         touch "$DC_tl/$tpc1/2.cfg" && tok1="$DC_tl/$tpc1/2.cfg"
         touch "$DC_tl/$tpc2/2.cfg" && tok2="$DC_tl/$tpc2/2.cfg"
     elif [ -n "$tpc1" ];then
-        [[ -f "$DC_tl/$tpc1/1.cfg" ]] && tlng1="$DC_tl/$tpc1/1.cfg"
+        [ -f "$DC_tl/$tpc1/1.cfg" ] && tlng1="$DC_tl/$tpc1/1.cfg"
         touch "$DC_tl/$tpc1/2.cfg" && tok1="$DC_tl/$tpc1/2.cfg"
     fi
 
@@ -68,7 +68,7 @@ if [ "$1" = A ]; then
     W9INX=$(cat $W9 | sort | uniq -dc | sort -n -r | sed 's/ \+/ /g')
     n=1
     while [ $n -le 15 ]; do
-        if [[ $(echo "$W9INX" | sed -n "$n"p | awk '{print ($1)}') -ge 3 ]]; then
+        if [ $(echo "$W9INX" | sed -n "$n"p | awk '{print ($1)}') -ge 3 ]; then
         
             fwk=$(echo "$W9INX" | sed -n "$n"p | awk '{print ($2)}')
             if [ -n "$tpc3" ];then
@@ -117,9 +117,9 @@ if [ "$1" = A ]; then
     echo "$PRCTC">> "$NUM"
     STDY=$(echo "$VWR $LRNPR $PRCTC" | tr ' ' '+' | bc -l)
     
-    [[ $DDC -ge 100 ]] && DDC=100
-    [[ $STDY -ge 100 ]] && STDY=100
-    [[ $ARCH -ge 100 ]] && ARCH=100
+    [ $DDC -ge 100 ] && DDC=100
+    [ $STDY -ge 100 ] && STDY=100
+    [ $ARCH -ge 100 ] && ARCH=100
     ttl=$(($DDC+$ARCH+$STDY))
     real=$(($ttl/3))
     acrm=$((100-$real))
@@ -129,9 +129,9 @@ if [ "$1" = A ]; then
     flD=$(($DDC*$real/$ttl))
     flS=$(($STDY*$real/$ttl))
     flL=$(($ARCH*$real/$ttl))
-    [[ $flD -gt 0 ]] && d=1 || d=0
-    [[ $flS -gt 0 ]] && s=1 || s=0
-    [[ $flL -gt 0 ]] && l=1 || l=0
+    [ $flD -gt 0 ] && d=1 || d=0
+    [ $flS -gt 0 ] && s=1 || s=0
+    [ $flL -gt 0 ] && l=1 || l=0
     FIX=$(($d+$s+$l))
     
     if [ "$real" -le 10 ]; then
@@ -143,9 +143,9 @@ if [ "$1" = A ]; then
     ext3="$(n=1; while [ $n -le $flL ]; do printf " "; let n++; done)"
     ext4="$(n=1; while [ $n -le $acrm ]; do printf " "; let n++; done)"
     ext5="$(n=1; while [ $n -le $FIX ]; do printf " "; let n++; done)"
-    [[ "$(echo "$tpc1" | wc -c)" -gt 60 ]] && tle1="${tpc1:0:60}..." || tle1="$tpc1"
-    [[ "$(echo "$tpc2" | wc -c)" -gt 60 ]] && tle2="${tpc2:0:60}..." || tle2="$tpc2"
-    [[ "$(echo "$tpc3" | wc -c)" -gt 60 ]] && tle3="${tpc3:0:60}..." || tle3="$tpc3"
+    [ "$(echo "$tpc1" | wc -c)" -gt 60 ] && tle1="${tpc1:0:60}..." || tle1="$tpc1"
+    [ "$(echo "$tpc2" | wc -c)" -gt 60 ] && tle2="${tpc2:0:60}..." || tle2="$tpc2"
+    [ "$(echo "$tpc3" | wc -c)" -gt 60 ] && tle3="${tpc3:0:60}..." || tle3="$tpc3"
 
     if [ $(cat $DC_a/stats/.wks | wc -l) -lt 12 ]; then
     ext=$(n=1; while [ $n -le 112 ]; do printf " "; let n++; done)
@@ -203,7 +203,7 @@ elif [ -z "$1" ]; then
     --title="$(gettext "Weekly Report")" --borders=10 \
     --center --form --on-top --scroll --skip-taskbar \
     --always-print-result --window-icon=idiomind \
-    --button="$(gettext "Close")":0 --width=420 --height=300 \
+    --button="$(gettext "Close")":0 --width=480 --height=350 \
     --field="$(gettext "active")":CHK $sttng \
     --field="\n$SW:LBL" \
     --field="\n:LBL")

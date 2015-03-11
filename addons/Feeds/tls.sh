@@ -6,7 +6,7 @@ source "$DS/ifs/mods/cmns.sh"
 #tmplitem="<?xml version='1.0' encoding='UTF-8'?>
 #<xsl:stylesheet version='1.0'
   #xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
-  #xmlns:itunes='http://www.itunes.com/dtds/feed-1.0.dtd'
+  #xmlns:itunes='http://www.itunes.com/dtds/podcast-1.0.dtd'
   #xmlns:media='http://search.yahoo.com/mrss/'
   #xmlns:atom='http://www.w3.org/2005/Atom'>
   #<xsl:output method='text'/>
@@ -26,7 +26,7 @@ source "$DS/ifs/mods/cmns.sh"
 tmplitem="<?xml version='1.0' encoding='UTF-8'?>
 <xsl:stylesheet version='1.0'
   xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
-  xmlns:itunes='http://www.itunes.com/dtds/feed-1.0.dtd'
+  xmlns:itunes='http://www.itunes.com/dtds/podcast-1.0.dtd'
   xmlns:media='http://search.yahoo.com/mrss/'
   xmlns:atom='http://www.w3.org/2005/Atom'>
   <xsl:output method='text'/>
@@ -46,8 +46,8 @@ tmplitem="<?xml version='1.0' encoding='UTF-8'?>
 if [ "$1" = play ]; then
     
     killall play
-    DCF="$DM_tl/Feeds/.conf"
-    [ -f "$DCF/0.cfg" ] && st3=$(sed -n 2p "$DCF/0.cfg") || st3=FALSE
+    DCP="$DM_tl/Feeds/.conf"
+    [ -f "$DCP/0.cfg" ] && st3=$(sed -n 2p "$DCP/0.cfg") || st3=FALSE
     [ $st3 = FALSE ] && fs="" || fs='-fs'
     
     if [ -f "$DM_tl/Feeds/cache/$2.mp3" ]; then
@@ -74,25 +74,25 @@ if [ "$1" = play ]; then
 elif [ "$1" = check ]; then
 
     source $DS/ifs/mods/cmns.sh
-    DCF="$DM_tl/Feeds/.conf"
-    DSF="$DS/addons/Feeds"
-    [[ -e "$DT/cft.lock" ]] && exit || touch "$DT/cft.lock"
+    DCP="$DM_tl/Feeds/.conf"
+    DSP="$DS_a/Feeds"
+    [[ -e "$DT/cpt.lock" ]] && exit || touch "$DT/cpt.lock"
 
     internet
 
-    tpl="$(gettext "Image")\n - - -\n$(gettext "Title")\n - - -\n$(gettext "Summary")\n - - -\n - - -\n - - -"
-    mn=" - - -!$(gettext "Image")!$(gettext "Title")!$(gettext "Summary")"
+    tpl="$(gettext "Enclosure audio/video")\n - - -\n$(gettext "Episode title")\n - - -\n$(gettext "Summary/Description")\n - - -\n - - -\n - - -"
+    mn=" - - -!$(gettext "Enclosure audio/video")!$(gettext "Episode title")!$(gettext "Summary/Description")"
 
-    lnk=$(sed -n "$2"p $DCF/4.cfg)
+    lnk=$(sed -n "$2"p $DCP/4.cfg)
     [ -z "$lnk" ] && exit 1
-    [ ! -f "$DCF/$2.xml" ] && printf "$tpl" > "$DCF/$2.xml"
-    cp "$DCF/$2.xml" "$DCF/$2.xml_"
-    feed_items="$(xsltproc - "$lnk" <<< "$tmplitem" 2> /dev/null)"
-    feed_items="$(echo "$feed_items" | tr '\n' ' ' | tr -s [:space:] | sed 's/EOL/\n/g' | head -n 2)"
-    item="$(echo "$feed_items" | sed -n 1p)"
+    [ ! -f "$DCP/$2.xml" ] && printf "$tpl" > "$DCP/$2.xml"
+    cp "$DCP/$2.xml" "$DCP/$2.xml_"
+    podcast_items="$(xsltproc - "$lnk" <<< "$tmplitem" 2> /dev/null)"
+    podcast_items="$(echo "$podcast_items" | tr '\n' ' ' | tr -s [:space:] | sed 's/EOL/\n/g' | head -n 2)"
+    item="$(echo "$podcast_items" | sed -n 1p)"
     if [ -z "$(echo $item | sed 's/^ *//; s/ *$//; /^$/d')" ]; then
     msg "$(gettext "Couldn't download the specified URL\n")" info
-    rm -f "$DT/cft.lock" & exit 1
+    rm -f "$DT/cpt.lock" & exit 1
     fi
     field="$(echo "$item" | sed -r 's|-\!-|\n|g')"
 
@@ -100,13 +100,13 @@ elif [ "$1" = check ]; then
     --width=800 --height=600 --form --on-top --window-icon=idiomind \
     --text="<small> $(gettext "\tIn this table you can define fields according to their cache,  most of the time the default values is right. ")</small>" \
     --button=gtk-apply:0 --borders=5 --title="$ttl" --always-print-result \
-    --field="":CB "$(sed -n 1p $DCF/$2.xml)!$mn" \
-    --field="":CB "$(sed -n 2p $DCF/$2.xml)!$mn" \
-    --field="":CB "$(sed -n 3p $DCF/$2.xml)!$mn" \
-    --field="":CB "$(sed -n 4p $DCF/$2.xml)!$mn" \
-    --field="":CB "$(sed -n 5p $DCF/$2.xml)!$mn" \
-    --field="":CB "$(sed -n 6p $DCF/$2.xml)!$mn" \
-    --field="":CB "$(sed -n 7p $DCF/$2.xml)!$mn" \
+    --field="":CB "$(sed -n 1p $DCP/$2.xml)!$mn" \
+    --field="":CB "$(sed -n 2p $DCP/$2.xml)!$mn" \
+    --field="":CB "$(sed -n 3p $DCP/$2.xml)!$mn" \
+    --field="":CB "$(sed -n 4p $DCP/$2.xml)!$mn" \
+    --field="":CB "$(sed -n 5p $DCP/$2.xml)!$mn" \
+    --field="":CB "$(sed -n 6p $DCP/$2.xml)!$mn" \
+    --field="":CB "$(sed -n 7p $DCP/$2.xml)!$mn" \
     --field="":TXT "$(echo "$field" | sed -n 1p)" \
     --field="":TXT "$(echo "$field" | sed -n 2p)" \
     --field="":TXT "$(echo "$field" | sed -n 3p | sed 's/\://g')" \
@@ -114,8 +114,58 @@ elif [ "$1" = check ]; then
     --field="":TXT "$(echo "$field" | sed -n 5p)" \
     --field="\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t":TXT "$(echo "$field" | sed -n 6p)" \
     --field="":TXT "$(echo "$field" | sed -n 7p)" | head -n 7 > $DT/f.tmp
-    [[ -n "$(cat "$DT/f.tmp")" ]] && mv -f $DT/f.tmp "$DCF/$2.xml" || cp -f "$DCF/$2.xml_" "$DCF/$2.xml"
-    [[ -f "$DCF/$2.xml_" ]] && rm "$DCF/$2.xml_"
-    [[ -e "$DT/cft.lock" ]] && rm -f "$DT/cft.lock" & exit
+    [[ -n "$(cat "$DT/f.tmp")" ]] && mv -f $DT/f.tmp "$DCP/$2.xml" || cp -f "$DCP/$2.xml_" "$DCP/$2.xml"
+    [[ -f "$DCP/$2.xml_" ]] && rm "$DCP/$2.xml_"
+    [[ -e "$DT/cpt.lock" ]] && rm -f "$DT/cpt.lock" & exit
 
+
+elif [ "$1" = syndlg ]; then
+
+    DCP="$DM_tl/Feeds/.conf"
+    SYNCDIR="$(sed -n 1p $DCP/5.cfg)"
+
+    cd $HOME
+    DIR="$(yad --center --form --on-top --window-icon=idiomind \
+    --borders=10 --separator="" --title=" " --always-print-result \
+    --text="$(gettext "Mountpoint or path where new episodes should be synced.")" \
+    --print-all --button="gtk-apply":0 \
+    --width=460 --height=200 --field="":CDIR "$SYNCDIR")"
+
+    echo "$DIR" > $DT/s.tmp
+    mv -f $DT/s.tmp $DCP/5.cfg
+    exit
+
+
+elif [ "$1" = syncronize ]; then
+   
+    DCP="$DM_tl/Feeds/.conf"
+    SYNCDIR="$(sed -n 1p $DCP/5.cfg)"
+
+    if [ ! -d "$SYNCDIR" ]; then
+            cd $HOME
+            DIR="$(yad --center --form --on-top --window-icon=idiomind \
+            --borders=10 --separator="" --title=" " --always-print-result \
+            --text="$(gettext "Set mountpoint or path where new episodes should be synced.")" \
+            --print-all --button="$(gettext "OK")":0 \
+            --width=460 --height=170 --field="":CDIR "$SYNCDIR")"
+            echo "$DIR" > $DT/s.tmp
+            mv -f $DT/s.tmp $DCP/5.cfg
+            if [ ! -d "$SYNCDIR" ]; then
+                msg "$(gettext "Failed: No directory\n ")" \
+                dialog-warning & exit 1; fi
+            [ ! -d "$DIR" ] && exit 1
+    fi
+    notify-send -i idiomind "$(gettext "Synchronizing...")" " "
+    touch $DT/l_sync; SYNCDIR="$(sed -n 1p $DCP/5.cfg)"
+    rsync -az --delete --exclude="*.txt" --exclude="*.png" \
+    --exclude="*.i" --ignore-errors $DM_tl/Feeds/cache/ "$SYNCDIR"
+
+    exit=$?
+    if [ $exit = 0 ] ; then
+        log="$(cd "$SYNCDIR"; ls *.mp3 | wc -l)"
+        notify-send -i idiomind "$(gettext "Synchronization was completed")" "$log $(gettext "synchronized episodes(s)")" -t 8000
+    else
+        notify-send -i dialog-warning "$(gettext "Error while syncing")" " " -t 8000
+    fi
+    rm -f $DT/l_sync
 fi

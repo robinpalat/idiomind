@@ -4,7 +4,7 @@
 source /usr/share/idiomind/ifs/c.conf
 wth=$(sed -n 5p $DC_s/18.cfg)
 eht=$(sed -n 6p $DC_s/18.cfg)
-ap=$(cat $DC_s/1.cfg | sed -n 6p)
+ap=$(sed -n 14p < $DC_s/1.cfg)
 echo "_" >> "$DC_a/stats/.tmp" &
 re='^[0-9]+$'
 now="$2"
@@ -58,7 +58,7 @@ if ( [ -f "$DM_tlt/words/$fname.mp3" ] || [ "$5" = w_fix ] ); then
 elif ( [ -f "$DM_tlt/$fname.mp3" ] || [ "$5" = s_fix ] ); then
 
     tgs=$(eyeD3 "$DM_tlt/$fname.mp3")
-    [[ $(sed -n 3p $DC_s/1.cfg) = TRUE ]] \
+    [[ $(sed -n 11p $DC_s/1.cfg) = TRUE ]] \
     && trgt=$(echo "$tgs" | grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)') \
     || trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
     src=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')

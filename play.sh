@@ -2,12 +2,13 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
+#--text=" <small> $(gettext "Playing:") datos de usauario de podcasts evitar</small>\n \
+#<small> $(gettext "Next:") datos de usauario de podcasts evitar </small>" \
 
 itms="Words
 Sentences
 Marks
 Practice
-News
 News episodes
 Saved epidodes"
 
@@ -48,10 +49,8 @@ elif [ -z "$1" ]; then
     in3=$(cat "$DC_tlt/6.cfg")
     cd "$DC_tlt/practice"
     in4=$(cat w6 | sed '/^$/d' | sort | uniq)
-    in5=$(cat "$DM_tl/Feeds/.conf/0.cfg" | sed '/^$/d')
-    in6=$(cat "$DM_tl/Podcasts/.conf/1.cfg" | sed '/^$/d')
-    in7=$(cat "$DM_tl/Podcasts/.conf/2.cfg" | sed '/^$/d')
-    nnews=$(cat "$DM_tl/Feeds/.conf/1.cfg" | head -n 8)
+    in5=$(cat "$DM_tl/Feeds/.conf/1.cfg" | sed '/^$/d')
+    in6=$(cat "$DM_tl/Feeds/.conf/2.cfg" | sed '/^$/d')
     u=$(echo "$(whoami)")
     infs=$(echo "$snts Sentences" | wc -l)
     infw=$(echo "$wrds Words" | wc -l)
@@ -60,7 +59,7 @@ elif [ -z "$1" ]; then
     
     function setting_1() {
         n=1
-        while [ $n -le 7 ]; do
+        while [ $n -le 6 ]; do
                 arr="in$n"
                 [[ -z ${!arr} ]] && echo "$DS/images/addi.png" \
                 || echo "$DS/images/add.png"

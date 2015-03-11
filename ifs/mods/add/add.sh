@@ -194,7 +194,7 @@ function add_tags_9() {
 
 function voice() {
     
-    cd "$2"; vs=$(sed -n 8p $DC_s/1.cfg)
+    cd "$2"; vs=$(sed -n 16p $DC_s/1.cfg)
     if [ -n "$vs" ]; then
     
         if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then

@@ -11,7 +11,7 @@ sttng4=$(sed -n 1p $DC_s/3.cfg); fi
 
 c=$(yad --center --form --on-top \
 --skip-taskbar --borders=15 --expand-column=3 --no-headers \
---button="$(gettext "OK")":0 --width=420 --height=300 \
+--button="$(gettext "OK")":0 --width=480 --height=350 \
 --always-print-result --editable --print-all \
 --title="Google translation service" --window-icon=idiomind \
 --field="\n$(gettext "Use Google translator")\n":CHK "$sttng4" \

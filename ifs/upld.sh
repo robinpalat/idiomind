@@ -264,10 +264,11 @@ if [ $(cat "$DC_tlt/0.cfg" | wc -l) -le 20 ]; then
 fi
 
 cd $HOME
-upld=$(yad --form --width=420 --height=460 --on-top \
+upld=$(yad --form --width=480 --height=460 --on-top \
 --buttons-layout=end --center --window-icon=idiomind \
 --borders=15 --skip-taskbar --align=right \
 --button="$(gettext "Cancel")":1 \
+--button="$(gettext "To PDF")":2 \
 --button="$(gettext "Upload")":0 \
 --title="$(gettext "Upload")" --text="   <b>$tpc</b>" \
 --field=" :lbl" "#1" \
@@ -280,8 +281,11 @@ upld=$(yad --form --width=420 --height=460 --on-top \
 --field="<small>$(gettext "Add image")</small>:FL")
 ret=$?
 
-if [ "$ret" != 0 ]; then
+if [[ "$ret" != 0 || "$ret" != 2 ]]; then
     exit 1
+fi
+if [ "$ret" = 2 ]; then
+    "$DS/ifs/tls.sh" pdf & exit 1
 fi
 
 Ctgry=$(echo "$upld" | cut -d "|" -f4)

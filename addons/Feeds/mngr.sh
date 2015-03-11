@@ -6,7 +6,7 @@ source $DS/ifs/mods/cmns.sh
 
 
 DMC="$DM_tl/Feeds/cache"
-DCF="$DM_tl/Feeds/.conf/"
+DCP="$DM_tl/Feeds/.conf/"
 
 
 if [ "$1" = delete_item ]; then
@@ -23,13 +23,13 @@ if [ "$1" = delete_item ]; then
             
             (sleep 0.2 && kill -9 $(pgrep -f "yad --text-info "))
             
-           if ! grep -Fxo "$trgt" < "$DCF/1.cfg"; then
+           if ! grep -Fxo "$trgt" < "$DCP/1.cfg"; then
                 rm "$DMC/$fname.mp3"
                 rm "$DMC/$fname.txt"
                 rm "$DMC/$fname.png"
                 rm "$DMC/$fname.i"
             fi
-            cd "$DCF"
+            cd "$DCP"
             grep -v -x -F "$trgt" ./.22.cfg > ./.22.cfg.tmp
             sed '/^$/d' ./.22.cfg.tmp > ./.22.cfg
             grep -v -x -F "$trgt" ./2.cfg > ./2.cfg.tmp
@@ -64,8 +64,8 @@ elif [ "$1" = delete_episodes_saved ]; then
 
     if [ $ret -eq 0 ]; then
     
-        rm -r "$DCF"/2.cfg "$DCF"/.22.cfg
-        touch "$DCF"/2.cfg "$DCF"/.22.cfg
+        rm -r "$DCP"/2.cfg "$DCP"/.22.cfg
+        touch "$DCP"/2.cfg "$DCP"/.22.cfg
     fi
     exit
 fi

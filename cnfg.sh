@@ -135,7 +135,7 @@ yad --notebook --key=$KEY --name=idiomind --class=idiomind --skip-taskbar \
         
         [ ! -d  "$HOME/.config/autostart" ] && mkdir "$HOME/.config/autostart"
         config_dir="$HOME/.config/autostart"
-        if [[ "$(sed -n 5p "$DC_s/1.cfg")" = "TRUE" ]]; then
+        if [[ "$(sed -n 13p "$DC_s/1.cfg")" = "TRUE" ]]; then
             if [ ! -f "$config_dir/idiomind.desktop" ]; then
             
                 if [ ! -d "$HOME/.config/autostart" ]; then

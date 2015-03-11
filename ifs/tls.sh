@@ -60,7 +60,7 @@ elif [ "$1" = dclik ]; then
 # -------------------------------------------------
 elif [ "$1" = edit_audio ]; then
 
-    cmd="$(sed -n 9p $DC_s/1.cfg)"
+    cmd="$(sed -n 17p $DC_s/1.cfg)"
     (cd "$3"; "$cmd" "$2") & exit
 
 # -------------------------------------------------
@@ -132,6 +132,18 @@ elif [ "$1" = check_updates ]; then
     [ -f $DT/release ] && rm -f $DT/release
 
 # -------------------------------------------------
+elif [ "$1" = about ]; then
+
+info_="$(gettext "\nIdiomind is a small program that helps you learn foreign words.\n\nLicense: GPLv3\nIdiomind is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, Either version 3 of the License, or (at your option) any later version.\nThis program is distributed in the hope That it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\nYou should have received a copy of the GNU General Public License along this program. If not, see https://www.gnu.org/licenses/gpl.html\nCode\nhttps://github.com/robinsato/idiomind")"
+text="<big><big><b>Idiomind v2.2-beta</b></big></big>\\n<sup>$(gettext "Vocabulary learning tool")\\n<a href='https://sourceforge.net/projects/idiomind/'>Homepage</a> (c) 2013-2015 Robin Palat</sup>"
+printf "$info_" | yad --text-info --text="$text\n" \
+--show-uri --fontname=Arial --margins=10 --wrap \
+--name=idiomind --text-align=center --on-top \
+--sticky --center --window-icon=idiomind --borders=5 \
+--width=450 --height=340 --title="$(gettext "About")" \
+--skip-taskbar --button="$(gettext "OK")":0
+
+# -------------------------------------------------
 elif [ "$1" = a_check_updates ]; then
 
     [ ! -f $DC_s/13.cfg ] && echo `date +%d` > $DC_s/13.cfg
@@ -181,7 +193,7 @@ elif [ "$1" = a_check_updates ]; then
     [ -f $DT/release ] && rm -f $DT/release
     fi
     
-
+# -------------------------------------------------
 elif [ "$1" = check_index ]; then
 
     source /usr/share/idiomind/ifs/c.conf

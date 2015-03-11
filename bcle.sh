@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 #source /usr/share/idiomind/ifs/c.conf
-[ -z "$tpc" && -d "$DT/p" ] && exit 1
+[[ -z "$tpc" && -d "$DT/p" ]] && exit 1
 > "$DT/.p_"
 cd "$DT/p"
 n=1

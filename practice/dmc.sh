@@ -59,7 +59,7 @@ function fonts() {
 
 function ofonts() {
     while read item; do
-        echo "<b>$item</b>"
+        echo "<b><big>$item</big></b>"
     done < word2.id
     }
 
@@ -67,7 +67,7 @@ function ofonts() {
 function mchoise() {
     
     dlg=$(ofonts | yad --list --on-top --skip-taskbar --title=" " \
-    --width=375 --height=330 --center --undecorated \
+    --width=375 --height=340 --center --undecorated \
     --text-align=center --no-headers --borders=6 \
     --button="$(gettext "Exit")":1 \
     --text="\n<span font_desc='Free Sans $s'><b>$1</b></span>\n\n" \

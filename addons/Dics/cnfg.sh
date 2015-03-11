@@ -31,7 +31,7 @@ function test_() {
 
 function dialog_edit() {
     
-    yad --text-info --width=420 --height=300 --on-top --wrap \
+    yad --text-info --width=480 --height=350 --on-top --wrap \
     --buttons-layout=end --center --window-icon=idiomind \
     --margins=4 --print-all --borders=0 --skip-taskbar \
     --editable --fontname=monospace --always-print-result \
@@ -149,7 +149,7 @@ elif [ -z "$1" ]; then
     
     sel="$(dict_list | yad --list --title="$(gettext "Dictionaries")" \
     --expand-column=2 "$tex" $align \
-    --width=420 --height=300 --skip-taskbar --separator=" " \
+    --width=480 --height=350 --skip-taskbar --separator=" " \
     --borders=10 --button="$(gettext "Add")":2 --print-all --button=OK:0 \
     --column=" ":CHK --column="$(gettext "availables")":TEXT \
     --column="$(gettext "languages")":TEXT --window-icon=idiomind \

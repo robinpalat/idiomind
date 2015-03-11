@@ -362,7 +362,7 @@ elif [ "$1" = new_sentence ]; then
     index sentence "$trgt" "$tpe"
     
     (
-    if [ $(sed -n 4p $DC_s/1.cfg) = TRUE ]; then
+    if [ $(sed -n 12p $DC_s/1.cfg) = TRUE ]; then
     $DS/add.sh sentence_list_words "$DM_tlt/$fname.mp3" "$trgt" "$tpe"
     fi
     ) &

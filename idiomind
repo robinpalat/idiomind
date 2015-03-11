@@ -97,7 +97,8 @@ function new_session() {
         let n++
     done
     
-    for s in $DS/ifs/mods/start/*; do "$s"; done &
+    for s in $DS/ifs/mods/start/*; do 
+    (sleep 20 && "$s"); done &
 
     # screen size
     sizes
@@ -116,27 +117,27 @@ function new_session() {
     n=1
     while [ $n -le "$(cat "$DM_tl/.1.cfg" | head -50 | wc -l )" ]; do
         tp=$(sed -n "$n"p "$DM_tl/.1.cfg")
-        stts=$(echo "$(cat "$DM_tl/$tp/8.cfg")")
+        stts=$(echo "$(cat "$DM_tl/$tp/.conf/8.cfg")")
 
         if [ "$stts" = 2 ] || [ "$stts" = 7 ]; then
         
-            if [ -f "$DM_tl/$tp/9.cfg" ]; then
+            if [ -f "$DM_tl/$tp/.conf/9.cfg" ]; then
 
-                dts=$(cat "$DM_tl/$tp/9.cfg" | wc -l)
+                dts=$(cat "$DM_tl/$tp/.conf9.cfg" | wc -l)
                 if [ $dts = 1 ]; then
-                    dte=$(sed -n 1p "$DM_tl/$tp/9.cfg")
+                    dte=$(sed -n 1p "$DM_tl/$tp/.conf/9.cfg")
                     TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
                     RM=$((100*$TM/10))
                 elif [ $dts = 2 ]; then
-                    dte=$(sed -n 2p "$DM_tl/$tp/9.cfg")
+                    dte=$(sed -n 2p "$DM_tl/$tp/.conf/9.cfg")
                     TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
                     RM=$((100*$TM/15))
                 elif [ $dts = 3 ]; then
-                    dte=$(sed -n 3p "$DM_tl/$tp/9.cfg")
+                    dte=$(sed -n 3p "$DM_tl/$tp/.conf/9.cfg")
                     TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
                     RM=$((100*$TM/30))
                 elif [ $dts = 4 ]; then
-                    dte=$(sed -n 4p "$DM_tl/$tp/9.cfg")
+                    dte=$(sed -n 4p "$DM_tl/$tp/.conf/9.cfg")
                     TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
                     RM=$((100*$TM/60))
                 fi
@@ -144,20 +145,20 @@ function new_session() {
                 nstll=$(grep -Fxo "$tp" "$DM_tl/.3.cfg")
                 if [ -n "$nstll" ]; then
                     if [ "$RM" -ge 100 ]; then
-                        echo "9" >> "$DM_tl/$tp/8.cfg"
+                        echo "9" >> "$DM_tl/$tp/.conf/8.cfg"
                         printf "$tp\n" >> $DT/notify
                     fi
                     if [ "$RM" -ge 150 ]; then
-                        echo "10" > "$DM_tl/$tp/8.cfg"
+                        echo "10" > "$DM_tl/$tp/.conf/8.cfg"
                         printf "$tp\n" >> $DT/notify
                     fi
                 else
                     if [ "$RM" -ge 100 ]; then
-                        echo "4" > "$DM_tl/$tp/8.cfg"
+                        echo "4" > "$DM_tl/$tp/.conf/8.cfg"
                         printf "$tp\n" >> $DT/notify
                     fi
                     if [ "$RM" -ge 150 ]; then
-                        echo "5" > "$DM_tl/$tp/8.cfg"
+                        echo "5" > "$DM_tl/$tp/.conf/8.cfg"
                         printf "$tp\n" >> $DT/notify
                     fi
                 fi
@@ -174,22 +175,16 @@ if [ -z "$1" ]; then
 
     yad --width=150 --height=200 --form --name=idiomind \
     --geometry=175x190-300-$(sed -n 12p $DC_s/18.cfg) \
-    --fixed --title="Idiomind" --no-buttons --skip-taskbar \
-    --field=gtk-add:btn "/usr/share/idiomind/add.sh 'new_items'" \
+    --fixed --title="Idiomind" --no-buttons \
+    --field=gtk-new:btn "/usr/share/idiomind/add.sh 'new_items'" \
     --field=gtk-home:btn "idiomind 'topic'" \
     --field=gtk-index:btn "/usr/share/idiomind/chng.sh" \
     --field=gtk-preferences:btn "/usr/share/idiomind/cnfg.sh" \
     --on-top --borders=5 --align=center \
     --window-icon=idiomind &
 
-    #printf "strt.1.strt\n" >> $DC_s/30.cfg
-    #yad --width=185 --height=210 --name=idiomind \
-    #--geometry=175x190-300-$(sed -n 12p $DC_s/18.cfg) \
-    #--fixed --title="Idiomind" --no-buttons --skip-taskbar \
-    #--icons --single-click --on-top --borders=0 \
-    #--read-dir=$DS/default/new --item-width=68 \
-    #--window-icon=idiomind --class=idiomind &
-
+    printf "strt.1.strt\n" >> $DC_s/30.cfg
+  
     [ -n "$tpc" ] && echo "$tpc" > $DC_s/6.cfg
     
     if [ ! -d $DT ]; then
@@ -382,7 +377,7 @@ elif [ "$1" = topic ]; then
             ls0="$DC_tlt/0.cfg"
             ls1="$DC_tlt/1.cfg"
             ls2="$DC_tlt/2.cfg"
-            flnt="$DC_tlt/10.cfg"
+            nt="$(cat $DC_tlt/10.cfg)"
             cd "$DC_tlt"
             ws=$(cat 3.cfg | wc -l)
             ss=$(cat 4.cfg | wc -l)
@@ -416,11 +411,11 @@ elif [ "$1" = topic ]; then
     [ -z "$tpc" ] && exit 1
 
     if echo "$mde" | grep "wn"; then
-        itxt="<big><big>$tpc </big></big><small>\\n$ss $(gettext "Sentences") $ws $(gettext "Words")\n</small>"
+        itxt="<big><big>$tpc </big></big><small>\\n$ss $(gettext "Sentences") $ws $(gettext "Words")</small>"
         itxt2="<span color='#ABABAB'><small> $(gettext "Created by") $author $(gettext "on") ${category^}  $date_u</small></span>"
     else
         source "$DC_tlt/12.cfg"
-        itxt="<big><big>$tpc </big></big><small>\\n$ss $(gettext "Sentences") $ws $(gettext "Words")\n</small>"
+        itxt="<big><big>$tpc </big></big><small>\\n$ss $(gettext "Sentences") $ws $(gettext "Words")</small>"
         itxt2="<small> $(gettext "Created by") $author $(gettext "on") <span color='#6E9FD4'>${category^}</span>  $date_u</small>"
     fi
 

@@ -9,18 +9,15 @@ function notebook_1() {
     --dclick-action='./vwr.sh v1' --print-all \
     --expand-column=1 --ellipsize=END \
     --column=Name:TEXT --column=Learned:CHK > "$cnf1" &
-    cat "$ls2" | yad \
-    --no-headers --list --plug=$KEY --tabnum=2 \
+    cat "$ls2" | yad --no-headers --list --plug=$KEY --tabnum=2 \
     --expand-column=0 --ellipsize=END --print-all \
     --column=Name:TEXT --dclick-action='./vwr.sh v2' &
-    yad --form --borders=10 --plug=$KEY --tabnum=3 --columns=2 \
-    --field="Notes":txt "$nt" \
+    yad --form --scroll --borders=10 --plug=$KEY --tabnum=3 --columns=2 \
+    --field="Notes\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t":txt "$nt" \
     --field=" <small>Rename</small>: " "$tpc" \
-    --field="$(gettext "Share")":BTN "/usr/share/idiomind/ifs/upld.sh" \
-    --field="\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t":lbl " " \
+    --field="Marcar Tema Como Aprendido":btn "/usr/share/idiomind/mngr.sh 'mkok-'" \
     --field="TextoLorem ipsum\ndolor sit amet, \nconsectetur \nadipisicing elit, \nsed doeiusmod tempor\n incididunt ut \nlabore et dolore\n magna aliqua.\n Ut enimad \nminim veniam, qu":lbl " " \
-    --field="Marcar Como Aprendido":btn "/usr/share/idiomind/mngr.sh 'mkok-'" \
-    --field="Repasar":btn "/usr/share/idiomind/mngr.sh 'mklg-'" \
+    --field="$(gettext "Share")":BTN "/usr/share/idiomind/ifs/upld.sh" \
     --field="Delete":btn "/usr/share/idiomind/mngr.sh 'delete_topic'" > "$cnf3" &
     yad --notebook --name=idiomind --center --key=$KEY \
     --class=Idiomind --align=right \

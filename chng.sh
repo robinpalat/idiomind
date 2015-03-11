@@ -45,8 +45,7 @@ if [ "$1" = chngi ]; then
     
     [ -f "$DM_tlt/$fname.mp3" ] && file="$DM_tlt/$fname.mp3" && t=2
     [ -f "$DM_tlt/words/$fname.mp3" ] && file="$DM_tlt/words/$fname.mp3" && t=1
-    [ -f "$DM_tl/Feeds/kept/words/$fname.mp3" ] && file="$DM_tl/Feeds/kept/words/$fname.mp3" && t=1
-    [ -f "$DM_tl/Feeds/content/$fname.mp3" ] && file="$DM_tl/Feeds/content/$fname.mp3" && t=2
+
     include "$DS/ifs/mods/play"
     
     stop_bcl "$file"
@@ -100,7 +99,7 @@ elif [ "$1" != chngi ]; then
         cd "$DC_s"
 
         VAR=$(cat "$DC_s/0.cfg" | yad --name=idiomind --text-align=$align \
-        --class=idiomind --center $img --image-on-top --separator="" \
+        --center $img --image-on-top --separator="" \
         "$text" --width="$wth" --height="$eht" --ellipsize=END \
         --no-headers --list --window-icon=idiomind --borders=5 \
         --button=gtk-new:3 --button=gtk-apply:0 \
@@ -123,10 +122,6 @@ elif [ "$1" != chngi ]; then
                 [ -z "$VAR" ] && exit 1
                 
                 if [ -f "$DM_tl/$VAR/tpc.sh" ]; then
-                    chka=$(md5sum "$DM_tl/$tpc/tpc.sh" | cut -d ' ' -f 1)
-                    chkb=$(md5sum "$DS/default/tpc.sh" | cut -d ' ' -f 1)
-                    [ "$chka" != "$chkb" ] && \
-                    cp -f "$DS/default/tpc.sh" "$DM_tl/$VAR/tpc.sh"
                     "$DM_tl/$VAR/tpc.sh" & exit
                 else
                     cp -f "$DS/default/tpc.sh" "$DM_tl/$VAR/tpc.sh"

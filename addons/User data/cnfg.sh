@@ -11,17 +11,15 @@ dte=$(date +%F)
 #dialog
 if [ -z "$1" ]; then
 
-    du -b -h $DM | tail -1 | awk '{print ($1)}' > $DT/.sz
-
     D=$(yad --list --title="$(gettext "User Data")" \
     --center --on-top --radiolist --expand-column=2 \
-    --text=" $(gettext "Size"): $(cat $DT/.sz) \\n" --width=420 --height=300 \
+    --text=" $(gettext "Size"): $(cat $DC_a/1.cfg) \\n" \
+    --width=480 --height=350 --always-print-result \
     --skip-taskbar --image=folder --separator=" " \
     --borders=15 --print-all --window-icon=idiomind \
     --button=Backup:2 --button=Ok:0 --image-on-top --column="" \
     --column=Options "FALSE" "$(gettext "Import")" "FALSE" \
-    "$(gettext "Export")"  \
-    --buttons-layout=edge --always-print-result)
+    "$(gettext "Export")" --buttons-layout=edge)
     
     ret=$?
 
