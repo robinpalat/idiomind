@@ -114,11 +114,11 @@ elif [ "$1" = check_updates ]; then
             xdg-open https://sourceforge.net/projects/idiomind/files/idiomind.deb/download & exit
             
         elif [ "$ret" -eq 2 ]; then
-            echo `date +%d` > $DC_s/13.cfg & exit
+            echo `date +%d` > $DC_s/9.cfg & exit
             
         elif [ "$ret" -eq 1 ]; then
-            echo `date +%d` > $DC_s/14.cfg
-            echo "$(sed -n 2p ./release)" >> $DC_s/14.cfg & exit
+            echo `date +%d` > $DC_s/9.cfg
+            echo "$(sed -n 2p ./release)" >> $DC_s/9.cfg & exit
         fi
         
     else
@@ -139,26 +139,24 @@ text="<big><big><b>Idiomind v2.2-beta</b></big></big>\\n<sup>$(gettext "Vocabula
 printf "$info_" | yad --text-info --text="$text\n" \
 --show-uri --fontname=Arial --margins=10 --wrap \
 --name=idiomind --text-align=center --on-top \
---sticky --center --window-icon=idiomind --borders=5 \
+--sticky --center --window-icon=idiomind --borders=10 \
 --width=450 --height=340 --title="$(gettext "About")" \
 --skip-taskbar --button="$(gettext "OK")":0
 
 # -------------------------------------------------
 elif [ "$1" = a_check_updates ]; then
 
-    [ ! -f $DC_s/13.cfg ] && echo `date +%d` > $DC_s/13.cfg
+    [ ! -f $DC_s/9.cfg ] && echo `date +%d` > $DC_s/9.cfg
 
-    d1=$(cat $DC_s/13.cfg)
+    d1=$(cat $DC_s/9.cfg)
     d2=$(date +%d)
 
-    [ $(cat $DC_s/13.cfg) = 28 ] && rm -f $DC_s/14.cfg
+    [ $(cat $DC_s/9.cfg) = 28 ] && rm -f $DC_s/9.cfg
 
-    [ -f $DC_s/14.cfg ] && exit 1
-
-    if [ $(cat $DC_s/13.cfg) != $(date +%d) ]; then
+    if [ $(cat $DC_s/9.cfg) != $(date +%d) ]; then
     
         sleep 1
-        echo "$d2" > $DC_s/13.cfg
+        echo "$d2" > $DC_s/9.cfg
         cd $DT
         [ -f release ] && rm -f release
         curl -v www.google.com 2>&1 | \
@@ -180,10 +178,10 @@ elif [ "$1" = a_check_updates ]; then
                 xdg-open $pkg & exit
                 
             elif [ "$ret" -eq 2 ]; then
-                echo `date +%d` > $DC_s/13.cfg & exit
+                echo `date +%d` > $DC_s/9.cfg & exit
                 
             elif [ "$ret" -eq 1 ]; then
-                echo `date +%d` > $DC_s/14.cfg & exit
+                echo `date +%d` > $DC_s/9.cfg & exit
             fi
             
         else
@@ -344,7 +342,7 @@ elif [ "$1" = check_index ]; then
     "$DS/mngr.sh" mkmn & exit 1
 
 # -------------------------------------------------
-elif [ "$1" = pdf_doc ]; then
+elif [ "$1" = pdfdoc ]; then
 
     cd $HOME
     pdf=$(yad --save --center --borders=10 \

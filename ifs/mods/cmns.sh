@@ -42,15 +42,40 @@ function include() {
 
 }
 
+
+function lnglss() {
+
+    [ ${1^} = English ] && lg=en
+    [ ${1^} = French ] && lg=fr
+    [ ${1^} = German ] && lg=de
+    [ ${1^} = Chinese ] && lg=zh-cn
+    [ ${1^} = Italian ] && lg=it
+    [ ${1^} = Japanese ] && lg=ja
+    [ ${1^} = Portuguese ] && lg=pt
+    [ ${1^} = Spanish ] && lg=es
+    [ ${1^} = Vietnamese ] && lg=vi
+    [ ${1^} = Russian ] && lg=ru
+    echo "$lg"
+}
+
+
 function try() {
         
     "$@"
-    c=$?
-    if [ $c -ne 0 ]; then
-        echo "prlonema "
-        exit 1
-    fi
+    exit=$?
+    [ $exit -ne 0 ] && val=0 || val=1
+    echo "[$val]"
+    
 }
+
+function btry() {
+        
+    "$@"
+    exit=$?
+    [ $exit -ne 0 ] && continue || break
+    
+}
+
 
 function check_index1() {
     

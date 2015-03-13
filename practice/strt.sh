@@ -19,11 +19,11 @@
 
 #source /usr/share/idiomind/ifs/c.conf
 DSP="$DS/practice"
-wth=$(sed -n 13p $DC_s/18.cfg)
-hgt=$(sed -n 14p $DC_s/18.cfg)
+wth=$(($(sed -n 2p $DC_s/10.cfg)-440))
+eht=$(($(sed -n 3p $DC_s/10.cfg)-100))
 easys=$2
 learning=$3
-[ $4 -lt 0 ] && hards=0 || hards=$4
+[[ "$4" -lt 0 ]] && hards=0 || hards="$4"
 $DS/stop.sh &
 [ ! -d "$DC_tlt/practice" ] \
 && mkdir "$DC_tlt/practice"
@@ -81,7 +81,7 @@ VAR=$(yad --ellipsize=NONE --list \
 --center --window-icon=idiomind --skip-taskbar \
 --image-on-top --buttons-layout=edge $img \
 --borders=5 --expand-column=1 --print-column=2 \
---width=$wth --height=$hgt --text="$info" \
+--width=$wth --height=$eht --text="$info" \
 --no-headers --button="$(gettext "Restart")":3 \
 --button="$(gettext "Start")":0 \
 --title="$(gettext "Practice") - $tpc" --text-align=center \
@@ -93,7 +93,7 @@ $img4 "     $info4 Listening Sentences" )
 ret=$?
 
 if [ $ret -eq 0 ]; then
-    printf "prct.shc.$tpc.prct.shc\n" >> $DC_s/30.cfg &
+    printf "prct.shc.$tpc.prct.shc\n" >> $DC_s/8.cfg &
     if echo "$VAR" | grep "Flashcards"; then
         $DSP/prct.sh f & exit 1
     elif echo "$VAR" | grep "Multiple Choice"; then

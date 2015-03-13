@@ -24,10 +24,10 @@ if [ -d "$DM_tlt" ]; then
    "$DS/ifs/tls.sh" check_index "$topic"
 
     # look status
-    if [[ $(cat "$DM_tl/.1.cfg" | grep -Fxon "$topic" \
+    if [[ $(grep -Fxon "$topic" < "$DM_tl/.1.cfg" \
     | sed -n 's/^\([0-9]*\)[:].*/\1/p') -ge 50 ]]; then
         if [ -f "$DC_tlt/9.cfg" ]; then
-            dts=$(cat "$DC_tlt/9.cfg" | wc -l)
+            dts=$(wc -l < "$DC_tlt/9.cfg")
             if [ "$dts" = 1 ]; then
                 dte=$(sed -n 1p "$DC_tlt/9.cfg")
                 TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
@@ -57,20 +57,17 @@ if [ -d "$DM_tlt" ]; then
         "$DS/mngr.sh" mkmn
     fi
     
-    if cat "$DM_tl/.3.cfg" | grep -Fxo "$topic"; then
-        echo "$topic" > "$DC_s/8.cfg"
-        echo istll >> "$DC_s/8.cfg"
-        echo "$topic" > "$DM_tl/.8.cfg"
+    echo "$topic" > "$DC_s/4.cfg"
+    echo "$topic" > "$DM_tl/.8.cfg"
+    echo "$topic" > "$DT/tpe"
+    if grep -Fxo "$topic" < "$DM_tl/.3.cfg"; then
+        echo istll >> "$DC_s/4.cfg" 
         echo istll >> "$DM_tl/.8.cfg"
-        echo "$topic" > "$DC_s/6.cfg"
     else
-        echo "$topic" > "$DC_s/8.cfg"
-        echo wn >> "$DC_s/8.cfg"
-        echo "$topic" > "$DM_tl/.8.cfg"
+        echo wn >> "$DC_s/4.cfg"
         echo wn >> "$DM_tl/.8.cfg"
-        echo "$topic" > "$DC_s/6.cfg"
     fi
-    
+
     [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
     cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
     idiomind topic &

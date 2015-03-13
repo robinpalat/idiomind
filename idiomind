@@ -38,35 +38,13 @@ if [ -f $DT/ps_lk ]; then
     exit 1
 fi
 
-function sizes() {
-    
-    wh=$DC_s/18.cfg
-    xrandr | grep '*' | awk '{ print $1 }' > $wh
-    sed -i 's/x/\n/' $wh
-    y=$(sed -n 2p $wh)
-    [[ $y -lt 1020 ]] && y=1020
-    echo $(($y*58/100)) >> $wh
-    echo $(($y*50/100)) >> $wh
-    
-    echo $(($y*58/100)) >> $wh
-    echo $(($y*36/100)) >> $wh
-    
-    echo $(($y*63/100)) >> $wh
-    echo $(($y*46/100)) >> $wh
-    echo $(($y*12/100)) >> $wh
-    echo $(($y*35/100)) >> $wh
-    echo $(($y*11/100)) >> $wh
-    echo $(($y*44/100)) >> $wh
-    echo $(($y*41/100)) >> $wh
-    echo $(($y*38/100)) >> $wh
-}
 
-[[ ! -f $DC_s/18.cfg ]] && sizes
 
 function new_session() {
     
     echo "--new session"
     touch $DT/ps_lk
+    echo "$(date +%d)" > $DC_s/10.cfg
     
     # write in /tmp
     if [[ ! -d $DT ]]; then
@@ -84,16 +62,16 @@ function new_session() {
   
     # start addons
     addons="$(cd $DS/addons; ls -d *)"
-    [[ -f $DC_s/21.cfg ]] && rm $DC_s/21.cfg
+    [[ -f $DC_s/2.cfg ]] && rm $DC_s/2.cfg
     n=1
     while [ $n -le $(echo "$addons" | wc -l ) ]; do
         set=$(echo "$addons" | sed -n "$n"p)
         if [ -f "/usr/share/idiomind/addons/$set/icon.png" ]; then 
-            echo "/usr/share/idiomind/addons/$set/icon.png" >> $DC_s/21.cfg
+            echo "/usr/share/idiomind/addons/$set/icon.png" >> $DC_s/2.cfg
         else
-            echo "/usr/share/idiomind/images/thumb.png" >> $DC_s/21.cfg
+            echo "/usr/share/idiomind/images/thumb.png" >> $DC_s/2.cfg
         fi
-        echo "$set" >> $DC_s/21.cfg
+        echo "$set" >> $DC_s/2.cfg
         let n++
     done
     
@@ -101,13 +79,18 @@ function new_session() {
     (sleep 20 && "$s"); done &
 
     # screen size
-    sizes
+    s="$(xrandr | grep '*' | awk '{ print $1 }' \
+    | sed 's/x/\n/')"
+    y="$(sed -n 1p <<< "$s")"
+    x="$(sed -n 2p <<< "$s")"
+    echo $(($y/2)) >> $DC_s/10.cfg
+    echo $(($x/2)) >> $DC_s/10.cfg
     
     # log file
-    c=$(du -sb $DC_s/30.cfg | awk '{ print $1 }')
+    c=$(du -sb $DC_s/8.cfg | awk '{ print $1 }')
     if [ $c -gt 500000 ]; then
-    cat $DC_s/30.cfg | head -l 1000 > $DT/30.cfg
-    mv -f $DT/30.cfg $DC_s/30.cfg; fi
+    head -l 1000 < $DC_s/8.cfg > $DT/8.cfg
+    mv -f $DT/8.cfg $DC_s/8.cfg; fi
     
     # check for updates
     $DS/ifs/tls.sh a_check_updates &
@@ -115,7 +98,7 @@ function new_session() {
     # status update topics
     [[ ! -f "$DM_tl/.1.cfg" ]] && touch "$DM_tl/.1.cfg"
     n=1
-    while [ $n -le "$(cat "$DM_tl/.1.cfg" | head -50 | wc -l )" ]; do
+    while [ $n -le "$(wc -l < "$DM_tl/.1.cfg" | head -50)" ]; do
         tp=$(sed -n "$n"p "$DM_tl/.1.cfg")
         stts=$(echo "$(cat "$DM_tl/$tp/.conf/8.cfg")")
 
@@ -123,7 +106,7 @@ function new_session() {
         
             if [ -f "$DM_tl/$tp/.conf/9.cfg" ]; then
 
-                dts=$(cat "$DM_tl/$tp/.conf9.cfg" | wc -l)
+                dts=$(wc -l < "$DM_tl/$tp/.conf/9.cfg")
                 if [ $dts = 1 ]; then
                     dte=$(sed -n 1p "$DM_tl/$tp/.conf/9.cfg")
                     TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
@@ -166,7 +149,7 @@ function new_session() {
         fi
         let n++
     done
-    echo "$(date +%d)" > $DC_s/15.cfg
+    
     rm -f  $DT/ps_lk
     $DS/mngr.sh mkmn &
 }
@@ -174,7 +157,6 @@ function new_session() {
 if [ -z "$1" ]; then
 
     yad --width=150 --height=200 --form --name=idiomind \
-    --geometry=175x190-300-$(sed -n 12p $DC_s/18.cfg) \
     --fixed --title="Idiomind" --no-buttons \
     --field=gtk-new:btn "/usr/share/idiomind/add.sh 'new_items'" \
     --field=gtk-home:btn "idiomind 'topic'" \
@@ -183,16 +165,16 @@ if [ -z "$1" ]; then
     --on-top --borders=5 --align=center \
     --window-icon=idiomind &
 
-    printf "strt.1.strt\n" >> $DC_s/30.cfg
+    printf "strt.1.strt\n" >> $DC_s/8.cfg
   
-    [ -n "$tpc" ] && echo "$tpc" > $DC_s/6.cfg
+    [ -n "$tpc" ] && echo "$tpc" > $DT/tpe
     
     if [ ! -d $DT ]; then
         new_session & exit
     fi
     
-    [ -f $DC_s/15.cfg ] && d2=$(cat $DC_s/15.cfg)
-    if ([ "$(date +%d)" != "$d2" ] || [ ! -f $DC_s/15.cfg ]); then
+    [ -f "$DC_s/10.cfg" ] && d2=$(sed -n 1p "$DC_s/10.cfg")
+    if ([ "$(date +%d)" != "$d2" ] || [ ! -f "$DC_s/10.cfg" ]); then
         new_session
     fi
 fi
@@ -210,10 +192,11 @@ if [ $(echo "$1" | grep -o 'autostart') ]; then
 
 elif [ $(echo "$1" | grep -o '.idmnd') ]; then
 
-    wth=$(sed -n 3p $DC_s/18.cfg)
-    eht=$(sed -n 4p $DC_s/18.cfg)
+    wth=$(($(sed -n 2p $DC_s/10.cfg)-50))
+    eht=$(($(sed -n 3p $DC_s/10.cfg)-50))
     dte=$(date "+%d %B")
     c=$(echo $(($RANDOM%1000)))
+    source "$DS/ifs/mods/cmns.sh"
     [ ! -d $DT ] && mkdir $DT
     mkdir $DT/idmimp_$c
     (cp -f $DS/default/p1.sh $DT/p1.$c
@@ -229,16 +212,8 @@ elif [ $(echo "$1" | grep -o '.idmnd') ]; then
     tmp="$DT/idmimp_$c/$tpc_i"
     
     source "$tmp/12.cfg"
-    [ $language_target = English ] && lng=en
-    [ $language_target = French ] && lng=fr
-    [ $language_target = German ] && lng=de
-    [ $language_target = Chinese ] && lng=zh-cn
-    [ $language_target = Italian ] && lng=it
-    [ $language_target = Japanese ] && lng=ja
-    [ $language_target = Portuguese ] && lng=pt
-    [ $language_target = Spanish ] && lng=es
-    [ $language_target = Vietnamese ] && lng=vi
-    [ $language_target = Russian ] && lng=ru
+    lng="$(lnglss "$language_target")"
+
     [ $level = 1 ] && level="$(gettext "Beginner")"
     [ $level = 2 ] && level="$(gettext "Intermediate")"
     [ $level = 3 ] && level="$(gettext "Advanced")"
@@ -260,8 +235,8 @@ elif [ $(echo "$1" | grep -o '.idmnd') ]; then
         
     else
         cd "$tmp"
-        ws=$(cat "3.cfg" | wc -l)
-        ss=$(cat "4.cfg" | wc -l)
+        ws=$(wc -l < "3.cfg")
+        ss=$(wc -l < "4.cfg")
         itxt="<big><big>$tpc_i</big></big><small>\\n${language_source^} <b>></b> $language_target\\n$nwords $(gettext "Words") $nsentences $(gettext "Sentences") $nimages $(gettext "Images")\n$(gettext "Level") $level </small>\n"
         dlck="$DT/p1.$c"
         
@@ -283,8 +258,8 @@ elif [ $(echo "$1" | grep -o '.idmnd') ]; then
                 
             elif [ "$ret" -eq 0 ]; then
             
-                if2=$(cat $DM_t/$language_target/.1.cfg | wc -l)
-                chck=$(cat $DM_t/$language_target/.1.cfg | grep -Fo "$tpc_i" | wc -l)
+                if2=$(wc -l < $DM_t/$language_target/.1.cfg)
+                chck=$(grep -Fo "$tpc_i" < $DM_t/$language_target/.1.cfg | wc -l)
                 
                 if [ $if2 -ge 80 ]; then
                 
@@ -337,8 +312,8 @@ elif [ $(echo "$1" | grep -o '.idmnd') ]; then
                 cp -f 10.cfg "$DI_c/10.cfg"
                 cp -f $DS/default/tpc.sh "$DI_m/tpc.sh"
                 chmod +x "$DI_m/tpc.sh"
-                echo "$lng" > $DC_s/10.cfg
-                echo "$language_target" >> $DC_s/10.cfg
+                echo "$language_target" > $DC_s/6.cfg
+                echo "$lgsl" >> $DC_s/6.cfg
                 cd "$DI_m"
                 echo $dte > 13.cfg
                 echo "$tpc_i" >> "$DM_t/$language_target/.3.cfg"
@@ -359,9 +334,9 @@ elif [ $(echo "$1" | grep -o '.idmnd') ]; then
 # topic
 elif [ "$1" = topic ]; then
 
-    wth=$(sed -n 3p $DC_s/18.cfg)
-    eht=$(sed -n 4p $DC_s/18.cfg)
-    mde=$(sed -n 2p $DC_s/8.cfg)
+    wth=$(($(sed -n 2p $DC_s/10.cfg)-350))
+    eht=$(($(sed -n 3p $DC_s/10.cfg)-0))
+    mde=$(sed -n 2p $DC_s/4.cfg)
     source $DS/ifs/mods/cmns.sh
     include $DS/ifs/mods/topic
 
@@ -377,10 +352,10 @@ elif [ "$1" = topic ]; then
             ls0="$DC_tlt/0.cfg"
             ls1="$DC_tlt/1.cfg"
             ls2="$DC_tlt/2.cfg"
-            nt="$(cat $DC_tlt/10.cfg)"
+            flnt="$(cat $DC_tlt/10.cfg)"
             cd "$DC_tlt"
-            ws=$(cat 3.cfg | wc -l)
-            ss=$(cat 4.cfg | wc -l)
+            ws=$(wc -l < 3.cfg)
+            ss=$(wc -l < 4.cfg)
             c=$(echo $(($RANDOM%100000)))
             KEY=$c
             cnf1=$(mktemp $DT/cnf1.XXX.x)
@@ -393,13 +368,13 @@ elif [ "$1" = topic ]; then
             img=$DS/images/trans.png
             fi
             printf "tpcs.$tpc.tpcs\n" >> \
-            $DC_s/30.cfg &
-            inx=$(cat "$ls0" | wc -l)
-            tb1=$(cat "$ls1" | wc -l)
-            tb2=$(cat "$ls2" | wc -l)
+            $DC_s/8.cfg &
+            inx=$(wc -l < "$ls0")
+            tb1=$(wc -l < "$ls1")
+            tb2=$(wc -l < "$ls2")
         fi
     else
-        if [ "$(cat $DM_tl/.1.cfg | wc -l)" -ge 1 ]; then
+        if [ "$(wc -l < $DM_tl/.1.cfg)" -ge 1 ]; then
             exit
             
         else
@@ -427,8 +402,8 @@ elif [ "$1" = topic ]; then
         ret=$(echo $?)
                 
             if [ -f $cnf3 ]; then
-                if [ "$(cat $flnt)" != "$nt" ]; then
-                    echo "$nt" > "$flnt"
+                if [ "$flnt" != "$nt" ]; then
+                    echo "$nt" > "$DC_tlt/10.cfg"
                 fi
             fi
             if [ $ret -eq 3 ]; then
@@ -502,13 +477,14 @@ elif [ "$1" = topic ]; then
                 
             else
                 if [ ! -f $DT/ps_lk ]; then
-                    if [ -f $cnf3 ]; then
-                        if [ "$(cat $cnf3)" != "$(cat "$nt")" ]; then
-                            mv -f $cnf3 "$nt"
+                    if [ -f "$cnf3" ]; then
+                    
+                         if [ "$flnt" != "$nt" ]; then
+                            echo "$nt" > "$DC_tlt/10.cfg"
                         fi
                     fi
                     
-                    if [ -n "$(cat "$cnf1" | grep -o TRUE)" ]; then
+                    if [ -n "$(grep -o TRUE < "$cnf1")" ]; then
                         grep -Rl "|FALSE|" "$cnf1" | while read tab1 ; do
                              sed '/|FALSE|/d' "$cnf1" > tmpf1
                              mv tmpf1 $tab1
@@ -517,7 +493,7 @@ elif [ "$1" = topic ]; then
                         sed -i 's/|TRUE|//g' "$cnf1"
                         cat "$cnf1" >> "$ls2"
 
-                        cnt=$(cat "$cnf1" | wc -l)
+                        cnt=$(wc -l < "$cnf1")
                         grep -F -x -v -f "$cnf1" "$ls1" > $DT/ls1.x
                         mv -f $DT/ls1.x "$ls1"
                         if [ -n "$(cat "$ls1" | sort -n | uniq -dc)" ]; then
@@ -525,7 +501,7 @@ elif [ "$1" = topic ]; then
                             sed '/^$/d' $DT/ls1.x > "$ls1"
                         fi
                         printf "okim.$cnt.okim\n" >> \
-                        $DC_s/30.cfg &
+                        $DC_s/8.cfg &
                     fi
                 fi
                 
@@ -576,19 +552,20 @@ elif [ "$1" = topic ]; then
             
             else
                 if [ ! -f $DT/ps_lk ]; then
-                    if [ -f $cnf3 ]; then
-                        if [ "$(cat $flnt)" != "$nt" ]; then
-                            echo "$nt" > "$flnt"
+                    if [ -f "$cnf3" ]; then
+                    
+                        if [ "$flnt" != "$nt" ]; then
+                            echo "$nt" > "$DC_tlt/10.cfg"
                         fi
                     fi
-                    if [ -n "$(cat "$cnf1" | grep -o TRUE)" ]; then
+                    if [ -n "$(grep -o TRUE < "$cnf1")" ]; then
                         grep -Rl "|FALSE|" "$cnf1" | while read tab1 ; do
                              sed '/|FALSE|/d' "$cnf1" > tmpf1
                              mv tmpf1 $tab1
                         done
                         sed -i 's/|TRUE|//g' "$cnf1"
                         cat "$cnf1" >> "$ls2"
-                        cnt=$(cat "$cnf1" | wc -l)
+                        cnt=$(wc -l < "$cnf1")
                         grep -F -x -v -f "$cnf1" "$ls1" > $DT/ls1.x
                         mv -f $DT/ls1.x "$ls1"
                         if [ -n "$(cat "$ls1" | sort -n | uniq -dc)" ]; then
@@ -596,7 +573,7 @@ elif [ "$1" = topic ]; then
                             sed '/^$/d' $DT/ls1.x > "$ls1"
                         fi
                         printf "okim.$cnt.okim\n" >> \
-                        $DC_s/30.cfg &
+                        $DC_s/8.cfg &
                     fi
                 fi
             fi
@@ -606,8 +583,11 @@ elif [ "$1" = topic ]; then
     
     rm -f $DT/*.x
     
-elif [[ "$1" = "--version" ]]; then
+elif [ "$1" = "--version" ]; then
     echo "2.2-beta" & exit
-elif [[ "$1" = "-v" ]]; then
+elif [ "$1" = "-v" ]; then
     echo "2.2-beta" & exit
+elif [ "$1" = "-s" ]; then
+    new_session
+    idiomind & exit
 fi

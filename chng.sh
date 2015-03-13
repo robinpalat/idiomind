@@ -33,14 +33,14 @@ if [ "$1" = chngi ]; then
     fi
     }
     
-    nta=$(sed -n 3p "$DC_s/1.cfg")
-    sna=$(sed -n 4p "$DC_s/1.cfg")
-    indx="$DT/p/indx"
-    [[ -z $(cat "$DC_s/2.cfg") ]] && echo 8 > "$DC_s/2.cfg"
-    bcl=$(cat "$DC_s/2.cfg")
+    nta=$(sed -n 27p "$DC_s/1.cfg")
+    sna=$(sed -n 28p "$DC_s/1.cfg")
+    index="$DT/index"
+   
+    bcl=$(sed -n 40p "$DC_s/1.cfg")
     if ([ $(echo "$nta" | grep "TRUE") ] && [ "$bcl" -lt 12 ]); then bcl=12; fi
     
-    item="$(sed -n "$2"p "$indx")"
+    item="$(sed -n "$2"p "$index")"
     fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
     
     [ -f "$DM_tlt/$fname.mp3" ] && file="$DM_tlt/$fname.mp3" && t=2
@@ -81,53 +81,49 @@ if [ "$1" = chngi ]; then
 
 elif [ "$1" != chngi ]; then
     
-    if [ ! -f "$DC_s/0.cfg" ]; then
-        > "$DC_s/0.cfg"
-        fi
-        wth=$(sed -n 3p "$DC_s/18.cfg")
-        eht=$(sed -n 4p "$DC_s/18.cfg")
-        if [ -n "$1" ]; then
-            text="--text=<small>$1\n</small>"
-            align="left"; h=1
-            img="--image=info"
-        else
-            lgtl=$(echo "$lgtl" | awk '{print tolower($0)}')
-            text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/$lgtl'>$(gettext "Search other topics")</a>   </small></small>"
-            align="right"
-        fi
-        [ -f "$DM_tl/.1.cfg" ] && info2=$(cat "$DM_tl/.1.cfg" | wc -l) || info2=""
-        cd "$DC_s"
+    lgs=$(lnglss $lgsl)
+    [ ! -f "$DC_s/0.cfg" ] && > "$DC_s/0.cfg"
+    wth=$(($(sed -n 2p $DC_s/10.cfg)-350))
+    eht=$(($(sed -n 3p $DC_s/10.cfg)-0))
+    
+    if [ -n "$1" ]; then
+        text="--text=<small>$1\n</small>"
+        align="left"; h=1
+        img="--image=info"
+    else
+        lgtl=$(echo "$lgtl" | awk '{print tolower($0)}')
+        text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/$lgtl'>$(gettext "Search other topics")</a>   </small></small>"
+        align="right"
+    fi
+    
+    VAR=$(cat "$DC_s/0.cfg" | yad --name=idiomind --text-align=$align \
+    --center $img --image-on-top --separator="" \
+    "$text" --width="$wth" --height="$eht" --ellipsize=END \
+    --no-headers --list --window-icon=idiomind --borders=5 \
+    --button=gtk-new:3 --button=gtk-apply:0 \
+    --title="$(gettext "Topics")" --column=img:img --column=File:TEXT)
+    ret=$?
+        
+    if [ $ret -eq 3 ]; then
+    
+            "$DS/add.sh" new_topic & exit
 
-        VAR=$(cat "$DC_s/0.cfg" | yad --name=idiomind --text-align=$align \
-        --center $img --image-on-top --separator="" \
-        "$text" --width="$wth" --height="$eht" --ellipsize=END \
-        --no-headers --list --window-icon=idiomind --borders=5 \
-        --button=gtk-new:3 --button=gtk-apply:0 \
-        --title="$(gettext "Topics")" --column=img:img --column=File:TEXT)
-        ret=$?
+    elif [ $ret -eq 0 ]; then
+    
+            "$DS/stop.sh" play &
             
-        if [ $ret -eq 3 ]; then
-        
-                if [ "$h" = 1 ]; then
-                    "$DS/add.sh" new_topic & exit
-                    
-                else
-                    "$DS/add.sh" new_topic & exit
+            [ -z "$VAR" ] && exit 1
+            
+            if [ -f "$DM_tl/$VAR/tpc.sh" ]; then
+                if [ "$VAR" != "Feeds" ]; then
+                cp -f "$DS/default/tpc.sh" "$DM_tl/$VAR/tpc.sh"
                 fi
-        
-        elif [ $ret -eq 0 ]; then
-        
-                "$DS/stop.sh" play &
-                
-                [ -z "$VAR" ] && exit 1
-                
-                if [ -f "$DM_tl/$VAR/tpc.sh" ]; then
-                    "$DM_tl/$VAR/tpc.sh" & exit
-                else
-                    cp -f "$DS/default/tpc.sh" "$DM_tl/$VAR/tpc.sh"
-                    "$DM_tl/$VAR/tpc.sh" & exit
-                fi
-        else
-            exit 1
-        fi
+                "$DM_tl/$VAR/tpc.sh" & exit
+            else
+                cp -f "$DS/default/tpc.sh" "$DM_tl/$VAR/tpc.sh"
+                "$DM_tl/$VAR/tpc.sh" & exit
+            fi
+    else
+        exit 1
+    fi
 fi

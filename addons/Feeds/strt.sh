@@ -53,11 +53,11 @@ tmplitem="<?xml version='1.0' encoding='UTF-8'?>
 </xsl:stylesheet>"
 tpc_sh='#!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
-uid=$(sed -n 1p $DC_s/4.cfg)
 [ ! -f "$DM_tl/Feeds/.conf/8.cfg" ] \
 && echo "11" > "$DM_tl/Feeds/.conf/8.cfg"
-echo "$tpc" > "$DC_s/8.cfg"
-echo fd >> "$DC_s/8.cfg"
+echo "$tpc" > "$DC_s/4.cfg"
+echo fd >> "$DC_s/4.cfg"
+idiomind topic
 exit 1'
 DSP="$DS/addons/Feeds"
 DMC="$DM_tl/Feeds/cache"
@@ -99,9 +99,9 @@ function conditions() {
     
     n=1; DCP="$DM_tl/Feeds/.conf"
     while [ $n -le "$(wc -l < "$rssf")" ]; do
-        if ([ -n "$(grep -v   " - - -" < "$DCP/$n.xml" | uniq -dc)" ] \
-        || [ $(wc -l < "$DCP/$n.xml") != 7 ] \
-        || [ ! -f "$DCP/$n.xml" ]); then
+        if ([ -n "$(grep -v   " _______" < "$DCP/$n.rss" | uniq -dc)" ] \
+        || [ $(wc -l < "$DCP/$n.rss") != 7 ] \
+        || [ ! -f "$DCP/$n.rss" ]); then
                 echo "$n" > $DT/dupl.cnf
                 msg "$(gettext "Se encontró un error (01) en la configuración de un feed") ($n)\n " dialog-warning
                 [ -f "$DT/.uptp" ] && rm -fr "$DT_r" "$DT/.uptp"
@@ -208,11 +208,11 @@ fetch_podcasts() {
         podcast_items="$(echo "$podcast_items" | tr '\n' ' ' \
         | tr -s '[:space:]' | sed 's/EOL/\n/g' | head -n "$nps")"
         podcast_items="$(echo "$podcast_items" | sed '/^$/d')"
-        n_enc=$(grep -Fxon "$(gettext "Enclosure audio/video")" < "$DCP/$n.xml" \
+        n_enc=$(grep -Fxon "$(gettext "Enclosure audio/video")" < "$DCP/$n.rss" \
         | sed -n 's/^\([0-9]*\)[:].*/\1/p')
-        n_tit=$(grep -Fxon "$(gettext "Episode title")" < "$DCP/$n.xml" \
+        n_tit=$(grep -Fxon "$(gettext "Episode title")" < "$DCP/$n.rss" \
         | sed -n 's/^\([0-9]*\)[:].*/\1/p')
-        n_sum=$(grep -Fxon "$(gettext "Summary/Description")" < "$DCP/$n.xml" \
+        n_sum=$(grep -Fxon "$(gettext "Summary/Description")" < "$DCP/$n.rss" \
         | sed -n 's/^\([0-9]*\)[:].*/\1/p')
         
         while read -r item; do
@@ -349,8 +349,8 @@ check_index() {
 conditions
 
 if [ "$1" != A ]; then
-    echo "$tpc" > "$DC_s/8.cfg"
-    echo fd >> "$DC_s/8.cfg"
+    echo "$tpc" > "$DC_s/4.cfg"
+    echo fd >> "$DC_s/4.cfg"
     echo "11" > "$DCP/8.cfg"
     (sleep 2 && notify-send -i idiomind "$(gettext "Checking for new downloads")" "$(gettext "Updating") $nps $(gettext "feeds...")" -t 6000) &
 fi

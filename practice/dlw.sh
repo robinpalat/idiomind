@@ -6,17 +6,18 @@ drtt="$DM_tlt/words"
 drts="$DS/practice/"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
+log="$DC_s/8.cfg"
 all=$(cat lwin | wc -l)
 easy=0
 hard=0
 ling=0
-
 [ -f lwin2 ] && rm lwin2
 [ -f lwin3 ] && rm lwin3
 
 function score() {
 
     if [ "$(($(cat l_w)+$1))" -ge "$all" ] ; then
+        echo "w9.$(tr -s '\n' ';' < ok.w).w9" >> "$log"
         rm lwin lwin1 lwin2 lwin3 ok.w
         echo "$(date "+%a %d %B")" > look_lw
         echo 21 > .iconlw
@@ -37,7 +38,9 @@ function score() {
         done
         
         [ -f lwin2 ] && rm lwin2
-        [ -f lwin3 ] && rm lwin3
+        if [ -f lwin3 ]; then
+            echo "w6.$(tr -s '\n' ';' < lwin3).w6" >> "$log"
+            rm lwin3; fi
         $strt 7 $easy $ling $hard & exit 1
     fi
 }
@@ -103,11 +106,11 @@ while read trgt; do
         ans=$(echo "$?")
 
         if [ $ans = 2 ]; then
-            echo "$trgt" | tee -a ok.w $w9
+            echo "$trgt" >> ok.w
             easy=$(($easy+1))
 
         elif [ $ans = 3 ]; then
-            echo "$trgt" | tee -a lwin2 w6
+            echo "$trgt" >> lwin2
             hard=$(($hard+1))
         fi
 
@@ -140,7 +143,7 @@ else
                 ling=$(($ling+1))
                 
             elif [ $ans = 3 ]; then
-                echo "$trgt" | tee -a lwin3 w6
+                echo "$trgt" >> lwin3
             fi
             
         elif [ $ret = 1 ]; then

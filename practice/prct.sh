@@ -18,14 +18,13 @@
 #  
 
 source /usr/share/idiomind/ifs/c.conf
-strt=$DS/practice/strt.sh
-cls=$DS/practice/cls
-w9=$DC_s/22.cfg
-w6=$DC_s/23.cfg
-DF=$DS/practice/df.sh
-DLW=$DS/practice/dlw.sh
-DMC=$DS/practice/dmc.sh
-DLS=$DS/practice/dls.sh
+strt="$DS/practice/strt.sh"
+cls="$DS/practice/cls"
+log="$DC_s/8.cfg"
+DF="$DS/practice/df.sh"
+DLW="$DS/practice/dlw.sh"
+DMC="$DS/practice/dmc.sh"
+DLS="$DS/practice/dls.sh"
 Wi="$DC_tlt/3.cfg"
 Si="$DC_tlt/4.cfg"
 Li="$DC_tlt/1.cfg"
@@ -99,6 +98,7 @@ if [[ "$1" = f ]]; then
     fi
 
     if ([ -f fin ] && [ -f ok.f ]); then
+        echo "w9.$(tr -s '\n' ';' < ok.f).w9" >> "$log"
         grep -Fxvf ok.f fin > fin1
         echo "-- restarting session"
     else
@@ -124,6 +124,7 @@ elif [[ "$1" = m ]]; then
     fi
 
     if ([ -f mcin ] && [ -f ok.m ]); then
+        echo "w9.$(tr -s '\n' ';' < ok.m).w9" >> "$log"
         grep -Fxvf ok.m mcin > mcin1
         echo "-- restarting session"
         
@@ -153,6 +154,7 @@ elif [[ "$1" = w ]]; then
     fi
 
     if ([ -f lwin ] && [ -f ok.w ]); then
+        echo "w9.$(tr -s '\n' ';' < ok.w).w9" >> "$log"
         grep -Fxvf ok.w lwin > lwin1
         echo "-- restarting session"
     else

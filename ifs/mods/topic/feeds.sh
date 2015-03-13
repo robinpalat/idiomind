@@ -50,8 +50,9 @@ function feedmode() {
     --ellipsize=END --image-on-top \
     --window-icon=$DS/images/idiomind.png \
     --width="$wth" --height="$eht" --borders=0 \
-    --button="Playlist":/usr/share/idiomind/play.sh \
-    --button="gtk-refresh":2
+    --button="<small>$(gettext "Play/Stop")</small>":"/usr/share/idiomind/play.sh" \
+    --button="gtk-refresh":2 \
+    --button="gtk-close":1
     ret=$?
         
     if [ $ret -eq 2 ]; then

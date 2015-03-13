@@ -6,20 +6,19 @@ drtt="$DM_tlt/words"
 drts="$DS/practice/"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
-w9=$DC_s/22.cfg
+log="$DC_s/8.cfg"
 all=$(cat fin | wc -l)
 easy=0
 hard=0
 ling=0
-
 [ -f fin2 ] && rm fin2
 [ -f fin3 ] && rm fin3
 
 function score() {
 
     if [ "$(($(cat l_f)+$1))" -ge "$all" ]; then
-        
-        rm fin fin1 fin2 fin3 ok.f
+        echo "w9.$(tr -s '\n' ';' < ok.f).w9" >> "$log"
+        rm fin fin1 fin2 ok.f
         echo "$(date "+%a %d %B")" > look_f
         echo 21 > .iconf
         play $drts/all.mp3 & $strt 1 &
@@ -39,7 +38,9 @@ function score() {
         done
         
         [ -f fin2 ] && rm fin2
-        [ -f fin3 ] && rm fin3
+        if [ -f fin3 ]; then
+            echo "w6.$(tr -s '\n' ';' < fin3).w6" >> "$log"
+            rm fin3; fi
         $strt 5 $easy $ling $hard & exit 1
     fi
 }
@@ -98,11 +99,11 @@ while read trgt; do
         ans=$(echo "$?")
 
         if [ $ans = 2 ]; then
-            echo "$trgt" | tee -a ok.f $w9
+            echo "$trgt" >> ok.f
             easy=$(($easy+1))
 
         elif [ $ans = 3 ]; then
-            echo "$trgt" | tee -a fin2 w6
+            echo "$trgt" >> fin2
             hard=$(($hard+1))
         fi
 
@@ -135,7 +136,7 @@ else
                 ling=$(($ling+1))
                 
             elif [ $ans = 3 ]; then
-                echo "$trgt" | tee -a fin3 w6
+                echo "$trgt" >> fin3
             fi
             
         elif [ $ret = 1 ]; then

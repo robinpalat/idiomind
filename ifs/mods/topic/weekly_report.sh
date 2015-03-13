@@ -4,8 +4,8 @@
 
 function weeklyreport() {
     
-    wth=$(sed -n 3p $DC_s/18.cfg)
-    eht=$(sed -n 4p $DC_s/18.cfg)
+    wth=$(($(sed -n 2p $DC_s/10.cfg)-350))
+    eht=$(($(sed -n 3p $DC_s/10.cfg)-0))
     TPS=$DC_a/stats/tpcs.tmp
     tpc1=$(sed -n 1p $TPS)
     tpc2=$(sed -n 2p $TPS)
@@ -110,16 +110,16 @@ function weeklyreport() {
                     fi
                     let n++
                 done
-            rm $DC_s/22.cfg
+            
             fi
             
-            echo "$(sed -n 1p $DC_a/stats/tpc.tmp)" > $DC_s/8.cfg
-            echo "$(sed -n 2p $DC_a/stats/tpc.tmp)" >> $DC_s/8.cfg
+            echo "$(sed -n 1p $DC_a/stats/tpc.tmp)" > $DC_s/4.cfg
+            echo "$(sed -n 2p $DC_a/stats/tpc.tmp)" >> $DC_s/4.cfg
             rm -f $DT/*.tmp
             rm $DC_a/stats/*.tmp
         else
-            echo "$(sed -n 1p $DC_a/stats/tpc.tmp)" > $DC_s/8.cfg
-            echo "$(sed -n 2p $DC_a/stats/tpc.tmp)" >> $DC_s/8.cfg
+            echo "$(sed -n 1p $DC_a/stats/tpc.tmp)" > $DC_s/4.cfg
+            echo "$(sed -n 2p $DC_a/stats/tpc.tmp)" >> $DC_s/4.cfg
             rm -f $DT/*.tmp
         fi
 }

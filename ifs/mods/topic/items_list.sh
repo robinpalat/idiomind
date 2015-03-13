@@ -29,8 +29,9 @@ function notebook_1() {
     --tab=" $(gettext "Edit") " \
     --ellipsize=END --image-on-top --always-print-result \
     --width="$wth" --height="$eht" --borders=0 \
-    --button="$(gettext "Playlist")":$DS/play.sh \
-    --button="$(gettext "Practice")":5
+    --button="<small>$(gettext "Play/Stop")</small>":$DS/play.sh \
+    --button="$(gettext "Practice")":5 \
+    --button="gtk-close":1
 }
 
 
@@ -56,7 +57,7 @@ function notebook_2() {
     --tab=" $(gettext "Notes") " \
     --ellipsize=END --image-on-top --always-print-result \
     --width="$wth" --height="$eht" --borders=0 \
-    --button="$(gettext "Edit")":3
+    --button="gtk-close":1
 }
 
 

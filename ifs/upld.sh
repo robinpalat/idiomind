@@ -18,16 +18,16 @@
 #  
 
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/mods/cmns.sh
+source "$DS/ifs/mods/cmns.sh"
 
 if [ "$1" = vsd ]; then
 
     U=$(sed -n 1p $HOME/.config/idiomind/s/4.cfg)
     lng=$(echo "$lgtl" | awk '{print tolower($0)}')
-    wth=$(sed -n 3p $DC_s/18.cfg)
-    eht=$(sed -n 4p $DC_s/18.cfg)
+    wth=$(($(sed -n 2p $DC_s/10.cfg)-350))
+    eht=$(($(sed -n 3p $DC_s/10.cfg)-0))
     
-    cd $DM_t/saved; ls -t *.id | sed 's/\.id//g' | yad --list \
+    cd "$DM_t/saved"; ls -t *.id | sed 's/\.id//g' | yad --list \
     --window-icon=idiomind --center --skip-taskbar --borders=8 \
     --text=" <small>$(gettext "Double clik to download") \t\t\t\t</small>" \
     --title="$(gettext "Topics saved")" --width=$wth --height=$eht \
@@ -39,7 +39,7 @@ if [ "$1" = vsd ]; then
     
 elif [ "$1" = infsd ]; then
 
-    U=$(sed -n 1p $DC_s/4.cfg)
+    U=$(sed -n 1p $DC_s/5.cfg)
     user=$(echo "$(whoami)")
     source "$DM_t/saved/$2.id"
     [ $language_source = english ] && lng=en
@@ -147,116 +147,16 @@ interview="$(gettext "Interview")"
 funny="$(gettext "Funny")"
 
 lnglbl=$(echo $lgtl | awk '{print tolower($0)}')
-U=$(sed -n 1p $DC_s/4.cfg)
-mail=$(sed -n 2p $DC_s/4.cfg)
-user=$(sed -n 3p $DC_s/4.cfg)
+U=$(sed -n 1p $DC_s/5.cfg)
+mail=$(sed -n 2p $DC_s/5.cfg)
+user=$(sed -n 3p $DC_s/5.cfg)
 [ -z "$user" ] && user=$(echo "$(whoami)")
 nt=$(cat "$DC_tlt/10.cfg")
 nme=$(echo "$tpc" | sed 's/ /_/g' \
 | sed 's/"//g' | sed 's/’//g')
 
-# check index
 #------------------------------------------
-[ ! -f "$DC_tlt/0.cfg" ] && touch "$DC_tlt/0.cfg"
-[ ! -f "$DC_tlt/1.cfg" ] && touch "$DC_tlt/1.cfg"
-[ ! -f "$DC_tlt/2.cfg" ] && touch "$DC_tlt/2.cfg"
-[ ! -f "$DC_tlt/3.cfg" ] && touch "$DC_tlt/3.cfg"
-[ ! -f "$DC_tlt/4.cfg" ] && touch "$DC_tlt/4.cfg"
-[ ! -f "$DC_tlt/10.cfg" ] && touch "$DC_tlt/10.cfg"
-
-check_index1 "$DC_tlt/0.cfg" "$DC_tlt/1.cfg" \
-"$DC_tlt/2.cfg" "$DC_tlt/3.cfg" "$DC_tlt/4.cfg"
-
-chk0=$(cat "$DC_tlt/0.cfg" | wc -l)
-chk1=$(cat "$DC_tlt/1.cfg" | wc -l)
-chk2=$(cat "$DC_tlt/2.cfg" | wc -l)
-chk3=$(cat "$DC_tlt/3.cfg" | wc -l)
-chk4=$(cat "$DC_tlt/4.cfg" | wc -l)
-stts=$(cat "$DC_tlt/8.cfg")
-mp3s="$(cd "$DM_tlt/"; find . -maxdepth 2 -name '*.mp3' \
-| sort -k 1n,1 -k 7 | wc -l)"
-
-# fix index
-#------------------------------------------
-if [[ $(($chk3 + $chk4)) != $chk0 || $(($chk1 + $chk2)) != $chk0 \
-|| $mp3s != $chk0 || $stts = 13 ]]; then
-    sleep 1
-    notify-send -i idiomind "$(gettext "Index error")" "$(gettext "fixing...")" -t 3000 &
-    > $DT/ps_lk
-    [ -d "$DM_tlt/.conf" ] && mkdir "$DM_tlt/.conf"
-    DC_tlt="$DM_tlt/.conf"
-    cd "$DM_tlt/words/"
-    for i in *.mp3 ; do [ ! -s ${i} ] && rm ${i} ; done
-    if [ -f ".mp3" ]; then rm ".mp3"; fi
-    cd "$DM_tlt/"
-    for i in *.mp3 ; do [ ! -s ${i} ] && rm ${i} ; done
-    if [ -f ".mp3" ]; then rm ".mp3"; fi
-    cd "$DM_tlt/"; find . -maxdepth 2 -name '*.mp3' \
-    | sort -k 1n,1 -k 7 | sed s'|\.\/words\/||'g \
-    | sed s'|\.\/||'g | sed s'|\.mp3||'g > $DT/index
-
-    if ([ -f "$DC_tlt/.11.cfg" ] && \
-    [ -n "$(cat "$DC_tlt/.11.cfg")" ]); then
-    index="$DC_tlt/.11.cfg"
-    echo ok
-    else
-    index="$DT/index"
-    fi
-
-    while read name; do
-
-        sfname="$(nmfile "$name")"
-        wfname="$(nmfile "$name")"
-
-        if [ -f "$DM_tlt/$name.mp3" ]; then
-            tgs="$(eyeD3 "$DM_tlt/$name.mp3")"
-            trgt="$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')"
-            xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
-            [ "$name" != "$xname" ] && \
-            mv -f "$DM_tlt/$name.mp3" "$DM_tlt/$xname.mp3"
-            echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
-            echo "$trgt" >> "$DC_tlt/4.cfg.tmp"
-        elif [ -f "$DM_tlt/$sfname.mp3" ]; then
-            tgs=$(eyeD3 "$DM_tlt/$sfname.mp3")
-            trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
-            xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
-            [ "$sfname" != "$xname" ] && \
-            mv -f "$DM_tlt/$sfname.mp3" "$DM_tlt/$xname.mp3"
-            echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
-            echo "$trgt" >> "$DC_tlt/4.cfg.tmp"
-        elif [ -f "$DM_tlt/words/$name.mp3" ]; then
-            tgs="$(eyeD3 "$DM_tlt/words/$name.mp3")"
-            trgt="$(echo "$tgs" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')"
-            xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
-            [ "$name" != "$xname" ] && \
-            mv -f "$DM_tlt/words/$name.mp3" "$DM_tlt/words/$xname.mp3"
-            echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
-            echo "$trgt" >> "$DC_tlt/3.cfg.tmp"
-        elif [ -f "$DM_tlt/words/$wfname.mp3" ]; then
-            tgs="$(eyeD3 "$DM_tlt/words/$wfname.mp3")"
-            trgt="$(echo "$tgs" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')"
-            xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
-            [ "$wfname" != "$xname" ] \
-            && mv -f "$DM_tlt/words/$wfname.mp3" "$DM_tlt/words/$xname.mp3"
-            echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
-            echo "$trgt" >> "$DC_tlt/3.cfg.tmp"
-        fi
-        
-    done < "$index"
-
-    mv -f "$DC_tlt/0.cfg.tmp" "$DC_tlt/0.cfg"
-    mv -f "$DC_tlt/3.cfg.tmp" "$DC_tlt/3.cfg"
-    mv -f "$DC_tlt/4.cfg.tmp" "$DC_tlt/4.cfg"
-    cp -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"
-    cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
-    check_index1 "$DC_tlt/0.cfg" "$DC_tlt/1.cfg" \
-    "$DC_tlt/2.cfg" "$DC_tlt/3.cfg" "$DC_tlt/4.cfg"
-    [ -f $DT/ps_lk ] && rm -f $DT/ps_lk
-fi
-
-if [ $? -ne 0 ]; then
-    msg " $files_err\n\n" error & exit 1
-fi
+"$DS/ifs/tls.sh" check_index "$tpc"
 
 if [ $(cat "$DC_tlt/0.cfg" | wc -l) -le 20 ]; then
     msg "$(gettext "To upload must be at least 20 items.")\n " info &
@@ -278,50 +178,46 @@ upld=$(yad --form --width=480 --height=460 --on-top \
 "!$others!$article!$comics!$culture!$documentary!$entertainment!$funny!$family!$grammar!$history!$movies!$in_the_city!$interview!$internet!$music!$nature!$news!$office!$relations!$sport!$science!$shopping!$social_networks!$technology!$travel" \
 --field="    <small>$(gettext "Skill Level")</small>:CB" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
 --field="<small>\n$(gettext "Description/Notes")</small>:TXT" "$nt" \
---field="<small>$(gettext "Add image")</small>:FL")
+--field="<small>$(gettext "Add image")</small>:FL" "$DM_tlt/words/images/img.png")
 ret=$?
 
-if [[ "$ret" != 0 || "$ret" != 2 ]]; then
-    exit 1
-fi
 if [ "$ret" = 2 ]; then
-    "$DS/ifs/tls.sh" pdf & exit 1
-fi
+    "$DS/ifs/tls.sh" pdfdoc & exit 1
+    
+elif [ "$ret" = 0 ]; then
 
 Ctgry=$(echo "$upld" | cut -d "|" -f4)
-[ $Ctgry = $others ] && Ctgry=others
-[ $Ctgry = $comics ] && Ctgry=comics
-[ $Ctgry = $culture ] && Ctgry=culture
-[ $Ctgry = $family ] && Ctgry=family
-[ $Ctgry = $entertainment ] && Ctgry=entertainment
-[ $Ctgry = $grammar ] && Ctgry=grammar
-[ $Ctgry = $history ] && Ctgry=history
-[ $Ctgry = $documentary ] && Ctgry=documentary
-[ $Ctgry = $in_the_city ] && Ctgry=in_the_city
-[ $Ctgry = $movies ] && Ctgry=movies
-[ $Ctgry = $internet ] && Ctgry=internet
-[ $Ctgry = $music ] && Ctgry=music
-[ $Ctgry = $nature ] && Ctgry=nature
-[ $Ctgry = $news ] && Ctgry=news
-[ $Ctgry = $office ] && Ctgry=office
-[ $Ctgry = $relations ] && Ctgry=relations
-[ $Ctgry = $sport ] && Ctgry=sport
-[ $Ctgry = $social_networks ] && Ctgry=social_networks
-[ $Ctgry = $shopping ] && Ctgry=shopping
-[ $Ctgry = $technology ] && Ctgry=technology
-[ $Ctgry = $article ] && Ctgry=article
-[ $Ctgry = $travel ] && Ctgry=travel
-[ $Ctgry = $interview ] && Ctgry=interview
-[ $Ctgry = $science ] && Ctgry=science
-[ $Ctgry = $funny ] && Ctgry=funny
-[ $Ctgry = $others ] && Ctgry=others
-
 level=$(echo "$upld" | cut -d "|" -f5)
-[ $level = $beginner ] && level=1
-[ $level = $intermediate ] && level=2
-[ $level = $advanced ] && level=3
+[ "$Ctgry" = "$others" ] && Ctgry=others
+[ "$Ctgry" = "$comics" ] && Ctgry=comics
+[ "$Ctgry" = "$culture" ] && Ctgry=culture
+[ "$Ctgry" = "$family" ] && Ctgry=family
+[ "$Ctgry" = "$entertainment" ] && Ctgry=entertainment
+[ "$Ctgry" = "$grammar" ] && Ctgry=grammar
+[ "$Ctgry" = "$history" ] && Ctgry=history
+[ "$Ctgry" = "$documentary" ] && Ctgry=documentary
+[ "$Ctgry" = "$in_the_city" ] && Ctgry=in_the_city
+[ "$Ctgry" = "$movies" ] && Ctgry=movies
+[ "$Ctgry" = "$internet" ] && Ctgry=internet
+[ "$Ctgry" = "$music" ] && Ctgry=music
+[ "$Ctgry" = "$nature" ] && Ctgry=nature
+[ "$Ctgry" = "$news" ] && Ctgry=news
+[ "$Ctgry" = "$office" ] && Ctgry=office
+[ "$Ctgry" = "$relations" ] && Ctgry=relations
+[ "$Ctgry" = "$sport" ] && Ctgry=sport
+[ "$Ctgry" = "$social_networks" ] && Ctgry=social_networks
+[ "$Ctgry" = "$shopping" ] && Ctgry=shopping
+[ "$Ctgry" = "$technology" ] && Ctgry=technology
+[ "$Ctgry" = "$article" ] && Ctgry=article
+[ "$Ctgry" = "$travel" ] && Ctgry=travel
+[ "$Ctgry" = "$interview" ] && Ctgry=interview
+[ "$Ctgry" = "$science" ] && Ctgry=science
+[ "$Ctgry" = "$funny" ] && Ctgry=funny
+[ "$Ctgry" = "$others" ] && Ctgry=others
+[ "$level" = $(gettext "Beginner") ] && level=1
+[ "$level" = $(gettext "Intermediate") ] && level=2
+[ "$level" = $(gettext "Advanced") ] && level=3
 
-echo "$Ctgry"
 if [ -z "$Ctgry" ]; then
 msg " $(gettext "Please indicates a category.")\n " info
 $DS/ifs/upld.sh &
@@ -356,40 +252,23 @@ fi
 [ -f "$DC_tlt"/12.cfg ] && date_c=$(cat "$DC_tlt"/12.cfg)
 date_u=$(date +%F)
 
-echo '
-name="01"
-language_source="02"
-language_target="03"
-author="04"
-contact="05"
-category="06"
-link="07"
-date_c="08"
-date_u="09"
-nwords="10"
-nsentences="11"
-nimages="12"
-level=13
-' > "$DT_u/$tpc/12.cfg"
-
-sed -i "s/01/$tpc/g" "$DT_u/$tpc/12.cfg"
-sed -i "s/02/$lgsl/g" "$DT_u/$tpc/12.cfg"
-sed -i "s/03/$lgtl/g" "$DT_u/$tpc/12.cfg"
-sed -i "s/04/$Author/g" "$DT_u/$tpc/12.cfg"
-sed -i "s/05/$Mail/g" "$DT_u/$tpc/12.cfg"
-sed -i "s/06/$Ctgry/g" "$DT_u/$tpc/12.cfg"
-sed -i "s/07/$link/g" "$DT_u/$tpc/12.cfg"
-sed -i "s/08/$date_c/g" "$DT_u/$tpc/12.cfg"
-sed -i "s/09/$date_u/g" "$DT_u/$tpc/12.cfg"
-sed -i "s/10/$words/g" "$DT_u/$tpc/12.cfg"
-sed -i "s/11/$sentences/g" "$DT_u/$tpc/12.cfg"
-sed -i "s/12/$images/g" "$DT_u/$tpc/12.cfg"
-sed -i "s/13/$level/g" "$DT_u/$tpc/12.cfg"
+echo -e "name=\"$tpc\"
+language_source=\"$lgsl\"
+language_target=\"$lgtl\"
+author=\"$Author\"
+contact=\"$Mail\"
+category=\"$Ctgry\"
+link=\"$link\"
+date_c=\"$date_c\"
+date_u=\"$date_u\"
+nwords=\"$words\"
+nsentences=\"$sentences\"
+nimages=\"$images\"
+level=\"$level\"" > "$DT_u/$tpc/12.cfg"
 cp -f "$DT_u/$tpc/12.cfg" "$DT/12.cfg"
-
-echo "$U" > $DC_s/4.cfg
-echo "$Mail" >> $DC_s/4.cfg
-echo "$Author" >> $DC_s/4.cfg
+echo -e "$U
+$Mail
+$Author" >> "$DC_s/5.cfg"
 
 if [ -f "$img" ]; then
 /usr/bin/convert -scale 110x80! "$img" $DT_u/img1.png
@@ -464,5 +343,7 @@ msg "$info" $image
 [ -f "$DT_u/$tpc.tar" ] && rm -f "$DT_u/$tpc.tar"
 [ -f "$DT_u/$tpc.tar.gz" ] && rm -f "$DT_u/$tpc.tar.gz"
 [ -d "$DT_u" ] && rm -fr "$DT_u"
-
-exit
+exit 0
+else
+exit 1
+fi

@@ -2,8 +2,8 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-wth=$(sed -n 5p $DC_s/18.cfg)
-eht=$(sed -n 6p $DC_s/18.cfg)
+wth=$(($(sed -n 2p $DC_s/10.cfg)-320))
+eht=$(($(sed -n 3p $DC_s/10.cfg)-130))
 ap=$(sed -n 14p < $DC_s/1.cfg)
 echo "_" >> "$DC_a/stats/.tmp" &
 re='^[0-9]+$'
@@ -96,6 +96,6 @@ fi
             "$DS/vwr.sh" "$1" "$nll" $ff &
         else 
             printf "vwr.$(cat "$DC_a/stats/.tmp" | wc -l).vwr\n" >> \
-            "$DC_s/30.cfg" &
+            "$DC_s/8.cfg" &
             rm "$DC/addons/stats/.tmp" & exit 1
         fi

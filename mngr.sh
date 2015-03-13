@@ -18,7 +18,7 @@
 #  
 
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/mods/cmns.sh
+source "$DS/ifs/mods/cmns.sh"
 
 if [ "$1" = mkmn ]; then
     
@@ -28,28 +28,13 @@ if [ "$1" = mkmn ]; then
     [[ -d ./practice ]] && rm -r ./practice
     for i in "$(ls -t -N -d */ | sed 's/\///g')"; do echo "${i%%/}"; done > $DM_tl/.1.cfg
     sed -i '/^$/d' $DM_tl/.1.cfg
-    [[ -f $DC_s/0.cfg ]] && mv -f $DC_s/0.cfg $DC_s/16.cfg
+    > $DC_s/0.cfg
     
     n=1
     while [ $n -le $(cat $DM_tl/.1.cfg | head -50 | wc -l) ]; do
     
         tp=$(sed -n "$n"p $DM_tl/.1.cfg)
-        
-        cd "$DM_tl/$tp/.conf"
-        [ -f cfg.1 ] && mv cfg.1 1.cfg
-        [ -f cfg.2 ] && mv cfg.2 2.cfg
-        [ -f cfg.3 ] && mv cfg.3 3.cfg
-        [ -f cfg.4 ] && mv cfg.4 4.cfg
-        [ -f cfg.5 ] && mv cfg.5 5.cfg
-        [ -f cfg.6 ] && mv cfg.6 6.cfg
-        [ -f cfg.7 ] && mv cfg.7 7.cfg
-        [ -f cfg.8 ] && mv cfg.8 8.cfg
-        [ -f cfg.9 ] && mv cfg.9 9.cfg
-        [ -f cfg.10 ] && mv cfg.10 10.cfg
-        [ -f .cfg.11 ] && mv .cfg.11 .11.cfg
-        [ -f cfg.12 ] && mv cfg.12 12.cfg
-        
-        
+
         i=$(cat "$DM_tl/$tp/.conf/8.cfg")
         if [ ! -f "$DM_tl/$tp/.conf/8.cfg" ] || \
         [ ! -f "$DM_tl/$tp/.conf/0.cfg" ] || \
@@ -313,7 +298,7 @@ elif [ "$1" = delete_topic ]; then
             [[ -d "$DM_tl/$tpc" ]] && rm -r "$DM_tl/$tpc"
             [[ -d "$DC_tl/$tpc" ]] && rm -r "$DC_tl/$tpc"
             
-            > $DC_s/6.cfg; rm $DC_s/8.cfg
+            rm $DC_s/4.cfg
             > $DC_tl/.8.cfg
 
             cd $DC_tl
@@ -343,8 +328,10 @@ elif [ "$1" = delete_topic ]; then
 elif [ "$1" = edt ]; then
 
     include $DS/ifs/mods/mngr
-    wth=$(sed -n 7p $DC_s/18.cfg)
-    eht=$(sed -n 8p $DC_s/18.cfg)
+    wth=$(($(sed -n 2p $DC_s/10.cfg)-250))
+    eht=$(($(sed -n 3p $DC_s/10.cfg)-0))
+    lgt=$(lnglss $lgtl)
+    lgs=$(lnglss $lgsl)
     dct="$DS/addons/Dics/cnfg.sh"
     cnf=$(mktemp $DT/cnf.XXXX)
     edta=$(sed -n 17p ~/.config/idiomind/s/1.cfg)
@@ -434,7 +421,7 @@ elif [ "$1" = edt ]; then
             
                 impr=$(echo "$infm" | tr '\n' '_')
                 add_tags_6 W "$impr" "$wfile" >/dev/null 2>&1
-                printf "eitm.$tpc.eitm\n" >> $DC_s/30.cfg &
+                printf "eitm.$tpc.eitm\n" >> $DC_s/8.cfg &
             fi
 
             if [[ "$tpc" != "$topc" ]]; then
@@ -451,7 +438,7 @@ elif [ "$1" = edt ]; then
                 sed '/^$/d' $DT/tx > "$ind"
                 rm $DT/tx
                 echo "$TGT" >> "$inp"
-                printf "okim.1.okim\n" >> $DC_s/30.cfg &
+                printf "okim.1.okim\n" >> $DC_s/8.cfg &
                 $DS/vwr.sh "$v" "nll" $ff & exit 1
             fi
             
@@ -605,7 +592,7 @@ elif [ "$1" = edt ]; then
                 sed '/^$/d' $DT/tx > "$ind"
                 rm $DT/tx
                 echo "$trgt" >> "$inp"
-                printf "okim.1.okim\n" >> $DC_s/30.cfg &
+                printf "okim.1.okim\n" >> $DC_s/8.cfg &
                 
                 $DS/vwr.sh "$v" "null" $ff & exit 1
             fi

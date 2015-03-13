@@ -2,8 +2,11 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/mods/cmns.sh
-include $DS/ifs/mods/add
+source "$DS/ifs/mods/cmns.sh"
+include "$DS/ifs/mods/add"
+trda=$(sed -n 36p "$DC_s/1.cfg")
+lgt=$(lnglss $lgtl)
+lgs=$(lnglss $lgsl)
 
 if [ "$1" = new_topic ]; then
 
@@ -140,18 +143,11 @@ Create one using the button below. ")"
     ttle="${tpe:0:50}"
     [[ "$tpe" != "$tpc" ]] && topic="$topic <b>*</b>" || topic="$topic"
     
-    [[ ! -f $DC_s/3.cfg ]] && echo 'FALSE' > $DC_s/3.cfg
-    
-    if sed -n 1p $DC_s/3.cfg | grep 'TRUE'; then
-    
+
+    if [ $trda = TRUE ]; then
         lzgpr="$(dlg_form_1)"
-        
-    elif sed -n 1p $DC_s/3.cfg | grep 'FALSE'; then
-    
+    else 
         lzgpr="$(dlg_form_2)"
-        
-    else
-        lzgpr="$(dlg_form_1)"
     fi
     
     ret=$(echo "$?")
@@ -204,8 +200,7 @@ Create one using the button below. ")"
             if [[ "$chk" = "$(gettext "New topic") *" ]]; then
                 $DS/add.sh new_topic
             else
-                echo "$tpe" > $DC_s/7.cfg
-                echo "$tpe" > $DC_s/6.cfg
+                echo "$tpe" > $DT/tpe
             fi
             
             if [ "$(echo "$trgt")" = I ]; then
@@ -222,7 +217,7 @@ Create one using the button below. ")"
 
             elif ([ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]); then
             
-                if sed -n 1p $DC_s/3.cfg | grep FALSE; then
+                if [ $trda = FALSE ]; then
                     if [ -z "$srce" ]; then
                         [ -d $DT_r ] && rm -fr $DT_r
                         msg "$(gettext "The second field is empty.") $lgsl." info & exit 1
@@ -242,7 +237,7 @@ Create one using the button below. ")"
                 fi
             elif ([ $lgt != ja ] || [ $lgt != 'zh-cn' ] || [ $lgt != ru ]); then
             
-                if sed -n 1p $DC_s/3.cfg | grep FALSE; then
+                if [ $trda = FALSE ]; then
                     if [ -z "$srce" ]; then
                         [ -d $DT_r ] && rm -fr $DT_r
                         msg "$(gettext "The second field is empty.") $lgsl." info & exit 1
@@ -284,7 +279,7 @@ elif [ "$1" = new_sentence ]; then
     fi
     
     # ---------------------
-    if sed -n 1p $DC_s/3.cfg | grep TRUE; then
+    if [ $trda = TRUE ]; then
     
         internet
     
@@ -370,7 +365,7 @@ elif [ "$1" = new_sentence ]; then
     fetch_audio $aw $bw $DT_r $DM_tls
     
     [ -d $DT_r ] && rm -fr $DT_r
-    printf "aitm.1.aitm\n" >> $DC_s/30.cfg
+    printf "aitm.1.aitm\n" >> $DC_s/8.cfg
     exit 1
     
 
@@ -396,7 +391,7 @@ elif [ $1 = new_word ]; then
     internet
     
    # ---------------------
-    if sed -n 1p $DC_s/3.cfg | grep TRUE; then
+    if [ $trda = TRUE ]; then
 
         trgt="$(translate "$trgt" auto $lgt)"
         srce="$(translate "$trgt" $lgt $lgs)"
@@ -469,7 +464,7 @@ elif [ $1 = new_word ]; then
         eyeD3 --set-encoding=utf8 -A IWI3I0I"$nt"IWI3I0I "$DM_tlt/words/$fname.mp3"
         notify-send -i "$icnn" "$trgt" "$srce\\n($tpe)" -t 5000
         index word "$trgt" "$tpe"
-        printf "aitm.1.aitm\n" >> $DC_s/30.cfg
+        printf "aitm.1.aitm\n" >> $DC_s/8.cfg
     
     else
         [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
@@ -574,7 +569,7 @@ elif [ "$1" = edit_list_words ]; then
             let n++
         done
 
-        printf "aitm.$lns.aitm\n" >> $DC_s/30.cfg
+        printf "aitm.$lns.aitm\n" >> $DC_s/8.cfg
 
             if [ -f $DT_r/logw ]; then
                 dlg_info_1 "$(gettext "Sentences that were not added")"
@@ -749,7 +744,7 @@ elif [ "$1" = sentence_list_words ]; then
         let n++
     done
 
-    printf "aitm.$lns.aitm\n" >> $DC_s/30.cfg &
+    printf "aitm.$lns.aitm\n" >> $DC_s/8.cfg &
 
     if [ -f  $DT_r/logw ]; then
         logs="$(cat $DT_r/logw)"
@@ -764,9 +759,8 @@ elif [ "$1" = sentence_list_words ]; then
     
 elif [ "$1" = process ]; then
     
-    source $DS/ifs/trans/$lgs/add.conf
-    wth=$(sed -n 3p $DC_s/18.cfg)
-    eht=$(sed -n 4p $DC_s/18.cfg)
+    wth=$(($(sed -n 2p $DC_s/10.cfg)-350))
+    eht=$(($(sed -n 3p $DC_s/10.cfg)-0))
     ns=$(cat "$DC_tlt/4.cfg" | wc -l)
     source $DS/default/dicts/$lgt
     nspr='/usr/share/idiomind/add.sh process'
@@ -949,7 +943,7 @@ elif [ "$1" = process ]; then
                                 printf "\n- $sntc" >> ./wlog
                         
                             else
-                                if sed -n 1p $DC_s/3.cfg | grep TRUE; then
+                                if [ $trda = TRUE ]; then
             
                                     tts ./trgt $lgt $DT_r "$DM_tlt/words/$fname.mp3"
                                     
@@ -982,7 +976,7 @@ elif [ "$1" = process ]; then
                                     printf "\n- $sntc" >> ./slog
                             
                                 else
-                                    if sed -n 1p $DC_s/3.cfg | grep TRUE; then
+                                    if [ $trda = TRUE ]; then
                                     
                                         tts ./trgt $lgt $DT_r "$DM_tlt/$fname.mp3"
                                         
@@ -1127,7 +1121,7 @@ elif [ "$1" = process ]; then
                     if [ $adds -ge 1 ]; then
                         notify-send -i idiomind "$tpe" \
                         "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
-                        printf "aitm.$adds.aitm\n" >> $DC_s/30.cfg
+                        printf "aitm.$adds.aitm\n" >> $DC_s/8.cfg
                     fi
                     
                     if [ $(cat ./slog ./wlog | wc -l) -ge 1 ]; then
@@ -1253,7 +1247,7 @@ elif [ "$1" = set_image ]; then
                 eyeD3 --remove-image "$file" >/dev/null 2>&1
                 eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file" >/dev/null 2>&1 &&
                 rm -f *.jpeg
-                printf "aimg.$tpc.aimg\n" >> $DC_s/30.cfg &
+                printf "aimg.$tpc.aimg\n" >> $DC_s/8.cfg &
                 $DS/add.sh set_image "$wrd" sentence
                 
             elif [ $ret -eq 2 ]; then

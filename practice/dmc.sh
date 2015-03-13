@@ -6,17 +6,18 @@ drtt="$DM_tlt/words"
 drts="$DS/practice/"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
+log="$DC_s/8.cfg"
 all=$(cat mcin | wc -l)
 easy=0
 hard=0
 ling=0
-
 [ -f mcin2 ] && rm mcin2
 [ -f mcin3 ] && rm mcin3
 
 function score() {
 
     if [ "$(($(cat l_m)+$1))" -ge "$all" ]; then
+        echo "w9.$(tr -s '\n' ';' < ok.m).w9" >> "$log"
         rm mcin mcin1 mcin2 mcin3 ok.m
         echo "$(date "+%a %d %B")" > look_mc
         echo 21 > .iconmc
@@ -37,7 +38,9 @@ function score() {
         done
         
         [ -f mcin2 ] && rm mcin2
-        [ -f mcin3 ] && rm mcin3
+        if [ -f mcin3 ]; then
+            echo "w6.$(tr -s '\n' ';' < mcin3).w6" >> "$log"
+            rm mcin3; fi
         $strt 6 $easy $ling $hard & exit 1
     fi
 }
@@ -83,11 +86,11 @@ while read trgt; do
     if [ $ret = 0 ]; then
     
         if echo "$dlg" | grep "$wes"; then
-            echo "$trgt" | tee -a ok.m $w9
+            echo "$trgt" >> ok.m
             easy=$(($easy+1))
             
         else
-            echo "$trgt" | tee -a mcin2 w6
+            echo "$trgt" >> mcin2
             hard=$(($hard+1))
         fi  
             
@@ -116,7 +119,7 @@ else
                 ling=$(($ling+1))
                 
             else
-                echo "$trgt" | tee -a mcin3 w6
+                echo "$trgt" >> mcin3
             fi
 
         elif [ $ret = 1 ]; then
