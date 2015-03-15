@@ -6,7 +6,8 @@ source $DS/ifs/mods/cmns.sh
 dir="$DC/addons/dict"
 enables="$DC/addons/dict/enables"
 disables="$DC/addons/dict/disables"
-
+lgt=$(lnglss $lgtl)
+lgs=$(lnglss $lgsl)
 new="#!/bin/bash
 # 1 argument: \"\$1\" = \"word\"
 # 
@@ -152,8 +153,8 @@ elif [ -z "$1" ]; then
     --expand-column=2 "$tex" $align --name=Idiomind --class=Idiomind \
     --width=480 --height=350 --skip-taskbar --separator=" " \
     --borders=10 --button="$(gettext "Add")":2 --print-all --button=OK:0 \
-    --column=" ":CHK --column="$(gettext "availables")":TEXT \
-    --column="$(gettext "languages")":TEXT --window-icon=idiomind \
+    --column=" ":CHK --column="$(gettext "Available dictionaries")":TEXT \
+    --column=" ":TEXT --window-icon=idiomind \
     --buttons-layout=edge --always-print-result \
     --dclick-action='/usr/share/idiomind/addons/Dics/cnfg.sh dlk_dlg')"
     ret=$?
