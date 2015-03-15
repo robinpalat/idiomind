@@ -21,7 +21,7 @@ source /usr/share/idiomind/ifs/c.conf
 Encoding=UTF-8
 wth=$(($(sed -n 2p $DC_s/10.cfg)-450))
 eht=$(($(sed -n 3p $DC_s/10.cfg)-80))
-
+IFS=$'\n'
 info1="$(echo "$(gettext "Do you want to change the interface language program?")" | xargs -n6 | sed 's/^/  /')"
 info2="$(echo "$(gettext "You want to change the language setting to learn?")" | xargs -n6 | sed 's/^/  /')"
 cd "$DS/addons"
@@ -86,67 +86,68 @@ while read val; do
     declare set"$n"="$val"
     ((n=n+1))
 done < "$DC_s/1.cfg"
-[ "$set27" = "$set28" ] && set28=TRUE
+[ "$set9" = "$set10" ] && set10=TRUE
 
 yad --plug=$KEY --tabnum=1 --borders=5 --scroll --columns=2 \
 --separator="\n" --form --no-headers --align=right \
 --field=" :LBL" " " \
 --field=" :LBL" " " \
---field="$(gettext "Words")":CHK "$set3" \
---field="$(gettext "Sentences")":CHK "$set4" \
---field="$(gettext "Marks")":CHK "$set5" \
---field="$(gettext "Practice")":CHK "$set6" \
---field="$(gettext "New Episodes")":CHK "$set7" \
---field="$(gettext "Saved Episodes")":CHK "$set8" \
+--field="$(gettext "Words")":CHK "$set1" \
+--field="$(gettext "Sentences")":CHK "$set2" \
+--field="$(gettext "Marks")":CHK "$set3" \
+--field="$(gettext "Practice")":CHK "$set4" \
+--field="$(gettext "New Episodes")":CHK "$set5" \
+--field="$(gettext "Saved Episodes")":CHK "$set6" \
 --field=" :LBL" " " \
 --field=" :LBL" " " \
---field="$(gettext "Colorize words to grammar")":CHK "$set11" \
---field="$(gettext "List words after adding a sentence")":CHK "$set12" \
+--field="$(gettext "Colorize words to grammar")":CHK "$set7" \
+--field="$(gettext "List words after adding a sentence")":CHK "$set8" \
 --field=" :LBL" " " \
 --field="$(gettext "Speech Synthesizer Default espeak")":LBL " " \
 --field="$(gettext "Use this program for audio editing")":LBL " " \
 --field="$(gettext "Time for play Loop")":LBL " " \
 --field=" :LBL" " " \
---field="$(gettext "Check for Updates")":BTN "/usr/share/idiomind/ifs/tls.sh check_updates" \
---field="$(gettext "Quick Help")":BTN "/usr/share/idiomind/ifs/tls.sh help" \
---field=" :LBL" " " \
---field=" :LBL" " " \
 --field=" :LBL" " " \
 --field="$(gettext "Language Learning")":LBL " " \
 --field="$(gettext "Your Language")":LBL " " \
+--field=" :LBL" " " \
+--field=" :LBL" " " \
+--field="<small>$(gettext "Check for Updates")</small>":FBTN "$DS/ifs/tls.sh check_updates" \
+--field="<small>$(gettext "Quick Help")</small>":FBTN "$DS/ifs/tls.sh help" \
+--field=" :LBL" " " \
 --field="$(gettext "Play Options")\t":LBL " " \
 --field=":LBL" " " \
---field="$(gettext "Texto")":CHK "$set27" \
---field="$(gettext "Audio")":CHK "$set28" \
---field="$(gettext "Repeat")":CHK "$set29" \
---field="$(gettext "Only videos")":CHK "$set30" \
+--field="$(gettext "Texto")":CHK "$set9" \
+--field="$(gettext "Audio")":CHK "$set10" \
+--field="$(gettext "Repeat")":CHK "$set11" \
+--field="$(gettext "Only videos")":CHK "$set12" \
 --field=" :LBL" " " \
 --field=" :LBL" " " \
 --field="$(gettext "General Options")\t":lbl " " \
 --field=":LBL" " " \
---field="$(gettext "Perform tasks at startup")":CHK "$set35" \
---field="$(gettext "Usar traduccion automatica\nsi esta disponible")":CHK "$set36" \
+--field="$(gettext "Perform tasks at startup")":CHK "$set13" \
+--field="$(gettext "Usar traduccion automatica\nsi esta disponible")":CHK "$set14" \
 --field=" :LBL" " " \
---field=" ":CB5 "$set38" \
---field=" ":CB5 "$set39" \
---field=" ":SCL "$set40" \
---field=" :LBL" " " \
---field="$(gettext "Topic Saved")":BTN "/usr/share/idiomind/ifs/upld.sh vsd" \
---field="$(gettext "Feedback")":BTN "/usr/share/idiomind/ifs/tls.sh fback" \
---field=" :LBL" " " \
---field="$(gettext "Languages")\t":LBL " " \
+--field=" ":CB5 "$set15" \
+--field=" ":CB5 "$set16" \
+--field=" ":SCL "$set17" \
+--field="\n$(gettext "Languages")\t":LBL " " \
 --field=":LBL" " " \
 --field="":CB "$lgtl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
---field="":CB "$lgsl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" > "$cnf1" &
+--field="":CB "$lgsl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
+--field=" :LBL" " " \
+--field=" :LBL" " " \
+--field="<small>$(gettext "Topic Saved")</small>":FBTN "$DS/ifs/upld.sh 'vsd'" \
+--field="<small>$(gettext "Feedback")</small>":FBTN "$DS/ifs/tls.sh 'fback'" \
+--field="<small>$(gettext "About")</small>":FBTN "$DS/ifs/tls.sh 'about'" | sed '/^$/d' > "$cnf1" &
 cat "$DC_s/2.cfg" | yad --plug=$KEY --tabnum=2 --list --expand-column=2 \
---text="<sub>  $(gettext "Double click to set") </sub>" \
---no-headers --dclick-action="/usr/share/idiomind/ifs/dclik.sh" --print-all \
+--text="<sub>  $(gettext "Double click to set") </sub>" --print-all \
+--no-headers --dclick-action="$DS/ifs/dclik.sh" \
 --column=icon:IMG --column=Action &
 yad --notebook --key=$KEY --name=Idiomind --class=Idiomind \
 --sticky --center --window-icon=idiomind --borders=5  \
 --tab="$(gettext "Preferences")" --tab="  $(gettext "Addons")  " \
 --width=$wth --height=$eht --title="$(gettext "Settings")" \
---button="$(gettext "About")":"/usr/share/idiomind/ifs/tls.sh about" \
 --button="$(gettext "Cancel")":1 --button="$(gettext "OK")":0
     
     ret=$?
@@ -156,7 +157,7 @@ yad --notebook --key=$KEY --name=Idiomind --class=Idiomind \
         [ ! -d  "$HOME/.config/autostart" ] \
         && mkdir "$HOME/.config/autostart"
         config_dir="$HOME/.config/autostart"
-        if [[ "$(sed -n 35p "$DC_s/1.cfg")" = "TRUE" ]]; then
+        if [[ "$(sed -n 36p "$DC_s/1.cfg")" = "TRUE" ]]; then
             if [ ! -f "$config_dir/idiomind.desktop" ]; then
                 echo "$autostart" > "$config_dir/idiomind.desktop"
                 chmod +x "$config_dir/idiomind.desktop"
@@ -168,7 +169,7 @@ yad --notebook --key=$KEY --name=Idiomind --class=Idiomind \
         fi
         
         while read -r lang; do
-            if sed -n 47p "$cnf1" | grep "$lang" && \
+            if sed -n 18p "$cnf1" | grep "$lang" && \
             [ "$lang" != "$lgtl" ] ; then
                 confirm "$info2" dialog-question
                 [ $? -eq 0 ] && set_lang "$lang"
@@ -177,7 +178,7 @@ yad --notebook --key=$KEY --name=Idiomind --class=Idiomind \
         done <<< "$langs"
         
         while read -r lang; do
-            if sed -n 48p "$cnf1" | grep "$lang" && \
+            if sed -n 19p "$cnf1" | grep "$lang" && \
             [ "$lang" != "$lgsl" ] ; then
                 confirm "$info1" dialog-warning
                 if [ $? -eq 0 ]; then
@@ -190,9 +191,9 @@ yad --notebook --key=$KEY --name=Idiomind --class=Idiomind \
         
         if ([ "$(cat "$cnf1")" != "$(cat "$DC_s/1.cfg")" ] \
         && [ -n "$(cat "$cnf1")" ]); then
-            mv -f "$cnf1" "$DC_s/1.cfg";
-        else rm -f "$cnf1"; fi
-        "$DT/.lc" & exit 1
+            cat "$cnf1" > "$DC_s/1.cfg"; fi
+
+        rm -f "$cnf1" "$DT/.lc" & exit 1
     else
         rm -f "$cnf1" "$DT/.lc" & exit 1
     fi

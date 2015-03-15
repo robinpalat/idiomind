@@ -3,25 +3,25 @@
 
 
 function notebook_1() {
-    nt="$(cat "$flnt")"
+    
     cat "$ls1" | awk '{print $0"\n"}' | yad \
     --no-headers --list --plug=$KEY --tabnum=1 \
     --dclick-action='./vwr.sh v1' --print-all \
     --expand-column=1 --ellipsize=END \
     --column=Name:TEXT --column=Learned:CHK > "$cnf1" &
     cat "$ls2" | yad --no-headers --list --plug=$KEY --tabnum=2 \
-    --expand-column=0 --ellipsize=END --print-all \
+    --expand-column=0 --ellipsize=END --print-all --separator='|' \
     --column=Name:TEXT --dclick-action='./vwr.sh v2' &
     yad --form --scroll --borders=10 --plug=$KEY --tabnum=3 --columns=2 \
     --field="Notes\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t":txt "$nt" \
     --field=" <small>Rename</small>: " "$tpc" \
-    --field="Marcar Tema Como Aprendido":btn "/usr/share/idiomind/mngr.sh 'mkok-'" \
-    --field="TextoLorem ipsum\ndolor sit amet, \nconsectetur \nadipisicing elit, \nsed doeiusmod tempor\n incididunt ut \nlabore et dolore\n magna aliqua.\n Ut enimad \nminim veniam, qu":lbl " " \
-    --field="$(gettext "Share")":BTN "/usr/share/idiomind/ifs/upld.sh" \
-    --field="Delete":btn "/usr/share/idiomind/mngr.sh 'delete_topic'" > "$cnf3" &
+    --field="Marcar Tema Como Aprendido":FBTN "$DS/mngr.sh 'mkok-'" \
+    --field="$itxt2":LBL " " \
+    --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh" \
+    --field="Delete":FBTN "$DS/mngr.sh 'delete_topic'" > "$cnf3" &
     yad --notebook --name=Idiomind --center --key=$KEY \
     --class=Idiomind --align=right \
-    --window-icon=$DS/images/idiomind.png \
+    --window-icon=idiomind \
     --tab-borders=0 --center --title="Idiomind" \
     --image="$img" --text="$itxt" \
     --tab="  $(gettext "Learning") ($tb1) " \
@@ -44,17 +44,21 @@ function notebook_2() {
     --no-headers --list --plug=$KEY --tabnum=2 \
     --expand-column=1 --ellipsize=END --print-all \
     --column=Name:TEXT --dclick-action='./vwr.sh v2' &
-    yad --text-info --plug=$KEY --margins=14 --text="$itxt2" \
-    --tabnum=3 --fore='gray40' --wrap --filename="$nt" \
-    --show-uri --fontname=vendana --editable > "$cnf3" &
+    yad --form --scroll --borders=10 --plug=$KEY --tabnum=3 --columns=2 \
+    --field="Notes\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t":txt "$nt" \
+    --field=" <small>Rename</small>: " "$tpc" \
+    --field="Review":FBTN "$DS/mngr.sh 'mklg-'" \
+    --field="$itxt2":LBL " " \
+    --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh" \
+    --field="Delete":FBTN "$DS/mngr.sh 'delete_topic'" > "$cnf3" &
     yad --notebook --name=Idiomind --center \
     --class=Idiomind --align=right --key=$KEY \
     --tab-borders=0 --center --title="Idiomind" \
     --image="$img" --text="$itxt" \
-    --window-icon=$DS/images/idiomind.png \
+    --window-icon=idiomind \
     --tab=" $(gettext "Review") " \
     --tab=" $(gettext "Learned") ($tb2) " \
-    --tab=" $(gettext "Notes") " \
+    --tab=" $(gettext "Edit") " \
     --ellipsize=END --image-on-top --always-print-result \
     --width="$wth" --height="$eht" --borders=0 \
     --button="gtk-close":1
@@ -66,7 +70,7 @@ function dialog_1() {
     yad --title="$tpc" --window-icon=idiomind \
     --borders=20 --buttons-layout=edge \
     --image=dialog-question --on-top --center \
-    --window-icon=$DS/images/idiomind.png \
+    --window-icon=idiomind \
     --buttons-layout=edge --class=idiomind \
     --button="       $(gettext "Not Yet")       ":1 \
     --button="        $(gettext "Review")        ":2 \

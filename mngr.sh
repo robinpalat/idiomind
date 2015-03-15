@@ -78,8 +78,11 @@ if [ "$1" = mkmn ]; then
 #--------------------------------
 elif [ "$1" = mklg- ]; then
     
-    include $DS/ifs/mods/mngr
-    kill -9 $(pgrep -f "yad --icons")
+    include "$DS/ifs/mods/mngr"
+    if [ $(cat "$DC_tlt/2.cfg" | wc -l) -le 20 ]; then
+        msg "$(gettext "You must be at least 20 items.")\n " info &
+        exit
+    fi
 
     nstll=$(grep -Fxo "$tpc" "$DM_tl/.3.cfg")
     if [ -n "$nstll" ]; then
@@ -125,9 +128,12 @@ elif [ "$1" = mklg- ]; then
 #--------------------------------
 elif [ "$1" = mkok- ]; then
     
-    include $DS/ifs/mods/mngr
-    kill -9 $(pgrep -f "yad --icons")
-
+    include "$DS/ifs/mods/mngr"
+    if [ $(cat "$DC_tlt/2.cfg" | wc -l) -le 20 ]; then
+        msg "$(gettext "You must be at least 20 items.")\n " info &
+        exit
+    fi
+    
     if [ -f "$DC_tlt/9.cfg" ]; then
     
         calculate_review
@@ -223,7 +229,7 @@ elif [ "$1" = delete_item ]; then
     if [ -f "$DM_tlt/words/$fname.mp3" ]; then 
     
         msg_2 "$(gettext "Are you sure you want to delete this word?")\n\n" \
-        dialog-question "$(gettext "Yes")" "$(gettext "Not")" "$(gettext "Confirm")"
+        dialog-question "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
         
         file="$DM_tlt/words/$fname.mp3"
         trgt=$(eyeD3 "$file" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
@@ -231,7 +237,7 @@ elif [ "$1" = delete_item ]; then
     elif [ -f "$DM_tlt/$fname.mp3" ]; then
     
         msg_2 "$(gettext "Are you sure you want to delete this sentence?")\n\n" \
-        dialog-question "$(gettext "Yes")" "$(gettext "Not")" "$(gettext "Confirm")"
+        dialog-question "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
         
         file="$DM_tlt/$fname.mp3"
         trgt=$(eyeD3 "$file" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
@@ -239,7 +245,7 @@ elif [ "$1" = delete_item ]; then
     else
     
         msg_2 "$(gettext "Are you sure you want to delete this item?")\n\n" \
-        dialog-question "$(gettext "Yes")" "$(gettext "Not")" "$(gettext "Confirm")"
+        dialog-question "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
         trgt="${3}"
         
     fi
@@ -290,7 +296,7 @@ elif [ "$1" = delete_topic ]; then
     include $DS/ifs/mods/mngr
     
     msg_2 "$(gettext "Are you sure you want to delete this Topic?")\n\n" \
-    dialog-question "$(gettext "Yes")" "$(gettext "Not")" "$(gettext "Confirm")"
+    dialog-question "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
     ret=$(echo "$?")
         
         if [ $ret -eq 0 ]; then
@@ -600,5 +606,64 @@ elif [ "$1" = edt ]; then
             [ -d "$DT/$c" ] && $DS/add.sh edit_list_words "$fname" S $c "$trgt" &
             $DS/vwr.sh "$v" "$trgt" $ff & exit 1
     fi
+
+
+elif [ "$1" = rename_topic ]; then
+
+    source "$DS/ifs/mods/add/add.sh"
+    info2=$(cat $DM_tl/.1.cfg | wc -l)
+    jlb="$2"
+    jlb="$(clean_2 "$jlb")"
+    snm=$(cat $DM_tl/.1.cfg | grep -Fxo "$jlb" | wc -l)
+    
+    if [ $snm -ge 1 ]; then
+    
+        jlb=$(echo ""$jlb" $snm")
+        dlg_msg_6 " <b>"$(gettext "You already have a Topic has the same name")"   </b>\\n "$(gettext "The new rename it as")"  <b>$jlb</b>   \\n"
+        ret=$(echo "$?")
+
+            if [ "$ret" -eq 1 ]; then
+                exit 1
+            fi
+    else
+        jlb=$(echo "$jlb")
+    fi
+    
+    if [ -z "$jlb" ]; then
+        exit 1
+    else
+        mv -f "$DM_tl/$tpc/.11.cfg" "$DT/.11.cfg"
+        mv -f "$DM_tl/$tpc" "$DM_tl/$jlb"
+        mv -f "$DM_tl/$tpc" "$DM_tl/$jlb"
+        mv -f "$DT/.11.cfg" "$DM_tl/$jlb/.11.cfg"
+        
+        echo "$jlb" > "$DC_s/4.cfg"
+        echo "$jlb" > "$DM_tl/.8.cfg"
+        echo "$jlb" > "$DT/tpe"
+        
+        if grep -Fxo "$tpc" < "$DM_tl/.3.cfg"; then
+            echo "$jlb" >> "$DM_tl/.3.cfg"
+            echo istll >> "$DC_s/4.cfg" 
+            echo istll >> "$DM_tl/.8.cfg"
+        else
+            echo "$jlb" >> "$DM_tl/.2.cfg"
+            echo wn >> "$DC_s/4.cfg"
+            echo wn >> "$DM_tl/.8.cfg"
+        fi
+
+        grep -v -x -F "$tpc" "$DM_tl/.2.cfg" > "$DM_tl/.2.cfg.tmp"
+        sed '/^$/d' "$DM_tl/.2.cfg.tmp" > "$DM_tl/.2.cfg"
+        grep -v -x -F "$tpc" "$DM_tl/.1.cfg" > "$DM_tl/.1.cfg.tmp"
+        sed '/^$/d' "$DM_tl/.1.cfg.tmp" > "$DM_tl/.1.cfg"
+        grep -v -x -F "$tpc" "$DM_tl/.3.cfg > $DM_tl/.3.cfg.tmp"
+        sed '/^$/d' "$DM_tl/.3.cfg.tmp" > "$DM_tl/.3.cfg"
+        rm "$DM_tl"/.*.tmp
+
+        [ -d "$DM_tl/$tpc" ] && rm -r "$DM_tl/$tpc"
+        [ -d "$DM_tl/$tpc" ] && rm -r "$DM_tl/$tpc"
+        
+        "$DS/mngr.sh" mkmn & exit 1
+    fi
+    
 fi
   

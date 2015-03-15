@@ -33,13 +33,10 @@ if [ "$1" = chngi ]; then
     fi
     }
     
-    nta=$(sed -n 27p "$DC_s/1.cfg")
-    sna=$(sed -n 28p "$DC_s/1.cfg")
+    nta=$(sed -n 9p "$DC_s/1.cfg")
+    sna=$(sed -n 10p "$DC_s/1.cfg")
     index="$DT/index"
-   
-    bcl=$(sed -n 40p "$DC_s/1.cfg")
-    if ([ $(echo "$nta" | grep "TRUE") ] && [ "$bcl" -lt 12 ]); then bcl=12; fi
-    
+    bcl=$(sed -n 17p "$DC_s/1.cfg")
     item="$(sed -n "$2"p "$index")"
     fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
     
@@ -59,6 +56,8 @@ if [ "$1" = chngi ]; then
         play=play
     
     elif [ "$t" = 1 ]; then
+        if ([ $(echo "$nta" | grep "TRUE") ] \
+        && [ "$bcl" -lt 12 ]); then bcl=12; fi
         tgs=$(eyeD3 "$file")
         trgt=$(echo "$tgs" | \
         grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
@@ -100,7 +99,7 @@ elif [ "$1" != chngi ]; then
     --center $img --image-on-top --separator="" --class=Idiomind \
     "$text" --width="$wth" --height="$eht" --ellipsize=END \
     --no-headers --list --window-icon=idiomind --borders=5 \
-    --button=gtk-new:3 --button=gtk-apply:0 \
+    --button=gtk-new:3 --button=gtk-apply:0 --button=gtk-close:1 \
     --title="$(gettext "Topics")" --column=img:img --column=File:TEXT)
     ret=$?
         

@@ -273,7 +273,7 @@ elif [ "$1" = check ]; then
 
     yad --scroll --columns=2 --skip-taskbar --separator='\n' \
     --width=800 --height=600 --form --on-top --window-icon=idiomind \
-    --text="<small> $(gettext "\tIn this table you can define fields according to their cache,  most of the time the default values is right. ")</small>" \
+    --text="<small> $(gettext "\tIn this table you can define fields according to their cache,  most of the time the default values is right. ")</small>" --name=Idiomind --class=Idiomind \
     --button=gtk-apply:0 --borders=5 --title="$ttl" --always-print-result \
     --field="":CB "$(sed -n 1p $DCP/$2.rss)!$mn" \
     --field="":CB "$(sed -n 2p $DCP/$2.rss)!$mn" \
@@ -303,7 +303,7 @@ elif [ "$1" = syndlg ]; then
     DIR="$(yad --center --form --on-top --window-icon=idiomind \
     --borders=10 --separator="" --title=" " --always-print-result \
     --text="$(gettext "Mountpoint or path where new episodes should be synced.")" \
-    --print-all --button="gtk-apply":0 \
+    --print-all --button="gtk-apply":0 --name=Idiomind --class=Idiomind \
     --width=460 --height=200 --field="":CDIR "$SYNCDIR")"
 
     echo "$DIR" > $DT/s.tmp
@@ -311,7 +311,7 @@ elif [ "$1" = syndlg ]; then
     exit
 
 
-elif [ "$1" = syncronize ]; then
+elif [ "$1" = sync ]; then
    
     DCP="$DM_tl/Feeds/.conf"
     SYNCDIR="$(sed -n 1p $DCP/5.cfg)"
@@ -321,7 +321,7 @@ elif [ "$1" = syncronize ]; then
             DIR="$(yad --center --form --on-top --window-icon=idiomind \
             --borders=10 --separator="" --title=" " --always-print-result \
             --text="$(gettext "Set mountpoint or path where new episodes should be synced.")" \
-            --print-all --button="$(gettext "OK")":0 \
+            --print-all --button="$(gettext "OK")":0 --name=Idiomind --class=Idiomind \
             --width=460 --height=170 --field="":CDIR "$SYNCDIR")"
             echo "$DIR" > $DT/s.tmp
             mv -f $DT/s.tmp $DCP/5.cfg

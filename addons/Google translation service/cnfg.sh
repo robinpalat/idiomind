@@ -9,7 +9,7 @@ echo 'FALSE' > $DC_s/3.cfg
 echo ' ' >> $DC_s/3.cfg
 sttng4=$(sed -n 1p $DC_s/3.cfg); fi
 
-c=$(yad --center --form --on-top \
+c=$(yad --center --form --on-top --name=Idiomind --class=Idiomind \
 --skip-taskbar --borders=15 --expand-column=3 --no-headers \
 --button="$(gettext "OK")":0 --width=480 --height=350 \
 --always-print-result --editable --print-all \

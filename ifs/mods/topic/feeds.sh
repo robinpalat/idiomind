@@ -37,18 +37,20 @@ function feedmode() {
     list_2 | yad --no-headers --list --plug=$KEY --tabnum=2 \
     --expand-column=2 --ellipsize=END --print-all --column=Name:IMG \
     --column=Name --dclick-action="$DSP/vwr.sh" &
-    yad --form --borders=10 --plug=$KEY --tabnum=3 --columns=1 --separator="" \
-    --field="Notes":txt "$nt" \
-    --field="Syncronize":btn "/usr/share/idiomind/addons/Feeds/tls.sh 'syncronize'" \
-    --field="Delete":btn "/usr/share/idiomind/ifs/tls.sh 'syncronize'" > "$DT/f.edit" &
+    yad --form --scroll --borders=10 --plug=$KEY --tabnum=3 --columns=2 \
+    --field="Notes\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t":txt "$nt" \
+    --field=" :LBL" "2" \
+    --field="$(gettext "Subscriptions")":FBTN "$DS/addons/Feeds/cnfg.sh" \
+    --field=" $itxt2":lbl " " \
+    --field="$(gettext "Syncronize")":FBTN "$DS/addons/Feeds/tls.sh 'sync'" \
+    --field="Delete":FBTN "$DS/addons/Feeds/mngr.sh 'delete'" > "$DT/f.edit" &
     yad --notebook --name=Idiomind --center \
     --class=Idiomind --align=right --key=$KEY \
     --tab-borders=0 --center --title="$FEED" \
     --tab=" $(gettext "Episodes") " \
     --tab=" $(gettext "Saved Episodes") " \
     --tab=" $(gettext "Edit") " --always-print-result \
-    --ellipsize=END --image-on-top \
-    --window-icon=$DS/images/idiomind.png \
+    --ellipsize=END --image-on-top --window-icon=idiomind \
     --width="$wth" --height="$eht" --borders=0 \
     --button="<small>$(gettext "Play/Stop")</small>":"/usr/share/idiomind/play.sh" \
     --button="gtk-refresh":2 \
@@ -59,9 +61,9 @@ function feedmode() {
         "$DSP/strt.sh";
     fi
     
-    if ([ "$(cat "$DT/f.edit")" != "$(cat "$DCP/10.cfg")" ] \
-    && [ -n "$(cat "$DT/f.edit")" ]); then
-    mv -f "$DT/f.edit" "$DCP/10.cfg";
+    nnt=$(cut -d '|' -f 1 < "$DT/f.edit")
+    if [ "$nt" != "$nnt" ] && [ -n "$nnt" ]; then
+        echo "$nnt" > "$DCP/10.cfg";
     fi
 }
 

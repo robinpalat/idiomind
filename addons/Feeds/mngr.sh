@@ -16,7 +16,7 @@ if [ "$1" = delete_item ]; then
     fname="$(nmfile "${trgt}")"
     
     msg_2 " $(gettext "Are you sure you want to delete this episode?")\n\n" \
-    dialog-question "$(gettext "Yes")" "$(gettext "Not")" "$(gettext "Confirm")"
+    dialog-question "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
     ret=$(echo "$?")
 
         if [ $ret -eq 0 ]; then
@@ -40,32 +40,26 @@ if [ "$1" = delete_item ]; then
             
     rm -f $DT/ps_lk; exit 1
 
-    
-elif [ "$1" = delete_episodes ]; then
-    
-    msg_2 "$(gettext " Are you sure you want to delete all episodes?\n\ (Downloads every 5 days\n will be automatically deleted\).")" dialog-question \
-    "$(gettext "Yes")" "$(gettext "Not")" "$(gettext "Confirm")"
-    ret=$(echo "$?")
 
-        if [ $ret -eq 0 ]; then
-        
-            rm $DM_tl/Feeds/cache/*
-            rm $DM_tl/Feeds/.conf/.updt.lst
-            rm $DM_tl/Feeds/.conf/1.cfg
-            rm $DM_tl/Feeds/.conf/.dt
-        else
-            exit
-        fi
-        
-elif [ "$1" = delete_episodes_saved ]; then
 
-        msg_2 "$(gettext " Are you sure you want\n to delete the saved episodes?\n")" dialog-question "$(gettext "Yes")" "$(gettext "Not")" "$(gettext "Confirm")"
-        ret=$(echo "$?")
+elif [ "$1" = delete ]; then
 
+     msg_2 "$(gettext " Are you sure you want\n to delete the saved episodes?\n")" dialog-question "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
+    tret=$(echo "$?")
+            
     if [ $ret -eq 0 ]; then
-    
+
+        rm $DM_tl/Feeds/cache/*
+        rm $DM_tl/Feeds/.conf/.updt.lst
+        rm $DM_tl/Feeds/.conf/1.cfg
+        rm $DM_tl/Feeds/.conf/.dt
+
+   elif [ $ret -eq 2 ]; then
+
         rm -r "$DCP"/2.cfg "$DCP"/.22.cfg
         touch "$DCP"/2.cfg "$DCP"/.22.cfg
+        
+    else
+        exit
     fi
-    exit
 fi

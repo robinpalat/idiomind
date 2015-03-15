@@ -4,16 +4,24 @@
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/mods/cmns.sh
 user=$(echo "$(whoami)")
-[ -f $DC_s/12.cfg ] && D_cps=$(sed -n 2p $DC_s/12.cfg)
+if [ ! -f "$DC_a/1.cfg" ]; then
+    echo -e "backup=FALSE" > "$DC_a/1.cfg"
+    echo -e "path=\"$HOME\"" >> "$DC_a/1.cfg"
+    echo -e "size=0" >> "$DC_a/1.cfg"
+    source "$DC_a/1.cfg"
+fi
+source "$DC_a/1.cfg"
+
 [ -f "$D_cps/.udt" ] && udt=$(cat "$D_cps/.udt") || udt=" "
 dte=$(date +%F)
 
 #dialog
 if [ -z "$1" ]; then
-
+    
     D=$(yad --list --title="$(gettext "User Data")" \
     --center --on-top --radiolist --expand-column=2 \
-    --text=" $(gettext "Size"): $(cat $DC_a/1.cfg) \\n" \
+    --name=Idiomind --class=Idiomind \
+    --text=" $(gettext "Size"): $size \\n" \
     --width=480 --height=350 --always-print-result \
     --skip-taskbar --image=folder --separator=" " \
     --borders=15 --print-all --window-icon=idiomind \
@@ -56,8 +64,8 @@ if [ -z "$1" ]; then
                 --pulsate --percentage="5" --auto-close \
                 --sticky --undecorated --skip-taskbar --no-buttons
                 
-                yad --fixed --name=idiomind --center --class=idiomind \
-                --image=info --sticky \
+                yad --fixed --name=idiomind --center \
+                --image=info --sticky --class=idiomind \
                 --text="$(gettext "Data exported successfully")\n" \
                 --image-on-top --fixed --width=360 --height=140 --borders=3 \
                 --skip-taskbar --window-icon=idiomind \
@@ -159,8 +167,8 @@ if [ -z "$1" ]; then
                 --sticky --on-top --undecorated --on-top \
                 --skip-taskbar --center --no-buttons
                 
-                yad --fixed --name=idiomind --center --class=idiomind \
-                --image=info --sticky \
+                yad --fixed --name=idiomind --center \
+                --image=info --sticky --class=idiomind \
                 --text=" $(gettext "Data imported successfully")   \\n" \
                 --image-on-top --fixed --width=360 --height=140 --borders=3 \
                 --skip-taskbar --window-icon=idiomind \
@@ -172,13 +180,13 @@ if [ -z "$1" ]; then
 
     # backup
     elif [ "$ret" -eq 2 ]; then
-        sttng=$(sed -n 1p $DC_s/12.cfg)
-        D_cps=$(sed -n 2p $DC_s/12.cfg)
-        
-        if [ -z $sttng ]; then
-            echo FALSE > $DC_s/12.cfg
-            echo " " > $DC_s/12.cfg
+
+        if [ ! -f "$DC_a/1.cfg" ]; then
+            echo -e "backup=FALSE" > "$DC_a/1.cfg"
+            echo -e "path=\"$HOME\"" >> "$DC_a/1.cfg"
+            echo -e "size=0" >> "$DC_a/1.cfg"
         fi
+        source "$DC_a/1.cfg"
 
         cd $HOME
         CNFG=$(yad --center --form --on-top --window-icon=idiomind \
@@ -186,39 +194,40 @@ if [ -z "$1" ]; then
         --print-all --button="$(gettext "Restore")":3 --always-print-result \
         --button="$(gettext "Close")":0 --width=420 --height=300 \
         --title=Backup --columns=2 \
-        --field="$(gettext "Backing up periodically.")":CHK $sttng \
-        --field="$(gettext "Path to save")":"":CDIR "$D_cps" \
+        --field="$(gettext "Backing up periodically.")":CHK $backup \
+        --field="$(gettext "Path to save")":"":CDIR "$path" \
         --field=" :LBL" " " )
         
         ret=$?
         # backup config
         if [ "$ret" -eq 0 ]; then
-            sttng=$(echo "$CNFG" | cut -d "|" -f1)
-            dircy=$(echo "$CNFG" | cut -d "|" -f2)
-            echo "$sttng" > $DC_s/12.cfg
-            echo "$dircy" >> $DC_s/12.cfg
+            st1=$(echo "$CNFG" | cut -d "|" -f1)
+            st2=$(echo "$CNFG" | cut -d "|" -f2 | sed 's|\/|\\/|g')
+            
+            sed -i "1s/backup=.*/backup=\"$st1\"/" "$DC_a/1.cfg"
+            sed -i "2s/path=.*/path=\"$st2\"/" "$DC_a/1.cfg"
 
         elif [ "$ret" -eq 3 ]; then
         
             if [ ! -d "$D_cps" ]; then
-                yad --fixed --name=idiomind --center \
-                --image=info --sticky --class=idiomind \
+                yad --fixed --name=Idiomind --center \
+                --image=info --sticky --class=Idiomind \
                 --text="$(gettext "Not defined directory\nfor Backups")" \
                 --image-on-top --fixed --width=340 --height=130 --borders=3 \
                 --skip-taskbar --window-icon=idiomind \
                 --title=Idiomind --button=Ok:0 & exit 1
                 
             elif [ ! -f "$D_cps/idiomind.backup" ]; then
-                yad --fixed --name=idiomind --center \
-                --image=info --sticky --class=idiomind \
+                yad --fixed --name=Idiomind --center \
+                --image=info --sticky --class=Idiomind \
                 --text="$(gettext "No Backup")\n" \
                 --image-on-top --fixed --width=340 --height=130 --borders=3 \
                 --skip-taskbar --window-icon=idiomind \
                 --title=Idiomind --button=Ok:0 & exit 1
             else
                 udt=$(cat "$D_cps/.udt")
-                yad --fixed --name=idiomind --center \
-                --image=info --sticky --class=idiomind \
+                yad --fixed --name=Idiomind --center \
+                --image=info --sticky --class=Idiomind \
                 --text="$(gettext "Data will be restored to") $udt \n" \
                 --image-on-top --fixed --width=340 --height=130 --borders=3 \
                 --skip-taskbar --window-icon=idiomind \
@@ -269,11 +278,6 @@ if [ -z "$1" ]; then
                         exit 1
                     fi
             fi
-        else
-            sttng=$(echo "$CNFG" | cut -d "|" -f1)
-            dircy=$(echo "$CNFG" | cut -d "|" -f2)
-            echo "$sttng" > $DC_s/12.cfg
-            echo "$dircy" >> $DC_s/12.cfg
         fi  
     else
         exit 1
@@ -282,7 +286,8 @@ if [ -z "$1" ]; then
 elif ([ "$1" = C ] && [ "$dte" != "$udt" ]); then
     sleep 3
     while true; do
-    idle=$(top -bn2 | grep "Cpu(s)" | tail -n 1 | sed 's/\%us,.*//' | sed 's/.*Cpu(s): //')
+    idle=$(top -bn2 | grep "Cpu(s)" | tail -n 1 \
+    | sed 's/\%us,.*//' | sed 's/.*Cpu(s): //')
     echo "idle is $idle"
     if [[ $idle < 15 ]]; then
         break
@@ -291,8 +296,8 @@ elif ([ "$1" = C ] && [ "$dte" != "$udt" ]); then
     done
     
     if [ ! -d "$D_cps" ]; then
-        yad --fixed --name=idiomind --center \
-        --image=info --sticky --class=idiomind \
+        yad --fixed --name=Idiomind --center \
+        --image=info --sticky --class=Idiomind \
         --text="$(gettext "Can not find the directory\nestablished for backups")" \
         --image-on-top --fixed --width=420 --height=130 --borders=3 \
         --skip-taskbar --window-icon=idiomind \

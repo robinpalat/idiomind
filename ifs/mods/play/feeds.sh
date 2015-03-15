@@ -3,7 +3,7 @@
 
 
     
-if [ $(sed -n 30p "$DC_s/1.cfg") = "TRUE" ]; then
+if [ $(sed -n 12p "$DC_s/1.cfg") = "TRUE" ]; then
     find "$DM_tl/Feeds/cache"/ -type f \( -name "*.avi" -o -name "*.mp4" -o -name "*.m4v" \) > $DT/playlist.m3u
     mplayer -fs -playlist $DT/playlist.m3u & $DS/stop.sh play & exit 1
 else

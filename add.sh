@@ -4,110 +4,45 @@
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 include "$DS/ifs/mods/add"
-trda=$(sed -n 36p "$DC_s/1.cfg")
+trda=$(sed -n 14p "$DC_s/1.cfg")
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
 
 if [ "$1" = new_topic ]; then
 
-    info2=$(cat $DM_tl/.1.cfg | wc -l)
-    c=$(echo $(($RANDOM%100)))
-    
-    if [ "$3" = 2 ]; then
-        nmt="$tpc"
-        tle="$tpc"
-        
-        if [ -n "$nmt" ];then
-            nmt="$nmt"
-        else
-            tle="$(gettext "New Topic")"; nmt=""
-        fi
-        
-        jlbi=$(dlg_form_0 "$(gettext "Rename")" "$nmt")
-        ret=$(echo "$?")
-        jlb="$(clean_2 "$jlbi")"
-        snm=$(cat $DM_tl/.1.cfg | grep -Fxo "$jlb" | wc -l)
-        
-        if [ $snm -ge 1 ]; then
-        
-            jlb=$(echo ""$jlb" $snm")
-            dlg_msg_6 " <b>"$(gettext "You already have a Topic has the same name")"   </b>\\n "$(gettext "The new rename it as")"  <b>$jlb</b>   \\n"
-            ret=$(echo "$?")
+    if [ $info2 -ge 80 ]; then
+        msg "$(gettext "You have reached the maximum number of topics")" info &&
+        killall add.sh & exit 1
+    fi
+    jlbi=$(dlg_form_0 "$(gettext "New Topic")")
+    ret=$(echo "$?")
 
-                if [ "$ret" -eq 1 ]; then
-                    exit 1
-                fi
+        jlb="$(clean_2 "$jlbi")"
+        sfname=$(cat $DM_tl/.1.cfg | grep -Fxo "$jlb" | wc -l)
+        
+        if [ "$sfname" -ge 1 ]; then
+        
+            jlb="$jlb $sfname"
+            dlg_msg_6 " <b>$name_eq   </b>\\n $name_eq2  <b>$jlb</b>   \\n"
+            ret=$(echo "$?")
+            
+            [ "$ret" -eq 1 ] && exit 1
+            
         else
-            jlb=$(echo "$jlb")
+            jlb="$jlb"
         fi
         
         if [ -z "$jlb" ]; then
             exit 1
+            
         else
-            mv -f "$DM_tl/$tpc/.11.cfg" "$DT/.11.cfg"
-            mv -f "$DM_tl/$tpc" "$DM_tl/$jlb"
-            mv -f "$DM_tl/$tpc" "$DM_tl/$jlb"
-            mv -f "$DT/.11.cfg" "$DM_tl/$jlb/.11.cfg"
-            
-            if grep -Fxo "$tpc" $DM_tl/.3.cfg; then
-                echo "$jlb" >> $DM_tl/.3.cfg
-            else
-                echo "$jlb" >> $DM_tl/.2.cfg
-            fi
-            
-            grep -v -x -F "$tpc" $DM_tl/.2.cfg > $DM_tl/.2.cfg.tmp
-            sed '/^$/d' $DM_tl/.2.cfg.tmp > $DM_tl/.2.cfg
-            grep -v -x -F "$tpc" $DM_tl/.1.cfg > $DM_tl/.1.cfg.tmp
-            sed '/^$/d' $DM_tl/.1.cfg.tmp > $DM_tl/.1.cfg
-            grep -v -x -F "$tpc" $DM_tl/.3.cfg > $DM_tl/.3.cfg.tmp
-            sed '/^$/d' $DM_tl/.3.cfg.tmp > $DM_tl/.3.cfg
-            rm $DM_tl/.*.tmp
-
-            [ -d "$DM_tl/$tpc" ] && rm -r "$DM_tl/$tpc"
-            [ -d "$DM_tl/$tpc" ] && rm -r "$DM_tl/$tpc"
-            
-            $DS/mngr.sh mkmn
-            "$DM_tl/$jlb/tpc.sh" & exit 1
+            mkdir "$DM_tl/$jlb"
+            cp -f "$DS/default/tpc.sh" "$DM_tl/$jlb/tpc.sh"
+            chmod +x "$DM_tl/$jlb/tpc.sh"
+            echo "$jlb" >> "$DM_tl/.2.cfg"
+            echo "1" > "$DM_tl/$jlb/.conf/8.cfg"
+            "$DS/mngr.sh mkmn"
         fi
-        
-    else
-        
-        [[ -z "$2" ]] && nmt="" || nmt="$2"
-        
-        if [ $info2 -ge 80 ]; then
-            msg "$(gettext "You have reached the maximum number of topics")" info &&
-            killall add.sh & exit 1
-        fi
-        jlbi=$(dlg_form_0 "$(gettext "New Topic")" "$nmt")
-        ret=$(echo "$?")
-
-            jlb="$(clean_2 "$jlbi")"
-            sfname=$(cat $DM_tl/.1.cfg | grep -Fxo "$jlb" | wc -l)
-            
-            if [ "$sfname" -ge 1 ]; then
-            
-                jlb="$jlb $sfname"
-                dlg_msg_6 " <b>$name_eq   </b>\\n $name_eq2  <b>$jlb</b>   \\n"
-                ret=$(echo "$?")
-                
-                [ "$ret" -eq 1 ] && exit 1
-                
-            else
-                jlb="$jlb"
-            fi
-            
-            if [ -z "$jlb" ]; then
-                exit 1
-                
-            else
-                mkdir "$DM_tl/$jlb"
-                cp -f "$DS/default/tpc.sh" "$DM_tl/$jlb/tpc.sh"
-                chmod +x "$DM_tl/$jlb/tpc.sh"
-                echo "$jlb" >> $DM_tl/.2.cfg
-                "$DM_tl/$jlb/tpc.sh"
-                $DS/mngr.sh mkmn
-            fi
-    fi
     exit 1
     
 elif [ "$1" = new_items ]; then
@@ -357,7 +292,7 @@ elif [ "$1" = new_sentence ]; then
     index sentence "$trgt" "$tpe"
     
     (
-    if [ $(sed -n 12p $DC_s/1.cfg) = TRUE ]; then
+    if [ $(sed -n 8p $DC_s/1.cfg) = TRUE ]; then
     $DS/add.sh sentence_list_words "$DM_tlt/$fname.mp3" "$trgt" "$tpe"
     fi
     ) &
@@ -1185,7 +1120,7 @@ elif [ "$1" = set_image ]; then
             txt="--text=<small>$(gettext "Search image")\t<a href='file://$DT/s.html'>$wrd</a></small>"
         fi
         
-        yad --form --align=center --center \
+        yad --form --align=center --center --name=Idiomind --class=Idiomind \
         --width=340 --text-align=center --height=280 \
         --on-top --skip-taskbar --image-on-top "$txt" >/dev/null 2>&1 \
         "$btnn" --window-icon=idiomind --borders=0 \
@@ -1232,7 +1167,7 @@ elif [ "$1" = set_image ]; then
             txt="--text=<small>\\n<a href='file://$DT/s.html'>"$(gettext "Search Image")"</a></small>"
         fi
         
-        yad --form --text-align=center \
+        yad --form --text-align=center --name=Idiomind --class=Idiomind \
         --center --width=470 --height=280 \
         --on-top --skip-taskbar --image-on-top \
         "$txt" "$btnn" --window-icon=idiomind --borders=0 \

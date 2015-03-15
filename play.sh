@@ -68,19 +68,19 @@ if [ -z "$1" ]; then
     if [ "$ret" -eq 0 ]; then
     
         #mv -f "$slct" "$DC_s/3.cfg"
-        cd "$DT"; > ./index; n=3; l=1
+        cd "$DT"; > ./index; n=1
         while [ $n -le 8 ]; do
                 if  sed -n "$n"p "$DC_s/1.cfg" | grep TRUE; then
-                    lst="in$l"
+                    lst="in$n"
                     [ -n "${!lst}" ] && echo "${!lst}" >> ./index
                 fi
-                let n++ l++
+                let n++
         done
         
         
         #rm -f "$slct"; "$DS/stop.sh" playm
 
-        if ([ -z "$(cat "$DC_s/1.cfg" | head -n8 | grep -o "TRUE")" ] \
+        if ([ -z "$(cat "$DC_s/1.cfg" | head -n6 | grep -o "TRUE")" ] \
         || [ -z "$(cat "$DT/index")" ]); then
             notify-send "$(gettext "Exiting")" "$(gettext "Nothing specified to play")" -i idiomind -t 3000 &&
             sleep 4

@@ -32,8 +32,8 @@ if [ "$1" = vsd ]; then
     --text=" <small>$(gettext "Double clik to download") \t\t\t\t</small>" \
     --title="$(gettext "Topics saved")" --width=$wth --height=$eht \
     --column=Nombre:TEXT --print-column=1 --no-headers --class=Idiomind \
-    --expand-column=1 --search-column=1 --button="$(gettext "Close")":1 \
-    --dclick-action='/usr/share/idiomind/ifs/upld.sh infsd' >/dev/null 2>&1
+    --expand-column=1 --search-column=1 --button=gtk-close:1 \
+    --dclick-action="$DS/ifs/upld.sh 'infsd'" >/dev/null 2>&1
     [ "$?" -eq 1 ] & exit
     exit
     
@@ -42,35 +42,18 @@ elif [ "$1" = infsd ]; then
     U=$(sed -n 1p $DC_s/5.cfg)
     user=$(echo "$(whoami)")
     source "$DM_t/saved/$2.id"
-    [ $language_source = english ] && lng=en
-    [ $language_source = french ] && lng=fr
-    [ $language_source = german ] && lng=de
-    [ $language_source = chinese ] && lng=zh-cn
-    [ $language_source = italian ] && lng=it
-    [ $language_source = japanese ] && lng=ja
-    [ $language_source = portuguese ] && lng=pt
-    [ $language_source = spanish ] && lng=es
-    [ $language_source = vietnamese ] && lng=vi
-    [ $language_source = russian ] && lng=ru
+    lng=$(lnglss $language_source)
     nme=$(echo "$2" | sed 's/ /_/g')
     lnglbl=$(echo $language_target | awk '{print tolower($0)}')
-    icon=$DS/images/img.6.png
-
-    yad --borders=10 --width=420 --height=150 --name=Idiomind \
-    --on-top --class=Idiomind --center --image=$icon \
-    --title="idiomind" --button="$(gettext "Download")":0 \
-    --button="$(gettext "Close")":1 \
-    --text="$name\n<small>${language_source^} $language_target </small> \n" \
-    --window-icon=idiomind
-    ret=$?
-
+    
+        cd $HOME
+        sleep 0.5
+        sv=$(yad --save --center --borders=10 \
+        --on-top --filename="$2.idmnd" \
+        --window-icon=idiomind --skip-taskbar --title="Save" \
+        --file --width=600 --height=500 --button="Ok":0 )
+        ret=$?
         if [ $ret -eq 0 ]; then
-            cd $HOME
-            sv=$(yad --save --center --borders=10 \
-            --on-top --filename="$2.idmnd" \
-            --window-icon=idiomind --skip-taskbar --title="Save" \
-            --file --width=600 --height=500 --button="Ok":0 )
-            ret=$?
             
             internet
             cd $DT
@@ -145,7 +128,6 @@ article="$(gettext "Article")"
 science="$(gettext "Science")"
 interview="$(gettext "Interview")"
 funny="$(gettext "Funny")"
-
 lnglbl=$(echo $lgtl | awk '{print tolower($0)}')
 U=$(sed -n 1p $DC_s/5.cfg)
 [[ -z "$U" ]] && U=$(echo $(($RANDOM%100)))
@@ -176,9 +158,9 @@ upld=$(yad --form --width=480 --height=460 --on-top \
 --field=" :lbl" "#1" \
 --field="    <small>$(gettext "Author")</small>" "$user" \
 --field="    <small>$(gettext "Contact (Optional)")</small>" "$mail" \
---field="    <small>$(gettext "Category")</small>:CB" \
+--field="    <small>$(gettext "Category")</small>:CBE" \
 "!$others!$article!$comics!$culture!$documentary!$entertainment!$funny!$family!$grammar!$history!$movies!$in_the_city!$interview!$internet!$music!$nature!$news!$office!$relations!$sport!$science!$shopping!$social_networks!$technology!$travel" \
---field="    <small>$(gettext "Skill Level")</small>:CB" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
+--field="    <small>$(gettext "Skill Level")</small>:CBE" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
 --field="<small>\n$(gettext "Description/Notes")</small>:TXT" "$nt" \
 --field="<small>$(gettext "Add image")</small>:FL" "$imgm")
 ret=$?

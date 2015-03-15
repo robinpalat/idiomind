@@ -199,10 +199,10 @@ elif [ -z "$1" ]; then
     else
     SW=" "; fi
 
-    CNFG=$(yad --print-all --align=center \
+    CNFG=$(yad --print-all --align=center --name=Idiomind \
     --title="$(gettext "Weekly Report")" --borders=10 \
     --center --form --on-top --scroll --skip-taskbar \
-    --always-print-result --window-icon=idiomind \
+    --always-print-result --window-icon=idiomind --class=Idiomind \
     --button="$(gettext "Close")":0 --width=480 --height=350 \
     --field="$(gettext "active")":CHK $sttng \
     --field="\n$SW:LBL" \

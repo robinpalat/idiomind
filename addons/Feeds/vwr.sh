@@ -42,11 +42,11 @@ trgt="<span font_desc='Free Sans 9' color='#5A5C5D'>\
 cmdplay="'$DSP/tls.sh' play '$fname'"
 sum="$(cat "$dir/$fname.txt")"
 printf "$sum" | yad --text-info \
---window-icon=/usr/share/idiomind/images/idiomind.png \
+--window-icon=idiomind \
 --center --title=" " --scroll --borders=5 --text="$trgt" \
---editable --always-print-result --on-top \
+--editable --always-print-result --on-top --class=Idiomind \
 --width="$(($wth+130))" --height="$(($eht+160))" --center --margins=20 \
---wrap --show-uri --fontname='Sans 13' --name=idiomind \
+--wrap --show-uri --fontname='Sans 13' --name=Idiomind \
 --button="$btnlabel":"$btncmd" \
 --button="Stop/Play":"$cmdplay" > "$DT/d.tmp"
 mv -f "$DT/d.tmp" "$dir/$fname.txt"

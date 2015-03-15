@@ -26,11 +26,11 @@ function weeklyreport() {
     --column="$(cat $DC_a/stats/w9.tmp | wc -l)" \
     --column=$(gettext "Items that could be marked as learned") \
     --checklist --class=idiomind --center > "$DT/slt" &
-    yad --notebook --on-top --name=idiomind --center \
-    --class=idiomind --align=right --key=$KEY \
+    yad --notebook --on-top --center \
+    --class=Idiomind --align=right --key=$KEY \
     --tab-borders=0 --center --title="$(gettext "Weekly Report")" \
     --tab=" $(gettext "Report") $(date "+%B %d") " --tab=" $(gettext "Items") " \
-    --buttons-layout=end --class=idiomind \
+    --buttons-layout=end --class=Idiomind \
     --image-on-top --window-icon=idiomind \
     --width="$wth" --height="$eht" --borders=0 \
     --button=Ok:0

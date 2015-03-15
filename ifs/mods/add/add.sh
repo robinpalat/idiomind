@@ -194,7 +194,7 @@ function add_tags_9() {
 
 function voice() {
     
-    cd "$2"; vs=$(sed -n 16p $DC_s/1.cfg)
+    cd "$2"; vs=$(sed -n 15p $DC_s/1.cfg)
     if [ -n "$vs" ]; then
     
         if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
@@ -371,9 +371,9 @@ function dlg_msg_6() {
 # new topic
 function dlg_form_0() {
     
-        yad --window-icon=idiomind --form --center \
+        yad --window-icon=idiomind --form --center --on-top \
         --field="$(gettext "Name")" "$2" --title="$1" \
-        --width=440 --height=100 --name=Idiomind --on-top \
+        --width=440 --height=100 --name=Idiomind --class=Idiomind \
         --skip-taskbar --borders=5 --button=gtk-ok:0
 }
 
@@ -419,8 +419,8 @@ function dlg_radiolist_1() {
         echo "$1" | awk '{print "FALSE\n"$0}' | \
         yad --name=Idiomind --class=Idiomind --center \
         --list --radiolist --on-top --fixed --no-headers \
-        --text="<b>$te</b> <small><small> --window-icon=idiomind \
-        $info</small></small>" --sticky --skip-taskbar \
+        --text="<b>$te</b> <small><small> $info</small></small>" \
+        --sticky --skip-taskbar --window-icon=idiomind \
         --height=420 --width=150 --separator="\\n" \
         --button=$(gettext "Save"):0 --title="$(gettext "Listing words")" \
         --borders=3 --column=" " --column="$(gettext "Sentences")"
@@ -452,7 +452,7 @@ function dlg_checklist_3() {
         --text="<small>$info</small>" --title="$tpe" \
         --width=$wth --print-all --height=$eht --borders=3 \
         --button="$(gettext "Cancel")":1 --button=$(gettext "Arrange"):2 \
-        --button="$(gettext "To New Topic")":'/usr/share/idiomind/add.sh new_topic' \
+        --button="$(gettext "To New Topic")":"$DS/add.sh 'new_topic'" \
         --button=gtk-save:0 \
         --column="$(cat "$1" | wc -l)" \
         --column="$(gettext "sentences")" > $slt

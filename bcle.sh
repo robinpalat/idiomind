@@ -7,8 +7,7 @@ cd "$DT"
 n=1
 
 if ([ -n "$(cat ./index)" ] && [ $(wc -l < ./index) -gt 0 ]); then
-    if [ "$(sed -n 29p "$DC_s/1.cfg")" = "TRUE" ]; then
-
+    if [ "$(sed -n 11p "$DC_s/1.cfg")" = "TRUE" ]; then
         while [ 1 ]; do
             while [ $n -le $(wc -l < ./index) ]; do
                 "$DS/chng.sh" chngi "$n"

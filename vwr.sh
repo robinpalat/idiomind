@@ -4,7 +4,6 @@
 source /usr/share/idiomind/ifs/c.conf
 wth=$(($(sed -n 2p $DC_s/10.cfg)-320))
 eht=$(($(sed -n 3p $DC_s/10.cfg)-130))
-ap=$(sed -n 14p < $DC_s/1.cfg)
 echo "_" >> "$DC_a/stats/.tmp" &
 re='^[0-9]+$'
 now="$2"
@@ -43,7 +42,6 @@ if ( [ -f "$DM_tlt/words/$fname.mp3" ] || [ "$5" = w_fix ] ); then
     exmp1=$(echo "$(echo "$exmp" | sed -n 1p)" | sed "s/"${trgt,,}"/<span background='#FDFBCF'>"${trgt,,}"<\/\span>/g")
     [[ "$(echo "$tgs" | grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)')" = TRUE ]] \
     && trgt=$(echo "* "$trgt"")
-    [ "$ap" = TRUE ] && (killall play & sleep 1 && play "$DM_tlt/words/$fname.mp3") &
     yad --form --window-icon=idiomind --scroll --text-align=$align \
     --skip-taskbar --center --title=" " --borders=20 \
     --quoted-output --on-top --selectable-labels \
@@ -58,7 +56,7 @@ if ( [ -f "$DM_tlt/words/$fname.mp3" ] || [ "$5" = w_fix ] ); then
 elif ( [ -f "$DM_tlt/$fname.mp3" ] || [ "$5" = s_fix ] ); then
 
     tgs=$(eyeD3 "$DM_tlt/$fname.mp3")
-    [[ $(sed -n 11p $DC_s/1.cfg) = TRUE ]] \
+    [[ $(sed -n 7p $DC_s/1.cfg) = TRUE ]] \
     && trgt=$(echo "$tgs" | grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)') \
     || trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
     src=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
@@ -66,7 +64,6 @@ elif ( [ -f "$DM_tlt/$fname.mp3" ] || [ "$5" = s_fix ] ); then
     [[ "$(echo "$tgs" | grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)')" = TRUE ]] \
     && trgt=$(echo "<b>*</b> "$trgt"")
     [[ ! -f "$DM_tlt/$fname.mp3" ]] && exit 1
-    [ "$ap" = TRUE ] && (killall play & sleep 1 && play "$DM_tlt/$fname.mp3") &
     echo "$lwrd" | yad --list --print-column=0 --no-headers \
     --window-icon=idiomind --scroll --text-align=$align \
     --skip-taskbar --center --title=" " --borders=20 \

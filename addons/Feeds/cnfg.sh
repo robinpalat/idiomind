@@ -39,7 +39,8 @@ if [ -z "$1" ]; then
 
     CNF=$(gettext "Configure")
     CNFG=$(yad --form --center --scroll --columns=2 --borders=10 \
-    --window-icon=idiomind --skip-taskbar --separator="\n"\
+    --window-icon=idiomind --skip-taskbar --separator="\n" \
+    --name=Idiomind --class=Idiomind --text="*Only podcasts." \
     --width=550 --height=360 --always-print-result --on-top \
     --title="$(gettext "Feeds settings")"  \
     --field="" "$url1" --field="" "$url2" --field="" "$url3" \

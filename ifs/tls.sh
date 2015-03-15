@@ -17,7 +17,6 @@
 #  MA 02110-1301, USA.
 #  
 
-
 source "$DS/ifs/mods/cmns.sh"
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
@@ -62,7 +61,7 @@ elif [ "$1" = dclik ]; then
 # -------------------------------------------------
 elif [ "$1" = edit_audio ]; then
 
-    cmd="$(sed -n 17p $DC_s/1.cfg)"
+    cmd="$(sed -n 16p $DC_s/1.cfg)"
     (cd "$3"; "$cmd" "$2") & exit
 
 # -------------------------------------------------
@@ -93,18 +92,17 @@ elif [ "$1" = fback ]; then
     web="http://idiomind.sourceforge.net/doc/msg.html"
     yad --html --window-icon=idiomind --browser \
     --title="$(gettext "Message")" --width=500 \
-    --height=470 --no-buttons --fixed \
+    --height=455 --no-buttons --fixed \
     --name=Idiomind --class=Idiomind \
     --uri="$web" >/dev/null 2>&1
 
 # -------------------------------------------------
 elif [ "$1" = check_updates ]; then
 
-    cd $DT
-    internet
-    
+    cd "$DT"; internet
     [ -f release ] && rm -f release
     wget http://idiomind.sourceforge.net/doc/release
+    pkg=https://sourceforge.net/projects/idiomind/files/idiomind.deb/download
     
     if [ "$(sed -n 1p $DT/release)" != "$(idiomind -v)" ]; then
     
@@ -117,14 +115,11 @@ elif [ "$1" = check_updates ]; then
         ret=$?
         
         if [ "$ret" -eq 0 ]; then
-            xdg-open https://sourceforge.net/projects/idiomind/files/idiomind.deb/download & exit
-            
+            xdg-open "$pkg";
         elif [ "$ret" -eq 2 ]; then
-            echo `date +%d` > $DC_s/9.cfg & exit
-            
+            echo `date +%d` > "$DC_s/9.cfg";
         elif [ "$ret" -eq 1 ]; then
-            echo `date +%d` > $DC_s/9.cfg
-            echo "$(sed -n 2p ./release)" >> $DC_s/9.cfg & exit
+            echo `date +%d` > "$DC_s/9.cfg";
         fi
         
     else
@@ -132,71 +127,106 @@ elif [ "$1" = check_updates ]; then
         --image=info --title=" " --window-icon=idiomind \
         --on-top --skip-taskbar --sticky --width=430 --height=160 \
         --center --name=idiomind --borders=10 \
-        --button="$(gettext "Close")":1
+        --button="$(gettext "OK")":1;
     fi
     
-    [ -f $DT/release ] && rm -f $DT/release
-
-# -------------------------------------------------
-elif [ "$1" = about ]; then
-
-info_="$(gettext "\nIdiomind is a small program that helps you learn foreign words.\n\nLicense: GPLv3\nIdiomind is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, Either version 3 of the License, or (at your option) any later version.\nThis program is distributed in the hope That it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\nYou should have received a copy of the GNU General Public License along this program. If not, see https://www.gnu.org/licenses/gpl.html\nCode\nhttps://github.com/robinsato/idiomind")"
-text="<big><big><b>Idiomind v2.2-beta</b></big></big>\\n<sup>$(gettext "Vocabulary learning tool")\\n<a href='https://sourceforge.net/projects/idiomind/'>Homepage</a> (c) 2013-2015 Robin Palat</sup>"
-printf "$info_" | yad --text-info --text="$text\n" \
---show-uri --fontname=Arial --margins=10 --wrap \
---name=Idiomind --text-align=center --on-top \
---sticky --center --window-icon=idiomind --borders=10 \
---width=450 --height=340 --title="$(gettext "About")" \
---class=Idiomind --button="$(gettext "OK")":0
+    [ -f "$DT/release" ] && rm -f "$DT/release"
+    exit 0
+    
 
 # -------------------------------------------------
 elif [ "$1" = a_check_updates ]; then
 
-    [ ! -f $DC_s/9.cfg ] && echo `date +%d` > $DC_s/9.cfg
+    [ ! -f "$DC_s/9.cfg" ] \
+    && echo `date +%d` > "$DC_s/9.cfg" && exit
+    d1=$(cat $DC_s/9.cfg); d2=$(date +%d)
+    if [ $(sed -n 1p $DC_s/9.cfg) = 28 ] \
+    && [ $(wc -l < $DC_s/9.cfg) -ge 2 ]; then
+    rm -f "$DC_s/9.cfg"; fi
 
-    d1=$(cat $DC_s/9.cfg)
-    d2=$(date +%d)
+    if [ "$d1" != "$d2" ]; then
 
-    [ $(cat $DC_s/9.cfg) = 28 ] && rm -f $DC_s/9.cfg
-
-    if [ $(cat $DC_s/9.cfg) != $(date +%d) ]; then
-    
-        sleep 1
-        echo "$d2" > $DC_s/9.cfg
-        cd $DT
-        [ -f release ] && rm -f release
+        echo "$d2" > "$DC_s/9.cfg"
+        cd "$DT"; internet; [ -f release ] && rm -f release
         curl -v www.google.com 2>&1 | \
         grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
         wget http://idiomind.sourceforge.net/doc/release
         pkg=https://sourceforge.net/projects/idiomind/files/idiomind.deb/download
         
         if [ "$(sed -n 1p $DT/release)" != "$(idiomind -v)" ]; then
-        
-            yad --text="<b> $(gettext "A new version of Idiomind available") </b>\n\n" \
+            
+            yad --text="<b> $(gettext "A new version of Idiomind available\n")</b>\n $(gettext "You would like to update?")\n" \
             --image=info --title=" " --window-icon=idiomind \
             --on-top --skip-taskbar --sticky --always-print-result \
             --center --name=Idiomind --borders=10 --class=Idiomind \
-            --button="$later":2 --button="$(gettext "Download")":0 \
+            --button="$(gettext "No, Thanks")":2 --button="$(gettext "Download")":0 \
             --width=430 --height=160
             ret=$?
             
             if [ "$ret" -eq 0 ]; then
-                xdg-open $pkg & exit
-                
+                xdg-open "$pkg";
             elif [ "$ret" -eq 2 ]; then
-                echo `date +%d` > $DC_s/9.cfg & exit
-                
+                echo `date +%d` >> "$DC_s/9.cfg";
             elif [ "$ret" -eq 1 ]; then
-                echo `date +%d` > $DC_s/9.cfg & exit
+                echo `date +%d` > "$DC_s/9.cfg";
             fi
-            
-        else
-            exit 0
         fi
-        
-    [ -f $DT/release ] && rm -f $DT/release
     fi
+    [ -f "$DT/release" ] && rm -f "$DT/release"
+    exit 0
     
+# -------------------------------------------------
+elif [ "$1" = about ]; then
+
+python << END
+import gtk
+import os
+app_logo = os.path.join('/usr/share/idiomind/images/', 'logo.png')
+app_name = 'Idiomind'
+app_version = 'v2.2-beta'
+app_comments = 'Vocabulary learning tool'
+app_copyright = 'Copyright (c) 2013-2015 Robin Palat'
+app_website = 'https://sourceforge.net/projects/idiomind/'
+app_license = (('This program is free software: you can redistribute it and/or modify\n'+
+'it under the terms of the GNU General Public License as published by\n'+
+'the Free Software Foundation, either version 3 of the License, or\n'+
+'(at your option) any later version.\n'+
+'\n'+
+'This program is distributed in the hope that it will be useful,\n'+
+'but WITHOUT ANY WARRANTY; without even the implied warranty of\n'+
+'MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n'+
+'GNU General Public License for more details.\n'+
+'\n'+
+'You should have received a copy of the GNU General Public License\n'+
+'along with this program.  If not, see <http://www.gnu.org/licenses/>.'))
+app_authors = ['Robin Palat <patapatass@gmail.com>']
+app_documenters = ['Robin Palat <patapatass@gmail.com>']
+
+class AboutDialog:
+
+    def __init__(self):
+
+        about = gtk.AboutDialog()
+        about.set_logo(gtk.gdk.pixbuf_new_from_file(app_logo))
+        about.set_wmclass('Idiomind', 'Idiomind')
+        about.set_name(app_name)
+        about.set_program_name(app_name)
+        about.set_version(app_version)
+        about.set_comments(app_comments)
+        about.set_copyright(app_copyright)
+        about.set_license(app_license)
+        about.set_website(app_website)
+        about.set_website_label(app_website)
+        about.set_authors(app_authors)
+        about.set_documenters(app_documenters)
+        about.run()
+        about.destroy()
+
+if __name__ == "__main__":
+    AboutDialog = AboutDialog()
+    main()
+END
+
 # -------------------------------------------------
 elif [ "$1" = check_index ]; then
 
