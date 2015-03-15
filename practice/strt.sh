@@ -23,7 +23,7 @@ wth=$(($(sed -n 2p $DC_s/10.cfg)-440))
 eht=$(($(sed -n 3p $DC_s/10.cfg)-100))
 easys=$2
 learning=$3
-[[ "$4" -lt 0 ]] && hards=0 || hards="$4"
+[ "$4" -lt 0 ] && hards=0 || hards="$4"
 $DS/stop.sh &
 [ ! -d "$DC_tlt/practice" ] \
 && mkdir "$DC_tlt/practice"
@@ -71,10 +71,10 @@ if [[ -n "$1" ]]; then
     fi
 fi
 
-img1=$DSP/icons_st/$(cat .iconf).png
-img2=$DSP/icons_st/$(cat .iconmc).png
-img3=$DSP/icons_st/$(cat .iconlw).png
-img4=$DSP/icons_st/$(cat .iconls).png
+img1="$DSP/icons_st/$(cat .iconf).png"
+img2="$DSP/icons_st/$(cat .iconmc).png"
+img3="$DSP/icons_st/$(cat .iconlw).png"
+img4="$DSP/icons_st/$(cat .iconls).png"
 
 VAR=$(yad --ellipsize=NONE --list \
 --on-top --class=Idiomind --name=Idiomind \

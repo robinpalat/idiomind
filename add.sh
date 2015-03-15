@@ -9,8 +9,8 @@ lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
 
 if [ "$1" = new_topic ]; then
-
-    if [ $info2 -ge 80 ]; then
+    i=$(cat $DM_tl/.1.cfg | wc -l)
+    if [ "$i" -ge 80 ]; then
         msg "$(gettext "You have reached the maximum number of topics")" info &&
         killall add.sh & exit 1
     fi
@@ -40,8 +40,9 @@ if [ "$1" = new_topic ]; then
             cp -f "$DS/default/tpc.sh" "$DM_tl/$jlb/tpc.sh"
             chmod +x "$DM_tl/$jlb/tpc.sh"
             echo "$jlb" >> "$DM_tl/.2.cfg"
-            echo "1" > "$DM_tl/$jlb/.conf/8.cfg"
-            "$DS/mngr.sh mkmn"
+            cp -f "$DS/default/tpc.sh" "$DM_tl/$jlb/tpc.sh"
+            "$DM_tl/$jlb/tpc.sh" 1
+            "$DS/mngr.sh" mkmn
         fi
     exit 1
     

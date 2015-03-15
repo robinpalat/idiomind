@@ -72,8 +72,8 @@ function set_lang() {
     echo "$lgsl" >> "$DC_s/6.cfg"
     "$DS/stop.sh" L
     if [ -f "$DM/topics/$1/.8.cfg" ]; then
-        LST=$(sed -n 1p "$DM/topics/$1/.8.cfg")
-        "$DM/topics/$1/$LST/tpc.sh"
+        lst=$(sed -n 1p "$DM/topics/$1/.8.cfg")
+        "$DM/topics/$1/$lst/tpc.sh" 1
     else
         rm "$DC_s/4.cfg" && touch "$DC_s/4.cfg"
     fi
@@ -95,7 +95,7 @@ yad --plug=$KEY --tabnum=1 --borders=5 --scroll --columns=2 \
 --field="$(gettext "Words")":CHK "$set1" \
 --field="$(gettext "Sentences")":CHK "$set2" \
 --field="$(gettext "Marks")":CHK "$set3" \
---field="$(gettext "Practice")":CHK "$set4" \
+--field="$(gettext "Difficult and learning")":CHK "$set4" \
 --field="$(gettext "New Episodes")":CHK "$set5" \
 --field="$(gettext "Saved Episodes")":CHK "$set6" \
 --field=" :LBL" " " \

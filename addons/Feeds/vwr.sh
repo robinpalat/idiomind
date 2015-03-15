@@ -48,5 +48,6 @@ printf "$sum" | yad --text-info \
 --width="$(($wth+130))" --height="$(($eht+160))" --center --margins=20 \
 --wrap --show-uri --fontname='Sans 13' --name=Idiomind \
 --button="$btnlabel":"$btncmd" \
---button="Stop/Play":"$cmdplay" > "$DT/d.tmp"
+--button="<small>Stop/Play</small>":"$cmdplay" \
+--button="gtk-close":1 > "$DT/d.tmp"
 mv -f "$DT/d.tmp" "$dir/$fname.txt"

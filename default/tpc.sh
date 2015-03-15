@@ -68,9 +68,9 @@ if [ -d "$DM_tlt" ]; then
         echo wn >> "$DM_tl/.8.cfg"
     fi
 
-    [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
     cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
-    idiomind topic &
+    [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
+    [ -z "$1" ] && idiomind topic &
     sleep 2
     notify-send --icon=idiomind \
     "$topic" "$(gettext "Is your topic now")" -t 2000 & exit 0

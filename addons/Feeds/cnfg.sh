@@ -25,7 +25,6 @@ exit 1' > "$DM_tl/Feeds/tpc.sh"
     "$DS/mngr.sh" mkmn
 fi
 
-
 if [ -z "$1" ]; then
     
     [[ -e "$DT/cp.lock" ]] && exit || touch "$DT/cp.lock"
