@@ -383,7 +383,7 @@ function dlg_form_1() {
 
         yad --form --center --always-print-result \
         --on-top --window-icon=idiomind \
-        --separator="\n" --align=right $img \
+        --separator="\n" --align=right --image="$img" \
         --name=Idiomind --class=Idiomind \
         --borders=0 --title=" " --width=420 --height=140 \
         --field=" <small><small>$lgtl</small></small>: " "$txt" \
@@ -400,7 +400,7 @@ function dlg_form_2() {
     
         yad --form --center --always-print-result \
         --on-top --window-icon=idiomind \
-        --separator="\n" --align=right $img \
+        --separator="\n" --align=right --image="$img" \
         --name=Idiomind --class=Idiomind \
         --borders=0 --title=" " --width=420 --height=170 \
         --field=" <small><small>$lgtl</small></small>: " "$txt" \

@@ -72,7 +72,7 @@ function cuestion() {
     --field="<span font_desc='Free Sans $s'>$lcuestion</span>":lbl \
     --width=371 --height=280 \
     --button="   $(gettext "Exit")   ":1 \
-    --button="   $(gettext "Check Answer") >>   ":0
+    --button="     $(gettext "Answer") >>     ":0
     }
 
 function answer() {

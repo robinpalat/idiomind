@@ -9,83 +9,69 @@ lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
 
 if [ "$1" = new_topic ]; then
-    i=$(cat $DM_tl/.1.cfg | wc -l)
-    if [ "$i" -ge 80 ]; then
-        msg "$(gettext "You have reached the maximum number of topics")" info &&
-        killall add.sh & exit 1
-    fi
+
+
+    if [ "$(wc -l < "$DM_tl/.1.cfg")" -ge 80 ]; then
+    msg "$(gettext "You have reached the maximum number of topics")" info &&
+    killall add.sh & exit 1; fi
+        
     jlbi=$(dlg_form_0 "$(gettext "New Topic")")
     ret=$(echo "$?")
-
-        jlb="$(clean_2 "$jlbi")"
-        sfname=$(cat $DM_tl/.1.cfg | grep -Fxo "$jlb" | wc -l)
-        
-        if [ "$sfname" -ge 1 ]; then
-        
-            jlb="$jlb $sfname"
-            dlg_msg_6 " <b>$name_eq   </b>\\n $name_eq2  <b>$jlb</b>   \\n"
-            ret=$(echo "$?")
-            
-            [ "$ret" -eq 1 ] && exit 1
-            
-        else
-            jlb="$jlb"
-        fi
-        
-        if [ -z "$jlb" ]; then
-            exit 1
-            
-        else
-            mkdir "$DM_tl/$jlb"
-            cp -f "$DS/default/tpc.sh" "$DM_tl/$jlb/tpc.sh"
-            chmod +x "$DM_tl/$jlb/tpc.sh"
-            echo "$jlb" >> "$DM_tl/.2.cfg"
-            cp -f "$DS/default/tpc.sh" "$DM_tl/$jlb/tpc.sh"
-            "$DM_tl/$jlb/tpc.sh" 1
-            "$DS/mngr.sh" mkmn
-        fi
+    jlb="$(clean_2 "$jlbi")"
+    sfname=$(cat $DM_tl/.1.cfg | grep -Fxo "$jlb" | wc -l)
+    
+    if [ "$sfname" -ge 1 ]; then
+    jlb="$jlb $sfname"
+    dlg_msg_6 " <b>$name_eq   </b>\\n $name_eq2  <b>$jlb</b>   \\n"
+    ret=$(echo "$?")
+    [ "$ret" -eq 1 ] && exit 1
+    else
+    jlb="$jlb"; fi
+    
+    if [ -z "$jlb" ]; then
+        exit 1
+    else
+        mkdir "$DM_tl/$jlb"
+        cp -f "$DS/default/tpc.sh" "$DM_tl/$jlb/tpc.sh"
+        chmod +x "$DM_tl/$jlb/tpc.sh"
+        echo "$jlb" >> "$DM_tl/.2.cfg"
+        cp -f "$DS/default/tpc.sh" "$DM_tl/$jlb/tpc.sh"
+        "$DM_tl/$jlb/tpc.sh" 1
+        "$DS/mngr.sh" mkmn
+    fi
     exit 1
     
 elif [ "$1" = new_items ]; then
 
-    if [ "$(cat $DM_tl/.1.cfg | grep -v 'Feeds' | wc -l)" -lt 1 ]; then
-        [ -d $DT_r ] && rm -fr $DT_r
-        notopic="$(gettext "To start adding notes you need have a topic.
-Create one using the button below. ")"
-        $DS/chng.sh "$notopic" & exit 1
-    fi
-    
-    [[ -z "$4" ]] && txt="$(xclip -selection primary -o \
-    | sed ':a;N;$!ba;s/\n/ /g' | sed '/^$/d')" || txt="$4"
+    if [ "$(grep -v 'Feeds' < $DM_tl/.1.cfg | wc -l)" -lt 1 ]; then
+    [ -d $DT_r ] && rm -fr $DT_r
+    $DS/chng.sh "$(gettext "To start adding notes you need have a topic.
+Create one using the button below. ")" & exit 1; fi
 
-    if [[ "$3" = 2 ]]; then
-        DT_r="$2"; cd $DT_r
-        [[ -n "$5" ]] && srce="$5" || srce=""
-    else
-        DT_r=$(mktemp -d $DT/XXXXXX); cd $DT_r
-    fi
+    [ -z "$4" ] && txt="$(xclip -selection primary -o \
+    | sed ':a;N;$!ba;s/\n/ /g' | sed '/^$/d')" || txt="$4"
     
-    [[ -f $DT_r/ico.jpg ]] && img="--image=$DT_r/ico.jpg" \
-    || img="--image=$DS/images/nw.png"
+    if [ "$3" = 2 ]; then
+    DT_r="$2"; cd $DT_r
+    [ -n "$5" ] && srce="$5" || srce=""; else
+    DT_r=$(mktemp -d $DT/XXXXXX); cd $DT_r; fi
+    
+    [ -f $DT_r/ico.jpg ] && img="$DT_r/ico.jpg" \
+    || img="$DS/images/nw.png"
     
     if [[ -z "$tpe" ]]; then
-        tpcs=$(cat "$DM_tl/.2.cfg" | cut -c 1-40 \
-        | tr "\\n" '!' | sed 's/\!*$//g')
-    else
-        tpcs=$(cat "$DM_tl/.2.cfg" | egrep -v "$tpe" | cut -c 1-40 \
-        | tr "\\n" '!' | sed 's/\!*$//g')
-    fi
+    tpcs=$(cat "$DM_tl/.2.cfg" | cut -c 1-40 \
+    | tr "\\n" '!' | sed 's/\!*$//g'); else
+    tpcs=$(cat "$DM_tl/.2.cfg" | egrep -v "$tpe" | cut -c 1-40 \
+    | tr "\\n" '!' | sed 's/\!*$//g'); fi
+    
     [ -n "$tpcs" ] && e='!'
     ttle="${tpe:0:50}"
-    [[ "$tpe" != "$tpc" ]] && topic="$topic <b>*</b>" || topic="$topic"
-    
+    [ "$tpe" != "$tpc" ] && topic="$topic <b>*</b>" || topic="$topic"
 
-    if [ $trda = TRUE ]; then
-        lzgpr="$(dlg_form_1)"
-    else 
-        lzgpr="$(dlg_form_2)"
-    fi
-    
+    if [ "$trda" = TRUE ]; then lzgpr="$(dlg_form_1)"; \
+    else lzgpr="$(dlg_form_2)"; fi
+
     ret=$(echo "$?")
     trgt=$(echo "$lzgpr" | head -n -1 | sed -n 1p | sed 's/^\s*./\U&\E/g')
     srce=$(echo "$lzgpr" | sed -n 2p | sed 's/^\s*./\U&\E/g')
@@ -214,7 +200,6 @@ elif [ "$1" = new_sentence ]; then
         msg "$(gettext "No topic is active")\n" info & exit 1
     fi
     
-    # ---------------------
     if [ $trda = TRUE ]; then
     
         internet
@@ -233,7 +218,6 @@ elif [ "$1" = new_sentence ]; then
             cp -f $DT_r/audtm.mp3 "$DM_tlt/$fname.mp3"
         fi
     
-    # ---------------------
     else 
         if [ -z "$4" ]; then
             [ -d $DT_r ] && rm -fr $DT_r
@@ -256,7 +240,6 @@ elif [ "$1" = new_sentence ]; then
         fi
     fi
     
-    # ---------------------
     if ( [ -z $(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary') ] \
     || [ ! -f "$DM_tlt/$fname.mp3" ] || [ -z "$trgt" ] || [ -z "$srce" ] ); then
         [ -d $DT_r ] && rm -fr $DT_r
@@ -285,18 +268,16 @@ elif [ "$1" = new_sentence ]; then
         rm "$DM_tlt/$fname.mp3"
         msg "$(gettext "Something unexpected has occurred while saving your note.")" dialog-warning 
         [ -d $DT_r ] && rm -fr $DT_r & exit 1
-        
     fi
     
     add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3"
     notify-send -i "$icnn" "$trgt" "$srce\\n($tpe)" -t 10000
     index sentence "$trgt" "$tpe"
     
-    (
-    if [ $(sed -n 8p $DC_s/1.cfg) = TRUE ]; then
+    
+    (if [ $(sed -n 8p $DC_s/1.cfg) = TRUE ]; then
     $DS/add.sh sentence_list_words "$DM_tlt/$fname.mp3" "$trgt" "$tpe"
-    fi
-    ) &
+    fi) &
 
     fetch_audio $aw $bw $DT_r $DM_tls
     
@@ -325,8 +306,7 @@ elif [ $1 = new_word ]; then
     fi
     
     internet
-    
-   # ---------------------
+
     if [ $trda = TRUE ]; then
 
         trgt="$(translate "$trgt" auto $lgt)"
@@ -348,8 +328,7 @@ elif [ $1 = new_word ]; then
         else
             voice "$trgt" $DT_r "$DM_tlt/words/$fname.mp3"
         fi
-    
-    # ---------------------
+
     else
         if [ -z "$4" ]; then
             [ -d $DT_r ] && rm -fr $DT_r
@@ -386,7 +365,7 @@ elif [ $1 = new_word ]; then
 
         fi
     fi
-    # ---------------------
+
     if [ -f img.jpg ]; then
         set_image_3 "$DM_tlt/words/$fname.mp3" "$DM_tlt/words/images/$fname.jpg"
         icnn=img.jpg
