@@ -96,8 +96,8 @@ elif [ "$1" != chngi ]; then
         align="right"
     fi
     
-    VAR=$(cat "$DC_s/0.cfg" | yad --name=idiomind --text-align=$align \
-    --center $img --image-on-top --separator="" \
+    VAR=$(cat "$DC_s/0.cfg" | yad --name=Idiomind --text-align=$align \
+    --center $img --image-on-top --separator="" --class=Idiomind \
     "$text" --width="$wth" --height="$eht" --ellipsize=END \
     --no-headers --list --window-icon=idiomind --borders=5 \
     --button=gtk-new:3 --button=gtk-apply:0 \

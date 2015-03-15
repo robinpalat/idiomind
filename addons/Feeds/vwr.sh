@@ -3,8 +3,9 @@
 
 source /usr/share/idiomind/ifs/c.conf
 DSP="$DS/addons/Feeds"
-wth=$(sed -n 5p $DC_s/18.cfg)
-eht=$(sed -n 6p $DC_s/18.cfg)
+wth=$(($(sed -n 2p $DC_s/10.cfg)-480))
+eht=$(($(sed -n 3p $DC_s/10.cfg)-140))
+
 D=($*)
 Q=$((${#D[@]}-1))
 for i in $(seq 0 $Q); do
@@ -22,17 +23,17 @@ btncmd="'$DSP/add.sh' new_item '$item'"
 fi
 
 if [ -f "$dir/$fname.mp3" ]; then
-    file="$dir/$fname.mp3"
+file="$dir/$fname.mp3"
 elif [ -f "$dir/$fname.ogg" ]; then
-    file="$dir/$fname.ogg"
+file="$dir/$fname.ogg"
 elif [ -f "$dir/$fname.mp4" ]; then
-     file="$dir/$fname.mp4"
+file="$dir/$fname.mp4"
 elif [ -f "$dir/$fname.m4v" ]; then
-     file="$dir/$fname.m4v"
+file="$dir/$fname.m4v"
 elif [ -f "$dir/$fname.avi" ]; then
-     file="$dir/$fname.avi"
+file="$dir/$fname.avi"
 elif [ -f "$dir/$fname.mov" ]; then
-     file="$dir/$fname.mov"
+file="$dir/$fname.mov"
 fi
 
 source "$dir/$fname.i"

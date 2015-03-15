@@ -18,7 +18,9 @@
 #  
 
 
-source $DS/ifs/mods/cmns.sh
+source "$DS/ifs/mods/cmns.sh"
+lgt=$(lnglss $lgtl)
+lgs=$(lnglss $lgsl)
 
 # -------------------------------------------------
 if [ "$1" = play ]; then
@@ -67,17 +69,17 @@ elif [ "$1" = edit_audio ]; then
 elif [ "$1" = help ]; then
 
     web="http://idiomind.sourceforge.net/doc/help.html"
-    zenity --text-info --window-icon=idiomind \
-    --title="$(gettext "Help")" --width=800 \
-    --height=680 --ok-label="$(gettext "OK")" \
-    --name=idiomind --html \
-    --url="$web" >/dev/null 2>&1
+    yad --html --window-icon=idiomind --browser \
+    --title="$(gettext "Help")" --width=700 \
+    --height=600 --button="$(gettext "OK")":0 \
+    --name=Idiomind --class=Idiomind \
+    --uri="$web" >/dev/null 2>&1
     
 # -------------------------------------------------
 elif [ "$1" = definition ]; then
 
     web="http://glosbe.com/$lgt/$lgs/${2,,}"
-    xdg-open "$web" > /tmp/myword
+    xdg-open "$web"
     
 # -------------------------------------------------
 elif [ "$1" = web ]; then
@@ -88,8 +90,12 @@ elif [ "$1" = web ]; then
 # -------------------------------------------------
 elif [ "$1" = fback ]; then
 
-    web=http://idiomind.sourceforge.net/doc/msg.html
-    xdg-open "$web" >/dev/null 2>&1
+    web="http://idiomind.sourceforge.net/doc/msg.html"
+    yad --html --window-icon=idiomind --browser \
+    --title="$(gettext "Message")" --width=500 \
+    --height=470 --no-buttons --fixed \
+    --name=Idiomind --class=Idiomind \
+    --uri="$web" >/dev/null 2>&1
 
 # -------------------------------------------------
 elif [ "$1" = check_updates ]; then
@@ -104,8 +110,8 @@ elif [ "$1" = check_updates ]; then
     
         yad --text="<b> $(gettext "A new version of Idiomind available") </b>\n\n" \
         --image=info --title=" " --window-icon=idiomind \
-        --on-top --skip-taskbar --sticky \
-        --center --name=idiomind --borders=10 --always-print-result \
+        --on-top --skip-taskbar --sticky --class=Idiomind \
+        --center --name=Idiomind --borders=10 --always-print-result \
         --button="$later":2 --button="$(gettext "Download")":0 \
         --width=430 --height=160
         ret=$?
@@ -138,10 +144,10 @@ info_="$(gettext "\nIdiomind is a small program that helps you learn foreign wor
 text="<big><big><b>Idiomind v2.2-beta</b></big></big>\\n<sup>$(gettext "Vocabulary learning tool")\\n<a href='https://sourceforge.net/projects/idiomind/'>Homepage</a> (c) 2013-2015 Robin Palat</sup>"
 printf "$info_" | yad --text-info --text="$text\n" \
 --show-uri --fontname=Arial --margins=10 --wrap \
---name=idiomind --text-align=center --on-top \
+--name=Idiomind --text-align=center --on-top \
 --sticky --center --window-icon=idiomind --borders=10 \
 --width=450 --height=340 --title="$(gettext "About")" \
---skip-taskbar --button="$(gettext "OK")":0
+--class=Idiomind --button="$(gettext "OK")":0
 
 # -------------------------------------------------
 elif [ "$1" = a_check_updates ]; then
@@ -169,7 +175,7 @@ elif [ "$1" = a_check_updates ]; then
             yad --text="<b> $(gettext "A new version of Idiomind available") </b>\n\n" \
             --image=info --title=" " --window-icon=idiomind \
             --on-top --skip-taskbar --sticky --always-print-result \
-            --center --name=idiomind --borders=10 \
+            --center --name=Idiomind --borders=10 --class=Idiomind \
             --button="$later":2 --button="$(gettext "Download")":0 \
             --width=430 --height=160
             ret=$?
@@ -345,9 +351,9 @@ elif [ "$1" = check_index ]; then
 elif [ "$1" = pdfdoc ]; then
 
     cd $HOME
-    pdf=$(yad --save --center --borders=10 \
-    --on-top --filename="$HOME/$tpc.pdf" \
-    --window-icon=idiomind --skip-taskbar --title="Export " \
+    pdf=$(yad --save --center --borders=5 --name=Idiomind \
+    --on-top --filename="$HOME/$tpc.pdf" --class=Idiomind \
+    --window-icon=idiomind --title="Export " \
     --file --width=600 --height=500 --button=gtk-ok:0 )
     ret=$?
 

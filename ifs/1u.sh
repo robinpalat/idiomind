@@ -68,7 +68,7 @@ sudo apt-get install yad")" \
 fi
 
 dialog=$(yad --center --width=500 --height=300 --fixed \
-    --image-on-top --on-top --class=idiomind --name=idiomind \
+    --image-on-top --on-top --class=Idiomind --name=Idiomind \
     --window-icon=idiomind --buttons-layout=end --text="$text" \
     --title="Idiomind" --form --borders=15 --align=center --button=Cancel:1 --button=gtk-ok:0 \
     --field="$(gettext "Select the language you are studying:")":lbl \

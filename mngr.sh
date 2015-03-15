@@ -26,14 +26,14 @@ if [ "$1" = mkmn ]; then
     [[ -d ./images ]] && rm -r ./images
     [[ -d ./words ]] && rm -r ./words
     [[ -d ./practice ]] && rm -r ./practice
-    for i in "$(ls -t -N -d */ | sed 's/\///g')"; do echo "${i%%/}"; done > $DM_tl/.1.cfg
-    sed -i '/^$/d' $DM_tl/.1.cfg
-    > $DC_s/0.cfg
+    for i in "$(ls -t -N -d */ | sed 's/\///g')"; do echo "${i%%/}"; done > "$DM_tl/.1.cfg"
+    sed -i '/^$/d' "$DM_tl/.1.cfg"
+    > "$DC_s/0.cfg"
     
     n=1
-    while [ $n -le $(cat $DM_tl/.1.cfg | head -50 | wc -l) ]; do
+    while [ $n -le $(cat "$DM_tl/.1.cfg" | head -50 | wc -l) ]; do
     
-        tp=$(sed -n "$n"p $DM_tl/.1.cfg)
+        tp=$(sed -n "$n"p "$DM_tl/.1.cfg")
 
         i=$(cat "$DM_tl/$tp/.conf/8.cfg")
         if [ ! -f "$DM_tl/$tp/.conf/8.cfg" ] || \
@@ -44,20 +44,20 @@ if [ "$1" = mkmn ]; then
         [ ! -d "$DM_tl/$tp" ]; then
             i=13
             echo "13" > "$DM_tl/$tp/.conf/8.cfg"
-            cp -f $DS/default/tpc.sh "$DM_tl/$tp/tpc.sh"
+            cp -f "$DS/default/tpc.sh" "$DM_tl/$tp/tpc.sh"
             chmod +x "$DM_tl/$tp/tpc.sh"
         fi
         [ ! -f "$DM_tl/$tp/tpc.sh" ] && \
-        cp -f $DS/default/tpc.sh "$DM_tl/$tp/tpc.sh"
+        cp -f "$DS/default/tpc.sh" "$DM_tl/$tp/tpc.sh"
         chmod +x "$DM_tl/$tp/tpc.sh"
-        echo "/usr/share/idiomind/images/img.$i.png" >> $DC_s/0.cfg
-        echo "$tp" >> $DC_s/0.cfg
+        echo "/usr/share/idiomind/images/img.$i.png" >> "$DC_s/0.cfg"
+        echo "$tp" >> "$DC_s/0.cfg"
         let n++
     done
     n=1
-    while [ $n -le $(cat $DM_tl/.1.cfg | tail -n+51 | wc -l) ]; do
-        ff=$(cat $DM_tl/.1.cfg | tail -n+51)
-        tp=$(echo "$ff" | sed -n "$n"p)
+    while [ $n -le $(cat "$DM_tl/.1.cfg" | tail -n+51 | wc -l) ]; do
+        f=$(cat "$DM_tl/.1.cfg" | tail -n+51)
+        tp=$(echo "$f" | sed -n "$n"p)
         if [ ! -f "$DM_tl/$tp/.conf/8.cfg" ] || \
         [ ! -f "$DM_tl/$tp/tpc.sh" ] || \
         [ ! -f "$DM_tl/$tp/.conf/0.cfg" ] || \
@@ -65,11 +65,11 @@ if [ "$1" = mkmn ]; then
         [ ! -f "$DM_tl/$tp/.conf/3.cfg" ] || \
         [ ! -f "$DM_tl/$tp/.conf/4.cfg" ] || \
         [ ! -d "$DM_tl/$tp" ]; then
-            echo '/usr/share/idiomind/images/img.13.png' >> $DC_s/0.cfg
+            echo '/usr/share/idiomind/images/img.13.png' >> "$DC_s/0.cfg"
         else
-            echo '/usr/share/idiomind/images/img.12.png' >> $DC_s/0.cfg
+            echo '/usr/share/idiomind/images/img.12.png' >> "$DC_s/0.cfg"
         fi
-        echo "$tp" >> $DC_s/0.cfg
+        echo "$tp" >> "$DC_s/0.cfg"
         let n++
     done
     exit 1

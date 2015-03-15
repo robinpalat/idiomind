@@ -15,9 +15,9 @@ function delll() {
 
 function dlg_form_1() {
     
-        yad --form --wrap --center --name=idiomind --class=idmnd \
+        yad --form --wrap --center --name=Idiomind \
         --width=$wth --height=$eht --always-print-result \
-        --borders=15 --columns=2 --align=center --skip-taskbar \
+        --borders=15 --columns=2 --align=center --class=Idiomind \
         --buttons-layout=end --title=" $TGT" --separator="\\n" \
         --fontname="Arial" --scroll --window-icon=idiomind \
         --text-align=center --selectable-labels \
@@ -40,11 +40,11 @@ function dlg_form_1() {
 
 function dlg_form_2() {
         
-        yad --form --wrap --center --name=idiomind --class=idmnd \
+        yad --form --wrap --center --name=Idiomind  \
         --width=$wth --height=$eht --always-print-result \
         --separator="\\n" --borders=15 --align=center --align=center \
         --buttons-layout=end --title=" $tgt" --fontname="Arial" \
-        --selectable-labels --window-icon=idiomind --skip-taskbar \
+        --selectable-labels --window-icon=idiomind --class=Idiomind \
         --field="$chk:CHK" "$ok" \
         --field="$(gettext "Mark") "":CHK" "$mrk" \
         --field="<small>$lgtl</small>":TXT "$tgt" \

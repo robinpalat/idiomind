@@ -156,8 +156,8 @@ function new_session() {
 
 if [ -z "$1" ]; then
 
-    yad --width=150 --height=200 --form --name=idiomind \
-    --fixed --title="Idiomind" --no-buttons \
+    yad --width=150 --height=200 --form --name=Idiomind \
+    --fixed --title="Idiomind" --no-buttons --class=Idiomind \
     --field=gtk-new:btn "/usr/share/idiomind/add.sh 'new_items'" \
     --field=gtk-home:btn "idiomind 'topic'" \
     --field=gtk-index:btn "/usr/share/idiomind/chng.sh" \
@@ -192,8 +192,8 @@ if [ $(echo "$1" | grep -o 'autostart') ]; then
 
 elif [ $(echo "$1" | grep -o '.idmnd') ]; then
 
-    wth=$(($(sed -n 2p $DC_s/10.cfg)-50))
-    eht=$(($(sed -n 3p $DC_s/10.cfg)-50))
+    wth=$(($(sed -n 2p $DC_s/10.cfg)-350))
+    eht=$(($(sed -n 3p $DC_s/10.cfg)-0))
     dte=$(date "+%d %B")
     c=$(echo $(($RANDOM%1000)))
     source "$DS/ifs/mods/cmns.sh"
@@ -224,7 +224,7 @@ elif [ $(echo "$1" | grep -o '.idmnd') ]; then
     
     if [ "$tpc_i" != "$name" ]; then
     
-        cstn=$(yad --name=idiomind --image=error \
+        cstn=$(yad --name=Idiomind --class=Idiomind --image=error \
         --text=" <b>$(gettext "The file is damaged")</b>\\n" \
         --image-on-top --sticky --button=gtk-ok:1 \
         --width=280 --height=120 --title=Idiomind \
@@ -263,8 +263,8 @@ elif [ $(echo "$1" | grep -o '.idmnd') ]; then
                 
                 if [ $if2 -ge 80 ]; then
                 
-                    yad --name=idiomind --center \
-                    --image=info --class=idiomind \
+                    yad --name=Idiomind --center \
+                    --image=info --class=Idiomind \
                     --text="$(gettext "You have reached the maximum number of topics")\n\n" \
                     --image-on-top --sticky --skip-taskbar \
                     --width=420 --height=150 --title=Idiomind \
@@ -276,9 +276,9 @@ elif [ $(echo "$1" | grep -o '.idmnd') ]; then
                 if [ "$chck" -ge 1 ]; then
                 
                     tpc_i="$tpc_i $chck"
-                    yad --name=idiomind --image=info --sticky \
+                    yad --name=Idiomind --image=info --sticky \
                     --text=" $(gettext "You have a topic with the same name")  \\n $(gettext "The new rename it as") <b>$tpc_i    </b>\n" \
-                    --class=idiomind --center --skip-taskbar \
+                    --class=Idiomind --center --skip-taskbar \
                     --image-on-top --width=420 --height=150 \
                     --window-icon=idiomind --title=Idiomind \
                     --button=Cancel:1 --button=gtk-ok:0

@@ -77,8 +77,8 @@ img3=$DSP/icons_st/$(cat .iconlw).png
 img4=$DSP/icons_st/$(cat .iconls).png
 
 VAR=$(yad --ellipsize=NONE --list \
---on-top --class=idiomind --name=idiomind \
---center --window-icon=idiomind --skip-taskbar \
+--on-top --class=Idiomind --name=Idiomind \
+--center --window-icon=idiomind \
 --image-on-top --buttons-layout=edge $img \
 --borders=5 --expand-column=1 --print-column=2 \
 --width=$wth --height=$eht --text="$info" \

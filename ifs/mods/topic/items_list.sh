@@ -19,7 +19,7 @@ function notebook_1() {
     --field="TextoLorem ipsum\ndolor sit amet, \nconsectetur \nadipisicing elit, \nsed doeiusmod tempor\n incididunt ut \nlabore et dolore\n magna aliqua.\n Ut enimad \nminim veniam, qu":lbl " " \
     --field="$(gettext "Share")":BTN "/usr/share/idiomind/ifs/upld.sh" \
     --field="Delete":btn "/usr/share/idiomind/mngr.sh 'delete_topic'" > "$cnf3" &
-    yad --notebook --name=idiomind --center --key=$KEY \
+    yad --notebook --name=Idiomind --center --key=$KEY \
     --class=Idiomind --align=right \
     --window-icon=$DS/images/idiomind.png \
     --tab-borders=0 --center --title="Idiomind" \
@@ -47,7 +47,7 @@ function notebook_2() {
     yad --text-info --plug=$KEY --margins=14 --text="$itxt2" \
     --tabnum=3 --fore='gray40' --wrap --filename="$nt" \
     --show-uri --fontname=vendana --editable > "$cnf3" &
-    yad --notebook --name=idiomind --center \
+    yad --notebook --name=Idiomind --center \
     --class=Idiomind --align=right --key=$KEY \
     --tab-borders=0 --center --title="Idiomind" \
     --image="$img" --text="$itxt" \
@@ -71,17 +71,17 @@ function dialog_1() {
     --button="       $(gettext "Not Yet")       ":1 \
     --button="        $(gettext "Review")        ":2 \
     --text="$(gettext "days have passed since you mark\n  this topic as learned, you want to review it?")" \
-    --name=idiomind --width=420 --height=150
+    --name=Idiomind --width=420 --height=150 --class=Idiomind
 }
 
 
 function dialog_2() {
     
     yad --title="$tpc" --window-icon=idiomind \
-    --borders=5 --name=idiomind \
+    --borders=5 --name=Idiomind \
     --image=dialog-question \
     --on-top --window-icon=idiomind \
-    --center --class=idiomind \
+    --center --class=Idiomind \
     --button="$(gettext "Only New items")":3 \
     --button="$(gettext "All Items")":2 \
     --text="  $(gettext "Go over whole list or only new items?") " \

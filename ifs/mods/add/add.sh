@@ -348,31 +348,21 @@ function list_words_3() {
 function dlg_msg_3() {
     
         yad --fixed --center --on-top \
-        --image=info --name=idiomind \
+        --image=info --name=Idiomind --class=Idiomind \
         --text="$(gettext "Wait till it finishes a previous process")" \
         --fixed --sticky --buttons-layout=edge \
         --width=360 --height=120 --borders=5 \
-        --skip-taskbar --window-icon=idiomind \
+        --window-icon=idiomind \
         --title=Idiomind --button=gtk-cancel:3 --button=Ok:1
 }
 
-
-# s
-function dlg_msg_2() {
-    
-        yad --name=idiomind --center --on-top --image=info \
-        --text="$item_err\n" \
-        --image-on-top --width=360 --height=120 --borders=3 \
-        --skip-taskbar --window-icon=idiomind --sticky \
-        --title=Idiomind --button=$(gettext "Delete"):1 --button="$fix_item":0 
-}
 
 
 # same name - topic 
 function dlg_msg_6() {
     
-        yad --name=idiomind --center --on-top --image=info \
-        --text=" $1" --width=420 --height=120 --borders=3 \
+        yad --name=Idiomind --class=Idiomind --center --on-top \
+        --text=" $1" --width=420 --height=120 --borders=3 --image=info \
         --skip-taskbar --window-icon=idiomind --sticky --image-on-top \
         --title=Idiomind --button=$(gettext "Cancel"):1 --button=Ok:0
 }
@@ -383,7 +373,7 @@ function dlg_form_0() {
     
         yad --window-icon=idiomind --form --center \
         --field="$(gettext "Name")" "$2" --title="$1" \
-        --width=440 --height=100 --name=idiomind --on-top \
+        --width=440 --height=100 --name=Idiomind --on-top \
         --skip-taskbar --borders=5 --button=gtk-ok:0
 }
 
@@ -392,9 +382,9 @@ function dlg_form_0() {
 function dlg_form_1() {
 
         yad --form --center --always-print-result \
-        --on-top --window-icon=idiomind --skip-taskbar \
+        --on-top --window-icon=idiomind \
         --separator="\n" --align=right $img \
-        --name=idiomind --class=idiomind \
+        --name=Idiomind --class=Idiomind \
         --borders=0 --title=" " --width=420 --height=140 \
         --field=" <small><small>$lgtl</small></small>: " "$txt" \
         --field=" <small><small>$(gettext "Topic")</small></small>:CB" \
@@ -409,9 +399,9 @@ function dlg_form_1() {
 function dlg_form_2() {
     
         yad --form --center --always-print-result \
-        --on-top --window-icon=idiomind --skip-taskbar \
+        --on-top --window-icon=idiomind \
         --separator="\n" --align=right $img \
-        --name=idiomind --class=idiomind \
+        --name=Idiomind --class=Idiomind \
         --borders=0 --title=" " --width=420 --height=170 \
         --field=" <small><small>$lgtl</small></small>: " "$txt" \
         --field=" <small><small>${lgsl^}</small></small>: " "$srce" \
@@ -427,7 +417,7 @@ function dlg_form_2() {
 function dlg_radiolist_1() {
     
         echo "$1" | awk '{print "FALSE\n"$0}' | \
-        yad --name=idiomind --class=idiomind --center \
+        yad --name=Idiomind --class=Idiomind --center \
         --list --radiolist --on-top --fixed --no-headers \
         --text="<b>$te</b> <small><small> --window-icon=idiomind \
         $info</small></small>" --sticky --skip-taskbar \
@@ -442,9 +432,9 @@ function dlg_checklist_1() {
     
         cat "$1" | awk '{print "FALSE\n"$0}' | \
         yad --list --checklist --title="$(gettext "Listing words")" \
-        --on-top --text="<small>$2</small>" \
-        --center --sticky --no-headers \
-        --buttons-layout=end --skip-taskbar --width=400 \
+        --on-top --text="<small>$2</small>" --class=Idiomind \
+        --center --sticky --no-headers --name=Idiomind \
+        --buttons-layout=end --width=400 \
         --height=280 --borders=10 --window-icon=idiomind \
         --button=gtk-close:1 --button=$(gettext "Add"):0 \
         --column="" --column="Select" > "$slt"
@@ -456,9 +446,9 @@ function dlg_checklist_3() {
 
         slt=$(mktemp $DT/slt.XXXX.x)
         cat "$1" | awk '{print "FALSE\n"$0}' | \
-        yad --name=idiomind --window-icon=idiomind \
+        yad --name=Idiomind --window-icon=idiomind \
         --dclick-action='/usr/share/idiomind/add.sh dclik_list_words' \
-        --list --checklist --class=idiomind --center --sticky \
+        --list --checklist --class=Idiomind --center --sticky \
         --text="<small>$info</small>" --title="$tpe" \
         --width=$wth --print-all --height=$eht --borders=3 \
         --button="$(gettext "Cancel")":1 --button=$(gettext "Arrange"):2 \
@@ -474,7 +464,7 @@ function dlg_text_info_1() {
     
         cat "$1" | awk '{print "\n\n\n"$0}' | \
         yad --text-info --editable --window-icon=idiomind \
-        --name=idiomind --wrap --margins=60 --class=idiomind \
+        --name=Idiomind --wrap --margins=60 --class=Idiomind \
         --sticky --fontname=vendana --on-top --center \
         --skip-taskbar --width=$wth \
         --height=$eht --borders=3 \
@@ -486,9 +476,9 @@ function dlg_text_info_1() {
 function dlg_text_info_3() {
 
         printf "$1" | yad --text-info --center --wrap \
-        --center --skip-taskbar --on-top --title=Idiomind \
+        --center --on-top --title=Idiomind --class=Idiomind \
         --width=420 --height=150 --on-top --margins=4 \
-        --window-icon=idiomind --borders=0 --name=idiomind \
+        --window-icon=idiomind --borders=0 --name=Idiomind \
         "$2" --button=Ok:1
 }
 
@@ -497,7 +487,7 @@ function dlg_text_info_3() {
 function dlg_text_info_4() {
     
         echo "$1" | yad --text-info --center --wrap \
-        --name=idiomind --class=idiomind --window-icon=idiomind \
+        --name=Idiomind --class=Idiomind --window-icon=idiomind \
         --text=" " --sticky --width=$wth --height=$eht \
         --margins=8 --borders=3 --button=Ok:0 \
         --title=Idiomind

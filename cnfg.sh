@@ -28,17 +28,13 @@ cd "$DS/addons"
 
 autostart="[Desktop Entry]
 Name=Idiomind
-GenericName=idiomind
+GenericName=Learning Tool
 Comment=Vocabulary learning tool
 Exec=idiomind autostart
 Terminal=false
 Type=Application
-Categories=languages;Education;
 Icon=idiomind
-MimeType=application/x-idmnd;
-StartupNotify=true
-StartupWMClass=idiomind
-Encoding=UTF-8"
+StartupWMClass=Idiomind"
 
 langs="English
 Spanish
@@ -55,9 +51,7 @@ c=$(echo $(($RANDOM%100000))); KEY=$c
 cnf1=$(mktemp $DT/cnf1.XXXX)
 
 if [ ! -d "$DC" ]; then
-    "$DS/ifs/1u.sh"
-    sleep 1
-    "$DS/cnfg.sh" & exit
+    "$DS/ifs/1u.sh" & exit
 fi
 
 function confirm() {
@@ -73,21 +67,16 @@ function set_lang() {
     
     if [ ! -d "$DM_t/$1" ]; then
         mkdir "$DM_t/$1"
-        mkdir "$DM_t/$1/.share"
-    fi
+        mkdir "$DM_t/$1/.share"; fi
     echo "$1" > "$DC_s/6.cfg"
     echo "$lgsl" >> "$DC_s/6.cfg"
-    
     "$DS/stop.sh" L
-    "$DS/stop.sh" feed
-
     if [ -f "$DM/topics/$1/.8.cfg" ]; then
         LST=$(sed -n 1p "$DM/topics/$1/.8.cfg")
         "$DM/topics/$1/$LST/tpc.sh"
     else
         rm "$DC_s/4.cfg" && touch "$DC_s/4.cfg"
     fi
-    
     "$DS/mngr.sh" mkmn
 }
 
@@ -153,7 +142,7 @@ cat "$DC_s/2.cfg" | yad --plug=$KEY --tabnum=2 --list --expand-column=2 \
 --text="<sub>  $(gettext "Double click to set") </sub>" \
 --no-headers --dclick-action="/usr/share/idiomind/ifs/dclik.sh" --print-all \
 --column=icon:IMG --column=Action &
-yad --notebook --key=$KEY --name=idiomind --class=idiomind \
+yad --notebook --key=$KEY --name=Idiomind --class=Idiomind \
 --sticky --center --window-icon=idiomind --borders=5  \
 --tab="$(gettext "Preferences")" --tab="  $(gettext "Addons")  " \
 --width=$wth --height=$eht --title="$(gettext "Settings")" \
@@ -163,12 +152,7 @@ yad --notebook --key=$KEY --name=idiomind --class=idiomind \
     ret=$?
     
     if [ $ret -eq 0 ]; then
-        
-        if ([ "$(cat "$cnf1")" != "$(cat "$DC_s/1.cfg")" ] \
-        && [ -n "$(cat "$cnf1")" ]); then
-            mv -f "$cnf1" "$DC_s/1.cfg";
-        fi
-        
+
         [ ! -d  "$HOME/.config/autostart" ] \
         && mkdir "$HOME/.config/autostart"
         config_dir="$HOME/.config/autostart"
@@ -199,11 +183,16 @@ yad --notebook --key=$KEY --name=idiomind --class=idiomind \
                 if [ $? -eq 0 ]; then
                     echo "$lgtl" > "$DC_s/6.cfg"
                     echo "$lang" >> "$DC_s/6.cfg"
+                    break
                 fi
             fi
         done <<< "$langs"
         
-        rm -f "$cnf1" "$DT/.lc" & exit 1
+        if ([ "$(cat "$cnf1")" != "$(cat "$DC_s/1.cfg")" ] \
+        && [ -n "$(cat "$cnf1")" ]); then
+            mv -f "$cnf1" "$DC_s/1.cfg";
+        else rm -f "$cnf1"; fi
+        "$DT/.lc" & exit 1
     else
         rm -f "$cnf1" "$DT/.lc" & exit 1
     fi

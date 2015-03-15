@@ -41,7 +41,7 @@ function feedmode() {
     --field="Notes":txt "$nt" \
     --field="Syncronize":btn "/usr/share/idiomind/addons/Feeds/tls.sh 'syncronize'" \
     --field="Delete":btn "/usr/share/idiomind/ifs/tls.sh 'syncronize'" > "$DT/f.edit" &
-    yad --notebook --name=idiomind --center \
+    yad --notebook --name=Idiomind --center \
     --class=Idiomind --align=right --key=$KEY \
     --tab-borders=0 --center --title="$FEED" \
     --tab=" $(gettext "Episodes") " \

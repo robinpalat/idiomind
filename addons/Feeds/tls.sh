@@ -33,7 +33,7 @@ if [ "$1" = play ]; then
 fi
 
 
-tmplchannel="<?xml version='1.0' encoding='UTF-8'?>
+tmpl1="<?xml version='1.0' encoding='UTF-8'?>
 <xsl:stylesheet version='1.0'
   xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
   xmlns:itunes='http://www.itunes.com/dtds/podcast-1.0.dtd'
@@ -50,7 +50,7 @@ tmplchannel="<?xml version='1.0' encoding='UTF-8'?>
     </xsl:for-each>
   </xsl:template>
 </xsl:stylesheet>"
-tmplitem1="<?xml version='1.0' encoding='UTF-8'?>
+tmpl2="<?xml version='1.0' encoding='UTF-8'?>
 <xsl:stylesheet version='1.0'
   xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
   xmlns:itunes='http://www.itunes.com/dtds/podcast-1.0.dtd'
@@ -68,7 +68,7 @@ tmplitem1="<?xml version='1.0' encoding='UTF-8'?>
     </xsl:for-each>
   </xsl:template>
 </xsl:stylesheet>"
-tmplitem2="<?xml version='1.0' encoding='UTF-8'?>
+tmpl3="<?xml version='1.0' encoding='UTF-8'?>
 <xsl:stylesheet version='1.0'
   xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
   xmlns:itunes='http://www.itunes.com/dtds/podcast-1.0.dtd'
@@ -90,117 +90,123 @@ tmplitem2="<?xml version='1.0' encoding='UTF-8'?>
 
 
 if [ "$1" = set_channel ]; then
-
-
-    mediatype () {
-
-        if echo "${1}" | grep -o ".mp3"; then ex="mp3"; tp="aud"
-        elif echo "${1}" | grep -o ".mp4"; then ex="mp4"; tp="vid"
-        elif echo "${1}" | grep -o ".ogg"; then ex="ogg"; tp="aud"
-        elif echo "${1}" | grep -o ".avi"; then ex="avi"; tp="vid"
-        elif echo "${1}" | grep -o ".m4v"; then ex="m4v"; tp="vid"
-        elif echo "${1}" | grep -o ".mov"; then ex="mov"; tp="vid"
-        fi
-    }
     
     feed="$2"
     DCP="$DM_tl/Feeds/.conf"
+    
+    xml="$(xsltproc - "$feed" <<< "$tmpl1" 2> /dev/null)"
+    items1="$(echo "$xml" | tr '\n' ' ' | tr -s '[:space:]' \
+    | sed 's/EOL/\n/g' | head -n 1 | sed -r 's|-\!-|\n|g')"
+
+    xml="$(xsltproc - "$feed" <<< "$tmpl2" 2> /dev/null)"
+    items2="$(echo "$xml" | tr '\n' ' ' | tr -s [:space:] \
+    | sed 's/EOL/\n/g' | head -n 1 | sed -r 's|-\!-|\n|g')"
+    
+    xml="$(xsltproc - "$feed" <<< "$tmpl3" 2> /dev/null)"
+    items3="$(echo "$xml" | tr '\n' ' ' | tr -s [:space:] \
+    | sed 's/EOL/\n/g' | head -n 1  | sed -r 's|-\!-|\n|g')"
+
 
     fchannel() {
         
-        channel="$(xsltproc - "$feed" <<< "$tmplchannel" 2> /dev/null)"
-        channel="$(echo "$channel" | tr '\n' ' ' \
-        | tr -s '[:space:]' | sed 's/EOL/\n/g' | head -n 1)"
-        fields="$(echo "$channel" | sed -r 's|-\!-|\n|g')"
         n=1;
         while read -r find; do
+        
+            
             if ([ $(wc -w <<< "${find}") -ge 1 ] && [ -z "$name" ]); then
                 name="$n"
                 n=2; fi
+                
             if ([ -n "$(grep 'http:/' <<< "${find}")" ] && [ -z "$link" ]); then
                 link="$n"
                 n=3; fi
+                
             if ([ -n "$(grep -E '.jpeg|.jpg|.png' <<< "${find}")" ] && [ -z "$logo" ]); then
                 logo="$n"; fi
+                
             let n++
-        done <<< "$fields"
-
-        echo
-        echo "[channel]    name: $name ____ link: $link ____ logo: $logo"
-        echo
+        done <<< "$items1"
     }
    
 
-    ftype1() {
-        items="$(xsltproc - "$feed" <<< "$tmplitem1" 2> /dev/null)"
-        items="$(echo "$items" | tr '\n' ' ' | tr -s [:space:] | sed 's/EOL/\n/g' | head -n 2)"
-        item="$(echo "$items" | sed -n 1p)"
-        if [ -z "$(echo $item | sed 's/^ *//; s/ *$//; /^$/d')" ]; then
-        msg "$(gettext "Couldn't download the specified URL\n")" info
-        rm -f "$DT/cpt.lock" & exit 1
-        fi
-        items="$(echo "$item" | sed -r 's|-\!-|\n|g')"
-        n=1; 
-        while read -r find; do
-            if ([ -n "$(grep -E '.mp3|.mp4|.ogg|.avi|.m4v|.mov|.flv' <<< "${find}")" ] && [ -z "$media" ]); then
-                media="$n"; type=1
-                n=2; fi
-            if ([ $(wc -w <<< "${find}") -ge 1 ] && [ -z "$title" ]); then
-                title="$n"
-                n=4; fi
-            if ([ $(wc -w <<< "${find}") -ge 1 ] && [ -z "$summ" ]); then
-                summ="$n"; fi
-            let n++
-        done <<< "$items"
+    ftype1() { # manera basicapara podcast en tonces type es 1
         
-        echo
-        echo "[1]    media: $media ____ title: $title ____ summ: $summ"
-        echo
+        n=1
+        while read -r find; do
+            [[ $n = 3 || $n = 5 || $n = 6 ]] && continue
+            if ([ -n "$(grep -o -E '\.mp3|\.mp4|\.ogg|\.avi|\.m4v|\.mov|\.flv' <<< "${find}")" ] && [ -z "$media" ]); then
+
+            media="$n"; type=1; break; fi
+            let n++
+        done <<< "$items2"
+        
+        n=3
+        while read -r find; do
+            if ([ $(wc -w <<< "${find}") -ge 1 ] && [ $(wc -w <<< "${find}") -le 180 ] && [ -z "$title" ]); then
+            title="$n"; break; fi
+            let n++
+        done <<< "$items2"
+
+        n=5
+        while read -r find; do
+            if ([ $(wc -w <<< "${find}") -ge 1 ] && [ -z "$summ" ]); then
+            summ="$n"; break; fi
+            let n++
+        done <<< "$items2"
     }
     
     
-    ftype2() {
-        items="$(xsltproc - "$feed" <<< "$tmplitem2" 2> /dev/null)"
-        items="$(echo "$items" | tr '\n' ' ' | tr -s [:space:] | sed 's/EOL/\n/g' | head -n 2)"
-        item="$(echo "$items" | sed -n 1p)"
+    ftype2() {  # si no encuentra 3d busca 2d el type sera 2
 
-        n=1;
+        n=1
         while read -r find; do
-            if ([ -n "$(grep -E '.jpg|.jpeg|.png' <<< "${find}")" ] && [ -z "$image" ]); then
-                image="$n"; type=2
-                n=2; fi
-            if ([ $(wc -w <<< "${find}") -ge 1 ] && [ -z "$title" ]); then
-                title="$n"
-                n=4; fi
-            if ([ $(wc -w <<< "${find}") -ge 1 ] && [ -z "$summ" ]); then
-                summ="$n"; fi
+            if ([ -n "$(grep -o -E '\.jpg|\.jpeg|\.png' <<< "${find}")" ] && [ -z "$image" ]); then
+            image="$n"; type=2; break ; fi
             let n++
-        done <<< "$items"
-
-        echo
-        echo "[2] $c    image: $image ____ title: $title ____ summ: $summ"
-        echo
-
-        if [ -z $image ]; then
+        done <<< "$items3"
         
-            n=1
-            while read -r find; do
-                if ([ -n "$(grep -E '.jpg|.jpeg|.png' <<< "${find}")" ] && [ -z "$image" ]); then
-                    type=2
-                    image="$n"; break; fi
-                if ([ -n "$(grep -o 'media:thumbnail url="[^"]*' | grep -o '[^"]*$')" <<< "${find}" ] && [ -z "$image" ]); then
-                    image="$n"; break; fi
-                    type=2
-                if ([ -n "$(grep -o 'img src="[^"]*' | grep -o '[^"]*$')" <<< "${find}" ] && [ -z "$image" ]); then
-                    type=2
-                    image="$n"; break; fi
-                let n++
-            done <<< "$items"
-        fi
+        n=4
+        while read -r find; do
+            if ([ $(wc -w <<< "${find}") -ge 1 ] && [ -z "$title" ]); then
+            title="$n"; break ; fi
+            let n++
+        done <<< "$items3"
         
-        echo
-        echo "[3] $c   image: $image ____ summ: $summ"
-        echo
+        n=6
+        while read -r find; do
+            if ([ $(wc -w <<< "${find}") -ge 1 ] && [ -z "$summ" ]); then
+                summ="$n"; break ; fi
+            let n++
+        done <<< "$items3"
+    }
+
+
+    find_images() {
+
+        n=1
+        while read -r find; do
+            if ([ -n "$(grep -E '\.jpg|\.jpeg|.png' <<< "${find}")" ] && [ -z "$image" ]); then
+                type=2
+                image="$n"; break; fi
+            if ([ -n "$(grep -o 'media:thumbnail url="[^"]*' | grep -o '[^"]*$')" <<< "${find}" ] && [ -z "$image" ]); then
+                image="$n"; break; fi
+                type=2
+            if ([ -n "$(grep -o 'img src="[^"]*' | grep -o '[^"]*$')" <<< "${find}" ] && [ -z "$image" ]); then
+                type=2
+                image="$n"; break; fi
+            let n++
+        done <<< "$items3"
+    }
+    
+    
+    find_summ() {
+
+        n=1
+        while read -r find; do
+            if [ $(wc -w <<< "${find}") -ge 1 ]; then
+                summ="$n"; break; fi
+            let n++
+        done <<< "$items3"
     }
     
 
@@ -209,66 +215,33 @@ if [ "$1" = set_channel ]; then
     ftype1
     if [ -z "$type" ]; then
         ftype2
+        if [ -z $image ]; then
+        find_images
+        fi
+        if [ -z $summ ]; then
+            find_summ
+        fi
     fi
+
     
 
-    if [ -z $summ ]; then
-        n=1
-        while read -r find; do
-            if [ $(wc -w <<< "${find}") -ge 1 ]; then
-                summ="$n"; break; fi
-            let n++
-        done <<< "$items"
-    fi
-    
-    
-    if [ -z "$logo" ]; then
-        enclosure_url=$(curl -s -I -L -w %"{url_effective}" \
-        --url "$enclosure" | tail -n 1)
-        mediatype "$enclosure_url"
-        cd "$DT_r"; wget -q -c -T 30 -O "media.$ex" "$enclosure_url"
-        eyeD3 --write-images="$DT_r" "media.$ex"
-        if ls | grep -E '.jpeg|.jpg|.png'; then
-            logo="5"; fi
-        rm -f "$DT"/*jpeg "$DT"/*jpg "$DT"/*png
-        logo=3
-    fi
-    
-    
     if [[ -n "$title" && -n "$summ" && -z "$image" && -z "$media" ]]; then
         type=3
     fi
     
     if [ -n "$type" ]; then
+            
+        echo _______________________________________
+        echo -e "\nname: $name\nlink: $link\nlogo: $logo\ntype: $type\nmedia: $media\ntitle: $title\nsumm: $summ\nimage: $image "
+        echo ______________________________________
+        
         echo "$feed|$type|$name|$link|$logo|$title|$media|$image|$summ" >> "$DCP/15.cfg"
         exit 0
     else
-        exit 1
+        msg "$(gettext "Couldn't download the specified URL\n")" info
+        rm -f "$DT/cpt.lock" & exit 1
     fi
     
-
-
-
-
-
-
-echo "$sumlink" | grep -o 'img src="[^"]*' | grep -o '[^"]*$' | sed -n 1p
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -289,7 +262,7 @@ elif [ "$1" = check ]; then
     [ -z "$lnk" ] && exit 1
     [ ! -f "$DCP/$2.rss" ] && printf "$tpl" > "$DCP/$2.rss"
     cp "$DCP/$2.rss" "$DCP/$2.rss_"
-    podcast_items="$(xsltproc - "$lnk" <<< "$tmplitem1" 2> /dev/null)"
+    podcast_items="$(xsltproc - "$lnk" <<< "$tmpl2" 2> /dev/null)"
     podcast_items="$(echo "$podcast_items" | tr '\n' ' ' | tr -s [:space:] | sed 's/EOL/\n/g' | head -n 2)"
     item="$(echo "$podcast_items" | sed -n 1p)"
     if [ -z "$(echo $item | sed 's/^ *//; s/ *$//; /^$/d')" ]; then

@@ -4,8 +4,8 @@
 u=$(echo "$(whoami)")
 nmt=$(sed -n 1p /tmp/.idmtp1.$u/idmimp_X015x/ls)
 dir="/tmp/.idmtp1.$u/idmimp_X015x/$nmt"
-wth=$(($(sed -n 2p $HOME/.config/idiomind/s/10.cfg)-350))
-eht=$(($(sed -n 3p $HOME/.config/idiomind/s/10.cfg)-0))
+wth=$(($(sed -n 2p $DC_s/10.cfg)-320))
+eht=$(($(sed -n 3p $DC_s/10.cfg)-130))
     
 re='^[0-9]+$'
 now="$1"

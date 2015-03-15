@@ -28,10 +28,10 @@ if [ "$1" = vsd ]; then
     eht=$(($(sed -n 3p $DC_s/10.cfg)-0))
     
     cd "$DM_t/saved"; ls -t *.id | sed 's/\.id//g' | yad --list \
-    --window-icon=idiomind --center --skip-taskbar --borders=8 \
+    --window-icon=idiomind --center --name=Idiomind --borders=8 \
     --text=" <small>$(gettext "Double clik to download") \t\t\t\t</small>" \
     --title="$(gettext "Topics saved")" --width=$wth --height=$eht \
-    --column=Nombre:TEXT --print-column=1 --no-headers \
+    --column=Nombre:TEXT --print-column=1 --no-headers --class=Idiomind \
     --expand-column=1 --search-column=1 --button="$(gettext "Close")":1 \
     --dclick-action='/usr/share/idiomind/ifs/upld.sh infsd' >/dev/null 2>&1
     [ "$?" -eq 1 ] & exit
@@ -56,8 +56,8 @@ elif [ "$1" = infsd ]; then
     lnglbl=$(echo $language_target | awk '{print tolower($0)}')
     icon=$DS/images/img.6.png
 
-    yad --borders=10 --width=420 --height=150 \
-    --on-top --skip-taskbar --center --image=$icon \
+    yad --borders=10 --width=420 --height=150 --name=Idiomind \
+    --on-top --class=Idiomind --center --image=$icon \
     --title="idiomind" --button="$(gettext "Download")":0 \
     --button="$(gettext "Close")":1 \
     --text="$name\n<small>${language_source^} $language_target </small> \n" \
@@ -148,12 +148,14 @@ funny="$(gettext "Funny")"
 
 lnglbl=$(echo $lgtl | awk '{print tolower($0)}')
 U=$(sed -n 1p $DC_s/5.cfg)
+[[ -z "$U" ]] && U=$(echo $(($RANDOM%100)))
 mail=$(sed -n 2p $DC_s/5.cfg)
 user=$(sed -n 3p $DC_s/5.cfg)
 [ -z "$user" ] && user=$(echo "$(whoami)")
 nt=$(cat "$DC_tlt/10.cfg")
 nme=$(echo "$tpc" | sed 's/ /_/g' \
 | sed 's/"//g' | sed 's/’//g')
+imgm="$DM_tlt/words/images/img.png"
 
 #------------------------------------------
 "$DS/ifs/tls.sh" check_index "$tpc"
@@ -166,7 +168,7 @@ fi
 cd $HOME
 upld=$(yad --form --width=480 --height=460 --on-top \
 --buttons-layout=end --center --window-icon=idiomind \
---borders=15 --skip-taskbar --align=right \
+--borders=15 --name=Idiomind --align=right --class=Idiomind \
 --button="$(gettext "Cancel")":1 \
 --button="$(gettext "To PDF")":2 \
 --button="$(gettext "Upload")":0 \
@@ -178,7 +180,7 @@ upld=$(yad --form --width=480 --height=460 --on-top \
 "!$others!$article!$comics!$culture!$documentary!$entertainment!$funny!$family!$grammar!$history!$movies!$in_the_city!$interview!$internet!$music!$nature!$news!$office!$relations!$sport!$science!$shopping!$social_networks!$technology!$travel" \
 --field="    <small>$(gettext "Skill Level")</small>:CB" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
 --field="<small>\n$(gettext "Description/Notes")</small>:TXT" "$nt" \
---field="<small>$(gettext "Add image")</small>:FL" "$DM_tlt/words/images/img.png")
+--field="<small>$(gettext "Add image")</small>:FL" "$imgm")
 ret=$?
 
 if [ "$ret" = 2 ]; then
@@ -268,9 +270,9 @@ level=\"$level\"" > "$DT_u/$tpc/12.cfg"
 cp -f "$DT_u/$tpc/12.cfg" "$DT/12.cfg"
 echo -e "$U
 $Mail
-$Author" >> "$DC_s/5.cfg"
+$Author" > "$DC_s/5.cfg"
 
-if [ -f "$img" ]; then
+if [ "$img" != "$imgm" ]; then
 /usr/bin/convert -scale 110x80! "$img" $DT_u/img1.png
 convert $DT_u/img1.png -alpha opaque -channel a \
 -evaluate set 15% +channel $DT_u/img.png
@@ -318,7 +320,7 @@ notify-send "$(gettext "Uploading")" "$(gettext "Wait...")" -i idiomind -t 6000
 
 #-----------------------
 cd $DT_u
-chmod 755 -R $DT_u
+#chmod 755 -R $DT_u
 lftp -u $USER,$KEY $FTPHOST << END_SCRIPT
 mirror --reverse ./ public_html/$lgs/$lnglbl/$Ctgry/
 quit
@@ -327,7 +329,7 @@ END_SCRIPT
 exit=$?
 if [ $exit = 0 ] ; then
     mv -f "$DT/12.cfg" "$DM_t/saved/$tpc.id"
-    info="  $tpc\n\n<b> $(gettext "Was uploaded properly.")</b>\n"
+    info="  $tpc\n<b> $(gettext "Was uploaded properly.")</b>\n"
     image=dialog-ok
 else
     info=" $(gettext "There was a problem uploading your file.") "
