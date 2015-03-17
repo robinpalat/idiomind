@@ -120,9 +120,7 @@ function new_session() {
                     TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
                     RM=$((100*$TM/60))
                 fi
-
-                nstll=$(grep -Fxo "$tp" "$DM_tl/.3.cfg")
-                if [ -n "$nstll" ]; then
+                if grep -Fxo "$tp" < "$DM_tl/.3.cfg"; then
                     if [ "$RM" -ge 100 ]; then
                         echo "9" >> "$DM_tl/$tp/.conf/8.cfg"
                         printf "$tp\n" >> "$DT/notify"
@@ -242,7 +240,7 @@ elif [ $(echo "$1" | grep -o '.idmnd') ]; then
         cat "$tmp/0.cfg" | awk '{print $0""}' | \
         yad --list --name=Idiomind --title="Idiomind" \
         --ellipsize=END --print-all --image-on-top \
-        --image="$img" --text="$itxt"  --class=Idiomind \
+        --image="$img" --text="$itxt" --class=Idiomind \
         --scroll --no-headers --dclick-action="$dlck" \
         --width="$wth" --height="$eht" --image-on-top \
         --window-icon=idiomind --column=Items --center \
@@ -380,8 +378,8 @@ elif [ "$1" = topic ]; then
     [ -z "$tpc" ] && exit 1
 
     if echo "$mde" | grep "wn"; then
-        itxt="<big><big>$tpc </big></big><small>\\n$ss $(gettext "Sentences") $ws $(gettext "Words")</small>"
-        itxt2="<span color='#545454'><small> $(gettext "Created by")\n $author $(gettext "on") ${category^}\n  $date_u</small></span>"
+        itxt="<big><big>$tpc </big></big><small>\\n</small>"
+        itxt2="<span color='#545454'><small>$ss $(gettext "Sentences")\n$ws $(gettext "Words")\n$(gettext "Created by")\n $author $(gettext "on") ${category^}\n  $date_u</small></span>"
     else
         itxt="<big><big>$tpc </big></big><small>\\n$ss $(gettext "Sentences") $ws $(gettext "Words")</small>"
         itxt2="<span color='#545454'><small>$(gettext "Created by")\n$author\n$(gettext "Category:") ${category^}\n$(gettext "Date:") $date_u</small></span>\n\n\n\n\n\n"

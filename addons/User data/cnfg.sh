@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/mods/cmns.sh
+source "$DS/ifs/mods/cmns.sh"
 user=$(echo "$(whoami)")
 if [ ! -f "$DC_a/1.cfg" ]; then
     echo -e "backup=FALSE" > "$DC_a/1.cfg"
@@ -64,12 +64,9 @@ if [ -z "$1" ]; then
                 --pulsate --percentage="5" --auto-close \
                 --sticky --undecorated --skip-taskbar --no-buttons
                 
-                yad --fixed --name=idiomind --center \
-                --image=info --sticky --class=idiomind \
-                --text="$(gettext "Data exported successfully")\n" \
-                --image-on-top --fixed --width=360 --height=140 --borders=3 \
-                --skip-taskbar --window-icon=idiomind \
-                --title=Idiomind --button=Ok:0 && exit 1
+                msg "$(gettext "Data exported successfully")\n" info
+                exit 1
+
             else
                 exit 1
             fi
@@ -167,12 +164,8 @@ if [ -z "$1" ]; then
                 --sticky --on-top --undecorated --on-top \
                 --skip-taskbar --center --no-buttons
                 
-                yad --fixed --name=idiomind --center \
-                --image=info --sticky --class=idiomind \
-                --text=" $(gettext "Data imported successfully")   \\n" \
-                --image-on-top --fixed --width=360 --height=140 --borders=3 \
-                --skip-taskbar --window-icon=idiomind \
-                --title=Idiomind --button=Ok:0 && exit 1
+                msg " $(gettext "Data imported successfully") \n" info
+                exit 1
             else
                 exit 1
             fi
@@ -190,7 +183,7 @@ if [ -z "$1" ]; then
 
         cd $HOME
         CNFG=$(yad --center --form --on-top --window-icon=idiomind \
-        --borders=15 --expand-column=3 --no-headers \
+        --borders=15 --expand-column=3 --no-headers --name=Idiomind  --class=Idiomind \
         --print-all --button="$(gettext "Restore")":3 --always-print-result \
         --button="$(gettext "Close")":0 --width=420 --height=300 \
         --title=Backup --columns=2 \
@@ -210,29 +203,18 @@ if [ -z "$1" ]; then
         elif [ "$ret" -eq 3 ]; then
         
             if [ ! -d "$D_cps" ]; then
-                yad --fixed --name=Idiomind --center \
-                --image=info --sticky --class=Idiomind \
-                --text="$(gettext "Not defined directory\nfor Backups")" \
-                --image-on-top --fixed --width=340 --height=130 --borders=3 \
-                --skip-taskbar --window-icon=idiomind \
-                --title=Idiomind --button=Ok:0 & exit 1
+            
+                msg "$(gettext "Not defined directory\nfor Backups")\n" info
+                exit 1
                 
             elif [ ! -f "$D_cps/idiomind.backup" ]; then
-                yad --fixed --name=Idiomind --center \
-                --image=info --sticky --class=Idiomind \
-                --text="$(gettext "No Backup")\n" \
-                --image-on-top --fixed --width=340 --height=130 --borders=3 \
-                --skip-taskbar --window-icon=idiomind \
-                --title=Idiomind --button=Ok:0 & exit 1
+            
+                msg "$(gettext "No Backup")\n" info
+                exit 1
             else
                 udt=$(cat "$D_cps/.udt")
-                yad --fixed --name=Idiomind --center \
-                --image=info --sticky --class=Idiomind \
-                --text="$(gettext "Data will be restored to") $udt \n" \
-                --image-on-top --fixed --width=340 --height=130 --borders=3 \
-                --skip-taskbar --window-icon=idiomind \
-                --title=Idiomind --button="$(gettext "Cancel")":1 --button=Ok:0
-                    ret=$?
+                msg_2 "$(gettext "Data will be restored to") $udt \n" info
+                ret=$(echo $?)
                 
                     if [ "$ret" -eq 0 ]; then
                         set -e
@@ -296,12 +278,9 @@ elif ([ "$1" = C ] && [ "$dte" != "$udt" ]); then
     done
     
     if [ ! -d "$D_cps" ]; then
-        yad --fixed --name=Idiomind --center \
-        --image=info --sticky --class=Idiomind \
-        --text="$(gettext "Can not find the directory\nestablished for backups")" \
-        --image-on-top --fixed --width=420 --height=130 --borders=3 \
-        --skip-taskbar --window-icon=idiomind \
-        --title=Idiomind --button=Ok:0
+    
+        msg "$(gettext "Can not find the directory established for backups")" info
+      
         exit 1
     fi
     

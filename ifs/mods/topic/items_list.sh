@@ -1,6 +1,14 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+    
+    
+    #web="/tmp/.idmtp1.robin/Test_7_february/index.html"
+    #yad --html --window-icon=idiomind --browser --plug=$KEY --tabnum=1 \
+    #--title="$(gettext "Help")" --width=700 \
+    #--height=600 --button="$(gettext "OK")":0 \
+    #--name=Idiomind --class=Idiomind \
+    #--uri="$web" >/dev/null 2>&1 &
 
 function notebook_1() {
     
@@ -13,6 +21,7 @@ function notebook_1() {
     --expand-column=0 --ellipsize=END --print-all --separator='|' \
     --column=Name:TEXT --dclick-action='./vwr.sh v2' &
     yad --form --scroll --borders=10 --plug=$KEY --tabnum=3 --columns=2 \
+    --text="$itxt" --image="$img" \
     --field="Notes\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t":txt "$nt" \
     --field=" <small>Rename</small>: " "$tpc" \
     --field="Marcar Tema Como Aprendido":FBTN "$DS/mngr.sh 'mkok-'" \
@@ -22,8 +31,7 @@ function notebook_1() {
     yad --notebook --name=Idiomind --center --key=$KEY \
     --class=Idiomind --align=right \
     --window-icon=idiomind \
-    --tab-borders=0 --center --title="Idiomind" \
-    --image="$img" --text="$itxt" \
+    --tab-borders=0 --center --title="Idiomind - $tpc" \
     --tab="  $(gettext "Learning") ($tb1) " \
     --tab="  $(gettext "Learned") ($tb2) " \
     --tab=" $(gettext "Edit") " \
@@ -53,8 +61,7 @@ function notebook_2() {
     --field="Delete":FBTN "$DS/mngr.sh 'delete_topic'" > "$cnf3" &
     yad --notebook --name=Idiomind --center \
     --class=Idiomind --align=right --key=$KEY \
-    --tab-borders=0 --center --title="Idiomind" \
-    --image="$img" --text="$itxt" \
+    --tab-borders=0 --center --title="Idiomind - $tpc" \
     --window-icon=idiomind \
     --tab=" $(gettext "Review") " \
     --tab=" $(gettext "Learned") ($tb2) " \

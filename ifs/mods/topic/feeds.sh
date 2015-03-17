@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/mods/cmns.sh
+source "$DS/ifs/mods/cmns.sh"
 
 function list_1() {
     while read list1; do
@@ -27,12 +27,11 @@ function feedmode() {
     info="$(cat $DCP/9.cfg)"
     c=$(echo $(($RANDOM%100000))); KEY=$c
     [ -f "$DT/.uptp" ] && \
-    info=$(echo "<i>"$(gettext "Updating")"...</i>") || \
+    info=$(echo "$(gettext "Updating")...") || \
     info=$(cat "$DM_tl/Feeds/.dt")
 
     list_1 | yad --no-headers --list --plug=$KEY \
     --tabnum=1 --print-all --expand-column=2 --ellipsize=END \
-    --text="  <small>${info^}</small>" \
     --column=Name:IMG --column=Name --dclick-action="$DSP/vwr.sh" &
     list_2 | yad --no-headers --list --plug=$KEY --tabnum=2 \
     --expand-column=2 --ellipsize=END --print-all --column=Name:IMG \
@@ -46,13 +45,13 @@ function feedmode() {
     --field="Delete":FBTN "$DS/addons/Feeds/mngr.sh 'delete'" > "$DT/f.edit" &
     yad --notebook --name=Idiomind --center \
     --class=Idiomind --align=right --key=$KEY \
-    --tab-borders=0 --center --title="$FEED" \
+    --tab-borders=0 --center --title="Feeds - ${info^}" \
     --tab=" $(gettext "Episodes") " \
     --tab=" $(gettext "Saved Episodes") " \
     --tab=" $(gettext "Edit") " --always-print-result \
     --ellipsize=END --image-on-top --window-icon=idiomind \
     --width="$wth" --height="$eht" --borders=0 \
-    --button="<small>$(gettext "Play/Stop")</small>":"/usr/share/idiomind/play.sh" \
+    --button="$(gettext "Play")":"/usr/share/idiomind/play.sh" \
     --button="gtk-refresh":2 \
     --button="gtk-close":1
     ret=$?

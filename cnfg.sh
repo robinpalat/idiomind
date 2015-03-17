@@ -112,8 +112,8 @@ yad --plug=$KEY --tabnum=1 --borders=5 --scroll --columns=2 \
 --field="$(gettext "Your Language")":LBL " " \
 --field=" :LBL" " " \
 --field=" :LBL" " " \
---field="<small>$(gettext "Check for Updates")</small>":FBTN "$DS/ifs/tls.sh check_updates" \
---field="<small>$(gettext "Quick Help")</small>":FBTN "$DS/ifs/tls.sh help" \
+--field="<small>$(gettext "Check for Updates")</small>":BTN "$DS/ifs/tls.sh check_updates" \
+--field="<small>$(gettext "Quick Help")</small>":BTN "$DS/ifs/tls.sh help" \
 --field=" :LBL" " " \
 --field="$(gettext "Play Options")\t":LBL " " \
 --field=":LBL" " " \
@@ -137,9 +137,9 @@ yad --plug=$KEY --tabnum=1 --borders=5 --scroll --columns=2 \
 --field="":CB "$lgsl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
 --field=" :LBL" " " \
 --field=" :LBL" " " \
---field="<small>$(gettext "Topic Saved")</small>":FBTN "$DS/ifs/upld.sh 'vsd'" \
---field="<small>$(gettext "Feedback")</small>":FBTN "$DS/ifs/tls.sh 'fback'" \
---field="<small>$(gettext "About")</small>":FBTN "$DS/ifs/tls.sh 'about'" | sed '/^$/d' > "$cnf1" &
+--field="<small>$(gettext "Topic Saved")</small>":BTN "$DS/ifs/upld.sh 'vsd'" \
+--field="<small>$(gettext "Feedback")</small>":BTN "$DS/ifs/tls.sh 'fback'" \
+--field="<small>$(gettext "About")</small>":BTN "$DS/ifs/tls.sh 'about'" | sed '/^$/d' > "$cnf1" &
 cat "$DC_s/2.cfg" | yad --plug=$KEY --tabnum=2 --list --expand-column=2 \
 --text="<sub>  $(gettext "Double click to set") </sub>" --print-all \
 --no-headers --dclick-action="$DS/ifs/dclik.sh" \

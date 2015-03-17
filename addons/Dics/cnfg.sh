@@ -142,11 +142,11 @@ elif [ -z "$1" ]; then
     fi
     
     if [ "$2" = f ]; then
-        tex="--text=<small>$3\n</small>"
-        align="--text-align=left"
+    tex="--text=<small>$3\n</small>"
+    align="--text-align=left"
     else
-        tex="--center"
-        align="--text-align=right"
+    tex="--center"
+    align="--text-align=right"
     fi
     
     sel="$(dict_list | yad --list --title="$(gettext "Dictionaries")" \
@@ -171,7 +171,7 @@ elif [ -z "$1" ]; then
                 dict=$(echo "$sel" | sed -n "$n"p)
                 d=$(echo "$dict" | awk '{print ($2)}')
                 
-                if echo "$dict" | grep FALSE; then
+                if echo "$dict" | grep 'FALSE'; then
                     if [ ! -f "$disables/$d.$lgt" ]; then
                         [ -f "$enables/$d.$lgt" ] \
                         && mv -f "$enables/$d.$lgt" "$disables/$d.$lgt"
@@ -181,7 +181,7 @@ elif [ -z "$1" ]; then
                         && mv -f "$enables/$d.auto" "$disables/$d.auto"
                     fi
                 fi
-                if echo "$dict" | grep TRUE; then
+                if echo "$dict" | grep 'TRUE'; then
                     if [ ! -f "$enables/$d.$lgt" ]; then
                         [ -f "$disables/$d.$lgt" ] \
                         && mv -f "$disables/$d.$lgt" "$enables/$d.$lgt"
