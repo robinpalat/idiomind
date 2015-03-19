@@ -1,17 +1,17 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-source /usr/share/idiomind/ifs/c.conf
 wth=$(($(sed -n 2p $DC_s/10.cfg)-320))
 eht=$(($(sed -n 3p $DC_s/10.cfg)-130))
+
 echo "_" >> "$DC_a/stats/.tmp" &
+[ "$1" = v1 ] && ind="$DC_tlt/1.cfg"
+[ "$1" = v2 ] && ind="$DC_tlt/2.cfg"
 re='^[0-9]+$'
 now="$2"
 nuw="$3"
 listen="▷"
 
-[ "$1" = v1 ] && ind="$DC_tlt/1.cfg"
-[ "$1" = v2 ] && ind="$DC_tlt/2.cfg"
 if ! [[ $nuw =~ $re ]]; then
     nuw=$(cat "$ind" \
     | grep -Fxon "$now" \
@@ -24,56 +24,15 @@ if [ -z "$item" ]; then
     nuw=1
 fi
 fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
-[ "$(echo "$item" | wc -c)" -le 50 ] && align=center || align=left
+align=left
 
+if [ -f "$DM_tlt/words/$fname.mp3" ]; then
 
-if ( [ -f "$DM_tlt/words/$fname.mp3" ] || [ "$5" = w_fix ] ); then
+    word_view
 
-    tgs=$(eyeD3 "$DM_tlt/words/$fname.mp3")
-    trgt="$item"
-    src=$(echo "$tgs" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
-    exmp=$(echo "$tgs" | grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' | tr '_' '\n')
-    mrk=$(echo "$tgs" | grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)')
-    [[ $(echo "$exmp" | sed -n 2p) ]] \
-    && dfnts="--field=$(echo "$exmp" | sed -n 2p)\\n:lbl"
-    [[ $(echo "$exmp" | sed -n 3p) ]] \
-    && ntess="--field=$(echo "$exmp" | sed -n 3p)\\n:lbl"
-    hlgt=$(echo $trgt | awk '{print tolower($0)}')
-    exmp1=$(echo "$(echo "$exmp" | sed -n 1p)" | sed "s/"${trgt,,}"/<span background='#FDFBCF'>"${trgt,,}"<\/\span>/g")
-    [[ "$(echo "$tgs" | grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)')" = TRUE ]] \
-    && trgt=$(echo "* "$trgt"")
-    yad --form --window-icon=idiomind --scroll --text-align=$align \
-    --skip-taskbar --center --title=" " --borders=20 \
-    --quoted-output --on-top --selectable-labels \
-    --text="<span font_desc='Purisa Bold 22'>$trgt</span>\n\n<i>$src</i>\n" \
-    --field="":lbl \
-    --field="<i><span color='#7D7D7D'>$exmp1</span></i>:lbl" "$dfnts" "$ntess" \
-    --width="$wth" --height="$eht" --center \
-    --button=gtk-edit:4 --button="$listen":"play '$DM_tlt/words/$fname.mp3'" \
-    --button=gtk-go-up:3 --button=gtk-go-down:2 >/dev/null 2>&1
-    
-    
-elif ( [ -f "$DM_tlt/$fname.mp3" ] || [ "$5" = s_fix ] ); then
+elif [ -f "$DM_tlt/$fname.mp3" ]; then
 
-    tgs=$(eyeD3 "$DM_tlt/$fname.mp3")
-    [[ $(sed -n 7p $DC_s/1.cfg) = TRUE ]] \
-    && trgt=$(echo "$tgs" | grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)') \
-    || trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
-    src=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
-    lwrd=$(echo "$tgs" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' | tr '_' '\n')
-    [[ "$(echo "$tgs" | grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)')" = TRUE ]] \
-    && trgt=$(echo "<b>*</b> "$trgt"")
-    [[ ! -f "$DM_tlt/$fname.mp3" ]] && exit 1
-    echo "$lwrd" | yad --list --print-column=0 --no-headers \
-    --window-icon=idiomind --scroll --text-align=$align \
-    --skip-taskbar --center --title=" " --borders=20 \
-    --on-top --selectable-labels --expand-column=0 \
-    --text="<span font_desc='Purisa Bold 15'>$trgt</span>\n\n<i>$src</i>\n\n" \
-    --width="$wth" --height="$eht" --center \
-    --column="":TEXT --column="":TEXT \
-    --button=gtk-edit:4 --button="$listen":"$DS/ifs/tls.sh listen_sntnc '$fname'" \
-    --button=gtk-go-up:3 --button=gtk-go-down:2 \
-    --dclick-action="$DS/ifs/tls.sh dclik" >/dev/null 2>&1
+    sentence_view
     
 else
     ff=$(($nuw + 1))
@@ -81,8 +40,8 @@ else
     [ $(cat $DT/sc | wc -l) -ge 5 ] && rm -f "$DT/sc" & exit 1 \
     || "$DS/vwr.sh" "$1" "$nll" "$ff" & exit 1
 fi
-
         ret=$?
+        
         if [ $ret -eq 4 ]; then
             "$DS/mngr.sh" edt "$1" "$fname" "$nuw"
         elif [ $ret -eq 2 ]; then

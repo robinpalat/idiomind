@@ -43,11 +43,12 @@ cmdplay="'$DSP/tls.sh' play '$fname'"
 sum="$(cat "$dir/$fname.txt")"
 printf "$sum" | yad --text-info \
 --window-icon=idiomind \
---center --title=" " --scroll --borders=5 --text="$trgt" \
+--center --title="$channel" --scroll --borders=5 --text="$trgt" \
 --editable --always-print-result --on-top --class=Idiomind \
 --width="$(($wth+150))" --height="$(($eht+80))" --center --margins=20 \
---wrap --show-uri --fontname='Sans 13' --name=Idiomind \
+--wrap --show-uri --fontname='Sans 12' --name=Idiomind \
 --button="$btnlabel":"$btncmd" \
 --button="Play":"$cmdplay" \
 --button="gtk-close":1 > "$DT/d.tmp"
 mv -f "$DT/d.tmp" "$dir/$fname.txt"
+

@@ -30,6 +30,7 @@ if [ ! -d "$HOME/.idiomind" ]; then
 fi
 
 source /usr/share/idiomind/ifs/c.conf
+source "$DC_s/1.cfg"
 
 if [ -f "$DT/ps_lk" ]; then
     sleep 15
@@ -71,7 +72,7 @@ function new_session() {
         let n++
     done
     
-    for s in "$DS/ifs/mods/start"/*; do 
+    for s in "$DS/ifs/mods/start"/*; do
     (sleep 20 && "$s"); done &
 
     # screen size
@@ -148,46 +149,8 @@ function new_session() {
     "$DS/mngr.sh" mkmn &
 }
 
-if [ -z "$1" ]; then
 
-    w=$(($(sed -n 2p $DC_s/10.cfg)-600))
-    h=$(($(sed -n 3p $DC_s/10.cfg)-50))
-    yad --width=150 --height=200 --form \
-    --geometry=150x300-$w-$h --name=Idiomind \
-    --fixed --title="Idiomind" --no-buttons --class=Idiomind \
-    --field=gtk-new:btn "$DS/add.sh 'new_items'" \
-    --field=gtk-home:btn "idiomind 'topic'" \
-    --field=gtk-index:btn "$DS/chng.sh" \
-    --field=gtk-preferences:btn "$DS/cnfg.sh" \
-    --on-top --borders=5 --align=center \
-    --window-icon=idiomind &
-
-    printf "strt.1.strt\n" >> "$DC_s/8.cfg"
-
-    [ -n "$tpc" ] && echo "$tpc" > "$DT/tpe"
-    
-    if [ ! -d "$DT" ]; then
-        new_session & exit
-    fi
-    
-    [ -f "$DC_s/10.cfg" ] && d2=$(sed -n 1p "$DC_s/10.cfg")
-    if ([ "$(date +%d)" != "$d2" ] || [ ! -f "$DC_s/10.cfg" ]); then
-        new_session
-    fi
-fi
-
-if [ $(echo "$1" | grep -o 'autostart') ]; then
-    
-    sleep 50
-    [ ! -f "$DT/ps_lk" ] && new_session
-    if [ -f "$DT/notify" ]; then
-    info=$(cat "$DT/notify")
-    (sleep 100 && notify-send -i idiomind "Reminders" "$info") &
-    rm -f "$DT/notify" &
-    fi
-    exit 0
-
-elif [ $(echo "$1" | grep -o '.idmnd') ]; then
+if [ $(echo "$1" | grep -o '.idmnd') ]; then
 
     wth=$(($(sed -n 2p $DC_s/10.cfg)-350))
     eht=$(($(sed -n 3p $DC_s/10.cfg)-0))
@@ -327,9 +290,10 @@ elif [ $(echo "$1" | grep -o '.idmnd') ]; then
             fi
     exit 0
     fi
+    fi
     
 # topic
-elif [ "$1" = topic ]; then
+function topic() {
 
     wth=$(($(sed -n 2p $DC_s/10.cfg)-350))
     eht=$(($(sed -n 3p $DC_s/10.cfg)-0))
@@ -341,10 +305,11 @@ elif [ "$1" = topic ]; then
     
         if [ -n "$tpc" ]; then
         
-            [ ! -f "$DC_tlt/0.cfg" ] && touch "$DC_tlt/0.cfg"
-            [ ! -f "$DC_tlt/1.cfg" ] && touch "$DC_tlt/1.cfg"
-            [ ! -f "$DC_tlt/2.cfg" ] && touch "$DC_tlt/2.cfg"
-            [ ! -f "$DC_tlt/10.cfg" ] && touch "$DC_tlt/10.cfg"
+            n=0
+            while [ $n -le 4 ]; do
+            [ ! -f "$DC_tlt/$n.cfg" ] && touch "$DC_tlt/$n.cfg"
+            let n++
+            done
             ls0="$DC_tlt/0.cfg"
             ls1="$DC_tlt/1.cfg"
             ls2="$DC_tlt/2.cfg"
@@ -378,11 +343,11 @@ elif [ "$1" = topic ]; then
     [ -z "$tpc" ] && exit 1
 
     if echo "$mde" | grep "wn"; then
-        itxt="<big><big>$tpc </big></big><small>\\n</small>"
-        itxt2="<span color='#545454'><small>$ss $(gettext "Sentences")\n$ws $(gettext "Words")\n$(gettext "Created by")\n $author $(gettext "on") ${category^}\n  $date_u</small></span>"
+        itxt="<big><big>$tpc </big></big>\\n"
+        itxt2="<span color='#545454'>$ss $(gettext "Sentences")\n$ws $(gettext "Words")\n$(gettext "Created by")\n $author $(gettext "on") ${category^}\n  $date_u</span>"
     else
-        itxt="<big><big>$tpc </big></big><small>\\n$ss $(gettext "Sentences") $ws $(gettext "Words")</small>"
-        itxt2="<span color='#545454'><small>$(gettext "Created by")\n$author\n$(gettext "Category:") ${category^}\n$(gettext "Date:") $date_u</small></span>\n\n\n\n\n\n"
+        itxt="<big><big>$tpc </big></big>\\n$ss $(gettext "Sentences") $ws $(gettext "Words")"
+        itxt2="<span color='#545454'>$(gettext "Created by")\n$author\n$(gettext "Category:") ${category^}\n$(gettext "Date:") $date_u</span>\n\n\n\n\n\n"
     fi
 
     if [ "$inx" -lt 1 ]; then
@@ -578,12 +543,73 @@ elif [ "$1" = topic ]; then
     fi
     
     rm -f "$DT"/*.x
+}
+
+function panel() {
+
+    w=$(($(sed -n 2p $DC_s/10.cfg)-600))
+    h=$(($(sed -n 3p $DC_s/10.cfg)-50))
+    yad --width=150 --height=200 --form \
+    --geometry=150x300-$w-$h --name=Idiomind \
+    --fixed --title="Idiomind" --no-buttons --class=Idiomind \
+    --field=gtk-new:btn "$DS/add.sh 'new_items'" \
+    --field=gtk-home:btn "idiomind 'topic'" \
+    --field=gtk-index:btn "$DS/chng.sh" \
+    --field=gtk-preferences:btn "$DS/cnfg.sh" \
+    --on-top --borders=5 --align=center \
+    --window-icon=idiomind &
+
+    printf "strt.1.strt\n" >> "$DC_s/8.cfg"
+    [ -n "$tpc" ] && echo "$tpc" > "$DT/tpe"
+    if [ ! -d "$DT" ]; then new_session & exit; fi
     
-elif [ "$1" = "--version" ]; then
-    echo "2.2-beta" & exit
-elif [ "$1" = "-v" ]; then
-    echo "2.2-beta" & exit
-elif [ "$1" = "-s" ]; then
+    [ -f "$DC_s/10.cfg" ] && d2=$(sed -n 1p "$DC_s/10.cfg")
+    if ([ "$(date +%d)" != "$d2" ] || [ ! -f "$DC_s/10.cfg" ]); then
+        new_session; fi
+}
+
+function version() {
+    echo "2.2-beta"
+}
+
+function session() {
+    
     new_session
-    idiomind & exit
-fi
+    idiomind &
+}
+
+function autostart() {
+
+    sleep 50
+    [ ! -f "$DT/ps_lk" ] && new_session
+    if [ -f "$DT/notify" ]; then
+    info=$(cat "$DT/notify")
+    (sleep 100 && notify-send -i idiomind "Reminders" "$info") &
+    rm -f "$DT/notify" &
+    fi
+    exit 0
+}
+
+function passhtml() {
+    
+    source "$DS/ifs/tls.sh"
+    html
+    exit 0
+}
+
+case $1 in
+    topic)
+    topic ;;
+    --version)
+    version ;;
+    -v)
+    version;;
+    -s)
+    session;;
+    autostart)
+    autostart;;
+    html)
+    passhtml;;
+    *)
+    panel;;
+esac

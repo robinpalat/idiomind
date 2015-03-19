@@ -95,32 +95,48 @@ elif [ "$1" != chngi ]; then
         align="right"
     fi
     
-    VAR=$(cat "$DC_s/0.cfg" | yad --name=Idiomind --text-align=$align \
+    s=$(cat "$DC_s/0.cfg" | yad --name=Idiomind --text-align=$align \
     --center $img --image-on-top --separator="" --class=Idiomind \
     "$text" --width="$wth" --height="$eht" --ellipsize=END \
     --no-headers --list --window-icon=idiomind --borders=5 \
-    --button=gtk-new:3 --button=gtk-apply:0 --button=gtk-close:1 \
+    --button=gtk-new:3 --button=gtk-apply:2 --button=gtk-close:1 \
     --title="$(gettext "Topics")" --column=img:img --column=File:TEXT)
     ret=$?
         
     if [ $ret -eq 3 ]; then
     
             "$DS/add.sh" new_topic & exit
+            
+    elif [ $ret -eq 2 ]; then
+    
+            "$DS/stop.sh" play &
+            
+            [ -z "$s" ] && exit 1
+            
+            if [ -f "$DM_tl/$s/tpc.sh" ]; then
+                if [ "$s" != "Feeds" ]; then
+                cp -f "$DS/default/tpc.sh" "$DM_tl/$s/tpc.sh"
+                fi
+                "$DM_tl/$s/tpc.sh" 1 & exit
+            else
+                cp -f "$DS/default/tpc.sh" "$DM_tl/$s/tpc.sh"
+                "$DM_tl/$s/tpc.sh" 1 & exit
+            fi
 
     elif [ $ret -eq 0 ]; then
     
             "$DS/stop.sh" play &
             
-            [ -z "$VAR" ] && exit 1
+            [ -z "$s" ] && exit 1
             
-            if [ -f "$DM_tl/$VAR/tpc.sh" ]; then
-                if [ "$VAR" != "Feeds" ]; then
-                cp -f "$DS/default/tpc.sh" "$DM_tl/$VAR/tpc.sh"
+            if [ -f "$DM_tl/$s/tpc.sh" ]; then
+                if [ "$s" != "Feeds" ]; then
+                cp -f "$DS/default/tpc.sh" "$DM_tl/$s/tpc.sh"
                 fi
-                "$DM_tl/$VAR/tpc.sh" & exit
+                "$DM_tl/$s/tpc.sh" & exit
             else
-                cp -f "$DS/default/tpc.sh" "$DM_tl/$VAR/tpc.sh"
-                "$DM_tl/$VAR/tpc.sh" & exit
+                cp -f "$DS/default/tpc.sh" "$DM_tl/$s/tpc.sh"
+                "$DM_tl/$s/tpc.sh" & exit
             fi
     else
         exit 1

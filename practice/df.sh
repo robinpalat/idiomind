@@ -54,12 +54,15 @@ function fonts() {
         s=$((25-$(echo "$1" | wc -c)))
         img="$drtt/images/$fname.jpg"
         lcuestion="<b>$1</b>"
-        lanswer="<small><small><small>$1</small></small></small>  |  <b>$src</b>"
+        #lanswer="<small><small><small>$1</small></small></small>  |  <b>$src</b>"
+        lanswer1="<small><small><small>$1</small></small></small>"
+        lanswer2="<b>$src</b>"
     else
         s=$((40-$(echo "$1" | wc -c)))
         img="/usr/share/idiomind/images/fc.png"
         lcuestion="<b>$1</b>"
-        lanswer="<small><small><small>$1</small></small></small>\n<b>$src</b>"
+        lanswer1="<small><small><small>$1</small></small></small>"
+        lanswer2="<b>$src</b>"
     fi
     }
 
@@ -81,7 +84,8 @@ function answer() {
     --center --on-top --image-on-top --image="$img" \
     --skip-taskbar --title=" " --borders=3 \
     --buttons-layout=spread --align=center \
-    --field="<span font_desc='Free Sans $s'>$lanswer</span>":lbl \
+    --field="<span font_desc='Free Sans $s'>$lanswer1</span>":lbl \
+    --field="<span font_desc='Free Sans $s'>$lanswer2</span>":lbl \
     --width=371 --height=280 \
     --button="    $(gettext "I don't know")    ":3 \
     --button="    $(gettext "I know")    ":2

@@ -4,12 +4,11 @@
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 include "$DS/ifs/mods/add"
-trda=$(sed -n 14p "$DC_s/1.cfg")
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
+source "$DC_s/1.cfg"
 
 if [ "$1" = new_topic ]; then
-
 
     if [ "$(wc -l < "$DM_tl/.1.cfg")" -ge 80 ]; then
     msg "$(gettext "You have reached the maximum number of topics")" info &&
@@ -69,7 +68,7 @@ Create one using the button below. ")" & exit 1; fi
     ttle="${tpe:0:50}"
     [ "$tpe" != "$tpc" ] && topic="$topic <b>*</b>" || topic="$topic"
 
-    if [ "$trda" = TRUE ]; then lzgpr="$(dlg_form_1)"; \
+    if [ "$trans" = TRUE ]; then lzgpr="$(dlg_form_1)"; \
     else lzgpr="$(dlg_form_2)"; fi
 
     ret=$(echo "$?")
@@ -139,7 +138,7 @@ Create one using the button below. ")" & exit 1; fi
 
             elif ([ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]); then
             
-                if [ $trda = FALSE ]; then
+                if [ "$trans" = FALSE ]; then
                     if [ -z "$srce" ]; then
                         [ -d $DT_r ] && rm -fr $DT_r
                         msg "$(gettext "The second field is empty.") $lgsl." info & exit 1
@@ -159,7 +158,7 @@ Create one using the button below. ")" & exit 1; fi
                 fi
             elif ([ $lgt != ja ] || [ $lgt != 'zh-cn' ] || [ $lgt != ru ]); then
             
-                if [ $trda = FALSE ]; then
+                if [ "$trans" = FALSE ]; then
                     if [ -z "$srce" ]; then
                         [ -d $DT_r ] && rm -fr $DT_r
                         msg "$(gettext "The second field is empty.") $lgsl." info & exit 1
@@ -200,7 +199,7 @@ elif [ "$1" = new_sentence ]; then
         msg "$(gettext "No topic is active")\n" info & exit 1
     fi
     
-    if [ $trda = TRUE ]; then
+    if [ "$trans" = TRUE ]; then
     
         internet
     
@@ -274,8 +273,7 @@ elif [ "$1" = new_sentence ]; then
     notify-send -i "$icnn" "$trgt" "$srce\\n($tpe)" -t 10000
     index sentence "$trgt" "$tpe"
     
-    
-    (if [ $(sed -n 8p $DC_s/1.cfg) = TRUE ]; then
+    (if [ "$list" = TRUE ]; then
     $DS/add.sh sentence_list_words "$DM_tlt/$fname.mp3" "$trgt" "$tpe"
     fi) &
 
@@ -307,7 +305,7 @@ elif [ $1 = new_word ]; then
     
     internet
 
-    if [ $trda = TRUE ]; then
+    if [ "$trans" = TRUE ]; then
 
         trgt="$(translate "$trgt" auto $lgt)"
         srce="$(translate "$trgt" $lgt $lgs)"
@@ -496,7 +494,7 @@ elif [ "$1" = edit_list_words ]; then
 elif [ "$1" = dclik_list_words ]; then
 
     DM_tlt="$DM_tl/$tpe"
-    DC_tlt="$DM_tl/$tpe"
+    DC_tlt="$DM_tl/$tpe/.conf"
     DT_r=$(cat $DT/.n_s_pr)
     cd $DT_r
     echo "$3" > ./lstws
@@ -572,7 +570,7 @@ elif [ "$1" = dclik_list_words ]; then
 elif [ "$1" = sentence_list_words ]; then
 
     DM_tlt="$DM_tl/$4"
-    DC_tlt="$DM_tl/$4"
+    DC_tlt="$DM_tl/$4/.conf"
     c=$(echo $(($RANDOM%100)))
     DT_r=$(mktemp -d $DT/XXXXXX)
     cd $DT_r
@@ -681,7 +679,7 @@ elif [ "$1" = process ]; then
     nspr='/usr/share/idiomind/add.sh process'
     lckpr=$DT/.n_s_pr
     DM_tlt="$DM_tl/$tpe"
-    DC_tlt="$DM_tl/$tpe"
+    DC_tlt="$DM_tl/$tpe/.conf"
     DT_r="$3"; cd "$DT_r"
 
     if [ -z "$tpe" ]; then
@@ -858,7 +856,7 @@ elif [ "$1" = process ]; then
                                 printf "\n- $sntc" >> ./wlog
                         
                             else
-                                if [ $trda = TRUE ]; then
+                                if [ "$trans" = TRUE ]; then
             
                                     tts ./trgt $lgt $DT_r "$DM_tlt/words/$fname.mp3"
                                     
@@ -891,7 +889,7 @@ elif [ "$1" = process ]; then
                                     printf "\n- $sntc" >> ./slog
                             
                                 else
-                                    if [ $trda = TRUE ]; then
+                                    if [ "$trans" = TRUE ]; then
                                     
                                         tts ./trgt $lgt $DT_r "$DM_tlt/$fname.mp3"
                                         

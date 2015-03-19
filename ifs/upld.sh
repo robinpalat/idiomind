@@ -29,7 +29,7 @@ if [ "$1" = vsd ]; then
     
     cd "$DM_t/saved"; ls -t *.id | sed 's/\.id//g' | yad --list \
     --window-icon=idiomind --center --name=Idiomind --borders=8 \
-    --text=" <small>$(gettext "Double clik to download") \t\t\t\t</small>" \
+    --text=" $(gettext "Double clik to download") \t\t\t\t" \
     --title="$(gettext "Topics saved")" --width=$wth --height=$eht \
     --column=Nombre:TEXT --print-column=1 --no-headers --class=Idiomind \
     --expand-column=1 --search-column=1 --button=gtk-close:1 \
@@ -156,13 +156,13 @@ upld=$(yad --form --width=480 --height=460 --on-top \
 --button="$(gettext "Upload")":0 \
 --title="$(gettext "Upload")" --text="   <b>$tpc</b>" \
 --field=" :lbl" "#1" \
---field="    <small>$(gettext "Author")</small>" "$user" \
---field="    <small>$(gettext "Contact (Optional)")</small>" "$mail" \
---field="    <small>$(gettext "Category")</small>:CBE" \
+--field="    $(gettext "Author")" "$user" \
+--field="    $(gettext "Contact (Optional)")" "$mail" \
+--field="    $(gettext "Category"):CBE" \
 "!$others!$article!$comics!$culture!$documentary!$entertainment!$funny!$family!$grammar!$history!$movies!$in_the_city!$interview!$internet!$music!$nature!$news!$office!$relations!$sport!$science!$shopping!$social_networks!$technology!$travel" \
---field="    <small>$(gettext "Skill Level")</small>:CBE" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
---field="<small>\n$(gettext "Description/Notes")</small>:TXT" "$nt" \
---field="<small>$(gettext "Add image")</small>:FL" "$imgm")
+--field="    $(gettext "Skill Level"):CBE" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
+--field="\n$(gettext "Description/Notes"):TXT" "$nt" \
+--field="$(gettext "Add image"):FL" "$imgm")
 ret=$?
 
 if [ "$ret" = 2 ]; then

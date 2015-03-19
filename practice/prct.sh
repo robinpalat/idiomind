@@ -30,6 +30,7 @@ Si="$DC_tlt/4.cfg"
 Li="$DC_tlt/1.cfg"
 cd "$DC_tlt/practice"
 
+
 function look() {
         yad --title="$practice - $tpc" --borders=5 --center \
         --on-top --skip-taskbar --window-icon=idiomind \
@@ -82,8 +83,7 @@ function starting() {
 }
 
 
-# --------------------------------------------
-if [[ "$1" = f ]]; then
+function flashcards() {
 
     cd "$DC_tlt/practice"
     
@@ -108,8 +108,10 @@ if [[ "$1" = f ]]; then
     fi
     
     $DF
+}
 
-elif [[ "$1" = m ]]; then
+
+function multiple_choise() {
 
     cd "$DC_tlt/practice"
     
@@ -138,8 +140,10 @@ elif [[ "$1" = m ]]; then
     fi
 
     $DMC
+}
 
-elif [[ "$1" = w ]]; then
+
+function listen_words() {
 
     cd "$DC_tlt/practice"
     
@@ -164,8 +168,10 @@ elif [[ "$1" = w ]]; then
     fi
     
     $DLW
+}
 
-elif [[ "$1" = s ]]; then
+
+function listen_sentences() {
 
     cd "$DC_tlt/practice"
     
@@ -189,4 +195,16 @@ elif [[ "$1" = s ]]; then
     fi
     
     $DLS
-fi
+}
+
+case $1 in
+    f)
+    flashcards ;;
+    m)
+    multiple_choise ;;
+    w)
+    listen_words ;;
+    s)
+    listen_sentences ;;
+esac
+

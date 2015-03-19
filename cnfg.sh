@@ -47,12 +47,21 @@ Vietnamese
 Chinese
 Russian"
 
+sets=('grammar' 'list' 'tasks' 'trans' 'synth' \
+'edit' 'text' 'audio' 'repeat' 'videos' 'loop' 't_lang' 's_lang')
+
 c=$(echo $(($RANDOM%100000))); KEY=$c
 cnf1=$(mktemp $DT/cnf1.XXXX)
 
 if [ ! -d "$DC" ]; then
     "$DS/ifs/1u.sh" & exit
 fi
+
+
+
+#sed -i '${n}s/.*/TRUE/' $DC_s/cfg.5
+
+#sed -i "3s/size=.*/size=$du/" "$DC_a/1.cfg"
 
 function confirm() {
     
@@ -80,84 +89,104 @@ function set_lang() {
     "$DS/mngr.sh" mkmn
 }
 
-[ ! -f "$DC_s/1.cfg" ] && touch "$DC_s/1.cfg"
-n=1
-while read val; do
-    declare set"$n"="$val"
+if [ ! -f "$DC_s/1.cfg" ]; then
+sets=('words' 'sentences' 'marks' 'difficult' 'news' 'archive' \
+'text' 'audio' 'grammar' 'repeat' 'videos' 'list' \
+'synth' 'edit' 'loop' 'tasks' 'trans' 't_lang' 's_lang')
+n=0; > "$DC_s/1.cfg"
+while [ $n -le 18 ]; do
+    echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
     ((n=n+1))
-done < "$DC_s/1.cfg"
-[ "$set9" = "$set10" ] && set10=TRUE
+done
+fi
 
-yad --plug=$KEY --tabnum=1 --borders=5 --scroll --columns=2 \
---separator="\n" --form --no-headers --align=right \
---field=" :LBL" " " \
---field=" :LBL" " " \
---field="$(gettext "Words")":CHK "$set1" \
---field="$(gettext "Sentences")":CHK "$set2" \
---field="$(gettext "Marks")":CHK "$set3" \
---field="$(gettext "Difficult and learning")":CHK "$set4" \
---field="$(gettext "New Episodes")":CHK "$set5" \
---field="$(gettext "Saved Episodes")":CHK "$set6" \
---field=" :LBL" " " \
---field=" :LBL" " " \
---field="$(gettext "Colorize words to grammar")":CHK "$set7" \
---field="$(gettext "List words after adding a sentence")":CHK "$set8" \
---field=" :LBL" " " \
---field="$(gettext "Speech Synthesizer Default espeak")":LBL " " \
---field="$(gettext "Use this program for audio editing")":LBL " " \
---field="$(gettext "Time for play Loop")":LBL " " \
---field=" :LBL" " " \
---field=" :LBL" " " \
---field="$(gettext "Language Learning")":LBL " " \
---field="$(gettext "Your Language")":LBL " " \
---field=" :LBL" " " \
---field=" :LBL" " " \
---field="<small>$(gettext "Check for Updates")</small>":BTN "$DS/ifs/tls.sh check_updates" \
---field="<small>$(gettext "Quick Help")</small>":BTN "$DS/ifs/tls.sh help" \
+
+
+#declare set"$n"="${sets[$n]}=\"$val\""
+
+
+#sed -i '/${sets[$n]}=.*/a\${sets[$n]}=11'
+
+
+
+#sed -i "s/${sets[2]}=.*/${sets[2]}=25/g" "$DC_s/1.cfg" # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+#n=1
+#while read val; do
+    #declare set"$n"="${sets[$n]}=\"$val\""
+    
+
+    #((n=n+1))
+#done < "$DC_s/1.cfg"
+
+
+
+
+source "$DC_s/1.cfg"
+[ "$synth" = FALSE ] && synth="_"
+[ "$edit" = FALSE ] && edit="_"
+
+yad --plug=$KEY --tabnum=1 \
+--separator="|" --form --align=right --scroll \
+--always-print-result --print-all \
+--field="$(gettext "General Options")\t":lbl " " \
+--field=":LBL" " " \
+--field="$(gettext "Colorize words to grammar")":CHK "$grammar" \
+--field="$(gettext "List words after adding a sentence")":CHK "$list" \
+--field="$(gettext "Perform tasks at startup")":CHK "$tasks" \
+--field="$(gettext "Usar traduccion automatica si esta disponible")":CHK "$trans" \
+--field="$(gettext "Speech Synthesizer Default espeak")":CB5 "$synth" \
+--field="$(gettext "Use this program for audio editing")":CB5 "$edit" \
 --field=" :LBL" " " \
 --field="$(gettext "Play Options")\t":LBL " " \
 --field=":LBL" " " \
---field="$(gettext "Texto")":CHK "$set9" \
---field="$(gettext "Audio")":CHK "$set10" \
---field="$(gettext "Repeat")":CHK "$set11" \
---field="$(gettext "Only videos")":CHK "$set12" \
+--field="$(gettext "Texto")":CHK "$text" \
+--field="$(gettext "Audio")":CHK "$audio" \
+--field="$(gettext "Repeat")":CHK "$repeat" \
+--field="$(gettext "Only videos")":CHK "$videos" \
+--field="$(gettext "Time for play Loop")":SCL "$loop" \
 --field=" :LBL" " " \
---field=" :LBL" " " \
---field="$(gettext "General Options")\t":lbl " " \
+--field="$(gettext "Languages")\t":LBL " " \
 --field=":LBL" " " \
---field="$(gettext "Perform tasks at startup")":CHK "$set13" \
---field="$(gettext "Usar traduccion automatica\nsi esta disponible")":CHK "$set14" \
+--field="$(gettext "Language Learning")":CB "$lgtl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
+--field="$(gettext "Your Language")":CB "$lgsl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
 --field=" :LBL" " " \
---field=" ":CB5 "$set15" \
---field=" ":CB5 "$set16" \
---field=" ":SCL "$set17" \
---field="\n$(gettext "Languages")\t":LBL " " \
 --field=":LBL" " " \
---field="":CB "$lgtl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
---field="":CB "$lgsl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
---field=" :LBL" " " \
---field=" :LBL" " " \
---field="<small>$(gettext "Topic Saved")</small>":BTN "$DS/ifs/upld.sh 'vsd'" \
---field="<small>$(gettext "Feedback")</small>":BTN "$DS/ifs/tls.sh 'fback'" \
---field="<small>$(gettext "About")</small>":BTN "$DS/ifs/tls.sh 'about'" | sed '/^$/d' > "$cnf1" &
+--field="$(gettext "Check for Updates")":BTN "$DS/ifs/tls.sh check_updates" \
+--field="$(gettext "Quick Help")":BTN "$DS/ifs/tls.sh help" \
+--field="$(gettext "Topic Saved")":BTN "$DS/ifs/upld.sh 'vsd'" \
+--field="$(gettext "Feedback")":BTN "$DS/ifs/tls.sh 'fback'" \
+--field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" > "$cnf1" &
 cat "$DC_s/2.cfg" | yad --plug=$KEY --tabnum=2 --list --expand-column=2 \
 --text="<sub>  $(gettext "Double click to set") </sub>" --print-all \
 --no-headers --dclick-action="$DS/ifs/dclik.sh" \
 --column=icon:IMG --column=Action &
 yad --notebook --key=$KEY --name=Idiomind --class=Idiomind \
 --sticky --center --window-icon=idiomind --borders=5  \
---tab="$(gettext "Preferences")" --tab="  $(gettext "Addons")  " \
+--tab="$(gettext "Preferences")" --tab="$(gettext "Addons")" \
 --width=$wth --height=$eht --title="$(gettext "Settings")" \
 --button="$(gettext "Cancel")":1 --button="$(gettext "OK")":0
     
     ret=$?
     
     if [ $ret -eq 0 ]; then
-
+        n=0
+        while [ $n -le 11 ]; do
+            #if [ $n = 7 ] || [ $n = 8 ]; then val="_"; fi
+            if [ -n "$val" ]; then
+                sed -i "s/${sets[$n]}=.*/${sets[$n]}=$val/g" "$DC_s/1.cfg"
+                ((n=n+1))
+            fi
+                sed -i "s/${sets[7]}=.*/${sets[7]}=$val/g" "$DC_s/1.cfg"
+                sed -i "s/${sets[7]}=.*/${sets[7]}=$val/g" "$DC_s/1.cfg"
+        done <
+    
         [ ! -d  "$HOME/.config/autostart" ] \
         && mkdir "$HOME/.config/autostart"
         config_dir="$HOME/.config/autostart"
-        if [[ "$(sed -n 36p "$DC_s/1.cfg")" = "TRUE" ]]; then
+        if [[ "$(sed -n 5p "$DC_s/1.cfg")" = "TRUE" ]]; then
             if [ ! -f "$config_dir/idiomind.desktop" ]; then
                 echo "$autostart" > "$config_dir/idiomind.desktop"
                 chmod +x "$config_dir/idiomind.desktop"
@@ -169,7 +198,7 @@ yad --notebook --key=$KEY --name=Idiomind --class=Idiomind \
         fi
         
         while read -r lang; do
-            if sed -n 18p "$cnf1" | grep "$lang" && \
+            if sed -n 12p "$cnf1" | grep "$lang" && \
             [ "$lang" != "$lgtl" ] ; then
                 confirm "$info2" dialog-question
                 [ $? -eq 0 ] && set_lang "$lang"
@@ -178,7 +207,7 @@ yad --notebook --key=$KEY --name=Idiomind --class=Idiomind \
         done <<< "$langs"
         
         while read -r lang; do
-            if sed -n 19p "$cnf1" | grep "$lang" && \
+            if sed -n 13p "$cnf1" | grep "$lang" && \
             [ "$lang" != "$lgsl" ] ; then
                 confirm "$info1" dialog-warning
                 if [ $? -eq 0 ]; then
@@ -189,9 +218,9 @@ yad --notebook --key=$KEY --name=Idiomind --class=Idiomind \
             fi
         done <<< "$langs"
         
-        if ([ "$(cat "$cnf1")" != "$(cat "$DC_s/1.cfg")" ] \
-        && [ -n "$(cat "$cnf1")" ]); then
-            cat "$cnf1" > "$DC_s/1.cfg"; fi
+        #if ([ "$(cat "$cnf1")" != "$(cat "$DC_s/1.cfg")" ] \
+        #&& [ -n "$(cat "$cnf1")" ]); then
+            #cat "$cnf1" > "$DC_s/1.cfg"; fi
 
         rm -f "$cnf1" "$DT/.lc" & exit 1
     else

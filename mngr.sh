@@ -129,7 +129,7 @@ elif [ "$1" = mklg- ]; then
 elif [ "$1" = mkok- ]; then
     
     include "$DS/ifs/mods/mngr"
-    if [ $(cat "$DC_tlt/2.cfg" | wc -l) -le 20 ]; then
+    if [ $(cat "$DC_tlt/1.cfg" | wc -l) -le 20 ]; then
         msg "$(gettext "You must be at least 20 items.")\n " info &
         exit
     fi
@@ -334,7 +334,7 @@ elif [ "$1" = delete_topic ]; then
 elif [ "$1" = edt ]; then
 
     include $DS/ifs/mods/mngr
-    wth=$(($(sed -n 2p $DC_s/10.cfg)-250))
+    wth=$(($(sed -n 2p $DC_s/10.cfg)-220))
     eht=$(($(sed -n 3p $DC_s/10.cfg)-0))
     lgt=$(lnglss $lgtl)
     lgs=$(lnglss $lgsl)
@@ -377,7 +377,6 @@ elif [ "$1" = edt ]; then
         imge="$DS/add.sh set_image '$TGT' word"
         sdefn="/usr/share/idiomind/ifs/tls.sh definition '$TGT'"
         
-        # ===============================================
         dlg_form_1 $cnf
         ret=$(echo "$?")
         
@@ -466,7 +465,6 @@ elif [ "$1" = edt ]; then
         dlte="$DS/mngr.sh delete_item ${fname}"
         imge="$DS/add.sh set_image '$tgt' sentence"
         
-        # ===============================================
         dlg_form_2 $cnf
         ret=$(echo "$?")
         

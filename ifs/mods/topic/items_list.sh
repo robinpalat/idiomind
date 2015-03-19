@@ -10,6 +10,68 @@
     #--name=Idiomind --class=Idiomind \
     #--uri="$web" >/dev/null 2>&1 &
 
+    #web="/tmp/.idmtp1.robin/Test_7_february/index.html"
+    #yad --html --window-icon=idiomind --browser --plug=$KEY --tabnum=1 \
+    #--title="$(gettext "Help")" --width=700 \
+    #--height=600 --button="$(gettext "OK")":0 \
+    #--name=Idiomind --class=Idiomind \
+    #--uri="$web" >/dev/null 2>&1 &
+
+function word_view(){
+    
+    source "$DC_s/1.cfg"
+    tgs=$(eyeD3 "$DM_tlt/words/$fname.mp3")
+    trgt="$item"
+    src=$(echo "$tgs" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
+    exmp=$(echo "$tgs" | grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' | tr '_' '\n')
+    mrk=$(echo "$tgs" | grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)')
+    [ $(echo "$exmp" | sed -n 2p) ] \
+    && dfnts="--field=$(echo "$exmp" | sed -n 2p)\\n:lbl"
+    [ $(echo "$exmp" | sed -n 3p) ] \
+    && ntess="--field=$(echo "$exmp" | sed -n 3p)\\n:lbl"
+    hlgt=$(echo $trgt | awk '{print tolower($0)}')
+    exmp1=$(echo "$(echo "$exmp" | sed -n 1p)" | sed "s/"${trgt,,}"/<span background='#FDFBCF'>"${trgt,,}"<\/\span>/g")
+    [ "$(echo "$tgs" | grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)')" = TRUE ] \
+    && trgt=$(echo "* "$trgt"")
+    yad --form --window-icon=idiomind --scroll --text-align=center \
+    --skip-taskbar --center --title=" " --borders=20 \
+    --quoted-output --on-top --selectable-labels \
+    --text="<span font_desc='Sans Free Bold 22'>$trgt</span>\n\n<i>$src</i>\n" \
+    --field="":lbl \
+    --field="<i><span color='#7D7D7D'>$exmp1</span></i>:lbl" "$dfnts" "$ntess" \
+    --width="$wth" --height="$eht" --center \
+    --button=gtk-edit:4 --button="$listen":"play '$DM_tlt/words/$fname.mp3'" \
+    --button=gtk-go-up:3 --button=gtk-go-down:2 >/dev/null 2>&1
+}
+
+
+function sentence_view(){
+    
+    source "$DC_s/1.cfg"
+    tgs=$(eyeD3 "$DM_tlt/$fname.mp3")
+    [ "$grammar" = TRUE ] \
+    && trgt=$(echo "$tgs" | grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)') \
+    || trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
+    src=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
+    lwrd=$(echo "$tgs" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' | tr '_' '\n')
+    [ "$(echo "$tgs" | grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)')" = TRUE ] \
+    && trgt=$(echo "<b>*</b> "$trgt"")
+    [ ! -f "$DM_tlt/$fname.mp3" ] && exit 1
+    echo "$lwrd" | yad --list --print-column=0 --no-headers \
+    --window-icon=idiomind --scroll --text-align=left \
+    --skip-taskbar --center --title=" " --borders=20 \
+    --on-top --selectable-labels --expand-column=0 \
+    --text="<span font_desc='Sans Free 15'>$trgt</span>\n\n<i>$src</i>\n\n" \
+    --width="$wth" --height="$eht" --center \
+    --column="":TEXT --column="":TEXT \
+    --button=gtk-edit:4 --button="$listen":"$DS/ifs/tls.sh listen_sntnc '$fname'" \
+    --button=gtk-go-up:3 --button=gtk-go-down:2 \
+    --dclick-action="$DS/ifs/tls.sh dclik" >/dev/null 2>&1
+}
+
+export -f word_view
+export -f sentence_view
+    
 function notebook_1() {
     
     cat "$ls1" | awk '{print $0"\n"}' | yad \
@@ -37,7 +99,7 @@ function notebook_1() {
     --tab=" $(gettext "Edit") " \
     --ellipsize=END --image-on-top --always-print-result \
     --width="$wth" --height="$eht" --borders=0 \
-    --button="<small>$(gettext "Play/Stop")</small>":$DS/play.sh \
+    --button="$(gettext "Play")":$DS/play.sh \
     --button="$(gettext "Practice")":5 \
     --button="gtk-close":1
 }

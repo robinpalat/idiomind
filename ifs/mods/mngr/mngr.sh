@@ -17,7 +17,7 @@ function dlg_form_1() {
     
         yad --form --wrap --center --name=Idiomind \
         --width=$wth --height=$eht --always-print-result \
-        --borders=15 --columns=2 --align=center --class=Idiomind \
+        --borders=5 --columns=2 --align=center --class=Idiomind \
         --buttons-layout=end --title=" $TGT" --separator="\\n" \
         --fontname="Arial" --scroll --window-icon=idiomind \
         --text-align=center --selectable-labels \
@@ -30,7 +30,7 @@ function dlg_form_1() {
         --field="<small>$(gettext "Notes") </small>":TXT "$ntes" \
         --field="$(gettext "Mark") "":CHK" "$mrk" \
         --field="$chk"":CHK" "$mrok" \
-        --field="<small>$(gettext "Search definition") </small>":BTN "$sdefn" \
+        --field="<small>$(gettext "Search definition") </small>":FBTN "$sdefn" \
         --field=" :LBL" " " \
         --button="$(gettext "Image")":"$imge" \
         --button="$(gettext "Delete")":"$dlte" \
@@ -42,7 +42,7 @@ function dlg_form_2() {
         
         yad --form --wrap --center --name=Idiomind  \
         --width=$wth --height=$eht --always-print-result \
-        --separator="\\n" --borders=15 --align=center --align=center \
+        --separator="\\n" --borders=5 --align=center --align=center \
         --buttons-layout=end --title=" $tgt" --fontname="Arial" \
         --selectable-labels --window-icon=idiomind --class=Idiomind \
         --field="$chk:CHK" "$ok" \
@@ -51,7 +51,7 @@ function dlg_form_2() {
         --field="<small>$lgsl</small>":TXT "$src" \
         --field="<small>$(gettext "Topic") </small>":CB "$tpc!$tpcs" \
         --field="<small>$(gettext "Audio") </small>":FL "$DM_tlt/$fname.mp3" \
-        --field="$(gettext "List Words")":BTN "$wrds" \
+        --field="$(gettext "List Words")":FBTN "$wrds" \
         --button="$(gettext "Image")":"$imge" \
         --button="$(gettext "Edit Audio")":"$edau" \
         --button="$(gettext "Delete")":"$dlte" \

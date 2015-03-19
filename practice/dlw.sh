@@ -47,8 +47,13 @@ function score() {
 
 function fonts() {
     
+    if [ $p = 2 ]; then
+    [ $lgtl = Japanese ] || [ $lgtl = Chinese ] || [ $lgtl = Russian ] \
+    && lst="${1:0:1} ${1:5:5}" || lst=$(echo "$1" | awk '$1=$1' FS= OFS=" " | tr aeiouy '-')
+    else
     [ $lgtl = Japanese ] || [ $lgtl = Chinese ] || [ $lgtl = Russian ] \
     && lst="${1:0:1} ${1:5:5}" || lst=$(echo "$1" | awk '$1=$1' FS= OFS=" " | tr aeiouy '.')
+    fi
     
     if [ -f "$drtt/images/$fname.jpg" ]; then
         img="$drtt/images/$fname.jpg"
@@ -77,7 +82,7 @@ function cuestion() {
     --width=371 --height=280 \
     --button="$(gettext "Exit")":1 \
     --button="Play":"$play" \
-    --button="$(gettext "Check Answer") >>":0
+    --button="$(gettext "Answer") >>":0
     }
 
 function answer() {
@@ -92,6 +97,7 @@ function answer() {
     --button="    $(gettext "I know")    ":2
     }
 
+p=1
 while read trgt; do
 
     fonts "$trgt"
@@ -124,7 +130,7 @@ if [ ! -f lwin2 ]; then
     score $easy
     
 else
-
+    p=2
     while read trgt; do
 
         fonts "$trgt"

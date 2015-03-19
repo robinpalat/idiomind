@@ -44,11 +44,11 @@ function dialog1() {
     SE=$(yad --center --text-info --image="$IMAGE" "$info" \
     --fontname="Free Sans 15" --justify=fill --editable --wrap \
     --buttons-layout=end --borders=0 --title=" " --image-on-top \
-    --margins=8 --text-align=left --height=410 --width=460 \
+    --margins=8 --text-align=left --height=440 --width=470 \
     --align=left --window-icon=idiomind --fore=4A4A4A --skip-taskbar \
-    --button="<small>$(gettext "Hint")</small>":"/usr/share/idiomind/practice/hint.sh '$1'" \
-    --button="<small>$listen</small>":"play '$DM_tlt/$fname.mp3'" \
-    --button="<small>  $(gettext "OK") >> </small>":0)
+    --button="$(gettext "Hint")":"/usr/share/idiomind/practice/hint.sh '$1'" \
+    --button="$listen":"play '$DM_tlt/$fname.mp3'" \
+    --button=" $(gettext "OK") >> ":0)
     }
     
 function dialog2() {
@@ -56,23 +56,23 @@ function dialog2() {
     SE=$(yad --center --text-info --fore=4A4A4A --skip-taskbar \
     --fontname="Free Sans 15" --justify=fill --editable --wrap \
     --buttons-layout=end --borders=0 --title=" " "$info" \
-    --margins=8 --text-align=left --height=170 --width=460 \
+    --margins=8 --text-align=left --height=200 --width=470 \
     --align=left --window-icon=idiomind --image-on-top \
-    --button="<small>$(gettext "Hint")</small>":"/usr/share/idiomind/practice/hint.sh '$1'" \
-    --button="<small>$listen</small>":"play '$DM_tlt/$fname.mp3'" \
-    --button="<small>  $(gettext "OK") >>     </small>":0)
+    --button="$(gettext "Hint")":"/usr/share/idiomind/practice/hint.sh '$1'" \
+    --button="$listen":"play '$DM_tlt/$fname.mp3'" \
+    --button=" $(gettext "OK") >> ":0)
     }
     
 function check() {
     
-    yad --form --center --name=idiomind --buttons-layout=end \
-    --width=470 --height=230 --on-top --skip-taskbar --scroll \
-    --class=idiomind $aut --wrap --window-icon=idiomind \
-    --text-align=center --borders=5 --selectable-labels \
-    --title="" --button="<small>$listen</small>":"play '$DM_tlt/$fname.mp3'" \
-    --button="<small>$(gettext "Next sentence")</small>":2 \
+    yad --form --center --name=Idiomind --buttons-layout=end \
+    --width=550 --height=300 --on-top --skip-taskbar --scroll \
+    --class=Idiomind $aut --wrap --window-icon=idiomind \
+    --borders=5 --selectable-labels \
+    --title="" --button="$listen":"play '$DM_tlt/$fname.mp3'" \
+    --button="$(gettext "Next sentence")":2 \
     --field="":lbl --text="<span font_desc='Free Sans 14'>$wes</span>\\n" \
-    --field="<span font_desc='Free Sans 9'>$(echo $OK | sed 's/\,*$/\./g')  $prc</span>\\n":lbl
+    --field="<span font_desc='Free Sans 9'>$(echo $OK | sed 's/\,*$/\./g') $prc</span>\\n":lbl
     }
     
 function get_image_text() {

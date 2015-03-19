@@ -384,10 +384,10 @@ function dlg_form_1() {
         yad --form --center --always-print-result \
         --on-top --window-icon=idiomind \
         --separator="\n" --align=right --image="$img" \
-        --name=Idiomind --class=Idiomind \
+        --name=Idiomind --class=Idiomind --skip-taskbar \
         --borders=0 --title=" " --width=420 --height=140 \
-        --field=" <small><small>$lgtl</small></small>: " "$txt" \
-        --field=" <small><small>$(gettext "Topic")</small></small>:CB" \
+        --field=" <small>$lgtl</small>: " "$txt" \
+        --field=" <small>$(gettext "Topic")</small>:CB" \
         "$ttle!$(gettext "New topic") *$e$tpcs" \
         --button="$(gettext "Image")":3 \
         --button="$(gettext "Audio")":2 \
@@ -401,11 +401,11 @@ function dlg_form_2() {
         yad --form --center --always-print-result \
         --on-top --window-icon=idiomind \
         --separator="\n" --align=right --image="$img" \
-        --name=Idiomind --class=Idiomind \
+        --name=Idiomind --class=Idiomind --skip-taskbar \
         --borders=0 --title=" " --width=420 --height=170 \
-        --field=" <small><small>$lgtl</small></small>: " "$txt" \
-        --field=" <small><small>${lgsl^}</small></small>: " "$srce" \
-        --field=" <small><small>$(gettext "Topic")</small></small>:CB" \
+        --field=" <small>$lgtl</small>: " "$txt" \
+        --field=" <small>${lgsl^}</small>: " "$srce" \
+        --field=" <small>$(gettext "Topic")</small>:CB" \
         "$ttle!$(gettext "New topic") *$e$tpcs" \
         --button="$(gettext "Image")":3 \
         --button="$(gettext "Audio")":2 \
@@ -419,7 +419,7 @@ function dlg_radiolist_1() {
         echo "$1" | awk '{print "FALSE\n"$0}' | \
         yad --name=Idiomind --class=Idiomind --center \
         --list --radiolist --on-top --fixed --no-headers \
-        --text="<b>$te</b> <small><small> $info</small></small>" \
+        --text="<b>$te</b> <small> $info</small>" \
         --sticky --skip-taskbar --window-icon=idiomind \
         --height=420 --width=150 --separator="\\n" \
         --button=$(gettext "Save"):0 --title="$(gettext "Listing words")" \
@@ -446,10 +446,10 @@ function dlg_checklist_3() {
 
         slt=$(mktemp $DT/slt.XXXX.x)
         cat "$1" | awk '{print "FALSE\n"$0}' | \
-        yad --name=Idiomind --window-icon=idiomind \
+        yad --name=Idiomind --window-icon=idiomind --ellipsize=END \
         --dclick-action='/usr/share/idiomind/add.sh dclik_list_words' \
         --list --checklist --class=Idiomind --center --sticky \
-        --text="<small>$info</small>" --title="$tpe" \
+        --text="<small>$info</small>" --title="$tpe" --no-headers \
         --width=$wth --print-all --height=$eht --borders=3 \
         --button="$(gettext "Cancel")":1 --button=$(gettext "Arrange"):2 \
         --button="$(gettext "To New Topic")":"$DS/add.sh 'new_topic'" \
