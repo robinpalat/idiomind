@@ -343,7 +343,7 @@ function topic() {
     [ -z "$tpc" ] && exit 1
 
     if echo "$mde" | grep "wn"; then
-        itxt="<big><big>$tpc </big></big>\\n"
+        itxt="<big><big>$tpc </big></big>"
         itxt2="<span color='#545454'>$ss $(gettext "Sentences")\n$ws $(gettext "Words")\n$(gettext "Created by")\n $author $(gettext "on") ${category^}\n  $date_u</span>"
     else
         itxt="<big><big>$tpc </big></big>\\n$ss $(gettext "Sentences") $ws $(gettext "Words")"

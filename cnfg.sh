@@ -49,20 +49,23 @@ Russian"
 
 sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
 'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' 'edit')
-
 c=$(echo $(($RANDOM%100000))); KEY=$c
-> $DT/cnf1
-cnf1=$DT/cnf1
+cnf1=$(mktemp "$DT"/cnf1.XXXX)
 
 if [ ! -d "$DC" ]; then
     "$DS/ifs/1u.sh" & exit
 fi
 
-
-
 #sed -i '${n}s/.*/TRUE/' $DC_s/cfg.5
-
 #sed -i "3s/size=.*/size=$du/" "$DC_a/1.cfg"
+#declare set"$n"="${sets[$n]}=\"$val\""
+#sed -i '/${sets[$n]}=.*/a\${sets[$n]}=11'
+#sed -i "s/${sets[2]}=.*/${sets[2]}=25/g" "$DC_s/1.cfg" # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#n=1
+#while read val; do
+    #declare set"$n"="${sets[$n]}=\"$val\""
+    #((n=n+1))
+#done < "$DC_s/1.cfg"
 
 function confirm() {
     
@@ -91,39 +94,15 @@ function set_lang() {
 }
 
 if [ ! -f "$DC_s/1.cfg" ]; then
-sets=('words' 'sentences' 'marks' 'difficult' 'news' 'archive' \
-'text' 'audio' 'grammar' 'repeat' 'videos' 'list' \
-'synth' 'edit' 'loop' 'tasks' 'trans' 't_lang' 's_lang')
+sets=('grammar' 'list' 'tasks' 'trans' 'synth' 'edit' \
+'text' 'audio' 'repeat' 'videos' 'loop' 't_lang' \
+'s_lang' 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
 n=0; > "$DC_s/1.cfg"
 while [ $n -le 18 ]; do
-    echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
+    echo -e "${sets[$n]}=\"\ \"" >> "$DC_s/1.cfg"
     ((n=n+1))
 done
 fi
-
-
-
-#declare set"$n"="${sets[$n]}=\"$val\""
-
-
-#sed -i '/${sets[$n]}=.*/a\${sets[$n]}=11'
-
-
-
-#sed -i "s/${sets[2]}=.*/${sets[2]}=25/g" "$DC_s/1.cfg" # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-
-#n=1
-#while read val; do
-    #declare set"$n"="${sets[$n]}=\"$val\""
-    
-
-    #((n=n+1))
-#done < "$DC_s/1.cfg"
-
-
-
 
 source "$DC_s/1.cfg"
 [ "$synth" = FALSE ] && synth="_"
@@ -173,8 +152,7 @@ yad --notebook --key=$KEY --name=Idiomind --class=Idiomind \
 --tab="$(gettext "Preferences")" --tab="$(gettext "Addons")" \
 --width=$wth --height=$eht --title="$(gettext "Settings")" \
 --button="$(gettext "Cancel")":1 --button="$(gettext "OK")":0
-    
-    ret=$?
+ret=$?
     
     if [ $ret -eq 0 ]; then
 
@@ -191,10 +169,9 @@ yad --notebook --key=$KEY --name=Idiomind --class=Idiomind \
         [ ! -d  "$HOME/.config/autostart" ] \
         && mkdir "$HOME/.config/autostart"
         config_dir="$HOME/.config/autostart"
-        if [[ "$(sed -n 5p "$DC_s/1.cfg")" = "TRUE" ]]; then
+        if sed -n 3p "$DC_s/1.cfg" | grep "TRUE"; then
             if [ ! -f "$config_dir/idiomind.desktop" ]; then
                 echo "$autostart" > "$config_dir/idiomind.desktop"
-                chmod +x "$config_dir/idiomind.desktop"
             fi
         else
             if [ -f "$config_dir/idiomind.desktop" ]; then
@@ -223,11 +200,7 @@ yad --notebook --key=$KEY --name=Idiomind --class=Idiomind \
             fi
         done <<< "$langs"
         
-        #if ([ "$(cat "$cnf1")" != "$(cat "$DC_s/1.cfg")" ] \
-        #&& [ -n "$(cat "$cnf1")" ]); then
-            #cat "$cnf1" > "$DC_s/1.cfg"; fi
-
-        rm -f "$DT/.lc" & exit 1
+        rm -f "$cnf1" "$DT/.lc" & exit 1
     else
-        rm -f "$DT/.lc" & exit 1
+        rm -f "$cnf1" "$DT/.lc" & exit 1
     fi

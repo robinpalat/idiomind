@@ -93,7 +93,7 @@ function notebook_1() {
     yad --notebook --name=Idiomind --center --key=$KEY \
     --class=Idiomind --align=right \
     --window-icon=idiomind \
-    --tab-borders=0 --center --title="Idiomind - $tpc" \
+    --tab-borders=0 --center --title="$tpc" \
     --tab="  $(gettext "Learning") ($tb1) " \
     --tab="  $(gettext "Learned") ($tb2) " \
     --tab=" $(gettext "Edit") " \
@@ -123,7 +123,7 @@ function notebook_2() {
     --field="Delete":FBTN "$DS/mngr.sh 'delete_topic'" > "$cnf3" &
     yad --notebook --name=Idiomind --center \
     --class=Idiomind --align=right --key=$KEY \
-    --tab-borders=0 --center --title="Idiomind - $tpc" \
+    --tab-borders=0 --center --title="$tpc" \
     --window-icon=idiomind \
     --tab=" $(gettext "Review") " \
     --tab=" $(gettext "Learned") ($tb2) " \
