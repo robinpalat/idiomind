@@ -19,24 +19,21 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
+source "$DC_s/1.cfg"
 
 if [ "$1" = chngi ]; then
 
-    function stop_bcl() {
+    function stop_loop() {
     
-    if [ ! -f "$1" ]; then
-        echo "___" >> "$DT/.l_bcl"
-        if [ $(cat "$DT/.l_bcl" | wc -l) -gt 5 ]; then
-            rm -f "$DT/.p_"  "$DT/.l_bcl" &
-            "$DS/stop.sh" play & exit 1
+        if [ ! -f "$1" ]; then
+            echo "___" >> "$DT/.l_loop"
+            if [ $(cat "$DT/.l_loop" | wc -l) -gt 5 ]; then
+                rm -f "$DT/.p_"  "$DT/.l_loop" &
+                "$DS/stop.sh" play & exit 1; fi
         fi
-    fi
     }
-    
-    nta=$(sed -n 9p "$DC_s/1.cfg")
-    sna=$(sed -n 10p "$DC_s/1.cfg")
+
     index="$DT/index"
-    bcl=$(sed -n 17p "$DC_s/1.cfg")
     item="$(sed -n "$2"p "$index")"
     fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
     
@@ -45,7 +42,7 @@ if [ "$1" = chngi ]; then
 
     include "$DS/ifs/mods/play"
     
-    stop_bcl "$file"
+    stop_loop "$file"
     
     if [ "$t" = 2 ]; then
         tgs=$(eyeD3 "$file")
@@ -56,8 +53,8 @@ if [ "$1" = chngi ]; then
         play=play
     
     elif [ "$t" = 1 ]; then
-        if ([ $(echo "$nta" | grep "TRUE") ] \
-        && [ "$bcl" -lt 12 ]); then bcl=12; fi
+        if ([ $(echo "$text" | grep "TRUE") ] \
+        && [ "$loop" -lt 12 ]); then loop=12; fi
         tgs=$(eyeD3 "$file")
         trgt=$(echo "$tgs" | \
         grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
@@ -69,13 +66,13 @@ if [ "$1" = chngi ]; then
     [ -z "$trgt" ] && trgt="$item"
     imgt="$DM_tlt/words/images/$fname.jpg"
     [ -f "$imgt" ] && osdi="$imgt" || osdi=idiomind
-    if echo "$nta" | grep "TRUE"; then
+    if [ "$text" = "TRUE" ]; then
         (notify-send -i "$osdi" "$trgt" "$srce" -t 10000 && sleep 0.5); fi &
-    if echo "$sna" | grep "TRUE"; then
+    if [ "$audio" = "TRUE" ]; then
         "$play" "$file" && wait; fi
     
-    sleep "$bcl"
-    [ -f "$DT/.l_bcl" ] && rm -f "$DT/.l_bcl"
+    sleep "$loop"
+    [ -f "$DT/.l_loop" ] && rm -f "$DT/.l_loop"
         
 
 elif [ "$1" != chngi ]; then

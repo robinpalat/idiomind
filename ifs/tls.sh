@@ -65,7 +65,7 @@ function edit_audio() {
 
 function help() {
 
-    web="/tmp/.idmtp1.robin/Expressions_of_L._E./index.html"
+    web="http://idiomind.sourceforge.net/doc/help.html"
     yad --html --window-icon=idiomind --browser \
     --title="$(gettext "Help")" --width=700 \
     --height=600 --button="$(gettext "OK")":0 \
@@ -1090,7 +1090,7 @@ case $1 in
     edit_audio)
     edit_audio ;;
     help)
-    help_dialog ;;
+    help ;;
     check_updates)
     check_updates ;;
     check_index)

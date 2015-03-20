@@ -227,10 +227,8 @@ mkdir "$DT/upload/$tpc"
 
 cd "$DM_tlt/words/images"
 if [ $(ls -1 *.jpg 2>/dev/null | wc -l) != 0 ]; then
-    images=$(ls *.jpg | wc -l)
-else
-    images=0
-fi
+images=$(ls *.jpg | wc -l); else
+images=0; fi
 [ -f "$DC_tlt"/3.cfg ] && words=$(cat "$DC_tlt"/3.cfg | wc -l)
 [ -f "$DC_tlt"/4.cfg ] && sentences=$(cat "$DC_tlt"/4.cfg | wc -l)
 [ -f "$DC_tlt"/12.cfg ] && date_c=$(cat "$DC_tlt"/12.cfg)

@@ -1,106 +1,100 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#  
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#  
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+#  MA 02110-1301, USA.
+#
+#  2015/02/27
 source /usr/share/idiomind/ifs/c.conf
-#--text=" <small> $(gettext "Playing:") datos de usauario de podcasts evitar</small>\n \
-#<small> $(gettext "Next:") datos de usauario de podcasts evitar </small>" \
+[ -z "$tpc" ] && exit 1
+source "$DC_s/1.cfg"
+lbls=(' ' 'Words' 'Sentences' 'Marks' 'Practice' 'News episodes' 'Saved epidodes')
+sets=(' ' 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
+in=(' ' 'in1' 'in2' 'in3' 'in4' 'in5' 'in6')
+tlng="$DC_tlt/1.cfg"
+winx="$DC_tlt/3.cfg"
+sinx="$DC_tlt/4.cfg"
+if [ "$(cat "$sinx" | wc -l)" -gt 0 ]; then
+in1=$(grep -Fxvf "$sinx" "$tlng"); else
+in1=$(cat "$tlng"); fi
+if [ "$(cat "$winx" | wc -l)" -gt 0 ]; then
+in2=$(grep -Fxvf "$winx" "$tlng"); else
+in2=$(cat "$tlng"); fi
+in3=$(cat "$DC_tlt/6.cfg")
+cd "$DC_tlt/practice"
+in4=$(cat w6 | sed '/^$/d' | sort | uniq)
+in5=$(cat "$DM_tl/Feeds/.conf/1.cfg" | sed '/^$/d')
+in6=$(cat "$DM_tl/Feeds/.conf/2.cfg" | sed '/^$/d')
+[ ! -d "$DT" ] && mkdir "$DT"; cd "$DT"
 
-itms="Words
-Sentences
-Marks
-Practice
-News episodes
-Saved epidodes"
+function setting_1() {
+    n=1
+    while [ $n -le 6 ]; do
+            arr="in$n"
+            [[ -z ${!arr} ]] && echo "$DS/images/addi.png" \
+            || echo "$DS/images/add.png"
+        echo "  <span font_desc='Verdana 10'>$(gettext "${lbls[$n]}")</span>"
+        echo "${!sets[$n]}"
+        let n++
+    done
+}
 
-if [ -z "$1" ]; then
+if [ ! -f $DT/.p_ ]; then
+btn="Play:0"; else btn="gtk-media-stop:2"; fi
+slct=$(mktemp "$DT"/slct.XXXX)
+setting_1 | yad --list  --separator="|" --on-top \
+--expand-column=2 --print-all --no-headers --center \
+--class=Idiomind --name=Idiomind --align=right \
+--width=380 --height=310 --title="$(gettext "Playlist")" \
+--window-icon=idiomind --borders=5 --always-print-result \
+--column=IMG:IMG --column=TXT:TXT --column=CHK:CHK \
+--button="Cancel":1 --button="$btn" --skip-taskbar > "$slct"
+ret=$?
 
-    tlng="$DC_tlt/1.cfg"
-    winx="$DC_tlt/3.cfg"
-    sinx="$DC_tlt/4.cfg"
-    [ -z "$tpc" ] && exit 1
-    if [ "$(cat "$sinx" | wc -l)" -gt 0 ]; then
-        in1=$(grep -Fxvf "$sinx" "$tlng")
-    else
-        in1=$(cat "$tlng")
-    fi
-    if [ "$(cat "$winx" | wc -l)" -gt 0 ]; then
-        in2=$(grep -Fxvf "$winx" "$tlng")
-    else
-        in2=$(cat "$tlng")
-    fi
-    in3=$(cat "$DC_tlt/6.cfg")
-    cd "$DC_tlt/practice"
-    in4=$(cat w6 | sed '/^$/d' | sort | uniq)
-    in5=$(cat "$DM_tl/Feeds/.conf/1.cfg" | sed '/^$/d')
-    in6=$(cat "$DM_tl/Feeds/.conf/2.cfg" | sed '/^$/d')
-    u=$(echo "$(whoami)")
-    infs=$(echo "$snts Sentences" | wc -l)
-    infw=$(echo "$wrds Words" | wc -l)
+if [ "$ret" -eq 0 ]; then
 
-    [ ! -d "$DT" ] && mkdir "$DT"; cd "$DT"
-    
-    function setting_1() {
-        n=1
-        while [ $n -le 6 ]; do
-                arr="in$n"
-                [[ -z ${!arr} ]] && echo "$DS/images/addi.png" \
-                || echo "$DS/images/add.png"
-            echo "  <span font_desc='Verdana 10'>$(gettext "$(echo "$itms" | sed -n "$n"p)")</span>"
-            echo $(sed -n "$n"p "$DC_s/3.cfg" | cut -d '|' -f 3)
-            let n++
-        done
-    }
-    
-    if [ ! -f $DT/.p_ ]; then
-    btn="Play:0"; else btn="gtk-media-stop:2"; fi
-    slct=$(mktemp "$DT"/slct.XXXX)
-    [ -f "$DT/.p_" ] && ret="2" || ret="0"
-    setting_1 | yad --list  --separator="|" --limit=6 \
-    --expand-column=2 --print-all --no-headers \
-    --class=Idiomind --name=Idiomind --align=right --center  \
-    --width=380 --height=310 --title="$(gettext "Playlist")" --on-top \
-    --window-icon=idiomind --borders=5 --always-print-result \
-    --column=IMG:IMG --column=TXT:TXT --column=CHK:CHK \
-    --button="Cancel":1 --button="$btn" --skip-taskbar > "$slct"
-    ret=$?
-    
-    if [ "$ret" -eq 0 ]; then
-    
-        if ([ "$(cat "$slct")" != "$(cat "$DC_s/3.cfg")" ] \
-        && [ -n "$(cat "$slct")" ]); then
-            cat "$slct" > "$DC_s/3.cfg"; fi
-
-        cd "$DT"; > ./index; n=1
-        while [ $n -le 6 ]; do
-            if  sed -n "$n"p "$DC_s/3.cfg" | grep TRUE; then
-                lst="in$n"
-                [ -n "${!lst}" ] && echo "${!lst}" >> ./index
-            fi
-            let n++
-        done
-
-        rm -f "$slct"; "$DS/stop.sh" playm
-
-        if ([ -z "$(cat "$DC_s/3.cfg" | head -n6 | grep -o "TRUE")" ] \
-        || [ -z "$(cat "$DT/index")" ]); then
-            notify-send "$(gettext "Exiting")" "$(gettext "Nothing specified to play")" -i idiomind -t 3000 &&
-            sleep 4
-            "$DS/stop.sh" play & exit 1
+    cd "$DT"; > ./index; n=1
+    while [ $n -le 6 ]; do
+        val=$(sed -n "$n"p < "$slct" | cut -d "|" -f3)
+        sed -i "s/${sets[$n]}=.*/${sets[$n]}=$val/g" "$DC_s/1.cfg"
+        if [ "$val" = TRUE ]; then
+            [ -n "${!in[$n]}" ] && echo "${!in[$n]}" >> ./index
         fi
-        
-        printf "plyrt.$tpc.plyrt\n" >> "$DC_s/8.cfg" &
-        sleep 1
-        "$DS/bcle.sh" & exit 0
+        ((n=n+1))
+    done
 
-    elif [ "$ret" -eq 2 ]; then
-    
-        rm -f "$slct"
-        [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
-        /usr/share/idiomind/stop.sh play & exit
-        
-    else
-        rm -f "$slct"
-        exit 1
+    rm -f "$slct"; 
+    "$DS/stop.sh" playm
+    source "$DC_s/1.cfg"
+    if [ -z "$(cat "$DT/index")" ]; then
+        notify-send "$(gettext "Exiting")" "$(gettext "Nothing specified to play")" -i idiomind -t 3000 &&
+        sleep 4
+        "$DS/stop.sh" play & exit 1
     fi
+    
+    printf "plyrt.$tpc.plyrt\n" >> "$DC_s/8.cfg" &
+    sleep 1
+    "$DS/bcle.sh" & exit 0
 
+elif [ "$ret" -eq 2 ]; then
+
+    rm -f "$slct"
+    [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
+    /usr/share/idiomind/stop.sh play & exit
+    
+else
+    rm -f "$slct"
+    exit 1
 fi

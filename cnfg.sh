@@ -19,8 +19,8 @@
 
 source /usr/share/idiomind/ifs/c.conf
 Encoding=UTF-8
-wth=$(($(sed -n 2p $DC_s/10.cfg)-450))
-eht=$(($(sed -n 3p $DC_s/10.cfg)-140))
+wth=$(($(sed -n 2p $DC_s/10.cfg)-500))
+eht=$(($(sed -n 3p $DC_s/10.cfg)-200))
 IFS=$'\n'
 info1="$(echo "$(gettext "Do you want to change the interface language program?")" | xargs -n6 | sed 's/^/  /')"
 info2="$(echo "$(gettext "You want to change the language setting to learn?")" | xargs -n6 | sed 's/^/  /')"
@@ -47,11 +47,12 @@ Vietnamese
 Chinese
 Russian"
 
-sets=('grammar' 'list' 'tasks' 'trans' 'synth' \
-'edit' 'text' 'audio' 'repeat' 'videos' 'loop' 't_lang' 's_lang')
+sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
+'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' 'edit')
 
 c=$(echo $(($RANDOM%100000))); KEY=$c
-cnf1=$(mktemp $DT/cnf1.XXXX)
+> $DT/cnf1
+cnf1=$DT/cnf1
 
 if [ ! -d "$DC" ]; then
     "$DS/ifs/1u.sh" & exit
@@ -127,6 +128,10 @@ fi
 source "$DC_s/1.cfg"
 [ "$synth" = FALSE ] && synth="_"
 [ "$edit" = FALSE ] && edit="_"
+[ "$synth" = TRUE ] && synth="_"
+[ "$edit" = TRUE ] && edit="_"
+[ -z "$synth" ] && synth="_"
+[ -z "$edit" ] && edit="_"
 
 yad --plug=$KEY --tabnum=1 \
 --separator="|" --form --align=right --scroll \
@@ -137,8 +142,6 @@ yad --plug=$KEY --tabnum=1 \
 --field="$(gettext "List words after adding a sentence")":CHK "$list" \
 --field="$(gettext "Perform tasks at startup")":CHK "$tasks" \
 --field="$(gettext "Usar traduccion automatica si esta disponible")":CHK "$trans" \
---field="$(gettext "Speech Synthesizer Default espeak")":CB5 "$synth" \
---field="$(gettext "Use this program for audio editing")":CB5 "$edit" \
 --field=" :LBL" " " \
 --field="$(gettext "Play Options")\t":LBL " " \
 --field=":LBL" " " \
@@ -154,6 +157,8 @@ yad --plug=$KEY --tabnum=1 \
 --field="$(gettext "Your Language")":CB "$lgsl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
 --field=" :LBL" " " \
 --field=":LBL" " " \
+--field="$(gettext "Speech Synthesizer Default espeak")":CB5 "$synth" \
+--field="$(gettext "Use this program for audio editing")":CB5 "$edit" \
 --field="$(gettext "Check for Updates")":BTN "$DS/ifs/tls.sh check_updates" \
 --field="$(gettext "Quick Help")":BTN "$DS/ifs/tls.sh help" \
 --field="$(gettext "Topic Saved")":BTN "$DS/ifs/upld.sh 'vsd'" \
@@ -172,17 +177,17 @@ yad --notebook --key=$KEY --name=Idiomind --class=Idiomind \
     ret=$?
     
     if [ $ret -eq 0 ]; then
-        n=0
-        while [ $n -le 11 ]; do
-            #if [ $n = 7 ] || [ $n = 8 ]; then val="_"; fi
-            if [ -n "$val" ]; then
-                sed -i "s/${sets[$n]}=.*/${sets[$n]}=$val/g" "$DC_s/1.cfg"
-                ((n=n+1))
+
+        n=1; v=0
+        while [ $n -le 24 ]; do
+            val=$(cut -d "|" -f$n < "$cnf1")
+            if [ -n "$val" ] || [ $n = 22] || [ $n = 23 ]; then
+                sed -i "s/${sets[$v]}=.*/${sets[$v]}=$val/g" "$DC_s/1.cfg"
+                ((v=v+1))
             fi
-                sed -i "s/${sets[7]}=.*/${sets[7]}=$val/g" "$DC_s/1.cfg"
-                sed -i "s/${sets[7]}=.*/${sets[7]}=$val/g" "$DC_s/1.cfg"
-        done <
-    
+            ((n=n+1))
+        done
+
         [ ! -d  "$HOME/.config/autostart" ] \
         && mkdir "$HOME/.config/autostart"
         config_dir="$HOME/.config/autostart"
@@ -222,7 +227,7 @@ yad --notebook --key=$KEY --name=Idiomind --class=Idiomind \
         #&& [ -n "$(cat "$cnf1")" ]); then
             #cat "$cnf1" > "$DC_s/1.cfg"; fi
 
-        rm -f "$cnf1" "$DT/.lc" & exit 1
+        rm -f "$DT/.lc" & exit 1
     else
-        rm -f "$cnf1" "$DT/.lc" & exit 1
+        rm -f "$DT/.lc" & exit 1
     fi
