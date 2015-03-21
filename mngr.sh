@@ -79,11 +79,16 @@ if [ "$1" = mkmn ]; then
 elif [ "$1" = mklg- ]; then
     
     include "$DS/ifs/mods/mngr"
-    if [ $(cat "$DC_tlt/2.cfg" | wc -l) -le 20 ]; then
-        msg "$(gettext "You must be at least 20 items.")\n " info &
+    if [ $(cat "$DC_tlt/2.cfg" | wc -l) -le 15 ]; then
+        msg "$(gettext "You must be at least 15 items.")\n " info &
         exit
     fi
 
+    kill -9 $(pgrep -f "yad --multi-progress ") &
+    kill -9 $(pgrep -f "yad --list ") &
+    kill -9 $(pgrep -f "yad --form ") &
+    kill -9 $(pgrep -f "yad --notebook ") &
+    
     nstll=$(grep -Fxo "$tpc" "$DM_tl/.3.cfg")
     if [ -n "$nstll" ]; then
         if [ $(cat "$DC_tlt/8.cfg") = 7 ]; then
@@ -114,14 +119,14 @@ elif [ "$1" = mklg- ]; then
         fi
         rm -f "$DC_tlt/7.cfg"
     fi
-    cat "$DC_tlt/0.cfg" | awk '!array_temp[$0]++' > $DT/0.cfg.tmp
-    sed '/^$/d' $DT/0.cfg.tmp > "$DC_tlt/0.cfg"
-    rm -f $DT/*.tmp
+    cat "$DC_tlt/0.cfg" | awk '!array_temp[$0]++' > "$DT/0.cfg.tmp"
+    sed '/^$/d' "$DT/0.cfg.tmp" > "$DC_tlt/0.cfg"
+    rm -f "$DT/*.tmp"
     rm "$DC_tlt/2.cfg" "$DC_tlt/1.cfg"
     touch "$DC_tlt/2.cfg"
     cp -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"
 
-    $DS/mngr.sh mkmn &
+    "$DS/mngr.sh" mkmn &
 
     idiomind topic & exit 1
     
@@ -129,11 +134,16 @@ elif [ "$1" = mklg- ]; then
 elif [ "$1" = mkok- ]; then
     
     include "$DS/ifs/mods/mngr"
-    if [ $(cat "$DC_tlt/1.cfg" | wc -l) -le 20 ]; then
-        msg "$(gettext "You must be at least 20 items.")\n " info &
+    if [ $(cat "$DC_tlt/1.cfg" | wc -l) -le 15 ]; then
+        msg "$(gettext "You must be at least 15 items.")\n " info &
         exit
     fi
     
+    kill -9 $(pgrep -f "yad --list ") &
+    kill -9 $(pgrep -f "yad --list ") &
+    kill -9 $(pgrep -f "yad --form ") &
+    kill -9 $(pgrep -f "yad --notebook ") &
+
     if [ -f "$DC_tlt/9.cfg" ]; then
     
         calculate_review
@@ -161,16 +171,16 @@ elif [ "$1" = mkok- ]; then
     rm "$DC_tlt/2.cfg" "$DC_tlt/1.cfg"
     touch "$DC_tlt/1.cfg"
     cp -f "$DC_tlt/0.cfg" "$DC_tlt/2.cfg"
-    $DS/mngr.sh mkmn &
+    "$DS/mngr.sh" mkmn &
 
     idiomind topic & exit 1
     
     
 elif [ "$1" = delete_item_confirm ]; then
 
-    touch $DT/ps_lk
-    include $DS/ifs/mods/mngr
-    source $DS/ifs/mods/cmns.sh
+    touch "$DT/ps_lk"
+    include "$DS/ifs/mods/mngr"
+    source "$DS/ifs/mods/cmns.sh"
     fname="${2}"
 
     if [ -f "$DM_tlt/words/$fname.mp3" ]; then 
@@ -213,16 +223,16 @@ elif [ "$1" = delete_item_confirm ]; then
     ./4.cfg.tmp && sed '/^$/d' ./4.cfg.tmp > ./4.cfg
     rm ./*.tmp
 
-    (sleep 1 && rm -f $DT/ps_lk) & exit 1
+    (sleep 1 && rm -f "$DT/ps_lk") & exit 1
     
-    rm -f $DT/ps_lk & exit 1
+    rm -f "$DT/ps_lk" & exit 1
     
     
 elif [ "$1" = delete_item ]; then
 
-    touch $DT/ps_lk
-    include $DS/ifs/mods/mngr
-    source $DS/ifs/mods/cmns.sh
+    touch "$DT/ps_lk"
+    include "$DS/ifs/mods/mngr"
+    source "$DS/ifs/mods/cmns.sh"
     fname="${2}"
     
     
@@ -285,15 +295,15 @@ elif [ "$1" = delete_item ]; then
         ./4.cfg.tmp && sed '/^$/d' ./4.cfg.tmp > ./4.cfg
         rm ./*.tmp
 
-        (sleep 1 && rm -f $DT/ps_lk) & exit 1
+        (sleep 1 && rm -f "$DT/ps_lk") & exit 1
         
     else
-        rm -f $DT/ps_lk & exit 1
+        rm -f "$DT/ps_lk" & exit 1
     fi
     
 #--------------------------------
 elif [ "$1" = delete_topic ]; then
-    include $DS/ifs/mods/mngr
+    include "$DS/ifs/mods/mngr"
     
     msg_2 "$(gettext "Are you sure you want to delete this Topic?")\n\n" \
     dialog-question "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
@@ -301,39 +311,44 @@ elif [ "$1" = delete_topic ]; then
         
         if [ $ret -eq 0 ]; then
         
-            [[ -d "$DM_tl/$tpc" ]] && rm -r "$DM_tl/$tpc"
-            [[ -d "$DC_tl/$tpc" ]] && rm -r "$DC_tl/$tpc"
+            kill -9 $(pgrep -f "yad --list ") &
+            kill -9 $(pgrep -f "yad --list ") &
+            kill -9 $(pgrep -f "yad --form ") &
+            kill -9 $(pgrep -f "yad --notebook ") &
+        
+            [ -d "$DM_tl/$tpc" ] && rm -r "$DM_tl/$tpc"
+            [ -d "$DC_tl/$tpc" ] && rm -r "$DC_tl/$tpc"
             
-            rm $DC_s/4.cfg
-            > $DC_tl/.8.cfg
+            rm "$DC_s/4.cfg" "rm $DT/tpe"
+            > "$DC_tl/.8.cfg"
 
-            cd $DC_tl
-            [ -f ./.1.cfg ] && grep -vxF "$tpc" ./.1.cfg > \
-            ./.1.cfg.tmp && sed '/^$/d' ./.1.cfg.tmp > ./.1.cfg
-            [ -f ./.2.cfg ] && grep -vxF "$tpc" ./.2.cfg > \
-            ./.2.cfg.tmp && sed '/^$/d' ./.2.cfg.tmp > ./.2.cfg
-            [ -f ./.3.cfg ] && grep -vxF "$tpc" ./.3.cfg > \
-            ./.3.cfg.tmp && sed '/^$/d' ./.3.cfg.tmp > ./.3.cfg
-            [ -f ./.5.cfg ] && grep -vxF "$tpc" ./.5.cfg > \
-            ./.5.cfg.tmp && sed '/^$/d' ./.5.cfg.tmp > ./.5.cfg
-            [ -f ./.6.cfg ] && grep -vxF "$tpc" ./.6.cfg > \
-            ./.6.cfg.tmp && sed '/^$/d' ./.6.cfg.tmp > ./.6.cfg
-            [ -f ./.7.cfg ] && grep -vxF "$tpc" ./.7.cfg > \
-            ./.7.cfg.tmp && sed '/^$/d' ./.7.cfg.tmp > ./.7.cfg
-            rm $DC_tl/.*.tmp 
+            cd "$DC_tl"
+            [ -f "./.1.cfg" ] && grep -vxF "$tpc" "./.1.cfg" > \
+            "./.1.cfg.tmp" && sed '/^$/d' "./.1.cfg.tmp" > "./.1.cfg"
+            [ -f "./.2.cfg" ] && grep -vxF "$tpc" "./.2.cfg" > \
+            "./.2.cfg.tmp" && sed '/^$/d' "./.2.cfg.tmp" > "./.2.cfg"
+            [ -f "./.3.cfg" ] && grep -vxF "$tpc" "./.3.cfg" > \
+            "./.3.cfg.tmp" && sed '/^$/d' "./.3.cfg.tmp" > "./.3.cfg"
+            [ -f "./.5.cfg" ] && grep -vxF "$tpc" "./.5.cfg" > \
+            "./.5.cfg.tmp" && sed '/^$/d' "./.5.cfg.tmp" > "./.5.cfg"
+            [ -f "./.6.cfg" ] && grep -vxF "$tpc" "./.6.cfg" > \
+            "./.6.cfg.tmp" && sed '/^$/d' "./.6.cfg.tmp" > "./.6.cfg"
+            [ -f "./.7.cfg" ] && grep -vxF "$tpc" "./.7.cfg" > \
+            "./.7.cfg.tmp" && sed '/^$/d' "./.7.cfg.tmp" > "./.7.cfg"
+            rm "$DC_tl/.*.tmp"
             
-            (sleep 1 && rm -f $DT/ps_lk) &
-            $DS/mngr.sh mkmn
+            (sleep 1 && rm -f "$DT/ps_lk") &
+            "$DS/mngr.sh" mkmn
             exit 1
             
         else
-            rm -f $DT/ps_lk & exit 1
+            rm -f "$DT/ps_lk" & exit 1
         fi
 
 #--------------------------------
 elif [ "$1" = edt ]; then
 
-    include $DS/ifs/mods/mngr
+    include "$DS/ifs/mods/mngr"
     wth=$(($(sed -n 2p $DC_s/10.cfg)-220))
     eht=$(($(sed -n 3p $DC_s/10.cfg)-0))
     lgt=$(lnglss $lgtl)
@@ -377,10 +392,10 @@ elif [ "$1" = edt ]; then
         imge="$DS/add.sh set_image '$TGT' word"
         sdefn="/usr/share/idiomind/ifs/tls.sh definition '$TGT'"
         
-        dlg_form_1 $cnf
+        dlg_form_1 "$cnf"
         ret=$(echo "$?")
         
-            [ -f $DT/ps_lk ] && $DS/vwr.sh "$v" "nll" $ff && exit 1
+            [ -f "$DT/ps_lk" ] && "$DS/vwr.sh" "$v" "nll" $ff && exit 1
             srce=$(cat $cnf | tail -12 | sed -n 2p  \
             | sed 's/^ *//; s/ *$//g'| sed ':a;N;$!ba;s/\n/ /g')
             topc=$(cat $cnf | tail -12 | sed -n 3p)
@@ -391,8 +406,8 @@ elif [ "$1" = edt ]; then
             mrk2=$(cat $cnf | tail -12 | sed -n 8p)
             mrok=$(cat $cnf | tail -12 | sed -n 9p)
             source /usr/share/idiomind/ifs/c.conf
-            include $DS/ifs/mods/add
-            rm -f $cnf
+            include "$DS/ifs/mods/add"
+            rm -f "$cnf"
             
             if [[ "$mrk" != "$mrk2" ]]; then
             
@@ -408,12 +423,12 @@ elif [ "$1" = edt ]; then
             
             if [[ "$audo" != "$wfile" ]]; then
             
-                eyeD3 --write-images=$DT "$wfile"
+                eyeD3 --write-images="$DT" "$wfile"
                 cp -f "$audo" "$DM_tlt/words/$fname.mp3"
                 add_tags_2 W "$TGT" "$srce" "$DM_tlt/words/$fname.mp3" >/dev/null 2>&1
                 eyeD3 --add-image $DT/ILLUSTRATION.jpeg:ILLUSTRATION \
                 "$DM_tlt/words/$fname.mp3" >/dev/null 2>&1
-                [[ -d $DT/idadtmptts ]] && rm -fr $DT/idadtmptts
+                [[ -d "$DT/idadtmptts" ]] && rm -fr "$DT/idadtmptts"
             fi
             
             if [[ "$srce" != "$SRC" ]]; then
@@ -426,29 +441,28 @@ elif [ "$1" = edt ]; then
             
                 impr=$(echo "$infm" | tr '\n' '_')
                 add_tags_6 W "$impr" "$wfile" >/dev/null 2>&1
-                printf "eitm.$tpc.eitm\n" >> $DC_s/8.cfg &
+                printf "eitm.$tpc.eitm\n" >> "$DC_s/8.cfg" &
             fi
 
             if [[ "$tpc" != "$topc" ]]; then
             
                 cp -f "$audo" "$DM_tl/$topc/words/$fname.mp3"
                 index word "$TGT" "$topc" &
-                $DS/mngr.sh delete_item_confirm "$fname"
-                $DS/vwr.sh "$v" "nll" $ff & exit 1
+                "$DS/mngr.sh" delete_item_confirm "$fname"
+                "$DS/vwr.sh" "$v" "nll" $ff & exit 1
             fi
             
             if [[ "$mrok" = "TRUE" ]]; then
             
-                grep -vxv "$TGT" "$ind" > $DT/tx
-                sed '/^$/d' $DT/tx > "$ind"
-                rm $DT/tx
+                grep -vxv "$TGT" "$ind" > "$DT/tx"
+                sed '/^$/d' "$DT/tx" > "$ind"
+                rm "$DT/tx"
                 echo "$TGT" >> "$inp"
-                printf "okim.1.okim\n" >> $DC_s/8.cfg &
-                $DS/vwr.sh "$v" "nll" $ff & exit 1
+                printf "okim.1.okim\n" >> "$DC_s/8.cfg" &
+                "$DS/vwr.sh" "$v" "nll" $ff & exit 1
             fi
             
             $DS/vwr.sh "$v" "$TGT" $ff & exit 1
-    
     
     elif [ -f "$sfile" ]; then
     
@@ -465,10 +479,10 @@ elif [ "$1" = edt ]; then
         dlte="$DS/mngr.sh delete_item ${fname}"
         imge="$DS/add.sh set_image '$tgt' sentence"
         
-        dlg_form_2 $cnf
+        dlg_form_2 "$cnf"
         ret=$(echo "$?")
         
-            [ -f $DT/ps_lk ] && $DS/vwr.sh "$v" "nll" $ff && exit 1
+            [ -f "$DT/ps_lk" ] && "$DS/vwr.sh" "$v" "nll" $ff && exit 1
             mrok=$(cat $cnf | tail -8 | sed -n 1p)
             mrk2=$(cat $cnf | tail -8 | sed -n 2p)
             trgt=$(cat $cnf | tail -8 | sed -n 3p | \
@@ -478,7 +492,7 @@ elif [ "$1" = edt ]; then
             topc=$(cat $cnf | tail -8 | sed -n 5p)
             audo=$(cat $cnf | tail -8 | sed -n 6p)
             source /usr/share/idiomind/ifs/c.conf
-            include $DS/ifs/mods/add
+            include "$DS/ifs/mods/add"
             rm -f $cnf
             
             if [ "$trgt" != "$tgt" ]; then
@@ -491,27 +505,26 @@ elif [ "$1" = edt ]; then
                 sed -i "s/${tgt}/${trgt}/" "$DC_tlt/2.cfg"
                 sed -i "s/${tgt}/${trgt}/" "$DC_tlt/.11.cfg"
                 sed -i "s/${tgt}/${trgt}/" "$DC_tlt/practice/lsin"
-                mv -f "$DM_tlt/$fname".mp3 "$DM_tlt/$fname2".mp3
+                mv -f "$DM_tlt/$fname.mp3" "$DM_tlt/$fname2.mp3"
                 srce=$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')
                 add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname2.mp3" >/dev/null 2>&1
-                source $DS/default/dicts/$lgt
+                source "$DS/default/dicts/$lgt"
                 
                 (
-                DT_r=$(mktemp -d $DT/XXXXXX)
-                cd $DT_r
+                DT_r=$(mktemp -d $DT/XXXXXX); cd "$DT_r"
                 r=$(echo $(($RANDOM%1000)))
-                clean_3 $DT_r $r
+                clean_3 "$DT_r $r"
                 translate "$(cat $aw | sed '/^$/d')" auto $lg | sed 's/,//g' \
-                | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
-                check_grammar_1 $DT_r $r
-                list_words $DT_r $r
+                | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
+                check_grammar_1 "$DT_r" $r
+                list_words "$DT_r" $r
                 grmrk=$(cat g.$r | sed ':a;N;$!ba;s/\n/ /g')
                 lwrds=$(cat A.$r)
                 pwrds=$(cat B.$r | tr '\n' '_')
                 add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname2".mp3 >/dev/null 2>&1
-                fetch_audio $aw $bw
+                fetch_audio "$aw" "$bw"
             
-                [[ -d $DT_r ]] && rm -fr $DT_r
+                [[ -d "$DT_r" ]] && rm -fr "$DT_r"
                 ) &
                 
                 fname="$fname2"
@@ -540,33 +553,32 @@ elif [ "$1" = edt ]; then
                     cp -f "$audo" "$DM_tlt/$fname.mp3"
                     eyeD3 --remove-all "$DM_tlt/$fname.mp3"
                     add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3" >/dev/null 2>&1
-                    source $DS/default/dicts/$lgt
+                    source "$DS/default/dicts/$lgt"
                     
                     (
-                    DT_r=$(mktemp -d $DT/XXXXXX)
-                    cd $DT_r
+                    DT_r=$(mktemp -d $DT/XXXXXX); cd "$DT_r"
                     r=$(echo $(($RANDOM%1000)))
-                    clean_3 $DT_r $r
+                    clean_3 "$DT_r $r"
                     translate "$(cat $aw | sed '/^$/d')" auto $lg | sed 's/,//g' \
-                    | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
-                    check_grammar_1 $DT_r $r
-                    list_words $DT_r $r
+                    | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
+                    check_grammar_1 "$DT_r" $r
+                    list_words "$DT_r" $r
                     grmrk=$(cat g.$r | sed ':a;N;$!ba;s/\n/ /g')
                     lwrds=$(cat A.$r)
                     pwrds=$(cat B.$r | tr '\n' '_')
                     add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3" >/dev/null 2>&1
-                    fetch_audio $aw $bw
+                    fetch_audio "$aw" "$bw"
                     
-                    [ -d $DT_r ] && rm -fr $DT_r
+                    [ -d "$DT_r" ] && rm -fr "$DT_r"
                     ) &
                 fi
             fi
             
-            if [ -f $DT/tmpau.mp3 ]; then
+            if [ -f "$DT/tmpau.mp3" ]; then
             
-                cp -f $DT/tmpau.mp3 "$DM_tlt/$fname.mp3"
+                cp -f "$DT/tmpau.mp3" "$DM_tlt/$fname.mp3"
                 add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3" >/dev/null 2>&1
-                rm -f $DT/tmpau.mp3
+                rm -f "$DT/tmpau.mp3"
             fi
             
             if [ "$srce" != "$src" ]; then
@@ -577,32 +589,32 @@ elif [ "$1" = edt ]; then
             if [ "$tpc" != "$topc" ]; then
 
                 cp -f "$audo" "$DM_tl/$topc/$fname.mp3"
-                DT_r=$(mktemp -d $DT/XXXXXX); cd $DT_r
-                clean_3 $DT_r $(echo $(($RANDOM%1000)))
+                DT_r=$(mktemp -d $DT/XXXXXX); cd "$DT_r"
+                clean_3 "$DT_r" $(echo $(($RANDOM%1000)))
 
                 while read mp3; do
                     echo "$mp3.mp3" >> "$DM_tl/$topc/5.cfg"
                 done < "$aw"
                 
                 index sentence "$trgt" "$topc" &
-                $DS/mngr.sh delete_item_confirm "$fname"
-                [ -d $DT_r ] && rm -fr $DT_r
-                $DS/vwr.sh "$v" "null" $ff & exit 1
+                "$DS/mngr.sh" delete_item_confirm "$fname"
+                [ -d $DT_r ] && rm -fr "$DT_r"
+                "$DS/vwr.sh" "$v" "null" $ff & exit 1
             fi
             
             if [ "$mrok" = "TRUE" ]; then
             
-                grep -vxF "$trgt" "$ind" > $DT/tx
-                sed '/^$/d' $DT/tx > "$ind"
-                rm $DT/tx
+                grep -vxF "$trgt" "$ind" > "$DT/tx"
+                sed '/^$/d' "$DT/tx" > "$ind"
+                rm "$DT/tx"
                 echo "$trgt" >> "$inp"
-                printf "okim.1.okim\n" >> $DC_s/8.cfg &
+                printf "okim.1.okim\n" >> "$DC_s/8.cfg" &
                 
-                $DS/vwr.sh "$v" "null" $ff & exit 1
+                "$DS/vwr.sh" "$v" "null" $ff & exit 1
             fi
             
-            [ -d "$DT/$c" ] && $DS/add.sh edit_list_words "$fname" S $c "$trgt" &
-            $DS/vwr.sh "$v" "$trgt" $ff & exit 1
+            [ -d "$DT/$c" ] && "$DS/add.sh" edit_list_words "$fname" S $c "$trgt" &
+            "$DS/vwr.sh" "$v" "$trgt" $ff & exit 1
     fi
 
 

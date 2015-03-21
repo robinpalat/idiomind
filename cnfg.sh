@@ -93,7 +93,7 @@ function set_lang() {
     "$DS/mngr.sh" mkmn
 }
 
-if [ ! -f "$DC_s/1.cfg" ]; then
+if [ ! -f "$DC_s/1.cfg" ] || [ -z $(<"$DC_s/1.cfg") ]; then
 sets=('grammar' 'list' 'tasks' 'trans' 'synth' 'edit' \
 'text' 'audio' 'repeat' 'videos' 'loop' 't_lang' \
 's_lang' 'words' 'sentences' 'marks' 'practice' 'news' 'saved')

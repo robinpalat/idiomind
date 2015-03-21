@@ -75,7 +75,7 @@ Create one using the button below. ")" & exit 1; fi
     [ -f $DT_r/ico.jpg ] && img="$DT_r/ico.jpg" \
     || img="$DS/images/nw.png"
     
-    if [[ -z "$tpe" ]]; then
+    if [ -z "$tpe" ]; then
     tpcs=$(cat "$DM_tl/.2.cfg" | cut -c 1-40 \
     | tr "\\n" '!' | sed 's/\!*$//g'); else
     tpcs=$(cat "$DM_tl/.2.cfg" | egrep -v "$tpe" | cut -c 1-40 \
@@ -738,12 +738,22 @@ elif [ "$1" = process ]; then
         echo "1"
         echo "# $(gettext "Processing")..." ;
         lynx -dump -nolist $2  | sed -n -e '1x;1!H;${x;s-\n- -gp}' \
-        | sed 's/\./\.\n/g' | sed 's/<[^>]*>//g' | sed 's/ \+/ /g' \
+        | sed 's/<[^>]*>//g' | sed 's/ \+/ /g' \
         | sed '/^$/d' |  sed 's/ \+/ /g' | sed 's/\://; s/"//g' \
         | sed 's/^[ \t]*//;s/[ \t]*$//g' | sed 's/^ *//; s/ *$//g' \
         | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' | grep -v '^..$' \
         | grep -v '^.$' | sed 's/<[^>]\+>//g' | sed 's/\://g' \
-        | sed '/\*/d' | sed '/\+/d' >> ./sntsls_
+        | sed '/\*/d' | sed '/\+/d' \
+        | iconv -c -f utf8 -t ascii \
+        | sed 's/\&quot;/\"/g' | sed "s/\&#039;/\'/g" \
+        | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
+        | sed 's/ *<[^>]\+> */ /g' \
+        | sed 's/[<>£§]//g' \
+        | sed 's/&amp;/\&/g' \
+        | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. //g' \
+        | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
+        | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
+        | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' > ./sntsls_
         
         ) | dlg_progress_1
 
@@ -769,16 +779,27 @@ elif [ "$1" = process ]; then
         (
         echo "1"
         echo "# $(gettext "Processing")..." ;
-        echo "$prdt" | sed 's/\\n/./g' | sed 's/\./\n/g' \
+        echo "$prdt" \
         | sed 's/^ *//; s/ *$//g' | sed 's/^[ \t]*//;s/[ \t]*$//' \
         | sed 's/ \+/ /g' | sed 's/\://; s/"//g' \
-        | sed '/^$/d' > ./sntsls_
+        | sed '/^$/d' \
+        | iconv -c -f utf8 -t ascii \
+        | sed 's/\&quot;/\"/g' | sed "s/\&#039;/\'/g" \
+        | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
+        | sed 's/ *<[^>]\+> */ /g' \
+        | sed 's/[<>£§]//g' \
+        | sed 's/&amp;/\&/g' \
+        | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. //g' \
+        | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
+        | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
+        | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' > ./sntsls_
         
         ) | dlg_progress_1
     fi
     
         [[ -f ./sntsls ]] && rm -f ./sntsls
     
+    #| sed 's/\\n/./g' | sed 's/\./\.\n/g'
         #while read sntnc
         #do
             #if [ $(echo "$sntnc" | wc -c) -ge 150 ]; then

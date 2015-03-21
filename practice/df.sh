@@ -47,24 +47,20 @@ function score() {
 
 function fonts() {
     
-    
     fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
     src=$(eyeD3 "$drtt/$fname.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
     if [ -f "$drtt/images/$fname.jpg" ]; then
-        s=$((25-$(echo "$1" | wc -c)))
-        img="$drtt/images/$fname.jpg"
-        lcuestion="<b>$1</b>"
-        #lanswer="<small><small><small>$1</small></small></small>  |  <b>$src</b>"
-        lanswer1="<small><small><small>$1</small></small></small>"
-        lanswer2="<b>$src</b>"
+    s=$((25-$(echo "$1" | wc -c)))
+    img="$drtt/images/$fname.jpg"
+    lcuestion="<b>$1</b>"
+    lanswer="<small><small><small>$1</small></small></small> | <b>$src</b>"
     else
-        s=$((40-$(echo "$1" | wc -c)))
-        img="/usr/share/idiomind/images/fc.png"
-        lcuestion="<b>$1</b>"
-        lanswer1="<small><small><small>$1</small></small></small>"
-        lanswer2="<b>$src</b>"
+    s=$((40-$(echo "$1" | wc -c)))
+    img="/usr/share/idiomind/images/fc.png"
+    lcuestion="<b>$1</b>"
+    lanswer="<small><small><small>$1</small></small></small>\n<b>$src</b>"
     fi
-    }
+}
 
 function cuestion() {
     
@@ -74,9 +70,9 @@ function cuestion() {
     --buttons-layout=spread --align=center \
     --field="<span font_desc='Free Sans $s'>$lcuestion</span>":lbl \
     --width=371 --height=280 \
-    --button="   $(gettext "Exit")   ":1 \
-    --button="     $(gettext "Answer") >>     ":0
-    }
+    --button=" $(gettext "Exit") ":1 \
+    --button=" $(gettext "Answer") >> ":0
+}
 
 function answer() {
     
@@ -84,13 +80,11 @@ function answer() {
     --center --on-top --image-on-top --image="$img" \
     --skip-taskbar --title=" " --borders=3 \
     --buttons-layout=spread --align=center \
-    --field="<span font_desc='Free Sans $s'>$lanswer1</span>":lbl \
-    --field="<span font_desc='Free Sans $s'>$lanswer2</span>":lbl \
+    --field="<span font_desc='Free Sans $s'>$lanswer</span>":lbl \
     --width=371 --height=280 \
-    --button="    $(gettext "I don't know")    ":3 \
-    --button="    $(gettext "I know")    ":2
-    }
-
+    --button=" $(gettext "I don't know") ":3 \
+    --button=" $(gettext "I know") ":2
+}
 
 while read trgt; do
 

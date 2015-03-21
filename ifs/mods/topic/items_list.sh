@@ -74,12 +74,12 @@ export -f sentence_view
     
 function notebook_1() {
     
-    cat "$ls1" | awk '{print $0"\n"}' | yad \
-    --no-headers --list --plug=$KEY --tabnum=1 \
+    cat "$ls1" | awk '{print $0"\n"}' | yad --list \
+    --no-headers --plug=$KEY --tabnum=1 \
     --dclick-action='./vwr.sh v1' --print-all \
     --expand-column=1 --ellipsize=END \
     --column=Name:TEXT --column=Learned:CHK > "$cnf1" &
-    cat "$ls2" | yad --no-headers --list --plug=$KEY --tabnum=2 \
+    cat "$ls2" | yad --list --no-headers --plug=$KEY --tabnum=2 \
     --expand-column=0 --ellipsize=END --print-all --separator='|' \
     --column=Name:TEXT --dclick-action='./vwr.sh v2' &
     yad --form --scroll --borders=10 --plug=$KEY --tabnum=3 --columns=2 \
@@ -107,11 +107,11 @@ function notebook_1() {
 
 function notebook_2() {
     
-    yad --align=center --borders=80 \
+    yad --multi-progress --borders=80 \
     --text="$pres" --bar="":NORM $RM \
-    --multi-progress --plug=$KEY --tabnum=1 &
-    cat "$ls2" | yad \
-    --no-headers --list --plug=$KEY --tabnum=2 \
+    --align=center --plug=$KEY --tabnum=1 &
+    cat "$ls2" | yad --list \
+    --no-headers --plug=$KEY --tabnum=2 \
     --expand-column=1 --ellipsize=END --print-all \
     --column=Name:TEXT --dclick-action='./vwr.sh v2' &
     yad --form --scroll --borders=10 --plug=$KEY --tabnum=3 --columns=2 \
