@@ -17,10 +17,10 @@
 #  MA 02110-1301, USA.
 #  
 
+
 source "$DS/ifs/mods/cmns.sh"
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
-
 
 if [ "$1" = play ]; then
 
@@ -374,6 +374,117 @@ function check_index() {
 
     "$DS/mngr.sh" mkmn & exit 1
 }
+
+
+function set_image() {
+
+    cd "$DT"
+    wrd="$2"
+    fname="$(nmfile "$wrd")"
+    echo '<html>
+<head>
+<meta http-equiv="Refresh" content="0;url=https://www.google.com/search?q=XxXx&tbm=isch">
+</head>
+<body>
+<p>Search images for '"'XxXx'"'...</p>
+</body>
+</html>' > html
+
+    sed -i 's/XxXx/'"$wrd"'/g' html
+    mv -f html s.html
+    chmod +x s.html
+    ICON="$DS/icon/nw.png"
+    btnn="--button="$(gettext "Add Image")":3"
+    
+    if [ "$3" = word ]; then
+        
+        if [ ! -f "$DT/$fname.*" ]; then
+            file="$DM_tlt/words/$fname.mp3"
+        fi
+        
+        if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
+            ICON="--image=$DM_tlt/words/images/$fname.jpg"
+            btnn="--button="$(gettext "Change")":3"
+            btn2="--button="$(gettext "Delete")":2"
+        else
+            txt="--text=<small>$(gettext "Search image")\t<a href='file://$DT/s.html'>$wrd</a></small>"
+        fi
+        
+        yad --form --align=center --center --name=Idiomind --class=Idiomind \
+        --width=340 --text-align=center --height=280 \
+        --on-top --skip-taskbar --image-on-top "$txt" >/dev/null 2>&1 \
+        "$btnn" --window-icon=idiomind --borders=5 \
+        --title=$(gettext "Image") "$ICON" "$btn2" \
+        --button=gtk-close:1
+            ret=$? >/dev/null 2>&1
+            
+            if [ $ret -eq 3 ]; then
+            
+                rm -f *.l
+                scrot -s --quality 70 "$fname.temp.jpeg"
+                /usr/bin/convert -scale 100x90! "$fname.temp.jpeg" "$wrd"_temp.jpeg
+                /usr/bin/convert -scale 360x240! "$fname.temp.jpeg" "$DM_tlt/words/images/$fname.jpg"
+                eyeD3 --remove-images "$file" >/dev/null 2>&1
+                eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file" >/dev/null 2>&1
+                rm -f *.jpeg
+                "$DS/ifs/tls.sh" set_image "$wrd" word
+                
+            elif [ $ret -eq 2 ]; then
+            
+                eyeD3 --remove-image "$file" >/dev/null 2>&1
+                rm -f "$DM_tlt/words/images/$fname.jpg"
+                rm -f *.jpeg s.html
+                
+            else
+                rm -f *.jpeg s.html
+            fi
+            
+    elif [ "$3" = sentence ]; then
+    
+        if [ ! -f "$DT/$wrd.*" ]; then
+            file="$DM_tlt/$fname.mp3"
+        fi
+        
+        btnn="--button="$(gettext "Add Image")":3"
+        eyeD3 --write-images="$DT" "$file" >/dev/null 2>&1
+        
+        if [ -f "$DT/ILLUSTRATION".jpeg ]; then
+            mv -f "$DT/ILLUSTRATION".jpeg "$DT/imgsw".jpeg
+            ICON="--image=$DT/imgsw.jpeg"
+            btnn="--button="$(gettext "Change")":3"
+            btn2="--button="$(gettext "Delete")":2"
+        else
+            txt="--text=<small>\\n<a href='file://$DT/s.html'>"$(gettext "Search Image")"</a></small>"
+        fi
+        
+        yad --name=Idiomind --class=Idiomind \
+        --form --center --width=470 --height=280 \
+        --on-top --skip-taskbar --image-on-top \
+        "$txt" "$btnn" --window-icon=idiomind --borders=5 \
+        --title=$(gettext "Image") "$ICON" "$btn2" --button=gtk-close:1
+        ret=$? >/dev/null 2>&1
+                
+            if [ $ret -eq 3 ]; then
+            
+                rm -f $DT/*.l
+                scrot -s --quality 70 "$fname.temp.jpeg"
+                /usr/bin/convert -scale 450x270! "$fname.temp.jpeg" "$fname"_temp.jpeg
+                eyeD3 --remove-image "$file" >/dev/null 2>&1
+                eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file" >/dev/null 2>&1 &&
+                rm -f *.jpeg
+                printf "aimg.$tpc.aimg\n" >> $DC_s/8.cfg &
+                "$DS/ifs/tls.sh" set_image "$wrd" sentence
+                
+            elif [ $ret -eq 2 ]; then
+                eyeD3 --remove-images "$file" >/dev/null 2>&1
+                rm -f s.html *.jpeg
+            else
+                rm -f s.html *.jpeg
+            fi
+    fi
+
+}
+
 
 function pdfdoc() {
 
@@ -1082,19 +1193,19 @@ function html() {
 
 }
 
-case $1 in
+case "$1" in
     add_audio)
-    add_audio ;;
-    listen_sntnc)
-    listen_sntnc ;;
+    add_audio "$@" ;;
     edit_audio)
-    edit_audio ;;
+    edit_audio "$@" ;;
     help)
     help ;;
     check_updates)
     check_updates ;;
     check_index)
-    check_index ;;
+    check_index "$@" ;;
+    set_image)
+    set_image "$@" ;;
     pdfdoc)
     pdfdoc ;;
     html)

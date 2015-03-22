@@ -96,7 +96,7 @@ function notebook_1() {
     --tab="  $(gettext "Learned") ($tb2) " \
     --tab=" $(gettext "Edit") " \
     --ellipsize=END --image-on-top --always-print-result \
-    --width="$wth" --height="$eht" --borders=0 \
+    --width="$wth" --height="$eht" --borders=5 \
     --button="$(gettext "Play")":$DS/play.sh \
     --button="$(gettext "Practice")":5 \
     --button="gtk-close":1
@@ -128,7 +128,7 @@ function notebook_2() {
     --tab=" $(gettext "Learned") ($tb2) " \
     --tab=" $(gettext "Edit") " \
     --ellipsize=END --image-on-top --always-print-result \
-    --width="$wth" --height="$eht" --borders=0 \
+    --width="$wth" --height="$eht" --borders=5 \
     --button="gtk-close":1
 }
 

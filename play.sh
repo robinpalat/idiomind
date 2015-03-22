@@ -26,17 +26,17 @@ in=(' ' 'in1' 'in2' 'in3' 'in4' 'in5' 'in6')
 tlng="$DC_tlt/1.cfg"
 winx="$DC_tlt/3.cfg"
 sinx="$DC_tlt/4.cfg"
-if [ "$(cat "$sinx" | wc -l)" -gt 0 ]; then
+if [ "$(wc -l < "$sinx")" -gt 0 ]; then
 in1=$(grep -Fxvf "$sinx" "$tlng"); else
-in1=$(cat "$tlng"); fi
-if [ "$(cat "$winx" | wc -l)" -gt 0 ]; then
+in1=$(< "$tlng"); fi
+if [ "$(wc -l < "$winx")" -gt 0 ]; then
 in2=$(grep -Fxvf "$winx" "$tlng"); else
-in2=$(cat "$tlng"); fi
-in3=$(cat "$DC_tlt/6.cfg")
+in2=$(< "$tlng"); fi
+in3=$(< "$DC_tlt/6.cfg")
 cd "$DC_tlt/practice"
-in4=$(cat w6 | sed '/^$/d' | sort | uniq)
-in5=$(cat "$DM_tl/Feeds/.conf/1.cfg" | sed '/^$/d')
-in6=$(cat "$DM_tl/Feeds/.conf/2.cfg" | sed '/^$/d')
+in4=$(sed '/^$/d' < w6 | sort | uniq)
+in5=$(sed '/^$/d' < "$DM_tl/Feeds/.conf/1.cfg")
+in6=$(sed '/^$/d' < "$DM_tl/Feeds/.conf/2.cfg")
 [ ! -d "$DT" ] && mkdir "$DT"; cd "$DT"
 
 function setting_1() {
@@ -51,10 +51,11 @@ function setting_1() {
     done
 }
 
-if [ ! -f $DT/.p_ ]; then
+if [ ! -f "$DT/.p_" ]; then
 btn="Play:0"; else btn="gtk-media-stop:2"; fi
+
 slct=$(mktemp "$DT"/slct.XXXX)
-setting_1 | yad --list  --separator="|" --on-top \
+setting_1 | yad --list --separator="|" --on-top \
 --expand-column=2 --print-all --no-headers --center \
 --class=Idiomind --name=Idiomind --align=right \
 --width=380 --height=310 --title="$(gettext "Playlist")" \
@@ -78,8 +79,9 @@ if [ "$ret" -eq 0 ]; then
     rm -f "$slct"; 
     "$DS/stop.sh" playm
     source "$DC_s/1.cfg"
-    if [ -z "$(cat "$DT/index")" ]; then
-        notify-send "$(gettext "Exiting")" "$(gettext "Nothing specified to play")" -i idiomind -t 3000 &&
+    if [ -z "$(< "$DT/index")" ]; then
+        notify-send "$(gettext "Exiting")" \
+        "$(gettext "Nothing specified to play")" -i idiomind -t 3000 &&
         sleep 4
         "$DS/stop.sh" play & exit 1
     fi
@@ -92,7 +94,7 @@ elif [ "$ret" -eq 2 ]; then
 
     rm -f "$slct"
     [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
-    /usr/share/idiomind/stop.sh play & exit
+    "$DS/stop.sh" play & exit
     
 else
     rm -f "$slct"

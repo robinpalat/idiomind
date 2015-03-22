@@ -50,7 +50,7 @@ function feedmode() {
     --tab=" $(gettext "Saved Episodes") " \
     --tab=" $(gettext "Edit") " --always-print-result \
     --ellipsize=END --image-on-top --window-icon=idiomind \
-    --width="$wth" --height="$eht" --borders=0 \
+    --width="$wth" --height="$eht" --borders=5 \
     --button="$(gettext "Play")":"/usr/share/idiomind/play.sh" \
     --button="gtk-refresh":2 \
     --button="gtk-close":1

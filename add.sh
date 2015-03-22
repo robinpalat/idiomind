@@ -26,7 +26,7 @@ lgs=$(lnglss $lgsl)
 source "$DC_s/1.cfg"
 
 
-if [ "$1" = new_topic ]; then
+function new_topic() {
 
     if [ "$(wc -l < "$DM_tl/.1.cfg")" -ge 80 ]; then
     msg "$(gettext "You have reached the maximum number of topics")" info Info &&
@@ -56,9 +56,10 @@ if [ "$1" = new_topic ]; then
         "$DS/mngr.sh" mkmn
     fi
     exit 1
+}
 
 
-elif [ "$1" = new_items ]; then
+function new_items() {
 
     if [ "$(grep -v 'Feeds' < $DM_tl/.1.cfg | wc -l)" -lt 1 ]; then
     [ -d "$DT_r" ] && rm -fr "$DT_r"
@@ -197,12 +198,14 @@ Create one using the button below. ")" & exit 1; fi
             [ -d "$DT_r" ] && rm -fr "$DT_r"
             exit 1
         fi
+}
 
 
-elif [ "$1" = new_sentence ]; then
+function new_sentence() {
         
     DT_r="$3"
     source "$DS/default/dicts/$lgt"
+    source "$DC_s/1.cfg"
     DM_tlt="$DM_tl/$tpe"
     DC_tlt="$DM_tl/$tpe/.conf"
     icnn=idiomind
@@ -295,9 +298,10 @@ elif [ "$1" = new_sentence ]; then
     [ -d "$DT_r" ] && rm -fr "$DT_r"
     printf "aitm.1.aitm\n" >> "$DC_s/8.cfg"
     exit 1
+}
 
 
-elif [ "$1" = new_word ]; then
+function new_word() {
 
     trgt="$2"
     srce="$4"
@@ -396,12 +400,11 @@ elif [ "$1" = new_word ]; then
     [ -d "$DT_r" ] && rm -fr "$DT_r"
     rm -f *.jpg
     exit 1
+}
 
-
-elif [ "$1" = edit_list_words ]; then
+function edit_list_words() {
 
     c="$4"
-
     if [ "$3" = "F" ]; then
 
         tpe="$tpc"
@@ -500,9 +503,10 @@ elif [ "$1" = edit_list_words ]; then
             [ -d "$DT_r" ] && rm -fr "$DT_r"
             rm -f logw "$DT"/*.$c & exit 1
     fi
+}
 
 
-elif [ "$1" = dclik_list_words ]; then
+function dclik_list_words() {
 
     DM_tlt="$DM_tl/$tpe"
     DC_tlt="$DM_tl/$tpe/.conf"
@@ -576,8 +580,10 @@ elif [ "$1" = dclik_list_words ]; then
         
     $? >/dev/null 2>&1
     exit 1
+}
 
-elif [ "$1" = sentence_list_words ]; then
+
+function sentence_list_words() {
 
     DM_tlt="$DM_tl/$4"
     DC_tlt="$DM_tl/$4/.conf"
@@ -678,8 +684,10 @@ elif [ "$1" = sentence_list_words ]; then
     rm -f "$DT"/*."$c" 
     [ -d "$DT_r" ] && rm -fr "$DT_r"
     exit 1
+}
     
-elif [ "$1" = process ]; then
+
+function process() {
     
     wth=$(($(sed -n 2p $DC_s/10.cfg)-350))
     eht=$(($(sed -n 3p $DC_s/10.cfg)-0))
@@ -1090,112 +1098,24 @@ elif [ "$1" = process ]; then
                     [ -d "$DT_r" ] && rm -fr "$DT_r"
                      rm -f "$lckpr" "$slt" & exit 1
                 fi
+}
             
-elif [ "$1" = set_image ]; then
 
-    cd "$DT"
-    wrd="$2"
-    fname="$(nmfile "$wrd")"
-    echo '<html>
-<head>
-<meta http-equiv="Refresh" content="0;url=https://www.google.com/search?q=XxXx&tbm=isch">
-</head>
-<body>
-<p>Search images for '"'XxXx'"'...</p>
-</body>
-</html>' > html
-
-    sed -i 's/XxXx/'"$wrd"'/g' html
-    mv -f html s.html
-    chmod +x s.html
-    ICON="$DS/icon/nw.png"
-    btnn="--button="$(gettext "Add Image")":3"
-    
-    if [ "$3" = word ]; then
-        
-        if [ ! -f "$DT/$fname.*" ]; then
-            file="$DM_tlt/words/$fname.mp3"
-        fi
-        
-        if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
-            ICON="--image=$DM_tlt/words/images/$fname.jpg"
-            btnn="--button="$(gettext "Change")":3"
-            btn2="--button="$(gettext "Delete")":2"
-        else
-            txt="--text=<small>$(gettext "Search image")\t<a href='file://$DT/s.html'>$wrd</a></small>"
-        fi
-        
-        yad --form --align=center --center --name=Idiomind --class=Idiomind \
-        --width=340 --text-align=center --height=280 \
-        --on-top --skip-taskbar --image-on-top "$txt" >/dev/null 2>&1 \
-        "$btnn" --window-icon=idiomind --borders=0 \
-        --title=$(gettext "Image") "$ICON" "$btn2" \
-        --button=gtk-close:1
-            ret=$? >/dev/null 2>&1
-            
-            if [ $ret -eq 3 ]; then
-            
-                rm -f *.l
-                scrot -s --quality 70 "$fname.temp.jpeg"
-                /usr/bin/convert -scale 100x90! "$fname.temp.jpeg" "$wrd"_temp.jpeg
-                /usr/bin/convert -scale 360x240! "$fname.temp.jpeg" "$DM_tlt/words/images/$fname.jpg"
-                eyeD3 --remove-images "$file" >/dev/null 2>&1
-                eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file" >/dev/null 2>&1
-                rm -f *.jpeg
-                "$DS/add.sh" set_image "$wrd" word
-                
-            elif [ $ret -eq 2 ]; then
-            
-                eyeD3 --remove-image "$file" >/dev/null 2>&1
-                rm -f "$DM_tlt/words/images/$fname.jpg"
-                rm -f *.jpeg s.html
-                
-            else
-                rm -f *.jpeg s.html
-            fi
-            
-    elif [ "$3" = sentence ]; then
-    
-        if [ ! -f "$DT/$wrd.*" ]; then
-            file="$DM_tlt/$fname.mp3"
-        fi
-        
-        btnn="--button="$(gettext "Add Image")":3"
-        eyeD3 --write-images="$DT" "$file" >/dev/null 2>&1
-        
-        if [ -f "$DT/ILLUSTRATION".jpeg ]; then
-            mv -f "$DT/ILLUSTRATION".jpeg "$DT/imgsw".jpeg
-            ICON="--image=$DT/imgsw.jpeg"
-            btnn="--button="$(gettext "Change")":3"
-            btn2="--button="$(gettext "Delete")":2"
-        else
-            txt="--text=<small>\\n<a href='file://$DT/s.html'>"$(gettext "Search Image")"</a></small>"
-        fi
-        
-        yad --form --text-align=center --name=Idiomind --class=Idiomind \
-        --center --width=470 --height=280 \
-        --on-top --skip-taskbar --image-on-top \
-        "$txt" "$btnn" --window-icon=idiomind --borders=0 \
-        --title=$(gettext "Image") "$ICON" "$btn2" --button=gtk-close:1
-        ret=$? >/dev/null 2>&1
-                
-            if [ $ret -eq 3 ]; then
-            
-                rm -f $DT/*.l
-                scrot -s --quality 70 "$fname.temp.jpeg"
-                /usr/bin/convert -scale 450x270! "$fname.temp.jpeg" "$fname"_temp.jpeg
-                eyeD3 --remove-image "$file" >/dev/null 2>&1
-                eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file" >/dev/null 2>&1 &&
-                rm -f *.jpeg
-                printf "aimg.$tpc.aimg\n" >> $DC_s/8.cfg &
-                "$DS/add.sh" set_image "$wrd" sentence
-                
-            elif [ $ret -eq 2 ]; then
-                eyeD3 --remove-images "$file" >/dev/null 2>&1
-                rm -f s.html *.jpeg
-            else
-                rm -f s.html *.jpeg
-            fi
-    fi
-fi
-
+case "$1" in
+    new_topic)
+    new_topic "$@" ;;
+    new_items)
+    new_items "$@" ;;
+    new_sentence)
+    new_sentence "$@" ;;
+    new_word)
+    new_word "$@" ;;
+    edit_list_words)
+    edit_list_words "$@" ;;
+    dclik_list_words)
+    dclik_list_words "$@" ;;
+    sentence_list_words)
+    sentence_list_words "$@" ;;
+    process)
+    process "$@" ;;
+esac

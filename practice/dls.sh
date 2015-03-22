@@ -58,7 +58,7 @@ function dialog1() {
     
     SE=$(yad --center --text-info --image="$IMAGE" "$info" \
     --fontname="Free Sans 15" --justify=fill --editable --wrap \
-    --buttons-layout=end --borders=0 --title=" " --image-on-top \
+    --buttons-layout=end --borders=5 --title=" " --image-on-top \
     --margins=8 --text-align=left --height=420 --width=470 \
     --align=left --window-icon=idiomind --fore=4A4A4A --skip-taskbar \
     --button="$(gettext "Hint")":"/usr/share/idiomind/practice/hint.sh '$1'" \
@@ -70,7 +70,7 @@ function dialog2() {
 
     SE=$(yad --center --text-info --fore=4A4A4A --skip-taskbar \
     --fontname="Free Sans 15" --justify=fill --editable --wrap \
-    --buttons-layout=end --borders=0 --title=" " "$info" \
+    --buttons-layout=end --borders=5 --title=" " "$info" \
     --margins=8 --text-align=left --height=180 --width=470 \
     --align=left --window-icon=idiomind --image-on-top \
     --button="$(gettext "Hint")":"/usr/share/idiomind/practice/hint.sh '$1'" \
@@ -95,7 +95,6 @@ function get_image_text() {
     WEN=$(echo "$1" | sed 's/^ *//; s/ *$//')
     eyeD3 --write-images=$DT "$DM_tlt/$fname.mp3"
     echo "$WEN" | awk '{print tolower($0)}' > quote
-
     }
 
 function result() {

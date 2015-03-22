@@ -12,7 +12,7 @@ if [ ! -f "$DC_a/1.cfg" ]; then
 fi
 source "$DC_a/1.cfg"
 
-[ -f "$D_cps/.udt" ] && udt=$(cat "$D_cps/.udt") || udt=" "
+[ -f "$D_cps/.udt" ] && udt=$(< "$D_cps/.udt") || udt=" "
 dte=$(date +%F)
 
 #dialog
@@ -37,7 +37,7 @@ if [ -z "$1" ]; then
         ex=$(echo "$D" | sed -n 2p)
         
         # export
-        if echo "$ex" | grep "TRUE $(gettext "Export")"; then
+        if grep "TRUE $(gettext "Export")" <<<"$ex"; then
             
             cd $HOME &&
             exp=$(yad --save --center --borders=10 \
@@ -72,7 +72,7 @@ if [ -z "$1" ]; then
             fi
 
         # import
-        elif echo "$in" | grep "TRUE $(gettext "Import")"; then
+        elif grep "TRUE $(gettext "Import")" <<<"$in"; then
         
             cd $HOME &&
             
@@ -84,7 +84,7 @@ if [ -z "$1" ]; then
             
             if [ "$ret" -eq 0 ]; then
             
-                if [[ -z "$add" || ! -d "$DM" ]]; then
+                if [ -z "$add" ] || [ ! -d "$DM" ]; then
                     exit 1
                 fi
                 
@@ -212,7 +212,7 @@ if [ -z "$1" ]; then
                 msg "$(gettext "No Backup")\n" info
                 exit 1
             else
-                udt=$(cat "$D_cps/.udt")
+                udt=$(< "$D_cps/.udt")
                 msg_2 "$(gettext "Data will be restored to") $udt \n" info
                 ret=$(echo $?)
                 
@@ -265,7 +265,7 @@ if [ -z "$1" ]; then
         exit 1
     fi
 
-elif ([ "$1" = C ] && [ "$dte" != "$udt" ]); then
+elif [ "$1" = C ] && [ "$dte" != "$udt" ]; then
     sleep 3
     while true; do
     idle=$(top -bn2 | grep "Cpu(s)" | tail -n 1 \

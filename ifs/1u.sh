@@ -28,7 +28,7 @@ alias gettext='gettext "idiomind"'
 user=$(echo "$(whoami)")
 
 text="<big><big><big>  Welcome  </big></big></big>
-$(gettext "     To get started, please configure the following:")\n"
+$(gettext "     To get started, please configure the following")\n"
 
 langs="English
 Spanish
@@ -56,9 +56,9 @@ function set_lang() {
 
 if [ ! -f /usr/bin/yad ]; then
 zenity --info --window-icon="idiomind" \
---text="$(gettext "Missing a dependency to start.
+--text="$(gettext "Missing dependency to start.
 It seems that you have no installed on your system the program YAD.\t
-You can get it from here:  www.sourceforge.net/projects/yad-dialog
+You can get it from here:  www.sourceforge.net/projects/yad-dlg
 or install it using the following commands:
 
 sudo add-apt-repository ppa:robinpala/idiomind
@@ -67,16 +67,15 @@ sudo apt-get install yad")" \
 --title="Idiomind" --no-wrap & exit
 fi
 
-dialog=$(yad --center --width=500 --height=300 --fixed \
-    --image-on-top --on-top --class=Idiomind --name=Idiomind \
-    --window-icon=idiomind --buttons-layout=end --text="$text" \
-    --title="Idiomind" --form --borders=15 --align=center --button=Cancel:1 --button=gtk-ok:0 \
-    --field="$(gettext "Select the language you are studying:")":lbl \
-    --field=":CB" !""\
-    --field="$(gettext "Select your native language:")":lbl \
-    --field=":CB" \
-    !"English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" !"" \
-    !"English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese")
+dlg=$(yad --center --width=500 --height=300 --fixed \
+--image-on-top --on-top --class=Idiomind --name=Idiomind \
+--window-icon=idiomind --buttons-layout=end --text="$text" \
+--title="Idiomind" --form --borders=15 --align=center --button=Cancel:1 --button=gtk-ok:0 \
+--field="$(gettext "Select the language you are studying:")":lbl " " \
+--field=":CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
+--field="$(gettext "Select your native language:")":lbl " " \
+--field=":CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese")
+
 
 ret=$?
 
@@ -84,10 +83,10 @@ if [[ $ret -eq 1 ]]; then
     killall 1u.sh & exit 1
 
 elif [[ $ret -eq 0 ]]; then
-    source=$(echo "$dialog" | cut -d "|" -f2)
-    target=$(echo "$dialog" | cut -d "|" -f4)
+    source=$(echo "$dlg" | cut -d "|" -f2)
+    target=$(echo "$dlg" | cut -d "|" -f4)
     
-    if [ -z "$dialog" ]; then
+    if [ -z "$dlg" ]; then
         /usr/share/idiomind/ifs/1u.sh & exit 1
     elif [ -z $source ]; then
         /usr/share/idiomind/ifs/1u.sh & exit 1

@@ -551,13 +551,13 @@ function panel() {
     h=$(($(sed -n 3p $DC_s/10.cfg)-50))
     yad --width=150 --height=200 --form \
     --geometry=150x300-$w-$h --name=Idiomind \
-    --fixed --title="Idiomind" --no-buttons --class=Idiomind \
+    --fixed --title="Idiomind" --class=Idiomind \
     --field=gtk-new:btn "$DS/add.sh 'new_items'" \
     --field=gtk-home:btn "idiomind 'topic'" \
     --field=gtk-index:btn "$DS/chng.sh" \
     --field=gtk-preferences:btn "$DS/cnfg.sh" \
     --on-top --borders=5 --align=center \
-    --window-icon=idiomind &
+    --no-buttons --window-icon=idiomind &
 
     printf "strt.1.strt\n" >> "$DC_s/8.cfg"
     [ -n "$tpc" ] && echo "$tpc" > "$DT/tpe"

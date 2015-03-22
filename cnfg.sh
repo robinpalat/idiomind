@@ -56,17 +56,6 @@ if [ ! -d "$DC" ]; then
     "$DS/ifs/1u.sh" & exit
 fi
 
-#sed -i '${n}s/.*/TRUE/' $DC_s/cfg.5
-#sed -i "3s/size=.*/size=$du/" "$DC_a/1.cfg"
-#declare set"$n"="${sets[$n]}=\"$val\""
-#sed -i '/${sets[$n]}=.*/a\${sets[$n]}=11'
-#sed -i "s/${sets[2]}=.*/${sets[2]}=25/g" "$DC_s/1.cfg" # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#n=1
-#while read val; do
-    #declare set"$n"="${sets[$n]}=\"$val\""
-    #((n=n+1))
-#done < "$DC_s/1.cfg"
-
 function confirm() {
     
     yad --form --center --borders=8 --image=$2 \
@@ -93,25 +82,18 @@ function set_lang() {
     "$DS/mngr.sh" mkmn
 }
 
-if [ ! -f "$DC_s/1.cfg" ] || [ -z $(<"$DC_s/1.cfg") ]; then
+if [ ! -f "$DC_s/1.cfg" ] || [ -z "$(<"$DC_s/1.cfg")" ]; then
 sets=('grammar' 'list' 'tasks' 'trans' 'synth' 'edit' \
 'text' 'audio' 'repeat' 'videos' 'loop' 't_lang' \
 's_lang' 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
 n=0; > "$DC_s/1.cfg"
 while [ $n -le 18 ]; do
-    echo -e "${sets[$n]}=\"\ \"" >> "$DC_s/1.cfg"
+    echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
     ((n=n+1))
 done
 fi
 
 source "$DC_s/1.cfg"
-[ "$synth" = FALSE ] && synth="_"
-[ "$edit" = FALSE ] && edit="_"
-[ "$synth" = TRUE ] && synth="_"
-[ "$edit" = TRUE ] && edit="_"
-[ -z "$synth" ] && synth="_"
-[ -z "$edit" ] && edit="_"
-
 yad --plug=$KEY --tabnum=1 \
 --separator="|" --form --align=right --scroll \
 --always-print-result --print-all \
@@ -159,7 +141,7 @@ ret=$?
         n=1; v=0
         while [ $n -le 24 ]; do
             val=$(cut -d "|" -f$n < "$cnf1")
-            if [ -n "$val" ] || [ $n = 22] || [ $n = 23 ]; then
+            if [ -n "$val" ]; then
                 sed -i "s/${sets[$v]}=.*/${sets[$v]}=$val/g" "$DC_s/1.cfg"
                 ((v=v+1))
             fi

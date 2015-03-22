@@ -20,7 +20,7 @@
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 
-if [ "$1" = mkmn ]; then
+function mkmn() {
     
     cd "$DM_tl"
     [[ -d ./images ]] && rm -r ./images
@@ -72,10 +72,9 @@ if [ "$1" = mkmn ]; then
         let n++
     done
     exit 1
+}
 
-
-#--------------------------------
-elif [ "$1" = mklg- ]; then
+function mklg-() {
     
     include "$DS/ifs/mods/mngr"
     if [ $(wc -l < "$DC_tlt/2.cfg") -le 15 ]; then
@@ -128,10 +127,11 @@ elif [ "$1" = mklg- ]; then
     "$DS/mngr.sh" mkmn &
 
     idiomind topic & exit 1
-    
-#--------------------------------
-elif [ "$1" = mkok- ]; then
-    
+}
+
+
+function mkok-() {
+
     include "$DS/ifs/mods/mngr"
     if [ $(wc -l < "$DC_tlt/1.cfg") -le 15 ]; then
         msg "$(gettext "You must be at least 15 items.")\n " info &
@@ -173,9 +173,10 @@ elif [ "$1" = mkok- ]; then
     "$DS/mngr.sh" mkmn &
 
     idiomind topic & exit 1
-    
-    
-elif [ "$1" = delete_item_confirm ]; then
+}
+
+
+function delete_item_confirm() {
 
     touch "$DT/ps_lk"
     include "$DS/ifs/mods/mngr"
@@ -221,9 +222,9 @@ elif [ "$1" = delete_item_confirm ]; then
     (sleep 1 && rm -f "$DT/ps_lk") & exit 1
     
     rm -f "$DT/ps_lk" & exit 1
-    
-    
-elif [ "$1" = delete_item ]; then
+}
+
+function delete_item() {
 
     touch "$DT/ps_lk"
     include "$DS/ifs/mods/mngr"
@@ -287,9 +288,11 @@ elif [ "$1" = delete_item ]; then
     else
         rm -f "$DT/ps_lk" & exit 1
     fi
-    
-#--------------------------------
-elif [ "$1" = delete_topic ]; then
+}
+
+
+function delete_topic() {
+
     include "$DS/ifs/mods/mngr"
     
     msg_2 "$(gettext "Are you sure you want to delete this Topic?")\n\n" \
@@ -323,9 +326,9 @@ elif [ "$1" = delete_topic ]; then
         else
             rm -f "$DT/ps_lk" & exit 1
         fi
+}
 
-#--------------------------------
-elif [ "$1" = edt ]; then
+function edt() {
 
     include "$DS/ifs/mods/mngr"
     wth=$(($(sed -n 2p $DC_s/10.cfg)-220))
@@ -368,7 +371,7 @@ elif [ "$1" = edt ]; then
         dftn=$(sed -n 2p <<<"$inf")
         ntes=$(sed -n 3p <<<"$inf")
         dlte="$DS/mngr.sh delete_item ${fname}"
-        imge="$DS/add.sh set_image '$TGT' word"
+        imge="$DS/ifs/tls.sh set_image '$TGT' word"
         sdefn="/usr/share/idiomind/ifs/tls.sh definition '$TGT'"
         
         dlg_form_1 "$cnf"
@@ -456,7 +459,7 @@ elif [ "$1" = edt ]; then
         edau="/usr/share/idiomind/ifs/tls.sh edit_audio \
         '$DM_tlt/$fname.mp3' '$DM_tlt'"
         dlte="$DS/mngr.sh delete_item ${fname}"
-        imge="$DS/add.sh set_image '$tgt' sentence"
+        imge="$DS/ifs/tls.sh set_image '$tgt' sentence"
         
         dlg_form_2 "$cnf"
         ret=$(echo "$?")
@@ -596,9 +599,9 @@ elif [ "$1" = edt ]; then
             [ -d "$DT/$c" ] && "$DS/add.sh" edit_list_words "$fname" S $c "$trgt" &
             "$DS/vwr.sh" "$v" "$trgt" $ff & exit 1
     fi
+}
 
-
-elif [ "$1" = rename_topic ]; then
+function rename_topic() {
 
     source "$DS/ifs/mods/add/add.sh"
     info2=$(wc -l < $DM_tl/.1.cfg)
@@ -655,6 +658,24 @@ elif [ "$1" = rename_topic ]; then
         
         "$DS/mngr.sh" mkmn & exit 1
     fi
-    
-fi
-  
+}
+
+
+case "$1" in
+    mkmn)
+    mkmn "$@" ;;
+    mkok-)
+    mkok- "$@" ;;
+    mklg-)
+    mklg- "$@" ;;
+    delete_item_confirm)
+    delete_item_confirm "$@" ;;
+    delete_item)
+    delete_item "$@" ;;
+    delete_topic)
+    delete_topic "$@" ;;
+    edt)
+    edt "$@" ;;
+    rename_topic)
+    rename_topic "$@" ;;
+esac
