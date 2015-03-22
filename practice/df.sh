@@ -21,12 +21,12 @@ function score() {
         rm fin fin1 fin2 ok.f
         echo "$(date "+%a %d %B")" > look_f
         echo 21 > .iconf
-        play $drts/all.mp3 & $strt 1 &
+        play "$drts/all.mp3" & $strt 1 &
         killall df.sh
         exit 1
         
     else
-        [ -f l_f ] && echo "$(($(cat l_f)+$easy))" > l_f || echo $easy > l_f
+        [ -f l_f ] && echo "$(($(cat l_f)+$easy))" > l_f || echo "$easy" > l_f
         s=$(cat l_f)
         v=$((100*$s/$all))
         n=1; c=1
@@ -41,7 +41,7 @@ function score() {
         if [ -f fin3 ]; then
             echo "w6.$(tr -s '\n' ';' < fin3).w6" >> "$log"
             rm fin3; fi
-        $strt 5 $easy $ling $hard & exit 1
+        "$strt" 5 "$easy" "$ling" "$hard" & exit 1
     fi
 }
 
@@ -96,7 +96,7 @@ while read trgt; do
         answer
         ans=$(echo "$?")
 
-        if [ $ans = 2 ]; then
+        if [ "$ans" = 2 ]; then
             echo "$trgt" >> ok.f
             easy=$(($easy+1))
 
@@ -106,7 +106,7 @@ while read trgt; do
         fi
 
     elif [ $ret = 1 ]; then
-        $drts/cls f $easy $ling $hard $all &
+        "$drts/cls" f "$easy" "$ling" "$hard" "$all" &
         break &
         exit 1
         
@@ -115,7 +115,7 @@ done < fin1
 
 if [ ! -f fin2 ]; then
 
-    score $easy
+    score "$easy"
     
 else
 
@@ -138,11 +138,11 @@ else
             fi
             
         elif [ $ret = 1 ]; then
-            $drts/cls f $easy $ling $hard $all &
+            "$drts/cls" f "$easy" "$ling" "$hard" "$all" &
             break &
             exit 1
         fi
     done < fin2
     
-    score $easy
+    score "$easy"
 fi

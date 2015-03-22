@@ -18,6 +18,7 @@
 #
 #  2015/02/27
 source /usr/share/idiomind/ifs/c.conf
+
 [ -z "$tpc" ] && exit 1
 source "$DC_s/1.cfg"
 lbls=(' ' 'Words' 'Sentences' 'Marks' 'Practice' 'News episodes' 'Saved epidodes')
@@ -79,6 +80,7 @@ if [ "$ret" -eq 0 ]; then
     rm -f "$slct"; 
     "$DS/stop.sh" playm
     source "$DC_s/1.cfg"
+    
     if [ -z "$(< "$DT/index")" ]; then
         notify-send "$(gettext "Exiting")" \
         "$(gettext "Nothing specified to play")" -i idiomind -t 3000 &&

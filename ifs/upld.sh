@@ -300,7 +300,6 @@ notify-send "$(gettext "Uploading")" "$(gettext "Wait...")" -i idiomind -t 6000
 
 #-----------------------
 cd $DT_u
-#chmod 755 -R $DT_u
 lftp -u $USER,$KEY $FTPHOST << END_SCRIPT
 mirror --reverse ./ public_html/$lgs/$lnglbl/$Ctgry/
 quit

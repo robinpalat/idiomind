@@ -41,7 +41,6 @@ function dialog_edit() {
     --button=Test:4 --button=Save:5 --title="$_NAME" > $DT/script.sh
 }
 
-
 function dict_list() {
 
     cd "$enables/"
@@ -60,7 +59,6 @@ function dict_list() {
         echo "$dict" | sed 's/\./\n/g'
     done < .dicts
 }
-
 
 if [ "$1" = edit_dlg ]; then
 
@@ -85,8 +83,7 @@ if [ "$1" = edit_dlg ]; then
         
     elif [ $ret -eq 4 ]; then
         
-        internet
-        test_
+        internet; test_
         cd  $DT; sh $DT/script.sh $test
         [ -f $DT/$test.mp3 ] && play $DT/$test.mp3 || msg Fail info
         rm -f $DT/$test.mp3
@@ -95,7 +92,6 @@ if [ "$1" = edit_dlg ]; then
     else
         $DS_a/Dics/cnfg.sh
     fi
-
 
 elif [ "$1" = dlk_dlg ]; then
 
@@ -123,8 +119,7 @@ elif [ "$1" = dlk_dlg ]; then
         
     elif [ $ret -eq 4 ]; then
     
-        internet
-        test_
+        internet; test_
         cd  $DT; sh $DT/script.sh $test
         [ -f $DT/$test.mp3 ] && play $DT/$test.mp3 || msg Fail info
         rm -f $DT/$test.mp3
@@ -143,11 +138,9 @@ elif [ -z "$1" ]; then
     
     if [ "$2" = f ]; then
     tex="--text=<small>$3\n</small>"
-    align="--text-align=left"
-    else
+    align="--text-align=left"; else
     tex="--center"
-    align="--text-align=right"
-    fi
+    align="--text-align=right"; fi
     
     sel="$(dict_list | yad --list --title="$(gettext "Dictionaries")" \
     --expand-column=2 "$tex" $align --name=Idiomind --class=Idiomind \
@@ -195,8 +188,6 @@ elif [ -z "$1" ]; then
             done
             
             cd "$enables/"
-            #[ -f *.$lgt ] && ls -d -1 $PWD/*.$lgt > "$dir/.dicts"
-            #[ -f *.auto ] && ls -d -1 $PWD/*.auto >> "$dir/.dicts"
             ls -d -1 $PWD/*.$lgt > "$dir/.dicts"
             ls -d -1 $PWD/*.auto >> "$dir/.dicts"; 
         

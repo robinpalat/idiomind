@@ -58,7 +58,6 @@ function new_topic() {
     exit 1
 }
 
-
 function new_items() {
 
     if [ "$(grep -v 'Feeds' < $DM_tl/.1.cfg | wc -l)" -lt 1 ]; then
@@ -200,7 +199,6 @@ Create one using the button below. ")" & exit 1; fi
         fi
 }
 
-
 function new_sentence() {
         
     DT_r="$3"
@@ -299,7 +297,6 @@ function new_sentence() {
     printf "aitm.1.aitm\n" >> "$DC_s/8.cfg"
     exit 1
 }
-
 
 function new_word() {
 
@@ -505,7 +502,6 @@ function edit_list_words() {
     fi
 }
 
-
 function dclik_list_words() {
 
     DM_tlt="$DM_tl/$tpe"
@@ -581,7 +577,6 @@ function dclik_list_words() {
     $? >/dev/null 2>&1
     exit 1
 }
-
 
 function sentence_list_words() {
 
@@ -685,7 +680,6 @@ function sentence_list_words() {
     [ -d "$DT_r" ] && rm -fr "$DT_r"
     exit 1
 }
-    
 
 function process() {
     
@@ -1099,7 +1093,6 @@ function process() {
                      rm -f "$lckpr" "$slt" & exit 1
                 fi
 }
-            
 
 case "$1" in
     new_topic)

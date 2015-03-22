@@ -32,22 +32,22 @@ cd "$DC_tlt/practice"
 
 
 function look() {
-        yad --title="$practice - $tpc" --borders=5 --center \
-        --on-top --skip-taskbar --window-icon=idiomind \
-        --center --image="$DS/practice/icons_st/21.png" --button=Ok:2 \
-        --button="   $(gettext "Restart")   ":0 --width=360 --height=120 \
-        --text="<b>   $(gettext "Complete practice")</b>\\n    $(cat $1)\\n\\n"
+    
+    yad --title="$practice - $tpc" --borders=5 --center \
+    --on-top --skip-taskbar --window-icon=idiomind \
+    --center --image="$DS/practice/icons_st/21.png" --button=Ok:2 \
+    --button="   $(gettext "Restart")   ":0 --width=360 --height=120 \
+    --text="<b>   $(gettext "Complete practice")</b>\\n    $(cat $1)\\n\\n"
 }
-
 
 function get_list() {
-        if [ "$(cat "$Si" | wc -l)" -gt 0 ]; then
-            grep -Fxvf "$Si" "$Li" > $1
-        else
-            cat "$Li" > $1
-        fi
+    
+    if [ "$(cat "$Si" | wc -l)" -gt 0 ]; then
+        grep -Fxvf "$Si" "$Li" > "$1"
+    else
+        cat "$Li" > "$1"
+    fi
 }
-
 
 function get_list_mchoice() {
 
@@ -64,36 +64,35 @@ function get_list_mchoice() {
     --skip-taskbar --center --no-buttons
 }
 
-
 function get_list_sentences() {
-        if [ "$(cat "$Wi" | wc -l)" -gt 0 ]; then
-            grep -Fxvf "$Wi" "$Li" > "$1"
-        else
-            cat "$Li" > "$1"
-        fi
+    
+    if [ "$(cat "$Wi" | wc -l)" -gt 0 ]; then
+        grep -Fxvf "$Wi" "$Li" > "$1"
+    else
+        cat "$Li" > "$1"
+    fi
 }
-
 
 function starting() {
-        yad --form --center --borders=5 --image=info \
-        --title="$practice" --on-top --window-icon=idiomind \
-        --button=Ok:1 --skip-taskbar --width=360 --height=120 \
-        --text " $1  "
-        $strt & killall prct.sh.sh & exit 1
+    
+    yad --form --center --borders=5 --image=info \
+    --title="$practice" --on-top --window-icon=idiomind \
+    --button=Ok:1 --skip-taskbar --width=360 --height=120 \
+    --text " $1  "
+    "$strt" & killall prct.sh.sh & exit 1
 }
-
 
 function flashcards() {
 
     cd "$DC_tlt/practice"
     
-    if [[ -f look_f ]]; then
+    if [ -f look_f ]; then
         look "look_f"
         ret=$(echo "$?")
-        if [[ "$ret" -eq 0 ]]; then
-        $cls df & exit
+        if [ "$ret" -eq 0 ]; then
+        "$cls" df & exit
         else
-        $strt & exit
+        "$strt" & exit
         fi
     fi
 
@@ -107,21 +106,20 @@ function flashcards() {
         echo "-- new session"
     fi
     
-    $DF
+    "$DF"
 }
-
 
 function multiple_choise() {
 
     cd "$DC_tlt/practice"
     
-    if [[ -f look_mc ]]; then
+    if [ -f look_mc ]; then
         look "look_mc"
         ret=$(echo "$?")
         if [[ "$ret" -eq 0 ]]; then
-        $cls dm & exit
+        "$cls" dm & exit
         else
-        $strt & exit
+        "$strt" & exit
         fi
     fi
 
@@ -133,15 +131,13 @@ function multiple_choise() {
     else
         get_list mcin && cp -f mcin mcin1
         if [ ! -f word1.idx ]; then
-            get_list_mchoice
-        fi
+            get_list_mchoice; fi
         [[ "$(cat mcin  | wc -l)" -lt 4 ]] && starting "$(gettext "Not enough words to start")"
          echo "-- new session"
     fi
 
-    $DMC
+    "$DMC"
 }
-
 
 function listen_words() {
 
@@ -151,9 +147,9 @@ function listen_words() {
         look "look_lw"
         ret=$(echo "$?")
         if [[ "$ret" -eq 0 ]]; then
-        $cls dw & exit
+        "$cls" dw & exit
         else
-        $strt & exit
+        "$strt" & exit
         fi
     fi
 
@@ -167,21 +163,20 @@ function listen_words() {
         echo "-- new session"
     fi
     
-    $DLW
+    "$DLW"
 }
-
 
 function listen_sentences() {
 
     cd "$DC_tlt/practice"
     
-    if [[ -f look_ls ]]; then
+    if [ -f look_ls ]; then
         look "look_ls"
         ret=$(echo "$?")
         if [[ "$ret" -eq 0 ]]; then
-        $cls ds & exit
+        "$cls" ds & exit
         else
-        $strt & exit
+        "$strt" & exit
         fi
     fi
 
@@ -194,10 +189,10 @@ function listen_sentences() {
         echo "-- new session"
     fi
     
-    $DLS
+    "$DLS"
 }
 
-case $1 in
+case "$1" in
     f)
     flashcards ;;
     m)

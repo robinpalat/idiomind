@@ -23,7 +23,7 @@ function dlg_text_info_5() {
         --name=Idiomind --class=Idiomind --window-icon=idiomind \
         --sticky --width=520 --height=110 --editable \
         --margins=8 --borders=0 --button=Ok:0 \
-        --title=" " > "$1".txt
+        --title=" " > "$1.txt"
 }
 
 function audio_recognizer() {
@@ -122,7 +122,7 @@ if [[ "$prdt" = A ]]; then
         if [ -z "$data" ]; then
             msg "$(gettext "  The key is invalid or has\\n   exceeded its quota of daily requests")" error
             [ -d "$DT_r" ] && rm -fr "$DT_r"
-            rm -f ls $lckpr & exit 1
+            rm -f ls "$lckpr" & exit 1
         fi
         
        echo "# $(gettext "Processing")..." ; sleep 0.2
@@ -142,7 +142,7 @@ if [[ "$prdt" = A ]]; then
             trgt="$(echo "$data" | sed '1d' | sed 's/.*transcript":"//' \
             | sed 's/"}],"final":true}],"result_index":0}//g')"
             
-            if [ $(wc -c <<< "$trgt") -ge 180 ]; then
+            if [ $(wc -c <<<"$trgt") -ge 180 ]; then
                 printf "\n- $trgt" >> log
             
             else
@@ -162,14 +162,14 @@ if [[ "$prdt" = A ]]; then
 
         cd "$DT_r"
         sed -i '/^$/d' ./ls
-        [[ $(wc -c <<< "$tpe") -gt 40 ]] && tcnm="${tpe:0:40}..." || tcnm="$tpe"
+        [[ $(wc -c <<<"$tpe") -gt 40 ]] && tcnm="${tpe:0:40}..." || tcnm="$tpe"
 
         left=$((50 - $(wc -l < "$DC_tlt"/4.cfg)))
         info="$(gettext "You can add") $left $(gettext "Sentences")"
         [ $ns -ge 45 ] && info="$(gettext "You can add") $left $(gettext "Sentences")"
         [ $ns -ge 49 ] && info="$(gettext "You can add") $left $(gettext "Sentence")"
         
-        if [ -z "$(<$DT_r/ls)" ]; then
+        if [ -z "$(< $DT_r/ls)" ]; then
         
             dlg_text_info_4 "$gettext_err"
             [ -d "$DT_r" ] && rm -fr "$DT_r"
@@ -186,7 +186,7 @@ if [[ "$prdt" = A ]]; then
                 list=$(sed 's/|//g' < "$slt")
                 n=1
                 while [ $n -le "$(wc -l < "$slt"  | head -50)" ]; do
-                    chkst=$(sed -n "$n"p <<< "$list")
+                    chkst=$(sed -n "$n"p <<<"$list")
                     echo "$chkst" | sed 's/TRUE//g' >> ./slts
                     let n++
                 done
@@ -245,13 +245,13 @@ if [[ "$prdt" = A ]]; then
 
                             (
                             r=$(echo $(($RANDOM%1000)))
-                            clean_3 "$DT_r" $r
+                            clean_3 "$DT_r" "$r"
                             translate "$(sed '/^$/d' < $aw)" auto $lg | sed 's/,//g' \
-                            | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
-                            check_grammar_1 "$DT_r" $r
-                            list_words "$DT_r" $r
+                            | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
+                            check_grammar_1 "$DT_r" "$r"
+                            list_words "$DT_r" "$r"
                             grmrk=$(sed ':a;N;$!ba;s/\n/ /g' < g.$r)
-                            lwrds=$(<A.$r)
+                            lwrds=$(< A.$r)
                             pwrds=$(tr '\n' '_' < B.$r)
                             
                             if ( [ -n $(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary') ] \
@@ -260,7 +260,7 @@ if [[ "$prdt" = A ]]; then
                                 echo "$sntc" >> adds
                                 index sentence "$trgt" "$tpe"
                                 add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3"
-                                fetch_audio $aw $bw "$DT_r" "$DM_tls"
+                                fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
                             else
                                 printf "\n- $sntc" >> ./slog
                                 [ -f "$DM_tlt/$fname.mp3" ] && rm "$DM_tlt/$fname.mp3"
@@ -281,10 +281,8 @@ if [[ "$prdt" = A ]]; then
                     
                     let n++
                 done
-                
-                # --------------------------------------
-                #-words
-                if [ -n "$(<wrds)" ]; then
+
+                if [ -n "$(< wrds)" ]; then
                 nwrds=" $(wc -l < wrds  | head -50) Palabras"; fi
                 
                 n=1
@@ -329,9 +327,7 @@ if [[ "$prdt" = A ]]; then
                 done
                 ) | dlg_progress_2
                 
-                # --------------------------------------
                 cd "$DT_r"
-                
                 if [ -f ./wlog ]; then
                     wadds=" $(($(wc -l < ./addw) - $(sed '/^$/d' < ./wlog | wc -l)))"
                     W="$(gettext " Words")"
@@ -397,11 +393,11 @@ if [[ "$prdt" = A ]]; then
                                 fi
                         fi
                 fi
-                # --------------------------------------
+                
                 cd "$DT_r"
                 if  [ -f ./log ]; then
-                rm="$(($(<./adds) - $(sed '/^$/d' < ./log | wc -l)))"
-                else rm="$(<./adds)"; fi
+                rm="$(($(< ./adds) - $(sed '/^$/d' < ./log | wc -l)))"
+                else rm="$(< ./adds)"; fi
                 
                 n=1
                 while [ $n -le 20 ]; do
@@ -424,9 +420,8 @@ if [[ "$prdt" = A ]]; then
     
 elif [ "$1" = show_item_for_edit ]; then
 
-    DT_r=$(<$DT/.n_s_pr)
+    DT_r=$(< $DT/.n_s_pr)
     cd "$DT_r"
     dlg_text_info_5 "$3"
     $? >/dev/null 2>&1
-    
 fi

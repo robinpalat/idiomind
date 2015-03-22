@@ -129,7 +129,6 @@ function mklg-() {
     idiomind topic & exit 1
 }
 
-
 function mkok-() {
 
     include "$DS/ifs/mods/mngr"
@@ -174,7 +173,6 @@ function mkok-() {
 
     idiomind topic & exit 1
 }
-
 
 function delete_item_confirm() {
 
@@ -289,7 +287,6 @@ function delete_item() {
         rm -f "$DT/ps_lk" & exit 1
     fi
 }
-
 
 function delete_topic() {
 
@@ -659,7 +656,6 @@ function rename_topic() {
         "$DS/mngr.sh" mkmn & exit 1
     fi
 }
-
 
 case "$1" in
     mkmn)

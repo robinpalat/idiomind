@@ -21,10 +21,10 @@
 DSP="$DS/practice"
 wth=$(($(sed -n 2p $DC_s/10.cfg)-440))
 eht=$(($(sed -n 3p $DC_s/10.cfg)-100))
-easys=$2
-learning=$3
+easys="$2"
+learning="$3"
 [ "$4" -lt 0 ] && hards=0 || hards="$4"
-$DS/stop.sh &
+"$DS/stop.sh" &
 [ ! -d "$DC_tlt/practice" ] \
 && mkdir "$DC_tlt/practice"
 cd "$DC_tlt/practice"
@@ -36,19 +36,19 @@ cd "$DC_tlt/practice"
 
 if [[ -n "$1" ]]; then
 
-    if [ $1 = 1 ]; then
+    if [ "$1" = 1 ]; then
         info1="* "
         echo 21 > .iconf
-    elif [ $1 = 2 ]; then
+    elif [ "$1" = 2 ]; then
         info2="* "
         echo 21 > .iconmc
-    elif [ $1 = 3 ]; then
+    elif [ "$1" = 3 ]; then
         info3="* "
         echo 21 > .iconlw
-    elif [ $1 = 4 ]; then
+    elif [ "$1" = 4 ]; then
         info4="* "
         echo 21 > .iconls
-    elif [ $1 = 5 ]; then
+    elif [ "$1" = 5 ]; then
         learned=$(cat l_f)
         num=$(cat .iconf)
         info1="* "
@@ -93,28 +93,28 @@ $img4 "     $info4 Listening Sentences" )
 ret=$?
 
 if [ $ret -eq 0 ]; then
-    printf "prct.shc.$tpc.prct.shc\n" >> $DC_s/8.cfg &
+    printf "prct.shc.$tpc.prct.shc\n" >> "$DC_s/8.cfg" &
     if echo "$VAR" | grep "Flashcards"; then
-        $DSP/prct.sh f & exit 1
+        "$DSP/prct.sh" f & exit 1
     elif echo "$VAR" | grep "Multiple Choice"; then
-        $DSP/prct.sh m & exit 1
+        "$DSP/prct.sh" m & exit 1
     elif echo "$VAR" | grep "Listening Words"; then
-        $DSP/prct.sh w & exit 1
+        "$DSP/prct.sh" w & exit 1
     elif echo "$VAR" | grep "Listening Sentences"; then
-        $DSP/prct.sh s & exit 1
+        "$DSP/prct.sh" s & exit 1
     else
         yad --form --center --borders=5 \
         --title="Info" --on-top --window-icon=idiomind \
         --button=Ok:1 --skip-taskbar --image=info \
         --text=" $(gettext "You must choose a practice")\n" \
         --width=360 --height=120
-        $DSP/strt.sh & exit 1
+        "$DSP/strt.sh" & exit 1
     fi
 elif [ $ret -eq 3 ]; then
     if [ -d "$DC_tlt/practice" ]; then
     cd "$DC_tlt/practice"
     rm .*; rm *; fi
-    $DS/practice/strt.sh & exit
+    "$DS/practice/strt.sh" & exit
 else
     cd "$DC_tlt/practice"
     [ -f fin1 ] && rm fin1; [ -f fin2 ] && rm fin2;
