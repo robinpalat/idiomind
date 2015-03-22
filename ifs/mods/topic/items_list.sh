@@ -1,8 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-    
-    
     #web="/tmp/.idmtp1.robin/Test_7_february/index.html"
     #yad --html --window-icon=idiomind --browser --plug=$KEY --tabnum=1 \
     #--title="$(gettext "Help")" --width=700 \
@@ -22,17 +20,17 @@ function word_view(){
     source "$DC_s/1.cfg"
     tgs=$(eyeD3 "$DM_tlt/words/$fname.mp3")
     trgt="$item"
-    src=$(echo "$tgs" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
-    exmp=$(echo "$tgs" | grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' | tr '_' '\n')
-    mrk=$(echo "$tgs" | grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)')
+    src=$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)' <<<"$tgs")
+    exmp=$(grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' <<<"$tgs" | tr '_' '\n')
+    mrk=$(grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)' <<<"$tgs")
     [ $(echo "$exmp" | sed -n 2p) ] \
     && dfnts="--field=$(echo "$exmp" | sed -n 2p)\\n:lbl"
     [ $(echo "$exmp" | sed -n 3p) ] \
     && ntess="--field=$(echo "$exmp" | sed -n 3p)\\n:lbl"
-    hlgt=$(echo $trgt | awk '{print tolower($0)}')
+    hlgt=$(awk '{print tolower($0)}' <<<"$trgt")
     exmp1=$(echo "$(echo "$exmp" | sed -n 1p)" | sed "s/"${trgt,,}"/<span background='#FDFBCF'>"${trgt,,}"<\/\span>/g")
     [ "$(echo "$tgs" | grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)')" = TRUE ] \
-    && trgt=$(echo "* "$trgt"")
+    && trgt="* $trgt"
     yad --form --window-icon=idiomind --scroll --text-align=center \
     --skip-taskbar --center --title=" " --borders=20 \
     --quoted-output --on-top --selectable-labels \
@@ -50,12 +48,12 @@ function sentence_view(){
     source "$DC_s/1.cfg"
     tgs=$(eyeD3 "$DM_tlt/$fname.mp3")
     [ "$grammar" = TRUE ] \
-    && trgt=$(echo "$tgs" | grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)') \
-    || trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
-    src=$(echo "$tgs" | grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
-    lwrd=$(echo "$tgs" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' | tr '_' '\n')
-    [ "$(echo "$tgs" | grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)')" = TRUE ] \
-    && trgt=$(echo "<b>*</b> "$trgt"")
+    && trgt=$(grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)' <<<"$tgs") \
+    || trgt=$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"$tgs")
+    src=$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"$tgs")
+    lwrd=$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"$tgs" | tr '_' '\n')
+    [ "$(grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)' <<<"$tgs")" = TRUE ] \
+    && trgt="<b>*</b> $trgt"
     [ ! -f "$DM_tlt/$fname.mp3" ] && exit 1
     echo "$lwrd" | yad --list --print-column=0 --no-headers \
     --window-icon=idiomind --scroll --text-align=left \
@@ -83,7 +81,7 @@ function notebook_1() {
     --expand-column=0 --ellipsize=END --print-all --separator='|' \
     --column=Name:TEXT --dclick-action='./vwr.sh v2' &
     yad --form --scroll --borders=10 --plug=$KEY --tabnum=3 --columns=2 \
-    --text="$itxt" --image="$img" \
+    --text="$itxt" \
     --field="Notes\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t":txt "$nt" \
     --field=" <small>Rename</small>: " "$tpc" \
     --field="Marcar Tema Como Aprendido":FBTN "$DS/mngr.sh 'mkok-'" \
@@ -115,6 +113,7 @@ function notebook_2() {
     --expand-column=1 --ellipsize=END --print-all \
     --column=Name:TEXT --dclick-action='./vwr.sh v2' &
     yad --form --scroll --borders=10 --plug=$KEY --tabnum=3 --columns=2 \
+    --text="$itxt" \
     --field="Notes\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t":txt "$nt" \
     --field=" <small>Rename</small>: " "$tpc" \
     --field="Review":FBTN "$DS/mngr.sh 'mklg-'" \

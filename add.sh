@@ -25,16 +25,17 @@ lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
 source "$DC_s/1.cfg"
 
+
 if [ "$1" = new_topic ]; then
 
     if [ "$(wc -l < "$DM_tl/.1.cfg")" -ge 80 ]; then
-    msg "$(gettext "You have reached the maximum number of topics")" info &&
+    msg "$(gettext "You have reached the maximum number of topics")" info Info &&
     killall add.sh & exit 1; fi
         
     jlbi=$(dlg_form_0 "$(gettext "New Topic")")
     ret=$(echo "$?")
     jlb="$(clean_2 "$jlbi")"
-    sfname=$(cat $DM_tl/.1.cfg | grep -Fxo "$jlb" | wc -l)
+    sfname=$(cat "$DM_tl/.1.cfg" | grep -Fxo "$jlb" | wc -l)
     
     if [ "$sfname" -ge 1 ]; then
     jlb="$jlb $sfname"
@@ -51,28 +52,28 @@ if [ "$1" = new_topic ]; then
         cp -f "$DS/default/tpc.sh" "$DM_tl/$jlb/tpc.sh"
         chmod +x "$DM_tl/$jlb/tpc.sh"
         echo "$jlb" >> "$DM_tl/.2.cfg"
-        cp -f "$DS/default/tpc.sh" "$DM_tl/$jlb/tpc.sh"
         "$DM_tl/$jlb/tpc.sh" 1
         "$DS/mngr.sh" mkmn
     fi
     exit 1
-    
+
+
 elif [ "$1" = new_items ]; then
 
     if [ "$(grep -v 'Feeds' < $DM_tl/.1.cfg | wc -l)" -lt 1 ]; then
-    [ -d $DT_r ] && rm -fr $DT_r
-    $DS/chng.sh "$(gettext "To start adding notes you need have a topic.
+    [ -d "$DT_r" ] && rm -fr "$DT_r"
+    "$DS/chng.sh" "$(gettext "To start adding notes you need have a topic.
 Create one using the button below. ")" & exit 1; fi
 
     [ -z "$4" ] && txt="$(xclip -selection primary -o \
     | sed ':a;N;$!ba;s/\n/ /g' | sed '/^$/d')" || txt="$4"
     
     if [ "$3" = 2 ]; then
-    DT_r="$2"; cd $DT_r
+    DT_r="$2"; cd "$DT_r"
     [ -n "$5" ] && srce="$5" || srce=""; else
-    DT_r=$(mktemp -d $DT/XXXXXX); cd $DT_r; fi
+    DT_r=$(mktemp -d $DT/XXXXXX); cd "$DT_r"; fi
     
-    [ -f $DT_r/ico.jpg ] && img="$DT_r/ico.jpg" \
+    [ -f "$DT_r/ico.jpg" ] && img="$DT_r/ico.jpg" \
     || img="$DS/images/nw.png"
     
     if [ -z "$tpe" ]; then
@@ -96,23 +97,23 @@ Create one using the button below. ")" & exit 1; fi
     
         if [ $ret -eq 3 ]; then
         
-            cd $DT_r; set_image_1
-            $DS/add.sh new_items $DT_r 2 "$trgt" "$srce" && exit
+            cd "$DT_r"; set_image_1
+            "$DS/add.sh" new_items "$DT_r" 2 "$trgt" "$srce" && exit
         
         elif [ $ret -eq 2 ]; then
         
-            $DS/ifs/tls.sh add_audio $DT_r
-            $DS/add.sh new_items $DT_r 2 "$trgt" "$srce" && exit
+            "$DS/ifs/tls.sh" add_audio "$DT_r"
+            "$DS/add.sh" new_items "$DT_r" 2 "$trgt" "$srce" && exit
         
         elif [ $ret -eq 0 ]; then
         
             if [ -z "$chk" ]; then
-                [ -d $DT_r ] && rm -fr $DT_r
+                [ -d "$DT_r" ] && rm -fr "$DT_r"
                 msg "$(gettext "No topic is active")\n" info & exit 1
             fi
         
             if [ -z "$trgt" ]; then
-                [ -d $DT_r ] && rm -fr $DT_r
+                [ -d "$DT_r" ] && rm -fr "$DT_r"
                 exit 1
             fi
 
@@ -127,7 +128,7 @@ Create one using the button below. ")" & exit 1; fi
                     slt=$(echo "$tpe" | sed -n 2p)
                     tpe="$slt"
                 else
-                    slt=`dlg_radiolist_1 "$tpe"`
+                    slt=$(dlg_radiolist_1 "$tpe")
                     
                     if [ -z "$(echo "$slt" | sed -n 2p)" ]; then
                         killall add.sh & exit 1
@@ -136,129 +137,124 @@ Create one using the button below. ")" & exit 1; fi
                 fi
             fi
             if [[ "$chk" = "$(gettext "New topic") *" ]]; then
-                $DS/add.sh new_topic
+                "$DS/add.sh" new_topic
             else
-                echo "$tpe" > $DT/tpe
+                echo "$tpe" > "$DT/tpe"
             fi
             
             if [ "$(echo "$trgt")" = I ]; then
-                $DS/add.sh process image $DT_r & exit 1
+                "$DS/add.sh" process image "$DT_r" & exit 1
 
             elif [[ $(printf "$trgt" | wc -c) = 1 ]]; then
-                $DS/add.sh process ${trgt:0:2} $DT_r & exit 1
+                "$DS/add.sh" process "${trgt:0:2}" "$DT_r" & exit 1
 
             elif [[ "$(echo ${trgt:0:4})" = 'Http' ]]; then
-                $DS/add.sh process "$trgt" $DT_r & exit 1
+                "$DS/add.sh" process "$trgt" "$DT_r" & exit 1
             
             elif [ $(echo "$trgt" | wc -c) -gt 150 ]; then
-                $DS/add.sh process "$trgt" $DT_r & exit 1
+                "$DS/add.sh" process "$trgt" "$DT_r" & exit 1
 
             elif ([ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]); then
             
                 if [ "$trans" = FALSE ]; then
                     if [ -z "$srce" ]; then
-                        [ -d $DT_r ] && rm -fr $DT_r
+                        [ -d "$DT_r" ] && rm -fr "$DT_r"
                         msg "$(gettext "The second field is empty.") $lgsl." info & exit 1
                     elif [ -z "$trgt" ]; then
-                        [ -d $DT_r ] && rm -fr $DT_r
-                        msg "$(gettext "The first field is empty.") $lgtl." info & exit 1
-                    fi
+                        [ -d "$DT_r" ] && rm -fr "$DT_r"
+                        msg "$(gettext "The first field is empty.") $lgtl." info & exit 1; fi
                 fi
 
                 srce=$(translate "$trgt" auto $lgs)
                 
                 if [ $(echo "$srce" | wc -w) = 1 ]; then
-                    $DS/add.sh new_word "$trgt" $DT_r "$srce" & exit 1
+                    "$DS/add.sh" new_word "$trgt" "$DT_r" "$srce" & exit 1
                     
                 elif [ $(echo "$srce" | wc -w) -ge 1 -a $(echo "$srce" | wc -c) -le 180 ]; then
-                    $DS/add.sh new_sentence "$trgt" $DT_r "$srce" & exit 1
+                    "$DS/add.sh" new_sentence "$trgt" "$DT_r" "$srce" & exit 1
                 fi
             elif ([ $lgt != ja ] || [ $lgt != 'zh-cn' ] || [ $lgt != ru ]); then
             
                 if [ "$trans" = FALSE ]; then
                     if [ -z "$srce" ]; then
-                        [ -d $DT_r ] && rm -fr $DT_r
+                        [ -d "$DT_r" ] && rm -fr "$DT_r"
                         msg "$(gettext "The second field is empty.") $lgsl." info & exit 1
                         
                     elif [ -z "$trgt" ]; then
-                        [ -d $DT_r ] && rm -fr $DT_r
-                        msg "$(gettext "The first field is empty.") $lgtl." info & exit 1
-                    fi
+                        [ -d "$DT_r" ] && rm -fr "$DT_r"
+                        msg "$(gettext "The first field is empty.") $lgtl." info & exit 1; fi
                 fi
             
                 if [ $(echo "$trgt" | wc -w) = 1 ]; then
-                    $DS/add.sh new_word "$trgt" $DT_r "$srce" & exit 1
+                    "$DS/add.sh" new_word "$trgt" "$DT_r" "$srce" & exit 1
                     
                 elif [ $(echo "$trgt" | wc -w) -ge 1 -a $(echo "$trgt" | wc -c) -le 180 ]; then
-                    $DS/add.sh new_sentence "$trgt" $DT_r "$srce" & exit 1
+                    "$DS/add.sh" new_sentence "$trgt" "$DT_r" "$srce" & exit 1
                     
                 fi
             fi
         else
-            [ -d $DT_r ] && rm -fr $DT_r
+            [ -d "$DT_r" ] && rm -fr "$DT_r"
             exit 1
         fi
-        
+
+
 elif [ "$1" = new_sentence ]; then
         
     DT_r="$3"
-    source $DS/default/dicts/$lgt
+    source "$DS/default/dicts/$lgt"
     DM_tlt="$DM_tl/$tpe"
     DC_tlt="$DM_tl/$tpe/.conf"
     icnn=idiomind
 
-    if [ $(cat "$DC_tlt/4.cfg" | wc -l) -ge 50 ]; then
-        [ -d $DT_r ] && rm -fr $DT_r
-        msg "$tpe  \\n$(gettext "You have reached the maximum number of sentences")" info & exit
+    if [ $(wc -l < "$DC_tlt/4.cfg") -ge 50 ]; then
+        [ -d "$DT_r" ] && rm -fr "$DT_r"
+        msg "$(gettext "You have reached the maximum number of sentences")" info Info & exit
     fi
     if [ -z "$tpe" ]; then
-        [ -d $DT_r ] && rm -fr $DT_r
+        [ -d "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "No topic is active")\n" info & exit 1
     fi
     
     if [ "$trans" = TRUE ]; then
     
         internet
-    
-        cd $DT_r
+        cd "$DT_r"
         trgt=$(translate "$(clean_1 "$2")" auto $lgt | sed ':a;N;$!ba;s/\n/ /g')
         srce=$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')
         echo "$trgt" > trgt
         fname="$(nmfile "$trgt")"
         
-        if [ ! -f $DT_r/audtm.mp3 ]; then
+        if [ ! -f "$DT_r/audtm.mp3" ]; then
         
-            tts ./trgt $lgt $DT_r "$DM_tlt/$fname.mp3"
+            tts ./trgt $lgt "$DT_r" "$DM_tlt/$fname.mp3"
             
         else
-            cp -f $DT_r/audtm.mp3 "$DM_tlt/$fname.mp3"
+            cp -f "$DT_r/audtm.mp3" "$DM_tlt/$fname.mp3"
         fi
     
     else 
-        if [ -z "$4" ]; then
-            [ -d $DT_r ] && rm -fr $DT_r
+        if [ -z "$4" ] || [ -z "$2" ]; then
+            [ -d "$DT_r" ] && rm -fr "$DT_r"
             msg "$(gettext "The second field is empty.") $lgsl." info & exit
-        elif [ -z "$2" ]; then
-            [ -d $DT_r ] && rm -fr $DT_r
-            msg "$(gettext "The first field is empty.") $lgtl." info & exit
         fi
         
         trgt=$(echo "$(clean_1 "$2")" | sed ':a;N;$!ba;s/\n/ /g')
         srce=$(echo "$(clean_1 "$4")" | sed ':a;N;$!ba;s/\n/ /g')
         fname="$(nmfile "$trgt")"
         
-        if [ -f $DT_r/audtm.mp3 ]; then
+        if [ -f "$DT_r/audtm.mp3" ]; then
         
-            mv -f $DT_r/audtm.mp3 "$DM_tlt/$fname.mp3"
+            mv -f "$DT_r/audtm.mp3" "$DM_tlt/$fname.mp3"
             
         else
-            voice "$trgt" $DT_r "$DM_tlt/$fname.mp3"
+            voice "$trgt" "$DT_r" "$DM_tlt/$fname.mp3"
         fi
     fi
     
     if ( [ -z $(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary') ] \
     || [ ! -f "$DM_tlt/$fname.mp3" ] || [ -z "$trgt" ] || [ -z "$srce" ] ); then
-        [ -d $DT_r ] && rm -fr $DT_r
+        [ -d "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "Something unexpected has occurred while saving your note.")" dialog-warning & exit 1
     fi
     
@@ -269,21 +265,21 @@ elif [ "$1" = new_sentence ]; then
         icnn=img.jpg
     fi
     
-    cd $DT_r
+    cd "$DT_r"
     r=$(echo $(($RANDOM%1000)))
-    clean_3 $DT_r $r
-    translate "$(cat $aw | sed '/^$/d')" auto $lg | sed 's/,//g' \
-    | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
-    check_grammar_1 $DT_r $r
-    list_words $DT_r $r
-    grmrk=$(cat g.$r | sed ':a;N;$!ba;s/\n/ /g')
-    lwrds=$(cat A.$r)
-    pwrds=$(cat B.$r | tr '\n' '_')
+    clean_3 "$DT_r" "$r"
+    translate "$(sed '/^$/d' < $aw)" auto $lg | sed 's/,//g' \
+    | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
+    check_grammar_1 "$DT_r" "$r"
+    list_words "$DT_r" "$r"
+    grmrk=$(sed ':a;N;$!ba;s/\n/ /g' < g.$r)
+    lwrds=$(< A.$r)
+    pwrds=$(tr '\n' '_' < B.$r)
     
     if ([ -z "$grmrk" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ]); then
         rm "$DM_tlt/$fname.mp3"
         msg "$(gettext "Something unexpected has occurred while saving your note.")" dialog-warning 
-        [ -d $DT_r ] && rm -fr $DT_r & exit 1
+        [ -d "$DT_r" ] && rm -fr "$DT_r" & exit 1
     fi
     
     add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3"
@@ -291,32 +287,32 @@ elif [ "$1" = new_sentence ]; then
     index sentence "$trgt" "$tpe"
     
     (if [ "$list" = TRUE ]; then
-    $DS/add.sh sentence_list_words "$DM_tlt/$fname.mp3" "$trgt" "$tpe"
+    "$DS/add.sh" sentence_list_words "$DM_tlt/$fname.mp3" "$trgt" "$tpe"
     fi) &
 
-    fetch_audio $aw $bw $DT_r $DM_tls
+    fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
     
-    [ -d $DT_r ] && rm -fr $DT_r
-    printf "aitm.1.aitm\n" >> $DC_s/8.cfg
+    [ -d "$DT_r" ] && rm -fr "$DT_r"
+    printf "aitm.1.aitm\n" >> "$DC_s/8.cfg"
     exit 1
-    
 
-elif [ $1 = new_word ]; then
+
+elif [ "$1" = new_word ]; then
 
     trgt="$2"
     srce="$4"
     icnn=idiomind
     DT_r="$3"
-    cd $DT_r
+    cd "$DT_r"
     DM_tlt="$DM_tl/$tpe"
     DC_tlt="$DM_tl/$tpe/.conf"
     
-    if [ $(cat "$DC_tlt/3.cfg" | wc -l) -ge 50 ]; then
-        [ -d $DT_r ] && rm -fr $DT_r
-        msg "$tpe    \\n"$(gettext "You have reached the maximum number of words.")"" info & exit 0
+    if [ $(wc -l < "$DC_tlt/3.cfg") -ge 50 ]; then
+        [ -d "$DT_r" ] && rm -fr "$DT_r"
+        msg "$(gettext "You have reached the maximum number of words.")" info Info & exit 0
     fi
     if [ -z "$tpe" ]; then
-        [ -d $DT_r ] && rm -fr $DT_r
+        [ -d "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "No topic is active")\n" info & exit 1
     fi
     
@@ -333,7 +329,7 @@ elif [ $1 = new_word ]; then
             cp -f "$DM_tls/${trgt,,}.mp3" "$DT_r/${trgt,,}.mp3"
             
         else
-            dictt "${trgt,,}" $DT_r
+            dictt "${trgt,,}" "$DT_r"
         fi
         
         if [ -f "$DT_r/${trgt,,}.mp3" ]; then
@@ -341,16 +337,13 @@ elif [ $1 = new_word ]; then
             cp -f "$DT_r/${trgt,,}.mp3" "$DM_tlt/words/$fname.mp3"
             
         else
-            voice "$trgt" $DT_r "$DM_tlt/words/$fname.mp3"
+            voice "$trgt" "$DT_r" "$DM_tlt/words/$fname.mp3"
         fi
 
     else
-        if [ -z "$4" ]; then
-            [ -d $DT_r ] && rm -fr $DT_r
+        if [ -z "$4" ] || [ -z "$2" ]; then
+            [ -d "$DT_r" ] && rm -fr "$DT_r"
             msg "$(gettext "Lacking complete a text input field") $lgsl." info & exit 1
-        elif [ -z "$2" ]; then
-            [ -d $DT_r ] && rm -fr $DT_r
-            msg "$(gettext "Lacking complete a text input field") $lgtl." info & exit 1
         fi
         
         trgt="$2"
@@ -367,7 +360,7 @@ elif [ $1 = new_word ]; then
                 cp -f "$DM_tls/${trgt,,}.mp3" "$DT_r/${trgt,,}.mp3"
                 
             else
-                dictt "${trgt,,}" $DT_r
+                dictt "${trgt,,}" "$DT_r"
             fi
             
             if [ -f "$DT_r/${trgt,,}.mp3" ]; then
@@ -375,9 +368,8 @@ elif [ $1 = new_word ]; then
                 cp -f "$DT_r/${trgt,,}.mp3" "$DM_tlt/words/$fname.mp3"
                 
             else
-                voice "$trgt" $DT_r "$DM_tlt/words/$fname.mp3"
+                voice "$trgt" "$DT_r" "$DM_tlt/words/$fname.mp3"
             fi
-
         fi
     fi
 
@@ -390,21 +382,22 @@ elif [ $1 = new_word ]; then
     && [ -f "$DM_tlt/words/$fname.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
     
         add_tags_1 W "$trgt" "$srce" "$DM_tlt/words/$fname.mp3"
-        nt="$(echo "_$(check_grammar_2 $trgt)" | tr '\n' '_')"
+        nt="$(echo "_$(check_grammar_2 "$trgt")" | tr '\n' '_')"
         eyeD3 --set-encoding=utf8 -A IWI3I0I"$nt"IWI3I0I "$DM_tlt/words/$fname.mp3"
         notify-send -i "$icnn" "$trgt" "$srce\\n($tpe)" -t 5000
         index word "$trgt" "$tpe"
-        printf "aitm.1.aitm\n" >> $DC_s/8.cfg
+        printf "aitm.1.aitm\n" >> "$DC_s/8.cfg"
     
     else
         [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
         msg "$(gettext "Something unexpected has occurred while saving your note")" dialog-warning & exit 1
     fi
 
-    [ -d $DT_r ] && rm -fr $DT_r
+    [ -d "$DT_r" ] && rm -fr "$DT_r"
     rm -f *.jpg
     exit 1
-    
+
+
 elif [ "$1" = edit_list_words ]; then
 
     c="$4"
@@ -413,15 +406,15 @@ elif [ "$1" = edit_list_words ]; then
 
         tpe="$tpc"
         if [ $(cat "$DC_tlt/3.cfg" | wc -l) -ge 50 ]; then
-            [ -d $DT_r ] && rm -fr $DT_r
-            msg "$tpe    \\n"$(gettext "You have reached the maximum number of words.")"" info & exit
+            [ -d "$DT_r" ] && rm -fr "$DT_r"
+            msg "$(gettext "You have reached the maximum number of words.")" info Info & exit
         fi
         if [ -z "$tpe" ]; then
-            [ -d $DT_r ] && rm -fr $DT_r
+            [ -d "$DT_r" ] && rm -fr "$DT_r"
             msg "$(gettext "No topic is active")\n" info & exit 1
         fi
         
-        nw=$(cat "$DC_tlt/3.cfg" | wc -l)
+        nw=$(wc -l < "$DC_tlt/3.cfg")
         left=$((50 - $nw))
         info="$(gettext "You can add") $left $(gettext "Words")"
         if [ $nw -ge 45 ]; then
@@ -430,7 +423,7 @@ elif [ "$1" = edit_list_words ]; then
             info="$(gettext "You can add") $left $(gettext "Word")"
         fi
 
-        mkdir $DT/$c; DT_r=$DT/$c; cd $DT_r
+        mkdir "$DT/$c"; "DT_r=$DT/$c"; cd "$DT_r"
 
         list_words_2 "$2"
         slt=$(mktemp $DT/slt.XXXX.x)
@@ -453,28 +446,28 @@ elif [ "$1" = edit_list_words ]; then
     
         sname="$5"
         DT_r="$DT/$c"
-        cd $DT_r
+        cd "$DT_r"
         
         n=1
-        while [ $n -le "$(cat ./slts | head -50 | wc -l)" ]; do
+        while [ $n -le "$(wc -l < ./slts | head -50)" ]; do
 
                 trgt=$(sed -n "$n"p ./slts | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
                 fname="$(nmfile "$trgt")"
                 
-            if [ $(cat "$DC_tlt/3.cfg" | wc -l) -ge 50 ]; then
+            if [ $(wc -l < "$DC_tlt/3.cfg") -ge 50 ]; then
                 echo "$trgt
 " > logw
             
             else
-                translate "$trgt" auto $lgs > tr."$c"
-                srce=$(cat tr."$c")
+                translate "$trgt" auto $lgs > "tr.$c"
+                srce=$(< tr."$c")
                 
                 if [ -f "$DM_tls/${trgt,,}.mp3" ]; then
                 
                     cp -f "$DM_tls/${trgt,,}.mp3" "$DT_r/${trgt,,}.mp3"
                 
                 else
-                    dictt "${trgt,,}" $DT_r
+                    dictt "${trgt,,}" "$DT_r"
                 fi
                 
                 if [ -f "$DT_r/${trgt,,}.mp3" ]; then
@@ -482,7 +475,7 @@ elif [ "$1" = edit_list_words ]; then
                     cp -f "$DT_r/${trgt,,}.mp3" "$DM_tlt/words/$fname.mp3"
                 
                 else
-                    voice "$trgt" $DT_r "$DM_tlt/words/$fname.mp3"
+                    voice "$trgt" "$DT_r" "$DM_tlt/words/$fname.mp3"
                 fi
                 
                 if ( [ -n $(file -ib "$DM_tlt/words/$fname.mp3" | grep -o 'binary') ] \
@@ -499,33 +492,34 @@ elif [ "$1" = edit_list_words ]; then
             let n++
         done
 
-        printf "aitm.$lns.aitm\n" >> $DC_s/8.cfg
+        printf "aitm.$lns.aitm\n" >> "$DC_s/8.cfg"
 
-            if [ -f $DT_r/logw ]; then
+            if [ -f "$DT_r/logw" ]; then
                 dlg_info_1 "$(gettext "Sentences that were not added")"
             fi
-            [ -d $DT_r ] && rm -fr $DT_r
-            rm -f logw $DT/*.$c & exit 1
+            [ -d "$DT_r" ] && rm -fr "$DT_r"
+            rm -f logw "$DT"/*.$c & exit 1
     fi
-    
+
+
 elif [ "$1" = dclik_list_words ]; then
 
     DM_tlt="$DM_tl/$tpe"
     DC_tlt="$DM_tl/$tpe/.conf"
     DT_r=$(cat $DT/.n_s_pr)
-    cd $DT_r
+    cd "$DT_r"
     echo "$3" > ./lstws
     
     if [ -z "$tpe" ]; then
-        [ -d $DT_r ] && rm -fr $DT_r
+        [ -d "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "No topic is active")\n" info & exit 1
     fi
     
     nw=$(cat "$DC_tlt/3.cfg" | wc -l)
     
     if [ $(cat "$DC_tlt/3.cfg" | wc -l) -ge 50 ]; then
-        [ -d $DT_r ] && rm -fr $DT_r
-        msg "$tpe    \\n"$(gettext "You have reached the maximum number of words.")"" info & exit
+        [ -d "$DT_r" ] && rm -fr "$DT_r"
+        msg "$(gettext "You have reached the maximum number of words.")" info Info & exit
     fi
 
     left=$((50 - $nw))
@@ -541,13 +535,13 @@ elif [ "$1" = dclik_list_words ]; then
             echo "1"
             echo "# $(gettext "Processing")..." ;
             srce="$(translate "$(cat lstws)" $lgtl $lgsl)"
-            cd $DT_r
+            cd "$DT_r"
             r=$(echo $(($RANDOM%1000)))
-            clean_3 $DT_r $r
-            translate "$(cat $aw | sed '/^$/d')" auto $lg | sed 's/,//g' \
-            | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
-            list_words $DT_r $r
-            pwrds=$(cat B.$r | tr '\n' '_')
+            clean_3 "$DT_r" "$r"
+            translate "$(sed '/^$/d' < $aw)" auto $lg | sed 's/,//g' \
+            | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
+            list_words "$DT_r" "$r"
+            pwrds=$(tr '\n' '_' < "B.$r")
             echo "$pwrds"
             list_words_3 ./lstws "$pwrds"
         ) | dlg_progress_1
@@ -565,8 +559,8 @@ elif [ "$1" = dclik_list_words ]; then
     
             list=$(cat "$slt" | sed 's/|//g')
             n=1
-            while [ $n -le $(cat "$slt" | head -50 | wc -l) ]; do
-                chkst=$(echo "$list" |sed -n "$n"p)
+            while [ $n -le $(wc -l < "$slt" | head -50) ]; do
+                chkst=$(sed -n "$n"p <<<"$list")
                 echo "$chkst" | sed 's/TRUE//g' >> ./wrds
                 echo "$sname" >> wrdsls
                 let n++
@@ -575,14 +569,13 @@ elif [ "$1" = dclik_list_words ]; then
             
         elif [ "$ret" -eq 1 ]; then
         
-        rm -f $DT/*."$c"
-        [ -d $DT_r ] && rm -fr $DT_r
+        rm -f "$DT"/*."$c"
+        [ -d "$DT_r" ] && rm -fr "$DT_r"
         exit
         fi
         
     $? >/dev/null 2>&1
     exit 1
-
 
 elif [ "$1" = sentence_list_words ]; then
 
@@ -590,14 +583,14 @@ elif [ "$1" = sentence_list_words ]; then
     DC_tlt="$DM_tl/$4/.conf"
     c=$(echo $(($RANDOM%100)))
     DT_r=$(mktemp -d $DT/XXXXXX)
-    cd $DT_r
+    cd "$DT_r"
     
     if [ -z "$4" ]; then
-        [ -d $DT_r ] && rm -fr $DT_r
+        [ -d "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "No topic is active")\n" info & exit 1
     fi
     
-    nw=$(cat "$DC_tlt/3.cfg" | wc -l)
+    nw=$(wc -l < "$DC_tlt/3.cfg")
     left=$((50 - $nw))
     if [ "$left" = 0 ]; then
         exit 1
@@ -618,7 +611,7 @@ elif [ "$1" = sentence_list_words ]; then
         
             list=$(cat "$slt" | sed 's/|//g')
             n=1
-            while [ $n -le $(cat "$slt" | head -50 | wc -l) ]; do
+            while [ $n -le $(wc -l < "$slt" | head -50) ]; do
                 chkst=$(echo "$list" |sed -n "$n"p)
                 echo "$chkst" | sed 's/TRUE//g' >> ./slts
                 let n++
@@ -627,13 +620,13 @@ elif [ "$1" = sentence_list_words ]; then
             
         elif [ "$ret" -eq 1 ]; then
         
-            rm -f $DT/*."$c"
-            [ -d $DT_r ] && rm -fr $DT_r
+            rm -f "$DT"/*."$c"
+            [ -d "$DT_r" ] && rm -fr "$DT_r"
             exit 1
         fi
 
     n=1
-    while [ $n -le $(cat ./slts | head -50 | wc -l) ]; do
+    while [ $n -le $(wc -l < ./slts | head -50) ]; do
     
         trgt=$(sed -n "$n"p ./slts | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
         fname="$(nmfile "$trgt")"
@@ -649,7 +642,7 @@ elif [ "$1" = sentence_list_words ]; then
                 cp -f "$DM_tls/${trgt,,}.mp3" "$DT_r/${trgt,,}.mp3"
                 
             else
-                dictt "${trgt,,}" $DT_r
+                dictt "${trgt,,}" "$DT_r"
             fi
             
             if [ -f "$DT_r/${trgt,,}.mp3" ]; then
@@ -657,7 +650,7 @@ elif [ "$1" = sentence_list_words ]; then
                 cp -f "$DT_r/${trgt,,}.mp3" "$DM_tlt/words/$fname.mp3"
                 
             else
-                voice "$trgt" $DT_r "$DM_tlt/words/$fname.mp3"
+                voice "$trgt" "$DT_r" "$DM_tlt/words/$fname.mp3"
             fi
             
             if ( [ -n $(file -ib "$DM_tlt/words/$fname.mp3" | grep -o 'binary') ] \
@@ -674,61 +667,60 @@ elif [ "$1" = sentence_list_words ]; then
         let n++
     done
 
-    printf "aitm.$lns.aitm\n" >> $DC_s/8.cfg &
+    printf "aitm.$lns.aitm\n" >> "$DC_s/8.cfg" &
 
-    if [ -f  $DT_r/logw ]; then
-        logs="$(cat $DT_r/logw)"
+    if [ -f  "$DT_r/logw" ]; then
+        logs="$(< $DT_r/logw)"
         text_r1="$(gettext "Sentences that were not added")\n\n$logs"
         dlg_text_info_3 "$text_r1"
     fi
     
-    rm -f $DT/*."$c" 
-    [ -d $DT_r ] && rm -fr $DT_r
+    rm -f "$DT"/*."$c" 
+    [ -d "$DT_r" ] && rm -fr "$DT_r"
     exit 1
-    
     
 elif [ "$1" = process ]; then
     
     wth=$(($(sed -n 2p $DC_s/10.cfg)-350))
     eht=$(($(sed -n 3p $DC_s/10.cfg)-0))
     ns=$(cat "$DC_tlt/4.cfg" | wc -l)
-    source $DS/default/dicts/$lgt
+    source "$DS/default/dicts/$lgt"
     nspr='/usr/share/idiomind/add.sh process'
-    lckpr=$DT/.n_s_pr
+    lckpr="$DT/.n_s_pr"
     DM_tlt="$DM_tl/$tpe"
     DC_tlt="$DM_tl/$tpe/.conf"
     DT_r="$3"; cd "$DT_r"
 
     if [ -z "$tpe" ]; then
-        [ -d $DT_r ] && rm -fr $DT_r
+        [ -d "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "No topic is active")\n" info & exit 1
     fi
     if [ $ns -ge 50 ]; then
-        [ -d $DT_r ] && rm -fr $DT_r
-        msg "$(gettext "You have reached the maximum number of sentences.")" info
-        rm -f ls $lckpr & exit 1
+        [ -d "$DT_r" ] && rm -fr "$DT_r"
+        msg "$(gettext "You have reached the maximum number of sentences.")" info Info
+        rm -f ls "$lckpr" & exit 1
     fi
 
-    if [ -f $lckpr ]; then
+    if [ -f "$lckpr" ]; then
     
         dlg_msg_3
         ret=$(echo "$?")
 
         if [ $ret -eq "3" ]; then
             rm=$(cat $lckpr)
-            rm fr $rm $lckpr
+            rm fr "$rm" "$lckpr"
             index R && killall add.sh
         fi
         exit 1
     fi
     
     if [ -n "$2" ]; then
-        echo $DT_r > $DT/.n_s_pr
-        lckpr=$DT/.n_s_pr
+        echo "$DT_r" > "$DT/.n_s_pr"
+        lckpr="$DT/.n_s_pr"
         prdt="$2"
     fi
-    include $DS/ifs/mods/add
-    include $DS/ifs/mods/add_process
+    include "$DS/ifs/mods/add"
+    include "$DS/ifs/mods/add_process"
     
     if [ $(echo ${2:0:4}) = 'Http' ]; then
     
@@ -831,8 +823,8 @@ elif [ "$1" = process ]; then
         
             dlg_text_info_4 "$(gettext "Failed to retrieve text. For the process to be successful audio file must not have music or background noise.")"
 
-            [ -d $DT_r ] && rm -fr $DT_r
-            rm -f $lckpr $slt & exit 1
+            [ -d "$DT_r" ] && rm -fr "$DT_r"
+            rm -f "$lckpr" "$slt" & exit 1
         
         else
             dlg_checklist_3 ./sntsls_
@@ -840,36 +832,35 @@ elif [ "$1" = process ]; then
             
         fi
                 if [ $ret -eq 2 ]; then
-                    rm -f $lckpr "$slt" &
+                    rm -f "$lckpr" "$slt" &
                     
                     dlg_text_info_1 ./sntsls_
                     ret=$(echo "$?")
                         
                         if [ $ret -eq 0 ]; then
-                            $nspr "$(cat ./sort)" $DT_r "$tpe" &
+                            "$nspr" "$(cat ./sort)" $DT_r "$tpe" &
                             exit 1
                         else
-                            [ -d $DT_r ] && rm -fr $DT_r
-                            rm -f $lckpr $slt & exit 1
+                            [ -d "$DT_r" ] && rm -fr "$DT_r"
+                            rm -f "$lckpr" "$slt" & exit 1
                         fi
                 
                 elif [ $ret -eq 0 ]; then
                 
                     source /usr/share/idiomind/ifs/c.conf
-                    list=$(cat "$slt" | sed 's/|//g')
+                    list=$(sed 's/|//g' < "$slt")
                     n=1
-                    while [ $n -le $(cat "$slt" | wc -l) ]; do
-                        chkst=$(echo "$list" |sed -n "$n"p)
+                    while [ $n -le $(wc -l < "$slt") ]; do
+                        chkst=$(sed -n "$n"p <<<"$list")
                         if echo "$chkst" | grep "TRUE"; then
                             echo "$chkst" | sed 's/TRUE//g' >> slts
                         fi
                         let n++
                     done
-                    rm -f $slt
+                    rm -f "$slt"
                     
                     internet
-                    
-                    cd $DT_r
+                    cd "$DT_r"
                     touch ./wlog ./slog
                     
                     {
@@ -880,7 +871,7 @@ elif [ "$1" = process ]; then
                     lns=$(cat ./slts ./wrds | wc -l)
 
                     n=1
-                    while [ $n -le $(cat slts | head -50 | wc -l) ]; do
+                    while [ $n -le $(wc -l < slts | head -50) ]; do
                     
                         sntc=$(sed -n "$n"p slts)
                         trgt=$(translate "$(clean_1 "$sntc")" auto $lgt | sed ':a;N;$!ba;s/\n/ /g')
@@ -889,17 +880,17 @@ elif [ "$1" = process ]; then
                         fname="$(nmfile "$trgt")"
                     
                         # words
-                        if [ $(echo "$sntc" | wc -$c) = 1 ]; then
-                            if [ $(cat "$DC_tlt"/3.cfg | wc -l) -ge 50 ]; then
+                        if [ $(wc -$c <<<"$sntc") = 1 ]; then
+                            if [ $(wc -l < "$DC_tlt"/3.cfg) -ge 50 ]; then
                                 printf "\n- $sntc" >> ./wlog
                         
                             else
                                 if [ "$trans" = TRUE ]; then
             
-                                    tts ./trgt $lgt $DT_r "$DM_tlt/words/$fname.mp3"
+                                    tts ./trgt $lgt "$DT_r" "$DM_tlt/words/$fname.mp3"
                                     
                                 else
-                                    voice "$trgt" $DT_r "$DM_tlt/words/$fname.mp3"
+                                    voice "$trgt" "$DT_r" "$DM_tlt/words/$fname.mp3"
                                 fi
 
                                 if ( [ -n $(file -ib "$DM_tlt/words/$fname.mp3" | grep -o 'binary') ] \
@@ -917,38 +908,38 @@ elif [ "$1" = process ]; then
                             fi
                         
                         #sentences 
-                        elif [ $(echo "$sntc" | wc -$c) -ge 1 ]; then
+                        elif [ $(wc -$c <<<"$sntc") -ge 1 ]; then
                             
-                            if [ $(cat "$DC_tlt/4.cfg" | wc -l) -ge 50 ]; then
+                            if [ $(wc -l < "$DC_tlt/4.cfg") -ge 50 ]; then
                                 printf "\n- $sntc" >> ./slog
                         
                             else
-                                if [ $(echo "$sntc" | wc -c) -ge 150 ]; then
+                                if [ $(wc -c <<<"$sntc") -ge 150 ]; then
                                     printf "\n- $sntc" >> ./slog
                             
                                 else
                                     if [ "$trans" = TRUE ]; then
                                     
-                                        tts ./trgt $lgt $DT_r "$DM_tlt/$fname.mp3"
+                                        tts ./trgt $lgt "$DT_r" "$DM_tlt/$fname.mp3"
                                         
                                     else
-                                        voice "$trgt" $DT_r "$DM_tlt/$fname.mp3"
+                                        voice "$trgt" "$DT_r" "$DM_tlt/$fname.mp3"
                                         
                                     fi
                                     
                                     add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3"
                                     
                                     (
-                                    cd $DT_r
+                                    cd "$DT_r"
                                     r=$(echo $(($RANDOM%1000)))
-                                    clean_3 $DT_r $r
-                                    translate "$(cat $aw | sed '/^$/d')" auto $lg | sed 's/,//g' \
-                                    | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > $bw
-                                    check_grammar_1 $DT_r $r
-                                    list_words $DT_r $r
-                                    grmrk=$(cat g.$r | sed ':a;N;$!ba;s/\n/ /g')
-                                    lwrds=$(cat A.$r)
-                                    pwrds=$(cat B.$r | tr '\n' '_')
+                                    clean_3 "$DT_r" "$r"
+                                    translate "$(sed '/^$/d' < $aw)" auto $lg | sed 's/,//g' \
+                                    | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
+                                    check_grammar_1 "$DT_r" "$r"
+                                    list_words "$DT_r" "$r"
+                                    grmrk=$(sed ':a;N;$!ba;s/\n/ /g' < "g.$r" )
+                                    lwrds=$(< "A.$r")
+                                    pwrds=$(tr '\n' '_' < "B.$r")
                                     
                                     if ( [ -n $(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary') ] \
                                     && [ -f "$DM_tlt/$fname.mp3" ] && [ -n "$lwrds" ] && [ -n "$pwrds" ] && [ -n "$grmrk" ] ); then
@@ -956,7 +947,7 @@ elif [ "$1" = process ]; then
                                         echo "$fname" >> adds
                                         index sentence "$trgt" "$tpe"
                                         add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3"
-                                        fetch_audio $aw $bw $DT_r $DM_tls
+                                        fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
 
                                     else
                                         printf "\n- $sntc" >> ./slog
@@ -965,8 +956,8 @@ elif [ "$1" = process ]; then
                                     fi
                                     
                                     echo "__" >> x
-                                    rm -f $DT/*.$r
-                                    rm -f $aw $bw
+                                    rm -f "$DT"/*.$r
+                                    rm -f "$aw" "$bw"
                                     
                                     ) &
                                     
@@ -984,13 +975,13 @@ elif [ "$1" = process ]; then
                     
                     #words
                     n=1
-                    while [ $n -le $(cat wrds | head -50 | wc -l) ]; do
+                    while [ $n -le $(wc -l < wrds | head -50) ]; do
                     
                         sname=$(sed -n "$n"p wrdsls)
                         trgt=$(sed -n "$n"p wrds | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
                         fname="$(nmfile "$trgt")"
 
-                        if [ $(cat "$DC_tlt/3.cfg" | wc -l) -ge 50 ]; then
+                        if [ $(wc -l < "$DC_tlt/3.cfg") -ge 50 ]; then
                             printf "\n- $trgt" >> ./wlog
                     
                         else
@@ -1001,7 +992,7 @@ elif [ "$1" = process ]; then
                                 cp -f "$DM_tls/${trgt,,}.mp3" "$DT_r/${trgt,,}.mp3"
                                 
                             else
-                                dictt "${trgt,,}" $DT_r
+                                dictt "${trgt,,}" "$DT_r"
                             fi
                             
                             if [ -f "$DT_r/${trgt,,}.mp3" ]; then
@@ -1009,7 +1000,7 @@ elif [ "$1" = process ]; then
                                 cp -f "$DT_r/${trgt,,}.mp3" "$DM_tlt/words/$fname.mp3"
                                 
                             else
-                                voice "$trgt" $DT_r "$DM_tlt/words/$fname.mp3"
+                                voice "$trgt" "$DT_r" "$DM_tlt/words/$fname.mp3"
                             fi
 
 
@@ -1025,7 +1016,7 @@ elif [ "$1" = process ]; then
                         fi
                         
                         
-                        nn=$(($n+$(cat ./slts | wc -l)-1))
+                        nn=$(($n+$(wc -l < ./slts)-1))
                         prg=$((100*$nn/$lns))
                         echo "$prg"
                         echo "# ${itm:0:35}... " ;
@@ -1037,27 +1028,27 @@ elif [ "$1" = process ]; then
                     cd $DT_r
                     
                     if [ -f ./wlog ]; then
-                        wadds=" $(($(cat ./addw | wc -l) - $(cat ./wlog | sed '/^$/d' | wc -l)))"
+                        wadds=" $(($(wc -l < ./addw) - $(cat ./wlog | sed '/^$/d' | wc -l)))"
                         W=" $(gettext "Words")"
                         if [ $(echo $wadds) = 1 ]; then
                             W=" $(gettext "Word")"
                         fi
                     else
-                        wadds=" $(cat ./addw | wc -l)"
+                        wadds=" $(wc -l < ./addw)"
                         W=" $(gettext "Words")"
                         if [ $(echo $wadds) = 1 ]; then
-                            wadds=" $(cat ./addw | wc -l)"
+                            wadds=" $(wc -l < ./addw)"
                             W=" $(gettext "Word")"
                         fi
                     fi
                     if [ -f ./slog ]; then
-                        sadds=" $(($(cat ./adds | wc -l) - $(cat ./slog | sed '/^$/d' | wc -l)))"
+                        sadds=" $(($( wc -l < ./adds) - $(cat ./slog | sed '/^$/d' | wc -l)))"
                         S=" $(gettext "sentences")"
                         if [ $(echo $sadds) = 1 ]; then
                             S=" $(gettext "sentence")"
                         fi
                     else
-                        sadds=" $(cat ./adds | wc -l)"
+                        sadds=" $(wc -l < ./adds)"
                         S=" $(gettext "sentences")"
                         if [ $(echo $sadds) = 1 ]; then
                             S=" $(gettext "sentence")"
@@ -1067,12 +1058,10 @@ elif [ "$1" = process ]; then
                     logs=$(cat ./slog ./wlog)
                     adds=$(cat ./adds ./addw | wc -l)
                     
-                    source $DS/ifs/trans/$lgs/add.conf
-                    
                     if [ $adds -ge 1 ]; then
                         notify-send -i idiomind "$tpe" \
                         "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
-                        printf "aitm.$adds.aitm\n" >> $DC_s/8.cfg
+                        printf "aitm.$adds.aitm\n" >> "$DC_s/8.cfg"
                     fi
                     
                     if [ $(cat ./slog ./wlog | wc -l) -ge 1 ]; then
@@ -1086,25 +1075,25 @@ elif [ "$1" = process ]; then
                     fi
                     
                     n=1
-                    while [[ $n -le 20 ]]; do
+                    while [ $n -le 20 ]; do
                          sleep 5
-                         if ([ $(cat ./x | wc -l) = $rm ] || [ $n = 20 ]); then
-                            [ -d $DT_r ] && rm -fr $DT_r
+                         if ([ $(wc -l < ./x) = "$rm" ] || [ $n = 20 ]); then
+                            [ -d "$DT_r" ] && rm -fr "$DT_r"
                             cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
-                            rm -f $lckpr & break & exit 1
+                            rm -f "$lckpr" & break & exit 1
                          fi
                         let n++
                     done
                     
                 else
                     cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
-                    [ -d $DT_r ] && rm -fr $DT_r
-                     rm -f $lckpr $slt & exit 1
+                    [ -d "$DT_r" ] && rm -fr "$DT_r"
+                     rm -f "$lckpr" "$slt" & exit 1
                 fi
             
 elif [ "$1" = set_image ]; then
 
-    cd $DT
+    cd "$DT"
     wrd="$2"
     fname="$(nmfile "$wrd")"
     echo '<html>
@@ -1119,7 +1108,7 @@ elif [ "$1" = set_image ]; then
     sed -i 's/XxXx/'"$wrd"'/g' html
     mv -f html s.html
     chmod +x s.html
-    ICON=$DS/icon/nw.png
+    ICON="$DS/icon/nw.png"
     btnn="--button="$(gettext "Add Image")":3"
     
     if [ "$3" = word ]; then
@@ -1153,7 +1142,7 @@ elif [ "$1" = set_image ]; then
                 eyeD3 --remove-images "$file" >/dev/null 2>&1
                 eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file" >/dev/null 2>&1
                 rm -f *.jpeg
-                $DS/add.sh set_image "$wrd" word
+                "$DS/add.sh" set_image "$wrd" word
                 
             elif [ $ret -eq 2 ]; then
             
@@ -1172,7 +1161,7 @@ elif [ "$1" = set_image ]; then
         fi
         
         btnn="--button="$(gettext "Add Image")":3"
-        eyeD3 --write-images=$DT "$file" >/dev/null 2>&1
+        eyeD3 --write-images="$DT" "$file" >/dev/null 2>&1
         
         if [ -f "$DT/ILLUSTRATION".jpeg ]; then
             mv -f "$DT/ILLUSTRATION".jpeg "$DT/imgsw".jpeg
@@ -1199,7 +1188,7 @@ elif [ "$1" = set_image ]; then
                 eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file" >/dev/null 2>&1 &&
                 rm -f *.jpeg
                 printf "aimg.$tpc.aimg\n" >> $DC_s/8.cfg &
-                $DS/add.sh set_image "$wrd" sentence
+                "$DS/add.sh" set_image "$wrd" sentence
                 
             elif [ $ret -eq 2 ]; then
                 eyeD3 --remove-images "$file" >/dev/null 2>&1
@@ -1209,3 +1198,4 @@ elif [ "$1" = set_image ]; then
             fi
     fi
 fi
+

@@ -11,8 +11,10 @@ if [ "$1" = new_item ]; then
     DMC="$DM_tl/Feeds/cache"
     DCP="$DM_tl/Feeds/.conf"
     fname="$(nmfile "${trgt}")"
+    if [ -s "$DCP/2.cfg" ]; then
     sed -i -e "1i$trgt\\" "$DCP/2.cfg"
-    sed -i -e "1i$trgt\\" "$DCP/.22.cfg"
+    else
+    echo "$trgt" > "$DCP/2.cfg"; fi
     check_index1 "$DCP/2.cfg" "$DCP/.22.cfg"
     notify-send -i idiomind "$(gettext "Archive")" "$trgt" -t 3000
     exit

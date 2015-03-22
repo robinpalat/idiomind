@@ -16,18 +16,20 @@ function internet() {
 
 function msg() {
         
+        [ -n "$3" ] && title="$3" || title=Idiomind
         yad --window-icon=idiomind --name=idiomind \
-        --image=$2 --on-top --text="$1" --class=Idiomind \
+        --image="$2" --on-top --text="$1" --class=Idiomind \
         --image-on-top --center --sticky --button="$(gettext "OK")":0 \
-        --width=360 --height=120 --borders=5 --title=Idiomind
+        --width=360 --height=120 --borders=5 --title="$title"
 }
 
 function msg_2() { # decide
-    
+        
+        [ -n "$5" ] && title="$5" || title=Idiomind
         yad --name=Idiomind --on-top --text="$1" --image="$2" \
         --image-on-top --width=360 --height=120 --borders=3 \
         --class=Idiomind --window-icon=idiomind --sticky --center \
-        --title=Idiomind --button="$4":1 --button="$3":0
+        --title="$title" --button="$4":1 --button="$3":0
 }
 
 function nmfile() {

@@ -88,7 +88,7 @@ function cuestion() {
     
     fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
     play="play '$drtt/$fname.mp3'"
-    play "$drtt/$fname".mp3 &
+    (sleep 0.8 && play "$drtt/$fname".mp3) &
     yad --form --align=center --undecorated \
     --center --on-top --image-on-top --image="$img" \
     --skip-taskbar --title=" " --borders=3 \

@@ -25,7 +25,7 @@ function index() {
             echo "$2" >> "$DC_tlt/4.cfg"
             echo "$2" >> "$DC_tlt/.11.cfg"; fi
 
-        tmp=$DT/tmp
+        tmp="$DT/tmp"
         lss="$DC_tlt/.11.cfg"
         if [ -n "$(cat "$lss" | sort -n | uniq -dc)" ]; then
             cat "$lss" | awk '!array_temp[$0]++' > $tmp
@@ -55,29 +55,29 @@ function index() {
 function check_grammar_1() {
     
     g=$(echo "$trgt"  | sed 's/ /\n/g')
-    cd $1; touch A.$r B.$r g.$r; n=1
+    cd "$1"; touch "A.$r" "B.$r" "g.$r"; n=1
     while [ $n -le $(echo "$g" | wc -l) ]; do
         grmrk=$(echo "$g" | sed -n "$n"p)
         chck=$(echo "$g,," | sed -n "$n"p \
         | sed 's/,//g' | sed 's/\.//g')
-        if echo "$pronouns" | grep -Fxq $chck; then
-            echo "<span color='#35559C'>$grmrk</span>" >> g.$2
-        elif echo "$nouns_verbs" | grep -Fxq $chck; then
-            echo "<span color='#896E7A'>$grmrk</span>" >> g.$2
-        elif echo "$conjunctions" | grep -Fxq $chck; then
-            echo "<span color='#90B33B'>$grmrk</span>" >> g.$2
-        elif echo "$verbs" | grep -Fxq $chck; then
-            echo "<span color='#CF387F'>$grmrk</span>" >> g.$2
-        elif echo "$prepositions" | grep -Fxq $chck; then
-            echo "<span color='#D67B2D'>$grmrk</span>" >> g.$2
-        elif echo "$adverbs" | grep -Fxq $chck; then
-            echo "<span color='#9C68BD'>$grmrk</span>" >> g.$2
-        elif echo "$nouns_adjetives" | grep -Fxq $chck; then
-            echo "<span color='#496E60'>$grmrk</span>" >> g.$2
-        elif echo "$adjetives" | grep -Fxq $chck; then
-            echo "<span color='#3E8A3B'>$grmrk</span>" >> g.$2
+        if echo "$pronouns" | grep -Fxq "$chck"; then
+            echo "<span color='#35559C'>$grmrk</span>" >> "g.$2"
+        elif echo "$nouns_verbs" | grep -Fxq "$chck"; then
+            echo "<span color='#896E7A'>$grmrk</span>" >> "g.$2"
+        elif echo "$conjunctions" | grep -Fxq "$chck"; then
+            echo "<span color='#90B33B'>$grmrk</span>" >> "g.$2"
+        elif echo "$verbs" | grep -Fxq "$chck"; then
+            echo "<span color='#CF387F'>$grmrk</span>" >> "g.$2"
+        elif echo "$prepositions" | grep -Fxq "$chck"; then
+            echo "<span color='#D67B2D'>$grmrk</span>" >> "g.$2"
+        elif echo "$adverbs" | grep -Fxq "$chck"; then
+            echo "<span color='#9C68BD'>$grmrk</span>" >> "g.$2"
+        elif echo "$nouns_adjetives" | grep -Fxq "$chck"; then
+            echo "<span color='#496E60'>$grmrk</span>" >> "g.$2"
+        elif echo "$adjetives" | grep -Fxq "$chck"; then
+            echo "<span color='#3E8A3B'>$grmrk</span>" >> "g.$2"
         else
-            echo "$grmrk" >> g.$2
+            echo "$grmrk" >> "g.$2"
         fi
         let n++
     done
@@ -118,18 +118,18 @@ function clean_2() {
 
 function clean_3() {
     
-    cd $1; touch swrd.$2 twrd.$2
+    cd "$1"; touch "swrd.$2" "twrd.$2"
     if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
-        vrbl="$srce"; lg=$lgt; aw=swrd.$2; bw=twrd.$2
+        vrbl="$srce"; lg=$lgt; aw="swrd.$2"; bw="twrd.$2"
     else
-        vrbl="$trgt"; lg=$lgs; aw=twrd.$2; bw=swrd.$2
+        vrbl="$trgt"; lg=$lgs; aw="twrd.$2"; bw="swrd.$2"
     fi
     echo "$vrbl" | sed 's/ /\n/g' | grep -v '^.$' \
     | grep -v '^..$' | sed -n 1,40p | sed s'/&//'g \
     | sed 's/,//g' | sed 's/\?//g' | sed 's/\¿//g' \
     | sed 's/;//g' | sed 's/\!//g' | sed 's/\¡//g' \
     | tr -d ')' | tr -d '(' | sed 's/\]//g' | sed 's/\[//g' \
-    | sed 's/\.//g' | sed 's/  / /g' | sed 's/ /\. /g' > $aw
+    | sed 's/\.//g' | sed 's/  / /g' | sed 's/ /\. /g' > "$aw"
 }
 
 
@@ -194,7 +194,8 @@ function add_tags_9() {
 
 function voice() {
     
-    cd "$2"; vs=$(sed -n 15p $DC_s/1.cfg)
+    source "$DC_s/1.cfg"
+    cd "$2"; vs="$synth"
     if [ -n "$vs" ]; then
     
         if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
@@ -207,20 +208,20 @@ function voice() {
             sox ./s.wav "$3"
             else
                 msg "$(gettext "Festival can not process text") $lgtl" error
-                [[ -d $DT_r ]] && rm -fr $DT_r
+                [ -d "$DT_r" ] && rm -fr "$DT_r"
                 exit 1
             fi
         else
             echo "$1" | "$vs"
-            [[ -f *.mp3 ]] && mv -f *.mp3 "$3"
-            [[ -f *.wav ]] && sox *.wav "$3"
+            [ -f *.mp3 ] && mv -f *.mp3 "$3"
+            [ -f *.wav ] && sox *.wav "$3"
         fi
     else
     
         lg="${lgtl,,}"
-        [[ $lg = chinese ]] && lg=Mandarin
-        [[ $lg = japanese ]] && (msg "$(gettext "espeak can not process Japanese text")" error \
-        && exit 1 && [[ -d $DT_r ]] && rm -fr $DT_r)
+        [ $lg = chinese ] && lg=Mandarin
+        [ $lg = japanese ] && (msg "$(gettext "espeak can not process Japanese text")" error \
+        && exit 1 && [ -d "$DT_r" ] && rm -fr "$DT_r")
         espeak "$1" -v $lg -k 1 -p 40 -a 80 -s 110 -w ./s.wav
         sox ./s.wav "$3"
     fi
@@ -271,24 +272,24 @@ function set_image_5() {
 
 function list_words() {
     
-    sed -i 's/\. /\n/g' $bw
-    sed -i 's/\. /\n/g' $aw
-    cd $1; touch A.$2 B.$2 g.$2; n=1
+    sed -i 's/\. /\n/g' "$bw"
+    sed -i 's/\. /\n/g' "$aw"
+    cd "$1"; touch "A.$2" "B.$2" "g.$2"; n=1
     
     if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
         while [ $n -le "$(cat $aw | wc -l)" ]; do
             s=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
             t=$(sed -n "$n"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-            echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> A.$2
-            echo "$t"_"$s""" >> B.$2
+            echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> "A.$2"
+            echo "$t"_"$s""" >> "B.$2"
             let n++
         done
     else
         while [ $n -le "$(cat $aw | wc -l)" ]; do
             t=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
             s=$(sed -n "$n"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-            echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> A.$2
-            echo "$t"_"$s""" >> B.$2
+            echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> "A.$2"
+            echo "$t"_"$s""" >> "B.$2"
             let n++
         done
     fi
