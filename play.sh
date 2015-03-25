@@ -46,7 +46,7 @@ function setting_1() {
             arr="in$n"
             [[ -z ${!arr} ]] && echo "$DS/images/addi.png" \
             || echo "$DS/images/add.png"
-        echo "  <span font_desc='Verdana 10'>$(gettext "${lbls[$n]}")</span>"
+        echo "  <span font_desc='Verdana 10'>$(gettext "${lbls[$n]}")</span><i></i>"
         echo "${!sets[$n]}"
         let n++
     done
@@ -54,7 +54,7 @@ function setting_1() {
 
 if [ ! -f "$DT/.p_" ]; then
 btn="Play:0"; else btn="gtk-media-stop:2"; fi
-
+#--text="<span background='#505050'>\t\t\t\t\t</span>" \
 slct=$(mktemp "$DT"/slct.XXXX)
 setting_1 | yad --list --separator="|" --on-top \
 --expand-column=2 --print-all --no-headers --center \

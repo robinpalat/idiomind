@@ -17,14 +17,14 @@ _LANG=\"\""
 
 function test_() {
     
-    [[ $_LANG = en ]] && test=house
+    [[ $_LANG = en ]] && test=test
     [[ $_LANG = fr ]] && test=maison
     [[ $_LANG = de ]] && test=Haus
     [[ $_LANG = 'zh-cn' ]] && test=房子
     [[ $_LANG = it ]] && test=casa
     [[ $_LANG = ja ]] && test=家
     [[ $_LANG = pt ]] && test=casa
-    [[ $_LANG = es ]] && test=casa
+    [[ $_LANG = es ]] && test=test
     [[ $_LANG = vi ]] && test=nhà
     [[ $_LANG = ru ]] && test=дом
     [[ $_LANG = auto ]] && test=house

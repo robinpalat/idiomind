@@ -21,35 +21,35 @@ source "$DS/ifs/mods/cmns.sh"
 include "$DS/ifs/mods/add"
 tmplchannel="<?xml version='1.0' encoding='UTF-8'?>
 <xsl:stylesheet version='1.0'
-  xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
-  xmlns:itunes='http://www.itunes.com/dtds/podcast-1.0.dtd'
-  xmlns:media='http://search.yahoo.com/mrss/'
-  xmlns:atom='http://www.w3.org/2005/Atom'>
-  <xsl:output method='text'/>
-  <xsl:template match='/'>
-    <xsl:for-each select='/rss/channel'>
-      <xsl:value-of select='title'/><xsl:text>-!-</xsl:text>
-      <xsl:value-of select='link'/><xsl:text>-!-</xsl:text>
-    </xsl:for-each>
-  </xsl:template>
+xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
+xmlns:itunes='http://www.itunes.com/dtds/podcast-1.0.dtd'
+xmlns:media='http://search.yahoo.com/mrss/'
+xmlns:atom='http://www.w3.org/2005/Atom'>
+<xsl:output method='text'/>
+<xsl:template match='/'>
+<xsl:for-each select='/rss/channel'>
+<xsl:value-of select='title'/><xsl:text>-!-</xsl:text>
+<xsl:value-of select='link'/><xsl:text>-!-</xsl:text>
+</xsl:for-each>
+</xsl:template>
 </xsl:stylesheet>"
 tmplitem="<?xml version='1.0' encoding='UTF-8'?>
 <xsl:stylesheet version='1.0'
-  xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
-  xmlns:itunes='http://www.itunes.com/dtds/podcast-1.0.dtd'
-  xmlns:media='http://search.yahoo.com/mrss/'
-  xmlns:atom='http://www.w3.org/2005/Atom'>
-  <xsl:output method='text'/>
-  <xsl:template match='/'>
-    <xsl:for-each select='/rss/channel/item'>
-      <xsl:value-of select='enclosure/@url'/><xsl:text>-!-</xsl:text>
-      <xsl:value-of select='media:cache[@type=\"audio/mpeg\"]/@url'/><xsl:text>-!-</xsl:text>
-      <xsl:value-of select='title'/><xsl:text>-!-</xsl:text>
-      <xsl:value-of select='media:cache[@type=\"audio/mpeg\"]/@duration'/><xsl:text>-!-</xsl:text>
-      <xsl:value-of select='itunes:summary'/><xsl:text>-!-</xsl:text>
-      <xsl:value-of select='description'/><xsl:text>EOL</xsl:text>
-    </xsl:for-each>
-  </xsl:template>
+xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
+xmlns:itunes='http://www.itunes.com/dtds/podcast-1.0.dtd'
+xmlns:media='http://search.yahoo.com/mrss/'
+xmlns:atom='http://www.w3.org/2005/Atom'>
+<xsl:output method='text'/>
+<xsl:template match='/'>
+<xsl:for-each select='/rss/channel/item'>
+<xsl:value-of select='enclosure/@url'/><xsl:text>-!-</xsl:text>
+<xsl:value-of select='media:cache[@type=\"audio/mpeg\"]/@url'/><xsl:text>-!-</xsl:text>
+<xsl:value-of select='title'/><xsl:text>-!-</xsl:text>
+<xsl:value-of select='media:cache[@type=\"audio/mpeg\"]/@duration'/><xsl:text>-!-</xsl:text>
+<xsl:value-of select='itunes:summary'/><xsl:text>-!-</xsl:text>
+<xsl:value-of select='description'/><xsl:text>EOL</xsl:text>
+</xsl:for-each>
+</xsl:template>
 </xsl:stylesheet>"
 tpc_sh='#!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
@@ -70,14 +70,14 @@ cp -f "$rssf" "$DT_r/rss_list"
 function conditions() {
     
     [ ! -f "$DCP/1.cfg" ] && touch "$DCP/1.cfg"
-    internet
+    
     
     if ([ -f "$DT/.uptp" ] && [ -z "$1" ]); then
         msg_2 "$(gettext "Wait till it finishes a previous process")\n" info OK gtk-stop
         ret=$(echo $?)
         [ $ret -eq 1 ] && "$DS/stop.sh" feed
         [ $ret -eq 0 ] && exit 1
-        
+    
     elif [[ -f "$DT/.uptp" && "$1" = A ]]; then
         exit 1
     fi
@@ -115,33 +115,33 @@ function conditions() {
         msg "$(gettext "Missing URL. Please check the settings in the preferences dialog.")\n" info
         [ -f "$DT/.uptp" ] && rm -fr "$DT_r" "$DT/.uptp"
         exit 1; fi
+    internet
 }
 
 mediatype () {
 
-    if echo "${1}" | grep -o ".mp3"; then ex="mp3"; tp="aud"
-    elif echo "${1}" | grep -o ".mp4"; then ex="mp4"; tp="vid"
-    elif echo "${1}" | grep -o ".ogg"; then ex="ogg"; tp="aud"
-    elif echo "${1}" | grep -o ".avi"; then ex="avi"; tp="vid"
-    elif echo "${1}" | grep -o ".m4v"; then ex="m4v"; tp="vid"
-    elif echo "${1}" | grep -o ".mov"; then ex="mov"; tp="vid"
+    if echo "${1}" | grep -q ".mp3"; then ex=mp3; tp=aud
+    elif echo "${1}" | grep -q ".mp4"; then ex=mp4; tp=vid
+    elif echo "${1}" | grep -q ".ogg"; then ex=ogg; tp=aud
+    elif echo "${1}" | grep -q ".avi"; then ex=avi; tp=vid
+    elif echo "${1}" | grep -q ".m4v"; then ex=m4v; tp=vid
+    elif echo "${1}" | grep -q ".mov"; then ex=mov; tp=vid
     else
         msg "$(gettext "Se encontró un error (02) en la configuración de un feed") ($n)\n " dialog-warning;
         continue; fi
 }
 
-
 get_images () {
     
     cd "$DT_r"; p=TRUE; rm -f *.jpeg *.jpg
-
+    
     if [ "$tp" = aud ]; then
-
+        
         eyeD3 --write-images="$DT_r" "media.$ex"
-
+        
         if ls | grep '.jpeg'; then img="$(ls | grep '.jpeg')"
         else img="$(ls | grep '.jpg')"; fi
-
+        
         if [ ! -f "$DT_r/$img" ]; then
         
             wget -q -O- "$FEED" | grep -o '<itunes:image href="[^"]*' \
@@ -151,30 +151,29 @@ get_images () {
             elif ls | grep '.png'; then img="$(ls | grep '.png')"
             else img="$(ls | grep '.jpg')"; fi
         fi
-            
+        
         if [ ! -f "$DT_r/$img" ]; then
         
-            cp -f "$DSP/images/item.png" "$DMC/$fname.png"
+            cp -f "$DSP/images/audio.png" "$DMC/$fname.png"
             p=""
         fi
-    fi
 
-    if [ "$tp" = vid ]; then
+    elif [ "$tp" = vid ]; then
         
-        mplayer -ss 60 -nosound -vo jpeg -frames 1 "media.$ex"
-        
-        if ls | grep '.jpeg'; then img="$(ls | grep '.jpeg')"
-        else img="$(ls | grep '.jpg')"; fi
+        exec 3<&0; mplayer -ss 60 -nosound -noconsolecontrols -vo jpeg -frames 3 "media.$ex" <&3 &&
+
+        if ls | grep '.jpeg'; then img="$(ls | grep '.jpeg' | head -n1)"
+        else img="$(ls | grep '.jpg' | head -n1)"; fi
         
         if [ ! -f "$DT_r/$img" ]; then
             
-            cp -f "$DSP/images/item.png" "$DMC/$fname.png"
+            cp -f "$DSP/images/video.png" "$DMC/$fname.png"
             p=""
         fi
     fi
     
-    if ([ "$p" = TRUE ] && [ -f "$DT_r/$img" ]); then
-    
+    if [ "$p" = TRUE ] && [ -f "$DT_r/$img" ]; then
+        
         convert "$DT_r/$img" -interlace Plane -thumbnail 52x44^ \
         -gravity center -extent 52x44 -quality 100% tmp.jpg
         convert tmp.jpg -bordercolor white \
@@ -184,7 +183,6 @@ get_images () {
         rm -f *.jpeg *.jpg
     fi
 }
-
 
 fetch_podcasts() {
 
@@ -254,9 +252,9 @@ fetch_podcasts() {
                 mediatype "$enclosure_url"
                 
                 if [ ! -f "$DMC/$fname.$ex" ]; then
-                    cd "$DT_r"; wget -q -c -T 30 -O "media.$ex" "$enclosure_url"
+                cd "$DT_r"; wget -q -c -T 30 -O "media.$ex" "$enclosure_url"
                 else
-                    cd "$DT_r"; mv -f "$DMC/$fname.$ex" "media.$ex"
+                cd "$DT_r"; mv -f "$DMC/$fname.$ex" "media.$ex"
                 fi
                 
                 if [ -z "$channel" ]; then
@@ -268,6 +266,7 @@ fetch_podcasts() {
                 fi
                 
                 get_images
+                wait
                 
                 mv -f "media.$ex" "$DMC/$fname.$ex"
                 printf "\n$summary" > "$DMC/$fname.txt"
@@ -284,7 +283,7 @@ fetch_podcasts() {
                 echo "$title" >> "$DT_r/log"
             fi
 
-        done <<< "$podcast_items"
+        done <<<"$podcast_items"
 
         let n++
     
@@ -356,7 +355,7 @@ if [ "$1" != A ]; then
 fi
 
 echo "updating" > "$DT/.uptp"
-nps=4
+nps=5
 fetch_podcasts
 
 [ -f "$DT_r/log" ] && nd="$(wc -l < "$DT_r/log")" || nd=0
@@ -364,9 +363,9 @@ rm -fr "$DT_r" "$DT/.uptp"
 
 if [ "$nd" -gt 0 ]; then
     remove_items
-    check_index
+    #check_index
     echo "$(date "+%a %d %B")" > "$DM_tl/Feeds/.dt"
-    notify-send -i idiomind \
+    [ "$1" != A ] && notify-send -i idiomind \
     "$(gettext "Update finished")" "$(gettext "Downloaded") $nd $(gettext "episode(s)")" -t 8000
     exit 0
 else
