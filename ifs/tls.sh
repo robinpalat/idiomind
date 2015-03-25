@@ -34,8 +34,11 @@ elif [ "$1" = listen_sntnc ]; then
 elif [ "$1" = dclik ]; then
 
     play "$DM_tls/${2,,}".mp3 & exit
-fi
 
+elif [ "$1" = thumb ]; then
+    >/dev/null 2>&1
+    cd "$2"; mplayer -ss 60 -nosound -vo jpeg -frames 1 "$3" >/dev/null 2>&1
+fi
 
 function add_audio() {
 
@@ -119,7 +122,6 @@ function check_updates() {
         elif [ "$ret" -eq 1 ]; then
             echo `date +%d` > "$DC_s/9.cfg";
         fi
-        
     else
         yad --text="<big><b> $(gettext "No updates available")  </b></big>\n\n  $(gettext "You have the latest version of Idiomind.")" \
         --image=info --title=" " --window-icon=idiomind \
@@ -506,7 +508,6 @@ function pdfdoc() {
         cp -f "$DC_tlt/4.cfg" s.inx.l
         iw=w.inx.l; is=s.inx.l
 
-        #images
         n=1
         while [[ $n -le "$(cat $iw | wc -l | awk '{print ($1)}')" ]]; do
             wnm=$(sed -n "$n"p $iw)
@@ -517,7 +518,7 @@ function pdfdoc() {
             fi
             let n++
         done
-        #sentences
+
         n=1
         while [[ $n -le "$(cat  $is | wc -l | awk '{print ($1)}')" ]]; do
             wnm=$(sed -n "$n"p $is)
@@ -676,7 +677,7 @@ function pdfdoc() {
         </td>
         </tr>
         </table>' >> pdf_doc
-        #images
+
         cd "$DM_tlt/words/images"
         cnt=`ls -1 *.jpg 2>/dev/null | wc -l`
         if [ $cnt != 0 ]; then
@@ -726,7 +727,7 @@ function pdfdoc() {
             <p>&nbsp;</p>
             <p>&nbsp;</p>' >> pdf_doc
         fi
-        #words
+
         cd $DT/mkhtml
         n=1
         while [ $n -le "$(cat $iw | wc -l)" ]; do
@@ -785,7 +786,7 @@ function pdfdoc() {
             fi
             let n++
         done
-        #sentences
+
         n=1
         while [ $n -le "$(cat s.inx.l | wc -l)" ]; do
                 st=$(sed -n "$n"p S.gprt.x)
@@ -807,7 +808,7 @@ function pdfdoc() {
                 fi
             let n++
         done
-        #html
+
         echo '<p>&nbsp;</p>
         <p>&nbsp;</p>
         <h3>&nbsp;</h3>
@@ -831,7 +832,6 @@ function html() {
     
     source /usr/share/idiomind/ifs/c.conf
     source "$DS/ifs/mods/cmns.sh"
-
     NAME=$(echo "$tpc" | sed 's/ /_/g')
     dte=$(date "+%d %B %Y")
     mkdir $DT/mkhtml
@@ -843,7 +843,6 @@ function html() {
     mkdir $DT/$NAME/images
     cd $DT/mkhtml
 
-    #-----------------------
     n=1
     while [ $n -le $(cat $iw | wc -l | awk '{print ($1)}') ]; do
         itemw=$(sed -n "$n"p  $iw)
@@ -862,7 +861,6 @@ function html() {
         let n++
     done
 
-    #-----------------------
     n=1
     while [[ $n -le "$(cat  $is | wc -l | awk '{print ($1)}')" ]]; do
         WL=$(sed -n "$n"p $is)
@@ -875,7 +873,6 @@ function html() {
         let n++
     done
 
-    #-----------------------
     #lgt=$(sed -n 2p "$DT/$tpc"/cnfg13 | awk '{print tolower($0)}')
     #ls=$(sed -n 5p "$DT/$tpc"/cnfg13)
     #cby=$(sed -n 6p "$DT/$tpc"/cnfg13)
@@ -884,8 +881,7 @@ function html() {
 
     lgt=en
     ls=es
-
-
+    
     nts=$(cat "$DC_tlt/10.cfg")
 
     l=$(sort -Ru $DM_t/saved/ls | egrep -v "$tpc" | head -4)
@@ -899,7 +895,6 @@ function html() {
     #lt3=$(sed -n 10p "$DM_t/saved/$ot3"cnfg13)
     #lt4=$(sed -n 10p "$DM_t/saved/$ot4"cnfg13)
 
-    #-----------------------htmlquiz
     if [ -n "$(cat $iw)" ]; then
     echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html xmlns="http://www.w3.org/1999/xhtml">' > $DT/$NAME/flashcards.html
@@ -909,8 +904,6 @@ function html() {
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
     <script>window.jQuery || document.write("<script src="jquery-1.6.2.min.js">\x3C/script>")</script>
     </head>' >> $DT/$NAME/flashcards.html
-
-    #-----------------------htmlhome
 
     echo '<script src="ln/utils.js" type="text/javascript"></script>
     <div id="fc_container" class="noprint">
@@ -946,8 +939,6 @@ function html() {
        var embedWidth =  850;
     </script>' >> $DT/$NAME/flashcards.html
 
-    #-----------------------htmlhome
-
     echo '<script type="text/javascript">
          //<![CDATA[
       var stack = {name : "'$tpc'",description : "'$tpc'",nextCardId : "50" ,numCards : "49" ,columnNames : [ "'$lgtl'","'$lgsl'"], data : [' >> $DT/$NAME/flashcards.html
@@ -961,8 +952,6 @@ function html() {
     done
 
     cat flashcards | tr '\n' ',' >> $DT/$NAME/flashcards.html
-
-    #-----------------------
 
     echo ']};;
       // 
@@ -981,7 +970,6 @@ function html() {
     </footer>
     </div></html>' >> $DT/$NAME/flashcards.html
     fi
-    #-----------------------
 
     echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html xmlns="http://www.w3.org/1999/xhtml">' > $DT/$NAME/index.html
@@ -1028,8 +1016,6 @@ function html() {
                  </header>
                  <div class="entry">' >> $DT/$NAME/index.html
 
-    #-----------------------images
-
     cd "$DM_tlt/words/images"
 
     if [ $(ls -1 *.jpg 2>/dev/null | wc -l) != 0 ]; then
@@ -1048,10 +1034,8 @@ function html() {
         done
 
         echo '</div>' >> $DT/$NAME/index.html
-
     fi
 
-    #-----------------------htmlhome
     cd $DT/mkhtml/
     n=1
     while [ $n -le $(cat s.inx.l | wc -l) ]; do
@@ -1071,7 +1055,6 @@ function html() {
                 
                 fn="$(nmfile "$fn")"
                 eyeD3 "$DM_tlt/$fn.mp3" > tgs
-                
                 
                 > wt
                 > ws
@@ -1119,9 +1102,7 @@ function html() {
             fi
         let n++
     done
-
-    #-----------------------htmlhome
-
+    
     echo '<a href="#top">Ir Arriba</a>
     <p>&nbsp;</p>
     </section>
@@ -1179,9 +1160,6 @@ function html() {
         </nav>
       </aside>
     </main>' >> $DT/$NAME/index.html
-
-    #-----------------------htmlhome
-
     echo '<footer role="contentinfo">
         <div class="inner">
             <img width="64" height="64" class="w3c-logo" alt="W3C HTML5 logo (not CSS3!)" src="/usr/share/idiomind/images/cnn.png">
@@ -1190,7 +1168,6 @@ function html() {
         </div>
     </footer>
     </div></html>' >> $DT/$NAME/index.html
-
 }
 
 case "$1" in
@@ -1202,6 +1179,8 @@ case "$1" in
     help ;;
     check_updates)
     check_updates ;;
+    a_check_updates)
+    a_check_updates ;;
     check_index)
     check_index "$@" ;;
     set_image)
