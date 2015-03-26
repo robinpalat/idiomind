@@ -2,9 +2,7 @@
 
 name="googletranslate"
 lang="auto"
-
-wdr=$(echo "$1")
-lang=$(sed -n 1p ~/.config/idiomind/s/10.cfg)
+wdr="$1"
+lang="$lgt"
 wget -q -U Mozilla -O tmp.mp3 "http://translate.google.com/translate_tts?ie=UTF-8&tl=$lang&q=$wdr"
-sox tmp.mp3 "$wdr.mp3" speed 0.9
-exit
+sox tmp.mp3 "$wdr.mp3" speed 0.9; exit 1

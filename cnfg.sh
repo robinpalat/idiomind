@@ -19,8 +19,8 @@
 
 source /usr/share/idiomind/ifs/c.conf
 Encoding=UTF-8
-wth=$(($(sed -n 2p $DC_s/10.cfg)-500))
-eht=$(($(sed -n 3p $DC_s/10.cfg)-200))
+wth=$(($(sed -n 2p $DC_s/10.cfg)-480))
+eht=$(($(sed -n 3p $DC_s/10.cfg)-180))
 IFS=$'\n'
 info1="$(echo "$(gettext "Do you want to change the interface language program?")" | xargs -n6 | sed 's/^/  /')"
 info2="$(echo "$(gettext "You want to change the language setting to learn?")" | xargs -n6 | sed 's/^/  /')"

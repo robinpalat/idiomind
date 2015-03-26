@@ -105,8 +105,6 @@ elif [ "$1" != chngi ]; then
             "$DS/add.sh" new_topic & exit
             
     elif [ $ret -eq 2 ]; then
-    
-            "$DS/stop.sh" play &
             
             [ -z "$s" ] && exit 1
             
@@ -121,8 +119,6 @@ elif [ "$1" != chngi ]; then
             fi
 
     elif [ $ret -eq 0 ]; then
-    
-            "$DS/stop.sh" play &
             
             [ -z "$s" ] && exit 1
             

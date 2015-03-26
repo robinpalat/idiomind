@@ -208,9 +208,9 @@ function new_sentence() {
     DC_tlt="$DM_tl/$tpe/.conf"
     icnn=idiomind
 
-    if [ $(wc -l < "$DC_tlt/4.cfg") -ge 50 ]; then
+    if [ $(wc -l < "$DC_tlt/0.cfg") -ge 100 ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "You have reached the maximum number of sentences")" info Info & exit
+        msg "$(gettext "You have reached the maximum number of items")" info Info & exit
     fi
     if [ -z "$tpe" ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
@@ -308,9 +308,9 @@ function new_word() {
     DM_tlt="$DM_tl/$tpe"
     DC_tlt="$DM_tl/$tpe/.conf"
     
-    if [ $(wc -l < "$DC_tlt/3.cfg") -ge 50 ]; then
+    if [ $(wc -l < "$DC_tlt/1.cfg") -ge 100 ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "You have reached the maximum number of words.")" info Info & exit 0
+        msg "$(gettext "You have reached the maximum number of items.")" info Info & exit 0
     fi
     if [ -z "$tpe" ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
@@ -405,9 +405,9 @@ function edit_list_words() {
     if [ "$3" = "F" ]; then
 
         tpe="$tpc"
-        if [ $(cat "$DC_tlt/3.cfg" | wc -l) -ge 50 ]; then
+        if [ $(cat "$DC_tlt/0.cfg" | wc -l) -ge 100 ]; then
             [ -d "$DT_r" ] && rm -fr "$DT_r"
-            msg "$(gettext "You have reached the maximum number of words.")" info Info & exit
+            msg "$(gettext "You have reached the maximum number of items.")" info Info & exit
         fi
         if [ -z "$tpe" ]; then
             [ -d "$DT_r" ] && rm -fr "$DT_r"
@@ -454,7 +454,7 @@ function edit_list_words() {
                 trgt=$(sed -n "$n"p ./slts | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
                 fname="$(nmfile "$trgt")"
                 
-            if [ $(wc -l < "$DC_tlt/3.cfg") -ge 50 ]; then
+            if [ $(wc -l < "$DC_tlt/0.cfg") -ge 100 ]; then
                 echo "$trgt
 " > logw
             
@@ -517,9 +517,9 @@ function dclik_list_words() {
     
     nw=$(cat "$DC_tlt/3.cfg" | wc -l)
     
-    if [ $(cat "$DC_tlt/3.cfg" | wc -l) -ge 50 ]; then
+    if [ $(cat "$DC_tlt/0.cfg" | wc -l) -ge 100 ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "You have reached the maximum number of words.")" info Info & exit
+        msg "$(gettext "You have reached the maximum number of items.")" info Info & exit
     fi
 
     left=$((50 - $nw))
@@ -632,7 +632,7 @@ function sentence_list_words() {
         trgt=$(sed -n "$n"p ./slts | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
         fname="$(nmfile "$trgt")"
         
-        if [ $(cat "$DC_tlt/3.cfg" | wc -l) -ge 50 ]; then
+        if [ $(cat "$DC_tlt/0.cfg" | wc -l) -ge 100 ]; then
             echo "$trgt" >> logw
         else
             translate "$trgt" auto $lgs > tr."$c"
@@ -685,7 +685,7 @@ function process() {
     
     wth=$(($(sed -n 2p $DC_s/10.cfg)-350))
     eht=$(($(sed -n 3p $DC_s/10.cfg)-0))
-    ns=$(cat "$DC_tlt/4.cfg" | wc -l)
+    ns=$(wc -l < "$DC_tlt/0.cfg")
     source "$DS/default/dicts/$lgt"
     nspr='/usr/share/idiomind/add.sh process'
     lckpr="$DT/.n_s_pr"
@@ -697,9 +697,9 @@ function process() {
         [ -d "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "No topic is active")\n" info & exit 1
     fi
-    if [ $ns -ge 50 ]; then
+    if [ $ns -ge 100 ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "You have reached the maximum number of sentences.")" info Info
+        msg "$(gettext "You have reached the maximum number of items.")" info Info
         rm -f ls "$lckpr" & exit 1
     fi
 
@@ -813,14 +813,14 @@ function process() {
         [[ $(echo "$tpe" | wc -c) -gt 60 ]] \
         && tcnm="${tpe:0:60}..." || tcnm="$tpe"
         
-        left=$((50 - $ns))
-        info="$(gettext "You can add") $left $(gettext "sentences")"
-        if [ $ns -ge 45 ]; then
-            info="$(gettext "You can add") $left $(gettext "sentences")"
-        elif [ $ns -ge 49 ]; then
-            info="$(gettext "You can add") $left $(gettext "sentence")"
+        left=$((100 - $ns))
+        info="$(gettext "You can add") $left $(gettext "items")"
+        if [ $ns -ge 95 ]; then
+            info="$(gettext "You can add") $left $(gettext "items")"
+        elif [ $ns -ge 99 ]; then
+            info="$(gettext "You can add") $left $(gettext "items")"
         fi
-        
+        -ge
         if [ -z "$(cat ./sntsls_)" ]; then
         
             dlg_text_info_4 "$(gettext "Failed to retrieve text. For the process to be successful audio file must not have music or background noise.")"
@@ -883,7 +883,7 @@ function process() {
                     
                         # words
                         if [ $(wc -$c <<<"$sntc") = 1 ]; then
-                            if [ $(wc -l < "$DC_tlt"/3.cfg) -ge 50 ]; then
+                            if [ $(wc -l < "$DC_tlt"/0.cfg) -ge 100 ]; then
                                 printf "\n- $sntc" >> ./wlog
                         
                             else
@@ -912,7 +912,7 @@ function process() {
                         #sentences 
                         elif [ $(wc -$c <<<"$sntc") -ge 1 ]; then
                             
-                            if [ $(wc -l < "$DC_tlt/4.cfg") -ge 50 ]; then
+                            if [ $(wc -l < "$DC_tlt/0.cfg") -ge 100 ]; then
                                 printf "\n- $sntc" >> ./slog
                         
                             else
@@ -983,7 +983,7 @@ function process() {
                         trgt=$(sed -n "$n"p wrds | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
                         fname="$(nmfile "$trgt")"
 
-                        if [ $(wc -l < "$DC_tlt/3.cfg") -ge 50 ]; then
+                        if [ $(wc -l < "$DC_tlt/0.cfg") -ge 100 ]; then
                             printf "\n- $trgt" >> ./wlog
                     
                         else

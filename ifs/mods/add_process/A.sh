@@ -210,7 +210,7 @@ if [[ "$prdt" = A ]]; then
                     
                     if [ $(sed -n 1p "$sntc.txt" | wc -$c) -eq 1 ]; then
                     
-                        if [ $(wc -l < "$DC_tlt/3.cfg") -ge 50 ]; then
+                        if [ $(wc -l < "$DC_tlt/0.cfg") -ge 100 ]; then
                             printf "\n- $sntc" >> ./wlog
                     
                         else
@@ -231,7 +231,7 @@ if [[ "$prdt" = A ]]; then
                     
                     elif [ $(sed -n 1p "$sntc.txt" | wc -$c) -ge 1 ]; then
                     
-                        if [ $(wc -l < "$DC_tlt"/4.cfg) -ge 50 ]; then
+                        if [ $(wc -l < "$DC_tlt"/0.cfg) -ge 100 ]; then
                             printf "\n- $sntc" >> ./slog
                     
                         else
@@ -291,7 +291,7 @@ if [[ "$prdt" = A ]]; then
                     sname=$(sed -n "$n"p wrdsls)
                     fname="$(nmfile "$trgt")"
 
-                    if [ $(wc -l < "$DC_tlt"/3.cfg) -ge 50 ]; then
+                    if [ $(wc -l < "$DC_tlt"/0.cfg) -ge 100 ]; then
                         printf "\n- $trgt" >> ./wlog
                 
                     else
