@@ -226,17 +226,7 @@ fetch_podcasts() {
             | sed 's/<[^>]*>//g' | sed 's/^ *//; s/ *$//; /^$/d')
             #sumlink=$(echo "$fields" | sed -n "$n_sum"p)
             summary=$(echo "$fields" | sed -n "$n_sum"p \
-            | iconv -c -f utf8 -t ascii \
-            | sed 's/\&quot;/\"/g' | sed "s/\&#039;/\'/g" \
-            | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
-            | sed 's/<!\[CDATA\[\|\]\]>//g' \
-            | sed 's/ *<[^>]\+> */ /g' \
-            | sed 's/[<>£§]//g' \
-            | sed 's/&amp;/\&/g' \
-            | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. //g' \
-            | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
-            | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
-            | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g')
+            | iconv -c -f utf8 -t ascii)
             fname="$(nmfile "${title}")"
             
             if ([ "$(echo "$title" | wc -c)" -ge 180 ] \
@@ -269,10 +259,43 @@ fetch_podcasts() {
                 wait
                 
                 mv -f "media.$ex" "$DMC/$fname.$ex"
-                printf "\n$summary" > "$DMC/$fname.txt"
-                echo -e "channel=\"$channel\"" > "$DMC/$fname.i"
-                echo -e "link=\"$link\"" >> "$DMC/$fname.i"
-                echo -e "title=\"$title\"" >> "$DMC/$fname.i"
+                
+                #printf "\n$summary" > "$DMC/$fname.txt"
+                #echo -e "channel=\"$channel\"" > "$DMC/$fname.i"
+                #echo -e "link=\"$link\"" >> "$DMC/$fname.i"
+                #echo -e "title=\"$title\"" >> "$DMC/$fname.i"
+                
+                #<a href=\"$link\"Link
+                
+                if [ "$tp" = vid ]; then
+                if [ $ex = m4v || $ex = mp4 ]; then
+                t = mp4
+                elif [ $ex = avi ]; then
+                t = avi
+                fi
+                printf "
+                <link rel="stylesheet" href="./style.css">
+                <video width=650 height=380 controls>
+                <source src=\"$fname.$ex\" type=\"video/mp4\">
+                Your browser does not support the video tag.
+                </video><br><br>
+                <h3>$title</h3>
+                <br>
+                $summary
+                " > "$DMC/$fname.html"
+                elif [ "$tp" = aud ]; then
+                printf "
+                <link rel="stylesheet" href="./style.css">
+                <h2>$title</h2><br>
+                <audio controls>
+                <source src=\"$fname.$ex\" type=\"audio/mpeg\">
+                Your browser does not support the audio tag.
+                </audio> 
+                <br>
+                $summary
+                " > "$DMC/$fname.html"
+                fi
+
                 if [ -s "$DCP/1.cfg" ]; then
                 sed -i -e "1i$title\\" "$DCP/1.cfg"
                 else
