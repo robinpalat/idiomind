@@ -54,7 +54,6 @@ function setting_1() {
 
 if [ ! -f "$DT/.p_" ]; then
 btn="Play:0"; else btn="gtk-media-stop:2"; fi
-#--text="<span background='#505050'>\t\t\t\t\t</span>" \
 slct=$(mktemp "$DT"/slct.XXXX)
 setting_1 | yad --list --separator="|" --on-top \
 --expand-column=2 --print-all --no-headers --center \
@@ -79,6 +78,7 @@ if [ "$ret" -eq 0 ]; then
 
     rm -f "$slct"; 
     "$DS/stop.sh" playm
+    echo "$DM_tlt" > "$DT/tpp"
     source "$DC_s/1.cfg"
     
     if [ -z "$(< "$DT/index")" ]; then

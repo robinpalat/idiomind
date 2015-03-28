@@ -23,7 +23,7 @@
 IFS=$'\n\t'
 
 if [ ! -d "$HOME/.idiomind" ]; then
-    /usr/share/idiomind/ifs/1u.sh && exit
+    /usr/share/idiomind/ifs/1u.sh & exit
     if [ ! -d "$HOME/.idiomind" ]; then
         exit 1
     fi
@@ -72,8 +72,8 @@ function new_session() {
         let n++
     done
     
-    for s in "$DS/ifs/mods/start"/*; do
-    (sleep 20 && "$s"); done &
+    for strt in "$DS/ifs/mods/start"/*; do
+    (sleep 20 && "$strt"); done &
 
     # screen size
     s="$(xrandr | grep '*' | awk '{ print $1 }' \
@@ -84,10 +84,12 @@ function new_session() {
     echo $(($x/2)) >> "$DC_s/10.cfg"
     
     # log file
-    c=$(du -sb $DC_s/8.cfg | awk '{ print $1 }')
+    if [ -f "$DC_s/8.cfg" ]; then
+    c=$(du -sb "$DC_s/8.cfg" | awk '{ print $1 }')
     if [ $c -gt 500000 ]; then
     head -l 1000 < "$DC_s/8.cfg" > "$DT/8.cfg"
     mv -f "$DT/8.cfg" "$DC_s/8.cfg"; fi
+    fi
     
     # check for updates
     "$DS/ifs/tls.sh" a_check_updates &
@@ -342,13 +344,8 @@ function topic() {
 
     [ -z "$tpc" ] && exit 1
 
-    if echo "$mde" | grep "wn"; then
-        itxt="<big><big>$tpc </big></big>"
-        itxt2="<span color='#545454'>$ss $(gettext "Sentences")\n$ws $(gettext "Words")\n$(gettext "Created by")\n $author $(gettext "on") ${category^}\n  $date_u</span>"
-    else
-        itxt="<big><big>$tpc </big></big>\\n$ss $(gettext "Sentences") $ws $(gettext "Words")"
-        itxt2="<span color='#545454'>$(gettext "Created by")\n$author\n$(gettext "Category:") ${category^}\n$(gettext "Date:") $date_u</span>\n\n\n\n\n\n"
-    fi
+    label_info="<big><big>$tpc </big></big><small>\\n$ss $(gettext "Sentences") $ws $(gettext "Words") $(gettext "Created by") $author $(gettext "on") <span color='#6E9FD4'>${category^}</span> $date_u</small>"
+    label_info2=""
 
     if [ "$inx" -lt 1 ]; then
     
@@ -397,7 +394,7 @@ function topic() {
                     fi 
             fi
             
-            pres="<u><b>$(gettext "Learned")</b></u> $(gettext "* However there are new items") ($tb1).\\n$(gettext "Time for review:") $tdays $(gettext "days")"
+            pres="<u><b>$(gettext "Learned")</b></u> $(gettext " * however you have new items") ($tb1).\\n$(gettext "Time set to review:") \t\t\t\t\t\\t\t\t\t\t$tdays $(gettext "days")"
 
             notebook_2
             
@@ -497,7 +494,7 @@ function topic() {
                 fi 
         fi
         
-        pres="<u><b>$(gettext "Learned")</b></u>\\n$(gettext "Time to review") ($tdays $(gettext "days"))"
+        pres="<u><b>$(gettext "Learned")</b></u>\\n$(gettext "Time set to review:") \t\t\t\t\\t\t\t\t\t\t$tdays $(gettext "days")"
         
         notebook_2
       

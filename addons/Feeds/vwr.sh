@@ -22,27 +22,11 @@ btnlabel="Save"
 btncmd="'$DSP/add.sh' new_item '$item'"
 fi
 
-if [ -f "$dir/$fname.mp3" ]; then
-file="$dir/$fname.mp3"
-elif [ -f "$dir/$fname.ogg" ]; then
-file="$dir/$fname.ogg"
-elif [ -f "$dir/$fname.mp4" ]; then
-file="$dir/$fname.mp4"
-elif [ -f "$dir/$fname.m4v" ]; then
-file="$dir/$fname.m4v"
-elif [ -f "$dir/$fname.avi" ]; then
-file="$dir/$fname.avi"
-elif [ -f "$dir/$fname.mov" ]; then
-file="$dir/$fname.mov"
-fi
-
 yad --html \
 --window-icon=idiomind --uri="$dir/$fname.html" \
---center --title="$item" --borders=5 \
+--center --title="$item" --borders=0 \
 --on-top --class=Idiomind \
 --width=700 --height=540 \
---name=Idiomind \
+--name=Idiomind --no-buttons \
 --button="$btnlabel":"$btncmd" \
 --button="gtk-close":1
-
-#--width="$(($wth+150))" --height="$(($eht+80))" \

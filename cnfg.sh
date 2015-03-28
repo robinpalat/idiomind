@@ -21,9 +21,8 @@ source /usr/share/idiomind/ifs/c.conf
 Encoding=UTF-8
 wth=$(($(sed -n 2p $DC_s/10.cfg)-480))
 eht=$(($(sed -n 3p $DC_s/10.cfg)-180))
-IFS=$'\n'
-info1="$(echo "$(gettext "Do you want to change the interface language program?")" | xargs -n6 | sed 's/^/  /')"
-info2="$(echo "$(gettext "You want to change the language setting to learn?")" | xargs -n6 | sed 's/^/  /')"
+info1="$(echo "$(gettext "Do you want to change the interface language program?")"|xargs -n6|sed 's/^/  /')"
+info2="$(echo "$(gettext "You want to change the language setting to learn?")"|xargs -n6|sed 's/^/  /')"
 cd "$DS/addons"
 
 autostart="[Desktop Entry]
@@ -36,17 +35,8 @@ Type=Application
 Icon=idiomind
 StartupWMClass=Idiomind"
 
-langs="English
-Spanish
-Italian
-Portuguese
-German
-Japanese
-French
-Vietnamese
-Chinese
-Russian"
-
+lang=('English' 'Spanish' 'Italian' 'Portuguese' 'German' \
+'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian')
 sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
 'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' 'edit')
 c=$(echo $(($RANDOM%100000))); KEY=$c
@@ -83,11 +73,11 @@ function set_lang() {
 }
 
 if [ ! -f "$DC_s/1.cfg" ] || [ -z "$(<"$DC_s/1.cfg")" ]; then
-sets=('grammar' 'list' 'tasks' 'trans' 'synth' 'edit' \
-'text' 'audio' 'repeat' 'videos' 'loop' 't_lang' \
-'s_lang' 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
+sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
+'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' 'edit'\
+ 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
 n=0; > "$DC_s/1.cfg"
-while [ $n -le 18 ]; do
+while [ $n -lt 19 ]; do
     echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
     ((n=n+1))
 done
@@ -95,7 +85,7 @@ fi
 
 source "$DC_s/1.cfg"
 yad --plug=$KEY --tabnum=1 \
---separator="|" --form --align=right --scroll \
+--separator='|' --form --align=right --scroll \
 --always-print-result --print-all \
 --field="$(gettext "General Options")\t":lbl " " \
 --field=":LBL" " " \
@@ -116,9 +106,9 @@ yad --plug=$KEY --tabnum=1 \
 --field=":LBL" " " \
 --field="$(gettext "Language Learning")":CB "$lgtl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
 --field="$(gettext "Your Language")":CB "$lgsl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
---field=" :LBL" " " \
---field=":LBL" " " \
---field="$(gettext "Speech Synthesizer Default espeak")":CB5 "$synth" \
+--field=" :LBL" "2" \
+--field=":LBL" "2" \
+--field="$(gettext "Speech Synthesizer (default espeak)")":CB5 "$synth" \
 --field="$(gettext "Use this program for audio editing")":CB5 "$edit" \
 --field="$(gettext "Check for Updates")":BTN "$DS/ifs/tls.sh check_updates" \
 --field="$(gettext "Quick Help")":BTN "$DS/ifs/tls.sh help" \
@@ -135,11 +125,10 @@ yad --notebook --key=$KEY --name=Idiomind --class=Idiomind \
 --width=$wth --height=$eht --title="$(gettext "Settings")" \
 --button="$(gettext "Cancel")":1 --button="$(gettext "OK")":0
 ret=$?
-    
-    if [ $ret -eq 0 ]; then
 
+    if [ $ret -eq 0 ]; then
         n=1; v=0
-        while [ $n -le 24 ]; do
+        while [ $n -le 21 ]; do
             val=$(cut -d "|" -f$n < "$cnf1")
             if [ -n "$val" ]; then
                 sed -i "s/${sets[$v]}=.*/${sets[$v]}=$val/g" "$DC_s/1.cfg"
@@ -148,10 +137,16 @@ ret=$?
             ((n=n+1))
         done
 
+        val=$(cut -d "|" -f22 < "$cnf1")
+        sed -i "s/${sets[11]}=.*/${sets[11]}=$val/g" "$DC_s/1.cfg"
+        val=$(cut -d "|" -f23 < "$cnf1")
+        sed -i "s/${sets[12]}=.*/${sets[12]}=$val/g" "$DC_s/1.cfg"
+        
         [ ! -d  "$HOME/.config/autostart" ] \
         && mkdir "$HOME/.config/autostart"
         config_dir="$HOME/.config/autostart"
-        if sed -n 3p "$DC_s/1.cfg" | grep "TRUE"; then
+        
+        if cut -d "|" -f3 < "$cnf1" | grep "TRUE"; then
             if [ ! -f "$config_dir/idiomind.desktop" ]; then
                 echo "$autostart" > "$config_dir/idiomind.desktop"
             fi
@@ -161,28 +156,33 @@ ret=$?
             fi
         fi
         
-        while read -r lang; do
-            if sed -n 12p "$cnf1" | grep "$lang" && \
-            [ "$lang" != "$lgtl" ] ; then
+        n=0
+        while [ $n -lt 10 ]; do
+            if cut -d "|" -f18 < "$cnf1" | grep "${lang[$n]}" && \
+            [ "${lang[$n]}" != "$lgtl" ] ; then
                 confirm "$info2" dialog-question
-                [ $? -eq 0 ] && set_lang "$lang"
-                lgtl="$lang" & break
+                [ $? -eq 0 ] && set_lang "${lang[$n]}"
+                lgtl="${lang[$n]}" & break
             fi
-        done <<< "$langs"
+            ((n=n+1))
+        done
         
-        while read -r lang; do
-            if sed -n 13p "$cnf1" | grep "$lang" && \
-            [ "$lang" != "$lgsl" ] ; then
+        n=0
+        while [ $n -lt 10 ]; do
+            if cut -d "|" -f19 < "$cnf1" | grep "${lang[$n]}" && \
+            [ "${lang[$n]}" != "$lgsl" ] ; then
                 confirm "$info1" dialog-warning
                 if [ $? -eq 0 ]; then
                     echo "$lgtl" > "$DC_s/6.cfg"
-                    echo "$lang" >> "$DC_s/6.cfg"
+                    echo "${lang[$n]}" >> "$DC_s/6.cfg"
                     break
                 fi
             fi
-        done <<< "$langs"
+            ((n=n+1))
+        done
         
         rm -f "$cnf1" "$DT/.lc" & exit 1
     else
         rm -f "$cnf1" "$DT/.lc" & exit 1
     fi
+    

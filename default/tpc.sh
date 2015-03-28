@@ -3,7 +3,6 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/mods/cmns.sh
-$DS/stop.sh tpc
 gtdr="$(cd "$(dirname "$0")" && pwd)"
 topic=$(echo "$gtdr" | sed 's|\/|\n|g' | sed -n 7p)
 DC_tlt="$DM_tl/$topic/.conf"

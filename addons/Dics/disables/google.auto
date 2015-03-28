@@ -1,8 +1,10 @@
 #!/bin/bash
-
 name="googletranslate"
 lang="auto"
-wdr="$1"
-lang="$lgt"
-wget -q -U Mozilla -O tmp.mp3 "http://translate.google.com/translate_tts?ie=UTF-8&tl=$lang&q=$wdr"
-sox tmp.mp3 "$wdr.mp3" speed 0.9; exit 1
+
+source /usr/share/idiomind/ifs/c.conf
+source "$DS/ifs/mods/cmns.sh"
+lgt=$(lnglss $lgtl)
+wget -q -U Mozilla -O tmp.mp3 "http://translate.google.com/translate_tts?ie=UTF-8&tl=$lgt&q=$1"
+sox tmp.mp3 "$wdr.mp3" speed 0.9
+exit;

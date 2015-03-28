@@ -17,7 +17,6 @@
 #  MA 02110-1301, USA.
 #  27.02.2015
 
-LANGUAGE=$LANGUAGE
 [ -z $LANGUAGE ] && LANGUAGE=en
 TEXTDOMAIN=idiomind
 export TEXTDOMAIN
@@ -29,30 +28,23 @@ user=$(echo "$(whoami)")
 
 text="<big><big><big>  Welcome  </big></big></big>
 $(gettext "     To get started, please configure the following")\n"
-
-langs="English
-Spanish
-Italian
-Portuguese
-German
-Japanese
-French
-Vietnamese
-Chinese
-Russian"
+lang=('English' 'Spanish' 'Italian' 'Portuguese' 'German' \
+'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian')
+sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
+'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' 'edit'\
+ 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
 
 function set_lang() {
     
-        if [ ! -d "$DIR1/$1" ]; then
-            mkdir "$DIR1/$1"
-            touch "$DIR1/$1/.1.cfg"
-            touch "$DIR1/$1/.2.cfg"
-            touch "$DIR1/$1/.3.cfg"
-            mkdir "$DIR1/$1/.share"
-        fi
-        echo "$1" > "$DIR2/6.cfg"
+    if [ ! -d "$DM_t/$1" ]; then
+        mkdir "$DM_t/$1"
+        touch "$DM_t/$1/.1.cfg"
+        touch "$DM_t/$1/.2.cfg"
+        touch "$DM_t/$1/.3.cfg"
+        mkdir "$DM_t/$1/.share"
+    fi
+    echo "$1" > "$DC_s/6.cfg"
 }
-
 
 if [ ! -f /usr/bin/yad ]; then
 zenity --info --window-icon="idiomind" \
@@ -66,6 +58,7 @@ sudo apt-get update
 sudo apt-get install yad")" \
 --title="Idiomind" --no-wrap & exit
 fi
+
 
 dlg=$(yad --center --width=500 --height=300 --fixed \
 --image-on-top --on-top --class=Idiomind --name=Idiomind \
@@ -108,30 +101,43 @@ elif [[ $ret -eq 0 ]]; then
     fi
     
     mkdir -p "$HOME/.idiomind/topics/saved"
-    DIR1="$HOME/.idiomind/topics"
+    DM_t="$HOME/.idiomind/topics"
     [ ! -d  "$HOME/.config" ] && mkdir "$HOME/.config"
     mkdir -p "$HOME/.config/idiomind/s"
-    DIR2="$HOME/.config/idiomind/s"
+    DC_s="$HOME/.config/idiomind/s"
     mkdir "$HOME/.config/idiomind/addons"
-    
-    while read -r lang; do
-        if echo "$target" | grep "$lang"; then
-            set_lang French
+
+    n=0
+    while [ $n -lt 10 ]; do
+        if echo "$target" | grep "${lang[$n]}"; then
+        set_lang "${lang[$n]}"
             lgtl="$lang" & break
         fi
-    done <<< "$langs"
-
-    while read -r lang; do
-        if echo "$source" | grep "$lang"; then
-            echo "$lang" >> "$DIR2/6.cfg" & break
+        ((n=n+1))
+    done
+    
+    n=0
+    while [ $n -lt 10 ]; do
+        if echo "$source" | grep "${lang[$n]}"; then
+            echo "${lang[$n]}" >> "$DC_s/6.cfg" & break
         fi
-    done <<< "$langs"
+        ((n=n+1))
+    done
+
+    n=0; > "$DC_s/1.cfg"
+    while [ $n -lt 19 ]; do
+        echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
+        ((n=n+1))
+    done
+    touch "$DC_s/4.cfg"
 
     b=$(tr -dc a-z < /dev/urandom | head -c 1)
     c=$(echo $(($RANDOM%100)))
-    echo $c$b > "$DIR2/5.cfg"
+    echo $c$b > "$DC_s/5.cfg"
 
-    exit 0
+    idiomind -s
+
+    exit;
 else
     killall 1u.sh & exit 1
 fi

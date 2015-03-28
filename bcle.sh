@@ -37,7 +37,7 @@ if ([ -n "$(cat ./index)" ] && [ $(wc -l < ./index) -gt 0 ]); then
         "$DS/chng.sh" chngi "$n"
             let n++
         done
-        rm -fr "$DT/.p_"
+        rm -fr "$DT/.p_" "$DT/tpp"
     fi
 else
     exit 1

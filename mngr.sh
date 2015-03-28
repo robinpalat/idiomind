@@ -23,15 +23,16 @@ source "$DS/ifs/mods/cmns.sh"
 function mkmn() {
     
     cd "$DM_tl"
-    [[ -d ./images ]] && rm -r ./images
-    [[ -d ./words ]] && rm -r ./words
-    [[ -d ./practice ]] && rm -r ./practice
-    for i in "$(ls -t -N -d */ | sed 's/\///g')"; do echo "${i%%/}"; done > "$DM_tl/.1.cfg"
+    [ -d ./images ] && rm -r ./images
+    [ -d ./words ] && rm -r ./words
+    [ -d ./practice ] && rm -r ./practice
+    for i in "$(ls -t -N -d */ | sed 's/\///g')"; do \
+    echo "${i%%/}"; done > "$DM_tl/.1.cfg"
     sed -i '/^$/d' "$DM_tl/.1.cfg"
     > "$DC_s/0.cfg"
     
     n=1
-    while [ $n -le $(wc -l < "$DM_tl/.1.cfg" | head -50) ]; do
+    while [[ $n -le $(head -50 < "$DM_tl/.1.cfg" | wc -l) ]]; do
     
         tp=$(sed -n "$n"p "$DM_tl/.1.cfg")
         i=$(<"$DM_tl/$tp/.conf/8.cfg")
@@ -54,7 +55,7 @@ function mkmn() {
         let n++
     done
     n=1
-    while [ $n -le $(wc -l < "$DM_tl/.1.cfg" | tail -n+51) ]; do
+    while [[ $n -le "$(tail -n+51 < "$DM_tl/.1.cfg" | wc -l)" ]]; do
         f=$(tail -n+51 < "$DM_tl/.1.cfg")
         tp=$(sed -n "$n"p <<<"$f")
         if [ ! -f "$DM_tl/$tp/.conf/8.cfg" ] || \
@@ -74,7 +75,7 @@ function mkmn() {
     exit 1
 }
 
-function mklg-() {
+function mark_as_learn() {
     
     include "$DS/ifs/mods/mngr"
     if [ $(wc -l < "$DC_tlt/2.cfg") -le 15 ]; then
@@ -86,10 +87,10 @@ function mklg-() {
     kill -9 $(pgrep -f "yad --list ") &
     kill -9 $(pgrep -f "yad --form ") &
     kill -9 $(pgrep -f "yad --notebook ") &
+
+    if grep -Fxo "$tpc" < "$DM_tl/.3.cfg"; then
     
-    nstll=$(grep -Fxo "$tpc" "$DM_tl/.3.cfg")
-    if [ -n "$nstll" ]; then
-        if [ $(<"$DC_tlt/8.cfg") = 7 ]; then
+        if [ $(< "$DC_tlt/8.cfg") = 7 ]; then
         
             calculate_review
             
@@ -103,7 +104,7 @@ function mklg-() {
         fi
         rm -f "$DC_tlt/7.cfg"
     else
-        if [ $(<"$DC_tlt/8.cfg") = 2 ]; then
+        if [ $(< "$DC_tlt/8.cfg") = 2 ]; then
         
             calculate_review
             
@@ -129,7 +130,7 @@ function mklg-() {
     idiomind topic & exit 1
 }
 
-function mkok-() {
+function mark_as_learned() {
 
     include "$DS/ifs/mods/mngr"
     if [ $(wc -l < "$DC_tlt/1.cfg") -le 15 ]; then
@@ -160,8 +161,8 @@ function mkok-() {
         echo "$(date +%m/%d/%Y)" > "$DC_tlt/9.cfg"
     fi
     > "$DC_tlt/7.cfg"
-    nstll=$(grep -Fxo "$tpc" "$DM_tl/.3.cfg")
-    if [ -n "$nstll" ]; then
+
+    if grep -Fxo "$tpc" "$DM_tl/.3.cfg"; then
         echo "7" > "$DC_tlt/8.cfg"
     else
         echo "2" > "$DC_tlt/8.cfg"
@@ -325,7 +326,7 @@ function delete_topic() {
         fi
 }
 
-function edt() {
+function edit() {
 
     include "$DS/ifs/mods/mngr"
     wth=$(($(sed -n 2p $DC_s/10.cfg)-220))
@@ -441,7 +442,7 @@ function edt() {
                 "$DS/vwr.sh" "$v" "nll" $ff & exit 1
             fi
             
-            $DS/vwr.sh "$v" "$TGT" $ff & exit 1
+            "$DS/vwr.sh" "$v" "$TGT" $ff & exit 1
     
     elif [ -f "$sfile" ]; then
     
@@ -501,7 +502,7 @@ function edt() {
                 grmrk=$(sed ':a;N;$!ba;s/\n/ /g' < g.$r)
                 lwrds=$(<A.$r)
                 pwrds=$(tr '\n' '_' < B.$r)
-                add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname2".mp3 >/dev/null 2>&1
+                add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname2.mp3" >/dev/null 2>&1
                 fetch_audio "$aw" "$bw"
             
                 [ -d "$DT_r" ] && rm -fr "$DT_r"
@@ -539,7 +540,7 @@ function edt() {
                     DT_r=$(mktemp -d $DT/XXXXXX); cd "$DT_r"
                     r=$(echo $(($RANDOM%1000)))
                     clean_3 "$DT_r $r"
-                    translate "$(sed '/^$/d' < $aw)" auto $lg | sed 's/,//g' \
+                    translate "$(sed '/^$/d' < "$aw")" auto $lg | sed 's/,//g' \
                     | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
                     check_grammar_1 "$DT_r" $r
                     list_words "$DT_r" $r
@@ -601,8 +602,8 @@ function edt() {
 function rename_topic() {
 
     source "$DS/ifs/mods/add/add.sh"
-    info2=$(wc -l < $DM_tl/.1.cfg)
-    jlb="$2"
+    info2=$(wc -l < "$DM_tl/.1.cfg")
+    jlb="${2}"
     jlb="$(clean_2 "$jlb")"
     snm=$(grep -Fxo "$jlb" < "$DM_tl/.1.cfg" | wc -l)
     
@@ -659,19 +660,19 @@ function rename_topic() {
 
 case "$1" in
     mkmn)
-    mkmn "$@" ;;
-    mkok-)
-    mkok- "$@" ;;
-    mklg-)
-    mklg- "$@" ;;
+    mkmn ;;
+    mark_as_learned)
+    mark_as_learned ;;
+    mark_as_learn)
+    mark_as_learn ;;
     delete_item_confirm)
     delete_item_confirm "$@" ;;
     delete_item)
     delete_item "$@" ;;
     delete_topic)
     delete_topic "$@" ;;
-    edt)
-    edt "$@" ;;
+    edit)
+    edit "$@" ;;
     rename_topic)
     rename_topic "$@" ;;
 esac

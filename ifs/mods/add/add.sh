@@ -102,6 +102,7 @@ function clean_1() {
     echo "$(echo "$1" | sed ':a;N;$!ba;s/\n/ /g' \
     | sed 's/"//g' | sed 's/“//g' | sed s'/&//'g \
     | sed 's/”//g' | sed s'/://'g | sed "s/’/'/g" \
+    | iconv -c -f utf8 -t ascii | sed "s/|//g" \
     | sed 's/ \+/ /g' | sed 's/^[ \t]*//;s/[ \t]*$//'\
     | sed 's/^ *//; s/ *$//g'| sed 's/^\s*./\U&\E/g')"
 }
@@ -280,7 +281,7 @@ function list_words() {
         while [ $n -le "$(cat $aw | wc -l)" ]; do
             s=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
             t=$(sed -n "$n"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-            echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> "A.$2"
+            echo ISTI"$n"I0I"$t"ISTI"$fetch_audion"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> "A.$2"
             echo "$t"_"$s""" >> "B.$2"
             let n++
         done
@@ -295,8 +296,14 @@ function list_words() {
     fi
 }
 
+function translate() {
+    
+    for trans in "$DS/ifs/mods/trans"/*; do
+    "$trans" "$@"; done
 
-function fetch_audio() { 
+}
+
+function fetch_audio() {
     
     if ([ $lgt = ja ] || [ $lgt = "zh-cn" ] || [ $lgt = ru ]); then
     words_list="$2"; else words_list="$1"; fi
@@ -314,7 +321,6 @@ function fetch_audio() {
             
             [ "$4" = "$DM_tl/.share" ] \
             && echo "${word,,}.mp3" >> "$DC_tlt/5.cfg"
-
         fi
         
     done < "$words_list"

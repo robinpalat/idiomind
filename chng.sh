@@ -17,7 +17,10 @@
 #  MA 02110-1301, USA.
 #  
 
-source /usr/share/idiomind/ifs/c.conf
+DT="/tmp/.idmtp1.$USER"
+DS="/usr/share/idiomind"
+DC_s="$HOME/.config/idiomind/s"
+DM_tlt=$(< "$DT/tpp")
 source "$DS/ifs/mods/cmns.sh"
 source "$DC_s/1.cfg"
 
@@ -46,20 +49,15 @@ if [ "$1" = chngi ]; then
     
     if [ "$t" = 2 ]; then
         tgs=$(eyeD3 "$file")
-        trgt=$(echo "$tgs" | \
-        grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
-        srce=$(echo "$tgs" | \
-        grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)')
+        trgt=$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"$tgs")
+        srce=$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"$tgs")
         play=play
     
     elif [ "$t" = 1 ]; then
-        if ([ $(echo "$text" | grep "TRUE") ] \
-        && [ "$loop" -lt 12 ]); then loop=12; fi
+        if [ "$text" = "TRUE" ] && [ "$loop" -lt 12 ]; then loop=12; fi
         tgs=$(eyeD3 "$file")
-        trgt=$(echo "$tgs" | \
-        grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
-        srce=$(echo "$tgs" | \
-        grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
+        trgt=$(grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)' <<<"$tgs")
+        srce=$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)' <<<"$tgs")
         play=play
     fi
 

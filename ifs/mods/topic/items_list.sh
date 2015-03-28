@@ -1,19 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-    #web="/tmp/.idmtp1.robin/Test_7_february/index.html"
-    #yad --html --window-icon=idiomind --browser --plug=$KEY --tabnum=1 \
-    #--title="$(gettext "Help")" --width=700 \
-    #--height=600 --button="$(gettext "OK")":0 \
-    #--name=Idiomind --class=Idiomind \
-    #--uri="$web" >/dev/null 2>&1 &
-
-    #web="/tmp/.idmtp1.robin/Test_7_february/index.html"
-    #yad --html --window-icon=idiomind --browser --plug=$KEY --tabnum=1 \
-    #--title="$(gettext "Help")" --width=700 \
-    #--height=600 --button="$(gettext "OK")":0 \
-    #--name=Idiomind --class=Idiomind \
-    #--uri="$web" >/dev/null 2>&1 &
 
 function word_view(){
     
@@ -81,13 +68,13 @@ function notebook_1() {
     --expand-column=0 --ellipsize=END --print-all --separator='|' \
     --column=Name:TEXT --dclick-action='./vwr.sh v2' &
     yad --form --scroll --borders=10 --plug=$KEY --tabnum=3 --columns=2 \
-    --text="$itxt" \
-    --field="Notes\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t":txt "$nt" \
-    --field=" <small>Rename</small>: " "$tpc" \
-    --field="Marcar Tema Como Aprendido":FBTN "$DS/mngr.sh 'mkok-'" \
-    --field="$itxt2":LBL " " \
+    --text="$label_info" \
+    --field="$(gettext "Notes")\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t":txt "$nt" \
+    --field="<small>$(gettext "Rename")</small>:" "$tpc" \
+    --field="$(gettext "Mark as learned")":FBTN "$DS/mngr.sh 'mark_as_learned'" \
+    --field="$label_info2":LBL " " \
     --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh" \
-    --field="Delete":FBTN "$DS/mngr.sh 'delete_topic'" > "$cnf3" &
+    --field="gtk-delete":FBTN "$DS/mngr.sh 'delete_topic'" > "$cnf3" &
     yad --notebook --name=Idiomind --center --key=$KEY \
     --class=Idiomind --align=right \
     --window-icon=idiomind \
@@ -113,13 +100,13 @@ function notebook_2() {
     --expand-column=1 --ellipsize=END --print-all \
     --column=Name:TEXT --dclick-action='./vwr.sh v2' &
     yad --form --scroll --borders=10 --plug=$KEY --tabnum=3 --columns=2 \
-    --text="$itxt" \
-    --field="Notes\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t":txt "$nt" \
-    --field=" <small>Rename</small>: " "$tpc" \
-    --field="Review":FBTN "$DS/mngr.sh 'mklg-'" \
-    --field="$itxt2":LBL " " \
+    --text="$label_info" \
+    --field="$(gettext "Notes")\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t":txt "$nt" \
+    --field="<small>$(gettext "Rename")</small>:" "$tpc" \
+    --field="$(gettext "Review")":FBTN "$DS/mngr.sh 'mark_as_learn'" \
+    --field="$label_info2":LBL " " \
     --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh" \
-    --field="Delete":FBTN "$DS/mngr.sh 'delete_topic'" > "$cnf3" &
+    --field="gtk-delete":FBTN "$DS/mngr.sh 'delete_topic'" > "$cnf3" &
     yad --notebook --name=Idiomind --center \
     --class=Idiomind --align=right --key=$KEY \
     --tab-borders=0 --center --title="$tpc" \
@@ -142,7 +129,7 @@ function dialog_1() {
     --buttons-layout=edge --class=idiomind \
     --button="       $(gettext "Not Yet")       ":1 \
     --button="        $(gettext "Review")        ":2 \
-    --text="$(gettext "days have passed since you mark\n  this topic as learned, you want to review it?")" \
+    --text="$(gettext "days have passed since you mark this topic as learned, you want to review it?")" \
     --name=Idiomind --width=420 --height=150 --class=Idiomind
 }
 

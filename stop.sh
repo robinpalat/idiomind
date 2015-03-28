@@ -15,14 +15,7 @@ elif echo "$1" | grep "play"; then
     [ -n "$(ps -A | pgrep -f "notify-osd")" ] && killall notify-osd &
     [ -n "$(ps -A | pgrep -f "play")" ] && killall play &
     [ -n "$(ps -A | pgrep -f "mplayer")" ] && killall mplayer &
-    [ -f "$DT/.p_" ] && rm -fr "$DT/.p_"
-    exit
-elif echo "$1" | grep "tpc"; then
-    [ -n "$(ps -A | pgrep -f "bcle.sh")" ] && killall bcle.sh &
-    [ -n "$(ps -A | pgrep -f "notify-osd")" ] && killall notify-osd &
-    [ -n "$(ps -A | pgrep -f "play")" ] && killall play &
-    [ -n "$(ps -A | pgrep -f "play.sh")" ] && killall play.sh &
-    [ -n "$(ps -A | pgrep -f "chng.sh")" ] && killall chng.sh &
+    [ -f "$DT/.p_" ] && rm -fr "$DT/.p_" "$DT/tpp"
     exit
 elif echo "$1" | grep "S"; then
     killall bcle.sh &

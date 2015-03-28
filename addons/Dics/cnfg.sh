@@ -18,16 +18,16 @@ _LANG=\"\""
 function test_() {
     
     [[ $_LANG = en ]] && test=test
-    [[ $_LANG = fr ]] && test=maison
-    [[ $_LANG = de ]] && test=Haus
-    [[ $_LANG = 'zh-cn' ]] && test=房子
-    [[ $_LANG = it ]] && test=casa
-    [[ $_LANG = ja ]] && test=家
-    [[ $_LANG = pt ]] && test=casa
+    [[ $_LANG = fr ]] && test=test
+    [[ $_LANG = de ]] && test=test
+    [[ $_LANG = 'zh-cn' ]] && test=测试
+    [[ $_LANG = it ]] && test=test
+    [[ $_LANG = ja ]] && test=テスト
+    [[ $_LANG = pt ]] && test=teste
     [[ $_LANG = es ]] && test=test
-    [[ $_LANG = vi ]] && test=nhà
-    [[ $_LANG = ru ]] && test=дом
-    [[ $_LANG = auto ]] && test=house
+    [[ $_LANG = vi ]] && test=thử
+    [[ $_LANG = ru ]] && test=тест
+    [[ $_LANG = auto ]] && test=test
 }
 
 function dialog_edit() {

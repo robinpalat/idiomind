@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
 
-if [ ! -f "$DC_a/gts.cfg" ] || [ -z $(<"$DC_a/gts.cfg")  ]; then
+if [ ! -f "$DC_a/gts.cfg" ] || [ -z "$(< "$DC_a/gts.cfg")" ]; then
 echo -e "set1=\"\"" > "$DC_a/gts.cfg"
 echo -e "key=\"\"" >> "$DC_a/gts.cfg";fi
 source "$DC_a/gts.cfg"
@@ -17,6 +17,6 @@ c=$(yad --center --form --on-top --name=Idiomind --class=Idiomind \
 --field="\n\n\n\n":LBL " ")
 val1="$(cut -d "|" -f1 <<< "$c")"
 val2="$(cut -d "|" -f2 <<< "$c")"
-sed -i "s/set1=.*/set1=$val1/g" "$DC_a/gts.cfg"
-sed -i "s/key=.*/key=$val2/g" "$DC_a/gts.cfg"
+sed -i "s/set1=.*/set1=\"$val1\"/g" "$DC_a/gts.cfg"
+sed -i "s/key=.*/key=\"$val2\"/g" "$DC_a/gts.cfg"
 

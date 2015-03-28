@@ -223,12 +223,11 @@ function new_sentence() {
         cd "$DT_r"
         trgt=$(translate "$(clean_1 "$2")" auto $lgt | sed ':a;N;$!ba;s/\n/ /g')
         srce=$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')
-        echo "$trgt" > trgt
         fname="$(nmfile "$trgt")"
         
         if [ ! -f "$DT_r/audtm.mp3" ]; then
         
-            tts ./trgt $lgt "$DT_r" "$DM_tlt/$fname.mp3"
+            tts "$trgt" $lgt "$DT_r" "$DM_tlt/$fname.mp3"
             
         else
             cp -f "$DT_r/audtm.mp3" "$DM_tlt/$fname.mp3"
@@ -256,7 +255,7 @@ function new_sentence() {
     if ( [ -z $(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary') ] \
     || [ ! -f "$DM_tlt/$fname.mp3" ] || [ -z "$trgt" ] || [ -z "$srce" ] ); then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "Something unexpected has occurred while saving your note.")" dialog-warning & exit 1
+        msg "$(gettext "Something unexpected has occurred while saving the note.")" dialog-warning & exit 1
     fi
     
     add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3"
@@ -279,7 +278,7 @@ function new_sentence() {
     
     if ([ -z "$grmrk" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ]); then
         rm "$DM_tlt/$fname.mp3"
-        msg "$(gettext "Something unexpected has occurred while saving your note.")" dialog-warning 
+        msg "$(gettext "Something unexpected has occurred while saving the note.")" dialog-warning 
         [ -d "$DT_r" ] && rm -fr "$DT_r" & exit 1
     fi
     
@@ -391,7 +390,7 @@ function new_word() {
     
     else
         [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
-        msg "$(gettext "Something unexpected has occurred while saving your note")" dialog-warning & exit 1
+        msg "$(gettext "Something unexpected has occurred while saving the note")" dialog-warning & exit 1
     fi
 
     [ -d "$DT_r" ] && rm -fr "$DT_r"
@@ -878,7 +877,6 @@ function process() {
                         sntc=$(sed -n "$n"p slts)
                         trgt=$(translate "$(clean_1 "$sntc")" auto $lgt | sed ':a;N;$!ba;s/\n/ /g')
                         srce=$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')
-                        echo "$trgt" > ./trgt
                         fname="$(nmfile "$trgt")"
                     
                         # words
@@ -889,7 +887,7 @@ function process() {
                             else
                                 if [ "$trans" = TRUE ]; then
             
-                                    tts ./trgt $lgt "$DT_r" "$DM_tlt/words/$fname.mp3"
+                                    tts "$trgt" $lgt "$DT_r" "$DM_tlt/words/$fname.mp3"
                                     
                                 else
                                     voice "$trgt" "$DT_r" "$DM_tlt/words/$fname.mp3"
@@ -922,7 +920,7 @@ function process() {
                                 else
                                     if [ "$trans" = TRUE ]; then
                                     
-                                        tts ./trgt $lgt "$DT_r" "$DM_tlt/$fname.mp3"
+                                        tts "$trgt" $lgt "$DT_r" "$DM_tlt/$fname.mp3"
                                         
                                     else
                                         voice "$trgt" "$DT_r" "$DM_tlt/$fname.mp3"
