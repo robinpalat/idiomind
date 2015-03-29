@@ -79,8 +79,8 @@ function notebook_1() {
     --class=Idiomind --align=right \
     --window-icon=idiomind \
     --tab-borders=0 --center --title="$tpc" \
-    --tab="  $(gettext "Learning") ($tb1) " \
-    --tab="  $(gettext "Learned") ($tb2) " \
+    --tab="  $(gettext "Learning") ($inx1) " \
+    --tab="  $(gettext "Learned") ($inx2) " \
     --tab=" $(gettext "Edit") " \
     --ellipsize=END --image-on-top --always-print-result \
     --width="$wth" --height="$eht" --borders=5 \
@@ -112,7 +112,7 @@ function notebook_2() {
     --tab-borders=0 --center --title="$tpc" \
     --window-icon=idiomind \
     --tab=" $(gettext "Review") " \
-    --tab=" $(gettext "Learned") ($tb2) " \
+    --tab=" $(gettext "Learned") ($inx2) " \
     --tab=" $(gettext "Edit") " \
     --ellipsize=END --image-on-top --always-print-result \
     --width="$wth" --height="$eht" --borders=5 \

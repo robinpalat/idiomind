@@ -75,6 +75,18 @@ function new_session() {
     for strt in "$DS/ifs/mods/start"/*; do
     (sleep 20 && "$strt"); done &
 
+    # control + fix
+    n=1; cd "$DM_tl"; f="$DM_tl/.2.cfg"
+    while [ $n -le $(wc -l < "$f") ]; do
+        chk=$(sed -n "$n"p "$f")
+        if ! grep -Fxo "$chk" <(ls -d *); then
+            grep -vxF "$chk" "$f" > "$DT/f.tmp"
+            sed '/^$/d' "$DT/f.tmp" > "$f"
+            rm -f "$DT/f.tmp"
+        fi
+        let n++
+    done; cd ~/
+
     # screen size
     s="$(xrandr | grep '*' | awk '{ print $1 }' \
     | sed 's/x/\n/')"
@@ -94,7 +106,7 @@ function new_session() {
     # check for updates
     "$DS/ifs/tls.sh" a_check_updates &
     
-    # status update topics
+    # status update topic
     [ ! -f "$DM_tl/.1.cfg" ] && touch "$DM_tl/.1.cfg"
     n=1
     while [ $n -le "$(wc -l < "$DM_tl/.1.cfg" | head -50)" ]; do
@@ -172,10 +184,8 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
     ls -tdN * > "$DT/idmimp_$c/ls"
     tpc_i=$(sed -n 1p "$DT/idmimp_$c/ls")
     tmp="$DT/idmimp_$c/$tpc_i"
-    
     source "$tmp/12.cfg"
     lng="$(lnglss "$language_target")"
-
     [ $level = 1 ] && level="$(gettext "Beginner")"
     [ $level = 2 ] && level="$(gettext "Intermediate")"
     [ $level = 3 ] && level="$(gettext "Advanced")"
@@ -256,28 +266,27 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
                 mkdir "$DM_t/$language_target"
                 mkdir "$DM_t/$language_target/.share"
                 fi
-                mkdir "$DM_t/$language_target/$tpc_i"
+                mkdir -p "$DM_t/$language_target/$tpc_i/.conf"
                 DI_m="$DM_t/$language_target/$tpc_i"
                 DI_c="$DM_t/$language_target/$tpc_i/.conf"
                 cd "$tmp"
                 cp -n ./.audio/*.mp3 "$DM_t/$language_target/.share/"
                 [ -d ./.audio ] && rm -fr ./.audio
+                n=0
+                while [ $n -le 13 ]; do
+                    if [ ! -f "$tmp/$n.cfg" ]; then
+                    touch "$DI_c/$n.cfg"
+                    else mv -f "$tmp/$n.cfg" "$DI_c/$n.cfg"; fi
+                    let n++
+                done
+                tee -a "$DI_c/.11.cfg" "$DI_c/1.cfg" < "$DI_c/0.cfg"
+                echo "6" > "$DI_c/8.cfg"; rm "$DI_c/9.cfg" "$DI_c/ls"
                 cp -fr ./.* "$DI_m/"
-                cp -f "12.cfg" "$DI_c/12.cfg"
-                echo "6" > "$DI_c/8.cfg"
-                cp -f "0.cfg" "$DI_c/0.cfg"
-                cp -f "0.cfg" "$DI_c/.11.cfg"
-                cp -f "0.cfg" "$DI_c/1.cfg"
-                cp -f "3.cfg" "$DI_c/3.cfg"
-                cp -f "4.cfg" "$DI_c/4.cfg"
-                cp -f "5.cfg" "$DI_c/5.cfg"
-                cp -f "10.cfg" "$DI_c/10.cfg"
                 cp -f "$DS/default/tpc.sh" "$DI_m/tpc.sh"
                 chmod +x "$DI_m/tpc.sh"
                 echo "$language_target" > "$DC_s/6.cfg"
                 echo "$lgsl" >> "$DC_s/6.cfg"
-                cd "$DI_m"
-                echo "$dte" > "13.cfg"
+                echo "$dte" > "$DI_c/13.cfg"
                 echo "$tpc_i" >> "$DM_t/$language_target/.3.cfg"
                 sed -i 's/'"$tpc_i"'//g' "$DM_t/$language_target/.2.cfg"
                 sed '/^$/d' "$DM_t/$language_target/.2.cfg" > "$DM_t/$language_target/.2.cfg.tmp"
@@ -309,20 +318,14 @@ function topic() {
         
             n=0
             while [ $n -le 4 ]; do
-            [ ! -f "$DC_tlt/$n.cfg" ] && touch "$DC_tlt/$n.cfg"
-            let n++
+                [ ! -f "$DC_tlt/$n.cfg" ] && touch "$DC_tlt/$n.cfg"
+                declare ls$n="$DC_tlt/$n.cfg"
+                declare inx$n=$(wc -l < "$DC_tlt/$n.cfg")
+                let n++
             done
-            ls0="$DC_tlt/0.cfg"
-            ls1="$DC_tlt/1.cfg"
-            ls2="$DC_tlt/2.cfg"
+
             nt="$(cat $DC_tlt/10.cfg)"
             source "$DC_tlt/12.cfg"
-            cd "$DC_tlt"
-            ws=$(wc -l < 3.cfg)
-            ss=$(wc -l < 4.cfg)
-            inx=$(wc -l < "$ls0")
-            tb1=$(wc -l < "$ls1")
-            tb2=$(wc -l < "$ls2")
             c=$(echo $(($RANDOM%100000))); KEY=$c
             cnf1=$(mktemp $DT/cnf1.XXX.x)
             cnf3=$(mktemp $DT/cnf3.XXX.x)
@@ -344,10 +347,10 @@ function topic() {
 
     [ -z "$tpc" ] && exit 1
 
-    label_info="<big><big>$tpc </big></big><small>\\n$ss $(gettext "Sentences") $ws $(gettext "Words") $(gettext "Created by") $author $(gettext "on") <span color='#6E9FD4'>${category^}</span> $date_u</small>"
+    label_info="<big><big>$tpc </big></big><small>\\n$inx4 $(gettext "Sentences") $inx3 $(gettext "Words") $(gettext "Created by") $author $(gettext "on") <span color='#6E9FD4'>${category^}</span> $date_u</small>"
     label_info2=""
 
-    if [ "$inx" -lt 1 ]; then
+    if [ "$inx0" -lt 1 ]; then
     
         notebook_1
      
@@ -371,7 +374,7 @@ function topic() {
 
         rm -f "$DT"/*.x
         
-    elif [ "$tb1" -ge 1 ]; then
+    elif [ "$inx1" -ge 1 ]; then
     
         if [ -f "$DC_tlt/9.cfg" ] && [ -f "$DC_tlt/7.cfg" ]; then
         
@@ -394,7 +397,7 @@ function topic() {
                     fi 
             fi
             
-            pres="<u><b>$(gettext "Learned")</b></u> $(gettext " * however you have new items") ($tb1).\\n$(gettext "Time set to review:") \t\t\t\t\t\\t\t\t\t\t$tdays $(gettext "days")"
+            pres="<u><b>$(gettext "Learned")</b></u> $(gettext " * however you have new items") ($inx1).\\n$(gettext "Time set to review:") \t\t\t\t\t\\t\t\t\t\t$tdays $(gettext "days")"
 
             notebook_2
             
@@ -451,7 +454,7 @@ function topic() {
                         cat "$cnf1" >> "$ls2"
 
                         cnt=$(wc -l < "$cnf1")
-                        grep -F -x -v -f "$cnf1" "$ls1" > "$DT/ls1.x"
+                        grep -Fxvf "$cnf1" "$ls1" > "$DT/ls1.x"
                         mv -f "$DT/ls1.x" "$ls1"
                         if [ -n "$(cat "$ls1" | sort -n | uniq -dc)" ]; then
                             cat "$ls1" | awk '!array_temp[$0]++' > "$DT/ls1.x"
@@ -465,7 +468,7 @@ function topic() {
                 rm -f $DT/*.x
             fi
         
-    elif [ "$tb1" -eq 0 ]; then
+    elif [ "$inx1" -eq 0 ]; then
     
         if [ ! -f "$DC_tlt/7.cfg" ]; then
             > "$DC_tlt/7.cfg"
@@ -524,7 +527,7 @@ function topic() {
                         sed -i 's/|TRUE|//g' "$cnf1"
                         cat "$cnf1" >> "$ls2"
                         cnt=$(wc -l < "$cnf1")
-                        grep -F -x -v -f "$cnf1" "$ls1" > "$DT/ls1.x"
+                        grep -Fxvf "$cnf1" "$ls1" > "$DT/ls1.x"
                         mv -f "$DT/ls1.x" "$ls1"
                         if [ -n "$(cat "$ls1" | sort -n | uniq -dc)" ]; then
                             cat "$ls1" | awk '!array_temp[$0]++' > "$DT/ls1.x"
