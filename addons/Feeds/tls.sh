@@ -326,7 +326,7 @@ elif [ "$1" = sync ]; then
             echo "$DIR" > $DT/s.tmp
             mv -f $DT/s.tmp $DCP/5.cfg
             if [ ! -d "$SYNCDIR" ]; then
-                msg "$(gettext "Failed: No directory\n ")" \
+                msg " $(gettext "The directory \'"$SYNCDIR"\' does not exist.\n Exiting.")" \
                 dialog-warning & exit 1; fi
             [ ! -d "$DIR" ] && exit 1
     fi
@@ -338,7 +338,7 @@ elif [ "$1" = sync ]; then
     exit=$?
     if [ $exit = 0 ] ; then
         log="$(cd "$SYNCDIR"; ls *.mp3 | wc -l)"
-        notify-send -i idiomind "$(gettext "Synchronization was completed")" "$log $(gettext "synchronized episodes(s)")" -t 8000
+        notify-send -i idiomind "$(gettext "Complete synchronization")" "$log $(gettext "synchronized episodes(s)")" -t 8000
     else
         notify-send -i dialog-warning "$(gettext "Error while syncing")" " " -t 8000
     fi

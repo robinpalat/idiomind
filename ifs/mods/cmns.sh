@@ -7,7 +7,7 @@ function internet() {
     | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
     yad --window-icon=idiomind --on-top \
     --image=info --name=Idiomind --class=Idiomind \
-    --text=" $(gettext "You have not internet connection")\n " \
+    --text=" $(gettext "No network connection\n Please connect to a network, then try again.") " \
     --image-on-top --center --sticky \
     --width=360 --height=120 --borders=3 \
     --skip-taskbar --title=Idiomind \

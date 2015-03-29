@@ -187,7 +187,7 @@ if [ -z "$1" ]; then
         --print-all --button="$(gettext "Restore")":3 --always-print-result \
         --button="$(gettext "Close")":0 --width=420 --height=300 \
         --title=Backup --columns=2 \
-        --field="$(gettext "Backing up periodically.")":CHK $backup \
+        --field="$(gettext "Backup regularly")":CHK $backup \
         --field="$(gettext "Path to save")":"":CDIR "$path" \
         --field=" :LBL" " " )
         
@@ -204,7 +204,7 @@ if [ -z "$1" ]; then
         
             if [ ! -d "$D_cps" ]; then
             
-                msg "$(gettext "Not defined directory\nfor Backups")\n" info
+                msg "$(gettext "Backup directory does not exist. \nPlease check the settings and try again.")\n" info
                 exit 1
                 
             elif [ ! -f "$D_cps/idiomind.backup" ]; then
@@ -279,7 +279,7 @@ elif [ "$1" = C ] && [ "$dte" != "$udt" ]; then
     
     if [ ! -d "$D_cps" ]; then
     
-        msg "$(gettext "Can not find the directory established for backups")" info
+        msg "$(gettext "Backup directory does not exist.")" info
       
         exit 1
     fi

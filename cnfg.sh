@@ -21,8 +21,8 @@ source /usr/share/idiomind/ifs/c.conf
 Encoding=UTF-8
 wth=$(($(sed -n 2p $DC_s/10.cfg)-480))
 eht=$(($(sed -n 3p $DC_s/10.cfg)-180))
-info1="$(echo "$(gettext "Do you want to change the interface language program?")"|xargs -n6|sed 's/^/  /')"
-info2="$(echo "$(gettext "You want to change the language setting to learn?")"|xargs -n6|sed 's/^/  /')"
+info1="$(gettext "Do you want to change the interface language program?")"
+info2="$(gettext "You want to change the language setting to learn?")"
 cd "$DS/addons"
 
 autostart="[Desktop Entry]
@@ -50,7 +50,7 @@ function confirm() {
     
     yad --form --center --borders=8 --image=$2 \
     --title="Idiomind" --on-top --window-icon=idiomind \
-    --skip-taskbar --button="$(gettext "Nope")":1 \
+    --skip-taskbar --button="$(gettext "No")":1 \
     --button="$(gettext "Yes")":0 --text="$1\n" \
     --width=350 --height=120
 }

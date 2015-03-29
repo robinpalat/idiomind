@@ -373,9 +373,9 @@ if [[ "$prdt" = A ]]; then
                     
                     if [ $(ls [0-9]* | wc -l) -ge 1 ]; then
                         btn="--button="$(gettext "Save Audio")":0"
-                        text_r2="$(gettext "There are some audio files who were unable to add.")\n"
+                        text_r2="$(gettext "Audio files that were not added")\n"
                     fi
-                    
+
                     dlg_text_info_3 "$text_r2$text_r1" "$btn" >/dev/null 2>&1
                     ret=$(echo "$?")
                     

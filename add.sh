@@ -494,7 +494,7 @@ function edit_list_words() {
         printf "aitm.$lns.aitm\n" >> "$DC_s/8.cfg"
 
             if [ -f "$DT_r/logw" ]; then
-                dlg_info_1 "$(gettext "Sentences that were not added")"
+                dlg_info_1 " $(gettext "Some items could not be added to your list")"
             fi
             [ -d "$DT_r" ] && rm -fr "$DT_r"
             rm -f logw "$DT"/*.$c & exit 1
@@ -671,7 +671,7 @@ function sentence_list_words() {
 
     if [ -f  "$DT_r/logw" ]; then
         logs="$(< $DT_r/logw)"
-        text_r1="$(gettext "Sentences that were not added")\n\n$logs"
+        text_r1=" $(gettext "Some items could not be added to your list")\n\n$logs"
         dlg_text_info_3 "$text_r1"
     fi
     
@@ -1066,7 +1066,7 @@ function process() {
                     
                     if [ $(cat ./slog ./wlog | wc -l) -ge 1 ]; then
                         
-                        dlg_text_info_3 "$(gettext "Sentences that were not added")\n\n$logs" >/dev/null 2>&1
+                        dlg_text_info_3 " $(gettext "Some items could not be added to your list")\n\n$logs" >/dev/null 2>&1
                     fi
                     if  [ $(cat ./slog ./wlog | wc -l) -ge 1 ]; then
                         rm=$(($(cat ./addw ./adds | wc -l) - $(cat ./slog ./wlog | sed '/^$/d' | wc -l)))

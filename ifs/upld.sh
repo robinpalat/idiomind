@@ -293,7 +293,7 @@ gzip -9 "$tpc.tar"
 mv "$tpc.tar.gz" "$U.$tpc.idmnd"
 [ -d "$DT_u/$tpc" ] && rm -fr "$DT_u/$tpc"
 dte=$(date "+%d %B %Y")
-notify-send "$(gettext "Uploading")" "$(gettext "Wait...")" -i idiomind -t 6000
+notify-send "$(gettext "Please wait while file is uploaded")" "$(gettext "$tpc")" -i idiomind -t 6000
 
 #-----------------------
 cd $DT_u

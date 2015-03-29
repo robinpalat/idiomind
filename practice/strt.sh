@@ -37,16 +37,16 @@ cd "$DC_tlt/practice"
 if [[ -n "$1" ]]; then
 
     if [ "$1" = 1 ]; then
-        info1="* "
+        info1="* "; info="<b>Test completed!</b>\n"
         echo 21 > .iconf
     elif [ "$1" = 2 ]; then
-        info2="* "
+        info2="* "; info="<b>Test completed!</b>\n"
         echo 21 > .iconmc
     elif [ "$1" = 3 ]; then
-        info3="* "
+        info3="* "; info="<b>Test completed!</b>\n"
         echo 21 > .iconlw
     elif [ "$1" = 4 ]; then
-        info4="* "
+        info4="* "; info="<b>Test completed!</b>\n"
         echo 21 > .iconls
     elif [ "$1" = 5 ]; then
         learned=$(cat l_f)
