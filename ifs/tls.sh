@@ -285,8 +285,8 @@ function check_index() {
         done < "$index"
 
         [ -f "$DC_tlt/0.cfg.tmp" ] && mv -f "$DC_tlt/0.cfg.tmp" "$DC_tlt/0.cfg"
-        [ -f "$DC_tlt/0.cfg.tmp" ] && mv -f "$DC_tlt/3.cfg.tmp" "$DC_tlt/3.cfg"
-        [ -f "$DC_tlt/0.cfg.tmp" ] && mv -f "$DC_tlt/4.cfg.tmp" "$DC_tlt/4.cfg"
+        [ -f "$DC_tlt/3.cfg.tmp" ] && mv -f "$DC_tlt/3.cfg.tmp" "$DC_tlt/3.cfg"
+        [ -f "$DC_tlt/4.cfg.tmp" ] && mv -f "$DC_tlt/4.cfg.tmp" "$DC_tlt/4.cfg"
         cp -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"
         cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
         
