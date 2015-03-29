@@ -47,7 +47,7 @@ function setting_1() {
             arr="in$n"
             [[ -z ${!arr} ]] && echo "$DS/images/addi.png" \
             || echo "$DS/images/add.png"
-        echo "  <span font_desc='Verdana 10'>$(gettext "${lbls[$n]}")</span><i></i>"
+        echo "  <span color='#646D72' font_desc='Verdana 10'>$(gettext "${lbls[$n]}")</span><i></i>"
         echo "${!sets[$n]}"
         let n++
     done
@@ -67,12 +67,12 @@ ret=$?
 
 if [ "$ret" -eq 0 ]; then
 
-    cd "$DT"; > ./index; n=1
+    cd "$DT"; > ./index.m3u; n=1
     while [ $n -le 6 ]; do
         val=$(sed -n "$n"p < "$slct" | cut -d "|" -f3)
         sed -i "s/${sets[$n]}=.*/${sets[$n]}=$val/g" "$DC_s/1.cfg"
         if [ "$val" = TRUE ]; then
-            [ -n "${!in[$n]}" ] && echo "${!in[$n]}" >> ./index
+            [ -n "${!in[$n]}" ] && echo "${!in[$n]}" >> ./index.m3u
         fi
         ((n=n+1))
     done
@@ -82,7 +82,7 @@ if [ "$ret" -eq 0 ]; then
     echo "$DM_tlt" > "$DT/tpp"
     source "$DC_s/1.cfg"
     
-    if [ -z "$(< "$DT/index")" ]; then
+    if [ -z "$(< "$DT/index.m3u")" ]; then
         notify-send "$(gettext "Exiting")" \
         "$(gettext "Nothing specified to play")" -i idiomind -t 3000 &&
         sleep 4

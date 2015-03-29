@@ -36,7 +36,7 @@ if [ "$1" = chngi ]; then
         fi
     }
 
-    index="$DT/index"
+    index="$DT/index.m3u"
     item="$(sed -n "$2"p "$index")"
     fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
     

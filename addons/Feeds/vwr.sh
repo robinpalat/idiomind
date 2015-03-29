@@ -15,10 +15,10 @@ dir="$DM_tl/Feeds/cache"
 fname=$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)
 
 if grep -Fxo "$item" < "$DM_tl/Feeds/.conf/2.cfg"; then
-btnlabel="Delete"
+btnlabel="<small>Delete</small>"
 btncmd="'$DSP/mngr.sh' delete_item '$item'"
 else
-btnlabel="Save"
+btnlabel="<small>Save</small>"
 btncmd="'$DSP/add.sh' new_item '$item'"
 fi
 
@@ -26,7 +26,6 @@ yad --html \
 --window-icon=idiomind --uri="$dir/$fname.html" \
 --center --title="$item" --borders=0 \
 --on-top --class=Idiomind \
---width=700 --height=540 \
---name=Idiomind --no-buttons \
+--width=700 --height=540 --name=Idiomind \
 --button="$btnlabel":"$btncmd" \
---button="gtk-close":1
+--button="<small>Close</small>":1

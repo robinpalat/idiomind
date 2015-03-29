@@ -58,8 +58,7 @@ elif [ "$1" = infsd ]; then
         if [ $ret -eq 0 ]; then
             
             internet; cd "$DT"
-            val="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP)"
-            eval "$val"
+            source /dev/stdin <<<"$(curl http://idiomind.sourceforge.net/doc/SITE_TMP)"
             [ -z "$DOWNLOADS" ] && msg "$(gettext "The server is not available at the moment.")" dialog-warning && exit
             
             file="$DOWNLOADS/$lng/$lnglbl/$category/$link"
@@ -209,8 +208,7 @@ exit 1
 fi
 
 internet; cd "$DT"
-val="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP)"
-eval "$val"
+source /dev/stdin <<<"$(curl http://idiomind.sourceforge.net/doc/SITE_TMP)"
 [ -z "$FTPHOST" ] && msg " $(gettext "An error occurred, please try later.")\n " dialog-warning && exit
 
 Author=$(echo "$upld" | cut -d "|" -f2)

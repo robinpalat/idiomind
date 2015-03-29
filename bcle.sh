@@ -24,17 +24,17 @@ source "$DC_s/1.cfg"
 cd "$DT"
 n=1
 
-if ([ -n "$(cat ./index)" ] && [ $(wc -l < ./index) -gt 0 ]); then
+if ([ -n "$(cat ./index.m3u)" ] && [ $(wc -l < ./index.m3u) -gt 0 ]); then
     if [ "$repeat" = "TRUE" ]; then
         while [ 1 ]; do
-            while [ $n -le $(wc -l < ./index) ]; do
+            while [ $n -le $(wc -l < ./index.m3u) ]; do
                 "$DS/chng.sh" chngi "$n"
                 let n++
             done
         done
         
     else
-        while [ $n -le $(wc -l < ./index) ]; do
+        while [ $n -le $(wc -l < ./index.m3u) ]; do
         "$DS/chng.sh" chngi "$n"
             let n++
         done

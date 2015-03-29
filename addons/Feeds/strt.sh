@@ -130,6 +130,39 @@ mediatype () {
         continue; fi
 }
 
+mkhtml () {
+
+    if [ "$tp" = vid ]; then
+        if [ $ex = m4v || $ex = mp4 ]; then
+        t = mp4
+        elif [ $ex = avi ]; then
+        t = avi; fi
+        
+printf "<link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwrstyle.css\">
+<video width=650 height=380 controls>
+<source src=\"$fname.$ex\" type=\"video/mp4\">
+Your browser does not support the video tag.
+</video><br><br>
+<div class=\"title\"><h3>$title</h3></div>
+<br>
+<div class=\"summary\">$summary<br><br></div>
+" > "$DMC/$fname.html"
+
+    elif [ "$tp" = aud ]; then
+printf "<link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwrstyle.css\">
+<br><div class=\"title\"><h2>$title</h2></div><br>
+<div class=\"summary\"><audio controls><br>
+<source src=\"$fname.$ex\" type=\"audio/mpeg\">
+Your browser does not support the audio tag.
+</audio><br>
+<br>
+$summary<br><br></div>
+" > "$DMC/$fname.html"
+
+    fi
+}
+
+
 get_images () {
     
     cd "$DT_r"; p=TRUE; rm -f *.jpeg *.jpg
@@ -258,42 +291,7 @@ fetch_podcasts() {
                 wait
                 
                 mv -f "media.$ex" "$DMC/$fname.$ex"
-                
-                #printf "\n$summary" > "$DMC/$fname.txt"
-                #echo -e "channel=\"$channel\"" > "$DMC/$fname.i"
-                #echo -e "link=\"$link\"" >> "$DMC/$fname.i"
-                #echo -e "title=\"$title\"" >> "$DMC/$fname.i"
-                
-                #<a href=\"$link\"Link
-                
-                if [ "$tp" = vid ]; then
-                if [ $ex = m4v || $ex = mp4 ]; then
-                t = mp4
-                elif [ $ex = avi ]; then
-                t = avi
-                fi
-                printf "
-                <link rel="stylesheet" href="./style.css">
-                <video width=650 height=380 controls>
-                <source src=\"$fname.$ex\" type=\"video/mp4\">
-                Your browser does not support the video tag.
-                </video><br><br>
-                <h3>$title</h3>
-                <br>
-                $summary
-                " > "$DMC/$fname.html"
-                elif [ "$tp" = aud ]; then
-                printf "
-                <link rel="stylesheet" href="./style.css">
-                <h2>$title</h2><br>
-                <audio controls>
-                <source src=\"$fname.$ex\" type=\"audio/mpeg\">
-                Your browser does not support the audio tag.
-                </audio> 
-                <br>
-                $summary
-                " > "$DMC/$fname.html"
-                fi
+                mkhtml
 
                 if [ -s "$DCP/1.cfg" ]; then
                 sed -i -e "1i$title\\" "$DCP/1.cfg"
