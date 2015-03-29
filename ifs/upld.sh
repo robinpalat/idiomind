@@ -19,6 +19,8 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
+lgt=$(lnglss $lgtl)
+lgs=$(lnglss $lgsl)
 
 if [ "$1" = vsd ]; then
 
@@ -55,10 +57,9 @@ elif [ "$1" = infsd ]; then
         ret=$?
         if [ $ret -eq 0 ]; then
             
-            internet
-            cd $DT
-            wget http://idiomind.sourceforge.net/doc/SITE_TMP
-            source $DT/SITE_TMP && rm -f $DT/SITE_TMP
+            internet; cd "$DT"
+            val="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP)"
+            eval "$val"
             [ -z "$DOWNLOADS" ] && msg "$(gettext "The server is not available at the moment.")" dialog-warning && exit
             
             file="$DOWNLOADS/$lng/$lnglbl/$category/$link"
@@ -139,7 +140,6 @@ nme=$(echo "$tpc" | sed 's/ /_/g' \
 | sed 's/"//g' | sed 's/’//g')
 imgm="$DM_tlt/words/images/img.png"
 
-#------------------------------------------
 "$DS/ifs/tls.sh" check_index "$tpc"
 
 if [ $(cat "$DC_tlt/0.cfg" | wc -l) -le 20 ]; then
@@ -208,11 +208,9 @@ $DS/ifs/upld.sh &
 exit 1
 fi
 
-internet
-
-cd $DT
-wget http://idiomind.sourceforge.net/doc/SITE_TMP
-source $DT/SITE_TMP && rm -f $DT/SITE_TMP
+internet; cd "$DT"
+val="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP)"
+eval "$val"
 [ -z "$FTPHOST" ] && msg " $(gettext "An error occurred, please try later.")\n " dialog-warning && exit
 
 Author=$(echo "$upld" | cut -d "|" -f2)
@@ -281,7 +279,8 @@ cp -r "./words" "$DT_u/$tpc/"
 cp -r "./words/images" "$DT_u/$tpc/words"
 mkdir "$DT_u/$tpc/.audio"
 while read audio; do
-    cp -f "$DM_tl/.share/$audio" "$DT_u/$tpc/.audio/$audio"
+    if [ -f "$DT_u/$tpc/.audio/$audio" ]; then
+    cp -f "$DM_tl/.share/$audio" "$DT_u/$tpc/.audio/$audio"; fi
 done < "$DC_tlt/5.cfg"
 cp -f "$DC_tlt/0.cfg" "$DT_u/$tpc/0.cfg"
 cp -f "$DC_tlt/3.cfg" "$DT_u/$tpc/3.cfg"
@@ -318,7 +317,6 @@ fi
 msg "$info" $image
 
 [ -d "$DT_u/$tpc" ] && rm -fr "$DT_u/$tpc"
-[ -f "$DT_u/SITE_TMP" ] && rm -f "$DT_u/SITE_TMP"
 [ -f "$DT_u/.aud" ] && rm -f "$DT_u/.aud"
 [ -f "$DT_u/$U.$tpc.idmnd" ] && rm -f "$DT_u/$U.$tpc.idmnd"
 [ -f "$DT_u/$tpc.tar" ] && rm -f "$DT_u/$tpc.tar"

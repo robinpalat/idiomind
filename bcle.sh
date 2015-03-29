@@ -17,6 +17,7 @@
 #  MA 02110-1301, USA.
 #
 #  2015/02/27
+
 [[ -z "$tpc" && -d "$DT" ]] && exit 1
 source "$DC_s/1.cfg"
 > "$DT/.p_"

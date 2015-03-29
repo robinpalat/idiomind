@@ -17,6 +17,7 @@
 #  MA 02110-1301, USA.
 #
 #  2015/02/27
+
 drts="$DS/practice/"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
@@ -56,24 +57,26 @@ function score() {
 
 function dialog1() {
     
-    SE=$(yad --center --text-info --image="$IMAGE" "$info" \
+    hint="$(iconv -c -f utf8 -t ascii <<<"$1" | tr -s "'" " ")"
+    SE=$(yad --center --text-info --image="$IMAGE" "$info" --image-on-top \
     --fontname="Free Sans 15" --justify=fill --editable --wrap \
-    --buttons-layout=end --borders=5 --title=" " --image-on-top \
-    --margins=8 --text-align=left --height=420 --width=470 \
-    --align=left --window-icon=idiomind --fore=4A4A4A --skip-taskbar \
-    --button="$(gettext "Hint")":"/usr/share/idiomind/practice/hint.sh '$1'" \
+    --buttons-layout=end --borders=5 --title=" " --margins=8 \
+    --text-align=left --height=420 --width=470 --name=Idiomind \
+    --align=left --window-icon=idiomind --fore=4A4A4A --class=Idiomind \
+    --button="$(gettext "Hint")":"/usr/share/idiomind/practice/hint.sh ${hint}" \
     --button="$listen":"play '$DM_tlt/$fname.mp3'" \
     --button=" $(gettext "OK") >> ":0)
     }
     
 function dialog2() {
-
+    
+    hint="$(iconv -c -f utf8 -t ascii <<<"$1" | tr -s "'" " ")"
     SE=$(yad --center --text-info --fore=4A4A4A --skip-taskbar \
     --fontname="Free Sans 15" --justify=fill --editable --wrap \
-    --buttons-layout=end --borders=5 --title=" " "$info" \
-    --margins=8 --text-align=left --height=180 --width=470 \
-    --align=left --window-icon=idiomind --image-on-top \
-    --button="$(gettext "Hint")":"/usr/share/idiomind/practice/hint.sh '$1'" \
+    --buttons-layout=end --borders=5 --title=" " "$info" --margins=8 \
+    --text-align=left --height=180 --width=470 --name=Idiomind \
+    --align=left --window-icon=idiomind --image-on-top --class=Idiomind \
+    --button="$(gettext "Hint")":"/usr/share/idiomind/practice/hint.sh ${hint}" \
     --button="$listen":"play '$DM_tlt/$fname.mp3'" \
     --button=" $(gettext "OK") >> ":0)
     }
@@ -100,9 +103,11 @@ function get_image_text() {
 function result() {
     
     echo "$SE" | awk '{print tolower($0)}' \
-    | sed 's/ /\n/g' | grep -v '^.$' > ing
+    | sed 's/ /\n/g' | grep -v '^.$' \
+    | sed s'/,//; s/\!//; s/\?//; s/¿//; s/\¡//; s/"//'g > ing
     cat quote | awk '{print tolower($0)}' \
-    | sed 's/ /\n/g' | grep -v '^.$' > all
+    | sed 's/ /\n/g' | grep -v '^.$' \
+    | sed s'/,//; s/\!//; s/\?//; s/¿//; s/\¡//; s/"//'g > all
     (
     ff="$(cat ing | sed 's/ /\n/g')"
     n=1

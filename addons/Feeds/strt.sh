@@ -67,12 +67,11 @@ rssf="$DCP/4.cfg"
 cp -f "$rssf" "$DT_r/rss_list"
 
 
-function conditions() {
+conditions() {
     
     [ ! -f "$DCP/1.cfg" ] && touch "$DCP/1.cfg"
     
-    
-    if ([ -f "$DT/.uptp" ] && [ -z "$1" ]); then
+    if [ -f "$DT/.uptp" ] && [ -z "$1" ]; then
         msg_2 "$(gettext "Wait till it finishes a previous process")\n" info OK gtk-stop
         ret=$(echo $?)
         [ $ret -eq 1 ] && "$DS/stop.sh" feed
@@ -368,7 +367,7 @@ check_index() {
     fi
 }
 
-conditions
+conditions "$1"
 
 if [ "$1" != A ]; then
     echo "$tpc" > "$DC_s/4.cfg"

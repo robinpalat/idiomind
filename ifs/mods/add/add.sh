@@ -208,9 +208,9 @@ function voice() {
             echo "$1" | text2wave -o ./s.wav
             sox ./s.wav "$3"
             else
-                msg "$(gettext "Festival can not process text") $lgtl" error
-                [ -d "$DT_r" ] && rm -fr "$DT_r"
-                exit 1
+            msg "$(gettext "Festival can not process text") $lgtl" error
+            [ -d "$DT_r" ] && rm -fr "$DT_r"
+            exit 1
             fi
         else
             echo "$1" | "$vs"
@@ -318,10 +318,9 @@ function fetch_audio() {
                     mv -f "$3/${word,,}.mp3" "$4/${word,,}.mp3"
             else
                 voice "$word" "$3" "$4/${word,,}.mp3"; fi
-            
-            [ "$4" = "$DM_tl/.share" ] \
-            && echo "${word,,}.mp3" >> "$DC_tlt/5.cfg"
         fi
+        
+        echo "${word,,}.mp3" >> "$DC_tlt/5.cfg"
         
     done < "$words_list"
 }

@@ -17,6 +17,7 @@
 #  MA 02110-1301, USA.
 #
 #  2015/02/27
+
 source /usr/share/idiomind/ifs/c.conf
 
 [ -z "$tpc" ] && exit 1
@@ -76,7 +77,7 @@ if [ "$ret" -eq 0 ]; then
         ((n=n+1))
     done
 
-    rm -f "$slct"; 
+    rm -f "$slct";
     "$DS/stop.sh" playm
     echo "$DM_tlt" > "$DT/tpp"
     source "$DC_s/1.cfg"

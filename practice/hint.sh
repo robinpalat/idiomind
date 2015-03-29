@@ -17,12 +17,10 @@
 #  MA 02110-1301, USA.
 #
 #  2015/02/27
-echo "$1" | awk '{print tolower($0)}' | sed "s/\'//g" | sed "s/\b\(.\)/\u\1/g" \
+
+h="$(echo "$@" | sed "s/\'//g" | awk '{print tolower($0)}'  | sed "s/\b\(.\)/\u\1/g" \
 | sed "s|\.||; s|\,||; s|\;||g" | sed "s|[a-z]|"\."|g" | sed "s| |\t|g" \
-| sed "s|\.|\ .|g" | tr "[:upper:]" "[:lower:]" | sed 's/^\s*./\U&\E/g' | \
-yad --center --text-info --skip-taskbar \
---justify=left --margins=15 --fontname="Free Sans 15"  \
---buttons-layout=end --borders=0 --wrap --title=" " \
---text-align=center --height=150 --width=460 \
---on-top --align=center --window-icon=idiomind \
---no-buttons & exit
+| sed "s|\.|\ .|g" | tr "[:upper:]" "[:lower:]" | sed 's/^\s*./\U&\E/g')"
+yad --center --text="<span font_desc='Free Sans Bold 15'>$h </span>" --skip-taskbar \
+--buttons-layout=end --borders=15 --title=" " --height=190 --width=470 \
+--on-top --window-icon=idiomind --no-buttons & exit
