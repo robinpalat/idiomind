@@ -37,7 +37,7 @@ function look() {
     --on-top --skip-taskbar --window-icon=idiomind \
     --center --image="$DS/practice/icons_st/21.png" --button=Ok:2 \
     --button="   $(gettext "Restart")   ":0 --width=360 --height=120 \
-    --text="<b>   $(gettext "Complete practice")</b>\\n    $(cat $1)\\n\\n"
+    --text="<b>   $(gettext "Complete practice")</b>\\n   $(cat $1)\n "
 }
 
 function get_list() {
@@ -75,10 +75,10 @@ function get_list_sentences() {
 
 function starting() {
     
-    yad --form --center --borders=5 --image=info \
+    yad --center --borders=5 --image=info \
     --title="$practice" --on-top --window-icon=idiomind \
     --button=Ok:1 --skip-taskbar --width=360 --height=120 \
-    --text " $1  "
+    --text=" $1  "
     "$strt" & killall prct.sh.sh & exit 1
 }
 

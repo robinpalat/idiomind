@@ -234,19 +234,19 @@ function delete_item() {
     
         file="$DM_tlt/words/$fname.mp3"
         trgt=$(eyeD3 "$file" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
-        msg_2 "$(gettext "Are you sure you want to delete this word?")\n\n" \
+        msg_2 "$(gettext "Are you sure you want to delete this word?")\n" \
         dialog-question "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
 
     elif [ -f "$DM_tlt/$fname.mp3" ]; then
     
         file="$DM_tlt/$fname.mp3"
         trgt=$(eyeD3 "$file" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
-        msg_2 "$(gettext "Are you sure you want to delete this sentence?")\n\n" \
+        msg_2 "$(gettext "Are you sure you want to delete this sentence?")\n" \
         dialog-question "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
 
     else
         trgt="${3}"
-        msg_2 "$(gettext "Are you sure you want to delete this item?")\n\n" \
+        msg_2 "$(gettext "Are you sure you want to delete this item?")\n" \
         dialog-question "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
 
     fi
@@ -293,7 +293,7 @@ function delete_topic() {
     
     include "$DS/ifs/mods/mngr"
     
-    msg_2 "$(gettext "Are you sure you want to delete this Topic?")\n\n" \
+    msg_2 "$(gettext "Are you sure you want to delete this Topic?")\n" \
     dialog-question "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
     ret=$(echo "$?")
         

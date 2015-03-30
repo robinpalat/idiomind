@@ -12,10 +12,8 @@ if [ ! -d "$DC_a/dict/" ]; then
 [ ! -f "$DC_a/dict/.dicts" ] && touch "$DC_a/dict/.dicts"
 [ ! -f "$DC_a/dict/.lng" ] && echo $lgtl > "$DC_a/dict/.lng"
 
-if  [ -z "$(cat $DC_a/dict/.dicts)" ]; then
-    "$DS_a/Dics/cnfg.sh" "" f "$(gettext " Not indicated a dictionary Select one or more of the list")"; fi
-if [ "$(cat $DC_a/dict/.lng)" != $lgtl ]; then
-    "$DS_a/Dics/cnfg.sh" "" f "$(gettext " Not indicated a dictionary Select one or more of the list")"
+if  [ -z "$(cat $DC_a/dict/.dicts)" ] || [ "$(cat $DC_a/dict/.lng)" != $lgtl ] ; then
+    "$DS_a/Dics/cnfg.sh" "" f "$(gettext " Not indicated a dictionary Select one or more of the list.")"
     echo $lgtl > "$DC_a/dict/.lng"; fi
 
 function dictt() {

@@ -42,9 +42,11 @@ fi
 function add_audio() {
 
     cd $HOME
-    AU=$(yad --width=620 --height=400 --file --on-top --name=idiomind \
-    --class=idiomind --window-icon=idiomind --center --file-filter="*.mp3" \
-    --button=Ok:0 --borders=0 --title="$ttl" --skip-taskbar)
+    AU=$(yad --width=620 --height=500 --file --on-top --name=Idiomind \
+    --text=" $(gettext "Browse to and select the audio file that you want to add.")" \
+    --class=Idiomind --window-icon=idiomind --center --file-filter="*.mp3" \
+    --button="$(gettext "Cancel")":1 --button="$(gettext "OK")":0 \
+    --borders=5 --title="$(gettext "Add Audio")")
 
     ret=$?
     audio=$(echo "$AU" | cut -d "|" -f1)

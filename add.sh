@@ -251,7 +251,7 @@ function new_sentence() {
     if ( [ -z $(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary') ] \
     || [ ! -f "$DM_tlt/$fname.mp3" ] || [ -z "$trgt" ] || [ -z "$srce" ] ); then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "Something unexpected has occurred while saving the note.")" dialog-warning & exit 1
+        msg " $(gettext "Something unexpected has occurred while saving the note.  \n")" dialog-warning & exit 1
     fi
     
     add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3"
@@ -274,7 +274,7 @@ function new_sentence() {
     
     if ([ -z "$grmrk" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ]); then
         rm "$DM_tlt/$fname.mp3"
-        msg "$(gettext "Something unexpected has occurred while saving the note.")" dialog-warning 
+        msg " $(gettext "Something unexpected has occurred while saving the note.  \n")" dialog-warning 
         [ -d "$DT_r" ] && rm -fr "$DT_r" & exit 1
     fi
     
@@ -386,7 +386,7 @@ function new_word() {
     
     else
         [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
-        msg "$(gettext "Something unexpected has occurred while saving the note")" dialog-warning & exit 1
+        msg " $(gettext "Something unexpected has occurred while saving the note.  \n")" dialog-warning & exit 1
     fi
 
     [ -d "$DT_r" ] && rm -fr "$DT_r"
@@ -490,7 +490,7 @@ function edit_list_words() {
         printf "aitm.$lns.aitm\n" >> "$DC_s/8.cfg"
 
             if [ -f "$DT_r/logw" ]; then
-                dlg_info_1 " $(gettext "Some items could not be added to your list")"
+                dlg_info_1 " $(gettext "Some items could not be added to your list.") "
             fi
             [ -d "$DT_r" ] && rm -fr "$DT_r"
             rm -f logw "$DT"/*.$c & exit 1
@@ -666,10 +666,10 @@ function sentence_list_words() {
 
     if [ -f  "$DT_r/logw" ]; then
         logs="$(< $DT_r/logw)"
-        text_r1=" $(gettext "Some items could not be added to your list")\n\n$logs"
+        text_r1=" $(gettext "Some items could not be added to your list.")\n\n$logs "
         dlg_text_info_3 "$text_r1"
     fi
-    
+
     rm -f "$DT"/*."$c" 
     [ -d "$DT_r" ] && rm -fr "$DT_r"
     exit 1
@@ -1045,7 +1045,7 @@ function process() {
                     
                     if [ $(cat ./slog ./wlog | wc -l) -ge 1 ]; then
                         
-                        dlg_text_info_3 " $(gettext "Some items could not be added to your list")\n\n$logs" >/dev/null 2>&1
+                        dlg_text_info_3 " $(gettext "Some items could not be added to your list.")\n\n$logs " >/dev/null 2>&1
                     fi
                     if  [ $(cat ./slog ./wlog | wc -l) -ge 1 ]; then
                         rm=$(($(cat ./addw ./adds | wc -l) - $(cat ./slog ./wlog | sed '/^$/d' | wc -l)))

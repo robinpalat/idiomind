@@ -81,7 +81,7 @@ elif [ "$1" != chngi ]; then
     eht=$(($(sed -n 3p $DC_s/10.cfg)-0))
     
     if [ -n "$1" ]; then
-        text="--text=<small>$1\n</small>"
+        text="--text=$1\n"
         align="left"; h=1
         img="--image=info"
     else

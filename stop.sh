@@ -1,48 +1,70 @@
 #!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
 
-if echo "$1" | grep "playm"; then
+playm() {
     killall bcle.sh &
     [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/bcle.sh")" ] && killall bcle.sh &
+    [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/bcle.sh")" ] && killall bcle.sh &
     [ -n "$(ps -A | pgrep -f "chng.sh")" ] && killall chng.sh &
-    [ -n "$(ps -A | pgrep -f "yad --form ")" ] && kill -9 $(pgrep -f "yad --form ") &
+    [ -f "$DT/.p_" ] && rm -fr "$DT/.p_" "$DT/tpp"
     exit
-elif echo "$1" | grep "play"; then
+}
+
+play() {
     killall bcle.sh &
     [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/bcle.sh")" ] && killall bcle.sh &
+    [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/bcle.sh")" ] && killall bcle.sh &
     [ -n "$(ps -A | pgrep -f "chng.sh")" ] && killall chng.sh &
-    [ -n "$(ps -A | pgrep -f "tls.sh")" ] && killall tls.sh &
     [ -n "$(ps -A | pgrep -f "notify-osd")" ] && killall notify-osd &
     [ -n "$(ps -A | pgrep -f "play")" ] && killall play &
     [ -n "$(ps -A | pgrep -f "mplayer")" ] && killall mplayer &
     [ -f "$DT/.p_" ] && rm -fr "$DT/.p_" "$DT/tpp"
     exit
-elif echo "$1" | grep "S"; then
+}
+
+S() {
     killall bcle.sh &
     [ -n "$(ps -A | pgrep -f "bcle.sh")" ] && killall bcle.sh &
     [ -n "$(ps -A | pgrep -f "notify-osd")" ] && killall notify-osd &
     [ -n "$(ps -A | pgrep -f "play")" ] && killall play &
     [ -n "$(ps -A | pgrep -f "play.sh")" ] && killall play.sh &
     [ -n "$(ps -A | pgrep -f "chng.sh")" ] && killall chng.sh &
-    [ -n "$(ps -A | pgrep -f "yad --form ")" ] && kill -9 $(pgrep -f "yad --form ") &
     exit
-elif echo "$1" | grep "V"; then
+}
+
+V() {
     [ -n "$(ps -A | pgrep -f "chng.sh")" ] && killall chng.sh &
-    [ -n "$(ps -A | pgrep -f "yad --form ")" ] && kill -9 $(pgrep -f "yad --form ") &
     exit
-elif echo "$1" | grep "L"; then
+}
+
+L() {
     killall bcle.sh &
     [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/bcle.sh")" ] && killall bcle.sh &
     [ -n "$(ps -A | pgrep -f "notify-osd")" ] && killall notify-osd &
     [ -n "$(ps -A | pgrep -f "play")" ] && killall play &
     [ -n "$(ps -A | pgrep -f "chng.sh")" ] && killall chng.sh &
-    [ -n "$(ps -A | pgrep -f "yad --form ")" ] && kill -9 $(pgrep -f "yad --form ") &
     [ -d "$DT/p" ] && rm -fr "$DT/p"
     exit
-elif echo "$1" | grep "feed"; then
-    [ -n "$(ps -A | pgrep -f "rsstail")" ] && killall rsstail &
+}
+
+feed() {
     killall strt.sh &
     [ -f "$DT/.uptf" ] && rm -fr "$DT/.uptf"
     [ -f "$DT/.uptp" ] && rm -fr "$DT/.uptp"
     exit
-fi
+}
+
+case "$1" in
+    playm)
+    playm ;;
+    play)
+    play ;;
+    S)
+    S ;;
+    V)
+    V ;;
+    L)
+    L ;;
+    feed)
+    feed ;;
+esac

@@ -137,14 +137,12 @@ elif [ -z "$1" ]; then
     fi
     
     if [ "$2" = f ]; then
-    tex="--text=<small>$3\n</small>"
-    align="--text-align=left"; else
-    tex="--center"
-    align="--text-align=right"; fi
+    tex="--text=$3\n"; else
+    tex="--center"; fi
     
     sel="$(dict_list | yad --list --title="$(gettext "Dictionaries")" \
-    --expand-column=2 "$tex" $align --name=Idiomind --class=Idiomind \
-    --width=480 --height=350 --skip-taskbar --separator=" " \
+    --expand-column=2 "$tex" --name=Idiomind --class=Idiomind \
+    --width=480 --height=350 --skip-taskbar --separator=" " --center \
     --borders=10 --button="$(gettext "Add")":2 --print-all --button=OK:0 \
     --column=" ":CHK --column="$(gettext "Available dictionaries")":TEXT \
     --column=" ":TEXT --window-icon=idiomind \
