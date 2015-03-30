@@ -69,7 +69,7 @@ function notebook_1() {
     --column=Name:TEXT --dclick-action='./vwr.sh v2' &
     yad --form --scroll --borders=10 --plug=$KEY --tabnum=3 --columns=2 \
     --text="$label_info" \
-    --field="$(gettext "Notes")\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t":txt "$nt" \
+    --field="$(gettext "Notes")\t\t\t\t\t\t\t\t":txt "$nt" \
     --field="<small>$(gettext "Rename")</small>:" "$tpc" \
     --field="$(gettext "Mark as learned")":FBTN "$DS/mngr.sh 'mark_as_learned'" \
     --field="$label_info2":LBL " " \
@@ -101,7 +101,7 @@ function notebook_2() {
     --column=Name:TEXT --dclick-action='./vwr.sh v2' &
     yad --form --scroll --borders=10 --plug=$KEY --tabnum=3 --columns=2 \
     --text="$label_info" \
-    --field="$(gettext "Notes")\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t":txt "$nt" \
+    --field="$(gettext "Notes")\t\t\t\t\t\t\t\t":txt "$nt" \
     --field="<small>$(gettext "Rename")</small>:" "$tpc" \
     --field="$(gettext "Review")":FBTN "$DS/mngr.sh 'mark_as_learn'" \
     --field="$label_info2":LBL " " \
@@ -123,13 +123,13 @@ function notebook_2() {
 function dialog_1() {
     
     yad --title="$tpc" --window-icon=idiomind \
-    --borders=20 --buttons-layout=edge \
+    --borders=10 --buttons-layout=edge \
     --image=dialog-question --on-top --center \
     --window-icon=idiomind \
     --buttons-layout=edge --class=idiomind \
     --button="       $(gettext "Not Yet")       ":1 \
     --button="        $(gettext "Review")        ":2 \
-    --text="$(gettext "days have passed since you mark this topic as learned, you want to review it?")" \
+    --text="$(gettext "More than") $tdays $(gettext "days have passed since you mark this topic as learned. You'd like to review?")" \
     --name=Idiomind --width=420 --height=150 --class=Idiomind
 }
 
@@ -143,7 +143,7 @@ function dialog_2() {
     --center --class=Idiomind \
     --button="$(gettext "Only New items")":3 \
     --button="$(gettext "All Items")":2 \
-    --text="  $(gettext "Go over whole list or only new items?") " \
+    --text="  $(gettext "Review entire list or only new items?") " \
     --width=420 --height=150
 }
 
