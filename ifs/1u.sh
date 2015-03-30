@@ -76,8 +76,8 @@ if [[ $ret -eq 1 ]]; then
     killall 1u.sh & exit 1
 
 elif [[ $ret -eq 0 ]]; then
-    source=$(echo "$dlg" | cut -d "|" -f2)
-    target=$(echo "$dlg" | cut -d "|" -f4)
+    target=$(echo "$dlg" | cut -d "|" -f2)
+    source=$(echo "$dlg" | cut -d "|" -f4)
     
     if [ -z "$dlg" ]; then
         /usr/share/idiomind/ifs/1u.sh & exit 1
@@ -92,7 +92,7 @@ elif [[ $ret -eq 0 ]]; then
     if [ $? -ne 0 ]; then
         yad --name=idiomind \
         --image=error --button=gtk-ok:1\
-        --text=" $(gettext "Error while trying to write on") /home/$user/</b>\\n" \
+        --text=" $(gettext "Error while trying to write on") \'/home/$user/\'\n" \
         --image-on-top --sticky --fixed \
         --width=320 --height=80 \
         --borders=2 --title=Idiomind \

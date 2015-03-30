@@ -677,11 +677,10 @@ function sentence_list_words() {
 
 function process() {
     
-    wth=$(($(sed -n 2p $DC_s/10.cfg)-350))
-    eht=$(($(sed -n 3p $DC_s/10.cfg)-0))
+    wth=$(($(sed -n 2p $DC_s/10.cfg)-50))
+    eht=$(($(sed -n 3p $DC_s/10.cfg)-50))
     ns=$(wc -l < "$DC_tlt/0.cfg")
     source "$DS/default/dicts/$lgt"
-    nspr='/usr/share/idiomind/add.sh process'
     lckpr="$DT/.n_s_pr"
     DM_tlt="$DM_tl/$tpe"
     DC_tlt="$DM_tl/$tpe/.conf"
@@ -818,7 +817,7 @@ function process() {
                     ret=$(echo "$?")
                         
                         if [ $ret -eq 0 ]; then
-                            "$nspr" "$(cat ./sort)" $DT_r "$tpe" &
+                            "$DS/add.sh" process "$(cat ./sort)" $DT_r "$tpe" &
                             exit 1
                         else
                             [ -d "$DT_r" ] && rm -fr "$DT_r"
@@ -953,7 +952,7 @@ function process() {
                     done
                     
                     #words
-                    n=1
+                    n=1; touch wrds
                     while [ $n -le $(wc -l < wrds | head -50) ]; do
                     
                         sname=$(sed -n "$n"p wrdsls)

@@ -37,7 +37,7 @@ function feedmode() {
     --expand-column=2 --ellipsize=END --print-all --column=Name:IMG \
     --column=Name --dclick-action="$DSP/vwr.sh" &
     yad --form --scroll --borders=10 --plug=$KEY --tabnum=3 --columns=2 \
-    --field="Notes\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t":txt "$nt" \
+    --field="$(gettext "Notes")$spc":txt "$nt" \
     --field=" :LBL" "2" \
     --field="$(gettext "Subscriptions")":FBTN "$DS/addons/Feeds/cnfg.sh" \
     --field=" $itxt2":lbl " " \

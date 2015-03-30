@@ -84,6 +84,7 @@ done
 fi
 
 source "$DC_s/1.cfg"
+if [ "$text" != TRUE ] && [ "$audio" != TRUE ]; then audio=TRUE; fi
 yad --plug=$KEY --tabnum=1 \
 --separator='|' --form --align=right --scroll \
 --always-print-result --print-all \
@@ -96,7 +97,7 @@ yad --plug=$KEY --tabnum=1 \
 --field=" :LBL" " " \
 --field="$(gettext "Play Options")\t":LBL " " \
 --field=":LBL" " " \
---field="$(gettext "Texto")":CHK "$text" \
+--field="$(gettext "Text")":CHK "$text" \
 --field="$(gettext "Audio")":CHK "$audio" \
 --field="$(gettext "Repeat")":CHK "$repeat" \
 --field="$(gettext "Only videos")":CHK "$videos" \

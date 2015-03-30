@@ -76,7 +76,7 @@ function get_list_sentences() {
 function starting() {
     
     yad --center --borders=5 --image=info \
-    --title="$practice" --on-top --window-icon=idiomind \
+    --title=$(gettext "Practice") --on-top --window-icon=idiomind \
     --button=Ok:1 --skip-taskbar --width=360 --height=120 \
     --text=" $1  "
     "$strt" & killall prct.sh.sh & exit 1

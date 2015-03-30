@@ -344,9 +344,8 @@ function dlg_msg_3() {
         --image=info --name=Idiomind --class=Idiomind \
         --text="$(gettext "Wait till it finishes a previous process")" \
         --fixed --sticky --buttons-layout=edge \
-        --width=360 --height=120 --borders=5 \
-        --window-icon=idiomind \
-        --title=Idiomind --button=gtk-cancel:3 --button=Ok:1
+        --width=360 --height=120 --borders=5 --window-icon=idiomind \
+        --title=Idiomind --button=gtk-stop:3 --button=Ok:1
 }
 
 
@@ -355,7 +354,7 @@ function dlg_msg_3() {
 function dlg_msg_6() {
     
         yad --name=Idiomind --class=Idiomind --center --on-top \
-        --text=" $1" --width=420 --height=120 --borders=3 --image=info \
+        --text=" $1" --width=420 --height=120 --borders=5 --image=info \
         --skip-taskbar --window-icon=idiomind --sticky --image-on-top \
         --title=Idiomind --button=$(gettext "Cancel"):1 --button=Ok:0
 }
@@ -416,7 +415,7 @@ function dlg_radiolist_1() {
         --sticky --skip-taskbar --window-icon=idiomind \
         --height=420 --width=150 --separator="\\n" \
         --button=$(gettext "Save"):0 --title="$(gettext "Listing words")" \
-        --borders=3 --column=" " --column="$(gettext "Sentences")"
+        --borders=5 --column=" " --column="$(gettext "Sentences")"
 }
 
 
@@ -428,7 +427,7 @@ function dlg_checklist_1() {
         --on-top --text="<small>$2</small>" --class=Idiomind \
         --center --sticky --no-headers --name=Idiomind \
         --buttons-layout=end --width=400 \
-        --height=280 --borders=10 --window-icon=idiomind \
+        --height=280 --borders=5 --window-icon=idiomind \
         --button=gtk-close:1 --button=$(gettext "Add"):0 \
         --column="" --column="Select" > "$slt"
 }
@@ -443,7 +442,7 @@ function dlg_checklist_3() {
         --dclick-action='/usr/share/idiomind/add.sh dclik_list_words' \
         --list --checklist --class=Idiomind --center --sticky \
         --text="<small>$info</small>" --title="$tpe" --no-headers \
-        --width=$wth --print-all --height=$eht --borders=3 \
+        --width=$wth --print-all --height=$eht --borders=5 \
         --button="$(gettext "Cancel")":1 --button=$(gettext "Arrange"):2 \
         --button="$(gettext "To New Topic")":"$DS/add.sh 'new_topic'" \
         --button=gtk-add:0 \
@@ -459,8 +458,7 @@ function dlg_text_info_1() {
         yad --text-info --editable --window-icon=idiomind \
         --name=Idiomind --wrap --margins=60 --class=Idiomind \
         --sticky --fontname=vendana --on-top --center \
-        --skip-taskbar --width=$wth \
-        --height=$eht --borders=3 \
+        --skip-taskbar --width=$wth --height=$eht --borders=5 \
         --button=gtk-ok:0 --title="$tpe" > ./sort
 }
 
@@ -471,7 +469,7 @@ function dlg_text_info_3() {
         printf "$1" | yad --text-info --center --wrap \
         --center --on-top --title=Idiomind --class=Idiomind \
         --width=420 --height=150 --on-top --margins=4 \
-        --window-icon=idiomind --borders=0 --name=Idiomind \
+        --window-icon=idiomind --borders=5 --name=Idiomind \
         "$2" --button=Ok:1
 }
 
@@ -482,25 +480,22 @@ function dlg_text_info_4() {
         echo "$1" | yad --text-info --center --wrap \
         --name=Idiomind --class=Idiomind --window-icon=idiomind \
         --text=" " --sticky --width=$wth --height=$eht \
-        --margins=8 --borders=3 --button=Ok:0 \
-        --title=Idiomind
+        --margins=8 --borders=5 --button=Ok:0 --title=Idiomind
 }
 
 
 function dlg_progress_1() {
     
-        yad --progress --progress-text=" " \
+        yad --progress --progress-text=" " --on-top \
         --width=200 --height=20 --geometry=200x20-2-2 \
-        --pulsate --percentage="5" --on-top \
-        --undecorated --auto-close \
-        --skip-taskbar --no-buttons
+        --pulsate --percentage="5" \
+        --undecorated --auto-close --skip-taskbar --no-buttons
 }
 
 
 function dlg_progress_2() {
 
-        yad --progress --progress-text=" " \
+        yad --progress --progress-text=" " --on-top \
         --width=200 --height=20 --geometry=200x20-2-2 \
-        --undecorated --auto-close --on-top \
-        --skip-taskbar --no-buttons
+        --undecorated --auto-close --skip-taskbar --no-buttons
 }

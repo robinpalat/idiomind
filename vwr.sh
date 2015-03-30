@@ -9,7 +9,7 @@ echo "_" >> "$DC_a/stats/.tmp" &
 re='^[0-9]+$'
 now="$2"
 nuw="$3"
-listen="▷"
+listen="$(gettext "Listen")"
 
 if ! [[ $nuw =~ $re ]]; then
     nuw=$(grep -Fxon "$now" < "$ind" \
