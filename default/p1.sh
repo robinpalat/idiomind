@@ -4,9 +4,8 @@
 u=$(echo "$(whoami)")
 nmt=$(sed -n 1p /tmp/.idmtp1.$u/idmimp_X015x/ls)
 dir="/tmp/.idmtp1.$u/idmimp_X015x/$nmt"
-wth=$(($(sed -n 2p $DC_s/10.cfg)-320))
-eht=$(($(sed -n 3p $DC_s/10.cfg)-130))
-    
+wth=$(sed -n 2p $DC_s/10.cfg)
+eht=$(($(sed -n 3p $DC_s/10.cfg)-180))
 re='^[0-9]+$'
 now="$1"
 nuw="$2"
@@ -26,9 +25,9 @@ fi
 fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
 
 if [ -f "$dir/words/$fname.mp3" ]; then
-        file="$dir/words/$fname.mp3"
-        listen="--button=Listen:play '$dir/words/$fname.mp3'"
 
+    file="$dir/words/$fname.mp3"
+    listen="--button=Listen:play '$dir/words/$fname.mp3'"
     tgs=$(eyeD3 "$file")
     trgt=$(grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)' <<<"$tgs")
     src=$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)' <<<"$tgs")
@@ -44,15 +43,15 @@ if [ -f "$dir/words/$fname.mp3" ]; then
     --window-icon=idiomind --scroll --text-align=center \
     --skip-taskbar --center --title="$MPG " --borders=20 \
     --quoted-output --on-top --selectable-labels \
-    --text="<big><big><big><b>$trgt</b></big></big></big>\n\n<i>$src</i>\n\n" \
+    --text="<span font_desc='Sans Free Bold 22'>$trgt</span>\n\n<i>$src</i>\n\n" \
     --field="":lbl --field="<i><span color='#808080'>$exmp1 \
 </span></i>\\n:lbl" "$dfnts" "$ntess" \
     "$listen" --button=gtk-go-up:3 --button=gtk-go-down:2
 
 elif [ -f "$dir/$fname.mp3" ]; then
-        file="$dir/$fname.mp3"
-        listen="--button=Listen:play '$dir/$fname.mp3'"
-    
+
+    file="$dir/$fname.mp3"
+    listen="--button=Listen:play '$dir/$fname.mp3'"
     dwck="/tmp/.idmtp1.$u/p2.X015x"
     tgs=$(eyeD3 "$file")
     trgt=$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"$tgs")
@@ -63,26 +62,25 @@ elif [ -f "$dir/$fname.mp3" ]; then
     --window-icon=idiomind --scroll --no-headers \
     --skip-taskbar --center --title=" " --borders=15 \
     --on-top --selectable-labels --expand-column=0 \
-    --text="<big><big>$trgt</big></big>\\n\\n<i>$src</i>\\n\\n" \
+    --text="<span font_desc='Sans Free 15'>$trgt</span>\n\n<i>$src</i>\n\n" \
     --width=$wth --height=$eht --center \
     --column="":TEXT --column="":TEXT \
     "$listen" --button=gtk-go-up:3 --button=gtk-go-down:2 \
     --dclick-action="$dwck"
     
 else
-    ff=$(($nuw + 1))
+    ff=$((nuw - 1))
     echo "_" >> /tmp/.sc
     [[ $(wc -l < /tmp/.sc) -ge 5 ]] && rm -f /tmp/.sc & exit 1 \
-    || /tmp/.idmtp1.$u/p1.X015x "$nll" "$ff" & exit 1
+    || "/tmp/.idmtp1.$u/p1.X015x" "$nll" "$ff" & exit 1
 fi
 
 ret=$?
-if [[ $ret -eq 2 ]]; then
-ff=$(($nuw + 1))
-/tmp/.idmtp1.$u/p1.X015x "$nll" "$ff" &
-elif [[ $ret -eq 3 ]]; then
-ff=$(($nuw - 1))
-/tmp/.idmtp1.$u/p1.X015x "$nll" "$ff" &
-exit 1
+if [ $ret -eq 2 ]; then
+ff=$((nuw-1))
+"/tmp/.idmtp1.$u/p1.X015x" "$nll" "$ff" &
+elif [ $ret -eq 3 ]; then
+ff=$((nuw+1))
+"/tmp/.idmtp1.$u/p1.X015x" "$nll" "$ff" &
 fi
 

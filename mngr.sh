@@ -79,7 +79,7 @@ function mark_as_learn() {
     
     include "$DS/ifs/mods/mngr"
     if [ $(wc -l < "$DC_tlt/2.cfg") -le 15 ]; then
-        msg "$(gettext "You must be at least 15 items.")\n " info &
+        msg "$(gettext "Sorry, you must be at least 15 items.")\n " info &
         exit
     fi
 
@@ -134,7 +134,7 @@ function mark_as_learned() {
 
     include "$DS/ifs/mods/mngr"
     if [ $(wc -l < "$DC_tlt/1.cfg") -le 15 ]; then
-        msg "$(gettext "You must be at least 15 items.")\n " info &
+        msg "$(gettext "Sorry, you must be at least 15 items.")\n " info &
         exit
     fi
     

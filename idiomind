@@ -177,9 +177,8 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
     cp -f "$DS/default/p2.sh" "$DT/p2.$c"
     sed -i 's/X015x/'$c'/g' "$DT"/*.$c) &
     cp "$1" "$DT/import.tmp"
-    cd "$DT"
-    mv ./import.tmp ./import.tar.gz
-    cd ./idmimp_$c
+    mv "$DT/import.tmp" "$DT/import.tar.gz"
+    cd "$DT/idmimp_$c"
     tar -xzvf ../import.tar.gz
     ls -tdN * > "$DT/idmimp_$c/ls"
     tpc_i=$(sed -n 1p "$DT/idmimp_$c/ls")
@@ -207,7 +206,7 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
         itxt="<big><big>$tpc_i</big></big><small>\\n${language_source^} <b>></b> $language_target\\n$nwords $(gettext "Words") $nsentences $(gettext "Sentences") $nimages $(gettext "Images")\n$(gettext "Level") $level </small>\n"
         dlck="$DT/p1.$c"
         
-        cat "$tmp/0.cfg" | awk '{print $0""}' | \
+        tac "$tmp/0.cfg" | awk '{print $0""}' | \
         yad --list --name=Idiomind --title="Idiomind" \
         --ellipsize=END --print-all --image-on-top \
         --image="$img" --text="$itxt" --class=Idiomind \
@@ -293,9 +292,12 @@ function topic() {
 
     wth=$(sed -n 2p $DC_s/10.cfg)
     eht=$(sed -n 3p $DC_s/10.cfg)
+    spc="$(n=1; while [[ $n -le $((wth/35)) ]]; \
+    do printf "\t"; [ $n -ge 50 ] && break; let n++; done)"
     mde=$(sed -n 2p $DC_s/4.cfg)
     source "$DS/ifs/mods/cmns.sh"
     include "$DS/ifs/mods/topic"
+    
 
     if ([ -n "$tpc" ] || [ $(echo "$mde" | grep "fd") ]); then
     
@@ -344,7 +346,7 @@ function topic() {
             if [ -f "$cnf3" ]; then
                 nnt=$(cut -d '|' -f 1 < "$cnf3")
                 if [ "$nt" != "$nnt" ]; then
-                    if [ -z "$nnt" ]; then msg_2 "$(gettext " Really delete note of topic?")\n" "$DS/images/note.png" "Delete" "No"
+                    if [ -z "$nnt" ]; then msg_2 "$(gettext " Really delete note of topic?")\n" gtk-delete "Delete" "No"
                     [ $? = 0 ] && echo "$nnt" > "$DC_tlt/10.cfg"; else
                     echo "$nnt" > "$DC_tlt/10.cfg"; fi
                 fi
@@ -378,13 +380,12 @@ function topic() {
                     if [ "$ret" -eq 2 ]; then
                         echo "3" > "$DC_tlt/8.cfg"
                         "$DS/mngr.sh" mkmn
-                        rm -f "$ls2" 
-                        rm -f "$DC_tlt/7.cfg"
+                        rm -f "$ls2" "$DC_tlt/7.cfg"
                         cp -f "$ls0" "$ls1" && idiomind topic & exit 1
                     fi 
             fi
             
-            pres="<u><b>$(gettext "Learned")</b></u> $(gettext " * however you have new items") ($inx1).\\n$(gettext "Time set to review:") \t\t\t\t\t\\t\t\t\t\t$tdays $(gettext "days")"
+            pres="<u><b>$(gettext "Learned")</b></u> $(gettext " * however you have new items") ($inx1).\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
 
             notebook_2
             
@@ -404,16 +405,14 @@ function topic() {
                 ret=$(echo $?)
                 
                     if [ "$ret" -eq 2 ]; then
-                        rm -f "$DC_tlt/7.cfg"
-                        rm -f "$DT"/*.x
+                        rm -f "$DC_tlt/7.cfg" "$DT"/*.x "$ls2"
                         echo "3" > "$DC_tlt/8.cfg"
                         "$DS/mngr.sh" mkmn
-                        rm -f "$ls2"
                         cp -f "$ls0" "$ls1" && idiomind topic & exit 1
                         
                     elif [ "$ret" -eq 3 ]; then
-                        rm -f "$DT"/*.x
-                        rm -f "$DC_tlt/7.cfg" && idiomind topic & exit 1
+                        rm -f "$DC_tlt/7.cfg" "$DT"/*.x
+                        idiomind topic & exit 1
                     fi
                 
             else
@@ -423,7 +422,7 @@ function topic() {
                     
                         nnt=$(cut -d '|' -f 1 < "$cnf3")
                         if [ "$nt" != "$nnt" ]; then
-                            if [ -z "$nnt" ]; then msg_2 "$(gettext " Really delete note of topic?")\n" "$DS/images/note.png" "Delete" "No"
+                            if [ -z "$nnt" ]; then msg_2 "$(gettext " Really delete note of topic?")\n" gtk-delete "Delete" "No"
                             [ $? = 0 ] && echo "$nnt" > "$DC_tlt/10.cfg"; else
                             echo "$nnt" > "$DC_tlt/10.cfg"; fi
                         fi
@@ -477,11 +476,9 @@ function topic() {
             ret=$(echo $?)
                 
                 if [ "$ret" -eq 2 ]; then
-                    rm -f "$DC_tlt/7.cfg"
-                    rm -f "$DT"/*.x
+                    rm -f "$DC_tlt/7.cfg" "$DT"/*.x "$ls2"
                     echo "3" > "$DC_tlt/8.cfg"
                     "$DS/mngr.sh" mkmn
-                    rm -f "$ls2" 
                     cp -f "$ls0" "$ls1" && idiomind topic & exit 1
                 fi 
         fi
@@ -501,7 +498,7 @@ function topic() {
                     
                         nnt=$(cut -d '|' -f 1 < "$cnf3")
                         if [ "$nt" != "$nnt" ]; then
-                            if [ -z "$nnt" ]; then msg_2 "$(gettext " Really delete note of topic?")\n" "$DS/images/note.png" "Delete" "No"
+                            if [ -z "$nnt" ]; then msg_2 "$(gettext " Really delete note of topic?")\n" gtk-delete "Delete" "No"
                             [ $? = 0 ] && echo "$nnt" > "$DC_tlt/10.cfg"; else
                             echo "$nnt" > "$DC_tlt/10.cfg"; fi
                         fi

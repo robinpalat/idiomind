@@ -36,7 +36,7 @@ elif [ -f "$DM_tlt/$fname.mp3" ]; then
     
 else
 
-    ff=$(($nuw + 1))
+    ff=$((nuw+1))
     echo "_" >> "$DT/sc"
     [ $(wc -l < "$DT/sc") -ge 5 ] && rm -f "$DT/sc" & exit 1 \
     || "$DS/vwr.sh" "$1" "$nll" "$ff" & exit 1
@@ -46,10 +46,10 @@ fi
     if [ $ret -eq 4 ]; then
         "$DS/mngr.sh" edit "$1" "$fname" "$nuw"
     elif [ $ret -eq 2 ]; then
-        ff=$(($nuw - 1))
+        ff=$((nuw-1))
         "$DS/vwr.sh" "$1" "$nll" $ff &
     elif [ $ret -eq 3 ]; then
-        ff=$(($nuw + 1))
+        ff=$((nuw+1))
         "$DS/vwr.sh" "$1" "$nll" $ff &
     else 
         printf "vwr.$(wc -l < "$DC_a/stats/.tmp").vwr\n" >> \

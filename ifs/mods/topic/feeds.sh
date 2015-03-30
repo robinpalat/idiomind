@@ -62,7 +62,7 @@ function feedmode() {
     
     nnt=$(cut -d '|' -f 1 < "$DT/f.edit")
     if [ "$nt" != "$nnt" ]; then
-        if [ -z "$nnt" ]; then msg_2 "$(gettext " Really delete note?")\n" "$DS/images/note.png" "Delete" "No"
+        if [ -z "$nnt" ]; then msg_2 "$(gettext " Really delete note?")\n" gtk-delete "Delete" "No"
         [ $? = 0 ] && echo "$nnt" > "$DCP/10.cfg"; else
         echo "$nnt" > "$DCP/10.cfg"; fi
     fi

@@ -141,19 +141,17 @@ imgm="$DM_tlt/words/images/img.png"
 
 "$DS/ifs/tls.sh" check_index "$tpc"
 
-if [ $(cat "$DC_tlt/0.cfg" | wc -l) -le 20 ]; then
-    msg "$(gettext "To upload must you have at least 20 items.")\n " info &
-    exit
-fi
+if [ $(cat "$DC_tlt/0.cfg" | wc -l) -ge 20 ]; then
+btn="--button="$(gettext "Upload")":0"; else
+btn="--center"; fi
 
 cd $HOME
 upld=$(yad --form --width=480 --height=460 --on-top \
 --buttons-layout=end --center --window-icon=idiomind \
 --borders=15 --name=Idiomind --align=right --class=Idiomind \
 --button="$(gettext "Cancel")":1 \
---button="$(gettext "To PDF")":2 \
---button="$(gettext "Upload")":0 \
---title="$(gettext "Upload")" --text="   <b>$tpc</b>" \
+--button="$(gettext "To PDF")":2 "$btn" \
+--title="$(gettext "Share")" --text="   <b>$tpc</b>" \
 --field=" :lbl" "#1" \
 --field="    $(gettext "Author")" "$user" \
 --field="    $(gettext "Contact (Optional)")" "$mail" \

@@ -56,7 +56,8 @@ function sentence_view(){
 
 export -f word_view
 export -f sentence_view
-    
+
+
 function notebook_1() {
     
     tac "$ls1" | awk '{print $0"\n"}' | yad --list \
@@ -69,10 +70,10 @@ function notebook_1() {
     --column=Name:TEXT --dclick-action='./vwr.sh v2' &
     yad --form --scroll --borders=10 --plug=$KEY --tabnum=3 --columns=2 \
     --text="$label_info" \
-    --field="$(gettext "Notes")\t\t\t\t\t\t\t\t":txt "$nt" \
+    --field="$(gettext "Notes")$spc":txt "$nt" \
     --field="<small>$(gettext "Rename")</small>:" "$tpc" \
     --field="$(gettext "Mark as learned")":FBTN "$DS/mngr.sh 'mark_as_learned'" \
-    --field="$label_info2":LBL " " \
+    --field=" $label_info2":LBL " " \
     --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh" \
     --field="$(gettext "Delete")":FBTN "$DS/mngr.sh 'delete_topic'" > "$cnf3" &
     yad --notebook --name=Idiomind --center --key=$KEY \
@@ -101,10 +102,10 @@ function notebook_2() {
     --column=Name:TEXT --dclick-action='./vwr.sh v2' &
     yad --form --scroll --borders=10 --plug=$KEY --tabnum=3 --columns=2 \
     --text="$label_info" \
-    --field="$(gettext "Notes")\t\t\t\t\t\t\t\t":txt "$nt" \
+    --field="$(gettext "Notes")$spc":txt "$nt" \
     --field="<small>$(gettext "Rename")</small>:" "$tpc" \
     --field="$(gettext "Review")":FBTN "$DS/mngr.sh 'mark_as_learn'" \
-    --field="$label_info2":LBL " " \
+    --field=" $label_info2":LBL " " \
     --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh" \
     --field="$(gettext "Delete")":FBTN "$DS/mngr.sh 'delete_topic'" > "$cnf3" &
     yad --notebook --name=Idiomind --center \
