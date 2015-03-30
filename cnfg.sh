@@ -19,8 +19,8 @@
 
 source /usr/share/idiomind/ifs/c.conf
 Encoding=UTF-8
-wth=$(($(sed -n 2p $DC_s/10.cfg)-160))
-eht=$(($(sed -n 3p $DC_s/10.cfg)-140))
+wth=$(($(sed -n 2p $DC_s/10.cfg)-150))
+eht=$(($(sed -n 3p $DC_s/10.cfg)-150))
 info1="$(gettext "Do you want to change the interface language program?")"
 info2="$(gettext "You want to change the language setting to learn?")"
 cd "$DS/addons"

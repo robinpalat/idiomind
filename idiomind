@@ -92,8 +92,8 @@ function new_session() {
     | sed 's/x/\n/')"
     x="$(sed -n 1p <<<"$s")"
     y="$(sed -n 2p <<<"$s")"
-    echo $(($x/3))>> "$DC_s/10.cfg"
-    echo $(($y/2))>> "$DC_s/10.cfg"
+    echo $(($x/10+420))>> "$DC_s/10.cfg"
+    echo $(($y/10+420))>> "$DC_s/10.cfg"
     
     # log file
     if [ -f "$DC_s/8.cfg" ]; then
@@ -111,7 +111,7 @@ function new_session() {
     n=1
     while [ $n -le "$(wc -l < "$DM_tl/.1.cfg" | head -50)" ]; do
         tp=$(sed -n "$n"p "$DM_tl/.1.cfg")
-        stts=$(echo "$(cat "$DM_tl/$tp/.conf/8.cfg")")
+        stts=$(echo "$(< "$DM_tl/$tp/.conf/8.cfg")")
 
         if [ "$stts" = 2 ] || [ "$stts" = 7 ]; then
         
@@ -166,8 +166,8 @@ function new_session() {
 
 if [ $(echo "$1" | grep -o '.idmnd') ]; then
 
-    wth=$(($(sed -n 2p $DC_s/10.cfg)-0))
-    eht=$(($(sed -n 3p $DC_s/10.cfg)-0))
+    wth=$(sed -n 2p $DC_s/10.cfg)
+    eht=$(sed -n 3p $DC_s/10.cfg)
     dte=$(date "+%d %B")
     c=$(echo $(($RANDOM%1000)))
     source "$DS/ifs/mods/cmns.sh"
@@ -291,8 +291,8 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
 # topic
 function topic() {
 
-    wth=$(($(sed -n 2p $DC_s/10.cfg)-0))
-    eht=$(($(sed -n 3p $DC_s/10.cfg)-0))
+    wth=$(sed -n 2p $DC_s/10.cfg)
+    eht=$(sed -n 3p $DC_s/10.cfg)
     mde=$(sed -n 2p $DC_s/4.cfg)
     source "$DS/ifs/mods/cmns.sh"
     include "$DS/ifs/mods/topic"

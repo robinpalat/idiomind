@@ -13,8 +13,7 @@ nuw="$3"
 listen="▷"
 
 if ! [[ $nuw =~ $re ]]; then
-    nuw=$(cat "$ind" \
-    | grep -Fxon "$now" \
+    nuw=$(grep -Fxon "$now" < "$ind" \
     | sed -n 's/^\([0-9]*\)[:].*/\1/p')
     nll=" "
 fi
@@ -37,7 +36,7 @@ elif [ -f "$DM_tlt/$fname.mp3" ]; then
 else
     ff=$(($nuw + 1))
     echo "_" >> "$DT/sc"
-    [ $(cat $DT/sc | wc -l) -ge 5 ] && rm -f "$DT/sc" & exit 1 \
+    [ $(wc -l < "$DT/sc") -ge 5 ] && rm -f "$DT/sc" & exit 1 \
     || "$DS/vwr.sh" "$1" "$nll" "$ff" & exit 1
 fi
         ret=$?
@@ -45,13 +44,13 @@ fi
         if [ $ret -eq 4 ]; then
             "$DS/mngr.sh" edit "$1" "$fname" "$nuw"
         elif [ $ret -eq 2 ]; then
-            ff=$(($nuw + 1))
-            "$DS/vwr.sh" "$1" "$nll" $ff &
-        elif [ $ret -eq 3 ]; then
             ff=$(($nuw - 1))
             "$DS/vwr.sh" "$1" "$nll" $ff &
+        elif [ $ret -eq 3 ]; then
+            ff=$(($nuw + 1))
+            "$DS/vwr.sh" "$1" "$nll" $ff &
         else 
-            printf "vwr.$(cat "$DC_a/stats/.tmp" | wc -l).vwr\n" >> \
+            printf "vwr.$(wc -l < "$DC_a/stats/.tmp").vwr\n" >> \
             "$DC_s/8.cfg" &
             rm "$DC/addons/stats/.tmp" & exit 1
         fi
