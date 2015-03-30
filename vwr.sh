@@ -1,8 +1,8 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-wth=$(($(sed -n 2p $DC_s/10.cfg)-320))
-eht=$(($(sed -n 3p $DC_s/10.cfg)-130))
+wth=$(($(sed -n 2p $DC_s/10.cfg)+20))
+eht=$(($(sed -n 3p $DC_s/10.cfg)-120))
 
 echo "_" >> "$DC_a/stats/.tmp" &
 [ "$1" = v1 ] && ind="$DC_tlt/1.cfg"

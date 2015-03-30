@@ -19,8 +19,8 @@
 
 #source /usr/share/idiomind/ifs/c.conf
 DSP="$DS/practice"
-wth=$(($(sed -n 2p $DC_s/10.cfg)-440))
-eht=$(($(sed -n 3p $DC_s/10.cfg)-100))
+wth=$(($(sed -n 2p $DC_s/10.cfg)-160))
+eht=$(($(sed -n 3p $DC_s/10.cfg)-140))
 easys="$2"
 learning="$3"
 [[ "$4" -lt 0 ]] && hards=0 || hards="$4"

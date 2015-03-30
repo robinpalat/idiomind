@@ -26,7 +26,7 @@ if [ "$1" = vsd ]; then
 
     U=$(sed -n 1p $HOME/.config/idiomind/s/4.cfg)
     lng=$(echo "$lgtl" | awk '{print tolower($0)}')
-    wth=$(($(sed -n 2p $DC_s/10.cfg)-350))
+    wth=$(($(sed -n 2p $DC_s/10.cfg)-0))
     eht=$(($(sed -n 3p $DC_s/10.cfg)-0))
     
     cd "$DM_t/saved"; ls -t *.id | sed 's/\.id//g' | yad --list \

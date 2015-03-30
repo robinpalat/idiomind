@@ -77,7 +77,7 @@ elif [ "$1" != chngi ]; then
     
     lgs=$(lnglss $lgsl)
     [ ! -f "$DC_s/0.cfg" ] && > "$DC_s/0.cfg"
-    wth=$(($(sed -n 2p $DC_s/10.cfg)-350))
+    wth=$(($(sed -n 2p $DC_s/10.cfg)-0))
     eht=$(($(sed -n 3p $DC_s/10.cfg)-0))
     
     if [ -n "$1" ]; then

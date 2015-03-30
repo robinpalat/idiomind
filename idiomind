@@ -75,7 +75,7 @@ function new_session() {
     for strt in "$DS/ifs/mods/start"/*; do
     (sleep 20 && "$strt"); done &
 
-    # control + fix
+    # fix
     n=1; cd "$DM_tl"; f="$DM_tl/.2.cfg"
     while [ $n -le $(wc -l < "$f") ]; do
         chk=$(sed -n "$n"p "$f")
@@ -90,10 +90,10 @@ function new_session() {
     # screen size
     s="$(xrandr | grep '*' | awk '{ print $1 }' \
     | sed 's/x/\n/')"
-    y="$(sed -n 1p <<< "$s")"
-    x="$(sed -n 2p <<< "$s")"
-    echo $(($y/2)) >> "$DC_s/10.cfg"
-    echo $(($x/2)) >> "$DC_s/10.cfg"
+    x="$(sed -n 1p <<<"$s")"
+    y="$(sed -n 2p <<<"$s")"
+    echo $(($x/3))>> "$DC_s/10.cfg"
+    echo $(($y/2))>> "$DC_s/10.cfg"
     
     # log file
     if [ -f "$DC_s/8.cfg" ]; then
@@ -166,7 +166,7 @@ function new_session() {
 
 if [ $(echo "$1" | grep -o '.idmnd') ]; then
 
-    wth=$(($(sed -n 2p $DC_s/10.cfg)-350))
+    wth=$(($(sed -n 2p $DC_s/10.cfg)-0))
     eht=$(($(sed -n 3p $DC_s/10.cfg)-0))
     dte=$(date "+%d %B")
     c=$(echo $(($RANDOM%1000)))
@@ -291,7 +291,7 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
 # topic
 function topic() {
 
-    wth=$(($(sed -n 2p $DC_s/10.cfg)-350))
+    wth=$(($(sed -n 2p $DC_s/10.cfg)-0))
     eht=$(($(sed -n 3p $DC_s/10.cfg)-0))
     mde=$(sed -n 2p $DC_s/4.cfg)
     source "$DS/ifs/mods/cmns.sh"

@@ -2,94 +2,162 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-wth=$(sed -n 3p $DC_s/18.cfg)
-eht=$(sed -n 4p $DC_s/18.cfg)
-LOG=$DC_a/stats/.log
+source "$DC_a/stats/wr.cfg"
+
+charts() {
+    
+    LABELS=("Dedication"  "Study" "Achievements" "Discard")
+    COLORS=("#1c28a1" "#ff6d00" "#107a3f" "#bf0000");
+     
+    TARGET_DIR='images'
+    PRO=$(($pro+100))
+     
+    arc=()
+    sum=0
+    for piece in "$@"
+    do
+            sum=$(( $piece + $sum ))
+    done
+     
+    WIDTHxHEIGHT='330x330'
+    RADIUS=135
+    CENTERX=160
+    CENTERY=160
+     
+    count=0
+    startAngle=0
+    endAngle=0
+    arc=0
+    total=0
+    x1=0
+    x2=0
+    y1=0
+    y2=0
+    pi=$(echo "scale=10; 4*a(1)" | bc -l)
+    cmd='convert -size '$WIDTHxHEIGHT' xc:white -stroke white -strokewidth 5 '
+    first=0
+    for piece in "$@"
+    do
+            startAngle=$endAngle
+            endAngle=$(echo "scale=10;$startAngle+(360*$piece/$PRO)" | bc -l)
+            x1=$(echo "scale=10;$CENTERX+$RADIUS*c($pi*$startAngle/180)" | bc -l)
+            y1=$(echo "scale=10;$CENTERY+$RADIUS*s($pi*$startAngle/180)" | bc -l)
+            x2=$(echo "scale=10;$CENTERX+$RADIUS*c($pi*$endAngle/180)" | bc -l)
+            y2=$(echo "scale=10;$CENTERY+$RADIUS*s($pi*$endAngle/180)" | bc -l)
+            if [ $piece -ge 50 ]
+            then
+                    FIFTY=1
+            else
+                    FIFTY=0
+              fi
+            cmd=$cmd"-fill '${COLORS[count]}' -draw \"path 'M $CENTERX,$CENTERY L $x1,$y1 A $RADIUS,$RADIUS 0 $FIFTY,1 $x2,$y2 Z'\" "
+     
+            count=$(( $count + 1 ))
+    done
+    cmd=$cmd" $DC_a/stats/chart.jpg"
+     
+    eval $cmd
+     
+    KEY_SIZE=20
+    MARGIN=5
+    TEXT_X=$(( $KEY_SIZE+$MARGIN ))
+     
+    legends=$(( $#*($KEY_SIZE+$MARGIN) ))
+     
+    cmd='convert -size 125x'$legends' xc:white -fill white '
+    label=" -font 'Nimbus-Sans-Bold' -stroke none -pointsize 12 "
+    count=0;
+    y1=5
+    for piece in "$@"
+    do
+            y2=$(( $y1+$KEY_SIZE ))
+            y3=$(( $y2-$MARGIN ))
+            label=$label"-fill '${COLORS[count]}' -draw 'rectangle 0,$y1 $KEY_SIZE,$y2 ' -draw \"text $TEXT_X,$y3 '$piece% ${LABELS[count]}'\" "
+            count=$(( $count + 1 ))
+            y1=$(( $y1+$KEY_SIZE+$MARGIN ))
+    done
+    cmd=$cmd$label" $DC_a/stats/legend.jpg"
+     
+    eval $cmd
+
+}
+
+LOG="$DC_s/8.cfg"
 NUM=$DC_a/stats/num.tmp
 TPS=$DC_a/stats/tpcs.tmp
-WKRT=$DC_a/stats/wkrt.tmp
-WKRT2=$DC_a/stats/wkrt2.tmp
 [ ! -f "$DC_a/stats/.udt" ] && touch "$DC_a/stats/.udt"
-udt=$(cat "$DC_a/stats/.udt")
+udt=$(< "$DC_a/stats/.udt")
 [ ! -d "$DC_a/stats" ] && mkdir "$DC_a/stats"
 
-#----------------------------
 if [ "$1" = A ]; then
     [ "$(date +%F)" = "$udt" ] && exit 1
-    echo "$tpc" > $DC_a/stats/tpc.tmp
-    echo $(sed -n 2p $DC_s/8.cfg) >> $DC_a/stats/tpc.tmp
-    TPCS=$(cat "$LOG" | grep -o -P '(?<=tpcs.).*(?=\.tpcs)' \
+    
+    TPCS=$(grep -o -P '(?<=tpcs.).*(?=\.tpcs)' < "$LOG" \
     | sort | uniq -dc | sort -n -r | head -3 | sed -e 's/^ *//' -e 's/ *$//')
-    tpc1=$(echo "$TPCS" | sed -n 1p | cut -d " " -f2-)
+    tpc1=$(sed -n 1p <<<"$TPCS" | cut -d " " -f2-)
     echo "$tpc1" > "$TPS"
-    if [ "$(echo "$TPCS" | sed -n 2p | awk '{print ($1)}')" -ge 3 ]; then
-        tpc2=$(echo "$TPCS" | sed -n 2p | cut -d " " -f2-)
-        echo "$tpc2" >> "$TPS"
-    fi
-    if [ "$(echo "$TPCS" | sed -n 3p | awk '{print ($1)}')" -ge 3 ]; then
-        tpc3=$(echo "$TPCS" | sed -n 3p | cut -d " " -f2-)
-        echo "$tpc3" >> "$TPS"
-    fi
+    if [ "$(sed -n 2p <<<"$TPCS" | awk '{print ($1)}')" -ge 3 ]; then
+        tpc2=$(sed -n 2p <<<"$TPCS" | cut -d " " -f2-)
+        echo "$tpc2" >> "$TPS"; fi
+    if [ "$(sed -n 3p <<<"$TPCS" | awk '{print ($1)}')" -ge 3 ]; then
+        tpc3=$(sed -n 3p <<<"$TPCS" | cut -d " " -f2-)
+        echo "$tpc3" >> "$TPS"; fi
 
-    EITM=$(cat "$LOG" \
-    | grep -o -P '(?<=eitm.).*(?=.eitm)' | wc -l)
-    AIMG=$(cat "$LOG" \
-    | grep -o -P '(?<=aimg.).*(?=.aimg)' | wc -l)
-    REIM=$(cat "$LOG" \
-    | grep -o -P '(?<=reim.).*(?=.reim)' | tr '\n' '+')
-    REIM=$(echo "$REIM""0" | bc -l)
-    AITM=$(cat "$LOG" \
-    | grep -o -P '(?<=aitm.).*(?=.aitm)' | tr '\n' '+')
+    EITM=$(grep -o -P '(?<=eitm.).*(?=.eitm)' < "$LOG" | wc -l)
+    AIMG=$(grep -o -P '(?<=aimg.).*(?=.aimg)' < "$LOG" | wc -l)
+    REIM=$(grep -o -P '(?<=reim.).*(?=.reim)' < "$LOG" | tr '\n' '+')
+    REIM=$(bc -l <<<"$REIM""0")
+    AITM=$(grep -o -P '(?<=aitm.).*(?=.aitm)' < "$LOG" | tr '\n' '+')
     echo "$AITM""0" | bc -l > "$NUM"
-    AITM=$(echo "$AITM""0" | bc -l)
-    DDC=$(echo "$EITM $AIMG $REIM $AITM" | tr ' ' '+' | bc -l)
+    AITM=$(bc -l <<<"$AITM""0")
+    DDC=$(tr ' ' '+' <<<"$EITM $AIMG $REIM $AITM" | bc -l)
+    W9INX=$(grep -o -P '(?<=w9.).*(?=\.w9)' < "$LOG" | tr -s ';' '\n' \
+    | sort | uniq -dc | sort -n -r | sed 's/ \+/ /g')
     tpc1=$(sed -n 1p $TPS)
     tpc2=$(sed -n 2p $TPS)
     tpc3=$(sed -n 3p $TPS)
 
     if [ -n "$tpc3" ];then
-        [ -f "$DC_tl/$tpc1/1.cfg" ] && tlng1="$DC_tl/$tpc1/1.cfg"
-        [ -f "$DC_tl/$tpc2/1.cfg" ] && tlng2="$DC_tl/$tpc2/1.cfg"
-        [ -f "$DC_tl/$tpc3/1.cfg" ] && tlng3="$DC_tl/$tpc3/1.cfg"
-        touch "$DC_tl/$tpc1/2.cfg" && tok1="$DC_tl/$tpc1/2.cfg"
-        touch "$DC_tl/$tpc2/2.cfg" && tok2="$DC_tl/$tpc2/2.cfg"
-        touch "$DC_tl/$tpc3/2.cfg" && tok3="$DC_tl/$tpc3/2.cfg"
+        [ -f "$DM_tl/$tpc1/.conf/1.cfg" ] && tlng1="$DM_tl/$tpc1/.conf/1.cfg"
+        [ -f "$DM_tl/$tpc2/.conf/1.cfg" ] && tlng2="$DM_tl/$tpc2/.conf/1.cfg"
+        [ -f "$DM_tl/$tpc3/.conf/1.cfg" ] && tlng3="$DM_tl/$tpc3/.conf/1.cfg"
+        touch "$DM_tl/$tpc1/.conf/2.cfg" && tok1="$DM_tl/$tpc1/.conf/2.cfg"
+        touch "$DM_tl/$tpc2/.conf/2.cfg" && tok2="$DM_tl/$tpc2/.conf/2.cfg"
+        touch "$DM_tl/$tpc3/.conf/2.cfg" && tok3="$DM_tl/$tpc3/.conf/2.cfg"
     elif [ -n "$tpc2" ];then
-        [ -f "$DC_tl/$tpc1/1.cfg" ] && tlng1="$DC_tl/$tpc1/1.cfg"
-        [ -f "$DC_tl/$tpc2/1.cfg" ] && tlng2="$DC_tl/$tpc2/1.cfg"
-        touch "$DC_tl/$tpc1/2.cfg" && tok1="$DC_tl/$tpc1/2.cfg"
-        touch "$DC_tl/$tpc2/2.cfg" && tok2="$DC_tl/$tpc2/2.cfg"
+        [ -f "$DM_tl/$tpc1/.conf/1.cfg" ] && tlng1="$DM_tl/$tpc1/.conf/1.cfg"
+        [ -f "$DM_tl/$tpc2/.conf/1.cfg" ] && tlng2="$DM_tl/$tpc2/.conf/1.cfg"
+        touch "$DM_tl/$tpc1/.conf/2.cfg" && tok1="$DM_tl/$tpc1/.conf/2.cfg"
+        touch "$DM_tl/$tpc2/.conf/2.cfg" && tok2="$DM_tl/$tpc2/.conf/2.cfg"
     elif [ -n "$tpc1" ];then
-        [ -f "$DC_tl/$tpc1/1.cfg" ] && tlng1="$DC_tl/$tpc1/1.cfg"
-        touch "$DC_tl/$tpc1/2.cfg" && tok1="$DC_tl/$tpc1/2.cfg"
+        [ -f "$DM_tl/$tpc1/.conf/1.cfg" ] && tlng1="$DM_tl/$tpc1/.conf/1.cfg"
+        touch "$DM_tl/$tpc1/.conf/2.cfg" && tok1="$DM_tl/$tpc1/.conf/2.cfg"
     fi
 
-    W9=$DC_s/22.cfg
-    W9INX=$(cat $W9 | sort | uniq -dc | sort -n -r | sed 's/ \+/ /g')
-    n=1
+    n=1; > "$DC_a/stats/w9.tmp"
     while [ $n -le 15 ]; do
-        if [ $(echo "$W9INX" | sed -n "$n"p | awk '{print ($1)}') -ge 3 ]; then
+        if [ $(sed -n "$n"p <<<"$W9INX" | awk '{print ($1)}') -ge 3 ]; then
         
-            fwk=$(echo "$W9INX" | sed -n "$n"p | awk '{print ($2)}')
+            fwk=$(sed -n "$n"p <<<"$W9INX" | awk '{print ($2)}')
             if [ -n "$tpc3" ];then
-                if cat "$tlng1" | grep -o "$fwk"; then
+                if grep -o "$fwk" < "$tlng1"; then
                     echo "$fwk" >> $DC_a/stats/w9.tmp
                     
-                elif cat "$tlng2" | grep -o "$fwk"; then
+                elif grep -o "$fwk" < "$tlng2"; then
                     echo "$fwk" >> $DC_a/stats/w9.tmp
                     
-                elif cat "$tlng3" | grep -o "$fwk"; then
+                elif grep -o "$fwk" < "$tlng3"; then
                     echo "$fwk" >> $DC_a/stats/w9.tmp
                 fi
             elif [ -n "$tpc2" ]; then
-                if cat "$tlng1" | grep -o "$fwk"; then
+                if grep -o "$fwk" < "$tlng1"; then
                     echo "$fwk" >> $DC_a/stats/w9.tmp
                     
-                elif cat "$tlng2" | grep -o "$fwk"; then
+                elif grep -o "$fwk" < "$tlng2"; then
                     echo "$fwk" >> $DC_a/stats/w9.tmp
                 fi
             elif [ -n "$tpc1" ]; then
-                if cat "$tlng1" | grep -o "$fwk"; then
+                if grep -o "$fwk" < "$tlng1"; then
                 echo "$fwk" >> $DC_a/stats/w9.tmp
                 fi
             fi
@@ -98,24 +166,20 @@ if [ "$1" = A ]; then
     done
     sed -i '/^$/d' $DC_a/stats/w9.tmp
     
-    CTW9=$(cat $DC_a/stats/w9.tmp | wc -l)
+    CTW9=$(wc -l < $DC_a/stats/w9.tmp)
     echo "$CTW9" >> "$NUM"
-    OKIM=$(cat "$LOG" \
-    | grep -o -P '(?<=okim.).*(?=.okim)' | tr '\n' '+')
+    OKIM=$(grep -o -P '(?<=okim.).*(?=.okim)' < "$LOG" | tr '\n' '+')
     echo "$OKIM""0" | bc -l >> "$NUM"
-    OKIM=$(echo "$OKIM""0" | bc -l)
-    ARCH=$(echo "$CTW9 $OKIM" | tr ' ' '+' | bc -l)
-    VWR=$(cat "$LOG" \
-    | grep -o -P '(?<=vwr.).*(?=.vwr)' | tr '\n' '+')
+    OKIM=$(bc -l <<<"$OKIM""0")
+    ARCH=$(tr ' ' '+' <<<"$CTW9 $OKIM" | bc -l)
+    VWR=$(grep -o -P '(?<=vwr.).*(?=.vwr)' < "$LOG" | tr '\n' '+')
     echo "$VWR""0" | bc -l >> "$NUM"
-    VWR=$(echo "$VWR""0" | bc -l)
-    LRNPR=$(cat "$LOG" \
-    | grep -o -P '(?<=lrnpr.).*(?=.lrnpr)' | wc -l)
+    VWR=$(bc -l <<<"$VWR""0")
+    LRNPR=$(grep -o -P '(?<=lrnpr.).*(?=.lrnpr)' < "$LOG" | wc -l)
     echo "$LRNPR">> "$NUM"
-    PRCTC=$(cat "$LOG" \
-    | grep -o -P '(?<=prctc.).*(?=.prctc)' | wc -l)
+    PRCTC=$(grep -o -P '(?<=prctc.).*(?=.prctc)' < "$LOG" | wc -l)
     echo "$PRCTC">> "$NUM"
-    STDY=$(echo "$VWR $LRNPR $PRCTC" | tr ' ' '+' | bc -l)
+    STDY=$(tr ' ' '+' <<<"$VWR $LRNPR $PRCTC" | bc -l)
     
     [ $DDC -ge 100 ] && DDC=100
     [ $STDY -ge 100 ] && STDY=100
@@ -129,94 +193,92 @@ if [ "$1" = A ]; then
     flD=$(($DDC*$real/$ttl))
     flS=$(($STDY*$real/$ttl))
     flL=$(($ARCH*$real/$ttl))
-    [ $flD -gt 0 ] && d=1 || d=0
-    [ $flS -gt 0 ] && s=1 || s=0
-    [ $flL -gt 0 ] && l=1 || l=0
-    FIX=$(($d+$s+$l))
     
-    if [ "$real" -le 10 ]; then
-    real=10
+    charts $flD $flS $flL
+    if [ "$aut" = TRUE ]; then
+    while read itm; do
+
+        if [ -n "$tpc3" ];then
+            if [ -f "$tlng1" ]; then
+                if grep -o "$itm" < "$tlng1"; then
+                    grep -vxF "$itm" "$tlng1" > $DT/tlng.tmp
+                    sed '/^$/d' $DT/tlng.tmp > "$tlng1"
+                    echo "$itm" >> "$tok1"; printf "$tpc1%s\n --> $itm"
+                fi
+            fi
+            if [ -f "$tlng2" ]; then
+                if grep -o "$itm" < "$tlng2"; then
+                    grep -vxF "$itm" "$tlng2" > $DT/tlng.tmp
+                    sed '/^$/d' $DT/tlng.tmp > "$tlng2"
+                    echo "$itm" >> "$tok2"; printf "$tpc2%s\n --> $itm"
+                fi
+            fi
+            if [ -f "$tlng3" ]; then
+                if grep -o "$itm" < "$tlng3"; then
+                    grep -vxF "$itm" "$tlng3" > $DT/tlng.tmp
+                    sed '/^$/d' $DT/tlng.tmp > "$tlng3"
+                    echo "$itm" >> "$tok3"; printf "$tpc3%s\n --> $itm"
+                fi
+            fi
+        elif [ -n "$tpc2" ];then
+            if [ -f "$tlng1" ]; then
+                if grep -o "$itm" < "$tlng1"; then
+                    grep -vxF "$itm" "$tlng1" > $DT/tlng.tmp
+                    sed '/^$/d' $DT/tlng.tmp > "$tlng1"
+                    echo "$itm" >> "$tok1"; printf "$tpc1%s\n --> $itm"
+                fi
+            fi
+            if [ -f "$tlng2" ]; then
+                if grep -o "$itm" < "$tlng2"; then
+                    grep -vxF "$itm" "$tlng2" > $DT/tlng.tmp
+                    sed '/^$/d' $DT/tlng.tmp > "$tlng2"
+                    echo "$itm" >> "$tok2"; printf "$tpc2%s\n --> $itm"
+                fi
+            fi
+        elif [ -n "$tpc1" ];then
+            if [ -f "$tlng1" ]; then
+                if grep -o "$itm" < "$tlng1"; then
+                    grep -vxF "$itm" "$tlng1" > $DT/tlng.tmp
+                    sed '/^$/d' $DT/tlng.tmp > "$tlng1"
+                    echo "$itm" >> "$tok1"; printf "$tpc1%s\n --> $itm"
+                fi
+            fi
+        fi
+        
+    done < "$DC_a/stats/w9.tmp"
     fi
-    rm "$LOG"
-    ext1="$(n=1; while [ $n -le $flD ]; do printf " "; let n++; done)"
-    ext2="$(n=1; while [ $n -le $flS ]; do printf " "; let n++; done)"
-    ext3="$(n=1; while [ $n -le $flL ]; do printf " "; let n++; done)"
-    ext4="$(n=1; while [ $n -le $acrm ]; do printf " "; let n++; done)"
-    ext5="$(n=1; while [ $n -le $FIX ]; do printf " "; let n++; done)"
-    [ "$(echo "$tpc1" | wc -c)" -gt 60 ] && tle1="${tpc1:0:60}..." || tle1="$tpc1"
-    [ "$(echo "$tpc2" | wc -c)" -gt 60 ] && tle2="${tpc2:0:60}..." || tle2="$tpc2"
-    [ "$(echo "$tpc3" | wc -c)" -gt 60 ] && tle3="${tpc3:0:60}..." || tle3="$tpc3"
-
-    if [ $(cat $DC_a/stats/.wks | wc -l) -lt 12 ]; then
-    ext=$(n=1; while [ $n -le 112 ]; do printf " "; let n++; done)
-    seq 0 15 | xargs -Iz echo "<small><sup><span background='#E8E8E8'>$ext</span></sup></small>" > $DC_a/stats/.wks
-    sed -i '/^$/d' $DC_a/stats/.wks
-    fi
-
-    echo "<small><sup><span background='#F3C879'>$ext1</span><span background='#6E9FD4'>$ext2</span><span background='#76A862'><span color='#FFFFFF'><b>$ext3$real% </b></span><span background='#E8E8E8'>$ext4$ext5</span></span></sup></small>" >> $DC_a/stats/.wks.tmp
-    cat $DC_a/stats/.wks | head -n 12 >> $DC_a/stats/.wks.tmp
-    mv -f $DC_a/stats/.wks.tmp $DC_a/stats/.wks
-    
-    echo "<big><big><b>$real%</b></big></big>  Performance
-" > $WKRT
-if [ -n "$tpc3" ]; then
-    echo "$(gettext "Topics"):
- <b>$tle1</b>
- <b>$tle2</b>
- <b>$tle3</b>
-">> $WKRT
-elif [ -n "$tpc2" ]; then
-    echo "$(gettext "Topics"):
- <b>$tle1</b>
- <b>$tle2</b>
-">> $WKRT
-else
-    echo "$(gettext "Topic"):
- <b>$tle1</b>
-">> $WKRT
-fi
-echo "<big><span font='ultralight'>$CTW9</span></big>  $(gettext "Items that could be marked as learned")" >> $WKRT
-echo "<big><span font='ultralight'>$OKIM</span></big>  $(gettext "Items marked learned")
-
-" >> $WKRT
-cat "$DC_a/stats/.wks" >> $WKRT2
-echo "$(date +%F)" > "$DC_a/stats/.udt"
-echo "$tpc" > $DC_s/8.cfg
-echo wr >> $DC_s/8.cfg
-exit 1
-
+    #rm "$DC_s/8.cfg"; touch "$DC_s/8.cfg"
+    #echo "$(date +%F)" > "$DC_a/stats/.udt"
+    exit 0
 
 #----------------------------
 elif [ -z "$1" ]; then
 
-    sttng=$(sed -n 1p $DC_a/stats/cnfg)
-    if [ -z $sttng ]; then
-        echo FALSE > $DC_a/stats/cnfg
-        sttng=$(sed -n 1p $DC_a/stats/cnfg)
-    fi
-    if [ $sttng = TRUE ]; then
-    SW=$(cat $DC_a/stats/.wks | head -n 8)
-    else
-    SW=" "; fi
+    if [ ! -f "$DC_a/stats/wr.cfg" ] || [ -z "$(< "$DC_a/stats/wr.cfg")" ]; then
+    echo -e "act=\"FALSE\"" > "$DC_a/stats/wr.cfg"
+    echo -e "pro=\"0\"" >> "$DC_a/stats/wr.cfg"
+    echo -e "aut=\"FALSE\"" >> "$DC_a/stats/wr.cfg";fi
+    source "$DC_a/stats/wr.cfg"
 
-    CNFG=$(yad --print-all --align=center --name=Idiomind \
+    C=$(yad --print-all --name=Idiomind \
     --title="$(gettext "Weekly Report")" --borders=10 \
+    --image=$DC_a/stats/chart.jpg --separator='|' \
     --center --form --on-top --scroll --skip-taskbar \
     --always-print-result --window-icon=idiomind --class=Idiomind \
-    --button="$(gettext "Close")":0 --width=480 --height=350 \
-    --field="$(gettext "active")":CHK $sttng \
-    --field="\n$SW:LBL" \
-    --field="\n:LBL")
+    --button="$(gettext "Close")":0 --width=530 --height=400 \
+    --field="$(gettext "active")":CHK $act \
+    --field="$(gettext "Automark")":CHK $aut \
+    --field="\n\n\n\n$(gettext "Desafio")":lbl " " \
+    --field=":scl" $pro \
+    --field="<sup>Normal\t\t\t\tHard</sup>\n":lbl " " )
         ret=$?
-        
+
         if [ $ret -eq 0 ]; then
-            sttng=$(echo "$CNFG" | cut -d "|" -f1)
-            sed -i "1s/.*/$sttng/" $DC_a/stats/cnfg
-            rm -f $DT/*.r
-            exit
-        else
-            sttng=$(echo "$CNFG" | cut -d "|" -f1)
-            sed -i "1s/.*/$sttng/" $DC_a/stats/cnfg
-            exit
+            val1="$(cut -d "|" -f1 <<<"$C")"
+            val2="$(cut -d "|" -f4 <<<"$C")"
+            val3="$(cut -d "|" -f2 <<<"$C")"
+            sed -i "s/act=.*/act=\"$val1\"/g" "$DC_a/stats/wr.cfg"
+            sed -i "s/pro=.*/pro=\"$val2\"/g" "$DC_a/stats/wr.cfg"
+            sed -i "s/aut=.*/aut=\"$val3\"/g" "$DC_a/stats/wr.cfg"
         fi
 fi
