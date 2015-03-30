@@ -268,7 +268,7 @@ elif [ -z "$1" ]; then
     --button="$(gettext "Close")":0 --width=530 --height=400 \
     --field="$(gettext "active")":CHK $act \
     --field="$(gettext "Automark")":CHK $aut \
-    --field="\n\n\n\n$(gettext "Desafio")":lbl " " \
+    --field="\n\n\n\n$(gettext "Tax challenge")":lbl " " \
     --field=":scl" $pro \
     --field="<sup>Normal\t\t\t\tHard</sup>\n":lbl " " )
         ret=$?

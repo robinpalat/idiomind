@@ -92,7 +92,7 @@ yad --plug=$KEY --tabnum=1 \
 --field="$(gettext "Colorize words to grammar")":CHK "$grammar" \
 --field="$(gettext "List words after adding a sentence")":CHK "$list" \
 --field="$(gettext "Perform tasks at startup")":CHK "$tasks" \
---field="$(gettext "Usar traduccion automatica si esta disponible")":CHK "$trans" \
+--field="$(gettext "Use automatic translation, if available")":CHK "$trans" \
 --field=" :LBL" " " \
 --field="$(gettext "Play Options")\t":LBL " " \
 --field=":LBL" " " \

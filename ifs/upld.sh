@@ -142,7 +142,7 @@ imgm="$DM_tlt/words/images/img.png"
 "$DS/ifs/tls.sh" check_index "$tpc"
 
 if [ $(cat "$DC_tlt/0.cfg" | wc -l) -le 20 ]; then
-    msg "$(gettext "To upload must be at least 20 items.")\n " info &
+    msg "$(gettext "To upload must you have at least 20 items.")\n " info &
     exit
 fi
 
@@ -202,7 +202,7 @@ level=$(echo "$upld" | cut -d "|" -f5)
 [ "$level" = $(gettext "Advanced") ] && level=3
 
 if [ -z "$Ctgry" ]; then
-msg " $(gettext "Please indicate a category.")\n " info
+msg " $(gettext "Please select a category.")\n " info
 $DS/ifs/upld.sh &
 exit 1
 fi
@@ -311,10 +311,10 @@ END_SCRIPT
 exit=$?
 if [ $exit = 0 ] ; then
     mv -f "$DT/12.cfg" "$DM_t/saved/$tpc.id"
-    info=" <b>$(gettext "successfully published.")</b>\n $tpc\n"
+    info=" <b>$(gettext "Successfully published.")</b>\n $tpc\n"
     image=dialog-ok
 else
-    info=" $(gettext "It was a problem uploading your file.") "
+    info=" $(gettext "There was a problem uploading the file.") "
     image=dialog-warning
 fi
 

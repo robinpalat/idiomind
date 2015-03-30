@@ -801,7 +801,7 @@ function process() {
 
         if [ -z "$(cat ./sntsls_)" ]; then
         
-            dlg_text_info_4 "$(gettext "Failed to retrieve text. For the process to be successful audio file must not have music or background noise.")"
+            dlg_text_info_4 "$(gettext "Failed to get text. For the process to be successful, audio file must not have music or background noise.")"
 
             [ -d "$DT_r" ] && rm -fr "$DT_r"
             rm -f "$lckpr" "$slt" & exit 1
