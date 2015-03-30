@@ -41,7 +41,6 @@ function index() {
 }
 
 
-
 function check_grammar_1() {
     
     g=$(echo "$trgt"  | sed 's/ /\n/g')
@@ -387,7 +386,7 @@ function dlg_form_1() {
         --button="$(gettext "Audio")":2 \
         --button=gtk-add:0
 }
-${tpc:-}
+
 
 # imput text 
 function dlg_form_2() {

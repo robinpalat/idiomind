@@ -23,7 +23,7 @@ wth=$(($(sed -n 2p $DC_s/10.cfg)-440))
 eht=$(($(sed -n 3p $DC_s/10.cfg)-100))
 easys="$2"
 learning="$3"
-[ "$4" -lt 0 ] && hards=0 || hards="$4"
+[[ "$4" -lt 0 ]] && hards=0 || hards="$4"
 "$DS/stop.sh" &
 [ ! -d "$DC_tlt/practice" ] \
 && mkdir "$DC_tlt/practice"

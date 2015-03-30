@@ -196,12 +196,7 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
     
     if [ "$tpc_i" != "$name" ]; then
     
-        cstn=$(yad --name=Idiomind --class=Idiomind --image=error \
-        --text=" <b>$(gettext "The file is damaged")</b>\\n" \
-        --image-on-top --sticky --button=gtk-ok:1 \
-        --width=280 --height=120 --title=Idiomind \
-        --skip-taskbar --center --window-icon=idiomind)
-        
+        msg "$(gettext "The file is damaged.")\n " error;
         [ -d "$DT/idmimp_$c" ] && rm -fr "$DT/idmimp_$c"
         rm -f "$DT"/*.$c "$DT/import.tar.gz" & exit
         
@@ -219,7 +214,7 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
         --scroll --no-headers --dclick-action="$dlck" \
         --width="$wth" --height="$eht" --image-on-top \
         --window-icon=idiomind --column=Items --center \
-        --button="$(gettext "Install")":0 \
+        --borders=5 --button="$(gettext "Install")":0 \
         --button="$(gettext "Close")":1
         ret=$?
             
@@ -235,12 +230,7 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
                 
                 if [ "$if2" -ge 80 ]; then
                 
-                    yad --name=Idiomind --center \
-                    --image=info --class=Idiomind \
-                    --text="$(gettext "You have reached the maximum number of topics")\n\n" \
-                    --image-on-top --sticky --skip-taskbar \
-                    --width=420 --height=150 --title=Idiomind \
-                    --window-icon=idiomind --button=gtk-ok:1
+                    msg "$(gettext "You have reached the maximum number of topics")\n" info
                     [ -d "$DT/idmimp_$c" ] && rm -fr "$DT/idmimp_$c"
                     rm -f "$DT"/*.$c "$DT/import.tar.gz" & exit
                 fi
@@ -248,13 +238,8 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
                 if [ "$chck" -ge 1 ]; then
                 
                     tpc_i="$tpc_i $chck"
-                    yad --name=Idiomind --image=info --sticky \
-                    --text=" $(gettext "You already have a topic with the same name.")  \\n $(gettext "The new it was renamed to:") <b>$tpc_i    </b>\n" \
-                    --class=Idiomind --center --skip-taskbar \
-                    --image-on-top --width=420 --height=150 \
-                    --window-icon=idiomind --title=Idiomind \
-                    --button=Cancel:1 --button=gtk-ok:0
-                    ret=$?
+                    msg_2 " $(gettext "You already have a topic with the same name.")  \\n $(gettext "The new it was renamed to:") <b>$tpc_i    </b>\n" info "$(gettext "OK")" "$(gettext "Cancel")"
+                    ret=$(echo $?)
                     
                     if [ $ret != 0 ]; then
                         [ -d "$DT/idmimp_$c" ] && rm -fr "$DT/idmimp_$c"
