@@ -31,7 +31,7 @@ function new_topic() {
     if [ "$(wc -l < "$DM_tl/.1.cfg")" -ge 80 ]; then
     msg "$(gettext "You have reached the maximum number of topics")" info Info &&
     killall add.sh & exit 1; fi
-        
+    
     jlbi=$(dlg_form_0 "$(gettext "New Topic")")
     ret=$(echo "$?")
     jlb="$(clean_2 "$jlbi")"
@@ -39,7 +39,7 @@ function new_topic() {
     
     if [ "$sfname" -ge 1 ]; then
     jlb="$jlb $sfname"
-    dlg_msg_6 " <b>$name_eq   </b>\\n $name_eq2  <b>$jlb</b>   \\n"
+    dlg_msg_6 " <b>"$(gettext "You already have a topic with the same name.")" </b>\\n "$(gettext " The new it was renamed to")"  <b>$jlb</b> \\n"
     ret=$(echo "$?")
     [ "$ret" -eq 1 ] && exit 1
     else
@@ -75,16 +75,19 @@ Create one using the button below. ")" & exit 1; fi
     
     [ -f "$DT_r/ico.jpg" ] && img="$DT_r/ico.jpg" \
     || img="$DS/images/nw.png"
-    
+
     if [ -z "$tpe" ]; then
-    tpcs=$(cat "$DM_tl/.2.cfg" | cut -c 1-40 \
+    tpcs=$(sed -n '1!G;h;$p' < "$DM_tl/.2.cfg" | cut -c 1-40  \
     | tr "\\n" '!' | sed 's/\!*$//g'); else
-    tpcs=$(cat "$DM_tl/.2.cfg" | egrep -v "$tpe" | cut -c 1-40 \
+    tpcs=$(sed -n '1!G;h;$p' < "$DM_tl/.2.cfg" \
+    | egrep -v "$tpe" | cut -c 1-40 \
     | tr "\\n" '!' | sed 's/\!*$//g'); fi
     
-    [ -n "$tpcs" ] && e='!'
-    ttle="${tpe:0:50}"
-    [ "$tpe" != "$tpc" ] && topic="$topic <b>*</b>" || topic="$topic"
+    [ -n "$tpcs" ] && e='!'; [ -z "$tpe" ] && tpe=' '
+    ltopic="${tpe:0:50}"
+    [ "$tpe" != "$tpc" ] && \
+    atopic="<small><b><i>$(gettext "Topic")</i></b></small>" || \
+    atopic="<small>$(gettext "Topic")</small>"
 
     if [ "$trans" = TRUE ]; then lzgpr="$(dlg_form_1)"; \
     else lzgpr="$(dlg_form_2)"; fi
@@ -157,12 +160,9 @@ Create one using the button below. ")" & exit 1; fi
             elif ([ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]); then
             
                 if [ "$trans" = FALSE ]; then
-                    if [ -z "$srce" ]; then
+                    if [ -z "$srce" ] || [ -z "$trgt" ]; then
                         [ -d "$DT_r" ] && rm -fr "$DT_r"
-                        msg "$(gettext "The second field is empty.") $lgsl." info & exit 1
-                    elif [ -z "$trgt" ]; then
-                        [ -d "$DT_r" ] && rm -fr "$DT_r"
-                        msg "$(gettext "The first field is empty.") $lgtl." info & exit 1; fi
+                        msg "$(gettext "You need to fill text fields.") $lgsl." info & exit 1; fi
                 fi
 
                 srce=$(translate "$trgt" auto $lgs)
@@ -176,13 +176,9 @@ Create one using the button below. ")" & exit 1; fi
             elif ([ $lgt != ja ] || [ $lgt != 'zh-cn' ] || [ $lgt != ru ]); then
             
                 if [ "$trans" = FALSE ]; then
-                    if [ -z "$srce" ]; then
+                    if [ -z "$srce" ] || [ -z "$trgt" ]; then
                         [ -d "$DT_r" ] && rm -fr "$DT_r"
-                        msg "$(gettext "The second field is empty.") $lgsl." info & exit 1
-                        
-                    elif [ -z "$trgt" ]; then
-                        [ -d "$DT_r" ] && rm -fr "$DT_r"
-                        msg "$(gettext "The first field is empty.") $lgtl." info & exit 1; fi
+                        msg "$(gettext "You need to fill text fields.") $lgsl." info & exit 1; fi
                 fi
             
                 if [ $(echo "$trgt" | wc -w) = 1 ]; then
@@ -236,7 +232,7 @@ function new_sentence() {
     else 
         if [ -z "$4" ] || [ -z "$2" ]; then
             [ -d "$DT_r" ] && rm -fr "$DT_r"
-            msg "$(gettext "The second field is empty.") $lgsl." info & exit
+            msg "$(gettext "You need to fill text fields.") $lgsl." info & exit
         fi
         
         trgt=$(echo "$(clean_1 "$2")" | sed ':a;N;$!ba;s/\n/ /g')
@@ -343,7 +339,7 @@ function new_word() {
     else
         if [ -z "$4" ] || [ -z "$2" ]; then
             [ -d "$DT_r" ] && rm -fr "$DT_r"
-            msg "$(gettext "Lacking complete a text input field") $lgsl." info & exit 1
+            msg "$(gettext "You need to fill text fields.") $lgsl." info & exit 1
         fi
         
         trgt="$2"
@@ -600,9 +596,8 @@ function sentence_list_words() {
         info="$(gettext "You can add") $left $(gettext "Word")"
     fi
     
-    #fname="$(nmfile "$2")"
     list_words_2 "$2"
-
+    
     slt=$(mktemp $DT/slt.XXXX.x)
     dlg_checklist_1 ./idlst "$info" "$slt"
     ret=$(echo "$?")
@@ -723,7 +718,7 @@ function process() {
     include "$DS/ifs/mods/add"
     include "$DS/ifs/mods/add_process"
     
-    if [ $(echo ${2:0:4}) = 'Http' ]; then
+    if [ "$(echo ${2:0:4})" = 'Http' ]; then
     
         internet
         
@@ -792,22 +787,6 @@ function process() {
     
         [[ -f ./sntsls ]] && rm -f ./sntsls
     
-    #| sed 's/\\n/./g' | sed 's/\./\.\n/g'
-        #while read sntnc
-        #do
-            #if [ $(echo "$sntnc" | wc -c) -ge 150 ]; then
-                #less="$(echo "$sntnc" | sed 's/\,/\n/g')"
-                #n=1
-                #while [ $n -le $(echo "$less" | wc -l) ]; do
-                    #sn=$(echo "$less" | sed -n "$n"p)
-                    #echo "$sn" >> ./sntsls
-                    #let n++
-                #done
-            #else
-                #echo "$sntnc" >> ./sntsls
-            #fi
-        #done < ./sntsls_
-
         sed -i '/^$/d' ./sntsls_
         [[ $(echo "$tpe" | wc -c) -gt 60 ]] \
         && tcnm="${tpe:0:60}..." || tcnm="$tpe"
@@ -819,7 +798,7 @@ function process() {
         elif [ $ns -ge 99 ]; then
             info="$(gettext "You can add") $left $(gettext "items")"
         fi
-        -ge
+
         if [ -z "$(cat ./sntsls_)" ]; then
         
             dlg_text_info_4 "$(gettext "Failed to retrieve text. For the process to be successful audio file must not have music or background noise.")"
@@ -968,7 +947,7 @@ function process() {
                         
                         prg=$((100*$n/$lns-1))
                         echo "$prg"
-                        echo "# ${sntc:0:35}... " ;
+                        echo "# ${trgt:0:35}... " ;
                         
                         let n++
                     done
@@ -1028,7 +1007,7 @@ function process() {
                     cd $DT_r
                     
                     if [ -f ./wlog ]; then
-                        wadds=" $(($(wc -l < ./addw) - $(cat ./wlog | sed '/^$/d' | wc -l)))"
+                        wadds=" $(($(wc -l < ./addw) - $(sed '/^$/d' < ./wlog | wc -l)))"
                         W=" $(gettext "Words")"
                         if [ $(echo $wadds) = 1 ]; then
                             W=" $(gettext "Word")"
@@ -1042,7 +1021,7 @@ function process() {
                         fi
                     fi
                     if [ -f ./slog ]; then
-                        sadds=" $(($( wc -l < ./adds) - $(cat ./slog | sed '/^$/d' | wc -l)))"
+                        sadds=" $(($( wc -l < ./adds) - $(sed '/^$/d' < ./slog | wc -l)))"
                         S=" $(gettext "sentences")"
                         if [ $(echo $sadds) = 1 ]; then
                             S=" $(gettext "sentence")"

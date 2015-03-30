@@ -9,7 +9,7 @@ function index() {
     
         if [ "$1" = word ]; then
         
-            if [ "$(cat "$DC_tlt/0.cfg" | grep "$4")" ] && [ -n "$4" ]; then
+            if [ "$(grep "$4" < "$DC_tlt/0.cfg")" ] && [ -n "$4" ]; then
                 sed -i "s/${4}/${4}\n$2/" "$DC_tlt/0.cfg"
                 sed -i "s/${4}/${4}\n$2/" "$DC_tlt/1.cfg"
                 sed -i "s/${4}/${4}\n$2/" "$DC_tlt/.11.cfg"
@@ -25,27 +25,17 @@ function index() {
             echo "$2" >> "$DC_tlt/4.cfg"
             echo "$2" >> "$DC_tlt/.11.cfg"; fi
 
-        tmp="$DT/tmp"
-        lss="$DC_tlt/.11.cfg"
-        if [ -n "$(cat "$lss" | sort -n | uniq -dc)" ]; then
-            cat "$lss" | awk '!array_temp[$0]++' > $tmp
-            sed '/^$/d' $tmp > "$lss"; fi
-        ls0="$DC_tlt/0.cfg"
-        if [ -n "$(cat "$ls0" | sort -n | uniq -dc)" ]; then
-            cat "$ls0" | awk '!array_temp[$0]++' > $tmp
-            sed '/^$/d' $tmp > "$ls0"; fi
-        ls1="$DC_tlt/1.cfg"
-        if [ -n "$(cat "$ls1" | sort -n | uniq -dc)" ]; then
-            cat "$ls1" | awk '!array_temp[$0]++' > $tmp
-            sed '/^$/d' $tmp > "$ls1"; fi
-        ls2="$DC_tlt/3.cfg"
-        if [ -n "$(cat "$ls2" | sort -n | uniq -dc)" ]; then
-            cat "$ls2" | awk '!array_temp[$0]++' > $tmp
-            sed '/^$/d' $tmp > "$ls2"; fi
-        ls3="$DC_tlt/4.cfg"
-        if [ -n "$(cat "$ls3" | sort -n | uniq -dc)" ]; then
-            cat "$ls3" | awk '!array_temp[$0]++' > $tmp
-            sed '/^$/d' $tmp > "$ls3"; fi
+        z=0; tmp="$DT/tmp"
+        while [ $z -le 4 ]; do
+        
+            inx="$DC_tlt/$z.cfg"
+            if [ -n "$(uniq -dc < "$inx" | sort -n)" ]; then
+                cat "$inx" | awk '!array_temp[$0]++' > $tmp
+                sed '/^$/d' $tmp > "$inx"; fi
+            if grep '^$' "$inx"; then
+                sed -i '/^$/d' "$inx"; fi
+            let z++
+        done
         rm -f $tmp
     fi
 }
@@ -320,8 +310,6 @@ function fetch_audio() {
                 voice "$word" "$3" "$4/${word,,}.mp3"; fi
         fi
         
-        echo "${word,,}.mp3" >> "$DC_tlt/5.cfg"
-        
     done < "$words_list"
 }
 
@@ -393,13 +381,13 @@ function dlg_form_1() {
         --name=Idiomind --class=Idiomind --skip-taskbar \
         --borders=0 --title=" " --width=420 --height=140 \
         --field=" <small>$lgtl</small>: " "$txt" \
-        --field=" <small>$(gettext "Topic")</small>:CB" \
-        "$ttle!$(gettext "New topic") *$e$tpcs" \
+        --field=" $atopic:CB" \
+        "$ltopic!$(gettext "New topic") *$e$tpcs" \
         --button="$(gettext "Image")":3 \
         --button="$(gettext "Audio")":2 \
         --button=gtk-add:0
 }
-
+${tpc:-}
 
 # imput text 
 function dlg_form_2() {
@@ -411,8 +399,8 @@ function dlg_form_2() {
         --borders=0 --title=" " --width=420 --height=170 \
         --field=" <small>$lgtl</small>: " "$txt" \
         --field=" <small>${lgsl^}</small>: " "$srce" \
-        --field=" <small>$(gettext "Topic")</small>:CB" \
-        "$ttle!$(gettext "New topic") *$e$tpcs" \
+        --field=" $atopic:CB" \
+        "$ltopic!$(gettext "New topic") *$e$tpcs" \
         --button="$(gettext "Image")":3 \
         --button="$(gettext "Audio")":2 \
         --button=gtk-add:0
@@ -459,7 +447,7 @@ function dlg_checklist_3() {
         --width=$wth --print-all --height=$eht --borders=3 \
         --button="$(gettext "Cancel")":1 --button=$(gettext "Arrange"):2 \
         --button="$(gettext "To New Topic")":"$DS/add.sh 'new_topic'" \
-        --button=gtk-save:0 \
+        --button=gtk-add:0 \
         --column="$(cat "$1" | wc -l)" \
         --column="$(gettext "sentences")" > $slt
 }

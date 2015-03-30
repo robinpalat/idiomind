@@ -95,7 +95,7 @@ elif [ "$1" = infsd ]; then
                 [ -f "$sv" ] && rm "$sv"
                 mv -f "/tmp/$link" "$sv"
             else
-                msg "$(gettext "The file is not yet available.\n")" info && exit
+                msg "$(gettext "The file is not yet available for download from the server.\n")" info && exit
             fi
             exit
         else
@@ -202,7 +202,7 @@ level=$(echo "$upld" | cut -d "|" -f5)
 [ "$level" = $(gettext "Advanced") ] && level=3
 
 if [ -z "$Ctgry" ]; then
-msg " $(gettext "Please indicates a category.")\n " info
+msg " $(gettext "Please indicate a category.")\n " info
 $DS/ifs/upld.sh &
 exit 1
 fi
@@ -225,9 +225,9 @@ cd "$DM_tlt/words/images"
 if [ $(ls -1 *.jpg 2>/dev/null | wc -l) != 0 ]; then
 images=$(ls *.jpg | wc -l); else
 images=0; fi
-[ -f "$DC_tlt"/3.cfg ] && words=$(cat "$DC_tlt"/3.cfg | wc -l)
-[ -f "$DC_tlt"/4.cfg ] && sentences=$(cat "$DC_tlt"/4.cfg | wc -l)
-[ -f "$DC_tlt"/12.cfg ] && date_c=$(cat "$DC_tlt"/12.cfg)
+[ -f "$DC_tlt/3.cfg" ] && words=$(wc -l < "$DC_tlt/3.cfg")
+[ -f "$DC_tlt/4.cfg" ] && sentences=$(wc -l < "$DC_tlt/4.cfg")
+[ -f "$DC_tlt/12.cfg" ] && date_c=$(< "$DC_tlt/12.cfg")
 date_u=$(date +%F)
 
 echo -e "name=\"$tpc\"
@@ -276,14 +276,21 @@ cp -r ./* "$DT_u/$tpc/"
 cp -r "./words" "$DT_u/$tpc/"
 cp -r "./words/images" "$DT_u/$tpc/words"
 mkdir "$DT_u/$tpc/.audio"
-while read audio; do
-    if [ -f "$DT_u/$tpc/.audio/$audio" ]; then
-    cp -f "$DM_tl/.share/$audio" "$DT_u/$tpc/.audio/$audio"; fi
-done < "$DC_tlt/5.cfg"
+
+auds="$(uniq < "$DC_tlt/4.cfg" | sed 's/ /\n/g' \
+| grep -v '^.$' | grep -v '^..$' \
+| sed -n 1,40p | sed 's/&//; s/,//; s/\?//; s/\¿//; s/;//'g \
+|  sed 's/\!//; s/\¡//; s/\]//; s/\[//; s/\.//; s/  / /'g \
+| tr -d ')' | tr -d '(') | tr '[:upper:]' '[:lower:]')"
+
+while read -r audio; do
+    if [ -f "$DM_tl/.share/$audio.mp3" ]; then
+    cp -f "$DM_tl/.share/$audio.mp3" "$DT_u/$tpc/.audio/$audio.mp3"; fi
+done <<<"$auds"
+
 cp -f "$DC_tlt/0.cfg" "$DT_u/$tpc/0.cfg"
 cp -f "$DC_tlt/3.cfg" "$DT_u/$tpc/3.cfg"
 cp -f "$DC_tlt/4.cfg" "$DT_u/$tpc/4.cfg"
-cp -f "$DC_tlt/5.cfg" "$DT_u/$tpc/5.cfg"
 printf "$notes" > "$DC_tlt/10.cfg"
 printf "$notes" > "$DT_u/$tpc/10.cfg"
 
@@ -295,7 +302,6 @@ mv "$tpc.tar.gz" "$U.$tpc.idmnd"
 dte=$(date "+%d %B %Y")
 notify-send "$(gettext "Please wait while file is uploaded")" "$(gettext "$tpc")" -i idiomind -t 6000
 
-#-----------------------
 cd $DT_u
 lftp -u $USER,$KEY $FTPHOST << END_SCRIPT
 mirror --reverse ./ public_html/$lgs/$lnglbl/$Ctgry/
@@ -305,10 +311,10 @@ END_SCRIPT
 exit=$?
 if [ $exit = 0 ] ; then
     mv -f "$DT/12.cfg" "$DM_t/saved/$tpc.id"
-    info="  $tpc\n<b> $(gettext "Was uploaded properly.")</b>\n"
+    info=" <b>$(gettext "successfully published.")</b>\n $tpc\n"
     image=dialog-ok
 else
-    info=" $(gettext "There was a problem uploading your file.") "
+    info=" $(gettext "It was a problem uploading your file.") "
     image=dialog-warning
 fi
 

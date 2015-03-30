@@ -290,7 +290,7 @@ function delete_item() {
 }
 
 function delete_topic() {
-
+    
     include "$DS/ifs/mods/mngr"
     
     msg_2 "$(gettext "Are you sure you want to delete this Topic?")\n\n" \
@@ -305,17 +305,16 @@ function delete_topic() {
             kill -9 $(pgrep -f "yad --notebook ") &
         
             [ -d "$DM_tl/$tpc" ] && rm -r "$DM_tl/$tpc"
-            rm "$DC_s/4.cfg" "rm $DT/tpe"
-            > "$DC_tl/.8.cfg"
+            rm -f "$DC_s/4.cfg" "$DT/tpe"
+            > "$DM_tl/.8.cfg"
 
-            cd "$DC_tl"
             n=0
             while [ $n -le 4 ]; do
-                 [ -f ".$n.cfg" ] && grep -vxF "$trgt" "./.$n.cfg" > \
-                "./.$n.cfg.tmp" && sed '/^$/d' "./.$n.cfg.tmp" > "./.$n.cfg"
+                 [ -f "$DM_tl/.$n.cfg" ] && grep -vxF "$tpc" "$DM_tl/.$n.cfg" > \
+                "$DT/cfg.tmp" && sed '/^$/d' "$DT/cfg.tmp" > "$DM_tl/.$n.cfg"
                 let n++
             done
-            rm "$DC_tl/.*.tmp"
+            rm "$DT/cfg.tmp"
             
             (sleep 1 && rm -f "$DT/ps_lk") &
             "$DS/mngr.sh" mkmn
@@ -610,7 +609,7 @@ function rename_topic() {
     if [ $snm -ge 1 ]; then
     
         jlb="$jlb $snm"
-        dlg_msg_6 " <b>"$(gettext "You already have a Topic has the same name")"   </b>\\n "$(gettext "The new rename it as")"  <b>$jlb</b>   \\n"
+        dlg_msg_6 " <b>"$(gettext "You already have a topic with the same name.")" </b>\\n "$(gettext " The new it was renamed to")"  <b>$jlb</b>  \\n"
         ret=$(echo "$?")
 
             if [ "$ret" -eq 1 ]; then

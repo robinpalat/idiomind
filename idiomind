@@ -249,7 +249,7 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
                 
                     tpc_i="$tpc_i $chck"
                     yad --name=Idiomind --image=info --sticky \
-                    --text=" $(gettext "You have a topic with the same name")  \\n $(gettext "The new rename it as") <b>$tpc_i    </b>\n" \
+                    --text=" $(gettext "You already have a topic with the same name.")  \\n $(gettext "The new it was renamed to:") <b>$tpc_i    </b>\n" \
                     --class=Idiomind --center --skip-taskbar \
                     --image-on-top --width=420 --height=150 \
                     --window-icon=idiomind --title=Idiomind \

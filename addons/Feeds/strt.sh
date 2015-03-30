@@ -102,7 +102,7 @@ conditions() {
         || [ $(wc -l < "$DCP/$n.rss") != 7 ] \
         || [ ! -f "$DCP/$n.rss" ]); then
                 echo "$n" > $DT/dupl.cnf
-                msg "$(gettext "Se encontró un error (01) en la configuración de un feed") ($n)\n " dialog-warning
+                msg " $(gettext "Something wrong on servers configuration")\n $(gettext "Error")1  $(gettext "URL")$n" dialog-warning
                 [ -f "$DT/.uptp" ] && rm -fr "$DT_r" "$DT/.uptp"
             exit 1
         fi
@@ -126,7 +126,7 @@ mediatype () {
     elif echo "${1}" | grep -q ".m4v"; then ex=m4v; tp=vid
     elif echo "${1}" | grep -q ".mov"; then ex=mov; tp=vid
     else
-        msg "$(gettext "Se encontró un error (02) en la configuración de un feed") ($n)\n " dialog-warning;
+        msg " $(gettext "Something wrong on servers configuration")\n $(gettext "Error")2  $(gettext "URL")$n" dialog-warning;
         continue; fi
 }
 
@@ -222,7 +222,7 @@ fetch_podcasts() {
     while read FEED; do
         
         if [ -z "$FEED" ]; then
-            break; msg "$(gettext "Se encontró un error (03) en la configuración de un feed") ($n)\n " dialog-warning &
+            break; msg " $(gettext "Something wrong on servers configuration")\n $(gettext "Error")3  $(gettext "URL")$n" dialog-warning &
             [ -f "$DT/.uptp" ] && rm -fr "$DT_r" "$DT/.uptp"
             exit 1; fi
         
@@ -263,7 +263,7 @@ fetch_podcasts() {
             
             if ([ "$(echo "$title" | wc -c)" -ge 180 ] \
             || [ -z "$title" ]); then
-                    msg "$(gettext "Se encontró un error (04) en la configuración de un feed") ($n)\n $title" info;
+                    msg " $(gettext "Something wrong on servers configuration")\n $(gettext "Error")4  $(gettext "URL")$n" info;
                     continue; fi
                  
             if ! grep -Fxo "$title" < "$DCP/1.cfg"; then
