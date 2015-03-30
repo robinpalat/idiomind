@@ -74,7 +74,7 @@ function notebook_1() {
     --field="$(gettext "Mark as learned")":FBTN "$DS/mngr.sh 'mark_as_learned'" \
     --field="$label_info2":LBL " " \
     --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh" \
-    --field="gtk-delete":FBTN "$DS/mngr.sh 'delete_topic'" > "$cnf3" &
+    --field="$(gettext "Delete")":FBTN "$DS/mngr.sh 'delete_topic'" > "$cnf3" &
     yad --notebook --name=Idiomind --center --key=$KEY \
     --class=Idiomind --align=right \
     --window-icon=idiomind \
@@ -106,7 +106,7 @@ function notebook_2() {
     --field="$(gettext "Review")":FBTN "$DS/mngr.sh 'mark_as_learn'" \
     --field="$label_info2":LBL " " \
     --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh" \
-    --field="gtk-delete":FBTN "$DS/mngr.sh 'delete_topic'" > "$cnf3" &
+    --field="$(gettext "Delete")":FBTN "$DS/mngr.sh 'delete_topic'" > "$cnf3" &
     yad --notebook --name=Idiomind --center \
     --class=Idiomind --align=right --key=$KEY \
     --tab-borders=0 --center --title="$tpc" \

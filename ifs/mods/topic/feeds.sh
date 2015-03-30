@@ -42,7 +42,7 @@ function feedmode() {
     --field="$(gettext "Subscriptions")":FBTN "$DS/addons/Feeds/cnfg.sh" \
     --field=" $itxt2":lbl " " \
     --field="$(gettext "Syncronize")":FBTN "$DS/addons/Feeds/tls.sh 'sync'" \
-    --field="Delete":FBTN "$DS/addons/Feeds/mngr.sh 'delete'" > "$DT/f.edit" &
+    --field="$(gettext "Delete")":FBTN "$DS/addons/Feeds/mngr.sh 'delete'" > "$DT/f.edit" &
     yad --notebook --name=Idiomind --center \
     --class=Idiomind --align=right --key=$KEY \
     --tab-borders=0 --center --title="Feeds - ${info^}" \
