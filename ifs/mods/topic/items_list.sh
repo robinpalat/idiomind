@@ -19,7 +19,7 @@ function word_view(){
     [ "$(echo "$tgs" | grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)')" = TRUE ] \
     && trgt="* $trgt"
     yad --form --window-icon=idiomind --scroll --text-align=center \
-    --skip-taskbar --center --title="$item" --borders=10 "$1" \
+    --skip-taskbar --center --title="$item" --borders=20 "$1" \
     --quoted-output --on-top --image-on-top \
     --text="<span font_desc='Sans Free Bold 22'>$trgt</span>\n\n<i>$src</i>\n\n$br" \
     --field="":lbl \
@@ -44,7 +44,7 @@ function sentence_view(){
     [ ! -f "$DM_tlt/$fname.mp3" ] && exit 1
     echo "$lwrd" | yad --list --print-column=0 --no-headers \
     --window-icon=idiomind --scroll --text-align=left "$1" \
-    --skip-taskbar --center --title=" " --borders=10 --image-on-top \
+    --skip-taskbar --center --title=" " --borders=20 --image-on-top \
     --on-top --selectable-labels --expand-column=0 \
     --text="<span font_desc='Sans Free 15'>$trgt</span>\n\n<i>$src</i>\n\n" \
     --width="$wth" --height="$eht" --center \

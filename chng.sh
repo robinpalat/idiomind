@@ -54,7 +54,6 @@ if [ "$1" = chngi ]; then
         play=play
     
     elif [ "$t" = 1 ]; then
-        if [ "$text" = "TRUE" ] && [ "$loop" -lt 12 ]; then loop=12; fi
         tgs=$(eyeD3 "$file")
         trgt=$(grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)' <<<"$tgs")
         srce=$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)' <<<"$tgs")
@@ -63,13 +62,15 @@ if [ "$1" = chngi ]; then
 
     [ -z "$trgt" ] && trgt="$item"
     imgt="$DM_tlt/words/images/$fname.jpg"
-    [ -f "$imgt" ] && osdi="$imgt" || osdi=idiomind
+    [ -f "$imgt" ] && osdi="$imgt"
     if [ "$text" = "TRUE" ]; then
-        (notify-send -i "$osdi" "$trgt" "$srce" -t 10000 && sleep 0.5); fi &
+    notify-send -i "$osdi" "$trgt" "$srce" -t 10000; fi &
     if [ "$audio" = "TRUE" ]; then
-        "$play" "$file" && wait; fi
+    "$play" "$file" && wait; fi
     
+    if [ "$text" = "TRUE" ] && [ "$loop" -lt 11 ]; then loop=11; fi
     sleep "$loop"
+    
     [ -f "$DT/.l_loop" ] && rm -f "$DT/.l_loop"
         
 
@@ -106,13 +107,12 @@ elif [ "$1" != chngi ]; then
             
             [ -z "$s" ] && exit 1
             
-            if [ -f "$DM_tl/$s/tpc.sh" ]; then
+            if [ ! -f "$DM_tl/$s/tpc.sh" ]; then
                 if [ "$s" != "Feeds" ]; then
                 cp -f "$DS/default/tpc.sh" "$DM_tl/$s/tpc.sh"
                 fi
                 "$DM_tl/$s/tpc.sh" 1 & exit
             else
-                cp -f "$DS/default/tpc.sh" "$DM_tl/$s/tpc.sh"
                 "$DM_tl/$s/tpc.sh" 1 & exit
             fi
 
@@ -120,13 +120,12 @@ elif [ "$1" != chngi ]; then
             
             [ -z "$s" ] && exit 1
             
-            if [ -f "$DM_tl/$s/tpc.sh" ]; then
+            if [ ! -f "$DM_tl/$s/tpc.sh" ]; then
                 if [ "$s" != "Feeds" ]; then
                 cp -f "$DS/default/tpc.sh" "$DM_tl/$s/tpc.sh"
                 fi
                 "$DM_tl/$s/tpc.sh" & exit
             else
-                cp -f "$DS/default/tpc.sh" "$DM_tl/$s/tpc.sh"
                 "$DM_tl/$s/tpc.sh" & exit
             fi
     else
