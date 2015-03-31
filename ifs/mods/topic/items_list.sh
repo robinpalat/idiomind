@@ -19,9 +19,9 @@ function word_view(){
     [ "$(echo "$tgs" | grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)')" = TRUE ] \
     && trgt="* $trgt"
     yad --form --window-icon=idiomind --scroll --text-align=center \
-    --skip-taskbar --center --title=" " --borders=20 \
-    --quoted-output --on-top --selectable-labels \
-    --text="<span font_desc='Sans Free Bold 22'>$trgt</span>\n\n<i>$src</i>\n" \
+    --skip-taskbar --center --title="$item" --borders=10 "$1" \
+    --quoted-output --on-top --image-on-top \
+    --text="<span font_desc='Sans Free Bold 22'>$trgt</span>\n\n<i>$src</i>\n\n$br" \
     --field="":lbl \
     --field="<i><span color='#7D7D7D'>$exmp1</span></i>:lbl" "$dfnts" "$ntess" \
     --width="$wth" --height="$eht" --center \
@@ -43,8 +43,8 @@ function sentence_view(){
     && trgt="<b>*</b> $trgt"
     [ ! -f "$DM_tlt/$fname.mp3" ] && exit 1
     echo "$lwrd" | yad --list --print-column=0 --no-headers \
-    --window-icon=idiomind --scroll --text-align=left \
-    --skip-taskbar --center --title=" " --borders=20 \
+    --window-icon=idiomind --scroll --text-align=left "$1" \
+    --skip-taskbar --center --title=" " --borders=10 --image-on-top \
     --on-top --selectable-labels --expand-column=0 \
     --text="<span font_desc='Sans Free 15'>$trgt</span>\n\n<i>$src</i>\n\n" \
     --width="$wth" --height="$eht" --center \
@@ -70,7 +70,7 @@ function notebook_1() {
     --column=Name:TEXT --dclick-action='./vwr.sh v2' &
     yad --form --scroll --borders=10 --plug=$KEY --tabnum=3 --columns=2 \
     --text="$label_info" \
-    --field="$(gettext "Notes")$spc":txt "$nt" \
+    --field="$(gettext "Notes")$spc":txt "${nt}" \
     --field="<small>$(gettext "Rename")</small>:" "$tpc" \
     --field="$(gettext "Mark as learned")":FBTN "$DS/mngr.sh 'mark_as_learned'" \
     --field=" $label_info2":LBL " " \
@@ -85,7 +85,7 @@ function notebook_1() {
     --tab=" $(gettext "Edit") " \
     --ellipsize=END --image-on-top --always-print-result \
     --width="$wth" --height="$eht" --borders=5 \
-    --button="$(gettext "Play")":$DS/play.sh \
+    --button="$(gettext "Playlist")":$DS/play.sh \
     --button="$(gettext "Practice")":5 \
     --button="gtk-close":1
 }

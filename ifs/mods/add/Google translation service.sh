@@ -2,12 +2,6 @@
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
 
-function audio_recognizer() {
-    
-    wget -q -U "Mozilla/5.0" --post-file "$1" --header="Content-Type: audio/x-flac; rate=16000" \
-    -O - "https://www.google.com/speech-api/v2/recognize?&lang="$2"-"$3"&key=$4"
-}
-
 function tts() {
     
     cd "$3"; x=1; xargs -n10 | tr -s "'" "|" <<<"${1}" > ./temp

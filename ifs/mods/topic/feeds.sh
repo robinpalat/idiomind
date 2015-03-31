@@ -49,7 +49,7 @@ function feedmode() {
     --tab=" $(gettext "Edit") " --always-print-result \
     --ellipsize=END --image-on-top --window-icon=idiomind \
     --width="$wth" --height="$eht" --borders=5 \
-    --button="$(gettext "Play")":"/usr/share/idiomind/play.sh" \
+    --button="$(gettext "Playlist")":"/usr/share/idiomind/play.sh" \
     --button="gtk-refresh":2 --button="gtk-close":1
     ret=$?
         
@@ -60,8 +60,8 @@ function feedmode() {
     nnt=$(cut -d '|' -f 1 < "$DT/f.edit")
     if [ "$nt" != "$nnt" ]; then
         if [ -z "$nnt" ]; then msg_2 "$(gettext " Really delete note?")\n" gtk-delete "Delete" "No"
-        [ $? = 0 ] && echo "$nnt" > "$DCP/10.cfg"; else
-        echo "$nnt" > "$DCP/10.cfg"; fi
+        [ $? = 0 ] && echo "$nnt" | cut -c1-90000 > "$DCP/10.cfg"; else
+        echo "$nnt" | cut -c1-90000 > "$DCP/10.cfg"; fi
     fi
 }
 

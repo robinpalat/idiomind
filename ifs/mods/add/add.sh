@@ -17,6 +17,7 @@ function index() {
                 echo "$2" >> "$DC_tlt/0.cfg"
                 echo "$2" >> "$DC_tlt/1.cfg"
                 echo "$2" >> "$DC_tlt/.11.cfg"; fi
+                
             echo "$2" >> "$DC_tlt/3.cfg"
             
         elif [ "$1" = sentence ]; then
@@ -96,7 +97,7 @@ function clean_1() {
     | sed 's/^ *//; s/ *$//g'| sed 's/^\s*./\U&\E/g')"
 }
 
-# topic name
+
 function clean_2() {
     
     echo "$(echo "$1" | cut -d "|" -f1 | sed s'/!//'g \
@@ -174,6 +175,7 @@ function add_tags_8() {
     
     eyeD3 -p I$1I4I0I"$2"I$1I4I0I "$3"
 }
+
 
 
 function add_tags_9() {
@@ -285,12 +287,14 @@ function list_words() {
     fi
 }
 
+
 function translate() {
     
     for trans in "$DS/ifs/mods/trans"/*; do
     "$trans" "$@"; done
 
 }
+
 
 function fetch_audio() {
     
@@ -337,7 +341,6 @@ function list_words_3() {
 }
 
 
-# current process
 function dlg_msg_3() {
     
         yad --fixed --center --on-top \
@@ -349,8 +352,6 @@ function dlg_msg_3() {
 }
 
 
-
-# same name - topic 
 function dlg_msg_6() {
     
         yad --name=Idiomind --class=Idiomind --center --on-top \
@@ -360,7 +361,6 @@ function dlg_msg_6() {
 }
 
 
-# new topic
 function dlg_form_0() {
     
         yad --window-icon=idiomind --form --center --on-top \
@@ -370,7 +370,6 @@ function dlg_form_0() {
 }
 
 
-# imput text 
 function dlg_form_1() {
 
         yad --form --center --always-print-result \
@@ -387,7 +386,6 @@ function dlg_form_1() {
 }
 
 
-# imput text 
 function dlg_form_2() {
     
         yad --form --center --always-print-result \
@@ -405,7 +403,6 @@ function dlg_form_2() {
 }
 
 
-# check_tpe
 function dlg_radiolist_1() {
     
         echo "$1" | awk '{print "FALSE\n"$0}' | \
@@ -414,12 +411,11 @@ function dlg_radiolist_1() {
         --text="<b>$te</b> <small> $info</small>" \
         --sticky --skip-taskbar --window-icon=idiomind \
         --height=420 --width=150 --separator="\\n" \
-        --button=$(gettext "Save"):0 --title="$(gettext "Listing words")" \
+        --button=gtk-add:0 --title="$(gettext "Listing words")" \
         --borders=5 --column=" " --column="$(gettext "Sentences")"
 }
 
 
-#edit_word_list
 function dlg_checklist_1() {
     
         cat "$1" | awk '{print "FALSE\n"$0}' | \
@@ -433,7 +429,7 @@ function dlg_checklist_1() {
 }
 
 
-# process no audio
+
 function dlg_checklist_3() {
 
         slt=$(mktemp $DT/slt.XXXX.x)
@@ -451,7 +447,6 @@ function dlg_checklist_3() {
 }
 
 
-# sort
 function dlg_text_info_1() {
     
         cat "$1" | awk '{print "\n\n\n"$0}' | \
@@ -463,7 +458,6 @@ function dlg_text_info_1() {
 }
 
 
-# for log
 function dlg_text_info_3() {
 
         printf "$1" | yad --text-info --center --wrap \
@@ -474,7 +468,6 @@ function dlg_text_info_3() {
 }
 
 
-# no get text
 function dlg_text_info_4() {
     
         echo "$1" | yad --text-info --center --wrap \
@@ -487,7 +480,7 @@ function dlg_text_info_4() {
 function dlg_progress_1() {
     
         yad --progress --progress-text=" " --on-top \
-        --width=200 --height=20 --geometry=200x20-2-2 \
+        --width=240 --height=20 --geometry=240x20-2-2 \
         --pulsate --percentage="5" \
         --undecorated --auto-close --skip-taskbar --no-buttons
 }
@@ -496,6 +489,6 @@ function dlg_progress_1() {
 function dlg_progress_2() {
 
         yad --progress --progress-text=" " --on-top \
-        --width=200 --height=20 --geometry=200x20-2-2 \
+        --width=240 --height=20 --geometry=240x20-2-2 \
         --undecorated --auto-close --skip-taskbar --no-buttons
 }

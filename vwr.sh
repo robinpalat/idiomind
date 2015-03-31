@@ -25,14 +25,17 @@ fi
 
 fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
 align=left
+if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
+br="\n\n\n\n\n"
+image="--image=$DM_tlt/words/images/$fname.jpg"; fi
 
 if [ -f "$DM_tlt/words/$fname.mp3" ]; then
 
-    word_view
+    word_view "$image"
 
 elif [ -f "$DM_tlt/$fname.mp3" ]; then
 
-    sentence_view
+    sentence_view "$image"
     
 else
 

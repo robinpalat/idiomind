@@ -51,7 +51,7 @@ function dlg_file_2() {
 if [[ "$prdt" = A ]]; then
 
     cd "$DT_r"
-    left=$((50 - $(wc -l < "$DC_tlt/4.cfg")))
+    left=$((200 - $(wc -l < "$DC_tlt/4.cfg")))
     test="$DS/addons/Google translation service/test.flac"
     LNK='https://console.developers.google.com'
     
@@ -105,7 +105,7 @@ if [[ "$prdt" = A ]]; then
         fi
 
         ls *.mp3 > lst
-        lns=$(wc -l < lst | head -50)
+        lns=$(wc -l < lst | head -200)
         internet
          
         echo "3"
@@ -143,7 +143,7 @@ if [[ "$prdt" = A ]]; then
             | sed 's/"}],"final":true}],"result_index":0}//g')"
             
             if [ $(wc -c <<<"$trgt") -ge 180 ]; then
-                printf "\n- $trgt" >> log
+                printf "\n\n- $trgt" >> log
             
             else
                 mv -f "./$n.mp3" "./$trgt.mp3"
@@ -162,12 +162,12 @@ if [[ "$prdt" = A ]]; then
 
         cd "$DT_r"
         sed -i '/^$/d' ./ls
-        [[ $(wc -c <<<"$tpe") -gt 40 ]] && tcnm="${tpe:0:40}..." || tcnm="$tpe"
+        [ $(wc -c <<<"$tpe") -gt 40 ] && tcnm="${tpe:0:40}..." || tcnm="$tpe"
 
-        left=$((50 - $(wc -l < "$DC_tlt"/4.cfg)))
-        info="$(gettext "You can add") $left $(gettext "Sentences")"
-        [ $ns -ge 45 ] && info="$(gettext "You can add") $left $(gettext "Sentences")"
-        [ $ns -ge 49 ] && info="$(gettext "You can add") $left $(gettext "Sentence")"
+        left=$((200 - $(wc -l < "$DC_tlt"/4.cfg)))
+        info="$(gettext "You can add") $left $(gettext "Items")"
+        [ $ns -ge 195 ] && info="$(gettext "You can add") $left $(gettext "Items")"
+        [ $ns -ge 199 ] && info="$(gettext "You can add") $left $(gettext "Item")"
         
         if [ -z "$(< $DT_r/ls)" ]; then
         
@@ -183,9 +183,9 @@ if [[ "$prdt" = A ]]; then
             
                 source /usr/share/idiomind/ifs/c.conf
                 cd "$DT_r"
-                list=$(sed 's/|//g' < "$slt")
+                list="$(tac "$slt" | sed 's/|//g')"
                 n=1
-                while [ $n -le "$(wc -l < "$slt"  | head -50)" ]; do
+                while [ $n -le "$(wc -l < "$slt"  | head -200)" ]; do
                     chkst=$(sed -n "$n"p <<<"$list")
                     echo "$chkst" | sed 's/TRUE//g' >> ./slts
                     let n++
@@ -202,7 +202,7 @@ if [[ "$prdt" = A ]]; then
                 lns=$(cat ./slts ./wrds | wc -l)
 
                 n=1
-                while [ $n -le $(wc -l < ./slts | head -50) ]; do
+                while [ $n -le $(wc -l < ./slts | head -200) ]; do
                     
                     sntc=$(sed -n "$n"p ./slts)
                     trgt=$(sed 's/^\s*./\U&\E/g' < "./$sntc.txt")
@@ -210,8 +210,8 @@ if [[ "$prdt" = A ]]; then
                     
                     if [ $(sed -n 1p "$sntc.txt" | wc -$c) -eq 1 ]; then
                     
-                        if [ $(wc -l < "$DC_tlt/0.cfg") -ge 100 ]; then
-                            printf "\n- $sntc" >> ./wlog
+                        if [ $(wc -l < "$DC_tlt/0.cfg") -ge 200 ]; then
+                            printf "\n\n- $sntc" >> ./wlog
                     
                         else
                             srce="$(translate "$trgt" $lgt $lgs)"
@@ -225,14 +225,14 @@ if [[ "$prdt" = A ]]; then
                                 echo "$sntc" >> addw
                             else
                                 [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
-                                printf "\n- $sntc" >> ./wlog
+                                printf "\n\n- $sntc" >> ./wlog
                             fi
                         fi
                     
                     elif [ $(sed -n 1p "$sntc.txt" | wc -$c) -ge 1 ]; then
                     
-                        if [ $(wc -l < "$DC_tlt"/0.cfg) -ge 100 ]; then
-                            printf "\n- $sntc" >> ./slog
+                        if [ $(wc -l < "$DC_tlt"/0.cfg) -ge 200 ]; then
+                            printf "\n\n- $sntc" >> ./slog
                     
                         else
                             srce="$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')"
@@ -262,7 +262,7 @@ if [[ "$prdt" = A ]]; then
                                 add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3"
                                 fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
                             else
-                                printf "\n- $sntc" >> ./slog
+                                printf "\n\n- $sntc" >> ./slog
                                 [ -f "$DM_tlt/$fname.mp3" ] && rm "$DM_tlt/$fname.mp3"
                             fi
 
@@ -277,22 +277,22 @@ if [[ "$prdt" = A ]]; then
                 
                     prg=$((100*$n/$lns-1))
                     echo "$prg"
-                    echo "# ${sntc:0:35} ... " ;
+                    echo "# ${sntc:0:35}..." ;
                     
                     let n++
                 done
 
                 if [ -n "$(< wrds)" ]; then
-                nwrds=" $(wc -l < wrds  | head -50) Palabras"; fi
+                nwrds=" $(wc -l < wrds  | head -200) $(gettext "Words")"; fi
                 
                 n=1
-                while [ $n -le "$(wc -l < wrds  | head -50)" ]; do
+                while [ $n -le "$(wc -l < wrds  | head -200)" ]; do
                     trgt=$(sed -n "$n"p wrds | sed ':a;N;$!ba;s/\n/ /g' | sed 's/^\s*./\U&\E/g')
                     sname=$(sed -n "$n"p wrdsls)
                     fname="$(nmfile "$trgt")"
 
-                    if [ $(wc -l < "$DC_tlt"/0.cfg) -ge 100 ]; then
-                        printf "\n- $trgt" >> ./wlog
+                    if [ $(wc -l < "$DC_tlt"/0.cfg) -ge 200 ]; then
+                        printf "\n\n- $trgt" >> ./wlog
                 
                     else
                         srce="$(translate "$trgt" auto $lgs)"
@@ -313,15 +313,14 @@ if [[ "$prdt" = A ]]; then
                             echo "$trgt" >> addw
                         else
                             [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
-                            printf "\n- $trgt" >> ./wlog
+                            printf "\n\n- $trgt" >> ./wlog
                         fi
                     fi
-                    
                     
                     nn=$(($n+$(wc -l < ./slts)-1))
                     prg=$((100*$nn/$lns))
                     echo "$prg"
-                    echo "# ${trgt:0:35} ... " ;
+                    echo "# ${trgt:0:35}..." ;
                     
                     let n++
                 done

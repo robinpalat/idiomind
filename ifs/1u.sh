@@ -25,7 +25,6 @@ export TEXTDOMAINDIR
 Encoding=UTF-8
 alias gettext='gettext "idiomind"'
 user=$(echo "$(whoami)")
-
 text="<big><big><big>  Welcome  </big></big></big>
 $(gettext "     To get started, please configure the following")\n"
 lang=('English' 'Spanish' 'Italian' 'Portuguese' 'German' \
@@ -59,7 +58,6 @@ sudo apt-get install yad")" \
 --title="Idiomind" --no-wrap & exit
 fi
 
-
 dlg=$(yad --center --width=500 --height=320 --fixed \
 --image-on-top --on-top --class=Idiomind --name=Idiomind \
 --window-icon=idiomind --buttons-layout=end --text="$text" \
@@ -68,7 +66,6 @@ dlg=$(yad --center --width=500 --height=320 --fixed \
 --field=":CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
 --field="$(gettext "Select your native language:")":lbl " " \
 --field=":CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese")
-
 
 ret=$?
 

@@ -204,7 +204,7 @@ function new_sentence() {
     DC_tlt="$DM_tl/$tpe/.conf"
     icnn=idiomind
 
-    if [ $(wc -l < "$DC_tlt/0.cfg") -ge 100 ]; then
+    if [ $(wc -l < "$DC_tlt/0.cfg") -ge 200 ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "You have reached the maximum number of items")" info Info & exit
     fi
@@ -303,7 +303,7 @@ function new_word() {
     DM_tlt="$DM_tl/$tpe"
     DC_tlt="$DM_tl/$tpe/.conf"
     
-    if [ $(wc -l < "$DC_tlt/1.cfg") -ge 100 ]; then
+    if [ $(wc -l < "$DC_tlt/1.cfg") -ge 200 ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "You have reached the maximum number of items.")" info Info & exit 0
     fi
@@ -400,7 +400,7 @@ function edit_list_words() {
     if [ "$3" = "F" ]; then
 
         tpe="$tpc"
-        if [ $(cat "$DC_tlt/0.cfg" | wc -l) -ge 100 ]; then
+        if [ $(cat "$DC_tlt/0.cfg" | wc -l) -ge 200 ]; then
             [ -d "$DT_r" ] && rm -fr "$DT_r"
             msg "$(gettext "You have reached the maximum number of items.")" info Info & exit
         fi
@@ -410,11 +410,11 @@ function edit_list_words() {
         fi
         
         nw=$(wc -l < "$DC_tlt/3.cfg")
-        left=$((50 - $nw))
+        left=$((200 - $nw))
         info="$(gettext "You can add") $left $(gettext "Words")"
-        if [ $nw -ge 45 ]; then
+        if [ $nw -ge 195 ]; then
             info="$(gettext "You can add") $left $(gettext "Words")"
-        elif [ $nw -ge 49 ]; then
+        elif [ $nw -ge 199 ]; then
             info="$(gettext "You can add") $left $(gettext "Word")"
         fi
 
@@ -429,7 +429,7 @@ function edit_list_words() {
             if [ $ret -eq 0 ]; then
                 list=$(cat "$slt" | sed 's/|//g')
                 n=1
-                while [ $n -le "$(cat "$slt" | head -50 | wc -l)" ]; do
+                while [ $n -le "$(cat "$slt" | head -200 | wc -l)" ]; do
                     chkst=$(echo "$list" | sed -n "$n"p)
                     echo "$chkst" | sed 's/TRUE//g' >> ./slts
                     let n++
@@ -444,12 +444,12 @@ function edit_list_words() {
         cd "$DT_r"
         
         n=1
-        while [ $n -le "$(wc -l < ./slts | head -50)" ]; do
+        while [ $n -le "$(wc -l < ./slts | head -200)" ]; do
 
                 trgt=$(sed -n "$n"p ./slts | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
                 fname="$(nmfile "$trgt")"
                 
-            if [ $(wc -l < "$DC_tlt/0.cfg") -ge 100 ]; then
+            if [ $(wc -l < "$DC_tlt/0.cfg") -ge 200 ]; then
                 echo "$trgt
 " > logw
             
@@ -512,16 +512,16 @@ function dclik_list_words() {
     
     nw=$(cat "$DC_tlt/3.cfg" | wc -l)
     
-    if [ $(cat "$DC_tlt/0.cfg" | wc -l) -ge 100 ]; then
+    if [ $(cat "$DC_tlt/0.cfg" | wc -l) -ge 200 ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "You have reached the maximum number of items.")" info Info & exit
     fi
 
-    left=$((50 - $nw))
+    left=$((200 - $nw))
     info="$(gettext "You can add") $left $(gettext "Words")"
-    if [ $nw -ge 45 ]; then
+    if [ $nw -ge 195 ]; then
         info="$(gettext "You can add") $left $(gettext "Words")"
-    elif [ $nw -ge 49 ]; then
+    elif [ $nw -ge 199 ]; then
         info="$(gettext "You can add") $left $(gettext "Word")"
     fi
     
@@ -554,7 +554,7 @@ function dclik_list_words() {
     
             list=$(cat "$slt" | sed 's/|//g')
             n=1
-            while [ $n -le $(wc -l < "$slt" | head -50) ]; do
+            while [ $n -le $(wc -l < "$slt" | head -200) ]; do
                 chkst=$(sed -n "$n"p <<<"$list")
                 echo "$chkst" | sed 's/TRUE//g' >> ./wrds
                 echo "$sname" >> wrdsls
@@ -587,12 +587,12 @@ function sentence_list_words() {
     fi
     
     nw=$(wc -l < "$DC_tlt/3.cfg")
-    left=$((50 - $nw))
+    left=$((200 - $nw))
     if [ "$left" = 0 ]; then
         exit 1
-    elif [ $nw -ge 45 ]; then
+    elif [ $nw -ge 195 ]; then
         info="$(gettext "You can add") $left $(gettext "Words")"
-    elif [ $nw -ge 49 ]; then
+    elif [ $nw -ge 199 ]; then
         info="$(gettext "You can add") $left $(gettext "Word")"
     fi
     
@@ -606,7 +606,7 @@ function sentence_list_words() {
         
             list=$(cat "$slt" | sed 's/|//g')
             n=1
-            while [ $n -le $(wc -l < "$slt" | head -50) ]; do
+            while [ $n -le $(wc -l < "$slt" | head -200) ]; do
                 chkst=$(echo "$list" |sed -n "$n"p)
                 echo "$chkst" | sed 's/TRUE//g' >> ./slts
                 let n++
@@ -621,12 +621,12 @@ function sentence_list_words() {
         fi
 
     n=1
-    while [ $n -le $(wc -l < ./slts | head -50) ]; do
+    while [ $n -le $(wc -l < ./slts | head -200) ]; do
     
         trgt=$(sed -n "$n"p ./slts | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
         fname="$(nmfile "$trgt")"
         
-        if [ $(cat "$DC_tlt/0.cfg" | wc -l) -ge 100 ]; then
+        if [ $(cat "$DC_tlt/0.cfg" | wc -l) -ge 200 ]; then
             echo "$trgt" >> logw
         else
             translate "$trgt" auto $lgs > tr."$c"
@@ -690,7 +690,7 @@ function process() {
         [ -d "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "No topic is active")\n" info & exit 1
     fi
-    if [ $ns -ge 100 ]; then
+    if [ $ns -ge 200 ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "You have reached the maximum number of items.")" info Info
         rm -f ls "$lckpr" & exit 1
@@ -790,11 +790,11 @@ function process() {
         [[ $(echo "$tpe" | wc -c) -gt 60 ]] \
         && tcnm="${tpe:0:60}..." || tcnm="$tpe"
         
-        left=$((100 - $ns))
+        left=$((200 - $ns))
         info="$(gettext "You can add") $left $(gettext "items")"
-        if [ $ns -ge 95 ]; then
+        if [ $ns -ge 195 ]; then
             info="$(gettext "You can add") $left $(gettext "items")"
-        elif [ $ns -ge 99 ]; then
+        elif [ $ns -ge 199 ]; then
             info="$(gettext "You can add") $left $(gettext "items")"
         fi
 
@@ -827,7 +827,7 @@ function process() {
                 elif [ $ret -eq 0 ]; then
                 
                     source /usr/share/idiomind/ifs/c.conf
-                    list=$(sed 's/|//g' < "$slt")
+                    list=$(tac "$slt" | 's/|//g')
                     n=1
                     while [ $n -le $(wc -l < "$slt") ]; do
                         chkst=$(sed -n "$n"p <<<"$list")
@@ -850,7 +850,7 @@ function process() {
                     lns=$(cat ./slts ./wrds | wc -l)
 
                     n=1
-                    while [ $n -le $(wc -l < slts | head -50) ]; do
+                    while [ $n -le $(wc -l < slts | head -200) ]; do
                     
                         sntc=$(sed -n "$n"p slts)
                         trgt=$(translate "$(clean_1 "$sntc")" auto $lgt | sed ':a;N;$!ba;s/\n/ /g')
@@ -859,7 +859,7 @@ function process() {
                     
                         # words
                         if [ $(wc -$c <<<"$sntc") = 1 ]; then
-                            if [ $(wc -l < "$DC_tlt"/0.cfg) -ge 100 ]; then
+                            if [ $(wc -l < "$DC_tlt"/0.cfg) -ge 200 ]; then
                                 printf "\n- $sntc" >> ./wlog
                         
                             else
@@ -888,7 +888,7 @@ function process() {
                         #sentences 
                         elif [ $(wc -$c <<<"$sntc") -ge 1 ]; then
                             
-                            if [ $(wc -l < "$DC_tlt/0.cfg") -ge 100 ]; then
+                            if [ $(wc -l < "$DC_tlt/0.cfg") -ge 200 ]; then
                                 printf "\n- $sntc" >> ./slog
                         
                             else
@@ -953,13 +953,13 @@ function process() {
                     
                     #words
                     n=1; touch wrds
-                    while [ $n -le $(wc -l < wrds | head -50) ]; do
+                    while [ $n -le $(wc -l < wrds | head -200) ]; do
                     
                         sname=$(sed -n "$n"p wrdsls)
                         trgt=$(sed -n "$n"p wrds | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
                         fname="$(nmfile "$trgt")"
 
-                        if [ $(wc -l < "$DC_tlt/0.cfg") -ge 100 ]; then
+                        if [ $(wc -l < "$DC_tlt/0.cfg") -ge 200 ]; then
                             printf "\n- $trgt" >> ./wlog
                     
                         else
