@@ -12,7 +12,7 @@ c=$(yad --center --form --on-top --name=Idiomind --class=Idiomind \
 --button="$(gettext "OK")":0 --width=480 --height=320 \
 --always-print-result --editable --print-all \
 --title="Google translation service" --window-icon=idiomind \
---field="\n$(gettext "Use Google translator")\n":CHK "$set1" \
+--field="\n$(gettext "Enable translator")\n":CHK "$set1" \
 --field="$(gettext "Key (optional)")"::TXT "$key" \
 --field="\n\n\n\n":LBL " ")
 val1="$(cut -d "|" -f1 <<< "$c")"

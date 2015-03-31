@@ -97,11 +97,11 @@ yad --plug=$KEY --tabnum=1 \
 --field=" :LBL" " " \
 --field="$(gettext "Play Options")\t":LBL " " \
 --field=":LBL" " " \
---field="$(gettext "Text")":CHK "$text" \
---field="$(gettext "Audio")":CHK "$audio" \
+--field="$(gettext "Desktop notifications")":CHK "$text" \
+--field="$(gettext "Play audio")":CHK "$audio" \
 --field="$(gettext "Repeat")":CHK "$repeat" \
---field="$(gettext "Only videos")":CHK "$videos" \
---field="$(gettext "Time for play Loop")":SCL "$loop" \
+--field="$(gettext "Only play videos")":CHK "$videos" \
+--field="$(gettext "Duration of pause between items:")":SCL "$loop" \
 --field=" :LBL" " " \
 --field="$(gettext "Languages")\t":LBL " " \
 --field=":LBL" " " \

@@ -267,8 +267,8 @@ elif [ -z "$1" ]; then
     --always-print-result --window-icon=idiomind --class=Idiomind \
     --button="$(gettext "Close")":0 --width=530 --height=400 \
     --field="$(gettext "active")":CHK $act \
-    --field="$(gettext "Automark")":CHK $aut \
-    --field="\n\n\n\n$(gettext "Tax challenge")":lbl " " \
+    --field="$(gettext "Automark items")":CHK $aut \
+    --field="\n\n\n\n$(gettext "Challenge")":lbl " " \
     --field=":scl" $pro \
     --field="<sup>Normal\t\t\t\tHard</sup>\n":lbl " " )
         ret=$?
