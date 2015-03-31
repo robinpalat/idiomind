@@ -38,9 +38,7 @@ function feedmode() {
     --column=Name --dclick-action="$DSP/vwr.sh" &
     yad --form --scroll --borders=10 --plug=$KEY --tabnum=3 --columns=2 \
     --field="$(gettext "Notes")$spc":txt "$nt" \
-    --field=" :LBL" "2" \
-    --field="$(gettext "Subscriptions")":FBTN "$DS/addons/Feeds/cnfg.sh" \
-    --field=" $itxt2":lbl " " \
+    --field=" :LBL" " " --field=" :LBL" " " --field=" $itxt2":lbl " " \
     --field="$(gettext "Syncronize")":FBTN "$DS/addons/Feeds/tls.sh 'sync'" \
     --field="$(gettext "Delete")":FBTN "$DS/addons/Feeds/mngr.sh 'delete'" > "$DT/f.edit" &
     yad --notebook --name=Idiomind --center \
@@ -52,8 +50,7 @@ function feedmode() {
     --ellipsize=END --image-on-top --window-icon=idiomind \
     --width="$wth" --height="$eht" --borders=5 \
     --button="$(gettext "Play")":"/usr/share/idiomind/play.sh" \
-    --button="gtk-refresh":2 \
-    --button="gtk-close":1
+    --button="gtk-refresh":2 --button="gtk-close":1
     ret=$?
         
     if [ $ret -eq 2 ]; then
