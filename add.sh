@@ -29,7 +29,7 @@ source "$DC_s/1.cfg"
 function new_topic() {
 
     if [ "$(wc -l < "$DM_tl/.1.cfg")" -ge 80 ]; then
-    msg "$(gettext "You have reached the maximum number of topics")" info Info &&
+    msg "$(gettext "Sorry, you have reached the maximum number of topics")" info Info &&
     killall add.sh & exit 1; fi
     
     jlbi=$(dlg_form_0 "$(gettext "New Topic")")

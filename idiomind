@@ -229,7 +229,7 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
                 
                 if [ "$if2" -ge 80 ]; then
                 
-                    msg "$(gettext "You have reached the maximum number of topics")\n" info
+                    msg "$(gettext "Sorry, you have reached the maximum number of topics")\n" info
                     [ -d "$DT/idmimp_$c" ] && rm -fr "$DT/idmimp_$c"
                     rm -f "$DT"/*.$c "$DT/import.tar.gz" & exit
                 fi
@@ -577,13 +577,6 @@ function autostart() {
     exit 0
 }
 
-function passhtml() {
-    
-    source "$DS/ifs/tls.sh"
-    html
-    exit 0
-}
-
 case $1 in
     topic)
     topic ;;
@@ -595,8 +588,6 @@ case $1 in
     session;;
     autostart)
     autostart;;
-    html)
-    passhtml;;
     *)
     panel;;
 esac
