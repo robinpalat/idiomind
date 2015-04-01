@@ -54,12 +54,18 @@ function setting_1() {
 }
 
 if [ ! -f "$DT/.p_" ]; then
-btn="Play:0"; else btn="gtk-media-stop:2"; fi
+tpp="$tpc"
+btn="Play:0"; else
+tpp="$(sed -n 2p "$DT/.p_")"
+if grep TRUE <<<"$words$sentences$marks$practice"; then
+[ "$tpp" != "$tpc" ] && r="Playing: "; fi
+btn="gtk-media-stop:2"; fi
 slct=$(mktemp "$DT"/slct.XXXX)
+
 setting_1 | yad --list --separator="|" --on-top \
 --expand-column=2 --print-all --no-headers --center \
 --class=Idiomind --name=Idiomind --align=right \
---width=380 --height=310 --title="$tpc" \
+--width=380 --height=310 --title="$r$tpp" \
 --window-icon=idiomind --borders=5 --always-print-result \
 --column=IMG:IMG --column=TXT:TXT --column=CHK:CHK \
 --button="$(gettext "Cancel")":1 --button="$btn" --skip-taskbar > "$slct"
@@ -79,7 +85,11 @@ if [ "$ret" -eq 0 ]; then
 
     rm -f "$slct";
     "$DS/stop.sh" playm
-    echo "$DM_tlt" > "$DT/tpp"
+    if [ -d "$DM_tlt" ] && [ -n "$tpc" ]; then
+    echo "$DM_tlt" > "$DT/.p_"
+    echo "$tpc" >> "$DT/.p_"
+    else "$DS/stop.sh" play && exit 1; fi
+    
     source "$DC_s/1.cfg"
     
     if [ -z "$(< "$DT/index.m3u")" ]; then

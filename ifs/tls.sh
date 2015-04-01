@@ -826,6 +826,8 @@ case "$1" in
     edit_audio "$@" ;;
     help)
     help ;;
+    definition)
+    definition "$@" ;;
     check_updates)
     check_updates ;;
     a_check_updates)

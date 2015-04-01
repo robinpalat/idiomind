@@ -20,13 +20,12 @@
 
 [[ -z "$tpc" && -d "$DT" ]] && exit 1
 source "$DC_s/1.cfg"
-> "$DT/.p_"
 cd "$DT"
-n=$(wc -l < ./index.m3u)
 
-if ([ -n "$(cat ./index.m3u)" ] && [ $(wc -l < ./index.m3u) -gt 0 ]); then
+if [ -n "$(cat ./index.m3u)" ] && [ $(wc -l < ./index.m3u) -gt 0 ]; then
     if [ "$repeat" = "TRUE" ]; then
         while [ 1 ]; do
+            n=$(wc -l < ./index.m3u)
             while [ 1 -le $n ]; do
                 "$DS/chng.sh" chngi "$n"
                 let n--
@@ -38,7 +37,7 @@ if ([ -n "$(cat ./index.m3u)" ] && [ $(wc -l < ./index.m3u) -gt 0 ]); then
         "$DS/chng.sh" chngi "$n"
             let n--
         done
-        rm -fr "$DT/.p_" "$DT/tpp"
+        rm -fr "$DT/.p_"
     fi
 else
     exit 1

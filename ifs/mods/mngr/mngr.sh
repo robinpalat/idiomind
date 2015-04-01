@@ -17,15 +17,6 @@
 #  MA 02110-1301, USA.
 #
 #  2015/02/27
-#function () delete{
-
-    #for f in "${@}"; do
-        #[ -f "$f" ] && \
-        #grep -vxF "$trgt" "$f" "$f.tmp" && \
-        #sed '/^$/d' "$f.tmp" > "$f"
-        #[ -f "$f.tmp" ] && rm "$f.tmp"
-    #done
-#}
 
 
 function dlg_form_1() {

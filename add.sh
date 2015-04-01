@@ -157,7 +157,7 @@ Create one using the button below. ")" & exit 1; fi
             elif [ $(echo "$trgt" | wc -c) -gt 150 ]; then
                 "$DS/add.sh" process "$trgt" "$DT_r" & exit 1
 
-            elif ([ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]); then
+            elif [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
             
                 if [ "$trans" = FALSE ]; then
                     if [ -z "$srce" ] || [ -z "$trgt" ]; then
@@ -173,7 +173,7 @@ Create one using the button below. ")" & exit 1; fi
                 elif [ $(echo "$srce" | wc -w) -ge 1 -a $(echo "$srce" | wc -c) -le 180 ]; then
                     "$DS/add.sh" new_sentence "$trgt" "$DT_r" "$srce" & exit 1
                 fi
-            elif ([ $lgt != ja ] || [ $lgt != 'zh-cn' ] || [ $lgt != ru ]); then
+            elif [ $lgt != ja ] || [ $lgt != 'zh-cn' ] || [ $lgt != ru ]; then
             
                 if [ "$trans" = FALSE ]; then
                     if [ -z "$srce" ] || [ -z "$trgt" ]; then
@@ -374,8 +374,8 @@ function new_word() {
         icnn=img.jpg
     fi
     
-    if ( [ -n $(file -ib "$DM_tlt/words/$fname.mp3" | grep -o 'binary') ] \
-    && [ -f "$DM_tlt/words/$fname.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
+    if [ -n $(file -ib "$DM_tlt/words/$fname.mp3" | grep -o 'binary') ] \
+    && [ -f "$DM_tlt/words/$fname.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ]; then
     
         add_tags_1 W "$trgt" "$srce" "$DM_tlt/words/$fname.mp3"
         nt="$(echo "_$(check_grammar_2 "$trgt")" | tr '\n' '_')"
@@ -418,7 +418,7 @@ function edit_list_words() {
             info="$(gettext "You can add") $left $(gettext "Word")"
         fi
 
-        mkdir "$DT/$c"; "DT_r=$DT/$c"; cd "$DT_r"
+        mkdir "$DT/$c"; cd "$DT/$c";
 
         list_words_2 "$2"
         slt=$(mktemp $DT/slt.XXXX.x)
@@ -427,13 +427,10 @@ function edit_list_words() {
         ret=$(echo "$?")
 
             if [ $ret -eq 0 ]; then
-                list=$(cat "$slt" | sed 's/|//g')
-                n=1
-                while [ $n -le "$(cat "$slt" | head -200 | wc -l)" ]; do
-                    chkst=$(echo "$list" | sed -n "$n"p)
-                    echo "$chkst" | sed 's/TRUE//g' >> ./slts
-                    let n++
-                done
+                
+                while read chkst; do
+                    sed 's/TRUE//g' <<<"$chkst" >> "$DT/$c/slts"
+                done <<<"$(sed 's/|//g' < "$slt")"
                 rm -f "$slt"
             fi
         
@@ -444,7 +441,7 @@ function edit_list_words() {
         cd "$DT_r"
         
         n=1
-        while [ $n -le "$(wc -l < ./slts | head -200)" ]; do
+        while [ $n -le $(wc -l < "$DT_r/slts") ]; do
 
                 trgt=$(sed -n "$n"p ./slts | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
                 fname="$(nmfile "$trgt")"
@@ -473,8 +470,8 @@ function edit_list_words() {
                     voice "$trgt" "$DT_r" "$DM_tlt/words/$fname.mp3"
                 fi
                 
-                if ( [ -n $(file -ib "$DM_tlt/words/$fname.mp3" | grep -o 'binary') ] \
-                && [ -f "$DM_tlt/words/$fname.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
+                if [ -n $(file -ib "$DM_tlt/words/$fname.mp3" | grep -o 'binary') ] \
+                && [ -f "$DM_tlt/words/$fname.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ]; then
                 
                     add_tags_2 W "$trgt" "$srce" "$5" "$DM_tlt/words/$fname.mp3" >/dev/null 2>&1
                     index word "$trgt" "$tpc" "$sname"
@@ -552,16 +549,12 @@ function dclik_list_words() {
     
     if [ $? -eq 0 ]; then
     
-            list=$(cat "$slt" | sed 's/|//g')
-            n=1
-            while [ $n -le $(wc -l < "$slt" | head -200) ]; do
-                chkst=$(sed -n "$n"p <<<"$list")
-                echo "$chkst" | sed 's/TRUE//g' >> ./wrds
+            while read chkst; do
+                sed 's/TRUE//g' <<<"$chkst" >> ./wrds
                 echo "$sname" >> wrdsls
-                let n++
-            done
+            done <<<"$(sed 's/|//g' < "$slt")"
             rm -f "$slt"
-            
+
         elif [ "$ret" -eq 1 ]; then
         
         rm -f "$DT"/*."$c"
@@ -603,16 +596,12 @@ function sentence_list_words() {
     ret=$(echo "$?")
         
         if [ $ret -eq 0 ]; then
-        
-            list=$(cat "$slt" | sed 's/|//g')
-            n=1
-            while [ $n -le $(wc -l < "$slt" | head -200) ]; do
-                chkst=$(echo "$list" |sed -n "$n"p)
-                echo "$chkst" | sed 's/TRUE//g' >> ./slts
-                let n++
-            done
-            rm -f "$slt"
             
+            while read chkst; do
+                sed 's/TRUE//g' <<<"$chkst"  >> ./slts
+            done <<<"$(sed 's/|//g' < "$slt")"
+            rm -f "$slt"
+
         elif [ "$ret" -eq 1 ]; then
         
             rm -f "$DT"/*."$c"
@@ -648,8 +637,8 @@ function sentence_list_words() {
                 voice "$trgt" "$DT_r" "$DM_tlt/words/$fname.mp3"
             fi
             
-            if ( [ -n $(file -ib "$DM_tlt/words/$fname.mp3" | grep -o 'binary') ] \
-            && [ -f "$DM_tlt/words/$fname.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
+            if [ -n $(file -ib "$DM_tlt/words/$fname.mp3" | grep -o 'binary') ] \
+            && [ -f "$DM_tlt/words/$fname.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ]; then
                 
                 add_tags_2 W "$trgt" "$srce" "$3" "$DM_tlt/words/$fname.mp3" >/dev/null 2>&1
                 index word "$trgt" "$4"
@@ -880,8 +869,8 @@ function process() {
                                     voice "$trgt" "$DT_r" "$DM_tlt/words/$fname.mp3"
                                 fi
 
-                                if ( [ -n $(file -ib "$DM_tlt/words/$fname.mp3" | grep -o 'binary') ] \
-                                && [ -f "$DM_tlt/words/$fname.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
+                                if [ -n $(file -ib "$DM_tlt/words/$fname.mp3" | grep -o 'binary') ] \
+                                && [ -f "$DM_tlt/words/$fname.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ]; then
                                 
                                     add_tags_1 W "$trgt" "$srce" "$DM_tlt/words/$fname.mp3"
                                     echo "$trgt" >> addw
@@ -928,8 +917,8 @@ function process() {
                                     lwrds=$(< "A.$r")
                                     pwrds=$(tr '\n' '_' < "B.$r")
                                     
-                                    if ( [ -n $(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary') ] \
-                                    && [ -f "$DM_tlt/$fname.mp3" ] && [ -n "$lwrds" ] && [ -n "$pwrds" ] && [ -n "$grmrk" ] ); then
+                                    if [ -n $(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary') ] \
+                                    && [ -f "$DM_tlt/$fname.mp3" ] && [ -n "$lwrds" ] && [ -n "$pwrds" ] && [ -n "$grmrk" ]; then
                                     
                                         echo "$fname" >> adds
                                         index sentence "$trgt" "$tpe"
@@ -991,8 +980,8 @@ function process() {
                             fi
 
 
-                            if ( [ -n $(file -ib "$DM_tlt/words/$fname.mp3" | grep -o 'binary') ] \
-                            && [ -f "$DM_tlt/words/$fname.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
+                            if [ -n $(file -ib "$DM_tlt/words/$fname.mp3" | grep -o 'binary') ] \
+                            && [ -f "$DM_tlt/words/$fname.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ]; then
                                 add_tags_2 W "$trgt" "$srce" "$sname" "$DM_tlt/words/$fname.mp3"
                                 index word "$trgt" "$tpe" "$sname"
                                 echo "$trgt" >> addw
@@ -1006,7 +995,7 @@ function process() {
                         nn=$(($n+$(wc -l < ./slts)-1))
                         prg=$((100*$nn/$lns))
                         echo "$prg"
-                        echo "# ${itm:0:35}... " ;
+                        echo "# ${trgt:0:35}... " ;
                         
                         let n++
                     done

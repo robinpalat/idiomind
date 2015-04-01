@@ -296,6 +296,9 @@ function delete_topic() {
     if [ -f "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "$tpc" ]; then
     msg " $(gettext "You can not delete at this time. Please try later ")\n" dialog-warning &
     exit 1; fi
+    if [ -f "$DT/.p_" ] && [ "$(sed -n 2p "$DT/.p_")" = "$tpc" ]; then
+    msg " $(gettext "You can not delete at this time. Please try later ")\n" dialog-warning &
+    exit 1; fi
     
     msg_2 "$(gettext "Are you sure you want to delete this Topic?")\n" \
     dialog-question "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
@@ -628,6 +631,8 @@ function rename_topic() {
             fi
             
     elif [ -f "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "$tpc" ]; then
+         msg " $(gettext "Unable to rename at this time. Please try later ")\n" dialog-warning & exit 1
+    elif [ -f "$DT/.p_" ] && [ "$(sed -n 2p "$DT/.p_")" = "$tpc" ]; then
          msg " $(gettext "Unable to rename at this time. Please try later ")\n" dialog-warning & exit 1
     else
         jlb="$jlb"

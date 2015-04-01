@@ -25,7 +25,7 @@ source "$DC_s/1.cfg"
 
 if [ "$1" = chngi ]; then
     
-    DM_tlt=$(< "$DT/tpp")
+    DM_tlt=$(sed -n 1p "$DT/.p_")
 
     function stop_loop() {
     
