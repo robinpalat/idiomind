@@ -20,11 +20,12 @@
 DT="/tmp/.idmtp1.$USER"
 DS="/usr/share/idiomind"
 DC_s="$HOME/.config/idiomind/s"
-DM_tlt=$(< "$DT/tpp")
 source "$DS/ifs/mods/cmns.sh"
 source "$DC_s/1.cfg"
 
 if [ "$1" = chngi ]; then
+    
+    DM_tlt=$(< "$DT/tpp")
 
     function stop_loop() {
     

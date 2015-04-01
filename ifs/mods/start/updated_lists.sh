@@ -9,63 +9,52 @@ if [ TRUE = TRUE ]; then
     TPS=$(mktemp $DT/tps.XXXX)
     items=$(mktemp $DT/w9.XXXX)
     TPCS=$(grep -o -P '(?<=tpcs.).*(?=\.tpcs)' < "$LOG" \
-    | sort | uniq -dc | sort -n -r | head -3 | sed -e 's/^ *//' -e 's/ *$//')
+    | sort | uniq -dc | sort -n -r | head -15 | sed -e 's/^ *//' -e 's/ *$//')
     W9INX=$(grep -o -P '(?<=w9.).*(?=\.w9)' < "$LOG" | tr -s ';' '\n' \
     | sort | uniq -dc | sort -n -r | sed 's/ \+/ /g')
-    tpc1=$(sed -n 1p <<<"$TPCS" | cut -d " " -f2-)
-    echo "$tpc1" > "$TPS"
-    tpc1=$(sed -n 1p $TPS)
-    if [ "$(sed -n 2p <<<"$TPCS" | awk '{print ($1)}')" -ge 3 ]; then
-    tpc2=$(sed -n 2p <<<"$TPCS" | cut -d " " -f2-)
-    echo "$tpc2" >> "$TPS"; tpc2=$(sed -n 2p $TPS); fi
-    if [ "$(sed -n 3p <<<"$TPCS" | awk '{print ($1)}')" -ge 3 ]; then
-    tpc3=$(sed -n 3p <<<"$TPCS" | cut -d " " -f2-)
-    echo "$tpc3" >> "$TPS"; tpc3=$(sed -n 3p $TPS); fi
-
-    if [ -n "$tpc3" ];then
-    [ -f "$DM_tl/$tpc1/.conf/1.cfg" ] && list_a1="$DM_tl/$tpc1/.conf/1.cfg"
-    [ -f "$DM_tl/$tpc2/.conf/1.cfg" ] && list_a2="$DM_tl/$tpc2/.conf/1.cfg"
-    [ -f "$DM_tl/$tpc3/.conf/1.cfg" ] && list_a3="$DM_tl/$tpc3/.conf/1.cfg"
-    touch "$DM_tl/$tpc1/.conf/2.cfg" && list_b1="$DM_tl/$tpc1/.conf/2.cfg"
-    touch "$DM_tl/$tpc2/.conf/2.cfg" && list_b2="$DM_tl/$tpc2/.conf/2.cfg"
-    touch "$DM_tl/$tpc3/.conf/2.cfg" && list_b3="$DM_tl/$tpc3/.conf/2.cfg"
-    elif [ -n "$tpc2" ];then
-    [ -f "$DM_tl/$tpc1/.conf/1.cfg" ] && list_a1="$DM_tl/$tpc1/.conf/1.cfg"
-    [ -f "$DM_tl/$tpc2/.conf/1.cfg" ] && list_a2="$DM_tl/$tpc2/.conf/1.cfg"
-    touch "$DM_tl/$tpc1/.conf/2.cfg" && list_b1="$DM_tl/$tpc1/.conf/2.cfg"
-    touch "$DM_tl/$tpc2/.conf/2.cfg" && list_b2="$DM_tl/$tpc2/.conf/2.cfg"
-    elif [ -n "$tpc1" ];then
-    [ -f "$DM_tl/$tpc1/.conf/1.cfg" ] && list_a1="$DM_tl/$tpc1/.conf/1.cfg"
-    touch "$DM_tl/$tpc1/.conf/2.cfg" && list_b1="$DM_tl/$tpc1/.conf/2.cfg"
-    fi
-
+    
     n=1
     while [ $n -le 15 ]; do
+        
+        if [[ "$(sed -n "$n"p <<<"$TPCS" | awk '{print ($1)}')" -ge 3 ]]; then
+        
+            tpc=$(sed -n "$n"p <<<"$TPCS" | cut -d " " -f2-)
+            
+                if [ -d "$DM_tl/$tpc" ]; then
+                echo "$tpc" >> "$TPS"
+                declare tpc$n="$tpc"
+                touch "$DM_tl/$tpc/.conf/1.cfg"
+                touch "$DM_tl/$tpc/.conf/2.cfg"
+                declare list_a$n="$DM_tl/$tpc/.conf/1.cfg"
+                declare list_b$n="$DM_tl/$tpc/.conf/2.cfg"
+                else 
+                declare tpc$n=""
+                fi
+        fi
+        let n++
+    done
+
+    n=1
+    while [ $n -le 100 ]; do
+    
         if [[ $(sed -n "$n"p <<<"$W9INX" | awk '{print ($1)}') -ge 3 ]]; then
         
             fwk=$(sed -n "$n"p <<<"$W9INX" | awk '{print ($2)}')
-            if [ -n "$tpc3" ];then
-                if grep -o "$fwk" < "$list_a1"; then
+
+            q=1
+            while [ $q -le 15 ]; do
+            
+                    tpc="tpc$q"
+                    list_a="list_a$q"
+                    if [ -n "${!tpc}" ];then
+                    if grep -o "$fwk" < "${!list_a}"; then
                     echo "$fwk" >> "$items"
-                    
-                elif grep -o "$fwk" < "$list_a2"; then
-                    echo "$fwk" >> "$items"
-                    
-                elif grep -o "$fwk" < "$list_a3"; then
-                    echo "$fwk" >> "$items"
-                fi
-            elif [ -n "$tpc2" ]; then
-                if grep -o "$fwk" < "$list_a1"; then
-                    echo "$fwk" >> "$items"
-                    
-                elif grep -o "$fwk" < "$list_a2"; then
-                    echo "$fwk" >> "$items"
-                fi
-            elif [ -n "$tpc1" ]; then
-                if grep -o "$fwk" < "$list_a1"; then
-                echo "$fwk" >> "$items"
-                fi
-            fi
+                    fi
+                    fi
+
+                let q++
+            done
+            
         fi
         let n++
     done
@@ -74,59 +63,34 @@ if [ TRUE = TRUE ]; then
     
     if [ $(wc -l < "$items") -gt 0 ]; then
     notify-send -i idiomind "$(gettext "Update lists")" \
-    "$(wc -l < "$items") $(gettext "item(s) marked as learned")" -t 8000
+    "$(wc -l < "$items") $(gettext "item(s) marked as learned")" -t 12000
 
     while read item; do
-
-        if [ -n "$tpc3" ];then
-            if [ -f "$list_a1" ]; then
-                if grep -o "$item" < "$list_a1"; then
-                    grep -vxF "$item" "$list_a1" > "$DT/list_a.tmp"
-                    sed '/^$/d' "$DT/list_a.tmp" > "$list_a1"
-                    echo "$item" >> "$list_b1"; printf "$tpc1%s\n --> $item"
-                fi
-            fi
-            if [ -f "$list_a2" ]; then
-                if grep -o "$item" < "$list_a2"; then
-                    grep -vxF "$item" "$list_a2" > "$DT/list_a.tmp"
-                    sed '/^$/d' "$DT/list_a.tmp" > "$list_a2"
-                    echo "$item" >> "$list_b2"; printf "$tpc2%s\n --> $item"
-                fi
-            fi
-            if [ -f "$list_a3" ]; then
-                if grep -o "$item" < "$list_a3"; then
-                    grep -vxF "$item" "$list_a3" > "$DT/list_a.tmp"
-                    sed '/^$/d' "$DT/list_a.tmp" > "$list_a3"
-                    echo "$item" >> "$list_b3"; printf "$tpc3%s\n --> $item"
-                fi
-            fi
-        elif [ -n "$tpc2" ];then
-            if [ -f "$list_a1" ]; then
-                if grep -o "$item" < "$list_a1"; then
-                    grep -vxF "$item" "$list_a1" > "$DT/list_a.tmp"
-                    sed '/^$/d' "$DT/list_a.tmp" > "$list_a1"
-                    echo "$item" >> "$list_b1"; printf "$tpc1%s\n --> $item"
-                fi
-            fi
-            if [ -f "$list_a2" ]; then
-                if grep -o "$item" < "$list_a2"; then
-                    grep -vxF "$item" "$list_a2" > "$DT/list_a.tmp"
-                    sed '/^$/d' "$DT/list_a.tmp" > "$list_a2"
-                    echo "$item" >> "$list_b2"; printf "$tpc2%s\n --> $item"
-                fi
-            fi
-        elif [ -n "$tpc1" ];then
-            if [ -f "$list_a1" ]; then
-                if grep -o "$item" < "$list_a1"; then
-                    grep -vxF "$item" "$list_a1" > "$DT/list_a.tmp"
-                    sed '/^$/d' "$DT/list_a.tmp" > "$list_a1"
-                    echo "$item" >> "$list_b1"; printf "$tpc1%s\n --> $item"
-                fi
-            fi
-        fi
+    
+        n=1
+        while [ $n -le 15 ]; do
         
+            tpc="tpc$n"
+            list_a="list_a$n"
+            list_b="list_b$n"
+
+            if [ -n "${!tpc}" ]; then
+            
+                if [ -f "${!list_a}" ]; then
+                if grep -o "$item" < "${!list_a}"; then
+                grep -vxF "$item" "${!list_a}" > "$DT/list_a.tmp"
+                sed '/^$/d' "$DT/list_a.tmp" > "${!list_a}"
+                if ! grep -o "$item" < "${!list_b}"; then
+                echo "$item" >> "${!list_b}"; printf "${!tpc}%s\n --> $item"; fi
+                fi
+                fi
+            
+            fi
+            let n++
+        done
+    
     done < "$items"
     fi
-    rm -f "$TPS" "$items"
+    rm -f "$TPS" "$items" "$DT/list_a.tmp"
     exit 0
 fi
