@@ -6,21 +6,18 @@ DSP="$DS/addons/Feeds"
 #wth=$(($(sed -n 2p $DC_s/10.cfg)-480))
 #eht=$(($(sed -n 3p $DC_s/10.cfg)-140))
 
-D=($*)
-Q=$((${#D[@]}-1))
-for i in $(seq 0 $Q); do
-item[$i]=${D[$i]}; done
-item="${item[@]}"
+item="${2}"
 dir="$DM_tl/Feeds/cache"
 fname=$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)
 
 if grep -Fxo "$item" < "$DM_tl/Feeds/.conf/2.cfg"; then
 btnlabel="<small>Delete</small>"
-btncmd="'$DSP/mngr.sh' delete_item '$item'"
-else
+btncmd="'$DSP/mngr.sh' delete_item '$item'"; else
 btnlabel="<small>Save</small>"
-btncmd="'$DSP/add.sh' new_item '$item'"
-fi
+btncmd="'$DSP/add.sh' new_item '$item'"; fi
+if [ -f "$dir/$fname.html" ]; then
+uri="$dir/$fname.html"; else
+uri=""; fi
 
 yad --html \
 --window-icon=idiomind --uri="$dir/$fname.html" \

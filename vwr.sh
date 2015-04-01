@@ -12,8 +12,7 @@ nuw="$3"
 listen="$(gettext "Listen")"
 
 if ! [[ $nuw =~ $re ]]; then
-    nuw=$(grep -Fxon "$now" < "$ind" \
-    | sed -n 's/^\([0-9]*\)[:].*/\1/p')
+    nuw=$(grep -Fxon "$now" < "$ind" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
     nll=" "
 fi
 

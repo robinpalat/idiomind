@@ -13,8 +13,8 @@ function dlg_checklist_5() {
         --width=$wth --text="<small>$info</small>" \
         --height=$eht --borders=3 --button="$(gettext "Cancel")":1 \
         --button="$(gettext "To New Topic")":'/usr/share/idiomind/add.sh new_topic' \
-        --button="$(gettext "Save")":0 --title="$tpe" \
-        --column="$(cat "$1" | wc -l)" --column="$(gettext "Items")" > "$slt"
+        --button=gtk-add:0 --title="$2" \
+        --column="$(wc -l < "$1")" --column="$(gettext "Items")" > "$slt"
 }
 
 function dlg_text_info_5() {
@@ -26,11 +26,23 @@ function dlg_text_info_5() {
         --title=" " > "$1.txt"
 }
 
+function dlg_text_info_4() {
+    
+        echo "$1" | yad --text-info --center --wrap \
+        --name=Idiomind --class=Idiomind --window-icon=idiomind \
+        --text=" " --sticky --width=$wth --height=$eht \
+        --margins=8 --borders=5 --button=Ok:0 --title=Idiomind
+}
+
 function audio_recognizer() {
     
-    echo "$(wget -q -U "Mozilla/5.0" --post-file "$1" \
+    echo "$(wget -q -U -T 30 "Mozilla/5.0" --post-file "$1" \
     --header="Content-Type: audio/x-flac; rate=16000" \
     -O - "https://www.google.com/speech-api/v2/recognize?&lang="$2"-"$3"&key=$4")"
+    if [ $? != 0 ]; then
+        msg "$(gettext "An error occurred, please try later.")\n" dialog-warning &
+        kill -9 $(pgrep -f "yad --progress") & exit 1; fi
+    
 }
 
 function dlg_file_1() {
@@ -54,11 +66,12 @@ if [[ "$prdt" = A ]]; then
     left=$((200 - $(wc -l < "$DC_tlt/4.cfg")))
     test="$DS/addons/Google translation service/test.flac"
     LNK='https://console.developers.google.com'
+    source "$DS/ifs/mods/cmns.sh"
     
     if [ -z "$key" ]; then
         
         msg "$(gettext "  For this feature you need to provide a key\\n   Please get one from the:\\n")   <a href='$LNK'>console.developers.google.com</a>\n" dialog-warning
-        [[ -d "$DT_r" ]] && rm -fr "$DT_r"
+        [ -d "$DT_r" ] && rm -fr "$DT_r"
         rm -f ls "$lckpr" & exit 1
     fi
     
@@ -120,7 +133,7 @@ if [[ "$prdt" = A ]]; then
             data="$(audio_recognizer "$test" $lgt $lgt $key)"
         fi
         if [ -z "$data" ]; then
-            msg "$(gettext "  The key is invalid or has\\n   exceeded its quota of daily requests")" error
+            msg "$(gettext "The key is invalid or has exceeded its quota of daily requests")" error
             [ -d "$DT_r" ] && rm -fr "$DT_r"
             rm -f ls "$lckpr" & exit 1
         fi
@@ -134,7 +147,7 @@ if [[ "$prdt" = A ]]; then
             data="$(audio_recognizer info.flac $lgt $lgt $key)"
             if [ -z "$data" ]; then
             
-                msg "$(gettext "  The key is invalid or has\\n   exceeded its quota of daily requests")" error
+                msg "$(gettext "The key is invalid or has exceeded its quota of daily requests")" error
                 [ -d "$DT_r" ] && rm -fr "$DT_r"
                 rm -f ls "$lckpr" & break & exit 1
             fi
@@ -171,20 +184,28 @@ if [[ "$prdt" = A ]]; then
         
         if [ -z "$(< $DT_r/ls)" ]; then
         
-            dlg_text_info_4 "$gettext_err"
+            dlg_text_info_4  "$(gettext "Failed to get text. For the process to be successful, audio file must not have music or background noise.")"
             [ -d "$DT_r" ] && rm -fr "$DT_r"
             rm -f "$lckpr" & exit 1
             
         else
-            dlg_checklist_5 "$DT_r/ls"
+            dlg_checklist_5 "$DT_r/ls" "$(sed -n 2p "$lckpr")"
         fi
         
             if [ $? -eq 0 ]; then
             
-                source /usr/share/idiomind/ifs/c.conf
+                tpe=$(sed -n 2p "$DT/.n_s_pr")
+                DM_tlt="$DM_tl/$tpe"
+                DC_tlt="$DM_tl/$tpe/.conf"
+
+                if [ ! -d "$DM_tlt" ]; then
+                    msg " $(gettext "An error occurred.")\n" dialog-warning
+                    rm -fr "$DT_r" "$lckpr" "$slt" & exit 1
+                fi
+                
                 cd "$DT_r"
-                list="$(tac "$slt" | sed 's/|//g')"
-                n=1
+                
+                n=1; list="$(tac "$slt" | sed 's/|//g')"
                 while [ $n -le "$(wc -l < "$slt"  | head -200)" ]; do
                     chkst=$(sed -n "$n"p <<<"$list")
                     echo "$chkst" | sed 's/TRUE//g' >> ./slts
@@ -246,8 +267,8 @@ if [[ "$prdt" = A ]]; then
                             (
                             r=$(echo $(($RANDOM%1000)))
                             clean_3 "$DT_r" "$r"
-                            translate "$(sed '/^$/d' < $aw)" auto $lg | sed 's/,//g' \
-                            | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
+                            translate "$(sed '/^$/d' < $aw)" auto $lg \
+                            | sed 's/,//; s/\?//; s/\¿//; s/;//g' > "$bw"
                             check_grammar_1 "$DT_r" "$r"
                             list_words "$DT_r" "$r"
                             grmrk=$(sed ':a;N;$!ba;s/\n/ /g' < g.$r)
@@ -267,8 +288,7 @@ if [[ "$prdt" = A ]]; then
                             fi
 
                             echo "__" >> x
-                            rm -f "$DT"/*.$r
-                            rm -f "$aw" "$bw"
+                            rm -f "$DT"/*.$r "$aw" "$bw"
                             ) &
                     
                             rm -f "$sntc.mp3"
@@ -331,40 +351,36 @@ if [[ "$prdt" = A ]]; then
                     wadds=" $(($(wc -l < ./addw) - $(sed '/^$/d' < ./wlog | wc -l)))"
                     W="$(gettext " Words")"
                     if [ $(echo $wadds) = 1 ]; then
-                        W="$(gettext " Word")"
-                    fi
+                        W="$(gettext " Word")"; fi
                 else
                     wadds=" $(wc -l < ./addw)"
                     W="$(gettext " Words")"
                     if [ $(echo $wadds) = 1 ]; then
                         wadds=" $(wc -l < ./addw)"
-                        W="$(gettext " Word")"
-                    fi
+                        W="$(gettext " Word")"; fi
                 fi
                 if [ -f ./slog ]; then
                     sadds=" $(($(wc -l < ./adds) - $(sed '/^$/d' < ./swlog | wc -l)))"
                     S="$(gettext " Sentences")"
                     if [ $(echo $sadds) = 1 ]; then
-                        S="$(gettext " Sentence")"
-                    fi
+                        S="$(gettext " Sentence")"; fi
                 else
                     sadds=" $(wc -l < ./adds)"
                     S="$(gettext " Sentences")"
                     if [ $(echo $sadds) = 1 ]; then
-                        S="$(gettext " Sentence")"
-                    fi
+                        S="$(gettext " Sentence")"; fi
                 fi
                 
                 logs=$(cat ./slog ./wlog ./log)
                 adds=$(cat ./adds ./addw | wc -l)
                 
                 if [ "$adds" -ge 1 ]; then
-                    notify-send -i idiomind "$tpe" "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
+                    notify-send -i idiomind "$tpe" "$(gettext "Have been added\:")\n$sadds$S$wadds$W" -t 2000 &
                     echo "aitm.$adds.aitm" >> \
                     $DC/addons/stats/.log
                 fi
                 
-                if ( [ -n "$logs" ] || [ $(ls [0-9]* | wc -l) -ge 1 ] ); then
+                if [ -n "$logs" ] || [ $(ls [0-9]* | wc -l) -ge 1 ]; then
                 
                     if [ -n "$logs" ]; then
                         text_r1="$(gettext "Have been added:")\n\n$logs"
@@ -395,31 +411,31 @@ if [[ "$prdt" = A ]]; then
                 
                 cd "$DT_r"
                 if  [ -f ./log ]; then
-                rm="$(($(< ./adds) - $(sed '/^$/d' < ./log | wc -l)))"
-                else rm="$(< ./adds)"; fi
+                rm="$(($(wc -l < ./adds) - $(sed '/^$/d' < ./log | wc -l)))"
+                else rm="$(wc -l < ./adds)"; fi
                 
                 n=1
                 while [ $n -le 20 ]; do
                      sleep 5
-                     if ( [ "$(wc -l < ./x)" = "$rm" ] || [ "$n" = 20 ] ); then
-                        [[ -d "$DT_r" ]] && rm -fr "$DT_r"
+                     if [ "$(wc -l < ./x)" -eq "$rm" ] || [ "$n" = 20 ]; then
+                        [ -d "$DT_r" ] && rm -fr "$DT_r"
                         cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
                         rm -f "$lckpr" & break & exit 1
                      fi
                     let n++
                 done
-                exit 1
+                exit
             else
                 [ -d "$DT_r" ] && rm -fr "$DT_r"
                 cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
                 rm -f "$lckpr" "$slt" & exit 1
             fi
         fi
-    exit 1
+    exit
     
 elif [ "$1" = show_item_for_edit ]; then
 
-    DT_r=$(< $DT/.n_s_pr)
+    DT_r=$(sed -n 1p "$DT/.n_s_pr")
     cd "$DT_r"
     dlg_text_info_5 "$3"
     $? >/dev/null 2>&1

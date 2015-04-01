@@ -364,7 +364,7 @@ function check_index() {
         touch "$DC_tlt/$n.cfg"
         ((n=n+1))
     done
-    rm -f "$DT/index"
+    rm -f "$DT/index" "$DM_tlt/.conf/9.cfg"
     "$DS/mngr.sh" mkmn & exit 1
 }
 

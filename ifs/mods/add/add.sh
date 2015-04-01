@@ -48,8 +48,7 @@ function check_grammar_1() {
     cd "$1"; touch "A.$r" "B.$r" "g.$r"; n=1
     while [ $n -le $(echo "$g" | wc -l) ]; do
         grmrk=$(echo "$g" | sed -n "$n"p)
-        chck=$(echo "$g,," | sed -n "$n"p \
-        | sed 's/,//g' | sed 's/\.//g')
+        chck=$(echo "$g,," | sed -n "$n"p | sed 's/,//;s/\.//g')
         if echo "$pronouns" | grep -Fxq "$chck"; then
             echo "<span color='#35559C'>$grmrk</span>" >> "g.$2"
         elif echo "$nouns_verbs" | grep -Fxq "$chck"; then
@@ -90,20 +89,19 @@ function check_grammar_2() {
 function clean_1() {
     
     echo "$(echo "$1" | sed ':a;N;$!ba;s/\n/ /g' \
-    | sed 's/"//g' | sed 's/“//g' | sed s'/&//'g \
-    | sed 's/”//g' | sed s'/://'g | sed "s/’/'/g" \
+    | sed 's/"//; s/“//;s/&//; s/”//;s/://'g | sed "s/’/'/g" \
     | iconv -c -f utf8 -t ascii | sed "s/|//g" \
-    | sed 's/ \+/ /g' | sed 's/^[ \t]*//;s/[ \t]*$//'\
+    | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//'\
     | sed 's/^ *//; s/ *$//g'| sed 's/^\s*./\U&\E/g')"
 }
 
 
 function clean_2() {
     
-    echo "$(echo "$1" | cut -d "|" -f1 | sed s'/!//'g \
-    | sed s'/&//'g | sed s'/\://'g | sed s'/\&//'g \
+    echo "$(echo "$1" | cut -d "|" -f1 \
+    | sed s'/!//; s/&//; s/\://; s/\&//'g \
     | sed s"/'//"g | sed 's/^[ \t]*//;s/[ \t]*$//' \
-    | sed s'|/||'g | sed 's/^\s*./\U&\E/g')"
+    | sed s'|/||; s/^\s*./\U&\E/g')"
 }    
 
 
@@ -111,16 +109,14 @@ function clean_3() {
     
     cd "$1"; touch "swrd.$2" "twrd.$2"
     if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
-        vrbl="$srce"; lg=$lgt; aw="swrd.$2"; bw="twrd.$2"
-    else
-        vrbl="$trgt"; lg=$lgs; aw="twrd.$2"; bw="swrd.$2"
-    fi
+    vrbl="$srce"; lg=$lgt; aw="swrd.$2"; bw="twrd.$2"
+    else vrbl="$trgt"; lg=$lgs; aw="twrd.$2"; bw="swrd.$2"; fi
+    
     echo "$vrbl" | sed 's/ /\n/g' | grep -v '^.$' \
     | grep -v '^..$' | sed -n 1,40p | sed s'/&//'g \
-    | sed 's/,//g' | sed 's/\?//g' | sed 's/\¿//g' \
-    | sed 's/;//g' | sed 's/\!//g' | sed 's/\¡//g' \
-    | tr -d ')' | tr -d '(' | sed 's/\]//g' | sed 's/\[//g' \
-    | sed 's/\.//g' | sed 's/  / /g' | sed 's/ /\. /g' > "$aw"
+    | sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
+    | tr -d ')' | tr -d '(' | sed 's/\]//;s/\[//g' \
+    | sed 's/\.//;s/  / /;s/ /\. /g' > "$aw"
 }
 
 
@@ -341,26 +337,6 @@ function list_words_3() {
 }
 
 
-function dlg_msg_3() {
-    
-        yad --fixed --center --on-top \
-        --image=info --name=Idiomind --class=Idiomind \
-        --text="$(gettext "Wait till it finishes a previous process")" \
-        --fixed --sticky --buttons-layout=edge \
-        --width=360 --height=120 --borders=5 --window-icon=idiomind \
-        --title=Idiomind --button=gtk-stop:3 --button=Ok:1
-}
-
-
-function dlg_msg_6() {
-    
-        yad --name=Idiomind --class=Idiomind --center --on-top \
-        --text=" $1" --width=420 --height=120 --borders=5 --image=info \
-        --skip-taskbar --window-icon=idiomind --sticky --image-on-top \
-        --title=Idiomind --button=$(gettext "Cancel"):1 --button=Ok:0
-}
-
-
 function dlg_form_0() {
     
         yad --window-icon=idiomind --form --center --on-top \
@@ -429,7 +405,6 @@ function dlg_checklist_1() {
 }
 
 
-
 function dlg_checklist_3() {
 
         slt=$(mktemp $DT/slt.XXXX.x)
@@ -437,7 +412,7 @@ function dlg_checklist_3() {
         yad --name=Idiomind --window-icon=idiomind --ellipsize=END \
         --dclick-action='/usr/share/idiomind/add.sh dclik_list_words' \
         --list --checklist --class=Idiomind --center --sticky \
-        --text="<small>$info</small>" --title="$tpe" --no-headers \
+        --text="<small>$info</small>" --title="$2" --no-headers \
         --width=$wth --print-all --height=$eht --borders=5 \
         --button="$(gettext "Cancel")":1 --button=$(gettext "Arrange"):2 \
         --button="$(gettext "To New Topic")":"$DS/add.sh 'new_topic'" \
@@ -454,7 +429,7 @@ function dlg_text_info_1() {
         --name=Idiomind --wrap --margins=60 --class=Idiomind \
         --sticky --fontname=vendana --on-top --center \
         --skip-taskbar --width=$wth --height=$eht --borders=5 \
-        --button=gtk-ok:0 --title="$tpe" > ./sort
+        --button=gtk-ok:0 --title="$2" > ./sort
 }
 
 
@@ -465,15 +440,6 @@ function dlg_text_info_3() {
         --width=420 --height=150 --on-top --margins=4 \
         --window-icon=idiomind --borders=5 --name=Idiomind \
         "$2" --button=Ok:1
-}
-
-
-function dlg_text_info_4() {
-    
-        echo "$1" | yad --text-info --center --wrap \
-        --name=Idiomind --class=Idiomind --window-icon=idiomind \
-        --text=" " --sticky --width=$wth --height=$eht \
-        --margins=8 --borders=5 --button=Ok:0 --title=Idiomind
 }
 
 

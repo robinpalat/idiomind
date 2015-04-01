@@ -252,8 +252,7 @@ fetch_podcasts() {
             
             if [ -z "$enclosure" ]; then continue; fi
             
-            title=$(echo "$fields" | sed -n "$n_tit"p \
-            | iconv -c -f utf8 -t ascii | sed 's/\://g' \
+            title=$(echo "$fields" | sed -n "$n_tit"p | sed 's/\://g' \
             | sed 's/\&/&amp;/g' | sed 's/^\s*./\U&\E/g' \
             | sed 's/<[^>]*>//g' | sed 's/^ *//; s/ *$//; /^$/d')
             #sumlink=$(echo "$fields" | sed -n "$n_sum"p)
@@ -261,8 +260,7 @@ fetch_podcasts() {
             | iconv -c -f utf8 -t ascii)
             fname="$(nmfile "${title}")"
             
-            if ([ "$(echo "$title" | wc -c)" -ge 180 ] \
-            || [ -z "$title" ]); then
+            if [ "$(echo "$title" | wc -c)" -ge 180 ] || [ -z "$title" ]; then
                     msg " $(gettext "Something wrong on feeds configuration")\n $(gettext "Error")4  $(gettext "URL")$n" info;
                     continue; fi
                  
@@ -371,7 +369,7 @@ if [ "$1" != A ]; then
     echo "$tpc" > "$DC_s/4.cfg"
     echo fd >> "$DC_s/4.cfg"
     echo "11" > "$DCP/8.cfg"
-    (sleep 2 && notify-send -i idiomind "$(gettext "Checking for new downloads")" "$(gettext "Updating") $nps $(gettext "feeds...")" -t 6000) &
+    (sleep 2 && notify-send -i idiomind "$(gettext "Checking for new episodes")" "$(gettext "Updating") $nps $(gettext "feeds...")" -t 6000) &
 fi
 
 echo "updating" > "$DT/.uptp"
@@ -386,12 +384,11 @@ if [ "$nd" -gt 0 ]; then
     #check_index
     echo "$(date "+%a %d %B")" > "$DM_tl/Feeds/.dt"
     [ "$1" != A ] && notify-send -i idiomind \
-    "$(gettext "Update finished")" "$(gettext "Downloaded") $nd $(gettext "episode(s)")" -t 8000
+    "$(gettext "Update finished")" "$(gettext "There are") $nd $(gettext "new episode(s)")" -t 8000
     exit 0
 else
     if [[ ! -n "$1" && "$1" != A ]]; then
-        notify-send -i idiomind \
-        "$(gettext "No new episodes")" "$(gettext "Downloaded") $nd $(gettext "episode(s)")" -t 8000
+        notify-send -i idiomind "$(gettext "No new episodes")" -t 8000
     fi
     exit 0
 fi

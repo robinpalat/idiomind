@@ -106,7 +106,7 @@ function new_session() {
     # check for updates
     "$DS/ifs/tls.sh" a_check_updates &
     
-    # status update topic
+    # status update
     [ ! -f "$DM_tl/.1.cfg" ] && touch "$DM_tl/.1.cfg"
     n=1
     while [ $n -le "$(wc -l < "$DM_tl/.1.cfg" | head -50)" ]; do
@@ -237,7 +237,7 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
                 if [ "$chck" -ge 1 ]; then
                 
                     tpc_i="$tpc_i $chck"
-                    msg_2 " $(gettext "You already have a topic with the same name.")  \\n $(gettext "The new it was renamed to:") <b>$tpc_i    </b>\n" info "$(gettext "OK")" "$(gettext "Cancel")"
+                    msg_2 " $(gettext "You already have a topic with the same name.")\n $(gettext "The new it was renamed to\:")\n <b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
                     ret=$(echo $?)
                     
                     if [ $ret != 0 ]; then
@@ -310,7 +310,7 @@ function topic() {
                 let n++
             done
 
-            nt="$(cat $DC_tlt/10.cfg)"
+            nt="$(< $DC_tlt/10.cfg)"
             source "$DC_tlt/12.cfg"
             c=$(echo $(($RANDOM%100000))); KEY=$c
             cnf1=$(mktemp $DT/cnf1.XXX.x)

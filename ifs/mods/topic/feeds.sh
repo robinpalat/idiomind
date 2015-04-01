@@ -25,6 +25,7 @@ function feedmode() {
     DSP="$DS/addons/Feeds"
     nt="$(cat $DCP/10.cfg)"
     info="$(cat $DCP/9.cfg)"
+    fdit=$(mktemp "$DT/fdit.XXXX")
     c=$(echo $(($RANDOM%100000))); KEY=$c
     [ -f "$DT/.uptp" ] && \
     info=$(echo "$(gettext "Updating")...") || \
@@ -40,10 +41,10 @@ function feedmode() {
     --field="$(gettext "Notes")$spc":txt "$nt" \
     --field=" :LBL" " " --field=" :LBL" " " --field=" $itxt2":lbl " " \
     --field="$(gettext "Syncronize")":FBTN "$DS/addons/Feeds/tls.sh 'sync'" \
-    --field="$(gettext "Delete")":FBTN "$DS/addons/Feeds/mngr.sh 'delete'" > "$DT/f.edit" &
+    --field="$(gettext "Delete")":FBTN "$DS/addons/Feeds/mngr.sh 'delete'" > "$fdit" &
     yad --notebook --name=Idiomind --center \
     --class=Idiomind --align=right --key=$KEY \
-    --tab-borders=0 --center --title="Feeds - ${info^}" \
+    --tab-borders=0 --center --title="Feeds  ${info^}" \
     --tab=" $(gettext "Episodes") " \
     --tab=" $(gettext "Saved Episodes") " \
     --tab=" $(gettext "Edit") " --always-print-result \
@@ -57,7 +58,8 @@ function feedmode() {
         "$DSP/strt.sh";
     fi
     
-    nnt=$(cut -d '|' -f 1 < "$DT/f.edit")
+    nnt=$(cut -d '|' -f 1 < "$fdit")
+    rm -f "$fdit"
     if [ "$nt" != "$nnt" ]; then
         if [ -z "$nnt" ]; then msg_2 "$(gettext " Really delete note?")\n" gtk-delete "Delete" "No"
         [ $? = 0 ] && echo "$nnt" | cut -c1-90000 > "$DCP/10.cfg"; else

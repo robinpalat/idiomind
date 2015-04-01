@@ -4,21 +4,37 @@
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/mods/cmns.sh
 gtdr="$(cd "$(dirname "$0")" && pwd)"
-topic=$(echo "$gtdr" | sed 's|\/|\n|g' | sed -n 7p)
+topic="$(sed 's|\/|\n|g' <<<"$gtdr" | sed -n 7p)"
 DC_tlt="$DM_tl/$topic/.conf"
 DM_tlt="$DM_tl/$topic"
 
 if [ -d "$DM_tlt" ]; then
 
-    if [ ! -d "$DM_tlt/.conf" ]; then
-        mkdir -p "$DM_tlt/words/images"
-        mkdir "$DM_tlt/.conf"
-        cd "$DM_tlt/.conf"
-        touch "0.cfg" "1.cfg" "2.cfg" "3.cfg" "4.cfg" "5.cfg"
-        echo "$(date +%F)" > "12.cfg"
-        echo "1" > "8.cfg"
-        cd "$HOME"
-    fi
+if [ ! -d "$DM_tlt/.conf" ]; then
+mkdir -p "$DM_tlt/words/images"
+mkdir "$DM_tlt/.conf"
+cd "$DM_tlt/.conf"
+c=0; while [ $c -le 10 ]; do
+touch "$c.cfg"; let c++
+done
+rm "$DM_tlt/.conf/9.cfg"
+echo -e "
+name=\"$topic\"
+language_source=\"$lgsl\"
+language_target=\"$lgtl\"
+author=\"$Author\"
+contact=\"$Mail\"
+category=\"$Ctgry\"
+link=\"$link\"
+date_c=\"$(date +%F)\"
+date_u=\"$date_u\"
+nwords=\"$words\"
+nsentences=\"$sentences\"
+nimages=\"$images\"
+level=\"$level\"" > "12.cfg"
+echo "1" > "8.cfg"
+cd "$HOME"
+fi
 
    "$DS/ifs/tls.sh" check_index "$topic"
 

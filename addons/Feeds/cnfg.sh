@@ -73,7 +73,7 @@ if [ -z "$1" ]; then
     
     feedstmp="$(cat "$DT/feeds.tmp")"
     if ([ -n "$feedstmp" ] && [ "$feedstmp" != "$(cat "$DCP/4.cfg")" ]); then
-        mv -f "$DT/feeds.tmp" "$DCP/4.cfg"; fi
+        mv -f "$DT/feeds.tmp" "$DCP/4.cfg"; else rm -f "$DT/feeds.tmp"; fi
 
     printf "$CNFG" | tail -n 1 > "$DCP/0.cfg"
     [[ -e "$DT/cp.lock" ]] && rm -f "$DT/cp.lock"

@@ -39,7 +39,7 @@ function new_topic() {
     
     if [ "$sfname" -ge 1 ]; then
     jlb="$jlb $sfname"
-    dlg_msg_6 " <b>"$(gettext "You already have a topic with the same name.")" </b>\\n "$(gettext " The new it was renamed to")"  <b>$jlb</b> \\n"
+    msg_2 " $(gettext "You already have a topic with the same name.") \n $(gettext "The new it was renamed to\:")\n  <b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
     ret=$(echo "$?")
     [ "$ret" -eq 1 ] && exit 1
     else
@@ -248,8 +248,8 @@ function new_sentence() {
         fi
     fi
     
-    if ( [ -z $(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary') ] \
-    || [ ! -f "$DM_tlt/$fname.mp3" ] || [ -z "$trgt" ] || [ -z "$srce" ] ); then
+    if [ -z $(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary') ] \
+    || [ ! -f "$DM_tlt/$fname.mp3" ] || [ -z "$trgt" ] || [ -z "$srce" ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
         msg " $(gettext "Something unexpected has occurred while saving the note.  \n")" dialog-warning & exit 1
     fi
@@ -257,7 +257,7 @@ function new_sentence() {
     add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3"
 
     if [ -f img.jpg ]; then
-        set_image_2 "$DM_tlt/$fname.mp3"
+        set_image_2 "$DM_tlt/$fname.mp3" "$DM_tlt/words/images/$fname.jpg"
         icnn=img.jpg
     fi
     
@@ -272,7 +272,7 @@ function new_sentence() {
     lwrds=$(< A.$r)
     pwrds=$(tr '\n' '_' < B.$r)
     
-    if ([ -z "$grmrk" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ]); then
+    if [ -z "$grmrk" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ]; then
         rm "$DM_tlt/$fname.mp3"
         msg " $(gettext "Something unexpected has occurred while saving the note.  \n")" dialog-warning 
         [ -d "$DT_r" ] && rm -fr "$DT_r" & exit 1
@@ -569,7 +569,7 @@ function dclik_list_words() {
         exit
         fi
         
-    $? >/dev/null 2>&1
+    "$?" >/dev/null 2>&1
     exit 1
 }
 
@@ -681,10 +681,12 @@ function process() {
     eht=$(($(sed -n 3p $DC_s/10.cfg)-50))
     ns=$(wc -l < "$DC_tlt/0.cfg")
     source "$DS/default/dicts/$lgt"
-    lckpr="$DT/.n_s_pr"
+    if [ -f "$DT/.n_s_pr" ]; then
+    tpe="$(sed -n 2p "$DT/.n_s_pr")"; fi
     DM_tlt="$DM_tl/$tpe"
     DC_tlt="$DM_tl/$tpe/.conf"
     DT_r="$3"; cd "$DT_r"
+    lckpr="$DT/.n_s_pr"
 
     if [ -z "$tpe" ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
@@ -696,21 +698,22 @@ function process() {
         rm -f ls "$lckpr" & exit 1
     fi
 
-    if [ -f "$lckpr" ]; then
+    if [ -f "$lckpr" ] && [ -z "$4" ]; then
     
-        dlg_msg_3
+        msg_2 "$(gettext "Wait till it finishes a previous process")\n" info OK gtk-stop "$(gettext "Warning")"
         ret=$(echo "$?")
 
-        if [ $ret -eq "3" ]; then
-            rm=$(cat $lckpr)
-            rm fr "$rm" "$lckpr"
+        if [ $ret -eq "1" ]; then
+            rm=$(sed -n 1p "$DT/.n_s_pr")
+            rm fr "$rm" "$DT/.n_s_pr"
             index R && killall add.sh
         fi
         exit 1
     fi
     
     if [ -n "$2" ]; then
-        echo "$DT_r" > "$DT/.n_s_pr"
+        [ -d "$DT_r" ] && echo "$DT_r" > "$DT/.n_s_pr"
+        [ -n "$tpe" ] && echo "$tpe" >> "$DT/.n_s_pr"
         lckpr="$DT/.n_s_pr"
         prdt="$2"
     fi
@@ -726,17 +729,16 @@ function process() {
         echo "# $(gettext "Processing")..." ;
         lynx -dump -nolist $2  | sed -n -e '1x;1!H;${x;s-\n- -gp}' \
         | sed 's/<[^>]*>//g' | sed 's/ \+/ /g' \
-        | sed '/^$/d' |  sed 's/ \+/ /g' | sed 's/\://; s/"//g' \
-        | sed 's/^[ \t]*//;s/[ \t]*$//g' | sed 's/^ *//; s/ *$//g' \
+        | sed '/^$/d' |  sed 's/ \+/ /;s/\://;s/"//g' \
+        | sed 's/^[ \t]*//;s/[ \t]*$//;s/^ *//; s/ *$//g' \
         | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' | grep -v '^..$' \
-        | grep -v '^.$' | sed 's/<[^>]\+>//g' | sed 's/\://g' \
+        | grep -v '^.$' | sed 's/<[^>]\+>//;s/\://g' \
         | sed '/\*/d' | sed '/\+/d' \
         | iconv -c -f utf8 -t ascii \
         | sed 's/\&quot;/\"/g' | sed "s/\&#039;/\'/g" \
         | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
         | sed 's/ *<[^>]\+> */ /g' \
-        | sed 's/[<>£§]//g' \
-        | sed 's/&amp;/\&/g' \
+        | sed 's/[<>£§]//; s/&amp;/\&/g' \
         | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. //g' \
         | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
         | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
@@ -755,10 +757,9 @@ function process() {
         echo "# $(gettext "Processing")..." ;
         mogrify -modulate 100,0 -resize 400% $SCR_IMG.png
         tesseract $SCR_IMG.png $SCR_IMG &> /dev/null # -l $lgt
-        cat $SCR_IMG.txt | sed 's/\\n/./g' | sed 's/\./\n/g' \
+        cat $SCR_IMG.txt | sed 's/\\n/./;s/\./\n/g' \
         | sed '/^$/d' | sed 's/^[ \t]*//;s/[ \t]*$//' \
-        | sed 's/ \+/ /g' | sed 's/\://; s/"//g' \
-        | sed 's/^ *//; s/ *$//g' > ./sntsls_
+        | sed 's/ \+/ /;s/\://;s/"//;s/^ *//;s/ *$//g' > ./sntsls_
         
         ) | dlg_progress_1
 
@@ -767,26 +768,24 @@ function process() {
         echo "1"
         echo "# $(gettext "Processing")..." ;
         echo "$prdt" \
-        | sed 's/^ *//; s/ *$//g' | sed 's/^[ \t]*//;s/[ \t]*$//' \
-        | sed 's/ \+/ /g' | sed 's/\://; s/"//g' \
-        | sed '/^$/d' \
-        | iconv -c -f utf8 -t ascii \
+        | sed 's/^ *//;s/ *$//g' | sed 's/^[ \t]*//;s/[ \t]*$//' \
+        | sed 's/ \+/ /;s/\://;s/"//g' \
+        | sed '/^$/d' | iconv -c -f utf8 -t ascii \
         | sed 's/\&quot;/\"/g' | sed "s/\&#039;/\'/g" \
         | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
-        | sed 's/ *<[^>]\+> */ /g' \
-        | sed 's/[<>£§]//g' \
-        | sed 's/&amp;/\&/g' \
+        | sed 's/ *<[^>]\+> */ /; s/[<>£§]//; s/\&amp;/\&/g' \
         | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. //g' \
         | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
         | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
         | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' > ./sntsls_
-        
+
         ) | dlg_progress_1
     fi
     
         [[ -f ./sntsls ]] && rm -f ./sntsls
-    
+        
         sed -i '/^$/d' ./sntsls_
+        tpe="$(sed -n 2p "$lckpr")"
         [[ $(echo "$tpe" | wc -c) -gt 60 ]] \
         && tcnm="${tpe:0:60}..." || tcnm="$tpe"
         
@@ -798,36 +797,46 @@ function process() {
             info="$(gettext "You can add") $left $(gettext "items")"
         fi
 
-        if [ -z "$(cat ./sntsls_)" ]; then
+        if [ -z "$(< ./sntsls_)" ]; then
         
-            dlg_text_info_4 "$(gettext "Failed to get text. For the process to be successful, audio file must not have music or background noise.")"
+            msg "$(gettext "Failed to get text")\n" info
 
             [ -d "$DT_r" ] && rm -fr "$DT_r"
             rm -f "$lckpr" "$slt" & exit 1
         
         else
-            dlg_checklist_3 ./sntsls_
+            tpe="$(sed -n 2p "$lckpr")"
+            dlg_checklist_3 ./sntsls_ "$tpe"
             ret=$(echo "$?")
             
         fi
                 if [ $ret -eq 2 ]; then
-                    rm -f "$lckpr" "$slt" &
+                    rm -f "$slt" &
                     
-                    dlg_text_info_1 ./sntsls_
+                    dlg_text_info_1 ./sntsls_ "$tpe"
                     ret=$(echo "$?")
                         
                         if [ $ret -eq 0 ]; then
-                            "$DS/add.sh" process "$(cat ./sort)" $DT_r "$tpe" &
+                            "$DS/add.sh" process "$(cat ./sort)" \
+                            $DT_r "$(sed -n 2p "$lckpr")" &
                             exit 1
                         else
                             [ -d "$DT_r" ] && rm -fr "$DT_r"
-                            rm -f "$lckpr" "$slt" & exit 1
+                            rm -f "$slt" & exit 1
                         fi
                 
                 elif [ $ret -eq 0 ]; then
                 
-                    source /usr/share/idiomind/ifs/c.conf
-                    list=$(tac "$slt" | 's/|//g')
+                    tpe=$(sed -n 2p "$lckpr")
+                    DM_tlt="$DM_tl/$tpe"
+                    DC_tlt="$DM_tl/$tpe/.conf"
+
+                    if [ ! -d "$DM_tlt" ]; then
+                        msg " $(gettext "An error occurred.")\n" dialog-warning
+                        rm -fr "$DT_r" "$lckpr" "$slt" & exit 1
+                    fi
+                
+                    list=$(tac "$slt" | sed 's/|//g')
                     n=1
                     while [ $n -le $(wc -l < "$slt") ]; do
                         chkst=$(sed -n "$n"p <<<"$list")
@@ -1055,10 +1064,10 @@ function process() {
                     n=1
                     while [ $n -le 20 ]; do
                          sleep 5
-                         if ([ $(wc -l < ./x) = "$rm" ] || [ $n = 20 ]); then
+                         if [ $(wc -l < ./x) -eq "$rm" ] || [ $n = 20 ]; then
                             [ -d "$DT_r" ] && rm -fr "$DT_r"
                             cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
-                            rm -f "$lckpr" & break & exit 1
+                            rm -f "$lckpr" & break; exit 1
                          fi
                         let n++
                     done

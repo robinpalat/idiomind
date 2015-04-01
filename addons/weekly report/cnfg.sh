@@ -97,12 +97,11 @@ if [ "$1" = A ]; then
     tpc1=$(sed -n 1p <<<"$TPCS" | cut -d " " -f2-)
     echo "$tpc1" > "$TPS"
     if [ "$(sed -n 2p <<<"$TPCS" | awk '{print ($1)}')" -ge 3 ]; then
-        tpc2=$(sed -n 2p <<<"$TPCS" | cut -d " " -f2-)
-        echo "$tpc2" >> "$TPS"; fi
+    tpc2=$(sed -n 2p <<<"$TPCS" | cut -d " " -f2-)
+    echo "$tpc2" >> "$TPS"; fi
     if [ "$(sed -n 3p <<<"$TPCS" | awk '{print ($1)}')" -ge 3 ]; then
-        tpc3=$(sed -n 3p <<<"$TPCS" | cut -d " " -f2-)
-        echo "$tpc3" >> "$TPS"; fi
-
+    tpc3=$(sed -n 3p <<<"$TPCS" | cut -d " " -f2-)
+    echo "$tpc3" >> "$TPS"; fi
     EITM=$(grep -o -P '(?<=eitm.).*(?=.eitm)' < "$LOG" | wc -l)
     AIMG=$(grep -o -P '(?<=aimg.).*(?=.aimg)' < "$LOG" | wc -l)
     REIM=$(grep -o -P '(?<=reim.).*(?=.reim)' < "$LOG" | tr '\n' '+')
@@ -113,59 +112,6 @@ if [ "$1" = A ]; then
     DDC=$(tr ' ' '+' <<<"$EITM $AIMG $REIM $AITM" | bc -l)
     W9INX=$(grep -o -P '(?<=w9.).*(?=\.w9)' < "$LOG" | tr -s ';' '\n' \
     | sort | uniq -dc | sort -n -r | sed 's/ \+/ /g')
-    tpc1=$(sed -n 1p $TPS)
-    tpc2=$(sed -n 2p $TPS)
-    tpc3=$(sed -n 3p $TPS)
-
-    if [ -n "$tpc3" ];then
-        [ -f "$DM_tl/$tpc1/.conf/1.cfg" ] && tlng1="$DM_tl/$tpc1/.conf/1.cfg"
-        [ -f "$DM_tl/$tpc2/.conf/1.cfg" ] && tlng2="$DM_tl/$tpc2/.conf/1.cfg"
-        [ -f "$DM_tl/$tpc3/.conf/1.cfg" ] && tlng3="$DM_tl/$tpc3/.conf/1.cfg"
-        touch "$DM_tl/$tpc1/.conf/2.cfg" && tok1="$DM_tl/$tpc1/.conf/2.cfg"
-        touch "$DM_tl/$tpc2/.conf/2.cfg" && tok2="$DM_tl/$tpc2/.conf/2.cfg"
-        touch "$DM_tl/$tpc3/.conf/2.cfg" && tok3="$DM_tl/$tpc3/.conf/2.cfg"
-    elif [ -n "$tpc2" ];then
-        [ -f "$DM_tl/$tpc1/.conf/1.cfg" ] && tlng1="$DM_tl/$tpc1/.conf/1.cfg"
-        [ -f "$DM_tl/$tpc2/.conf/1.cfg" ] && tlng2="$DM_tl/$tpc2/.conf/1.cfg"
-        touch "$DM_tl/$tpc1/.conf/2.cfg" && tok1="$DM_tl/$tpc1/.conf/2.cfg"
-        touch "$DM_tl/$tpc2/.conf/2.cfg" && tok2="$DM_tl/$tpc2/.conf/2.cfg"
-    elif [ -n "$tpc1" ];then
-        [ -f "$DM_tl/$tpc1/.conf/1.cfg" ] && tlng1="$DM_tl/$tpc1/.conf/1.cfg"
-        touch "$DM_tl/$tpc1/.conf/2.cfg" && tok1="$DM_tl/$tpc1/.conf/2.cfg"
-    fi
-
-    n=1; > "$DC_a/stats/w9.tmp"
-    while [ $n -le 15 ]; do
-        if [ $(sed -n "$n"p <<<"$W9INX" | awk '{print ($1)}') -ge 3 ]; then
-        
-            fwk=$(sed -n "$n"p <<<"$W9INX" | awk '{print ($2)}')
-            if [ -n "$tpc3" ];then
-                if grep -o "$fwk" < "$tlng1"; then
-                    echo "$fwk" >> $DC_a/stats/w9.tmp
-                    
-                elif grep -o "$fwk" < "$tlng2"; then
-                    echo "$fwk" >> $DC_a/stats/w9.tmp
-                    
-                elif grep -o "$fwk" < "$tlng3"; then
-                    echo "$fwk" >> $DC_a/stats/w9.tmp
-                fi
-            elif [ -n "$tpc2" ]; then
-                if grep -o "$fwk" < "$tlng1"; then
-                    echo "$fwk" >> $DC_a/stats/w9.tmp
-                    
-                elif grep -o "$fwk" < "$tlng2"; then
-                    echo "$fwk" >> $DC_a/stats/w9.tmp
-                fi
-            elif [ -n "$tpc1" ]; then
-                if grep -o "$fwk" < "$tlng1"; then
-                echo "$fwk" >> $DC_a/stats/w9.tmp
-                fi
-            fi
-        fi
-        let n++
-    done
-    sed -i '/^$/d' $DC_a/stats/w9.tmp
-    
     CTW9=$(wc -l < $DC_a/stats/w9.tmp)
     echo "$CTW9" >> "$NUM"
     OKIM=$(grep -o -P '(?<=okim.).*(?=.okim)' < "$LOG" | tr '\n' '+')
@@ -195,57 +141,6 @@ if [ "$1" = A ]; then
     flL=$(($ARCH*$real/$ttl))
     
     charts $flD $flS $flL
-    if [ "$aut" = TRUE ]; then
-    while read itm; do
-
-        if [ -n "$tpc3" ];then
-            if [ -f "$tlng1" ]; then
-                if grep -o "$itm" < "$tlng1"; then
-                    grep -vxF "$itm" "$tlng1" > $DT/tlng.tmp
-                    sed '/^$/d' $DT/tlng.tmp > "$tlng1"
-                    echo "$itm" >> "$tok1"; printf "$tpc1%s\n --> $itm"
-                fi
-            fi
-            if [ -f "$tlng2" ]; then
-                if grep -o "$itm" < "$tlng2"; then
-                    grep -vxF "$itm" "$tlng2" > $DT/tlng.tmp
-                    sed '/^$/d' $DT/tlng.tmp > "$tlng2"
-                    echo "$itm" >> "$tok2"; printf "$tpc2%s\n --> $itm"
-                fi
-            fi
-            if [ -f "$tlng3" ]; then
-                if grep -o "$itm" < "$tlng3"; then
-                    grep -vxF "$itm" "$tlng3" > $DT/tlng.tmp
-                    sed '/^$/d' $DT/tlng.tmp > "$tlng3"
-                    echo "$itm" >> "$tok3"; printf "$tpc3%s\n --> $itm"
-                fi
-            fi
-        elif [ -n "$tpc2" ];then
-            if [ -f "$tlng1" ]; then
-                if grep -o "$itm" < "$tlng1"; then
-                    grep -vxF "$itm" "$tlng1" > $DT/tlng.tmp
-                    sed '/^$/d' $DT/tlng.tmp > "$tlng1"
-                    echo "$itm" >> "$tok1"; printf "$tpc1%s\n --> $itm"
-                fi
-            fi
-            if [ -f "$tlng2" ]; then
-                if grep -o "$itm" < "$tlng2"; then
-                    grep -vxF "$itm" "$tlng2" > $DT/tlng.tmp
-                    sed '/^$/d' $DT/tlng.tmp > "$tlng2"
-                    echo "$itm" >> "$tok2"; printf "$tpc2%s\n --> $itm"
-                fi
-            fi
-        elif [ -n "$tpc1" ];then
-            if [ -f "$tlng1" ]; then
-                if grep -o "$itm" < "$tlng1"; then
-                    grep -vxF "$itm" "$tlng1" > $DT/tlng.tmp
-                    sed '/^$/d' $DT/tlng.tmp > "$tlng1"
-                    echo "$itm" >> "$tok1"; printf "$tpc1%s\n --> $itm"
-                fi
-            fi
-        fi
-        
-    done < "$DC_a/stats/w9.tmp"
     fi
     #rm "$DC_s/8.cfg"; touch "$DC_s/8.cfg"
     #echo "$(date +%F)" > "$DC_a/stats/.udt"
