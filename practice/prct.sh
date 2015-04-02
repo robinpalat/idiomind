@@ -99,11 +99,11 @@ function flashcards() {
     if ([ -f fin ] && [ -f ok.f ]); then
         echo "w9.$(tr -s '\n' ';' < ok.f).w9" >> "$log"
         grep -Fxvf ok.f fin > fin1
-        echo "-- restarting session"
+        echo " practice --restarting session"
     else
         get_list fin && cp -f fin fin1
         [[ "$(cat fin  | wc -l)" -lt 4 ]] && starting "$(gettext "Not enough words to start")"
-        echo "-- new session"
+        echo " practice --new session"
     fi
     
     "$DF"
@@ -126,14 +126,14 @@ function multiple_choise() {
     if ([ -f mcin ] && [ -f ok.m ]); then
         echo "w9.$(tr -s '\n' ';' < ok.m).w9" >> "$log"
         grep -Fxvf ok.m mcin > mcin1
-        echo "-- restarting session"
+        echo " practice --restarting session"
         
     else
         get_list mcin && cp -f mcin mcin1
         if [ ! -f word1.idx ]; then
             get_list_mchoice; fi
         [[ "$(cat mcin  | wc -l)" -lt 4 ]] && starting "$(gettext "Not enough words to start")"
-         echo "-- new session"
+         echo " practice --new session"
     fi
 
     "$DMC"
@@ -156,11 +156,11 @@ function listen_words() {
     if ([ -f lwin ] && [ -f ok.w ]); then
         echo "w9.$(tr -s '\n' ';' < ok.w).w9" >> "$log"
         grep -Fxvf ok.w lwin > lwin1
-        echo "-- restarting session"
+        echo " practice --restarting session"
     else
         get_list lwin && cp -f lwin lwin1
         [[ "$(cat lwin  | wc -l)" -lt 4 ]] && starting "$(gettext "Not enough words to start")"
-        echo "-- new session"
+        echo " practice --new session"
     fi
     
     "$DLW"
@@ -182,11 +182,11 @@ function listen_sentences() {
 
     if ([ -f lsin ] && [ -f ok.s ]); then
         grep -Fxvf ok.s lsin > lsin1
-        echo "-- restarting session"
+        echo " practice --restarting session"
     else
         get_list_sentences lsin && cp -f lsin lsin1
         [[ "$(cat lsin  | wc -l)" -lt 1 ]] && starting "$(gettext "Not enough sentences to start")"
-        echo "-- new session"
+        echo " practice --new session"
     fi
     
     "$DLS"

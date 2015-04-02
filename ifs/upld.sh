@@ -30,7 +30,7 @@ if [ "$1" = vsd ]; then
     eht=$(($(sed -n 3p $DC_s/10.cfg)-0))
     
     cd "$DM_t/saved"; ls -t *.id | sed 's/\.id//g' | yad --list \
-    --window-icon=idiomind --center --name=Idiomind --borders=8 \
+    --window-icon="$DS/images/logo.png" --center --name=Idiomind --borders=8 \
     --text=" $(gettext "Double clik to download") \t\t\t\t" \
     --title="$(gettext "Topics saved")" --width=$wth --height=$eht \
     --column=Nombre:TEXT --print-column=1 --no-headers --class=Idiomind \
@@ -52,7 +52,7 @@ elif [ "$1" = infsd ]; then
         sleep 0.5
         sv=$(yad --save --center --borders=10 \
         --on-top --filename="$2.idmnd" \
-        --window-icon=idiomind --skip-taskbar --title="Save" \
+        --window-icon="$DS/images/logo.png" --skip-taskbar --title="Save" \
         --file --width=600 --height=500 --button="Ok":0 )
         ret=$?
         if [ $ret -eq 0 ]; then
@@ -147,7 +147,7 @@ btn="--center"; fi
 
 cd $HOME
 upld=$(yad --form --width=480 --height=460 --on-top \
---buttons-layout=end --center --window-icon=idiomind \
+--buttons-layout=end --center --window-icon="$DS/images/logo.png" \
 --borders=15 --name=Idiomind --align=right --class=Idiomind \
 --button="$(gettext "Cancel")":1 \
 --button="$(gettext "To PDF")":2 "$btn" \

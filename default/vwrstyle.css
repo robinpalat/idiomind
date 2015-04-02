@@ -28,6 +28,13 @@ video {
     width: 650; height: 410;
 }
 
+image {
+    right: 0; bottom: 0;
+    min-width: 100%; min-height: 100%;
+    background:#000000;
+    width: 650; height: 410;
+}
+
 .title {
     text-align: left;
     margin-left: 40px;

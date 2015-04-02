@@ -32,66 +32,65 @@ if [ "$1" = play ]; then
     fi
 fi
 
-
 tmpl1="<?xml version='1.0' encoding='UTF-8'?>
 <xsl:stylesheet version='1.0'
-  xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
-  xmlns:itunes='http://www.itunes.com/dtds/podcast-1.0.dtd'
-  xmlns:media='http://search.yahoo.com/mrss/'
-  xmlns:atom='http://www.w3.org/2005/Atom'>
-  <xsl:output method='text'/>
-  <xsl:template match='/'>
-    <xsl:for-each select='/rss/channel'>
-      <xsl:value-of select='title'/><xsl:text>-!-</xsl:text>
-      <xsl:value-of select='link'/><xsl:text>-!-</xsl:text>
-      <xsl:value-of select='image'/><xsl:text>-!-</xsl:text>
-      <xsl:value-of select='image/@url'/><xsl:text>-!-</xsl:text>
-      <xsl:value-of select='itunes:image[@type=\"image/jpeg\"]/@href'/><xsl:text>-!-</xsl:text>
-    </xsl:for-each>
-  </xsl:template>
+xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
+xmlns:itunes='http://www.itunes.com/dtds/podcast-1.0.dtd'
+xmlns:media='http://search.yahoo.com/mrss/'
+xmlns:atom='http://www.w3.org/2005/Atom'>
+<xsl:output method='text'/>
+<xsl:template match='/'>
+<xsl:for-each select='/rss/channel'>
+<xsl:value-of select='title'/><xsl:text>-!-</xsl:text>
+<xsl:value-of select='link'/><xsl:text>-!-</xsl:text>
+<xsl:value-of select='image'/><xsl:text>-!-</xsl:text>
+<xsl:value-of select='image/@url'/><xsl:text>-!-</xsl:text>
+<xsl:value-of select='itunes:image[@type=\"image/jpeg\"]/@href'/><xsl:text>-!-</xsl:text>
+</xsl:for-each>
+</xsl:template>
 </xsl:stylesheet>"
 tmpl2="<?xml version='1.0' encoding='UTF-8'?>
 <xsl:stylesheet version='1.0'
-  xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
-  xmlns:itunes='http://www.itunes.com/dtds/podcast-1.0.dtd'
-  xmlns:media='http://search.yahoo.com/mrss/'
-  xmlns:atom='http://www.w3.org/2005/Atom'>
-  <xsl:output method='text'/>
-  <xsl:template match='/'>
-    <xsl:for-each select='/rss/channel/item'>
-      <xsl:value-of select='enclosure/@url'/><xsl:text>-!-</xsl:text>
-      <xsl:value-of select='media:cache[@type=\"audio/mpeg\"]/@url'/><xsl:text>-!-</xsl:text>
-      <xsl:value-of select='title'/><xsl:text>-!-</xsl:text>
-      <xsl:value-of select='media:cache[@type=\"audio/mpeg\"]/@duration'/><xsl:text>-!-</xsl:text>
-      <xsl:value-of select='itunes:summary'/><xsl:text>-!-</xsl:text>
-      <xsl:value-of select='description'/><xsl:text>EOL</xsl:text>
-    </xsl:for-each>
-  </xsl:template>
+xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
+xmlns:itunes='http://www.itunes.com/dtds/podcast-1.0.dtd'
+xmlns:media='http://search.yahoo.com/mrss/'
+xmlns:atom='http://www.w3.org/2005/Atom'>
+<xsl:output method='text'/>
+<xsl:template match='/'>
+<xsl:for-each select='/rss/channel/item'>
+<xsl:value-of select='enclosure/@url'/><xsl:text>-!-</xsl:text>
+<xsl:value-of select='media:cache[@type=\"audio/mpeg\"]/@url'/><xsl:text>-!-</xsl:text>
+<xsl:value-of select='title'/><xsl:text>-!-</xsl:text>
+<xsl:value-of select='media:cache[@type=\"audio/mpeg\"]/@duration'/><xsl:text>-!-</xsl:text>
+<xsl:value-of select='itunes:summary'/><xsl:text>-!-</xsl:text>
+<xsl:value-of select='description'/><xsl:text>EOL</xsl:text>
+</xsl:for-each>
+</xsl:template>
 </xsl:stylesheet>"
 tmpl3="<?xml version='1.0' encoding='UTF-8'?>
 <xsl:stylesheet version='1.0'
-  xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
-  xmlns:itunes='http://www.itunes.com/dtds/podcast-1.0.dtd'
-  xmlns:media='http://search.yahoo.com/mrss/'
-  xmlns:atom='http://www.w3.org/2005/Atom'>
-  <xsl:output method='text'/>
-  <xsl:template match='/'>
-    <xsl:for-each select='/rss/channel/item'>
-      <xsl:value-of select='enclosure/@url'/><xsl:text>-!-</xsl:text>
-      <xsl:value-of select='media:cache[@type=\"image/jpeg\"]/@url'/><xsl:text>-!-</xsl:text>
-      <xsl:value-of select='media:content[@type=\"image/jpeg\"]/@url'/><xsl:text>-!-</xsl:text>
-      <xsl:value-of select='title'/><xsl:text>-!-</xsl:text>
-      <xsl:value-of select='media:cache[@type=\"image/jpeg\"]/@duration'/><xsl:text>-!-</xsl:text>
-      <xsl:value-of select='itunes:summary'/><xsl:text>-!-</xsl:text>
-      <xsl:value-of select='description'/><xsl:text>EOL</xsl:text>
-    </xsl:for-each>
-  </xsl:template>
+xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
+xmlns:itunes='http://www.itunes.com/dtds/podcast-1.0.dtd'
+xmlns:media='http://search.yahoo.com/mrss/'
+xmlns:atom='http://www.w3.org/2005/Atom'>
+<xsl:output method='text'/>
+<xsl:template match='/'>
+<xsl:for-each select='/rss/channel/item'>
+<xsl:value-of select='enclosure/@url'/><xsl:text>-!-</xsl:text>
+<xsl:value-of select='media:cache[@type=\"image/jpeg\"]/@url'/><xsl:text>-!-</xsl:text>
+<xsl:value-of select='media:content[@type=\"image/jpeg\"]/@url'/><xsl:text>-!-</xsl:text>
+<xsl:value-of select='title'/><xsl:text>-!-</xsl:text>
+<xsl:value-of select='media:cache[@type=\"image/jpeg\"]/@duration'/><xsl:text>-!-</xsl:text>
+<xsl:value-of select='itunes:summary'/><xsl:text>-!-</xsl:text>
+<xsl:value-of select='description'/><xsl:text>EOL</xsl:text>
+</xsl:for-each>
+</xsl:template>
 </xsl:stylesheet>"
-
 
 if [ "$1" = set_channel ]; then
     
     feed="$2"
+    num="$3"
     DCP="$DM_tl/Feeds/.conf"
     
     xml="$(xsltproc - "$feed" <<< "$tmpl1" 2> /dev/null)"
@@ -106,30 +105,27 @@ if [ "$1" = set_channel ]; then
     items3="$(echo "$xml" | tr '\n' ' ' | tr -s [:space:] \
     | sed 's/EOL/\n/g' | head -n 1  | sed -r 's|-\!-|\n|g')"
 
-
     fchannel() {
         
         n=1;
         while read -r find; do
-        
-            
-            if ([ $(wc -w <<< "${find}") -ge 1 ] && [ -z "$name" ]); then
-                name="$n"
+
+            if [ $(wc -w <<< "${find}") -ge 1 ] && [ -z "$name" ]; then
+                name="$find"
                 n=2; fi
                 
-            if ([ -n "$(grep 'http:/' <<< "${find}")" ] && [ -z "$link" ]); then
-                link="$n"
+            if [ -n "$(grep 'http:/' <<< "${find}")" ] && [ -z "$link" ]; then
+                link="$find"
                 n=3; fi
                 
-            if ([ -n "$(grep -E '.jpeg|.jpg|.png' <<< "${find}")" ] && [ -z "$logo" ]); then
-                logo="$n"; fi
+            if [ -n "$(grep -E '.jpeg|.jpg|.png' <<< "${find}")" ] && [ -z "$logo" ]; then
+                logo="$find"; fi
                 
             let n++
         done <<< "$items1"
     }
    
-
-    ftype1() { # manera basicapara podcast en tonces type es 1
+    ftype1() {
         
         n=1
         while read -r find; do
@@ -155,8 +151,7 @@ if [ "$1" = set_channel ]; then
         done <<< "$items2"
     }
     
-    
-    ftype2() {  # si no encuentra 3d busca 2d el type sera 2
+    ftype2() {
 
         n=1
         while read -r find; do
@@ -180,7 +175,6 @@ if [ "$1" = set_channel ]; then
         done <<< "$items3"
     }
 
-
     find_images() {
 
         n=1
@@ -198,7 +192,6 @@ if [ "$1" = set_channel ]; then
         done <<< "$items3"
     }
     
-    
     find_summ() {
 
         n=1
@@ -209,8 +202,6 @@ if [ "$1" = set_channel ]; then
         done <<< "$items3"
     }
     
-
-
     fchannel
     ftype1
     if [ -z "$type" ]; then
@@ -223,29 +214,28 @@ if [ "$1" = set_channel ]; then
         fi
     fi
 
-    
-
     if [[ -n "$title" && -n "$summ" && -z "$image" && -z "$media" ]]; then
         type=3
     fi
     
     if [ -n "$type" ]; then
-            
-        echo _______________________________________
-        echo -e "\nname: $name\nlink: $link\nlogo: $logo\ntype: $type\nmedia: $media\ntitle: $title\nsumm: $summ\nimage: $image "
-        echo ______________________________________
-        
-        echo "$feed|$type|$name|$link|$logo|$title|$media|$image|$summ" >> "$DCP/15.cfg"
+
+echo -e "channel=\"$name\"
+link=\"$link\"
+logo=\"$logo\"
+ntype=\"$type\"
+nmedia=\"$media\"
+ntitle=\"$title\"
+nsumm=\"$summ\"
+nimage=\"$image\"
+url=\"$feed\"" > "$DCP/$num.rss"
+
         exit 0
     else
         msg "$(gettext "Couldn't download the specified URL\n")" info
         rm -f "$DT/cpt.lock" & exit 1
     fi
     
-
-
-
-
 elif [ "$1" = check ]; then
 
     source $DS/ifs/mods/cmns.sh
@@ -255,10 +245,7 @@ elif [ "$1" = check ]; then
 
     internet
 
-    tpl="$(gettext "Enclosure audio/video")\n _______\n$(gettext "Episode title")\n _______\n$(gettext "Summary/Description")\n _______\n _______\n _______"
-    mn=" _______!$(gettext "Enclosure audio/video")!$(gettext "Episode title")!$(gettext "Summary/Description")"
-
-    lnk=$(sed -n "$2"p $DCP/4.cfg)
+    source="$DCP/$2.rss"
     [ -z "$lnk" ] && exit 1
     [ ! -f "$DCP/$2.rss" ] && printf "$tpl" > "$DCP/$2.rss"
     cp "$DCP/$2.rss" "$DCP/$2.rss_"
@@ -303,13 +290,14 @@ elif [ "$1" = syndlg ]; then
     DIR="$(yad --center --form --on-top --window-icon=idiomind \
     --borders=10 --separator="" --title=" " --always-print-result \
     --text="$(gettext "Mountpoint or path where new episodes should be synced.")" \
-    --print-all --button="gtk-apply":0 --name=Idiomind --class=Idiomind \
-    --width=460 --height=200 --field="":CDIR "$SYNCDIR")"
+    --print-all --name=Idiomind --class=Idiomind \
+    --width=460 --height=200 --field="":CDIR "$SYNCDIR" \
+    --button="$(gettext "Cancel")":1 --button="gtk-apply":0)"
+    [ "$?" -eq 1 ] && exit 1 
 
     echo "$DIR" > $DT/s.tmp
     mv -f $DT/s.tmp $DCP/5.cfg
     exit
-
 
 elif [ "$1" = sync ]; then
    

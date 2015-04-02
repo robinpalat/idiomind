@@ -55,7 +55,7 @@ function new_session() {
         --text=" $(gettext "Fail on try write in /tmp")\n\n" \
         --image-on-top --sticky  \
         --width=420 --height=150 --borders=5 --title=Idiomind \
-        --skip-taskbar --center --window-icon=idiomind & exit 1
+        --skip-taskbar --center --window-icon="$DS/images/logo.png" & exit 1
     fi
   
     # start addons
@@ -97,9 +97,8 @@ function new_session() {
     
     # log file
     if [ -f "$DC_s/8.cfg" ]; then
-    c=$(du -sb "$DC_s/8.cfg" | awk '{ print $1 }')
-    if [ $c -gt 500000 ]; then
-    head -l 1000 < "$DC_s/8.cfg" > "$DT/8.cfg"
+    if [ $(du -sb "$DC_s/8.cfg" | awk '{ print $1 }') -gt 100000 ]; then
+    tail -n2000 < "$DC_s/8.cfg" > "$DT/8.cfg"
     mv -f "$DT/8.cfg" "$DC_s/8.cfg"; fi
     fi
     
@@ -212,7 +211,7 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
         --image="$img" --text="$itxt" --class=Idiomind \
         --scroll --no-headers --dclick-action="$dlck" \
         --width="$wth" --height="$eht" --image-on-top \
-        --window-icon=idiomind --column=Items --center \
+        --window-icon="$DS/images/logo.png" --column=Items --center \
         --borders=5 --button="$(gettext "Install")":0 \
         --button="$(gettext "Close")":1
         ret=$?
@@ -237,7 +236,7 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
                 if [ "$chck" -ge 1 ]; then
                 
                     tpc_i="$tpc_i $chck"
-                    msg_2 " $(gettext "You already have a topic with the same name.")\n $(gettext "The new it was renamed to\:")\n <b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
+                    msg_2 " $(gettext "You already have a topic with the same name.")\n $(gettext "The new it was renamed to\:")\n <b>$tpc_i</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
                     ret=$(echo $?)
                     
                     if [ $ret != 0 ]; then
@@ -319,8 +318,7 @@ function topic() {
             if [ -f "$DM_tlt/words/images/img.png" ]; then
             img="$DM_tlt/words/images/img.png"
             else img="$DS/images/trans.png"; fi
-            printf "tpcs.$tpc.tpcs\n" >> \
-            "$DC_s/8.cfg" &
+            printf "tpcs.$tpc.tpcs\n" >> "$DC_s/8.cfg"
         fi
     else
         if [ "$(wc -l < $DM_tl/.1.cfg)" -ge 1 ]; then
@@ -447,8 +445,7 @@ function topic() {
                             cat "$ls1" | awk '!array_temp[$0]++' > "$DT/ls1.x"
                             sed '/^$/d' "$DT/ls1.x" > "$ls1"
                         fi
-                        printf "okim.$cnt.okim\n" >> \
-                        "$DC_s/8.cfg" &
+                        printf "okim.$cnt.okim\n" >> "$DC_s/8.cfg"
                     fi
                 fi
                 
@@ -520,8 +517,7 @@ function topic() {
                             cat "$ls1" | awk '!array_temp[$0]++' > "$DT/ls1.x"
                             sed '/^$/d' "$DT/ls1.x" > "$ls1"
                         fi
-                        printf "okim.$cnt.okim\n" >> \
-                        "$DC_s/8.cfg" &
+                        printf "okim.$cnt.okim\n" >> "$DC_s/8.cfg"
                     fi
                 fi
             fi
@@ -544,7 +540,7 @@ function panel() {
     --field=gtk-index:btn "$DS/chng.sh" \
     --field=gtk-preferences:btn "$DS/cnfg.sh" \
     --on-top --borders=5 --align=center \
-    --no-buttons --window-icon=idiomind &
+    --no-buttons --window-icon="$DS/images/logo.png" &
 
     printf "strt.1.strt\n" >> "$DC_s/8.cfg"
     [ -n "$tpc" ] && echo "$tpc" > "$DT/tpe"

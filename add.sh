@@ -251,7 +251,7 @@ function new_sentence() {
     if [ -z $(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary') ] \
     || [ ! -f "$DM_tlt/$fname.mp3" ] || [ -z "$trgt" ] || [ -z "$srce" ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
-        msg " $(gettext "Something unexpected has occurred while saving the note.  \n")" dialog-warning & exit 1
+        msg " $(gettext "Something unexpected has occurred while saving the note. \n")" dialog-warning & exit 1
     fi
     
     add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3"
@@ -274,7 +274,7 @@ function new_sentence() {
     
     if [ -z "$grmrk" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ]; then
         rm "$DM_tlt/$fname.mp3"
-        msg " $(gettext "Something unexpected has occurred while saving the note.  \n")" dialog-warning 
+        msg " $(gettext "Something unexpected has occurred while saving the note. \n")" dialog-warning 
         [ -d "$DT_r" ] && rm -fr "$DT_r" & exit 1
     fi
     
@@ -386,7 +386,7 @@ function new_word() {
     
     else
         [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
-        msg " $(gettext "Something unexpected has occurred while saving the note.  \n")" dialog-warning & exit 1
+        msg " $(gettext "Something unexpected has occurred while saving the note. \n")" dialog-warning & exit 1
     fi
 
     [ -d "$DT_r" ] && rm -fr "$DT_r"
@@ -400,7 +400,7 @@ function edit_list_words() {
     if [ "$3" = "F" ]; then
 
         tpe="$tpc"
-        if [ $(cat "$DC_tlt/0.cfg" | wc -l) -ge 200 ]; then
+        if [ $(wc -l < "$DC_tlt/0.cfg") -ge 200 ]; then
             [ -d "$DT_r" ] && rm -fr "$DT_r"
             msg "$(gettext "You have reached the maximum number of items.")" info Info & exit
         fi
@@ -424,9 +424,8 @@ function edit_list_words() {
         slt=$(mktemp $DT/slt.XXXX.x)
         
         dlg_checklist_1 ./idlst "$info" "$slt"
-        ret=$(echo "$?")
 
-            if [ $ret -eq 0 ]; then
+            if [ $? -eq 0 ]; then
                 
                 while read chkst; do
                     sed 's/TRUE//g' <<<"$chkst" >> "$DT/$c/slts"
@@ -447,8 +446,7 @@ function edit_list_words() {
                 fname="$(nmfile "$trgt")"
                 
             if [ $(wc -l < "$DC_tlt/0.cfg") -ge 200 ]; then
-                echo "$trgt
-" > logw
+                printf "\n- $trgt" >> ./logw
             
             else
                 translate "$trgt" auto $lgs > "tr.$c"
@@ -496,9 +494,11 @@ function edit_list_words() {
 
 function dclik_list_words() {
 
+    tpe=$(sed -n 2p $DT/.n_s_pr)
     DM_tlt="$DM_tl/$tpe"
     DC_tlt="$DM_tl/$tpe/.conf"
-    DT_r=$(cat $DT/.n_s_pr)
+    DT_r=$(sed -n 1p $DT/.n_s_pr)
+    tpe=$(sed -n 2p $DT/.n_s_pr)
     cd "$DT_r"
     echo "$3" > ./lstws
     
@@ -507,7 +507,7 @@ function dclik_list_words() {
         msg "$(gettext "No topic is active")\n" info & exit 1
     fi
     
-    nw=$(cat "$DC_tlt/3.cfg" | wc -l)
+    nw=$(wc -l < "$DC_tlt/3.cfg")
     
     if [ $(cat "$DC_tlt/0.cfg" | wc -l) -ge 200 ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
@@ -545,7 +545,6 @@ function dclik_list_words() {
     sname="$(cat lstws)"
     slt=$(mktemp $DT/slt.XXXX.x)
     dlg_checklist_1 ./lst " " "$slt"
-    ret=$(echo "$?")
     
     if [ $? -eq 0 ]; then
     
@@ -932,8 +931,7 @@ function process() {
                                     fi
                                     
                                     echo "__" >> x
-                                    rm -f "$DT"/*.$r
-                                    rm -f "$aw" "$bw"
+                                    rm -f "$DT"/*.$r "$aw" "$bw"
                                     
                                     ) &
                                     
@@ -990,7 +988,6 @@ function process() {
                                 [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
                             fi
                         fi
-                        
                         
                         nn=$(($n+$(wc -l < ./slts)-1))
                         prg=$((100*$nn/$lns))

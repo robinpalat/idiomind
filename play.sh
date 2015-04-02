@@ -66,7 +66,7 @@ setting_1 | yad --list --separator="|" --on-top \
 --expand-column=2 --print-all --no-headers --center \
 --class=Idiomind --name=Idiomind --align=right \
 --width=380 --height=310 --title="$r$tpp" \
---window-icon=idiomind --borders=5 --always-print-result \
+--window-icon="$DS/images/logo.png" --borders=5 --always-print-result \
 --column=IMG:IMG --column=TXT:TXT --column=CHK:CHK \
 --button="$(gettext "Cancel")":1 --button="$btn" --skip-taskbar > "$slct"
 ret=$?

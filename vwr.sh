@@ -3,7 +3,7 @@
 
 wth=$(sed -n 2p $DC_s/10.cfg)
 eht=$(($(sed -n 3p $DC_s/10.cfg)-180))
-echo "_" >> "$DC_a/stats/.tmp" &
+echo "_" >> "$DT/stats.tmp" &
 [ "$1" = v1 ] && ind="$DC_tlt/1.cfg"
 [ "$1" = v2 ] && ind="$DC_tlt/2.cfg"
 re='^[0-9]+$'
@@ -55,7 +55,6 @@ fi
         ff=$((nuw+1))
         "$DS/vwr.sh" "$1" "$nll" $ff &
     else 
-        printf "vwr.$(wc -l < "$DC_a/stats/.tmp").vwr\n" >> \
-        "$DC_s/8.cfg" &
-        rm "$DC/addons/stats/.tmp" & exit 1
+        printf "vwr.$(wc -l < "$DT/stats.tmp").vwr\n" >> "$DC_s/8.cfg"
+        rm -f "$DT/stats.tmp" & exit 1
     fi

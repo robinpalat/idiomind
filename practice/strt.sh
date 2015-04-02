@@ -78,7 +78,7 @@ img4="$DSP/icons_st/$(cat .iconls).png"
 
 VAR=$(yad --ellipsize=NONE --list \
 --on-top --class=Idiomind --name=Idiomind \
---center --window-icon=idiomind \
+--center --window-icon="$DS/images/logo.png" \
 --image-on-top --buttons-layout=edge $img \
 --borders=5 --expand-column=1 --print-column=2 \
 --width=$wth --height=$eht --text="$info" \
@@ -104,7 +104,7 @@ if [ $ret -eq 0 ]; then
         "$DSP/prct.sh" s & exit 1
     else
         yad --form --center --borders=5 \
-        --title="Info" --on-top --window-icon=idiomind \
+        --title="Info" --on-top --window-icon="$DS/images/logo.png" \
         --button=Ok:1 --skip-taskbar --image=info \
         --text=" $(gettext "You must choose a practice")\n" \
         --width=360 --height=120

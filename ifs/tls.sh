@@ -25,6 +25,7 @@ if [ "$1" = play ]; then
 
     play "$2"
     wait
+    
 elif [ "$1" = listen_sntnc ]; then
 
     play "$DM_tlt/$2.mp3"
@@ -34,9 +35,6 @@ elif [ "$1" = dclik ]; then
 
     play "$DM_tls/${2,,}".mp3 & exit
 
-elif [ "$1" = thumb ]; then
-    >/dev/null 2>&1
-    cd "$2"; mplayer -ss 60 -nosound -vo jpeg -frames 1 "$3" >/dev/null 2>&1
 fi
 
 function add_audio() {
@@ -44,7 +42,7 @@ function add_audio() {
     cd $HOME
     AU=$(yad --width=620 --height=500 --file --on-top --name=Idiomind \
     --text=" $(gettext "Browse to and select the audio file that you want to add.")" \
-    --class=Idiomind --window-icon=idiomind --center --file-filter="*.mp3" \
+    --class=Idiomind --window-icon="$DS/images/logo.png" --center --file-filter="*.mp3" \
     --button="$(gettext "Cancel")":1 --button="$(gettext "OK")":0 \
     --borders=5 --title="$(gettext "Add Audio")")
 
@@ -70,7 +68,7 @@ function edit_audio() {
 function help() {
 
     web="http://idiomind.sourceforge.net/doc/help.html"
-    yad --html --window-icon=idiomind --browser \
+    yad --html --window-icon="$DS/images/logo.png" --browser \
     --title="$(gettext "Help")" --width=700 \
     --height=600 --button="$(gettext "OK")":0 \
     --name=Idiomind --class=Idiomind \
@@ -92,7 +90,7 @@ function web() {
 function fback() {
 
     web="http://idiomind.sourceforge.net/doc/msg.html"
-    yad --html --window-icon=idiomind --browser \
+    yad --html --window-icon="$DS/images/logo.png" --browser \
     --title="$(gettext "Message")" --width=500 \
     --height=455 --no-buttons --fixed \
     --name=Idiomind --class=Idiomind \
@@ -406,7 +404,7 @@ function set_image() {
         yad --form --align=center --center --name=Idiomind --class=Idiomind \
         --width=340 --text-align=center --height=280 \
         --on-top --skip-taskbar --image-on-top "$txt" >/dev/null 2>&1 \
-        "$btnn" --window-icon=idiomind --borders=5 \
+        "$btnn" --window-icon="$DS/images/logo.png" --borders=5 \
         --title=$(gettext "Image") "$ICON" "$btn2" \
         --button=gtk-close:1
             ret=$? >/dev/null 2>&1
@@ -453,7 +451,7 @@ function set_image() {
         yad --name=Idiomind --class=Idiomind \
         --form --center --width=470 --height=280 \
         --on-top --skip-taskbar --image-on-top \
-        "$txt" "$btnn" --window-icon=idiomind --borders=5 \
+        "$txt" "$btnn" --window-icon="$DS/images/logo.png" --borders=5 \
         --title=$(gettext "Image") "$ICON" "$btn2" --button=gtk-close:1
         ret=$? >/dev/null 2>&1
                 
@@ -484,17 +482,17 @@ function pdfdoc() {
     cd $HOME
     pdf=$(yad --save --center --borders=5 --name=Idiomind \
     --on-top --filename="$HOME/$tpc.pdf" --class=Idiomind \
-    --window-icon=idiomind --title="Export " \
+    --window-icon="$DS/images/logo.png" --title="Export " \
     --file --width=600 --height=500 --button=gtk-ok:0 )
     ret=$?
 
     if [ "$ret" -eq 0 ]; then
     
         dte=$(date "+%d %B %Y")
-        mkdir $DT/mkhtml
-        mkdir $DT/mkhtml/images
+        mkdir "$DT/mkhtml"
+        mkdir "$DT/mkhtml/images"
         nts=$(sed 's/\./\.<br>/g' < "$DC_tlt/10.cfg")
-        cd $DT/mkhtml
+        cd "$DT/mkhtml"
         cp -f "$DC_tlt/3.cfg" w.inx.l
         cp -f "$DC_tlt/4.cfg" s.inx.l
         iw=w.inx.l; is=s.inx.l
@@ -550,7 +548,7 @@ function pdfdoc() {
         cnt=`ls -1 *.jpg 2>/dev/null | wc -l`
         if [ $cnt != 0 ]; then
             cd $DT/mkhtml/images/
-            ls *.png | sed 's/\.png//g' > $DT/mkhtml/nimg
+            ls *.png | sed 's/\.png//g' > "$DT/mkhtml/nimg"
             cd $DT/mkhtml
             echo '<table width="90%" align="center" border="0" class="wrdimg">' >> pdf_doc
             n=1
@@ -596,7 +594,7 @@ function pdfdoc() {
             <p>&nbsp;</p>' >> pdf_doc
         fi
 
-        cd $DT/mkhtml
+        cd "$DT/mkhtml"
         n=1
         while [ $n -le "$(wc -l < $iw)" ]; do
             wnm=$(sed -n "$n"p $iw)
@@ -689,7 +687,7 @@ function pdfdoc() {
         mv -f pdf_doc pdf_doc.html
         wkhtmltopdf -s A4 -O Portrait pdf_doc.html tmp.pdf
         mv -f tmp.pdf "$pdf"
-        rm -fr pdf_doc $DT/mkhtml $DT/*.x $DT/*.l
+        rm -fr pdf_doc "$DT/mkhtml" "$DT"/*.x "$DT"/*.l
 
     else
         exit 0

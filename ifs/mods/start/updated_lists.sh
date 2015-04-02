@@ -47,7 +47,7 @@ if [ TRUE = TRUE ]; then
                     tpc="tpc$q"
                     list_a="list_a$q"
                     if [ -n "${!tpc}" ];then
-                    if grep -o "$fwk" < "${!list_a}"; then
+                    if grep -Fxo "$fwk" < "${!list_a}"; then
                     echo "$fwk" >> "$items"
                     fi
                     fi
@@ -77,10 +77,10 @@ if [ TRUE = TRUE ]; then
             if [ -n "${!tpc}" ]; then
             
                 if [ -f "${!list_a}" ]; then
-                if grep -o "$item" < "${!list_a}"; then
+                if grep -Fxo "$item" < "${!list_a}"; then
                 grep -vxF "$item" "${!list_a}" > "$DT/list_a.tmp"
                 sed '/^$/d' "$DT/list_a.tmp" > "${!list_a}"
-                if ! grep -o "$item" < "${!list_b}"; then
+                if ! grep -Fxo "$item" < "${!list_b}"; then
                 echo "$item" >> "${!list_b}"; printf "${!tpc}%s\n --> $item"; fi
                 fi
                 fi
@@ -91,6 +91,8 @@ if [ TRUE = TRUE ]; then
     
     done < "$items"
     fi
+    if [ "$(date +%u)" = 6 ]; then rm "$LOG"; touch "$LOG"; fi
     rm -f "$TPS" "$items" "$DT/list_a.tmp"
-    exit 0
+    echo "lists updated"
+    exit
 fi

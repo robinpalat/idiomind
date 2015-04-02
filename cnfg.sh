@@ -16,7 +16,7 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
 #  
-
+#--field="$(gettext "Quick Help")":BTN "$DS/ifs/tls.sh help"
 source /usr/share/idiomind/ifs/c.conf
 Encoding=UTF-8
 wth=520
@@ -49,7 +49,7 @@ fi
 function confirm() {
     
     yad --form --center --borders=8 --image=$2 \
-    --title="Idiomind" --on-top --window-icon=idiomind \
+    --title="Idiomind" --on-top --window-icon="$DS/images/logo.png" \
     --skip-taskbar --button="$(gettext "No")":1 \
     --button="$(gettext "Yes")":0 --text="$1\n" \
     --width=350 --height=120
@@ -112,7 +112,6 @@ yad --plug=$KEY --tabnum=1 \
 --field="$(gettext "Speech Synthesizer (default espeak)")":CB5 "$synth" \
 --field="$(gettext "Use this program for audio editing")":CB5 "$edit" \
 --field="$(gettext "Check for Updates")":BTN "$DS/ifs/tls.sh check_updates" \
---field="$(gettext "Quick Help")":BTN "$DS/ifs/tls.sh help" \
 --field="$(gettext "Topic Saved")":BTN "$DS/ifs/upld.sh 'vsd'" \
 --field="$(gettext "Feedback")":BTN "$DS/ifs/tls.sh 'fback'" \
 --field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" > "$cnf1" &
@@ -121,7 +120,7 @@ cat "$DC_s/2.cfg" | yad --plug=$KEY --tabnum=2 --list --expand-column=2 \
 --no-headers --dclick-action="$DS/ifs/dclik.sh" \
 --column=icon:IMG --column=Action &
 yad --notebook --key=$KEY --name=Idiomind --class=Idiomind \
---sticky --center --window-icon=idiomind --borders=5  \
+--sticky --center --window-icon="$DS/images/logo.png" --borders=5  \
 --tab="$(gettext "Preferences")" --tab="$(gettext "Addons")" \
 --width=$wth --height=$eht --title="$(gettext "Settings")" \
 --button="$(gettext "Cancel")":1 --button="$(gettext "OK")":0
