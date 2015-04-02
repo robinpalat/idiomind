@@ -291,7 +291,7 @@ function topic() {
 
     wth=$(sed -n 2p $DC_s/10.cfg)
     eht=$(sed -n 3p $DC_s/10.cfg)
-    spc="$(n=1; while [[ $n -le $((wth/45)) ]]; \
+    spc="$(n=1; while [[ $n -le $((wth/40)) ]]; \
     do printf "\t"; [ $n -ge 50 ] && break; let n++; done)"
     mde=$(sed -n 2p $DC_s/4.cfg)
     source "$DS/ifs/mods/cmns.sh"

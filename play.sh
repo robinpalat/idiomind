@@ -57,7 +57,7 @@ btn="Play:0"; else
 tpp="$(sed -n 2p "$DT/.p_")"
 if grep TRUE <<<"$words$sentences$marks$practice"; then
 [ "$tpp" != "$tpc" ] && \
-l="--text=<sup><b>Playing:  \"$tpp\"</b></sup>" || \
+l="--text=Playing:  \"$tpp\"" || \
 l="--center"; fi
 btn="gtk-media-stop:2"; fi
 slct=$(mktemp "$DT"/slct.XXXX)
