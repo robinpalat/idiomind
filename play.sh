@@ -18,8 +18,6 @@
 #
 #  2015/02/27
 
-source /usr/share/idiomind/ifs/c.conf
-
 [ -z "$tpc" ] && exit 1
 source "$DC_s/1.cfg"
 lbls=(' ' 'Words' 'Sentences' 'Marks' 'Practice' 'News episodes' 'Saved epidodes')
@@ -47,28 +45,30 @@ function setting_1() {
             arr="in$n"
             [[ -z ${!arr} ]] && echo "$DS/images/addi.png" \
             || echo "$DS/images/add.png"
-        echo "  <span color='#646D72' font_desc='Verdana 10'>$(gettext "${lbls[$n]}")</span><i></i>"
+        echo "  <span color='#646D72' font_desc='Verdana 11'>$(gettext "${lbls[$n]}")</span><i></i>"
         echo "${!sets[$n]}"
         let n++
     done
 }
 
 if [ ! -f "$DT/.p_" ]; then
-tpp="$tpc"
+l="--center"
 btn="Play:0"; else
 tpp="$(sed -n 2p "$DT/.p_")"
 if grep TRUE <<<"$words$sentences$marks$practice"; then
-[ "$tpp" != "$tpc" ] && r="Playing: "; fi
+[ "$tpp" != "$tpc" ] && \
+l="--text=<sup><b>Playing:  \"$tpp\"</b></sup>" || \
+l="--center"; fi
 btn="gtk-media-stop:2"; fi
 slct=$(mktemp "$DT"/slct.XXXX)
 
 setting_1 | yad --list --separator="|" --on-top \
 --expand-column=2 --print-all --no-headers --center \
 --class=Idiomind --name=Idiomind --align=right \
---width=380 --height=310 --title="$r$tpp" \
+--width=380 --height=310 --title="$tpc" "$l" \
 --window-icon="$DS/images/logo.png" --borders=5 --always-print-result \
 --column=IMG:IMG --column=TXT:TXT --column=CHK:CHK \
---button="$(gettext "Cancel")":1 --button="$btn" --skip-taskbar > "$slct"
+--button="$btn" --button="$(gettext "Close")":1 --skip-taskbar > "$slct"
 ret=$?
 
 if [ "$ret" -eq 0 ]; then
@@ -82,15 +82,13 @@ if [ "$ret" -eq 0 ]; then
         fi
         ((n=n+1))
     done
-
+    
     rm -f "$slct";
     "$DS/stop.sh" playm
     if [ -d "$DM_tlt" ] && [ -n "$tpc" ]; then
     echo "$DM_tlt" > "$DT/.p_"
     echo "$tpc" >> "$DT/.p_"
     else "$DS/stop.sh" play && exit 1; fi
-    
-    source "$DC_s/1.cfg"
     
     if [ -z "$(< "$DT/index.m3u")" ]; then
         notify-send "$(gettext "Exiting")" \
