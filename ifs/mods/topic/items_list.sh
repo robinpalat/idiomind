@@ -68,20 +68,27 @@ function notebook_1() {
     tac "$ls2" | yad --list --no-headers --plug=$KEY --tabnum=2 \
     --expand-column=0 --ellipsize=END --print-all --separator='|' \
     --column=Name:TEXT --dclick-action='./vwr.sh v2' &
-    yad --form --scroll --borders=10 --plug=$KEY --tabnum=3 --columns=2 \
+    yad --text-info --plug=$KEY --margins=14 \
+    --tabnum=3 --fore='gray40' --wrap --editable \
+    --show-uri --fontname=vendana --print-column=1 \
+    --column="" --filename="$nt" > "$cnf3" &
+    yad --form --scroll --borders=15 --plug=$KEY --tabnum=4 --columns=2 \
     --text="$label_info" \
-    --field="$(gettext "Notes")$spc":txt "${nt}" \
+    --field="\n\n$spc":lbl " " \
     --field="<small>$(gettext "Rename")</small>:" "$tpc" \
     --field="$(gettext "Mark as learned")":FBTN "$DS/mngr.sh 'mark_as_learned'" \
-    --field=" $label_info2":LBL " " \
+    --field=" ":lbl " " \
+    --field="\n\n":lbl " " \
     --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh" \
-    --field="$(gettext "Delete")":FBTN "$DS/mngr.sh 'delete_topic'" > "$cnf3" &
+    --field="$(gettext "Add Media")":FBTN "$DS/ifs/upld.sh" \
+    --field="$(gettext "Delete")":FBTN "$DS/mngr.sh 'delete_topic'" > "$cnf4" &
     yad --notebook --name=Idiomind --center --key=$KEY \
     --class=Idiomind --align=right \
     --window-icon="$DS/images/logo.png" \
     --tab-borders=0 --center --title="$tpc" \
     --tab="  $(gettext "Learning") ($inx1) " \
     --tab="  $(gettext "Learned") ($inx2) " \
+    --tab=" $(gettext "Notes") " \
     --tab=" $(gettext "Edit") " \
     --ellipsize=END --image-on-top --always-print-result \
     --width="$wth" --height="$eht" --borders=5 \
@@ -100,11 +107,11 @@ function notebook_2() {
     --no-headers --plug=$KEY --tabnum=2 \
     --expand-column=1 --ellipsize=END --print-all \
     --column=Name:TEXT --dclick-action='./vwr.sh v2' &
-    yad --form --scroll --borders=10 --plug=$KEY --tabnum=3 --columns=2 \
+    yad --form --scroll --borders=15 --plug=$KEY --tabnum=3 --columns=2 \
     --text="$label_info" \
     --field="$(gettext "Notes")$spc":txt "$nt" \
-    --field="<small>$(gettext "Rename")</small>:" "$tpc" \
     --field="$(gettext "Review")":FBTN "$DS/mngr.sh 'mark_as_learn'" \
+    --field="<small>$(gettext "Rename")</small>:" "$tpc" \
     --field=" $label_info2":LBL " " \
     --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh" \
     --field="$(gettext "Delete")":FBTN "$DS/mngr.sh 'delete_topic'" > "$cnf3" &

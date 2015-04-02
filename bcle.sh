@@ -18,6 +18,7 @@
 #
 #  2015/02/27
 
+source /usr/share/idiomind/ifs/c.conf
 [[ -z "$tpc" && -d "$DT" ]] && exit 1
 source "$DC_s/1.cfg"
 cd "$DT"
@@ -30,6 +31,7 @@ if [ -n "$(cat ./index.m3u)" ] && [ $(wc -l < ./index.m3u) -gt 0 ]; then
                 "$DS/chng.sh" chngi "$n"
                 let n--
             done
+            sleep 15
         done
         
     else
@@ -37,7 +39,7 @@ if [ -n "$(cat ./index.m3u)" ] && [ $(wc -l < ./index.m3u) -gt 0 ]; then
         "$DS/chng.sh" chngi "$n"
             let n--
         done
-        rm -fr "$DT/.p_"
+        rm -fr "$DT/.p_"; exit 0
     fi
 else
     exit 1

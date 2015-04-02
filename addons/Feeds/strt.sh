@@ -122,6 +122,7 @@ conditions() {
         msg "$(gettext "Missing URL. Please check the settings in the preferences dialog.")\n" info
         [ -f "$DT/.uptp" ] && rm -fr "$DT_r" "$DT/.uptp"
         exit 1; fi
+        
     internet
 }
 
@@ -160,6 +161,7 @@ get_images_main () {
 mkhtml () {
 
     if [ "$tp" = vid ]; then
+    
         if [ $ex = m4v || $ex = mp4 ]; then
         t = mp4
         elif [ $ex = avi ]; then
@@ -232,7 +234,8 @@ get_images () {
         
         cd "$DT_r"; p=TRUE; rm -f *.jpeg *.jpg
         
-        exec 3<&0; mplayer -ss 60 -nosound -noconsolecontrols -vo jpeg -frames 3 "media.$ex" <&3 &&
+        exec 3<&0; mplayer -ss 60 -nosound -noconsolecontrols \
+        -vo jpeg -frames 3 "media.$ex" <&3 &&
 
         if ls | grep '.jpeg'; then img="$(ls | grep '.jpeg' | head -n1)"
         else img="$(ls | grep '.jpg' | head -n1)"; fi
