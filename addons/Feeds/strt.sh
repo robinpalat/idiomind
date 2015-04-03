@@ -366,7 +366,7 @@ fetch_podcasts() {
                         fname="$(nmfile "${title}")"
 
                         if [ "$(echo "$title" | wc -c)" -ge 200 ]; then
-                                msg "$(gettext "Se encontró un error (04) en la configuración de un feed") ($n)\n $title" info;
+                                msg " $(gettext "Something wrong on feeds configuration")\n $(gettext "Error")4  $(gettext "URL")$n" info;
                                 continue; fi
                                 
                         if ! grep -Fxo "$title" < "$DCP/1.cfg"; then

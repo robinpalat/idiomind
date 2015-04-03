@@ -17,7 +17,7 @@ ling=0
 function score() {
 
     if [ "$(($(cat l_f)+$1))" -ge "$all" ]; then
-        echo "w9.$(tr -s '\n' ';' < ok.f).w9" >> "$log"
+        echo "w9.$(tr -s '\n' '|' < ok.f).w9" >> "$log"
         rm fin fin1 fin2 ok.f
         echo "$(date "+%a %d %B")" > look_f
         echo 21 > .iconf
@@ -39,7 +39,7 @@ function score() {
         
         [ -f fin2 ] && rm fin2
         if [ -f fin3 ]; then
-            echo "w6.$(tr -s '\n' ';' < fin3).w6" >> "$log"
+            echo "w6.$(tr -s '\n' '|' < fin3).w6" >> "$log"
             rm fin3; fi
         "$strt" 5 "$easy" "$ling" "$hard" & exit 1
     fi

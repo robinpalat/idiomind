@@ -32,7 +32,7 @@ ling=0
 function score() {
 
     if [ "$(($(cat l_w)+$1))" -ge "$all" ] ; then
-        echo "w9.$(tr -s '\n' ';' < ok.w).w9" >> "$log"
+        echo "w9.$(tr -s '\n' '|' < ok.w).w9" >> "$log"
         rm lwin lwin1 lwin2 lwin3 ok.w
         echo "$(date "+%a %d %B")" > look_lw
         echo 21 > .iconlw
@@ -54,7 +54,7 @@ function score() {
         
         [ -f lwin2 ] && rm lwin2
         if [ -f lwin3 ]; then
-            echo "w6.$(tr -s '\n' ';' < lwin3).w6" >> "$log"
+            echo "w6.$(tr -s '\n' '|' < lwin3).w6" >> "$log"
             rm lwin3; fi
         $strt 7 $easy $ling $hard & exit 1
     fi

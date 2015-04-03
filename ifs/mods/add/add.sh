@@ -7,24 +7,26 @@ function index() {
 
     if [ ! -z "$2" ]; then
     
+        item="$2"
+    
         if [ "$1" = word ]; then
         
             if [ "$(grep "$4" < "$DC_tlt/0.cfg")" ] && [ -n "$4" ]; then
-                sed -i "s/${4}/${4}\n$2/" "$DC_tlt/0.cfg"
-                sed -i "s/${4}/${4}\n$2/" "$DC_tlt/1.cfg"
-                sed -i "s/${4}/${4}\n$2/" "$DC_tlt/.11.cfg"
+                sed -i "s/${4}/${4}\n$item/" "$DC_tlt/0.cfg"
+                sed -i "s/${4}/${4}\n$item/" "$DC_tlt/1.cfg"
+                sed -i "s/${4}/${4}\n$item/" "$DC_tlt/.11.cfg"
             else
-                echo "$2" >> "$DC_tlt/0.cfg"
-                echo "$2" >> "$DC_tlt/1.cfg"
-                echo "$2" >> "$DC_tlt/.11.cfg"; fi
+                echo "$item" >> "$DC_tlt/0.cfg"
+                echo "$item" >> "$DC_tlt/1.cfg"
+                echo "$item" >> "$DC_tlt/.11.cfg"; fi
                 
-            echo "$2" >> "$DC_tlt/3.cfg"
+            echo "$item" >> "$DC_tlt/3.cfg"
             
         elif [ "$1" = sentence ]; then
-            echo "$2" >> "$DC_tlt/0.cfg"
-            echo "$2" >> "$DC_tlt/1.cfg"
-            echo "$2" >> "$DC_tlt/4.cfg"
-            echo "$2" >> "$DC_tlt/.11.cfg"; fi
+            echo "$item" >> "$DC_tlt/0.cfg"
+            echo "$item" >> "$DC_tlt/1.cfg"
+            echo "$item" >> "$DC_tlt/4.cfg"
+            echo "$item" >> "$DC_tlt/.11.cfg"; fi
 
         z=0; tmp="$DT/tmp"
         while [ $z -le 4 ]; do
@@ -88,20 +90,19 @@ function check_grammar_2() {
 
 function clean_1() {
     
-    echo "$(echo "$1" | sed ':a;N;$!ba;s/\n/ /g' \
+    sed ':a;N;$!ba;s/\n/ /g' \
     | sed 's/"//; s/“//;s/&//; s/”//;s/://'g | sed "s/’/'/g" \
     | iconv -c -f utf8 -t ascii | sed "s/|//g" \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//'\
-    | sed 's/^ *//; s/ *$//g'| sed 's/^\s*./\U&\E/g')"
+    | sed 's/^ *//; s/ *$//g'| sed 's/^\s*./\U&\E/g' <<<"$1"
 }
 
 
 function clean_2() {
     
-    echo "$(echo "$1" | cut -d "|" -f1 \
-    | sed s'/!//; s/&//; s/\://; s/\&//'g \
-    | sed s"/'//"g | sed 's/^[ \t]*//;s/[ \t]*$//' \
-    | sed s'|/||; s/^\s*./\U&\E/g')"
+    sed s'/!//; s/&//; s/\://; s/\&//'g | sed s"/'//"g \
+    | sed 's/^[ \t]*//;s/[ \t]*$//' \
+    | sed s'|/||; s/^\s*./\U&\E/g' | cut -d "|" -f1  <<<"$1"
 }    
 
 
@@ -413,12 +414,12 @@ function dlg_checklist_3() {
         --dclick-action='/usr/share/idiomind/add.sh dclik_list_words' \
         --list --checklist --class=Idiomind --center --sticky \
         --text="<small>$info</small>" --title="$2" --no-headers \
-        --width=$wth --print-all --height=$eht --borders=5 \
+        --width=$wth --height=$eht --borders=5 \
         --button="$(gettext "Cancel")":1 --button=$(gettext "Arrange"):2 \
         --button="$(gettext "To New Topic")":"$DS/add.sh 'new_topic'" \
         --button=gtk-add:0 \
         --column="$(cat "$1" | wc -l)" \
-        --column="$(gettext "sentences")" > $slt
+        --column="$(gettext "sentences")" > "$slt"
 }
 
 

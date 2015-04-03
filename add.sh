@@ -295,7 +295,7 @@ function new_sentence() {
 
 function new_word() {
 
-    trgt="$2"
+    trgt="$(sed s'\|\\'g <<<"$2")"
     srce="$4"
     icnn=idiomind
     DT_r="$3"
@@ -824,17 +824,11 @@ function process() {
                         rm -fr "$DT_r" "$lckpr" "$slt" & exit 1
                     fi
                 
-                    list=$(tac "$slt" | sed 's/|//g')
-                    n=1
-                    while [ $n -le $(wc -l < "$slt") ]; do
-                        chkst=$(sed -n "$n"p <<<"$list")
-                        if echo "$chkst" | grep "TRUE"; then
-                            echo "$chkst" | sed 's/TRUE//g' >> slts
-                        fi
-                        let n++
-                    done
+                    while read chkst; do
+                        sed 's/TRUE//g' <<<"$chkst"  >> ./slts
+                    done <<<"$(tac "$slt" | sed 's/|//g')"
                     rm -f "$slt"
-                    
+
                     internet
                     cd "$DT_r"
                     touch ./wlog ./slog

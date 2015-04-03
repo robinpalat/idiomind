@@ -31,6 +31,8 @@ f=0
 function score() {
 
     if [ "$1" -ge "$all" ] ; then
+    
+        echo "w6.$(tr -s '\n' '|' < ok.s).w6" >> "$log"
         rm lsin ok.s
         echo "$(date "+%a %d %B")" > look_ls
         echo 21 > .iconls

@@ -97,7 +97,7 @@ function flashcards() {
     fi
 
     if ([ -f fin ] && [ -f ok.f ]); then
-        echo "w9.$(tr -s '\n' ';' < ok.f).w9" >> "$log"
+        echo "w9.$(tr -s '\n' '|' < ok.f).w9" >> "$log"
         grep -Fxvf ok.f fin > fin1
         echo " practice --restarting session"
     else
@@ -124,7 +124,7 @@ function multiple_choise() {
     fi
 
     if ([ -f mcin ] && [ -f ok.m ]); then
-        echo "w9.$(tr -s '\n' ';' < ok.m).w9" >> "$log"
+        echo "w9.$(tr -s '\n' '|' < ok.m).w9" >> "$log"
         grep -Fxvf ok.m mcin > mcin1
         echo " practice --restarting session"
         
@@ -154,7 +154,7 @@ function listen_words() {
     fi
 
     if ([ -f lwin ] && [ -f ok.w ]); then
-        echo "w9.$(tr -s '\n' ';' < ok.w).w9" >> "$log"
+        echo "w9.$(tr -s '\n' '|' < ok.w).w9" >> "$log"
         grep -Fxvf ok.w lwin > lwin1
         echo " practice --restarting session"
     else
@@ -181,6 +181,7 @@ function listen_sentences() {
     fi
 
     if ([ -f lsin ] && [ -f ok.s ]); then
+        echo "w6.$(tr -s '\n' '|' < ok.s).w6" >> "$log"
         grep -Fxvf ok.s lsin > lsin1
         echo " practice --restarting session"
     else

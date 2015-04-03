@@ -61,7 +61,7 @@ function feedmode() {
     nnt=$(cut -d '|' -f 1 < "$fdit")
     rm -f "$fdit"
     if [ "$nt" != "$nnt" ]; then
-        if [ -z "$nnt" ]; then msg_2 "$(gettext " Really delete note?")\n" gtk-delete "Delete" "No"
+        if [ -z "$nnt" ]; then msg_2 " $(gettext "Really delete note?")\n" gtk-delete "Delete" "No"
         [ $? = 0 ] && echo "$nnt" | cut -c1-90000 > "$DCP/10.cfg"; else
         echo "$nnt" | cut -c1-90000 > "$DCP/10.cfg"; fi
     fi

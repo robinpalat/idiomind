@@ -17,7 +17,7 @@ ling=0
 function score() {
 
     if [ "$(($(cat l_m)+$1))" -ge "$all" ]; then
-        echo "w9.$(tr -s '\n' ';' < ok.m).w9" >> "$log"
+        echo "w9.$(tr -s '\n' '|' < ok.m).w9" >> "$log"
         rm mcin mcin1 mcin2 mcin3 ok.m
         echo "$(date "+%a %d %B")" > look_mc
         echo 21 > .iconmc
@@ -39,7 +39,7 @@ function score() {
         
         [ -f mcin2 ] && rm mcin2
         if [ -f mcin3 ]; then
-            echo "w6.$(tr -s '\n' ';' < mcin3).w6" >> "$log"
+            echo "w6.$(tr -s '\n' '|' < mcin3).w6" >> "$log"
             rm mcin3; fi
         $strt 6 $easy $ling $hard & exit 1
     fi

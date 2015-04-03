@@ -40,7 +40,7 @@ function audio_recognizer() {
     --header="Content-Type: audio/x-flac; rate=16000" \
     -O - "https://www.google.com/speech-api/v2/recognize?&lang="$2"-"$3"&key=$4")"
     if [ $? != 0 ]; then
-        msg "$(gettext "An error occurred, please try later.")\n" dialog-warning &
+        msg " $(gettext "An error occurred, please try later.")\n" dialog-warning &
         kill -9 $(pgrep -f "yad --progress") & exit 1; fi
     
 }
@@ -70,7 +70,7 @@ if [[ "$prdt" = A ]]; then
     
     if [ -z "$key" ]; then
         
-        msg "$(gettext "  For this feature you need to provide a key\\n   Please get one from the:\\n")   <a href='$LNK'>console.developers.google.com</a>\n" dialog-warning
+        msg "$(gettext "For this feature you need to provide a key. Please get one from the:")   <a href='$LNK'>console.developers.google.com</a>\n" dialog-warning
         [ -d "$DT_r" ] && rm -fr "$DT_r"
         rm -f ls "$lckpr" & exit 1
     fi
@@ -84,12 +84,12 @@ if [[ "$prdt" = A ]]; then
     else
         if [ -z "$tpe" ]; then
             [ -d "$DT_r" ] && rm -fr "$DT_r"
-            msg "$(gettext "No topic is active")\n" info & exit 1
+            msg " $(gettext "No topic is active")\n" info & exit 1
         fi
         
         (
         echo "2"
-        echo "# $(gettext "Processing; wait...")";
+        echo "# $(gettext "Processing wait...")";
         cd "$DT_r"
         
         if echo "$fl" | grep '.mp3'; then
@@ -349,26 +349,26 @@ if [[ "$prdt" = A ]]; then
                 cd "$DT_r"
                 if [ -f ./wlog ]; then
                     wadds=" $(($(wc -l < ./addw) - $(sed '/^$/d' < ./wlog | wc -l)))"
-                    W="$(gettext " Words")"
+                    W=" $(gettext "Words")"
                     if [ $(echo $wadds) = 1 ]; then
-                        W="$(gettext " Word")"; fi
+                        W=" $(gettext "Word")"; fi
                 else
                     wadds=" $(wc -l < ./addw)"
-                    W="$(gettext " Words")"
+                    W=" $(gettext "Words")"
                     if [ $(echo $wadds) = 1 ]; then
                         wadds=" $(wc -l < ./addw)"
-                        W="$(gettext " Word")"; fi
+                        W=" $(gettext "Word")"; fi
                 fi
                 if [ -f ./slog ]; then
                     sadds=" $(($(wc -l < ./adds) - $(sed '/^$/d' < ./swlog | wc -l)))"
-                    S="$(gettext " Sentences")"
+                    S=" $(gettext "Sentences")"
                     if [ $(echo $sadds) = 1 ]; then
-                        S="$(gettext " Sentence")"; fi
+                        S=" $(gettext "Sentence")"; fi
                 else
                     sadds=" $(wc -l < ./adds)"
-                    S="$(gettext " Sentences")"
+                    S=" $(gettext "Sentences")"
                     if [ $(echo $sadds) = 1 ]; then
-                        S="$(gettext " Sentence")"; fi
+                        S=" $(gettext "Sentence")"; fi
                 fi
                 
                 logs=$(cat ./slog ./wlog ./log)

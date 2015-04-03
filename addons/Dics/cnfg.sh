@@ -105,7 +105,7 @@ elif [ "$1" = dlk_dlg ]; then
     
     if [ $ret -eq 2 ]; then
     
-        msg_2 " $(gettext "  Confirm.\n")" dialog-question yes no
+        msg_2 " $(gettext "Confirm.\n")" dialog-question yes no
         rt=$(echo $?)
         [ $rt -eq 0 ] && rm "$script"; exit
     

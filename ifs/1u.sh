@@ -25,8 +25,8 @@ export TEXTDOMAINDIR
 Encoding=UTF-8
 alias gettext='gettext "idiomind"'
 user=$(echo "$(whoami)")
-text="<big><big><big>  Welcome  </big></big></big>
-$(gettext "     To get started, please configure the following")\n"
+text="<big><big><big>$(gettext "Welcome")</big></big></big>
+$(gettext "To get started, please configure the following.")\n"
 lang=('English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian')
 sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
@@ -58,13 +58,13 @@ sudo apt-get install yad")" \
 --title="Idiomind" --no-wrap & exit
 fi
 
-dlg=$(yad --center --width=500 --height=320 --fixed \
+dlg=$(yad --center --width=420 --height=320 --fixed \
 --image-on-top --on-top --class=Idiomind --name=Idiomind \
 --window-icon="$DS/images/logo.png" --buttons-layout=end --text="$text" \
 --title="Idiomind" --form --borders=15 --align=center --button=Cancel:1 --button=gtk-ok:0 \
---field="$(gettext "Select the language you are studying:")":lbl " " \
+--field="$(gettext "Select the language you are studying")":lbl " " \
 --field=":CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
---field="$(gettext "Select your native language:")":lbl " " \
+--field="$(gettext "Select your native language")":lbl " " \
 --field=":CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese")
 
 ret=$?
