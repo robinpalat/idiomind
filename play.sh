@@ -20,7 +20,8 @@
 
 [ -z "$tpc" ] && exit 1
 source "$DC_s/1.cfg"
-lbls=(' ' 'Words' 'Sentences' 'Marks' 'Practice' 'News episodes' 'Saved epidodes')
+"$(gettext "Marks")"
+lbls=(' ' 'Words' 'Sentences' 'Marks' 'Practice' 'New episodes' 'Saved episodes')
 sets=(' ' 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
 in=(' ' 'in1' 'in2' 'in3' 'in4' 'in5' 'in6')
 tlng="$DC_tlt/1.cfg"

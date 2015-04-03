@@ -32,7 +32,7 @@ if [ "$1" = vsd ]; then
     cd "$DM_t/saved"; ls -t *.id | sed 's/\.id//g' | yad --list \
     --window-icon="$DS/images/logo.png" --center --name=Idiomind --borders=8 \
     --text=" $(gettext "Double clik to download") \t\t\t\t" \
-    --title="$(gettext "Topics saved")" --width=$wth --height=$eht \
+    --title="$(gettext "Topics Saved")" --width=$wth --height=$eht \
     --column=Nombre:TEXT --print-column=1 --no-headers --class=Idiomind \
     --expand-column=1 --search-column=1 --button=gtk-close:1 \
     --dclick-action="$DS/ifs/upld.sh 'infsd'" >/dev/null 2>&1
@@ -95,7 +95,7 @@ elif [ "$1" = infsd ]; then
                 [ -f "$sv" ] && rm "$sv"
                 mv -f "/tmp/$link" "$sv"
             else
-                msg "$(gettext "The file is not yet available for download from the server.\n")" info && exit
+                msg "$(gettext "The file is not yet available for download from the server.")\n" info && exit
             fi
             exit
         else

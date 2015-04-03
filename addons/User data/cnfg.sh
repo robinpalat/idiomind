@@ -50,7 +50,7 @@ if [ -z "$1" ]; then
             if [ "$ret" -eq 0 ]; then
                 
                 (
-                echo "# $(gettext "Copying...")" ; sleep 0.1
+                echo "# $(gettext "Copying")..." ; sleep 0.1
 
                 cd "$DM"
                 tar cvzf backup.tar.gz *
@@ -91,7 +91,7 @@ if [ -z "$1" ]; then
                 (
                 rm -f $DT/*.XXXXXXXX
                 echo "5"
-                echo "# $(gettext "Copying...")" ; sleep 0.1
+                echo "# $(gettext "Copying")..." ; sleep 0.1
                 mkdir $DT/import
                 cp -f "$add" $DT/import/import.tar.gz
                 cd $DT/import

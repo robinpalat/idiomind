@@ -232,7 +232,7 @@ url=\"$feed\"" > "$DCP/$num.rss"
 
         exit 0
     else
-        msg "$(gettext "Couldn't download the specified URL\n")" info
+        msg "$(gettext "Couldn't download the specified URL")\n" info
         rm -f "$DT/cpt.lock" & exit 1
     fi
     
@@ -253,14 +253,14 @@ elif [ "$1" = check ]; then
     podcast_items="$(echo "$podcast_items" | tr '\n' ' ' | tr -s [:space:] | sed 's/EOL/\n/g' | head -n 2)"
     item="$(echo "$podcast_items" | sed -n 1p)"
     if [ -z "$(echo $item | sed 's/^ *//; s/ *$//; /^$/d')" ]; then
-    msg "$(gettext "Couldn't download the specified URL\n")" info
+    msg "$(gettext "Couldn't download the specified URL")\n" info
     rm -f "$DT/cpt.lock" & exit 1
     fi
     field="$(echo "$item" | sed -r 's|-\!-|\n|g')"
 
     yad --scroll --columns=2 --skip-taskbar --separator='\n' \
     --width=800 --height=600 --form --on-top --window-icon=idiomind \
-    --text="<small> $(gettext "\tIn this table you can define fields according to their cache,  most of the time the default values is right. ")</small>" --name=Idiomind --class=Idiomind \
+    --text="\t<small>$(gettext "In this table you can define fields according to their cache,  most of the time the default values is right. ")</small>" --name=Idiomind --class=Idiomind \
     --button=gtk-apply:0 --borders=5 --title="$ttl" --always-print-result \
     --field="":CB "$(sed -n 1p $DCP/$2.rss)!$mn" \
     --field="":CB "$(sed -n 2p $DCP/$2.rss)!$mn" \

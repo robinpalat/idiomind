@@ -106,7 +106,7 @@ function check_updates() {
     
     if [ "$rversion" != "$(idiomind -v)" ]; then
     
-        msg_2 "<b> $(gettext "A new version of Idiomind available") </b>\n\n" info "$(gettext "Download")" "$(gettext "Cancelar")" $(gettext "Updates")
+        msg_2 "<b> $(gettext "A new version of Idiomind available") </b>\n\n" info "$(gettext "Download")" "$(gettext "Cancel")" $(gettext "Updates")
         
         if [ "$ret" -eq 0 ]; then
             xdg-open "$pkg";
@@ -140,7 +140,7 @@ function a_check_updates() {
         
         if [ "$rversion" != "$(idiomind -v)" ]; then
             
-            msg_2 "<b> $(gettext "A new version of Idiomind available\n")</b>\n $(gettext "Do you want to download it now?")\n" info "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Updates")" "$(gettext "Ignore this update")"
+            msg_2 "<b> $(gettext "A new version of Idiomind available")\n</b>\n $(gettext "Do you want to download it now?")\n" info "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Updates")" "$(gettext "Ignore this update")"
             ret=$(echo $?)
             
             if [ "$ret" -eq 0 ]; then
@@ -165,7 +165,7 @@ app_name = 'Idiomind'
 app_version = 'v2.2-beta'
 app_comments = 'Vocabulary learning tool'
 app_copyright = 'Copyright (c) 2013-2015 Robin Palat'
-app_website = 'https://sourceforge.net/projects/idiomind/'
+app_website = 'http://idiomind.sourceforge.net/'
 app_license = (('This program is free software: you can redistribute it and/or modify\n'+
 'it under the terms of the GNU General Public License as published by\n'+
 'the Free Software Foundation, either version 3 of the License, or\n'+
@@ -445,7 +445,7 @@ function set_image() {
             btnn="--button="$(gettext "Change")":3"
             btn2="--button="$(gettext "Delete")":2"
         else
-            txt="--text=<small>\\n<a href='file://$DT/s.html'>"$(gettext "Search Image")"</a></small>"
+            txt="--text=<small>\\n<a href='file://$DT/s.html'>"$(gettext "Search image")"</a></small>"
         fi
         
         yad --name=Idiomind --class=Idiomind \

@@ -44,7 +44,7 @@ if [ "$1" = delete_item ]; then
 
 elif [ "$1" = delete ]; then
 
-     msg_2 " $(gettext "Are you sure you want to delete saved episodes?\n") " dialog-question "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
+     msg_2 " $(gettext "Are you sure you want to delete saved episodes?")\n" dialog-question "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
     tret=$(echo "$?")
             
     if [ $ret -eq 0 ]; then

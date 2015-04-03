@@ -25,7 +25,6 @@ lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
 source "$DC_s/1.cfg"
 
-
 function new_topic() {
 
     if [ "$(wc -l < "$DM_tl/.1.cfg")" -ge 80 ]; then
@@ -206,7 +205,7 @@ function new_sentence() {
 
     if [ $(wc -l < "$DC_tlt/0.cfg") -ge 200 ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "You have reached the maximum number of items")" info Info & exit
+        msg "$(gettext "You have reached the maximum number of items.")" info Info & exit
     fi
     if [ -z "$tpe" ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
@@ -232,8 +231,7 @@ function new_sentence() {
     else 
         if [ -z "$4" ] || [ -z "$2" ]; then
             [ -d "$DT_r" ] && rm -fr "$DT_r"
-            msg "$(gettext "You need to fill text fields.") $lgsl." info & exit
-        fi
+            msg "$(gettext "You need to fill text fields.") $lgsl." info & exit; fi
         
         trgt=$(echo "$(clean_1 "$2")" | sed ':a;N;$!ba;s/\n/ /g')
         srce=$(echo "$(clean_1 "$4")" | sed ':a;N;$!ba;s/\n/ /g')
@@ -251,8 +249,7 @@ function new_sentence() {
     if [ -z $(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary') ] \
     || [ ! -f "$DM_tlt/$fname.mp3" ] || [ -z "$trgt" ] || [ -z "$srce" ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
-        msg " $(gettext "Something unexpected has occurred while saving the note. \n")" dialog-warning & exit 1
-    fi
+        msg " $(gettext "Something unexpected has occurred while saving the note.")\n" dialog-warning & exit 1; fi
     
     add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3"
 
@@ -274,9 +271,8 @@ function new_sentence() {
     
     if [ -z "$grmrk" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ]; then
         rm "$DM_tlt/$fname.mp3"
-        msg " $(gettext "Something unexpected has occurred while saving the note. \n")" dialog-warning 
-        [ -d "$DT_r" ] && rm -fr "$DT_r" & exit 1
-    fi
+        msg " $(gettext "Something unexpected has occurred while saving the note.")\n" dialog-warning 
+        [ -d "$DT_r" ] && rm -fr "$DT_r" & exit 1; fi
     
     add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3"
     notify-send -i "$icnn" "$trgt" "$srce\\n($tpe)" -t 10000
@@ -305,8 +301,7 @@ function new_word() {
     
     if [ $(wc -l < "$DC_tlt/1.cfg") -ge 200 ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "You have reached the maximum number of items.")" info Info & exit 0
-    fi
+        msg "$(gettext "You have reached the maximum number of items.")" info Info & exit 0; fi
     if [ -z "$tpe" ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "No topic is active")\n" info & exit 1
@@ -339,8 +334,7 @@ function new_word() {
     else
         if [ -z "$4" ] || [ -z "$2" ]; then
             [ -d "$DT_r" ] && rm -fr "$DT_r"
-            msg "$(gettext "You need to fill text fields.") $lgsl." info & exit 1
-        fi
+            msg "$(gettext "You need to fill text fields.") $lgsl." info & exit 1; fi
         
         trgt="$2"
         srce="$4"
@@ -386,8 +380,7 @@ function new_word() {
     
     else
         [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
-        msg " $(gettext "Something unexpected has occurred while saving the note. \n")" dialog-warning & exit 1
-    fi
+        msg " $(gettext "Something unexpected has occurred while saving the note.")\n" dialog-warning & exit 1; fi
 
     [ -d "$DT_r" ] && rm -fr "$DT_r"
     rm -f *.jpg
@@ -402,8 +395,7 @@ function edit_list_words() {
         tpe="$tpc"
         if [ $(wc -l < "$DC_tlt/0.cfg") -ge 200 ]; then
             [ -d "$DT_r" ] && rm -fr "$DT_r"
-            msg "$(gettext "You have reached the maximum number of items.")" info Info & exit
-        fi
+            msg "$(gettext "You have reached the maximum number of items.")" info Info & exit; fi
         if [ -z "$tpe" ]; then
             [ -d "$DT_r" ] && rm -fr "$DT_r"
             msg "$(gettext "No topic is active")\n" info & exit 1
@@ -476,8 +468,7 @@ function edit_list_words() {
                 
                 else
                     printf "\n- $sntc" >> ./logw
-                    [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
-                fi
+                    [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"; fi
             fi
             let n++
         done
@@ -485,8 +476,7 @@ function edit_list_words() {
         printf "aitm.$lns.aitm\n" >> "$DC_s/8.cfg"
 
             if [ -f "$DT_r/logw" ]; then
-                dlg_info_1 " $(gettext "Some items could not be added to your list.") "
-            fi
+                dlg_info_1 " $(gettext "Some items could not be added to your list.")"; fi
             [ -d "$DT_r" ] && rm -fr "$DT_r"
             rm -f logw "$DT"/*.$c & exit 1
     fi
@@ -511,8 +501,7 @@ function dclik_list_words() {
     
     if [ $(cat "$DC_tlt/0.cfg" | wc -l) -ge 200 ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "You have reached the maximum number of items.")" info Info & exit
-    fi
+        msg "$(gettext "You have reached the maximum number of items.")" info Info & exit; fi
 
     left=$((200 - $nw))
     info="$(gettext "You can add") $left $(gettext "Words")"
@@ -575,8 +564,7 @@ function sentence_list_words() {
     
     if [ -z "$4" ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "No topic is active")\n" info & exit 1
-    fi
+        msg "$(gettext "No topic is active")\n" info & exit 1; fi
     
     nw=$(wc -l < "$DC_tlt/3.cfg")
     left=$((200 - $nw))
@@ -585,8 +573,7 @@ function sentence_list_words() {
     elif [ $nw -ge 195 ]; then
         info="$(gettext "You can add") $left $(gettext "Words")"
     elif [ $nw -ge 199 ]; then
-        info="$(gettext "You can add") $left $(gettext "Word")"
-    fi
+        info="$(gettext "You can add") $left $(gettext "Word")"; fi
     
     list_words_2 "$2"
     
@@ -655,8 +642,7 @@ function sentence_list_words() {
     if [ -f  "$DT_r/logw" ]; then
         logs="$(< $DT_r/logw)"
         text_r1=" $(gettext "Some items could not be added to your list.")\n\n$logs "
-        dlg_text_info_3 "$text_r1"
-    fi
+        dlg_text_info_3 "$text_r1"; fi
 
     rm -f "$DT"/*."$c" 
     [ -d "$DT_r" ] && rm -fr "$DT_r"
@@ -678,13 +664,12 @@ function process() {
 
     if [ -z "$tpe" ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "No topic is active")\n" info & exit 1
-    fi
+        msg "$(gettext "No topic is active")\n" info & exit 1; fi
+        
     if [ $ns -ge 200 ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "You have reached the maximum number of items.")" info Info
-        rm -f ls "$lckpr" & exit 1
-    fi
+        rm -f ls "$lckpr" & exit 1; fi
 
     if [ -f "$lckpr" ] && [ -z "$4" ]; then
     
@@ -694,8 +679,7 @@ function process() {
         if [ $ret -eq "1" ]; then
             rm=$(sed -n 1p "$DT/.n_s_pr")
             rm fr "$rm" "$DT/.n_s_pr"
-            index R && killall add.sh
-        fi
+            index R && killall add.sh; fi
         exit 1
     fi
     
@@ -715,23 +699,20 @@ function process() {
         (
         echo "1"
         echo "# $(gettext "Processing")..." ;
-        lynx -dump -nolist $2  | sed -n -e '1x;1!H;${x;s-\n- -gp}' \
+        lynx -dump -nolist "$2"  | sed -n -e '1x;1!H;${x;s-\n- -gp}' \
         | sed 's/<[^>]*>//g' | sed 's/ \+/ /g' \
         | sed '/^$/d' |  sed 's/ \+/ /;s/\://;s/"//g' \
         | sed 's/^[ \t]*//;s/[ \t]*$//;s/^ *//; s/ *$//g' \
         | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' | grep -v '^..$' \
         | grep -v '^.$' | sed 's/<[^>]\+>//;s/\://g' \
-        | sed '/\*/d' | sed '/\+/d' \
-        | iconv -c -f utf8 -t ascii \
         | sed 's/\&quot;/\"/g' | sed "s/\&#039;/\'/g" \
         | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
-        | sed 's/ *<[^>]\+> */ /g' \
-        | sed 's/[<>£§]//; s/&amp;/\&/g' \
+        | sed 's/[<>£§]//; s/&amp;/\&/g' | sed 's/ *<[^>]\+> */ /g' \
         | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. //g' \
         | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
         | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
         | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' > ./sntsls_
-        
+        #iconv -c -f utf8 -t ascii
         ) | dlg_progress_1
 
     elif echo "$2" | grep -o "image"; then
@@ -745,9 +726,13 @@ function process() {
         echo "# $(gettext "Processing")..." ;
         mogrify -modulate 100,0 -resize 400% $SCR_IMG.png
         tesseract $SCR_IMG.png $SCR_IMG &> /dev/null # -l $lgt
-        cat $SCR_IMG.txt | sed 's/\\n/./;s/\./\n/g' \
+        cat $SCR_IMG.txt | sed 's/\\n/./g' \
         | sed '/^$/d' | sed 's/^[ \t]*//;s/[ \t]*$//' \
-        | sed 's/ \+/ /;s/\://;s/"//;s/^ *//;s/ *$//g' > ./sntsls_
+        | sed 's/ \+/ /;s/\://;s/"//;s/^ *//;s/ *$//g' \
+        | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. //g' \
+        | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
+        | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
+        | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' > ./sntsls_> ./sntsls_
         
         ) | dlg_progress_1
 
@@ -782,12 +767,11 @@ function process() {
         if [ $ns -ge 195 ]; then
             info="$(gettext "You can add") $left $(gettext "items")"
         elif [ $ns -ge 199 ]; then
-            info="$(gettext "You can add") $left $(gettext "items")"
-        fi
+            info="$(gettext "You can add") $left $(gettext "items")"; fi
 
         if [ -z "$(< ./sntsls_)" ]; then
         
-            msg "$(gettext "Failed to get text")\n" info
+            msg " $(gettext "Failed to get text.")\n" info
 
             [ -d "$DT_r" ] && rm -fr "$DT_r"
             rm -f "$lckpr" "$slt" & exit 1
@@ -810,8 +794,7 @@ function process() {
                             exit 1
                         else
                             [ -d "$DT_r" ] && rm -fr "$DT_r"
-                            rm -f "$slt" & exit 1
-                        fi
+                            rm -f "$slt" & exit 1; fi
                 
                 elif [ $ret -eq 0 ]; then
                 
@@ -821,8 +804,7 @@ function process() {
 
                     if [ ! -d "$DM_tlt" ]; then
                         msg " $(gettext "An error occurred.")\n" dialog-warning
-                        rm -fr "$DT_r" "$lckpr" "$slt" & exit 1
-                    fi
+                        rm -fr "$DT_r" "$lckpr" "$slt" & exit 1; fi
                 
                     while read chkst; do
                         sed 's/TRUE//g' <<<"$chkst"  >> ./slts
@@ -872,7 +854,6 @@ function process() {
                                 else
                                     printf "\n- $sntc" >> ./wlog
                                     [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
-                                    
                                 fi
                             fi
                         
@@ -921,7 +902,6 @@ function process() {
                                     else
                                         printf "\n- $sntc" >> ./slog
                                         [ -f "$DM_tlt/$fname.mp3" ] && rm "$DM_tlt/$fname.mp3"
-                                        
                                     fi
                                     
                                     echo "__" >> x

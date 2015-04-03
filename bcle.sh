@@ -26,18 +26,19 @@ cd "$DT"
 if [ -n "$(cat ./index.m3u)" ] && [ $(wc -l < ./index.m3u) -gt 0 ]; then
     if [ "$repeat" = "TRUE" ]; then
         while [ 1 ]; do
-            n=$(wc -l < ./index.m3u)
-            while [ 1 -le $n ]; do
-                "$DS/chng.sh" chngi "$n"
-                let n--
+            ind=$(wc -l < ./index.m3u)
+            while [ 1 -le $ind ]; do
+                "$DS/chng.sh" chngi "$ind"
+                let ind--
             done
             sleep 15
         done
     
     else
-        while [ 1 -le $n ]; do
-        "$DS/chng.sh" chngi "$n"
-            let n--
+        ind=$(wc -l < ./index.m3u)
+        while [ 1 -le $ind ]; do
+        "$DS/chng.sh" chngi "$ind"
+            let ind--
         done
         rm -fr "$DT/.p_"; exit 0
     fi
