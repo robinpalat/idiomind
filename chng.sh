@@ -27,7 +27,7 @@ if [ "$1" = chngi ]; then
     
     DM_tlt=$(sed -n 1p "$DT/.p_")
 
-    function stop_loop() {
+    stop_loop() {
     
         if [ ! -f "$1" ]; then
             echo "___" >> "$DT/.l_loop"
@@ -94,11 +94,14 @@ elif [ "$1" != chngi ]; then
     
     s=$(cat "$DC_s/0.cfg" | yad --name=Idiomind --text-align=$align \
     --center $img --image-on-top --separator="" --class=Idiomind \
-    "$text" --width=650 --height=580 --ellipsize=END \
-    --no-headers --list --window-icon="$DS/images/logo.png" --borders=5 \
-    --button=gtk-new:3 --button="$(gettext "Apply")":2 \
+    "$text" --width=640 --height=560 \
+    --ellipsize=END --title="$(gettext "Topics")"  \
+    --no-headers --list --window-icon="$DS/images/logo.png" --borders=7 \
+    --button=gtk-new:3 \
+    --button="$(gettext "Apply")":2 \
     --button="$(gettext "Close")":1 \
-    --title="$(gettext "Topics")" --column=img:img --column=File:TEXT)
+    --column=img:img \
+    --column=File:TEXT)
     ret=$?
         
     if [ $ret -eq 3 ]; then

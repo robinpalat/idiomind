@@ -165,8 +165,6 @@ function new_session() {
 
 if [ $(echo "$1" | grep -o '.idmnd') ]; then
 
-    wth=$(sed -n 2p $DC_s/10.cfg)
-    eht=$(sed -n 3p $DC_s/10.cfg)
     dte=$(date "+%d %B")
     c=$(echo $(($RANDOM%1000)))
     source "$DS/ifs/mods/cmns.sh"
@@ -188,10 +186,6 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
     [ $level = 2 ] && level="$(gettext "Intermediate")"
     [ $level = 3 ] && level="$(gettext "Advanced")"
 
-    if [ -f "$tmp/words/images/thumb.png" ]; then
-    img="$tmp/words/images/thumb.png"; else
-    img="$DS/images/trans.png"; fi
-    
     if [ "$tpc_i" != "$name" ]; then
     
         msg "$(gettext "The file is damaged.")\n " error;
@@ -202,17 +196,17 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
         cd "$tmp"
         ws=$(wc -l < "3.cfg")
         ss=$(wc -l < "4.cfg")
-        itxt="<big><big>$tpc_i</big></big><small>\\n${language_source^} <b>></b> $language_target\\n$nwords $(gettext "Words") $nsentences $(gettext "Sentences") $nimages $(gettext "Images")\n$(gettext "Level") $level </small>\n"
+        itxt="<big><big> $tpc_i</big></big><small>\\n  ${language_source^} <b>></b> $language_target\\n  $nwords $(gettext "Words") $nsentences $(gettext "Sentences") $nimages $(gettext "Images")\n  $(gettext "Level") $level \n</small>"
         dlck="$DT/p1.$c"
         
         tac "$tmp/0.cfg" | awk '{print $0""}' | \
         yad --list --name=Idiomind --title="Idiomind" \
         --ellipsize=END --print-all --image-on-top \
-        --image="$img" --text="$itxt" --class=Idiomind \
+        --text="$itxt" --class=Idiomind --center  \
         --scroll --no-headers --dclick-action="$dlck" \
-        --width=650 --height=580 --image-on-top \
-        --window-icon="$DS/images/logo.png" --column=Items --center \
-        --borders=5 --button="$(gettext "Install")":0 \
+        --width=650 --height=580 --image-on-top  \
+        --window-icon="$DS/images/logo.png" --column=Items \
+        --borders=10 --button="$(gettext "Install")":0 \
         --button="$(gettext "Close")":1
         ret=$?
             
@@ -289,14 +283,12 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
 # topic
 function topic() {
 
-    wth=$(sed -n 2p $DC_s/10.cfg)
-    eht=$(sed -n 3p $DC_s/10.cfg)
     spc="$(n=1; while [[ $n -le $((wth/40)) ]]; \
     do printf "\t"; [ $n -ge 50 ] && break; let n++; done)"
     mde=$(sed -n 2p $DC_s/4.cfg)
     source "$DS/ifs/mods/cmns.sh"
     include "$DS/ifs/mods/topic"
-    
+
     if ([ -n "$tpc" ] || [ $(echo "$mde" | grep "fd") ]); then
     
         if [ -n "$tpc" ]; then
@@ -318,8 +310,7 @@ function topic() {
             cd $DS
             if [ -f "$DM_tlt/words/images/img.jpg" ]; then
             img="--image=$DM_tlt/words/images/img.jpg"
-            sx=585
-            else sx=655; fi
+            sx=612; sy=570; else sx=640; sy=560; fi
             printf "tpcs.$tpc.tpcs\n" >> "$DC_s/8.cfg"
         fi
     else
@@ -327,31 +318,59 @@ function topic() {
             exit
             
         else
-            msg "$(gettext "Nothing to display") ($lgtl)\n" info
+            msg "$(gettext "Nothing to display") \n" info
         fi
     fi
 
     [ -z "$tpc" ] && exit 1
+    
+    apply() {
+    
+        note_mod="$(< $cnf3)"
+        if [ "$note_mod" != "$(< $nt)" ]; then
+            if [ -z "$note_mod" ]; then msg_2 "$(gettext " Really delete note of topic?")\n" gtk-delete "Delete" "No"
+            [ $? = 0 ] && mv -f "$cnf3" "$DC_tlt/10.cfg"; else
+            mv -f "$cnf3" "$DC_tlt/10.cfg"; fi
+        fi
+        
+        ntpc=$(cut -d '|' -f 1 < "$cnf4")
+        if [ "$tpc" != "$ntpc" ] && [ -n "$ntpc" ]; then
+            "$DS/mngr.sh" rename_topic "$ntpc" &
+        fi
+
+        if [ -n "$(grep -o TRUE < "$cnf1")" ]; then
+            grep -Rl "|FALSE|" "$cnf1" | while read tab1 ; do
+                 sed '/|FALSE|/d' "$cnf1" > tmpf1
+                 mv tmpf1 "$tab1"
+            done
+            
+            sed -i 's/|TRUE|//g' "$cnf1"
+            cat "$cnf1" >> "$ls2"
+
+            cnt=$(wc -l < "$cnf1")
+            grep -Fxvf "$cnf1" "$ls1" > "$DT/ls1.x"
+            mv -f "$DT/ls1.x" "$ls1"
+            if [ -n "$(cat "$ls1" | sort -n | uniq -dc)" ]; then
+                cat "$ls1" | awk '!array_temp[$0]++' > "$DT/ls1.x"
+                sed '/^$/d' "$DT/ls1.x" > "$ls1"
+            fi
+            printf "okim.$cnt.okim\n" >> "$DC_s/8.cfg"
+        fi
+    }
 
     label_info="<big><big>$tpc </big></big><small>\\n$inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$(gettext "Created by") $author $(gettext "on") <span color='#6E9FD4'>${category^}</span> $date_u</small>"
     label_info2=""
 
     if [ "$inx0" -lt 1 ]; then
-    
+        
+        # empty lists
         notebook_1
      
         ret=$(echo $?)
                 
-            note_mod="$(< $cnf3)"
-            if [ "$note_mod" != "$(< $nt)" ]; then
-                if [ -z "$note_mod" ]; then msg_2 "$(gettext " Really delete note of topic?")\n" gtk-delete "Delete" "No"
-                [ $? = 0 ] && mv -f "$cnf3" "$DC_tlt/10.cfg"; else
-                mv -f "$cnf3" "$DC_tlt/10.cfg"; fi
-            fi
-            
-            ntpc=$(cut -d '|' -f 1 < "$cnf4")
-            if [ "$tpc" != "$ntpc" ] && [ -n "$ntpc" ]; then
-                "$DS/mngr.sh" rename_topic "$ntpc" &
+            if [ ! -f "$DT/ps_lk" ]; then
+                
+                    apply
             fi
             
             if [ $ret -eq 5 ]; then
@@ -385,9 +404,11 @@ function topic() {
             
             pres="<u><b>$(gettext "Learned")</b></u>  $(gettext "* however you have new items") ($inx1).\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
 
+            # learned
             notebook_2
             
         else
+            # learning
             notebook_1
             
         fi
@@ -416,37 +437,7 @@ function topic() {
             else
                 if [ ! -f "$DT/ps_lk" ]; then
                 
-                    note_mod="$(< $cnf3)"
-                    if [ "$note_mod" != "$(< $nt)" ]; then
-                        if [ -z "$note_mod" ]; then msg_2 "$(gettext " Really delete note of topic?")\n" gtk-delete "Delete" "No"
-                        [ $? = 0 ] && mv -f "$cnf3" "$DC_tlt/10.cfg"; else
-                        mv -f "$cnf3" "$DC_tlt/10.cfg"; fi
-                    fi
-                    
-                    ntpc=$(cut -d '|' -f 1 < "$cnf4")
-                    if [ "$tpc" != "$ntpc" ] && [ -n "$ntpc" ]; then
-                        "$DS/mngr.sh" rename_topic "$ntpc" &
-                    fi
-
-                    
-                    if [ -n "$(grep -o TRUE < "$cnf1")" ]; then
-                        grep -Rl "|FALSE|" "$cnf1" | while read tab1 ; do
-                             sed '/|FALSE|/d' "$cnf1" > tmpf1
-                             mv tmpf1 "$tab1"
-                        done
-                        
-                        sed -i 's/|TRUE|//g' "$cnf1"
-                        cat "$cnf1" >> "$ls2"
-
-                        cnt=$(wc -l < "$cnf1")
-                        grep -Fxvf "$cnf1" "$ls1" > "$DT/ls1.x"
-                        mv -f "$DT/ls1.x" "$ls1"
-                        if [ -n "$(cat "$ls1" | sort -n | uniq -dc)" ]; then
-                            cat "$ls1" | awk '!array_temp[$0]++' > "$DT/ls1.x"
-                            sed '/^$/d' "$DT/ls1.x" > "$ls1"
-                        fi
-                        printf "okim.$cnt.okim\n" >> "$DC_s/8.cfg"
-                    fi
+                    apply
                 fi
                 
                 rm -f $DT/*.x
@@ -481,6 +472,7 @@ function topic() {
         
         pres="<u><b>$(gettext "Learned")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
         
+        # learned with new items
         notebook_2
       
         ret=$(echo $?)
@@ -491,34 +483,7 @@ function topic() {
             else
                 if [ ! -f "$DT/ps_lk" ]; then
                 
-                    note_mod="$(< $cnf3)"
-                    if [ "$note_mod" != "$(< $nt)" ]; then
-                        if [ -z "$note_mod" ]; then msg_2 "$(gettext " Really delete note of topic?")\n" gtk-delete "Delete" "No"
-                        [ $? = 0 ] && mv -f "$cnf3" "$DC_tlt/10.cfg"; else
-                        mv -f "$cnf3" "$DC_tlt/10.cfg"; fi
-                    fi
-                    
-                    ntpc=$(cut -d '|' -f 1 < "$cnf4")
-                    if [ "$tpc" != "$ntpc" ] && [ -n "$ntpc" ]; then
-                        "$DS/mngr.sh" rename_topic "$ntpc" &
-                    fi
-                    
-                    if [ -n "$(grep -o TRUE < "$cnf1")" ]; then
-                        grep -Rl "|FALSE|" "$cnf1" | while read tab1 ; do
-                             sed '/|FALSE|/d' "$cnf1" > tmpf1
-                             mv tmpf1 "$tab1"
-                        done
-                        sed -i 's/|TRUE|//g' "$cnf1"
-                        cat "$cnf1" >> "$ls2"
-                        cnt=$(wc -l < "$cnf1")
-                        grep -Fxvf "$cnf1" "$ls1" > "$DT/ls1.x"
-                        mv -f "$DT/ls1.x" "$ls1"
-                        if [ -n "$(cat "$ls1" | sort -n | uniq -dc)" ]; then
-                            cat "$ls1" | awk '!array_temp[$0]++' > "$DT/ls1.x"
-                            sed '/^$/d' "$DT/ls1.x" > "$ls1"
-                        fi
-                        printf "okim.$cnt.okim\n" >> "$DC_s/8.cfg"
-                    fi
+                    apply
                 fi
             fi
 
@@ -528,7 +493,7 @@ function topic() {
     rm -f "$DT"/*.x
 }
 
-function panel() {
+panel() {
 
     w=$(($(sed -n 2p $DC_s/10.cfg)-400))
     h=$(($(sed -n 3p $DC_s/10.cfg)-150))
@@ -551,17 +516,17 @@ function panel() {
         new_session; fi
 }
 
-function version() {
+version() {
     echo "2.2-beta"
 }
 
-function session() {
+session() {
     
     new_session
     idiomind &
 }
 
-function autostart() {
+autostart() {
 
     sleep 50
     [ ! -f "$DT/ps_lk" ] && new_session

@@ -16,7 +16,7 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
 #  
-
+source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
@@ -65,6 +65,32 @@ function edit_audio() {
     (cd "$3"; "$cmd" "$2") & exit
 }
 
+function attatchments() {
+    
+    if [ "$(ls -A "$DM_tlt/attchs")" ]; then
+    yad --html --window-icon="$DS/images/logo.png" --browser \
+    --title="$(gettext "Message")" \
+    --width=650 --height=580 \
+    --button="$(gettext "Folder")":"xdg-open '$DM_tlt/attchs'" \
+    --button="$(gettext "Video URL")":"$DS/ifs/tls.sh videourl" \
+    --button=gtk-save:0 \
+    --name=Idiomind --class=Idiomind \
+    --uri="$DM_tlt/attchs/index.html" >/dev/null 2>&1
+    else
+    yad --dnd --window-icon="$DS/images/logo.png" --borders=5 \
+    --center \
+    --text="$(gettext "Put files in folder or drap and drop here")" \
+    --title="$(gettext "Attachments")" --width=450 --height=320 \
+    --button="$(gettext "Cancel")":"$DS/ifs/tls.sh videourl" \
+    --button="$(gettext "Open Folder")":"xdg-open '$DM_tlt/attchs'" \
+    --button="$(gettext "Video URL")":"$DS/ifs/tls.sh videourl" \
+    --button=gtk-save:0 \
+    --name=Idiomind --class=Idiomind >/dev/null 2>&1
+    fi
+    ret=$?
+    [ $ret = 0 ] && echo ok
+}
+
 function help() {
 
     web="http://idiomind.sourceforge.net/doc/help.html"
@@ -87,6 +113,16 @@ function web() {
     xdg-open "$web/$lgs/${lgtl,,}" >/dev/null 2>&1
 }
 
+function videourl() {
+
+    yad --window-icon="$DS/images/logo.png" --form --center --on-top \
+    --text="$(gettext "Only youtube videos")" \
+    --field="$(gettext "URL")" --title="Video" \
+    --width=440 --height=100 --name=Idiomind --class=Idiomind \
+    --skip-taskbar --borders=5 --button=gtk-ok:0
+
+}
+
 function fback() {
 
     web="http://idiomind.sourceforge.net/doc/msg.html"
@@ -96,6 +132,7 @@ function fback() {
     --name=Idiomind --class=Idiomind \
     --uri="$web" >/dev/null 2>&1
 }
+
 
 function check_updates() {
 
@@ -699,6 +736,12 @@ case "$1" in
     add_audio "$@" ;;
     edit_audio)
     edit_audio "$@" ;;
+    attachs)
+    attatchments ;;
+    videoem)
+    videoem ;;
+    videourl)
+    videourl "$@" ;;
     help)
     help ;;
     definition)

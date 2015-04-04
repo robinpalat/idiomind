@@ -25,13 +25,13 @@ DF="$DS/practice/df.sh"
 DLW="$DS/practice/dlw.sh"
 DMC="$DS/practice/dmc.sh"
 DLS="$DS/practice/dls.sh"
+DI="$DS/practice/di.sh"
 Wi="$DC_tlt/3.cfg"
 Si="$DC_tlt/4.cfg"
 Li="$DC_tlt/1.cfg"
 cd "$DC_tlt/practice"
 
-
-function look() {
+look() {
     
     yad --title="$practice - $tpc" --borders=5 --center \
     --on-top --skip-taskbar --window-icon=idiomind \
@@ -40,7 +40,7 @@ function look() {
     --text="<b>   $(gettext "Complete practice")</b>\\n   $(cat $1)\n "
 }
 
-function get_list() {
+get_list() {
     
     if [ "$(cat "$Si" | wc -l)" -gt 0 ]; then
         grep -Fxvf "$Si" "$Li" > "$1"
@@ -49,7 +49,15 @@ function get_list() {
     fi
 }
 
-function get_list_mchoice() {
+get_list_images() {
+
+    cnt=$(ls -1 *.jpg 2>/dev/null | grep -v Fx "image" | wc -l)
+    if [ $cnt != 0 ]; then
+    echo ok
+    fi
+}
+
+get_list_mchoice() {
 
     (
     echo "5" ; sleep 0
@@ -64,7 +72,7 @@ function get_list_mchoice() {
     --skip-taskbar --center --no-buttons
 }
 
-function get_list_sentences() {
+get_list_sentences() {
     
     if [ "$(cat "$Wi" | wc -l)" -gt 0 ]; then
         grep -Fxvf "$Wi" "$Li" > "$1"
@@ -73,7 +81,7 @@ function get_list_sentences() {
     fi
 }
 
-function starting() {
+starting() {
     
     yad --center --borders=5 --image=info \
     --title=$(gettext "Practice") --on-top --window-icon=idiomind \
@@ -82,7 +90,7 @@ function starting() {
     "$strt" & killall prct.sh.sh & exit 1
 }
 
-function flashcards() {
+flashcards() {
 
     cd "$DC_tlt/practice"
     
@@ -109,7 +117,7 @@ function flashcards() {
     "$DF"
 }
 
-function multiple_choise() {
+multiple_choise() {
 
     cd "$DC_tlt/practice"
     
@@ -139,7 +147,7 @@ function multiple_choise() {
     "$DMC"
 }
 
-function listen_words() {
+listen_words() {
 
     cd "$DC_tlt/practice"
     
@@ -166,7 +174,7 @@ function listen_words() {
     "$DLW"
 }
 
-function listen_sentences() {
+listen_sentences() {
 
     cd "$DC_tlt/practice"
     
@@ -193,6 +201,33 @@ function listen_sentences() {
     "$DLS"
 }
 
+images() {
+
+    cd "$DC_tlt/practice"
+    
+    if [ -f look_i ]; then
+        look "look_i"
+        ret=$(echo "$?")
+        if [ "$ret" -eq 0 ]; then
+        "$cls" di & exit
+        else
+        "$strt" & exit
+        fi
+    fi
+
+    if ([ -f iin ] && [ -f ok.i ]); then
+        echo "w9.$(tr -s '\n' '|' < ok.i).w9" >> "$log"
+        grep -Fxvf ok.i iin > iin1
+        echo " practice --restarting session"
+    else
+        get_list iin && cp -f iin iin1
+        [[ "$(cat iin  | wc -l)" -lt 4 ]] && starting "$(gettext "Not enough images to start")"
+        echo " practice --new session"
+    fi
+    
+    "$DI"
+}
+
 case "$1" in
     f)
     flashcards ;;
@@ -202,5 +237,7 @@ case "$1" in
     listen_words ;;
     s)
     listen_sentences ;;
+    i)
+    images ;;
 esac
 

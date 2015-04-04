@@ -56,7 +56,7 @@ function score() {
         if [ -f lwin3 ]; then
             echo "w6.$(tr -s '\n' '|' < lwin3).w6" >> "$log"
             rm lwin3; fi
-        $strt 7 $easy $ling $hard & exit 1
+        $strt 8 $easy $ling $hard & exit 1
     fi
 }
 
@@ -70,69 +70,47 @@ function fonts() {
     && lst="${1:0:1} ${1:5:5}" || lst=$(echo "${1^}" | sed "s|[a-z]|"\ \."|g")
     fi
     
-    if [ -f "$drtt/images/$fname.jpg" ]; then
-        img="$drtt/images/$fname.jpg"
-        s=$((20-$(echo "$1" | wc -c)))
-        lcuestion="$lst"
-        lanswer="$1"
-    else
-        s=$((40-$(echo "$1" | wc -c)))
-        img="/usr/share/idiomind/images/fc.png"
-        lcuestion="$lst"
-        lanswer="$1"
-    fi
-    
+    s=$((40-$(echo "$1" | wc -c)))
+    img="/usr/share/idiomind/images/fc.png"
+    lcuestion="$lst"
+    lanswer="$1"
+
     }
 
 function cuestion() {
     
     fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
     play="play '$drtt/$fname.mp3'"
-    (sleep 0.8 && play "$drtt/$fname".mp3) &
-    yad --form --align=center --undecorated \
-    --center --on-top --image-on-top --image="$img" \
-    --skip-taskbar --title=" " --borders=3 \
+    (sleep 0.5 && play "$drtt/$fname".mp3) &
+    yad --form --text-align=center --undecorated \
+    --center --on-top --image-on-top \
+    --skip-taskbar --title=" " --borders=5 \
     --buttons-layout=spread \
-    --field="<span font_desc='Free Sans $s'><b>$lcuestion</b></span>":lbl \
+    --text="\n\n<span font_desc='Verdana $s'><b>$lcuestion</b></span>\n\n\n\n\n" \
+    --field=play:BTN "$play" \
     --width=371 --height=280 \
     --button="$(gettext "Exit")":1 \
-    --button="Play":"$play" \
-    --button="$(gettext "Answer") >>":0
+    --button="     $(gettext "I don't know")     ":3 \
+    --button="     $(gettext "I know")     ":2
     }
 
-function answer() {
-    
-    yad --form --align=center --undecorated \
-    --center --on-top --image-on-top --image="$img" \
-    --skip-taskbar --title=" " --borders=3 \
-    --buttons-layout=spread \
-    --field="<span font_desc='Free Sans $s'><b>$lanswer</b></span>":lbl \
-    --width=371 --height=280 \
-    --button="    $(gettext "I don't know")    ":3 \
-    --button="    $(gettext "I know")    ":2
-    }
 
 p=1
 while read trgt; do
 
     fonts "$trgt"
     cuestion "$trgt"
-    ret=$(echo "$?")
+    ans=$(echo "$?")
     
-    if [ $ret = 0 ]; then
-        answer "$trgt"
-        ans=$(echo "$?")
-
-        if [ $ans = 2 ]; then
+    if [ $ans = 2 ]; then
             echo "$trgt" >> ok.w
             easy=$(($easy+1))
 
-        elif [ $ans = 3 ]; then
+    elif [ $ans = 3 ]; then
             echo "$trgt" >> lwin2
             hard=$(($hard+1))
-        fi
 
-    elif [[ $ret = 1 ]]; then
+    elif [ $ans = 1 ]; then
         $drts/cls w $easy $ling $hard $all &
         break &
         exit 1
@@ -150,21 +128,16 @@ else
 
         fonts "$trgt"
         cuestion "$trgt"
-        ret=$(echo "$?")
-        
-        if [ $ret = 0 ]; then
-            answer "$trgt"
-            ans=$(echo "$?")
-            
-            if [ $ans = 2 ]; then
+        ans=$(echo "$?")
+          
+        if [ $ans = 2 ]; then
                 hard=$(($hard-1))
                 ling=$(($ling+1))
                 
-            elif [ $ans = 3 ]; then
+        elif [ $ans = 3 ]; then
                 echo "$trgt" >> lwin3
-            fi
-            
-        elif [ $ret = 1 ]; then
+
+        elif [ $ans = 1 ]; then
             $drts/cls w $easy $ling $hard $all &
             break &
             exit 1

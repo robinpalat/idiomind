@@ -26,12 +26,11 @@ if [ "$1" = vsd ]; then
 
     U=$(sed -n 1p $HOME/.config/idiomind/s/4.cfg)
     lng=$(echo "$lgtl" | awk '{print tolower($0)}')
-    wth=650; eht=580
     
     cd "$DM_t/saved"; ls -t *.id | sed 's/\.id//g' | yad --list \
     --window-icon="$DS/images/logo.png" --center --name=Idiomind --borders=8 \
     --text=" $(gettext "Double clik to download") \t\t\t\t" \
-    --title="$(gettext "Topics Saved")" --width=$wth --height=$eht \
+    --title="$(gettext "Topics Saved")" --width=640 --height=560 \
     --column=Nombre:TEXT --print-column=1 --no-headers --class=Idiomind \
     --expand-column=1 --search-column=1 --button=gtk-close:1 \
     --dclick-action="$DS/ifs/upld.sh 'infsd'" >/dev/null 2>&1
@@ -158,7 +157,7 @@ upld=$(yad --form --width=480 --height=460 --on-top \
 "!$others!$article!$comics!$culture!$documentary!$entertainment!$funny!$family!$grammar!$history!$movies!$in_the_city!$interview!$internet!$music!$nature!$news!$office!$relations!$sport!$science!$shopping!$social_networks!$technology!$travel" \
 --field="    $(gettext "Skill Level"):CBE" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
 --field="\n$(gettext "Description/Notes"):TXT" "$nt" \
---field="$(gettext "Add image"):FL" "$imgm")
+--field="$(gettext "Add image\n(600px x 150px)"):FL" "$imgm")
 ret=$?
 
 if [ "$ret" = 2 ]; then
@@ -199,6 +198,13 @@ level=$(echo "$upld" | cut -d "|" -f5)
 [ "$level" = $(gettext "Advanced") ] && level=3
 
 if [ -z "$Ctgry" ]; then
+msg " $(gettext "Please select a category.")\n " info
+$DS/ifs/upld.sh &
+exit 1
+fi
+
+if [ -z "$Ctgry" ]; then
+vsize="$(identify "media.$ex" | cut -d ' ' -f 3 | cut -d 'x' -f 1)"
 msg " $(gettext "Please select a category.")\n " info
 $DS/ifs/upld.sh &
 exit 1
@@ -246,29 +252,9 @@ $Mail
 $Author" > "$DC_s/5.cfg"
 
 if [ "$img" != "$imgm" ]; then
-/usr/bin/convert "$img" -interlace Plane -thumbnail 570x150^ \
--gravity center -extent 570x150 \
+/usr/bin/convert "$img" -interlace Plane -thumbnail 600x150^ \
+-gravity center -extent 600x150 \
 -quality 100% "$DM_tlt/words/images/img.jpg"
-/usr/bin/convert -scale 110x80! "$img" $DT_u/img1.png
-convert $DT_u/img1.png -alpha opaque -channel a \
--evaluate set 15% +channel $DT_u/img.png
-bo=/usr/share/idiomind/images/bo.png
-convert $bo -edge .5 -blur 0x.5 $DT_u/bo_.png
-convert $DT_u/img.png \( $DT_u/bo_.png -negate \) \
--geometry +1+1 -compose multiply -composite \
--crop 115x80+1+1 +repage $DT_u/bo_outline.png
-convert $DT_u/img.png -crop 115x80+1+1\! \
--background none -flatten +repage \( $bo +matte \) \
--compose CopyOpacity -composite +repage $DT_u/boim.png
-convert $DT_u/boim.png \( +clone -channel A -separate +channel \
--negate -background black -virtual-pixel background \
--blur 0x4 -shade 115x21.78 -contrast-stretch 0% +sigmoidal-contrast 7x50% \
--fill grey50 -colorize 10% +clone +swap -compose overlay -composite \) \
--compose In -composite $DT_u/boim1.png
-convert $DT_u/boim1.png \( +clone -background Black \
--shadow 30x3+4+4 \) -background none \
--compose DstOver -flatten "$DM_tlt/words/images/thumb.png"
-cd $DT_u; rm -f *.png
 fi
 
 cd "$DM_tlt"

@@ -77,19 +77,21 @@ function notebook_1() {
     --field="<small>$(gettext "Rename")</small>:" "$tpc" \
     --field="$(gettext "Mark as learned")":FBTN "$DS/mngr.sh 'mark_as_learned'" \
     --field="\t\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " \
+    --field="\t\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " \
     --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh" \
-    --field="$(gettext "Delete")":FBTN "$DS/mngr.sh 'delete_topic'" \
-    --field=" ":LBL " " > "$cnf4" &
+    --field="$(gettext "Attatchment")":FBTN "$DS/ifs/tls.sh attachs"\
+    --field="$(gettext "No show image")":CHK " " \
+    --field="$(gettext "Delete")":BTN "$DS/mngr.sh 'delete_topic'" > "$cnf4" &
     yad --notebook --name=Idiomind --center --key=$KEY \
     --class=Idiomind --align=right "$img" --fixed \
     --window-icon="$DS/images/logo.png" \
-    --tab-borders=0 --center --title="$tpc" \
+    --tab-borders=5 --center --title="$tpc" \
     --tab="  $(gettext "Learning") ($inx1) " \
     --tab="  $(gettext "Learned") ($inx2) " \
     --tab=" $(gettext "Notes") " \
     --tab=" $(gettext "Edit") " \
     --ellipsize=END --image-on-top --always-print-result \
-    --width=$sx --height=580 --borders=3 \
+    --width=$sx --height=$sy --borders=2 \
     --button="$(gettext "Playlist")":$DS/play.sh \
     --button="$(gettext "Practice")":5 \
     --button="$(gettext "Close")":1
@@ -109,7 +111,7 @@ function notebook_2() {
     --tabnum=3 --fore='gray40' --wrap --editable \
     --show-uri --fontname=vendana --print-column=1 \
     --column="" --filename="$nt" > "$cnf3" &
-    yad --form --scroll --borders=15 --plug=$KEY --tabnum=4 --columns=2 \
+    yad --form --scroll --borders=10 --plug=$KEY --tabnum=4 --columns=2 \
     --text="$label_info \n" \
     --field="<small>$(gettext "Rename")</small>:" "$tpc" \
     --field="$(gettext "Mark as learned")":FBTN "$DS/mngr.sh 'mark_as_learned'" \
@@ -119,14 +121,14 @@ function notebook_2() {
     --field=" ":LBL " " > "$cnf4" &
     yad --notebook --name=Idiomind --center \
     --class=Idiomind --align=right --key=$KEY \
-    --tab-borders=0 --center --title="$tpc" \
-    --window-icon="$DS/images/logo.png" \
+    --tab-borders=5 --center --title="$tpc" \
+    --window-icon="$DS/images/logo.png" --fixed \
     --tab=" $(gettext "Review") " \
     --tab=" $(gettext "Learned") ($inx2) " \
     --tab=" $(gettext "Notes") " \
     --tab=" $(gettext "Edit") " \
     --ellipsize=END --image-on-top --always-print-result \
-    --width=$sx --height=580 --borders=5 \
+    --width=$sx --height=$sy --borders=2 \
     --button="$(gettext "Close")":1
 }
 

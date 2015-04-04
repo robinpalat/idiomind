@@ -5,6 +5,7 @@
 drtt="$DM_tlt/words"
 drts="$DS/practice/"
 strt="$drts/strt.sh"
+snd="$drts/no.mp3"
 cd "$DC_tlt/practice"
 log="$DC_s/8.cfg"
 all=$(cat mcin | wc -l)
@@ -41,7 +42,7 @@ function score() {
         if [ -f mcin3 ]; then
             echo "w6.$(tr -s '\n' '|' < mcin3).w6" >> "$log"
             rm mcin3; fi
-        $strt 6 $easy $ling $hard & exit 1
+        $strt 7 $easy $ling $hard & exit 1
     fi
 }
 
@@ -62,7 +63,7 @@ function fonts() {
 
 function ofonts() {
     while read item; do
-        echo "<b><big>$item</big></b>"
+        echo "<big>$item</big>"
     done < word2.id
     }
 
@@ -70,7 +71,7 @@ function ofonts() {
 function mchoise() {
     
     dlg=$(ofonts | yad --list --on-top --skip-taskbar --title=" " \
-    --width=375 --height=340 --center --undecorated \
+    --width=390 --height=340 --center --undecorated \
     --text-align=center --no-headers --borders=6 \
     --button="$(gettext "Exit")":1 \
     --text="\n<span font_desc='Free Sans $s'><b>$1</b></span>\n\n" \
@@ -90,6 +91,7 @@ while read trgt; do
             easy=$(($easy+1))
             
         else
+            play "$snd" &
             echo "$trgt" >> mcin2
             hard=$(($hard+1))
         fi  
@@ -119,6 +121,7 @@ else
                 ling=$(($ling+1))
                 
             else
+                play "$snd" &
                 echo "$trgt" >> mcin3
             fi
 

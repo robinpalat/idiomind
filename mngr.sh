@@ -78,10 +78,10 @@ function mkmn() {
 function mark_as_learn() {
     
     include "$DS/ifs/mods/mngr"
-    if [ $(wc -l < "$DC_tlt/2.cfg") -le 15 ]; then
+    
+    if [ $(wc -l < "$DC_tlt/0.cfg") -le 15 ]; then
         msg "$(gettext "Sorry, you must be at least 15 items.")\n " info &
-        exit
-    fi
+        exit; fi
 
     kill -9 $(pgrep -f "yad --multi-progress ") &
     kill -9 $(pgrep -f "yad --list ") &
@@ -133,10 +133,10 @@ function mark_as_learn() {
 function mark_as_learned() {
 
     include "$DS/ifs/mods/mngr"
-    if [ $(wc -l < "$DC_tlt/1.cfg") -le 15 ]; then
+    
+    if [ $(wc -l < "$DC_tlt/0.cfg") -le 15 ]; then
         msg "$(gettext "Sorry, you must be at least 15 items.")\n " info &
-        exit
-    fi
+        exit; fi
     
     kill -9 $(pgrep -f "yad --list ") &
     kill -9 $(pgrep -f "yad --list ") &

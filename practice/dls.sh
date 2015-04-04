@@ -52,7 +52,7 @@ function score() {
             let n++
         done
 
-        $strt 8 $easy $ling $hard & exit 1
+        $strt 9 $easy $ling $hard & exit 1
     fi
 }
 
