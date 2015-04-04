@@ -77,14 +77,14 @@ function notebook_1() {
     --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh" \
     --field="$(gettext "Delete")":FBTN "$DS/mngr.sh 'delete_topic'" > "$cnf3" &
     yad --notebook --name=Idiomind --center --key=$KEY \
-    --class=Idiomind --align=right --image=/home/robin/Desktop/g.jpg \
+    --class=Idiomind --align=right \
     --window-icon="$DS/images/logo.png" \
     --tab-borders=0 --center --title="$tpc" \
     --tab="  $(gettext "Learning") ($inx1) " \
     --tab="  $(gettext "Learned") ($inx2) " \
     --tab=" $(gettext "Edit") " \
     --ellipsize=END --image-on-top --always-print-result \
-    --width=440 --height=600 --borders=5 \
+    --width="$wth" --height="$eht" --borders=5 \
     --button="$(gettext "Playlist")":$DS/play.sh \
     --button="$(gettext "Practice")":5 \
     --button="gtk-close":1

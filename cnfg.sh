@@ -113,7 +113,6 @@ yad --plug=$KEY --tabnum=1 \
 --field="$(gettext "Use this program for audio editing")":CB5 "$edit" \
 --field="$(gettext "Check for Updates")":BTN "$DS/ifs/tls.sh check_updates" \
 --field="$(gettext "Topic Saved")":BTN "$DS/ifs/upld.sh 'vsd'" \
---field="$(gettext "Quick Help")":BTN "$DS/ifs/tls.sh help" \
 --field="$(gettext "Feedback")":BTN "$DS/ifs/tls.sh 'fback'" \
 --field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" > "$cnf1" &
 cat "$DC_s/2.cfg" | yad --plug=$KEY --tabnum=2 --list --expand-column=2 \

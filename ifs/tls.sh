@@ -67,9 +67,9 @@ function edit_audio() {
 
 function help() {
 
-    web="/home/robin/web/idiomind/home/doc/help.html"
+    web="http://idiomind.sourceforge.net/doc/help.html"
     yad --html --window-icon="$DS/images/logo.png" --browser \
-    --title="$(gettext "Help")" --width=700 --fixed \
+    --title="$(gettext "Help")" --width=700 \
     --height=600 --button="$(gettext "OK")":0 \
     --name=Idiomind --class=Idiomind \
     --uri="$web" >/dev/null 2>&1
