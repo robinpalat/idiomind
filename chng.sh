@@ -94,9 +94,10 @@ elif [ "$1" != chngi ]; then
     
     s=$(cat "$DC_s/0.cfg" | yad --name=Idiomind --text-align=$align \
     --center $img --image-on-top --separator="" --class=Idiomind \
-    "$text" --width="$wth" --height="$eht" --ellipsize=END \
+    "$text" --width=650 --height=580 --ellipsize=END \
     --no-headers --list --window-icon="$DS/images/logo.png" --borders=5 \
-    --button=gtk-new:3 --button=gtk-apply:2 --button=gtk-close:1 \
+    --button=gtk-new:3 --button="$(gettext "Apply")":2 \
+    --button="$(gettext "Close")":1 \
     --title="$(gettext "Topics")" --column=img:img --column=File:TEXT)
     ret=$?
         

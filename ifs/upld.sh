@@ -26,8 +26,7 @@ if [ "$1" = vsd ]; then
 
     U=$(sed -n 1p $HOME/.config/idiomind/s/4.cfg)
     lng=$(echo "$lgtl" | awk '{print tolower($0)}')
-    wth=$(($(sed -n 2p $DC_s/10.cfg)-0))
-    eht=$(($(sed -n 3p $DC_s/10.cfg)-0))
+    wth=650; eht=580
     
     cd "$DM_t/saved"; ls -t *.id | sed 's/\.id//g' | yad --list \
     --window-icon="$DS/images/logo.png" --center --name=Idiomind --borders=8 \
@@ -137,7 +136,7 @@ user=$(sed -n 3p $DC_s/5.cfg)
 nt=$(cat "$DC_tlt/10.cfg")
 nme=$(echo "$tpc" | sed 's/ /_/g' \
 | sed 's/"//g' | sed 's/’//g')
-imgm="$DM_tlt/words/images/img.png"
+imgm="$DM_tlt/words/images/img.jpg"
 
 "$DS/ifs/tls.sh" check_index "$tpc"
 
@@ -247,6 +246,9 @@ $Mail
 $Author" > "$DC_s/5.cfg"
 
 if [ "$img" != "$imgm" ]; then
+/usr/bin/convert "$img" -interlace Plane -thumbnail 570x250^ \
+-gravity center -extent 570x250 \
+-quality 100% "$DM_tlt/words/images/img.jpg"
 /usr/bin/convert -scale 110x80! "$img" $DT_u/img1.png
 convert $DT_u/img1.png -alpha opaque -channel a \
 -evaluate set 15% +channel $DT_u/img.png
@@ -265,7 +267,7 @@ convert $DT_u/boim.png \( +clone -channel A -separate +channel \
 -compose In -composite $DT_u/boim1.png
 convert $DT_u/boim1.png \( +clone -background Black \
 -shadow 30x3+4+4 \) -background none \
--compose DstOver -flatten "$DM_tlt/words/images/img.png" 
+-compose DstOver -flatten "$DM_tlt/words/images/thumb.png"
 cd $DT_u; rm -f *.png
 fi
 

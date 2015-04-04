@@ -68,26 +68,31 @@ function notebook_1() {
     tac "$ls2" | yad --list --no-headers --plug=$KEY --tabnum=2 \
     --expand-column=0 --ellipsize=END --print-all --separator='|' \
     --column=Name:TEXT --dclick-action='./vwr.sh v2' &
-    yad --form --scroll --borders=10 --plug=$KEY --tabnum=3 --columns=2 \
-    --text="$label_info" \
-    --field="$(gettext "Notes")$spc":txt "${nt}" \
+    yad --text-info --plug=$KEY --margins=14 \
+    --tabnum=3 --fore='gray40' --wrap --editable \
+    --show-uri --fontname=vendana --print-column=1 \
+    --column="" --filename="$nt" > "$cnf3" &
+    yad --form --scroll --borders=15 --plug=$KEY --tabnum=4 --columns=2 \
+    --text="$label_info \n" \
     --field="<small>$(gettext "Rename")</small>:" "$tpc" \
     --field="$(gettext "Mark as learned")":FBTN "$DS/mngr.sh 'mark_as_learned'" \
-    --field=" $label_info2":LBL " " \
+    --field="\t\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " \
     --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh" \
-    --field="$(gettext "Delete")":FBTN "$DS/mngr.sh 'delete_topic'" > "$cnf3" &
+    --field="$(gettext "Delete")":FBTN "$DS/mngr.sh 'delete_topic'" \
+    --field=" ":LBL " " > "$cnf4" &
     yad --notebook --name=Idiomind --center --key=$KEY \
-    --class=Idiomind --align=right \
+    --class=Idiomind --align=right "$img" --fixed \
     --window-icon="$DS/images/logo.png" \
     --tab-borders=0 --center --title="$tpc" \
     --tab="  $(gettext "Learning") ($inx1) " \
     --tab="  $(gettext "Learned") ($inx2) " \
+    --tab=" $(gettext "Notes") " \
     --tab=" $(gettext "Edit") " \
     --ellipsize=END --image-on-top --always-print-result \
-    --width="$wth" --height="$eht" --borders=5 \
+    --width=$sx --height=580 --borders=3 \
     --button="$(gettext "Playlist")":$DS/play.sh \
     --button="$(gettext "Practice")":5 \
-    --button="gtk-close":1
+    --button="$(gettext "Close")":1
 }
 
 
@@ -100,24 +105,29 @@ function notebook_2() {
     --no-headers --plug=$KEY --tabnum=2 \
     --expand-column=1 --ellipsize=END --print-all \
     --column=Name:TEXT --dclick-action='./vwr.sh v2' &
-    yad --form --scroll --borders=10 --plug=$KEY --tabnum=3 --columns=2 \
-    --text="$label_info" \
-    --field="$(gettext "Notes")$spc":txt "$nt" \
+    yad --text-info --plug=$KEY --margins=14 \
+    --tabnum=3 --fore='gray40' --wrap --editable \
+    --show-uri --fontname=vendana --print-column=1 \
+    --column="" --filename="$nt" > "$cnf3" &
+    yad --form --scroll --borders=15 --plug=$KEY --tabnum=4 --columns=2 \
+    --text="$label_info \n" \
     --field="<small>$(gettext "Rename")</small>:" "$tpc" \
-    --field="$(gettext "Review")":FBTN "$DS/mngr.sh 'mark_as_learn'" \
-    --field=" $label_info2":LBL " " \
+    --field="$(gettext "Mark as learned")":FBTN "$DS/mngr.sh 'mark_as_learned'" \
+    --field="\t\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " \
     --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh" \
-    --field="$(gettext "Delete")":FBTN "$DS/mngr.sh 'delete_topic'" > "$cnf3" &
+    --field="$(gettext "Delete")":FBTN "$DS/mngr.sh 'delete_topic'" \
+    --field=" ":LBL " " > "$cnf4" &
     yad --notebook --name=Idiomind --center \
     --class=Idiomind --align=right --key=$KEY \
     --tab-borders=0 --center --title="$tpc" \
     --window-icon="$DS/images/logo.png" \
     --tab=" $(gettext "Review") " \
     --tab=" $(gettext "Learned") ($inx2) " \
+    --tab=" $(gettext "Notes") " \
     --tab=" $(gettext "Edit") " \
     --ellipsize=END --image-on-top --always-print-result \
-    --width="$wth" --height="$eht" --borders=5 \
-    --button="gtk-close":1
+    --width=$sx --height=580 --borders=5 \
+    --button="$(gettext "Close")":1
 }
 
 

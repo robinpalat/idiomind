@@ -20,8 +20,7 @@
 
 [ -z "$tpc" ] && exit 1
 source "$DC_s/1.cfg"
-"$(gettext "Marks")"
-lbls=(' ' 'Words' 'Sentences' 'Marks' 'Practice' 'New episodes' 'Saved episodes')
+lbls=(' ' 'Words' 'Sentences' 'Marks' 'Practice' 'News episodes' 'Saved epidodes')
 sets=(' ' 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
 in=(' ' 'in1' 'in2' 'in3' 'in4' 'in5' 'in6')
 tlng="$DC_tlt/1.cfg"
@@ -58,7 +57,7 @@ btn="Play:0"; else
 tpp="$(sed -n 2p "$DT/.p_")"
 if grep TRUE <<<"$words$sentences$marks$practice"; then
 [ "$tpp" != "$tpc" ] && \
-l="--text=Playing:  \"$tpp\"" || \
+l="--text=<sup><b>Playing:  \"$tpp\"</b></sup>" || \
 l="--center"; fi
 btn="gtk-media-stop:2"; fi
 slct=$(mktemp "$DT"/slct.XXXX)
@@ -83,7 +82,7 @@ if [ "$ret" -eq 0 ]; then
         fi
         ((n=n+1))
     done
-    
+
     rm -f "$slct";
     "$DS/stop.sh" playm
     if [ -d "$DM_tlt" ] && [ -n "$tpc" ]; then
