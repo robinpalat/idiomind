@@ -1,5 +1,10 @@
 
+
 body {margin:0;padding:0;background:#f6f6f6;font-family: 'Comfortaa', 'Century Gothic', Arial;font-size:100%;line-height:1.8em;letter-spacing:.5px;color:#646D71;font-weight:normal;}
+
+/*
+body {margin:0;padding:0;background:#f6f6f6;font-family: 'Comfortaa', 'Century Gothic', Arial;font-size:100%;color:#646D71;font-weight:normal;}
+*/
 .clear {clear:both;}
 .left {float:left;margin:15px 0 0 0;}
 .right {float:right;margin:15px 0 0 0;}

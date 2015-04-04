@@ -42,14 +42,14 @@ function feedmode() {
     --field=" :LBL" " " --field=" :LBL" " " --field=" $itxt2":lbl " " \
     --field="$(gettext "Syncronize")":FBTN "$DS/addons/Feeds/tls.sh 'sync'" \
     --field="$(gettext "Delete")":FBTN "$DS/addons/Feeds/mngr.sh 'delete'" > "$fdit" &
-    yad --notebook --name=Idiomind --center \
+    yad --notebook --name=Idiomind --center --fixed \
     --class=Idiomind --align=right --key=$KEY \
     --tab-borders=0 --center --title="Feeds  ${info^}" \
     --tab=" $(gettext "Episodes") " \
     --tab=" $(gettext "Saved Episodes") " \
     --tab=" $(gettext "Edit") " --always-print-result \
     --ellipsize=END --image-on-top --window-icon="$DS/images/logo.png" \
-    --width="$wth" --height="$eht" --borders=5 \
+    --width=650 --height=580 --borders=5 \
     --button="$(gettext "Playlist")":"/usr/share/idiomind/play.sh" \
     --button="gtk-refresh":2 --button="gtk-close":1
     ret=$?

@@ -342,8 +342,7 @@ function delete_topic() {
 function edit() {
 
     include "$DS/ifs/mods/mngr"
-    wth=$(sed -n 2p $DC_s/10.cfg)
-    eht=$(sed -n 3p $DC_s/10.cfg)
+    wth=650; eht=580
     lgt=$(lnglss $lgtl)
     lgs=$(lnglss $lgsl)
     dct="$DS/addons/Dics/cnfg.sh"

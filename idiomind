@@ -188,8 +188,8 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
     [ $level = 2 ] && level="$(gettext "Intermediate")"
     [ $level = 3 ] && level="$(gettext "Advanced")"
 
-    if [ -f "$tmp/words/images/img.png" ]; then
-    img="$tmp/words/images/img.png"; else
+    if [ -f "$tmp/words/images/thumb.png" ]; then
+    img="$tmp/words/images/thumb.png"; else
     img="$DS/images/trans.png"; fi
     
     if [ "$tpc_i" != "$name" ]; then
@@ -210,7 +210,7 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
         --ellipsize=END --print-all --image-on-top \
         --image="$img" --text="$itxt" --class=Idiomind \
         --scroll --no-headers --dclick-action="$dlck" \
-        --width="$wth" --height="$eht" --image-on-top \
+        --width=650 --height=580 --image-on-top \
         --window-icon="$DS/images/logo.png" --column=Items --center \
         --borders=5 --button="$(gettext "Install")":0 \
         --button="$(gettext "Close")":1
@@ -224,7 +224,7 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
             elif [ "$ret" -eq 0 ]; then
             
                 if2=$(wc -l < $DM_t/$language_target/.1.cfg)
-                chck=$(grep -Fo "$tpc_i" < $DM_t/$language_target/.1.cfg | wc -l)
+                chck=$(grep -Fox "$tpc_i" < $DM_t/$language_target/.1.cfg | wc -l)
                 
                 if [ "$if2" -ge 80 ]; then
                 
@@ -291,7 +291,7 @@ function topic() {
 
     wth=$(sed -n 2p $DC_s/10.cfg)
     eht=$(sed -n 3p $DC_s/10.cfg)
-    spc="$(n=1; while [[ $n -le $((wth/55)) ]]; \
+    spc="$(n=1; while [[ $n -le $((wth/40)) ]]; \
     do printf "\t"; [ $n -ge 50 ] && break; let n++; done)"
     mde=$(sed -n 2p $DC_s/4.cfg)
     source "$DS/ifs/mods/cmns.sh"
@@ -314,11 +314,12 @@ function topic() {
             c=$(echo $(($RANDOM%100000))); KEY=$c
             cnf1=$(mktemp $DT/cnf1.XXX.x)
             cnf3=$(mktemp $DT/cnf3.XXX.x)
-            cnf4=$(mktemp $DT/cnf3.XXX.x)
+            cnf4=$(mktemp $DT/cnf4.XXX.x)
             cd $DS
-            if [ -f "$DM_tlt/words/images/img.png" ]; then
-            img="$DM_tlt/words/images/img.png"
-            else img="$DS/images/trans.png"; fi
+            if [ -f "$DM_tlt/words/images/img.jpg" ]; then
+            img="--image=$DM_tlt/words/images/img.jpg"
+            sx=585
+            else sx=655; fi
             printf "tpcs.$tpc.tpcs\n" >> "$DC_s/8.cfg"
         fi
     else
@@ -332,7 +333,7 @@ function topic() {
 
     [ -z "$tpc" ] && exit 1
 
-    label_info="<big><big>$tpc </big></big><small>\\n$inx4 $(gettext "Sentences") $inx3 $(gettext "Words") $(gettext "Created by") $author $(gettext "on") <span color='#6E9FD4'>${category^}</span> $date_u</small>"
+    label_info="<big><big>$tpc </big></big><small>\\n$inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$(gettext "Created by") $author $(gettext "on") <span color='#6E9FD4'>${category^}</span> $date_u</small>"
     label_info2=""
 
     if [ "$inx0" -lt 1 ]; then
@@ -340,39 +341,19 @@ function topic() {
         notebook_1
      
         ret=$(echo $?)
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            if [ -f "$cnf3" ]; then
-                note_mod="$(<$cnf3)"
-                if [ "$note_mod" != "$(<$nt)" ]; then
-                    if [ -z "$note_mod" ]; then msg_2 "$(gettext " Really delete note of topic?")\n" gtk-delete "Delete" "No"
-                    [ $? = 0 ] && mv -f "$cnf3" "$DC_tlt/10.cfg"; else
-                    mv -f "$cnf3" "$DC_tlt/10.cfg"; fi
-                fi
                 
-                ntpc=$(cut -d '|' -f 2 < "$cnf4")
-                if [ "$tpc" != "$ntpc" ] && [ -n "$ntpc" ]; then
-                    "$DS/mngr.sh" rename_topic "$ntpc" &
-                fi
-                
+            note_mod="$(< $cnf3)"
+            if [ "$note_mod" != "$(< $nt)" ]; then
+                if [ -z "$note_mod" ]; then msg_2 "$(gettext " Really delete note of topic?")\n" gtk-delete "Delete" "No"
+                [ $? = 0 ] && mv -f "$cnf3" "$DC_tlt/10.cfg"; else
+                mv -f "$cnf3" "$DC_tlt/10.cfg"; fi
             fi
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
+            
+            ntpc=$(cut -d '|' -f 1 < "$cnf4")
+            if [ "$tpc" != "$ntpc" ] && [ -n "$ntpc" ]; then
+                "$DS/mngr.sh" rename_topic "$ntpc" &
+            fi
+            
             if [ $ret -eq 5 ]; then
                 rm -f "$DT"/*.x
                 "$DS/practice/strt.sh" &
@@ -402,7 +383,7 @@ function topic() {
                     fi 
             fi
             
-            pres="<u><b>$(gettext "Learned")</b></u> $(gettext " * however you have new items") ($inx1).\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
+            pres="<u><b>$(gettext "Learned")</b></u>  $(gettext "* however you have new items") ($inx1).\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
 
             notebook_2
             
@@ -435,47 +416,18 @@ function topic() {
             else
                 if [ ! -f "$DT/ps_lk" ]; then
                 
-                    
-                    
-                    
-                    
-                    
-                    if [ -f "$cnf3" ]; then
-                        note_mod=$(< "$cnf3")
-                        if [ "$note_mod" != "$(< "$nt")" ]; then
-                            if [ -z "$note_mod" ]; then msg_2 "$(gettext " Really delete note of topic?")\n" gtk-delete "Delete" "No"
-                            [ $? = 0 ] && mv -f "$cnf3" "$DC_tlt/10.cfg"; else
-                            mv -f "$cnf3" "$nt"; fi
-                        fi
-                        
-                        ntpc=$(cut -d '|' -f 3 < "$cnf4")
-                        if [ "$tpc" != "$ntpc" ] && [ -n "$ntpc" ]; then
-                            "$DS/mngr.sh" rename_topic "$ntpc" &
-                        fi
-                        
+                    note_mod="$(< $cnf3)"
+                    if [ "$note_mod" != "$(< $nt)" ]; then
+                        if [ -z "$note_mod" ]; then msg_2 "$(gettext " Really delete note of topic?")\n" gtk-delete "Delete" "No"
+                        [ $? = 0 ] && mv -f "$cnf3" "$DC_tlt/10.cfg"; else
+                        mv -f "$cnf3" "$DC_tlt/10.cfg"; fi
                     fi
                     
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    #if [ -f "$cnf3" ]; then
-                    
-                        #nnt=$(cut -d '|' -f 1 < "$cnf3")
-                        #if [ "$nt" != "$nnt" ]; then
-                            #if [ -z "$nnt" ]; then msg_2 "$(gettext " Really delete note of topic?")\n" gtk-delete "Delete" "No"
-                            #[ $? = 0 ] && echo "$nnt" | cut -c1-90000 > "$DC_tlt/10.cfg"; else
-                            #echo "$nnt" | cut -c1-90000 > "$DC_tlt/10.cfg"; fi
-                        #fi
-                        #ntpc=$(cut -d '|' -f 2 < "$cnf3")
-                        #if [ "$tpc" != "$ntpc" ] && [ -n "$ntpc" ]; then
-                            #"$DS/mngr.sh" rename_topic "$ntpc" &
-                        #fi
-                    #fi
+                    ntpc=$(cut -d '|' -f 1 < "$cnf4")
+                    if [ "$tpc" != "$ntpc" ] && [ -n "$ntpc" ]; then
+                        "$DS/mngr.sh" rename_topic "$ntpc" &
+                    fi
+
                     
                     if [ -n "$(grep -o TRUE < "$cnf1")" ]; then
                         grep -Rl "|FALSE|" "$cnf1" | while read tab1 ; do
@@ -538,19 +490,19 @@ function topic() {
             
             else
                 if [ ! -f "$DT/ps_lk" ]; then
-                    if [ -f "$cnf3" ]; then
-                    
-                        nnt=$(cut -d '|' -f 1 < "$cnf3")
-                        if [ "$nt" != "$nnt" ]; then
-                            if [ -z "$nnt" ]; then msg_2 "$(gettext " Really delete note of topic?")\n" gtk-delete "Delete" "No"
-                            [ $? = 0 ] && echo "$nnt" | cut -c1-90000 > "$DC_tlt/10.cfg"; else
-                            echo "$nnt" | cut -c1-90000 > "$DC_tlt/10.cfg"; fi
-                        fi
-                        ntpc=$(cut -d '|' -f 2 < "$cnf3")
-                        if [ "$tpc" != "$ntpc" ] && [ -n "$ntpc" ]; then
-                            "$DS/mngr.sh" rename_topic "$ntpc" &
-                        fi
+                
+                    note_mod="$(< $cnf3)"
+                    if [ "$note_mod" != "$(< $nt)" ]; then
+                        if [ -z "$note_mod" ]; then msg_2 "$(gettext " Really delete note of topic?")\n" gtk-delete "Delete" "No"
+                        [ $? = 0 ] && mv -f "$cnf3" "$DC_tlt/10.cfg"; else
+                        mv -f "$cnf3" "$DC_tlt/10.cfg"; fi
                     fi
+                    
+                    ntpc=$(cut -d '|' -f 1 < "$cnf4")
+                    if [ "$tpc" != "$ntpc" ] && [ -n "$ntpc" ]; then
+                        "$DS/mngr.sh" rename_topic "$ntpc" &
+                    fi
+                    
                     if [ -n "$(grep -o TRUE < "$cnf1")" ]; then
                         grep -Rl "|FALSE|" "$cnf1" | while read tab1 ; do
                              sed '/|FALSE|/d' "$cnf1" > tmpf1
