@@ -246,8 +246,8 @@ $Mail
 $Author" > "$DC_s/5.cfg"
 
 if [ "$img" != "$imgm" ]; then
-/usr/bin/convert "$img" -interlace Plane -thumbnail 570x250^ \
--gravity center -extent 570x250 \
+/usr/bin/convert "$img" -interlace Plane -thumbnail 570x150^ \
+-gravity center -extent 570x150 \
 -quality 100% "$DM_tlt/words/images/img.jpg"
 /usr/bin/convert -scale 110x80! "$img" $DT_u/img1.png
 convert $DT_u/img1.png -alpha opaque -channel a \

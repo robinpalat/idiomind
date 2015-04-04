@@ -58,7 +58,7 @@ sudo apt-get install yad")" \
 --title="Idiomind" --no-wrap & exit
 fi
 
-dlg=$(yad --center --width=420 --height=320 --fixed \
+dlg=$(yad --center --width=420 --height=300 --fixed \
 --image-on-top --on-top --class=Idiomind --name=Idiomind \
 --window-icon="$DS/images/logo.png" --buttons-layout=end --text="$text" \
 --title="Idiomind" --form --borders=15 --align=center --button=Cancel:1 --button=gtk-ok:0 \
