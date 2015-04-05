@@ -283,45 +283,61 @@ elif [ "$1" = check ]; then
 
 elif [ "$1" = syndlg ]; then
 
-    DCP="$DM_tl/Feeds/.conf"
-    SYNCDIR="$(sed -n 1p $DCP/5.cfg)"
+    if  [ -f "$DT/l_sync" ]; then
+    info="<b><i>$(gettext "Synchronizing")</i></b>"
+    btn="--button=gtk-stop:3"; else
+    info="$(gettext "Mountpoint or path where new episodes should be synced.")"
+    fi
 
-    cd $HOME
+    DCP="$DM_tl/Feeds/.conf"
+    SYNCDIR="$(sed -n 1p "$DCP/5.cfg")"
+
+    cd "$HOME"
     DIR="$(yad --center --form --on-top --window-icon=idiomind \
     --borders=10 --separator="" --title=" " --always-print-result \
-    --text="$(gettext "Mountpoint or path where new episodes should be synced.")" \
-    --print-all --name=Idiomind --class=Idiomind \
+    --text="$info" --print-all --name=Idiomind --class=Idiomind \
     --width=460 --height=200 --field="":CDIR "$SYNCDIR" \
-    --button="$(gettext "Cancel")":1 --button="gtk-apply":0)"
-    [ "$?" -eq 1 ] && exit 1 
+    "$btn" --button="$(gettext "Cancel")":1 --button="gtk-apply":0)"
+    exit=$?
+    
+    if [ "$exit" -eq 3 ]; then
+    [ -f "$DT/l_sync" ] && rm -f "$DT/l_sync"
+    killall rsync
+    killall tls.sh && exit 1
+    elif [ "$exit" -eq 1 ]; then exit 1; fi
 
-    echo "$DIR" > $DT/s.tmp
-    mv -f $DT/s.tmp $DCP/5.cfg
+    echo "$DIR" > "$DT/s.tmp"
+    mv -f "$DT/s.tmp" "$DCP/5.cfg"
     exit
 
 elif [ "$1" = sync ]; then
    
     DCP="$DM_tl/Feeds/.conf"
     SYNCDIR="$(sed -n 1p $DCP/5.cfg)"
+    
+    if  [ -f "$DT/l_sync" ]; then
+    "$DS/addons/Feeds/tls.sh" syndlg & exit 1
 
-    if [ ! -d "$SYNCDIR" ]; then
+    elif [ ! -d "$SYNCDIR" ]; then
+    
             cd $HOME
             DIR="$(yad --center --form --on-top --window-icon=idiomind \
             --borders=10 --separator="" --title=" " --always-print-result \
             --text="$(gettext "Set mountpoint or path where new episodes should be synced.")" \
             --print-all --button="$(gettext "OK")":0 --name=Idiomind --class=Idiomind \
             --width=460 --height=170 --field="":CDIR "$SYNCDIR")"
-            echo "$DIR" > $DT/s.tmp
-            mv -f $DT/s.tmp $DCP/5.cfg
+            echo "$DIR" > "$DT/s.tmp"
+            mv -f "$DT/s.tmp" "$DCP/5.cfg"
             if [ ! -d "$SYNCDIR" ]; then
                 msg " $(gettext "The directory \'"$SYNCDIR"\' does not exist.\n Exiting.")" \
                 dialog-warning & exit 1; fi
             [ ! -d "$DIR" ] && exit 1
     fi
-    notify-send -i idiomind "$(gettext "Synchronizing...")" " "
-    touch $DT/l_sync; SYNCDIR="$(sed -n 1p $DCP/5.cfg)"
+    
+    (sleep 1 && notify-send -i idiomind "$(gettext "Synchronizing...")" " ") &
+    touch "$DT/l_sync"; SYNCDIR="$(sed -n 1p "$DCP/5.cfg")"
     rsync -az --delete --exclude="*.txt" --exclude="*.png" \
-    --exclude="*.i" --ignore-errors $DM_tl/Feeds/cache/ "$SYNCDIR"
+    --exclude="*.html" --ignore-errors "$DM_tl/Feeds/cache/" "$SYNCDIR"
 
     exit=$?
     if [ $exit = 0 ] ; then
@@ -330,5 +346,5 @@ elif [ "$1" = sync ]; then
     else
         notify-send -i dialog-warning "$(gettext "Error while syncing")" " " -t 8000
     fi
-    rm -f $DT/l_sync
+    rm -f "$DT/l_sync"
 fi

@@ -197,17 +197,28 @@ level=$(echo "$upld" | cut -d "|" -f5)
 [ "$level" = $(gettext "Intermediate") ] && level=2
 [ "$level" = $(gettext "Advanced") ] && level=3
 
-if [ -z "$Ctgry" ]; then
-msg " $(gettext "Please select a category.")\n " info
-$DS/ifs/upld.sh &
-exit 1
+wsize="$(identify "$img" | cut -d ' ' -f 3 | cut -d 'x' -f 1)"
+esize="$(identify "$img" | cut -d ' ' -f 3 | cut -d 'x' -f 2)"
+if [ "$wsize" != 600 ] || [ "$esize" != 150 ]; then
+msg " $(gettext "Sorry, the image size is not suitable.")\n " info
+$DS/ifs/upld.sh & exit 1
+fi
+
+if [ "$img" != "$imgm" ]; then
+/usr/bin/convert "$img" -interlace Plane -thumbnail 600x150^ \
+-gravity center -extent 600x150 \
+-quality 100% "$DM_tlt/words/images/img.jpg"
 fi
 
 if [ -z "$Ctgry" ]; then
-vsize="$(identify "media.$ex" | cut -d ' ' -f 3 | cut -d 'x' -f 1)"
 msg " $(gettext "Please select a category.")\n " info
-$DS/ifs/upld.sh &
-exit 1
+$DS/ifs/upld.sh & exit 1
+fi
+
+if [ -d "$DM_tlt/attchs" ]; then
+du="$(du -b -h "$DM_tlt/attchs" | tail -1 | awk '{print ($1)}' | tr -d 'M')"
+if [ "$du" -gt 50 ]; then
+msg " $(gettext "Sorry, the size of the attachment is too large.")\n " info & exit 1; fi
 fi
 
 internet; cd "$DT"
@@ -250,12 +261,6 @@ cp -f "$DT_u/$tpc/12.cfg" "$DT/12.cfg"
 echo -e "$U
 $Mail
 $Author" > "$DC_s/5.cfg"
-
-if [ "$img" != "$imgm" ]; then
-/usr/bin/convert "$img" -interlace Plane -thumbnail 600x150^ \
--gravity center -extent 600x150 \
--quality 100% "$DM_tlt/words/images/img.jpg"
-fi
 
 cd "$DM_tlt"
 cp -r ./* "$DT_u/$tpc/"

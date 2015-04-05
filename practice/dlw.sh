@@ -29,7 +29,7 @@ ling=0
 [ -f lwin2 ] && rm lwin2
 [ -f lwin3 ] && rm lwin3
 
-function score() {
+score() {
 
     if [ "$(($(cat l_w)+$1))" -ge "$all" ] ; then
         echo "w9.$(tr -s '\n' '|' < ok.w).w9" >> "$log"
@@ -60,7 +60,7 @@ function score() {
     fi
 }
 
-function fonts() {
+fonts() {
     
     if [ $p = 2 ]; then
     [ $lgtl = Japanese ] || [ $lgtl = Chinese ] || [ $lgtl = Russian ] \
@@ -77,7 +77,7 @@ function fonts() {
 
     }
 
-function cuestion() {
+cuestion() {
     
     fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
     play="play '$drtt/$fname.mp3'"

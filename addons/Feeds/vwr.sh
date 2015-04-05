@@ -23,6 +23,6 @@ yad --html \
 --window-icon=idiomind --uri="$dir/$fname.html" \
 --center --title="$item" --borders=0 \
 --on-top --class=Idiomind \
---width=700 --height=540 --name=Idiomind \
+--width=650 --height=580 --name=Idiomind \
 --button="$btnlabel":"$btncmd" \
---button="<small>Close</small>":1
+--button="Close":1

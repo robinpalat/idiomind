@@ -14,7 +14,7 @@ ling=0
 [ -f fin2 ] && rm fin2
 [ -f fin3 ] && rm fin3
 
-function score() {
+score() {
 
     if [ "$(($(cat l_f)+$1))" -ge "$all" ]; then
         echo "w9.$(tr -s '\n' '|' < ok.f).w9" >> "$log"
@@ -45,7 +45,7 @@ function score() {
     fi
 }
 
-function fonts() {
+fonts() {
     
     fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
     src=$(eyeD3 "$drtt/$fname.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
@@ -54,7 +54,7 @@ function fonts() {
     lcuestion="$1"
 }
 
-function cuestion() {
+cuestion() {
     
     yad --form --text-align=center --undecorated --center --on-top  \
     --skip-taskbar --title=" " --borders=5 --buttons-layout=spread \
@@ -64,7 +64,7 @@ function cuestion() {
     --button=" $(gettext "Answer") >> ":0
 }
 
-function answer() {
+answer() {
     
     yad --form --text-align=center --undecorated --center --on-top \
     --skip-taskbar --title=" " --borders=5 \

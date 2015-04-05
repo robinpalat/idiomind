@@ -35,7 +35,7 @@ echo "1" > "8.cfg"
 cd "$HOME"
 fi
 
-   "$DS/ifs/tls.sh" check_index "$topic"
+   "$DS/ifs/safe.sh" check_index "$topic"
 
     # look status
     if [[ $(grep -Fxon "$topic" < "$DM_tl/.1.cfg" \

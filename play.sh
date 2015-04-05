@@ -45,7 +45,7 @@ function setting_1() {
             arr="in$n"
             [[ -z ${!arr} ]] && echo "$DS/images/addi.png" \
             || echo "$DS/images/add.png"
-        echo "  <span color='#646D72' font_desc='Verdana 11'>$(gettext "${lbls[$n]}")</span><i></i>"
+        echo "  <span font_desc='Arial 11'>$(gettext "${lbls[$n]}")</span><i></i>"
         echo "${!sets[$n]}"
         let n++
     done

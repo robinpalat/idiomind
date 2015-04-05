@@ -28,7 +28,7 @@ hard=0
 ling=0
 f=0
 
-function score() {
+score() {
 
     if [ "$1" -ge "$all" ] ; then
     
@@ -57,7 +57,7 @@ function score() {
 }
 
 
-function dialog1() {
+dialog1() {
     
     hint="$(iconv -c -f utf8 -t ascii <<<"$1" | tr -s "'" " ")"
     SE=$(yad --center --text-info --image="$IMAGE" "$info" --image-on-top \
@@ -70,7 +70,7 @@ function dialog1() {
     --button=" $(gettext "OK") >> ":0)
     }
     
-function dialog2() {
+dialog2() {
     
     hint="$(iconv -c -f utf8 -t ascii <<<"$1" | tr -s "'" " ")"
     SE=$(yad --center --text-info --fore=4A4A4A --skip-taskbar \
@@ -79,30 +79,30 @@ function dialog2() {
     --text-align=left --height=180 --width=470 --name=Idiomind \
     --align=left --window-icon=idiomind --image-on-top --class=Idiomind \
     --button="$(gettext "Hint")":"/usr/share/idiomind/practice/hint.sh ${hint}" \
-    --button="$listen":"play '$DM_tlt/$fname.mp3'" \
+    --button="$(gettext "Listen")":"play '$DM_tlt/$fname.mp3'" \
     --button=" $(gettext "OK") >> ":0)
     }
     
-function check() {
+check() {
     
     yad --form --center --name=Idiomind --buttons-layout=end \
     --width=560 --height=300 --on-top --skip-taskbar --scroll \
     --class=Idiomind $aut --wrap --window-icon=idiomind \
     --borders=10 --selectable-labels \
-    --title="" --button="$listen":"play '$DM_tlt/$fname.mp3'" \
+    --title="" --button="$(gettext "Listen")":"play '$DM_tlt/$fname.mp3'" \
     --button="$(gettext "Next sentence")":2 \
-    --field="":lbl --text="<span font_desc='Free Sans 14'>$wes</span>\\n" \
+    --field="":lbl --text="<span font_desc='Free Sans 15'>$wes</span>\\n" \
     --field="<span font_desc='Free Sans 9'>$(echo $OK | sed 's/\,*$/\./g') $prc</span>\\n":lbl
     }
     
-function get_image_text() {
+get_image_text() {
     
     WEN=$(echo "$1" | sed 's/^ *//; s/ *$//')
     eyeD3 --write-images=$DT "$DM_tlt/$fname.mp3"
     echo "$WEN" | awk '{print tolower($0)}' > quote
     }
 
-function result() {
+result() {
     
     echo "$SE" | awk '{print tolower($0)}' \
     | sed 's/ /\n/g' | grep -v '^.$' \

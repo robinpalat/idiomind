@@ -41,7 +41,7 @@ elif [ "$1" = ds ]; then
     "$DSP/strt.sh" &
     exit 1
 elif [ "$1" = di ]; then
-    rm look_li lsin ok.i
+    rm look_i lsin ok.i
     echo "1" > .iconi
     echo "0" > l_i
     "$DSP/strt.sh" &

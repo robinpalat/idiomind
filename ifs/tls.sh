@@ -65,6 +65,15 @@ function edit_audio() {
     (cd "$3"; "$cmd" "$2") & exit
 }
 
+function text() {
+
+    yad --width=300 --height=250 --form --field="$(< "$2")":lbl \
+    --on-top --name=Idiomind --class=Idiomind --scroll --fixed \
+    --window-icon="$DS/images/logo.png" --center --borders=5 \
+    --button="$(gettext "Close")":0 \
+    --title="$(gettext "Info")" >/dev/null 2>&1
+}
+
 function add_file() {
 
     cd $HOME
@@ -84,7 +93,7 @@ function add_file() {
         done <<<$(sed s'/|/\n/'g <<<"$FL")
     fi
 
-}
+} >/dev/null
 
 function videourl() {
 
@@ -183,6 +192,7 @@ fi
     ch1="$(ls -A "$DM_tlt/attchs")"
     
     if [ "$(ls -A "$DM_tlt/attchs")" ]; then
+        [ ! -f "$DC_tlt/att.html" ] && mkindex >/dev/null 2>&1
         yad --html --window-icon="$DS/images/logo.png" \
         --title="$(gettext "Attachments")" --borders=5 \
         --width=650 --height=580 --center --browser \
@@ -202,7 +212,7 @@ fi
         --field="$(gettext "Add File")":FBTN "$DS/ifs/tls.sh 'add_file'" \
         --field="$(gettext "Add Video URL (Youtube)")":FBTN "$DS/ifs/tls.sh 'videourl'" \
         --name=Idiomind --class=Idiomind --center \
-        --text="$(gettext "Put files in folder or drap and drop here")" \
+        --text="$(gettext "Put files in a folder related to the topic.")" \
         --title="$(gettext "Attachments")" --width=350 --height=200 \
         --button="$(gettext "Cancelar")":1 \
         --button="$(gettext "OK")":0
@@ -845,6 +855,8 @@ case "$1" in
     add_audio "$@" ;;
     edit_audio)
     edit_audio "$@" ;;
+    text)
+    text "$@" ;;
     attachs)
     attatchments "$@" ;;
     add_file)

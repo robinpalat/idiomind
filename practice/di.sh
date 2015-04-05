@@ -14,7 +14,7 @@ ling=0
 [ -f iin2 ] && rm iin2
 [ -f iin3 ] && rm iin3
 
-function score() {
+score() {
 
     if [ "$(($(cat l_i)+$1))" -ge "$all" ]; then
         echo "w9.$(tr -s '\n' '|' < ok.i).w9" >> "$log"
@@ -45,42 +45,39 @@ function score() {
     fi
 }
 
-function fonts() {
+
+fonts() {
     
     fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
     src=$(eyeD3 "$drtt/$fname.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
-    s=$((25-$(echo "$1" | wc -c)))
     img="$drtt/images/$fname.jpg"
-    lcuestion="<b>$1</b>"
-    lanswer="<small><small><small>$1</small></small></small> | <b>$src</b>"
+    s=$((40-$(echo "$1" | wc -c)))
+    c=$((22-$(echo "$1" | wc -c)))
+    lcuestion="$1"
 }
 
-function cuestion() {
+cuestion() {
     
     yad --form --text-align=center --undecorated \
     --center --on-top --image-on-top --image="$img" \
     --skip-taskbar --title=" " --borders=5 \
     --buttons-layout=spread --align=center \
-    --field="\n<span font_desc='Free Sans $s'>$lcuestion</span>":lbl \
-    --width=375 --height=280 \
+    --width=375 --height=290 \
     --button=" $(gettext "Exit") ":1 \
     --button=" $(gettext "Answer") >> ":0
 }
 
-function answer() {
+answer() {
     
-    yad --form --text-align=center --undecorated \
-    --center --on-top --image-on-top --image="$img" \
+    yad --form --text-align=center --undecorated --center --on-top \
     --skip-taskbar --title=" " --borders=5 \
     --buttons-layout=spread --align=center \
-    --field="<span font_desc='Free Sans $s'><small><small><small>$llcuestion</small></small></small></span>":lbl \
-    --field="":lbl \
-    --field="<span font_desc='Free Sans $s'><b>$src</b></span>":lbl \
-    --width=375 --height=280 \
+    --field="\n\n<span font_desc='Free Sans $s'><b>$lcuestion</b></span>":lbl \
+    --field="<span font_desc='Free Sans $c'>$src</span>":lbl \
+    --width=375 --height=290 \
     --button="     $(gettext "I don't know")     ":3 \
     --button="     $(gettext "I know")     ":2
 }
-
 while read trgt; do
 
     fonts "$trgt"

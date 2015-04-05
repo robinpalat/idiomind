@@ -48,8 +48,7 @@ function new_topic() {
         exit 1
     else
         mkdir "$DM_tl/$jlb"
-        cp -f "$DS/default/tpc.sh" "$DM_tl/$jlb/tpc.sh"
-        chmod +x "$DM_tl/$jlb/tpc.sh"
+        ln -s "$DS/default/tpc.sh" "$DM_tl/$jlb/tpc.sh"
         echo "$jlb" >> "$DM_tl/.2.cfg"
         "$DM_tl/$jlb/tpc.sh" 1
         "$DS/mngr.sh" mkmn

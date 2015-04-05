@@ -15,7 +15,7 @@ ling=0
 [ -f mcin2 ] && rm mcin2
 [ -f mcin3 ] && rm mcin3
 
-function score() {
+score() {
 
     if [ "$(($(cat l_m)+$1))" -ge "$all" ]; then
         echo "w9.$(tr -s '\n' '|' < ok.m).w9" >> "$log"
@@ -47,7 +47,7 @@ function score() {
 }
 
 
-function fonts() {
+fonts() {
     
     fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
     wes=$(eyeD3 "$drtt/$fname.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
@@ -61,17 +61,17 @@ function fonts() {
     }
 
 
-function ofonts() {
+ofonts() {
     while read item; do
         echo "<big>$item</big>"
     done < word2.id
     }
 
 
-function mchoise() {
+mchoise() {
     
     dlg=$(ofonts | yad --list --on-top --skip-taskbar --title=" " \
-    --width=390 --height=340 --center --undecorated \
+    --width=390 --height=350 --center --undecorated \
     --text-align=center --no-headers --borders=6 \
     --button="$(gettext "Exit")":1 \
     --text="\n<span font_desc='Free Sans $s'><b>$1</b></span>\n\n" \

@@ -51,10 +51,19 @@ get_list() {
 
 get_list_images() {
 
-    cnt=$(ls -1 *.jpg 2>/dev/null | grep -v Fx "image" | wc -l)
-    if [ $cnt != 0 ]; then
-    echo ok
+    if [ "$(cat "$Si" | wc -l)" -gt 0 ]; then
+        grep -Fxvf "$Si" "$Li" > "$DT/images"
+    else
+        cat "$Li" > "$DT/images"
     fi
+    > "$1"
+    
+    while read itm; do
+        
+        fname="$(echo -n "$itm" | md5sum | rev | cut -c 4- | rev)"
+        if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
+            echo "$itm" >> "$1"; fi
+    done < "$DT/images"
 }
 
 get_list_mchoice() {
@@ -83,10 +92,10 @@ get_list_sentences() {
 
 starting() {
     
-    yad --center --borders=5 --image=info \
+    yad --center --borders=5 \
     --title=$(gettext "Practice") --on-top --window-icon=idiomind \
-    --button=Ok:1 --skip-taskbar --width=360 --height=120 \
-    --text=" $1  "
+    --button=Ok:1 --skip-taskbar --width=320 --height=120 \
+    --text="  $1.  "
     "$strt" & killall prct.sh.sh & exit 1
 }
 
@@ -220,7 +229,8 @@ images() {
         grep -Fxvf ok.i iin > iin1
         echo " practice --restarting session"
     else
-        get_list iin && cp -f iin iin1
+        
+        get_list_images iin && cp -f iin iin1
         [[ "$(cat iin  | wc -l)" -lt 4 ]] && starting "$(gettext "Not enough images to start")"
         echo " practice --new session"
     fi

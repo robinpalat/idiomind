@@ -176,27 +176,30 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
     cp "$1" "$DT/import.tmp"
     mv "$DT/import.tmp" "$DT/import.tar.gz"
     cd "$DT/idmimp_$c"
+    #--exclude=./topics/attchs #TODO
     tar -xzvf ../import.tar.gz
     ls -tdN * > "$DT/idmimp_$c/ls"
-    tpc_i=$(sed -n 1p "$DT/idmimp_$c/ls")
-    tmp="$DT/idmimp_$c/$tpc_i"
-    source "$tmp/12.cfg"
+    tpi=$(sed -n 1p "$DT/idmimp_$c/ls")
+    tmp="$DT/idmimp_$c/$tpi"
+    "$DS/ifs/safe.sh" check_source_1 "$tmp/12.cfg" "$tpi" &&
+    source "$DT/$tpi.cfg"
     lng="$(lnglss "$language_target")"
+    infs="'$DS/ifs/safe.sh' 'text' '$tmp/12.cfg'"
     [ $level = 1 ] && level="$(gettext "Beginner")"
     [ $level = 2 ] && level="$(gettext "Intermediate")"
     [ $level = 3 ] && level="$(gettext "Advanced")"
 
-    if [ "$tpc_i" != "$name" ]; then
+    if [ "$tpi" != "$name" ]; then
     
-        msg "$(gettext "The file is damaged.")\n " error;
-        [ -d "$DT/idmimp_$c" ] && rm -fr "$DT/idmimp_$c"
-        rm -f "$DT"/*.$c "$DT/import.tar.gz" & exit
+        msg "$(gettext "File is corrupted.")\n " error;
+        [ -d "$DT/idmimp_$c" ] && rm -fr "$DT/idmimp_$c" \
+        "$DT/$tpi.cfg" "$DT"/*.$c "$DT/import.tar.gz" & exit 1
         
     else
         cd "$tmp"
         ws=$(wc -l < "3.cfg")
         ss=$(wc -l < "4.cfg")
-        itxt="<big><big> $tpc_i</big></big><small>\\n  ${language_source^} <b>></b> $language_target\\n  $nwords $(gettext "Words") $nsentences $(gettext "Sentences") $nimages $(gettext "Images")\n  $(gettext "Level") $level \n</small>"
+        itxt="<big><big> $tpi</big></big><small>\\n  ${language_source^} <b>></b> $language_target\\n  $nwords $(gettext "Words") $nsentences $(gettext "Sentences") $nimages $(gettext "Images")\n  $(gettext "Level") $level \n</small>"
         dlck="$DT/p1.$c"
         
         tac "$tmp/0.cfg" | awk '{print $0""}' | \
@@ -206,6 +209,7 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
         --scroll --no-headers --dclick-action="$dlck" \
         --width=650 --height=580 --image-on-top  \
         --window-icon="$DS/images/logo.png" --column=Items \
+        --borders=10 --button="$(gettext "Info")":"$infs" \
         --borders=10 --button="$(gettext "Install")":0 \
         --button="$(gettext "Close")":1
         ret=$?
@@ -213,12 +217,12 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
             if [ "$ret" -eq 1 ]; then
             
                 [ -d "$DT/idmimp_$c" ] && rm -fr "$DT/idmimp_$c"
-                rm -f "$DT"/*.$c "$DT/import.tar.gz" & exit
+                rm -f "$DT"/*.$c "$DT/import.tar.gz" "$DT/$tpi.cfg" & exit
                 
             elif [ "$ret" -eq 0 ]; then
             
                 if2=$(wc -l < $DM_t/$language_target/.1.cfg)
-                chck=$(grep -Fox "$tpc_i" < $DM_t/$language_target/.1.cfg | wc -l)
+                chck=$(grep -Fox "$tpi" < $DM_t/$language_target/.1.cfg | wc -l)
                 
                 if [ "$if2" -ge 80 ]; then
                 
@@ -229,8 +233,8 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
         
                 if [ "$chck" -ge 1 ]; then
                 
-                    tpc_i="$tpc_i $chck"
-                    msg_2 " $(gettext "You already have a topic with the same name.")\n $(gettext "The new it was renamed to\:")\n <b>$tpc_i</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
+                    tpi="$tpi $chck"
+                    msg_2 " $(gettext "You already have a topic with the same name.")\n $(gettext "The new it was renamed to\:")\n <b>$tpi</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
                     ret=$(echo $?)
                     
                     if [ $ret != 0 ]; then
@@ -243,9 +247,9 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
                 mkdir "$DM_t/$language_target"
                 mkdir "$DM_t/$language_target/.share"
                 fi
-                mkdir -p "$DM_t/$language_target/$tpc_i/.conf"
-                DI_m="$DM_t/$language_target/$tpc_i"
-                DI_c="$DM_t/$language_target/$tpc_i/.conf"
+                mkdir -p "$DM_t/$language_target/$tpi/.conf"
+                DI_m="$DM_t/$language_target/$tpi"
+                DI_c="$DM_t/$language_target/$tpi/.conf"
                 cd "$tmp"
                 cp -n ./.audio/*.mp3 "$DM_t/$language_target/.share/"
                 [ -d ./.audio ] && rm -fr ./.audio
@@ -264,21 +268,16 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
                 echo "$language_target" > "$DC_s/6.cfg"
                 echo "$lgsl" >> "$DC_s/6.cfg"
                 echo "$dte" > "$DI_c/13.cfg"
-                echo "$tpc_i" >> "$DM_t/$language_target/.3.cfg"
-                sed -i 's/'"$tpc_i"'//g' "$DM_t/$language_target/.2.cfg"
+                echo "$tpi" >> "$DM_t/$language_target/.3.cfg"
+                sed -i 's/'"$tpi"'//g' "$DM_t/$language_target/.2.cfg"
                 sed '/^$/d' "$DM_t/$language_target/.2.cfg" > "$DM_t/$language_target/.2.cfg.tmp"
                 mv -f "$DM_t/$language_target/.2.cfg.tmp" "$DM_t/$language_target/.2.cfg"
                 "$DS/mngr.sh" mkmn; "$DI_m/tpc.sh" &
-                [ -d "$DT/idmimp_$c" ] && rm -fr "$DT/idmimp_$c"
-                rm -f "$DT"/*.$c "$DT/import.tar.gz" & exit
-                
-            else
-                [ -d "$DT/idmimp_$c" ] && rm -fr "$DT/idmimp_$c"
-                rm -f "$DT"/*.$c "$DT/import.tar.gz" & exit
             fi
-    exit 0
     fi
-    fi
+    [ -d "$DT/idmimp_$c" ] && rm -fr "$DT/idmimp_$c"
+    rm -f "$DT"/*.$c "$DT/import.tar.gz" "$DT/$tpi.cfg" & exit
+fi
     
 # topic
 function topic() {
@@ -330,9 +329,7 @@ function topic() {
     
         note_mod="$(< $cnf3)"
         if [ "$note_mod" != "$(< $nt)" ]; then
-            if [ -z "$note_mod" ]; then msg_2 "$(gettext " Really delete note of topic?")\n" gtk-delete "Delete" "No"
-            [ $? = 0 ] && mv -f "$cnf3" "$DC_tlt/10.cfg"; else
-            mv -f "$cnf3" "$DC_tlt/10.cfg"; fi
+            mv -f "$cnf3" "$DC_tlt/10.cfg"
         fi
         
         ntpc=$(cut -d '|' -f 1 < "$cnf4")

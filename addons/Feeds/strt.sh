@@ -168,7 +168,7 @@ mkhtml () {
         t = avi; fi
         
 printf "<link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwrstyle.css\">
-<video width=650 height=380 controls>
+<video width=640 height=380 controls>
 <source src=\"$fname.$ex\" type=\"video/mp4\">
 Your browser does not support the video tag.
 </video><br><br>
@@ -417,7 +417,7 @@ remove_items() {
     n=50
     while [[ $n -le "$(wc -l < "$DCP/1.cfg")" ]]; do
         item="$(sed -n "$n"p "$DCP/1.cfg")"
-        if ! grep -Fxo "$title" < "$DCP/2.cfg"; then
+        if ! grep -Fxo "$item" < "$DCP/2.cfg"; then
             fname="$(nmfile "${item}")"
             [ -f "$DMC/$fname.mp4" ] && rm "$DMC/$fname.mp4"
             [ -f "$DMC/$fname.ogg" ] && rm "$DMC/$fname.ogg"

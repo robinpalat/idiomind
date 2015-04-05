@@ -20,7 +20,7 @@
 #source /usr/share/idiomind/ifs/c.conf
 DSP="$DS/practice"
 wth=500
-eht=430
+eht=440
 easys="$2"
 learning="$3"
 [[ "$4" -lt 0 ]] && hards=0 || hards="$4"
@@ -75,7 +75,7 @@ if [[ -n "$1" ]]; then
     elif [ $1 = 10 ]; then
         learned=$(cat l_i)
         num=$(cat .iconi)
-        info4="* "
+        info5="* "
         info="  <b><big>$learned </big></b><small>$(gettext "Learned")</small>   <span color='#3AB451'><b><big>$easys </big></b></span><small>$(gettext "Easy")</small>   <span color='#E78C1E'><b><big>$learning </big></b></span><small>$(gettext "Learning")</small>   <span color='#D11B5D'><b><big>$hards </big></b></span><small>$(gettext "Difficult")</small>  \\n"
     fi
 fi
@@ -84,7 +84,7 @@ img1="$DSP/icons_st/$(cat .iconf).png"
 img2="$DSP/icons_st/$(cat .iconmc).png"
 img3="$DSP/icons_st/$(cat .iconlw).png"
 img4="$DSP/icons_st/$(cat .iconls).png"
-img4="$DSP/icons_st/$(cat .iconi).png"
+img5="$DSP/icons_st/$(cat .iconi).png"
 
 VAR=$(yad --ellipsize=NONE --list \
 --on-top --class=Idiomind --name=Idiomind \
@@ -100,7 +100,7 @@ $img1 "     $info1 Flashcards" \
 $img2 "     $info2 Multiple Choice" \
 $img3 "     $info3 Listening Words" \
 $img4 "     $info4 Listening Sentences" \
-$img4 "     $info5 Images" )
+$img5 "     $info5 Images" )
 ret=$?
 
 if [ $ret -eq 0 ]; then

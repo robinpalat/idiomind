@@ -3,7 +3,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
-user=$(echo "$(whoami)")
+
 if [ ! -f "$DC_a/1.cfg" ]; then
     echo -e "backup=FALSE" > "$DC_a/1.cfg"
     echo -e "path=\"$HOME\"" >> "$DC_a/1.cfg"
@@ -39,9 +39,9 @@ if [ -z "$1" ]; then
         # export
         if grep "TRUE $(gettext "Export")" <<<"$ex"; then
             
-            cd $HOME &&
+            cd "$HOME"
             exp=$(yad --save --center --borders=10 \
-            --on-top --filename="$user"_idiomind_data.tar.gz \
+            --on-top --filename="idiomind_data.tar.gz" \
             --window-icon=idiomind --skip-taskbar \
             --title="$(gettext "Export")" \
             --file --width=600 --height=500 --button=Ok:0 )
@@ -53,18 +53,32 @@ if [ -z "$1" ]; then
                 echo "# $(gettext "Copying")..." ; sleep 0.1
 
                 cd "$DM"
-                tar cvzf backup.tar.gz *
-                mv -f backup.tar.gz $DT/"$user"_idiomind_data.tar.gz
+                #chmod 777 -R "$DM"
+                # TODO data addons 
+                tar cvzf backup.tar.gz \
+                --exclude='./topics/Italian/Feeds/cache' \
+                --exclude='./topics/French/Feeds/cache' \
+                --exclude='./topics/Portuguese/Feeds/cache' \
+                --exclude='./topics/Russian/Feeds/cache' \
+                --exclude='./topics/Spanish/Feeds/cache' \
+                --exclude='./topics/German/Feeds/cache' \
+                --exclude='./topics/Chinese/Feeds/cache' \
+                --exclude='./topics/Japanese/Feeds/cache' \
+                --exclude='./topics/Vietnamese/Feeds/cache' \
+                ./topics
 
-                mv -f $DT/"$user"_idiomind_data.tar.gz "$exp"
+                mv -f backup.tar.gz "$DT/idiomind_data.tar.gz"
+                mv -f "$DT/idiomind_data.tar.gz" "$exp"
                 echo "# $(gettext "Completing")" ; sleep 1
-                
+
                 ) | yad --center --on-top --progress \
                 --width=200 --height=20 --geometry=200x20-2-2 \
                 --pulsate --percentage="5" --auto-close \
                 --sticky --undecorated --skip-taskbar --no-buttons
                 
+                #if [ $exit1 = 0 ] && [ $exit2 = 0 ] && [ $exit3 = 0 ]; then
                 msg "$(gettext "Data exported successfully")\n" info
+                #;fi
                 exit 1
 
             else
@@ -74,8 +88,7 @@ if [ -z "$1" ]; then
         # import
         elif grep "TRUE $(gettext "Import")" <<<"$in"; then
         
-            cd $HOME &&
-            
+            cd "$HOME"
             add=$(yad --center --on-top \
             --borders=10 --file-filter="*.gz" --button=Ok:0 \
             --window-icon=idiomind --skip-taskbar \
@@ -89,27 +102,29 @@ if [ -z "$1" ]; then
                 fi
                 
                 (
-                rm -f $DT/*.XXXXXXXX
+                rm -f "$DT/*.XXXXXXXX"
                 echo "5"
                 echo "# $(gettext "Copying")..." ; sleep 0.1
-                mkdir $DT/import
-                cp -f "$add" $DT/import/import.tar.gz
-                cd $DT/import
+                mkdir "$DT/import"
+                cp -f "$add" "$DT/import/import.tar.gz"
+                cd "$DT/import"
                 tar -xzvf import.tar.gz
-                cd $DT/import/topics/
-                list=$(ls * -d | sed 's/saved//g' | sed '/^$/d')
+                cd "$DT/import/topics/"
+                list="$(ls * -d | sed 's/saved//g' | sed '/^$/d')"
 
                 while read -r lng; do
                     mkdir "$DM_t/$lng"
                     mkdir "$DM_t/$lng/.share"
-                    mv -f ./$lng/.share/* "$DM_t/$lng/.share/"
+                    [ -d "./$lng/.share" ] && \
+                    mv -f "./$lng/.share"/* "$DM_t/$lng/.share"/
                     echo $lng >> ./.languages
                 done <<< "$list"
 
                 while read language; do
 
-                    cd $DT/import/topics/$language/
-                    ls * -d | sed 's/Feeds//g' | sed '/^$/d' > $DT/import/topics/$language/.topics
+                    cd "$DT/import/topics/$language/"
+                    ls * -d | sed 's/Feeds//g' | sed '/^$/d' > \
+                    "$DT/import/topics/$language/.topics"
 
                     echo "50"
                     echo "# $(gettext "Setting up languages") $language " ; sleep 0.1
@@ -127,6 +142,7 @@ if [ -z "$1" ]; then
                         "$DM_t/$language/$topic/"
                         
                         rm "$DM_t/$language/$topic/tpc.sh"
+                        rm "$DM_t/$language/$topic/.conf/att.html"
                         rm "$DM_t/$language/$topic/.conf/1.cfg"
                         rm "$DM_t/$language/$topic/.conf/2.cfg"
                         rm -rf "$DM_t/$language/$topic/.conf/practice/"
@@ -141,21 +157,24 @@ if [ -z "$1" ]; then
                         
                         echo "$topic" >> "$DM_t/$language/.3.cfg"
                         sed -i 's/'"$topic"'//g' "$DM_t/$language/.2.cfg"
-                        sed '/^$/d' $DM_t/$language/.2.cfg > $DM_t/$language/.2.cfg_
-                        mv -f $DM_t/$language/.2.cfg_ $DM_t/$language/.2.cfg
-                        cd $DT/import/topics
+                        sed '/^$/d' "$DM_t/$language/.2.cfg" > "$DM_t/$language/.2.cfg_"
+                        mv -f "$DM_t/$language/.2.cfg_" "$DM_t/$language/.2.cfg"
+                        cd "$DT/import/topics"
                         echo "90"
                         echo "# $(gettext "Copying") ${topic:0:20} ... " ; sleep 0.2
-
-                    done < $DT/import/topics/$language/.topics
+                        
+                        
+                        
+                    done < "$DT/import/topics/$language/.topics"
                     
-
-                done < $DT/import/topics/.languages
+                    cp -r "$DT/import/topics/$language/Feeds" "$DM_t/$language/Feeds"
+                
+                done < "$DT/import/topics/.languages"
                 
                 echo "95"
                 echo "# $(gettext "Completing")" ; sleep 1
                 echo "100"
-                $DS/mngr.sh mkmn
+                "$DS/mngr.sh" mkmn
                 rm -f -r $DT/import
                 
                 ) | yad --on-top --progress \
@@ -181,12 +200,12 @@ if [ -z "$1" ]; then
         fi
         source "$DC_a/1.cfg"
 
-        cd $HOME
+        cd "$HOME"
         CNFG=$(yad --center --form --on-top --window-icon=idiomind \
-        --borders=15 --expand-column=3 --no-headers --name=Idiomind  --class=Idiomind \
+        --borders=15 --expand-column=3 --no-headers --name=Idiomind \
         --print-all --button="$(gettext "Restore")":3 --always-print-result \
         --button="$(gettext "Close")":0 --width=420 --height=300 \
-        --title=Backup --columns=2 \
+        --class=Idiomind --title=Backup --columns=2 \
         --field="$(gettext "Backup regularly")":CHK $backup \
         --field="$(gettext "Path to save")":"":CDIR "$path" \
         --field=" :LBL" " " )
@@ -219,7 +238,7 @@ if [ -z "$1" ]; then
                     if [ "$ret" -eq 0 ]; then
                         set -e
                         (
-                        rm -f $DT/*.XXXXXXXX
+                        rm -f "$DT/*.XXXXXXXX"
                         echo "#" ; sleep 0
                         cp "$DC_s/12.cfg"  "$DT/.SC.bk"
                         mv "$DC/" "$DT/.s2.bk"
@@ -233,7 +252,7 @@ if [ -z "$1" ]; then
                         tar -xzvf ./backup.tar.gz
                         mv -f ./idiomind/* "$DC/"
                         mv -f ./topics/* "$DM_t/"
-                        $DS/mngr mkmn
+                        "$DS/mngr" mkmn
                         chmod -R +x "$DC"
                         rm -r  "$D_cps/idiomind"
                         rm -r  "$D_cps/topics"
@@ -289,7 +308,7 @@ elif [ "$1" = C ] && [ "$dte" != "$udt" ]; then
     fi
 
     cp -r "$DC" "$DM"
-    cd $DM
+    cd "$DM"
     tar cvzf backup.tar.gz *
     mv -f backup.tar.gz "$D_cps/idiomind.backup"
     exit=$?
