@@ -11,9 +11,9 @@ function word_view(){
     exmp=$(grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' <<<"$tgs" | tr '_' '\n')
     mrk=$(grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)' <<<"$tgs")
     [ $(echo "$exmp" | sed -n 2p) ] \
-    && dfnts="--field=$(echo "$exmp" | sed -n 2p)\\n:lbl"
+    && dfnts="--field=$(echo "$exmp" | sed -n 2p)\n:lbl"
     [ $(echo "$exmp" | sed -n 3p) ] \
-    && ntess="--field=$(echo "$exmp" | sed -n 3p)\\n:lbl"
+    && ntess="--field=$(echo "$exmp" | sed -n 3p)\n:lbl"
     hlgt=$(awk '{print tolower($0)}' <<<"$trgt")
     exmp1=$(echo "$(echo "$exmp" | sed -n 1p)" | sed "s/"${trgt,,}"/<span background='#FDFBCF'>"${trgt,,}"<\/\span>/g")
     [ "$(echo "$tgs" | grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)')" = TRUE ] \
@@ -73,14 +73,13 @@ function notebook_1() {
     --show-uri --fontname=vendana --print-column=1 \
     --column="" --filename="$nt" > "$cnf3" &
     yad --form --scroll --borders=15 --plug=$KEY --tabnum=4 --columns=2 \
-    --text="$label_info \n" \
+    --text="$label_info\n" \
     --field="<small>$(gettext "Rename")</small>:" "$tpc" \
     --field="$(gettext "Mark as learned")":FBTN "$DS/mngr.sh 'mark_as_learned'" \
-    --field="\t\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " \
-    --field="\t\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " \
+    --field="\t\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " --field=" ":LBL " " \
     --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh" \
-    --field="$(gettext "Attatchment")":FBTN "$DS/ifs/tls.sh attachs"\
-    --field="$(gettext "No show image")":CHK " " \
+    --field="$(gettext "Attachments")":FBTN "$DS/ifs/tls.sh attachs" \
+    --field="$(gettext "Show image")":CHK "$set1" \
     --field="$(gettext "Delete")":BTN "$DS/mngr.sh 'delete_topic'" > "$cnf4" &
     yad --notebook --name=Idiomind --center --key=$KEY \
     --class=Idiomind --align=right "$img" --fixed \
@@ -111,14 +110,15 @@ function notebook_2() {
     --tabnum=3 --fore='gray40' --wrap --editable \
     --show-uri --fontname=vendana --print-column=1 \
     --column="" --filename="$nt" > "$cnf3" &
-    yad --form --scroll --borders=10 --plug=$KEY --tabnum=4 --columns=2 \
+    yad --form --scroll --borders=15 --plug=$KEY --tabnum=4 --columns=2 \
     --text="$label_info \n" \
     --field="<small>$(gettext "Rename")</small>:" "$tpc" \
     --field="$(gettext "Mark as learned")":FBTN "$DS/mngr.sh 'mark_as_learned'" \
-    --field="\t\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " \
+    --field="\t\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " --field=" ":LBL " " \
     --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh" \
-    --field="$(gettext "Delete")":FBTN "$DS/mngr.sh 'delete_topic'" \
-    --field=" ":LBL " " > "$cnf4" &
+    --field="$(gettext "Attachments")":FBTN "$DS/ifs/tls.sh attachs" >/dev/null 2>&1 \
+    --field="$(gettext "No show image")":CHK " " \
+    --field="$(gettext "Delete")":BTN "$DS/mngr.sh 'delete_topic'" > "$cnf4" &
     yad --notebook --name=Idiomind --center \
     --class=Idiomind --align=right --key=$KEY \
     --tab-borders=5 --center --title="$tpc" \

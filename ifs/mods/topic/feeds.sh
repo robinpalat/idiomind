@@ -38,18 +38,18 @@ function feedmode() {
     --expand-column=2 --ellipsize=END --print-all --column=Name:IMG \
     --column=Name --dclick-action="$DSP/vwr.sh" &
     yad --form --scroll --borders=10 --plug=$KEY --tabnum=3 --columns=2 \
-    --field="$(gettext "Notes")$spc":txt "$nt" \
+    --field="$(gettext "Notes")\t\t\t\t\t\t\t\t\t\t\t\t\t":txt "$nt" \
     --field=" :LBL" " " --field=" :LBL" " " --field=" $itxt2":lbl " " \
     --field="$(gettext "Syncronize")":FBTN "$DS/addons/Feeds/tls.sh 'sync'" \
     --field="$(gettext "Delete")":FBTN "$DS/addons/Feeds/mngr.sh 'delete'" > "$fdit" &
     yad --notebook --name=Idiomind --center --fixed \
     --class=Idiomind --align=right --key=$KEY \
-    --tab-borders=0 --center --title="Feeds  ${info^}" \
+    --tab-borders=5 --center --title="Feeds  ${info^}" \
     --tab=" $(gettext "New episodes") " \
     --tab=" $(gettext "Saved episodes") " \
     --tab=" $(gettext "Edit") " --always-print-result \
     --ellipsize=END --image-on-top --window-icon="$DS/images/logo.png" \
-    --width=640 --height=560 --borders=5 \
+    --width=640 --height=560 --borders=2 \
     --button="$(gettext "Playlist")":"/usr/share/idiomind/play.sh" \
     --button="gtk-refresh":2 --button="gtk-close":1
     ret=$?

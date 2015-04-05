@@ -65,30 +65,146 @@ function edit_audio() {
     (cd "$3"; "$cmd" "$2") & exit
 }
 
+function add_file() {
+
+    cd $HOME
+    FL=$(yad --width=620 --height=500 --file --on-top --name=Idiomind \
+    --text=" $(gettext "Browse to and select the file that you want to add.")" \
+    --class=Idiomind --window-icon="$DS/images/logo.png" --center --multiple \
+    --file-filter="*.mp3 *.ogg *.mp4 *.m4v *.jpg *.jpeg *.png *.txt *.pdf" \
+    --button="$(gettext "Cancel")":1 --button="$(gettext "OK")":0 \
+    --borders=5 --title="$(gettext "Add File")")
+    rt=$?
+    
+    if [ $rt -eq 0 ]; then
+        while read -r file; do
+            if  [ -f "$file" ]; then
+                cp -f "$file" "$DM_tlt/attchs"
+            fi
+        done <<<$(sed s'/|/\n/'g <<<"$FL")
+    fi
+
+}
+
+function videourl() {
+
+    url=$(yad --window-icon="$DS/images/logo.png" --form --center --on-top \
+    --text="$(gettext "Only youtube videos")" \
+    --field="$(gettext "URL")" --title="Video" \
+    --width=480 --height=100 --name=Idiomind --class=Idiomind \
+    --skip-taskbar --borders=5 --button="$(gettext "Cancel")":1 --button=gtk-ok:0)
+    echo "$url" > "$DM_tlt/attchs/video.url"
+
+}
+
 function attatchments() {
     
+    mkindex() {
+
+        echo "<link rel=\"stylesheet\" \
+        href=\"/usr/share/idiomind/default/attstyle.css\">\
+        <body><div class=\"summary\">" \
+        > "$DC_tlt/att.html"
+
+        while read -r file; do
+    
+if grep ".mp3" <<<"$file"; then
+name="$(sed s'/\.mp3//' <<<"$file")"
+echo "<br><br><h2>$name</h2>
+<br><audio controls>
+<source src=\"../attchs/$file\" type=\"audio/mpeg\">
+Your browser does not support the audio tag.
+</audio><br><br>" >> "$DC_tlt/att.html"
+elif grep ".ogg" <<<"$file"; then
+name="$(sed s'/\.ogg//' <<<"$file")"
+echo "<br><br><h2>$name</h2>
+<br><audio controls>
+<source src=\"../attchs/$file\" type=\"audio/mpeg\">
+Your browser does not support the audio tag.
+</audio><br><br>" >> "$DC_tlt/att.html"
+elif grep ".mp4" <<<"$file"; then
+name="$(sed s'/\.mp4//' <<<"$file")"
+echo "<br><br><h2>$name</h2>
+<br><video width=450 height=280 controls>
+<source src=\"../attchs/$file\" type=\"video/mp4\">
+Your browser does not support the video tag.
+</video><br><br>" >> "$DC_tlt/att.html"
+elif grep ".m4v" <<<"$file"; then
+name="$(sed s'/\.m4v//' <<<"$file")"
+echo "<br><br><h2>$name</h2>
+<br><video width=450 height=280 controls>
+<source src=\"../attchs/$file\" type=\"video/mp4\">
+Your browser does not support the video tag.
+</video><br><br>" >> "$DC_tlt/att.html"
+elif grep ".jpg" <<<"$file"; then
+name="$(sed s'/\.jpg//' <<<"$file")"
+echo "<br><br><h2>$name</h2>
+<img src=\"../attchs/$file\" alt=\"$name\" \
+style=\"width:100%;height:100%\"><br><br>" \
+>> "$DC_tlt/att.html"
+elif grep ".jpeg" <<<"$file"; then
+name="$(sed s'/\.jpeg//' <<<"$file")"
+echo "<br><br><h2>$name</h2>
+<img src=\"../attchs/$file\" alt=\"$name\" \
+style=\"width:100%;height:100%\"><br><br>" \
+>> "$DC_tlt/att.html"
+elif grep ".png" <<<"$file"; then
+name="$(sed s'/\.png//' <<<"$file")"
+echo "<br><br><h2>$name</h2>
+<img src=\"../attchs/$file\" alt=\"$name\" \
+style=\"width:100%;height:100%\"><br><br>" \
+>> "$DC_tlt/att.html"
+elif grep ".txt" <<<"$file"; then
+txto=$(cat "$DM_tlt/attchs/$file")
+echo "<br><br><div class=\"summary\">$txto \
+<br><br></div>" \
+>> "$DC_tlt/att.html"
+elif grep ".url" <<<"$file"; then
+url=$(sed 's/|//' < "$DM_tlt/attchs/$file")
+echo "<br><br><div class=\"summary\">
+<iframe width=\"420\" height=\"315\" src=\"$url\" \
+frameborder=\"0\" allowfullscreen></iframe>
+</div><br><br>" >> "$DC_tlt/att.html"
+fi
+        done <<<"$(ls "$DM_tlt/attchs")"
+    
+            echo "<br><br></div>
+            </body>" >> "$DC_tlt/att.html"
+            
+    }
+    
+    [ ! -d "$DM_tlt/attchs" ] && mkdir "$DM_tlt/attchs"
+    ch1="$(ls -A "$DM_tlt/attchs")"
+    
     if [ "$(ls -A "$DM_tlt/attchs")" ]; then
-    yad --html --window-icon="$DS/images/logo.png" --browser \
-    --title="$(gettext "Message")" \
-    --width=650 --height=580 \
-    --button="$(gettext "Folder")":"xdg-open '$DM_tlt/attchs'" \
-    --button="$(gettext "Video URL")":"$DS/ifs/tls.sh videourl" \
-    --button=gtk-save:0 \
-    --name=Idiomind --class=Idiomind \
-    --uri="$DM_tlt/attchs/index.html" >/dev/null 2>&1
+        yad --html --window-icon="$DS/images/logo.png" \
+        --title="$(gettext "Attachments")" --borders=5 \
+        --width=650 --height=580 --center --browser \
+        --button="$(gettext "Open Folder")":"xdg-open '$DM_tlt/attchs'" \
+        --button="$(gettext "Video URL")":"$DS/ifs/tls.sh 'videourl'" \
+        --button="$(gettext "Add File")":"$DS/ifs/tls.sh 'add_file'" \
+        --button="$(gettext "Close")":"1" \
+        --name=Idiomind --class=Idiomind \
+        --uri="$DC_tlt/att.html"
+        
+        if [ "$ch1" != "$(ls -A "$DM_tlt/attchs")" ]; then
+            mkindex >/dev/null 2>&1
+        fi
+        
     else
-    yad --dnd --window-icon="$DS/images/logo.png" --borders=5 \
-    --center \
-    --text="$(gettext "Put files in folder or drap and drop here")" \
-    --title="$(gettext "Attachments")" --width=450 --height=320 \
-    --button="$(gettext "Cancel")":"$DS/ifs/tls.sh videourl" \
-    --button="$(gettext "Open Folder")":"xdg-open '$DM_tlt/attchs'" \
-    --button="$(gettext "Video URL")":"$DS/ifs/tls.sh videourl" \
-    --button=gtk-save:0 \
-    --name=Idiomind --class=Idiomind >/dev/null 2>&1
+        yad --form --window-icon="$DS/images/logo.png" --borders=5 \
+        --field="$(gettext "Add File")":FBTN "$DS/ifs/tls.sh 'add_file'" \
+        --field="$(gettext "Add Video URL (Youtube)")":FBTN "$DS/ifs/tls.sh 'videourl'" \
+        --name=Idiomind --class=Idiomind --center \
+        --text="$(gettext "Put files in folder or drap and drop here")" \
+        --title="$(gettext "Attachments")" --width=350 --height=200 \
+        --button="$(gettext "Cancelar")":1 \
+        --button="$(gettext "OK")":0
+        ret=$?
+        if [ "$ch1" != "$(ls -A "$DM_tlt/attchs")" ] && [ $ret = 0 ]; then
+            mkindex >/dev/null 2>&1
+        fi
     fi
-    ret=$?
-    [ $ret = 0 ] && echo ok
 }
 
 function help() {
@@ -113,16 +229,6 @@ function web() {
     xdg-open "$web/$lgs/${lgtl,,}" >/dev/null 2>&1
 }
 
-function videourl() {
-
-    yad --window-icon="$DS/images/logo.png" --form --center --on-top \
-    --text="$(gettext "Only youtube videos")" \
-    --field="$(gettext "URL")" --title="Video" \
-    --width=440 --height=100 --name=Idiomind --class=Idiomind \
-    --skip-taskbar --borders=5 --button=gtk-ok:0
-
-}
-
 function fback() {
 
     web="http://idiomind.sourceforge.net/doc/msg.html"
@@ -132,7 +238,6 @@ function fback() {
     --name=Idiomind --class=Idiomind \
     --uri="$web" >/dev/null 2>&1
 }
-
 
 function check_updates() {
 
@@ -403,7 +508,6 @@ function check_index() {
     "$DS/mngr.sh" mkmn & exit 1
 }
 
-
 function set_image() {
 
     cd "$DT"
@@ -512,7 +616,6 @@ function set_image() {
     fi
 
 }
-
 
 function pdfdoc() {
 
@@ -737,9 +840,9 @@ case "$1" in
     edit_audio)
     edit_audio "$@" ;;
     attachs)
-    attatchments ;;
-    videoem)
-    videoem ;;
+    attatchments "$@" ;;
+    add_file)
+    add_file ;;
     videourl)
     videourl "$@" ;;
     help)
