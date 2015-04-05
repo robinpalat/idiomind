@@ -76,7 +76,7 @@ function notebook_1() {
     --text="$label_info\n" \
     --field="<small>$(gettext "Rename")</small>:" "$tpc" \
     --field="$(gettext "Mark as learned")":FBTN "$DS/mngr.sh 'mark_as_learned'" \
-    --field="\t\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " --field=" ":LBL " " \
+    --field="\t\t\t\t\t\t\t\t":LBL " " --field=" ":LBL " " \
     --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh" \
     --field="$(gettext "Attachments")":FBTN "$DS/ifs/tls.sh attachs" \
     --field="$(gettext "Show image")":CHK "$set1" \

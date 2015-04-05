@@ -71,7 +71,7 @@ function add_file() {
     FL=$(yad --width=620 --height=500 --file --on-top --name=Idiomind \
     --text=" $(gettext "Browse to and select the file that you want to add.")" \
     --class=Idiomind --window-icon="$DS/images/logo.png" --center --multiple \
-    --file-filter="*.mp3 *.ogg *.mp4 *.m4v *.jpg *.jpeg *.png *.txt *.pdf" \
+    --file-filter="*.mp3 *.ogg *.mp4 *.m4v *.jpg *.jpeg *.png *.txt *.pdf *.gif" \
     --button="$(gettext "Cancel")":1 --button="$(gettext "OK")":0 \
     --borders=5 --title="$(gettext "Add File")")
     rt=$?
@@ -165,6 +165,12 @@ echo "<br><br><div class=\"summary\">
 <iframe width=\"420\" height=\"315\" src=\"$url\" \
 frameborder=\"0\" allowfullscreen></iframe>
 </div><br><br>" >> "$DC_tlt/att.html"
+elif grep ".gif" <<<"$file"; then
+name="$(sed s'/\.gif//' <<<"$file")"
+echo "<br><br><h2>$name</h2>
+<img src=\"../attchs/$file\" alt=\"$name\" \
+style=\"width:100%;height:100%\"><br><br>" \
+>> "$DC_tlt/att.html"
 fi
         done <<<"$(ls "$DM_tlt/attchs")"
     

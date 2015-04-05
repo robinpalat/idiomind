@@ -342,7 +342,7 @@ function dlg_form_0() {
     
         yad --window-icon="$DS/images/logo.png" --form --center --on-top \
         --field="$(gettext "Name")" "$2" --title="$1" \
-        --width=440 --height=100 --name=Idiomind --class=Idiomind \
+        --width=470 --height=100 --name=Idiomind --class=Idiomind \
         --skip-taskbar --borders=5 --button=gtk-ok:0
 }
 

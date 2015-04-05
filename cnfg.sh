@@ -19,7 +19,7 @@
 #--field="$(gettext "Quick Help")":BTN "$DS/ifs/tls.sh help"
 source /usr/share/idiomind/ifs/c.conf
 Encoding=UTF-8
-wth=520
+wth=540
 eht=400
 info1="$(gettext "Do you want to change the interface language program?")"
 info2="$(gettext "You want to change the language setting to learn?")"
@@ -109,8 +109,8 @@ yad --plug=$KEY --tabnum=1 \
 --field="$(gettext "Your Language")":CB "$lgsl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
 --field=" :LBL" "2" \
 --field=":LBL" "2" \
---field="$(gettext "Speech Synthesizer (default espeak)")":CB5 "$synth" \
---field="$(gettext "Use this program for audio editing")":CB5 "$edit" \
+--field="<small>$(gettext "Speech Synthesizer (default espeak)")</small>":CB5 "$synth" \
+--field="<small>$(gettext "Use this program for audio editing")</small>":CB5 "$edit" \
 --field="$(gettext "Check for Updates")":BTN "$DS/ifs/tls.sh check_updates" \
 --field="$(gettext "Topic Saved")":BTN "$DS/ifs/upld.sh 'vsd'" \
 --field="$(gettext "Feedback")":BTN "$DS/ifs/tls.sh 'fback'" \
