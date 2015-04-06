@@ -184,7 +184,7 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
     "$DS/ifs/safe.sh" check_source_1 "$tmp/12.cfg" "$tpi" &&
     source "$DT/$tpi.cfg"
     lng="$(lnglss "$language_target")"
-    infs="'$DS/ifs/safe.sh' 'text' '$tmp/12.cfg'"
+    infs="'$DS/ifs/safe.sh' 'text' '$tmp'"
     [ $level = 1 ] && level="$(gettext "Beginner")"
     [ $level = 2 ] && level="$(gettext "Intermediate")"
     [ $level = 3 ] && level="$(gettext "Advanced")"
@@ -251,8 +251,8 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
                 DI_m="$DM_t/$language_target/$tpi"
                 DI_c="$DM_t/$language_target/$tpi/.conf"
                 cd "$tmp"
-                cp -n ./.audio/*.mp3 "$DM_t/$language_target/.share/"
-                [ -d ./.audio ] && rm -fr ./.audio
+                cp -n ./audio/*.mp3 "$DM_t/$language_target/.share/"
+                [ -d ./audio ] && rm -fr ./audio
                 n=0
                 while [ $n -le 13 ]; do
                     if [ ! -f "$tmp/$n.cfg" ]; then

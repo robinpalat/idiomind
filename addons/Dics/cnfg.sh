@@ -191,5 +191,6 @@ elif [ -z "$1" ]; then
         
         fi
         
+    rm -f "$DT/new.sh" "$DT/script.sh"
     exit 1
 fi

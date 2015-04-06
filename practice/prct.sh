@@ -59,11 +59,11 @@ get_list_images() {
     > "$1"
     
     while read itm; do
-        
         fname="$(echo -n "$itm" | md5sum | rev | cut -c 4- | rev)"
         if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
             echo "$itm" >> "$1"; fi
     done < "$DT/images"
+    [ -f "$DT/images" ] && rm -f "$DT/images"
 }
 
 get_list_mchoice() {

@@ -110,10 +110,10 @@ function attatchments() {
     
     mkindex() {
 
-        echo "<link rel=\"stylesheet\" \
-        href=\"/usr/share/idiomind/default/attstyle.css\">\
-        <body><div class=\"summary\">" \
-        > "$DC_tlt/att.html"
+echo "<link rel=\"stylesheet\" \
+href=\"/usr/share/idiomind/default/attstyle.css\">\
+<body><div class=\"summary\">" \
+> "$DC_tlt/att.html"
 
         while read -r file; do
     
@@ -183,8 +183,8 @@ style=\"width:100%;height:100%\"><br><br>" \
 fi
         done <<<"$(ls "$DM_tlt/attchs")"
     
-            echo "<br><br></div>
-            </body>" >> "$DC_tlt/att.html"
+echo "<br><br></div>
+</body>" >> "$DC_tlt/att.html"
             
     }
     
@@ -365,164 +365,6 @@ if __name__ == "__main__":
 END
 }
 
-function check_index() {
-
-    source /usr/share/idiomind/ifs/c.conf
-    DC_tlt="$DM_tl/$2/.conf"
-    DM_tlt="$DM_tl/$2"
-    
-    function check() {
-
-        n=0
-        while [ $n -le 4 ]; do
-            [ ! -f "$DC_tlt/$n.cfg" ] && touch "$DC_tlt/$n.cfg"
-            check_index1 "$DC_tlt/$n.cfg"
-            chk=$(wc -l < "$DC_tlt/$n.cfg")
-            [ -z "$chk" ] && chk=0
-            eval chk$n=$(echo $chk)
-            ((n=n+1))
-        done
-        
-        if [ ! -f "$DC_tlt/8.cfg" ]; then
-            if grep -Fxo "$2" "$DM_tl/.3.cfg"; then
-            echo '6' > "$DC_tlt/8.cfg"
-            else echo '1' > "$DC_tlt/8.cfg"; fi
-        fi
-        eval stts=$(< "$DC_tlt/8.cfg")
-
-        eval mp3s="$(cd "$DM_tlt/"; find . -maxdepth 2 -name '*.mp3' \
-        | sort -k 1n,1 -k 7 | wc -l)"
-    }
-    
-    function fix() {
-       rm "$DC_tlt/0.cfg" "$DC_tlt/1.cfg" "$DC_tlt/2.cfg" \
-       "$DC_tlt/3.cfg" "$DC_tlt/4.cfg"
-       
-       while read name; do
-        
-            sfname="$(nmfile "$name")"
-
-            if [ -f "$DM_tlt/$name.mp3" ]; then
-                tgs="$(eyeD3 "$DM_tlt/$name.mp3")"
-                trgt="$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')"
-                [ -z "$trgt" ] && rm "$DM_tlt/$name.mp3" && continue
-                xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
-                [ "$name" != "$xname" ] && \
-                mv -f "$DM_tlt/$name.mp3" "$DM_tlt/$xname.mp3"
-                echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
-                echo "$trgt" >> "$DC_tlt/4.cfg.tmp"
-            elif [ -f "$DM_tlt/$sfname.mp3" ]; then
-                tgs=$(eyeD3 "$DM_tlt/$sfname.mp3")
-                trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
-                [ -z "$trgt" ] && rm "$DM_tlt/$sfname.mp3" && continue
-                xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
-                [ "$sfname" != "$xname" ] && \
-                mv -f "$DM_tlt/$sfname.mp3" "$DM_tlt/$xname.mp3"
-                echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
-                echo "$trgt" >> "$DC_tlt/4.cfg.tmp"
-            elif [ -f "$DM_tlt/words/$name.mp3" ]; then
-                tgs="$(eyeD3 "$DM_tlt/words/$name.mp3")"
-                trgt="$(echo "$tgs" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')"
-                [ -z "$trgt" ] && rm "$DM_tlt/words/$name.mp3" && continue
-                xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
-                [ "$name" != "$xname" ] && \
-                mv -f "$DM_tlt/words/$name.mp3" "$DM_tlt/words/$xname.mp3"
-                echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
-                echo "$trgt" >> "$DC_tlt/3.cfg.tmp"
-            elif [ -f "$DM_tlt/words/$sfname.mp3" ]; then
-                tgs="$(eyeD3 "$DM_tlt/words/$sfname.mp3")"
-                trgt="$(echo "$tgs" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')"
-                [ -z "$trgt" ] && rm "$DM_tlt/words/$sfname.mp3" && continue
-                xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
-                [ "$sfname" != "$xname" ] \
-                && mv -f "$DM_tlt/words/$sfname.mp3" "$DM_tlt/words/$xname.mp3"
-                echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
-                echo "$trgt" >> "$DC_tlt/3.cfg.tmp"
-            fi
-            
-        done < "$index"
-
-        [ -f "$DC_tlt/0.cfg.tmp" ] && mv -f "$DC_tlt/0.cfg.tmp" "$DC_tlt/0.cfg"
-        [ -f "$DC_tlt/3.cfg.tmp" ] && mv -f "$DC_tlt/3.cfg.tmp" "$DC_tlt/3.cfg"
-        [ -f "$DC_tlt/4.cfg.tmp" ] && mv -f "$DC_tlt/4.cfg.tmp" "$DC_tlt/4.cfg"
-        cp -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"
-        cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
-        
-        check_index1 "$DC_tlt/0.cfg" "$DC_tlt/1.cfg" \
-        "$DC_tlt/2.cfg" "$DC_tlt/3.cfg" "$DC_tlt/4.cfg"
-        
-        if [ $? -ne 0 ]; then
-            [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
-            msg " $(gettext "File not found")\n" error & exit 1
-        fi
-        
-        if [ "$stts" = "13" ]; then
-            if grep -Fxo "$topic" < "$DM_tl/.3.cfg"; then
-                echo "6" > "$DC_tlt/8.cfg"
-            elif grep -Fxo "$topic" < "$DM_tl/.2.cfg"; then
-                echo "1" > "$DC_tlt/8.cfg"
-            else
-                echo "1" > "$DC_tlt/8.cfg"
-            fi
-        fi
-    }
-        
-    function files() {
-        
-        cd "$DM_tlt/words/"
-        for i in *.mp3 ; do [ ! -s ${i} ] && rm ${i} ; done
-        if [ -f ".mp3" ]; then rm ".mp3"; fi
-        cd "$DM_tlt/"
-        for i in *.mp3 ; do [[ ! -s ${i} ]] && rm ${i} ; done
-        if [ -f ".mp3" ]; then rm ".mp3"; fi
-        cd "$DM_tlt/"; find . -maxdepth 2 -name '*.mp3' \
-        | sort -k 1n,1 -k 7 | sed s'|\.\/words\/||'g \
-        | sed s'|\.\/||'g | sed s'|\.mp3||'g > "$DT/index"
-    }
-
-    check
-
-    if [[ $(($chk3 + $chk4)) != $chk0 || $(($chk1 + $chk2)) != $chk0 \
-    || $mp3s != $chk0 || $stts = 13 ]]; then
-    
-        (sleep 1
-        notify-send -i idiomind "$(gettext "Index error")" "$(gettext "fixing...")" -t 3000) &
-        > "$DT/ps_lk"
-        [ ! -d "$DM_tlt/.conf" ] && mkdir "$DM_tlt/.conf"
-        DC_tlt="$DM_tlt/.conf"
-        
-        files
-        
-        if ([ -f "$DC_tlt/.11.cfg" ] && \
-        [ -n "$(< "$DC_tlt/.11.cfg")" ]); then
-            index="$DC_tlt/.11.cfg"
-        else
-            index="$DT/index"
-        fi
-        
-        fix
-    fi
-
-    check
-    
-    if [[ $(($chk3 + $chk4)) != $chk0 || $(($chk1 + $chk2)) != $chk0 \
-    || $mp3s != $chk0 || $stts = 13 ]]; then
-
-        files
-        
-        index="$DT/index"; rm "$DC_tlt/.11.cfg"
-
-        fix
-    fi
-    
-    n=0
-    while [ $n -le 4 ]; do
-        touch "$DC_tlt/$n.cfg"
-        ((n=n+1))
-    done
-    rm -f "$DT/index" "$DM_tlt/.conf/9.cfg"
-    "$DS/mngr.sh" mkmn & exit 1
-}
 
 function set_image() {
 

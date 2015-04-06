@@ -59,6 +59,7 @@ Vietnamese"
 check_source_1() {
 
     file="${2}"
+    nu='^[0-9]+$'
     
     name="$(sed -n 1p < "${file}" | grep -o 'name="[^"]*' | grep -o '[^"]*$')"
     language_source=$(sed -n 2p < "${file}" | grep -o 'language_source="[^"]*' | grep -o '[^"]*$')
@@ -67,54 +68,44 @@ check_source_1() {
     contact=$(sed -n 5p < "${file}" | grep -o 'contact="[^"]*' | grep -o '[^"]*$')
     category=$(sed -n 6p < "${file}" | grep -o 'category="[^"]*' | grep -o '[^"]*$')
     link=$(sed -n 7p < "${file}" | grep -o 'link="[^"]*' | grep -o '[^"]*$')
-    date_c=$(sed -n 8p < "${file}" | grep -o 'date_c="[^"]*' | grep -o '[^"]*$')
-    date_u=$(sed -n 9p < "${file}" | grep -o 'date_u="[^"]*' | grep -o '[^"]*$')
+    date_c=$(sed -n 8p < "${file}" | grep -o 'date_c="[^"]*' | grep -o '[^"]*$' | tr -d '-')
+    date_u=$(sed -n 9p < "${file}" | grep -o 'date_u="[^"]*' | grep -o '[^"]*$' | tr -d '-')
     nwords=$(sed -n 10p < "${file}" | grep -o 'nwords="[^"]*' | grep -o '[^"]*$')
     nsentences=$(sed -n 11p < "${file}" | grep -o 'nsentences="[^"]*' | grep -o '[^"]*$')
     nimages=$(sed -n 12p < "${file}" | grep -o 'nimages="[^"]*' | grep -o '[^"]*$')
     level=$(sed -n 13p < "${file}" | grep -o 'level="[^"]*' | grep -o '[^"]*$')
 
-    if [ "${name}" != "${3}" ]; then
+    if [ "${name}" != "${3}" ] || [ $(wc -c <<<"${name}") -gt 80 ] || \
+    [ `grep -o -E '\.|\*|\/|\@|$|\)|\(|=|-' <<<"${name}"` ]; then
     msg "$(gettext "File is corrupted. E1")" error & exit 1
-    
     elif ! grep -Fox "${language_source}" <<<"${LANGUAGES}"; then
     msg "$(gettext "File is corrupted. E2")" error && exit 1
-    
     elif ! grep -Fox "${language_target}" <<<"${LANGUAGES}"; then
     msg "$(gettext "File is corrupted. E3")" error & exit 1
-    
-    elif [ $(wc -c <<<"${author}") -gt 20 ]; then
+    elif [ $(wc -c <<<"${author}") -gt 20 ] || \
+    [ `grep -o -E '\.|\*|\/|\@|$|\)|\(|=|-' <<<"${author}"` ]; then
     msg "$(gettext "File is corrupted. E4")" error & exit 1
-    
-    elif [ $(wc -c <<<"${contact}") -gt 20 ]; then
-    msg "$(gettext "File is corrupted. Error 5")" & exit 1
-    
+    elif [ $(wc -c <<<"${contact}") -gt 30 ] || \
+    [ `grep -o -E '\*|\/|$|\)|\(|=' <<<"${contact}"` ]; then
+    msg "$(gettext "File is corrupted. Error 5")" error & exit 1
     elif ! grep -Fox "${category}" <<<"${CATEGORIES}"; then
     msg "$(gettext "File is corrupted. E6")" error & exit 1
-    
-    elif [ $(wc -c <<<"${link}") -gt 400 ]; then
+    elif ! [[ 1 =~ $nu ]] || [ $(wc -c <<<"${link}") -gt 400 ]; then
     msg "$(gettext "File is corrupted. E7")" error & exit 1
-    
-    elif [ $(wc -c <<<"${date_c}") -gt 10 ]; then
+    elif ! [[ $date_c =~ $nu ]] || [ $(wc -c <<<"${date_c}") -gt 12 ]; then
     msg "$(gettext "File is corrupted. E8")" error & exit 1
-    
-    elif [ 1 -gt 10 ]; then
+    elif ! [[ $date_u =~ $nu ]] || [ $(wc -c <<<"${date_u}") -gt 12 ]; then
     msg "$(gettext "File is corrupted. E9")" error & exit 1
-    
-    elif [ "${nwords}" -gt 200 ]; then
+    elif ! [[ $nwords =~ $nu ]] || [ "${nwords}" -gt 200 ]; then
     msg "$(gettext "File is corrupted. E10")" error & exit 1
-    
-    elif [ "${nsentences}" -gt 200 ]; then
+    elif ! [[ $nsentences =~ $nu ]] || [ "${nsentences}" -gt 200 ]; then
     msg "$(gettext "File is corrupted. E11")" error & exit 1
-    
-    elif [ "${nimages}" -gt 200 ]; then
+    elif ! [[ $nimages =~ $nu ]] || [ "${nimages}" -gt 200 ]; then
     msg "$(gettext "File is corrupted. E12")" error & exit 1
-    
-    elif [ $(wc -c <<<"$level") -gt 2 ]; then
+    elif ! [[ $level =~ $nu ]] || [ $(wc -c <<<"$level") -gt 2 ]; then
     msg "$(gettext "File is corrupted. E13")" error & exit 1
-    
     else
-        head -n14 < "${file}" > "$DT/$name.cfg"
+    head -n14 < "${file}" > "$DT/$name.cfg"
     fi
 }
 
@@ -125,11 +116,135 @@ check_install() {
 
 text() {
 
-    yad --width=300 --height=250 --form --field="$(< "$2")":lbl \
-    --on-top --name=Idiomind --class=Idiomind --scroll --fixed \
-    --window-icon="$DS/images/logo.png" --center --borders=5 \
+    dirs="$(cd "$2"; find . -maxdepth 5 -type d)"
+    files="$(cd "$2"; find . -maxdepth 5 -type f)"
+    hfiles="$(ls -d "$2"/.[^.]* | less)"
+    exfiles="$(cd "$2"; find . -maxdepth 1 -perm -111 -type f)"
+    wordsdir="$(cd "$2/words/"; find . -maxdepth 1 -type f)"
+    [ -d "$2/attchs" ] && attchdir="$(cd "$2/attchs/"; find . -maxdepth 1 -type f)"
+    imagesdir="$(cd "$2/words/images/"; find . -maxdepth 1 -type f)"
+    audiodir="$(cd "$2/audio/"; find . -maxdepth 1 -type f)"
+    maindir="$(cd "$2"; find . -maxdepth 1 -type f)"
+    wcdirs=`wc -l <<<"${dirs}"`
+    wcfiles=`wc -l <<<"${files}"`
+    wchfiles=`wc -l <<<"${hfiles}"`
+    wcexfiles=`wc -l <<<"${exfiles}"`
+    SRFL1=$(cat "$2/12.cfg")
+    SRFL2=$(cat "$2/10.cfg")
+    SRFL3=$(cat "$2/4.cfg")
+    SRFL4=$(cat "$2/3.cfg")
+    SRFL5=$(cat "$2/0.cfg")
+    
+    echo -e "
+SUMMARY
+===========================
+$wcdirs directories
+$wcfiles files
+$wchfiles hide files
+$wcexfiles executables files
+
+
+
+
+DIRECTORIES
+===========================
+$dirs
+
+
+
+
+HIDE FILES
+===========================
+$hfiles
+
+
+
+
+EXECUTABLES FILES
+===========================
+$exfiles
+
+
+
+
+FILES
+===========================
+
+./
+
+$maindir
+
+
+
+./words
+
+$wordsdir
+
+
+
+./words/images
+
+$imagesdir
+
+
+
+./attchs
+
+$attchsdir
+
+
+
+./audio
+
+$audiodir
+
+
+
+
+TEXT FILES
+===========================
+
+12.cfg content (configuration file)
+
+$SRFL1
+
+
+
+
+10.cfg content (note)
+
+$SRFL2
+
+
+
+
+4.cfg content (sentences list)
+
+$SRFL3
+
+
+
+
+3.cfg content (words list)
+
+$SRFL4
+
+
+
+
+0.cfg content (index list)
+
+$SRFL5
+
+
+
+" | yad --width=520 --height=450 --text-info --margins=10 \
+    --on-top --name=Idiomind --class=Idiomind \
+    --buttons-layout=edge --scroll \
+    --window-icon="$DS/images/logo.png" --center --borders=0 \
+    --button="$(gettext "Open Folder")":"xdg-open '$2'" \
     --button="$(gettext "Close")":0 \
-    --title="$(gettext "Info")" >/dev/null 2>&1
+    --title="$(gettext "Installation details")" >/dev/null 2>&1
 }
 
 check_index() {

@@ -137,7 +137,7 @@ nme=$(echo "$tpc" | sed 's/ /_/g' \
 | sed 's/"//g' | sed 's/’//g')
 imgm="$DM_tlt/words/images/img.jpg"
 
-"$DS/ifs/tls.sh" check_index "$tpc"
+"$DS/ifs/safe.sh" check_index "$tpc"
 
 if [ $(cat "$DC_tlt/0.cfg" | wc -l) -ge 20 ]; then
 btn="--button="$(gettext "Upload")":0"; else
@@ -197,11 +197,12 @@ level=$(echo "$upld" | cut -d "|" -f5)
 [ "$level" = $(gettext "Intermediate") ] && level=2
 [ "$level" = $(gettext "Advanced") ] && level=3
 
+if [ -n "$img" ]; then
 wsize="$(identify "$img" | cut -d ' ' -f 3 | cut -d 'x' -f 1)"
 esize="$(identify "$img" | cut -d ' ' -f 3 | cut -d 'x' -f 2)"
 if [ "$wsize" != 600 ] || [ "$esize" != 150 ]; then
 msg " $(gettext "Sorry, the image size is not suitable.")\n " info
-$DS/ifs/upld.sh & exit 1
+$DS/ifs/upld.sh & exit 1; fi
 fi
 
 if [ "$img" != "$imgm" ]; then
@@ -229,7 +230,7 @@ Author=$(echo "$upld" | cut -d "|" -f2)
 Mail=$(echo "$upld" | cut -d "|" -f3)
 notes=$(echo "$upld" | cut -d "|" -f6)
 img=$(echo "$upld" | cut -d "|" -f7)
-link="$U.$tpc.idmnd"
+link="$U"
 
 mkdir "$DT/upload"
 DT_u="$DT/upload"
@@ -241,7 +242,7 @@ images=$(ls *.jpg | wc -l); else
 images=0; fi
 [ -f "$DC_tlt/3.cfg" ] && words=$(wc -l < "$DC_tlt/3.cfg")
 [ -f "$DC_tlt/4.cfg" ] && sentences=$(wc -l < "$DC_tlt/4.cfg")
-[ -f "$DC_tlt/12.cfg" ] && date_c=$(< "$DC_tlt/12.cfg")
+[ -f "$DC_tlt/12.cfg" ] && date_c="$(sed -n 8p < "$DC_tlt/12.cfg" | grep -o 'date_c="[^"]*' | grep -o '[^"]*$')"
 date_u=$(date +%F)
 
 echo -e "name=\"$tpc\"
@@ -266,7 +267,7 @@ cd "$DM_tlt"
 cp -r ./* "$DT_u/$tpc/"
 cp -r "./words" "$DT_u/$tpc/"
 cp -r "./words/images" "$DT_u/$tpc/words"
-mkdir "$DT_u/$tpc/.audio"
+mkdir "$DT_u/$tpc/audio"
 
 auds="$(uniq < "$DC_tlt/4.cfg" | sed 's/ /\n/g' \
 | grep -v '^.$' | grep -v '^..$' \
@@ -276,7 +277,7 @@ auds="$(uniq < "$DC_tlt/4.cfg" | sed 's/ /\n/g' \
 
 while read -r audio; do
     if [ -f "$DM_tl/.share/$audio.mp3" ]; then
-    cp -f "$DM_tl/.share/$audio.mp3" "$DT_u/$tpc/.audio/$audio.mp3"; fi
+    cp -f "$DM_tl/.share/$audio.mp3" "$DT_u/$tpc/audio/$audio.mp3"; fi
 done <<<"$auds"
 
 cp -f "$DC_tlt/0.cfg" "$DT_u/$tpc/0.cfg"
@@ -285,13 +286,16 @@ cp -f "$DC_tlt/4.cfg" "$DT_u/$tpc/4.cfg"
 printf "$notes" > "$DC_tlt/10.cfg"
 printf "$notes" > "$DT_u/$tpc/10.cfg"
 
+[ "$DT_u/$tpc/tpc.sh" ] && rm -f "$DT_u/$tpc/tpc.sh"
+#chmod -x -R $DT_u
 cd $DT_u
+
 tar -cvf "$tpc.tar" "$tpc"
 gzip -9 "$tpc.tar"
 mv "$tpc.tar.gz" "$U.$tpc.idmnd"
 [ -d "$DT_u/$tpc" ] && rm -fr "$DT_u/$tpc"
 dte=$(date "+%d %B %Y")
-notify-send "$(gettext "Please wait while file is uploaded")" "$(gettext "$tpc")" -i idiomind -t 6000
+notify-send "$(gettext "Uploading")" "$(gettext "Please wait while file is uploaded")" -i idiomind -t 6000
 
 cd $DT_u
 lftp -u $USER,$KEY $FTPHOST << END_SCRIPT
