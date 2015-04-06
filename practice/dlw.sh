@@ -31,12 +31,12 @@ ling=0
 
 score() {
 
-    if [ "$(($(cat l_w)+$1))" -ge "$all" ] ; then
+    if [[ $(($(< l_w)+$1)) -ge $all ]]; then
         echo "w9.$(tr -s '\n' '|' < ok.w).w9" >> "$log"
         rm lwin lwin1 lwin2 lwin3 ok.w
         echo "$(date "+%a %d %B")" > look_lw
         echo 21 > .iconlw
-        play $drts/all.mp3 & $strt 3 &
+        play "$drts/all.mp3" & "$strt" 3 &
         killall dlw.sh
         exit 1
         
@@ -45,7 +45,7 @@ score() {
         s=$(cat l_w)
         v=$((100*$s/$all))
         n=1; c=1
-        while [ "$n" -le 21 ]; do
+        while [[ $n -le 21 ]]; do
                 if [ "$v" -le "$c" ]; then
                 echo "$n" > .iconlw; break; fi
                 ((c=c+5))
@@ -56,7 +56,7 @@ score() {
         if [ -f lwin3 ]; then
             echo "w6.$(tr -s '\n' '|' < lwin3).w6" >> "$log"
             rm lwin3; fi
-        $strt 8 $easy $ling $hard & exit 1
+        "$strt" 8 $easy $ling $hard & exit 1
     fi
 }
 
@@ -67,13 +67,11 @@ fonts() {
     && lst="${1:0:1} ${1:5:5}" || lst=$(echo "$1" | awk '$1=$1' FS= OFS=" " | tr aeiouy '.')
     elif [ $p = 1 ]; then
     [ $lgtl = Japanese ] || [ $lgtl = Chinese ] || [ $lgtl = Russian ] \
-    && lst="${1:0:1} ${1:5:5}" || lst=$(echo "${1^}" | sed "s|[a-z]|"\ \."|g")
-    fi
+    && lst="${1:0:1} ${1:5:5}" || lst=$(echo "${1^}" | sed "s|[a-z]|"\ \."|g"); fi
     
-    s=$((40-$(echo "$1" | wc -c)))
+    s=$((30-$(wc -c <<<"$1")))
     img="/usr/share/idiomind/images/fc.png"
-    lcuestion="$lst"
-    lanswer="$1"
+    lcuestion="\n\n<span font_desc='Verdana $s'><b>$lst</b></span>\n\n\n\n\n"
 
     }
 
@@ -86,12 +84,12 @@ cuestion() {
     --center --on-top --image-on-top \
     --skip-taskbar --title=" " --borders=5 \
     --buttons-layout=spread \
-    --text="\n\n<span font_desc='Verdana $s'><b>$lcuestion</b></span>\n\n\n\n\n" \
+    --text="$lcuestion" \
     --field=play:BTN "$play" \
     --width=371 --height=280 \
     --button="$(gettext "Exit")":1 \
-    --button="     $(gettext "I don't know")     ":3 \
-    --button="     $(gettext "I know")     ":2
+    --button="  $(gettext "I don't know")  ":3 \
+    --button="  $(gettext "I know")  ":2
     }
 
 
@@ -111,7 +109,7 @@ while read trgt; do
             hard=$(($hard+1))
 
     elif [ $ans = 1 ]; then
-        $drts/cls w $easy $ling $hard $all &
+        "$drts/cls" w $easy $ling $hard $all &
         break &
         exit 1
         
@@ -138,7 +136,7 @@ else
                 echo "$trgt" >> lwin3
 
         elif [ $ans = 1 ]; then
-            $drts/cls w $easy $ling $hard $all &
+            "$drts/cls" w $easy $ling $hard $all &
             break &
             exit 1
         fi

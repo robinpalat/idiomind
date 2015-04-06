@@ -17,21 +17,21 @@ ling=0
 
 score() {
 
-    if [ "$(($(cat l_m)+$1))" -ge "$all" ]; then
+    if [[ $(($(< l_m)+$1)) -ge $all ]]; then
         echo "w9.$(tr -s '\n' '|' < ok.m).w9" >> "$log"
         rm mcin mcin1 mcin2 mcin3 ok.m
         echo "$(date "+%a %d %B")" > look_mc
         echo 21 > .iconmc
-        play $drts/all.mp3 & $strt 2 &
+        play "$drts/all.mp3" & "$strt" 2 &
         killall dmc.sh
         exit 1
         
     else
-        [ -f l_m ] && echo "$(($(cat l_m)+$easy))" > l_m || echo $easy > l_m
-        s=$(cat l_m)
+        [ -f l_m ] && echo "$(($(< l_m)+$easy))" > l_m || echo $easy > l_m
+        s=$(< l_m)
         v=$((100*$s/$all))
         n=1; c=1
-        while [ "$n" -le 21 ]; do
+        while [[ $n -le 21 ]]; do
                 if [ "$v" -le "$c" ]; then
                 echo "$n" > .iconmc; break; fi
                 ((c=c+5))
@@ -42,7 +42,7 @@ score() {
         if [ -f mcin3 ]; then
             echo "w6.$(tr -s '\n' '|' < mcin3).w6" >> "$log"
             rm mcin3; fi
-        $strt 7 $easy $ling $hard & exit 1
+        "$strt" 7 $easy $ling $hard & exit 1
     fi
 }
 
@@ -58,6 +58,7 @@ fonts() {
     echo "$ells" > word2.tmp
     sed '/^$/d' word2.tmp > word2.id
     s=$((40-$(echo "$1" | wc -c)))
+    cuestion="\n<span font_desc='Free Sans $s'><b>$1</b></span>\n\n"
     }
 
 
@@ -70,12 +71,10 @@ ofonts() {
 
 mchoise() {
     
-    dlg=$(ofonts | yad --list --on-top --skip-taskbar --title=" " \
-    --width=390 --height=350 --center --undecorated \
-    --text-align=center --no-headers --borders=6 \
-    --button="$(gettext "Exit")":1 \
-    --text="\n<span font_desc='Free Sans $s'><b>$1</b></span>\n\n" \
-    --column=Opcion )
+    dlg=$(ofonts | yad --list --on-top --skip-taskbar \
+    --title=" " --width=390 --height=350 --center --undecorated \
+    --text-align=center --no-headers --borders=6 --column=Option \
+    --button="$(gettext "Exit")":1 --text="$cuestion")
 }
 
 while read trgt; do
@@ -97,7 +96,7 @@ while read trgt; do
         fi  
             
     elif [ $ret = 1 ]; then
-        $drts/cls m $easy $ling $hard $all &
+        "$drts/cls" m $easy $ling $hard $all &
         break &
         exit 1
     fi
@@ -126,7 +125,7 @@ else
             fi
 
         elif [ $ret = 1 ]; then
-            $drts/cls m $easy $ling $hard $all &
+            "$drts/cls" m $easy $ling $hard $all &
             break &
             exit 1
         fi

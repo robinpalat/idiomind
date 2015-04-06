@@ -16,12 +16,12 @@ ling=0
 
 score() {
 
-    if [ "$(($(cat l_f)+$1))" -ge "$all" ]; then
+    if [[ $(($(< l_f)+$1)) -ge $all ]]; then
         echo "w9.$(tr -s '\n' '|' < ok.f).w9" >> "$log"
         rm fin fin1 fin2 ok.f
         echo "$(date "+%a %d %B")" > look_f
         echo 21 > .iconf
-        play "$drts/all.mp3" & $strt 1 &
+        play "$drts/all.mp3" & "$strt" 1 &
         killall df.sh
         exit 1
         
@@ -30,7 +30,7 @@ score() {
         s=$(cat l_f)
         v=$((100*$s/$all))
         n=1; c=1
-        while [ "$n" -le 21 ]; do
+        while [[ $n -le 21 ]]; do
                 if [ "$v" -le "$c" ]; then
                 echo "$n" > .iconf; break; fi
                 ((c=c+5))
@@ -49,16 +49,18 @@ fonts() {
     
     fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
     src=$(eyeD3 "$drtt/$fname.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
-    s=$((40-$(echo "$1" | wc -c)))
-    c=$((26-$(echo "$1" | wc -c)))
-    lcuestion="$1"
+    s=$((40-$(wc -c <<<"$1")))
+    c=$((25-$(wc -c <<<"$1")))
+    acuestion="\n\n<span font_desc='Free Sans $s'><b>$1</b></span>"
+    bcuestion="\n\n<span font_desc='Free Sans $c'>$1</span>"
+    answer="<span font_desc='Free Sans $s'><b>$src</b></span>"
 }
 
 cuestion() {
     
     yad --form --text-align=center --undecorated --center --on-top  \
     --skip-taskbar --title=" " --borders=5 --buttons-layout=spread \
-    --field="\n\n<span font_desc='Free Sans $s'><b>$lcuestion</b></span>":lbl \
+    --field="$acuestion":lbl \
     --align=center --width=375 --height=280 \
     --button=" $(gettext "Exit") ":1 \
     --button=" $(gettext "Answer") >> ":0
@@ -69,9 +71,9 @@ answer() {
     yad --form --text-align=center --undecorated --center --on-top \
     --skip-taskbar --title=" " --borders=5 \
     --buttons-layout=spread --align=center \
-    --field="\n\n<span font_desc='Free Sans $c'>$lcuestion</span>":lbl \
+    --field="$bcuestion":lbl \
     --field="":lbl \
-    --field="<span font_desc='Free Sans $s'><b>$src</b></span>":lbl \
+    --field="$answer":lbl \
     --width=375 --height=280 \
     --button="     $(gettext "I don't know")     ":3 \
     --button="     $(gettext "I know")     ":2
@@ -87,7 +89,7 @@ while read trgt; do
         answer
         ans=$(echo "$?")
 
-        if [ "$ans" = 2 ]; then
+        if [ $ans = 2 ]; then
             echo "$trgt" >> ok.f
             easy=$(($easy+1))
 

@@ -58,9 +58,11 @@ Vietnamese"
 
 check_source_1() {
 
-    file="${2}"
+    dir="${2}"
+    file="${dir}/12.cfg"
     nu='^[0-9]+$'
     
+    dirs="$(find "${dir}"/ -maxdepth 5 -type d | sed '/^$/d' | wc -l)"
     name="$(sed -n 1p < "${file}" | grep -o 'name="[^"]*' | grep -o '[^"]*$')"
     language_source=$(sed -n 2p < "${file}" | grep -o 'language_source="[^"]*' | grep -o '[^"]*$')
     language_target=$(sed -n 3p < "${file}" | grep -o 'language_target="[^"]*' | grep -o '[^"]*$')
@@ -77,33 +79,39 @@ check_source_1() {
 
     if [ "${name}" != "${3}" ] || [ $(wc -c <<<"${name}") -gt 80 ] || \
     [ `grep -o -E '\.|\*|\/|\@|$|\)|\(|=|-' <<<"${name}"` ]; then
-    msg "$(gettext "File is corrupted. E1")" error & exit 1
+    msg "$(gettext "File is corrupted.") E1\n" error & exit 1
     elif ! grep -Fox "${language_source}" <<<"${LANGUAGES}"; then
-    msg "$(gettext "File is corrupted. E2")" error && exit 1
+    msg "$(gettext "File is corrupted.") E2\n" error && exit 1
     elif ! grep -Fox "${language_target}" <<<"${LANGUAGES}"; then
-    msg "$(gettext "File is corrupted. E3")" error & exit 1
+    msg "$(gettext "File is corrupted.") E3\n" error & exit 1
     elif [ $(wc -c <<<"${author}") -gt 20 ] || \
     [ `grep -o -E '\.|\*|\/|\@|$|\)|\(|=|-' <<<"${author}"` ]; then
-    msg "$(gettext "File is corrupted. E4")" error & exit 1
+    msg "$(gettext "File is corrupted.") E4\n" error & exit 1
     elif [ $(wc -c <<<"${contact}") -gt 30 ] || \
     [ `grep -o -E '\*|\/|$|\)|\(|=' <<<"${contact}"` ]; then
-    msg "$(gettext "File is corrupted. Error 5")" error & exit 1
+    msg "$(gettext "File is corrupted.") E5\n" error & exit 1
     elif ! grep -Fox "${category}" <<<"${CATEGORIES}"; then
-    msg "$(gettext "File is corrupted. E6")" error & exit 1
-    elif ! [[ 1 =~ $nu ]] || [ $(wc -c <<<"${link}") -gt 400 ]; then
-    msg "$(gettext "File is corrupted. E7")" error & exit 1
-    elif ! [[ $date_c =~ $nu ]] || [ $(wc -c <<<"${date_c}") -gt 12 ]; then
-    msg "$(gettext "File is corrupted. E8")" error & exit 1
-    elif ! [[ $date_u =~ $nu ]] || [ $(wc -c <<<"${date_u}") -gt 12 ]; then
-    msg "$(gettext "File is corrupted. E9")" error & exit 1
+    msg "$(gettext "File is corrupted.") E6\n" error & exit 1
+    elif ! [[ 1 =~ $nu ]] || [ $(wc -c <<<"${link}") -gt 400 ]; then # TODO
+    msg "$(gettext "File is corrupted.") E7\n" error & exit 1
+    elif ! [[ $date_c =~ $nu ]] || [ $(wc -c <<<"${date_c}") -gt 12 ] && \
+    [ -n "${date_c}" ]; then
+    msg "$(gettext "File is corrupted.") E8\n" error & exit 1
+    elif ! [[ $date_u =~ $nu ]] || [ $(wc -c <<<"${date_u}") -gt 12 ] && \
+    [ -n "${date_u}" ]; then
+    msg "$(gettext "File is corrupted.") E9\n" error & exit 1
     elif ! [[ $nwords =~ $nu ]] || [ "${nwords}" -gt 200 ]; then
-    msg "$(gettext "File is corrupted. E10")" error & exit 1
+    msg "$(gettext "File is corrupted.") E10\n" error & exit 1
     elif ! [[ $nsentences =~ $nu ]] || [ "${nsentences}" -gt 200 ]; then
-    msg "$(gettext "File is corrupted. E11")" error & exit 1
+    msg "$(gettext "File is corrupted.") E11\n" error & exit 1
     elif ! [[ $nimages =~ $nu ]] || [ "${nimages}" -gt 200 ]; then
-    msg "$(gettext "File is corrupted. E12")" error & exit 1
+    msg "$(gettext "File is corrupted.") E12\n" error & exit 1
     elif ! [[ $level =~ $nu ]] || [ $(wc -c <<<"$level") -gt 2 ]; then
-    msg "$(gettext "File is corrupted. E13")" error & exit 1
+    msg "$(gettext "File is corrupted.") E13\n" error & exit 1
+    elif grep "invalid" <<<"$chckf"; then
+    msg "$(gettext "File is corrupted.") E14\n" error & exit 1
+    elif [[ $dirs -gt 5 ]] ; then
+    msg "$(gettext "File is corrupted.") E15\n" error & exit 1
     else
     head -n14 < "${file}" > "$DT/$name.cfg"
     fi
@@ -111,24 +119,29 @@ check_source_1() {
 
 check_install() {
 
- echo >/dev/null 2>&1
+    chckf=""
+    
+    while read -r f; do
+        if ! file "$f" | grep -o -E 'Audio|ASCII|UTF-8|empty|MPEG|JPEG|data'; then
+        chckf="invalid"; fi
+    done <<<"$(find "$dir" -maxdepth 5 -type f)"
 }
 
 text() {
-
-    dirs="$(cd "$2"; find . -maxdepth 5 -type d)"
-    files="$(cd "$2"; find . -maxdepth 5 -type f)"
-    hfiles="$(ls -d "$2"/.[^.]* | less)"
-    exfiles="$(cd "$2"; find . -maxdepth 1 -perm -111 -type f)"
-    wordsdir="$(cd "$2/words/"; find . -maxdepth 1 -type f)"
-    [ -d "$2/attchs" ] && attchdir="$(cd "$2/attchs/"; find . -maxdepth 1 -type f)"
-    imagesdir="$(cd "$2/words/images/"; find . -maxdepth 1 -type f)"
-    audiodir="$(cd "$2/audio/"; find . -maxdepth 1 -type f)"
-    maindir="$(cd "$2"; find . -maxdepth 1 -type f)"
-    wcdirs=`wc -l <<<"${dirs}"`
-    wcfiles=`wc -l <<<"${files}"`
-    wchfiles=`wc -l <<<"${hfiles}"`
-    wcexfiles=`wc -l <<<"${exfiles}"`
+    cd "$2"
+    dirs="$(find . -maxdepth 5 -type d)"
+    files="$(find . -maxdepth 5 -type f)"
+    hfiles="$(ls -d ./.[^.]* | less)"
+    exfiles="$(find . -maxdepth 5 -perm -111 -type f)"
+    wordsdir="$(cd "./words/"; find . -maxdepth 1 -type f)"
+    attchsdir="$(cd "./attchs/"; find . -maxdepth 5 -type f)"
+    imagesdir="$(cd "./words/images/"; find . -maxdepth 1 -type f)"
+    audiodir="$(cd "./audio/"; find . -maxdepth 1 -type f)"
+    maindir="$(find . -maxdepth 1 -type f)"
+    wcdirs=`sed '/^$/d' <<<"${dirs}" | wc -l`
+    wcfiles=`sed '/^$/d' <<<"${files}" | wc -l`
+    wchfiles=`sed '/^$/d' <<<"${hfiles}" | wc -l`
+    wcexfiles=`sed '/^$/d' <<<"${exfiles}" | wc -l`
     SRFL1=$(cat "$2/12.cfg")
     SRFL2=$(cat "$2/10.cfg")
     SRFL3=$(cat "$2/4.cfg")
@@ -140,7 +153,7 @@ SUMMARY
 ===========================
 $wcdirs directories
 $wcfiles files
-$wchfiles hide files
+$wchfiles hidden files
 $wcexfiles executables files
 
 
@@ -153,7 +166,7 @@ $dirs
 
 
 
-HIDE FILES
+HIDDEN FILES
 ===========================
 $hfiles
 
@@ -239,7 +252,7 @@ $SRFL5
 
 
 " | yad --width=520 --height=450 --text-info --margins=10 \
-    --on-top --name=Idiomind --class=Idiomind \
+    --name=Idiomind --class=Idiomind \
     --buttons-layout=edge --scroll \
     --window-icon="$DS/images/logo.png" --center --borders=0 \
     --button="$(gettext "Open Folder")":"xdg-open '$2'" \

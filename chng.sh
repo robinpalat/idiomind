@@ -64,12 +64,13 @@ if [ "$1" = chngi ]; then
     [ -z "$trgt" ] && trgt="$item"
     imgt="$DM_tlt/words/images/$fname.jpg"
     [ -f "$imgt" ] && osdi="$imgt"
-    if [ "$text" = "TRUE" ]; then
-    notify-send -i "$osdi" "$trgt" "$srce" -t 10000; fi &
-    if [ "$audio" = "TRUE" ]; then
-    "$play" "$file" && wait; fi
+            
+            if [ "$text" = "TRUE" ]; then
+            notify-send -i "$osdi" "$trgt" "$srce" -t 10000; fi &
+            if [ "$audio" = "TRUE" ]; then
+            "$play" "$file" && wait; fi
     
-    if [ "$text" = "TRUE" ] && [ "$loop" -lt 11 ]; then loop=11; fi
+    if [ "$text" = "TRUE" ] && [[ $loop -lt 11 ]]; then loop=11; fi
     sleep "$loop"
     
     [ -f "$DT/.l_loop" ] && rm -f "$DT/.l_loop"
@@ -83,20 +84,19 @@ elif [ "$1" != chngi ]; then
     eht=$(($(sed -n 3p $DC_s/10.cfg)-0))
     
     if [ -n "$1" ]; then
-        text="--text=$1\n"
-        align="left"; h=1
-        img="--image=info"
+    text="--text=$1\n"
+    align="left"; h=1
+    img="--image=info"
     else
-        lgtl=$(echo "$lgtl" | awk '{print tolower($0)}')
-        text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/$lgtl'>$(gettext "Search other topics")</a>   </small></small>"
-        align="right"
-    fi
+    lgtl=$(echo "$lgtl" | awk '{print tolower($0)}')
+    text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/$lgtl'>$(gettext "Search other topics")</a>   </small></small>"
+    align="right"; fi
     
     s=$(cat "$DC_s/0.cfg" | yad --name=Idiomind --text-align=$align \
     --center $img --image-on-top --separator="" --class=Idiomind \
-    "$text" --width=640 --height=560 \
+    "$text" --width=640 --height=560 --borders=7 \
     --ellipsize=END --title="$(gettext "Topics")"  \
-    --no-headers --list --window-icon="$DS/images/logo.png" --borders=7 \
+    --no-headers --list --window-icon="$DS/images/logo.png" \
     --button=gtk-new:3 \
     --button="$(gettext "Apply")":2 \
     --button="$(gettext "Close")":1 \

@@ -36,22 +36,63 @@ done < "$DCP/4.cfg"
 
 CNF=$(gettext "Configure")
 
+
+if [ ! -f "$DCP/0.cfg" ] \
+|| [ -z "$(<"$DCP/0.cfg")" ]; then
+> "$DCP/0.cfg"
+echo -e "update=\"\"
+sync=\"\" >> 
+path=\"\"" >> "$DCP/0.cfg"; fi
+source "$DCP/0.cfg"
+
+apply() {
+    
+    printf "$CNFG" | sed 's/|/\n/g' | sed -n 7,16p | \
+    sed 's/^ *//; s/ *$//g' > "$DT/feeds.tmp"
+
+    n=1; while read feed; do
+        declare mod"$n"="$feed"
+        mod="mod$n"; url="url$n"
+        if [ "${!url}" != "${!mod}" ]; then
+            "$DSP/tls.sh" set_channel "${!mod}" $n & fi
+        ((n=n+1))
+    done < "$DT/feeds.tmp"
+
+    feedstmp="$(cat "$DT/feeds.tmp")"
+    if ([ -n "$feedstmp" ] && [ "$feedstmp" != "$(cat "$DCP/4.cfg")" ]); then
+        mv -f "$DT/feeds.tmp" "$DCP/4.cfg"; else rm -f "$DT/feeds.tmp"; fi
+
+    val1=$(cut -d "|" -f1 <<<"$CNFG")
+    val2=$(cut -d "|" -f2 <<<"$CNFG")
+    val3=$(cut -d "|" -f4 <<<"$CNFG" | sed 's|/|\\/|g')
+    sed -i "s/update=.*/update=$val1/;s/sync=.*/sync=$val2/;s/path=.*/path=$val3/g" "$DCP/0.cfg"
+    [ -f "$DT/cp.lock" ] && rm -f "$DT/cp.lock"
+}
+
 if [ -z "$1" ]; then
 
-CNFG=$(yad --form --center --scroll --borders=10 \
+CNFG=$(yad --form --center --scroll --borders=20 \
 --window-icon=idiomind --skip-taskbar --separator="|" \
 --name=Idiomind --class=Idiomind --text=" " \
---width=550 --height=360 --always-print-result --print-all --on-top \
+--width=600 --height=460 --always-print-result --print-all --on-top \
 --title="$(gettext "Feeds settings")"  \
---field="$(gettext "Update at startup")\t\t\t\t\t\t\t\t\t\t\t":CHK "$st2" \
+--text="$(gettext "Configure feeds to learn with podcasts or news.")"  \
+--field="$(gettext "Update at startup")":CHK "$update" \
+--field="$(gettext "Sync after update")":CHK "$sync" \
+--field="$(gettext "Mountpoint or path where episodes should be synced.")":LBL " " \
+--field="":DIR "$path" \
+--field=" ":LBL " " \
+--field="$(gettext "Feeds")":LBL " " \
 --field="" "$url1" --field="" "$url2" --field="" "$url3" \
 --field="" "$url4" --field="" "$url5" --field="" "$url6" \
 --field="" "$url7" --field="" "$url8" --field="" "$url9" \
 --field="" "$url10" \
 --button="$(gettext "Cancel")":1 \
---button="$(gettext "Syncronize")":"$DSP/tls.sh 'syndlg'" \
+--button="$(gettext "Advance")":2 \
+--button="$(gettext "Syncronize")":5 \
 --button="gtk-apply":0)
-#--button="$(gettext "Advance")":2 
+
+
 
 elif [ "$1" = "adv" ]; then
 
@@ -60,11 +101,10 @@ CNFG=$(yad --form --center --scroll --columns=2 --borders=10 \
 --name=Idiomind --class=Idiomind --text=" " \
 --width=550 --height=360 --always-print-result --print-all --on-top \
 --title="$(gettext "Feeds settings")"  \
---field="$(gettext "Update at startup")\t\t\t\t\t\t\t\t\t\t\t":CHK "$st2" \
---field="1" "$url1" --field="2" "$url2" --field="3" "$url3" \
---field="4" "$url4" --field="5" "$url5" --field="6" "$url6" \
---field="7" "$url7" --field="8" "$url8" --field="9" "$url9" \
---field="10" "$url10" --field=" ":LBL " " \
+--field="1 $url1":lbl --field="2 $url2":lbl --field="3 $url3":lbl \
+--field="4 $url4":lbl --field="5 $url5":lbl --field="6 $url6":lbl \
+--field="7 $url7":lbl --field="8 $url8":lbl --field="9 $url9":lbl \
+--field="10 $url10":lbl --field=" ":LBL " " \
 --field="<small>$CNF</small>":BTN "$DSP/tls.sh check 1" \
 --field="<small>$CNF</small>":BTN "$DSP/tls.sh check 2" \
 --field="<small>$CNF</small>":BTN "$DSP/tls.sh check 3" \
@@ -82,29 +122,18 @@ ret=$?
 
 if [ "$ret" -eq 0 ]; then
 
-    printf "$CNFG" | sed 's/|/\n/g' | sed -n 2,11p | \
-    sed 's/^ *//; s/ *$//g' > "$DT/feeds.tmp"
-
-    n=1; while read feed; do
-        declare mod"$n"="$feed"
-        mod="mod$n"; url="url$n"
-        if [ "${!url}" != "${!mod}" ]; then
-            "$DSP/tls.sh" set_channel "${!mod}" $n & fi
-        ((n=n+1))
-    done < "$DT/feeds.tmp"
-
-    feedstmp="$(cat "$DT/feeds.tmp")"
-    if ([ -n "$feedstmp" ] && [ "$feedstmp" != "$(cat "$DCP/4.cfg")" ]); then
-        mv -f "$DT/feeds.tmp" "$DCP/4.cfg"; else rm -f "$DT/feeds.tmp"; fi
-
-    printf "$CNFG" | sed 's/|/\n/g' | head -n 1 > "$DCP/0.cfg";
+    apply;
 
 elif [ "$ret" -eq 2 ]; then
-
-    [[ -e "$DT/cp.lock" ]] && rm -f "$DT/cp.lock"
+    
+    apply
     "$DS_a/Feeds/cnfg.sh" adv;
+    
+elif [ "$ret" -eq 5 ]; then
+
+    apply
+    "$DSP/tls.sh" sync;
 
 fi
-
-[[ -e "$DT/cp.lock" ]] && rm -f "$DT/cp.lock" & exit
-
+[ -f "$DT/cp.lock" ] && rm -f "$DT/cp.lock"
+exit

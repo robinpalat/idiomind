@@ -23,7 +23,7 @@ function feedmode() {
     DMP="$DM_tl/Feeds"
     DCP="$DM_tl/Feeds/.conf"
     DSP="$DS/addons/Feeds"
-    nt="$(cat $DCP/10.cfg)"
+    nt="$DCP/10.cfg"
     info="$(cat $DCP/9.cfg)"
     fdit=$(mktemp "$DT/fdit.XXXX")
     c=$(echo $(($RANDOM%100000))); KEY=$c
@@ -37,17 +37,16 @@ function feedmode() {
     list_2 | yad --no-headers --list --plug=$KEY --tabnum=2 \
     --expand-column=2 --ellipsize=END --print-all --column=Name:IMG \
     --column=Name --dclick-action="$DSP/vwr.sh" &
-    yad --form --scroll --borders=10 --plug=$KEY --tabnum=3 --columns=2 \
-    --field="$(gettext "Notes")\t\t\t\t\t\t\t\t\t\t\t\t\t":txt "$nt" \
-    --field=" :LBL" " " --field=" :LBL" " " --field=" $itxt2":lbl " " \
-    --field="$(gettext "Syncronize")":FBTN "$DS/addons/Feeds/tls.sh 'sync'" \
-    --field="$(gettext "Delete")":FBTN "$DS/addons/Feeds/mngr.sh 'delete'" > "$fdit" &
+    yad --text-info --plug=$KEY --margins=14 \
+    --tabnum=3 --fore='gray40' --wrap --editable \
+    --show-uri --fontname=vendana --print-column=1 \
+    --column="" --filename="$nt" > "$fdit" &
     yad --notebook --name=Idiomind --center --fixed \
     --class=Idiomind --align=right --key=$KEY \
     --tab-borders=5 --center --title="Feeds  ${info^}" \
     --tab=" $(gettext "New episodes") " \
     --tab=" $(gettext "Saved episodes") " \
-    --tab=" $(gettext "Edit") " --always-print-result \
+    --tab=" $(gettext "Notes") " --always-print-result \
     --ellipsize=END --image-on-top --window-icon="$DS/images/logo.png" \
     --width=640 --height=560 --borders=2 \
     --button="$(gettext "Playlist")":"/usr/share/idiomind/play.sh" \
@@ -58,10 +57,9 @@ function feedmode() {
         "$DSP/strt.sh";
     fi
     
-    nnt=$(cut -d '|' -f 1 < "$fdit")
-    rm -f "$fdit"
-    if [ "$nt" != "$nnt" ]; then
-        echo "$nnt" | cut -c1-90000 > "$DCP/10.cfg"
+    note_mod="$(< $fdit)"
+    if [ "$note_mod" != "$(< $nt)" ]; then
+        mv -f "$fdit" "$nt"
     fi
 }
 

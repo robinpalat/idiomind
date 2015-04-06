@@ -181,7 +181,7 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
     ls -tdN * > "$DT/idmimp_$c/ls"
     tpi=$(sed -n 1p "$DT/idmimp_$c/ls")
     tmp="$DT/idmimp_$c/$tpi"
-    "$DS/ifs/safe.sh" check_source_1 "$tmp/12.cfg" "$tpi" &&
+    "$DS/ifs/safe.sh" check_source_1 "$tmp" "$tpi" &&
     source "$DT/$tpi.cfg"
     lng="$(lnglss "$language_target")"
     infs="'$DS/ifs/safe.sh' 'text' '$tmp'"

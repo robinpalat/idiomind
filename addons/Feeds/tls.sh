@@ -238,18 +238,25 @@ url=\"$feed\"" > "$DCP/$num.rss"
     
 elif [ "$1" = check ]; then
 
+    yad --text="$1 $2 $3"
+
     source $DS/ifs/mods/cmns.sh
     DCP="$DM_tl/Feeds/.conf"
     DSP="$DS_a/Feeds"
-    [[ -e "$DT/cpt.lock" ]] && exit || touch "$DT/cpt.lock"
+    [ -f "$DT/cpt.lock" ] && exit || touch "$DT/cpt.lock"
 
     internet
+    
+    source "$DCP/$2.rss"
 
-    source="$DCP/$2.rss"
-    [ -z "$lnk" ] && exit 1
+    [ -z "$url" ] && exit 1
+     
     [ ! -f "$DCP/$2.rss" ] && printf "$tpl" > "$DCP/$2.rss"
+    
     cp "$DCP/$2.rss" "$DCP/$2.rss_"
-    podcast_items="$(xsltproc - "$lnk" <<< "$tmpl2" 2> /dev/null)"
+    
+    
+    podcast_items="$(xsltproc - "$url" <<<"$tmpl2" 2>/dev/null)"
     podcast_items="$(echo "$podcast_items" | tr '\n' ' ' | tr -s [:space:] | sed 's/EOL/\n/g' | head -n 2)"
     item="$(echo "$podcast_items" | sed -n 1p)"
     if [ -z "$(echo $item | sed 's/^ *//; s/ *$//; /^$/d')" ]; then
@@ -260,7 +267,7 @@ elif [ "$1" = check ]; then
 
     yad --scroll --columns=2 --skip-taskbar --separator='\n' \
     --width=800 --height=600 --form --on-top --window-icon=idiomind \
-    --text="\t<small>$(gettext "In this table you can define fields according to their cache,  most of the time the default values is right. ")</small>" --name=Idiomind --class=Idiomind \
+    --text="\t<small>$(gettext "In this table you can define fields according to their content,  most of the time the default values is right. ")</small>" --name=Idiomind --class=Idiomind \
     --button=gtk-apply:0 --borders=5 --title="$ttl" --always-print-result \
     --field="":CB "$(sed -n 1p $DCP/$2.rss)!$mn" \
     --field="":CB "$(sed -n 2p $DCP/$2.rss)!$mn" \
@@ -276,75 +283,57 @@ elif [ "$1" = check ]; then
     --field="":TXT "$(echo "$field" | sed -n 5p)" \
     --field="\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t":TXT "$(echo "$field" | sed -n 6p)" \
     --field="":TXT "$(echo "$field" | sed -n 7p)" | head -n 7 > $DT/f.tmp
-    [[ -n "$(cat "$DT/f.tmp")" ]] && mv -f $DT/f.tmp "$DCP/$2.rss" || cp -f "$DCP/$2.rss_" "$DCP/$2.rss"
-    [[ -f "$DCP/$2.rss_" ]] && rm "$DCP/$2.rss_"
-    [[ -e "$DT/cpt.lock" ]] && rm -f "$DT/cpt.lock" & exit
+    [ -n "$(cat "$DT/f.tmp")" ] && mv -f $DT/f.tmp "$DCP/$2.rss" || cp -f "$DCP/$2.rss_" "$DCP/$2.rss"
+    [ -f "$DCP/$2.rss_" ] && rm "$DCP/$2.rss_"
+    [ -f "$DT/cpt.lock" ] && rm -f "$DT/cpt.lock" & exit
 
-
-elif [ "$1" = syndlg ]; then
-
-    if  [ -f "$DT/l_sync" ]; then
-    info="<b><i>$(gettext "Synchronizing")</i></b>"
-    btn="--button=gtk-stop:3"; else
-    info="$(gettext "Mountpoint or path where new episodes should be synced.")"
-    fi
-
-    DCP="$DM_tl/Feeds/.conf"
-    SYNCDIR="$(sed -n 1p "$DCP/5.cfg")"
-
-    cd "$HOME"
-    DIR="$(yad --center --form --on-top --window-icon=idiomind \
-    --borders=10 --separator="" --title=" " --always-print-result \
-    --text="$info" --print-all --name=Idiomind --class=Idiomind \
-    --width=460 --height=200 --field="":CDIR "$SYNCDIR" \
-    "$btn" --button="$(gettext "Cancel")":1 --button="gtk-apply":0)"
-    exit=$?
-    
-    if [ "$exit" -eq 3 ]; then
-    [ -f "$DT/l_sync" ] && rm -f "$DT/l_sync"
-    killall rsync
-    killall tls.sh && exit 1
-    elif [ "$exit" -eq 1 ]; then exit 1; fi
-
-    echo "$DIR" > "$DT/s.tmp"
-    mv -f "$DT/s.tmp" "$DCP/5.cfg"
-    exit
 
 elif [ "$1" = sync ]; then
    
     DCP="$DM_tl/Feeds/.conf"
-    SYNCDIR="$(sed -n 1p $DCP/5.cfg)"
+    source "$DCP/0.cfg"
     
     if  [ -f "$DT/l_sync" ]; then
-    "$DS/addons/Feeds/tls.sh" syndlg & exit 1
 
-    elif [ ! -d "$SYNCDIR" ]; then
-    
-            cd $HOME
-            DIR="$(yad --center --form --on-top --window-icon=idiomind \
-            --borders=10 --separator="" --title=" " --always-print-result \
-            --text="$(gettext "Set mountpoint or path where new episodes should be synced.")" \
-            --print-all --button="$(gettext "OK")":0 --name=Idiomind --class=Idiomind \
-            --width=460 --height=170 --field="":CDIR "$SYNCDIR")"
-            echo "$DIR" > "$DT/s.tmp"
-            mv -f "$DT/s.tmp" "$DCP/5.cfg"
-            if [ ! -d "$SYNCDIR" ]; then
-                msg " $(gettext "The directory \'"$SYNCDIR"\' does not exist.\n Exiting.")" \
-                dialog-warning & exit 1; fi
-            [ ! -d "$DIR" ] && exit 1
-    fi
-    
-    (sleep 1 && notify-send -i idiomind "$(gettext "Synchronizing...")" " ") &
-    touch "$DT/l_sync"; SYNCDIR="$(sed -n 1p "$DCP/5.cfg")"
-    rsync -az --delete --exclude="*.txt" --exclude="*.png" \
-    --exclude="*.html" --ignore-errors "$DM_tl/Feeds/cache/" "$SYNCDIR"
+        msg_2 "<i>$(gettext "Synchronizing...")</i>\n" info "OK" "gtk-stop" "Feeds"
+        ST=$(echo $?)
+        
+            if [ $ST -eq 1 ]; then
 
-    exit=$?
-    if [ $exit = 0 ] ; then
-        log="$(cd "$SYNCDIR"; ls *.mp3 | wc -l)"
-        notify-send -i idiomind "$(gettext "Complete synchronization")" "$log $(gettext "synchronized episodes(s)")" -t 8000
-    else
-        notify-send -i dialog-warning "$(gettext "Error while syncing")" " " -t 8000
+                killall rsync
+                [ -n "$(ps -A | pgrep -f "rsync")" ] && killall rsync
+                [ -f "$DT/cp.lock" ] && rm -f "$DT/cp.lock"
+                rm -f "$DT/l_sync"
+                killall tls.sh
+                exit 1
+            fi
+
+    elif [ ! -d "$path" ]; then
+        
+        yad --text=no
+        msg " $(gettext "The directory to synchronization does not exist \n Exiting.")" \
+        dialog-warning & exit 1
+        
+    elif [ -d "$path" ]; then
+        
+        set -e
+        set u pipefail
+        IFS=$'\n\t'
+        [ ! -d "$path" ] && exit 1
+    
+        (sleep 1 && notify-send -i idiomind "$(gettext "Synchronizing...")" " ") &
+        touch "$DT/l_sync"; SYNCDIR="$path"
+        rsync -az --delete --exclude="*.txt" --exclude="*.png" \
+        --exclude="*.html" --ignore-errors "$DM_tl/Feeds/cache/" "$SYNCDIR"
+        sleep 20
+
+        exit=$?
+        if [ $exit = 0 ] ; then
+            log="$(cd "$SYNCDIR"; ls *.mp3 | wc -l)"
+            notify-send -i idiomind "$(gettext "Complete synchronization")" "$log $(gettext "synchronized episodes(s)")" -t 8000
+        else
+            notify-send -i dialog-warning "$(gettext "Error while syncing")" " " -t 8000
+        fi
     fi
     rm -f "$DT/l_sync"
 fi

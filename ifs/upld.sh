@@ -46,7 +46,7 @@ elif [ "$1" = infsd ]; then
     nme=$(echo "$2" | sed 's/ /_/g')
     lnglbl=$(echo $language_target | awk '{print tolower($0)}')
     
-        cd $HOME
+        cd "$HOME"
         sleep 0.5
         sv=$(yad --save --center --borders=10 \
         --on-top --filename="$2.idmnd" \
@@ -143,7 +143,7 @@ if [ $(cat "$DC_tlt/0.cfg" | wc -l) -ge 20 ]; then
 btn="--button="$(gettext "Upload")":0"; else
 btn="--center"; fi
 
-cd $HOME
+cd "$HOME"
 upld=$(yad --form --width=480 --height=460 --on-top \
 --buttons-layout=end --center --window-icon="$DS/images/logo.png" \
 --borders=15 --name=Idiomind --align=right --class=Idiomind \
@@ -202,7 +202,7 @@ wsize="$(identify "$img" | cut -d ' ' -f 3 | cut -d 'x' -f 1)"
 esize="$(identify "$img" | cut -d ' ' -f 3 | cut -d 'x' -f 2)"
 if [ "$wsize" != 600 ] || [ "$esize" != 150 ]; then
 msg " $(gettext "Sorry, the image size is not suitable.")\n " info
-$DS/ifs/upld.sh & exit 1; fi
+"$DS/ifs/upld.sh" & exit 1; fi
 fi
 
 if [ "$img" != "$imgm" ]; then
@@ -213,7 +213,7 @@ fi
 
 if [ -z "$Ctgry" ]; then
 msg " $(gettext "Please select a category.")\n " info
-$DS/ifs/upld.sh & exit 1
+"$DS/ifs/upld.sh" & exit 1
 fi
 
 if [ -d "$DM_tlt/attchs" ]; then
@@ -267,6 +267,7 @@ cd "$DM_tlt"
 cp -r ./* "$DT_u/$tpc/"
 cp -r "./words" "$DT_u/$tpc/"
 cp -r "./words/images" "$DT_u/$tpc/words"
+mkdir "$DT_u/$tpc/attchs"
 mkdir "$DT_u/$tpc/audio"
 
 auds="$(uniq < "$DC_tlt/4.cfg" | sed 's/ /\n/g' \
@@ -287,9 +288,8 @@ printf "$notes" > "$DC_tlt/10.cfg"
 printf "$notes" > "$DT_u/$tpc/10.cfg"
 
 [ "$DT_u/$tpc/tpc.sh" ] && rm -f "$DT_u/$tpc/tpc.sh"
-#chmod -x -R $DT_u
-cd $DT_u
-
+find "$DT_u" -type f -exec chmod 644 {} \; 
+cd "$DT_u"
 tar -cvf "$tpc.tar" "$tpc"
 gzip -9 "$tpc.tar"
 mv "$tpc.tar.gz" "$U.$tpc.idmnd"
@@ -297,8 +297,7 @@ mv "$tpc.tar.gz" "$U.$tpc.idmnd"
 dte=$(date "+%d %B %Y")
 notify-send "$(gettext "Uploading")" "$(gettext "Please wait while file is uploaded")" -i idiomind -t 6000
 
-cd $DT_u
-lftp -u $USER,$KEY $FTPHOST << END_SCRIPT
+lftp -u "$USER","$KEY" "$FTPHOST" << END_SCRIPT
 mirror --reverse ./ public_html/$lgs/$lnglbl/$Ctgry/
 quit
 END_SCRIPT
@@ -309,6 +308,7 @@ if [ $exit = 0 ] ; then
     info=" <b>$(gettext "Successfully published.")</b>\n $tpc\n"
     image=dialog-ok
 else
+    sleep 10
     info=" $(gettext "There was a problem uploading the file.") "
     image=dialog-warning
 fi

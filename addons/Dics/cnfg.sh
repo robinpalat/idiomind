@@ -9,7 +9,7 @@ disables="$DC/addons/dict/disables"
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
 new="#!/bin/bash
-# 1 argument: \"\$1\" = \"word\"
+# argument \"\$1\" = \"word\"
 # 
 #
 _NAME=\"\"
@@ -79,18 +79,18 @@ if [ "$1" = edit_dlg ]; then
         if ([ -n "$_NAME" ] && [ -n "$_LANG" ]); then
         mv -f "$DT/script.sh" "$disables/$_NAME.$_LANG"
         fi
-        $DS_a/Dics/cnfg.sh
+        "$DS_a/Dics/cnfg.sh"
         
     elif [ $ret -eq 4 ]; then
         
         internet; test_
-        cd  $DT; sh $DT/script.sh $test
-        [ -f $DT/$test.mp3 ] && play $DT/$test.mp3 || msg Fail info
-        rm -f $DT/$test.mp3
-        mv -f $DT/script.sh "$DT/new.sh"
-        $DS_a/Dics/cnfg.sh edit_dlg 2
+        cd  "$DT"; sh "$DT/script.sh" "$test"
+        [ -f "$DT/$test.mp3" ] && play "$DT/$test.mp3" || msg Fail info
+        rm -f "$DT/$test.mp3"
+        mv -f "$DT/script.sh" "$DT/new.sh"
+        "$DS_a/Dics/cnfg.sh" edit_dlg 2
     else
-        $DS_a/Dics/cnfg.sh
+        "$DS_a/Dics/cnfg.sh"
     fi
 
 elif [ "$1" = dlk_dlg ]; then
@@ -115,25 +115,24 @@ elif [ "$1" = dlk_dlg ]; then
         _LANG=$(grep -F "_LANG=" "$script" | grep -o -P '(?<=_LANG=").*(?=")')
         [ -z "$_NAME" ] && _NAME="$3"
         [ -z "$_LANG" ] && _LANG="$4"
-        mv -f $DT/script.sh "$dir/$stts/$_NAME.$_LANG"
+        mv -f "$DT/script.sh" "$dir/$stts/$_NAME.$_LANG"
         
     elif [ $ret -eq 4 ]; then
     
         internet; test_
-        cd  $DT; sh $DT/script.sh $test
-        [ -f $DT/$test.mp3 ] && play $DT/$test.mp3 || msg Fail info
-        rm -f $DT/$test.mp3
-        mv -f $DT/script.sh "$dir/$stts/$_NAME.$_LANG"
-        $DS_a/Dics/cnfg.sh dlk_dlg "$2" "$_NAME" "$_LANG"
+        cd  "$DT"; sh "$DT/script.sh" "$test"
+        [ -f "$DT/$test.mp3" ] && play "$DT/$test.mp3" || msg Fail info
+        rm -f "$DT/$test.mp3"
+        mv -f "$DT/script.sh" "$dir/$stts/$_NAME.$_LANG"
+        "$DS_a/Dics/cnfg.sh" dlk_dlg "$2" "$_NAME" "$_LANG"
     fi
-    
     
 elif [ -z "$1" ]; then
 
     if [ ! -d "$DC_a/dict/" ]; then
         mkdir -p "$enables"
         mkdir -p "$disables"
-        cp -f $DS/addons/Dics/disables/* "$disables/"
+        cp -f "$DS/addons/Dics/disables"/* "$disables/"
     fi
     
     if [ "$2" = f ]; then
@@ -152,7 +151,7 @@ elif [ -z "$1" ]; then
     
         if [ "$ret" -eq 2 ]; then
         
-                $DS_a/Dics/cnfg.sh edit_dlg
+                "$DS_a/Dics/cnfg.sh" edit_dlg
         
         elif [ "$ret" -eq 0 ]; then
         
@@ -186,8 +185,8 @@ elif [ -z "$1" ]; then
             done
             
             cd "$enables/"
-            ls -d -1 $PWD/*.$lgt > "$dir/.dicts"
-            ls -d -1 $PWD/*.auto >> "$dir/.dicts"; 
+            ls -d -1 "$PWD"/*.$lgt > "$dir/.dicts"
+            ls -d -1 "$PWD"/*.auto >> "$dir/.dicts"; 
         
         fi
         

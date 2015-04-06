@@ -30,29 +30,29 @@ f=0
 
 score() {
 
-    if [ "$1" -ge "$all" ] ; then
+    if [[ $1 -ge $all ]]; then
     
         echo "w6.$(tr -s '\n' '|' < ok.s).w6" >> "$log"
         rm lsin ok.s
         echo "$(date "+%a %d %B")" > look_ls
         echo 21 > .iconls
-        play $drts/all.mp3 & $strt 4 &
+        play "$drts/all.mp3" & "$strt" 4 &
         killall dls.sh
         exit 1
         
     else
-        [ -f l_s ] && echo "$(($(cat l_s)+$easy))" > l_s || echo $easy > l_s
-        s=$(cat l_s)
+        [ -f ./l_s ] && echo "$(($(< l_s)+$easy))" > l_s || echo $easy > l_s
+        s=$(< l_s)
         v=$((100*$s/$all))
         n=1; c=1
-        while [ "$n" -le 21 ]; do
+        while [[ $n -le 21 ]]; do
                 if [ "$v" -le "$c" ]; then
                 echo "$n" > .iconls; break; fi
                 ((c=c+5))
             let n++
         done
 
-        $strt 9 $easy $ling $hard & exit 1
+        "$strt" 9 $easy $ling $hard & exit 1
     fi
 }
 
@@ -90,7 +90,7 @@ check() {
     --class=Idiomind $aut --wrap --window-icon=idiomind \
     --borders=10 --selectable-labels \
     --title="" --button="$(gettext "Listen")":"play '$DM_tlt/$fname.mp3'" \
-    --button="$(gettext "Next sentence")":2 \
+    --button="$(gettext "Next")":2 \
     --field="":lbl --text="<span font_desc='Free Sans 15'>$wes</span>\\n" \
     --field="<span font_desc='Free Sans 9'>$(echo $OK | sed 's/\,*$/\./g') $prc</span>\\n":lbl
     }
@@ -106,38 +106,42 @@ result() {
     
     echo "$SE" | awk '{print tolower($0)}' \
     | sed 's/ /\n/g' | grep -v '^.$' \
-    | sed s'/,//; s/\!//; s/\?//; s/¿//; s/\¡//; s/"//'g > ing
+    | sed s'/,//; s/\!//; s/\?//; s/¿//; s/\¡//; s/"//'g > ./ing
     cat quote | awk '{print tolower($0)}' \
     | sed 's/ /\n/g' | grep -v '^.$' \
-    | sed s'/,//; s/\!//; s/\?//; s/¿//; s/\¡//; s/"//'g > all
+    | sed s'/,//; s/\!//; s/\?//; s/¿//; s/\¡//; s/"//'g > ./all
+    
     (
-    ff="$(cat ing | sed 's/ /\n/g')"
-    n=1
-    while [ $n -le $(echo "$ff" | wc -l) ]; do
-        line="$(echo "$ff" | sed -n "$n"p )"
+    n=1;
+    while read -r line; do
+    
         if cat all | grep -oFx "$line"; then
             sed -i "s/"$line"/<b>"$line"<\/b>/g" quote
             [ -n "$line" ] && echo \
-            "<span color='#3A9000'><b>${line^}</b></span>,  " >> wrds
+            "<span color='#3A9000'><b>${line^}</b></span>,  " >> ./wrds
             [ -n "$line" ] && echo "$line" >> w.ok
         else
             [ -n "$line" ] && echo \
-            "<span color='#7B4A44'><b>${line^}</b></span>,  " >> wrds
+            "<span color='#7B4A44'><b>${line^}</b></span>,  " >> ./wrds
         fi
         let n++
-    done
+        
+    done <<<"$(sed 's/ /\n/g' < ./ing)"
     )
-    OK=$(cat wrds | tr '\n' ' ')
-    cat quote | sed 's/ /\n/g' > all
-    porc=$((100*$(cat w.ok | wc -l)/$(cat all | wc -l)))
     
-    if [ $porc -ge 70 ]; then
-        echo "$WEN" | tee -a ok.s $w9
+    OK=$(tr '\n' ' ' < ./wrds)
+    sed 's/ /\n/g' < ./quote > all
+    porc=$((100*$(cat ./w.ok | wc -l)/$(cat ./all | wc -l)))
+    
+    if [[ $porc -ge 70 ]]; then
+        echo "$WEN" >> ok.s
         easy=$(($easy+1))
         clr=3AB452
-    elif [ $porc -ge 50 ]; then
+        
+    elif [[ $porc -ge 50 ]]; then
         ling=$(($ling+1))
         clr=E5801D
+        
     else
         hard=$(($hard+1))
         clr=D11B5D
@@ -145,34 +149,32 @@ result() {
     
     prc="<span background='#$clr'><span color='#FFFFFF'> <b>$porc%</b> </span></span>"
     wes="$(cat quote)"
-    
     rm allc quote
     }
     
     
 n=1
-while [ $n -le $(wc -l < lsin1) ]; do
+while [[ $n -le $(wc -l < lsin1) ]]; do
 
     trgt="$(sed -n "$n"p lsin1)"
     fname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
     
-    if [ $n = 1 ]; then
+    if [[ $n = 1 ]]; then
     info="--text=<sup><tt> $(gettext "Try to write the phrase you're listening to")...</tt></sup>"
-    else
-    info=""; fi
+    else info=""; fi
     
-    if [ -f "$DM_tlt/$fname".mp3 ]; then
-        if [ -f "$DT/ILLUSTRATION".jpeg ]; then
-            rm -f "$DT/ILLUSTRATION".jpeg; fi
+    if [ -f "$DM_tlt/$fname.mp3" ]; then
+        if [ -f "$DT/ILLUSTRATION.jpeg" ]; then
+            rm -f "$DT/ILLUSTRATION.jpeg"; fi
         
         get_image_text "$trgt"
 
-        if ( [ -f "$DT/ILLUSTRATION".jpeg ] && [ $n != 1 ] ); then
-            IMAGE="$DT/ILLUSTRATION".jpeg
-            (sleep 0.5 && play "$DM_tlt/$fname".mp3) &
+        if ( [ -f "$DT/ILLUSTRATION.jpeg" ] && [ $n != 1 ] ); then
+            IMAGE="$DT/ILLUSTRATION.jpeg"
+            (sleep 0.5 && play "$DM_tlt/$fname.mp3") &
             dialog1 "$trgt"
         else
-            (sleep 0.5 && play "$DM_tlt/$fname".mp3) &
+            (sleep 0.5 && play "$DM_tlt/$fname.mp3") &
             dialog2 "$trgt"
         fi
         ret=$(echo "$?")
@@ -182,7 +184,7 @@ while [ $n -le $(wc -l < lsin1) ]; do
             result "$trgt"
         else
             killall play &
-            $drts/cls s $easy $ling $hard $all &
+            "$drts/cls" s $easy $ling $hard $all &
             break &
             exit 0; fi
     
@@ -191,11 +193,11 @@ while [ $n -le $(wc -l < lsin1) ]; do
         
         if [ $ret -eq 2 ]; then
             killall play &
-            rm -f w.ok wrds $DT/*.jpeg *.png &
+            rm -f w.ok wrds "$DT"/*.jpeg *.png &
         else
             killall play &
-            rm -f w.ok all ing wrds $DT/*.jpeg *.png
-            $drts/cls s $easy $ling $hard $all &
+            rm -f w.ok all ing wrds "$DT"/*.jpeg *.png
+            "$drts/cls" s $easy $ling $hard $all &
             break &
             exit 0; fi
     fi
