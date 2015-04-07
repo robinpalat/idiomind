@@ -310,7 +310,6 @@ elif [ "$1" = sync ]; then
 
     elif [ ! -d "$path" ]; then
         
-        yad --text=no
         msg " $(gettext "The directory to synchronization does not exist \n Exiting.")" \
         dialog-warning & exit 1
         
@@ -323,7 +322,7 @@ elif [ "$1" = sync ]; then
     
         (sleep 1 && notify-send -i idiomind "$(gettext "Synchronizing...")" " ") &
         touch "$DT/l_sync"; SYNCDIR="$path"
-        rsync -az --delete --exclude="*.txt" --exclude="*.png" \
+        rsync -az --exclude="*.txt" --exclude="*.png" \
         --exclude="*.html" --ignore-errors "$DM_tl/Feeds/cache/" "$SYNCDIR"
         sleep 20
 

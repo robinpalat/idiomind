@@ -42,8 +42,9 @@ if [ ! -f "$DCP/0.cfg" ] \
 > "$DCP/0.cfg"
 echo -e "update=\"\"
 sync=\"\" >> 
-path=\"\"" >> "$DCP/0.cfg"; fi
+path=\"/uu\"" >> "$DCP/0.cfg"; fi
 source "$DCP/0.cfg"
+[ ! -d "$path" ] && path=/uu
 
 apply() {
     
@@ -65,6 +66,7 @@ apply() {
     val1=$(cut -d "|" -f1 <<<"$CNFG")
     val2=$(cut -d "|" -f2 <<<"$CNFG")
     val3=$(cut -d "|" -f4 <<<"$CNFG" | sed 's|/|\\/|g')
+    if [ ! -d "$val3" ] ||  [ -z "$val3" ]; then path=/uu; fi
     sed -i "s/update=.*/update=$val1/;s/sync=.*/sync=$val2/;s/path=.*/path=$val3/g" "$DCP/0.cfg"
     [ -f "$DT/cp.lock" ] && rm -f "$DT/cp.lock"
 }

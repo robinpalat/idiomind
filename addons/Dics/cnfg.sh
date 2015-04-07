@@ -142,10 +142,10 @@ elif [ -z "$1" ]; then
     sel="$(dict_list | yad --list --title="$(gettext "Dictionaries")" \
     --expand-column=2 "$tex" --name=Idiomind --class=Idiomind \
     --width=480 --height=350 --skip-taskbar --separator=" " --center \
-    --borders=10 --button="$(gettext "Add")":2 --print-all --button=OK:0 \
+    --borders=15 --window-icon=idiomind --print-all --always-print-result \
+    --button="$(gettext "Cancel")":1 --button="$(gettext "Add")":2 --button=OK:0 \
     --column=" ":CHK --column="$(gettext "Available dictionaries")":TEXT \
-    --column=" ":TEXT --window-icon=idiomind \
-    --buttons-layout=edge --always-print-result \
+    --column=" ":TEXT \
     --dclick-action='/usr/share/idiomind/addons/Dics/cnfg.sh dlk_dlg')"
     ret=$?
     
