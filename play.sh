@@ -19,10 +19,41 @@
 #  2015/02/27
 
 [ -z "$tpc" ] && exit 1
-source "$DC_s/1.cfg"
+
 lbls=(' ' 'Words' 'Sentences' 'Marks' 'Practice' 'News episodes' 'Saved epidodes')
 sets=(' ' 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
 in=(' ' 'in1' 'in2' 'in3' 'in4' 'in5' 'in6')
+
+if [ -f "$DC_s/1.cfg" ]; then
+source /dev/stdin <<<"$(tail -n 6 "$DC_s/1.cfg")"
+else > "$DC_s/1.cfg"; fi
+
+n=1
+while [ $n -lt 7 ]; do
+
+    val="${!sets[$n]}"
+    echo "${!sets[$n]} ---  ${sets[$n]}"
+    if [ "$val" != TRUE ] && [ "$val" != FALSE ];
+    then cfg=invalid; fi
+    
+    ((n=n+1))
+    
+done
+
+if [ "$cfg" = invalid ]; then
+
+    sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
+    'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' 'edit')
+    
+    n=0; > "$DC_s/1.cfg"
+    while [ $n -lt 19 ]; do
+        if [ $n -lt 8 ] || [ $n -gt 12 ]; then
+        val=FALSE; else val=""; fi
+        echo -e "${sets[$n]}=$val" >> "$DC_s/1.cfg"
+        ((n=n+1))
+    done
+fi
+
 tlng="$DC_tlt/1.cfg"
 winx="$DC_tlt/3.cfg"
 sinx="$DC_tlt/4.cfg"
@@ -52,16 +83,20 @@ function setting_1() {
 }
 
 if [ ! -f "$DT/.p_" ]; then
-l="--center"
-btn="Play:0"; else
-tpp="$(sed -n 2p "$DT/.p_")"
-if grep TRUE <<<"$words$sentences$marks$practice"; then
-[ "$tpp" != "$tpc" ] && \
-l="--text=<sup><b>Playing:  \"$tpp\"</b></sup>" || \
-l="--center"; fi
-btn="gtk-media-stop:2"; fi
-slct=$(mktemp "$DT"/slct.XXXX)
+    l="--center"
+    btn="Play:0"
+    
+else
+    tpp="$(sed -n 2p "$DT/.p_")"
+    if grep TRUE <<<"$words$sentences$marks$practice"; then
+    [ "$tpp" != "$tpc" ] && \
+    l="--text=<sup><b>Playing:  \"$tpp\"</b></sup>" || \
+    l="--center"; 
+    fi
+    btn="gtk-media-stop:2"; 
+fi
 
+slct=$(mktemp "$DT"/slct.XXXX)
 setting_1 | yad --list --separator="|" --on-top \
 --expand-column=2 --print-all --no-headers --center \
 --class=Idiomind --name=Idiomind --align=right \

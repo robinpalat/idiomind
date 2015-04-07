@@ -19,6 +19,13 @@
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 include "$DS/ifs/mods/add"
+DSP="$DS/addons/Feeds"
+DMC="$DM_tl/Feeds/cache"
+DCP="$DM_tl/Feeds/.conf"
+DT_r=$(mktemp -d $DT/XXXX)
+rssf="$DCP/4.cfg"
+cp -f "$rssf" "$DT_r/rss_list"
+
 tmplitem="<?xml version='1.0' encoding='UTF-8'?>
 <xsl:stylesheet version='1.0'
 xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
@@ -37,6 +44,7 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
 </xsl:for-each>
 </xsl:template>
 </xsl:stylesheet>"
+
 tmplitem2="<?xml version='1.0' encoding='UTF-8'?>
 <xsl:stylesheet version='1.0'
 xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
@@ -55,6 +63,7 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
 </xsl:for-each>
 </xsl:template>
 </xsl:stylesheet>"
+
 tpc_sh='#!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
 [ ! -f "$DM_tl/Feeds/.conf/8.cfg" ] \
@@ -63,13 +72,30 @@ echo "$tpc" > "$DC_s/4.cfg"
 echo fd >> "$DC_s/4.cfg"
 idiomind topic
 exit 1'
-DSP="$DS/addons/Feeds"
-DMC="$DM_tl/Feeds/cache"
-DCP="$DM_tl/Feeds/.conf"
-DT_r=$(mktemp -d $DT/XXXX)
-rssf="$DCP/4.cfg"
-cp -f "$rssf" "$DT_r/rss_list"
 
+videoblock="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
+<link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwrstyle.css\">
+<video width=640 height=380 controls>
+<source src=\"$fname.$ex\" type=\"video/mp4\">
+Your browser does not support the video tag.</video><br><br>
+<div class=\"title\"><h3>$title</h3></div><br>
+<div class=\"summary\">$summary<br><br></div>"
+
+audioblock="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
+<link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwrstyle.css\">
+<br><div class=\"title\"><h2>$title</h2></div><br>
+<div class=\"summary\"><audio controls><br>
+<source src=\"$fname.$ex\" type=\"audio/mpeg\">
+Your browser does not support the audio tag.</audio><br><br>
+$summary<br><br></div>"
+
+txtblock="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
+<link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwrstyle.css\">
+<body><br><div class=\"title\"><h2>$title</h2></div><br>
+<div class=\"summary\"><div class=\"image\">
+<img src=\"$fname.jpg\" alt=\"Image\" style=\"width:650px\"></div><br>
+$summary<br><br></div>
+</body>"
 
 conditions() {
     
@@ -91,7 +117,7 @@ conditions() {
     fi
     
     if ([ ! -f "$DM_tl/Feeds/tpc.sh" ] || \
-    [ "$(wc -l < "$DM_tl/Feeds/tpc.sh")" -ge 15 ]); then
+    [ "$(wc -l < "$DM_tl/Feeds/tpc.sh")" -ge 10 ]); then
         echo "$tpc_sh" > "$DM_tl/Feeds/tpc.sh"
         chmod +x "$DM_tl/Feeds/tpc.sh"
         echo "14" > "$DM_tl/Feeds/.conf/8.cfg"
@@ -161,50 +187,19 @@ get_images_main () {
 mkhtml () {
 
     if [ "$tp" = vid ]; then
-    
         if [ $ex = m4v || $ex = mp4 ]; then
         t = mp4
         elif [ $ex = avi ]; then
         t = avi; fi
-        
-printf "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
-<link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwrstyle.css\">
-<video width=640 height=380 controls>
-<source src=\"$fname.$ex\" type=\"video/mp4\">
-Your browser does not support the video tag.
-</video><br><br>
-<div class=\"title\"><h3>$title</h3></div>
-<br>
-<div class=\"summary\">$summary<br><br></div>
-" > "$DMC/$fname.html"
+        printf "$videoblock" > "$DMC/$fname.html"
 
     elif [ "$tp" = aud ]; then
-printf "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
-<link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwrstyle.css\">
-<br><div class=\"title\"><h2>$title</h2></div><br>
-<div class=\"summary\"><audio controls><br>
-<source src=\"$fname.$ex\" type=\"audio/mpeg\">
-Your browser does not support the audio tag.
-</audio><br>
-<br>
-$summary<br><br></div>
-" > "$DMC/$fname.html"
+        printf "$audioblock" > "$DMC/$fname.html"
 
     elif [ "$tp" = txt ]; then
-printf "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
-<link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwrstyle.css\">
-<body>
-<br><div class=\"title\"><h2>$title</h2></div><br>
-<div class=\"summary\"><div class=\"image\">
-<img src=\"$fname.jpg\" alt=\"Image\" style=\"width:650px\"></div>
-<br>
-$summary<br><br></div>
-</body>
-" > "$DMC/$fname.html"
-
+        printf "txtblock" > "$DMC/$fname.html"
     fi
 }
-
 
 get_images () {
 

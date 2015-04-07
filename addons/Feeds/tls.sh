@@ -49,6 +49,7 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
 </xsl:for-each>
 </xsl:template>
 </xsl:stylesheet>"
+
 tmpl2="<?xml version='1.0' encoding='UTF-8'?>
 <xsl:stylesheet version='1.0'
 xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
@@ -67,6 +68,7 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
 </xsl:for-each>
 </xsl:template>
 </xsl:stylesheet>"
+
 tmpl3="<?xml version='1.0' encoding='UTF-8'?>
 <xsl:stylesheet version='1.0'
 xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
@@ -86,6 +88,16 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
 </xsl:for-each>
 </xsl:template>
 </xsl:stylesheet>"
+
+cfg= "channel=\"$name\"
+link=\"$link\"
+logo=\"$logo\"
+ntype=\"$type\"
+nmedia=\"$media\"
+ntitle=\"$title\"
+nsumm=\"$summ\"
+nimage=\"$image\"
+url=\"$feed\""
 
 if [ "$1" = set_channel ]; then
     
@@ -220,15 +232,7 @@ if [ "$1" = set_channel ]; then
     
     if [ -n "$type" ]; then
 
-echo -e "channel=\"$name\"
-link=\"$link\"
-logo=\"$logo\"
-ntype=\"$type\"
-nmedia=\"$media\"
-ntitle=\"$title\"
-nsumm=\"$summ\"
-nimage=\"$image\"
-url=\"$feed\"" > "$DCP/$num.rss"
+        echo -e "$cfg" > "$DCP/$num.rss" # --------------------
 
         exit 0
     else
@@ -259,10 +263,12 @@ elif [ "$1" = check ]; then
     podcast_items="$(xsltproc - "$url" <<<"$tmpl2" 2>/dev/null)"
     podcast_items="$(echo "$podcast_items" | tr '\n' ' ' | tr -s [:space:] | sed 's/EOL/\n/g' | head -n 2)"
     item="$(echo "$podcast_items" | sed -n 1p)"
+    
     if [ -z "$(echo $item | sed 's/^ *//; s/ *$//; /^$/d')" ]; then
     msg "$(gettext "Couldn't download the specified URL")\n" info
     rm -f "$DT/cpt.lock" & exit 1
     fi
+    
     field="$(echo "$item" | sed -r 's|-\!-|\n|g')"
 
     yad --scroll --columns=2 --skip-taskbar --separator='\n' \

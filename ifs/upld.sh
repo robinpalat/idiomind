@@ -22,7 +22,7 @@ source "$DS/ifs/mods/cmns.sh"
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
 
-if [ "$1" = vsd ]; then
+function vsd() {
 
     U=$(sed -n 1p $HOME/.config/idiomind/s/4.cfg)
     lng=$(echo "$lgtl" | awk '{print tolower($0)}')
@@ -36,8 +36,9 @@ if [ "$1" = vsd ]; then
     --dclick-action="$DS/ifs/upld.sh 'infsd'" >/dev/null 2>&1
     [ "$?" -eq 1 ] & exit
     exit
-    
-elif [ "$1" = infsd ]; then
+}
+
+function infsd() {
 
     U=$(sed -n 1p $DC_s/5.cfg)
     user=$(echo "$(whoami)")
@@ -99,8 +100,10 @@ elif [ "$1" = infsd ]; then
         else
             exit
         fi
-fi
+}
 
+function upld() {
+    
 others="$(gettext "Others")"
 comics="$(gettext "Comics")"
 culture="$(gettext "Culture")"
@@ -157,7 +160,7 @@ upld=$(yad --form --width=480 --height=460 --on-top \
 "!$others!$article!$comics!$culture!$documentary!$entertainment!$funny!$family!$grammar!$history!$movies!$in_the_city!$interview!$internet!$music!$nature!$news!$office!$relations!$sport!$science!$shopping!$social_networks!$technology!$travel" \
 --field="    $(gettext "Skill Level"):CBE" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
 --field="\n$(gettext "Description/Notes"):TXT" "$nt" \
---field="$(gettext "Add image\n(600px x 150px)"):FL" "$imgm")
+--field="$(gettext "Add image\napprox. 600px x 200px"):FL" "$imgm")
 ret=$?
 
 if [ "$ret" = 2 ]; then
@@ -197,10 +200,17 @@ level=$(echo "$upld" | cut -d "|" -f5)
 [ "$level" = $(gettext "Intermediate") ] && level=2
 [ "$level" = $(gettext "Advanced") ] && level=3
 
+Author=$(echo "$upld" | cut -d "|" -f2)
+Mail=$(echo "$upld" | cut -d "|" -f3)
+notes=$(echo "$upld" | cut -d "|" -f6)
+img=$(echo "$upld" | cut -d "|" -f7)
+link="$U"
+
 if [ -n "$img" ]; then
 wsize="$(identify "$img" | cut -d ' ' -f 3 | cut -d 'x' -f 1)"
 esize="$(identify "$img" | cut -d ' ' -f 3 | cut -d 'x' -f 2)"
-if [ "$wsize" != 600 ] || [ "$esize" != 150 ]; then
+if [ "$wsize" -gt 1000 ] || [ "$wsize" -lt 600 ] \
+|| [ "$esize" -lt 100 ] || [ "$esize" -gt 400 ]; then
 msg " $(gettext "Sorry, the image size is not suitable.")\n " info
 "$DS/ifs/upld.sh" & exit 1; fi
 fi
@@ -225,12 +235,6 @@ fi
 internet; cd "$DT"
 source /dev/stdin <<<"$(curl http://idiomind.sourceforge.net/doc/SITE_TMP)"
 [ -z "$FTPHOST" ] && msg " $(gettext "An error occurred, please try later.")\n " dialog-warning && exit
-
-Author=$(echo "$upld" | cut -d "|" -f2)
-Mail=$(echo "$upld" | cut -d "|" -f3)
-notes=$(echo "$upld" | cut -d "|" -f6)
-img=$(echo "$upld" | cut -d "|" -f7)
-link="$U"
 
 mkdir "$DT/upload"
 DT_u="$DT/upload"
@@ -270,11 +274,12 @@ cp -r "./words/images" "$DT_u/$tpc/words"
 mkdir "$DT_u/$tpc/attchs"
 mkdir "$DT_u/$tpc/audio"
 
-auds="$(uniq < "$DC_tlt/4.cfg" | sed 's/ /\n/g' \
+auds="$(uniq < "$DC_tlt/4.cfg" \
+| sed 's/\n/ /g' | sed 's/ /\n/g' \
 | grep -v '^.$' | grep -v '^..$' \
-| sed -n 1,40p | sed 's/&//; s/,//; s/\?//; s/\¿//; s/;//'g \
+| sed 's/&//; s/,//; s/\?//; s/\¿//; s/;//'g \
 |  sed 's/\!//; s/\¡//; s/\]//; s/\[//; s/\.//; s/  / /'g \
-| tr -d ')' | tr -d '(') | tr '[:upper:]' '[:lower:]')"
+| tr -d ')' | tr -d '(' | tr '[:upper:]' '[:lower:]')"
 
 while read -r audio; do
     if [ -f "$DM_tl/.share/$audio.mp3" ]; then
@@ -297,10 +302,10 @@ mv "$tpc.tar.gz" "$U.$tpc.idmnd"
 dte=$(date "+%d %B %Y")
 notify-send "$(gettext "Uploading")" "$(gettext "Please wait while file is uploaded")" -i idiomind -t 6000
 
-lftp -u "$USER","$KEY" "$FTPHOST" << END_SCRIPT
-mirror --reverse ./ public_html/$lgs/$lnglbl/$Ctgry/
-quit
-END_SCRIPT
+#lftp -u "$USER","$KEY" "$FTPHOST" << END_SCRIPT
+#mirror --reverse ./ public_html/$lgs/$lnglbl/$Ctgry/
+#quit
+#END_SCRIPT
 
 exit=$?
 if [ $exit = 0 ] ; then
@@ -325,3 +330,14 @@ exit 0
 else
 exit 1
 fi
+    
+} >/dev/null 2>&1
+
+case "$1" in
+    vsd)
+    vsd "$@" ;;
+    infsd)
+    infsd "$@" ;;
+    upld)
+    upld "$@" ;;
+esac

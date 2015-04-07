@@ -4,6 +4,16 @@ source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/mods/cmns.sh
 DCP="$DM_tl/Feeds/.conf"
 DSP="$DS_a/Feeds"
+CNF=$(gettext "Configure")
+
+tpc='#!/bin/bash
+source /usr/share/idiomind/ifs/c.conf
+[ ! -f $DM_tl/Feeds/.conf/8.cfg ] \
+&& echo "11" > $DM_tl/Feeds/.conf/8.cfg
+echo "$tpc" > $DC_s/4.cfg
+echo fd >> $DC_s/4.cfg
+idiomind topic
+exit 1'
 
 if [ ! -d $DM_tl/Feeds ]; then
 
@@ -12,14 +22,7 @@ if [ ! -d $DM_tl/Feeds ]; then
     mkdir "$DM_tl/Feeds/cache"
     cd "$DM_tl/Feeds/.conf/"
     touch "0.cfg" "1.cfg" "2.cfg" "3.cfg" "4.cfg" ".updt.lst"
-    echo '#!/bin/bash
-source /usr/share/idiomind/ifs/c.conf
-[ ! -f $DM_tl/Feeds/.conf/8.cfg ] \
-&& echo "11" > $DM_tl/Feeds/.conf/8.cfg
-echo "$tpc" > $DC_s/4.cfg
-echo fd >> $DC_s/4.cfg
-idiomind topic
-exit 1' > "$DM_tl/Feeds/tpc.sh"
+    echo "$tpc" > "$DM_tl/Feeds/tpc.sh"
     chmod +x "$DM_tl/Feeds/tpc.sh"
     echo "14" > "$DM_tl/Feeds/.conf/8.cfg"
     "$DS/mngr.sh" mkmn
@@ -34,16 +37,15 @@ n=1; while read feed; do
     ((n=n+1))
 done < "$DCP/4.cfg"
 
-CNF=$(gettext "Configure")
-
-
-if [ ! -f "$DCP/0.cfg" ] \
-|| [ -z "$(<"$DCP/0.cfg")" ]; then
+[ -f "$DCP/0.cfg" ] && source /dev/stdin <<<"$(head -n 3 "$DCP/0.cfg")"
+if [ "$update" != TRUE ] && [ "$update" != FALSE ]; then cfg=invalid ; fi
+if [ "$update" != TRUE ] && [ "$update" != FALSE ]; then cfg=invalid ; fi
+if [ -z "$path" ] && [ "$path" != "/uu" ]; then cfg=invalid ; fi
+if [ ! -f "$DCP/0.cfg" ] || [ $cfg = invalid ]; then
 > "$DCP/0.cfg"
-echo -e "update=\"\"
-sync=\"\" >> 
-path=\"/uu\"" >> "$DCP/0.cfg"; fi
-source "$DCP/0.cfg"
+echo -e "update=FALSE
+sync=FALSE
+path=/uu" >> "$DCP/0.cfg"; fi
 [ ! -d "$path" ] && path=/uu
 
 apply() {
@@ -61,13 +63,15 @@ apply() {
 
     feedstmp="$(cat "$DT/feeds.tmp")"
     if ([ -n "$feedstmp" ] && [ "$feedstmp" != "$(cat "$DCP/4.cfg")" ]); then
-        mv -f "$DT/feeds.tmp" "$DCP/4.cfg"; else rm -f "$DT/feeds.tmp"; fi
+    mv -f "$DT/feeds.tmp" "$DCP/4.cfg"; else rm -f "$DT/feeds.tmp"; fi
 
     val1=$(cut -d "|" -f1 <<<"$CNFG")
     val2=$(cut -d "|" -f2 <<<"$CNFG")
     val3=$(cut -d "|" -f4 <<<"$CNFG" | sed 's|/|\\/|g')
     if [ ! -d "$val3" ] ||  [ -z "$val3" ]; then path=/uu; fi
-    sed -i "s/update=.*/update=$val1/;s/sync=.*/sync=$val2/;s/path=.*/path=$val3/g" "$DCP/0.cfg"
+    sed -i "s/update=.*/update=$val1/g" "$DCP/0.cfg"
+    sed -i "s/sync=.*/sync=$val2/g" "$DCP/0.cfg"
+    sed -i "s/path=.*/path=$val3/g" "$DCP/0.cfg"
     [ -f "$DT/cp.lock" ] && rm -f "$DT/cp.lock"
 }
 

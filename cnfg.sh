@@ -72,18 +72,47 @@ function set_lang() {
     "$DS/mngr.sh" mkmn
 }
 
-if [ ! -f "$DC_s/1.cfg" ] || [ -z "$(<"$DC_s/1.cfg")" ]; then
+if [ -f "$DC_s/1.cfg" ]; then
+source /dev/stdin <<<"$(head -n 19 "$DC_s/1.cfg")"
+else > "$DC_s/1.cfg"; fi
+
 sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
-'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' 'edit'\
- 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
-n=0; > "$DC_s/1.cfg"
+'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' 'edit' \
+'words' 'sentences' 'marks' 'practice' 'news' 'saved')
+ 
+n=0
 while [ $n -lt 19 ]; do
-    echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
+
+    val="${!sets[$n]}"
+    
+    if [ $n -lt 8 ] || [ $n -gt 12 ]; then
+        if [ "$val" != TRUE ] && [ "$val" != FALSE ];
+        then cfg=invalid; fi
+    fi
+    if [ $n -ge 9 ] && [ $n -le 12 ]; then
+        if [ $(wc -c <<<"$val") -gt 10 ]; then #TODO
+        cfg=invalid; fi
+    fi
+    if [ $n = 8 ]; then
+        if [ $(wc -c <<<"$val") -gt 2 ]; then
+        cfg=invalid; fi
+    fi
     ((n=n+1))
+    
 done
+
+if [ ! -f "$DC_s/1.cfg" ] || [ "$cfg" = invalid ]; then
+
+    n=0; > "$DC_s/1.cfg"
+    while [ $n -lt 19 ]; do
+        if [ $n -lt 8 ] || [ $n -gt 12 ]; then
+        val=FALSE; else val=""; fi
+        echo -e "${sets[$n]}=$val" >> "$DC_s/1.cfg"
+        ((n=n+1))
+    done
+    
 fi
 
-source "$DC_s/1.cfg"
 if [ "$text" != TRUE ] && [ "$audio" != TRUE ]; then audio=TRUE; fi
 yad --plug=$KEY --tabnum=1 \
 --separator='|' --form --align=right --scroll \

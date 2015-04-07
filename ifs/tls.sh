@@ -193,15 +193,16 @@ echo "<br><br></div>
     
     if [ "$(ls -A "$DM_tlt/attchs")" ]; then
         [ ! -f "$DC_tlt/att.html" ] && mkindex >/dev/null 2>&1
-        yad --html --window-icon="$DS/images/logo.png" \
+        yad --html --uri="$DC_tlt/att.html" \
+        --window-icon="$DS/images/logo.png" --center \
         --title="$(gettext "Attachments")" --borders=5 \
-        --width=650 --height=580 --center --browser \
+        --width=650 --height=580 \
         --button="$(gettext "Open Folder")":"xdg-open '$DM_tlt/attchs'" \
         --button="$(gettext "Video URL")":"$DS/ifs/tls.sh 'videourl'" \
         --button="$(gettext "Add File")":"$DS/ifs/tls.sh 'add_file'" \
         --button="$(gettext "Close")":"1" \
         --name=Idiomind --class=Idiomind \
-        --uri="$DC_tlt/att.html"
+        
         
         if [ "$ch1" != "$(ls -A "$DM_tlt/attchs")" ]; then
             mkindex
@@ -226,11 +227,11 @@ echo "<br><br></div>
 function help() {
 
     web="http://idiomind.sourceforge.net/doc/help.html"
-    yad --html --window-icon="$DS/images/logo.png" --browser \
+    yad --html --browser --uri="$web" \
+    --window-icon="$DS/images/logo.png" \
     --title="$(gettext "Help")" --width=700 --fixed \
     --height=600 --button="$(gettext "OK")":0 \
-    --name=Idiomind --class=Idiomind \
-    --uri="$web" >/dev/null 2>&1
+    --name=Idiomind --class=Idiomind >/dev/null 2>&1
 }
     
 function definition() {
@@ -248,11 +249,11 @@ function web() {
 function fback() {
 
     web="http://idiomind.sourceforge.net/doc/msg.html"
-    yad --html --window-icon="$DS/images/logo.png" --browser \
+    yad --html --browser --uri="$web" \
+    --window-icon="$DS/images/logo.png" \
     --title="$(gettext "Message")" --width=500 \
     --height=455 --no-buttons --fixed \
-    --name=Idiomind --class=Idiomind \
-    --uri="$web" >/dev/null 2>&1
+    --name=Idiomind --class=Idiomind >/dev/null 2>&1
 }
 
 function check_updates() {

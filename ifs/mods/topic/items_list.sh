@@ -78,7 +78,7 @@ function notebook_1() {
     --field="   $(gettext "Mark as learned")   ":FBTN "$DS/mngr.sh 'mark_as_learned'" \
     --field="$(gettext "Show cover")":CHK "$set1" \
     --field="$label_info2":LBL " " \
-    --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh" \
+    --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh 'upld'" \
     --field="$(gettext "Attachments")":FBTN "$DS/ifs/tls.sh attachs" \
     --field="$(gettext "Delete")":BTN "$DS/mngr.sh 'delete_topic'" \
     --field=" ":LBL " " > "$cnf4" &
@@ -117,7 +117,7 @@ function notebook_2() {
     --field="   $(gettext "Review")"   :FBTN "$DS/mngr.sh 'mark_as_learn'" \
     --field="$(gettext "Show cover")\t ":CHK "$set1" \
     --field="$label_info2":LBL " " \
-    --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh" \
+    --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh 'upld'" \
     --field="$(gettext "Attachments")":FBTN "$DS/ifs/tls.sh attachs" \
     --field="$(gettext "Delete")":BTN "$DS/mngr.sh 'delete_topic'" \
     --field=" ":LBL " " > "$cnf4" &

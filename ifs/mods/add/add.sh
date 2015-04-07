@@ -29,17 +29,18 @@ function index() {
             echo "$item" >> "$DC_tlt/.11.cfg"; fi
 
         z=0; tmp="$DT/tmp"
-        while [ $z -le 4 ]; do
+        while [[ $z -le 4 ]]; do
         
             inx="$DC_tlt/$z.cfg"
             if [ -n "$(uniq -dc < "$inx" | sort -n)" ]; then
-                cat "$inx" | awk '!array_temp[$0]++' > $tmp
-                sed '/^$/d' $tmp > "$inx"; fi
+                cat "$inx" | awk '!array_temp[$0]++' > "$tmp"
+                sed '/^$/d' "$tmp" > "$inx"; fi
             if grep '^$' "$inx"; then
                 sed -i '/^$/d' "$inx"; fi
             let z++
         done
-        rm -f $tmp
+        
+        rm -f "$tmp"
     fi
 }
 
@@ -102,7 +103,7 @@ function clean_2() {
     
     echo "$1" | cut -d "|" -f1 | sed 's/!//; s/&//; s/\://; s/\&//g' \
     | sed "s/'//g" | sed 's/^[ \t]*//;s/[ \t]*$//' \
-    | sed 's|/||; s/\.//; s/^\s*./\U&\E/g'
+    | sed 's|/||; s/^\s*./\U&\E/g'
 }    
 
 
@@ -114,7 +115,7 @@ function clean_3() {
     else vrbl="$trgt"; lg=$lgs; aw="twrd.$2"; bw="swrd.$2"; fi
     
     echo "$vrbl" | sed 's/ /\n/g' | grep -v '^.$' \
-    | grep -v '^..$' | sed -n 1,40p | sed s'/&//'g \
+    | grep -v '^..$' | sed -n 1,50p | sed s'/&//'g \
     | sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
     | tr -d ')' | tr -d '(' | sed 's/\]//;s/\[//g' \
     | sed 's/\.//;s/  / /;s/ /\. /g' > "$aw"

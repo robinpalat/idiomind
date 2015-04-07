@@ -201,7 +201,7 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
         cd "$tmp"
         ws=$(wc -l < "3.cfg")
         ss=$(wc -l < "4.cfg")
-        itxt="<big><big> $tpi</big></big><small>\\n  ${language_source^} <b>></b> $language_target\\n  $nwords $(gettext "Words") $nsentences $(gettext "Sentences") $nimages $(gettext "Images")\n  $(gettext "Level") $level \n</small>"
+        itxt="<big><big>$tpi</big></big><small>\\n ${language_source^} <b>></b> $language_target\\n $nwords $(gettext "Words") $nsentences $(gettext "Sentences") $nimages $(gettext "Images")\n $(gettext "Level") $level \n</small>"
         dlck="$DS/default/p1.sh '$c'"
         
         tac "$tmp/0.cfg" | awk '{print $0""}' | \
@@ -264,15 +264,17 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
                 tee -a "$DI_c/.11.cfg" "$DI_c/1.cfg" < "$DI_c/0.cfg"
                 echo "6" > "$DI_c/8.cfg"; rm "$DI_c/9.cfg" "$DI_c/ls"
                 cp -fr ./.* "$DI_m/"
-                cp -f "$DS/default/tpc.sh" "$DI_m/tpc.sh"
+                ln -s "$DS/default/tpc.sh" "$DI_m/tpc.sh"
                 chmod +x "$DI_m/tpc.sh"
                 echo "$language_target" > "$DC_s/6.cfg"
                 echo "$lgsl" >> "$DC_s/6.cfg"
                 echo "$dte" > "$DI_c/13.cfg"
                 echo "$tpi" >> "$DM_t/$language_target/.3.cfg"
                 sed -i 's/'"$tpi"'//g' "$DM_t/$language_target/.2.cfg"
-                sed '/^$/d' "$DM_t/$language_target/.2.cfg" > "$DM_t/$language_target/.2.cfg.tmp"
-                mv -f "$DM_t/$language_target/.2.cfg.tmp" "$DM_t/$language_target/.2.cfg"
+                sed '/^$/d' "$DM_t/$language_target/.2.cfg" \
+                > "$DM_t/$language_target/.2.cfg.tmp"
+                mv -f "$DM_t/$language_target/.2.cfg.tmp" \
+                "$DM_t/$language_target/.2.cfg"
                 "$DS/mngr.sh" mkmn; "$DI_m/tpc.sh" &
             fi
     fi
@@ -302,7 +304,8 @@ function topic() {
             done
 
             nt="$DC_tlt/10.cfg"
-            source "$DC_tlt/12.cfg"
+            author="$(sed -n 4p < "$DC_tlt/12.cfg" \
+            | grep -o 'author="[^"]*' | grep -o '[^"]*$')"
             c=$(echo $(($RANDOM%100000))); KEY=$c
             cnf1=$(mktemp $DT/cnf1.XXX.x)
             cnf3=$(mktemp $DT/cnf3.XXX.x)
@@ -326,7 +329,7 @@ function topic() {
 
     [ -z "$tpc" ] && exit 1
     
-        label_info1="<big><big>$tpc </big></big><small>\\n$inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$(gettext "Created by") $author $(gettext "on") <span color='#6E9FD4'>${category^}</span> $date_u</small>"
+        label_info1="<big><big>$tpc </big></big><small>\\n$inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$(gettext "Created by") $author</small>"
 
         if [ -f "$DT/notify" ]; then
         l=$(wc -l < "$DT/notify")

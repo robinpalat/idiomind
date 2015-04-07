@@ -20,6 +20,7 @@ source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
+
 CATEGORIES="others
 comics
 culture
@@ -45,6 +46,7 @@ article
 science
 interview
 funny"
+
 LANGUAGES="English
 Chinese
 French
@@ -78,7 +80,7 @@ check_source_1() {
     level=$(sed -n 13p < "${file}" | grep -o 'level="[^"]*' | grep -o '[^"]*$')
 
     if [ "${name}" != "${3}" ] || [ $(wc -c <<<"${name}") -gt 80 ] || \
-    [ `grep -o -E '\.|\*|\/|\@|$|\)|\(|=|-' <<<"${name}"` ]; then
+    [ `grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${name}"` ]; then
     msg "$(gettext "File is corrupted.") E1\n" error & exit 1
     elif ! grep -Fox "${language_source}" <<<"${LANGUAGES}"; then
     msg "$(gettext "File is corrupted.") E2\n" error && exit 1
@@ -166,20 +168,6 @@ $dirs
 
 
 
-HIDDEN FILES
-===========================
-$hfiles
-
-
-
-
-EXECUTABLES FILES
-===========================
-$exfiles
-
-
-
-
 FILES
 ===========================
 
@@ -210,6 +198,20 @@ $attchsdir
 ./audio
 
 $audiodir
+
+
+
+
+HIDDEN FILES
+===========================
+$hfiles
+
+
+
+
+EXECUTABLES FILES
+===========================
+$exfiles
 
 
 
