@@ -52,7 +52,7 @@ fonts() {
     s=$((40-$(wc -c <<<"$1")))
     c=$((25-$(wc -c <<<"$1")))
     acuestion="\n\n<span font_desc='Free Sans $s'><b>$1</b></span>"
-    bcuestion="\n\n<span font_desc='Free Sans $c'>$1</span>"
+    bcuestion="\n<span font_desc='Free Sans $c'>$1</span>"
     answer="<span font_desc='Free Sans $s'><b>$src</b></span>"
 }
 
@@ -61,7 +61,7 @@ cuestion() {
     yad --form --text-align=center --undecorated --center --on-top  \
     --skip-taskbar --title=" " --borders=5 --buttons-layout=spread \
     --field="$acuestion":lbl \
-    --align=center --width=375 --height=280 \
+    --align=center --width=375 --height=270 \
     --button=" $(gettext "Exit") ":1 \
     --button=" $(gettext "Answer") >> ":0
 }
@@ -74,7 +74,7 @@ answer() {
     --field="$bcuestion":lbl \
     --field="":lbl \
     --field="$answer":lbl \
-    --width=375 --height=280 \
+    --width=375 --height=270 \
     --button="     $(gettext "I don't know")     ":3 \
     --button="     $(gettext "I know")     ":2
 }

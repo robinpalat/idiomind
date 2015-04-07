@@ -86,7 +86,7 @@ cuestion() {
     --buttons-layout=spread \
     --text="$lcuestion" \
     --field=play:BTN "$play" \
-    --width=371 --height=280 \
+    --width=370 --height=270 \
     --button="$(gettext "Exit")":1 \
     --button="  $(gettext "I don't know")  ":3 \
     --button="  $(gettext "I know")  ":2

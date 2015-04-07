@@ -92,9 +92,9 @@ get_list_sentences() {
 
 starting() {
     
-    yad --center --borders=5 \
+    yad --center --borders=5 --image=info \
     --title=$(gettext "Practice") --on-top --window-icon=idiomind \
-    --button=Ok:1 --skip-taskbar --width=320 --height=120 \
+    --button=Ok:1 --skip-taskbar --width=330 --height=130 \
     --text="  $1.  "
     "$strt" & killall prct.sh.sh & exit 1
 }

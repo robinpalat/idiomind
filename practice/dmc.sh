@@ -57,7 +57,7 @@ fonts() {
     ells=$(sort -Ru word2.tmp | head -6)
     echo "$ells" > word2.tmp
     sed '/^$/d' word2.tmp > word2.id
-    s=$((40-$(echo "$1" | wc -c)))
+    s=$((35-$(echo "$1" | wc -c)))
     cuestion="\n<span font_desc='Free Sans $s'><b>$1</b></span>\n\n"
     }
 
@@ -72,7 +72,7 @@ ofonts() {
 mchoise() {
     
     dlg=$(ofonts | yad --list --on-top --skip-taskbar \
-    --title=" " --width=390 --height=350 --center --undecorated \
+    --title=" " --width=390 --height=340 --center --undecorated \
     --text-align=center --no-headers --borders=6 --column=Option \
     --button="$(gettext "Exit")":1 --text="$cuestion")
 }
