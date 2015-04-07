@@ -392,7 +392,7 @@ function set_image() {
             btnn="--button="$(gettext "Change")":3"
             btn2="--button="$(gettext "Delete")":2"
         else
-            txt="--text=<small>$(gettext "Search image") <a href='file://$DT/search.html'>$wrd</a></small>"
+            txt="--text=<small>$(gettext "Search image related") <a href='file://$DT/search.html'>$wrd</a></small>"
         fi
         
         yad --form --align=center --center --name=Idiomind --class=Idiomind \
@@ -438,7 +438,7 @@ function set_image() {
             btnn="--button="$(gettext "Change")":3"
             btn2="--button="$(gettext "Delete")":2"
         else
-            txt="--text=<small>\\n<a href='file://$DT/search.html'>"$(gettext "Search image")"</a></small>"
+            txt="--text=<small>\\n<a href='file://$DT/search.html'>"$(gettext "Search image related to")"</a></small>"
         fi
         
         yad --name=Idiomind --class=Idiomind --text-align=center \

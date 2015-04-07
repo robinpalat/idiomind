@@ -350,7 +350,6 @@ fetch_podcasts() {
                     while read -r item; do
 
                         fields="$(echo "$item" | sed -r 's|-\!-|\n|g')"
-                        echo "$fields" > /home/robin/Desktop/file
                         enclosure=$(echo "$fields" | sed -n "$nimage"p)
                         title=$(echo "$fields" | sed -n "$ntitle"p \
                         | iconv -c -f utf8 -t ascii | sed 's/\://g' \

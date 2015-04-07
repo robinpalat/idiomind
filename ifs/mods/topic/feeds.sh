@@ -59,8 +59,7 @@ function feedmode() {
     
     note_mod="$(< $fdit)"
     if [ "$note_mod" != "$(< $nt)" ]; then
-        mv -f "$fdit" "$nt"
-    fi
+    mv -f "$fdit" "$nt"; else rm -f "$fdit"; fi
 }
 
 
