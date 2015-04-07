@@ -105,8 +105,10 @@ if [ TRUE = TRUE ]; then
     
     done < "$items"
     
-    notify-send -i idiomind "$(gettext "Update lists")" \
-    "$(wc -l < "$items") $(gettext "item(s) marked as learned")" -t 12000
+    echo "$(gettext "Information"):\n$(wc -l < "$items") $(gettext "item(s) marked as learned")" >> "$DT/notify"
+    
+    #notify-send -i idiomind "$(gettext "Update lists")" \
+    #"$(wc -l < "$items") $(gettext "item(s) marked as learned")" -t 12000
     
     fi
     

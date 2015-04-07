@@ -298,7 +298,7 @@ function new_word() {
     DM_tlt="$DM_tl/$tpe"
     DC_tlt="$DM_tl/$tpe/.conf"
     
-    if [ $(wc -l < "$DC_tlt/1.cfg") -ge 200 ]; then
+    if [ $(wc -l < "$DC_tlt/0.cfg") -ge 200 ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "You have reached the maximum number of items.")" info Info & exit 0; fi
     if [ -z "$tpe" ]; then
@@ -400,13 +400,13 @@ function edit_list_words() {
             msg "$(gettext "No topic is active")\n" info & exit 1
         fi
         
-        nw=$(wc -l < "$DC_tlt/3.cfg")
+        nw=$(wc -l < "$DC_tlt/0.cfg")
         left=$((200 - $nw))
         info="$(gettext "You can add") $left $(gettext "Words")"
         if [ $nw -ge 195 ]; then
-            info="$(gettext "You can add") $left $(gettext "Words")"
+        info="$(gettext "You can add") $left $(gettext "Words")"
         elif [ $nw -ge 199 ]; then
-            info="$(gettext "You can add") $left $(gettext "Word")"
+        info="$(gettext "You can add") $left $(gettext "Word")"
         fi
 
         mkdir "$DT/$c"; cd "$DT/$c";
@@ -496,9 +496,9 @@ function dclik_list_words() {
         msg "$(gettext "No topic is active")\n" info & exit 1
     fi
     
-    nw=$(wc -l < "$DC_tlt/3.cfg")
+    nw=$(wc -l < "$DC_tlt/0.cfg")
     
-    if [ $(cat "$DC_tlt/0.cfg" | wc -l) -ge 200 ]; then
+    if [ $(wc -l < "$DC_tlt/0.cfg") -ge 200 ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "You have reached the maximum number of items.")" info Info & exit; fi
 
@@ -565,14 +565,13 @@ function sentence_list_words() {
         [ -d "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "No topic is active")\n" info & exit 1; fi
     
-    nw=$(wc -l < "$DC_tlt/3.cfg")
+    nw=$(wc -l < "$DC_tlt/0.cfg")
     left=$((200 - $nw))
-    if [ "$left" = 0 ]; then
-        exit 1
+    if [ "$left" = 0 ]; then exit 1
     elif [ $nw -ge 195 ]; then
-        info="$(gettext "You can add") $left $(gettext "Words")"
+    info="$(gettext "You can add") $left $(gettext "Words")"
     elif [ $nw -ge 199 ]; then
-        info="$(gettext "You can add") $left $(gettext "Word")"; fi
+    info="$(gettext "You can add") $left $(gettext "Word")"; fi
     
     list_words_2 "$2"
     
@@ -764,9 +763,9 @@ function process() {
         left=$((200 - $ns))
         info="$(gettext "You can add") $left $(gettext "items")"
         if [ $ns -ge 195 ]; then
-            info="$(gettext "You can add") $left $(gettext "items")"
+        info="$(gettext "You can add") $left $(gettext "items")"
         elif [ $ns -ge 199 ]; then
-            info="$(gettext "You can add") $left $(gettext "items")"; fi
+        info="$(gettext "You can add") $left $(gettext "items")"; fi
 
         if [ -z "$(< ./sntsls_)" ]; then
         

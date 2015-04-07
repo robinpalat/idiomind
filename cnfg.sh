@@ -119,8 +119,8 @@ cat "$DC_s/2.cfg" | yad --plug=$KEY --tabnum=2 --list --expand-column=2 \
 --text="<sub>  $(gettext "Double click to set") </sub>" --print-all \
 --no-headers --dclick-action="$DS/ifs/dclik.sh" \
 --column=icon:IMG --column=Action &
-yad --notebook --key=$KEY --name=Idiomind --class=Idiomind \
---sticky --center --window-icon="$DS/images/logo.png" --borders=5  \
+yad --notebook --key=$KEY --name=Idiomind --class=Idiomind --tab-borders=5 \
+--sticky --center --window-icon="$DS/images/logo.png" --borders=2  \
 --tab="$(gettext "Preferences")" --tab="$(gettext "Addons")" \
 --width=$wth --height=$eht --title="$(gettext "Settings")" \
 --button="$(gettext "Cancel")":1 --button="$(gettext "OK")":0

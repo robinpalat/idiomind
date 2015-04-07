@@ -72,15 +72,16 @@ function notebook_1() {
     --tabnum=3 --fore='gray40' --wrap --editable \
     --show-uri --fontname=vendana --print-column=1 \
     --column="" --filename="$nt" > "$cnf3" &
-    yad --form --scroll --borders=15 --plug=$KEY --tabnum=4 --columns=2 \
-    --text="$label_info\n" \
+    yad --form --scroll --borders=10 --plug=$KEY --tabnum=4 --columns=2 \
+    --text="$label_info1\n" \
     --field="<small>$(gettext "Rename")</small>:" "$tpc" \
-    --field="$(gettext "Mark as learned")":FBTN "$DS/mngr.sh 'mark_as_learned'" \
-    --field="\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " --field=" ":LBL " " \
+    --field="   $(gettext "Mark as learned")   ":FBTN "$DS/mngr.sh 'mark_as_learned'" \
+    --field="$(gettext "Show cover")":CHK "$set1" \
+    --field="$label_info2":LBL " " \
     --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh" \
     --field="$(gettext "Attachments")":FBTN "$DS/ifs/tls.sh attachs" \
-    --field="$(gettext "Show cover")":CHK "$set1" \
-    --field="$(gettext "Delete")":BTN "$DS/mngr.sh 'delete_topic'" > "$cnf4" &
+    --field="$(gettext "Delete")":BTN "$DS/mngr.sh 'delete_topic'" \
+    --field=" ":LBL " " > "$cnf4" &
     yad --notebook --name=Idiomind --center --key=$KEY \
     --class=Idiomind --align=right "$img" --fixed \
     --window-icon="$DS/images/logo.png" \
@@ -110,15 +111,16 @@ function notebook_2() {
     --tabnum=3 --fore='gray40' --wrap --editable \
     --show-uri --fontname=vendana --print-column=1 \
     --column="" --filename="$nt" > "$cnf3" &
-    yad --form --scroll --borders=15 --plug=$KEY --tabnum=4 --columns=2 \
-    --text="$label_info \n" \
+    yad --form --scroll --borders=10 --plug=$KEY --tabnum=4 --columns=2 \
+    --text="$label_info1\n" \
     --field="<small>$(gettext "Rename")</small>:" "$tpc" \
-    --field="$(gettext "Review")":FBTN "$DS/mngr.sh 'mark_as_learn'" \
-    --field="\t\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " --field=" ":LBL " " \
+    --field="   $(gettext "Review")"   :FBTN "$DS/mngr.sh 'mark_as_learn'" \
+    --field="$(gettext "Show cover")\t ":CHK "$set1" \
+    --field="$label_info2":LBL " " \
     --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh" \
-    --field="$(gettext "Attachments")":FBTN "$DS/ifs/tls.sh attachs" >/dev/null 2>&1 \
-    --field="$(gettext "Show cover")":CHK "$set1" \
-    --field="$(gettext "Delete")":BTN "$DS/mngr.sh 'delete_topic'" > "$cnf4" &
+    --field="$(gettext "Attachments")":FBTN "$DS/ifs/tls.sh attachs" \
+    --field="$(gettext "Delete")":BTN "$DS/mngr.sh 'delete_topic'" \
+    --field=" ":LBL " " > "$cnf4" &
     yad --notebook --name=Idiomind --center \
     --class=Idiomind --align=right --key=$KEY \
     --tab-borders=5 --center --title="$tpc" \

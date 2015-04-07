@@ -18,8 +18,6 @@
 #
 #  2015/02/27
 
-#set -e
-#set u pipefail
 IFS=$'\n\t'
 
 if [ ! -d "$HOME/.idiomind" ]; then
@@ -39,15 +37,17 @@ if [ -f "$DT/ps_lk" ]; then
 fi
 
 function new_session() {
-    
+
+    #set -e
+    #set u pipefail
     echo "--new session"
     touch "$DT/ps_lk"
     echo "$(date +%d)" > "$DC_s/10.cfg"
+    if [ -f "$DT/t_notify" ]; then rm -f "$DT/t_notify"; fi
+    if [ -f "$DT/notify" ]; then rm -f "$DT/notify"; fi
     
     # write in /tmp
-    if [ ! -d "$DT" ]; then
-        mkdir "$DT";
-    fi
+    if [ ! -d "$DT" ]; then mkdir "$DT"; fi
     
     if [ $? -ne 0 ]; then
         killall yad &
@@ -76,14 +76,13 @@ function new_session() {
     (sleep 20 && "$strt"); done &
 
     # fix
-    n=1; cd "$DM_tl"; f="$DM_tl/.2.cfg"
-    while [ $n -le $(wc -l < "$f") ]; do
-        chk=$(sed -n "$n"p "$f")
+    n=1; cd "$DM_tl"; cfg="$DM_tl/.2.cfg"
+    while [ $n -le $(wc -l < "$cfg") ]; do
+        chk=$(sed -n "$n"p "$cfg")
         if ! grep -Fxo "$chk" <(ls -d *); then
-            grep -vxF "$chk" "$f" > "$DT/f.tmp"
-            sed '/^$/d' "$DT/f.tmp" > "$f"
-            rm -f "$DT/f.tmp"
-        fi
+            grep -vxF "$chk" "$cfg" > "$DT/f.tmp"
+            sed '/^$/d' "$DT/f.tmp" > "$cfg"
+            rm -f "$DT/f.tmp";fi
         let n++
     done; cd ~/
 
@@ -110,7 +109,7 @@ function new_session() {
     n=1
     while [ $n -le "$(wc -l < "$DM_tl/.1.cfg" | head -50)" ]; do
         tp=$(sed -n "$n"p "$DM_tl/.1.cfg")
-        stts=$(echo "$(< "$DM_tl/$tp/.conf/8.cfg")")
+        stts=$(< "$DM_tl/$tp/.conf/8.cfg")
 
         if [ "$stts" = 2 ] || [ "$stts" = 7 ]; then
         
@@ -137,26 +136,33 @@ function new_session() {
                 if grep -Fxo "$tp" < "$DM_tl/.3.cfg"; then
                     if [ "$RM" -ge 100 ]; then
                         echo "9" >> "$DM_tl/$tp/.conf/8.cfg"
-                        printf "$tp\n" >> "$DT/notify"
+                        printf "$tp\n" >> "$DT/t_notify"
                     fi
                     if [ "$RM" -ge 150 ]; then
                         echo "10" > "$DM_tl/$tp/.conf/8.cfg"
-                        printf "$tp\n" >> "$DT/notify"
+                        printf "$tp\n" >> "$DT/t_notify"
                     fi
                 else
                     if [ "$RM" -ge 100 ]; then
                         echo "4" > "$DM_tl/$tp/.conf/8.cfg"
-                        printf "$tp\n" >> "$DT/notify"
+                        printf "$tp\n" >> "$DT/t_notify"
                     fi
                     if [ "$RM" -ge 150 ]; then
                         echo "5" > "$DM_tl/$tp/.conf/8.cfg"
-                        printf "$tp\n" >> "$DT/notify"
+                        printf "$tp\n" >> "$DT/t_notify"
                     fi
                 fi
             fi
         fi
         let n++
     done
+    
+    if [ -f "$DT/t_notify" ] && [ -z "$2" ]; then
+        info="$(< "$DT/t_notify")"
+        (sleep 2 && notify-send -i idiomind "$(gettext "There are topics to review")" "$info") &
+        echo "$(gettext "Could be reviewed:")\n$info" >> "$DT/notify"
+        rm -f "$DT/t_notify";
+    fi
     
     rm -f  "$DT/ps_lk"
     "$DS/mngr.sh" mkmn &
@@ -169,18 +175,14 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
     c=$(echo $(($RANDOM%1000)))
     source "$DS/ifs/mods/cmns.sh"
     [ ! -d "$DT" ] && mkdir "$DT"
-    mkdir "$DT/idmimp_$c"
-    (cp -f "$DS/default/p1.sh" "$DT/p1.$c"
-    cp -f "$DS/default/p2.sh" "$DT/p2.$c"
-    sed -i 's/X015x/'$c'/g' "$DT"/*.$c) &
+    mkdir "$DT/dir$c"
     cp "$1" "$DT/import.tmp"
     mv "$DT/import.tmp" "$DT/import.tar.gz"
-    cd "$DT/idmimp_$c"
-    #--exclude=./topics/attchs #TODO
+    cd "$DT/dir$c" #--exclude=./topics/attchs #TODO
     tar -xzvf ../import.tar.gz
-    ls -tdN * > "$DT/idmimp_$c/ls"
-    tpi=$(sed -n 1p "$DT/idmimp_$c/ls")
-    tmp="$DT/idmimp_$c/$tpi"
+    ls -tdN * > "$DT/dir$c/ls"
+    tpi=$(sed -n 1p "$DT/dir$c/ls")
+    tmp="$DT/dir$c/$tpi"
     "$DS/ifs/safe.sh" check_source_1 "$tmp" "$tpi" &&
     source "$DT/$tpi.cfg"
     lng="$(lnglss "$language_target")"
@@ -192,15 +194,15 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
     if [ "$tpi" != "$name" ]; then
     
         msg "$(gettext "File is corrupted.")\n " error;
-        [ -d "$DT/idmimp_$c" ] && rm -fr "$DT/idmimp_$c" \
-        "$DT/$tpi.cfg" "$DT"/*.$c "$DT/import.tar.gz" & exit 1
+        [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c" \
+        "$DT/$tpi.cfg" "$DT/import.tar.gz" & exit 1
         
     else
         cd "$tmp"
         ws=$(wc -l < "3.cfg")
         ss=$(wc -l < "4.cfg")
         itxt="<big><big> $tpi</big></big><small>\\n  ${language_source^} <b>></b> $language_target\\n  $nwords $(gettext "Words") $nsentences $(gettext "Sentences") $nimages $(gettext "Images")\n  $(gettext "Level") $level \n</small>"
-        dlck="$DT/p1.$c"
+        dlck="$DS/default/p1.sh '$c'"
         
         tac "$tmp/0.cfg" | awk '{print $0""}' | \
         yad --list --name=Idiomind --title="Idiomind" \
@@ -216,8 +218,8 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
             
             if [ "$ret" -eq 1 ]; then
             
-                [ -d "$DT/idmimp_$c" ] && rm -fr "$DT/idmimp_$c"
-                rm -f "$DT"/*.$c "$DT/import.tar.gz" "$DT/$tpi.cfg" & exit
+                [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c"
+                rm -f "$DT/import.tar.gz" "$DT/$tpi.cfg" & exit
                 
             elif [ "$ret" -eq 0 ]; then
             
@@ -227,8 +229,8 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
                 if [ "$if2" -ge 80 ]; then
                 
                     msg "$(gettext "Sorry, you have reached the maximum number of topics")\n" info
-                    [ -d "$DT/idmimp_$c" ] && rm -fr "$DT/idmimp_$c"
-                    rm -f "$DT"/*.$c "$DT/import.tar.gz" & exit
+                    [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c"
+                    rm -f "$DT/import.tar.gz" & exit
                 fi
         
                 if [ "$chck" -ge 1 ]; then
@@ -238,9 +240,8 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
                     ret=$(echo $?)
                     
                     if [ $ret != 0 ]; then
-                        [ -d "$DT/idmimp_$c" ] && rm -fr "$DT/idmimp_$c"
-                        rm -f "$DT"/*.$c "$DT/import.tar.gz" & exit 1
-                    fi
+                        [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c"
+                        rm -f  "$DT/import.tar.gz" & exit 1; fi
                 fi
 
                 if [ ! -d "$DM_t/$language_target" ]; then
@@ -275,8 +276,8 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
                 "$DS/mngr.sh" mkmn; "$DI_m/tpc.sh" &
             fi
     fi
-    [ -d "$DT/idmimp_$c" ] && rm -fr "$DT/idmimp_$c"
-    rm -f "$DT"/*.$c "$DT/import.tar.gz" "$DT/$tpi.cfg" & exit
+    [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c"
+    rm -f "$DT/import.tar.gz" "$DT/$tpi.cfg" & exit
 fi
     
 # topic
@@ -307,9 +308,9 @@ function topic() {
             cnf3=$(mktemp $DT/cnf3.XXX.x)
             cnf4=$(mktemp $DT/cnf4.XXX.x)
             set1=$(< "$DC_tlt/5.cfg")
+            
             cd $DS
-            if [ -f "$DM_tlt/words/images/img.jpg" ] \
-            && [ "$set1" = TRUE ]; then
+            if [ -f "$DM_tlt/words/images/img.jpg" ]; then
             img="--image=$DM_tlt/words/images/img.jpg"
             sx=612; sy=570; else sx=640; sy=560; fi
             printf "tpcs.$tpc.tpcs\n" >> "$DC_s/8.cfg"
@@ -325,6 +326,14 @@ function topic() {
 
     [ -z "$tpc" ] && exit 1
     
+        label_info1="<big><big>$tpc </big></big><small>\\n$inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$(gettext "Created by") $author $(gettext "on") <span color='#6E9FD4'>${category^}</span> $date_u</small>"
+
+        if [ -f "$DT/notify" ]; then
+        l=$(wc -l < "$DT/notify")
+        r=`shuf -i 1-$l -n 1`
+        label_info2="<small>$(sed -n "$r"p "$DT/notify")</small>"
+        else label_info2=" "; fi
+
     apply() {
     
         note_mod="$(< $cnf3)"
@@ -337,7 +346,7 @@ function topic() {
             "$DS/mngr.sh" rename_topic "$ntpc" &
         fi
         
-        set1_=$(cut -d '|' -f 7 < "$cnf4")
+        set1_=$(cut -d '|' -f 8 < "$cnf4")
         if [ "$set1" != "$set1_" ]; then
             echo  "$set1_" > "$DC_tlt/5.cfg"
         fi
@@ -361,10 +370,7 @@ function topic() {
             printf "okim.$cnt.okim\n" >> "$DC_s/8.cfg"
         fi
     }
-
-    label_info="<big><big>$tpc </big></big><small>\\n$inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$(gettext "Created by") $author $(gettext "on") <span color='#6E9FD4'>${category^}</span> $date_u</small>"
-    label_info2=""
-
+    
     if [ "$inx0" -lt 1 ]; then
         
         # empty lists
@@ -499,6 +505,14 @@ function topic() {
 
 panel() {
 
+    printf "strt.1.strt\n" >> "$DC_s/8.cfg"
+    [ -n "$tpc" ] && echo "$tpc" > "$DT/tpe"
+    if [ ! -d "$DT" ]; then new_session & exit; fi
+    
+    [ -f "$DC_s/10.cfg" ] && date=$(sed -n 1p "$DC_s/10.cfg")
+    if [ "$(date +%d)" != "$date" ] || [ ! -f "$DC_s/10.cfg" ]; then
+    new_session; fi
+    
     w=$(($(sed -n 2p $DC_s/10.cfg)-400))
     h=$(($(sed -n 3p $DC_s/10.cfg)-150))
     yad --width=150 --height=200 --form \
@@ -510,14 +524,6 @@ panel() {
     --field=gtk-preferences:btn "$DS/cnfg.sh" \
     --on-top --borders=5 --align=center \
     --no-buttons --window-icon="$DS/images/logo.png" &
-
-    printf "strt.1.strt\n" >> "$DC_s/8.cfg"
-    [ -n "$tpc" ] && echo "$tpc" > "$DT/tpe"
-    if [ ! -d "$DT" ]; then new_session & exit; fi
-    
-    [ -f "$DC_s/10.cfg" ] && d2=$(sed -n 1p "$DC_s/10.cfg")
-    if ([ "$(date +%d)" != "$d2" ] || [ ! -f "$DC_s/10.cfg" ]); then
-        new_session; fi
 }
 
 version() {
@@ -532,17 +538,12 @@ session() {
 
 autostart() {
 
-    sleep 50
-    [ ! -f "$DT/ps_lk" ] && new_session
-    if [ -f "$DT/notify" ]; then
-    info=$(cat "$DT/notify")
-    (sleep 100 && notify-send -i idiomind "Reminders" "$info") &
-    rm -f "$DT/notify" &
-    fi
+    sleep 1
+    [ ! -f "$DT/ps_lk" ] && new_session auto
     exit 0
 }
 
-case $1 in
+case "$1" in
     topic)
     topic ;;
     --version)

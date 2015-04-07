@@ -27,10 +27,10 @@ function feedmode() {
     info="$(cat $DCP/9.cfg)"
     fdit=$(mktemp "$DT/fdit.XXXX")
     c=$(echo $(($RANDOM%100000))); KEY=$c
-    [ -f "$DT/.uptp" ] && \
-    info=$(echo "$(gettext "Updating")...") || \
-    info=$(cat "$DM_tl/Feeds/.dt")
-
+    info=$(< "$DM_tl/Feeds/.dt")
+    [ -f "$DT/.uptp" ] && info="- $(gettext "Updating")..."
+    [ -f "$DT/l_sync" ] && info="- $(gettext "Synchronizing")..."
+    
     list_1 | yad --no-headers --list --plug=$KEY \
     --tabnum=1 --print-all --expand-column=2 --ellipsize=END \
     --column=Name:IMG --column=Name --dclick-action="$DSP/vwr.sh" &

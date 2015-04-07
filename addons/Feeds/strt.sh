@@ -109,7 +109,7 @@ conditions() {
             if ([ -z "$channel" ] && [ -z "$ntype" ] && [ -z "$ntitle" ]) \
             && ([ -z "$nmedia" ] || [ -z "$nimage" ]); then
                 echo "$n" > $DT/dupl.cnf
-                msg " $(gettext "Something wrong on feeds configuration")\n $(gettext "Error")1  $(gettext "URL")$n" dialog-warning
+                printf "err.FE2($n).err\n" >> "$DC_s/8.cfg";
                 [ -f "$DT/.uptp" ] && rm -fr "$DT_r" "$DT/.uptp"
             exit 1
             fi
@@ -138,7 +138,7 @@ mediatype () {
     elif echo "${1}" | grep -o ".jpeg"; then ex=jpeg; tp=txt
     elif echo "${1}" | grep -o ".png"; then ex=png; tp=txt
     else
-        msg " $(gettext "Something wrong on feeds configuration")\n $(gettext "Error")2  $(gettext "URL")$n" dialog-warning;
+        printf "err.FE2($n).err\n" >> "$DC_s/8.cfg";
         continue; fi
 }
 
@@ -167,7 +167,8 @@ mkhtml () {
         elif [ $ex = avi ]; then
         t = avi; fi
         
-printf "<link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwrstyle.css\">
+printf "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
+<link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwrstyle.css\">
 <video width=640 height=380 controls>
 <source src=\"$fname.$ex\" type=\"video/mp4\">
 Your browser does not support the video tag.
@@ -178,7 +179,8 @@ Your browser does not support the video tag.
 " > "$DMC/$fname.html"
 
     elif [ "$tp" = aud ]; then
-printf "<link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwrstyle.css\">
+printf "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
+<link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwrstyle.css\">
 <br><div class=\"title\"><h2>$title</h2></div><br>
 <div class=\"summary\"><audio controls><br>
 <source src=\"$fname.$ex\" type=\"audio/mpeg\">
@@ -189,7 +191,8 @@ $summary<br><br></div>
 " > "$DMC/$fname.html"
 
     elif [ "$tp" = txt ]; then
-printf "<link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwrstyle.css\">
+printf "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
+<link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwrstyle.css\">
 <body>
 <br><div class=\"title\"><h2>$title</h2></div><br>
 <div class=\"summary\"><div class=\"image\">
@@ -295,7 +298,7 @@ fetch_podcasts() {
                     fname="$(nmfile "${title}")"
                     
                     if [ "$(echo "$title" | wc -c)" -ge 180 ] || [ -z "$title" ]; then
-                            msg " $(gettext "Something wrong on feeds configuration")\n $(gettext "Error")4  $(gettext "URL")$n" info;
+                            printf "err.FE4($n).err\n" >> "$DC_s/8.cfg";
                             continue; fi
                          
                     if ! grep -Fxo "$title" < "$DCP/1.cfg"; then
@@ -369,7 +372,7 @@ fetch_podcasts() {
                         fname="$(nmfile "${title}")"
 
                         if [ "$(echo "$title" | wc -c)" -ge 200 ]; then
-                                msg " $(gettext "Something wrong on feeds configuration")\n $(gettext "Error")4  $(gettext "URL")$n" info;
+                                printf "err.FE5($n).err\n" >> "$DC_s/8.cfg";
                                 continue; fi
                                 
                         if ! grep -Fxo "$title" < "$DCP/1.cfg"; then

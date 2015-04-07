@@ -469,7 +469,7 @@ function edit() {
         edau="/usr/share/idiomind/ifs/tls.sh edit_audio \
         '$DM_tlt/$fname.mp3' '$DM_tlt'"
         dlte="$DS/mngr.sh delete_item ${fname}"
-        imge="$DS/ifs/tls.sh set_image '$tgt' sentence"
+        imge="$DS/ifs/tls.sh set_image '$file' sentence"
         
         dlg_form_2 "$cnf"
         ret=$(echo "$?")

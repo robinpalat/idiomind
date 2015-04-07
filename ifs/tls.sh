@@ -186,7 +186,7 @@ fi
 echo "<br><br></div>
 </body>" >> "$DC_tlt/att.html"
             
-    }
+    } >/dev/null 2>&1
     
     [ ! -d "$DM_tlt/attchs" ] && mkdir "$DM_tlt/attchs"
     ch1="$(ls -A "$DM_tlt/attchs")"
@@ -204,7 +204,7 @@ echo "<br><br></div>
         --uri="$DC_tlt/att.html"
         
         if [ "$ch1" != "$(ls -A "$DM_tlt/attchs")" ]; then
-            mkindex >/dev/null 2>&1
+            mkindex
         fi
         
     else
@@ -214,14 +214,14 @@ echo "<br><br></div>
         --name=Idiomind --class=Idiomind --center \
         --text="$(gettext "Put files in a folder related to the topic.")" \
         --title="$(gettext "Attachments")" --width=350 --height=200 \
-        --button="$(gettext "Cancelar")":1 \
+        --button="$(gettext "Cancel")":1 \
         --button="$(gettext "OK")":0
         ret=$?
         if [ "$ch1" != "$(ls -A "$DM_tlt/attchs")" ] && [ $ret = 0 ]; then
-            mkindex >/dev/null 2>&1
+            mkindex
         fi
     fi
-}
+} >/dev/null 2>&1
 
 function help() {
 
@@ -369,35 +369,30 @@ END
 function set_image() {
 
     cd "$DT"
-    wrd="$2"
-    fname="$(nmfile "$wrd")"
-    echo '<html>
-<head>
-<meta http-equiv="Refresh" content="0;url=https://www.google.com/search?q=XxXx&tbm=isch">
-</head>
-<body>
-<p>Search images for '"'XxXx'"'...</p>
-</body>
-</html>' > html
+    
+    if [ "$3" = word ]; then wrd="$2"
+    elif [ "$3" = sentence ]; then
+    wrd=$(eyeD3 "$2" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)'); fi
 
-    sed -i 's/XxXx/'"$wrd"'/g' html
-    mv -f html s.html
-    chmod +x s.html
+    search="$(sed "s/'//g" <<<"$wrd")"
+    fname="$(nmfile "$wrd")"
+    echo -e "<html><head>
+    <meta http-equiv=\"Refresh\" content=\"0;url=https://www.google.com/search?q="$search"&tbm=isch\">
+    </head><body><p>Search images for \"$search\"...</p></body></html>" > search.html
     ICON="$DS/icon/nw.png"
     btnn="--button="$(gettext "Add Image")":3"
     
     if [ "$3" = word ]; then
         
         if [ ! -f "$DT/$fname.*" ]; then
-            file="$DM_tlt/words/$fname.mp3"
-        fi
+            file="$DM_tlt/words/$fname.mp3"; fi
         
         if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
             ICON="--image=$DM_tlt/words/images/$fname.jpg"
             btnn="--button="$(gettext "Change")":3"
             btn2="--button="$(gettext "Delete")":2"
         else
-            txt="--text=<small>$(gettext "Search image")\t<a href='file://$DT/s.html'>$wrd</a></small>"
+            txt="--text=<small>$(gettext "Search image") <a href='file://$DT/search.html'>$wrd</a></small>"
         fi
         
         yad --form --align=center --center --name=Idiomind --class=Idiomind \
@@ -406,7 +401,7 @@ function set_image() {
         "$btnn" --window-icon="$DS/images/logo.png" --borders=5 \
         --title=$(gettext "Image") "$ICON" "$btn2" \
         --button=gtk-close:1
-            ret=$? >/dev/null 2>&1
+        ret=$? >/dev/null 2>&1
             
             if [ $ret -eq 3 ]; then
             
@@ -432,8 +427,7 @@ function set_image() {
     elif [ "$3" = sentence ]; then
     
         if [ ! -f "$DT/$wrd.*" ]; then
-            file="$DM_tlt/$fname.mp3"
-        fi
+            file="$DM_tlt/$fname.mp3"; fi
         
         btnn="--button="$(gettext "Add Image")":3"
         eyeD3 --write-images="$DT" "$file" >/dev/null 2>&1
@@ -444,10 +438,10 @@ function set_image() {
             btnn="--button="$(gettext "Change")":3"
             btn2="--button="$(gettext "Delete")":2"
         else
-            txt="--text=<small>\\n<a href='file://$DT/s.html'>"$(gettext "Search image")"</a></small>"
+            txt="--text=<small>\\n<a href='file://$DT/search.html'>"$(gettext "Search image")"</a></small>"
         fi
         
-        yad --name=Idiomind --class=Idiomind \
+        yad --name=Idiomind --class=Idiomind --text-align=center \
         --form --center --width=470 --height=280 \
         --on-top --skip-taskbar --image-on-top \
         "$txt" "$btnn" --window-icon="$DS/images/logo.png" --borders=5 \
@@ -467,9 +461,9 @@ function set_image() {
                 
             elif [ $ret -eq 2 ]; then
                 eyeD3 --remove-images "$file" >/dev/null 2>&1
-                rm -f s.html *.jpeg
+                rm -f search.html *.jpeg
             else
-                rm -f s.html *.jpeg
+                rm -f search.html *.jpeg
             fi
     fi
 
