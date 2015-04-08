@@ -140,7 +140,7 @@ nme=$(echo "$tpc" | sed 's/ /_/g' \
 | sed 's/"//g' | sed 's/’//g')
 imgm="$DM_tlt/words/images/img.jpg"
 
-"$DS/ifs/safe.sh" check_index "$tpc"
+"$DS/ifs/tls.sh" check_index "$tpc"
 
 if [ $(cat "$DC_tlt/0.cfg" | wc -l) -ge 20 ]; then
 btn="--button="$(gettext "Upload")":0"; else
@@ -160,7 +160,7 @@ upld=$(yad --form --width=480 --height=460 --on-top \
 "!$others!$article!$comics!$culture!$documentary!$entertainment!$funny!$family!$grammar!$history!$movies!$in_the_city!$interview!$internet!$music!$nature!$news!$office!$relations!$sport!$science!$shopping!$social_networks!$technology!$travel" \
 --field="    $(gettext "Skill Level"):CBE" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
 --field="\n$(gettext "Description/Notes"):TXT" "$nt" \
---field="$(gettext "Add image\napprox. 600px x 200px"):FL" "$imgm")
+--field="$(gettext "Image\napprox. 600x200px"):FL" "$imgm")
 ret=$?
 
 if [ "$ret" = 2 ]; then

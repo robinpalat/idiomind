@@ -3,11 +3,8 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/mods/cmns.sh
-
-
 DMC="$DM_tl/Feeds/cache"
 DCP="$DM_tl/Feeds/.conf/"
-
 
 if [ "$1" = delete_item ]; then
 
@@ -40,12 +37,12 @@ if [ "$1" = delete_item ]; then
             
     rm -f $DT/ps_lk; exit 1
 
-
-
 elif [ "$1" = delete ]; then
 
-     msg_2 " $(gettext "Are you sure you want to delete saved episodes?")\n" dialog-question "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
-    tret=$(echo "$?")
+    if [ "$(wc -l < "$DCP/2.cfg")" -gt 0 ]; then
+    msg_2 " $(gettext "Are you sure you want to delete saved episodes?")\n" dialog-question "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
+    else exit 1; fi
+    ret=$(echo "$?")
             
     if [ $ret -eq 0 ]; then
 

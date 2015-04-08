@@ -20,7 +20,7 @@
 #source /usr/share/idiomind/ifs/c.conf
 DSP="$DS/practice"
 wth=500
-eht=440
+eht=450
 easys="$2"
 learning="$3"
 [[ "$4" -lt 0 ]] && hards=0 || hards="$4"
@@ -38,19 +38,19 @@ cd "$DC_tlt/practice"
 if [[ -n "$1" ]]; then
 
     if [ "$1" = 1 ]; then
-        info1="* "; info="<b>Test completed!</b>\n"
+        info1="* "; info="<b>$(gettext "Test completed!")</b>\n"
         echo 21 > .iconf
     elif [ "$1" = 2 ]; then
-        info2="* "; info="<b>Test completed!</b>\n"
+        info2="* "; info="<b>$(gettext "Test completed!")</b>\n"
         echo 21 > .iconmc
     elif [ "$1" = 3 ]; then
-        info3="* "; info="<b>Test completed!</b>\n"
+        info3="* "; info="<b>$(gettext "Test completed!")</b>\n"
         echo 21 > .iconlw
     elif [ "$1" = 4 ]; then
-        info4="* "; info="<b>Test completed!</b>\n"
+        info4="* "; info="<b>$(gettext "Test completed!")</b>\n"
         echo 21 > .iconls
     elif [ "$1" = 5 ]; then
-        info5="* "; info="<b>Test completed!</b>\n"
+        info5="* "; info="<b>$(gettext "Test completed!")</b>\n"
         echo 21 > .iconi
     elif [ "$1" = 6 ]; then
         learned=$(cat l_f)
@@ -88,32 +88,32 @@ img5="$DSP/icons_st/$(cat .iconi).png"
 
 VAR=$(yad --ellipsize=NONE --list \
 --on-top --class=Idiomind --name=Idiomind \
---center --window-icon="$DS/images/logo.png" \
+--center --window-icon="$DS/images/logo.png" --hide-column=1 \
 --image-on-top --buttons-layout=edge $img \
---borders=5 --expand-column=1 --print-column=2 \
+--borders=10 --expand-column=2 --print-column=1 \
 --width=$wth --height=$eht --text="$info" \
 --no-headers --button="$(gettext "Restart")":3 \
 --button="$(gettext "Start")":0 \
 --title="$(gettext "Practice") - $tpc" --text-align=center \
---column="Pick":IMG --column="Action" \
-$img1 "     $info1 Flashcards" \
-$img2 "     $info2 Multiple Choice" \
-$img3 "     $info3 Listening Words" \
-$img4 "     $info4 Listening Sentences" \
-$img5 "     $info5 Images" )
+--column="Action" --column="Pick":IMG --column="Label" \
+Fcards $img1 "     $info1 $(gettext "Flashcards")" \
+MChoise $img2 "     $info2 $(gettext "Multiple Choice")" \
+LWords $img3 "     $info3 $(gettext "Listening Words")" \
+LSntncs $img4 "     $info4 $(gettext "Listening Sentences")" \
+WImages $img5 "     $info5 $(gettext "With Images")" )
 ret=$?
 
 if [ $ret -eq 0 ]; then
     printf "prct.shc.$tpc.prct.shc\n" >> "$DC_s/8.cfg" &
-    if echo "$VAR" | grep "Flashcards"; then
+    if echo "$VAR" | grep "Fcards"; then
         "$DSP/prct.sh" f & exit 1
-    elif echo "$VAR" | grep "Multiple Choice"; then
+    elif echo "$VAR" | grep "MChoise"; then
         "$DSP/prct.sh" m & exit 1
-    elif echo "$VAR" | grep "Listening Words"; then
+    elif echo "$VAR" | grep "LWords"; then
         "$DSP/prct.sh" w & exit 1
-    elif echo "$VAR" | grep "Listening Sentences"; then
+    elif echo "$VAR" | grep "LSntncs"; then
         "$DSP/prct.sh" s & exit 1
-    elif echo "$VAR" | grep "Images"; then
+    elif echo "$VAR" | grep "WImages"; then
         "$DSP/prct.sh" i & exit 1
     else
         yad --form --center --borders=5 \

@@ -1,8 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-wth=650
-eht=400
 echo "_" >> "$DT/stats.tmp" &
 [ "$1" = v1 ] && ind="$DC_tlt/1.cfg"
 [ "$1" = v2 ] && ind="$DC_tlt/2.cfg"

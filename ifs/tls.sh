@@ -37,6 +37,410 @@ elif [ "$1" = dclik ]; then
 
 fi
 
+check_source_1() {
+
+CATEGORIES="others
+comics
+culture
+family
+entertainment
+grammar
+history
+documentary
+in_the_city
+movies
+internet
+music
+nature
+news
+office
+relations
+sport
+social_networks
+shopping
+technology
+travel
+article
+science
+interview
+funny"
+
+LANGUAGES="English
+Chinese
+French
+German
+Italian
+Japanese
+Portuguese
+Russian
+Spanish
+Vietnamese"
+
+    dir="${2}"
+    file="${dir}/12.cfg"
+    nu='^[0-9]+$'
+    
+    dirs="$(find "${dir}"/ -maxdepth 5 -type d | sed '/^$/d' | wc -l)"
+    name="$(sed -n 1p < "${file}" | grep -o 'name="[^"]*' | grep -o '[^"]*$')"
+    language_source=$(sed -n 2p < "${file}" | grep -o 'language_source="[^"]*' | grep -o '[^"]*$')
+    language_target=$(sed -n 3p < "${file}" | grep -o 'language_target="[^"]*' | grep -o '[^"]*$')
+    author="$(sed -n 4p < "${file}" | grep -o 'author="[^"]*' | grep -o '[^"]*$')"
+    contact=$(sed -n 5p < "${file}" | grep -o 'contact="[^"]*' | grep -o '[^"]*$')
+    category=$(sed -n 6p < "${file}" | grep -o 'category="[^"]*' | grep -o '[^"]*$')
+    link=$(sed -n 7p < "${file}" | grep -o 'link="[^"]*' | grep -o '[^"]*$')
+    date_c=$(sed -n 8p < "${file}" | grep -o 'date_c="[^"]*' | grep -o '[^"]*$' | tr -d '-')
+    date_u=$(sed -n 9p < "${file}" | grep -o 'date_u="[^"]*' | grep -o '[^"]*$' | tr -d '-')
+    nwords=$(sed -n 10p < "${file}" | grep -o 'nwords="[^"]*' | grep -o '[^"]*$')
+    nsentences=$(sed -n 11p < "${file}" | grep -o 'nsentences="[^"]*' | grep -o '[^"]*$')
+    nimages=$(sed -n 12p < "${file}" | grep -o 'nimages="[^"]*' | grep -o '[^"]*$')
+    level=$(sed -n 13p < "${file}" | grep -o 'level="[^"]*' | grep -o '[^"]*$')
+
+    if [ "${name}" != "${3}" ] || [ $(wc -c <<<"${name}") -gt 80 ] || \
+    [ `grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${name}"` ]; then
+    msg "$(gettext "File is corrupted.") E1\n" error & exit 1
+    elif ! grep -Fox "${language_source}" <<<"${LANGUAGES}"; then
+    msg "$(gettext "File is corrupted.") E2\n" error && exit 1
+    elif ! grep -Fox "${language_target}" <<<"${LANGUAGES}"; then
+    msg "$(gettext "File is corrupted.") E3\n" error & exit 1
+    elif [ $(wc -c <<<"${author}") -gt 20 ] || \
+    [ `grep -o -E '\.|\*|\/|\@|$|\)|\(|=|-' <<<"${author}"` ]; then
+    msg "$(gettext "File is corrupted.") E4\n" error & exit 1
+    elif [ $(wc -c <<<"${contact}") -gt 30 ] || \
+    [ `grep -o -E '\*|\/|$|\)|\(|=' <<<"${contact}"` ]; then
+    msg "$(gettext "File is corrupted.") E5\n" error & exit 1
+    elif ! grep -Fox "${category}" <<<"${CATEGORIES}"; then
+    msg "$(gettext "File is corrupted.") E6\n" error & exit 1
+    elif ! [[ 1 =~ $nu ]] || [ $(wc -c <<<"${link}") -gt 400 ]; then # TODO
+    msg "$(gettext "File is corrupted.") E7\n" error & exit 1
+    elif ! [[ $date_c =~ $nu ]] || [ $(wc -c <<<"${date_c}") -gt 12 ] && \
+    [ -n "${date_c}" ]; then
+    msg "$(gettext "File is corrupted.") E8\n" error & exit 1
+    elif ! [[ $date_u =~ $nu ]] || [ $(wc -c <<<"${date_u}") -gt 12 ] && \
+    [ -n "${date_u}" ]; then
+    msg "$(gettext "File is corrupted.") E9\n" error & exit 1
+    elif ! [[ $nwords =~ $nu ]] || [ "${nwords}" -gt 200 ]; then
+    msg "$(gettext "File is corrupted.") E10\n" error & exit 1
+    elif ! [[ $nsentences =~ $nu ]] || [ "${nsentences}" -gt 200 ]; then
+    msg "$(gettext "File is corrupted.") E11\n" error & exit 1
+    elif ! [[ $nimages =~ $nu ]] || [ "${nimages}" -gt 200 ]; then
+    msg "$(gettext "File is corrupted.") E12\n" error & exit 1
+    elif ! [[ $level =~ $nu ]] || [ $(wc -c <<<"$level") -gt 2 ]; then
+    msg "$(gettext "File is corrupted.") E13\n" error & exit 1
+    elif grep "invalid" <<<"$chckf"; then
+    msg "$(gettext "File is corrupted.") E14\n" error & exit 1
+    elif [[ $dirs -gt 5 ]] ; then
+    msg "$(gettext "File is corrupted.") E15\n" error & exit 1
+    else
+    head -n14 < "${file}" > "$DT/$name.cfg"
+    fi
+}
+
+check_install() {
+
+    chckf=""
+    
+    while read -r f; do
+        if ! file "$f" | grep -o -E 'Audio|ASCII|UTF-8|empty|MPEG|JPEG|data'; then
+        chckf="invalid"; fi
+    done <<<"$(find "$dir" -maxdepth 5 -type f)"
+}
+
+text() {
+    cd "$2"
+    dirs="$(find . -maxdepth 5 -type d)"
+    files="$(find . -maxdepth 5 -type f)"
+    hfiles="$(ls -d ./.[^.]* | less)"
+    exfiles="$(find . -maxdepth 5 -perm -111 -type f)"
+    wordsdir="$(cd "./words/"; find . -maxdepth 1 -type f)"
+    attchsdir="$(cd "./attchs/"; find . -maxdepth 5 -type f)"
+    imagesdir="$(cd "./words/images/"; find . -maxdepth 1 -type f)"
+    audiodir="$(cd "./audio/"; find . -maxdepth 1 -type f)"
+    maindir="$(find . -maxdepth 1 -type f)"
+    wcdirs=`sed '/^$/d' <<<"${dirs}" | wc -l`
+    wcfiles=`sed '/^$/d' <<<"${files}" | wc -l`
+    wchfiles=`sed '/^$/d' <<<"${hfiles}" | wc -l`
+    wcexfiles=`sed '/^$/d' <<<"${exfiles}" | wc -l`
+    SRFL1=$(cat "$2/12.cfg")
+    SRFL2=$(cat "$2/10.cfg")
+    SRFL3=$(cat "$2/4.cfg")
+    SRFL4=$(cat "$2/3.cfg")
+    SRFL5=$(cat "$2/0.cfg")
+    
+    echo -e "
+SUMMARY
+===========================
+$wcdirs directories
+$wcfiles files
+$wchfiles hidden files
+$wcexfiles executables files
+
+
+
+
+DIRECTORIES
+===========================
+$dirs
+
+
+
+
+FILES
+===========================
+
+./
+
+$maindir
+
+
+
+./words
+
+$wordsdir
+
+
+
+./words/images
+
+$imagesdir
+
+
+
+./attchs
+
+$attchsdir
+
+
+
+./audio
+
+$audiodir
+
+
+
+
+HIDDEN FILES
+===========================
+$hfiles
+
+
+
+
+EXECUTABLES FILES
+===========================
+$exfiles
+
+
+
+
+TEXT FILES
+===========================
+
+12.cfg content (configuration file)
+
+$SRFL1
+
+
+
+
+10.cfg content (note)
+
+$SRFL2
+
+
+
+
+4.cfg content (sentences list)
+
+$SRFL3
+
+
+
+
+3.cfg content (words list)
+
+$SRFL4
+
+
+
+
+0.cfg content (index list)
+
+$SRFL5
+
+
+
+" | yad --width=520 --height=450 --text-info --margins=10 \
+    --name=Idiomind --class=Idiomind \
+    --buttons-layout=edge --scroll \
+    --window-icon="$DS/images/logo.png" --center --borders=0 \
+    --button="$(gettext "Open Folder")":"xdg-open '$2'" \
+    --button="$(gettext "Close")":0 \
+    --title="$(gettext "Installation details")" >/dev/null 2>&1
+}
+
+check_index() {
+
+    source /usr/share/idiomind/ifs/c.conf
+    DC_tlt="$DM_tl/$2/.conf"
+    DM_tlt="$DM_tl/$2"
+    
+    check() {
+
+        n=0
+        while [ $n -le 4 ]; do
+            [ ! -f "$DC_tlt/$n.cfg" ] && touch "$DC_tlt/$n.cfg"
+            check_index1 "$DC_tlt/$n.cfg"
+            chk=$(wc -l < "$DC_tlt/$n.cfg")
+            [ -z "$chk" ] && chk=0
+            eval chk$n=$(echo $chk)
+            ((n=n+1))
+        done
+        
+        if [ ! -f "$DC_tlt/8.cfg" ]; then
+            if grep -Fxo "$2" "$DM_tl/.3.cfg"; then
+            echo '6' > "$DC_tlt/8.cfg"
+            else echo '1' > "$DC_tlt/8.cfg"; fi
+        fi
+        eval stts=$(< "$DC_tlt/8.cfg")
+
+        eval mp3s="$(cd "$DM_tlt/"; find . -maxdepth 2 -name '*.mp3' \
+        | sort -k 1n,1 -k 7 | wc -l)"
+    }
+    
+    fix() {
+       rm "$DC_tlt/0.cfg" "$DC_tlt/1.cfg" "$DC_tlt/2.cfg" \
+       "$DC_tlt/3.cfg" "$DC_tlt/4.cfg"
+       
+       while read name; do
+        
+            sfname="$(nmfile "$name")"
+
+            if [ -f "$DM_tlt/$name.mp3" ]; then
+                tgs="$(eyeD3 "$DM_tlt/$name.mp3")"
+                trgt="$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')"
+                [ -z "$trgt" ] && rm "$DM_tlt/$name.mp3" && continue
+                xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
+                [ "$name" != "$xname" ] && \
+                mv -f "$DM_tlt/$name.mp3" "$DM_tlt/$xname.mp3"
+                echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
+                echo "$trgt" >> "$DC_tlt/4.cfg.tmp"
+            elif [ -f "$DM_tlt/$sfname.mp3" ]; then
+                tgs=$(eyeD3 "$DM_tlt/$sfname.mp3")
+                trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
+                [ -z "$trgt" ] && rm "$DM_tlt/$sfname.mp3" && continue
+                xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
+                [ "$sfname" != "$xname" ] && \
+                mv -f "$DM_tlt/$sfname.mp3" "$DM_tlt/$xname.mp3"
+                echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
+                echo "$trgt" >> "$DC_tlt/4.cfg.tmp"
+            elif [ -f "$DM_tlt/words/$name.mp3" ]; then
+                tgs="$(eyeD3 "$DM_tlt/words/$name.mp3")"
+                trgt="$(echo "$tgs" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')"
+                [ -z "$trgt" ] && rm "$DM_tlt/words/$name.mp3" && continue
+                xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
+                [ "$name" != "$xname" ] && \
+                mv -f "$DM_tlt/words/$name.mp3" "$DM_tlt/words/$xname.mp3"
+                echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
+                echo "$trgt" >> "$DC_tlt/3.cfg.tmp"
+            elif [ -f "$DM_tlt/words/$sfname.mp3" ]; then
+                tgs="$(eyeD3 "$DM_tlt/words/$sfname.mp3")"
+                trgt="$(echo "$tgs" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')"
+                [ -z "$trgt" ] && rm "$DM_tlt/words/$sfname.mp3" && continue
+                xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
+                [ "$sfname" != "$xname" ] \
+                && mv -f "$DM_tlt/words/$sfname.mp3" "$DM_tlt/words/$xname.mp3"
+                echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
+                echo "$trgt" >> "$DC_tlt/3.cfg.tmp"
+            fi
+            
+        done < "$index"
+
+        [ -f "$DC_tlt/0.cfg.tmp" ] && mv -f "$DC_tlt/0.cfg.tmp" "$DC_tlt/0.cfg"
+        [ -f "$DC_tlt/3.cfg.tmp" ] && mv -f "$DC_tlt/3.cfg.tmp" "$DC_tlt/3.cfg"
+        [ -f "$DC_tlt/4.cfg.tmp" ] && mv -f "$DC_tlt/4.cfg.tmp" "$DC_tlt/4.cfg"
+        cp -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"
+        cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
+        rm -r "$DC_tlt/practice"
+        
+        check_index1 "$DC_tlt/0.cfg" "$DC_tlt/1.cfg" \
+        "$DC_tlt/2.cfg" "$DC_tlt/3.cfg" "$DC_tlt/4.cfg"
+        
+        if [ $? -ne 0 ]; then
+            [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
+            msg "$(gettext "File not found")\n" error & exit 1
+        fi
+        
+        if [ "$stts" = "13" ]; then
+            if grep -Fxo "$topic" < "$DM_tl/.3.cfg"; then
+                echo "6" > "$DC_tlt/8.cfg"
+            elif grep -Fxo "$topic" < "$DM_tl/.2.cfg"; then
+                echo "1" > "$DC_tlt/8.cfg"
+            else
+                echo "1" > "$DC_tlt/8.cfg"
+            fi
+        fi
+    }
+        
+    files() {
+        
+        cd "$DM_tlt/words/"
+        for i in *.mp3 ; do [ ! -s ${i} ] && rm ${i} ; done
+        if [ -f ".mp3" ]; then rm ".mp3"; fi
+        cd "$DM_tlt/"
+        for i in *.mp3 ; do [[ ! -s ${i} ]] && rm ${i} ; done
+        if [ -f ".mp3" ]; then rm ".mp3"; fi
+        cd "$DM_tlt/"; find . -maxdepth 2 -name '*.mp3' \
+        | sort -k 1n,1 -k 7 | sed s'|\.\/words\/||'g \
+        | sed s'|\.\/||'g | sed s'|\.mp3||'g > "$DT/index"
+    }
+
+    check
+
+    if [[ $(($chk3 + $chk4)) != $chk0 || $(($chk1 + $chk2)) != $chk0 \
+    || $mp3s != $chk0 || $stts = 13 ]]; then
+    
+        (sleep 1
+        notify-send -i idiomind "$(gettext "Index error")" "$(gettext "fixing...")" -t 3000) &
+        > "$DT/ps_lk"
+        [ ! -d "$DM_tlt/.conf" ] && mkdir "$DM_tlt/.conf"
+        DC_tlt="$DM_tlt/.conf"
+        
+        files
+        
+        if ([ -f "$DC_tlt/.11.cfg" ] && \
+        [ -n "$(< "$DC_tlt/.11.cfg")" ]); then
+            index="$DC_tlt/.11.cfg"
+        else
+            index="$DT/index"
+        fi
+        
+        fix
+    fi
+
+    check
+    
+    if [[ $(($chk3 + $chk4)) != $chk0 || $(($chk1 + $chk2)) != $chk0 \
+    || $mp3s != $chk0 || $stts = 13 ]]; then
+
+        files
+        
+        index="$DT/index"; rm "$DC_tlt/.11.cfg"
+
+        fix
+    fi
+    
+    n=0
+    while [ $n -le 4 ]; do
+        touch "$DC_tlt/$n.cfg"
+        ((n=n+1))
+    done
+    rm -f "$DT/index" "$DM_tlt/.conf/9.cfg"
+    "$DS/mngr.sh" mkmn & exit 1
+}
+
+
+
+
 function add_audio() {
 
     cd $HOME
@@ -83,26 +487,24 @@ function add_file() {
     --file-filter="*.mp3 *.ogg *.mp4 *.m4v *.jpg *.jpeg *.png *.txt *.pdf *.gif" \
     --button="$(gettext "Cancel")":1 --button="$(gettext "OK")":0 \
     --borders=5 --title="$(gettext "Add File")")
-    rt=$?
-    
-    if [ $rt -eq 0 ]; then
+    ret=$?
+
+    if [ $ret -eq 0 ]; then
         while read -r file; do
-            if  [ -f "$file" ]; then
-                cp -f "$file" "$DM_tlt/attchs"
-            fi
-        done <<<$(sed s'/|/\n/'g <<<"$FL")
+            [ -f "$file" ] && cp -f "$file" "$DM_tlt/attchs"
+        done <<<"$(tr '|' '\n' <<<"$FL")"
     fi
 
 } >/dev/null
 
 function videourl() {
 
+    n=$(ls *.url "$DM_tlt/attchs/" | wc -l)
     url=$(yad --window-icon="$DS/images/logo.png" --form --center --on-top \
-    --text="$(gettext "Only youtube videos")" \
-    --field="$(gettext "URL")" --title="Video" \
+    --field="$(gettext "Video URL")" --title=" " \
     --width=480 --height=100 --name=Idiomind --class=Idiomind \
     --skip-taskbar --borders=5 --button="$(gettext "Cancel")":1 --button=gtk-ok:0)
-    echo "$url" > "$DM_tlt/attchs/video.url"
+    echo "$url" > "$DM_tlt/attchs/video$n.url"
 
 }
 
@@ -169,7 +571,8 @@ echo "<br><br><div class=\"summary\">$txto \
 <br><br></div>" \
 >> "$DC_tlt/att.html"
 elif grep ".url" <<<"$file"; then
-url=$(sed 's/|//' < "$DM_tlt/attchs/$file")
+url=$(tr -d '=' < "$DM_tlt/attchs/$file" \
+| sed 's/|//;s|watch?v|v\/|;s|https|http|g')
 echo "<br><br><div class=\"summary\">
 <iframe width=\"420\" height=\"315\" src=\"$url\" \
 frameborder=\"0\" allowfullscreen></iframe>
@@ -193,12 +596,12 @@ echo "<br><br></div>
     
     if [ "$(ls -A "$DM_tlt/attchs")" ]; then
         [ ! -f "$DC_tlt/att.html" ] && mkindex >/dev/null 2>&1
-        yad --html --uri="$DC_tlt/att.html" \
+        yad --html --uri="$DC_tlt/att.html" --browser \
         --window-icon="$DS/images/logo.png" --center \
         --title="$(gettext "Attachments")" --borders=5 \
         --width=650 --height=580 \
         --button="$(gettext "Open Folder")":"xdg-open '$DM_tlt/attchs'" \
-        --button="$(gettext "Video URL")":"$DS/ifs/tls.sh 'videourl'" \
+        --button="$(gettext "YouTube video URL")":"$DS/ifs/tls.sh 'videourl'" \
         --button="$(gettext "Add File")":"$DS/ifs/tls.sh 'add_file'" \
         --button="$(gettext "Close")":"1" \
         --name=Idiomind --class=Idiomind \
@@ -211,7 +614,7 @@ echo "<br><br></div>
     else
         yad --form --window-icon="$DS/images/logo.png" --borders=5 \
         --field="$(gettext "Add File")":FBTN "$DS/ifs/tls.sh 'add_file'" \
-        --field="$(gettext "Add Video URL (Youtube)")":FBTN "$DS/ifs/tls.sh 'videourl'" \
+        --field="$(gettext "YouTube video URL")":FBTN "$DS/ifs/tls.sh 'videourl'" \
         --name=Idiomind --class=Idiomind --center \
         --text="$(gettext "Put files in a folder related to the topic.")" \
         --title="$(gettext "Attachments")" --width=350 --height=200 \
@@ -251,7 +654,7 @@ function fback() {
     web="http://idiomind.sourceforge.net/doc/msg.html"
     yad --html --browser --uri="$web" \
     --window-icon="$DS/images/logo.png" \
-    --title="$(gettext "Message")" --width=500 \
+    --title="$(gettext "Feedback")" --width=500 \
     --height=455 --no-buttons --fixed \
     --name=Idiomind --class=Idiomind >/dev/null 2>&1
 }
@@ -481,18 +884,20 @@ function pdfdoc() {
 
     if [ "$ret" -eq 0 ]; then
     
+        #(sleep 1 && notify-send -i idiomind converting wait...) &
         dte=$(date "+%d %B %Y")
         mkdir "$DT/mkhtml"
         mkdir "$DT/mkhtml/images"
-        nts=$(sed 's/\./\.<br>/g' < "$DC_tlt/10.cfg")
+        nts="$(sed ':a;N;$!ba;s/\n/<br>/g' < "$DC_tlt/10.cfg" \
+        | sed 's/\"/\&quot;/;s/\&/&amp;/g')"
+
         cd "$DT/mkhtml"
-        cp -f "$DC_tlt/3.cfg" w.inx.l
-        cp -f "$DC_tlt/4.cfg" s.inx.l
-        iw=w.inx.l; is=s.inx.l
+        cp -f "$DC_tlt/3.cfg" "3.cfg"
+        cp -f "$DC_tlt/4.cfg" "4.cfg"
 
         n=1
-        while [[ $n -le "$(wc -l < $iw | awk '{print ($1)}')" ]]; do
-            wnm=$(sed -n "$n"p $iw)
+        while [[ $n -le "$(wc -l < "3.cfg" | awk '{print ($1)}')" ]]; do
+            wnm=$(sed -n "$n"p "3.cfg")
             fname="$(nmfile "$wnm")"
             if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
                 convert "$DM_tlt/words/images/$fname.jpg" -alpha set -virtual-pixel transparent \
@@ -502,40 +907,39 @@ function pdfdoc() {
         done
 
         n=1
-        while [[ $n -le "$(wc -l < $is | awk '{print ($1)}')" ]]; do
-            wnm=$(sed -n "$n"p $is)
+        while [[ $n -le "$(wc -l < "4.cfg" | awk '{print ($1)}')" ]]; do
+            wnm=$(sed -n "$n"p "4.cfg")
             fname="$(nmfile "$wnm")"
             tgs=$(eyeD3 "$DM_tlt/$fname.mp3")
-            wt=$(echo "$tgs" | grep -o -P "(?<=ISI1I0I).*(?=ISI1I0I)")
-            ws=$(echo "$tgs" | grep -o -P "(?<=ISI2I0I).*(?=ISI2I0I)")
+            wt=$(grep -o -P "(?<=ISI1I0I).*(?=ISI1I0I)" <<<"$tgs")
+            ws=$(grep -o -P "(?<=ISI2I0I).*(?=ISI2I0I)" <<<"$tgs")
             echo "$wt" >> S.gprt.x
             echo "$ws" >> S.gprs.x
             let n++
         done
-        echo '<head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>'$tpc'</title>
-        <head>
-        <link rel="stylesheet" href="/usr/share/idiomind/default/pdfstyle.css">
+        echo -e "<head>
+        <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />
+        <title>$tpc</title><head>
+        <link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/pdfstyle.css\">
         </head>
         <body>
         <div><p></p>
         </div>
         <div>
-        <h3>'$tpc'</h3>
+        <p>&nbsp;</p>
+        <h3>$tpc</h3>
         <p>&nbsp;</p>
         <hr>
-        <table width="80%" align="left" border="0" class="ifont">
+        <table width=\"80%\" align=\"left\" border=\"0\" class=\"ifont\">
         <tr>
         <td>
-        <br>' > pdf_doc
+        <br>" > pdf_doc
         printf "$nts" >> pdf_doc
-        echo '<p>&nbsp;</p>
-        <p>&nbsp;</p>
+        echo -e "<p>&nbsp;</p>
         <p>&nbsp;</p>
         </td>
         </tr>
-        </table>' >> pdf_doc
+        </table>" >> pdf_doc
 
         cd "$DM_tlt/words/images"
         cnt=`ls -1 *.jpg 2>/dev/null | wc -l`
@@ -543,36 +947,35 @@ function pdfdoc() {
             cd $DT/mkhtml/images/
             ls *.png | sed 's/\.png//g' > "$DT/mkhtml/nimg"
             cd $DT/mkhtml
-            echo '<table width="90%" align="center" border="0" class="wrdimg">' >> pdf_doc
+            echo -e "<table width=\"90%\" align=\"center\" border=\"0\" class=\"wrdimg\">" >> pdf_doc
             n=1
             while [ $n -le "$(wc -l < nimg)" ]; do
                     if [ -f nnn ]; then
                     n=$(< nnn)
                     fi
-                    nn=$(($n + 1))
-                    nnn=$(($n + 2))
+                    nn=$((n+1))
+                    nnn=$((n+2))
                     d1m=$(sed -n "$n","$nn"p < nimg | sed -n 1p)
                     d2m=$(sed -n "$n","$nn"p < nimg | sed -n 2p)
                     if [ -n "$d1m" ]; then
-                        echo '<tr>
-                        <td align="center"><img src="images/'$d1m'.png" width="240" height="220"></td>' >> pdf_doc
+                        echo -e "<tr>
+                        <td align=\"center\"><img src=\"images/$d1m.png\" width=\"240\" height=\"220\"></td>" >> pdf_doc
                         if [ -n "$d2m" ]; then
-                            echo '<td align="center"><img src="images/'$d2m'.png" width="240" height="220"></td>
-                            </tr>' >> pdf_doc
+                            echo -e "<td align=\"center\"><img src=\"images/$d2m.png\" width=\"240\" height=\"220\"></td></tr>" >> pdf_doc
                         else
                             echo '</tr>' >> pdf_doc
                         fi
-                        echo '<tr>
-                        <td align="center" valign="top"><p>'$d1m'</p>
+                        echo -e "<tr>
+                        <td align=\"center\" valign=\"top\"><p>$d1m</p>
                         <p>&nbsp;</p>
                         <p>&nbsp;</p>
-                        <p>&nbsp;</p></td>' >> pdf_doc
+                        <p>&nbsp;</p></td>" >> pdf_doc
                         if [ -n "$d2m" ]; then
-                            echo '<td align="center" valign="top"><p>'$d2m'</p>
+                            echo -e "<td align=\"center\" valign=\"top\"><p>$d2m</p>
                             <p>&nbsp;</p>
                             <p>&nbsp;</p>
                             <p>&nbsp;</p></td>
-                            </tr>' >> pdf_doc
+                            </tr>" >> pdf_doc
                         else
                             echo '</tr>' >> pdf_doc
                         fi
@@ -582,20 +985,20 @@ function pdfdoc() {
                     echo $nnn > nnn
                 let n++
             done
-            echo '</table>
+            echo -e "</table>
             <p>&nbsp;</p>
-            <p>&nbsp;</p>' >> pdf_doc
+            <p>&nbsp;</p>" >> pdf_doc
         fi
 
         cd "$DT/mkhtml"
         n=1
-        while [ $n -le "$(wc -l < $iw)" ]; do
-            wnm=$(sed -n "$n"p $iw)
+        while [ $n -le "$(wc -l < "3.cfg")" ]; do
+            wnm=$(sed -n "$n"p "3.cfg")
             fname="$(nmfile "$wnm")"
             tgs=$(eyeD3 "$DM_tlt/words/$fname.mp3")
-            wt=$(echo "$tgs" | grep -o -P "(?<=IWI1I0I).*(?=IWI1I0I)")
-            ws=$(echo "$tgs" | grep -o -P "(?<=IWI2I0I).*(?=IWI2I0I)")
-            inf=$(echo "$tgs" | grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' | tr '_' '\n')
+            wt=$(grep -o -P "(?<=IWI1I0I).*(?=IWI1I0I)" <<<"$tgs")
+            ws=$(grep -o -P "(?<=IWI2I0I).*(?=IWI2I0I)" <<<"$tgs")
+            inf=$(grep -o -P "(?<=IWI3I0I).*(?=IWI3I0I)" <<<"$tgs" | tr '_' '\n')
             hlgt="${wt,,}"
             exm1=$(echo "$inf" | sed -n 1p | sed 's/\\n/ /g')
             dftn=$(echo "$inf" | sed -n 2p | sed 's/\\n/ /g')
@@ -604,79 +1007,89 @@ function pdfdoc() {
             echo "$wt" >> W.lizt.x
             echo "$ws" >> W.lizs.x
             if [ -n "$wt" ]; then
-                echo '<table width="55%" border="0" align="left" cellpadding="10" cellspacing="5">
+                echo -e "<table width=\"55%\" border=\"0\" align=\"left\" cellpadding=\"10\" cellspacing=\"5\">
                 <tr>
-                <td bgcolor="#F8D49F" class="side"></td>
-                <td bgcolor="#F7EDDF"><w1>'$wt'</w1></td>
+                <td bgcolor=\"#F8D49F\" class=\"side\"></td>
+                <td bgcolor=\"#F7EDDF\"><w1>$wt</w1></td>
                 </tr>
                 <tr>
-                <td bgcolor="#EAE5A0" class="side"></td>
-                <td bgcolor="#FAF9F4"><w2>'$ws'</w2></td>
+                <td bgcolor=\"#EAE5A0\" class=\"side\"></td>
+                <td bgcolor=\"#FAF9F4\"><w2>$ws</w2></td>
                 </tr>
-                </table>' >> pdf_doc
-                echo '<table width="100%" border="0" align="center" cellpadding="10" class="efont">
+                </table>" >> pdf_doc
+                echo -e "<table width=\"100%\" border=\"0\" align=\"center\" cellpadding=\"10\" class=\"efont\">
                 <tr>
-                <td width="10px"></td>' >> pdf_doc
-                if ([ -z "$dftn" ] && [ -z "$exmp1" ]); then
-                echo '<td width="466" valign="top" class="nfont" >'$ntes'</td>
-                <td width="389"</td>
+                <td width=\"10px\"></td>" >> pdf_doc
+                if [ -z "$dftn" ] && [ -z "$exmp1" ]; then
+                echo -e "<td width=\"466\" valign=\"top\" class=\"nfont\" >$ntes</td>
+                <td width=\"389\"</td>
                 </tr>
-                </table>' >> pdf_doc
+                </table>" >> pdf_doc
                 else
-                    echo '<td width="466">' >> pdf_doc
+                    echo -e "<td width=\"466\">" >> pdf_doc
                     if [ -n "$dftn" ]; then
-                        echo '<dl>
-                        <dd><dfn>'$dftn'</dfn></dd>
-                        </dl>' >> pdf_doc
+                        echo -e "<dl>
+                        <dd><dfn>$dftn</dfn></dd>
+                        </dl>" >> pdf_doc
                     fi
-                    if [ -n "$exmp1" ]; then #Example: <dt> </dt>
-                        echo '<dl>
+                    if [ -n "$exmp1" ]; then
+                        echo -e "<dl>
                         <dt> </dt>
-                        <dd><cite>'$exmp1'</cite></dd>
-                        </dl>' >> pdf_doc
+                        <dd><cite>$exmp1</cite></dd>
+                        </dl>" >> pdf_doc
                     fi 
-                    echo '</td>
-                    <td width="389" valign="top" class="nfont">'$ntes'</td>
+                    echo -e "</td>
+                    <td width=\"400\" valign=\"top\" class=\"nfont\">$ntes</td>
                     </tr>
-                    </table>' >> pdf_doc
+                    </table>" >> pdf_doc
                 fi
-                echo '<p>&nbsp;</p>
-                <h1>&nbsp;</h1>' >> pdf_doc
+                echo -e "<p>&nbsp;</p>
+                <h1>&nbsp;</h1>" >> pdf_doc
             fi
             let n++
         done
 
         n=1
-        while [ $n -le "$(wc -l < s.inx.l)" ]; do
-                st=$(sed -n "$n"p S.gprt.x)
-                if [ -n "$st" ]; then
-                    ss=$(sed -n "$n"p S.gprs.x)
-                    fn=$(sed -n "$n"p s.inx.l)
-                    echo '<h1>&nbsp;</h1>
-                    <table width="100%" border="0" align="left" cellpadding="10" cellspacing="5">
-                    <tr>
-                    <td bgcolor="#FAF9F4"><h1>'$st'</h1></td>
-                    </tr>' > Sgprt.tmp
-                    echo '<tr>
-                    <td ><h2>'$ss'</h2></td>
-                    </tr>
-                    </table>
-                    <h1>&nbsp;</h1>' > Sgprs.tmp
-                    cat Sgprt.tmp >> pdf_doc
-                    cat Sgprs.tmp >> pdf_doc
+        while [ $n -le "$(wc -l < "4.cfg")" ]; do
+                st=$(sed -n "$n"p "S.gprt.x")
+
+            while read -r mrk; do
+            
+                if grep -Fxo $mrk < "3.cfg"; then
+                trgsm=$(sed "s|$mrk|<mark>$mrk<\/mark>|g" <<<"$st")
+                st="$trgsm"
                 fi
+                
+            done <<<"$(tr ' ' '\n' <<<"$st")"
+
+            if [ -n "$st" ]; then
+                ss=$(sed -n "$n"p "S.gprs.x")
+                fn=$(sed -n "$n"p "4.cfg")
+                echo -e "<h1>&nbsp;</h1>
+                <table width=\"100%\" border=\"0\" align=\"left\" cellpadding=\"10\" cellspacing=\"5\">
+                <tr>
+                <td bgcolor='#FAF9F4'><h1>$st</h1></td>
+                </tr>" > Sgprt.tmp
+                echo -e "<tr>
+                <td ><h2>$ss</h2></td>
+                </tr>
+                </table>
+                <h1>&nbsp;</h1>" > Sgprs.tmp
+                cat Sgprt.tmp >> pdf_doc
+                cat Sgprs.tmp >> pdf_doc
+            fi
             let n++
         done
 
-        echo '<p>&nbsp;</p>
+        echo -e "<p>&nbsp;</p>
         <p>&nbsp;</p>
         <h3>&nbsp;</h3>
         <p>&nbsp;</p>
         </div>
         </div>
-        <span class="container"></span>
+        <span class=\"container\"></span>
         </body>
-        </html>' >> pdf_doc
+        </html>" >> pdf_doc
         mv -f pdf_doc pdf_doc.html
         wkhtmltopdf -s A4 -O Portrait pdf_doc.html tmp.pdf
         mv -f tmp.pdf "$pdf"
@@ -688,6 +1101,12 @@ function pdfdoc() {
 }
 
 case "$1" in
+    text)
+    text "$@" ;;
+    check_source_1)
+    check_source_1 "$@" ;;
+    check_index)
+    check_index "$@" ;;
     add_audio)
     add_audio "$@" ;;
     edit_audio)

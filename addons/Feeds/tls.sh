@@ -89,16 +89,6 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
 </xsl:template>
 </xsl:stylesheet>"
 
-cfg= "channel=\"$name\"
-link=\"$link\"
-logo=\"$logo\"
-ntype=\"$type\"
-nmedia=\"$media\"
-ntitle=\"$title\"
-nsumm=\"$summ\"
-nimage=\"$image\"
-url=\"$feed\""
-
 if [ "$1" = set_channel ]; then
     
     feed="$2"
@@ -231,6 +221,16 @@ if [ "$1" = set_channel ]; then
     fi
     
     if [ -n "$type" ]; then
+        
+cfg="channel=\"$name\"
+link=\"$link\"
+logo=\"$logo\"
+ntype=\"$type\"
+nmedia=\"$media\"
+ntitle=\"$title\"
+nsumm=\"$summ\"
+nimage=\"$image\"
+url=\"$feed\""
 
         echo -e "$cfg" > "$DCP/$num.rss" # --------------------
 

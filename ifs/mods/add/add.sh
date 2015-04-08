@@ -94,7 +94,7 @@ function clean_1() {
     echo "$1" | sed ':a;N;$!ba;s/\n/ /g' \
     | sed 's/"//; s/“//;s/&//; s/”//;s/://'g | sed "s/’/'/g" \
     | iconv -c -f utf8 -t ascii | sed "s/|//g" \
-    | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//'\
+    | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//; s/ *$//g'| sed 's/^\s*./\U&\E/g'
 }
 
@@ -102,7 +102,7 @@ function clean_1() {
 function clean_2() {
     
     echo "$1" | cut -d "|" -f1 | sed 's/!//; s/&//; s/\://; s/\&//g' \
-    | sed "s/'//g" | sed 's/^[ \t]*//;s/[ \t]*$//' \
+    | sed "s/'//;s/-//g" | sed 's/^[ \t]*//;s/[ \t]*$//' \
     | sed 's|/||; s/^\s*./\U&\E/g'
 }    
 
@@ -118,7 +118,7 @@ function clean_3() {
     | grep -v '^..$' | sed -n 1,50p | sed s'/&//'g \
     | sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
     | tr -d ')' | tr -d '(' | sed 's/\]//;s/\[//g' \
-    | sed 's/\.//;s/  / /;s/ /\. /g' > "$aw"
+    | sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //g' > "$aw"
 }
 
 
@@ -437,11 +437,11 @@ function dlg_text_info_1() {
 
 function dlg_text_info_3() {
 
-        printf "$1" | yad --text-info --center --wrap \
+        printf "$2" | yad --text="$1" --text-info --center --wrap \
         --center --on-top --title=Idiomind --class=Idiomind \
         --width=420 --height=150 --on-top --margins=4 \
         --window-icon="$DS/images/logo.png" --borders=5 --name=Idiomind \
-        "$2" --button=Ok:1
+        "$3" --button=Ok:1
 }
 
 

@@ -49,16 +49,19 @@ if [ "$1" = chngi ]; then
     stop_loop "$file"
     
     if [ "$t" = 2 ]; then
-        tgs=$(eyeD3 "$file")
-        trgt=$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"$tgs")
-        srce=$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"$tgs")
-        play=play
+    
+    tgs=$(eyeD3 "$file")
+    trgt=$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"$tgs")
+    srce=$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"$tgs")
+    play=play
     
     elif [ "$t" = 1 ]; then
-        tgs=$(eyeD3 "$file")
-        trgt=$(grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)' <<<"$tgs")
-        srce=$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)' <<<"$tgs")
-        play=play
+    
+    tgs=$(eyeD3 "$file")
+    trgt=$(grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)' <<<"$tgs")
+    srce=$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)' <<<"$tgs")
+    play=play
+    
     fi
 
     [ -z "$trgt" ] && trgt="$item"
@@ -113,10 +116,11 @@ elif [ "$1" != chngi ]; then
             [ -z "$s" ] && exit 1
             
             if [ ! -f "$DM_tl/$s/tpc.sh" ]; then
+            
                 if [ "$s" != "Feeds" ]; then
-                ln -s "$DS/default/tpc.sh" "$DM_tl/$s/tpc.sh"
-                fi
+                ln -s "$DS/default/tpc.sh" "$DM_tl/$s/tpc.sh"; fi
                 "$DM_tl/$s/tpc.sh" 1 & exit
+                
             else
                 "$DM_tl/$s/tpc.sh" 1 & exit
             fi
@@ -126,10 +130,11 @@ elif [ "$1" != chngi ]; then
             [ -z "$s" ] && exit 1
             
             if [ ! -f "$DM_tl/$s/tpc.sh" ]; then
+            
                 if [ "$s" != "Feeds" ]; then
-                ln -s "$DS/default/tpc.sh" "$DM_tl/$s/tpc.sh"
-                fi
+                ln -s "$DS/default/tpc.sh" "$DM_tl/$s/tpc.sh"; fi
                 "$DM_tl/$s/tpc.sh" & exit
+                
             else
                 "$DM_tl/$s/tpc.sh" & exit
             fi

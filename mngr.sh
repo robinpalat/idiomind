@@ -42,11 +42,10 @@ function mkmn() {
         [ ! -f "$DM_tl/$tp/.conf/3.cfg" ] || \
         [ ! -f "$DM_tl/$tp/.conf/4.cfg" ] || \
         [ ! -d "$DM_tl/$tp" ]; then
-            i=13
-            echo "13" > "$DM_tl/$tp/.conf/8.cfg"
-            cp -f "$DS/default/tpc.sh" "$DM_tl/$tp/tpc.sh"
-            chmod +x "$DM_tl/$tp/tpc.sh"
-        fi
+        i=13; echo "13" > "$DM_tl/$tp/.conf/8.cfg"
+        cp -f "$DS/default/tpc.sh" "$DM_tl/$tp/tpc.sh"
+        chmod +x "$DM_tl/$tp/tpc.sh";fi
+        
         [ ! -f "$DM_tl/$tp/tpc.sh" ] && \
         cp -f "$DS/default/tpc.sh" "$DM_tl/$tp/tpc.sh"
         chmod +x "$DM_tl/$tp/tpc.sh"
@@ -80,8 +79,7 @@ function mark_as_learn() {
     include "$DS/ifs/mods/mngr"
     
     if [ $(wc -l < "$DC_tlt/0.cfg") -le 15 ]; then
-        msg "$(gettext "Sorry, you must be at least 15 items.")\n " info &
-        exit; fi
+    msg "$(gettext "Sorry, you must be at least 15 items.")\n " info & exit; fi
 
     kill -9 $(pgrep -f "yad --multi-progress ") &
     kill -9 $(pgrep -f "yad --list ") &
@@ -135,8 +133,7 @@ function mark_as_learned() {
     include "$DS/ifs/mods/mngr"
     
     if [ $(wc -l < "$DC_tlt/0.cfg") -le 15 ]; then
-        msg "$(gettext "Sorry, you must be at least 15 items.")\n " info &
-        exit; fi
+    msg "$(gettext "Sorry, you must be at least 15 items.")\n " info & exit; fi
     
     kill -9 $(pgrep -f "yad --list ") &
     kill -9 $(pgrep -f "yad --list ") &
@@ -260,16 +257,16 @@ function delete_item() {
         
         if [ -d "$DC_tlt/practice" ]; then
         
-            cd "$DC_tlt/practice"
-            [ -f ./fin ] && grep -vxF "$trgt" ./fin > \
-            ./fin.tmp && sed '/^$/d' ./fin.tmp > ./fin
-            [ -f ./mcin ] && grep -vxF "$trgt" ./mcin > \
-            ./mcin.tmp && sed '/^$/d' ./mcin.tmp > ./mcin
-            [ -f ./lwin ] && grep -vxF "$trgt" ./lwin > \
-            ./lwin.tmp && sed '/^$/d' ./lwin.tmp > ./lwin
-            [ -f ./lsin ] && grep -vxF "$trgt" ./lsin > \
-            ./lsin.tmp && sed '/^$/d' ./lsin.tmp > ./lsin
-            rm ./*.tmp; fi
+        cd "$DC_tlt/practice"
+        [ -f ./fin ] && grep -vxF "$trgt" ./fin > \
+        ./fin.tmp && sed '/^$/d' ./fin.tmp > ./fin
+        [ -f ./mcin ] && grep -vxF "$trgt" ./mcin > \
+        ./mcin.tmp && sed '/^$/d' ./mcin.tmp > ./mcin
+        [ -f ./lwin ] && grep -vxF "$trgt" ./lwin > \
+        ./lwin.tmp && sed '/^$/d' ./lwin.tmp > ./lwin
+        [ -f ./lsin ] && grep -vxF "$trgt" ./lsin > \
+        ./lsin.tmp && sed '/^$/d' ./lsin.tmp > ./lsin
+        rm ./*.tmp; fi
             
         cd "$DC_tlt"
         [ -f "./.11.cfg" ] && grep -vxF "$trgt" "./.11.cfg" > \
@@ -294,11 +291,10 @@ function delete_topic() {
     include "$DS/ifs/mods/mngr"
     
     if [ -f "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "$tpc" ]; then
-    msg "$(gettext "You can not delete at this time. Please try later ")\n" dialog-warning &
-    exit 1; fi
+    msg "$(gettext "You can not delete at this time. Please try later ")\n" dialog-warning & exit 1; fi
+    
     if [ -f "$DT/.p_" ] && [ "$(sed -n 2p "$DT/.p_")" = "$tpc" ]; then
-    msg "$(gettext "You can not delete at this time. Please try later ")\n" dialog-warning &
-    exit 1; fi
+    msg "$(gettext "You can not delete at this time. Please try later ")\n" dialog-warning & exit 1; fi
     
     msg_2 "$(gettext "Are you sure you want to delete this Topic?")\n" \
     dialog-question "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
@@ -307,7 +303,7 @@ function delete_topic() {
         if [ $ret -eq 0 ]; then
 
             if [ -d "$DM_tl/$tpc" ] &&  [ -n "$tpc" ]; then
-                rm -r "$DM_tl/$tpc"; fi
+            rm -r "$DM_tl/$tpc"; fi
             rm -f "$DC_s/4.cfg" "$DT/tpe"
             > "$DM_tl/.8.cfg"
 
@@ -359,14 +355,13 @@ function edit() {
     sfile="$DM_tlt/$fname.mp3"
     
     if [ "$v" = v1 ]; then
-        ind="$DC_tlt/1.cfg"
-        inp="$DC_tlt/2.cfg"
-        chk="$(gettext "Mark as learned")"
+    ind="$DC_tlt/1.cfg"
+    inp="$DC_tlt/2.cfg"
+    chk="$(gettext "Mark as learned")"
     elif [ "$v" = v2 ]; then
-        ind="$DC_tlt/2.cfg"
-        inp="$DC_tlt/1.cfg"
-        chk="$(gettext "Review")"
-    fi
+    ind="$DC_tlt/2.cfg"
+    inp="$DC_tlt/1.cfg"
+    chk="$(gettext "Review")"; fi
 
     if [ -f "$wfile" ]; then
         
@@ -630,12 +625,12 @@ function rename_topic() {
             fi
             
     elif [ -f "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "$tpc" ]; then
-         msg "$(gettext "Unable to rename at this time. Please try later ")\n" dialog-warning & exit 1
+    msg "$(gettext "Unable to rename at this time. Please try later ")\n" dialog-warning & exit 1
+    
     elif [ -f "$DT/.p_" ] && [ "$(sed -n 2p "$DT/.p_")" = "$tpc" ]; then
-         msg "$(gettext "Unable to rename at this time. Please try later ")\n" dialog-warning & exit 1
-    else
-        jlb="$jlb"
-    fi
+    msg "$(gettext "Unable to rename at this time. Please try later ")\n" dialog-warning & exit 1
+    
+    else jlb="$jlb"; fi
     
     if [ -z "$jlb" ]; then
         exit 1
@@ -649,14 +644,12 @@ function rename_topic() {
         echo "$jlb" > "$DT/tpe"
         
         if grep -Fxo "$tpc" < "$DM_tl/.3.cfg"; then
-            echo "$jlb" >> "$DM_tl/.3.cfg"
-            echo istll >> "$DC_s/4.cfg" 
-            echo istll >> "$DM_tl/.8.cfg"
-        else
-            echo "$jlb" >> "$DM_tl/.2.cfg"
-            echo wn >> "$DC_s/4.cfg"
-            echo wn >> "$DM_tl/.8.cfg"
-        fi
+        echo "$jlb" >> "$DM_tl/.3.cfg"
+        echo istll >> "$DC_s/4.cfg" 
+        echo istll >> "$DM_tl/.8.cfg"; else
+        echo "$jlb" >> "$DM_tl/.2.cfg"
+        echo wn >> "$DC_s/4.cfg"
+        echo wn >> "$DM_tl/.8.cfg"; fi
 
         n=1
         while [ $n -le 3 ]; do

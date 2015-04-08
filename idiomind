@@ -79,10 +79,12 @@ function new_session() {
     n=1; cd "$DM_tl"; cfg="$DM_tl/.2.cfg"
     while [ $n -le $(wc -l < "$cfg") ]; do
         chk=$(sed -n "$n"p "$cfg")
-        if ! grep -Fxo "$chk" <(ls -d *); then
-            grep -vxF "$chk" "$cfg" > "$DT/f.tmp"
-            sed '/^$/d' "$DT/f.tmp" > "$cfg"
-            rm -f "$DT/f.tmp";fi
+        dirs="$(find ./ -maxdepth 1 -type d \
+        | sed 's|\./\.share||;s|\./||g')"
+        if ! grep -Fxo "$chk" <<<"$dirs"; then
+            grep -vxF "$chk" "$cfg" > "$DT/2.cfg.fix"
+            sed '/^$/d' "$DT/2.cfg.fix" > "$cfg"
+            rm -f "$DT/2.cfg.fix";fi
         let n++
     done; cd ~/
 
@@ -183,10 +185,10 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
     ls -tdN * > "$DT/dir$c/ls"
     tpi=$(sed -n 1p "$DT/dir$c/ls")
     tmp="$DT/dir$c/$tpi"
-    "$DS/ifs/safe.sh" check_source_1 "$tmp" "$tpi" &&
+    "$DS/ifs/tls.sh" check_source_1 "$tmp" "$tpi" &&
     source "$DT/$tpi.cfg"
     lng="$(lnglss "$language_target")"
-    infs="'$DS/ifs/safe.sh' 'text' '$tmp'"
+    infs="'$DS/ifs/tls.sh' 'text' '$tmp'"
     [ $level = 1 ] && level="$(gettext "Beginner")"
     [ $level = 2 ] && level="$(gettext "Intermediate")"
     [ $level = 3 ] && level="$(gettext "Advanced")"
@@ -240,8 +242,8 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
                     ret=$(echo $?)
                     
                     if [ $ret != 0 ]; then
-                        [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c"
-                        rm -f  "$DT/import.tar.gz" & exit 1; fi
+                    [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c"
+                    rm -f  "$DT/import.tar.gz" & exit 1; fi
                 fi
 
                 if [ ! -d "$DM_t/$language_target" ]; then
@@ -341,18 +343,15 @@ function topic() {
     
         note_mod="$(< $cnf3)"
         if [ "$note_mod" != "$(< $nt)" ]; then
-            mv -f "$cnf3" "$DC_tlt/10.cfg"
-        fi
+        mv -f "$cnf3" "$DC_tlt/10.cfg"; fi
         
         ntpc=$(cut -d '|' -f 1 < "$cnf4")
         if [ "$tpc" != "$ntpc" ] && [ -n "$ntpc" ]; then
-            "$DS/mngr.sh" rename_topic "$ntpc" &
-        fi
+        "$DS/mngr.sh" rename_topic "$ntpc" & exit; fi
         
         set1_=$(cut -d '|' -f 8 < "$cnf4")
         if [ "$set1" != "$set1_" ]; then
-            echo  "$set1_" > "$DC_tlt/5.cfg"
-        fi
+        echo  "$set1_" > "$DC_tlt/5.cfg"; fi
 
         if [ -n "$(grep -o TRUE < "$cnf1")" ]; then
             grep -Rl "|FALSE|" "$cnf1" | while read tab1 ; do

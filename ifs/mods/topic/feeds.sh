@@ -24,7 +24,6 @@ function feedmode() {
     DCP="$DM_tl/Feeds/.conf"
     DSP="$DS/addons/Feeds"
     nt="$DCP/10.cfg"
-    info="$(cat $DCP/9.cfg)"
     fdit=$(mktemp "$DT/fdit.XXXX")
     c=$(echo $(($RANDOM%100000))); KEY=$c
     info=$(< "$DM_tl/Feeds/.dt")

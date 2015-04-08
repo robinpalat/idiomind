@@ -34,7 +34,7 @@ function new_topic() {
     jlbi=$(dlg_form_0 "$(gettext "New Topic")")
     ret=$(echo "$?")
     jlb="$(clean_2 "$jlbi")"
-    sfname=$(cat "$DM_tl/.1.cfg" | grep -Fxo "$jlb" | wc -l)
+    sfname=$(grep -Fxo "$jlb" < "$DM_tl/.1.cfg" | wc -l)
     
     if [ "$sfname" -ge 1 ]; then
     jlb="$jlb $sfname"
@@ -382,7 +382,6 @@ function new_word() {
         msg "$(gettext "Something unexpected has occurred while saving the note.")\n" dialog-warning & exit 1; fi
 
     [ -d "$DT_r" ] && rm -fr "$DT_r"
-    rm -f *.jpg
     exit 1
 }
 
@@ -393,12 +392,12 @@ function edit_list_words() {
 
         tpe="$tpc"
         if [ $(wc -l < "$DC_tlt/0.cfg") -ge 200 ]; then
-            [ -d "$DT_r" ] && rm -fr "$DT_r"
-            msg "$(gettext "You have reached the maximum number of items.")" info Info & exit; fi
+        [ -d "$DT_r" ] && rm -fr "$DT_r"
+        msg "$(gettext "You have reached the maximum number of items.")" info Info & exit; fi
+            
         if [ -z "$tpe" ]; then
-            [ -d "$DT_r" ] && rm -fr "$DT_r"
-            msg "$(gettext "No topic is active")\n" info & exit 1
-        fi
+        [ -d "$DT_r" ] && rm -fr "$DT_r"
+        msg "$(gettext "No topic is active")\n" info & exit 1; fi
         
         nw=$(wc -l < "$DC_tlt/0.cfg")
         left=$((200 - $nw))
@@ -475,6 +474,7 @@ function edit_list_words() {
         printf "aitm.$lns.aitm\n" >> "$DC_s/8.cfg"
 
             if [ -f "$DT_r/logw" ]; then
+                sleep 1
                 dlg_info_1 "$(gettext "Some items could not be added to your list.")"; fi
             [ -d "$DT_r" ] && rm -fr "$DT_r"
             rm -f logw "$DT"/*.$c & exit 1
@@ -492,15 +492,14 @@ function dclik_list_words() {
     echo "$3" > ./lstws
     
     if [ -z "$tpe" ]; then
-        [ -d "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "No topic is active")\n" info & exit 1
-    fi
+    [ -d "$DT_r" ] && rm -fr "$DT_r"
+    msg "$(gettext "No topic is active")\n" info & exit 1; fi
     
     nw=$(wc -l < "$DC_tlt/0.cfg")
     
     if [ $(wc -l < "$DC_tlt/0.cfg") -ge 200 ]; then
-        [ -d "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "You have reached the maximum number of items.")" info Info & exit; fi
+    [ -d "$DT_r" ] && rm -fr "$DT_r"
+    msg "$(gettext "You have reached the maximum number of items.")" info Info & exit; fi
 
     left=$((200 - $nw))
     info="$(gettext "You can add") $left $(gettext "Words")"
@@ -562,11 +561,11 @@ function sentence_list_words() {
     cd "$DT_r"
     
     if [ -z "$4" ]; then
-        [ -d "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "No topic is active")\n" info & exit 1; fi
+    [ -d "$DT_r" ] && rm -fr "$DT_r"
+    msg "$(gettext "No topic is active")\n" info & exit 1; fi
     
     nw=$(wc -l < "$DC_tlt/0.cfg")
-    left=$((200 - $nw))
+    left=$((200-nw))
     if [ "$left" = 0 ]; then exit 1
     elif [ $nw -ge 195 ]; then
     info="$(gettext "You can add") $left $(gettext "Words")"
@@ -638,9 +637,9 @@ function sentence_list_words() {
     printf "aitm.$lns.aitm\n" >> "$DC_s/8.cfg" &
 
     if [ -f  "$DT_r/logw" ]; then
-        logs="$(< $DT_r/logw)"
-        text_r1="$(gettext "Some items could not be added to your list.")\n\n$logs "
-        dlg_text_info_3 "$text_r1"; fi
+    sleep 1
+    logs="$(< $DT_r/logw)"
+    dlg_text_info_3 "$(gettext "Some items could not be added to your list.")" "$logs"; fi
 
     rm -f "$DT"/*."$c" 
     [ -d "$DT_r" ] && rm -fr "$DT_r"
@@ -661,13 +660,13 @@ function process() {
     lckpr="$DT/.n_s_pr"
 
     if [ -z "$tpe" ]; then
-        [ -d "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "No topic is active")\n" info & exit 1; fi
+    [ -d "$DT_r" ] && rm -fr "$DT_r"
+    msg "$(gettext "No topic is active")\n" info & exit 1; fi
         
     if [ $ns -ge 200 ]; then
-        [ -d "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "You have reached the maximum number of items.")" info Info
-        rm -f ls "$lckpr" & exit 1; fi
+    [ -d "$DT_r" ] && rm -fr "$DT_r"
+    msg "$(gettext "You have reached the maximum number of items.")" info Info
+    rm -f ./ls "$lckpr" & exit 1; fi
 
     if [ -f "$lckpr" ] && [ -z "$4" ]; then
     
@@ -675,13 +674,14 @@ function process() {
         ret=$(echo "$?")
 
         if [ $ret -eq "1" ]; then
+        
             rm=$(sed -n 1p "$DT/.n_s_pr")
             rm fr "$rm" "$DT/.n_s_pr"
-            index R && killall add.sh; fi
-        exit 1
+            index R && killall add.sh; exit 1; fi
     fi
     
     if [ -n "$2" ]; then
+    
         [ -d "$DT_r" ] && echo "$DT_r" > "$DT/.n_s_pr"
         [ -n "$tpe" ] && echo "$tpe" >> "$DT/.n_s_pr"
         lckpr="$DT/.n_s_pr"
@@ -801,8 +801,8 @@ function process() {
                     DC_tlt="$DM_tl/$tpe/.conf"
 
                     if [ ! -d "$DM_tlt" ]; then
-                        msg " $(gettext "An error occurred.")\n" dialog-warning
-                        rm -fr "$DT_r" "$lckpr" "$slt" & exit 1; fi
+                    msg " $(gettext "An error occurred.")\n" dialog-warning
+                    rm -fr "$DT_r" "$lckpr" "$slt" & exit 1; fi
                 
                     while read chkst; do
                         sed 's/TRUE//g' <<<"$chkst"  >> ./slts
@@ -912,7 +912,7 @@ function process() {
                             fi
                         fi
                         
-                        prg=$((100*$n/$lns-1))
+                        prg=$((100*n/lns-1))
                         echo "$prg"
                         echo "# ${trgt:0:35}... " ;
                         
@@ -961,8 +961,8 @@ function process() {
                             fi
                         fi
                         
-                        nn=$(($n+$(wc -l < ./slts)-1))
-                        prg=$((100*$nn/$lns))
+                        nn=$((n+$(wc -l < ./slts)-1))
+                        prg=$((100*nn/lns))
                         echo "$prg"
                         echo "# ${trgt:0:35}... " ;
                         
@@ -1010,8 +1010,8 @@ function process() {
                     fi
                     
                     if [ $(cat ./slog ./wlog | wc -l) -ge 1 ]; then
-                        
-                        dlg_text_info_3 " $(gettext "Some items could not be added to your list.")\n\n$logs " >/dev/null 2>&1
+                        sleep 1
+                        dlg_text_info_3 "$(gettext "Some items could not be added to your list.")" "$logs" >/dev/null 2>&1
                     fi
                     if  [ $(cat ./slog ./wlog | wc -l) -ge 1 ]; then
                         rm=$(($(cat ./addw ./adds | wc -l) - $(cat ./slog ./wlog | sed '/^$/d' | wc -l)))

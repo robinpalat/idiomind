@@ -24,7 +24,7 @@ function word_view(){
     --text="<span font_desc='Sans Free Bold 22'>$trgt</span>\n\n<i>$src</i>\n\n$br" \
     --field="":lbl \
     --field="<i><span color='#7D7D7D'>$exmp1</span></i>:lbl" "$dfnts" "$ntess" \
-    --width="$wth" --height="$eht" --center \
+    --width=650 --height=400 --center \
     --button=gtk-edit:4 --button="$listen":"play '$DM_tlt/words/$fname.mp3'" \
     --button=gtk-go-up:3 --button=gtk-go-down:2 >/dev/null 2>&1
 }
@@ -47,7 +47,7 @@ function sentence_view(){
     --skip-taskbar --center --title=" " --borders=20 --image-on-top \
     --on-top --selectable-labels --expand-column=0 \
     --text="<span font_desc='Sans Free 15'>$trgt</span>\n\n<i>$src</i>\n\n" \
-    --width="$wth" --height="$eht" --center \
+    --width=650 --height=400 --center \
     --column="":TEXT --column="":TEXT \
     --button=gtk-edit:4 --button="$listen":"$DS/ifs/tls.sh listen_sntnc '$fname'" \
     --button=gtk-go-up:3 --button=gtk-go-down:2 \

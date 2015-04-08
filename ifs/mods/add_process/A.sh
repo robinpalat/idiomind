@@ -383,15 +383,15 @@ if [[ "$prdt" = A ]]; then
                 if [ -n "$logs" ] || [ $(ls [0-9]* | wc -l) -ge 1 ]; then
                 
                     if [ -n "$logs" ]; then
-                        text_r1="$(gettext "Have been added:")\n\n$logs"
+                        text_r1="$(gettext "Some items could not be added to your list.")"
                     fi
                     
                     if [ $(ls [0-9]* | wc -l) -ge 1 ]; then
                         btn="--button="$(gettext "Save Audio")":0"
-                        text_r2="$(gettext "Audio files that were not added")\n"
+                        text_r2="$(gettext "Some audio files could not be added.")"
                     fi
 
-                    dlg_text_info_3 "$text_r2$text_r1" "$btn" >/dev/null 2>&1
+                    dlg_text_info_3 "$text_r2 $text_r1" "$logs" "$btn" >/dev/null 2>&1
                     ret=$(echo "$?")
                     
                         if  [ "$ret" -eq 0 ]; then

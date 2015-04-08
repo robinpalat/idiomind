@@ -73,6 +73,98 @@ echo fd >> "$DC_s/4.cfg"
 idiomind topic
 exit 1'
 
+conditions() {
+    
+    [ ! -f "$DCP/1.cfg" ] && touch "$DCP/1.cfg"
+    
+    if [ -f "$DT/.uptp" ] && [ -z "$1" ]; then
+        msg_2 "$(gettext "Wait till it finishes a previous process")\n" info OK gtk-stop
+        ret=$(echo $?)
+        [ $ret -eq 1 ] && "$DS/stop.sh" feed
+        [ $ret -eq 0 ] && exit 1
+    
+    elif [[ -f "$DT/.uptp" && "$1" = A ]]; then
+        exit 1
+    fi
+    
+    if [ ! -d "$DM_tl/Feeds/cache" ]; then
+        mkdir -p "DM_tl/Feeds/.conf"
+        mkdir -p "DM_tl/Feeds/cache"
+    fi
+    
+    if [ ! -f "$DM_tl/Feeds/tpc.sh" ] || \
+    [ "$(wc -l < "$DM_tl/Feeds/tpc.sh")" -gt 8 ]; then
+        echo "$tpc_sh" > "$DM_tl/Feeds/tpc.sh"
+        chmod +x "$DM_tl/Feeds/tpc.sh"
+        echo "14" > "$DM_tl/Feeds/.conf/8.cfg"
+        cd "$DM_tl/Feeds/.conf/"
+        touch 0.cfg 1.cfg 3.cfg 4.cfg .updt.lst
+        "$DS/mngr.sh" mkmn
+    fi
+    
+    n=1; DCP="$DM_tl/Feeds/.conf"
+    while [ $n -le "$(wc -l < "$rssf")" ]; do
+
+        if [ -n "$(sed -n "$n"p "$rssf")" ]; then
+        
+            source "$DCP/$n.rss"
+            if ([ -z "$channel" ] && [ -z "$ntype" ] && [ -z "$ntitle" ]) \
+            && ([ -z "$nmedia" ] || [ -z "$nimage" ]); then
+                echo "Configuration error. slot $n" >> "$DM_tl/Feeds/.conf/feed.err"
+                printf "err.FE2($n).err\n" >> "$DC_s/8.cfg";
+                [ -f "$DT/.uptp" ] && rm -fr "$DT_r" "$DT/.uptp"
+            exit 1
+            fi
+        fi
+        let n++
+    done
+    
+    nps="$(sed '/^$/d' < "$DCP/4.cfg" | wc -l)"
+    if [ "$nps" -le 0 ]; then
+        msg "$(gettext "Missing URL. Please check the settings in the preferences dialog.")\n" info
+        [ -f "$DT/.uptp" ] && rm -fr "$DT_r" "$DT/.uptp"
+        exit 1; fi
+        
+    internet
+}
+
+mediatype () {
+
+    if echo "${1}" | grep -q ".mp3"; then ex=mp3; tp=aud
+    elif echo "${1}" | grep -q ".mp4"; then ex=mp4; tp=vid
+    elif echo "${1}" | grep -q ".ogg"; then ex=ogg; tp=aud
+    elif echo "${1}" | grep -q ".avi"; then ex=avi; tp=vid
+    elif echo "${1}" | grep -q ".m4v"; then ex=m4v; tp=vid
+    elif echo "${1}" | grep -q ".mov"; then ex=mov; tp=vid
+    elif echo "${1}" | grep -o ".jpg"; then ex=jpg; tp=txt
+    elif echo "${1}" | grep -o ".jpeg"; then ex=jpeg; tp=txt
+    elif echo "${1}" | grep -o ".png"; then ex=png; tp=txt
+    elif echo "${1}" | grep -o ".pdf"; then ex=pdf; tp=txt
+    elif [ -n "${1}" ]; then ex=pdf; tp=others
+    else
+        printf "err.FE2($n).err\n" >> "$DC_s/8.cfg"
+        echo "Could not add some podcasts.\n$FEED" >> "$DM_tl/Feeds/.conf/feed.err"
+        continue; fi
+}
+
+get_images_main () {
+    
+    cd "$DT_r"
+    
+    echo "$sumlink" | grep -o 'img src="[^"]*' | grep -o '[^"]*$' | sed -n 1p
+
+    #if ls | grep '.jpeg'; then img="$(ls | grep '.jpeg')"
+    #elif ls | grep '.png'; then img="$(ls | grep '.png')"
+    #elif ls | grep '.jpg'; then img="$(ls | grep '.jpg')"
+    #fi
+        
+    #if [ -f "$DT_r/$img" ]; then
+    
+        #img="$DT_r/$img"
+}
+
+mkhtml () {
+
 videoblock="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
 <link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwrstyle.css\">
 <video width=640 height=380 controls>
@@ -97,107 +189,18 @@ txtblock="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"
 $summary<br><br></div>
 </body>"
 
-conditions() {
-    
-    [ ! -f "$DCP/1.cfg" ] && touch "$DCP/1.cfg"
-    
-    if [ -f "$DT/.uptp" ] && [ -z "$1" ]; then
-        msg_2 "$(gettext "Wait till it finishes a previous process")\n" info OK gtk-stop
-        ret=$(echo $?)
-        [ $ret -eq 1 ] && "$DS/stop.sh" feed
-        [ $ret -eq 0 ] && exit 1
-    
-    elif [[ -f "$DT/.uptp" && "$1" = A ]]; then
-        exit 1
-    fi
-    
-    if [ ! -d "$DM_tl/Feeds/cache" ]; then
-        mkdir -p "DM_tl/Feeds/.conf"
-        mkdir -p "DM_tl/Feeds/cache"
-    fi
-    
-    if ([ ! -f "$DM_tl/Feeds/tpc.sh" ] || \
-    [ "$(wc -l < "$DM_tl/Feeds/tpc.sh")" -ge 10 ]); then
-        echo "$tpc_sh" > "$DM_tl/Feeds/tpc.sh"
-        chmod +x "$DM_tl/Feeds/tpc.sh"
-        echo "14" > "$DM_tl/Feeds/.conf/8.cfg"
-        cd "$DM_tl/Feeds/.conf/"
-        touch 0.cfg 1.cfg 3.cfg 4.cfg .updt.lst
-        "$DS/mngr.sh" mkmn
-    fi
-    
-    n=1; DCP="$DM_tl/Feeds/.conf"
-    while [ $n -le "$(wc -l < "$rssf")" ]; do
-
-        if [ -n "$(sed -n "$n"p "$rssf")" ]; then
-        
-            source "$DCP/$n.rss"
-            if ([ -z "$channel" ] && [ -z "$ntype" ] && [ -z "$ntitle" ]) \
-            && ([ -z "$nmedia" ] || [ -z "$nimage" ]); then
-                echo "$n" > $DT/dupl.cnf
-                printf "err.FE2($n).err\n" >> "$DC_s/8.cfg";
-                [ -f "$DT/.uptp" ] && rm -fr "$DT_r" "$DT/.uptp"
-            exit 1
-            fi
-        fi
-        let n++
-    done
-    
-    nps="$(wc -l < "$rssf" | sed '/^\s*$/d')"
-    if [ "$nps" -le 0 ]; then
-        msg "$(gettext "Missing URL. Please check the settings in the preferences dialog.")\n" info
-        [ -f "$DT/.uptp" ] && rm -fr "$DT_r" "$DT/.uptp"
-        exit 1; fi
-        
-    internet
-}
-
-mediatype () {
-
-    if echo "${1}" | grep -q ".mp3"; then ex=mp3; tp=aud
-    elif echo "${1}" | grep -q ".mp4"; then ex=mp4; tp=vid
-    elif echo "${1}" | grep -q ".ogg"; then ex=ogg; tp=aud
-    elif echo "${1}" | grep -q ".avi"; then ex=avi; tp=vid
-    elif echo "${1}" | grep -q ".m4v"; then ex=m4v; tp=vid
-    elif echo "${1}" | grep -q ".mov"; then ex=mov; tp=vid
-    elif echo "${1}" | grep -o ".jpg"; then ex=jpg; tp=txt
-    elif echo "${1}" | grep -o ".jpeg"; then ex=jpeg; tp=txt
-    elif echo "${1}" | grep -o ".png"; then ex=png; tp=txt
-    else
-        printf "err.FE2($n).err\n" >> "$DC_s/8.cfg";
-        continue; fi
-}
-
-get_images_main () {
-    
-    cd "$DT_r"
-    
-    echo "$sumlink" | grep -o 'img src="[^"]*' | grep -o '[^"]*$' | sed -n 1p
-
-    #if ls | grep '.jpeg'; then img="$(ls | grep '.jpeg')"
-    #elif ls | grep '.png'; then img="$(ls | grep '.png')"
-    #elif ls | grep '.jpg'; then img="$(ls | grep '.jpg')"
-    #fi
-        
-    #if [ -f "$DT_r/$img" ]; then
-    
-        #img="$DT_r/$img"
-}
-
-mkhtml () {
-
     if [ "$tp" = vid ]; then
         if [ $ex = m4v || $ex = mp4 ]; then
         t = mp4
         elif [ $ex = avi ]; then
         t = avi; fi
-        printf "$videoblock" > "$DMC/$fname.html"
+        echo -e "$videoblock" > "$DMC/$fname.html"
 
     elif [ "$tp" = aud ]; then
-        printf "$audioblock" > "$DMC/$fname.html"
+        echo -e "$audioblock" > "$DMC/$fname.html"
 
     elif [ "$tp" = txt ]; then
-        printf "txtblock" > "$DMC/$fname.html"
+        echo -e "txtblock" > "$DMC/$fname.html"
     fi
 }
 
@@ -231,9 +234,9 @@ get_images () {
     elif [ "$tp" = vid ]; then
         
         cd "$DT_r"; p=TRUE; rm -f *.jpeg *.jpg
-        
-        exec 3<&0; mplayer -ss 60 -nosound -noconsolecontrols \
-        -vo jpeg -frames 3 "media.$ex" <&3 &&
+        #exec 3<&0; 
+        mplayer -ss 60 -nosound -noconsolecontrols \
+        -vo jpeg -frames 3 "media.$ex" >/dev/null
 
         if ls | grep '.jpeg'; then img="$(ls | grep '.jpeg' | head -n1)"
         else img="$(ls | grep '.jpg' | head -n1)"; fi
@@ -253,11 +256,11 @@ get_images () {
     
     if [ "$p" = TRUE ] && [ -f "$DT_r/$img" ]; then
         
-        convert "$DT_r/$img" -interlace Plane -thumbnail 52x44^ \
-        -gravity center -extent 52x44 -quality 100% tmp.jpg
+        convert "$DT_r/$img" -interlace Plane -thumbnail 62x54^ \
+        -gravity center -extent 62x54 -quality 100% tmp.jpg
         convert tmp.jpg -bordercolor white \
         -border 2 \( +clone -background black \
-        -shadow 60x3+2+2 \) +swap -background transparent \
+        -shadow 70x3+2+2 \) +swap -background transparent \
         -layers merge +repage "$DMC/$fname.png"
         rm -f *.jpeg *.jpg
     fi
@@ -280,10 +283,12 @@ fetch_podcasts() {
                 
                 while read -r item; do
 
-                    fields="$(echo "$item" | sed -r 's|-\!-|\n|g')"
-                    enclosure=$(echo "$fields" | sed -n "$nmedia"p)
+                    fields="$(sed -r 's|-\!-|\n|g' <<<"$item")"
+                    enclosure=$(sed -n "$nmedia"p <<<"$fields")
                     
-                    if [ -z "$enclosure" ]; then continue; fi
+                    if [ -z "$enclosure" ]; then
+                    #echo "Missing enclosure.\n$FEED\n$enclosure" >> "$DM_tl/Feeds/.conf/feed.err"
+                    continue; fi
                     
                     title=$(echo "$fields" | sed -n "$ntitle"p | sed 's/\://g' \
                     | sed 's/\&/&amp;/g' | sed 's/^\s*./\U&\E/g' \
@@ -293,8 +298,9 @@ fetch_podcasts() {
                     fname="$(nmfile "${title}")"
                     
                     if [ "$(echo "$title" | wc -c)" -ge 180 ] || [ -z "$title" ]; then
-                            printf "err.FE4($n).err\n" >> "$DC_s/8.cfg";
-                            continue; fi
+                    echo "Missing title.\n$FEED" >> "$DM_tl/Feeds/.conf/feed.err"
+                    printf "err.FE4($n).err\n" >> "$DC_s/8.cfg"
+                    continue; fi
                          
                     if ! grep -Fxo "$title" < "$DCP/1.cfg"; then
                     
@@ -366,8 +372,9 @@ fetch_podcasts() {
                         fname="$(nmfile "${title}")"
 
                         if [ "$(echo "$title" | wc -c)" -ge 200 ]; then
-                                printf "err.FE5($n).err\n" >> "$DC_s/8.cfg";
-                                continue; fi
+                        echo "Title too long.\n$FEED" >> "$DM_tl/Feeds/.conf/feed.err"
+                        printf "err.FE5($n).err\n" >> "$DC_s/8.cfg";
+                        continue; fi
                                 
                         if ! grep -Fxo "$title" < "$DCP/1.cfg"; then
                         

@@ -41,7 +41,7 @@ done < "$DCP/4.cfg"
 if [ "$update" != TRUE ] && [ "$update" != FALSE ]; then cfg=invalid ; fi
 if [ "$update" != TRUE ] && [ "$update" != FALSE ]; then cfg=invalid ; fi
 if [ -z "$path" ] && [ "$path" != "/uu" ]; then cfg=invalid ; fi
-if [ ! -f "$DCP/0.cfg" ] || [ $cfg = invalid ]; then
+if [ ! -f "$DCP/0.cfg" ] || [ "$cfg" = 'invalid' ]; then
 > "$DCP/0.cfg"
 echo -e "update=FALSE
 sync=FALSE
@@ -77,6 +77,12 @@ apply() {
 
 if [ -z "$1" ]; then
 
+if [ -f "$DM_tl/Feeds/.conf/feed.err" ]; then
+e="$(head -n 10 < "$DM_tl/Feeds/.conf/feed.err" | tr '&' ' ')"
+rm "$DM_tl/Feeds/.conf/feed.err"
+(sleep 2 && msg "$(gettext "Errors found in log file") \n$e" info) &
+fi
+
 CNFG=$(yad --form --center --scroll --borders=20 \
 --window-icon=idiomind --skip-taskbar --separator="|" \
 --name=Idiomind --class=Idiomind --text=" " \
@@ -94,11 +100,10 @@ CNFG=$(yad --form --center --scroll --borders=20 \
 --field="" "$url7" --field="" "$url8" --field="" "$url9" \
 --field="" "$url10" \
 --button="$(gettext "Cancel")":1 \
---button="$(gettext "Advance")":2 \
 --button="$(gettext "Syncronize")":5 \
 --button="gtk-apply":0)
 
-
+#--button="$(gettext "Advance")":2 \
 
 elif [ "$1" = "adv" ]; then
 

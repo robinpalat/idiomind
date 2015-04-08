@@ -52,24 +52,24 @@ function confirm() {
     --center --borders=8 --image=$2 \
     --on-top --window-icon="$DS/images/logo.png" \
     --skip-taskbar --width=350 --height=120 \
-    --button="$(gettext "No")":1 --button="$(gettext "Yes")":0 \
-    
+    --button="$(gettext "No")":1 --button="$(gettext "Yes")":0
 }
 
 function set_lang() {
     
     if [ ! -d "$DM_t/$1" ]; then
-        mkdir "$DM_t/$1"
-        mkdir "$DM_t/$1/.share"; fi
+    mkdir "$DM_t/$1"
+    mkdir "$DM_t/$1/.share"; fi
+        
     echo "$1" > "$DC_s/6.cfg"
     echo "$lgsl" >> "$DC_s/6.cfg"
     "$DS/stop.sh" L
+    
     if [ -f "$DM/topics/$1/.8.cfg" ]; then
-        lst=$(sed -n 1p "$DM/topics/$1/.8.cfg")
-        "$DM/topics/$1/$lst/tpc.sh" 1
-    else
-        rm "$DC_s/4.cfg" && touch "$DC_s/4.cfg"
-    fi
+    lst=$(sed -n 1p "$DM/topics/$1/.8.cfg")
+    "$DM/topics/$1/$lst/tpc.sh" 1
+    else rm "$DC_s/4.cfg" && touch "$DC_s/4.cfg"; fi
+    
     "$DS/mngr.sh" mkmn
 }
 
@@ -217,4 +217,3 @@ ret=$?
     else
         rm -f "$cnf1" "$DT/.lc" & exit 1
     fi
-    
