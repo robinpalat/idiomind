@@ -211,7 +211,7 @@ wsize="$(identify "$img" | cut -d ' ' -f 3 | cut -d 'x' -f 1)"
 esize="$(identify "$img" | cut -d ' ' -f 3 | cut -d 'x' -f 2)"
 if [ "$wsize" -gt 1000 ] || [ "$wsize" -lt 600 ] \
 || [ "$esize" -lt 100 ] || [ "$esize" -gt 400 ]; then
-msg " $(gettext "Sorry, the image size is not suitable.")\n " info
+msg "$(gettext "Sorry, the image size is not suitable.")\n " info
 "$DS/ifs/upld.sh" & exit 1; fi
 fi
 
@@ -222,19 +222,19 @@ if [ "$img" != "$imgm" ]; then
 fi
 
 if [ -z "$Ctgry" ]; then
-msg " $(gettext "Please select a category.")\n " info
+msg "$(gettext "Please select a category.")\n " info
 "$DS/ifs/upld.sh" & exit 1
 fi
 
 if [ -d "$DM_tlt/attchs" ]; then
 du="$(du -b -h "$DM_tlt/attchs" | tail -1 | awk '{print ($1)}' | tr -d 'M')"
 if [ "$du" -gt 50 ]; then
-msg " $(gettext "Sorry, the size of the attachment is too large.")\n " info & exit 1; fi
+msg "$(gettext "Sorry, the size of the attachment is too large.")\n " info & exit 1; fi
 fi
 
 internet; cd "$DT"
 source /dev/stdin <<<"$(curl http://idiomind.sourceforge.net/doc/SITE_TMP)"
-[ -z "$FTPHOST" ] && msg " $(gettext "An error occurred, please try later.")\n " dialog-warning && exit
+[ -z "$FTPHOST" ] && msg "$(gettext "An error occurred, please try later.")\n " dialog-warning && exit
 
 mkdir "$DT/upload"
 DT_u="$DT/upload"
@@ -302,10 +302,10 @@ mv "$tpc.tar.gz" "$U.$tpc.idmnd"
 dte=$(date "+%d %B %Y")
 notify-send "$(gettext "Uploading")" "$(gettext "Please wait while file is uploaded")" -i idiomind -t 6000
 
-#lftp -u "$USER","$KEY" "$FTPHOST" << END_SCRIPT
-#mirror --reverse ./ public_html/$lgs/$lnglbl/$Ctgry/
-#quit
-#END_SCRIPT
+lftp -u "$USER","$KEY" "$FTPHOST" << END_SCRIPT
+mirror --reverse ./ public_html/$lgs/$lnglbl/$Ctgry/
+quit
+END_SCRIPT
 
 exit=$?
 if [ $exit = 0 ] ; then
@@ -314,7 +314,7 @@ if [ $exit = 0 ] ; then
     image=dialog-ok
 else
     sleep 10
-    info=" $(gettext "There was a problem uploading the file.") "
+    info="$(gettext "There was a problem uploading the file.") "
     image=dialog-warning
 fi
 

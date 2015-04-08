@@ -38,7 +38,7 @@ function new_topic() {
     
     if [ "$sfname" -ge 1 ]; then
     jlb="$jlb $sfname"
-    msg_2 " $(gettext "You already have a topic with the same name.") \n $(gettext "The new it was renamed to\:")\n  <b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
+    msg_2 "$(gettext "You already have a topic with the same name.")\n$(gettext "The new it was renamed to\:")\n<b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
     ret=$(echo "$?")
     [ "$ret" -eq 1 ] && exit 1
     else
@@ -248,7 +248,7 @@ function new_sentence() {
     if [ -z $(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary') ] \
     || [ ! -f "$DM_tlt/$fname.mp3" ] || [ -z "$trgt" ] || [ -z "$srce" ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
-        msg " $(gettext "Something unexpected has occurred while saving the note.")\n" dialog-warning & exit 1; fi
+        msg "$(gettext "Something unexpected has occurred while saving the note.")\n" dialog-warning & exit 1; fi
     
     add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3"
 
@@ -270,7 +270,7 @@ function new_sentence() {
     
     if [ -z "$grmrk" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ]; then
         rm "$DM_tlt/$fname.mp3"
-        msg " $(gettext "Something unexpected has occurred while saving the note.")\n" dialog-warning 
+        msg "$(gettext "Something unexpected has occurred while saving the note.")\n" dialog-warning 
         [ -d "$DT_r" ] && rm -fr "$DT_r" & exit 1; fi
     
     add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3"
@@ -379,7 +379,7 @@ function new_word() {
     
     else
         [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
-        msg " $(gettext "Something unexpected has occurred while saving the note.")\n" dialog-warning & exit 1; fi
+        msg "$(gettext "Something unexpected has occurred while saving the note.")\n" dialog-warning & exit 1; fi
 
     [ -d "$DT_r" ] && rm -fr "$DT_r"
     rm -f *.jpg
@@ -475,7 +475,7 @@ function edit_list_words() {
         printf "aitm.$lns.aitm\n" >> "$DC_s/8.cfg"
 
             if [ -f "$DT_r/logw" ]; then
-                dlg_info_1 " $(gettext "Some items could not be added to your list.")"; fi
+                dlg_info_1 "$(gettext "Some items could not be added to your list.")"; fi
             [ -d "$DT_r" ] && rm -fr "$DT_r"
             rm -f logw "$DT"/*.$c & exit 1
     fi
@@ -639,7 +639,7 @@ function sentence_list_words() {
 
     if [ -f  "$DT_r/logw" ]; then
         logs="$(< $DT_r/logw)"
-        text_r1=" $(gettext "Some items could not be added to your list.")\n\n$logs "
+        text_r1="$(gettext "Some items could not be added to your list.")\n\n$logs "
         dlg_text_info_3 "$text_r1"; fi
 
     rm -f "$DT"/*."$c" 

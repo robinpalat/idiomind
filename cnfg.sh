@@ -48,11 +48,12 @@ fi
 
 function confirm() {
     
-    yad --form --center --borders=8 --image=$2 \
-    --title="Idiomind" --on-top --window-icon="$DS/images/logo.png" \
-    --skip-taskbar --button="$(gettext "No")":1 \
-    --button="$(gettext "Yes")":0 --text="$1\n" \
-    --width=350 --height=120
+    yad --form --title="Idiomind" --text="$1\n" \
+    --center --borders=8 --image=$2 \
+    --on-top --window-icon="$DS/images/logo.png" \
+    --skip-taskbar --width=350 --height=120 \
+    --button="$(gettext "No")":1 --button="$(gettext "Yes")":0 \
+    
 }
 
 function set_lang() {
@@ -114,9 +115,9 @@ if [ ! -f "$DC_s/1.cfg" ] || [ "$cfg" = invalid ]; then
 fi
 
 if [ "$text" != TRUE ] && [ "$audio" != TRUE ]; then audio=TRUE; fi
-yad --plug=$KEY --tabnum=1 \
---separator='|' --form --align=right --scroll \
---always-print-result --print-all \
+yad --plug=$KEY --form --tabnum=1 \
+--align=right --scroll \
+--separator='|' --always-print-result --print-all \
 --field="$(gettext "General Options")\t":lbl " " \
 --field=":LBL" " " \
 --field="$(gettext "Colorize words to grammar")":CHK "$grammar" \
@@ -144,14 +145,16 @@ yad --plug=$KEY --tabnum=1 \
 --field="$(gettext "Topic Saved")":BTN "$DS/ifs/upld.sh 'vsd'" \
 --field="$(gettext "Feedback")":BTN "$DS/ifs/tls.sh 'fback'" \
 --field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" > "$cnf1" &
-cat "$DC_s/2.cfg" | yad --plug=$KEY --tabnum=2 --list --expand-column=2 \
---text="<sub>  $(gettext "Double click to set") </sub>" --print-all \
---no-headers --dclick-action="$DS/ifs/dclik.sh" \
+cat "$DC_s/2.cfg" | yad --plug=$KEY --tabnum=2 --list \
+--text="<sub>  $(gettext "Double click to set") </sub>" \
+--print-all --dclick-action="$DS/ifs/dclik.sh" \
+--expand-column=2 --no-headers \
 --column=icon:IMG --column=Action &
-yad --notebook --key=$KEY --name=Idiomind --class=Idiomind --tab-borders=5 \
+yad --notebook --key=$KEY --title="$(gettext "Settings")" \
+--name=Idiomind --class=Idiomind --tab-borders=5 \
 --sticky --center --window-icon="$DS/images/logo.png" --borders=2  \
 --tab="$(gettext "Preferences")" --tab="$(gettext "Addons")" \
---width=$wth --height=$eht --title="$(gettext "Settings")" \
+--width=$wth --height=$eht \
 --button="$(gettext "Cancel")":1 --button="$(gettext "OK")":0
 ret=$?
 

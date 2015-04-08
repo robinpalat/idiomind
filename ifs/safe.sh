@@ -350,7 +350,7 @@ check_index() {
         
         if [ $? -ne 0 ]; then
             [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
-            msg " $(gettext "File not found")\n" error & exit 1
+            msg "$(gettext "File not found")\n" error & exit 1
         fi
         
         if [ "$stts" = "13" ]; then

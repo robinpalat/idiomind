@@ -77,7 +77,7 @@ function text() {
 function add_file() {
 
     cd $HOME
-    FL=$(yad --width=620 --height=500 --file --on-top --name=Idiomind \
+    FL=$(yad --width=680 --height=500 --file --on-top --name=Idiomind --add-preview \
     --text=" $(gettext "Browse to and select the file that you want to add.")" \
     --class=Idiomind --window-icon="$DS/images/logo.png" --center --multiple \
     --file-filter="*.mp3 *.ogg *.mp4 *.m4v *.jpg *.jpeg *.png *.txt *.pdf *.gif" \

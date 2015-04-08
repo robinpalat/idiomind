@@ -92,16 +92,16 @@ elif [ "$1" != chngi ]; then
     text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/$lgtl'>$(gettext "Search other topics")</a>   </small></small>"
     align="right"; fi
     
-    s=$(cat "$DC_s/0.cfg" | yad --name=Idiomind --text-align=$align \
-    --center $img --image-on-top --separator="" --class=Idiomind \
-    "$text" --width=640 --height=560 --borders=7 \
-    --ellipsize=END --title="$(gettext "Topics")"  \
-    --no-headers --list --window-icon="$DS/images/logo.png" \
+    s=$(cat "$DC_s/0.cfg" | yad --list --title="$(gettext "Topics")" "$text" \
+    --name=Idiomind --class=Idiomind --text-align=$align \
+    --separator="" --center $img --image-on-top --ellipsize=END \
+    --no-headers --window-icon="$DS/images/logo.png" \
+    --width=640 --height=560 --borders=8 \
+    --column=img:IMG \
+    --column=File:TEXT \
     --button=gtk-new:3 \
     --button="$(gettext "Apply")":2 \
-    --button="$(gettext "Close")":1 \
-    --column=img:img \
-    --column=File:TEXT)
+    --button="$(gettext "Close")":1)
     ret=$?
         
     if [ $ret -eq 3 ]; then

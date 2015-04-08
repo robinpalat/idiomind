@@ -32,7 +32,6 @@ n=1
 while [ $n -lt 7 ]; do
 
     val="${!sets[$n]}"
-    echo "${!sets[$n]} ---  ${sets[$n]}"
     if [ "$val" != TRUE ] && [ "$val" != FALSE ];
     then cfg=invalid; fi
     
@@ -88,22 +87,23 @@ if [ ! -f "$DT/.p_" ]; then
     
 else
     tpp="$(sed -n 2p "$DT/.p_")"
+    l="--center"
     if grep TRUE <<<"$words$sentences$marks$practice"; then
-    [ "$tpp" != "$tpc" ] && \
-    l="--text=<sup><b>Playing:  \"$tpp\"</b></sup>" || \
-    l="--center"; 
+    
+        if [ "$tpp" != "$tpc" ]; then
+        l="--text=<sup><b>Playing:  $tpp</b></sup>"; fi
     fi
-    btn="gtk-media-stop:2"; 
+    btn="gtk-media-stop:2"
 fi
 
 slct=$(mktemp "$DT"/slct.XXXX)
-setting_1 | yad --list --separator="|" --on-top \
---expand-column=2 --print-all --no-headers --center \
---class=Idiomind --name=Idiomind --align=right \
---width=380 --height=310 --title="$tpc" "$l" \
---window-icon="$DS/images/logo.png" --borders=5 --always-print-result \
+setting_1 | yad --list --title="$tpc" "$l" \
+--print-all --always-print-result --separator="|" \
+--class=Idiomind --name=Idiomind --align=right --no-headers --center \
+--expand-column=2 --window-icon="$DS/images/logo.png" \
+--on-top --skip-taskbar --borders=5 --width=380 --height=310 \
 --column=IMG:IMG --column=TXT:TXT --column=CHK:CHK \
---button="$btn" --button="$(gettext "Close")":1 --skip-taskbar > "$slct"
+--button="$btn" --button="$(gettext "Close")":1  > "$slct"
 ret=$?
 
 if [ "$ret" -eq 0 ]; then

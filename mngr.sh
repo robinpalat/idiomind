@@ -294,10 +294,10 @@ function delete_topic() {
     include "$DS/ifs/mods/mngr"
     
     if [ -f "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "$tpc" ]; then
-    msg " $(gettext "You can not delete at this time. Please try later ")\n" dialog-warning &
+    msg "$(gettext "You can not delete at this time. Please try later ")\n" dialog-warning &
     exit 1; fi
     if [ -f "$DT/.p_" ] && [ "$(sed -n 2p "$DT/.p_")" = "$tpc" ]; then
-    msg " $(gettext "You can not delete at this time. Please try later ")\n" dialog-warning &
+    msg "$(gettext "You can not delete at this time. Please try later ")\n" dialog-warning &
     exit 1; fi
     
     msg_2 "$(gettext "Are you sure you want to delete this Topic?")\n" \
@@ -622,7 +622,7 @@ function rename_topic() {
     if [ $snm -ge 1 ]; then
     
         jlb="$jlb $snm"
-        msg_2 " $(gettext "You already have a topic with the same name.") \n $(gettext "The new it was renamed to\:")\n  <b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
+        msg_2 "$(gettext "You already have a topic with the same name.") \n$(gettext "The new it was renamed to\:")\n<b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
         ret=$(echo "$?")
 
             if [ "$ret" -eq 1 ]; then
@@ -630,9 +630,9 @@ function rename_topic() {
             fi
             
     elif [ -f "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "$tpc" ]; then
-         msg " $(gettext "Unable to rename at this time. Please try later ")\n" dialog-warning & exit 1
+         msg "$(gettext "Unable to rename at this time. Please try later ")\n" dialog-warning & exit 1
     elif [ -f "$DT/.p_" ] && [ "$(sed -n 2p "$DT/.p_")" = "$tpc" ]; then
-         msg " $(gettext "Unable to rename at this time. Please try later ")\n" dialog-warning & exit 1
+         msg "$(gettext "Unable to rename at this time. Please try later ")\n" dialog-warning & exit 1
     else
         jlb="$jlb"
     fi

@@ -40,7 +40,7 @@ function audio_recognizer() {
     --header="Content-Type: audio/x-flac; rate=16000" \
     -O - "https://www.google.com/speech-api/v2/recognize?&lang="$2"-"$3"&key=$4")"
     if [ $? != 0 ]; then
-        msg " $(gettext "An error occurred, please try later.")\n" dialog-warning &
+        msg "$(gettext "An error occurred, please try later.")\n" dialog-warning &
         kill -9 $(pgrep -f "yad --progress") & exit 1; fi
     
 }
@@ -84,7 +84,7 @@ if [[ "$prdt" = A ]]; then
     else
         if [ -z "$tpe" ]; then
             [ -d "$DT_r" ] && rm -fr "$DT_r"
-            msg " $(gettext "No topic is active")\n" info & exit 1
+            msg "$(gettext "No topic is active")\n" info & exit 1
         fi
         
         (
@@ -184,7 +184,7 @@ if [[ "$prdt" = A ]]; then
         
         if [ -z "$(< $DT_r/ls)" ]; then
         
-            dlg_text_info_4  "$(gettext "Failed to get text. For the process to be successful, audio file must not have music or background noise.")"
+            msg "$(gettext "Failed to get text. For the process to be successful, audio file must not have music or background noise.")" dialog-warning
             [ -d "$DT_r" ] && rm -fr "$DT_r"
             rm -f "$lckpr" & exit 1
             
