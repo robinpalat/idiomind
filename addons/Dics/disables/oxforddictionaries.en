@@ -1,9 +1,0 @@
-#! /bin/bash
-
-name="oxforddictionaries"
-lang="en"
-
-cd "$2"
-wget "$(wget -q http://www.oxforddictionaries.com/definition/english/$1 -O - | grep -o -P '(?<=data-src-mp3=").*(?=.mp3)')".mp3
-
-exit
