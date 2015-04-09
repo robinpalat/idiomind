@@ -5,12 +5,12 @@ function internet() {
 
     curl -v www.google.com 2>&1 \
     | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
-    yad --window-icon="$DS/images/logo.png" --on-top \
-    --image=info --name=Idiomind --class=Idiomind \
+    yad --title=Idiomind --image=info \
+    --name=Idiomind --class=Idiomind \
+    --window-icon="$DS/images/logo.png" \
+    --image-on-top --center --sticky --on-top --skip-taskbar \
     --text=" $(gettext "No network connection\n Please connect to a network, then try again.") " \
-    --image-on-top --center --sticky \
     --width=360 --height=120 --borders=3 \
-    --skip-taskbar --title=Idiomind \
     --button="$(gettext "OK")":0 >&2; exit 1;}
 }
 
@@ -18,20 +18,24 @@ function msg() {
         
     [ -n "$3" ] && title="$3" || title=Idiomind
     [ -n "$4" ] && btn="$4" || btn="$(gettext "OK")"
-    yad --window-icon="$DS/images/logo.png" --name=Idiomind \
-    --image="$2" --on-top --text="$1" --class=Idiomind \
-    --image-on-top --center --sticky --button="$btn":0 \
-    --width=360 --height=120 --borders=5 --title="$title"
+    yad --title="$title" --text="$1" --image="$2" \
+    --name=Idiomind --class=Idiomind \
+    --window-icon="$DS/images/logo.png" \
+    --image-on-top --center --sticky --on-top \
+    --width=360 --height=120 --borders=5 \
+    --button="$btn":0
 }
 
 function msg_2() {
         
     [ -n "$5" ] && title="$5" || title=Idiomind
     [ -n "$6" ] && btn3="--button=$6:2" || btn3=""
-    yad --name=Idiomind --on-top --text="$1" --image="$2" \
-    --always-print-result --title="$title" \
-    --image-on-top --width=360 --height=120 --borders=3 \
-    --class=Idiomind --window-icon="$DS/images/logo.png" --sticky --center \
+    yad --title="$title" --text="$1" --image="$2" \
+    --name=Idiomind --class=Idiomind \
+    --always-print-result \
+    --window-icon="$DS/images/logo.png" \
+    --image-on-top --on-top --sticky --center \
+    --width=360 --height=120 --borders=3 \
     "$btn3" --button="$4":1 --button="$3":0
 }
 

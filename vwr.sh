@@ -22,12 +22,6 @@ fi
 
 fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
 align=left
-#if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
-#fs=16; bs=10
-#image="--image=$DM_tlt/words/images/$fname.jpg"; else
-#fs=22; bs=20
-#image="--center"
-#fi
 fs=22; bs=20
 
 if [ -f "$DM_tlt/words/$fname.mp3" ]; then

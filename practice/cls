@@ -11,7 +11,7 @@ DSP="$DS/practice"
 [ -n "$(ps -A | pgrep -f "$DSP/di.sh")" ] && killall "$DSP/di.sh" &
 [ -n "$(ps -A | pgrep -f "$DSP/prct.sh")" ] && killall "$DSP/prct.sh" &
 [ -n "$(ps -A | pgrep -f "$DSP/strt.sh")" ] && killall "$DSP/strt.sh" &
-[ -n "$(ps -A | pgrep -f play)" ]] && killall play &
+[ -n "$(ps -A | pgrep -f play)" ] && killall play &
 
 cd "$DC_tlt/practice"
 easy="$2"; ling="$3"; hard="$4"; all="$5"

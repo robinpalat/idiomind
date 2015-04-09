@@ -3,6 +3,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/mods/cmns.sh
+wicon="$DS/images/logo.png"
 dir="$DC/addons/dict"
 enables="$DC/addons/dict/enables"
 disables="$DC/addons/dict/disables"
@@ -32,13 +33,16 @@ function test_() {
 
 function dialog_edit() {
     
-    yad --text-info --width=480 --height=350 --on-top --wrap \
+    yad --text-info --title="$_NAME" \
     --name=Idiomind --class=Idiomind \
-    --buttons-layout=end --center --window-icon=idiomind \
-    --margins=4 --print-all --borders=0 --skip-taskbar \
-    --editable --fontname=monospace --always-print-result \
-    --filename="$script" --button=Cancel:1 --button=Delete:2 \
-    --button=Test:4 --button=Save:5 --title="$_NAME" > $DT/script.sh
+    --filename="$script" --print-all --always-print-result \
+    --window-icon="$wicon" --skip-taskbar --buttons-layout=end --center --on-top \
+    --width=480 --height=350 --borders=0 \
+    --editable --fontname=monospace --margins=4 --wrap \
+    --button=Cancel:1 \
+    --button=Delete:2 \
+    --button=Test:4 \
+    --button=Save:5 > $DT/script.sh
 }
 
 function dict_list() {
@@ -140,13 +144,18 @@ elif [ -z "$1" ]; then
     tex="--center"; fi
     
     sel="$(dict_list | yad --list --title="$(gettext "Dictionaries")" \
-    --expand-column=2 "$tex" --name=Idiomind --class=Idiomind \
-    --width=480 --height=350 --skip-taskbar --separator=" " --center \
-    --borders=15 --window-icon=idiomind --print-all --always-print-result \
-    --button="$(gettext "Cancel")":1 --button="$(gettext "Add")":2 --button=OK:0 \
-    --column=" ":CHK --column="$(gettext "Available dictionaries")":TEXT \
+    --name=Idiomind --class=Idiomind "$tex" \
+    --print-all --always-print-result --separator=" " \
+    --dclick-action='/usr/share/idiomind/addons/Dics/cnfg.sh dlk_dlg' \
+    --window-icon="$wicon"--expand-column=2 --skip-taskbar --center \
+    --width=480 --height=350 --borders=15 \
+    --column=" ":CHK \
+    --column="$(gettext "Available dictionaries")":TEXT \
     --column=" ":TEXT \
-    --dclick-action='/usr/share/idiomind/addons/Dics/cnfg.sh dlk_dlg')"
+    --button="$(gettext "Cancel")":1 \
+    --button="$(gettext "Add")":2 \
+    --button=OK:0)"
+    
     ret=$?
     
         if [ "$ret" -eq 2 ]; then

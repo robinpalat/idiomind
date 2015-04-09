@@ -28,12 +28,13 @@ if [ "$1" = play ]; then
     
 elif [ "$1" = listen_sntnc ]; then
 
-    play "$DM_tlt/$2.mp3"
+    play "$DM_tlt/$2.mp3" >/dev/null 2>&1
     exit
 
 elif [ "$1" = dclik ]; then
 
-    play "$DM_tls/${2,,}".mp3 & exit
+    play "$DM_tls/${2,,}".mp3 >/dev/null 2>&1
+    exit
 
 fi
 
@@ -145,30 +146,26 @@ check_install() {
     done <<<"$(find "$dir" -maxdepth 5 -type f)"
 }
 
-text() {
+details() {
     cd "$2"
     dirs="$(find . -maxdepth 5 -type d)"
-    files="$(find . -maxdepth 5 -type f)"
+    files="$(find . -type f -exec file {} \; 2> /dev/null)"
     hfiles="$(ls -d ./.[^.]* | less)"
     exfiles="$(find . -maxdepth 5 -perm -111 -type f)"
-    wordsdir="$(cd "./words/"; find . -maxdepth 1 -type f)"
     attchsdir="$(cd "./attchs/"; find . -maxdepth 5 -type f)"
-    imagesdir="$(cd "./words/images/"; find . -maxdepth 1 -type f)"
-    audiodir="$(cd "./audio/"; find . -maxdepth 1 -type f)"
-    maindir="$(find . -maxdepth 1 -type f)"
     wcdirs=`sed '/^$/d' <<<"${dirs}" | wc -l`
     wcfiles=`sed '/^$/d' <<<"${files}" | wc -l`
     wchfiles=`sed '/^$/d' <<<"${hfiles}" | wc -l`
     wcexfiles=`sed '/^$/d' <<<"${exfiles}" | wc -l`
-    SRFL1=$(cat "$2/12.cfg")
-    SRFL2=$(cat "$2/10.cfg")
-    SRFL3=$(cat "$2/4.cfg")
-    SRFL4=$(cat "$2/3.cfg")
-    SRFL5=$(cat "$2/0.cfg")
+    SRFL1=$(cat "./12.cfg")
+    SRFL2=$(cat "./10.cfg")
+    SRFL3=$(cat "./4.cfg")
+    SRFL4=$(cat "./3.cfg")
+    SRFL5=$(cat "./0.cfg")
     
     echo -e "
 SUMMARY
-===========================
+======================
 $wcdirs directories
 $wcfiles files
 $wchfiles hidden files
@@ -176,33 +173,15 @@ $wcexfiles executables files
 
 
 
-
 DIRECTORIES
-===========================
+======================
 $dirs
 
 
 
-
 FILES
-===========================
-
-./
-
-$maindir
-
-
-
-./words
-
-$wordsdir
-
-
-
-./words/images
-
-$imagesdir
-
+======================
+$files
 
 
 ./attchs
@@ -211,29 +190,20 @@ $attchsdir
 
 
 
-./audio
-
-$audiodir
-
-
-
-
 HIDDEN FILES
-===========================
+======================
 $hfiles
 
 
 
-
 EXECUTABLES FILES
-===========================
+======================
 $exfiles
 
 
 
-
 TEXT FILES
-===========================
+======================
 
 12.cfg content (configuration file)
 
@@ -242,34 +212,30 @@ $SRFL1
 
 
 
-10.cfg content (note)
+10.cfg content
 
 $SRFL2
 
 
 
 
-4.cfg content (sentences list)
+4.cfg content
 
 $SRFL3
 
 
 
 
-3.cfg content (words list)
+3.cfg content
 
 $SRFL4
 
 
 
 
-0.cfg content (index list)
+0.cfg content
 
-$SRFL5
-
-
-
-" | yad --width=520 --height=450 --text-info --margins=10 \
+$SRFL5" | yad --width=550 --height=550 --text-info --margins=10 \
     --name=Idiomind --class=Idiomind \
     --buttons-layout=edge --scroll \
     --window-icon="$DS/images/logo.png" --center --borders=0 \
@@ -504,7 +470,7 @@ function videourl() {
     --field="$(gettext "Video URL")" --title=" " \
     --width=480 --height=100 --name=Idiomind --class=Idiomind \
     --skip-taskbar --borders=5 --button="$(gettext "Cancel")":1 --button=gtk-ok:0)
-    echo "$url" > "$DM_tlt/attchs/video$n.url"
+    [ -n "$url" ] && echo "$url" > "$DM_tlt/attchs/video$n.url"
 
 }
 
@@ -1101,8 +1067,8 @@ function pdfdoc() {
 }
 
 case "$1" in
-    text)
-    text "$@" ;;
+    details)
+    details "$@" ;;
     check_source_1)
     check_source_1 "$@" ;;
     check_index)

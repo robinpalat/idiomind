@@ -3,8 +3,15 @@
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 
-if [ "$1" = play ]; then
-    
+#if [ -z "$channel" ]; then
+#channel="$(eyeD3 --no-color "media.$ex" \
+#| grep -o -P '(?<=title:).*(?=artist:)' \
+#| sed -e 's/^[ \t]*//g' | tr -s '\ \t' \
+#| sed -e "s/[[:space:]]\+/ /g" | sed 's/\&/&amp;/g' \
+#| sed 's/^ *//; s/ *$//; /^$/d' | tr -s ':')"; fi
+
+play() {
+
     killall play
     DCP="$DM_tl/Feeds/.conf"
     [ -f "$DCP/0.cfg" ] && st3=$(sed -n 2p "$DCP/0.cfg") || st3=FALSE
@@ -30,8 +37,10 @@ if [ "$1" = play ]; then
         mplayer "$fs" "$DM_tl/Feeds/cache/$2.mov" \
         >/dev/null 2>&1 & exit
     fi
-fi
+}
 
+set_channel() {
+    
 tmpl1="<?xml version='1.0' encoding='UTF-8'?>
 <xsl:stylesheet version='1.0'
 xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
@@ -88,8 +97,6 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
 </xsl:for-each>
 </xsl:template>
 </xsl:stylesheet>"
-
-if [ "$1" = set_channel ]; then
     
     feed="$2"
     num="$3"
@@ -239,10 +246,9 @@ url=\"$feed\""
         msg "$(gettext "Couldn't download the specified URL")\n" info
         rm -f "$DT/cpt.lock" & exit 1
     fi
+}
     
-elif [ "$1" = check ]; then
-
-    yad --text="$1 $2 $3"
+check() {
 
     source $DS/ifs/mods/cmns.sh
     DCP="$DM_tl/Feeds/.conf"
@@ -271,10 +277,12 @@ elif [ "$1" = check ]; then
     
     field="$(echo "$item" | sed -r 's|-\!-|\n|g')"
 
-    yad --scroll --columns=2 --skip-taskbar --separator='\n' \
-    --width=800 --height=600 --form --on-top --window-icon=idiomind \
-    --text="\t<small>$(gettext "In this table you can define fields according to their content,  most of the time the default values is right. ")</small>" --name=Idiomind --class=Idiomind \
-    --button=gtk-apply:0 --borders=5 --title="$ttl" --always-print-result \
+    yad --form --title="$ttl" \
+    --name=Idiomind --class=Idiomind \
+    --always-print-result --separator='\n' \
+    --window-icon=$wicon --columns=2 --skip-taskbar --scroll --on-top \
+    --width=800 --height=600 --borders=5 \
+    --text="\t<small>$(gettext "In this table you can define fields according to their content,  most of the time the default values is right. ")</small>" \
     --field="":CB "$(sed -n 1p $DCP/$2.rss)!$mn" \
     --field="":CB "$(sed -n 2p $DCP/$2.rss)!$mn" \
     --field="":CB "$(sed -n 3p $DCP/$2.rss)!$mn" \
@@ -288,23 +296,27 @@ elif [ "$1" = check ]; then
     --field="":TXT "$(echo "$field" | sed -n 4p | sed 's/\://g')" \
     --field="":TXT "$(echo "$field" | sed -n 5p)" \
     --field="\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t":TXT "$(echo "$field" | sed -n 6p)" \
-    --field="":TXT "$(echo "$field" | sed -n 7p)" | head -n 7 > $DT/f.tmp
+    --field="":TXT "$(echo "$field" | sed -n 7p)" \
+    --button=gtk-apply:0 | head -n 7 > $DT/f.tmp
+
     [ -n "$(cat "$DT/f.tmp")" ] && mv -f $DT/f.tmp "$DCP/$2.rss" || cp -f "$DCP/$2.rss_" "$DCP/$2.rss"
     [ -f "$DCP/$2.rss_" ] && rm "$DCP/$2.rss_"
     [ -f "$DT/cpt.lock" ] && rm -f "$DT/cpt.lock" & exit
+}
 
-
-elif [ "$1" = sync ]; then
+sync() {
    
     DCP="$DM_tl/Feeds/.conf"
-    source "$DCP/0.cfg"
+    cfg="$DM_tl/Feeds/.conf/0.cfg"
+    path="$(sed -n 3p < "$cfg" | grep -o 'path="[^"]*' | grep -o '[^"]*$')"
+    #source "$DCP/0.cfg"
     
-    if  [ -f "$DT/l_sync" ]; then
+    if  [ -f "$DT/l_sync" ] && [ "$2" != A ]; then
 
-        msg_2 "<i>$(gettext "Synchronizing...")</i>\n" info "OK" "gtk-stop" "Feeds"
-        ST=$(echo $?)
+        msg_2 "$(gettext "A process is already running!")\n" info "OK" "gtk-stop" "Feeds"
+        e=$(echo $?)
         
-            if [ $ST -eq 1 ]; then
+            if [ $e -eq 1 ]; then
 
                 killall rsync
                 [ -n "$(ps -A | pgrep -f "rsync")" ] && killall rsync
@@ -313,32 +325,55 @@ elif [ "$1" = sync ]; then
                 killall tls.sh
                 exit 1
             fi
+            
+    elif  [ -f "$DT/l_sync" ] && [ "$2" = A ]; then
+    
+        exit 1
 
-    elif [ ! -d "$path" ]; then
+    elif [ ! -d "$path" ] && [ "$2" != A ]; then
         
         msg " $(gettext "The directory to synchronization does not exist \n Exiting.")" \
         dialog-warning & exit 1
+    
+    elif  [ ! -d "$path" ] && [ "$2" = A ]; then
+            
+        echo "Synchronization error. Missing path" >> "$DM_tl/Feeds/.conf/feed.err"
+        exit 1
         
     elif [ -d "$path" ]; then
         
-        set -e
-        set u pipefail
-        IFS=$'\n\t'
+        #set -e
+        #set u pipefail
+        #IFS=$'\n\t'
         [ ! -d "$path" ] && exit 1
     
-        (sleep 1 && notify-send -i idiomind "$(gettext "Synchronizing...")" " ") &
+        [[ $2 != A ]] && (sleep 1 && notify-send -i idiomind \
+        "$(gettext "Synchronizing...")" " ")
         touch "$DT/l_sync"; SYNCDIR="$path"
-        rsync -az --exclude="*.txt" --exclude="*.png" \
-        --exclude="*.html" --ignore-errors "$DM_tl/Feeds/cache/" "$SYNCDIR"
-        sleep 20
-
+        st1="$(cd "$SYNCDIR"; ls *.mp3 | wc -l)"
+        rsync -az -v --exclude="*.txt" --exclude="*.png" \
+        --exclude="*.html" --omit-dir-times --ignore-errors "$DM_tl/Feeds/cache/" "$SYNCDIR"
         exit=$?
+        
         if [ $exit = 0 ] ; then
-            log="$(cd "$SYNCDIR"; ls *.mp3 | wc -l)"
-            notify-send -i idiomind "$(gettext "Complete synchronization")" "$log $(gettext "synchronized episodes(s)")" -t 8000
+            st2="$(cd "$SYNCDIR"; ls *.mp3 | wc -l)"
+            re=$((st2-st1))
+            notify-send -i idiomind "$(gettext "Complete synchronization")" "$re $(gettext "New episodes(s)")\n$st2 $(gettext "Total")" -t 8000
         else
-            notify-send -i dialog-warning "$(gettext "Error while syncing")" " " -t 8000
+            notify-send -i dialog-warning \
+            "$(gettext "Error while syncing")" " " -t 8000
         fi
     fi
-    rm -f "$DT/l_sync"
-fi
+    [ -f "$DT/l_sync" ] && rm -f "$DT/l_sync"; exit
+}
+
+case "$1" in
+    play)
+    play "$@" ;;
+    set_channel)
+    set_channel "$@" ;;
+    check)
+    check "$@" ;;
+    sync)
+    sync "$@" ;;
+esac

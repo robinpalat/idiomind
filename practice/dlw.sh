@@ -97,7 +97,7 @@ cuestion() {
 p=1
 while read trgt; do
 
-    fonts "$trgt"
+    fonts "${trgt,,}"
     cuestion "$trgt"
     ans=$(echo "$?")
     
@@ -125,7 +125,7 @@ else
     p=2
     while read trgt; do
 
-        fonts "$trgt"
+        fonts "${trgt,,}"
         cuestion "$trgt"
         ans=$(echo "$?")
           

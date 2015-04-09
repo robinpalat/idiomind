@@ -3,6 +3,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
+wicon="$DS/images/logo.png"
 
 if [ ! -f "$DC_a/1.cfg" ]; then
 
@@ -18,17 +19,17 @@ dte=$(date +%F)
 #dialog --button=Backup:2
 if [ -z "$1" ]; then
     
-    D=$(yad --list --title="$(gettext "User Data")" \
-    --center --on-top --radiolist --expand-column=2 \
-    --name=Idiomind --class=Idiomind \
-    --text=" $(gettext "Size"): $size \\n" \
-    --width=480 --height=330 --always-print-result \
-    --skip-taskbar --image=folder --separator=" " \
-    --borders=15 --print-all --window-icon=idiomind \
-    --button="$(gettext "Cancel")":1 --button=Ok:0 \
-    --image-on-top --column="" --column=Options \
-    "FALSE" "$(gettext "Import")" "FALSE" \
-    "$(gettext "Export")")
+    D=$(yad --list --radiolist --title="$(gettext "User Data")" \
+    --name=Idiomind --class=Idiomind --text=" $(gettext "Size"): $size\n" \
+    --always-print-result --print-all --separator=" " \
+    --center --on-top --expand-column=2 --image-on-top \
+    --skip-taskbar --image=folder --window-icon=idiomind \
+    --width=480 --height=330 --borders=15 \
+    --button="$(gettext "Cancel")":1 \
+    --button=Ok:0 \
+    --column="" \
+    --column=Options \
+    "FALSE" "$(gettext "Import")" "FALSE" "$(gettext "Export")")
     
     ret=$?
 
@@ -45,11 +46,12 @@ if [ -z "$1" ]; then
             IFS=$'\n\t'
             
             cd "$HOME"
-            exp=$(yad --save --center --borders=10 \
-            --on-top --filename="idiomind_data.tar.gz" \
-            --window-icon=idiomind --skip-taskbar \
-            --title="$(gettext "Export")" \
-            --file --width=600 --height=500 --button=Ok:0 )
+            exp=$(yad --file --save --title="$(gettext "Export")" \
+            --filename="idiomind_data.tar.gz" \
+            --window-icon="$wicon" --skip-taskbar --center --on-top \
+            --width=600 --height=500 --borders=10 \
+            --button="$(gettext "Cancel")":1 \
+            --button=Ok:0)
             ret=$?
                 
             if [ "$ret" -eq 0 ]; then
@@ -98,11 +100,12 @@ if [ -z "$1" ]; then
             IFS=$'\n\t'
             
             cd "$HOME"
-            add=$(yad --center --on-top \
-            --borders=10 --file-filter="*.gz" --button=Ok:0 \
-            --window-icon=idiomind --skip-taskbar \
-            --title="$(gettext "Import")" \
-            --window-icon=$ICON --file --width=600 --height=500)
+            add=$(yad --file --title="$(gettext "Import")" \
+            --file-filter="*.gz" \
+            --window-icon="$wicon" --skip-taskbar --center --on-top \
+            --width=600 --height=500 --borders=10 \
+            --button="$(gettext "Cancel")":1 \
+            --button=Ok:0)
             
             if [ "$ret" -eq 0 ]; then
             
@@ -206,12 +209,11 @@ if [ -z "$1" ]; then
                 "$DS/mngr.sh" mkmn
                 rm -f -r "$DT/import"
                 
-                ) | yad --on-top --progress \
-                --width=200 --height=20 --geometry=200x20-2-2 \
-                --percentage="5" --auto-close \
-                --sticky --on-top --undecorated --on-top \
-                --skip-taskbar --center --no-buttons
-                
+                ) | yad --progress \
+                    --percentage="5" --auto-close \
+                    --sticky --on-top --undecorated --skip-taskbar --center --no-buttons \
+                    --width=200 --height=20 --geometry=200x20-2-2
+
                 msg " $(gettext "Data imported successfully") \n" info
                 exit 1
             else
@@ -231,14 +233,16 @@ if [ -z "$1" ]; then
         source "$DC_a/1.cfg"
 
         cd "$HOME"
-        CNFG=$(yad --center --form --on-top --window-icon=idiomind \
-        --borders=15 --expand-column=3 --no-headers --name=Idiomind \
-        --print-all --button="$(gettext "Restore")":3 --always-print-result \
-        --button="$(gettext "Close")":0 --width=420 --height=300 \
-        --class=Idiomind --title=Backup --columns=2 \
+        CNFG=$(yad --form --title=Backup \
+        --name=Idiomind --class=Idiomind \
+        --print-all --always-print-result \
+        --window-icon="$wicon" --center --on-top --expand-column=3 --no-headers --columns=2 \
+        --width=420 --height=300 --borders=15 \
         --field="$(gettext "Backup regularly")":CHK $backup \
         --field="$(gettext "Path to save")":"":CDIR "$path" \
-        --field=" :LBL" " " )
+        --field=" :LBL" " " \
+        --button="$(gettext "Restore")":3
+        --button="$(gettext "Close")":0)
         
         ret=$?
         # backup config
@@ -289,15 +293,14 @@ if [ -z "$1" ]; then
                         rm -r  "$path/topics"
                         mv -f "$path/backup.tar.gz" "$path/idiomind.backup"
                         
-                        ) | yad --on-top \
-                        --width=200 --height=20 --geometry=200x20-2-2 \
-                        --pulsate --percentage="5" --auto-close \
-                        --sticky --on-top --undecorated --skip-taskbar \
-                        --center --no-buttons --fixed --progress
+                        ) | yad --progress \
+                            --percentage="5" --auto-close \
+                            --sticky --on-top --undecorated --skip-taskbar --center --no-buttons \
+                            --width=200 --height=20 --geometry=200x20-2-2
                         
                         exit=$?
                         
-                        if [[ $exit = 0 ]] ; then
+                        if [ $exit = 0 ] ; then
                         
                             info=" Restore succefull\n"
                             image=dialog-ok

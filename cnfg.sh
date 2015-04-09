@@ -38,7 +38,9 @@ StartupWMClass=Idiomind"
 lang=('English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian')
 sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
-'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' 'edit')
+'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' 'edit' \
+'words' 'sentences' 'marks' 'practice' 'news' 'saved')
+[ -n "$(< "$DC_s/1.cfg")" ] && cfg=1 || > "$DC_s/1.cfg"
 c=$(echo $(($RANDOM%100000))); KEY=$c
 cnf1=$(mktemp "$DT"/cnf1.XXXX)
 
@@ -73,45 +75,25 @@ function set_lang() {
     "$DS/mngr.sh" mkmn
 }
 
-if [ -f "$DC_s/1.cfg" ]; then
-source /dev/stdin <<<"$(head -n 19 "$DC_s/1.cfg")"
-else > "$DC_s/1.cfg"; fi
-
-sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
-'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' 'edit' \
-'words' 'sentences' 'marks' 'practice' 'news' 'saved')
- 
 n=0
-while [ $n -lt 19 ]; do
+if [ "$cfg" = 1 ]; then
 
-    val="${!sets[$n]}"
-    
-    if [ $n -lt 8 ] || [ $n -gt 12 ]; then
-        if [ "$val" != TRUE ] && [ "$val" != FALSE ];
-        then cfg=invalid; fi
-    fi
-    if [ $n -ge 9 ] && [ $n -le 12 ]; then
-        if [ $(wc -c <<<"$val") -gt 10 ]; then #TODO
-        cfg=invalid; fi
-    fi
-    if [ $n = 8 ]; then
-        if [ $(wc -c <<<"$val") -gt 2 ]; then
-        cfg=invalid; fi
-    fi
-    ((n=n+1))
-    
-done
-
-if [ ! -f "$DC_s/1.cfg" ] || [ "$cfg" = invalid ]; then
-
-    n=0; > "$DC_s/1.cfg"
-    while [ $n -lt 19 ]; do
-        if [ $n -lt 8 ] || [ $n -gt 12 ]; then
-        val=FALSE; else val=""; fi
-        echo -e "${sets[$n]}=$val" >> "$DC_s/1.cfg"
+    while [[ $n -lt 14 ]]; do
+        itn=$((n+1))
+        get="${sets[$n]}"
+        val=$(sed -n "$itn"p < "$DC_s/1.cfg" \
+        | grep -o "$get"=\"[^\"]* | grep -o '[^"]*$')
+        declare "${sets[$n]}"="$val"
         ((n=n+1))
     done
     
+else
+    while [ $n -lt 19 ]; do
+        if [ $n -lt 8 ] || [ $n -gt 12 ]; then
+        val="FALSE"; else val=" "; fi
+        echo -e "${sets[$n]}=\"$val\"" >> "$DC_s/1.cfg"
+        ((n=n+1))
+    done
 fi
 
 if [ "$text" != TRUE ] && [ "$audio" != TRUE ]; then audio=TRUE; fi
@@ -163,16 +145,16 @@ ret=$?
         while [ $n -le 21 ]; do
             val=$(cut -d "|" -f$n < "$cnf1")
             if [ -n "$val" ]; then
-                sed -i "s/${sets[$v]}=.*/${sets[$v]}=$val/g" "$DC_s/1.cfg"
-                ((v=v+1))
+            sed -i "s/${sets[$v]}=.*/${sets[$v]}=\"$val\"/g" "$DC_s/1.cfg"
+            ((v=v+1))
             fi
             ((n=n+1))
         done
 
         val=$(cut -d "|" -f22 < "$cnf1")
-        sed -i "s/${sets[11]}=.*/${sets[11]}=$val/g" "$DC_s/1.cfg"
+        sed -i "s/${sets[11]}=.*/${sets[11]}=\"$val\"/g" "$DC_s/1.cfg"
         val=$(cut -d "|" -f23 < "$cnf1")
-        sed -i "s/${sets[12]}=.*/${sets[12]}=$val/g" "$DC_s/1.cfg"
+        sed -i "s/${sets[12]}=.*/${sets[12]}=\"$val\"/g" "$DC_s/1.cfg"
         
         [ ! -d  "$HOME/.config/autostart" ] \
         && mkdir "$HOME/.config/autostart"

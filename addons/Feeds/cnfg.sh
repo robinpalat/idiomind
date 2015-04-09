@@ -2,9 +2,12 @@
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/mods/cmns.sh
+wicon"$DS/images/logo.png"
 DCP="$DM_tl/Feeds/.conf"
 DSP="$DS_a/Feeds"
 CNF=$(gettext "Configure")
+sets=('update' 'sync' 'path')
+[ -n "$(< "$DCP/0.cfg")" ] && cfg=1 || > "$DCP/0.cfg"
 
 tpc='#!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
@@ -37,17 +40,25 @@ n=1; while read feed; do
     ((n=n+1))
 done < "$DCP/4.cfg"
 
-[ -f "$DCP/0.cfg" ] && source /dev/stdin <<<"$(head -n 3 "$DCP/0.cfg")"
-if [ "$update" != TRUE ] && [ "$update" != FALSE ]; then cfg=invalid ; fi
-if [ "$update" != TRUE ] && [ "$update" != FALSE ]; then cfg=invalid ; fi
-if [ -z "$path" ] && [ "$path" != "/uu" ]; then cfg=invalid ; fi
-if [ ! -f "$DCP/0.cfg" ] || [ "$cfg" = 'invalid' ]; then
-> "$DCP/0.cfg"
-echo -e "update=FALSE
-sync=FALSE
-path=/uu" >> "$DCP/0.cfg"; fi
-[ ! -d "$path" ] && path=/uu
+n=0
+while [[ $n -lt 3 ]]; do
 
+    if [ "$cfg" = 1 ]; then
+        itn=$((n+1))
+        get="${sets[$n]}"
+        val=$(sed -n "$itn"p < "$DCP/0.cfg" \
+        | grep -o "$get"=\"[^\"]* | grep -o '[^"]*$')
+        declare "${sets[$n]}"="$val"
+        
+    else
+        if [ $n -lt 2 ]; then
+        val="FALSE"; else val="/uu"; fi
+        echo -e "${sets[$n]}=\"$val\"" >> "$DCP/0.cfg"
+    fi
+
+    ((n=n+1))
+done
+    
 apply() {
     
     printf "$CNFG" | sed 's/|/\n/g' | sed -n 7,16p | \
@@ -69,26 +80,25 @@ apply() {
     val2=$(cut -d "|" -f2 <<<"$CNFG")
     val3=$(cut -d "|" -f4 <<<"$CNFG" | sed 's|/|\\/|g')
     if [ ! -d "$val3" ] ||  [ -z "$val3" ]; then path=/uu; fi
-    sed -i "s/update=.*/update=$val1/g" "$DCP/0.cfg"
-    sed -i "s/sync=.*/sync=$val2/g" "$DCP/0.cfg"
-    sed -i "s/path=.*/path=$val3/g" "$DCP/0.cfg"
+    sed -i "s/update=.*/update=\"$val1\"/g" "$DCP/0.cfg"
+    sed -i "s/sync=.*/sync=\"$val2\"/g" "$DCP/0.cfg"
+    sed -i "s/path=.*/path=\"$val3\"/g" "$DCP/0.cfg"
     [ -f "$DT/cp.lock" ] && rm -f "$DT/cp.lock"
 }
 
-if [ -z "$1" ]; then
-
+[ ! -d "$path" ] && path=/uu
 if [ -f "$DM_tl/Feeds/.conf/feed.err" ]; then
 e="$(head -n 10 < "$DM_tl/Feeds/.conf/feed.err" | tr '&' ' ')"
 rm "$DM_tl/Feeds/.conf/feed.err"
 (sleep 2 && msg "$(gettext "Errors found in log file") \n$e" info) &
 fi
 
-CNFG=$(yad --form --center --scroll --borders=20 \
---window-icon=idiomind --skip-taskbar --separator="|" \
---name=Idiomind --class=Idiomind --text=" " \
---width=600 --height=460 --always-print-result --print-all --on-top \
---title="$(gettext "Feeds settings")"  \
---text="$(gettext "Configure feeds to learn with podcasts or news.")"  \
+CNFG=$(yad --form --title="$(gettext "Feeds settings")" \
+--name=Idiomind --class=Idiomind \
+--always-print-result --print-all --separator="|" \
+--window-icon="$wicon" --center --scroll --on-top \
+--width=600 --height=460 --borders=15 \
+--text="$(gettext "Configure feeds to learn with podcasts or news.")" \
 --field="$(gettext "Update at startup")":CHK "$update" \
 --field="$(gettext "Sync after update")":CHK "$sync" \
 --field="$(gettext "Mountpoint or path where episodes should be synced.")":LBL " " \
@@ -103,42 +113,11 @@ CNFG=$(yad --form --center --scroll --borders=20 \
 --button="$(gettext "Syncronize")":5 \
 --button="gtk-apply":0)
 
-#--button="$(gettext "Advance")":2 \
-
-elif [ "$1" = "adv" ]; then
-
-CNFG=$(yad --form --center --scroll --columns=2 --borders=10 \
---window-icon=idiomind --skip-taskbar --separator="|" \
---name=Idiomind --class=Idiomind --text=" " \
---width=550 --height=360 --always-print-result --print-all --on-top \
---title="$(gettext "Feeds settings")"  \
---field="1 $url1":lbl --field="2 $url2":lbl --field="3 $url3":lbl \
---field="4 $url4":lbl --field="5 $url5":lbl --field="6 $url6":lbl \
---field="7 $url7":lbl --field="8 $url8":lbl --field="9 $url9":lbl \
---field="10 $url10":lbl --field=" ":LBL " " \
---field="<small>$CNF</small>":BTN "$DSP/tls.sh check 1" \
---field="<small>$CNF</small>":BTN "$DSP/tls.sh check 2" \
---field="<small>$CNF</small>":BTN "$DSP/tls.sh check 3" \
---field="<small>$CNF</small>":BTN "$DSP/tls.sh check 4" \
---field="<small>$CNF</small>":BTN "$DSP/tls.sh check 5" \
---field="<small>$CNF</small>":BTN "$DSP/tls.sh check 6" \
---field="<small>$CNF</small>":BTN "$DSP/tls.sh check 7" \
---field="<small>$CNF</small>":BTN "$DSP/tls.sh check 8" \
---field="<small>$CNF</small>":BTN "$DSP/tls.sh check 9" \
---field="<small>$CNF</small>":BTN "$DSP/tls.sh check 10" \
---button="$(gettext "Cancel")":1 --button="gtk-apply":0)
-fi
-
 ret=$?
 
 if [ "$ret" -eq 0 ]; then
 
     apply;
-
-elif [ "$ret" -eq 2 ]; then
-    
-    apply
-    "$DS_a/Feeds/cnfg.sh" adv;
     
 elif [ "$ret" -eq 5 ]; then
 

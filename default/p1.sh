@@ -28,46 +28,49 @@ if [ -f "$dir/words/$fname.mp3" ]; then
 
     file="$dir/words/$fname.mp3"
     listen="--button=Listen:play '$dir/words/$fname.mp3'"
-    tgs=$(eyeD3 "$file")
-    trgt=$(grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)' <<<"$tgs")
-    src=$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)' <<<"$tgs")
-    exmp=$(grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' <<<"$tgs" | tr '_' '\n')
-    exm1=$(sed -n 1p <<<"$exmp")
-    dftn=$(sed -n 2p <<<"$exmp")
-    ntes=$(sed -n 3p <<<"$exmp")
+    tgs="$(eyeD3 "$file")"
+    trgt="$(grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)' <<<"$tgs")"
+    src="$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)' <<<"$tgs")"
+    exmp="$(grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' <<<"$tgs" | tr '_' '\n')"
+    exm1="$(sed -n 1p <<<"$exmp")"
+    dftn="$(sed -n 2p <<<"$exmp")"
+    ntes="$(sed -n 3p <<<"$exmp")"
     dfnts="--field=<i><span color='#696464'>$dftn</span></i>\\n:lbl"
     ntess="--field=<span color='#868686'>$ntes</span>\\n:lbl"
-    exmp1=$(echo "$exm1" | sed "s/"$trgt"/<span background='#F8F4A2'>"$trgt"<\/\span>/g")
+    exmp1="$(echo "$exm1" | sed "s/"$trgt"/<span background='#F8F4A2'>"$trgt"<\/\span>/g")"
     
-    yad --columns=1 --form --width=$wth --height=$eht --center \
-    --window-icon=idiomind --scroll --text-align=center \
-    --skip-taskbar --center --title="$MPG " --borders=20 \
-    --quoted-output --on-top --selectable-labels \
+    yad --form --title="$item " \
     --text="<span font_desc='Sans Free Bold 22'>$trgt</span>\n\n<i>$src</i>\n\n" \
-    --field="":lbl --field="<i><span color='#808080'>$exmp1 \
-</span></i>\\n:lbl" "$dfnts" "$ntess" \
-    "$listen" --button=gtk-go-up:3 --button=gtk-go-down:2
+    --selectable-labels --quoted-output \
+    --window-icon=idiomind \
+    --skip-taskbar --scroll --text-align=center --center --on-top \
+    --width=$wth --height=$eht --borders=20 \
+    --field="":lbl \
+    --field="<i><span color='#808080'>$exmp1</span></i>\\n:lbl" "$dfnts" "$ntess" \
+    "$listen" --button=gtk-go-up:3 \
+    --button=gtk-go-down:2
 
 elif [ -f "$dir/$fname.mp3" ]; then
 
     file="$dir/$fname.mp3"
     listen="--button=Listen:play '$dir/$fname.mp3'"
     dwck="'/usr/share/idiomind/default/p2.sh' $1"
-    tgs=$(eyeD3 "$file")
-    trgt=$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"$tgs")
-    src=$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"$tgs")
-    lwrd=$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"$tgs" | tr '_' '\n')
+    tgs="$(eyeD3 "$file")"
+    trgt="$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"$tgs")"
+    src="$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"$tgs")"
+    lwrd="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"$tgs" | tr '_' '\n')"
     
-    echo "$lwrd" | awk '{print $0""}' | yad --list \
-    --window-icon=idiomind --scroll --no-headers \
-    --skip-taskbar --center --title=" " --borders=15 \
-    --on-top --selectable-labels --expand-column=0 \
+    echo "$lwrd" | awk '{print $0""}' | yad --list --title=" " \
     --text="<span font_desc='Sans Free 15'>$trgt</span>\n\n<i>$src</i>\n\n" \
-    --width=$wth --height=$eht --center \
-    --column="":TEXT --column="":TEXT \
-    "$listen" --button=gtk-go-up:3 --button=gtk-go-down:2 \
-    --dclick-action="$dwck"
-    
+    --selectable-labels --dclick-action="$dwck" \
+    --window-icon=idiomind --scroll --no-headers \
+    --expand-column=0 --skip-taskbar --center --on-top \
+    --width=$wth --height=$eht --borders=15 \
+    --column="":TEXT \
+    --column="":TEXT \
+    "$listen" --button=gtk-go-up:3 \
+    --button=gtk-go-down:2
+   
 else
     ff=$((nuw - 1))
     echo "_" >> /tmp/.sc

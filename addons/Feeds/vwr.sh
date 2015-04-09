@@ -3,9 +3,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 DSP="$DS/addons/Feeds"
-#wth=$(($(sed -n 2p $DC_s/10.cfg)-480))
-#eht=$(($(sed -n 3p $DC_s/10.cfg)-140))
-
+wicon="$DS/images/logo.png"
 item="${2}"
 dir="$DM_tl/Feeds/cache"
 fname=$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)
@@ -19,10 +17,10 @@ if [ -f "$dir/$fname.html" ]; then
 uri="$dir/$fname.html"; else
 uri=""; fi
 
-yad --html \
---window-icon=idiomind --uri="$dir/$fname.html" \
---center --title="$item" --borders=0 \
---on-top --class=Idiomind \
---width=650 --height=580 --name=Idiomind \
+yad --html --title="$item" \
+--name=Idiomind --class=Idiomind \
+--uri="$dir/$fname.html" \
+--window-icon=$wicon --center --on-top \
+--width=650 --height=580 --borders=0 \
 --button="$btnlabel":"$btncmd" \
 --button="Close":1

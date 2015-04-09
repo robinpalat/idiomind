@@ -191,7 +191,7 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
     "$DS/ifs/tls.sh" check_source_1 "$tmp" "$tpi" &&
     source "$DT/$tpi.cfg"
     lng="$(lnglss "$language_target")"
-    infs="'$DS/ifs/tls.sh' 'text' '$tmp'"
+    infs="$DS/ifs/tls.sh details $tmp"
     [ $level = 1 ] && level="$(gettext "Beginner")"
     [ $level = 2 ] && level="$(gettext "Intermediate")"
     [ $level = 3 ] && level="$(gettext "Advanced")"

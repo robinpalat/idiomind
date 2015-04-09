@@ -28,28 +28,32 @@ function feedmode() {
     c=$(echo $(($RANDOM%100000))); KEY=$c
     info=$(< "$DM_tl/Feeds/.dt")
     [ -f "$DT/.uptp" ] && info="- $(gettext "Updating")..."
-    [ -f "$DT/l_sync" ] && info="- $(gettext "Synchronizing")..."
     
-    list_1 | yad --no-headers --list --plug=$KEY \
-    --tabnum=1 --print-all --expand-column=2 --ellipsize=END \
-    --column=Name:IMG --column=Name --dclick-action="$DSP/vwr.sh" &
-    list_2 | yad --no-headers --list --plug=$KEY --tabnum=2 \
-    --expand-column=2 --ellipsize=END --print-all --column=Name:IMG \
-    --column=Name --dclick-action="$DSP/vwr.sh" &
-    yad --text-info --plug=$KEY --margins=14 \
-    --tabnum=3 --fore='gray40' --wrap --editable \
-    --show-uri --fontname=vendana --print-column=1 \
-    --column="" --filename="$nt" > "$fdit" &
-    yad --notebook --name=Idiomind --center --fixed \
-    --class=Idiomind --align=right --key=$KEY \
-    --tab-borders=5 --center --title="Feeds  ${info^}" \
+    list_1 | yad --list --tabnum=1 \
+    --plug=$KEY --print-all --dclick-action="$DSP/vwr.sh" \
+    --no-headers --expand-column=2 --ellipsize=END \
+    --column=Name:IMG \
+    --column=Name &
+    list_2 | yad --list --tabnum=2 \
+    --plug=$KEY --print-all --dclick-action="$DSP/vwr.sh" \
+    --no-headers --expand-column=2 --ellipsize=END \
+    --column=Name:IMG \
+    --column=Name &
+    yad --text-info --tabnum=3 \
+    --plug=$KEY --filename="$nt" \
+    --fore='gray40' --wrap --editable \
+    --show-uri --margins=14 --fontname=vendana > "$fdit" &
+    yad --notebook --title="Feeds  ${info^}" \
+    --name=Idiomind --class=Idiomind --key=$KEY \
+    --always-print-result \
+    --window-icon="$DS/images/logo.png" --image-on-top \
+    --ellipsize=END --align=right --center --fixed \
+    --width=640 --height=560 --borders=2 --tab-borders=5 \
     --tab=" $(gettext "New episodes") " \
     --tab=" $(gettext "Saved episodes") " \
-    --tab=" $(gettext "Notes") " --always-print-result \
-    --ellipsize=END --image-on-top --window-icon="$DS/images/logo.png" \
-    --width=640 --height=560 --borders=2 \
+    --tab=" $(gettext "Notes") " \
     --button="$(gettext "Playlist")":"/usr/share/idiomind/play.sh" \
-    --button="gtk-refresh":2 --button="gtk-close":1
+    --button="gtk-refresh":2 --button="$(gettext "Close")":1
     ret=$?
         
     if [ $ret -eq 2 ]; then
