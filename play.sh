@@ -100,7 +100,7 @@ slct=$(mktemp "$DT"/slct.XXXX)
 setting_1 | yad --list --title="$tpc" "$l" \
 --print-all --always-print-result --separator="|" \
 --class=Idiomind --name=Idiomind --align=right --no-headers --center \
---expand-column=2 --window-icon="$DS/images/logo.png" \
+--expand-column=2 --window-icon="idiomind" \
 --on-top --skip-taskbar --borders=5 --width=380 --height=310 \
 --column=IMG:IMG --column=TXT:TXT --column=CHK:CHK \
 --button="$btn" --button="$(gettext "Close")":1  > "$slct"

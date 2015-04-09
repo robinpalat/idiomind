@@ -52,7 +52,7 @@ function confirm() {
     
     yad --form --title="Idiomind" --text="$1\n" \
     --center --borders=8 --image=$2 \
-    --on-top --window-icon="$DS/images/logo.png" \
+    --on-top --window-icon="idiomind" \
     --skip-taskbar --width=350 --height=120 \
     --button="$(gettext "No")":1 --button="$(gettext "Yes")":0
 }
@@ -134,10 +134,12 @@ cat "$DC_s/2.cfg" | yad --plug=$KEY --tabnum=2 --list \
 --column=icon:IMG --column=Action &
 yad --notebook --key=$KEY --title="$(gettext "Settings")" \
 --name=Idiomind --class=Idiomind --tab-borders=5 \
---sticky --center --window-icon="$DS/images/logo.png" --borders=2  \
---tab="$(gettext "Preferences")" --tab="$(gettext "Addons")" \
+--sticky --center --window-icon="idiomind" --borders=2  \
+--tab="$(gettext "Preferences")" \
+--tab="$(gettext "Addons")" \
 --width=$wth --height=$eht \
---button="$(gettext "Cancel")":1 --button="$(gettext "OK")":0
+--button="$(gettext "Cancel")":1 \
+--button="$(gettext "OK")":0
 ret=$?
 
     if [ $ret -eq 0 ]; then

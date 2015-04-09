@@ -15,7 +15,8 @@ key=$(sed -n 2p < "$DC_a/gts.cfg" \
 c=$(yad --form --title="Translator" \
 --name=Idiomind --class=Idiomind \
 --text="Google Translate" \
---window-icon="$wicon" --center --on-top --skip-taskbar --expand-column=3 \
+--window-icon="idiomind" --center \
+--on-top --skip-taskbar --expand-column=3 \
 --width=450 --height=300 --borders=10 \
 --always-print-result --editable --print-all \
 --field="$(gettext "Enable")":CHK "$set1" \

@@ -55,7 +55,7 @@ function new_session() {
         --text=" $(gettext "Fail on try write in /tmp")\n\n" \
         --image-on-top --sticky  \
         --width=420 --height=150 --borders=5 --title=Idiomind \
-        --skip-taskbar --center --window-icon="$DS/images/logo.png" & exit 1
+        --skip-taskbar --center --window-icon="idiomind" & exit 1
     fi
   
     # start addons
@@ -215,7 +215,7 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
         --text="$itxt" --class=Idiomind --center  \
         --scroll --no-headers --dclick-action="$dlck" \
         --width=650 --height=580 --image-on-top  \
-        --window-icon="$DS/images/logo.png" --column=Items \
+        --window-icon="idiomind" --column=Items \
         --borders=10 --button="$(gettext "Info")":"$infs" \
         --borders=10 --button="$(gettext "Install")":0 \
         --button="$(gettext "Close")":1
@@ -528,7 +528,7 @@ panel() {
     --field=gtk-index:btn "$DS/chng.sh" \
     --field=gtk-preferences:btn "$DS/cnfg.sh" \
     --on-top --borders=5 --align=center \
-    --no-buttons --window-icon="$DS/images/logo.png" &
+    --no-buttons --window-icon="idiomind" &
 }
 
 version() {

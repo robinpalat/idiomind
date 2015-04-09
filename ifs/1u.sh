@@ -60,7 +60,7 @@ fi
 
 dlg=$(yad --center --width=420 --height=300 --fixed \
 --image-on-top --on-top --class=Idiomind --name=Idiomind \
---window-icon="$DS/images/logo.png" --buttons-layout=end --text="$text" \
+--window-icon="idiomind" --buttons-layout=end --text="$text" \
 --title="Idiomind" --form --borders=15 --align=center --button=Cancel:1 --button=gtk-ok:0 \
 --field="$(gettext "Select the language you are studying")":lbl " " \
 --field=":CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
@@ -94,7 +94,7 @@ elif [[ $ret -eq 0 ]]; then
         --width=320 --height=80 \
         --borders=2 --title=Idiomind \
         --skip-taskbar --center \
-        --window-icon="$DS/images/logo.png" & exit 1
+        --window-icon="idiomind" & exit 1
     fi
     
     mkdir -p "$HOME/.idiomind/topics/saved"

@@ -280,7 +280,7 @@ check() {
     yad --form --title="$ttl" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --separator='\n' \
-    --window-icon=$wicon --columns=2 --skip-taskbar --scroll --on-top \
+    --window-icon=idiomind --columns=2 --skip-taskbar --scroll --on-top \
     --width=800 --height=600 --borders=5 \
     --text="\t<small>$(gettext "In this table you can define fields according to their content,  most of the time the default values is right. ")</small>" \
     --field="":CB "$(sed -n 1p $DCP/$2.rss)!$mn" \

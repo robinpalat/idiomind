@@ -25,7 +25,7 @@ function dlg_form_1() {
         --width=$wth --height=$eht --always-print-result \
         --borders=5 --columns=2 --align=center --class=Idiomind \
         --buttons-layout=end --title=" $TGT" --separator="\\n" \
-        --fontname="Arial" --scroll --window-icon="$DS/images/logo.png" \
+        --fontname="Arial" --scroll --window-icon="idiomind" \
         --text-align=center --selectable-labels \
         --field="<small>$lgtl</small>":RO "$TGT" \
         --field="<small>$lgsl</small>" "$src" \
@@ -50,7 +50,7 @@ function dlg_form_2() {
         --width=$wth --height=$eht --always-print-result \
         --separator="\\n" --borders=5 --align=center --align=center \
         --buttons-layout=end --title=" $tgt" --fontname="Arial" \
-        --selectable-labels --window-icon="$DS/images/logo.png" --class=Idiomind \
+        --selectable-labels --window-icon="idiomind" --class=Idiomind \
         --field="$chk:CHK" "$ok" \
         --field="$(gettext "Mark") "":CHK" "$mrk" \
         --field="<small>$lgtl</small>":TXT "$tgt" \

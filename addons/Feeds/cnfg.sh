@@ -2,7 +2,6 @@
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/mods/cmns.sh
-wicon"$DS/images/logo.png"
 DCP="$DM_tl/Feeds/.conf"
 DSP="$DS_a/Feeds"
 CNF=$(gettext "Configure")
@@ -96,7 +95,7 @@ fi
 CNFG=$(yad --form --title="$(gettext "Feeds settings")" \
 --name=Idiomind --class=Idiomind \
 --always-print-result --print-all --separator="|" \
---window-icon="$wicon" --center --scroll --on-top \
+--window-icon="idiomind" --center --scroll --on-top \
 --width=600 --height=460 --borders=15 \
 --text="$(gettext "Configure feeds to learn with podcasts or news.")" \
 --field="$(gettext "Update at startup")":CHK "$update" \

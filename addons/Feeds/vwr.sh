@@ -3,7 +3,6 @@
 
 source /usr/share/idiomind/ifs/c.conf
 DSP="$DS/addons/Feeds"
-wicon="$DS/images/logo.png"
 item="${2}"
 dir="$DM_tl/Feeds/cache"
 fname=$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)
@@ -20,7 +19,7 @@ uri=""; fi
 yad --html --title="$item" \
 --name=Idiomind --class=Idiomind \
 --uri="$dir/$fname.html" \
---window-icon=$wicon --center --on-top \
+--window-icon=idiomind --center --on-top \
 --width=650 --height=580 --borders=0 \
 --button="$btnlabel":"$btncmd" \
 --button="Close":1

@@ -48,7 +48,7 @@ if [ -z "$1" ]; then
             cd "$HOME"
             exp=$(yad --file --save --title="$(gettext "Export")" \
             --filename="idiomind_data.tar.gz" \
-            --window-icon="$wicon" --skip-taskbar --center --on-top \
+            --window-icon="idiomind" --skip-taskbar --center --on-top \
             --width=600 --height=500 --borders=10 \
             --button="$(gettext "Cancel")":1 \
             --button=Ok:0)
@@ -102,7 +102,7 @@ if [ -z "$1" ]; then
             cd "$HOME"
             add=$(yad --file --title="$(gettext "Import")" \
             --file-filter="*.gz" \
-            --window-icon="$wicon" --skip-taskbar --center --on-top \
+            --window-icon="idiomind" --skip-taskbar --center --on-top \
             --width=600 --height=500 --borders=10 \
             --button="$(gettext "Cancel")":1 \
             --button=Ok:0)
@@ -236,7 +236,7 @@ if [ -z "$1" ]; then
         CNFG=$(yad --form --title=Backup \
         --name=Idiomind --class=Idiomind \
         --print-all --always-print-result \
-        --window-icon="$wicon" --center --on-top --expand-column=3 --no-headers --columns=2 \
+        --window-icon="idiomind" --center --on-top --expand-column=3 --no-headers --columns=2 \
         --width=420 --height=300 --borders=15 \
         --field="$(gettext "Backup regularly")":CHK $backup \
         --field="$(gettext "Path to save")":"":CDIR "$path" \
