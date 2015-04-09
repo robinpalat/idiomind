@@ -81,6 +81,7 @@ cuestion() {
     play="play '$drtt/$fname.mp3'"
     (sleep 0.5 && play "$drtt/$fname".mp3) &
     yad --form --text-align=center --undecorated \
+    --timeout=20 \
     --center --on-top --image-on-top \
     --skip-taskbar --title=" " --borders=5 \
     --buttons-layout=spread \
@@ -109,8 +110,8 @@ while read trgt; do
             hard=$(($hard+1))
 
     elif [ $ans = 1 ]; then
-        "$drts/cls" w $easy $ling $hard $all &
         break &
+        "$drts/cls" w $easy $ling $hard $all &
         exit 1
         
     fi
@@ -136,8 +137,8 @@ else
                 echo "$trgt" >> lwin3
 
         elif [ $ans = 1 ]; then
-            "$drts/cls" w $easy $ling $hard $all &
             break &
+            "$drts/cls" w $easy $ling $hard $all &
             exit 1
         fi
     done < lwin2

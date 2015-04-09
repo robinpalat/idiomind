@@ -60,6 +60,7 @@ cuestion() {
     
     yad --form --text-align=center --undecorated --center --on-top  \
     --skip-taskbar --title=" " --borders=5 --buttons-layout=spread \
+    --timeout=10 \
     --field="$acuestion":lbl \
     --align=center --width=375 --height=270 \
     --button=" $(gettext "Exit") ":1 \
@@ -70,6 +71,7 @@ answer() {
     
     yad --form --text-align=center --undecorated --center --on-top \
     --skip-taskbar --title=" " --borders=5 \
+    --timeout=10 \
     --buttons-layout=spread --align=center \
     --field="$bcuestion":lbl \
     --field="":lbl \
@@ -84,8 +86,13 @@ while read trgt; do
     fonts "$trgt"
     cuestion
     ret=$(echo "$?")
-    
-    if [ $ret = 0 ]; then
+
+    if [ $ret = 1 ]; then
+        break &
+        "$drts/cls" f "$easy" "$ling" "$hard" "$all" &
+        exit 1
+        
+    else
         answer
         ans=$(echo "$?")
 
@@ -97,11 +104,6 @@ while read trgt; do
             echo "$trgt" >> fin2
             hard=$(($hard+1))
         fi
-
-    elif [ $ret = 1 ]; then
-        "$drts/cls" f "$easy" "$ling" "$hard" "$all" &
-        break &
-        exit 1
         
     fi
 done < fin1
@@ -118,7 +120,12 @@ else
         cuestion
         ret=$(echo "$?")
         
-        if [ $ret = 0 ]; then
+        if [ $ret = 1 ]; then
+            break &
+            "$drts/cls" f "$easy" "$ling" "$hard" "$all" &
+            exit 1
+        
+        else
             answer
             ans=$(echo "$?")
             
@@ -130,10 +137,6 @@ else
                 echo "$trgt" >> fin3
             fi
             
-        elif [ $ret = 1 ]; then
-            "$drts/cls" f "$easy" "$ling" "$hard" "$all" &
-            break &
-            exit 1
         fi
     done < fin2
     

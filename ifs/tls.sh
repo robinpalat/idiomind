@@ -400,7 +400,7 @@ check_index() {
     || $mp3s != $chk0 || $stts = 13 ]]; then
     
         (sleep 1
-        notify-send -i idiomind "$(gettext "Index error")" "$(gettext "fixing...")" -t 3000) &
+        notify-send -i idiomind "$(gettext "Index Error")" "$(gettext "Fixing...")" -t 3000) &
         > "$DT/ps_lk"
         [ ! -d "$DM_tlt/.conf" ] && mkdir "$DM_tlt/.conf"
         DC_tlt="$DM_tlt/.conf"

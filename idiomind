@@ -93,9 +93,12 @@ function new_session() {
     | sed 's/x/\n/')"
     x="$(sed -n 1p <<<"$s")"
     y="$(sed -n 2p <<<"$s")"
-    echo $(($x/10+500))>> "$DC_s/10.cfg"
-    echo $(($y/10+500))>> "$DC_s/10.cfg"
-    
+    echo $((x/10+500))>> "$DC_s/10.cfg"
+    echo $((y/10+500))>> "$DC_s/10.cfg"
+    echo "$DESKTOP_SESSION" >> "$DC_s/10.cfg"
+    gconftool-2 --get /desktop/gnome/interface/font_name \
+    | cut -d ' ' -f 2 >> "$DC_s/10.cfg"
+
     # log file
     if [ -f "$DC_s/8.cfg" ]; then
     if [ $(du -sb "$DC_s/8.cfg" | awk '{ print $1 }') -gt 100000 ]; then

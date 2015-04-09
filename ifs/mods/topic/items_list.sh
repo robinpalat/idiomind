@@ -19,12 +19,12 @@ function word_view(){
     [ "$(echo "$tgs" | grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)')" = TRUE ] \
     && trgt="* $trgt"
     yad --form --scroll --text-align=center \
-    --skip-taskbar --center --title="$item" --borders=20 "$1" \
+    --skip-taskbar --center --title="$item" --borders=$bs "$1" \
     --quoted-output --on-top --image-on-top \
-    --text="<span font_desc='Sans Free Bold 22'>$trgt</span>\n\n<i>$src</i>\n\n$br" \
+    --text="<span font_desc='Sans Free Bold $fs'>$trgt</span>\n\n<i>$src</i>\n\n" \
     --field="":lbl \
     --field="<i><span color='#7D7D7D'>$exmp1</span></i>:lbl" "$dfnts" "$ntess" \
-    --width=650 --height=400 --center \
+    --width=610 --height=370 --center \
     --button=gtk-edit:4 --button="$listen":"play '$DM_tlt/words/$fname.mp3'" \
     --button=gtk-go-up:3 --button=gtk-go-down:2 >/dev/null 2>&1
 }
@@ -47,7 +47,7 @@ function sentence_view(){
     --skip-taskbar --center --title=" " --borders=20 --image-on-top \
     --on-top --selectable-labels --expand-column=0 \
     --text="<span font_desc='Sans Free 15'>$trgt</span>\n\n<i>$src</i>\n\n" \
-    --width=650 --height=400 --center \
+    --width=610 --height=370 --center \
     --column="":TEXT --column="":TEXT \
     --button=gtk-edit:4 --button="$listen":"$DS/ifs/tls.sh listen_sntnc '$fname'" \
     --button=gtk-go-up:3 --button=gtk-go-down:2 \
@@ -74,10 +74,10 @@ function notebook_1() {
     --column="" --filename="$nt" > "$cnf3" &
     yad --form --scroll --borders=10 --plug=$KEY --tabnum=4 --columns=2 \
     --text="$label_info1\n" \
-    --field="<small>$(gettext "Rename")</small>:" "$tpc" \
-    --field="   $(gettext "Mark as learned")   ":FBTN "$DS/mngr.sh 'mark_as_learned'" \
-    --field="$(gettext "Show cover")":CHK "$set1" \
-    --field="$label_info2":LBL " " \
+    --field="<small>$(gettext "Rename")</small>" "$tpc" \
+    --field="$(gettext "Mark as learned")":FBTN "$DS/mngr.sh 'mark_as_learned'" \
+    --field=" ":LBL "$set1" \
+    --field="$label_info2\n\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " \
     --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh 'upld'" \
     --field="$(gettext "Attachments")":FBTN "$DS/ifs/tls.sh attachs" \
     --field="$(gettext "Delete")":BTN "$DS/mngr.sh 'delete_topic'" \
@@ -113,10 +113,10 @@ function notebook_2() {
     --column="" --filename="$nt" > "$cnf3" &
     yad --form --scroll --borders=10 --plug=$KEY --tabnum=4 --columns=2 \
     --text="$label_info1\n" \
-    --field="<small>$(gettext "Rename")</small>:" "$tpc" \
-    --field="   $(gettext "Review")"   :FBTN "$DS/mngr.sh 'mark_as_learn'" \
-    --field="$(gettext "Show cover")\t ":CHK "$set1" \
-    --field="$label_info2":LBL " " \
+    --field="<small>$(gettext "Rename")</small>" "$tpc" \
+    --field="   $(gettext "Review")   ":FBTN "$DS/mngr.sh 'mark_as_learn'" \
+    --field=" ":LBL "$set1" \
+    --field="$label_info2\n\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " \
     --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh 'upld'" \
     --field="$(gettext "Attachments")":FBTN "$DS/ifs/tls.sh attachs" \
     --field="$(gettext "Delete")":BTN "$DS/mngr.sh 'delete_topic'" \

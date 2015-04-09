@@ -21,7 +21,7 @@
 
 function dlg_form_1() {
     
-        yad --form --wrap --center --name=Idiomind \
+        yad --form --wrap --center --name=Idiomind --on-top \
         --width=$wth --height=$eht --always-print-result \
         --borders=5 --columns=2 --align=center --class=Idiomind \
         --buttons-layout=end --title=" $TGT" --separator="\\n" \
@@ -46,7 +46,7 @@ function dlg_form_1() {
 
 function dlg_form_2() {
         
-        yad --form --wrap --center --name=Idiomind  \
+        yad --form --wrap --center --name=Idiomind --on-top \
         --width=$wth --height=$eht --always-print-result \
         --separator="\\n" --borders=5 --align=center --align=center \
         --buttons-layout=end --title=" $tgt" --fontname="Arial" \

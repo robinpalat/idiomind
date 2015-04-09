@@ -71,7 +71,7 @@ ofonts() {
 
 mchoise() {
     
-    dlg=$(ofonts | yad --list --on-top --skip-taskbar \
+    dlg=$(ofonts | yad --list --on-top --skip-taskbar --timeout=15 \
     --title=" " --width=390 --height=340 --center --undecorated \
     --text-align=center --no-headers --borders=6 --column=Option \
     --button="$(gettext "Exit")":1 --text="$cuestion")
@@ -96,10 +96,11 @@ while read trgt; do
         fi  
             
     elif [ $ret = 1 ]; then
-        "$drts/cls" m $easy $ling $hard $all &
         break &
+        "$drts/cls" m $easy $ling $hard $all &
         exit 1
     fi
+    
 done < mcin1
     
 if [ ! -f mcin2 ]; then
@@ -125,10 +126,11 @@ else
             fi
 
         elif [ $ret = 1 ]; then
-            "$drts/cls" m $easy $ling $hard $all &
             break &
+            "$drts/cls" m $easy $ling $hard $all &
             exit 1
         fi
+        
     done < mcin2
     
     score $easy

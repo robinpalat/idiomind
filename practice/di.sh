@@ -72,6 +72,7 @@ answer() {
     
     yad --form --text-align=center --undecorated --on-top \
     --skip-taskbar --title=" " --borders=5 --center \
+    --timeout=20 \
     --buttons-layout=spread --align=center \
     --field="$cuestion":lbl \
     --field="$answer":lbl \
@@ -85,7 +86,12 @@ while read trgt; do
     cuestion
     ret=$(echo "$?")
     
-    if [ $ret = 0 ]; then
+    if [ $ret = 1 ]; then
+        break &
+        "$drts/cls" i "$easy" "$ling" "$hard" "$all" &
+        exit 1
+        
+    else
         answer
         ans=$(echo "$?")
 
@@ -98,12 +104,8 @@ while read trgt; do
             hard=$(($hard+1))
         fi
 
-    elif [ $ret = 1 ]; then
-        "$drts/cls" i "$easy" "$ling" "$hard" "$all" &
-        break &
-        exit 1
-        
     fi
+    
 done < iin1
 
 if [ ! -f iin2 ]; then
@@ -118,7 +120,12 @@ else
         cuestion
         ret=$(echo "$?")
         
-        if [ $ret = 0 ]; then
+        if [ $ret = 1 ]; then
+            break &
+            "$drts/cls" i "$easy" "$ling" "$hard" "$all" &
+            exit 1
+
+        else
             answer
             ans=$(echo "$?")
             
@@ -129,12 +136,8 @@ else
             elif [ $ans = 3 ]; then
                 echo "$trgt" >> iin3
             fi
-            
-        elif [ $ret = 1 ]; then
-            "$drts/cls" i "$easy" "$ling" "$hard" "$all" &
-            break &
-            exit 1
         fi
+            
     done < iin2
     
     score "$easy"
