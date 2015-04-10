@@ -479,7 +479,7 @@ function attatchments() {
     mkindex() {
 
 echo "<link rel=\"stylesheet\" \
-href=\"/usr/share/idiomind/default/attstyle.css\">\
+href=\"/usr/share/idiomind/default/attch.css\">\
 <body><div class=\"summary\">" \
 > "$DC_tlt/att.html"
 
@@ -886,7 +886,7 @@ function pdfdoc() {
         echo -e "<head>
         <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />
         <title>$tpc</title><head>
-        <link rel=\"stylesheet\" href=\"/home/robin/Desktop/home/style/style.css\">
+        <link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/pdf.css\">
         </head>
         <body>
         <div><p></p>

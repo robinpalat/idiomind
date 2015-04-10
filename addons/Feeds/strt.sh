@@ -152,7 +152,7 @@ get_images_main () {
 mkhtml () {
 
 videoblock="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
-<link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwrstyle.css\">
+<link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwr.css\">
 <video width=640 height=380 controls>
 <source src=\"$fname.$ex\" type=\"video/mp4\">
 Your browser does not support the video tag.</video><br><br>
@@ -160,7 +160,7 @@ Your browser does not support the video tag.</video><br><br>
 <div class=\"summary\">$summary<br><br></div>"
 
 audioblock="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
-<link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwrstyle.css\">
+<link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwr.css\">
 <br><div class=\"title\"><h2>$title</h2></div><br>
 <div class=\"summary\"><audio controls><br>
 <source src=\"$fname.$ex\" type=\"audio/mpeg\">
@@ -168,7 +168,7 @@ Your browser does not support the audio tag.</audio><br><br>
 $summary<br><br></div>"
 
 textblock="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
-<link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwrstyle.css\">
+<link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwr.css\">
 <body><br><div class=\"title\"><h2>$title</h2></div><br>
 <div class=\"summary\"><div class=\"image\">
 <img src=\"$fname.jpg\" alt=\"Image\" style=\"width:650px\"></div><br>
