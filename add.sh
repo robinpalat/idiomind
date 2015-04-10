@@ -58,8 +58,8 @@ function new_topic() {
 
 function new_items() {
 
-    if [ "$(grep -v 'Feeds' < $DM_tl/.1.cfg | wc -l)" -lt 1 ]; then
-    [ -d "$DT_r" ] && rm -fr "$DT_r"
+    if [ "$(grep -v 'Feeds' < "$DM_tl/.1.cfg" | wc -l)" -lt 1 ]; then
+    [ "$DT_r" ] && rm -fr "$DT_r"
     "$DS/chng.sh" "$(gettext "To start adding notes you need have a topic.
 Create one using the button below. ")" & exit 1; fi
 
@@ -109,12 +109,12 @@ Create one using the button below. ")" & exit 1; fi
         elif [ $ret -eq 0 ]; then
         
             if [ -z "$chk" ]; then
-                [ -d "$DT_r" ] && rm -fr "$DT_r"
+                [ "$DT_r" ] && rm -fr "$DT_r"
                 msg "$(gettext "No topic is active")\n" info & exit 1
             fi
         
             if [ -z "$trgt" ]; then
-                [ -d "$DT_r" ] && rm -fr "$DT_r"
+                [ "$DT_r" ] && rm -fr "$DT_r"
                 exit 1
             fi
 
@@ -159,7 +159,7 @@ Create one using the button below. ")" & exit 1; fi
             
                 if [ "$trans" = FALSE ]; then
                     if [ -z "$srce" ] || [ -z "$trgt" ]; then
-                        [ -d "$DT_r" ] && rm -fr "$DT_r"
+                        [ "$DT_r" ] && rm -fr "$DT_r"
                         msg "$(gettext "You need to fill text fields.") $lgsl." info & exit 1; fi
                 fi
 
@@ -175,7 +175,7 @@ Create one using the button below. ")" & exit 1; fi
             
                 if [ "$trans" = FALSE ]; then
                     if [ -z "$srce" ] || [ -z "$trgt" ]; then
-                        [ -d "$DT_r" ] && rm -fr "$DT_r"
+                        [ "$DT_r" ] && rm -fr "$DT_r"
                         msg "$(gettext "You need to fill text fields.") $lgsl." info & exit 1; fi
                 fi
             
@@ -188,7 +188,7 @@ Create one using the button below. ")" & exit 1; fi
                 fi
             fi
         else
-            [ -d "$DT_r" ] && rm -fr "$DT_r"
+            [ "$DT_r" ] && rm -fr "$DT_r"
             exit 1
         fi
 }
@@ -203,11 +203,11 @@ function new_sentence() {
     icnn=idiomind
 
     if [ $(wc -l < "$DC_tlt/0.cfg") -ge 200 ]; then
-        [ -d "$DT_r" ] && rm -fr "$DT_r"
+        [ "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "You have reached the maximum number of items.")" info Info & exit
     fi
     if [ -z "$tpe" ]; then
-        [ -d "$DT_r" ] && rm -fr "$DT_r"
+        [ "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "No topic is active")\n" info & exit 1
     fi
     
@@ -229,7 +229,7 @@ function new_sentence() {
     
     else 
         if [ -z "$4" ] || [ -z "$2" ]; then
-            [ -d "$DT_r" ] && rm -fr "$DT_r"
+            [ "$DT_r" ] && rm -fr "$DT_r"
             msg "$(gettext "You need to fill text fields.") $lgsl." info & exit; fi
         
         trgt=$(echo "$(clean_1 "$2")" | sed ':a;N;$!ba;s/\n/ /g')
@@ -247,7 +247,7 @@ function new_sentence() {
     
     if [ -z $(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary') ] \
     || [ ! -f "$DM_tlt/$fname.mp3" ] || [ -z "$trgt" ] || [ -z "$srce" ]; then
-        [ -d "$DT_r" ] && rm -fr "$DT_r"
+        [ "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "Something unexpected has occurred while saving the note.")\n" dialog-warning & exit 1; fi
     
     add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3"
@@ -271,7 +271,7 @@ function new_sentence() {
     if [ -z "$grmrk" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ]; then
         rm "$DM_tlt/$fname.mp3"
         msg "$(gettext "Something unexpected has occurred while saving the note.")\n" dialog-warning 
-        [ -d "$DT_r" ] && rm -fr "$DT_r" & exit 1; fi
+        [ "$DT_r" ] && rm -fr "$DT_r" & exit 1; fi
     
     add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3"
     notify-send -i "$icnn" "$trgt" "$srce\\n($tpe)" -t 10000
@@ -283,7 +283,7 @@ function new_sentence() {
 
     fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
     
-    [ -d "$DT_r" ] && rm -fr "$DT_r"
+    [ "$DT_r" ] && rm -fr "$DT_r"
     printf "aitm.1.aitm\n" >> "$DC_s/8.cfg"
     exit 1
 }
@@ -299,10 +299,10 @@ function new_word() {
     DC_tlt="$DM_tl/$tpe/.conf"
     
     if [ $(wc -l < "$DC_tlt/0.cfg") -ge 200 ]; then
-        [ -d "$DT_r" ] && rm -fr "$DT_r"
+        [ "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "You have reached the maximum number of items.")" info Info & exit 0; fi
     if [ -z "$tpe" ]; then
-        [ -d "$DT_r" ] && rm -fr "$DT_r"
+        [ "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "No topic is active")\n" info & exit 1
     fi
     
@@ -332,7 +332,7 @@ function new_word() {
 
     else
         if [ -z "$4" ] || [ -z "$2" ]; then
-            [ -d "$DT_r" ] && rm -fr "$DT_r"
+            [ "$DT_r" ] && rm -fr "$DT_r"
             msg "$(gettext "You need to fill text fields.") $lgsl." info & exit 1; fi
         
         trgt="$2"
@@ -381,7 +381,7 @@ function new_word() {
         [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
         msg "$(gettext "Something unexpected has occurred while saving the note.")\n" dialog-warning & exit 1; fi
 
-    [ -d "$DT_r" ] && rm -fr "$DT_r"
+    [ "$DT_r" ] && rm -fr "$DT_r"
     exit 1
 }
 
@@ -392,11 +392,11 @@ function edit_list_words() {
 
         tpe="$tpc"
         if [ $(wc -l < "$DC_tlt/0.cfg") -ge 200 ]; then
-        [ -d "$DT_r" ] && rm -fr "$DT_r"
+        [ "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "You have reached the maximum number of items.")" info Info & exit; fi
             
         if [ -z "$tpe" ]; then
-        [ -d "$DT_r" ] && rm -fr "$DT_r"
+        [ "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "No topic is active")\n" info & exit 1; fi
         
         nw=$(wc -l < "$DC_tlt/0.cfg")
@@ -476,7 +476,7 @@ function edit_list_words() {
             if [ -f "$DT_r/logw" ]; then
                 sleep 1
                 dlg_info_1 "$(gettext "Some items could not be added to your list.")"; fi
-            [ -d "$DT_r" ] && rm -fr "$DT_r"
+            [ "$DT_r" ] && rm -fr "$DT_r"
             rm -f logw "$DT"/*.$c & exit 1
     fi
 }
@@ -492,13 +492,13 @@ function dclik_list_words() {
     echo "$3" > ./lstws
     
     if [ -z "$tpe" ]; then
-    [ -d "$DT_r" ] && rm -fr "$DT_r"
+    [ "$DT_r" ] && rm -fr "$DT_r"
     msg "$(gettext "No topic is active")\n" info & exit 1; fi
     
     nw=$(wc -l < "$DC_tlt/0.cfg")
     
     if [ $(wc -l < "$DC_tlt/0.cfg") -ge 200 ]; then
-    [ -d "$DT_r" ] && rm -fr "$DT_r"
+    [ "$DT_r" ] && rm -fr "$DT_r"
     msg "$(gettext "You have reached the maximum number of items.")" info Info & exit; fi
 
     left=$((200 - $nw))
@@ -544,7 +544,7 @@ function dclik_list_words() {
         elif [ "$ret" -eq 1 ]; then
         
         rm -f "$DT"/*."$c"
-        [ -d "$DT_r" ] && rm -fr "$DT_r"
+        [ "$DT_r" ] && rm -fr "$DT_r"
         exit
         fi
         
@@ -561,7 +561,7 @@ function sentence_list_words() {
     cd "$DT_r"
     
     if [ -z "$4" ]; then
-    [ -d "$DT_r" ] && rm -fr "$DT_r"
+    [ "$DT_r" ] && rm -fr "$DT_r"
     msg "$(gettext "No topic is active")\n" info & exit 1; fi
     
     nw=$(wc -l < "$DC_tlt/0.cfg")
@@ -588,7 +588,7 @@ function sentence_list_words() {
         elif [ "$ret" -eq 1 ]; then
         
             rm -f "$DT"/*."$c"
-            [ -d "$DT_r" ] && rm -fr "$DT_r"
+            [ "$DT_r" ] && rm -fr "$DT_r"
             exit 1
         fi
 
@@ -642,7 +642,7 @@ function sentence_list_words() {
     dlg_text_info_3 "$(gettext "Some items could not be added to your list.")" "$logs"; fi
 
     rm -f "$DT"/*."$c" 
-    [ -d "$DT_r" ] && rm -fr "$DT_r"
+    [ "$DT_r" ] && rm -fr "$DT_r"
     exit 1
 }
 
@@ -660,11 +660,11 @@ function process() {
     lckpr="$DT/.n_s_pr"
 
     if [ -z "$tpe" ]; then
-    [ -d "$DT_r" ] && rm -fr "$DT_r"
+    [ "$DT_r" ] && rm -fr "$DT_r"
     msg "$(gettext "No topic is active")\n" info & exit 1; fi
         
     if [ $ns -ge 200 ]; then
-    [ -d "$DT_r" ] && rm -fr "$DT_r"
+    [ "$DT_r" ] && rm -fr "$DT_r"
     msg "$(gettext "You have reached the maximum number of items.")" info Info
     rm -f ./ls "$lckpr" & exit 1; fi
 
@@ -682,7 +682,7 @@ function process() {
     
     if [ -n "$2" ]; then
     
-        [ -d "$DT_r" ] && echo "$DT_r" > "$DT/.n_s_pr"
+        [ "$DT_r" ] && echo "$DT_r" > "$DT/.n_s_pr"
         [ -n "$tpe" ] && echo "$tpe" >> "$DT/.n_s_pr"
         lckpr="$DT/.n_s_pr"
         prdt="$2"
@@ -771,7 +771,7 @@ function process() {
         
             msg " $(gettext "Failed to get text.")\n" info
 
-            [ -d "$DT_r" ] && rm -fr "$DT_r"
+            [ "$DT_r" ] && rm -fr "$DT_r"
             rm -f "$lckpr" "$slt" & exit 1
         
         else
@@ -791,7 +791,7 @@ function process() {
                             $DT_r "$(sed -n 2p "$lckpr")" &
                             exit 1
                         else
-                            [ -d "$DT_r" ] && rm -fr "$DT_r"
+                            [ "$DT_r" ] && rm -fr "$DT_r"
                             rm -f "$slt" & exit 1; fi
                 
                 elif [ $ret -eq 0 ]; then
@@ -1023,7 +1023,7 @@ function process() {
                     while [ $n -le 20 ]; do
                          sleep 5
                          if [ $(wc -l < ./x) -eq "$rm" ] || [ $n = 20 ]; then
-                            [ -d "$DT_r" ] && rm -fr "$DT_r"
+                            [ "$DT_r" ] && rm -fr "$DT_r"
                             cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
                             rm -f "$lckpr" & break; exit 1
                          fi
@@ -1032,7 +1032,7 @@ function process() {
                     
                 else
                     cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
-                    [ -d "$DT_r" ] && rm -fr "$DT_r"
+                    [ "$DT_r" ] && rm -fr "$DT_r"
                      rm -f "$lckpr" "$slt" & exit 1
                 fi
 }

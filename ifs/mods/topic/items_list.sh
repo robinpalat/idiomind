@@ -76,7 +76,7 @@ function notebook_1() {
     --column=Name:TEXT &
     yad --text-info --tabnum=3 \
     --plug=$KEY \
-    --filename="$nt" --editable --wrap --fore='gray40' \
+    --filename="$nt" --editable --wrap --fore='gray40' --back='#FFFAEC' \
     --show-uri --fontname=vendana --margins=14 > "$cnf3" &
     yad --form --tabnum=4 \
     --plug=$KEY \
@@ -119,7 +119,7 @@ function notebook_2() {
     --column=Name:TEXT &
     yad --text-info --tabnum=3 \
     --plug=$KEY \
-    --filename="$nt" --editable --wrap --fore='gray40' \
+    --filename="$nt" --editable --wrap --fore='gray40' --back='#FFFAEC' \
     --show-uri --fontname=vendana --margins=14 > "$cnf3" &
     yad --form --tabnum=4 \
     --plug=$KEY \
@@ -179,28 +179,28 @@ function calculate_review() {
     
     dts=$(wc -l < "$DC_tlt/9.cfg")
     if [ $dts = 1 ]; then
-        dte=$(sed -n 1p "$DC_tlt/9.cfg")
-        adv="<b>   10 $cuestion_review </b>"
-        TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-        RM=$((100*$TM/10))
-        tdays=10
+    dte=$(sed -n 1p "$DC_tlt/9.cfg")
+    adv="<b>   10 $cuestion_review </b>"
+    TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
+    RM=$((100*$TM/10))
+    tdays=10
     elif [ $dts = 2 ]; then
-        dte=$(sed -n 2p "$DC_tlt/9.cfg")
-        adv="<b> 15 $cuestion_review </b>"
-        TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-        RM=$((100*$TM/15))
-        tdays=15
+    dte=$(sed -n 2p "$DC_tlt/9.cfg")
+    adv="<b> 15 $cuestion_review </b>"
+    TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
+    RM=$((100*$TM/15))
+    tdays=15
     elif [ $dts = 3 ]; then
-        dte=$(sed -n 3p "$DC_tlt/9.cfg")
-        adv="<b>  30 $cuestion_review </b>"
-        TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-        RM=$((100*$TM/30))
-        tdays=30
+    dte=$(sed -n 3p "$DC_tlt/9.cfg")
+    adv="<b>  30 $cuestion_review </b>"
+    TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
+    RM=$((100*$TM/30))
+    tdays=30
     elif [ $dts = 4 ]; then
-        dte=$(sed -n 4p "$DC_tlt/9.cfg")
-        adv="<b>  60 $cuestion_review </b>"
-        TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-        RM=$((100*$TM/60))
-        tdays=60
+    dte=$(sed -n 4p "$DC_tlt/9.cfg")
+    adv="<b>  60 $cuestion_review </b>"
+    TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
+    RM=$((100*$TM/60))
+    tdays=60
     fi
 }

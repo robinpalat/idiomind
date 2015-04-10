@@ -197,7 +197,7 @@ function voice() {
             sox ./s.wav "$3"
             else
             msg "$(gettext "Festival can not process text") $lgtl" error
-            [ -d "$DT_r" ] && rm -fr "$DT_r"
+            [ "$DT_r" ] && rm -fr "$DT_r"
             exit 1
             fi
         else
@@ -210,7 +210,7 @@ function voice() {
         lg="${lgtl,,}"
         [ $lg = chinese ] && lg=Mandarin
         [ $lg = japanese ] && (msg "$(gettext "espeak can not process Japanese text")" error \
-        && exit 1 && [ -d "$DT_r" ] && rm -fr "$DT_r")
+        && exit 1 && [ "$DT_r" ] && rm -fr "$DT_r")
         espeak "$1" -v $lg -k 1 -p 40 -a 80 -s 110 -w ./s.wav
         sox ./s.wav "$3"
     fi
@@ -356,7 +356,7 @@ function dlg_form_1() {
         --align=right --image="$img" \
         --window-icon="idiomind" \
         --width=420 --height=150 --borders=0 \
-        --field=" <small>$lgtl</small>":CE "$txt" \
+        --field=" <small>$lgtl</small>" "$txt" \
         --field=" $atopic:CB" \
         "$ltopic!$(gettext "New topic") *$e$tpcs" \
         --button="$(gettext "Image")":3 \
@@ -374,8 +374,8 @@ function dlg_form_2() {
         --align=right --image="$img" \
         --window-icon="idiomind" \
         --width=420 --height=180 --borders=0 \
-        --field=" <small>$lgtl</small>":CE "$txt" \
-        --field=" <small>${lgsl^}</small>":CE "$srce" \
+        --field=" <small>$lgtl</small>" "$txt" \
+        --field=" <small>${lgsl^}</small>" "$srce" \
         --field=" $atopic:CB" \
         "$ltopic!$(gettext "New topic") *$e$tpcs" \
         --button="$(gettext "Image")":3 \

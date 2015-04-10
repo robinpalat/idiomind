@@ -71,19 +71,19 @@ if [[ "$prdt" = A ]]; then
     if [ -z "$key" ]; then
         
         msg "$(gettext "For this feature you need to provide a key. Please get one from the:")   <a href='$LNK'>console.developers.google.com</a>\n" dialog-warning
-        [ -d "$DT_r" ] && rm -fr "$DT_r"
+        [ "$DT_r" ] && rm -fr "$DT_r"
         rm -f ls "$lckpr" & exit 1
     fi
     
     cd "$HOME"; fl="$(dlg_file_1)"
     
     if [ -z "$fl" ];then
-        [ -d "$DT_r" ] && rm -fr "$DT_r"
+        [ "$DT_r" ] && rm -fr "$DT_r"
         rm -f "$lckpr" & exit 1
         
     else
         if [ -z "$tpe" ]; then
-            [ -d "$DT_r" ] && rm -fr "$DT_r"
+            [ "$DT_r" ] && rm -fr "$DT_r"
             msg "$(gettext "No topic is active")\n" info & exit 1
         fi
         
@@ -134,7 +134,7 @@ if [[ "$prdt" = A ]]; then
         fi
         if [ -z "$data" ]; then
             msg "$(gettext "The key is invalid or has exceeded its quota of daily requests")" error
-            [ -d "$DT_r" ] && rm -fr "$DT_r"
+            [ "$DT_r" ] && rm -fr "$DT_r"
             rm -f ls "$lckpr" & exit 1
         fi
         
@@ -148,7 +148,7 @@ if [[ "$prdt" = A ]]; then
             if [ -z "$data" ]; then
             
                 msg "$(gettext "The key is invalid or has exceeded its quota of daily requests")" error
-                [ -d "$DT_r" ] && rm -fr "$DT_r"
+                [ "$DT_r" ] && rm -fr "$DT_r"
                 rm -f ls "$lckpr" & break & exit 1
             fi
 
@@ -185,7 +185,7 @@ if [[ "$prdt" = A ]]; then
         if [ -z "$(< $DT_r/ls)" ]; then
         
             msg "$(gettext "Failed to get text. For the process to be successful, audio file must not have music or background noise.")" dialog-warning
-            [ -d "$DT_r" ] && rm -fr "$DT_r"
+            [ "$DT_r" ] && rm -fr "$DT_r"
             rm -f "$lckpr" & exit 1
             
         else
@@ -418,7 +418,7 @@ if [[ "$prdt" = A ]]; then
                 while [ $n -le 20 ]; do
                      sleep 5
                      if [ "$(wc -l < ./x)" -eq "$rm" ] || [ "$n" = 20 ]; then
-                        [ -d "$DT_r" ] && rm -fr "$DT_r"
+                        [ "$DT_r" ] && rm -fr "$DT_r"
                         cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
                         rm -f "$lckpr" & break & exit 1
                      fi
@@ -426,7 +426,7 @@ if [[ "$prdt" = A ]]; then
                 done
                 exit
             else
-                [ -d "$DT_r" ] && rm -fr "$DT_r"
+                [ "$DT_r" ] && rm -fr "$DT_r"
                 cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
                 rm -f "$lckpr" "$slt" & exit 1
             fi

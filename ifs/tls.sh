@@ -282,41 +282,41 @@ check_index() {
             sfname="$(nmfile "$name")"
 
             if [ -f "$DM_tlt/$name.mp3" ]; then
-                tgs="$(eyeD3 "$DM_tlt/$name.mp3")"
-                trgt="$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')"
-                [ -z "$trgt" ] && rm "$DM_tlt/$name.mp3" && continue
-                xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
-                [ "$name" != "$xname" ] && \
-                mv -f "$DM_tlt/$name.mp3" "$DM_tlt/$xname.mp3"
-                echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
-                echo "$trgt" >> "$DC_tlt/4.cfg.tmp"
+            tgs="$(eyeD3 "$DM_tlt/$name.mp3")"
+            trgt="$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')"
+            [ -z "$trgt" ] && rm "$DM_tlt/$name.mp3" && continue
+            xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
+            [ "$name" != "$xname" ] && \
+            mv -f "$DM_tlt/$name.mp3" "$DM_tlt/$xname.mp3"
+            echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
+            echo "$trgt" >> "$DC_tlt/4.cfg.tmp"
             elif [ -f "$DM_tlt/$sfname.mp3" ]; then
-                tgs=$(eyeD3 "$DM_tlt/$sfname.mp3")
-                trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
-                [ -z "$trgt" ] && rm "$DM_tlt/$sfname.mp3" && continue
-                xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
-                [ "$sfname" != "$xname" ] && \
-                mv -f "$DM_tlt/$sfname.mp3" "$DM_tlt/$xname.mp3"
-                echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
-                echo "$trgt" >> "$DC_tlt/4.cfg.tmp"
+            tgs=$(eyeD3 "$DM_tlt/$sfname.mp3")
+            trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
+            [ -z "$trgt" ] && rm "$DM_tlt/$sfname.mp3" && continue
+            xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
+            [ "$sfname" != "$xname" ] && \
+            mv -f "$DM_tlt/$sfname.mp3" "$DM_tlt/$xname.mp3"
+            echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
+            echo "$trgt" >> "$DC_tlt/4.cfg.tmp"
             elif [ -f "$DM_tlt/words/$name.mp3" ]; then
-                tgs="$(eyeD3 "$DM_tlt/words/$name.mp3")"
-                trgt="$(echo "$tgs" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')"
-                [ -z "$trgt" ] && rm "$DM_tlt/words/$name.mp3" && continue
-                xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
-                [ "$name" != "$xname" ] && \
-                mv -f "$DM_tlt/words/$name.mp3" "$DM_tlt/words/$xname.mp3"
-                echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
-                echo "$trgt" >> "$DC_tlt/3.cfg.tmp"
+            tgs="$(eyeD3 "$DM_tlt/words/$name.mp3")"
+            trgt="$(echo "$tgs" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')"
+            [ -z "$trgt" ] && rm "$DM_tlt/words/$name.mp3" && continue
+            xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
+            [ "$name" != "$xname" ] && \
+            mv -f "$DM_tlt/words/$name.mp3" "$DM_tlt/words/$xname.mp3"
+            echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
+            echo "$trgt" >> "$DC_tlt/3.cfg.tmp"
             elif [ -f "$DM_tlt/words/$sfname.mp3" ]; then
-                tgs="$(eyeD3 "$DM_tlt/words/$sfname.mp3")"
-                trgt="$(echo "$tgs" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')"
-                [ -z "$trgt" ] && rm "$DM_tlt/words/$sfname.mp3" && continue
-                xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
-                [ "$sfname" != "$xname" ] \
-                && mv -f "$DM_tlt/words/$sfname.mp3" "$DM_tlt/words/$xname.mp3"
-                echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
-                echo "$trgt" >> "$DC_tlt/3.cfg.tmp"
+            tgs="$(eyeD3 "$DM_tlt/words/$sfname.mp3")"
+            trgt="$(echo "$tgs" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')"
+            [ -z "$trgt" ] && rm "$DM_tlt/words/$sfname.mp3" && continue
+            xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
+            [ "$sfname" != "$xname" ] \
+            && mv -f "$DM_tlt/words/$sfname.mp3" "$DM_tlt/words/$xname.mp3"
+            echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
+            echo "$trgt" >> "$DC_tlt/3.cfg.tmp"
             fi
             
         done < "$index"
@@ -373,7 +373,7 @@ check_index() {
         
         files
         
-        if ([ -f "$DC_tlt/.11.cfg" ] && \
+        if ([ "$DC_tlt/.11.cfg" ] && \
         [ -n "$(< "$DC_tlt/.11.cfg")" ]); then
             index="$DC_tlt/.11.cfg"
         else

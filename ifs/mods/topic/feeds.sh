@@ -41,7 +41,7 @@ function feedmode() {
     --column=Name &
     yad --text-info --tabnum=3 \
     --plug=$KEY --filename="$nt" \
-    --fore='gray40' --wrap --editable \
+    --wrap --editable --fore='gray40' --back='#FFFAEC' \
     --show-uri --margins=14 --fontname=vendana > "$fdit" &
     yad --notebook --title="Feeds  ${info^}" \
     --name=Idiomind --class=Idiomind --key=$KEY \

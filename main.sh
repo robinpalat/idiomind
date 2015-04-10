@@ -122,21 +122,21 @@ function new_session() {
 
                 dts=$(wc -l < "$DM_tl/$tp/.conf/9.cfg")
                 if [ $dts = 1 ]; then
-                    dte=$(sed -n 1p "$DM_tl/$tp/.conf/9.cfg")
-                    TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-                    RM=$((100*$TM/10))
+                dte=$(sed -n 1p "$DM_tl/$tp/.conf/9.cfg")
+                TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
+                RM=$((100*$TM/10))
                 elif [ $dts = 2 ]; then
-                    dte=$(sed -n 2p "$DM_tl/$tp/.conf/9.cfg")
-                    TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-                    RM=$((100*$TM/15))
+                dte=$(sed -n 2p "$DM_tl/$tp/.conf/9.cfg")
+                TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
+                RM=$((100*$TM/15))
                 elif [ $dts = 3 ]; then
-                    dte=$(sed -n 3p "$DM_tl/$tp/.conf/9.cfg")
-                    TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-                    RM=$((100*$TM/30))
+                dte=$(sed -n 3p "$DM_tl/$tp/.conf/9.cfg")
+                TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
+                RM=$((100*$TM/30))
                 elif [ $dts = 4 ]; then
-                    dte=$(sed -n 4p "$DM_tl/$tp/.conf/9.cfg")
-                    TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-                    RM=$((100*$TM/60))
+                dte=$(sed -n 4p "$DM_tl/$tp/.conf/9.cfg")
+                TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
+                RM=$((100*$TM/60))
                 fi
                 if grep -Fxo "$tp" < "$DM_tl/.3.cfg"; then
                 if [ "$RM" -ge 100 ]; then

@@ -36,11 +36,11 @@ function mkmn() {
     
         tp=$(sed -n "$n"p "$DM_tl/.1.cfg")
         i=$(<"$DM_tl/$tp/.conf/8.cfg")
-        if [ ! -f "$DM_tl/$tp/.conf/8.cfg" ] || \
-        [ ! -f "$DM_tl/$tp/.conf/0.cfg" ] || \
-        [ ! -f "$DM_tl/$tp/.conf/1.cfg" ] || \
-        [ ! -f "$DM_tl/$tp/.conf/3.cfg" ] || \
-        [ ! -f "$DM_tl/$tp/.conf/4.cfg" ] || \
+        if [ ! "$DM_tl/$tp/.conf/8.cfg" ] || \
+        [ ! "$DM_tl/$tp/.conf/0.cfg" ] || \
+        [ ! "$DM_tl/$tp/.conf/1.cfg" ] || \
+        [ ! "$DM_tl/$tp/.conf/3.cfg" ] || \
+        [ ! "$DM_tl/$tp/.conf/4.cfg" ] || \
         [ ! -d "$DM_tl/$tp" ]; then
         i=13; echo "13" > "$DM_tl/$tp/.conf/8.cfg"
         cp -f "$DS/default/tpc.sh" "$DM_tl/$tp/tpc.sh"
@@ -58,11 +58,11 @@ function mkmn() {
         f=$(tail -n+51 < "$DM_tl/.1.cfg")
         tp=$(sed -n "$n"p <<<"$f")
         if [ ! -f "$DM_tl/$tp/.conf/8.cfg" ] || \
-        [ ! -f "$DM_tl/$tp/tpc.sh" ] || \
-        [ ! -f "$DM_tl/$tp/.conf/0.cfg" ] || \
-        [ ! -f "$DM_tl/$tp/.conf/1.cfg" ] || \
-        [ ! -f "$DM_tl/$tp/.conf/3.cfg" ] || \
-        [ ! -f "$DM_tl/$tp/.conf/4.cfg" ] || \
+        [ ! "$DM_tl/$tp/tpc.sh" ] || \
+        [ ! "$DM_tl/$tp/.conf/0.cfg" ] || \
+        [ ! "$DM_tl/$tp/.conf/1.cfg" ] || \
+        [ ! "$DM_tl/$tp/.conf/3.cfg" ] || \
+        [ ! "$DM_tl/$tp/.conf/4.cfg" ] || \
         [ ! -d "$DM_tl/$tp" ]; then
             echo '/usr/share/idiomind/images/img.13.png' >> "$DC_s/0.cfg"
         else
@@ -200,18 +200,18 @@ function delete_item_confirm() {
     if [ -d "$DC_tlt/practice" ]; then
     
         cd "$DC_tlt/practice"
-        [ -f ./fin ] && grep -vxF "$trgt" ./fin > \
+        [ ./fin ] && grep -vxF "$trgt" ./fin > \
         ./fin.tmp && sed '/^$/d' ./fin.tmp > ./fin
-        [ -f ./mcin ] && grep -vxF "$trgt" ./mcin > \
+        [ ./mcin ] && grep -vxF "$trgt" ./mcin > \
         ./mcin.tmp && sed '/^$/d' ./mcin.tmp > ./mcin
-        [ -f ./lwin ] && grep -vxF "$trgt" ./lwin > \
+        [ ./lwin ] && grep -vxF "$trgt" ./lwin > \
         ./lwin.tmp && sed '/^$/d' ./lwin.tmp > ./lwin
-        [ -f ./lsin ] && grep -vxF "$trgt" ./lsin > \
+        [ ./lsin ] && grep -vxF "$trgt" ./lsin > \
         ./lsin.tmp && sed '/^$/d' ./lsin.tmp > ./lsin
         rm ./*.tmp; fi
     
     cd "$DC_tlt"
-    [ -f "./.11.cfg" ] && grep -vxF "$trgt" "./.11.cfg" > \
+    [ "./.11.cfg" ] && grep -vxF "$trgt" "./.11.cfg" > \
     "./11.cfg.tmp" && sed '/^$/d' "./11.cfg.tmp" > "./.11.cfg"
     n=0
     while [ $n -le 4 ]; do
@@ -264,13 +264,13 @@ function delete_item() {
         if [ -d "$DC_tlt/practice" ]; then
         
         cd "$DC_tlt/practice"
-        [ -f ./fin ] && grep -vxF "$trgt" ./fin > \
+        [ ./fin ] && grep -vxF "$trgt" ./fin > \
         ./fin.tmp && sed '/^$/d' ./fin.tmp > ./fin
-        [ -f ./mcin ] && grep -vxF "$trgt" ./mcin > \
+        [ ./mcin ] && grep -vxF "$trgt" ./mcin > \
         ./mcin.tmp && sed '/^$/d' ./mcin.tmp > ./mcin
-        [ -f ./lwin ] && grep -vxF "$trgt" ./lwin > \
+        [ ./lwin ] && grep -vxF "$trgt" ./lwin > \
         ./lwin.tmp && sed '/^$/d' ./lwin.tmp > ./lwin
-        [ -f ./lsin ] && grep -vxF "$trgt" ./lsin > \
+        [ ./lsin ] && grep -vxF "$trgt" ./lsin > \
         ./lsin.tmp && sed '/^$/d' ./lsin.tmp > ./lsin
         rm ./*.tmp; fi
             
@@ -299,10 +299,10 @@ function delete_topic() {
     if [ "$tpc" != "$2" ]; then
     msg "$(gettext "sorry, this topic is currently not active.")\n " info & exit; fi
     
-    if [ -f "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "$tpc" ]; then
+    if [ "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "$tpc" ]; then
     msg "$(gettext "You can not delete at this time. Please try later ")\n" dialog-warning & exit 1; fi
     
-    if [ -f "$DT/.p_" ] && [ "$(sed -n 2p "$DT/.p_")" = "$tpc" ]; then
+    if [ "$DT/.p_" ] && [ "$(sed -n 2p "$DT/.p_")" = "$tpc" ]; then
     msg "$(gettext "You can not delete at this time. Please try later ")\n" dialog-warning & exit 1; fi
     
     msg_2 "$(gettext "Are you sure you want to delete this Topic?")\n" \
@@ -311,20 +311,20 @@ function delete_topic() {
         
         if [ $ret -eq 0 ]; then
 
-            if [ -d "$DM_tl/$tpc" ] &&  [ -n "$tpc" ]; then
+            if [ "$DM_tl/$tpc" ] &&  [ -n "$tpc" ]; then
             rm -r "$DM_tl/$tpc"; fi
             rm -f "$DC_s/4.cfg" "$DT/tpe"
             > "$DM_tl/.8.cfg"
 
             n=0
             while [ $n -le 4 ]; do
-                 [ -f "$DM_tl/.$n.cfg" ] && grep -vxF "$tpc" "$DM_tl/.$n.cfg" > \
+                 [ "$DM_tl/.$n.cfg" ] && grep -vxF "$tpc" "$DM_tl/.$n.cfg" > \
                 "$DT/cfg.tmp" && sed '/^$/d' "$DT/cfg.tmp" > "$DM_tl/.$n.cfg"
                 let n++
             done
             rm "$DT/cfg.tmp"
             
-            if [ -f "$DT/.n_s_pr" ] && \
+            if [ "$DT/.n_s_pr" ] && \
             [ "$(sed -n 2p "$DT/.n_s_pr")" = "$tpc" ]; then
             rm -fr "$(sed -n 1p "$DT/.n_s_pr")" "$DT/.n_s_pr"
             killall add.sh
@@ -510,7 +510,7 @@ function edit() {
                 add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname2.mp3" >/dev/null 2>&1
                 fetch_audio "$aw" "$bw"
             
-                [ -d "$DT_r" ] && rm -fr "$DT_r"
+                [ "$DT_r" ] && rm -fr "$DT_r"
                 ) &
                 
                 fname="$fname2"
@@ -554,7 +554,7 @@ function edit() {
                     add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3" >/dev/null 2>&1
                     fetch_audio "$aw" "$bw"
                     
-                    [ -d "$DT_r" ] && rm -fr "$DT_r"
+                    [ "$DT_r" ] && rm -fr "$DT_r"
                     ) &
                 fi
             fi
@@ -616,14 +616,12 @@ function rename_topic() {
         msg_2 "$(gettext "You already have a topic with the same name.") \n$(gettext "The new it was renamed to\:")\n<b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
         ret=$(echo "$?")
 
-            if [ "$ret" -eq 1 ]; then
-                exit 1
-            fi
+            if [ "$ret" -eq 1 ]; then exit 1; fi
             
-    elif [ -f "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "$tpc" ]; then
+    elif [ "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "$tpc" ]; then
     msg "$(gettext "Unable to rename at this time. Please try later ")\n" dialog-warning & exit 1
     
-    elif [ -f "$DT/.p_" ] && [ "$(sed -n 2p "$DT/.p_")" = "$tpc" ]; then
+    elif [ "$DT/.p_" ] && [ "$(sed -n 2p "$DT/.p_")" = "$tpc" ]; then
     msg "$(gettext "Unable to rename at this time. Please try later ")\n" dialog-warning & exit 1
     
     else jlb="$jlb"; fi
@@ -657,8 +655,8 @@ function rename_topic() {
         done
         rm "$DM_tl"/.*.tmp
 
-        [ -d "$DM_tl/$tpc" ] && rm -r "$DM_tl/$tpc"
-        [ -d "$DM_tl/$tpc" ] && rm -r "$DM_tl/$tpc"
+        [ "$DM_tl/$tpc" ] && rm -r "$DM_tl/$tpc"
+        [ "$DM_tl/$tpc" ] && rm -r "$DM_tl/$tpc"
         
         "$DS/mngr.sh" mkmn & exit 1
     fi

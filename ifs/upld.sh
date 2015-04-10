@@ -91,10 +91,10 @@ function infsd() {
             WGET "$file"
             
             if [ -f "/tmp/$link" ] ; then
-                [ -f "$sv" ] && rm "$sv"
-                mv -f "/tmp/$link" "$sv"
+            [ -f "$sv" ] && rm "$sv"
+            mv -f "/tmp/$link" "$sv"
             else
-                msg "$(gettext "The file is not yet available for download from the server.")\n" info && exit
+            msg "$(gettext "The file is not yet available for download from the server.")\n" info && exit
             fi
             exit
         else
@@ -221,13 +221,11 @@ fi
 if [ "$img" != "$imgm" ]; then
 /usr/bin/convert "$img" -interlace Plane -thumbnail 600x150^ \
 -gravity center -extent 600x150 \
--quality 100% "$DM_tlt/words/images/img.jpg"
-fi
+-quality 100% "$DM_tlt/words/images/img.jpg"; fi
 
 if [ -z "$Ctgry" ]; then
 msg "$(gettext "Please select a category.")\n " info
-"$DS/ifs/upld.sh" & exit 1
-fi
+"$DS/ifs/upld.sh" & exit 1; fi
 
 if [ -d "$DM_tlt/attchs" ]; then
 du="$(du -b -h "$DM_tlt/attchs" | tail -1 | awk '{print ($1)}' | tr -d 'M')"
@@ -292,8 +290,8 @@ done <<<"$auds"
 cp -f "$DC_tlt/0.cfg" "$DT_u/$tpc/0.cfg"
 cp -f "$DC_tlt/3.cfg" "$DT_u/$tpc/3.cfg"
 cp -f "$DC_tlt/4.cfg" "$DT_u/$tpc/4.cfg"
-printf "$notes" > "$DC_tlt/10.cfg"
-printf "$notes" > "$DT_u/$tpc/10.cfg"
+printf "${notes}" > "$DC_tlt/10.cfg"
+printf "${notes}" > "$DT_u/$tpc/10.cfg"
 
 [ "$DT_u/$tpc/tpc.sh" ] && rm -f "$DT_u/$tpc/tpc.sh"
 find "$DT_u" -type f -exec chmod 644 {} \; 
@@ -324,10 +322,10 @@ fi
 msg "$info" $image
 
 [ -d "$DT_u/$tpc" ] && rm -fr "$DT_u/$tpc"
-[ -f "$DT_u/.aud" ] && rm -f "$DT_u/.aud"
-[ -f "$DT_u/$U.$tpc.idmnd" ] && rm -f "$DT_u/$U.$tpc.idmnd"
-[ -f "$DT_u/$tpc.tar" ] && rm -f "$DT_u/$tpc.tar"
-[ -f "$DT_u/$tpc.tar.gz" ] && rm -f "$DT_u/$tpc.tar.gz"
+[ "$DT_u/.aud" ] && rm -f "$DT_u/.aud"
+[ "$DT_u/$U.$tpc.idmnd" ] && rm -f "$DT_u/$U.$tpc.idmnd"
+[ "$DT_u/$tpc.tar" ] && rm -f "$DT_u/$tpc.tar"
+[ "$DT_u/$tpc.tar.gz" ] && rm -f "$DT_u/$tpc.tar.gz"
 [ -d "$DT_u" ] && rm -fr "$DT_u"
 exit 0
 else
