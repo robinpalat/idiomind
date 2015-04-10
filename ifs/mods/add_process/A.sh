@@ -178,9 +178,9 @@ if [[ "$prdt" = A ]]; then
         [ $(wc -c <<<"$tpe") -gt 40 ] && tcnm="${tpe:0:40}..." || tcnm="$tpe"
 
         left=$((200 - $(wc -l < "$DC_tlt"/4.cfg)))
-        info="$(gettext "You can add") $left $(gettext "Items")"
-        [ $ns -ge 195 ] && info="$(gettext "You can add") $left $(gettext "Items")"
-        [ $ns -ge 199 ] && info="$(gettext "You can add") $left $(gettext "Item")"
+        info="-$left"
+        [ $ns -ge 195 ] && info="-$left"
+        [ $ns -ge 199 ] && info="-$left"
         
         if [ -z "$(< $DT_r/ls)" ]; then
         

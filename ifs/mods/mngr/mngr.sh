@@ -39,24 +39,23 @@ function position() {
             > "$DC_tlt/0.cfg.mv"
             while read sec; do
 
-                if [ -n "${sec}" ] && [ "${sec}" = "${item}" ]; then
+                if [ -n "$sec" ] && [ "$sec" = "${item}" ]; then
                     continue
                     
-                elif [ -n "${mv}" ] && [ "${sec}" = "${mv}" ]; then
+                elif [ -n "${mv}" ] && [ "$sec" = "${mv}" ]; then
                     echo -e "$mv" >> "$DC_tlt/0.cfg.mv"
                     echo -e "$item" >> "$DC_tlt/0.cfg.mv"
 
-                else echo "${sec}" >> "$DC_tlt/0.cfg.mv"; fi
+                else echo "$sec" >> "$DC_tlt/0.cfg.mv"; fi
                 
             done < "$DC_tlt/0.cfg"
 
             e=$?
         
             if [ $e != 0 ] ; then
-                cp -f "$DC_tlt/.11.cfg" "$DC_tlt/0.cfg"
                 msg "$(gettext "Some changes were not made.")\n" dialog-warning
             else
-                sed '/^$/d' "$DC_tlt/0.cfg.mv" > "$DC_tlt/0.cfg"
+                cp -f "$DC_tlt/0.cfg.mv" "$DC_tlt/0.cfg"
                 cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
                 
                 if [ `wc -l < "$DC_tlt/2.cfg"` = 0 ]; then
@@ -89,7 +88,7 @@ function dlg_form_1() {
         --field="$(gettext "Mark") "":CHK" "$mark" \
         --field="<small>$(gettext "Search definition") </small>":FBTN "$sdefn" \
         --field=" ":LBL "" \
-        --field="<small>$(gettext "Listen") </small>":FBTN "play '$DM_tlt/words/$fname.mp3'" \
+        --field="<small>$(gettext "Listen")</small>":FBTN "play '$DM_tlt/words/$fname.mp3'" \
         --button="$(gettext "Position")":"$DS/ifs/mods/mngr/mngr.sh 'position' '$item_pos' '$index_1'" \
         --button="$(gettext "Image")":"$imge" \
         --button="$(gettext "Delete")":"$dlte" \
@@ -112,7 +111,7 @@ function dlg_form_2() {
         --field="<small>$(gettext "Topic") </small>":CB "$tpc!$tpcs" \
         --field="<small>$(gettext "Audio") </small>":FL "$DM_tlt/$fname.mp3" \
         --button="$(gettext "Position")":"$DS/ifs/mods/mngr/mngr.sh 'position' '$item_pos' '$index_1'" \
-        --button="$(gettext "List Words")":"$wrds" \
+        --button="$(gettext "List Words")":"$word_list" \
         --button="$(gettext "Image")":"$imge" \
         --button="$(gettext "Delete")":"$dlte" \
         --button="gtk-go-down":2 \

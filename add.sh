@@ -401,11 +401,11 @@ function edit_list_words() {
         
         nw=$(wc -l < "$DC_tlt/0.cfg")
         left=$((200 - $nw))
-        info="$(gettext "You can add") $left $(gettext "Words")"
+        info=" -$left"
         if [ $nw -ge 195 ]; then
-        info="$(gettext "You can add") $left $(gettext "Words")"
+        info="-$left"
         elif [ $nw -ge 199 ]; then
-        info="$(gettext "You can add") $left $(gettext "Word")"
+        info="-$left"
         fi
 
         mkdir "$DT/$c"; cd "$DT/$c";
@@ -502,11 +502,11 @@ function dclik_list_words() {
     msg "$(gettext "You have reached the maximum number of items.")" info Info & exit; fi
 
     left=$((200 - $nw))
-    info="$(gettext "You can add") $left $(gettext "Words")"
+    info="-$left"
     if [ $nw -ge 195 ]; then
-        info="$(gettext "You can add") $left $(gettext "Words")"
+        info="-$left"
     elif [ $nw -ge 199 ]; then
-        info="$(gettext "You can add") $left $(gettext "Word")"
+        info="-$left"
     fi
     
     if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
@@ -568,9 +568,9 @@ function sentence_list_words() {
     left=$((200-nw))
     if [ "$left" = 0 ]; then exit 1
     elif [ $nw -ge 195 ]; then
-    info="$(gettext "You can add") $left $(gettext "Words")"
+    info="-$left"
     elif [ $nw -ge 199 ]; then
-    info="$(gettext "You can add") $left $(gettext "Word")"; fi
+    info="-$left"; fi
     
     list_words_2 "$2"
     
@@ -761,11 +761,11 @@ function process() {
         && tcnm="${tpe:0:60}..." || tcnm="$tpe"
         
         left=$((200 - $ns))
-        info="$(gettext "You can add") $left $(gettext "items")"
+        info="-$left"
         if [ $ns -ge 195 ]; then
-        info="$(gettext "You can add") $left $(gettext "items")"
+        info="-$left"
         elif [ $ns -ge 199 ]; then
-        info="$(gettext "You can add") $left $(gettext "items")"; fi
+        info="-$left"; fi
 
         if [ -z "$(< ./sntsls_)" ]; then
         
