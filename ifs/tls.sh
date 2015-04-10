@@ -467,7 +467,7 @@ function videourl() {
 
     n=$(ls *.url "$DM_tlt/attchs/" | wc -l)
     url=$(yad --window-icon="idiomind" --form --center --on-top \
-    --field="$(gettext "Video URL")" --title=" " \
+    --field="$(gettext "YouTube URL")" --title=" " \
     --width=480 --height=100 --name=Idiomind --class=Idiomind \
     --skip-taskbar --borders=5 --button="$(gettext "Cancel")":1 --button=gtk-ok:0)
     [ -n "$url" ] && echo "$url" > "$DM_tlt/attchs/video$n.url"
@@ -564,10 +564,10 @@ echo "<br><br></div>
         [ ! -f "$DC_tlt/att.html" ] && mkindex >/dev/null 2>&1
         yad --html --uri="$DC_tlt/att.html" --browser \
         --window-icon="idiomind" --center \
-        --title="$(gettext "Attachments")" --borders=5 \
+        --title="$(gettext "Attachments")" --borders=10 \
         --width=650 --height=580 \
         --button="$(gettext "Open Folder")":"xdg-open '$DM_tlt/attchs'" \
-        --button="$(gettext "YouTube video URL")":"$DS/ifs/tls.sh 'videourl'" \
+        --button="$(gettext "Add Video")":"$DS/ifs/tls.sh 'videourl'" \
         --button="$(gettext "Add File")":"$DS/ifs/tls.sh 'add_file'" \
         --button="$(gettext "Close")":"1" \
         --name=Idiomind --class=Idiomind \
@@ -886,7 +886,7 @@ function pdfdoc() {
         echo -e "<head>
         <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />
         <title>$tpc</title><head>
-        <link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/pdfstyle.css\">
+        <link rel=\"stylesheet\" href=\"/home/robin/Desktop/home/style/style.css\">
         </head>
         <body>
         <div><p></p>

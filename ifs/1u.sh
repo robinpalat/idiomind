@@ -17,7 +17,6 @@
 #  MA 02110-1301, USA.
 #  27.02.2015
 
-[ -z $LANGUAGE ] && LANGUAGE=en
 TEXTDOMAIN=idiomind
 export TEXTDOMAIN
 TEXTDOMAINDIR=/usr/share/locale
@@ -58,7 +57,7 @@ sudo apt-get install yad")" \
 --title="Idiomind" --no-wrap & exit
 fi
 
-dlg=$(yad --center --width=420 --height=300 --fixed \
+dlg=$(yad --center --width=420 --height=280 --fixed \
 --image-on-top --on-top --class=Idiomind --name=Idiomind \
 --window-icon="idiomind" --buttons-layout=end --text="$text" \
 --title="Idiomind" --form --borders=15 --align=center --button=Cancel:1 --button=gtk-ok:0 \
@@ -134,7 +133,7 @@ elif [[ $ret -eq 0 ]]; then
 
     idiomind -s
 
-    exit;
+    exit
 else
-    killall 1u.sh & exit 1
+    exit 1
 fi

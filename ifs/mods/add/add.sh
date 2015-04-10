@@ -175,7 +175,6 @@ function add_tags_8() {
 }
 
 
-
 function add_tags_9() {
     
     eyeD3 --set-encoding=utf8 -A IWI3I0I"$2"IWI3I0IIPWI3I0I"$3"IPWI3I0I "$4"
@@ -356,8 +355,8 @@ function dlg_form_1() {
         --skip-taskbar --center --on-top \
         --align=right --image="$img" \
         --window-icon="idiomind" \
-        --width=420 --height=170 --borders=0 \
-        --field=" <small>$lgtl</small>":txt  "$txt" \
+        --width=420 --height=150 --borders=0 \
+        --field=" <small>$lgtl</small>":CE "$txt" \
         --field=" $atopic:CB" \
         "$ltopic!$(gettext "New topic") *$e$tpcs" \
         --button="$(gettext "Image")":3 \
@@ -374,9 +373,9 @@ function dlg_form_2() {
         --skip-taskbar --center --on-top \
         --align=right --image="$img" \
         --window-icon="idiomind" \
-        --width=420 --height=230 --borders=0 \
-        --field=" <small>$lgtl</small>":txt "$txt" \
-        --field=" <small>${lgsl^}</small>":txt "$srce" \
+        --width=420 --height=180 --borders=0 \
+        --field=" <small>$lgtl</small>":CE "$txt" \
+        --field=" <small>${lgsl^}</small>":CE "$srce" \
         --field=" $atopic:CB" \
         "$ltopic!$(gettext "New topic") *$e$tpcs" \
         --button="$(gettext "Image")":3 \

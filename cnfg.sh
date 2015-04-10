@@ -25,7 +25,7 @@ info1="$(gettext "Do you want to change the interface language program?")"
 info2="$(gettext "You want to change the language setting to learn?")"
 cd "$DS/addons"
 
-autostart="[Desktop Entry]
+desktopfile="[Desktop Entry]
 Name=Idiomind
 GenericName=Learning Tool
 Comment=Vocabulary learning tool
@@ -164,7 +164,7 @@ ret=$?
         
         if cut -d "|" -f3 < "$cnf1" | grep "TRUE"; then
             if [ ! -f "$config_dir/idiomind.desktop" ]; then
-                echo "$autostart" > "$config_dir/idiomind.desktop"
+                echo "$desktopfile" > "$config_dir/idiomind.desktop"
             fi
         else
             if [ -f "$config_dir/idiomind.desktop" ]; then

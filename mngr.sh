@@ -77,6 +77,9 @@ function mkmn() {
 function mark_as_learn() {
     
     include "$DS/ifs/mods/mngr"
+
+    if [ "$tpc" != "$2" ]; then
+    msg "$(gettext "sorry, this topic is currently not active.")\n " info & exit; fi
     
     if [ $(wc -l < "$DC_tlt/0.cfg") -le 15 ]; then
     msg "$(gettext "Sorry, you must be at least 15 items.")\n " info & exit; fi
@@ -131,6 +134,9 @@ function mark_as_learn() {
 function mark_as_learned() {
 
     include "$DS/ifs/mods/mngr"
+
+    if [ "$tpc" != "$2" ]; then
+    msg "$(gettext "sorry, this topic is currently not active.")\n " info & exit; fi
     
     if [ $(wc -l < "$DC_tlt/0.cfg") -le 15 ]; then
     msg "$(gettext "Sorry, you must be at least 15 items.")\n " info & exit; fi
@@ -290,6 +296,9 @@ function delete_topic() {
     
     include "$DS/ifs/mods/mngr"
     
+    if [ "$tpc" != "$2" ]; then
+    msg "$(gettext "sorry, this topic is currently not active.")\n " info & exit; fi
+    
     if [ -f "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "$tpc" ]; then
     msg "$(gettext "You can not delete at this time. Please try later ")\n" dialog-warning & exit 1; fi
     
@@ -341,161 +350,150 @@ function edit() {
     wth=650; eht=580
     lgt=$(lnglss $lgtl)
     lgs=$(lnglss $lgsl)
+    lists="$2";  item_pos="$3"
+    if [ "$lists" = v1 ]; then
+    index_1="$DC_tlt/1.cfg"
+    index_2="$DC_tlt/2.cfg"
+    elif [ "$lists" = v2 ]; then
+    index_1="$DC_tlt/2.cfg"
+    index_2="$DC_tlt/1.cfg"; fi
     dct="$DS/addons/Dics/cnfg.sh"
-    cnf=$(mktemp $DT/cnf.XXXX)
+    file_tmp=$(mktemp $DT/file_tmp.XXXX)
     edta=$(sed -n 17p ~/.config/idiomind/s/1.cfg)
     tpcs=$(egrep -v "$tpc" < "$DM_tl/.2.cfg" | cut -c 1-40 \
     | tr "\\n" '!' | sed 's/!\+$//g')
     c=$(echo $(($RANDOM%10000)))
-    re='^[0-9]+$'
-    v="$2"
-    fname="$3"
-    ff="$4"
-    wfile="$DM_tlt/words/$fname.mp3"
-    sfile="$DM_tlt/$fname.mp3"
+    item="$(sed -n "$3"p "$index_1")"
+    fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
+    audiofile_2="$DM_tlt/words/$fname.mp3"
+    audiofile_1="$DM_tlt/$fname.mp3"
     
-    if [ "$v" = v1 ]; then
-    ind="$DC_tlt/1.cfg"
-    inp="$DC_tlt/2.cfg"
-    chk="$(gettext "Mark as learned")"
-    elif [ "$v" = v2 ]; then
-    ind="$DC_tlt/2.cfg"
-    inp="$DC_tlt/1.cfg"
-    chk="$(gettext "Review")"; fi
-
-    if [ -f "$wfile" ]; then
+    if [ -f "$audiofile_2" ]; then
         
-        tgs=$(eyeD3 "$wfile")
-        TGT=$(grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)' <<<"$tgs")
-        SRC=$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)'<<<"$tgs")
-        inf=$(grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' <<<"$tgs" | tr '_' '\n')
-        mrk=$(grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)' <<<"$tgs")
-        src=$(echo "$SRC")
-        ok=$(echo "FALSE")
-        exm1=$(sed -n 1p <<<"$inf")
-        dftn=$(sed -n 2p <<<"$inf")
-        ntes=$(sed -n 3p <<<"$inf")
+        tags=$(eyeD3 "$audiofile_2")
+        trgt=$(grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)' <<<"$tags")
+        srce=$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)'<<<"$tags")
+        fields=$(grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' <<<"$tags" | tr '_' '\n')
+        mark=$(grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)' <<<"$tags")
+        exm1=$(sed -n 1p <<<"$fields")
+        dftn=$(sed -n 2p <<<"$fields")
+        ntes=$(sed -n 3p <<<"$fields")
         dlte="$DS/mngr.sh delete_item ${fname}"
-        imge="$DS/ifs/tls.sh set_image '$TGT' word"
-        sdefn="/usr/share/idiomind/ifs/tls.sh definition '$TGT'"
+        imge="$DS/ifs/tls.sh set_image '$trgt' word"
+        sdefn="/usr/share/idiomind/ifs/tls.sh definition '$trgt'"
         
-        dlg_form_1 "$cnf"
+        dlg_form_1 "$file_tmp"
         ret=$(echo "$?")
         
-            [ -f "$DT/ps_lk" ] && "$DS/vwr.sh" "$v" "nll" $ff && exit 1
-            srce=$(tail -12 < "$cnf" | sed -n 2p  \
+            [ -f "$DT/ps_lk" ] && "$DS/vwr.sh" "$lists" "nll" "$item_pos" && exit 1
+            srce_mod=$(tail -12 < "$file_tmp" | sed -n 2p  \
             | sed 's/^ *//; s/ *$//g'| sed ':a;N;$!ba;s/\n/ /g')
-            topc=$(tail -12 < "$cnf" | sed -n 3p)
-            audo=$(tail -12 < "$cnf" | sed -n 4p)
-            exm1=$(tail -12 < "$cnf" | sed -n 5p)
-            dftn=$(tail -12 < "$cnf" | sed -n 6p)
-            ntes=$(tail -12 < "$cnf" | sed -n 7p)
-            mrk2=$(tail -12 < "$cnf" | sed -n 8p)
-            mrok=$(tail -12 < "$cnf" | sed -n 9p)
+            tpc_mod=$(tail -12 < "$file_tmp" | sed -n 3p)
+            audio_mod=$(tail -12 < "$file_tmp" | sed -n 4p)
+            exm1=$(tail -12 < "$file_tmp" | sed -n 5p)
+            dftn=$(tail -12 < "$file_tmp" | sed -n 6p)
+            ntes=$(tail -12 < "$file_tmp" | sed -n 7p)
+            mark_mod=$(tail -12 < "$file_tmp" | sed -n 8p)
             source /usr/share/idiomind/ifs/c.conf
             include "$DS/ifs/mods/add"
-            rm -f "$cnf"
+            rm -f "$file_tmp"
             
-            if [ "$mrk" != "$mrk2" ]; then
+            if [ "$mark" != "$mark_mod" ]; then
             
-                if [ "$mrk2" = "TRUE" ]; then
-                    echo "$TGT" >> "$DC_tlt/6.cfg"
+                if [ "$mark_mod" = "TRUE" ]; then
+                echo "$trgt" >> "$DC_tlt/6.cfg"
                 else
-                    grep -vxv "$TGT" "$DC_tlt/6.cfg" > "$DC_tlt/6.cfg.tmp"
-                    sed '/^$/d' "$DC_tlt/6.cfg.tmp" > "$DC_tlt/6.cfg"
-                    rm "$DC_tlt/6.cfg.tmp"
-                fi
-                add_tags_8 W "$mrk2" "$DM_tlt/words/$fname".mp3 >/dev/null 2>&1
+                grep -vxv "$trgt" "$DC_tlt/6.cfg" > "$DC_tlt/6.cfg.tmp"
+                sed '/^$/d' "$DC_tlt/6.cfg.tmp" > "$DC_tlt/6.cfg"
+                rm "$DC_tlt/6.cfg.tmp"; fi
+                add_tags_8 W "$mark_mod" "$DM_tlt/words/$fname".mp3 >/dev/null 2>&1
             fi
             
-            if [ "$audo" != "$wfile" ]; then
+            if [ "$audio_mod" != "$audiofile_2" ]; then
             
-                eyeD3 --write-images="$DT" "$wfile"
-                cp -f "$audo" "$DM_tlt/words/$fname.mp3"
-                add_tags_2 W "$TGT" "$srce" "$DM_tlt/words/$fname.mp3" >/dev/null 2>&1
+                eyeD3 --write-images="$DT" "$audiofile_2"
+                cp -f "$audio_mod" "$DM_tlt/words/$fname.mp3"
+                add_tags_2 W "$trgt" "$srce_mod" "$DM_tlt/words/$fname.mp3" >/dev/null 2>&1
                 eyeD3 --add-image $DT/ILLUSTRATION.jpeg:ILLUSTRATION \
                 "$DM_tlt/words/$fname.mp3" >/dev/null 2>&1
                 [ -d "$DT/idadtmptts" ] && rm -fr "$DT/idadtmptts"
             fi
             
-            if [ "$srce" != "$SRC" ]; then
-                add_tags_5 W "$srce" "$wfile" >/dev/null 2>&1
+            if [ "$srce_mod" != "$srce" ]; then
+                add_tags_5 W "$srce_mod" "$audiofile_2" >/dev/null 2>&1
             fi
             
             infm="$(echo $exm1 && echo $dftn && echo $ntes)"
             
-            if [ "$infm" != "$inf" ]; then
+            if [ "$infm" != "$fields" ]; then
             
                 impr=$(echo "$infm" | tr '\n' '_')
-                add_tags_6 W "$impr" "$wfile" >/dev/null 2>&1
+                add_tags_6 W "$impr" "$audiofile_2" >/dev/null 2>&1
                 printf "eitm.$tpc.eitm\n" >> "$DC_s/8.cfg" &
             fi
 
-            if [ "$tpc" != "$topc" ]; then
+            if [ "$tpc" != "$tpc_mod" ]; then
             
-                cp -f "$audo" "$DM_tl/$topc/words/$fname.mp3"
-                index word "$TGT" "$topc" &
+                cp -f "$audio_mod" "$DM_tl/$tpc_mod/words/$fname.mp3"
+                index word "$trgt" "$tpc_mod" &
                 "$DS/mngr.sh" delete_item_confirm "$fname"
-                "$DS/vwr.sh" "$v" "nll" $ff & exit 1
+                "$DS/vwr.sh" "$lists" "nll" $item_pos & exit 1
             fi
             
-            if [ "$mrok" = "TRUE" ]; then
+            if [ $ret -eq 2 ]; then
             
-                grep -vxv "$TGT" "$ind" > "$DT/tx"
-                sed '/^$/d' "$DT/tx" > "$ind"
-                rm "$DT/tx"
-                echo "$TGT" >> "$inp"
-                printf "okim.1.okim\n" >> "$DC_s/8.cfg" &
-                "$DS/vwr.sh" "$v" "nll" $ff & exit 1
+                "$DS/mngr.sh" edit "$lists" "$((item_pos-1))" &
+            else
+                "$DS/vwr.sh" "$lists" "$trgt" "$item_pos" &
             fi
             
-            "$DS/vwr.sh" "$v" "$TGT" $ff & exit 1
-    
-    elif [ -f "$sfile" ]; then
+            exit
+            
+    elif [ -f "$audiofile_1" ]; then
     
         file="$DM_tlt/$fname.mp3"
-        tgs=$(eyeD3 "$sfile")
-        mrk=$(grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)' <<<"$tgs")
-        tgt=$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"$tgs")
-        src=$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"$tgs")
-        lwrd=$(grep -o -P '(?<=IWI3I0I).*(?=IPWI3I0I)' <<<"$tgs")
-        pwrds=$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"$tgs")
-        wrds="$DS/add.sh edit_list_words '$file' F $c"
+        tags=$(eyeD3 "$audiofile_1")
+        mark=$(grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)' <<<"$tags")
+        trgt=$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"$tags")
+        srce=$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"$tags")
+        lwrd=$(grep -o -P '(?<=IWI3I0I).*(?=IPWI3I0I)' <<<"$tags")
+        pwrds=$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"$tags")
+        word_list="$DS/add.sh edit_list_words '$file' F $c"
         edau="/usr/share/idiomind/ifs/tls.sh edit_audio \
         '$DM_tlt/$fname.mp3' '$DM_tlt'"
+        lstau="/usr/share/idiomind/ifs/tls.sh play '$DM_tlt/$fname.mp3'"
         dlte="$DS/mngr.sh delete_item ${fname}"
         imge="$DS/ifs/tls.sh set_image '$file' sentence"
         
-        dlg_form_2 "$cnf"
+        dlg_form_2 "$file_tmp"
         ret=$(echo "$?")
-        
-            [ -f "$DT/ps_lk" ] && "$DS/vwr.sh" "$v" "nll" $ff && exit 1
-            mrok=$(tail -8 < "$cnf" | sed -n 1p)
-            mrk2=$(tail -8 < "$cnf" | sed -n 2p)
-            trgt=$(tail -8 < "$cnf" | sed -n 3p | \
+
+            [ -f "$DT/ps_lk" ] && "$DS/vwr.sh" "$lists" "nll" "$item_pos" && exit 1
+            mark_mod=$(tail -7 < "$file_tmp" | sed -n 1p)
+            trgt_mod=$(tail -7 < "$file_tmp" | sed -n 2p | \
             sed 's/^ *//; s/ *$//g'| sed ':a;N;$!ba;s/\n/ /g')
-            srce=$(tail -8 < "$cnf" | sed -n 4p | \
+            srce_mod=$(tail -7 < "$file_tmp" | sed -n 3p | \
             sed 's/^ *//; s/ *$//g'| sed ':a;N;$!ba;s/\n/ /g')
-            topc=$(tail -8 < "$cnf" | sed -n 5p)
-            audo=$(tail -8 < "$cnf" | sed -n 6p)
+            tpc_mod=$(tail -7 < "$file_tmp" | sed -n 5p)
+            audio_mod=$(tail -7 < "$file_tmp" | sed -n 6p)
             source /usr/share/idiomind/ifs/c.conf
             include "$DS/ifs/mods/add"
-            rm -f $cnf
+            rm -f "$file_tmp"
             
-            if [ "$trgt" != "$tgt" ]; then
+            if [ "$trgt_mod" != "$trgt" ]; then
             
                 internet
-                fname2="$(nmfile "$trgt")"
+                fname2="$(nmfile "$trgt_mod")"
 
-                sed -i "s/${tgt}/${trgt}/" "$DC_tlt/0.cfg"
-                sed -i "s/${tgt}/${trgt}/" "$DC_tlt/1.cfg"
-                sed -i "s/${tgt}/${trgt}/" "$DC_tlt/2.cfg"
-                sed -i "s/${tgt}/${trgt}/" "$DC_tlt/4.cfg"
-                sed -i "s/${tgt}/${trgt}/" "$DC_tlt/.11.cfg"
-                sed -i "s/${tgt}/${trgt}/" "$DC_tlt/practice/lsin"
+                sed -i "s/${trgt}/${trgt_mod}/" "$DC_tlt/0.cfg"
+                sed -i "s/${trgt}/${trgt_mod}/" "$DC_tlt/1.cfg"
+                sed -i "s/${trgt}/${trgt_mod}/" "$DC_tlt/2.cfg"
+                sed -i "s/${trgt}/${trgt_mod}/" "$DC_tlt/4.cfg"
+                sed -i "s/${trgt}/${trgt_mod}/" "$DC_tlt/.11.cfg"
+                sed -i "s/${trgt}/${trgt_mod}/" "$DC_tlt/practice/lsin"
                 mv -f "$DM_tlt/$fname.mp3" "$DM_tlt/$fname2.mp3"
-                srce=$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')
-                add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname2.mp3" >/dev/null 2>&1
+                srce_mod=$(translate "$trgt_mod" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')
+                add_tags_1 S "$trgt_mod" "$srce_mod" "$DM_tlt/$fname2.mp3" >/dev/null 2>&1
                 source "$DS/default/dicts/$lgt"
                 
                 (
@@ -516,31 +514,30 @@ function edit() {
                 ) &
                 
                 fname="$fname2"
-                trgt="$trgt"
+                trgt_mod="$trgt_mod"
             else
-                trgt="$tgt"
+                trgt_mod="$trgt"
             fi
 
-            if [ "$mrk" != "$mrk2" ]; then
+            if [ "$mark" != "$mark_mod" ]; then
             
-                if [ "$mrk2" = "TRUE" ]; then
-                    echo "$trgt" >> "$DC_tlt/6.cfg"
+                if [ "$mark_mod" = "TRUE" ]; then
+                echo "$trgt_mod" >> "$DC_tlt/6.cfg"
                 else
-                    grep -vxv "$trgt" "$DC_tlt/6.cfg" > "$DC_tlt/6.cfg.tmp"
-                    sed '/^$/d' "$DC_tlt/6.cfg.tmp" > "$DC_tlt/6.cfg"
-                    rm "$DC_tlt/6.cfg.tmp"
-                fi
-                add_tags_8 S "$mrk2" "$DM_tlt/$fname.mp3" >/dev/null 2>&1
+                grep -vxv "$trgt_mod" "$DC_tlt/6.cfg" > "$DC_tlt/6.cfg.tmp"
+                sed '/^$/d' "$DC_tlt/6.cfg.tmp" > "$DC_tlt/6.cfg"
+                rm "$DC_tlt/6.cfg.tmp"; fi
+                add_tags_8 S "$mark_mod" "$DM_tlt/$fname.mp3" >/dev/null 2>&1
             fi
             
-            if [ -n "$audo" ]; then
+            if [ -n "$audio_mod" ]; then
             
-                if [ "$audo" != "$sfile" ]; then
+                if [ "$audio_mod" != "$audiofile_1" ]; then
                 
                     internet
-                    cp -f "$audo" "$DM_tlt/$fname.mp3"
+                    cp -f "$audio_mod" "$DM_tlt/$fname.mp3"
                     eyeD3 --remove-all "$DM_tlt/$fname.mp3"
-                    add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3" >/dev/null 2>&1
+                    add_tags_1 S "$trgt_mod" "$srce_mod" "$DM_tlt/$fname.mp3" >/dev/null 2>&1
                     source "$DS/default/dicts/$lgt"
                     
                     (
@@ -565,46 +562,45 @@ function edit() {
             if [ -f "$DT/tmpau.mp3" ]; then
             
                 cp -f "$DT/tmpau.mp3" "$DM_tlt/$fname.mp3"
-                add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3" >/dev/null 2>&1
+                add_tags_1 S "$trgt_mod" "$srce_mod" "$DM_tlt/$fname.mp3" >/dev/null 2>&1
                 rm -f "$DT/tmpau.mp3"
             fi
             
-            if [ "$srce" != "$src" ]; then
+            if [ "$srce_mod" != "$srce" ]; then
             
-                add_tags_5 S "$srce" "$sfile"
+                add_tags_5 S "$srce_mod" "$audiofile_1"
             fi
             
-            if [ "$tpc" != "$topc" ]; then
+            if [ "$tpc" != "$tpc_mod" ]; then
 
-                cp -f "$audo" "$DM_tl/$topc/$fname.mp3"
+                cp -f "$audio_mod" "$DM_tl/$tpc_mod/$fname.mp3"
                 DT_r=$(mktemp -d $DT/XXXXXX); cd "$DT_r"
                 clean_3 "$DT_r" $(echo $(($RANDOM%1000)))
 
                 while read mp3; do
-                    echo "$mp3.mp3" >> "$DM_tl/$topc/5.cfg"
+                    echo "$mp3.mp3" >> "$DM_tl/$tpc_mod/5.cfg"
                 done < "$aw"
                 
-                index sentence "$trgt" "$topc" &
+                index sentence "$trgt_mod" "$tpc_mod" &
                 "$DS/mngr.sh" delete_item_confirm "$fname"
                 [ -d $DT_r ] && rm -fr "$DT_r"
-                "$DS/vwr.sh" "$v" "null" $ff & exit 1
+                "$DS/vwr.sh" "$lists" "null" $item_pos & exit 1
             fi
+
+            [ -d "$DT/$c" ] && "$DS/add.sh" edit_list_words "$fname" S $c "$trgt_mod" &
             
-            if [ "$mrok" = "TRUE" ]; then
-            
-                grep -vxF "$trgt" "$ind" > "$DT/mrok"
-                sed '/^$/d' "$DT/mrok" > "$ind"
-                rm "$DT/mrok"
-                echo "$trgt" >> "$inp"
-                printf "okim.1.okim\n" >> "$DC_s/8.cfg" &
+            if [ $ret -eq 2 ]; then
+
+                "$DS/mngr.sh" edit "$lists" "$((item_pos-1))" &
                 
-                "$DS/vwr.sh" "$v" "null" $ff & exit 1
+            else
+                "$DS/vwr.sh" "$lists" "$trgt_mod" "$item_pos" &
             fi
             
-            [ -d "$DT/$c" ] && "$DS/add.sh" edit_list_words "$fname" S $c "$trgt" &
-            "$DS/vwr.sh" "$v" "$trgt" $ff & exit 1
+            exit
     fi
-}
+} 
+
 
 function rename_topic() {
 
@@ -672,9 +668,9 @@ case "$1" in
     mkmn)
     mkmn ;;
     mark_as_learned)
-    mark_as_learned ;;
+    mark_as_learned "$@" ;;
     mark_as_learn)
-    mark_as_learn ;;
+    mark_as_learn "$@" ;;
     delete_item_confirm)
     delete_item_confirm "$@" ;;
     delete_item)

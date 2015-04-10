@@ -139,23 +139,23 @@ function new_session() {
                     RM=$((100*$TM/60))
                 fi
                 if grep -Fxo "$tp" < "$DM_tl/.3.cfg"; then
-                    if [ "$RM" -ge 100 ]; then
-                        echo "9" >> "$DM_tl/$tp/.conf/8.cfg"
-                        printf "$tp\n" >> "$DT/t_notify"
-                    fi
-                    if [ "$RM" -ge 150 ]; then
-                        echo "10" > "$DM_tl/$tp/.conf/8.cfg"
-                        printf "$tp\n" >> "$DT/t_notify"
-                    fi
+                if [ "$RM" -ge 100 ]; then
+                    echo "9" >> "$DM_tl/$tp/.conf/8.cfg"
+                    printf "$tp\n" >> "$DT/t_notify"
+                fi
+                if [ "$RM" -ge 150 ]; then
+                    echo "10" > "$DM_tl/$tp/.conf/8.cfg"
+                    printf "$tp\n" >> "$DT/t_notify"
+                fi
                 else
-                    if [ "$RM" -ge 100 ]; then
-                        echo "4" > "$DM_tl/$tp/.conf/8.cfg"
-                        printf "$tp\n" >> "$DT/t_notify"
-                    fi
-                    if [ "$RM" -ge 150 ]; then
-                        echo "5" > "$DM_tl/$tp/.conf/8.cfg"
-                        printf "$tp\n" >> "$DT/t_notify"
-                    fi
+                if [ "$RM" -ge 100 ]; then
+                    echo "4" > "$DM_tl/$tp/.conf/8.cfg"
+                    printf "$tp\n" >> "$DT/t_notify"
+                fi
+                if [ "$RM" -ge 150 ]; then
+                    echo "5" > "$DM_tl/$tp/.conf/8.cfg"
+                    printf "$tp\n" >> "$DT/t_notify"
+                fi
                 fi
             fi
         fi
@@ -343,13 +343,15 @@ function topic() {
         else label_info2=" "; fi
 
     apply() {
-    
+
         note_mod="$(< $cnf3)"
         if [ "$note_mod" != "$(< $nt)" ]; then
         mv -f "$cnf3" "$DC_tlt/10.cfg"; fi
         
         ntpc=$(cut -d '|' -f 1 < "$cnf4")
         if [ "$tpc" != "$ntpc" ] && [ -n "$ntpc" ]; then
+        if [ "$tpc" != "$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")" ]; then
+        msg "$(gettext "sorry, this topic is currently not active.")\n " info & exit; fi
         "$DS/mngr.sh" rename_topic "$ntpc" & exit; fi
         
         set1_=$(cut -d '|' -f 8 < "$cnf4")

@@ -24,7 +24,7 @@ function word_view(){
     --scroll --center --on-top --skip-taskbar --text-align=center --image-on-top --center \
     --width=610 --height=380 --borders=$bs \
     --field="":lbl \
-    --field="<i><span color='#7D7D7D'>$exmp1</span></i>:lbl" "$dfnts" "$ntess" \
+    --field="<i><span color='#737373'>$exmp1</span></i>:lbl" "$dfnts" "$ntess" \
     --button=gtk-edit:4 \
     --button="$listen":"play '$DM_tlt/words/$fname.mp3'" \
     --button=gtk-go-up:3 \
@@ -57,12 +57,10 @@ function sentence_view(){
     --button="$listen":"$DS/ifs/tls.sh listen_sntnc '$fname'" \
     --button=gtk-go-up:3 \
     --button=gtk-go-down:2
-    
 }
 
 export -f word_view
 export -f sentence_view
-
 
 function notebook_1() {
     
@@ -85,12 +83,12 @@ function notebook_1() {
     --text="$label_info1\n" \
     --scroll --borders=10 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "$tpc" \
-    --field="$(gettext "Mark as learned")":FBTN "$DS/mngr.sh 'mark_as_learned'" \
+    --field="$(gettext "Mark as learned")":FBTN "$DS/mngr.sh 'mark_as_learned' '$tpc'" \
     --field=" ":LBL "$set1" \
     --field="$label_info2\n\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " \
-    --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh 'upld'" \
+    --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh 'upld' '$tpc'" \
     --field="$(gettext "Attachments")":FBTN "$DS/ifs/tls.sh attachs" \
-    --field="$(gettext "Delete")":BTN "$DS/mngr.sh 'delete_topic'" \
+    --field="$(gettext "Delete")":BTN "$DS/mngr.sh 'delete_topic' '$tpc'" \
     --field=" ":LBL " " > "$cnf4" &
     yad --notebook --title="$tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
@@ -128,12 +126,12 @@ function notebook_2() {
     --text="$label_info1\n" \
     --scroll --borders=10 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "$tpc" \
-    --field="   $(gettext "Review")   ":FBTN "$DS/mngr.sh 'mark_as_learn'" \
+    --field="   $(gettext "Review")   ":FBTN "$DS/mngr.sh 'mark_as_learn' '$tpc'" \
     --field=" ":LBL "$set1" \
     --field="$label_info2\n\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " \
-    --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh 'upld'" \
+    --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh 'upld' '$tpc'" \
     --field="$(gettext "Attachments")":FBTN "$DS/ifs/tls.sh attachs" \
-    --field="$(gettext "Delete")":BTN "$DS/mngr.sh 'delete_topic'" \
+    --field="$(gettext "Delete")":BTN "$DS/mngr.sh 'delete_topic' '$tpc'" \
     --field=" ":LBL " " > "$cnf4" &
     yad --notebook --title="$tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
@@ -160,8 +158,6 @@ function dialog_1() {
     --width=420 --height=150 --borders=10 \
     --button=" $(gettext "Not Yet") ":1 \
     --button=" $(gettext "Review") ":2
-    
-     
 }
 
 

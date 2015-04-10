@@ -42,7 +42,7 @@ fi
     ret=$?
         
     if [ $ret -eq 4 ]; then
-        "$DS/mngr.sh" edit "$1" "$fname" "$nuw"
+        "$DS/mngr.sh" edit "$1" "$nuw"
     elif [ $ret -eq 2 ]; then
         ff=$((nuw-1))
         "$DS/vwr.sh" "$1" "$nll" $ff &
