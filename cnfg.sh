@@ -37,9 +37,11 @@ StartupWMClass=Idiomind"
 
 lang=('English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian')
+
 sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
-'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' 'edit' \
+'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' \
 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
+
 [ -n "$(< "$DC_s/1.cfg")" ] && cfg=1 || > "$DC_s/1.cfg"
 c=$(echo $(($RANDOM%100000))); KEY=$c
 cnf1=$(mktemp "$DT"/cnf1.XXXX)
@@ -78,18 +80,17 @@ function set_lang() {
 n=0
 if [ "$cfg" = 1 ]; then
 
-    while [[ $n -lt 14 ]]; do
-        itn=$((n+1))
+    while [[ $n -lt 13 ]]; do
         get="${sets[$n]}"
-        val=$(sed -n "$itn"p < "$DC_s/1.cfg" \
+        val=$(sed -n $((n+1))p < "$DC_s/1.cfg" \
         | grep -o "$get"=\"[^\"]* | grep -o '[^"]*$')
         declare "${sets[$n]}"="$val"
         ((n=n+1))
     done
     
 else
-    while [ $n -lt 19 ]; do
-        if [ $n -lt 8 ] || [ $n -gt 12 ]; then
+    while [ $n -lt 18 ]; do
+        if [ $n -lt 7 ] || [ $n -gt 11 ]; then
         val="FALSE"; else val=" "; fi
         echo -e "${sets[$n]}=\"$val\"" >> "$DC_s/1.cfg"
         ((n=n+1))
@@ -122,7 +123,6 @@ yad --plug=$KEY --form --tabnum=1 \
 --field=" :LBL" "2" \
 --field=":LBL" "2" \
 --field="<small>$(gettext "Speech Synthesizer (default espeak)")</small>":CB5 "$synth" \
---field="<small>$(gettext "Use this program for audio editing")</small>":CB5 "$edit" \
 --field="$(gettext "Check for Updates")":BTN "$DS/ifs/tls.sh check_updates" \
 --field="$(gettext "Topic Saved")":BTN "$DS/ifs/upld.sh 'vsd'" \
 --field="$(gettext "Feedback")":BTN "$DS/ifs/tls.sh 'fback'" \
@@ -144,19 +144,16 @@ ret=$?
 
     if [ $ret -eq 0 ]; then
         n=1; v=0
-        while [ $n -le 21 ]; do
+        while [ $n -le 20 ]; do
             val=$(cut -d "|" -f$n < "$cnf1")
             if [ -n "$val" ]; then
             sed -i "s/${sets[$v]}=.*/${sets[$v]}=\"$val\"/g" "$DC_s/1.cfg"
-            ((v=v+1))
-            fi
+            ((v=v+1)); fi
             ((n=n+1))
         done
 
         val=$(cut -d "|" -f22 < "$cnf1")
         sed -i "s/${sets[11]}=.*/${sets[11]}=\"$val\"/g" "$DC_s/1.cfg"
-        val=$(cut -d "|" -f23 < "$cnf1")
-        sed -i "s/${sets[12]}=.*/${sets[12]}=\"$val\"/g" "$DC_s/1.cfg"
         
         [ ! -d  "$HOME/.config/autostart" ] \
         && mkdir "$HOME/.config/autostart"

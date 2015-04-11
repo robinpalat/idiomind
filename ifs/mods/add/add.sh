@@ -356,7 +356,7 @@ function dlg_form_1() {
         --align=right --image="$img" \
         --window-icon="idiomind" \
         --width=420 --height=150 --borders=0 \
-        --field=" <small>$lgtl</small>":CE "$txt" \
+        --field=" <small>$lgtl</small>" "$txt" \
         --field=" $atopic:CB" \
         "$ltopic!$(gettext "New topic") *$e$tpcs" \
         --button="$(gettext "Image")":3 \
@@ -374,8 +374,8 @@ function dlg_form_2() {
         --align=right --image="$img" \
         --window-icon="idiomind" \
         --width=420 --height=180 --borders=0 \
-        --field=" <small>$lgtl</small>":CE "$txt" \
-        --field=" <small>${lgsl^}</small>":CE "$srce" \
+        --field=" <small>$lgtl</small>" "$txt" \
+        --field=" <small>${lgsl^}</small>" "$srce" \
         --field=" $atopic:CB" \
         "$ltopic!$(gettext "New topic") *$e$tpcs" \
         --button="$(gettext "Image")":3 \
@@ -419,7 +419,7 @@ function dlg_checklist_3() {
         --list --checklist --class=Idiomind --center --sticky \
         --text="<small>$info</small>" --title="$2" --no-headers \
         --width=$wth --height=$eht --borders=5 \
-        --button="$(gettext "Cancel")":1 --button=$(gettext "Arrange"):2 \
+        --button="$(gettext "Cancel")":1 --button=$(gettext "Reorder"):2 \
         --button="$(gettext "To New Topic")":"$DS/add.sh 'new_topic'" \
         --button=gtk-add:0 \
         --column="$(cat "$1" | wc -l)" \

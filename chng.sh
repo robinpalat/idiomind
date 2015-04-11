@@ -21,7 +21,9 @@ DT="/tmp/.idmtp1.$USER"
 DS="/usr/share/idiomind"
 DC_s="$HOME/.config/idiomind/s"
 source "$DS/ifs/mods/cmns.sh"
-source "$DC_s/1.cfg"
+loop=$(sed -n 9p < "$DC_s/1.cfg" \
+| grep -o loop=\"[^\"]* | grep -o '[^"]*$')
+nu='^[0-9]+$'; if ! [[ $loop =~ $nu ]]; then loop=10; fi
 
 if [ "$1" = chngi ]; then
     

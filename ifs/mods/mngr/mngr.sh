@@ -29,7 +29,7 @@ function position() {
         | awk '{print ((let++))"\nFALSE\n"$0}' \
         | yad --list --title=" " \
         --class=Idiomind --name=Idiomind \
-        --text="<sup>$(gettext "Move the item through the list.")</sup>\n  [ $pos ]  <i>\"$label\"</i>" \
+        --text="<sup>$(gettext "Moving the item through the list.")</sup>\n  [ $pos ]  <i>\"$label\"</i>" \
         --always-print-result --print-column=3 --separator="" \
         --window-icon="idiomind" --no-headers --on-top --center \
         --expand-column=3 --ellipsize=END \
@@ -44,6 +44,7 @@ function position() {
 
         if [ $ret -eq 0 ]; then
         
+            [ -z "${mv}" ] && exit
             > "$DC_tlt/0.cfg.mv"
             while read sec; do
 

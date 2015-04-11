@@ -19,64 +19,58 @@
 #  2015/02/27
 
 [ -z "$tpc" ] && exit 1
-
-lbls=(' ' 'Words' 'Sentences' 'Marks' 'Practice' 'News episodes' 'Saved epidodes')
-sets=(' ' 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
-in=(' ' 'in1' 'in2' 'in3' 'in4' 'in5' 'in6')
-
-if [ -f "$DC_s/1.cfg" ]; then
-source /dev/stdin <<<"$(tail -n 6 "$DC_s/1.cfg")"
-else > "$DC_s/1.cfg"; fi
-
-n=1
-while [ $n -lt 7 ]; do
-
-    val="${!sets[$n]}"
-    if [ "$val" != TRUE ] && [ "$val" != FALSE ];
-    then cfg=invalid; fi
-    
-    ((n=n+1))
-    
-done
-
-if [ "$cfg" = invalid ]; then
-
-    sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
-    'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' 'edit')
-    
-    n=0; > "$DC_s/1.cfg"
-    while [ $n -lt 19 ]; do
-        if [ $n -lt 8 ] || [ $n -gt 12 ]; then
-        val=FALSE; else val=""; fi
-        echo -e "${sets[$n]}=$val" >> "$DC_s/1.cfg"
-        ((n=n+1))
-    done
-fi
+lbls=('Words' 'Sentences' 'Marks' 'Practice' 'News episodes' 'Saved epidodes')
+sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
+'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' \
+'words' 'sentences' 'marks' 'practice' 'news' 'saved')
+in=('in1' 'in2' 'in3' 'in4' 'in5' 'in6')
+[ -n "$(< "$DC_s/1.cfg")" ] && cfg=1 || > "$DC_s/1.cfg"
 
 tlng="$DC_tlt/1.cfg"
 winx="$DC_tlt/3.cfg"
 sinx="$DC_tlt/4.cfg"
 if [ "$(wc -l < "$sinx")" -gt 0 ]; then
-in1=$(grep -Fxvf "$sinx" "$tlng"); else
-in1=$(< "$tlng"); fi
+in1="$(grep -Fxvf "$sinx" "$tlng")"; else
+in1="$(< "$tlng")"; fi
 if [ "$(wc -l < "$winx")" -gt 0 ]; then
-in2=$(grep -Fxvf "$winx" "$tlng"); else
-in2=$(< "$tlng"); fi
-in3=$(< "$DC_tlt/6.cfg")
+in2="$(grep -Fxvf "$winx" "$tlng")"; else
+in2="$(< "$tlng")"; fi
+in3="$(< "$DC_tlt/6.cfg")"
 cd "$DC_tlt/practice"
-in4=$(sed '/^$/d' < w6 | sort | uniq)
-in5=$(tac "$DM_tl/Feeds/.conf/1.cfg" | sed '/^$/d')
-in6=$(tac "$DM_tl/Feeds/.conf/2.cfg" | sed '/^$/d')
+in4="$(sed '/^$/d' < w6 | sort | uniq)"
+in5="$(tac "$DM_tl/Feeds/.conf/1.cfg" | sed '/^$/d')"
+in6="$(tac "$DM_tl/Feeds/.conf/2.cfg" | sed '/^$/d')"
 [ ! -d "$DT" ] && mkdir "$DT"; cd "$DT"
 
+if [ "$cfg" = 1 ]; then
+
+    n=12
+    while [[ $n -lt 18 ]]; do
+        get="${sets[$n]}"
+        val=$(sed -n $((n+1))p < "$DC_s/1.cfg" \
+        | grep -o "$get"=\"[^\"]* | grep -o '[^"]*$')
+        declare "${sets[$n]}"="$val"
+        ((n=n+1))
+    done
+    
+else
+    n=0
+    while [ $n -lt 19 ]; do
+        if [ $n -lt 8 ] || [ $n -gt 12 ]; then
+        val="FALSE"; else val=" "; fi
+        echo -e "${sets[$n]}=\"$val\"" >> "$DC_s/1.cfg"
+        ((n=n+1))
+    done
+fi
+
 function setting_1() {
-    n=1
-    while [ $n -le 6 ]; do
-            arr="in$n"
+    n=0; 
+    while [ $n -le 5 ]; do
+            arr="in$((n+1))"
             [[ -z ${!arr} ]] && echo "$DS/images/addi.png" \
             || echo "$DS/images/add.png"
         echo "  <span font_desc='Arial 11'>$(gettext "${lbls[$n]}")</span><i></i>"
-        echo "${!sets[$n]}"
+        echo "${!sets[$((n+12))]}"
         let n++
     done
 }
@@ -108,12 +102,17 @@ ret=$?
 
 if [ "$ret" -eq 0 ]; then
 
-    cd "$DT"; > ./index.m3u; n=1
-    while [ $n -le 6 ]; do
-        val=$(sed -n "$n"p < "$slct" | cut -d "|" -f3)
-        sed -i "s/${sets[$n]}=.*/${sets[$n]}=$val/g" "$DC_s/1.cfg"
+    cd "$DT"; > ./index.m3u; n=12
+    
+    while [ $n -lt 19 ]; do
+
+        val=$(sed -n $((n-11))p < "$slct" | cut -d "|" -f3)
+        [ -n "$val" ] && sed -i "s/${sets[$n]}=.*/${sets[$n]}=\"$val\"/g" \
+        "$DC_s/1.cfg"
+
         if [ "$val" = TRUE ]; then
-            [ -n "${!in[$n]}" ] && echo "${!in[$n]}" >> ./index.m3u
+            [ -n "${!in[$((n-12))]}" ] && \
+            echo "${!in[$((n-12))]}" >> ./index.m3u
         fi
         ((n=n+1))
     done
