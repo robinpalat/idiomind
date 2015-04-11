@@ -19,19 +19,27 @@
 #  2015/02/27
 
 function position() {
-            
+
         item="$(sed -n "$2"p "$3")"
+        pos=$(($(wc -l < "$3")-$2))
         source "$DS/ifs/mods/cmns.sh"
-        items=$(tac "$DC_tlt/0.cfg" | cut -c 1-90 | tr "\\n" '!' | sed 's/!\+$//g')
-        mv="$(yad --form --title=" " --separator="" \
-        --class=Idiomind --name=Idiomind --print-all \
-        --text="$(gettext "Move the item through the list")" \
-        --always-print-result --separator="\n" \
-        --window-icon="idiomind" --on-top --center \
-        --width=600 --height=150 --borders=5 \
-        --field="":CB " !$items" \
+        [ $(wc -c <<<"$item") -gt 80 ] && label="${item:0:80}..." \
+        || label="$item"
+        mv="$(tac "$DC_tlt/0.cfg" | grep -vxF "$item" \
+        | awk '{print ((let++))"\nFALSE\n"$0}' \
+        | yad --list --title=" " \
+        --class=Idiomind --name=Idiomind \
+        --text="<sup>$(gettext "Move the item through the list.")</sup>\n  [ $pos ]  <i>\"$label\"</i>" \
+        --always-print-result --print-column=3 --separator="" \
+        --window-icon="idiomind" --no-headers --on-top --center \
+        --expand-column=3 --ellipsize=END \
+        --width=600 --height=500 --borders=5 \
+        --column="":NUM \
+        --column="":RD \
+        --column="":TEXT \
         --button="$(gettext "Cancel")":2 \
         --button="$(gettext "Save")":0)"
+
         ret=$?
 
         if [ $ret -eq 0 ]; then
@@ -39,13 +47,13 @@ function position() {
             > "$DC_tlt/0.cfg.mv"
             while read sec; do
 
-                if [ -n "$sec" ] && [ "$sec" = "${item}" ]; then
-                    continue
-                    
-                elif [ -n "${mv}" ] && [ "$sec" = "${mv}" ]; then
+                if [ "$sec" = "${mv}" ]; then
                     echo -e "$mv" >> "$DC_tlt/0.cfg.mv"
                     echo -e "$item" >> "$DC_tlt/0.cfg.mv"
-
+                    
+                elif [ "$sec" = "${item}" ]; then
+                    continue
+ 
                 else echo "$sec" >> "$DC_tlt/0.cfg.mv"; fi
                 
             done < "$DC_tlt/0.cfg"
@@ -72,12 +80,13 @@ function position() {
 
 function dlg_form_1() {
     
-        yad --form --wrap --center --name=Idiomind --on-top \
-        --width=$wth --height=$eht --always-print-result \
-        --borders=10 --columns=2 --align=center --class=Idiomind \
-        --buttons-layout=end --title=" $trgt" --separator="\n" \
-        --fontname="Arial" --scroll --window-icon="idiomind" \
-        --text-align=center --selectable-labels \
+        yad --form --title="$trgt" \
+        --name=Idiomind --class=Idiomind \
+        --always-print-result --separator="\n" --selectable-labels \
+        --align=center --text-align=center \
+        --window-icon="idiomind" --buttons-layout=end --scroll \
+        --columns=2 --center --on-top \
+        --width=$wth --height=$eht --borders=10 \
         --field="<small>$lgtl</small>":RO "$trgt" \
         --field="<small>$lgsl</small>" "$srce" \
         --field="<small>$(gettext "Topic") </small>":CB "$tpc!$tpcs" \
@@ -99,11 +108,12 @@ function dlg_form_1() {
 
 function dlg_form_2() {
         
-        yad --form --wrap --center --name=Idiomind --on-top \
-        --width=$wth --height=$eht --always-print-result \
-        --separator="\\n" --borders=10 --align=center --align=center \
-        --buttons-layout=end --title="$trgt" --fontname="Arial" \
-        --selectable-labels --window-icon="idiomind" --class=Idiomind \
+        yad --form --title="$trgt" \
+        --name=Idiomind --class=Idiomind \
+        --always-print-result --separator="\n" --selectable-labels \
+        --window-icon="idiomind" --center --on-top --align=center \
+        --buttons-layout=end \
+        --width=$wth --height=$eht --borders=10 \
         --field="$(gettext "Mark") "":CHK" "$mark" \
         --field="<small>$lgtl</small>":TXT "$trgt" \
         --field="<small>$lgsl</small>":TXT "$srce" \

@@ -356,7 +356,7 @@ function dlg_form_1() {
         --align=right --image="$img" \
         --window-icon="idiomind" \
         --width=420 --height=150 --borders=0 \
-        --field=" <small>$lgtl</small>" "$txt" \
+        --field=" <small>$lgtl</small>":CE "$txt" \
         --field=" $atopic:CB" \
         "$ltopic!$(gettext "New topic") *$e$tpcs" \
         --button="$(gettext "Image")":3 \
@@ -374,8 +374,8 @@ function dlg_form_2() {
         --align=right --image="$img" \
         --window-icon="idiomind" \
         --width=420 --height=180 --borders=0 \
-        --field=" <small>$lgtl</small>" "$txt" \
-        --field=" <small>${lgsl^}</small>" "$srce" \
+        --field=" <small>$lgtl</small>":CE "$txt" \
+        --field=" <small>${lgsl^}</small>":CE "$srce" \
         --field=" $atopic:CB" \
         "$ltopic!$(gettext "New topic") *$e$tpcs" \
         --button="$(gettext "Image")":3 \
