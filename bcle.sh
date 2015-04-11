@@ -22,25 +22,24 @@ source /usr/share/idiomind/ifs/c.conf
 [[ -z "$tpc" && -d "$DT" ]] && exit 1
 repeat=$(sed -n 7p < "$DC_s/1.cfg" \
 | grep -o repeat=\"[^\"]* | grep -o '[^"]*$')
-
 cd "$DT"
 
 if [ -n "$(cat ./index.m3u)" ] && [ $(wc -l < ./index.m3u) -gt 0 ]; then
     if [ "$repeat" = "TRUE" ]; then
         while [ 1 ]; do
-            ind=$(wc -l < ./index.m3u)
-            while [ 1 -le $ind ]; do
+            index=$(wc -l < ./index.m3u)
+            while [ 1 -le $index ]; do
                 "$DS/chng.sh" chngi "$ind"
-                let ind--
+                let index--
             done
             sleep 15
         done
     
     else
-        ind=$(wc -l < ./index.m3u)
-        while [ 1 -le $ind ]; do
+        index=$(wc -l < ./index.m3u)
+        while [ 1 -le $index ]; do
         "$DS/chng.sh" chngi "$ind"
-            let ind--
+            let index--
         done
         rm -fr "$DT/.p_"; exit 0
     fi

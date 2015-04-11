@@ -10,34 +10,34 @@ source "$DS/ifs/mods/cmns.sh"
 #| sed -e "s/[[:space:]]\+/ /g" | sed 's/\&/&amp;/g' \
 #| sed 's/^ *//; s/ *$//; /^$/d' | tr -s ':')"; fi
 
-play() {
+#play() {
 
-    killall play
-    DCP="$DM_tl/Feeds/.conf"
-    [ -f "$DCP/0.cfg" ] && st3=$(sed -n 2p "$DCP/0.cfg") || st3=FALSE
-    [ $st3 = FALSE ] && fs="" || fs='-fs'
+    #killall play
+    #DCP="$DM_tl/Feeds/.conf"
+    #[ -f "$DCP/0.cfg" ] && st3=$(sed -n 2p "$DCP/0.cfg") || st3=FALSE
+    #[ $st3 = FALSE ] && fs="" || fs='-fs'
     
-    if [ -f "$DM_tl/Feeds/cache/$2.mp3" ]; then
-        play "$DM_tl/Feeds/cache/$2.mp3" & exit
-    elif [ -f "$DM_tl/Feeds/cache/$2.ogg" ]; then
-        play "$DM_tl/Feeds/cache/$2.ogg" & exit
-    elif [ -f "$DM_tl/Feeds/cache/$2.mp4" ]; then
-        mplayer "$fs" "$DM_tl/Feeds/cache/$2.mp4" \
-        >/dev/null 2>&1 & exit
-    elif [ -f "$DM_tl/Feeds/cache/$2.m4v" ]; then
-        mplayer "$fs" "$DM_tl/Feeds/cache/$2.m4v" \
-        >/dev/null 2>&1 & exit
-    elif [ -f "$DM_tl/Feeds/cache/$2.avi" ]; then
-        mplayer "$fs" "$DM_tl/Feeds/cache/$2.avi" \
-        >/dev/null 2>&1 & exit
-    elif [ -f "$DM_tl/Feeds/cache/$2.flv" ]; then
-        mplayer "$fs" "$DM_tl/Feeds/cache/$2.flv" \
-        >/dev/null 2>&1 & exit
-    elif [ -f "$DM_tl/Feeds/cache/$2.mov" ]; then
-        mplayer "$fs" "$DM_tl/Feeds/cache/$2.mov" \
-        >/dev/null 2>&1 & exit
-    fi
-}
+    #if [ -f "$DM_tl/Feeds/cache/$2.mp3" ]; then
+        #play "$DM_tl/Feeds/cache/$2.mp3" & exit
+    #elif [ -f "$DM_tl/Feeds/cache/$2.ogg" ]; then
+        #play "$DM_tl/Feeds/cache/$2.ogg" & exit
+    #elif [ -f "$DM_tl/Feeds/cache/$2.mp4" ]; then
+        #mplayer "$fs" "$DM_tl/Feeds/cache/$2.mp4" \
+        #>/dev/null 2>&1 & exit
+    #elif [ -f "$DM_tl/Feeds/cache/$2.m4v" ]; then
+        #mplayer "$fs" "$DM_tl/Feeds/cache/$2.m4v" \
+        #>/dev/null 2>&1 & exit
+    #elif [ -f "$DM_tl/Feeds/cache/$2.avi" ]; then
+        #mplayer "$fs" "$DM_tl/Feeds/cache/$2.avi" \
+        #>/dev/null 2>&1 & exit
+    #elif [ -f "$DM_tl/Feeds/cache/$2.flv" ]; then
+        #mplayer "$fs" "$DM_tl/Feeds/cache/$2.flv" \
+        #>/dev/null 2>&1 & exit
+    #elif [ -f "$DM_tl/Feeds/cache/$2.mov" ]; then
+        #mplayer "$fs" "$DM_tl/Feeds/cache/$2.mov" \
+        #>/dev/null 2>&1 & exit
+    #fi
+#}
 
 set_channel() {
     
@@ -101,126 +101,147 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
     feed="$2"
     num="$3"
     DCP="$DM_tl/Feeds/.conf"
-    
-    xml="$(xsltproc - "$feed" <<< "$tmpl1" 2> /dev/null)"
-    items1="$(echo "$xml" | tr '\n' ' ' | tr -s '[:space:]' \
-    | sed 's/EOL/\n/g' | head -n 1 | sed -r 's|-\!-|\n|g')"
 
-    xml="$(xsltproc - "$feed" <<< "$tmpl2" 2> /dev/null)"
-    items2="$(echo "$xml" | tr '\n' ' ' | tr -s [:space:] \
-    | sed 's/EOL/\n/g' | head -n 1 | sed -r 's|-\!-|\n|g')"
-    
-    xml="$(xsltproc - "$feed" <<< "$tmpl3" 2> /dev/null)"
-    items3="$(echo "$xml" | tr '\n' ' ' | tr -s [:space:] \
-    | sed 's/EOL/\n/g' | head -n 1  | sed -r 's|-\!-|\n|g')"
 
+    #///////////////////////////////////////////////////////////////////
     fchannel() {
         
         n=1;
-        while read -r find; do
+        while read -r get; do
 
-            if [ $(wc -w <<< "${find}") -ge 1 ] && [ -z "$name" ]; then
-                name="$find"
+            if [ $(wc -w <<< "${get}") -ge 1 ] && [ -z "$name" ]; then
+                name="$get"
                 n=2; fi
                 
-            if [ -n "$(grep 'http:/' <<< "${find}")" ] && [ -z "$link" ]; then
-                link="$find"
+            if [ -n "$(grep 'http:/' <<< "${get}")" ] && [ -z "$link" ]; then
+                link="$get"
                 n=3; fi
                 
-            if [ -n "$(grep -E '.jpeg|.jpg|.png' <<< "${find}")" ] && [ -z "$logo" ]; then
-                logo="$find"; fi
+            if [ -n "$(grep -E '.jpeg|.jpg|.png' <<< "${get}")" ] && [ -z "$logo" ]; then
+                logo="$get"; fi
                 
             let n++
         done <<< "$items1"
     }
    
+   # podcast
+   #///////////////////////////////////////////////////////////////////
     ftype1() {
         
         n=1
-        while read -r find; do
+        while read -r get; do
             [[ $n = 3 || $n = 5 || $n = 6 ]] && continue
-            if ([ -n "$(grep -o -E '\.mp3|\.mp4|\.ogg|\.avi|\.m4v|\.mov|\.flv' <<< "${find}")" ] && [ -z "$media" ]); then
+            if ([ -n "$(grep -o -E '\.mp3|\.mp4|\.ogg|\.avi|\.m4v|\.mov|\.flv|.pdf' <<< "${get}")" ] && [ -z "$media" ]); then
 
             media="$n"; type=1; break; fi
             let n++
         done <<< "$items2"
         
         n=3
-        while read -r find; do
-            if ([ $(wc -w <<< "${find}") -ge 1 ] && [ $(wc -w <<< "${find}") -le 180 ] && [ -z "$title" ]); then
+        while read -r get; do
+            if ([ $(wc -w <<< "${get}") -ge 1 ] && [ $(wc -w <<< "${get}") -le 180 ] && [ -z "$title" ]); then
             title="$n"; break; fi
             let n++
         done <<< "$items2"
 
         n=5
-        while read -r find; do
-            if ([ $(wc -w <<< "${find}") -ge 1 ] && [ -z "$summ" ]); then
+        while read -r get; do
+            if ([ $(wc -w <<< "${get}") -ge 1 ] && [ -z "$summ" ]); then
             summ="$n"; break; fi
             let n++
         done <<< "$items2"
     }
     
+       
+   # rss with images o others
+   #///////////////////////////////////////////////////////////////////
     ftype2() {
 
         n=1
-        while read -r find; do
-            if ([ -n "$(grep -o -E '\.jpg|\.jpeg|\.png' <<< "${find}")" ] && [ -z "$image" ]); then
+        while read -r get; do
+            if ([ -n "$(grep -o -E '\.jpg|\.jpeg|\.png' <<< "${get}")" ] && [ -z "$image" ]); then
             image="$n"; type=2; break ; fi
             let n++
         done <<< "$items3"
         
         n=4
-        while read -r find; do
-            if ([ $(wc -w <<< "${find}") -ge 1 ] && [ -z "$title" ]); then
+        while read -r get; do
+            if ([ $(wc -w <<< "${get}") -ge 1 ] && [ -z "$title" ]); then
             title="$n"; break ; fi
             let n++
         done <<< "$items3"
         
         n=6
-        while read -r find; do
-            if ([ $(wc -w <<< "${find}") -ge 1 ] && [ -z "$summ" ]); then
+        while read -r get; do
+            if ([ $(wc -w <<< "${get}") -ge 1 ] && [ -z "$summ" ]); then
                 summ="$n"; break ; fi
             let n++
         done <<< "$items3"
     }
 
-    find_images() {
+   
+   # rss tipical
+   #///////////////////////////////////////////////////////////////////
+    get_images() {
 
         n=1
-        while read -r find; do
-            if ([ -n "$(grep -E '\.jpg|\.jpeg|.png' <<< "${find}")" ] && [ -z "$image" ]); then
+        while read -r get; do
+            if ([ -n "$(grep -E '\.jpg|\.jpeg|.png' <<< "${get}")" ] && [ -z "$image" ]); then
                 type=2
                 image="$n"; break; fi
-            if ([ -n "$(grep -o 'media:thumbnail url="[^"]*' | grep -o '[^"]*$')" <<< "${find}" ] && [ -z "$image" ]); then
+            if ([ -n "$(grep -o 'media:thumbnail url="[^"]*' | grep -o '[^"]*$')" <<< "${get}" ] && [ -z "$image" ]); then
                 image="$n"; break; fi
                 type=2
-            if ([ -n "$(grep -o 'img src="[^"]*' | grep -o '[^"]*$')" <<< "${find}" ] && [ -z "$image" ]); then
+            if ([ -n "$(grep -o 'img src="[^"]*' | grep -o '[^"]*$')" <<< "${get}" ] && [ -z "$image" ]); then
                 type=2
                 image="$n"; break; fi
             let n++
         done <<< "$items3"
     }
     
-    find_summ() {
+    
+    #===================================================================
+    get_summ() {
 
         n=1
-        while read -r find; do
-            if [ $(wc -w <<< "${find}") -ge 1 ]; then
+        while read -r get; do
+            if [ $(wc -w <<< "${get}") -ge 1 ]; then
                 summ="$n"; break; fi
             let n++
         done <<< "$items3"
     }
     
     fchannel
+
+    xml="$(xsltproc - "$feed" <<< "$tmpl1" 2> /dev/null)"
+    items1="$(echo "$xml" | tr '\n' ' ' | tr -s '[:space:]' \
+    | sed 's/EOL/\n/g' | head -n 1 | sed -r 's|-\!-|\n|g')"
+
     ftype1
+
     if [ -z "$type" ]; then
+    
+        xml="$(xsltproc - "$feed" <<< "$tmpl2" 2> /dev/null)"
+        items2="$(echo "$xml" | tr '\n' ' ' | tr -s [:space:] \
+        | sed 's/EOL/\n/g' | head -n 1 | sed -r 's|-\!-|\n|g')"
+    
         ftype2
+        
         if [ -z $image ]; then
-        find_images
+        
+            xml="$(xsltproc - "$feed" <<< "$tmpl3" 2> /dev/null)"
+            items3="$(echo "$xml" | tr '\n' ' ' | tr -s [:space:] \
+            | sed 's/EOL/\n/g' | head -n 1  | sed -r 's|-\!-|\n|g')"
+            
+            get_images
+        
         fi
+        
         if [ -z $summ ]; then
-            find_summ
+        
+            get_summ
         fi
+        
     fi
 
     if [[ -n "$title" && -n "$summ" && -z "$image" && -z "$media" ]]; then
@@ -304,68 +325,68 @@ check() {
     [ -f "$DT/cpt.lock" ] && rm -f "$DT/cpt.lock" & exit
 }
 
-sync() {
+#sync() {
    
-    DCP="$DM_tl/Feeds/.conf"
-    cfg="$DM_tl/Feeds/.conf/0.cfg"
-    path="$(sed -n 3p < "$cfg" | grep -o 'path="[^"]*' | grep -o '[^"]*$')"
-    #source "$DCP/0.cfg"
+    #DCP="$DM_tl/Feeds/.conf"
+    #cfg="$DM_tl/Feeds/.conf/0.cfg"
+    #path="$(sed -n 3p < "$cfg" | grep -o 'path="[^"]*' | grep -o '[^"]*$')"
+    ##source "$DCP/0.cfg"
     
-    if  [ -f "$DT/l_sync" ] && [ "$2" != A ]; then
+    #if  [ -f "$DT/l_sync" ] && [ "$2" != A ]; then
 
-        msg_2 "$(gettext "A process is already running!")\n" info "OK" "gtk-stop" "Feeds"
-        e=$(echo $?)
+        #msg_2 "$(gettext "A process is already running!")\n" info "OK" "gtk-stop" "Feeds"
+        #e=$(echo $?)
         
-            if [ $e -eq 1 ]; then
+            #if [ $e -eq 1 ]; then
 
-                killall rsync
-                [ -n "$(ps -A | pgrep -f "rsync")" ] && killall rsync
-                [ -f "$DT/cp.lock" ] && rm -f "$DT/cp.lock"
-                rm -f "$DT/l_sync"
-                killall tls.sh
-                exit 1
-            fi
+                #killall rsync
+                #[ -n "$(ps -A | pgrep -f "rsync")" ] && killall rsync
+                #[ -f "$DT/cp.lock" ] && rm -f "$DT/cp.lock"
+                #rm -f "$DT/l_sync"
+                #killall tls.sh
+                #exit 1
+            #fi
             
-    elif  [ -f "$DT/l_sync" ] && [ "$2" = A ]; then
+    #elif  [ -f "$DT/l_sync" ] && [ "$2" = A ]; then
     
-        exit 1
+        #exit 1
 
-    elif [ ! -d "$path" ] && [ "$2" != A ]; then
+    #elif [ ! -d "$path" ] && [ "$2" != A ]; then
         
-        msg " $(gettext "The directory to synchronization does not exist \n Exiting.")" \
-        dialog-warning & exit 1
+        #msg " $(gettext "The directory to synchronization does not exist \n Exiting.")" \
+        #dialog-warning & exit 1
     
-    elif  [ ! -d "$path" ] && [ "$2" = A ]; then
+    #elif  [ ! -d "$path" ] && [ "$2" = A ]; then
             
-        echo "Synchronization error. Missing path" >> "$DM_tl/Feeds/.conf/feed.err"
-        exit 1
+        #echo "Synchronization error. Missing path" >> "$DM_tl/Feeds/.conf/feed.err"
+        #exit 1
         
-    elif [ -d "$path" ]; then
+    #elif [ -d "$path" ]; then
         
-        #set -e
-        #set u pipefail
-        #IFS=$'\n\t'
-        [ ! -d "$path" ] && exit 1
+        ##set -e
+        ##set u pipefail
+        ##IFS=$'\n\t'
+        #[ ! -d "$path" ] && exit 1
     
-        [[ $2 != A ]] && (sleep 1 && notify-send -i idiomind \
-        "$(gettext "Synchronizing...")" " ")
-        touch "$DT/l_sync"; SYNCDIR="$path"
-        st1="$(cd "$SYNCDIR"; ls *.mp3 | wc -l)"
-        rsync -az -v --exclude="*.txt" --exclude="*.png" \
-        --exclude="*.html" --omit-dir-times --ignore-errors "$DM_tl/Feeds/cache/" "$SYNCDIR"
-        exit=$?
+        #[[ $2 != A ]] && (sleep 1 && notify-send -i idiomind \
+        #"$(gettext "Synchronizing...")" " ")
+        #touch "$DT/l_sync"; SYNCDIR="$path"
+        #st1="$(cd "$SYNCDIR"; ls *.mp3 | wc -l)"
+        #rsync -az -v --exclude="*.txt" --exclude="*.png" \
+        #--exclude="*.html" --omit-dir-times --ignore-errors "$DM_tl/Feeds/cache/" "$SYNCDIR"
+        #exit=$?
         
-        if [ $exit = 0 ] ; then
-            st2="$(cd "$SYNCDIR"; ls *.mp3 | wc -l)"
-            re=$((st2-st1))
-            notify-send -i idiomind "$(gettext "Complete synchronization")" "$re $(gettext "New episodes(s)")\n$st2 $(gettext "Total")" -t 8000
-        else
-            notify-send -i dialog-warning \
-            "$(gettext "Error while syncing")" " " -t 8000
-        fi
-    fi
-    [ -f "$DT/l_sync" ] && rm -f "$DT/l_sync"; exit
-}
+        #if [ $exit = 0 ] ; then
+            #st2="$(cd "$SYNCDIR"; ls *.mp3 | wc -l)"
+            #re=$((st2-st1))
+            #notify-send -i idiomind "$(gettext "Complete synchronization")" "$re $(gettext "New episodes(s)")\n$st2 $(gettext "Total")" -t 8000
+        #else
+            #notify-send -i dialog-warning \
+            #"$(gettext "Error while syncing")" " " -t 8000
+        #fi
+    #fi
+    #[ -f "$DT/l_sync" ] && rm -f "$DT/l_sync"; exit
+#}
 
 case "$1" in
     play)

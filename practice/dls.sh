@@ -46,9 +46,9 @@ score() {
         v=$((100*$s/$all))
         n=1; c=1
         while [[ $n -le 21 ]]; do
-                if [ "$v" -le "$c" ]; then
-                echo "$n" > .iconls; break; fi
-                ((c=c+5))
+            if [ "$v" -le "$c" ]; then
+            echo "$n" > .iconls; break; fi
+            ((c=c+5))
             let n++
         done
 
@@ -62,8 +62,8 @@ dialog1() {
     hint="$(iconv -c -f utf8 -t ascii <<<"$1" | tr -s "'" " ")"
     SE=$(yad --center --text-info --image="$IMAGE" "$info" --image-on-top \
     --fontname="Free Sans 15" --justify=fill --editable --wrap \
-    --buttons-layout=end --borders=5 --title=" " --margins=8 \
-    --text-align=left --height=420 --width=470 --name=Idiomind \
+    --buttons-layout=end --borders=2 --title=" " --margins=5 \
+    --text-align=left --height=420 --width=462 --name=Idiomind \
     --align=left --window-icon=idiomind --fore=4A4A4A --class=Idiomind \
     --button="$(gettext "Hint")":"/usr/share/idiomind/practice/hint.sh ${hint}" \
     --button="$listen":"play '$DM_tlt/$fname.mp3'" \
@@ -75,7 +75,7 @@ dialog2() {
     hint="$(iconv -c -f utf8 -t ascii <<<"$1" | tr -s "'" " ")"
     SE=$(yad --center --text-info --fore=4A4A4A --skip-taskbar \
     --fontname="Free Sans 15" --justify=fill --editable --wrap \
-    --buttons-layout=end --borders=5 --title=" " "$info" --margins=8 \
+    --buttons-layout=end --borders=4 --title=" " "$info" --margins=5 \
     --text-align=left --height=180 --width=470 --name=Idiomind \
     --align=left --window-icon=idiomind --image-on-top --class=Idiomind \
     --button="$(gettext "Hint")":"/usr/share/idiomind/practice/hint.sh ${hint}" \
@@ -98,7 +98,6 @@ check() {
 get_image_text() {
     
     WEN=$(echo "$1" | sed 's/^ *//; s/ *$//')
-    eyeD3 --write-images=$DT "$DM_tlt/$fname.mp3"
     echo "$WEN" | awk '{print tolower($0)}' > quote
     }
 
@@ -136,41 +135,38 @@ result() {
     if [[ $porc -ge 70 ]]; then
         echo "$WEN" >> ok.s
         easy=$(($easy+1))
-        clr=3AB452
+        color=3AB452
         
     elif [[ $porc -ge 50 ]]; then
         ling=$(($ling+1))
-        clr=E5801D
+        color=E5801D
         
     else
         hard=$(($hard+1))
-        clr=D11B5D
+        color=D11B5D
     fi
     
-    prc="<span background='#$clr'><span color='#FFFFFF'> <b>$porc%</b> </span></span>"
+    prc="<span background='#$color'><span color='#FFFFFF'> <b>$porc%</b> </span></span>"
     wes="$(cat quote)"
     rm allc quote
     }
-    
-    
+
 n=1
 while [[ $n -le $(wc -l < lsin1) ]]; do
 
     trgt="$(sed -n "$n"p lsin1)"
     fname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
     
-    if [[ $n = 1 ]]; then
+    if [[ $n = 1 ]] && [ ! -f "$DM_tlt/words/images/$fname.jpg" ]; then
     info="--text=<sup><tt> $(gettext "Try to write the phrase you're listening to")...</tt></sup>"
     else info=""; fi
     
     if [ -f "$DM_tlt/$fname.mp3" ]; then
-        if [ -f "$DT/ILLUSTRATION.jpeg" ]; then
-            rm -f "$DT/ILLUSTRATION.jpeg"; fi
-        
+
         get_image_text "$trgt"
 
-        if ( [ -f "$DT/ILLUSTRATION.jpeg" ] && [ $n != 1 ] ); then
-            IMAGE="$DT/ILLUSTRATION.jpeg"
+        if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
+            IMAGE="$DM_tlt/words/images/$fname.jpg"
             (sleep 0.5 && play "$DM_tlt/$fname.mp3") &
             dialog1 "$trgt"
         else

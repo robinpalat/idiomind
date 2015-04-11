@@ -140,7 +140,7 @@ elif [ "$1" != chngi ]; then
             else
                 "$DM_tl/$s/tpc.sh" & exit
             fi
-    else
-        exit 1
     fi
+    
+    exit
 fi

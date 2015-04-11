@@ -18,13 +18,12 @@
 #  
 #--field="$(gettext "Quick Help")":BTN "$DS/ifs/tls.sh help"
 source /usr/share/idiomind/ifs/c.conf
-Encoding=UTF-8
+[ ! -d "$DC" ] && "$DS/ifs/1u.sh" && exit
 wth=520
 eht=400
 info1="$(gettext "Do you want to change the interface language program?")"
 info2="$(gettext "You want to change the language setting to learn?")"
 cd "$DS/addons"
-
 desktopfile="[Desktop Entry]
 Name=Idiomind
 GenericName=Learning Tool
@@ -34,21 +33,14 @@ Terminal=false
 Type=Application
 Icon=idiomind
 StartupWMClass=Idiomind"
-
 lang=('English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian')
-
 sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
 'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' \
 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
-
 [ -n "$(< "$DC_s/1.cfg")" ] && cfg=1 || > "$DC_s/1.cfg"
 c=$(echo $(($RANDOM%100000))); KEY=$c
 cnf1=$(mktemp "$DT"/cnf1.XXXX)
-
-if [ ! -d "$DC" ]; then
-    "$DS/ifs/1u.sh" & exit
-fi
 
 function confirm() {
     
@@ -193,8 +185,7 @@ ret=$?
             fi
             ((n=n+1))
         done
-        
-        rm -f "$cnf1" "$DT/.lc" & exit 1
-    else
-        rm -f "$cnf1" "$DT/.lc" & exit 1
     fi
+    
+    rm -f "$cnf1" "$DT/.lc"
+    exit

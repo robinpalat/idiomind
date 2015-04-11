@@ -31,9 +31,9 @@ score() {
         v=$((100*$s/$all))
         n=1; c=1
         while [[ $n -le 21 ]]; do
-                if [ "$v" -le "$c" ]; then
-                echo "$n" > .iconi; break; fi
-                ((c=c+5))
+            if [ "$v" -le "$c" ]; then
+            echo "$n" > .iconi; break; fi
+            ((c=c+5))
             let n++
         done
         

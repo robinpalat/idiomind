@@ -127,31 +127,18 @@ mediatype () {
     elif echo "${1}" | grep -o ".png"; then ex=png; tp=txt
     elif echo "${1}" | grep -o ".pdf"; then ex=pdf; tp=txt
     elif [ -n "${1}" ]; then ex=pdf; tp=others
-    else
-        printf "err.FE2($n).err\n" >> "$DC_s/8.cfg"
-        echo "Could not add some podcasts.\n$FEED" >> "$DM_tl/Feeds/.conf/feed.err"
-        continue; fi
+    else 
+        if [ "$ntype" =1 ]; then
+            printf "err.FE2($n).err\n" >> "$DC_s/8.cfg"
+            echo "Could not add some podcasts.\n$FEED" >> "$DM_tl/Feeds/.conf/feed.err"
+            continue; fi
+    fi
 }
 
-get_images_main () {
-    
-    cd "$DT_r"
-    
-    echo "$sumlink" | grep -o 'img src="[^"]*' | grep -o '[^"]*$' | sed -n 1p
 
-    #if ls | grep '.jpeg'; then img="$(ls | grep '.jpeg')"
-    #elif ls | grep '.png'; then img="$(ls | grep '.png')"
-    #elif ls | grep '.jpg'; then img="$(ls | grep '.jpg')"
-    #fi
-        
-    #if [ -f "$DT_r/$img" ]; then
-    
-        #img="$DT_r/$img"
-}
+mkhtml() {
 
-mkhtml () {
-
-videoblock="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
+video="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
 <link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwr.css\">
 <video width=640 height=380 controls>
 <source src=\"$fname.$ex\" type=\"video/mp4\">
@@ -159,7 +146,7 @@ Your browser does not support the video tag.</video><br><br>
 <div class=\"title\"><h3>$title</h3></div><br>
 <div class=\"summary\">$summary<br><br></div>"
 
-audioblock="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
+audio="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
 <link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwr.css\">
 <br><div class=\"title\"><h2>$title</h2></div><br>
 <div class=\"summary\"><audio controls><br>
@@ -167,7 +154,7 @@ audioblock="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8
 Your browser does not support the audio tag.</audio><br><br>
 $summary<br><br></div>"
 
-textblock="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
+text="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
 <link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwr.css\">
 <body><br><div class=\"title\"><h2>$title</h2></div><br>
 <div class=\"summary\"><div class=\"image\">
@@ -180,61 +167,130 @@ $summary<br><br></div>
         t = mp4
         elif [ $ex = avi ]; then
         t = avi; fi
-        echo -e "$videoblock" > "$DMC/$fname.html"
+        echo -e "$video" > "$DMC/$fname.html"
 
     elif [ "$tp" = aud ]; then
-        echo -e "$audioblock" > "$DMC/$fname.html"
+        echo -e "$audio" > "$DMC/$fname.html"
 
     elif [ "$tp" = txt ]; then
-        echo -e "textblock" > "$DMC/$fname.html"
+        echo -e "text" > "$DMC/$fname.html"
     fi
 }
 
-get_images () {
 
-    if [ "$tp" = aud ]; then
+get_media() {
+    
+    cd "$DT_r"
+    
+    #if [ "$ntype" = 1 ]; then
+    
+        #enclosure_url=$(curl -s -I -L -w %"{url_effective}" \
+        #--url "$enclosure" | tail -n 1)
+                        
+        #mediatype "$enclosure_url"
+                            
+        #if [ ! -f "$DMC/$fname.$ex" ]; then
+            #cd "$DT_r"; wget -q -c -T 30 -O "media.$ex" "$enclosure_url"
+        #else
+            #cd "$DT_r"; mv -f "$DMC/$fname.$ex" "media.$ex"
+        #fi
         
-        cd "$DT_r"; p=TRUE; rm -f *.jpeg *.jpg
+        #mv -f "media.$ex" "$DMC/$fname.$ex"
         
-        eyeD3 --write-images="$DT_r" "media.$ex"
         
-        if ls | grep '.jpeg'; then img="$(ls | grep '.jpeg')"
-        else img="$(ls | grep '.jpg')"; fi
         
-        if [ ! -f "$DT_r/$img" ]; then
+    #elif [ "$ntype" = 2 ]; then
+    
+        #p=TRUE
+        #if [ -n "$enclosure" ]; then
+            #url=$(curl -s -I -L -w %"{url_effective}" \
+            #--url "$enclosure" | tail -n 1)
+        #else
+            #imgemb=`sed -n 1p <<<"$sumlink" | grep -o 'img src="[^"]*' | grep -o '[^"]*$'`
+            
+            #url=$(curl -s -I -L -w %"{url_effective}" \
+            #--url "$imgemb" | tail -n 1)
+        #fi 
+            
+        #mediatype "$url"
         
-            wget -q -O- "$FEED" | grep -o '<itunes:image href="[^"]*' \
-            | grep -o '[^"]*$' | xargs wget -c
+        #wget -q -c -T 30 -O "media.$ex" "$url"
+        
+        ##echo "$sumlink" >> /home/robin/Desktop/ff
+        
+        
+        #if [ "media.$ex" ]; then
+            #/usr/bin/convert "media.$ex" "$DMC/$fname.jpg"
+        #else
+            #url="$(sed -n 1p <<<"$summary" | grep -o 'img src="[^"]*' | grep -o '[^"]*$')"
+            #url=$(curl -s -I -L -w %"{url_effective}" --url "$url" | tail -n 1)
+            #mediatype "$url"
+            ##echo "media.$ex  $url" >> /home/robin/Desktop/ff
+            #wget -q -c -T 30 -O "media.$ex" "$url"
+            ##echo "media.$ex  $url" >> /home/robin/Desktop/ff
+        #fi
+        
+        
+        #if [ "media.$ex" ]; then
+            #/usr/bin/convert "media.$ex" "$DMC/$fname.jpg"
+        #else
+            #cp /usr/share/idiomind/addons/Feeds/images/audio.png "$DMC/$fname.jpg"
+            #p=""
+        #fi
+        p="TRUE"
+        cp /usr/share/idiomind/addons/Feeds/images/audio.png "$DT_r/$img"
+        
+    #fi
+}
+
+
+get_thumbls () {
+
+    # ------------------------------------------------------------------
+
+        if [ "$tp" = aud ]; then
+            
+            cd "$DT_r"; p=TRUE; rm -f *.jpeg *.jpg
+            
+            eyeD3 --write-images="$DT_r" "media.$ex"
             
             if ls | grep '.jpeg'; then img="$(ls | grep '.jpeg')"
-            elif ls | grep '.png'; then img="$(ls | grep '.png')"
             else img="$(ls | grep '.jpg')"; fi
+            
+            if [ ! -f "$DT_r/$img" ]; then
+            
+                wget -q -O- "$FEED" | grep -o '<itunes:image href="[^"]*' \
+                | grep -o '[^"]*$' | xargs wget -c
+                
+                if ls | grep '.jpeg'; then img="$(ls | grep '.jpeg')"
+                elif ls | grep '.png'; then img="$(ls | grep '.png')"
+                else img="$(ls | grep '.jpg')"; fi
+            fi
+            
+            if [ ! -f "$DT_r/$img" ]; then
+            cp -f "$DSP/images/audio.png" "$DMC/$fname.png"
+            p=""; fi
+
+        elif [ "$tp" = vid ]; then
+            
+            cd "$DT_r"; p=TRUE; rm -f *.jpeg *.jpg
+            mplayer -ss 60 -nosound -noconsolecontrols \
+            -vo jpeg -frames 3 "media.$ex" >/dev/null
+
+            if ls | grep '.jpeg'; then img="$(ls | grep '.jpeg' | head -n1)"
+            else img="$(ls | grep '.jpg' | head -n1)"; fi
+            
+            if [ ! -f "$DT_r/$img" ]; then
+            cp -f "$DSP/images/video.png" "$DMC/$fname.png"
+            p=""; fi
+            
+        elif [ "$tp" = txt ]; then
+        
+            cd "$DT_r"; p=""
+        
+            img="media.$ex"
         fi
         
-        if [ ! -f "$DT_r/$img" ]; then
-        cp -f "$DSP/images/audio.png" "$DMC/$fname.png"
-        p=""; fi
-
-    elif [ "$tp" = vid ]; then
-        
-        cd "$DT_r"; p=TRUE; rm -f *.jpeg *.jpg
-        mplayer -ss 60 -nosound -noconsolecontrols \
-        -vo jpeg -frames 3 "media.$ex" >/dev/null
-
-        if ls | grep '.jpeg'; then img="$(ls | grep '.jpeg' | head -n1)"
-        else img="$(ls | grep '.jpg' | head -n1)"; fi
-        
-        if [ ! -f "$DT_r/$img" ]; then
-        cp -f "$DSP/images/video.png" "$DMC/$fname.png"
-        p=""; fi
-        
-    elif [ "$tp" = txt ]; then
-    
-        cd "$DT_r"; p=TRUE
-    
-        img="media.$ex"
-    fi
-    
     if [ "$p" = TRUE ] && [ -f "$DT_r/$img" ]; then
         
         convert "$DT_r/$img" -interlace Plane -thumbnail 62x54^ \
@@ -245,7 +301,9 @@ get_images () {
         -layers merge +repage "$DMC/$fname.png"
         rm -f *.jpeg *.jpg
     fi
+    
 }
+        
 
 fetch_podcasts() {
 
@@ -254,12 +312,12 @@ fetch_podcasts() {
         
         if [ ! -z "$FEED" ]; then
 
-            if [ -f "$DCP/$n.rss" ]; then
-
+            if [ "$DCP/$n.rss" ]; then
+                d=0
                 while [[ $d -lt 8 ]]; do
                 
-                    itn=$((d+1)); get="${sets[$d]}"
-                    val=$(sed -n "$itn"p < "$DCP/$n.rss" \
+                    get="${sets[$d]}"
+                    val=$(sed -n $((d+1))p < "$DCP/$n.rss" \
                     | grep -o "$get"=\"[^\"]* | grep -o '[^"]*$')
                     declare "${sets[$d]}"="$val"
                     ((d=d+1))
@@ -299,18 +357,8 @@ fetch_podcasts() {
                          
                     if ! grep -Fxo "$title" < "$DCP/1.cfg"; then
                     
-                        enclosure_url=$(curl -s -I -L -w %"{url_effective}" \
-                        --url "$enclosure" | tail -n 1)
-                        
-                        mediatype "$enclosure_url"
-                        
-                        if [ ! -f "$DMC/$fname.$ex" ]; then
-                        cd "$DT_r"; wget -q -c -T 30 -O "media.$ex" "$enclosure_url"
-                        else cd "$DT_r"; mv -f "$DMC/$fname.$ex" "media.$ex"; fi
-
-                        get_images
-                        
-                        mv -f "media.$ex" "$DMC/$fname.$ex"
+                        get_media
+                        get_thumbls
                         mkhtml
 
                         if [ -s "$DCP/1.cfg" ]; then
@@ -331,14 +379,18 @@ fetch_podcasts() {
                     | tr -s '[:space:]' | sed 's/EOL/\n/g' | head -n "$downloads")"
                     feed_items="$(echo "$feed_items" | sed '/^$/d')"
                     
+                     
+                    
                     while read -r item; do
 
                         fields="$(echo "$item" | sed -r 's|-\!-|\n|g')"
+                        
                         enclosure=$(echo "$fields" | sed -n "$nimage"p)
                         title=$(echo "$fields" | sed -n "$ntitle"p \
                         | iconv -c -f utf8 -t ascii | sed 's/\://g' \
                         | sed 's/\&/&amp;/g' | sed 's/^\s*./\U&\E/g' \
                         | sed 's/<[^>]*>//g' | sed 's/^ *//; s/ *$//; /^$/d')
+                        sumlink=$(echo "$fields" | sed -n "$n_sum"p | sed '/^$/d')
                         summary=$(echo "$fields" | sed -n "$nsumm"p)
                         [ -z "$summary" ] && summary=$(echo "$fields" | sed -n $((nsumm+1))p)
                         summary=$(echo "$summary" \
@@ -354,30 +406,14 @@ fetch_podcasts() {
                         | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g')
                         fname="$(nmfile "${title}")"
 
-                        if [ "$(echo "$title" | wc -c)" -ge 200 ]; then
-                        echo "Title too long.\n$FEED" >> "$DM_tl/Feeds/.conf/feed.err"
-                        printf "err.FE5($n).err\n" >> "$DC_s/8.cfg";
-                        continue; fi
-                                
+                        #if [ "$(echo "$title" | wc -c)" -ge 200 ]; then
+                        #echo "Title too long.\n$FEED" >> "$DM_tl/Feeds/.conf/feed.err"
+                        #printf "err.FE5($n).err\n" >> "$DC_s/8.cfg";
+                        #continue; fi
                         if ! grep -Fxo "$title" < "$DCP/1.cfg"; then
                         
-                            if [ -n "$enclosure" ]; then
-                                enclosure_url=$(curl -s -I -L -w %"{url_effective}" \
-                                --url "$enclosure" | tail -n 1)
-                            else
-                                enclosure_url=$(curl -s -I -L -w %"{url_effective}" \
-                                --url "$(get_images_main)" | tail -n 1)
-                            fi
-                            
-                            mediatype "$enclosure_url"
-                            rm -f 
-                            cd "$DT_r"; rm -f *.jpg *.png *.jpeg
-                            wget -q -c -T 30 -O "media.$ex" "$enclosure_url"
-                            
-                            /usr/bin/convert "media.$ex" "$DMC/$fname.jpg"
-                            
-                            get_images
-                            
+                            get_media
+                            get_thumbls
                             mkhtml
 
                             if [ -s "$DCP/1.cfg" ]; then
@@ -467,14 +503,14 @@ echo "updating" > "$DT/.uptp"
 fetch_podcasts
 
 [ -f "$DT_r/log" ] && nd="$(wc -l < "$DT_r/log")" || nd=0
-rm -fr "$DT_r" "$DT/.uptp"
+rm -fr "$DT/.uptp"
 echo "$(date "+%a %d %B")" > "$DM_tl/Feeds/.dt"
 
 if [ "$nd" -gt 0 ]; then
 
-    remove_items
+    #remove_items
     
-    check_index
+    #check_index
     
     [ "$1" != A ] && notify-send -i idiomind \
     "$(gettext "Feed update")" \
