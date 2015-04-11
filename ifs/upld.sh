@@ -105,7 +105,7 @@ function infsd() {
 function upld() {
 
 if [ "$tpc" != "$2" ]; then
-msg "$(gettext "sorry, this topic is currently not active.")\n " info & exit; fi
+msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
     
 others="$(gettext "Others")"
 comics="$(gettext "Comics")"

@@ -79,7 +79,7 @@ function mark_as_learn() {
     include "$DS/ifs/mods/mngr"
 
     if [ "$tpc" != "$2" ]; then
-    msg "$(gettext "sorry, this topic is currently not active.")\n " info & exit; fi
+    msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
     
     if [ $(wc -l < "$DC_tlt/0.cfg") -le 15 ]; then
     msg "$(gettext "Sorry, you must be at least 15 items.")\n " info & exit; fi
@@ -136,7 +136,7 @@ function mark_as_learned() {
     include "$DS/ifs/mods/mngr"
 
     if [ "$tpc" != "$2" ]; then
-    msg "$(gettext "sorry, this topic is currently not active.")\n " info & exit; fi
+    msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
     
     if [ $(wc -l < "$DC_tlt/0.cfg") -le 15 ]; then
     msg "$(gettext "Sorry, you must be at least 15 items.")\n " info & exit; fi
@@ -297,7 +297,7 @@ function delete_topic() {
     include "$DS/ifs/mods/mngr"
     
     if [ "$tpc" != "$2" ]; then
-    msg "$(gettext "sorry, this topic is currently not active.")\n " info & exit; fi
+    msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
     
     if [ "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "$tpc" ]; then
     msg "$(gettext "You can not delete at this time. Please try later ")\n" dialog-warning & exit 1; fi
