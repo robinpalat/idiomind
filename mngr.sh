@@ -239,20 +239,20 @@ function delete_item() {
     file="$DM_tlt/words/$fname.mp3"
     trgt=$(eyeD3 "$file" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
     msg_2 "$(gettext "Are you sure you want to delete this word?")\n" \
-    gtk-delete "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
+    gtk-delete "$(gettext "Delete")" "$(gettext "No")" "$(gettext "Confirm")"
 
     elif [ -f "$DM_tlt/$fname.mp3" ]; then
     
     file="$DM_tlt/$fname.mp3"
     trgt=$(eyeD3 "$file" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
     msg_2 "$(gettext "Are you sure you want to delete this sentence?")\n" \
-    gtk-delete "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
+    gtk-delete "$(gettext "Delete")" "$(gettext "No")" "$(gettext "Confirm")"
 
     else
     
     trgt="${3}"
     msg_2 "$(gettext "Are you sure you want to delete this item?")\n" \
-    gtk-delete "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
+    gtk-delete "$(gettext "Delete")" "$(gettext "No")" "$(gettext "Confirm")"
 
     fi
     ret=$(echo "$?")
@@ -308,7 +308,7 @@ function delete_topic() {
     msg "$(gettext "You can not delete at this time. Please try later ")\n" dialog-warning & exit 1; fi
     
     msg_2 "$(gettext "Are you sure you want to delete this Topic?")\n" \
-    gtk-delete "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
+    gtk-delete "$(gettext "Delete")" "$(gettext "No")" "$(gettext "Confirm")"
     ret=$(echo "$?")
         
         if [ $ret -eq 0 ]; then
@@ -608,7 +608,7 @@ function rename_topic() {
     if [ $snm -ge 1 ]; then
     
         jlb="$jlb $snm"
-        msg_2 "$(gettext "You already have a topic with the same name.") \n$(gettext "The new it was renamed to\:")\n<b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
+        msg_2 "$(gettext "Another topic with the same name already exist.") \n$(gettext "The new it was renamed to\:")\n<b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
         ret="$?"
         if [ "$ret" -eq 1 ]; then exit 1; fi
         

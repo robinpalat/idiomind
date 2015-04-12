@@ -39,7 +39,7 @@ function new_topic() {
     if [ "$sfname" -ge 1 ]; then
     
         jlb="$jlb $sfname"
-        msg_2 "$(gettext "You already have a topic with the same name.")\n$(gettext "The new it was renamed to\:")\n<b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
+        msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "The new it was renamed to\:")\n<b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
         ret="$?"
         [ "$ret" -eq 1 ] && exit 1
         

@@ -22,7 +22,7 @@ function word_view(){
     --quoted-output \
     --text="<span font_desc='Sans Free Bold $fs'>$trgt</span>\n\n<i>$srce</i>\n\n" \
     --scroll --center --on-top --skip-taskbar --text-align=center --image-on-top --center \
-    --width=610 --height=380 --borders=$bs \
+    --width=620 --height=380 --borders=$bs \
     --field="":lbl \
     --field="<i><span color='#737373'>$exmp</span></i>:lbl" "$field_dftn" "$field_note" \
     --button=gtk-edit:4 \
@@ -50,7 +50,7 @@ function sentence_view(){
     --skip-taskbar --center --image-on-top --center --on-top \
     --scroll --text-align=left --expand-column=0 --no-headers \
     --text="<span font_desc='Sans Free 15'>$trgt</span>\n\n<i>$srce</i>\n\n" \
-    --width=610 --height=380 --borders=20 \
+    --width=620 --height=380 --borders=20 \
     --column="":TEXT \
     --column="":TEXT \
     --button=gtk-edit:4 \

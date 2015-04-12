@@ -33,11 +33,14 @@ cd "$DC_tlt/practice"
 
 look() {
     
-    yad --title="$practice - $tpc" --borders=5 --center \
-    --on-top --skip-taskbar --window-icon=idiomind \
-    --center --image="$DS/practice/icons_st/21.png" --button=Ok:2 \
-    --button="   $(gettext "Restart")   ":0 --width=360 --height=120 \
-    --text="<b>   $(gettext "Complete practice")</b>\\n   $(cat $1)\n "
+    yad --title="$(gettext "Practice") - $tpc" \
+    --text="<b>$(gettext "Practice Completed")</b>\\n   $(cat $1)\n " \
+    --window-icon=idiomind --on-top --skip-taskbar \
+    --center --image="$DS/practice/icons_st/21.png" \
+    --width=360 --height=120 --borders=5 \
+    --button="   $(gettext "Restart")   ":0 \
+    --button=Ok:2
+    
 }
 
 get_list() {
@@ -92,10 +95,12 @@ get_list_sentences() {
 
 starting() {
     
-    yad --center --borders=5 --image=info \
-    --title=$(gettext "Practice") --on-top --window-icon=idiomind \
-    --button=Ok:1 --skip-taskbar --width=330 --height=130 \
-    --text="  $1.  "
+    yad --title=$(gettext "Practice") \
+    --text="$1" --image=info \
+    --window-icon=idiomind --skip-taskbar --center --on-top \
+    --width=360 --height=120 --borders=5 \
+    --button=Ok:1
+    
     "$strt" & killall prct.sh.sh & exit 1
 }
 
@@ -119,7 +124,7 @@ flashcards() {
         echo " practice --restarting session"
     else
         get_list fin && cp -f fin fin1
-        [[ "$(cat fin  | wc -l)" -lt 4 ]] && starting "$(gettext "Not enough words to start")"
+        [[ "$(cat fin  | wc -l)" -lt 4 ]] && starting "$(gettext "Not enough words to start.")"
         echo " practice --new session"
     fi
     
@@ -149,7 +154,7 @@ multiple_choise() {
         get_list mcin && cp -f mcin mcin1
         if [ ! -f word1.idx ]; then
             get_list_mchoice; fi
-        [[ "$(cat mcin  | wc -l)" -lt 4 ]] && starting "$(gettext "Not enough words to start")"
+        [[ "$(cat mcin  | wc -l)" -lt 4 ]] && starting "$(gettext "Not enough words to start.")"
          echo " practice --new session"
     fi
 
@@ -176,7 +181,7 @@ listen_words() {
         echo " practice --restarting session"
     else
         get_list lwin && cp -f lwin lwin1
-        [[ "$(cat lwin  | wc -l)" -lt 4 ]] && starting "$(gettext "Not enough words to start")"
+        [[ "$(cat lwin  | wc -l)" -lt 4 ]] && starting "$(gettext "Not enough words to start.")"
         echo " practice --new session"
     fi
     
@@ -203,7 +208,7 @@ listen_sentences() {
         echo " practice --restarting session"
     else
         get_list_sentences lsin && cp -f lsin lsin1
-        [[ "$(cat lsin  | wc -l)" -lt 1 ]] && starting "$(gettext "Not enough sentences to start")"
+        [[ "$(cat lsin  | wc -l)" -lt 1 ]] && starting "$(gettext "Not enough sentences to start.")"
         echo " practice --new session"
     fi
     
@@ -231,7 +236,7 @@ images() {
     else
         
         get_list_images iin && cp -f iin iin1
-        [[ "$(cat iin  | wc -l)" -lt 4 ]] && starting "$(gettext "Not enough images to start")"
+        [[ "$(cat iin  | wc -l)" -lt 4 ]] && starting "$(gettext "Not enough images to start.")"
         echo " practice --new session"
     fi
     

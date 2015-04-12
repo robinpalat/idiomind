@@ -27,16 +27,20 @@ vsd() {
     U=$(sed -n 1p $HOME/.config/idiomind/s/4.cfg)
     lng=$(echo "$lgtl" | awk '{print tolower($0)}')
     
-    cd "$DM_t/saved"; ls -t *.id | sed 's/\.id//g' | yad --list \
-    --window-icon="idiomind" --center --name=Idiomind --borders=8 \
+    cd "$DM_t/saved"; ls -t *.id | sed 's/\.id//g' | \
+    yad --list --title="$(gettext "Topics Saved")" \
     --text=" $(gettext "Double clik to download") \t\t\t\t" \
-    --title="$(gettext "Topics Saved")" --width=640 --height=560 \
-    --column=Nombre:TEXT --print-column=1 --no-headers --class=Idiomind \
-    --expand-column=1 --search-column=1 --button=gtk-close:1 \
-    --dclick-action="$DS/ifs/upld.sh 'infsd'" >/dev/null 2>&1
+    --name=Idiomind --class=Idiomind \
+    --dclick-action="$DS/ifs/upld.sh 'infsd'" \
+    --window-icon="idiomind" --center \
+    --width=640 --height=560 --borders=10 \
+    --print-column=1 --no-headers \
+    --column=Nombre:TEXT \
+    --button=gtk-close:1
+    
     [ "$?" -eq 1 ] & exit
     exit
-}
+} >/dev/null 2>&1
 
 infsd() {
 
@@ -49,10 +53,11 @@ infsd() {
     
         cd "$HOME"
         sleep 0.5
-        sv=$(yad --save --center --borders=10 \
-        --on-top --filename="$2.idmnd" \
-        --window-icon="idiomind" --skip-taskbar --title="Save" \
-        --file --width=600 --height=500 --button="Ok":0 )
+        sv=$(yad --file --save --title="Save" \
+        --filename="$2.idmnd" \
+        --window-icon="idiomind" --skip-taskbar --center --on-top \
+        --width=600 --height=500 --borders=5 \
+        --button="$(gettext "Cancel")":1 --button="Ok":0)
         ret=$?
         if [ $ret -eq 0 ]; then
             
@@ -148,12 +153,12 @@ btn="--button="$(gettext "Upload")":0"; else
 btn="--center"; fi
 
 cd "$HOME"
-upld=$(yad --form --width=480 --height=460 --on-top \
---buttons-layout=end --center --window-icon="idiomind" \
---borders=15 --name=Idiomind --align=right --class=Idiomind \
---button="$(gettext "Cancel")":1 \
---button="$(gettext "To PDF")":2 "$btn" \
---title="$(gettext "Share")" --text="   <b>$tpc</b>" \
+upld=$(yad --form --title="$(gettext "Share")" \
+--text="   <b>$tpc</b>" \
+--name=Idiomind --class=Idiomind \
+--window-icon="idiomind" --buttons-layout=end \
+--align=right --center --on-top \
+--width=480 --height=460 --borders=15 \
 --field=" :lbl" "#1" \
 --field="    $(gettext "Author")" "$user" \
 --field="    $(gettext "Contact (Optional)")" "$mail" \
@@ -161,7 +166,9 @@ upld=$(yad --form --width=480 --height=460 --on-top \
 "!$others!$article!$comics!$culture!$documentary!$entertainment!$funny!$family!$grammar!$history!$movies!$in_the_city!$interview!$internet!$music!$nature!$news!$office!$relations!$sport!$science!$shopping!$social_networks!$technology!$travel" \
 --field="    $(gettext "Skill Level"):CBE" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
 --field="\n$(gettext "Description/Notes"):TXT" "$nt" \
---field="$(gettext "Image\napprox. 600x200px"):FL" "$imgm")
+--field="$(gettext "Image\napprox. 600x200px"):FL" "$imgm" \
+--button="$(gettext "Cancel")":1 \
+--button="$(gettext "PDF")":2 "$btn")
 ret=$?
 
 if [ "$ret" = 2 ]; then

@@ -158,7 +158,7 @@ while [[ $n -le $(wc -l < lsin1) ]]; do
     fname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
     
     if [[ $n = 1 ]] && [ ! -f "$DM_tlt/words/images/$fname.jpg" ]; then
-    info="--text=<sup><tt> $(gettext "Try to write the phrase you're listening to")...</tt></sup>"
+    info="--text=<sup><tt> $(gettext "Try to write the sentence you're listening to")...</tt></sup>"
     else info=""; fi
     
     if [ -f "$DM_tlt/$fname.mp3" ]; then

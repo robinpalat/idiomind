@@ -13,7 +13,7 @@ if [ "$1" = delete_item ]; then
     fname="$(nmfile "${trgt}")"
     
     msg_2 "$(gettext "Are you sure you want to delete this episode?")\n" \
-    gtk-delete "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
+    gtk-delete "$(gettext "Delete")" "$(gettext "No")" "$(gettext "Confirm")"
     ret=$(echo "$?")
 
         if [ $ret -eq 0 ]; then
@@ -46,7 +46,7 @@ if [ "$1" = delete_item ]; then
 elif [ "$1" = delete_1 ]; then
 
     if [ "$(wc -l < "$DCP/2.cfg")" -gt 0 ]; then
-    msg_2 "$(gettext "Are you sure you want to delete all episodes?")\n" gtk-delete "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
+    msg_2 "$(gettext "Are you sure you want to delete all episodes?")\n" gtk-delete "$(gettext "Delete")" "$(gettext "No")" "$(gettext "Confirm")"
     else exit 1; fi
     ret=$(echo "$?")
             
@@ -62,7 +62,7 @@ elif [ "$1" = delete_1 ]; then
 elif [ "$1" = delete_2 ]; then
 
     if [ "$(wc -l < "$DCP/2.cfg")" -gt 0 ]; then
-    msg_2 "$(gettext "Are you sure you want to delete all saved episodes?")\n" gtk-delete "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
+    msg_2 "$(gettext "Are you sure you want to delete all saved episodes?")\n" gtk-delete "$(gettext "Delete")" "$(gettext "No")" "$(gettext "Confirm")"
     else exit 1; fi
     ret=$(echo "$?")
     

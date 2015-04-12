@@ -820,10 +820,12 @@ function set_image() {
 function pdfdoc() {
 
     cd $HOME
-    pdf=$(yad --save --center --borders=5 --name=Idiomind \
-    --on-top --filename="$HOME/$tpc.pdf" --class=Idiomind \
-    --window-icon="idiomind" --title="Export " \
-    --file --width=600 --height=500 --button=gtk-ok:0 )
+    pdf=$(yad --file --save --title="Export" \
+    --name=Idiomind --class=Idiomind \
+    --filename="$HOME/$tpc.pdf" \
+    --window-icon="idiomind" --center --on-top \
+    --width=600 --height=500 --borders=5 \
+    --button=gtk-ok:0)
     ret=$?
 
     if [ "$ret" -eq 0 ]; then
@@ -838,19 +840,19 @@ function pdfdoc() {
         cp -f "$DC_tlt/3.cfg" "3.cfg"
         cp -f "$DC_tlt/4.cfg" "4.cfg"
 
-        n=1
-        while [[ $n -le "$(wc -l < "3.cfg" | awk '{print ($1)}')" ]]; do
+        n="$(wc -l < "3.cfg" | awk '{print ($1)}')"
+        while [[ $n -ge 1 ]]; do
             wnm=$(sed -n "$n"p "3.cfg")
             fname="$(nmfile "$wnm")"
             if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
             convert "$DM_tlt/words/images/$fname.jpg" -alpha set -virtual-pixel transparent \
             -channel A -blur 0x10 -level 50%,100% +channel "$DT/mkhtml/images/$wnm.png"
             fi
-            let n++
+            let n--
         done
 
-        n=1
-        while [[ $n -le "$(wc -l < "4.cfg" | awk '{print ($1)}')" ]]; do
+        n="$(wc -l < "4.cfg" | awk '{print ($1)}')"
+        while [[ $n -ge 1 ]]; do
             wnm=$(sed -n "$n"p "4.cfg")
             fname="$(nmfile "$wnm")"
             tgs=$(eyeD3 "$DM_tlt/$fname.mp3")
@@ -858,7 +860,7 @@ function pdfdoc() {
             ws=$(grep -o -P "(?<=ISI2I0I).*(?=ISI2I0I)" <<<"$tgs")
             echo "$wt" >> S.gprt.x
             echo "$ws" >> S.gprs.x
-            let n++
+            let n--
         done
         echo -e "<head>
         <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />
@@ -890,9 +892,9 @@ function pdfdoc() {
             cd $DT/mkhtml/images/
             ls *.png | sed 's/\.png//g' > "$DT/mkhtml/nimg"
             cd $DT/mkhtml
-            echo -e "<table width=\"90%\" align=\"center\" border=\"0\" class=\"wrdimg\">" >> pdf_doc
-            n=1
-            while [ $n -le "$(wc -l < nimg)" ]; do
+            echo -e "<table width=\"90%\" align=\"center\" border=\"0\" class=\"images\">" >> pdf_doc
+            n="$(wc -l < nimg)"
+            while [ $n -ge 1 ]; do
                     if [ -f nnn ]; then
                     n=$(< nnn)
                     fi
@@ -926,7 +928,7 @@ function pdfdoc() {
                         break
                     fi
                     echo $nnn > nnn
-                let n++
+                let n--
             done
             echo -e "</table>
             <p>&nbsp;</p>
@@ -934,8 +936,8 @@ function pdfdoc() {
         fi
 
         cd "$DT/mkhtml"
-        n=1
-        while [ $n -le "$(wc -l < "3.cfg")" ]; do
+        n="$(wc -l < "3.cfg")"
+        while [ $n -ge 1 ]; do
             wnm=$(sed -n "$n"p "3.cfg")
             fname="$(nmfile "$wnm")"
             tgs=$(eyeD3 "$DM_tlt/words/$fname.mp3")
@@ -986,19 +988,19 @@ function pdfdoc() {
                     </tr>
                     </table>" >> pdf_doc
                 fi
-                echo -e "<p>&nbsp;</p>
-                <h1>&nbsp;</h1>" >> pdf_doc
+                echo -e "<p>&nbsp;</p>" >> pdf_doc
             fi
-            let n++
+            let n--
         done
 
         n=1
         while [ $n -le "$(wc -l < "4.cfg")" ]; do
+        
                 st=$(sed -n "$n"p "S.gprt.x")
 
             while read -r mrk; do
             
-                if grep -Fxo $mrk < "3.cfg"; then
+                if grep -Fxo ${mrk^} < "3.cfg"; then
                 trgsm=$(sed "s|$mrk|<mark>$mrk<\/mark>|g" <<<"$st")
                 st="$trgsm"
                 fi

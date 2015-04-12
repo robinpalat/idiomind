@@ -89,15 +89,15 @@ apply() {
 if [ -f "$DM_tl/Podcasts/.conf/feed.err" ]; then
 e="$(head -n 2 < "$DM_tl/Podcasts/.conf/feed.err" | tr '&' ' ')"
 rm "$DM_tl/Podcasts/.conf/feed.err"
-(sleep 2 && msg "$(gettext "Errors found in log file") \n$e" info) &
+(sleep 2 && msg "$(gettext "Errors found in log file") \n$e" info Info) &
 fi
 
 CNFG=$(yad --form --title="$(gettext "Podcasts settings")" \
 --name=Idiomind --class=Idiomind \
 --always-print-result --print-all --separator="|" \
 --window-icon="idiomind" --center --scroll --on-top \
---width=600 --height=460 --borders=15 \
---text="$(gettext "Configure feeds to learn with podcasts.")" \
+--width=580 --height=460 --borders=15 \
+--text="$(gettext "Configure RSS feed to learn with educational podcast.")" \
 --field="$(gettext "Update at startup")":CHK "$update" \
 --field="$(gettext "Sync after update")":CHK "$sync" \
 --field="$(gettext "Mountpoint or path where episodes should be synced.")":LBL " " \
@@ -110,7 +110,7 @@ CNFG=$(yad --form --title="$(gettext "Podcasts settings")" \
 --field="" "$url10" \
 --field="$(gettext "Remove Episodes")":FBTN "$DSP/mngr.sh 'delete_1'" \
 --field="$(gettext "Remove Saved Episodes")":FBTN "$DSP/mngr.sh 'delete_2'" \
---field="$(gettext "Advance Setting")":FBTN \
+--field="$(gettext "Advance")":FBTN \
 --button="$(gettext "Cancel")":1 \
 --button="$(gettext "Syncronize")":5 \
 --button="gtk-apply":0)
