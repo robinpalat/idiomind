@@ -250,7 +250,7 @@ function new_sentence() {
     
     add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3"
 
-    if [ -f img.jpg ]; then
+    if [ ./img.jpg ]; then
         set_image_2 "$DM_tlt/$fname.mp3" "$DM_tlt/words/images/$fname.jpg"
         icnn=img.jpg
     fi
