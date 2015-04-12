@@ -226,7 +226,7 @@ function set_image_2() {
     
     /usr/bin/convert -scale 450x270! img.jpg imgs.jpg
     eyeD3 --add-image imgs.jpg:ILLUSTRATION "$1"
-}
+} >/dev/null 2>&1
 
 
 function set_image_3() {
@@ -235,7 +235,7 @@ function set_image_3() {
     /usr/bin/convert -scale 360x240! img.jpg imgt.jpg
     eyeD3 --set-encoding=utf8 --add-image imgs.jpg:ILLUSTRATION "$1"
     mv -f imgt.jpg "$2"
-}
+} >/dev/null 2>&1
 
 
 function set_image_4() {
@@ -243,18 +243,18 @@ function set_image_4() {
     scrot -s --quality 80 "$1.temp.jpeg"
     /usr/bin/convert -scale 100x90! "$1.temp.jpeg" "$1"_temp.jpeg
     /usr/bin/convert -scale 360x240! "$1.temp.jpeg" "$3.jpg"
-    eyeD3 --remove-images "$2" >/dev/null 2>&1
+    eyeD3 --remove-images "$2"
     eyeD3 --add-image "$1"_temp.jpeg:ILLUSTRATION "$2"
-}
+} >/dev/null 2>&1
 
 
 function set_image_5() {
     
     scrot -s --quality 80 "$1.temp.jpeg"
-    /usr/bin/convert -scale 450x270! "$1.temp.jpeg" "$1"_temp.jpeg
+    /usr/bin/convert -scale 450x260! "$1.temp.jpeg" "$1"_temp.jpeg
     eyeD3 --remove-image "$2" >/dev/null 2>&1
     eyeD3 --add-image "$1"_temp.jpeg:ILLUSTRATION "$2"
-}
+} >/dev/null 2>&1
 
 
 function list_words() {

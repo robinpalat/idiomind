@@ -20,13 +20,13 @@ function list_2() {
 
 function feedmode() {
 
-    DMP="$DM_tl/Feeds"
-    DCP="$DM_tl/Feeds/.conf"
-    DSP="$DS/addons/Feeds"
+    DMP="$DM_tl/Podcasts"
+    DCP="$DM_tl/Podcasts/.conf"
+    DSP="$DS/addons/Podcasts"
     nt="$DCP/10.cfg"
     fdit=$(mktemp "$DT/fdit.XXXX")
     c=$(echo $(($RANDOM%100000))); KEY=$c
-    info=$(< "$DM_tl/Feeds/.dt")
+    info=$(< "$DM_tl/Podcasts/.dt")
     [ -f "$DT/.uptp" ] && info="- $(gettext "Updating")..."
     
     list_1 | yad --list --tabnum=1 \
@@ -43,7 +43,7 @@ function feedmode() {
     --plug=$KEY --filename="$nt" \
     --wrap --editable --fore='gray40' --back='#FFFAEC' \
     --show-uri --margins=14 --fontname=vendana > "$fdit" &
-    yad --notebook --title="Feeds  ${info^}" \
+    yad --notebook --title="Podcasts  ${info^}" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
     --window-icon="idiomind" --image-on-top \

@@ -2,31 +2,31 @@
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/mods/cmns.sh
-DCP="$DM_tl/Feeds/.conf"
-DSP="$DS_a/Feeds"
+DCP="$DM_tl/Podcasts/.conf"
+DSP="$DS_a/Podcasts"
 CNF=$(gettext "Configure")
 sets=('update' 'sync' 'path')
 [ -n "$(< "$DCP/0.cfg")" ] && cfg=1 || > "$DCP/0.cfg"
 
 tpc='#!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
-[ ! -f $DM_tl/Feeds/.conf/8.cfg ] \
-&& echo "11" > $DM_tl/Feeds/.conf/8.cfg
+[ ! -f $DM_tl/Podcasts/.conf/8.cfg ] \
+&& echo "11" > $DM_tl/Podcasts/.conf/8.cfg
 echo "$tpc" > $DC_s/4.cfg
 echo fd >> $DC_s/4.cfg
 idiomind topic
 exit 1'
 
-if [ ! -d $DM_tl/Feeds ]; then
+if [ ! -d $DM_tl/Podcasts ]; then
 
-    mkdir "$DM_tl/Feeds"
-    mkdir "$DM_tl/Feeds/.conf"
-    mkdir "$DM_tl/Feeds/cache"
-    cd "$DM_tl/Feeds/.conf/"
+    mkdir "$DM_tl/Podcasts"
+    mkdir "$DM_tl/Podcasts/.conf"
+    mkdir "$DM_tl/Podcasts/cache"
+    cd "$DM_tl/Podcasts/.conf/"
     touch "0.cfg" "1.cfg" "2.cfg" "3.cfg" "4.cfg" ".updt.lst"
-    echo "$tpc" > "$DM_tl/Feeds/tpc.sh"
-    chmod +x "$DM_tl/Feeds/tpc.sh"
-    echo "14" > "$DM_tl/Feeds/.conf/8.cfg"
+    echo "$tpc" > "$DM_tl/Podcasts/tpc.sh"
+    chmod +x "$DM_tl/Podcasts/tpc.sh"
+    echo "14" > "$DM_tl/Podcasts/.conf/8.cfg"
     "$DS/mngr.sh" mkmn
 fi
 
@@ -61,7 +61,7 @@ done
 apply() {
     
     printf "$CNFG" | sed 's/|/\n/g' | sed -n 7,16p | \
-    sed 's/^ *//; s/ *$//g' > "$DT/feeds.tmp"
+    sed 's/^ *//; s/ *$//g' > "$DT/podcasts.tmp"
 
     n=1; while read feed; do
         declare mod"$n"="$feed"
@@ -69,11 +69,11 @@ apply() {
         if [ "${!url}" != "${!mod}" ]; then
             "$DSP/tls.sh" set_channel "${!mod}" $n & fi
         ((n=n+1))
-    done < "$DT/feeds.tmp"
+    done < "$DT/podcasts.tmp"
 
-    feedstmp="$(cat "$DT/feeds.tmp")"
-    if ([ -n "$feedstmp" ] && [ "$feedstmp" != "$(cat "$DCP/4.cfg")" ]); then
-    mv -f "$DT/feeds.tmp" "$DCP/4.cfg"; else rm -f "$DT/feeds.tmp"; fi
+    podcaststmp="$(cat "$DT/podcasts.tmp")"
+    if ([ -n "$podcaststmp" ] && [ "$podcaststmp" != "$(cat "$DCP/4.cfg")" ]); then
+    mv -f "$DT/podcasts.tmp" "$DCP/4.cfg"; else rm -f "$DT/podcasts.tmp"; fi
 
     val1=$(cut -d "|" -f1 <<<"$CNFG")
     val2=$(cut -d "|" -f2 <<<"$CNFG")
@@ -86,24 +86,24 @@ apply() {
 }
 
 [ ! -d "$path" ] && path=/uu
-if [ -f "$DM_tl/Feeds/.conf/feed.err" ]; then
-e="$(head -n 10 < "$DM_tl/Feeds/.conf/feed.err" | tr '&' ' ')"
-rm "$DM_tl/Feeds/.conf/feed.err"
+if [ -f "$DM_tl/Podcasts/.conf/feed.err" ]; then
+e="$(head -n 10 < "$DM_tl/Podcasts/.conf/feed.err" | tr '&' ' ')"
+rm "$DM_tl/Podcasts/.conf/feed.err"
 (sleep 2 && msg "$(gettext "Errors found in log file") \n$e" info) &
 fi
 
-CNFG=$(yad --form --title="$(gettext "Feeds settings")" \
+CNFG=$(yad --form --title="$(gettext "Podcasts settings")" \
 --name=Idiomind --class=Idiomind \
 --always-print-result --print-all --separator="|" \
 --window-icon="idiomind" --center --scroll --on-top \
 --width=600 --height=460 --borders=15 \
---text="$(gettext "Configure feeds to learn with podcasts or news.")" \
+--text="$(gettext "Configure podcasts to learn with podcasts or news.")" \
 --field="$(gettext "Update at startup")":CHK "$update" \
 --field="$(gettext "Sync after update")":CHK "$sync" \
 --field="$(gettext "Mountpoint or path where episodes should be synced.")":LBL " " \
 --field="":DIR "$path" \
 --field=" ":LBL " " \
---field="$(gettext "Feeds")":LBL " " \
+--field="$(gettext "Podcasts")":LBL " " \
 --field="" "$url1" --field="" "$url2" --field="" "$url3" \
 --field="" "$url4" --field="" "$url5" --field="" "$url6" \
 --field="" "$url7" --field="" "$url8" --field="" "$url9" \

@@ -8,8 +8,8 @@ include $DS/ifs/mods/add
 if [ "$1" = new_item ]; then
 
     trgt="$2"
-    DMC="$DM_tl/Feeds/cache"
-    DCP="$DM_tl/Feeds/.conf"
+    DMC="$DM_tl/Podcasts/cache"
+    DCP="$DM_tl/Podcasts/.conf"
     fname="$(nmfile "${trgt}")"
     if [ -s "$DCP/2.cfg" ]; then
     sed -i -e "1i$trgt\\" "$DCP/2.cfg"

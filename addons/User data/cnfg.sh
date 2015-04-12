@@ -63,15 +63,15 @@ if [ -z "$1" ]; then
                 #chmod 777 -R "$DM"
                 # TODO data addons 
                 tar cvzf backup.tar.gz \
-                --exclude='./topics/Italian/Feeds/cache' \
-                --exclude='./topics/French/Feeds/cache' \
-                --exclude='./topics/Portuguese/Feeds/cache' \
-                --exclude='./topics/Russian/Feeds/cache' \
-                --exclude='./topics/Spanish/Feeds/cache' \
-                --exclude='./topics/German/Feeds/cache' \
-                --exclude='./topics/Chinese/Feeds/cache' \
-                --exclude='./topics/Japanese/Feeds/cache' \
-                --exclude='./topics/Vietnamese/Feeds/cache' \
+                --exclude='./topics/Italian/Podcasts/cache' \
+                --exclude='./topics/French/Podcasts/cache' \
+                --exclude='./topics/Portuguese/Podcasts/cache' \
+                --exclude='./topics/Russian/Podcasts/cache' \
+                --exclude='./topics/Spanish/Podcasts/cache' \
+                --exclude='./topics/German/Podcasts/cache' \
+                --exclude='./topics/Chinese/Podcasts/cache' \
+                --exclude='./topics/Japanese/Podcasts/cache' \
+                --exclude='./topics/Vietnamese/Podcasts/cache' \
                 ./topics
 
                 mv -f backup.tar.gz "$DT/idiomind_data.tar.gz"
@@ -141,7 +141,7 @@ if [ -z "$1" ]; then
                     [ "$(ls -A "$DT/import/topics/$language/")" ] ; then
                     cd "$DT/import/topics/$language/"; else continue; fi
                     
-                    ls * -d | sed 's/Feeds//g' | sed '/^$/d' > \
+                    ls * -d | sed 's/Podcasts//g' | sed '/^$/d' > \
                     "$DT/import/topics/$language/.topics"
 
                     echo "50"
@@ -198,8 +198,8 @@ if [ -z "$1" ]; then
                         
                     done < "$DT/import/topics/$language/.topics"
                     
-                    if [ -d "$DT/import/topics/$language/Feeds" ]; then
-                    cp -r "$DT/import/topics/$language/Feeds" "$DM_t/$language/Feeds"; fi
+                    if [ -d "$DT/import/topics/$language/Podcasts" ]; then
+                    cp -r "$DT/import/topics/$language/Podcasts" "$DM_t/$language/Podcasts"; fi
                 
                 done < "$DT/import/topics/.languages"
                 
@@ -355,15 +355,15 @@ elif [ "$1" = C ] && [ "$dte" != "$udt" ]; then
     ##chmod 777 -R "$DM"
     ## TODO data addons
     #tar cvzf backup.tar.gz \
-    #--exclude='./topics/Italian/Feeds/cache' \
-    #--exclude='./topics/French/Feeds/cache' \
-    #--exclude='./topics/Portuguese/Feeds/cache' \
-    #--exclude='./topics/Russian/Feeds/cache' \
-    #--exclude='./topics/Spanish/Feeds/cache' \
-    #--exclude='./topics/German/Feeds/cache' \
-    #--exclude='./topics/Chinese/Feeds/cache' \
-    #--exclude='./topics/Japanese/Feeds/cache' \
-    #--exclude='./topics/Vietnamese/Feeds/cache' \
+    #--exclude='./topics/Italian/Podcasts/cache' \
+    #--exclude='./topics/French/Podcasts/cache' \
+    #--exclude='./topics/Portuguese/Podcasts/cache' \
+    #--exclude='./topics/Russian/Podcasts/cache' \
+    #--exclude='./topics/Spanish/Podcasts/cache' \
+    #--exclude='./topics/German/Podcasts/cache' \
+    #--exclude='./topics/Chinese/Podcasts/cache' \
+    #--exclude='./topics/Japanese/Podcasts/cache' \
+    #--exclude='./topics/Vietnamese/Podcasts/cache' \
     #"$DM"
     
 

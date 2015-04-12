@@ -3,8 +3,8 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source $DS/ifs/mods/cmns.sh
-DMC="$DM_tl/Feeds/cache"
-DCP="$DM_tl/Feeds/.conf/"
+DMC="$DM_tl/Podcasts/cache"
+DCP="$DM_tl/Podcasts/.conf/"
 
 if [ "$1" = delete_item ]; then
 
@@ -46,10 +46,10 @@ elif [ "$1" = delete ]; then
             
     if [ $ret -eq 0 ]; then
 
-        rm $DM_tl/Feeds/cache/*
-        rm $DM_tl/Feeds/.conf/.updt.lst
-        rm $DM_tl/Feeds/.conf/1.cfg
-        rm $DM_tl/Feeds/.conf/.dt
+        rm $DM_tl/Podcasts/cache/*
+        rm $DM_tl/Podcasts/.conf/.updt.lst
+        rm $DM_tl/Podcasts/.conf/1.cfg
+        rm $DM_tl/Podcasts/.conf/.dt
 
    elif [ $ret -eq 2 ]; then
 

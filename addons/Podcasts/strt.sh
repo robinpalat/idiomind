@@ -19,9 +19,9 @@
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 include "$DS/ifs/mods/add"
-DSP="$DS/addons/Feeds"
-DMC="$DM_tl/Feeds/cache"
-DCP="$DM_tl/Feeds/.conf"
+DSP="$DS/addons/Podcasts"
+DMC="$DM_tl/Podcasts/cache"
+DCP="$DM_tl/Podcasts/.conf"
 DT_r=$(mktemp -d $DT/XXXX)
 downloads=5
 
@@ -44,29 +44,10 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
 </xsl:template>
 </xsl:stylesheet>"
 
-tmplitem2="<?xml version='1.0' encoding='UTF-8'?>
-<xsl:stylesheet version='1.0'
-xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
-xmlns:itunes='http://www.itunes.com/dtds/feed-1.0.dtd'
-xmlns:media='http://search.yahoo.com/mrss/'
-xmlns:atom='http://www.w3.org/2005/Atom'>
-<xsl:output method='text'/>
-<xsl:template match='/'>
-<xsl:for-each select='/rss/channel/item'>
-<xsl:value-of select='enclosure/@url'/><xsl:text>-!-</xsl:text>
-<xsl:value-of select='media:cache[@type=\"image/jpeg\"]/@url'/><xsl:text>-!-</xsl:text>
-<xsl:value-of select='title'/><xsl:text>-!-</xsl:text>
-<xsl:value-of select='media:cache[@type=\"image/jpeg\"]/@duration'/><xsl:text>-!-</xsl:text>
-<xsl:value-of select='itunes:summary'/><xsl:text>-!-</xsl:text>
-<xsl:value-of select='description'/><xsl:text>EOL</xsl:text>
-</xsl:for-each>
-</xsl:template>
-</xsl:stylesheet>"
-
 tpc_sh='#!/bin/bash
 source /usr/share/idiomind/ifs/c.conf
-[ ! -f "$DM_tl/Feeds/.conf/8.cfg" ] \
-&& echo "11" > "$DM_tl/Feeds/.conf/8.cfg"
+[ ! -f "$DM_tl/Podcasts/.conf/8.cfg" ] \
+&& echo "11" > "$DM_tl/Podcasts/.conf/8.cfg"
 echo "$tpc" > "$DC_s/4.cfg"
 echo fd >> "$DC_s/4.cfg"
 idiomind topic
@@ -74,7 +55,6 @@ exit 1'
 
 sets=('channel' 'link' 'logo' 'ntype' \
 'nmedia' 'ntitle' 'nsumm' 'nimage' 'url')
-d=0
 
 conditions() {
     
@@ -90,17 +70,17 @@ conditions() {
         exit 1
     fi
     
-    if [ ! -d "$DM_tl/Feeds/cache" ]; then
-        mkdir -p "DM_tl/Feeds/.conf"
-        mkdir -p "DM_tl/Feeds/cache"
+    if [ ! -d "$DM_tl/Podcasts/cache" ]; then
+        mkdir -p "DM_tl/Podcasts/.conf"
+        mkdir -p "DM_tl/Podcasts/cache"
     fi
     
-    if [ ! -f "$DM_tl/Feeds/tpc.sh" ] || \
-    [ "$(wc -l < "$DM_tl/Feeds/tpc.sh")" -gt 8 ]; then
-        echo "$tpc_sh" > "$DM_tl/Feeds/tpc.sh"
-        chmod +x "$DM_tl/Feeds/tpc.sh"
-        echo "14" > "$DM_tl/Feeds/.conf/8.cfg"
-        cd "$DM_tl/Feeds/.conf/"
+    if [ ! -f "$DM_tl/Podcasts/tpc.sh" ] || \
+    [ "$(wc -l < "$DM_tl/Podcasts/tpc.sh")" -gt 8 ]; then
+        echo "$tpc_sh" > "$DM_tl/Podcasts/tpc.sh"
+        chmod +x "$DM_tl/Podcasts/tpc.sh"
+        echo "14" > "$DM_tl/Podcasts/.conf/8.cfg"
+        cd "$DM_tl/Podcasts/.conf/"
         touch 0.cfg 1.cfg 3.cfg 4.cfg .updt.lst
         "$DS/mngr.sh" mkmn
     fi
@@ -122,21 +102,14 @@ mediatype () {
     elif echo "${1}" | grep -q ".avi"; then ex=avi; tp=vid
     elif echo "${1}" | grep -q ".m4v"; then ex=m4v; tp=vid
     elif echo "${1}" | grep -q ".mov"; then ex=mov; tp=vid
-    elif echo "${1}" | grep -o ".jpg"; then ex=jpg; tp=txt
-    elif echo "${1}" | grep -o ".jpeg"; then ex=jpeg; tp=txt
-    elif echo "${1}" | grep -o ".png"; then ex=png; tp=txt
     elif echo "${1}" | grep -o ".pdf"; then ex=pdf; tp=txt
-    elif [ -n "${1}" ]; then ex=pdf; tp=others
-    else 
-        if [ "$ntype" =1 ]; then
-            printf "err.FE2($n).err\n" >> "$DC_s/8.cfg"
-            echo "Could not add some podcasts.\n$FEED" >> "$DM_tl/Feeds/.conf/feed.err"
-            continue; fi
-    fi
+    else
+        printf "err.FE2($n).err\n" >> "$DC_s/8.cfg"
+        echo "Could not add some podcasts.\n$FEED" >> "$DM_tl/Podcasts/.conf/feed.err"
+        continue; fi
 }
 
-
-mkhtml() {
+mkhtml () {
 
 video="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
 <link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwr.css\">
@@ -177,120 +150,51 @@ $summary<br><br></div>
     fi
 }
 
+get_images () {
 
-get_media() {
-    
-    cd "$DT_r"
-    
-    #if [ "$ntype" = 1 ]; then
-    
-        #enclosure_url=$(curl -s -I -L -w %"{url_effective}" \
-        #--url "$enclosure" | tail -n 1)
-                        
-        #mediatype "$enclosure_url"
-                            
-        #if [ ! -f "$DMC/$fname.$ex" ]; then
-            #cd "$DT_r"; wget -q -c -T 30 -O "media.$ex" "$enclosure_url"
-        #else
-            #cd "$DT_r"; mv -f "$DMC/$fname.$ex" "media.$ex"
-        #fi
+    if [ "$tp" = aud ]; then
         
-        #mv -f "media.$ex" "$DMC/$fname.$ex"
+        cd "$DT_r"; p=TRUE; rm -f *.jpeg *.jpg
         
+        eyeD3 --write-images="$DT_r" "media.$ex"
         
+        if ls | grep '.jpeg'; then img="$(ls | grep '.jpeg')"
+        else img="$(ls | grep '.jpg')"; fi
         
-    #elif [ "$ntype" = 2 ]; then
-    
-        #p=TRUE
-        #if [ -n "$enclosure" ]; then
-            #url=$(curl -s -I -L -w %"{url_effective}" \
-            #--url "$enclosure" | tail -n 1)
-        #else
-            #imgemb=`sed -n 1p <<<"$sumlink" | grep -o 'img src="[^"]*' | grep -o '[^"]*$'`
-            
-            #url=$(curl -s -I -L -w %"{url_effective}" \
-            #--url "$imgemb" | tail -n 1)
-        #fi 
-            
-        #mediatype "$url"
+        if [ ! -f "$DT_r/$img" ]; then
         
-        #wget -q -c -T 30 -O "media.$ex" "$url"
-        
-        ##echo "$sumlink" >> /home/robin/Desktop/ff
-        
-        
-        #if [ "media.$ex" ]; then
-            #/usr/bin/convert "media.$ex" "$DMC/$fname.jpg"
-        #else
-            #url="$(sed -n 1p <<<"$summary" | grep -o 'img src="[^"]*' | grep -o '[^"]*$')"
-            #url=$(curl -s -I -L -w %"{url_effective}" --url "$url" | tail -n 1)
-            #mediatype "$url"
-            ##echo "media.$ex  $url" >> /home/robin/Desktop/ff
-            #wget -q -c -T 30 -O "media.$ex" "$url"
-            ##echo "media.$ex  $url" >> /home/robin/Desktop/ff
-        #fi
-        
-        
-        #if [ "media.$ex" ]; then
-            #/usr/bin/convert "media.$ex" "$DMC/$fname.jpg"
-        #else
-            #cp /usr/share/idiomind/addons/Feeds/images/audio.png "$DMC/$fname.jpg"
-            #p=""
-        #fi
-        p="TRUE"
-        cp /usr/share/idiomind/addons/Feeds/images/audio.png "$DT_r/$img"
-        
-    #fi
-}
-
-
-get_thumbls () {
-
-    # ------------------------------------------------------------------
-
-        if [ "$tp" = aud ]; then
-            
-            cd "$DT_r"; p=TRUE; rm -f *.jpeg *.jpg
-            
-            eyeD3 --write-images="$DT_r" "media.$ex"
+            wget -q -O- "$FEED" | grep -o '<itunes:image href="[^"]*' \
+            | grep -o '[^"]*$' | xargs wget -c
             
             if ls | grep '.jpeg'; then img="$(ls | grep '.jpeg')"
+            elif ls | grep '.png'; then img="$(ls | grep '.png')"
             else img="$(ls | grep '.jpg')"; fi
-            
-            if [ ! -f "$DT_r/$img" ]; then
-            
-                wget -q -O- "$FEED" | grep -o '<itunes:image href="[^"]*' \
-                | grep -o '[^"]*$' | xargs wget -c
-                
-                if ls | grep '.jpeg'; then img="$(ls | grep '.jpeg')"
-                elif ls | grep '.png'; then img="$(ls | grep '.png')"
-                else img="$(ls | grep '.jpg')"; fi
-            fi
-            
-            if [ ! -f "$DT_r/$img" ]; then
-            cp -f "$DSP/images/audio.png" "$DMC/$fname.png"
-            p=""; fi
-
-        elif [ "$tp" = vid ]; then
-            
-            cd "$DT_r"; p=TRUE; rm -f *.jpeg *.jpg
-            mplayer -ss 60 -nosound -noconsolecontrols \
-            -vo jpeg -frames 3 "media.$ex" >/dev/null
-
-            if ls | grep '.jpeg'; then img="$(ls | grep '.jpeg' | head -n1)"
-            else img="$(ls | grep '.jpg' | head -n1)"; fi
-            
-            if [ ! -f "$DT_r/$img" ]; then
-            cp -f "$DSP/images/video.png" "$DMC/$fname.png"
-            p=""; fi
-            
-        elif [ "$tp" = txt ]; then
-        
-            cd "$DT_r"; p=""
-        
-            img="media.$ex"
         fi
         
+        if [ ! -f "$DT_r/$img" ]; then
+        cp -f "$DSP/images/audio.png" "$DMC/$fname.png"
+        p=""; fi
+
+    elif [ "$tp" = vid ]; then
+        
+        cd "$DT_r"; p=TRUE; rm -f *.jpeg *.jpg
+        mplayer -ss 60 -nosound -noconsolecontrols \
+        -vo jpeg -frames 3 "media.$ex" >/dev/null
+
+        if ls | grep '.jpeg'; then img="$(ls | grep '.jpeg' | head -n1)"
+        else img="$(ls | grep '.jpg' | head -n1)"; fi
+        
+        if [ ! -f "$DT_r/$img" ]; then
+        cp -f "$DSP/images/video.png" "$DMC/$fname.png"
+        p=""; fi
+        
+    elif [ "$tp" = txt ]; then
+    
+        cd "$DT_r"; p=TRUE
+    
+        img="media.$ex"
+    fi
+    
     if [ "$p" = TRUE ] && [ -f "$DT_r/$img" ]; then
         
         convert "$DT_r/$img" -interlace Plane -thumbnail 62x54^ \
@@ -301,9 +205,7 @@ get_thumbls () {
         -layers merge +repage "$DMC/$fname.png"
         rm -f *.jpeg *.jpg
     fi
-    
 }
-        
 
 fetch_podcasts() {
 
@@ -312,12 +214,12 @@ fetch_podcasts() {
         
         if [ ! -z "$FEED" ]; then
 
-            if [ "$DCP/$n.rss" ]; then
+            if [ -f "$DCP/$n.rss" ]; then
                 d=0
                 while [[ $d -lt 8 ]]; do
                 
-                    get="${sets[$d]}"
-                    val=$(sed -n $((d+1))p < "$DCP/$n.rss" \
+                    itn=$((d+1)); get="${sets[$d]}"
+                    val=$(sed -n "$itn"p < "$DCP/$n.rss" \
                     | grep -o "$get"=\"[^\"]* | grep -o '[^"]*$')
                     declare "${sets[$d]}"="$val"
                     ((d=d+1))
@@ -339,9 +241,9 @@ fetch_podcasts() {
                     fields="$(sed -r 's|-\!-|\n|g' <<<"$item")"
                     enclosure=$(sed -n "$nmedia"p <<<"$fields")
                     
-                    if [ -z "$enclosure" ]; then
-                    #echo "Missing enclosure.\n$FEED\n$enclosure" >> "$DM_tl/Feeds/.conf/feed.err" # FIX
-                    continue; fi
+                    #if [ -z "$enclosure" ]; then
+                    #echo "Missing enclosure.\n$FEED\n$enclosure" >> "$DM_tl/Podcasts/.conf/feed.err"
+                    #continue; fi
                     
                     title=$(echo "$fields" | sed -n "$ntitle"p | sed 's/\://g' \
                     | sed 's/\&/&amp;/g' | sed 's/^\s*./\U&\E/g' \
@@ -351,14 +253,24 @@ fetch_podcasts() {
                     fname="$(nmfile "${title}")"
                     
                     if [ "$(echo "$title" | wc -c)" -ge 180 ] || [ -z "$title" ]; then
-                    echo "Missing title.\n$FEED" >> "$DM_tl/Feeds/.conf/feed.err"
+                    echo "Missing title.\n$FEED" >> "$DM_tl/Podcasts/.conf/feed.err"
                     printf "err.FE4($n).err\n" >> "$DC_s/8.cfg"
                     continue; fi
                          
                     if ! grep -Fxo "$title" < "$DCP/1.cfg"; then
                     
-                        get_media
-                        get_thumbls
+                        enclosure_url=$(curl -s -I -L -w %"{url_effective}" \
+                        --url "$enclosure" | tail -n 1)
+                        
+                        mediatype "$enclosure_url"
+                        
+                        if [ ! -f "$DMC/$fname.$ex" ]; then
+                        cd "$DT_r"; wget -q -c -T 30 -O "media.$ex" "$enclosure_url"
+                        else cd "$DT_r"; mv -f "$DMC/$fname.$ex" "media.$ex"; fi
+
+                        get_images
+                        
+                        mv -f "media.$ex" "$DMC/$fname.$ex"
                         mkhtml
 
                         if [ -s "$DCP/1.cfg" ]; then
@@ -369,63 +281,7 @@ fetch_podcasts() {
                         echo "$title" >> "$DCP/.11.cfg"
                         echo "$title" >> "$DT_r/log"
                     fi
-
                 done <<<"$podcast_items"
-                
-            elif [ "$ntype" = 2 ]; then
-            
-                    feed_items="$(xsltproc - "$FEED" <<< "$tmplitem2" 2> /dev/null)"
-                    feed_items="$(echo "$feed_items" | tr '\n' ' ' \
-                    | tr -s '[:space:]' | sed 's/EOL/\n/g' | head -n "$downloads")"
-                    feed_items="$(echo "$feed_items" | sed '/^$/d')"
-                    
-                     
-                    
-                    while read -r item; do
-
-                        fields="$(echo "$item" | sed -r 's|-\!-|\n|g')"
-                        
-                        enclosure=$(echo "$fields" | sed -n "$nimage"p)
-                        title=$(echo "$fields" | sed -n "$ntitle"p \
-                        | iconv -c -f utf8 -t ascii | sed 's/\://g' \
-                        | sed 's/\&/&amp;/g' | sed 's/^\s*./\U&\E/g' \
-                        | sed 's/<[^>]*>//g' | sed 's/^ *//; s/ *$//; /^$/d')
-                        sumlink=$(echo "$fields" | sed -n "$n_sum"p | sed '/^$/d')
-                        summary=$(echo "$fields" | sed -n "$nsumm"p)
-                        [ -z "$summary" ] && summary=$(echo "$fields" | sed -n $((nsumm+1))p)
-                        summary=$(echo "$summary" \
-                        | iconv -c -f utf8 -t ascii \
-                        | sed 's/\&quot;/\"/g' | sed "s/\&#039;/\'/g" \
-                        | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
-                        | sed 's/<!\[CDATA\[\|\]\]>//g' \
-                        | sed 's/ *<[^>]\+> */ /g' \
-                        | sed 's/[<>£§]//g' | sed 's/&amp;/\&/g' \
-                        | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. //g' \
-                        | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
-                        | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
-                        | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g')
-                        fname="$(nmfile "${title}")"
-
-                        #if [ "$(echo "$title" | wc -c)" -ge 200 ]; then
-                        #echo "Title too long.\n$FEED" >> "$DM_tl/Feeds/.conf/feed.err"
-                        #printf "err.FE5($n).err\n" >> "$DC_s/8.cfg";
-                        #continue; fi
-                        if ! grep -Fxo "$title" < "$DCP/1.cfg"; then
-                        
-                            get_media
-                            get_thumbls
-                            mkhtml
-
-                            if [ -s "$DCP/1.cfg" ]; then
-                            sed -i -e "1i$title\\" "$DCP/1.cfg"
-                            else echo "$title" > "$DCP/1.cfg"; fi
-                            if grep '^$' "$DCP/1.cfg"; then
-                            sed -i '/^$/d' "$DCP/1.cfg"; fi
-                            echo "$title" >> "$DCP/.11.cfg"
-                            echo "$title" >> "$DT_r/log"
-                        fi
-
-                    done <<< "$feed_items"
             fi
             
         else
@@ -495,7 +351,7 @@ if [ "$1" != A ]; then
     echo fd >> "$DC_s/4.cfg"
     echo "11" > "$DCP/8.cfg"
     (sleep 2 && notify-send -i idiomind "$(gettext "Checking for new episodes")" \
-    "$(gettext "Updating") $nps $(gettext "feeds...")" -t 6000) &
+    "$(gettext "Updating") $nps $(gettext "feeds")" -t 6000) &
 fi
 
 echo "updating" > "$DT/.uptp"
@@ -503,27 +359,27 @@ echo "updating" > "$DT/.uptp"
 fetch_podcasts
 
 [ -f "$DT_r/log" ] && nd="$(wc -l < "$DT_r/log")" || nd=0
-rm -fr "$DT/.uptp"
-echo "$(date "+%a %d %B")" > "$DM_tl/Feeds/.dt"
+rm -fr "$DT_r" "$DT/.uptp"
+echo "$(date "+%a %d %B")" > "$DM_tl/Podcasts/.dt"
 
 if [ "$nd" -gt 0 ]; then
 
-    #remove_items
+    remove_items
     
-    #check_index
+    check_index
     
     [ "$1" != A ] && notify-send -i idiomind \
     "$(gettext "Feed update")" \
     "$(gettext "Has") $nd $(gettext "Update(s)")" -t 8000
     
 else
-    if [[ ! -n "$1" && "$1" != A ]]; then
+    if [[ ! -n "$1" && "$1" != A && -f "$DT_r/log" ]]; then
     notify-send -i idiomind "$(gettext "Feed update")" \
     "$(gettext "No change since the last update")" -t 8000
     fi
 fi
 
-cfg="$DM_tl/Feeds/.conf/0.cfg"; if [ -f "$cfg" ]; then
+cfg="$DM_tl/Podcasts/.conf/0.cfg"; if [ -f "$cfg" ]; then
 sync="$(sed -n 2p < "$cfg" | grep -o 'sync="[^"]*' | grep -o '[^"]*$')"
 if [ "$sync" = TRUE ]; then "$DSP/tls.sh" sync A; fi; fi
 

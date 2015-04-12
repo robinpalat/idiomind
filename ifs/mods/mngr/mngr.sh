@@ -29,11 +29,11 @@ position() {
         | awk '{print ((let++))"\nFALSE\n"$0}' \
         | yad --list --title="$(gettext "Moving the item through the list")" \
         --class=Idiomind --name=Idiomind \
-        --text="  [ $pos ]  <i>\"$label\"</i>" \
+        --text="  [ $pos ]  \"$label\"\n" \
         --always-print-result --print-column=3 --separator="" \
         --window-icon="idiomind" --no-headers --on-top --center \
         --expand-column=3 --ellipsize=END \
-        --width=600 --height=500 --borders=5 \
+        --width=600 --height=500 --borders=10 \
         --column="":NUM \
         --column="":RD \
         --column="":TEXT \
@@ -90,22 +90,22 @@ function dlg_form_1() {
         --columns=2 --center --on-top \
         --width=$wth --height=$eht --borders=10 \
         --field="<small>$lgtl</small>":RO "$trgt" \
-        --field="<small>$lgsl</small>":CE "$srce" \
-        --field="<small>$(gettext "Topic") </small>":CB "$tpc!$tpcs" \
-        --field="<small>$(gettext "Audio") </small>":FL "$DM_tlt/words/$fname.mp3" \
-        --field="<small>$(gettext "Example") </small>":TXT "$exm1" \
-        --field="<small>$(gettext "Definition") </small>":TXT "$dftn" \
-        --field="<small>$(gettext "Note") </small>":TXT "$ntes" \
-        --field="$(gettext "Mark") ":CHK "$mark" \
+        --field="<small>$lgsl</small>" "$srce" \
+        --field="<small>$(gettext "Topic")</small>":CB "$tpc!$tpcs" \
+        --field="<small>$(gettext "Audio")</small>":FL "$DM_tlt/words/$fname.mp3" \
+        --field="<small>$(gettext "Example")</small>":TXT "$exmp" \
+        --field="<small>$(gettext "Definition")</small>":TXT "$dftn" \
+        --field="<small>$(gettext "Note")</small>":TXT "$note" \
         --field="<small>$(gettext "Listen")</small>":FBTN "play '$DM_tlt/words/$fname.mp3'" \
-        --field="<small>$(gettext "Search definition") </small>":FBTN "$sdefn" \
+        --field="$(gettext "Mark")":CHK "$mark" \
+        --field="<small>$(gettext "Search definition")</small>":FBTN "$sdefn" \
         --field=" ":LBL " " \
         --button="$(gettext "Position")":"$DS/ifs/mods/mngr/mngr.sh 'position' '$item_pos' '$index_1'" \
         --button="$(gettext "Image")":"$imge" \
         --button="$(gettext "Delete")":"$dlte" \
         --button="gtk-go-down":2 \
         --button="$(gettext "Close")":0 > "$1"
-}
+} >/dev/null 2>&1
 
 
 function dlg_form_2() {
@@ -120,15 +120,15 @@ function dlg_form_2() {
         --field="<small>$lgtl</small>":TXT "$trgt" \
         --field="<small>$lgsl</small>":TXT "$srce" \
         --field="$(gettext "Listen")":FBTN "$lstau" \
-        --field="<small>$(gettext "Topic") </small>":CB "$tpc!$tpcs" \
-        --field="<small>$(gettext "Audio") </small>":FL "$DM_tlt/$fname.mp3" \
+        --field="<small>$(gettext "Topic")</small>":CB "$tpc!$tpcs" \
+        --field="<small>$(gettext "Audio")</small>":FL "$DM_tlt/$fname.mp3" \
         --button="$(gettext "Position")":"$DS/ifs/mods/mngr/mngr.sh 'position' '$item_pos' '$index_1'" \
         --button="$(gettext "List Words")":"$word_list" \
         --button="$(gettext "Image")":"$imge" \
         --button="$(gettext "Delete")":"$dlte" \
         --button="gtk-go-down":2 \
         --button="$(gettext "Close")":0 > "$1"
-}
+} >/dev/null 2>&1
 
 
 function calculate_review() {

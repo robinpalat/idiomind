@@ -1,47 +1,47 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-
 function word_view(){
     
     source "$DC_s/1.cfg"
-    tgs="$(eyeD3 "$DM_tlt/words/$fname.mp3")"
+    tags="$(eyeD3 "$DM_tlt/words/$fname.mp3")"
     trgt="$item"
-    src="$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)' <<<"$tgs")"
-    exmp="$(grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' <<<"$tgs" | tr '_' '\n')"
-    mrk="$(grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)' <<<"$tgs")"
-    [ $(echo "$exmp" | sed -n 2p) ] \
-    && dfnts="--field=$(echo "$exmp" | sed -n 2p)\n:lbl"
-    [ $(echo "$exmp" | sed -n 3p) ] \
-    && ntess="--field=$(echo "$exmp" | sed -n 3p)\n:lbl"
+    srce="$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)' <<<"$tags")"
+    fields="$(grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' <<<"$tags" | tr '_' '\n')"
+    mark="$(grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)' <<<"$tags")"
+    exmp="$(sed -n 1p <<<"$fields")"
+    dftn="$(sed -n 2p <<<"$fields")"
+    note="$(sed -n 3p <<<"$fields")"
+    [ -n "$dftn" ] && field_dftn="--field=\n$dftn:lbl"
+    [ -n "$note" ] && field_note="--field=$note\n:lbl"
     hlgt="$(awk '{print tolower($0)}' <<<"$trgt")"
-    exmp1="$(echo "$(echo "$exmp" | sed -n 1p)" | sed "s/"${trgt,,}"/<span background='#FDFBCF'>"${trgt,,}"<\/\span>/g")"
-    [ "$(echo "$tgs" | grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)')" = TRUE ] && trgt="* $trgt"
+    exmp="$(echo "$(echo "$exmp" | sed -n 1p)" | sed "s/"${trgt,,}"/<span background='#FDFBCF'>"${trgt,,}"<\/\span>/g")"
+    [ "$mark" = TRUE ] && trgt="<span color='#A21722'>$trgt</span>"
     
     yad --form --scroll --title="$item" \
     --quoted-output \
-    --text="<span font_desc='Sans Free Bold $fs'>$trgt</span>\n\n<i>$src</i>\n\n" \
+    --text="<span font_desc='Sans Free Bold $fs'>$trgt</span>\n\n<i>$srce</i>\n\n" \
     --scroll --center --on-top --skip-taskbar --text-align=center --image-on-top --center \
     --width=610 --height=380 --borders=$bs \
     --field="":lbl \
-    --field="<i><span color='#737373'>$exmp1</span></i>:lbl" "$dfnts" "$ntess" \
+    --field="<i><span color='#737373'>$exmp</span></i>:lbl" "$field_dftn" "$field_note" \
     --button=gtk-edit:4 \
     --button="$listen":"play '$DM_tlt/words/$fname.mp3'" \
     --button=gtk-go-up:3 \
-    --button=gtk-go-down:2 >/dev/null 2>&1
-}
+    --button=gtk-go-down:2
+} >/dev/null 2>&1
 
 
 function sentence_view(){
     
     source "$DC_s/1.cfg"
-    tgs="$(eyeD3 "$DM_tlt/$fname.mp3")"
+    tags="$(eyeD3 "$DM_tlt/$fname.mp3")"
     [ "$grammar" = TRUE ] \
-    && trgt="$(grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)' <<<"$tgs")" \
-    || trgt="$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"$tgs")"
-    src="$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"$tgs")"
-    lwrd="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"$tgs" | tr '_' '\n')"
-    [ "$(grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)' <<<"$tgs")" = TRUE ] && trgt="<b>*</b> $trgt"
+    && trgt="$(grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)' <<<"$tags")" \
+    || trgt="$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"$tags")"
+    srce="$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"$tags")"
+    lwrd="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"$tags" | tr '_' '\n')"
+    [ "$(grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)' <<<"$tags")" = TRUE ] && trgt="<b>*</b> $trgt"
     [ ! -f "$DM_tlt/$fname.mp3" ] && exit 1
     
     echo "$lwrd" | yad --list --title=" " \
@@ -49,7 +49,7 @@ function sentence_view(){
     --dclick-action="$DS/ifs/tls.sh dclik" \
     --skip-taskbar --center --image-on-top --center --on-top \
     --scroll --text-align=left --expand-column=0 --no-headers \
-    --text="<span font_desc='Sans Free 15'>$trgt</span>\n\n<i>$src</i>\n\n" \
+    --text="<span font_desc='Sans Free 15'>$trgt</span>\n\n<i>$srce</i>\n\n" \
     --width=610 --height=380 --borders=20 \
     --column="":TEXT \
     --column="":TEXT \
@@ -57,7 +57,7 @@ function sentence_view(){
     --button="$listen":"$DS/ifs/tls.sh listen_sntnc '$fname'" \
     --button=gtk-go-up:3 \
     --button=gtk-go-down:2
-}
+} >/dev/null 2>&1
 
 export -f word_view
 export -f sentence_view
@@ -66,12 +66,12 @@ function notebook_1() {
     
     tac "$ls1" | awk '{print $0"\n"}' | yad --list --tabnum=1 \
     --plug=$KEY --print-all \
-    --dclick-action='./vwr.sh v1' \
+    --dclick-action="$DS/vwr.sh '1'" \
     --expand-column=1 --no-headers --ellipsize=END \
     --column=Name:TEXT --column=Learned:CHK > "$cnf1" &
     tac "$ls2" | yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
-    --dclick-action='./vwr.sh v2' \
+    --dclick-action="$DS/vwr.sh '2'" \
     --expand-column=0 --no-headers --ellipsize=END \
     --column=Name:TEXT &
     yad --text-info --tabnum=3 \
@@ -114,7 +114,7 @@ function notebook_2() {
     --align=center --borders=80 --bar="":NORM $RM &
     tac "$ls2" | yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
-    --dclick-action='./vwr.sh v2' \
+    --dclick-action="$DS/vwr.sh '1'" \
     --expand-column=0 --no-headers --ellipsize=END \
     --column=Name:TEXT &
     yad --text-info --tabnum=3 \

@@ -592,6 +592,7 @@ echo "<br><br></div>
 
 function help() {
 
+    internet
     web="http://idiomind.sourceforge.net/doc/help.html"
     yad --html --browser --uri="$web" \
     --window-icon="idiomind" \
@@ -613,7 +614,8 @@ function web() {
 }
 
 function fback() {
-
+    
+    internet
     web="http://idiomind.sourceforge.net/doc/msg.html"
     yad --html --browser --uri="$web" \
     --window-icon="idiomind" \
@@ -790,7 +792,7 @@ function set_image() {
         --name=Idiomind --class=Idiomind \
         --window-icon="idiomind" --text-align=center \
         --skip-taskbar --image-on-top --center --on-top \
-        --width=470 --height=280 --borders=5 \
+        --width=470 --height=270 --borders=5 \
         "$btn1" "$btn2" --button=$(gettext "Close"):1
         ret=$?
                 
@@ -798,7 +800,7 @@ function set_image() {
             
             rm -f $DT/*.l
             scrot -s --quality 70 "$fname.temp.jpeg"
-            /usr/bin/convert -scale 450x270! "$fname.temp.jpeg" "$fname"_temp.jpeg
+            /usr/bin/convert -scale 450x260! "$fname.temp.jpeg" "$fname"_temp.jpeg
             cp -f "$fname"_temp.jpeg "$DM_tlt/words/images/$fname.jpg"
             eyeD3 --remove-image "$file"
             eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file"

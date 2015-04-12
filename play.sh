@@ -91,7 +91,7 @@ else
 fi
 
 slct=$(mktemp "$DT"/slct.XXXX)
-setting_1 | yad --list --title="$tpc" "$l" --image=/home/robin/Desktop/idiomind.svg \
+setting_1 | yad --list --title="$tpc" "$l" \
 --print-all --always-print-result --separator="|" \
 --class=Idiomind --name=Idiomind --align=right --no-headers --center \
 --expand-column=2 --window-icon="idiomind" \

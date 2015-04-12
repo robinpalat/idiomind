@@ -63,7 +63,7 @@ dialog1() {
     SE=$(yad --center --text-info --image="$IMAGE" "$info" --image-on-top \
     --fontname="Free Sans 15" --justify=fill --editable --wrap \
     --buttons-layout=end --borders=2 --title=" " --margins=5 \
-    --text-align=left --height=420 --width=462 --name=Idiomind \
+    --text-align=left --height=410 --width=462 --name=Idiomind \
     --align=left --window-icon=idiomind --fore=4A4A4A --class=Idiomind \
     --button="$(gettext "Hint")":"/usr/share/idiomind/practice/hint.sh ${hint}" \
     --button="$listen":"play '$DM_tlt/$fname.mp3'" \
