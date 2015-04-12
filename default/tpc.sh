@@ -35,7 +35,7 @@ echo "1" > "8.cfg"
 cd "$HOME"
 fi
 
-   "$DS/ifs/tls.sh" check_index "$topic"
+    [ ! "$DC_tl/$topic/7.cfg" ] && "$DS/ifs/tls.sh" check_index "$topic"
 
     if [[ $(grep -Fxon "$topic" < "$DM_tl/.1.cfg" \
     | sed -n 's/^\([0-9]*\)[:].*/\1/p') -ge 50 ]]; then

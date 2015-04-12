@@ -120,7 +120,7 @@ function new_session() {
         
             if [ -f "$DM_tl/$tp/.conf/9.cfg" ]; then
 
-                dts=$(wc -l < "$DM_tl/$tp/.conf/9.cfg")
+                dts=$(sed '/^$/d' < "$DM_tl/$tp/.conf/9.cfg" | wc -l)
                 if [ $dts = 1 ]; then
                 dte=$(sed -n 1p "$DM_tl/$tp/.conf/9.cfg")
                 TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))

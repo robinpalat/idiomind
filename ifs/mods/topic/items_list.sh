@@ -177,7 +177,7 @@ function dialog_2() {
 
 function calculate_review() {
     
-    dts=$(wc -l < "$DC_tlt/9.cfg")
+    dts=$(sed '/^$/d' < "$DC_tlt/9.cfg" | wc -l)
     if [ $dts = 1 ]; then
     dte=$(sed -n 1p "$DC_tlt/9.cfg")
     adv="<b>   10 $cuestion_review </b>"

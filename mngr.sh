@@ -151,7 +151,8 @@ function mark_as_learned() {
         calculate_review
         
         if [ "$RM" -ge 50 ]; then
-            if [ $(wc -l < "$DC_tlt/9.cfg") = 4 ]; then
+        
+            if [ $(sed '/^$/d' < "$DC_tlt/9.cfg" | wc -l) = 4 ]; then
                 echo "_
                 _
                 _
