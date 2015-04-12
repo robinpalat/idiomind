@@ -12,24 +12,30 @@ if [ "$1" = delete_item ]; then
     trgt="$2"
     fname="$(nmfile "${trgt}")"
     
-    msg_2 " $(gettext "Are you sure you want to delete this episode?")\n\n" \
-    dialog-question "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
+    msg_2 "$(gettext "Are you sure you want to delete this episode?")\n" \
+    gtk-delete "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
     ret=$(echo "$?")
 
         if [ $ret -eq 0 ]; then
             
-            (sleep 0.2 && kill -9 $(pgrep -f "yad --text-info "))
+            (sleep 0.2 && kill -9 $(pgrep -f "yad --html "))
             
            if ! grep -Fxo "$trgt" < "$DCP/1.cfg"; then
-                rm "$DMC/$fname.mp3"
-                rm "$DMC/$fname.txt"
-                rm "$DMC/$fname.png"
-                rm "$DMC/$fname.i"
+           
+                [ "$DMC/$fname.mp3" ] && rm "$DMC/$fname.mp3"
+                [ "$DMC/$fname.ogg" ] && rm "$DMC/$fname.ogg"
+                [ "$DMC/$fname.mp4" ] && rm "$DMC/$fname.mp4"
+                [ "$DMC/$fname.m4v" ] && rm "$DMC/$fname.m4v"
+                [ "$DMC/$fname.flv" ] && rm "$DMC/$fname.flv"
+                [ "$DMC/$fname.html" ] && rm "$DMC/$fname.html"
+                [ "$DMC/$fname.jpg" ] && rm "$DMC/$fname.jpg"
+                [ "$DMC/$fname.png" ] && rm "$DMC/$fname.png"
+
             fi
             cd "$DCP"
-            grep -v -x -F "$trgt" ./.22.cfg > ./.22.cfg.tmp
+            grep -vxF "$trgt" ./.22.cfg > ./.22.cfg.tmp
             sed '/^$/d' ./.22.cfg.tmp > ./.22.cfg
-            grep -v -x -F "$trgt" ./2.cfg > ./2.cfg.tmp
+            grep -vxF "$trgt" ./2.cfg > ./2.cfg.tmp
             sed '/^$/d' ./2.cfg.tmp > ./2.cfg
 
             rm ./*.tmp
@@ -37,26 +43,33 @@ if [ "$1" = delete_item ]; then
             
     rm -f $DT/ps_lk; exit 1
 
-elif [ "$1" = delete ]; then
+elif [ "$1" = delete_1 ]; then
 
     if [ "$(wc -l < "$DCP/2.cfg")" -gt 0 ]; then
-    msg_2 " $(gettext "Are you sure you want to delete saved episodes?")\n" dialog-question "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
+    msg_2 "$(gettext "Are you sure you want to delete all episodes?")\n" gtk-delete "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
     else exit 1; fi
     ret=$(echo "$?")
             
     if [ $ret -eq 0 ]; then
 
-        rm $DM_tl/Podcasts/cache/*
-        rm $DM_tl/Podcasts/.conf/.updt.lst
-        rm $DM_tl/Podcasts/.conf/1.cfg
-        rm $DM_tl/Podcasts/.conf/.dt
-
-   elif [ $ret -eq 2 ]; then
-
-        rm -r "$DCP"/2.cfg "$DCP"/.22.cfg
-        touch "$DCP"/2.cfg "$DCP"/.22.cfg
-        
-    else
-        exit
+        rm "$DM_tl/Podcasts/cache"/*
+        rm "$DM_tl/Podcasts/.conf/.updt.lst"
+        rm "$DM_tl/Podcasts/.conf/1.cfg"
+        rm "$DM_tl/Podcasts/.conf/.dt"
     fi
+    exit
+
+elif [ "$1" = delete_2 ]; then
+
+    if [ "$(wc -l < "$DCP/2.cfg")" -gt 0 ]; then
+    msg_2 "$(gettext "Are you sure you want to delete all saved episodes?")\n" gtk-delete "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
+    else exit 1; fi
+    ret=$(echo "$?")
+    
+   if [ $ret -eq 0 ]; then
+
+        rm "$DCP/2.cfg" "$DCP/.22.cfg"
+        touch "$DCP/2.cfg" "$DCP/.22.cfg"
+    fi
+    exit
 fi

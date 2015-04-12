@@ -108,6 +108,9 @@ CNFG=$(yad --form --title="$(gettext "Podcasts settings")" \
 --field="" "$url4" --field="" "$url5" --field="" "$url6" \
 --field="" "$url7" --field="" "$url8" --field="" "$url9" \
 --field="" "$url10" \
+--field="$(gettext "Remove Episodes")":FBTN "$DSP/mngr.sh 'delete_1'" \
+--field="$(gettext "Remove Saved Episodes")":FBTN "$DSP/mngr.sh 'delete_2'" \
+--field="$(gettext "Advance Setting")":FBTN \
 --button="$(gettext "Cancel")":1 \
 --button="$(gettext "Syncronize")":5 \
 --button="gtk-apply":0)

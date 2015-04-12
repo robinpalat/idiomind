@@ -4,14 +4,14 @@ source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 IFS=$'\n\t'
 #
-# sync delete option disable
+# sync delete option: disable 0 / enable 1
+delete=0
 #
 #
 #
 #
 #
 #
-
 
 play() {
 
@@ -323,7 +323,7 @@ sync() {
 
                 killall rsync
                 [ -n "$(ps -A | pgrep -f "rsync")" ] && killall rsync
-                [ -f "$DT/cp.lock" ] && rm -f "$DT/cp.lock"
+                [ "$DT/cp.lock" ] && rm -f "$DT/cp.lock"
                 rm -f "$DT/l_sync"
                 killall tls.sh
                 exit 1
@@ -334,7 +334,7 @@ sync() {
         exit 1
 
     elif [ ! -d "$path" ] && [ "$2" != A ]; then
-        
+         
         msg " $(gettext "The directory to synchronization does not exist \n Exiting.")" \
         dialog-warning & exit 1
     
@@ -353,14 +353,21 @@ sync() {
         "$(gettext "Synchronizing...")" " ")
         touch "$DT/l_sync"; SYNCDIR="$path"
         st1="$(cd "$SYNCDIR"; ls *.mp3 | wc -l)"
+        
+        if [ "$delete" = 0 ]; then
         rsync -az -v --exclude="*.txt" --exclude="*.png" \
         --exclude="*.html" --omit-dir-times --ignore-errors "$DM_tl/Podcasts/cache/" "$SYNCDIR"
+        elif [ "$delete" = 1 ]; then
+        rsync -az -v --delete --exclude="*.txt" --exclude="*.png" \
+        --exclude="*.html" --omit-dir-times --ignore-errors "$DM_tl/Podcasts/cache/" "$SYNCDIR"
+        fi
+        
         exit=$?
         
         if [ $exit = 0 ] ; then
             st2="$(cd "$SYNCDIR"; ls *.mp3 | wc -l)"
             re=$((st2-st1))
-            notify-send -i idiomind "$(gettext "Complete synchronization")" "$re $(gettext "New episodes(s)")\n$st2 $(gettext "Total")" -t 8000
+            notify-send -i idiomind "$(gettext "Synchronization finished")" "$re $(gettext "New episodes(s)")\n$st2 $(gettext "Total")" -t 8000
         else
             notify-send -i dialog-warning \
             "$(gettext "Error while syncing")" " " -t 8000

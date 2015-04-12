@@ -45,18 +45,12 @@ function new_session() {
     echo "$(date +%d)" > "$DC_s/10.cfg"
     if [ -f "$DT/t_notify" ]; then rm -f "$DT/t_notify"; fi
     if [ -f "$DT/notify" ]; then rm -f "$DT/notify"; fi
+    source "$DS/ifs/mods/cmns.sh"
     
     # write in /tmp
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
-    
     if [ $? -ne 0 ]; then
-        killall yad &
-        yad --name=idiomind --image=error --button=gtk-ok:1\
-        --text=" $(gettext "Fail on try write in /tmp")\n\n" \
-        --image-on-top --sticky  \
-        --width=420 --height=150 --borders=5 --title=Idiomind \
-        --skip-taskbar --center --window-icon="idiomind" & exit 1
-    fi
+    msg "$(gettext "Fail on try write in /tmp")\n" error & exit 1; fi
   
     # start addons
     addons="$(cd $DS/addons; ls -d *)"
@@ -206,18 +200,20 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
         cd "$tmp"
         ws=$(wc -l < "3.cfg")
         ss=$(wc -l < "4.cfg")
-        itxt="<big><big>$tpi</big></big><small>\\n ${language_source^} <b>></b> $language_target\\n $nwords $(gettext "Words") $nsentences $(gettext "Sentences") $nimages $(gettext "Images")\n $(gettext "Level") $level \n</small>"
+        itxt="<big><big>$tpi</big></big><small>\\n ${language_source^} <b>></b> $language_target\\n $nwords $(gettext "Words") $nsentences $(gettext "Sentences") $nimages $(gettext "Images")\n $(gettext "Level:") $level \n</small>"
         dlck="$DS/default/p1.sh '$c'"
         
         tac "$tmp/0.cfg" | awk '{print $0""}' | \
-        yad --list --name=Idiomind --title="Idiomind" \
-        --ellipsize=END --print-all --image-on-top \
-        --text="$itxt" --class=Idiomind --center  \
-        --scroll --no-headers --dclick-action="$dlck" \
-        --width=650 --height=580 --image-on-top  \
-        --window-icon="idiomind" --column=Items \
-        --borders=10 --button="$(gettext "Info")":"$infs" \
-        --borders=10 --button="$(gettext "Install")":0 \
+        yad --list --title="Idiomind" \
+        --text="$itxt" \
+        --name=Idiomind --class=Idiomind \
+        --print-all --dclick-action="$dlck" \
+        --window-icon="idiomind" --scroll \
+        --no-headers --ellipsize=END --center \
+        --width=650 --height=580 --borders=10 \
+        --column=Items \
+        --button="$(gettext "Info")":"$infs" \
+        --button="$(gettext "Install")":0 \
         --button="$(gettext "Close")":1
         ret=$?
             
@@ -489,7 +485,7 @@ function topic() {
         
         pres="<u><b>$(gettext "Learned")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
         
-        # learned with new items
+    
         notebook_2
       
         ret=$(echo $?)
@@ -522,15 +518,15 @@ panel() {
     
     w=$(($(sed -n 2p $DC_s/10.cfg)-400))
     h=$(($(sed -n 3p $DC_s/10.cfg)-150))
-    yad --width=150 --height=200 --form \
-    --geometry=150x300-$w-$h --name=Idiomind \
-    --fixed --title="Idiomind" --class=Idiomind \
+    yad --title="Idiomind" \
+    --name=Idiomind --class=Idiomind \
+    --window-icon="idiomind" \
+    --form --fixed --on-top --no-buttons --align=center \
+    --width=150 --height=200 --borders=1 --geometry=150x300-$w-$h \
     --field=gtk-new:btn "$DS/add.sh 'new_items'" \
     --field=gtk-home:btn "idiomind 'topic'" \
     --field=gtk-index:btn "$DS/chng.sh" \
-    --field=gtk-preferences:btn "$DS/cnfg.sh" \
-    --on-top --borders=5 --align=center \
-    --no-buttons --window-icon="idiomind" &
+    --field=gtk-preferences:btn "$DS/cnfg.sh" &
 }
 
 version() {

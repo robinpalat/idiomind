@@ -76,7 +76,7 @@ function notebook_1() {
     --column=Name:TEXT &
     yad --text-info --tabnum=3 \
     --plug=$KEY \
-    --filename="$nt" --editable --wrap --fore='gray40' --back='#FFFAEC' \
+    --filename="$nt" --editable --wrap --fore='gray40' \
     --show-uri --fontname=vendana --margins=14 > "$cnf3" &
     yad --form --tabnum=4 \
     --plug=$KEY \
@@ -114,12 +114,12 @@ function notebook_2() {
     --align=center --borders=80 --bar="":NORM $RM &
     tac "$ls2" | yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
-    --dclick-action="$DS/vwr.sh '1'" \
+    --dclick-action="$DS/vwr.sh '2'" \
     --expand-column=0 --no-headers --ellipsize=END \
     --column=Name:TEXT &
     yad --text-info --tabnum=3 \
     --plug=$KEY \
-    --filename="$nt" --editable --wrap --fore='gray40' --back='#FFFAEC' \
+    --filename="$nt" --editable --wrap --fore='gray40' \
     --show-uri --fontname=vendana --margins=14 > "$cnf3" &
     yad --form --tabnum=4 \
     --plug=$KEY \
