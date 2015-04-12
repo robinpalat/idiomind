@@ -23,6 +23,10 @@ DC_s="$HOME/.config/idiomind/s"
 source "$DS/ifs/mods/cmns.sh"
 loop=$(sed -n 9p < "$DC_s/1.cfg" \
 | grep -o loop=\"[^\"]* | grep -o '[^"]*$')
+text=$(sed -n 5p < "$DC_s/1.cfg" \
+| grep -o text=\"[^\"]* | grep -o '[^"]*$')
+audio=$(sed -n 6p < "$DC_s/1.cfg" \
+| grep -o audio=\"[^\"]* | grep -o '[^"]*$')
 nu='^[0-9]+$'; if ! [[ $loop =~ $nu ]]; then loop=10; fi
 
 if [ "$1" = chngi ]; then
@@ -70,10 +74,11 @@ if [ "$1" = chngi ]; then
     imgt="$DM_tlt/words/images/$fname.jpg"
     [ -f "$imgt" ] && osdi="$imgt"
             
-            if [ "$text" = "TRUE" ]; then
-            notify-send -i "$osdi" "$trgt" "$srce" -t 10000; fi &
-            if [ "$audio" = "TRUE" ]; then
-            "$play" "$file" && wait; fi
+    if [ "$text" = "TRUE" ]; then
+    notify-send -i "$osdi" "$trgt" "$srce" -t 10000; fi &
+    
+    if [ "$audio" = "TRUE" ]; then
+    "$play" "$file" && wait; fi
     
     if [ "$text" = "TRUE" ] && [[ $loop -lt 11 ]]; then loop=11; fi
     sleep "$loop"

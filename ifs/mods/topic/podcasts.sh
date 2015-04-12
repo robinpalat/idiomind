@@ -57,12 +57,13 @@ function feedmode() {
     ret=$?
         
     if [ $ret -eq 2 ]; then
-        "$DSP/strt.sh";
-    fi
+    "$DSP/strt.sh"; fi
     
     note_mod="$(< $fdit)"
     if [ "$note_mod" != "$(< $nt)" ]; then
-    mv -f "$fdit" "$nt"; else rm -f "$fdit"; fi
+    mv -f "$fdit" "$nt"; fi
+    
+    [ "$fdit" ] && rm -f "$fdit"
 }
 
 

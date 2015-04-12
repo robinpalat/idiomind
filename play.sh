@@ -17,6 +17,7 @@
 #  MA 02110-1301, USA.
 #
 #  2015/02/27
+source /usr/share/idiomind/ifs/c.conf
 
 [ -z "$tpc" ] && exit 1
 lbls=('Words' 'Sentences' 'Marks' 'Practice' 'News episodes' 'Saved epidodes')

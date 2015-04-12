@@ -29,7 +29,7 @@ if [ -n "$(cat ./index.m3u)" ] && [ $(wc -l < ./index.m3u) -gt 0 ]; then
         while [ 1 ]; do
             index=$(wc -l < ./index.m3u)
             while [ 1 -le $index ]; do
-                "$DS/chng.sh" chngi "$ind"
+                "$DS/chng.sh" chngi "$index"
                 let index--
             done
             sleep 15
@@ -38,7 +38,7 @@ if [ -n "$(cat ./index.m3u)" ] && [ $(wc -l < ./index.m3u) -gt 0 ]; then
     else
         index=$(wc -l < ./index.m3u)
         while [ 1 -le $index ]; do
-        "$DS/chng.sh" chngi "$ind"
+        "$DS/chng.sh" chngi "$index"
             let index--
         done
         rm -fr "$DT/.p_"; exit 0

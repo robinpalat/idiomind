@@ -33,7 +33,7 @@ position() {
         --always-print-result --print-column=3 --separator="" \
         --window-icon="idiomind" --no-headers --on-top --center \
         --expand-column=3 --ellipsize=END \
-        --width=600 --height=500 --borders=10 \
+        --width=640 --height=560 --borders=8 \
         --column="":NUM \
         --column="":RD \
         --column="":TEXT \
