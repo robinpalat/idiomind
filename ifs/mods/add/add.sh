@@ -196,10 +196,8 @@ function voice() {
             echo "$1" | text2wave -o ./s.wav
             sox ./s.wav "$3"
             else
-            msg "$(gettext "Festival can not process text") $lgtl" error
-            [ "$DT_r" ] && rm -fr "$DT_r"
-            exit 1
-            fi
+            msg "$(gettext "Sorry, festival can not process this language.")\n" error
+            [ "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
         else
             echo "$1" | "$vs"
             [ -f *.mp3 ] && mv -f *.mp3 "$3"
@@ -209,8 +207,8 @@ function voice() {
     
         lg="${lgtl,,}"
         [ $lg = chinese ] && lg=Mandarin
-        [ $lg = japanese ] && (msg "$(gettext "espeak can not process Japanese text")" error \
-        && exit 1 && [ "$DT_r" ] && rm -fr "$DT_r")
+        if [ $lg = japanese ]; then msg "$(gettext "Sorry, espeak can not process Japanese text.")\n" error
+        [ "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
         espeak "$1" -v $lg -k 1 -p 40 -a 80 -s 110 -w ./s.wav
         sox ./s.wav "$3"
     fi

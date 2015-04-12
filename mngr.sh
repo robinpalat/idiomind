@@ -353,10 +353,10 @@ function edit() {
     index_1="$DC_tlt/2.cfg"
     index_2="$DC_tlt/1.cfg"; fi
     dct="$DS/addons/Dics/cnfg.sh"
-    file_tmp=$(mktemp $DT/file_tmp.XXXX)
-    edta=$(sed -n 17p ~/.config/idiomind/s/1.cfg)
-    tpcs=$(egrep -v "$tpc" < "$DM_tl/.2.cfg" | cut -c 1-40 \
-    | tr "\\n" '!' | sed 's/!\+$//g')
+    file_tmp="$(mktemp $DT/file_tmp.XXXX)"
+    edta="$(sed -n 17p ~/.config/idiomind/s/1.cfg)"
+    tpcs="$(egrep -v "$tpc" < "$DM_tl/.2.cfg" | cut -c 1-40 \
+    | tr "\\n" '!' | sed 's/!\+$//g')"
     c=$(echo $(($RANDOM%10000)))
     item="$(sed -n "$3"p "$index_1")"
     fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
@@ -365,14 +365,14 @@ function edit() {
     
     if [ -f "$audiofile_2" ]; then
         
-        tags=$(eyeD3 "$audiofile_2")
-        trgt=$(grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)' <<<"$tags")
-        srce=$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)'<<<"$tags")
-        fields=$(grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' <<<"$tags" | tr '_' '\n')
-        mark=$(grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)' <<<"$tags")
-        exm1=$(sed -n 1p <<<"$fields")
-        dftn=$(sed -n 2p <<<"$fields")
-        ntes=$(sed -n 3p <<<"$fields")
+        tags="$(eyeD3 "$audiofile_2")"
+        trgt="$(grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)' <<<"$tags")"
+        srce="$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)'<<<"$tags")"
+        fields="$(grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' <<<"$tags" | tr '_' '\n')"
+        mark="$(grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)' <<<"$tags")"
+        exm1="$(sed -n 1p <<<"$fields")"
+        dftn="$(sed -n 2p <<<"$fields")"
+        ntes="$(sed -n 3p <<<"$fields")"
         dlte="$DS/mngr.sh delete_item ${fname}"
         imge="$DS/ifs/tls.sh set_image '$trgt' word"
         sdefn="/usr/share/idiomind/ifs/tls.sh definition '$trgt'"
@@ -381,17 +381,17 @@ function edit() {
         ret=$(echo "$?")
         
             [ -f "$DT/ps_lk" ] && "$DS/vwr.sh" "$lists" "nll" "$item_pos" && exit 1
-            srce_mod=$(tail -12 < "$file_tmp" | sed -n 2p  \
-            | sed 's/^ *//; s/ *$//g'| sed ':a;N;$!ba;s/\n/ /g')
-            tpc_mod=$(tail -12 < "$file_tmp" | sed -n 3p)
-            audio_mod=$(tail -12 < "$file_tmp" | sed -n 4p)
-            exm1=$(tail -12 < "$file_tmp" | sed -n 5p)
-            dftn=$(tail -12 < "$file_tmp" | sed -n 6p)
-            ntes=$(tail -12 < "$file_tmp" | sed -n 7p)
-            mark_mod=$(tail -12 < "$file_tmp" | sed -n 8p)
+            srce_mod="$(tail -12 < "$file_tmp" | sed -n 2p  \
+            | sed 's/^ *//; s/ *$//g'| sed ':a;N;$!ba;s/\n/ /g')"
+            tpc_mod="$(tail -12 < "$file_tmp" | sed -n 3p)"
+            audio_mod="$(tail -12 < "$file_tmp" | sed -n 4p)"
+            exm1="$(tail -12 < "$file_tmp" | sed -n 5p)"
+            dftn="$(tail -12 < "$file_tmp" | sed -n 6p)"
+            ntes="$(tail -12 < "$file_tmp" | sed -n 7p)"
+            mark_mod="$(tail -12 < "$file_tmp" | sed -n 8p)"
             source /usr/share/idiomind/ifs/c.conf
             include "$DS/ifs/mods/add"
-            rm -f "$file_tmp"
+            #rm -f "$file_tmp"
             
             if [ "$mark" != "$mark_mod" ]; then
             
@@ -448,12 +448,12 @@ function edit() {
     elif [ -f "$audiofile_1" ]; then
     
         file="$DM_tlt/$fname.mp3"
-        tags=$(eyeD3 "$audiofile_1")
-        mark=$(grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)' <<<"$tags")
-        trgt=$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"$tags")
-        srce=$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"$tags")
-        lwrd=$(grep -o -P '(?<=IWI3I0I).*(?=IPWI3I0I)' <<<"$tags")
-        pwrds=$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"$tags")
+        tags="$(eyeD3 "$audiofile_1")"
+        mark="$(grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)' <<<"$tags")"
+        trgt="$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"$tags")"
+        srce="$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"$tags")"
+        lwrd="$(grep -o -P '(?<=IWI3I0I).*(?=IPWI3I0I)' <<<"$tags")"
+        pwrds="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"$tags")"
         word_list="$DS/add.sh edit_list_words '$file' F $c"
         edau="/usr/share/idiomind/ifs/tls.sh edit_audio \
         '$DM_tlt/$fname.mp3' '$DM_tlt'"
@@ -465,13 +465,13 @@ function edit() {
         ret=$(echo "$?")
 
             [ -f "$DT/ps_lk" ] && "$DS/vwr.sh" "$lists" "nll" "$item_pos" && exit 1
-            mark_mod=$(tail -7 < "$file_tmp" | sed -n 1p)
-            trgt_mod=$(tail -7 < "$file_tmp" | sed -n 2p | \
-            sed 's/^ *//; s/ *$//g'| sed ':a;N;$!ba;s/\n/ /g')
-            srce_mod=$(tail -7 < "$file_tmp" | sed -n 3p | \
-            sed 's/^ *//; s/ *$//g'| sed ':a;N;$!ba;s/\n/ /g')
-            tpc_mod=$(tail -7 < "$file_tmp" | sed -n 5p)
-            audio_mod=$(tail -7 < "$file_tmp" | sed -n 6p)
+            mark_mod="$(tail -7 < "$file_tmp" | sed -n 1p)"
+            trgt_mod="$(tail -7 < "$file_tmp" | sed -n 2p | \
+            sed 's/^ *//; s/ *$//g'| sed ':a;N;$!ba;s/\n/ /g')"
+            srce_mod="$(tail -7 < "$file_tmp" | sed -n 3p | \
+            sed 's/^ *//; s/ *$//g'| sed ':a;N;$!ba;s/\n/ /g')"
+            tpc_mod="$(tail -7 < "$file_tmp" | sed -n 5p)"
+            audio_mod="$(tail -7 < "$file_tmp" | sed -n 6p)"
             source /usr/share/idiomind/ifs/c.conf
             include "$DS/ifs/mods/add"
             rm -f "$file_tmp"
@@ -603,7 +603,7 @@ function rename_topic() {
     info2=$(wc -l < "$DM_tl/.1.cfg")
     jlb="${2}"
     jlb="$(clean_2 "$jlb")"
-    snm=$(grep -Fxo "$jlb" < "$DM_tl/.1.cfg" | wc -l)
+    snm="$(grep -Fxo "$jlb" < "$DM_tl/.1.cfg" | wc -l)"
   
     if [ "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "$tpc" ]; then
     msg "$(gettext "Unable to rename at this time. Please try later ")\n" dialog-warning & exit 1; fi

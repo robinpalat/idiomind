@@ -90,16 +90,16 @@ function dlg_form_1() {
         --columns=2 --center --on-top \
         --width=$wth --height=$eht --borders=10 \
         --field="<small>$lgtl</small>":RO "$trgt" \
-        --field="<small>$lgsl</small>" "$srce" \
+        --field="<small>$lgsl</small>":CE "$srce" \
         --field="<small>$(gettext "Topic") </small>":CB "$tpc!$tpcs" \
         --field="<small>$(gettext "Audio") </small>":FL "$DM_tlt/words/$fname.mp3" \
         --field="<small>$(gettext "Example") </small>":TXT "$exm1" \
         --field="<small>$(gettext "Definition") </small>":TXT "$dftn" \
-        --field="<small>$(gettext "Notes") </small>":TXT "$ntes" \
-        --field="$(gettext "Mark") "":CHK" "$mark" \
-        --field="<small>$(gettext "Search definition") </small>":FBTN "$sdefn" \
-        --field=" ":LBL "" \
+        --field="<small>$(gettext "Note") </small>":TXT "$ntes" \
+        --field="$(gettext "Mark") ":CHK "$mark" \
         --field="<small>$(gettext "Listen")</small>":FBTN "play '$DM_tlt/words/$fname.mp3'" \
+        --field="<small>$(gettext "Search definition") </small>":FBTN "$sdefn" \
+        --field=" ":LBL " " \
         --button="$(gettext "Position")":"$DS/ifs/mods/mngr/mngr.sh 'position' '$item_pos' '$index_1'" \
         --button="$(gettext "Image")":"$imge" \
         --button="$(gettext "Delete")":"$dlte" \
@@ -116,7 +116,7 @@ function dlg_form_2() {
         --window-icon="idiomind" --center --on-top --align=center \
         --buttons-layout=end \
         --width=$wth --height=$eht --borders=10 \
-        --field="$(gettext "Mark") "":CHK" "$mark" \
+        --field="$(gettext "Mark")":CHK "$mark" \
         --field="<small>$lgtl</small>":TXT "$trgt" \
         --field="<small>$lgsl</small>":TXT "$srce" \
         --field="$(gettext "Listen")":FBTN "$lstau" \

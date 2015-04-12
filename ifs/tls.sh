@@ -685,7 +685,7 @@ function about() {
 python << END
 import gtk
 import os
-app_logo = os.path.join('/usr/share/idiomind/images/', 'logo.png')
+app_logo = os.path.join('/usr/share/idiomind/images/idiomind.png')
 app_name = 'Idiomind'
 app_version = 'v2.2-beta'
 app_comments = 'Vocabulary learning tool'
