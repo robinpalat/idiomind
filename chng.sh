@@ -119,7 +119,7 @@ elif [ "$1" != chngi ]; then
             
             if [ ! -f "$DM_tl/$s/tpc.sh" ]; then
             
-                if [ "$s" != "Feeds" ]; then
+                if [ "$s" != "Podcasts" ]; then
                 ln -s "$DS/default/tpc.sh" "$DM_tl/$s/tpc.sh"; fi
                 "$DM_tl/$s/tpc.sh" 1 & exit
                 
@@ -133,7 +133,7 @@ elif [ "$1" != chngi ]; then
             
             if [ ! -f "$DM_tl/$s/tpc.sh" ]; then
             
-                if [ "$s" != "Feeds" ]; then
+                if [ "$s" != "Podcasts" ]; then
                 ln -s "$DS/default/tpc.sh" "$DM_tl/$s/tpc.sh"; fi
                 "$DM_tl/$s/tpc.sh" & exit
                 

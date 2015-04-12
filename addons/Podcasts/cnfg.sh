@@ -87,7 +87,7 @@ apply() {
 
 [ ! -d "$path" ] && path=/uu
 if [ -f "$DM_tl/Podcasts/.conf/feed.err" ]; then
-e="$(head -n 10 < "$DM_tl/Podcasts/.conf/feed.err" | tr '&' ' ')"
+e="$(head -n 2 < "$DM_tl/Podcasts/.conf/feed.err" | tr '&' ' ')"
 rm "$DM_tl/Podcasts/.conf/feed.err"
 (sleep 2 && msg "$(gettext "Errors found in log file") \n$e" info) &
 fi
@@ -97,13 +97,13 @@ CNFG=$(yad --form --title="$(gettext "Podcasts settings")" \
 --always-print-result --print-all --separator="|" \
 --window-icon="idiomind" --center --scroll --on-top \
 --width=600 --height=460 --borders=15 \
---text="$(gettext "Configure podcasts to learn with podcasts or news.")" \
+--text="$(gettext "Configure feeds to learn with podcasts.")" \
 --field="$(gettext "Update at startup")":CHK "$update" \
 --field="$(gettext "Sync after update")":CHK "$sync" \
 --field="$(gettext "Mountpoint or path where episodes should be synced.")":LBL " " \
 --field="":DIR "$path" \
 --field=" ":LBL " " \
---field="$(gettext "Podcasts")":LBL " " \
+--field="$(gettext "Feeds")":LBL " " \
 --field="" "$url1" --field="" "$url2" --field="" "$url3" \
 --field="" "$url4" --field="" "$url5" --field="" "$url6" \
 --field="" "$url7" --field="" "$url8" --field="" "$url9" \

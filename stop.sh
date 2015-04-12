@@ -49,7 +49,6 @@ L() {
 
 feed() {
     killall strt.sh &
-    [ -f "$DT/.uptf" ] && rm -fr "$DT/.uptf"
     [ -f "$DT/.uptp" ] && rm -fr "$DT/.uptp"
     exit
 }

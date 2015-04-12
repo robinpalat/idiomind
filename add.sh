@@ -60,7 +60,7 @@ function new_topic() {
 
 function new_items() {
 
-    if [ "$(grep -v 'Feeds' < "$DM_tl/.1.cfg" | wc -l)" -lt 1 ]; then
+    if [ "$(grep -v 'Podcasts' < "$DM_tl/.1.cfg" | wc -l)" -lt 1 ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
     "$DS/chng.sh" "$(gettext "To start adding notes you need have a topic.
 Create one using the button below. ")" & exit 1; fi

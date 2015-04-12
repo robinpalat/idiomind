@@ -38,8 +38,8 @@ in2="$(< "$tlng")"; fi
 in3="$(< "$DC_tlt/6.cfg")"
 cd "$DC_tlt/practice"
 in4="$(sed '/^$/d' < w6 | sort | uniq)"
-in5="$(tac "$DM_tl/Feeds/.conf/1.cfg" | sed '/^$/d')"
-in6="$(tac "$DM_tl/Feeds/.conf/2.cfg" | sed '/^$/d')"
+in5="$(tac "$DM_tl/Podcasts/.conf/1.cfg" | sed '/^$/d')"
+in6="$(tac "$DM_tl/Podcasts/.conf/2.cfg" | sed '/^$/d')"
 [ ! -d "$DT" ] && mkdir "$DT"; cd "$DT"
 
 if [ "$cfg" = 1 ]; then
