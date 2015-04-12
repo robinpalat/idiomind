@@ -18,7 +18,7 @@
 #
 #  2015/02/27
 
-function position() {
+position() {
 
         item="$(sed -n "$2"p "$3")"
         pos=$(($(wc -l < "$3")-$2))
@@ -27,9 +27,9 @@ function position() {
         || label="$item"
         mv="$(tac "$DC_tlt/0.cfg" | grep -vxF "$item" \
         | awk '{print ((let++))"\nFALSE\n"$0}' \
-        | yad --list --title=" " \
+        | yad --list --title="$(gettext "Moving the item through the list")" \
         --class=Idiomind --name=Idiomind \
-        --text="<sup>$(gettext "Moving the item through the list.")</sup>\n  [ $pos ]  <i>\"$label\"</i>" \
+        --text="  [ $pos ]  <i>\"$label\"</i>" \
         --always-print-result --print-column=3 --separator="" \
         --window-icon="idiomind" --no-headers --on-top --center \
         --expand-column=3 --ellipsize=END \
@@ -39,11 +39,12 @@ function position() {
         --column="":TEXT \
         --button="$(gettext "Cancel")":2 \
         --button="$(gettext "Save")":0)"
+        
 
         ret=$?
 
         if [ $ret -eq 0 ]; then
-        
+
             [ -z "${mv}" ] && exit
             > "$DC_tlt/0.cfg.mv"
             while read sec; do

@@ -108,10 +108,6 @@ if [ TRUE = TRUE ]; then
     if [ $(wc -l < "$items") -ge 5 ]; then
     echo "$(gettext "Information"):\n$(wc -l < "$items") $(gettext "items marked as learned")" >> "$DT/notify"
     fi
-    
-    #notify-send -i idiomind "$(gettext "Update lists")" \
-    #"$(wc -l < "$items") $(gettext "item(s) marked as learned")" -t 12000
-    
     fi
     
     if [ "$(date +%u)" = 6 ]; then rm "$LOG"; touch "$LOG"; fi

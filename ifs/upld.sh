@@ -22,7 +22,7 @@ source "$DS/ifs/mods/cmns.sh"
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
 
-function vsd() {
+vsd() {
 
     U=$(sed -n 1p $HOME/.config/idiomind/s/4.cfg)
     lng=$(echo "$lgtl" | awk '{print tolower($0)}')
@@ -38,7 +38,7 @@ function vsd() {
     exit
 }
 
-function infsd() {
+infsd() {
 
     U=$(sed -n 1p $DC_s/5.cfg)
     user=$(echo "$(whoami)")
@@ -96,10 +96,8 @@ function infsd() {
             else
             msg "$(gettext "The file is not yet available for download from the server.")\n" info && exit
             fi
-            exit
-        else
-            exit
         fi
+        exit
 }
 
 function upld() {
@@ -283,8 +281,8 @@ auds="$(uniq < "$DC_tlt/4.cfg" \
 | tr -d ')' | tr -d '(' | tr '[:upper:]' '[:lower:]')"
 
 while read -r audio; do
-    if [ -f "$DM_tl/.share/$audio.mp3" ]; then
-    cp -f "$DM_tl/.share/$audio.mp3" "$DT_u/$tpc/audio/$audio.mp3"; fi
+if [ -f "$DM_tl/.share/$audio.mp3" ]; then
+cp -f "$DM_tl/.share/$audio.mp3" "$DT_u/$tpc/audio/$audio.mp3"; fi
 done <<<"$auds"
 
 cp -f "$DC_tlt/0.cfg" "$DT_u/$tpc/0.cfg"

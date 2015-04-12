@@ -69,23 +69,20 @@ if [[ "$prdt" = A ]]; then
     source "$DS/ifs/mods/cmns.sh"
     
     if [ -z "$key" ]; then
-        
-        msg "$(gettext "For this feature you need to provide a key. Please get one from the:")   <a href='$LNK'>console.developers.google.com</a>\n" dialog-warning
-        [ "$DT_r" ] && rm -fr "$DT_r"
-        rm -f ls "$lckpr" & exit 1
-    fi
+    msg "$(gettext "For this feature you need to provide a key. Please get one from the:")   <a href='$LNK'>console.developers.google.com</a>\n" dialog-warning
+    [ "$DT_r" ] && rm -fr "$DT_r"
+    rm -f ls "$lckpr" & exit 1; fi
     
     cd "$HOME"; fl="$(dlg_file_1)"
     
     if [ -z "$fl" ];then
-        [ "$DT_r" ] && rm -fr "$DT_r"
-        rm -f "$lckpr" & exit 1
+    [ "$DT_r" ] && rm -fr "$DT_r"
+    rm -f "$lckpr" & exit 1
         
     else
         if [ -z "$tpe" ]; then
-            [ "$DT_r" ] && rm -fr "$DT_r"
-            msg "$(gettext "No topic is active")\n" info & exit 1
-        fi
+        [ "$DT_r" ] && rm -fr "$DT_r"
+        msg "$(gettext "No topic is active")\n" info & exit 1; fi
         
         (
         echo "2"
@@ -125,18 +122,15 @@ if [[ "$prdt" = A ]]; then
         echo "# $(gettext "Checking key")..."; sleep 1
         data="$(audio_recognizer "$test" $lgt $lgt $key)"
         if [ -z "$data" ]; then
-            key=$(sed -n 3p $DC_s/3.cfg)
-            data="$(audio_recognizer "$test" $lgt $lgt $key)"
-        fi
+        key=$(sed -n 3p $DC_s/3.cfg)
+        data="$(audio_recognizer "$test" $lgt $lgt $key)"; fi
         if [ -z "$data" ]; then
-            key=$(sed -n 4p $DC_s/3.cfg)
-            data="$(audio_recognizer "$test" $lgt $lgt $key)"
-        fi
+        key=$(sed -n 4p $DC_s/3.cfg)
+        data="$(audio_recognizer "$test" $lgt $lgt $key)"; fi
         if [ -z "$data" ]; then
-            msg "$(gettext "The key is invalid or has exceeded its quota of daily requests")" error
-            [ "$DT_r" ] && rm -fr "$DT_r"
-            rm -f ls "$lckpr" & exit 1
-        fi
+        msg "$(gettext "The key is invalid or has exceeded its quota of daily requests")" error
+        [ "$DT_r" ] && rm -fr "$DT_r"
+        rm -f ls "$lckpr" & exit 1; fi
         
        echo "# $(gettext "Processing")..." ; sleep 0.2
 
@@ -145,12 +139,11 @@ if [[ "$prdt" = A ]]; then
 
             sox "$n.mp3" info.flac rate 16k
             data="$(audio_recognizer info.flac $lgt $lgt $key)"
-            if [ -z "$data" ]; then
             
-                msg "$(gettext "The key is invalid or has exceeded its quota of daily requests")" error
-                [ "$DT_r" ] && rm -fr "$DT_r"
-                rm -f ls "$lckpr" & break & exit 1
-            fi
+            if [ -z "$data" ]; then
+            msg "$(gettext "The key is invalid or has exceeded its quota of daily requests")" error
+            [ "$DT_r" ] && rm -fr "$DT_r"
+            rm -f ls "$lckpr" & break & exit 1; fi
 
             trgt="$(echo "$data" | sed '1d' | sed 's/.*transcript":"//' \
             | sed 's/"}],"final":true}],"result_index":0}//g')"
@@ -184,9 +177,9 @@ if [[ "$prdt" = A ]]; then
         
         if [ -z "$(< $DT_r/ls)" ]; then
         
-            msg "$(gettext "Failed to get text. For the process to be successful, audio file must not have music or background noise.")" dialog-warning
-            [ "$DT_r" ] && rm -fr "$DT_r"
-            rm -f "$lckpr" & exit 1
+        msg "$(gettext "Failed to get text. For the process to be successful, audio file must not have music or background noise.")" dialog-warning
+        [ "$DT_r" ] && rm -fr "$DT_r"
+        rm -f "$lckpr" & exit 1
             
         else
             dlg_checklist_5 "$DT_r/ls" "$(sed -n 2p "$lckpr")"
@@ -199,9 +192,8 @@ if [[ "$prdt" = A ]]; then
                 DC_tlt="$DM_tl/$tpe/.conf"
 
                 if [ ! -d "$DM_tlt" ]; then
-                    msg " $(gettext "An error occurred.")\n" dialog-warning
-                    rm -fr "$DT_r" "$lckpr" "$slt" & exit 1
-                fi
+                msg " $(gettext "An error occurred.")\n" dialog-warning
+                rm -fr "$DT_r" "$lckpr" "$slt" & exit 1; fi
                 
                 cd "$DT_r"
                 
@@ -348,48 +340,45 @@ if [[ "$prdt" = A ]]; then
                 
                 cd "$DT_r"
                 if [ -f ./wlog ]; then
-                    wadds=" $(($(wc -l < ./addw) - $(sed '/^$/d' < ./wlog | wc -l)))"
-                    W=" $(gettext "Words")"
-                    if [ $(echo $wadds) = 1 ]; then
-                        W=" $(gettext "Word")"; fi
+                wadds=" $(($(wc -l < ./addw) - $(sed '/^$/d' < ./wlog | wc -l)))"
+                W=" $(gettext "Words")"
+                if [ $(echo $wadds) = 1 ]; then
+                W=" $(gettext "Word")"; fi
                 else
-                    wadds=" $(wc -l < ./addw)"
-                    W=" $(gettext "Words")"
-                    if [ $(echo $wadds) = 1 ]; then
-                        wadds=" $(wc -l < ./addw)"
-                        W=" $(gettext "Word")"; fi
+                wadds=" $(wc -l < ./addw)"
+                W=" $(gettext "Words")"
+                if [ $(echo $wadds) = 1 ]; then
+                wadds=" $(wc -l < ./addw)"
+                W=" $(gettext "Word")"; fi
                 fi
                 if [ -f ./slog ]; then
-                    sadds=" $(($(wc -l < ./adds) - $(sed '/^$/d' < ./swlog | wc -l)))"
-                    S=" $(gettext "Sentences")"
-                    if [ $(echo $sadds) = 1 ]; then
-                        S=" $(gettext "Sentence")"; fi
+                sadds=" $(($(wc -l < ./adds) - $(sed '/^$/d' < ./swlog | wc -l)))"
+                S=" $(gettext "Sentences")"
+                if [ $(echo $sadds) = 1 ]; then
+                S=" $(gettext "Sentence")"; fi
                 else
-                    sadds=" $(wc -l < ./adds)"
-                    S=" $(gettext "Sentences")"
-                    if [ $(echo $sadds) = 1 ]; then
-                        S=" $(gettext "Sentence")"; fi
+                sadds=" $(wc -l < ./adds)"
+                S=" $(gettext "Sentences")"
+                if [ $(echo $sadds) = 1 ]; then
+                S=" $(gettext "Sentence")"; fi
                 fi
                 
                 logs=$(cat ./slog ./wlog ./log)
                 adds=$(cat ./adds ./addw | wc -l)
                 
                 if [ "$adds" -ge 1 ]; then
-                    notify-send -i idiomind "$tpe" "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
-                    echo "aitm.$adds.aitm" >> \
-                    $DC/addons/stats/.log
-                fi
+                notify-send -i idiomind "$tpe" "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
+                echo "aitm.$adds.aitm" >> \
+                $DC/addons/stats/.log; fi
                 
                 if [ -n "$logs" ] || [ $(ls [0-9]* | wc -l) -ge 1 ]; then
                 
                     if [ -n "$logs" ]; then
-                        text_r1="$(gettext "Some items could not be added to your list.")"
-                    fi
+                    text_r1="$(gettext "Some items could not be added to your list.")"; fi
                     
                     if [ $(ls [0-9]* | wc -l) -ge 1 ]; then
-                        btn="--button="$(gettext "Save Audio")":0"
-                        text_r2="$(gettext "Some audio files could not be added.")"
-                    fi
+                    btn="--button="$(gettext "Save Audio")":0"
+                    text_r2="$(gettext "Some audio files could not be added.")"; fi
 
                     dlg_text_info_3 "$text_r2 $text_r1" "$logs" "$btn" >/dev/null 2>&1
                     ret=$(echo "$?")
@@ -397,14 +386,15 @@ if [[ "$prdt" = A ]]; then
                         if  [ "$ret" -eq 0 ]; then
                             aud=$(dlg_file_2)
                             ret=$(echo "$?")
+                            
                                 if [ "$ret" -eq 0 ]; then
-                                    mkdir rest
-                                    mv -f [0-9]*.mp3 ./rest/
-                                    cd ./rest
-                                    cat "$(ls [0-9]*.mp3 | sort -n | tr '\n' ' ')" > audio.mp3
-                                    rm -f "$(ls [0-9]*.mp3)"
-                                    tar cvzf audio.tar.gz *
-                                    mv -f audio.tar.gz "$aud"
+                                mkdir rest
+                                mv -f [0-9]*.mp3 ./rest/
+                                cd ./rest
+                                cat "$(ls [0-9]*.mp3 | sort -n | tr '\n' ' ')" > audio.mp3
+                                rm -f "$(ls [0-9]*.mp3)"
+                                tar cvzf audio.tar.gz *
+                                mv -f audio.tar.gz "$aud"
                                 fi
                         fi
                 fi

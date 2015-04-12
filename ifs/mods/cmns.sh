@@ -5,11 +5,11 @@ function internet() {
 
     curl -v www.google.com 2>&1 \
     | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
-    yad --title=Idiomind --image=info \
+    yad --title="$(gettext "No network connection")" --image=info \
     --name=Idiomind --class=Idiomind \
     --window-icon="idiomind" \
     --image-on-top --center --sticky --on-top --skip-taskbar \
-    --text=" $(gettext "No network connection\n Please connect to a network, then try again.") " \
+    --text="$(gettext "No network connection\nPlease connect to a network, then try again.")" \
     --width=360 --height=120 --borders=3 \
     --button="$(gettext "OK")":0 >&2; exit 1;}
 }

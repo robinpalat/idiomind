@@ -263,10 +263,9 @@ check_index() {
         done
         
         if [ ! -f "$DC_tlt/8.cfg" ]; then
-            if grep -Fxo "$2" "$DM_tl/.3.cfg"; then
-            echo '6' > "$DC_tlt/8.cfg"
-            else echo '1' > "$DC_tlt/8.cfg"; fi
-        fi
+        if grep -Fxo "$2" "$DM_tl/.3.cfg"; then
+        echo '6' > "$DC_tlt/8.cfg"
+        else echo '1' > "$DC_tlt/8.cfg"; fi; fi
         eval stts=$(< "$DC_tlt/8.cfg")
 
         eval mp3s="$(cd "$DM_tlt/"; find . -maxdepth 2 -name '*.mp3' \
@@ -332,9 +331,8 @@ check_index() {
         "$DC_tlt/2.cfg" "$DC_tlt/3.cfg" "$DC_tlt/4.cfg"
         
         if [ $? -ne 0 ]; then
-            [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
-            msg "$(gettext "File not found")\n" error & exit 1
-        fi
+        [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
+        msg "$(gettext "File not found")\n" error & exit 1; fi
         
         if [ "$stts" = "13" ]; then
             if grep -Fxo "$topic" < "$DM_tl/.3.cfg"; then
@@ -375,10 +373,9 @@ check_index() {
         
         if ([ "$DC_tlt/.11.cfg" ] && \
         [ -n "$(< "$DC_tlt/.11.cfg")" ]); then
-            index="$DC_tlt/.11.cfg"
+        index="$DC_tlt/.11.cfg"
         else
-            index="$DT/index"
-        fi
+        index="$DT/index"; fi
         
         fix
     fi
@@ -422,9 +419,9 @@ function add_audio() {
     DT="$2"; cd $DT
     if [ $ret -eq 0 ]; then
         if  [ -f "$audio" ]; then
-            cp -f "$audio" $DT/audtm.mp3 >/dev/null 2>&1
-            #eyeD3 -P itunes-podcast --remove $DT/audtm.mp3
-            eyeD3 --remove-all $DT/audtm.mp3 & exit
+        cp -f "$audio" $DT/audtm.mp3 >/dev/null 2>&1
+        #eyeD3 -P itunes-podcast --remove $DT/audtm.mp3
+        eyeD3 --remove-all $DT/audtm.mp3 & exit
         fi
     fi
 }
@@ -457,7 +454,7 @@ function add_file() {
 
     if [ $ret -eq 0 ]; then
         while read -r file; do
-            [ -f "$file" ] && cp -f "$file" "$DM_tlt/attchs"
+        [ -f "$file" ] && cp -f "$file" "$DM_tlt/attchs"
         done <<<"$(tr '|' '\n' <<<"$FL")"
     fi
 
@@ -811,7 +808,6 @@ function set_image() {
             
             eyeD3 --remove-images "$file"
             rm -f "$DM_tlt/words/images/$fname.jpg"
-            
             fi
     fi
     
@@ -830,7 +826,6 @@ function pdfdoc() {
 
     if [ "$ret" -eq 0 ]; then
     
-        #(sleep 1 && notify-send -i idiomind converting wait...) &
         dte=$(date "+%d %B %Y")
         mkdir "$DT/mkhtml"
         mkdir "$DT/mkhtml/images"
@@ -846,8 +841,8 @@ function pdfdoc() {
             wnm=$(sed -n "$n"p "3.cfg")
             fname="$(nmfile "$wnm")"
             if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
-                convert "$DM_tlt/words/images/$fname.jpg" -alpha set -virtual-pixel transparent \
-                -channel A -blur 0x10 -level 50%,100% +channel "$DT/mkhtml/images/$wnm.png"
+            convert "$DM_tlt/words/images/$fname.jpg" -alpha set -virtual-pixel transparent \
+            -channel A -blur 0x10 -level 50%,100% +channel "$DT/mkhtml/images/$wnm.png"
             fi
             let n++
         done
@@ -907,9 +902,9 @@ function pdfdoc() {
                         echo -e "<tr>
                         <td align=\"center\"><img src=\"images/$d1m.png\" width=\"240\" height=\"220\"></td>" >> pdf_doc
                         if [ -n "$d2m" ]; then
-                            echo -e "<td align=\"center\"><img src=\"images/$d2m.png\" width=\"240\" height=\"220\"></td></tr>" >> pdf_doc
+                        echo -e "<td align=\"center\"><img src=\"images/$d2m.png\" width=\"240\" height=\"220\"></td></tr>" >> pdf_doc
                         else
-                            echo '</tr>' >> pdf_doc
+                        echo '</tr>' >> pdf_doc
                         fi
                         echo -e "<tr>
                         <td align=\"center\" valign=\"top\"><p>$d1m</p>
@@ -917,13 +912,13 @@ function pdfdoc() {
                         <p>&nbsp;</p>
                         <p>&nbsp;</p></td>" >> pdf_doc
                         if [ -n "$d2m" ]; then
-                            echo -e "<td align=\"center\" valign=\"top\"><p>$d2m</p>
-                            <p>&nbsp;</p>
-                            <p>&nbsp;</p>
-                            <p>&nbsp;</p></td>
-                            </tr>" >> pdf_doc
+                        echo -e "<td align=\"center\" valign=\"top\"><p>$d2m</p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p></td>
+                        </tr>" >> pdf_doc
                         else
-                            echo '</tr>' >> pdf_doc
+                        echo '</tr>' >> pdf_doc
                         fi
                     else
                         break
@@ -974,15 +969,15 @@ function pdfdoc() {
                 else
                     echo -e "<td width=\"466\">" >> pdf_doc
                     if [ -n "$dftn" ]; then
-                        echo -e "<dl>
-                        <dd><dfn>$dftn</dfn></dd>
-                        </dl>" >> pdf_doc
+                    echo -e "<dl>
+                    <dd><dfn>$dftn</dfn></dd>
+                    </dl>" >> pdf_doc
                     fi
                     if [ -n "$exmp1" ]; then
-                        echo -e "<dl>
-                        <dt> </dt>
-                        <dd><cite>$exmp1</cite></dd>
-                        </dl>" >> pdf_doc
+                    echo -e "<dl>
+                    <dt> </dt>
+                    <dd><cite>$exmp1</cite></dd>
+                    </dl>" >> pdf_doc
                     fi 
                     echo -e "</td>
                     <td width=\"400\" valign=\"top\" class=\"nfont\">$ntes</td>

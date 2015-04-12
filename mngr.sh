@@ -235,22 +235,23 @@ function delete_item() {
 
     if [ -f "$DM_tlt/words/$fname.mp3" ]; then 
     
-        file="$DM_tlt/words/$fname.mp3"
-        trgt=$(eyeD3 "$file" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
-        msg_2 "$(gettext "Are you sure you want to delete this word?")\n" \
-        dialog-question "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
+    file="$DM_tlt/words/$fname.mp3"
+    trgt=$(eyeD3 "$file" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
+    msg_2 "$(gettext "Are you sure you want to delete this word?")\n" \
+    dialog-question "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
 
     elif [ -f "$DM_tlt/$fname.mp3" ]; then
     
-        file="$DM_tlt/$fname.mp3"
-        trgt=$(eyeD3 "$file" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
-        msg_2 "$(gettext "Are you sure you want to delete this sentence?")\n" \
-        dialog-question "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
+    file="$DM_tlt/$fname.mp3"
+    trgt=$(eyeD3 "$file" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
+    msg_2 "$(gettext "Are you sure you want to delete this sentence?")\n" \
+    dialog-question "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
 
     else
-        trgt="${3}"
-        msg_2 "$(gettext "Are you sure you want to delete this item?")\n" \
-        dialog-question "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
+    
+    trgt="${3}"
+    msg_2 "$(gettext "Are you sure you want to delete this item?")\n" \
+    dialog-question "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Confirm")"
 
     fi
     ret=$(echo "$?")
@@ -324,12 +325,6 @@ function delete_topic() {
             done
             rm "$DT/cfg.tmp"
             
-            if [ "$DT/.n_s_pr" ] && \
-            [ "$(sed -n 2p "$DT/.n_s_pr")" = "$tpc" ]; then
-            rm -fr "$(sed -n 1p "$DT/.n_s_pr")" "$DT/.n_s_pr"
-            killall add.sh
-            fi
-            
             (sleep 1 && rm -f "$DT/ps_lk") &
             "$DS/mngr.sh" mkmn
 
@@ -401,8 +396,7 @@ function edit() {
             if [ "$mark" != "$mark_mod" ]; then
             
                 if [ "$mark_mod" = "TRUE" ]; then
-                echo "$trgt" >> "$DC_tlt/6.cfg"
-                else
+                echo "$trgt" >> "$DC_tlt/6.cfg"; else
                 grep -vxv "$trgt" "$DC_tlt/6.cfg" > "$DC_tlt/6.cfg.tmp"
                 sed '/^$/d' "$DC_tlt/6.cfg.tmp" > "$DC_tlt/6.cfg"
                 rm "$DC_tlt/6.cfg.tmp"; fi
@@ -420,6 +414,7 @@ function edit() {
             fi
             
             if [ "$srce_mod" != "$srce" ]; then
+            
                 add_tags_5 W "$srce_mod" "$audiofile_2" >/dev/null 2>&1
             fi
             
@@ -443,6 +438,7 @@ function edit() {
             if [ $ret -eq 2 ]; then
             
                 "$DS/mngr.sh" edit "$lists" "$((item_pos-1))" &
+                
             else
                 "$DS/vwr.sh" "$lists" "$trgt" "$item_pos" &
             fi
@@ -522,8 +518,7 @@ function edit() {
             if [ "$mark" != "$mark_mod" ]; then
             
                 if [ "$mark_mod" = "TRUE" ]; then
-                echo "$trgt_mod" >> "$DC_tlt/6.cfg"
-                else
+                echo "$trgt_mod" >> "$DC_tlt/6.cfg"; else
                 grep -vxv "$trgt_mod" "$DC_tlt/6.cfg" > "$DC_tlt/6.cfg.tmp"
                 sed '/^$/d' "$DC_tlt/6.cfg.tmp" > "$DC_tlt/6.cfg"
                 rm "$DC_tlt/6.cfg.tmp"; fi
@@ -578,7 +573,7 @@ function edit() {
                 clean_3 "$DT_r" $(echo $(($RANDOM%1000)))
 
                 while read mp3; do
-                    echo "$mp3.mp3" >> "$DM_tl/$tpc_mod/5.cfg"
+                echo "$mp3.mp3" >> "$DM_tl/$tpc_mod/5.cfg"
                 done < "$aw"
                 
                 index sentence "$trgt_mod" "$tpc_mod" &
@@ -597,7 +592,7 @@ function edit() {
                 "$DS/vwr.sh" "$lists" "$trgt_mod" "$item_pos" &
             fi
             
-            exit
+        exit
     fi
 } 
 
@@ -609,26 +604,26 @@ function rename_topic() {
     jlb="${2}"
     jlb="$(clean_2 "$jlb")"
     snm=$(grep -Fxo "$jlb" < "$DM_tl/.1.cfg" | wc -l)
-    
+  
+    if [ "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "$tpc" ]; then
+    msg "$(gettext "Unable to rename at this time. Please try later ")\n" dialog-warning & exit 1; fi
+        
+    if [ "$DT/.p_" ] && [ "$(sed -n 2p "$DT/.p_")" = "$tpc" ]; then
+    msg "$(gettext "Unable to rename at this time. Please try later ")\n" dialog-warning & exit 1; fi
+
     if [ $snm -ge 1 ]; then
     
         jlb="$jlb $snm"
         msg_2 "$(gettext "You already have a topic with the same name.") \n$(gettext "The new it was renamed to\:")\n<b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
-        ret=$(echo "$?")
+        ret="$?"
+        if [ "$ret" -eq 1 ]; then exit 1; fi
+        
+    else 
+        jlb="$jlb"
+    fi
+        
+    if [ -n "$jlb" ]; then
 
-            if [ "$ret" -eq 1 ]; then exit 1; fi
-            
-    elif [ "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "$tpc" ]; then
-    msg "$(gettext "Unable to rename at this time. Please try later ")\n" dialog-warning & exit 1
-    
-    elif [ "$DT/.p_" ] && [ "$(sed -n 2p "$DT/.p_")" = "$tpc" ]; then
-    msg "$(gettext "Unable to rename at this time. Please try later ")\n" dialog-warning & exit 1
-    
-    else jlb="$jlb"; fi
-    
-    if [ -z "$jlb" ]; then
-        exit 1
-    else
         mv -f "$DM_tl/$tpc/.11.cfg" "$DT/.11.cfg"
         mv -f "$DM_tl/$tpc" "$DM_tl/$jlb"
         mv -f "$DT/.11.cfg" "$DM_tl/$jlb/.11.cfg"

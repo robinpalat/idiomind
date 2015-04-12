@@ -29,18 +29,17 @@ $(gettext "To get started, please configure the following.")\n"
 lang=('English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian')
 sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
-'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' 'edit'\
- 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
+'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' 'edit' \
+'words' 'sentences' 'marks' 'practice' 'news' 'saved')
 
 function set_lang() {
     
     if [ ! -d "$DM_t/$1" ]; then
-        mkdir "$DM_t/$1"
-        touch "$DM_t/$1/.1.cfg"
-        touch "$DM_t/$1/.2.cfg"
-        touch "$DM_t/$1/.3.cfg"
-        mkdir "$DM_t/$1/.share"
-    fi
+    mkdir "$DM_t/$1"
+    touch "$DM_t/$1/.1.cfg"
+    touch "$DM_t/$1/.2.cfg"
+    touch "$DM_t/$1/.3.cfg"
+    mkdir "$DM_t/$1/.share"; fi
     echo "$1" > "$DC_s/6.cfg"
 }
 
@@ -54,8 +53,7 @@ or install it using the following commands:
 sudo add-apt-repository ppa:robinpala/idiomind
 sudo apt-get update
 sudo apt-get install yad")" \
---title="Idiomind" --no-wrap & exit
-fi
+--title="Idiomind" --no-wrap & exit; fi
 
 dlg=$(yad --center --width=420 --height=280 --fixed \
 --image-on-top --on-top --class=Idiomind --name=Idiomind \
@@ -76,11 +74,11 @@ elif [[ $ret -eq 0 ]]; then
     source=$(echo "$dlg" | cut -d "|" -f4)
     
     if [ -z "$dlg" ]; then
-        /usr/share/idiomind/ifs/1u.sh & exit 1
+    /usr/share/idiomind/ifs/1u.sh & exit 1
     elif [ -z $source ]; then
-        /usr/share/idiomind/ifs/1u.sh & exit 1
+    /usr/share/idiomind/ifs/1u.sh & exit 1
     elif [ -z $target ]; then
-        /usr/share/idiomind/ifs/1u.sh t & exit 1
+    /usr/share/idiomind/ifs/1u.sh t & exit 1
     fi
     
     mkdir "$HOME/.idiomind"
@@ -107,7 +105,7 @@ elif [[ $ret -eq 0 ]]; then
     while [ $n -lt 10 ]; do
         if echo "$target" | grep "${lang[$n]}"; then
         set_lang "${lang[$n]}"
-            lgtl="$lang" & break
+        lgtl="$lang" & break
         fi
         ((n=n+1))
     done
@@ -115,15 +113,15 @@ elif [[ $ret -eq 0 ]]; then
     n=0
     while [ $n -lt 10 ]; do
         if echo "$source" | grep "${lang[$n]}"; then
-            echo "${lang[$n]}" >> "$DC_s/6.cfg" & break
+        echo "${lang[$n]}" >> "$DC_s/6.cfg" & break
         fi
         ((n=n+1))
     done
 
     n=0; > "$DC_s/1.cfg"
     while [ $n -lt 19 ]; do
-        echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
-        ((n=n+1))
+    echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
+    ((n=n+1))
     done
     touch "$DC_s/4.cfg"
 

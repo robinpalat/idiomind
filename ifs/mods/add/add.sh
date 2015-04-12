@@ -267,19 +267,19 @@ function list_words() {
     
     if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
         while [ $n -le "$(cat $aw | wc -l)" ]; do
-            s=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-            t=$(sed -n "$n"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-            echo ISTI"$n"I0I"$t"ISTI"$fetch_audion"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> "A.$2"
-            echo "$t"_"$s""" >> "B.$2"
-            let n++
+        s=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
+        t=$(sed -n "$n"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
+        echo ISTI"$n"I0I"$t"ISTI"$fetch_audion"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> "A.$2"
+        echo "$t"_"$s""" >> "B.$2"
+        let n++
         done
     else
         while [ $n -le "$(cat $aw | wc -l)" ]; do
-            t=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-            s=$(sed -n "$n"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-            echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> "A.$2"
-            echo "$t"_"$s""" >> "B.$2"
-            let n++
+        t=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
+        s=$(sed -n "$n"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
+        echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> "A.$2"
+        echo "$t"_"$s""" >> "B.$2"
+        let n++
         done
     fi
 }
@@ -317,11 +317,11 @@ function fetch_audio() {
 function list_words_2() {
 
         if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
-            eyeD3 "$1" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' \
-            | tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > idlst
+        eyeD3 "$1" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' \
+        | tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > idlst
         else
-            eyeD3 "$1" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' \
-            | tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > idlst
+        eyeD3 "$1" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' \
+        | tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > idlst
         fi
 }
 
@@ -329,11 +329,11 @@ function list_words_2() {
 function list_words_3() {
 
     if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
-        echo "$2" | tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > lst
+    echo "$2" | tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > lst
     else
-        cat "$1" | tr -c "[:alnum:]" '\n' | sed '/^$/d' | sed '/"("/d' \
-        | sed '/")"/d' | sed '/":"/d' | sort -u \
-        | head -n40 | egrep -v "FALSE" | egrep -v "TRUE" > lst
+    cat "$1" | tr -c "[:alnum:]" '\n' | sed '/^$/d' | sed '/"("/d' \
+    | sed '/")"/d' | sed '/":"/d' | sort -u \
+    | head -n40 | egrep -v "FALSE" | egrep -v "TRUE" > lst
     fi
 }
 

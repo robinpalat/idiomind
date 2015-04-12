@@ -32,28 +32,30 @@ function new_topic() {
     killall add.sh & exit 1; fi
     
     jlbi=$(dlg_form_0 "$(gettext "New Topic")")
-    ret=$(echo "$?")
+    ret="$?"
     jlb="$(clean_2 "$jlbi")"
     sfname=$(grep -Fxo "$jlb" < "$DM_tl/.1.cfg" | wc -l)
     
     if [ "$sfname" -ge 1 ]; then
-    jlb="$jlb $sfname"
-    msg_2 "$(gettext "You already have a topic with the same name.")\n$(gettext "The new it was renamed to\:")\n<b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
-    ret=$(echo "$?")
-    [ "$ret" -eq 1 ] && exit 1
-    else
-    jlb="$jlb"; fi
     
-    if [ -z "$jlb" ]; then
-        exit 1
+        jlb="$jlb $sfname"
+        msg_2 "$(gettext "You already have a topic with the same name.")\n$(gettext "The new it was renamed to\:")\n<b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
+        ret="$?"
+        [ "$ret" -eq 1 ] && exit 1
+        
     else
+        jlb="$jlb"
+    fi
+    
+    if [ -n "$jlb" ]; then
+    
         mkdir "$DM_tl/$jlb"
         ln -s "$DS/default/tpc.sh" "$DM_tl/$jlb/tpc.sh"
         echo "$jlb" >> "$DM_tl/.2.cfg"
         "$DM_tl/$jlb/tpc.sh" 1
         "$DS/mngr.sh" mkmn
     fi
-    exit 1
+    exit
 }
 
 function new_items() {
@@ -109,14 +111,11 @@ Create one using the button below. ")" & exit 1; fi
         elif [ $ret -eq 0 ]; then
         
             if [ -z "$chk" ]; then
-                [ "$DT_r" ] && rm -fr "$DT_r"
-                msg "$(gettext "No topic is active")\n" info & exit 1
-            fi
+            [ "$DT_r" ] && rm -fr "$DT_r"
+            msg "$(gettext "No topic is active")\n" info & exit 1; fi
         
             if [ -z "$trgt" ]; then
-                [ "$DT_r" ] && rm -fr "$DT_r"
-                exit 1
-            fi
+            [ "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
 
             if [ $(echo "$tpe" | wc -l) -ge 2 ]; then
                 
@@ -159,8 +158,8 @@ Create one using the button below. ")" & exit 1; fi
             
                 if [ "$trans" = FALSE ]; then
                     if [ -z "$srce" ] || [ -z "$trgt" ]; then
-                        [ "$DT_r" ] && rm -fr "$DT_r"
-                        msg "$(gettext "You need to fill text fields.") $lgsl." info & exit 1; fi
+                    [ "$DT_r" ] && rm -fr "$DT_r"
+                    msg "$(gettext "You need to fill text fields.") $lgsl." info & exit 1; fi
                 fi
 
                 srce=$(translate "$trgt" auto $lgs)
@@ -175,8 +174,8 @@ Create one using the button below. ")" & exit 1; fi
             
                 if [ "$trans" = FALSE ]; then
                     if [ -z "$srce" ] || [ -z "$trgt" ]; then
-                        [ "$DT_r" ] && rm -fr "$DT_r"
-                        msg "$(gettext "You need to fill text fields.") $lgsl." info & exit 1; fi
+                    [ "$DT_r" ] && rm -fr "$DT_r"
+                    msg "$(gettext "You need to fill text fields.") $lgsl." info & exit 1; fi
                 fi
             
                 if [ $(echo "$trgt" | wc -w) = 1 ]; then
@@ -203,13 +202,12 @@ function new_sentence() {
     icnn=idiomind
 
     if [ $(wc -l < "$DC_tlt/0.cfg") -ge 200 ]; then
-        [ "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "You have reached the maximum number of items.")" info Info & exit
-    fi
+    [ "$DT_r" ] && rm -fr "$DT_r"
+    msg "$(gettext "You have reached the maximum number of items.")" info Info & exit; fi
+    
     if [ -z "$tpe" ]; then
-        [ "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "No topic is active")\n" info & exit 1
-    fi
+    [ "$DT_r" ] && rm -fr "$DT_r"
+    msg "$(gettext "No topic is active")\n" info & exit 1; fi
     
     if [ "$trans" = TRUE ]; then
     
@@ -229,8 +227,8 @@ function new_sentence() {
     
     else 
         if [ -z "$4" ] || [ -z "$2" ]; then
-            [ "$DT_r" ] && rm -fr "$DT_r"
-            msg "$(gettext "You need to fill text fields.") $lgsl." info & exit; fi
+        [ "$DT_r" ] && rm -fr "$DT_r"
+        msg "$(gettext "You need to fill text fields.") $lgsl." info & exit; fi
         
         trgt=$(echo "$(clean_1 "$2")" | sed ':a;N;$!ba;s/\n/ /g')
         srce=$(echo "$(clean_1 "$4")" | sed ':a;N;$!ba;s/\n/ /g')
@@ -247,8 +245,8 @@ function new_sentence() {
     
     if [ -z $(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary') ] \
     || [ ! -f "$DM_tlt/$fname.mp3" ] || [ -z "$trgt" ] || [ -z "$srce" ]; then
-        [ "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "Something unexpected has occurred while saving the note.")\n" dialog-warning & exit 1; fi
+    [ "$DT_r" ] && rm -fr "$DT_r"
+    msg "$(gettext "Something unexpected has occurred while saving the note.")\n" dialog-warning & exit 1; fi
     
     add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3"
 
@@ -269,9 +267,9 @@ function new_sentence() {
     pwrds=$(tr '\n' '_' < B.$r)
     
     if [ -z "$grmrk" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ]; then
-        rm "$DM_tlt/$fname.mp3"
-        msg "$(gettext "Something unexpected has occurred while saving the note.")\n" dialog-warning 
-        [ "$DT_r" ] && rm -fr "$DT_r" & exit 1; fi
+    rm "$DM_tlt/$fname.mp3"
+    msg "$(gettext "Something unexpected has occurred while saving the note.")\n" dialog-warning 
+    [ "$DT_r" ] && rm -fr "$DT_r" & exit 1; fi
     
     add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3"
     notify-send -i "$icnn" "$trgt" "$srce\\n($tpe)" -t 10000
@@ -299,11 +297,12 @@ function new_word() {
     DC_tlt="$DM_tl/$tpe/.conf"
     
     if [ $(wc -l < "$DC_tlt/0.cfg") -ge 200 ]; then
-        [ "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "You have reached the maximum number of items.")" info Info & exit 0; fi
+    [ "$DT_r" ] && rm -fr "$DT_r"
+    msg "$(gettext "You have reached the maximum number of items.")" info Info & exit 0; fi
+    
     if [ -z "$tpe" ]; then
-        [ "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "No topic is active")\n" info & exit 1
+    [ "$DT_r" ] && rm -fr "$DT_r"
+    msg "$(gettext "No topic is active")\n" info & exit 1
     fi
     
     internet

@@ -14,13 +14,12 @@ cd "$dir"
 if ! [[ $nuw =~ $re ]]; then
 nuw=$(cat "$dir/0.cfg" | grep -Fxon "$now" \
 | sed -n 's/^\([0-9]*\)[:].*/\1/p')
-nll='echo  " "'
-fi
+nll='echo  " "'; fi
+
 item="$(sed -n "$nuw"p "$dir/0.cfg")"
 if [ -z "$item" ]; then
 item="$(sed -n 1p "$dir/0.cfg")"
-nuw=1
-fi
+nuw=1; fi
 
 fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
 

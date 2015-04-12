@@ -37,27 +37,26 @@ fi
 
    "$DS/ifs/tls.sh" check_index "$topic"
 
-    # look status
     if [[ $(grep -Fxon "$topic" < "$DM_tl/.1.cfg" \
     | sed -n 's/^\([0-9]*\)[:].*/\1/p') -ge 50 ]]; then
         if [ -f "$DC_tlt/9.cfg" ]; then
             dts=$(wc -l < "$DC_tlt/9.cfg")
             if [ "$dts" = 1 ]; then
-                dte=$(sed -n 1p "$DC_tlt/9.cfg")
-                TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-                RM=$((100*$TM/10))
+            dte=$(sed -n 1p "$DC_tlt/9.cfg")
+            TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
+            RM=$((100*$TM/10))
             elif [ "$dts" = 2 ]; then
-                dte=$(sed -n 2p "$DC_tlt/9.cfg")
-                TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-                RM=$((100*$TM/15))
+            dte=$(sed -n 2p "$DC_tlt/9.cfg")
+            TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
+            RM=$((100*$TM/15))
             elif [ "$dts" = 3 ]; then
-                dte=$(sed -n 3p "$DC_tlt/9.cfg")
-                TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-                RM=$((100*$TM/30))
+            dte=$(sed -n 3p "$DC_tlt/9.cfg")
+            TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
+            RM=$((100*$TM/30))
             elif [ "$dts" = 4 ]; then
-                dte=$(sed -n 4p "$DC_tlt/9.cfg")
-                TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-                RM=$((100*$TM/60))
+            dte=$(sed -n 4p "$DC_tlt/9.cfg")
+            TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
+            RM=$((100*$TM/60))
             fi
             nstll=$(grep -Fxo "$topic" "$DM_tl/.3.cfg")
             if [ -n "$nstll" ]; then
