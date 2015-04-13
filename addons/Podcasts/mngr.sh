@@ -9,37 +9,42 @@ DCP="$DM_tl/Podcasts/.conf/"
 if [ "$1" = delete_item ]; then
 
     touch $DT/ps_lk
-    trgt="$2"
-    fname="$(nmfile "${trgt}")"
+    fname="$(nmfile "${item}")"
     
-    msg_2 "$(gettext "Are you sure you want to delete this episode?")\n" \
-    gtk-delete "$(gettext "Delete")" "$(gettext "No")" "$(gettext "Confirm")"
-    ret=$(echo "$?")
-
+    if ! grep -Fxo "$item" < "$DCP/1.cfg"; then
+    
+        msg_2 "$lbl" gtk-delete "$(gettext "Delete")" "$(gettext "No")" "$(gettext "Confirm")"
+        ret=$(echo "$?")
+    
         if [ $ret -eq 0 ]; then
             
             (sleep 0.2 && kill -9 $(pgrep -f "yad --html "))
-            
-           if ! grep -Fxo "$trgt" < "$DCP/1.cfg"; then
-           
-                [ "$DMC/$fname.mp3" ] && rm "$DMC/$fname.mp3"
-                [ "$DMC/$fname.ogg" ] && rm "$DMC/$fname.ogg"
-                [ "$DMC/$fname.mp4" ] && rm "$DMC/$fname.mp4"
-                [ "$DMC/$fname.m4v" ] && rm "$DMC/$fname.m4v"
-                [ "$DMC/$fname.flv" ] && rm "$DMC/$fname.flv"
-                [ "$DMC/$fname.html" ] && rm "$DMC/$fname.html"
-                [ "$DMC/$fname.jpg" ] && rm "$DMC/$fname.jpg"
-                [ "$DMC/$fname.png" ] && rm "$DMC/$fname.png"
 
-            fi
+            [ "$DMC/$fname.mp3" ] && rm "$DMC/$fname.mp3"
+            [ "$DMC/$fname.ogg" ] && rm "$DMC/$fname.ogg"
+            [ "$DMC/$fname.mp4" ] && rm "$DMC/$fname.mp4"
+            [ "$DMC/$fname.m4v" ] && rm "$DMC/$fname.m4v"
+            [ "$DMC/$fname.flv" ] && rm "$DMC/$fname.flv"
+            [ "$DMC/$fname.html" ] && rm "$DMC/$fname.html"
+            [ "$DMC/$fname.jpg" ] && rm "$DMC/$fname.jpg"
+            [ "$DMC/$fname.png" ] && rm "$DMC/$fname.png"
             cd "$DCP"
-            grep -vxF "$trgt" ./.22.cfg > ./.22.cfg.tmp
+            grep -vxF "$item" ./.22.cfg > ./.22.cfg.tmp
             sed '/^$/d' ./.22.cfg.tmp > ./.22.cfg
-            grep -vxF "$trgt" ./2.cfg > ./2.cfg.tmp
+            grep -vxF "$item" ./2.cfg > ./2.cfg.tmp
             sed '/^$/d' ./2.cfg.tmp > ./2.cfg
+            rm ./*.tmp; fi
 
-            rm ./*.tmp
-        fi
+    else
+        notify-send -i info "$(gettext "Removed from list of saved")" "$item" 
+    
+        cd "$DCP"
+        grep -vxF "$item" ./.22.cfg > ./.22.cfg.tmp
+        sed '/^$/d' ./.22.cfg.tmp > ./.22.cfg
+        grep -vxF "$item" ./2.cfg > ./2.cfg.tmp
+        sed '/^$/d' ./2.cfg.tmp > ./2.cfg
+        rm ./*.tmp
+    fi
             
     rm -f $DT/ps_lk; exit 1
 

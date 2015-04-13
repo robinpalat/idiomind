@@ -190,7 +190,8 @@ function set_image_1() {
 
 function set_image_2() {
     
-    /usr/bin/convert -scale 450x260! img.jpg imgs.jpg
+    /usr/bin/convert img.jpg -interlace Plane -thumbnail 450x260^ \
+    -gravity center -extent 450x260 -quality 90% imgs.jpg
     eyeD3 --add-image imgs.jpg:ILLUSTRATION "$1"
     mv -f imgs.jpg "$2"
 } >/dev/null 2>&1
@@ -198,7 +199,8 @@ function set_image_2() {
 
 function set_image_3() {
     
-    /usr/bin/convert -scale 360x240! img.jpg imgw.jpg
+    /usr/bin/convert img.jpg -interlace Plane -thumbnail 360x240^ \
+    -gravity center -extent 360x240 -quality 90% imgw.jpg
     eyeD3 --add-image imgw.jpg:ILLUSTRATION "$1"
     mv -f imgw.jpg "$2"
 } >/dev/null 2>&1
@@ -380,7 +382,7 @@ function dlg_radiolist_1() {
     --sticky --skip-taskbar --window-icon="$DS/images/icon.png" \
     --height=420 --width=150 --separator="\\n" \
     --button=gtk-add:0 --title="$(gettext "Listing words")" \
-    --borders=5 --column=" " --column="$(gettext "Sentences")"
+    --borders=5 --column=" " --column=" "
 }
 
 
@@ -406,7 +408,7 @@ function dlg_checklist_3() {
     --dclick-action='/usr/share/idiomind/add.sh dclik_list_words' \
     --list --checklist --class=Idiomind --center --sticky \
     --text="<small>$info</small>" --title="$2" --no-headers \
-    --width=$wth --height=$eht --borders=5 \
+    --width=600 --height=550 --borders=5 \
     --button="$(gettext "Cancel")":1 --button=$(gettext "Reorder"):2 \
     --button="$(gettext "To New Topic")":"$DS/add.sh 'new_topic'" \
     --button=gtk-add:0 \
@@ -414,14 +416,13 @@ function dlg_checklist_3() {
     --column="$(gettext "sentences")" > "$slt"
 }
 
-
 function dlg_text_info_1() {
     
     cat "$1" | awk '{print "\n\n\n"$0}' | \
     yad --text-info --editable --window-icon="$DS/images/icon.png" \
     --name=Idiomind --wrap --margins=60 --class=Idiomind \
     --sticky --fontname=vendana --on-top --center \
-    --skip-taskbar --width=$wth --height=$eht --borders=5 \
+    --skip-taskbar --width=600 --height=550 --borders=5 \
     --button=gtk-ok:0 --title="$2" > ./sort
 }
 

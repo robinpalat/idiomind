@@ -5,12 +5,12 @@ DSP="$DS/addons/Podcasts"
 item="${2}"
 dir="$DM_tl/Podcasts/cache"
 fname=$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)
-
+export item
 if grep -Fxo "$item" < "$DM_tl/Podcasts/.conf/2.cfg"; then
 btnlabel="$(gettext "Delete")"
-btncmd="'$DSP/mngr.sh' delete_item '$item'"; else
+btncmd="'$DSP/mngr.sh' delete_item"; else
 btnlabel="$(gettext "Save")"
-btncmd="'$DSP/add.sh' new_item '$item'"; fi
+btncmd="'$DSP/add.sh' new_item"; fi
 if [ -f "$dir/$fname.html" ]; then
 uri="$dir/$fname.html"; else
 uri=""; fi

@@ -99,8 +99,8 @@ Create one using the button below. ")" & exit 1; fi
     trgt=$(echo "$lzgpr" | head -n -1 | sed -n 1p | sed 's/^\s*./\U&\E/g')
     srce=$(echo "$lzgpr" | sed -n 2p | sed 's/^\s*./\U&\E/g')
     chk=$(echo "$lzgpr" | tail -1)
-    tpe=$(cat "$DM_tl/.1.cfg" | grep "$chk")
-    
+    tpe_list=$(grep "$chk" "$DM_tl/.1.cfg")
+
         if [ $ret -eq 3 ]; then
         
             cd "$DT_r"; set_image_1
@@ -113,37 +113,28 @@ Create one using the button below. ")" & exit 1; fi
         
         elif [ $ret -eq 0 ]; then
         
-            if [ -z "$chk" ]; then
-            [ "$DT_r" ] && rm -fr "$DT_r"
+            if [ -z "$chk" ]; then [ "$DT_r" ] && rm -fr "$DT_r";
             msg "$(gettext "No topic is active")\n" info & exit 1; fi
         
             if [ -z "$trgt" ]; then
             [ "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
 
-            if [ $(echo "$tpe" | wc -l) -ge 2 ]; then
-                
-                if [[ $(echo "$tpe" | sed -n 1p | wc -w) \
-                = $(echo "$chk" | wc -w) ]]; then
-                    slt=$(echo "$tpe" | sed -n 1p)
-                    tpe="$slt"
-                elif [[ $(echo "$tpe" | sed -n 2p | wc -w) \
-                = $(echo "$chk" | wc -w) ]]; then
-                    slt=$(echo "$tpe" | sed -n 2p)
-                    tpe="$slt"
+            if [[ $(wc -l <<<"$tpe_list") -ge 2 ]]; then
+                if [[ $(sed -n 1p <<<"$tpe_list" | wc -w) = \
+                $(wc -w <<<"$chk") ]]; then
+                    tpe=$(sed -n 1p <<<"$tpe_list")
+                elif [[ $(sed -n 2p <<<"$tpe_list" | wc -w) = \
+                $(wc -w <<<"$chk") ]]; then
+                    tpe=$(sed -n 2p <<<"$tpe_list")
                 else
-                    slt=$(dlg_radiolist_1 "$tpe")
-                    
-                    if [ -z "$(echo "$slt" | sed -n 2p)" ]; then
-                        killall add.sh & exit 1
+                    tpe="$(sed -n 2p <<<"$slt")"
                     fi
-                    tpe=$(echo "$slt" | sed -n 2p)
-                fi
+            else
+                tpe="$chk"
             fi
             if [[ "$chk" = "$(gettext "New topic") *" ]]; then
-                "$DS/add.sh" new_topic
-            else
-                echo "$tpe" > "$DT/tpe"
-            fi
+            "$DS/add.sh" new_topic
+            else echo "$tpe" > "$DT/tpe"; fi
             
             if [ "$(echo "$trgt")" = I ]; then
                 "$DS/add.sh" process image "$DT_r" & exit 1
@@ -162,7 +153,7 @@ Create one using the button below. ")" & exit 1; fi
                 if [ "$trans" = FALSE ]; then
                     if [ -z "$srce" ] || [ -z "$trgt" ]; then
                     [ "$DT_r" ] && rm -fr "$DT_r"
-                    msg "$(gettext "You need to fill text fields.") $lgsl." info & exit 1; fi
+                    msg "$(gettext "You need to fill text fields.")" info & exit 1; fi
                 fi
 
                 srce=$(translate "$trgt" auto $lgs)
@@ -173,12 +164,13 @@ Create one using the button below. ")" & exit 1; fi
                 elif [ $(echo "$srce" | wc -w) -ge 1 -a $(echo "$srce" | wc -c) -le 180 ]; then
                     "$DS/add.sh" new_sentence "$trgt" "$DT_r" "$srce" & exit 1
                 fi
+                
             elif [ $lgt != ja ] || [ $lgt != 'zh-cn' ] || [ $lgt != ru ]; then
             
                 if [ "$trans" = FALSE ]; then
                     if [ -z "$srce" ] || [ -z "$trgt" ]; then
                     [ "$DT_r" ] && rm -fr "$DT_r"
-                    msg "$(gettext "You need to fill text fields.") $lgsl." info & exit 1; fi
+                    msg "$(gettext "You need to fill text fields.")" info & exit 1; fi
                 fi
             
                 if [ $(echo "$trgt" | wc -w) = 1 ]; then
@@ -186,7 +178,6 @@ Create one using the button below. ")" & exit 1; fi
                     
                 elif [ $(echo "$trgt" | wc -w) -ge 1 -a $(echo "$trgt" | wc -c) -le 180 ]; then
                     "$DS/add.sh" new_sentence "$trgt" "$DT_r" "$srce" & exit 1
-                    
                 fi
             fi
         else
@@ -194,6 +185,7 @@ Create one using the button below. ")" & exit 1; fi
             exit 1
         fi
 }
+
 
 function new_sentence() {
         
@@ -233,7 +225,7 @@ function new_sentence() {
     else 
         if [ -z "$4" ] || [ -z "$2" ]; then
         [ "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "You need to fill text fields.") $lgsl." info & exit; fi
+        msg "$(gettext "You need to fill text fields.")" info & exit; fi
         
         trgt=$(echo "$(clean_1 "$2")" | sed ':a;N;$!ba;s/\n/ /g')
         srce=$(echo "$(clean_1 "$4")" | sed ':a;N;$!ba;s/\n/ /g')
@@ -291,6 +283,7 @@ function new_sentence() {
     exit 1
 }
 
+
 function new_word() {
 
     trgt="$(sed s'\|\\'g <<<"$2")"
@@ -337,7 +330,7 @@ function new_word() {
     else
         if [ -z "$4" ] || [ -z "$2" ]; then
             [ "$DT_r" ] && rm -fr "$DT_r"
-            msg "$(gettext "You need to fill text fields.") $lgsl." info & exit 1; fi
+            msg "$(gettext "You need to fill text fields.")" info & exit 1; fi
         
         trgt="$2"
         srce="$4"
@@ -409,8 +402,7 @@ function edit_list_words() {
         if [ $nw -ge 195 ]; then
         info="-$left"
         elif [ $nw -ge 199 ]; then
-        info="-$left"
-        fi
+        info="-$left"; fi
 
         mkdir "$DT/$c"; cd "$DT/$c";
 
@@ -491,7 +483,6 @@ function dclik_list_words() {
     DM_tlt="$DM_tl/$tpe"
     DC_tlt="$DM_tl/$tpe/.conf"
     DT_r=$(sed -n 1p $DT/.n_s_pr)
-    tpe=$(sed -n 2p $DT/.n_s_pr)
     cd "$DT_r"
     echo "$3" > ./lstws
     
@@ -508,10 +499,9 @@ function dclik_list_words() {
     left=$((200 - $nw))
     info="-$left"
     if [ $nw -ge 195 ]; then
-        info="-$left"
+    info="-$left"
     elif [ $nw -ge 199 ]; then
-        info="-$left"
-    fi
+    info="-$left"; fi
     
     if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
         (
@@ -650,10 +640,9 @@ function sentence_list_words() {
     exit 1
 }
 
+
 function process() {
     
-    wth=$(($(sed -n 2p $DC_s/10.cfg)-50))
-    eht=$(($(sed -n 3p $DC_s/10.cfg)-50))
     ns=$(wc -l < "$DC_tlt/0.cfg")
     source "$DS/default/dicts/$lgt"
     if [ -f "$DT/.n_s_pr" ]; then
@@ -664,11 +653,11 @@ function process() {
     lckpr="$DT/.n_s_pr"
 
     if [ -z "$tpe" ]; then
-    [ "$DT_r" ] && rm -fr "$DT_r"
+    [ -d "$DT_r" ] && rm -fr "$DT_r"
     msg "$(gettext "No topic is active")\n" info & exit 1; fi
         
     if [ $ns -ge 200 ]; then
-    [ "$DT_r" ] && rm -fr "$DT_r"
+    [ -d "$DT_r" ] && rm -fr "$DT_r"
     msg "$(gettext "You have reached the maximum number of items.")" info Info
     rm -f ./ls "$lckpr" & exit 1; fi
 
@@ -677,7 +666,7 @@ function process() {
         msg_2 "$(gettext "Wait till it finishes a previous process")\n" info OK gtk-stop "$(gettext "Warning")"
         ret=$(echo "$?")
 
-        if [ $ret -eq "1" ]; then
+        if [ $ret -eq 1 ]; then
         
             rm=$(sed -n 1p "$DT/.n_s_pr")
             rm fr "$rm" "$DT/.n_s_pr"
@@ -686,10 +675,10 @@ function process() {
     
     if [ -n "$2" ]; then
     
-        [ "$DT_r" ] && echo "$DT_r" > "$DT/.n_s_pr"
+        [ -d "$DT_r" ] && echo "$DT_r" > "$DT/.n_s_pr"
         [ -n "$tpe" ] && echo "$tpe" >> "$DT/.n_s_pr"
         lckpr="$DT/.n_s_pr"
-        prdt="$2"
+        conten="$2"
     fi
     include "$DS/ifs/mods/add"
     include "$DS/ifs/mods/add_process"
@@ -742,7 +731,7 @@ function process() {
         (
         echo "1"
         echo "# $(gettext "Processing")..." ;
-        echo "$prdt" \
+        echo "$conten" \
         | sed 's/^ *//;s/ *$//g' | sed 's/^[ \t]*//;s/[ \t]*$//' \
         | sed 's/ \+/ /;s/\://;s/"//g' \
         | sed '/^$/d' | iconv -c -f utf8 -t ascii \
@@ -775,14 +764,13 @@ function process() {
         
             msg " $(gettext "Failed to get text.")\n" info
 
-            [ "$DT_r" ] && rm -fr "$DT_r"
+            [ -d "$DT_r" ] && rm -fr "$DT_r"
             rm -f "$lckpr" "$slt" & exit 1
         
         else
             tpe="$(sed -n 2p "$lckpr")"
             dlg_checklist_3 ./sntsls_ "$tpe"
             ret=$(echo "$?")
-            
         fi
                 if [ $ret -eq 2 ]; then
                     rm -f "$slt" &
@@ -792,10 +780,10 @@ function process() {
                         
                         if [ $ret -eq 0 ]; then
                             "$DS/add.sh" process "$(cat ./sort)" \
-                            $DT_r "$(sed -n 2p "$lckpr")" &
+                            "$DT_r" "$(sed -n 2p "$lckpr")" &
                             exit 1
                         else
-                            [ "$DT_r" ] && rm -fr "$DT_r"
+                            [ -d "$DT_r" ] && rm -fr "$DT_r"
                             rm -f "$slt" & exit 1; fi
                 
                 elif [ $ret -eq 0 ]; then
@@ -841,6 +829,8 @@ function process() {
                                 if [ "$trans" = TRUE ]; then
             
                                     tts "$trgt" $lgt "$DT_r" "$DM_tlt/words/$fname.mp3"
+                                            [ ! -f "$DM_tlt/words/$fname.mp3" ] && \
+                                            voice "$trgt" "$DT_r" "$DM_tlt/words/$fname.mp3"
                                     
                                 else
                                     voice "$trgt" "$DT_r" "$DM_tlt/words/$fname.mp3"
@@ -873,6 +863,8 @@ function process() {
                                     if [ "$trans" = TRUE ]; then
                                     
                                         tts "$trgt" $lgt "$DT_r" "$DM_tlt/$fname.mp3"
+                                            [ ! -f "$DM_tlt/$fname.mp3" ] && \
+                                            voice "$trgt" "$DT_r" "$DM_tlt/$fname.mp3"
                                         
                                     else
                                         voice "$trgt" "$DT_r" "$DM_tlt/$fname.mp3"
@@ -1027,7 +1019,7 @@ function process() {
                     while [ $n -le 20 ]; do
                          sleep 5
                          if [ $(wc -l < ./x) -eq "$rm" ] || [ $n = 20 ]; then
-                            [ "$DT_r" ] && rm -fr "$DT_r"
+                            [ -d "$DT_r" ] && rm -fr "$DT_r"
                             cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
                             rm -f "$lckpr" & break; exit 1
                          fi
@@ -1036,7 +1028,7 @@ function process() {
                     
                 else
                     cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
-                    [ "$DT_r" ] && rm -fr "$DT_r"
+                    [ -d "$DT_r" ] && rm -fr "$DT_r"
                      rm -f "$lckpr" "$slt" & exit 1
                 fi
 }

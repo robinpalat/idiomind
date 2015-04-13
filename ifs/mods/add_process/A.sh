@@ -1,7 +1,5 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
-source /usr/share/idiomind/ifs/c.conf
-
 
 function dlg_checklist_5() {
     
@@ -10,8 +8,8 @@ function dlg_checklist_5() {
     yad --center --sticky --name=Idiomind --class=Idiomind \
     --dclick-action="$DS/ifs/mods/add_process/A.sh 'show_item_for_edit'" \
     --list --checklist --window-icon="$DS/images/icon.png" \
-    --width=$wth --text="<small>$info</small>" \
-    --height=$eht --borders=3 --button="$(gettext "Cancel")":1 \
+    --text="<small>$info</small>" \
+    --width=600 --height=550 --borders=3 --button="$(gettext "Cancel")":1 \
     --button="$(gettext "To New Topic")":'/usr/share/idiomind/add.sh new_topic' \
     --button=gtk-add:0 --title="$2" \
     --column="$(wc -l < "$1")" --column="$(gettext "Items")" > "$slt"
@@ -30,7 +28,7 @@ function dlg_text_info_4() {
     
     echo "$1" | yad --text-info --center --wrap \
     --name=Idiomind --class=Idiomind --window-icon="$DS/images/icon.png" \
-    --text=" " --sticky --width=$wth --height=$eht \
+    --text=" " --sticky --width=600 --height=550 \
     --margins=8 --borders=5 --button=Ok:0 --title=Idiomind
 }
 
