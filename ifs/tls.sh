@@ -222,7 +222,7 @@ $SRFL4
 $SRFL5" | yad --width=550 --height=550 --text-info --margins=10 \
     --name=Idiomind --class=Idiomind \
     --buttons-layout=edge --scroll \
-    --window-icon="idiomind" --center --borders=0 \
+    --window-icon="$DS/images/icon.png" --center --borders=0 \
     --button="$(gettext "Open Folder")":"xdg-open '$2'" \
     --button="$(gettext "Close")":0 \
     --title="$(gettext "Installation details")" >/dev/null 2>&1
@@ -393,7 +393,7 @@ function add_audio() {
     cd $HOME
     AU=$(yad --width=620 --height=500 --file --on-top --name=Idiomind \
     --text=" $(gettext "Browse to and select the audio file that you want to add.")" \
-    --class=Idiomind --window-icon="idiomind" --center --file-filter="*.mp3" \
+    --class=Idiomind --window-icon="$DS/images/icon.png" --center --file-filter="*.mp3" \
     --button="$(gettext "Cancel")":1 --button="$(gettext "OK")":0 \
     --borders=5 --title="$(gettext "Add Audio")")
 
@@ -420,7 +420,7 @@ function text() {
 
     yad --width=300 --height=250 --form --field="$(< "$2")":lbl \
     --on-top --name=Idiomind --class=Idiomind --scroll --fixed \
-    --window-icon="idiomind" --center --borders=5 \
+    --window-icon="$DS/images/icon.png" --center --borders=5 \
     --button="$(gettext "Close")":0 \
     --title="$(gettext "Info")" >/dev/null 2>&1
 }
@@ -430,7 +430,7 @@ function add_file() {
     cd $HOME
     FL=$(yad --width=680 --height=500 --file --on-top --name=Idiomind --add-preview \
     --text=" $(gettext "Browse to and select the file that you want to add.")" \
-    --class=Idiomind --window-icon="idiomind" --center --multiple \
+    --class=Idiomind --window-icon="$DS/images/icon.png" --center --multiple \
     --file-filter="*.mp3 *.ogg *.mp4 *.m4v *.jpg *.jpeg *.png *.txt *.pdf *.gif" \
     --button="$(gettext "Cancel")":1 --button="$(gettext "OK")":0 \
     --borders=5 --title="$(gettext "Add File")")
@@ -447,7 +447,7 @@ function add_file() {
 function videourl() {
 
     n=$(ls *.url "$DM_tlt/attchs/" | wc -l)
-    url=$(yad --window-icon="idiomind" --form --center --on-top \
+    url=$(yad --window-icon="$DS/images/icon.png" --form --center --on-top \
     --field="$(gettext "YouTube URL")" --title=" " \
     --width=480 --height=100 --name=Idiomind --class=Idiomind \
     --skip-taskbar --borders=5 --button="$(gettext "Cancel")":1 --button=gtk-ok:0)
@@ -544,7 +544,7 @@ echo "<br><br></div>
     if [ "$(ls -A "$DM_tlt/attchs")" ]; then
         [ ! -f "$DC_tlt/att.html" ] && mkindex >/dev/null 2>&1
         yad --html --uri="$DC_tlt/att.html" --browser \
-        --window-icon="idiomind" --center \
+        --window-icon="$DS/images/icon.png" --center \
         --title="$(gettext "Attachments")" --borders=10 \
         --width=650 --height=580 \
         --button="$(gettext "Open Folder")":"xdg-open '$DM_tlt/attchs'" \
@@ -559,7 +559,7 @@ echo "<br><br></div>
         fi
         
     else
-        yad --form --window-icon="idiomind" --borders=5 \
+        yad --form --window-icon="$DS/images/icon.png" --borders=5 \
         --field="$(gettext "Add File")":FBTN "$DS/ifs/tls.sh 'add_file'" \
         --field="$(gettext "YouTube video URL")":FBTN "$DS/ifs/tls.sh 'videourl'" \
         --name=Idiomind --class=Idiomind --center \
@@ -579,7 +579,7 @@ function help() {
     internet
     web="http://idiomind.sourceforge.net/doc/help.html"
     yad --html --browser --uri="$web" \
-    --window-icon="idiomind" \
+    --window-icon="$DS/images/icon.png" \
     --title="$(gettext "Help")" --width=700 --fixed \
     --height=600 --button="$(gettext "OK")":0 \
     --name=Idiomind --class=Idiomind >/dev/null 2>&1
@@ -602,7 +602,7 @@ function fback() {
     internet
     web="http://idiomind.sourceforge.net/doc/msg.html"
     yad --html --browser --uri="$web" \
-    --window-icon="idiomind" \
+    --window-icon="$DS/images/icon.png" \
     --title="$(gettext "Feedback")" --width=500 \
     --height=455 --no-buttons --fixed \
     --name=Idiomind --class=Idiomind >/dev/null 2>&1
@@ -744,7 +744,7 @@ function set_image() {
         file="$DM_tlt/words/$fname.mp3"; fi
         yad --form --title=$(gettext "Image") "$image" "$label" \
         --name=Idiomind --class=Idiomind \
-        --window-icon="idiomind" --image-on-top \
+        --window-icon="$DS/images/icon.png" --image-on-top \
         --skip-taskbar --text-align=center \
         --align=center --center --on-top \
         --width=340 --height=280 --borders=5 \
@@ -774,7 +774,7 @@ function set_image() {
         file="$DM_tlt/$fname.mp3"; fi
         yad --form --title=$(gettext "Image") "$image" "$label" \
         --name=Idiomind --class=Idiomind \
-        --window-icon="idiomind" --text-align=center \
+        --window-icon="$DS/images/icon.png" --text-align=center \
         --skip-taskbar --image-on-top --center --on-top \
         --width=470 --height=270 --borders=5 \
         "$btn1" "$btn2" --button=$(gettext "Close"):1
@@ -807,7 +807,7 @@ function pdfdoc() {
     pdf=$(yad --file --save --title="Export" \
     --name=Idiomind --class=Idiomind \
     --filename="$HOME/$tpc.pdf" \
-    --window-icon="idiomind" --center --on-top \
+    --window-icon="$DS/images/icon.png" --center --on-top \
     --width=600 --height=500 --borders=5 \
     --button=gtk-ok:0)
     ret=$?

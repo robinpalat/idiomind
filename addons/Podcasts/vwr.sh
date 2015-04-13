@@ -18,7 +18,7 @@ uri=""; fi
 yad --html --title="$item" \
 --name=Idiomind --class=Idiomind \
 --uri="$dir/$fname.html" \
---window-icon=idiomind --center --on-top \
+--window-icon="$DS/images/icon.png" --center --on-top \
 --width=650 --height=580 --borders=0 \
 --button="$btnlabel":"$btncmd" \
 --button="Close":1

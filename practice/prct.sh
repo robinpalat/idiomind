@@ -35,7 +35,7 @@ look() {
     
     yad --title="$(gettext "Practice") - $tpc" \
     --text="<b>$(gettext "Practice Completed")</b>\\n   $(cat $1)\n " \
-    --window-icon=idiomind --on-top --skip-taskbar \
+    --window-icon="$DS/images/icon.png" --on-top --skip-taskbar \
     --center --image="$DS/practice/icons_st/21.png" \
     --width=360 --height=120 --borders=5 \
     --button="   $(gettext "Restart")   ":0 \
@@ -97,7 +97,7 @@ starting() {
     
     yad --title=$(gettext "Practice") \
     --text="$1" --image=info \
-    --window-icon=idiomind --skip-taskbar --center --on-top \
+    --window-icon="$DS/images/icon.png" --skip-taskbar --center --on-top \
     --width=360 --height=120 --borders=5 \
     --button=Ok:1
     

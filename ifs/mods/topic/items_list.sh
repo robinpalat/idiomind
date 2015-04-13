@@ -94,7 +94,7 @@ function notebook_1() {
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
     --center --align=right "$img" --fixed --ellipsize=END --image-on-top \
-    --window-icon="idiomind" --center \
+    --window-icon="$DS/images/icon.png" --center \
     --tab="  $(gettext "Learning") ($inx1) " \
     --tab="  $(gettext "Learned") ($inx2) " \
     --tab=" $(gettext "Notes") " \
@@ -137,7 +137,7 @@ function notebook_2() {
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
     --center --align=right "$img" --fixed --ellipsize=END --image-on-top \
-    --window-icon="idiomind" --center \
+    --window-icon="$DS/images/icon.png" --center \
     --tab="  $(gettext "Learning") ($inx1) " \
     --tab="  $(gettext "Learned") ($inx2) " \
     --tab=" $(gettext "Notes") " \
@@ -153,7 +153,7 @@ function dialog_1() {
     --class=idiomind --name=Idiomind \
     --text="$(gettext "More than") $tdays $(gettext "days have passed since you mark this topic as learned. You'd like to review?")" \
     --image=dialog-question --on-top --center \
-    --window-icon="idiomind" \
+    --window-icon="$DS/images/icon.png" \
     --buttons-layout=edge \
     --width=420 --height=150 --borders=10 \
     --button=" $(gettext "Not Yet") ":1 \
@@ -166,9 +166,9 @@ function dialog_2() {
     yad --title="$tpc" \
     --class=Idiomind --name=Idiomind \
     --text="  $(gettext "Review entire list or only new items?") " \
-    --window-icon="idiomind" \
+    --window-icon="$DS/images/icon.png" \
     --image=dialog-question --center \
-    --on-top --window-icon="idiomind" \
+    --on-top --window-icon="$DS/images/icon.png" \
     --width=420 --height=150 --borders=5 \
     --button="$(gettext "Only New items")":3 \
     --button="$(gettext "All Items")":2

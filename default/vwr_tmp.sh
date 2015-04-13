@@ -40,7 +40,7 @@ if [ -f "$dir/words/$fname.mp3" ]; then
     yad --form --title="$item " \
     --text="<span font_desc='Sans Free Bold 22'>$trgt</span>\n\n<i>$src</i>\n\n" \
     --selectable-labels --quoted-output \
-    --window-icon=idiomind \
+    --window-icon="/usr/share/idiomind/images/icon.png" \
     --skip-taskbar --scroll --text-align=center --center --on-top \
     --width=$wth --height=$eht --borders=20 \
     --field="":lbl \
@@ -61,7 +61,8 @@ elif [ -f "$dir/$fname.mp3" ]; then
     echo "$lwrd" | awk '{print $0""}' | yad --list --title=" " \
     --text="<span font_desc='Sans Free 15'>$trgt</span>\n\n<i>$src</i>\n\n" \
     --selectable-labels --dclick-action="$dwck" \
-    --window-icon=idiomind --scroll --no-headers \
+    --window-icon="/usr/share/idiomind/images/icon.png" \
+    --scroll --no-headers \
     --expand-column=0 --skip-taskbar --center --on-top \
     --width=$wth --height=$eht --borders=15 \
     --column="":TEXT \

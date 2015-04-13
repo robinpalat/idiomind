@@ -32,7 +32,7 @@ vsd() {
     --text=" $(gettext "Double clik to download") \t\t\t\t" \
     --name=Idiomind --class=Idiomind \
     --dclick-action="$DS/ifs/upld.sh 'infsd'" \
-    --window-icon="idiomind" --center \
+    --window-icon="$DS/images/icon.png" --center \
     --width=640 --height=560 --borders=10 \
     --print-column=1 --no-headers \
     --column=Nombre:TEXT \
@@ -55,7 +55,7 @@ infsd() {
         sleep 0.5
         sv=$(yad --file --save --title="Save" \
         --filename="$2.idmnd" \
-        --window-icon="idiomind" --skip-taskbar --center --on-top \
+        --window-icon="$DS/images/icon.png" --skip-taskbar --center --on-top \
         --width=600 --height=500 --borders=5 \
         --button="$(gettext "Cancel")":1 --button="Ok":0)
         ret=$?
@@ -156,7 +156,7 @@ cd "$HOME"
 upld=$(yad --form --title="$(gettext "Share")" \
 --text="   <b>$tpc</b>" \
 --name=Idiomind --class=Idiomind \
---window-icon="idiomind" --buttons-layout=end \
+--window-icon="$DS/images/icon.png" --buttons-layout=end \
 --align=right --center --on-top \
 --width=480 --height=460 --borders=15 \
 --field=" :lbl" "#1" \

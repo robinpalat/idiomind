@@ -204,7 +204,7 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
         --text="$itxt" \
         --name=Idiomind --class=Idiomind \
         --print-all --dclick-action="$dclk" \
-        --window-icon="idiomind" --scroll \
+        --window-icon="$DS/images/icon.png" --scroll \
         --no-headers --ellipsize=END --center \
         --width=650 --height=580 --borders=10 \
         --column=Items \
@@ -533,7 +533,7 @@ panel() {
     h=$(($(sed -n 3p $DC_s/10.cfg)-150))
     yad --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
-    --window-icon="idiomind" \
+    --window-icon="$DS/images/icon.png" \
     --form --fixed --on-top --no-buttons --align=center \
     --width=150 --height=200 --borders=1 --geometry=150x300-$w-$h \
     --field=gtk-new:btn "$DS/add.sh 'new_items'" \

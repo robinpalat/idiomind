@@ -31,7 +31,7 @@ position() {
         --class=Idiomind --name=Idiomind \
         --text="  [ $pos ]  \"$label\"\n" \
         --always-print-result --print-column=3 --separator="" \
-        --window-icon="idiomind" --no-headers --on-top --center \
+        --window-icon="$DS/images/icon.png" --no-headers --on-top --center \
         --expand-column=3 --ellipsize=END \
         --width=640 --height=560 --borders=8 \
         --column="":NUM \
@@ -86,7 +86,7 @@ function dlg_form_1() {
         --name=Idiomind --class=Idiomind \
         --always-print-result --separator="\n" --selectable-labels \
         --align=center --text-align=center \
-        --window-icon="idiomind" --buttons-layout=end --scroll \
+        --window-icon="$DS/images/icon.png" --buttons-layout=end --scroll \
         --columns=2 --center \
         --width=$wth --height=$eht --borders=10 \
         --field="<small>$lgtl</small>":RO "$trgt" \
@@ -113,7 +113,7 @@ function dlg_form_2() {
         yad --form --title="$trgt" \
         --name=Idiomind --class=Idiomind \
         --always-print-result --separator="\n" --selectable-labels \
-        --window-icon="idiomind" --center --align=center \
+        --window-icon="$DS/images/icon.png" --center --align=center \
         --buttons-layout=end \
         --width=$wth --height=$eht --borders=10 \
         --field="$(gettext "Mark")":CHK "$mark" \

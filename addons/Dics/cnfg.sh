@@ -35,7 +35,8 @@ function dialog_edit() {
     yad --text-info --title="$_NAME" \
     --name=Idiomind --class=Idiomind \
     --filename="$script" --print-all --always-print-result \
-    --window-icon="idiomind" --skip-taskbar --buttons-layout=end --center --on-top \
+    --window-icon="$DS/images/icon.png" \
+    --skip-taskbar --buttons-layout=end --center --on-top \
     --width=480 --height=350 --borders=0 \
     --editable --fontname=monospace --margins=4 --wrap \
     --button=Cancel:1 \
@@ -146,7 +147,8 @@ elif [ -z "$1" ]; then
     --name=Idiomind --class=Idiomind "$tex" \
     --print-all --always-print-result --separator=" " \
     --dclick-action='/usr/share/idiomind/addons/Dics/cnfg.sh dlk_dlg' \
-    --window-icon="idiomind" --expand-column=2 --skip-taskbar --center \
+    --window-icon="$DS/images/icon.png" \
+    --expand-column=2 --skip-taskbar --center \
     --width=480 --height=350 --borders=15 \
     --column=" ":CHK \
     --column="$(gettext "Available dictionaries")":TEXT \

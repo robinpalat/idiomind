@@ -105,7 +105,7 @@ elif [ "$1" != chngi ]; then
     s=$(cat "$DC_s/0.cfg" | yad --list --title="$(gettext "Topics")" "$text" \
     --name=Idiomind --class=Idiomind --text-align=$align \
     --separator="" --center $img --image-on-top --ellipsize=END \
-    --no-headers --window-icon="idiomind" \
+    --no-headers --window-icon="$DS/images/icon.png" \
     --width=640 --height=560 --borders=8 \
     --column=img:IMG \
     --column=File:TEXT \

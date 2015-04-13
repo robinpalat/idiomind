@@ -95,7 +95,7 @@ fi
 CNFG=$(yad --form --title="$(gettext "Podcasts settings")" \
 --name=Idiomind --class=Idiomind \
 --always-print-result --print-all --separator="|" \
---window-icon="idiomind" --center --scroll --on-top \
+--window-icon="$DS/images/icon.png" --center --scroll --on-top \
 --width=580 --height=460 --borders=5 \
 --text="$(gettext "Configure RSS feed to learn with educational podcast.")" \
 --field="$(gettext "Update at startup")":CHK "$update" \

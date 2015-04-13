@@ -63,7 +63,7 @@ dialog1() {
     --fontname="Free Sans 15" --justify=fill --editable --wrap \
     --buttons-layout=end --borders=2 --title=" " --margins=5 \
     --text-align=left --height=410 --width=462 --name=Idiomind \
-    --align=left --window-icon=idiomind --fore=4A4A4A --class=Idiomind \
+    --align=left --window-icon="$DS/images/icon.png" --fore=4A4A4A --class=Idiomind \
     --button="$(gettext "Hint")":"/usr/share/idiomind/practice/hint.sh ${hint}" \
     --button="$listen":"play '$DM_tlt/$fname.mp3'" \
     --button=" $(gettext "OK") >> ":0)
@@ -76,7 +76,7 @@ dialog2() {
     --fontname="Free Sans 15" --justify=fill --editable --wrap \
     --buttons-layout=end --borders=4 --title=" " "$info" --margins=5 \
     --text-align=left --height=180 --width=470 --name=Idiomind \
-    --align=left --window-icon=idiomind --image-on-top --class=Idiomind \
+    --align=left --window-icon="$DS/images/icon.png" --image-on-top --class=Idiomind \
     --button="$(gettext "Hint")":"/usr/share/idiomind/practice/hint.sh ${hint}" \
     --button="$(gettext "Listen")":"play '$DM_tlt/$fname.mp3'" \
     --button=" $(gettext "OK") >> ":0)
@@ -86,7 +86,7 @@ check() {
     
     yad --form --center --name=Idiomind --buttons-layout=end \
     --width=560 --height=300 --on-top --skip-taskbar --scroll \
-    --class=Idiomind $aut --wrap --window-icon=idiomind \
+    --class=Idiomind $aut --wrap --window-icon="$DS/images/icon.png" \
     --borders=10 --selectable-labels \
     --title="" --button="$(gettext "Listen")":"play '$DM_tlt/$fname.mp3'" \
     --button="$(gettext "Next")":2 \

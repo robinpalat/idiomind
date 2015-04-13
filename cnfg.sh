@@ -46,7 +46,7 @@ confirm() {
     
     yad --form --title="Idiomind" --text="$1\n" \
     --center --borders=8 --image=$2 \
-    --on-top --window-icon="idiomind" \
+    --on-top --window-icon="$DS/images/icon.png" \
     --skip-taskbar --width=350 --height=120 \
     --button="$(gettext "No")":1 --button="$(gettext "Yes")":0
 }
@@ -126,7 +126,7 @@ cat "$DC_s/2.cfg" | yad --plug=$KEY --tabnum=2 --list \
 --column=icon:IMG --column=Action &
 yad --notebook --key=$KEY --title="$(gettext "Settings")" \
 --name=Idiomind --class=Idiomind --tab-borders=5 \
---sticky --center --window-icon="idiomind" --borders=2  \
+--sticky --center --window-icon="$DS/images/icon.png" --borders=2  \
 --tab="$(gettext "Preferences")" \
 --tab="$(gettext "Addons")" \
 --width=$wth --height=$eht \

@@ -7,7 +7,7 @@ function internet() {
     | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
     yad --title="$(gettext "No network connection")" --image=info \
     --name=Idiomind --class=Idiomind \
-    --window-icon="idiomind" \
+    --window-icon="$DS/images/icon.png" \
     --image-on-top --center --sticky --on-top --skip-taskbar \
     --text="$(gettext "No network connection\nPlease connect to a network, then try again.")" \
     --width=360 --height=120 --borders=3 \
@@ -20,7 +20,7 @@ function msg() {
     [ -n "$4" ] && btn="$4" || btn="$(gettext "OK")"
     yad --title="$title" --text="$1" --image="$2" \
     --name=Idiomind --class=Idiomind \
-    --window-icon="idiomind" \
+    --window-icon="$DS/images/icon.png" \
     --image-on-top --center --sticky --on-top \
     --width=360 --height=120 --borders=5 \
     --button="$btn":0
@@ -33,7 +33,7 @@ function msg_2() {
     yad --title="$title" --text="$1" --image="$2" \
     --name=Idiomind --class=Idiomind \
     --always-print-result \
-    --window-icon="idiomind" \
+    --window-icon="$DS/images/icon.png" \
     --image-on-top --on-top --sticky --center \
     --width=360 --height=120 --borders=3 \
     "$btn3" --button="$4":1 --button="$3":0

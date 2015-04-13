@@ -5,33 +5,33 @@ source "$DC_a/gts.cfg"
 
 function dlg_checklist_5() {
     
-        slt=$(mktemp $DT/slt.XXXX.x)
-        cat "$1" | awk '{print "FALSE\n"$0}' | \
-        yad --center --sticky --name=Idiomind --class=Idiomind \
-        --dclick-action="$DS/ifs/mods/add_process/A.sh 'show_item_for_edit'" \
-        --list --checklist --window-icon="idiomind" \
-        --width=$wth --text="<small>$info</small>" \
-        --height=$eht --borders=3 --button="$(gettext "Cancel")":1 \
-        --button="$(gettext "To New Topic")":'/usr/share/idiomind/add.sh new_topic' \
-        --button=gtk-add:0 --title="$2" \
-        --column="$(wc -l < "$1")" --column="$(gettext "Items")" > "$slt"
+    slt=$(mktemp $DT/slt.XXXX.x)
+    cat "$1" | awk '{print "FALSE\n"$0}' | \
+    yad --center --sticky --name=Idiomind --class=Idiomind \
+    --dclick-action="$DS/ifs/mods/add_process/A.sh 'show_item_for_edit'" \
+    --list --checklist --window-icon="$DS/images/icon.png" \
+    --width=$wth --text="<small>$info</small>" \
+    --height=$eht --borders=3 --button="$(gettext "Cancel")":1 \
+    --button="$(gettext "To New Topic")":'/usr/share/idiomind/add.sh new_topic' \
+    --button=gtk-add:0 --title="$2" \
+    --column="$(wc -l < "$1")" --column="$(gettext "Items")" > "$slt"
 }
 
 function dlg_text_info_5() {
     
-        echo "$1" | yad --text-info --center --wrap \
-        --name=Idiomind --class=Idiomind --window-icon="idiomind" \
-        --sticky --width=520 --height=110 --editable \
-        --margins=8 --borders=0 --button=Ok:0 \
-        --title=" " > "$1.txt"
+    echo "$1" | yad --text-info --center --wrap \
+    --name=Idiomind --class=Idiomind --window-icon="$DS/images/icon.png" \
+    --sticky --width=520 --height=110 --editable \
+    --margins=8 --borders=0 --button=Ok:0 \
+    --title=" " > "$1.txt"
 }
 
 function dlg_text_info_4() {
     
-        echo "$1" | yad --text-info --center --wrap \
-        --name=Idiomind --class=Idiomind --window-icon="idiomind" \
-        --text=" " --sticky --width=$wth --height=$eht \
-        --margins=8 --borders=5 --button=Ok:0 --title=Idiomind
+    echo "$1" | yad --text-info --center --wrap \
+    --name=Idiomind --class=Idiomind --window-icon="$DS/images/icon.png" \
+    --text=" " --sticky --width=$wth --height=$eht \
+    --margins=8 --borders=5 --button=Ok:0 --title=Idiomind
 }
 
 function audio_recognizer() {
@@ -47,17 +47,17 @@ function audio_recognizer() {
 
 function dlg_file_1() {
     
-        echo "$(yad --borders=0 --name=Idiomind --file-filter="*.mp3 *.tar *.zip" \
-        --skip-taskbar --on-top --title="Speech recognize" --center \
-        --class=Idiomind --window-icon="idiomind" --file --width=600 --height=450)"
+    echo "$(yad --borders=0 --name=Idiomind --file-filter="*.mp3 *.tar *.zip" \
+    --skip-taskbar --on-top --title="Speech recognize" --center \
+    --class=Idiomind --window-icon="$DS/images/icon.png" --file --width=600 --height=450)"
 }
 
 function dlg_file_2() {
     
-        yad --save --center --borders=10 --name=Idiomind --class=Idiomind \
-        --on-top --filename="$(date +%m-%d-%Y)"_audio.tar.gz \
-        --window-icon="idiomind" --skip-taskbar --title="Save" \
-        --file --width=600 --height=500 --button=gtk-ok:0
+    yad --save --center --borders=10 --name=Idiomind --class=Idiomind \
+    --on-top --filename="$(date +%m-%d-%Y)"_audio.tar.gz \
+    --window-icon="$DS/images/icon.png" --skip-taskbar --title="Save" \
+    --file --width=600 --height=500 --button=gtk-ok:0
 }
 
 if [[ "$prdt" = A ]]; then

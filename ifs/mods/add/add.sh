@@ -301,13 +301,13 @@ function fetch_audio() {
 
 function list_words_2() {
 
-        if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
-        eyeD3 "$1" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' \
-        | tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > idlst
-        else
-        eyeD3 "$1" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' \
-        | tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > idlst
-        fi
+    if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
+    eyeD3 "$1" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' \
+    | tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > idlst
+    else
+    eyeD3 "$1" | grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' \
+    | tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > idlst
+    fi
 }
 
 
@@ -325,127 +325,127 @@ function list_words_3() {
 
 function dlg_form_0() {
     
-        yad --window-icon="idiomind" --form --center --on-top \
-        --field="$(gettext "Name")" "$2" --title="$1" \
-        --width=470 --height=100 --name=Idiomind --class=Idiomind \
-        --skip-taskbar --borders=5 --button=gtk-ok:0
+    yad --window-icon="$DS/images/icon.png" --form --center --on-top \
+    --field="$(gettext "Name")" "$2" --title="$1" \
+    --width=470 --height=100 --name=Idiomind --class=Idiomind \
+    --skip-taskbar --borders=5 --button=gtk-ok:0
 }
 
 
 function dlg_form_1() {
 
-        yad --form --title="$(gettext "New Note")" \
-        --name=Idiomind --class=Idiomind \
-        --always-print-result --separator="\n" \
-        --skip-taskbar --center --on-top \
-        --align=right --image="$img" \
-        --window-icon="idiomind" \
-        --width=420 --height=150 --borders=0 \
-        --field=" <small>$lgtl</small>" "$txt" \
-        --field=" $atopic:CB" \
-        "$ltopic!$(gettext "New topic") *$e$tpcs" \
-        --button="$(gettext "Image")":3 \
-        --button="$(gettext "Audio")":2 \
-        --button=gtk-add:0
+    yad --form --title="$(gettext "New Note")" \
+    --name=Idiomind --class=Idiomind \
+    --always-print-result --separator="\n" \
+    --skip-taskbar --center --on-top \
+    --align=right --image="$img" \
+    --window-icon="$DS/images/icon.png" \
+    --width=420 --height=150 --borders=0 \
+    --field=" <small>$lgtl</small>" "$txt" \
+    --field=" $atopic:CB" \
+    "$ltopic!$(gettext "New topic") *$e$tpcs" \
+    --button="$(gettext "Image")":3 \
+    --button="$(gettext "Audio")":2 \
+    --button=gtk-add:0
 }
 
 
 function dlg_form_2() {
     
-        yad --form --title="$(gettext "New Note")" \
-        --name=Idiomind --class=Idiomind \
-        --always-print-result --separator="\n" \
-        --skip-taskbar --center --on-top \
-        --align=right --image="$img" \
-        --window-icon="idiomind" \
-        --width=420 --height=180 --borders=0 \
-        --field=" <small>$lgtl</small>" "$txt" \
-        --field=" <small>${lgsl^}</small>" "$srce" \
-        --field=" $atopic:CB" \
-        "$ltopic!$(gettext "New topic") *$e$tpcs" \
-        --button="$(gettext "Image")":3 \
-        --button="$(gettext "Audio")":2 \
-        --button=gtk-add:0
+    yad --form --title="$(gettext "New Note")" \
+    --name=Idiomind --class=Idiomind \
+    --always-print-result --separator="\n" \
+    --skip-taskbar --center --on-top \
+    --align=right --image="$img" \
+    --window-icon="$DS/images/icon.png" \
+    --width=420 --height=180 --borders=0 \
+    --field=" <small>$lgtl</small>" "$txt" \
+    --field=" <small>${lgsl^}</small>" "$srce" \
+    --field=" $atopic:CB" \
+    "$ltopic!$(gettext "New topic") *$e$tpcs" \
+    --button="$(gettext "Image")":3 \
+    --button="$(gettext "Audio")":2 \
+    --button=gtk-add:0
 }
 
 
 function dlg_radiolist_1() {
     
-        echo "$1" | awk '{print "FALSE\n"$0}' | \
-        yad --name=Idiomind --class=Idiomind --center \
-        --list --radiolist --on-top --fixed --no-headers \
-        --text="<b>$te</b> <small> $info</small>" \
-        --sticky --skip-taskbar --window-icon="idiomind" \
-        --height=420 --width=150 --separator="\\n" \
-        --button=gtk-add:0 --title="$(gettext "Listing words")" \
-        --borders=5 --column=" " --column="$(gettext "Sentences")"
+    echo "$1" | awk '{print "FALSE\n"$0}' | \
+    yad --name=Idiomind --class=Idiomind --center \
+    --list --radiolist --on-top --fixed --no-headers \
+    --text="<b>$te</b> <small> $info</small>" \
+    --sticky --skip-taskbar --window-icon="$DS/images/icon.png" \
+    --height=420 --width=150 --separator="\\n" \
+    --button=gtk-add:0 --title="$(gettext "Listing words")" \
+    --borders=5 --column=" " --column="$(gettext "Sentences")"
 }
 
 
 function dlg_checklist_1() {
     
-        cat "$1" | awk '{print "FALSE\n"$0}' | \
-        yad --list --checklist --title="$(gettext "Listing words")" \
-        --on-top --text="<small>$2</small>" --class=Idiomind \
-        --center --sticky --no-headers --name=Idiomind \
-        --buttons-layout=end --width=400 \
-        --height=280 --borders=5 --window-icon="idiomind" \
-        --button="$(gettext "Close")":1 \
-        --button="$(gettext "Add")":0 \
-        --column="" --column="Select" > "$slt"
+    cat "$1" | awk '{print "FALSE\n"$0}' | \
+    yad --list --checklist --title="$(gettext "Listing words")" \
+    --on-top --text="<small>$2</small>" --class=Idiomind \
+    --center --sticky --no-headers --name=Idiomind \
+    --buttons-layout=end --width=400 \
+    --height=280 --borders=5 --window-icon="$DS/images/icon.png" \
+    --button="$(gettext "Close")":1 \
+    --button="$(gettext "Add")":0 \
+    --column="" --column="Select" > "$slt"
 }
 
 
 function dlg_checklist_3() {
 
-        slt=$(mktemp $DT/slt.XXXX.x)
-        cat "$1" | awk '{print "FALSE\n"$0}' | \
-        yad --name=Idiomind --window-icon="idiomind" --ellipsize=END \
-        --dclick-action='/usr/share/idiomind/add.sh dclik_list_words' \
-        --list --checklist --class=Idiomind --center --sticky \
-        --text="<small>$info</small>" --title="$2" --no-headers \
-        --width=$wth --height=$eht --borders=5 \
-        --button="$(gettext "Cancel")":1 --button=$(gettext "Reorder"):2 \
-        --button="$(gettext "To New Topic")":"$DS/add.sh 'new_topic'" \
-        --button=gtk-add:0 \
-        --column="$(cat "$1" | wc -l)" \
-        --column="$(gettext "sentences")" > "$slt"
+    slt=$(mktemp $DT/slt.XXXX.x)
+    cat "$1" | awk '{print "FALSE\n"$0}' | \
+    yad --name=Idiomind --window-icon="$DS/images/icon.png" --ellipsize=END \
+    --dclick-action='/usr/share/idiomind/add.sh dclik_list_words' \
+    --list --checklist --class=Idiomind --center --sticky \
+    --text="<small>$info</small>" --title="$2" --no-headers \
+    --width=$wth --height=$eht --borders=5 \
+    --button="$(gettext "Cancel")":1 --button=$(gettext "Reorder"):2 \
+    --button="$(gettext "To New Topic")":"$DS/add.sh 'new_topic'" \
+    --button=gtk-add:0 \
+    --column="$(cat "$1" | wc -l)" \
+    --column="$(gettext "sentences")" > "$slt"
 }
 
 
 function dlg_text_info_1() {
     
-        cat "$1" | awk '{print "\n\n\n"$0}' | \
-        yad --text-info --editable --window-icon="idiomind" \
-        --name=Idiomind --wrap --margins=60 --class=Idiomind \
-        --sticky --fontname=vendana --on-top --center \
-        --skip-taskbar --width=$wth --height=$eht --borders=5 \
-        --button=gtk-ok:0 --title="$2" > ./sort
+    cat "$1" | awk '{print "\n\n\n"$0}' | \
+    yad --text-info --editable --window-icon="$DS/images/icon.png" \
+    --name=Idiomind --wrap --margins=60 --class=Idiomind \
+    --sticky --fontname=vendana --on-top --center \
+    --skip-taskbar --width=$wth --height=$eht --borders=5 \
+    --button=gtk-ok:0 --title="$2" > ./sort
 }
 
 
 function dlg_text_info_3() {
 
-        printf "$2" | yad --text="$1" --text-info --center --wrap \
-        --center --on-top --title=Idiomind --class=Idiomind \
-        --width=420 --height=150 --on-top --margins=4 \
-        --window-icon="idiomind" --borders=5 --name=Idiomind \
-        "$3" --button="$(gettext "OK")":1
+    printf "$2" | yad --text="$1" --text-info --center --wrap \
+    --center --on-top --title=Idiomind --class=Idiomind \
+    --width=420 --height=150 --on-top --margins=4 \
+    --window-icon="$DS/images/icon.png" --borders=5 --name=Idiomind \
+    "$3" --button="$(gettext "OK")":1
 }
 
 
 function dlg_progress_1() {
     
-        yad --progress --progress-text=" " --on-top \
-        --width=240 --height=20 --geometry=240x20-4-4 \
-        --pulsate --percentage="5" \
-        --undecorated --auto-close --skip-taskbar --no-buttons
+    yad --progress --progress-text=" " --on-top \
+    --width=240 --height=20 --geometry=240x20-4-4 \
+    --pulsate --percentage="5" \
+    --undecorated --auto-close --skip-taskbar --no-buttons
 }
 
 
 function dlg_progress_2() {
 
-        yad --progress --progress-text=" " --on-top \
-        --width=240 --height=20 --geometry=240x20-4-4 \
-        --undecorated --auto-close --skip-taskbar --no-buttons
+    yad --progress --progress-text=" " --on-top \
+    --width=240 --height=20 --geometry=240x20-4-4 \
+    --undecorated --auto-close --skip-taskbar --no-buttons
 }

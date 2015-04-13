@@ -22,7 +22,7 @@ h="$(echo "$@" | sed "s/\'//g" | awk '{print tolower($0)}'  | sed "s/\b\(.\)/\u\
 | sed "s|\.||; s|\,||; s|\;||g" | sed "s|[a-z]|"\."|g" | sed "s| |\t|g" \
 | sed "s|\.|\ .|g" | tr "[:upper:]" "[:lower:]" | sed 's/^\s*./\U&\E/g')"
 yad --title=" " --text="<span font_desc='Free Sans Bold 15'>$h </span>" \
---window-icon=idiomind \
+--window-icon="$DS/images/icon.png" \
 --buttons-layout=end --skip-taskbar --center --on-top \
 --width=550 --height=250 --borders=15 \
 --no-buttons & exit

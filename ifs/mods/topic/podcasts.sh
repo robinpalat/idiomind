@@ -46,7 +46,7 @@ function feedmode() {
     yad --notebook --title="Podcasts  ${info^}" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
-    --window-icon="idiomind" --image-on-top \
+    --window-icon="$DS/images/icon.png" --image-on-top \
     --ellipsize=END --align=right --center --fixed \
     --width=640 --height=560 --borders=2 --tab-borders=5 \
     --tab=" $(gettext "New episodes") " \
