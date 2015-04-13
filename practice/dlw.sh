@@ -32,12 +32,12 @@ ling=0
 score() {
 
     if [[ $(($(< l_w)+$1)) -ge $all ]]; then
+        play "$drts/all.mp3" &
         echo "w9.$(tr -s '\n' '|' < ok.w).w9" >> "$log"
         rm lwin lwin1 lwin2 lwin3 ok.w
         echo "$(date "+%a %d %B")" > look_lw
         echo 21 > .iconlw
-        play "$drts/all.mp3" & "$strt" 3 &
-        killall dlw.sh
+        "$strt" 3 &
         exit 1
         
     else

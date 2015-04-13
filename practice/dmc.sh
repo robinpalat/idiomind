@@ -18,12 +18,12 @@ ling=0
 score() {
 
     if [[ $(($(< l_m)+$1)) -ge $all ]]; then
+        play "$drts/all.mp3" &
         echo "w9.$(tr -s '\n' '|' < ok.m).w9" >> "$log"
         rm mcin mcin1 mcin2 mcin3 ok.m
         echo "$(date "+%a %d %B")" > look_mc
         echo 21 > .iconmc
-        play "$drts/all.mp3" & "$strt" 2 &
-        killall dmc.sh
+        "$strt" 2 &
         exit 1
         
     else

@@ -60,7 +60,7 @@ done
     
 apply() {
     
-    printf "$CNFG" | sed 's/|/\n/g' | sed -n 7,16p | \
+    printf "$CNFG" | sed 's/|/\n/g' | sed -n 6,15p | \
     sed 's/^ *//; s/ *$//g' > "$DT/podcasts.tmp"
 
     n=1; while read feed; do
@@ -96,14 +96,13 @@ CNFG=$(yad --form --title="$(gettext "Podcasts settings")" \
 --name=Idiomind --class=Idiomind \
 --always-print-result --print-all --separator="|" \
 --window-icon="idiomind" --center --scroll --on-top \
---width=580 --height=460 --borders=15 \
+--width=580 --height=460 --borders=5 \
 --text="$(gettext "Configure RSS feed to learn with educational podcast.")" \
 --field="$(gettext "Update at startup")":CHK "$update" \
 --field="$(gettext "Sync after update")":CHK "$sync" \
 --field="$(gettext "Mountpoint or path where episodes should be synced.")":LBL " " \
 --field="":DIR "$path" \
---field=" ":LBL " " \
---field="$(gettext "Feeds")":LBL " " \
+--field="$(gettext "URL")":LBL " " \
 --field="" "$url1" --field="" "$url2" --field="" "$url3" \
 --field="" "$url4" --field="" "$url5" --field="" "$url6" \
 --field="" "$url7" --field="" "$url8" --field="" "$url9" \

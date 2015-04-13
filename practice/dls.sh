@@ -31,13 +31,12 @@ f=0
 score() {
 
     if [[ $1 -ge $all ]]; then
-    
+        play "$drts/all.mp3" & 
         echo "w6.$(tr -s '\n' '|' < ok.s).w6" >> "$log"
         rm lsin ok.s
         echo "$(date "+%a %d %B")" > look_ls
         echo 21 > .iconls
-        play "$drts/all.mp3" & "$strt" 4 &
-        killall dls.sh
+        "$strt" 4 &
         exit 1
         
     else
@@ -158,7 +157,7 @@ while [[ $n -le $(wc -l < lsin1) ]]; do
     fname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
     
     if [[ $n = 1 ]] && [ ! -f "$DM_tlt/words/images/$fname.jpg" ]; then
-    info="--text=<sup><tt> $(gettext "Try to write the sentence you're listening to")...</tt></sup>"
+    info="--text= $(gettext "Try to write the sentence you're listening to")..."
     else info=""; fi
     
     if [ -f "$DM_tlt/$fname.mp3" ]; then

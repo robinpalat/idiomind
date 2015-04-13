@@ -17,12 +17,12 @@ ling=0
 score() {
 
     if [[ $(($(< l_f)+$1)) -ge $all ]]; then
+        play "$drts/all.mp3" &
         echo "w9.$(tr -s '\n' '|' < ok.f).w9" >> "$log"
         rm fin fin1 fin2 ok.f
         echo "$(date "+%a %d %B")" > look_f
         echo 21 > .iconf
-        play "$drts/all.mp3" & "$strt" 1 &
-        killall df.sh
+        "$strt" 1 &
         exit 1
         
     else

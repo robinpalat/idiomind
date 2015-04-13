@@ -17,12 +17,12 @@ ling=0
 score() {
 
     if [[ $(($(< l_i)+$1)) -ge $all ]]; then
+        play "$drts/all.mp3" &
         echo "w9.$(tr -s '\n' '|' < ok.i).w9" >> "$log"
         rm iin iin1 iin2 ok.i
         echo "$(date "+%a %d %B")" > look_i
         echo 21 > .iconi
-        play "$drts/all.mp3" & "$strt" 5 &
-        killall di.sh
+        "$strt" 5 &
         exit 1
         
     else

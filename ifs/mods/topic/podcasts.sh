@@ -53,7 +53,8 @@ function feedmode() {
     --tab=" $(gettext "Saved episodes") " \
     --tab=" $(gettext "Notes") " \
     --button="$(gettext "Playlist")":"/usr/share/idiomind/play.sh" \
-    --button="gtk-refresh":2 --button="$(gettext "Close")":1
+    --button="$(gettext "Update")":2 \
+    --button="$(gettext "Close")":1
     ret=$?
         
     if [ $ret -eq 2 ]; then
