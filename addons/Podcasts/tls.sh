@@ -261,7 +261,7 @@ check() {
 
     internet
     
-    source "$DCP/$2.rss"
+    source "$DCP/$2.rss" # FIX
 
     [ -z "$url" ] && exit 1
      

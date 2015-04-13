@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
-source "$DC_a/gts.cfg"
+
 
 function dlg_checklist_5() {
     
@@ -64,6 +64,8 @@ if [[ "$prdt" = A ]]; then
 
     cd "$DT_r"
     left=$((200 - $(wc -l < "$DC_tlt/4.cfg")))
+    key="$(sed -n 2p < "$HOME/.config/idiomind/addons/gts.cfg" \
+    | grep -o key=\"[^\"]* | grep -o '[^"]*$')"
     test="$DS/addons/Google translation service/test.flac"
     LNK='https://console.developers.google.com'
     source "$DS/ifs/mods/cmns.sh"

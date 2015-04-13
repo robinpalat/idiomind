@@ -246,11 +246,13 @@ function tts() {
 
 function voice() {
     
-    source "$DC_s/1.cfg"
-    cd "$2"; vs="$synth"
-    if [ -n "$vs" ]; then
+    synth="$(sed -n 12p < "$DC_s/1.cfg" \
+    | grep -o synth=\"[^\"]* | grep -o '[^"]*$')"
+
+    cd "$2"
+    if [ -n "$synth" ]; then
     
-        if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
+        if [ "$synth" = 'festival' ] || [ "$synth" = 'text2wave' ]; then
             lg="${lgtl,,}"
 
             if ([ $lg = "english" ] \
@@ -262,7 +264,7 @@ function voice() {
             msg "$(gettext "Sorry, festival can not process this language.")\n" error
             [ "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
         else
-            echo "$1" | "$vs"
+            echo "$1" | "$synth"
             [ -f *.mp3 ] && mv -f *.mp3 "$3"
             [ -f *.wav ] && sox *.wav "$3"
         fi

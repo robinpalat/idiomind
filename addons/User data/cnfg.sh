@@ -11,7 +11,9 @@ if [ ! -f "$DC_a/1.cfg" ]; then
     path=\"$HOME\"
     size=0" > "$DC_a/1.cfg"
 fi
-source "$DC_a/1.cfg"
+
+path="$(sed -n 2p < "$DC_a/1.cfg" \
+| grep -o path=\"[^\"]* | grep -o '[^"]*$')"
 
 [ -f "$path/.udt" ] && udt=$(< "$path/.udt") || udt=" "
 dte=$(date +%F)
@@ -233,7 +235,9 @@ if [ -z "$1" ]; then
             path=\"$HOME\"
             size=0" > "$DC_a/1.cfg"
         fi
-        source "$DC_a/1.cfg"
+
+        backup="$(sed -n 1p < "$DC_a/1.cfg" \
+        | grep -o backup=\"[^\"]* | grep -o '[^"]*$')"
 
         cd "$HOME"
         CNFG=$(yad --form --title=Backup \

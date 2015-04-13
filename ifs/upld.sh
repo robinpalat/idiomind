@@ -46,7 +46,11 @@ infsd() {
 
     U=$(sed -n 1p $DC_s/5.cfg)
     user=$(echo "$(whoami)")
-    source "$DM_t/saved/$2.id"
+    file="$DM_t/saved/$2.id"
+    language_source=$(sed -n 2p < "$file" | grep -o 'language_source="[^"]*' | grep -o '[^"]*$')
+    language_target=$(sed -n 3p < "$file" | grep -o 'language_target="[^"]*' | grep -o '[^"]*$')
+    category=$(sed -n 6p < "$file" | grep -o 'category="[^"]*' | grep -o '[^"]*$')
+    link=$(sed -n 7p < "$file" | grep -o 'link="[^"]*' | grep -o '[^"]*$')
     lng=$(lnglss $language_source)
     nme=$(echo "$2" | sed 's/ /_/g')
     lnglbl=$(echo $language_target | awk '{print tolower($0)}')

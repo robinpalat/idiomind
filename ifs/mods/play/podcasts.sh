@@ -1,8 +1,8 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-
-source "$DC_s/1.cfg"
+videos="$(sed -n 8p < "$DC_s/1.cfg" \
+| grep -o videos=\"[^\"]* | grep -o '[^"]*$')"
 if [ "$videos" = "TRUE" ] && ([ "$news" = "TRUE" ] || [ "$saved" = "TRUE" ]); then
 find "$DM_tl/Feeds/cache"/ -type f \( -name "*.avi" -o -name "*.mp4" -o -name "*.m4v" \) > "$DT/index.m3u"
 "$DS/stop.sh" playm && mplayer -fs -playlist "$DT/index.m3u";

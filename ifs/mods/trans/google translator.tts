@@ -1,7 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
-source "$HOME/.config/idiomind/addons/gts.cfg"
-source /usr/share/idiomind/ifs/c.conf
+
 DT_r="$3"; cd "$DT_r"
 
 if [ "$(sed -n 1p < "$HOME/.config/idiomind/addons/gts.cfg" \

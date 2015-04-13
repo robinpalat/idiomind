@@ -199,7 +199,6 @@ function new_sentence() {
         
     DT_r="$3"
     source "$DS/default/dicts/$lgt"
-    source "$DC_s/1.cfg"
     DM_tlt="$DM_tl/$tpe"
     DC_tlt="$DM_tl/$tpe/.conf"
     icnn=idiomind
