@@ -181,40 +181,6 @@ function add_tags_9() {
 }
 
 
-function voice() {
-    
-    source "$DC_s/1.cfg"
-    cd "$2"; vs="$synth"
-    if [ -n "$vs" ]; then
-    
-        if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
-            lg="${lgtl,,}"
-
-            if ([ $lg = "english" ] \
-            || [ $lg = "spanish" ] \
-            || [ $lg = "russian" ]); then
-            echo "$1" | text2wave -o ./s.wav
-            sox ./s.wav "$3"
-            else
-            msg "$(gettext "Sorry, festival can not process this language.")\n" error
-            [ "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
-        else
-            echo "$1" | "$vs"
-            [ -f *.mp3 ] && mv -f *.mp3 "$3"
-            [ -f *.wav ] && sox *.wav "$3"
-        fi
-    else
-    
-        lg="${lgtl,,}"
-        [ $lg = chinese ] && lg=Mandarin
-        if [ $lg = japanese ]; then msg "$(gettext "Sorry, espeak can not process Japanese text.")\n" error
-        [ "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
-        espeak "$1" -v $lg -k 1 -p 40 -a 80 -s 110 -w ./s.wav
-        sox ./s.wav "$3"
-    fi
-}
-
-
 function set_image_1() {
     
     scrot -s --quality 80 img.jpg
@@ -266,9 +232,49 @@ function list_words() {
 
 function translate() {
     
-    for trans in "$DS/ifs/mods/trans"/*; do
+    for trans in "$DS/ifs/mods/trans"/*.trad; do
     "$trans" "$@"; done
+}
 
+
+function tts() {
+    
+    for convert in "$DS/ifs/mods/trans"/*.tts; do
+    "$convert" "$@"; done
+}
+
+
+function voice() {
+    
+    source "$DC_s/1.cfg"
+    cd "$2"; vs="$synth"
+    if [ -n "$vs" ]; then
+    
+        if [ "$vs" = 'festival' ] || [ "$vs" = 'text2wave' ]; then
+            lg="${lgtl,,}"
+
+            if ([ $lg = "english" ] \
+            || [ $lg = "spanish" ] \
+            || [ $lg = "russian" ]); then
+            echo "$1" | text2wave -o ./s.wav
+            sox ./s.wav "$3"
+            else
+            msg "$(gettext "Sorry, festival can not process this language.")\n" error
+            [ "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
+        else
+            echo "$1" | "$vs"
+            [ -f *.mp3 ] && mv -f *.mp3 "$3"
+            [ -f *.wav ] && sox *.wav "$3"
+        fi
+    else
+    
+        lg="${lgtl,,}"
+        [ $lg = chinese ] && lg=Mandarin
+        if [ $lg = japanese ]; then msg "$(gettext "Sorry, espeak can not process Japanese text.")\n" error
+        [ "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
+        espeak "$1" -v $lg -k 1 -p 40 -a 80 -s 110 -w ./s.wav
+        sox ./s.wav "$3"
+    fi
 }
 
 

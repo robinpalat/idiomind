@@ -87,7 +87,7 @@ function dlg_form_1() {
         --always-print-result --separator="\n" --selectable-labels \
         --align=center --text-align=center \
         --window-icon="idiomind" --buttons-layout=end --scroll \
-        --columns=2 --center --on-top \
+        --columns=2 --center \
         --width=$wth --height=$eht --borders=10 \
         --field="<small>$lgtl</small>":RO "$trgt" \
         --field="<small>$lgsl</small>" "$srce" \
@@ -113,7 +113,7 @@ function dlg_form_2() {
         yad --form --title="$trgt" \
         --name=Idiomind --class=Idiomind \
         --always-print-result --separator="\n" --selectable-labels \
-        --window-icon="idiomind" --center --on-top --align=center \
+        --window-icon="idiomind" --center --align=center \
         --buttons-layout=end \
         --width=$wth --height=$eht --borders=10 \
         --field="$(gettext "Mark")":CHK "$mark" \

@@ -23,7 +23,10 @@ source "$DS/ifs/mods/cmns.sh"
 include "$DS/ifs/mods/add"
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
-source "$DC_s/1.cfg"
+list=$(sed -n 2p < "$DC_s/1.cfg" \
+| grep -o list=\"[^\"]* | grep -o '[^"]*$')
+trans=$(sed -n 4p < "$DC_s/1.cfg" \
+| grep -o trans=\"[^\"]* | grep -o '[^"]*$')
 
 function new_topic() {
 
@@ -220,6 +223,9 @@ function new_sentence() {
         if [ ! -f "$DT_r/audtm.mp3" ]; then
         
             tts "$trgt" $lgt "$DT_r" "$DM_tlt/$fname.mp3"
+            
+                [ ! -f "$DM_tlt/$fname.mp3" ] && \
+                voice "$trgt" "$DT_r" "$DM_tlt/$fname.mp3"
             
         else
             cp -f "$DT_r/audtm.mp3" "$DM_tlt/$fname.mp3"
