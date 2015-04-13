@@ -4,7 +4,6 @@
 u=$(echo "$(whoami)")
 nmt=$(sed -n 1p "/tmp/.idmtp1.$u/dir$1/ls")
 dir="/tmp/.idmtp1.$u/dir$1/$nmt"
-#yad --text="-$1 -$2 -$3"
 wth=650; eht=400
 re='^[0-9]+$'
 now="$2"
@@ -53,7 +52,7 @@ elif [ -f "$dir/$fname.mp3" ]; then
 
     file="$dir/$fname.mp3"
     listen="--button=Listen:play '$dir/$fname.mp3'"
-    dwck="'/usr/share/idiomind/default/p2.sh' $1"
+    dwck="'/usr/share/idiomind/ifs/tls.sh' 'play_temp' '$1'"
     tgs="$(eyeD3 "$file")"
     trgt="$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"$tgs")"
     src="$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"$tgs")"
@@ -71,18 +70,18 @@ elif [ -f "$dir/$fname.mp3" ]; then
     --button=gtk-go-down:2
    
 else
-    ff=$((nuw - 1))
+    item_pos=$((nuw - 1))
     echo "_" >> /tmp/.sc
     [[ $(wc -l < /tmp/.sc) -ge 5 ]] && rm -f /tmp/.sc & exit 1 \
-    || "/usr/share/idiomind/default/p1.sh" "$1" "$nll" "$ff" & exit 1
+    || "/usr/share/idiomind/default/vwr_tmp.sh" "$1" "$nll" "$item_pos" & exit 1
 fi
 
 ret=$?
 if [ $ret -eq 2 ]; then
-ff=$((nuw-1))
-"/usr/share/idiomind/default/p1.sh" "$1" "$nll" "$ff" &
+item_pos=$((nuw-1))
+"/usr/share/idiomind/default/vwr_tmp.sh" "$1" "$nll" "$item_pos" &
 elif [ $ret -eq 3 ]; then
-ff=$((nuw+1))
-"/usr/share/idiomind/default/p1.sh" "$1" "$nll" "$ff" &
+item_pos=$((nuw+1))
+"/usr/share/idiomind/default/vwr_tmp.sh" "$1" "$nll" "$item_pos" &
 fi
 

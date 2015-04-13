@@ -197,13 +197,13 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
         ws=$(wc -l < "3.cfg")
         ss=$(wc -l < "4.cfg")
         itxt="<big><big>$tpi</big></big><small>\\n ${language_source^} <b>></b> $language_target\\n $nwords $(gettext "Words") $nsentences $(gettext "Sentences") $nimages $(gettext "Images")\n $(gettext "Level:") $level \n</small>"
-        dlck="$DS/default/p1.sh '$c'"
-        
+        dclk="$DS/default/vwr_tmp.sh '$c'"
+
         tac "$tmp/0.cfg" | awk '{print $0""}' | \
         yad --list --title="Idiomind" \
         --text="$itxt" \
         --name=Idiomind --class=Idiomind \
-        --print-all --dclick-action="$dlck" \
+        --print-all --dclick-action="$dclk" \
         --window-icon="idiomind" --scroll \
         --no-headers --ellipsize=END --center \
         --width=650 --height=580 --borders=10 \

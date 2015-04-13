@@ -21,22 +21,6 @@ source "$DS/ifs/mods/cmns.sh"
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
 
-if [ "$1" = play ]; then
-
-    play "$2"
-    wait
-    
-elif [ "$1" = listen_sntnc ]; then
-
-    play "$DM_tlt/$2.mp3" >/dev/null 2>&1
-    exit
-
-elif [ "$1" = dclik ]; then
-
-    play "$DM_tls/${2,,}".mp3 >/dev/null 2>&1
-    exit
-
-fi
 
 check_source_1() {
 
@@ -1044,6 +1028,30 @@ function pdfdoc() {
         exit 0
     fi
 }
+
+if [ "$1" = play ]; then
+
+    play "$2"
+    wait
+    
+elif [ "$1" = listen_sntnc ]; then
+
+    play "$DM_tlt/$2.mp3" >/dev/null 2>&1
+    exit
+
+elif [ "$1" = dclik ]; then
+
+    play "$DM_tls/${2,,}".mp3 >/dev/null 2>&1
+    exit
+
+elif [ "$1" = play_temp ]; then
+
+    nmt=$(sed -n 1p "/tmp/.idmtp1.$USER/dir$2/ls")
+    dir="/tmp/.idmtp1.$USER/dir$2/$nmt"
+    play "$dir/audio/${3,,}.mp3";
+    exit
+
+fi
 
 case "$1" in
     details)
