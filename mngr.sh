@@ -381,7 +381,7 @@ function edit() {
         dlg_form_1 "$file_tmp"
         ret=$(echo "$?")
         
-            [ -f "$DT/ps_lk" ] && "$DS/vwr.sh" "$lists" "nll" "$item_pos" && exit 1
+            [ ! "$audiofile_2" ] && "$DS/vwr.sh" "$lists" "nll" "$item_pos" && exit 1
             srce_mod="$(tail -12 < "$file_tmp" | sed -n 2p  \
             | sed 's/^ *//; s/ *$//g'| sed ':a;N;$!ba;s/\n/ /g')"
             tpc_mod="$(tail -12 < "$file_tmp" | sed -n 3p)"
@@ -463,7 +463,7 @@ function edit() {
         dlg_form_2 "$file_tmp"
         ret=$(echo "$?")
 
-            [ -f "$DT/ps_lk" ] && "$DS/vwr.sh" "$lists" "nll" "$item_pos" && exit 1
+            [ ! "$audiofile_1" ] && "$DS/vwr.sh" "$lists" "nll" "$item_pos" && exit 1
             mark_mod="$(tail -7 < "$file_tmp" | sed -n 1p)"
             trgt_mod="$(tail -7 < "$file_tmp" | sed -n 2p | \
             sed 's/^ *//; s/ *$//g'| sed ':a;N;$!ba;s/\n/ /g')"
@@ -491,10 +491,10 @@ function edit() {
                 add_tags_1 S "$trgt_mod" "$srce_mod" "$DM_tlt/$fname2.mp3"
                 source "$DS/default/dicts/$lgt"
                 
-                (
-                DT_r=$(mktemp -d $DT/XXXXXX); cd "$DT_r"
+                (DT_r=$(mktemp -d $DT/XXXXXX); cd "$DT_r"
+                trgt="$trgt_mod"; srce="$srce_mod"
                 r=$(echo $(($RANDOM%1000)))
-                clean_3 "$DT_r $r"
+                clean_3 "$DT_r" "$r"
                 translate "$(sed '/^$/d' < $aw)" auto $lg | sed 's/,//g' \
                 | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
                 check_grammar_1 "$DT_r" $r
@@ -504,14 +504,9 @@ function edit() {
                 pwrds=$(tr '\n' '_' < B.$r)
                 add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname2.mp3"
                 fetch_audio "$aw" "$bw"
-            
-                [ "$DT_r" ] && rm -fr "$DT_r"
-                ) &
+                [ "$DT_r" ] && rm -fr "$DT_r") &
                 
                 fname="$fname2"
-                trgt_mod="$trgt_mod"
-            else
-                trgt_mod="$trgt"
             fi
 
             if [ "$mark" != "$mark_mod" ]; then
@@ -534,8 +529,8 @@ function edit() {
                     add_tags_1 S "$trgt_mod" "$srce_mod" "$DM_tlt/$fname.mp3"
                     source "$DS/default/dicts/$lgt"
                     
-                    (
-                    DT_r=$(mktemp -d $DT/XXXXXX); cd "$DT_r"
+                    (DT_r=$(mktemp -d $DT/XXXXXX); cd "$DT_r"
+                    trgt="$trgt_mod"; srce="$srce_mod"
                     r=$(echo $(($RANDOM%1000)))
                     clean_3 "$DT_r $r"
                     translate "$(sed '/^$/d' < "$aw")" auto $lg | sed 's/,//g' \
@@ -547,9 +542,7 @@ function edit() {
                     pwrds=$(tr '\n' '_' < B.$r)
                     add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3"
                     fetch_audio "$aw" "$bw"
-                    
-                    [ "$DT_r" ] && rm -fr "$DT_r"
-                    ) &
+                    [ "$DT_r" ] && rm -fr "$DT_r") &
                 fi
             fi
             
