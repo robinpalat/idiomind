@@ -390,8 +390,8 @@ function dlg_checklist_1() {
     
     cat "$1" | awk '{print "FALSE\n"$0}' | \
     yad --list --checklist --title="$(gettext "Listing words")" \
-    --on-top --text="<small>$2</small>" --class=Idiomind \
-    --center --sticky --no-headers --name=Idiomind \
+    --on-top --text="<small>$2 </small> " --class=Idiomind \
+    --center --sticky --no-headers --text-align=right --name=Idiomind \
     --buttons-layout=end --width=400 \
     --height=280 --borders=5 --window-icon="$DS/images/icon.png" \
     --button="$(gettext "Close")":1 \
@@ -405,9 +405,9 @@ function dlg_checklist_3() {
     slt=$(mktemp $DT/slt.XXXX.x)
     cat "$1" | awk '{print "FALSE\n"$0}' | \
     yad --name=Idiomind --window-icon="$DS/images/icon.png" --ellipsize=END \
-    --dclick-action='/usr/share/idiomind/add.sh dclik_list_words' \
-    --list --checklist --class=Idiomind --center --sticky \
-    --text="<small>$info</small>" --title="$2" --no-headers \
+    --dclick-action="'/usr/share/idiomind/add.sh' 'dclik_list_words'" \
+    --list --checklist --class=Idiomind --text-align=right --center --sticky \
+    --text="<small>$info </small> " --title="$2" --no-headers \
     --width=600 --height=550 --borders=5 \
     --button="$(gettext "Cancel")":1 --button=$(gettext "Reorder"):2 \
     --button="$(gettext "To New Topic")":"$DS/add.sh 'new_topic'" \

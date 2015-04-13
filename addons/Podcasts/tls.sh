@@ -13,6 +13,10 @@ delete=0
 #
 #
 
+"$(gettext "New episodes")" >/dev/null 2>&1
+"$(gettext "Saved epidodes")" >/dev/null 2>&1
+"$(gettext "Marks")" >/dev/null 2>&1
+
 play() {
 
     killall play

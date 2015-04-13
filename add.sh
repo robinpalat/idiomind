@@ -396,13 +396,7 @@ function edit_list_words() {
         [ "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "No topic is active")\n" info & exit 1; fi
         
-        nw=$(wc -l < "$DC_tlt/0.cfg")
-        left=$((200 - $nw))
-        info=" -$left"
-        if [ $nw -ge 195 ]; then
-        info="-$left"
-        elif [ $nw -ge 199 ]; then
-        info="-$left"; fi
+        info=" -$((200-$(wc -l < "$DC_tlt/0.cfg")))"
 
         mkdir "$DT/$c"; cd "$DT/$c";
 
@@ -490,18 +484,11 @@ function dclik_list_words() {
     [ "$DT_r" ] && rm -fr "$DT_r"
     msg "$(gettext "No topic is active")\n" info & exit 1; fi
     
-    nw=$(wc -l < "$DC_tlt/0.cfg")
-    
     if [ $(wc -l < "$DC_tlt/0.cfg") -ge 200 ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
     msg "$(gettext "You have reached the maximum number of items.")" info Info & exit; fi
 
-    left=$((200 - $nw))
-    info="-$left"
-    if [ $nw -ge 195 ]; then
-    info="-$left"
-    elif [ $nw -ge 199 ]; then
-    info="-$left"; fi
+    info="-$((200 - $(wc -l < "$DC_tlt/0.cfg")))"
     
     if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
         (
@@ -525,26 +512,27 @@ function dclik_list_words() {
 
     sname="$(cat lstws)"
     slt=$(mktemp $DT/slt.XXXX.x)
-    dlg_checklist_1 ./lst " " "$slt"
+    dlg_checklist_1 ./lst "$info" "$slt"
+    ret=$(echo $?)
     
-    if [ $? -eq 0 ]; then
+    if [ $ret -eq 0 ]; then
     
-            while read chkst; do
-                sed 's/TRUE//g' <<<"$chkst" >> ./wrds
-                echo "$sname" >> wrdsls
-            done <<<"$(sed 's/|//g' < "$slt")"
-            rm -f "$slt"
+    
+        while read chkst; do
+            sed 's/TRUE//g' <<<"$chkst" >> ./wrds
+            echo "$sname" >> wrdsls
+        done <<<"$(sed 's/|//g' < "$slt")"
+        rm -f "$slt"
 
-        elif [ "$ret" -eq 1 ]; then
+    elif [ $ret -eq 1 ]; then
         
         rm -f "$DT"/*."$c"
         [ "$DT_r" ] && rm -fr "$DT_r"
-        exit
-        fi
-        
-    "$?" >/dev/null 2>&1
+    fi
+    
     exit 1
-}
+    
+} >/dev/null 2>&1
 
 function sentence_list_words() {
 
@@ -557,15 +545,9 @@ function sentence_list_words() {
     if [ -z "$4" ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
     msg "$(gettext "No topic is active")\n" info & exit 1; fi
-    
-    nw=$(wc -l < "$DC_tlt/0.cfg")
-    left=$((200-nw))
-    if [ "$left" = 0 ]; then exit 1
-    elif [ $nw -ge 195 ]; then
-    info="-$left"
-    elif [ $nw -ge 199 ]; then
-    info="-$left"; fi
-    
+
+    info="-$((200-$(wc -l < "$DC_tlt/0.cfg")))"
+
     list_words_2 "$2"
     
     slt=$(mktemp $DT/slt.XXXX.x)
@@ -579,7 +561,7 @@ function sentence_list_words() {
             done <<<"$(sed 's/|//g' < "$slt")"
             rm -f "$slt"
 
-        elif [ "$ret" -eq 1 ]; then
+        elif [ $ret -eq 1 ]; then
         
             rm -f "$DT"/*."$c"
             [ "$DT_r" ] && rm -fr "$DT_r"
@@ -752,13 +734,8 @@ function process() {
         tpe="$(sed -n 2p "$lckpr")"
         [[ $(echo "$tpe" | wc -c) -gt 60 ]] \
         && tcnm="${tpe:0:60}..." || tcnm="$tpe"
-        
-        left=$((200 - $ns))
-        info="-$left"
-        if [ $ns -ge 195 ]; then
-        info="-$left"
-        elif [ $ns -ge 199 ]; then
-        info="-$left"; fi
+
+        info="-$((200-ns))"
 
         if [ -z "$(< ./sntsls_)" ]; then
         
@@ -972,28 +949,24 @@ function process() {
                         wadds=" $(($(wc -l < ./addw) - $(sed '/^$/d' < ./wlog | wc -l)))"
                         W=" $(gettext "Words")"
                         if [ $(echo $wadds) = 1 ]; then
-                            W=" $(gettext "Word")"
-                        fi
+                        W=" $(gettext "Word")"; fi
                     else
                         wadds=" $(wc -l < ./addw)"
                         W=" $(gettext "Words")"
                         if [ $(echo $wadds) = 1 ]; then
-                            wadds=" $(wc -l < ./addw)"
-                            W=" $(gettext "Word")"
-                        fi
+                        wadds=" $(wc -l < ./addw)"
+                        W=" $(gettext "Word")"; fi
                     fi
                     if [ -f ./slog ]; then
                         sadds=" $(($( wc -l < ./adds) - $(sed '/^$/d' < ./slog | wc -l)))"
                         S=" $(gettext "sentences")"
                         if [ $(echo $sadds) = 1 ]; then
-                            S=" $(gettext "sentence")"
-                        fi
+                        S=" $(gettext "sentence")"; fi
                     else
                         sadds=" $(wc -l < ./adds)"
                         S=" $(gettext "sentences")"
                         if [ $(echo $sadds) = 1 ]; then
-                            S=" $(gettext "sentence")"
-                        fi
+                        S=" $(gettext "sentence")"; fi
                     fi
                     
                     logs=$(cat ./slog ./wlog)
@@ -1006,25 +979,26 @@ function process() {
                     fi
                     
                     if [ $(cat ./slog ./wlog | wc -l) -ge 1 ]; then
-                        sleep 1
-                        dlg_text_info_3 "$(gettext "Some items could not be added to your list.")" "$logs" >/dev/null 2>&1
-                    fi
-                    if  [ $(cat ./slog ./wlog | wc -l) -ge 1 ]; then
-                        rm=$(($(cat ./addw ./adds | wc -l) - $(cat ./slog ./wlog | sed '/^$/d' | wc -l)))
-                    else
-                        rm=$(cat ./addw ./adds | wc -l)
+                    sleep 1
+                    dlg_text_info_3 "$(gettext "Some items could not be added to your list.")" "$logs" >/dev/null 2>&1
                     fi
                     
-                    n=1
-                    while [ $n -le 20 ]; do
-                         sleep 5
-                         if [ $(wc -l < ./x) -eq "$rm" ] || [ $n = 20 ]; then
-                            [ -d "$DT_r" ] && rm -fr "$DT_r"
-                            cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
-                            rm -f "$lckpr" & break; exit 1
-                         fi
-                        let n++
-                    done
+                    if  [ $(cat ./slog ./wlog | wc -l) -ge 1 ]; then
+                    rm=$(($(cat ./addw ./adds | wc -l) - $(cat ./slog ./wlog | sed '/^$/d' | wc -l)))
+                    else rm=$(cat ./addw ./adds | wc -l); fi
+                    
+                    if [ -f ./x ]; then
+                        n=1
+                        while [ $n -le 20 ]; do
+                             sleep 5
+                             if [ $(wc -l < ./x) -eq "$rm" ] || [ $n = 20 ]; then
+                                [ -d "$DT_r" ] && rm -fr "$DT_r"
+                                cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
+                                rm -f "$lckpr" & break; exit 1
+                             fi
+                            let n++
+                        done
+                    fi
                     
                 else
                     cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"

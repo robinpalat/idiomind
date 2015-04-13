@@ -20,7 +20,7 @@
 source /usr/share/idiomind/ifs/c.conf
 
 [ -z "$tpc" ] && exit 1
-lbls=('Words' 'Sentences' 'Marks' 'Practice' 'News episodes' 'Saved epidodes')
+lbls=('Words' 'Sentences' 'Marks' 'Practice' 'New episodes' 'Saved epidodes')
 sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
 'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' \
 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
