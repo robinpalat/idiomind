@@ -384,7 +384,8 @@ function dlg_checklist_1() {
         --center --sticky --no-headers --name=Idiomind \
         --buttons-layout=end --width=400 \
         --height=280 --borders=5 --window-icon="idiomind" \
-        --button=gtk-close:1 --button=$(gettext "Add"):0 \
+        --button="$(gettext "Close")":1 \
+        --button="$(gettext "Add")":0 \
         --column="" --column="Select" > "$slt"
 }
 
@@ -423,7 +424,7 @@ function dlg_text_info_3() {
         --center --on-top --title=Idiomind --class=Idiomind \
         --width=420 --height=150 --on-top --margins=4 \
         --window-icon="idiomind" --borders=5 --name=Idiomind \
-        "$3" --button=Ok:1
+        "$3" --button="$(gettext "OK")":1
 }
 
 

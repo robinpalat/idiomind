@@ -1,16 +1,15 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-source /usr/share/idiomind/ifs/c.conf
 DSP="$DS/addons/Podcasts"
 item="${2}"
 dir="$DM_tl/Podcasts/cache"
 fname=$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)
 
 if grep -Fxo "$item" < "$DM_tl/Podcasts/.conf/2.cfg"; then
-btnlabel="<small>Delete</small>"
+btnlabel="$(gettext "Delete")"
 btncmd="'$DSP/mngr.sh' delete_item '$item'"; else
-btnlabel="<small>Save</small>"
+btnlabel="$(gettext "Save")"
 btncmd="'$DSP/add.sh' new_item '$item'"; fi
 if [ -f "$dir/$fname.html" ]; then
 uri="$dir/$fname.html"; else

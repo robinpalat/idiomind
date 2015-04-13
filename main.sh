@@ -134,22 +134,18 @@ function new_session() {
                 fi
                 if grep -Fxo "$tp" < "$DM_tl/.3.cfg"; then
                 if [ "$RM" -ge 100 ]; then
-                    echo "9" >> "$DM_tl/$tp/.conf/8.cfg"
-                    printf "$tp\n" >> "$DT/t_notify"
-                fi
+                echo "9" >> "$DM_tl/$tp/.conf/8.cfg"
+                printf "$tp\n" >> "$DT/t_notify"; fi
                 if [ "$RM" -ge 150 ]; then
-                    echo "10" > "$DM_tl/$tp/.conf/8.cfg"
-                    printf "$tp\n" >> "$DT/t_notify"
-                fi
+                echo "10" > "$DM_tl/$tp/.conf/8.cfg"
+                printf "$tp\n" >> "$DT/t_notify"; fi
                 else
                 if [ "$RM" -ge 100 ]; then
-                    echo "4" > "$DM_tl/$tp/.conf/8.cfg"
-                    printf "$tp\n" >> "$DT/t_notify"
-                fi
+                echo "4" > "$DM_tl/$tp/.conf/8.cfg"
+                printf "$tp\n" >> "$DT/t_notify"; fi
                 if [ "$RM" -ge 150 ]; then
-                    echo "5" > "$DM_tl/$tp/.conf/8.cfg"
-                    printf "$tp\n" >> "$DT/t_notify"
-                fi
+                echo "5" > "$DM_tl/$tp/.conf/8.cfg"
+                printf "$tp\n" >> "$DT/t_notify"; fi
                 fi
             fi
         fi
@@ -298,10 +294,10 @@ function topic() {
         
             n=0
             while [ $n -le 4 ]; do
-                [ ! -f "$DC_tlt/$n.cfg" ] && touch "$DC_tlt/$n.cfg"
-                declare ls$n="$DC_tlt/$n.cfg"
-                declare inx$n=$(wc -l < "$DC_tlt/$n.cfg")
-                let n++
+            [ ! -f "$DC_tlt/$n.cfg" ] && touch "$DC_tlt/$n.cfg"
+            declare ls$n="$DC_tlt/$n.cfg"
+            declare inx$n=$(wc -l < "$DC_tlt/$n.cfg")
+            let n++
             done
 
             nt="$DC_tlt/10.cfg"
@@ -400,7 +396,10 @@ function topic() {
             calculate_review
 
             if [ "$RM" -ge 100 ]; then
-                echo "4" > "$DC_tlt/8.cfg"
+            
+                if grep -Fxo "$tpc" < "$DM_tl/.3.cfg"; then
+                echo "10" > "$DC_tlt/8.cfg"; else
+                echo "4" > "$DC_tlt/8.cfg"; fi
                 "$DS/mngr.sh" mkmn &
                 RM=100
                 
@@ -408,7 +407,10 @@ function topic() {
                 ret=$(echo $?)
                 
                     if [ "$ret" -eq 2 ]; then
-                        echo "3" > "$DC_tlt/8.cfg"
+                    
+                        if grep -Fxo "$tpc" < "$DM_tl/.3.cfg"; then
+                        echo "9" > "$DC_tlt/8.cfg"; else
+                        echo "3" > "$DC_tlt/8.cfg"; fi
                         "$DS/mngr.sh" mkmn
                         rm -f "$ls2" "$DC_tlt/7.cfg"
                         cp -f "$ls0" "$ls1" && idiomind topic & exit 1
@@ -437,8 +439,11 @@ function topic() {
                 ret=$(echo $?)
                 
                     if [ "$ret" -eq 2 ]; then
+                    
                         rm -f "$DC_tlt/7.cfg" "$DT"/*.x "$ls2"
-                        echo "3" > "$DC_tlt/8.cfg"
+                        if grep -Fxo "$tpc" < "$DM_tl/.3.cfg"; then
+                        echo "9" > "$DC_tlt/8.cfg"; else
+                        echo "3" > "$DC_tlt/8.cfg"; fi
                         "$DS/mngr.sh" mkmn
                         cp -f "$ls0" "$ls1" && idiomind topic & exit 1
                         
@@ -458,10 +463,15 @@ function topic() {
         
     elif [ "$inx1" -eq 0 ]; then
     
-        if [ ! -f "$DC_tlt/7.cfg" ]; then
+        if [ ! -f "$DC_tlt/7.cfg" ] || [ ! -f "$DC_tlt/9.cfg" ]; then
+            
             > "$DC_tlt/7.cfg"
             echo "$(date +%m/%d/%Y)" > "$DC_tlt/9.cfg"
-            echo "2" > "$DC_tlt/8.cfg"
+            if grep -Fxo "$tpc" < "$DM_tl/.3.cfg"; then
+            echo "7" > "$DC_tlt/8.cfg"; else
+            echo "2" > "$DC_tlt/8.cfg"; fi
+            
+            
             "$DS/mngr.sh" mkmn &
         fi
         
@@ -476,8 +486,11 @@ function topic() {
             ret=$(echo $?)
                 
                 if [ "$ret" -eq 2 ]; then
+                
                     rm -f "$DC_tlt/7.cfg" "$DT"/*.x "$ls2"
-                    echo "3" > "$DC_tlt/8.cfg"
+                    if grep -Fxo "$tpc" < "$DM_tl/.3.cfg"; then
+                    echo "9" > "$DC_tlt/8.cfg"; else
+                    echo "3" > "$DC_tlt/8.cfg"; fi
                     "$DS/mngr.sh" mkmn
                     cp -f "$ls0" "$ls1" && idiomind topic & exit 1
                 fi 
@@ -485,7 +498,7 @@ function topic() {
         
         pres="<u><b>$(gettext "Learned")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
         
-    
+        # learned
         notebook_2
       
         ret=$(echo $?)

@@ -45,7 +45,7 @@ if [ "$1" = delete_item ]; then
 
 elif [ "$1" = delete_1 ]; then
 
-    if [ "$(wc -l < "$DCP/2.cfg")" -gt 0 ]; then
+    if [ "$(wc -l < "$DCP/1.cfg")" -gt 0 ]; then
     msg_2 "$(gettext "Are you sure you want to delete all episodes?")\n" gtk-delete "$(gettext "Delete")" "$(gettext "No")" "$(gettext "Confirm")"
     else exit 1; fi
     ret=$(echo "$?")
@@ -56,6 +56,7 @@ elif [ "$1" = delete_1 ]; then
         rm "$DM_tl/Podcasts/.conf/.updt.lst"
         rm "$DM_tl/Podcasts/.conf/1.cfg"
         rm "$DM_tl/Podcasts/.conf/.dt"
+        touch "$DM_tl/Podcasts/.conf/1.cfg"
     fi
     exit
 

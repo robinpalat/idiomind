@@ -42,7 +42,7 @@ sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
 c=$(echo $(($RANDOM%100000))); KEY=$c
 cnf1=$(mktemp "$DT"/cnf1.XXXX)
 
-function confirm() {
+confirm() {
     
     yad --form --title="Idiomind" --text="$1\n" \
     --center --borders=8 --image=$2 \
@@ -51,7 +51,7 @@ function confirm() {
     --button="$(gettext "No")":1 --button="$(gettext "Yes")":0
 }
 
-function set_lang() {
+set_lang() {
     
     if [ ! -d "$DM_t/$1" ]; then
     mkdir "$DM_t/$1"
