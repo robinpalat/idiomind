@@ -4,6 +4,11 @@
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 
+[ ! -f "$DM_tl/Podcasts/.conf/8.cfg" ] \
+&& echo "11" > "$DM_tl/Podcasts/.conf/8.cfg"
+echo "$tpc" > "$DC_s/4.cfg"
+echo fd >> "$DC_s/4.cfg"
+
 function list_1() {
     while read list1; do
         echo "$DMP/cache/$(nmfile "$list1").png"
@@ -67,7 +72,5 @@ function feedmode() {
     [ "$fdit" ] && rm -f "$fdit"
 }
 
+feedmode & exit 1
 
-if echo "$mde" | grep "fd"; then
-    feedmode; exit 1
-fi

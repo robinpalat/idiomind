@@ -3,19 +3,16 @@
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 IFS=$'\n\t'
+"$(gettext "New episodes")
+$(gettext "Saved epidodes")
+$(gettext "Marks")" >/dev/null 2>&1
+
 #
 # sync delete option: disable 0 / enable 1
 delete=0
 #
 #
 #
-#
-#
-#
-
-"$(gettext "New episodes")" >/dev/null 2>&1
-"$(gettext "Saved epidodes")" >/dev/null 2>&1
-"$(gettext "Marks")" >/dev/null 2>&1
 
 play() {
 
@@ -111,7 +108,6 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
     feed="$2"
     num="$3"
     DCP="$DM_tl/Podcasts/.conf"
-    
     xml="$(xsltproc - "$feed" <<< "$tmpl1" 2> /dev/null)"
     items1="$(echo "$xml" | tr '\n' ' ' | tr -s '[:space:]' \
     | sed 's/EOL/\n/g' | head -n 1 | sed -r 's|-\!-|\n|g')"
@@ -126,7 +122,6 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
         
         n=1;
         while read -r get; do
-
             if [ $(wc -w <<< "${get}") -ge 1 ] && [ -z "$name" ]; then
                 name="$get"
                 n=2; fi
@@ -148,7 +143,6 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
         while read -r get; do
             [[ $n = 3 || $n = 5 || $n = 6 ]] && continue
             if ([ -n "$(grep -o -E '\.mp3|\.mp4|\.ogg|\.avi|\.m4v|\.mov|\.flv' <<< "${get}")" ] && [ -z "$media" ]); then
-
             media="$n"; type=1; break; fi
             let n++
         done <<< "$items2"
@@ -232,8 +226,7 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
     fi
 
     if [[ -n "$title" && -n "$summ" && -z "$image" && -z "$media" ]]; then
-        type=3
-    fi
+    type=3; fi
     
     if [ "$type" = 1 ]; then
         
@@ -246,16 +239,16 @@ ntitle=\"$title\"
 nsumm=\"$summ\"
 nimage=\"$image\"
 url=\"$feed\""
-
-        echo -e "$cfg" > "$DCP/$num.rss"
-
-        exit 0
+        echo -e "$cfg" > "$DCP/$num.rss"; exit 0
+        
     else
-        msg "$(gettext "Couldn't download the specified URL")\n$feed" dialog-warning Error;
-        rm -f "$DT/cpt.lock" & exit 1
+        url="$(tr '&' ' ' <<<"$feed")"
+        msg "<b>$(gettext "Specified URL doesn't seem to contain any feeds")</b>\n$url\n\n<a href='leafpad'>\
+$(gettext "Tell us if you think this is an error")</a>" dialog-warning Idiomind &
+        rm -f "$DT/cpt.lock"; exit 1
     fi
 }
-    
+
 check() {
 
     source $DS/ifs/mods/cmns.sh
@@ -272,7 +265,6 @@ check() {
     [ ! -f "$DCP/$2.rss" ] && printf "$tpl" > "$DCP/$2.rss"
     
     cp "$DCP/$2.rss" "$DCP/$2.rss_"
-    
     
     podcast_items="$(xsltproc - "$url" <<<"$tmpl2" 2>/dev/null)"
     podcast_items="$(echo "$podcast_items" | tr '\n' ' ' | tr -s [:space:] | sed 's/EOL/\n/g' | head -n 2)"
@@ -348,16 +340,14 @@ sync() {
         exit 1
         
     elif [ -d "$path" ]; then
-        
-        #set -e
-        #set u pipefail
-        [ ! -d "$path" ] && exit 1
     
-        [[ $2 != A ]] && (sleep 1 && notify-send -i idiomind \
-        "$(gettext "Synchronizing...")" " ")
+        set -e; set u
         touch "$DT/l_sync"; SYNCDIR="$path"
         st1="$(cd "$SYNCDIR"; ls *.mp3 | wc -l)"
         
+        [[ $2 != A ]] && (sleep 1 && notify-send -i idiomind \
+        "$(gettext "Podcasts")" "$(gettext "Synchronizing") $st1 $(gettext "episode(s)")")
+
         if [ "$delete" = 0 ]; then
         rsync -az -v --exclude="*.txt" --exclude="*.png" \
         --exclude="*.html" --omit-dir-times --ignore-errors "$DM_tl/Podcasts/cache/" "$SYNCDIR"
@@ -365,16 +355,15 @@ sync() {
         rsync -az -v --delete --exclude="*.txt" --exclude="*.png" \
         --exclude="*.html" --omit-dir-times --ignore-errors "$DM_tl/Podcasts/cache/" "$SYNCDIR"
         fi
-        
+        set +e
         exit=$?
         
         if [ $exit = 0 ] ; then
             st2="$(cd "$SYNCDIR"; ls *.mp3 | wc -l)"
             re=$((st2-st1))
-            notify-send -i idiomind "$(gettext "Synchronization finished")" "$re $(gettext "New episodes(s)")\n$st2 $(gettext "Total")" -t 8000
+            notify-send -i idiomind "$(gettext "Synchronization finished")" "$re $(gettext "New episode(s)")\n$st2 $(gettext "Total")" -t 8000
         else
-            notify-send -i dialog-warning \
-            "$(gettext "Error while syncing")" " " -t 8000
+            notify-send -i idiomind "$(gettext "Error")" "$(gettext "Error while syncing")" -t 8000
         fi
     fi
     [ -f "$DT/l_sync" ] && rm -f "$DT/l_sync"; exit

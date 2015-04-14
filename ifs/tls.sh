@@ -80,7 +80,7 @@ Vietnamese"
     nimages=$(sed -n 12p < "${file}" | grep -o 'nimages="[^"]*' | grep -o '[^"]*$')
     level=$(sed -n 13p < "${file}" | grep -o 'level="[^"]*' | grep -o '[^"]*$')
 
-    if [ "${name}" != "${3}" ] || [ $(wc -c <<<"${name}") -gt 80 ] || \
+    if [ "${name}" != "${3}" ] || [ $(wc -c <<<"${name}") -gt 100 ] || \
     [ `grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${name}"` ]; then
     msg "$(gettext "File is corrupted.") E1\n" error & exit 1
     elif ! grep -Fox "${language_source}" <<<"${LANGUAGES}"; then

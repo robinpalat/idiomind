@@ -42,13 +42,8 @@ function mkmn() {
         [ ! "$DM_tl/$tp/.conf/3.cfg" ] || \
         [ ! "$DM_tl/$tp/.conf/4.cfg" ] || \
         [ ! -d "$DM_tl/$tp" ]; then
-        i=13; echo "13" > "$DM_tl/$tp/.conf/8.cfg"
-        cp -f "$DS/default/tpc.sh" "$DM_tl/$tp/tpc.sh"
-        chmod +x "$DM_tl/$tp/tpc.sh";fi
+        i=13; echo "13" > "$DM_tl/$tp/.conf/8.cfg";fi
         
-        [ ! -f "$DM_tl/$tp/tpc.sh" ] && \
-        cp -f "$DS/default/tpc.sh" "$DM_tl/$tp/tpc.sh"
-        chmod +x "$DM_tl/$tp/tpc.sh"
         echo "/usr/share/idiomind/images/img.$i.png" >> "$DC_s/0.cfg"
         echo "$tp" >> "$DC_s/0.cfg"
         let n++
@@ -58,7 +53,6 @@ function mkmn() {
         f=$(tail -n+51 < "$DM_tl/.1.cfg")
         tp=$(sed -n "$n"p <<<"$f")
         if [ ! -f "$DM_tl/$tp/.conf/8.cfg" ] || \
-        [ ! "$DM_tl/$tp/tpc.sh" ] || \
         [ ! "$DM_tl/$tp/.conf/0.cfg" ] || \
         [ ! "$DM_tl/$tp/.conf/1.cfg" ] || \
         [ ! "$DM_tl/$tp/.conf/3.cfg" ] || \

@@ -63,7 +63,7 @@ set_lang() {
     
     if [ -f "$DM/topics/$1/.8.cfg" ]; then
     lst=$(sed -n 1p "$DM/topics/$1/.8.cfg")
-    "$DM/topics/$1/$lst/tpc.sh" 1
+    "$DS/default/tpc.sh" "$lst" 1
     else rm "$DC_s/4.cfg" && touch "$DC_s/4.cfg"; fi
     
     "$DS/mngr.sh" mkmn

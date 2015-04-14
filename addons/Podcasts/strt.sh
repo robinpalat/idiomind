@@ -44,15 +44,6 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
 </xsl:template>
 </xsl:stylesheet>"
 
-tpc_sh='#!/bin/bash
-source /usr/share/idiomind/ifs/c.conf
-[ ! -f "$DM_tl/Podcasts/.conf/8.cfg" ] \
-&& echo "11" > "$DM_tl/Podcasts/.conf/8.cfg"
-echo "$tpc" > "$DC_s/4.cfg"
-echo fd >> "$DC_s/4.cfg"
-idiomind topic
-exit 1'
-
 sets=('channel' 'link' 'logo' 'ntype' \
 'nmedia' 'ntitle' 'nsumm' 'nimage' 'url')
 
@@ -73,16 +64,6 @@ conditions() {
     if [ ! -d "$DM_tl/Podcasts/cache" ]; then
         mkdir -p "DM_tl/Podcasts/.conf"
         mkdir -p "DM_tl/Podcasts/cache"
-    fi
-    
-    if [ ! -f "$DM_tl/Podcasts/tpc.sh" ] || \
-    [ "$(wc -l < "$DM_tl/Podcasts/tpc.sh")" -gt 8 ]; then
-        echo "$tpc_sh" > "$DM_tl/Podcasts/tpc.sh"
-        chmod +x "$DM_tl/Podcasts/tpc.sh"
-        echo "14" > "$DM_tl/Podcasts/.conf/8.cfg"
-        cd "$DM_tl/Podcasts/.conf/"
-        touch 0.cfg 1.cfg 3.cfg 4.cfg .updt.lst
-        "$DS/mngr.sh" mkmn
     fi
 
     nps="$(sed '/^$/d' < "$DCP/4.cfg" | wc -l)"

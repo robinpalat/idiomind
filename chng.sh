@@ -87,7 +87,7 @@ if [ "$1" = chngi ]; then
         
 
 elif [ "$1" != chngi ]; then
-    
+
     lgs=$(lnglss $lgsl)
     [ ! -f "$DC_s/0.cfg" ] && > "$DC_s/0.cfg"
     wth=$(($(sed -n 2p $DC_s/10.cfg)-0))
@@ -102,8 +102,9 @@ elif [ "$1" != chngi ]; then
     text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/$lgtl'>$(gettext "Search other topics")</a>   </small></small>"
     align="right"; fi
     
-    s=$(cat "$DC_s/0.cfg" | yad --list --title="$(gettext "Topics")" "$text" \
+    tpc=$(cat "$DC_s/0.cfg" | yad --list --title="$(gettext "Topics")" "$text" \
     --name=Idiomind --class=Idiomind --text-align=$align \
+    --always-print-result \
     --separator="" --center $img --image-on-top --ellipsize=END \
     --no-headers --window-icon="$DS/images/icon.png" \
     --width=640 --height=560 --borders=8 \
@@ -120,30 +121,18 @@ elif [ "$1" != chngi ]; then
             
     elif [ $ret -eq 2 ]; then
             
-            [ -z "$s" ] && exit 1
-            
-            if [ ! -f "$DM_tl/$s/tpc.sh" ]; then
-            
-                if [ "$s" != "Podcasts" ]; then
-                ln -s "$DS/default/tpc.sh" "$DM_tl/$s/tpc.sh"; fi
-                "$DM_tl/$s/tpc.sh" 1 & exit
-                
+            if [ -z "$tpc" ]; then exit 1
+
             else
-                "$DM_tl/$s/tpc.sh" 1 & exit
+                "$DS/default/tpc.sh" "$tpc" 1 & exit
             fi
 
     elif [ $ret -eq 0 ]; then
             
-            [ -z "$s" ] && exit 1
-            
-            if [ ! -f "$DM_tl/$s/tpc.sh" ]; then
-            
-                if [ "$s" != "Podcasts" ]; then
-                ln -s "$DS/default/tpc.sh" "$DM_tl/$s/tpc.sh"; fi
-                "$DM_tl/$s/tpc.sh" & exit
-                
+            if [ -z "$tpc" ]; then exit 1
+
             else
-                "$DM_tl/$s/tpc.sh" & exit
+                "$DS/default/tpc.sh" "$tpc" & exit
             fi
     fi
 fi

@@ -116,19 +116,19 @@ function new_session() {
                 dts=$(sed '/^$/d' < "$DM_tl/$tp/.conf/9.cfg" | wc -l)
                 if [ $dts = 1 ]; then
                 dte=$(sed -n 1p "$DM_tl/$tp/.conf/9.cfg")
-                TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
+                TM="$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))"
                 RM=$((100*$TM/10))
                 elif [ $dts = 2 ]; then
                 dte=$(sed -n 2p "$DM_tl/$tp/.conf/9.cfg")
-                TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
+                TM="$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))"
                 RM=$((100*$TM/15))
                 elif [ $dts = 3 ]; then
                 dte=$(sed -n 3p "$DM_tl/$tp/.conf/9.cfg")
-                TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
+                TM="$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))"
                 RM=$((100*$TM/30))
                 elif [ $dts = 4 ]; then
                 dte=$(sed -n 4p "$DM_tl/$tp/.conf/9.cfg")
-                TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
+                TM="$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))"
                 RM=$((100*$TM/60))
                 fi
                 if grep -Fxo "$tp" < "$DM_tl/.3.cfg"; then
@@ -260,8 +260,6 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
                 tee -a "$DI_c/.11.cfg" "$DI_c/1.cfg" < "$DI_c/0.cfg"
                 echo "6" > "$DI_c/8.cfg"; rm "$DI_c/9.cfg" "$DI_c/ls"
                 cp -fr ./.* "$DI_m/"
-                ln -s "$DS/default/tpc.sh" "$DI_m/tpc.sh"
-                chmod +x "$DI_m/tpc.sh"
                 echo "$language_target" > "$DC_s/6.cfg"
                 echo "$lgsl" >> "$DC_s/6.cfg"
                 echo "$dte" > "$DI_c/13.cfg"
@@ -271,7 +269,7 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
                 > "$DM_t/$language_target/.2.cfg.tmp"
                 mv -f "$DM_t/$language_target/.2.cfg.tmp" \
                 "$DM_t/$language_target/.2.cfg"
-                "$DS/mngr.sh" mkmn; "$DI_m/tpc.sh" &
+                "$DS/mngr.sh" mkmn; "$DS/default/tpc.sh" "$tpi" &
             fi
     fi
     [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c"
@@ -285,7 +283,7 @@ function topic() {
     do printf "\t"; [ $n -ge 50 ] && break; let n++; done)"
     mde=$(sed -n 2p $DC_s/4.cfg)
     source "$DS/ifs/mods/cmns.sh"
-    include "$DS/ifs/mods/topic"
+    source "$DS/ifs/mods/topic/items_list.sh"
 
     if ([ -n "$tpc" ] || [ $(echo "$mde" | grep "fd") ]); then
     

@@ -91,11 +91,19 @@ function check_grammar_2() {
 
 function clean_1() {
     
+    if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
+    echo "$1" | sed ':a;N;$!ba;s/\n/ /g' \
+    | sed 's/"//; s/“//;s/&//; s/”//;s/://'g | sed "s/’/'/g" \
+    | sed "s/|//g" \
+    | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
+    | sed 's/^ *//; s/ *$//g'| sed 's/^\s*./\U&\E/g'
+    else
     echo "$1" | sed ':a;N;$!ba;s/\n/ /g' \
     | sed 's/"//; s/“//;s/&//; s/”//;s/://'g | sed "s/’/'/g" \
     | iconv -c -f utf8 -t ascii | sed "s/|//g" \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//; s/ *$//g'| sed 's/^\s*./\U&\E/g'
+    fi
 }
 
 
@@ -103,7 +111,7 @@ function clean_2() {
     
     echo "$1" | cut -d "|" -f1 | sed 's/!//; s/&//; s/\://; s/\&//g' \
     | sed "s/'//;s/-//g" | sed 's/^[ \t]*//;s/[ \t]*$//' \
-    | sed 's|/||; s/^\s*./\U&\E/g'
+    | sed 's|/||; s/^\s*./\U&\E/g' | sed 's/\：//g' | iconv -c -t UTF-8
 }    
 
 

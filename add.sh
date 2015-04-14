@@ -53,9 +53,8 @@ function new_topic() {
     if [ -n "$jlb" ]; then
     
         mkdir "$DM_tl/$jlb"
-        ln -s "$DS/default/tpc.sh" "$DM_tl/$jlb/tpc.sh"
         echo "$jlb" >> "$DM_tl/.2.cfg"
-        "$DM_tl/$jlb/tpc.sh" 1
+        "$DS/default/tpc.sh" "$jlb" 1
         "$DS/mngr.sh" mkmn
     fi
     exit
@@ -161,7 +160,7 @@ Create one using the button below. ")" & exit 1; fi
                 if [ $(echo "$srce" | wc -w) = 1 ]; then
                     "$DS/add.sh" new_word "$trgt" "$DT_r" "$srce" & exit 1
                     
-                elif [ $(echo "$srce" | wc -w) -ge 1 -a $(echo "$srce" | wc -c) -le 180 ]; then
+                elif [ $(echo "$srce" | wc -w) -ge 1 ] &&  [ $(echo "$srce" | wc -c) -le 180 ]; then
                     "$DS/add.sh" new_sentence "$trgt" "$DT_r" "$srce" & exit 1
                 fi
                 
@@ -207,13 +206,13 @@ function new_sentence() {
     
         internet
         cd "$DT_r"
-        trgt=$(translate "$(clean_1 "$2")" auto $lgt | sed ':a;N;$!ba;s/\n/ /g')
+        trgt=$(translate "$(clean_1 "$2")" auto "$lgt" | sed ':a;N;$!ba;s/\n/ /g')
         srce=$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')
         fname="$(nmfile "$trgt")"
         
         if [ ! -f "$DT_r/audtm.mp3" ]; then
         
-            tts "$trgt" $lgt "$DT_r" "$DM_tlt/$fname.mp3"
+            tts "$trgt" "$lgt" "$DT_r" "$DM_tlt/$fname.mp3"
             
                 [ ! -f "$DM_tlt/$fname.mp3" ] && \
                 voice "$trgt" "$DT_r" "$DM_tlt/$fname.mp3"
@@ -243,7 +242,7 @@ function new_sentence() {
     if [ -z $(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary') ] \
     || [ ! -f "$DM_tlt/$fname.mp3" ] || [ -z "$trgt" ] || [ -z "$srce" ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
-    msg "$(gettext "Something unexpected has occurred while saving the note.")\n" dialog-warning & exit 1; fi
+    msg "$(gettext "An error has occurred while saving the note.")\n" dialog-warning & exit 1; fi
     
     add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3"
 
@@ -265,7 +264,7 @@ function new_sentence() {
     
     if [ -z "$grmrk" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ]; then
     rm "$DM_tlt/$fname.mp3"
-    msg "$(gettext "Something unexpected has occurred while saving the note.")\n" dialog-warning 
+    msg "$(gettext "An error has occurred while saving the note.")\n" dialog-warning 
     [ "$DT_r" ] && rm -fr "$DT_r" & exit 1; fi
     
     add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3"
@@ -376,7 +375,7 @@ function new_word() {
     
     else
         [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
-        msg "$(gettext "Something unexpected has occurred while saving the note.")\n" dialog-warning & exit 1; fi
+        msg "$(gettext "An error has occurred while saving the note.")\n" dialog-warning & exit 1; fi
 
     [ "$DT_r" ] && rm -fr "$DT_r"
     exit 1
@@ -711,10 +710,20 @@ function process() {
         (
         echo "1"
         echo "# $(gettext "Processing")..." ;
+        if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
         echo "$conten" \
         | sed 's/^ *//;s/ *$//g' | sed 's/^[ \t]*//;s/[ \t]*$//' \
         | sed 's/ \+/ /;s/\://;s/"//g' \
-        | sed '/^$/d' | iconv -c -f utf8 -t ascii \
+        | sed '/^$/d' \
+        | sed 's/\&quot;/\"/g' | sed "s/\&#039;/\'/g" \
+        | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
+        | sed 's/ *<[^>]\+> */ /; s/[<>£§]//; s/\&amp;/\&/g' \
+        | sed 's/,/\n/g' | sed 's/。/\n/g' > ./sntsls_
+        else
+        echo "$conten" \
+        | sed 's/^ *//;s/ *$//g' | sed 's/^[ \t]*//;s/[ \t]*$//' \
+        | sed 's/ \+/ /;s/\://;s/"//g' \
+        | sed '/^$/d' \
         | sed 's/\&quot;/\"/g' | sed "s/\&#039;/\'/g" \
         | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
         | sed 's/ *<[^>]\+> */ /; s/[<>£§]//; s/\&amp;/\&/g' \
@@ -722,6 +731,7 @@ function process() {
         | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
         | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
         | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' > ./sntsls_
+        fi
 
         ) | dlg_progress_1
     fi

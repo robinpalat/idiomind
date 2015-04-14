@@ -302,7 +302,6 @@ cp -f "$DC_tlt/4.cfg" "$DT_u/$tpc/4.cfg"
 printf "${notes}" > "$DC_tlt/10.cfg"
 printf "${notes}" > "$DT_u/$tpc/10.cfg"
 
-[ "$DT_u/$tpc/tpc.sh" ] && rm -f "$DT_u/$tpc/tpc.sh"
 find "$DT_u" -type f -exec chmod 644 {} \; 
 cd "$DT_u"
 tar -cvf "$tpc.tar" "$tpc"
