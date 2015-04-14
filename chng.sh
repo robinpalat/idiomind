@@ -38,8 +38,8 @@ if [ "$1" = chngi ]; then
         if [ ! -f "$1" ]; then
             echo "___" >> "$DT/.l_loop"
             if [ $(cat "$DT/.l_loop" | wc -l) -gt 5 ]; then
-                rm -f "$DT/.p_"  "$DT/.l_loop" &
-                "$DS/stop.sh" play & exit 1; fi
+            rm -f "$DT/.p_"  "$DT/.l_loop" &
+            "$DS/stop.sh" play & exit 1; fi
         fi
     }
 
@@ -146,6 +146,6 @@ elif [ "$1" != chngi ]; then
                 "$DM_tl/$s/tpc.sh" & exit
             fi
     fi
-    
-    exit
 fi
+
+exit

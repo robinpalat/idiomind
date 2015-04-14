@@ -180,7 +180,7 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
     "$DS/ifs/tls.sh" check_source_1 "$tmp" "$tpi" &&
     source "$DT/$tpi.cfg"
     lng="$(lnglss "$language_target")"
-    infs="$DS/ifs/tls.sh details $tmp"
+    infs="'$DS/ifs/tls.sh' 'details' '$tmp'"
     [ $level = 1 ] && level="$(gettext "Beginner")"
     [ $level = 2 ] && level="$(gettext "Intermediate")"
     [ $level = 3 ] && level="$(gettext "Advanced")"
@@ -196,7 +196,7 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
         ws=$(wc -l < "3.cfg")
         ss=$(wc -l < "4.cfg")
         itxt="<big><big>$tpi</big></big><small>\\n ${language_source^} <b>></b> $language_target\\n $nwords $(gettext "Words") $nsentences $(gettext "Sentences") $nimages $(gettext "Images")\n $(gettext "Level:") $level \n</small>"
-        dclk="$DS/default/vwr_tmp.sh '$c'"
+        dclk="'$DS/default/vwr_tmp.sh' '$c'"
 
         tac "$tmp/0.cfg" | awk '{print $0""}' | \
         yad --list --title="Idiomind" \
@@ -319,7 +319,7 @@ function topic() {
             exit
             
         else
-            msg "$(gettext "Nothing to display") \n" info
+            exit 1
         fi
     fi
 
@@ -450,7 +450,7 @@ function topic() {
                         rm -f "$DC_tlt/7.cfg" "$DT"/*.x
                         idiomind topic & exit 1
                     fi
-                
+                    
             else
                 if [ ! -f "$DT/ps_lk" ]; then
                 
@@ -469,7 +469,6 @@ function topic() {
             if grep -Fxo "$tpc" < "$DM_tl/.3.cfg"; then
             echo "7" > "$DC_tlt/8.cfg"; else
             echo "2" > "$DC_tlt/8.cfg"; fi
-            
             
             "$DS/mngr.sh" mkmn &
         fi

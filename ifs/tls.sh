@@ -385,9 +385,6 @@ check_index() {
     "$DS/mngr.sh" mkmn & exit 1
 }
 
-
-
-
 function add_audio() {
 
     cd $HOME
@@ -403,12 +400,12 @@ function add_audio() {
     DT="$2"; cd $DT
     if [ $ret -eq 0 ]; then
         if  [ -f "$audio" ]; then
-        cp -f "$audio" $DT/audtm.mp3 >/dev/null 2>&1
+        cp -f "$audio" $DT/audtm.mp3
         #eyeD3 -P itunes-podcast --remove $DT/audtm.mp3
         eyeD3 --remove-all $DT/audtm.mp3 & exit
         fi
     fi
-}
+} >/dev/null 2>&1
 
 function edit_audio() {
 
@@ -617,7 +614,8 @@ function check_updates() {
     
     if [ "$rversion" != "$(idiomind -v)" ]; then
     
-        msg_2 "<b> $(gettext "A new version of Idiomind available") </b>\n\n" info "$(gettext "Download")" "$(gettext "Cancel")" $(gettext "Updates")
+        msg_2 "<b> $(gettext "A new version of Idiomind available") </b>\n\n" \
+        info "$(gettext "Download")" "$(gettext "Cancel")" $(gettext "Updates")
         
         if [ "$ret" -eq 0 ]; then
             xdg-open "$pkg";
@@ -651,7 +649,7 @@ function a_check_updates() {
         
         if [ "$rversion" != "$(idiomind -v)" ]; then
             
-            msg_2 "<b> $(gettext "A new version of Idiomind available")\n</b>\n $(gettext "Do you want to download it now?")\n" info "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Updates")" "$(gettext "Ignore this update")"
+            msg_2 "<b>$(gettext "A new version of Idiomind available")\n</b>\n$(gettext "Do you want to download it now?")\n" info "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Updates")" "$(gettext "Ignore this update")"
             ret=$(echo $?)
             
             if [ "$ret" -eq 0 ]; then
@@ -689,13 +687,11 @@ app_license = (('This program is free software: you can redistribute it and/or m
 '\n'+
 'You should have received a copy of the GNU General Public License\n'+
 'along with this program.  If not, see <http://www.gnu.org/licenses/>.'))
-app_authors = ['Robin Palat <patapatass@gmail.com>']
-app_documenters = ['Robin Palat <patapatass@gmail.com>']
+app_authors = ['Robin Palatnik <patapatass@hotmail.com>']
+app_artists = [' ']
 
 class AboutDialog:
-
     def __init__(self):
-
         about = gtk.AboutDialog()
         about.set_logo(gtk.gdk.pixbuf_new_from_file(app_logo))
         about.set_wmclass('Idiomind', 'Idiomind')
@@ -706,9 +702,9 @@ class AboutDialog:
         about.set_copyright(app_copyright)
         about.set_license(app_license)
         about.set_website(app_website)
-        about.set_website_label(app_website)
+        about.set_website_label('Homepage')
         about.set_authors(app_authors)
-        about.set_documenters(app_documenters)
+        about.set_artists(app_artists)
         about.run()
         about.destroy()
 
@@ -717,7 +713,6 @@ if __name__ == "__main__":
     main()
 END
 }
-
 
 function set_image() {
 

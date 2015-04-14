@@ -66,10 +66,10 @@ dlg=$(yad --center --width=420 --height=280 --fixed \
 
 ret=$?
 
-if [[ $ret -eq 1 ]]; then
+if [ $ret -eq 1 ]; then
     killall 1u.sh & exit 1
 
-elif [[ $ret -eq 0 ]]; then
+elif [ $ret -eq 0 ]; then
     target=$(echo "$dlg" | cut -d "|" -f2)
     source=$(echo "$dlg" | cut -d "|" -f4)
     
@@ -84,14 +84,14 @@ elif [[ $ret -eq 0 ]]; then
     mkdir "$HOME/.idiomind"
     
     if [ $? -ne 0 ]; then
-        yad --name=idiomind \
-        --image=error --button=gtk-ok:1\
-        --text=" $(gettext "Error while trying to write on") \'/home/$user/\'\n" \
-        --image-on-top --sticky --fixed \
-        --width=320 --height=80 \
-        --borders=2 --title=Idiomind \
-        --skip-taskbar --center \
-        --window-icon="$DS/images/icon.png" & exit 1
+    yad --name=idiomind \
+    --image=error --button=gtk-ok:1\
+    --text=" $(gettext "Error while trying to write on") \'/home/$user/\'\n" \
+    --image-on-top --sticky --fixed \
+    --width=320 --height=80 \
+    --borders=2 --title=Idiomind \
+    --skip-taskbar --center \
+    --window-icon="$DS/images/icon.png" & exit 1
     fi
     
     mkdir -p "$HOME/.idiomind/topics/saved"

@@ -128,7 +128,7 @@ Create one using the button below. ")" & exit 1; fi
                     tpe=$(sed -n 2p <<<"$tpe_list")
                 else
                     tpe="$(sed -n 2p <<<"$slt")"
-                    fi
+                fi
             else
                 tpe="$chk"
             fi
@@ -408,7 +408,7 @@ function edit_list_words() {
             if [ $? -eq 0 ]; then
                 
                 while read chkst; do
-                    sed 's/TRUE//g' <<<"$chkst" >> "$DT/$c/slts"
+                sed 's/TRUE//g' <<<"$chkst" >> "$DT/$c/slts"
                 done <<<"$(sed 's/|//g' < "$slt")"
                 rm -f "$slt"
             fi
@@ -517,10 +517,9 @@ function dclik_list_words() {
     
     if [ $ret -eq 0 ]; then
     
-    
         while read chkst; do
-            sed 's/TRUE//g' <<<"$chkst" >> ./wrds
-            echo "$sname" >> wrdsls
+        sed 's/TRUE//g' <<<"$chkst" >> ./wrds
+        echo "$sname" >> wrdsls
         done <<<"$(sed 's/|//g' < "$slt")"
         rm -f "$slt"
 
@@ -557,7 +556,7 @@ function sentence_list_words() {
         if [ $ret -eq 0 ]; then
             
             while read chkst; do
-                sed 's/TRUE//g' <<<"$chkst"  >> ./slts
+            sed 's/TRUE//g' <<<"$chkst"  >> ./slts
             done <<<"$(sed 's/|//g' < "$slt")"
             rm -f "$slt"
 
@@ -685,7 +684,6 @@ function process() {
         | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
         | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
         | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' > ./sntsls_
-        #iconv -c -f utf8 -t ascii
         ) | dlg_progress_1
 
     elif echo "$2" | grep -o "image"; then
