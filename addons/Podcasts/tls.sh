@@ -361,9 +361,14 @@ sync() {
         if [ $exit = 0 ] ; then
             st2="$(cd "$SYNCDIR"; ls *.mp3 | wc -l)"
             re=$((st2-st1))
-            notify-send -i idiomind "$(gettext "Synchronization finished")" "$re $(gettext "New episode(s)")\n$st2 $(gettext "Total")" -t 8000
+                if [ $re -gt 0 ]; then
+                notify-send -i idiomind \
+                "$(gettext "Synchronization finished")" \
+                "$re $(gettext "New episode(s)")\n$st2 $(gettext "Total")" -t 8000; fi
         else
-            notify-send -i idiomind "$(gettext "Error")" "$(gettext "Error while syncing")" -t 8000
+            notify-send -i idiomind \
+            "$(gettext "Error")" \
+            "$(gettext "Error while syncing")" -t 8000
         fi
     fi
     [ -f "$DT/l_sync" ] && rm -f "$DT/l_sync"; exit

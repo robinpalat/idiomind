@@ -370,9 +370,7 @@ check_index() {
     || $mp3s != $chk0 || $stts = 13 ]]; then
 
         files
-        
         index="$DT/index"; rm "$DC_tlt/.11.cfg"
-
         fix
     fi
     

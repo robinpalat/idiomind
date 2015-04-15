@@ -349,13 +349,14 @@ if [ "$nd" -gt 0 ]; then
     
     check_index
     
-    [ "$1" != A ] && notify-send -i idiomind \
+    notify-send -i idiomind \
     "$(gettext "Feed update")" \
     "$(gettext "Has") $nd $(gettext "Update(s)")" -t 8000
     
 else
     if [[ ! -n "$1" && "$1" != A && -f "$DT_r/log" ]]; then
-    notify-send -i idiomind "$(gettext "Feed update")" \
+    notify-send -i idiomind \
+    "$(gettext "Feed update")" \
     "$(gettext "No change since the last update")" -t 8000
     fi
 fi

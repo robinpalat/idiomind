@@ -38,7 +38,6 @@ fi
 function new_session() {
 
     #set -e
-    #set u pipefail
     echo "--new session"
     touch "$DT/ps_lk"
     echo "$(date +%d)" > "$DC_s/10.cfg"
@@ -81,7 +80,7 @@ function new_session() {
         let n++
     done; cd ~/
 
-    # screen size
+    # sizes
     s="$(xrandr | grep '*' | awk '{ print $1 }' \
     | sed 's/x/\n/')"
     x="$(sed -n 1p <<<"$s")"
@@ -252,10 +251,10 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
                 [ -d ./audio ] && rm -fr ./audio
                 n=0
                 while [ $n -le 13 ]; do
-                    if [ ! -f "$tmp/$n.cfg" ]; then
-                    touch "$DI_c/$n.cfg"
-                    else mv -f "$tmp/$n.cfg" "$DI_c/$n.cfg"; fi
-                    let n++
+                if [ ! -f "$tmp/$n.cfg" ]; then
+                touch "$DI_c/$n.cfg"
+                else mv -f "$tmp/$n.cfg" "$DI_c/$n.cfg"; fi
+                let n++
                 done
                 tee -a "$DI_c/.11.cfg" "$DI_c/1.cfg" < "$DI_c/0.cfg"
                 echo "6" > "$DI_c/8.cfg"; rm "$DI_c/9.cfg" "$DI_c/ls"
@@ -276,53 +275,42 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
     rm -f "$DT/import.tar.gz" "$DT/$tpi.cfg" & exit
 fi
     
-# topic
 function topic() {
 
-    spc="$(n=1; while [[ $n -le $((wth/40)) ]]; \
-    do printf "\t"; [ $n -ge 50 ] && break; let n++; done)"
-    mde=$(sed -n 2p $DC_s/4.cfg)
+    [ -z "$tpc" ] && exit 1
+    mode=$(sed -n 2p $DC_s/4.cfg)
     source "$DS/ifs/mods/cmns.sh"
     source "$DS/ifs/mods/topic/items_list.sh"
-
-    if ([ -n "$tpc" ] || [ $(echo "$mde" | grep "fd") ]); then
     
-        if [ -n "$tpc" ]; then
+    if [ "$mode" = 2 ]; then
+    
+        "$DS/ifs/mods/topic/$tpc.sh" & exit
+
+    elif [ "$mode" = 0 ] || [ "$mode" = 1 ]; then
+    
+        n=0
+        while [ $n -le 4 ]; do
+        [ ! -f "$DC_tlt/$n.cfg" ] && touch "$DC_tlt/$n.cfg"
+        declare ls$n="$DC_tlt/$n.cfg"
+        declare inx$n=$(wc -l < "$DC_tlt/$n.cfg")
+        let n++
+        done
+
+        nt="$DC_tlt/10.cfg"
+        author="$(sed -n 4p < "$DC_tlt/12.cfg" \
+        | grep -o 'author="[^"]*' | grep -o '[^"]*$')"
+        c=$(echo $(($RANDOM%100000))); KEY=$c
+        cnf1=$(mktemp $DT/cnf1.XXX.x)
+        cnf3=$(mktemp $DT/cnf3.XXX.x)
+        cnf4=$(mktemp $DT/cnf4.XXX.x)
+        set1=$(< "$DC_tlt/5.cfg")
         
-            n=0
-            while [ $n -le 4 ]; do
-            [ ! -f "$DC_tlt/$n.cfg" ] && touch "$DC_tlt/$n.cfg"
-            declare ls$n="$DC_tlt/$n.cfg"
-            declare inx$n=$(wc -l < "$DC_tlt/$n.cfg")
-            let n++
-            done
+        cd $DS
+        if [ -f "$DM_tlt/words/images/img.jpg" ]; then
+        img="--image=$DM_tlt/words/images/img.jpg"
+        sx=612; sy=570; else sx=640; sy=560; fi
+        printf "tpcs.$tpc.tpcs\n" >> "$DC_s/8.cfg"
 
-            nt="$DC_tlt/10.cfg"
-            author="$(sed -n 4p < "$DC_tlt/12.cfg" \
-            | grep -o 'author="[^"]*' | grep -o '[^"]*$')"
-            c=$(echo $(($RANDOM%100000))); KEY=$c
-            cnf1=$(mktemp $DT/cnf1.XXX.x)
-            cnf3=$(mktemp $DT/cnf3.XXX.x)
-            cnf4=$(mktemp $DT/cnf4.XXX.x)
-            set1=$(< "$DC_tlt/5.cfg")
-            
-            cd $DS
-            if [ -f "$DM_tlt/words/images/img.jpg" ]; then
-            img="--image=$DM_tlt/words/images/img.jpg"
-            sx=612; sy=570; else sx=640; sy=560; fi
-            printf "tpcs.$tpc.tpcs\n" >> "$DC_s/8.cfg"
-        fi
-    else
-        if [ "$(wc -l < $DM_tl/.1.cfg)" -ge 1 ]; then
-            exit
-            
-        else
-            exit 1
-        fi
-    fi
-
-    [ -z "$tpc" ] && exit 1
-    
         label_info1="<big><big>$tpc </big></big><small>\\n$inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$(gettext "Created by") $author</small>"
 
         if [ -f "$DT/notify" ]; then
@@ -331,41 +319,41 @@ function topic() {
         label_info2="<small>$(sed -n "$r"p "$DT/notify")</small>"
         else label_info2=" "; fi
 
-    apply() {
+        apply() {
 
-        note_mod="$(< $cnf3)"
-        if [ "$note_mod" != "$(< $nt)" ]; then
-        mv -f "$cnf3" "$DC_tlt/10.cfg"; fi
-        
-        ntpc=$(cut -d '|' -f 1 < "$cnf4")
-        if [ "$tpc" != "$ntpc" ] && [ -n "$ntpc" ]; then
-        if [ "$tpc" != "$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")" ]; then
-        msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
-        "$DS/mngr.sh" rename_topic "$ntpc" & exit; fi
-        
-        set1_=$(cut -d '|' -f 8 < "$cnf4")
-        if [ "$set1" != "$set1_" ]; then
-        echo  "$set1_" > "$DC_tlt/5.cfg"; fi
-
-        if [ -n "$(grep -o TRUE < "$cnf1")" ]; then
-            grep -Rl "|FALSE|" "$cnf1" | while read tab1 ; do
-                 sed '/|FALSE|/d' "$cnf1" > tmpf1
-                 mv tmpf1 "$tab1"
-            done
+            note_mod="$(< $cnf3)"
+            if [ "$note_mod" != "$(< $nt)" ]; then
+            mv -f "$cnf3" "$DC_tlt/10.cfg"; fi
             
-            sed -i 's/|TRUE|//g' "$cnf1"
-            cat "$cnf1" >> "$ls2"
+            ntpc=$(cut -d '|' -f 1 < "$cnf4")
+            if [ "$tpc" != "$ntpc" ] && [ -n "$ntpc" ]; then
+            if [ "$tpc" != "$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")" ]; then
+            msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
+            "$DS/mngr.sh" rename_topic "$ntpc" & exit; fi
+            
+            set1_=$(cut -d '|' -f 8 < "$cnf4")
+            if [ "$set1" != "$set1_" ]; then
+            echo  "$set1_" > "$DC_tlt/5.cfg"; fi
 
-            cnt=$(wc -l < "$cnf1")
-            grep -Fxvf "$cnf1" "$ls1" > "$DT/ls1.x"
-            mv -f "$DT/ls1.x" "$ls1"
-            if [ -n "$(cat "$ls1" | sort -n | uniq -dc)" ]; then
-                cat "$ls1" | awk '!array_temp[$0]++' > "$DT/ls1.x"
-                sed '/^$/d' "$DT/ls1.x" > "$ls1"
+            if [ -n "$(grep -o TRUE < "$cnf1")" ]; then
+                grep -Rl "|FALSE|" "$cnf1" | while read tab1 ; do
+                     sed '/|FALSE|/d' "$cnf1" > tmpf1
+                     mv tmpf1 "$tab1"
+                done
+                
+                sed -i 's/|TRUE|//g' "$cnf1"
+                cat "$cnf1" >> "$ls2"
+
+                cnt=$(wc -l < "$cnf1")
+                grep -Fxvf "$cnf1" "$ls1" > "$DT/ls1.x"
+                mv -f "$DT/ls1.x" "$ls1"
+                if [ -n "$(cat "$ls1" | sort -n | uniq -dc)" ]; then
+                    cat "$ls1" | awk '!array_temp[$0]++' > "$DT/ls1.x"
+                    sed '/^$/d' "$DT/ls1.x" > "$ls1"
+                fi
+                printf "okim.$cnt.okim\n" >> "$DC_s/8.cfg"
             fi
-            printf "okim.$cnt.okim\n" >> "$DC_s/8.cfg"
-        fi
-    }
+        }
     
     if [ "$inx0" -lt 1 ]; then
         
@@ -511,27 +499,33 @@ function topic() {
 
         rm -f "$DT"/*.x & exit
     fi
-    
     rm -f "$DT"/*.x
+    
+    else
+        if [ "$(wc -l < $DM_tl/.1.cfg)" -ge 1 ]; then
+            exit 1
+        fi
+    fi
 }
 
 panel() {
 
     printf "strt.1.strt\n" >> "$DC_s/8.cfg"
-    [ -n "$tpc" ] && echo "$tpc" > "$DT/tpe"
+    if [ -n "$tpc" ] && ([ "$mode" = 0 ] || [ "$mode" = 1 ]); then
+     echo "$tpc" > "$DT/tpe"; fi
     if [ ! -d "$DT" ]; then new_session & exit; fi
     
     [ -f "$DC_s/10.cfg" ] && date=$(sed -n 1p "$DC_s/10.cfg")
     if [ "$(date +%d)" != "$date" ] || [ ! -f "$DC_s/10.cfg" ]; then
     new_session; fi
     
-    w=$(($(sed -n 2p $DC_s/10.cfg)-400))
-    h=$(($(sed -n 3p $DC_s/10.cfg)-150))
+    x=$(($(sed -n 2p $DC_s/10.cfg)/2))
+    y=$(($(sed -n 3p $DC_s/10.cfg)/2))
     yad --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" \
     --form --fixed --on-top --no-buttons --align=center \
-    --width=150 --height=200 --borders=1 --geometry=150x300-$w-$h \
+    --width=150 --height=200 --borders=1 --geometry=150x300-$x-$y \
     --field=gtk-new:btn "$DS/add.sh 'new_items'" \
     --field=gtk-home:btn "idiomind 'topic'" \
     --field=gtk-index:btn "$DS/chng.sh" \

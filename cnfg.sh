@@ -115,7 +115,7 @@ yad --plug=$KEY --form --tabnum=1 \
 --field=" :LBL" "2" \
 --field=":LBL" "2" \
 --field="<small>$(gettext "Speech Synthesizer (default espeak)")</small>":CB5 "$synth" \
---field="$(gettext "Check for Updates")":BTN "$DS/ifs/tls.sh check_updates" \
+--field="$(gettext "Check for Updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
 --field="$(gettext "Topic Saved")":BTN "$DS/ifs/upld.sh 'vsd'" \
 --field="$(gettext "Feedback")":BTN "$DS/ifs/tls.sh 'fback'" \
 --field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" > "$cnf1" &

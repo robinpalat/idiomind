@@ -1,6 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+
 function word_view(){
 
     tags="$(eyeD3 "$DM_tlt/words/$fname.mp3")"
@@ -31,8 +32,6 @@ function word_view(){
 } >/dev/null 2>&1
 
 
-
-
 function sentence_view(){
 
     tags="$(eyeD3 "$DM_tlt/$fname.mp3")"
@@ -59,8 +58,7 @@ function sentence_view(){
     --button=gtk-go-down:2
 } >/dev/null 2>&1
 
-export -f word_view
-export -f sentence_view
+export -f word_view sentence_view
 
 function notebook_1() {
     
@@ -87,7 +85,7 @@ function notebook_1() {
     --field=" ":LBL "$set1" \
     --field="$label_info2\n\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " \
     --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh 'upld' '$tpc'" \
-    --field="$(gettext "Attachments")":FBTN "$DS/ifs/tls.sh attachs" \
+    --field="$(gettext "Attachments")":FBTN "$DS/ifs/tls.sh 'attachs'" \
     --field="$(gettext "Delete")":FBTN "$DS/mngr.sh 'delete_topic' '$tpc'" \
     --field=" ":LBL " " > "$cnf4" &
     yad --notebook --title="$tpc" \

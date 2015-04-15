@@ -79,10 +79,10 @@ else
         echo "$topic" > "$DM_tl/.8.cfg"
         echo "$topic" > "$DT/tpe"
         if grep -Fxo "$topic" < "$DM_tl/.3.cfg"; then
-        echo istll >> "$DC_s/4.cfg" 
-        echo istll >> "$DM_tl/.8.cfg"; else
-        echo wn >> "$DC_s/4.cfg"
-        echo wn >> "$DM_tl/.8.cfg"; fi
+        echo '1' >> "$DC_s/4.cfg" 
+        echo '1' >> "$DM_tl/.8.cfg"; else
+        echo '0' >> "$DC_s/4.cfg"
+        echo '0' >> "$DM_tl/.8.cfg"; fi
 
         cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
         [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
