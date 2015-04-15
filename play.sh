@@ -96,7 +96,7 @@ setting_1 | yad --list --title="$tpc" "$l" \
 --print-all --always-print-result --separator="|" \
 --class=Idiomind --name=Idiomind --align=right --no-headers --center \
 --expand-column=2 --window-icon="$DS/images/icon.png" \
---on-top --skip-taskbar --borders=5 --width=380 --height=310 \
+--on-top --skip-taskbar --borders=5 --width=330 --height=280 \
 --column=IMG:IMG --column=TXT:TXT --column=CHK:CHK \
 --button="$btn" --button="$(gettext "Close")":1  > "$slct"
 ret=$?
