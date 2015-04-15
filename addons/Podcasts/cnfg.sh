@@ -8,15 +8,6 @@ CNF=$(gettext "Configure")
 sets=('update' 'sync' 'path')
 [ -n "$(< "$DCP/0.cfg")" ] && cfg=1 || > "$DCP/0.cfg"
 
-tpc='#!/bin/bash
-source /usr/share/idiomind/ifs/c.conf
-[ ! -f $DM_tl/Podcasts/.conf/8.cfg ] \
-&& echo "11" > $DM_tl/Podcasts/.conf/8.cfg
-echo "$tpc" > $DC_s/4.cfg
-echo fd >> $DC_s/4.cfg
-idiomind topic
-exit 1'
-
 if [ ! -d $DM_tl/Podcasts ]; then
 
     mkdir "$DM_tl/Podcasts"
@@ -24,8 +15,6 @@ if [ ! -d $DM_tl/Podcasts ]; then
     mkdir "$DM_tl/Podcasts/cache"
     cd "$DM_tl/Podcasts/.conf/"
     touch "0.cfg" "1.cfg" "2.cfg" "3.cfg" "4.cfg" ".updt.lst"
-    echo "$tpc" > "$DM_tl/Podcasts/tpc.sh"
-    chmod +x "$DM_tl/Podcasts/tpc.sh"
     echo "14" > "$DM_tl/Podcasts/.conf/8.cfg"
     "$DS/mngr.sh" mkmn
 fi
@@ -60,7 +49,7 @@ done
     
 apply() {
     
-    printf "$CNFG" | sed 's/|/\n/g' | sed -n 6,15p | \
+    printf "$CNFG" | sed 's/|/\n/g' | sed -n 4,13p | \
     sed 's/^ *//; s/ *$//g' > "$DT/podcasts.tmp"
 
     n=1; while read feed; do
@@ -75,17 +64,18 @@ apply() {
     if ([ -n "$podcaststmp" ] && [ "$podcaststmp" != "$(cat "$DCP/4.cfg")" ]); then
     mv -f "$DT/podcasts.tmp" "$DCP/4.cfg"; else rm -f "$DT/podcasts.tmp"; fi
 
+
     val1=$(cut -d "|" -f1 <<<"$CNFG")
     val2=$(cut -d "|" -f2 <<<"$CNFG")
-    val3=$(cut -d "|" -f4 <<<"$CNFG" | sed 's|/|\\/|g')
-    if [ ! -d "$val3" ] ||  [ -z "$val3" ]; then path=/uu; fi
+    val3=$(cut -d "|" -f16 <<<"$CNFG" | sed 's|/|\\/|g')
+    if [ ! -d "$val3" ] || [ -z "$val3" ]; then path=/uu; fi
     sed -i "s/update=.*/update=\"$val1\"/g" "$DCP/0.cfg"
     sed -i "s/sync=.*/sync=\"$val2\"/g" "$DCP/0.cfg"
-    sed -i "s/path=.*/path=\"$val3\"/g" "$DCP/0.cfg"
+    sed -i "s/path=.*/path=\"${val3}\"/g" "$DCP/0.cfg"
     [ -f "$DT/cp.lock" ] && rm -f "$DT/cp.lock"
 }
 
-[ ! -d "$path" ] && path=/uu
+if [ ! -d "$path" ] || [ ! -n "$path" ]; then path=/uu; fi
 if [ -f "$DM_tl/Podcasts/.conf/feed.err" ]; then
 e="$(head -n 2 < "$DM_tl/Podcasts/.conf/feed.err" | tr '&' ' ')"
 rm "$DM_tl/Podcasts/.conf/feed.err"
@@ -96,20 +86,21 @@ CNFG=$(yad --form --title="$(gettext "Podcasts settings")" \
 --name=Idiomind --class=Idiomind \
 --always-print-result --print-all --separator="|" \
 --window-icon="$DS/images/icon.png" --center --scroll --on-top \
---width=580 --height=460 --borders=5 \
+--width=580 --height=460 --borders=10 \
 --text="$(gettext "Configure RSS feed to learn with educational podcast.")" \
 --field="$(gettext "Update at startup")":CHK "$update" \
 --field="$(gettext "Sync after update")":CHK "$sync" \
---field="$(gettext "Mountpoint or path where episodes should be synced.")":LBL " " \
---field="":DIR "$path" \
 --field="$(gettext "URL")":LBL " " \
 --field="" "$url1" --field="" "$url2" --field="" "$url3" \
 --field="" "$url4" --field="" "$url5" --field="" "$url6" \
 --field="" "$url7" --field="" "$url8" --field="" "$url9" \
 --field="" "$url10" \
+--field=" ":LBL " " \
+--field="$(gettext "Mountpoint or path where episodes should be synced")":LBL " " \
+--field="":DIR "$path" \
 --field="$(gettext "Remove Episodes")":FBTN "$DSP/mngr.sh 'delete_1'" \
 --field="$(gettext "Remove Saved Episodes")":FBTN "$DSP/mngr.sh 'delete_2'" \
---field="$(gettext "Advance")":FBTN \
+--field=" ":LBL " " \
 --button="$(gettext "Cancel")":1 \
 --button="$(gettext "Syncronize")":5 \
 --button="gtk-apply":0)
@@ -117,7 +108,7 @@ CNFG=$(yad --form --title="$(gettext "Podcasts settings")" \
 ret=$?
 
 if [ "$ret" -eq 0 ]; then
-
+    
     apply;
     
 elif [ "$ret" -eq 5 ]; then

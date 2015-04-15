@@ -108,43 +108,41 @@ function new_session() {
         tp=$(sed -n "$n"p "$DM_tl/.1.cfg")
         stts=$(< "$DM_tl/$tp/.conf/8.cfg")
 
-        if [ "$stts" = 2 ] || [ "$stts" = 7 ]; then
+        if ([ "$stts" = 2 ] || [ "$stts" = 7 ]) && \
+        [ "$DM_tl/$tp/.conf/9.cfg" ]; then
         
-            if [ -f "$DM_tl/$tp/.conf/9.cfg" ]; then
-
-                dts=$(sed '/^$/d' < "$DM_tl/$tp/.conf/9.cfg" | wc -l)
-                if [ $dts = 1 ]; then
-                dte=$(sed -n 1p "$DM_tl/$tp/.conf/9.cfg")
-                TM="$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))"
-                RM=$((100*$TM/10))
-                elif [ $dts = 2 ]; then
-                dte=$(sed -n 2p "$DM_tl/$tp/.conf/9.cfg")
-                TM="$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))"
-                RM=$((100*$TM/15))
-                elif [ $dts = 3 ]; then
-                dte=$(sed -n 3p "$DM_tl/$tp/.conf/9.cfg")
-                TM="$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))"
-                RM=$((100*$TM/30))
-                elif [ $dts = 4 ]; then
-                dte=$(sed -n 4p "$DM_tl/$tp/.conf/9.cfg")
-                TM="$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))"
-                RM=$((100*$TM/60))
-                fi
-                if grep -Fxo "$tp" < "$DM_tl/.3.cfg"; then
-                if [ "$RM" -ge 100 ]; then
-                echo "9" >> "$DM_tl/$tp/.conf/8.cfg"
-                printf "$tp\n" >> "$DT/t_notify"; fi
-                if [ "$RM" -ge 150 ]; then
-                echo "10" > "$DM_tl/$tp/.conf/8.cfg"
-                printf "$tp\n" >> "$DT/t_notify"; fi
-                else
-                if [ "$RM" -ge 100 ]; then
-                echo "4" > "$DM_tl/$tp/.conf/8.cfg"
-                printf "$tp\n" >> "$DT/t_notify"; fi
-                if [ "$RM" -ge 150 ]; then
-                echo "5" > "$DM_tl/$tp/.conf/8.cfg"
-                printf "$tp\n" >> "$DT/t_notify"; fi
-                fi
+            dts=$(sed '/^$/d' < "$DM_tl/$tp/.conf/9.cfg" | wc -l)
+            if [ $dts = 1 ]; then
+            dte=$(sed -n 1p "$DM_tl/$tp/.conf/9.cfg")
+            TM="$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))"
+            RM=$((100*$TM/10))
+            elif [ $dts = 2 ]; then
+            dte=$(sed -n 2p "$DM_tl/$tp/.conf/9.cfg")
+            TM="$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))"
+            RM=$((100*$TM/15))
+            elif [ $dts = 3 ]; then
+            dte=$(sed -n 3p "$DM_tl/$tp/.conf/9.cfg")
+            TM="$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))"
+            RM=$((100*$TM/30))
+            elif [ $dts = 4 ]; then
+            dte=$(sed -n 4p "$DM_tl/$tp/.conf/9.cfg")
+            TM="$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))"
+            RM=$((100*$TM/60))
+            fi
+            if grep -Fxo "$tp" < "$DM_tl/.3.cfg"; then
+            if [ "$RM" -ge 100 ]; then
+            echo "9" >> "$DM_tl/$tp/.conf/8.cfg"
+            printf "$tp\n" >> "$DT/t_notify"; fi
+            if [ "$RM" -ge 150 ]; then
+            echo "10" > "$DM_tl/$tp/.conf/8.cfg"
+            printf "$tp\n" >> "$DT/t_notify"; fi
+            else
+            if [ "$RM" -ge 100 ]; then
+            echo "4" > "$DM_tl/$tp/.conf/8.cfg"
+            printf "$tp\n" >> "$DT/t_notify"; fi
+            if [ "$RM" -ge 150 ]; then
+            echo "5" > "$DM_tl/$tp/.conf/8.cfg"
+            printf "$tp\n" >> "$DT/t_notify"; fi
             fi
         fi
         let n++
@@ -357,7 +355,6 @@ function topic() {
     
     if [ "$inx0" -lt 1 ]; then
         
-        # empty lists
         notebook_1
      
         ret=$(echo $?)
@@ -525,7 +522,7 @@ panel() {
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" \
     --form --fixed --on-top --no-buttons --align=center \
-    --width=150 --height=200 --borders=1 --geometry=150x300-$x-$y \
+    --width=150 --height=200 --borders=1 --geometry="$x"x$y-$x-$y \
     --field=gtk-new:btn "$DS/add.sh 'new_items'" \
     --field=gtk-home:btn "idiomind 'topic'" \
     --field=gtk-index:btn "$DS/chng.sh" \
@@ -544,7 +541,7 @@ session() {
 
 autostart() {
 
-    sleep 1
+    sleep 50
     [ ! -f "$DT/ps_lk" ] && new_session auto
     exit 0
 }

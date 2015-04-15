@@ -729,7 +729,7 @@ function set_image() {
     image="--image=$DM_tlt/words/images/$fname.jpg"
     btn1="--button="$(gettext "Change")":3"
     btn2="--button="$(gettext "Delete")":2"
-    else label="--text=<small>\\n<a href='file://$DT/search.html'>"$(gettext "Search image related")"</a></small>"; fi
+    else label="--text=\t<small><a href='file://$DT/search.html'>"$(gettext "Search image related")"</a></small>"; fi
 
     if [ "$3" = word ]; then
         
@@ -737,10 +737,10 @@ function set_image() {
         file="$DM_tlt/words/$fname.mp3"; fi
         yad --form --title=$(gettext "Image") "$image" "$label" \
         --name=Idiomind --class=Idiomind \
-        --window-icon="$DS/images/icon.png" --image-on-top \
-        --skip-taskbar --text-align=center \
+        --window-icon="$DS/images/icon.png" \
+        --skip-taskbar --image-on-top \
         --align=center --center --on-top \
-        --width=340 --height=280 --borders=5 \
+        --width=380 --height=280 --borders=5 \
         "$btn1" "$btn2" --button=$(gettext "Close"):1
         ret=$?
             
@@ -767,7 +767,7 @@ function set_image() {
         file="$DM_tlt/$fname.mp3"; fi
         yad --form --title=$(gettext "Image") "$image" "$label" \
         --name=Idiomind --class=Idiomind \
-        --window-icon="$DS/images/icon.png" --text-align=center \
+        --window-icon="$DS/images/icon.png" \
         --skip-taskbar --image-on-top --center --on-top \
         --width=470 --height=270 --borders=5 \
         "$btn1" "$btn2" --button=$(gettext "Close"):1

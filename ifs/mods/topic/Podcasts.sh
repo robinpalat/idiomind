@@ -72,8 +72,4 @@ function feedmode() {
     [ "$fdit" ] && rm -f "$fdit"
 }
 
-feedmode & exit 1
-
-#if echo "$mde" | grep "fd"; then
-    #feedmode; exit 1
-#fi
+feedmode & exit

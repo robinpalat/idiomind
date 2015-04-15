@@ -221,11 +221,7 @@ fetch_podcasts() {
 
                     fields="$(sed -r 's|-\!-|\n|g' <<<"$item")"
                     enclosure=$(sed -n "$nmedia"p <<<"$fields")
-                    
-                    #if [ -z "$enclosure" ]; then
-                    #echo "Missing enclosure.\n$FEED\n$enclosure" >> "$DM_tl/Podcasts/.conf/feed.err"
-                    #continue; fi
-                    
+
                     title=$(echo "$fields" | sed -n "$ntitle"p | sed 's/\://g' \
                     | sed 's/\&/&amp;/g' | sed 's/^\s*./\U&\E/g' \
                     | sed 's/<[^>]*>//g' | sed 's/^ *//; s/ *$//; /^$/d')
@@ -233,9 +229,8 @@ fetch_podcasts() {
                     | iconv -c -f utf8 -t ascii)
                     fname="$(nmfile "${title}")"
                     
-                    if [ "$(echo "$title" | wc -c)" -ge 180 ] || [ -z "$title" ]; then
-                    echo "Missing title.\n$FEED" >> "$DM_tl/Podcasts/.conf/feed.err"
-                    printf "err.FE4($n).err\n" >> "$DC_s/8.cfg"
+                    if [ "$(echo "$title" | wc -c)" -ge 300 ] \
+                    || [ -z "$title" ]; then
                     continue; fi
                          
                     if ! grep -Fxo "$title" < "$DCP/1.cfg"; then
@@ -329,7 +324,7 @@ conditions "$1"
 
 if [ "$1" != A ]; then
     echo "$tpc" > "$DC_s/4.cfg"
-    echo fd >> "$DC_s/4.cfg"
+    echo '2' >> "$DC_s/4.cfg"
     echo "11" > "$DCP/8.cfg"
     (sleep 2 && notify-send -i idiomind "$(gettext "Checking for new episodes")" \
     "$(gettext "Updating") $nps $(gettext "feeds")" -t 6000) &
