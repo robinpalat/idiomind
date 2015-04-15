@@ -80,7 +80,7 @@ function new_session() {
         let n++
     done; cd ~/
 
-    # sizes
+    # 
     s="$(xrandr | grep '*' | awk '{ print $1 }' \
     | sed 's/x/\n/')"
     echo "$(sed -n 1p <<<"$s")" >> "$DC_s/10.cfg"
@@ -88,6 +88,10 @@ function new_session() {
     echo "$DESKTOP_SESSION" >> "$DC_s/10.cfg"
     gconftool-2 --get /desktop/gnome/interface/font_name \
     | cut -d ' ' -f 2 >> "$DC_s/10.cfg"
+    locale >/dev/null 2>&1
+    [[ $? != 0 ]] && msg \
+    "$(gettext "The system is not properly configured.\nE10")" \
+    error Error && exit 1
 
     # log file
     if [ -f "$DC_s/8.cfg" ]; then

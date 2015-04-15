@@ -62,9 +62,8 @@ conditions() {
     fi
     
     if [ ! -d "$DM_tl/Podcasts/cache" ]; then
-        mkdir -p "DM_tl/Podcasts/.conf"
-        mkdir -p "DM_tl/Podcasts/cache"
-    fi
+    mkdir -p "DM_tl/Podcasts/.conf"
+    mkdir -p "DM_tl/Podcasts/cache"; fi
 
     nps="$(sed '/^$/d' < "$DCP/4.cfg" | wc -l)"
     if [ "$nps" -le 0 ]; then
@@ -221,7 +220,6 @@ fetch_podcasts() {
 
                     fields="$(sed -r 's|-\!-|\n|g' <<<"$item")"
                     enclosure=$(sed -n "$nmedia"p <<<"$fields")
-
                     title=$(echo "$fields" | sed -n "$ntitle"p | sed 's/\://g' \
                     | sed 's/\&/&amp;/g' | sed 's/^\s*./\U&\E/g' \
                     | sed 's/<[^>]*>//g' | sed 's/^ *//; s/ *$//; /^$/d')
@@ -265,7 +263,6 @@ fetch_podcasts() {
         fi
         
         let n++
-
     done < "$DCP/4.cfg"
 }
 
@@ -295,7 +292,7 @@ check_index() {
     while read item; do
         fname="$(nmfile "${item}")"
         if ([ -f "$DMC/$fname.mp3" ] || [ -f "$DMC/$fname.mp4" ] || \
-        [ -f "$DMC/$fname.jpg" ] || \
+        [ -f "$DMC/$fname.jpg" ] || [ -f "$DMC/$fname.pdf" ] \
         [ -f "$DMC/$fname.jpeg" ] || [ -f "$DMC/$fname.png" ] || \
         [ -f "$DMC/$fname.ogg" ] || [ -f "$DMC/$fname.avi" ] || \
         [ -f "$DMC/$fname.m4v" ] || [ -f "$DMC/$fname.flv" ]); then
@@ -326,8 +323,8 @@ if [ "$1" != A ]; then
     echo "$tpc" > "$DC_s/4.cfg"
     echo '2' >> "$DC_s/4.cfg"
     echo "11" > "$DCP/8.cfg"
-    (sleep 2 && notify-send -i idiomind "$(gettext "Checking for new episodes")" \
-    "$(gettext "Updating") $nps $(gettext "feeds")" -t 6000) &
+    (sleep 2 && notify-send -i idiomind "$(gettext "Updating")" \
+    "$(gettext "Checking") $nps $(gettext "feeds")" -t 6000) &
 fi
 
 echo "updating" > "$DT/.uptp"
@@ -342,17 +339,17 @@ if [ "$nd" -gt 0 ]; then
 
     remove_items
     
-    check_index
+    #check_index
     
     notify-send -i idiomind \
-    "$(gettext "Feed update")" \
-    "$(gettext "Has") $nd $(gettext "Update(s)")" -t 8000
+    "$(gettext "Feeds updated")" \
+    "$nd $(gettext "new episode(s)")" -t 8000
     
 else
-    if [[ ! -n "$1" && "$1" != A && -f "$DT_r/log" ]]; then
-    notify-send -i idiomind \
-    "$(gettext "Feed update")" \
-    "$(gettext "No change since the last update")" -t 8000
+    if [ -n "$1" ] || [ -f "$DT_r/log" ]; then
+        notify-send -i idiomind \
+        "$(gettext "Feeds updated")" \
+        "$(gettext "No change since the last update")" -t 8000
     fi
 fi
 

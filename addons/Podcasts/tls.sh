@@ -6,7 +6,6 @@ IFS=$'\n\t'
 "$(gettext "New episodes")
 $(gettext "Saved epidodes")
 $(gettext "Marks")" >/dev/null 2>&1
-
 #
 # sync delete option: disable 0 / enable 1
 delete=0
@@ -250,9 +249,8 @@ url=\"$feed\""
         echo -e "$cfg" > "$DIR2/$num.rss"; exit 0
         
     else
-        url="$(tr '&' ' ' <<<"$feed")"
-        msg "<b>$(gettext "Specified URL doesn't seem to contain any feeds")</b>\n$url\n\n<a href='leafpad'>\
-$(gettext "Tell us if you think this is an error")</a>" dialog-warning Idiomind &
+        msg "<b>$(gettext "Specified URL doesn't seem to contain any feeds.")</b>\n\n\
+$(gettext "Tell us if you think this is an error.")" dialog-warning Idiomind &
         [ "$DIR2/$num.rss" ] && "$DIR2/$num.rss"
         rm -f "$DT/cpt.lock"; exit 1
     fi
@@ -330,7 +328,7 @@ sync() {
         killall tls.sh
         exit 1; fi
             
-    elif  [ -f "$DT/l_sync" ] && [ "$2" = A ]; then; exit 1
+    elif  [ -f "$DT/l_sync" ] && [ "$2" = A ]; then exit 1
 
     elif [ ! -d "$path" ] && [ "$2" != A ]; then
     msg " $(gettext "The directory to synchronization does not exist \n Exiting.")" \

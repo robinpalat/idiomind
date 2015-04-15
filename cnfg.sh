@@ -42,12 +42,22 @@ sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
 c=$(echo $(($RANDOM%100000))); KEY=$c
 cnf1=$(mktemp "$DT"/cnf1.XXXX)
 
+_info() {
+    
+    yad --form --title="$(gettext "Information")" \
+    --text="$(gettext "Some features do not yet work with") $1 $(gettext "language")." \
+    --center --borders=5 --image=info \
+    --on-top --window-icon=info \
+    --skip-taskbar --width=400 --height=120 \
+    --button="$(gettext "OK")":0
+}
+
 confirm() {
     
     yad --form --title="Idiomind" --text="$1\n" \
-    --center --borders=8 --image=$2 \
+    --center --borders=5 --image=$2 \
     --on-top --window-icon="$DS/images/icon.png" \
-    --skip-taskbar --width=350 --height=120 \
+    --skip-taskbar --width=380 --height=120 \
     --button="$(gettext "No")":1 --button="$(gettext "Yes")":0
 }
 
@@ -66,7 +76,7 @@ set_lang() {
     "$DS/default/tpc.sh" "$lst" 1
     else rm "$DC_s/4.cfg" && touch "$DC_s/4.cfg"; fi
     
-    "$DS/mngr.sh" mkmn
+    "$DS/mngr.sh" mkmn &
 }
 
 n=0
@@ -164,10 +174,13 @@ ret=$?
         n=0
         while [ $n -lt 10 ]; do
             if cut -d "|" -f18 < "$cnf1" | grep "${lang[$n]}" && \
-            [ "${lang[$n]}" != "$lgtl" ] ; then
+            [ "${lang[$n]}" != "$lgtl" ]; then
                 confirm "$info2" dialog-question
                 [ $? -eq 0 ] && set_lang "${lang[$n]}"
-                lgtl="${lang[$n]}" & break
+                lgtl="${lang[$n]}"
+                if grep -o -E 'Chinese|Japanese|Russian|Vietnamese' <<< "$lgtl";
+                then _info "$lgtl"; fi
+                break
             fi
             ((n=n+1))
         done
@@ -175,7 +188,7 @@ ret=$?
         n=0
         while [ $n -lt 10 ]; do
             if cut -d "|" -f19 < "$cnf1" | grep "${lang[$n]}" && \
-            [ "${lang[$n]}" != "$lgsl" ] ; then
+            [ "${lang[$n]}" != "$lgsl" ]; then
                 confirm "$info1" dialog-warning
                 if [ $? -eq 0 ]; then
                     echo "$lgtl" > "$DC_s/6.cfg"
@@ -188,4 +201,5 @@ ret=$?
     fi
     
     rm -f "$cnf1" "$DT/.lc"
+
     exit
