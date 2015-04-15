@@ -350,7 +350,8 @@ function edit() {
     dct="$DS/addons/Dics/cnfg.sh"
     file_tmp="$(mktemp $DT/file_tmp.XXXX)"
     edta="$(sed -n 17p ~/.config/idiomind/s/1.cfg)"
-    tpcs="$(egrep -v "$tpc" < "$DM_tl/.2.cfg" | cut -c 1-40 \
+    tpcs="$(egrep -v "$tpc" < "$DM_tl/.2.cfg" \
+    | awk '{print substr($0,1,40)}' \
     | tr "\\n" '!' | sed 's/!\+$//g')"
     c=$(echo $(($RANDOM%10000)))
     item="$(sed -n "$3"p "$index_1")"

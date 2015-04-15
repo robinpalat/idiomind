@@ -83,10 +83,8 @@ function new_session() {
     # sizes
     s="$(xrandr | grep '*' | awk '{ print $1 }' \
     | sed 's/x/\n/')"
-    x="$(sed -n 1p <<<"$s")"
-    y="$(sed -n 2p <<<"$s")"
-    echo $((x/10+500))>> "$DC_s/10.cfg"
-    echo $((y/10+500))>> "$DC_s/10.cfg"
+    echo "$(sed -n 1p <<<"$s")" >> "$DC_s/10.cfg"
+    echo "$(sed -n 2p <<<"$s")" >> "$DC_s/10.cfg"
     echo "$DESKTOP_SESSION" >> "$DC_s/10.cfg"
     gconftool-2 --get /desktop/gnome/interface/font_name \
     | cut -d ' ' -f 2 >> "$DC_s/10.cfg"
@@ -516,13 +514,14 @@ panel() {
     if [ "$(date +%d)" != "$date" ] || [ ! -f "$DC_s/10.cfg" ]; then
     new_session; fi
     
-    x=$(($(sed -n 2p $DC_s/10.cfg)/2))
-    y=$(($(sed -n 3p $DC_s/10.cfg)/2))
+    x=$(($(sed -n 2p "$DC_s/10.cfg")/2))
+    y=$(($(sed -n 3p "$DC_s/10.cfg")/2))
+    
     yad --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" \
     --form --fixed --on-top --no-buttons --align=center \
-    --width=150 --height=200 --borders=1 --geometry="$x"x$y-$x-$y \
+    --width=150 --height=200 --borders=1 --geometry=150x200-$x-$y \
     --field=gtk-new:btn "$DS/add.sh 'new_items'" \
     --field=gtk-home:btn "idiomind 'topic'" \
     --field=gtk-index:btn "$DS/chng.sh" \

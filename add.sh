@@ -79,10 +79,10 @@ Create one using the button below. ")" & exit 1; fi
     || img="$DS/images/nw.png"
 
     if [ -z "$tpe" ]; then
-    tpcs=$(sed -n '1!G;h;$p' < "$DM_tl/.2.cfg" | cut -c 1-40  \
+    tpcs=$(sed -n '1!G;h;$p' < "$DM_tl/.2.cfg" | awk '{print substr($0,1,40)}' \
     | tr "\\n" '!' | sed 's/\!*$//g'); else
     tpcs=$(sed -n '1!G;h;$p' < "$DM_tl/.2.cfg" \
-    | egrep -v "$tpe" | cut -c 1-40 \
+    | egrep -v "$tpe" | awk '{print substr($0,1,40)}' \
     | tr "\\n" '!' | sed 's/\!*$//g'); fi
     
     [ -n "$tpcs" ] && e='!'; [ -z "$tpe" ] && tpe=' '

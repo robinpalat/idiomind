@@ -3,11 +3,12 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
-
+if [ "$tpc" != 'Podcasts' ]; then
 [ ! -f "$DM_tl/Podcasts/.conf/8.cfg" ] \
 && echo "11" > "$DM_tl/Podcasts/.conf/8.cfg"
 echo "Podcasts" > "$DC_s/4.cfg"
 echo '2' >> "$DC_s/4.cfg"
+fi
 
 function list_1() {
     while read list1; do
