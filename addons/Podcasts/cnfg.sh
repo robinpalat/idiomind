@@ -96,7 +96,7 @@ CNFG=$(yad --form --title="$(gettext "Podcasts settings")" \
 --field="" "$url7" --field="" "$url8" --field="" "$url9" \
 --field="" "$url10" \
 --field=" ":LBL " " \
---field="$(gettext "Mountpoint or path where episodes should be synced")":LBL " " \
+--field="$(gettext "Path where episodes should be synced")":LBL " " \
 --field="":DIR "$path" \
 --field="$(gettext "Remove Episodes")":FBTN "$DSP/mngr.sh 'delete_1'" \
 --field="$(gettext "Remove Saved Episodes")":FBTN "$DSP/mngr.sh 'delete_2'" \

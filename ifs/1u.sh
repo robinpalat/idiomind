@@ -32,6 +32,16 @@ sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
 'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' 'edit' \
 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
 
+_info() {
+    
+    yad --form --title="$(gettext "Information")" \
+    --text="$(gettext "Some features do not yet work with") $1 $(gettext "language")." \
+    --center --borders=5 --image=info \
+    --on-top --window-icon=info \
+    --skip-taskbar --width=400 --height=120 \
+    --button="$(gettext "OK")":0
+}
+
 function set_lang() {
     
     if [ ! -d "$DM_t/$1" ]; then
@@ -44,7 +54,7 @@ function set_lang() {
 }
 
 if [ ! -f /usr/bin/yad ]; then
-zenity --info --window-icon="$DS/images/icon.png" \
+zenity --info --window-icon="/usr/share/idiomind/images/icon.png" \
 --text="$(gettext "Missing dependency to start.
 It seems that you have no installed on your system the program YAD.\t
 You can get it from here:  www.sourceforge.net/projects/yad-dlg
@@ -55,14 +65,18 @@ sudo apt-get update
 sudo apt-get install yad")" \
 --title="Idiomind" --no-wrap & exit; fi
 
-dlg=$(yad --center --width=420 --height=280 --fixed \
---image-on-top --on-top --class=Idiomind --name=Idiomind \
---window-icon="$DS/images/icon.png" --buttons-layout=end --text="$text" \
---title="Idiomind" --form --borders=15 --align=center --button=Cancel:1 --button=gtk-ok:0 \
+dlg=$(yad --form --title="Idiomind" \
+--text="$text" \
+--class=Idiomind --name=Idiomind \
+--window-icon="/usr/share/idiomind/images/icon.png" \
+--image-on-top --fixed --align=center --center --on-top --buttons-layout=end \
+--width=420 --height=280 --borders=15 \
 --field="$(gettext "Select the language you are studying")":lbl " " \
 --field=":CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
 --field="$(gettext "Select your native language")":lbl " " \
---field=":CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese")
+--field=":CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
+--button=Cancel:1 \
+--button=gtk-ok:0)
 
 ret=$?
 
@@ -105,7 +119,9 @@ elif [ $ret -eq 0 ]; then
     while [ $n -lt 10 ]; do
         if echo "$target" | grep "${lang[$n]}"; then
         set_lang "${lang[$n]}"
-        lgtl="$lang" & break
+        if grep -o -E 'Chinese|Japanese|Russian|Vietnamese' <<< "$target";
+        then _info "$target"; fi
+        break
         fi
         ((n=n+1))
     done

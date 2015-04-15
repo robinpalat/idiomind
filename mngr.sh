@@ -281,7 +281,7 @@ function delete_item() {
         done
         rm ./*.tmp
 
-        (sleep 1 && rm -f "$DT/ps_lk") & exit 1
+        rm -f "$DT/ps_lk" & exit 1
         
     else
         rm -f "$DT/ps_lk" & exit 1
@@ -376,7 +376,8 @@ function edit() {
         dlg_form_1 "$file_tmp"
         ret=$(echo "$?")
         
-            [ ! "$audiofile_2" ] && "$DS/vwr.sh" "$lists" "nll" "$item_pos" && exit 1
+            if [ ! -f "$DM_tlt/words/$fname.mp3" ]; then
+            "$DS/mngr.sh" edit "$lists" "$((item_pos-1))" & exit; fi
             srce_mod="$(tail -12 < "$file_tmp" | sed -n 2p  \
             | sed 's/^ *//; s/ *$//g'| sed ':a;N;$!ba;s/\n/ /g')"
             tpc_mod="$(tail -12 < "$file_tmp" | sed -n 3p)"
@@ -458,7 +459,8 @@ function edit() {
         dlg_form_2 "$file_tmp"
         ret=$(echo "$?")
 
-            [ ! "$audiofile_1" ] && "$DS/vwr.sh" "$lists" "nll" "$item_pos" && exit 1
+            if [ ! -f "$DM_tlt/$fname.mp3" ]; then
+            "$DS/mngr.sh" edit "$lists" "$((item_pos-1))" & exit; fi
             mark_mod="$(tail -7 < "$file_tmp" | sed -n 1p)"
             trgt_mod="$(tail -7 < "$file_tmp" | sed -n 2p | \
             sed 's/^ *//; s/ *$//g'| sed ':a;N;$!ba;s/\n/ /g')"
@@ -472,7 +474,7 @@ function edit() {
             
             if [ "$trgt_mod" != "$trgt" ]; then
             
-                internet
+                (internet
                 fname2="$(nmfile "$trgt_mod")"
 
                 sed -i "s/${trgt}/${trgt_mod}/" "$DC_tlt/0.cfg"
@@ -486,7 +488,7 @@ function edit() {
                 add_tags_1 S "$trgt_mod" "$srce_mod" "$DM_tlt/$fname2.mp3"
                 source "$DS/default/dicts/$lgt"
                 
-                (DT_r=$(mktemp -d $DT/XXXXXX); cd "$DT_r"
+                DT_r=$(mktemp -d $DT/XXXXXX); cd "$DT_r"
                 trgt="$trgt_mod"; srce="$srce_mod"
                 r=$(echo $(($RANDOM%1000)))
                 clean_3 "$DT_r" "$r"
@@ -518,13 +520,13 @@ function edit() {
             
                 if [ "$audio_mod" != "$audiofile_1" ]; then
                 
-                    internet
+                    (internet
                     cp -f "$audio_mod" "$DM_tlt/$fname.mp3"
                     eyeD3 --remove-all "$DM_tlt/$fname.mp3"
                     add_tags_1 S "$trgt_mod" "$srce_mod" "$DM_tlt/$fname.mp3"
                     source "$DS/default/dicts/$lgt"
                     
-                    (DT_r=$(mktemp -d $DT/XXXXXX); cd "$DT_r"
+                    DT_r=$(mktemp -d $DT/XXXXXX); cd "$DT_r"
                     trgt="$trgt_mod"; srce="$srce_mod"
                     r=$(echo $(($RANDOM%1000)))
                     clean_3 "$DT_r $r"

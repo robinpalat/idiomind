@@ -21,6 +21,7 @@ function word_view(){
     yad --form --scroll --title="$item" \
     --quoted-output \
     --text="<span font_desc='Sans Free Bold $fs'>$trgt</span>\n\n<i>$srce</i>\n\n" \
+    --window-icon="$DS/images/icon.png" \
     --scroll --center --on-top --skip-taskbar --text-align=center --image-on-top --center \
     --width=620 --height=380 --borders=$bs \
     --field="":lbl \
@@ -46,6 +47,7 @@ function sentence_view(){
     echo "$lwrd" | yad --list --title=" " \
     --selectable-labels --print-column=0 \
     --dclick-action="$DS/ifs/tls.sh dclik" \
+    --window-icon="$DS/images/icon.png" \
     --skip-taskbar --center --image-on-top --center --on-top \
     --scroll --text-align=left --expand-column=0 --no-headers \
     --text="<span font_desc='Sans Free 15'>$trgt</span>\n\n<i>$srce</i>\n\n" \

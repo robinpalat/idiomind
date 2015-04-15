@@ -64,8 +64,7 @@ if [ -z "$1" ]; then
                 echo "# $(gettext "Copying")..." ; sleep 0.1
 
                 cd "$DM"
-                #chmod 777 -R "$DM"
-                # TODO data addons 
+                # TODO
                 tar cvzf backup.tar.gz \
                 --exclude='./topics/Italian/Podcasts/cache' \
                 --exclude='./topics/French/Podcasts/cache' \
@@ -87,9 +86,8 @@ if [ -z "$1" ]; then
                 --pulsate --percentage="5" --auto-close \
                 --sticky --undecorated --skip-taskbar --no-buttons
                 
-                #if [ $exit1 = 0 ] && [ $exit2 = 0 ] && [ $exit3 = 0 ]; then
                 msg "$(gettext "Data exported successfully")\n" info
-                #;fi
+                
                 exit 1
 
             else
@@ -328,63 +326,5 @@ if [ -z "$1" ]; then
 
 elif [ "$1" = C ] && [ "$dte" != "$udt" ]; then
     sleep 3
-    #while true; do
-    #idle=$(top -bn2 | grep "Cpu(s)" | tail -n 1 \
-    #| sed 's/\%us,.*//' | sed 's/.*Cpu(s): //')
-    #echo "idle is $idle"
-    #if [[ $idle < 15 ]]; then
-        #break
-    #fi
-    #sleep 10
-    #done
-    
-    #set -e
-    #set u pipefail
-    #IFS=$'\n\t'
-    #source "$DC_a/1.cfg"
-    
-    #if [ ! -d "$path" ]; then
-    
-        #msg "$(gettext "Backup directory does not exist.")" info
-      
-        #exit 1
-    #fi
-    
-    #if [ -f "$path/idiomind.backup" ]; then
-        #mv -f "$path/idiomind.backup" "$path/idiomind.bk"
-    #fi
-
-    #cp -r "$DC" "$DM"
-    #cd "$DM"
-    #tar cvzf backup.tar.gz *
-    
-
-   #cd "$DT"
-    ##chmod 777 -R "$DM"
-    ## TODO data addons
-    #tar cvzf backup.tar.gz \
-    #--exclude='./topics/Italian/Podcasts/cache' \
-    #--exclude='./topics/French/Podcasts/cache' \
-    #--exclude='./topics/Portuguese/Podcasts/cache' \
-    #--exclude='./topics/Russian/Podcasts/cache' \
-    #--exclude='./topics/Spanish/Podcasts/cache' \
-    #--exclude='./topics/German/Podcasts/cache' \
-    #--exclude='./topics/Chinese/Podcasts/cache' \
-    #--exclude='./topics/Japanese/Podcasts/cache' \
-    #--exclude='./topics/Vietnamese/Podcasts/cache' \
-    #"$DM"
-    
-
-    #mv -f backup.tar.gz "$path/idiomind.backup"
-    
-    #exit=$?
-    #if [ $exit = 0 ] ; then
-    #echo "$dte" > "$path/.udt"
-    #rm "$path/idiomind.bk"
-    #else
-    #mv -f "$path/idiomind.bk" "$path/idiomind.backup"
-    #fi
-    ##rm -r "$DM/idiomind"
-    #exit
-
+    #TODO
 fi
