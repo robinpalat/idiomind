@@ -21,8 +21,8 @@ source /usr/share/idiomind/ifs/c.conf
 [ ! -d "$DC" ] && "$DS/ifs/1u.sh" && exit
 wth=520
 eht=400
-info1="$(gettext "Do you want to change the interface language program?")"
-info2="$(gettext "You want to change the language setting to learn?")"
+info1="$(gettext "Do you want to change the interface language program?")  "
+info2="$(gettext "You want to change the language setting to learn?")  "
 cd "$DS/addons"
 desktopfile="[Desktop Entry]
 Name=Idiomind
@@ -42,18 +42,8 @@ sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
 c=$(echo $(($RANDOM%100000))); KEY=$c
 cnf1=$(mktemp "$DT"/cnf1.XXXX)
 
-_info() {
-    
-    yad --form --title="$(gettext "Information")" \
-    --text="$(gettext "Some features do not yet work with") $1 $(gettext "language")." \
-    --center --borders=5 --image=info \
-    --on-top --window-icon=info \
-    --skip-taskbar --width=400 --height=120 \
-    --button="$(gettext "OK")":0
-}
-
 confirm() {
-    
+
     yad --form --title="Idiomind" --text="$1\n" \
     --center --borders=5 --image=$2 \
     --on-top --window-icon="$DS/images/icon.png" \
@@ -63,16 +53,17 @@ confirm() {
 
 set_lang() {
     
-    if [ ! -d "$DM_t/$1" ]; then
-    mkdir "$DM_t/$1"
-    mkdir "$DM_t/$1/.share"; fi
+    language="$1"
+    if [ ! -d "$DM_t/$language" ]; then
+    mkdir "$DM_t/$language"
+    mkdir "$DM_t/$language/.share"; fi
         
-    echo "$1" > "$DC_s/6.cfg"
+    echo "$language" > "$DC_s/6.cfg"
     echo "$lgsl" >> "$DC_s/6.cfg"
     "$DS/stop.sh" L
     
-    if [ -f "$DM/topics/$1/.8.cfg" ]; then
-    lst=$(sed -n 1p "$DM/topics/$1/.8.cfg")
+    if [ -f "$DM/topics/$language/.8.cfg" ]; then
+    lst=$(sed -n 1p "$DM/topics/$language/.8.cfg")
     "$DS/default/tpc.sh" "$lst" 1
     else rm "$DC_s/4.cfg" && touch "$DC_s/4.cfg"; fi
     
@@ -163,11 +154,11 @@ ret=$?
         
         if cut -d "|" -f3 < "$cnf1" | grep "TRUE"; then
             if [ ! -f "$config_dir/idiomind.desktop" ]; then
-                echo "$desktopfile" > "$config_dir/idiomind.desktop"
+            echo "$desktopfile" > "$config_dir/idiomind.desktop"
             fi
         else
             if [ -f "$config_dir/idiomind.desktop" ]; then
-                rm "$config_dir/idiomind.desktop"
+            rm "$config_dir/idiomind.desktop"
             fi
         fi
         
@@ -175,11 +166,11 @@ ret=$?
         while [ $n -lt 10 ]; do
             if cut -d "|" -f18 < "$cnf1" | grep "${lang[$n]}" && \
             [ "${lang[$n]}" != "$lgtl" ]; then
-                confirm "$info2" dialog-question
-                [ $? -eq 0 ] && set_lang "${lang[$n]}"
                 lgtl="${lang[$n]}"
                 if grep -o -E 'Chinese|Japanese|Russian|Vietnamese' <<< "$lgtl";
-                then _info "$lgtl"; fi
+                then info3="\n$(gettext "Some features do not yet work with") $lgtl $(gettext "language")."; fi
+                confirm "$info2$info3" dialog-question "$lgtl"
+                [ $? -eq 0 ] && set_lang "${lang[$n]}"
                 break
             fi
             ((n=n+1))

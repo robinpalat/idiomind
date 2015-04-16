@@ -81,7 +81,7 @@ function notebook_1() {
     yad --form --tabnum=4 \
     --plug=$KEY \
     --text="$label_info1\n" \
-    --scroll --borders=10 --columns=2 \
+    --scroll --borders=5 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "$tpc" \
     --field="$(gettext "Mark as learned")":FBTN "$DS/mngr.sh 'mark_as_learned' '$tpc'" \
     --field=" ":LBL "$set1" \
@@ -124,7 +124,7 @@ function notebook_2() {
     yad --form --tabnum=4 \
     --plug=$KEY \
     --text="$label_info1\n" \
-    --scroll --borders=10 --columns=2 \
+    --scroll --borders=5 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "$tpc" \
     --field="   $(gettext "Review")   ":FBTN "$DS/mngr.sh 'mark_as_learn' '$tpc'" \
     --field=" ":LBL "$set1" \
