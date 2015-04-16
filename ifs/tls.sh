@@ -671,7 +671,7 @@ app_logo = os.path.join('/usr/share/idiomind/images/idiomind.png')
 app_name = 'Idiomind'
 app_version = 'v2.2-beta'
 app_comments = 'Vocabulary learning tool'
-app_copyright = 'Copyright (c) 2013-2015 Robin Palat'
+app_copyright = 'Copyright (c) 2013-2015 Robin Palatnik'
 app_website = 'http://idiomind.sourceforge.net/'
 app_license = (('This program is free software: you can redistribute it and/or modify\n'+
 'it under the terms of the GNU General Public License as published by\n'+

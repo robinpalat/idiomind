@@ -87,7 +87,7 @@ CNFG=$(yad --form --title="$(gettext "Podcasts settings")" \
 --always-print-result --print-all --separator="|" \
 --window-icon="$DS/images/icon.png" --center --scroll --on-top \
 --width=580 --height=460 --borders=10 \
---text="$(gettext "Configure RSS feed to learn with educational podcast.")" \
+--text="$(gettext "Configure feed urls to learn with educational podcasts.")" \
 --field="$(gettext "Update at startup")":CHK "$update" \
 --field="$(gettext "Sync after update")":CHK "$sync" \
 --field="$(gettext "URL")":LBL " " \

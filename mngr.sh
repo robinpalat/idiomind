@@ -378,6 +378,7 @@ function edit() {
         
             if [ ! -f "$DM_tlt/words/$fname.mp3" ]; then
             "$DS/mngr.sh" edit "$lists" "$((item_pos-1))" & exit; fi
+            
             srce_mod="$(tail -12 < "$file_tmp" | sed -n 2p  \
             | sed 's/^ *//; s/ *$//g'| sed ':a;N;$!ba;s/\n/ /g')"
             tpc_mod="$(tail -12 < "$file_tmp" | sed -n 3p)"
@@ -461,6 +462,7 @@ function edit() {
 
             if [ ! -f "$DM_tlt/$fname.mp3" ]; then
             "$DS/mngr.sh" edit "$lists" "$((item_pos-1))" & exit; fi
+            
             mark_mod="$(tail -7 < "$file_tmp" | sed -n 1p)"
             trgt_mod="$(tail -7 < "$file_tmp" | sed -n 2p | \
             sed 's/^ *//; s/ *$//g'| sed ':a;N;$!ba;s/\n/ /g')"
@@ -474,9 +476,8 @@ function edit() {
             
             if [ "$trgt_mod" != "$trgt" ]; then
             
-                (internet
                 fname2="$(nmfile "$trgt_mod")"
-
+                (internet
                 sed -i "s/${trgt}/${trgt_mod}/" "$DC_tlt/0.cfg"
                 sed -i "s/${trgt}/${trgt_mod}/" "$DC_tlt/1.cfg"
                 sed -i "s/${trgt}/${trgt_mod}/" "$DC_tlt/2.cfg"
@@ -486,8 +487,8 @@ function edit() {
                 mv -f "$DM_tlt/$fname.mp3" "$DM_tlt/$fname2.mp3"
                 srce_mod=$(translate "$trgt_mod" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')
                 add_tags_1 S "$trgt_mod" "$srce_mod" "$DM_tlt/$fname2.mp3"
-                source "$DS/default/dicts/$lgt"
                 
+                source "$DS/default/dicts/$lgt"
                 DT_r=$(mktemp -d $DT/XXXXXX); cd "$DT_r"
                 trgt="$trgt_mod"; srce="$srce_mod"
                 r=$(echo $(($RANDOM%1000)))
@@ -524,8 +525,8 @@ function edit() {
                     cp -f "$audio_mod" "$DM_tlt/$fname.mp3"
                     eyeD3 --remove-all "$DM_tlt/$fname.mp3"
                     add_tags_1 S "$trgt_mod" "$srce_mod" "$DM_tlt/$fname.mp3"
-                    source "$DS/default/dicts/$lgt"
                     
+                    source "$DS/default/dicts/$lgt"
                     DT_r=$(mktemp -d $DT/XXXXXX); cd "$DT_r"
                     trgt="$trgt_mod"; srce="$srce_mod"
                     r=$(echo $(($RANDOM%1000)))
