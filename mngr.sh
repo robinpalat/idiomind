@@ -35,12 +35,13 @@ function mkmn() {
     while [[ $n -le $(head -50 < "$DM_tl/.1.cfg" | wc -l) ]]; do
     
         tp=$(sed -n "$n"p "$DM_tl/.1.cfg")
-        i=$(<"$DM_tl/$tp/.conf/8.cfg")
+        i=$(sed -n 1p < "$DM_tl/$tp/.conf/8.cfg")
         if [ ! "$DM_tl/$tp/.conf/8.cfg" ] || \
         [ ! "$DM_tl/$tp/.conf/0.cfg" ] || \
         [ ! "$DM_tl/$tp/.conf/1.cfg" ] || \
         [ ! "$DM_tl/$tp/.conf/3.cfg" ] || \
         [ ! "$DM_tl/$tp/.conf/4.cfg" ] || \
+        [ -z "$i" ] || \
         [ ! -d "$DM_tl/$tp" ]; then
         i=13; echo "13" > "$DM_tl/$tp/.conf/8.cfg";fi
         
@@ -68,51 +69,54 @@ function mkmn() {
     exit 1
 }
 
-function mark_as_learn() {
+function mark_to_learn() {
     
     include "$DS/ifs/mods/mngr"
-
+    
     if [ "$tpc" != "$2" ]; then
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
     
     if [ $(wc -l < "$DC_tlt/0.cfg") -le 15 ]; then
     msg "$(gettext "Sorry, you must be at least 15 items.")\n " info & exit; fi
 
+    if [ "$3" = 1 ]; then
     kill -9 $(pgrep -f "yad --multi-progress ") &
     kill -9 $(pgrep -f "yad --list ") &
     kill -9 $(pgrep -f "yad --form ") &
     kill -9 $(pgrep -f "yad --notebook ") &
-
-    if grep -Fxo "$tpc" < "$DM_tl/.3.cfg"; then
-    
-        if [ $(< "$DC_tlt/8.cfg") = 7 ]; then
-        
-            calculate_review
-            
-            if [ "$RM" -ge 50 ]; then
-                echo "8" > "$DC_tlt/8.cfg"
-            else
-                echo "6" > "$DC_tlt/8.cfg"
-            fi
-        else
-            echo "6" > "$DC_tlt/8.cfg"
-        fi
-        rm -f "$DC_tlt/7.cfg"
-    else
-        if [ $(< "$DC_tlt/8.cfg") = 2 ]; then
-        
-            calculate_review
-            
-            if [ "$RM" -ge 50 ]; then
-                echo "3" > "$DC_tlt/8.cfg"
-            else
-                echo "1" > "$DC_tlt/8.cfg"
-            fi
-        else
-            echo "1" > "$DC_tlt/8.cfg"
-        fi
-        rm -f "$DC_tlt/7.cfg"
     fi
+
+    if [ $(wc -l < "$DC_tlt/8.cfg") -ge 1 ]; then
+        include "$DS/ifs/mods/mngr"
+    
+        dialog_2
+        ret=$(echo $?)
+    
+        # se eligio los nuevo 
+        if [ $ret -eq 3 ]; then
+        
+            rm -f "$DC_tlt/7.cfg"
+            idiomind topic & exit 1
+        fi
+    fi
+
+    stts=$(sed -n 1p "$DC_tlt/8.cfg")
+    
+    calculate_review
+    
+    if [ $((stts%2)) = 0 ]; then
+
+        echo "6" > "$DC_tlt/8.cfg"
+            
+    else
+        if [ "$RM" -ge 50 ]; then
+        echo "5" > "$DC_tlt/8.cfg"
+        else
+        echo "1" > "$DC_tlt/8.cfg"
+        fi
+    fi
+    
+    rm -f "$DC_tlt/7.cfg"
     cat "$DC_tlt/0.cfg" | awk '!array_temp[$0]++' > "$DT/0.cfg.tmp"
     sed '/^$/d' "$DT/0.cfg.tmp" > "$DC_tlt/0.cfg"
     rm -f "$DT/*.tmp"
@@ -122,7 +126,7 @@ function mark_as_learn() {
 
     "$DS/mngr.sh" mkmn &
 
-    idiomind topic & exit 1
+    [ "$3" = 1 ] && idiomind topic &
 }
 
 function mark_as_learned() {
@@ -135,42 +139,52 @@ function mark_as_learned() {
     if [ $(wc -l < "$DC_tlt/0.cfg") -le 15 ]; then
     msg "$(gettext "Sorry, you must be at least 15 items.")\n " info & exit; fi
     
+    if [ "$3" = 1 ]; then
     kill -9 $(pgrep -f "yad --list ") &
     kill -9 $(pgrep -f "yad --list ") &
     kill -9 $(pgrep -f "yad --form ") &
     kill -9 $(pgrep -f "yad --notebook ") &
-
-    if [ -f "$DC_tlt/9.cfg" ]; then
-    
-        calculate_review
-        
-        if [ "$RM" -ge 50 ]; then
-        
-            if [ $(sed '/^$/d' < "$DC_tlt/9.cfg" | wc -l) = 4 ]; then
-                echo "_
-                _
-                _
-                $(date +%m/%d/%Y)" > "$DC_tlt/9.cfg"
-            else
-                echo "$(date +%m/%d/%Y)" >> "$DC_tlt/9.cfg"
-            fi
-        fi
-    else
-        echo "$(date +%m/%d/%Y)" > "$DC_tlt/9.cfg"
     fi
-    > "$DC_tlt/7.cfg"
 
-    if grep -Fxo "$tpc" "$DM_tl/.3.cfg"; then
-        echo "7" > "$DC_tlt/8.cfg"
-    else
-        echo "2" > "$DC_tlt/8.cfg"
+    stts=$(sed -n 1p "$DC_tlt/8.cfg")
+
+    if [ ! -f "$DC_tlt/7.cfg" ]; then
+        if [ -f "$DC_tlt/9.cfg" ]; then
+        
+            calculate_review
+            
+            steps=$(sed '/^$/d' < "$DC_tlt/9.cfg" | wc -l)
+            
+             if [ "$steps" = 2 ]; then
+            stts=$((stts+1)); fi
+            
+            if [ "$RM" -ge 50 ]; then
+            
+                if [ "$steps" = 4 ]; then
+                echo -e "_\n_\n_\n$(date +%m/%d/%Y)" > "$DC_tlt/9.cfg"
+                else
+                echo "$(date +%m/%d/%Y)" >> "$DC_tlt/9.cfg"
+                fi
+            fi
+            
+        else
+            echo "$(date +%m/%d/%Y)" > "$DC_tlt/9.cfg"
+        fi
+
+        > "$DC_tlt/7.cfg"
+        if [ $((stts%2)) = 0 ]; then
+        echo "4" > "$DC_tlt/8.cfg"
+        else
+        echo "3" > "$DC_tlt/8.cfg"
+        fi
     fi
     rm "$DC_tlt/2.cfg" "$DC_tlt/1.cfg"
     touch "$DC_tlt/1.cfg"
     cp -f "$DC_tlt/0.cfg" "$DC_tlt/2.cfg"
     "$DS/mngr.sh" mkmn &
 
-    idiomind topic & exit 1
+    [ "$3" = 1 ] && idiomind topic &
+    exit 1
 }
 
 function delete_item_confirm() {
@@ -180,14 +194,16 @@ function delete_item_confirm() {
     source "$DS/ifs/mods/cmns.sh"
     fname="${2}"
 
-    if [ -f "$DM_tlt/words/$fname.mp3" ]; then 
-        file="$DM_tlt/words/$fname.mp3"
-        trgt=$(eyeD3 "$file" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
+    if [ -f "$DM_tlt/words/$fname.mp3" ]; then
+    file="$DM_tlt/words/$fname.mp3"
+    trgt=$(eyeD3 "$file" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
+        
     elif [ -f "$DM_tlt/$fname.mp3" ]; then
-        file="$DM_tlt/$fname.mp3"
-        trgt=$(eyeD3 "$file" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
+    file="$DM_tlt/$fname.mp3"
+    trgt=$(eyeD3 "$file" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
+    
     else
-        trgt="${3}"
+    trgt="${3}"
     fi
 
     [ -f "$file" ] && rm "$file"
@@ -203,16 +219,17 @@ function delete_item_confirm() {
         ./lwin.tmp && sed '/^$/d' ./lwin.tmp > ./lwin
         [ ./lsin ] && grep -vxF "$trgt" ./lsin > \
         ./lsin.tmp && sed '/^$/d' ./lsin.tmp > ./lsin
-        rm ./*.tmp; fi
+        rm ./*.tmp
+    fi
     
     cd "$DC_tlt"
     [ "./.11.cfg" ] && grep -vxF "$trgt" "./.11.cfg" > \
     "./11.cfg.tmp" && sed '/^$/d' "./11.cfg.tmp" > "./.11.cfg"
     n=0
     while [ $n -le 4 ]; do
-         [ -f "./$n.cfg" ] && grep -vxF "$trgt" "./$n.cfg" > \
-        "./$n.cfg.tmp" && sed '/^$/d' "./$n.cfg.tmp" > "./$n.cfg"
-        let n++
+    [ -f "./$n.cfg" ] && grep -vxF "$trgt" "./$n.cfg" > \
+    "./$n.cfg.tmp" && sed '/^$/d' "./$n.cfg.tmp" > "./$n.cfg"
+    let n++
     done
     rm ./*.tmp
 
@@ -647,8 +664,8 @@ case "$1" in
     mkmn ;;
     mark_as_learned)
     mark_as_learned "$@" ;;
-    mark_as_learn)
-    mark_as_learn "$@" ;;
+    mark_to_learn)
+    mark_to_learn "$@" ;;
     delete_item_confirm)
     delete_item_confirm "$@" ;;
     delete_item)

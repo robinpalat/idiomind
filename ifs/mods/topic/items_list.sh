@@ -83,7 +83,7 @@ function notebook_1() {
     --text="$label_info1\n" \
     --scroll --borders=5 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "$tpc" \
-    --field="$(gettext "Mark as learned")":FBTN "$DS/mngr.sh 'mark_as_learned' '$tpc'" \
+    --field="$(gettext "Mark as learned")":FBTN "$DS/mngr.sh 'mark_as_learned' '$tpc' 1" \
     --field=" ":LBL "$set1" \
     --field="$label_info2\n\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " \
     --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh 'upld' '$tpc'" \
@@ -126,7 +126,7 @@ function notebook_2() {
     --text="$label_info1\n" \
     --scroll --borders=5 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "$tpc" \
-    --field="   $(gettext "Review")   ":FBTN "$DS/mngr.sh 'mark_as_learn' '$tpc'" \
+    --field="   $(gettext "Review")   ":FBTN "$DS/mngr.sh 'mark_to_learn' '$tpc' 1" \
     --field=" ":LBL "$set1" \
     --field="$label_info2\n\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " \
     --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh 'upld' '$tpc'" \
@@ -158,20 +158,6 @@ function dialog_1() {
     --width=420 --height=150 --borders=10 \
     --button=" $(gettext "Not Yet") ":1 \
     --button=" $(gettext "Review") ":2
-}
-
-
-function dialog_2() {
-    
-    yad --title="$tpc" \
-    --class=Idiomind --name=Idiomind \
-    --text="  $(gettext "Review entire list or only new items?") " \
-    --window-icon="$DS/images/icon.png" \
-    --image=dialog-question --center \
-    --on-top --window-icon="$DS/images/icon.png" \
-    --width=420 --height=150 --borders=5 \
-    --button="$(gettext "Only New items")":3 \
-    --button="$(gettext "All Items")":2
 }
 
 

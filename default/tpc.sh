@@ -40,8 +40,10 @@ else
         echo "1" > "8.cfg"
         cd "$HOME"
         fi
+        
         [ ! "$DC_tl/$topic/7.cfg" ] && "$DS/ifs/tls.sh" check_index "$topic"
-
+        
+        stts=$(sed -n 1p < "$DC_tlt/8.cfg")
         if [[ $(grep -Fxon "$topic" < "$DM_tl/.1.cfg" \
         | sed -n 's/^\([0-9]*\)[:].*/\1/p') -ge 50 ]]; then
             if [ -f "$DC_tlt/9.cfg" ]; then
@@ -63,13 +65,13 @@ else
                 TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
                 RM=$((100*$TM/60))
                 fi
-                nstll=$(grep -Fxo "$topic" "$DM_tl/.3.cfg")
-                if [ -n "$nstll" ]; then
-                if [ "$RM" -ge 100 ]; then echo "9" > "$DC_tlt/8.cfg"; fi
+
+                if [[ $((stts%2)) = 0 ]]; then
+                if [ "$RM" -ge 100 ]; then echo "8" > "$DC_tlt/8.cfg"; fi
                 if [ "$RM" -ge 150 ]; then echo "10" > "$DC_tlt/8.cfg"; fi
                 else
-                if [ "$RM" -ge 100 ]; then echo "4" > "$DC_tlt/8.cfg"; fi
-                if [ "$RM" -ge 150 ]; then echo "5" > "$DC_tlt/8.cfg"; fi
+                if [ "$RM" -ge 100 ]; then echo "7" > "$DC_tlt/8.cfg"; fi
+                if [ "$RM" -ge 150 ]; then echo "9" > "$DC_tlt/8.cfg"; fi
                 fi
             fi
             "$DS/mngr.sh" mkmn
@@ -78,11 +80,8 @@ else
         echo "$topic" > "$DC_s/4.cfg"
         echo "$topic" > "$DM_tl/.8.cfg"
         echo "$topic" > "$DT/tpe"
-        if grep -Fxo "$topic" < "$DM_tl/.3.cfg"; then
-        echo '1' >> "$DC_s/4.cfg" 
-        echo '1' >> "$DM_tl/.8.cfg"; else
-        echo '0' >> "$DC_s/4.cfg"
-        echo '0' >> "$DM_tl/.8.cfg"; fi
+        echo '0' >> "$DC_s/4.cfg" 
+        echo '0' >> "$DM_tl/.8.cfg"
 
         cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
         [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"

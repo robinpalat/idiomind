@@ -247,10 +247,8 @@ check_index() {
         done
         
         if [ ! -f "$DC_tlt/8.cfg" ]; then
-        if grep -Fxo "$2" "$DM_tl/.3.cfg"; then
-        echo '6' > "$DC_tlt/8.cfg"
-        else echo '1' > "$DC_tlt/8.cfg"; fi; fi
-        eval stts=$(< "$DC_tlt/8.cfg")
+        echo 1 > "$DC_tlt/8.cfg"; fi
+        eval stts=$(sed -n 1p "$DC_tlt/8.cfg")
 
         eval mp3s="$(cd "$DM_tlt/"; find . -maxdepth 2 -name '*.mp3' \
         | sort -k 1n,1 -k 7 | wc -l)"
@@ -319,13 +317,12 @@ check_index() {
         msg "$(gettext "File not found")\n" error & exit 1; fi
         
         if [ "$stts" = "13" ]; then
-            if grep -Fxo "$topic" < "$DM_tl/.3.cfg"; then
-                echo "6" > "$DC_tlt/8.cfg"
-            elif grep -Fxo "$topic" < "$DM_tl/.2.cfg"; then
-                echo "1" > "$DC_tlt/8.cfg"
-            else
-                echo "1" > "$DC_tlt/8.cfg"
-            fi
+        
+            if [ "$DC_tlt/8.cfg_" ]; then
+            stts=$(sed -n 1p "$DC_tlt/8.cfg_")
+            rm "$DC_tlt/8.cfg_"
+            else stts=1; fi
+            echo "$stts" > "$DC_tlt/8.cfg"
         fi
     }
         
@@ -671,7 +668,7 @@ app_logo = os.path.join('/usr/share/idiomind/images/idiomind.png')
 app_name = 'Idiomind'
 app_version = 'v2.2-beta'
 app_comments = 'Vocabulary learning tool'
-app_copyright = 'Copyright (c) 2013-2015 Robin Palatnik'
+app_copyright = 'Copyright (c) 2015 Robin Palatnik'
 app_website = 'http://idiomind.sourceforge.net/'
 app_license = (('This program is free software: you can redistribute it and/or modify\n'+
 'it under the terms of the GNU General Public License as published by\n'+

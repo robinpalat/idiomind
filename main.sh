@@ -108,9 +108,10 @@ function new_session() {
     n=1
     while [ $n -le "$(wc -l < "$DM_tl/.1.cfg" | head -50)" ]; do
         tp=$(sed -n "$n"p "$DM_tl/.1.cfg")
-        stts=$(< "$DM_tl/$tp/.conf/8.cfg")
+        stts=$(sed -n 1p "$DM_tl/$tp/.conf/8.cfg")
 
-        if ([ "$stts" = 2 ] || [ "$stts" = 7 ]) && \
+        if ([ "$stts" = 3 ] || [ "$stts" = 4 ] \
+        || [ "$stts" = 7 ] || [ "$stts" = 8 ]) && \
         [ "$DM_tl/$tp/.conf/9.cfg" ]; then
         
             dts=$(sed '/^$/d' < "$DM_tl/$tp/.conf/9.cfg" | wc -l)
@@ -131,19 +132,19 @@ function new_session() {
             TM="$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))"
             RM=$((100*$TM/60))
             fi
-            if grep -Fxo "$tp" < "$DM_tl/.3.cfg"; then
-            if [ "$RM" -ge 100 ]; then
-            echo "9" >> "$DM_tl/$tp/.conf/8.cfg"
-            printf "$tp\n" >> "$DT/t_notify"; fi
+            if [ $((stts%2)) = 0 ]; then
             if [ "$RM" -ge 150 ]; then
             echo "10" > "$DM_tl/$tp/.conf/8.cfg"
+            printf "$tp\n" >> "$DT/t_notify"
+            elif [ "$RM" -ge 100 ]; then
+            echo "8" >> "$DM_tl/$tp/.conf/8.cfg"
             printf "$tp\n" >> "$DT/t_notify"; fi
             else
-            if [ "$RM" -ge 100 ]; then
-            echo "4" > "$DM_tl/$tp/.conf/8.cfg"
-            printf "$tp\n" >> "$DT/t_notify"; fi
             if [ "$RM" -ge 150 ]; then
-            echo "5" > "$DM_tl/$tp/.conf/8.cfg"
+            echo "9" > "$DM_tl/$tp/.conf/8.cfg"
+            printf "$tp\n" >> "$DT/t_notify"
+            elif [ "$RM" -ge 100 ]; then
+            echo "7" > "$DM_tl/$tp/.conf/8.cfg"
             printf "$tp\n" >> "$DT/t_notify"; fi
             fi
         fi
@@ -211,12 +212,12 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
         --button="$(gettext "Close")":1
         ret=$?
             
-            if [ "$ret" -eq 1 ]; then
+            if [ $ret -eq 1 ]; then
             
                 [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c"
                 rm -f "$DT/import.tar.gz" "$DT/$tpi.cfg" & exit
                 
-            elif [ "$ret" -eq 0 ]; then
+            elif [ $ret -eq 0 ]; then
             
                 if2=$(wc -l < $DM_t/$language_target/.1.cfg)
                 chck=$(grep -Fox "$tpi" < $DM_t/$language_target/.1.cfg | wc -l)
@@ -257,12 +258,12 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
                 let n++
                 done
                 tee -a "$DI_c/.11.cfg" "$DI_c/1.cfg" < "$DI_c/0.cfg"
-                echo "6" > "$DI_c/8.cfg"; rm "$DI_c/9.cfg" "$DI_c/ls"
+                echo "1" > "$DI_c/8.cfg"; rm "$DI_c/9.cfg" "$DI_c/ls"
                 cp -fr ./.* "$DI_m/"
                 echo "$language_target" > "$DC_s/6.cfg"
                 echo "$lgsl" >> "$DC_s/6.cfg"
                 echo "$dte" > "$DI_c/13.cfg"
-                echo "$tpi" >> "$DM_t/$language_target/.3.cfg"
+                #echo "$tpi" >> "$DM_t/$language_target/.3.cfg"
                 sed -i 's/'"$tpi"'//g' "$DM_t/$language_target/.2.cfg"
                 sed '/^$/d' "$DM_t/$language_target/.2.cfg" \
                 > "$DM_t/$language_target/.2.cfg.tmp"
@@ -303,6 +304,7 @@ function topic() {
         cnf1=$(mktemp $DT/cnf1.XXX.x)
         cnf3=$(mktemp $DT/cnf3.XXX.x)
         cnf4=$(mktemp $DT/cnf4.XXX.x)
+        [ ! "$DC_tlt/5.cfg" ] && > "$DC_tlt/5.cfg"
         set1=$(< "$DC_tlt/5.cfg")
         
         cd $DS
@@ -355,7 +357,7 @@ function topic() {
             fi
         }
     
-    if [ "$inx0" -lt 1 ]; then
+    if [ "$inx0" -lt 1 ]; then 
         
         notebook_1
      
@@ -372,69 +374,47 @@ function topic() {
             fi
 
         rm -f "$DT"/*.x
-        
+
     elif [ "$inx1" -ge 1 ]; then
     
         if [ -f "$DC_tlt/9.cfg" ] && [ -f "$DC_tlt/7.cfg" ]; then
         
             calculate_review
+            stts=$(sed -n 1p "$DC_tlt/8.cfg")
 
             if [ "$RM" -ge 100 ]; then
             
-                if grep -Fxo "$tpc" < "$DM_tl/.3.cfg"; then
-                echo "10" > "$DC_tlt/8.cfg"; else
-                echo "4" > "$DC_tlt/8.cfg"; fi
-                "$DS/mngr.sh" mkmn &
-                RM=100
+                if [ $((stts%2)) = 0 ]; then
+                echo "8" > "$DC_tlt/8.cfg"; else
+                echo "7" > "$DC_tlt/8.cfg"; fi
                 
+                "$DS/mngr.sh" mkmn &
+                
+                RM=100
                 dialog_1
                 ret=$(echo $?)
                 
-                    if [ "$ret" -eq 2 ]; then
+                    if [ $ret -eq 2 ]; then
                     
-                        if grep -Fxo "$tpc" < "$DM_tl/.3.cfg"; then
-                        echo "9" > "$DC_tlt/8.cfg"; else
-                        echo "3" > "$DC_tlt/8.cfg"; fi
-                        "$DS/mngr.sh" mkmn
-                        rm -f "$ls2" "$DC_tlt/7.cfg"
-                        cp -f "$ls0" "$ls1" && idiomind topic & exit 1
+                        "$DS/mngr.sh" mark_to_learn "$tpc" 0
+                        idiomind topic & exit 1
                     fi 
             fi
-            
+
             pres="<u><b>$(gettext "Learned")</b></u>  $(gettext "* however you have new items") ($inx1).\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
 
-            # learned
             notebook_2
             
         else
-            # learning
             notebook_1
             
         fi
             ret=$(echo $?)
 
             if [ $ret -eq 5 ]; then
+            
                 rm -f "$DT"/*.x
                 "$DS/practice/strt.sh" &
-                
-            elif [ $ret -eq 4 ]; then
-            
-                dialog_2
-                ret=$(echo $?)
-                
-                    if [ "$ret" -eq 2 ]; then
-                    
-                        rm -f "$DC_tlt/7.cfg" "$DT"/*.x "$ls2"
-                        if grep -Fxo "$tpc" < "$DM_tl/.3.cfg"; then
-                        echo "9" > "$DC_tlt/8.cfg"; else
-                        echo "3" > "$DC_tlt/8.cfg"; fi
-                        "$DS/mngr.sh" mkmn
-                        cp -f "$ls0" "$ls1" && idiomind topic & exit 1
-                        
-                    elif [ "$ret" -eq 3 ]; then
-                        rm -f "$DC_tlt/7.cfg" "$DT"/*.x
-                        idiomind topic & exit 1
-                    fi
                     
             else
                 if [ ! -f "$DT/ps_lk" ]; then
@@ -444,38 +424,33 @@ function topic() {
                 
                 rm -f $DT/*.x
             fi
-        
+    
     elif [ "$inx1" -eq 0 ]; then
     
         if [ ! -f "$DC_tlt/7.cfg" ] || [ ! -f "$DC_tlt/9.cfg" ]; then
-            
-            > "$DC_tlt/7.cfg"
-            echo "$(date +%m/%d/%Y)" > "$DC_tlt/9.cfg"
-            if grep -Fxo "$tpc" < "$DM_tl/.3.cfg"; then
-            echo "7" > "$DC_tlt/8.cfg"; else
-            echo "2" > "$DC_tlt/8.cfg"; fi
-            
-            "$DS/mngr.sh" mkmn &
+
+            "$DS/mngr.sh" mark_as_learned "$tpc" 0
         fi
         
         calculate_review
             
         if [ "$RM" -ge 100 ]; then
-            echo "4" > "$DC_tlt/8.cfg"
-            "$DS/mngr.sh" mkmn &
-            RM=100
+
+            stts=$(sed -n 1p "$DC_tlt/8.cfg")
+            if [[ $((stts%2)) = 0 ]]; then
+            echo "8" > "$DC_tlt/8.cfg"; else
+            echo "7" > "$DC_tlt/8.cfg"; fi
             
+            "$DS/mngr.sh" mkmn &
+            
+            RM=100
             dialog_1
             ret=$(echo $?)
                 
-                if [ "$ret" -eq 2 ]; then
-                
-                    rm -f "$DC_tlt/7.cfg" "$DT"/*.x "$ls2"
-                    if grep -Fxo "$tpc" < "$DM_tl/.3.cfg"; then
-                    echo "9" > "$DC_tlt/8.cfg"; else
-                    echo "3" > "$DC_tlt/8.cfg"; fi
-                    "$DS/mngr.sh" mkmn
-                    cp -f "$ls0" "$ls1" && idiomind topic & exit 1
+                if [ $ret -eq 2 ]; then
+
+                    "$DS/mngr.sh" mark_to_learn "$tpc" 0
+                    idiomind topic & exit 1
                 fi 
         fi
         
@@ -484,18 +459,6 @@ function topic() {
         # learned
         notebook_2
       
-        ret=$(echo $?)
-              
-            if [ $ret -eq 5 ]; then
-                "$DS/practice/strt.sh" &
-            
-            else
-                if [ ! -f "$DT/ps_lk" ]; then
-                
-                    apply
-                fi
-            fi
-
         rm -f "$DT"/*.x & exit
     fi
     rm -f "$DT"/*.x
