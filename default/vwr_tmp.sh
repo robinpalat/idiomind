@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 u=$(echo "$(whoami)")
-nmt=$(sed -n 1p "/tmp/.idmtp1.$u/dir$1/ls")
+nmt=$(sed -n 1p "/tmp/.idmtp1.$u/dir$1/folder")
 dir="/tmp/.idmtp1.$u/dir$1/$nmt"
 wth=650; eht=400
 re='^[0-9]+$'
