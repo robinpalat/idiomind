@@ -564,11 +564,11 @@ echo "<br><br></div>
         fi
         
     else
-        yad --form --title="$(gettext "Attachments")" \
+        yad --form --title="$(gettext "Attached Files")" \
         --text="$(gettext "Put in a folder files related to topic.")" \
         --name=Idiomind --class=Idiomind \
         --window-icon="$DS/images/icon.png" --center \
-        --width=350 --height=200 --borders=5 \
+        --width=350 --height=180 --borders=5 \
         --field="$(gettext "Add File")":FBTN "$DS/ifs/tls.sh 'add_file'" \
         --field="$(gettext "YouTube video URL")":FBTN "$DS/ifs/tls.sh 'videourl'" \
         --button="$(gettext "Cancel")":1 \
