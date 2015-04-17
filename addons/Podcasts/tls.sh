@@ -7,9 +7,8 @@ IFS=$'\n\t'
 $(gettext "Saved epidodes")
 $(gettext "Marks")" >/dev/null 2>&1
 #
-# sync delete option: disable 0 / enable 1
+# rsync delete: disable 0/enable 1
 delete=0
-#
 #
 #
 
@@ -151,16 +150,12 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
         
         if [ $(wc -w <<< "${f3}") -ge 2 ] && [ $(wc -w <<< "${f3}") -le 200 ]; then
         title=3; fi
-
         if [ $(wc -w <<< "${f5}") -ge 2 ] && [ -n "$(grep -o -E '\<|\>|/>' <<< "${f5}")" ]; then
         sum1=5; fi
-        
         if [ $(wc -w <<< "${f6}") -ge 2 ] && [ -n "$(grep -o -E '\<|\>|/>' <<< "${f6}")" ]; then
         sum1=6; fi
-
         if [ $(wc -w <<< "${f5}") -ge 2 ]; then
         sum2=5; fi
-        
         if [ $(wc -w <<< "${f6}") -ge 2 ]; then
         sum2=6; fi
     }
@@ -218,15 +213,15 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
     
     fchannel
     ftype1
-    if [ -z "$type" ]; then
-        ftype2
-        if [ -z $image ]; then
-        get_images
-        fi
-        if [ -z $summ ]; then
-            get_summ
-        fi
-    fi
+    #if [ -z "$type" ]; then
+        #ftype2
+        #if [ -z $image ]; then
+        #get_images
+        #fi
+        #if [ -z $summ ]; then
+            #get_summ
+        #fi
+    #fi
     
     if [ -z $sum2 ]; then
     summary="$sum1"; else
@@ -235,7 +230,7 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
     if [[ -n "$title" && -n "$summary" && -z "$image" && -z "$media" ]]; then
     type=3; fi
     
-    if [ "$type" = 1 ]; then
+    if [[ "$type" = 1 ]]; then
         
 cfg="channel=\"$name\"
 link=\"$link\"
@@ -316,7 +311,7 @@ sync() {
     cfg="$DM_tl/Podcasts/.conf/0.cfg"
     path="$(sed -n 3p < "$cfg" | grep -o 'path="[^"]*' | grep -o '[^"]*$')"
     
-    if  [ -f "$DT/l_sync" ] && [ "$2" != A ]; then
+    if  [ -f "$DT/l_sync" ] && [ "$2" != 0 ]; then
     msg_2 "$(gettext "A process is already running!")\n" info "OK" "gtk-stop" "Podcasts"
     e=$(echo $?)
         
@@ -328,53 +323,64 @@ sync() {
         killall tls.sh
         exit 1; fi
             
-    elif  [ -f "$DT/l_sync" ] && [ "$2" = A ]; then exit 1
+    elif  [ -f "$DT/l_sync" ] && [ "$2" = 0 ]; then exit 1
 
-    elif [ ! -d "$path" ] && [ "$2" != A ]; then
+    elif [ ! -d "$path" ] && [ "$2" != 0 ]; then
     msg " $(gettext "The directory to synchronization does not exist \n Exiting.")" \
-    dialog-warning & 
+    dialog-warning
     [ -f "$DT/l_sync" ] && rm -f "$DT/l_sync"; exit 1
     
-    elif  [ ! -d "$path" ] && [ "$2" = A ]; then
+    elif  [ ! -d "$path" ] && [ "$2" = 0 ]; then
     echo "Synchronization error. Missing path" >> "$DM_tl/Podcasts/.conf/feed.err"
     [ -f "$DT/l_sync" ] && rm -f "$DT/l_sync"; exit 1
     
-    
     elif [ -d "$path" ]; then
-    
-        set -e; set u
+        
         touch "$DT/l_sync"; SYNCDIR="$path"
         st1="$(cd "$SYNCDIR"; ls *.mp3 | wc -l)"
         
-        [[ $2 != A ]] && (sleep 1 && notify-send -i idiomind \
-        "$(gettext "Podcasts")" "$(gettext "Synchronizing") $st1 $(gettext "episode(s)")")
+        if [[ "$2" != 0 ]]; then
+        (sleep 1 && notify-send -i idiomind \
+        "$(gettext "Podcasts")" \
+        "$(gettext "Synchronizing") $st1 $(gettext "episode(s)")" -t 8000) &
+        fi
 
         if [ "$delete" = 0 ]; then
-        rsync -az -v --exclude="*.txt" --exclude="*.png" \
-        --exclude="*.html" --omit-dir-times --ignore-errors "$DM_tl/Podcasts/cache/" "$SYNCDIR"
+            
+            rsync -az -v --exclude="*.txt" --exclude="*.png" \
+            --exclude="*.html" --omit-dir-times --ignore-errors "$DM_tl/Podcasts/cache/" "$SYNCDIR"
+            exit=$?
         elif [ "$delete" = 1 ]; then
-        rsync -az -v --delete --exclude="*.txt" --exclude="*.png" \
-        --exclude="*.html" --omit-dir-times --ignore-errors "$DM_tl/Podcasts/cache/" "$SYNCDIR"
-        fi
-        set +e
-        exit=$?
         
-        if [ $exit = 0 ] ; then
-            [ -f "$DT/l_sync" ] && rm -f "$DT/l_sync"; exit 0
+            rsync -az -v --delete --exclude="*.txt" --exclude="*.png" \
+            --exclude="*.html" --omit-dir-times --ignore-errors "$DM_tl/Podcasts/cache/" "$SYNCDIR"
+            exit=$?
+        fi
+
+        if [[ $exit = 0 ]]; then
+            
             st2="$(cd "$SYNCDIR"; ls *.mp3 | wc -l)"
             re=$((st2-st1))
-                if [ $re -gt 0 ]; then
-                notify-send -i idiomind \
-                "$(gettext "Synchronization finished")" \
-                "$re $(gettext "New episode(s)")\n$st2 $(gettext "Total")" -t 8000; fi
+            
+            if [[ $re -gt 0 ]] || [ "$2" != 0 ]; then
+            (sleep 1 && notify-send -i idiomind \
+            "$(gettext "Synchronization finished")" \
+            "$re $(gettext "New episode(s)")\n$st2 $(gettext "Total")" -t 8000) &
+            fi
+  
         else
-            [ -f "$DT/l_sync" ] && rm -f "$DT/l_sync"; exit 1
-            notify-send -i idiomind \
+            if [ "$2" != 0 ]; then
+            (sleep 1 && notify-send -i idiomind \
             "$(gettext "Error")" \
-            "$(gettext "Error while syncing")" -t 8000
+            "$(gettext "Error while syncing")" -t 8000) &
+            else
+            echo "Error while syncing" >> "$DM_tl/Podcasts/.conf/feed.err"
+            fi
+
         fi
+        
+        [ -f "$DT/l_sync" ] && rm -f "$DT/l_sync"; exit
     fi
-    
 }
 
 case "$1" in

@@ -170,7 +170,7 @@ upld=$(yad --form --title="$(gettext "Share")" \
 "!$others!$article!$comics!$culture!$documentary!$entertainment!$funny!$family!$grammar!$history!$movies!$in_the_city!$interview!$internet!$music!$nature!$news!$office!$relations!$sport!$science!$shopping!$social_networks!$technology!$travel" \
 --field="    $(gettext "Skill Level"):CBE" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
 --field="\n$(gettext "Description/Notes"):TXT" "$nt" \
---field="$(gettext "Image\napprox. 600x200px"):FL" "$imgm" \
+--field="$(gettext "Image 600x150px"):FL" "$imgm" \
 --button="$(gettext "Cancel")":1 \
 --button="$(gettext "PDF")":2 "$btn")
 ret=$?

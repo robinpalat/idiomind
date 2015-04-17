@@ -192,7 +192,6 @@ function new_sentence() {
     source "$DS/default/dicts/$lgt"
     DM_tlt="$DM_tl/$tpe"
     DC_tlt="$DM_tl/$tpe/.conf"
-    icnn=idiomind
 
     if [ $(wc -l < "$DC_tlt/0.cfg") -ge 200 ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
@@ -248,7 +247,6 @@ function new_sentence() {
 
     if [ ./img.jpg ]; then
         set_image_2 "$DM_tlt/$fname.mp3" "$DM_tlt/words/images/$fname.jpg"
-        icnn=img.jpg
     fi
     
     cd "$DT_r"
@@ -268,7 +266,7 @@ function new_sentence() {
     [ "$DT_r" ] && rm -fr "$DT_r" & exit 1; fi
     
     add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3"
-    notify-send -i "$icnn" "$trgt" "$srce\\n($tpe)" -t 10000
+    notify-send "$trgt" "$srce\\n($tpe)" -t 10000
     index sentence "$trgt" "$tpe"
     
     (if [ "$list" = TRUE ]; then
@@ -287,7 +285,6 @@ function new_word() {
 
     trgt="$(sed s'\|\\'g <<<"$2")"
     srce="$4"
-    icnn=idiomind
     DT_r="$3"
     cd "$DT_r"
     DM_tlt="$DM_tl/$tpe"
@@ -360,7 +357,6 @@ function new_word() {
 
     if [ -f img.jpg ]; then
         set_image_3 "$DM_tlt/words/$fname.mp3" "$DM_tlt/words/images/$fname.jpg"
-        icnn=img.jpg
     fi
     
     if [ -n $(file -ib "$DM_tlt/words/$fname.mp3" | grep -o 'binary') ] \
@@ -369,7 +365,7 @@ function new_word() {
         add_tags_1 W "$trgt" "$srce" "$DM_tlt/words/$fname.mp3"
         nt="$(echo "_$(check_grammar_2 "$trgt")" | tr '\n' '_')"
         eyeD3 --set-encoding=utf8 -A IWI3I0I"$nt"IWI3I0I "$DM_tlt/words/$fname.mp3"
-        notify-send -i "$icnn" "$trgt" "$srce\\n($tpe)" -t 5000
+        notify-send "$trgt" "$srce\\n($tpe)" -t 5000
         index word "$trgt" "$tpe"
         printf "aitm.1.aitm\n" >> "$DC_s/8.cfg"
     

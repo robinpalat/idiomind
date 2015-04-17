@@ -319,7 +319,7 @@ check_index() {
 
 conditions "$1"
 
-if [ "$1" != A ]; then
+if [[ "$1" != A ]]; then
     echo "$tpc" > "$DC_s/4.cfg"
     echo '2' >> "$DC_s/4.cfg"
     echo "11" > "$DCP/8.cfg"
@@ -328,7 +328,6 @@ if [ "$1" != A ]; then
 fi
 
 echo "updating" > "$DT/.uptp"
-
 fetch_podcasts
 
 [ -f "$DT_r/log" ] && nd="$(wc -l < "$DT_r/log")" || nd=0
@@ -338,15 +337,14 @@ echo "$(date "+%a %d %B")" > "$DM_tl/Podcasts/.dt"
 if [ "$nd" -gt 0 ]; then
 
     remove_items
-    
-    #check_index
+    check_index
     
     notify-send -i idiomind \
     "$(gettext "Feeds updated")" \
     "$nd $(gettext "new episode(s)")" -t 8000
     
 else
-    if [ -n "$1" ] || [ -f "$DT_r/log" ]; then
+    if [[ "$1" != A ]]; then
         notify-send -i idiomind \
         "$(gettext "Feeds updated")" \
         "$(gettext "No change since the last update")" -t 8000
@@ -355,6 +353,7 @@ fi
 
 cfg="$DM_tl/Podcasts/.conf/0.cfg"; if [ -f "$cfg" ]; then
 sync="$(sed -n 2p < "$cfg" | grep -o 'sync="[^"]*' | grep -o '[^"]*$')"
-if [ "$sync" = TRUE ]; then "$DSP/tls.sh" sync A; fi; fi
+if [ "$sync" = TRUE ]; then "$DSP/tls.sh" sync 0
+fi; fi
 
 exit

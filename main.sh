@@ -105,6 +105,7 @@ function new_session() {
     
     # status update
     [ ! -f "$DM_tl/.1.cfg" ] && touch "$DM_tl/.1.cfg"
+    info="$(gettext "Could be reviewed:")"
     n=1
     while [ $n -le "$(wc -l < "$DM_tl/.1.cfg" | head -50)" ]; do
         tp=$(sed -n "$n"p "$DM_tl/.1.cfg")
@@ -118,44 +119,51 @@ function new_session() {
             if [ $dts = 1 ]; then
             dte=$(sed -n 1p "$DM_tl/$tp/.conf/9.cfg")
             TM="$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))"
-            RM=$((100*$TM/10))
+            RM=$((100*$TM/6))
             elif [ $dts = 2 ]; then
             dte=$(sed -n 2p "$DM_tl/$tp/.conf/9.cfg")
             TM="$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))"
-            RM=$((100*$TM/15))
+            RM=$((100*$TM/10))
             elif [ $dts = 3 ]; then
             dte=$(sed -n 3p "$DM_tl/$tp/.conf/9.cfg")
             TM="$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))"
-            RM=$((100*$TM/30))
+            RM=$((100*$TM/15))
             elif [ $dts = 4 ]; then
             dte=$(sed -n 4p "$DM_tl/$tp/.conf/9.cfg")
             TM="$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))"
-            RM=$((100*$TM/60))
+            RM=$((100*$TM/20))
+            elif [ $dts = 5 ]; then
+            dte=$(sed -n 5p "$DM_tl/$tp/.conf/9.cfg")
+            TM="$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))"
+            RM=$((100*$TM/30))
+            elif [ $dts = 6 ]; then
+            dte=$(sed -n 6p "$DM_tl/$tp/.conf/9.cfg")
+            TM="$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))"
+            RM=$((100*$TM/40))
             fi
             if [ $((stts%2)) = 0 ]; then
             if [ "$RM" -ge 150 ]; then
             echo "10" > "$DM_tl/$tp/.conf/8.cfg"
-            printf "$tp\n" >> "$DT/t_notify"
+            printf "$tp" >> "$DT/t_notify"
             elif [ "$RM" -ge 100 ]; then
             echo "8" >> "$DM_tl/$tp/.conf/8.cfg"
-            printf "$tp\n" >> "$DT/t_notify"; fi
+            printf "$tp" >> "$DT/t_notify"; fi
             else
             if [ "$RM" -ge 150 ]; then
             echo "9" > "$DM_tl/$tp/.conf/8.cfg"
-            printf "$tp\n" >> "$DT/t_notify"
+            printf "$tp" >> "$DT/t_notify"
             elif [ "$RM" -ge 100 ]; then
             echo "7" > "$DM_tl/$tp/.conf/8.cfg"
-            printf "$tp\n" >> "$DT/t_notify"; fi
+            printf "$tp" >> "$DT/t_notify"; fi
             fi
         fi
         let n++
     done
-    
-    if [ -f "$DT/t_notify" ] && [ -z "$2" ]; then
-        info="$(< "$DT/t_notify")"
-        (sleep 2 && notify-send -i idiomind "$(gettext "There are topics to review")" "$info") &
-        echo "$(gettext "Could be reviewed:")\n$info" >> "$DT/notify"
-        rm -f "$DT/t_notify";
+
+    if [ -f "$DT/t_notify" ]; then
+    info2="$(< "$DT/t_notify")"
+    printf "$info\n$info2" >> "$DT/notify"
+    rm -f "$DT/t_notify"
     fi
     
     rm -f  "$DT/ps_lk"
@@ -307,19 +315,13 @@ function topic() {
         [ ! "$DC_tlt/5.cfg" ] && > "$DC_tlt/5.cfg"
         set1=$(< "$DC_tlt/5.cfg")
         
-        cd $DS
+        cd "$DS"
         if [ -f "$DM_tlt/words/images/img.jpg" ]; then
         img="--image=$DM_tlt/words/images/img.jpg"
         sx=612; sy=570; else sx=640; sy=560; fi
         printf "tpcs.$tpc.tpcs\n" >> "$DC_s/8.cfg"
 
         label_info1="<big><big>$tpc </big></big><small>\\n$inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$(gettext "Created by") $author</small>"
-
-        if [ -f "$DT/notify" ]; then
-        l=$(wc -l < "$DT/notify")
-        r=`shuf -i 1-$l -n 1`
-        label_info2="<small>$(sed -n "$r"p "$DT/notify")</small>"
-        else label_info2=" "; fi
 
         apply() {
 
@@ -493,6 +495,13 @@ panel() {
     --field=gtk-home:btn "idiomind 'topic'" \
     --field=gtk-index:btn "$DS/chng.sh" \
     --field=gtk-preferences:btn "$DS/cnfg.sh" &
+    
+    if [ -f "$DT/notify" ]; then
+    info="$(< "$DT/notify")"
+    (sleep 4 && notify-send -i idiomind "$(gettext "Information")" "$info") &
+    rm -f "$DT/notify"
+    fi
+
 }
 
 version() {

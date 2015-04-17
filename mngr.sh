@@ -155,13 +155,13 @@ function mark_as_learned() {
             
             steps=$(sed '/^$/d' < "$DC_tlt/9.cfg" | wc -l)
             
-             if [ "$steps" = 2 ]; then
+            if [ "$steps" = 4 ]; then
             stts=$((stts+1)); fi
             
             if [ "$RM" -ge 50 ]; then
             
-                if [ "$steps" = 4 ]; then
-                echo -e "_\n_\n_\n$(date +%m/%d/%Y)" > "$DC_tlt/9.cfg"
+                if [ "$steps" = 6 ]; then
+                echo -e "_\n_\n_\n_\n_\n$(date +%m/%d/%Y)" > "$DC_tlt/9.cfg"
                 else
                 echo "$(date +%m/%d/%Y)" >> "$DC_tlt/9.cfg"
                 fi

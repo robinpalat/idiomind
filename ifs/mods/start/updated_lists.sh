@@ -106,7 +106,7 @@ if [ TRUE = TRUE ]; then
     done < "$items"
     
     if [ $(wc -l < "$items") -ge 5 ]; then
-    echo "$(gettext "Information"):\n$(wc -l < "$items") $(gettext "items marked as learned")" >> "$DT/notify"
+    echo "$(wc -l < "$items") $(gettext "items marked as learned")" >> "$DT/notify"
     fi
     fi
     
