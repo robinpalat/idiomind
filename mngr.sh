@@ -92,7 +92,6 @@ function mark_to_learn() {
         dialog_2
         ret=$(echo $?)
     
-        # se eligio los nuevo 
         if [ $ret -eq 3 ]; then
         
             rm -f "$DC_tlt/7.cfg"

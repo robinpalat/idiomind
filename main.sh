@@ -88,7 +88,7 @@ function new_session() {
     echo "$DESKTOP_SESSION" >> "$DC_s/10.cfg"
     gconftool-2 --get /desktop/gnome/interface/font_name \
     | cut -d ' ' -f 2 >> "$DC_s/10.cfg"
-    locale >/dev/null 2>&1
+    locale >/dev/null 2>&1 #FIX
     [[ $? != 0 ]] && msg \
     "$(gettext "The system is not properly configured.\nE10")" \
     error Error && exit 1
@@ -304,7 +304,6 @@ function topic() {
         declare inx$n=$(wc -l < "$DC_tlt/$n.cfg")
         let n++
         done
-
         nt="$DC_tlt/10.cfg"
         author="$(sed -n 4p < "$DC_tlt/12.cfg" \
         | grep -o 'author="[^"]*' | grep -o '[^"]*$')"
@@ -314,8 +313,6 @@ function topic() {
         cnf4=$(mktemp $DT/cnf4.XXX.x)
         [ ! "$DC_tlt/5.cfg" ] && > "$DC_tlt/5.cfg"
         set1=$(< "$DC_tlt/5.cfg")
-        
-        cd "$DS"
         if [ -f "$DM_tlt/words/images/img.jpg" ]; then
         img="--image=$DM_tlt/words/images/img.jpg"
         sx=612; sy=570; else sx=640; sy=560; fi
@@ -501,7 +498,6 @@ panel() {
     (sleep 4 && notify-send -i idiomind "$(gettext "Information")" "$info") &
     rm -f "$DT/notify"
     fi
-
 }
 
 version() {

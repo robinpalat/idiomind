@@ -21,7 +21,6 @@ source "$DS/ifs/mods/cmns.sh"
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
 
-
 check_source_1() {
 
 CATEGORIES="others
@@ -451,13 +450,16 @@ function videourl() {
     n=$(ls *.url "$DM_tlt/attchs/" | wc -l)
     url=$(yad --form --title=" " \
     --name=Idiomind --class=Idiomind \
-    --field="$(gettext "YouTube URL")" \
+    --separator="" \
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --center --on-top \
     --width=480 --height=100 --borders=5 \
+    --field="$(gettext "YouTube URL")" \
     --button="$(gettext "Cancel")":1 \
     --button=gtk-ok:0)
-    [ -n "$url" ] && echo "$url" > "$DM_tlt/attchs/video$n.url"
+
+    [ `wc -c <<<"$url"` -gt 40 ] && \
+    echo "$url" > "$DM_tlt/attchs/video$n.url"
 
 }
 
@@ -525,7 +527,7 @@ echo "<br><br><div class=\"summary\">$txto \
 >> "$DC_tlt/att.html"
 elif grep ".url" <<<"$file"; then
 url=$(tr -d '=' < "$DM_tlt/attchs/$file" \
-| sed 's/|//;s|watch?v|v\/|;s|https|http|g')
+| sed 's|watch?v|v\/|;s|https|http|g')
 echo "<br><br><div class=\"summary\">
 <iframe width=\"420\" height=\"315\" src=\"$url\" \
 frameborder=\"0\" allowfullscreen></iframe>
@@ -554,9 +556,9 @@ echo "<br><br></div>
         --uri="$DC_tlt/att.html" --browser \
         --window-icon="$DS/images/icon.png" --center \
         --width=650 --height=580 --borders=10 \
-        --button="$(gettext "Open Folder")":"xdg-open '$DM_tlt/attchs'" \
-        --button="$(gettext "Add Video")":"$DS/ifs/tls.sh 'videourl'" \
-        --button="$(gettext "Add File")":"$DS/ifs/tls.sh 'add_file'" \
+        --button="$(gettext "Folder")":"xdg-open '$DM_tlt/attchs'" \
+        --button="$(gettext "Video")":"$DS/ifs/tls.sh 'videourl'" \
+        --button="$(gettext "File")":"$DS/ifs/tls.sh 'add_file'" \
         --button="$(gettext "Close")":"1"
 
         if [ "$ch1" != "$(ls -A "$DM_tlt/attchs")" ]; then
@@ -630,9 +632,9 @@ function check_updates() {
         msg_2 "<b> $(gettext "A new version of Idiomind available") </b>\n\n" \
         info "$(gettext "Download")" "$(gettext "Cancel")" $(gettext "Updates")
         
-        if [ "$ret" -eq 0 ]; then
+        if [ $ret -eq 0 ]; then
             xdg-open "$pkg";
-        elif [ "$ret" -eq 1 ]; then
+        elif [ $ret -eq 1 ]; then
             echo `date +%d` > "$DC_s/9.cfg";
         fi
         
@@ -665,12 +667,12 @@ function a_check_updates() {
             msg_2 "<b>$(gettext "A new version of Idiomind available")\n</b>\n$(gettext "Do you want to download it now?")\n" info "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Updates")" "$(gettext "Ignore this update")"
             ret=$(echo $?)
             
-            if [ "$ret" -eq 0 ]; then
-                xdg-open "$pkg";
-            elif [ "$ret" -eq 2 ]; then
-                echo `date +%d` >> "$DC_s/9.cfg";
-            elif [ "$ret" -eq 1 ]; then
-                echo `date +%d` > "$DC_s/9.cfg";
+            if [ $ret -eq 0 ]; then
+            xdg-open "$pkg";
+            elif [ $ret -eq 2 ]; then
+            echo `date +%d` >> "$DC_s/9.cfg";
+            elif [ $ret -eq 1 ]; then
+            echo `date +%d` > "$DC_s/9.cfg";
             fi
         fi
     fi

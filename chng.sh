@@ -36,10 +36,10 @@ if [ "$1" = chngi ]; then
     stop_loop() {
     
         if [ ! -f "$1" ]; then
-            echo "___" >> "$DT/.l_loop"
-            if [ $(cat "$DT/.l_loop" | wc -l) -gt 5 ]; then
-            rm -f "$DT/.p_"  "$DT/.l_loop" &
-            "$DS/stop.sh" play & exit 1; fi
+        echo "___" >> "$DT/.l_loop"
+        if [ $(cat "$DT/.l_loop" | wc -l) -gt 5 ]; then
+        rm -f "$DT/.p_"  "$DT/.l_loop" &
+        "$DS/stop.sh" play & exit 1; fi
         fi
     }
 
@@ -67,7 +67,6 @@ if [ "$1" = chngi ]; then
     trgt=$(grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)' <<<"$tgs")
     srce=$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)' <<<"$tgs")
     play=play
-    
     fi
 
     [ -z "$trgt" ] && trgt="$item"
@@ -105,8 +104,9 @@ elif [ "$1" != chngi ]; then
     tpc=$(cat "$DC_s/0.cfg" | yad --list --title="$(gettext "Topics")" "$text" \
     --name=Idiomind --class=Idiomind --text-align=$align \
     --always-print-result \
-    --separator="" --center $img --image-on-top --ellipsize=END \
-    --no-headers --window-icon="$DS/images/icon.png" \
+    --window-icon="$DS/images/icon.png" \
+    --separator="" --center $img --image-on-top \
+    --no-headers --ellipsize=END \
     --width=640 --height=560 --borders=8 \
     --column=img:IMG \
     --column=File:TEXT \

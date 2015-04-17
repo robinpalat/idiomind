@@ -296,8 +296,7 @@ function new_word() {
     
     if [ -z "$tpe" ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
-    msg "$(gettext "No topic is active")\n" info & exit 1
-    fi
+    msg "$(gettext "No topic is active")\n" info & exit 1; fi
     
     internet
 
@@ -458,11 +457,12 @@ function edit_list_words() {
 
         printf "aitm.$lns.aitm\n" >> "$DC_s/8.cfg"
 
-            if [ -f "$DT_r/logw" ]; then
-                sleep 1
-                dlg_info_1 "$(gettext "Some items could not be added to your list.")"; fi
-            [ "$DT_r" ] && rm -fr "$DT_r"
-            rm -f logw "$DT"/*.$c & exit 1
+        if [ -f "$DT_r/logw" ]; then
+        sleep 1
+        dlg_info_1 "$(gettext "Some items could not be added to your list.")"; fi
+        
+        [ "$DT_r" ] && rm -fr "$DT_r"
+        rm -f logw "$DT"/*.$c & exit 1
     fi
 }
 
@@ -487,18 +487,18 @@ function dclik_list_words() {
     
     if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
         (
-            echo "1"
-            echo "# $(gettext "Processing")..." ;
-            srce="$(translate "$(cat lstws)" $lgtl $lgsl)"
-            cd "$DT_r"
-            r=$(echo $(($RANDOM%1000)))
-            clean_3 "$DT_r" "$r"
-            translate "$(sed '/^$/d' < $aw)" auto $lg | sed 's/,//g' \
-            | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
-            list_words "$DT_r" "$r"
-            pwrds=$(tr '\n' '_' < "B.$r")
-            echo "$pwrds"
-            list_words_3 ./lstws "$pwrds"
+        echo "1"
+        echo "# $(gettext "Processing")..." ;
+        srce="$(translate "$(cat lstws)" $lgtl $lgsl)"
+        cd "$DT_r"
+        r=$(echo $(($RANDOM%1000)))
+        clean_3 "$DT_r" "$r"
+        translate "$(sed '/^$/d' < $aw)" auto $lg | sed 's/,//g' \
+        | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
+        list_words "$DT_r" "$r"
+        pwrds=$(tr '\n' '_' < "B.$r")
+        echo "$pwrds"
+        list_words_3 ./lstws "$pwrds"
         ) | dlg_progress_1
     
     else
@@ -996,9 +996,9 @@ function process() {
                         while [ $n -le 20 ]; do
                              sleep 5
                              if [ $(wc -l < ./x) -eq "$rm" ] || [ $n = 20 ]; then
-                                [ -d "$DT_r" ] && rm -fr "$DT_r"
-                                cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
-                                rm -f "$lckpr" & break; exit 1
+                            [ -d "$DT_r" ] && rm -fr "$DT_r"
+                            cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
+                            rm -f "$lckpr" & break; exit 1
                              fi
                             let n++
                         done
