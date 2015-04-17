@@ -3,7 +3,8 @@
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 IFS=$'\n\t'
-"$(gettext "New episodes")
+"$(gettext "Tell us if you think this is an error.")
+$(gettext "New episodes")
 $(gettext "Saved epidodes")
 $(gettext "Marks")" >/dev/null 2>&1
 #
@@ -244,8 +245,8 @@ url=\"$feed\""
         echo -e "$cfg" > "$DIR2/$num.rss"; exit 0
         
     else
-        msg "<b>$(gettext "Specified URL doesn't seem to contain any feeds.")</b>\n\n\
-$(gettext "Tell us if you think this is an error.")" dialog-warning Idiomind &
+        url="$(tr '&' ' ' <<<"$feed")"
+        msg "<b>$(gettext "Specified URL doesn't seem to contain any feeds.  ")</b>\n$url  " dialog-warning Idiomind &
         [ "$DIR2/$num.rss" ] && "$DIR2/$num.rss"
         rm -f "$DT/cpt.lock"; exit 1
     fi
@@ -347,12 +348,12 @@ sync() {
 
         if [ "$delete" = 0 ]; then
             
-            rsync -az -v --exclude="*.txt" --exclude="*.png" \
+            rsync -az -v --exclude="*.item" --exclude="*.png" \
             --exclude="*.html" --omit-dir-times --ignore-errors "$DM_tl/Podcasts/cache/" "$SYNCDIR"
             exit=$?
         elif [ "$delete" = 1 ]; then
         
-            rsync -az -v --delete --exclude="*.txt" --exclude="*.png" \
+            rsync -az -v --delete --exclude="*.item" --exclude="*.png" \
             --exclude="*.html" --omit-dir-times --ignore-errors "$DM_tl/Podcasts/cache/" "$SYNCDIR"
             exit=$?
         fi

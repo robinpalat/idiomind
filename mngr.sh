@@ -77,7 +77,7 @@ function mark_to_learn() {
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
     
     if [ $(wc -l < "$DC_tlt/0.cfg") -le 15 ]; then
-    msg "$(gettext "Sorry, you must be at least 15 items.")\n " info & exit; fi
+    msg "$(gettext "You must be at least 15 items.")\n " info & exit; fi
 
     if [ "$3" = 1 ]; then
     kill -9 $(pgrep -f "yad --multi-progress ") &
@@ -136,7 +136,7 @@ function mark_as_learned() {
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
     
     if [ $(wc -l < "$DC_tlt/0.cfg") -le 15 ]; then
-    msg "$(gettext "Sorry, you must be at least 15 items.")\n " info & exit; fi
+    msg "$(gettext "You must be at least 15 items.")\n " info & exit; fi
     
     if [ "$3" = 1 ]; then
     kill -9 $(pgrep -f "yad --list ") &

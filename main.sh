@@ -105,7 +105,7 @@ function new_session() {
     
     # status update
     [ ! -f "$DM_tl/.1.cfg" ] && touch "$DM_tl/.1.cfg"
-    info="$(gettext "Could be reviewed:")"
+    #info="$(gettext "Review")"
     n=1
     while [ $n -le "$(wc -l < "$DM_tl/.1.cfg" | head -50)" ]; do
         tp=$(sed -n "$n"p "$DM_tl/.1.cfg")
@@ -163,8 +163,7 @@ function new_session() {
     if [ -f "$DT/t_notify" ]; then
     info2="$(< "$DT/t_notify")"
     printf "$info\n$info2" >> "$DT/notify"
-    rm -f "$DT/t_notify"
-    fi
+    rm -f "$DT/t_notify"; fi
     
     rm -f  "$DT/ps_lk"
     "$DS/mngr.sh" mkmn &
@@ -495,8 +494,8 @@ panel() {
     --field=gtk-preferences:btn "$DS/cnfg.sh" &
     
     if [ -f "$DT/notify" ]; then
-    info="$(< "$DT/notify")"
-    (sleep 4 && notify-send -i idiomind "$(gettext "Information")" "$info") &
+    info="$(head -n 10 < "$DT/notify" | uniq)"
+    (sleep 5 && notify-send -i idiomind "$(gettext "Notice")" "$info") &
     rm -f "$DT/notify"
     fi
 }

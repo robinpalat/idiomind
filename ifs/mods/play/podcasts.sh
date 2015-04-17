@@ -3,7 +3,7 @@
 
 videos="$(sed -n 8p < "$DC_s/1.cfg" \
 | grep -o videos=\"[^\"]* | grep -o '[^"]*$')"
-channel="$(sed -n 1p < "$DM_tl/Podcasts/cache/$fname" \
+channel="$(sed -n 1p < "$DM_tl/Podcasts/cache/$fname.item" \
 | grep -o channel=\"[^\"]* | grep -o '[^"]*$')"
 if [ "$videos" = "TRUE" ] && ([ "$news" = "TRUE" ] || [ "$saved" = "TRUE" ]); then
 find "$DM_tl/Podcasts/cache"/ -type f \( -name "*.avi" -o -name "*.mp4" -o -name "*.m4v" \) > "$DT/index.m3u"

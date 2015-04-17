@@ -615,7 +615,8 @@ function fback() {
     yad --html --title="$(gettext "Feedback")" \
     --name=Idiomind --class=Idiomind \
     --browser --uri="$web" \
-    --window-icon="$DS/images/icon.png" -no-buttons --fixed \
+    --window-icon="$DS/images/icon.png" \
+    --no-buttons --fixed \
     --width=500 --height=455
      
 } >/dev/null 2>&1

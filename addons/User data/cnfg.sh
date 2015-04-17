@@ -14,6 +14,8 @@ fi
 
 path="$(sed -n 2p < "$DC_a/1.cfg" \
 | grep -o path=\"[^\"]* | grep -o '[^"]*$')"
+size="$(sed -n 3p < "$DC_a/1.cfg" \
+| grep -o size=\"[^\"]* | grep -o '[^"]*$')"
 
 [ -f "$path/.udt" ] && udt=$(< "$path/.udt") || udt=" "
 dte=$(date +%F)

@@ -254,9 +254,9 @@ fetch_podcasts() {
                         sed -i '/^$/d' "$DCP/1.cfg"; fi
                         echo "$title" >> "$DCP/.11.cfg"
                         echo "$title" >> "$DT_r/log"
-                        echo -e "channel=\"$channel\"" > "$DMC/$fname"
-                        echo -e "link=\"$link\"" >> "$DMC/$fname"
-                        echo -e "title=\"$title\"" >> "$DMC/$fname"
+                        echo -e "channel=\"$channel\"" > "$DMC/$fname.item"
+                        echo -e "link=\"$link\"" >> "$DMC/$fname.item"
+                        echo -e "title=\"$title\"" >> "$DMC/$fname.item"
                     fi
                 done <<<"$podcast_items"
             fi
@@ -356,7 +356,11 @@ fi
 
 cfg="$DM_tl/Podcasts/.conf/0.cfg"; if [ -f "$cfg" ]; then
 sync="$(sed -n 2p < "$cfg" | grep -o 'sync="[^"]*' | grep -o '[^"]*$')"
-if [ "$sync" = TRUE ]; then "$DSP/tls.sh" sync 0
+if [ "$sync" = TRUE ]; then 
+if [[ "$1" != A ]]; then
+"$DSP/tls.sh" sync
+else
+"$DSP/tls.sh" sync 0
 fi; fi
 
 exit

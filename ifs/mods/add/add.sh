@@ -271,7 +271,7 @@ function voice() {
             echo "$1" | text2wave -o ./s.wav
             sox ./s.wav "$3"
             else
-            msg "$(gettext "Sorry, festival can not process this language.")\n" error
+            msg "$(gettext "Sorry, <b><i>festival</i></b> can not process this language.")\n" error
             [ "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
         else
             echo "$1" | "$synth"
@@ -281,9 +281,13 @@ function voice() {
     else
     
         lg="${lgtl,,}"
+        
         [ $lg = chinese ] && lg=Mandarin
-        if [ $lg = japanese ]; then msg "$(gettext "Sorry, espeak can not process Japanese text.")\n" error
+        [ $lg = portuguese ] && lg=brazil
+        [ $lg = vietnamese ] && lg=vietnam
+        if [ $lg = japanese ]; then msg "$(gettext "Sorry, <b><i>espeak</i></b> can not process Japanese language.")\n" error
         [ "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
+        
         espeak "$1" -v $lg -k 1 -p 40 -a 80 -s 110 -w ./s.wav
         sox ./s.wav "$3"
     fi
@@ -304,7 +308,8 @@ function fetch_audio() {
             if [ -f "$3/${word,,}.mp3" ]; then
                     mv -f "$3/${word,,}.mp3" "$4/${word,,}.mp3"
             else
-                voice "$word" "$3" "$4/${word,,}.mp3"; fi
+                voice "$word" "$3" "$4/${word,,}.mp3"
+            fi
         fi
         
     done < "$words_list"
@@ -358,7 +363,7 @@ function dlg_form_1() {
     --width=420 --height=150 --borders=0 \
     --field=" <small>$lgtl</small>" "$txt" \
     --field=" $atopic:CB" \
-    "$ltopic!$(gettext "New topic") *$e$tpcs" \
+    "$ltopic!$(gettext "New") *$e$tpcs" \
     --button="$(gettext "Image")":3 \
     --button="$(gettext "Audio")":2 \
     --button=gtk-add:0
@@ -377,7 +382,7 @@ function dlg_form_2() {
     --field=" <small>$lgtl</small>" "$txt" \
     --field=" <small>${lgsl^}</small>" "$srce" \
     --field=" $atopic:CB" \
-    "$ltopic!$(gettext "New topic") *$e$tpcs" \
+    "$ltopic!$(gettext "New") *$e$tpcs" \
     --button="$(gettext "Image")":3 \
     --button="$(gettext "Audio")":2 \
     --button=gtk-add:0
@@ -432,7 +437,6 @@ function dlg_checklist_3() {
     --button=$(gettext "Reorder"):2 \
     --button="$(gettext "To New Topic")":"$DS/add.sh 'new_topic'" \
     --button=gtk-add:0 > "$slt"
-
 }
 
 

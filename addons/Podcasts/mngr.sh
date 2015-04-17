@@ -28,7 +28,7 @@ if [ "$1" = delete_item ]; then
             [ "$DMC/$fname.jpg" ] && rm "$DMC/$fname.jpg"
             [ "$DMC/$fname.png" ] && rm "$DMC/$fname.png"
             [ "$DMC/$fname.html" ] && rm "$DMC/$fname.html"
-            [ "$DMC/$fname" ] && rm "$DMC/$fname"
+            [ "$DMC/$fname.item" ] && rm "$DMC/$fname.item"
             cd "$DCP"
             grep -vxF "$item" ./.22.cfg > ./.22.cfg.tmp
             sed '/^$/d' ./.22.cfg.tmp > ./.22.cfg

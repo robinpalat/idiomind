@@ -20,6 +20,8 @@
 source /usr/share/idiomind/ifs/c.conf
 
 [ -z "$tpc" ] && exit 1
+x=$(($(sed -n 2p "$DC_s/10.cfg")/2))
+y=$(($(sed -n 3p "$DC_s/10.cfg")/2))
 lbls=('Words' 'Sentences' 'Marks' 'Practice' 'New episodes' 'Saved epidodes')
 sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
 'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' \
@@ -70,7 +72,7 @@ function setting_1() {
             arr="in$((n+1))"
             [[ -z ${!arr} ]] && echo "$DS/images/addi.png" \
             || echo "$DS/images/add.png"
-        echo "  <span font_desc='Arial 11'>$(gettext "${lbls[$n]}")</span><i></i>"
+        echo "  <span font_desc='Arial 11'>$(gettext "${lbls[$n]}")</span>"
         echo "${!sets[$((n+12))]}"
         let n++
     done
@@ -90,15 +92,18 @@ else
     fi
     btn="gtk-media-stop:2"
 fi
-
+#--geometry=0x0-$x-$y
 slct=$(mktemp "$DT"/slct.XXXX)
 setting_1 | yad --list --title="$tpc" "$l" \
 --print-all --always-print-result --separator="|" \
---class=Idiomind --name=Idiomind --align=right --no-headers --center \
---expand-column=2 --window-icon="$DS/images/icon.png" \
---on-top --skip-taskbar --borders=5 --width=330 --height=280 \
+--class=Idiomind --name=Idiomind \
+--window-icon="$DS/images/icon.png" \
+--skip-taskbar --fixed --align=right --center --on-top \
+--expand-column=2 --no-headers \
+--width=330 --height=280 --borders=5 \
 --column=IMG:IMG --column=TXT:TXT --column=CHK:CHK \
---button="$btn" --button="$(gettext "Close")":1  > "$slct"
+--button="$btn" \
+--button="$(gettext "Close")":1  > "$slct"
 ret=$?
 
 if [ "$ret" -eq 0 ]; then
@@ -107,7 +112,7 @@ if [ "$ret" -eq 0 ]; then
     
     while [ $n -lt 19 ]; do
 
-        val=$(sed -n $((n-11))p < "$slct" | cut -d "|" -f3)
+        val=$(sed -n $((n-11))p < "$slct" | cut -d "|" -f3) # -f3
         [ -n "$val" ] && sed -i "s/${sets[$n]}=.*/${sets[$n]}=\"$val\"/g" \
         "$DC_s/1.cfg"
 
