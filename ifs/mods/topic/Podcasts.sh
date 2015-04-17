@@ -3,10 +3,12 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
-if [ "$tpc" != 'Podcasts' ]; then
+tpa="$(sed -n 1p "$DC_a/4.cfg")"
+if [ "$tpa" != 'Podcasts' ]; then
 [ ! -f "$DM_tl/Podcasts/.conf/8.cfg" ] \
 && echo "11" > "$DM_tl/Podcasts/.conf/8.cfg"
-echo "Podcasts" > "$DC_s/4.cfg"
+echo "Podcasts" > "$DC_a/4.cfg"
+echo "$tpc" > "$DC_s/4.cfg"
 echo '2' >> "$DC_s/4.cfg"
 fi
 

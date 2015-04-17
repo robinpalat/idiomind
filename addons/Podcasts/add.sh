@@ -7,7 +7,6 @@ include "$DS/ifs/mods/add"
 
 if [ "$1" = new_item ]; then
 
-    
     DMC="$DM_tl/Podcasts/cache"
     DCP="$DM_tl/Podcasts/.conf"
     fname="$(nmfile "${item}")"

@@ -292,8 +292,9 @@ function topic() {
     source "$DS/ifs/mods/topic/items_list.sh"
     
     if [ "$mode" = 2 ]; then
-    
-        "$DS/ifs/mods/topic/$tpc.sh" & exit
+        
+        tpa="$(sed -n 1p "$DC_a/4.cfg")"
+        "$DS/ifs/mods/topic/$tpa.sh" & exit 1
 
     elif [ "$mode" = 0 ] || [ "$mode" = 1 ]; then
     

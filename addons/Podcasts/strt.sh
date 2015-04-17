@@ -254,6 +254,9 @@ fetch_podcasts() {
                         sed -i '/^$/d' "$DCP/1.cfg"; fi
                         echo "$title" >> "$DCP/.11.cfg"
                         echo "$title" >> "$DT_r/log"
+                        echo -e "channel=\"$channel\"" > "$DMC/$fname"
+                        echo -e "link=\"$link\"" >> "$DMC/$fname"
+                        echo -e "title=\"$title\"" >> "$DMC/$fname"
                     fi
                 done <<<"$podcast_items"
             fi
@@ -324,7 +327,7 @@ if [[ "$1" != A ]]; then
     echo '2' >> "$DC_s/4.cfg"
     echo "11" > "$DCP/8.cfg"
     (sleep 2 && notify-send -i idiomind "$(gettext "Updating")" \
-    "$(gettext "Checking") $nps $(gettext "feeds")" -t 6000) &
+    "$(gettext "Checking new episodes...")" -t 6000) &
 fi
 
 echo "updating" > "$DT/.uptp"

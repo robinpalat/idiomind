@@ -70,11 +70,11 @@ if [ "$1" = chngi ]; then
     fi
 
     [ -z "$trgt" ] && trgt="$item"
-    imgt="$DM_tlt/words/images/$fname.jpg"
-    [ -f "$imgt" ] && osdi="$imgt"
+    img="$DM_tlt/words/images/$fname.jpg"
+    [ -f "$img" ] && icon="$img"
             
     if [ "$text" = "TRUE" ]; then
-    notify-send -i "$osdi" "$trgt" "$srce" -t 10000; fi &
+    notify-send -i "$icon" "$trgt" "$srce" -t 10000; fi &
     
     if [ "$audio" = "TRUE" ]; then
     "$play" "$file" && wait; fi
