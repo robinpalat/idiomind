@@ -733,16 +733,18 @@ END
 function set_image() {
 
     cd "$DT"
-    if [ "$3" = word ]; then wrd="$2"
+    if [ "$3" = word ]; then item="$2"
     elif [ "$3" = sentence ]; then
-    wrd=$(eyeD3 "$2" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)'); fi
-    search="$(sed "s/'//g" <<<"$wrd")"
-    fname="$(nmfile "$wrd")"
+    item=$(eyeD3 "$2" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
+    fi
+    search="$(sed "s/'//g" <<<"$item")"
+    fname="$(nmfile "$item")"
+
     echo -e "<html><head>
     <meta http-equiv=\"Refresh\" content=\"0;url=https://www.google.com/search?q="$search"&tbm=isch\">
     </head><body><p>Search images for \"$search\"...</p></body></html>" > search.html
-    image="$DS/icon/nw.png"
     btn1="--button="$(gettext "Add Image")":3"
+
     if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
     image="--image=$DM_tlt/words/images/$fname.jpg"
     btn1="--button="$(gettext "Change")":3"
@@ -765,12 +767,15 @@ function set_image() {
             if [ $ret -eq 3 ]; then
             
             rm -f *.l
-            scrot -s --quality 70 "$fname.temp.jpeg"
-            /usr/bin/convert -scale 100x90! "$fname.temp.jpeg" "$wrd"_temp.jpeg
-            /usr/bin/convert -scale 360x240! "$fname.temp.jpeg" "$DM_tlt/words/images/$fname.jpg"
+            scrot -s --quality 80 "$fname.temp.jpeg"
+            /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 100x90^ \
+            -gravity center -extent 100x90 -quality 90% "$item"_temp.jpeg
+            /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 360x240^ \
+            -gravity center -extent 360x240 -quality 90% "$DM_tlt/words/images/$fname.jpg"
             eyeD3 --remove-images "$file"
             eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file"
-            "$DS/ifs/tls.sh" set_image "$wrd" word
+            wait
+            "$DS/ifs/tls.sh" set_image "$item" word & exit
                 
             elif [ $ret -eq 2 ]; then
             
@@ -781,7 +786,7 @@ function set_image() {
             
     elif [ "$3" = sentence ]; then
     
-        if [ ! -f "$DT/$wrd".* ]; then
+        if [ ! -f "$DT/$item".* ]; then
         file="$DM_tlt/$fname.mp3"; fi
         yad --form --title=$(gettext "Image") "$image" "$label" \
         --name=Idiomind --class=Idiomind \
@@ -793,19 +798,23 @@ function set_image() {
                 
             if [ $ret -eq 3 ]; then
             
-            rm -f $DT/*.l
-            scrot -s --quality 70 "$fname.temp.jpeg"
-            /usr/bin/convert -scale 450x260! "$fname.temp.jpeg" "$fname"_temp.jpeg
-            cp -f "$fname"_temp.jpeg "$DM_tlt/words/images/$fname.jpg"
-            eyeD3 --remove-image "$file"
+            rm -f *.l
+            scrot -s --quality 80 "$fname.temp.jpeg"
+            /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 100x90^ \
+            -gravity center -extent 100x90 -quality 90% "$item"_temp.jpeg
+            /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 450x260^ \
+            -gravity center -extent 450x260 -quality 90% "$DM_tlt/words/images/$fname.jpg"
+            eyeD3 --remove-images "$file"
             eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file"
-            "$DS/ifs/tls.sh" set_image "$wrd" sentence
+            wait
+            "$DS/ifs/tls.sh" set_image "$file" sentence & exit
                 
             elif [ $ret -eq 2 ]; then
             
-            eyeD3 --remove-images "$file"
+            eyeD3 --remove-image "$file"
             rm -f "$DM_tlt/words/images/$fname.jpg"
-            fi
+            
+            fi  
     fi
     
     rm -f search.html *.jpeg & exit

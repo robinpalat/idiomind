@@ -224,7 +224,7 @@ esize="$(identify "$img" | cut -d ' ' -f 3 | cut -d 'x' -f 2)"
 if [ "$wsize" -gt 1000 ] || [ "$wsize" -lt 600 ] \
 || [ "$esize" -lt 100 ] || [ "$esize" -gt 400 ]; then
 msg "$(gettext "Sorry, the image size is not suitable.")\n " info
-"$DS/ifs/upld.sh" & exit 1; fi
+"$DS/ifs/upld.sh" upld "$tpc" & exit 1; fi
 fi
 
 if [ "$img" != "$imgm" ]; then
@@ -234,7 +234,7 @@ if [ "$img" != "$imgm" ]; then
 
 if [ -z "$Ctgry" ]; then
 msg "$(gettext "Please select a category.")\n " info
-"$DS/ifs/upld.sh" & exit 1; fi
+"$DS/ifs/upld.sh" upld "$tpc" & exit 1; fi
 
 if [ -d "$DM_tlt/attchs" ]; then
 du="$(du -b -h "$DM_tlt/attchs" | tail -1 | awk '{print ($1)}' | tr -d 'M')"

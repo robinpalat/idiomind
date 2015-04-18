@@ -192,7 +192,8 @@ function add_tags_9() {
 function set_image_1() {
     
     scrot -s --quality 80 img.jpg
-    /usr/bin/convert -scale 110x90! img.jpg ico.jpg
+    /usr/bin/convert img.jpg -interlace Plane -thumbnail 110x90^ \
+    -gravity center -extent 110x90 -quality 90% ico.jpg
 }
 
 
