@@ -12,6 +12,9 @@ echo "$tpc" > "$DC_s/4.cfg"
 echo '2' >> "$DC_s/4.cfg"
 fi
 
+echo "$tpc" > "$DC_s/4.cfg"
+echo '2' >> "$DC_s/4.cfg"
+
 function list_1() {
     while read list1; do
         echo "$DMP/cache/$(nmfile "$list1").png"

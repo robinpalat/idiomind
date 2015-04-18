@@ -131,7 +131,7 @@ function notebook_2() {
     --field="$label_info2\n\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " \
     --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh 'upld' '$tpc'" \
     --field="$(gettext "Attached Files")":FBTN "$DS/ifs/tls.sh attachs" \
-    --field="$(gettext "Delete")":BTN "$DS/mngr.sh 'delete_topic' '$tpc'" \
+    --field="$(gettext "Delete")":FBTN "$DS/mngr.sh 'delete_topic' '$tpc'" \
     --field=" ":LBL " " > "$cnf4" &
     yad --notebook --title="$tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
@@ -151,7 +151,7 @@ function dialog_1() {
     
     yad --title="$tpc" \
     --class=idiomind --name=Idiomind \
-    --text="$(gettext "More than") $tdays $(gettext "days have passed since you mark this topic as learned. You'd like to review?")" \
+    --text="$(gettext "More than") $tdays $(gettext "days have passed since you mark this topic as learned.  You'd like to review?")" \
     --image=dialog-question --on-top --center \
     --window-icon="$DS/images/icon.png" \
     --buttons-layout=edge \

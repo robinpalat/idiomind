@@ -106,64 +106,53 @@ function new_session() {
     # status update
     [ ! -f "$DM_tl/.1.cfg" ] && touch "$DM_tl/.1.cfg"
     #info="$(gettext "Review")"
-    n=1
-    while [ $n -le "$(wc -l < "$DM_tl/.1.cfg" | head -50)" ]; do
-        tp=$(sed -n "$n"p "$DM_tl/.1.cfg")
-        stts=$(sed -n 1p "$DM_tl/$tp/.conf/8.cfg")
-
-        if ([ "$stts" = 3 ] || [ "$stts" = 4 ] \
-        || [ "$stts" = 7 ] || [ "$stts" = 8 ]) && \
-        [ "$DM_tl/$tp/.conf/9.cfg" ]; then
+    
+    while read line; do
+    
+        stts=$(sed -n 1p "$DM_tl/$line/.conf/8.cfg")
+        if ([ $stts = 3 ] || [ $stts = 4 ] \
+        || [ $stts = 7 ] || [ $stts = 8 ]) && \
+        [ "$DM_tl/$line/.conf/9.cfg" ]; then
         
-            dts=$(sed '/^$/d' < "$DM_tl/$tp/.conf/9.cfg" | wc -l)
+            dts=$(sed '/^$/d' < "$DM_tl/$line/.conf/9.cfg" | wc -l)
             if [ $dts = 1 ]; then
-            dte=$(sed -n 1p "$DM_tl/$tp/.conf/9.cfg")
+            dte=$(sed -n 1p "$DM_tl/$line/.conf/9.cfg")
             TM="$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))"
             RM=$((100*$TM/6))
             elif [ $dts = 2 ]; then
-            dte=$(sed -n 2p "$DM_tl/$tp/.conf/9.cfg")
+            dte=$(sed -n 2p "$DM_tl/$line/.conf/9.cfg")
             TM="$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))"
             RM=$((100*$TM/10))
             elif [ $dts = 3 ]; then
-            dte=$(sed -n 3p "$DM_tl/$tp/.conf/9.cfg")
+            dte=$(sed -n 3p "$DM_tl/$line/.conf/9.cfg")
             TM="$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))"
             RM=$((100*$TM/15))
             elif [ $dts = 4 ]; then
-            dte=$(sed -n 4p "$DM_tl/$tp/.conf/9.cfg")
+            dte=$(sed -n 4p "$DM_tl/$line/.conf/9.cfg")
             TM="$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))"
             RM=$((100*$TM/20))
             elif [ $dts = 5 ]; then
-            dte=$(sed -n 5p "$DM_tl/$tp/.conf/9.cfg")
+            dte=$(sed -n 5p "$DM_tl/$line/.conf/9.cfg")
             TM="$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))"
             RM=$((100*$TM/30))
             elif [ $dts = 6 ]; then
-            dte=$(sed -n 6p "$DM_tl/$tp/.conf/9.cfg")
+            dte=$(sed -n 6p "$DM_tl/$line/.conf/9.cfg")
             TM="$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))"
             RM=$((100*$TM/40))
             fi
             if [ $((stts%2)) = 0 ]; then
             if [ "$RM" -ge 150 ]; then
-            echo "10" > "$DM_tl/$tp/.conf/8.cfg"
-            printf "$tp" >> "$DT/t_notify"
+            echo 10 > "$DM_tl/$line/.conf/8.cfg"
             elif [ "$RM" -ge 100 ]; then
-            echo "8" >> "$DM_tl/$tp/.conf/8.cfg"
-            printf "$tp" >> "$DT/t_notify"; fi
+            echo 8 >> "$DM_tl/$line/.conf/8.cfg"; fi
             else
             if [ "$RM" -ge 150 ]; then
-            echo "9" > "$DM_tl/$tp/.conf/8.cfg"
-            printf "$tp" >> "$DT/t_notify"
+            echo 9 > "$DM_tl/$line/.conf/8.cfg"
             elif [ "$RM" -ge 100 ]; then
-            echo "7" > "$DM_tl/$tp/.conf/8.cfg"
-            printf "$tp" >> "$DT/t_notify"; fi
+            echo 7 > "$DM_tl/$line/.conf/8.cfg"; fi
             fi
         fi
-        let n++
-    done
-
-    if [ -f "$DT/t_notify" ]; then
-    info2="$(< "$DT/t_notify")"
-    printf "$info\n$info2" >> "$DT/notify"
-    rm -f "$DT/t_notify"; fi
+    done < "$DM_tl/.1.cfg"
     
     rm -f  "$DT/ps_lk"
     "$DS/mngr.sh" mkmn &
@@ -495,7 +484,7 @@ panel() {
     
     if [ -f "$DT/notify" ]; then
     info="$(head -n 10 < "$DT/notify" | uniq)"
-    (sleep 5 && notify-send -i idiomind "$(gettext "Notice")" "$info") &
+    (sleep 10 && notify-send -i idiomind "$(gettext "Notice")" "$info") &
     rm -f "$DT/notify"
     fi
 }

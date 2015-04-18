@@ -19,7 +19,8 @@
 #  2015/02/27
 source /usr/share/idiomind/ifs/c.conf
 
-[ -z "$tpc" ] && exit 1
+if [ -z "$tpc" ]; then source "$DS/ifs/mods/cmns.sh"
+msg "$(gettext "No topic is active")\n" info & exit 1; fi
 #x=$(($(sed -n 2p "$DC_s/10.cfg")/2))
 #y=$(($(sed -n 3p "$DC_s/10.cfg")/2))
 lbls=('Words' 'Sentences' 'Marks' 'Practice' 'New episodes' 'Saved epidodes')

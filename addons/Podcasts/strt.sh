@@ -223,8 +223,8 @@ fetch_podcasts() {
                     title=$(echo "$fields" | sed -n "$ntitle"p | sed 's/\://g' \
                     | sed 's/\&/&amp;/g' | sed 's/^\s*./\U&\E/g' \
                     | sed 's/<[^>]*>//g' | sed 's/^ *//; s/ *$//; /^$/d')
-                    summary=$(echo "$fields" | sed -n "$nsumm"p \
-                    | iconv -c -f utf8 -t ascii)
+                    summary=$(echo "$fields" | sed -n "$nsumm"p)
+                    #| iconv -c -f utf8 -t ascii
                     fname="$(nmfile "${title}")"
                     
                     if [ "$(echo "$title" | wc -c)" -ge 300 ] \
@@ -282,6 +282,7 @@ remove_items() {
         sed '/^$/d' "$DT/item.tmp" > "$DCP/1.cfg"
         let n++
     done
+    rm -f "$DT/item.tmp"
 }
 
 check_index() {
@@ -317,6 +318,7 @@ check_index() {
             [ -f "$DMC/$fname.png" ] && rm "$DMC/$fname.png"
         done < "$DT/cchk"
         [ -f "$DCP/*.tmp" ] && rm "$DCP/*.tmp"
+        [ -f "$DT/cchk" ] && rm "$DT/cchk"
     fi
 }
 
