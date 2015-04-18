@@ -179,7 +179,7 @@ if [ $(echo "$1" | grep -o '.idmnd') ]; then
     mkdir "$DT/dir$c"
     cp "$1" "$DT/import.tmp"
     mv "$DT/import.tmp" "$DT/import.tar.gz"
-    cd "$DT/dir$c" #--exclude=./topics/attchs #TODO
+    cd "$DT/dir$c" #--exclude=./topics/files #TODO
     tar -xzvf ../import.tar.gz
     ls -tdN * > "$DT/dir$c/folder"
     tpi=$(sed -n 1p "$DT/dir$c/folder")

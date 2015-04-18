@@ -135,7 +135,7 @@ details() {
     files="$(find . -type f -exec file {} \; 2> /dev/null)"
     hfiles="$(ls -d ./.[^.]* | less)"
     exfiles="$(find . -maxdepth 5 -perm -111 -type f)"
-    attchsdir="$(cd "./attchs/"; find . -maxdepth 5 -type f)"
+    attchsdir="$(cd "./files/"; find . -maxdepth 5 -type f)"
     wcdirs=`sed '/^$/d' <<<"${dirs}" | wc -l`
     wcfiles=`sed '/^$/d' <<<"${files}" | wc -l`
     wchfiles=`sed '/^$/d' <<<"${hfiles}" | wc -l`
@@ -167,7 +167,7 @@ FILES
 $files
 
 
-./attchs
+./files
 
 $attchsdir
 
@@ -439,7 +439,7 @@ function add_file() {
 
     if [ $ret -eq 0 ]; then
         while read -r file; do
-        [ -f "$file" ] && cp -f "$file" "$DM_tlt/attchs"
+        [ -f "$file" ] && cp -f "$file" "$DM_tlt/files"
         done <<<"$(tr '|' '\n' <<<"$FL")"
     fi
 
@@ -447,7 +447,7 @@ function add_file() {
 
 function videourl() {
 
-    n=$(ls *.url "$DM_tlt/attchs/" | wc -l)
+    n=$(ls *.url "$DM_tlt/files/" | wc -l)
     url=$(yad --form --title=" " \
     --name=Idiomind --class=Idiomind \
     --separator="" \
@@ -459,7 +459,7 @@ function videourl() {
     --button=gtk-ok:0)
 
     [ `wc -c <<<"$url"` -gt 40 ] && \
-    echo "$url" > "$DM_tlt/attchs/video$n.url"
+    echo "$url" > "$DM_tlt/files/video$n.url"
 
 }
 
@@ -478,55 +478,55 @@ if grep ".mp3" <<<"$file"; then
 name="$(sed s'/\.mp3//' <<<"$file")"
 echo "<br><br><h2>$name</h2>
 <br><audio controls>
-<source src=\"../attchs/$file\" type=\"audio/mpeg\">
+<source src=\"../files/$file\" type=\"audio/mpeg\">
 Your browser does not support the audio tag.
 </audio><br><br>" >> "$DC_tlt/att.html"
 elif grep ".ogg" <<<"$file"; then
 name="$(sed s'/\.ogg//' <<<"$file")"
 echo "<br><br><h2>$name</h2>
 <br><audio controls>
-<source src=\"../attchs/$file\" type=\"audio/mpeg\">
+<source src=\"../files/$file\" type=\"audio/mpeg\">
 Your browser does not support the audio tag.
 </audio><br><br>" >> "$DC_tlt/att.html"
 elif grep ".mp4" <<<"$file"; then
 name="$(sed s'/\.mp4//' <<<"$file")"
 echo "<br><br><h2>$name</h2>
 <br><video width=450 height=280 controls>
-<source src=\"../attchs/$file\" type=\"video/mp4\">
+<source src=\"../files/$file\" type=\"video/mp4\">
 Your browser does not support the video tag.
 </video><br><br>" >> "$DC_tlt/att.html"
 elif grep ".m4v" <<<"$file"; then
 name="$(sed s'/\.m4v//' <<<"$file")"
 echo "<br><br><h2>$name</h2>
 <br><video width=450 height=280 controls>
-<source src=\"../attchs/$file\" type=\"video/mp4\">
+<source src=\"../files/$file\" type=\"video/mp4\">
 Your browser does not support the video tag.
 </video><br><br>" >> "$DC_tlt/att.html"
 elif grep ".jpg" <<<"$file"; then
 name="$(sed s'/\.jpg//' <<<"$file")"
 echo "<br><br><h2>$name</h2>
-<img src=\"../attchs/$file\" alt=\"$name\" \
+<img src=\"../files/$file\" alt=\"$name\" \
 style=\"width:100%;height:100%\"><br><br>" \
 >> "$DC_tlt/att.html"
 elif grep ".jpeg" <<<"$file"; then
 name="$(sed s'/\.jpeg//' <<<"$file")"
 echo "<br><br><h2>$name</h2>
-<img src=\"../attchs/$file\" alt=\"$name\" \
+<img src=\"../files/$file\" alt=\"$name\" \
 style=\"width:100%;height:100%\"><br><br>" \
 >> "$DC_tlt/att.html"
 elif grep ".png" <<<"$file"; then
 name="$(sed s'/\.png//' <<<"$file")"
 echo "<br><br><h2>$name</h2>
-<img src=\"../attchs/$file\" alt=\"$name\" \
+<img src=\"../files/$file\" alt=\"$name\" \
 style=\"width:100%;height:100%\"><br><br>" \
 >> "$DC_tlt/att.html"
 elif grep ".txt" <<<"$file"; then
-txto=$(cat "$DM_tlt/attchs/$file")
+txto=$(cat "$DM_tlt/files/$file")
 echo "<br><br><div class=\"summary\">$txto \
 <br><br></div>" \
 >> "$DC_tlt/att.html"
 elif grep ".url" <<<"$file"; then
-url=$(tr -d '=' < "$DM_tlt/attchs/$file" \
+url=$(tr -d '=' < "$DM_tlt/files/$file" \
 | sed 's|watch?v|v\/|;s|https|http|g')
 echo "<br><br><div class=\"summary\">
 <iframe width=\"420\" height=\"315\" src=\"$url\" \
@@ -535,33 +535,33 @@ frameborder=\"0\" allowfullscreen></iframe>
 elif grep ".gif" <<<"$file"; then
 name="$(sed s'/\.gif//' <<<"$file")"
 echo "<br><br><h2>$name</h2>
-<img src=\"../attchs/$file\" alt=\"$name\" \
+<img src=\"../files/$file\" alt=\"$name\" \
 style=\"width:100%;height:100%\"><br><br>" \
 >> "$DC_tlt/att.html"
 fi
-        done <<<"$(ls "$DM_tlt/attchs")"
+        done <<<"$(ls "$DM_tlt/files")"
     
 echo "<br><br></div>
 </body>" >> "$DC_tlt/att.html"
             
     } >/dev/null 2>&1
     
-    [ ! -d "$DM_tlt/attchs" ] && mkdir "$DM_tlt/attchs"
-    ch1="$(ls -A "$DM_tlt/attchs")"
+    [ ! -d "$DM_tlt/files" ] && mkdir "$DM_tlt/files"
+    ch1="$(ls -A "$DM_tlt/files")"
     
-    if [ "$(ls -A "$DM_tlt/attchs")" ]; then
+    if [ "$(ls -A "$DM_tlt/files")" ]; then
         [ ! -f "$DC_tlt/att.html" ] && mkindex >/dev/null 2>&1
         yad --html --title="$(gettext "Attached Files")" \
         --name=Idiomind --class=Idiomind \
         --uri="$DC_tlt/att.html" --browser \
         --window-icon="$DS/images/icon.png" --center \
         --width=650 --height=580 --borders=10 \
-        --button="$(gettext "Folder")":"xdg-open '$DM_tlt/attchs'" \
+        --button="$(gettext "Folder")":"xdg-open '$DM_tlt/files'" \
         --button="$(gettext "Video")":"$DS/ifs/tls.sh 'videourl'" \
         --button="$(gettext "File")":"$DS/ifs/tls.sh 'add_file'" \
         --button="$(gettext "Close")":"1"
 
-        if [ "$ch1" != "$(ls -A "$DM_tlt/attchs")" ]; then
+        if [ "$ch1" != "$(ls -A "$DM_tlt/files")" ]; then
             mkindex
         fi
         
@@ -576,7 +576,7 @@ echo "<br><br></div>
         --button="$(gettext "Cancel")":1 \
         --button="$(gettext "OK")":0
         ret=$?
-        if [ "$ch1" != "$(ls -A "$DM_tlt/attchs")" ] && [ $ret = 0 ]; then
+        if [ "$ch1" != "$(ls -A "$DM_tlt/files")" ] && [ $ret = 0 ]; then
             mkindex
         fi
     fi

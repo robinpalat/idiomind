@@ -189,7 +189,7 @@ Create one using the button below. ")" & exit 1; fi
 function new_sentence() {
         
     DT_r="$3"
-    #source "$DS/default/dicts/$lgt"
+    source "$DS/default/dicts/$lgt"
     DM_tlt="$DM_tl/$tpe"
     DC_tlt="$DM_tl/$tpe/.conf"
 

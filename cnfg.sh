@@ -19,8 +19,8 @@
 #--field="$(gettext "Quick Help")":BTN "$DS/ifs/tls.sh help"
 source /usr/share/idiomind/ifs/c.conf
 [ ! -d "$DC" ] && "$DS/ifs/1u.sh" && exit
-wth=520
-eht=400
+wth=480
+eht=360
 info1="$(gettext "Do you want to change the interface language program?")  "
 info2="$(gettext "You want to change the language setting to learn?")  "
 cd "$DS/addons"
@@ -47,7 +47,7 @@ confirm() {
     yad --form --title="Idiomind" --text="$1\n" \
     --center --borders=5 --image=$2 \
     --on-top --window-icon="$DS/images/icon.png" \
-    --skip-taskbar --width=380 --height=120 \
+    --skip-taskbar --width=400 --height=130 \
     --button="$(gettext "No")":1 --button="$(gettext "Yes")":0
 }
 
@@ -96,7 +96,7 @@ yad --plug=$KEY --form --tabnum=1 \
 --separator='|' --always-print-result --print-all \
 --field="$(gettext "General Options")\t":lbl " " \
 --field=":LBL" " " \
---field="$(gettext "Use Color to grammar (for reference only)")":CHK "$grammar" \
+--field="$(gettext "Use color to grammar (for reference only)")":CHK "$grammar" \
 --field="$(gettext "List words after adding a sentence")":CHK "$list" \
 --field="$(gettext "Perform tasks at startup")":CHK "$tasks" \
 --field="$(gettext "Use automatic translation, if available")":CHK "$trans" \
@@ -115,7 +115,7 @@ yad --plug=$KEY --form --tabnum=1 \
 --field="$(gettext "Your Language")":CB "$lgsl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
 --field=" :LBL" "2" \
 --field=":LBL" "2" \
---field="<small>$(gettext "Speech Synthesizer (default espeak)")</small>":CB5 "$synth" \
+--field="<small>$(gettext "Speech Synthesizer (default espeak)")</small>" "$synth" \
 --field="$(gettext "Check for Updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
 --field="$(gettext "Topic Saved")":BTN "$DS/ifs/upld.sh 'vsd'" \
 --field="$(gettext "Feedback")":BTN "$DS/ifs/tls.sh 'fback'" \
@@ -152,7 +152,7 @@ ret=$?
         && mkdir "$HOME/.config/autostart"
         config_dir="$HOME/.config/autostart"
         
-        if cut -d "|" -f3 < "$cnf1" | grep "TRUE"; then
+        if cut -d "|" -f5 < "$cnf1" | grep "TRUE"; then
             if [ ! -f "$config_dir/idiomind.desktop" ]; then
             echo "$desktopfile" > "$config_dir/idiomind.desktop"
             fi
@@ -168,7 +168,7 @@ ret=$?
             [ "${lang[$n]}" != "$lgtl" ]; then
                 lgtl="${lang[$n]}"
                 if grep -o -E 'Chinese|Japanese|Russian|Vietnamese' <<< "$lgtl";
-                then info3="\n$(gettext "Some features do not yet work with") $lgtl $(gettext "language")."; fi
+                then info3="\n$(gettext "Some features do not yet work with this language:") $lgtl. "; fi
                 confirm "$info2$info3" dialog-question "$lgtl"
                 [ $? -eq 0 ] && set_lang "${lang[$n]}"
                 break

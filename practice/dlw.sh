@@ -111,7 +111,7 @@ while read trgt; do
 
     elif [ $ans = 1 ]; then
         break &
-        "$drts/cls" w $easy $ling $hard $all &
+        "$drts/cls.sh" w $easy $ling $hard $all &
         exit 1
         
     fi
@@ -138,7 +138,7 @@ else
 
         elif [ $ans = 1 ]; then
             break &
-            "$drts/cls" w $easy $ling $hard $all &
+            "$drts/cls.sh" w $easy $ling $hard $all &
             exit 1
         fi
     done < lwin2

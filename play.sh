@@ -20,8 +20,8 @@
 source /usr/share/idiomind/ifs/c.conf
 
 [ -z "$tpc" ] && exit 1
-x=$(($(sed -n 2p "$DC_s/10.cfg")/2))
-y=$(($(sed -n 3p "$DC_s/10.cfg")/2))
+#x=$(($(sed -n 2p "$DC_s/10.cfg")/2))
+#y=$(($(sed -n 3p "$DC_s/10.cfg")/2))
 lbls=('Words' 'Sentences' 'Marks' 'Practice' 'New episodes' 'Saved epidodes')
 sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
 'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' \
@@ -98,7 +98,7 @@ setting_1 | yad --list --title="$tpc" "$l" \
 --print-all --always-print-result --separator="|" \
 --class=Idiomind --name=Idiomind \
 --window-icon="$DS/images/icon.png" \
---skip-taskbar --fixed --align=right --center --on-top \
+--skip-taskbar --align=right --center --on-top \
 --expand-column=2 --no-headers \
 --width=330 --height=280 --borders=5 \
 --column=IMG:IMG --column=TXT:TXT --column=CHK:CHK \

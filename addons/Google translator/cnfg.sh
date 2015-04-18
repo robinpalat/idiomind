@@ -14,7 +14,7 @@ key=$(sed -n 2p < "$DC_a/gts.cfg" \
 
 c=$(yad --form --title="Translator" \
 --name=Idiomind --class=Idiomind \
---text="Google Translate" \
+--text="$(gettext "Google Translate")" \
 --window-icon="$DS/images/icon.png" --center \
 --on-top --skip-taskbar --expand-column=3 \
 --width=450 --height=300 --borders=10 \

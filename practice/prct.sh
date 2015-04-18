@@ -19,7 +19,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 strt="$DS/practice/strt.sh"
-cls="$DS/practice/cls"
+cls="$DS/practice/cls.sh"
 log="$DC_s/8.cfg"
 DF="$DS/practice/df.sh"
 DLW="$DS/practice/dlw.sh"

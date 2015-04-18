@@ -6,7 +6,21 @@ source $DS/ifs/mods/cmns.sh
 DMC="$DM_tl/Podcasts/cache"
 DCP="$DM_tl/Podcasts/.conf/"
 
-if [ "$1" = delete_item ]; then
+
+if [ "$1" = new_item ]; then
+
+    DMC="$DM_tl/Podcasts/cache"
+    DCP="$DM_tl/Podcasts/.conf"
+    fname="$(nmfile "${item}")"
+    if [ -s "$DCP/2.cfg" ]; then
+    sed -i -e "1i$item\\" "$DCP/2.cfg"
+    else
+    echo "$item" > "$DCP/2.cfg"; fi
+    check_index1 "$DCP/2.cfg" "$DCP/.22.cfg"
+    notify-send -i info "$(gettext "Kept episode")" "$item" -t 3000
+    exit
+        
+elif [ "$1" = delete_item ]; then
 
     touch $DT/ps_lk
     fname="$(nmfile "${item}")"

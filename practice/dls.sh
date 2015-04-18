@@ -179,7 +179,7 @@ while [[ $n -le $(wc -l < lsin1) ]]; do
             result "$trgt"
         else
             killall play &
-            "$drts/cls" s $easy $ling $hard $all &
+            "$drts/cls.sh" s $easy $ling $hard $all &
             break &
             exit 0; fi
     
@@ -192,7 +192,7 @@ while [[ $n -le $(wc -l < lsin1) ]]; do
         else
             killall play &
             rm -f w.ok all ing wrds "$DT"/*.jpeg *.png
-            "$drts/cls" s $easy $ling $hard $all &
+            "$drts/cls.sh" s $easy $ling $hard $all &
             break &
             exit 0; fi
     fi
