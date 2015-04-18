@@ -47,6 +47,16 @@ L() {
     exit
 }
 
+add() {
+    killall bcle.sh &
+    [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/add.sh")" ] && killall add.sh &
+    [ -n "$(ps -A | pgrep -f "add.sh")" ] && killall add.sh &
+    [ -n "$(ps -A | pgrep -f "mogrify")" ] && killall mogrify &
+    [ -n "$(ps -A | pgrep -f "yad --progress")" ] && kill -9 $(pgrep -f "yad --progress") &
+    [ -f "$DT/.n_s_pr" ] && rm -f "$DT/.n_s_pr"
+    exit
+}
+
 feed() {
     killall strt.sh &
     [ -f "$DT/.uptp" ] && rm -fr "$DT/.uptp"

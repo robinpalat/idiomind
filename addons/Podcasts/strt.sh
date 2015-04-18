@@ -332,21 +332,27 @@ if [[ "$1" != A ]]; then
     "$(gettext "Checking new episodes...")" -t 6000) &
 fi
 
-echo "updating" > "$DT/.uptp"
+[ -f "$DCP/1.cfg" ] && kept_episodes="$(wc -l < "$DCP/1.cfg")" || kept_episodes=0
+echo -e " <b>$(gettext "Updating")</b>
+ $(gettext "New episodes:") --\t$(gettext "Saved episodes:") \
+$kept_episodes "> "$DM_tl/Podcasts/.update"
+
 fetch_podcasts
-
-[ -f "$DT_r/log" ] && nd="$(wc -l < "$DT_r/log")" || nd=0
 rm -fr "$DT_r" "$DT/.uptp"
-echo "$(date "+%a %d %B")" > "$DM_tl/Podcasts/.dt"
 
-if [ "$nd" -gt 0 ]; then
+[ -f "$DT_r/log" ] && new_episodes="$(wc -l < "$DT_r/log")" || new_episodes=0
+echo -e " $(gettext "Last update:") `date "+%r %a %d %B"`
+ $(gettext "New episodes:") $new_episodes\t$(gettext "Saved episodes:") \
+$kept_episodes "> "$DM_tl/Podcasts/.update"
+
+if [ "$new_episodes" -gt 0 ]; then
 
     remove_items
     check_index
     
     notify-send -i idiomind \
     "$(gettext "Feeds updated")" \
-    "$nd $(gettext "new episode(s)")" -t 8000
+    "$new_episodes $(gettext "new episode(s)")" -t 8000
     
 else
     if [[ "$1" != A ]]; then

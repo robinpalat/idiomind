@@ -37,8 +37,8 @@ function feedmode() {
     nt="$DCP/10.cfg"
     fdit=$(mktemp "$DT/fdit.XXXX")
     c=$(echo $(($RANDOM%100000))); KEY=$c
-    info=$(< "$DM_tl/Podcasts/.dt")
     [ -f "$DT/.uptp" ] && info="- $(gettext "Updating")..."
+    infolabel="$(< "$DM_tl/Podcasts/.update")"
     
     list_1 | yad --list --tabnum=1 \
     --plug=$KEY --print-all --dclick-action="$DSP/vwr.sh" \
@@ -51,6 +51,7 @@ function feedmode() {
     --column=Name:IMG \
     --column=Name &
     yad --text-info --tabnum=3 \
+    --text="<small>$infolabel</small>" \
     --plug=$KEY --filename="$nt" \
     --wrap --editable --fore='gray40' \
     --show-uri --margins=14 --fontname=vendana > "$fdit" &
@@ -60,7 +61,7 @@ function feedmode() {
     --window-icon="$DS/images/icon.png" --image-on-top \
     --ellipsize=END --align=right --center --fixed \
     --width=640 --height=560 --borders=2 --tab-borders=5 \
-    --tab=" $(gettext "New episodes") " \
+    --tab=" $(gettext "Episodes") " \
     --tab=" $(gettext "Saved episodes") " \
     --tab=" $(gettext "Notes") " \
     --button="$(gettext "Playlist")":"/usr/share/idiomind/play.sh" \

@@ -436,7 +436,7 @@ function dlg_checklist_3() {
     --column="$(gettext "sentences")" \
     --button="$(gettext "Cancel")":1 \
     --button=$(gettext "Reorder"):2 \
-    --button="$(gettext "To New Topic")":"$DS/add.sh 'new_topic'" \
+    --button="$(gettext "To new topic")":"$DS/add.sh 'new_topic'" \
     --button=gtk-add:0 > "$slt"
 }
 
@@ -448,7 +448,7 @@ function dlg_text_info_1() {
     --name=Idiomind --class=Idiomind \
     --editable \
     --window-icon="$DS/images/icon.png" \
-    --wrap --margins=60 --fontname=vendana \
+    --wrap --margins=30 --fontname=vendana \
     --sticky --skip-taskbar --center --on-top \
     --width=600 --height=550 --borders=5 \
     --button=gtk-ok:0 > ./sort

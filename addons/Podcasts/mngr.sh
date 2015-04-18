@@ -75,7 +75,7 @@ elif [ "$1" = delete_1 ]; then
         rm "$DM_tl/Podcasts/cache"/*
         rm "$DM_tl/Podcasts/.conf/.updt.lst"
         rm "$DM_tl/Podcasts/.conf/1.cfg"
-        rm "$DM_tl/Podcasts/.conf/.dt"
+        rm "$DM_tl/Podcasts/.conf/.update"
         touch "$DM_tl/Podcasts/.conf/1.cfg"
     fi
     exit

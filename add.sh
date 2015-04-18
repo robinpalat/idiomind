@@ -283,8 +283,8 @@ function new_sentence() {
 
 function new_word() {
 
-    trgt="$(sed s'\|\\'g <<<"$2")"
-    srce="$4"
+    trgt="$(sed s'\|\\'g <<<"$2" | sed 's/^ *//;s/ *$//g')"
+    srce="$(sed s'\|\\'g <<<"$4" | sed 's/^ *//;s/ *$//g')"
     DT_r="$3"
     cd "$DT_r"
     DM_tlt="$DM_tl/$tpe"
@@ -643,10 +643,10 @@ function process() {
         ret=$(echo "$?")
 
         if [ $ret -eq 1 ]; then
-        
-            rm=$(sed -n 1p "$DT/.n_s_pr")
-            rm fr "$rm" "$DT/.n_s_pr"
-            index R && killall add.sh; exit 1; fi
+        rm=$(sed -n 1p "$DT/.n_s_pr")
+        rm fr "$rm" "$DT/.n_s_pr"
+        "$DS/stop.sh" "$rm"
+        exit 1; fi
     fi
     
     if [ -n "$2" ]; then
@@ -681,7 +681,7 @@ function process() {
         | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' > ./sntsls_
         ) | dlg_progress_1
 
-    elif echo "$2" | grep -o "image"; then
+    elif [ "$2" = "image" ]; then
         
         SCR_IMG=`mktemp`
         trap "rm $SCR_IMG*" EXIT
@@ -699,7 +699,6 @@ function process() {
         | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
         | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
         | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' > ./sntsls_> ./sntsls_
-        
         ) | dlg_progress_1
 
     else
@@ -728,7 +727,6 @@ function process() {
         | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
         | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' > ./sntsls_
         fi
-
         ) | dlg_progress_1
     fi
     

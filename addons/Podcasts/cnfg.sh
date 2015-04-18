@@ -1,14 +1,14 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/mods/cmns.sh
+source "$DS/ifs/mods/cmns.sh"
 DCP="$DM_tl/Podcasts/.conf"
 DSP="$DS_a/Podcasts"
 CNF=$(gettext "Configure")
 sets=('update' 'sync' 'path')
 [ -n "$(< "$DCP/0.cfg")" ] && cfg=1 || > "$DCP/0.cfg"
 
-if [ ! -d $DM_tl/Podcasts ]; then
+if [ ! -d "$DM_tl/Podcasts" ]; then
 
     mkdir "$DM_tl/Podcasts"
     mkdir "$DM_tl/Podcasts/.conf"
@@ -16,6 +16,10 @@ if [ ! -d $DM_tl/Podcasts ]; then
     cd "$DM_tl/Podcasts/.conf/"
     touch "0.cfg" "1.cfg" "2.cfg" "3.cfg" "4.cfg" ".updt.lst"
     echo "14" > "$DM_tl/Podcasts/.conf/8.cfg"
+    echo " " > "$DM_tl/Podcasts/.conf/10.cfg"
+    echo -e " $(gettext "Last update:")
+$(gettext "New episodes:") 0\t$(gettext "Saved episodes:") \
+0 "> "$DM_tl/Podcasts/.update"
     "$DS/mngr.sh" mkmn
 fi
 
