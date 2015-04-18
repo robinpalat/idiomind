@@ -802,8 +802,8 @@ function set_image() {
             scrot -s --quality 80 "$fname.temp.jpeg"
             /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 100x90^ \
             -gravity center -extent 100x90 -quality 90% "$item"_temp.jpeg
-            /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 450x260^ \
-            -gravity center -extent 450x260 -quality 90% "$DM_tlt/words/images/$fname.jpg"
+            /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 490x260^ \
+            -gravity center -extent 490x260 -quality 90% "$DM_tlt/words/images/$fname.jpg"
             eyeD3 --remove-images "$file"
             eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file"
             wait
