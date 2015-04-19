@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/mods/cmns.sh
+source "$DS/ifs/mods/cmns.sh"
 DMC="$DM_tl/Podcasts/cache"
 DCP="$DM_tl/Podcasts/.conf/"
 
@@ -22,7 +22,7 @@ if [ "$1" = new_item ]; then
         
 elif [ "$1" = delete_item ]; then
 
-    touch $DT/ps_lk
+    touch "$DT/ps_lk"
     fname="$(nmfile "${item}")"
     
     if ! grep -Fxo "$item" < "$DCP/1.cfg"; then
@@ -30,9 +30,9 @@ elif [ "$1" = delete_item ]; then
         msg_2 "$lbl" gtk-delete "$(gettext "Delete")" "$(gettext "No")" "$(gettext "Confirm")"
         ret=$(echo "$?")
     
-        if [ $ret -eq 0 ]; then
+        if [[ $ret -eq 0 ]]; then
             
-            (sleep 0.2 && kill -9 $(pgrep -f "yad --html "))
+            (sleep 0.2 && kill -9 "$(pgrep -f "yad --html ")")
 
             [ "$DMC/$fname.mp3" ] && rm "$DMC/$fname.mp3"
             [ "$DMC/$fname.ogg" ] && rm "$DMC/$fname.ogg"
@@ -61,7 +61,7 @@ elif [ "$1" = delete_item ]; then
         rm ./*.tmp
     fi
             
-    rm -f $DT/ps_lk; exit 1
+    rm -f "$DT/ps_lk"; exit 1
 
 elif [ "$1" = delete_1 ]; then
 
@@ -70,7 +70,7 @@ elif [ "$1" = delete_1 ]; then
     else exit 1; fi
     ret=$(echo "$?")
             
-    if [ $ret -eq 0 ]; then
+    if [[ $ret -eq 0 ]]; then
 
         rm "$DM_tl/Podcasts/cache"/*
         rm "$DM_tl/Podcasts/.conf/.updt.lst"
@@ -87,7 +87,7 @@ elif [ "$1" = delete_2 ]; then
     else exit 1; fi
     ret=$(echo "$?")
     
-   if [ $ret -eq 0 ]; then
+   if [[ $ret -eq 0 ]]; then
 
         rm "$DCP/2.cfg" "$DCP/.22.cfg"
         touch "$DCP/2.cfg" "$DCP/.22.cfg"

@@ -23,7 +23,7 @@ position() {
     item="$(sed -n "$2"p "$3")"
     pos=$(($(wc -l < "$3")-$2))
     source "$DS/ifs/mods/cmns.sh"
-    [ $(wc -c <<<"$item") -gt 80 ] && label="${item:0:80}..." \
+    [ ${#item} -gt 80 ] && label="${item:0:80}..." \
     || label="$item"
     mv="$(tac "$DC_tlt/0.cfg" | grep -vxF "$item" \
     | awk '{print ((let++))"\nFALSE\n"$0}' \
@@ -42,7 +42,7 @@ position() {
     
     ret=$?
 
-    if [ $ret -eq 0 ]; then
+    if [[ $ret -eq 0 ]]; then
 
         [ -z "${mv}" ] && exit
         > "$DC_tlt/0.cfg.mv"
@@ -67,7 +67,7 @@ position() {
             cp -f "$DC_tlt/0.cfg.mv" "$DC_tlt/0.cfg"
             cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
             
-            if [ `wc -l < "$DC_tlt/2.cfg"` = 0 ]; then
+            if [ "$(wc -l < "$DC_tlt/2.cfg")" = 0 ]; then
                 cp -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"
                 msg "$(gettext "Restart the window to see the changes.")\n" info
                 
@@ -132,23 +132,31 @@ function dlg_form_2() {
 
 function calculate_review() {
 
-    dts=$(cat "$DC_tlt/9.cfg" | wc -l)
-    if [ $dts = 1 ]; then
+    dts=$(wc -l < "$DC_tlt/9.cfg")
+    if [[ $dts = 1 ]]; then
     dte=$(sed -n 1p "$DC_tlt/9.cfg")
-    TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-    RM=$((100*$TM/10))
-    elif [ $dts = 2 ]; then
+    TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+    RM=$((100*TM/6))
+    elif [[ $dts = 2 ]]; then
     dte=$(sed -n 2p "$DC_tlt/9.cfg")
-    TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-    RM=$((100*$TM/15))
-    elif [ $dts = 3 ]; then
+    TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+    RM=$((100*TM/10))
+    elif [[ $dts = 3 ]]; then
     dte=$(sed -n 3p "$DC_tlt/9.cfg")
-    TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-    RM=$((100*$TM/30))
-    elif [ $dts = 4 ]; then
+    TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+    RM=$((100*TM/15))
+    elif [[ $dts = 4 ]]; then
     dte=$(sed -n 4p "$DC_tlt/9.cfg")
-    TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-    RM=$((100*$TM/60))
+    TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+    RM=$((100*TM/20))
+    elif [[ $dts = 5 ]]; then
+    dte=$(sed -n 5p "$DC_tlt/9.cfg")
+    TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+    RM=$((100*TM/30))
+    elif [[ $dts = 6 ]]; then
+    dte=$(sed -n 6p "$DC_tlt/9.cfg")
+    TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+    RM=$((100*TM/40))
     fi
 }
 

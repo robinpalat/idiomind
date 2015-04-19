@@ -39,8 +39,8 @@ sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
 'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' \
 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
 [ -n "$(< "$DC_s/1.cfg")" ] && cfg=1 || > "$DC_s/1.cfg"
-c=$(echo $(($RANDOM%100000))); KEY=$c
-cnf1=$(mktemp "$DT"/cnf1.XXXX)
+c=$(($RANDOM%100000)); KEY=$c
+cnf1=$(mktemp "$DT/cnf1.XXXX")
 
 confirm() {
 

@@ -2,12 +2,12 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-source $DS/ifs/mods/cmns.sh
+source "$DS/ifs/mods/cmns.sh"
 dir="$DC/addons/dict"
 enables="$DC/addons/dict/enables"
 disables="$DC/addons/dict/disables"
-lgt=$(lnglss $lgtl)
-lgs=$(lnglss $lgsl)
+lgt=$(lnglss "$lgtl")
+lgs=$(lnglss "$lgsl")
 new="#!/bin/bash
 # argument \"\$1\" = \"word\"
 # 
@@ -42,7 +42,7 @@ function dialog_edit() {
     --button=Cancel:1 \
     --button=Delete:2 \
     --button=Test:4 \
-    --button=Save:5 > $DT/script.sh
+    --button=Save:5 > "$DT/script.sh"
 }
 
 function dict_list() {
@@ -75,7 +75,7 @@ if [ "$1" = edit_dlg ]; then
         dialog_edit
         ret=$(echo $?)
          
-    if [ $ret -eq 5 ]; then
+    if [[ $ret -eq 5 ]]; then
         
         _NAME=$(cat "$DT/script.sh" | grep -o -P '(?<=_NAME=").*(?=")')
         _LANG=$(cat "$DT/script.sh" | grep -o -P '(?<=_LANG=").*(?=")')
@@ -85,7 +85,7 @@ if [ "$1" = edit_dlg ]; then
         fi
         "$DS_a/Dics/cnfg.sh"
         
-    elif [ $ret -eq 4 ]; then
+    elif [[ $ret -eq 4 ]]; then
         
         internet; test_
         cd  "$DT"; sh "$DT/script.sh" "$test"
@@ -107,13 +107,13 @@ elif [ "$1" = dlk_dlg ]; then
     dialog_edit
     ret=$(echo $?)
     
-    if [ $ret -eq 2 ]; then
+    if [[ $ret -eq 2 ]]; then
     
         msg_2 " $(gettext "Confirm")\n" dialog-question yes no
         rt=$(echo $?)
-        [ $rt -eq 0 ] && rm "$script"; exit
+        [[ $rt -eq 0 ]] && rm "$script"; exit
     
-    elif [ $ret -eq 5 ]; then
+    elif [[ $ret -eq 5 ]]; then
     
         _NAME=$(grep -F "_NAME=" "$script" | grep -o -P '(?<=_NAME=").*(?=")')
         _LANG=$(grep -F "_LANG=" "$script" | grep -o -P '(?<=_LANG=").*(?=")')
@@ -121,7 +121,7 @@ elif [ "$1" = dlk_dlg ]; then
         [ -z "$_LANG" ] && _LANG="$4"
         mv -f "$DT/script.sh" "$dir/$stts/$_NAME.$_LANG"
         
-    elif [ $ret -eq 4 ]; then
+    elif [[ $ret -eq 4 ]]; then
     
         internet; test_
         cd  "$DT"; sh "$DT/script.sh" "$test"
@@ -159,11 +159,11 @@ elif [ -z "$1" ]; then
     
     ret=$?
     
-        if [ "$ret" -eq 2 ]; then
+        if [[ $ret -eq 2 ]]; then
         
                 "$DS_a/Dics/cnfg.sh" edit_dlg
         
-        elif [ "$ret" -eq 0 ]; then
+        elif [[ $ret -eq 0 ]]; then
         
             n=1
             while [ $n -le "$(echo "$sel" | wc -l)" ]; do

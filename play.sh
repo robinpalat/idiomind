@@ -53,7 +53,7 @@ if [ "$cfg" = 1 ]; then
         get="${sets[$n]}"
         val=$(sed -n $((n+1))p < "$DC_s/1.cfg" \
         | grep -o "$get"=\"[^\"]* | grep -o '[^"]*$')
-        declare "${sets[$n]}"="$val"
+        declare ${sets[$n]}="$val"
         ((n=n+1))
     done
     
@@ -101,7 +101,7 @@ setting_1 | yad --list --title="$tpc" "$l" \
 --window-icon="$DS/images/icon.png" \
 --skip-taskbar --align=right --center --on-top \
 --expand-column=2 --no-headers \
---width=330 --height=280 --borders=5 \
+--width=340 --height=280 --borders=5 \
 --column=IMG:IMG --column=TXT:TXT --column=CHK:CHK \
 --button="$btn" \
 --button="$(gettext "Close")":1  > "$slct"

@@ -146,8 +146,7 @@ mail=$(sed -n 2p $DC_s/5.cfg)
 user=$(sed -n 3p $DC_s/5.cfg)
 [ -z "$user" ] && user=$(echo "$(whoami)")
 nt=$(cat "$DC_tlt/10.cfg")
-nme=$(echo "$tpc" | sed 's/ /_/g' \
-| sed 's/"//g' | sed 's/’//g')
+nme=$(echo "$tpc" | sed 's/ /_/g' | tr -s '"' ' ' | sed 's/’//g')
 imgm="$DM_tlt/words/images/img.jpg"
 
 "$DS/ifs/tls.sh" check_index "$tpc"
@@ -175,10 +174,10 @@ upld=$(yad --form --title="$(gettext "Share")" \
 --button="$(gettext "PDF")":2 "$btn")
 ret=$?
 
-if [ "$ret" = 2 ]; then
+if [[ $ret = 2 ]]; then
     "$DS/ifs/tls.sh" pdfdoc & exit 1
     
-elif [ "$ret" = 0 ]; then
+elif [[ $ret = 0 ]]; then
 
 Ctgry=$(echo "$upld" | cut -d "|" -f4)
 level=$(echo "$upld" | cut -d "|" -f5)
@@ -236,9 +235,9 @@ if [ -z "$Ctgry" ]; then
 msg "$(gettext "Please select a category.")\n " info
 "$DS/ifs/upld.sh" upld "$tpc" & exit 1; fi
 
-if [ -d "$DM_tlt/attchs" ]; then
-du="$(du -b -h "$DM_tlt/attchs" | tail -1 | awk '{print ($1)}' | tr -d 'M')"
-if [ "$du" -gt 50 ]; then
+if [ -d "$DM_tlt/files" ]; then
+du=$(du -sb "$DM_tlt/files" | cut -f1)
+if [ "$du" -gt 50000000 ]; then
 msg "$(gettext "Sorry, the size of the attachment is too large.")\n " info & exit 1; fi
 fi
 
@@ -317,7 +316,7 @@ quit
 END_SCRIPT
 
 exit=$?
-if [ $exit = 0 ] ; then
+if [[ $exit = 0 ]]; then
     mv -f "$DT/12.cfg" "$DM_t/saved/$tpc.id"
     info=" <b>$(gettext "Successfully published.")</b>\n $tpc\n"
     image=dialog-ok
@@ -336,8 +335,6 @@ msg "$info" $image
 [ "$DT_u/$tpc.tar.gz" ] && rm -f "$DT_u/$tpc.tar.gz"
 [ -d "$DT_u" ] && rm -fr "$DT_u"
 exit 0
-else
-exit 1
 fi
     
 } >/dev/null 2>&1

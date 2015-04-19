@@ -46,7 +46,7 @@ function nmfile() {
 
 function include() {
         
-  for f in $1/*; do source "$f"; done
+  for f in "$1"/*; do source "$f"; done
 
 }
 
@@ -68,9 +68,9 @@ function lnglss() {
 function check_index1() {
     
     for i in "${@}"; do
-        if [ -n "$(cat "$i" | sort -n | uniq -dc)" ]; then
-            cat "$i" | awk '!array_temp[$0]++' > $DT/tmp
-            sed '/^$/d' $DT/tmp > "$i"; rm -f $DT/tmp
+        if [ -n "$(sort -n < "$i" | uniq -dc)" ]; then
+            awk '!array_temp[$0]++' < "$i" > "$DT/tmp"
+            sed '/^$/d' "$DT/tmp" > "$i"; rm -f "$DT/tmp"
         fi
     done
 }

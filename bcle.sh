@@ -24,11 +24,11 @@ repeat=$(sed -n 7p < "$DC_s/1.cfg" \
 | grep -o repeat=\"[^\"]* | grep -o '[^"]*$')
 cd "$DT"
 
-if [ -n "$(cat ./index.m3u)" ] && [ $(wc -l < ./index.m3u) -gt 0 ]; then
+if [ -n "$(cat ./index.m3u)" ] && [ "$(wc -l < ./index.m3u)" -gt 0 ]; then
     if [ "$repeat" = "TRUE" ]; then
         while [ 1 ]; do
-            index=$(wc -l < ./index.m3u)
-            while [ 1 -le $index ]; do
+            index="$(wc -l < ./index.m3u)"
+            while [[ 1 -le $index ]]; do
                 "$DS/chng.sh" chngi "$index"
                 let index--
             done
@@ -36,8 +36,8 @@ if [ -n "$(cat ./index.m3u)" ] && [ $(wc -l < ./index.m3u) -gt 0 ]; then
         done
     
     else
-        index=$(wc -l < ./index.m3u)
-        while [ 1 -le $index ]; do
+        index="$(wc -l < ./index.m3u)"
+        while [[ 1 -le $index ]]; do
         "$DS/chng.sh" chngi "$index"
             let index--
         done

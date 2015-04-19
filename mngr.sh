@@ -76,7 +76,7 @@ function mark_to_learn() {
     if [ "$tpc" != "$2" ]; then
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
     
-    if [ $(wc -l < "$DC_tlt/0.cfg") -le 15 ]; then
+    if [ "$(wc -l < "$DC_tlt/0.cfg")" -le 15 ]; then
     msg "$(gettext "You must be at least 15 items.")\n " info & exit; fi
 
     if [ "$3" = 1 ]; then
@@ -86,13 +86,13 @@ function mark_to_learn() {
     kill -9 $(pgrep -f "yad --notebook ") &
     fi
 
-    if [ $(wc -l < "$DC_tlt/8.cfg") -ge 1 ]; then
+    if [ "$(wc -l < "$DC_tlt/8.cfg")" -ge 1 ]; then
         include "$DS/ifs/mods/mngr"
     
         dialog_2
         ret=$(echo $?)
     
-        if [ $ret -eq 3 ]; then
+        if [[ $ret -eq 3 ]]; then
         
             rm -f "$DC_tlt/7.cfg"
             idiomind topic & exit 1
@@ -103,12 +103,12 @@ function mark_to_learn() {
     
     calculate_review
     
-    if [ $((stts%2)) = 0 ]; then
+    if [[ $((stts%2)) = 0 ]]; then
 
         echo "6" > "$DC_tlt/8.cfg"
             
     else
-        if [ "$RM" -ge 50 ]; then
+        if [[ "$RM" -ge 50 ]]; then
         echo "5" > "$DC_tlt/8.cfg"
         else
         echo "1" > "$DC_tlt/8.cfg"
@@ -116,7 +116,7 @@ function mark_to_learn() {
     fi
     
     rm -f "$DC_tlt/7.cfg"
-    cat "$DC_tlt/0.cfg" | awk '!array_temp[$0]++' > "$DT/0.cfg.tmp"
+    awk '!array_temp[$0]++' < "$DC_tlt/0.cfg" > "$DT/0.cfg.tmp"
     sed '/^$/d' "$DT/0.cfg.tmp" > "$DC_tlt/0.cfg"
     rm -f "$DT/*.tmp"
     rm "$DC_tlt/2.cfg" "$DC_tlt/1.cfg"
@@ -125,7 +125,7 @@ function mark_to_learn() {
 
     "$DS/mngr.sh" mkmn &
 
-    [ "$3" = 1 ] && idiomind topic &
+    [[ "$3" = 1 ]] && idiomind topic &
 }
 
 function mark_as_learned() {
@@ -135,7 +135,7 @@ function mark_as_learned() {
     if [ "$tpc" != "$2" ]; then
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
     
-    if [ $(wc -l < "$DC_tlt/0.cfg") -le 15 ]; then
+    if [ "$(wc -l < "$DC_tlt/0.cfg")" -le 15 ]; then
     msg "$(gettext "You must be at least 15 items.")\n " info & exit; fi
     
     if [ "$3" = 1 ]; then
@@ -154,12 +154,12 @@ function mark_as_learned() {
             
             steps=$(sed '/^$/d' < "$DC_tlt/9.cfg" | wc -l)
             
-            if [ "$steps" = 4 ]; then
+            if [[ "$steps" = 4 ]]; then
             stts=$((stts+1)); fi
             
-            if [ "$RM" -ge 50 ]; then
+            if [[ "$RM" -ge 50 ]]; then
             
-                if [ "$steps" = 6 ]; then
+                if [[ "$steps" = 6 ]]; then
                 echo -e "_\n_\n_\n_\n_\n$(date +%m/%d/%Y)" > "$DC_tlt/9.cfg"
                 else
                 echo "$(date +%m/%d/%Y)" >> "$DC_tlt/9.cfg"
@@ -171,7 +171,7 @@ function mark_as_learned() {
         fi
 
         > "$DC_tlt/7.cfg"
-        if [ $((stts%2)) = 0 ]; then
+        if [[ $((stts%2)) = 0 ]]; then
         echo "4" > "$DC_tlt/8.cfg"
         else
         echo "3" > "$DC_tlt/8.cfg"
@@ -182,7 +182,7 @@ function mark_as_learned() {
     cp -f "$DC_tlt/0.cfg" "$DC_tlt/2.cfg"
     "$DS/mngr.sh" mkmn &
 
-    [ "$3" = 1 ] && idiomind topic &
+    [[ "$3" = 1 ]] && idiomind topic &
     exit 1
 }
 
@@ -208,26 +208,34 @@ function delete_item_confirm() {
     [ -f "$file" ] && rm "$file"
     
     if [ -d "$DC_tlt/practice" ]; then
-    
-        cd "$DC_tlt/practice"
-        [ ./fin ] && grep -vxF "$trgt" ./fin > \
-        ./fin.tmp && sed '/^$/d' ./fin.tmp > ./fin
-        [ ./mcin ] && grep -vxF "$trgt" ./mcin > \
-        ./mcin.tmp && sed '/^$/d' ./mcin.tmp > ./mcin
-        [ ./lwin ] && grep -vxF "$trgt" ./lwin > \
-        ./lwin.tmp && sed '/^$/d' ./lwin.tmp > ./lwin
-        [ ./lsin ] && grep -vxF "$trgt" ./lsin > \
-        ./lsin.tmp && sed '/^$/d' ./lsin.tmp > ./lsin
-        rm ./*.tmp
+        dir="$DC_tlt/practice"
+        if [ "$dir/fin" ]; then
+        grep -vxF "$trgt" "$dir/fin" > "$dir/fin.tmp"
+        sed '/^$/d' "$dir/fin.tmp" > "$dir/fin"; fi
+        if [ "$dir/mcin" ]; then
+        grep -vxF "$trgt" "$dir/mcin" > "$dir/mcin.tmp"
+        sed '/^$/d' "$dir/mcin.tmp" > "$dir/mcin"; fi
+        if [ "$dir/lwin" ]; then
+        grep -vxF "$trgt" "$dir/lwin" > "$dir/lwin.tmp"
+        sed '/^$/d' "$dir/lwin.tmp" > "$dir/lwin" ; fi
+        if [ "$dir/lsin" ]; then
+        grep -vxF "$trgt" "$dir/lsin" > "$dir/lsin.tmp"
+        sed '/^$/d' "$dir/lsin.tmp" > "$dir/lsin"; fi
+        if [ "$dir/iin" ]; then
+        grep -vxF "$trgt" "$dir/iin" > "$dir/iin.tmp"
+        sed '/^$/d' "$dir/iin.tmp" > "$dir/iin"; fi
+        rm "$dir"/*.tmp
     fi
     
     cd "$DC_tlt"
-    [ "./.11.cfg" ] && grep -vxF "$trgt" "./.11.cfg" > \
-    "./11.cfg.tmp" && sed '/^$/d' "./11.cfg.tmp" > "./.11.cfg"
+    if [ "$DC_tlt/.11.cfg" ]; then
+    grep -vxF "$trgt" "$DC_tlt/.11.cfg" > "$DC_tlt/11.cfg.tmp"
+    sed '/^$/d' "$DC_tlt/11.cfg.tmp" > "$DC_tlt/.11.cfg"; fi
     n=0
     while [ $n -le 4 ]; do
-    [ -f "./$n.cfg" ] && grep -vxF "$trgt" "./$n.cfg" > \
-    "./$n.cfg.tmp" && sed '/^$/d' "./$n.cfg.tmp" > "./$n.cfg"
+    if [ -f "$DC_tlt/$n.cfg" ]; then
+    grep -vxF "$trgt" "$DC_tlt/$n.cfg" > "$DC_tlt/$n.cfg.tmp"
+    sed '/^$/d' "$DC_tlt/$n.cfg.tmp" > "$DC_tlt/$n.cfg"; fi
     let n++
     done
     rm ./*.tmp
@@ -267,32 +275,40 @@ function delete_item() {
     fi
     ret=$(echo "$?")
         
-    if [ $ret -eq 0 ]; then 
+    if [[ $ret -eq 0 ]]; then 
     
         (sleep 0.1 && kill -9 $(pgrep -f "yad --form "))
 
         [ -f "$file" ] && rm "$file"
         
         if [ -d "$DC_tlt/practice" ]; then
-        
-        cd "$DC_tlt/practice"
-        [ ./fin ] && grep -vxF "$trgt" ./fin > \
-        ./fin.tmp && sed '/^$/d' ./fin.tmp > ./fin
-        [ ./mcin ] && grep -vxF "$trgt" ./mcin > \
-        ./mcin.tmp && sed '/^$/d' ./mcin.tmp > ./mcin
-        [ ./lwin ] && grep -vxF "$trgt" ./lwin > \
-        ./lwin.tmp && sed '/^$/d' ./lwin.tmp > ./lwin
-        [ ./lsin ] && grep -vxF "$trgt" ./lsin > \
-        ./lsin.tmp && sed '/^$/d' ./lsin.tmp > ./lsin
-        rm ./*.tmp; fi
+        dir="$DC_tlt/practice"
+        if [ "$dir/fin" ]; then
+        grep -vxF "$trgt" "$dir/fin" > "$dir/fin.tmp"
+        sed '/^$/d' "$dir/fin.tmp" > "$dir/fin"; fi
+        if [ "$dir/mcin" ]; then
+        grep -vxF "$trgt" "$dir/mcin" > "$dir/mcin.tmp"
+        sed '/^$/d' "$dir/mcin.tmp" > "$dir/mcin"; fi
+        if [ "$dir/lwin" ]; then
+        grep -vxF "$trgt" "$dir/lwin" > "$dir/lwin.tmp"
+        sed '/^$/d' "$dir/lwin.tmp" > "$dir/lwin" ; fi
+        if [ "$dir/lsin" ]; then
+        grep -vxF "$trgt" "$dir/lsin" > "$dir/lsin.tmp"
+        sed '/^$/d' "$dir/lsin.tmp" > "$dir/lsin"; fi
+        if [ "$dir/iin" ]; then
+        grep -vxF "$trgt" "$dir/iin" > "$dir/iin.tmp"
+        sed '/^$/d' "$dir/iin.tmp" > "$dir/iin"; fi
+        rm "$dir"/*.tmp; fi
             
         cd "$DC_tlt"
-        [ -f "./.11.cfg" ] && grep -vxF "$trgt" "./.11.cfg" > \
-        "./11.cfg.tmp" && sed '/^$/d' "./11.cfg.tmp" > "./.11.cfg"
+        if [ -f "$DC_tlt/.11.cfg" ]; then
+        grep -vxF "$trgt" "$DC_tlt/.11.cfg" > "$DC_tlt/11.cfg.tmp"
+        sed '/^$/d' "$DC_tlt/11.cfg.tmp" > "$DC_tlt/.11.cfg"; fi
         n=0
-        while [ $n -le 4 ]; do
-             [ -f "./$n.cfg" ] && grep -vxF "$trgt" "./$n.cfg" > \
-            "./$n.cfg.tmp" && sed '/^$/d' "./$n.cfg.tmp" > "./$n.cfg"
+        while [[ $n -le 4 ]]; do
+             if [ -f "$DC_tlt/$n.cfg" ]; then
+             grep -vxF "$trgt" "$DC_tlt/$n.cfg" > "$DC_tlt/$n.cfg.tmp"
+             sed '/^$/d' "$DC_tlt/$n.cfg.tmp" > "$DC_tlt/$n.cfg"; fi
             let n++
         done
         rm ./*.tmp
@@ -321,7 +337,7 @@ function delete_topic() {
     gtk-delete "$(gettext "Delete")" "$(gettext "No")" "$(gettext "Confirm")"
     ret=$(echo "$?")
         
-        if [ $ret -eq 0 ]; then
+        if [[ $ret -eq 0 ]]; then
 
             if [ "$DM_tl/$tpc" ] &&  [ -n "$tpc" ]; then
             rm -r "$DM_tl/$tpc"; fi
@@ -329,9 +345,10 @@ function delete_topic() {
             > "$DM_tl/.8.cfg"
 
             n=0
-            while [ $n -le 4 ]; do
-                 [ "$DM_tl/.$n.cfg" ] && grep -vxF "$tpc" "$DM_tl/.$n.cfg" > \
-                "$DT/cfg.tmp" && sed '/^$/d' "$DT/cfg.tmp" > "$DM_tl/.$n.cfg"
+            while [[ $n -le 4 ]]; do
+                 if [ "$DM_tl/.$n.cfg" ]; then
+                 grep -vxF "$tpc" "$DM_tl/.$n.cfg" > "$DT/cfg.tmp"
+                 sed '/^$/d' "$DT/cfg.tmp" > "$DM_tl/.$n.cfg"; fi
                 let n++
             done
             rm "$DT/cfg.tmp"
@@ -364,12 +381,11 @@ function edit() {
     index_1="$DC_tlt/2.cfg"
     index_2="$DC_tlt/1.cfg"; fi
     dct="$DS/addons/Dics/cnfg.sh"
-    file_tmp="$(mktemp $DT/file_tmp.XXXX)"
-    edta="$(sed -n 17p ~/.config/idiomind/s/1.cfg)"
+    file_tmp="$(mktemp "$DT/file_tmp.XXXX")"
     tpcs="$(egrep -v "$tpc" < "$DM_tl/.2.cfg" \
     | awk '{print substr($0,1,40)}' \
     | tr "\\n" '!' | sed 's/!\+$//g')"
-    c=$(echo $(($RANDOM%10000)))
+    c=$(($RANDOM%10000))
     item="$(sed -n "$3"p "$index_1")"
     fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
     audiofile_2="$DM_tlt/words/$fname.mp3"
@@ -449,7 +465,7 @@ function edit() {
                 "$DS/vwr.sh" "$lists" "nll" $item_pos & exit 1
             fi
             
-            if [ $ret -eq 2 ]; then
+            if [[ $ret -eq 2 ]]; then
             
                 "$DS/mngr.sh" edit "$lists" "$((item_pos-1))" &
                 
@@ -505,9 +521,9 @@ function edit() {
                 add_tags_1 S "$trgt_mod" "$srce_mod" "$DM_tlt/$fname2.mp3"
                 
                 source "$DS/default/dicts/$lgt"
-                DT_r=$(mktemp -d $DT/XXXXXX); cd "$DT_r"
+                DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
                 trgt="$trgt_mod"; srce="$srce_mod"
-                r=$(echo $(($RANDOM%1000)))
+                r=$(($RANDOM%1000))
                 clean_3 "$DT_r" "$r"
                 translate "$(sed '/^$/d' < $aw)" auto $lg | sed 's/,//g' \
                 | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
@@ -543,9 +559,9 @@ function edit() {
                     add_tags_1 S "$trgt_mod" "$srce_mod" "$DM_tlt/$fname.mp3"
                     
                     source "$DS/default/dicts/$lgt"
-                    DT_r=$(mktemp -d $DT/XXXXXX); cd "$DT_r"
+                    DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
                     trgt="$trgt_mod"; srce="$srce_mod"
-                    r=$(echo $(($RANDOM%1000)))
+                    r=$(($RANDOM%1000))
                     clean_3 "$DT_r $r"
                     translate "$(sed '/^$/d' < "$aw")" auto $lg | sed 's/,//g' \
                     | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
@@ -575,7 +591,7 @@ function edit() {
             if [ "$tpc" != "$tpc_mod" ]; then
 
                 cp -f "$audio_mod" "$DM_tl/$tpc_mod/$fname.mp3"
-                DT_r=$(mktemp -d $DT/XXXXXX); cd "$DT_r"
+                DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
                
                 index sentence "$trgt_mod" "$tpc_mod" &
                 "$DS/mngr.sh" delete_item_confirm "$fname"
@@ -585,7 +601,7 @@ function edit() {
 
             [ -d "$DT/$c" ] && "$DS/add.sh" edit_list_words "$fname" S $c "$trgt_mod" &
             
-            if [ $ret -eq 2 ]; then
+            if [[ $ret -eq 2 ]]; then
 
                 "$DS/mngr.sh" edit "$lists" "$((item_pos-1))" &
                 
@@ -612,12 +628,12 @@ function rename_topic() {
     if [ "$DT/.p_" ] && [ "$(sed -n 2p "$DT/.p_")" = "$tpc" ]; then
     msg "$(gettext "Unable to rename at this time. Please try later ")\n" dialog-warning & exit 1; fi
 
-    if [ $snm -ge 1 ]; then
+    if [[ $snm -ge 1 ]]; then
     
         jlb="$jlb $snm"
         msg_2 "$(gettext "Another topic with the same name already exist.") \n$(gettext "The new it was renamed to\:")\n<b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
         ret="$?"
-        if [ "$ret" -eq 1 ]; then exit 1; fi
+        if [[ $ret -eq 1 ]]; then exit 1; fi
         
     else 
         jlb="$jlb"
@@ -632,21 +648,14 @@ function rename_topic() {
         echo "$jlb" > "$DC_s/4.cfg"
         echo "$jlb" > "$DM_tl/.8.cfg"
         echo "$jlb" > "$DT/tpe"
+        echo '0' >> "$DC_s/4.cfg" 
+        echo '0' >> "$DM_tl/.8.cfg"
         
-        if grep -Fxo "$tpc" < "$DM_tl/.3.cfg"; then
-        echo "$jlb" >> "$DM_tl/.3.cfg"
-        echo istll >> "$DC_s/4.cfg" 
-        echo istll >> "$DM_tl/.8.cfg"; else
-        echo "$jlb" >> "$DM_tl/.2.cfg"
-        echo wn >> "$DC_s/4.cfg"
-        echo wn >> "$DM_tl/.8.cfg"; fi
-
         n=1
-        while [ $n -le 3 ]; do
-             [ -f "$DM_tl/.$n.cfg" ] \
-             && grep -vxF "$tpc" "$DM_tl/.$n.cfg" > \
-             "$DM_tl/.$n.cfg.tmp" \
-             && sed '/^$/d' "$DM_tl/.$n.cfg.tmp" > "$DM_tl/.$n.cfg"
+        while [[ $n -le 3 ]]; do
+             if [ -f "$DM_tl/.$n.cfg" ]; then
+             grep -vxF "$tpc" "$DM_tl/.$n.cfg" > "$DM_tl/.$n.cfg.tmp"
+             sed '/^$/d' "$DM_tl/.$n.cfg.tmp" > "$DM_tl/.$n.cfg"; fi
             let n++
         done
         rm "$DM_tl"/.*.tmp

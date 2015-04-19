@@ -28,7 +28,7 @@ fi
 [ -f "$DCP/0.cfg" ] && st2=$(sed -n 1p "$DCP/0.cfg") || st2=FALSE
 
 n=1; while read feed; do
-    declare url"$n"="$feed"
+    declare url$n="$feed"
     ((n=n+1))
 done < "$DCP/4.cfg"
 
@@ -40,7 +40,7 @@ while [[ $n -lt 3 ]]; do
         get="${sets[$n]}"
         val=$(sed -n "$itn"p < "$DCP/0.cfg" \
         | grep -o "$get"=\"[^\"]* | grep -o '[^"]*$')
-        declare "${sets[$n]}"="$val"
+        declare ${sets[$n]}="$val"
         
     else
         if [ $n -lt 2 ]; then
@@ -57,7 +57,7 @@ apply() {
     sed 's/^ *//; s/ *$//g' > "$DT/podcasts.tmp"
 
     n=1; while read feed; do
-        declare mod"$n"="$feed"
+        declare mod$n="$feed"
         mod="mod$n"; url="url$n"
         if [ "${!url}" != "${!mod}" ]; then
             "$DSP/tls.sh" set_channel "${!mod}" $n & fi

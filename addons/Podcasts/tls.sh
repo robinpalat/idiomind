@@ -110,7 +110,7 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
     items1="$(echo "$xml" | tr '\n' ' ' | tr -s '[:space:]' \
     | sed 's/EOL/\n/g' | head -n 1 | sed -r 's|-\!-|\n|g')"
     xml="$(xsltproc - "$feed" <<< "$tmpl2" 2> /dev/null)"
-    items2="$(echo "$xml" | tr '\n' ' ' | tr -s [:space:] \
+    items2="$(echo "$xml" | tr '\n' ' ' | tr -s "[:space:]" \
     | sed 's/EOL/\n/g' | head -n 1 | sed -r 's|-\!-|\n|g')"
     #xml="$(xsltproc - "$feed" <<< "$tmpl3" 2> /dev/null)"
     #items3="$(echo "$xml" | tr '\n' ' ' | tr -s [:space:] \
@@ -120,15 +120,15 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
         
         n=1;
         while read -r get; do
-            if [ $(wc -w <<< "${get}") -ge 1 ] && [ -z "$name" ]; then
+            if [ "$(wc -w <<<"$get")" -ge 1 ] && [ -z "$name" ]; then
                 name="$get"
                 n=2; fi
                 
-            if [ -n "$(grep 'http:/' <<< "${get}")" ] && [ -z "$link" ]; then
+            if [ -n "$(grep 'http:/' <<<"$get")" ] && [ -z "$link" ]; then
                 link="$get"
                 n=3; fi
                 
-            if [ -n "$(grep -E '.jpeg|.jpg|.png' <<< "${get}")" ] && [ -z "$logo" ]; then
+            if [ -n "$(grep -E '.jpeg|.jpg|.png' <<<"$get")" ] && [ -z "$logo" ]; then
                 logo="$get"; fi
                 
             let n++
@@ -149,15 +149,15 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
         f5="$(sed -n 5p <<<"$items2")"
         f6="$(sed -n 6p <<<"$items2")"
         
-        if [ $(wc -w <<< "${f3}") -ge 2 ] && [ $(wc -w <<< "${f3}") -le 200 ]; then
+        if [ "$(wc -w <<<"$f3")" -ge 2 ] && [ "$(wc -w <<<"$f3")" -le 200 ]; then
         title=3; fi
-        if [ $(wc -w <<< "${f5}") -ge 2 ] && [ -n "$(grep -o -E '\<|\>|/>' <<< "${f5}")" ]; then
+        if [ "$(wc -w <<<"$f5")" -ge 2 ] && [ -n "$(grep -o -E '\<|\>|/>' <<<"$f5")" ]; then
         sum1=5; fi
-        if [ $(wc -w <<< "${f6}") -ge 2 ] && [ -n "$(grep -o -E '\<|\>|/>' <<< "${f6}")" ]; then
+        if [ "$(wc -w <<<"$f6")" -ge 2 ] && [ -n "$(grep -o -E '\<|\>|/>' <<<"$f6")" ]; then
         sum1=6; fi
-        if [ $(wc -w <<< "${f5}") -ge 2 ]; then
+        if [ "$(wc -w <<<"$f5")" -ge 2 ]; then
         sum2=5; fi
-        if [ $(wc -w <<< "${f6}") -ge 2 ]; then
+        if [ "$(wc -w <<<"$f6")" -ge 2 ]; then
         sum2=6; fi
     }
     
@@ -165,48 +165,48 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
 
         n=1
         while read -r get; do
-            if [ -n "$(grep -o -E '\.jpg|\.jpeg|\.png' <<< "${get}")" ] && [ -z "$image" ]; then
+            if [ -n "$(grep -o -E '\.jpg|\.jpeg|\.png' <<<"$get")" ] && [ -z "$image" ]; then
             image="$n"; type=2; break ; fi
             let n++
         done <<< "$items3"
         
         n=4
         while read -r get; do
-            if [ $(wc -w <<< "${get}") -ge 1 ] && [ -z "$title" ]; then
+            if [ "$(wc -w <<<"$get")" -ge 1 ] && [ -z "$title" ]; then
             title="$n"; break ; fi
             let n++
         done <<< "$items3"
         
         n=6
         while read -r get; do
-            if [ $(wc -w <<< "${get}") -ge 1 ] && [ -z "$summ" ]; then
+            if [ "$(wc -w <<<"$get")" -ge 1 ] && [ -z "$summ" ]; then
                 summ="$n"; break ; fi
             let n++
         done <<< "$items3"
     }
 
-    get_images() {
+    #get_images() {
 
-        n=1
-        while read -r get; do
-            if [ -n "$(grep -E '\.jpg|\.jpeg|.png' <<< "${get}")" ] && [ -z "$image" ]; then
-                type=2
-                image="$n"; break; fi
-            if [ -n "$(grep -o 'media:thumbnail url="[^"]*' | grep -o '[^"]*$')" <<< "${get}" ] && [ -z "$image" ]; then
-                image="$n"; break; fi
-                type=2
-            if [ -n "$(grep -o 'img src="[^"]*' | grep -o '[^"]*$')" <<< "${get}" ] && [ -z "$image" ]; then
-                type=2
-                image="$n"; break; fi
-            let n++
-        done <<< "$items3"
-    }
+        #n=1
+        #while read -r get; do
+            #if [ -n "$(grep -E '\.jpg|\.jpeg|.png' <<<"$get")" ] && [ -z "$image" ]; then
+                #type=2
+                #image="$n"; break; fi
+            #if [ -n "$(grep -o 'media:thumbnail url="[^"]*' | grep -o '[^"]*$')" <<<"$get" ] && [ -z "$image" ]; then
+                #image="$n"; break; fi
+                #type=2
+            #if [ -n "$(grep -o 'img src="[^"]*' | grep -o '[^"]*$')" <<<"$get" ] && [ -z "$image" ]; then
+                #type=2
+                #image="$n"; break; fi
+            #let n++
+        #done <<< "$items3"
+    #}
     
     get_summ() {
 
         n=1
         while read -r get; do
-            if [ $(wc -w <<< "${get}") -ge 1 ]; then
+            if [ "$(wc -w <<<"$get")" -ge 1 ]; then
                 summ="$n"; break; fi
             let n++
         done <<< "$items3"
@@ -270,7 +270,7 @@ check() {
     cp "$DIR2/$2.rss" "$DIR2/$2.rss_"
     
     podcast_items="$(xsltproc - "$url" <<<"$tmpl2" 2>/dev/null)"
-    podcast_items="$(echo "$podcast_items" | tr '\n' ' ' | tr -s [:space:] | sed 's/EOL/\n/g' | head -n 2)"
+    podcast_items="$(echo "$podcast_items" | tr '\n' ' ' | tr -s "[:space:]" | sed 's/EOL/\n/g' | head -n 2)"
     item="$(echo "$podcast_items" | sed -n 1p)"
     
     if [ -z "$(echo $item | sed 's/^ *//; s/ *$//; /^$/d')" ]; then
@@ -285,13 +285,13 @@ check() {
     --window-icon="$DS/images/icon.png" --columns=2 --skip-taskbar --scroll --on-top \
     --width=800 --height=600 --borders=5 \
     --text="\t<small>$(gettext "In this table you can define fields according to their content,  most of the time the default values is right. ")</small>" \
-    --field="":CB "$(sed -n 1p $DIR2/$2.rss)!$mn" \
-    --field="":CB "$(sed -n 2p $DIR2/$2.rss)!$mn" \
-    --field="":CB "$(sed -n 3p $DIR2/$2.rss)!$mn" \
-    --field="":CB "$(sed -n 4p $DIR2/$2.rss)!$mn" \
-    --field="":CB "$(sed -n 5p $DIR2/$2.rss)!$mn" \
-    --field="":CB "$(sed -n 6p $DIR2/$2.rss)!$mn" \
-    --field="":CB "$(sed -n 7p $DIR2/$2.rss)!$mn" \
+    --field="":CB "$(sed -n 1p "$DIR2/$2.rss")!$mn" \
+    --field="":CB "$(sed -n 2p "$DIR2/$2.rss")!$mn" \
+    --field="":CB "$(sed -n 3p "$DIR2/$2.rss")!$mn" \
+    --field="":CB "$(sed -n 4p "$DIR2/$2.rss")!$mn" \
+    --field="":CB "$(sed -n 5p "$DIR2/$2.rss")!$mn" \
+    --field="":CB "$(sed -n 6p "$DIR2/$2.rss")!$mn" \
+    --field="":CB "$(sed -n 7p "$DIR2/$2.rss")!$mn" \
     --field="":TXT "$(echo "$field" | sed -n 1p)" \
     --field="":TXT "$(echo "$field" | sed -n 2p)" \
     --field="":TXT "$(echo "$field" | sed -n 3p | sed 's/\://g')" \
@@ -299,9 +299,9 @@ check() {
     --field="":TXT "$(echo "$field" | sed -n 5p)" \
     --field="\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t":TXT "$(echo "$field" | sed -n 6p)" \
     --field="":TXT "$(echo "$field" | sed -n 7p)" \
-    --button=gtk-apply:0 | head -n 7 > $DT/f.tmp
+    --button=gtk-apply:0 | head -n 7 > "$DT/f.tmp"
 
-    [ -n "$(cat "$DT/f.tmp")" ] && mv -f $DT/f.tmp "$DIR2/$2.rss" || cp -f "$DIR2/$2.rss_" "$DIR2/$2.rss"
+    [ -n "$(cat "$DT/f.tmp")" ] && mv -f "$DT/f.tmp" "$DIR2/$2.rss" || cp -f "$DIR2/$2.rss_" "$DIR2/$2.rss"
     [ -f "$DIR2/$2.rss_" ] && rm "$DIR2/$2.rss_"
     [ -f "$DT/cpt.lock" ] && rm -f "$DT/cpt.lock" & exit
 }
@@ -316,7 +316,7 @@ sync() {
     msg_2 "$(gettext "A process is already running!")\n" info "OK" "gtk-stop" "Podcasts"
     e=$(echo $?)
         
-        if [ $e -eq 1 ]; then
+        if [[ $e -eq 1 ]]; then
         killall rsync
         [ -n "$(ps -A | pgrep -f "rsync")" ] && killall rsync
         [ -f "$DT/cp.lock" ] && rm -f "$DT/cp.lock"
@@ -338,7 +338,7 @@ sync() {
     elif [ -d "$path" ]; then
         
         touch "$DT/l_sync"; SYNCDIR="$path"
-        st1="$(cd "$SYNCDIR"; ls *.mp3 | wc -l)"
+        st1="$(cd "$SYNCDIR"; ls ./*.mp3 | wc -l)"
         
         if [[ "$2" != 0 ]]; then
         (sleep 1 && notify-send -i idiomind \
@@ -360,7 +360,7 @@ sync() {
 
         if [[ $exit = 0 ]]; then
             
-            st2="$(cd "$SYNCDIR"; ls *.mp3 | wc -l)"
+            st2="$(cd "$SYNCDIR"; ls ./*.mp3 | wc -l)"
             re=$((st2-st1))
             
             if [[ $re -gt 0 ]] || [ "$2" != 0 ]; then

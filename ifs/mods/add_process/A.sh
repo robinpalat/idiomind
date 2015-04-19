@@ -3,25 +3,33 @@
 
 function dlg_checklist_5() {
     
-    slt=$(mktemp $DT/slt.XXXX.x)
+    slt=$(mktemp "$DT/slt.XXXX.x")
     cat "$1" | awk '{print "FALSE\n"$0}' | \
-    yad --center --sticky --name=Idiomind --class=Idiomind \
-    --dclick-action="$DS/ifs/mods/add_process/A.sh 'show_item_for_edit'" \
-    --list --checklist --window-icon="$DS/images/icon.png" \
+    yad --list --checklist --title="$2" \
     --text="<small>$info</small>" \
-    --width=600 --height=550 --borders=3 --button="$(gettext "Cancel")":1 \
+    --name=Idiomind --class=Idiomind \
+    --dclick-action="$DS/ifs/mods/add_process/A.sh 'show_item_for_edit'" \
+    --window-icon="$DS/images/icon.png" \
+    --center --sticky \
+    --width=600 --height=550 --borders=3 \
+    --column="$(wc -l < "$1")" \
+    --column="$(gettext "Items")" \
+    --button="$(gettext "Cancel")":1 \
     --button="$(gettext "To New Topic")":'/usr/share/idiomind/add.sh new_topic' \
-    --button=gtk-add:0 --title="$2" \
-    --column="$(wc -l < "$1")" --column="$(gettext "Items")" > "$slt"
+    --button=gtk-add:0 > "$slt"
+    
 }
 
 function dlg_text_info_5() {
     
-    echo "$1" | yad --text-info --center --wrap \
-    --name=Idiomind --class=Idiomind --window-icon="$DS/images/icon.png" \
-    --sticky --width=520 --height=110 --editable \
-    --margins=8 --borders=0 --button=Ok:0 \
-    --title=" " > "$1.txt"
+    echo "$1" | yad --text-info --title=" " \
+    --name=Idiomind --class=Idiomind \
+    --editable \
+    --window-icon="$DS/images/icon.png" \
+    --center --wrap --sticky \
+    --width=520 --height=110 \
+    --margins=8 --borders=0 \
+    --button=Ok:0 > "$1.txt"
 }
 
 function dlg_text_info_4() {
@@ -37,25 +45,32 @@ function audio_recognizer() {
     echo "$(wget -q -U -T 30 "Mozilla/5.0" --post-file "$1" \
     --header="Content-Type: audio/x-flac; rate=16000" \
     -O - "https://www.google.com/speech-api/v2/recognize?&lang="$2"-"$3"&key=$4")"
-    if [ $? != 0 ]; then
-        msg "$(gettext "An error occurred, please try later.")\n" dialog-warning &
-        kill -9 $(pgrep -f "yad --progress") & exit 1; fi
+    
+    if [[ $? != 0 ]]; then
+    msg "$(gettext "An error occurred, please try later.")\n" dialog-warning &
+    kill -9 $(pgrep -f "yad --progress") & exit 1; fi
     
 }
 
 function dlg_file_1() {
     
-    echo "$(yad --borders=0 --name=Idiomind --file-filter="*.mp3 *.tar *.zip" \
-    --skip-taskbar --on-top --title="Speech recognize" --center \
-    --class=Idiomind --window-icon="$DS/images/icon.png" --file --width=600 --height=450)"
+    yad --file --title="Speech recognize" \
+    --name=Idiomind --class=Idiomind \
+    --file-filter="*.mp3 *.tar *.zip" \
+    --window-icon="$DS/images/icon.png" \
+    --skip-taskbar --on-top --center \
+    --width=600 --height=450 --borders=0
 }
 
 function dlg_file_2() {
     
-    yad --save --center --borders=10 --name=Idiomind --class=Idiomind \
-    --on-top --filename="$(date +%m-%d-%Y)"_audio.tar.gz \
-    --window-icon="$DS/images/icon.png" --skip-taskbar --title="Save" \
-    --file --width=600 --height=500 --button=gtk-ok:0
+    yad --file --save --title="Save" \
+    --name=Idiomind --class=Idiomind \
+    --filename="$(date +%m-%d-%Y)"_audio.tar.gz \
+    --window-icon="$DS/images/icon.png" \
+    --skip-taskbar --center --on-top \
+    --width=600 --height=500 --borders=10 \
+    --button=gtk-ok:0
 }
 
 if [[ "$prdt" = A ]]; then
@@ -114,7 +129,7 @@ if [[ "$prdt" = A ]]; then
             unzip "$DT_r/rv.zip"
         fi
 
-        ls *.mp3 > lst
+        ls *.mp3 > ./lst
         lns=$(wc -l < lst | head -200)
         internet
          
@@ -135,7 +150,7 @@ if [[ "$prdt" = A ]]; then
        echo "# $(gettext "Processing")..." ; sleep 0.2
 
         n=1
-        while [ $n -le "$lns" ]; do
+        while [[ $n -le "$lns" ]]; do
 
             sox "$n.mp3" info.flac rate 16k
             data="$(audio_recognizer info.flac $lgt $lgt $key)"
@@ -148,7 +163,7 @@ if [[ "$prdt" = A ]]; then
             trgt="$(echo "$data" | sed '1d' | sed 's/.*transcript":"//' \
             | sed 's/"}],"final":true}],"result_index":0}//g')"
             
-            if [ $(wc -c <<<"$trgt") -ge 180 ]; then
+            if [ ${#trgt} -ge 180 ]; then
                 printf "\n\n- $trgt" >> log
             
             else
@@ -157,7 +172,7 @@ if [[ "$prdt" = A ]]; then
                 echo "$trgt" >> ./ls
                 rm -f info.flac info.ret
             fi
-            prg=$((100*$n/$lns))
+            prg=$((100*$n/lns))
             echo "$prg"
             echo "# ${trgt:0:35} ... " ;
             
@@ -168,7 +183,7 @@ if [[ "$prdt" = A ]]; then
 
         cd "$DT_r"
         sed -i '/^$/d' ./ls
-        [ $(wc -c <<<"$tpe") -gt 40 ] && tcnm="${tpe:0:40}..." || tcnm="$tpe"
+        [ ${#tpe} -gt 40 ] && tcnm="${tpe:0:40}..." || tcnm="$tpe"
 
         left=$((200 - $(wc -l < "$DC_tlt"/4.cfg)))
         info="-$left"
@@ -211,11 +226,12 @@ if [[ "$prdt" = A ]]; then
                 (
                 echo "1"
                 echo "# $(gettext "Processing")...";
-                [ $lgt = ja ] || [ $lgt = "zh-cn" ] || [ $lgt = ru ] && c=c || c=w
+                if [ $lgt = ja ] || [ $lgt = "zh-cn" ] || [ $lgt = ru ];
+                then c=c; else c=w; fi
                 lns=$(cat ./slts ./wrds | wc -l)
 
                 n=1
-                while [ $n -le $(wc -l < ./slts | head -200) ]; do
+                while [ $n -le "$(wc -l < ./slts | head -200)" ]; do
                     
                     sntc=$(sed -n "$n"p ./slts)
                     trgt=$(sed 's/^\s*./\U&\E/g' < "./$sntc.txt")
@@ -230,7 +246,7 @@ if [[ "$prdt" = A ]]; then
                             srce="$(translate "$trgt" $lgt $lgs)"
                             mv -f "$sntc.mp3" "$DM_tlt/words/$fname.mp3"
                             
-                            if ( [ -n $(file -ib "$DM_tlt/words/$fname".mp3 | grep -o 'binary') ] \
+                            if ( [ -n "$(file -ib "$DM_tlt/words/$fname".mp3 | grep -o 'binary')" ] \
                             && [ -n "$trgt" ] && [ -n "$srce" ] ); then
                             
                                 add_tags_1 W "$trgt" "$srce" "$DM_tlt/words/$fname.mp3"
@@ -242,9 +258,9 @@ if [[ "$prdt" = A ]]; then
                             fi
                         fi
                     
-                    elif [ $(sed -n 1p "$sntc.txt" | wc -$c) -ge 1 ]; then
+                    elif [ "$(sed -n 1p "$sntc.txt" | wc -$c)" -ge 1 ]; then
                     
-                        if [ $(wc -l < "$DC_tlt"/0.cfg) -ge 200 ]; then
+                        if [ "$(wc -l < "$DC_tlt"/0.cfg)" -ge 200 ]; then
                             printf "\n\n- $sntc" >> ./slog
                     
                         else
@@ -252,22 +268,22 @@ if [[ "$prdt" = A ]]; then
                             
                             mv -f "$sntc.mp3" "$DM_tlt/$fname.mp3"
                             
-                            if ( [ -f "$DM_tlt/$fname.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ] ); then
+                            if [ -f "$DM_tlt/$fname.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ]; then
                                 add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3"
                             fi
 
                             (
-                            r=$(echo $(($RANDOM%1000)))
+                            r=$(($RANDOM%1000))
                             clean_3 "$DT_r" "$r"
-                            translate "$(sed '/^$/d' < $aw)" auto $lg \
+                            translate "$(sed '/^$/d' < "$aw")" auto $lg \
                             | sed 's/,//; s/\?//; s/\¿//; s/;//g' > "$bw"
                             check_grammar_1 "$DT_r" "$r"
                             list_words "$DT_r" "$r"
-                            grmrk=$(sed ':a;N;$!ba;s/\n/ /g' < g.$r)
+                            grmrk=$(sed ':a;N;$!ba;s/\n/ /g' < "./g.$r")
                             lwrds=$(< A.$r)
-                            pwrds=$(tr '\n' '_' < B.$r)
+                            pwrds=$(tr '\n' '_' < "./B.$r")
                             
-                            if ( [ -n $(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary') ] \
+                            if ( [ -n "$(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary')" ] \
                             && [ -n "$lwrds" ] && [ -n "$pwrds" ] && [ -n "$grmrk" ] ); then
                                 
                                 echo "$sntc" >> adds
@@ -287,7 +303,7 @@ if [[ "$prdt" = A ]]; then
                         fi
                     fi
                 
-                    prg=$((100*$n/$lns-1))
+                    prg=$((100*$n/lns-1))
                     echo "$prg"
                     echo "# ${sntc:0:35}..." ;
                     
@@ -298,7 +314,7 @@ if [[ "$prdt" = A ]]; then
                 nwrds=" $(wc -l < wrds  | head -200) $(gettext "Words")"; fi
                 
                 n=1
-                while [ $n -le "$(wc -l < wrds  | head -200)" ]; do
+                while [ $n -le "$(wc -l < wrds | head -200)" ]; do
                     trgt=$(sed -n "$n"p wrds | sed ':a;N;$!ba;s/\n/ /g' | sed 's/^\s*./\U&\E/g')
                     sname=$(sed -n "$n"p wrdsls)
                     fname="$(nmfile "$trgt")"
@@ -330,7 +346,7 @@ if [[ "$prdt" = A ]]; then
                     fi
                     
                     nn=$(($n+$(wc -l < ./slts)-1))
-                    prg=$((100*$nn/$lns))
+                    prg=$((100*$nn/lns))
                     echo "$prg"
                     echo "# $trgt..." ;
                     
@@ -342,60 +358,59 @@ if [[ "$prdt" = A ]]; then
                 if [ -f ./wlog ]; then
                 wadds=" $(($(wc -l < ./addw) - $(sed '/^$/d' < ./wlog | wc -l)))"
                 W=" $(gettext "Words")"
-                if [ $(echo $wadds) = 1 ]; then
+                if [ $wadds = 1 ]; then
                 W=" $(gettext "Word")"; fi
                 else
                 wadds=" $(wc -l < ./addw)"
                 W=" $(gettext "Words")"
-                if [ $(echo $wadds) = 1 ]; then
+                if [ $wadds = 1 ]; then
                 wadds=" $(wc -l < ./addw)"
                 W=" $(gettext "Word")"; fi
                 fi
                 if [ -f ./slog ]; then
                 sadds=" $(($(wc -l < ./adds) - $(sed '/^$/d' < ./swlog | wc -l)))"
                 S=" $(gettext "Sentences")"
-                if [ $(echo $sadds) = 1 ]; then
+                if [ $sadds = 1 ]; then
                 S=" $(gettext "Sentence")"; fi
                 else
                 sadds=" $(wc -l < ./adds)"
                 S=" $(gettext "Sentences")"
-                if [ $(echo $sadds) = 1 ]; then
+                if [ $sadds = 1 ]; then
                 S=" $(gettext "Sentence")"; fi
                 fi
                 
                 logs=$(cat ./slog ./wlog ./log)
                 adds=$(cat ./adds ./addw | wc -l)
                 
-                if [ "$adds" -ge 1 ]; then
+                if [[ "$adds" -ge 1 ]]; then
                 notify-send -i idiomind "$tpe" "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
                 echo "aitm.$adds.aitm" >> \
                 $DC/addons/stats/.log; fi
                 
-                if [ -n "$logs" ] || [ $(ls [0-9]* | wc -l) -ge 1 ]; then
+                if [ -n "$logs" ] || [ "$(ls [0-9]* | wc -l)" -ge 1 ]; then
                 
                     if [ -n "$logs" ]; then
                     text_r1="$(gettext "Some items could not be added to your list.")"; fi
                     
-                    if [ $(ls [0-9]* | wc -l) -ge 1 ]; then
+                    if [ "$(ls [0-9]* | wc -l)" -ge 1 ]; then
                     btn="--button="$(gettext "Save Audio")":0"
                     text_r2="$(gettext "Some audio files could not be added.")"; fi
 
                     dlg_text_info_3 "$text_r2 $text_r1" "$logs" "$btn" >/dev/null 2>&1
                     ret=$(echo "$?")
                     
-                        if  [ "$ret" -eq 0 ]; then
+                        if  [[ "$ret" -eq 0 ]]; then
                             aud=$(dlg_file_2)
                             ret=$(echo "$?")
                             
-                                if [ "$ret" -eq 0 ]; then
+                                if [[ "$ret" -eq 0 ]]; then
                                 mkdir rest
                                 mv -f [0-9]*.mp3 ./rest/
                                 cd ./rest
                                 cat "$(ls [0-9]*.mp3 | sort -n | tr '\n' ' ')" > audio.mp3
                                 rm -f "$(ls [0-9]*.mp3)"
                                 tar cvzf audio.tar.gz *
-                                mv -f audio.tar.gz "$aud"
-                                fi
+                                mv -f audio.tar.gz "$aud"; fi
                         fi
                 fi
                 
@@ -405,10 +420,10 @@ if [[ "$prdt" = A ]]; then
                 else rm="$(wc -l < ./adds)"; fi
                 
                 n=1
-                while [ $n -le 20 ]; do
+                while [[ $n -le 20 ]]; do
                      sleep 5
                      if [ "$(wc -l < ./x)" -eq "$rm" ] || [ "$n" = 20 ]; then
-                        [ "$DT_r" ] && rm -fr "$DT_r"
+                        [ -d "$DT_r" ] && rm -fr "$DT_r"
                         cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
                         rm -f "$lckpr" & break & exit 1
                      fi
@@ -416,7 +431,7 @@ if [[ "$prdt" = A ]]; then
                 done
                 exit
             else
-                [ "$DT_r" ] && rm -fr "$DT_r"
+                [ -d "$DT_r" ] && rm -fr "$DT_r"
                 cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
                 rm -f "$lckpr" "$slt" & exit 1
             fi

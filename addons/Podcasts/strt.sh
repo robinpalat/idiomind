@@ -22,7 +22,7 @@ include "$DS/ifs/mods/add"
 DSP="$DS/addons/Podcasts"
 DMC="$DM_tl/Podcasts/cache"
 DCP="$DM_tl/Podcasts/.conf"
-DT_r=$(mktemp -d $DT/XXXX)
+DT_r="$(mktemp -d "$DT/XXXX")"
 downloads=5
 
 tmplitem="<?xml version='1.0' encoding='UTF-8'?>
@@ -54,8 +54,8 @@ conditions() {
     if [ -f "$DT/.uptp" ] && [ -z "$1" ]; then
         msg_2 "$(gettext "Wait till it finishes a previous process")\n" info OK gtk-stop
         ret=$(echo $?)
-        [ $ret -eq 1 ] && "$DS/stop.sh" feed
-        [ $ret -eq 0 ] && exit 1
+        [[ $ret -eq 1 ]] && "$DS/stop.sh" feed
+        [[ $ret -eq 0 ]] && exit 1
     
     elif [[ -f "$DT/.uptp" && "$1" = A ]]; then
         exit 1
@@ -76,17 +76,17 @@ conditions() {
 
 mediatype () {
 
-    if echo "${1}" | grep -q ".mp3"; then ex=mp3; tp=aud
-    elif echo "${1}" | grep -q ".mp4"; then ex=mp4; tp=vid
-    elif echo "${1}" | grep -q ".ogg"; then ex=ogg; tp=aud
-    elif echo "${1}" | grep -q ".avi"; then ex=avi; tp=vid
-    elif echo "${1}" | grep -q ".m4v"; then ex=m4v; tp=vid
-    elif echo "${1}" | grep -q ".mov"; then ex=mov; tp=vid
-    elif echo "${1}" | grep -o ".pdf"; then ex=pdf; tp=txt
+    if echo "$1" | grep -q ".mp3"; then ex=mp3; tp=aud
+    elif echo "$1" | grep -q ".mp4"; then ex=mp4; tp=vid
+    elif echo "$1" | grep -q ".ogg"; then ex=ogg; tp=aud
+    elif echo "$1" | grep -q ".avi"; then ex=avi; tp=vid
+    elif echo "$1" | grep -q ".m4v"; then ex=m4v; tp=vid
+    elif echo "$1" | grep -q ".mov"; then ex=mov; tp=vid
+    elif echo "$1" | grep -o ".pdf"; then ex=pdf; tp=txt
     else
         printf "err.FE2($n).err\n" >> "$DC_s/8.cfg"
-        echo "Could not add some podcasts.\n$FEED" >> "$DM_tl/Podcasts/.conf/feed.err"
-        continue; fi
+        printf "Could not add some podcasts.\n$FEED" >> "$DM_tl/Podcasts/.conf/feed.err"
+        return; fi
 }
 
 mkhtml () {
@@ -116,10 +116,12 @@ $summary<br><br></div>
 </body>"
 
     if [ "$tp" = vid ]; then
-        if [ $ex = m4v || $ex = mp4 ]; then
-        t = mp4
-        elif [ $ex = avi ]; then
-        t = avi; fi
+    
+        if [ "$ex" = m4v ] || [ $ex = mp4 ]; then
+        t=mp4
+        elif [ "$ex" = avi ]; then
+        t=avi
+        fi
         echo -e "$video" > "$DMC/$fname.html"
 
     elif [ "$tp" = aud ]; then
@@ -134,7 +136,7 @@ get_images () {
 
     if [ "$tp" = aud ]; then
         
-        cd "$DT_r"; p=TRUE; rm -f *.jpeg *.jpg
+        cd "$DT_r"; p=TRUE; rm -f ./*.jpeg ./*.jpg
         
         eyeD3 --write-images="$DT_r" "media.$ex"
         
@@ -157,7 +159,7 @@ get_images () {
 
     elif [ "$tp" = vid ]; then
         
-        cd "$DT_r"; p=TRUE; rm -f *.jpeg *.jpg
+        cd "$DT_r"; p=TRUE; rm -f ./*.jpeg ./*.jpg
         mplayer -ss 60 -nosound -noconsolecontrols \
         -vo jpeg -frames 3 "media.$ex" >/dev/null
 
@@ -198,10 +200,10 @@ fetch_podcasts() {
                 d=0
                 while [[ $d -lt 8 ]]; do
                 
-                    itn=$((d+1)); get="${sets[$d]}"
+                    itn=$((d+1)); get=${sets[$d]}
                     val=$(sed -n "$itn"p < "$DCP/$n.rss" \
                     | grep -o "$get"=\"[^\"]* | grep -o '[^"]*$')
-                    declare "${sets[$d]}"="$val"
+                    declare ${sets[$d]}="$val"
                     ((d=d+1))
                 done
               
@@ -225,9 +227,9 @@ fetch_podcasts() {
                     | sed 's/<[^>]*>//g' | sed 's/^ *//; s/ *$//; /^$/d')
                     summary=$(echo "$fields" | sed -n "$nsumm"p)
                     #| iconv -c -f utf8 -t ascii
-                    fname="$(nmfile "${title}")"
+                    fname="$(nmfile "$title")"
                     
-                    if [ "$(echo "$title" | wc -c)" -ge 300 ] \
+                    if [ "$(wc -c <<<"$title")" -ge 300 ] \
                     || [ -z "$title" ]; then
                     continue; fi
                          
@@ -275,8 +277,8 @@ remove_items() {
     while [[ $n -le "$(wc -l < "$DCP/1.cfg")" ]]; do
         item="$(sed -n "$n"p "$DCP/1.cfg")"
         if ! grep -Fxo "$item" < "$DCP/2.cfg"; then
-            fname="$(nmfile "${item}")"
-            [ -f "$DMC/$fname".* ] && rm "$DMC/$fname".*
+            fname="$(nmfile "$item")"
+            [ "$DMC/$fname".* ] && rm "$DMC/$fname".*
         fi
         grep -vxF "$item" "$DCP/1.cfg" > "$DT/item.tmp"
         sed '/^$/d' "$DT/item.tmp" > "$DCP/1.cfg"
@@ -294,7 +296,7 @@ check_index() {
     
     df_img="$DSP/images/item.png"
     while read item; do
-        fname="$(nmfile "${item}")"
+        fname="$(nmfile "$item")"
         if ([ -f "$DMC/$fname.mp3" ] || [ -f "$DMC/$fname.mp4" ] || \
         [ -f "$DMC/$fname.jpg" ] || [ -f "$DMC/$fname.pdf" ] \
         [ -f "$DMC/$fname.jpeg" ] || [ -f "$DMC/$fname.png" ] || \
@@ -310,15 +312,15 @@ check_index() {
     
     if [ -f "$DT/cchk" ]; then
         while read item; do
-            fname="$(nmfile "${item}")"
+            fname="$(nmfile "$item")"
             grep -vxF "$item" "$DCP/.11.cfg" > "$DCP/.11.cfg.tmp"
             sed '/^$/d' "$DCP/.11.cfg.tmp" > "$DCP/.11.cfg"
             grep -vxF "$item" "$DCP/1.cfg" > "$DCP/1.cfg.tmp"
             sed '/^$/d' "$DCP/1.cfg.tmp" > "$DCP/1.cfg"
             [ -f "$DMC/$fname.png" ] && rm "$DMC/$fname.png"
         done < "$DT/cchk"
-        [ -f "$DCP/*.tmp" ] && rm "$DCP/*.tmp"
-        [ -f "$DT/cchk" ] && rm "$DT/cchk"
+        [ "$DCP"/*.tmp ] && rm "$DCP"/*.tmp
+        [ "$DT/cchk" ] && rm "$DT/cchk"
     fi
 }
 
@@ -334,14 +336,14 @@ fi
 
 [ -f "$DCP/1.cfg" ] && kept_episodes="$(wc -l < "$DCP/1.cfg")" || kept_episodes=0
 echo -e " <b>$(gettext "Updating")</b>
- $(gettext "New episodes:") --\t$(gettext "Saved episodes:") \
+ $(gettext "New episodes:") \t$(gettext "Saved episodes:") \
 $kept_episodes "> "$DM_tl/Podcasts/.update"
 
 fetch_podcasts
 rm -fr "$DT_r" "$DT/.uptp"
 
 [ -f "$DT_r/log" ] && new_episodes="$(wc -l < "$DT_r/log")" || new_episodes=0
-echo -e " $(gettext "Last update:") `date "+%r %a %d %B"`
+echo -e " $(gettext "Last update:") $(date "+%r %a %d %B")
  $(gettext "New episodes:") $new_episodes\t$(gettext "Saved episodes:") \
 $kept_episodes "> "$DM_tl/Podcasts/.update"
 
@@ -365,10 +367,12 @@ fi
 cfg="$DM_tl/Podcasts/.conf/0.cfg"; if [ -f "$cfg" ]; then
 sync="$(sed -n 2p < "$cfg" | grep -o 'sync="[^"]*' | grep -o '[^"]*$')"
 if [ "$sync" = TRUE ]; then 
-if [[ "$1" != A ]]; then
-"$DSP/tls.sh" sync
-else
-"$DSP/tls.sh" sync 0
-fi; fi
+    if [[ "$1" != A ]]; then
+    "$DSP/tls.sh" sync
+    else
+    "$DSP/tls.sh" sync 0
+    fi
+fi
+fi
 
 exit

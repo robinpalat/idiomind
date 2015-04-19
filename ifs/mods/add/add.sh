@@ -1,4 +1,5 @@
-#!/usr/bin/env
+#!/bin/bash
+# -*- ENCODING: UTF-8 -*-
 
 
 function index() {
@@ -221,8 +222,8 @@ function list_words() {
     sed -i 's/\. /\n/g' "$aw"
     cd "$1"; touch "A.$2" "B.$2" "g.$2"; n=1
     
-    if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
-        while [ $n -le "$(cat $aw | wc -l)" ]; do
+    if [ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]; then
+        while [ $n -le "$(wc -l < "$aw")" ]; do
         s=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
         t=$(sed -n "$n"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
         echo ISTI"$n"I0I"$t"ISTI"$fetch_audion"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> "A.$2"
@@ -230,7 +231,7 @@ function list_words() {
         let n++
         done
     else
-        while [ $n -le "$(cat $aw | wc -l)" ]; do
+        while [ $n -le "$(wc -l < "$aw")" ]; do
         t=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
         s=$(sed -n "$n"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
         echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> "A.$2"
@@ -355,7 +356,7 @@ function dlg_form_0() {
 
 function dlg_form_1() {
 
-    yad --form --title="$(gettext "New Note")" \
+    yad --form --title="$(gettext "New note")" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --separator="\n" \
     --skip-taskbar --center --on-top \
@@ -373,7 +374,7 @@ function dlg_form_1() {
 
 function dlg_form_2() {
     
-    yad --form --title="$(gettext "New Note")" \
+    yad --form --title="$(gettext "New note")" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --separator="\n" \
     --skip-taskbar --center --on-top \

@@ -3,7 +3,6 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
-wicon="$DS/images/logo.png"
 
 if [ ! -f "$DC_a/1.cfg" ]; then
 
@@ -47,7 +46,6 @@ if [ -z "$1" ]; then
         if grep "TRUE $(gettext "Export")" <<<"$ex"; then
         
             set -e
-            set u pipefail
             IFS=$'\n\t'
             
             cd "$HOME"
@@ -136,7 +134,7 @@ if [ -z "$1" ]; then
                     [ ! -d "$DM_t/$lng/.share" ] && mkdir "$DM_t/$lng/.share"
                     [ "$(ls -A "./$lng/.share")" ] && mv -f "./$lng/.share"/* "$DM_t/$lng/.share"/
                     
-                    echo $lng >> ./.languages
+                    echo "$lng" >> ./.languages
                     
                 done <<< "$list"
 

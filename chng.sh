@@ -37,7 +37,7 @@ if [ "$1" = chngi ]; then
     
         if [ ! -f "$1" ]; then
         echo "___" >> "$DT/.l_loop"
-        if [ $(cat "$DT/.l_loop" | wc -l) -gt 5 ]; then
+        if [ "$(wc -l < "$DT/.l_loop")" -gt 5 ]; then
         rm -f "$DT/.p_"  "$DT/.l_loop" &
         "$DS/stop.sh" play & exit 1; fi
         fi
@@ -89,12 +89,10 @@ elif [ "$1" != chngi ]; then
 
     lgs=$(lnglss $lgsl)
     [ ! -f "$DC_s/0.cfg" ] && > "$DC_s/0.cfg"
-    wth=$(($(sed -n 2p $DC_s/10.cfg)-0))
-    eht=$(($(sed -n 3p $DC_s/10.cfg)-0))
     
     if [ -n "$1" ]; then
     text="--text=$1\n"
-    align="left"; h=1
+    align="left"
     img="--image=info"
     else
     lgtl=$(echo "$lgtl" | awk '{print tolower($0)}')

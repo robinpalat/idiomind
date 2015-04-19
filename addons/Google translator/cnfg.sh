@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 source /usr/share/idiomind/ifs/c.conf
-wicon="$DS/images/logo.png"
+
 if [ ! -f "$DC_a/gts.cfg" ] \
 || [ -z "$(< "$DC_a/gts.cfg")" ]; then
 echo -e "set1=\"\"" > "$DC_a/gts.cfg"

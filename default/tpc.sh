@@ -41,7 +41,8 @@ else
         cd "$HOME"
         fi
         
-        [ ! "$DC_tl/$topic/7.cfg" ] && "$DS/ifs/tls.sh" check_index "$topic"
+        if [ ! -f "$DC_tl/$topic/7.cfg" ]; then
+        "$DS/ifs/tls.sh" check_index "$topic"; fi
         
         stts=$(sed -n 1p < "$DC_tlt/8.cfg")
         if [[ $(grep -Fxon "$topic" < "$DM_tl/.1.cfg" \
@@ -49,30 +50,30 @@ else
         
             if [ -f "$DC_tlt/9.cfg" ]; then
                 dts=$(wc -l < "$DC_tlt/9.cfg")
-                if [ "$dts" = 1 ]; then
+                if [[ $dts = 1 ]]; then
                 dte=$(sed -n 1p "$DC_tlt/9.cfg")
-                TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-                RM=$((100*$TM/6))
-                elif [ "$dts" = 2 ]; then
+                TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+                RM=$((100*TM/6))
+                elif [[ $dts = 2 ]]; then
                 dte=$(sed -n 2p "$DC_tlt/9.cfg")
-                TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-                RM=$((100*$TM/10))
-                elif [ "$dts" = 3 ]; then
+                TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+                RM=$((100*TM/10))
+                elif [[ $dts = 3 ]]; then
                 dte=$(sed -n 3p "$DC_tlt/9.cfg")
-                TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-                RM=$((100*$TM/15))
-                elif [ "$dts" = 4 ]; then
+                TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+                RM=$((100*TM/15))
+                elif [[ $dts = 4 ]]; then
                 dte=$(sed -n 4p "$DC_tlt/9.cfg")
-                TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-                RM=$((100*$TM/20))
-                elif [ "$dts" = 5 ]; then
+                TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+                RM=$((100*TM/20))
+                elif [[ $dts = 5 ]]; then
                 dte=$(sed -n 5p "$DC_tlt/9.cfg")
-                TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-                RM=$((100*$TM/30))
-                elif [ "$dts" = 6 ]; then
+                TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+                RM=$((100*TM/30))
+                elif [[ $dts = 6 ]]; then
                 dte=$(sed -n 6p "$DC_tlt/9.cfg")
-                TM=$(echo $(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) )))
-                RM=$((100*$TM/40))
+                TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+                RM=$((100*TM/40))
                 fi
 
                 if [[ $((stts%2)) = 0 ]]; then
@@ -92,7 +93,6 @@ else
         echo '0' >> "$DC_s/4.cfg" 
         echo '0' >> "$DM_tl/.8.cfg"
 
-        cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
         [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
         
         if [ "$2" = 1 ]; then 

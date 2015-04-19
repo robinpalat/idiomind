@@ -237,12 +237,12 @@ check_index() {
     check() {
 
         n=0
-        while [ $n -le 4 ]; do
+        while [[ $n -le 4 ]]; do
             [ ! -f "$DC_tlt/$n.cfg" ] && touch "$DC_tlt/$n.cfg"
             check_index1 "$DC_tlt/$n.cfg"
             chk=$(wc -l < "$DC_tlt/$n.cfg")
             [ -z "$chk" ] && chk=0
-            eval chk$n=$(echo $chk)
+            eval chk$n="$chk"
             ((n=n+1))
         done
         
@@ -341,8 +341,8 @@ check_index() {
 
     check
 
-    if [[ $(($chk3 + $chk4)) != $chk0 || $(($chk1 + $chk2)) != $chk0 \
-    || $mp3s != $chk0 || $stts = 13 ]]; then
+    if [ $((chk3+chk4)) != $chk0 ]  || [ $((chk1+chk2)) != $chk0 ] \
+    || [ $mp3s != $chk0 ] || [ $stts = 13 ]; then
     
         (sleep 1
         notify-send -i idiomind "$(gettext "Index Error")" "$(gettext "Fixing...")" -t 3000) &
@@ -352,8 +352,7 @@ check_index() {
         
         files
         
-        if ([ "$DC_tlt/.11.cfg" ] && \
-        [ -n "$(< "$DC_tlt/.11.cfg")" ]); then
+        if [ -f "$DC_tlt/.11.cfg" ] && [ -n "$(< "$DC_tlt/.11.cfg")" ]; then
         index="$DC_tlt/.11.cfg"
         else
         index="$DT/index"; fi
@@ -363,8 +362,8 @@ check_index() {
 
     check
     
-    if [[ $(($chk3 + $chk4)) != $chk0 || $(($chk1 + $chk2)) != $chk0 \
-    || $mp3s != $chk0 || $stts = 13 ]]; then
+    if [ $((chk3+chk4)) != $chk0 ]  || [ $((chk1+chk2)) != $chk0 ] \
+    || [ $mp3s != $chk0 ] || [ $stts = 13 ]; then
 
         files
         index="$DT/index"; rm "$DC_tlt/.11.cfg"
@@ -372,7 +371,7 @@ check_index() {
     fi
     
     n=0
-    while [ $n -le 4 ]; do
+    while [[ $n -le 4 ]]; do
         touch "$DC_tlt/$n.cfg"
         ((n=n+1))
     done
@@ -382,7 +381,7 @@ check_index() {
 
 function add_audio() {
 
-    cd $HOME
+    cd "$HOME"
     AU=$(yad --file --title="$(gettext "Add Audio")" \
     --text=" $(gettext "Browse to and select the audio file that you want to add.")" \
     --class=Idiomind --name=Idiomind \
@@ -393,14 +392,14 @@ function add_audio() {
     --button="$(gettext "OK")":0)
 
     ret=$?
-    audio=$(echo "$AU" | cut -d "|" -f1)
+    audio=$(cut -d "|" -f1 <<<"$AU")
 
-    DT="$2"; cd $DT
-    if [ $ret -eq 0 ]; then
+    DT="$2"; cd "$DT"
+    if [[ $ret -eq 0 ]]; then
         if  [ -f "$audio" ]; then
-        cp -f "$audio" $DT/audtm.mp3
+        cp -f "$audio" "$DT/audtm.mp3"
         #eyeD3 -P itunes-podcast --remove $DT/audtm.mp3
-        eyeD3 --remove-all $DT/audtm.mp3 & exit
+        eyeD3 --remove-all "$DT/audtm.mp3" & exit
         fi
     fi
 } >/dev/null 2>&1
@@ -425,7 +424,7 @@ function text() {
 
 function add_file() {
 
-    cd $HOME
+    cd "$HOME"
     FL=$(yad --file --title="$(gettext "Add File")" \
     --text=" $(gettext "Browse to and select the file that you want to add.")" \
     --name=Idiomind --class=Idiomind \
@@ -437,7 +436,8 @@ function add_file() {
     --button="$(gettext "OK")":0)
     ret=$?
 
-    if [ $ret -eq 0 ]; then
+    if [[ $ret -eq 0 ]]; then
+    
         while read -r file; do
         [ -f "$file" ] && cp -f "$file" "$DM_tlt/files"
         done <<<"$(tr '|' '\n' <<<"$FL")"
@@ -458,7 +458,7 @@ function videourl() {
     --button="$(gettext "Cancel")":1 \
     --button=gtk-ok:0)
 
-    [ `wc -c <<<"$url"` -gt 40 ] && \
+    [ ${#url} -gt 40 ] && \
     echo "$url" > "$DM_tlt/files/video$n.url"
 
 }
@@ -633,9 +633,12 @@ function check_updates() {
         msg_2 "<b> $(gettext "A new version of Idiomind available") </b>\n\n" \
         info "$(gettext "Download")" "$(gettext "Cancel")" $(gettext "Updates")
         
-        if [ $ret -eq 0 ]; then
+        if [[ $ret -eq 0 ]]; then
+        
             xdg-open "$pkg";
-        elif [ $ret -eq 1 ]; then
+            
+        elif [[ $ret -eq 1 ]]; then
+        
             echo `date +%d` > "$DC_s/9.cfg";
         fi
         
@@ -650,8 +653,9 @@ function a_check_updates() {
 
     [ ! -f "$DC_s/9.cfg" ] && echo `date +%d` > "$DC_s/9.cfg" && exit
     
-    d1=$(< $DC_s/9.cfg); d2=$(date +%d)
-    if [ $(sed -n 1p $DC_s/9.cfg) = 28 ] && [ $(wc -l < $DC_s/9.cfg) -ge 2 ]; then
+    d1=$(< "$DC_s/9.cfg"); d2=$(date +%d)
+    if [ "$(sed -n 1p "$DC_s/9.cfg")" = 28 ] \
+    && [ "$(wc -l < "$DC_s/9.cfg")" -ge 2 ]; then
     rm -f "$DC_s/9.cfg"; fi
 
     if [ "$d1" != "$d2" ]; then
@@ -668,12 +672,18 @@ function a_check_updates() {
             msg_2 "<b>$(gettext "A new version of Idiomind available")\n</b>\n$(gettext "Do you want to download it now?")\n" info "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Updates")" "$(gettext "Ignore this update")"
             ret=$(echo $?)
             
-            if [ $ret -eq 0 ]; then
+            if [[ $ret -eq 0 ]]; then
+            
             xdg-open "$pkg";
-            elif [ $ret -eq 2 ]; then
+            
+            elif [[ $ret -eq 2 ]]; then
+            
             echo `date +%d` >> "$DC_s/9.cfg";
-            elif [ $ret -eq 1 ]; then
+            
+            elif [[ $ret -eq 1 ]]; then
+            
             echo `date +%d` > "$DC_s/9.cfg";
+            
             fi
         fi
     fi
@@ -753,7 +763,7 @@ function set_image() {
 
     if [ "$3" = word ]; then
         
-        if [ ! -f "$DT/$fname.*" ]; then
+        if [ ! "$DT/$fname".* ]; then
         file="$DM_tlt/words/$fname.mp3"; fi
         yad --form --title=$(gettext "Image") "$image" "$label" \
         --name=Idiomind --class=Idiomind \
@@ -764,7 +774,7 @@ function set_image() {
         "$btn1" "$btn2" --button=$(gettext "Close"):1
         ret=$?
             
-            if [ $ret -eq 3 ]; then
+            if [[ $ret -eq 3 ]]; then
             
             rm -f *.l
             scrot -s --quality 80 "$fname.temp.jpeg"
@@ -777,7 +787,7 @@ function set_image() {
             wait
             "$DS/ifs/tls.sh" set_image "$item" word & exit
                 
-            elif [ $ret -eq 2 ]; then
+            elif [[ $ret -eq 2 ]]; then
             
             eyeD3 --remove-image "$file"
             rm -f "$DM_tlt/words/images/$fname.jpg"
@@ -786,7 +796,7 @@ function set_image() {
             
     elif [ "$3" = sentence ]; then
     
-        if [ ! -f "$DT/$item".* ]; then
+        if [ ! "$DT/$item".* ]; then
         file="$DM_tlt/$fname.mp3"; fi
         yad --form --title=$(gettext "Image") "$image" "$label" \
         --name=Idiomind --class=Idiomind \
@@ -796,7 +806,7 @@ function set_image() {
         "$btn1" "$btn2" --button=$(gettext "Close"):1
         ret=$?
                 
-            if [ $ret -eq 3 ]; then
+            if [[ $ret -eq 3 ]]; then
             
             rm -f *.l
             scrot -s --quality 80 "$fname.temp.jpeg"
@@ -809,7 +819,7 @@ function set_image() {
             wait
             "$DS/ifs/tls.sh" set_image "$file" sentence & exit
                 
-            elif [ $ret -eq 2 ]; then
+            elif [[ $ret -eq 2 ]]; then
             
             eyeD3 --remove-image "$file"
             rm -f "$DM_tlt/words/images/$fname.jpg"
