@@ -97,11 +97,11 @@ function dlg_form_1() {
     --field="<small>$(gettext "Note")</small>":TXT "$note" \
     --field="<small>$(gettext "Listen")</small>":FBTN "play '$DM_tlt/words/$fname.mp3'" \
     --field="$(gettext "Mark")":CHK "$mark" \
-    --field="<small>$(gettext "Search definition")</small>":FBTN "$sdefn" \
+    --field="<small>$(gettext "Search definition")</small>":FBTN "$cmd_definition" \
     --field=" ":LBL " " \
-    --button="$(gettext "Move")":"$DS/ifs/mods/mngr/mngr.sh 'position' '$item_pos' '$index_1'" \
-    --button="$(gettext "Image")":"$imge" \
-    --button="$(gettext "Delete")":"$dlte" \
+    --button="$(gettext "Move")":"$cmd_move" \
+    --button="$(gettext "Image")":"$cmd_image" \
+    --button="$(gettext "Delete")":"$cmd_delete" \
     --button="gtk-go-down":2 \
     --button="$(gettext "Close")":0 > "$1"
 } >/dev/null 2>&1
@@ -118,47 +118,16 @@ function dlg_form_2() {
     --field="$(gettext "Mark")":CHK "$mark" \
     --field="<small>$lgtl</small>":TXT "$trgt" \
     --field="<small>$lgsl</small>":TXT "$srce" \
-    --field="$(gettext "Listen")":FBTN "$lstau" \
+    --field="$(gettext "Listen")":FBTN "$cmd_play" \
     --field="<small>$(gettext "Topic")</small>":CB "$tpc!$tpcs" \
     --field="<small>$(gettext "Audio")</small>":FL "$DM_tlt/$fname.mp3" \
-    --button="$(gettext "Move")":"$DS/ifs/mods/mngr/mngr.sh 'position' '$item_pos' '$index_1'" \
-    --button="$(gettext "Words")":"$word_list" \
-    --button="$(gettext "Image")":"$imge" \
-    --button="$(gettext "Delete")":"$dlte" \
+    --button="$(gettext "Move")":"$cmd_move" \
+    --button="$(gettext "Words")":"$cmd_words" \
+    --button="$(gettext "Image")":"$cmd_image" \
+    --button="$(gettext "Delete")":"$cmd_delete" \
     --button="gtk-go-down":2 \
     --button="$(gettext "Close")":0 > "$1"
 } >/dev/null 2>&1
-
-
-function calculate_review() {
-
-    dts=$(wc -l < "$DC_tlt/9.cfg")
-    if [[ $dts = 1 ]]; then
-    dte=$(sed -n 1p "$DC_tlt/9.cfg")
-    TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
-    RM=$((100*TM/6))
-    elif [[ $dts = 2 ]]; then
-    dte=$(sed -n 2p "$DC_tlt/9.cfg")
-    TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
-    RM=$((100*TM/10))
-    elif [[ $dts = 3 ]]; then
-    dte=$(sed -n 3p "$DC_tlt/9.cfg")
-    TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
-    RM=$((100*TM/15))
-    elif [[ $dts = 4 ]]; then
-    dte=$(sed -n 4p "$DC_tlt/9.cfg")
-    TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
-    RM=$((100*TM/20))
-    elif [[ $dts = 5 ]]; then
-    dte=$(sed -n 5p "$DC_tlt/9.cfg")
-    TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
-    RM=$((100*TM/30))
-    elif [[ $dts = 6 ]]; then
-    dte=$(sed -n 6p "$DC_tlt/9.cfg")
-    TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
-    RM=$((100*TM/40))
-    fi
-}
 
 
 function dialog_2() {

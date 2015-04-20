@@ -77,7 +77,7 @@ function mark_to_learn() {
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
     
     if [ "$(wc -l < "$DC_tlt/0.cfg")" -le 15 ]; then
-    msg "$(gettext "You must be at least 15 items.")\n " info & exit; fi
+    msg "$(gettext "There is not enough items.")\n " info & exit; fi
 
     if [ "$3" = 1 ]; then
     kill -9 $(pgrep -f "yad --multi-progress ") &
@@ -86,7 +86,7 @@ function mark_to_learn() {
     kill -9 $(pgrep -f "yad --notebook ") &
     fi
 
-    if [ "$(wc -l < "$DC_tlt/8.cfg")" -ge 1 ]; then
+    if [ "$(sed '/^$/d' < "$DC_tlt/1.cfg" | wc -l )" -ge 1 ]; then
         include "$DS/ifs/mods/mngr"
     
         dialog_2
@@ -118,7 +118,7 @@ function mark_to_learn() {
     rm -f "$DC_tlt/7.cfg"
     awk '!array_temp[$0]++' < "$DC_tlt/0.cfg" > "$DT/0.cfg.tmp"
     sed '/^$/d' "$DT/0.cfg.tmp" > "$DC_tlt/0.cfg"
-    rm -f "$DT/*.tmp"
+    rm -f "$DT"/*.tmp
     rm "$DC_tlt/2.cfg" "$DC_tlt/1.cfg"
     touch "$DC_tlt/2.cfg"
     cp -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"
@@ -136,7 +136,7 @@ function mark_as_learned() {
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
     
     if [ "$(wc -l < "$DC_tlt/0.cfg")" -le 15 ]; then
-    msg "$(gettext "You must be at least 15 items.")\n " info & exit; fi
+    msg "$(gettext "There is not enough items.")\n " info & exit; fi
     
     if [ "$3" = 1 ]; then
     kill -9 $(pgrep -f "yad --list ") &
@@ -393,6 +393,7 @@ function edit() {
     
     if [ -f "$audiofile_2" ]; then
         
+        file="$DM_tlt/words/$fname.mp3"
         tags="$(eyeD3 "$audiofile_2")"
         trgt="$(grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)' <<<"$tags")"
         srce="$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)' <<<"$tags")"
@@ -401,15 +402,16 @@ function edit() {
         exmp="$(sed -n 1p <<<"$fields")"
         dftn="$(sed -n 2p <<<"$fields")"
         note="$(sed -n 3p <<<"$fields")"
-        dlte="$DS/mngr.sh delete_item $fname"
-        imge="$DS/ifs/tls.sh set_image '$trgt' word"
-        sdefn="/usr/share/idiomind/ifs/tls.sh definition '$trgt'"
+        cmd_move="$DS/ifs/mods/mngr/mngr.sh 'position' '$item_pos' '$index_1'"
+        cmd_delete="$DS/mngr.sh delete_item $fname"
+        cmd_image="$DS/ifs/tls.sh set_image '$file' word"
+        cmd_definition="/usr/share/idiomind/ifs/tls.sh definition '$trgt'"
         
         dlg_form_1 "$file_tmp"
         ret=$(echo "$?")
         
             if [ ! -f "$DM_tlt/words/$fname.mp3" ]; then
-            "$DS/mngr.sh" edit "$lists" "$((item_pos-1))" & exit; fi
+            "$DS/mngr.sh" edit "$lists" $((item_pos-1)) & exit; fi
             
             srce_mod="$(tail -12 < "$file_tmp" | sed -n 2p  \
             | sed 's/^ *//; s/ *$//g'| sed ':a;N;$!ba;s/\n/ /g')"
@@ -467,7 +469,7 @@ function edit() {
             
             if [[ $ret -eq 2 ]]; then
             
-                "$DS/mngr.sh" edit "$lists" "$((item_pos-1))" &
+                "$DS/mngr.sh" edit "$lists" $((item_pos-1)) &
                 
             else
                 "$DS/vwr.sh" "$lists" "$trgt" "$item_pos" &
@@ -484,16 +486,17 @@ function edit() {
         srce="$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"$tags")"
         lwrd="$(grep -o -P '(?<=IWI3I0I).*(?=IPWI3I0I)' <<<"$tags")"
         pwrds="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"$tags")"
-        word_list="$DS/add.sh edit_list_words '$file' F $c"
-        lstau="/usr/share/idiomind/ifs/tls.sh play '$DM_tlt/$fname.mp3'"
-        dlte="$DS/mngr.sh delete_item ${fname}"
-        imge="$DS/ifs/tls.sh set_image '$file' sentence"
+        cmd_move="$DS/ifs/mods/mngr/mngr.sh 'position' '$item_pos' '$index_1'"
+        cmd_words="$DS/add.sh edit_list_words '$file' F $c"
+        cmd_play="/usr/share/idiomind/ifs/tls.sh play '$DM_tlt/$fname.mp3'"
+        cmd_delete="$DS/mngr.sh delete_item ${fname}"
+        cmd_image="$DS/ifs/tls.sh set_image '$file' sentence"
         
         dlg_form_2 "$file_tmp"
         ret=$(echo "$?")
 
             if [ ! -f "$DM_tlt/$fname.mp3" ]; then
-            "$DS/mngr.sh" edit "$lists" "$((item_pos-1))" & exit; fi
+            "$DS/mngr.sh" edit "$lists" $((item_pos-1)) & exit; fi
             
             mark_mod="$(tail -7 < "$file_tmp" | sed -n 1p)"
             trgt_mod="$(tail -7 < "$file_tmp" | sed -n 2p | \
@@ -603,7 +606,7 @@ function edit() {
             
             if [[ $ret -eq 2 ]]; then
 
-                "$DS/mngr.sh" edit "$lists" "$((item_pos-1))" &
+                "$DS/mngr.sh" edit "$lists" $((item_pos-1)) &
                 
             else
                 "$DS/vwr.sh" "$lists" "$trgt_mod" "$item_pos" &
@@ -618,8 +621,10 @@ function rename_topic() {
 
     source "$DS/ifs/mods/add/add.sh"
     info2=$(wc -l < "$DM_tl/.1.cfg")
+    restr="$(cd "$DS/addons/"; ls)"
     jlb="${2}"
     jlb="$(clean_2 "$jlb")"
+    if grep -Fxo "$jlb" <<<"$restr"; then jlb="$jlb."; fi
     snm="$(grep -Fxo "$jlb" < "$DM_tl/.1.cfg" | wc -l)"
   
     if [ "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "$tpc" ]; then
@@ -660,7 +665,6 @@ function rename_topic() {
         done
         rm "$DM_tl"/.*.tmp
 
-        [ "$DM_tl/$tpc" ] && rm -r "$DM_tl/$tpc"
         [ "$DM_tl/$tpc" ] && rm -r "$DM_tl/$tpc"
         
         "$DS/mngr.sh" mkmn & exit 1

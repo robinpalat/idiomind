@@ -119,16 +119,6 @@ Vietnamese"
     fi
 }
 
-check_install() {
-
-    chckf=""
-    
-    while read -r f; do
-        if ! file "$f" | grep -o -E 'Audio|ASCII|UTF-8|empty|MPEG|JPEG|data'; then
-        chckf="invalid"; fi
-    done <<<"$(find "$dir" -maxdepth 5 -type f)"
-}
-
 details() {
     cd "$2"
     dirs="$(find . -maxdepth 5 -type d)"
@@ -254,50 +244,60 @@ check_index() {
         | sort -k 1n,1 -k 7 | wc -l)"
     }
     
+    
     fix() {
+        
        rm "$DC_tlt/0.cfg" "$DC_tlt/1.cfg" "$DC_tlt/2.cfg" \
        "$DC_tlt/3.cfg" "$DC_tlt/4.cfg"
        
        while read name; do
         
-            sfname="$(nmfile "$name")"
+            md5sum="$(nmfile "$name")"
 
-            if [ -f "$DM_tlt/$name.mp3" ]; then
-            tgs="$(eyeD3 "$DM_tlt/$name.mp3")"
-            trgt="$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')"
-            [ -z "$trgt" ] && rm "$DM_tlt/$name.mp3" && continue
-            xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
-            [ "$name" != "$xname" ] && \
-            mv -f "$DM_tlt/$name.mp3" "$DM_tlt/$xname.mp3"
-            echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
-            echo "$trgt" >> "$DC_tlt/4.cfg.tmp"
-            elif [ -f "$DM_tlt/$sfname.mp3" ]; then
-            tgs=$(eyeD3 "$DM_tlt/$sfname.mp3")
-            trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
-            [ -z "$trgt" ] && rm "$DM_tlt/$sfname.mp3" && continue
-            xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
-            [ "$sfname" != "$xname" ] && \
-            mv -f "$DM_tlt/$sfname.mp3" "$DM_tlt/$xname.mp3"
-            echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
-            echo "$trgt" >> "$DC_tlt/4.cfg.tmp"
+            if [[ ${#name} != 32 ]]; then
+                [ -f "$DM_tlt/$name.mp3" ] && rm "$DM_tlt/$name.mp3"
+                [ -f "$DM_tlt/words/$name.mp3" ] && rm "$DM_tlt/words/$name.mp3"
+                continue
+
+            elif [ -f "$DM_tlt/$name.mp3" ]; then
+                tgs="$(eyeD3 "$DM_tlt/$name.mp3")"
+                trgt="$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')"
+                [ -z "$trgt" ] && rm "$DM_tlt/$name.mp3" && continue
+                md5sum_2="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
+                [ "$name" != "$md5sum_2" ] && \
+                mv -f "$DM_tlt/$name.mp3" "$DM_tlt/$md5sum_2.mp3"
+                echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
+                echo "$trgt" >> "$DC_tlt/4.cfg.tmp"
+                
+            elif [ -f "$DM_tlt/$md5sum.mp3" ]; then
+                tgs=$(eyeD3 "$DM_tlt/$md5sum.mp3")
+                trgt=$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
+                [ -z "$trgt" ] && rm "$DM_tlt/$md5sum.mp3" && continue
+                md5sum_2="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
+                [ "$md5sum" != "$md5sum_2" ] && \
+                mv -f "$DM_tlt/$md5sum.mp3" "$DM_tlt/$md5sum_2.mp3"
+                echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
+                echo "$trgt" >> "$DC_tlt/4.cfg.tmp"
+                
             elif [ -f "$DM_tlt/words/$name.mp3" ]; then
-            tgs="$(eyeD3 "$DM_tlt/words/$name.mp3")"
-            trgt="$(echo "$tgs" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')"
-            [ -z "$trgt" ] && rm "$DM_tlt/words/$name.mp3" && continue
-            xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
-            [ "$name" != "$xname" ] && \
-            mv -f "$DM_tlt/words/$name.mp3" "$DM_tlt/words/$xname.mp3"
-            echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
-            echo "$trgt" >> "$DC_tlt/3.cfg.tmp"
-            elif [ -f "$DM_tlt/words/$sfname.mp3" ]; then
-            tgs="$(eyeD3 "$DM_tlt/words/$sfname.mp3")"
-            trgt="$(echo "$tgs" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')"
-            [ -z "$trgt" ] && rm "$DM_tlt/words/$sfname.mp3" && continue
-            xname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
-            [ "$sfname" != "$xname" ] \
-            && mv -f "$DM_tlt/words/$sfname.mp3" "$DM_tlt/words/$xname.mp3"
-            echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
-            echo "$trgt" >> "$DC_tlt/3.cfg.tmp"
+                tgs="$(eyeD3 "$DM_tlt/words/$name.mp3")"
+                trgt="$(echo "$tgs" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')"
+                [ -z "$trgt" ] && rm "$DM_tlt/words/$name.mp3" && continue
+                md5sum_2="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
+                [ "$name" != "$md5sum_2" ] && \
+                mv -f "$DM_tlt/words/$name.mp3" "$DM_tlt/words/$md5sum_2.mp3"
+                echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
+                echo "$trgt" >> "$DC_tlt/3.cfg.tmp"
+                
+            elif [ -f "$DM_tlt/words/$md5sum.mp3" ]; then
+                tgs="$(eyeD3 "$DM_tlt/words/$md5sum.mp3")"
+                trgt="$(echo "$tgs" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')"
+                [ -z "$trgt" ] && rm "$DM_tlt/words/$md5sum.mp3" && continue
+                md5sum_2="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
+                [ "$md5sum" != "$md5sum_2" ] \
+                && mv -f "$DM_tlt/words/$md5sum.mp3" "$DM_tlt/words/$md5sum_2.mp3"
+                echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
+                echo "$trgt" >> "$DC_tlt/3.cfg.tmp"
             fi
             
         done < "$index"
@@ -313,6 +313,7 @@ check_index() {
         "$DC_tlt/2.cfg" "$DC_tlt/3.cfg" "$DC_tlt/4.cfg"
         
         if [ $? -ne 0 ]; then
+        
         [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
         msg "$(gettext "File not found")\n" error & exit 1; fi
         
@@ -326,13 +327,15 @@ check_index() {
         fi
     }
         
-    files() {
+    name_files() {
         
         cd "$DM_tlt/words/"
         for i in *.mp3 ; do [ ! -s ${i} ] && rm ${i} ; done
+        find -name "* *" -type f | rename 's/ /_/g'
         if [ -f ".mp3" ]; then rm ".mp3"; fi
         cd "$DM_tlt/"
         for i in *.mp3 ; do [[ ! -s ${i} ]] && rm ${i} ; done
+        find -name "* *" -type f | rename 's/ /_/g'
         if [ -f ".mp3" ]; then rm ".mp3"; fi
         cd "$DM_tlt/"; find . -maxdepth 2 -name '*.mp3' \
         | sort -k 1n,1 -k 7 | sed s'|\.\/words\/||'g \
@@ -350,23 +353,21 @@ check_index() {
         [ ! -d "$DM_tlt/.conf" ] && mkdir "$DM_tlt/.conf"
         DC_tlt="$DM_tlt/.conf"
         
-        files
-        
-        if [ -f "$DC_tlt/.11.cfg" ] && [ -n "$(< "$DC_tlt/.11.cfg")" ]; then
-        index="$DC_tlt/.11.cfg"
-        else
-        index="$DT/index"; fi
+        name_files
+
+        index="$DT/index"
         
         fix
-    fi
 
     check
     
     if [ $((chk3+chk4)) != $chk0 ]  || [ $((chk1+chk2)) != $chk0 ] \
     || [ $mp3s != $chk0 ] || [ $stts = 13 ]; then
 
-        files
+        name_files
+        
         index="$DT/index"; rm "$DC_tlt/.11.cfg"
+        
         fix
     fi
     
@@ -375,8 +376,12 @@ check_index() {
         touch "$DC_tlt/$n.cfg"
         ((n=n+1))
     done
-    rm -f "$DT/index"
+    #rm -f "$DT/index"
     "$DS/mngr.sh" mkmn & exit 1
+    
+    else
+    exit
+    fi
 }
 
 function add_audio() {
@@ -567,7 +572,7 @@ echo "<br><br></div>
         
     else
         yad --form --title="$(gettext "Attached Files")" \
-        --text="$(gettext "Put in a folder files related to topic.")" \
+        --text="$(gettext "Save files related to topic.")" \
         --name=Idiomind --class=Idiomind \
         --window-icon="$DS/images/icon.png" --center \
         --width=350 --height=180 --borders=5 \
@@ -743,17 +748,19 @@ END
 function set_image() {
 
     cd "$DT"
-    if [ "$3" = word ]; then item="$2"
+    if [ "$3" = word ]; then
+    item=$(eyeD3 "$2" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
     elif [ "$3" = sentence ]; then
     item=$(eyeD3 "$2" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
     fi
     search="$(sed "s/'//g" <<<"$item")"
+    file="$2"
     fname="$(nmfile "$item")"
 
     echo -e "<html><head>
     <meta http-equiv=\"Refresh\" content=\"0;url=https://www.google.com/search?q="$search"&tbm=isch\">
     </head><body><p>Search images for \"$search\"...</p></body></html>" > search.html
-    btn1="--button="$(gettext "Add Image")":3"
+    btn1="--button="$(gettext "Image")":3"
 
     if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
     image="--image=$DM_tlt/words/images/$fname.jpg"
@@ -763,8 +770,6 @@ function set_image() {
 
     if [ "$3" = word ]; then
         
-        if [ ! "$DT/$fname".* ]; then
-        file="$DM_tlt/words/$fname.mp3"; fi
         yad --form --title=$(gettext "Image") "$image" "$label" \
         --name=Idiomind --class=Idiomind \
         --window-icon="$DS/images/icon.png" \
@@ -785,7 +790,7 @@ function set_image() {
             eyeD3 --remove-images "$file"
             eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file"
             wait
-            "$DS/ifs/tls.sh" set_image "$item" word & exit
+            "$DS/ifs/tls.sh" set_image "$file" word & exit
                 
             elif [[ $ret -eq 2 ]]; then
             
@@ -796,8 +801,6 @@ function set_image() {
             
     elif [ "$3" = sentence ]; then
     
-        if [ ! "$DT/$item".* ]; then
-        file="$DM_tlt/$fname.mp3"; fi
         yad --form --title=$(gettext "Image") "$image" "$label" \
         --name=Idiomind --class=Idiomind \
         --window-icon="$DS/images/icon.png" \

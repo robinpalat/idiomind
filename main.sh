@@ -114,32 +114,8 @@ function new_session() {
         || [ $stts = 7 ] || [ $stts = 8 ]) && \
         [ "$DM_tl/$line/.conf/9.cfg" ]; then
         
-            dts=$(sed '/^$/d' < "$DM_tl/$line/.conf/9.cfg" | wc -l)
-            if [ $dts = 1 ]; then
-            dte=$(sed -n 1p "$DM_tl/$line/.conf/9.cfg")
-            TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
-            RM=$((100*TM/6))
-            elif [ $dts = 2 ]; then
-            dte=$(sed -n 2p "$DM_tl/$line/.conf/9.cfg")
-            TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
-            RM=$((100*TM/10))
-            elif [ $dts = 3 ]; then
-            dte=$(sed -n 3p "$DM_tl/$line/.conf/9.cfg")
-            TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
-            RM=$((100*TM/15))
-            elif [ $dts = 4 ]; then
-            dte=$(sed -n 4p "$DM_tl/$line/.conf/9.cfg")
-            TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
-            RM=$((100*TM/20))
-            elif [ $dts = 5 ]; then
-            dte=$(sed -n 5p "$DM_tl/$line/.conf/9.cfg")
-            TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
-            RM=$((100*TM/30))
-            elif [ $dts = 6 ]; then
-            dte=$(sed -n 6p "$DM_tl/$line/.conf/9.cfg")
-            TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
-            RM=$((100*TM/40))
-            fi
+            calculate_review
+           
             if [ $((stts%2)) = 0 ]; then
             if [ "$RM" -ge 150 ]; then
             echo 10 > "$DM_tl/$line/.conf/8.cfg"
@@ -189,8 +165,8 @@ if [ "$(echo "$1" | grep -o '.idmnd')" ]; then
         
     else
         cd "$tmp"
-        ws=$(wc -l < "3.cfg")
-        ss=$(wc -l < "4.cfg")
+        ws=$(wc -l < "./3.cfg")
+        ss=$(wc -l < "./4.cfg")
         itxt="<big><big>$tpi</big></big><small>\\n ${language_source^} <b>></b> $language_target\\n $nwords $(gettext "Words") $nsentences $(gettext "Sentences") $nimages $(gettext "Images")\n $(gettext "Level:") $level \n</small>"
         dclk="'$DS/default/vwr_tmp.sh' '$c'"
 
@@ -389,7 +365,7 @@ function topic() {
                     fi 
             fi
 
-            pres="<u><b>$(gettext "Learned")</b></u>  $(gettext "* however you have new items") ($inx1).\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
+            pres="<u><b>$(gettext "Learned topic")</b></u>  $(gettext "* however you have new items") ($inx1).\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
 
             notebook_2
             
@@ -481,12 +457,6 @@ panel() {
     --field=gtk-home:btn "idiomind 'topic'" \
     --field=gtk-index:btn "$DS/chng.sh" \
     --field=gtk-preferences:btn "$DS/cnfg.sh" &
-    
-    if [ -f "$DT/notify" ]; then
-    info="$(head -n 10 < "$DT/notify" | uniq)"
-    (sleep 10 && notify-send -i idiomind "$(gettext "Notice")" "$info") &
-    rm -f "$DT/notify"
-    fi
 }
 
 version() {

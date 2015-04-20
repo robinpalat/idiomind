@@ -23,6 +23,7 @@ source "$DS/ifs/mods/cmns.sh"
 include "$DS/ifs/mods/add"
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
+restr="$(cd "$DS/addons/"; ls)"
 list=$(sed -n 2p < "$DC_s/1.cfg" \
 | grep -o list=\"[^\"]* | grep -o '[^"]*$')
 trans=$(sed -n 4p < "$DC_s/1.cfg" \
@@ -37,6 +38,7 @@ function new_topic() {
     jlbi=$(dlg_form_0 "$(gettext "New Topic")")
     ret="$?"
     jlb="$(clean_2 "$jlbi")"
+    if grep -Fxo "$jlb" <<<"$restr"; then jlb="$jlb."; fi
     sfname=$(grep -Fxo "$jlb" < "$DM_tl/.1.cfg" | wc -l)
     
     if [ "$sfname" -ge 1 ]; then
