@@ -57,7 +57,7 @@ conditions() {
         [[ $ret -eq 1 ]] && "$DS/stop.sh" feed
         [[ $ret -eq 0 ]] && exit 1
     
-    elif [[ -f "$DT/.uptp" && "$1" = A ]]; then
+    elif [[ -f "$DT/.uptp" && "$1" = 0 ]]; then
         exit 1
     fi
     
@@ -67,10 +67,12 @@ conditions() {
 
     nps="$(sed '/^$/d' < "$DCP/4.cfg" | wc -l)"
     if [ "$nps" -le 0 ]; then
-    [ "$1" != A ] && msg "$(gettext "Missing URL. Please check the settings in the preferences dialog.")\n" info
-    [ -f "$DT_r" ] && rm -fr "$DT_r" "$DT/.uptp" && exit 1; fi
+    [ "$1" != 0 ] && msg "$(gettext "Missing URL. Please check the settings in the preferences dialog.")\n" info
+    [ -f "$DT_r" ] && rm -fr "$DT_r" "$DT/.uptp"
+    exit 1
+    fi
         
-    [ "$1" != A ] && internet || curl -v www.google.com 2>&1 \
+    [ "$1" != 0 ] && internet || curl -v www.google.com 2>&1 \
     | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
 }
 
@@ -326,7 +328,7 @@ check_index() {
 
 conditions "$1"
 
-if [[ "$1" != A ]]; then
+if [[ "$1" != 0 ]]; then
     echo "$tpc" > "$DC_s/4.cfg"
     echo '2' >> "$DC_s/4.cfg"
     echo "11" > "$DCP/8.cfg"
@@ -334,7 +336,7 @@ if [[ "$1" != A ]]; then
     "$(gettext "Checking new episodes...")" -t 6000) &
 fi
 
-[ -f "$DCP/1.cfg" ] && kept_episodes="$(wc -l < "$DCP/1.cfg")" || kept_episodes=0
+[ -f "$DCP/2.cfg" ] && kept_episodes="$(wc -l < "$DCP/2.cfg")" || kept_episodes=0
 echo -e " <b>$(gettext "Updating")</b>
  $(gettext "New episodes:") \t$(gettext "Saved episodes:") \
 $kept_episodes "> "$DM_tl/Podcasts/.update"
@@ -357,7 +359,7 @@ if [ "$new_episodes" -gt 0 ]; then
     "$new_episodes $(gettext "new episode(s)")" -t 8000
     
 else
-    if [[ "$1" != A ]]; then
+    if [[ "$1" != 0 ]]; then
         notify-send -i idiomind \
         "$(gettext "Feeds updated")" \
         "$(gettext "No change since the last update")" -t 8000
@@ -367,7 +369,7 @@ fi
 cfg="$DM_tl/Podcasts/.conf/0.cfg"; if [ -f "$cfg" ]; then
 sync="$(sed -n 2p < "$cfg" | grep -o 'sync="[^"]*' | grep -o '[^"]*$')"
 if [ "$sync" = TRUE ]; then 
-    if [[ "$1" != A ]]; then
+    if [[ "$1" != 0 ]]; then
     "$DSP/tls.sh" sync
     else
     "$DSP/tls.sh" sync 0

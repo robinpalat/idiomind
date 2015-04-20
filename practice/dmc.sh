@@ -8,7 +8,7 @@ strt="$drts/strt.sh"
 snd="$drts/no.mp3"
 cd "$DC_tlt/practice"
 log="$DC_s/8.cfg"
-all=$(cat mcin | wc -l)
+all=$(cat ./mcin | wc -l)
 easy=0
 hard=0
 ling=0
@@ -27,7 +27,7 @@ score() {
         exit 1
         
     else
-        [ -f l_m ] && echo "$(($(< l_m)+$easy))" > l_m || echo $easy > l_m
+        [ -f l_m ] && echo $(($(< l_m)+$easy)) > l_m || echo $easy > l_m
         s=$(< l_m)
         v=$((100*$s/$all))
         n=1; c=1

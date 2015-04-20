@@ -64,7 +64,7 @@ function new_topic() {
 
 function new_items() {
 
-    if [ "$(grep -v 'Podcasts' < "$DM_tl/.1.cfg" | wc -l)" -lt 1 ]; then
+    if [ "$(grep -vFx 'Podcasts' < "$DM_tl/.1.cfg" | wc -l)" -lt 1 ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
     "$DS/chng.sh" "$(gettext "To start adding notes you need have a topic.
 Create one using the button below. ")" & exit 1; fi
@@ -151,11 +151,9 @@ Create one using the button below. ")" & exit 1; fi
 
             elif [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
             
-                if [ "$trans" = FALSE ]; then
-                    if [ -z "$srce" ] || [ -z "$trgt" ]; then
-                    [ "$DT_r" ] && rm -fr "$DT_r"
-                    msg "$(gettext "You need to fill text fields.")" info & exit 1; fi
-                fi
+                if [ "$trans" = FALSE ] && ([ -z "$srce" ] || [ -z "$trgt" ]); then
+                [ "$DT_r" ] && rm -fr "$DT_r"
+                msg "$(gettext "You need to fill text fields.")\n" info & exit 1; fi
 
                 srce=$(translate "$trgt" auto $lgs)
                 
@@ -171,7 +169,7 @@ Create one using the button below. ")" & exit 1; fi
                 if [ "$trans" = FALSE ]; then
                     if [ -z "$srce" ] || [ -z "$trgt" ]; then
                     [ "$DT_r" ] && rm -fr "$DT_r"
-                    msg "$(gettext "You need to fill text fields.")" info & exit 1; fi
+                    msg "$(gettext "You need to fill text fields.")\n" info & exit 1; fi
                 fi
             
                 if [ "$(wc -w <<<"$trgt")" = 1 ]; then
@@ -225,7 +223,7 @@ function new_sentence() {
     else 
         if [ -z "$4" ] || [ -z "$2" ]; then
         [ "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "You need to fill text fields.")" info & exit; fi
+        msg "$(gettext "You need to fill text fields.")\n" info & exit; fi
         
         trgt=$(echo "$(clean_1 "$2")" | sed ':a;N;$!ba;s/\n/ /g')
         srce=$(echo "$(clean_1 "$4")" | sed ':a;N;$!ba;s/\n/ /g')
@@ -252,15 +250,15 @@ function new_sentence() {
     fi
     
     cd "$DT_r"
-    r=$(echo $(($RANDOM%1000)))
+    r=$(($RANDOM%1000))
     clean_3 "$DT_r" "$r"
-    translate "$(sed '/^$/d' < $aw)" auto $lg | sed 's/,//g' \
+    translate "$(sed '/^$/d' < "$aw")" auto $lg | sed 's/,//g' \
     | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
     check_grammar_1 "$DT_r" "$r"
     list_words "$DT_r" "$r"
-    grmrk=$(sed ':a;N;$!ba;s/\n/ /g' < g.$r)
-    lwrds=$(< A.$r)
-    pwrds=$(tr '\n' '_' < B.$r)
+    grmrk=$(sed ':a;N;$!ba;s/\n/ /g' < "./g.$r")
+    lwrds=$(< "./A.$r")
+    pwrds=$(tr '\n' '_' < "./B.$r")
     
     if [ -z "$grmrk" ] || [ -z "$lwrds" ] || [ -z "$pwrds" ]; then
     rm "$DM_tlt/$fname.mp3"
@@ -300,10 +298,9 @@ function new_word() {
     [ "$DT_r" ] && rm -fr "$DT_r"
     msg "$(gettext "No topic is active")\n" info & exit 1; fi
     
-    internet
-
     if [ "$trans" = TRUE ]; then
-
+    
+        internet
         trgt="$(translate "$trgt" auto $lgt)"
         srce="$(translate "$trgt" $lgt $lgs)"
         fname="$(nmfile "${trgt^}")"
@@ -327,7 +324,7 @@ function new_word() {
     else
         if [ -z "$4" ] || [ -z "$2" ]; then
             [ "$DT_r" ] && rm -fr "$DT_r"
-            msg "$(gettext "You need to fill text fields.")" info & exit 1; fi
+            msg "$(gettext "You need to fill text fields.")\n" info & exit 1; fi
         
         trgt="$2"
         srce="$4"
@@ -493,7 +490,7 @@ function dclik_list_words() {
         echo "# $(gettext "Processing")..." ;
         srce="$(translate "$(cat lstws)" $lgtl $lgsl)"
         cd "$DT_r"
-        r=$(echo $(($RANDOM%1000)))
+        r=$(($RANDOM%1000))
         clean_3 "$DT_r" "$r"
         translate "$(sed '/^$/d' < $aw)" auto $lg | sed 's/,//g' \
         | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
@@ -534,7 +531,7 @@ function sentence_list_words() {
 
     DM_tlt="$DM_tl/$4"
     DC_tlt="$DM_tl/$4/.conf"
-    c=$(echo $(($RANDOM%100)))
+    c=$(($RANDOM%100))
     DT_r=$(mktemp -d "$DT/XXXXXX")
     cd "$DT_r"
     
@@ -856,15 +853,15 @@ function process() {
                                     
                                     (
                                     cd "$DT_r"
-                                    r=$(echo $(($RANDOM%1000)))
+                                    r=$(($RANDOM%1000))
                                     clean_3 "$DT_r" "$r"
                                     translate "$(sed '/^$/d' < $aw)" auto $lg | sed 's/,//g' \
                                     | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
                                     check_grammar_1 "$DT_r" "$r"
                                     list_words "$DT_r" "$r"
-                                    grmrk=$(sed ':a;N;$!ba;s/\n/ /g' < "g.$r" )
-                                    lwrds=$(< "A.$r")
-                                    pwrds=$(tr '\n' '_' < "B.$r")
+                                    grmrk=$(sed ':a;N;$!ba;s/\n/ /g' < "./g.$r" )
+                                    lwrds=$(< "./A.$r")
+                                    pwrds=$(tr '\n' '_' < "./B.$r")
                                     
                                     if ([ -n "$(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary')" ] \
                                     && [ -f "$DM_tlt/$fname.mp3" ] && [ -n "$lwrds" ] && [ -n "$pwrds" ] && [ -n "$grmrk" ]); then
@@ -947,7 +944,7 @@ function process() {
                     done
                     } | dlg_progress_2
 
-                    cd $DT_r
+                    cd "$DT_r"
                     
                     if [ -f ./wlog ]; then
                         wadds=" $(($(wc -l < ./addw) - $(sed '/^$/d' < ./wlog | wc -l)))"
@@ -993,7 +990,7 @@ function process() {
                     
                     if [ -f ./x ]; then
                         n=1
-                        while [ $n -le 20 ]; do
+                        while [[ $n -le 20 ]]; do
                              sleep 5
                              if [ "$(wc -l < ./x)" -eq "$rm" ] || [ $n = 20 ]; then
                             [ -d "$DT_r" ] && rm -fr "$DT_r"

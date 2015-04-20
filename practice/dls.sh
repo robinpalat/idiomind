@@ -21,7 +21,7 @@
 drts="$DS/practice/"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
-all=$(cat lsin | wc -l)
+all=$(cat ./lsin | wc -l)
 listen="Listen"
 easy=0
 hard=0
@@ -30,7 +30,7 @@ f=0
 
 score() {
 
-    if [[ $1 -ge $all ]]; then
+    if [[ "$1" -ge $all ]]; then
         play "$drts/all.mp3" & 
         echo "w6.$(tr -s '\n' '|' < ok.s).w6" >> "$log"
         rm lsin ok.s
@@ -40,8 +40,8 @@ score() {
         exit 1
         
     else
-        [ -f ./l_s ] && echo "$(($(< l_s)+$easy))" > l_s || echo $easy > l_s
-        s=$(< l_s)
+        [ -f ./l_s ] && echo $(($(< ./l_s)+$easy)) > l_s || echo $easy > l_s
+        s=$(< ./l_s)
         v=$((100*$s/$all))
         n=1; c=1
         while [[ $n -le 21 ]]; do

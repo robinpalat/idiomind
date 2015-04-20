@@ -971,12 +971,12 @@ function pdfdoc() {
             if [ -n "$wt" ]; then
                 echo -e "<table width=\"55%\" border=\"0\" align=\"left\" cellpadding=\"10\" cellspacing=\"5\">
                 <tr>
-                <td bgcolor=\"#F8D49F\" class=\"side\"></td>
-                <td bgcolor=\"#F7EDDF\"><w1>$wt</w1></td>
+                <td bgcolor=\"#F8F8F8\" class=\"side\"></td>
+                <td bgcolor=\"#FFFFFF\"><w1>$wt</w1></td>
                 </tr>
                 <tr>
-                <td bgcolor=\"#EAE5A0\" class=\"side\"></td>
-                <td bgcolor=\"#FAF9F4\"><w2>$ws</w2></td>
+                <td bgcolor=\"#F8F8F8\" class=\"side\"></td>
+                <td bgcolor=\"#FFFFFF\"><w2>$ws</w2></td>
                 </tr>
                 </table>" >> pdf_doc
                 echo -e "<table width=\"100%\" border=\"0\" align=\"center\" cellpadding=\"10\" class=\"efont\">

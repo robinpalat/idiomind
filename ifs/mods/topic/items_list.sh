@@ -67,12 +67,12 @@ function notebook_1() {
     tac "$ls1" | awk '{print $0"\n"}' | yad --list --tabnum=1 \
     --plug=$KEY --print-all \
     --dclick-action="$DS/vwr.sh '1'" \
-    --expand-column=1 --no-headers --ellipsize=END \
+    --expand-column=1 --no-headers --ellipsize=END --tooltip-column=1 \
     --column=Name:TEXT --column=Learned:CHK > "$cnf1" &
     tac "$ls2" | yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh '2'" \
-    --expand-column=0 --no-headers --ellipsize=END \
+    --expand-column=0 --no-headers --ellipsize=END --tooltip-column=1 \
     --column=Name:TEXT &
     yad --text-info --tabnum=3 \
     --plug=$KEY \
@@ -115,7 +115,7 @@ function notebook_2() {
     tac "$ls2" | yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh '2'" \
-    --expand-column=0 --no-headers --ellipsize=END \
+    --expand-column=0 --no-headers --ellipsize=END --tooltip-column=1 \
     --column=Name:TEXT &
     yad --text-info --tabnum=3 \
     --plug=$KEY \

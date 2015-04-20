@@ -22,7 +22,7 @@ drts="$DS/practice/"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
 log="$DC_s/8.cfg"
-all=$(cat lwin | wc -l)
+all=$(cat ./lwin | wc -l)
 easy=0
 hard=0
 ling=0
@@ -41,7 +41,7 @@ score() {
         exit 1
         
     else
-        [ -f l_w ] && echo "$(($(cat l_w)+$easy))" > l_w || echo $easy > l_w
+        [ -f l_w ] && echo $(($(cat l_w)+$easy)) > l_w || echo $easy > l_w
         s=$(cat l_w)
         v=$((100*$s/$all))
         n=1; c=1

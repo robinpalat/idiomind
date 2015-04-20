@@ -44,12 +44,12 @@ function feedmode() {
     --plug=$KEY --print-all --dclick-action="$DSP/vwr.sh" \
     --no-headers --expand-column=2 --ellipsize=END \
     --column=Name:IMG \
-    --column=Name &
+    --column=Name:TXT &
     list_2 | yad --list --tabnum=2 \
     --plug=$KEY --print-all --dclick-action="$DSP/vwr.sh" \
     --no-headers --expand-column=2 --ellipsize=END \
     --column=Name:IMG \
-    --column=Name &
+    --column=Name:TXT &
     yad --text-info --tabnum=3 \
     --text="<small>$infolabel</small>" \
     --plug=$KEY --filename="$nt" \
@@ -69,7 +69,7 @@ function feedmode() {
     --button="$(gettext "Close")":1
     ret=$?
         
-    if [ $ret -eq 2 ]; then
+    if [[ $ret -eq 2 ]]; then
     "$DSP/strt.sh"; fi
     
     note_mod="$(< $fdit)"

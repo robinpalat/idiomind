@@ -94,6 +94,7 @@ if [ TRUE = TRUE ]; then
                         grep -vxF "$item" "${!list_a}" > "$DT/list_a.tmp"
                         sed '/^$/d' "$DT/list_a.tmp" > "${!list_a}"
                         if ! grep -Fxo "$item" < "${!list_b}"; then
+                            echo "$item" >> "$DM_tl/${!tpc}/.conf/5.cfg"
                             echo "$item" >> "${!list_b}"; printf "${!tpc}%s\n --> $item"
                         fi
                     fi

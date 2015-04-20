@@ -100,14 +100,15 @@ elif [ "$1" != chngi ]; then
     align="right"; fi
     
     tpc=$(cat "$DC_s/0.cfg" | yad --list --title="$(gettext "Topics")" "$text" \
-    --name=Idiomind --class=Idiomind --text-align=$align \
-    --always-print-result \
+    --name=Idiomind --class=Idiomind \
+    --always-print-result --print-column=2 --separator="" \
     --window-icon="$DS/images/icon.png" \
-    --separator="" --center $img --image-on-top \
-    --no-headers --ellipsize=END \
+    --text-align=$align --center $img --image-on-top \
+    --no-headers --ellipsize=END --expand-column=2 --tooltip-column=3 \
     --width=640 --height=560 --borders=8 \
     --column=img:IMG \
     --column=File:TEXT \
+    --column=File:HD \
     --button=gtk-new:3 \
     --button="$(gettext "Apply")":2 \
     --button="$(gettext "Close")":1)

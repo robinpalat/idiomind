@@ -86,24 +86,26 @@ img3="$DSP/icons_st/$(cat .iconlw).png"
 img4="$DSP/icons_st/$(cat .iconls).png"
 img5="$DSP/icons_st/$(cat .iconi).png"
 
-VAR=$(yad --ellipsize=NONE --list \
---on-top --class=Idiomind --name=Idiomind \
---center --window-icon="$DS/images/icon.png" --hide-column=1 \
---image-on-top --buttons-layout=edge $img \
---borders=10 --expand-column=2 --print-column=1 \
---width=$wth --height=$eht --text="$info" \
---no-headers --button="$(gettext "Restart")":3 \
---button="$(gettext "Start")":0 \
---title="$(gettext "Practice") - $tpc" --text-align=center \
+VAR="$(yad --list --title="$(gettext "Practice") - $tpc" \
+$img --text="$info" \
+--class=Idiomind --name=Idiomind \
+--print-column=1 \
+--window-icon="$DS/images/icon.png" \
+--buttons-layout=edge --image-on-top --center --on-top --text-align=center \
+--ellipsize=NONE --no-headers --expand-column=2 --hide-column=1 \
+--width=$wth --height=$eht --borders=10 \
 --column="Action" --column="Pick":IMG --column="Label" \
 Fcards $img1 "     $info1 $(gettext "Flashcards")" \
 MChoise $img2 "     $info2 $(gettext "Multiple Choice")" \
 LWords $img3 "     $info3 $(gettext "Listening Words")" \
 LSntncs $img4 "     $info4 $(gettext "Listening Sentences")" \
-WImages $img5 "     $info5 $(gettext "With Images")" )
+WImages $img5 "     $info5 $(gettext "With Images")" \
+--button="$(gettext "Restart")":3 \
+--button="$(gettext "Start")":0)"
 ret=$?
 
-if [ $ret -eq 0 ]; then
+if [[ $ret -eq 0 ]]; then
+
     printf "prct.shc.$tpc.prct.shc\n" >> "$DC_s/8.cfg" &
     if echo "$VAR" | grep "Fcards"; then
         "$DSP/prct.sh" f & exit 1
@@ -116,14 +118,11 @@ if [ $ret -eq 0 ]; then
     elif echo "$VAR" | grep "WImages"; then
         "$DSP/prct.sh" i & exit 1
     else
-        yad --form --center --borders=5 \
-        --title="Info" --on-top --window-icon="$DS/images/icon.png" \
-        --button=Ok:1 --skip-taskbar --image=info \
-        --text=" $(gettext "You must choose a practice")\n" \
-        --width=360 --height=120
+        source "$DS/ifs/mods/cmns.sh"
+        msg " $(gettext "You must choose a practice.")\n" info
         "$DSP/strt.sh" & exit 1
     fi
-elif [ $ret -eq 3 ]; then
+elif [[ $ret -eq 3 ]]; then
     if [ -d "$DC_tlt/practice" ]; then
     cd "$DC_tlt/practice"
     rm .*; rm *; fi

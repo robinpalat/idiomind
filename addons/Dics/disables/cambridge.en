@@ -1,16 +1,13 @@
 #!/bin/bash
 
-name:"cambridge"
-lang:"en"
+name="cambridge"
+lang="en"
 
 cd "$2"
-word="$1"
-a="$(echo $word | head -c 1)"
-b="$(echo $word | head -c 3)"
-c="$(echo $word | head -c 5)"
+a="$(head -c 1 <<<"$1")"
+b="$(head -c 3 <<<"$1")"
+c="$(head -c 5 <<<"$1")"
 
-wget "http://dictionary.cambridge.org/media/british/us_pron/$a/$b/$c/$word.mp3"
-
-[ -f ./"$word"*.mp3 ] && mv ./"$word"*.mp3 ./"$word".mp3
-
+wget "http://dictionary.cambridge.org/media/british/us_pron/$a/$b/$c/$1.mp3"
+[ -f ./"$1"*.mp3 ] && mv ./"$1"*.mp3 ./"$1".mp3
 exit

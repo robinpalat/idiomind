@@ -22,6 +22,7 @@ source "$DS/ifs/mods/cmns.sh"
 
 function mkmn() {
     
+    restr="$(cd "$DS/addons/"; ls)"
     cd "$DM_tl"
     [ -d ./images ] && rm -r ./images
     [ -d ./words ] && rm -r ./words
@@ -31,10 +32,15 @@ function mkmn() {
     sed -i '/^$/d' "$DM_tl/.1.cfg"
     > "$DC_s/0.cfg"
     
+    
     n=1
     while [[ $n -le $(head -50 < "$DM_tl/.1.cfg" | wc -l) ]]; do
     
         tp=$(sed -n "$n"p "$DM_tl/.1.cfg")
+        if ! grep -Fxo "$tp" <<<"$restr"; then
+        inx1=$(wc -l < "$DM_tl/$tp/.conf/1.cfg")
+        inx2=$(wc -l < "$DM_tl/$tp/.conf/2.cfg")
+        else inx1=""; inx2=""; inx5=""; fi
         i=$(sed -n 1p < "$DM_tl/$tp/.conf/8.cfg")
         if [ ! "$DM_tl/$tp/.conf/8.cfg" ] || \
         [ ! "$DM_tl/$tp/.conf/0.cfg" ] || \
@@ -44,9 +50,9 @@ function mkmn() {
         [ -z "$i" ] || \
         [ ! -d "$DM_tl/$tp" ]; then
         i=13; echo "13" > "$DM_tl/$tp/.conf/8.cfg";fi
-        
         echo "/usr/share/idiomind/images/img.$i.png" >> "$DC_s/0.cfg"
         echo "$tp" >> "$DC_s/0.cfg"
+        echo "$inx1 / $inx2" >> "$DC_s/0.cfg"
         let n++
     done
     n=1
