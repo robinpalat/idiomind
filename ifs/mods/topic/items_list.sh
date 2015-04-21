@@ -94,7 +94,7 @@ function notebook_1() {
     --field="$label_info2\n\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " \
     --field="$(gettext "Attached Files")":FBTN "$cmd_attchs" \
     --field="$(gettext "Share")":FBTN "$cmd_share" \
-    --field="$(gettext "Delete")":BTN "$cmd_del" \
+    --field="$(gettext "Delete")":FBTN "$cmd_del" \
     --field=" ":LBL " " > "$cnf4" &
     yad --notebook --title="$tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
@@ -142,7 +142,7 @@ function notebook_2() {
     --field="$label_info2\n\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " \
     --field="$(gettext "Attached Files")":FBTN "$cmd_attchs" \
     --field="$(gettext "Share")":FBTN "$cmd_share" \
-    --field="$(gettext "Delete")":BTN "$cmd_del" \
+    --field="$(gettext "Delete")":FBTN "$cmd_del" \
     --field=" ":LBL " " > "$cnf4" &
     yad --notebook --title="$tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \

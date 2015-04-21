@@ -164,8 +164,8 @@ if [ "$(echo "$1" | grep -o '.idmnd')" ]; then
         
     else
         cd "$tmp"
-        ws=$(wc -l < "./3.cfg")
-        ss=$(wc -l < "./4.cfg")
+        ws=$(wc -l < "$tmp/3.cfg")
+        ss=$(wc -l < "$tmp/4.cfg")
         itxt="<big><big>$tpi</big></big><small>\\n ${language_source^} <b>></b> $language_target\\n $nwords $(gettext "Words") $nsentences $(gettext "Sentences") $nimages $(gettext "Images")\n $(gettext "Level:") $level \n</small>"
         dclk="'$DS/default/vwr_tmp.sh' '$c'"
 
@@ -234,7 +234,6 @@ if [ "$(echo "$1" | grep -o '.idmnd')" ]; then
                 echo "$language_target" > "$DC_s/6.cfg"
                 echo "$lgsl" >> "$DC_s/6.cfg"
                 echo "$dte" > "$DI_c/13.cfg"
-                #echo "$tpi" >> "$DM_t/$language_target/.3.cfg"
                 sed -i 's/'"$tpi"'//g' "$DM_t/$language_target/.2.cfg"
                 sed '/^$/d' "$DM_t/$language_target/.2.cfg" \
                 > "$DM_t/$language_target/.2.cfg.tmp"
@@ -281,8 +280,9 @@ function topic() {
         img="--image=$DM_tlt/words/images/img.jpg"
         sx=612; sy=580; else sx=640; sy=560; fi
         printf "tpcs.$tpc.tpcs\n" >> "$DC_s/8.cfg"
+        [ ! -z "$author" ] && author="$(gettext "Created by") $author"
 
-        label_info1="<big><big>$tpc </big></big><small>\\n$inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$(gettext "Created by") $author</small>"
+        label_info1="<big><big>$tpc </big></big><small>\\n$inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"
 
         apply() {
 

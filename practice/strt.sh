@@ -38,19 +38,19 @@ cd "$DC_tlt/practice"
 if [[ -n "$1" ]]; then
 
     if [ "$1" = 1 ]; then
-        info1="* "; info="<b>$(gettext "Test completed!")</b>\n"
+        info1="* "; info6="<b>$(gettext "Test completed!")</b>"
         echo 21 > .iconf
     elif [ "$1" = 2 ]; then
-        info2="* "; info="<b>$(gettext "Test completed!")</b>\n"
+        info2="* "; info7="<b>$(gettext "Test completed!")</b>"
         echo 21 > .iconmc
     elif [ "$1" = 3 ]; then
-        info3="* "; info="<b>$(gettext "Test completed!")</b>\n"
+        info3="* "; info8="<b>$(gettext "Test completed!")</b>"
         echo 21 > .iconlw
     elif [ "$1" = 4 ]; then
-        info4="* "; info="<b>$(gettext "Test completed!")</b>\n"
+        info4="* "; info9="<b>$(gettext "Test completed!")</b>"
         echo 21 > .iconls
     elif [ "$1" = 5 ]; then
-        info5="* "; info="<b>$(gettext "Test completed!")</b>\n"
+        info5="* "; info10="<b>$(gettext "Test completed!")</b>"
         echo 21 > .iconi
     elif [ "$1" = 6 ]; then
         learned=$(cat l_f)
@@ -95,11 +95,11 @@ $img --text="$info" \
 --ellipsize=NONE --no-headers --expand-column=2 --hide-column=1 \
 --width=$wth --height=$eht --borders=10 \
 --column="Action" --column="Pick":IMG --column="Label" \
-Fcards $img1 "     $info1 $(gettext "Flashcards")" \
-MChoise $img2 "     $info2 $(gettext "Multiple Choice")" \
-LWords $img3 "     $info3 $(gettext "Listening Words")" \
-LSntncs $img4 "     $info4 $(gettext "Listening Sentences")" \
-WImages $img5 "     $info5 $(gettext "With Images")" \
+Fcards $img1 "     $info1 $info6   $(gettext "Flashcards")" \
+MChoise $img2 "     $info2 $info7   $(gettext "Multiple Choice")" \
+LWords $img3 "     $info3 $info8   $(gettext "Listening Words")" \
+LSntncs $img4 "     $info4 $info9   $(gettext "Listening Sentences")" \
+WImages $img5 "     $info5 $info10   $(gettext "With Images")" \
 --button="$(gettext "Restart")":3 \
 --button="$(gettext "Start")":0)"
 ret=$?

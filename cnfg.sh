@@ -19,8 +19,6 @@
 #--field="$(gettext "Quick Help")":BTN "$DS/ifs/tls.sh help"
 source /usr/share/idiomind/ifs/c.conf
 [ ! -d "$DC" ] && "$DS/ifs/1u.sh" && exit
-wth=520
-eht=400
 info1="$(gettext "Do you want to change the interface language program?")  "
 info2="$(gettext "You want to change the language setting to learn?")  "
 cd "$DS/addons"
@@ -126,11 +124,12 @@ cat "$DC_s/2.cfg" | yad --plug=$KEY --tabnum=2 --list \
 --expand-column=2 --no-headers \
 --column=icon:IMG --column=Action &
 yad --notebook --key=$KEY --title="$(gettext "Settings")" \
---name=Idiomind --class=Idiomind --tab-borders=5 \
---sticky --center --window-icon="$DS/images/icon.png" --borders=2  \
+--name=Idiomind --class=Idiomind \
+--window-icon="$DS/images/icon.png" \
+--tab-borders=5 --sticky --center \
 --tab="$(gettext "Preferences")" \
 --tab="$(gettext "Addons")" \
---width=$wth --height=$eht \
+--width=520 --height=380 --borders=2 \
 --button="$(gettext "Cancel")":1 \
 --button="$(gettext "OK")":0
 ret=$?

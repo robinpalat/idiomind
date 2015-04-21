@@ -3,19 +3,22 @@
 
 function dlg_checklist_5() {
     
+    cmd_edit_="$DS/ifs/mods/add_process/A.sh 'item_for_edit'"
+    cmd_newtopic="$DS/add.sh 'new_topic'"
     slt=$(mktemp "$DT/slt.XXXX.x")
+    
     cat "$1" | awk '{print "FALSE\n"$0}' | \
     yad --list --checklist --title="$2" \
     --text="<small>$info</small>" \
     --name=Idiomind --class=Idiomind \
-    --dclick-action="$DS/ifs/mods/add_process/A.sh 'show_item_for_edit'" \
+    --dclick-action="$cmd_edit_" \
     --window-icon="$DS/images/icon.png" \
     --center --sticky \
     --width=600 --height=550 --borders=3 \
     --column="$(wc -l < "$1")" \
     --column="$(gettext "Items")" \
     --button="$(gettext "Cancel")":1 \
-    --button="$(gettext "To New Topic")":'/usr/share/idiomind/add.sh new_topic' \
+    --button="$(gettext "New Topic")":"cmd_newtopic" \
     --button=gtk-add:0 > "$slt"
     
 }
@@ -26,18 +29,22 @@ function dlg_text_info_5() {
     --name=Idiomind --class=Idiomind \
     --editable \
     --window-icon="$DS/images/icon.png" \
-    --center --wrap --sticky \
-    --width=520 --height=110 \
-    --margins=8 --borders=0 \
+    --margins=8 --wrap \
+    --center --sticky \
+    --width=520 --height=110 --borders=0 \
     --button=Ok:0 > "$1.txt"
 }
 
 function dlg_text_info_4() {
     
-    echo "$1" | yad --text-info --center --wrap \
-    --name=Idiomind --class=Idiomind --window-icon="$DS/images/icon.png" \
-    --text=" " --sticky --width=600 --height=550 \
-    --margins=8 --borders=5 --button=Ok:0 --title=Idiomind
+    echo "$1" | yad --text-info --title=Idiomind \
+    --name=Idiomind --class=Idiomind \
+    --window-icon="$DS/images/icon.png" \
+    --text=" " \
+    --margins=8 --wrap \
+    --center --sticky \
+    --width=600 --height=550 --borders=5 \
+    --button=Ok:0
 }
 
 function audio_recognizer() {
@@ -45,11 +52,6 @@ function audio_recognizer() {
     echo "$(wget -q -U -T 30 "Mozilla/5.0" --post-file "$1" \
     --header="Content-Type: audio/x-flac; rate=16000" \
     -O - "https://www.google.com/speech-api/v2/recognize?&lang="$2"-"$3"&key=$4")"
-    
-    if [[ $? != 0 ]]; then
-    msg "$(gettext "An error occurred, please try later.")\n" dialog-warning &
-    kill -9 $(pgrep -f "yad --progress") & exit 1; fi
-    
 }
 
 function dlg_file_1() {
@@ -73,13 +75,13 @@ function dlg_file_2() {
     --button=gtk-ok:0
 }
 
-if [[ "$prdt" = A ]]; then
+if [[ "$conten" = A ]]; then
 
     cd "$DT_r"
     left=$((200 - $(wc -l < "$DC_tlt/4.cfg")))
     key="$(sed -n 2p < "$HOME/.config/idiomind/addons/gts.cfg" \
     | grep -o key=\"[^\"]* | grep -o '[^"]*$')"
-    test="$DS/addons/Google translation service/test.flac"
+    test="$DS/addons/Google translator/test.flac"
     LNK='https://console.developers.google.com'
     source "$DS/ifs/mods/cmns.sh"
     
@@ -147,7 +149,7 @@ if [[ "$prdt" = A ]]; then
         [ "$DT_r" ] && rm -fr "$DT_r"
         rm -f ls "$lckpr" & exit 1; fi
         
-       echo "# $(gettext "Processing")..." ; sleep 0.2
+        echo "# $(gettext "Processing")..." ; sleep 0.2
 
         n=1
         while [[ $n -le "$lns" ]]; do
@@ -172,7 +174,7 @@ if [[ "$prdt" = A ]]; then
                 echo "$trgt" >> ./ls
                 rm -f info.flac info.ret
             fi
-            prg=$((100*$n/lns))
+            prg=$((100*n/lns))
             echo "$prg"
             echo "# ${trgt:0:35} ... " ;
             
@@ -192,7 +194,7 @@ if [[ "$prdt" = A ]]; then
         
         if [ -z "$(< $DT_r/ls)" ]; then
         
-        msg "$(gettext "Failed to get text. For the process to be successful, audio file must not have music or background noise.")" dialog-warning
+        msg "$(gettext "Failed to get text.")" dialog-warning
         [ "$DT_r" ] && rm -fr "$DT_r"
         rm -f "$lckpr" & exit 1
             
@@ -303,7 +305,7 @@ if [[ "$prdt" = A ]]; then
                         fi
                     fi
                 
-                    prg=$((100*$n/lns-1))
+                    prg=$((100*n/lns-1))
                     echo "$prg"
                     echo "# ${sntc:0:35}..." ;
                     
@@ -345,8 +347,8 @@ if [[ "$prdt" = A ]]; then
                         fi
                     fi
                     
-                    nn=$(($n+$(wc -l < ./slts)-1))
-                    prg=$((100*$nn/lns))
+                    nn=$((n+$(wc -l < ./slts)-1))
+                    prg=$((100*nn/lns))
                     echo "$prg"
                     echo "# $trgt..." ;
                     
@@ -438,7 +440,7 @@ if [[ "$prdt" = A ]]; then
         fi
     exit
     
-elif [ "$1" = show_item_for_edit ]; then
+elif [ "$1" = item_for_edit ]; then
 
     DT_r=$(sed -n 1p "$DT/.n_s_pr")
     cd "$DT_r"

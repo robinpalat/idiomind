@@ -137,11 +137,11 @@ Create one using the button below. ")" & exit 1; fi
             "$DS/add.sh" new_topic
             else echo "$tpe" > "$DT/tpe"; fi
             
-            if [ "$trgt" = I ]; then
+            if [ "$trgt" = Ocr ]; then
                 "$DS/add.sh" process image "$DT_r" & exit 1
 
             elif [ ${#trgt} = 1 ]; then
-                "$DS/add.sh" process "${trgt:0:2}" "$DT_r" & exit 1
+                "$DS/add.sh" process ${trgt:0:2} "$DT_r" & exit 1
 
             elif [ ${trgt:0:4} = 'Http' ]; then
                 "$DS/add.sh" process "$trgt" "$DT_r" & exit 1
@@ -657,7 +657,7 @@ function process() {
     fi
     include "$DS/ifs/mods/add"
     include "$DS/ifs/mods/add_process"
-    
+
     if [ ${2:0:4} = 'Http' ]; then
     
         internet
