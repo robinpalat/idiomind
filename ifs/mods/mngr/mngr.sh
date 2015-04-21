@@ -38,7 +38,7 @@ position() {
     --column="":RD \
     --column="":TEXT \
     --button="$(gettext "Cancel")":2 \
-    --button="$(gettext "Save")":0)"
+    --button="$(gettext "OK")":0)"
     
     ret=$?
 

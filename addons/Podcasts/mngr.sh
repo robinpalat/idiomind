@@ -27,7 +27,7 @@ elif [ "$1" = delete_item ]; then
     
     if ! grep -Fxo "$item" < "$DCP/1.cfg"; then
     
-        msg_2 "$lbl" gtk-delete "$(gettext "Delete")" "$(gettext "No")" "$(gettext "Confirm")"
+        msg_2 "$(gettext "Are you sure you want to delete this episode here?")\n" gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
         ret=$(echo "$?")
     
         if [[ $ret -eq 0 ]]; then
@@ -44,21 +44,21 @@ elif [ "$1" = delete_item ]; then
             [ "$DMC/$fname.html" ] && rm "$DMC/$fname.html"
             [ "$DMC/$fname.item" ] && rm "$DMC/$fname.item"
             cd "$DCP"
-            grep -vxF "$item" ./.22.cfg > ./.22.cfg.tmp
-            sed '/^$/d' ./.22.cfg.tmp > ./.22.cfg
-            grep -vxF "$item" ./2.cfg > ./2.cfg.tmp
-            sed '/^$/d' ./2.cfg.tmp > ./2.cfg
-            rm ./*.tmp; fi
+            grep -vxF "$item" "$DCP/.22.cfg" > "$DCP/.22.cfg.tmp"
+            sed '/^$/d' "$DCP/.22.cfg.tmp" > "$DCP/.22.cfg"
+            grep -vxF "$item" "$DCP/2.cfg" > "$DCP/2.cfg.tmp"
+            sed '/^$/d' "$DCP/2.cfg.tmp" > "$DCP/2.cfg"
+            rm "$DCP"/*.tmp; fi
 
     else
         notify-send -i info "$(gettext "Removed from list of saved")" "$item" 
     
         cd "$DCP"
-        grep -vxF "$item" ./.22.cfg > ./.22.cfg.tmp
-        sed '/^$/d' ./.22.cfg.tmp > ./.22.cfg
-        grep -vxF "$item" ./2.cfg > ./2.cfg.tmp
-        sed '/^$/d' ./2.cfg.tmp > ./2.cfg
-        rm ./*.tmp
+        grep -vxF "$item" "$DCP/.22.cfg" > "$DCP/.22.cfg.tmp"
+        sed '/^$/d' "$DCP/.22.cfg.tmp" > "$DCP/.22.cfg"
+        grep -vxF "$item" "$DCP/2.cfg" > "$DCP/2.cfg.tmp"
+        sed '/^$/d' "$DCP/2.cfg.tmp" > "$DCP/2.cfg"
+        rm "$DCP"/*.tmp
     fi
             
     rm -f "$DT/ps_lk"; exit 1
@@ -66,7 +66,7 @@ elif [ "$1" = delete_item ]; then
 elif [ "$1" = delete_1 ]; then
 
     if [ "$(wc -l < "$DCP/1.cfg")" -gt 0 ]; then
-    msg_2 "$(gettext "Are you sure you want to delete all episodes?")\n" gtk-delete "$(gettext "Delete")" "$(gettext "No")" "$(gettext "Confirm")"
+    msg_2 "$(gettext "Are you sure you want to delete all episodes?")\n" gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
     else exit 1; fi
     ret=$(echo "$?")
             
@@ -83,7 +83,7 @@ elif [ "$1" = delete_1 ]; then
 elif [ "$1" = delete_2 ]; then
 
     if [ "$(wc -l < "$DCP/2.cfg")" -gt 0 ]; then
-    msg_2 "$(gettext "Are you sure you want to delete all saved episodes?")\n" gtk-delete "$(gettext "Delete")" "$(gettext "No")" "$(gettext "Confirm")"
+    msg_2 "$(gettext "Are you sure you want to delete all saved episodes?")\n" gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
     else exit 1; fi
     ret=$(echo "$?")
     

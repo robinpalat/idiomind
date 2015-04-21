@@ -112,7 +112,7 @@ function new_session() {
         stts=$(sed -n 1p "$DM_tl/$line/.conf/8.cfg")
         if ([ $stts = 3 ] || [ $stts = 4 ] \
         || [ $stts = 7 ] || [ $stts = 8 ]) && \
-        [ "$DM_tl/$line/.conf/9.cfg" ]; then
+        [ -f "$DM_tl/$line/.conf/9.cfg" ]; then
         
             calculate_review
             if [ $((stts%2)) = 0 ]; then

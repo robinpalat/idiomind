@@ -344,7 +344,7 @@ fi
 if [ -f "$DCP/2.cfg" ]; then kept_episodes="$(wc -l < "$DCP/2.cfg")"
 else kept_episodes=0; fi
 echo -e " <b>$(gettext "Updating")</b>
- $(gettext "New episodes:") \t$(gettext "Saved episodes:") \
+ $(gettext "Recent downloads:") \t$(gettext "Saved episodes:") \
 $kept_episodes "> "$DM_tl/Podcasts/.update"
 
 fetch_podcasts
@@ -352,7 +352,7 @@ fetch_podcasts
 if [ -f "$DT_r/log" ]; then new_episodes="$(wc -l < "$DT_r/log")"
 else new_episodes=0; fi
 echo -e " $(gettext "Last update:") $(date "+%r %a %d %B")
- $(gettext "New episodes:") $new_episodes\t$(gettext "Saved episodes:") \
+ $(gettext "Recent downloads:") $new_episodes\t$(gettext "Saved episodes:") \
 $kept_episodes "> "$DM_tl/Podcasts/.update"
 
 rm -fr "$DT_r" "$DT/.uptp"

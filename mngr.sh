@@ -263,20 +263,20 @@ function delete_item() {
     file="$DM_tlt/words/$fname.mp3"
     trgt=$(eyeD3 "$file" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
     msg_2 "$(gettext "Are you sure you want to delete this word?")\n" \
-    gtk-delete "$(gettext "Delete")" "$(gettext "No")" "$(gettext "Confirm")"
+    gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
 
     elif [ -f "$DM_tlt/$fname.mp3" ]; then
     
     file="$DM_tlt/$fname.mp3"
     trgt=$(eyeD3 "$file" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
     msg_2 "$(gettext "Are you sure you want to delete this sentence?")\n" \
-    gtk-delete "$(gettext "Delete")" "$(gettext "No")" "$(gettext "Confirm")"
+    gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
 
     else
     
     trgt="${3}"
     msg_2 "$(gettext "Are you sure you want to delete this item?")\n" \
-    gtk-delete "$(gettext "Delete")" "$(gettext "No")" "$(gettext "Confirm")"
+    gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
 
     fi
     ret=$(echo "$?")
@@ -340,7 +340,7 @@ function delete_topic() {
     msg "$(gettext "You can not delete at this time. Please try later ")\n" dialog-warning & exit 1; fi
     
     msg_2 "$(gettext "Are you sure you want to delete this Topic?")\n" \
-    gtk-delete "$(gettext "Delete")" "$(gettext "No")" "$(gettext "Confirm")"
+    gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
     ret=$(echo "$?")
         
         if [[ $ret -eq 0 ]]; then

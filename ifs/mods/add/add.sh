@@ -362,7 +362,7 @@ function dlg_form_1() {
     --skip-taskbar --center --on-top \
     --align=right --image="$img" \
     --window-icon="$DS/images/icon.png" \
-    --width=420 --height=150 --borders=0 \
+    --width=420 --height=140 --borders=0 \
     --field=" <small>$lgtl</small>" "$txt" \
     --field=" $atopic:CB" \
     "$ltopic!$(gettext "New") *$e$tpcs" \
@@ -380,7 +380,7 @@ function dlg_form_2() {
     --skip-taskbar --center --on-top \
     --align=right --image="$img" \
     --window-icon="$DS/images/icon.png" \
-    --width=420 --height=180 --borders=0 \
+    --width=420 --height=170 --borders=0 \
     --field=" <small>$lgtl</small>" "$txt" \
     --field=" <small>${lgsl^}</small>" "$srce" \
     --field=" $atopic:CB" \
