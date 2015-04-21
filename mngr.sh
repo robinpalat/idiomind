@@ -32,7 +32,6 @@ function mkmn() {
     sed -i '/^$/d' "$DM_tl/.1.cfg"
     > "$DC_s/0.cfg"
     
-    
     n=1
     while [[ $n -le $(head -50 < "$DM_tl/.1.cfg" | wc -l) ]]; do
     
@@ -42,7 +41,9 @@ function mkmn() {
         inx2=$(wc -l < "$DM_tl/$tp/.conf/2.cfg")
         ttip="$inx1 / $inx2"
         else ttip=""; fi
-        i=$(sed -n 1p < "$DM_tl/$tp/.conf/8.cfg")
+        if [ ! -f "$DM_tl/$tp/.conf/8.cfg" ]; then
+        i=13; echo "13" > "$DM_tl/$tp/.conf/8.cfg"
+        else i=$(sed -n 1p < "$DM_tl/$tp/.conf/8.cfg"); fi
         if [ ! "$DM_tl/$tp/.conf/8.cfg" ] || \
         [ ! "$DM_tl/$tp/.conf/0.cfg" ] || \
         [ ! "$DM_tl/$tp/.conf/1.cfg" ] || \
@@ -60,6 +61,9 @@ function mkmn() {
     while [[ $n -le $(tail -n+51 < "$DM_tl/.1.cfg" | wc -l) ]]; do
         f=$(tail -n+51 < "$DM_tl/.1.cfg")
         tp=$(sed -n "$n"p <<<"$f")
+        if [ ! -f "$DM_tl/$tp/.conf/8.cfg" ]; then
+        i=13; echo "13" > "$DM_tl/$tp/.conf/8.cfg"
+        else i=$(sed -n 1p < "$DM_tl/$tp/.conf/8.cfg"); fi
         if [ ! -f "$DM_tl/$tp/.conf/8.cfg" ] || \
         [ ! "$DM_tl/$tp/.conf/0.cfg" ] || \
         [ ! "$DM_tl/$tp/.conf/1.cfg" ] || \
@@ -71,6 +75,7 @@ function mkmn() {
             echo '/usr/share/idiomind/images/img.12.png' >> "$DC_s/0.cfg"
         fi
         echo "$tp" >> "$DC_s/0.cfg"
+        echo " / " >> "$DC_s/0.cfg"
         let n++
     done
     exit 1
@@ -538,11 +543,11 @@ function edit() {
                 | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
                 check_grammar_1 "$DT_r" $r
                 list_words "$DT_r" $r
-                grmrk=$(sed ':a;N;$!ba;s/\n/ /g' < g.$r)
-                lwrds=$(<A.$r)
-                pwrds=$(tr '\n' '_' < B.$r)
+                grmrk=$(sed ':a;N;$!ba;s/\n/ /g' < "./g.$r")
+                lwrds=$(< "./A.$r")
+                pwrds=$(tr '\n' '_' < "./B.$r")
                 add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname2.mp3"
-                fetch_audio "$aw" "$bw"
+                fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
                 [ "$DT_r" ] && rm -fr "$DT_r") &
                 
                 fname="$fname2"
@@ -571,16 +576,16 @@ function edit() {
                     DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
                     trgt="$trgt_mod"; srce="$srce_mod"
                     r=$(($RANDOM%1000))
-                    clean_3 "$DT_r $r"
+                    clean_3 "$DT_r" "$r"
                     translate "$(sed '/^$/d' < "$aw")" auto $lg | sed 's/,//g' \
                     | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
                     check_grammar_1 "$DT_r" $r
                     list_words "$DT_r" $r
-                    grmrk=$(sed ':a;N;$!ba;s/\n/ /g' < g.$r)
-                    lwrds=$(< A.$r)
-                    pwrds=$(tr '\n' '_' < B.$r)
+                    grmrk=$(sed ':a;N;$!ba;s/\n/ /g' < "./g.$r")
+                    lwrds=$(< "./A.$r")
+                    pwrds=$(tr '\n' '_' < "./B.$r")
                     add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3"
-                    fetch_audio "$aw" "$bw"
+                    fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
                     [ "$DT_r" ] && rm -fr "$DT_r") &
                 fi
             fi

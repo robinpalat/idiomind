@@ -225,7 +225,9 @@ check_index() {
     DM_tlt="$DM_tl/$2"
     
     check() {
-
+        
+        [ -d "$DM_tl/$2/.conf" ] && mkdir "$DM_tl/$2/.conf"
+        
         n=0
         while [[ $n -le 4 ]]; do
             [ ! -f "$DC_tlt/$n.cfg" ] && touch "$DC_tlt/$n.cfg"
@@ -236,14 +238,15 @@ check_index() {
             ((n=n+1))
         done
         
+        [ -f "$DC_tlt/7.cfg" ] && rm "$DC_tlt/7.cfg"
         if [ ! -f "$DC_tlt/8.cfg" ]; then
         echo 1 > "$DC_tlt/8.cfg"; fi
         eval stts=$(sed -n 1p "$DC_tlt/8.cfg")
-
-        eval mp3s="$(cd "$DM_tlt/"; find . -maxdepth 2 -name '*.mp3' \
+        
+        mp3s="$(find "$DM_tlt"/ -maxdepth 2 -name '*.mp3' \
         | sort -k 1n,1 -k 7 | wc -l)"
+        eval $mp3s
     }
-    
     
     fix() {
         
@@ -254,12 +257,7 @@ check_index() {
         
             md5sum="$(nmfile "$name")"
 
-            if [[ ${#name} != 32 ]]; then
-                [ -f "$DM_tlt/$name.mp3" ] && rm "$DM_tlt/$name.mp3"
-                [ -f "$DM_tlt/words/$name.mp3" ] && rm "$DM_tlt/words/$name.mp3"
-                continue
-
-            elif [ -f "$DM_tlt/$name.mp3" ]; then
+            if [ -f "$DM_tlt/$name.mp3" ]; then
                 tgs="$(eyeD3 "$DM_tlt/$name.mp3")"
                 trgt="$(echo "$tgs" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')"
                 [ -z "$trgt" ] && rm "$DM_tlt/$name.mp3" && continue
@@ -305,7 +303,9 @@ check_index() {
         [ -f "$DC_tlt/0.cfg.tmp" ] && mv -f "$DC_tlt/0.cfg.tmp" "$DC_tlt/0.cfg"
         [ -f "$DC_tlt/3.cfg.tmp" ] && mv -f "$DC_tlt/3.cfg.tmp" "$DC_tlt/3.cfg"
         [ -f "$DC_tlt/4.cfg.tmp" ] && mv -f "$DC_tlt/4.cfg.tmp" "$DC_tlt/4.cfg"
-        cp -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"
+        if [ ! -f "$DC_tlt/7.cfg" ]; then
+        cp -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"; else
+        cp -f "$DC_tlt/0.cfg" "$DC_tlt/2.cfg"; fi
         cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
         rm -r "$DC_tlt/practice"
         
@@ -354,9 +354,10 @@ check_index() {
         DC_tlt="$DM_tlt/.conf"
         
         name_files
-
-        index="$DT/index"
-        
+        if [ "$DC_tlt/.11.cfg" ] && \
+        [ -n "$(cat "$DC_tlt/.11.cfg")" ]; then
+        index="$DC_tlt/.11.cfg"
+        else index="$DT/index"; fi
         fix
 
     check
@@ -365,9 +366,7 @@ check_index() {
     || [ $mp3s != $chk0 ] || [ $stts = 13 ]; then
 
         name_files
-        
         index="$DT/index"; rm "$DC_tlt/.11.cfg"
-        
         fix
     fi
     
@@ -830,7 +829,7 @@ function set_image() {
             fi  
     fi
     
-    rm -f search.html *.jpeg & exit
+    rm -f "$DT/search.html" "$DT"/*.jpeg & exit
 
 }  >/dev/null 2>&1
 
@@ -971,11 +970,11 @@ function pdfdoc() {
             if [ -n "$wt" ]; then
                 echo -e "<table width=\"55%\" border=\"0\" align=\"left\" cellpadding=\"10\" cellspacing=\"5\">
                 <tr>
-                <td bgcolor=\"#F8F8F8\" class=\"side\"></td>
+                <td bgcolor=\"#E6E6E6\" class=\"side\"></td>
                 <td bgcolor=\"#FFFFFF\"><w1>$wt</w1></td>
                 </tr>
                 <tr>
-                <td bgcolor=\"#F8F8F8\" class=\"side\"></td>
+                <td bgcolor=\"#E6E6E6\" class=\"side\"></td>
                 <td bgcolor=\"#FFFFFF\"><w2>$ws</w2></td>
                 </tr>
                 </table>" >> pdf_doc
@@ -1030,7 +1029,7 @@ function pdfdoc() {
                 echo -e "<h1>&nbsp;</h1>
                 <table width=\"100%\" border=\"0\" align=\"left\" cellpadding=\"10\" cellspacing=\"5\">
                 <tr>
-                <td bgcolor='#FAF9F4'><h1>$st</h1></td>
+                <td bgcolor='#F3F3F3'><h1>$st</h1></td>
                 </tr>" > Sgprt.tmp
                 echo -e "<tr>
                 <td ><h2>$ss</h2></td>

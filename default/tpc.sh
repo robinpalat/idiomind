@@ -41,8 +41,7 @@ else
         cd "$HOME"
         fi
         
-        if [ ! -f "$DC_tlt/7.cfg" ]; then
-        "$DS/ifs/tls.sh" check_index "$topic"; fi
+        "$DS/ifs/tls.sh" check_index "$topic"
         
         stts=$(sed -n 1p < "$DC_tlt/8.cfg")
         if [[ $(grep -Fxon "$topic" < "$DM_tl/.1.cfg" \

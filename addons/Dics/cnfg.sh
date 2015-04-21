@@ -9,13 +9,14 @@ disables="$DC/addons/dict/disables"
 lgt=$(lnglss "$lgtl")
 lgs=$(lnglss "$lgsl")
 new="#!/bin/bash
-# argument \"$1\" = \"word\"
+# argument 1 = \"word\"
 # eg.languages: en
 #
+
 Name=\"\"
 Language=\"\""
 
-function test_() {
+test_() {
     
     [[ $Language = en ]] && test=test
     [[ $Language = fr ]] && test=test
@@ -30,14 +31,14 @@ function test_() {
     [[ $Language = auto ]] && test=test
 }
 
-function dialog_edit() {
+dialog_edit() {
     
     yad --text-info --title="$Name" \
     --name=Idiomind --class=Idiomind \
     --filename="$script" --print-all --always-print-result \
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --buttons-layout=end --center --on-top \
-    --width=480 --height=350 --borders=0 \
+    --width=490 --height=360 --borders=0 \
     --editable --fontname=monospace --margins=4 --wrap \
     --button=Cancel:1 \
     --button=Delete:2 \
@@ -45,7 +46,7 @@ function dialog_edit() {
     --button=Save:5 > "$DT/script.sh"
 }
 
-function dict_list() {
+dict_list() {
 
     cd "$enables/"
     find . -not -name "*.$lgt" -and -not -name "*.auto" -type f \
