@@ -22,7 +22,7 @@ source "$DS/ifs/mods/cmns.sh"
 
 function mkmn() {
     
-    restr="$(cd "$DS/addons/"; ls)"
+    restr="$(ls "$DS/addons/")"
     cd "$DM_tl"
     [ -d ./images ] && rm -r ./images
     [ -d ./words ] && rm -r ./words
@@ -40,7 +40,8 @@ function mkmn() {
         if ! grep -Fxo "$tp" <<<"$restr"; then
         inx1=$(wc -l < "$DM_tl/$tp/.conf/1.cfg")
         inx2=$(wc -l < "$DM_tl/$tp/.conf/2.cfg")
-        else inx1=""; inx2=""; inx5=""; fi
+        ttip="$inx1 / $inx2"
+        else ttip=""; fi
         i=$(sed -n 1p < "$DM_tl/$tp/.conf/8.cfg")
         if [ ! "$DM_tl/$tp/.conf/8.cfg" ] || \
         [ ! "$DM_tl/$tp/.conf/0.cfg" ] || \
@@ -52,7 +53,7 @@ function mkmn() {
         i=13; echo "13" > "$DM_tl/$tp/.conf/8.cfg";fi
         echo "/usr/share/idiomind/images/img.$i.png" >> "$DC_s/0.cfg"
         echo "$tp" >> "$DC_s/0.cfg"
-        echo "$inx1 / $inx2" >> "$DC_s/0.cfg"
+        echo "$ttip" >> "$DC_s/0.cfg"
         let n++
     done
     n=1
@@ -108,7 +109,6 @@ function mark_to_learn() {
     stts=$(sed -n 1p "$DC_tlt/8.cfg")
     
     calculate_review
-    
     if [[ $((stts%2)) = 0 ]]; then
 
         echo "6" > "$DC_tlt/8.cfg"
@@ -627,7 +627,7 @@ function rename_topic() {
 
     source "$DS/ifs/mods/add/add.sh"
     info2=$(wc -l < "$DM_tl/.1.cfg")
-    restr="$(cd "$DS/addons/"; ls)"
+    restr="$(ls "$DS/addons/")"
     jlb="${2}"
     jlb="$(clean_2 "$jlb")"
     if grep -Fxo "$jlb" <<<"$restr"; then jlb="$jlb."; fi

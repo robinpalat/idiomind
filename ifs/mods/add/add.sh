@@ -437,7 +437,7 @@ function dlg_checklist_3() {
     --column="$(gettext "sentences")" \
     --button="$(gettext "Cancel")":1 \
     --button=$(gettext "Reorder"):2 \
-    --button="$(gettext "To new topic")":"$DS/add.sh 'new_topic'" \
+    --button="$(gettext "New topic")":"$DS/add.sh 'new_topic'" \
     --button=gtk-add:0 > "$slt"
 }
 

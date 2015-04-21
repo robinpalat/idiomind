@@ -6,7 +6,7 @@ DT_r="$3"; cd "$DT_r"
 if [ "$(sed -n 1p < "$HOME/.config/idiomind/addons/gts.cfg" \
 | grep -o set1=\"[^\"]* | grep -o '[^"]*$')" = TRUE ]; then
 
-if [ $(wc -c <<<"$1") -gt 100 ]; then
+if [ "$(wc -c <<<"$1")" -gt 100 ]; then
 
     file=1;
     while read -r chnk; do

@@ -25,7 +25,7 @@ lgs=$(lnglss $lgsl)
 vsd() {
 
     U=$(sed -n 1p $HOME/.config/idiomind/s/4.cfg)
-    lng=$(echo "$lgtl" | awk '{print tolower($0)}')
+    lng=$(awk '{print tolower($0)}' <<<"$lgtl")
     
     cd "$DM_t/saved"; ls -t *.id | sed 's/\.id//g' | \
     yad --list --title="$(gettext "Topics Saved")" \
@@ -45,15 +45,15 @@ vsd() {
 infsd() {
 
     U=$(sed -n 1p $DC_s/5.cfg)
-    user=$(echo "$(whoami)")
+    user="$USER"
     file="$DM_t/saved/$2.id"
     language_source=$(sed -n 2p < "$file" | grep -o 'language_source="[^"]*' | grep -o '[^"]*$')
     language_target=$(sed -n 3p < "$file" | grep -o 'language_target="[^"]*' | grep -o '[^"]*$')
     category=$(sed -n 6p < "$file" | grep -o 'category="[^"]*' | grep -o '[^"]*$')
     link=$(sed -n 7p < "$file" | grep -o 'link="[^"]*' | grep -o '[^"]*$')
     lng=$(lnglss $language_source)
-    nme=$(echo "$2" | sed 's/ /_/g')
-    lnglbl=$(echo $language_target | awk '{print tolower($0)}')
+    nme=$(sed 's/ /_/g' <<<"$2")
+    lnglbl=$(awk '{print tolower($0)}' <<<"$language_target")
     
         cd "$HOME"
         sleep 0.5

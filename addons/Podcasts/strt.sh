@@ -273,7 +273,7 @@ fetch_podcasts() {
     done < "$DCP/4.cfg"
 }
 
-remove_items() {
+removes() {
     
     n=50
     while [[ $n -le "$(wc -l < "$DCP/1.cfg")" ]]; do
@@ -299,11 +299,16 @@ check_index() {
     df_img="$DSP/images/item.png"
     while read item; do
         fname="$(nmfile "$item")"
-        if ([ -f "$DMC/$fname.mp3" ] || [ -f "$DMC/$fname.mp4" ] || \
-        [ -f "$DMC/$fname.jpg" ] || [ -f "$DMC/$fname.pdf" ] \
-        [ -f "$DMC/$fname.jpeg" ] || [ -f "$DMC/$fname.png" ] || \
-        [ -f "$DMC/$fname.ogg" ] || [ -f "$DMC/$fname.avi" ] || \
-        [ -f "$DMC/$fname.m4v" ] || [ -f "$DMC/$fname.flv" ]); then
+        if [ -f "$DMC/$fname.mp3" ] || \
+        [ -f "$DMC/$fname.mp4" ] || \
+        [ -f "$DMC/$fname.jpg" ] || \
+        [ -f "$DMC/$fname.pdf" ] || \
+        [ -f "$DMC/$fname.jpeg" ] || \
+        [ -f "$DMC/$fname.png" ] || \
+        [ -f "$DMC/$fname.ogg" ] || \
+        [ -f "$DMC/$fname.avi" ] || \
+        [ -f "$DMC/$fname.m4v" ] || \
+        [ -f "$DMC/$fname.flv" ]; then
             continue
         else
             echo "$item" >> "$DT/cchk"; fi
@@ -329,29 +334,32 @@ check_index() {
 conditions "$1"
 
 if [[ "$1" != 0 ]]; then
-    echo "$tpc" > "$DC_s/4.cfg"
-    echo '2' >> "$DC_s/4.cfg"
-    echo "11" > "$DCP/8.cfg"
-    (sleep 2 && notify-send -i idiomind "$(gettext "Updating")" \
-    "$(gettext "Checking new episodes...")" -t 6000) &
+echo "$tpc" > "$DC_s/4.cfg"
+echo '2' >> "$DC_s/4.cfg"
+echo "11" > "$DCP/8.cfg"
+(sleep 2 && notify-send -i idiomind "$(gettext "Updating")" \
+"$(gettext "Checking new episodes...")" -t 6000) &
 fi
 
-[ -f "$DCP/2.cfg" ] && kept_episodes="$(wc -l < "$DCP/2.cfg")" || kept_episodes=0
+if [ -f "$DCP/2.cfg" ]; then kept_episodes="$(wc -l < "$DCP/2.cfg")"
+else kept_episodes=0; fi
 echo -e " <b>$(gettext "Updating")</b>
  $(gettext "New episodes:") \t$(gettext "Saved episodes:") \
 $kept_episodes "> "$DM_tl/Podcasts/.update"
 
 fetch_podcasts
-rm -fr "$DT_r" "$DT/.uptp"
 
-[ -f "$DT_r/log" ] && new_episodes="$(wc -l < "$DT_r/log")" || new_episodes=0
+if [ -f "$DT_r/log" ]; then new_episodes="$(wc -l < "$DT_r/log")"
+else new_episodes=0; fi
 echo -e " $(gettext "Last update:") $(date "+%r %a %d %B")
  $(gettext "New episodes:") $new_episodes\t$(gettext "Saved episodes:") \
 $kept_episodes "> "$DM_tl/Podcasts/.update"
 
+rm -fr "$DT_r" "$DT/.uptp"
+
 if [ "$new_episodes" -gt 0 ]; then
 
-    remove_items
+    removes
     check_index
     
     notify-send -i idiomind \

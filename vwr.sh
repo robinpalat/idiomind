@@ -23,9 +23,11 @@ align=left
 fs=22; bs=20
 
 if [ -f "$DM_tlt/words/$fname.mp3" ]; then
+    cmd_listen="play '$DM_tlt/words/$fname.mp3'"
     word_view
 
 elif [ -f "$DM_tlt/$fname.mp3" ]; then
+    cmd_listen="'$DS/ifs/tls.sh' 'listen_sntnc' '$fname'"
     sentence_view
     
 else

@@ -23,7 +23,7 @@ source "$DS/ifs/mods/cmns.sh"
 include "$DS/ifs/mods/add"
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
-restr="$(cd "$DS/addons/"; ls)"
+restr="$(ls "$DS/addons/")"
 list=$(sed -n 2p < "$DC_s/1.cfg" \
 | grep -o list=\"[^\"]* | grep -o '[^"]*$')
 trans=$(sed -n 4p < "$DC_s/1.cfg" \

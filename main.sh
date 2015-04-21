@@ -115,7 +115,6 @@ function new_session() {
         [ "$DM_tl/$line/.conf/9.cfg" ]; then
         
             calculate_review
-           
             if [ $((stts%2)) = 0 ]; then
             if [ "$RM" -ge 150 ]; then
             echo 10 > "$DM_tl/$line/.conf/8.cfg"
@@ -418,7 +417,7 @@ function topic() {
                 fi 
         fi
         
-        pres="<u><b>$(gettext "Learned")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
+        pres="<u><b>$(gettext "Learned topic")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
         
         # learned
         notebook_2

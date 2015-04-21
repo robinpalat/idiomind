@@ -27,7 +27,7 @@ function word_view(){
     --field="":lbl \
     --field="<i><span color='#737373'>$exmp</span></i>:lbl" "$field_dftn" "$field_note" \
     --button=gtk-edit:4 \
-    --button="$listen":"play '$DM_tlt/words/$fname.mp3'" \
+    --button="$listen":"$cmd_listen" \
     --button=gtk-go-up:3 \
     --button=gtk-go-down:2
 } >/dev/null 2>&1
@@ -46,7 +46,7 @@ function sentence_view(){
     
     echo "$lwrd" | yad --list --title=" " \
     --selectable-labels --print-column=0 \
-    --dclick-action="$DS/ifs/tls.sh dclik" \
+    --dclick-action="$DS/ifs/tls.sh 'dclik'" \
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --center --image-on-top --center --on-top \
     --scroll --text-align=left --expand-column=0 --no-headers \
@@ -55,7 +55,7 @@ function sentence_view(){
     --column="":TEXT \
     --column="":TEXT \
     --button=gtk-edit:4 \
-    --button="$listen":"$DS/ifs/tls.sh listen_sntnc '$fname'" \
+    --button="$listen":"$cmd_listen" \
     --button=gtk-go-up:3 \
     --button=gtk-go-down:2
 } >/dev/null 2>&1
@@ -63,6 +63,12 @@ function sentence_view(){
 export -f word_view sentence_view
 
 function notebook_1() {
+    
+    cmd_mark="'$DS/mngr.sh' 'mark_as_learned' '$tpc' 1"
+    cmd_attchs="'$DS/ifs/tls.sh' 'attachs'"
+    cmd_del="'$DS/mngr.sh' 'delete_topic' '$tpc'"
+    cmd_share="'$DS/ifs/upld.sh' 'upld' '$tpc'"
+    cmd_play="$DS/play.sh"
     
     tac "$ls1" | awk '{print $0"\n"}' | yad --list --tabnum=1 \
     --plug=$KEY --print-all \
@@ -83,12 +89,12 @@ function notebook_1() {
     --text="$label_info1\n" \
     --scroll --borders=5 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "$tpc" \
-    --field="$(gettext "Mark as learned")":FBTN "$DS/mngr.sh 'mark_as_learned' '$tpc' 1" \
+    --field="$(gettext "Mark as learned")":FBTN "$cmd_mark" \
     --field=" ":LBL "$set1" \
     --field="$label_info2\n\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " \
-    --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh 'upld' '$tpc'" \
-    --field="$(gettext "Attached Files")":FBTN "$DS/ifs/tls.sh 'attachs'" \
-    --field="$(gettext "Delete")":FBTN "$DS/mngr.sh 'delete_topic' '$tpc'" \
+    --field="$(gettext "Attached Files")":FBTN "$cmd_attchs" \
+    --field="$(gettext "Share")":FBTN "$cmd_share" \
+    --field="$(gettext "Delete")":BTN "$cmd_del" \
     --field=" ":LBL " " > "$cnf4" &
     yad --notebook --title="$tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
@@ -100,13 +106,18 @@ function notebook_1() {
     --tab=" $(gettext "Notes") " \
     --tab=" $(gettext "Edit") " \
     --width=$sx --height=$sy --borders=2 --tab-borders=5 \
-    --button="$(gettext "Playlist")":$DS/play.sh \
+    --button="$(gettext "Lists")":"$cmd_play" \
     --button="$(gettext "Practice")":5 \
     --button="$(gettext "Close")":1
 }
 
 
 function notebook_2() {
+    
+    cmd_mark="'$DS/mngr.sh' 'mark_to_learn' '$tpc' 1"
+    cmd_attchs="'$DS/ifs/tls.sh' 'attachs'"
+    cmd_del="'$DS/mngr.sh' 'delete_topic' '$tpc'"
+    cmd_share="'$DS/ifs/upld.sh' 'upld' '$tpc'"
     
     yad --multi-progress --tabnum=1 \
     --text="$pres" \
@@ -126,12 +137,12 @@ function notebook_2() {
     --text="$label_info1\n" \
     --scroll --borders=5 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "$tpc" \
-    --field="   $(gettext "Review")   ":FBTN "$DS/mngr.sh 'mark_to_learn' '$tpc' 1" \
+    --field="   $(gettext "Review")   ":FBTN "$cmd_mark" \
     --field=" ":LBL "$set1" \
     --field="$label_info2\n\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " \
-    --field="$(gettext "Share")":FBTN "$DS/ifs/upld.sh 'upld' '$tpc'" \
-    --field="$(gettext "Attached Files")":FBTN "$DS/ifs/tls.sh attachs" \
-    --field="$(gettext "Delete")":FBTN "$DS/mngr.sh 'delete_topic' '$tpc'" \
+    --field="$(gettext "Attached Files")":FBTN "$cmd_attchs" \
+    --field="$(gettext "Share")":FBTN "$cmd_share" \
+    --field="$(gettext "Delete")":BTN "$cmd_del" \
     --field=" ":LBL " " > "$cnf4" &
     yad --notebook --title="$tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \

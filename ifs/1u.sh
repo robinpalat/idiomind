@@ -24,7 +24,7 @@ export TEXTDOMAINDIR
 Encoding=UTF-8
 alias gettext='gettext "idiomind"'
 user=$(echo "$(whoami)")
-text="<big><big><big>$(gettext "Welcome")</big></big></big>
+text="<big><big><big>$(gettext "Welcome") $USER </big></big></big>
 $(gettext "To get started, please configure the following.")\n"
 lang=('English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian')
@@ -36,9 +36,10 @@ _info() {
     
     yad --form --title="$(gettext "Information")" \
     --text="$(gettext "Some features do not yet work with this language:") $1 ." \
-    --center --borders=5 --image=info \
-    --on-top --window-icon=info \
-    --skip-taskbar --width=400 --height=120 \
+    --image=info \
+    --window-icon=info \
+    --skip-taskbar --center --on-top \
+    --width=400 --height=120 --borders=5 \
     --button="$(gettext "OK")":0
 }
 
@@ -98,14 +99,14 @@ elif [ $ret -eq 0 ]; then
     mkdir "$HOME/.idiomind"
     
     if [ $? -ne 0 ]; then
-    yad --name=idiomind \
-    --image=error --button=gtk-ok:1\
+    yad --title=Idiomind \
     --text=" $(gettext "Error while trying to write on") \'/home/$user/\'\n" \
-    --image-on-top --sticky --fixed \
-    --width=320 --height=80 \
-    --borders=2 --title=Idiomind \
-    --skip-taskbar --center \
-    --window-icon="$DS/images/icon.png" & exit 1
+    --image=error \
+    --name=idiomind --class=idiomind \
+    --window-icon="$DS/images/icon.png" \
+    --image-on-top --sticky --fixed --skip-taskbar --center \
+    --width=320 --height=80 --borders=2 \
+    --button=gtk-ok:1 & exit 1
     fi
     
     mkdir -p "$HOME/.idiomind/topics/saved"
