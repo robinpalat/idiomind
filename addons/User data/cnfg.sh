@@ -61,7 +61,7 @@ if [ -z "$1" ]; then
             if [ "$ret" -eq 0 ]; then
                 
                 (
-                echo "# $(gettext "Copying")..." ; sleep 0.1
+                echo "# $(gettext "Copying")..."
 
                 cd "$DM"
                 # TODO
@@ -81,12 +81,13 @@ if [ -z "$1" ]; then
                 mv -f "$DT/idiomind_data.tar.gz" "$exp"
                 echo "# $(gettext "Completing")" ; sleep 1
 
-                ) | yad --center --on-top --progress \
-                --width=200 --height=20 --geometry=200x20-2-2 \
+                ) | yad --progress \
                 --pulsate --percentage="5" --auto-close \
-                --sticky --undecorated --skip-taskbar --no-buttons
+                --sticky --undecorated --no-buttons \
+                --skip-taskbar --center --on-top \
+                --width=200 --height=20 --geometry=200x20-2-2
                 
-                msg "$(gettext "Data exported successfully")\n" info
+                msg "$(gettext "Data exported successfully.")\n" info
                 
                 exit 1
 
@@ -119,8 +120,8 @@ if [ -z "$1" ]; then
                 (
                 [ -d "$DT/import" ] && rm -fr "$DT/import"
                 rm -f "$DT/*.XXXXXXXX"
-                echo "5"
-                echo "# $(gettext "Copying")..." ; sleep 0.1
+              
+                echo "# $(gettext "Copying")..."
                 mkdir "$DT/import"
                 cp -f "$add" "$DT/import/import.tar.gz"
                 cd "$DT/import"
@@ -146,28 +147,15 @@ if [ -z "$1" ]; then
                     
                     ls * -d | sed 's/Podcasts//g' | sed '/^$/d' > \
                     "$DT/import/topics/$language/.topics"
-
-                    echo "50"
-                    echo "# $(gettext "Setting up languages") $language " ; sleep 0.1
-                    echo "90"
-                    echo "# $(gettext "Setting up languages") $language " ; sleep 0.1
                     
                     while read topic; do
-                    
-                        echo "5"
-                        echo "# $(gettext "Setting up") ${topic:0:20} ... " ; sleep 0.1
-                        echo "20"
-                        echo "# $(gettext "Copying") ${topic:0:20} ... " ; sleep 0.2
                         
-                         if [ -d "$DM_t/$language/$topic" ]; then continue; fi
+                        if [ -d "$DM_t/$language/$topic" ]; then continue; fi
                          
                         if [ -d "$DT/import/topics/$language/$topic" ]; then
                         cp -fr "$DT/import/topics/$language/$topic" "$DM_t/$language/$topic"
                         else continue; fi
-                        
-                        echo "50"
-                        echo "# $(gettext "Copying") ${topic:0:20} ... " ; sleep 0.2
-                        
+
                         [ -f "$DM_t/$language/$topic/tpc.sh" ] && \
                         rm "$DM_t/$language/$topic/tpc.sh"
                         [ -f "$DM_t/$language/$topic/.conf/att.html" ] && \
@@ -182,11 +170,8 @@ if [ -z "$1" ]; then
                         cp -f "$DM_t/$language/$topic/.conf/0.cfg" \
                         "$DM_t/$language/$topic/.conf/1.cfg"
                         [ -d "$DM_t/$language/$topic/.conf" ] && \
-                        echo "6" > "$DM_t/$language/$topic/.conf/8.cfg"
-                        
-                        echo "80"
-                        echo "# $(gettext "Copying") ${topic:0:20} ... " ; sleep 0.1
-                        
+                        echo "1" > "$DM_t/$language/$topic/.conf/8.cfg"
+
                         if [ -d "$DT/import/topics/$language/$topic" ]; then
                         echo "$topic" >> "$DM_t/$language/.3.cfg"; fi
                         
@@ -196,9 +181,7 @@ if [ -z "$1" ]; then
                         mv -f "$DM_t/$language/.2.cfg_" "$DM_t/$language/.2.cfg"; fi
                         
                         cd "$DT/import/topics"
-                        echo "90"
-                        echo "# $(gettext "Copying") ${topic:0:20} ... " ; sleep 0.2
-                        
+
                     done < "$DT/import/topics/$language/.topics"
                     
                     if [ -d "$DT/import/topics/$language/Podcasts" ]; then
@@ -206,18 +189,16 @@ if [ -z "$1" ]; then
                 
                 done < "$DT/import/topics/.languages"
                 
-                echo "95"
-                echo "# $(gettext "Completing")" ; sleep 1
-                echo "100"
                 "$DS/mngr.sh" mkmn
                 rm -f -r "$DT/import"
                 
                 ) | yad --progress \
-                    --percentage="5" --auto-close \
-                    --sticky --on-top --undecorated --skip-taskbar --center --no-buttons \
-                    --width=200 --height=20 --geometry=200x20-2-2
-
-                msg " $(gettext "Data imported successfully") \n" info
+                --pulsate --percentage="5" --auto-close \
+                --sticky --undecorated --no-buttons \
+                --skip-taskbar --center --on-top \
+                --width=200 --height=20 --geometry=200x20-2-2
+                
+                msg "$(gettext "Data imported successfully.")\n" info
                 exit 1
             else
                 exit 1
