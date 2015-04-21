@@ -64,7 +64,7 @@ function feedmode() {
     --tab=" $(gettext "Episodes") " \
     --tab=" $(gettext "Saved episodes") " \
     --tab=" $(gettext "Notes") " \
-    --button="$(gettext "Playlist")":"/usr/share/idiomind/play.sh" \
+    --button="$(gettext "Lists")":"/usr/share/idiomind/play.sh" \
     --button="$(gettext "Update")":2 \
     --button="$(gettext "Close")":1
     ret=$?

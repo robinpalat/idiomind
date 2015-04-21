@@ -213,32 +213,28 @@ if [ "$(echo "$1" | grep -o '.idmnd')" ]; then
 
                 if [ ! -d "$DM_t/$language_target" ]; then
                 mkdir "$DM_t/$language_target"
-                mkdir "$DM_t/$language_target/.share"
-                fi
+                mkdir "$DM_t/$language_target/.share"; fi
                 mkdir -p "$DM_t/$language_target/$tpi/.conf"
-                DI_m="$DM_t/$language_target/$tpi"
-                DI_c="$DM_t/$language_target/$tpi/.conf"
-                cd "$tmp"
-                cp -n ./audio/*.mp3 "$DM_t/$language_target/.share/"
-                [ -d ./audio ] && rm -fr ./audio
+                DM_tlt="$DM_t/$language_target/$tpi"
+                DC_tlt="$DM_t/$language_target/$tpi/.conf"
+                if [ -d "$tmp/audio" ]; then
+                cp -n "$tmp/audio"/*.mp3 "$DM_t/$language_target/.share"/
+                rm -fr "$tmp/audio"; fi
                 n=0
                 while [[ $n -le 13 ]]; do
                 if [ ! -f "$tmp/$n.cfg" ]; then
-                touch "$DI_c/$n.cfg"
-                else mv -f "$tmp/$n.cfg" "$DI_c/$n.cfg"; fi
+                touch "$DC_tlt/$n.cfg"
+                else mv -f "$tmp/$n.cfg" "$DC_tlt/$n.cfg"; fi
                 let n++
                 done
-                tee -a "$DI_c/.11.cfg" "$DI_c/1.cfg" < "$DI_c/0.cfg"
-                echo "1" > "$DI_c/8.cfg"; rm "$DI_c/9.cfg" "$DI_c/ls"
-                cp -fr ./.* "$DI_m/"
+                tee -a "$DC_tlt/.11.cfg" "$DC_tlt/1.cfg" < "$DC_tlt/0.cfg"
+                echo "1" > "$DC_tlt/8.cfg"; rm "$DC_tlt/9.cfg" "$DC_tlt/ls"
+                cp -fr "$tmp"/.* "$DM_tlt/"
                 echo "$language_target" > "$DC_s/6.cfg"
                 echo "$lgsl" >> "$DC_s/6.cfg"
-                echo "$dte" > "$DI_c/13.cfg"
+                echo "$dte" > "$DC_tlt/13.cfg"
                 sed -i 's/'"$tpi"'//g' "$DM_t/$language_target/.2.cfg"
-                sed '/^$/d' "$DM_t/$language_target/.2.cfg" \
-                > "$DM_t/$language_target/.2.cfg.tmp"
-                mv -f "$DM_t/$language_target/.2.cfg.tmp" \
-                "$DM_t/$language_target/.2.cfg"
+                sed -i '/^$/d' "$DM_t/$language_target/.2.cfg"
                 "$DS/mngr.sh" mkmn; "$DS/default/tpc.sh" "$tpi" &
             fi
     fi

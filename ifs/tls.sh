@@ -137,7 +137,7 @@ details() {
     SRFL5=$(cat "./0.cfg")
     
     echo -e "
-SUMMARY
+$(gettext "SUMMARY")
 ======================
 $wcdirs directories
 $wcfiles files
@@ -145,74 +145,34 @@ $wchfiles hidden files
 $wcexfiles executables files
 
 
-
-DIRECTORIES
-======================
-$dirs
-
-
-
-FILES
+$(gettext "FILES")
 ======================
 $files
-
 
 ./files
 
 $attchsdir
 
-
-
-HIDDEN FILES
-======================
 $hfiles
 
-
-
-EXECUTABLES FILES
-======================
 $exfiles
 
-
-
-TEXT FILES
+$(gettext "TEXT FILES")
 ======================
-
-12.cfg content (configuration file)
 
 $SRFL1
 
-
-
-
-10.cfg content
-
 $SRFL2
-
-
-
-
-4.cfg content
 
 $SRFL3
 
-
-
-
-3.cfg content
-
 $SRFL4
-
-
-
-
-0.cfg content
 
 $SRFL5" | yad --text-info --title="$(gettext "Installation details")" \
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" --center \
     --buttons-layout=edge --scroll --margins=10 \
-    --width=550 --height=550 --borders=0 \
+    --width=600 --height=550 --borders=0 \
     --button="$(gettext "Open Folder")":"xdg-open '$2'" \
     --button="$(gettext "Close")":0
     
@@ -297,7 +257,6 @@ check_index() {
                 echo "$trgt" >> "$DC_tlt/0.cfg.tmp"
                 echo "$trgt" >> "$DC_tlt/3.cfg.tmp"
             fi
-            
         done < "$index"
 
         [ -f "$DC_tlt/0.cfg.tmp" ] && mv -f "$DC_tlt/0.cfg.tmp" "$DC_tlt/0.cfg"
