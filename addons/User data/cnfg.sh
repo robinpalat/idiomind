@@ -37,7 +37,7 @@ if [ -z "$1" ]; then
     
     ret=$?
 
-    if [ "$ret" -eq 0 ]; then
+    if [[ $ret -eq 0 ]]; then
 
         in=$(echo "$D" | sed -n 1p)
         ex=$(echo "$D" | sed -n 2p)
@@ -58,7 +58,7 @@ if [ -z "$1" ]; then
             --button=Ok:0)
             ret=$?
                 
-            if [ "$ret" -eq 0 ]; then
+            if [[ $ret -eq 0 ]]; then
                 
                 (
                 echo "# $(gettext "Copying")..."
@@ -66,15 +66,15 @@ if [ -z "$1" ]; then
                 cd "$DM"
                 # TODO
                 tar cvzf backup.tar.gz \
-                --exclude='./topics/Italian/Podcasts/cache' \
-                --exclude='./topics/French/Podcasts/cache' \
-                --exclude='./topics/Portuguese/Podcasts/cache' \
-                --exclude='./topics/Russian/Podcasts/cache' \
-                --exclude='./topics/Spanish/Podcasts/cache' \
-                --exclude='./topics/German/Podcasts/cache' \
-                --exclude='./topics/Chinese/Podcasts/cache' \
-                --exclude='./topics/Japanese/Podcasts/cache' \
-                --exclude='./topics/Vietnamese/Podcasts/cache' \
+                --exclude='./topics/Italian/Podcasts' \
+                --exclude='./topics/French/Podcasts' \
+                --exclude='./topics/Portuguese/Podcasts' \
+                --exclude='./topics/Russian/Podcasts' \
+                --exclude='./topics/Spanish/Podcasts' \
+                --exclude='./topics/German/Podcasts' \
+                --exclude='./topics/Chinese/Podcasts' \
+                --exclude='./topics/Japanese/Podcasts' \
+                --exclude='./topics/Vietnamese/Podcasts' \
                 ./topics
 
                 mv -f backup.tar.gz "$DT/idiomind_data.tar.gz"
@@ -88,13 +88,8 @@ if [ -z "$1" ]; then
                 --width=200 --height=20 --geometry=200x20-2-2
                 
                 msg "$(gettext "Data exported successfully.")\n" info
-                
-                exit 1
-
-            else
-                exit 1
             fi
-
+            
         # import
         elif grep "TRUE $(gettext "Import")" <<<"$in"; then
             
@@ -111,7 +106,7 @@ if [ -z "$1" ]; then
             --button="$(gettext "Cancel")":1 \
             --button=Ok:0)
             
-            if [ "$ret" -eq 0 ]; then
+            if [[ $ret -eq 0 ]]; then
             
                 if [ -z "$add" ] || [ ! -d "$DM" ]; then
                     exit 1
@@ -156,8 +151,8 @@ if [ -z "$1" ]; then
                         cp -fr "$DT/import/topics/$language/$topic" "$DM_t/$language/$topic"
                         else continue; fi
 
-                        [ -f "$DM_t/$language/$topic/tpc.sh" ] && \
-                        rm "$DM_t/$language/$topic/tpc.sh"
+                        [ -f "$DM_t/$language/$topic/.conf/7.cfg" ] && \
+                        rm "$DM_t/$language/$topic/.conf/7.cfg"
                         [ -f "$DM_t/$language/$topic/.conf/att.html" ] && \
                         rm "$DM_t/$language/$topic/.conf/att.html"
                         [ -f "$DM_t/$language/$topic/.conf/1.cfg" ] && \
@@ -165,7 +160,7 @@ if [ -z "$1" ]; then
                         [ -f "$DM_t/$language/$topic/.conf/2.cfg" ] && \
                         rm "$DM_t/$language/$topic/.conf/2.cfg"
                         [ -d "$DM_t/$language/$topic/.conf/practice" ] && \
-                        rm -rf "$DM_t/$language/$topic/.conf/practice/"
+                        rm -r "$DM_t/$language/$topic/.conf/practice/"
                         [ -f "$DM_t/$language/$topic/.conf/0.cfg" ] && \
                         cp -f "$DM_t/$language/$topic/.conf/0.cfg" \
                         "$DM_t/$language/$topic/.conf/1.cfg"
@@ -199,113 +194,9 @@ if [ -z "$1" ]; then
                 --width=200 --height=20 --geometry=200x20-2-2
                 
                 msg "$(gettext "Data imported successfully.")\n" info
-                exit 1
-            else
-                exit 1
             fi
+    
         fi
-
-    # backup
-    elif [ "$ret" -eq 2 ]; then
-
-        if [ ! -f "$DC_a/1.cfg" ]; then
-        
-            echo -e "backup=FALSE
-            path=\"$HOME\"
-            size=0" > "$DC_a/1.cfg"
-        fi
-
-        backup="$(sed -n 1p < "$DC_a/1.cfg" \
-        | grep -o backup=\"[^\"]* | grep -o '[^"]*$')"
-
-        cd "$HOME"
-        CNFG=$(yad --form --title=Backup \
-        --name=Idiomind --class=Idiomind \
-        --print-all --always-print-result \
-        --window-icon="$DS/images/icon.png" \
-        --center --on-top --expand-column=3 --no-headers --columns=2 \
-        --width=420 --height=300 --borders=15 \
-        --field="$(gettext "Backup regularly")":CHK $backup \
-        --field="$(gettext "Path to save")":"":CDIR "$path" \
-        --field=" :LBL" " " \
-        --button="$(gettext "Restore")":3
-        --button="$(gettext "Close")":0)
-        
-        ret=$?
-        # backup config
-        if [ "$ret" -eq 0 ]; then
-            st1=$(echo "$CNFG" | cut -d "|" -f1)
-            st2=$(echo "$CNFG" | cut -d "|" -f2 | sed 's|\/|\\/|g')
-            
-            sed -i "1s/backup=.*/backup=\"$st1\"/" "$DC_a/1.cfg"
-            sed -i "2s/path=.*/path=\"$st2\"/" "$DC_a/1.cfg"
-
-        elif [ "$ret" -eq 3 ]; then
-            
-            set -e
-
-            if [ ! -d "$path" ]; then
-            
-                msg "$(gettext "Backup directory does not exist. \nPlease check the settings and try again.")\n" info & exit 1
-                
-            elif [ ! -f "$D_cps/idiomind.backup" ]; then
-            
-                msg "$(gettext "No Backup.")\n" info & exit 1
-                
-            else
-                udt=$(< "$path/.udt")
-                msg_2 "$(gettext "Data will be restored to") $udt \n" info
-                ret=$(echo $?)
-                
-                    if [ "$ret" -eq 0 ]; then
-                        set -e
-                        (
-                        rm -f "$DT/*.XXXXXXXX"
-                        echo "#" ; sleep 0
-                        
-                        mv "$DC/" "$DT/DC.bk"
-                        mv "$DM/" "$DT/DM.bk"
-                        mkdir "$DC/"
-                        mkdir "$DM/"
-                        mkdir "$DM_t"
-                        D_cps=$(sed -n 2p $DT/.SC.bk)
-                        mv -f "$path/idiomind.backup" "$path/backup.tar.gz"
-                        cd "$path"
-                        tar -xzvf ./backup.tar.gz
-                        mv -f ./idiomind/* "$DC/"
-                        mv -f ./topics/* "$DM_t/"
-                        "$DS/mngr" mkmn
-                        chmod -R +x "$DC"
-                        rm -r  "$path/idiomind"
-                        rm -r  "$path/topics"
-                        mv -f "$path/backup.tar.gz" "$path/idiomind.backup"
-                        
-                        ) | yad --progress \
-                            --percentage="5" --auto-close \
-                            --sticky --on-top --undecorated --skip-taskbar --center --no-buttons \
-                            --width=200 --height=20 --geometry=200x20-2-2
-                        
-                        exit=$?
-                        
-                        if [ $exit = 0 ] ; then
-                        
-                            info=" Restore succefull\n"
-                            image=dialog-ok
-                        else
-                            info=" Restore Error"
-                            image=dialog-warning
-                        fi
-
-                    elif [ "$ret" -eq 1 ]; then
-                        exit 1
-                    fi
-            fi
-        fi  
-    else
-        exit 1
     fi
-
-elif [ "$1" = C ] && [ "$dte" != "$udt" ]; then
-    sleep 3
-    #TODO
 fi
+exit
