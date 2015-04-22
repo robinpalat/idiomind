@@ -198,7 +198,6 @@ check_index() {
             ((n=n+1))
         done
         
-        [ -f "$DC_tlt/7.cfg" ] && rm "$DC_tlt/7.cfg"
         if [ ! -f "$DC_tlt/8.cfg" ]; then
         echo 1 > "$DC_tlt/8.cfg"; fi
         eval stts=$(sed -n 1p "$DC_tlt/8.cfg")

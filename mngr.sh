@@ -112,8 +112,8 @@ function mark_to_learn() {
     fi
 
     stts=$(sed -n 1p "$DC_tlt/8.cfg")
+    calculate_review "$tpc"
     
-    calculate_review
     if [[ $((stts%2)) = 0 ]]; then
 
         echo "6" > "$DC_tlt/8.cfg"
@@ -161,12 +161,12 @@ function mark_as_learned() {
     if [ ! -f "$DC_tlt/7.cfg" ]; then
         if [ -f "$DC_tlt/9.cfg" ]; then
         
-            calculate_review
-            
+            calculate_review "$tpc"
             steps=$(sed '/^$/d' < "$DC_tlt/9.cfg" | wc -l)
             
             if [[ "$steps" = 4 ]]; then
-            stts=$((stts+1)); fi
+            
+                stts=$((stts+1)); fi
             
             if [[ "$RM" -ge 50 ]]; then
             

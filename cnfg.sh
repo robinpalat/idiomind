@@ -46,7 +46,7 @@ confirm() {
     --center --borders=5 --image=$2 \
     --on-top --window-icon="$DS/images/icon.png" \
     --skip-taskbar --width=400 --height=130 \
-    --button="$(gettext "No")":1 --button="$(gettext "Yes")":0
+    --button="$(gettext "Cancel")":1 --button="$(gettext "Yes")":0
 }
 
 set_lang() {
@@ -167,7 +167,7 @@ ret=$?
             [ "${lang[$n]}" != "$lgtl" ]; then
                 lgtl="${lang[$n]}"
                 if grep -o -E 'Chinese|Japanese|Russian|Vietnamese' <<< "$lgtl";
-                then info3="\n$(gettext "Some features do not yet work with this language:") $lgtl. "; fi
+                then info3="\n<u>$lgtl</u>: $(gettext "Some features do not yet work with this language"). "; fi
                 confirm "$info2$info3" dialog-question "$lgtl"
                 [ $? -eq 0 ] && set_lang "${lang[$n]}"
                 break

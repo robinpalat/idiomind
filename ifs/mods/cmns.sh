@@ -78,6 +78,7 @@ function check_index1() {
 
 function calculate_review() {
     
+    DC_tlt="$DM_tl/$1/.conf"
     dts=$(sed '/^$/d' < "$DC_tlt/9.cfg" | wc -l)
     if [[ $dts = 1 ]]; then
     dte=$(sed -n 1p "$DC_tlt/9.cfg")

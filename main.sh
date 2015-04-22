@@ -39,7 +39,6 @@ function new_session() {
 
     #set -e
     echo "--new session"
-    touch "$DT/ps_lk"
     echo "$(date +%d)" > "$DC_s/10.cfg"
     if [ -f "$DT/t_notify" ]; then rm -f "$DT/t_notify"; fi
     if [ -f "$DT/notify" ]; then rm -f "$DT/notify"; fi
@@ -49,6 +48,8 @@ function new_session() {
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
     if [ $? -ne 0 ]; then
     msg "$(gettext "Fail on try write in /tmp")\n" error & exit 1; fi
+    
+    touch "$DT/ps_lk"
   
     # start addons
     addons="$(cd "$DS/addons"; ls -d *)"
@@ -105,26 +106,26 @@ function new_session() {
     
     # status update
     [ ! -f "$DM_tl/.1.cfg" ] && touch "$DM_tl/.1.cfg"
-    #info="$(gettext "Review")"
     
     while read line; do
-    
-        stts=$(sed -n 1p "$DM_tl/$line/.conf/8.cfg")
+        
+        DM_tlt="$DM_tl/$line"
+        stts=$(sed -n 1p "$DM_tlt/.conf/8.cfg")
         if ([ $stts = 3 ] || [ $stts = 4 ] \
         || [ $stts = 7 ] || [ $stts = 8 ]) && \
-        [ -f "$DM_tl/$line/.conf/9.cfg" ]; then
+        [ -f "$DM_tlt/.conf/9.cfg" ]; then
         
-            calculate_review
+            calculate_review "$line"
             if [ $((stts%2)) = 0 ]; then
-            if [ "$RM" -ge 150 ]; then
-            echo 10 > "$DM_tl/$line/.conf/8.cfg"
+            if [ "$RM" -ge 180 ]; then
+            echo 10 > "$DM_tlt/.conf/8.cfg"
             elif [ "$RM" -ge 100 ]; then
-            echo 8 >> "$DM_tl/$line/.conf/8.cfg"; fi
+            echo 8 > "$DM_tlt/.conf/8.cfg"; fi
             else
-            if [ "$RM" -ge 150 ]; then
-            echo 9 > "$DM_tl/$line/.conf/8.cfg"
+            if [ "$RM" -ge 180 ]; then
+            echo 9 > "$DM_tlt/.conf/8.cfg"
             elif [ "$RM" -ge 100 ]; then
-            echo 7 > "$DM_tl/$line/.conf/8.cfg"; fi
+            echo 7 > "$DM_tlt/.conf/8.cfg"; fi
             fi
         fi
     done < "$DM_tl/.1.cfg"
@@ -338,9 +339,8 @@ function topic() {
     
         if [ -f "$DC_tlt/9.cfg" ] && [ -f "$DC_tlt/7.cfg" ]; then
         
-            calculate_review
+            calculate_review "$tpc"
             stts=$(sed -n 1p "$DC_tlt/8.cfg")
-
             if [[ ${RM} -ge 100 ]]; then
             
                 if [ $((stts%2)) = 0 ]; then
@@ -391,8 +391,7 @@ function topic() {
             "$DS/mngr.sh" mark_as_learned "$tpc" 0
         fi
         
-        calculate_review
-            
+        calculate_review "$tpc"
         if [[ ${RM} -ge 100 ]]; then
 
             stts=$(sed -n 1p "$DC_tlt/8.cfg")
@@ -432,9 +431,8 @@ function topic() {
 panel() {
 
     printf "strt.1.strt\n" >> "$DC_s/8.cfg"
-    if [ -n "$tpc" ] && ([ "$mode" = 0 ] || [ "$mode" = 1 ]); then
-     echo "$tpc" > "$DT/tpe"; fi
-    if [ ! -d "$DT" ]; then new_session & exit; fi
+    echo "$tpc" > "$DT/tpe"
+    if [ ! -d "$DT" ]; then new_session; fi
     
     [ -f "$DC_s/10.cfg" ] && date=$(sed -n 1p "$DC_s/10.cfg")
     if [ "$(date +%d)" != "$date" ] || [ ! -f "$DC_s/10.cfg" ]; then
