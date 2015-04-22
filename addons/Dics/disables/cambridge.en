@@ -1,13 +1,12 @@
 #!/bin/bash
 
-name="cambridge"
-lang="en"
+Name="cambridge"
+Language="en"
+Test="testing"
 
-cd "$2"
 a="$(head -c 1 <<<"$1")"
 b="$(head -c 3 <<<"$1")"
 c="$(head -c 5 <<<"$1")"
-
 wget "http://dictionary.cambridge.org/media/british/us_pron/$a/$b/$c/$1.mp3"
-[ -f ./"$1"*.mp3 ] && mv ./"$1"*.mp3 ./"$1".mp3
+[ -f ./"$1"*.mp3 ] && mv ./"$1"*.mp3 "./$1.mp3"
 exit

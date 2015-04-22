@@ -20,7 +20,7 @@
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 
-function mkmn() {
+mkmn() {
     
     restr="$(ls "$DS/addons/")"
     cd "$DM_tl"
@@ -39,8 +39,8 @@ function mkmn() {
         if ! grep -Fxo "$tp" <<<"$restr"; then
         inx1=$(wc -l < "$DM_tl/$tp/.conf/1.cfg")
         inx2=$(wc -l < "$DM_tl/$tp/.conf/2.cfg")
-        ttip="$inx1 / $inx2"
-        else ttip=""; fi
+        tooltips_1="$inx1 / $inx2"
+        else tooltips_1=""; fi
         if [ ! -f "$DM_tl/$tp/.conf/8.cfg" ]; then
         i=13; echo "13" > "$DM_tl/$tp/.conf/8.cfg"
         else i=$(sed -n 1p < "$DM_tl/$tp/.conf/8.cfg"); fi
@@ -54,7 +54,7 @@ function mkmn() {
         i=13; echo "13" > "$DM_tl/$tp/.conf/8.cfg";fi
         echo "/usr/share/idiomind/images/img.$i.png" >> "$DC_s/0.cfg"
         echo "$tp" >> "$DC_s/0.cfg"
-        echo "$ttip" >> "$DC_s/0.cfg"
+        echo "$tooltips_1" >> "$DC_s/0.cfg"
         let n++
     done
     n=1
@@ -81,7 +81,7 @@ function mkmn() {
     exit 1
 }
 
-function mark_to_learn() {
+mark_to_learn() {
     
     include "$DS/ifs/mods/mngr"
     
@@ -139,7 +139,7 @@ function mark_to_learn() {
     [[ "$3" = 1 ]] && idiomind topic &
 }
 
-function mark_as_learned() {
+mark_as_learned() {
 
     include "$DS/ifs/mods/mngr"
 
@@ -197,7 +197,7 @@ function mark_as_learned() {
     exit 1
 }
 
-function delete_item_confirm() {
+delete_item_confirm() {
 
     touch "$DT/ps_lk"
     include "$DS/ifs/mods/mngr"
@@ -253,7 +253,7 @@ function delete_item_confirm() {
     rm -f "$DT/ps_lk" & exit 1
 }
 
-function delete_item() {
+delete_item() {
 
     touch "$DT/ps_lk"
     include "$DS/ifs/mods/mngr"
@@ -325,7 +325,7 @@ function delete_item() {
     rm -f "$DT/ps_lk" & exit 1
 }
 
-function delete_topic() {
+delete_topic() {
     
     include "$DS/ifs/mods/mngr"
     
@@ -369,7 +369,7 @@ function delete_topic() {
 
 }
 
-function edit() {
+edit() {
 
     include "$DS/ifs/mods/mngr"
     wth=650; eht=580
@@ -619,7 +619,7 @@ function edit() {
 } >/dev/null 2>&1
 
 
-function rename_topic() {
+rename_topic() {
 
     source "$DS/ifs/mods/add/add.sh"
     info2=$(wc -l < "$DM_tl/.1.cfg")
@@ -651,7 +651,6 @@ function rename_topic() {
         mv -f "$DM_tl/$tpc/.11.cfg" "$DT/.11.cfg"
         mv -f "$DM_tl/$tpc" "$DM_tl/$jlb"
         mv -f "$DT/.11.cfg" "$DM_tl/$jlb/.11.cfg"
-        
         echo "$jlb" > "$DC_s/4.cfg"
         echo "$jlb" > "$DM_tl/.8.cfg"
         echo "$jlb" > "$DT/tpe"
@@ -660,9 +659,9 @@ function rename_topic() {
         
         n=1
         while [[ $n -le 3 ]]; do
-             if [ -f "$DM_tl/.$n.cfg" ]; then
-             grep -vxF "$tpc" "$DM_tl/.$n.cfg" > "$DM_tl/.$n.cfg.tmp"
-             sed '/^$/d' "$DM_tl/.$n.cfg.tmp" > "$DM_tl/.$n.cfg"; fi
+            if [ -f "$DM_tl/.$n.cfg" ]; then
+            grep -vxF "$tpc" "$DM_tl/.$n.cfg" > "$DM_tl/.$n.cfg.tmp"
+            sed '/^$/d' "$DM_tl/.$n.cfg.tmp" > "$DM_tl/.$n.cfg"; fi
             let n++
         done
         rm "$DM_tl"/.*.tmp

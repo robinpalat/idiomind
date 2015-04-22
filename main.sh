@@ -175,8 +175,8 @@ if [ "$(echo "$1" | grep -o '.idmnd')" ]; then
         --text="$itxt" \
         --name=Idiomind --class=Idiomind \
         --print-all --dclick-action="$dclk" \
-        --window-icon="$DS/images/icon.png" --scroll \
-        --no-headers --ellipsize=END --center \
+        --window-icon="$DS/images/icon.png" \
+        --no-headers --ellipsize=END --scroll --center \
         --width=650 --height=580 --borders=10 \
         --column=Items \
         --button="$(gettext "Info")":"$infs" \
@@ -329,6 +329,7 @@ function topic() {
             fi
             
             if [[ $ret -eq 5 ]]; then
+            
                 rm -f "$DT"/*.x
                 "$DS/practice/strt.sh" &
             fi
@@ -465,7 +466,7 @@ session() {
 autostart() {
 
     sleep 50
-    [ ! -f "$DT/ps_lk" ] && new_session auto
+    [ ! -f "$DT/ps_lk" ] && new_session
     exit 0
 }
 

@@ -762,7 +762,7 @@ function set_image() {
         --name=Idiomind --class=Idiomind \
         --window-icon="$DS/images/icon.png" \
         --skip-taskbar --image-on-top --center --on-top \
-        --width=470 --height=270 --borders=5 \
+        --width=380 --height=280 --borders=5 \
         "$btn1" "$btn2" --button=$(gettext "Close"):1
         ret=$?
                 
@@ -772,8 +772,8 @@ function set_image() {
             scrot -s --quality 80 "$fname.temp.jpeg"
             /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 100x90^ \
             -gravity center -extent 100x90 -quality 90% "$item"_temp.jpeg
-            /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 490x260^ \
-            -gravity center -extent 490x260 -quality 90% "$DM_tlt/words/images/$fname.jpg"
+            /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 360x240^ \
+            -gravity center -extent 360x240 -quality 90% "$DM_tlt/words/images/$fname.jpg"
             eyeD3 --remove-images "$file"
             eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file"
             wait

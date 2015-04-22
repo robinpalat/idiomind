@@ -19,7 +19,6 @@ size="$(sed -n 3p < "$DC_a/1.cfg" \
 [ -f "$path/.udt" ] && udt=$(< "$path/.udt") || udt=" "
 dte=$(date +%F)
 
-#dialog --button=Backup:2
 if [ -z "$1" ]; then
     
     D=$(yad --list --radiolist --title="$(gettext "User Data")" \

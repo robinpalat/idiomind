@@ -200,8 +200,8 @@ function set_image_1() {
 
 function set_image_2() {
     
-    /usr/bin/convert img.jpg -interlace Plane -thumbnail 490x260^ \
-    -gravity center -extent 490x260 -quality 90% imgs.jpg
+    /usr/bin/convert img.jpg -interlace Plane -thumbnail 360x240^ \
+    -gravity center -extent 360x240 -quality 90% imgs.jpg
     eyeD3 --add-image imgs.jpg:ILLUSTRATION "$1"
     mv -f imgs.jpg "$2"
 } >/dev/null 2>&1

@@ -8,28 +8,13 @@ enables="$DC/addons/dict/enables"
 disables="$DC/addons/dict/disables"
 lgt=$(lnglss "$lgtl")
 lgs=$(lnglss "$lgsl")
-new="#!/bin/bash
+new_script="#!/bin/bash
 # argument 1 = \"word\"
 # eg.languages: en
-#
-
 Name=\"\"
-Language=\"\""
+Language=\"\"
+Test=\"test\""
 
-test_() {
-    
-    [[ $Language = en ]] && test=test
-    [[ $Language = fr ]] && test=test
-    [[ $Language = de ]] && test=test
-    [[ $Language = 'zh-cn' ]] && test=测试
-    [[ $Language = it ]] && test=test
-    [[ $Language = ja ]] && test=テスト
-    [[ $Language = pt ]] && test=teste
-    [[ $Language = es ]] && test=test
-    [[ $Language = vi ]] && test=thử
-    [[ $Language = ru ]] && test=тест
-    [[ $Language = auto ]] && test=test
-}
 
 dialog_edit() {
     
@@ -41,7 +26,6 @@ dialog_edit() {
     --width=490 --height=360 --borders=0 \
     --editable --fontname=monospace --margins=4 --wrap \
     --button=Cancel:1 \
-    --button=Delete:2 \
     --button=Test:4 \
     --button=Save:5 > "$DT/script.sh"
 }
@@ -65,11 +49,12 @@ dict_list() {
     done <<<"$(ls "$disables/")"
 }
 
-if [ "$1" = edit_dlg ]; then
+
+if [ "$1" = add_dlg ]; then
 
         if [[ "$2" = 2 ]]; then 
         script="$DT/new.sh"; else
-        printf "$new" > "$DT/new.sh"
+        printf "$new_script" > "$DT/new.sh"
         script="$DT/new.sh"; fi
         Name="untitled"
         Language=""
@@ -78,27 +63,39 @@ if [ "$1" = edit_dlg ]; then
          
     if [[ $ret -eq 5 ]]; then
         
+        if [ -z "$(< "$DT/script.sh")" ]; then
+        
+        rm "$DT/script.sh"
+        "$DS_a/Dics/cnfg.sh" & exit
+            
+        else
         Name=$(grep -o -P '(?<=Name=").*(?=")' "$DT/script.sh" | sed 's/\.//g')
         Language=$(grep -o -P '(?<=Language=").*(?=")' "$DT/script.sh" | sed 's/\.//g')
-        
+            
         if ([ -n "$Name" ] && [ -n "$Language" ]); then
         mv -f "$DT/script.sh" "$disables/$Name.$Language"
         fi
         "$DS_a/Dics/cnfg.sh"
+        fi
         
     elif [[ $ret -eq 4 ]]; then
         
-        internet; test_
-        cd  "$DT"; sh "$DT/script.sh" "$test"
-        [ -f "$DT/$test.mp3" ] && play "$DT/$test.mp3" || msg Fail info
-        rm -f "$DT/$test.mp3"
+        test=$(grep -o -P '(?<=Test=").*(?=")' "$DT/script.sh")
+        cd "$DT"; sh "$DT/script.sh" "${test,,}"
+        if [ "$DT"/*.mp3 ]; then play "$DT"/*.mp3; fi
+        if [ "$DT"/*.wav ]; then play "$DT"/*.wav; fi
+        if [ "$DT"/*.ogg ]; then play "$DT"/*.ogg; fi
+        if [ -f "$DT"/*.mp3 ]; then rm -f "$DT"/*.mp3; fi
+        if [ -f "$DT"/*.wav ]; then rm -f "$DT"/*.wav; fi
+        if [ -f "$DT"/*.ogg ]; then rm -f "$DT"/*.ogg; fi
         mv -f "$DT/script.sh" "$DT/new.sh"
-        "$DS_a/Dics/cnfg.sh" edit_dlg 2
+        "$DS_a/Dics/cnfg.sh" add_dlg 2
     else
         "$DS_a/Dics/cnfg.sh"
     fi
 
-elif [ "$1" = dlk_dlg ]; then
+
+elif [ "$1" = edit_dlg ]; then
 
     [ "$2" = TRUE ] && stts=enables
     [ "$2" = FALSE ] && stts=disables
@@ -108,29 +105,31 @@ elif [ "$1" = dlk_dlg ]; then
     dialog_edit
     ret=$(echo $?)
     
-    if [[ $ret -eq 2 ]]; then
-    
-        msg_2 "$(gettext "Confirm")\n" dialog-question \
-        "$(gettext "Delete")" "$(gettext "Cancel")" "$(gettext "Confirm")"
-        rt=$(echo $?)
-        [[ $rt -eq 0 ]] && rm "$script"; exit
-    
-    elif [[ $ret -eq 5 ]]; then
+    if [[ $ret -eq 5 ]]; then
     
         Name=$(grep -F "Name=" "$script" | grep -o -P '(?<=Name=").*(?=")' | sed 's/\.//g')
         Language=$(grep -F "Language=" "$script" | grep -o -P '(?<=Language=").*(?=")' | sed 's/\.//g')
         [ -z "$Name" ] && Name="$3"
         [ -z "$Language" ] && Language="$4"
-        mv -f "$DT/script.sh" "$dir/$stts/$Name.$Language"
+            
+        if [ -z "$(< "$DT/script.sh")" ]; then
+        rm "$DT/script.sh" "$dir/$stts/$Name.$Language" & exit
+        else
+        mv -f "$DT/script.sh" "$dir/$stts/$Name.$Language" & exit
+        fi
         
     elif [[ $ret -eq 4 ]]; then
-    
-        internet; test_
-        cd  "$DT"; sh "$DT/script.sh" "$test"
-        [ -f "$DT/$test.mp3" ] && play "$DT/$test.mp3" || msg Fail info
-        rm -f "$DT/$test.mp3"
+
+        test=$(grep -o -P '(?<=Test=").*(?=")' "$DT/script.sh")
+        cd "$DT"; sh "$DT/script.sh" "${test,,}"
+        if [ "$DT"/*.mp3 ]; then play "$DT"/*.mp3; fi
+        if [ "$DT"/*.wav ]; then play "$DT"/*.wav; fi
+        if [ "$DT"/*.ogg ]; then play "$DT"/*.ogg; fi
+        if [ -f "$DT"/*.mp3 ]; then rm -f "$DT"/*.mp3; fi
+        if [ -f "$DT"/*.wav ]; then rm -f "$DT"/*.wav; fi
+        if [ -f "$DT"/*.ogg ]; then rm -f "$DT"/*.ogg; fi
         mv -f "$DT/script.sh" "$dir/$stts/$Name.$Language"
-        "$DS_a/Dics/cnfg.sh" dlk_dlg "$2" "$Name" "$Language"
+        "$DS_a/Dics/cnfg.sh" edit_dlg "$2" "$Name" "$Language"
     fi
     
 elif [ -z "$1" ]; then
@@ -148,7 +147,7 @@ elif [ -z "$1" ]; then
     sel="$(dict_list | yad --list --title="$(gettext "Dictionaries")" \
     --name=Idiomind --class=Idiomind "$tex" \
     --print-all --always-print-result --separator=" " \
-    --dclick-action='/usr/share/idiomind/addons/Dics/cnfg.sh dlk_dlg' \
+    --dclick-action='/usr/share/idiomind/addons/Dics/cnfg.sh edit_dlg' \
     --window-icon="$DS/images/icon.png" \
     --expand-column=2 --skip-taskbar --center \
     --width=480 --height=350 --borders=10 \
@@ -163,7 +162,7 @@ elif [ -z "$1" ]; then
     
         if [[ $ret -eq 2 ]]; then
         
-                "$DS_a/Dics/cnfg.sh" edit_dlg
+                "$DS_a/Dics/cnfg.sh" add_dlg
         
         elif [[ $ret -eq 0 ]]; then
         

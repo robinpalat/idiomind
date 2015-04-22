@@ -67,13 +67,13 @@ conditions() {
 
     nps="$(sed '/^$/d' < "$DCP/4.cfg" | wc -l)"
     if [ "$nps" -le 0 ]; then
-    [ "$1" != 0 ] && msg "$(gettext "Missing URL. Please check the settings in the preferences dialog.")\n" info
+    [[ "$1" != 0 ]] && msg "$(gettext "Missing URL. Please check the settings in the preferences dialog.")\n" info
     [ -f "$DT_r" ] && rm -fr "$DT_r" "$DT/.uptp"
     exit 1
     fi
         
-    [ "$1" != 0 ] && internet || curl -v www.google.com 2>&1 \
-    | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
+    if [[ "$1" != 0 ]]; then internet; else curl -v www.google.com 2>&1 \
+    | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1; fi
 }
 
 mediatype () {
@@ -86,7 +86,6 @@ mediatype () {
     elif echo "$1" | grep -q ".mov"; then ex=mov; tp=vid
     elif echo "$1" | grep -o ".pdf"; then ex=pdf; tp=txt
     else
-        printf "err.FE2($n).err\n" >> "$DC_s/8.cfg"
         printf "Could not add some podcasts.\n$FEED" >> "$DM_tl/Podcasts/.conf/feed.err"
         return; fi
 }
@@ -100,7 +99,6 @@ video="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
 Your browser does not support the video tag.</video><br><br>
 <div class=\"title\"><h3>$title</h3></div><br>
 <div class=\"summary\">$summary<br><br></div>"
-
 audio="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
 <link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwr.css\">
 <br><div class=\"title\"><h2>$title</h2></div><br>
@@ -108,7 +106,6 @@ audio="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
 <source src=\"$fname.$ex\" type=\"audio/mpeg\">
 Your browser does not support the audio tag.</audio><br><br>
 $summary<br><br></div>"
-
 text="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
 <link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwr.css\">
 <body><br><div class=\"title\"><h2>$title</h2></div><br>
@@ -118,12 +115,8 @@ $summary<br><br></div>
 </body>"
 
     if [ "$tp" = vid ]; then
-    
-        if [ "$ex" = m4v ] || [ $ex = mp4 ]; then
-        t=mp4
-        elif [ "$ex" = avi ]; then
-        t=avi
-        fi
+        if [ "$ex" = m4v ] || [ $ex = mp4 ]; then t=mp4
+        elif [ "$ex" = avi ]; then t=avi; fi
         echo -e "$video" > "$DMC/$fname.html"
 
     elif [ "$tp" = aud ]; then

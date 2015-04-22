@@ -21,7 +21,7 @@ nsentences=\"$sentences\"
 nimages=\"$images\"
 level=\"$level\""
 
-if grep -Fxo "$topic" <<<"$list"; then
+if grep -Fxo "$topic" <<<"${restr}"; then
 
     "$DS/ifs/mods/topic/$topic.sh" & exit
 

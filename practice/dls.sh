@@ -38,46 +38,46 @@ score() {
     fi
 }
 
-
-dialog1() {
-    
-    hint="$(iconv -c -f utf8 -t ascii <<<"$1" | tr -s "'" " ")"
-    SE=$(yad --center --text-info --image="$IMAGE" "$info" --image-on-top \
-    --fontname="Free Sans 15" --justify=fill --editable --wrap \
-    --buttons-layout=end --borders=2 --title=" " --margins=5 \
-    --text-align=left --height=410 --width=492 --name=Idiomind \
-    --align=left --window-icon="$DS/images/icon.png" --fore=4A4A4A --class=Idiomind \
-    --button="$(gettext "Hint")":"/usr/share/idiomind/practice/hint.sh ${hint}" \
-    --button="$listen":"play '$DM_tlt/$fname.mp3'" \
-    --button=" $(gettext "OK") >> ":0)
-    }
-    
 dialog2() {
     
+    hint="$(echo "$@" | sed "s/\'//g" | awk '{print tolower($0)}'  | sed "s/\b\(.\)/\u\1/g" \
+    | sed "s|\.||; s|\,||; s|\;||g" | sed "s|[a-z]|"\."|g" | sed "s| |\t|g" \
+    | sed "s|\.|\ .|g" | tr "[:upper:]" "[:lower:]" | sed 's/^\s*./\U&\E/g')"
+    text="<span font_desc='Free Sans Bold 13'>$hint</span>\n"
+
     hint="$(iconv -c -f utf8 -t ascii <<<"$1" | tr -s "'" " ")"
-    SE=$(yad --center --text-info --fore=4A4A4A --skip-taskbar \
-    --fontname="Free Sans 15" --justify=fill --editable --wrap \
-    --buttons-layout=end --borders=4 --title=" " "$info" --margins=5 \
-    --text-align=left --height=180 --width=470 --name=Idiomind \
-    --align=left --window-icon="$DS/images/icon.png" --image-on-top --class=Idiomind \
-    --button="$(gettext "Hint")":"/usr/share/idiomind/practice/hint.sh ${hint}" \
+    SE=$(yad --text-info --title=" " \
+    --text="$text" \
+    --name=Idiomind --class=Idiomind \
+    --fontname="Free Sans 15" --fore=4A4A4A --justify=fill \
+    --margins=5 --editable --wrap \
+    --window-icon="$DS/images/icon.png" --image="/usr/share/idiomind/practice/bar.png" \
+    --buttons-layout=end --center --skip-taskbar --undecorated \
+    --text-align=left --align=left --image-on-top \
+    --height=270 --width=560 --borders=5 \
+    --button="$(gettext "Exit")":1 \
     --button="$(gettext "Listen")":"play '$DM_tlt/$fname.mp3'" \
     --button=" $(gettext "OK") >> ":0)
     }
     
 check() {
     
-    yad --form --center --name=Idiomind --buttons-layout=end \
-    --width=560 --height=300 --on-top --skip-taskbar --scroll \
-    --class=Idiomind $aut --wrap --window-icon="$DS/images/icon.png" \
-    --borders=10 --selectable-labels \
-    --title="" --button="$(gettext "Listen")":"play '$DM_tlt/$fname.mp3'" \
+    yad --form --title="" \
+    --name=Idiomind --class=Idiomind \
+    --image="/usr/share/idiomind/practice/bar.png" $aut \
+    --selectable-labels \
+    --window-icon="$DS/images/icon.png" \
+    --skip-taskbar --wrap --scroll --image-on-top --center --on-top \
+    --undecorated --buttons-layout=end \
+    --width=560 --height=270 --borders=5 \
+    --button="$(gettext "Exit")":1 \
+    --button="$(gettext "Listen")":"play '$DM_tlt/$fname.mp3'" \
     --button="$(gettext "Next")":2 \
     --field="":lbl --text="<span font_desc='Free Sans 15'>$wes</span>\\n" \
     --field="<span font_desc='Free Sans 9'>$(echo $OK | sed 's/\,*$/\./g') $prc</span>\\n":lbl
     }
     
-get_image_text() {
+get_text() {
     
     WEN=$(echo "$1" | sed 's/^ *//; s/ *$//')
     echo "$WEN" | awk '{print tolower($0)}' > quote
@@ -128,7 +128,7 @@ result() {
         color=D11B5D
     fi
     
-    prc="<span background='#$color'><span color='#FFFFFF'> <b>$porc%</b> </span></span>"
+    prc="<b>$porc%</b>"
     wes="$(cat quote)"
     rm allc quote
     }
@@ -139,45 +139,42 @@ while [[ $n -le $(wc -l < lsin1) ]]; do
     trgt="$(sed -n "$n"p lsin1)"
     fname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
     
-    if [[ $n = 1 ]] && [ ! -f "$DM_tlt/words/images/$fname.jpg" ]; then
-    info="--text= $(gettext "Try to write the sentence you're listening to")..."
+    if [[ $n = 1 ]]; then
+    info="$(gettext "Try to write the sentence you're listening to")..."
     else info=""; fi
     
     if [ -f "$DM_tlt/$fname.mp3" ]; then
 
-        get_image_text "$trgt"
+        get_text "$trgt"
 
-        if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
-            IMAGE="$DM_tlt/words/images/$fname.jpg"
-            (sleep 0.5 && play "$DM_tlt/$fname.mp3") &
-            dialog1 "$trgt"
-        else
-            (sleep 0.5 && play "$DM_tlt/$fname.mp3") &
-            dialog2 "$trgt"
-        fi
+        (sleep 0.5 && play "$DM_tlt/$fname.mp3") &
+        dialog2 "$trgt"
         ret=$(echo "$?")
         
-        if [ $ret -eq 0 ]; then
-            killall play &
-            result "$trgt"
+        if [ $ret = 1 ]; then
+            break &
+            killall play
+            "$drts/cls.sh" s $easy $ling $hard $all &
+            exit 1
         else
             killall play &
-            "$drts/cls.sh" s $easy $ling $hard $all &
-            break &
-            exit 0; fi
+            result "$trgt"
+        fi
     
         check "$trgt"
         ret=$(echo "$?")
         
-        if [ $ret -eq 2 ]; then
-            killall play &
-            rm -f w.ok wrds "$DT"/*.jpeg *.png &
-        else
+        if [ $ret = 1 ]; then
+            break &
             killall play &
             rm -f w.ok all ing wrds "$DT"/*.jpeg *.png
             "$drts/cls.sh" s $easy $ling $hard $all &
-            break &
-            exit 0; fi
+            exit 1
+            
+        elif [ $ret -eq 2 ]; then
+            killall play &
+            rm -f w.ok wrds "$DT"/*.jpeg *.png &
+        fi
     fi
     let n++
 done
