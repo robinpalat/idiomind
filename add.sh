@@ -34,10 +34,15 @@ function new_topic() {
     if [ "$(wc -l < "$DM_tl/.1.cfg")" -ge 80 ]; then
     msg "$(gettext "Sorry, you have reached the maximum number of topics")" info Info &&
     killall add.sh & exit 1; fi
-    
-    jlbi=$(dlg_form_0 "$(gettext "New Topic")")
+
+    jlbi=$(dlg_form_0 "$2")
     ret="$?"
     jlb="$(clean_2 "$jlbi")"
+    
+    if [ ${#jlb} -gt 60 ]; then
+    msg "$(gettext "sorry, the name is too long.")\n" info
+    "$DS/add.sh" new_topic "$jlb" & exit 1; fi
+    
     if grep -Fxo "$jlb" <<<"$restr"; then jlb="$jlb."; fi
     sfname=$(grep -Fxo "$jlb" < "$DM_tl/.1.cfg" | wc -l)
     
@@ -81,14 +86,14 @@ Create one using the button below. ")" & exit 1; fi
     || img="$DS/images/nw.png"
 
     if [ -z "$tpe" ]; then
-    tpcs=$(sed -n '1!G;h;$p' < "$DM_tl/.2.cfg" | awk '{print substr($0,1,40)}' \
-    | tr "\\n" '!' | sed 's/\!*$//g'); else
     tpcs=$(sed -n '1!G;h;$p' < "$DM_tl/.2.cfg" \
-    | egrep -v "$tpe" | awk '{print substr($0,1,40)}' \
-    | tr "\\n" '!' | sed 's/\!*$//g'); fi
+    | tr "\\n" '!' | sed 's/\!*$//g')
+    else
+    tpcs=$(sed -n '1!G;h;$p' < "$DM_tl/.2.cfg" \
+    | grep -vFx "$tpe" | tr "\\n" '!' | sed 's/\!*$//g'); fi
     
     [ -n "$tpcs" ] && e='!'; [ -z "$tpe" ] && tpe=' '
-    ltopic="${tpe:0:50}"
+    ltopic="${tpe:0:63}"
     [ "$tpe" != "$tpc" ] && \
     atopic="<small><b><i>$(gettext "Topic")</i></b></small>" || \
     atopic="<small>$(gettext "Topic")</small>"
@@ -100,7 +105,7 @@ Create one using the button below. ")" & exit 1; fi
     trgt=$(echo "$lzgpr" | head -n -1 | sed -n 1p | sed 's/^\s*./\U&\E/g')
     srce=$(echo "$lzgpr" | sed -n 2p | sed 's/^\s*./\U&\E/g')
     chk=$(echo "$lzgpr" | tail -1)
-    tpe_list=$(grep "$chk" "$DM_tl/.1.cfg")
+    tpe=$(grep -Fxo "$chk" "$DM_tl/.1.cfg")
 
         if [[ $ret -eq 3 ]]; then
         
@@ -120,19 +125,6 @@ Create one using the button below. ")" & exit 1; fi
             if [ -z "$trgt" ]; then
             [ "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
 
-            if [[ "$(wc -l <<<"$tpe_list")" -ge 2 ]]; then
-                if [[ "$(sed -n 1p <<<"$tpe_list" | wc -w)" = \
-                $(wc -w <<<"$chk") ]]; then
-                    tpe=$(sed -n 1p <<<"$tpe_list")
-                elif [[ "$(sed -n 2p <<<"$tpe_list" | wc -w)" = \
-                $(wc -w <<<"$chk") ]]; then
-                    tpe="$(sed -n 2p <<<"$tpe_list")"
-                else
-                    tpe="$(sed -n 2p <<<"$slt")"
-                fi
-            else
-                tpe="$chk"
-            fi
             if [[ "$chk" = "$(gettext "New") *" ]]; then
             "$DS/add.sh" new_topic
             else echo "$tpe" > "$DT/tpe"; fi

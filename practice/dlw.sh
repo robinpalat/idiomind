@@ -62,16 +62,15 @@ fonts() {
 cuestion() {
     
     fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
-    play="play '$drtt/$fname.mp3'"
+    cmd_play="play '$drtt/$fname.mp3'"
     (sleep 0.5 && play "$drtt/$fname".mp3) &
-    yad --form --text-align=center --undecorated \
-    --timeout=20 \
-    --center --on-top --image-on-top \
-    --skip-taskbar --title=" " --borders=5 \
-    --buttons-layout=spread \
+    yad --form --title="$(gettext "Practice")" \
     --text="$lcuestion" \
-    --field=play:BTN "$play" \
-    --width=370 --height=270 \
+    --timeout=20 \
+    --skip-taskbar --text-align=center --center --on-top \
+    --buttons-layout=spread --image-on-top --undecorated \
+    --width=370 --height=270 --borders=5 \
+    --field=play:BTN "$cmd_play" \
     --button="$(gettext "Exit")":1 \
     --button="  $(gettext "I don't know")  ":3 \
     --button="  $(gettext "I know")  ":2

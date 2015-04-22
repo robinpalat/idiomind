@@ -57,25 +57,26 @@ fonts() {
 
 cuestion() {
     
-    yad --form --text-align=center --undecorated --center --on-top  \
-    --skip-taskbar --title=" " --borders=5 --buttons-layout=spread \
+    yad --form --title="$(gettext "Practice")" \
     --timeout=10 \
+    --skip-taskbar --text-align=center --center --on-top \
+    --undecorated --buttons-layout=spread --align=center \
+    --width=375 --height=270 --borders=5 \
     --field="$acuestion":lbl \
-    --align=center --width=375 --height=270 \
     --button=" $(gettext "Exit") ":1 \
     --button=" $(gettext "Answer") >> ":0
 }
 
 answer() {
     
-    yad --form --text-align=center --undecorated --center --on-top \
-    --skip-taskbar --title=" " --borders=5 \
+    yad --form --title="$(gettext "Practice")" \
     --timeout=10 \
-    --buttons-layout=spread --align=center \
+    --skip-taskbar --text-align=center --center --on-top \
+    --undecorated --buttons-layout=spread --align=center \
+    --width=375 --height=270 --borders=5 \
     --field="$bcuestion":lbl \
     --field="":lbl \
     --field="$answer":lbl \
-    --width=375 --height=270 \
     --button="     $(gettext "I don't know")     ":3 \
     --button="     $(gettext "I know")     ":2
 }

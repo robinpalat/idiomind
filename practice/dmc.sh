@@ -70,10 +70,15 @@ ofonts() {
 
 mchoise() {
     
-    dlg=$(ofonts | yad --list --on-top --skip-taskbar --timeout=15 \
-    --title=" " --width=390 --height=340 --center --undecorated \
-    --text-align=center --no-headers --borders=6 --column=Option \
-    --button="$(gettext "Exit")":1 --text="$cuestion")
+    dlg=$(ofonts | yad --list --title="$(gettext "Practice")" \
+    --text="$cuestion" \
+    --timeout=15 \
+    --skip-taskbar --text-align=center --center --on-top \
+    --undecorated \
+    --no-headers \
+    --width=390 --height=340 --borders=6 \
+    --column=Option \
+    --button="$(gettext "Exit")":1)
 }
 
 while read trgt; do

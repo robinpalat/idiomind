@@ -653,6 +653,8 @@ rename_topic() {
         mv -f "$DT/.11.cfg" "$DM_tl/$jlb/.11.cfg"
         echo "$jlb" > "$DC_s/4.cfg"
         echo "$jlb" > "$DM_tl/.8.cfg"
+        echo "$jlb" >> "$DM_tl/.1.cfg"
+        echo "$jlb" >> "$DM_tl/.2.cfg"
         echo "$jlb" > "$DT/tpe"
         echo '0' >> "$DC_s/4.cfg" 
         echo '0' >> "$DM_tl/.8.cfg"

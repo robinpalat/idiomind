@@ -5,42 +5,29 @@
 function index() {
 
     DC_tlt="$DM_tl/$3/.conf"
-
-    if [ ! -z "$2" ]; then
+    item="${2}"
     
-        item="$2"
+    if [ ! -z "${item}" ] && ! grep -Fxo "${item}" < "$DC_tlt/0.cfg"; then
     
         if [ "$1" = word ]; then
         
             if [ "$(grep "$4" < "$DC_tlt/0.cfg")" ] && [ -n "$4" ]; then
-            sed -i "s/${4}/${4}\n$item/" "$DC_tlt/0.cfg"
-            sed -i "s/${4}/${4}\n$item/" "$DC_tlt/1.cfg"
-            sed -i "s/${4}/${4}\n$item/" "$DC_tlt/.11.cfg"
+            sed -i "s/${4}/${4}\n${item}/" "$DC_tlt/0.cfg"
+            sed -i "s/${4}/${4}\n${item}/" "$DC_tlt/1.cfg"
+            sed -i "s/${4}/${4}\n${item}/" "$DC_tlt/.11.cfg"
             else
-            echo "$item" >> "$DC_tlt/0.cfg"
-            echo "$item" >> "$DC_tlt/1.cfg"
-            echo "$item" >> "$DC_tlt/.11.cfg"; fi
-                
-            echo "$item" >> "$DC_tlt/3.cfg"
+            echo "${item}" >> "$DC_tlt/0.cfg"
+            echo "${item}" >> "$DC_tlt/1.cfg"
+            echo "${item}" >> "$DC_tlt/.11.cfg"; fi
+            echo "${item}" >> "$DC_tlt/3.cfg"
             
         elif [ "$1" = sentence ]; then
-            echo "$item" >> "$DC_tlt/0.cfg"
-            echo "$item" >> "$DC_tlt/1.cfg"
-            echo "$item" >> "$DC_tlt/4.cfg"
-            echo "$item" >> "$DC_tlt/.11.cfg"; fi
-
-        z=0; tmp="$DT/tmp"
-        while [[ $z -le 4 ]]; do
         
-            inx="$DC_tlt/$z.cfg"
-            if [ -n "$(uniq -dc < "$inx" | sort -n)" ]; then
-                cat "$inx" | awk '!array_temp[$0]++' > "$tmp"
-                sed '/^$/d' "$tmp" > "$inx"; fi
-            if grep '^$' "$inx"; then
-                sed -i '/^$/d' "$inx"; fi
-            let z++
-        done
-        
+            echo "${item}" >> "$DC_tlt/0.cfg"
+            echo "${item}" >> "$DC_tlt/1.cfg"
+            echo "${item}" >> "$DC_tlt/4.cfg"
+            echo "${item}" >> "$DC_tlt/.11.cfg"
+        fi
         rm -f "$tmp"
     fi
 }
@@ -313,7 +300,6 @@ function fetch_audio() {
                 voice "$word" "$3" "$4/${word,,}.mp3"
             fi
         fi
-        
     done < "$words_list"
 }
 
@@ -344,12 +330,12 @@ function list_words_3() {
 
 function dlg_form_0() {
     
-    yad --form --title="$1" \
+    yad --form --title="$(gettext "New Topic")" \
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --center --on-top \
-    --width=470 --height=100 --borders=5 \
-    --field="$(gettext "Name")" "$2" \
+    --width=450 --height=100 --borders=5 \
+    --field="$(gettext "Name")" "$1" \
     --button=gtk-ok:0
 }
 
@@ -362,7 +348,7 @@ function dlg_form_1() {
     --skip-taskbar --center --on-top \
     --align=right --image="$img" \
     --window-icon="$DS/images/icon.png" \
-    --width=420 --height=140 --borders=0 \
+    --width=450 --height=140 --borders=0 \
     --field=" <small>$lgtl</small>" "$txt" \
     --field=" $atopic:CB" \
     "$ltopic!$(gettext "New") *$e$tpcs" \
@@ -380,7 +366,7 @@ function dlg_form_2() {
     --skip-taskbar --center --on-top \
     --align=right --image="$img" \
     --window-icon="$DS/images/icon.png" \
-    --width=420 --height=170 --borders=0 \
+    --width=450 --height=170 --borders=0 \
     --field=" <small>$lgtl</small>" "$txt" \
     --field=" <small>${lgsl^}</small>" "$srce" \
     --field=" $atopic:CB" \

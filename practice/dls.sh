@@ -45,14 +45,13 @@ dialog2() {
     | sed "s|\.|\ .|g" | tr "[:upper:]" "[:lower:]" | sed 's/^\s*./\U&\E/g')"
     text="<span font_desc='Free Sans Bold 13'>$hint</span>\n"
 
-    hint="$(iconv -c -f utf8 -t ascii <<<"$1" | tr -s "'" " ")"
-    SE=$(yad --text-info --title=" " \
+    SE=$(yad --text-info --title="$(gettext "Practice")" \
     --text="$text" \
     --name=Idiomind --class=Idiomind \
     --fontname="Free Sans 15" --fore=4A4A4A --justify=fill \
     --margins=5 --editable --wrap \
-    --window-icon="$DS/images/icon.png" --image="/usr/share/idiomind/practice/bar.png" \
-    --buttons-layout=end --center --skip-taskbar --undecorated \
+    --window-icon="$DS/images/icon.png" --image="$DS/practice/bar.png" \
+    --buttons-layout=end --skip-taskbar --undecorated --center --on-top \
     --text-align=left --align=left --image-on-top \
     --height=270 --width=560 --borders=5 \
     --button="$(gettext "Exit")":1 \
@@ -62,7 +61,7 @@ dialog2() {
     
 check() {
     
-    yad --form --title="" \
+    yad --form --title="$(gettext "Practice")" \
     --name=Idiomind --class=Idiomind \
     --image="/usr/share/idiomind/practice/bar.png" $aut \
     --selectable-labels \
@@ -85,12 +84,12 @@ get_text() {
 
 result() {
     
-    echo "$SE" | awk '{print tolower($0)}' \
-    | sed 's/ /\n/g' | grep -v '^.$' \
-    | sed s'/,//; s/\!//; s/\?//; s/¿//; s/\¡//; s/"//'g > ./ing
-    cat quote | awk '{print tolower($0)}' \
-    | sed 's/ /\n/g' | grep -v '^.$' \
-    | sed s'/,//; s/\!//; s/\?//; s/¿//; s/\¡//; s/"//'g > ./all
+    awk '{print tolower($0)}' <<<"$SE" | sed 's/ /\n/g' | grep -v '^.$' \
+    | sed 's/,//;s/\!//;s/\?//;s/¿//;s/\¡//;s/(//;s/)//;s/"//g' \
+    | sed 's/\-//;s/\[//;s/\]//;s/\.//;s/\://;s/\|//;s/)//;s/"//g' > ./ing
+    awk '{print tolower($0)}' < ./quote | sed 's/ /\n/g' | grep -v '^.$' \
+    | sed 's/,//;s/\!//;s/\?//;s/¿//;s/\¡//;s/(//;s/)//;s/"//g' \
+    | sed 's/\-//;s/\[//;s/\]//;s/\.//;s/\://;s/\|//;s/)//;s/"//g' > ./all
     
     (
     n=1;
@@ -140,7 +139,7 @@ while [[ $n -le $(wc -l < lsin1) ]]; do
     fname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
     
     if [[ $n = 1 ]]; then
-    info="$(gettext "Try to write the sentence you're listening to")..."
+    info="<sub>$(gettext "Try to write the sentence you're listening to")...</sub>"
     else info=""; fi
     
     if [ -f "$DM_tlt/$fname.mp3" ]; then
@@ -167,13 +166,13 @@ while [[ $n -le $(wc -l < lsin1) ]]; do
         if [ $ret = 1 ]; then
             break &
             killall play &
-            rm -f w.ok all ing wrds "$DT"/*.jpeg *.png
+            rm -f w.ok all ing wrds
             "$drts/cls.sh" s $easy $ling $hard $all &
             exit 1
             
         elif [ $ret -eq 2 ]; then
             killall play &
-            rm -f w.ok wrds "$DT"/*.jpeg *.png &
+            rm -f w.ok wrds &
         fi
     fi
     let n++

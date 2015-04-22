@@ -79,27 +79,27 @@ Vietnamese"
     nimages=$(sed -n 12p < "${file}" | grep -o 'nimages="[^"]*' | grep -o '[^"]*$')
     level=$(sed -n 13p < "${file}" | grep -o 'level="[^"]*' | grep -o '[^"]*$')
 
-    if [ "${name}" != "${3}" ] || [ $(wc -c <<<"${name}") -gt 100 ] || \
+    if [ "${name}" != "${3}" ] || [ "${#name}" -gt 65 ] || \
     [ `grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${name}"` ]; then
     msg "$(gettext "File is corrupted.") E1\n" error & exit 1
     elif ! grep -Fox "${language_source}" <<<"${LANGUAGES}"; then
     msg "$(gettext "File is corrupted.") E2\n" error && exit 1
     elif ! grep -Fox "${language_target}" <<<"${LANGUAGES}"; then
     msg "$(gettext "File is corrupted.") E3\n" error & exit 1
-    elif [ $(wc -c <<<"${author}") -gt 20 ] || \
+    elif [ "${#author}" -gt 20 ] || \
     [ `grep -o -E '\.|\*|\/|\@|$|\)|\(|=|-' <<<"${author}"` ]; then
     msg "$(gettext "File is corrupted.") E4\n" error & exit 1
-    elif [ $(wc -c <<<"${contact}") -gt 30 ] || \
+    elif [ "${#contact}" -gt 30 ] || \
     [ `grep -o -E '\*|\/|$|\)|\(|=' <<<"${contact}"` ]; then
     msg "$(gettext "File is corrupted.") E5\n" error & exit 1
     elif ! grep -Fox "${category}" <<<"${CATEGORIES}"; then
     msg "$(gettext "File is corrupted.") E6\n" error & exit 1
-    elif ! [[ 1 =~ $nu ]] || [ $(wc -c <<<"${link}") -gt 400 ]; then # TODO
+    elif ! [[ 1 =~ $nu ]] || [ "${#link}" -gt 400 ]; then # TODO
     msg "$(gettext "File is corrupted.") E7\n" error & exit 1
-    elif ! [[ $date_c =~ $nu ]] || [ $(wc -c <<<"${date_c}") -gt 12 ] && \
+    elif ! [[ $date_c =~ $nu ]] || [ "${#date_c}" -gt 12 ] && \
     [ -n "${date_c}" ]; then
     msg "$(gettext "File is corrupted.") E8\n" error & exit 1
-    elif ! [[ $date_u =~ $nu ]] || [ $(wc -c <<<"${date_u}") -gt 12 ] && \
+    elif ! [[ $date_u =~ $nu ]] || [ "${#date_u}" -gt 12 ] && \
     [ -n "${date_u}" ]; then
     msg "$(gettext "File is corrupted.") E9\n" error & exit 1
     elif ! [[ $nwords =~ $nu ]] || [ "${nwords}" -gt 200 ]; then
@@ -108,7 +108,7 @@ Vietnamese"
     msg "$(gettext "File is corrupted.") E11\n" error & exit 1
     elif ! [[ $nimages =~ $nu ]] || [ "${nimages}" -gt 200 ]; then
     msg "$(gettext "File is corrupted.") E12\n" error & exit 1
-    elif ! [[ $level =~ $nu ]] || [ $(wc -c <<<"$level") -gt 2 ]; then
+    elif ! [[ $level =~ $nu ]] || [ "${#level}" -gt 2 ]; then
     msg "$(gettext "File is corrupted.") E13\n" error & exit 1
     elif grep "invalid" <<<"$chckf"; then
     msg "$(gettext "File is corrupted.") E14\n" error & exit 1
@@ -187,10 +187,12 @@ check_index() {
     check() {
         
         [ -d "$DM_tl/$2/.conf" ] && mkdir "$DM_tl/$2/.conf"
-        
+
         n=0
         while [[ $n -le 4 ]]; do
             [ ! -f "$DC_tlt/$n.cfg" ] && touch "$DC_tlt/$n.cfg"
+            if grep '^$' "$DC_tlt/$n.cfg"; then
+            sed -i '/^$/d' "$DC_tlt/$n.cfg"; fi
             check_index1 "$DC_tlt/$n.cfg"
             chk=$(wc -l < "$DC_tlt/$n.cfg")
             [ -z "$chk" ] && chk=0
