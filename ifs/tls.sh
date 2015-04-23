@@ -18,8 +18,8 @@
 #  
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
-lgt=$(lnglss $lgtl)
-lgs=$(lnglss $lgsl)
+lgt=$(lnglss "$lgtl")
+lgs=$(lnglss "$lgsl")
 
 check_source_1() {
 
@@ -94,7 +94,7 @@ Vietnamese"
     msg "$(gettext "File is corrupted.") E5\n" error & exit 1
     elif ! grep -Fox "${category}" <<<"${CATEGORIES}"; then
     msg "$(gettext "File is corrupted.") E6\n" error & exit 1
-    elif ! [[ 1 =~ $nu ]] || [ "${#link}" -gt 400 ]; then # TODO
+    elif ! [[ 1 =~ $nu ]] || [ "${#link}" -gt 400 ]; then
     msg "$(gettext "File is corrupted.") E7\n" error & exit 1
     elif ! [[ $date_c =~ $nu ]] || [ "${#date_c}" -gt 12 ] && \
     [ -n "${date_c}" ]; then
@@ -138,15 +138,15 @@ details() {
     
     echo -e "
 $(gettext "SUMMARY")
-======================
-$wcdirs directories
-$wcfiles files
-$wchfiles hidden files
-$wcexfiles executables files
+==========
+$wcdirs Directories
+$wcfiles Files
+$wchfiles Hidden files
+$wcexfiles Executables files
 
 
 $(gettext "FILES")
-======================
+==========
 $files
 
 ./files
@@ -158,7 +158,7 @@ $hfiles
 $exfiles
 
 $(gettext "TEXT FILES")
-======================
+==========
 
 $SRFL1
 
@@ -268,12 +268,10 @@ check_index() {
         cp -f "$DC_tlt/0.cfg" "$DC_tlt/2.cfg"; fi
         cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
         rm -r "$DC_tlt/practice"
-        
         check_index1 "$DC_tlt/0.cfg" "$DC_tlt/1.cfg" \
         "$DC_tlt/2.cfg" "$DC_tlt/3.cfg" "$DC_tlt/4.cfg"
         
         if [ $? -ne 0 ]; then
-        
         [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
         msg "$(gettext "File not found")\n" error & exit 1; fi
         
@@ -304,7 +302,7 @@ check_index() {
 
     check
 
-    if [ $((chk3+chk4)) != $chk0 ]  || [ $((chk1+chk2)) != $chk0 ] \
+    if [ $((chk3+chk4)) != $chk0 ] || [ $((chk1+chk2)) != $chk0 ] \
     || [ $mp3s != $chk0 ] || [ $stts = 13 ]; then
     
         (sleep 1
@@ -322,7 +320,7 @@ check_index() {
 
     check
     
-    if [ $((chk3+chk4)) != $chk0 ]  || [ $((chk1+chk2)) != $chk0 ] \
+    if [ $((chk3+chk4)) != $chk0 ] || [ $((chk1+chk2)) != $chk0 ] \
     || [ $mp3s != $chk0 ] || [ $stts = 13 ]; then
 
         name_files
@@ -335,7 +333,7 @@ check_index() {
         touch "$DC_tlt/$n.cfg"
         ((n=n+1))
     done
-    #rm -f "$DT/index"
+    rm -f "$DT/index"
     "$DS/mngr.sh" mkmn & exit 1
     
     else
@@ -343,7 +341,7 @@ check_index() {
     fi
 }
 
-function add_audio() {
+add_audio() {
 
     cd "$HOME"
     AU=$(yad --file --title="$(gettext "Add Audio")" \
@@ -360,7 +358,8 @@ function add_audio() {
 
     DT="$2"; cd "$DT"
     if [[ $ret -eq 0 ]]; then
-        if  [ -f "$audio" ]; then
+    
+        if [ -f "$audio" ]; then
         cp -f "$audio" "$DT/audtm.mp3"
         #eyeD3 -P itunes-podcast --remove $DT/audtm.mp3
         eyeD3 --remove-all "$DT/audtm.mp3" & exit
@@ -368,13 +367,13 @@ function add_audio() {
     fi
 } >/dev/null 2>&1
 
-function edit_audio() {
+edit_audio() {
 
     cmd="$(sed -n 16p $DC_s/1.cfg)"
     (cd "$3"; "$cmd" "$2") & exit
 }
 
-function text() {
+text() {
 
     yad --form --title="$(gettext "Info")" \
     --name=Idiomind --class=Idiomind \
@@ -383,10 +382,9 @@ function text() {
     --width=300 --height=250 --borders=5 \
     --field="$(< "$2")":lbl \
     --button="$(gettext "Close")":0
-     
 } >/dev/null 2>&1
 
-function add_file() {
+add_file() {
 
     cd "$HOME"
     FL=$(yad --file --title="$(gettext "Add File")" \
@@ -406,10 +404,9 @@ function add_file() {
         [ -f "$file" ] && cp -f "$file" "$DM_tlt/files"
         done <<<"$(tr '|' '\n' <<<"$FL")"
     fi
-
 } >/dev/null
 
-function videourl() {
+videourl() {
 
     n=$(ls *.url "$DM_tlt/files/" | wc -l)
     url=$(yad --form --title=" " \
@@ -424,10 +421,9 @@ function videourl() {
 
     [ ${#url} -gt 40 ] && \
     echo "$url" > "$DM_tlt/files/video$n.url"
-
 }
 
-function attatchments() {
+attatchments() {
     
     mkindex() {
 
@@ -544,10 +540,9 @@ echo "<br><br></div>
             mkindex
         fi
     fi
-
 } >/dev/null 2>&1
 
-function help() {
+help() {
 
     internet
     web="http://idiomind.sourceforge.net/doc/help.html"
@@ -560,19 +555,19 @@ function help() {
      
 } >/dev/null 2>&1
     
-function definition() {
+definition() {
 
     web="http://glosbe.com/$lgt/$lgs/${2,,}"
     xdg-open "$web"
 }
 
-function web() {
+web() {
 
     web=http://idiomind.sourceforge.net
     xdg-open "$web/$lgs/${lgtl,,}" >/dev/null 2>&1
 }
 
-function fback() {
+fback() {
     
     internet
     web="http://idiomind.sourceforge.net/doc/msg.html"
@@ -585,7 +580,7 @@ function fback() {
      
 } >/dev/null 2>&1
 
-function check_updates() {
+check_updates() {
 
     cd "$DT"; internet
     [ -f release ] && rm -f release
@@ -613,7 +608,7 @@ function check_updates() {
     exit 0
 }
 
-function a_check_updates() {
+a_check_updates() {
 
     [ ! -f "$DC_s/9.cfg" ] && echo `date +%d` > "$DC_s/9.cfg" && exit
     
@@ -654,7 +649,7 @@ function a_check_updates() {
     exit 0
 }
 
-function about() {
+about() {
 
 python << END
 import gtk
@@ -704,7 +699,7 @@ if __name__ == "__main__":
 END
 }
 
-function set_image() {
+set_image() {
 
     cd "$DT"
     if [ "$3" = word ]; then
@@ -786,14 +781,13 @@ function set_image() {
             eyeD3 --remove-image "$file"
             rm -f "$DM_tlt/words/images/$fname.jpg"
             
-            fi  
+            fi
     fi
     
     rm -f "$DT/search.html" "$DT"/*.jpeg & exit
-
 }  >/dev/null 2>&1
 
-function pdfdoc() {
+pdfdoc() {
 
     cd $HOME
     pdf=$(yad --file --save --title="Export" \

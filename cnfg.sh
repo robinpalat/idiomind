@@ -22,6 +22,8 @@ source /usr/share/idiomind/ifs/c.conf
 info1="$(gettext "Do you want to change the interface language program?")  "
 info2="$(gettext "You want to change the language setting to learn?")  "
 cd "$DS/addons"
+[ -n "$(< "$DC_s/1.cfg")" ] && cfg=1 || > "$DC_s/1.cfg"
+cnf1=$(mktemp "$DT/cnf1.XXXX")
 desktopfile="[Desktop Entry]
 Name=Idiomind
 GenericName=Learning Tool
@@ -36,9 +38,7 @@ lang=('English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
 'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' \
 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
-[ -n "$(< "$DC_s/1.cfg")" ] && cfg=1 || > "$DC_s/1.cfg"
 c=$(($RANDOM%100000)); KEY=$c
-cnf1=$(mktemp "$DT/cnf1.XXXX")
 
 confirm() {
 
@@ -115,7 +115,7 @@ yad --plug=$KEY --form --tabnum=1 \
 --field=":LBL" "2" \
 --field="<small>$(gettext "Speech Synthesizer (default espeak)")</small>" "$synth" \
 --field="$(gettext "Check for Updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
---field="$(gettext "Topic Saved")":BTN "$DS/ifs/upld.sh 'vsd'" \
+--field="$(gettext "Saved Topics")":BTN "$DS/ifs/upld.sh 'vsd'" \
 --field="$(gettext "Feedback")":BTN "$DS/ifs/tls.sh 'fback'" \
 --field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" > "$cnf1" &
 cat "$DC_s/2.cfg" | yad --plug=$KEY --tabnum=2 --list \

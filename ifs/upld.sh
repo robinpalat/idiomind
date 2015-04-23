@@ -24,12 +24,9 @@ lgs=$(lnglss $lgsl)
 
 vsd() {
 
-    U=$(sed -n 1p $HOME/.config/idiomind/s/4.cfg)
-    lng=$(awk '{print tolower($0)}' <<<"$lgtl")
-    
     cd "$DM_t/saved"; ls -t *.id | sed 's/\.id//g' | \
     yad --list --title="$(gettext "Topics Saved")" \
-    --text=" $(gettext "Double clik to download") \t\t\t\t" \
+    --text="$(gettext "Double clik to download")" \
     --name=Idiomind --class=Idiomind \
     --dclick-action="$DS/ifs/upld.sh 'infsd'" \
     --window-icon="$DS/images/icon.png" --center \
@@ -37,76 +34,72 @@ vsd() {
     --print-column=1 --no-headers \
     --column=Nombre:TEXT \
     --button=gtk-close:1
-    
-    [ "$?" -eq 1 ] & exit
     exit
 } >/dev/null 2>&1
 
 infsd() {
 
-    U=$(sed -n 1p $DC_s/5.cfg)
-    user="$USER"
     file="$DM_t/saved/$2.id"
-    language_source=$(sed -n 2p < "$file" | grep -o 'language_source="[^"]*' | grep -o '[^"]*$')
-    language_target=$(sed -n 3p < "$file" | grep -o 'language_target="[^"]*' | grep -o '[^"]*$')
-    category=$(sed -n 6p < "$file" | grep -o 'category="[^"]*' | grep -o '[^"]*$')
-    link=$(sed -n 7p < "$file" | grep -o 'link="[^"]*' | grep -o '[^"]*$')
-    lng=$(lnglss $language_source)
-    nme=$(sed 's/ /_/g' <<<"$2")
-    lnglbl=$(awk '{print tolower($0)}' <<<"$language_target")
+    idlink=$(sed -n 1p "$DC_s/5.cfg")
+    language_source=$(sed -n 2p "$file" | grep -o 'language_source="[^"]*' | grep -o '[^"]*$')
+    language_target=$(sed -n 3p "$file" | grep -o 'language_target="[^"]*' | grep -o '[^"]*$')
+    category=$(sed -n 6p "$file" | grep -o 'category="[^"]*' | grep -o '[^"]*$')
+    link=$(sed -n 7p "$file" | grep -o 'link="[^"]*' | grep -o '[^"]*$')
+    name=$(sed -n 1p "$file" | grep -o 'name="[^"]*' | grep -o '[^"]*$')
+    lng=$(lnglss "$language_source")
+    lnglbl="${language_target,,}"
     
-        cd "$HOME"
-        sleep 0.5
-        sv=$(yad --file --save --title="Save" \
-        --filename="$2.idmnd" \
-        --window-icon="$DS/images/icon.png" --skip-taskbar --center --on-top \
-        --width=600 --height=500 --borders=5 \
-        --button="$(gettext "Cancel")":1 --button="Ok":0)
-        ret=$?
-        if [ $ret -eq 0 ]; then
-            
-            internet; cd "$DT"
-            source /dev/stdin <<<"$(curl http://idiomind.sourceforge.net/doc/SITE_TMP)"
-            [ -z "$DOWNLOADS" ] && msg "$(gettext "The server is not available at the moment.")" dialog-warning && exit
-            
-            file="$DOWNLOADS/$lng/$lnglbl/$category/$link"
-            WGET() {
-            rand="$RANDOM `date`"
-            pipe="/tmp/pipe.`echo '$rand' | md5sum | tr -d ' -'`"
-            mkfifo $pipe
-            wget -c "$1" 2>&1 | while read data;do
-            if [ "`echo $data | grep '^Length:'`" ]; then
-            total_size=`echo $data | grep "^Length:" | sed 's/.*\((.*)\).*/\1/' | tr -d '()'`
-            fi
-            if [ "`echo $data | grep '[0-9]*%' `" ];then
-            percent=`echo $data | grep -o "[0-9]*%" | tr -d '%'`
-            echo $percent
-            echo "# $(gettext "Downloading...")  $percent%"
-            fi
-            done > $pipe &
-            wget_info=`ps ax |grep "wget.*$1" |awk '{print $1"|"$2}'`
-            wget_pid=`echo $wget_info|cut -d'|' -f1 `
-            yad --progress --timeout=100 --auto-close --width=200 --height=20 \
-            --geometry=200x20-2-2 --no-buttons --skip-taskbar --undecorated --on-top \
-            --title="Downloading"< $pipe
-            if [ "`ps -A |grep "$wget_pid"`" ];then
-            kill $wget_pid
-            fi
-            rm -f $pipe
-            }
-            cd /tmp
-            [ -f "/tmp/$link" ] && rm -f "/tmp/$link"
-            
-            WGET "$file"
-            
-            if [ -f "/tmp/$link" ] ; then
-            [ -f "$sv" ] && rm "$sv"
-            mv -f "/tmp/$link" "$sv"
-            else
-            msg "$(gettext "The file is not yet available for download from the server.")\n" info && exit
-            fi
+    cd "$HOME"
+    sleep 0.5
+    sv=$(yad --file --save --title="$(gettext "Save")" \
+    --filename="$2.idmnd" \
+    --window-icon="$DS/images/icon.png" --skip-taskbar --center --on-top \
+    --width=600 --height=500 --borders=5 \
+    --button="$(gettext "Cancel")":1 --button="Ok":0)
+    ret=$?
+    
+    if [[ $ret -eq 0 ]]; then
+        
+        internet; cd "$DT"
+        source /dev/stdin <<<"$(curl http://idiomind.sourceforge.net/doc/SITE_TMP)"
+        [ -z "$DOWNLOADS" ] && msg "$(gettext "The server is not available at the moment.")" dialog-warning && exit
+        
+        file="$DOWNLOADS/$lng/$lnglbl/$category/$link.$name.idmnd"
+        WGET() {
+        rand="$RANDOM `date`"
+        pipe="/tmp/pipe.$(echo '$rand' | md5sum | tr -d ' -')"
+        mkfifo "$pipe"
+        wget -c "$1" 2>&1 | while read data;do
+        if [ "`echo $data | grep '^Length:'`" ]; then
+        total_size=$(echo $data | grep "^Length:" | sed 's/.*\((.*)\).*/\1/' | tr -d '()')
         fi
-        exit
+        if [ "$(echo $data | grep '[0-9]*%' )" ];then
+        percent=$(echo $data | grep -o "[0-9]*%" | tr -d '%')
+        echo "$percent"
+        echo "# $(gettext "Downloading...")  $percent%"
+        fi
+        done > "$pipe" &
+        wget_info=$(ps ax |grep "wget.*$1" |awk '{print $1"|"$2}')
+        wget_pid=$(echo $wget_info | cut -d'|' -f1)
+        yad --progress --title="Downloading" \
+        --timeout=100 --auto-close \
+        --no-buttons --skip-taskbar --undecorated --on-top \
+        --width=200 --height=20 --geometry=200x20-2-2 < "$pipe"
+        if [ "$(ps -A |grep "$wget_pid")" ];then
+        kill "$wget_pid"
+        fi
+        rm -f "$pipe"
+        }
+        WGET "$file"
+        
+        if [ -f "$DT/$link.$name.idmnd" ] ; then
+        [ -f "$sv" ] && rm "$sv"
+        mv -f "$DT/$link.$name.idmnd" "$sv"
+        else
+        msg "$(gettext "The file is not yet available for download from the server.")\n" info && exit
+        fi
+    fi
+    exit
 }
 
 function upld() {
@@ -139,13 +132,13 @@ article="$(gettext "Article")"
 science="$(gettext "Science")"
 interview="$(gettext "Interview")"
 funny="$(gettext "Funny")"
-lnglbl=$(echo $lgtl | awk '{print tolower($0)}')
-U=$(sed -n 1p $DC_s/5.cfg)
-[[ -z "$U" ]] && U=$(echo $(($RANDOM%100)))
+lnglbl="${lgtl,,}"
+idlink=$(sed -n 1p $DC_s/5.cfg)
+[[ -z "$idlink" ]] && idlink=$(($RANDOM%100))
 mail=$(sed -n 2p $DC_s/5.cfg)
 user=$(sed -n 3p $DC_s/5.cfg)
 [ -z "$user" ] && user=$(echo "$(whoami)")
-nt=$(cat "$DC_tlt/10.cfg")
+nt=$(< "$DC_tlt/10.cfg")
 nme=$(echo "$tpc" | sed 's/ /_/g' | tr -s '"' ' ' | sed 's/’//g')
 imgm="$DM_tlt/words/images/img.jpg"
 
@@ -215,7 +208,7 @@ Author=$(echo "$upld" | cut -d "|" -f2)
 Mail=$(echo "$upld" | cut -d "|" -f3)
 notes=$(echo "$upld" | cut -d "|" -f6)
 img=$(echo "$upld" | cut -d "|" -f7)
-link="$U"
+link="$idlink"
 
 if [ -n "$img" ]; then
 wsize="$(identify "$img" | cut -d ' ' -f 3 | cut -d 'x' -f 1)"
@@ -238,7 +231,7 @@ msg "$(gettext "Please select a category.")\n " info
 if [ -d "$DM_tlt/files" ]; then
 du=$(du -sb "$DM_tlt/files" | cut -f1)
 if [ "$du" -gt 50000000 ]; then
-msg "$(gettext "Sorry, the size of the attachment is too large.")\n " info & exit 1; fi
+msg "$(gettext "Sorry, the size of the attachments is too large.")\n " info & exit 1; fi
 fi
 
 internet; cd "$DT"

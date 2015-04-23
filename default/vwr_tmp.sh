@@ -1,24 +1,23 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-u=$(echo "$(whoami)")
+u=$USER
 nmt=$(sed -n 1p "/tmp/.idmtp1.$u/dir$1/folder")
 dir="/tmp/.idmtp1.$u/dir$1/$nmt"
-wth=650; eht=400
 re='^[0-9]+$'
-now="$2"
-nuw="$3"
+item_name="$2"
+index_pos="$3"
 cd "$dir"
 
-if ! [[ $nuw =~ $re ]]; then
-nuw=$(cat "$dir/0.cfg" | grep -Fxon "$now" \
+if ! [[ $index_pos =~ $re ]]; then
+index_pos=$(cat "$dir/0.cfg" | grep -Fxon "$item_name" \
 | sed -n 's/^\([0-9]*\)[:].*/\1/p')
 nll='echo  " "'; fi
 
-item="$(sed -n "$nuw"p "$dir/0.cfg")"
+item="$(sed -n "$index_pos"p "$dir/0.cfg")"
 if [ -z "$item" ]; then
 item="$(sed -n 1p "$dir/0.cfg")"
-nuw=1; fi
+index_pos=1; fi
 
 fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
 
@@ -42,7 +41,7 @@ if [ -f "$dir/words/$fname.mp3" ]; then
     --selectable-labels --quoted-output \
     --window-icon="/usr/share/idiomind/images/icon.png" \
     --skip-taskbar --scroll --text-align=center --center --on-top \
-    --width=$wth --height=$eht --borders=20 \
+    --width=650 --height=400 --borders=20 \
     --field="":lbl \
     --field="<i><span color='#808080'>$exmp1</span></i>\\n:lbl" "$dfnts" "$ntess" \
     "$listen" --button=gtk-go-up:3 \
@@ -64,14 +63,14 @@ elif [ -f "$dir/$fname.mp3" ]; then
     --window-icon="/usr/share/idiomind/images/icon.png" \
     --scroll --no-headers \
     --expand-column=0 --skip-taskbar --center --on-top \
-    --width=$wth --height=$eht --borders=15 \
+    --width=650 --height=400 --borders=15 \
     --column="":TEXT \
     --column="":TEXT \
     "$listen" --button=gtk-go-up:3 \
     --button=gtk-go-down:2
    
 else
-    item_pos=$((nuw - 1))
+    item_pos=$((index_pos-1))
     echo "_" >> /tmp/.sc
     [[ $(wc -l < /tmp/.sc) -ge 5 ]] && rm -f /tmp/.sc & exit 1 \
     || "/usr/share/idiomind/default/vwr_tmp.sh" "$1" "$nll" "$item_pos" & exit 1
@@ -79,10 +78,10 @@ fi
 
 ret=$?
 if [ $ret -eq 2 ]; then
-item_pos=$((nuw-1))
+item_pos=$((index_pos-1))
 "/usr/share/idiomind/default/vwr_tmp.sh" "$1" "$nll" "$item_pos" &
 elif [ $ret -eq 3 ]; then
-item_pos=$((nuw+1))
+item_pos=$((index_pos+1))
 "/usr/share/idiomind/default/vwr_tmp.sh" "$1" "$nll" "$item_pos" &
 fi
 

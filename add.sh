@@ -754,7 +754,7 @@ function process() {
                             exit 1
                         else
                             [ -d "$DT_r" ] && rm -fr "$DT_r"
-                            rm -f "$slt" & exit 1; fi
+                            rm -f "$lckpr" "$slt" & exit 1; fi
                 
                 elif [[ $ret -eq 0 ]]; then
                 

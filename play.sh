@@ -21,8 +21,6 @@ source /usr/share/idiomind/ifs/c.conf
 
 if [ -z "$tpc" ]; then source "$DS/ifs/mods/cmns.sh"
 msg "$(gettext "No topic is active")\n" info & exit 1; fi
-#x=$(($(sed -n 2p "$DC_s/10.cfg")/2))
-#y=$(($(sed -n 3p "$DC_s/10.cfg")/2))
 lbls=('Words' 'Sentences' 'Marks' 'Practice' 'New episodes' 'Saved epidodes')
 sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
 'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' \
@@ -93,7 +91,7 @@ else
     fi
     btn="gtk-media-stop:2"
 fi
-#--geometry=0x0-$x-$y
+
 slct=$(mktemp "$DT"/slct.XXXX)
 setting_1 | yad --list --title="$tpc" "$l" \
 --print-all --always-print-result --separator="|" \

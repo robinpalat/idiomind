@@ -55,7 +55,8 @@ function set_lang() {
 }
 
 if [ ! -f /usr/bin/yad ]; then
-zenity --info --window-icon="/usr/share/idiomind/images/icon.png" \
+zenity --info --title="Idiomind" \
+--window-icon="/usr/share/idiomind/images/icon.png" \
 --text="$(gettext "Missing dependency to start.
 It seems that you have no installed on your system the program YAD.\t
 You can get it from here:  www.sourceforge.net/projects/yad-dlg
@@ -64,7 +65,7 @@ or install it using the following commands:
 sudo add-apt-repository ppa:robinpala/idiomind
 sudo apt-get update
 sudo apt-get install yad")" \
---title="Idiomind" --no-wrap & exit; fi
+--no-wrap & exit; fi
 
 dlg=$(yad --form --title="Idiomind" \
 --text="$text" \
@@ -97,10 +98,9 @@ elif [ $ret -eq 0 ]; then
     fi
     
     mkdir "$HOME/.idiomind"
-    
     if [ $? -ne 0 ]; then
     yad --title=Idiomind \
-    --text=" $(gettext "Error while trying to write on") \'/home/$user/\'\n" \
+    --text="$(gettext "Error while trying to write")\n" \
     --image=error \
     --name=idiomind --class=idiomind \
     --window-icon="$DS/images/icon.png" \
@@ -143,8 +143,8 @@ elif [ $ret -eq 0 ]; then
     touch "$DC_s/4.cfg"
 
     b=$(tr -dc a-z < /dev/urandom | head -c 1)
-    c=$(echo $(($RANDOM%100)))
-    echo $c$b > "$DC_s/5.cfg"
+    c=$(($RANDOM%100))
+    echo "$c$b" > "$DC_s/5.cfg"
 
     idiomind -s
 

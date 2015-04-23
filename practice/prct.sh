@@ -34,7 +34,7 @@ cd "$DC_tlt/practice"
 look() {
     
     yad --title="$(gettext "Practice") - $tpc" \
-    --text="<b>$(gettext "Practice Completed")</b>\\n   $(cat $1)\n " \
+    --text="<b>$(gettext "Practice Completed")</b>\\n   $(< $1)\n " \
     --window-icon="$DS/images/icon.png" --on-top --skip-taskbar \
     --center --image="$DS/practice/icons_st/21.png" \
     --width=360 --height=120 --borders=5 \
@@ -45,7 +45,7 @@ look() {
 
 get_list() {
     
-    if [ "$(cat "$Si" | wc -l)" -gt 0 ]; then
+    if [ "$(wc -l < "$Si")" -gt 0 ]; then
         grep -Fxvf "$Si" "$Li" > "$1"
     else
         cat "$Li" > "$1"
@@ -54,7 +54,7 @@ get_list() {
 
 get_list_images() {
 
-    if [ "$(cat "$Si" | wc -l)" -gt 0 ]; then
+    if [ "$(wc -l < "$Si")" -gt 0 ]; then
         grep -Fxvf "$Si" "$Li" > "$DT/images"
     else
         cat "$Li" > "$DT/images"
@@ -77,7 +77,7 @@ get_list_mchoice() {
         fname="$(echo -n "$word" | md5sum | rev | cut -c 4- | rev)"
         file="$DM_tlt/words/$fname.mp3"
         echo "$(eyeD3 "$file" | grep -o -P "(?<=IWI2I0I).*(?=IWI2I0I)")" >> word1.idx
-    done < mcin
+    done < ./mcin
     ) | yad --progress \
     --width 50 --height 35 --undecorated \
     --pulsate --auto-close \
@@ -86,10 +86,12 @@ get_list_mchoice() {
 
 get_list_sentences() {
     
-    if [ "$(cat "$Wi" | wc -l)" -gt 0 ]; then
-        grep -Fxvf "$Wi" "$Li" > "$1"
+    if [ "$(wc -l < "$Wi")" -gt 0 ]; then
+        grep -Fxvf "$Wi" "$Li" > "$DT/slist"
+        tac "$DT/slist" > "$1"
+        rm -f "$DT/slist"
     else
-        cat "$Li" > "$1"
+        tac "$Li" > "$1"
     fi
 }
 
@@ -101,7 +103,7 @@ starting() {
     --width=360 --height=120 --borders=5 \
     --button=Ok:1
     
-    "$strt" & killall prct.sh.sh & exit 1
+    "$strt" & killall prct.sh & exit 1
 }
 
 flashcards() {
@@ -118,13 +120,13 @@ flashcards() {
         fi
     fi
 
-    if ([ -f fin ] && [ -f ok.f ]); then
+    if [ -f ./fin ] && [ -f ./ok.f ]; then
         echo "w9.$(tr -s '\n' '|' < ok.f).w9" >> "$log"
         grep -Fxvf ok.f fin > fin1
         echo " practice --restarting session"
     else
         get_list fin && cp -f fin fin1
-        [[ "$(cat fin  | wc -l)" -lt 4 ]] && starting "$(gettext "Not enough words to start.")"
+        [[ "$(wc -l < ./fin)" -lt 4 ]] && starting "$(gettext "Not enough words to start.")"
         echo " practice --new session"
     fi
     
@@ -145,7 +147,7 @@ multiple_choise() {
         fi
     fi
 
-    if ([ -f mcin ] && [ -f ok.m ]); then
+    if [ -f ./mcin ] && [ -f ./ok.m ]; then
         echo "w9.$(tr -s '\n' '|' < ok.m).w9" >> "$log"
         grep -Fxvf ok.m mcin > mcin1
         echo " practice --restarting session"
@@ -154,7 +156,7 @@ multiple_choise() {
         get_list mcin && cp -f mcin mcin1
         if [ ! -f word1.idx ]; then
             get_list_mchoice; fi
-        [[ "$(cat mcin  | wc -l)" -lt 4 ]] && starting "$(gettext "Not enough words to start.")"
+        [[ "$(wc -l < ./mcin)" -lt 4 ]] && starting "$(gettext "Not enough words to start.")"
          echo " practice --new session"
     fi
 
@@ -175,13 +177,13 @@ listen_words() {
         fi
     fi
 
-    if ([ -f lwin ] && [ -f ok.w ]); then
+    if [ -f ./lwin ] && [ -f ./ok.w ]; then
         echo "w9.$(tr -s '\n' '|' < ok.w).w9" >> "$log"
         grep -Fxvf ok.w lwin > lwin1
         echo " practice --restarting session"
     else
         get_list lwin && cp -f lwin lwin1
-        [[ "$(cat lwin  | wc -l)" -lt 4 ]] && starting "$(gettext "Not enough words to start.")"
+        [[ "$(wc -l < ./lwin)" -lt 4 ]] && starting "$(gettext "Not enough words to start.")"
         echo " practice --new session"
     fi
     
@@ -202,13 +204,13 @@ listen_sentences() {
         fi
     fi
 
-    if ([ -f lsin ] && [ -f ok.s ]); then
+    if [ -f ./lsin ] && [ -f ./ok.s ]; then
         echo "w6.$(tr -s '\n' '|' < ok.s).w6" >> "$log"
         grep -Fxvf ok.s lsin > lsin1
         echo " practice --restarting session"
     else
         get_list_sentences lsin && cp -f lsin lsin1
-        [[ "$(cat lsin  | wc -l)" -lt 1 ]] && starting "$(gettext "Not enough sentences to start.")"
+        [[ "$(wc -l < ./lsin)" -lt 1 ]] && starting "$(gettext "Not enough sentences to start.")"
         echo " practice --new session"
     fi
     
@@ -229,14 +231,14 @@ images() {
         fi
     fi
 
-    if ([ -f iin ] && [ -f ok.i ]); then
+    if [ -f ./iin ] && [ -f ./ok.i ]; then
         echo "w9.$(tr -s '\n' '|' < ok.i).w9" >> "$log"
         grep -Fxvf ok.i iin > iin1
         echo " practice --restarting session"
     else
         
         get_list_images iin && cp -f iin iin1
-        [[ "$(cat iin  | wc -l)" -lt 4 ]] && starting "$(gettext "Not enough images to start.")"
+        [[ "$(wc -l < ./iin)" -lt 4 ]] && starting "$(gettext "Not enough images to start.")"
         echo " practice --new session"
     fi
     

@@ -95,11 +95,11 @@ $img --text="$info" \
 --ellipsize=NONE --no-headers --expand-column=2 --hide-column=1 \
 --width=$wth --height=$eht --borders=10 \
 --column="Action" --column="Pick":IMG --column="Label" \
-Fcards $img1 "     $info1 $info6   $(gettext "Flashcards")" \
-MChoise $img2 "     $info2 $info7   $(gettext "Multiple Choice")" \
-LWords $img3 "     $info3 $info8   $(gettext "Listening Words")" \
-LSntncs $img4 "     $info4 $info9   $(gettext "Listening Sentences")" \
-WImages $img5 "     $info5 $info10   $(gettext "With Images")" \
+Fcards $img1 "    $info1 $info6   $(gettext "Flashcards")" \
+MChoise $img2 "    $info2 $info7   $(gettext "Multiple Choice")" \
+LWords $img3 "    $info3 $info8   $(gettext "Listening Words")" \
+LSntncs $img4 "    $info4 $info9   $(gettext "Listening Sentences")" \
+WImages $img5 "    $info5 $info10   $(gettext "With Images")" \
 --button="$(gettext "Restart")":3 \
 --button="$(gettext "Start")":0)"
 ret=$?

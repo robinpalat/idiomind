@@ -133,7 +133,7 @@ result() {
     }
 
 n=1
-while [[ $n -le $(wc -l < lsin1) ]]; do
+while [[ $n -le "$(wc -l < ./lsin1)" ]]; do
 
     trgt="$(sed -n "$n"p lsin1)"
     fname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
