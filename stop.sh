@@ -1,5 +1,5 @@
 #!/bin/bash
-source /usr/share/idiomind/ifs/c.conf
+[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 
 playm() {
     killall bcle.sh &

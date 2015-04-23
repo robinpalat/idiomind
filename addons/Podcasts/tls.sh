@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source /usr/share/idiomind/ifs/c.conf
+[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 IFS=$'\n\t'
 "$(gettext "Tell us if you think this is an error.")
