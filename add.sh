@@ -18,7 +18,7 @@
 #
 #  2015/02/27
 
-source /usr/share/idiomind/ifs/c.conf
+[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 include "$DS/ifs/mods/add"
 lgt=$(lnglss $lgtl)

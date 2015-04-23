@@ -4,16 +4,19 @@
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 
-if [ ! -f "$DC_a/1.cfg" ]; then
-echo -e "backup=FALSE
+if [ ! -f "$DC_a/user_data.cfg" ]; then
+echo -e "backup=\"FALSE\"
 path=\"$HOME\"
-size=0" > "$DC_a/1.cfg"
+size=\"0\"
+others=\" \"" > "$DC_a/user_data.cfg"
 fi
 
-path="$(sed -n 2p < "$DC_a/1.cfg" \
+path="$(sed -n 2p < "$DC_a/user_data.cfg" \
 | grep -o path=\"[^\"]* | grep -o '[^"]*$')"
-size="$(sed -n 3p < "$DC_a/1.cfg" \
+size="$(sed -n 3p < "$DC_a/user_data.cfg" \
 | grep -o size=\"[^\"]* | grep -o '[^"]*$')"
+others="$(sed -n 4p < "$DC_a/user_data.cfg" \
+| grep -o others=\"[^\"]* | grep -o '[^"]*$')"
 
 [ -f "$path/.udt" ] && udt=$(< "$path/.udt") || udt=" "
 dte=$(date +%F)
@@ -21,7 +24,8 @@ dte=$(date +%F)
 if [ -z "$1" ]; then
     
     D=$(yad --list --radiolist --title="$(gettext "User Data")" \
-    --name=Idiomind --class=Idiomind --text=" $(gettext "Size"): $size\n" \
+    --name=Idiomind --class=Idiomind \
+    --text="$(gettext "Total size:") $size\n$others" \
     --always-print-result --print-all --separator=" " \
     --center --on-top --expand-column=2 --image-on-top \
     --skip-taskbar --image=folder \

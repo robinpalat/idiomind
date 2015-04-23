@@ -17,7 +17,7 @@
 #  MA 02110-1301, USA.
 #  
 
-source /usr/share/idiomind/ifs/c.conf
+[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)

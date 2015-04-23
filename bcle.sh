@@ -18,7 +18,7 @@
 #
 #  2015/02/27
 
-source /usr/share/idiomind/ifs/c.conf
+[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 [[ -z "$tpc" && -d "$DT" ]] && exit 1
 repeat=$(sed -n 7p < "$DC_s/1.cfg" \
 | grep -o repeat=\"[^\"]* | grep -o '[^"]*$')

@@ -1,15 +1,23 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-source /usr/share/idiomind/ifs/c.conf
-du="$(du -b -h "$DM" | tail -1 | awk '{print ($1)}')"
-if [ ! -f "$DC_a/1.cfg" ]; then
-echo -e "backup=FALSE
-path=\"$HOME\"
-size=0" > "$DC_a/1.cfg"
+[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
+sizes() {
+for i in "$DS/addons/"* ; do
+dir=`basename "$i"`
+if [ -d "$DM_tl/$dir" ]; then
+du="$(du -b -h "$DM_tl/$dir" | tail -1 | awk '{print ($1)}')"
+echo -e "$dir: $du\n"
 fi
-sed -i "3s/size=.*/size=\"$du\"/" "$DC_a/1.cfg"
-#if ([ "$(date +%u)" = 6 ] && \
-#[ "$(sed -n 1p "$DC_a/1.cfg")" = "TRUE" ]); then
-    #"$DS/addons/User data/cnfg.sh" C &
-#fi
+done
+}
+others=`sizes`
+du=`du -b -h "$DM" | tail -1 | awk '{print ($1)}'`
+if [ ! -f "$DC_a/user_data.cfg" ]; then
+echo -e "backup=\"FALSE\"
+path=\"$HOME\"
+size=\"0\"
+others=\" \"" > "$DC_a/user_data.cfg"
+fi
+sed -i "3s/size=.*/size=\"$du\"/" "$DC_a/user_data.cfg"
+sed -i "4s/others=.*/others=\"$others\"/" "$DC_a/user_data.cfg"

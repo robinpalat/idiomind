@@ -79,6 +79,7 @@ elif [ "$1" = w ]; then
     "$DIR/strt.sh" 8 "$easy" "$ling" "$hard" & exit 1
 
 elif [ "$1" = s ]; then
+
     [ ./quote ] && rm quote; [ ./all ] && rm ./all; [ ./ing ] && rm ./ing
     [ ./l_s ] && echo $(($(< ./l_s)+easy)) > ./l_s || echo "$easy" > ./l_s
     v=$((100*$(< ./l_s)/all))

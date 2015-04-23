@@ -27,7 +27,7 @@ if [ ! -d "$HOME/.idiomind" ]; then
     fi
 fi
 
-source /usr/share/idiomind/ifs/c.conf
+[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 
 if [ -f "$DT/ps_lk" ]; then
     sleep 15

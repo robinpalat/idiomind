@@ -1,9 +1,9 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-source /usr/share/idiomind/ifs/c.conf
+[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
-lgt=$(lnglss $lgtl)
+lgt=$(lnglss "$lgtl")
 
 if [ ! -d "$DC_a/dict/" ]; then
 mkdir -p "$DC_a/dict/enables"

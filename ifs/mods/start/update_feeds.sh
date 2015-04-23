@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-source /usr/share/idiomind/ifs/c.conf
+[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 cfg="$DM_tl/Podcasts/.conf/0.cfg"
 if [ -f "$cfg" ]; then
 update="$(sed -n 1p < "$cfg" | grep -o 'update="[^"]*' | grep -o '[^"]*$')"

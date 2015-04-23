@@ -17,8 +17,7 @@
 #  MA 02110-1301, USA.
 #
 #  2015/02/27
-source /usr/share/idiomind/ifs/c.conf
-
+[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 if [ -z "$tpc" ]; then source "$DS/ifs/mods/cmns.sh"
 msg "$(gettext "No topic is active")\n" info & exit 1; fi
 lbls=('Words' 'Sentences' 'Marks' 'Practice' 'New episodes' 'Saved epidodes')
@@ -59,7 +58,7 @@ if [ "$cfg" = 1 ]; then
     
 else
     n=0
-    while [ $n -lt 19 ]; do
+    while [[ $n -lt 19 ]]; do
         if [ $n -lt 8 ] || [ $n -gt 12 ]; then
         val="FALSE"; else val=" "; fi
         echo -e "${sets[$n]}=\"$val\"" >> "$DC_s/1.cfg"
@@ -69,7 +68,7 @@ fi
 
 function setting_1() {
     n=0; 
-    while [ $n -le 5 ]; do
+    while [[ $n -le 5 ]]; do
             arr="in$((n+1))"
             [[ -z ${!arr} ]] && echo "$DS/images/addi.png" \
             || echo "$DS/images/add.png"
@@ -111,7 +110,7 @@ if [ "$ret" -eq 0 ]; then
 
     cd "$DT"; > ./index.m3u; n=12
     
-    while [ $n -lt 19 ]; do
+    while [[ $n -lt 19 ]]; do
 
         val=$(sed -n $((n-11))p < "$slct" | cut -d "|" -f3) # -f3
         [ -n "$val" ] && sed -i "s/${sets[$n]}=.*/${sets[$n]}=\"$val\"/g" \
