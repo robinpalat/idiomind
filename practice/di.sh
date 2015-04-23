@@ -6,7 +6,7 @@ drts="$DS/practice"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
 log="$DC_s/8.cfg"
-all=$(cat ./iin | wc -l)
+all=$(wc -l < ./iin)
 easy=0
 hard=0
 ling=0
@@ -19,15 +19,15 @@ score() {
         play "$drts/all.mp3" &
         echo "w9.$(tr -s '\n' '|' < ok.i).w9" >> "$log"
         rm iin iin1 iin2 ok.i
-        echo "$(date "+%a %d %B")" > look_i
+        echo "$(date "+%a %d %B")" > lock_i
         echo 21 > .iconi
         "$strt" 5 &
         exit 1
         
     else
-        [ -f l_i ] && echo $(($(< l_i)+$easy)) > l_i || echo "$easy" > l_i
+        [ -f l_i ] && echo $(($(< l_i)+easy)) > l_i || echo "$easy" > l_i
         s=$(< l_i)
-        v=$((100*$s/$all))
+        v=$((100*s/all))
         n=1; c=1
         while [[ $n -le 21 ]]; do
             if [ "$v" -le "$c" ]; then
@@ -38,8 +38,10 @@ score() {
         
         [ -f iin2 ] && rm iin2
         if [ -f iin3 ]; then
-            echo "w6.$(tr -s '\n' '|' < iin3).w6" >> "$log"
-            rm iin3; fi
+        echo "w6.$(tr -s '\n' '|' < iin3).w6" >> "$log"
+        echo "$(< iin3)" >> "log"
+        rm iin3; fi
+        
         "$strt" 10 "$easy" "$ling" "$hard" & exit 1
     fi
 }
@@ -97,13 +99,12 @@ while read trgt; do
 
         if [ $ans = 2 ]; then
             echo "$trgt" >> ok.i
-            easy=$(($easy+1))
+            easy=$((easy+1))
 
         elif [ $ans = 3 ]; then
             echo "$trgt" >> iin2
-            hard=$(($hard+1))
+            hard=$((hard+1))
         fi
-
     fi
     
 done < iin1
@@ -113,7 +114,6 @@ if [ ! -f iin2 ]; then
     score "$easy"
     
 else
-
     while read trgt; do
 
         fonts "$trgt"
@@ -130,14 +130,14 @@ else
             ans=$(echo "$?")
             
             if [ $ans = 2 ]; then
-                hard=$(($hard-1))
-                ling=$(($ling+1))
+                hard=$((hard-1))
+                ling=$((ling+1))
                 
             elif [ $ans = 3 ]; then
                 echo "$trgt" >> iin3
             fi
         fi
-            
+        
     done < iin2
     
     score "$easy"

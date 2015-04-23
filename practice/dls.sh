@@ -4,7 +4,7 @@
 drts="$DS/practice"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
-all=$(cat ./lsin | wc -l)
+all=$(wc -l < ./lsin)
 listen="Listen"
 easy=0
 hard=0
@@ -15,17 +15,17 @@ score() {
 
     if [[ "$1" -ge $all ]]; then
         play "$drts/all.mp3" & 
-        echo "w6.$(tr -s '\n' '|' < ok.s).w6" >> "$log"
+        echo "s9.$(tr -s '\n' '|' < ok.s).s9" >> "$log"
         rm lsin ok.s
-        echo "$(date "+%a %d %B")" > look_ls
+        echo "$(date "+%a %d %B")" > lock_ls
         echo 21 > .iconls
         "$strt" 4 &
         exit 1
         
     else
-        [ -f ./l_s ] && echo $(($(< ./l_s)+$easy)) > l_s || echo $easy > l_s
+        [ -f ./l_s ] && echo $(($(< ./l_s)+easy)) > l_s || echo $easy > l_s
         s=$(< ./l_s)
-        v=$((100*$s/$all))
+        v=$((100*s/all))
         n=1; c=1
         while [[ $n -le 21 ]]; do
             if [ "$v" -le "$c" ]; then
@@ -40,13 +40,14 @@ score() {
 
 dialog2() {
     
-    hint="$(echo "$@" | sed "s/\'//g" | awk '{print tolower($0)}'  | sed "s/\b\(.\)/\u\1/g" \
-    | sed "s|\.||; s|\,||; s|\;||g" | sed "s|[a-z]|"\."|g" | sed "s| |\t|g" \
-    | sed "s|\.|\ .|g" | tr "[:upper:]" "[:lower:]" | sed 's/^\s*./\U&\E/g')"
+    hint="$(echo "$@" | tr -s "'" ' '|awk '{print tolower($0)}' \
+    |sed 's/\b\(.\)/\u\1/g'|tr -s ',' ' ' \
+    |sed 's|\.||;s|\,||;s|\;||g'|sed 's|[a-z]|\.|g'|sed 's| |\t|g' \
+    |sed 's|\.|\ .|g' | tr "[:upper:]" "[:lower:]"|sed 's/^\s*./\U&\E/g')"
     text="<span font_desc='Free Sans Bold 13'>$hint</span>\n"
 
     SE=$(yad --text-info --title="$(gettext "Practice")" \
-    --text="$text" \
+    --text="$text" --selectable-labels \
     --name=Idiomind --class=Idiomind \
     --fontname="Free Sans 15" --fore=4A4A4A --justify=fill \
     --margins=5 --editable --wrap \
@@ -95,7 +96,7 @@ result() {
     n=1;
     while read -r line; do
     
-        if cat all | grep -oFx "$line"; then
+        if grep -oFx "$line" ./all; then
             sed -i "s/"$line"/<b>"$line"<\/b>/g" quote
             [ -n "$line" ] && echo \
             "<span color='#3A9000'><b>${line^}</b></span>,  " >> ./wrds
@@ -115,20 +116,20 @@ result() {
     
     if [[ $porc -ge 70 ]]; then
         echo "$WEN" >> ok.s
-        easy=$(($easy+1))
+        easy=$((easy+1))
         color=3AB452
         
     elif [[ $porc -ge 50 ]]; then
-        ling=$(($ling+1))
+        ling=$((ling+1))
         color=E5801D
         
     else
-        hard=$(($hard+1))
+        hard=$((hard+1))
         color=D11B5D
     fi
     
     prc="<b>$porc%</b>"
-    wes="$(cat quote)"
+    wes="$(< quote)"
     rm allc quote
     }
 

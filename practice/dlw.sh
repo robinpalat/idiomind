@@ -6,7 +6,7 @@ drts="$DS/practice"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
 log="$DC_s/8.cfg"
-all=$(cat ./lwin | wc -l)
+all=$(wc -l < ./lwin)
 easy=0
 hard=0
 ling=0
@@ -19,15 +19,15 @@ score() {
         play "$drts/all.mp3" &
         echo "w9.$(tr -s '\n' '|' < ok.w).w9" >> "$log"
         rm lwin lwin1 lwin2 lwin3 ok.w
-        echo "$(date "+%a %d %B")" > look_lw
+        echo "$(date "+%a %d %B")" > lock_lw
         echo 21 > .iconlw
         "$strt" 3 &
         exit 1
         
     else
-        [ -f l_w ] && echo $(($(cat l_w)+$easy)) > l_w || echo $easy > l_w
-        s=$(cat l_w)
-        v=$((100*$s/$all))
+        [ -f l_w ] && echo $(($(< l_w)+easy)) > l_w || echo $easy > l_w
+        s=$(< l_w)
+        v=$((100*s/all))
         n=1; c=1
         while [[ $n -le 21 ]]; do
             if [ "$v" -le "$c" ]; then
@@ -38,8 +38,10 @@ score() {
         
         [ -f lwin2 ] && rm lwin2
         if [ -f lwin3 ]; then
-            echo "w6.$(tr -s '\n' '|' < lwin3).w6" >> "$log"
-            rm lwin3; fi
+        echo "w6.$(tr -s '\n' '|' < lwin3).w6" >> "$log"
+        echo "$(< lwin3)" >> "log"
+        rm lwin3; fi
+        
         "$strt" 8 $easy $ling $hard & exit 1
     fi
 }
@@ -86,17 +88,16 @@ while read trgt; do
     
     if [ $ans = 2 ]; then
             echo "$trgt" >> ok.w
-            easy=$(($easy+1))
+            easy=$((easy+1))
 
     elif [ $ans = 3 ]; then
             echo "$trgt" >> lwin2
-            hard=$(($hard+1))
+            hard=$((hard+1))
 
     elif [ $ans = 1 ]; then
         break &
         "$drts/cls.sh" w $easy $ling $hard $all &
         exit 1
-        
     fi
 done < lwin1
 
@@ -113,8 +114,8 @@ else
         ans=$(echo "$?")
           
         if [ $ans = 2 ]; then
-                hard=$(($hard-1))
-                ling=$(($ling+1))
+                hard=$((hard-1))
+                ling=$((ling+1))
                 
         elif [ $ans = 3 ]; then
                 echo "$trgt" >> lwin3

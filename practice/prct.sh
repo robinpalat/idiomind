@@ -31,7 +31,7 @@ Si="$DC_tlt/4.cfg"
 Li="$DC_tlt/1.cfg"
 cd "$DC_tlt/practice"
 
-look() {
+lock() {
     
     yad --title="$(gettext "Practice") - $tpc" \
     --text="<b>$(gettext "Practice Completed")</b>\\n   $(< $1)\n " \
@@ -40,7 +40,6 @@ look() {
     --width=360 --height=120 --borders=5 \
     --button="   $(gettext "Restart")   ":0 \
     --button=Ok:2
-    
 }
 
 get_list() {
@@ -110,8 +109,8 @@ flashcards() {
 
     cd "$DC_tlt/practice"
     
-    if [ -f look_f ]; then
-        look "look_f"
+    if [ -f lock_f ]; then
+        lock "lock_f"
         ret=$(echo "$?")
         if [ "$ret" -eq 0 ]; then
         "$cls" df & exit
@@ -137,8 +136,8 @@ multiple_choise() {
 
     cd "$DC_tlt/practice"
     
-    if [ -f look_mc ]; then
-        look "look_mc"
+    if [ -f lock_mc ]; then
+        lock "lock_mc"
         ret=$(echo "$?")
         if [[ "$ret" -eq 0 ]]; then
         "$cls" dm & exit
@@ -167,8 +166,8 @@ listen_words() {
 
     cd "$DC_tlt/practice"
     
-    if [[ -f look_lw ]]; then
-        look "look_lw"
+    if [[ -f lock_lw ]]; then
+        lock "lock_lw"
         ret=$(echo "$?")
         if [[ "$ret" -eq 0 ]]; then
         "$cls" dw & exit
@@ -194,8 +193,8 @@ listen_sentences() {
 
     cd "$DC_tlt/practice"
     
-    if [ -f look_ls ]; then
-        look "look_ls"
+    if [ -f lock_ls ]; then
+        lock "lock_ls"
         ret=$(echo "$?")
         if [[ "$ret" -eq 0 ]]; then
         "$cls" ds & exit
@@ -205,7 +204,7 @@ listen_sentences() {
     fi
 
     if [ -f ./lsin ] && [ -f ./ok.s ]; then
-        echo "w6.$(tr -s '\n' '|' < ok.s).w6" >> "$log"
+        echo "s9.$(tr -s '\n' '|' < ok.s).s9" >> "$log"
         grep -Fxvf ok.s lsin > lsin1
         echo " practice --restarting session"
     else
@@ -221,8 +220,8 @@ images() {
 
     cd "$DC_tlt/practice"
     
-    if [ -f look_i ]; then
-        look "look_i"
+    if [ -f lock_i ]; then
+        lock "lock_i"
         ret=$(echo "$?")
         if [ "$ret" -eq 0 ]; then
         "$cls" di & exit

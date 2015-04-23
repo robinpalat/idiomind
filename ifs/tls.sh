@@ -204,9 +204,8 @@ check_index() {
         echo 1 > "$DC_tlt/8.cfg"; fi
         eval stts=$(sed -n 1p "$DC_tlt/8.cfg")
         
-        mp3s="$(find "$DM_tlt"/ -maxdepth 2 -name '*.mp3' \
+        eval mp3s="$(find "$DM_tlt"/ -maxdepth 2 -name '*.mp3' \
         | sort -k 1n,1 -k 7 | wc -l)"
-        eval $mp3s
     }
     
     fix() {

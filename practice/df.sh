@@ -6,7 +6,7 @@ drts="$DS/practice"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
 log="$DC_s/8.cfg"
-all=$(cat ./fin | wc -l)
+all=$(wc -l < ./fin)
 easy=0
 hard=0
 ling=0
@@ -19,15 +19,15 @@ score() {
         play "$drts/all.mp3" &
         echo "w9.$(tr -s '\n' '|' < ok.f).w9" >> "$log"
         rm fin fin1 fin2 ok.f
-        echo "$(date "+%a %d %B")" > look_f
+        echo "$(date "+%a %d %B")" > lock_f
         echo 21 > .iconf
         "$strt" 1 &
         exit 1
         
     else
-        [ -f l_f ] && echo $(($(cat l_f)+$easy)) > l_f || echo "$easy" > l_f
-        s=$(cat l_f)
-        v=$((100*$s/$all))
+        [ -f l_f ] && echo $(($(< l_f)+easy)) > l_f || echo "$easy" > l_f
+        s=$(< l_f)
+        v=$((100*s/all))
         n=1; c=1
         while [[ $n -le 21 ]]; do
             if [ "$v" -le "$c" ]; then
@@ -38,8 +38,10 @@ score() {
         
         [ -f fin2 ] && rm fin2
         if [ -f fin3 ]; then
-            echo "w6.$(tr -s '\n' '|' < fin3).w6" >> "$log"
-            rm fin3; fi
+        echo "w6.$(tr -s '\n' '|' < fin3).w6" >> "$log"
+        echo "$(< fin3)" >> "log"
+        rm fin3; fi
+        
         "$strt" 6 "$easy" "$ling" "$hard" & exit 1
     fi
 }
@@ -98,13 +100,12 @@ while read trgt; do
 
         if [ $ans = 2 ]; then
             echo "$trgt" >> ok.f
-            easy=$(($easy+1))
+            easy=$((easy+1))
 
         elif [ $ans = 3 ]; then
             echo "$trgt" >> fin2
-            hard=$(($hard+1))
+            hard=$((hard+1))
         fi
-        
     fi
 done < fin1
 
@@ -113,7 +114,6 @@ if [ ! -f fin2 ]; then
     score "$easy"
     
 else
-
     while read trgt; do
 
         fonts "$trgt"
@@ -130,13 +130,12 @@ else
             ans=$(echo "$?")
             
             if [ $ans = 2 ]; then
-                hard=$(($hard-1))
-                ling=$(($ling+1))
+                hard=$((hard-1))
+                ling=$((ling+1))
                 
             elif [ $ans = 3 ]; then
                 echo "$trgt" >> fin3
             fi
-            
         fi
     done < fin2
     

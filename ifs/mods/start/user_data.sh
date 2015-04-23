@@ -3,6 +3,11 @@
 
 source /usr/share/idiomind/ifs/c.conf
 du="$(du -b -h "$DM" | tail -1 | awk '{print ($1)}')"
+if [ ! -f "$DC_a/1.cfg" ]; then
+echo -e "backup=FALSE
+path=\"$HOME\"
+size=0" > "$DC_a/1.cfg"
+fi
 sed -i "3s/size=.*/size=\"$du\"/" "$DC_a/1.cfg"
 #if ([ "$(date +%u)" = 6 ] && \
 #[ "$(sed -n 1p "$DC_a/1.cfg")" = "TRUE" ]); then

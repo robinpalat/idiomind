@@ -25,12 +25,12 @@ lgs=$(lnglss $lgsl)
 vsd() {
 
     cd "$DM_t/saved"; ls -t *.id | sed 's/\.id//g' | \
-    yad --list --title="$(gettext "Topics Saved")" \
+    yad --list --title="$(gettext "Saved Topics")" \
     --text="$(gettext "Double clik to download")" \
     --name=Idiomind --class=Idiomind \
     --dclick-action="$DS/ifs/upld.sh 'infsd'" \
     --window-icon="$DS/images/icon.png" --center \
-    --width=640 --height=560 --borders=10 \
+    --width=520 --height=380 --borders=10 \
     --print-column=1 --no-headers \
     --column=Nombre:TEXT \
     --button=gtk-close:1

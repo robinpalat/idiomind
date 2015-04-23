@@ -38,10 +38,12 @@ if [ "$(wc -l < "$winx")" -gt 0 ]; then
 in2="$(grep -Fxvf "$winx" "$tlng")"; else
 in2="$(< "$tlng")"; fi
 in3="$(< "$DC_tlt/6.cfg")"
-cd "$DC_tlt/practice"
-in4="$(sed '/^$/d' < w6 | sort | uniq)"
-in5="$(tac "$DM_tl/Podcasts/.conf/1.cfg" | sed '/^$/d')"
-in6="$(tac "$DM_tl/Podcasts/.conf/2.cfg" | sed '/^$/d')"
+[ -f "$DC_tlt/practice/log" ] && \
+in4="$(sed '/^$/d' < "$DC_tlt/practice/log" | sort | uniq | head -n 20)" || in4=""
+[ -f "$DM_tl/Podcasts/.conf/1.cfg" ] && \
+in5="$(tac "$DM_tl/Podcasts/.conf/1.cfg" | sed '/^$/d')" || in5=""
+[ -f "$DM_tl/Podcasts/.conf/2.cfg" ] && \
+in6="$(tac "$DM_tl/Podcasts/.conf/2.cfg" | sed '/^$/d')" || in6=""
 [ ! -d "$DT" ] && mkdir "$DT"; cd "$DT"
 
 if [ "$cfg" = 1 ]; then

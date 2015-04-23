@@ -5,10 +5,9 @@ source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 
 if [ ! -f "$DC_a/1.cfg" ]; then
-
-    echo -e "backup=FALSE
-    path=\"$HOME\"
-    size=0" > "$DC_a/1.cfg"
+echo -e "backup=FALSE
+path=\"$HOME\"
+size=0" > "$DC_a/1.cfg"
 fi
 
 path="$(sed -n 2p < "$DC_a/1.cfg" \

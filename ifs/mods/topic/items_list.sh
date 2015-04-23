@@ -165,7 +165,6 @@ function dialog_1() {
     --text="$(gettext "More than") $tdays $(gettext "days have passed since you mark this topic as learned.  You'd like to review?")" \
     --image=dialog-question --on-top --center \
     --window-icon="$DS/images/icon.png" \
-    --buttons-layout=edge \
     --width=420 --height=150 --borders=10 \
     --button=" $(gettext "Not Yet") ":1 \
     --button=" $(gettext "Review") ":2

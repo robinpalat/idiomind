@@ -7,7 +7,7 @@ strt="$drts/strt.sh"
 snd="$drts/no.mp3"
 cd "$DC_tlt/practice"
 log="$DC_s/8.cfg"
-all=$(cat ./mcin | wc -l)
+all=$(wc -l < ./mcin)
 easy=0
 hard=0
 ling=0
@@ -20,15 +20,15 @@ score() {
         play "$drts/all.mp3" &
         echo "w9.$(tr -s '\n' '|' < ok.m).w9" >> "$log"
         rm mcin mcin1 mcin2 mcin3 ok.m
-        echo "$(date "+%a %d %B")" > look_mc
+        echo "$(date "+%a %d %B")" > lock_mc
         echo 21 > .iconmc
         "$strt" 2 &
         exit 1
         
     else
-        [ -f l_m ] && echo $(($(< l_m)+$easy)) > l_m || echo $easy > l_m
+        [ -f l_m ] && echo $(($(< l_m)+easy)) > l_m || echo $easy > l_m
         s=$(< l_m)
-        v=$((100*$s/$all))
+        v=$((100*s/all))
         n=1; c=1
         while [[ $n -le 21 ]]; do
             if [ "$v" -le "$c" ]; then
@@ -39,8 +39,10 @@ score() {
         
         [ -f mcin2 ] && rm mcin2
         if [ -f mcin3 ]; then
-            echo "w6.$(tr -s '\n' '|' < mcin3).w6" >> "$log"
-            rm mcin3; fi
+        echo "w6.$(tr -s '\n' '|' < mcin3).w6" >> "$log"
+        echo "$(< mcin3)" >> "log"
+        rm mcin3; fi
+        
         "$strt" 7 $easy $ling $hard & exit 1
     fi
 }
@@ -91,12 +93,12 @@ while read trgt; do
     
         if echo "$dlg" | grep "$wes"; then
             echo "$trgt" >> ok.m
-            easy=$(($easy+1))
+            easy=$((easy+1))
             
         else
             play "$snd" &
             echo "$trgt" >> mcin2
-            hard=$(($hard+1))
+            hard=$((hard+1))
         fi  
             
     elif [ $ret = 1 ]; then
@@ -121,8 +123,8 @@ else
         if [ $ret = 0 ]; then
         
             if echo "$dlg" | grep "$wes"; then
-                hard=$(($hard-1))
-                ling=$(($ling+1))
+                hard=$((hard-1))
+                ling=$((ling+1))
                 
             else
                 play "$snd" &
