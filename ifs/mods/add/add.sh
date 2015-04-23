@@ -187,8 +187,8 @@ function set_image_1() {
 
 function set_image_2() {
     
-    /usr/bin/convert img.jpg -interlace Plane -thumbnail 360x240^ \
-    -gravity center -extent 360x240 -quality 90% imgs.jpg
+    /usr/bin/convert img.jpg -interlace Plane -thumbnail 400x270^ \
+    -gravity center -extent 400x270 -quality 90% imgs.jpg
     eyeD3 --add-image imgs.jpg:ILLUSTRATION "$1"
     mv -f imgs.jpg "$2"
 } >/dev/null 2>&1
@@ -196,8 +196,8 @@ function set_image_2() {
 
 function set_image_3() {
     
-    /usr/bin/convert img.jpg -interlace Plane -thumbnail 360x240^ \
-    -gravity center -extent 360x240 -quality 90% imgw.jpg
+    /usr/bin/convert img.jpg -interlace Plane -thumbnail 400x270^ \
+    -gravity center -extent 400x270 -quality 90% imgw.jpg
     eyeD3 --add-image imgw.jpg:ILLUSTRATION "$1"
     mv -f imgw.jpg "$2"
 } >/dev/null 2>&1
@@ -349,9 +349,8 @@ function dlg_form_1() {
     --align=right --image="$img" \
     --window-icon="$DS/images/icon.png" \
     --width=450 --height=140 --borders=0 \
-    --field=" <small>$lgtl</small>" "$txt" \
-    --field=" $atopic:CB" \
-    "$ltopic!$(gettext "New") *$e$tpcs" \
+    --field="" "$txt" \
+    --field=":CB" "$ltopic!$(gettext "New") *$e$tpcs" \
     --button="$(gettext "Image")":3 \
     --button="$(gettext "Audio")":2 \
     --button=gtk-add:0
@@ -367,16 +366,18 @@ function dlg_form_2() {
     --align=right --image="$img" \
     --window-icon="$DS/images/icon.png" \
     --width=450 --height=170 --borders=0 \
-    --field=" <small>$lgtl</small>" "$txt" \
-    --field=" <small>${lgsl^}</small>" "$srce" \
-    --field=" $atopic:CB" \
-    "$ltopic!$(gettext "New") *$e$tpcs" \
+    --field="" "$txt" \
+    --field="" "$srce" \
+    --field=":CB" "$ltopic!$(gettext "New") *$e$tpcs" \
     --button="$(gettext "Image")":3 \
     --button="$(gettext "Audio")":2 \
     --button=gtk-add:0
 }
 
-
+#<small>$lgtl</small>
+#<small>${lgsl^}</small>
+#$atopic
+ 
 function dlg_radiolist_1() {
     
     echo "$1" | awk '{print "FALSE\n"$0}' | \

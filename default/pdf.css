@@ -12,7 +12,7 @@ w2 {
     padding-right: 5px;
     padding-left: 5px;
     color: #61615B;
-    font-size: 12px;
+    font-size: 13px;
     font-style: normal;
     font-family: Verdana, Geneva, sans-serif;
 }
@@ -21,7 +21,7 @@ h1 {
     padding-right: 5px;
     padding-left: 5px;
     color: #595754;
-    font-size: 15px;
+    font-size: 16px;
     font-weight: normal;
     font-family: Verdana, Geneva, sans-serif;
 }
@@ -46,8 +46,9 @@ h3 {
 }
 
 mark {
-    background-color: #F7ECC4;
+    background-color: #FFFFFF;
     color: #595754;
+    font-weight: bold;
 }
 
 .examples {
@@ -98,6 +99,6 @@ a img {
 body {
     margin-left: 20px;
     margin-top: 10px;
-    margin-right: 10px;
+    margin-right: 40px;
     margin-bottom: 10px;
 }

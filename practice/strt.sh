@@ -99,7 +99,7 @@ Fcards $img1 "    $info1 $info6   $(gettext "Flashcards")" \
 MChoise $img2 "    $info2 $info7   $(gettext "Multiple Choice")" \
 LWords $img3 "    $info3 $info8   $(gettext "Listening Words")" \
 LSntncs $img4 "    $info4 $info9   $(gettext "Listening Sentences")" \
-WImages $img5 "    $info5 $info10   $(gettext "With Images")" \
+WImages $img5 "    $info5 $info10   $(gettext "Images")" \
 --button="$(gettext "Restart")":3 \
 --button="$(gettext "Start")":0)"
 ret=$?

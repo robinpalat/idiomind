@@ -63,7 +63,7 @@ get_list_images() {
     while read itm; do
         fname="$(echo -n "$itm" | md5sum | rev | cut -c 4- | rev)"
         if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
-            echo "$itm" >> "$1"; fi
+        echo "$itm" >> "$1"; fi
     done < "$DT/images"
     [ -f "$DT/images" ] && rm -f "$DT/images"
 }
@@ -125,7 +125,7 @@ flashcards() {
         echo " practice --restarting session"
     else
         get_list fin && cp -f fin fin1
-        [[ "$(wc -l < ./fin)" -lt 4 ]] && starting "$(gettext "Not enough words to start.")"
+        [[ "$(wc -l < ./fin)" -lt 5 ]] && starting "$(gettext "Not enough words to start.")"
         echo " practice --new session"
     fi
     
@@ -237,7 +237,7 @@ images() {
     else
         
         get_list_images iin && cp -f iin iin1
-        [[ "$(wc -l < ./iin)" -lt 4 ]] && starting "$(gettext "Not enough images to start.")"
+        [[ "$(wc -l < ./iin)" -lt 3 ]] && starting "$(gettext "Not enough images to start.")"
         echo " practice --new session"
     fi
     

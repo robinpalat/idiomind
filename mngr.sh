@@ -24,9 +24,8 @@ mkmn() {
     
     restr="$(ls "$DS/addons/")"
     cd "$DM_tl"
-    [ -d ./images ] && rm -r ./images
-    [ -d ./words ] && rm -r ./words
-    [ -d ./practice ] && rm -r ./practice
+    [ -d "$DM_tl/images" ] && rm -r "$DM_tl/images"
+    [ -d "$DM_tl/words" ] && rm -r "$DM_tl/words"
     for i in "$(ls -t -N -d */ | sed 's/\///g')"; do \
     echo "${i%%/}"; done > "$DM_tl/.1.cfg"
     sed -i '/^$/d' "$DM_tl/.1.cfg"
@@ -248,8 +247,7 @@ delete_item_confirm() {
     sed '/^$/d' "$DC_tlt/$n.cfg.tmp" > "$DC_tlt/$n.cfg"; fi
     let n++
     done
-    rm "$dir"/*.tmp
-
+    rm "$DC_tlt"/*.tmp
     rm -f "$DT/ps_lk" & exit 1
 }
 
@@ -308,20 +306,18 @@ delete_item() {
         sed '/^$/d' "$dir/iin.tmp" > "$dir/iin"; fi
         rm "$dir"/*.tmp; fi
             
-        cd "$DC_tlt"
         if [ -f "$DC_tlt/.11.cfg" ]; then
         grep -vxF "$trgt" "$DC_tlt/.11.cfg" > "$DC_tlt/11.cfg.tmp"
         sed '/^$/d' "$DC_tlt/11.cfg.tmp" > "$DC_tlt/.11.cfg"; fi
         n=0
         while [[ $n -le 4 ]]; do
-             if [ -f "$DC_tlt/$n.cfg" ]; then
-             grep -vxF "$trgt" "$DC_tlt/$n.cfg" > "$DC_tlt/$n.cfg.tmp"
-             sed '/^$/d' "$DC_tlt/$n.cfg.tmp" > "$DC_tlt/$n.cfg"; fi
-            let n++
+        if [ -f "$DC_tlt/$n.cfg" ]; then
+        grep -vxF "$trgt" "$DC_tlt/$n.cfg" > "$DC_tlt/$n.cfg.tmp"
+        sed '/^$/d' "$DC_tlt/$n.cfg.tmp" > "$DC_tlt/$n.cfg"; fi
+        let n++
         done
-        rm ./*.tmp
+        rm "$DC_tlt"/*.tmp
     fi
-    
     rm -f "$DT/ps_lk" & exit 1
 }
 
@@ -348,13 +344,12 @@ delete_topic() {
             rm -r "$DM_tl/$tpc"; fi
             rm -f "$DC_s/4.cfg" "$DT/tpe"
             > "$DM_tl/.8.cfg"
-
             n=0
             while [[ $n -le 4 ]]; do
-                 if [ "$DM_tl/.$n.cfg" ]; then
-                 grep -vxF "$tpc" "$DM_tl/.$n.cfg" > "$DT/cfg.tmp"
-                 sed '/^$/d' "$DT/cfg.tmp" > "$DM_tl/.$n.cfg"; fi
-                let n++
+            if [ "$DM_tl/.$n.cfg" ]; then
+            grep -vxF "$tpc" "$DM_tl/.$n.cfg" > "$DT/cfg.tmp"
+            sed '/^$/d' "$DT/cfg.tmp" > "$DM_tl/.$n.cfg"; fi
+            let n++
             done; rm "$DT/cfg.tmp"
             
             kill -9 $(pgrep -f "yad --list ") &
@@ -635,6 +630,9 @@ rename_topic() {
     if [ -f "$DT/.p_" ] && [ "$(sed -n 2p "$DT/.p_")" = "$tpc" ]; then
     msg "$(gettext "Unable to rename at this time. Please try later ")\n" dialog-warning & exit 1; fi
 
+    if [[ ${#jlb} -gt 55 ]]; then
+    msg "$(gettext "Sorry, the new name is too long.")\n" info & exit 1; fi
+
     if [ "$snm" -ge 1 ]; then
     
         jlb="$jlb $snm"
@@ -661,13 +659,12 @@ rename_topic() {
         
         n=1
         while [[ $n -le 3 ]]; do
-            if [ -f "$DM_tl/.$n.cfg" ]; then
-            grep -vxF "$tpc" "$DM_tl/.$n.cfg" > "$DM_tl/.$n.cfg.tmp"
-            sed '/^$/d' "$DM_tl/.$n.cfg.tmp" > "$DM_tl/.$n.cfg"; fi
-            let n++
+        if [ -f "$DM_tl/.$n.cfg" ]; then
+        grep -vxF "$tpc" "$DM_tl/.$n.cfg" > "$DM_tl/.$n.cfg.tmp"
+        sed '/^$/d' "$DM_tl/.$n.cfg.tmp" > "$DM_tl/.$n.cfg"; fi
+        let n++
         done
         rm "$DM_tl"/.*.tmp
-
         [ -d "$DM_tl/$tpc" ] && rm -r "$DM_tl/$tpc"
         
         "$DS/mngr.sh" mkmn & exit 1

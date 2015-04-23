@@ -29,7 +29,8 @@ list=$(sed -n 2p < "$DC_s/1.cfg" \
 trans=$(sed -n 4p < "$DC_s/1.cfg" \
 | grep -o trans=\"[^\"]* | grep -o '[^"]*$')
 
-function new_topic() {
+
+new_topic() {
 
     if [ "$(wc -l < "$DM_tl/.1.cfg")" -ge 80 ]; then
     msg "$(gettext "Sorry, you have reached the maximum number of topics")" info Info &&
@@ -39,8 +40,8 @@ function new_topic() {
     ret="$?"
     jlb="$(clean_2 "$jlbi")"
     
-    if [ ${#jlb} -gt 60 ]; then
-    msg "$(gettext "sorry, the name is too long.")\n" info
+    if [[ ${#jlb} -gt 55 ]]; then
+    msg "$(gettext "Sorry, the name is too long.")\n" info
     "$DS/add.sh" new_topic "$jlb" & exit 1; fi
     
     if grep -Fxo "$jlb" <<<"$restr"; then jlb="$jlb."; fi
@@ -67,7 +68,8 @@ function new_topic() {
     exit
 }
 
-function new_items() {
+
+new_items() {
 
     if [ "$(grep -vFx 'Podcasts' < "$DM_tl/.1.cfg" | wc -l)" -lt 1 ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
@@ -178,7 +180,7 @@ Create one using the button below. ")" & exit 1; fi
 }
 
 
-function new_sentence() {
+new_sentence() {
         
     DT_r="$3"
     source "$DS/default/dicts/$lgt"
@@ -273,7 +275,7 @@ function new_sentence() {
 }
 
 
-function new_word() {
+new_word() {
 
     trgt="$(sed s'\|\\'g <<<"$2" | sed 's/^ *//;s/ *$//g')"
     srce="$(sed s'\|\\'g <<<"$4" | sed 's/^ *//;s/ *$//g')"
@@ -367,7 +369,7 @@ function new_word() {
     exit 1
 }
 
-function edit_list_words() {
+edit_list_words() {
 
     c="$4"
     if [ "$3" = "F" ]; then
@@ -457,7 +459,7 @@ function edit_list_words() {
     fi
 }
 
-function dclik_list_words() {
+dclik_list_words() {
 
     tpe=$(sed -n 2p $DT/.n_s_pr)
     DM_tlt="$DM_tl/$tpe"
@@ -519,7 +521,7 @@ function dclik_list_words() {
     
 } >/dev/null 2>&1
 
-function sentence_list_words() {
+sentence_list_words() {
 
     DM_tlt="$DM_tl/$4"
     DC_tlt="$DM_tl/$4/.conf"
@@ -608,7 +610,7 @@ function sentence_list_words() {
 }
 
 
-function process() {
+process() {
     
     ns=$(wc -l < "$DC_tlt/0.cfg")
     source "$DS/default/dicts/$lgt"

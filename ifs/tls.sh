@@ -79,7 +79,7 @@ Vietnamese"
     nimages=$(sed -n 12p < "${file}" | grep -o 'nimages="[^"]*' | grep -o '[^"]*$')
     level=$(sed -n 13p < "${file}" | grep -o 'level="[^"]*' | grep -o '[^"]*$')
 
-    if [ "${name}" != "${3}" ] || [ "${#name}" -gt 65 ] || \
+    if [ "${name}" != "${3}" ] || [ "${#name}" -gt 60 ] || \
     [ `grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${name}"` ]; then
     msg "$(gettext "File is corrupted.") E1\n" error & exit 1
     elif ! grep -Fox "${language_source}" <<<"${LANGUAGES}"; then
@@ -728,7 +728,7 @@ set_image() {
         --window-icon="$DS/images/icon.png" \
         --skip-taskbar --image-on-top \
         --align=center --center --on-top \
-        --width=380 --height=280 --borders=5 \
+        --width=420 --height=320 --borders=5 \
         "$btn1" "$btn2" --button=$(gettext "Close"):1
         ret=$?
             
@@ -738,8 +738,8 @@ set_image() {
             scrot -s --quality 80 "$fname.temp.jpeg"
             /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 100x90^ \
             -gravity center -extent 100x90 -quality 90% "$item"_temp.jpeg
-            /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 360x240^ \
-            -gravity center -extent 360x240 -quality 90% "$DM_tlt/words/images/$fname.jpg"
+            /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 400x270^ \
+            -gravity center -extent 400x270 -quality 90% "$DM_tlt/words/images/$fname.jpg"
             eyeD3 --remove-images "$file"
             eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file"
             wait
@@ -758,7 +758,7 @@ set_image() {
         --name=Idiomind --class=Idiomind \
         --window-icon="$DS/images/icon.png" \
         --skip-taskbar --image-on-top --center --on-top \
-        --width=380 --height=280 --borders=5 \
+        --width=420 --height=320 --borders=5 \
         "$btn1" "$btn2" --button=$(gettext "Close"):1
         ret=$?
                 
@@ -768,8 +768,8 @@ set_image() {
             scrot -s --quality 80 "$fname.temp.jpeg"
             /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 100x90^ \
             -gravity center -extent 100x90 -quality 90% "$item"_temp.jpeg
-            /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 360x240^ \
-            -gravity center -extent 360x240 -quality 90% "$DM_tlt/words/images/$fname.jpg"
+            /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 400x270^ \
+            -gravity center -extent 400x270 -quality 90% "$DM_tlt/words/images/$fname.jpg"
             eyeD3 --remove-images "$file"
             eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file"
             wait
@@ -788,7 +788,7 @@ set_image() {
 
 pdfdoc() {
 
-    cd $HOME
+    cd "$HOME"
     pdf=$(yad --file --save --title="Export" \
     --name=Idiomind --class=Idiomind \
     --filename="$HOME/$tpc.pdf" \
@@ -799,7 +799,7 @@ pdfdoc() {
 
     if [ "$ret" -eq 0 ]; then
     
-        dte=$(date "+%d %B %Y")
+        dte=`date "+%d %B %Y"`
         mkdir "$DT/mkhtml"
         mkdir "$DT/mkhtml/images"
         nts="$(sed ':a;N;$!ba;s/\n/<br>/g' < "$DC_tlt/10.cfg" \
@@ -857,10 +857,10 @@ pdfdoc() {
 
         cd "$DM_tlt/words/images"
         cnt=`ls -1 *.jpg 2>/dev/null | wc -l`
-        if [ $cnt != 0 ]; then
-            cd $DT/mkhtml/images/
+        if [[ $cnt != 0 ]]; then
+            cd "$DT/mkhtml/images/"
             ls *.png | sed 's/\.png//g' > "$DT/mkhtml/nimg"
-            cd $DT/mkhtml
+            cd "$DT/mkhtml"
             echo -e "<table width=\"90%\" align=\"center\" border=\"0\" class=\"images\">" >> pdf_doc
             n="$(wc -l < nimg)"
             while [ $n -ge 1 ]; do
@@ -906,7 +906,7 @@ pdfdoc() {
 
         cd "$DT/mkhtml"
         n="$(wc -l < "3.cfg")"
-        while [ $n -ge 1 ]; do
+        while [[ $n -ge 1 ]]; do
             wnm=$(sed -n "$n"p "3.cfg")
             fname="$(nmfile "$wnm")"
             tgs=$(eyeD3 "$DM_tlt/words/$fname.mp3")
@@ -963,7 +963,7 @@ pdfdoc() {
         done
 
         n=1
-        while [ $n -le "$(wc -l < "4.cfg")" ]; do
+        while [[ $n -le "$(wc -l < "4.cfg")" ]]; do
         
                 st=$(sed -n "$n"p "S.gprt.x")
 
@@ -982,10 +982,12 @@ pdfdoc() {
                 echo -e "<h1>&nbsp;</h1>
                 <table width=\"100%\" border=\"0\" align=\"left\" cellpadding=\"10\" cellspacing=\"5\">
                 <tr>
-                <td bgcolor='#F3F3F3'><h1>$st</h1></td>
+                <td bgcolor=\"#E6E6E6\" class=\"side\"></td>
+                <td bgcolor=\"#FFFFFF\"><h1>$st</h1></td>
                 </tr>" > Sgprt.tmp
                 echo -e "<tr>
-                <td ><h2>$ss</h2></td>
+                <td bgcolor=\"#E6E6E6\" class=\"side\"></td>
+                <td bgcolor=\"#FFFFFF\"><h2>$ss</h2></td>
                 </tr>
                 </table>
                 <h1>&nbsp;</h1>" > Sgprs.tmp
@@ -1008,10 +1010,8 @@ pdfdoc() {
         wkhtmltopdf -s A4 -O Portrait pdf_doc.html tmp.pdf
         mv -f tmp.pdf "$pdf"
         rm -fr pdf_doc "$DT/mkhtml" "$DT"/*.x "$DT"/*.l
-
-    else
-        exit 0
     fi
+    exit
 }
 
 if [ "$1" = play ]; then
