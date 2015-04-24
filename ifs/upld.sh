@@ -17,7 +17,7 @@
 #  MA 02110-1301, USA.
 #  
 
-[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
+source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
@@ -29,7 +29,7 @@ vsd() {
     --text="$(gettext "Double clik to download")" \
     --name=Idiomind --class=Idiomind \
     --dclick-action="$DS/ifs/upld.sh 'infsd'" \
-    --window-icon="$DS/images/icon.png" --center \
+    --window-icon="$DS/images/icon.png" --center --on-top \
     --width=520 --height=380 --borders=10 \
     --print-column=1 --no-headers \
     --column=Nombre:TEXT \
@@ -61,7 +61,8 @@ infsd() {
     if [[ $ret -eq 0 ]]; then
         
         internet; cd "$DT"
-        source /dev/stdin <<<"$(curl http://idiomind.sourceforge.net/doc/SITE_TMP)"
+        DOWNLOADS="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP | \
+        grep -o 'DOWNLOADS="[^"]*' | grep -o '[^"]*$')"
         [ -z "$DOWNLOADS" ] && msg "$(gettext "The server is not available at the moment.")" dialog-warning && exit
         
         file="$DOWNLOADS/$lng/$lnglbl/$category/$link.$name.idmnd"
@@ -106,7 +107,7 @@ function upld() {
 
 if [ "$tpc" != "$2" ]; then
 msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
-    
+
 others="$(gettext "Others")"
 comics="$(gettext "Comics")"
 culture="$(gettext "Culture")"
@@ -208,14 +209,13 @@ Author=$(echo "$upld" | cut -d "|" -f2)
 Mail=$(echo "$upld" | cut -d "|" -f3)
 notes=$(echo "$upld" | cut -d "|" -f6)
 img=$(echo "$upld" | cut -d "|" -f7)
-link="$idlink"
 
-if [ -n "$img" ]; then
+if [ -f "$img" ]; then
 wsize="$(identify "$img" | cut -d ' ' -f 3 | cut -d 'x' -f 1)"
 esize="$(identify "$img" | cut -d ' ' -f 3 | cut -d 'x' -f 2)"
 if [ "$wsize" -gt 1000 ] || [ "$wsize" -lt 600 ] \
 || [ "$esize" -lt 100 ] || [ "$esize" -gt 400 ]; then
-msg "$(gettext "Sorry, the image size is not suitable.")\n " info
+msg "$(gettext "Sorry, the image size is not suitable.")\n " info "$(gettext "Error")"
 "$DS/ifs/upld.sh" upld "$tpc" & exit 1; fi
 fi
 
@@ -235,8 +235,6 @@ msg "$(gettext "Sorry, the size of the attachments is too large.")\n " info & ex
 fi
 
 internet; cd "$DT"
-source /dev/stdin <<<"$(curl http://idiomind.sourceforge.net/doc/SITE_TMP)"
-[ -z "$FTPHOST" ] && msg "$(gettext "An error occurred, please try later.")\n " dialog-warning && exit
 
 mkdir "$DT/upload"
 DT_u="$DT/upload"
@@ -257,7 +255,7 @@ language_target=\"$lgtl\"
 author=\"$Author\"
 contact=\"$Mail\"
 category=\"$Ctgry\"
-link=\"$link\"
+link=\"$idlink\"
 date_c=\"$date_c\"
 date_u=\"$date_u\"
 nwords=\"$words\"
@@ -265,7 +263,7 @@ nsentences=\"$sentences\"
 nimages=\"$images\"
 level=\"$level\"" > "$DT_u/$tpc/12.cfg"
 cp -f "$DT_u/$tpc/12.cfg" "$DT/12.cfg"
-echo -e "$U
+echo -e "$idlink
 $Mail
 $Author" > "$DC_s/5.cfg"
 
@@ -273,7 +271,7 @@ cd "$DM_tlt"
 cp -r ./* "$DT_u/$tpc/"
 cp -r "./words" "$DT_u/$tpc/"
 cp -r "./words/images" "$DT_u/$tpc/words"
-mkdir "$DT_u/$tpc/attchs"
+mkdir "$DT_u/$tpc/files"
 mkdir "$DT_u/$tpc/audio"
 
 auds="$(uniq < "$DC_tlt/4.cfg" \
@@ -294,16 +292,19 @@ cp -f "$DC_tlt/4.cfg" "$DT_u/$tpc/4.cfg"
 printf "${notes}" > "$DC_tlt/10.cfg"
 printf "${notes}" > "$DT_u/$tpc/10.cfg"
 
-find "$DT_u" -type f -exec chmod 644 {} \; 
+find "$DT_u" -type f -exec chmod 644 {} \;
 cd "$DT_u"
 tar -cvf "$tpc.tar" "$tpc"
 gzip -9 "$tpc.tar"
-mv "$tpc.tar.gz" "$U.$tpc.idmnd"
+mv "$tpc.tar.gz" "$idlink.$tpc.idmnd"
 [ -d "$DT_u/$tpc" ] && rm -fr "$DT_u/$tpc"
 dte=$(date "+%d %B %Y")
 notify-send "$(gettext "Uploading")" "$(gettext "Please wait while file is uploaded")" -i idiomind -t 6000
 
-lftp -u "$USER","$KEY" "$FTPHOST" << END_SCRIPT
+data=$(curl http://idiomind.sourceforge.net/doc/SITE_TMP)
+lftp -u "`sed -n 4p <<<"$data" | grep -o 'USER="[^"]*' | grep -o '[^"]*$'`",\
+"`sed -n 5p <<<"$data" | grep -o 'KEY="[^"]*' | grep -o '[^"]*$'`" \
+"`sed -n 3p <<<"$data" | grep -o 'FTPHOST="[^"]*' | grep -o '[^"]*$'`" << END_SCRIPT
 mirror --reverse ./ public_html/$lgs/$lnglbl/$Ctgry/
 quit
 END_SCRIPT
@@ -315,15 +316,15 @@ if [[ $exit = 0 ]]; then
     image=dialog-ok
 else
     sleep 10
-    info="$(gettext "There was a problem uploading the file.") "
+    info="$(gettext "Occurred a problem with the file upload, try again later.")"
     image=dialog-warning
 fi
 
 msg "$info" $image
 
 [ -d "$DT_u/$tpc" ] && rm -fr "$DT_u/$tpc"
-[ "$DT_u/.aud" ] && rm -f "$DT_u/.aud"
-[ "$DT_u/$U.$tpc.idmnd" ] && rm -f "$DT_u/$U.$tpc.idmnd"
+[ "$DT/12.cfg" ] && rm -f "$DT/12.cfg"
+[ "$DT_u/$idlink.$tpc.idmnd" ] && rm -f "$DT_u/$idlink.$tpc.idmnd"
 [ "$DT_u/$tpc.tar" ] && rm -f "$DT_u/$tpc.tar"
 [ "$DT_u/$tpc.tar.gz" ] && rm -f "$DT_u/$tpc.tar.gz"
 [ -d "$DT_u" ] && rm -fr "$DT_u"

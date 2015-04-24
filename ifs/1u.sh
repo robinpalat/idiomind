@@ -24,8 +24,8 @@ export TEXTDOMAINDIR
 Encoding=UTF-8
 alias gettext='gettext "idiomind"'
 user=$(echo "$(whoami)")
-text="<big><big><big>$(gettext "Welcome") $USER </big></big></big>
-$(gettext "To get started, please configure the following.")\n"
+text="<big><big><big>$(gettext "Welcome") ${USER^} </big></big></big>
+\n      $(gettext "To get started, please configure the following.")"
 lang=('English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian')
 sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
@@ -71,7 +71,7 @@ dlg=$(yad --form --title="Idiomind" \
 --text="$text" \
 --class=Idiomind --name=Idiomind \
 --window-icon="/usr/share/idiomind/images/icon.png" \
---image-on-top --fixed --align=center --center --on-top --buttons-layout=end \
+--image-on-top --align=center --center --on-top --buttons-layout=end \
 --width=420 --height=285 --borders=15 \
 --field="$(gettext "Select the language you are studying")":lbl " " \
 --field=":CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \

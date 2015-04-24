@@ -372,7 +372,7 @@ delete_topic() {
 edit() {
 
     include "$DS/ifs/mods/mngr"
-    wth=650; eht=580
+    wth=650; eht=540
     lgt=$(lnglss $lgtl)
     lgs=$(lnglss $lgsl)
     lists="$2";  item_pos="$3"
