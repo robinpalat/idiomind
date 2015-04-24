@@ -59,7 +59,6 @@ fonts() {
     echo "$ells" > word2.tmp
     sed '/^$/d' word2.tmp > word2.id
     s=$((42-${#1}))
-    yad --text="$s" &
     cuestion="\n<span font_desc='Free Sans $s'><b>$1</b></span>\n\n"
     }
 
