@@ -18,7 +18,7 @@ if [ ! -d "$DM_tl/Podcasts" ]; then
     echo "14" > "$DM_tl/Podcasts/.conf/8.cfg"
     echo " " > "$DM_tl/Podcasts/.conf/10.cfg"
     echo -e " $(gettext "Last update:")
- $(gettext "Latest downloads:") 0\t$(gettext "Saved episodes:") \
+ $(gettext "Latest downloads:") 0  $(gettext "Saved episodes:") \
 0 "> "$DM_tl/Podcasts/.update"
     "$DS/mngr.sh" mkmn
 fi
@@ -118,8 +118,8 @@ if [ "$ret" -eq 0 ]; then
 elif [ "$ret" -eq 5 ]; then
 
     apply
-    "$DSP/tls.sh" sync;
-
+    "$DSP/tls.sh" sync
 fi
+
 [ -f "$DT/cp.lock" ] && rm -f "$DT/cp.lock"
 exit

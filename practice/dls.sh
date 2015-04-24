@@ -74,7 +74,7 @@ check() {
     --button="$(gettext "Listen")":"play '$DM_tlt/$fname.mp3'" \
     --button="$(gettext "Next")":2 \
     --field="":lbl --text="<span font_desc='Free Sans 15'>$wes</span>\\n" \
-    --field="<span font_desc='Free Sans 9'>$(echo $OK | sed 's/\,*$/\./g') $prc</span>\\n":lbl
+    --field="<span font_desc='Free Sans 9'>$(sed 's/\,*$/\./g' <<<"$OK") $prc</span>\\n":lbl
     }
     
 get_text() {

@@ -40,6 +40,12 @@ else
         echo "1" > "8.cfg"
         cd "$HOME"
         fi
+
+        echo "$topic" > "$DC_s/4.cfg"
+        echo "$topic" > "$DM_tl/.8.cfg"
+        echo "$topic" > "$DT/tpe"
+        echo '0' >> "$DC_s/4.cfg" 
+        echo '0' >> "$DM_tl/.8.cfg"
         
         "$DS/ifs/tls.sh" check_index "$topic" &
         
@@ -67,12 +73,6 @@ else
             "$DS/mngr.sh" mkmn
         fi
         
-        echo "$topic" > "$DC_s/4.cfg"
-        echo "$topic" > "$DM_tl/.8.cfg"
-        echo "$topic" > "$DT/tpe"
-        echo '0' >> "$DC_s/4.cfg" 
-        echo '0' >> "$DM_tl/.8.cfg"
-
         [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
         
         if [ "$2" = 1 ]; then 

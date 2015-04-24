@@ -58,7 +58,8 @@ fonts() {
     ells=$(sort -Ru word2.tmp | head -6)
     echo "$ells" > word2.tmp
     sed '/^$/d' word2.tmp > word2.id
-    s=$((35-$(echo "$1" | wc -c)))
+    s=$((42-${#1}))
+    yad --text="$s" &
     cuestion="\n<span font_desc='Free Sans $s'><b>$1</b></span>\n\n"
     }
 
@@ -78,7 +79,7 @@ mchoise() {
     --skip-taskbar --text-align=center --center --on-top \
     --undecorated \
     --no-headers \
-    --width=390 --height=340 --borders=6 \
+    --width=410 --height=350 --borders=6 \
     --column=Option \
     --button="$(gettext "Exit")":1)
 }

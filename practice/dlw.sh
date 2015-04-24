@@ -55,7 +55,7 @@ fonts() {
     [ $lgtl = Japanese ] || [ $lgtl = Chinese ] || [ $lgtl = Russian ] \
     && lst="${1:0:1} ${1:5:5}" || lst=$(echo "${1^}" | sed "s|[a-z]|"\ \."|g"); fi
     
-    s=$((30-$(wc -c <<<"$1")))
+    s=$((30-${#1}))
     img="/usr/share/idiomind/images/fc.png"
     lcuestion="\n\n<span font_desc='Verdana $s'><b>$lst</b></span>\n\n\n\n\n"
 

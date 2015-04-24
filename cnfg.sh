@@ -191,5 +191,4 @@ ret=$?
     fi
     
     rm -f "$cnf1" "$DT/.lc"
-
     exit

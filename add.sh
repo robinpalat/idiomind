@@ -18,7 +18,7 @@
 #
 #  2015/02/27
 
-[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
+source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 include "$DS/ifs/mods/add"
 lgt=$(lnglss $lgtl)
@@ -131,7 +131,7 @@ Create one using the button below. ")" & exit 1; fi
             "$DS/add.sh" new_topic
             else echo "$tpe" > "$DT/tpe"; fi
             
-            if [ "$trgt" = Ocr ]; then
+            if [ "$trgt" = Ocr ] || [ "$trgt" = I ]; then
                 "$DS/add.sh" process image "$DT_r" & exit 1
 
             elif [ ${#trgt} = 1 ]; then

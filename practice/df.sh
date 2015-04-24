@@ -50,8 +50,8 @@ fonts() {
     
     fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
     src=$(eyeD3 "$drtt/$fname.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
-    s=$((40-$(wc -c <<<"$1")))
-    c=$((25-$(wc -c <<<"$1")))
+    s=$((45-${#1}))
+    c=$((25-${#1}))
     acuestion="\n\n<span font_desc='Free Sans $s'><b>$1</b></span>"
     bcuestion="\n<span font_desc='Free Sans $c'>$1</span>"
     answer="<span font_desc='Free Sans $s'><b>$src</b></span>"
@@ -63,7 +63,7 @@ cuestion() {
     --timeout=10 \
     --skip-taskbar --text-align=center --center --on-top \
     --undecorated --buttons-layout=spread --align=center \
-    --width=375 --height=270 --borders=5 \
+    --width=395 --height=290 --borders=5 \
     --field="$acuestion":lbl \
     --button=" $(gettext "Exit") ":1 \
     --button=" $(gettext "Answer") >> ":0
@@ -75,7 +75,7 @@ answer() {
     --timeout=10 \
     --skip-taskbar --text-align=center --center --on-top \
     --undecorated --buttons-layout=spread --align=center \
-    --width=375 --height=270 --borders=5 \
+    --width=395 --height=290 --borders=5 \
     --field="$bcuestion":lbl \
     --field="":lbl \
     --field="$answer":lbl \

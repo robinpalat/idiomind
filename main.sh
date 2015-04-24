@@ -19,7 +19,6 @@
 #  2015/02/27
 
 IFS=$'\n\t'
-
 if [ ! -d "$HOME/.idiomind" ]; then
     /usr/share/idiomind/ifs/1u.sh & exit
     if [ ! -d "$HOME/.idiomind" ]; then
@@ -27,7 +26,7 @@ if [ ! -d "$HOME/.idiomind" ]; then
     fi
 fi
 
-[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
+source /usr/share/idiomind/ifs/c.conf
 
 if [ -f "$DT/ps_lk" ]; then
     sleep 15
@@ -106,7 +105,6 @@ function new_session() {
     
     # status update
     [ ! -f "$DM_tl/.1.cfg" ] && touch "$DM_tl/.1.cfg"
-    
     while read line; do
         
         DM_tlt="$DM_tl/$line"
@@ -114,7 +112,6 @@ function new_session() {
         if ([ $stts = 3 ] || [ $stts = 4 ] \
         || [ $stts = 7 ] || [ $stts = 8 ]) && \
         [ -f "$DM_tlt/.conf/9.cfg" ]; then
-        
             calculate_review "$line"
             if [ $((stts%2)) = 0 ]; then
             if [ "$RM" -ge 180 ]; then

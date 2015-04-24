@@ -225,7 +225,7 @@ fetch_podcasts() {
                     #| iconv -c -f utf8 -t ascii
                     fname="$(nmfile "$title")"
                     
-                    if [ "$(wc -c <<<"$title")" -ge 300 ] \
+                    if [ ${#title} -ge 300 ] \
                     || [ -z "$title" ]; then
                     continue; fi
                          
@@ -338,7 +338,7 @@ fi
 if [ -f "$DCP/2.cfg" ]; then kept_episodes="$(wc -l < "$DCP/2.cfg")"
 else kept_episodes=0; fi
 echo -e " <b>$(gettext "Updating")</b>
- $(gettext "Latest downloads:") \t$(gettext "Saved episodes:") \
+ $(gettext "Latest downloads:") 0  $(gettext "Saved episodes:") \
 $kept_episodes "> "$DM_tl/Podcasts/.update"
 
 fetch_podcasts
@@ -346,7 +346,7 @@ fetch_podcasts
 if [ -f "$DT_r/log" ]; then new_episodes="$(wc -l < "$DT_r/log")"
 else new_episodes=0; fi
 echo -e " $(gettext "Last update:") $(date "+%r %a %d %B")
- $(gettext "Latest downloads:") $new_episodes\t$(gettext "Saved episodes:") \
+ $(gettext "Latest downloads:") $new_episodes  $(gettext "Saved episodes:") \
 $kept_episodes "> "$DM_tl/Podcasts/.update"
 
 rm -fr "$DT_r" "$DT/.uptp"
@@ -362,9 +362,9 @@ if [ "$new_episodes" -gt 0 ]; then
     
 else
     if [[ "$1" != 0 ]]; then
-        notify-send -i idiomind \
-        "$(gettext "Feeds updated")" \
-        "$(gettext "No change since the last update")" -t 8000
+    notify-send -i idiomind \
+    "$(gettext "Feeds updated")" \
+    "$(gettext "No change since the last update")" -t 8000
     fi
 fi
 
