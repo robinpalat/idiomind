@@ -201,7 +201,7 @@ if [ "$(echo "$1" | grep -o '.idmnd')" ]; then
                 if [ ${chck} -ge 1 ]; then
                 
                     tpi="$tpi $chck"
-                    msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "The new it was renamed to\:")\n<b>$tpi</b>\n" info "$(gettext "OK")" "$(gettext "Cancel")"
+                    msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "Name for the new topic\:")\n<b>$tpi</b>\n" info "$(gettext "OK")" "$(gettext "Cancel")"
                     ret=$(echo $?)
                     
                     if [[ $ret != 0 ]]; then

@@ -32,37 +32,40 @@ mkmn() {
     > "$DC_s/0.cfg"
     
     n=1
-    while [[ $n -le $(head -50 < "$DM_tl/.1.cfg" | wc -l) ]]; do
+    while [[ $n -le "$(head -50 < "$DM_tl/.1.cfg" | wc -l)" ]]; do
     
         tp=$(sed -n "$n"p "$DM_tl/.1.cfg")
         if ! grep -Fxo "$tp" <<<"$restr"; then
         inx1=$(wc -l < "$DM_tl/$tp/.conf/1.cfg")
         inx2=$(wc -l < "$DM_tl/$tp/.conf/2.cfg")
         tooltips_1="$inx1 / $inx2"
-        else tooltips_1=""; fi
+        else tooltips_1=""
+        fi
         if [ ! -f "$DM_tl/$tp/.conf/8.cfg" ]; then
         i=13; echo "13" > "$DM_tl/$tp/.conf/8.cfg"
         else i=$(sed -n 1p < "$DM_tl/$tp/.conf/8.cfg"); fi
+        
         if [ ! "$DM_tl/$tp/.conf/8.cfg" ] || \
         [ ! "$DM_tl/$tp/.conf/0.cfg" ] || \
         [ ! "$DM_tl/$tp/.conf/1.cfg" ] || \
         [ ! "$DM_tl/$tp/.conf/3.cfg" ] || \
         [ ! "$DM_tl/$tp/.conf/4.cfg" ] || \
-        [ -z "$i" ] || \
-        [ ! -d "$DM_tl/$tp" ]; then
+        [ -z "$i" ] || [ ! -d "$DM_tl/$tp" ]; then
         i=13; echo "13" > "$DM_tl/$tp/.conf/8.cfg";fi
+        
         echo "/usr/share/idiomind/images/img.$i.png" >> "$DC_s/0.cfg"
         echo "$tp" >> "$DC_s/0.cfg"
         echo "$tooltips_1" >> "$DC_s/0.cfg"
         let n++
     done
     n=1
-    while [[ $n -le $(tail -n+51 < "$DM_tl/.1.cfg" | wc -l) ]]; do
+    while [[ $n -le "$(tail -n+51 < "$DM_tl/.1.cfg" | wc -l)" ]]; do
         f=$(tail -n+51 < "$DM_tl/.1.cfg")
         tp=$(sed -n "$n"p <<<"$f")
         if [ ! -f "$DM_tl/$tp/.conf/8.cfg" ]; then
         i=13; echo "13" > "$DM_tl/$tp/.conf/8.cfg"
         else i=$(sed -n 1p < "$DM_tl/$tp/.conf/8.cfg"); fi
+        
         if [ ! -f "$DM_tl/$tp/.conf/8.cfg" ] || \
         [ ! "$DM_tl/$tp/.conf/0.cfg" ] || \
         [ ! "$DM_tl/$tp/.conf/1.cfg" ] || \
@@ -88,7 +91,8 @@ mark_to_learn() {
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
     
     if [ "$(wc -l < "$DC_tlt/0.cfg")" -le 15 ]; then
-    msg "$(gettext "There is not enough items.")\n " info & exit; fi
+    msg "$(gettext "Not enough items to perform the operation.")\n " \
+    info "$(gettext "Not enough items")" & exit; fi
 
     if [ "$3" = 1 ]; then
     kill -9 $(pgrep -f "yad --multi-progress ") &
@@ -146,7 +150,8 @@ mark_as_learned() {
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
     
     if [ "$(wc -l < "$DC_tlt/0.cfg")" -le 15 ]; then
-    msg "$(gettext "There is not enough items.")\n " info & exit; fi
+    msg "$(gettext "Not enough items to perform the operation.")\n " \
+    info "$(gettext "Not enough items")" & exit; fi
     
     if [ "$3" = 1 ]; then
     kill -9 $(pgrep -f "yad --list ") &
@@ -625,18 +630,21 @@ rename_topic() {
     snm="$(grep -Fxo "$jlb" < "$DM_tl/.1.cfg" | wc -l)"
   
     if [ -f "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "$tpc" ]; then
-    msg "$(gettext "Unable to rename at this time. Please try later ")\n" dialog-warning & exit 1; fi
+    msg "$(gettext "Unable to rename at this time. Please try later ")\n" \
+    dialog-warning "$(gettext "Rename")" & exit 1; fi
         
     if [ -f "$DT/.p_" ] && [ "$(sed -n 2p "$DT/.p_")" = "$tpc" ]; then
-    msg "$(gettext "Unable to rename at this time. Please try later ")\n" dialog-warning & exit 1; fi
+    msg "$(gettext "Unable to rename at this time. Please try later ")\n" \
+    dialog-warning "$(gettext "Rename")" & exit 1; fi
 
     if [[ ${#jlb} -gt 55 ]]; then
-    msg "$(gettext "Sorry, the new name is too long.")\n" info & exit 1; fi
+    msg "$(gettext "Sorry, the new name is too long.")\n" \
+    info "$(gettext "Rename")" & exit 1; fi
 
     if [ "$snm" -ge 1 ]; then
     
         jlb="$jlb $snm"
-        msg_2 "$(gettext "Another topic with the same name already exist.") \n$(gettext "The new it was renamed to\:")\n<b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
+        msg_2 "$(gettext "Another topic with the same name already exist.") \n$(gettext "Name for the new topic\:")\n<b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
         ret="$?"
         if [[ $ret -eq 1 ]]; then exit 1; fi
         
