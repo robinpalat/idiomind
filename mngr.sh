@@ -90,7 +90,7 @@ mark_to_learn() {
     if [ "$tpc" != "$2" ]; then
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
     
-    if [ "$(wc -l < "$DC_tlt/0.cfg")" -le 15 ]; then
+    if [ "$(wc -l < "$DC_tlt/0.cfg")" -le 10 ]; then
     msg "$(gettext "Not enough items to perform the operation.")\n " \
     info "$(gettext "Not enough items")" & exit; fi
 
@@ -149,7 +149,7 @@ mark_as_learned() {
     if [ "$tpc" != "$2" ]; then
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
     
-    if [ "$(wc -l < "$DC_tlt/0.cfg")" -le 15 ]; then
+    if [ "$(wc -l < "$DC_tlt/0.cfg")" -le 10 ]; then
     msg "$(gettext "Not enough items to perform the operation.")\n " \
     info "$(gettext "Not enough items")" & exit; fi
     

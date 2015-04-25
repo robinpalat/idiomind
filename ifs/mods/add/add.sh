@@ -460,8 +460,8 @@ function dlg_progress_1() {
     
     yad --progress \
     --progress-text=" " --pulsate --percentage="5" --auto-close \
-    --undecorated --skip-taskbar --no-buttons --on-top \
-    --width=240 --height=20 --geometry=240x20-4-4
+    --skip-taskbar --no-buttons --on-top --fixed \
+    --width=100 --height=20 --geometry=240x20-4-4
 }
 
 
@@ -469,6 +469,6 @@ function dlg_progress_2() {
 
     yad --progress \
     --progress-text=" " --auto-close \
-    --undecorated --skip-taskbar --no-buttons --on-top \
-    --width=240 --height=20 --geometry=240x20-4-4
+    --skip-taskbar --no-buttons --on-top --fixed \
+    --width=100 --height=20 --geometry=240x20-4-4
 }

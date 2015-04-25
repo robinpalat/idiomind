@@ -32,9 +32,10 @@ else
         mkdir -p "$DM_tlt/words/images"
         mkdir "$DM_tlt/.conf"
         cd "$DM_tlt/.conf"
-        c=0; while [ $c -le 10 ]; do
+        c=0; while [[ $c -le 10 ]]; do
         touch "$c.cfg"; let c++
         done
+        rm "$DM_tlt/.conf/7.cfg"
         rm "$DM_tlt/.conf/9.cfg"
         echo -e "$cfg" > "12.cfg"
         echo "1" > "8.cfg"

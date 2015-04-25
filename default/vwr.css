@@ -1,50 +1,23 @@
 
 body {margin:0;padding:0;background:#f6f6f6;font-family: 'Comfortaa', 'Century Gothic', Arial;font-size:100%;line-height:1.8em;letter-spacing:.5px;color:#646D71;font-weight:normal;}
-
 .clear {clear:both;}
 .left {float:left;margin:15px 0 0 0;}
 .right {float:right;margin:15px 0 0 0;}
 .important-text {color:#000000;text-decoration:underline;}
-
 a:link, a:visited, a:active {color:#f66d52;text-decoration:none;opacity:1;}
 a:hover {color:#67a0a6;text-decoration:none;}
 a.current {padding-bottom:3px;border-bottom:1px solid #f66d52;}
-
 h1 {padding:43px 0 8px 0;margin:0;color:#69a7ae;border-bottom:2px solid #ffffff; font-size:1.5em;clear:both;font-weight:normal;}
 h2 {padding:0 0 5px 0;margin:0;font-size:1.4em;color:#69a7ae;font-weight:normal;clear:both;}
 h3 {padding:0 0 0 0;margin:0;font-size:1.3em;color:#69a7ae;font-weight:normal;clear:both;}
 h4 {padding:15px 0 5px 0;margin:0 0 7px 0;font-size:1.1em;color:#69a7ae;font-weight:normal;border-bottom:2px solid #ffffff;clear:both;}
-
 img, object {max-height:100%;max-width:100%;}
 p {padding: 0px 0 0px 0; margin:0;}
 .divider {width:99%;height:2px;border-bottom:2px solid #ffffff; margin: 15px 0 15px 0;padding:0;clear:both;}
 .checkbox {float:left;display:block;width:240px;margin:5px;background: #ffffff;padding: 15px 5px 15px 12px;-moz-border-radius: 5px;border-radius: 5px;height:25px;}
 .checkbox input {margin:5px 5px 0 0;width:20px; height:20px;float:left;}
 .checkbox-label {}
-
-video {
-    right: 0; bottom: 0;
-    min-width: 100%; min-height: 100%;
-    line-height:1em;
-    background:#000000;
-    width: 620; height: 410;
-}
-
-image {
-    right: 0; bottom: 0;
-    min-width: 100%; min-height: 100%;
-    background:#000000;
-    width: 650; height: 410;
-}
-
-.title {
-    text-align: left;
-    margin-left: 40px;
-    margin-right: 40px;
-}
-
-.summary {
-    text-align: justify;
-    margin-left: 40px;
-    margin-right: 40px;
-}
+video {right:0;bottom:0;min-width:100%;min-height:100%;line-height:1em;background:#000000;width: 620;height:410;}
+image {right:0;bottom:0;min-width:100%;min-height:100%;background:#000000;width:650;height:410;}
+.title {text-align:left;margin-left:40px;margin-right:40px;}
+.summary {text-align:justify;margin-left:40px;margin-right:40px;}

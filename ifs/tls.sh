@@ -311,10 +311,13 @@ check_index() {
         DC_tlt="$DM_tlt/.conf"
         
         name_files
-        if [ "$DC_tlt/.11.cfg" ] && \
-        [ -n "$(cat "$DC_tlt/.11.cfg")" ]; then
+        
+        [ "$DC_tlt/.11.cfg" ] && sed -i '/^$/d' "$DC_tlt/.11.cfg"
+        if [ "$DC_tlt/.11.cfg" ] && [ -s "$DC_tlt/.11.cfg" ]; then
         index="$DC_tlt/.11.cfg"
-        else index="$DT/index"; fi
+        else 
+        index="$DT/index"; fi
+        
         fix
 
     check
@@ -333,11 +336,10 @@ check_index() {
         ((n=n+1))
     done
     rm -f "$DT/index"
-    "$DS/mngr.sh" mkmn & exit 1
-    
-    else
-    exit
+    "$DS/mngr.sh" mkmn &
     fi
+    
+    exit
 }
 
 add_audio() {
@@ -432,67 +434,54 @@ href=\"/usr/share/idiomind/default/attch.css\">\
 > "$DC_tlt/att.html"
 
         while read -r file; do
-if grep ".mp3" <<<"$file"; then
-name="$(sed s'/\.mp3//' <<<"$file")"
+if grep ".mp3" <<<"${file: -4}"; then
 echo "<div class=\"summary\">
-<br><h2>$name</h2><audio controls>
+<br><h2>${file::-4}</h2><audio controls>
 <source src=\"../files/$file\" type=\"audio/mpeg\">
-Your browser does not support the audio tag.
 </audio></div><br><br><br>" >> "$DC_tlt/att.html"
-elif grep ".ogg" <<<"$file"; then
-name="$(sed s'/\.ogg//' <<<"$file")"
-echo "<h2>$name</h2>
-<audio controls>
+elif grep ".ogg" <<<"${file: -4}"; then
+echo "<h2>${file::-4}</h2><audio controls>
 <source src=\"../files/$file\" type=\"audio/mpeg\">
-Your browser does not support the audio tag.
 </audio><br><br><br>" >> "$DC_tlt/att.html"
-elif grep ".mp4" <<<"$file"; then
-name="$(sed s'/\.mp4//' <<<"$file")"
-echo "<h2>$name</h2>
+elif grep ".mp4" <<<"${file: -4}"; then
+echo "<h2>${file::-4}</h2>
 <video width=450 height=280 controls>
 <source src=\"../files/$file\" type=\"video/mp4\">
-Your browser does not support the video tag.
 </video><br><br><br>" >> "$DC_tlt/att.html"
-elif grep ".m4v" <<<"$file"; then
-name="$(sed s'/\.m4v//' <<<"$file")"
-echo "<h2>$name</h2>
+elif grep ".m4v" <<<"${file: -4}"; then
+echo "<h2>${file::-4}</h2>
 <video width=450 height=280 controls>
 <source src=\"../files/$file\" type=\"video/mp4\">
-Your browser does not support the video tag.
 </video><br><br><br>" >> "$DC_tlt/att.html"
-elif grep ".jpg" <<<"$file"; then
-name="$(sed s'/\.jpg//' <<<"$file")"
-echo "<h2>$name</h2>
+elif grep ".jpg" <<<"${file: -4}"; then
+echo "<h2>${file::-4}</h2>
 <img src=\"../files/$file\" alt=\"$name\" \
 style=\"width:100%;height:100%\"><br><br><br>" \
 >> "$DC_tlt/att.html"
-elif grep ".jpeg" <<<"$file"; then
-name="$(sed s'/\.jpeg//' <<<"$file")"
-echo "<h2>$name</h2>
+elif grep ".jpeg" <<<"${file: -5}"; then
+echo "<h2>${file::-5}</h2>
 <img src=\"../files/$file\" alt=\"$name\" \
 style=\"width:100%;height:100%\"><br><br><br>" \
 >> "$DC_tlt/att.html"
-elif grep ".png" <<<"$file"; then
-name="$(sed s'/\.png//' <<<"$file")"
-echo "<h2>$name</h2>
+elif grep ".png" <<<"${file: -4}"; then
+echo "<h2>${file::-4}</h2>
 <img src=\"../files/$file\" alt=\"$name\" \
 style=\"width:100%;height:100%\"><br><br><br>" \
 >> "$DC_tlt/att.html"
-elif grep ".txt" <<<"$file"; then
-txto=$(sed ':a;N;$!ba;s/\n/<br>/g' < "$DM_tlt/files/$file" \
+elif grep ".txt" <<<"${file: -4}"; then
+txto=$(sed ':a;N;$!ba;s/\n/<br>/g' \
+< "$DM_tlt/files/$file" \
 | sed 's/\"/\&quot;/;s/\&/&amp;/g')
 echo "<br><br><div class=\"summary\">$txto \
-<br><br><br></div>" \
->> "$DC_tlt/att.html"
-elif grep ".url" <<<"$file"; then
+<br><br><br></div>" >> "$DC_tlt/att.html"
+elif grep ".url" <<<"${file: -4}"; then
 url=$(tr -d '=' < "$DM_tlt/files/$file" \
 | sed 's|watch?v|v\/|;s|https|http|g')
 echo "<iframe width=\"100%\" height=\"85%\" src=\"$url\" \
 frameborder=\"0\" allowfullscreen></iframe>
 <br>" >> "$DC_tlt/att.html"
-elif grep ".gif" <<<"$file"; then
-name="$(sed s'/\.gif//' <<<"$file")"
-echo "<h2>$name</h2>
+elif grep ".gif" <<<"${file: -4}"; then
+echo "<h2>${file::-4}</h2>
 <img src=\"../files/$file\" alt=\"$name\" \
 style=\"width:100%;height:100%\"><br><br><br>" \
 >> "$DC_tlt/att.html"
@@ -513,7 +502,7 @@ echo "<br><br>
         --name=Idiomind --class=Idiomind \
         --uri="$DC_tlt/att.html" --browser \
         --window-icon="$DS/images/icon.png" --center \
-        --width=650 --height=580 --borders=10 \
+        --width=660 --height=580 --borders=10 \
         --button="$(gettext "Folder")":"xdg-open '$DM_tlt/files'" \
         --button="$(gettext "Video")":"$DS/ifs/tls.sh 'videourl'" \
         --button="$(gettext "File")":"$DS/ifs/tls.sh 'add_file'" \
