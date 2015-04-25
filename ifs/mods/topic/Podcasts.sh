@@ -53,8 +53,8 @@ function feedmode() {
     yad --text-info --tabnum=3 \
     --text="<small>$infolabel</small>" \
     --plug=$KEY --filename="$nt" \
-    --wrap --editable --fore='gray40' \
-    --show-uri --margins=14 --fontname=vendana > "$fdit" &
+    --wrap --editable --fore='gray30' \
+    --show-uri --margins=14 --fontname='vendana 12' > "$fdit" &
     yad --notebook --title="Podcasts  ${info^}" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \

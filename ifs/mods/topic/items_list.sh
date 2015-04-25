@@ -62,6 +62,7 @@ function sentence_view(){
 
 export -f word_view sentence_view
 
+
 function notebook_1() {
     
     cmd_mark="'$DS/mngr.sh' 'mark_as_learned' '$tpc' 1"
@@ -82,8 +83,8 @@ function notebook_1() {
     --column=Name:TEXT &
     yad --text-info --tabnum=3 \
     --plug=$KEY \
-    --filename="$nt" --editable --wrap --fore='gray40' \
-    --show-uri --fontname=vendana --margins=14 > "$cnf3" &
+    --filename="$nt" --editable --wrap --fore='gray30' \
+    --show-uri --fontname='vendana 12' --margins=14 > "$cnf3" &
     yad --form --tabnum=4 \
     --plug=$KEY \
     --text="$label_info1\n" \
@@ -130,8 +131,8 @@ function notebook_2() {
     --column=Name:TEXT &
     yad --text-info --tabnum=3 \
     --plug=$KEY \
-    --filename="$nt" --editable --wrap --fore='gray40' \
-    --show-uri --fontname=vendana --margins=14 > "$cnf3" &
+    --filename="$nt" --editable --wrap --fore='gray30' \
+    --show-uri --fontname='vendana 12' --margins=14 > "$cnf3" &
     yad --form --tabnum=4 \
     --plug=$KEY \
     --text="$label_info1\n" \

@@ -2,6 +2,21 @@
 # -*- ENCODING: UTF-8 -*-
 
 
+function mksure() {
+    
+    e=0
+    if [ ! -f "${1}" ] || \
+    [ `stat --printf="%s" "${1}" | cut -c -3` -lt 100 ]; then
+    e=1; fi
+    for str in "${@}"; do
+        shopt -s extglob
+        if [ -z "${str##+([[:space:]])}" ]; then
+        e=1; break; fi
+    done
+    return $e
+}
+
+
 function index() {
 
     DC_tlt="$DM_tl/$3/.conf"
