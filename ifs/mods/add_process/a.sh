@@ -172,7 +172,7 @@ if [[ "$conten" = A ]]; then
                 mv -f "./$n.mp3" "./$trgt.mp3"
                 echo "$trgt" > "./$trgt.txt"
                 echo "$trgt" >> ./ls
-                rm -f info.flac info.ret
+                rm -f ./info.flac ./info.ret
             fi
             prg=$((100*n/lns))
             echo "$prg"
@@ -248,9 +248,8 @@ if [[ "$conten" = A ]]; then
                             srce="$(translate "$trgt" $lgt $lgs)"
                             mv -f "$sntc.mp3" "$DM_tlt/words/$fname.mp3"
                             
-                            if ( [ -n "$(file -ib "$DM_tlt/words/$fname".mp3 | grep -o 'binary')" ] \
-                            && [ -n "$trgt" ] && [ -n "$srce" ] ); then
-                            
+                            mksure "$DM_tlt/words/$fname.mp3" "$trgt" "$srce"
+                            if [ $? = 0 ]; then
                                 add_tags_1 W "$trgt" "$srce" "$DM_tlt/words/$fname.mp3"
                                 index word "$fname" "$tpe"
                                 echo "$sntc" >> addw
@@ -269,10 +268,6 @@ if [[ "$conten" = A ]]; then
                             srce="$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')"
                             
                             mv -f "$sntc.mp3" "$DM_tlt/$fname.mp3"
-                            
-                            if [ -f "$DM_tlt/$fname.mp3" ] && [ -n "$trgt" ] && [ -n "$srce" ]; then
-                                add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3"
-                            fi
 
                             (
                             r=$(($RANDOM%1000))
@@ -285,11 +280,12 @@ if [[ "$conten" = A ]]; then
                             lwrds=$(< A.$r)
                             pwrds=$(tr '\n' '_' < "./B.$r")
                             
-                            if ( [ -n "$(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary')" ] \
-                            && [ -n "$lwrds" ] && [ -n "$pwrds" ] && [ -n "$grmrk" ] ); then
-                                
+                            mksure "$DM_tlt/$fname.mp3" "$trgt" "$srce" \
+                            "$lwrds" "$pwrds" "$grmrk"
+                            if [ $? = 0 ]; then
                                 echo "$sntc" >> adds
                                 index sentence "$trgt" "$tpe"
+                                add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3"
                                 add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3"
                                 fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
                             else
@@ -335,12 +331,12 @@ if [[ "$conten" = A ]]; then
                         else
                             voice "$trgt" "$DT_r" "$DM_tlt/words/$fname.mp3"
                         fi
-                        if ( [ -n $(file -ib "$DM_tlt/words/$fname.mp3" | grep -o 'binary') ] \
-                        && [ -n "$trgt" ] && [ -n "$srce" ] ); then
-                        
+                        mksure "$DM_tlt/words/$fname.mp3" "$trgt" "$srce"
+                        if [ $? = 0 ]; then
                             add_tags_2 W "$trgt" "$srce" "$exmp" "$DM_tlt/words/$fname.mp3" >/dev/null 2>&1
                             index word "$trgt" "$tpe" "$sname"
                             echo "$trgt" >> addw
+                            
                         else
                             [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
                             printf "\n\n- $trgt" >> ./wlog

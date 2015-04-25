@@ -83,11 +83,10 @@ if [ -z "$1" ]; then
                 mv -f "$DT/idiomind_data.tar.gz" "$exp"
                 echo "# $(gettext "Completing")" ; sleep 1
 
-                ) | yad --progress \
+                ) | yad --progress --title="$(gettext "Progress")" \
                 --pulsate --percentage="5" --auto-close \
-                --sticky --undecorated --no-buttons \
-                --skip-taskbar --center --on-top \
-                --width=200 --height=20 --geometry=200x20-2-2
+                --skip-taskbar --no-buttons --on-top --fixed \
+                --width=200 --height=50 --borders=4 --geometry=200x20-2-2
                 
                 msg "$(gettext "Data exported successfully.")\n" info
             fi
@@ -189,11 +188,10 @@ if [ -z "$1" ]; then
                 "$DS/mngr.sh" mkmn
                 rm -f -r "$DT/import"
                 
-                ) | yad --progress \
+                ) | yad --progress --title="$(gettext "Progress")" \
                 --pulsate --percentage="5" --auto-close \
-                --sticky --undecorated --no-buttons \
-                --skip-taskbar --center --on-top \
-                --width=200 --height=20 --geometry=200x20-2-2
+                --skip-taskbar --no-buttons --on-top --fixed \
+                --width=200 --height=50 --borders=4 --geometry=200x20-2-2
                 
                 msg "$(gettext "Data imported successfully.")\n" info
             fi

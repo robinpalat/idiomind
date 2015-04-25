@@ -52,7 +52,7 @@ new_topic() {
         jlb="$jlb $sfname"
         msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "Name for the new topic\:")\n<b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
         ret="$?"
-        [[ $ret -eq 1 ]] && exit 1
+        [[ $ret -eq 1 ]] && exit 10
         
     else
         jlb="$jlb"
@@ -232,18 +232,6 @@ new_sentence() {
         fi
     fi
     
-    mksure  "$DM_tlt/$fname.mp3" "${trgt}" "${srce}"
-    if [ $? = 0 ]; then
-    [ "$DT_r" ] && rm -fr "$DT_r"
-    msg "$(gettext "An error has occurred while saving the note.")\n" dialog-warning & exit 1
-    else
-    add_tags_1 S "${trgt}" "${srce}" "$DM_tlt/$fname.mp3"
-    fi
-
-    if [ -f ./img.jpg ]; then
-        set_image_2 "$DM_tlt/$fname.mp3" "$DM_tlt/words/images/$fname.jpg"
-    fi
-    
     cd "$DT_r"
     r=$(($RANDOM%1000))
     clean_3 "$DT_r" "$r"
@@ -255,10 +243,18 @@ new_sentence() {
     lwrds=$(< "./A.$r")
     pwrds=$(tr '\n' '_' < "./B.$r")
     
-    if [ -z "${grmrk}" ] || [ -z "${lwrds}" ] || [ -z "${pwrds}" ]; then
+    mksure "$DM_tlt/$fname.mp3" "${trgt}" "${srce}" \
+    "${grmrk}" "${lwrds}" "${pwrds}"
+    
+    if [ $? = 1 ]; then
     rm "$DM_tlt/$fname.mp3"
-    msg "$(gettext "An error has occurred while saving the note.")\n" dialog-warning 
+    msg "$(gettext "An error has occurred while saving the note.")\n" dialog-warning
     [ "$DT_r" ] && rm -fr "$DT_r" & exit 1; fi
+    
+    add_tags_1 S "${trgt}" "${srce}" "$DM_tlt/$fname.mp3"
+
+    if [ -f "$DT_r/img.jpg" ]; then
+    set_image_2 "$DM_tlt/$fname.mp3" "$DM_tlt/words/images/$fname.jpg"; fi
     
     add_tags_3 W "${lwrds}" "${pwrds}" "${grmrk}" "$DM_tlt/$fname.mp3"
     notify-send "${trgt}" "${srce}\\n(${tpe})" -t 10000
@@ -319,8 +315,8 @@ new_word() {
 
     else
         if [ -z "$4" ] || [ -z "$2" ]; then
-            [ "$DT_r" ] && rm -fr "$DT_r"
-            msg "$(gettext "You need to fill text fields.")\n" info & exit 1; fi
+        [ "$DT_r" ] && rm -fr "$DT_r"
+        msg "$(gettext "You need to fill text fields.")\n" info & exit 1; fi
         
         trgt="$2"
         srce="$4"
@@ -353,9 +349,8 @@ new_word() {
         set_image_3 "$DM_tlt/words/$fname.mp3" "$DM_tlt/words/images/$fname.jpg"
     fi
     
-    if ([ -n "$(file -ib "$DM_tlt/words/$fname.mp3" | grep -o 'binary')" ] \
-    && [ -f "$DM_tlt/words/$fname.mp3" ] && [ -n "${trgt}" ] && [ -n "${srce}" ]); then
-    
+    mksure "$DM_tlt/words/$fname.mp3" "${trgt}" "${srce}"
+    if [ $? = 0 ]; then
         add_tags_1 W "${trgt}" "${srce}" "$DM_tlt/words/$fname.mp3"
         nt="$(echo "_$(check_grammar_2 "${trgt}")" | tr '\n' '_')"
         eyeD3 --set-encoding=utf8 -A IWI3I0I"$nt"IWI3I0I "$DM_tlt/words/$fname.mp3"
@@ -437,9 +432,8 @@ edit_list_words() {
                     voice "${trgt}" "$DT_r" "$DM_tlt/words/$fname.mp3"
                 fi
                 
-                if ([ -n "$(file -ib "$DM_tlt/words/$fname.mp3" | grep -o 'binary')" ] \
-                && [ -f "$DM_tlt/words/$fname.mp3" ] && [ -n "${trgt}" ] && [ -n "${srce}" ]); then
-                
+                mksure "$DM_tlt/words/$fname.mp3" "${trgt}" "${srce}"
+                if [ $? = 0 ]; then
                     add_tags_2 W "${trgt}" "${srce}" "${5}" "$DM_tlt/words/$fname.mp3" >/dev/null 2>&1
                     index word "${trgt}" "${tpc}" "${sname}"
                 
@@ -586,9 +580,8 @@ sentence_list_words() {
                 voice "${trgt}" "$DT_r" "$DM_tlt/words/$fname.mp3"
             fi
             
-            if ([ -n "$(file -ib "$DM_tlt/words/$fname.mp3" | grep -o 'binary')" ] \
-            && [ -f "$DM_tlt/words/$fname.mp3" ] && [ -n "${trgt}" ] && [ -n "${srce}" ]); then
-                
+            mksure "$DM_tlt/words/$fname.mp3" "${trgt}" "${srce}"
+            if [ $? = 0 ]; then
                 add_tags_2 W "${trgt}" "${srce}" "${3}" "$DM_tlt/words/$fname.mp3" >/dev/null 2>&1
                 index word "${trgt}" "${4}"
             
@@ -811,9 +804,8 @@ process() {
                                     voice "${trgt}" "$DT_r" "$DM_tlt/words/$fname.mp3"
                                 fi
 
-                                if ([ -n "$(file -ib "$DM_tlt/words/$fname.mp3" | grep -o 'binary')" ] \
-                                && [ -f "$DM_tlt/words/$fname.mp3" ] && [ -n "${trgt}" ] && [ -n "${srce}" ]); then
-                                
+                                mksure "$DM_tlt/words/$fname.mp3" "${trgt}" "${srce}"
+                                if [ $? = 0 ]; then
                                     add_tags_1 W "${trgt}" "${srce}" "$DM_tlt/words/$fname.mp3"
                                     echo "${trgt}" >> addw
                                     index word "${trgt}" "${tpe}"
@@ -843,11 +835,8 @@ process() {
                                         
                                     else
                                         voice "${trgt}" "${DT_r}" "$DM_tlt/$fname.mp3"
-                                        
                                     fi
-                                    
-                                    add_tags_1 S "${trgt}" "${srce}" "$DM_tlt/$fname.mp3"
-                                    
+
                                     (
                                     cd "$DT_r"
                                     r=$(($RANDOM%1000))
@@ -860,11 +849,12 @@ process() {
                                     lwrds=$(< "./A.$r")
                                     pwrds=$(tr '\n' '_' < "./B.$r")
                                     
-                                    if ([ -n "$(file -ib "$DM_tlt/$fname.mp3" | grep -o 'binary')" ] \
-                                    && [ -f "$DM_tlt/$fname.mp3" ] && [ -n "${lwrds}" ] && [ -n "${pwrds}" ] && [ -n "${grmrk}" ]); then
-                                    
+                                    mksure "$DM_tlt/$fname.mp3" "${trgt}" "${tpe}" \
+                                    "${lwrds}" "${pwrds}" "${grmrk}"
+                                    if [ $? = 0 ]; then
                                         echo "$fname" >> adds
                                         index sentence "${trgt}" "${tpe}"
+                                        add_tags_1 S "${trgt}" "${srce}" "$DM_tlt/$fname.mp3"
                                         add_tags_3 W "${lwrds}" "${pwrds}" "${grmrk}" "$DM_tlt/$fname.mp3"
                                         fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
 
@@ -921,11 +911,12 @@ process() {
                                 voice "${trgt}" "$DT_r" "$DM_tlt/words/$fname.mp3"
                             fi
 
-                            if ([ -n "$(file -ib "$DM_tlt/words/$fname.mp3" | grep -o 'binary')" ] \
-                            && [ -f "$DM_tlt/words/$fname.mp3" ] && [ -n "${trgt}" ] && [ -n "${srce}" ]); then
+                            mksure "$DM_tlt/words/$fname.mp3" "${trgt}" "${srce}"
+                            if [ $? = 0 ]; then
                                 add_tags_2 W "${trgt}" "${srce}" "${sname}" "$DM_tlt/words/$fname.mp3"
                                 index word "${trgt}" "${tpe}" "${sname}"
                                 echo "${trgt}" >> addw
+                                
                             else
                                 printf "\n- $sntc" >> ./wlog
                                 [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"

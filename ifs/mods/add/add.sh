@@ -473,17 +473,17 @@ function dlg_text_info_3() {
 
 function dlg_progress_1() {
     
-    yad --progress \
+    yad --progress --title="$(gettext "Progress")" \
     --progress-text=" " --pulsate --percentage="5" --auto-close \
     --skip-taskbar --no-buttons --on-top --fixed \
-    --width=100 --height=20 --geometry=240x20-4-4
+    --width=200 --height=50 --borders=4 --geometry=240x20-4-4
 }
 
 
 function dlg_progress_2() {
 
-    yad --progress \
+    yad --progress --title="$(gettext "Progress")" \
     --progress-text=" " --auto-close \
     --skip-taskbar --no-buttons --on-top --fixed \
-    --width=100 --height=20 --geometry=240x20-4-4
+    --width=200 --height=50 --borders=4 --geometry=240x20-4-4
 }
