@@ -428,79 +428,78 @@ attatchments() {
 
 echo "<link rel=\"stylesheet\" \
 href=\"/usr/share/idiomind/default/attch.css\">\
-<body><div class=\"summary\">" \
+<body>" \
 > "$DC_tlt/att.html"
 
         while read -r file; do
-    
 if grep ".mp3" <<<"$file"; then
 name="$(sed s'/\.mp3//' <<<"$file")"
-echo "<br><br><h2>$name</h2>
-<br><audio controls>
+echo "<div class=\"summary\">
+<br><h2>$name</h2><audio controls>
 <source src=\"../files/$file\" type=\"audio/mpeg\">
 Your browser does not support the audio tag.
-</audio><br><br>" >> "$DC_tlt/att.html"
+</audio></div><br><br><br>" >> "$DC_tlt/att.html"
 elif grep ".ogg" <<<"$file"; then
 name="$(sed s'/\.ogg//' <<<"$file")"
-echo "<br><br><h2>$name</h2>
-<br><audio controls>
+echo "<h2>$name</h2>
+<audio controls>
 <source src=\"../files/$file\" type=\"audio/mpeg\">
 Your browser does not support the audio tag.
-</audio><br><br>" >> "$DC_tlt/att.html"
+</audio><br><br><br>" >> "$DC_tlt/att.html"
 elif grep ".mp4" <<<"$file"; then
 name="$(sed s'/\.mp4//' <<<"$file")"
-echo "<br><br><h2>$name</h2>
-<br><video width=450 height=280 controls>
+echo "<h2>$name</h2>
+<video width=450 height=280 controls>
 <source src=\"../files/$file\" type=\"video/mp4\">
 Your browser does not support the video tag.
-</video><br><br>" >> "$DC_tlt/att.html"
+</video><br><br><br>" >> "$DC_tlt/att.html"
 elif grep ".m4v" <<<"$file"; then
 name="$(sed s'/\.m4v//' <<<"$file")"
-echo "<br><br><h2>$name</h2>
-<br><video width=450 height=280 controls>
+echo "<h2>$name</h2>
+<video width=450 height=280 controls>
 <source src=\"../files/$file\" type=\"video/mp4\">
 Your browser does not support the video tag.
-</video><br><br>" >> "$DC_tlt/att.html"
+</video><br><br><br>" >> "$DC_tlt/att.html"
 elif grep ".jpg" <<<"$file"; then
 name="$(sed s'/\.jpg//' <<<"$file")"
-echo "<br><br><h2>$name</h2>
+echo "<h2>$name</h2>
 <img src=\"../files/$file\" alt=\"$name\" \
-style=\"width:100%;height:100%\"><br><br>" \
+style=\"width:100%;height:100%\"><br><br><br>" \
 >> "$DC_tlt/att.html"
 elif grep ".jpeg" <<<"$file"; then
 name="$(sed s'/\.jpeg//' <<<"$file")"
-echo "<br><br><h2>$name</h2>
+echo "<h2>$name</h2>
 <img src=\"../files/$file\" alt=\"$name\" \
-style=\"width:100%;height:100%\"><br><br>" \
+style=\"width:100%;height:100%\"><br><br><br>" \
 >> "$DC_tlt/att.html"
 elif grep ".png" <<<"$file"; then
 name="$(sed s'/\.png//' <<<"$file")"
-echo "<br><br><h2>$name</h2>
+echo "<h2>$name</h2>
 <img src=\"../files/$file\" alt=\"$name\" \
-style=\"width:100%;height:100%\"><br><br>" \
+style=\"width:100%;height:100%\"><br><br><br>" \
 >> "$DC_tlt/att.html"
 elif grep ".txt" <<<"$file"; then
-txto=$(cat "$DM_tlt/files/$file")
+txto=$(sed ':a;N;$!ba;s/\n/<br>/g' < "$DM_tlt/files/$file" \
+| sed 's/\"/\&quot;/;s/\&/&amp;/g')
 echo "<br><br><div class=\"summary\">$txto \
-<br><br></div>" \
+<br><br><br></div>" \
 >> "$DC_tlt/att.html"
 elif grep ".url" <<<"$file"; then
 url=$(tr -d '=' < "$DM_tlt/files/$file" \
 | sed 's|watch?v|v\/|;s|https|http|g')
-echo "<br><br><div class=\"summary\">
-<iframe width=\"420\" height=\"315\" src=\"$url\" \
+echo "<iframe width=\"100%\" height=\"85%\" src=\"$url\" \
 frameborder=\"0\" allowfullscreen></iframe>
-</div><br><br>" >> "$DC_tlt/att.html"
+<br>" >> "$DC_tlt/att.html"
 elif grep ".gif" <<<"$file"; then
 name="$(sed s'/\.gif//' <<<"$file")"
-echo "<br><br><h2>$name</h2>
+echo "<h2>$name</h2>
 <img src=\"../files/$file\" alt=\"$name\" \
-style=\"width:100%;height:100%\"><br><br>" \
+style=\"width:100%;height:100%\"><br><br><br>" \
 >> "$DC_tlt/att.html"
 fi
         done <<<"$(ls "$DM_tlt/files")"
     
-echo "<br><br></div>
+echo "<br><br>
 </body>" >> "$DC_tlt/att.html"
             
     } >/dev/null 2>&1

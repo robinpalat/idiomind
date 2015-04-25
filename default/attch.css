@@ -19,6 +19,14 @@ img {
     height: auto !important;
 }
 
+video {
+    right: 0; bottom: 0;
+    min-width: 100%; min-height: 100%;
+    line-height:1em;
+    background:#000000;
+    width: 620; height: 410;
+}
+
 .title {
     text-align: left;
     margin-left: 40px;
