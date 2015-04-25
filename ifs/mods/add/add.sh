@@ -19,6 +19,10 @@ function mksure() {
 
 function index() {
 
+    while true; do
+    if [ -f "$DT/i_lk" ]; then sleep 1
+    else > "$DT/i_lk" & break; fi
+    done
     DC_tlt="$DM_tl/$3/.conf"
     item="${2}"
     
@@ -43,8 +47,9 @@ function index() {
             echo "${item}" >> "$DC_tlt/4.cfg"
             echo "${item}" >> "$DC_tlt/.11.cfg"
         fi
-        rm -f "$tmp"
     fi
+    sleep 0.5
+    rm -f "$DT/i_lk"
 }
 
 
@@ -275,7 +280,7 @@ function voice() {
             echo "$1" | text2wave -o ./s.wav
             sox ./s.wav "$3"
             else
-            msg "$(gettext "Sorry, <b><i>festival</i></b> can not process this language.")\n" error
+            msg "$(gettext "Sorry, <b>festival</b> can not process this language.")\n" error
             [ "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
         else
             echo "$1" | "$synth"
@@ -289,7 +294,7 @@ function voice() {
         [ $lg = chinese ] && lg=Mandarin
         [ $lg = portuguese ] && lg=brazil
         [ $lg = vietnamese ] && lg=vietnam
-        if [ $lg = japanese ]; then msg "$(gettext "Sorry, <b><i>espeak</i></b> can not process Japanese language.")\n" error
+        if [ $lg = japanese ]; then msg "$(gettext "Sorry, <b>espeak</b> can not process Japanese language.")\n" error
         [ "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
         
         espeak "$1" -v $lg -k 1 -p 40 -a 80 -s 110 -w ./s.wav

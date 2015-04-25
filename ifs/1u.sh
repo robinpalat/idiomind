@@ -144,7 +144,7 @@ elif [ $ret -eq 0 ]; then
 
     b=$(tr -dc a-z < /dev/urandom | head -c 1)
     c=$(($RANDOM%100))
-    echo "$c$b" > "$DC_s/5.cfg"
+    echo "$c$b" > "$DC_s/3.cfg"
 
     idiomind -s
 

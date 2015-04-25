@@ -808,9 +808,9 @@ pdfdoc() {
             let n--
         done
 
-        n="$(wc -l < "4.cfg" | awk '{print ($1)}')"
+        n="$(wc -l < "./4.cfg" | awk '{print ($1)}')"
         while [[ $n -ge 1 ]]; do
-            wnm=$(sed -n "$n"p "4.cfg")
+            wnm=$(sed -n "$n"p "./4.cfg")
             fname="$(nmfile "$wnm")"
             tgs=$(eyeD3 "$DM_tlt/$fname.mp3")
             wt=$(grep -o -P "(?<=ISI1I0I).*(?=ISI1I0I)" <<<"$tgs")

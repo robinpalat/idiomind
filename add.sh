@@ -652,8 +652,7 @@ process() {
     
         internet
         
-        (
-        echo "1"
+        (echo "1"
         echo "# $(gettext "Processing")..." ;
         lynx -dump -nolist "${2}"  | sed -n -e '1x;1!H;${x;s-\n- -gp}' \
         | sed 's/<[^>]*>//g' | sed 's/ \+/ /g' \
@@ -672,16 +671,15 @@ process() {
 
     elif [ "$2" = "image" ]; then
         
-        SCR_IMG=`mktemp`
-        trap rm "$SCR_IMG*" EXIT
-        scrot -s "$SCR_IMG.png"
+        pars=`mktemp`
+        trap rm "$pars*" EXIT
+        scrot -s "$pars.png"
         
-        (
-        echo "1"
+        (echo "1"
         echo "# $(gettext "Processing")..." ;
-        mogrify -modulate 100,0 -resize 400% "$SCR_IMG.png"
-        tesseract "$SCR_IMG.png" "$SCR_IMG" &> /dev/null # -l $lgt
-        cat "$SCR_IMG.txt" | sed 's/\\n/./g' \
+        mogrify -modulate 100,0 -resize 400% "$pars.png"
+        tesseract "$pars.png" "$pars" &> /dev/null # -l $lgt
+        cat "$pars.txt" | sed 's/\\n/./g' \
         | sed '/^$/d' | sed 's/^[ \t]*//;s/[ \t]*$//' \
         | sed 's/ \+/ /;s/\://;s/"//;s/^ *//;s/ *$//g' \
         | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. //g' \
@@ -689,10 +687,10 @@ process() {
         | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
         | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' > ./sntsls_> ./sntsls_
         ) | dlg_progress_1
+        rm "$pars.png"
 
     else
-        (
-        echo "1"
+        (echo "1"
         echo "# $(gettext "Processing")..." ;
         if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
         echo "${conten}" \
@@ -747,7 +745,7 @@ process() {
                     ret=$(echo "$?")
                         
                         if [[ $ret -eq 0 ]]; then
-                            "$DS/add.sh" process "$(cat ./sort)" \
+                            "$DS/add.sh" process "$(< ./sort)" \
                             "$DT_r" "$(sed -n 2p "$lckpr")" &
                             exit 1
                         else
@@ -765,14 +763,13 @@ process() {
                     rm -fr "$DT_r" "$lckpr" "$slt" & exit 1; fi
                 
                     while read chkst; do
-                        sed 's/TRUE//g' <<<"$chkst"  >> ./slts
-                    done <<<"$(tac "$slt" | sed 's/|//g')"
+                        sed 's/TRUE//g' <<<"${chkst}"  >> ./slts
+                    done <<<"$(tac "${slt}" | sed 's/|//g')"
                     rm -f "$slt"
 
                     internet
                     cd "$DT_r"
                     touch ./wlog ./slog
-                    
                     {
                     echo "5"
                     echo "# $(gettext "Processing")... " ;

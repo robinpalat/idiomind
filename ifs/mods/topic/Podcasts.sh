@@ -7,13 +7,8 @@ tpa="$(sed -n 1p "$DC_a/4.cfg")"
 if [ "$tpa" != 'Podcasts' ]; then
 [ ! -f "$DM_tl/Podcasts/.conf/8.cfg" ] \
 && echo "11" > "$DM_tl/Podcasts/.conf/8.cfg"
-echo "Podcasts" > "$DC_a/4.cfg"
-echo "$tpc" > "$DC_s/4.cfg"
-echo '2' >> "$DC_s/4.cfg"
-fi
-
-echo "$tpc" > "$DC_s/4.cfg"
-echo '2' >> "$DC_s/4.cfg"
+echo "Podcasts" > "$DC_a/4.cfg"; fi
+[ "$1" = 2 ] && echo 2 > "$DC_s/5.cfg"
 
 function list_1() {
     while read list1; do

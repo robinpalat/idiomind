@@ -40,7 +40,7 @@ vsd() {
 infsd() {
 
     file="$DM_t/saved/$2.id"
-    idlink=$(sed -n 1p "$DC_s/5.cfg")
+    idlink=$(sed -n 1p "$DC_s/3.cfg")
     language_source=$(sed -n 2p "$file" | grep -o 'language_source="[^"]*' | grep -o '[^"]*$')
     language_target=$(sed -n 3p "$file" | grep -o 'language_target="[^"]*' | grep -o '[^"]*$')
     category=$(sed -n 6p "$file" | grep -o 'category="[^"]*' | grep -o '[^"]*$')
@@ -63,9 +63,9 @@ infsd() {
         internet; cd "$DT"
         DOWNLOADS="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP | \
         grep -o 'DOWNLOADS="[^"]*' | grep -o '[^"]*$')"
+        file="$DOWNLOADS/$lng/$lnglbl/$category/$link.$name.idmnd"
         [ -z "$DOWNLOADS" ] && msg "$(gettext "The server is not available at the moment.")" dialog-warning && exit
         
-        file="$DOWNLOADS/$lng/$lnglbl/$category/$link.$name.idmnd"
         WGET() {
         rand="$RANDOM `date`"
         pipe="/tmp/pipe.$(echo '$rand' | md5sum | tr -d ' -')"
@@ -82,10 +82,11 @@ infsd() {
         done > "$pipe" &
         wget_info=$(ps ax |grep "wget.*$1" |awk '{print $1"|"$2}')
         wget_pid=$(echo $wget_info | cut -d'|' -f1)
-        yad --progress --title="Downloading" \
-        --timeout=100 --auto-close \
-        --no-buttons --skip-taskbar --undecorated --on-top \
-        --width=200 --height=20 --geometry=200x20-2-2 < "$pipe"
+        yad --progress --title="$(gettext "Downloading")" \
+        --progress-text=" " --auto-close \
+        --skip-taskbar --no-buttons --on-top --fixed \
+        --width=200 --height=50 --borders=4 --geometry=240x20-4-4 < "$pipe"
+
         if [ "$(ps -A |grep "$wget_pid")" ];then
         kill "$wget_pid"
         fi
@@ -134,10 +135,10 @@ science="$(gettext "Science")"
 interview="$(gettext "Interview")"
 funny="$(gettext "Funny")"
 lnglbl="${lgtl,,}"
-idlink=$(sed -n 1p $DC_s/5.cfg)
-[[ -z "$idlink" ]] && idlink=$(($RANDOM%100))
-mail=$(sed -n 2p $DC_s/5.cfg)
-user=$(sed -n 3p $DC_s/5.cfg)
+idlink=$(sed -n 1p $DC_s/3.cfg)
+[ -z "$idlink" ] && idlink=$(($RANDOM%100))
+mail=$(sed -n 2p $DC_s/3.cfg)
+user=$(sed -n 3p $DC_s/3.cfg)
 [ -z "$user" ] && user=$(echo "$(whoami)")
 nt=$(< "$DC_tlt/10.cfg")
 nme=$(echo "$tpc" | sed 's/ /_/g' | tr -s '"' ' ' | sed 's/’//g')
@@ -209,6 +210,7 @@ Author=$(echo "$upld" | cut -d "|" -f2)
 Mail=$(echo "$upld" | cut -d "|" -f3)
 notes=$(echo "$upld" | cut -d "|" -f6)
 img=$(echo "$upld" | cut -d "|" -f7)
+data=$(curl http://idiomind.sourceforge.net/doc/SITE_TMP)
 
 if [ -f "$img" ]; then
 wsize="$(identify "$img" | cut -d ' ' -f 3 | cut -d 'x' -f 1)"
@@ -265,7 +267,7 @@ level=\"$level\"" > "$DT_u/$tpc/12.cfg"
 cp -f "$DT_u/$tpc/12.cfg" "$DT/12.cfg"
 echo -e "$idlink
 $Mail
-$Author" > "$DC_s/5.cfg"
+$Author" > "$DC_s/3.cfg"
 
 cd "$DM_tlt"
 cp -r ./* "$DT_u/$tpc/"
@@ -301,7 +303,6 @@ mv "$tpc.tar.gz" "$idlink.$tpc.idmnd"
 dte=$(date "+%d %B %Y")
 notify-send "$(gettext "Uploading")" "$(gettext "Please wait while file is uploaded")" -i idiomind -t 6000
 
-data=$(curl http://idiomind.sourceforge.net/doc/SITE_TMP)
 lftp -u "`sed -n 4p <<<"$data" | grep -o 'USER="[^"]*' | grep -o '[^"]*$'`",\
 "`sed -n 5p <<<"$data" | grep -o 'KEY="[^"]*' | grep -o '[^"]*$'`" \
 "`sed -n 3p <<<"$data" | grep -o 'FTPHOST="[^"]*' | grep -o '[^"]*$'`" << END_SCRIPT

@@ -2,6 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
+
 source "$DS/ifs/mods/cmns.sh"
 topic="$1"
 DC_tlt="$DM_tl/$topic/.conf"
@@ -23,7 +24,7 @@ level=\"$level\""
 
 if grep -Fxo "$topic" <<<"${restr}"; then
 
-    "$DS/ifs/mods/topic/$topic.sh" & exit
+    "$DS/ifs/mods/topic/$topic.sh" 2 & exit 1
 
 else
     if [ -d "$DM_tlt" ]; then
@@ -45,7 +46,7 @@ else
         echo "$topic" > "$DC_s/4.cfg"
         echo "$topic" > "$DM_tl/.8.cfg"
         echo "$topic" > "$DT/tpe"
-        echo '0' >> "$DC_s/4.cfg" 
+        echo '0' > "$DC_s/5.cfg"
         echo '0' >> "$DM_tl/.8.cfg"
         
         "$DS/ifs/tls.sh" check_index "$topic" &

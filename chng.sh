@@ -99,7 +99,7 @@ elif [ "$1" != chngi ]; then
     text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/$lgtl'>$(gettext "Search other topics")</a>   </small></small>"
     align="right"; fi
     
-    tpc=$(cat "$DC_s/0.cfg" | \
+    Tpc=$(cat "$DC_s/0.cfg" | \
     yad --list --title="$(gettext "Topics")" "$text" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-column=2 --separator="" \
@@ -121,18 +121,18 @@ elif [ "$1" != chngi ]; then
             
     elif [ $ret -eq 2 ]; then
             
-            if [ -z "$tpc" ]; then exit 1
+            if [ -z "$Tpc" ]; then exit 1
 
             else
-                "$DS/default/tpc.sh" "$tpc" 1 & exit
+                "$DS/default/tpc.sh" "$Tpc" 1 & exit
             fi
 
     elif [ $ret -eq 0 ]; then
             
-            if [ -z "$tpc" ]; then exit 1
+            if [ -z "$Tpc" ]; then exit 1
 
             else
-                "$DS/default/tpc.sh" "$tpc" & exit
+                "$DS/default/tpc.sh" "$Tpc" & exit
             fi
     fi
 fi

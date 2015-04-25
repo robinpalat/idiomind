@@ -55,16 +55,15 @@ set_lang() {
     if [ ! -d "$DM_t/$language" ]; then
     mkdir "$DM_t/$language"
     mkdir "$DM_t/$language/.share"; fi
-        
     echo "$language" > "$DC_s/6.cfg"
     echo "$lgsl" >> "$DC_s/6.cfg"
     "$DS/stop.sh" L
-    
     if [ -f "$DM/topics/$language/.8.cfg" ]; then
     lst=$(sed -n 1p "$DM/topics/$language/.8.cfg")
+    mde=$(sed -n 2p "$DM/topics/$language/.8.cfg")
+    echo "$mde" > "$DC_s/4.cfg"
     "$DS/default/tpc.sh" "$lst" 1
     else rm "$DC_s/4.cfg" && touch "$DC_s/4.cfg"; fi
-    
     "$DS/mngr.sh" mkmn &
 }
 

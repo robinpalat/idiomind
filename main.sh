@@ -243,7 +243,7 @@ fi
 function topic() {
 
     [ -z "$tpc" ] && exit 1
-    mode=$(sed -n 2p "$DC_s/4.cfg")
+    mode=$(sed -n 1p "$DC_s/5.cfg")
     source "$DS/ifs/mods/cmns.sh"
     source "$DS/ifs/mods/topic/items_list.sh"
     
@@ -428,11 +428,10 @@ function topic() {
 }
 
 panel() {
-
-    printf "strt.1.strt\n" >> "$DC_s/8.cfg"
-    echo "$tpc" > "$DT/tpe"
-    if [ ! -d "$DT" ]; then new_session; fi
     
+    printf "strt.1.strt\n" >> "$DC_s/8.cfg"
+    if [ ! -d "$DT" ]; then new_session; fi
+    [ ! -f "$DT/tpe" ] && echo "$(sed -n 1p "$DC_s/4.cfg")" > "$DT/tpe"
     [ -f "$DC_s/10.cfg" ] && date=$(sed -n 1p "$DC_s/10.cfg")
     if [ "$(date +%d)" != "$date" ] || [ ! -f "$DC_s/10.cfg" ]; then
     new_session; fi
