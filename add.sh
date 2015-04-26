@@ -783,7 +783,7 @@ process() {
                         sntc=$(sed -n "$n"p ./slts)
                         trgt=$(translate "$(clean_1 "${sntc}")" auto $lgt | sed ':a;N;$!ba;s/\n/ /g')
                         srce=$(translate "${trgt}" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')
-                        fname="$(nmfile "${trgt}")"
+                        fname=$(nmfile "${trgt}")
                     
                         # words
                         if [ "$(wc -$c <<<"${sntc}")" = 1 ]; then
@@ -834,8 +834,8 @@ process() {
                                         voice "${trgt}" "${DT_r}" "$DM_tlt/$fname.mp3"
                                     fi
 
-                                    (
                                     cd "$DT_r"
+                                    (
                                     r=$(($RANDOM%1000))
                                     clean_3 "$DT_r" "$r"
                                     translate "$(sed '/^$/d' < $aw)" auto $lg | sed 's/,//g' \
@@ -862,10 +862,8 @@ process() {
                                     
                                     echo "__" >> x
                                     rm -f "$DT"/*.$r "$aw" "$bw"
-                                    
-                                    ) &
-                                    
-                                    rm -f "$fname.mp3"
+                                    )
+                                    rm "$fname.mp3"
                                 fi
                             fi
                         fi

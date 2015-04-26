@@ -58,7 +58,7 @@ fonts() {
     ells=$(sort -Ru word2.tmp | head -6)
     echo "$ells" > word2.tmp
     sed '/^$/d' word2.tmp > word2.id
-    s=$((42-${#1}))
+    s=$((40-${#1}))
     cuestion="\n<span font_desc='Free Sans $s'><b>$1</b></span>\n\n"
     }
 

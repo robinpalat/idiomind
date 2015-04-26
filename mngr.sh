@@ -51,8 +51,9 @@ mkmn() {
         [ ! "$DM_tl/$tp/.conf/3.cfg" ] || \
         [ ! "$DM_tl/$tp/.conf/4.cfg" ] || \
         [ -z "$i" ] || [ ! -d "$DM_tl/$tp" ]; then
+        [ -f "$DC_tlt/8.cfg" ] && stts_=$(< "$DC_tlt/8.cfg")
+        if [ "$stts_" != 13 ]; then echo "$stts_" > "$DC_tlt/8.cfg_"; fi
         i=13; echo 13 > "$DM_tl/$tp/.conf/8.cfg";fi
-        
         echo "/usr/share/idiomind/images/img.$i.png" >> "$DC_s/0.cfg"
         echo "$tp" >> "$DC_s/0.cfg"
         echo "$tooltips_1" >> "$DC_s/0.cfg"
@@ -63,9 +64,10 @@ mkmn() {
         f=$(tail -n+51 < "$DM_tl/.1.cfg")
         tp=$(sed -n "$n"p <<<"$f")
         if [ ! -f "$DM_tl/$tp/.conf/8.cfg" ]; then
+        [ -f "$DC_tlt/8.cfg" ] && stts_=$(< "$DC_tlt/8.cfg")
+        if [ "$stts_" != 13 ]; then echo "$stts_" > "$DC_tlt/8.cfg_"; fi
         i=13; echo 13 > "$DM_tl/$tp/.conf/8.cfg"
         else i=$(sed -n 1p "$DM_tl/$tp/.conf/8.cfg"); fi
-        
         if [ ! -f "$DM_tl/$tp/.conf/8.cfg" ] || \
         [ ! "$DM_tl/$tp/.conf/0.cfg" ] || \
         [ ! "$DM_tl/$tp/.conf/1.cfg" ] || \

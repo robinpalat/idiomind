@@ -173,7 +173,8 @@ if [ "$(echo "$1" | grep -o '.idmnd')" ]; then
         --name=Idiomind --class=Idiomind \
         --print-all --dclick-action="$dclk" \
         --window-icon="$DS/images/icon.png" \
-        --no-headers --ellipsize=END --scroll --center \
+        --no-headers --ellipsize=END --fixed \
+        --scroll --center --tooltip-column=1 \
         --width=650 --height=580 --borders=10 \
         --column=Items \
         --button="$(gettext "Info")":"$infs" \
@@ -276,7 +277,7 @@ function topic() {
         printf "tpcs.$tpc.tpcs\n" >> "$DC_s/8.cfg"
         [ ! -z "$author" ] && author="$(gettext "Created by") $author"
 
-        label_info1="<big><big>$tpc </big></big><small>\\n$inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"
+        label_info1="<span font_desc='Free Sans Bold 14' color='#5A5A5A'>$tpc</span><small>\n $inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"
 
         apply() {
 
@@ -356,6 +357,10 @@ function topic() {
                     
                         "$DS/mngr.sh" mark_to_learn "$tpc" 0
                         idiomind topic & exit 1
+                    
+                    elif [[ $ret -eq 3 ]]; then
+                    
+                       exit 1
                     fi 
             fi
 
@@ -408,6 +413,10 @@ function topic() {
 
                     "$DS/mngr.sh" mark_to_learn "$tpc" 0
                     idiomind topic & exit 1
+                    
+                elif [[ $ret -eq 3 ]]; then
+                    
+                       exit 1
                 fi 
         fi
         

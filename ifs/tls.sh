@@ -130,19 +130,20 @@ details() {
     wcfiles=`sed '/^$/d' <<<"${files}" | wc -l`
     wchfiles=`sed '/^$/d' <<<"${hfiles}" | wc -l`
     wcexfiles=`sed '/^$/d' <<<"${exfiles}" | wc -l`
+    others=$((wchfiles+wcexfiles))
     SRFL1=$(cat "./12.cfg")
     SRFL2=$(cat "./10.cfg")
     SRFL3=$(cat "./4.cfg")
     SRFL4=$(cat "./3.cfg")
     SRFL5=$(cat "./0.cfg")
     
+
     echo -e "
 $(gettext "SUMMARY")
 ==========
-$wcdirs Directories
-$wcfiles Files
-$wchfiles Hidden files
-$wcexfiles Executables files
+Directories: $wcdirs
+Files: $wcfiles
+Others files: $others
 
 
 $(gettext "FILES")
@@ -157,8 +158,8 @@ $hfiles
 
 $exfiles
 
-$(gettext "TEXT FILES")
-==========
+$(gettext "CONTENTS OF TEXT FILES")
+====================
 
 $SRFL1
 
@@ -273,9 +274,9 @@ check_index() {
         [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
         msg "$(gettext "File not found")\n" error & exit 1; fi
         
-        if [ "$stts" = "13" ]; then
-        
-            if [ "$DC_tlt/8.cfg_" ]; then
+        if [ "$stts" = 13 ]; then
+            if [ -f "$DC_tlt/8.cfg_" ] && \
+            [ -n $(< "$DC_tlt/8.cfg_") ]; then
             stts=$(sed -n 1p "$DC_tlt/8.cfg_")
             rm "$DC_tlt/8.cfg_"
             else stts=1; fi
@@ -335,7 +336,7 @@ check_index() {
         ((n=n+1))
     done
     rm -f "$DT/index"
-    "$DS/mngr.sh" mkmn &
+    "$DS/mngr.sh" mkmn
     fi
     
     exit

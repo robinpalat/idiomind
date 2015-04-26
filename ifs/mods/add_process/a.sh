@@ -269,7 +269,6 @@ if [[ "$conten" = A ]]; then
                             srce="$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')"
                             
                             mv -f "$sntc.mp3" "$DM_tlt/$fname.mp3"
-
                             (
                             r=$(($RANDOM%1000))
                             clean_3 "$DT_r" "$r"
@@ -296,9 +295,8 @@ if [[ "$conten" = A ]]; then
 
                             echo "__" >> x
                             rm -f "$DT"/*.$r "$aw" "$bw"
-                            ) &
-                    
-                            rm -f "$sntc.mp3"
+                            )
+                            rm "$sntc.mp3"
                         fi
                     fi
                 

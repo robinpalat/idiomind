@@ -50,8 +50,8 @@ fonts() {
     
     fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
     src=$(eyeD3 "$drtt/$fname.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
-    s=$((45-${#1}))
-    c=$((25-${#1}))
+    s=$((42-${#1}))
+    c=$((22-${#1}))
     acuestion="\n\n<span font_desc='Free Sans $s'><b>$1</b></span>"
     bcuestion="\n<span font_desc='Free Sans $c'>$1</span>"
     answer="<span font_desc='Free Sans $s'><b>$src</b></span>"

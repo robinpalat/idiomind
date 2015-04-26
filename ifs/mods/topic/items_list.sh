@@ -88,7 +88,7 @@ function notebook_1() {
     yad --form --tabnum=4 \
     --plug=$KEY \
     --text="$label_info1\n" \
-    --scroll --borders=5 --columns=2 \
+    --scroll --borders=8 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "$tpc" \
     --field="$(gettext "Mark as learned")":FBTN "$cmd_mark" \
     --field=" ":LBL "$set1" \
@@ -136,7 +136,7 @@ function notebook_2() {
     yad --form --tabnum=4 \
     --plug=$KEY \
     --text="$label_info1\n" \
-    --scroll --borders=5 --columns=2 \
+    --scroll --borders=8 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "$tpc" \
     --field="   $(gettext "Review")   ":FBTN "$cmd_mark" \
     --field=" ":LBL "$set1" \
@@ -166,7 +166,8 @@ function dialog_1() {
     --text="$(gettext "More than") $tdays $(gettext "days have passed since you mark this topic as learned.  You'd like to review?")" \
     --image=dialog-question --on-top --center \
     --window-icon="$DS/images/icon.png" \
-    --width=420 --height=150 --borders=10 \
+    --width=450 --height=150 --borders=10 \
+    --button=" $(gettext "Cancel") ":3 \
     --button=" $(gettext "Not Yet") ":1 \
-    --button=" $(gettext "Review") ":2
+    --button=" $(gettext "Yes") ":2
 }
