@@ -19,7 +19,7 @@ function word_view(){
     [ "$mark" = TRUE ] && trgt="<sup>*</sup>$trgt"
     
     yad --form --scroll --title="$item" \
-    --quoted-output \
+    --selectable-labels --quoted-output \
     --text="<span font_desc='Sans Free Bold $fs'>$trgt</span>\n\n<i>$srce</i>\n\n" \
     --window-icon="$DS/images/icon.png" \
     --scroll --center --on-top --skip-taskbar --text-align=center --image-on-top --center \

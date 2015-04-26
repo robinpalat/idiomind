@@ -175,7 +175,6 @@ $SRFL5" | yad --text-info --title="$(gettext "Installation details")" \
     --width=600 --height=550 --borders=0 \
     --button="$(gettext "Open Folder")":"xdg-open '$2'" \
     --button="$(gettext "Close")":0
-    
 } >/dev/null 2>&1
 
 check_index() {
@@ -613,7 +612,7 @@ a_check_updates() {
         rversion="$(curl http://idiomind.sourceforge.net/doc/release | sed -n 1p)"
         pkg='https://sourceforge.net/projects/idiomind/files/idiomind.deb/download'
         
-        if [ "$rversion" != "$(idiomind -v)" ]; then
+        if [ -n "$rversion" ] && [ "$rversion" != "$(idiomind -v)" ]; then
             
             msg_2 "<b>$(gettext "A new version of Idiomind available")\n</b>\n$(gettext "Do you want to download it now?")\n" info "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Updates")" "$(gettext "Ignore this update")"
             ret=$(echo $?)
@@ -793,7 +792,7 @@ mkpdf() {
         mkdir "$DT/mkhtml"
         mkdir "$DT/mkhtml/images"
         nts="$(sed ':a;N;$!ba;s/\n/<br>/g' < "$DC_tlt/10.cfg" \
-        | sed 's/\"/\&quot;/;s/\&/&amp;/g')"
+        | sed 's/\&/&amp;/g')"
 
         cd "$DT/mkhtml"
         cp -f "$DC_tlt/3.cfg" "./3.cfg"
@@ -888,7 +887,7 @@ mkpdf() {
         fi
 
         cd "$DT/mkhtml"
-        n="$(wc -l < "3.cfg")"
+        n="$(wc -l < "./3.cfg")"
         while [[ $n -ge 1 ]]; do
             Word=$(sed -n "$n"p "./3.cfg")
             fname="$(nmfile "$Word")"

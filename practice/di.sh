@@ -73,7 +73,7 @@ cuestion() {
 answer() {
     
     yad --form --title="$(gettext "Practice")" \
-    --timeout=20 \
+    --timeout=20 --selectable-labels \
     --skip-taskbar --text-align=center --align=center --center --on-top \
     --undecorated --buttons-layout=spread \
     --width=415 --height=340 --borders=4 \

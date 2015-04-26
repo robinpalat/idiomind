@@ -74,7 +74,7 @@ mchoise() {
     
     dlg=$(ofonts | yad --list --title="$(gettext "Practice")" \
     --text="$cuestion" \
-    --timeout=15 \
+    --timeout=15 --selectable-labels \
     --skip-taskbar --text-align=center --center --on-top \
     --undecorated \
     --no-headers \

@@ -47,7 +47,8 @@ dialog2() {
     text="<span font_desc='Free Sans Bold 13'>$hint</span>\n"
 
     SE=$(yad --text-info --title="$(gettext "Practice")" \
-    --text="$text" --selectable-labels \
+    --text="$text" \
+    --selectable-labels \
     --name=Idiomind --class=Idiomind \
     --fontname="Free Sans 15" --fore=4A4A4A --justify=fill \
     --margins=5 --editable --wrap \

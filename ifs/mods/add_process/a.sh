@@ -251,8 +251,9 @@ if [[ "$conten" = A ]]; then
                             mksure "$DM_tlt/words/$fname.mp3" "$trgt" "$srce"
                             if [ $? = 0 ]; then
                                 add_tags_1 W "$trgt" "$srce" "$DM_tlt/words/$fname.mp3"
-                                index word "$fname" "$tpe"
+                                index word "$trgt" "$tpe"
                                 echo "$sntc" >> addw
+                                
                             else
                                 [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
                                 printf "\n\n- $sntc" >> ./wlog

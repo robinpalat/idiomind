@@ -70,8 +70,7 @@ conditions() {
     if [ "$nps" -le 0 ]; then
     [[ "$1" != 0 ]] && msg "$(gettext "Missing URL. Please check the settings in the preferences dialog.")\n" info
     [ -f "$DT_r" ] && rm -fr "$DT_r" "$DT/.uptp"
-    exit 1
-    fi
+    exit 1; fi
         
     if [[ "$1" != 0 ]]; then internet; else curl -v www.google.com 2>&1 \
     | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1; fi
@@ -209,7 +208,7 @@ fetch_podcasts() {
 
             if [ "$ntype" = 1 ]; then
 
-                podcast_items="$(xsltproc - "$FEED" <<< "$tmplitem" 2> /dev/null)"
+                podcast_items="$(xsltproc - "$FEED" <<<"$tmplitem" 2> /dev/null)"
                 podcast_items="$(echo "$podcast_items" | tr '\n' ' ' \
                 | tr -s '[:space:]' | sed 's/EOL/\n/g' | head -n "$downloads")"
                 podcast_items="$(echo "$podcast_items" | sed '/^$/d')"
@@ -229,7 +228,7 @@ fetch_podcasts() {
                     || [ -z "$title" ]; then
                     continue; fi
                          
-                    if ! grep -Fxo "$title" < "$DCP/1.cfg"; then
+                    if ! grep -Fxo "$title" "$DCP/1.cfg"; then
                     
                         enclosure_url=$(curl -s -I -L -w %"{url_effective}" \
                         --url "$enclosure" | tail -n 1)
@@ -270,17 +269,21 @@ fetch_podcasts() {
 removes() {
     
     n=50
-    while [[ $n -le "$(wc -l < "$DCP/1.cfg")" ]]; do
-        item="$(sed -n "$n"p "$DCP/1.cfg")"
-        if ! grep -Fxo "$item" < "$DCP/2.cfg"; then
-            fname="$(nmfile "$item")"
-            [ "$DMC/$fname".* ] && rm "$DMC/$fname".*
-        fi
-        grep -vxF "$item" "$DCP/1.cfg" > "$DT/item.tmp"
-        sed '/^$/d' "$DT/item.tmp" > "$DCP/1.cfg"
-        let n++
-    done
-    rm -f "$DT/item.tmp"
+    if [[ "$(wc -l < "$DCP/1.cfg")" -gt $n ]]; then
+        while [[ $n -lt "$(wc -l < "$DCP/1.cfg")" ]]; do
+            item="$(sed -n "$n"p "$DCP/1.cfg")"
+            echo "$item" >> "$DT/rm_items.temp"
+            if ! grep -Fxo "$item" "$DCP/2.cfg"; then
+                fname=$(nmfile "$item")
+                find "$DMC" -type f -name "$fname.*" -exec rm {} +
+            fi
+            let n++
+        done
+        if [ -f "$DT/rm_items.temp" ]; then
+        grep -Fxvf "$DT/rm_items.temp" "$DCP/1.cfg" > "$DT/kp_items.temp"
+        sed '/^$/d' "$DT/kp_items.temp" > "$DCP/1.cfg"
+        rm -f "$DT"/*.temp; fi
+    fi
 }
 
 check_index() {
@@ -305,23 +308,22 @@ check_index() {
         [ -f "$DMC/$fname.flv" ]; then
             continue
         else
-            echo "$item" >> "$DT/cchk"; fi
+            echo "$item" >> "$DT/chk.temp"; fi
         if [ ! -f "$DMC/$fname.png" ]; then
             cp "$df_img" "$DMC/$fname.png"
         fi
     done < "$DCP/1.cfg"
     
-    if [ -f "$DT/cchk" ]; then
+    if [ -f "$DT/chk.temp" ]; then
         while read item; do
             fname="$(nmfile "$item")"
-            grep -vxF "$item" "$DCP/.11.cfg" > "$DCP/.11.cfg.tmp"
-            sed '/^$/d' "$DCP/.11.cfg.tmp" > "$DCP/.11.cfg"
-            grep -vxF "$item" "$DCP/1.cfg" > "$DCP/1.cfg.tmp"
-            sed '/^$/d' "$DCP/1.cfg.tmp" > "$DCP/1.cfg"
-            [ -f "$DMC/$fname.png" ] && rm "$DMC/$fname.png"
-        done < "$DT/cchk"
-        [ "$DCP"/*.tmp ] && rm "$DCP"/*.tmp
-        [ "$DT/cchk" ] && rm "$DT/cchk"
+            grep -vxF "$item" "$DCP/.11.cfg" > "$DT/11cfg.temp"
+            sed '/^$/d' "$DT/11cfg.temp" > "$DCP/.11.cfg"
+            grep -vxF "$item" "$DCP/1.cfg" > "$DT/1cfg.temp"
+            sed '/^$/d' "$DT/1cfg.temp" > "$DCP/1.cfg"
+            find "$DMC" -name "$fname".* -exec rm {} \;
+        done < "$DT/chk.temp"
+        find "$DMC" -type f -name "$fname.*" -exec rm {} +
     fi
 }
 
@@ -378,5 +380,4 @@ if [ "$sync" = TRUE ]; then
     fi
 fi
 fi
-
 exit
