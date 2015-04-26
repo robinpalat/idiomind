@@ -84,7 +84,7 @@ function notebook_1() {
     yad --text-info --tabnum=3 \
     --plug=$KEY \
     --filename="$nt" --editable --wrap --fore='gray30' \
-    --show-uri --fontname='vendana 12' --margins=14 > "$cnf3" &
+    --show-uri --fontname='vendana 11' --margins=14 > "$cnf3" &
     yad --form --tabnum=4 \
     --plug=$KEY \
     --text="$label_info1\n" \
@@ -132,7 +132,7 @@ function notebook_2() {
     yad --text-info --tabnum=3 \
     --plug=$KEY \
     --filename="$nt" --editable --wrap --fore='gray30' \
-    --show-uri --fontname='vendana 12' --margins=14 > "$cnf3" &
+    --show-uri --fontname='vendana 11' --margins=14 > "$cnf3" &
     yad --form --tabnum=4 \
     --plug=$KEY \
     --text="$label_info1\n" \

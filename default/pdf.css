@@ -10,7 +10,7 @@ mark {background-color: #FFFFFF;color: #595754;font-weight: bold;}
 .efont {color: #6F6F6F;font-family: Verdana, Geneva, sans-serif;font-size: 14px;text-align: left;}
 .nfont {color: #6F6F6F;font-family: Verdana, Geneva, sans-serif;font-size: 10px;text-align: left;}
 a img { border: none;}
-.images {font-family: Verdana, Geneva, sans-serif;font-size: 14px;font-weight: bold;color: #666;}
+.images {font-family: sans-serif, Verdana, Geneva;font-size: 16px;font-weight: bold;color: #666;}
 .wrdstable {font-family: Verdana, Geneva, sans-serif;font-size: 13px;font-weight: bold;color: #666;}
 .side {width: 3px;}
 body {margin-left: 20px;margin-top: 10px;margin-right: 40px;margin-bottom: 10px;}

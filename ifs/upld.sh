@@ -170,7 +170,7 @@ upld=$(yad --form --title="$(gettext "Share")" \
 ret=$?
 
 if [[ $ret = 2 ]]; then
-    "$DS/ifs/tls.sh" pdfdoc & exit 1
+    "$DS/ifs/tls.sh" pdf & exit 1
     
 elif [[ $ret = 0 ]]; then
 

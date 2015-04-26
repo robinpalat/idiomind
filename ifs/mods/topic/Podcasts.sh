@@ -49,7 +49,7 @@ function feedmode() {
     --text="<small>$infolabel</small>" \
     --plug=$KEY --filename="$nt" \
     --wrap --editable --fore='gray30' \
-    --show-uri --margins=14 --fontname='vendana 12' > "$fdit" &
+    --show-uri --margins=14 --fontname='vendana 11' > "$fdit" &
     yad --notebook --title="Podcasts  ${info^}" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
