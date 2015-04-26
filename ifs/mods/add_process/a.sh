@@ -3,10 +3,9 @@
 
 function dlg_checklist_5() {
     
-    cmd_edit_="$DS/ifs/mods/add_process/A.sh 'item_for_edit'"
+    cmd_edit_="$DS/ifs/mods/add_process/a.sh 'item_for_edit'"
     cmd_newtopic="$DS/add.sh 'new_topic'"
     slt=$(mktemp "$DT/slt.XXXX.x")
-    
     cat "$1" | awk '{print "FALSE\n"$0}' | \
     yad --list --checklist --title="$2" \
     --text="<small>$info</small>" \
@@ -20,7 +19,6 @@ function dlg_checklist_5() {
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "New Topic")":"cmd_newtopic" \
     --button=gtk-add:0 > "$slt"
-    
 }
 
 function dlg_text_info_5() {
@@ -49,7 +47,7 @@ function dlg_text_info_4() {
 
 function audio_recognizer() {
     
-    echo "$(wget -q -U -T 30 "Mozilla/5.0" --post-file "$1" \
+    echo "$(wget -q -U -T 100 "Mozilla/5.0" --post-file "$1" \
     --header="Content-Type: audio/x-flac; rate=16000" \
     -O - "https://www.google.com/speech-api/v2/recognize?&lang="$2"-"$3"&key=$4")"
 }
@@ -97,6 +95,7 @@ if [[ "$conten" = A ]]; then
     rm -f "$lckpr" & exit 1
         
     else
+        sleep 1
         if [ -z "$tpe" ]; then
         [ "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "No topic is active")\n" info & exit 1; fi
@@ -204,6 +203,7 @@ if [[ "$conten" = A ]]; then
         
             if [ $? -eq 0 ]; then
             
+                sleep 1
                 tpe=$(sed -n 2p "$DT/.n_s_pr")
                 DM_tlt="$DM_tl/$tpe"
                 DC_tlt="$DM_tl/$tpe/.conf"
@@ -214,20 +214,19 @@ if [[ "$conten" = A ]]; then
                 
                 cd "$DT_r"
                 
-                n=1; list="$(tac "$slt" | sed 's/|//g')"
-                while [ $n -le "$(wc -l < "$slt"  | head -200)" ]; do
-                    chkst=$(sed -n "$n"p <<<"$list")
-                    echo "$chkst" | sed 's/TRUE//g' >> ./slts
-                    let n++
-                done
+                while read chkst; do
+                    sed 's/TRUE//g' <<<"${chkst}"  >> ./slts
+                done <<<"$(tac "${slt}" | sed 's/|//g')"
+                rm -f "$slt"
                 
                 rm -f "$slt"
                 sed -i 's/\://g' ./slts
-                internet
-                
+                touch ./wrds ./addw
+
                 (
                 echo "1"
                 echo "# $(gettext "Processing")...";
+                internet
                 if [ $lgt = ja ] || [ $lgt = "zh-cn" ] || [ $lgt = ru ];
                 then c=c; else c=w; fi
                 lns=$(cat ./slts ./wrds | wc -l)
@@ -296,7 +295,7 @@ if [[ "$conten" = A ]]; then
                             echo "__" >> x
                             rm -f "$DT"/*.$r "$aw" "$bw"
                             )
-                            rm "$sntc.mp3"
+                            rm "$fname.mp3"
                         fi
                     fi
                 
@@ -307,8 +306,8 @@ if [[ "$conten" = A ]]; then
                     let n++
                 done
 
-                if [ -n "$(< wrds)" ]; then
-                nwrds=" $(wc -l < wrds  | head -200) $(gettext "Words")"; fi
+                if [ -n "$(< ./wrds)" ]; then
+                nwrds=" $(wc -l < ./wrds  | head -200) $(gettext "Words")"; fi
                 
                 n=1
                 while [ $n -le "$(wc -l < wrds | head -200)" ]; do
@@ -380,7 +379,9 @@ if [[ "$conten" = A ]]; then
                 adds=$(cat ./adds ./addw | wc -l)
                 
                 if [[ "$adds" -ge 1 ]]; then
-                notify-send -i idiomind "$tpe" "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
+                notify-send -i idiomind \
+                "$tpe" \
+                "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
                 echo "aitm.$adds.aitm" >> \
                 $DC/addons/stats/.log; fi
                 

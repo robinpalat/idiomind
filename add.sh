@@ -753,7 +753,8 @@ process() {
                             rm -f "$lckpr" "$slt" & exit 1; fi
                 
                 elif [[ $ret -eq 0 ]]; then
-                
+                    
+                    sleep 1
                     tpe=$(sed -n 2p "$lckpr")
                     DM_tlt="$DM_tl/${tpe}"
                     DC_tlt="$DM_tl/${tpe}/.conf"
@@ -766,13 +767,13 @@ process() {
                         sed 's/TRUE//g' <<<"${chkst}"  >> ./slts
                     done <<<"$(tac "${slt}" | sed 's/|//g')"
                     rm -f "$slt"
-
-                    internet
+                    
                     cd "$DT_r"
                     touch ./wlog ./slog
                     {
                     echo "5"
                     echo "# $(gettext "Processing")... " ;
+                    internet
                     [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ] && c=c || c=w
                     
                     lns="$(cat ./slts ./wrds | wc -l)"
