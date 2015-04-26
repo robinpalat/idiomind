@@ -31,7 +31,7 @@ nu='^[0-9]+$'; if ! [[ $loop =~ $nu ]]; then loop=10; fi
 
 if [ "$1" = chngi ]; then
     
-    DM_tlt=$(sed -n 1p "$DT/.p_")
+    DM_tlt="$(sed -n 1p "$DT/.p_")"
 
     stop_loop() {
     
@@ -99,7 +99,7 @@ elif [ "$1" != chngi ]; then
     text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/$lgtl'>$(gettext "Search other topics")</a>   </small></small>"
     align="right"; fi
     
-    Tpc=$(cat "$DC_s/0.cfg" | \
+    tpc=$(cat "$DC_s/0.cfg" | \
     yad --list --title="$(gettext "Topics")" "$text" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-column=2 --separator="" \
@@ -121,18 +121,18 @@ elif [ "$1" != chngi ]; then
             
     elif [ $ret -eq 2 ]; then
             
-            if [ -z "$Tpc" ]; then exit 1
+            if [ -z "$tpc" ]; then exit 1
 
             else
-                "$DS/default/tpc.sh" "$Tpc" 1 & exit
+                "$DS/default/tpc.sh" "$tpc" 1 & exit
             fi
 
     elif [ $ret -eq 0 ]; then
             
-            if [ -z "$Tpc" ]; then exit 1
+            if [ -z "$tpc" ]; then exit 1
 
             else
-                "$DS/default/tpc.sh" "$Tpc" & exit
+                "$DS/default/tpc.sh" "$tpc" & exit
             fi
     fi
 fi

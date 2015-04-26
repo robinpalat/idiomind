@@ -42,8 +42,8 @@ mkmn() {
         else tooltips_1=""
         fi
         if [ ! -f "$DM_tl/$tp/.conf/8.cfg" ]; then
-        i=13; echo "13" > "$DM_tl/$tp/.conf/8.cfg"
-        else i=$(sed -n 1p < "$DM_tl/$tp/.conf/8.cfg"); fi
+        i=13; echo 13 > "$DM_tl/$tp/.conf/8.cfg"
+        else i=$(sed -n 1p "$DM_tl/$tp/.conf/8.cfg"); fi
         
         if [ ! "$DM_tl/$tp/.conf/8.cfg" ] || \
         [ ! "$DM_tl/$tp/.conf/0.cfg" ] || \
@@ -51,7 +51,7 @@ mkmn() {
         [ ! "$DM_tl/$tp/.conf/3.cfg" ] || \
         [ ! "$DM_tl/$tp/.conf/4.cfg" ] || \
         [ -z "$i" ] || [ ! -d "$DM_tl/$tp" ]; then
-        i=13; echo "13" > "$DM_tl/$tp/.conf/8.cfg";fi
+        i=13; echo 13 > "$DM_tl/$tp/.conf/8.cfg";fi
         
         echo "/usr/share/idiomind/images/img.$i.png" >> "$DC_s/0.cfg"
         echo "$tp" >> "$DC_s/0.cfg"
@@ -63,8 +63,8 @@ mkmn() {
         f=$(tail -n+51 < "$DM_tl/.1.cfg")
         tp=$(sed -n "$n"p <<<"$f")
         if [ ! -f "$DM_tl/$tp/.conf/8.cfg" ]; then
-        i=13; echo "13" > "$DM_tl/$tp/.conf/8.cfg"
-        else i=$(sed -n 1p < "$DM_tl/$tp/.conf/8.cfg"); fi
+        i=13; echo 13 > "$DM_tl/$tp/.conf/8.cfg"
+        else i=$(sed -n 1p "$DM_tl/$tp/.conf/8.cfg"); fi
         
         if [ ! -f "$DM_tl/$tp/.conf/8.cfg" ] || \
         [ ! "$DM_tl/$tp/.conf/0.cfg" ] || \
@@ -278,7 +278,6 @@ delete_item() {
     gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
 
     else
-    
     trgt="${3}"
     msg_2 "$(gettext "Are you sure you want to delete this item?")\n" \
     gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"

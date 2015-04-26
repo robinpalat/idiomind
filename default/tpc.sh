@@ -49,7 +49,7 @@ else
         echo '0' > "$DC_s/5.cfg"
         echo '0' >> "$DM_tl/.8.cfg"
         
-        "$DS/ifs/tls.sh" check_index "$topic" &
+        "$DS/ifs/tls.sh" check_index "$topic"
         
         stts=$(sed -n 1p < "$DC_tlt/8.cfg")
         if [[ $(grep -Fxon "$topic" < "$DM_tl/.1.cfg" \
@@ -89,6 +89,6 @@ else
         
     else
         [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
-        msg " $(gettext "File not found")\n $topic\n" error & exit 1
+        msg "$(gettext "File not found")\n$topic\n" error & exit 1
     fi
 fi

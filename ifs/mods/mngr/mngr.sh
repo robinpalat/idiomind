@@ -134,13 +134,13 @@ function dialog_2() {
     
     yad --title="$tpc" \
     --class=Idiomind --name=Idiomind \
-    --text="  $(gettext "Reviewing all or only new?") " \
+    --text="<b>$(gettext "Reviewing all or only new?")</b>" \
     --window-icon="$DS/images/icon.png" \
     --image=dialog-question --center \
     --on-top --window-icon="$DS/images/icon.png" \
     --width=380 --height=120 --borders=3 \
-    --button="$(gettext "New items")":3 \
-    --button="$(gettext "Review all")":2
+    --button="$(gettext "New Items")":3 \
+    --button="$(gettext "Review All")":2
 }
 
 case "$1" in
