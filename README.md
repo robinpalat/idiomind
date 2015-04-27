@@ -5,7 +5,7 @@ bash (>=4.1) mplayer scrot imagemagick wkhtmltopdf lynx eyed3 curl html2text sox
 
 
 
-<b>Try it (beta) on Ubuntu and derivatives</b>
+<b>Installing in Ubuntu and it's derivatives:</b>
 
 Adding Launchpad repository
 
