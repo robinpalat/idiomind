@@ -786,6 +786,10 @@ mkpdf() {
         mkdir "$DT/mkhtml/images"
         nts="$(sed ':a;N;$!ba;s/\n/<br>/g' < "$DC_tlt/10.cfg" \
         | sed 's/\&/&amp;/g')"
+        if [ -f "$DM_tlt/words/images/img.jpg" ]; then
+        convert "$DM_tlt/words/images/img.jpg" \
+        -alpha set -channel A -evaluate set 50% \
+        "$DT/mkhtml/img.png"; fi
 
         cd "$DT/mkhtml"
         cp -f "$DC_tlt/3.cfg" "./3.cfg"
@@ -821,25 +825,30 @@ mkpdf() {
         <body>
         <div><p></p>
         </div>
-        <div>
-        <p>&nbsp;</p>
+        <div>" >> doc.html
+        if [ -f "$DT/mkhtml/img.png" ]; then
+        echo -e "<table width=\"100%\" border=\"0\">
+        <tr>
+        <td><img src=\"$DT/mkhtml/img.png\" alt="" border=0 height=100% width=100%></img>
+        </td>
+        </tr>
+        </table>" >> doc.html; fi
+        echo -e "<p>&nbsp;</p>
         <h3>$tpc</h3>
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
         <hr>
         <div width=\"80%\" align=\"left\" border=\"0\" class=\"ifont\">
-        <br>" > doc.html
+        <br>" >> doc.html
         printf "$nts" >> doc.html
         echo -e "<p>&nbsp;</p>
         <div>" >> doc.html
 
         cd "$DM_tlt/words/images"
-        cnt=`ls -1 *.jpg 2>/dev/null | wc -l`
+        cnt=`ls -1 *.jpg | grep -v "img.jpg" | wc -l`
         if [[ $cnt != 0 ]]; then
             cd "$DT/mkhtml/images/"
             ls *.png | sed 's/\.png//g' > "$DT/mkhtml/image_list"
             cd "$DT/mkhtml"
-            echo -e "<table width=\"90%\" align=\"center\" border=\"0\" class=\"images\">" >> doc.html
+            echo -e "<p>&nbsp;</p><table width=\"100%\" align=\"center\" border=\"0\" class=\"images\">" >> doc.html
             n=1
             while [[ $n -lt $(($(wc -l < ./image_list)+1)) ]]; do
             
@@ -847,9 +856,9 @@ mkpdf() {
                     label2=$(sed -n "$n",$((n+1))p < ./image_list | sed -n 2p)
                     if [ -n "$label1" ]; then
                         echo -e "<tr>
-                        <td align=\"center\"><img src=\"images/$label1.png\" width=\"240\" height=\"220\"></td>" >> doc.html
+                        <td align=\"center\"><img src=\"images/$label1.png\" width=\"200\" height=\"140\"></td>" >> doc.html
                         if [ -n "$label2" ]; then
-                        echo -e "<td align=\"center\"><img src=\"images/$label2.png\" width=\"240\" height=\"220\"></td></tr>" >> doc.html
+                        echo -e "<td align=\"center\"><img src=\"images/$label2.png\" width=\"200\" height=\"140\"></td></tr>" >> doc.html
                         else
                         echo '</tr>' >> doc.html
                         fi
@@ -874,7 +883,6 @@ mkpdf() {
                 ((n=n+2))
             done
             echo -e "</table>
-            <p>&nbsp;</p>
             <p>&nbsp;</p>" >> doc.html
         fi
 

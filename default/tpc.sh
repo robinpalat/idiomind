@@ -80,9 +80,9 @@ else
         
         if [ "$2" = 1 ]; then 
         
-            sleep 2
+            (sleep 2
             notify-send --icon=idiomind \
-            "$topic" "$(gettext "Is your topic now")" -t 2000 & exit
+            "$topic" "$(gettext "Is your topic now")" -t 2000) & exit
             
         else
             idiomind topic & exit

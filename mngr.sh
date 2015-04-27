@@ -32,7 +32,7 @@ mkmn() {
     > "$DC_s/0.cfg"
     
     n=1
-    while [[ $n -le "$(head -50 < "$DM_tl/.1.cfg" | wc -l)" ]]; do
+    while [[ $n -le "$(head -100 < "$DM_tl/.1.cfg" | wc -l)" ]]; do
     
         tp=$(sed -n "$n"p "$DM_tl/.1.cfg")
         if ! grep -Fxo "$tp" <<<"$restr"; then
@@ -60,7 +60,7 @@ mkmn() {
         let n++
     done
     n=1
-    while [[ $n -le "$(tail -n+51 < "$DM_tl/.1.cfg" | wc -l)" ]]; do
+    while [[ $n -le "$(tail -n+101 < "$DM_tl/.1.cfg" | wc -l)" ]]; do
         f=$(tail -n+51 < "$DM_tl/.1.cfg")
         tp=$(sed -n "$n"p <<<"$f")
         if [ ! -f "$DM_tl/$tp/.conf/8.cfg" ]; then

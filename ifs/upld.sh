@@ -165,9 +165,22 @@ upld=$(yad --form --title="$(gettext "Share")" \
 --field="    $(gettext "Skill Level"):CBE" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
 --field="\n$(gettext "Description/Notes"):TXT" "$nt" \
 --field="$(gettext "Image 600x150px"):FL" "$imgm" \
---button="$(gettext "Cancel")":1 \
+--button="$(gettext "Cancel")":4 \
 --button="$(gettext "PDF")":2 "$btn")
 ret=$?
+
+img=$(echo "$upld" | cut -d "|" -f7)
+if [ -f "$img" ] && [ "$img" != "$imgm" ]; then
+wsize="$(identify "$img" | cut -d ' ' -f 3 | cut -d 'x' -f 1)"
+esize="$(identify "$img" | cut -d ' ' -f 3 | cut -d 'x' -f 2)"
+if [ "$wsize" -gt 1000 ] || [ "$wsize" -lt 600 ] \
+|| [ "$esize" -lt 100 ] || [ "$esize" -gt 400 ]; then
+msg "$(gettext "Sorry, the image size is not suitable.")\n " info "$(gettext "Error")"
+"$DS/ifs/upld.sh" upld "$tpc" & exit 1; fi
+/usr/bin/convert "$img" -interlace Plane -thumbnail 600x150^ \
+-gravity center -extent 600x150 \
+-quality 100% "$DM_tlt/words/images/img.jpg"
+fi
 
 if [[ $ret = 2 ]]; then
     "$DS/ifs/tls.sh" pdf & exit 1
@@ -209,22 +222,7 @@ level=$(echo "$upld" | cut -d "|" -f5)
 Author=$(echo "$upld" | cut -d "|" -f2)
 Mail=$(echo "$upld" | cut -d "|" -f3)
 notes=$(echo "$upld" | cut -d "|" -f6)
-img=$(echo "$upld" | cut -d "|" -f7)
 data=$(curl http://idiomind.sourceforge.net/doc/SITE_TMP)
-
-if [ -f "$img" ]; then
-wsize="$(identify "$img" | cut -d ' ' -f 3 | cut -d 'x' -f 1)"
-esize="$(identify "$img" | cut -d ' ' -f 3 | cut -d 'x' -f 2)"
-if [ "$wsize" -gt 1000 ] || [ "$wsize" -lt 600 ] \
-|| [ "$esize" -lt 100 ] || [ "$esize" -gt 400 ]; then
-msg "$(gettext "Sorry, the image size is not suitable.")\n " info "$(gettext "Error")"
-"$DS/ifs/upld.sh" upld "$tpc" & exit 1; fi
-fi
-
-if [ "$img" != "$imgm" ]; then
-/usr/bin/convert "$img" -interlace Plane -thumbnail 600x150^ \
--gravity center -extent 600x150 \
--quality 100% "$DM_tlt/words/images/img.jpg"; fi
 
 if [ -z "$Ctgry" ]; then
 msg "$(gettext "Please select a category.")\n " info
