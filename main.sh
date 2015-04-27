@@ -156,7 +156,6 @@ if [ "$(echo "$1" | grep -o '.idmnd')" ]; then
 
     if [ "$tpi" != "$name" ]; then
     
-        msg "$(gettext "File is corrupted.")\n " error;
         [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c" \
         "$DT/$tpi.cfg" "$DT/import.tar.gz" & exit 1
         

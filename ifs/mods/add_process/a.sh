@@ -295,7 +295,6 @@ if [[ "$conten" = A ]]; then
                             echo "__" >> x
                             rm -f "$DT"/*.$r "$aw" "$bw"
                             )
-                            rm "$fname.mp3"
                         fi
                     fi
                 

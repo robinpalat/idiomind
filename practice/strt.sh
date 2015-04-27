@@ -28,100 +28,92 @@ learning="$3"
 [ ! -d "$DC_tlt/practice" ] \
 && mkdir "$DC_tlt/practice"
 cd "$DC_tlt/practice"
-
-[ ! -f .iconf ] && echo '1' > .iconf
-[ ! -f .iconmc ] && echo '1' > .iconmc
-[ ! -f .iconlw ] && echo '1' > .iconlw
-[ ! -f .iconls ] && echo '1' > .iconls
-[ ! -f .iconi ] && echo '1' > .iconi
+[ ! -f .icon1 ] && echo 1 > .icon1
+[ ! -f .icon2 ] && echo 1 > .icon2
+[ ! -f .icon3 ] && echo 1 > .icon3
+[ ! -f .icon4 ] && echo 1 > .icon4
+[ ! -f .icon5 ] && echo 1 > .icon5
 
 if [[ -n "$1" ]]; then
 
     if [ "$1" = 1 ]; then
         info1="* "; info6="<b>$(gettext "Test completed!")</b>"
-        echo 21 > .iconf
+        echo 21 > .icon1
     elif [ "$1" = 2 ]; then
         info2="* "; info7="<b>$(gettext "Test completed!")</b>"
-        echo 21 > .iconmc
+        echo 21 > .icon2
     elif [ "$1" = 3 ]; then
         info3="* "; info8="<b>$(gettext "Test completed!")</b>"
-        echo 21 > .iconlw
+        echo 21 > .icon3
     elif [ "$1" = 4 ]; then
         info4="* "; info9="<b>$(gettext "Test completed!")</b>"
-        echo 21 > .iconls
+        echo 21 > .icon4
     elif [ "$1" = 5 ]; then
         info5="* "; info10="<b>$(gettext "Test completed!")</b>"
-        echo 21 > .iconi
+        echo 21 > .icon5
     elif [ "$1" = 6 ]; then
-        learned=$(cat l_f)
-        num=$(cat .iconf)
+        learned=$(< ./l_f)
+        num=$(< ./.icon1)
         info1="* "
         info="  <b><big>$learned </big></b><small>$(gettext "Learned")</small>   <span color='#3AB451'><b><big>$easys </big></b></span><small>$(gettext "Easy")</small>   <span color='#E78C1E'><b><big>$learning </big></b></span><small>$(gettext "Learning")</small>   <span color='#D11B5D'><b><big>$hards </big></b></span><small>$(gettext "Difficult")</small>  \\n"
     elif [ $1 = 7 ]; then
-        learned=$(cat l_m)
-        num=$(cat .iconmc)
+        learned=$(< ./l_m)
+        num=$(< ./.icon2)
         info2="* "
         info="  <b><big>$learned </big></b><small>$(gettext "Learned")</small>   <span color='#3AB451'><b><big>$easys </big></b></span><small>$(gettext "Easy")</small>   <span color='#E78C1E'><b><big>$learning </big></b></span><small>$(gettext "Learning")</small>   <span color='#D11B5D'><b><big>$hards </big></b></span><small>$(gettext "Difficult")</small>  \\n"
     elif [ $1 = 8 ]; then
-        learned=$(cat l_w)
-        num=$(cat .iconlw)
+        learned=$(< ./l_w)
+        num=$(< ./.icon3)
         info3="* "
         info="  <b><big>$learned </big></b><small>$(gettext "Learned")</small>   <span color='#3AB451'><b><big>$easys </big></b></span><small>$(gettext "Easy")</small>   <span color='#E78C1E'><b><big>$learning </big></b></span><small>$(gettext "Learning")</small>   <span color='#D11B5D'><b><big>$hards </big></b></span><small>$(gettext "Difficult")</small>  \\n"
     elif [ $1 = 9 ]; then
-        learned=$(cat l_s)
-        num=$(cat .iconls)
+        learned=$(< ./l_s)
+        num=$(< ./.icon4)
         info4="* "
         info="  <b><big>$learned </big></b><small>$(gettext "Learned")</small>   <span color='#3AB451'><b><big>$easys </big></b></span><small>$(gettext "Easy")</small>   <span color='#E78C1E'><b><big>$learning </big></b></span><small>$(gettext "Learning")</small>   <span color='#D11B5D'><b><big>$hards </big></b></span><small>$(gettext "Difficult")</small>  \\n"
     elif [ $1 = 10 ]; then
-        learned=$(cat l_i)
-        num=$(cat .iconi)
+        learned=$(< ./l_i)
+        num=$(< ./.icon5)
         info5="* "
         info="  <b><big>$learned </big></b><small>$(gettext "Learned")</small>   <span color='#3AB451'><b><big>$easys </big></b></span><small>$(gettext "Easy")</small>   <span color='#E78C1E'><b><big>$learning </big></b></span><small>$(gettext "Learning")</small>   <span color='#D11B5D'><b><big>$hards </big></b></span><small>$(gettext "Difficult")</small>  \\n"
     fi
 fi
 
-img1="$DSP/icons_st/$(cat .iconf).png"
-img2="$DSP/icons_st/$(cat .iconmc).png"
-img3="$DSP/icons_st/$(cat .iconlw).png"
-img4="$DSP/icons_st/$(cat .iconls).png"
-img5="$DSP/icons_st/$(cat .iconi).png"
+img1="$DSP/icons_st/$(< ./.icon1).png"
+img2="$DSP/icons_st/$(< ./.icon2).png"
+img3="$DSP/icons_st/$(< ./.icon3).png"
+img4="$DSP/icons_st/$(< ./.icon4).png"
+img5="$DSP/icons_st/$(< ./.icon5).png"
 
 VAR="$(yad --list --title="$(gettext "Practice") - $tpc" \
 $img --text="$info" \
 --class=Idiomind --name=Idiomind \
---print-column=1 \
+--print-column=1 --separator="" \
 --window-icon="$DS/images/icon.png" \
 --buttons-layout=edge --image-on-top --center --on-top --text-align=center \
 --ellipsize=NONE --no-headers --expand-column=2 --hide-column=1 \
 --width=$wth --height=$eht --borders=10 \
 --column="Action" --column="Pick":IMG --column="Label" \
-Fcards $img1 "    $info1 $info6   $(gettext "Flashcards")" \
-MChoise $img2 "    $info2 $info7   $(gettext "Multiple Choice")" \
-LWords $img3 "    $info3 $info8   $(gettext "Listening Words")" \
-LSntncs $img4 "    $info4 $info9   $(gettext "Listening Sentences")" \
-WImages $img5 "    $info5 $info10   $(gettext "Images")" \
+1 $img1 "    $info1 $info6   $(gettext "Flashcards")" \
+2 $img2 "    $info2 $info7   $(gettext "Multiple Choice")" \
+3 $img3 "    $info3 $info8   $(gettext "Listening Words")" \
+4 $img4 "    $info4 $info9   $(gettext "Listening Sentences")" \
+5 $img5 "    $info5 $info10   $(gettext "Images")" \
 --button="$(gettext "Restart")":3 \
 --button="$(gettext "Start")":0)"
 ret=$?
 
 if [[ $ret -eq 0 ]]; then
 
-    printf "prct.shc.$tpc.prct.shc\n" >> "$DC_s/8.cfg" &
-    if echo "$VAR" | grep "Fcards"; then
-        "$DSP/prct.sh" f & exit 1
-    elif echo "$VAR" | grep "MChoise"; then
-        "$DSP/prct.sh" m & exit 1
-    elif echo "$VAR" | grep "LWords"; then
-        "$DSP/prct.sh" w & exit 1
-    elif echo "$VAR" | grep "LSntncs"; then
-        "$DSP/prct.sh" s & exit 1
-    elif echo "$VAR" | grep "WImages"; then
-        "$DSP/prct.sh" i & exit 1
+    if [ -z "$VAR" ]; then
+    source "$DS/ifs/mods/cmns.sh"
+    msg " $(gettext "You must choose a practice.")\n" info
+    "$DSP/strt.sh" & exit 1
     else
-        source "$DS/ifs/mods/cmns.sh"
-        msg " $(gettext "You must choose a practice.")\n" info
-        "$DSP/strt.sh" & exit 1
+    printf "prct.shc.$tpc.prct.shc\n" >> "$DC_s/8.cfg" &
+    "$DSP/prct.sh" "$VAR" & exit 1
     fi
+
 elif [[ $ret -eq 3 ]]; then
     if [ -d "$DC_tlt/practice" ]; then
     cd "$DC_tlt/practice"

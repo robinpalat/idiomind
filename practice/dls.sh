@@ -18,7 +18,7 @@ score() {
         echo "s9.$(tr -s '\n' '|' < ok.s).s9" >> "$log"
         rm lsin ok.s
         echo "$(date "+%a %d %B")" > lock_ls
-        echo 21 > .iconls
+        echo 21 > .icon4
         "$strt" 4 &
         exit 1
         
@@ -29,7 +29,7 @@ score() {
         n=1; c=1
         while [[ $n -le 21 ]]; do
             if [ "$v" -le "$c" ]; then
-            echo "$n" > .iconls; break; fi
+            echo "$n" > .icon4; break; fi
             ((c=c+5))
             let n++
         done

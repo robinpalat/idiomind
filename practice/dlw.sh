@@ -20,7 +20,7 @@ score() {
         echo "w9.$(tr -s '\n' '|' < ok.w).w9" >> "$log"
         rm lwin lwin1 lwin2 lwin3 ok.w
         echo "$(date "+%a %d %B")" > lock_lw
-        echo 21 > .iconlw
+        echo 21 > .icon3
         "$strt" 3 &
         exit 1
         
@@ -31,7 +31,7 @@ score() {
         n=1; c=1
         while [[ $n -le 21 ]]; do
             if [ "$v" -le "$c" ]; then
-            echo "$n" > .iconlw; break; fi
+            echo "$n" > .icon3; break; fi
             ((c=c+5))
             let n++
         done

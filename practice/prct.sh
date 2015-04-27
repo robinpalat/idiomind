@@ -109,7 +109,7 @@ flashcards() {
 
     cd "$DC_tlt/practice"
     
-    if [ -f lock_f ]; then
+    if [ -f ./lock_f ]; then
         lock "lock_f"
         ret=$(echo "$?")
         if [ "$ret" -eq 0 ]; then
@@ -136,7 +136,7 @@ multiple_choise() {
 
     cd "$DC_tlt/practice"
     
-    if [ -f lock_mc ]; then
+    if [ -f ./lock_mc ]; then
         lock "lock_mc"
         ret=$(echo "$?")
         if [[ "$ret" -eq 0 ]]; then
@@ -166,7 +166,7 @@ listen_words() {
 
     cd "$DC_tlt/practice"
     
-    if [[ -f lock_lw ]]; then
+    if [[ -f ./lock_lw ]]; then
         lock "lock_lw"
         ret=$(echo "$?")
         if [[ "$ret" -eq 0 ]]; then
@@ -193,7 +193,7 @@ listen_sentences() {
 
     cd "$DC_tlt/practice"
     
-    if [ -f lock_ls ]; then
+    if [ -f ./lock_ls ]; then
         lock "lock_ls"
         ret=$(echo "$?")
         if [[ "$ret" -eq 0 ]]; then
@@ -245,15 +245,15 @@ images() {
 }
 
 case "$1" in
-    f)
+    1)
     flashcards ;;
-    m)
+    2)
     multiple_choise ;;
-    w)
+    3)
     listen_words ;;
-    s)
+    4)
     listen_sentences ;;
-    i)
+    5)
     images ;;
 esac
 

@@ -38,6 +38,7 @@ else
         done
         rm "$DM_tlt/.conf/7.cfg"
         rm "$DM_tlt/.conf/9.cfg"
+        echo " " > "$DM_tlt/.conf/10.cfg"
         echo -e "$cfg" > "12.cfg"
         echo "1" > "8.cfg"
         cd "$HOME"

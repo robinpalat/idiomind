@@ -18,27 +18,27 @@ easy="$2"; ling="$3"; hard="$4"; all="$5"
 
 if [ "$1" = df ]; then
     rm lock_f fin fin1 fin2 fin3 ok.f
-    echo "1" > .iconf
+    echo "1" > .icon1
     echo "0" > l_f
     "$DIR/strt.sh" & exit
 elif [ "$1" = dm ]; then
     rm lock_mc mcin1 mcin2 mcin3 word1.idx ok.m
-    echo "1" > .iconmc
+    echo "1" > .icon2
     echo "0" > l_m
     "$DIR/strt.sh" & exit
 elif [ "$1" = dw ]; then
     rm lock_lw lwin lwin1 lwin2 lwin3 ok.w
-    echo "1" > .iconlw
+    echo "1" > .icon3
     echo "0" > l_w
     "$DIR/strt.sh" & exit
 elif [ "$1" = ds ]; then
     rm lock_ls lsin ok.s
-    echo "1" > .iconls
+    echo "1" > .icon4
     echo "0" > l_s
     "$DIR/strt.sh" & exit
 elif [ "$1" = di ]; then
     rm lock_i iin iin1 iin2 iin3 ok.i
-    echo "1" > .iconi
+    echo "1" > .icon5
     echo "0" > l_i
     "$DIR/strt.sh" & exit
 fi
@@ -59,7 +59,7 @@ if [ "$1" = f ]; then
     [ ./fin3 ] && echo "$(< ./fin3)" >> log
     [ ./l_f ] && echo $(($(< ./l_f)+easy)) > ./l_f || echo "$easy" > ./l_f
     v=$((100*$(< ./l_f)/all))
-    stats ./.iconf
+    stats ./.icon1
     "$DIR/strt.sh" 6 "$easy" "$ling" "$hard" & exit 1
 
 elif [ "$1" = m ]; then
@@ -67,7 +67,7 @@ elif [ "$1" = m ]; then
     [ ./mcin3 ] && echo "$(< ./mcin3)" >> log
     [ ./l_m ] && echo $(($(< ./l_m)+easy)) > ./l_m || echo "$easy" > ./l_m
     v=$((100*$(< ./l_m)/all))
-    stats ./.iconmc
+    stats ./.icon2
     "$DIR/strt.sh" 7 "$easy" "$ling" "$hard" & exit 1
 
 elif [ "$1" = w ]; then
@@ -75,7 +75,7 @@ elif [ "$1" = w ]; then
     [ ./lwin3 ] && echo "$(< ./lwin3)" >> log
     [ ./l_w ] && echo $(($(< ./l_w)+easy)) > ./l_w || echo "$easy" > ./l_w
     v=$((100*$(< ./l_w)/all))
-    stats ./.iconlw
+    stats ./.icon3
     "$DIR/strt.sh" 8 "$easy" "$ling" "$hard" & exit 1
 
 elif [ "$1" = s ]; then
@@ -83,7 +83,7 @@ elif [ "$1" = s ]; then
     [ ./quote ] && rm quote; [ ./all ] && rm ./all; [ ./ing ] && rm ./ing
     [ ./l_s ] && echo $(($(< ./l_s)+easy)) > ./l_s || echo "$easy" > ./l_s
     v=$((100*$(< ./l_s)/all))
-    stats ./.iconls
+    stats ./.icon4
     "$DIR/strt.sh" 9 "$easy" "$ling" "$hard" & exit 1
     
 elif [ "$1" = i ]; then
@@ -91,6 +91,6 @@ elif [ "$1" = i ]; then
     [ ./iin3 ] && echo "$(< ./iin3)" >> log
     [ ./l_i ] && echo $(($(< ./l_i)+easy)) > ./l_i || echo "$easy" > ./l_i
     v=$((100*$(< ./l_i)/all))
-    stats ./.iconi
+    stats ./.icon5
     "$DIR/strt.sh" 10 "$easy" "$ling" "$hard" & exit 1
 fi

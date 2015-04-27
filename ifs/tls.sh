@@ -563,14 +563,13 @@ fback() {
     --browser --uri="$web" \
     --window-icon="$DS/images/icon.png" \
     --no-buttons --fixed \
-    --width=500 --height=455
+    --width=500 --height=450
      
 } >/dev/null 2>&1
 
 check_updates() {
 
     cd "$DT"; internet
-    [ -f release ] && rm -f release
     rversion="$(curl http://idiomind.sourceforge.net/doc/release | sed -n 1p)"
     pkg='https://sourceforge.net/projects/idiomind/files/idiomind.deb/download'
     
@@ -598,7 +597,6 @@ check_updates() {
 a_check_updates() {
 
     [ ! -f "$DC_s/9.cfg" ] && echo `date +%d` > "$DC_s/9.cfg" && exit
-    
     d1=$(< "$DC_s/9.cfg"); d2=$(date +%d)
     if [ "$(sed -n 1p "$DC_s/9.cfg")" = 28 ] \
     && [ "$(wc -l < "$DC_s/9.cfg")" -ge 2 ]; then
@@ -607,7 +605,7 @@ a_check_updates() {
     if [ "$d1" != "$d2" ]; then
 
         echo "$d2" > "$DC_s/9.cfg"
-        cd "$DT"; internet; [ -f release ] && rm -f release
+        cd "$DT"; internet
         curl -v www.google.com 2>&1 | \
         grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
         rversion="$(curl http://idiomind.sourceforge.net/doc/release | sed -n 1p)"
@@ -833,13 +831,12 @@ mkpdf() {
         <p>&nbsp;</p>
         <h3>$tpc</h3>
         <p>&nbsp;</p>
-        <hr>
         <p>&nbsp;</p>
+        <hr>
         <div width=\"80%\" align=\"left\" border=\"0\" class=\"ifont\">
         <br>" > doc.html
         printf "$nts" >> doc.html
         echo -e "<p>&nbsp;</p>
-        <p>&nbsp;</p>
         <div>" >> doc.html
 
         cd "$DM_tlt/words/images"
