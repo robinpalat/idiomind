@@ -167,7 +167,6 @@ function dialog_1() {
     --image=dialog-question --on-top --center \
     --window-icon="$DS/images/icon.png" \
     --width=450 --height=150 --borders=10 \
-    --button=" $(gettext "Cancel") ":3 \
     --button=" $(gettext "Not Yet") ":1 \
     --button=" $(gettext "Yes") ":2
 }

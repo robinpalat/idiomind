@@ -268,21 +268,19 @@ fetch_podcasts() {
 
 removes() {
     
-    n=50
-    if [[ "$(wc -l < "$DCP/1.cfg")" -gt $n ]]; then
-        while [[ $n -lt "$(wc -l < "$DCP/1.cfg")" ]]; do
+    n=`wc -l < "$DCP/1.cfg"`
+    if [[ "$n" -gt 50 ]]; then
+        while [[ "$n" -gt 50 ]]; do
             item="$(sed -n "$n"p "$DCP/1.cfg")"
-            echo "$item" >> "$DT/rm_items.temp"
             if ! grep -Fxo "$item" "$DCP/2.cfg"; then
                 fname=$(nmfile "$item")
                 find "$DMC" -type f -name "$fname.*" -exec rm {} +
             fi
-            let n++
+            grep -vxF "$item" "$DCP/1.cfg" > "$DT/item.tmp"
+            sed '/^$/d' "$DT/item.tmp" > "$DCP/1.cfg"
+            ((n=n-1))
         done
-        if [ -f "$DT/rm_items.temp" ]; then
-        grep -Fxvf "$DT/rm_items.temp" "$DCP/1.cfg" > "$DT/kp_items.temp"
-        sed '/^$/d' "$DT/kp_items.temp" > "$DCP/1.cfg"
-        rm -f "$DT"/*.temp; fi
+        rm -f "$DT"/*.temp
     fi
 }
 
@@ -297,14 +295,12 @@ check_index() {
     while read item; do
         fname="$(nmfile "$item")"
         if [ -f "$DMC/$fname.mp3" ] || \
-        [ -f "$DMC/$fname.mp4" ] || \
-        [ -f "$DMC/$fname.jpg" ] || \
-        [ -f "$DMC/$fname.pdf" ] || \
-        [ -f "$DMC/$fname.jpeg" ] || \
-        [ -f "$DMC/$fname.png" ] || \
         [ -f "$DMC/$fname.ogg" ] || \
-        [ -f "$DMC/$fname.avi" ] || \
+        [ -f "$DMC/$fname.mp4" ] || \
         [ -f "$DMC/$fname.m4v" ] || \
+        [ -f "$DMC/$fname.jpg" ] || \
+        [ -f "$DMC/$fname.png" ] || \
+        [ -f "$DMC/$fname.pdf" ] || \
         [ -f "$DMC/$fname.flv" ]; then
             continue
         else
