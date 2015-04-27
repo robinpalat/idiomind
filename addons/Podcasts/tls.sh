@@ -1,6 +1,6 @@
 #!/bin/bash
 
-[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
+source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 IFS=$'\n\t'
 "$(gettext "Tell us if you think this is an error.")
@@ -10,8 +10,6 @@ $(gettext "Marks")" >/dev/null 2>&1
 #
 # rsync delete: disable 0/enable 1
 delete=0
-#
-#
 
 play() {
 
@@ -81,26 +79,6 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
 </xsl:template>
 </xsl:stylesheet>"
 
-#tmpl3="<?xml version='1.0' encoding='UTF-8'?>
-#<xsl:stylesheet version='1.0'
-#xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
-#xmlns:itunes='http://www.itunes.com/dtds/podcast-1.0.dtd'
-#xmlns:media='http://search.yahoo.com/mrss/'
-#xmlns:atom='http://www.w3.org/2005/Atom'>
-#<xsl:output method='text'/>
-#<xsl:template match='/'>
-#<xsl:for-each select='/rss/channel/item'>
-#<xsl:value-of select='enclosure/@url'/><xsl:text>-!-</xsl:text>
-#<xsl:value-of select='media:cache[@type=\"image/jpeg\"]/@url'/><xsl:text>-!-</xsl:text>
-#<xsl:value-of select='media:content[@type=\"image/jpeg\"]/@url'/><xsl:text>-!-</xsl:text>
-#<xsl:value-of select='title'/><xsl:text>-!-</xsl:text>
-#<xsl:value-of select='media:cache[@type=\"image/jpeg\"]/@duration'/><xsl:text>-!-</xsl:text>
-#<xsl:value-of select='itunes:summary'/><xsl:text>-!-</xsl:text>
-#<xsl:value-of select='description'/><xsl:text>EOL</xsl:text>
-#</xsl:for-each>
-#</xsl:template>
-#</xsl:stylesheet>"
-    
     if [ -z "$2" ]; then
     [ "$DIR2/$3.rss" ] && rm "$DIR2/$3.rss"; exit 1; fi
     feed="$2"
@@ -112,25 +90,19 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
     xml="$(xsltproc - "$feed" <<< "$tmpl2" 2> /dev/null)"
     items2="$(echo "$xml" | tr '\n' ' ' | tr -s "[:space:]" \
     | sed 's/EOL/\n/g' | head -n 1 | sed -r 's|-\!-|\n|g')"
-    #xml="$(xsltproc - "$feed" <<< "$tmpl3" 2> /dev/null)"
-    #items3="$(echo "$xml" | tr '\n' ' ' | tr -s [:space:] \
-    #| sed 's/EOL/\n/g' | head -n 1  | sed -r 's|-\!-|\n|g')"
-
+    
     fchannel() {
         
         n=1;
         while read -r get; do
             if [ "$(wc -w <<<"$get")" -ge 1 ] && [ -z "$name" ]; then
-                name="$get"
-                n=2; fi
-                
+            name="$get"
+            n=2; fi
             if [ -n "$(grep 'http:/' <<<"$get")" ] && [ -z "$link" ]; then
-                link="$get"
-                n=3; fi
-                
+            link="$get"
+            n=3; fi
             if [ -n "$(grep -E '.jpeg|.jpg|.png' <<<"$get")" ] && [ -z "$logo" ]; then
-                logo="$get"; fi
-                
+            logo="$get"; fi
             let n++
         done <<< "$items1"
     }
@@ -144,11 +116,9 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
             media="$n"; type=1; break; fi
             let n++
         done <<< "$items2"
-        
         f3="$(sed -n 3p <<<"$items2")"
         f5="$(sed -n 5p <<<"$items2")"
         f6="$(sed -n 6p <<<"$items2")"
-        
         if [ "$(wc -w <<<"$f3")" -ge 2 ] && [ "$(wc -w <<<"$f3")" -le 200 ]; then
         title=3; fi
         if [ "$(wc -w <<<"$f5")" -ge 2 ] && [ -n "$(grep -o -E '\<|\>|/>' <<<"$f5")" ]; then
@@ -169,65 +139,36 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
             image="$n"; type=2; break ; fi
             let n++
         done <<< "$items3"
-        
         n=4
         while read -r get; do
             if [ "$(wc -w <<<"$get")" -ge 1 ] && [ -z "$title" ]; then
             title="$n"; break ; fi
             let n++
         done <<< "$items3"
-        
         n=6
         while read -r get; do
             if [ "$(wc -w <<<"$get")" -ge 1 ] && [ -z "$summ" ]; then
-                summ="$n"; break ; fi
+            summ="$n"; break ; fi
             let n++
         done <<< "$items3"
     }
 
-    #get_images() {
-
-        #n=1
-        #while read -r get; do
-            #if [ -n "$(grep -E '\.jpg|\.jpeg|.png' <<<"$get")" ] && [ -z "$image" ]; then
-                #type=2
-                #image="$n"; break; fi
-            #if [ -n "$(grep -o 'media:thumbnail url="[^"]*' | grep -o '[^"]*$')" <<<"$get" ] && [ -z "$image" ]; then
-                #image="$n"; break; fi
-                #type=2
-            #if [ -n "$(grep -o 'img src="[^"]*' | grep -o '[^"]*$')" <<<"$get" ] && [ -z "$image" ]; then
-                #type=2
-                #image="$n"; break; fi
-            #let n++
-        #done <<< "$items3"
-    #}
-    
     get_summ() {
 
         n=1
         while read -r get; do
             if [ "$(wc -w <<<"$get")" -ge 1 ]; then
-                summ="$n"; break; fi
+            summ="$n"; break; fi
             let n++
         done <<< "$items3"
     }
     
     fchannel
     ftype1
-    #if [ -z "$type" ]; then
-        #ftype2
-        #if [ -z $image ]; then
-        #get_images
-        #fi
-        #if [ -z $summ ]; then
-            #get_summ
-        #fi
-    #fi
-    
+
     if [ -z $sum2 ]; then
     summary="$sum1"; else
     summary="$sum2"; fi
-
     if [[ -n "$title" && -n "$summary" && -z "$image" && -z "$media" ]]; then
     type=3; fi
     
@@ -250,60 +191,6 @@ url=\"$feed\""
         [ "$DIR2/$num.rss" ] && "$DIR2/$num.rss"
         rm -f "$DT/cpt.lock"; exit 1
     fi
-}
-
-check() {
-
-    source $DS/ifs/mods/cmns.sh
-    DIR2="$DM_tl/Podcasts/.conf"
-    DSP="$DS_a/Podcasts"
-    [ -f "$DT/cpt.lock" ] && exit || touch "$DT/cpt.lock"
-
-    internet
-    
-    source "$DIR2/$2.rss" # FIX
-
-    [ -z "$url" ] && exit 1
-     
-    [ ! "$DIR2/$2.rss" ] && printf "$tpl" > "$DIR2/$2.rss"
-    
-    cp "$DIR2/$2.rss" "$DIR2/$2.rss_"
-    
-    podcast_items="$(xsltproc - "$url" <<<"$tmpl2" 2>/dev/null)"
-    podcast_items="$(echo "$podcast_items" | tr '\n' ' ' | tr -s "[:space:]" | sed 's/EOL/\n/g' | head -n 2)"
-    item="$(echo "$podcast_items" | sed -n 1p)"
-    
-    if [ -z "$(echo $item | sed 's/^ *//; s/ *$//; /^$/d')" ]; then
-    msg "$(gettext "Couldn't download the specified URL")\n" info
-    rm -f "$DT/cpt.lock" & exit 1; fi
-    
-    field="$(echo "$item" | sed -r 's|-\!-|\n|g')"
-
-    yad --form --title="$ttl" \
-    --name=Idiomind --class=Idiomind \
-    --always-print-result --separator='\n' \
-    --window-icon="$DS/images/icon.png" --columns=2 --skip-taskbar --scroll --on-top \
-    --width=800 --height=600 --borders=5 \
-    --text="\t<small>$(gettext "In this table you can define fields according to their content,  most of the time the default values is right. ")</small>" \
-    --field="":CB "$(sed -n 1p "$DIR2/$2.rss")!$mn" \
-    --field="":CB "$(sed -n 2p "$DIR2/$2.rss")!$mn" \
-    --field="":CB "$(sed -n 3p "$DIR2/$2.rss")!$mn" \
-    --field="":CB "$(sed -n 4p "$DIR2/$2.rss")!$mn" \
-    --field="":CB "$(sed -n 5p "$DIR2/$2.rss")!$mn" \
-    --field="":CB "$(sed -n 6p "$DIR2/$2.rss")!$mn" \
-    --field="":CB "$(sed -n 7p "$DIR2/$2.rss")!$mn" \
-    --field="":TXT "$(echo "$field" | sed -n 1p)" \
-    --field="":TXT "$(echo "$field" | sed -n 2p)" \
-    --field="":TXT "$(echo "$field" | sed -n 3p | sed 's/\://g')" \
-    --field="":TXT "$(echo "$field" | sed -n 4p | sed 's/\://g')" \
-    --field="":TXT "$(echo "$field" | sed -n 5p)" \
-    --field="\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t":TXT "$(echo "$field" | sed -n 6p)" \
-    --field="":TXT "$(echo "$field" | sed -n 7p)" \
-    --button=gtk-apply:0 | head -n 7 > "$DT/f.tmp"
-
-    [ -n "$(cat "$DT/f.tmp")" ] && mv -f "$DT/f.tmp" "$DIR2/$2.rss" || cp -f "$DIR2/$2.rss_" "$DIR2/$2.rss"
-    [ -f "$DIR2/$2.rss_" ] && rm "$DIR2/$2.rss_"
-    [ -f "$DT/cpt.lock" ] && rm -f "$DT/cpt.lock" & exit
 }
 
 sync() {
@@ -389,8 +276,6 @@ case "$1" in
     play "$@" ;;
     set_channel)
     set_channel "$@" ;;
-    check)
-    check "$@" ;;
     sync)
     sync "$@" ;;
 esac

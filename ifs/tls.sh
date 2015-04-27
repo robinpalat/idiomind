@@ -569,26 +569,24 @@ fback() {
 
 check_updates() {
 
-    cd "$DT"; internet
+    internet
     rversion="$(curl http://idiomind.sourceforge.net/doc/release | sed -n 1p)"
     pkg='https://sourceforge.net/projects/idiomind/files/idiomind.deb/download'
+    echo "$(date +%d)" > "$DC_s/9.cfg"
     
-    if [ "$rversion" != "$(idiomind -v)" ]; then
+    if [ -n "${rversion##+([[:space:]])}" ] && [ "$rversion" != "$(idiomind -v)" ]; then
     
         msg_2 "<b> $(gettext "A new version of Idiomind available") </b>\n\n" \
         info "$(gettext "Download")" "$(gettext "Cancel")" $(gettext "Updates")
+        ret=$(echo $?)
         
         if [[ $ret -eq 0 ]]; then
         
-            xdg-open "$pkg";
-            
-        elif [[ $ret -eq 1 ]]; then
-        
-            echo `date +%d` > "$DC_s/9.cfg";
+            xdg-open "$pkg"
         fi
         
     else
-        msg " $(gettext "No updates available.") \n" info $(gettext "Updates")
+        msg "$(gettext "No updates available.")\n" info $(gettext "Updates")
     fi
 
     exit 0
@@ -598,35 +596,31 @@ a_check_updates() {
 
     [ ! -f "$DC_s/9.cfg" ] && echo `date +%d` > "$DC_s/9.cfg" && exit
     d1=$(< "$DC_s/9.cfg"); d2=$(date +%d)
-    if [ "$(sed -n 1p "$DC_s/9.cfg")" = 28 ] \
-    && [ "$(wc -l < "$DC_s/9.cfg")" -ge 2 ]; then
+    if [ "$(sed -n 1p "$DC_s/9.cfg")" = 28 ] && \
+    [ "$(wc -l < "$DC_s/9.cfg")" -gt 1 ]; then
     rm -f "$DC_s/9.cfg"; fi
+    [ "$(wc -l < "$DC_s/9.cfg")" -gt 1 ] && exit 1
 
     if [ "$d1" != "$d2" ]; then
 
-        echo "$d2" > "$DC_s/9.cfg"
-        cd "$DT"; internet
         curl -v www.google.com 2>&1 | \
         grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
+        echo "$d2" > "$DC_s/9.cfg"
         rversion="$(curl http://idiomind.sourceforge.net/doc/release | sed -n 1p)"
         pkg='https://sourceforge.net/projects/idiomind/files/idiomind.deb/download'
         
-        if [ -n "$rversion" ] && [ "$rversion" != "$(idiomind -v)" ]; then
+        if [ -n "${rversion##+([[:space:]])}" ] && [ "$rversion" != "$(idiomind -v)" ]; then
             
             msg_2 "<b>$(gettext "A new version of Idiomind available")\n</b>\n$(gettext "Do you want to download it now?")\n" info "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Updates")" "$(gettext "Ignore this update")"
             ret=$(echo $?)
             
             if [[ $ret -eq 0 ]]; then
             
-            xdg-open "$pkg";
+            xdg-open "$pkg"
             
             elif [[ $ret -eq 2 ]]; then
             
-            echo `date +%d` >> "$DC_s/9.cfg";
-            
-            elif [[ $ret -eq 1 ]]; then
-            
-            echo `date +%d` > "$DC_s/9.cfg";
+            echo "$d2" >> "$DC_s/9.cfg"
             
             fi
         fi

@@ -1,8 +1,10 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
-source "$DS/ifs/mods/cmns.sh"
+#[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
+source "/usr/share/idiomind/ifs/mods/cmns.sh"
+DC_a="$HOME/.config/idiomind/addons"
+lgtl="$(sed -n 1p "$HOME/.config/idiomind/s/6.cfg")"
 lgt=$(lnglss "$lgtl")
 
 if [ ! -d "$DC_a/dict/" ]; then
