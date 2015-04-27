@@ -471,7 +471,7 @@ function dlg_text_info_3() {
     --window-icon="$DS/images/icon.png" \
     --wrap --margins=4 \
     --center --on-top \
-    --width=420 --height=150 --borders=5 \
+    --width=510 --height=330 --borders=5 \
     "$3" --button="$(gettext "OK")":1
 }
 

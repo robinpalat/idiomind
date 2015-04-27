@@ -165,7 +165,7 @@ if [[ "$conten" = A ]]; then
             | sed 's/"}],"final":true}],"result_index":0}//g')"
             
             if [ ${#trgt} -ge 180 ]; then
-                printf "\n\n- $trgt" >> log
+                printf "\n\n$trgt" >> log
             
             else
                 mv -f "./$n.mp3" "./$trgt.mp3"
@@ -241,7 +241,7 @@ if [[ "$conten" = A ]]; then
                     if [ $(sed -n 1p "$sntc.txt" | wc -$c) -eq 1 ]; then
                     
                         if [ $(wc -l < "$DC_tlt/0.cfg") -ge 200 ]; then
-                            printf "\n\n- $sntc" >> ./wlog
+                            printf "\n\n$sntc" >> ./wlog
                     
                         else
                             srce="$(translate "$trgt" $lgt $lgs)"
@@ -255,14 +255,14 @@ if [[ "$conten" = A ]]; then
                                 
                             else
                                 [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
-                                printf "\n\n- $sntc" >> ./wlog
+                                printf "\n\n$sntc" >> ./wlog
                             fi
                         fi
                     
                     elif [ "$(sed -n 1p "$sntc.txt" | wc -$c)" -ge 1 ]; then
                     
                         if [ "$(wc -l < "$DC_tlt"/0.cfg)" -ge 200 ]; then
-                            printf "\n\n- $sntc" >> ./slog
+                            printf "\n\n$sntc" >> ./slog
                     
                         else
                             srce="$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')"
@@ -288,7 +288,7 @@ if [[ "$conten" = A ]]; then
                                 add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3"
                                 fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
                             else
-                                printf "\n\n- $sntc" >> ./slog
+                                printf "\n\n$sntc" >> ./slog
                                 [ -f "$DM_tlt/$fname.mp3" ] && rm "$DM_tlt/$fname.mp3"
                             fi
 
@@ -315,7 +315,7 @@ if [[ "$conten" = A ]]; then
                     fname="$(nmfile "$trgt")"
 
                     if [ $(wc -l < "$DC_tlt"/0.cfg) -ge 200 ]; then
-                        printf "\n\n- $trgt" >> ./wlog
+                        printf "\n\n$trgt" >> ./wlog
                 
                     else
                         srce="$(translate "$trgt" auto $lgs)"
@@ -336,7 +336,7 @@ if [[ "$conten" = A ]]; then
                             
                         else
                             [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
-                            printf "\n\n- $trgt" >> ./wlog
+                            printf "\n\n$trgt" >> ./wlog
                         fi
                     fi
                     
