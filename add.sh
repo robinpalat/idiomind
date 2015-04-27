@@ -112,10 +112,12 @@ Create one using the button below. ")" & exit 1; fi
         if [[ $ret -eq 3 ]]; then
         
             cd "$DT_r"; set_image_1
+            echo "$tpe" > "$DT/tpe"
             "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
         
         elif [[ $ret -eq 2 ]]; then
         
+            echo "$tpe" > "$DT/tpe"
             "$DS/ifs/tls.sh" add_audio "$DT_r"
             "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
         

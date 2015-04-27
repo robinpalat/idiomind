@@ -440,7 +440,9 @@ panel() {
     printf "strt.1.strt\n" >> "$DC_s/8.cfg"
     if [ ! -d "$DT" ]; then new_session; fi
     [ ! -f "$DT/tpe" ] && echo "$(sed -n 1p "$DC_s/4.cfg")" > "$DT/tpe"
+    [ "$(< "$DT/tpe")" != "$tpc" ] && echo "$(sed -n 1p "$DC_s/4.cfg")" > "$DT/tpe"
     [ -f "$DC_s/10.cfg" ] && date=$(sed -n 1p "$DC_s/10.cfg")
+    
     if [ "$(date +%d)" != "$date" ] || [ ! -f "$DC_s/10.cfg" ]; then
     new_session; fi
     
@@ -463,13 +465,11 @@ version() {
 }
 
 session() {
-    
     new_session
     idiomind &
 }
 
 autostart() {
-
     sleep 50
     [ ! -f "$DT/ps_lk" ] && new_session
     exit 0
