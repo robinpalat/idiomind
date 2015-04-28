@@ -32,10 +32,8 @@ elif [ -f "$DM_tlt/$fname.mp3" ]; then
     sentence_view
     
 else
-    ff=$((index_pos+1))
-    echo "_" >> "$DT/sc"
-    [ "$(wc -l < "$DT/sc")" -ge 5 ] && rm -f "$DT/sc" & exit 1 \
-    || "$DS/vwr.sh" "$1" "$nll" "$ff" & exit 1
+    "$DS/mngr.sh" edit "$1" "$index_pos"
+
 fi
     ret=$?
         

@@ -249,7 +249,7 @@ if [[ "$conten" = A ]]; then
                             
                             mksure "$DM_tlt/words/$fname.mp3" "$trgt" "$srce"
                             if [ $? = 0 ]; then
-                                add_tags_1 W "$trgt" "$srce" "$DM_tlt/words/$fname.mp3"
+                                tags_1 W "$trgt" "$srce" "$DM_tlt/words/$fname.mp3"
                                 index word "$trgt" "$tpe"
                                 echo "$sntc" >> addw
                                 
@@ -284,8 +284,8 @@ if [[ "$conten" = A ]]; then
                             if [ $? = 0 ]; then
                                 echo "$sntc" >> adds
                                 index sentence "$trgt" "$tpe"
-                                add_tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3"
-                                add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3"
+                                tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3"
+                                tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3"
                                 fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
                             else
                                 printf "\n\n$sntc" >> ./slog
@@ -330,7 +330,7 @@ if [[ "$conten" = A ]]; then
                         fi
                         mksure "$DM_tlt/words/$fname.mp3" "$trgt" "$srce"
                         if [ $? = 0 ]; then
-                            add_tags_2 W "$trgt" "$srce" "$exmp" "$DM_tlt/words/$fname.mp3" >/dev/null 2>&1
+                            tags_2 W "$trgt" "$srce" "$exmp" "$DM_tlt/words/$fname.mp3" >/dev/null 2>&1
                             index word "$trgt" "$tpe" "$sname"
                             echo "$trgt" >> addw
                             

@@ -81,39 +81,39 @@ Vietnamese"
 
     if [ "${name}" != "${3}" ] || [ "${#name}" -gt 60 ] || \
     [ `grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${name}"` ]; then
-    msg "$(gettext "File is corrupted.") E1\n" error & exit 1
+    msg "$(gettext "File is corrupted.") 1\n" error & exit 1
     elif ! grep -Fox "${language_source}" <<<"${LANGUAGES}"; then
-    msg "$(gettext "File is corrupted.") E2\n" error && exit 1
+    msg "$(gettext "File is corrupted.") 2\n" error && exit 1
     elif ! grep -Fox "${language_target}" <<<"${LANGUAGES}"; then
-    msg "$(gettext "File is corrupted.") E3\n" error & exit 1
+    msg "$(gettext "File is corrupted.") 3\n" error & exit 1
     elif [ "${#author}" -gt 20 ] || \
     [ `grep -o -E '\.|\*|\/|\@|$|\)|\(|=|-' <<<"${author}"` ]; then
-    msg "$(gettext "File is corrupted.") E4\n" error & exit 1
+    msg "$(gettext "File is corrupted.") 4\n" error & exit 1
     elif [ "${#contact}" -gt 30 ] || \
     [ `grep -o -E '\*|\/|$|\)|\(|=' <<<"${contact}"` ]; then
-    msg "$(gettext "File is corrupted.") E5\n" error & exit 1
+    msg "$(gettext "File is corrupted.") 5\n" error & exit 1
     elif ! grep -Fox "${category}" <<<"${CATEGORIES}"; then
-    msg "$(gettext "File is corrupted.") E6\n" error & exit 1
+    msg "$(gettext "File is corrupted.") 6\n" error & exit 1
     elif ! [[ 1 =~ $nu ]] || [ "${#link}" -gt 400 ]; then
-    msg "$(gettext "File is corrupted.") E7\n" error & exit 1
+    msg "$(gettext "File is corrupted.") 7\n" error & exit 1
     elif ! [[ $date_c =~ $nu ]] || [ "${#date_c}" -gt 12 ] && \
     [ -n "${date_c}" ]; then
-    msg "$(gettext "File is corrupted.") E8\n" error & exit 1
+    msg "$(gettext "File is corrupted.") 8\n" error & exit 1
     elif ! [[ $date_u =~ $nu ]] || [ "${#date_u}" -gt 12 ] && \
     [ -n "${date_u}" ]; then
-    msg "$(gettext "File is corrupted.") E9\n" error & exit 1
+    msg "$(gettext "File is corrupted.") 9\n" error & exit 1
     elif ! [[ $nwords =~ $nu ]] || [ "${nwords}" -gt 200 ]; then
-    msg "$(gettext "File is corrupted.") E10\n" error & exit 1
+    msg "$(gettext "File is corrupted.") 10\n" error & exit 1
     elif ! [[ $nsentences =~ $nu ]] || [ "${nsentences}" -gt 200 ]; then
-    msg "$(gettext "File is corrupted.") E11\n" error & exit 1
+    msg "$(gettext "File is corrupted.") 11\n" error & exit 1
     elif ! [[ $nimages =~ $nu ]] || [ "${nimages}" -gt 200 ]; then
-    msg "$(gettext "File is corrupted.") E12\n" error & exit 1
+    msg "$(gettext "File is corrupted.") 12\n" error & exit 1
     elif ! [[ $level =~ $nu ]] || [ "${#level}" -gt 2 ]; then
-    msg "$(gettext "File is corrupted.") E13\n" error & exit 1
+    msg "$(gettext "File is corrupted.") 13\n" error & exit 1
     elif grep "invalid" <<<"$chckf"; then
-    msg "$(gettext "File is corrupted.") E14\n" error & exit 1
+    msg "$(gettext "File is corrupted.") 14\n" error & exit 1
     elif [[ $dirs -gt 5 ]] ; then
-    msg "$(gettext "File is corrupted.") E15\n" error & exit 1
+    msg "$(gettext "File is corrupted.") 15\n" error & exit 1
     else
     head -n14 < "${file}" > "$DT/$name.cfg"
     fi
@@ -203,9 +203,6 @@ check_index() {
         if [ ! -f "$DC_tlt/8.cfg" ]; then
         echo 1 > "$DC_tlt/8.cfg"; fi
         eval stts=$(sed -n 1p "$DC_tlt/8.cfg")
-        
-        eval mp3s="$(find "$DM_tlt"/ -maxdepth 2 -name '*.mp3' \
-        | sort -k 1n,1 -k 7 | wc -l)"
     }
     
     fix() {
@@ -284,34 +281,17 @@ check_index() {
         fi
     }
         
-    name_files() {
-        
-        cd "$DM_tlt/words/"
-        for i in *.mp3 ; do [ ! -s ${i} ] && rm ${i} ; done
-        find -name "* *" -type f | rename 's/ /_/g'
-        if [ -f ".mp3" ]; then rm ".mp3"; fi
-        cd "$DM_tlt/"
-        for i in *.mp3 ; do [[ ! -s ${i} ]] && rm ${i} ; done
-        find -name "* *" -type f | rename 's/ /_/g'
-        if [ -f ".mp3" ]; then rm ".mp3"; fi
-        cd "$DM_tlt/"; find . -maxdepth 2 -name '*.mp3' \
-        | sort -k 1n,1 -k 7 | sed s'|\.\/words\/||'g \
-        | sed s'|\.\/||'g | sed s'|\.mp3||'g > "$DT/index"
-    }
-
     check
 
     if [ $((chk3+chk4)) != $chk0 ] || [ $((chk1+chk2)) != $chk0 ] \
-    || [ $mp3s != $chk0 ] || [ $stts = 13 ]; then
+    || [ $stts = 13 ]; then
     
         (sleep 1
         notify-send -i idiomind "$(gettext "Index Error")" "$(gettext "Fixing...")" -t 3000) &
         > "$DT/ps_lk"
         [ ! -d "$DM_tlt/.conf" ] && mkdir "$DM_tlt/.conf"
         DC_tlt="$DM_tlt/.conf"
-        
-        name_files
-        
+
         [ "$DC_tlt/.11.cfg" ] && sed -i '/^$/d' "$DC_tlt/.11.cfg"
         if [ "$DC_tlt/.11.cfg" ] && [ -s "$DC_tlt/.11.cfg" ]; then
         index="$DC_tlt/.11.cfg"
@@ -320,16 +300,6 @@ check_index() {
         
         fix
 
-    check
-    
-    if [ $((chk3+chk4)) != $chk0 ] || [ $((chk1+chk2)) != $chk0 ] \
-    || [ $mp3s != $chk0 ] || [ $stts = 13 ]; then
-
-        name_files
-        index="$DT/index"; rm "$DC_tlt/.11.cfg"
-        fix
-    fi
-    
     n=0
     while [[ $n -le 4 ]]; do
         touch "$DC_tlt/$n.cfg"
@@ -506,9 +476,9 @@ echo "<br><br>
         --window-icon="$DS/images/icon.png" --center \
         --width=660 --height=580 --borders=10 \
         --button="$(gettext "Folder")":"xdg-open '$DM_tlt/files'" \
-        --button="$(gettext "Video")":"$DS/ifs/tls.sh 'videourl'" \
-        --button="$(gettext "File")":"$DS/ifs/tls.sh 'add_file'" \
-        --button="$(gettext "Close")":"1"
+        --button="$(gettext "Video URL")":"$DS/ifs/tls.sh 'videourl'" \
+        --button="gtk-add":"$DS/ifs/tls.sh 'add_file'" \
+        --button="gtk-close":"1"
 
         if [ "$ch1" != "$(ls -A "$DM_tlt/files")" ]; then
             mkindex
@@ -904,6 +874,7 @@ mkpdf() {
             | sed "s/"$hlgt"/<b>"$hlgt"<\/\b>/g")
             echo "$trgt" >> trgt_words
             echo "$srce" >> srce_words
+            
             if [ -n "$trgt" ]; then
                 echo -e "<table width=\"55%\" border=\"0\" align=\"left\" cellpadding=\"10\" cellspacing=\"5\">
                 <tr>
@@ -962,15 +933,12 @@ mkpdf() {
                 <tr>
                 <td bgcolor=\"#E6E6E6\" class=\"side\"></td>
                 <td bgcolor=\"#FFFFFF\"><h1>$trgt</h1></td>
-                </tr>" > part1.tmp
-                echo -e "<tr>
+                </tr><tr>
                 <td bgcolor=\"#E6E6E6\" class=\"side\"></td>
                 <td bgcolor=\"#FFFFFF\"><h2>$srce</h2></td>
                 </tr>
                 </table>
-                <h1>&nbsp;</h1>" > part2.tmp
-                cat ./part1.tmp >> doc.html
-                cat ./part2.tmp >> doc.html
+                <h1>&nbsp;</h1>" >> doc.html
             fi
             let n++
         done

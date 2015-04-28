@@ -88,7 +88,7 @@ function notebook_1() {
     yad --form --tabnum=4 \
     --plug=$KEY \
     --text="$label_info1\n" \
-    --scroll --borders=8 --columns=2 \
+    --scroll --borders=10 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "$tpc" \
     --field="$(gettext "Mark as learned")":FBTN "$cmd_mark" \
     --field=" ":LBL "$set1" \
@@ -106,7 +106,7 @@ function notebook_1() {
     --tab="  $(gettext "Learned") ($inx2) " \
     --tab=" $(gettext "Notes") " \
     --tab=" $(gettext "Edit") " \
-    --width=$sx --height=$sy --borders=2 --tab-borders=5 \
+    --width=$sx --height=$sy --borders=0 --tab-borders=3 \
     --button="$(gettext "Lists")":"$cmd_play" \
     --button="$(gettext "Practice")":5 \
     --button="$(gettext "Close")":1
@@ -136,7 +136,7 @@ function notebook_2() {
     yad --form --tabnum=4 \
     --plug=$KEY \
     --text="$label_info1\n" \
-    --scroll --borders=8 --columns=2 \
+    --scroll --borders=10 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "$tpc" \
     --field="   $(gettext "Review")   ":FBTN "$cmd_mark" \
     --field=" ":LBL "$set1" \
@@ -154,7 +154,7 @@ function notebook_2() {
     --tab="  $(gettext "Learned") ($inx2) " \
     --tab=" $(gettext "Notes") " \
     --tab=" $(gettext "Edit") " \
-    --width=$sx --height=$sy --borders=2 --tab-borders=5 \
+    --width=$sx --height=$sy --borders=0 --tab-borders=3 \
     --button="$(gettext "Close")":1
 }
 

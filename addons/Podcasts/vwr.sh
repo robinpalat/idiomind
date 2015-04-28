@@ -9,7 +9,7 @@ export item
 if grep -Fxo "$item" < "$DM_tl/Podcasts/.conf/2.cfg"; then
 btnlabel="$(gettext "Delete")"
 btncmd="'$DSP/mngr.sh' delete_item"; else
-btnlabel="$(gettext "Save")"
+btnlabel="$(gettext "Keep")"
 btncmd="'$DSP/mngr.sh' new_item"; fi
 if [ -f "$dir/$fname.html" ]; then
 uri="$dir/$fname.html"; else

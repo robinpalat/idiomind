@@ -47,7 +47,21 @@ function index() {
             echo "${item}" >> "$DC_tlt/4.cfg"
             echo "${item}" >> "$DC_tlt/.11.cfg"
         fi
+        
     fi
+        
+    if [ "$1" = edit ]; then
+            
+        item="${item}"
+        item_mod="${4}"
+        sed -i "s/${item}/${item_mod}/" "$DC_tlt/0.cfg"
+        sed -i "s/${item}/${item_mod}/" "$DC_tlt/1.cfg"
+        sed -i "s/${item}/${item_mod}/" "$DC_tlt/2.cfg"
+        sed -i "s/${item}/${item_mod}/" "$DC_tlt/4.cfg"
+        sed -i "s/${item}/${item_mod}/" "$DC_tlt/.11.cfg"
+        sed -i "s/${item}/${item_mod}/" "$DC_tlt/practice/lsin"
+    fi
+    
     sleep 0.5
     rm -f "$DT/i_lk"
 }
@@ -138,7 +152,7 @@ function clean_3() {
 }
 
 
-function add_tags_1() {
+function tags_1() {
     
     eyeD3 --set-encoding=utf8 \
     -t I$1I1I0I"$2"I$1I1I0I \
@@ -146,7 +160,7 @@ function add_tags_1() {
 }
 
 
-function add_tags_2() {
+function tags_2() {
     
     eyeD3 --set-encoding=utf8 \
     -t IWI1I0I"$2"IWI1I0I \
@@ -155,14 +169,14 @@ function add_tags_2() {
 }
 
 
-function add_tags_3() {
+function tags_3() {
     
     eyeD3 --set-encoding=utf8 \
     -A IWI3I0I"$2"IWI3I0IIPWI3I0I"$3"IPWI3I0IIGMI3I0I"$4"IGMI3I0I "$5"
 }
 
 
-function add_tags_4() {
+function tags_4() {
     
     eyeD3 --set-encoding=utf8 \
     -t ISI1I0I"$2"ISI1I0I \
@@ -171,27 +185,27 @@ function add_tags_4() {
 }
 
 
-function add_tags_5() {
+function tags_5() {
     
     eyeD3 --set-encoding=utf8 \
     -a I$1I2I0I"$2"I$1I2I0I "$3"
 }
 
 
-function add_tags_6() {
+function tags_6() {
     
     eyeD3 --set-encoding=utf8 \
     -A IWI3I0I"$2"IWI3I0I "$3"
 }
 
 
-function add_tags_8() {
+function tags_8() {
     
     eyeD3 -p I$1I4I0I"$2"I$1I4I0I "$3"
 }
 
 
-function add_tags_9() {
+function tags_9() {
     
     eyeD3 --set-encoding=utf8 -A IWI3I0I"$2"IWI3I0IIPWI3I0I"$3"IPWI3I0I "$4"
 }

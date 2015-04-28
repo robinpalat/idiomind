@@ -50,7 +50,8 @@ else
         echo '0' > "$DC_s/5.cfg"
         echo '0' >> "$DM_tl/.8.cfg"
         
-        "$DS/ifs/tls.sh" check_index "$topic"
+        if [ ! -f "$DT/.n_s_pr" ]; then
+        "$DS/ifs/tls.sh" check_index "$topic"; fi
         
         stts=$(sed -n 1p < "$DC_tlt/8.cfg")
         if [[ $(grep -Fxon "$topic" < "$DM_tl/.1.cfg" \

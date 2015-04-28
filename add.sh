@@ -253,12 +253,12 @@ new_sentence() {
     msg "$(gettext "An error has occurred while saving the note.")\n" dialog-warning
     [ "$DT_r" ] && rm -fr "$DT_r" & exit 1; fi
     
-    add_tags_1 S "${trgt}" "${srce}" "$DM_tlt/$fname.mp3"
+    tags_1 S "${trgt}" "${srce}" "$DM_tlt/$fname.mp3"
 
     if [ -f "$DT_r/img.jpg" ]; then
     set_image_2 "$DM_tlt/$fname.mp3" "$DM_tlt/words/images/$fname.jpg"; fi
     
-    add_tags_3 W "${lwrds}" "${pwrds}" "${grmrk}" "$DM_tlt/$fname.mp3"
+    tags_3 W "${lwrds}" "${pwrds}" "${grmrk}" "$DM_tlt/$fname.mp3"
     notify-send "${trgt}" "${srce}\\n(${tpe})" -t 10000
     index sentence "${trgt}" "${tpe}"
     
@@ -353,7 +353,7 @@ new_word() {
     
     mksure "$DM_tlt/words/$fname.mp3" "${trgt}" "${srce}"
     if [ $? = 0 ]; then
-        add_tags_1 W "${trgt}" "${srce}" "$DM_tlt/words/$fname.mp3"
+        tags_1 W "${trgt}" "${srce}" "$DM_tlt/words/$fname.mp3"
         nt="$(echo "_$(check_grammar_2 "${trgt}")" | tr '\n' '_')"
         eyeD3 --set-encoding=utf8 -A IWI3I0I"$nt"IWI3I0I "$DM_tlt/words/$fname.mp3"
         notify-send "${trgt}" "${srce}\\n(${tpe})" -t 5000
@@ -436,7 +436,7 @@ edit_list_words() {
                 
                 mksure "$DM_tlt/words/$fname.mp3" "${trgt}" "${srce}"
                 if [ $? = 0 ]; then
-                    add_tags_2 W "${trgt}" "${srce}" "${5}" "$DM_tlt/words/$fname.mp3" >/dev/null 2>&1
+                    tags_2 W "${trgt}" "${srce}" "${5}" "$DM_tlt/words/$fname.mp3" >/dev/null 2>&1
                     index word "${trgt}" "${tpc}" "${sname}"
                 
                 else
@@ -584,7 +584,7 @@ sentence_list_words() {
             
             mksure "$DM_tlt/words/$fname.mp3" "${trgt}" "${srce}"
             if [ $? = 0 ]; then
-                add_tags_2 W "${trgt}" "${srce}" "${3}" "$DM_tlt/words/$fname.mp3" >/dev/null 2>&1
+                tags_2 W "${trgt}" "${srce}" "${3}" "$DM_tlt/words/$fname.mp3" >/dev/null 2>&1
                 index word "${trgt}" "${4}"
             
             else
@@ -806,7 +806,7 @@ process() {
 
                                 mksure "$DM_tlt/words/$fname.mp3" "${trgt}" "${srce}"
                                 if [ $? = 0 ]; then
-                                    add_tags_1 W "${trgt}" "${srce}" "$DM_tlt/words/$fname.mp3"
+                                    tags_1 W "${trgt}" "${srce}" "$DM_tlt/words/$fname.mp3"
                                     echo "${trgt}" >> addw
                                     index word "${trgt}" "${tpe}"
 
@@ -854,8 +854,8 @@ process() {
                                     if [ $? = 0 ]; then
                                         echo "$fname" >> adds
                                         index sentence "${trgt}" "${tpe}"
-                                        add_tags_1 S "${trgt}" "${srce}" "$DM_tlt/$fname.mp3"
-                                        add_tags_3 W "${lwrds}" "${pwrds}" "${grmrk}" "$DM_tlt/$fname.mp3"
+                                        tags_1 S "${trgt}" "${srce}" "$DM_tlt/$fname.mp3"
+                                        tags_3 W "${lwrds}" "${pwrds}" "${grmrk}" "$DM_tlt/$fname.mp3"
                                         fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
 
                                     else
@@ -910,7 +910,7 @@ process() {
 
                             mksure "$DM_tlt/words/$fname.mp3" "${trgt}" "${srce}"
                             if [ $? = 0 ]; then
-                                add_tags_2 W "${trgt}" "${srce}" "${sname}" "$DM_tlt/words/$fname.mp3"
+                                tags_2 W "${trgt}" "${srce}" "${sname}" "$DM_tlt/words/$fname.mp3"
                                 index word "${trgt}" "${tpe}" "${sname}"
                                 echo "${trgt}" >> addw
                                 
