@@ -163,7 +163,7 @@ if [ "$(echo "$1" | grep -o '.idmnd')" ]; then
         cd "$tmp"
         ws=$(wc -l < "$tmp/3.cfg")
         ss=$(wc -l < "$tmp/4.cfg")
-        itxt="<span font_desc='Serif 15'>$tpi</span><small>\\n ${language_source^} <b>></b> $language_target\\n $nwords $(gettext "Words") $nsentences $(gettext "Sentences") $nimages $(gettext "Images")\n $(gettext "Level:") $level\n</small>"
+        itxt="<span font_desc='Free Sans 14'>$tpi</span><small>\\n ${language_source^} <b>></b> $language_target\\n $nwords $(gettext "Words") $nsentences $(gettext "Sentences") $nimages $(gettext "Images")\n $(gettext "Level:") $level\n</small>"
         dclk="'$DS/default/vwr_tmp.sh' '$c'"
 
         tac "$tmp/0.cfg" | awk '{print $0""}' | \
@@ -276,7 +276,7 @@ function topic() {
         printf "tpcs.$tpc.tpcs\n" >> "$DC_s/8.cfg"
         [ ! -z "$author" ] && author=" $(gettext "Topic created by") $author"
 
-        label_info1="<span font_desc='Serif 15' color='#5A5A5A'>$tpc</span><small>\n $inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"
+        label_info1="<span font_desc='Free Sans 14' color='#5A5A5A'>$tpc</span><small>\n $inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"
 
         apply() {
 
