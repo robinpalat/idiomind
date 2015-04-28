@@ -19,7 +19,7 @@ if [ ! -d "$DM_tl/Podcasts" ]; then
     echo " " > "$DM_tl/Podcasts/.conf/10.cfg"
     echo -e " $(gettext "Last update:")
  $(gettext "Latest downloads:") 0  $(gettext "Saved episodes:") \
-0 "> "$DM_tl/Podcasts/.update"
+0 "> "$DM_tl/Podcasts/update"
     "$DS/mngr.sh" mkmn
 fi
 
@@ -53,7 +53,7 @@ done
     
 apply() {
     
-    printf "$CNFG" | sed 's/|/\n/g' | sed -n 4,13p | \
+    printf "$CNFG" | sed 's/|/\n/g' | sed -n 4,15p | \
     sed 's/^ *//; s/ *$//g' > "$DT/podcasts.tmp"
 
     n=1; while read feed; do
@@ -71,7 +71,7 @@ apply() {
 
     val1=$(cut -d "|" -f1 <<<"$CNFG")
     val2=$(cut -d "|" -f2 <<<"$CNFG")
-    val3=$(cut -d "|" -f16 <<<"$CNFG" | sed 's|/|\\/|g')
+    val3=$(cut -d "|" -f18 <<<"$CNFG" | sed 's|/|\\/|g')
     if [ ! -d "$val3" ] || [ -z "$val3" ]; then path=/uu; fi
     sed -i "s/update=.*/update=\"$val1\"/g" "$DCP/0.cfg"
     sed -i "s/sync=.*/sync=\"$val2\"/g" "$DCP/0.cfg"
@@ -98,7 +98,7 @@ CNFG=$(yad --form --title="$(gettext "Podcasts settings")" \
 --field="" "$url1" --field="" "$url2" --field="" "$url3" \
 --field="" "$url4" --field="" "$url5" --field="" "$url6" \
 --field="" "$url7" --field="" "$url8" --field="" "$url9" \
---field="" "$url10" \
+--field="" "$url10" --field="" "$url11" --field="" "$url12" \
 --field=" ":LBL " " \
 --field="$(gettext "Path where episodes should be synced")":LBL " " \
 --field="":DIR "$path" \

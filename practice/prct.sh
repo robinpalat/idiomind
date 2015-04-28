@@ -102,7 +102,7 @@ starting() {
     --width=360 --height=120 --borders=5 \
     --button=Ok:1
     
-    "$strt" & killall prct.sh & exit 1
+    "$strt" & exit 1
 }
 
 flashcards() {

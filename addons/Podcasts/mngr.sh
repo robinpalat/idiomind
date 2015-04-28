@@ -73,9 +73,8 @@ elif [ "$1" = delete_1 ]; then
     if [[ $ret -eq 0 ]]; then
 
         rm "$DM_tl/Podcasts/cache"/*
-        rm "$DM_tl/Podcasts/.conf/.updt.lst"
         rm "$DM_tl/Podcasts/.conf/1.cfg"
-        rm "$DM_tl/Podcasts/.conf/.update"
+        rm "$DM_tl/Podcasts/update"
         touch "$DM_tl/Podcasts/.conf/1.cfg"
     fi
     exit

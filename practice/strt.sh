@@ -17,7 +17,7 @@
 #  MA 02110-1301, USA.
 #  
 
-[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
+source /usr/share/idiomind/ifs/c.conf
 DSP="$DS/practice"
 wth=500
 eht=450

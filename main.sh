@@ -274,7 +274,7 @@ function topic() {
         img="--image=$DM_tlt/words/images/img.jpg"
         sx=612; sy=580; else sx=640; sy=560; fi
         printf "tpcs.$tpc.tpcs\n" >> "$DC_s/8.cfg"
-        [ ! -z "$author" ] && author="$(gettext "Created by") $author"
+        [ ! -z "$author" ] && author=" $(gettext "Topic created by") $author"
 
         label_info1="<span font_desc='Free Sans Bold 14' color='#5A5A5A'>$tpc</span><small>\n $inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"
 

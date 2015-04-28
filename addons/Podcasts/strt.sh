@@ -24,7 +24,8 @@ DSP="$DS/addons/Podcasts"
 DMC="$DM_tl/Podcasts/cache"
 DCP="$DM_tl/Podcasts/.conf"
 DT_r="$(mktemp -d "$DT/XXXX")"
-downloads=5
+dfimg="$DSP/images/audio.png"
+downloads=4
 
 tmplitem="<?xml version='1.0' encoding='UTF-8'?>
 <xsl:stylesheet version='1.0'
@@ -194,7 +195,6 @@ fetch_podcasts() {
             if [ -f "$DCP/$n.rss" ]; then
                 d=0
                 while [[ $d -lt 8 ]]; do
-                
                     itn=$((d+1)); get=${sets[$d]}
                     val=$(sed -n "$itn"p < "$DCP/$n.rss" \
                     | grep -o "$get"=\"[^\"]* | grep -o '[^"]*$')
@@ -245,7 +245,7 @@ fetch_podcasts() {
                         mkhtml
 
                         if [ -s "$DCP/1.cfg" ]; then
-                        sed -i -e "1i$title\\" "$DCP/1.cfg"
+                        sed -i -e "1i$title\\" "$DCP/1.cfg" # clean title
                         else echo "$title" > "$DCP/1.cfg"; fi
                         if grep '^$' "$DCP/1.cfg"; then
                         sed -i '/^$/d' "$DCP/1.cfg"; fi
@@ -268,67 +268,55 @@ fetch_podcasts() {
 
 removes() {
     
-    n=`wc -l < "$DCP/1.cfg"`
-    if [[ "$n" -gt 50 ]]; then
-        while [[ "$n" -gt 50 ]]; do
-            item="$(sed -n "$n"p "$DCP/1.cfg")"
-            if ! grep -Fxo "$item" "$DCP/2.cfg"; then
-                fname=$(nmfile "$item")
-                find "$DMC" -type f -name "$fname.*" -exec rm {} +
-            fi
-            grep -vxF "$item" "$DCP/1.cfg" > "$DT/item.tmp"
-            sed '/^$/d' "$DT/item.tmp" > "$DCP/1.cfg"
-            ((n=n-1))
-        done
-        rm -f "$DT"/*.temp
-    fi
-}
-
-check_index() {
-    
     check_index1 "$DCP/1.cfg"
     if grep '^$' "$DCP/1.cfg"; then
     sed -i '/^$/d' "$DCP/1.cfg"; fi
-    cp -f "$DCP/1.cfg" "$DCP/.11.cfg"
-    
-    df_img="$DSP/images/item.png"
+    echo "$(tail -n+51 < "$DCP/1.cfg")" >> "$DCP/remove"
+    echo "$(head -n 50 < "$DCP/1.cfg")" > "$DCP/kept"
+
     while read item; do
-        fname="$(nmfile "$item")"
-        if [ -f "$DMC/$fname.mp3" ] || \
-        [ -f "$DMC/$fname.ogg" ] || \
-        [ -f "$DMC/$fname.mp4" ] || \
-        [ -f "$DMC/$fname.m4v" ] || \
-        [ -f "$DMC/$fname.jpg" ] || \
-        [ -f "$DMC/$fname.png" ] || \
-        [ -f "$DMC/$fname.pdf" ] || \
-        [ -f "$DMC/$fname.flv" ]; then
+        if ! grep -Fxo "$item" "$DCP/2.cfg"; then
+        fname=$(nmfile "$item")
+        find "$DMC" -type f -name "$fname.*" -exec rm {} +
+        fi
+    done < "$DCP/remove"
+    
+    while read item; do
+       
+        [ ! -f "$DMC/$fname.png" ] && cp "$dfimg" "$DMC/$fname.png"
+        
+        if [ -f "$DMC/$fname.mp3" ] || [ -f "$DMC/$fname.ogg" ] \
+        || [ -f "$DMC/$fname.mp4" ] || [ -f "$DMC/$fname.m4v" ] \
+        || [ -f "$DMC/$fname.jpg" ] || [ -f "$DMC/$fname.png" ] \
+        || [ -f "$DMC/$fname.pdf" ] \
+        && ([ -f "$DMC/$fname.html" ] && [ -f "$DMC/$fname.item" ]); then
             continue
         else
-            echo "$item" >> "$DT/chk.temp"; fi
-        if [ ! -f "$DMC/$fname.png" ]; then
-            cp "$df_img" "$DMC/$fname.png"
-        fi
-    done < "$DCP/1.cfg"
+        grep -vxF "$item" "$DCP/2.cfg" > "$DT/rm.temp"
+        sed '/^$/d' "$DT/rm.temp" > "$DCP/2.cfg"
+        grep -vxF "$item" "$DCP/1.cfg" > "$DT/rm.temp"
+        sed '/^$/d' "$DT/rm.temp" > "$DCP/1.cfg"
+        find "$DMC" -name "$fname".* -exec rm {} \;
+        fi 
+    done < "$DCP/kept"
     
-    if [ -f "$DT/chk.temp" ]; then
-        while read item; do
-            fname="$(nmfile "$item")"
-            grep -vxF "$item" "$DCP/.11.cfg" > "$DT/11cfg.temp"
-            sed '/^$/d' "$DT/11cfg.temp" > "$DCP/.11.cfg"
-            grep -vxF "$item" "$DCP/1.cfg" > "$DT/1cfg.temp"
-            sed '/^$/d' "$DT/1cfg.temp" > "$DCP/1.cfg"
-            find "$DMC" -name "$fname".* -exec rm {} \;
-        done < "$DT/chk.temp"
-        find "$DMC" -type f -name "$fname.*" -exec rm {} +
-    fi
+    mv -f "$DCP/kept" "$DCP/1.cfg"
+    check_index1 "$DCP/1.cfg" "$DCP/2.cfg"
+    if grep '^$' "$DCP/1.cfg"; then
+    sed -i '/^$/d' "$DCP/1.cfg"; fi
+    if grep '^$' "$DCP/2.cfg"; then
+    sed -i '/^$/d' "$DCP/2.cfg"; fi
+    echo "$(< "$DCP/remove" | head -n 50)" > "$DCP/remove_"
+    mv -f "$DCP/remove_" "$DCP/remove"
+    cp -f "$DCP/1.cfg" "$DCP/.11.cfg"
 }
 
 conditions "$1"
 
 if [[ "$1" != 0 ]]; then
 echo "$tpc" > "$DC_s/4.cfg"
-echo '2' >> "$DC_s/4.cfg"
-echo "11" > "$DCP/8.cfg"
+echo 2 >> "$DC_s/4.cfg"
+echo 11 > "$DCP/8.cfg"
 (sleep 2 && notify-send -i idiomind "$(gettext "Updating")" \
 "$(gettext "Checking new episodes...")" -t 6000) &
 fi
@@ -337,7 +325,7 @@ if [ -f "$DCP/2.cfg" ]; then kept_episodes="$(wc -l < "$DCP/2.cfg")"
 else kept_episodes=0; fi
 echo -e " <b>$(gettext "Updating")</b>
  $(gettext "Latest downloads:") 0  $(gettext "Saved episodes:") \
-$kept_episodes "> "$DM_tl/Podcasts/.update"
+$kept_episodes "> "$DM_tl/Podcasts/update"
 
 fetch_podcasts
 
@@ -345,15 +333,13 @@ if [ -f "$DT_r/log" ]; then new_episodes="$(wc -l < "$DT_r/log")"
 else new_episodes=0; fi
 echo -e " $(gettext "Last update:") $(date "+%r %a %d %B")
  $(gettext "Latest downloads:") $new_episodes  $(gettext "Saved episodes:") \
-$kept_episodes "> "$DM_tl/Podcasts/.update"
+$kept_episodes "> "$DM_tl/Podcasts/update"
 
 rm -fr "$DT_r" "$DT/.uptp"
 
 if [ "$new_episodes" -gt 0 ]; then
 
     removes
-    check_index
-    
     notify-send -i idiomind \
     "$(gettext "Feeds updated")" \
     "$new_episodes $(gettext "new episode(s)")" -t 8000

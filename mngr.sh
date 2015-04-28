@@ -540,7 +540,7 @@ edit() {
                 pwrds=$(tr '\n' '_' < "./B.$r")
                 add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname2.mp3"
                 fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
-                [ "$DT_r" ] && rm -fr "$DT_r") &
+                [ "$DT_r" ] && rm -fr "$DT_r")
                 
                 fname="$fname2"
             fi
@@ -578,7 +578,7 @@ edit() {
                     pwrds=$(tr '\n' '_' < "./B.$r")
                     add_tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3"
                     fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
-                    [ "$DT_r" ] && rm -fr "$DT_r") &
+                    [ "$DT_r" ] && rm -fr "$DT_r")
                 fi
             fi
             

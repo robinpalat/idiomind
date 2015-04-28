@@ -402,9 +402,11 @@ add_file() {
     if [[ $ret -eq 0 ]]; then
     
         while read -r file; do
-        [ -f "$file" ] && cp -f "$file" "$DM_tlt/files"
+        [ -f "$file" ] && cp -f "$file" \
+        "$DM_tlt/files/$(basename "$file" |iconv -c -f utf8 -t ascii)"
         done <<<"$(tr '|' '\n' <<<"$FL")"
     fi
+    
 } >/dev/null
 
 videourl() {
@@ -938,7 +940,6 @@ mkpdf() {
                     </tr>
                     </table>" >> doc.html
                 fi
-                echo -e "<p>&nbsp;</p>" >> doc.html
             fi
             let n--
         done

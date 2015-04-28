@@ -33,7 +33,7 @@ function feedmode() {
     fdit=$(mktemp "$DT/fdit.XXXX")
     c=$(echo $(($RANDOM%100000))); KEY=$c
     [ -f "$DT/.uptp" ] && info="- $(gettext "Updating")..."
-    infolabel="$(< "$DM_tl/Podcasts/.update")"
+    infolabel="$(< "$DM_tl/Podcasts/update")"
     
     list_1 | yad --list --tabnum=1 \
     --plug=$KEY --print-all --dclick-action="$DSP/vwr.sh" \
