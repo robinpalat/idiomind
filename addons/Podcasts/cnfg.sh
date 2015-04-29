@@ -9,7 +9,6 @@ sets=('update' 'sync' 'path')
 [ -n "$(< "$DCP/0.cfg")" ] && cfg=1 || > "$DCP/0.cfg"
 
 if [ ! -d "$DM_tl/Podcasts" ]; then
-
     mkdir "$DM_tl/Podcasts"
     mkdir "$DM_tl/Podcasts/.conf"
     mkdir "$DM_tl/Podcasts/cache"
