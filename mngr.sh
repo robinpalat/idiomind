@@ -611,13 +611,6 @@ edit() {
             else
                 "$DS/vwr.sh" "$lists" "$trgt_mod" "$item_pos" &
             fi
-            
-    else
-    dlg_form_3 "$file_tmp" #####################################################################################
-    
-    "$DS/vwr.sh" "$lists" "$trgt_mod" $((item_pos-1)) &
-            
-            
         exit
     fi
 } >/dev/null 2>&1

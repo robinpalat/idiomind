@@ -272,7 +272,7 @@ function topic() {
         set1=$(< "$DC_tlt/5.cfg")
         if [ -f "$DM_tlt/words/images/img.jpg" ]; then
         img="--image=$DM_tlt/words/images/img.jpg"
-        sx=612; sy=580; else sx=640; sy=560; fi
+        sx=608; sy=580; else sx=620; sy=560; fi
         printf "tpcs.$tpc.tpcs\n" >> "$DC_s/8.cfg"
         [ ! -z "$author" ] && author=" $(gettext "Topic created by") $author"
 

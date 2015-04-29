@@ -854,8 +854,7 @@ mkpdf() {
 
                 ((n=n+2))
             done
-            echo -e "</table>
-            <p>&nbsp;</p>" >> doc.html
+            echo -e "</table>" >> doc.html
         fi
 
         cd "$DT/mkhtml"

@@ -130,30 +130,6 @@ function dlg_form_2() {
 } >/dev/null 2>&1
 
 
-function dlg_form_3() {
-        
-    yad --form --title="$trgt" \
-    --name=Idiomind --class=Idiomind \
-    --always-print-result --separator="\n" --selectable-labels \
-    --window-icon="$DS/images/icon.png" --center --align=center \
-    --buttons-layout=end \
-    --width=$wth --height=$eht --borders=10 \
-    --field="$(gettext "Mark")":CHK "$mark" \
-    --field="<small>$lgtl</small>":TXT "$trgt" \
-    --field="<small>$lgsl</small>":TXT "$srce" \
-    --field="$(gettext "Listen")":FBTN "$cmd_play" \
-    --field="<small>$(gettext "Topic")</small>":CB "$tpc!$tpcs" \
-    --field="<small>$(gettext "Audio")</small>":FL "$DM_tlt/$fname.mp3" \
-    --button="$(gettext "Move")":"$cmd_move" \
-    --button="$(gettext "Words")":"$cmd_words" \
-    --button="$(gettext "Image")":"$cmd_image" \
-    --button="$(gettext "Delete")":"$cmd_delete" \
-    --button="gtk-go-down":2 \
-    --button="$(gettext "Close")":0 > "$1"
-} >/dev/null 2>&1
-
-
-
 function dialog_2() {
     
     yad --title="$tpc" \
