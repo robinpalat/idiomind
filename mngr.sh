@@ -624,7 +624,7 @@ rename_topic() {
     jlb="${2}"
     jlb="$(clean_2 "$jlb")"
     if grep -Fxo "$jlb" <<<"$restr"; then jlb="$jlb."; fi
-    snm="$(grep -Fxo "$jlb" < "$DM_tl/.1.cfg" | wc -l)"
+    snm="$(grep -Fxo "$jlb" "$DM_tl/.1.cfg" | wc -l)"
   
     if [ -f "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "$tpc" ]; then
     msg "$(gettext "Unable to rename at this time. Please try later ")\n" \

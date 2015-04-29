@@ -44,18 +44,18 @@ dialog2() {
     |sed 's/\b\(.\)/\u\1/g'|tr -s ',' ' ' \
     |sed 's|\.||;s|\,||;s|\;||g'|sed 's|[a-z]|\.|g'|sed 's| |\t|g' \
     |sed 's|\.|\ .|g' | tr "[:upper:]" "[:lower:]"|sed 's/^\s*./\U&\E/g')"
-    text="<span font_desc='Free Sans Bold 13'>$hint</span>\n"
+    text="<span font_desc='Serif Bold 12'>$hint</span>\n"
 
     SE=$(yad --text-info --title="$(gettext "Practice")" \
     --text="$text" \
     --selectable-labels \
     --name=Idiomind --class=Idiomind \
-    --fontname="Free Sans 15" --fore=4A4A4A --justify=fill \
+    --fontname="Free Sans 14" --fore=4A4A4A --justify=fill \
     --margins=5 --editable --wrap \
     --window-icon="$DS/images/icon.png" --image="$DS/practice/bar.png" \
     --buttons-layout=end --skip-taskbar --undecorated --center --on-top \
     --text-align=left --align=left --image-on-top \
-    --height=270 --width=560 --borders=5 \
+    --height=240 --width=560 --borders=4 \
     --button="$(gettext "Exit")":1 \
     --button="$(gettext "Listen")":"play '$DM_tlt/$fname.mp3'" \
     --button=" $(gettext "OK") >> ":0)
@@ -70,12 +70,12 @@ check() {
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --wrap --scroll --image-on-top --center --on-top \
     --undecorated --buttons-layout=end \
-    --width=560 --height=270 --borders=5 \
+    --width=560 --height=250 --borders=10 \
     --button="$(gettext "Exit")":1 \
     --button="$(gettext "Listen")":"play '$DM_tlt/$fname.mp3'" \
     --button="$(gettext "Next")":2 \
-    --field="":lbl --text="<span font_desc='Free Sans 15'>$wes</span>\\n" \
-    --field="<span font_desc='Free Sans 9'>$(sed 's/\,*$/\./g' <<<"$OK") $prc</span>\\n":lbl
+    --field="":lbl --text="<span font_desc='Free Sans 14'>$wes</span>\\n" \
+    --field="<span font_desc='Free Sans 9'>$(sed 's/\,*$/\./g' <<<"$OK")\n\n$prc</span>\n":lbl
     }
     
 get_text() {
@@ -100,11 +100,11 @@ result() {
         if grep -oFx "$line" ./all; then
             sed -i "s/"$line"/<b>"$line"<\/b>/g" quote
             [ -n "$line" ] && echo \
-            "<span color='#3A9000'><b>${line^}</b></span>,  " >> ./wrds
+            "<span color='#3A9000'><b>${line^}</b></span>  " >> ./wrds
             [ -n "$line" ] && echo "$line" >> w.ok
         else
             [ -n "$line" ] && echo \
-            "<span color='#7B4A44'><b>${line^}</b></span>,  " >> ./wrds
+            "<span color='#7B4A44'><b>${line^}</b></span>  " >> ./wrds
         fi
         let n++
         
