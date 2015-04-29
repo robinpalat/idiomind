@@ -280,6 +280,21 @@ check_index() {
             echo "$stts" > "$DC_tlt/8.cfg"
         fi
     }
+    
+    namefiles() {
+        
+        cd "$DM_tlt/words/"
+        for i in *.mp3 ; do [ ! -s ${i} ] && rm ${i} ; done
+        find -name "* *" -type f | rename 's/ /_/g'
+        if [ -f ".mp3" ]; then rm ".mp3"; fi
+        cd "$DM_tlt/"
+        for i in *.mp3 ; do [[ ! -s ${i} ]] && rm ${i} ; done
+        find -name "* *" -type f | rename 's/ /_/g'
+        if [ -f ".mp3" ]; then rm ".mp3"; fi
+        cd "$DM_tlt/"; find . -maxdepth 2 -name '*.mp3' \
+        | sort -k 1n,1 -k 7 | sed s'|\.\/words\/||'g \
+        | sed s'|\.\/||'g | sed s'|\.mp3||'g > "$DT/index"
+    }
         
     check
 
@@ -296,6 +311,7 @@ check_index() {
         if [ "$DC_tlt/.11.cfg" ] && [ -s "$DC_tlt/.11.cfg" ]; then
         index="$DC_tlt/.11.cfg"
         else 
+        namefiles
         index="$DT/index"; fi
         
         fix
