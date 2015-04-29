@@ -992,7 +992,7 @@ elif [ "$1" = dclik ]; then
 
 elif [ "$1" = play_temp ]; then
 
-    nmt=$(sed -n 1p "/tmp/.idmtp1.$USER/dir$2/ls")
+    nmt=$(sed -n 1p "/tmp/.idmtp1.$USER/dir$2/folder")
     dir="/tmp/.idmtp1.$USER/dir$2/$nmt"
     play "$dir/audio/${3,,}.mp3";
     exit
