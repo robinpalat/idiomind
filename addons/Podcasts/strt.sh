@@ -23,7 +23,6 @@ include "$DS/ifs/mods/add"
 DSP="$DS/addons/Podcasts"
 DMC="$DM_tl/Podcasts/cache"
 DCP="$DM_tl/Podcasts/.conf"
-DT_r="$(mktemp -d "$DT/XXXX")"
 dfimg="$DSP/images/audio.png"
 downloads=4
 
@@ -174,14 +173,15 @@ get_images () {
     fi
     
     if [ "$p" = TRUE ] && [ -f "$DT_r/$img" ]; then
-        
-        convert "$DT_r/$img" -interlace Plane -thumbnail 62x54^ \
-        -gravity center -extent 62x54 -quality 100% tmp.jpg
-        convert tmp.jpg -bordercolor white \
-        -border 2 \( +clone -background black \
-        -shadow 70x3+2+2 \) +swap -background transparent \
-        -layers merge +repage "$DMC/$fname.png"
-        rm -f *.jpeg *.jpg
+    layer="$DSP/images/layer.png"
+    convert "$DT_r/$img" -interlace Plane -thumbnail 62x54^ \
+    -gravity center -extent 62x54 -quality 100% tmp.png
+    convert tmp.png -bordercolor white \
+    -border 2 \( +clone -background black \
+    -shadow 70x3+2+2 \) +swap -background transparent \
+    -layers merge +repage tmp.png
+    composite -compose Dst_Over tmp.png "$layer" "$DMC/$fname.png"
+    rm -f *.jpeg *.jpg *.png
     fi
 }
 
@@ -312,8 +312,8 @@ removes() {
 conditions "$1"
 
 if [[ "$1" != 0 ]]; then
-echo "$tpc" > "$DC_s/4.cfg"
-echo 2 >> "$DC_s/4.cfg"
+echo "Podcasts" > "$DC_a/4.cfg"
+echo 2 > "$DC_s/5.cfg"
 echo 11 > "$DCP/8.cfg"
 (sleep 2 && notify-send -i idiomind "$(gettext "Updating")" \
 "$(gettext "Checking new episodes...")" -t 6000) &
@@ -323,7 +323,9 @@ if [ -f "$DCP/2.cfg" ]; then kept_episodes="$(wc -l < "$DCP/2.cfg")"
 else kept_episodes=0; fi
 echo -e " <b>$(gettext "Updating")</b>
  $(gettext "Latest downloads:") 0  $(gettext "Saved episodes:") \
-$kept_episodes "> "$DM_tl/Podcasts/update"
+$kept_episodes" > "$DM_tl/Podcasts/update"
+> "$DT/.uptp"
+DT_r="$(mktemp -d "$DT/XXXX")"
 
 fetch_podcasts
 

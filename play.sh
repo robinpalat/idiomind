@@ -143,6 +143,7 @@ if [ "$ret" -eq 0 ]; then
 elif [ "$ret" -eq 2 ]; then
 
     [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
+    [ -f "$DT/index.m3u" ] && rm -f "$DT/index.m3u"
     "$DS/stop.sh" play
 fi
 

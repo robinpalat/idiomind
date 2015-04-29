@@ -115,7 +115,7 @@ elif [ $ret -eq 0 ]; then
     mkdir -p "$HOME/.config/idiomind/s"
     DC_s="$HOME/.config/idiomind/s"
     mkdir "$HOME/.config/idiomind/addons"
-
+    
     n=0
     while [ $n -lt 10 ]; do
         if echo "$target" | grep "${lang[$n]}"; then
@@ -134,18 +134,19 @@ elif [ $ret -eq 0 ]; then
         fi
         ((n=n+1))
     done
-
+    
     n=0; > "$DC_s/1.cfg"
     while [ $n -lt 19 ]; do
     echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
     ((n=n+1))
     done
     touch "$DC_s/4.cfg"
-
+    
     b=$(tr -dc a-z < /dev/urandom | head -c 1)
     c=$(($RANDOM%100))
-    echo "$c$b" > "$DC_s/3.cfg"
-
+    id="$b$c"
+    echo ${id:0:3} > "$DC_s/3.cfg"
+    
     idiomind -s
 
     exit

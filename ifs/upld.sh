@@ -40,7 +40,7 @@ vsd() {
 infsd() {
 
     file="$DM_t/saved/$2.id"
-    idlink=$(sed -n 1p "$DC_s/3.cfg")
+    id=$(sed -n 1p "$DC_s/3.cfg")
     language_source=$(sed -n 2p "$file" | grep -o 'language_source="[^"]*' | grep -o '[^"]*$')
     language_target=$(sed -n 3p "$file" | grep -o 'language_target="[^"]*' | grep -o '[^"]*$')
     category=$(sed -n 6p "$file" | grep -o 'category="[^"]*' | grep -o '[^"]*$')
@@ -135,11 +135,14 @@ science="$(gettext "Science")"
 interview="$(gettext "Interview")"
 funny="$(gettext "Funny")"
 lnglbl="${lgtl,,}"
-idlink=$(sed -n 1p $DC_s/3.cfg)
-[ -z "$idlink" ] && idlink=$(($RANDOM%100))
-mail=$(sed -n 2p $DC_s/3.cfg)
-user=$(sed -n 3p $DC_s/3.cfg)
-[ -z "$user" ] && user=$(echo "$(whoami)")
+id=$(sed -n 1p $DC_s/3.cfg)
+if [ -z "$id" ] || [ ${#id} -gt 3 ]; then
+b=$(tr -dc a-z < /dev/urandom | head -c 1)
+id="$b$(($RANDOM%100))"
+id=${id:0:3}; fi
+mail=$(sed -n 2p "$DC_s/3.cfg")
+user=$(sed -n 3p "$DC_s/3.cfg")
+[ -z "$user" ] && user=$USER
 nt=$(< "$DC_tlt/10.cfg")
 nme=$(echo "$tpc" | sed 's/ /_/g' | tr -s '"' ' ' | sed 's/’//g')
 imgm="$DM_tlt/words/images/img.jpg"
@@ -255,7 +258,7 @@ language_target=\"$lgtl\"
 author=\"$Author\"
 contact=\"$Mail\"
 category=\"$Ctgry\"
-link=\"$idlink\"
+link=\"$id\"
 date_c=\"$date_c\"
 date_u=\"$date_u\"
 nwords=\"$words\"
@@ -263,7 +266,7 @@ nsentences=\"$sentences\"
 nimages=\"$images\"
 level=\"$level\"" > "$DT_u/$tpc/12.cfg"
 cp -f "$DT_u/$tpc/12.cfg" "$DT/12.cfg"
-echo -e "$idlink
+echo -e "$id
 $Mail
 $Author" > "$DC_s/3.cfg"
 
@@ -296,7 +299,7 @@ find "$DT_u" -type f -exec chmod 644 {} \;
 cd "$DT_u"
 tar -cvf "$tpc.tar" "$tpc"
 gzip -9 "$tpc.tar"
-mv "$tpc.tar.gz" "$idlink.$tpc.idmnd"
+mv "$tpc.tar.gz" "$id.$tpc.idmnd"
 [ -d "$DT_u/$tpc" ] && rm -fr "$DT_u/$tpc"
 dte=$(date "+%d %B %Y")
 notify-send "$(gettext "Uploading")" "$(gettext "Please wait while file is uploaded")" -i idiomind -t 6000
@@ -323,7 +326,7 @@ msg "$info" $image
 
 [ -d "$DT_u/$tpc" ] && rm -fr "$DT_u/$tpc"
 [ "$DT/12.cfg" ] && rm -f "$DT/12.cfg"
-[ "$DT_u/$idlink.$tpc.idmnd" ] && rm -f "$DT_u/$idlink.$tpc.idmnd"
+[ "$DT_u/$id.$tpc.idmnd" ] && rm -f "$DT_u/$id.$tpc.idmnd"
 [ "$DT_u/$tpc.tar" ] && rm -f "$DT_u/$tpc.tar"
 [ "$DT_u/$tpc.tar.gz" ] && rm -f "$DT_u/$tpc.tar.gz"
 [ -d "$DT_u" ] && rm -fr "$DT_u"
