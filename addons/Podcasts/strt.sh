@@ -59,7 +59,7 @@ conditions() {
         [[ $ret -eq 1 ]] && "$DS/stop.sh" feed
         [[ $ret -eq 0 ]] && exit 1
     
-    elif [[ -f "$DT/.uptp" && "$1" = 0 ]]; then
+    elif [ -f "$DT/.uptp" ] && [ "$1" = 0 ]; then
         exit 1
     fi
     
@@ -67,7 +67,7 @@ conditions() {
     mkdir -p "DM_tl/Podcasts/.conf"
     mkdir -p "DM_tl/Podcasts/cache"; fi
 
-    nps="$(sed '/^$/d' < "$DCP/4.cfg" | wc -l)"
+    nps="$(sed '/^$/d' "$DCP/4.cfg" | wc -l)"
     if [ "$nps" -le 0 ]; then
     [[ "$1" != 0 ]] && msg "$(gettext "Missing URL. Please check the settings in the preferences dialog.")\n" info
     [ -f "$DT_r" ] && rm -fr "$DT_r" "$DT/.uptp"
@@ -232,7 +232,6 @@ fetch_podcasts() {
                     
                         enclosure_url=$(curl -s -I -L -w %"{url_effective}" \
                         --url "$enclosure" | tail -n 1)
-                        
                         mediatype "$enclosure_url"
                         
                         if [ ! -f "$DMC/$fname.$ex" ]; then
@@ -240,7 +239,6 @@ fetch_podcasts() {
                         else cd "$DT_r"; mv -f "$DMC/$fname.$ex" "media.$ex"; fi
 
                         get_images
-                        
                         mv -f "media.$ex" "$DMC/$fname.$ex"
                         mkhtml
 
