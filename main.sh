@@ -262,7 +262,7 @@ function topic() {
         let n++
         done
         nt="$DC_tlt/10.cfg"
-        author="$(sed -n 4p < "$DC_tlt/12.cfg" \
+        author="$(sed -n 4p "$DC_tlt/12.cfg" \
         | grep -o 'author="[^"]*' | grep -o '[^"]*$')"
         c=$(($RANDOM%100000)); KEY=$c
         cnf1=$(mktemp "$DT/cnf1.XXX.x")
@@ -276,7 +276,7 @@ function topic() {
         printf "tpcs.$tpc.tpcs\n" >> "$DC_s/8.cfg"
         [ ! -z "$author" ] && author=" $(gettext "Topic created by") $author"
 
-        label_info1="<span font_desc='Free Sans 14' color='#5A5A5A'>$tpc</span><small>\n $inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"
+        label_info1="<span font_desc='Free Sans 15' color='#5A5A5A'>$tpc</span><small>\n $inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"
 
         apply() {
 

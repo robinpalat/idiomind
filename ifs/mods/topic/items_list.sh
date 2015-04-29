@@ -15,7 +15,7 @@ function word_view(){
     [ -n "$dftn" ] && field_dftn="--field=\n$dftn:lbl"
     [ -n "$note" ] && field_note="--field=$note\n:lbl"
     hlgt="$(awk '{print tolower($0)}' <<<"$trgt")"
-    exmp="$(echo "$(echo "$exmp" | sed -n 1p)" | sed "s/"${trgt,,}"/<span background='#FDFBCF'>"${trgt,,}"<\/\span>/g")"
+    exmp="$(sed "s/"${trgt,,}"/<span background='#FDFBCF'>"${trgt,,}"<\/\span>/g" <<<"$exmp")"
     [ "$mark" = TRUE ] && trgt="<sup>*</sup>$trgt"
     
     yad --form --scroll --title="$item" \

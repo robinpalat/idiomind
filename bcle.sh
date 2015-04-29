@@ -22,12 +22,13 @@
 [[ -z "$tpc" && -d "$DT" ]] && exit 1
 repeat=$(sed -n 7p < "$DC_s/1.cfg" \
 | grep -o repeat=\"[^\"]* | grep -o '[^"]*$')
-cd "$DT"
 
-if [ -n "$(cat ./index.m3u)" ] && [ "$(wc -l < ./index.m3u)" -gt 0 ]; then
+if [ -s "$DT/index.m3u" ] \
+&& [ "$(wc -l < "$DT/index.m3u")" -gt 0 ]; then
+    index="$(wc -l < "$DT/index.m3u")"
+    
     if [ "$repeat" = "TRUE" ]; then
         while [ 1 ]; do
-            index="$(wc -l < ./index.m3u)"
             while [[ 1 -le $index ]]; do
                 "$DS/chng.sh" chngi "$index"
                 let index--
@@ -36,7 +37,6 @@ if [ -n "$(cat ./index.m3u)" ] && [ "$(wc -l < ./index.m3u)" -gt 0 ]; then
         done
     
     else
-        index="$(wc -l < ./index.m3u)"
         while [[ 1 -le $index ]]; do
         "$DS/chng.sh" chngi "$index"
             let index--
