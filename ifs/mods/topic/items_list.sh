@@ -18,11 +18,12 @@ function word_view(){
     exmp="$(sed "s/"${trgt,,}"/<span background='#FDFBCF'>"${trgt,,}"<\/\span>/g" <<<"$exmp")"
     [ "$mark" = TRUE ] && trgt="<sup>*</sup>$trgt"
     
-    yad --form --scroll --title="$item" \
+    yad --form --title="$item" \
     --selectable-labels --quoted-output \
     --text="<span font_desc='Sans Free Bold $fs'>$trgt</span>\n\n<i>$srce</i>\n\n" \
     --window-icon="$DS/images/icon.png" \
-    --scroll --center --on-top --skip-taskbar --text-align=center --image-on-top --center \
+    --scroll --skip-taskbar --text-align=center \
+    --image-on-top --center --on-top \
     --width=620 --height=380 --borders=$bs \
     --field="":lbl \
     --field="<i><span color='#737373'>$exmp</span></i>:lbl" "$field_dftn" "$field_note" \
@@ -60,7 +61,23 @@ function sentence_view(){
     --button=gtk-go-down:2
 } >/dev/null 2>&1
 
-export -f word_view sentence_view
+
+missing() {
+    
+    yad --form --title="$item" \
+    --selectable-labels \
+    --text="$(gettext "File not found")" \
+    --field="":lbl " " \
+    --field="<b><span color='#3F78A0'>$1</span></b>":lbl \
+    --window-icon="$DS/images/icon.png" \
+    --skip-taskbar --center --on-top \
+    --align=center --text-align=center \
+    --width=620 --height=380 --borders=$bs \
+    --button=gtk-edit:4 \
+    --button=gtk-go-up:3 \
+    --button=gtk-go-down:2
+}
+export -f word_view sentence_view missing
 
 
 function notebook_1() {

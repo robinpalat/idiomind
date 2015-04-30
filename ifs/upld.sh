@@ -300,9 +300,10 @@ cd "$DT_u"
 tar -cvf "$tpc.tar" "$tpc"
 gzip -9 "$tpc.tar"
 mv "$tpc.tar.gz" "$id.$tpc.idmnd"
+du=$(du -h "$id.$tpc.idmnd" | cut -f1)
 [ -d "$DT_u/$tpc" ] && rm -fr "$DT_u/$tpc"
 dte=$(date "+%d %B %Y")
-notify-send "$(gettext "Uploading")" "$(gettext "Please wait while file is uploaded")" -i idiomind -t 6000
+notify-send "$(gettext "Upload in progress")" "$(gettext "transferring approx.") ${du}" -i idiomind -t 6000
 
 lftp -u "`sed -n 4p <<<"$data" | grep -o 'USER="[^"]*' | grep -o '[^"]*$'`",\
 "`sed -n 5p <<<"$data" | grep -o 'KEY="[^"]*' | grep -o '[^"]*$'`" \
@@ -314,11 +315,11 @@ END_SCRIPT
 exit=$?
 if [[ $exit = 0 ]]; then
     mv -f "$DT/12.cfg" "$DM_t/saved/$tpc.id"
-    info=" <b>$(gettext "Successfully published.")</b>\n $tpc\n"
+    info=" <b>$(gettext "Uploaded correctly")</b>\n $tpc\n"
     image=dialog-ok
 else
     sleep 10
-    info="$(gettext "Occurred a problem with the file upload, try again later.")"
+    info="$(gettext "A problem occurred while the file is uploaded.")"
     image=dialog-warning
 fi
 

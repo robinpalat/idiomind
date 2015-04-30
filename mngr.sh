@@ -373,7 +373,6 @@ delete_topic() {
 edit() {
 
     include "$DS/ifs/mods/mngr"
-    wth=650; eht=540
     lgt=$(lnglss $lgtl)
     lgs=$(lnglss $lgsl)
     lists="$2";  item_pos="$3"
@@ -386,7 +385,6 @@ edit() {
     dct="$DS/addons/Dics/cnfg.sh"
     file_tmp="$(mktemp "$DT/file_tmp.XXXX")"
     tpcs="$(egrep -v "$tpc" < "$DM_tl/.2.cfg" \
-    | awk '{print substr($0,1,40)}' \
     | tr "\\n" '!' | sed 's/!\+$//g')"
     c=$(($RANDOM%10000))
     item="$(sed -n "$3"p "$index_1")"
@@ -528,7 +526,7 @@ edit() {
                 source "$DS/default/dicts/$lgt"
                 DT_r=$(mktemp -d "$DT/XXXX"); cd "$DT_r"
                 trgt="$trgt_mod"; srce="$srce_mod"
-                r=$(($RANDOM%1000))
+                r=$(($RANDOM%10000))
                 clean_3 "$DT_r" "$r"
                 translate "$(sed '/^$/d' < $aw)" auto "$lg" | sed 's/,//g' \
                 | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
@@ -564,7 +562,7 @@ edit() {
                     source "$DS/default/dicts/$lgt"
                     DT_r=$(mktemp -d "$DT/XXXX"); cd "$DT_r"
                     trgt="$trgt_mod"; srce="$srce_mod"
-                    r=$(($RANDOM%1000))
+                    r=$(($RANDOM%10000))
                     clean_3 "$DT_r" "$r"
                     translate "$(sed '/^$/d' < "$aw")" auto $lg | sed 's/,//g' \
                     | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
@@ -611,8 +609,11 @@ edit() {
             else
                 "$DS/vwr.sh" "$lists" "$trgt_mod" "$item_pos" &
             fi
-        exit
+    else
+    DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
+    "$DS/add.sh" new_items "$DT_r" 2 "$item"
     fi
+    exit
 } >/dev/null 2>&1
 
 

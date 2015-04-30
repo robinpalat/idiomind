@@ -994,7 +994,7 @@ elif [ "$1" = listen_sntnc ]; then
 
 elif [ "$1" = dclik ]; then
 
-    play "$DM_tls/${2,,}".mp3 >/dev/null 2>&1
+    play "$DM_tls/${2,,}.mp3" >/dev/null 2>&1
     exit
 
 elif [ "$1" = play_temp ]; then
@@ -1005,6 +1005,11 @@ elif [ "$1" = play_temp ]; then
     exit
 
 fi
+
+gtext() {
+$(gettext "Marked items")
+$(gettext "Difficult words")
+}>/dev/null 2>&1
 
 case "$1" in
     details)

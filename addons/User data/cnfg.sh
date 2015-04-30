@@ -83,7 +83,7 @@ if [ -z "$1" ]; then
                 mv -f "$DT/idiomind_data.tar.gz" "$exp"
                 echo "# $(gettext "Completing")" ; sleep 1
 
-                ) | yad --progress --title="$(gettext "Progress")" \
+                ) | yad --progress --title="$(gettext "Copying")" \
                 --window-icon="$DS/images/icon.png" \
                 --pulsate --percentage="5" --auto-close \
                 --skip-taskbar --no-buttons --on-top --fixed \
@@ -173,7 +173,7 @@ if [ -z "$1" ]; then
                 "$DS/mngr.sh" mkmn
                 rm -fr "$DT/import"
                 
-                ) | yad --progress --title="$(gettext "Progress")" \
+                ) | yad --progress --title="$(gettext "Copying")" \
                 --window-icon="$DS/images/icon.png" \
                 --pulsate --percentage="5" --auto-close \
                 --skip-taskbar --no-buttons --on-top --fixed \

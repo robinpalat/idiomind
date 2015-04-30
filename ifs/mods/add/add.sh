@@ -69,26 +69,26 @@ function index() {
 
 function check_grammar_1() {
     
-    g=$(echo "$trgt"  | sed 's/ /\n/g')
+    g=$(sed 's/ /\n/g' <<<"$trgt")
     cd "$1"; touch "A.$r" "B.$r" "g.$r"; n=1
-    while [ $n -le $(echo "$g" | wc -l) ]; do
-        grmrk=$(echo "$g" | sed -n "$n"p)
-        chck=$(echo "$g,," | sed -n "$n"p | sed 's/,//;s/\.//g')
-        if echo "$pronouns" | grep -Fxq "$chck"; then
+    while [ $n -le $(wc -l <<<"$g") ]; do
+        grmrk=$(sed -n "$n"p <<<"$g")
+        chck=$(sed -n "$n"p <<<"$g,," | sed 's/,//;s/\.//g')
+        if grep -Fxq "$chck" <<<"$pronouns"; then
             echo "<span color='#35559C'>$grmrk</span>" >> "g.$2"
-        elif echo "$nouns_verbs" | grep -Fxq "$chck"; then
+        elif grep -Fxq "$chck" <<<"$nouns_verbs"; then
             echo "<span color='#896E7A'>$grmrk</span>" >> "g.$2"
-        elif echo "$conjunctions" | grep -Fxq "$chck"; then
+        elif grep -Fxq "$chck" <<<"$conjunctions"; then
             echo "<span color='#90B33B'>$grmrk</span>" >> "g.$2"
-        elif echo "$verbs" | grep -Fxq "$chck"; then
+        elif grep -Fxq "$chck" <<<"$verbs"; then
             echo "<span color='#CF387F'>$grmrk</span>" >> "g.$2"
-        elif echo "$prepositions" | grep -Fxq "$chck"; then
+        elif grep -Fxq "$chck" <<<"$prepositions"; then
             echo "<span color='#D67B2D'>$grmrk</span>" >> "g.$2"
-        elif echo "$adverbs" | grep -Fxq "$chck"; then
+        elif grep -Fxq "$chck" <<<"$adverbs"; then
             echo "<span color='#9C68BD'>$grmrk</span>" >> "g.$2"
-        elif echo "$nouns_adjetives" | grep -Fxq "$chck"; then
+        elif grep -Fxq "$chck" <<<"$nouns_adjetives"; then
             echo "<span color='#496E60'>$grmrk</span>" >> "g.$2"
-        elif echo "$adjetives" | grep -Fxq "$chck"; then
+        elif grep -Fxq "$chck" <<<"$adjetives"; then
             echo "<span color='#3E8A3B'>$grmrk</span>" >> "g.$2"
         else
             echo "$grmrk" >> "g.$2"
@@ -100,18 +100,20 @@ function check_grammar_1() {
 
 function check_grammar_2() {
 
-    if echo "$pronouns" | grep -Fxq "${1,,}"; then echo 'Pron. ';
-    elif echo "$conjunctions" | grep -Fxq "${1,,}"; then echo 'Conj. ';
-    elif echo "$prepositions" | grep -Fxq "${1,,}"; then echo 'Prep. ';
-    elif echo "$adverbs" | grep -Fxq "${1,,}"; then echo 'adv. ';
-    elif echo "$nouns_adjetives" | grep -Fxq "${1,,}"; then echo 'Noun, Adj. ';
-    elif echo "$nouns_verbs" | grep -Fxq "${1,,}"; then echo 'Noun, Verb ';
-    elif echo "$adjetives" | grep -Fxq "${1,,}"; then echo 'adj. ';
-    elif echo "$verbs" | grep -Fxq "${1,,}"; then echo 'verb. '; fi
+    if grep -Fxq "${1,,}" <<<"$pronouns"; then echo 'Pron. ';
+    elif grep -Fxq "${1,,}" <<<"$conjunctions"; then echo 'Conj. ';
+    elif grep -Fxq "${1,,}" <<<"$prepositions"; then echo 'Prep. ';
+    elif grep -Fxq "${1,,}" <<<"$adverbs"; then echo 'adv. ';
+    elif grep -Fxq "${1,,}" <<<"$nouns_adjetives"; then echo 'Noun, Adj. ';
+    elif grep -Fxq "${1,,}" <<<"$nouns_verbs"; then echo 'Noun, Verb ';
+    elif grep -Fxq "${1,,}" <<<"$adjetives"; then echo 'adj. ';
+    elif grep -Fxq "${1,,}" <<<"$verbs"; then echo 'verb. '; fi
 }
 
 
 function clean_1() {
+    
+    #iconv -c -f utf8 -t ascii 
     
     if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
     echo "$1" | sed ':a;N;$!ba;s/\n/ /g' \
@@ -122,7 +124,7 @@ function clean_1() {
     else
     echo "$1" | sed ':a;N;$!ba;s/\n/ /g' \
     | sed 's/"//; s/“//;s/&//; s/”//;s/://'g | sed "s/’/'/g" \
-    | iconv -c -f utf8 -t ascii | sed "s/|//g" \
+    | sed "s/|//g" \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//; s/ *$//g'| sed 's/^\s*./\U&\E/g'
     fi
@@ -492,7 +494,7 @@ function dlg_text_info_3() {
 
 function dlg_progress_1() {
     
-    yad --progress --title="$(gettext "Progress")" \
+    yad --progress --title="$(gettext "Processing")" \
     --window-icon="$DS/images/icon.png" \
     --progress-text=" " --pulsate --percentage="5" --auto-close \
     --skip-taskbar --no-buttons --on-top --fixed \

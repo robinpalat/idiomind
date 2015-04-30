@@ -1,10 +1,10 @@
 #!/bin/bash
 DS=/usr/share/idiomind
-DADOS=($*)
-QTD=$((${#DADOS[@]}-1))
-for i in $(seq 0 $QTD)
+d=($*)
+q=$((${#d[@]}-1))
+for i in $(seq 0 $q)
 do
-    CMD[$i]=${DADOS[$i]}
+    cmd[$i]=${d[$i]}
 done
-CMD="${CMD[@]}"
-"$DS/addons/$CMD/cnfg.sh"
+cmd="${cmd[@]}"
+"$DS/addons/$cmd/cnfg.sh"

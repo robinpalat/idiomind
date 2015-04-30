@@ -32,8 +32,7 @@ elif [ -f "$DM_tlt/$fname.mp3" ]; then
     sentence_view
     
 else
-    "$DS/mngr.sh" edit "$1" "$index_pos"
-
+    missing "$item"
 fi
     ret=$?
         

@@ -269,7 +269,7 @@ if [[ "$conten" = A ]]; then
                             
                             mv -f "$sntc.mp3" "$DM_tlt/$fname.mp3"
                             (
-                            r=$(($RANDOM%1000))
+                            r=$(($RANDOM%10000))
                             clean_3 "$DT_r" "$r"
                             translate "$(sed '/^$/d' < "$aw")" auto $lg \
                             | sed 's/,//; s/\?//; s/\¿//; s/;//g' > "$bw"

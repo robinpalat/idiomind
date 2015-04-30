@@ -79,6 +79,7 @@ position() {
     exit
 }
 
+
 function dlg_form_1() {
     
     yad --form --title="$trgt" \
@@ -87,7 +88,7 @@ function dlg_form_1() {
     --align=center --text-align=center \
     --window-icon="$DS/images/icon.png" --buttons-layout=end --scroll \
     --columns=2 --center \
-    --width=$wth --height=$eht --borders=10 \
+    --width=680 --height=540 --borders=10 \
     --field="<small>$lgtl</small>":RO "$trgt" \
     --field="<small>$lgsl</small>" "$srce" \
     --field="<small>$(gettext "Topic")</small>":CB "$tpc!$tpcs" \
@@ -114,7 +115,7 @@ function dlg_form_2() {
     --always-print-result --separator="\n" --selectable-labels \
     --window-icon="$DS/images/icon.png" --center --align=center \
     --buttons-layout=end \
-    --width=$wth --height=$eht --borders=10 \
+    --width=650 --height=540 --borders=10 \
     --field="$(gettext "Mark")":CHK "$mark" \
     --field="<small>$lgtl</small>":TXT "$trgt" \
     --field="<small>$lgsl</small>":TXT "$srce" \

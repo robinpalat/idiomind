@@ -25,10 +25,10 @@ repeat=$(sed -n 7p < "$DC_s/1.cfg" \
 
 if [ -s "$DT/index.m3u" ] \
 && [ "$(wc -l < "$DT/index.m3u")" -gt 0 ]; then
-    index="$(wc -l < "$DT/index.m3u")"
-    
-    if [ "$repeat" = "TRUE" ]; then
+
+    if [ "$repeat" = TRUE ]; then
         while [ 1 ]; do
+            index="$(wc -l < "$DT/index.m3u")"
             while [[ 1 -le $index ]]; do
                 "$DS/chng.sh" chngi "$index"
                 let index--
@@ -37,6 +37,7 @@ if [ -s "$DT/index.m3u" ] \
         done
     
     else
+        index="$(wc -l < "$DT/index.m3u")"
         while [[ 1 -le $index ]]; do
         "$DS/chng.sh" chngi "$index"
             let index--

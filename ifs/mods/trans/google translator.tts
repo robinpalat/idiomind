@@ -2,7 +2,6 @@
 # -*- ENCODING: UTF-8 -*-
 
 DT_r="$3"; cd "$DT_r"
-
 if [ "$(sed -n 1p < "$HOME/.config/idiomind/addons/gts.cfg" \
 | grep -o set1=\"[^\"]* | grep -o '[^"]*$')" = TRUE ]; then
 
@@ -26,5 +25,5 @@ else
     "https://translate.google.com/translate_tts?ie=UTF-8&tl=$2&q=$1"
     cp -f "$DT_r/tmp1.mp3" "$4"
 fi
-exit
 fi
+exit

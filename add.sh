@@ -29,7 +29,6 @@ list=$(sed -n 2p < "$DC_s/1.cfg" \
 trans=$(sed -n 4p < "$DC_s/1.cfg" \
 | grep -o trans=\"[^\"]* | grep -o '[^"]*$')
 
-
 new_topic() {
 
     if [ "$(wc -l < "$DM_tl/.1.cfg")" -ge 80 ]; then
@@ -839,7 +838,7 @@ process() {
 
                                     cd "$DT_r"
                                     (
-                                    r=$(($RANDOM%1000))
+                                    r=$(($RANDOM%10000))
                                     clean_3 "$DT_r" "$r"
                                     translate "$(sed '/^$/d' < $aw)" auto $lg | sed 's/,//g' \
                                     | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
