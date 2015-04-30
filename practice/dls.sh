@@ -55,7 +55,7 @@ dialog2() {
     --window-icon="$DS/images/icon.png" --image="$DS/practice/bar.png" \
     --buttons-layout=end --skip-taskbar --undecorated --center --on-top \
     --text-align=left --align=left --image-on-top \
-    --height=240 --width=560 --borders=4 \
+    --height=225 --width=560 --borders=5 \
     --button="$(gettext "Exit")":1 \
     --button="$(gettext "Listen")":"play '$DM_tlt/$fname.mp3'" \
     --button=" $(gettext "OK") >> ":0)
@@ -70,12 +70,12 @@ check() {
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --wrap --scroll --image-on-top --center --on-top \
     --undecorated --buttons-layout=end \
-    --width=560 --height=250 --borders=10 \
+    --width=560 --height=250 --borders=12 \
     --button="$(gettext "Exit")":1 \
     --button="$(gettext "Listen")":"play '$DM_tlt/$fname.mp3'" \
     --button="$(gettext "Next")":2 \
     --field="":lbl --text="<span font_desc='Free Sans 14'>$wes</span>\\n" \
-    --field="<span font_desc='Free Sans 9'>$(sed 's/\,*$/\./g' <<<"$OK")\n\n$prc</span>\n":lbl
+    --field="<span font_desc='Free Sans 9'>$(sed 's/\,*$/\./g' <<<"$OK")\n\nhits $prc</span>\n":lbl
     }
     
 get_text() {

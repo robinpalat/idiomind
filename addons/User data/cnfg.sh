@@ -27,9 +27,9 @@ if [ -z "$1" ]; then
     --name=Idiomind --class=Idiomind \
     --text="$(gettext "Total size:") $size\n$others" \
     --always-print-result --print-all --separator=" " \
+    --window-icon="$DS/images/icon.png" \
     --center --on-top --expand-column=2 --image-on-top \
     --skip-taskbar --image=folder \
-    --window-icon="$DS/images/icon.png" \
     --width=480 --height=330 --borders=15 \
     --button="$(gettext "Cancel")":1 \
     --button=Ok:0 \
@@ -41,8 +41,8 @@ if [ -z "$1" ]; then
 
     if [[ $ret -eq 0 ]]; then
 
-        in=$(echo "$D" | sed -n 1p)
-        ex=$(echo "$D" | sed -n 2p)
+        in=$(sed -n 1p <<<"$D")
+        ex=$(sed -n 2p <<<"$D")
         
         # export
         if grep "TRUE $(gettext "Export")" <<<"$ex"; then
@@ -84,11 +84,14 @@ if [ -z "$1" ]; then
                 echo "# $(gettext "Completing")" ; sleep 1
 
                 ) | yad --progress --title="$(gettext "Progress")" \
+                --window-icon="$DS/images/icon.png" \
                 --pulsate --percentage="5" --auto-close \
                 --skip-taskbar --no-buttons --on-top --fixed \
                 --width=200 --height=50 --borders=4 --geometry=200x20-2-2
                 
-                msg "$(gettext "Data exported successfully.")\n" info
+                if [ -f "$exp" ]; then
+                msg "$(gettext "Data exported successfully.")\n" info; else
+                msg "$(gettext "An error occurred while copying files.")\n" error; fi
             fi
             
         # import
@@ -96,8 +99,6 @@ if [ -z "$1" ]; then
             
             set -e
             set u pipefail
-            IFS=$'\n\t'
-            
             cd "$HOME"
             add=$(yad --file --title="$(gettext "Import")" \
             --file-filter="*.gz" \
@@ -127,9 +128,13 @@ if [ -z "$1" ]; then
 
                 while read -r lng; do
                 
-                    [ ! -d "$DM_t/$lng" ] && mkdir "$DM_t/$lng"
-                    [ ! -d "$DM_t/$lng/.share" ] && mkdir "$DM_t/$lng/.share"
-                    [ "$(ls -A "./$lng/.share")" ] && mv -f "./$lng/.share"/* "$DM_t/$lng/.share"/
+                    if [ ! -d "$DM_t/$lng" ]; then
+                    mkdir "$DM_t/$lng"; fi
+                    if [ ! -d "$DM_t/$lng/.share" ]; then
+                    mkdir "$DM_t/$lng/.share"; fi
+                    if [ "$(ls -A "./$lng/.share")" ]; then
+                    mv -f "./$lng/.share"/* "$DM_t/$lng/.share"/
+                    fi
                     
                     echo "$lng" >> ./.languages
                     
@@ -147,35 +152,15 @@ if [ -z "$1" ]; then
                     while read topic; do
                         
                         if [ -d "$DM_t/$language/$topic" ]; then continue; fi
-                         
                         if [ -d "$DT/import/topics/$language/$topic" ]; then
                         cp -fr "$DT/import/topics/$language/$topic" "$DM_t/$language/$topic"
                         else continue; fi
-
-                        [ -f "$DM_t/$language/$topic/.conf/7.cfg" ] && \
-                        rm "$DM_t/$language/$topic/.conf/7.cfg"
-                        [ -f "$DM_t/$language/$topic/.conf/att.html" ] && \
-                        rm "$DM_t/$language/$topic/.conf/att.html"
-                        [ -f "$DM_t/$language/$topic/.conf/1.cfg" ] && \
-                        rm "$DM_t/$language/$topic/.conf/1.cfg"
-                        [ -f "$DM_t/$language/$topic/.conf/2.cfg" ] && \
-                        rm "$DM_t/$language/$topic/.conf/2.cfg"
-                        [ -d "$DM_t/$language/$topic/.conf/practice" ] && \
-                        rm -r "$DM_t/$language/$topic/.conf/practice/"
-                        [ -f "$DM_t/$language/$topic/.conf/0.cfg" ] && \
-                        cp -f "$DM_t/$language/$topic/.conf/0.cfg" \
-                        "$DM_t/$language/$topic/.conf/1.cfg"
-                        [ -d "$DM_t/$language/$topic/.conf" ] && \
-                        echo "1" > "$DM_t/$language/$topic/.conf/8.cfg"
-
+                        if [ ! -d "$DM_t/$language/$topic/.conf" ]; then
+                        mkdir "$DM_t/$language/$topic/.conf"; fi
+                        if [ ! -f "$DM_t/$language/$topic/.conf/8.cfg" ]; then
+                        echo 1 > "$DM_t/$language/$topic/.conf/8.cfg"; fi
                         if [ -d "$DT/import/topics/$language/$topic" ]; then
                         echo "$topic" >> "$DM_t/$language/.3.cfg"; fi
-                        
-                        if [ -f "$DM_t/$language/.2.cfg" ]; then
-                        sed -i 's/'"$topic"'//g' "$DM_t/$language/.2.cfg"
-                        sed '/^$/d' "$DM_t/$language/.2.cfg" > "$DM_t/$language/.2.cfg_"
-                        mv -f "$DM_t/$language/.2.cfg_" "$DM_t/$language/.2.cfg"; fi
-                        
                         cd "$DT/import/topics"
 
                     done < "$DT/import/topics/$language/.topics"
@@ -186,9 +171,10 @@ if [ -z "$1" ]; then
                 done < "$DT/import/topics/.languages"
                 
                 "$DS/mngr.sh" mkmn
-                rm -f -r "$DT/import"
+                rm -fr "$DT/import"
                 
                 ) | yad --progress --title="$(gettext "Progress")" \
+                --window-icon="$DS/images/icon.png" \
                 --pulsate --percentage="5" --auto-close \
                 --skip-taskbar --no-buttons --on-top --fixed \
                 --width=200 --height=50 --borders=4 --geometry=200x20-2-2

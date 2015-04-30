@@ -27,6 +27,7 @@ text=$(sed -n 5p < "$DC_s/1.cfg" \
 | grep -o text=\"[^\"]* | grep -o '[^"]*$')
 audio=$(sed -n 6p < "$DC_s/1.cfg" \
 | grep -o audio=\"[^\"]* | grep -o '[^"]*$')
+if [ "$text" != TRUE ] && [ "$audio" != TRUE ]; then audio=TRUE; fi
 nu='^[0-9]+$'; if ! [[ $loop =~ $nu ]]; then loop=10; fi
 
 if [ "$1" = chngi ]; then

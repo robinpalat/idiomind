@@ -493,6 +493,7 @@ function dlg_text_info_3() {
 function dlg_progress_1() {
     
     yad --progress --title="$(gettext "Progress")" \
+    --window-icon="$DS/images/icon.png" \
     --progress-text=" " --pulsate --percentage="5" --auto-close \
     --skip-taskbar --no-buttons --on-top --fixed \
     --width=200 --height=50 --borders=4 --geometry=240x20-4-4
@@ -502,6 +503,7 @@ function dlg_progress_1() {
 function dlg_progress_2() {
 
     yad --progress --title="$(gettext "Progress")" \
+    --window-icon="$DS/images/icon.png" \
     --progress-text=" " --auto-close \
     --skip-taskbar --no-buttons --on-top --fixed \
     --width=200 --height=50 --borders=4 --geometry=240x20-4-4

@@ -20,7 +20,7 @@
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 if [ -z "$tpc" ]; then source "$DS/ifs/mods/cmns.sh"
 msg "$(gettext "No topic is active")\n" info & exit 1; fi
-lbls=('Words' 'Sentences' 'Marks' 'Practice' 'New episodes' 'Saved epidodes')
+lbls=('Words' 'Sentences' 'Marked items' 'Difficult words' 'New episodes' 'Saved epidodes')
 sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
 'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' \
 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
@@ -132,7 +132,7 @@ if [ "$ret" -eq 0 ]; then
     
     if [ -z "$(< "$DT/index.m3u")" ]; then
     notify-send "$(gettext "Exiting")" \
-    "$(gettext "Nothing specified to play")" -i idiomind -t 3000 &&
+    "$(gettext "Nothing to play")" -i idiomind -t 3000 &&
     sleep 4
     "$DS/stop.sh" play & exit 1; fi
     

@@ -491,14 +491,21 @@ echo "<br><br>
         --uri="$DC_tlt/att.html" --browser \
         --window-icon="$DS/images/icon.png" --center \
         --width=660 --height=580 --borders=10 \
-        --button="$(gettext "Folder")":"xdg-open '$DM_tlt/files'" \
-        --button="$(gettext "Video URL")":"$DS/ifs/tls.sh 'videourl'" \
-        --button="gtk-add":"$DS/ifs/tls.sh 'add_file'" \
-        --button="gtk-close":"1"
-
-        if [ "$ch1" != "$(ls -A "$DM_tlt/files")" ]; then
-            mkindex
-        fi
+        --button="$(gettext "Folder")":3 \
+        --button="$(gettext "Video URL")":2 \
+        --button="gtk-add":0 \
+        --button="gtk-close":1
+        ret=$?
+            if [ $ret = 0 ]; then 
+            "$DS/ifs/tls.sh" add_file
+            elif [ $ret = 2 ]; then
+            "$DS/ifs/tls.sh" videourl
+            elif [ $ret = 3 ]; then 
+            xdg-open "$DM_tlt/files"
+            fi
+            if [ "$ch1" != "$(ls -A "$DM_tlt/files")" ]; then
+                mkindex
+            fi
         
     else
         yad --form --title="$(gettext "Attached Files")" \

@@ -55,7 +55,7 @@ fonts() {
     s=$((48-${#1}))
     c=$((28-${#1}))
     cuestion="\n\n<span font_desc='Free Sans $s'><b>$1</b></span>"
-    answer="<span font_desc='Free Sans $c'>$src</span>"
+    answer="<span font_desc='Free Sans $c'><i>$src</i></span>"
 }
 
 cuestion() {
