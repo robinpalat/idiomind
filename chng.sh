@@ -88,8 +88,9 @@ if [ "$1" = chngi ]; then
 
 elif [ "$1" != chngi ]; then
 
-    lgs=$(lnglss $lgsl)
+    source /usr/share/idiomind/ifs/c.conf
     [ ! -f "$DC_s/0.cfg" ] && > "$DC_s/0.cfg"
+    lgs=$(lnglss $lgsl)
     
     if [ -n "$1" ]; then
     text="--text=$1\n"

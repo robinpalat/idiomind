@@ -17,7 +17,7 @@
 #  MA 02110-1301, USA.
 #  
 #--field="$(gettext "Quick Help")":BTN "$DS/ifs/tls.sh help"
-[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
+source /usr/share/idiomind/ifs/c.conf
 [ ! -d "$DC" ] && "$DS/ifs/1u.sh" && exit
 info1="$(gettext "Do you want to change the interface language program?")  "
 info2="$(gettext "You want to change the language setting to learn?")  "
@@ -51,6 +51,8 @@ confirm() {
 
 set_lang() {
     
+    echo "$tpc" > "$DM_tl/.8.cfg"
+    echo '0' >> "$DM_tl/.8.cfg"
     language="$1"
     if [ ! -d "$DM_t/$language" ]; then
     mkdir "$DM_t/$language"
@@ -58,6 +60,7 @@ set_lang() {
     echo "$language" > "$DC_s/6.cfg"
     echo "$lgsl" >> "$DC_s/6.cfg"
     "$DS/stop.sh" L
+    source /usr/share/idiomind/ifs/c.conf
     if [ -f "$DM/topics/$language/.8.cfg" ]; then
     lst=$(sed -n 1p "$DM/topics/$language/.8.cfg")
     mde=$(sed -n 2p "$DM/topics/$language/.8.cfg")

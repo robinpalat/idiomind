@@ -67,9 +67,9 @@ missing() {
     item=$(sed -n "$1"p "$index")
     yad --form --title="$item" \
     --selectable-labels \
-    --text="$(gettext "File not found")" \
+    --text="<span color='#3F78A0'>$(gettext "File not found")</span>" \
     --field="":lbl " " \
-    --field="<b><span color='#3F78A0'>$item</span></b>":lbl \
+    --field="<b>$item</b>":lbl \
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --center --on-top \
     --align=center --text-align=center \

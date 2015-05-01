@@ -45,10 +45,8 @@ else
         fi
 
         echo "$topic" > "$DC_s/4.cfg"
-        echo "$topic" > "$DM_tl/.8.cfg"
         echo "$topic" > "$DT/tpe"
         echo '0' > "$DC_s/5.cfg"
-        echo '0' >> "$DM_tl/.8.cfg"
         
         if [ ! -f "$DT/.n_s_pr" ]; then
         "$DS/ifs/tls.sh" check_index "$topic"; fi
