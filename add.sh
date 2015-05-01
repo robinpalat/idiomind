@@ -31,7 +31,7 @@ trans=$(sed -n 4p < "$DC_s/1.cfg" \
 
 new_topic() {
 
-    if [ "$(wc -l < "$DM_tl/.1.cfg")" -ge 80 ]; then
+    if [ $(wc -l < "$DM_tl/.1.cfg") -ge 80 ]; then
     msg "$(gettext "Sorry, you have reached the maximum number of topics")" info Info &&
     killall add.sh & exit 1; fi
 
@@ -495,7 +495,7 @@ dclik_list_words() {
         list_words_3 ./lstws
     fi
 
-    sname="$(cat ./lstws)"
+    sname="$(< ./lstws)"
     slt=$(mktemp "$DT/slt.XXXX.x")
     dlg_checklist_1 ./lst "$info" "$slt"
     ret=$(echo $?)
@@ -682,18 +682,18 @@ process() {
         tesseract "$pars.png" "$pars" &> /dev/null # -l $lgt
         cat "$pars.txt" | sed 's/\\n/./g' \
         | sed '/^$/d' | sed 's/^[ \t]*//;s/[ \t]*$//' \
-        | sed 's/ \+/ /;s/\://;s/"//;s/^ *//;s/ *$//g' \
+        | sed 's/ \+/ /;s/\://;s/\&quot;/\"/;s/^ *//;s/ *$//g' \
         | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. //g' \
         | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
         | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
-        | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' > ./sntsls_> ./sntsls_
+        | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' > ./sntsls_
         ) | dlg_progress_1
         rm "$pars.png"
 
     else
         (echo "1"
         echo "# $(gettext "Processing")..." ;
-        if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
+        if [ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]; then
         echo "${conten}" \
         | sed 's/^ *//;s/ *$//g' | sed 's/^[ \t]*//;s/[ \t]*$//' \
         | sed 's/ \+/ /;s/\://;s/"//g' \
@@ -722,9 +722,6 @@ process() {
         
         sed -i '/^$/d' ./sntsls_
         tpe="$(sed -n 2p "$lckpr")"
-        [[ ${#tpe} -gt 60 ]] \
-        && tcnm="${tpe:0:60}..." || tcnm="${tpe}"
-
         info="-$((200-ns))"
 
         if [ -z "$(< ./sntsls_)" ]; then
@@ -780,7 +777,7 @@ process() {
                     lns="$(cat ./slts ./wrds | wc -l)"
 
                     n=1
-                    while [ $n -le "$(wc -l < slts | head -200)" ]; do
+                    while [[ $n -le "$(wc -l < slts | head -200)" ]]; do
                     
                         sntc=$(sed -n "$n"p ./slts)
                         trgt=$(translate "$(clean_1 "${sntc}")" auto $lgt | sed ':a;N;$!ba;s/\n/ /g')

@@ -197,7 +197,7 @@ if [[ "$conten" = A ]]; then
             dlg_checklist_5 "$DT_r/ls" "$(sed -n 2p "$lckpr")"
         fi
         
-            if [ $? -eq 0 ]; then
+            if [[ $? -eq 0 ]]; then
             
                 sleep 1
                 tpe=$(sed -n 2p "$DT/.n_s_pr")
@@ -228,10 +228,10 @@ if [[ "$conten" = A ]]; then
                 lns=$(cat ./slts ./wrds | wc -l)
 
                 n=1
-                while [ $n -le "$(wc -l < ./slts | head -200)" ]; do
+                while [[ $n -le "$(wc -l < ./slts | head -200)" ]]; do
                     
                     sntc=$(sed -n "$n"p ./slts)
-                    trgt=$(sed 's/^\s*./\U&\E/g' ./"$sntc".txt | sed ':a;N;$!ba;s/\n/ /g')
+                    trgt=$(clean_1 "$(< ./"$sntc".txt)")
                     srce="$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')"
                     fname=$(nmfile "$trgt")
                     
@@ -303,7 +303,7 @@ if [[ "$conten" = A ]]; then
                 nwrds=" $(wc -l < ./wrds  | head -200) $(gettext "Words")"; fi
                 
                 n=1
-                while [ $n -le "$(wc -l < wrds | head -200)" ]; do
+                while [[ $n -le "$(wc -l < wrds | head -200)" ]]; do
                     trgt=$(sed -n "$n"p wrds | sed ':a;N;$!ba;s/\n/ /g' | sed 's/^\s*./\U&\E/g')
                     sname=$(sed -n "$n"p wrdsls)
                     fname="$(nmfile "$trgt")"

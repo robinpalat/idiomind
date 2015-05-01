@@ -74,7 +74,7 @@ missing() {
     --skip-taskbar --center --on-top \
     --align=center --text-align=center \
     --width=620 --height=380 --borders=$bs \
-    --button="$(gettext "Add")":4 \
+    --button="$(gettext "Add")":5 \
     --button=gtk-go-up:3 \
     --button=gtk-go-down:2
 }

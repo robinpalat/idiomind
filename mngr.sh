@@ -610,10 +610,9 @@ edit() {
             else
                 "$DS/vwr.sh" "$lists" "$trgt_mod" "$item_pos" &
             fi
+            
     else
-    DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
-    item=$(sed -n "$item_pos"p "$DC_tlt/1.cfg")
-    "$DS/add.sh" new_items "$DT_r" 2 "$item"
+        exit 1
     fi
     exit
 } >/dev/null 2>&1
