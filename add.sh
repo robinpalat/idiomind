@@ -44,7 +44,7 @@ new_topic() {
     "$DS/add.sh" new_topic "$jlb" & exit 1; fi
     
     if grep -Fxo "$jlb" <<<"$restr"; then jlb="$jlb."; fi
-    sfname=$(grep -Fxo "$jlb" < "$DM_tl/.1.cfg" | wc -l)
+    sfname=$(grep -Fxo "$jlb" "$DM_tl/.1.cfg" | wc -l)
     
     if [ "$sfname" -ge 1 ]; then
     
@@ -73,7 +73,7 @@ new_items() {
     if [ ! -d "$DT" ]; then new_session; fi
     [ ! "$DT/tpe" ] && echo "$tpc" > "$DT/tpe"
     
-    if [ "$(grep -vFx 'Podcasts' < "$DM_tl/.1.cfg" | wc -l)" -lt 1 ]; then
+    if [ "$(grep -vFx 'Podcasts' "$DM_tl/.1.cfg" | wc -l)" -lt 1 ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
     "$DS/chng.sh" "$(gettext "To start adding notes you need have a topic.
 Create one using the button below. ")" & exit 1; fi
@@ -440,18 +440,18 @@ edit_list_words() {
                 
                 else
                     printf "\n\n$sntc" >> ./logw
-                    [ "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"; fi
+                    [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"; fi
             fi
             let n++
         done
 
         printf "aitm.$lns.aitm\n" >> "$DC_s/8.cfg"
 
-        if [ "$DT_r/logw" ]; then
+        if [ -f "$DT_r/logw" ]; then
         sleep 1
         dlg_info_1 "$(gettext "Some items could not be added to your list.")"; fi
         
-        [ "$DT_r" ] && rm -fr "$DT_r"
+        [ -d "$DT_r" ] && rm -fr "$DT_r"
         rm -f logw "$DT"/*.$c & exit 1
     fi
 }

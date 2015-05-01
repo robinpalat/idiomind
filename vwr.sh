@@ -2,8 +2,8 @@
 # -*- ENCODING: UTF-8 -*-
 
 echo "_" >> "$DT/stats.tmp" &
-[[ "$1" = 1 ]] && index="$DC_tlt/1.cfg"
-[[ "$1" = 2 ]] && index="$DC_tlt/2.cfg"
+[[ $1 = 1 ]] && index="$DC_tlt/1.cfg"
+[[ $1 = 2 ]] && index="$DC_tlt/2.cfg"
 re='^[0-9]+$'
 item_name="$2"
 index_pos="$3"

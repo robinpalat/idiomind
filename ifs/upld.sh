@@ -238,11 +238,9 @@ msg "$(gettext "Sorry, the size of the attachments is too large.")\n " info & ex
 fi
 
 internet; cd "$DT"
-
 mkdir "$DT/upload"
 DT_u="$DT/upload"
 mkdir "$DT/upload/$tpc"
-
 cd "$DM_tlt/words/images"
 if [ $(ls -1 *.jpg 2>/dev/null | wc -l) != 0 ]; then
 images=$(ls *.jpg | wc -l); else
@@ -251,7 +249,6 @@ images=0; fi
 [ -f "$DC_tlt/4.cfg" ] && sentences=$(wc -l < "$DC_tlt/4.cfg")
 [ -f "$DC_tlt/12.cfg" ] && date_c="$(sed -n 8p < "$DC_tlt/12.cfg" | grep -o 'date_c="[^"]*' | grep -o '[^"]*$')"
 date_u=$(date +%F)
-
 echo -e "name=\"$tpc\"
 language_source=\"$lgsl\"
 language_target=\"$lgtl\"
@@ -276,7 +273,6 @@ cp -r "./words" "$DT_u/$tpc/"
 cp -r "./words/images" "$DT_u/$tpc/words"
 mkdir "$DT_u/$tpc/files"
 mkdir "$DT_u/$tpc/audio"
-
 auds="$(uniq < "$DC_tlt/4.cfg" \
 | sed 's/\n/ /g' | sed 's/ /\n/g' \
 | grep -v '^.$' | grep -v '^..$' \

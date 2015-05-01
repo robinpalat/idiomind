@@ -88,10 +88,6 @@ function new_session() {
     echo "$DESKTOP_SESSION" >> "$DC_s/10.cfg"
     gconftool-2 --get /desktop/gnome/interface/font_name \
     | cut -d ' ' -f 2 >> "$DC_s/10.cfg"
-    locale >/dev/null 2>&1 #FIX
-    [[ $? != 0 ]] && msg \
-    "$(gettext "The system is not properly configured.\nE10")" \
-    error Error && exit 1
 
     # log file
     if [ -f "$DC_s/8.cfg" ]; then
@@ -132,7 +128,7 @@ function new_session() {
 }
 
 
-if [ "$(echo "$1" | grep -o '.idmnd')" ]; then
+if grep -o '.idmnd' <<<"$1"; then
 
     dte=$(date "+%d %B")
     c=$(($RANDOM%1000))
@@ -187,17 +183,17 @@ if [ "$(echo "$1" | grep -o '.idmnd')" ]; then
                 rm -f "$DT/import.tar.gz" "$DT/$tpi.cfg" & exit
                 
             elif [[ $ret -eq 0 ]]; then
-            
+                
                 if2=$(wc -l < "$DM_t/$language_target/.1.cfg")
                 chck=$(grep -Fox "$tpi" < "$DM_t/$language_target/.1.cfg" | wc -l)
                 
                 if [ ${if2} -ge 80 ]; then
-                
+                    
                     msg "$(gettext "Sorry, you have reached the maximum number of topics")\n" info
                     [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c"
                     rm -f "$DT/import.tar.gz" & exit
                 fi
-        
+                
                 if [ ${chck} -ge 1 ]; then
                 
                     tpi="$tpi $chck"
@@ -225,14 +221,12 @@ if [ "$(echo "$1" | grep -o '.idmnd')" ]; then
                 else mv -f "$tmp/$n.cfg" "$DC_tlt/$n.cfg"; fi
                 let n++
                 done
-                tee -a "$DC_tlt/.11.cfg" "$DC_tlt/1.cfg" < "$DC_tlt/0.cfg"
-                echo "1" > "$DC_tlt/8.cfg"; rm "$DC_tlt/9.cfg" "$DC_tlt/ls"
+                tee "$DC_tlt/.11.cfg" "$DC_tlt/1.cfg" < "$DC_tlt/0.cfg"
+                echo 1 > "$DC_tlt/8.cfg"; rm "$DC_tlt/9.cfg" "$DC_tlt/ls"
                 cp -fr "$tmp"/.* "$DM_tlt/"
                 echo "$language_target" > "$DC_s/6.cfg"
                 echo "$lgsl" >> "$DC_s/6.cfg"
                 echo "$dte" > "$DC_tlt/13.cfg"
-                sed -i 's/'"$tpi"'//g' "$DM_t/$language_target/.2.cfg"
-                sed -i '/^$/d' "$DM_t/$language_target/.2.cfg"
                 "$DS/mngr.sh" mkmn; "$DS/default/tpc.sh" "$tpi" &
             fi
     fi
@@ -343,8 +337,8 @@ function topic() {
             if [[ ${RM} -ge 100 ]]; then
             
                 if [ $((stts%2)) = 0 ]; then
-                echo "8" > "$DC_tlt/8.cfg"; else
-                echo "7" > "$DC_tlt/8.cfg"; fi
+                echo 8 > "$DC_tlt/8.cfg"; else
+                echo 7 > "$DC_tlt/8.cfg"; fi
                 
                 "$DS/mngr.sh" mkmn &
                 
@@ -399,8 +393,8 @@ function topic() {
 
             stts=$(sed -n 1p "$DC_tlt/8.cfg")
             if [[ $((stts%2)) = 0 ]]; then
-            echo "8" > "$DC_tlt/8.cfg"; else
-            echo "7" > "$DC_tlt/8.cfg"; fi
+            echo 8 > "$DC_tlt/8.cfg"; else
+            echo 7 > "$DC_tlt/8.cfg"; fi
             
             "$DS/mngr.sh" mkmn &
             

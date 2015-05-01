@@ -14,7 +14,7 @@ if [ ! -d "$DM_tl/Podcasts" ]; then
     mkdir "$DM_tl/Podcasts/cache"
     cd "$DM_tl/Podcasts/.conf/"
     touch "0.cfg" "1.cfg" "2.cfg" "3.cfg" "4.cfg" ".updt.lst"
-    echo "14" > "$DM_tl/Podcasts/.conf/8.cfg"
+    echo 14 > "$DM_tl/Podcasts/.conf/8.cfg"
     echo " " > "$DM_tl/Podcasts/.conf/10.cfg"
     echo -e " $(gettext "Last update:")
  $(gettext "Latest downloads:") 0  $(gettext "Saved episodes:") \
@@ -103,7 +103,6 @@ CNFG=$(yad --form --title="$(gettext "Podcasts settings")" \
 --field="":DIR "$path" \
 --field="$(gettext "Remove Episodes")":FBTN "$DSP/mngr.sh 'delete_1'" \
 --field="$(gettext "Remove Saved Episodes")":FBTN "$DSP/mngr.sh 'delete_2'" \
---field=" ":LBL " " \
 --button="$(gettext "Cancel")":1 \
 --button="$(gettext "Syncronize")":5 \
 --button="gtk-apply":0)

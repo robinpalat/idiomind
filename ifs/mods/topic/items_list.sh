@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 
-function word_view(){
+function word_view() {
 
     tags="$(eyeD3 "$DM_tlt/words/$fname.mp3")"
     trgt="$item"
@@ -34,10 +34,10 @@ function word_view(){
 } >/dev/null 2>&1
 
 
-function sentence_view(){
+function sentence_view() {
 
     tags="$(eyeD3 "$DM_tlt/$fname.mp3")"
-    [ "$(sed -n 1p < "$DC_s/1.cfg" | grep -o grammar=\"[^\"]* | grep -o '[^"]*$')"  = TRUE ] \
+    [ "$(sed -n 1p "$DC_s/1.cfg" | grep -o grammar=\"[^\"]* | grep -o '[^"]*$')"  = TRUE ] \
     && trgt="$(grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)' <<<"$tags")" \
     || trgt="$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"$tags")"
     srce="$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"$tags")"

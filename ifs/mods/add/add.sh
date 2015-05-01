@@ -47,13 +47,11 @@ function index() {
             echo "${item}" >> "$DC_tlt/4.cfg"
             echo "${item}" >> "$DC_tlt/.11.cfg"
         fi
-        
     fi
         
     if [ "$1" = edit ]; then
             
-        item="${item}"
-        item_mod="${4}"
+        item="${item}"; item_mod="${4}"
         sed -i "s/${item}/${item_mod}/" "$DC_tlt/0.cfg"
         sed -i "s/${item}/${item_mod}/" "$DC_tlt/1.cfg"
         sed -i "s/${item}/${item_mod}/" "$DC_tlt/2.cfg"
@@ -71,7 +69,7 @@ function check_grammar_1() {
     
     g=$(sed 's/ /\n/g' <<<"$trgt")
     cd "$1"; touch "A.$r" "B.$r" "g.$r"; n=1
-    while [ $n -le $(wc -l <<<"$g") ]; do
+    while [[ $n -le $(wc -l <<<"$g") ]]; do
         grmrk=$(sed -n "$n"p <<<"$g")
         chck=$(sed -n "$n"p <<<"$g,," | sed 's/,//;s/\.//g')
         if grep -Fxq "$chck" <<<"$pronouns"; then
@@ -114,7 +112,6 @@ function check_grammar_2() {
 function clean_1() {
     
     #iconv -c -f utf8 -t ascii 
-    
     if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
     echo "$1" | sed ':a;N;$!ba;s/\n/ /g' \
     | sed 's/"//; s/“//;s/&//; s/”//;s/://'g | sed "s/’/'/g" \
@@ -321,7 +318,7 @@ function voice() {
 
 function fetch_audio() {
     
-    if ([ $lgt = ja ] || [ $lgt = "zh-cn" ] || [ $lgt = ru ]); then
+    if [ $lgt = ja ] || [ $lgt = "zh-cn" ] || [ $lgt = ru ]; then
     words_list="$2"; else words_list="$1"; fi
     
     while read word; do

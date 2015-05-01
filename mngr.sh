@@ -121,13 +121,13 @@ mark_to_learn() {
     
     if [[ $((stts%2)) = 0 ]]; then
 
-        echo "6" > "$DC_tlt/8.cfg"
+        echo 6 > "$DC_tlt/8.cfg"
             
     else
         if [[ "$RM" -ge 50 ]]; then
-        echo "5" > "$DC_tlt/8.cfg"
+        echo 5 > "$DC_tlt/8.cfg"
         else
-        echo "1" > "$DC_tlt/8.cfg"
+        echo 1 > "$DC_tlt/8.cfg"
         fi
     fi
     
@@ -155,7 +155,7 @@ mark_as_learned() {
     msg "$(gettext "Not enough items to perform the operation.")\n " \
     info "$(gettext "Not enough items")" & exit; fi
     
-    if [ "$3" = 1 ]; then
+    if [ $3 = 1 ]; then
     kill -9 $(pgrep -f "yad --list ") &
     kill -9 $(pgrep -f "yad --list ") &
     kill -9 $(pgrep -f "yad --form ") &
@@ -176,7 +176,7 @@ mark_as_learned() {
             
             if [[ "$RM" -ge 50 ]]; then
             
-                if [[ "$steps" = 6 ]]; then
+                if [[ $steps = 6 ]]; then
                 echo -e "_\n_\n_\n_\n_\n$(date +%m/%d/%Y)" > "$DC_tlt/9.cfg"
                 else
                 echo "$(date +%m/%d/%Y)" >> "$DC_tlt/9.cfg"
@@ -189,9 +189,9 @@ mark_as_learned() {
 
         > "$DC_tlt/7.cfg"
         if [[ $((stts%2)) = 0 ]]; then
-        echo "4" > "$DC_tlt/8.cfg"
+        echo 4 > "$DC_tlt/8.cfg"
         else
-        echo "3" > "$DC_tlt/8.cfg"
+        echo 3 > "$DC_tlt/8.cfg"
         fi
     fi
     rm "$DC_tlt/2.cfg" "$DC_tlt/1.cfg"
@@ -199,7 +199,7 @@ mark_as_learned() {
     cp -f "$DC_tlt/0.cfg" "$DC_tlt/2.cfg"
     "$DS/mngr.sh" mkmn &
 
-    [[ "$3" = 1 ]] && idiomind topic &
+    [[ $3 = 1 ]] && idiomind topic &
     exit 1
 }
 
@@ -660,8 +660,8 @@ rename_topic() {
         echo "$jlb" >> "$DM_tl/.1.cfg"
         echo "$jlb" >> "$DM_tl/.2.cfg"
         echo "$jlb" > "$DT/tpe"
-        echo '0' >> "$DC_s/4.cfg" 
-        echo '0' >> "$DM_tl/.8.cfg"
+        echo 0 >> "$DC_s/4.cfg" 
+        echo 0 >> "$DM_tl/.8.cfg"
         
         n=1
         while [[ $n -le 3 ]]; do
