@@ -113,26 +113,26 @@ function clean_1() {
     
     #iconv -c -f utf8 -t ascii 
     if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
-    echo "$1" | sed ':a;N;$!ba;s/\n/ /g' \
+    echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' \
     | sed 's/"//; s/“//;s/&//; s/”//;s/://'g | sed "s/’/'/g" \
     | sed "s/|//g" \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
-    | sed 's/^ *//; s/ *$//g'| sed 's/^\s*./\U&\E/g'
+    | sed 's/^ *//; s/ *$//g'
     else
-    echo "$1" | sed ':a;N;$!ba;s/\n/ /g' \
-    | sed 's/"//; s/“//;s/&//; s/”//;s/://'g | sed "s/’/'/g" \
+    echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' \
+    | sed 's/“//;s/&//; s/”//;s/://'g | sed "s/’/'/g" \
     | sed "s/|//g" \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
-    | sed 's/^ *//; s/ *$//g'| sed 's/^\s*./\U&\E/g'
+    | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g'
     fi
 }
 
 
 function clean_2() {
     
-    echo "$1" | cut -d "|" -f1 | sed 's/!//; s/&//; s/\://; s/\&//g' \
-    | sed "s/'//;s/-//g" | sed 's/^[ \t]*//;s/[ \t]*$//' \
-    | sed 's|/||; s/^\s*./\U&\E/g' | sed 's/\：//g' | iconv -c -t UTF-8
+    echo "${1}" | cut -d "|" -f1 | sed 's/!//;s/&//;s/\://; s/\&//g' \
+    | sed "s/-//g" | sed 's/^[ \t]*//;s/[ \t]*$//' \
+    | sed 's|/||;s/^\s*./\U&\E/g' | sed 's/\：//g'
 }    
 
 
@@ -140,14 +140,14 @@ function clean_3() {
     
     cd "$1"; touch "swrd.$2" "twrd.$2"
     if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
-    vrbl="$srce"; lg=$lgt; aw="swrd.$2"; bw="twrd.$2"
-    else vrbl="$trgt"; lg=$lgs; aw="twrd.$2"; bw="swrd.$2"; fi
+    vrbl="${srce}"; lg=$lgt; aw="swrd.$2"; bw="twrd.$2"
+    else vrbl="${trgt}"; lg=$lgs; aw="twrd.$2"; bw="swrd.$2"; fi
     
-    echo "$vrbl" | sed 's/ /\n/g' | grep -v '^.$' \
+    echo "${vrbl}" | sed 's/ /\n/g' | grep -v '^.$' \
     | grep -v '^..$' | sed -n 1,50p | sed s'/&//'g \
     | sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
     | tr -d ')' | tr -d '(' | sed 's/\]//;s/\[//g' \
-    | sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //g' > "$aw"
+    | sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //;s/"//g' > "$aw"
 }
 
 
@@ -453,7 +453,7 @@ function dlg_checklist_3() {
     --window-icon="$DS/images/icon.png" \
     --ellipsize=END --text-align=right --center --sticky --no-headers \
     --width=600 --height=550 --borders=5 \
-    --column="$(cat "$1" | wc -l)" \
+    --column="$(wc -l < "$1")" \
     --column="$(gettext "sentences")" \
     --button="$(gettext "Cancel")":1 \
     --button=$(gettext "Reorder"):2 \

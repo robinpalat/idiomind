@@ -64,16 +64,17 @@ function sentence_view() {
 
 missing() {
     
+    item=$(sed -n "$1"p "$index")
     yad --form --title="$item" \
     --selectable-labels \
     --text="$(gettext "File not found")" \
     --field="":lbl " " \
-    --field="<b><span color='#3F78A0'>$1</span></b>":lbl \
+    --field="<b><span color='#3F78A0'>$item</span></b>":lbl \
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --center --on-top \
     --align=center --text-align=center \
     --width=620 --height=380 --borders=$bs \
-    --button=gtk-edit:4 \
+    --button="$(gettext "Add")":4 \
     --button=gtk-go-up:3 \
     --button=gtk-go-down:2
 }

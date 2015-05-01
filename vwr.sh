@@ -32,7 +32,7 @@ elif [ -f "$DM_tlt/$fname.mp3" ]; then
     sentence_view
     
 else
-    missing "$item"
+    missing "$index_pos"
 fi
     ret=$?
         

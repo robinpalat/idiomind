@@ -415,7 +415,7 @@ edit() {
             "$DS/mngr.sh" edit "$lists" $((item_pos-1)) & exit; fi
             
             srce_mod="$(tail -12 < "$file_tmp" | sed -n 2p  \
-            | sed 's/^ *//; s/ *$//g'| sed ':a;N;$!ba;s/\n/ /g')"
+            | sed 's/^ *//; s/ *$//g'| sed ':a;N;$!ba;s/\n/ /g'| sed 's/^\s*./\U&\E/g')"
             tpc_mod="$(tail -12 < "$file_tmp" | sed -n 3p)"
             audio_mod="$(tail -12 < "$file_tmp" | sed -n 4p)"
             exmp_mod="$(tail -12 < "$file_tmp" | sed -n 5p)"
@@ -498,12 +498,13 @@ edit() {
 
             if [ ! -f "$DM_tlt/$fname.mp3" ]; then
             "$DS/mngr.sh" edit "$lists" $((item_pos-1)) & exit; fi
-            
+
+            include "$DS/ifs/mods/add"
             mark_mod="$(tail -7 < "$file_tmp" | sed -n 1p)"
-            trgt_mod="$(tail -7 < "$file_tmp" | sed -n 2p | \
-            sed 's/^ *//; s/ *$//g'| sed ':a;N;$!ba;s/\n/ /g')"
+            trgt_mod="$(clean_1 "$(tail -7 < "$file_tmp" | sed -n 2p | \
+            sed 's/^ *//; s/ *$//g' | sed ':a;N;$!ba;s/\n/ /g')")"
             srce_mod="$(tail -7 < "$file_tmp" | sed -n 3p | \
-            sed 's/^ *//; s/ *$//g'| sed ':a;N;$!ba;s/\n/ /g')"
+            sed 's/^ *//; s/ *$//g' | sed ':a;N;$!ba;s/\n/ /g' | sed 's/^\s*./\U&\E/g')"
             tpc_mod="$(tail -7 < "$file_tmp" | sed -n 5p)"
             audio_mod="$(tail -7 < "$file_tmp" | sed -n 6p)"
             source /usr/share/idiomind/ifs/c.conf
@@ -512,13 +513,13 @@ edit() {
             
             if [ "$trgt_mod" != "$trgt" ] \
             && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
-            
+                
                 temp="$(gettext "Processing")..."
                 fname_mod="$(nmfile "$trgt_mod")"
                 mv -f "$DM_tlt/$fname.mp3" "$DM_tlt/$fname_mod.mp3"
                 index edit "${trgt}" "${tpc}" "${trgt_mod}"
                 tags_1 S "$trgt_mod" "$temp" "$DM_tlt/$fname_mod.mp3"
-                tags_3 W "$temp" " " "$trgt_mod" "$DM_tlt/$fname_mod.mp3"
+                tags_3 W "$temp" "$temp" "$trgt_mod" "$DM_tlt/$fname_mod.mp3"
                 
                 (internet
                 srce_mod=$(translate "$trgt_mod" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')
@@ -611,6 +612,7 @@ edit() {
             fi
     else
     DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
+    item=$(sed -n "$item_pos"p "$DC_tlt/1.cfg")
     "$DS/add.sh" new_items "$DT_r" 2 "$item"
     fi
     exit

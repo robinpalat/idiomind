@@ -8,11 +8,11 @@ function dlg_checklist_5() {
     slt=$(mktemp "$DT/slt.XXXX.x")
     cat "$1" | awk '{print "FALSE\n"$0}' | \
     yad --list --checklist --title="$2" \
-    --text="<small>$info</small>" \
+    --text="<small>$info</small> " \
     --name=Idiomind --class=Idiomind \
     --dclick-action="$cmd_edit_" \
     --window-icon="$DS/images/icon.png" \
-    --center --sticky \
+    --text-align=right --center --sticky \
     --width=600 --height=550 --borders=3 \
     --column="$(wc -l < "$1")" \
     --column="$(gettext "Items")" \
@@ -184,12 +184,8 @@ if [[ "$conten" = A ]]; then
 
         cd "$DT_r"
         sed -i '/^$/d' ./ls
-        [ ${#tpe} -gt 40 ] && tcnm="${tpe:0:40}..." || tcnm="$tpe"
-
         left=$((200 - $(wc -l < "$DC_tlt"/4.cfg)))
         info="-$left"
-        [ $ns -ge 195 ] && info="-$left"
-        [ $ns -ge 199 ] && info="-$left"
         
         if [ -z "$(< $DT_r/ls)" ]; then
         
@@ -235,8 +231,9 @@ if [[ "$conten" = A ]]; then
                 while [ $n -le "$(wc -l < ./slts | head -200)" ]; do
                     
                     sntc=$(sed -n "$n"p ./slts)
-                    trgt=$(sed 's/^\s*./\U&\E/g' < "./$sntc.txt")
-                    fname="$(nmfile "$trgt")"
+                    trgt=$(sed 's/^\s*./\U&\E/g' ./"$sntc".txt | sed ':a;N;$!ba;s/\n/ /g')
+                    srce="$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')"
+                    fname=$(nmfile "$trgt")
                     
                     if [ $(sed -n 1p "$sntc.txt" | wc -$c) -eq 1 ]; then
                     
@@ -244,7 +241,6 @@ if [[ "$conten" = A ]]; then
                             printf "\n\n$sntc" >> ./wlog
                     
                         else
-                            srce="$(translate "$trgt" $lgt $lgs)"
                             mv -f "$sntc.mp3" "$DM_tlt/words/$fname.mp3"
                             
                             mksure "$DM_tlt/words/$fname.mp3" "$trgt" "$srce"
@@ -259,14 +255,12 @@ if [[ "$conten" = A ]]; then
                             fi
                         fi
                     
-                    elif [ "$(sed -n 1p "$sntc.txt" | wc -$c)" -ge 1 ]; then
+                    elif [ "$(sed -n 1p "$sntc".txt | wc -$c)" -ge 1 ]; then
                     
                         if [ "$(wc -l < "$DC_tlt"/0.cfg)" -ge 200 ]; then
                             printf "\n\n$sntc" >> ./slog
                     
                         else
-                            srce="$(translate "$trgt" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')"
-                            
                             mv -f "$sntc.mp3" "$DM_tlt/$fname.mp3"
                             (
                             r=$(($RANDOM%10000))
@@ -280,17 +274,17 @@ if [[ "$conten" = A ]]; then
                             pwrds=$(tr '\n' '_' < "./B.$r")
                             
                             mksure "$DM_tlt/$fname.mp3" "$trgt" "$srce" \
-                            "$lwrds" "$pwrds" "$grmrk"
-                            if [ $? = 0 ]; then
-                                echo "$sntc" >> adds
-                                index sentence "$trgt" "$tpe"
-                                tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3"
-                                tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3"
-                                fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
-                            else
-                                printf "\n\n$sntc" >> ./slog
-                                [ -f "$DM_tlt/$fname.mp3" ] && rm "$DM_tlt/$fname.mp3"
-                            fi
+                                "$lwrds" "$pwrds" "$grmrk"
+                                if [ $? = 0 ]; then
+                                    echo "$sntc" >> adds
+                                    index sentence "$trgt" "$tpe"
+                                    tags_1 S "$trgt" "$srce" "$DM_tlt/$fname.mp3"
+                                    tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3"
+                                    fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
+                                else
+                                    printf "\n\n$sntc" >> ./slog
+                                    [ -f "$DM_tlt/$fname.mp3" ] && rm "$DM_tlt/$fname.mp3"
+                                fi
 
                             echo "__" >> x
                             rm -f "$DT"/*.$r "$aw" "$bw"
@@ -351,7 +345,7 @@ if [[ "$conten" = A ]]; then
                 
                 cd "$DT_r"
                 if [ -f ./wlog ]; then
-                wadds=" $(($(wc -l < ./addw) - $(sed '/^$/d' < ./wlog | wc -l)))"
+                wadds=" $(($(wc -l < ./addw) - $(sed '/^$/d' ./wlog | wc -l)))"
                 W=" $(gettext "Words")"
                 if [ $wadds = 1 ]; then
                 W=" $(gettext "Word")"; fi
@@ -363,7 +357,7 @@ if [[ "$conten" = A ]]; then
                 W=" $(gettext "Word")"; fi
                 fi
                 if [ -f ./slog ]; then
-                sadds=" $(($(wc -l < ./adds) - $(sed '/^$/d' < ./swlog | wc -l)))"
+                sadds=" $(($(wc -l < ./adds) - $(sed '/^$/d' ./swlog | wc -l)))"
                 S=" $(gettext "Sentences")"
                 if [ $sadds = 1 ]; then
                 S=" $(gettext "Sentence")"; fi
@@ -413,7 +407,7 @@ if [[ "$conten" = A ]]; then
                 
                 cd "$DT_r"
                 if  [ -f ./log ]; then
-                rm="$(($(wc -l < ./adds) - $(sed '/^$/d' < ./log | wc -l)))"
+                rm="$(($(wc -l < ./adds) - $(sed '/^$/d' ./log | wc -l)))"
                 else rm="$(wc -l < ./adds)"; fi
                 
                 n=1
