@@ -52,7 +52,6 @@ confirm() {
 set_lang() {
     
     echo "$tpc" > "$DM_tl/.8.cfg"
-    echo '0' >> "$DM_tl/.8.cfg"
     language="$1"
     if [ ! -d "$DM_t/$language" ]; then
     mkdir "$DM_t/$language"
@@ -63,10 +62,8 @@ set_lang() {
     source /usr/share/idiomind/ifs/c.conf
     if [ -f "$DM/topics/$language/.8.cfg" ]; then
     lst=$(sed -n 1p "$DM/topics/$language/.8.cfg")
-    mde=$(sed -n 2p "$DM/topics/$language/.8.cfg")
-    echo "$mde" > "$DC_s/4.cfg"
     "$DS/default/tpc.sh" "$lst" 1
-    else rm "$DC_s/4.cfg" && touch "$DC_s/4.cfg"; fi
+    else rm "$DC_s/4.cfg" && > "$DC_s/4.cfg"; fi
     "$DS/mngr.sh" mkmn &
 }
 

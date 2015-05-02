@@ -348,8 +348,9 @@ delete_topic() {
 
             if [ -d "$DM_tl/$tpc" ] && [ -n "$tpc" ]; then
             rm -r "$DM_tl/$tpc"; fi
-            rm -f "$DC_s/4.cfg" "$DT/tpe"
+            rm -f "$DT/tpe"
             > "$DM_tl/.8.cfg"
+            > "$DC_s/4.cfg"
             n=0
             while [[ $n -le 4 ]]; do
             if [ "$DM_tl/.$n.cfg" ]; then
