@@ -53,6 +53,7 @@ set_lang() {
     
     echo "$tpc" > "$DM_tl/.8.cfg"
     echo '0' >> "$DM_tl/.8.cfg"
+    kill -9 $(pgrep -f "python /usr/share/idiomind/systray")
     language="$1"
     if [ ! -d "$DM_t/$language" ]; then
     mkdir "$DM_t/$language"
@@ -67,6 +68,7 @@ set_lang() {
     echo "$mde" > "$DC_s/4.cfg"
     "$DS/default/tpc.sh" "$lst" 1
     else rm "$DC_s/4.cfg" && touch "$DC_s/4.cfg"; fi
+    python "$DS/systray.py" &
     "$DS/mngr.sh" mkmn &
 }
 
