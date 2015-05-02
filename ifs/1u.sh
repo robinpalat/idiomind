@@ -62,7 +62,7 @@ It seems that you have no installed on your system the program YAD.\t
 You can get it from here:  www.sourceforge.net/projects/yad-dlg
 or install it using the following commands:
 
-sudo add-apt-repository ppa:robinpala/idiomind
+sudo add-apt-repository ppa:robinpalat/idiomind
 sudo apt-get update
 sudo apt-get install yad")" \
 --no-wrap & exit; fi

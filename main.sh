@@ -439,7 +439,10 @@ panel() {
     
     if [ "$(date +%d)" != "$date" ] || [ ! -f "$DC_s/10.cfg" ]; then
     new_session; fi
-    python "$DS/ifs/systray.py"
+
+    ps -A | pgrep -f "python /usr/share/idiomind/ifs/systray.py"
+    if (($? != 0)); then
+    python "$DS/ifs/systray.py"; fi
 }
 
 version() {
