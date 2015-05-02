@@ -447,7 +447,7 @@ panel() {
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" \
     --form --fixed --on-top --no-buttons --align=center \
-    --width=140 --height=190 --borders=0 --geometry=150x190-$x-$y \
+    --width=130 --height=190 --borders=0 --geometry=150x190-$x-$y \
     --field=gtk-new:btn "$DS/add.sh 'new_items'" \
     --field=gtk-home:btn "idiomind 'topic'" \
     --field=gtk-index:btn "$DS/chng.sh" \
