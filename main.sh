@@ -442,7 +442,8 @@ panel() {
 
     ps -A | pgrep -f "python /usr/share/idiomind/ifs/systray.py"
     if (($? != 0)); then
-    python "$DS/ifs/systray.py"; fi
+    python "$DS/ifs/systray.py"
+    else idiomind topic; fi
 }
 
 version() {
