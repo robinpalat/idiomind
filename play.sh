@@ -79,18 +79,16 @@ function setting_1() {
 }
 
 if [ ! -f "$DT/.p_" ]; then
-    l="--center"
-    btn="Play:0"
-    
+l="--center"
+btn="Play:0"
 else
-    tpp="$(sed -n 2p "$DT/.p_")"
-    l="--center"
-    if grep TRUE <<<"$words$sentences$marks$practice"; then
-    
-        if [ "$tpp" != "$tpc" ]; then
-        l="--text=<sup><b>Playing:  $tpp</b></sup>"; fi
-    fi
-    btn="gtk-media-stop:2"
+tpp="$(sed -n 2p "$DT/.p_")"
+l="--center"
+if grep TRUE <<<"$words$sentences$marks$practice"; then
+if [ "$tpp" != "$tpc" ]; then
+l="--text=<sup><b>Playing:  $tpp</b></sup>"; fi
+fi
+btn="gtk-media-stop:2"
 fi
 
 slct=$(mktemp "$DT"/slct.XXXX)
@@ -100,10 +98,10 @@ setting_1 | yad --list --title="$tpc" "$l" \
 --window-icon="$DS/images/icon.png" \
 --skip-taskbar --align=right --center --on-top \
 --expand-column=2 --no-headers \
---width=450 --height=330 --borders=5 \
+--width=420 --height=310 --borders=5 \
 --column=IMG:IMG --column=TXT:TXT --column=CHK:CHK \
 --button="$btn" \
---button="$(gettext "Close")":1  > "$slct"
+--button="$(gettext "Close")":1 > "$slct"
 ret=$?
 
 if [ "$ret" -eq 0 ]; then
