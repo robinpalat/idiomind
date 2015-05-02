@@ -15,7 +15,8 @@
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
-#  
+#
+
 #--field="$(gettext "Quick Help")":BTN "$DS/ifs/tls.sh help"
 source /usr/share/idiomind/ifs/c.conf
 [ ! -d "$DC" ] && "$DS/ifs/1u.sh" && exit
@@ -53,7 +54,7 @@ set_lang() {
     
     echo "$tpc" > "$DM_tl/.8.cfg"
     echo '0' >> "$DM_tl/.8.cfg"
-    kill -9 $(pgrep -f "python /usr/share/idiomind/systray")
+    kill -9 $(pgrep -f "python /usr/share/idiomind/ifs/systray.py")
     language="$1"
     if [ ! -d "$DM_t/$language" ]; then
     mkdir "$DM_t/$language"
@@ -68,7 +69,7 @@ set_lang() {
     echo "$mde" > "$DC_s/4.cfg"
     "$DS/default/tpc.sh" "$lst" 1
     else rm "$DC_s/4.cfg" && touch "$DC_s/4.cfg"; fi
-    python "$DS/systray.py" &
+    python "$DS/ifs/systray.py" &
     "$DS/mngr.sh" mkmn &
 }
 

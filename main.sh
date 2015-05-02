@@ -439,7 +439,7 @@ panel() {
     
     if [ "$(date +%d)" != "$date" ] || [ ! -f "$DC_s/10.cfg" ]; then
     new_session; fi
-    python "$DS/systray.py"
+    python "$DS/ifs/systray.py"
 }
 
 version() {
