@@ -55,7 +55,7 @@ conditions() {
     if [ -f "$DT/.uptp" ] && [ -z "$1" ]; then
         msg_2 "$(gettext "Wait till it finishes a previous process")\n" info OK gtk-stop
         ret=$(echo $?)
-        [[ $ret -eq 1 ]] && "$DS/stop.sh" feed
+        [[ $ret -eq 1 ]] && "$DS/stop.sh" 6
         [[ $ret -eq 0 ]] && exit 1
     
     elif [ -f "$DT/.uptp" ] && [ "$1" = 0 ]; then
@@ -235,7 +235,7 @@ fetch_podcasts() {
                         mediatype "$enclosure_url"
                         
                         if [ ! -f "$DMC/$fname.$ex" ]; then
-                        cd "$DT_r"; wget -q -c -T 30 -O "media.$ex" "$enclosure_url"
+                        cd "$DT_r"; wget -q -c -T 51 -O "media.$ex" "$enclosure_url"
                         else cd "$DT_r"; mv -f "$DMC/$fname.$ex" "media.$ex"; fi
 
                         get_images

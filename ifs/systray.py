@@ -27,7 +27,7 @@ Quit = gettext('Quit')
 
 class Indicator:
 
-    cfg = os.getenv('HOME') + '/.config/idiomind/s/4.cfg'
+    cfg = os.getenv('HOME') + '/.config/idiomind/s/7.cfg'
 
     def __init__(self):
         self.ind = appindicator.Indicator(icon,
@@ -61,7 +61,7 @@ class Indicator:
         self.ind.set_menu(menu)
         
         item = self.create_menu_label("Add")
-        item.connect("activate", self.on_Add_click, 'Add:')
+        item.connect("activate", self.on_Add_click)
         menu.append(item)
         for bm in menutopic:
             label = bm.rstrip('\n')
@@ -73,32 +73,32 @@ class Indicator:
         item = gtk.SeparatorMenuItem()
         menu.append(item)
         item = self.create_menu_label("Topics")
-        item.connect("activate", self.on_Topics_click, 'Topics:')
+        item.connect("activate", self.on_Topics_click)
         menu.append(item)
         item = self.create_menu_label("Settings")
-        item.connect("activate", self.on_Settings_click, 'Setting:')
+        item.connect("activate", self.on_Settings_click)
         menu.append(item)
         item = self.create_menu_label("Quit")
-        item.connect("activate", gtk.main_quit)
+        item.connect("activate", self.on_Quit_click)
         menu.append(item)
         menu.show_all()
 
     def on_Home(self, widget):
         os.system("idiomind topic")
 
-    def on_Add_click(self, widget, path):
+    def on_Add_click(self, widget):
         os.system("'/usr/share/idiomind/add.sh' 'new_items'")
         
-    def on_Topics_click(self, widget, path):
+    def on_Topics_click(self, widget):
         subprocess.Popen('/usr/share/idiomind/chng.sh')
         
-    def on_Settings_click(self, widget, path):
+    def on_Settings_click(self, widget):
         subprocess.Popen('/usr/share/idiomind/cnfg.sh')
     
-    def on_quit(self):
-        gtk.main_quit
-        subprocess.Popen('/usr/share/idiomind/cnfg.sh')
-        
+    def on_Quit_click(self, widget):
+        os.system("/usr/share/idiomind/stop.sh 1")
+        gtk.main_quit()
+
     def on_Topic_Changed(self, filemonitor, file, other_file, event_type):
         if event_type == gio.FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
             self.update_menu()

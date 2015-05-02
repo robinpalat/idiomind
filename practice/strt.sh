@@ -24,7 +24,6 @@ eht=450
 easys="$2"
 learning="$3"
 [[ "$4" -lt 0 ]] && hards=0 || hards="$4"
-"$DS/stop.sh" &
 [ ! -d "$DC_tlt/practice" ] \
 && mkdir "$DC_tlt/practice"
 cd "$DC_tlt/practice"

@@ -45,6 +45,7 @@ else
         fi
 
         echo "$topic" > "$DC_s/4.cfg"
+        echo "$topic" > "$DC_s/7.cfg"
         echo "$topic" > "$DT/tpe"
         echo '0' > "$DC_s/5.cfg"
         

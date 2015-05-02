@@ -635,7 +635,7 @@ process() {
         if [[ $ret -eq 1 ]]; then
         rm=$(sed -n 1p "$DT/.n_s_pr")
         rm fr "$rm" "$DT/.n_s_pr"
-        "$DS/stop.sh" "$rm"
+        "$DS/stop.sh" 5
         exit 1; fi
     fi
     

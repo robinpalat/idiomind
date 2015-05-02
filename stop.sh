@@ -1,16 +1,18 @@
 #!/bin/bash
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 
-playm() {
-    killall bcle.sh &
+on_quit() {
     [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/bcle.sh")" ] && killall bcle.sh &
     [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/bcle.sh")" ] && killall bcle.sh &
     [ -n "$(ps -A | pgrep -f "chng.sh")" ] && killall chng.sh &
+    [ -n "$(ps -A | pgrep -f "notify-osd")" ] && killall notify-osd &
+    [ -n "$(ps -A | pgrep -f "play")" ] && killall play &
+    [ -n "$(ps -A | pgrep -f "mplayer")" ] && killall mplayer &
     [ -f "$DT/.p_" ] && rm -fr "$DT/.p_" "$DT/tpp"
     exit
 }
 
-play() {
+on_play() {
     killall bcle.sh &
     [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/bcle.sh")" ] && killall bcle.sh &
     [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/bcle.sh")" ] && killall bcle.sh &
@@ -22,22 +24,16 @@ play() {
     exit
 }
 
-S() {
+on_playm() {
     killall bcle.sh &
-    [ -n "$(ps -A | pgrep -f "bcle.sh")" ] && killall bcle.sh &
-    [ -n "$(ps -A | pgrep -f "notify-osd")" ] && killall notify-osd &
-    [ -n "$(ps -A | pgrep -f "play")" ] && killall play &
-    [ -n "$(ps -A | pgrep -f "play.sh")" ] && killall play.sh &
+    [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/bcle.sh")" ] && killall bcle.sh &
+    [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/bcle.sh")" ] && killall bcle.sh &
     [ -n "$(ps -A | pgrep -f "chng.sh")" ] && killall chng.sh &
+    [ -f "$DT/.p_" ] && rm -fr "$DT/.p_" "$DT/tpp"
     exit
 }
 
-V() {
-    [ -n "$(ps -A | pgrep -f "chng.sh")" ] && killall chng.sh &
-    exit
-}
-
-L() {
+on_lang() {
     killall bcle.sh &
     [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/bcle.sh")" ] && killall bcle.sh &
     [ -n "$(ps -A | pgrep -f "notify-osd")" ] && killall notify-osd &
@@ -47,7 +43,7 @@ L() {
     exit
 }
 
-add() {
+on_add() {
     killall bcle.sh &
     [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/add.sh")" ] && killall add.sh &
     [ -n "$(ps -A | pgrep -f "add.sh")" ] && killall add.sh &
@@ -57,23 +53,24 @@ add() {
     exit
 }
 
-feed() {
+on_addons() {
     killall strt.sh &
+    [ -n "$(ps -A | pgrep -f "wget -q -c -T 51")" ] && kill -9 $(pgrep -f "wget -q -c -T 51") &
     [ -f "$DT/.uptp" ] && rm -fr "$DT/.uptp"
     exit
 }
 
 case "$1" in
-    playm)
-    playm ;;
-    play)
-    play ;;
-    S)
-    S ;;
-    V)
-    V ;;
-    L)
-    L ;;
-    feed)
-    feed ;;
+    1)
+    on_quit ;;
+    2)
+    on_play ;;
+    3)
+    on_playm ;;
+    4)
+    on_lang ;;
+    5)
+    on_add ;;
+    6)
+    on_addons ;;
 esac

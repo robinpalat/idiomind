@@ -60,7 +60,7 @@ set_lang() {
     mkdir "$DM_t/$language/.share"; fi
     echo "$language" > "$DC_s/6.cfg"
     echo "$lgsl" >> "$DC_s/6.cfg"
-    "$DS/stop.sh" L
+    "$DS/stop.sh" 4
     source /usr/share/idiomind/ifs/c.conf
     if [ -f "$DM/topics/$language/.8.cfg" ]; then
     lst=$(sed -n 1p "$DM/topics/$language/.8.cfg")

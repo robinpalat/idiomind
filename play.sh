@@ -122,17 +122,17 @@ if [ "$ret" -eq 0 ]; then
     done
 
     rm -f "$slct";
-    "$DS/stop.sh" playm
+    "$DS/stop.sh" 3
     if [ -d "$DM_tlt" ] && [ -n "$tpc" ]; then
     echo "$DM_tlt" > "$DT/.p_"
     echo "$tpc" >> "$DT/.p_"
-    else "$DS/stop.sh" play && exit 1; fi
+    else "$DS/stop.sh" 2 && exit 1; fi
     
     if [ -z "$(< "$DT/index.m3u")" ]; then
     notify-send "$(gettext "Exiting")" \
     "$(gettext "Nothing to play")" -i idiomind -t 3000 &&
     sleep 4
-    "$DS/stop.sh" play & exit 1; fi
+    "$DS/stop.sh" 2 & exit 1; fi
     
     printf "plyrt.$tpc.plyrt\n" >> "$DC_s/8.cfg" &
     sleep 1
@@ -142,7 +142,7 @@ elif [ "$ret" -eq 2 ]; then
 
     [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
     [ -f "$DT/index.m3u" ] && rm -f "$DT/index.m3u"
-    "$DS/stop.sh" play
+    "$DS/stop.sh" 2
 fi
 
 rm -f "$slct" & exit
