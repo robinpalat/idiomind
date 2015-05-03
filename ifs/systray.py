@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 import os
 import gtk
 import gio
@@ -7,23 +9,13 @@ import appindicator
 import os.path
 import gettext
 
-LANGS = [('Chinese', 'zh-cn'), ('English', 'en'),
- ('French', 'fr'), ('German', 'de'),
- ('Italian', 'it'), ('Japanese', 'ja'), 
- ('Portuguese', 'pt'), ('Russian', 'ru'),
- ('Spanish', 'es'), ('Vietnamese', 'vi')]
-d = dict(LANGS)
-cfg = os.getenv('HOME') + '/.config/idiomind/s/6.cfg'
-with open(cfg, 'r') as f:
-    lgtl = f.readline()
-lgtl = lgtl.rstrip('\n')
-icon = '/usr/share/idiomind/images/flags/' + d[lgtl] + '.png'
+icon = '/usr/share/idiomind/images/icon_panel.png'
 t = gettext.translation('idiomind', 'locale', fallback=True)
-gettext = t.ugettext
-Add = gettext('Add')
-Topics = gettext('Topics')
-Settings = gettext('Settings')
-Quit = gettext('Quit')
+_ = t.ugettext
+Add = _('Add')
+Topics = _('Topics')
+Settings = _('Settings')
+Quit = _('Quit')
 
 class Indicator:
 
@@ -60,8 +52,8 @@ class Indicator:
         menu = gtk.Menu()
         self.ind.set_menu(menu)
         
-        item = self.create_menu_label("Add")
-        item.connect("activate", self.on_Add_click)
+        item = self.create_menu_label(Add)
+        item.connect("activate", self.on_Add)
         menu.append(item)
         for bm in menutopic:
             label = bm.rstrip('\n')
@@ -72,30 +64,30 @@ class Indicator:
             menu.append(item)
         item = gtk.SeparatorMenuItem()
         menu.append(item)
-        item = self.create_menu_label("Topics")
-        item.connect("activate", self.on_Topics_click)
+        item = self.create_menu_label(Topics)
+        item.connect("activate", self.on_Topics)
         menu.append(item)
-        item = self.create_menu_label("Settings")
-        item.connect("activate", self.on_Settings_click)
+        item = self.create_menu_label(Settings)
+        item.connect("activate", self.on_Settings)
         menu.append(item)
-        item = self.create_menu_label("Quit")
-        item.connect("activate", self.on_Quit_click)
+        item = self.create_menu_label(Quit)
+        item.connect("activate", self.on_Quit)
         menu.append(item)
         menu.show_all()
 
     def on_Home(self, widget):
         os.system("idiomind topic")
 
-    def on_Add_click(self, widget):
+    def on_Add(self, widget):
         os.system("'/usr/share/idiomind/add.sh' 'new_items'")
         
-    def on_Topics_click(self, widget):
+    def on_Topics(self, widget):
         subprocess.Popen('/usr/share/idiomind/chng.sh')
         
-    def on_Settings_click(self, widget):
+    def on_Settings(self, widget):
         subprocess.Popen('/usr/share/idiomind/cnfg.sh')
     
-    def on_Quit_click(self, widget):
+    def on_Quit(self, widget):
         os.system("/usr/share/idiomind/stop.sh 1")
         gtk.main_quit()
 
