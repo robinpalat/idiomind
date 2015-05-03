@@ -1,14 +1,21 @@
 #!/bin/bash
+
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 
 on_quit() {
     [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/bcle.sh")" ] && killall bcle.sh &
     [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/bcle.sh")" ] && killall bcle.sh
     [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/chng.sh")" ] && killall chng.sh
-    [ -n "$(ps -A | pgrep -f "yad")" ] && killall yad &
     [ -n "$(ps -A | pgrep -f "notify-osd")" ] && killall notify-osd &
     [ -n "$(ps -A | pgrep -f "play")" ] && killall play &
     [ -n "$(ps -A | pgrep -f "mplayer")" ] && killall mplayer &
+    if ps -A | pgrep -f "yad --notebook "; then
+    kill -9 $(pgrep -f "yad --multi-progress ") &
+    kill -9 $(pgrep -f "yad --list ") &
+    kill -9 $(pgrep -f "yad --form ") &
+    kill -9 $(pgrep -f "yad --notebook ") &
+    fi
+    [ -n "$(ps -A | pgrep -f "yad")" ] && killall yad
     [ -f "$DT/.p_" ] && rm -fr "$DT/.p_" "$DT/tpp"
     exit
 }

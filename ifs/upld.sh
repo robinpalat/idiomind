@@ -138,7 +138,7 @@ lnglbl="${lgtl,,}"
 id=$(sed -n 1p $DC_s/3.cfg)
 if [ -z "$id" ] || [ ${#id} -gt 3 ]; then
 b=$(tr -dc a-z < /dev/urandom | head -c 1)
-id="$b$(($RANDOM%100))"
+id="$b$((RANDOM%100))"
 id=${id:0:3}; fi
 mail=$(sed -n 2p "$DC_s/3.cfg")
 user=$(sed -n 3p "$DC_s/3.cfg")

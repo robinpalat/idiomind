@@ -234,7 +234,7 @@ new_sentence() {
     fi
     
     cd "$DT_r"
-    r=$(($RANDOM%1000))
+    r=$((RANDOM%1000))
     clean_3 "$DT_r" "$r"
     translate "$(sed '/^$/d' < "$aw")" auto $lg | sed 's/,//g' \
     | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
@@ -481,7 +481,7 @@ dclik_list_words() {
         echo "# $(gettext "Processing")..." ;
         srce="$(translate "$(cat lstws)" $lgtl $lgsl)"
         cd "$DT_r"
-        r=$(($RANDOM%1000))
+        r=$((RANDOM%1000))
         clean_3 "$DT_r" "$r"
         translate "$(sed '/^$/d' < $aw)" auto $lg | sed 's/,//g' \
         | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
@@ -522,7 +522,7 @@ sentence_list_words() {
 
     DM_tlt="$DM_tl/$4"
     DC_tlt="$DM_tl/$4/.conf"
-    c=$(($RANDOM%100))
+    c=$((RANDOM%100))
     DT_r=$(mktemp -d "$DT/XXXXXX")
     cd "$DT_r"
     
@@ -835,7 +835,7 @@ process() {
 
                                     cd "$DT_r"
                                     (
-                                    r=$(($RANDOM%10000))
+                                    r=$((RANDOM%10000))
                                     clean_3 "$DT_r" "$r"
                                     translate "$(sed '/^$/d' < $aw)" auto $lg | sed 's/,//g' \
                                     | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"

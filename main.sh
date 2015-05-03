@@ -131,7 +131,7 @@ function new_session() {
 if grep -o '.idmnd' <<<"$1"; then
 
     dte=$(date "+%d %B")
-    c=$(($RANDOM%1000))
+    c=$((RANDOM%1000))
     source "$DS/ifs/mods/cmns.sh"
     [ ! -d "$DT" ] && mkdir "$DT"
     mkdir "$DT/dir$c"
@@ -258,7 +258,7 @@ function topic() {
         nt="$DC_tlt/10.cfg"
         author="$(sed -n 4p "$DC_tlt/12.cfg" \
         | grep -o 'author="[^"]*' | grep -o '[^"]*$')"
-        c=$(($RANDOM%100000)); KEY=$c
+        c=$((RANDOM%100000)); KEY=$c
         cnf1=$(mktemp "$DT/cnf1.XXX.x")
         cnf3=$(mktemp "$DT/cnf3.XXX.x")
         cnf4=$(mktemp "$DT/cnf4.XXX.x")
@@ -282,8 +282,7 @@ function topic() {
             if [ "$tpc" != "$ntpc" ] && [ -n "$ntpc" ]; then
             if [ "$tpc" != "$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")" ]; then
             msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
-            "$DS/mngr.sh" rename_topic "$ntpc" & exit
-            fi
+            "$DS/mngr.sh" rename_topic "$ntpc" & exit; fi
 
             set1_=$(cut -d '|' -f 8 < "$cnf4")
             if [ "$set1" != "$set1_" ]; then
@@ -442,8 +441,7 @@ panel() {
 
     ps -A | pgrep -f "python /usr/share/idiomind/ifs/systray.py"
     if (($? != 0)); then
-    python "$DS/ifs/systray.py"
-    else idiomind topic; fi
+    python "$DS/ifs/systray.py"; fi
 }
 
 version() {
@@ -464,8 +462,6 @@ autostart() {
 case "$1" in
     topic)
     topic ;;
-    --version)
-    version ;;
     -v)
     version;;
     -s)

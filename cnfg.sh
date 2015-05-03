@@ -29,7 +29,7 @@ desktopfile="[Desktop Entry]
 Name=Idiomind
 GenericName=Learning Tool
 Comment=Vocabulary learning tool
-Exec=idiomind autostart
+Exec=idiomind
 Terminal=false
 Type=Application
 Icon=idiomind
@@ -39,7 +39,7 @@ lang=('English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
 'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' \
 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
-c=$(($RANDOM%100000)); KEY=$c
+c=$((RANDOM%100000)); KEY=$c
 
 confirm() {
 

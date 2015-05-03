@@ -19,8 +19,6 @@
 
 source /usr/share/idiomind/ifs/c.conf
 DSP="$DS/practice"
-wth=500
-eht=450
 easys="$2"
 learning="$3"
 [[ "$4" -lt 0 ]] && hards=0 || hards="$4"
@@ -91,7 +89,7 @@ $img --text="$info" \
 --window-icon="$DS/images/icon.png" \
 --buttons-layout=edge --image-on-top --center --on-top --text-align=center \
 --ellipsize=NONE --no-headers --expand-column=2 --hide-column=1 \
---width=$wth --height=$eht --borders=10 \
+--width=500 --height=450 --borders=10 \
 --column="Action" --column="Pick":IMG --column="Label" \
 1 $img1 "    $info1 $info6   $(gettext "Flashcards")" \
 2 $img2 "    $info2 $info7   $(gettext "Multiple Choice")" \
