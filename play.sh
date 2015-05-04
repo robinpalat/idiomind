@@ -79,18 +79,16 @@ function setting_1() {
 }
 
 if [ ! -f "$DT/.p_" ]; then
-    l="--center"
-    btn="Play:0"
-    
+l="--center"
+btn="Play:0"
 else
-    tpp="$(sed -n 2p "$DT/.p_")"
-    l="--center"
-    if grep TRUE <<<"$words$sentences$marks$practice"; then
-    
-        if [ "$tpp" != "$tpc" ]; then
-        l="--text=<sup><b>Playing:  $tpp</b></sup>"; fi
-    fi
-    btn="gtk-media-stop:2"
+tpp="$(sed -n 2p "$DT/.p_")"
+l="--center"
+if grep TRUE <<<"$words$sentences$marks$practice"; then
+if [ "$tpp" != "$tpc" ]; then
+l="--text=<sup><b>Playing:  $tpp</b></sup>"; fi
+fi
+btn="gtk-media-stop:2"
 fi
 
 slct=$(mktemp "$DT"/slct.XXXX)
@@ -100,7 +98,7 @@ setting_1 | yad --list --title="$tpc" "$l" \
 --window-icon="$DS/images/icon.png" \
 --skip-taskbar --align=right --center --on-top \
 --expand-column=2 --no-headers \
---width=400 --height=300 --borders=5 \
+--width=420 --height=310 --borders=5 \
 --column=IMG:IMG --column=TXT:TXT --column=CHK:CHK \
 --button="$btn" \
 --button="$(gettext "Close")":1 > "$slct"
@@ -124,17 +122,17 @@ if [ "$ret" -eq 0 ]; then
     done
 
     rm -f "$slct";
-    "$DS/stop.sh" playm
+    "$DS/stop.sh" 3
     if [ -d "$DM_tlt" ] && [ -n "$tpc" ]; then
     echo "$DM_tlt" > "$DT/.p_"
     echo "$tpc" >> "$DT/.p_"
-    else "$DS/stop.sh" play && exit 1; fi
+    else "$DS/stop.sh" 2 && exit 1; fi
     
     if [ -z "$(< "$DT/index.m3u")" ]; then
     notify-send "$(gettext "Exiting")" \
     "$(gettext "Nothing to play")" -i idiomind -t 3000 &&
     sleep 4
-    "$DS/stop.sh" play & exit 1; fi
+    "$DS/stop.sh" 2 & exit 1; fi
     
     printf "plyrt.$tpc.plyrt\n" >> "$DC_s/8.cfg" &
     sleep 1
@@ -144,7 +142,7 @@ elif [ "$ret" -eq 2 ]; then
 
     [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
     [ -f "$DT/index.m3u" ] && rm -f "$DT/index.m3u"
-    "$DS/stop.sh" play
+    "$DS/stop.sh" 2
 fi
 
 rm -f "$slct" & exit

@@ -6,7 +6,8 @@ DCP="$DM_tl/Podcasts/.conf"
 DSP="$DS_a/Podcasts"
 CNF=$(gettext "Configure")
 sets=('update' 'sync' 'path')
-[ -n "$(< "$DCP/0.cfg")" ] && cfg=1 || > "$DCP/0.cfg"
+if [ -n "$(< "$DCP/0.cfg")" ]; then cfg=1; else 
+> "$DCP/0.cfg"; fi
 
 if [ ! -d "$DM_tl/Podcasts" ]; then
     mkdir "$DM_tl/Podcasts"
@@ -80,7 +81,7 @@ apply() {
 
 if [ ! -d "$path" ] || [ ! -n "$path" ]; then path=/uu; fi
 if [ -f "$DM_tl/Podcasts/.conf/feed.err" ]; then
-e="$(head -n 2 < "$DM_tl/Podcasts/.conf/feed.err" | tr '&' ' ')"
+e="$(head -n 2 < "$DM_tl/Podcasts/.conf/feed.err" | tr '&' ' ' | uniq)"
 rm "$DM_tl/Podcasts/.conf/feed.err"
 (sleep 2 && msg "$(gettext "Errors found in log file") \n$e" info Info) &
 fi

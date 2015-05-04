@@ -40,7 +40,7 @@ if [ "$1" = chngi ]; then
         echo "___" >> "$DT/.l_loop"
         if [ "$(wc -l < "$DT/.l_loop")" -gt 5 ]; then
         rm -f "$DT/.p_"  "$DT/.l_loop" &
-        "$DS/stop.sh" play & exit 1; fi
+        "$DS/stop.sh" 2 & exit 1; fi
         fi
     }
 

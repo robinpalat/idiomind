@@ -15,7 +15,8 @@
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
-#  
+#
+
 #--field="$(gettext "Quick Help")":BTN "$DS/ifs/tls.sh help"
 source /usr/share/idiomind/ifs/c.conf
 [ ! -d "$DC" ] && "$DS/ifs/1u.sh" && exit
@@ -28,7 +29,7 @@ desktopfile="[Desktop Entry]
 Name=Idiomind
 GenericName=Learning Tool
 Comment=Vocabulary learning tool
-Exec=idiomind autostart
+Exec=idiomind
 Terminal=false
 Type=Application
 Icon=idiomind
@@ -38,7 +39,7 @@ lang=('English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
 'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' \
 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
-c=$(($RANDOM%100000)); KEY=$c
+c=$((RANDOM%100000)); KEY=$c
 
 confirm() {
 
@@ -58,7 +59,7 @@ set_lang() {
     mkdir "$DM_t/$language/.share"; fi
     echo "$language" > "$DC_s/6.cfg"
     echo "$lgsl" >> "$DC_s/6.cfg"
-    "$DS/stop.sh" L
+    "$DS/stop.sh" 4
     source /usr/share/idiomind/ifs/c.conf
     if [ -f "$DM/topics/$language/.8.cfg" ]; then
     lst=$(sed -n 1p "$DM/topics/$language/.8.cfg")

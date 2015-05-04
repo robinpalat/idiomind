@@ -71,7 +71,7 @@ get_list_images() {
 get_list_mchoice() {
 
     (
-    echo "5" ; sleep 0
+    echo "5"
     while read word; do
         fname="$(echo -n "$word" | md5sum | rev | cut -c 4- | rev)"
         file="$DM_tlt/words/$fname.mp3"

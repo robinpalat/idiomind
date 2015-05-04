@@ -413,7 +413,7 @@ videourl() {
 }
 
 attatchments() {
-    
+
     mkindex() {
 
 echo "<link rel=\"stylesheet\" \
@@ -491,7 +491,7 @@ echo "<br><br>
         --uri="$DC_tlt/att.html" --browser \
         --window-icon="$DS/images/icon.png" --center \
         --width=660 --height=580 --borders=10 \
-        --button="$(gettext "Folder")":3 \
+        --button="$(gettext "Folder")":"xdg-open '$DM_tlt/files'" \
         --button="$(gettext "Video URL")":2 \
         --button="gtk-add":0 \
         --button="gtk-close":1
@@ -500,12 +500,9 @@ echo "<br><br>
             "$DS/ifs/tls.sh" add_file
             elif [ $ret = 2 ]; then
             "$DS/ifs/tls.sh" videourl
-            elif [ $ret = 3 ]; then 
-            xdg-open "$DM_tlt/files"
             fi
             if [ "$ch1" != "$(ls -A "$DM_tlt/files")" ]; then
-                mkindex
-            fi
+            mkindex; fi
         
     else
         yad --form --title="$(gettext "Attached Files")" \
