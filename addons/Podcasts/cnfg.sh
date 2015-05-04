@@ -83,7 +83,7 @@ if [ ! -d "$path" ] || [ ! -n "$path" ]; then path=/uu; fi
 if [ -f "$DM_tl/Podcasts/.conf/feed.err" ]; then
 e="$(head -n 2 < "$DM_tl/Podcasts/.conf/feed.err" | tr '&' ' ' | uniq)"
 rm "$DM_tl/Podcasts/.conf/feed.err"
-(sleep 2 && msg "$(gettext "Errors found in log file") \n$e" info Info) &
+(sleep 2 && msg "$(gettext "Errors found in log file")\n$e\n" info Info) &
 fi
 
 CNFG=$(yad --form --title="$(gettext "Podcasts settings")" \
@@ -91,7 +91,7 @@ CNFG=$(yad --form --title="$(gettext "Podcasts settings")" \
 --always-print-result --print-all --separator="|" \
 --window-icon="$DS/images/icon.png" --center --scroll --on-top \
 --width=550 --height=440 --borders=10 \
---text="$(gettext "Configure feed urls to learn with educational podcasts.")" \
+--text="$(gettext "Configure feed URLs to learn with educational podcasts.")" \
 --field="$(gettext "Update at startup")":CHK "$update" \
 --field="$(gettext "Sync after update")":CHK "$sync" \
 --field="$(gettext "URL")":LBL " " \

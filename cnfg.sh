@@ -21,7 +21,7 @@
 source /usr/share/idiomind/ifs/c.conf
 [ ! -d "$DC" ] && "$DS/ifs/1u.sh" && exit
 info1="$(gettext "Do you want to change the interface language program?")  "
-info2="$(gettext "You want to change the language setting to learn?")  "
+info2="$(gettext "Do you want to change the language setting to learn?")  "
 cd "$DS/addons"
 [ -n "$(< "$DC_s/1.cfg")" ] && cfg=1 || > "$DC_s/1.cfg"
 cnf1=$(mktemp "$DT/cnf1.XXXX")
@@ -29,7 +29,7 @@ desktopfile="[Desktop Entry]
 Name=Idiomind
 GenericName=Learning Tool
 Comment=Vocabulary learning tool
-Exec=idiomind
+Exec=idiomind autostart
 Terminal=false
 Type=Application
 Icon=idiomind

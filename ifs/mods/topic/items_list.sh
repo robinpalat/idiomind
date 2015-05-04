@@ -108,7 +108,7 @@ function notebook_1() {
     --text="$label_info1\n" \
     --scroll --borders=10 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "$tpc" \
-    --field="$(gettext "Mark as learned")":FBTN "$cmd_mark" \
+    --field="$(gettext "Mark as learnt")":FBTN "$cmd_mark" \
     --field=" ":LBL "$set1" \
     --field="$label_info2\n\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " \
     --field="$(gettext "Attached Files")":FBTN "$cmd_attchs" \
@@ -121,7 +121,7 @@ function notebook_1() {
     --center --align=right "$img" --fixed --ellipsize=END --image-on-top \
     --window-icon="$DS/images/icon.png" --center \
     --tab="  $(gettext "Learning") ($inx1) " \
-    --tab="  $(gettext "Learned") ($inx2) " \
+    --tab="  $(gettext "Learnt") ($inx2) " \
     --tab=" $(gettext "Notes") " \
     --tab=" $(gettext "Edit") " \
     --width=$sx --height=$sy --borders=0 --tab-borders=3 \
@@ -169,7 +169,7 @@ function notebook_2() {
     --center --align=right "$img" --fixed --ellipsize=END --image-on-top \
     --window-icon="$DS/images/icon.png" --center \
     --tab="  $(gettext "Review")  " \
-    --tab="  $(gettext "Learned") ($inx2) " \
+    --tab="  $(gettext "Learnt") ($inx2) " \
     --tab=" $(gettext "Notes") " \
     --tab=" $(gettext "Edit") " \
     --width=$sx --height=$sy --borders=0 --tab-borders=3 \
@@ -181,7 +181,7 @@ function dialog_1() {
     
     yad --title="$tpc" \
     --class=idiomind --name=Idiomind \
-    --text="$(gettext "More than") $tdays $(gettext "days have passed since you mark this topic as learned.  You'd like to review?")" \
+    --text="$(gettext "More than") $tdays $(gettext "days have passed since you marked this topic as learnt. Would you like to review it?")" \
     --image=dialog-question --on-top --center \
     --window-icon="$DS/images/icon.png" \
     --width=450 --height=150 --borders=10 \

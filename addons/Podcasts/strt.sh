@@ -53,7 +53,7 @@ conditions() {
     [ ! -f "$DCP/1.cfg" ] && touch "$DCP/1.cfg"
     
     if [ -f "$DT/.uptp" ] && [ -z "$1" ]; then
-        msg_2 "$(gettext "Wait till it finishes a previous process")\n" info OK gtk-stop
+        msg_2 "$(gettext "Wait until it finishes a previous process")\n" info OK gtk-stop
         ret=$(echo $?)
         [[ $ret -eq 1 ]] && "$DS/stop.sh" 6
         [[ $ret -eq 0 ]] && exit 1

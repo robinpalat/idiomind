@@ -102,7 +102,7 @@ if [[ "$conten" = A ]]; then
         
         (
         echo "2"
-        echo "# $(gettext "Processing wait...")";
+        echo "# $(gettext "Processing... Wait.")";
         cd "$DT_r"
         
         if echo "$fl" | grep '.mp3'; then

@@ -75,7 +75,7 @@ new_items() {
     
     if [ "$(grep -vFx 'Podcasts' "$DM_tl/.1.cfg" | wc -l)" -lt 1 ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
-    "$DS/chng.sh" "$(gettext "To start adding notes you need have a topic.
+    "$DS/chng.sh" "$(gettext "To start adding notes you need to have a topic.
 Create one using the button below. ")" & exit 1; fi
 
     [ -z "$4" ] && txt="$(xclip -selection primary -o \
@@ -629,7 +629,7 @@ process() {
 
     if [ -f "$lckpr" ] && [ -z "$4" ]; then
     
-        msg_2 "$(gettext "Wait till it finishes a previous process")\n" info OK gtk-stop "$(gettext "Warning")"
+        msg_2 "$(gettext "Wait until it finishes a previous process")\n" info OK gtk-stop "$(gettext "Warning")"
         ret=$(echo "$?")
 
         if [[ $ret -eq 1 ]]; then
