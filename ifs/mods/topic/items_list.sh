@@ -111,7 +111,7 @@ function notebook_1() {
     --field="$(gettext "Mark as learnt")":FBTN "$cmd_mark" \
     --field=" ":LBL "$set1" \
     --field="$label_info2\n\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " \
-    --field="$(gettext "Attached Files")":FBTN "$cmd_attchs" \
+    --field="$(gettext "Files")":FBTN "$cmd_attchs" \
     --field="$(gettext "Share")":FBTN "$cmd_share" \
     --field="$(gettext "Delete")":FBTN "$cmd_del" \
     --field=" ":LBL " " > "$cnf4" &
@@ -159,7 +159,7 @@ function notebook_2() {
     --field="   $(gettext "Review")   ":FBTN "$cmd_mark" \
     --field=" ":LBL "$set1" \
     --field="$label_info2\n\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " \
-    --field="$(gettext "Attached Files")":FBTN "$cmd_attchs" \
+    --field="$(gettext "Files")":FBTN "$cmd_attchs" \
     --field="$(gettext "Share")":FBTN "$cmd_share" \
     --field="$(gettext "Delete")":FBTN "$cmd_del" \
     --field=" ":LBL " " > "$cnf4" &

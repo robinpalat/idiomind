@@ -506,7 +506,7 @@ echo "<br><br>
         
     else
         yad --form --title="$(gettext "Attached Files")" \
-        --text="$(gettext "Save files related to topic.")" \
+        --text="  $(gettext "Save files related to topic")" \
         --name=Idiomind --class=Idiomind \
         --window-icon="$DS/images/icon.png" --center \
         --width=350 --height=180 --borders=5 \
