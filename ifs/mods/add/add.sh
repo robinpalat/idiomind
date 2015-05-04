@@ -109,6 +109,14 @@ function check_grammar_2() {
 }
 
 
+function clean_0() {
+    
+    echo "$1" | sed ':a;N;$!ba;s/\n/ /g' \
+    | sed 's/“//;s/&//;s/”//;s/://;s/\.//g' | sed "s/’/'/;s/|//g" \
+    | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
+    | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g'
+}
+
 function clean_1() {
     
     #iconv -c -f utf8 -t ascii 
@@ -422,7 +430,7 @@ function dlg_radiolist_1() {
     --sticky --skip-taskbar --center --on-top --fixed --no-headers \
     --width=150 --height=420 --borders=5 \
     --column=" " --column=" " \
-    --button=gtk-add:0
+    --button="gtk-add":0
 }
 
 
@@ -438,7 +446,7 @@ function dlg_checklist_1() {
     --width=400 --height=280 --borders=5  \
     --column=" " --column="Select" \
     --button="$(gettext "Close")":1 \
-    --button="$(gettext "Add")":0 > "$slt"
+    --button="gtk-add":0 > "$slt"
 }
 
 
@@ -449,7 +457,7 @@ function dlg_checklist_3() {
     yad --list --checklist --title="$2" \
     --text="<small>$info</small> " \
     --name=Idiomind --class=Idiomind \
-    --dclick-action="'/usr/share/idiomind/add.sh' 'dclik_list_words'" \
+    --dclick-action="'/usr/share/idiomind/add.sh' 'list_words_dclik'" \
     --window-icon="$DS/images/icon.png" \
     --ellipsize=END --text-align=right --center --sticky --no-headers \
     --width=600 --height=550 --borders=5 \
@@ -458,7 +466,7 @@ function dlg_checklist_3() {
     --button="$(gettext "Cancel")":1 \
     --button=$(gettext "Reorder"):2 \
     --button="$(gettext "New topic")":"$DS/add.sh 'new_topic'" \
-    --button=gtk-add:0 > "$slt"
+    --button="gtk-add":0 > "$slt"
 }
 
 
@@ -472,7 +480,7 @@ function dlg_text_info_1() {
     --wrap --margins=30 --fontname=vendana \
     --sticky --skip-taskbar --center --on-top \
     --width=600 --height=550 --borders=5 \
-    --button=gtk-ok:0 > ./sort
+    --button="gtk-ok":0 > ./sort
 }
 
 

@@ -453,7 +453,8 @@ panel() {
     --field=gtk-index:btn "$DS/chng.sh" \
     --field=gtk-preferences:btn "$DS/cnfg.sh"
     ret=$?
-    [[ $ret != 0 ]] && "$DS/stop.sh" 1
+    [[ $ret != 0 ]] && "$DS/stop.sh" 1 &
+    exit 0
 }
 
 version() {

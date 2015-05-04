@@ -489,7 +489,7 @@ edit() {
         lwrd="$(grep -o -P '(?<=IWI3I0I).*(?=IPWI3I0I)' <<<"$tags")"
         pwrds="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"$tags")"
         cmd_move="$DS/ifs/mods/mngr/mngr.sh 'position' '$item_pos' '$index_1'"
-        cmd_words="$DS/add.sh edit_list_words '$file' F $c"
+        cmd_words="$DS/add.sh list_words_edit '$file' F $c"
         cmd_play="/usr/share/idiomind/ifs/tls.sh play '$DM_tlt/$fname.mp3'"
         cmd_delete="$DS/mngr.sh delete_item ${fname}"
         cmd_image="$DS/ifs/tls.sh set_image '$file' sentence"
@@ -602,7 +602,7 @@ edit() {
                 "$DS/vwr.sh" "$lists" "null" "$item_pos" & exit 1
             fi
 
-            [ -d "$DT/$c" ] && "$DS/add.sh" edit_list_words "$fname" S $c "$trgt_mod" &
+            [ -d "$DT/$c" ] && "$DS/add.sh" list_words_edit "$fname" S $c "$trgt_mod" &
             
             if [[ $ret -eq 2 ]]; then
 

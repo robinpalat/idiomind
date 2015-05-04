@@ -17,6 +17,7 @@ on_quit() {
     fi
     [ -n "$(ps -A | pgrep -f "yad")" ] && killall yad
     [ -f "$DT/.p_" ] && rm -fr "$DT/.p_" "$DT/tpp"
+    [ -f "$DT/index.m3u" ] && rm -fr "$DT/index.m3u"
     exit
 }
 
@@ -29,6 +30,7 @@ on_play() {
     [ -n "$(ps -A | pgrep -f "play")" ] && killall play &
     [ -n "$(ps -A | pgrep -f "mplayer")" ] && killall mplayer &
     [ -f "$DT/.p_" ] && rm -fr "$DT/.p_" "$DT/tpp"
+    [ -f "$DT/index.m3u" ] && rm -fr "$DT/index.m3u"
     exit
 }
 

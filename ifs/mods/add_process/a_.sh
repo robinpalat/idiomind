@@ -241,6 +241,9 @@ if [[ "$conten" = A ]]; then
                             printf "\n\n$sntc" >> ./wlog
                     
                         else
+                            trgt="$(clean_0 "$trgt")"
+                            fname=$(nmfile "$trgt")
+                            srce="$(clean_0 "$srce")"
                             mv -f "$sntc.mp3" "$DM_tlt/words/$fname.mp3"
                             
                             mksure "$DM_tlt/words/$fname.mp3" "$trgt" "$srce"
@@ -431,8 +434,7 @@ if [[ "$conten" = A ]]; then
     
 elif [ "$1" = item_for_edit ]; then
 
-    DT_r=$(sed -n 1p "$DT/.n_s_pr")
-    cd "$DT_r"
+    DT_r=$(sed -n 1p "$DT/.n_s_pr"); cd "$DT_r"
     dlg_text_info_5 "$3"
     $? >/dev/null 2>&1
 fi

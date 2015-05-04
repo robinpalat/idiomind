@@ -262,7 +262,7 @@ new_sentence() {
     index sentence "${trgt}" "${tpe}"
     
     (if [ "$list" = TRUE ]; then
-    "$DS/add.sh" sentence_list_words "$DM_tlt/$fname.mp3" "${trgt}" "${tpe}"
+    "$DS/add.sh" list_words_sentence "$DM_tlt/$fname.mp3" "${trgt}" "${tpe}"
     fi) &
 
     fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
@@ -275,8 +275,8 @@ new_sentence() {
 
 new_word() {
 
-    trgt="$(sed s'\|\\'g <<<"$2" | sed 's/^ *//;s/ *$//g')"
-    srce="$(sed s'\|\\'g <<<"$4" | sed 's/^ *//;s/ *$//g')"
+    trgt="$(clean_0 "$2")"
+    srce="$(clean_0 "$4")"
     DT_r="$3"
     cd "$DT_r"
     DM_tlt="$DM_tl/${tpe}"
@@ -367,7 +367,7 @@ new_word() {
     exit 1
 }
 
-edit_list_words() {
+list_words_edit() {
 
     c="$4"
     if [ "$3" = "F" ]; then
@@ -456,12 +456,12 @@ edit_list_words() {
     fi
 }
 
-dclik_list_words() {
+list_words_dclik() {
 
-    tpe=$(sed -n 2p $DT/.n_s_pr)
+    tpe="$(sed -n 2p "$DT/.n_s_pr")"
     DM_tlt="$DM_tl/${tpe}"
     DC_tlt="$DM_tl/${tpe}/.conf"
-    DT_r=$(sed -n 1p $DT/.n_s_pr)
+    DT_r=$(sed -n 1p "$DT/.n_s_pr")
     cd "$DT_r"
     echo "$3" > "$DT_r/lstws"
     
@@ -503,22 +503,16 @@ dclik_list_words() {
     if [[ $ret -eq 0 ]]; then
     
         while read chkst; do
-        sed 's/TRUE//g' <<<"${chkst}" >> ./wrds
-        echo "$sname" >> wrdsls
+        sed 's/TRUE//g' <<<"${chkst}" >> "$DT_r/wrds"
+        echo "$sname" >> "$DT_r/wrdsls"
         done <<<"$(sed 's/|//g' < "${slt}")"
         rm -f "$slt"
-
-    elif [[ $ret -eq 1 ]]; then
-        
-        rm -f "$DT"/*."$c"
-        [ "$DT_r" ] && rm -fr "$DT_r"
     fi
-    
     exit 1
     
 } >/dev/null 2>&1
 
-sentence_list_words() {
+list_words_sentence() {
 
     DM_tlt="$DM_tl/$4"
     DC_tlt="$DM_tl/$4/.conf"
@@ -627,7 +621,7 @@ process() {
     msg "$(gettext "You have reached the maximum number of items.")" info Info
     rm -f ./ls "$lckpr" & exit 1; fi
 
-    if [ -f "$lckpr" ] && [ -z "$4" ]; then
+    if [ -f "$lckpr" ] && [ ${#@} -lt 4 ]; then
     
         msg_2 "$(gettext "Wait until it finishes a previous process")\n" info OK gtk-stop "$(gettext "Warning")"
         ret=$(echo "$?")
@@ -636,7 +630,9 @@ process() {
         rm=$(sed -n 1p "$DT/.n_s_pr")
         rm fr "$rm" "$DT/.n_s_pr"
         "$DS/stop.sh" 5
-        exit 1; fi
+        fi
+        [ -d "$DT_r" ] && rm -fr "$DT_r"
+        exit 1
     fi
     
     if [ -n "$2" ]; then
@@ -756,6 +752,7 @@ process() {
                     tpe=$(sed -n 2p "$lckpr")
                     DM_tlt="$DM_tl/${tpe}"
                     DC_tlt="$DM_tl/${tpe}/.conf"
+                    touch slts
 
                     if [ ! -d "$DM_tlt" ]; then
                     msg " $(gettext "An error occurred.")\n" dialog-warning
@@ -790,6 +787,10 @@ process() {
                                 printf "\n\n$sntc" >> ./wlog
                         
                             else
+                                trgt="$(clean_0 "$trgt")"
+                                fname=$(nmfile "$trgt")
+                                srce="$(clean_0 "$srce")"
+                                
                                 if [ "$trans" = TRUE ]; then
             
                                     tts "${trgt}" $lgt "$DT_r" "$DM_tlt/words/$fname.mp3"
@@ -875,7 +876,7 @@ process() {
                     
                     #words
                     n=1; touch wrds
-                    while [[ $n -le "$(wc -l < wrds | head -200)" ]]; do
+                    while [[ $n -le "$(wc -l < ./wrds | head -200)" ]]; do
                     
                         sname=$(sed -n "$n"p wrdsls)
                         trgt=$(sed -n "$n"p wrds | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
@@ -998,12 +999,12 @@ case "$1" in
     new_sentence "$@" ;;
     new_word)
     new_word "$@" ;;
-    edit_list_words)
-    edit_list_words "$@" ;;
-    dclik_list_words)
-    dclik_list_words "$@" ;;
-    sentence_list_words)
-    sentence_list_words "$@" ;;
+    list_words_edit)
+    list_words_edit "$@" ;;
+    list_words_dclik)
+    list_words_dclik "$@" ;;
+    list_words_sentence)
+    list_words_sentence "$@" ;;
     process)
     process "$@" ;;
 esac
