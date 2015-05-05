@@ -27,7 +27,7 @@ position() {
     || label="$item"
     mv="$(tac "$DC_tlt/0.cfg" | grep -vxF "$item" \
     | awk '{print ((let++))"\nFALSE\n"$0}' \
-    | yad --list --title="$(gettext "Moving the item through the list")" \
+    | yad --list --title="$(gettext "Move")" \
     --class=Idiomind --name=Idiomind \
     --text="  [ $pos ]  \"$label\"\n" \
     --always-print-result --print-column=3 --separator="" \

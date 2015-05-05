@@ -20,8 +20,8 @@
 #--field="$(gettext "Quick Help")":BTN "$DS/ifs/tls.sh help"
 source /usr/share/idiomind/ifs/c.conf
 [ ! -d "$DC" ] && "$DS/ifs/1u.sh" && exit
-info1="$(gettext "Do you want to change the interface language program?")  "
-info2="$(gettext "Do you want to change the language setting to learn?")  "
+info1=" $(gettext "Are you sure you want to change the interface language program?")  "
+info2=" $(gettext "Are you sure you want to change the language setting to learn?")  "
 cd "$DS/addons"
 [ -n "$(< "$DC_s/1.cfg")" ] && cfg=1 || > "$DC_s/1.cfg"
 cnf1=$(mktemp "$DT/cnf1.XXXX")
@@ -43,11 +43,13 @@ c=$((RANDOM%100000)); KEY=$c
 
 confirm() {
 
-    yad --form --title="Idiomind" --text="$1\n" \
-    --center --borders=5 --image=$2 \
-    --on-top --window-icon="$DS/images/icon.png" \
-    --skip-taskbar --width=400 --height=130 \
-    --button="$(gettext "Cancel")":1 --button="$(gettext "Yes")":0
+    yad --form --title="Idiomind" \
+    --image=$2 --text="$1\n" \
+    --window-icon="$DS/images/icon.png" \
+    --skip-taskbar --center --on-top \
+    --width=480 --height=130 --borders=10 \
+    --button="$(gettext "Cancel")":1 \
+    --button="$(gettext "Yes")":0
 }
 
 set_lang() {
@@ -167,7 +169,7 @@ ret=$?
             [ "${lang[$n]}" != "$lgtl" ]; then
                 lgtl="${lang[$n]}"
                 if grep -o -E 'Chinese|Japanese|Russian|Vietnamese' <<< "$lgtl";
-                then info3="\n<u>$lgtl</u>: $(gettext "Some features do not yet work with this language"). "; fi
+                then info3="\n<b> $lgtl</b>\n $(gettext "Some features do not yet work with this language"). "; fi
                 confirm "$info2$info3" dialog-question "$lgtl"
                 [ $? -eq 0 ] && set_lang "${lang[$n]}"
                 break

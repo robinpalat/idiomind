@@ -384,7 +384,7 @@ if [[ "$conten" = A ]]; then
                 if [ -n "$logs" ] || [ "$(ls [0-9]* | wc -l)" -ge 1 ]; then
                 
                     if [ -n "$logs" ]; then
-                    text_r1="$(gettext "Some items could not be added to your list.")"; fi
+                    text_r1="$(gettext "Some items could not be added to your list:")"; fi
                     
                     if [ "$(ls [0-9]* | wc -l)" -ge 1 ]; then
                     btn="--button="$(gettext "Save Audio")":0"

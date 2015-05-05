@@ -24,7 +24,7 @@ DSP="$DS/addons/Podcasts"
 DMC="$DM_tl/Podcasts/cache"
 DCP="$DM_tl/Podcasts/.conf"
 dfimg="$DSP/images/audio.png"
-downloads=4
+downloads=2
 
 tmplitem="<?xml version='1.0' encoding='UTF-8'?>
 <xsl:stylesheet version='1.0'

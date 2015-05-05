@@ -158,7 +158,7 @@ $hfiles
 
 $exfiles
 
-$(gettext "CONTENTS OF TEXT FILES")
+$(gettext "TEXT FILES")
 ====================
 
 $SRFL1

@@ -214,7 +214,7 @@ sync() {
     elif  [ -f "$DT/l_sync" ] && [ "$2" = 0 ]; then exit 1
 
     elif [ ! -d "$path" ] && [ "$2" != 0 ]; then
-    msg " $(gettext "The directory to synchronization does not exist \n Exiting.")" \
+    msg " $(gettext "The directory to synchronization does not exist.")\n" \
     dialog-warning
     [ -f "$DT/l_sync" ] && rm -f "$DT/l_sync"; exit 1
     

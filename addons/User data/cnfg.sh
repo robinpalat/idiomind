@@ -25,7 +25,7 @@ if [ -z "$1" ]; then
     
     D=$(yad --list --radiolist --title="$(gettext "User Data")" \
     --name=Idiomind --class=Idiomind \
-    --text="$(gettext "Total size:") $size\n$others" \
+    --text="$(gettext "Total size:") $size\n<small>$(gettext "Others")\n$others</small>" \
     --always-print-result --print-all --separator=" " \
     --window-icon="$DS/images/icon.png" \
     --center --on-top --expand-column=2 --image-on-top \

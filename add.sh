@@ -449,7 +449,7 @@ list_words_edit() {
 
         if [ -f "$DT_r/logw" ]; then
         sleep 1
-        dlg_info_1 "$(gettext "Some items could not be added to your list.")"; fi
+        dlg_info_1 "$(gettext "Some items could not be added to your list:")"; fi
         
         [ -d "$DT_r" ] && rm -fr "$DT_r"
         rm -f logw "$DT"/*.$c & exit 1
@@ -593,7 +593,7 @@ list_words_sentence() {
     if [ -f "$DT_r/logw" ]; then
     sleep 1
     logs="$(< "$DT_r/logw")"
-    dlg_text_info_3 "$(gettext "Some items could not be added to your list.")" "$logs"; fi
+    dlg_text_info_3 "$(gettext "Some items could not be added to your list:")" "$logs"; fi
 
     rm -f "$DT"/*."$c" 
     [ "$DT_r" ] && rm -fr "$DT_r"
@@ -963,7 +963,7 @@ process() {
                     
                     if [ "$(cat ./slog ./wlog | wc -l)" -ge 1 ]; then
                     sleep 1
-                    dlg_text_info_3 "$(gettext "Some items could not be added to your list.")" "$logs" >/dev/null 2>&1
+                    dlg_text_info_3 "$(gettext "Some items could not be added to your list:")" "$logs" >/dev/null 2>&1
                     fi
                     
                     if  [ "$(cat ./slog ./wlog | wc -l)" -ge 1 ]; then
