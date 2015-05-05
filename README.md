@@ -7,7 +7,7 @@ bash (>=4.1) mplayer scrot imagemagick wkhtmltopdf lynx eyed3 curl html2text sox
 
 <b>Installing in Ubuntu and it's derivatives:</b>
 
-Adding Launchpad repository
+Adding repository
 
       sudo add-apt-repository ppa:robinpalat/idiomind
       
