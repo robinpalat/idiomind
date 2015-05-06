@@ -52,12 +52,23 @@ function index() {
     if [ "$1" = edit ]; then
             
         item="${item}"; item_mod="${4}"
-        sed -i "s/${item}/${item_mod}/" "$DC_tlt/0.cfg"
-        sed -i "s/${item}/${item_mod}/" "$DC_tlt/1.cfg"
-        sed -i "s/${item}/${item_mod}/" "$DC_tlt/2.cfg"
-        sed -i "s/${item}/${item_mod}/" "$DC_tlt/4.cfg"
         sed -i "s/${item}/${item_mod}/" "$DC_tlt/.11.cfg"
-        sed -i "s/${item}/${item_mod}/" "$DC_tlt/practice/lsin"
+        
+        sust(){
+            for inx in "${@}"; do
+                if grep -Fxo "${item}" "$inx"; then
+                sed -i "s/${item}/${item_mod}/" "$inx"
+                fi
+            done
+        }
+        
+        sust "$DC_tlt/0.cfg" \
+        "$DC_tlt/1.cfg" "$DC_tlt/2.cfg" \
+        "$DC_tlt/3.cfg" "$DC_tlt/4.cfg" \
+        "$DC_tlt/practice/lsin" \
+        "$DC_tlt/practice/fin" "$DC_tlt/practice/mcin" \
+        "$DC_tlt/practice/win" "$DC_tlt/practice/iin" \
+        "$DC_tlt/6.cfg"
     fi
     
     sleep 0.5

@@ -54,7 +54,7 @@ function new_session() {
     addons="$(cd "$DS/addons"; ls -d *)"
     n=1; > "$DC_s/2.cfg"
     while [ $n -le "$(wc -l <<<"$addons")" ]; do
-        set=$(echo "$addons" | sed -n "$n"p)
+        set=$(sed -n "$n"p <<<"$addons")
         if [ -f "/usr/share/idiomind/addons/$set/icon.png" ]; then 
             echo "/usr/share/idiomind/addons/$set/icon.png" >> "$DC_s/2.cfg"
         else
@@ -80,7 +80,6 @@ function new_session() {
         let n++
     done; cd ~/
 
-    # 
     s="$(xrandr | grep '*' | awk '{ print $1 }' \
     | sed 's/x/\n/')"
     sed -n 1p <<<"$s" >> "$DC_s/10.cfg"
@@ -145,7 +144,7 @@ if grep -o '.idmnd' <<<"$1"; then
     "$DS/ifs/tls.sh" check_source_1 "$tmp" "$tpi" &&
     source "$DT/$tpi.cfg"
     lng="$(lnglss "$language_target")"
-    infs="'$DS/ifs/tls.sh' 'details' '$tmp'"
+    cmd_infs="'$DS/ifs/tls.sh' 'details' '$tmp'"
     [ $level = 1 ] && level="$(gettext "Beginner")"
     [ $level = 2 ] && level="$(gettext "Intermediate")"
     [ $level = 3 ] && level="$(gettext "Advanced")"
@@ -159,7 +158,7 @@ if grep -o '.idmnd' <<<"$1"; then
         cd "$tmp"
         ws=$(wc -l < "$tmp/3.cfg")
         ss=$(wc -l < "$tmp/4.cfg")
-        itxt="<span font_desc='Free Sans 14'>$tpi</span><small>\n ${language_source^} > $language_target\n $nwords $(gettext "Words") $nsentences $(gettext "Sentences") $nimages $(gettext "Images")\n $(gettext "Level:") $level\n</small>"
+        itxt="<span font_desc='Free Sans 14'>$tpi</span><small>\n ${language_source^}~$language_target $nwords $(gettext "Words") $nsentences $(gettext "Sentences") $nimages $(gettext "Images")\n $(gettext "Level:") $level\n</small>"
         dclk="'$DS/default/vwr_tmp.sh' '$c'"
 
         tac "$tmp/0.cfg" | awk '{print $0""}' | \
@@ -172,7 +171,7 @@ if grep -o '.idmnd' <<<"$1"; then
         --scroll --center --tooltip-column=1 \
         --width=650 --height=580 --borders=10 \
         --column=Items \
-        --button="$(gettext "Info")":"$infs" \
+        --button="$(gettext "Info")":"$cmd_infs" \
         --button="$(gettext "Install")":0 \
         --button="$(gettext "Close")":1
         ret=$?
@@ -185,7 +184,7 @@ if grep -o '.idmnd' <<<"$1"; then
             elif [[ $ret -eq 0 ]]; then
                 
                 if2=$(wc -l < "$DM_t/$language_target/.1.cfg")
-                chck=$(grep -Fox "$tpi" < "$DM_t/$language_target/.1.cfg" | wc -l)
+                chck=$(grep -Fox "$tpi" "$DM_t/$language_target/.1.cfg" | wc -l)
                 
                 if [ ${if2} -ge 80 ]; then
                     

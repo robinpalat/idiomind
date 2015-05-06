@@ -89,7 +89,7 @@ function dlg_form_1() {
     --window-icon="$DS/images/icon.png" --buttons-layout=end --scroll \
     --columns=2 --center \
     --width=680 --height=540 --borders=10 \
-    --field="<small>$lgtl</small>":RO "$trgt" \
+    --field="<small>$lgtl</small>" "$trgt" \
     --field="<small>$lgsl</small>" "$srce" \
     --field="<small>$(gettext "Topic")</small>":CB "$tpc!$tpcs" \
     --field="<small>$(gettext "Audio")</small>":FL "$DM_tlt/words/$fname.mp3" \

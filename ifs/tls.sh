@@ -568,7 +568,7 @@ check_updates() {
     
     if [ -n "${rversion##+([[:space:]])}" ] && [ "$rversion" != "$(idiomind -v)" ]; then
     
-        msg_2 "<b> $(gettext "A new version of Idiomind available") </b>\n\n" \
+        msg_2 "<b> $(gettext "A new version of Idiomind available\!") </b>\n\n" \
         info "$(gettext "Download")" "$(gettext "Cancel")" $(gettext "Updates")
         ret=$(echo $?)
         
@@ -603,7 +603,7 @@ a_check_updates() {
         
         if [ -n "${rversion##+([[:space:]])}" ] && [ "$rversion" != "$(idiomind -v)" ]; then
             
-            msg_2 "<b>$(gettext "A new version of Idiomind available")\n</b>\n$(gettext "Do you want to download it now?")\n" info "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Updates")" "$(gettext "Ignore this update")"
+            msg_2 "<b>$(gettext "A new version of Idiomind available\!")\n</b>\n$(gettext "Do you want to download it now?")\n" info "$(gettext "Download")" "$(gettext "No")" "$(gettext "Updates")" "$(gettext "Ignore")"
             ret=$(echo $?)
             
             if [[ $ret -eq 0 ]]; then
@@ -626,6 +626,7 @@ python << END
 import gtk
 import os
 app_logo = os.path.join('/usr/share/idiomind/images/idiomind.png')
+app_icon = os.path.join('/usr/share/idiomind/images/icon.png')
 app_name = 'Idiomind'
 app_version = 'v2.2-beta'
 app_comments = 'Vocabulary learning tool'
@@ -650,6 +651,7 @@ class AboutDialog:
     def __init__(self):
         about = gtk.AboutDialog()
         about.set_logo(gtk.gdk.pixbuf_new_from_file(app_logo))
+        about.set_icon_from_file(app_icon)
         about.set_wmclass('Idiomind', 'Idiomind')
         about.set_name(app_name)
         about.set_program_name(app_name)

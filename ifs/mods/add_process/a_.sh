@@ -3,7 +3,7 @@
 
 function dlg_checklist_5() {
     
-    cmd_edit_="$DS/ifs/mods/add_process/a.sh 'item_for_edit'"
+    cmd_edit_="$DS/ifs/mods/add_process/a_.sh 'item_for_edit'"
     cmd_newtopic="$DS/add.sh 'new_topic'"
     slt=$(mktemp "$DT/slt.XXXX.x")
     cat "$1" | awk '{print "FALSE\n"$0}' | \
@@ -383,28 +383,24 @@ if [[ "$conten" = A ]]; then
                 
                 if [ -n "$logs" ] || [ "$(ls [0-9]* | wc -l)" -ge 1 ]; then
                 
-                    if [ -n "$logs" ]; then
-                    text_r1="$(gettext "Some items could not be added to your list:")"; fi
-                    
                     if [ "$(ls [0-9]* | wc -l)" -ge 1 ]; then
-                    btn="--button="$(gettext "Save Audio")":0"
-                    text_r2="$(gettext "Some audio files could not be added.")"; fi
+                    btn="--button="$(gettext "Save Audio")":0"; fi
 
-                    dlg_text_info_3 "$text_r2 $text_r1" "$logs" "$btn" >/dev/null 2>&1
+                    dlg_text_info_3 "$(gettext "Some items could not be added to your list:")" "$logs" "$btn" >/dev/null 2>&1
                     ret=$(echo "$?")
                     
                         if  [[ "$ret" -eq 0 ]]; then
-                            aud=$(dlg_file_2)
+                            aud=`dlg_file_2`
                             ret=$(echo "$?")
                             
                                 if [[ "$ret" -eq 0 ]]; then
-                                mkdir rest
+                                mkdir ./rest
                                 mv -f [0-9]*.mp3 ./rest/
                                 cd ./rest
                                 cat "$(ls [0-9]*.mp3 | sort -n | tr '\n' ' ')" > audio.mp3
                                 rm -f "$(ls [0-9]*.mp3)"
-                                tar cvzf audio.tar.gz *
-                                mv -f audio.tar.gz "$aud"; fi
+                                tar cvzf ./audio.tar.gz ./*
+                                mv -f ./audio.tar.gz "$aud"; fi
                         fi
                 fi
                 

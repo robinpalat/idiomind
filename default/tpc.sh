@@ -2,7 +2,6 @@
 # -*- ENCODING: UTF-8 -*-
 
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
-
 source "$DS/ifs/mods/cmns.sh"
 topic="$1"
 DC_tlt="$DM_tl/$topic/.conf"
@@ -44,9 +43,9 @@ else
         cd "$HOME"
         fi
 
-        echo "$topic" > "$DC_s/4.cfg"
-        echo "$topic" > "$DC_s/7.cfg"
-        echo "$topic" > "$DT/tpe"
+        echo "${topic}" > "$DC_s/4.cfg"
+        echo "${topic}" > "$DC_s/7.cfg"
+        echo "${topic}" > "$DT/tpe"
         echo '0' > "$DC_s/5.cfg"
         
         if [ ! -f "$DT/.n_s_pr" ]; then
@@ -82,7 +81,7 @@ else
         
             (sleep 2
             notify-send --icon=idiomind \
-            "$topic" "$(gettext "Is your topic now")" -t 2000) & exit
+            "$topic" "$(gettext "Is now your topic")" -t 4000) & exit
             
         else
             idiomind topic & exit
