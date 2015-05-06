@@ -145,7 +145,7 @@ Create one using the button below. ")" & exit 1; fi
                 "$DS/add.sh" process "${trgt}" "$DT_r" & exit 1
                 
             #elif [ ${#trgt} -gt 150 ]; then
-                #"$DS/add.sh" process "${trgt}" "$DT_r" & exit 1#######################################3
+                #"$DS/add.sh" process "${trgt}" "$DT_r" & exit 1
 
             elif [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
             
@@ -203,7 +203,11 @@ new_sentence() {
     
         internet
         cd "$DT_r"
-        trgt=$(translate "$(clean_1 "${2}")" auto "$lgt" | sed ':a;N;$!ba;s/\n/ /g')
+        if [ "$trd_trgt" = TRUE ]; then
+        trgt="$(translate "$(clean_1 "${2}")" auto "$lgt" | sed ':a;N;$!ba;s/\n/ /g')"
+        else
+        trgt="$(clean_1 "${2}" | sed ':a;N;$!ba;s/\n/ /g')"
+        fi
         srce=$(translate "${trgt}" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')
         fname="$(nmfile "${trgt}")"
         
@@ -296,7 +300,11 @@ new_word() {
     if [ "$trans" = TRUE ]; then
     
         internet
-        trgt="$(translate "${trgt}" auto $lgt)"
+        if [ "$trd_trgt" = TRUE ] && [ "$5" != 0 ]; then
+        trgt="$(translate "$(clean_0 "${trgt}")" auto "$lgt")"
+        else
+        trgt="$(clean_0 "${trgt}")"
+        fi
         srce="$(translate "${trgt}" $lgt $lgs)"
         fname="$(nmfile "${trgt^}")"
         audio="${trgt,,}"
@@ -780,8 +788,8 @@ process() {
                     while [[ $n -le "$(wc -l < slts | head -200)" ]]; do
                     
                         sntc=$(sed -n "$n"p ./slts)
-                        trgt=$(translate "$(clean_1 "${sntc}")" auto $lgt | sed ':a;N;$!ba;s/\n/ /g')
-                        srce=$(translate "${trgt}" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')
+                        trgt="$(clean_1 "${sntc}" | sed ':a;N;$!ba;s/\n/ /g')"
+                        srce="$(translate "${trgt}" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')"
                         fname=$(nmfile "${trgt}")
                     
                         # words

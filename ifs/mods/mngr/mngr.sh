@@ -117,7 +117,7 @@ function dlg_form_2() {
     --buttons-layout=end \
     --width=650 --height=540 --borders=10 \
     --field="$(gettext "Mark")":CHK "$mark" \
-    --field="$(gettext "Consider it as a word")":CHK "$type" \
+    --field=" $lbl_2":$t "$type" \
     --field="<small>$lgtl</small>":TXT "$trgt" \
     --field="<small>$lgsl</small>":TXT "$srce" \
     --field="$(gettext "Listen")":FBTN "$cmd_play" \

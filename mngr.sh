@@ -376,6 +376,7 @@ edit() {
     include "$DS/ifs/mods/mngr"
     lgt=$(lnglss $lgtl)
     lgs=$(lnglss $lgsl)
+    temp="$(gettext "Processing")..."
     lists="$2";  item_pos="$3"
     if [ "$lists" = 1 ]; then
     index_1="$DC_tlt/1.cfg"
@@ -389,6 +390,9 @@ edit() {
     | tr "\\n" '!' | sed 's/!\+$//g')"
     c=$(($RANDOM%10000))
     item="$(sed -n "$3"p "$index_1")"
+    if [ $(wc -w <<<"$item") -lt 3 ]; then
+    t=CHK; lbl_2="$(gettext "Consider it as a word")"
+    else t=LBL; fi
     fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
     audiofile_1="$DM_tlt/words/$fname.mp3"
     audiofile_2="$DM_tlt/$fname.mp3"
@@ -413,7 +417,7 @@ edit() {
         ret=$(echo "$?")
         
             if [ ! -f "$DM_tlt/words/$fname.mp3" ]; then
-            "$DS/mngr.sh" edit "$lists" $((item_pos-1)) & exit; fi
+            "$DS/mngr.sh" edit "$lists" $((item_pos-1)) & exit 1; fi
             
             source /usr/share/idiomind/ifs/c.conf
             include "$DS/ifs/mods/add"
@@ -425,7 +429,6 @@ edit() {
             dftn_mod="$(tail -12 < "$file_tmp" | sed -n 6p)"
             note_mod="$(tail -12 < "$file_tmp" | sed -n 7p)"
             mark_mod="$(tail -12 < "$file_tmp" | sed -n 9p)"
-            
             rm -f "$file_tmp"
             
             if [ "$mark" != "$mark_mod" ]; then
@@ -453,8 +456,10 @@ edit() {
                 fname_mod="$(nmfile "$trgt_mod")"
                 mv -f "$DM_tlt/words/$fname.mp3" "$DM_tlt/words/$fname_mod.mp3"
                 mv -f "$DM_tlt/words/images/$fname.jpg" "$DM_tlt/words/images/$fname_mod.jpg"
-                tags_1 W "$trgt_mod" "$srce_mod" "$DM_tlt/words/$fname_mod.mp3"
+                tags_1 W "$trgt_mod" "$temp" "$DM_tlt/words/$fname_mod.mp3"
                 index edit "${trgt}" "${tpc}" "${trgt_mod}"
+                (DT_r=$(mktemp -d "$DT/XXXX")
+                "$DS/add.sh" new_word "${trgt_mod}" "$DT_r" "${srce_mod}" 0) &
                 fname="$fname_mod"
             fi
 
@@ -464,7 +469,6 @@ edit() {
             fi
             
             infm="$(echo $exmp_mod && echo $dftn_mod && echo $note_mod)"
-            
             if [ "$infm" != "$fields" ]; then
             
                 impr=$(echo "$infm" | tr '\n' '_')
@@ -509,7 +513,7 @@ edit() {
         ret=$(echo "$?")
 
             if [ ! -f "$DM_tlt/$fname.mp3" ]; then
-            "$DS/mngr.sh" edit "$lists" $((item_pos-1)) & exit; fi
+            "$DS/mngr.sh" edit "$lists" $((item_pos-1)) & exit 1; fi
 
             include "$DS/ifs/mods/add"
             mark_mod="$(tail -8 < "$file_tmp" | sed -n 1p)"
@@ -527,7 +531,6 @@ edit() {
             if [ "$trgt_mod" != "$trgt" ] \
             && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
                 
-                temp="$(gettext "Processing")..."
                 fname_mod="$(nmfile "$trgt_mod")"
                 mv -f "$DM_tlt/$fname.mp3" "$DM_tlt/$fname_mod.mp3"
                 index edit "${trgt}" "${tpc}" "${trgt_mod}"
@@ -620,7 +623,6 @@ edit() {
 
                 cp -f "$audio_mod" "$DM_tl/$tpc_mod/$fname.mp3"
                 DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
-               
                 index sentence "$trgt_mod" "$tpc_mod" &
                 "$DS/mngr.sh" delete_item_confirm "$fname"
                 [ -d $DT_r ] && rm -fr "$DT_r"

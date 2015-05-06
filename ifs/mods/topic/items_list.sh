@@ -64,12 +64,10 @@ function sentence_view() {
 
 missing() {
     
-    item=$(sed -n "$1"p "$index")
-    yad --form --title="$item" \
+    yad --form --title=$(gettext "Error") \
     --selectable-labels \
     --text="<span color='#3F78A0'>$(gettext "File not found")</span>" \
     --field="":lbl " " \
-    --field="<b>$item</b>":lbl \
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --center --on-top \
     --align=center --text-align=center \
