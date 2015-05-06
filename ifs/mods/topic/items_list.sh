@@ -81,12 +81,12 @@ export -f word_view sentence_view missing
 
 function notebook_1() {
     
-    cmd_mark="'$DS/mngr.sh' 'mark_as_learned' '$tpc' 1"
+    cmd_mark="'$DS/mngr.sh' 'mark_as_learned' "\"$tpc\"" 1"
     cmd_attchs="'$DS/ifs/tls.sh' 'attachs'"
-    cmd_del="'$DS/mngr.sh' 'delete_topic' '$tpc'"
-    cmd_share="'$DS/ifs/upld.sh' 'upld' '$tpc'"
+    cmd_del="'$DS/mngr.sh' 'delete_topic' "\"$tpc\"""
+    cmd_share="'$DS/ifs/upld.sh' upld "\"$tpc\"""
     cmd_play="$DS/play.sh"
-    
+
     tac "$ls1" | awk '{print $0"\n"}' | yad --list --tabnum=1 \
     --plug=$KEY --print-all \
     --dclick-action="$DS/vwr.sh '1'" \
@@ -131,10 +131,10 @@ function notebook_1() {
 
 function notebook_2() {
     
-    cmd_mark="'$DS/mngr.sh' 'mark_to_learn' '$tpc' 1"
+    cmd_mark="'$DS/mngr.sh' 'mark_to_learn' "\"$tpc\"" 1"
     cmd_attchs="'$DS/ifs/tls.sh' 'attachs'"
-    cmd_del="'$DS/mngr.sh' 'delete_topic' '$tpc'"
-    cmd_share="'$DS/ifs/upld.sh' 'upld' '$tpc'"
+    cmd_del="'$DS/mngr.sh' 'delete_topic' "\"$tpc\"""
+    cmd_share="'$DS/ifs/upld.sh' 'upld' "\"$tpc\"""
     
     yad --multi-progress --tabnum=1 \
     --text="$pres" \

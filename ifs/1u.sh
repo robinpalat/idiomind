@@ -28,7 +28,7 @@ text="<big><big><big>$(gettext "Welcome") ${USER^} </big></big></big>
 \n      $(gettext "To get started, please configure the following.")"
 lang=('English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian')
-sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
+sets=('grammar' 'list' 'tasks' 'trans' 'trd_trgt' 'text' 'audio' \
 'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' \
 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
 
@@ -136,7 +136,7 @@ elif [ $ret -eq 0 ]; then
     done
     
     n=0; > "$DC_s/1.cfg"
-    while [ $n -lt 18 ]; do
+    while [ $n -lt 19 ]; do
     echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
     ((n=n+1))
     done

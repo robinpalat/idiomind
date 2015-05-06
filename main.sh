@@ -87,6 +87,7 @@ function new_session() {
     echo "$DESKTOP_SESSION" >> "$DC_s/10.cfg"
     gconftool-2 --get /desktop/gnome/interface/font_name \
     | cut -d ' ' -f 2 >> "$DC_s/10.cfg"
+    [ `wc -l < "$DC_s/1.cfg"` -lt 19 ] && rm "$DC_s/10.cfg"
 
     # log file
     if [ -f "$DC_s/8.cfg" ]; then
@@ -278,10 +279,10 @@ function topic() {
             mv -f "$cnf3" "$DC_tlt/10.cfg"; fi
             
             ntpc=$(cut -d '|' -f 1 < "$cnf4")
-            if [ "$tpc" != "$ntpc" ] && [ -n "$ntpc" ]; then
-            if [ "$tpc" != "$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")" ]; then
+            if [ "${tpc}" != "${ntpc}" ] && [ -n "$ntpc" ]; then
+            if [ "${tpc}" != "$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")" ]; then
             msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
-            "$DS/mngr.sh" rename_topic "$ntpc" & exit; fi
+            "$DS/mngr.sh" rename_topic "${ntpc}" & exit; fi
 
             set1_=$(cut -d '|' -f 8 < "$cnf4")
             if [ "$set1" != "$set1_" ]; then

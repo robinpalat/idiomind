@@ -390,7 +390,7 @@ edit() {
     | tr "\\n" '!' | sed 's/!\+$//g')"
     c=$(($RANDOM%10000))
     item="$(sed -n "$3"p "$index_1")"
-    if [ $(wc -w <<<"$item") -lt 3 ]; then
+    if [ $(wc -w <<<"$item") -lt 4 ]; then
     t=CHK; lbl_2="$(gettext "Consider it as a word")"
     else t=LBL; fi
     fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
@@ -451,7 +451,7 @@ edit() {
                 [ -d "$DT/idadtmptts" ] && rm -fr "$DT/idadtmptts"
             fi
             
-            if [ "$trgt_mod" != "$trgt" ]; then
+            if [ "$trgt_mod" != "$trgt" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
             
                 fname_mod="$(nmfile "$trgt_mod")"
                 mv -f "$DM_tlt/words/$fname.mp3" "$DM_tlt/words/$fname_mod.mp3"
@@ -528,8 +528,7 @@ edit() {
             include "$DS/ifs/mods/add"
             rm -f "$file_tmp"
             
-            if [ "$trgt_mod" != "$trgt" ] \
-            && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
+            if [ "$trgt_mod" != "$trgt" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
                 
                 fname_mod="$(nmfile "$trgt_mod")"
                 mv -f "$DM_tlt/$fname.mp3" "$DM_tlt/$fname_mod.mp3"

@@ -36,7 +36,7 @@ Icon=idiomind
 StartupWMClass=Idiomind"
 lang=('English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian')
-sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
+sets=('grammar' 'list' 'tasks' 'trans' 'trd_trgt' 'text' 'audio' \
 'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' \
 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
 c=$((RANDOM%100000)); KEY=$c
@@ -73,24 +73,24 @@ set_lang() {
 n=0
 if [ "$cfg" = 1 ]; then
 
-    while [[ $n -lt 13 ]]; do
+    while [[ $n -lt 14 ]]; do
         get="${sets[$n]}"
-        val=$(sed -n $((n+1))p < "$DC_s/1.cfg" \
+        val=$(sed -n $((n+1))p "$DC_s/1.cfg" \
         | grep -o "$get"=\"[^\"]* | grep -o '[^"]*$')
         declare "${sets[$n]}"="$val"
         ((n=n+1))
     done
     
 else
-    while [ $n -lt 18 ]; do
-        if [ $n -lt 7 ] || [ $n -gt 11 ]; then
-        val="FALSE"; else val=" "; fi
-        echo -e "${sets[$n]}=\"$val\"" >> "$DC_s/1.cfg"
-        ((n=n+1))
+    n=0; > "$DC_s/1.cfg"
+    while [ $n -lt 19 ]; do
+    echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
+    ((n=n+1))
     done
 fi
 
-if [ "$text" != TRUE ] && [ "$audio" != TRUE ]; then audio=TRUE; fi
+if [ "$text" != TRUE ]; then audio=TRUE; fi
+if [ "$trans" != TRUE ]; then trd_trgt=FALSE; fi
 yad --plug=$KEY --form --tabnum=1 \
 --align=right --scroll \
 --separator='|' --always-print-result --print-all \
@@ -100,6 +100,7 @@ yad --plug=$KEY --form --tabnum=1 \
 --field="$(gettext "List words after adding a sentence")":CHK "$list" \
 --field="$(gettext "Perform tasks at startup")":CHK "$tasks" \
 --field="$(gettext "Use automatic translation, if available")":CHK "$trans" \
+--field="$(gettext "Detect source language in translation (slower)")":CHK "$trd_trgt" \
 --field=" :LBL" " " \
 --field="$(gettext "Play Options")\t":LBL " " \
 --field=":LBL" " " \
@@ -138,7 +139,7 @@ ret=$?
 
     if [ $ret -eq 0 ]; then
         n=1; v=0
-        while [ $n -le 20 ]; do
+        while [ $n -le 21 ]; do
             val=$(cut -d "|" -f$n < "$cnf1")
             if [ -n "$val" ]; then
             sed -i "s/${sets[$v]}=.*/${sets[$v]}=\"$val\"/g" "$DC_s/1.cfg"
@@ -146,8 +147,8 @@ ret=$?
             ((n=n+1))
         done
 
-        val=$(cut -d "|" -f22 < "$cnf1")
-        sed -i "s/${sets[11]}=.*/${sets[11]}=\"$val\"/g" "$DC_s/1.cfg"
+        val=$(cut -d "|" -f23 < "$cnf1")
+        sed -i "s/${sets[12]}=.*/${sets[12]}=\"$val\"/g" "$DC_s/1.cfg"
         
         [ ! -d  "$HOME/.config/autostart" ] \
         && mkdir "$HOME/.config/autostart"
@@ -165,7 +166,7 @@ ret=$?
         
         n=0
         while [ $n -lt 10 ]; do
-            if cut -d "|" -f18 < "$cnf1" | grep "${lang[$n]}" && \
+            if cut -d "|" -f19 < "$cnf1" | grep "${lang[$n]}" && \
             [ "${lang[$n]}" != "$lgtl" ]; then
                 lgtl="${lang[$n]}"
                 if grep -o -E 'Chinese|Japanese|Russian|Vietnamese' <<< "$lgtl";
@@ -179,7 +180,7 @@ ret=$?
         
         n=0
         while [ $n -lt 10 ]; do
-            if cut -d "|" -f19 < "$cnf1" | grep "${lang[$n]}" && \
+            if cut -d "|" -f20 < "$cnf1" | grep "${lang[$n]}" && \
             [ "${lang[$n]}" != "$lgsl" ]; then
                 confirm "$info1" dialog-warning
                 if [ $? -eq 0 ]; then

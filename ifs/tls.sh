@@ -756,8 +756,8 @@ set_image() {
             
             fi
     fi
-    
-    rm -f "$DT/search.html" "$DT"/*.jpeg & exit
+    rm -f "$DT"/*.jpeg
+    (sleep 50 && rm -f "$DT/search.html") & exit
 }  >/dev/null 2>&1
 
 mkpdf() {
