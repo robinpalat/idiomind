@@ -143,6 +143,9 @@ Create one using the button below. ")" & exit 1; fi
             
             elif [ ${#trgt} -gt 150 ]; then
                 "$DS/add.sh" process "${trgt}" "$DT_r" & exit 1
+                
+            #elif [ ${#trgt} -gt 150 ]; then
+                #"$DS/add.sh" process "${trgt}" "$DT_r" & exit 1#######################################3
 
             elif [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
             

@@ -390,13 +390,13 @@ edit() {
     c=$(($RANDOM%10000))
     item="$(sed -n "$3"p "$index_1")"
     fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
-    audiofile_2="$DM_tlt/words/$fname.mp3"
-    audiofile_1="$DM_tlt/$fname.mp3"
+    audiofile_1="$DM_tlt/words/$fname.mp3"
+    audiofile_2="$DM_tlt/$fname.mp3"
     
-    if [ -f "$audiofile_2" ]; then
+    if [ -f "$audiofile_1" ]; then
         
         file="$DM_tlt/words/$fname.mp3"
-        tags="$(eyeD3 "$audiofile_2")"
+        tags="$(eyeD3 "$audiofile_1")"
         trgt="$(grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)' <<<"$tags")"
         srce="$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)' <<<"$tags")"
         fields="$(grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' <<<"$tags" | tr '_' '\n')"
@@ -431,50 +431,51 @@ edit() {
             if [ "$mark" != "$mark_mod" ]; then
             
                 if [ "$mark_mod" = "TRUE" ]; then
-                echo "${trgt}" >> "$DC_tlt/6.cfg"; else
-                grep -vxv "${trgt}" "$DC_tlt/6.cfg" > "$DC_tlt/6.cfg.tmp"
+                echo "$trgt" >> "$DC_tlt/6.cfg"; else
+                grep -vxv "$trgt" "$DC_tlt/6.cfg" > "$DC_tlt/6.cfg.tmp"
                 sed '/^$/d' "$DC_tlt/6.cfg.tmp" > "$DC_tlt/6.cfg"
                 rm "$DC_tlt/6.cfg.tmp"; fi
                 tags_8 W "$mark_mod" "$DM_tlt/words/$fname.mp3"
             fi
             
-            if [ "${audio_mod}" != "$audiofile_2" ]; then
+            if [ "$audio_mod" != "$audiofile_1" ]; then
             
-                eyeD3 --write-images="$DT" "$audiofile_2"
-                cp -f "${audio_mod}" "$DM_tlt/words/$fname.mp3"
-                tags_1 W "${trgt_mod}" "${srce_mod}" "$DM_tlt/words/$fname.mp3"
+                eyeD3 --write-images="$DT" "$audiofile_1"
+                cp -f "$audio_mod" "$DM_tlt/words/$fname.mp3"
+                tags_1 W "$trgt" "$srce_mod" "$DM_tlt/words/$fname.mp3"
                 eyeD3 --add-image $DT/ILLUSTRATION.jpeg:ILLUSTRATION \
                 "$DM_tlt/words/$fname.mp3"
                 [ -d "$DT/idadtmptts" ] && rm -fr "$DT/idadtmptts"
             fi
             
-            if [ "${trgt_mod}" != "${trgt}" ]; then
+            if [ "$trgt_mod" != "$trgt" ]; then
             
                 fname_mod="$(nmfile "$trgt_mod")"
                 mv -f "$DM_tlt/words/$fname.mp3" "$DM_tlt/words/$fname_mod.mp3"
-                tags_1 W "${trgt_mod}" "${srce_mod}" "$DM_tlt/words/$fname_mod.mp3"
+                mv -f "$DM_tlt/words/images/$fname.jpg" "$DM_tlt/words/images/$fname_mod.jpg"
+                tags_1 W "$trgt_mod" "$srce_mod" "$DM_tlt/words/$fname_mod.mp3"
                 index edit "${trgt}" "${tpc}" "${trgt_mod}"
                 fname="$fname_mod"
             fi
 
-            if [ "${srce_mod}" != "${srce}" ]; then
+            if [ "$srce_mod" != "$srce" ]; then
             
-                tags_5 W "${srce_mod}" "$DM_tlt/words/$fname.mp3"
+                tags_5 W "$srce_mod" "$DM_tlt/words/$fname.mp3"
             fi
             
             infm="$(echo $exmp_mod && echo $dftn_mod && echo $note_mod)"
             
             if [ "$infm" != "$fields" ]; then
             
-                impr=$(echo "${infm}" | tr '\n' '_')
-                tags_6 W "${impr}" "$audiofile_2"
+                impr=$(echo "$infm" | tr '\n' '_')
+                tags_6 W "$impr" "$DM_tlt/words/$fname.mp3"
                 printf "eitm.$tpc.eitm\n" >> "$DC_s/8.cfg" &
             fi
 
             if [ "$tpc" != "$tpc_mod" ]; then
             
                 cp -f "$audio_mod" "$DM_tl/$tpc_mod/words/$fname.mp3"
-                index word "${trgt}" "${tpc_mod}" &
+                index word "$trgt" "$tpc_mod" &
                 "$DS/mngr.sh" delete_item_confirm "$fname"
                 "$DS/vwr.sh" "$lists" "nll" $item_pos & exit 1
             fi
@@ -489,10 +490,10 @@ edit() {
             
             exit
             
-    elif [ -f "$audiofile_1" ]; then
+    elif [ -f "$audiofile_2" ]; then
     
         file="$DM_tlt/$fname.mp3"
-        tags="$(eyeD3 "$audiofile_1")"
+        tags="$(eyeD3 "$audiofile_2")"
         mark="$(grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)' <<<"$tags")"
         trgt="$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"$tags")"
         srce="$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"$tags")"
@@ -511,13 +512,14 @@ edit() {
             "$DS/mngr.sh" edit "$lists" $((item_pos-1)) & exit; fi
 
             include "$DS/ifs/mods/add"
-            mark_mod="$(tail -7 < "$file_tmp" | sed -n 1p)"
-            trgt_mod="$(clean_1 "$(tail -7 < "$file_tmp" | sed -n 2p | \
+            mark_mod="$(tail -8 < "$file_tmp" | sed -n 1p)"
+            type_mod="$(tail -8 < "$file_tmp" | sed -n 2p)"
+            trgt_mod="$(clean_1 "$(tail -8 < "$file_tmp" | sed -n 3p | \
             sed 's/^ *//; s/ *$//g' | sed ':a;N;$!ba;s/\n/ /g')")"
-            srce_mod="$(tail -7 < "$file_tmp" | sed -n 3p | \
+            srce_mod="$(tail -8 < "$file_tmp" | sed -n 4p | \
             sed 's/^ *//; s/ *$//g' | sed ':a;N;$!ba;s/\n/ /g' | sed 's/^\s*./\U&\E/g')"
-            tpc_mod="$(tail -7 < "$file_tmp" | sed -n 5p)"
-            audio_mod="$(tail -7 < "$file_tmp" | sed -n 6p)"
+            tpc_mod="$(tail -8 < "$file_tmp" | sed -n 6p)"
+            audio_mod="$(tail -8 < "$file_tmp" | sed -n 7p)"
             source /usr/share/idiomind/ifs/c.conf
             include "$DS/ifs/mods/add"
             rm -f "$file_tmp"
@@ -526,11 +528,11 @@ edit() {
             && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
                 
                 temp="$(gettext "Processing")..."
-                fname_mod="$(nmfile "{$trgt_mod}")"
+                fname_mod="$(nmfile "$trgt_mod")"
                 mv -f "$DM_tlt/$fname.mp3" "$DM_tlt/$fname_mod.mp3"
                 index edit "${trgt}" "${tpc}" "${trgt_mod}"
-                tags_1 S "${trgt_mod}" "$temp" "$DM_tlt/$fname_mod.mp3"
-                tags_3 W "$temp" "$temp" "${trgt_mod}" "$DM_tlt/$fname_mod.mp3"
+                tags_1 S "$trgt_mod" "$temp" "$DM_tlt/$fname_mod.mp3"
+                tags_3 W "$temp" "$temp" "$trgt_mod" "$DM_tlt/$fname_mod.mp3"
                 
                 (internet
                 srce_mod=$(translate "$trgt_mod" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')
@@ -556,16 +558,16 @@ edit() {
             if [ "$mark" != "$mark_mod" ]; then
             
                 if [ "$mark_mod" = "TRUE" ]; then
-                echo "${trgt_mod}" >> "$DC_tlt/6.cfg"; else
-                grep -vxv "${trgt_mod}" "$DC_tlt/6.cfg" > "$DC_tlt/6.cfg.tmp"
+                echo "$trgt_mod" >> "$DC_tlt/6.cfg"; else
+                grep -vxv "$trgt_mod" "$DC_tlt/6.cfg" > "$DC_tlt/6.cfg.tmp"
                 sed '/^$/d' "$DC_tlt/6.cfg.tmp" > "$DC_tlt/6.cfg"
                 rm "$DC_tlt/6.cfg.tmp"; fi
                 tags_8 S "$mark_mod" "$DM_tlt/$fname.mp3"
             fi
             
-            if [ -n "${audio_mod}" ]; then
+            if [ -n "$audio_mod" ]; then
             
-                if [ "${audio_mod}" != "$audiofile_1" ]; then
+                if [ "$audio_mod" != "$audiofile_2" ]; then
                 
                     (internet
                     cp -f "$audio_mod" "$DM_tlt/$fname.mp3"
@@ -596,17 +598,30 @@ edit() {
                 rm -f "$DT/tmpau.mp3"
             fi
             
-            if [ "${srce_mod}" != "${srce}" ]; then
+            if [ "$srce_mod" != "$srce" ]; then
             
-                tags_5 S "$srce_mod" "$audiofile_1"
+                tags_5 S "$srce_mod" "$DM_tlt/$fname.mp3"
             fi
             
-            if [ "${tpc}" != "${tpc_mod}" ]; then
+            if [ "$type_mod" = TRUE ]; then
+            
+                if [ $(wc -w <<<"$trgt_mod") -lt 3 ]; then
+                mv -f "$DM_tl/$tpc/$fname.mp3" "$DM_tlt/words/$fname.mp3"
+                tags_1 W "$trgt_mod" "$srce_mod" "$DM_tlt/words/$fname.mp3"
+                dir="$DC_tlt/practice"; if [ "$dir/lsin" ]; then
+                grep -vxF "$trgt_mod" "$dir/lsin" > "$dir/lsin.tmp"
+                sed '/^$/d' "$dir/lsin.tmp" > "$dir/lsin"; fi
+                grep -vxF "$trgt_mod" "$DC_tlt/4.cfg" > "$DT/4.cfg"
+                sed '/^$/d' "$DT/4.cfg" > "$DC_tlt/4.cfg"
+                echo "${trgt_mod}" >> "$DC_tlt/3.cfg"; fi
+            fi
+            
+            if [ "$tpc" != "$tpc_mod" ]; then
 
                 cp -f "$audio_mod" "$DM_tl/$tpc_mod/$fname.mp3"
                 DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
                
-                index sentence "${trgt_mod}" "${tpc_mod}" &
+                index sentence "$trgt_mod" "$tpc_mod" &
                 "$DS/mngr.sh" delete_item_confirm "$fname"
                 [ -d $DT_r ] && rm -fr "$DT_r"
                 "$DS/vwr.sh" "$lists" "null" "$item_pos" & exit 1
