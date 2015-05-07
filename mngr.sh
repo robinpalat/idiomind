@@ -615,6 +615,7 @@ edit() {
                 sed '/^$/d' "$dir/lsin.tmp" > "$dir/lsin"; fi
                 grep -vxF "$trgt_mod" "$DC_tlt/4.cfg" > "$DT/4.cfg"
                 sed '/^$/d' "$DT/4.cfg" > "$DC_tlt/4.cfg"
+                rm -f "$DT/4.cfg"
                 echo "${trgt_mod}" >> "$DC_tlt/3.cfg"; fi
             fi
             
@@ -641,6 +642,7 @@ edit() {
     else
         exit 1
     fi
+    [ -f "$file_tmp" ] && rm -f "$file_tmp"
     exit
 } >/dev/null 2>&1
 

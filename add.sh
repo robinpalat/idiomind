@@ -24,11 +24,11 @@ include "$DS/ifs/mods/add"
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
 restr="$(ls "$DS/addons/")"
-list=$(sed -n 2p < "$DC_s/1.cfg" \
+list=$(sed -n 2p "$DC_s/1.cfg" \
 | grep -o list=\"[^\"]* | grep -o '[^"]*$')
-trans=$(sed -n 4p < "$DC_s/1.cfg" \
+trans=$(sed -n 4p "$DC_s/1.cfg" \
 | grep -o trans=\"[^\"]* | grep -o '[^"]*$')
-trd_trgt=$(sed -n 5p < "$DC_s/1.cfg" \
+trd_trgt=$(sed -n 5p "$DC_s/1.cfg" \
 | grep -o trd_trgt=\"[^\"]* | grep -o '[^"]*$')
 
 new_topic() {
@@ -229,8 +229,8 @@ new_sentence() {
         [ "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "You need to fill text fields.")\n" info & exit; fi
         
-        trgt=$(clean_1 <<<"${2}" | sed ':a;N;$!ba;s/\n/ /g')
-        srce=$(clean_1 <<<"${4}" | sed ':a;N;$!ba;s/\n/ /g')
+        trgt=$(clean_1 "${2}" | sed ':a;N;$!ba;s/\n/ /g')
+        srce=$(clean_1 "${4}" | sed ':a;N;$!ba;s/\n/ /g')
         fname="$(nmfile "${trgt}")"
         
         if [ -f "$DT_r/audtm.mp3" ]; then
@@ -452,7 +452,7 @@ list_words_edit() {
                     index word "${trgt}" "${tpc}" "${sname}"
                 
                 else
-                    printf "\n\n$sntc" >> ./logw
+                    printf "\n\n[$n] $sntc" >> ./logw
                     [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"; fi
             fi
             let n++
@@ -594,7 +594,7 @@ list_words_sentence() {
                 index word "${trgt}" "${4}"
             
             else
-                printf "\n\n$sntc" >> ./logw
+                printf "\n\n[$n] $sntc" >> ./logw
                 [ "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
             fi
         fi
@@ -641,7 +641,7 @@ process() {
 
         if [[ $ret -eq 1 ]]; then
         rm=$(sed -n 1p "$DT/.n_s_pr")
-        rm fr "$rm" "$DT/.n_s_pr"
+        rm -fr "$rm" "$DT/.n_s_pr"
         "$DS/stop.sh" 5
         fi
         [ -d "$DT_r" ] && rm -fr "$DT_r"
@@ -785,7 +785,7 @@ process() {
                     [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ] && c=c || c=w
                     
                     lns="$(cat ./slts ./wrds | wc -l)"
-
+                    # ----------------------------
                     n=1
                     while [[ $n -le "$(wc -l < slts | head -200)" ]]; do
                     
@@ -797,7 +797,7 @@ process() {
                         # words
                         if [ "$(wc -$c <<<"${sntc}")" = 1 ]; then
                             if [ "$(wc -l < "$DC_tlt"/0.cfg)" -ge 200 ]; then
-                                printf "\n\n$sntc" >> ./wlog
+                                printf "\n\n[$n] $sntc" >> ./wlog
                         
                             else
                                 trgt="$(clean_0 "$trgt")"
@@ -821,7 +821,7 @@ process() {
                                     index word "${trgt}" "${tpe}"
 
                                 else
-                                    printf "\n\n$sntc" >> ./wlog
+                                    printf "\n\n[$n] $sntc" >> ./wlog
                                     [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
                                 fi
                             fi
@@ -830,11 +830,11 @@ process() {
                         elif [ "$(wc -$c <<<"$sntc")" -ge 1 ]; then
                             
                             if [ "$(wc -l < "$DC_tlt/0.cfg")" -ge 200 ]; then
-                                printf "\n\n$sntc" >> ./slog
+                                printf "\n\n[$n] $sntc" >> ./slog
                         
                             else
                                 if [ ${#sntc} -ge 150 ]; then
-                                    printf "\n\n$sntc" >> ./slog
+                                    printf "\n\n[$n] $sntc" >> ./slog
                             
                                 else
                                     if [ "$trans" = TRUE ]; then
@@ -869,7 +869,7 @@ process() {
                                         fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
 
                                     else
-                                        printf "\n\n$sntc" >> ./slog
+                                        printf "\n\n[$n] $sntc" >> ./slog
                                         [ -f "$DM_tlt/$fname.mp3" ] && rm "$DM_tlt/$fname.mp3"
                                     fi
                                     
@@ -897,7 +897,7 @@ process() {
                         audio="${trgt,,}"
 
                         if [ "$(wc -l < "$DC_tlt/0.cfg")" -ge 200 ]; then
-                            printf "\n\n${trgt}" >> ./wlog
+                            printf "\n\n[$n] ${trgt}" >> ./wlog
                     
                         else
                             srce="$(translate "${trgt}" auto $lgs)"
@@ -925,7 +925,7 @@ process() {
                                 echo "${trgt}" >> addw
                                 
                             else
-                                printf "\n\n$sntc" >> ./wlog
+                                printf "\n\n[$n] $sntc" >> ./wlog
                                 [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
                             fi
                         fi

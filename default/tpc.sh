@@ -22,7 +22,6 @@ nimages=\"$images\"
 level=\"$level\""
 
 if grep -Fxo "$topic" <<<"${restr}"; then
-
     "$DS/ifs/mods/topic/$topic.sh" 2 & exit 1
 
 else
@@ -51,8 +50,8 @@ else
         if [ ! -f "$DT/.n_s_pr" ]; then
         "$DS/ifs/tls.sh" check_index "$topic"; fi
         
-        stts=$(sed -n 1p < "$DC_tlt/8.cfg")
-        if [[ $(grep -Fxon "$topic" < "$DM_tl/.1.cfg" \
+        stts=$(sed -n 1p "$DC_tlt/8.cfg")
+        if [[ $(grep -Fxon "$topic" "$DM_tl/.1.cfg" \
         | sed -n 's/^\([0-9]*\)[:].*/\1/p') -ge 50 ]]; then
         
             if [ -f "$DC_tlt/9.cfg" ]; then

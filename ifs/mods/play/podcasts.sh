@@ -1,22 +1,22 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-if [ ! -n "$videos" ]; then
-videos="$(sed -n 9p < "$DC_s/1.cfg" \
+if [ ! -n "$_videos" ]; then
+_videos="$(sed -n 9p "$DC_s/1.cfg" \
 | grep -o videos=\"[^\"]* | grep -o '[^"]*$')"
-news="$(sed -n 18p < "$DC_s/1.cfg" \
+_news="$(sed -n 18p "$DC_s/1.cfg" \
 | grep -o news=\"[^\"]* | grep -o '[^"]*$')"
-saved="$(sed -n 19p < "$DC_s/1.cfg" \
+_saved="$(sed -n 19p "$DC_s/1.cfg" \
 | grep -o saved=\"[^\"]* | grep -o '[^"]*$')"
-export videos news saved
+export _videos _news _saved
 fi
 
 if [ -f "$DM_tl/Podcasts/cache/$fname.item" ]; then
 channel="$(sed -n 1p "$DM_tl/Podcasts/cache/$fname.item" \
 | grep -o channel=\"[^\"]* | grep -o '[^"]*$')"
-if [ "$videos" = "TRUE" ] && ([ "$news" = "TRUE" ] || [ "$saved" = "TRUE" ]); then
+if [ "$_videos" = "TRUE" ] && ([ "$_news" = "TRUE" ] || [ "$_saved" = "TRUE" ]); then
 find "$DM_tl/Podcasts/cache"/ -type f \( -name "*.avi" -o -name "*.mp4" -o -name "*.m4v" \) > "$DT/index.m3u"
-"$DS/stop.sh" 3 && mplayer -fs -playlist "$DT/index.m3u";
+"$DS/stop.sh" 3 && mplayer -fs -playlist "$DT/index.m3u"
 else
 [ -f "$DM_tl/Podcasts/cache/$fname.mp3" ] && file="$DM_tl/Podcasts/cache/$fname.mp3" && t=3
 [ -f "$DM_tl/Podcasts/cache/$fname.ogg" ] && file="$DM_tl/Podcasts/cache/$fname.ogg" && t=3

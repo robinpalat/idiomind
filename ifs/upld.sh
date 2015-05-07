@@ -144,7 +144,6 @@ mail=$(sed -n 2p "$DC_s/3.cfg")
 user=$(sed -n 3p "$DC_s/3.cfg")
 [ -z "$user" ] && user=$USER
 nt=$(< "$DC_tlt/10.cfg")
-nme=$(echo "$tpc" | sed 's/ /_/g' | tr -s '"' ' ' | sed 's/’//g')
 imgm="$DM_tlt/words/images/img.jpg"
 
 "$DS/ifs/tls.sh" check_index "$tpc"
@@ -247,7 +246,8 @@ images=$(ls *.jpg | wc -l); else
 images=0; fi
 [ -f "$DC_tlt/3.cfg" ] && words=$(wc -l < "$DC_tlt/3.cfg")
 [ -f "$DC_tlt/4.cfg" ] && sentences=$(wc -l < "$DC_tlt/4.cfg")
-[ -f "$DC_tlt/12.cfg" ] && date_c="$(sed -n 8p < "$DC_tlt/12.cfg" | grep -o 'date_c="[^"]*' | grep -o '[^"]*$')"
+[ -f "$DC_tlt/12.cfg" ] && date_c="$(sed -n 8p "$DC_tlt/12.cfg" \
+| grep -o 'date_c="[^"]*' | grep -o '[^"]*$')"
 date_u=$(date +%F)
 echo -e "name=\"$tpc\"
 language_source=\"$lgsl\"

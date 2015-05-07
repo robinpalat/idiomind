@@ -69,6 +69,11 @@ function index() {
         "$DC_tlt/practice/fin" "$DC_tlt/practice/mcin" \
         "$DC_tlt/practice/win" "$DC_tlt/practice/iin" \
         "$DC_tlt/6.cfg"
+        
+    elif [ "$1" = missing ]; then
+    
+        echo "${item}" >> "$DC_tlt/0.cfg"
+        echo "${item}" >> "$DC_tlt/1.cfg"
     fi
     
     sleep 0.5
