@@ -131,11 +131,11 @@ details() {
     wchfiles=`sed '/^$/d' <<<"${hfiles}" | wc -l`
     wcexfiles=`sed '/^$/d' <<<"${exfiles}" | wc -l`
     others=$((wchfiles+wcexfiles))
-    SRFL1=$(cat "./id")
-    SRFL2=$(cat "./info")
-    SRFL3=$(cat "./4.cfg")
-    SRFL4=$(cat "./3.cfg")
-    SRFL5=$(cat "./0.cfg")
+    SRFL1=$(cat "./conf/id")
+    SRFL2=$(cat "./conf/info")
+    SRFL3=$(cat "./conf/4.cfg")
+    SRFL4=$(cat "./conf/3.cfg")
+    SRFL5=$(cat "./conf/0.cfg")
     
 
     echo -e "
