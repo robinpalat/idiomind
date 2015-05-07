@@ -61,7 +61,7 @@ Spanish
 Vietnamese"
 
     dir="${2}"
-    file="${dir}/12.cfg"
+    file="${dir}/conf/id"
     nu='^[0-9]+$'
     
     dirs="$(find "${dir}"/ -maxdepth 5 -type d | sed '/^$/d' | wc -l)"
@@ -112,7 +112,7 @@ Vietnamese"
     msg "$(gettext "File is corrupted.") 13\n" error & exit 1
     elif grep "invalid" <<<"$chckf"; then
     msg "$(gettext "File is corrupted.") 14\n" error & exit 1
-    elif [[ $dirs -gt 5 ]] ; then
+    elif [[ $dirs -gt 6 ]] ; then
     msg "$(gettext "File is corrupted.") 15\n" error & exit 1
     else
     head -n14 < "${file}" > "$DT/$name.cfg"
@@ -131,8 +131,8 @@ details() {
     wchfiles=`sed '/^$/d' <<<"${hfiles}" | wc -l`
     wcexfiles=`sed '/^$/d' <<<"${exfiles}" | wc -l`
     others=$((wchfiles+wcexfiles))
-    SRFL1=$(cat "./12.cfg")
-    SRFL2=$(cat "./10.cfg")
+    SRFL1=$(cat "./id")
+    SRFL2=$(cat "./info")
     SRFL3=$(cat "./4.cfg")
     SRFL4=$(cat "./3.cfg")
     SRFL5=$(cat "./0.cfg")
@@ -1000,9 +1000,8 @@ elif [ "$1" = play_temp ]; then
 
     nmt=$(sed -n 1p "/tmp/.idmtp1.$USER/dir$2/folder")
     dir="/tmp/.idmtp1.$USER/dir$2/$nmt"
-    play "$dir/audio/${3,,}.mp3";
+    play "$dir/audio/${3,,}.mp3"
     exit
-
 fi
 
 gtext() {

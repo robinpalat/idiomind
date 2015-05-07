@@ -10,13 +10,13 @@ index_pos="$3"
 cd "$dir"
 
 if ! [[ $index_pos =~ $re ]]; then
-index_pos=$(cat "$dir/0.cfg" | grep -Fxon "$item_name" \
+index_pos=$(cat "$dir/conf/0.cfg" | grep -Fxon "$item_name" \
 | sed -n 's/^\([0-9]*\)[:].*/\1/p')
 nll='echo  " "'; fi
 
-item="$(sed -n "$index_pos"p "$dir/0.cfg")"
+item="$(sed -n "$index_pos"p "$dir/conf/0.cfg")"
 if [ -z "$item" ]; then
-item="$(sed -n 1p "$dir/0.cfg")"
+item="$(sed -n 1p "$dir/conf/0.cfg")"
 index_pos=1; fi
 
 fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
@@ -50,7 +50,8 @@ if [ -f "$dir/words/$fname.mp3" ]; then
 elif [ -f "$dir/$fname.mp3" ]; then
 
     file="$dir/$fname.mp3"
-    listen="--button=Listen:play '$dir/$fname.mp3'"
+    cmd_play="play "\"$dir/$fname.mp3\"""
+    
     dwck="'/usr/share/idiomind/ifs/tls.sh' 'play_temp' '$1'"
     tags="$(eyeD3 "$file")"
     trgt="$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"$tags")"
@@ -66,7 +67,7 @@ elif [ -f "$dir/$fname.mp3" ]; then
     --width=650 --height=400 --borders=15 \
     --column="":TEXT \
     --column="":TEXT \
-    "$listen" --button=gtk-go-up:3 \
+    --button=Listen:"$cmd_play" --button=gtk-go-up:3 \
     --button=gtk-go-down:2
    
 else

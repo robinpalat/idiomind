@@ -37,5 +37,5 @@ icon=idiomind
 fi
 fi
 else
-"$DS/stop.sh" 2
+stop_loop "$DM_tl/Podcasts/cache/$fname.item"
 fi

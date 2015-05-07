@@ -51,7 +51,7 @@ new_topic() {
     if [ "$sfname" -ge 1 ]; then
     
         jlb="$jlb $sfname"
-        msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "Name for the new topic\:")\n<b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
+        msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "The name for the newest will be\:")\n<b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
         ret="$?"
         [[ $ret -eq 1 ]] && exit 10
         

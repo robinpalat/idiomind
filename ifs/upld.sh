@@ -240,7 +240,7 @@ fi
 internet; cd "$DT"
 mkdir "$DT/upload"
 DT_u="$DT/upload"
-mkdir "$DT/upload/$tpc"
+mkdir -p "$DT/upload/$tpc/conf"
 cd "$DM_tlt/words/images"
 if [ $(ls -1 *.jpg 2>/dev/null | wc -l) != 0 ]; then
 images=$(ls *.jpg | wc -l); else
@@ -261,8 +261,8 @@ date_u=\"$date_u\"
 nwords=\"$words\"
 nsentences=\"$sentences\"
 nimages=\"$images\"
-level=\"$level\"" > "$DT_u/$tpc/12.cfg"
-cp -f "$DT_u/$tpc/12.cfg" "$DT/12.cfg"
+level=\"$level\"" > "$DT_u/$tpc/conf/id"
+cp -f "$DT_u/$tpc/conf/id" "$DT/$tpc.id"
 echo -e "$id
 $Mail
 $Author" > "$DC_s/3.cfg"
@@ -285,11 +285,11 @@ if [ -f "$DM_tl/.share/$audio.mp3" ]; then
 cp -f "$DM_tl/.share/$audio.mp3" "$DT_u/$tpc/audio/$audio.mp3"; fi
 done <<<"$auds"
 
-cp -f "$DC_tlt/0.cfg" "$DT_u/$tpc/0.cfg"
-cp -f "$DC_tlt/3.cfg" "$DT_u/$tpc/3.cfg"
-cp -f "$DC_tlt/4.cfg" "$DT_u/$tpc/4.cfg"
+cp -f "$DC_tlt/0.cfg" "$DT_u/$tpc/conf/0.cfg"
+cp -f "$DC_tlt/3.cfg" "$DT_u/$tpc/conf/3.cfg"
+cp -f "$DC_tlt/4.cfg" "$DT_u/$tpc/conf/4.cfg"
 printf "${notes}" > "$DC_tlt/10.cfg"
-printf "${notes}" > "$DT_u/$tpc/10.cfg"
+printf "${notes}" > "$DT_u/$tpc/conf/info"
 
 find "$DT_u" -type f -exec chmod 644 {} \;
 cd "$DT_u"
@@ -299,7 +299,7 @@ mv "$tpc.tar.gz" "$id.$tpc.idmnd"
 du=$(du -h "$id.$tpc.idmnd" | cut -f1)
 [ -d "$DT_u/$tpc" ] && rm -fr "$DT_u/$tpc"
 dte=$(date "+%d %B %Y")
-notify-send "$(gettext "Operation in progress...")" "$(gettext "Please wait while the file is uploaded.\nTransferring") ${du}" -i idiomind -t 6000
+notify-send "$(gettext "Operation in progress")" "$(gettext "Please wait while the file is uploaded. Transferring") ${du}" -i idiomind -t 6000
 
 lftp -u "`sed -n 4p <<<"$data" | grep -o 'USER="[^"]*' | grep -o '[^"]*$'`",\
 "`sed -n 5p <<<"$data" | grep -o 'KEY="[^"]*' | grep -o '[^"]*$'`" \
@@ -310,7 +310,7 @@ END_SCRIPT
 
 exit=$?
 if [[ $exit = 0 ]]; then
-    mv -f "$DT/12.cfg" "$DM_t/saved/$tpc.id"
+    mv -f "$DT/$tpc.id" "$DM_t/saved/$tpc.id"
     info=" <b>$(gettext "Uploaded correctly")</b>\n $tpc\n"
     image=dialog-ok
 else
@@ -322,7 +322,6 @@ fi
 msg "$info" $image
 
 [ -d "$DT_u/$tpc" ] && rm -fr "$DT_u/$tpc"
-[ "$DT/12.cfg" ] && rm -f "$DT/12.cfg"
 [ "$DT_u/$id.$tpc.idmnd" ] && rm -f "$DT_u/$id.$tpc.idmnd"
 [ "$DT_u/$tpc.tar" ] && rm -f "$DT_u/$tpc.tar"
 [ "$DT_u/$tpc.tar.gz" ] && rm -f "$DT_u/$tpc.tar.gz"

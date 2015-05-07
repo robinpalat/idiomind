@@ -162,7 +162,7 @@ if grep -o '.idmnd' <<<"$1"; then
         itxt="<span font_desc='Free Sans 14'>$tpi</span><small>\n ${language_source^}~$language_target $nwords $(gettext "Words") $nsentences $(gettext "Sentences") $nimages $(gettext "Images")\n $(gettext "Level:") $level\n</small>"
         dclk="'$DS/default/vwr_tmp.sh' '$c'"
 
-        tac "$tmp/0.cfg" | awk '{print $0""}' | \
+        tac "$tmp/conf/0.cfg" | awk '{print $0""}' | \
         yad --list --title="Idiomind" \
         --text="$itxt" \
         --name=Idiomind --class=Idiomind \
@@ -197,7 +197,7 @@ if grep -o '.idmnd' <<<"$1"; then
                 if [ ${chck} -ge 1 ]; then
                 
                     tpi="$tpi $chck"
-                    msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "Name for the new topic\:")\n<b>$tpi</b>\n" info "$(gettext "OK")" "$(gettext "Cancel")"
+                    msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "The name for the newest will be\:")\n<b>$tpi</b>\n" info "$(gettext "OK")" "$(gettext "Cancel")"
                     ret=$(echo $?)
                     
                     if [[ $ret != 0 ]]; then
@@ -216,11 +216,13 @@ if grep -o '.idmnd' <<<"$1"; then
                 rm -fr "$tmp/audio"; fi
                 n=0
                 while [[ $n -le 13 ]]; do
-                if [ ! -f "$tmp/$n.cfg" ]; then
+                if [ ! -f "$tmp/conf/$n.cfg" ]; then
                 touch "$DC_tlt/$n.cfg"
-                else mv -f "$tmp/$n.cfg" "$DC_tlt/$n.cfg"; fi
+                else mv -f "$tmp/conf/$n.cfg" "$DC_tlt/$n.cfg"; fi
                 let n++
                 done
+                cp "$tmp/conf/info" "$DC_tlt/10.cfg"
+                cp "$tmp/conf/id" "$DC_tlt/12.cfg"
                 tee "$DC_tlt/.11.cfg" "$DC_tlt/1.cfg" < "$DC_tlt/0.cfg"
                 echo 1 > "$DC_tlt/8.cfg"; rm "$DC_tlt/9.cfg" "$DC_tlt/ls"
                 cp -fr "$tmp"/.* "$DM_tlt/"

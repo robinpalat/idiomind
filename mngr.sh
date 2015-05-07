@@ -670,7 +670,7 @@ rename_topic() {
     if [ "$snm" -ge 1 ]; then
     
         jlb="$jlb $snm"
-        msg_2 "$(gettext "Another topic with the same name already exist.") \n$(gettext "Name for the new topic\:")\n<b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
+        msg_2 "$(gettext "Another topic with the same name already exist.") \n$(gettext "The name for the newest will be\:")\n<b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
         ret="$?"
         if [[ $ret -eq 1 ]]; then exit 1; fi
         
@@ -688,8 +688,7 @@ rename_topic() {
         echo "$jlb" >> "$DM_tl/.1.cfg"
         echo "$jlb" >> "$DM_tl/.2.cfg"
         echo "$jlb" > "$DT/tpe"
-        echo 0 >> "$DC_s/4.cfg" 
-        echo 0 >> "$DM_tl/.8.cfg"
+        echo 0 > "$DC_s/5.cfg" 
         
         n=1
         while [[ $n -le 3 ]]; do
