@@ -74,6 +74,7 @@ function index() {
     
         echo "${item}" >> "$DC_tlt/0.cfg"
         echo "${item}" >> "$DC_tlt/1.cfg"
+        echo "${item}" >> "$DC_tlt/3.cfg"
     fi
     
     sleep 0.5

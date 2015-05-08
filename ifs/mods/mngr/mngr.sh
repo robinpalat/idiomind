@@ -72,7 +72,7 @@ position() {
                 msg "$(gettext "Restart the window to see the changes.")\n" info
                 
             else
-                msg "$(gettext "The changes will be after restarting the topic indexes.")\n" info; fi
+                msg "$(gettext "The changes will be seen after restarting the index.")\n" info; fi
         fi
     fi
     rm "$DC_tlt/0.cfg.mv"

@@ -416,10 +416,11 @@ attatchments() {
 
     mkindex() {
 
-echo "<link rel=\"stylesheet\" \
+echo "<meta http-equiv=\"Content-Type\" \
+content=\"text/html; charset=UTF-8\" />
+<link rel=\"stylesheet\" \
 href=\"/usr/share/idiomind/default/attch.css\">\
-<body>" \
-> "$DC_tlt/att.html"
+<body>" > "$DC_tlt/att.html"
 
         while read -r file; do
 if grep ".mp3" <<<"${file: -4}"; then
@@ -460,14 +461,14 @@ elif grep ".txt" <<<"${file: -4}"; then
 txto=$(sed ':a;N;$!ba;s/\n/<br>/g' \
 < "$DM_tlt/files/$file" \
 | sed 's/\"/\&quot;/;s/\&/&amp;/g')
-echo "<br><br><div class=\"summary\">$txto \
+echo "<br><div class=\"summary\">$txto \
 <br><br><br></div>" >> "$DC_tlt/att.html"
 elif grep ".url" <<<"${file: -4}"; then
 url=$(tr -d '=' < "$DM_tlt/files/$file" \
 | sed 's|watch?v|v\/|;s|https|http|g')
 echo "<iframe width=\"100%\" height=\"85%\" src=\"$url\" \
 frameborder=\"0\" allowfullscreen></iframe>
-<br>" >> "$DC_tlt/att.html"
+<br><br>" >> "$DC_tlt/att.html"
 elif grep ".gif" <<<"${file: -4}"; then
 echo "<h2>${file::-4}</h2>
 <img src=\"../files/$file\" alt=\"$name\" \

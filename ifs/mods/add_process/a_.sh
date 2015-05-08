@@ -47,7 +47,7 @@ function dlg_text_info_4() {
 
 function audio_recog() {
     
-    echo "$(wget -q -U -T 100 "Mozilla/5.0" --post-file "$1" \
+    echo "$(wget -q -U -T 200 "Mozilla/5.0" --post-file "$1" \
     --header="Content-Type: audio/x-flac; rate=16000" \
     -O - "https://www.google.com/speech-api/v2/recognize?&lang="$2"-"$3"&key=$4")"
 }
@@ -105,7 +105,7 @@ if [[ "$conten" = A ]]; then
         echo "# $(gettext "Processing... Wait.")";
         cd "$DT_r"
         
-        if echo "$fl" | grep '.mp3'; then
+        if grep ".mp3" <<<"${fl: -4}"; then
         
             cp -f "$fl" "$DT_r/rv.mp3"
             #eyeD3 -P itunes-podcast --remove "$DT_r"/rv.mp3
@@ -116,24 +116,32 @@ if [[ "$conten" = A ]]; then
             vad -T 0.6 -p 0.2 -t 5 fade 0.1 reverse norm -0.5
             rm -f "$DT_r/rv.mp3"
             mp3splt -s -o @n *.mp3
-            
-            if [ "$(ls [0-9]* | wc -l)" -ge 1 ]; then
+            c="$(ls [0-9]*.mp3 | wc -l)"
+            if [[ $c -ge 1 ]]; then
             rename 's/^0*//' *.mp3
             elif [ $(du "$DT_r/c_rv.mp3" | cut -f1) -lt 400 ]; then
             mv -f "$DT_r/c_rv.mp3" "$DT_r/1.mp3"
             fi
             [ -f "$DT_r/c_rv.mp3" ] && rm -f "$DT_r/c_rv.mp3"
             
-        elif echo "$fl" | grep '.tar'; then
+        elif grep ".tar" <<<"${fl: -4}"; then
         
             cp -f "$fl" "$DT_r/rv.tar"
             tar -xvf "$DT_r/rv.tar"
             
-        elif echo "$fl" | grep '.zip'; then
+        elif grep ".zip" <<<"${fl: -4}"; then
         
             cp -f "$fl" "$DT_r/rv.zip"
             unzip "$DT_r/rv.zip"
         fi
+        
+        n=1; r=$c
+        while [[ $n -le $c ]]; do
+        mv -f ./$n.mp3 ./_$r.mp3
+        ((n=n+1))
+        ((r=r-1))
+        done
+        rename 's/^_*//' *.mp3
         
         internet
         echo "3"
@@ -169,8 +177,8 @@ if [[ "$conten" = A ]]; then
         if [ $lgt = ja ] || [ $lgt = "zh-cn" ] || [ $lgt = ru ];
         then c=c; else c=w; fi
         # ---------------
-        ls "$DT_r"/*.mp3 > ./lst
-        lns=$(wc -l < ./lst | head -200)
+        cd "$DT_r"
+        lns="$(ls ./[0-9]*.mp3 | wc -l | head -200)"
         n=1
         while [[ $n -le $lns ]]; do
 
@@ -180,7 +188,8 @@ if [[ "$conten" = A ]]; then
                 data="$(audio_recog ./info.flac $lgt $lgt $key)"
                 
                 if [ -z "${data}" ]; then
-                msg "$(gettext "The key is invalid or has exceeded its quota of daily requests")" error
+                msg "$(gettext "The key is invalid or has exceeded its quota of daily requests")\n" error
+                "$DS/stop.sh" 5
                 [ "$DT_r" ] && rm -fr "$DT_r"
                 rm -f ls "$lckpr" & break & exit 1; fi
 
@@ -193,15 +202,16 @@ if [[ "$conten" = A ]]; then
                 | sed 's/}],"final":true}],"result_index":0}//g')"
 
                 if [ ${#trgt} -ge 400 ]; then
-                printf "\n\n\#$n  [$(gettext "Too long sentence")]\n$trgt" >> log
+                printf "\n\n#$n  $(gettext "Too long sentence:")\n$trgt" >> log
                 
                 elif [ -z "$trgt" ]; then
-                index missing "#$n  [$(gettext "Text missing")]" "$tpe"
-                cp -f "$n.mp3" "$DM_tlt/words/$n.mp3"
-                printf "\n\n#$n  [$(gettext "Text missing")]\n$trgt" >> log
+                index missing "#$n" "$tpe"
+                fname=$(nmfile "#$n")
+                cp -f "$n.mp3" "$DM_tlt/words/$fname.mp3"
+                printf "\n\n#$n  $(gettext "Text missing")" >> log
                 
                 elif [ "$(wc -l < "$DC_tlt"/0.cfg)" -ge 200 ]; then
-                printf "\n\n[$n] $trgt" >> ./slog
+                printf "\n\n#$n  $trgt" >> ./slog
                 
                 else
                     trgt=$(clean_1 "${trgt}")
@@ -222,12 +232,12 @@ if [[ "$conten" = A ]]; then
                             echo "${trgt}" >> addw
                             
                         else
-                            printf "\n\n[$n] $trgt" >> ./wlog
+                            printf "\n\n#$n $trgt" >> ./wlog
                             if [ -f "$DM_tlt/words/$fname.mp3" ]; then
                             mv -f "$DM_tlt/words/$fname.mp3" ./"$n.mp3"; fi
                         fi
                             
-                    elif [ $(wc -$c <<<"${trgt}") -ge 1 ]; then
+                    elif [ $(wc -$c <<<"$trgt") -ge 1 ]; then
                     
                         mv -f "$n.mp3" "$DM_tlt/$fname.mp3"
                         (
@@ -238,7 +248,7 @@ if [[ "$conten" = A ]]; then
                         check_grammar_1 "$DT_r" "$r"
                         list_words "$DT_r" "$r"
                         grmrk=$(sed ':a;N;$!ba;s/\n/ /g' < "./g.$r")
-                        lwrds=$(< A.$r)
+                        lwrds=$(< "./A.$r")
                         pwrds=$(tr '\n' '_' < "./B.$r")
                         
                         mksure "$DM_tlt/$fname.mp3" "${trgt}" "${srce}" \
@@ -250,13 +260,12 @@ if [[ "$conten" = A ]]; then
                                 tags_3 W "${lwrds}" "${pwrds}" "${grmrk}" "$DM_tlt/$fname.mp3"
                                 fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
                             else
-                                printf "\n\n[$n] $trgt" >> ./slog
+                                printf "\n\n#$n $trgt" >> ./slog
                                 if [ -f "$DM_tlt/$fname.mp3" ]; then
                                 mv -f "$DM_tlt/$fname.mp3" ./"$n.mp3"; fi
                             fi
-
-                        echo "__" >> x
-                        rm -f "$DT"/*.$r "$aw" "$bw"
+                        cd "$DT"
+                        rm -f *.$r "$aw" "$bw"
                         )
                     fi
                 fi
@@ -329,23 +338,9 @@ if [[ "$conten" = A ]]; then
                         mv -f ./audio.tar.gz "$aud"; fi
                 fi
         fi
-
-        cd "$DT_r"
-        if  [ -f ./log ]; then
-        rm="$(($(wc -l < ./adds) - $(sed '/^$/d' ./log | wc -l)))"
-        else rm="$(wc -l < ./adds)"; fi
         
-        n=1
-        while [[ $n -le 20 ]]; do
-             sleep 5
-             if [ "$(wc -l < ./x)" -eq "$rm" ] || [ "$n" = 20 ]; then
-                [ -d "$DT_r" ] && rm -fr "$DT_r"
-                cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
-                rm -f "$lckpr" & break & exit 1
-             fi
-            let n++
-        done
-        exit
+        [ -d "$DT_r" ] && rm -fr "$DT_r"
+        rm -f "$lckpr"
     fi
     exit
     
