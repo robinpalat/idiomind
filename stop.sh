@@ -6,6 +6,9 @@ on_quit() {
     [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/bcle.sh")" ] && killall bcle.sh &
     [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/bcle.sh")" ] && killall bcle.sh
     [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/chng.sh")" ] && killall chng.sh
+    [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/mngr.sh")" ] && killall mngr.sh &
+    [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/vwr.sh")" ] && killall vwr.sh
+    [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/chng.sh")" ] && killall chng.sh
     [ -n "$(ps -A | pgrep -f "notify-osd")" ] && killall notify-osd &
     [ -n "$(ps -A | pgrep -f "play")" ] && killall play &
     [ -n "$(ps -A | pgrep -f "mplayer")" ] && killall mplayer &
@@ -70,6 +73,12 @@ on_addons() {
     exit
 }
 
+on_edit() {
+    [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/mngr.sh")" ] && killall mngr.sh &
+    [ -f "$DT/.uptp" ] && rm -fr "$DT/.uptp"
+    exit
+}
+
 case "$1" in
     1)
     on_quit ;;
@@ -83,4 +92,6 @@ case "$1" in
     on_add ;;
     6)
     on_addons ;;
+    7)
+    on_edit ;;
 esac

@@ -36,6 +36,7 @@ function word_view() {
 
 function sentence_view() {
 
+    if [ -f "$DM_tlt/$fname.mp3" ]; then
     tags="$(eyeD3 "$DM_tlt/$fname.mp3")"
     [ "$(sed -n 1p "$DC_s/1.cfg" | grep -o grammar=\"[^\"]* | grep -o '[^"]*$')"  = TRUE ] \
     && trgt="$(grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)' <<<"$tags")" \
@@ -44,6 +45,8 @@ function sentence_view() {
     lwrd="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"$tags" | tr '_' '\n')"
     [ "$(grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)' <<<"$tags")" = TRUE ] && trgt="<b>*</b> $trgt"
     [ ! -f "$DM_tlt/$fname.mp3" ] && exit 1
+    [ -z "$trgt" ] && tm="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>"
+    else tm="<span color='#3F78A0'><tt>$(gettext "File not found")</tt></span>"; fi
     
     echo "$lwrd" | yad --list --title=" " \
     --selectable-labels --print-column=0 \
@@ -51,7 +54,7 @@ function sentence_view() {
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --center --image-on-top --center --on-top \
     --scroll --text-align=left --expand-column=0 --no-headers \
-    --text="<span font_desc='Sans Free 15'>$trgt</span>\n\n<i>$srce</i>\n\n" \
+    --text="$tm<span font_desc='Sans Free 15'>$trgt</span>\n\n<i>$srce</i>\n\n" \
     --width=620 --height=380 --borders=20 \
     --column="":TEXT \
     --column="":TEXT \
@@ -61,22 +64,7 @@ function sentence_view() {
     --button=gtk-go-down:2
 } >/dev/null 2>&1
 
-
-missing() {
-    
-    yad --form --title=$(gettext "Error") \
-    --selectable-labels \
-    --text="<span color='#3F78A0'>$(gettext "File not found")</span>" \
-    --field="":lbl " " \
-    --window-icon="$DS/images/icon.png" \
-    --skip-taskbar --center --on-top \
-    --align=center --text-align=center \
-    --width=620 --height=380 --borders=$bs \
-    --button="$(gettext "Add")":5 \
-    --button=gtk-go-up:3 \
-    --button=gtk-go-down:2
-}
-export -f word_view sentence_view missing
+export -f word_view sentence_view
 
 
 function notebook_1() {

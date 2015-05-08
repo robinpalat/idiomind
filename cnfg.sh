@@ -112,8 +112,8 @@ yad --plug=$KEY --form --tabnum=1 \
 --field=" :LBL" " " \
 --field="$(gettext "Languages")\t":LBL " " \
 --field=":LBL" " " \
---field="$(gettext "Language Learning")":CB "$lgtl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
---field="$(gettext "Your Language")":CB "$lgsl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
+--field="$(gettext "I'm learning")":CB "$lgtl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
+--field="$(gettext "My language is")":CB "$lgsl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
 --field=" :LBL" "2" \
 --field=":LBL" "2" \
 --field="<small>$(gettext "Speech Synthesizer (default espeak)")</small>" "$synth" \

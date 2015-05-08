@@ -104,7 +104,7 @@ function dlg_form_1() {
     --button="$(gettext "Image")":"$cmd_image" \
     --button="$(gettext "Delete")":"$cmd_delete" \
     --button="gtk-go-down":2 \
-    --button="$(gettext "Close")":0 > "$1"
+    --button="gtk-save":0 > "$1"
 } >/dev/null 2>&1
 
 
@@ -128,7 +128,7 @@ function dlg_form_2() {
     --button="$(gettext "Image")":"$cmd_image" \
     --button="$(gettext "Delete")":"$cmd_delete" \
     --button="gtk-go-down":2 \
-    --button="$(gettext "Close")":0 > "$1"
+    --button="gtk-save":0 > "$1"
 } >/dev/null 2>&1
 
 

@@ -425,7 +425,7 @@ href=\"/usr/share/idiomind/default/attch.css\">\
 
 while read -r file; do
 if grep ".mp3" <<<"${file: -4}"; then
-echo "<br>${file::-4}<br><br><audio controls>
+echo "${file::-4}<br><br><audio controls>
 <source src=\"../files/$file\" type=\"audio/mpeg\">
 </audio><br><br>" >> "$DC_tlt/att.html"
 elif grep ".ogg" <<<"${file: -4}"; then
@@ -477,7 +477,7 @@ echo "<iframe width=\"100%\" height=\"85%\" src=\"$url\" \
 frameborder=\"0\" allowfullscreen></iframe>
 <br><br>" >> "$DC_tlt/att.html"
 elif grep ".gif" <<<"${file: -4}"; then
-echo "<h2>${file::-4}</h2>
+echo "${file::-4}<br><br>
 <img src=\"../files/$file\" alt=\"$name\" \
 style=\"width:100%;height:100%\"><br><br><br>" \
 >> "$DC_tlt/att.html"; fi

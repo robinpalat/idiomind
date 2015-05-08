@@ -207,7 +207,7 @@ if [[ "$conten" = A ]]; then
                 elif [ -z "$trgt" ]; then
                 index missing "#$n" "$tpe"
                 fname=$(nmfile "#$n")
-                cp -f "$n.mp3" "$DM_tlt/words/$fname.mp3"
+                cp -f "$n.mp3" "$DM_tlt/$fname.mp3"
                 printf "\n\n#$n  $(gettext "Text missing")" >> log
                 
                 elif [ "$(wc -l < "$DC_tlt"/0.cfg)" -ge 200 ]; then
