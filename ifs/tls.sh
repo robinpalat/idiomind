@@ -416,53 +416,60 @@ attatchments() {
 
     mkindex() {
 
+rename 's/_/ /g' "$DM_tlt/files"/*
 echo "<meta http-equiv=\"Content-Type\" \
 content=\"text/html; charset=UTF-8\" />
 <link rel=\"stylesheet\" \
 href=\"/usr/share/idiomind/default/attch.css\">\
 <body>" > "$DC_tlt/att.html"
 
-        while read -r file; do
+while read -r file; do
 if grep ".mp3" <<<"${file: -4}"; then
-echo "<div class=\"summary\">
-<br><h2>${file::-4}</h2><audio controls>
+echo "<br>${file::-4}<br><br><audio controls>
 <source src=\"../files/$file\" type=\"audio/mpeg\">
-</audio></div><br><br><br>" >> "$DC_tlt/att.html"
+</audio><br><br>" >> "$DC_tlt/att.html"
 elif grep ".ogg" <<<"${file: -4}"; then
-echo "<h2>${file::-4}</h2><audio controls>
+echo "${file::-4}<audio controls>
 <source src=\"../files/$file\" type=\"audio/mpeg\">
-</audio><br><br><br>" >> "$DC_tlt/att.html"
-elif grep ".mp4" <<<"${file: -4}"; then
-echo "<h2>${file::-4}</h2>
+</audio><br><br>" >> "$DC_tlt/att.html"; fi
+done <<<"$(ls "$DM_tlt/files")"
+
+while read -r file; do
+if grep ".txt" <<<"${file: -4}"; then
+txto=$(sed ':a;N;$!ba;s/\n/<br>/g' \
+< "$DM_tlt/files/$file" \
+| sed 's/\"/\&quot;/;s/\&/&amp;/g')
+echo "<div class=\"summary\">
+<h2>${file::-4}</h2><br>$txto \
+<br><br><br></div>" >> "$DC_tlt/att.html"; fi
+done <<<"$(ls "$DM_tlt/files")"
+
+while read -r file; do
+if grep ".mp4" <<<"${file: -4}"; then
+echo "${file::-4}<br><br>
 <video width=450 height=280 controls>
 <source src=\"../files/$file\" type=\"video/mp4\">
 </video><br><br><br>" >> "$DC_tlt/att.html"
 elif grep ".m4v" <<<"${file: -4}"; then
-echo "<h2>${file::-4}</h2>
+echo "${file::-4}<br><br>
 <video width=450 height=280 controls>
 <source src=\"../files/$file\" type=\"video/mp4\">
 </video><br><br><br>" >> "$DC_tlt/att.html"
 elif grep ".jpg" <<<"${file: -4}"; then
-echo "<h2>${file::-4}</h2>
+echo "${file::-4}<br><br>
 <img src=\"../files/$file\" alt=\"$name\" \
 style=\"width:100%;height:100%\"><br><br><br>" \
 >> "$DC_tlt/att.html"
 elif grep ".jpeg" <<<"${file: -5}"; then
-echo "<h2>${file::-5}</h2>
+echo "${file::-5}<br><br>
 <img src=\"../files/$file\" alt=\"$name\" \
 style=\"width:100%;height:100%\"><br><br><br>" \
 >> "$DC_tlt/att.html"
 elif grep ".png" <<<"${file: -4}"; then
-echo "<h2>${file::-4}</h2>
+echo "${file::-4}<br><br>
 <img src=\"../files/$file\" alt=\"$name\" \
 style=\"width:100%;height:100%\"><br><br><br>" \
 >> "$DC_tlt/att.html"
-elif grep ".txt" <<<"${file: -4}"; then
-txto=$(sed ':a;N;$!ba;s/\n/<br>/g' \
-< "$DM_tlt/files/$file" \
-| sed 's/\"/\&quot;/;s/\&/&amp;/g')
-echo "<br><div class=\"summary\">$txto \
-<br><br><br></div>" >> "$DC_tlt/att.html"
 elif grep ".url" <<<"${file: -4}"; then
 url=$(tr -d '=' < "$DM_tlt/files/$file" \
 | sed 's|watch?v|v\/|;s|https|http|g')
@@ -473,13 +480,12 @@ elif grep ".gif" <<<"${file: -4}"; then
 echo "<h2>${file::-4}</h2>
 <img src=\"../files/$file\" alt=\"$name\" \
 style=\"width:100%;height:100%\"><br><br><br>" \
->> "$DC_tlt/att.html"
-fi
-        done <<<"$(ls "$DM_tlt/files")"
-    
+>> "$DC_tlt/att.html"; fi
+done <<<"$(ls "$DM_tlt/files")"
+
 echo "<br><br>
 </body>" >> "$DC_tlt/att.html"
-            
+    
     } >/dev/null 2>&1
     
     [ ! -d "$DM_tlt/files" ] && mkdir "$DM_tlt/files"
@@ -491,7 +497,7 @@ echo "<br><br>
         --name=Idiomind --class=Idiomind \
         --uri="$DC_tlt/att.html" --browser \
         --window-icon="$DS/images/icon.png" --center \
-        --width=660 --height=580 --borders=10 \
+        --width=680 --height=580 --borders=10 \
         --button="$(gettext "Folder")":"xdg-open '$DM_tlt/files'" \
         --button="$(gettext "Video URL")":2 \
         --button="gtk-add":0 \

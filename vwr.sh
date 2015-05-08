@@ -31,6 +31,10 @@ elif [ -f "$DM_tlt/$fname.mp3" ]; then
     cmd_listen="'$DS/ifs/tls.sh' 'listen_sntnc' '$fname'"
     sentence_view
     
+elif [ -f "$DM_tlt/_$fname.mp3" ]; then
+    cmd_listen="'$DS/ifs/tls.sh' 'listen_sntnc' '_$fname'"
+    missing "$index_pos"
+    
 else
     missing "$index_pos"
 fi
@@ -51,6 +55,11 @@ fi
     DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
     item=$(sed -n "$index_pos"p "$index")
     "$DS/add.sh" new_items "$DT_r" 2 "$item" & exit 1
+    
+    #elif [[ $ret -eq 6 ]]; then
+    #DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
+    #item=$(sed -n "$index_pos"p "$index")
+    #"$DS/add.sh" new_items "$DT_r" 2 "$item" & exit 1
     
     else 
     printf "vwr.$(wc -l < "$DT/stats.tmp").vwr\n" >> "$DC_s/8.cfg"
