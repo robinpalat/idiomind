@@ -230,7 +230,8 @@ if grep -o '.idmnd' <<<"$1"; then
                 echo "$language_target" > "$DC_s/6.cfg"
                 echo "$lgsl" >> "$DC_s/6.cfg"
                 echo "$dte" > "$DC_tlt/13.cfg"
-                "$DS/mngr.sh" mkmn; "$DS/default/tpc.sh" "$tpi" &
+                "$DS/mngr.sh" mkmn; "$DS/default/tpc.sh" "$tpi"
+                "$DS/ifs/tls.sh' 'attachs' 0" &
             fi
     fi
     [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c"

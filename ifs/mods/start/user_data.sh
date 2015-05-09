@@ -7,7 +7,7 @@ for i in "$DS/addons/"* ; do
 dir=`basename "$i"`
 if [ -d "$DM_tl/$dir" ]; then
 du="$(du -b -h "$DM_tl/$dir" | tail -1 | awk '{print ($1)}')"
-echo -e "$dir: $du\n"
+echo -e "$du "
 fi
 done
 }

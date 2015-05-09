@@ -491,7 +491,7 @@ echo "<br><br>
     [ ! -d "$DM_tlt/files" ] && mkdir "$DM_tlt/files"
     ch1="$(ls -A "$DM_tlt/files")"
     
-    if [ "$(ls -A "$DM_tlt/files")" ]; then
+    if [ "$(ls -A "$DM_tlt/files")" ] && [ ${#@} = 1 ]; then
         [ ! -f "$DC_tlt/att.html" ] && mkindex >/dev/null 2>&1
         yad --html --title="$(gettext "Attached Files")" \
         --name=Idiomind --class=Idiomind \
@@ -511,7 +511,7 @@ echo "<br><br>
             if [ "$ch1" != "$(ls -A "$DM_tlt/files")" ]; then
             mkindex; fi
         
-    else
+    elif [ ! "$(ls -A "$DM_tlt/files")" ] && [ ${#@} = 1 ]; then
         yad --form --title="$(gettext "Attached Files")" \
         --text="  $(gettext "Save files related to topic")" \
         --name=Idiomind --class=Idiomind \
@@ -525,7 +525,12 @@ echo "<br><br>
         if [ "$ch1" != "$(ls -A "$DM_tlt/files")" ] && [ $ret = 0 ]; then
             mkindex
         fi
+    
+    elif [ ${#@} = 2 ]; then
+        mkindex
     fi
+    exit
+    
 } >/dev/null 2>&1
 
 help() {
