@@ -408,9 +408,16 @@ videourl() {
     --button="$(gettext "Cancel")":1 \
     --button=gtk-ok:0)
 
-    [ ${#url} -gt 40 ] && \
+    if [ ${#url} -gt 40 ] && \
+    ([ ${url:0:29} = 'https://www.youtube.com/watch' ] \
+    || [ ${url:0:28} = 'http://www.youtube.com/watch' ]); then \
     echo "$url" > "$DM_tlt/files/video$n.url"
+    else msg "$(gettext "Invalid Url Youtube")\n" info \
+    "$(gettext "Invalid Url Youtube")"; fi
 }
+
+
+
 
 attatchments() {
 
@@ -713,7 +720,7 @@ set_image() {
         --name=Idiomind --class=Idiomind \
         --window-icon="$DS/images/icon.png" \
         --skip-taskbar --image-on-top \
-        --align=center --center --on-top \
+        --align=center --text-align=center --center --on-top \
         --width=420 --height=320 --borders=5 \
         "$btn1" "$btn2" --button=$(gettext "Close"):1
         ret=$?
@@ -743,7 +750,7 @@ set_image() {
         yad --form --title=$(gettext "Image") "$image" "$label" \
         --name=Idiomind --class=Idiomind \
         --window-icon="$DS/images/icon.png" \
-        --skip-taskbar --image-on-top --center --on-top \
+        --skip-taskbar --image-on-top --text-align=center --center --on-top \
         --width=420 --height=320 --borders=5 \
         "$btn1" "$btn2" --button=$(gettext "Close"):1
         ret=$?

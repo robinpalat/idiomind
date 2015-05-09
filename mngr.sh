@@ -335,19 +335,20 @@ delete_topic() {
     
     if [ "$tpc" != "$2" ]; then
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
-    
-    if [ -f "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "$tpc" ]; then
-    msg "$(gettext "You can not delete at this time. Please try later ")\n" dialog-warning & exit 1; fi
-    
-    if [ -f "$DT/.p_" ] && [ "$(sed -n 2p "$DT/.p_")" = "$tpc" ]; then
-    msg "$(gettext "You can not delete at this time. Please try later ")\n" dialog-warning & exit 1; fi
-    
+
     msg_2 "$(gettext "Are you sure you want to delete this Topic?")\n" \
     gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
     ret=$(echo "$?")
         
         if [[ $ret -eq 0 ]]; then
 
+            if [ -f "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "$tpc" ]; then
+            "$DS/stop.sh" 5; fi
+            
+            if [ -f "$DT/.p_" ] && [ "$(sed -n 2p "$DT/.p_")" = "$tpc" ]; then
+            notify-send -i idiomind "$(gettext "Playback is stopped")" -t 5000 &
+            "$DS/stop.sh" 2; fi
+    
             if [ -d "$DM_tl/$tpc" ] && [ -n "$tpc" ]; then
             rm -r "$DM_tl/$tpc"; fi
             rm -f "$DT/tpe"
@@ -363,6 +364,7 @@ delete_topic() {
             
             kill -9 $(pgrep -f "yad --list ") &
             kill -9 $(pgrep -f "yad --list ") &
+            kill -9 $(pgrep -f "yad --text-info ") &
             kill -9 $(pgrep -f "yad --form ") &
             kill -9 $(pgrep -f "yad --notebook ") &
 
@@ -370,7 +372,6 @@ delete_topic() {
         fi
     
     rm -f "$DT/ps_lk" & exit 1
-
 }
 
 edit() {

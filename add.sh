@@ -198,7 +198,7 @@ new_sentence() {
 
     if [ "$(wc -l < "$DC_tlt/0.cfg")" -ge 200 ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
-    msg "$(gettext "You have reached the maximum number of items.")" info Info & exit; fi
+    msg "$(gettext "You have reached the maximum number of notes to this topic. Topics may not exceed 200 items.")" info Info & exit; fi
     
     if [ -z "${tpe}" ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
@@ -296,7 +296,7 @@ new_word() {
     
     if [ "$(wc -l < "$DC_tlt/0.cfg")" -ge 200 ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
-    msg "$(gettext "You have reached the maximum number of items.")" info Info & exit 0; fi
+    msg "$(gettext "You have reached the maximum number of notes to this topic. Topics may not exceed 200 items.")" info Info & exit 0; fi
     
     if [ -z "${tpe}" ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
@@ -391,7 +391,7 @@ list_words_edit() {
         tpe="$tpc"
         if [ "$(wc -l < "$DC_tlt/0.cfg")" -ge 200 ]; then
         [ "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "You have reached the maximum number of items.")" info Info & exit; fi
+        msg "$(gettext "You have reached the maximum number of notes to this topic. Topics may not exceed 200 items.")" info Info & exit; fi
             
         if [ -z "${tpe}" ]; then
         [ "$DT_r" ] && rm -fr "$DT_r"
@@ -487,7 +487,7 @@ list_words_dclik() {
     
     if [ "$(wc -l < "$DC_tlt/0.cfg")" -ge 200 ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
-    msg "$(gettext "You have reached the maximum number of items.")" info Info & exit; fi
+    msg "$(gettext "You have reached the maximum number of notes to this topic. Topics may not exceed 200 items.")" info Info & exit; fi
 
     info="-$((200 - $(wc -l < "$DC_tlt/0.cfg")))"
     
@@ -634,7 +634,7 @@ process() {
         
     if [[ $ns -ge 200 ]]; then
     [ -d "$DT_r" ] && rm -fr "$DT_r"
-    msg "$(gettext "You have reached the maximum number of items.")" info Info
+    msg "$(gettext "You have reached the maximum number of notes to this topic. Topics may not exceed 200 items.")" info Info
     rm -f ./ls "$lckpr" & exit 1; fi
 
     if [ -f "$lckpr" ] && [ ${#@} -lt 4 ]; then
