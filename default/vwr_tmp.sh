@@ -46,8 +46,9 @@ if [ -f "$dir/words/$fname.mp3" ]; then
     --field="":lbl \
     --field="<i><span color='#808080'>$exmp1</span></i>\\n:lbl" "$dfnts" "$ntess" \
     --button=$(gettext "Listen"):"$cmd_play" \
-    --button=gtk-go-up:3 \
-    --button=gtk-go-down:2
+    --button=gtk-go-down:2 \
+    --button=gtk-go-up:3
+    
 
 else
     file="$dir/$fname.mp3"
@@ -71,8 +72,9 @@ else
     --column="":TEXT \
     --column="":TEXT \
     --button=$(gettext "Listen"):"$cmd_play" \
-    --button=gtk-go-up:3 \
-    --button=gtk-go-down:2
+    --button=gtk-go-down:2 \
+    --button=gtk-go-up:3
+    
 fi
 
 ret=$?

@@ -661,7 +661,7 @@ rename_topic() {
     jlb="${2}"
     jlb="$(clean_2 "$jlb")"
     if grep -Fxo "$jlb" <<<"$restr"; then jlb="$jlb."; fi
-    snm="$(grep -Fxo "$jlb" "$DM_tl/.1.cfg" | wc -l)"
+    chck="$(grep -Fxo "$jlb" "$DM_tl/.1.cfg" | wc -l)"
   
     if [ -f "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "$tpc" ]; then
     msg "$(gettext "Unable to rename at this time. Please try later ")\n" \
@@ -675,9 +675,13 @@ rename_topic() {
     msg "$(gettext "Sorry, the new name is too long.")\n" \
     info "$(gettext "Rename")" & exit 1; fi
 
-    if [ "$snm" -ge 1 ]; then
+    if [ "$chck" -ge 1 ]; then
     
-        jlb="$jlb $snm"
+        for i in {1..50}; do
+        chck=$(grep -Fxo "$jlb ($i)" "$DM_t/$language_target/.1.cfg")
+        [ -z "$chck" ] && break; done
+        
+        jlb="$jlb ($i)"
         msg_2 "$(gettext "Another topic with the same name already exist.") \n$(gettext "The name for the newest will be\:")\n<b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
         ret="$?"
         if [[ $ret -eq 1 ]]; then exit 1; fi

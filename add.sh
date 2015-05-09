@@ -46,11 +46,14 @@ new_topic() {
     "$DS/add.sh" new_topic "$jlb" & exit 1; fi
     
     if grep -Fxo "$jlb" <<<"$restr"; then jlb="$jlb."; fi
-    sfname=$(grep -Fxo "$jlb" "$DM_tl/.1.cfg" | wc -l)
+    chck=$(grep -Fxo "$jlb" "$DM_tl/.1.cfg" | wc -l)
     
-    if [ "$sfname" -ge 1 ]; then
-    
-        jlb="$jlb $sfname"
+    if [ "$chck" -ge 1 ]; then
+        
+        for i in {1..50}; do
+        chck=$(grep -Fxo "$jlb ($i)" "$DM_t/$language_target/.1.cfg")
+        [ -z "$chck" ] && break; done
+        jlb="$jlb ($i)"
         msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "The name for the newest will be\:")\n<b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
         ret="$?"
         [[ $ret -eq 1 ]] && exit 10

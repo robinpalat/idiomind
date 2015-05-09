@@ -30,8 +30,9 @@ function word_view() {
     --field="<i><span color='#737373'>$exmp</span></i>:lbl" "$field_dftn" "$field_note" \
     --button=gtk-edit:4 \
     --button="$listen":"$cmd_listen" \
-    --button=gtk-go-up:3 \
-    --button=gtk-go-down:2
+    --button=gtk-go-down:2 \
+    --button=gtk-go-up:3
+    
 } >/dev/null 2>&1
 
 
@@ -60,8 +61,9 @@ function sentence_view() {
     --column="":TEXT \
     --button=gtk-edit:4 \
     --button="$listen":"$cmd_listen" \
-    --button=gtk-go-up:3 \
-    --button=gtk-go-down:2
+    --button=gtk-go-down:2 \
+    --button=gtk-go-up:3
+    
 } >/dev/null 2>&1
 
 export -f word_view sentence_view

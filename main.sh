@@ -186,7 +186,7 @@ if grep -o '.idmnd' <<<"$1"; then
             elif [[ $ret -eq 0 ]]; then
                 
                 if2=$(wc -l < "$DM_t/$language_target/.1.cfg")
-                chck=$(grep -Fox "$tpi" "$DM_t/$language_target/.1.cfg" | wc -l)
+                chck=$(grep -Fxo "$tpi" "$DM_t/$language_target/.1.cfg" | wc -l)
                 
                 if [ ${if2} -ge 80 ]; then
                     
@@ -197,7 +197,11 @@ if grep -o '.idmnd' <<<"$1"; then
                 
                 if [ ${chck} -ge 1 ]; then
                 
-                    tpi="$tpi $chck"
+                    for i in {1..50}; do
+                    chck=$(grep -Fxo "$tpi ($i)" "$DM_t/$language_target/.1.cfg")
+                    [ -z "$chck" ] && break; done
+                
+                    tpi="$tpi ($i)"
                     msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "The name for the newest will be\:")\n<b>$tpi</b>\n" info "$(gettext "OK")" "$(gettext "Cancel")"
                     ret=$(echo $?)
                     

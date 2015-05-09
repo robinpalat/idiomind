@@ -69,16 +69,15 @@ position() {
             
             if [ "$(wc -l < "$DC_tlt/2.cfg")" = 0 ]; then
                 cp -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"
-                msg "$(gettext "Restart the window to see the changes.")\n" info
+                msg "$(gettext "The changes will have effect only after restarting the window.")\n" info
                 
             else
-                msg "$(gettext "The changes will be seen after restarting the index.")\n" info; fi
+                msg "$(gettext "The changes will have effect only after restarting the index.")\n" info; fi
         fi
     fi
     rm "$DC_tlt/0.cfg.mv"
     exit
 }
-
 
 function dlg_form_1() {
     
