@@ -167,10 +167,10 @@ function dialog_1() {
     
     yad --title="$tpc" \
     --class=idiomind --name=Idiomind \
-    --text="$(gettext "More than") $tdays $(gettext "days have passed since you marked this topic as learnt. Would you like to review it?")" \
+    --text=" $(gettext "More than") $tdays $(gettext "days have passed since you marked this topic as learnt.\n Would you like to review it?")" \
     --image=dialog-question --on-top --center \
     --window-icon="$DS/images/icon.png" \
-    --width=450 --height=150 --borders=10 \
+    --width=530 --height=150 --borders=10 \
     --button=" $(gettext "Not Yet") ":1 \
     --button=" $(gettext "Yes") ":2
 }
