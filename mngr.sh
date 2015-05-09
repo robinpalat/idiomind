@@ -99,6 +99,7 @@ mark_to_learn() {
     if [ "$3" = 1 ]; then
     kill -9 $(pgrep -f "yad --multi-progress ") &
     kill -9 $(pgrep -f "yad --list ") &
+    kill -9 $(pgrep -f "yad --text-info ") &
     kill -9 $(pgrep -f "yad --form ") &
     kill -9 $(pgrep -f "yad --notebook ") &
     fi
@@ -158,6 +159,7 @@ mark_as_learned() {
     if [ $3 = 1 ]; then
     kill -9 $(pgrep -f "yad --list ") &
     kill -9 $(pgrep -f "yad --list ") &
+    kill -9 $(pgrep -f "yad --text-info ") &
     kill -9 $(pgrep -f "yad --form ") &
     kill -9 $(pgrep -f "yad --notebook ") &
     fi

@@ -209,26 +209,26 @@ fetch_podcasts() {
             if [ "$ntype" = 1 ]; then
 
                 podcast_items="$(xsltproc - "$FEED" <<<"$tmplitem" 2> /dev/null)"
-                podcast_items="$(echo "$podcast_items" | tr '\n' ' ' \
+                podcast_items="$(echo "${podcast_items}" | tr '\n' ' ' \
                 | tr -s '[:space:]' | sed 's/EOL/\n/g' | head -n "$downloads")"
-                podcast_items="$(echo "$podcast_items" | sed '/^$/d')"
+                podcast_items="$(echo "${podcast_items}" | sed '/^$/d')"
                 
                 while read -r item; do
 
-                    fields="$(sed -r 's|-\!-|\n|g' <<<"$item")"
-                    enclosure=$(sed -n "$nmedia"p <<<"$fields")
-                    title=$(echo "$fields" | sed -n "$ntitle"p | sed 's/\://g' \
+                    fields="$(sed -r 's|-\!-|\n|g' <<<"${item}")"
+                    enclosure=$(sed -n "$nmedia"p <<<"${fields}")
+                    title=$(echo "${fields}" | sed -n "$ntitle"p | sed 's/\://g' \
                     | sed 's/\&/&amp;/g' | sed 's/^\s*./\U&\E/g' \
                     | sed 's/<[^>]*>//g' | sed 's/^ *//; s/ *$//; /^$/d')
-                    summary=$(echo "$fields" | sed -n "$nsumm"p)
+                    summary=$(echo "${fields}" | sed -n "$nsumm"p)
                     #| iconv -c -f utf8 -t ascii
-                    fname="$(nmfile "$title")"
+                    fname="$(nmfile "${title}")"
                     
                     if [ ${#title} -ge 300 ] \
                     || [ -z "$title" ]; then
                     continue; fi
                          
-                    if ! grep -Fxo "$title" "$DCP/1.cfg"; then
+                    if ! grep -Fxo "${title}" <<<"$(cat "$DCP/1.cfg" "$DCP/remove")"; then
                     
                         enclosure_url=$(curl -s -I -L -w %"{url_effective}" \
                         --url "$enclosure" | tail -n 1)
@@ -243,17 +243,17 @@ fetch_podcasts() {
                         mkhtml
 
                         if [ -s "$DCP/1.cfg" ]; then
-                        sed -i -e "1i$title\\" "$DCP/1.cfg" # clean title
-                        else echo "$title" > "$DCP/1.cfg"; fi
+                        sed -i -e "1i${title}\\" "$DCP/1.cfg" # clean title
+                        else echo "${title}" > "$DCP/1.cfg"; fi
                         if grep '^$' "$DCP/1.cfg"; then
                         sed -i '/^$/d' "$DCP/1.cfg"; fi
-                        echo "$title" >> "$DCP/.11.cfg"
-                        echo "$title" >> "$DT_r/log"
-                        echo -e "channel=\"$channel\"" > "$DMC/$fname.item"
-                        echo -e "link=\"$link\"" >> "$DMC/$fname.item"
-                        echo -e "title=\"$title\"" >> "$DMC/$fname.item"
+                        echo "${title}" >> "$DCP/.11.cfg"
+                        echo "${title}" >> "$DT_r/log"
+                        echo -e "channel=\"${channel}\"" > "$DMC/$fname.item"
+                        echo -e "link=\"${link}\"" >> "$DMC/$fname.item"
+                        echo -e "title=\"${title}\"" >> "$DMC/$fname.item"
                     fi
-                done <<<"$podcast_items"
+                done <<<"${podcast_items}"
             fi
             
         else
@@ -304,7 +304,7 @@ removes() {
     sed -i '/^$/d' "$DCP/1.cfg"; fi
     if grep '^$' "$DCP/2.cfg"; then
     sed -i '/^$/d' "$DCP/2.cfg"; fi
-    echo "$(< "$DCP/remove" | head -n 50)" > "$DCP/remove_"
+    echo "$(head -n 500 < "$DCP/remove")" > "$DCP/remove_"
     mv -f "$DCP/remove_" "$DCP/remove"
     cp -f "$DCP/1.cfg" "$DCP/.11.cfg"
 }

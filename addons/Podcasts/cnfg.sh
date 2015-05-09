@@ -6,7 +6,7 @@ DCP="$DM_tl/Podcasts/.conf"
 DSP="$DS_a/Podcasts"
 CNF=$(gettext "Configure")
 sets=('update' 'sync' 'path')
-if [ -n "$(< "$DCP/0.cfg")" ]; then cfg=1; else 
+if [ -n "$(< "$DCP/0.cfg")" ]; then cfg=1; else
 > "$DCP/0.cfg"; fi
 
 if [ ! -d "$DM_tl/Podcasts" ]; then
@@ -47,7 +47,6 @@ while [[ $n -lt 3 ]]; do
         val="FALSE"; else val="/uu"; fi
         echo -e "${sets[$n]}=\"$val\"" >> "$DCP/0.cfg"
     fi
-
     ((n=n+1))
 done
     

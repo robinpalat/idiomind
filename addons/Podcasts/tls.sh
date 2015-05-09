@@ -264,7 +264,6 @@ sync() {
             else
             echo "Error while syncing" >> "$DM_tl/Podcasts/.conf/feed.err"
             fi
-
         fi
         
         [ -f "$DT/l_sync" ] && rm -f "$DT/l_sync"; exit
