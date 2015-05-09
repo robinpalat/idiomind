@@ -524,7 +524,7 @@ echo "</body>" >> "$DC_tlt/att.html"
         --window-icon="$DS/images/icon.png" --center \
         --width=350 --height=180 --borders=5 \
         --field="$(gettext "Add File")":FBTN "$DS/ifs/tls.sh 'add_file'" \
-        --field="$(gettext "YouTube video URL")":FBTN "$DS/ifs/tls.sh 'videourl'" \
+        --field="$(gettext "YouTube Video URL")":FBTN "$DS/ifs/tls.sh 'videourl'" \
         --button="$(gettext "Cancel")":1 \
         --button="$(gettext "OK")":0
         ret=$?
@@ -712,7 +712,7 @@ set_image() {
     image="--image=$DM_tlt/words/images/$fname.jpg"
     btn1="--button="$(gettext "Change")":3"
     btn2="--button="$(gettext "Delete")":2"
-    else label="--text=\t<small><a href='file://$DT/search.html'>"$(gettext "Search image related")"</a></small>"; fi
+    else label="--text=<small><a href='file://$DT/search.html'>"$(gettext "Search image related")"</a></small>"; fi
 
     if [ "$3" = word ]; then
         

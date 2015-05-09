@@ -454,7 +454,7 @@ panel() {
     yad --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
     --always-print-result \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --form --fixed --on-top --no-buttons --align=center \
     --width=130 --height=190 --borders=0 --geometry=150x190-$x-$y \
     --field=gtk-new:btn "$DS/add.sh 'new_items'" \

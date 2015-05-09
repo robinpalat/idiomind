@@ -84,6 +84,7 @@ infsd() {
         wget_pid=$(echo $wget_info | cut -d'|' -f1)
         yad --progress --title="$(gettext "Downloading")" \
         --progress-text=" " --auto-close \
+        --window-icon="$DS/images/icon.png" \
         --skip-taskbar --no-buttons --on-top --fixed \
         --width=200 --height=50 --borders=4 --geometry=240x20-4-4 < "$pipe"
 
@@ -154,17 +155,17 @@ btn="--center"; fi
 
 cd "$HOME"
 upld=$(yad --form --title="$(gettext "Share")" \
---text="   <b>$tpc</b>" \
+--text="<span font_desc='Free Sans Bold 12' color='#5A5A5A'>$tpc</span>" \
 --name=Idiomind --class=Idiomind \
 --window-icon="$DS/images/icon.png" --buttons-layout=end \
 --align=right --center --on-top \
 --width=480 --height=460 --borders=10 \
 --field=" :lbl" "#1" \
---field="    $(gettext "Author")" "$user" \
---field="    $(gettext "Contact (Optional)")" "$mail" \
---field="    $(gettext "Category"):CBE" \
+--field="$(gettext "Author")" "$user" \
+--field="\t$(gettext "Contact (Optional)")" "$mail" \
+--field="$(gettext "Category"):CBE" \
 "!$others!$article!$comics!$culture!$documentary!$entertainment!$funny!$family!$grammar!$history!$movies!$in_the_city!$interview!$internet!$music!$nature!$news!$office!$relations!$sport!$science!$shopping!$social_networks!$technology!$travel" \
---field="    $(gettext "Skill Level"):CBE" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
+--field="$(gettext "Skill Level"):CBE" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
 --field="\n$(gettext "Description/Notes"):TXT" "$nt" \
 --field="$(gettext "Image 600x150px"):FL" "$imgm" \
 --button="$(gettext "Cancel")":4 \
