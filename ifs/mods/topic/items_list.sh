@@ -16,6 +16,7 @@ function word_view() {
     [ -n "$note" ] && field_note="--field=$note\n:lbl"
     hlgt="$(awk '{print tolower($0)}' <<<"$trgt")"
     exmp="$(sed "s/"${trgt,,}"/<span background='#FDFBCF'>"${trgt,,}"<\/\span>/g" <<<"$exmp")"
+    [ -z "$trgt" ] && tm="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>"
     [ "$mark" = TRUE ] && trgt="<sup>*</sup>$trgt"
     
     yad --form --title="$item" \
@@ -44,7 +45,6 @@ function sentence_view() {
     srce="$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"$tags")"
     lwrd="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"$tags" | tr '_' '\n')"
     [ "$(grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)' <<<"$tags")" = TRUE ] && trgt="<b>*</b> $trgt"
-    [ ! -f "$DM_tlt/$fname.mp3" ] && exit 1
     [ -z "$trgt" ] && tm="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>"
     else tm="<span color='#3F78A0'><tt>$(gettext "File not found")</tt></span>"; fi
     
@@ -170,7 +170,7 @@ function dialog_1() {
     --text=" $(gettext "More than") $tdays $(gettext "days have passed since you marked this topic as learnt.\n Would you like to review it?")" \
     --image=dialog-question --on-top --center \
     --window-icon="$DS/images/icon.png" \
-    --width=530 --height=150 --borders=10 \
+    --width=510 --height=150 --borders=10 \
     --button=" $(gettext "Not Yet") ":1 \
     --button=" $(gettext "Yes") ":2
 }

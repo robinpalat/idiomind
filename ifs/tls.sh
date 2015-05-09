@@ -568,13 +568,16 @@ fback() {
 check_updates() {
 
     internet
-    rversion="$(curl http://idiomind.sourceforge.net/doc/release | sed -n 1p)"
+    rversion=`curl http://idiomind.sourceforge.net/doc/release | sed -n 1p`
+    cversion=`echo "$(idiomind -v)"`
     pkg='https://sourceforge.net/projects/idiomind/files/idiomind.deb/download'
     echo "$(date +%d)" > "$DC_s/9.cfg"
     
-    if [ -n "${rversion##+([[:space:]])}" ] && [ "$rversion" != "$(idiomind -v)" ]; then
+    if [ -n "${rversion##+([[:space:]])}" ] \
+    && [ -n "${cversion##+([[:space:]])}" ] \
+    && [ "$rversion" != "$cversion" ]; then
     
-        msg_2 "<b> $(gettext "A new version of Idiomind available\!") </b>\n\n" \
+        msg_2 " <b>$(gettext "A new version of Idiomind available\!")</b>\n" \
         info "$(gettext "Download")" "$(gettext "Cancel")" $(gettext "Updates")
         ret=$(echo $?)
         
@@ -584,7 +587,7 @@ check_updates() {
         fi
         
     else
-        msg "$(gettext "No updates available.")\n" info $(gettext "Updates")
+        msg " $(gettext "No updates available.")\n" info $(gettext "Updates")
     fi
 
     exit 0
@@ -604,12 +607,15 @@ a_check_updates() {
         curl -v www.google.com 2>&1 | \
         grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
         echo "$d2" > "$DC_s/9.cfg"
-        rversion="$(curl http://idiomind.sourceforge.net/doc/release | sed -n 1p)"
+        rversion=`curl http://idiomind.sourceforge.net/doc/release | sed -n 1p`
+        cversion=`echo "$(idiomind -v)"`
         pkg='https://sourceforge.net/projects/idiomind/files/idiomind.deb/download'
         
-        if [ -n "${rversion##+([[:space:]])}" ] && [ "$rversion" != "$(idiomind -v)" ]; then
+        if [ -n "${rversion##+([[:space:]])}" ] \
+        && [ -n "${cversion##+([[:space:]])}" ] \
+        && [ "$rversion" != "$cversion" ]; then
             
-            msg_2 "<b>$(gettext "A new version of Idiomind available\!")\n</b>\n$(gettext "Do you want to download it now?")\n" info "$(gettext "Download")" "$(gettext "No")" "$(gettext "Updates")" "$(gettext "Ignore")"
+            msg_2 " <b>$(gettext "A new version of Idiomind available\!")\n</b>\n $(gettext "Do you want to download it now?")\n" info "$(gettext "Download")" "$(gettext "No")" "$(gettext "Updates")" "$(gettext "Ignore")"
             ret=$(echo $?)
             
             if [[ $ret -eq 0 ]]; then

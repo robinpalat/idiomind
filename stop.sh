@@ -7,8 +7,7 @@ on_quit() {
     [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/bcle.sh")" ] && killall bcle.sh
     [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/chng.sh")" ] && killall chng.sh
     [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/mngr.sh")" ] && killall mngr.sh &
-    [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/vwr.sh")" ] && killall vwr.sh
-    [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/chng.sh")" ] && killall chng.sh
+    [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/vwr.sh")" ] && killall vwr.sh &
     [ -n "$(ps -A | pgrep -f "play")" ] && killall play &
     [ -n "$(ps -A | pgrep -f "mplayer")" ] && killall mplayer &
     if ps -A | pgrep -f "yad --notebook "; then

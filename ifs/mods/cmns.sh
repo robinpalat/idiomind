@@ -35,7 +35,7 @@ function msg_2() {
     --always-print-result \
     --window-icon="$DS/images/icon.png" \
     --image-on-top --on-top --sticky --center \
-    --width=380 --height=120 --borders=3 \
+    --width=400 --height=120 --borders=3 \
     "$btn3" --button="$4":1 --button="$3":0
 }
 
