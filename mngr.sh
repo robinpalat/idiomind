@@ -516,7 +516,8 @@ edit() {
             if [ ! -f "$DM_tlt/$fname.mp3" ] && [ $a != 1 ]; then
             "$DS/mngr.sh" edit "$lists" $((item_pos-1)) & exit 1
             elif [ $item_pos -lt 2 ]; then
-            "$DS/vwr.sh" "$lists" "$trgt_mod" "$item_pos" & exit 1; fi
+            "$DS/vwr.sh" "$lists" "$trgt_mod" "$item_pos" & exit 1
+            fi
             
             if [[ $ret -eq 0 ]] || [[ $ret -eq 2 ]]; then
             

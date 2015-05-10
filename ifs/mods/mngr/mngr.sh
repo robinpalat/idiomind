@@ -39,7 +39,6 @@ position() {
     --column="":TEXT \
     --button="$(gettext "Cancel")":2 \
     --button="$(gettext "OK")":0)"
-    
     ret=$?
 
     if [[ $ret -eq 0 ]]; then
@@ -60,7 +59,6 @@ position() {
         done < "$DC_tlt/0.cfg"
 
         e=$?
-    
         if [ $e != 0 ] ; then
             msg "$(gettext "Some changes were not made.")\n" dialog-warning
         else
@@ -103,7 +101,7 @@ function dlg_form_1() {
     --button="$(gettext "Image")":"$cmd_image" \
     --button="$(gettext "Delete")":"$cmd_delete" \
     --button="gtk-go-down":2 \
-    --button="gtk-save":0 > "$1"
+    --button="$(gettext "Close")":0 > "$1"
 } >/dev/null 2>&1
 
 
@@ -127,7 +125,7 @@ function dlg_form_2() {
     --button="$(gettext "Image")":"$cmd_image" \
     --button="$(gettext "Delete")":"$cmd_delete" \
     --button="gtk-go-down":2 \
-    --button="gtk-save":0 > "$1"
+    --button="$(gettext "Close")":0 > "$1"
 } >/dev/null 2>&1
 
 
