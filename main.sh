@@ -277,7 +277,7 @@ function topic() {
         printf "tpcs.$tpc.tpcs\n" >> "$DC_s/8.cfg"
         [ ! -z "$author" ] && author=" $(gettext "Topic created by") $author"
 
-        label_info1="<span font_desc='Free Sans 15' color='#5A5A5A'>$tpc</span><small>\n $inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"
+        label_info1="<span font_desc='Free Sans 15' color='#505050'>$tpc</span><small>\n $inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"
 
         apply() {
 

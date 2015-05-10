@@ -575,14 +575,13 @@ fback() {
 check_updates() {
 
     internet
-    rversion=`curl http://idiomind.sourceforge.net/doc/release | sed -n 1p`
-    cversion=`echo "$(idiomind -v)"`
+    nver=`curl http://idiomind.sourceforge.net/doc/release | sed -n 1p`
+    cver=`echo "$(idiomind -v)"`
     pkg='https://sourceforge.net/projects/idiomind/files/idiomind.deb/download'
     echo "$(date +%d)" > "$DC_s/9.cfg"
-    
-    if [ -n "${rversion##+([[:space:]])}" ] \
-    && [ -n "${cversion##+([[:space:]])}" ] \
-    && [ "$rversion" != "$cversion" ]; then
+    if [ ${#nver} -lt 9 ] && [ ${#cver} -lt 9 ] \
+    && [ ${#nver} -ge 3 ] && [ ${#cver} -ge 3 ] \
+    && [ "$nver" != "$cver" ]; then
     
         msg_2 " <b>$(gettext "A new version of Idiomind available\!")</b>\n" \
         info "$(gettext "Download")" "$(gettext "Cancel")" $(gettext "Updates")
@@ -614,13 +613,12 @@ a_check_updates() {
         curl -v www.google.com 2>&1 | \
         grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
         echo "$d2" > "$DC_s/9.cfg"
-        rversion=`curl http://idiomind.sourceforge.net/doc/release | sed -n 1p`
-        cversion=`echo "$(idiomind -v)"`
+        nver=`curl http://idiomind.sourceforge.net/doc/release | sed -n 1p`
+        cver=`echo "$(idiomind -v)"`
         pkg='https://sourceforge.net/projects/idiomind/files/idiomind.deb/download'
-        
-        if [ -n "${rversion##+([[:space:]])}" ] \
-        && [ -n "${cversion##+([[:space:]])}" ] \
-        && [ "$rversion" != "$cversion" ]; then
+        if [ ${#nver} -lt 9 ] && [ ${#cver} -lt 9 ] \
+        && [ ${#nver} -ge 3 ] && [ ${#cver} -ge 3 ] \
+        && [ "$nver" != "$cver" ]; then
             
             msg_2 " <b>$(gettext "A new version of Idiomind available\!")\n</b>\n $(gettext "Do you want to download it now?")\n" info "$(gettext "Download")" "$(gettext "No")" "$(gettext "Updates")" "$(gettext "Ignore")"
             ret=$(echo $?)
@@ -640,7 +638,9 @@ a_check_updates() {
 }
 
 about() {
-
+    
+c="$(gettext "A tool that uses the repetition as a method to memorizing with resources such as audio and images to help you learn vocabulary of a foreign language.")"
+export c
 python << END
 import gtk
 import os
@@ -648,7 +648,7 @@ app_logo = os.path.join('/usr/share/idiomind/images/idiomind.png')
 app_icon = os.path.join('/usr/share/idiomind/images/icon.png')
 app_name = 'Idiomind'
 app_version = 'v2.2-beta'
-app_comments = 'Vocabulary learning tool'
+app_comments = os.environ['c']
 app_copyright = 'Copyright (c) 2015 Robin Palatnik'
 app_website = 'http://idiomind.sourceforge.net/'
 app_license = (('This program is free software: you can redistribute it and/or modify\n'+

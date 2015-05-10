@@ -228,7 +228,8 @@ fetch_podcasts() {
                     || [ -z "$title" ]; then
                     continue; fi
                          
-                    if ! grep -Fxo "${title}" <<<"$(cat "$DCP/1.cfg" "$DCP/remove")"; then
+                    if ! grep -Fxo "${title}" \
+                    <<<"$(cat "$DCP/1.cfg" "$DCP/2.cfg" "$DCP/remove")"; then
                     
                         enclosure_url=$(curl -s -I -L -w %"{url_effective}" \
                         --url "$enclosure" | tail -n 1)

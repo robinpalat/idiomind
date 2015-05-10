@@ -216,6 +216,7 @@ if [[ "$conten" = A ]]; then
                 else
                     trgt=$(clean_1 "${trgt}")
                     srce="$(translate "${trgt}" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')"
+                    srce="$(clean_1 "${srce}")"
                     fname=$(nmfile "${trgt}")
                     
                     if [ $(wc -$c <<<"${trgt}") -eq 1 ]; then

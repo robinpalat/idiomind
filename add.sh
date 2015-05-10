@@ -195,6 +195,8 @@ new_sentence() {
     source "$DS/default/dicts/$lgt"
     DM_tlt="$DM_tl/${tpe}"
     DC_tlt="$DM_tl/${tpe}/.conf"
+    trgt=$(clean_1 "${2}" | sed ':a;N;$!ba;s/\n/ /g')
+    srce=$(clean_1 "${4}" | sed ':a;N;$!ba;s/\n/ /g')
 
     if [ "$(wc -l < "$DC_tlt/0.cfg")" -ge 200 ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
@@ -209,11 +211,10 @@ new_sentence() {
         internet
         cd "$DT_r"
         if [ "$trd_trgt" = TRUE ]; then
-        trgt="$(translate "$(clean_1 "${2}")" auto "$lgt" | sed ':a;N;$!ba;s/\n/ /g')"
-        else
-        trgt="$(clean_1 "${2}" | sed ':a;N;$!ba;s/\n/ /g')"
+        trgt="$(translate "${trgt}" auto "$lgt" | sed ':a;N;$!ba;s/\n/ /g')"
         fi
-        srce=$(translate "${trgt}" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')
+        srce="$(translate "${trgt}" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')"
+        srce="$(clean_1 "${srce}")"
         fname="$(nmfile "${trgt}")"
         
         if [ ! -f "$DT_r/audtm.mp3" ]; then
@@ -231,9 +232,7 @@ new_sentence() {
         if [ -z "$4" ] || [ -z "$2" ]; then
         [ "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "You need to fill text fields.")\n" info & exit; fi
-        
-        trgt=$(clean_1 "${2}" | sed ':a;N;$!ba;s/\n/ /g')
-        srce=$(clean_1 "${4}" | sed ':a;N;$!ba;s/\n/ /g')
+
         fname="$(nmfile "${trgt}")"
         
         if [ -f "$DT_r/audtm.mp3" ]; then
@@ -307,10 +306,9 @@ new_word() {
         internet
         if [ "$trd_trgt" = TRUE ] && [ "$5" != 0 ]; then
         trgt="$(translate "$(clean_0 "${trgt}")" auto "$lgt")"
-        else
-        trgt="$(clean_0 "${trgt}")"
         fi
         srce="$(translate "${trgt}" $lgt $lgs)"
+        srce="$(clean_0 "${srce}")"
         fname="$(nmfile "${trgt^}")"
         audio="${trgt,,}"
         
@@ -335,8 +333,6 @@ new_word() {
         [ "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "You need to fill text fields.")\n" info & exit 1; fi
         
-        trgt="$2"
-        srce="$4"
         fname="$(nmfile "${trgt^}")"
         
         if [ -f "$DT_r/audtm.mp3" ]; then
@@ -432,6 +428,7 @@ list_words_edit() {
             else
                 translate "${trgt}" auto $lgs > "tr.$c"
                 srce=$(< tr."$c")
+                srce="$(clean_0 "${srce}")"
                 
                 if [ -f "$DM_tls/$audio.mp3" ]; then
                 
@@ -574,6 +571,7 @@ list_words_sentence() {
         else
             translate "${trgt}" auto "$lgs" > tr."$c"
             srce=$(< ./tr."$c")
+            srce="$(clean_0 "${srce}")"
 
             if [ -f "$DM_tls/$audio.mp3" ]; then
             
@@ -795,6 +793,7 @@ process() {
                         sntc=$(sed -n "$n"p ./slts)
                         trgt="$(clean_1 "${sntc}" | sed ':a;N;$!ba;s/\n/ /g')"
                         srce="$(translate "${trgt}" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')"
+                        srce="$(clean_1 "${srce}")"
                         fname=$(nmfile "${trgt}")
                     
                         # words

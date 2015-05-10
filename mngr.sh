@@ -205,23 +205,20 @@ mark_as_learned() {
     exit 1
 }
 
-delete_item_confirm() {
+delete_item_ok() {
 
     touch "$DT/ps_lk"
     include "$DS/ifs/mods/mngr"
     source "$DS/ifs/mods/cmns.sh"
-    fname="${2}"
+    item="${2}"
+    fname="$(nmfile "${2}")"
 
     if [ -f "$DM_tlt/words/$fname.mp3" ]; then
     file="$DM_tlt/words/$fname.mp3"
-    trgt=$(eyeD3 "$file" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
         
     elif [ -f "$DM_tlt/$fname.mp3" ]; then
     file="$DM_tlt/$fname.mp3"
-    trgt=$(eyeD3 "$file" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
-    
-    else
-    trgt="${3}"
+
     fi
 
     [ -f "$file" ] && rm "$file"
@@ -229,30 +226,30 @@ delete_item_confirm() {
     if [ -d "$DC_tlt/practice" ]; then
         dir="$DC_tlt/practice"
         if [ "$dir/fin" ]; then
-        grep -vxF "$trgt" "$dir/fin" > "$dir/fin.tmp"
+        grep -vxF "$item" "$dir/fin" > "$dir/fin.tmp"
         sed '/^$/d' "$dir/fin.tmp" > "$dir/fin"; fi
         if [ "$dir/mcin" ]; then
-        grep -vxF "$trgt" "$dir/mcin" > "$dir/mcin.tmp"
+        grep -vxF "$item" "$dir/mcin" > "$dir/mcin.tmp"
         sed '/^$/d' "$dir/mcin.tmp" > "$dir/mcin"; fi
         if [ "$dir/lwin" ]; then
-        grep -vxF "$trgt" "$dir/lwin" > "$dir/lwin.tmp"
+        grep -vxF "$item" "$dir/lwin" > "$dir/lwin.tmp"
         sed '/^$/d' "$dir/lwin.tmp" > "$dir/lwin" ; fi
         if [ "$dir/lsin" ]; then
-        grep -vxF "$trgt" "$dir/lsin" > "$dir/lsin.tmp"
+        grep -vxF "$item" "$dir/lsin" > "$dir/lsin.tmp"
         sed '/^$/d' "$dir/lsin.tmp" > "$dir/lsin"; fi
         if [ "$dir/iin" ]; then
-        grep -vxF "$trgt" "$dir/iin" > "$dir/iin.tmp"
+        grep -vxF "$item" "$dir/iin" > "$dir/iin.tmp"
         sed '/^$/d' "$dir/iin.tmp" > "$dir/iin"; fi
         rm "$dir"/*.tmp
     fi
     
     if [ "$DC_tlt/.11.cfg" ]; then
-    grep -vxF "$trgt" "$DC_tlt/.11.cfg" > "$DC_tlt/11.cfg.tmp"
+    grep -vxF "$item" "$DC_tlt/.11.cfg" > "$DC_tlt/11.cfg.tmp"
     sed '/^$/d' "$DC_tlt/11.cfg.tmp" > "$DC_tlt/.11.cfg"; fi
     n=0
     while [ $n -le 4 ]; do
     if [ -f "$DC_tlt/$n.cfg" ]; then
-    grep -vxF "$trgt" "$DC_tlt/$n.cfg" > "$DC_tlt/$n.cfg.tmp"
+    grep -vxF "$item" "$DC_tlt/$n.cfg" > "$DC_tlt/$n.cfg.tmp"
     sed '/^$/d' "$DC_tlt/$n.cfg.tmp" > "$DC_tlt/$n.cfg"; fi
     let n++
     done
@@ -265,31 +262,28 @@ delete_item() {
     touch "$DT/ps_lk"
     include "$DS/ifs/mods/mngr"
     source "$DS/ifs/mods/cmns.sh"
-    fname="${2}"
+    item="${2}"
+    fname="$(nmfile "${2}")"
 
     if [ -f "$DM_tlt/words/$fname.mp3" ]; then 
     
     file="$DM_tlt/words/$fname.mp3"
-    trgt=$(eyeD3 "$file" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
     msg_2 "$(gettext "Are you sure you want to delete this word?")\n" \
     gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
 
     elif [ -f "$DM_tlt/$fname.mp3" ]; then
     
     file="$DM_tlt/$fname.mp3"
-    trgt=$(eyeD3 "$file" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
     msg_2 "$(gettext "Are you sure you want to delete this sentence?")\n" \
     gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
 
     else
-    trgt="${3}"
     msg_2 "$(gettext "Are you sure you want to delete this item?")\n" \
     gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
-
     fi
     ret=$(echo "$?")
         
-    if [[ $ret -eq 0 ]]; then 
+    if [[ $ret -eq 0 ]]; then
     
         (sleep 0.1 && kill -9 $(pgrep -f "yad --form "))
 
@@ -298,29 +292,29 @@ delete_item() {
         if [ -d "$DC_tlt/practice" ]; then
         dir="$DC_tlt/practice"
         if [ "$dir/fin" ]; then
-        grep -vxF "$trgt" "$dir/fin" > "$dir/fin.tmp"
+        grep -vxF "$item" "$dir/fin" > "$dir/fin.tmp"
         sed '/^$/d' "$dir/fin.tmp" > "$dir/fin"; fi
         if [ "$dir/mcin" ]; then
-        grep -vxF "$trgt" "$dir/mcin" > "$dir/mcin.tmp"
+        grep -vxF "$item" "$dir/mcin" > "$dir/mcin.tmp"
         sed '/^$/d' "$dir/mcin.tmp" > "$dir/mcin"; fi
         if [ "$dir/lwin" ]; then
-        grep -vxF "$trgt" "$dir/lwin" > "$dir/lwin.tmp"
+        grep -vxF "$item" "$dir/lwin" > "$dir/lwin.tmp"
         sed '/^$/d' "$dir/lwin.tmp" > "$dir/lwin" ; fi
         if [ "$dir/lsin" ]; then
-        grep -vxF "$trgt" "$dir/lsin" > "$dir/lsin.tmp"
+        grep -vxF "$item" "$dir/lsin" > "$dir/lsin.tmp"
         sed '/^$/d' "$dir/lsin.tmp" > "$dir/lsin"; fi
         if [ "$dir/iin" ]; then
-        grep -vxF "$trgt" "$dir/iin" > "$dir/iin.tmp"
+        grep -vxF "$item" "$dir/iin" > "$dir/iin.tmp"
         sed '/^$/d' "$dir/iin.tmp" > "$dir/iin"; fi
         rm "$dir"/*.tmp; fi
             
         if [ -f "$DC_tlt/.11.cfg" ]; then
-        grep -vxF "$trgt" "$DC_tlt/.11.cfg" > "$DC_tlt/11.cfg.tmp"
+        grep -vxF "$item" "$DC_tlt/.11.cfg" > "$DC_tlt/11.cfg.tmp"
         sed '/^$/d' "$DC_tlt/11.cfg.tmp" > "$DC_tlt/.11.cfg"; fi
         n=0
         while [[ $n -le 4 ]]; do
         if [ -f "$DC_tlt/$n.cfg" ]; then
-        grep -vxF "$trgt" "$DC_tlt/$n.cfg" > "$DC_tlt/$n.cfg.tmp"
+        grep -vxF "$item" "$DC_tlt/$n.cfg" > "$DC_tlt/$n.cfg.tmp"
         sed '/^$/d' "$DC_tlt/$n.cfg.tmp" > "$DC_tlt/$n.cfg"; fi
         let n++
         done
@@ -333,7 +327,7 @@ delete_topic() {
     
     include "$DS/ifs/mods/mngr"
     
-    if [ "$tpc" != "$2" ]; then
+    if [ "${tpc}" != "${2}" ]; then
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
 
     msg_2 "$(gettext "Are you sure you want to delete this Topic?")\n" \
@@ -357,7 +351,7 @@ delete_topic() {
             n=0
             while [[ $n -le 4 ]]; do
             if [ "$DM_tl/.$n.cfg" ]; then
-            grep -vxF "$tpc" "$DM_tl/.$n.cfg" > "$DT/cfg.tmp"
+            grep -vxF "${tpc}" "$DM_tl/.$n.cfg" > "$DT/cfg.tmp"
             sed '/^$/d' "$DT/cfg.tmp" > "$DM_tl/.$n.cfg"; fi
             let n++
             done; rm "$DT/cfg.tmp"
@@ -394,7 +388,7 @@ edit() {
     c=$(($RANDOM%10000))
     item="$(sed -n "$3"p "$index_1")"
     if [ $(wc -w <<<"$item") -lt 4 ]; then
-    t=CHK; lbl_2="$(gettext "Consider it as a word")"
+    t=CHK; lbl_2="$(gettext "Is a word")"
     else t=LBL; fi
     fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
     audiofile_1="$DM_tlt/words/$fname.mp3"
@@ -412,7 +406,7 @@ edit() {
         dftn="$(sed -n 2p <<<"$fields")"
         note="$(sed -n 3p <<<"$fields")"
         cmd_move="$DS/ifs/mods/mngr/mngr.sh 'position' '$item_pos' '$index_1'"
-        cmd_delete="$DS/mngr.sh delete_item $fname"
+        cmd_delete="$DS/mngr.sh delete_item "\"$item\"""
         cmd_image="$DS/ifs/tls.sh set_image '$file' word"
         cmd_definition="/usr/share/idiomind/ifs/tls.sh definition '$trgt'"
         
@@ -485,7 +479,7 @@ edit() {
                 
                     cp -f "$audio_mod" "$DM_tl/$tpc_mod/words/$fname.mp3"
                     index word "$trgt" "$tpc_mod" &
-                    "$DS/mngr.sh" delete_item_confirm "$fname"
+                    "$DS/mngr.sh" delete_item_ok "$fname"
                     "$DS/vwr.sh" "$lists" "nll" $item_pos & exit 1
                 fi
                 
@@ -507,38 +501,42 @@ edit() {
         trgt="$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"$tags")"
         srce="$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"$tags")"
         lwrd="$(grep -o -P '(?<=IWI3I0I).*(?=IPWI3I0I)' <<<"$tags")"
-        pwrds="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"$tags")"; fi
+        pwrds="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"$tags")"
+        a=0; else a=1; fi
         cmd_move="$DS/ifs/mods/mngr/mngr.sh 'position' '$item_pos' '$index_1'"
         cmd_words="$DS/add.sh list_words_edit '$file' F $c"
         cmd_play="/usr/share/idiomind/ifs/tls.sh play '$DM_tlt/$fname.mp3'"
-        cmd_delete="$DS/mngr.sh delete_item ${fname}"
+        cmd_delete="$DS/mngr.sh delete_item "\"$item\"""
         cmd_image="$DS/ifs/tls.sh set_image '$file' sentence"
+        [ -z "$trgt" ] && trgt="$item"
         
         dlg_form_2 "$file_tmp"
         ret=$(echo "$?")
-
-            if [ ! -f "$DM_tlt/$fname.mp3" ]; then
-            "$DS/mngr.sh" edit "$lists" $((item_pos-1)) & exit 1; fi
+        
+            if [ ! -f "$DM_tlt/$fname.mp3" ] && [ $a != 1 ]; then
+            "$DS/mngr.sh" edit "$lists" $((item_pos-1)) & exit 1
+            elif [ $item_pos -lt 2 ]; then
+            "$DS/vwr.sh" "$lists" "$trgt_mod" "$item_pos" & exit 1; fi
             
             if [[ $ret -eq 0 ]] || [[ $ret -eq 2 ]]; then
             
                 include "$DS/ifs/mods/add"
+                source /usr/share/idiomind/ifs/c.conf
                 mark_mod="$(tail -8 < "$file_tmp" | sed -n 1p)"
                 type_mod="$(tail -8 < "$file_tmp" | sed -n 2p)"
-                trgt_mod="$(clean_1 "$(tail -8 < "$file_tmp" | sed -n 3p | \
-                sed 's/^ *//; s/ *$//g' | sed ':a;N;$!ba;s/\n/ /g')")"
-                srce_mod="$(tail -8 < "$file_tmp" | sed -n 4p | \
-                sed 's/^ *//; s/ *$//g' | sed ':a;N;$!ba;s/\n/ /g' | sed 's/^\s*./\U&\E/g')"
+                trgt_mod="$(clean_1 "$(tail -8 < "$file_tmp" | sed -n 3p)")"
+                srce_mod="$(clean_1 "$(tail -8 < "$file_tmp" | sed -n 4p)")"
                 tpc_mod="$(tail -8 < "$file_tmp" | sed -n 6p)"
                 audio_mod="$(tail -8 < "$file_tmp" | sed -n 7p)"
-                source /usr/share/idiomind/ifs/c.conf
-                include "$DS/ifs/mods/add"
                 rm -f "$file_tmp"
                 
                 if [ "$trgt_mod" != "$trgt" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
-                    
+
                     fname_mod="$(nmfile "$trgt_mod")"
+                    if [ -f "$DM_tlt/$fname.mp3" ]; then
                     mv -f "$DM_tlt/$fname.mp3" "$DM_tlt/$fname_mod.mp3"
+                    else DT_r=$(mktemp -d "$DT/XXXXXX")
+                    voice "${trgt_mod}" "$DT_r" "$DM_tlt/$fname_mod.mp3"; fi
                     index edit "${trgt}" "${tpc}" "${trgt_mod}"
                     tags_1 S "$trgt_mod" "$temp" "$DM_tlt/$fname_mod.mp3"
                     tags_3 W "$temp" "$temp" "$trgt_mod" "$DM_tlt/$fname_mod.mp3"
@@ -551,7 +549,7 @@ edit() {
                     trgt="$trgt_mod"; srce="$srce_mod"
                     r=$(($RANDOM%10000))
                     clean_3 "$DT_r" "$r"
-                    translate "$(sed '/^$/d' < $aw)" auto "$lg" | sed 's/,//g' \
+                    translate "$(sed '/^$/d' < "$aw")" auto "$lg" | sed 's/,//g' \
                     | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
                     check_grammar_1 "$DT_r" "$r"
                     list_words "$DT_r" "$r"
@@ -631,7 +629,7 @@ edit() {
                     cp -f "$audio_mod" "$DM_tl/$tpc_mod/$fname.mp3"
                     DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
                     index sentence "$trgt_mod" "$tpc_mod" &
-                    "$DS/mngr.sh" delete_item_confirm "$fname"
+                    "$DS/mngr.sh" delete_item_ok "$fname"
                     [ -d $DT_r ] && rm -fr "$DT_r"
                     "$DS/vwr.sh" "$lists" "null" "$item_pos" & exit 1
                 fi
@@ -724,8 +722,8 @@ case "$1" in
     mark_as_learned "$@" ;;
     mark_to_learn)
     mark_to_learn "$@" ;;
-    delete_item_confirm)
-    delete_item_confirm "$@" ;;
+    delete_item_ok)
+    delete_item_ok "$@" ;;
     delete_item)
     delete_item "$@" ;;
     delete_topic)

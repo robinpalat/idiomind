@@ -1,6 +1,9 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+if [ -z "$lgtl" ] || [ -z "$lgsl" ] ]; then
+msg "$(gettext "Please check the language settings in the preferences dialog.")" error && exit 1
+fi
 
 function mksure() {
     
@@ -129,24 +132,25 @@ function check_grammar_2() {
 function clean_0() {
     
     echo "$1" | sed ':a;N;$!ba;s/\n/ /g' \
-    | sed 's/“//;s/&//;s/”//;s/://;s/\.//g' | sed "s/’/'/;s/|//g" \
+    | sed 's/&//;s/://;s/\.//g' | sed "s/’/'/;s/|//g" \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
-    | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g'
+    | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \
+    | tr -s '“' ' ' | tr -s '”' ' ' | tr -s '"' ' '
 }
 
 function clean_1() {
     
-    #iconv -c -f utf8 -t ascii 
+    #iconv -c -f utf8 -t ascii
     if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
-    echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' \
-    | sed 's/"//; s/“//;s/&//; s/”//;s/://'g | sed "s/’/'/g" \
-    | sed "s/|//g" \
+    echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" \
+    | tr -s '“' ' ' | tr -s '”' ' ' | tr -s '"' ' ' \
+    | tr -s '&' ' ' | tr -s ':' ' ' | tr -s '|' ' ' \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//; s/ *$//g'
-    else
-    echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' \
-    | sed 's/“//;s/&//; s/”//;s/://'g | sed "s/’/'/g" \
-    | sed "s/|//g" \
+    else #FIX
+    echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" \
+    | tr -s '“' ' ' | tr -s '”' ' ' | tr -s '"' ' ' \
+    | tr -s '&' ' ' | tr -s ':' ' ' | tr -s '|' ' ' \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g'
     fi
@@ -305,8 +309,8 @@ function voice() {
     
     synth="$(sed -n 13p < "$DC_s/1.cfg" \
     | grep -o synth=\"[^\"]* | grep -o '[^"]*$')"
-
-    cd "$2"
+    DT_r="$2"; cd "$DT_r"
+    
     if [ -n "$synth" ]; then
     
         if [ "$synth" = 'festival' ] || [ "$synth" = 'text2wave' ]; then
@@ -315,28 +319,27 @@ function voice() {
             if ([ $lg = "english" ] \
             || [ $lg = "spanish" ] \
             || [ $lg = "russian" ]); then
-            echo "$1" | text2wave -o ./s.wav
-            sox ./s.wav "$3"
+            echo "$1" | text2wave -o "$DT_r/s.wav"
+            sox "$DT_r/s.wav" "${3}"
             else
             msg "$(gettext "Sorry, <b>festival</b> can not process this language.")\n" error
             [ "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
         else
-            echo "$1" | "$synth"
-            [ -f *.mp3 ] && mv -f *.mp3 "$3"
-            [ -f *.wav ] && sox *.wav "$3"
+            echo "${1}" | "$synth"
+            [ -f *.mp3 ] && mv -f *.mp3 "${3}"
+            [ -f *.wav ] && sox *.wav "${3}"
         fi
-    else
-    
-        lg="${lgtl,,}"
         
+    else
+        lg="${lgtl,,}"
         [ $lg = chinese ] && lg=Mandarin
         [ $lg = portuguese ] && lg=brazil
         [ $lg = vietnamese ] && lg=vietnam
         if [ $lg = japanese ]; then msg "$(gettext "Sorry, <b>espeak</b> can not process Japanese language.")\n" error
         [ "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
         
-        espeak "$1" -v $lg -k 1 -p 40 -a 80 -s 110 -w ./s.wav
-        sox ./s.wav "$3"
+        espeak "${1}" -v $lg -k 1 -p 40 -a 80 -s 110 -w "$DT_r/s.wav"
+        sox "$DT_r/s.wav" "${3}"
     fi
 }
 

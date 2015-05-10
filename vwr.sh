@@ -36,7 +36,7 @@ else
     sentence_view
 fi
     ret=$?
-        
+    
     if [[ $ret -eq 4 ]]; then
     "$DS/mngr.sh" edit "$1" "$index_pos"
     
