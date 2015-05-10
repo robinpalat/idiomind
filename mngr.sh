@@ -396,7 +396,6 @@ edit() {
     
     if [ -f "$audiofile_1" ]; then
         
-        file="$DM_tlt/words/$fname.mp3"
         tags="$(eyeD3 "$audiofile_1")"
         trgt="$(grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)' <<<"$tags")"
         srce="$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)' <<<"$tags")"
@@ -407,7 +406,7 @@ edit() {
         note="$(sed -n 3p <<<"$fields")"
         cmd_move="$DS/ifs/mods/mngr/mngr.sh 'position' '$item_pos' '$index_1'"
         cmd_delete="$DS/mngr.sh delete_item "\"$item\"""
-        cmd_image="$DS/ifs/tls.sh set_image '$file' word"
+        cmd_image="$DS/ifs/tls.sh set_image '$audiofile_1' word"
         cmd_definition="/usr/share/idiomind/ifs/tls.sh definition '$trgt'"
         
         dlg_form_1 "$file_tmp"
@@ -434,7 +433,7 @@ edit() {
                 
                     if [ "$mark_mod" = "TRUE" ]; then
                     echo "$trgt" >> "$DC_tlt/6.cfg"; else
-                    grep -vxv "$trgt" "$DC_tlt/6.cfg" > "$DC_tlt/6.cfg.tmp"
+                    grep -vxF "$trgt" "$DC_tlt/6.cfg" > "$DC_tlt/6.cfg.tmp"
                     sed '/^$/d' "$DC_tlt/6.cfg.tmp" > "$DC_tlt/6.cfg"
                     rm "$DC_tlt/6.cfg.tmp"; fi
                     tags_8 W "$mark_mod" "$DM_tlt/words/$fname.mp3"
@@ -495,7 +494,6 @@ edit() {
              
     else
         if [ -f "$audiofile_2" ]; then
-        file="$DM_tlt/$fname.mp3"
         tags="$(eyeD3 "$audiofile_2")"
         mark="$(grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)' <<<"$tags")"
         trgt="$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"$tags")"
@@ -504,10 +502,10 @@ edit() {
         pwrds="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"$tags")"
         a=0; else a=1; fi
         cmd_move="$DS/ifs/mods/mngr/mngr.sh 'position' '$item_pos' '$index_1'"
-        cmd_words="$DS/add.sh list_words_edit '$file' F $c"
+        cmd_words="$DS/add.sh list_words_edit '$audiofile_1' F $c"
         cmd_play="/usr/share/idiomind/ifs/tls.sh play '$DM_tlt/$fname.mp3'"
         cmd_delete="$DS/mngr.sh delete_item "\"$item\"""
-        cmd_image="$DS/ifs/tls.sh set_image '$file' sentence"
+        cmd_image="$DS/ifs/tls.sh set_image '$audiofile_1' sentence"
         [ -z "$trgt" ] && trgt="$item"
         
         dlg_form_2 "$file_tmp"
@@ -567,7 +565,7 @@ edit() {
                 
                     if [ "$mark_mod" = "TRUE" ]; then
                     echo "$trgt_mod" >> "$DC_tlt/6.cfg"; else
-                    grep -vxv "$trgt_mod" "$DC_tlt/6.cfg" > "$DC_tlt/6.cfg.tmp"
+                    grep -vxF "$trgt_mod" "$DC_tlt/6.cfg" > "$DC_tlt/6.cfg.tmp"
                     sed '/^$/d' "$DC_tlt/6.cfg.tmp" > "$DC_tlt/6.cfg"
                     rm "$DC_tlt/6.cfg.tmp"; fi
                     tags_8 S "$mark_mod" "$DM_tlt/$fname.mp3"
