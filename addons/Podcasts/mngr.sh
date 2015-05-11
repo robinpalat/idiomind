@@ -32,8 +32,6 @@ elif [ "$1" = delete_item ]; then
     
         if [[ $ret -eq 0 ]]; then
             
-            (sleep 0.2 && kill -9 "$(pgrep -f "yad --html ")")
-
             [ "$DMC/$fname.mp3" ] && rm "$DMC/$fname.mp3"
             [ "$DMC/$fname.ogg" ] && rm "$DMC/$fname.ogg"
             [ "$DMC/$fname.mp4" ] && rm "$DMC/$fname.mp4"

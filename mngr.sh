@@ -502,10 +502,10 @@ edit() {
         pwrds="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"$tags")"
         a=0; else a=1; fi
         cmd_move="$DS/ifs/mods/mngr/mngr.sh 'position' '$item_pos' '$index_1'"
-        cmd_words="$DS/add.sh list_words_edit '$audiofile_1' F $c"
+        cmd_words="$DS/add.sh list_words_edit '$audiofile_2' F $c"
         cmd_play="/usr/share/idiomind/ifs/tls.sh play '$DM_tlt/$fname.mp3'"
         cmd_delete="$DS/mngr.sh delete_item "\"$item\"""
-        cmd_image="$DS/ifs/tls.sh set_image '$audiofile_1' sentence"
+        cmd_image="$DS/ifs/tls.sh set_image '$audiofile_2' sentence"
         [ -z "$trgt" ] && trgt="$item"
         
         dlg_form_2 "$file_tmp"
