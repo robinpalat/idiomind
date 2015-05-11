@@ -373,7 +373,6 @@ edit() {
     include "$DS/ifs/mods/mngr"
     lgt=$(lnglss $lgtl)
     lgs=$(lnglss $lgsl)
-    temp="$(gettext "Processing")..."
     lists="$2";  item_pos="$3"
     if [ "$lists" = 1 ]; then
     index_1="$DC_tlt/1.cfg"
@@ -381,15 +380,11 @@ edit() {
     elif [ "$lists" = 2 ]; then
     index_1="$DC_tlt/2.cfg"
     index_2="$DC_tlt/1.cfg"; fi
-    dct="$DS/addons/Dics/cnfg.sh"
-    file_tmp="$(mktemp "$DT/file_tmp.XXXX")"
     tpcs="$(egrep -v "$tpc" < "$DM_tl/.2.cfg" \
     | tr "\\n" '!' | sed 's/!\+$//g')"
     c=$(($RANDOM%10000))
+    file_tmp="$(mktemp "$DT/file_tmp.XXXX")"
     item="$(sed -n "$3"p "$index_1")"
-    if [ $(wc -w <<<"$item") -lt 4 ]; then
-    t=CHK; lbl_2="$(gettext "Is a word")"
-    else t=LBL; fi
     fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
     audiofile_1="$DM_tlt/words/$fname.mp3"
     audiofile_2="$DM_tlt/$fname.mp3"
@@ -451,9 +446,10 @@ edit() {
                 
                 if [ "$trgt_mod" != "$trgt" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
                 
-                    fname_mod="$(nmfile "$trgt_mod")"
+                    fname_mod="$(nmfile "${trgt_mod}")"
                     mv -f "$DM_tlt/words/$fname.mp3" "$DM_tlt/words/$fname_mod.mp3"
                     mv -f "$DM_tlt/words/images/$fname.jpg" "$DM_tlt/words/images/$fname_mod.jpg"
+                    temp="$(gettext "Processing")..."
                     tags_1 W "$trgt_mod" "$temp" "$DM_tlt/words/$fname_mod.mp3"
                     index edit "${trgt}" "${tpc}" "${trgt_mod}"
                     (DT_r=$(mktemp -d "$DT/XXXX")
@@ -536,6 +532,7 @@ edit() {
                     mv -f "$DM_tlt/$fname.mp3" "$DM_tlt/$fname_mod.mp3"
                     else DT_r=$(mktemp -d "$DT/XXXXXX")
                     voice "${trgt_mod}" "$DT_r" "$DM_tlt/$fname_mod.mp3"; fi
+                    temp="$(gettext "Processing")..."
                     index edit "${trgt}" "${tpc}" "${trgt_mod}"
                     tags_1 S "$trgt_mod" "$temp" "$DM_tlt/$fname_mod.mp3"
                     tags_3 W "$temp" "$temp" "$trgt_mod" "$DM_tlt/$fname_mod.mp3"
@@ -546,15 +543,12 @@ edit() {
                     source "$DS/default/dicts/$lgt"
                     DT_r=$(mktemp -d "$DT/XXXX"); cd "$DT_r"
                     trgt="$trgt_mod"; srce="$srce_mod"
-                    r=$(($RANDOM%10000))
+                    r=$((RANDOM%10000))
                     clean_3 "$DT_r" "$r"
                     translate "$(sed '/^$/d' < "$aw")" auto "$lg" | sed 's/,//g' \
                     | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
                     check_grammar_1 "$DT_r" "$r"
                     list_words "$DT_r" "$r"
-                    grmrk=$(sed ':a;N;$!ba;s/\n/ /g' < "./g.$r")
-                    lwrds=$(< "./A.$r")
-                    pwrds=$(tr '\n' '_' < "./B.$r")
                     tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname_mod.mp3"
                     fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
                     [ "$DT_r" ] && rm -fr "$DT_r") &
@@ -582,15 +576,12 @@ edit() {
                         source "$DS/default/dicts/$lgt"
                         DT_r=$(mktemp -d "$DT/XXXX"); cd "$DT_r"
                         trgt="$trgt_mod"; srce="$srce_mod"
-                        r=$(($RANDOM%10000))
+                        r=$((RANDOM%10000))
                         clean_3 "$DT_r" "$r"
-                        translate "$(sed '/^$/d' < "$aw")" auto $lg | sed 's/,//g' \
+                        translate "$(sed '/^$/d' < "$aw")" auto "$lg" | sed 's/,//g' \
                         | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
-                        check_grammar_1 "$DT_r" $r
-                        list_words "$DT_r" $r
-                        grmrk=$(sed ':a;N;$!ba;s/\n/ /g' < "./g.$r")
-                        lwrds=$(< "./A.$r")
-                        pwrds=$(tr '\n' '_' < "./B.$r")
+                        check_grammar_1 "$DT_r" "$r"
+                        list_words "$DT_r" "$r"
                         tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname.mp3"
                         fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
                         [ "$DT_r" ] && rm -fr "$DT_r") &
@@ -633,7 +624,7 @@ edit() {
                     "$DS/vwr.sh" "$lists" "null" "$item_pos" & exit 1
                 fi
 
-                [ -d "$DT/$c" ] && "$DS/add.sh" list_words_edit "$fname" S $c "$trgt_mod" &
+                [ -d "$DT/$c" ] && "$DS/add.sh" list_words_edit "$fname" S "$c" "$trgt_mod" &
             
                 [[ $ret -eq 0 ]] && "$DS/vwr.sh" "$lists" "$trgt_mod" "$item_pos" &
                 

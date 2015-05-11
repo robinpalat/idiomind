@@ -76,6 +76,10 @@ if [[ -n "$1" ]]; then
     fi
 fi
 
+
+
+writing sentences
+
 img1="$DSP/icons_st/$(< ./.icon1).png"
 img2="$DSP/icons_st/$(< ./.icon2).png"
 img3="$DSP/icons_st/$(< ./.icon3).png"
@@ -93,8 +97,8 @@ $img --text="$info" \
 --column="Action" --column="Pick":IMG --column="Label" \
 1 $img1 "    $info1 $info6   $(gettext "Flashcards")" \
 2 $img2 "    $info2 $info7   $(gettext "Multiple Choice")" \
-3 $img3 "    $info3 $info8   $(gettext "Listening Words")" \
-4 $img4 "    $info4 $info9   $(gettext "Listening Sentences")" \
+3 $img3 "    $info3 $info8   $(gettext "Recognizing Words")" \
+4 $img4 "    $info4 $info9   $(gettext "Writing Sentences")" \
 5 $img5 "    $info5 $info10   $(gettext "Images")" \
 --button="$(gettext "Restart")":3 \
 --button="$(gettext "Start")":0)"

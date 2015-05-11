@@ -106,7 +106,11 @@ function dlg_form_1() {
 
 
 function dlg_form_2() {
-        
+    
+    if [ $(wc -w <<<"$item") -lt 4 ]; then
+    t=CHK; lbl_2="$(gettext "Is a word")"
+    else t=LBL; fi
+    
     yad --form --title="$trgt" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --separator="\n" --selectable-labels \

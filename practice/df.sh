@@ -79,9 +79,10 @@ answer() {
     --field="$bcuestion":lbl \
     --field="":lbl \
     --field="$answer":lbl \
-    --button="     $(gettext "I don't know")     ":3 \
-    --button="     $(gettext "I know")     ":2
+    --button="    $(gettext "I did not know it")    ":3 \
+    --button="    $(gettext "I Knew it")    ":2
 }
+
 
 while read trgt; do
 

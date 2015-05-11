@@ -251,10 +251,7 @@ new_sentence() {
     | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
     check_grammar_1 "$DT_r" "$r"
     list_words "$DT_r" "$r"
-    grmrk=$(sed ':a;N;$!ba;s/\n/ /g' < "./g.$r")
-    lwrds=$(< "./A.$r")
-    pwrds=$(tr '\n' '_' < "./B.$r")
-    
+
     mksure "$DM_tlt/$fname.mp3" "${trgt}" "${srce}" \
     "${grmrk}" "${lwrds}" "${pwrds}"
     
@@ -499,7 +496,6 @@ list_words_dclik() {
         translate "$(sed '/^$/d' < $aw)" auto $lg | sed 's/,//g' \
         | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
         list_words "$DT_r" "$r"
-        pwrds=$(tr '\n' '_' < "B.$r")
         echo "$pwrds"
         list_words_3 "$DT_r/lstws" "$pwrds"
         ) | dlg_progress_1
@@ -857,10 +853,7 @@ process() {
                                     | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
                                     check_grammar_1 "$DT_r" "$r"
                                     list_words "$DT_r" "$r"
-                                    grmrk=$(sed ':a;N;$!ba;s/\n/ /g' < "./g.$r" )
-                                    lwrds=$(< "./A.$r")
-                                    pwrds=$(tr '\n' '_' < "./B.$r")
-                                    
+  
                                     mksure "$DM_tlt/$fname.mp3" "${trgt}" "${tpe}" \
                                     "${lwrds}" "${pwrds}" "${grmrk}"
                                     if [ $? = 0 ]; then

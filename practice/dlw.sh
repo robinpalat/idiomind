@@ -74,8 +74,8 @@ cuestion() {
     --width=370 --height=270 --borders=5 \
     --field=play:BTN "$cmd_play" \
     --button="$(gettext "Exit")":1 \
-    --button="  $(gettext "I don't know")  ":3 \
-    --button="  $(gettext "I know")  ":2
+    --button="  $(gettext "No")  ":3 \
+    --button="  $(gettext "Yes")  ":2
     }
 
 

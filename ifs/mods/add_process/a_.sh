@@ -248,9 +248,6 @@ if [[ "$conten" = A ]]; then
                         | sed 's/,//; s/\?//; s/\¿//; s/;//g' > "$bw"
                         check_grammar_1 "$DT_r" "$r"
                         list_words "$DT_r" "$r"
-                        grmrk=$(sed ':a;N;$!ba;s/\n/ /g' < "./g.$r")
-                        lwrds=$(< "./A.$r")
-                        pwrds=$(tr '\n' '_' < "./B.$r")
                         
                         mksure "$DM_tlt/$fname.mp3" "${trgt}" "${srce}" \
                         "${lwrds}" "${pwrds}" "${grmrk}"

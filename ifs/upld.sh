@@ -155,7 +155,7 @@ btn="--center"; fi
 
 cd "$HOME"
 upld=$(yad --form --title="$(gettext "Share")" \
---text="<span font_desc='Free Sans Bold 12' color='#5A5A5A'>$tpc</span>" \
+--text="<span font_desc='Free Sans Bold 10' color='#5A5A5A'>$tpc</span>" \
 --name=Idiomind --class=Idiomind \
 --window-icon="$DS/images/icon.png" --buttons-layout=end \
 --align=right --center --on-top \

@@ -269,25 +269,29 @@ function list_words() {
     
     sed -i 's/\. /\n/g' "$bw"
     sed -i 's/\. /\n/g' "$aw"
-    cd "$1"; touch "A.$2" "B.$2" "g.$2"; n=1
+    cd "$DT_r"; touch "$DT_r/A.$2" "$DT_r/B.$2" "$DT_r/g.$2"; n=1
     
     if [ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]; then
-        while [ $n -le "$(wc -l < "$aw")" ]; do
+        while [[ $n -le "$(wc -l < "$aw")" ]]; do
         s=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
         t=$(sed -n "$n"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-        echo ISTI"$n"I0I"$t"ISTI"$fetch_audion"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> "A.$2"
-        echo "$t"_"$s""" >> "B.$2"
+        echo ISTI"$n"I0I"$t"ISTI"$fetch_audion"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> "$DT_r/A.$2"
+        echo "$t"_"$s""" >> "$DT_r/B.$2"
         let n++
         done
     else
-        while [ $n -le "$(wc -l < "$aw")" ]; do
+        while [[ $n -le "$(wc -l < "$aw")" ]]; do
         t=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
         s=$(sed -n "$n"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-        echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> "A.$2"
-        echo "$t"_"$s""" >> "B.$2"
+        echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> "$DT_r/A.$2"
+        echo "$t"_"$s""" >> "$DT_r/B.$2"
         let n++
         done
     fi
+    
+    grmrk=$(sed ':a;N;$!ba;s/\n/ /g' < "$DT_r/g.$r")
+    lwrds=$(< "$DT_r/A.$r")
+    pwrds=$(tr '\n' '_' < "$DT_r/B.$r")
 }
 
 

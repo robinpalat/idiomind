@@ -640,7 +640,8 @@ a_check_updates() {
 about() {
     
 c="$(gettext "Vocabulary learning tool")"
-export c
+website="$(gettext "Web site")"
+export c website
 python << END
 import gtk
 import os
@@ -649,6 +650,7 @@ app_icon = os.path.join('/usr/share/idiomind/images/icon.png')
 app_name = 'Idiomind'
 app_version = 'v2.2-beta'
 app_comments = os.environ['c']
+web = os.environ['website']
 app_copyright = 'Copyright (c) 2015 Robin Palatnik'
 app_website = 'http://idiomind.sourceforge.net/'
 app_license = (('This program is free software: you can redistribute it and/or modify\n'+
@@ -679,7 +681,7 @@ class AboutDialog:
         about.set_copyright(app_copyright)
         about.set_license(app_license)
         about.set_website(app_website)
-        about.set_website_label('Homepage')
+        about.set_website_label(web)
         about.set_authors(app_authors)
         about.set_artists(app_artists)
         about.run()

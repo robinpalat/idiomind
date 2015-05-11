@@ -12,13 +12,13 @@ set1=$(sed -n 1p < "$DC_a/gts.cfg" \
 key=$(sed -n 2p < "$DC_a/gts.cfg" \
 | grep -o key=\"[^\"]* | grep -o '[^"]*$')
 
-c=$(yad --form --title="Translator" \
+c=$(yad --form --title="$(gettext "Google Translate")" \
 --name=Idiomind --class=Idiomind \
 --window-icon="$DS/images/icon.png" --center \
 --on-top --skip-taskbar --expand-column=3 \
 --width=450 --height=300 --borders=10 \
 --always-print-result --editable --print-all \
---field="$(gettext "Enable Google Translate")":CHK "$set1" \
+--field="$(gettext "Enable online translator")":CHK "$set1" \
 --field="$(gettext "Key (optional)")":TXT "$key" \
 --field="\n<a href='http://translate.google.com/community?source=all'>\
 $(gettext "Help improve Google Translate")</a>\n\n":LBL " " \

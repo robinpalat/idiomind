@@ -80,8 +80,8 @@ answer() {
     --width=415 --height=340 --borders=4 \
     --field="\n$cuestion":lbl \
     --field="$answer":lbl \
-    --button="     $(gettext "I don't know")     ":3 \
-    --button="     $(gettext "I know")     ":2
+    --button="          $(gettext "No")         ":3 \
+    --button="          $(gettext "Yes")         ":2
 }
 while read trgt; do
 

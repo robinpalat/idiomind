@@ -44,7 +44,7 @@ dialog2() {
     |sed 's/\b\(.\)/\u\1/g'|tr -s ',' ' ' \
     |sed 's|\.||;s|\,||;s|\;||g'|sed 's|[a-z]|\.|g'|sed 's| |\t|g' \
     |sed 's|\.|\ .|g' | tr "[:upper:]" "[:lower:]"|sed 's/^\s*./\U&\E/g')"
-    text="<span font_desc='Serif Bold 12'>$hint</span>\n"
+    text="<span font_desc='Free Sans Bold 10'>$hint</span>\n"
 
     SE=$(yad --text-info --title="$(gettext "Practice")" \
     --text="$text" \
