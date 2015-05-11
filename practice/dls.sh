@@ -15,7 +15,7 @@ score() {
 
     if [[ "$1" -ge $all ]]; then
         play "$drts/all.mp3" & 
-        echo "s9.$(tr -s '\n' '|' < ok.s).s9" >> "$log"
+        echo "s9.$(tr -s '\n' '|' < ./ok.s).s9" >> "$log"
         rm lsin ok.s
         echo "$(date "+%a %d %B")" > lock_ls
         echo 21 > .icon4

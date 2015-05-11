@@ -15,9 +15,9 @@ ling=0
 
 score() {
 
-    if [[ $(($(< l_i)+$1)) -ge $all ]]; then
+    if [[ $(($(< ./l_i)+$1)) -ge $all ]]; then
         play "$drts/all.mp3" &
-        echo "w9.$(tr -s '\n' '|' < ok.i).w9" >> "$log"
+        echo "w9.$(tr -s '\n' '|' < ./ok.i).w9" >> "$log"
         rm iin iin1 iin2 ok.i
         echo "$(date "+%a %d %B")" > lock_i
         echo 21 > .icon5
@@ -25,8 +25,8 @@ score() {
         exit 1
         
     else
-        [ -f l_i ] && echo $(($(< l_i)+easy)) > l_i || echo "$easy" > l_i
-        s=$(< l_i)
+        [ -f l_i ] && echo $(($(< ./l_i)+easy)) > l_i || echo "$easy" > l_i
+        s=$(< ./l_i)
         v=$((100*s/all))
         n=1; c=1
         while [[ $n -le 21 ]]; do
@@ -38,8 +38,8 @@ score() {
         
         [ -f iin2 ] && rm iin2
         if [ -f iin3 ]; then
-        echo "w6.$(tr -s '\n' '|' < iin3).w6" >> "$log"
-        echo "$(< iin3)" >> "log"
+        echo "w6.$(tr -s '\n' '|' < ./iin3).w6" >> "$log"
+        echo "$(< ./iin3)" >> "log"
         rm iin3; fi
         
         "$strt" 10 "$easy" "$ling" "$hard" & exit 1
@@ -108,7 +108,7 @@ while read trgt; do
         fi
     fi
     
-done < iin1
+done < ./iin1
 
 if [ ! -f iin2 ]; then
 
@@ -139,7 +139,7 @@ else
             fi
         fi
         
-    done < iin2
+    done < ./iin2
     
     score "$easy"
 fi

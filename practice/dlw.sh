@@ -15,9 +15,9 @@ ling=0
 
 score() {
 
-    if [[ $(($(< l_w)+$1)) -ge $all ]]; then
+    if [[ $(($(< ./l_w)+$1)) -ge $all ]]; then
         play "$drts/all.mp3" &
-        echo "w9.$(tr -s '\n' '|' < ok.w).w9" >> "$log"
+        echo "w9.$(tr -s '\n' '|' < ./ok.w).w9" >> "$log"
         rm lwin lwin1 lwin2 lwin3 ok.w
         echo "$(date "+%a %d %B")" > lock_lw
         echo 21 > .icon3
@@ -25,8 +25,8 @@ score() {
         exit 1
         
     else
-        [ -f l_w ] && echo $(($(< l_w)+easy)) > l_w || echo $easy > l_w
-        s=$(< l_w)
+        [ -f l_w ] && echo $(($(< ./l_w)+easy)) > l_w || echo $easy > l_w
+        s=$(< ./l_w)
         v=$((100*s/all))
         n=1; c=1
         while [[ $n -le 21 ]]; do
@@ -99,9 +99,9 @@ while read trgt; do
         "$drts/cls.sh" w $easy $ling $hard $all &
         exit 1
     fi
-done < lwin1
+done < ./lwin1
 
-if [ ! -f lwin2 ]; then
+if [ ! -f ./lwin2 ]; then
 
     score $easy
     
@@ -125,7 +125,7 @@ else
             "$drts/cls.sh" w $easy $ling $hard $all &
             exit 1
         fi
-    done < lwin2
+    done < ./lwin2
     
     score $easy
 fi
