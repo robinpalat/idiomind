@@ -404,10 +404,10 @@ videourl() {
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --center --on-top \
     --width=480 --height=100 --borders=5 \
-    --field="$(gettext "YouTube URL")" \
+    --field="$(gettext "URL")" \
     --button="$(gettext "Cancel")":1 \
     --button=gtk-ok:0)
-
+    [ $? = 1 ] && exit
     if [ ${#url} -gt 40 ] && \
     ([ ${url:0:29} = 'https://www.youtube.com/watch' ] \
     || [ ${url:0:28} = 'http://www.youtube.com/watch' ]); then \
@@ -639,7 +639,7 @@ a_check_updates() {
 
 about() {
     
-c="$(gettext "A tool that uses the repetition as a method to memorizing with resources such as audio and images to help you learn vocabulary of a foreign language.")"
+c="$(gettext "Vocabulary learning tool")"
 export c
 python << END
 import gtk

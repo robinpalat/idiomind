@@ -300,7 +300,7 @@ mv "$tpc.tar.gz" "$id.$tpc.idmnd"
 du=$(du -h "$id.$tpc.idmnd" | cut -f1)
 [ -d "$DT_u/$tpc" ] && rm -fr "$DT_u/$tpc"
 dte=$(date "+%d %B %Y")
-notify-send "$(gettext "Operation in progress")" "$(gettext "Please wait while the file is uploaded. Transferring") ${du}" -i idiomind -t 6000
+notify-send "$(gettext "Upload in progress")" "$(gettext "This can take some time. Please wait.")" -i idiomind -t 6000
 
 lftp -u "`sed -n 4p <<<"$data" | grep -o 'USER="[^"]*' | grep -o '[^"]*$'`",\
 "`sed -n 5p <<<"$data" | grep -o 'KEY="[^"]*' | grep -o '[^"]*$'`" \
