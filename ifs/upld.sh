@@ -159,7 +159,7 @@ upld=$(yad --form --title="$(gettext "Share")" \
 --name=Idiomind --class=Idiomind \
 --window-icon="$DS/images/icon.png" --buttons-layout=end \
 --align=right --center --on-top \
---width=480 --height=460 --borders=10 \
+--width=480 --height=460 --borders=12 \
 --field=" :lbl" "#1" \
 --field="$(gettext "Author")" "$user" \
 --field="\t$(gettext "Contact (Optional)")" "$mail" \
