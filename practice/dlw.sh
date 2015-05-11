@@ -75,7 +75,7 @@ cuestion() {
     --field=play:BTN "$cmd_play" \
     --button="$(gettext "Exit")":1 \
     --button="  $(gettext "No")  ":3 \
-    --button="  $(gettext "Yes")  ":2
+    --button="  $(gettext "Got It")  ":2
     }
 
 
