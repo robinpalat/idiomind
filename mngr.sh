@@ -490,6 +490,7 @@ edit() {
              
     else
         if [ -f "$audiofile_2" ]; then
+        
         tags="$(eyeD3 "$audiofile_2")"
         mark="$(grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)' <<<"$tags")"
         trgt="$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"$tags")"
@@ -509,7 +510,7 @@ edit() {
         
             if [ ! -f "$DM_tlt/$fname.mp3" ] && [ $a != 1 ]; then
             "$DS/mngr.sh" edit "$lists" $((item_pos-1)) & exit 1
-            elif [ $item_pos -lt 2 ]; then
+            elif [ $item_pos -lt 1 ]; then
             "$DS/vwr.sh" "$lists" "$trgt_mod" "$item_pos" & exit 1
             fi
             

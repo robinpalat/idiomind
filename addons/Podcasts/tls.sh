@@ -270,6 +270,31 @@ sync() {
     fi
 }
 
+disc_podscats() {
+
+    [ "$lgtl" = English ] && src="podcasts \"learning English\" OR \"$(gettext "learning English")\""
+    [ "$lgtl" = French ] && src="podcasts \"learning French\" OR \"$(gettext "learning French")\""
+    [ "$lgtl" = German ] && src="podcasts \"learning German\" OR \"$(gettext "learning German")\""
+    [ "$lgtl" = Chinese ] && src="podcasts \"learning Chinese\" OR \"$(gettext "learning Chinese")\""
+    [ "$lgtl" = Italian ] && src="podcasts \"learning Italian\" OR \"$(gettext "learning Italian")\""
+    [ "$lgtl" = Japanese ] && src="podcasts \"learning Japanese\" OR \"$(gettext "learning Japanese")\""
+    [ "$lgtl" = Portuguese ] && src="podcasts \"learning Portuguese\" OR \"$(gettext "learning Portuguese")\""
+    [ "$lgtl" = Spanish ] && src="podcasts \"learning Spanish\" OR \"$(gettext "learning Spanish")\""
+    [ "$lgtl" = Vietnamese ] && src="podcasts \"learning Vietnamese\" OR \"$(gettext "learning Vietnamese")\""
+    [ "$lgtl" = Russian ] && src="podcasts \"learning Russian\" OR \"$(gettext "learning Russian")\""
+    xdg-open https://www.google.com/search?q="$src"
+
+    #internet
+    #web=""
+    #yad --html --title="$(gettext "Get podcasts")" \
+    #--name=Idiomind --class=Idiomind \
+    #--uri="$web" --browser \
+    #--window-icon="$DS/images/icon.png" --center --on-top --fixed \
+    #--width=550 --height=440 --borders=10 \
+    #--button="$(gettext "Close")":0
+     
+} >/dev/null 2>&1
+
 case "$1" in
     play)
     play "$@" ;;
@@ -277,4 +302,6 @@ case "$1" in
     set_channel "$@" ;;
     sync)
     sync "$@" ;;
+    dpods)
+    disc_podscats "$@" ;;
 esac

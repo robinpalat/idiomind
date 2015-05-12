@@ -160,7 +160,7 @@ if grep -o '.idmnd' <<<"$1"; then
         cd "$tmp"
         ws=$(wc -l < "$tmp/3.cfg")
         ss=$(wc -l < "$tmp/4.cfg")
-        itxt="<span font_desc='Free Sans 14'>$tpi</span><small>\n ${language_source^}~$language_target $nwords $(gettext "Words") $nsentences $(gettext "Sentences") $nimages $(gettext "Images")\n $(gettext "Level:") $level\n</small>"
+        itxt="<span font_desc='Free Sans 14'>$tpi</span><small>\n ${language_source^}-$language_target $nwords $(gettext "Words") $nsentences $(gettext "Sentences") $nimages $(gettext "Images")\n $(gettext "Level:") $level\n</small>"
         dclk="'$DS/default/vwr_tmp.sh' '$c'"
 
         tac "$tmp/conf/0.cfg" | awk '{print $0""}' | \

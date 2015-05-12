@@ -70,7 +70,7 @@ apply() {
 
     val1=$(cut -d "|" -f1 <<<"$CNFG")
     val2=$(cut -d "|" -f2 <<<"$CNFG")
-    val3=$(cut -d "|" -f18 <<<"$CNFG" | sed 's|/|\\/|g')
+    val3=$(cut -d "|" -f19 <<<"$CNFG" | sed 's|/|\\/|g')
     if [ ! -d "$val3" ] || [ -z "$val3" ]; then path=/uu; fi
     sed -i "s/update=.*/update=\"$val1\"/g" "$DCP/0.cfg"
     sed -i "s/sync=.*/sync=\"$val2\"/g" "$DCP/0.cfg"
@@ -98,14 +98,17 @@ CNFG=$(yad --form --title="$(gettext "Podcasts settings")" \
 --field="" "$url4" --field="" "$url5" --field="" "$url6" \
 --field="" "$url7" --field="" "$url8" --field="" "$url9" \
 --field="" "$url10" --field="" "$url11" --field="" "$url12" \
+--field="$(gettext "Discover Podcasts")":FBTN "$DSP/tls.sh 'dpods'" \
 --field=" ":LBL " " \
 --field="$(gettext "Path where episodes should be synced")":LBL " " \
---field="":DIR "$path" \
---field="$(gettext "Remove Episodes")":FBTN "$DSP/mngr.sh 'delete_1'" \
---field="$(gettext "Remove Saved Episodes")":FBTN "$DSP/mngr.sh 'delete_2'" \
+--field="":MDIR "$path" \
 --button="$(gettext "Cancel")":1 \
+--button="$(gettext "Remove")":"$DSP/mngr.sh 'deleteall'" \
 --button="$(gettext "Syncronize")":5 \
 --button="gtk-apply":0)
+
+#--field="$(gettext "Remove Episodes")":FBTN "$DSP/mngr.sh 'delete_1'" \
+#--field="$(gettext "Remove Saved Episodes")":FBTN "$DSP/mngr.sh 'delete_2'" \
 
 ret=$?
 

@@ -61,12 +61,22 @@ elif [ "$1" = delete_item ]; then
             
     rm -f "$DT/ps_lk"; exit 1
 
-elif [ "$1" = delete_1 ]; then
-
-    if [ "$(wc -l < "$DCP/1.cfg")" -gt 0 ]; then
-    msg_2 "$(gettext "Are you sure you want to delete all episodes?")\n" gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
-    else exit 1; fi
-    ret=$(echo "$?")
+elif [ "$1" = deleteall ]; then
+    
+    if [ "$(wc -l < "$DCP/2.cfg")" -gt 0 ]; then
+    chk="--field="$(gettext "Delete saved episodes")":CHK"; fi
+    if [ "$(wc -l < "$DCP/1.cfg")" -lt 0 ]; then exit 1; fi
+    
+    dl=$(yad --form --title="$(gettext "Confirm")" \
+    --image=gtk-delete \
+    --name=Idiomind --class=Idiomind \
+    --always-print-result --print-all --separator="|" \
+    --window-icon="$DS/images/icon.png" --center --on-top \
+    --width=400 --height=120 --borders=3 \
+    --text="$(gettext "Are you sure you want to delete all episodes?")" "$chk" \
+    --button="$(gettext "Cancel")":1 \
+    --button="$(gettext "Yes")":0)
+    ret="$?"
             
     if [[ $ret -eq 0 ]]; then
 
@@ -74,20 +84,13 @@ elif [ "$1" = delete_1 ]; then
         rm "$DM_tl/Podcasts/.conf/1.cfg"
         rm "$DM_tl/Podcasts/update"
         touch "$DM_tl/Podcasts/.conf/1.cfg"
+
+        if [ $(cut -d "|" -f1 <<<"$dl") = TRUE ]; then
+
+            rm "$DCP/2.cfg" "$DCP/.22.cfg"
+            touch "$DCP/2.cfg" "$DCP/.22.cfg"
+        fi
     fi
-    exit
 
-elif [ "$1" = delete_2 ]; then
-
-    if [ "$(wc -l < "$DCP/2.cfg")" -gt 0 ]; then
-    msg_2 "$(gettext "Are you sure you want to delete all saved episodes?")\n" gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
-    else exit 1; fi
-    ret=$(echo "$?")
-    
-   if [[ $ret -eq 0 ]]; then
-
-        rm "$DCP/2.cfg" "$DCP/.22.cfg"
-        touch "$DCP/2.cfg" "$DCP/.22.cfg"
-    fi
     exit
 fi
