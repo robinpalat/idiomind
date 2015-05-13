@@ -3,20 +3,22 @@
 
 u=$USER
 nmt=$(sed -n 1p "/tmp/.idmtp1.$u/dir$1/folder")
+vwr="/usr/share/idiomind/default/vwr_tmp.sh"
 dir="/tmp/.idmtp1.$u/dir$1/$nmt"
 re='^[0-9]+$'
-item_name="$2"
+item="$2"
 index_pos="$3"
+index="$dir/conf/0.cfg"
 cd "$dir"
 
 if ! [[ $index_pos =~ $re ]]; then
-index_pos=$(cat "$dir/conf/0.cfg" | grep -Fxon "$item_name" \
+index_pos=$(cat "$index" | grep -Fxon "$item" \
 | sed -n 's/^\([0-9]*\)[:].*/\1/p')
 nll='echo  " "'; fi
 
-item="$(sed -n "$index_pos"p "$dir/conf/0.cfg")"
+item="$(sed -n "$index_pos"p "$index")"
 if [ -z "$item" ]; then
-item="$(sed -n 1p "$dir/conf/0.cfg")"
+item="$(sed -n 1p "$index")"
 index_pos=1; fi
 
 fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
@@ -79,10 +81,15 @@ fi
 
 ret=$?
 if [ $ret -eq 2 ]; then
-item_pos=$((index_pos-1))
-"/usr/share/idiomind/default/vwr_tmp.sh" "$1" "$nll" "$item_pos" &
+    if [[ $index_pos = 1 ]]; then
+    item=`tail -n 1 < "$index"`
+    "$vwr" "$1" "$item" &
+    else
+    item_pos=$((index_pos-1))
+    "$vwr" "$1" "$nll" "$item_pos" &
+    fi
 elif [ $ret -eq 3 ]; then
-item_pos=$((index_pos+1))
-"/usr/share/idiomind/default/vwr_tmp.sh" "$1" "$nll" "$item_pos" &
+    item_pos=$((index_pos+1))
+    "$vwr" "$1" "$nll" "$item_pos" &
 fi
 

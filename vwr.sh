@@ -36,22 +36,23 @@ else
     sentence_view
 fi
     ret=$?
-    
+
     if [[ $ret -eq 4 ]]; then
     "$DS/mngr.sh" edit "$1" "$index_pos"
     
     elif [[ $ret -eq 2 ]]; then
-    ff=$((index_pos-1))
-    "$DS/vwr.sh" "$1" "$nll" $ff &
+    
+        if [[ $index_pos = 1 ]]; then
+        item=`tail -n 1 < "$index"`
+        "$DS/vwr.sh" "$1" "$item" &
+        else
+        ff=$((index_pos-1))
+        "$DS/vwr.sh" "$1" "$nll" $ff &
+        fi
     
     elif [[ $ret -eq 3 ]]; then
     ff=$((index_pos+1))
     "$DS/vwr.sh" "$1" "$nll" $ff &
-    
-    elif [[ $ret -eq 5 ]]; then
-    DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
-    item=$(sed -n "$index_pos"p "$index")
-    "$DS/add.sh" new_items "$DT_r" 2 "$item" & exit 1
     
     else 
     printf "vwr.$(wc -l < "$DT/stats.tmp").vwr\n" >> "$DC_s/8.cfg"
