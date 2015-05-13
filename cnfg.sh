@@ -17,7 +17,6 @@
 #  MA 02110-1301, USA.
 #
 
-#--field="$(gettext "Quick Help")":BTN "$DS/ifs/tls.sh help"
 source /usr/share/idiomind/ifs/c.conf
 [ ! -d "$DC" ] && "$DS/ifs/1u.sh" && exit
 info1=" $(gettext "Are you sure you want to change the interface language program?")  "
@@ -117,9 +116,11 @@ yad --plug=$KEY --form --tabnum=1 \
 --field=" :LBL" "2" \
 --field=":LBL" "2" \
 --field="<small>$(gettext "Speech Synthesizer (default espeak)")</small>" "$synth" \
+--field=" :LBL" "2" \
+--field="$(gettext "Quick Help")":BTN "$DS/ifs/tls.sh help" \
 --field="$(gettext "Check for Updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
---field="$(gettext "Saved Topics")":BTN "$DS/ifs/upld.sh 'vsd'" \
 --field="$(gettext "Feedback")":BTN "$DS/ifs/tls.sh 'fback'" \
+--field="$(gettext "Saved Topics")":BTN "$DS/ifs/upld.sh 'vsd'" \
 --field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" > "$cnf1" &
 cat "$DC_s/2.cfg" | yad --plug=$KEY --tabnum=2 --list \
 --text="<sub>  $(gettext "Double click to set") </sub>" \

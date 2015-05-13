@@ -101,7 +101,7 @@ CNFG=$(yad --form --title="$(gettext "Podcasts settings")" \
 --field="$(gettext "Discover Podcasts")":FBTN "$DSP/tls.sh 'dpods'" \
 --field=" ":LBL " " \
 --field="$(gettext "Path where episodes should be synced")":LBL " " \
---field="":MDIR "$path" \
+--field="":DIR "$path" \
 --button="$(gettext "Cancel")":1 \
 --button="$(gettext "Remove")":"$DSP/mngr.sh 'deleteall'" \
 --button="$(gettext "Syncronize")":5 \

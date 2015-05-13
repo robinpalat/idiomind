@@ -408,6 +408,7 @@ edit() {
         ret=$(echo "$?")
         
             if [ ! -f "$DM_tlt/words/$fname.mp3" ]; then
+            rm -f "$file_tmp"
             "$DS/mngr.sh" edit "$lists" $((item_pos-1)) & exit 1; fi
              
             if [[ $ret -eq 0 ]] || [[ $ret -eq 2 ]]; then
@@ -509,8 +510,10 @@ edit() {
         ret=$(echo "$?")
         
             if [ ! -f "$DM_tlt/$fname.mp3" ] && [ $a != 1 ]; then
+            rm -f "$file_tmp"
             "$DS/mngr.sh" edit "$lists" $((item_pos-1)) & exit 1
             elif [ $item_pos -lt 1 ]; then
+            rm -f "$file_tmp"
             "$DS/vwr.sh" "$lists" "$trgt_mod" "$item_pos" & exit 1
             fi
             
@@ -531,7 +534,7 @@ edit() {
                     fname_mod="$(nmfile "$trgt_mod")"
                     if [ -f "$DM_tlt/$fname.mp3" ]; then
                     mv -f "$DM_tlt/$fname.mp3" "$DM_tlt/$fname_mod.mp3"
-                    else DT_r=$(mktemp -d "$DT/XXXXXX")
+                    else DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
                     voice "${trgt_mod}" "$DT_r" "$DM_tlt/$fname_mod.mp3"; fi
                     temp="$(gettext "Processing")..."
                     index edit "${trgt}" "${tpc}" "${trgt_mod}"
@@ -542,7 +545,6 @@ edit() {
                     srce_mod=$(translate "$trgt_mod" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')
                     tags_1 S "$trgt_mod" "$srce_mod" "$DM_tlt/$fname_mod.mp3"
                     source "$DS/default/dicts/$lgt"
-                    DT_r=$(mktemp -d "$DT/XXXX"); cd "$DT_r"
                     trgt="$trgt_mod"; srce="$srce_mod"
                     r=$((RANDOM%10000))
                     clean_3 "$DT_r" "$r"
@@ -675,11 +677,11 @@ rename_topic() {
         msg_2 "$(gettext "Another topic with the same name already exist.") \n$(gettext "The name for the newest will be\:")\n<b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
         ret="$?"
         if [[ $ret -eq 1 ]]; then exit 1; fi
-        
+    
     else 
         jlb="$jlb"
     fi
-        
+    
     if [ -n "$jlb" ]; then
 
         mv -f "$DM_tl/$tpc/.11.cfg" "$DT/.11.cfg"

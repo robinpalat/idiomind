@@ -788,6 +788,9 @@ process() {
                     
                         sntc=$(sed -n "$n"p ./slts)
                         trgt="$(clean_1 "${sntc}" | sed ':a;N;$!ba;s/\n/ /g')"
+                        if [ "$trd_trgt" = TRUE ]; then
+                        trgt="$(translate "${trgt}" auto "$lgt" | sed ':a;N;$!ba;s/\n/ /g')"
+                        trgt="$(clean_1 "${trgt}")"; fi
                         srce="$(translate "${trgt}" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')"
                         srce="$(clean_1 "${srce}")"
                         fname=$(nmfile "${trgt}")
