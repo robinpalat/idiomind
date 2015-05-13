@@ -389,8 +389,9 @@ edit() {
     audiofile_1="$DM_tlt/words/$fname.mp3"
     audiofile_2="$DM_tlt/$fname.mp3"
     
-    if [ -f "$audiofile_1" ]; then
-        
+    if grep -Fxo "$item" "$DC_tlt/3.cfg"; then
+    
+        if [ -f "$audiofile_1" ]; then
         tags="$(eyeD3 "$audiofile_1")"
         trgt="$(grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)' <<<"$tags")"
         srce="$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)' <<<"$tags")"
@@ -399,6 +400,7 @@ edit() {
         exmp="$(sed -n 1p <<<"$fields")"
         dftn="$(sed -n 2p <<<"$fields")"
         note="$(sed -n 3p <<<"$fields")"
+        a=0; else a=1; fi
         cmd_move="$DS/ifs/mods/mngr/mngr.sh 'position' '$item_pos' '$index_1'"
         cmd_delete="$DS/mngr.sh delete_item "\"$item\"""
         cmd_image="$DS/ifs/tls.sh set_image '$audiofile_1' word"
@@ -408,8 +410,7 @@ edit() {
         ret=$(echo "$?")
         
             if [ ! -f "$DM_tlt/words/$fname.mp3" ]; then
-            rm -f "$file_tmp"
-            "$DS/mngr.sh" edit "$lists" $((item_pos-1)) & exit 1; fi
+            rm -f "$file_tmp" & exit 1; fi
              
             if [[ $ret -eq 0 ]] || [[ $ret -eq 2 ]]; then
             
@@ -485,13 +486,13 @@ edit() {
                 
             else
                 rm -f "$file_tmp"
-                "$DS/stop.sh" 7
+                #"$DS/stop.sh" 7
                 "$DS/vwr.sh" "$lists" "$trgt" "$item_pos" &
             fi
              
-    else
+    elif grep -Fxo "$item" "$DC_tlt/4.cfg"; then
+    
         if [ -f "$audiofile_2" ]; then
-        
         tags="$(eyeD3 "$audiofile_2")"
         mark="$(grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)' <<<"$tags")"
         trgt="$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"$tags")"
@@ -510,12 +511,7 @@ edit() {
         ret=$(echo "$?")
         
             if [ ! -f "$DM_tlt/$fname.mp3" ] && [ $a != 1 ]; then
-            rm -f "$file_tmp"
-            "$DS/mngr.sh" edit "$lists" $((item_pos-1)) & exit 1
-            elif [ $item_pos -lt 1 ]; then
-            rm -f "$file_tmp"
-            "$DS/vwr.sh" "$lists" "$trgt_mod" "$item_pos" & exit 1
-            fi
+            rm -f "$file_tmp" & exit 1; fi
             
             if [[ $ret -eq 0 ]] || [[ $ret -eq 2 ]]; then
             
@@ -527,15 +523,16 @@ edit() {
                 srce_mod="$(clean_1 "$(tail -8 < "$file_tmp" | sed -n 4p)")"
                 tpc_mod="$(tail -8 < "$file_tmp" | sed -n 6p)"
                 audio_mod="$(tail -8 < "$file_tmp" | sed -n 7p)"
+                if [ $a = 1 ]; then trgt="_ _"; fi
                 rm -f "$file_tmp"
                 
                 if [ "$trgt_mod" != "$trgt" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
 
+                    DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
                     fname_mod="$(nmfile "$trgt_mod")"
                     if [ -f "$DM_tlt/$fname.mp3" ]; then
                     mv -f "$DM_tlt/$fname.mp3" "$DM_tlt/$fname_mod.mp3"
-                    else DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
-                    voice "${trgt_mod}" "$DT_r" "$DM_tlt/$fname_mod.mp3"; fi
+                    else voice "${trgt_mod}" "$DT_r" "$DM_tlt/$fname_mod.mp3"; fi
                     temp="$(gettext "Processing")..."
                     index edit "${trgt}" "${tpc}" "${trgt_mod}"
                     tags_1 S "$trgt_mod" "$temp" "$DM_tlt/$fname_mod.mp3"
@@ -635,9 +632,11 @@ edit() {
 
             else
                 rm -f "$file_tmp"
-                "$DS/stop.sh" 7
+                #"$DS/stop.sh" 7
                 "$DS/vwr.sh" "$lists" "$trgt_mod" "$item_pos" &
             fi
+    else
+        exit 1
     fi
     [ -f "$file_tmp" ] && rm -f "$file_tmp"
     exit

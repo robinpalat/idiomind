@@ -23,8 +23,8 @@ TEXTDOMAINDIR=/usr/share/locale
 export TEXTDOMAINDIR
 Encoding=UTF-8
 alias gettext='gettext "idiomind"'
-user=$(echo "$(whoami)")
-text="<big><big><big>$(gettext "Welcome") ${USER^} </big></big></big>
+
+text="<span font_desc='Free Sans Bold 14'>$(gettext "Welcome") ${USER^} </span>
 \n      $(gettext "To get started, please configure the following:")\n"
 lang=('English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian')

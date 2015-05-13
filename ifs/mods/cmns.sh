@@ -75,7 +75,6 @@ function check_index1() {
     done
 }
 
-
 function calculate_review() {
     
     DC_tlt="$DM_tl/$1/.conf"

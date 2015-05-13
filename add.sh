@@ -200,7 +200,7 @@ new_sentence() {
 
     if [ "$(wc -l < "$DC_tlt/0.cfg")" -ge 200 ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
-    msg "$(gettext "You have reached the maximum number of notes to this topic. Topics may not exceed 200 items.")" info Info & exit; fi
+    msg "$(gettext "This topic has been exceeded Maximum number of notes. Topics may not exceed 200 items.")" info "$tpe" & exit; fi
     
     if [ -z "${tpe}" ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
@@ -292,7 +292,7 @@ new_word() {
     
     if [ "$(wc -l < "$DC_tlt/0.cfg")" -ge 200 ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
-    msg "$(gettext "You have reached the maximum number of notes to this topic. Topics may not exceed 200 items.")" info Info & exit 0; fi
+    msg "$(gettext "This topic has been exceeded Maximum number of notes. Topics may not exceed 200 items.")" info "$tpe" & exit 0; fi
     
     if [ -z "${tpe}" ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
@@ -384,7 +384,7 @@ list_words_edit() {
         tpe="$tpc"
         if [ "$(wc -l < "$DC_tlt/0.cfg")" -ge 200 ]; then
         [ "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "You have reached the maximum number of notes to this topic. Topics may not exceed 200 items.")" info Info & exit; fi
+        msg "$(gettext "This topic has been exceeded Maximum number of notes. Topics may not exceed 200 items.")" info "$tpe" & exit; fi
             
         if [ -z "${tpe}" ]; then
         [ "$DT_r" ] && rm -fr "$DT_r"
@@ -420,7 +420,7 @@ list_words_edit() {
                 audio="${trgt,,}"
                 
             if [ "$(wc -l < "$DC_tlt/0.cfg")" -ge 200 ]; then
-                printf "\n\n${trgt}" >> ./logw
+                printf "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> ./logw
             
             else
                 translate "${trgt}" auto $lgs > "tr.$c"
@@ -449,7 +449,7 @@ list_words_edit() {
                     index word "${trgt}" "${tpc}" "${sname}"
                 
                 else
-                    printf "\n\n#$n $sntc" >> ./logw
+                    printf "\n\n#$n $trgt" >> ./logw
                     [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"; fi
             fi
             let n++
@@ -481,7 +481,7 @@ list_words_dclik() {
     
     if [ "$(wc -l < "$DC_tlt/0.cfg")" -ge 200 ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
-    msg "$(gettext "You have reached the maximum number of notes to this topic. Topics may not exceed 200 items.")" info Info & exit; fi
+    msg "$(gettext "This topic has been exceeded Maximum number of notes. Topics may not exceed 200 items.")" info "$tpe" & exit; fi
 
     info="-$((200 - $(wc -l < "$DC_tlt/0.cfg")))"
     
@@ -591,7 +591,7 @@ list_words_sentence() {
                 index word "${trgt}" "${4}"
             
             else
-                printf "\n\n#$n $sntc" >> ./logw
+                printf "\n\n#$n $trgt" >> ./logw
                 [ "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
             fi
         fi
@@ -628,7 +628,7 @@ process() {
         
     if [[ $ns -ge 200 ]]; then
     [ -d "$DT_r" ] && rm -fr "$DT_r"
-    msg "$(gettext "You have reached the maximum number of notes to this topic. Topics may not exceed 200 items.")" info Info
+    msg "$(gettext "This topic has been exceeded Maximum number of notes. Topics may not exceed 200 items.")" info "$tpe"
     rm -f ./ls "$lckpr" & exit 1; fi
 
     if [ -f "$lckpr" ] && [ ${#@} -lt 4 ]; then
@@ -795,10 +795,9 @@ process() {
                         srce="$(clean_1 "${srce}")"
                         fname=$(nmfile "${trgt}")
                     
-                        # words
                         if [ "$(wc -$c <<<"${sntc}")" = 1 ]; then
                             if [ "$(wc -l < "$DC_tlt"/0.cfg)" -ge 200 ]; then
-                                printf "\n\n#$n $sntc" >> ./wlog
+                                printf "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $sntc" >> ./wlog
                         
                             else
                                 trgt="$(clean_0 "$trgt")"
@@ -822,20 +821,19 @@ process() {
                                     index word "${trgt}" "${tpe}"
 
                                 else
-                                    printf "\n\n#$n $sntc" >> ./wlog
+                                    printf "\n\n#$n $trgt" >> ./wlog
                                     [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
                                 fi
                             fi
-                        
-                        #sentences 
+
                         elif [ "$(wc -$c <<<"$sntc")" -ge 1 ]; then
                             
                             if [ "$(wc -l < "$DC_tlt/0.cfg")" -ge 200 ]; then
-                                printf "\n\n#$n $sntc" >> ./slog
+                                printf "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $sntc" >> ./slog
                         
                             else
                                 if [ ${#sntc} -ge 150 ]; then
-                                    printf "\n\n#$n $sntc" >> ./slog
+                                    printf "\n\n#$n [$(gettext "Too long sentence")] $sntc" >> ./slog
                             
                                 else
                                     if [ "$trans" = TRUE ]; then
@@ -867,7 +865,7 @@ process() {
                                         fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
 
                                     else
-                                        printf "\n\n#$n $sntc" >> ./slog
+                                        printf "\n\n#$n $trgt" >> ./slog
                                         [ -f "$DM_tlt/$fname.mp3" ] && rm "$DM_tlt/$fname.mp3"
                                     fi
                                     
@@ -895,7 +893,7 @@ process() {
                         audio="${trgt,,}"
 
                         if [ "$(wc -l < "$DC_tlt/0.cfg")" -ge 200 ]; then
-                            printf "\n\n#$n ${trgt}" >> ./wlog
+                            printf "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> ./wlog
                     
                         else
                             srce="$(translate "${trgt}" auto $lgs)"
@@ -923,7 +921,7 @@ process() {
                                 echo "${trgt}" >> addw
                                 
                             else
-                                printf "\n\n#$n $sntc" >> ./wlog
+                                printf "\n\n#$n $trgt" >> ./wlog
                                 [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
                             fi
                         fi

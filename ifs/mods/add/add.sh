@@ -73,11 +73,11 @@ function index() {
         "$DC_tlt/practice/win" "$DC_tlt/practice/iin" \
         "$DC_tlt/6.cfg"
         
-    elif [ "$1" = missing ]; then
+    elif [ "$1" = txt_missing ]; then
     
         echo "${item}" >> "$DC_tlt/0.cfg"
         echo "${item}" >> "$DC_tlt/1.cfg"
-        echo "${item}" >> "$DC_tlt/3.cfg"
+        echo "${item}" >> "$DC_tlt/4.cfg"
     fi
     
     sleep 0.5
@@ -269,7 +269,7 @@ function list_words() {
     
     sed -i 's/\. /\n/g' "$bw"
     sed -i 's/\. /\n/g' "$aw"
-    cd "$DT_r"; touch "$DT_r/A.$2" "$DT_r/B.$2" "$DT_r/g.$2"; n=1
+    DT_r="$1"; cd "$DT_r"; touch "$DT_r/A.$2" "$DT_r/B.$2" "$DT_r/g.$2"; n=1
     
     if [ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]; then
         while [[ $n -le "$(wc -l < "$aw")" ]]; do
@@ -289,9 +289,9 @@ function list_words() {
         done
     fi
     
-    grmrk=$(sed ':a;N;$!ba;s/\n/ /g' < "$DT_r/g.$r")
-    lwrds=$(< "$DT_r/A.$r")
-    pwrds=$(tr '\n' '_' < "$DT_r/B.$r")
+    grmrk="$(sed ':a;N;$!ba;s/\n/ /g' < "$DT_r/g.$r")"
+    lwrds="$(< "$DT_r/A.$r")"
+    pwrds="$(tr '\n' '_' < "$DT_r/B.$r")"
 }
 
 
@@ -406,7 +406,10 @@ function dlg_form_0() {
 
 
 function dlg_form_1() {
-
+    
+    #<small>$lgtl</small>
+    #<small>${lgsl^}</small>
+    #$atopic
     yad --form --title="$(gettext "New note")" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --separator="\n" \
@@ -439,10 +442,7 @@ function dlg_form_2() {
     --button=gtk-add:0
 }
 
-#<small>$lgtl</small>
-#<small>${lgsl^}</small>
-#$atopic
- 
+
 function dlg_radiolist_1() {
     
     echo "$1" | awk '{print "FALSE\n"$0}' | \
@@ -476,6 +476,7 @@ function dlg_checklist_1() {
 
 function dlg_checklist_3() {
 
+    #--button="$(gettext "New topic")":"$DS/add.sh 'new_topic'" \
     slt=$(mktemp $DT/slt.XXXX.x)
     cat "$1" | awk '{print "FALSE\n"$0}' | \
     yad --list --checklist --title="$2" \
@@ -489,7 +490,6 @@ function dlg_checklist_3() {
     --column="$(gettext "sentences")" \
     --button="$(gettext "Cancel")":1 \
     --button=$(gettext "Reorder"):2 \
-    --button="$(gettext "New topic")":"$DS/add.sh 'new_topic'" \
     --button="gtk-add":0 > "$slt"
 }
 
@@ -514,9 +514,9 @@ function dlg_text_info_3() {
     --text="$1" \
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" \
-    --wrap --margins=4 \
+    --wrap --margins=5 \
     --center --on-top \
-    --width=510 --height=330 --borders=5 \
+    --width=510 --height=450 --borders=5 \
     "$3" --button="$(gettext "OK")":1
 }
 

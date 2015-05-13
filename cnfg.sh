@@ -24,6 +24,7 @@ info2=" $(gettext "Are you sure you want to change the language setting to learn
 cd "$DS/addons"
 [ -n "$(< "$DC_s/1.cfg")" ] && cfg=1 || > "$DC_s/1.cfg"
 cnf1=$(mktemp "$DT/cnf1.XXXX")
+
 desktopfile="[Desktop Entry]
 Name=Idiomind
 GenericName=Learning Tool
@@ -33,6 +34,7 @@ Terminal=false
 Type=Application
 Icon=idiomind
 StartupWMClass=Idiomind"
+
 lang=('English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian')
 sets=('grammar' 'list' 'tasks' 'trans' 'trd_trgt' 'text' 'audio' \
@@ -55,9 +57,8 @@ set_lang() {
     
     echo "$tpc" > "$DM_tl/.8.cfg"
     language="$1"
-    if [ ! -d "$DM_t/$language" ]; then
-    mkdir "$DM_t/$language"
-    mkdir "$DM_t/$language/.share"; fi
+    if [ ! -d "$DM_t/$language/.share" ]; then
+    mkdir -p "$DM_t/$language/.share"; fi
     echo "$language" > "$DC_s/6.cfg"
     echo "$lgsl" >> "$DC_s/6.cfg"
     "$DS/stop.sh" 4
@@ -113,10 +114,10 @@ yad --plug=$KEY --form --tabnum=1 \
 --field=":LBL" " " \
 --field="$(gettext "I'm learning")":CB "$lgtl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
 --field="$(gettext "My language is")":CB "$lgsl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
---field=" :LBL" "2" \
---field=":LBL" "2" \
+--field=" :LBL" " " \
+--field=":LBL" " " \
 --field="<small>$(gettext "Speech Synthesizer (default espeak)")</small>" "$synth" \
---field=" :LBL" "2" \
+--field=" :LBL" " " \
 --field="$(gettext "Quick Help")":BTN "$DS/ifs/tls.sh help" \
 --field="$(gettext "Check for Updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
 --field="$(gettext "Feedback")":BTN "$DS/ifs/tls.sh 'fback'" \

@@ -202,16 +202,17 @@ if [[ "$conten" = A ]]; then
                 | sed 's/}],"final":true}],"result_index":0}//g')"
 
                 if [ ${#trgt} -ge 400 ]; then
-                printf "\n\n#$n  $(gettext "Too long sentence:")\n$trgt" >> log
+                printf "\n\n#$n [$(gettext "Too long sentence")] $trgt" >> ./slog
                 
                 elif [ -z "$trgt" ]; then
-                index missing "#$n" "$tpe"
-                fname=$(nmfile "#$n")
+                trgt="#$n [$(gettext "Text missing")]"
+                index txt_missing "$trgt" "$tpe"
+                fname=$(nmfile "$trgt")
                 cp -f "$n.mp3" "$DM_tlt/$fname.mp3"
-                printf "\n\n#$n  $(gettext "Text missing")" >> log
+                printf "\n\n#$n [$(gettext "Text missing")] $trgt" >> ./slog
                 
                 elif [ "$(wc -l < "$DC_tlt"/0.cfg)" -ge 200 ]; then
-                printf "\n\n#$n  $trgt" >> ./slog
+                printf "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> ./slog
                 
                 else
                     trgt=$(clean_1 "${trgt}")
@@ -306,7 +307,7 @@ if [[ "$conten" = A ]]; then
         S=" $(gettext "Sentence")"; fi
         fi
         
-        logs=$(cat ./slog ./wlog ./log)
+        logs=$(cat ./slog ./wlog)
         adds=$(cat ./adds ./addw | wc -l)
         
         if [[ "$adds" -ge 1 ]]; then

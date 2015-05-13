@@ -107,9 +107,6 @@ CNFG=$(yad --form --title="$(gettext "Podcasts settings")" \
 --button="$(gettext "Syncronize")":5 \
 --button="gtk-apply":0)
 
-#--field="$(gettext "Remove Episodes")":FBTN "$DSP/mngr.sh 'delete_1'" \
-#--field="$(gettext "Remove Saved Episodes")":FBTN "$DSP/mngr.sh 'delete_2'" \
-
 ret=$?
 
 if [ "$ret" -eq 0 ]; then
