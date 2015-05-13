@@ -151,10 +151,16 @@ mark_as_learned() {
 
     if [ "$tpc" != "$2" ]; then
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
-    
+
     if [ "$(wc -l < "$DC_tlt/0.cfg")" -le 10 ]; then
     msg "$(gettext "Not enough items to perform the operation.")\n " \
     info "$(gettext "Not enough items")" & exit; fi
+    
+    if [ "$((( $(date +%s) - $(date -d "$(sed -n 8p "$DC_tlt/12.cfg" \
+    | grep -o 'date_c="[^"]*' | grep -o '[^"]*$')" +%s) ) /(24 * 60 * 60 )))" -lt 5 ]; then
+    msg_2 "$(gettext "Are you sure it's not too soon?")\n" \
+    gtk-dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"; fi
+    ret=$(echo $?); if [ $ret = 1 ]; then exit 1; fi
     
     if [ $3 = 1 ]; then
     kill -9 $(pgrep -f "yad --list ") &
