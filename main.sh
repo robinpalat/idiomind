@@ -216,9 +216,9 @@ if grep -o '.idmnd' <<<"$1"; then
                 mkdir -p "$DM_t/$language_target/$tpi/.conf"
                 DM_tlt="$DM_t/$language_target/$tpi"
                 DC_tlt="$DM_t/$language_target/$tpi/.conf"
-                if [ -d "$tmp/audio" ]; then
-                cp -n "$tmp/audio"/*.mp3 "$DM_t/$language_target/.share"/
-                rm -fr "$tmp/audio"; fi
+                if [ -d "$tmp/share" ]; then
+                cp -n "$tmp/share"/*.mp3 "$DM_t/$language_target/.share"/
+                rm -fr "$tmp/share"; fi
                 n=0
                 while [[ $n -le 13 ]]; do
                 if [ ! -f "$tmp/conf/$n.cfg" ]; then

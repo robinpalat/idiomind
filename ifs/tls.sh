@@ -63,7 +63,6 @@ Vietnamese"
     dir="${2}"
     file="${dir}/conf/id"
     nu='^[0-9]+$'
-    
     dirs="$(find "${dir}"/ -maxdepth 5 -type d | sed '/^$/d' | wc -l)"
     name="$(sed -n 1p < "${file}" | grep -o 'name="[^"]*' | grep -o '[^"]*$')"
     language_source=$(sed -n 2p < "${file}" | grep -o 'language_source="[^"]*' | grep -o '[^"]*$')
@@ -81,45 +80,46 @@ Vietnamese"
 
     if [ "${name}" != "${3}" ] || [ "${#name}" -gt 60 ] || \
     [ `grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${name}"` ]; then
-    msg "$(gettext "File is corrupted.") 1\n" error & exit 1
+    msg "1. $(gettext "File is corrupted.")\n" error & exit 1
     elif ! grep -Fox "${language_source}" <<<"${LANGUAGES}"; then
-    msg "$(gettext "File is corrupted.") 2\n" error && exit 1
+    msg "2. $(gettext "File is corrupted.")\n" error && exit 1
     elif ! grep -Fox "${language_target}" <<<"${LANGUAGES}"; then
-    msg "$(gettext "File is corrupted.") 3\n" error & exit 1
+    msg "3. $(gettext "File is corrupted.")\n" error & exit 1
     elif [ "${#author}" -gt 20 ] || \
     [ `grep -o -E '\.|\*|\/|\@|$|\)|\(|=|-' <<<"${author}"` ]; then
-    msg "$(gettext "File is corrupted.") 4\n" error & exit 1
+    msg "4. $(gettext "File is corrupted.")\n" error & exit 1
     elif [ "${#contact}" -gt 30 ] || \
     [ `grep -o -E '\*|\/|$|\)|\(|=' <<<"${contact}"` ]; then
-    msg "$(gettext "File is corrupted.") 5\n" error & exit 1
+    msg "5. $(gettext "File is corrupted.")\n" error & exit 1
     elif ! grep -Fox "${category}" <<<"${CATEGORIES}"; then
-    msg "$(gettext "File is corrupted.") 6\n" error & exit 1
-    elif ! [[ 1 =~ $nu ]] || [ "${#link}" -gt 400 ]; then
-    msg "$(gettext "File is corrupted.") 7\n" error & exit 1
+    msg "6. $(gettext "Unknown category.")\n" error & exit 1
+    elif ! [[ 1 =~ $nu ]] || [ "${#link}" -gt 4 ]; then
+    msg "7. $(gettext "File is corrupted.")\n" error & exit 1
     elif ! [[ $date_c =~ $nu ]] || [ "${#date_c}" -gt 12 ] && \
     [ -n "${date_c}" ]; then
-    msg "$(gettext "File is corrupted.") 8\n" error & exit 1
+    msg "8. $(gettext "File is corrupted.")\n" error & exit 1
     elif ! [[ $date_u =~ $nu ]] || [ "${#date_u}" -gt 12 ] && \
     [ -n "${date_u}" ]; then
-    msg "$(gettext "File is corrupted.") 9\n" error & exit 1
+    msg "9. $(gettext "File is corrupted.")\n" error & exit 1
     elif ! [[ $nwords =~ $nu ]] || [ "${nwords}" -gt 200 ]; then
-    msg "$(gettext "File is corrupted.") 10\n" error & exit 1
+    msg "10. $(gettext "File is corrupted.")\n" error & exit 1
     elif ! [[ $nsentences =~ $nu ]] || [ "${nsentences}" -gt 200 ]; then
-    msg "$(gettext "File is corrupted.") 11\n" error & exit 1
+    msg "11. $(gettext "File is corrupted.")\n" error & exit 1
     elif ! [[ $nimages =~ $nu ]] || [ "${nimages}" -gt 200 ]; then
-    msg "$(gettext "File is corrupted.") 12\n" error & exit 1
+    msg "12. $(gettext "File is corrupted.")\n" error & exit 1
     elif ! [[ $level =~ $nu ]] || [ "${#level}" -gt 2 ]; then
-    msg "$(gettext "File is corrupted.") 13\n" error & exit 1
+    msg "13. $(gettext "Incorrect value of learning difficulty.")\n" error & exit 1
     elif grep "invalid" <<<"$chckf"; then
-    msg "$(gettext "File is corrupted.") 14\n" error & exit 1
+    msg "14. $(gettext "File is corrupted.")\n" error & exit 1
     elif [[ $dirs -gt 6 ]] ; then
-    msg "$(gettext "File is corrupted.") 15\n" error & exit 1
+    msg "15. $(gettext "File is corrupted.")\n" error & exit 1
     else
     head -n14 < "${file}" > "$DT/$name.cfg"
     fi
 }
 
 details() {
+    
     cd "$2"
     dirs="$(find . -maxdepth 5 -type d)"
     files="$(find . -type f -exec file {} \; 2> /dev/null)"
@@ -140,14 +140,14 @@ details() {
 
     echo -e "
 $(gettext "SUMMARY")
-==========
+
 Directories: $wcdirs
 Files: $wcfiles
 Others files: $others
 
 
 $(gettext "FILES")
-==========
+
 $files
 
 ./files
@@ -159,7 +159,7 @@ $hfiles
 $exfiles
 
 $(gettext "TEXT FILES")
-====================
+
 
 $SRFL1
 
@@ -403,7 +403,7 @@ videourl() {
     --separator="" \
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --center --on-top \
-    --width=480 --height=100 --borders=5 \
+    --width=420 --height=100 --borders=5 \
     --field="$(gettext "URL")" \
     --button="$(gettext "Cancel")":1 \
     --button=gtk-ok:0)
@@ -415,9 +415,6 @@ videourl() {
     else msg "$(gettext "Invalid Url Youtube")\n" info \
     "$(gettext "Invalid Url Youtube")"; fi
 }
-
-
-
 
 attatchments() {
 

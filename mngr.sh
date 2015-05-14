@@ -510,9 +510,8 @@ edit() {
         cmd_move="$DS/ifs/mods/mngr/mngr.sh 'position' '$item_pos' "\"$index_1\"""
         cmd_words="$DS/add.sh list_words_edit "\"$audiofile_2\"" F $c"
         cmd_image="$DS/ifs/tls.sh set_image "\"$audiofile_2\"" sentence"
-        cmd_play="/usr/share/idiomind/ifs/tls.sh play '$DM_tlt/$fname.mp3'"
         cmd_delete="$DS/mngr.sh delete_item "\"$item\"""
-        cmd_play="play "\"$DM_tlt/$fname.mp3\"""
+        cmd_play="$DS/ifs/tls.sh play "\"$DM_tlt/$fname.mp3\"""
         [ -z "$trgt" ] && trgt="$item"
         
         dlg_form_2 "$file_tmp"
@@ -657,8 +656,8 @@ rename_topic() {
     source "$DS/ifs/mods/add/add.sh"
     info2=$(wc -l < "$DM_tl/.1.cfg")
     restr="$(ls "$DS/addons/")"
-    jlb="${2}"
-    jlb="$(clean_2 "$jlb")"
+    jlb="$(clean_2 "${2}")"
+    
     if grep -Fxo "$jlb" <<<"$restr"; then jlb="$jlb."; fi
     chck="$(grep -Fxo "$jlb" "$DM_tl/.1.cfg" | wc -l)"
   

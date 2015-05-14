@@ -273,7 +273,7 @@ cp -r ./* "$DT_u/$tpc/"
 cp -r "./words" "$DT_u/$tpc/"
 cp -r "./words/images" "$DT_u/$tpc/words"
 mkdir "$DT_u/$tpc/files"
-mkdir "$DT_u/$tpc/audio"
+mkdir "$DT_u/$tpc/share"
 auds="$(uniq < "$DC_tlt/4.cfg" \
 | sed 's/\n/ /g' | sed 's/ /\n/g' \
 | grep -v '^.$' | grep -v '^..$' \
@@ -283,7 +283,7 @@ auds="$(uniq < "$DC_tlt/4.cfg" \
 
 while read -r audio; do
 if [ -f "$DM_tl/.share/$audio.mp3" ]; then
-cp -f "$DM_tl/.share/$audio.mp3" "$DT_u/$tpc/audio/$audio.mp3"; fi
+cp -f "$DM_tl/.share/$audio.mp3" "$DT_u/$tpc/share/$audio.mp3"; fi
 done <<<"$auds"
 
 cp -f "$DC_tlt/0.cfg" "$DT_u/$tpc/conf/0.cfg"
@@ -300,7 +300,7 @@ mv "$tpc.tar.gz" "$id.$tpc.idmnd"
 du=$(du -h "$id.$tpc.idmnd" | cut -f1)
 [ -d "$DT_u/$tpc" ] && rm -fr "$DT_u/$tpc"
 dte=$(date "+%d %B %Y")
-notify-send "$(gettext "Upload in progress")" "$(gettext "This can take some time. Please wait.")" -i idiomind -t 6000
+notify-send "$(gettext "Upload in progress")" "$(gettext "This can take some time, please wait")" -i idiomind -t 6000
 
 lftp -u "`sed -n 4p <<<"$data" | grep -o 'USER="[^"]*' | grep -o '[^"]*$'`",\
 "`sed -n 5p <<<"$data" | grep -o 'KEY="[^"]*' | grep -o '[^"]*$'`" \
