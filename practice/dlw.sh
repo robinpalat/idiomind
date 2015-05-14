@@ -64,7 +64,8 @@ fonts() {
 cuestion() {
     
     fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
-    cmd_play="play '$drtt/$fname.mp3'"
+    cmd_play="play "\"$drtt/$fname.mp3\"""
+    
     (sleep 0.5 && play "$drtt/$fname".mp3) &
     yad --form --title="$(gettext "Practice")" \
     --text="$lcuestion" \

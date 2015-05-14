@@ -407,10 +407,11 @@ edit() {
         dftn="$(sed -n 2p <<<"$fields")"
         note="$(sed -n 3p <<<"$fields")"
         a=0; else a=1; fi
-        cmd_move="$DS/ifs/mods/mngr/mngr.sh 'position' '$item_pos' '$index_1'"
+        cmd_move="$DS/ifs/mods/mngr/mngr.sh 'position' '$item_pos' "\"$index_1\"""
         cmd_delete="$DS/mngr.sh delete_item "\"$item\"""
-        cmd_image="$DS/ifs/tls.sh set_image '$audiofile_1' word"
+        cmd_image="$DS/ifs/tls.sh set_image "\"$audiofile_1\"" word"
         cmd_definition="/usr/share/idiomind/ifs/tls.sh definition '$trgt'"
+        cmd_play="play "\"$DM_tlt/words/$fname.mp3\"""
         
         dlg_form_1 "$file_tmp"
         ret=$(echo "$?")
@@ -506,11 +507,12 @@ edit() {
         lwrd="$(grep -o -P '(?<=IWI3I0I).*(?=IPWI3I0I)' <<<"$tags")"
         pwrds="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"$tags")"
         a=0; else a=1; fi
-        cmd_move="$DS/ifs/mods/mngr/mngr.sh 'position' '$item_pos' '$index_1'"
-        cmd_words="$DS/add.sh list_words_edit '$audiofile_2' F $c"
+        cmd_move="$DS/ifs/mods/mngr/mngr.sh 'position' '$item_pos' "\"$index_1\"""
+        cmd_words="$DS/add.sh list_words_edit "\"$audiofile_2\"" F $c"
+        cmd_image="$DS/ifs/tls.sh set_image "\"$audiofile_2\"" sentence"
         cmd_play="/usr/share/idiomind/ifs/tls.sh play '$DM_tlt/$fname.mp3'"
         cmd_delete="$DS/mngr.sh delete_item "\"$item\"""
-        cmd_image="$DS/ifs/tls.sh set_image '$audiofile_2' sentence"
+        cmd_play="play "\"$DM_tlt/$fname.mp3\"""
         [ -z "$trgt" ] && trgt="$item"
         
         dlg_form_2 "$file_tmp"

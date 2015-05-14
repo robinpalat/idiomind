@@ -147,7 +147,7 @@ function clean_1() {
     | tr -s '&' ' ' | tr -s ':' ' ' | tr -s '|' ' ' \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//; s/ *$//g'
-    else #FIX
+    else
     echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" \
     | tr -s '“' ' ' | tr -s '”' ' ' | tr -s '"' ' ' \
     | tr -s '&' ' ' | tr -s ':' ' ' | tr -s '|' ' ' \

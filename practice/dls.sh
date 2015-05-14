@@ -57,7 +57,7 @@ dialog2() {
     --text-align=left --align=left --image-on-top \
     --height=225 --width=560 --borders=3 \
     --button="$(gettext "Exit")":1 \
-    --button="$(gettext "Listen")":"play '$DM_tlt/$fname.mp3'" \
+    --button="$(gettext "Listen")":"$cmd_play" \
     --button=" $(gettext "OK") >> ":0)
     }
     
@@ -72,11 +72,16 @@ check() {
     --undecorated --buttons-layout=end \
     --width=560 --height=250 --borders=12 \
     --button="$(gettext "Exit")":1 \
-    --button="$(gettext "Listen")":"play '$DM_tlt/$fname.mp3'" \
+    --button="$(gettext "Listen")":"$cmd_play" \
     --button="$(gettext "Next")":2 \
     --field="":lbl --text="<span font_desc='Free Sans 14'>$wes</span>\\n" \
     --field="<span font_desc='Free Sans 9'>$(sed 's/\,*$/\./g' <<<"$OK")\n\nhits $prc</span>\n":lbl
     }
+    
+    
+    
+    
+    
     
 get_text() {
     
@@ -147,6 +152,7 @@ while [[ $n -le "$(wc -l < ./lsin1)" ]]; do
     if [ -f "$DM_tlt/$fname.mp3" ]; then
 
         get_text "$trgt"
+        cmd_play="play "\"$DM_tlt/$fname.mp3\"""
 
         (sleep 0.5 && play "$DM_tlt/$fname.mp3") &
         dialog2 "$trgt"

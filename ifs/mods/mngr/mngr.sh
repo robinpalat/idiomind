@@ -82,9 +82,9 @@ function dlg_form_1() {
     yad --form --title="$trgt" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --separator="\n" --selectable-labels \
-    --align=center --text-align=center \
-    --window-icon="$DS/images/icon.png" --buttons-layout=end --scroll \
-    --columns=2 --center \
+    --window-icon="$DS/images/icon.png" \
+    --align=center --text-align=center --columns=2 \
+    --buttons-layout=end --scroll --center --on-top \
     --width=680 --height=540 --borders=10 \
     --field="<small>$lgtl</small>" "$trgt" \
     --field="<small>$lgsl</small>" "$srce" \
@@ -93,7 +93,7 @@ function dlg_form_1() {
     --field="<small>$(gettext "Example")</small>":TXT "$exmp" \
     --field="<small>$(gettext "Definition")</small>":TXT "$dftn" \
     --field="<small>$(gettext "Note")</small>":TXT "$note" \
-    --field="<small>$(gettext "Listen")</small>":FBTN "play '$DM_tlt/words/$fname.mp3'" \
+    --field="<small>$(gettext "Listen")</small>":FBTN "$cmd_play" \
     --field="$(gettext "Mark")":CHK "$mark" \
     --field="<small>$(gettext "Search definition")</small>":FBTN "$cmd_definition" \
     --field=" ":LBL " " \
@@ -114,8 +114,8 @@ function dlg_form_2() {
     yad --form --title="$trgt" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --separator="\n" --selectable-labels \
-    --window-icon="$DS/images/icon.png" --center --align=center \
-    --buttons-layout=end \
+    --window-icon="$DS/images/icon.png" \
+    --buttons-layout=end --align=center --center --on-top \
     --width=650 --height=540 --borders=10 \
     --field="$(gettext "Mark")":CHK "$mark" \
     --field=" $lbl_2":$t "$type" \

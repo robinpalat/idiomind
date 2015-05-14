@@ -504,7 +504,7 @@ echo "</body>" >> "$DC_tlt/att.html"
         --uri="$DC_tlt/att.html" --browser \
         --window-icon="$DS/images/icon.png" --center \
         --width=680 --height=580 --borders=10 \
-        --button="$(gettext "Folder")":"xdg-open '$DM_tlt/files'" \
+        --button="$(gettext "Folder")":"xdg-open \"$DM_tlt\"/files" \
         --button="$(gettext "Video URL")":2 \
         --button="gtk-add":0 \
         --button="gtk-close":1

@@ -77,7 +77,7 @@ if [[ "$conten" = A ]]; then
 
     cd "$DT_r"
     left=$((200 - $(wc -l < "$DC_tlt/4.cfg")))
-    key="$(sed -n 2p < "$HOME/.config/idiomind/addons/gts.cfg" \
+    key="$(sed -n 2p "$HOME/.config/idiomind/addons/gts.cfg" \
     | grep -o key=\"[^\"]* | grep -o '[^"]*$')"
     test="$DS/addons/Google translator/test.flac"
     LNK='https://console.developers.google.com'
@@ -209,7 +209,7 @@ if [[ "$conten" = A ]]; then
                 index txt_missing "$trgt" "$tpe"
                 fname=$(nmfile "$trgt")
                 cp -f "$n.mp3" "$DM_tlt/$fname.mp3"
-                printf "\n\n#$n [$(gettext "Text missing")] $trgt" >> ./slog
+                printf "\n\n#$n [$(gettext "Text missing")]" >> ./slog
                 
                 elif [ "$(wc -l < "$DC_tlt"/0.cfg)" -ge 200 ]; then
                 printf "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> ./slog
