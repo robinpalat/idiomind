@@ -108,7 +108,7 @@ Vietnamese"
     elif ! [[ $nimages =~ $nu ]] || [ "${nimages}" -gt 200 ]; then
     msg "12. $(gettext "File is corrupted.")\n" error & exit 1
     elif ! [[ $level =~ $nu ]] || [ "${#level}" -gt 2 ]; then
-    msg "13. $(gettext "Incorrect value of learning difficulty.")\n" error & exit 1
+    msg "13. $(gettext "Incorrect value of \"Learning difficulty\".")\n" error & exit 1
     elif grep "invalid" <<<"$chckf"; then
     msg "14. $(gettext "File is corrupted.")\n" error & exit 1
     elif [[ $dirs -gt 6 ]] ; then

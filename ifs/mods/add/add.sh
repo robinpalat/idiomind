@@ -1,8 +1,8 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-if [ -z "$lgtl" ] || [ -z "$lgsl" ] ]; then
-msg "$(gettext "Please check the language settings in the preferences dialog.")" error && exit 1
+if ([ -z "$lgtl" ] || [ -z "$lgsl" ]); then
+msg "$(gettext "Please check the language settings in the preferences dialog.")\n" error & exit 1
 fi
 
 function mksure() {
@@ -360,7 +360,7 @@ function fetch_audio() {
             dictt "${word,,}" $3
             
             if [ -f "$3/${word,,}.mp3" ]; then
-                    mv -f "$3/${word,,}.mp3" "$4/${word,,}.mp3"
+                mv -f "$3/${word,,}.mp3" "$4/${word,,}.mp3"
             else
                 voice "$word" "$3" "$4/${word,,}.mp3"
             fi

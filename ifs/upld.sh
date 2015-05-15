@@ -225,7 +225,6 @@ level=$(echo "$upld" | cut -d "|" -f5)
 Author=$(echo "$upld" | cut -d "|" -f2)
 Mail=$(echo "$upld" | cut -d "|" -f3)
 notes=$(echo "$upld" | cut -d "|" -f6)
-data=$(curl http://idiomind.sourceforge.net/doc/SITE_TMP)
 
 if [ -z "$Ctgry" ]; then
 msg "$(gettext "Please select a category.")\n " info
@@ -239,7 +238,7 @@ fi
 
 internet; cd "$DT"
 mkdir "$DT/upload"
-DT_u="$DT/upload"
+DT_u="$DT/upload/"
 mkdir -p "$DT/upload/$tpc/conf"
 cd "$DM_tlt/words/images"
 if [ $(ls -1 *.jpg 2>/dev/null | wc -l) != 0 ]; then
@@ -302,12 +301,19 @@ du=$(du -h "$id.$tpc.idmnd" | cut -f1)
 dte=$(date "+%d %B %Y")
 notify-send "$(gettext "Upload in progress")" "$(gettext "This can take some time, please wait")" -i idiomind -t 6000
 
-lftp -u "`sed -n 4p <<<"$data" | grep -o 'USER="[^"]*' | grep -o '[^"]*$'`",\
-"`sed -n 5p <<<"$data" | grep -o 'KEY="[^"]*' | grep -o '[^"]*$'`" \
-"`sed -n 3p <<<"$data" | grep -o 'FTPHOST="[^"]*' | grep -o '[^"]*$'`" << END_SCRIPT
-mirror --reverse ./ public_html/$lgs/$lnglbl/$Ctgry/
-quit
-END_SCRIPT
+url="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
+| grep -o 'UPLOADS="[^"]*' | grep -o '[^"]*$')"
+export tpc id DT_u url
+python << END
+import requests
+import os
+DT_u = os.environ['DT_u']
+id = os.environ['id']
+tpc = os.environ['tpc']
+url = os.environ['url']
+files = {'file': open(DT_u + id + "." + tpc + ".idmnd", 'rb')}
+r = requests.post(url, files=files)
+END
 
 exit=$?
 if [[ $exit = 0 ]]; then
@@ -316,7 +322,7 @@ if [[ $exit = 0 ]]; then
     image=dialog-ok
 else
     sleep 10
-    info="$(gettext "A problem has occurred with the file upload, try again later.")"
+    info="$(gettext "A problem has occurred with the file upload, try again later.")\n"
     image=dialog-warning
 fi
 
