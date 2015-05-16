@@ -295,23 +295,25 @@ find "$DT_u" -type f -exec chmod 644 {} \;
 cd "$DT_u"
 tar -cvf "$tpc.tar" "$tpc"
 gzip -9 "$tpc.tar"
-mv "$tpc.tar.gz" "$id.$tpc.idmnd"
-du=$(du -h "$id.$tpc.idmnd" | cut -f1)
+mv "$tpc.tar.gz" "$id.$tpc.$lgt"
+du=$(du -h "$id.$tpc.$lgt" | cut -f1)
 [ -d "$DT_u/$tpc" ] && rm -fr "$DT_u/$tpc"
 dte=$(date "+%d %B %Y")
 notify-send "$(gettext "Upload in progress")" "$(gettext "This can take some time, please wait")" -i idiomind -t 6000
 
 url="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
 | grep -o 'UPLOADS="[^"]*' | grep -o '[^"]*$')"
-export tpc id DT_u url
+
+export tpc id DT_u url lgt
 python << END
 import requests
 import os
 DT_u = os.environ['DT_u']
 id = os.environ['id']
 tpc = os.environ['tpc']
+lgt = os.environ['lgt']
 url = os.environ['url']
-files = {'file': open(DT_u + id + "." + tpc + ".idmnd", 'rb')}
+files = {'file': open(DT_u + id + "." + tpc + "." + lgt, 'rb')}
 r = requests.post(url, files=files)
 END
 
@@ -329,7 +331,7 @@ fi
 msg "$info" $image
 
 [ -d "$DT_u/$tpc" ] && rm -fr "$DT_u/$tpc"
-[ "$DT_u/$id.$tpc.idmnd" ] && rm -f "$DT_u/$id.$tpc.idmnd"
+[ "$DT_u/$id.$tpc.$lgt" ] && rm -f "$DT_u/$id.$tpc.$lgt"
 [ "$DT_u/$tpc.tar" ] && rm -f "$DT_u/$tpc.tar"
 [ "$DT_u/$tpc.tar.gz" ] && rm -f "$DT_u/$tpc.tar.gz"
 [ -d "$DT_u" ] && rm -fr "$DT_u"
