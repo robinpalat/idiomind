@@ -87,7 +87,7 @@ function new_session() {
     echo "$DESKTOP_SESSION" >> "$DC_s/10.cfg"
     gconftool-2 --get /desktop/gnome/interface/font_name \
     | cut -d ' ' -f 2 >> "$DC_s/10.cfg"
-    [ `wc -l < "$DC_s/1.cfg"` -lt 19 ] && rm "$DC_s/10.cfg"
+    [ `wc -l < "$DC_s/1.cfg"` -lt 19 ] && rm "$DC_s/1.cfg"
 
     # log file
     if [ -f "$DC_s/8.cfg" ]; then
@@ -447,10 +447,12 @@ panel() {
     new_session; fi
     
     if [ -f "$DC_s/10.cfg" ]; then
+    nu='^[0-9]+$'
     x=$(($(sed -n 2p "$DC_s/10.cfg")/2))
-    y=$(($(sed -n 3p "$DC_s/10.cfg")/2))
-    else x=200; y=200; fi
-    
+    y=$(($(sed -n 3p "$DC_s/10.cfg")/2)); fi
+    if ! [[ $x =~ $nu ]]; then x=100; fi
+    if ! [[ $y =~ $nu ]]; then y=100; fi
+
     yad --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
     --always-print-result \
