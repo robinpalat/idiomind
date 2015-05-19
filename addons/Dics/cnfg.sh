@@ -56,7 +56,7 @@ if [ "$1" = add_dlg ]; then
         script="$DT/new.sh"; else
         printf "$new_script" > "$DT/new.sh"
         script="$DT/new.sh"; fi
-        Name="untitled"
+        Name="New script"
         Language=""
         dialog_edit
         ret=$(echo $?)

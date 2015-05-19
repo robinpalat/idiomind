@@ -14,14 +14,18 @@ echo 2 > "$DC_s/5.cfg"; fi
 
 function list_1() {
     while read list1; do
+        if [ -f "$DMP/cache/$(nmfile "$list1").png" ]; then
         echo "$DMP/cache/$(nmfile "$list1").png"
+        else echo "$DS_a/Podcasts/images/audio.png"; fi
         echo "$list1"
     done < "$DCP/1.cfg"
 }
 
 function list_2() {
     while read list2; do
+        if [ -f "$DMP/cache/$(nmfile "$list2").png" ]; then
         echo "$DMP/cache/$(nmfile "$list2").png"
+        else echo "$DS_a/Podcasts/images/audio.png"; fi
         echo "$list2"
     done < "$DCP/2.cfg"
 }

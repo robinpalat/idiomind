@@ -110,6 +110,15 @@ function upld() {
 if [ "$tpc" != "$2" ]; then
 msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
 
+if [ -d "$DT/upload" ]; then
+msg_2 "$(gettext "Wait until it finishes a previous process")\n" info OK gtk-stop "$(gettext "Warning")"
+ret=$(echo "$?")
+if [[ $ret -eq 1 ]]; then
+rm -fr "$DT/upload"
+"$DS/stop.sh" 5
+fi
+fi
+
 others="$(gettext "Others")"
 comics="$(gettext "Comics")"
 culture="$(gettext "Culture")"
@@ -303,17 +312,14 @@ notify-send "$(gettext "Upload in progress")" "$(gettext "This can take some tim
 
 url="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
 | grep -o 'UPLOADS="[^"]*' | grep -o '[^"]*$')"
-
-export tpc id DT_u url lgt
+upld="$DT_u/$id.$tpc.$lgt"
+export upld url
 python << END
 import requests
 import os
-DT_u = os.environ['DT_u']
-id = os.environ['id']
-tpc = os.environ['tpc']
-lgt = os.environ['lgt']
+upld = os.environ['upld']
 url = os.environ['url']
-files = {'file': open(DT_u + id + "." + tpc + "." + lgt, 'rb')}
+files = {'file': open(upld, 'rb')}
 r = requests.post(url, files=files)
 END
 
@@ -331,9 +337,10 @@ fi
 msg "$info" $image
 
 [ -d "$DT_u/$tpc" ] && rm -fr "$DT_u/$tpc"
-[ "$DT_u/$id.$tpc.$lgt" ] && rm -f "$DT_u/$id.$tpc.$lgt"
-[ "$DT_u/$tpc.tar" ] && rm -f "$DT_u/$tpc.tar"
-[ "$DT_u/$tpc.tar.gz" ] && rm -f "$DT_u/$tpc.tar.gz"
+[ -f "$DT_u/$id.$tpc.$lgt" ] && rm -f "$DT_u/$id.$tpc.$lgt"
+[ -f "$DT_u/$tpc.tar" ] && rm -f "$DT_u/$tpc.tar"
+[ -f "$DT_u/$tpc.tar.gz" ] && rm -f "$DT_u/$tpc.tar.gz"
+[ -f "$DT/$tpc.id" ] && rm -f "$DT/$tpc.id"
 [ -d "$DT_u" ] && rm -fr "$DT_u"
 exit 0
 fi

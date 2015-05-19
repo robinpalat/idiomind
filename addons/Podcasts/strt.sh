@@ -228,8 +228,7 @@ fetch_podcasts() {
                     || [ -z "$title" ]; then
                     continue; fi
                          
-                    if ! grep -Fxo "${title}" \
-                    <<<"$(cat "$DCP/1.cfg" "$DCP/2.cfg" "$DCP/remove")"; then
+                    if ! grep -Fxo "${title}" <<<"$(cat "$DCP/1.cfg" "$DCP/2.cfg" "$DCP/remove")"; then
                     
                         enclosure_url=$(curl -s -I -L -w %"{url_effective}" \
                         --url "$enclosure" | tail -n 1)
@@ -238,7 +237,9 @@ fetch_podcasts() {
                         if [ ! -f "$DMC/$fname.$ex" ]; then
                         cd "$DT_r"; wget -q -c -T 51 -O "media.$ex" "$enclosure_url"
                         else cd "$DT_r"; mv -f "$DMC/$fname.$ex" "media.$ex"; fi
-
+                        
+                        exit=$?
+                        if [[ $exit = 0 ]]; then
                         get_images
                         mv -f "media.$ex" "$DMC/$fname.$ex"
                         mkhtml
@@ -253,6 +254,7 @@ fetch_podcasts() {
                         echo -e "channel=\"${channel}\"" > "$DMC/$fname.item"
                         echo -e "link=\"${link}\"" >> "$DMC/$fname.item"
                         echo -e "title=\"${title}\"" >> "$DMC/$fname.item"
+                        fi
                     fi
                 done <<<"${podcast_items}"
             fi

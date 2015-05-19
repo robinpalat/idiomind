@@ -88,6 +88,6 @@ else
         
     else
         [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
-        msg "$(gettext "File not found")\n$topic\n" error & exit 1
+        msg "$(gettext "No such file or directory")\n$topic\n" error & exit 1
     fi
 fi
