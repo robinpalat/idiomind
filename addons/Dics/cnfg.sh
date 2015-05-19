@@ -10,7 +10,7 @@ lgt=$(lnglss "$lgtl")
 lgs=$(lnglss "$lgsl")
 new_script="#!/bin/bash
 # argument 1 = \"word\"
-# eg.languages: en
+# e.g. languages: en
 Name=\"\"
 Language=\"\"
 Test=\"test\""

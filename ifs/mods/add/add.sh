@@ -275,7 +275,7 @@ function list_words() {
         while [[ $n -le "$(wc -l < "$aw")" ]]; do
         s=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
         t=$(sed -n "$n"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-        echo ISTI"$n"I0I"$t"ISTI"$fetch_audion"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> "$DT_r/A.$2"
+        echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> "$DT_r/A.$2"
         echo "$t"_"$s""" >> "$DT_r/B.$2"
         let n++
         done
