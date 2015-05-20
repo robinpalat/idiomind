@@ -307,7 +307,7 @@ removes() {
     sed -i '/^$/d' "$DCP/1.cfg"; fi
     if grep '^$' "$DCP/2.cfg"; then
     sed -i '/^$/d' "$DCP/2.cfg"; fi
-    echo "$(head -n 500 < "$DCP/remove")" > "$DCP/remove_"
+    echo "$(head -n 1000 < "$DCP/remove")" > "$DCP/remove_"
     mv -f "$DCP/remove_" "$DCP/remove"
     cp -f "$DCP/1.cfg" "$DCP/.11.cfg"
 }
@@ -329,7 +329,6 @@ echo -e " <b>$(gettext "Updating")</b>
 $kept_episodes" > "$DM_tl/Podcasts/update"
 > "$DT/.uptp"
 DT_r="$(mktemp -d "$DT/XXXX")"
-
 fetch_podcasts
 
 if [ -f "$DT_r/log" ]; then new_episodes="$(wc -l < "$DT_r/log")"

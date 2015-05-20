@@ -446,7 +446,7 @@ function dlg_form_2() {
 function dlg_radiolist_1() {
     
     echo "$1" | awk '{print "FALSE\n"$0}' | \
-    yad --list --radiolist --title="$(gettext "Listing words")" \
+    yad --list --radiolist --title="$(gettext "Word list")" \
     --text="<b>$te</b> <small> $info</small>" \
     --name=Idiomind --class=Idiomind \
     --separator="\n" \
@@ -461,7 +461,7 @@ function dlg_radiolist_1() {
 function dlg_checklist_1() {
     
     cat "$1" | awk '{print "FALSE\n"$0}' | \
-    yad --list --checklist --title="$(gettext "Listing words")" \
+    yad --list --checklist --title="$(gettext "Word list")" \
     --text="<small> $2 </small>" \
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" \

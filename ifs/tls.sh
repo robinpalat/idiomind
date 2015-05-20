@@ -711,7 +711,7 @@ set_image() {
     image="--image=$DM_tlt/words/images/$fname.jpg"
     btn1="--button="$(gettext "Change")":3"
     btn2="--button="$(gettext "Delete")":2"
-    else label="--text=<small><a href='file://$DT/search.html'>"$(gettext "Search image related")"</a></small>"; fi
+    else label="--text=<small><a href='file://$DT/search.html'>"$(gettext "Search image")"</a></small>"; fi
 
     if [ "$3" = word ]; then
         
