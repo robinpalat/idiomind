@@ -412,8 +412,8 @@ videourl() {
     ([ ${url:0:29} = 'https://www.youtube.com/watch' ] \
     || [ ${url:0:28} = 'http://www.youtube.com/watch' ]); then \
     echo "$url" > "$DM_tlt/files/video$n.url"
-    else msg "$(gettext "Invalid Url Youtube")\n" info \
-    "$(gettext "Invalid Url Youtube")"; fi
+    else msg "$(gettext "Invalid URL.")\n" error \
+    "$(gettext "Invalid URL")"; fi
 }
 
 attatchments() {

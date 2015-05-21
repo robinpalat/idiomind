@@ -21,9 +21,7 @@
 IFS=$'\n\t'
 if [ ! -d "$HOME/.idiomind" ]; then
     /usr/share/idiomind/ifs/1u.sh & exit
-    if [ ! -d "$HOME/.idiomind" ]; then
-        exit 1
-    fi
+    [ ! -d "$HOME/.idiomind" ] && exit 1
 fi
 
 source /usr/share/idiomind/ifs/c.conf
@@ -321,7 +319,7 @@ function topic() {
                 
             if [ ! -f "$DT/ps_lk" ]; then
                 
-                    apply
+                apply
             fi
             
             if [[ $ret -eq 5 ]]; then
@@ -456,7 +454,7 @@ panel() {
     --always-print-result \
     --window-icon=idiomind \
     --form --fixed --on-top --no-buttons --align=center \
-    --width=130 --height=190 --borders=0 --geometry=150x190-$x-$y \
+    --width=130 --height=185 --borders=0 --geometry=150x190-$x-$y \
     --field=gtk-new:btn "$DS/add.sh 'new_items'" \
     --field=gtk-home:btn "idiomind 'topic'" \
     --field=gtk-index:btn "$DS/chng.sh" \

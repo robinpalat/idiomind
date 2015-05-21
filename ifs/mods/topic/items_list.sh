@@ -103,7 +103,7 @@ function notebook_1() {
     --field="$(gettext "Share")":FBTN "$cmd_share" \
     --field="$(gettext "Delete")":FBTN "$cmd_del" \
     --field=" ":LBL " " > "$cnf4" &
-    yad --notebook --title="$tpc" \
+    yad --notebook --title="Idiomind - $tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
     --center --align=right "$img" --fixed --ellipsize=END --image-on-top \
@@ -151,7 +151,7 @@ function notebook_2() {
     --field="$(gettext "Share")":FBTN "$cmd_share" \
     --field="$(gettext "Delete")":FBTN "$cmd_del" \
     --field=" ":LBL " " > "$cnf4" &
-    yad --notebook --title="$tpc" \
+    yad --notebook --title="Idiomind - $tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
     --center --align=right "$img" --fixed --ellipsize=END --image-on-top \

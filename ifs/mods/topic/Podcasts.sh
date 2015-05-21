@@ -56,7 +56,7 @@ function feedmode() {
     --plug=$KEY --filename="$nt" \
     --wrap --editable --fore='gray30' \
     --show-uri --margins=14 --fontname='vendana 11' > "$fdit" &
-    yad --notebook --title="Podcasts  ${info^}" \
+    yad --notebook --title="Idiomind - Podcasts  ${info^}" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
     --window-icon="$DS/images/icon.png" --image-on-top \

@@ -108,7 +108,7 @@ elif [ "$1" != chngi ]; then
     --window-icon="$DS/images/icon.png" \
     --text-align=$align --center $img --image-on-top \
     --no-headers --ellipsize=END --expand-column=2 --tooltip-column=3 \
-    --width=640 --height=560 --borders=8 \
+    --width=600 --height=560 --borders=8 \
     --column=img:IMG \
     --column=File:TEXT \
     --column=File:HD \
