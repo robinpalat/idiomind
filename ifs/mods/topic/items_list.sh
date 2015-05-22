@@ -172,8 +172,8 @@ function dialog_1() {
     --text="$(gettext "<b>Would you like to review it?</b>\nMore than") $tdays $(gettext "days have passed since you marked this topic as learnt.")" \
     --image=dialog-question \
     --window-icon="$DS/images/icon.png" \
-    --buttons-layout=edge --on-top --center \
-    --width=440 --height=150 --borders=10 \
+    --buttons-layout=edge --center --on-top \
+    --width=450 --height=150 --borders=10 \
     --button=" $(gettext "Not Yet") ":1 \
     --button=" $(gettext "Yes") ":2
 }

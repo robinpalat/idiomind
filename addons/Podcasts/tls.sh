@@ -8,8 +8,8 @@ $(gettext "New episodes")
 $(gettext "Saved epidodes")
 $(gettext "Marks")" >/dev/null 2>&1
 #
-# rsync delete: disable 0/enable 1
-delete=0
+# rsync_delete: disable 0/enable 1
+rsync_delete=0
 
 play() {
 
@@ -236,13 +236,13 @@ sync() {
         "$(gettext "Synchronizing") $A $(gettext "episodes")" -t 8000) &
         fi
 
-        if [ "$delete" = 0 ]; then
+        if [ "$rsync_delete" = 0 ]; then
         
             rsync -az -v --exclude="*.item" --exclude="*.png" \
             --exclude="*.html" --omit-dir-times --ignore-errors "$DM_tl/Podcasts/cache/" "$SYNCDIR"
             exit=$?
             
-        elif [ "$delete" = 1 ]; then
+        elif [ "$rsync_delete" = 1 ]; then
         
             rsync -az -v --delete --exclude="*.item" --exclude="*.png" \
             --exclude="*.html" --omit-dir-times --ignore-errors "$DM_tl/Podcasts/cache/" "$SYNCDIR"
@@ -263,8 +263,8 @@ sync() {
             (sleep 1 && notify-send -i idiomind \
             "$(gettext "Error")" \
             "$(gettext "Error while syncing")" -t 8000) &
-            else
-            echo "Error while syncing" >> "$DM_tl/Podcasts/.conf/feed.err"
+            elif [[ $2 = 0 ]]; then
+            echo "$(gettext "Error while syncing")" >> "$DM_tl/Podcasts/.conf/feed.err"
             fi
         fi
         
@@ -286,15 +286,6 @@ disc_podscats() {
     [ "$lgtl" = Russian ] && src="podcasts \"learning Russian\" OR \"$(gettext "learning Russian")\""
     xdg-open https://www.google.com/search?q="$src"
 
-    #internet
-    #web=""
-    #yad --html --title="$(gettext "Get podcasts")" \
-    #--name=Idiomind --class=Idiomind \
-    #--uri="$web" --browser \
-    #--window-icon="$DS/images/icon.png" --center --on-top --fixed \
-    #--width=550 --height=440 --borders=10 \
-    #--button="$(gettext "Close")":0
-     
 } >/dev/null 2>&1
 
 case "$1" in

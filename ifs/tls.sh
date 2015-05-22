@@ -778,6 +778,7 @@ set_image() {
     (sleep 50 && rm -f "$DT/search.html") & exit
 }  >/dev/null 2>&1
 
+
 mkpdf() {
 
     cd "$HOME"
@@ -1060,6 +1061,8 @@ case "$1" in
     set_image "$@" ;;
     pdf)
     mkpdf ;;
+    html)
+    mkhtml ;;
     fback)
     fback ;;
     about)

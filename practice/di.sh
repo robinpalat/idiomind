@@ -53,7 +53,7 @@ fonts() {
     src=$(eyeD3 "$drtt/$fname.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
     img="$drtt/images/$fname.jpg"
     [ ! -f "$img" ] && img="$DS/practice/img_2.jpg"
-    s=$((48-${#1}))
+    s=$((48-${#src}))
     c=$((28-${#1}))
     cuestion="\n\n<span font_desc='Free Sans $s'><b>$1</b></span>"
     answer="<span font_desc='Free Sans $c'><i>$src</i></span>"
