@@ -38,7 +38,7 @@ function feedmode() {
     nt="$DCP/10.cfg"
     fdit=$(mktemp "$DT/fdit.XXXX")
     c=$(echo $(($RANDOM%100000))); KEY=$c
-    [ -f "$DT/.uptp" ] && info="- $(gettext "Updating")..."
+    [ -f "$DT/.uptp" ] && info="$(gettext "Updating Podcasts")" || info="$(gettext "Podcasts")"
     infolabel="$(< "$DM_tl/Podcasts/update")"
     
     list_1 | yad --list --tabnum=1 \
@@ -56,7 +56,7 @@ function feedmode() {
     --plug=$KEY --filename="$nt" \
     --wrap --editable --fore='gray30' \
     --show-uri --margins=14 --fontname='vendana 11' > "$fdit" &
-    yad --notebook --title="Idiomind - Podcasts  ${info^}" \
+    yad --notebook --title="Idiomind - $info" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
     --window-icon="$DS/images/icon.png" --image-on-top \

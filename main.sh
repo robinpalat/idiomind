@@ -75,7 +75,7 @@ function new_session() {
             sed '/^$/d' "$DT/2.cfg.fix" > "$cfg"
             rm -f "$DT/2.cfg.fix";fi
         let n++
-    done; cd ~/
+    done; cd /
 
     s="$(xrandr | grep '*' | awk '{ print $1 }' \
     | sed 's/x/\n/')"
