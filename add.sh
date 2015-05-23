@@ -65,11 +65,7 @@ new_topic() {
     if [ -n "$jlb" ]; then
     
         mkdir "$DM_tl/$jlb"
-        while read -r t; do
-        if ! grep -Fxo "$t" <<<"$(ls "$DS/addons/")" \
-        >/dev/null 2>&1; then echo "$t"; fi
-        done < <(cd "$DM_tl"; ls -tNd */ \
-        | head -n 30 | sed 's/\///g') > "$DM_tl/.2.cfg"
+        list_inadd > "$DM_tl/.2.cfg"
         "$DS/default/tpc.sh" "$jlb" 1
         "$DS/mngr.sh" mkmn
     fi

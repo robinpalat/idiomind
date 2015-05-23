@@ -632,6 +632,7 @@ delete_topic() {
             rm -f "$DT/tpe"
             > "$DM_tl/.8.cfg"
             > "$DC_s/4.cfg"
+            
             n=0
             while [[ $n -le 4 ]]; do
             if [ "$DM_tl/.$n.cfg" ]; then
@@ -657,6 +658,7 @@ rename_topic() {
     source "$DS/ifs/mods/add/add.sh"
     info2=$(wc -l < "$DM_tl/.1.cfg")
     restr="$(ls "$DS/addons/")"
+    if grep -Fxo "$tpc" < "$DM_tl/.3.cfg"; then i=1; fi
     jlb="$(clean_2 "${2}")"
     
     if grep -Fxo "$jlb" <<<"$restr"; then jlb="$jlb."; fi
@@ -697,13 +699,9 @@ rename_topic() {
         echo "$jlb" > "$DC_s/4.cfg"
         echo "$jlb" > "$DM_tl/.8.cfg"
         echo "$jlb" >> "$DM_tl/.1.cfg"
-        while read -r t; do
-        if ! grep -Fxo "$t" <<<"$(ls "$DS/addons/")" \
-        >/dev/null 2>&1; then echo "$t"; fi
-        done < <(cd "$DM_tl"; ls -tNd */ \
-        | head -n 30 | sed 's/\///g') > "$DM_tl/.2.cfg"
+        list_inadd > "$DM_tl/.2.cfg"
         echo "$jlb" > "$DT/tpe"
-        echo 0 > "$DC_s/5.cfg" 
+        echo 0 > "$DC_s/5.cfg"
         
         n=1
         while [[ $n -le 3 ]]; do
@@ -714,6 +712,7 @@ rename_topic() {
         done
         rm "$DM_tl"/.*.tmp
         [ -d "$DM_tl/$tpc" ] && rm -r "$DM_tl/$tpc"
+        [[ "$i" = 1 ]] &&  echo "$jlb" >> "$DM_tl/.3.cfg"
         
         "$DS/mngr.sh" mkmn & exit 1
     fi

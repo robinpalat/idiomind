@@ -50,7 +50,6 @@ elif [ "$1" = delete_item ]; then
 
     else
         notify-send -i info "$(gettext "Done")" "$item"
-    
         cd "$DCP"
         grep -vxF "$item" "$DCP/.22.cfg" > "$DCP/.22.cfg.tmp"
         sed '/^$/d' "$DCP/.22.cfg.tmp" > "$DCP/.22.cfg"

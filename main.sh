@@ -65,11 +65,7 @@ function new_session() {
     (sleep 20 && "$strt"); done &
 
     #
-    while read -r t; do
-    if ! grep -Fxo "$t" <<<"$(ls "$DS/addons/")" \
-    >/dev/null 2>&1; then echo "$t"; fi
-    done < <(cd "$DM_tl"; ls -tNd */ \
-    | head -n 30 | sed 's/\///g') > "$DM_tl/.2.cfg"
+    list_inadd > "$DM_tl/.2.cfg"
     cd /
 
     s="$(xrandr | grep '*' | awk '{ print $1 }' \
@@ -225,6 +221,7 @@ if grep -o '.idmnd' <<<"$1"; then
                 echo "$language_target" > "$DC_s/6.cfg"
                 echo "$lgsl" >> "$DC_s/6.cfg"
                 echo "$dte" > "$DC_tlt/13.cfg"
+                echo "$tpi" >> "$DM_tl/.3.cfg"
                 "$DS/mngr.sh" mkmn; "$DS/default/tpc.sh" "$tpi" &
             fi
     fi
