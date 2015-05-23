@@ -5,7 +5,7 @@
 source "$DS/ifs/mods/cmns.sh"
 DMC="$DM_tl/Podcasts/cache"
 DCP="$DM_tl/Podcasts/.conf/"
-
+date=$(date +%d)
 
 if [ "$1" = new_item ]; then
 
@@ -82,7 +82,7 @@ elif [ "$1" = deleteall ]; then
 
         rm "$DM_tl/Podcasts/cache"/*
         rm "$DM_tl/Podcasts/.conf/1.cfg"
-        rm "$DM_tl/Podcasts/update"
+        rm "$DM_tl/Podcasts/$date"
         touch "$DM_tl/Podcasts/.conf/1.cfg"
 
         if [ $(cut -d "|" -f1 <<<"$dl") = TRUE ]; then

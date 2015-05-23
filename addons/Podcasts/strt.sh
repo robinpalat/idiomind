@@ -24,6 +24,7 @@ DSP="$DS/addons/Podcasts"
 DMC="$DM_tl/Podcasts/cache"
 DCP="$DM_tl/Podcasts/.conf"
 dfimg="$DSP/images/audio.png"
+date=$(date +%d)
 downloads=2
 
 tmplitem="<?xml version='1.0' encoding='UTF-8'?>
@@ -325,7 +326,7 @@ if [ -f "$DCP/2.cfg" ]; then kept_episodes="$(wc -l < "$DCP/2.cfg")"
 else kept_episodes=0; fi
 echo -e " <b>$(gettext "Updating")</b>
  $(gettext "Latest downloads:") 0  $(gettext "Saved episodes:") \
-$kept_episodes" > "$DM_tl/Podcasts/update"
+$kept_episodes" > "$DM_tl/Podcasts/$date"
 > "$DT/.uptp"
 DT_r="$(mktemp -d "$DT/XXXX")"
 fetch_podcasts
@@ -334,7 +335,7 @@ if [ -f "$DT_r/log" ]; then new_episodes="$(wc -l < "$DT_r/log")"
 else new_episodes=0; fi
 echo -e " $(gettext "Last update:") $(date "+%r %a %d %B")
  $(gettext "Latest downloads:") $new_episodes  $(gettext "Saved episodes:") \
-$kept_episodes "> "$DM_tl/Podcasts/update"
+$kept_episodes "> "$DM_tl/Podcasts/$date"
 
 rm -fr "$DT_r" "$DT/.uptp"
 
@@ -349,7 +350,7 @@ else
     if [[ "$1" != 0 ]]; then
     notify-send -i idiomind \
     "$(gettext "Feeds updated")" \
-    "$(gettext "No change since the last update")" -t 8000
+    "$(gettext "Has not changed since last update")" -t 8000
     fi
 fi
 

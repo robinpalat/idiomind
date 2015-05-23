@@ -65,7 +65,11 @@ new_topic() {
     if [ -n "$jlb" ]; then
     
         mkdir "$DM_tl/$jlb"
-        echo "$jlb" >> "$DM_tl/.2.cfg"
+        while read -r t; do
+        if ! grep -Fxo "$t" <<<"$(ls "$DS/addons/")" \
+        >/dev/null 2>&1; then echo "$t"; fi
+        done < <(cd "$DM_tl"; ls -tNd */ \
+        | head -n 30 | sed 's/\///g') > "$DM_tl/.2.cfg"
         "$DS/default/tpc.sh" "$jlb" 1
         "$DS/mngr.sh" mkmn
     fi
@@ -93,16 +97,10 @@ Create one using the button below. ")" & exit 1; fi
     
     [ -f "$DT_r/ico.jpg" ] && img="$DT_r/ico.jpg" \
     || img="$DS/images/nw.png"
-
-    if [ -z "${tpe}" ]; then
-    tpcs=$(sed -n '1!G;h;$p' < "$DM_tl/.2.cfg" \
-    | tr "\\n" '!' | sed 's/\!*$//g')
-    else
-    tpcs=$(sed -n '1!G;h;$p' < "$DM_tl/.2.cfg" \
-    | grep -vFx "${tpe}" | tr "\\n" '!' | sed 's/\!*$//g'); fi
     
+    tpcs=$(grep -vFx "${tpe}" < "$DM_tl/.2.cfg" \
+    | tr "\\n" '!' | sed 's/\!*$//g')
     [ -n "$tpcs" ] && e='!'; [ -z "${tpe}" ] && tpe=' '
-    ltopic="${tpe:0:63}"
 
     if [ "$trans" = TRUE ]; then lzgpr="$(dlg_form_1)"; \
     else lzgpr="$(dlg_form_2)"; fi
@@ -195,8 +193,8 @@ new_sentence() {
     source "$DS/default/dicts/$lgt"
     DM_tlt="$DM_tl/${tpe}"
     DC_tlt="$DM_tl/${tpe}/.conf"
-    trgt=$(clean_1 "${2}" | sed ':a;N;$!ba;s/\n/ /g')
-    srce=$(clean_1 "${4}" | sed ':a;N;$!ba;s/\n/ /g')
+    trgt=$(clean_1 "${2}")
+    srce=$(clean_1 "${4}")
 
     if [ "$(wc -l < "$DC_tlt/0.cfg")" -ge 200 ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
@@ -211,9 +209,9 @@ new_sentence() {
         internet
         cd "$DT_r"
         if [ "$trd_trgt" = TRUE ]; then
-        trgt="$(translate "${trgt}" auto "$lgt" | sed ':a;N;$!ba;s/\n/ /g')"
+        trgt="$(translate "${trgt}" auto "$lgt")"
         fi
-        srce="$(translate "${trgt}" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')"
+        srce="$(translate "${trgt}" $lgt $lgs)"
         srce="$(clean_1 "${srce}")"
         fname="$(nmfile "${trgt}")"
         
@@ -283,8 +281,8 @@ new_sentence() {
 
 new_word() {
 
-    trgt="$(clean_0 "$2")"
-    srce="$(clean_0 "$4")"
+    trgt="$(clean_0 "${2}")"
+    srce="$(clean_0 "${4}")"
     DT_r="$3"
     cd "$DT_r"
     DM_tlt="$DM_tl/${tpe}"
@@ -302,7 +300,7 @@ new_word() {
     
         internet
         if [ "$trd_trgt" = TRUE ] && [ "$5" != 0 ]; then
-        trgt="$(translate "$(clean_0 "${trgt}")" auto "$lgt")"
+        trgt="$(translate "${trgt}" auto "$lgt")"
         fi
         srce="$(translate "${trgt}" $lgt $lgs)"
         srce="$(clean_0 "${srce}")"
@@ -787,11 +785,11 @@ process() {
                     while [[ $n -le "$(wc -l < slts | head -200)" ]]; do
                     
                         sntc=$(sed -n "$n"p ./slts)
-                        trgt="$(clean_1 "${sntc}" | sed ':a;N;$!ba;s/\n/ /g')"
+                        trgt="$(clean_1 "${sntc}")"
                         if [ "$trd_trgt" = TRUE ]; then
-                        trgt="$(translate "${trgt}" auto "$lgt" | sed ':a;N;$!ba;s/\n/ /g')"
+                        trgt="$(translate "${trgt}" auto $lgt)"
                         trgt="$(clean_1 "${trgt}")"; fi
-                        srce="$(translate "${trgt}" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')"
+                        srce="$(translate "${trgt}" $lgt $lgs)"
                         srce="$(clean_1 "${srce}")"
                         fname=$(nmfile "${trgt}")
                     

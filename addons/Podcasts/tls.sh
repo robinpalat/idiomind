@@ -252,13 +252,14 @@ sync() {
         if [[ $exit = 0 ]]; then
 
             new=$((A-B))
-            if [[ $new -gt 0 ]] || [[ $2 != 0 ]]; then
+            if [[ $2 != 0 ]]; then
             (sleep 1 && notify-send -i idiomind \
             "$(gettext "Synchronization finished")" \
             "$new $(gettext "New")" -t 8000) &
             fi
   
-        else
+        elif [[ $exit != 0 ]]; then
+        
             if [[ $2 != 0 ]]; then
             (sleep 1 && notify-send -i idiomind \
             "$(gettext "Error")" \

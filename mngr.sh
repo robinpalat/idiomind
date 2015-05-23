@@ -26,7 +26,7 @@ mkmn() {
     cd "$DM_tl"
     [ -d "$DM_tl/images" ] && rm -r "$DM_tl/images"
     [ -d "$DM_tl/words" ] && rm -r "$DM_tl/words"
-    for i in "$(ls -t -N -d */ | sed 's/\///g')"; do \
+    for i in "$(ls -tNd */ | sed 's/\///g')"; do \
     echo "${i%%/}"; done > "$DM_tl/.1.cfg"
     sed -i '/^$/d' "$DM_tl/.1.cfg"
     > "$DC_s/0.cfg"
@@ -329,50 +329,6 @@ delete_item() {
     rm -f "$DT/ps_lk" & exit 1
 }
 
-delete_topic() {
-    
-    include "$DS/ifs/mods/mngr"
-    
-    if [ "${tpc}" != "${2}" ]; then
-    msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
-
-    msg_2 "$(gettext "Are you sure you want to delete this Topic?")\n" \
-    gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
-    ret=$(echo "$?")
-        
-        if [[ $ret -eq 0 ]]; then
-
-            if [ -f "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "$tpc" ]; then
-            "$DS/stop.sh" 5; fi
-            
-            if [ -f "$DT/.p_" ] && [ "$(sed -n 2p "$DT/.p_")" = "$tpc" ]; then
-            notify-send -i idiomind "$(gettext "Playback is stopped")" -t 5000 &
-            "$DS/stop.sh" 2; fi
-    
-            if [ -d "$DM_tl/$tpc" ] && [ -n "$tpc" ]; then
-            rm -r "$DM_tl/$tpc"; fi
-            rm -f "$DT/tpe"
-            > "$DM_tl/.8.cfg"
-            > "$DC_s/4.cfg"
-            n=0
-            while [[ $n -le 4 ]]; do
-            if [ "$DM_tl/.$n.cfg" ]; then
-            grep -vxF "${tpc}" "$DM_tl/.$n.cfg" > "$DT/cfg.tmp"
-            sed '/^$/d' "$DT/cfg.tmp" > "$DM_tl/.$n.cfg"; fi
-            let n++
-            done; rm "$DT/cfg.tmp"
-            
-            kill -9 $(pgrep -f "yad --list ") &
-            kill -9 $(pgrep -f "yad --list ") &
-            kill -9 $(pgrep -f "yad --text-info ") &
-            kill -9 $(pgrep -f "yad --form ") &
-            kill -9 $(pgrep -f "yad --notebook ") &
-
-            "$DS/mngr.sh" mkmn &
-        fi
-    
-    rm -f "$DT/ps_lk" & exit 1
-}
 
 edit() {
 
@@ -651,6 +607,51 @@ edit() {
 } >/dev/null 2>&1
 
 
+delete_topic() {
+    
+    include "$DS/ifs/mods/mngr"
+    
+    if [ "${tpc}" != "${2}" ]; then
+    msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
+
+    msg_2 "$(gettext "Are you sure you want to delete this Topic?")\n" \
+    gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
+    ret=$(echo "$?")
+        
+        if [[ $ret -eq 0 ]]; then
+
+            if [ -f "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "$tpc" ]; then
+            "$DS/stop.sh" 5; fi
+            
+            if [ -f "$DT/.p_" ] && [ "$(sed -n 2p "$DT/.p_")" = "$tpc" ]; then
+            notify-send -i idiomind "$(gettext "Playback is stopped")" -t 5000 &
+            "$DS/stop.sh" 2; fi
+    
+            if [ -d "$DM_tl/$tpc" ] && [ -n "$tpc" ]; then
+            rm -r "$DM_tl/$tpc"; fi
+            rm -f "$DT/tpe"
+            > "$DM_tl/.8.cfg"
+            > "$DC_s/4.cfg"
+            n=0
+            while [[ $n -le 4 ]]; do
+            if [ "$DM_tl/.$n.cfg" ]; then
+            grep -vxF "${tpc}" "$DM_tl/.$n.cfg" > "$DT/cfg.tmp"
+            sed '/^$/d' "$DT/cfg.tmp" > "$DM_tl/.$n.cfg"; fi
+            let n++
+            done; rm "$DT/cfg.tmp"
+            
+            kill -9 $(pgrep -f "yad --list ") &
+            kill -9 $(pgrep -f "yad --list ") &
+            kill -9 $(pgrep -f "yad --text-info ") &
+            kill -9 $(pgrep -f "yad --form ") &
+            kill -9 $(pgrep -f "yad --notebook ") &
+
+            "$DS/mngr.sh" mkmn &
+        fi
+    
+    rm -f "$DT/ps_lk" & exit 1
+}
+
 rename_topic() {
 
     source "$DS/ifs/mods/add/add.sh"
@@ -696,7 +697,11 @@ rename_topic() {
         echo "$jlb" > "$DC_s/4.cfg"
         echo "$jlb" > "$DM_tl/.8.cfg"
         echo "$jlb" >> "$DM_tl/.1.cfg"
-        echo "$jlb" >> "$DM_tl/.2.cfg"
+        while read -r t; do
+        if ! grep -Fxo "$t" <<<"$(ls "$DS/addons/")" \
+        >/dev/null 2>&1; then echo "$t"; fi
+        done < <(cd "$DM_tl"; ls -tNd */ \
+        | head -n 30 | sed 's/\///g') > "$DM_tl/.2.cfg"
         echo "$jlb" > "$DT/tpe"
         echo 0 > "$DC_s/5.cfg" 
         

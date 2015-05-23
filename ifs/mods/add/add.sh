@@ -418,7 +418,7 @@ function dlg_form_1() {
     --window-icon="$DS/images/icon.png" \
     --width=450 --height=140 --borders=0 \
     --field="" "$txt" \
-    --field=":CB" "$ltopic!$(gettext "New") *$e$tpcs" \
+    --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
     --button="$(gettext "Image")":3 \
     --button="$(gettext "Audio")":2 \
     --button=gtk-add:0
@@ -436,7 +436,7 @@ function dlg_form_2() {
     --width=450 --height=170 --borders=0 \
     --field="" "$txt" \
     --field="" "$srce" \
-    --field=":CB" "$ltopic!$(gettext "New") *$e$tpcs" \
+    --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
     --button="$(gettext "Image")":3 \
     --button="$(gettext "Audio")":2 \
     --button=gtk-add:0

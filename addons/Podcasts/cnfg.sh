@@ -4,6 +4,7 @@
 source "$DS/ifs/mods/cmns.sh"
 DCP="$DM_tl/Podcasts/.conf"
 DSP="$DS_a/Podcasts"
+date=$(date +%d)
 CNF=$(gettext "Configure")
 sets=('update' 'sync' 'path')
 if [ -n "$(< "$DCP/0.cfg")" ]; then cfg=1; else
@@ -19,7 +20,7 @@ if [ ! -d "$DM_tl/Podcasts" ]; then
     echo " " > "$DM_tl/Podcasts/.conf/10.cfg"
     echo -e " $(gettext "Last update:")
  $(gettext "Latest downloads:") 0  $(gettext "Saved episodes:") \
-0 "> "$DM_tl/Podcasts/update"
+0 "> "$DM_tl/Podcasts/$date"
     "$DS/mngr.sh" mkmn
 fi
 

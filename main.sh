@@ -64,18 +64,13 @@ function new_session() {
     for strt in "$DS/ifs/mods/start"/*; do
     (sleep 20 && "$strt"); done &
 
-    # fix
-    n=1; cd "$DM_tl"; cfg="$DM_tl/.2.cfg"
-    while [ $n -le "$(wc -l < "$cfg")" ]; do
-        chk=$(sed -n "$n"p "$cfg")
-        dirs="$(find ./ -maxdepth 1 -type d \
-        | sed 's|\./\.share||;s|\./||g')"
-        if ! grep -Fxo "$chk" <<<"$dirs"; then
-            grep -vxF "$chk" "$cfg" > "$DT/2.cfg.fix"
-            sed '/^$/d' "$DT/2.cfg.fix" > "$cfg"
-            rm -f "$DT/2.cfg.fix";fi
-        let n++
-    done; cd /
+    #
+    while read -r t; do
+    if ! grep -Fxo "$t" <<<"$(ls "$DS/addons/")" \
+    >/dev/null 2>&1; then echo "$t"; fi
+    done < <(cd "$DM_tl"; ls -tNd */ \
+    | head -n 30 | sed 's/\///g') > "$DM_tl/.2.cfg"
+    cd /
 
     s="$(xrandr | grep '*' | awk '{ print $1 }' \
     | sed 's/x/\n/')"
