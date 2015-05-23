@@ -171,7 +171,6 @@ function clean_3() {
     if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
     vrbl="${srce}"; lg=$lgt; aw="swrd.$2"; bw="twrd.$2"
     else vrbl="${trgt}"; lg=$lgs; aw="twrd.$2"; bw="swrd.$2"; fi
-    
     echo "${vrbl}" | sed 's/ /\n/g' | grep -v '^.$' \
     | grep -v '^..$' | sed -n 1,50p | sed s'/&//'g \
     | sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
@@ -407,9 +406,6 @@ function dlg_form_0() {
 
 function dlg_form_1() {
     
-    #<small>$lgtl</small>
-    #<small>${lgsl^}</small>
-    #$atopic
     yad --form --title="$(gettext "New note")" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --separator="\n" \
@@ -476,8 +472,6 @@ function dlg_checklist_1() {
 
 function dlg_checklist_3() {
 
-    #--button="$(gettext "New topic")":"$DS/add.sh 'new_topic'" \
-    slt=$(mktemp $DT/slt.XXXX.x)
     cat "$1" | awk '{print "FALSE\n"$0}' | \
     yad --list --checklist --title="$2" \
     --text="<small>$info</small> " \

@@ -19,8 +19,7 @@ if [ ! -d "$DM_tl/Podcasts" ]; then
     echo 14 > "$DM_tl/Podcasts/.conf/8.cfg"
     echo " " > "$DM_tl/Podcasts/.conf/10.cfg"
     echo -e " $(gettext "Last update:")
- $(gettext "Latest downloads:") 0  $(gettext "Saved episodes:") \
-0 "> "$DM_tl/Podcasts/$date"
+ $(gettext "Latest downloads:") 0"> "$DM_tl/Podcasts/$date"
     "$DS/mngr.sh" mkmn
 fi
 

@@ -8,34 +8,29 @@ re='^[0-9]+$'
 item_name="$2"
 index_pos="$3"
 listen="$(gettext "Listen")"
-
 if ! [[ $index_pos =~ $re ]]; then
 index_pos=$(grep -Fxon "$item_name" < "$index" \
 | sed -n 's/^\([0-9]*\)[:].*/\1/p')
 nll=" "; fi
-
 item="$(sed -n "$index_pos"p "$index")"
 if [ -z "$item" ]; then
 item="$(sed -n 1p "$index")"
 index_pos=1; fi
-
 fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
 align=left
 fs=22; bs=20
 
 if [ -f "$DM_tlt/words/$fname.mp3" ]; then
-    cmd_listen="play '$DM_tlt/words/$fname.mp3'"
-    word_view
-
+cmd_listen="play '$DM_tlt/words/$fname.mp3'"
+word_view
 elif [ -f "$DM_tlt/$fname.mp3" ]; then
-    cmd_listen="'$DS/ifs/tls.sh' 'listen_sntnc' '$fname'"
-    sentence_view
-    
+cmd_listen="'$DS/ifs/tls.sh' 'listen_sntnc' '$fname'"
+sentence_view
 else
-    cmd_listen="'$DS/ifs/tls.sh' 'listen_sntnc' '$fname'"
-    sentence_view
+cmd_listen="'$DS/ifs/tls.sh' 'listen_sntnc' '$fname'"
+sentence_view
 fi
-    ret=$?
+ret=$?
 
     if [[ $ret -eq 4 ]]; then
     "$DS/mngr.sh" edit "$1" "$index_pos"

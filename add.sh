@@ -23,7 +23,6 @@ source "$DS/ifs/mods/cmns.sh"
 include "$DS/ifs/mods/add"
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
-restr="$(ls "$DS/addons/")"
 list=$(sed -n 2p "$DC_s/1.cfg" \
 | grep -o list=\"[^\"]* | grep -o '[^"]*$')
 trans=$(sed -n 4p "$DC_s/1.cfg" \
@@ -45,7 +44,7 @@ new_topic() {
     msg "$(gettext "Sorry, the name is too long.")\n" info
     "$DS/add.sh" new_topic "$jlb" & exit 1; fi
     
-    if grep -Fxo "$jlb" <<<"$restr"; then jlb="$jlb."; fi
+    if grep -Fxo "$jlb" <<<"$(ls "$DS/addons/")"; then jlb="$jlb."; fi
     chck=$(grep -Fxo "$jlb" "$DM_tl/.1.cfg" | wc -l)
     
     if [ "$chck" -ge 1 ]; then
@@ -194,7 +193,7 @@ new_sentence() {
 
     if [ "$(wc -l < "$DC_tlt/0.cfg")" -ge 200 ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
-    msg "$(gettext "This topic has been exceeded Maximum number of notes. Topics may not exceed 200 items.")" info "$tpe" & exit; fi
+    msg "$(gettext "Maximum number of notes has been exceeded for this topic. Max allowed (200)")" info " " & exit; fi
     
     if [ -z "${tpe}" ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
@@ -241,7 +240,7 @@ new_sentence() {
     cd "$DT_r"
     r=$((RANDOM%1000))
     clean_3 "$DT_r" "$r"
-    translate "$(sed '/^$/d' < "$aw")" auto $lg | sed 's/,//g' \
+    translate "$(sed '/^$/d' "$aw")" auto $lg | sed 's/,//g' \
     | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
     check_grammar_1 "$DT_r" "$r"
     list_words "$DT_r" "$r"
@@ -286,7 +285,7 @@ new_word() {
     
     if [ "$(wc -l < "$DC_tlt/0.cfg")" -ge 200 ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
-    msg "$(gettext "This topic has been exceeded Maximum number of notes. Topics may not exceed 200 items.")" info "$tpe" & exit 0; fi
+    msg "$(gettext "Maximum number of notes has been exceeded for this topic. Max allowed (200)")" info " " & exit 1; fi
     
     if [ -z "${tpe}" ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
@@ -378,7 +377,7 @@ list_words_edit() {
         tpe="$tpc"
         if [ "$(wc -l < "$DC_tlt/0.cfg")" -ge 200 ]; then
         [ "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "This topic has been exceeded Maximum number of notes. Topics may not exceed 200 items.")" info "$tpe" & exit; fi
+        msg "$(gettext "Maximum number of notes has been exceeded for this topic. Max allowed (200)")" info " " & exit; fi
             
         if [ -z "${tpe}" ]; then
         [ "$DT_r" ] && rm -fr "$DT_r"
@@ -475,7 +474,7 @@ list_words_dclik() {
     
     if [ "$(wc -l < "$DC_tlt/0.cfg")" -ge 200 ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
-    msg "$(gettext "This topic has been exceeded Maximum number of notes. Topics may not exceed 200 items.")" info "$tpe" & exit; fi
+    msg "$(gettext "Maximum number of notes has been exceeded for this topic. Max allowed (200)")" info " " & exit; fi
 
     info="-$((200 - $(wc -l < "$DC_tlt/0.cfg")))"
     
@@ -622,7 +621,7 @@ process() {
         
     if [[ $ns -ge 200 ]]; then
     [ -d "$DT_r" ] && rm -fr "$DT_r"
-    msg "$(gettext "This topic has been exceeded Maximum number of notes. Topics may not exceed 200 items.")" info "$tpe"
+    msg "$(gettext "Maximum number of notes has been exceeded for this topic. Max allowed (200)")" info " "
     rm -f ./ls "$lckpr" & exit 1; fi
 
     if [ -f "$lckpr" ] && [ ${#@} -lt 4 ]; then
