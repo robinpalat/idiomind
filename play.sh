@@ -99,7 +99,7 @@ setting_1 | yad --list --title="$tpc" "$l" \
 --window-icon="$DS/images/icon.png" \
 --skip-taskbar --align=right --center --on-top \
 --expand-column=2 --no-headers \
---width=420 --height=300 --borders=5 \
+--width=400 --height=300 --borders=5 \
 --column=IMG:IMG --column=TXT:TXT --column=CHK:CHK \
 --button="$btn" \
 --button="$(gettext "Close")":1 > "$slct"

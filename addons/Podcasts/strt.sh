@@ -53,7 +53,7 @@ conditions() {
     
     [ ! -f "$DCP/1.cfg" ] && touch "$DCP/1.cfg"
     
-    if [ -f "$DT/.uptp" ] && [ -z "$1" ]; then
+    if [ -f "$DT/.uptp" ] && [ "$1" != 0 ]; then
         msg_2 "$(gettext "Wait until it finishes a previous process")\n" info OK gtk-stop
         ret=$(echo $?)
         [[ $ret -eq 1 ]] && "$DS/stop.sh" 6
@@ -297,6 +297,7 @@ removes() {
         sed '/^$/d' "$DT/rm.temp" > "$DCP/2.cfg"
         grep -vxF "$item" "$DCP/1.cfg" > "$DT/rm.temp"
         sed '/^$/d' "$DT/rm.temp" > "$DCP/1.cfg"
+        rm -f "$DT/rm.temp"
         find "$DMC" -name "$fname".* -exec rm {} \;
         fi 
     done < "$DCP/kept"

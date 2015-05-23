@@ -17,7 +17,7 @@ if [ "$1" = new_item ]; then
     else
     echo "$item" > "$DCP/2.cfg"; fi
     check_index1 "$DCP/2.cfg" "$DCP/.22.cfg"
-    notify-send -i info "$(gettext "Kept episode")" "$item" -t 3000
+    notify-send -i info "$(gettext "Done")" "$item" -t 3000
     exit
         
 elif [ "$1" = delete_item ]; then
@@ -49,7 +49,7 @@ elif [ "$1" = delete_item ]; then
             rm "$DCP"/*.tmp; fi
 
     else
-        notify-send -i info "$(gettext "Removed from list of saved")" "$item" 
+        notify-send -i info "$(gettext "Done")" "$item"
     
         cd "$DCP"
         grep -vxF "$item" "$DCP/.22.cfg" > "$DCP/.22.cfg.tmp"
