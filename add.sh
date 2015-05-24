@@ -674,7 +674,6 @@ process() {
         pars=`mktemp`
         trap rm "$pars*" EXIT
         scrot -s "$pars.png"
-        
         (echo "1"
         echo "# $(gettext "Processing")..." ;
         mogrify -modulate 100,0 -resize 400% "$pars.png"

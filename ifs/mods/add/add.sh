@@ -472,6 +472,7 @@ function dlg_checklist_1() {
 
 function dlg_checklist_3() {
 
+    slt=$(mktemp $DT/slt.XXXX.x)
     cat "$1" | awk '{print "FALSE\n"$0}' | \
     yad --list --checklist --title="$2" \
     --text="<small>$info</small> " \
