@@ -111,6 +111,7 @@ function dlg_form_2() {
     t=CHK; lbl_2="$(gettext "Is a word")"
     else t=LBL; fi
     
+    #--button="$(gettext "Image")":"$cmd_image"
     yad --form --title="$trgt" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --separator="\n" --selectable-labels \
@@ -126,7 +127,6 @@ function dlg_form_2() {
     --field="<small>$(gettext "Audio")</small>":FL "$DM_tlt/$fname.mp3" \
     --button="$(gettext "Move")":"$cmd_move" \
     --button="$(gettext "Words")":"$cmd_words" \
-    --button="$(gettext "Image")":"$cmd_image" \
     --button="$(gettext "Delete")":"$cmd_delete" \
     --button="gtk-go-down":2 \
     --button="$(gettext "Close")":0 > "$1"

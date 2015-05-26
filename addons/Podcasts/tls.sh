@@ -112,7 +112,7 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
         n=1
         while read -r get; do
             [[ $n = 3 || $n = 5 || $n = 6 ]] && continue
-            if [ -n "$(grep -o -E '\.mp3|\.mp4|\.ogg|\.avi|\.m4v|\.mov|\.flv' <<< "${get}")" ] && [ -z "$media" ]; then
+            if [ -n "$(grep -o -E '\.mp3|\.mp4|\.ogg|\.avi|\.m4v|\.mov|\.flv' <<<"${get}")" ] && [ -z "$media" ]; then
             media="$n"; type=1; break; fi
             let n++
         done <<< "$items2"

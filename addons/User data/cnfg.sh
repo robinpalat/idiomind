@@ -138,7 +138,7 @@ if [ -z "$1" ]; then
                     
                     echo "$lng" >> ./.languages
                     
-                done <<< "$list"
+                done <<<"$list"
 
                 while read language; do
 

@@ -2,32 +2,32 @@
 # -*- ENCODING: UTF-8 -*-
 
 echo "_" >> "$DT/stats.tmp" &
-[[ $1 = 1 ]] && index="$DC_tlt/1.cfg"
-[[ $1 = 2 ]] && index="$DC_tlt/2.cfg"
+[[ $1 = 1 ]] && index="${DC_tlt}/1.cfg"
+[[ $1 = 2 ]] && index="${DC_tlt}/2.cfg"
 re='^[0-9]+$'
-item_name="$2"
+item_name="${2}"
 index_pos="$3"
 listen="$(gettext "Listen")"
 if ! [[ $index_pos =~ $re ]]; then
-index_pos=$(grep -Fxon "$item_name" < "$index" \
+index_pos=$(grep -Fxon "${item_name}" < "${index}" \
 | sed -n 's/^\([0-9]*\)[:].*/\1/p')
 nll=" "; fi
-item="$(sed -n "$index_pos"p "$index")"
-if [ -z "$item" ]; then
-item="$(sed -n 1p "$index")"
+item="$(sed -n "$index_pos"p "${index}")"
+if [ -z "${item}" ]; then
+item="$(sed -n 1p "${index}")"
 index_pos=1; fi
-fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
+fname="$(echo -n "${item}" | md5sum | rev | cut -c 4- | rev)"
 align=left
 fs=22; bs=20
 
-if [ -f "$DM_tlt/words/$fname.mp3" ]; then
-cmd_listen="play '$DM_tlt/words/$fname.mp3'"
+if [ -f "${DM_tlt}/words/${fname}.mp3" ]; then
+cmd_listen="play '${DM_tlt}/words/${fname}.mp3'"
 word_view
-elif [ -f "$DM_tlt/$fname.mp3" ]; then
-cmd_listen="'$DS/ifs/tls.sh' 'listen_sntnc' '$fname'"
+elif [ -f "${DM_tlt}/${fname}.mp3" ]; then
+cmd_listen="'$DS/ifs/tls.sh' 'listen_sntnc' '${fname}'"
 sentence_view
 else
-cmd_listen="'$DS/ifs/tls.sh' 'listen_sntnc' '$fname'"
+cmd_listen="'$DS/ifs/tls.sh' 'listen_sntnc' '${fname}'"
 sentence_view
 fi
 ret=$?
@@ -38,8 +38,8 @@ ret=$?
     elif [[ $ret -eq 2 ]]; then
     
         if [[ $index_pos = 1 ]]; then
-        item=`tail -n 1 < "$index"`
-        "$DS/vwr.sh" "$1" "$item" &
+        item=`tail -n 1 < "${index}"`
+        "$DS/vwr.sh" "$1" "${item}" &
         else
         ff=$((index_pos-1))
         "$DS/vwr.sh" "$1" "$nll" $ff &

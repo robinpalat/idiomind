@@ -82,8 +82,8 @@ new_items() {
     "$DS/chng.sh" "$(gettext "To start adding notes you need to have a topic.
 Create one using the button below. ")" & exit 1; fi
 
-    [ -z "$4" ] && txt="$(xclip -selection primary -o \
-    | sed ':a;N;$!ba;s/\n/ /g' | sed '/^$/d')" || txt="$4"
+    [ -z "$4" ] && txt="$(xclip -selection primary -o)" || txt="$4"
+    txt="$(clean_4 "${txt}")"
     
     if [ "$3" = 2 ]; then
     DT_r="$2"; cd "$DT_r"
@@ -93,7 +93,7 @@ Create one using the button below. ")" & exit 1; fi
     [ -f "$DT_r/ico.jpg" ] && img="$DT_r/ico.jpg" \
     || img="$DS/images/nw.png"
     
-    tpcs=$(grep -vFx "${tpe}" < "$DM_tl/.2.cfg" \
+    tpcs=$(grep -vFx "${tpe}" "$DM_tl/.2.cfg" \
     | tr "\\n" '!' | sed 's/\!*$//g')
     [ -n "$tpcs" ] && e='!'; [ -z "${tpe}" ] && tpe=' '
 
@@ -183,7 +183,8 @@ Create one using the button below. ")" & exit 1; fi
 
 
 new_sentence() {
-        
+    
+    
     DT_r="$3"
     source "$DS/default/dicts/$lgt"
     DM_tlt="$DM_tl/${tpe}"
@@ -258,7 +259,7 @@ new_sentence() {
     if [ -f "$DT_r/img.jpg" ]; then
     set_image_2 "$DM_tlt/$fname.mp3" "$DM_tlt/words/images/$fname.jpg"; fi
     
-    tags_3 W "${lwrds}" "${pwrds}" "${grmrk}" "$DM_tlt/$fname.mp3"
+    tags_3 W "${lwrds}" "${pwrds}" "${grmrk}" "${DM_tlt}/$fname.mp3"
     notify-send "${trgt}" "${srce}\\n(${tpe})" -t 10000
     index sentence "${trgt}" "${tpe}"
     
@@ -662,6 +663,7 @@ process() {
         | grep -v '^.$' | sed 's/<[^>]\+>//;s/\://g' \
         | sed 's/\&quot;/\"/g' | sed "s/\&#039;/\'/g" \
         | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
+        | sed 's/–//g' \
         | sed 's/[<>£§]//; s/&amp;/\&/g' | sed 's/ *<[^>]\+> */ /g' \
         | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. //g' \
         | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
@@ -680,6 +682,7 @@ process() {
         tesseract "$pars.png" "$pars" &> /dev/null # -l $lgt
         cat "$pars.txt" | sed 's/\\n/./g' \
         | sed '/^$/d' | sed 's/^[ \t]*//;s/[ \t]*$//' \
+        | sed 's/–//g' \
         | sed 's/ \+/ /;s/\://;s/\&quot;/\"/;s/^ *//;s/ *$//g' \
         | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. //g' \
         | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
@@ -695,16 +698,17 @@ process() {
         echo "${conten}" \
         | sed 's/^ *//;s/ *$//g' | sed 's/^[ \t]*//;s/[ \t]*$//' \
         | sed 's/ \+/ /;s/\://;s/"//g' \
-        | sed '/^$/d' \
+        | sed '/^$/d' | sed 's/–//g' \
         | sed 's/\&quot;/\"/g' | sed "s/\&#039;/\'/g" \
         | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
         | sed 's/ *<[^>]\+> */ /; s/[<>£§]//; s/\&amp;/\&/g' \
         | sed 's/,/\n/g' | sed 's/。/\n/g' > ./sntsls_
         else
         echo "${conten}" \
+        | sed 's/\[ \.\.\. \]//g' \
         | sed 's/^ *//;s/ *$//g' | sed 's/^[ \t]*//;s/[ \t]*$//' \
         | sed 's/ \+/ /;s/\://;s/"//g' \
-        | sed '/^$/d' \
+        | sed '/^$/d' | sed 's/–//g' \
         | sed 's/\&quot;/\"/g' | sed "s/\&#039;/\'/g" \
         | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
         | sed 's/ *<[^>]\+> */ /; s/[<>£§]//; s/\&amp;/\&/g' \
@@ -712,17 +716,49 @@ process() {
         | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
         | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
         | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' > ./sntsls_
+        [[ -f ./sntsls ]] && rm -f ./sntsls
+
+        lenght() {
+            if [ $(wc -c <<<"${1}") -le 150 ]; then
+            echo -e "${1}" >> ./sntsls
+            else echo -e "[ ... ]  ${1}" >> ./sntsls; fi
+            }
+        
+        while read l; do
+        
+            if [ $(wc -c <<<"{$l}") -gt 150 ]; then
+                if grep -o -E '\,|\;' <<<"${l}"; then
+
+                    while read -r split; do
+
+                        if [ $(wc -c <<<"${split}") -le 150 ]; then
+                            lenght "${split}"
+                        else
+                            while read -r split2; do
+                                lenght "${split2}"
+                            done < <(tr -s ';' '\n' <<<"${split}")
+                        fi
+                        
+                    done < <(sed 's/,/\n/g' <<<"${l}")
+                    
+                else
+                    lenght "${l}"
+                fi
+                
+            else
+                lenght "${l}"
+            fi
+        
+        done < ./sntsls_
+
         fi
         ) | dlg_progress_1
     fi
-    
-        [[ -f ./sntsls ]] && rm -f ./sntsls
-        
-        sed -i '/^$/d' ./sntsls_
+        sed -i '/^$/d' ./sntsls
         tpe="$(sed -n 2p "$lckpr")"
         info="-$((200-ns))"
 
-        if [ -z "$(< ./sntsls_)" ]; then
+        if [ -z "$(< ./sntsls)" ]; then
         
             msg " $(gettext "Failed to get text.")\n" info
 
@@ -731,13 +767,13 @@ process() {
         
         else
             tpe="$(sed -n 2p "$lckpr")"
-            dlg_checklist_3 ./sntsls_ "${tpe}"
+            dlg_checklist_3 ./sntsls "${tpe}"
             ret=$(echo "$?")
         fi
                 if [[ $ret -eq 2 ]]; then
                     rm -f "$slt" &
                     
-                    dlg_text_info_1 ./sntsls_ "${tpe}"
+                    dlg_text_info_1 ./sntsls "${tpe}"
                     ret=$(echo "$?")
                         
                         if [[ $ret -eq 0 ]]; then

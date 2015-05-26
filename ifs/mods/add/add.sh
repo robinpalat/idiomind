@@ -146,13 +146,14 @@ function clean_1() {
     | tr -s '“' ' ' | tr -s '”' ' ' | tr -s '"' ' ' \
     | tr -s '&' ' ' | tr -s ':' ' ' | tr -s '|' ' ' \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
-    | sed 's/^ *//; s/ *$//g'
+    | sed 's/^ *//; s/ *$//g' | sed 's/–//g'
     else
     echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" \
     | tr -s '“' ' ' | tr -s '”' ' ' | tr -s '"' ' ' \
     | tr -s '&' ' ' | tr -s ':' ' ' | tr -s '|' ' ' \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
-    | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g'
+    | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \
+    | sed 's/–//g'
     fi
 }
 
@@ -176,6 +177,11 @@ function clean_3() {
     | sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
     | tr -d ')' | tr -d '(' | sed 's/\]//;s/\[//g' \
     | sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //;s/"//g' > "$aw"
+}
+
+function clean_4() {
+    
+    echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' | sed 's/–//g' | sed '/^$/d'
 }
 
 
@@ -484,7 +490,7 @@ function dlg_checklist_3() {
     --column="$(wc -l < "$1")" \
     --column="$(gettext "sentences")" \
     --button="$(gettext "Cancel")":1 \
-    --button=$(gettext "Reorder"):2 \
+    --button=$(gettext "Edit"):2 \
     --button="gtk-add":0 > "$slt"
 }
 

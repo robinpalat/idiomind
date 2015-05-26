@@ -248,6 +248,7 @@ function topic() {
         [ ! -f "$DC_tlt/$n.cfg" ] && touch "$DC_tlt/$n.cfg"
         declare ls$n="$DC_tlt/$n.cfg"
         declare inx$n=$(wc -l < "$DC_tlt/$n.cfg")
+        export inx$n
         let n++
         done
         nt="$DC_tlt/10.cfg"

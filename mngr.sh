@@ -337,24 +337,27 @@ edit() {
     lgs=$(lnglss $lgsl)
     lists="$2";  item_pos="$3"
     if [ "$lists" = 1 ]; then
-    index_1="$DC_tlt/1.cfg"
-    index_2="$DC_tlt/2.cfg"
+    index_1="${DC_tlt}/1.cfg"
+    index_2="${DC_tlt}/2.cfg"
+    [[ $item_pos -lt 1 ]] && item_pos=$inx1
     elif [ "$lists" = 2 ]; then
-    index_1="$DC_tlt/2.cfg"
-    index_2="$DC_tlt/1.cfg"; fi
-    tpcs="$(egrep -v "$tpc" < "$DM_tl/.2.cfg" \
-    | tr "\\n" '!' | sed 's/!\+$//g')"
-    c=$(($RANDOM%10000))
+    index_1="${DC_tlt}/2.cfg"
+    index_2="${DC_tlt}/1.cfg"
+    [[ $item_pos -lt 1 ]] && item_pos=$inx2; fi
+    tpcs="$(egrep -v "${tpc}" "${DM_tl}/.2.cfg" | tr "\\n" '!' | sed 's/!\+$//g')"
+    c=$((RANDOM%10000))
     file_tmp="$(mktemp "$DT/file_tmp.XXXX")"
-    item="$(sed -n "$3"p "$index_1")"
-    fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
-    audiofile_1="$DM_tlt/words/$fname.mp3"
-    audiofile_2="$DM_tlt/$fname.mp3"
+    item="$(sed -n "$item_pos"p "${index_1}")"
+    fname="$(echo -n "${item}" | md5sum | rev | cut -c 4- | rev)"
+    audiofile_1="${DM_tlt}/words/$fname.mp3"
+    audiofile_2="${DM_tlt}/$fname.mp3"
+    if [ ! -f "${audiofile_1}" ] && [ ! -f "${audiofile_2}" ] && [ -z "${item}" ]; then
+    exit 1; fi
+
+    if grep -Fxo "${item}" "${DC_tlt}/3.cfg"; then
     
-    if grep -Fxo "$item" "$DC_tlt/3.cfg"; then
-    
-        if [ -f "$audiofile_1" ]; then
-        tags="$(eyeD3 "$audiofile_1")"
+        if [ -f "${audiofile_1}" ]; then
+        tags="$(eyeD3 "${audiofile_1}")"
         trgt="$(grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)' <<<"$tags")"
         srce="$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)' <<<"$tags")"
         fields="$(grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' <<<"$tags" | tr '_' '\n')"
@@ -363,11 +366,11 @@ edit() {
         dftn="$(sed -n 2p <<<"$fields")"
         note="$(sed -n 3p <<<"$fields")"
         a=0; else a=1; fi
-        cmd_move="$DS/ifs/mods/mngr/mngr.sh 'position' '$item_pos' "\"$index_1\"""
-        cmd_delete="$DS/mngr.sh delete_item "\"$item\"""
-        cmd_image="$DS/ifs/tls.sh set_image "\"$audiofile_1\"" word"
+        cmd_move="$DS/ifs/mods/mngr/mngr.sh 'position' '$item_pos' "\"${index_1}\"""
+        cmd_delete="$DS/mngr.sh delete_item "\"${item}\"""
+        cmd_image="$DS/ifs/tls.sh set_image "\"${audiofile_1}\"" word"
         cmd_definition="/usr/share/idiomind/ifs/tls.sh definition '$trgt'"
-        cmd_play="play "\"$DM_tlt/words/$fname.mp3\"""
+        cmd_play="play "\"${DM_tlt}/words/$fname.mp3\"""
         
         dlg_form_1 "$file_tmp"
         ret=$(echo "$?")
@@ -453,21 +456,20 @@ edit() {
                 "$DS/vwr.sh" "$lists" "$trgt" "$item_pos" &
             fi
              
-    elif grep -Fxo "$item" "$DC_tlt/4.cfg"; then
-    
-        if [ -f "$audiofile_2" ]; then
-        tags="$(eyeD3 "$audiofile_2")"
+    else
+        if [ -f "${audiofile_2}" ]; then
+        tags="$(eyeD3 "${audiofile_2}")"
         mark="$(grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)' <<<"$tags")"
         trgt="$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"$tags")"
         srce="$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"$tags")"
         lwrd="$(grep -o -P '(?<=IWI3I0I).*(?=IPWI3I0I)' <<<"$tags")"
         pwrds="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"$tags")"
         a=0; else a=1; fi
-        cmd_move="$DS/ifs/mods/mngr/mngr.sh 'position' '$item_pos' "\"$index_1\"""
-        cmd_words="$DS/add.sh list_words_edit "\"$audiofile_2\"" F $c"
-        cmd_image="$DS/ifs/tls.sh set_image "\"$audiofile_2\"" sentence"
-        cmd_delete="$DS/mngr.sh delete_item "\"$item\"""
-        cmd_play="$DS/ifs/tls.sh play "\"$DM_tlt/$fname.mp3\"""
+        cmd_move="$DS/ifs/mods/mngr/mngr.sh 'position' '$item_pos' "\"${index_1}\"""
+        cmd_words="$DS/add.sh list_words_edit "\"${audiofile_2}\"" F $c"
+        cmd_image="$DS/ifs/tls.sh set_image "\"${audiofile_2}\"" sentence"
+        cmd_delete="$DS/mngr.sh delete_item "\"${item}\"""
+        cmd_play="$DS/ifs/tls.sh play "\"${DM_tlt}/$fname.mp3\"""
         [ -z "$trgt" ] && trgt="$item"
         
         dlg_form_2 "$file_tmp"
@@ -598,8 +600,6 @@ edit() {
                 #"$DS/stop.sh" 7
                 "$DS/vwr.sh" "$lists" "$trgt_mod" "$item_pos" &
             fi
-    else
-        exit 1
     fi
     [ -f "$file_tmp" ] && rm -f "$file_tmp"
     exit

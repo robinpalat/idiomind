@@ -99,7 +99,7 @@ infsd() {
         [ -f "$sv" ] && rm "$sv"
         mv -f "$DT/$link.$name.idmnd" "$sv"
         else
-        msg "$(gettext "The file is not yet available for download from the server.")\n" info && exit
+        msg "$(gettext "The file is not yet available for download from the server.")\n" info & exit
         fi
     fi
     exit
@@ -108,7 +108,7 @@ infsd() {
 function upld() {
 
 if [ "$tpc" != "$2" ]; then
-msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
+msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit 1; fi
 
 if [ -d "$DT/upload" ]; then
 msg_2 "$(gettext "Wait until it finishes a previous process")\n" info OK gtk-stop "$(gettext "Warning")"
@@ -117,6 +117,7 @@ if [[ $ret -eq 1 ]]; then
 rm -fr "$DT/upload"
 "$DS/stop.sh" 5
 fi
+exit 1
 fi
 
 others="$(gettext "Others")"
