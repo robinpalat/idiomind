@@ -534,7 +534,7 @@ echo "</body>" >> "$DC_tlt/att.html"
 help() {
 
     internet
-    web="/var/www/idiomind.com/home/doc/help.html"
+    web="http://idiomind.sourceforge.net/doc/help.html"
     yad --html --title="$(gettext "Help")" \
     --name=Idiomind --class=Idiomind \
     --uri="$web" --browser \
