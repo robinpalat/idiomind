@@ -52,12 +52,12 @@ sets=('channel' 'link' 'logo' 'ntype' \
 conditions() {
     
     [ ! -f "$DCP/1.cfg" ] && touch "$DCP/1.cfg"
-    
+
     if [ -f "$DT/.uptp" ] && [ "$1" != 0 ]; then
         msg_2 "$(gettext "Wait until it finishes a previous process")\n" info OK gtk-stop
         ret=$(echo $?)
         [[ $ret -eq 1 ]] && "$DS/stop.sh" 6
-        [[ $ret -eq 0 ]] && exit 1
+        exit 1
     
     elif [ -f "$DT/.uptp" ] && [ "$1" = 0 ]; then
         exit 1

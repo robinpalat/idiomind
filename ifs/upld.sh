@@ -25,12 +25,11 @@ lgs=$(lnglss $lgsl)
 vsd() {
 
     cd "$DM_t/saved"; ls -t *.id | sed 's/\.id//g' | \
-    yad --list --title="$(gettext "Saved Topics")" \
-    --text="$(gettext "Double clik to download")" \
+    yad --list --title="$(gettext "Your shared topics")" \
     --name=Idiomind --class=Idiomind \
     --dclick-action="$DS/ifs/upld.sh 'infsd'" \
     --window-icon="$DS/images/icon.png" --center --on-top \
-    --width=520 --height=380 --borders=10 \
+    --width=520 --height=380 --borders=12 \
     --print-column=1 --no-headers \
     --column=Nombre:TEXT \
     --button=gtk-close:1
@@ -51,11 +50,11 @@ infsd() {
     
     cd "$HOME"
     sleep 0.5
-    sv=$(yad --file --save --title="$(gettext "Save")" \
+    sv=$(yad --file --save --title="$(gettext "Download")" \
     --filename="$2.idmnd" \
     --window-icon="$DS/images/icon.png" --skip-taskbar --center --on-top \
-    --width=600 --height=500 --borders=5 \
-    --button="$(gettext "Cancel")":1 --button="Ok":0)
+    --width=600 --height=500 --borders=10 \
+    --button="$(gettext "Cancel")":1 --button="gtk-save":0)
     ret=$?
     
     if [[ $ret -eq 0 ]]; then

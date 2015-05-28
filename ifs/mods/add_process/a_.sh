@@ -202,7 +202,7 @@ if [[ "$conten" = A ]]; then
                 | sed 's/}],"final":true}],"result_index":0}//g')"
 
                 if [ ${#trgt} -ge 400 ]; then
-                printf "\n\n#$n [$(gettext "Too long sentence")] $trgt" >> ./slog
+                printf "\n\n#$n [$(gettext "Sentence too long")] $trgt" >> ./slog
                 
                 elif [ -z "$trgt" ]; then
                 trgt="#$n [$(gettext "Text missing")]"

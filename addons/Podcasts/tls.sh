@@ -275,16 +275,16 @@ sync() {
 
 disc_podscats() {
 
-    [ "$lgtl" = English ] && src="podcasts \"learning English\" OR \"$(gettext "learning English")\""
-    [ "$lgtl" = French ] && src="podcasts \"learning French\" OR \"$(gettext "learning French")\""
-    [ "$lgtl" = German ] && src="podcasts \"learning German\" OR \"$(gettext "learning German")\""
-    [ "$lgtl" = Chinese ] && src="podcasts \"learning Chinese\" OR \"$(gettext "learning Chinese")\""
-    [ "$lgtl" = Italian ] && src="podcasts \"learning Italian\" OR \"$(gettext "learning Italian")\""
-    [ "$lgtl" = Japanese ] && src="podcasts \"learning Japanese\" OR \"$(gettext "learning Japanese")\""
-    [ "$lgtl" = Portuguese ] && src="podcasts \"learning Portuguese\" OR \"$(gettext "learning Portuguese")\""
-    [ "$lgtl" = Spanish ] && src="podcasts \"learning Spanish\" OR \"$(gettext "learning Spanish")\""
-    [ "$lgtl" = Vietnamese ] && src="podcasts \"learning Vietnamese\" OR \"$(gettext "learning Vietnamese")\""
-    [ "$lgtl" = Russian ] && src="podcasts \"learning Russian\" OR \"$(gettext "learning Russian")\""
+    [ "$lgtl" = English ] && src="\"podcasts learning English\" OR \"$(gettext "podcasts learning English")\""
+    [ "$lgtl" = French ] && src="\"podcasts learning French\" OR \"$(gettext "podcasts to learn French")\""
+    [ "$lgtl" = German ] && src="\"podcasts learning German\" OR \"$(gettext "podcasts to learn German")\""
+    [ "$lgtl" = Chinese ] && src="\"podcasts learning Chinese\" OR \"$(gettext "podcasts to learn Chinese")\""
+    [ "$lgtl" = Italian ] && src="\"podcasts learning Italian\" OR \"$(gettext "podcasts to learn Italian")\""
+    [ "$lgtl" = Japanese ] && src="\"podcasts learning Japanese\" OR \"$(gettext "podcasts to learn Japanese")\""
+    [ "$lgtl" = Portuguese ] && src="\"podcasts learning Portuguese\" OR \"$(gettext "podcasts to learn Portuguese")\""
+    [ "$lgtl" = Spanish ] && src="\"podcasts learning Spanish\" OR \"$(gettext "podcasts to learn Spanish")\""
+    [ "$lgtl" = Vietnamese ] && src="\"podcasts learning Vietnamese\" OR \"$(gettext "podcasts to learn Vietnamese")\""
+    [ "$lgtl" = Russian ] && src="\"podcasts learning Russian\" OR \"$(gettext "podcasts to learn Russian")\""
     xdg-open https://www.google.com/search?q="$src"
 
 } >/dev/null 2>&1

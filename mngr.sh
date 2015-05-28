@@ -673,7 +673,7 @@ rename_topic() {
     dialog-warning "$(gettext "Rename")" & exit 1; fi
 
     if [[ ${#jlb} -gt 55 ]]; then
-    msg "$(gettext "Sorry, the new name is too long.")\n" \
+    msg "$(gettext "Sorry, new name too long.")\n" \
     info "$(gettext "Rename")" & exit 1; fi
 
     if [ "$chck" -ge 1 ]; then

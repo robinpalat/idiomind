@@ -98,7 +98,7 @@ CNFG=$(yad --form --title="$(gettext "Podcasts settings")" \
 --field="" "$url4" --field="" "$url5" --field="" "$url6" \
 --field="" "$url7" --field="" "$url8" --field="" "$url9" \
 --field="" "$url10" --field="" "$url11" --field="" "$url12" \
---field="$(gettext "Discover Podcasts")":FBTN "$DSP/tls.sh 'dpods'" \
+--field="$(gettext "Discover podcasts")":FBTN "$DSP/tls.sh 'dpods'" \
 --field=" ":LBL " " \
 --field="$(gettext "Path where episodes should be synced")":LBL " " \
 --field="":DIR "$path" \

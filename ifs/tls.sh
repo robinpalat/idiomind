@@ -534,7 +534,7 @@ echo "</body>" >> "$DC_tlt/att.html"
 help() {
 
     internet
-    web="http://idiomind.sourceforge.net/doc/help.html"
+    web="/var/www/idiomind.com/home/doc/help.html"
     yad --html --title="$(gettext "Help")" \
     --name=Idiomind --class=Idiomind \
     --uri="$web" --browser \
@@ -637,7 +637,7 @@ a_check_updates() {
 about() {
     
 c="$(gettext "Vocabulary learning tool")"
-website="$(gettext "Web site")"
+website="$(gettext "Web Site")"
 export c website
 python << END
 import gtk

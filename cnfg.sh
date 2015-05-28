@@ -100,7 +100,7 @@ yad --plug=$KEY --form --tabnum=1 \
 --field="$(gettext "List words after adding a sentence")":CHK "$list" \
 --field="$(gettext "Perform tasks at startup")":CHK "$tasks" \
 --field="$(gettext "Use automatic translation, if available")":CHK "$trans" \
---field="$(gettext "Detect source language in translation (slower)")":CHK "$trd_trgt" \
+--field="$(gettext "Detect language of source text (slower)")":CHK "$trd_trgt" \
 --field=" :LBL" " " \
 --field="$(gettext "Play Options")\t":LBL " " \
 --field=":LBL" " " \
@@ -119,9 +119,9 @@ yad --plug=$KEY --form --tabnum=1 \
 --field="<small>$(gettext "Speech Synthesizer (default espeak)")</small>" "$synth" \
 --field=" :LBL" " " \
 --field="$(gettext "Quick Help")":BTN "$DS/ifs/tls.sh help" \
---field="$(gettext "Check for Updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
 --field="$(gettext "Feedback")":BTN "$DS/ifs/tls.sh 'fback'" \
---field="$(gettext "Saved Topics")":BTN "$DS/ifs/upld.sh 'vsd'" \
+--field="$(gettext "Check for Updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
+--field="$(gettext "Your Shared Topics")":BTN "$DS/ifs/upld.sh 'vsd'" \
 --field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" > "$cnf1" &
 cat "$DC_s/2.cfg" | yad --plug=$KEY --tabnum=2 --list \
 --text="<sub>  $(gettext "Double click to set") </sub>" \

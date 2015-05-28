@@ -98,7 +98,7 @@ elif [ "$1" != chngi ]; then
     img="--image=info"
     else
     lgtl=$(echo "$lgtl" | awk '{print tolower($0)}')
-    text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/$lgtl'>$(gettext "More topics")</a>   </small></small>"
+    text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/$lgtl'>$(gettext "Shared")</a>   </small></small>"
     align="right"; fi
     
     tpc=$(cat "$DC_s/0.cfg" | \

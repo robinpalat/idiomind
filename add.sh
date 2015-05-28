@@ -41,7 +41,7 @@ new_topic() {
     jlb="$(clean_2 "$jlbi")"
     
     if [[ ${#jlb} -gt 55 ]]; then
-    msg "$(gettext "Sorry, the name is too long.")\n" info
+    msg "$(gettext "Sorry, name too long.")\n" info
     "$DS/add.sh" new_topic "$jlb" & exit 1; fi
     
     if grep -Fxo "$jlb" <<<"$(ls "$DS/addons/")"; then jlb="$jlb."; fi
@@ -861,7 +861,7 @@ process() {
                         
                             else
                                 if [ ${#sntc} -ge 150 ]; then
-                                    printf "\n\n#$n [$(gettext "Too long sentence")] $sntc" >> ./slog
+                                    printf "\n\n#$n [$(gettext "Sentence too long")] $sntc" >> ./slog
                             
                                 else
                                     if [ "$trans" = TRUE ]; then
