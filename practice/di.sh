@@ -66,8 +66,8 @@ cuestion() {
     --skip-taskbar --text-align=center --align=center --center --on-top \
     --image-on-top --undecorated --buttons-layout=spread \
     --width=415 --height=340 --borders=4 \
-    --button=" $(gettext "Exit") ":1 \
-    --button="   $(gettext "Answer") >>   ":0
+    --button="gtk-close":1 \
+    --button="    $(gettext "Answer") >>    ":0
 }
 
 
@@ -80,8 +80,8 @@ answer() {
     --width=415 --height=340 --borders=4 \
     --field="\n$cuestion":lbl \
     --field="$answer":lbl \
-    --button="    $(gettext "I did not know it")    ":3 \
-    --button="    $(gettext "I Knew it")    ":2
+    --button="  $(gettext "I did not know it")  ":3 \
+    --button="  $(gettext "I Knew it")  ":2
 }
 while read trgt; do
 

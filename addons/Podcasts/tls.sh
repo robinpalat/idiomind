@@ -5,7 +5,7 @@ source "$DS/ifs/mods/cmns.sh"
 IFS=$'\n\t'
 "$(gettext "Tell us if you think this is an error.")
 $(gettext "New episodes")
-$(gettext "Saved epidodes")
+$(gettext "Saved episodes")
 $(gettext "Marks")" >/dev/null 2>&1
 #
 # rsync_delete: disable 0/enable 1

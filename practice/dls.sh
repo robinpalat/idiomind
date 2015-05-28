@@ -44,21 +44,20 @@ dialog2() {
     |sed 's/\b\(.\)/\u\1/g'|tr -s ',' ' ' \
     |sed 's|\.||;s|\,||;s|\;||g'|sed 's|[a-z]|\.|g'|sed 's| |\t|g' \
     |sed 's|\.|\ .|g' | tr "[:upper:]" "[:lower:]"|sed 's/^\s*./\U&\E/g')"
-    text="<span font_desc='Free Sans Bold 10'>$hint</span>\n"
+    text="<span font_desc='Free Sans Bold 11' color='#717171'>$hint</span>\n"
 
     SE=$(yad --text-info --title="$(gettext "Practice")" \
     --text="$text" \
-    --selectable-labels \
     --name=Idiomind --class=Idiomind \
     --fontname="Free Sans 14" --fore=4A4A4A --justify=fill \
     --margins=5 --editable --wrap \
     --window-icon="$DS/images/icon.png" --image="$DS/practice/bar.png" \
     --buttons-layout=end --skip-taskbar --undecorated --center --on-top \
     --text-align=left --align=left --image-on-top \
-    --height=225 --width=560 --borders=3 \
-    --button="$(gettext "Exit")":1 \
+    --height=215 --width=560 --borders=3 \
+    --button="gtk-close":1 \
     --button="$(gettext "Listen")":"$cmd_play" \
-    --button=" $(gettext "OK") >> ":0)
+    --button=" $(gettext "Check") >> ":0)
     }
     
 check() {
@@ -71,17 +70,11 @@ check() {
     --skip-taskbar --wrap --scroll --image-on-top --center --on-top \
     --undecorated --buttons-layout=end \
     --width=560 --height=250 --borders=12 \
-    --button="$(gettext "Exit")":1 \
     --button="$(gettext "Listen")":"$cmd_play" \
     --button="$(gettext "Next")":2 \
     --field="":lbl --text="<span font_desc='Free Sans 14'>$wes</span>\\n" \
     --field="<span font_desc='Free Sans 9'>$(sed 's/\,*$/\./g' <<<"$OK")\n\nhits $prc</span>\n":lbl
     }
-    
-    
-    
-    
-    
     
 get_text() {
     

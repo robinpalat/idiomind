@@ -76,11 +76,12 @@ mchoise() {
     --text="$cuestion" \
     --timeout=15 --selectable-labels \
     --skip-taskbar --text-align=center --center --on-top \
-    --undecorated \
+    --buttons-layout=edge --undecorated \
     --no-headers \
     --width=410 --height=350 --borders=6 \
     --column=Option \
-    --button="$(gettext "Exit")":1)
+    --button="gtk-close":1 \
+    --button="$(gettext "OK")":0)
 }
 
 while read trgt; do

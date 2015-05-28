@@ -246,7 +246,7 @@ fetch_podcasts() {
                         mkhtml
 
                         if [ -s "$DCP/1.cfg" ]; then
-                        sed -i -e "1i${title}\\" "$DCP/1.cfg" # clean title
+                        sed -i -e "1i${title}\\" "$DCP/1.cfg"
                         else echo "${title}" > "$DCP/1.cfg"; fi
                         if grep '^$' "$DCP/1.cfg"; then
                         sed -i '/^$/d' "$DCP/1.cfg"; fi

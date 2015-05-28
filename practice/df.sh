@@ -65,8 +65,8 @@ cuestion() {
     --undecorated --buttons-layout=spread --align=center \
     --width=395 --height=290 --borders=5 \
     --field="$acuestion":lbl \
-    --button=" $(gettext "Exit") ":1 \
-    --button=" $(gettext "Answer") >> ":0
+    --button="gtk-close":1 \
+    --button="    $(gettext "Answer") >>    ":0
 }
 
 answer() {
@@ -79,8 +79,8 @@ answer() {
     --field="$bcuestion":lbl \
     --field="":lbl \
     --field="$answer":lbl \
-    --button="    $(gettext "I did not know it")    ":3 \
-    --button="    $(gettext "I Knew it")    ":2
+    --button="  $(gettext "I did not know it")  ":3 \
+    --button="  $(gettext "I Knew it")  ":2
 }
 
 

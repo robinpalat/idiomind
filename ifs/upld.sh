@@ -25,7 +25,7 @@ lgs=$(lnglss $lgsl)
 vsd() {
 
     cd "$DM_t/saved"; ls -t *.id | sed 's/\.id//g' | \
-    yad --list --title="$(gettext "Your shared topics")" \
+    yad --list --title="$(gettext "Your Shared Topics")" \
     --name=Idiomind --class=Idiomind \
     --dclick-action="$DS/ifs/upld.sh 'infsd'" \
     --window-icon="$DS/images/icon.png" --center --on-top \

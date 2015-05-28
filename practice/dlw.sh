@@ -57,7 +57,7 @@ fonts() {
     
     s=$((30-${#1}))
     img="/usr/share/idiomind/images/fc.png"
-    lcuestion="\n\n<span font_desc='Verdana $s'><b>$lst</b></span>\n\n\n\n\n"
+    lcuestion="\n\n<span font_desc='Verdana $s' color='#717171'><b>$lst</b></span>\n\n\n\n\n"
 
     }
 
@@ -74,7 +74,7 @@ cuestion() {
     --buttons-layout=spread --image-on-top --undecorated \
     --width=370 --height=270 --borders=5 \
     --field=play:BTN "$cmd_play" \
-    --button="$(gettext "Exit")":1 \
+    --button="gtk-close":1 \
     --button="  $(gettext "Nope")  ":3 \
     --button="  $(gettext "I Got It")  ":2
     }
