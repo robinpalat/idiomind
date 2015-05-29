@@ -93,9 +93,9 @@ function check_grammar_1() {
         grmrk=$(sed -n "$n"p <<<"$g")
         chck=$(sed -n "$n"p <<<"$g,," | sed 's/,//;s/\.//g')
         if grep -Fxq "$chck" <<<"$pronouns"; then
-            echo "<span color='#35559C'>$grmrk</span>" >> "g.$2"
+            echo "<span color='#3E539A'>$grmrk</span>" >> "g.$2"
         elif grep -Fxq "$chck" <<<"$nouns_verbs"; then
-            echo "<span color='#896E7A'>$grmrk</span>" >> "g.$2"
+            echo "<span color='#62426A'>$grmrk</span>" >> "g.$2"
         elif grep -Fxq "$chck" <<<"$conjunctions"; then
             echo "<span color='#90B33B'>$grmrk</span>" >> "g.$2"
         elif grep -Fxq "$chck" <<<"$verbs"; then
@@ -302,15 +302,13 @@ function list_words() {
 
 function translate() {
     
-    for trans in "$DS/ifs/mods/trans"/*.trad; do
-    "$trans" "$@"; done
+    for trans in "$DS/ifs/mods/trans"/*.trad; do "$trans" "$@"; done
 }
 
 
 function tts() {
     
-    for convert in "$DS/ifs/mods/trans"/*.tts; do
-    "$convert" "$@"; done
+    for convert in "$DS/ifs/mods/trans"/*.tts; do "$convert" "$@"; done
 }
 
 
@@ -520,6 +518,19 @@ function dlg_text_info_3() {
     --width=510 --height=450 --borders=5 \
     "$3" --button="$(gettext "OK")":1
 }
+
+function dlg_form_3() {
+    
+    yad --form --title=$(gettext "Image") "$image" "$label" \
+    --name=Idiomind --class=Idiomind \
+    --window-icon="$DS/images/icon.png" \
+    --skip-taskbar --image-on-top \
+    --align=center --text-align=center --center --on-top \
+    --width=420 --height=320 --borders=5 \
+    "$btn1" "$btn2" --button=$(gettext "Close"):1
+}
+
+
 
 
 function dlg_progress_1() {

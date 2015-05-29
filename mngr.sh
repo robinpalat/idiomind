@@ -438,12 +438,12 @@ edit() {
                     printf "eitm.$tpc.eitm\n" >> "$DC_s/8.cfg" &
                 fi
 
-                if [ "$tpc" != "$tpc_mod" ]; then
-                
-                    cp -f "$audio_mod" "$DM_tl/$tpc_mod/words/$fname.mp3"
-                    index word "$trgt" "$tpc_mod" &
-                    "$DS/mngr.sh" delete_item_ok "$fname"
-                    "$DS/vwr.sh" "$lists" "nll" $item_pos & exit 1
+                if [ "${tpc}" != "${tpc_mod}" ]; then
+
+                    mv -f "${audio_mod}" "$DM_tl/${tpc_mod}/words/$fname.mp3"
+                    index word "${trgt_mod}" "${tpc_mod}" &
+                    "$DS/mngr.sh" delete_item_ok "${item}"
+                    "$DS/vwr.sh" "$lists" "nll" "$item_pos" & exit 1
                 fi
                 
                 [[ $ret -eq 0 ]] && "$DS/vwr.sh" "$lists" "$trgt" "$item_pos" &
@@ -579,12 +579,12 @@ edit() {
                     echo "${trgt_mod}" >> "$DC_tlt/3.cfg"; fi
                 fi
                 
-                if [ "$tpc" != "$tpc_mod" ]; then
+                if [ "${tpc}" != "${tpc_mod}" ]; then
 
-                    cp -f "$audio_mod" "$DM_tl/$tpc_mod/$fname.mp3"
+                    mv -f "${audio_mod}" "$DM_tl/${tpc_mod}/$fname.mp3"
                     DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
-                    index sentence "$trgt_mod" "$tpc_mod" &
-                    "$DS/mngr.sh" delete_item_ok "$fname"
+                    index sentence "${trgt_mod}" "${tpc_mod}" &
+                    "$DS/mngr.sh" delete_item_ok "${item}"
                     [ -d $DT_r ] && rm -fr "$DT_r"
                     "$DS/vwr.sh" "$lists" "null" "$item_pos" & exit 1
                 fi

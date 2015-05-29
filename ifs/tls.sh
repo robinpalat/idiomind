@@ -533,36 +533,30 @@ echo "</body>" >> "$DC_tlt/att.html"
 
 help() {
 
-    internet
-    web="http://idiomind.sourceforge.net/doc/help.html"
-    yad --html --title="$(gettext "Help")" \
-    --name=Idiomind --class=Idiomind \
-    --uri="$web" --browser \
-    --window-icon="$DS/images/icon.png" --fixed \
-    --width=700 --height=600 \
-    --button="$(gettext "OK")":0
+    URL="http://idiomind.com/doc/quick_help_$lgs.pdf"
+    xdg-open "$URL"
      
 } >/dev/null 2>&1
     
 definition() {
 
-    web="http://glosbe.com/$lgt/$lgs/${2,,}"
-    xdg-open "$web"
+    URL="http://glosbe.com/$lgt/$lgs/${2,,}"
+    xdg-open "$URL"
 }
 
 web() {
 
-    web=http://idiomind.sourceforge.net
+    web="http://idiomind.sourceforge.net"
     xdg-open "$web/$lgs/${lgtl,,}" >/dev/null 2>&1
 }
 
 fback() {
     
     internet
-    web="http://idiomind.sourceforge.net/doc/msg.html"
+    URL="http://idiomind.sourceforge.net/doc/msg.html"
     yad --html --title="$(gettext "Feedback")" \
     --name=Idiomind --class=Idiomind \
-    --browser --uri="$web" \
+    --browser --uri="$URL" \
     --window-icon="$DS/images/icon.png" \
     --no-buttons --fixed \
     --width=500 --height=450
@@ -688,7 +682,7 @@ if __name__ == "__main__":
     AboutDialog = AboutDialog()
     main()
 END
-}
+} >/dev/null 2>&1
 
 set_image() {
 
@@ -701,6 +695,7 @@ set_image() {
     search="$(sed "s/'//g" <<<"$item")"
     file="$2"
     fname="$(nmfile "$item")"
+    source "$DS/ifs/mods/add/add.sh"
 
     echo -e "<html><head>
     <meta http-equiv=\"Refresh\" content=\"0;url=https://www.google.com/search?q="$search"&tbm=isch\">
@@ -714,15 +709,9 @@ set_image() {
     else label="--text=<small><a href='file://$DT/search.html'>"$(gettext "Search image...")"</a></small>"; fi
 
     if [ "$3" = word ]; then
-        
-        yad --form --title=$(gettext "Image") "$image" "$label" \
-        --name=Idiomind --class=Idiomind \
-        --window-icon="$DS/images/icon.png" \
-        --skip-taskbar --image-on-top \
-        --align=center --text-align=center --center --on-top \
-        --width=420 --height=320 --borders=5 \
-        "$btn1" "$btn2" --button=$(gettext "Close"):1
-        ret=$?
+
+        dlg_form_3
+        ret=$(echo $?)
             
             if [[ $ret -eq 3 ]]; then
             
@@ -746,13 +735,8 @@ set_image() {
             
     elif [ "$3" = sentence ]; then
     
-        yad --form --title=$(gettext "Image") "$image" "$label" \
-        --name=Idiomind --class=Idiomind \
-        --window-icon="$DS/images/icon.png" \
-        --skip-taskbar --image-on-top --text-align=center --center --on-top \
-        --width=420 --height=320 --borders=5 \
-        "$btn1" "$btn2" --button=$(gettext "Close"):1
-        ret=$?
+        dlg_form_3
+        ret=$(echo $?)
                 
             if [[ $ret -eq 3 ]]; then
             

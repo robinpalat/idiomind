@@ -649,7 +649,6 @@ process() {
     include "$DS/ifs/mods/add"
     include "$DS/ifs/mods/add_process"
     
-    
     if [ ${2:0:4} = 'Http' ]; then
         (echo "1"
         internet
@@ -751,7 +750,6 @@ process() {
         else
             lenght "${l}"
         fi
-    
     done < ./sntsls_
 
     sed -i '/^$/d' ./sntsls
@@ -915,7 +913,7 @@ process() {
                 n=1; touch wrds
                 while [[ $n -le "$(wc -l < ./wrds | head -200)" ]]; do
                 
-                    sname=$(sed -n "$n"p wrdsls)
+                    sname=$(sed -n "$n"p wrdsls | sed 's/\[ \.\.\. \]//g')
                     trgt=$(sed -n "$n"p wrds | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
                     fname="$(nmfile "${trgt}")"
                     audio="${trgt,,}"
