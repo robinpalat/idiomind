@@ -533,7 +533,7 @@ echo "</body>" >> "$DC_tlt/att.html"
 
 help() {
 
-    URL="http://idiomind.com/doc/quick_help_$lgs.pdf"
+    URL="http://idiomind.sourceforge.net/doc/$(gettext "quick_help").pdf"
     xdg-open "$URL"
      
 } >/dev/null 2>&1

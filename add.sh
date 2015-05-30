@@ -130,16 +130,16 @@ Create one using the button below. ")" & exit 1; fi
             "$DS/add.sh" new_topic
             else echo "${tpe}" > "$DT/tpe"; fi
             
-            if [ "${trgt}" = Ocr ] || [ "${trgt}" = I ]; then
+            if [[ "${trgt}" = Ocr ]] || [[ "${trgt}" = I ]]; then
                 "$DS/add.sh" process image "$DT_r" & exit 1
 
-            elif [ ${#trgt} = 1 ]; then
+            elif [[ ${#trgt} = 1 ]]; then
                 "$DS/add.sh" process ${trgt:0:2} "$DT_r" & exit 1
 
-            elif [ ${trgt:0:4} = 'Http' ]; then
+            elif [[ ${trgt:0:4} = 'Http' ]]; then
                 "$DS/add.sh" process "${trgt}" "$DT_r" & exit 1
             
-            elif [ ${#trgt} -gt 150 ]; then
+            elif [[ ${#trgt} -gt 150 ]]; then
                 "$DS/add.sh" process "${trgt}" "$DT_r" & exit 1
                 
             #elif [ ${#trgt} -gt 150 ]; then
@@ -153,22 +153,21 @@ Create one using the button below. ")" & exit 1; fi
 
                 srce=$(translate "${trgt}" auto $lgs)
                 
-                if [ "$(wc -w <<<"${srce}")" = 1 ]; then
+                if [[ "$(wc -w <<<"${srce}")" = 1 ]]; then
                     "$DS/add.sh" new_word "${trgt}" "$DT_r" "${srce}" & exit 1
                     
-                elif [ "$(wc -w <<<"${srce}")" -ge 1 ] &&  [ ${#srce} -le 180 ]; then
+                elif [ "$(wc -w <<<"${srce}")" -ge 1 -a ${#srce} -le 180 ]; then
                     "$DS/add.sh" new_sentence "${trgt}" "$DT_r" "${srce}" & exit 1
                 fi
                 
             elif [ $lgt != ja ] || [ $lgt != 'zh-cn' ] || [ $lgt != ru ]; then
             
                 if [ "$trans" = FALSE ]; then
-                    if [ -z "${srce}" ] || [ -z "${trgt}" ]; then
-                    [ "$DT_r" ] && rm -fr "$DT_r"
+                    if [ -z "${srce}" ] || [ -z "${trgt}" ]; then [ "$DT_r" ] && rm -fr "$DT_r"
                     msg "$(gettext "You need to fill text fields.")\n" info & exit 1; fi
                 fi
             
-                if [ "$(wc -w <<<"${trgt}")" = 1 ]; then
+                if [[ "$(wc -w <<<"${trgt}")" = 1 ]]; then
                     "$DS/add.sh" new_word "${trgt}" "$DT_r" "${srce}" & exit 1
                     
                 elif [ "$(wc -w <<<"${trgt}")" -ge 1 -a ${#trgt} -le 180 ]; then
@@ -183,7 +182,6 @@ Create one using the button below. ")" & exit 1; fi
 
 
 new_sentence() {
-    
     
     DT_r="$3"
     source "$DS/default/dicts/$lgt"
@@ -206,11 +204,12 @@ new_sentence() {
         cd "$DT_r"
         if [ "$trd_trgt" = TRUE ]; then
         trgt="$(translate "${trgt}" auto "$lgt")"
+        trgt=$(clean_1 "${trgt}")
         fi
         srce="$(translate "${trgt}" $lgt $lgs)"
         srce="$(clean_1 "${srce}")"
         fname="$(nmfile "${trgt}")"
-        
+
         if [ ! -f "$DT_r/audtm.mp3" ]; then
         
             tts "${trgt}" "$lgt" "$DT_r" "$DM_tlt/$fname.mp3"

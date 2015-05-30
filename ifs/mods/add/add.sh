@@ -8,12 +8,12 @@ fi
 function mksure() {
     
     e=0
-    if [ ! -f "${1}" ] || \
-    [ `stat --printf="%s" "${1}" | cut -c -3` -lt 100 ]; then
+    if [[ ! -f "${1}" ]] || \
+    [[ `stat --printf="%s" "${1}" | cut -c -3` -lt 100 ]]; then
     e=1; fi
     for str in "${@}"; do
         shopt -s extglob
-        if [ -z "${str##+([[:space:]])}" ]; then
+        if [[ -z "${str##+([[:space:]])}" ]]; then
         e=1; break; fi
     done
     return $e
@@ -29,11 +29,11 @@ function index() {
     DC_tlt="$DM_tl/$3/.conf"
     item="${2}"
     
-    if [ ! -z "${item}" ] && ! grep -Fxo "${item}" < "$DC_tlt/0.cfg"; then
+    if [ ! -z "${item}" ] && ! grep -Fxof "${item}" "$DC_tlt/0.cfg"; then
     
         if [ "$1" = word ]; then
         
-            if [ "$(grep "$4" < "$DC_tlt/0.cfg")" ] && [ -n "$4" ]; then
+            if [ "$(grep "$4" "$DC_tlt/0.cfg")" ] && [ -n "$4" ]; then
             sed -i "s/${4}/${4}\n${item}/" "$DC_tlt/0.cfg"
             sed -i "s/${4}/${4}\n${item}/" "$DC_tlt/1.cfg"
             sed -i "s/${4}/${4}\n${item}/" "$DC_tlt/.11.cfg"
@@ -168,7 +168,7 @@ function clean_2() {
 
 function clean_3() {
     
-    cd "$1"; touch "swrd.$2" "twrd.$2"
+    cd /; cd "$1"; touch "swrd.$2" "twrd.$2"
     if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
     vrbl="${srce}"; lg=$lgt; aw="swrd.$2"; bw="twrd.$2"
     else vrbl="${trgt}"; lg=$lgs; aw="twrd.$2"; bw="swrd.$2"; fi
@@ -302,13 +302,15 @@ function list_words() {
 
 function translate() {
     
-    for trans in "$DS/ifs/mods/trans"/*.trad; do "$trans" "$@"; done
+    for trans in "$DS/ifs/mods/trans"/*.trad; do
+    "$trans" "$@"; done
 }
 
 
 function tts() {
     
-    for convert in "$DS/ifs/mods/trans"/*.tts; do "$convert" "$@"; done
+    for convert in "$DS/ifs/mods/trans"/*.tts; do
+    "$convert" "$@"; done
 }
 
 
@@ -519,6 +521,7 @@ function dlg_text_info_3() {
     "$3" --button="$(gettext "OK")":1
 }
 
+
 function dlg_form_3() {
     
     yad --form --title=$(gettext "Image") "$image" "$label" \
@@ -529,8 +532,6 @@ function dlg_form_3() {
     --width=420 --height=320 --borders=5 \
     "$btn1" "$btn2" --button=$(gettext "Close"):1
 }
-
-
 
 
 function dlg_progress_1() {
