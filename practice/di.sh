@@ -53,8 +53,8 @@ fonts() {
     src=$(eyeD3 "$drtt/$fname.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
     img="$drtt/images/$fname.jpg"
     [ ! -f "$img" ] && img="$DS/practice/img_2.jpg"
-    s=$((48-${#src}))
-    c=$((28-${#1}))
+    s=$((46-${#src}))
+    c=$((26-${#1}))
     cuestion="\n\n<span font_desc='Free Sans $s'><b>$1</b></span>"
     answer="<span font_desc='Free Sans $c'><i>$src</i></span>"
 }
@@ -66,7 +66,7 @@ cuestion() {
     --skip-taskbar --text-align=center --align=center --center --on-top \
     --image-on-top --undecorated --buttons-layout=spread \
     --width=415 --height=340 --borders=4 \
-    --button="gtk-close":1 \
+    --button="$(gettext "Exit")":1 \
     --button="    $(gettext "Answer") >>    ":0
 }
 

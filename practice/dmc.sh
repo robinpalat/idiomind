@@ -80,7 +80,7 @@ mchoise() {
     --no-headers \
     --width=410 --height=350 --borders=6 \
     --column=Option \
-    --button="gtk-close":1 \
+    --button="$(gettext "Exit")":1 \
     --button="$(gettext "OK")":0)
 }
 

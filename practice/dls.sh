@@ -55,7 +55,7 @@ dialog2() {
     --buttons-layout=end --skip-taskbar --undecorated --center --on-top \
     --text-align=left --align=left --image-on-top \
     --height=215 --width=560 --borders=3 \
-    --button="gtk-close":1 \
+    --button="$(gettext "Exit")":1 \
     --button="$(gettext "Listen")":"$cmd_play" \
     --button=" $(gettext "Check") >> ":0)
     }

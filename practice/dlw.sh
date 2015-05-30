@@ -74,7 +74,7 @@ cuestion() {
     --buttons-layout=spread --image-on-top --undecorated \
     --width=370 --height=270 --borders=5 \
     --field=play:BTN "$cmd_play" \
-    --button="gtk-close":1 \
+    --button="$(gettext "Exit")":1 \
     --button="  $(gettext "Nope")  ":3 \
     --button="  $(gettext "I Got It")  ":2
     }

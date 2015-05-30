@@ -65,7 +65,7 @@ cuestion() {
     --undecorated --buttons-layout=spread --align=center \
     --width=395 --height=290 --borders=5 \
     --field="$acuestion":lbl \
-    --button="gtk-close":1 \
+    --button="$(gettext "Exit")":1 \
     --button="    $(gettext "Answer") >>    ":0
 }
 

@@ -12,7 +12,7 @@ function word_view() {
     exmp="$(sed -n 1p <<<"$fields")"
     dftn="$(sed -n 2p <<<"$fields")"
     note="$(sed -n 3p <<<"$fields")"
-    [ -n "$dftn" ] && field_dftn="--field=<span font_desc='verdana 8'><b>$(gettext "Definition")</b>\n$dftn</span>:lbl"
+    [ -n "$dftn" ] && field_dftn="--field=<span font_desc='verdana 8'>$(gettext "Definition:") $dftn</span>:lbl"
     [ -n "$note" ] && field_note="--field=$note\n:lbl"
     hlgt="$(awk '{print tolower($0)}' <<<"$trgt")"
     exmp="$(sed "s/"${trgt,,}"/<span background='#FDFBCF'>"${trgt,,}"<\/\span>/g" <<<"$exmp")"

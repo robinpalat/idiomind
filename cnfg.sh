@@ -96,7 +96,7 @@ yad --plug=$KEY --form --tabnum=1 \
 --separator='|' --always-print-result --print-all \
 --field="$(gettext "General Options")\t":lbl " " \
 --field=":LBL" " " \
---field="$(gettext "Use color to grammar (for reference only)")":CHK "$grammar" \
+--field="$(gettext "Use color to grammar")":CHK "$grammar" \
 --field="$(gettext "List words after adding a sentence")":CHK "$list" \
 --field="$(gettext "Perform tasks at startup")":CHK "$tasks" \
 --field="$(gettext "Use automatic translation, if available")":CHK "$trans" \
