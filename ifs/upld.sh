@@ -308,7 +308,7 @@ mv "$tpc.tar.gz" "$id.$tpc.$lgt"
 du=$(du -h "$id.$tpc.$lgt" | cut -f1)
 [ -d "$DT_u/$tpc" ] && rm -fr "$DT_u/$tpc"
 dte=$(date "+%d %B %Y")
-notify-send "$(gettext "Upload in progress")" "$(gettext "This can take some time, please wait")" -i idiomind -t 6000
+notify-send "$(gettext "Upload in progress")" "$(gettext "This can take some time, please wait")" -t 6000
 
 url="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
 | grep -o 'UPLOADS="[^"]*' | grep -o '[^"]*$')"

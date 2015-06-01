@@ -86,7 +86,7 @@ img3="$DSP/icons_st/$(< ./.icon3).png"
 img4="$DSP/icons_st/$(< ./.icon4).png"
 img5="$DSP/icons_st/$(< ./.icon5).png"
 
-VAR="$(yad --list --title="$(gettext "Practice") - $tpc" \
+VAR="$(yad --list --title="$(gettext "Practice ")- $tpc" \
 $img --text="$info" \
 --class=Idiomind --name=Idiomind \
 --print-column=1 --separator="" \

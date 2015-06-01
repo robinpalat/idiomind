@@ -93,9 +93,9 @@ function dlg_form_1() {
     --field="<small>$(gettext "Example")</small>":TXT "$exmp" \
     --field="<small>$(gettext "Definition")</small>":TXT "$dftn" \
     --field="<small>$(gettext "Note")</small>":TXT "$note" \
-    --field="<small>$(gettext "Listen")</small>":FBTN "$cmd_play" \
-    --field="$(gettext "Mark")":CHK "$mark" \
     --field="<small>$(gettext "Search definition")</small>":FBTN "$cmd_definition" \
+    --field="$(gettext "Mark")":CHK "$mark" \
+    --field="<small>$(gettext "Listen")</small>":FBTN "$cmd_play" \
     --field=" ":LBL " " \
     --button="$(gettext "Move")":"$cmd_move" \
     --button="$(gettext "Image")":"$cmd_image" \

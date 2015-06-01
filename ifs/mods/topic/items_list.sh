@@ -169,8 +169,8 @@ function dialog_1() {
     
     yad --title="$tpc" \
     --class=idiomind --name=Idiomind \
-    --text="$(gettext "<b>Would you like to review it?</b>\nMore than") $tdays $(gettext "days have passed since you marked this topic as learnt.")" \
-    --image=dialog-question \
+    --text="$(gettext "<b>Would you like to go over it?</b>\nThe specified period already has been completed")" \
+    --image=gtk-refresh \
     --window-icon="$DS/images/icon.png" \
     --buttons-layout=edge --center --on-top \
     --width=450 --height=150 --borders=10 \

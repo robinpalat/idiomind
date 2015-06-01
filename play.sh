@@ -17,6 +17,7 @@
 #  MA 02110-1301, USA.
 #
 #  2015/02/27
+
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 if [ -z "$tpc" ]; then source "$DS/ifs/mods/cmns.sh"
 msg "$(gettext "No topic is active")\n" info & exit 1; fi
@@ -81,7 +82,8 @@ function setting_1() {
 
 if [ ! -f "$DT/.p_" ]; then
 l="--center"
-btn="Play:0"
+if grep -E 'vivid|wily' <<<"`lsb_release -a`"; then
+btn="gtk-media-play:0"; else btn="$(gettext "Play"):0"; fi
 else
 tpp="$(sed -n 2p "$DT/.p_")"
 l="--center"

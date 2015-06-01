@@ -33,7 +33,7 @@ cd "$DC_tlt/practice"
 
 lock() {
     
-    yad --title="$(gettext "Practice") - $tpc" \
+    yad --title="$(gettext "Practice Completed")" \
     --text="<b>$(gettext "Practice Completed")</b>\\n   $(< $1)\n " \
     --window-icon="$DS/images/icon.png" --on-top --skip-taskbar \
     --center --image="$DS/practice/icons_st/21.png" \
@@ -96,7 +96,7 @@ get_list_sentences() {
 
 starting() {
     
-    yad --title=$(gettext "Practice") \
+    yad --title=$(gettext "Practice ") \
     --text="$1" --image=info \
     --window-icon="$DS/images/icon.png" --skip-taskbar --center --on-top \
     --width=360 --height=120 --borders=5 \

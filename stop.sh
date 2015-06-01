@@ -17,9 +17,10 @@ on_quit() {
     kill -9 $(pgrep -f "yad --form ") &
     kill -9 $(pgrep -f "yad --notebook ") &
     fi
-    [ -n "$(ps -A | pgrep -f "yad")" ] && killall yad
-    [ -f "$DT/.p_" ] && rm -fr "$DT/.p_" "$DT/tpp"
-    [ -f "$DT/index.m3u" ] && rm -fr "$DT/index.m3u"
+    if [ -f "$DT/.p_" ]; then
+    notify-send "$(gettext "Playback stopped")"
+    rm -f "$DT/.p_" "$DT/tpp"
+    rm -f "$DT/index.m3u"; fi
     exit
 }
 

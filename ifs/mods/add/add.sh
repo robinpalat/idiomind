@@ -418,7 +418,7 @@ function dlg_form_1() {
     --skip-taskbar --center --on-top \
     --align=right --image="$img" \
     --window-icon="$DS/images/icon.png" \
-    --width=450 --height=140 --borders=0 \
+    --width=450 --height=130 --borders=0 \
     --field="" "$txt" \
     --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
     --button="$(gettext "Image")":3 \
@@ -435,7 +435,7 @@ function dlg_form_2() {
     --skip-taskbar --center --on-top \
     --align=right --image="$img" \
     --window-icon="$DS/images/icon.png" \
-    --width=450 --height=170 --borders=0 \
+    --width=450 --height=150 --borders=0 \
     --field="" "$txt" \
     --field="" "$srce" \
     --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \

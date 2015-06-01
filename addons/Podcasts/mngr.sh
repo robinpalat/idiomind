@@ -17,8 +17,28 @@ if [ "$1" = new_item ]; then
     else
     echo "$item" > "$DCP/2.cfg"; fi
     check_index1 "$DCP/2.cfg" "$DCP/.22.cfg"
-    notify-send -i info "$(gettext "Done")" "$item" -t 3000
+    notify-send -i info "$(gettext "Saved")" "$item" -t 3000
     exit
+    
+elif [ "$1" = sv_as ]; then
+
+    fname=$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)
+    [ -f "$DMC/$fname.mp3" ] && file="$DMC/$fname.mp3"
+    [ -f "$DMC/$fname.ogg" ] && file="$DMC/$fname.ogg"
+    [ -f "$DMC/$fname.m4v" ] && file="$DMC/$fname.m4v"
+    [ -f "$DMC/$fname.mp4" ] && file="$DMC/$fname.mp4"
+    cd "$HOME"
+    sv=$(yad --file --save --title="$(gettext "Save as")" \
+    --filename="$item${file: -4}" \
+    --window-icon="$DS/images/icon.png" \
+    --skip-taskbar --center --on-top \
+    --width=600 --height=500 --borders=10 \
+    --button="$(gettext "Cancel")":1 \
+    --button="$(gettext "Save")":0)
+    ret=$?
+    if [[ $ret -eq 0 ]]; then
+    cp "$file" "$sv"; fi
+    
         
 elif [ "$1" = delete_item ]; then
 
