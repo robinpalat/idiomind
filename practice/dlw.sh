@@ -73,10 +73,10 @@ cuestion() {
     --skip-taskbar --text-align=center --center --on-top \
     --buttons-layout=spread --image-on-top --undecorated \
     --width=370 --height=270 --borders=5 \
-    --field=play:BTN "$cmd_play" \
+    --field="$(gettext "Play")":BTN "$cmd_play" \
     --button="$(gettext "Exit")":1 \
-    --button="  $(gettext "Nope")  ":3 \
-    --button="  $(gettext "I Got It")  ":2
+    --button="  $(gettext "No")  ":3 \
+    --button="  $(gettext "Yes")  ":2
     }
 
 

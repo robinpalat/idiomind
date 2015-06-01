@@ -716,11 +716,11 @@ set_image() {
             if [[ $ret -eq 3 ]]; then
             
             rm -f *.l
-            scrot -s --quality 80 "$fname.temp.jpeg"
+            scrot -s --quality 90 "$fname.temp.jpeg"
             /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 100x90^ \
             -gravity center -extent 100x90 -quality 90% "$item"_temp.jpeg
-            /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 400x270^ \
-            -gravity center -extent 400x270 -quality 90% "$DM_tlt/words/images/$fname.jpg"
+            /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 360x240^ \
+            -gravity center -extent 360x240 -quality 90% "$DM_tlt/words/images/$fname.jpg"
             eyeD3 --remove-images "$file"
             eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file"
             wait
@@ -741,11 +741,11 @@ set_image() {
             if [[ $ret -eq 3 ]]; then
             
             rm -f *.l
-            scrot -s --quality 80 "$fname.temp.jpeg"
+            scrot -s --quality 90 "$fname.temp.jpeg"
             /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 100x90^ \
             -gravity center -extent 100x90 -quality 90% "$item"_temp.jpeg
-            /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 400x270^ \
-            -gravity center -extent 400x270 -quality 90% "$DM_tlt/words/images/$fname.jpg"
+            /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 360x240^ \
+            -gravity center -extent 360x240 -quality 90% "$DM_tlt/words/images/$fname.jpg"
             eyeD3 --remove-images "$file"
             eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file"
             wait

@@ -246,7 +246,7 @@ function tags_9() {
 
 function set_image_1() {
     
-    scrot -s --quality 80 img.jpg
+    scrot -s --quality 90 img.jpg
     /usr/bin/convert img.jpg -interlace Plane -thumbnail 110x90^ \
     -gravity center -extent 110x90 -quality 90% ico.jpg
 }
@@ -254,8 +254,8 @@ function set_image_1() {
 
 function set_image_2() {
     
-    /usr/bin/convert img.jpg -interlace Plane -thumbnail 400x270^ \
-    -gravity center -extent 400x270 -quality 90% imgs.jpg
+    /usr/bin/convert img.jpg -interlace Plane -thumbnail 380x250^ \
+    -gravity center -extent 380x250 -quality 90% imgs.jpg
     eyeD3 --add-image imgs.jpg:ILLUSTRATION "$1"
     mv -f imgs.jpg "$2"
 } >/dev/null 2>&1
@@ -263,8 +263,8 @@ function set_image_2() {
 
 function set_image_3() {
     
-    /usr/bin/convert img.jpg -interlace Plane -thumbnail 400x270^ \
-    -gravity center -extent 400x270 -quality 90% imgw.jpg
+    /usr/bin/convert img.jpg -interlace Plane -thumbnail 380x250^ \
+    -gravity center -extent 380x250 -quality 90% imgw.jpg
     eyeD3 --add-image imgw.jpg:ILLUSTRATION "$1"
     mv -f imgw.jpg "$2"
 } >/dev/null 2>&1

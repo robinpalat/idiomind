@@ -53,10 +53,10 @@ fonts() {
     src=$(eyeD3 "$drtt/$fname.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
     img="$drtt/images/$fname.jpg"
     [ ! -f "$img" ] && img="$DS/practice/img_2.jpg"
-    s=$((46-${#src}))
-    c=$((26-${#1}))
-    cuestion="\n\n<span font_desc='Free Sans $s'><b>$1</b></span>"
-    answer="<span font_desc='Free Sans $c'><i>$src</i></span>"
+    s=$((22-${#src}))
+    t=$((45-${#1}))
+    srcel="\n\n<span font_desc='Free Sans $s'><i>$src</i></span>"
+    trgtl="<span font_desc='Free Sans $t'><b>$1</b></span>"
 }
 
 cuestion() {
@@ -78,8 +78,9 @@ answer() {
     --skip-taskbar --text-align=center --align=center --center --on-top \
     --undecorated --buttons-layout=spread \
     --width=415 --height=340 --borders=4 \
-    --field="\n$cuestion":lbl \
-    --field="$answer":lbl \
+    --field="\n$srcel":lbl \
+    --field="":lbl \
+    --field="$trgtl":lbl \
     --button="  $(gettext "I did not know it")  ":3 \
     --button="  $(gettext "I Knew it")  ":2
 }
