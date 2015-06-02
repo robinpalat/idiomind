@@ -29,7 +29,7 @@ function index() {
     DC_tlt="$DM_tl/$3/.conf"
     item="${2}"
     
-    if [ ! -z "${item}" ] && ! grep -Fxof "${item}" "$DC_tlt/0.cfg"; then
+    if [ ! -z "${item}" ] && ! grep -Fxo "${item}" "$DC_tlt/0.cfg"; then
     
         if [ "$1" = word ]; then
         
@@ -254,8 +254,8 @@ function set_image_1() {
 
 function set_image_2() {
     
-    /usr/bin/convert img.jpg -interlace Plane -thumbnail 380x250^ \
-    -gravity center -extent 380x250 -quality 90% imgs.jpg
+    /usr/bin/convert img.jpg -interlace Plane -thumbnail 400x270^ \
+    -gravity center -extent 400x270 -quality 90% imgs.jpg
     eyeD3 --add-image imgs.jpg:ILLUSTRATION "$1"
     mv -f imgs.jpg "$2"
 } >/dev/null 2>&1
@@ -263,8 +263,8 @@ function set_image_2() {
 
 function set_image_3() {
     
-    /usr/bin/convert img.jpg -interlace Plane -thumbnail 380x250^ \
-    -gravity center -extent 380x250 -quality 90% imgw.jpg
+    /usr/bin/convert img.jpg -interlace Plane -thumbnail 400x270^ \
+    -gravity center -extent 400x270 -quality 90% imgw.jpg
     eyeD3 --add-image imgw.jpg:ILLUSTRATION "$1"
     mv -f imgw.jpg "$2"
 } >/dev/null 2>&1
@@ -389,11 +389,14 @@ function list_words_2() {
 function list_words_3() {
 
     if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
-    echo "$2" | tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > lst
+    echo "$2" | sed 's/\[ \.\.\. ] //g' | sed 's/\.//g' \
+    | tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > lst
     else
-    cat "$1" | tr -c "[:alnum:]" '\n' | sed '/^$/d' | sed '/"("/d' \
-    | sed '/")"/d' | sed '/":"/d' | sort -u \
-    | head -n40 | egrep -v "FALSE" | egrep -v "TRUE" > lst
+    cat "$1" | sed 's/\[ \.\.\. ] //g' | sed 's/\.//g' \
+    | tr -s "[:blank:]" '\n' | sed '/^$/d' | sed '/"("/d' \
+    | grep -v '^.$' | grep -v '^..$' \
+    | sed '/")"/d' | sed '/":"/d' | sed 's/[^ ]\+/\L\u&/g' \
+    | head -n100 | egrep -v "FALSE" | egrep -v "TRUE" > lst
     fi
 }
 
@@ -453,7 +456,7 @@ function dlg_radiolist_1() {
     --name=Idiomind --class=Idiomind \
     --separator="\n" \
     --window-icon="$DS/images/icon.png" \
-    --sticky --skip-taskbar --center --on-top --fixed --no-headers \
+    --skip-taskbar --center --on-top --fixed --no-headers \
     --width=150 --height=420 --borders=5 \
     --column=" " --column=" " \
     --button="gtk-add":0
@@ -467,7 +470,7 @@ function dlg_checklist_1() {
     --text="<small> $2 </small>" \
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" \
-    --center --on-top --sticky --no-headers \
+    --center --on-top --no-headers \
     --text-align=right --buttons-layout=end \
     --width=400 --height=280 --borders=5  \
     --column=" " --column="Select" \
@@ -485,7 +488,7 @@ function dlg_checklist_3() {
     --name=Idiomind --class=Idiomind \
     --dclick-action="'/usr/share/idiomind/add.sh' 'list_words_dclik'" \
     --window-icon="$DS/images/icon.png" \
-    --ellipsize=END --text-align=right --center --sticky --no-headers \
+    --ellipsize=END --text-align=right --center --no-headers \
     --width=600 --height=550 --borders=5 \
     --column="$(wc -l < "$1")" \
     --column="$(gettext "sentences")" \
@@ -503,7 +506,7 @@ function dlg_text_info_1() {
     --editable \
     --window-icon="$DS/images/icon.png" \
     --wrap --margins=30 --fontname=vendana \
-    --sticky --skip-taskbar --center --on-top \
+    --skip-taskbar --center --on-top \
     --width=600 --height=550 --borders=5 \
     --button="gtk-ok":0 > ./sort
 }

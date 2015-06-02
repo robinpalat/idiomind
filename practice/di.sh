@@ -53,7 +53,7 @@ fonts() {
     src=$(eyeD3 "$drtt/$fname.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
     img="$drtt/images/$fname.jpg"
     [ ! -f "$img" ] && img="$DS/practice/img_2.jpg"
-    s=$((22-${#src}))
+    s=$((24-${#src}))
     t=$((45-${#1}))
     srcel="\n\n<span font_desc='Free Sans $s'><i>$src</i></span>"
     trgtl="<span font_desc='Free Sans $t'><b>$1</b></span>"

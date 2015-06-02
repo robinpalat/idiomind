@@ -32,7 +32,8 @@ on_play() {
     [ -n "$(ps -A | pgrep -f "notify-osd")" ] && killall notify-osd &
     [ -n "$(ps -A | pgrep -f "play")" ] && killall play &
     [ -n "$(ps -A | pgrep -f "mplayer")" ] && killall mplayer &
-    [ -f "$DT/.p_" ] && rm -fr "$DT/.p_" "$DT/tpp"
+    [ -f "$DT/.p_" ] && rm -fr "$DT/.p_"
+    [ -f "$DT/.p" ] && rm -fr "$DT/.p"
     [ -f "$DT/index.m3u" ] && rm -fr "$DT/index.m3u"
     exit
 }
@@ -42,7 +43,7 @@ on_playm() {
     [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/bcle.sh")" ] && killall bcle.sh &
     [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/bcle.sh")" ] && killall bcle.sh &
     [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/chng.sh")" ] && killall chng.sh &
-    [ -f "$DT/.p_" ] && rm -fr "$DT/.p_" "$DT/tpp"
+    [ -f "$DT/.p_" ] && rm -fr "$DT/.p_"
     exit
 }
 
@@ -79,6 +80,18 @@ on_edit() {
     exit
 }
 
+on_play2() {
+    killall bcle.sh &
+    [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/bcle.sh")" ] && killall bcle.sh &
+    [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/bcle.sh")" ] && killall bcle.sh
+    [ -n "$(ps -A | pgrep -f "/usr/share/idiomind/chng.sh")" ] && killall chng.sh
+    [ -n "$(ps -A | pgrep -f "notify-osd")" ] && killall notify-osd &
+    [ -n "$(ps -A | pgrep -f "play")" ] && killall play &
+    [ -n "$(ps -A | pgrep -f "mplayer")" ] && killall mplayer &
+    [ -f "$DT/.p_" ] && rm -fr "$DT/.p_"
+    exit
+}
+
 case "$1" in
     1)
     on_quit ;;
@@ -94,4 +107,6 @@ case "$1" in
     on_addons ;;
     7)
     on_edit ;;
+    8)
+    on_play2 ;;
 esac

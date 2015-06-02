@@ -18,11 +18,11 @@
 #
 
 source /usr/share/idiomind/ifs/c.conf
-[ ! -d "$DC" ] && "$DS/ifs/1u.sh" && exit
-info1=" $(gettext "Are you sure you want to change the interface language program?")  "
-info2=" $(gettext "Are you sure you want to change the language setting to learn?")  "
+[[ ! -d "$DC" ]] && "$DS/ifs/1u.sh" && exit
+info2=" $(gettext "Are you sure you want to change the language set to learn?")  "
+info1=" $(gettext "Are you sure you want to change the source language setting?")  "
 cd "$DS/addons"
-[ -n "$(< "$DC_s/1.cfg")" ] && cfg=1 || > "$DC_s/1.cfg"
+[[ -n "$(< "$DC_s/1.cfg")" ]] && cfg=1 || > "$DC_s/1.cfg"
 cnf1=$(mktemp "$DT/cnf1.XXXX")
 
 desktopfile="[Desktop Entry]
@@ -72,7 +72,6 @@ set_lang() {
 
 n=0
 if [ "$cfg" = 1 ]; then
-
     while [[ $n -lt 14 ]]; do
         get="${sets[$n]}"
         val=$(sed -n $((n+1))p "$DC_s/1.cfg" \
@@ -83,7 +82,7 @@ if [ "$cfg" = 1 ]; then
     
 else
     n=0; > "$DC_s/1.cfg"
-    while [ $n -lt 19 ]; do
+    while [[ $n -lt 19 ]]; do
     echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
     ((n=n+1))
     done
@@ -118,7 +117,7 @@ yad --plug=$KEY --form --tabnum=1 \
 --field=":LBL" " " \
 --field="<small>$(gettext "Speech Synthesizer (default espeak)")</small>" "$synth" \
 --field=" :LBL" " " \
---field="$(gettext "Quick Help")":BTN "$DS/ifs/tls.sh help" \
+--field="$(gettext "Help")":BTN "$DS/ifs/tls.sh help" \
 --field="$(gettext "Feedback")":BTN "$DS/ifs/tls.sh 'fback'" \
 --field="$(gettext "Check for Updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
 --field="$(gettext "Your Shared Topics")":BTN "$DS/ifs/upld.sh 'vsd'" \
@@ -139,9 +138,9 @@ yad --notebook --key=$KEY --title="$(gettext "Settings")" \
 --button="$(gettext "OK")":0
 ret=$?
 
-    if [ $ret -eq 0 ]; then
+    if [[ $ret -eq 0 ]]; then
         n=1; v=0
-        while [ $n -le 21 ]; do
+        while [[ $n -le 21 ]]; do
             val=$(cut -d "|" -f$n < "$cnf1")
             if [ -n "$val" ]; then
             sed -i "s/${sets[$v]}=.*/${sets[$v]}=\"$val\"/g" "$DC_s/1.cfg"
@@ -167,7 +166,7 @@ ret=$?
         fi
         
         n=0
-        while [ $n -lt 10 ]; do
+        while [[ $n -lt 10 ]]; do
             if cut -d "|" -f19 < "$cnf1" | grep "${lang[$n]}" && \
             [ "${lang[$n]}" != "$lgtl" ]; then
                 lgtl="${lang[$n]}"
@@ -181,7 +180,7 @@ ret=$?
         done
         
         n=0
-        while [ $n -lt 10 ]; do
+        while [[ $n -lt 10 ]]; do
             if cut -d "|" -f20 < "$cnf1" | grep "${lang[$n]}" && \
             [ "${lang[$n]}" != "$lgsl" ]; then
                 confirm "$info1" dialog-warning

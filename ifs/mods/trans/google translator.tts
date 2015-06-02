@@ -5,25 +5,23 @@ DT_r="$3"; cd "$DT_r"
 if [ "$(sed -n 1p < "$HOME/.config/idiomind/addons/gts.cfg" \
 | grep -o set1=\"[^\"]* | grep -o '[^"]*$')" = TRUE ]; then
 
-if [ "$(wc -c <<<"$1")" -gt 100 ]; then
+if [ ${#1} -gt 100 ]; then
 
-    file=1;
-    while read -r chnk; do
+    f=1; while read -r chnk; do
         if [ -n "$chnk" ]; then
-        quote="$(sed -s "s/|/\'/g" <<<"$chnk")"
-        wget -q -U Mozilla -O "$DT_r/tmp$file.mp3" \
-        "https://translate.google.com/translate_tts?ie=UTF-8&tl=$2&q=$quote"
+        q="$(sed -s "s/|/\'/g" <<<"$chnk")"
+        wget -q -U Mozilla -O "$DT_r/tmp$f.mp3" \
+        "https://translate.google.com/translate_tts?ie=UTF-8&tl=$2&q=$q"
         fi
-        ((file=file+1))
-    done <<<"$(tr -s "'" "|" <<<"$1" | xargs -n7)"
-    
+        ((f=f+1))
+    done < <(tr -s "'" "|" <<<"$1" | xargs -n7)
     cat $(ls "$DT_r"/tmp[0-9]*.mp3 | sort -n | tr '\n' ' ') > "$4"
     find . -name "$DT_r"/tmp*.mp3 -exec rm -rf {} \;
 
 else
     wget -q -U Mozilla -O "$DT_r/tmp1.mp3" \
     "https://translate.google.com/translate_tts?ie=UTF-8&tl=$2&q=$1"
-    cp -f "$DT_r/tmp1.mp3" "$4"
+    mv -f "$DT_r/tmp1.mp3" "$4"
 fi
 fi
 exit

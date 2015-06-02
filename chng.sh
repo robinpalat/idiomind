@@ -45,8 +45,11 @@ if [ "$1" = chngi ]; then
     }
 
     index="$DT/index.m3u"
-    item="$(sed -n "$2"p "$index")"
-    fname="$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)"
+    _item="$(sed -n "$2"p "$index")"
+    if [ -f "$DT/.p" ]; then
+    echo $(($2+2)) > "$DT/.p"
+    "$DS/stop.sh" 8 & exit 1; fi
+    fname="$(echo -n "$_item" | md5sum | rev | cut -c 4- | rev)"
     
     [ -f "$DM_tlt/$fname.mp3" ] && file="$DM_tlt/$fname.mp3" && t=2
     [ -f "$DM_tlt/words/$fname.mp3" ] && file="$DM_tlt/words/$fname.mp3" && t=1
@@ -57,7 +60,7 @@ if [ "$1" = chngi ]; then
     
     if [ "$t" = 2 ]; then
     
-    tgs=$(eyeD3 "$file")
+    tgs=$(eyeD3 "$file") 
     trgt=$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"$tgs")
     srce=$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"$tgs")
     play=play
@@ -70,7 +73,7 @@ if [ "$1" = chngi ]; then
     play=play
     fi
 
-    [ -z "$trgt" ] && trgt="$item"
+    [ -z "$trgt" ] && trgt="$_item"
     img="$DM_tlt/words/images/$fname.jpg"
     [ -f "$img" ] && icon="$img"
             

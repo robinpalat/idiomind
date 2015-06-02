@@ -30,16 +30,17 @@ sets=('grammar' 'list' 'tasks' 'trans' 'trd_trgt' 'text' 'audio' \
 'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' \
 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
 in=('in1' 'in2' 'in3' 'in4' 'in5' 'in6')
+l="--center"
 
-tlng="$DC_tlt/1.cfg"
-winx="$DC_tlt/3.cfg"
-sinx="$DC_tlt/4.cfg"
-if [ "$(wc -l < "$sinx")" -gt 0 ]; then
-in1="$(grep -Fxvf "$sinx" "$tlng")"; else
-in1="$(< "$tlng")"; fi
-if [ "$(wc -l < "$winx")" -gt 0 ]; then
-in2="$(grep -Fxvf "$winx" "$tlng")"; else
-in2="$(< "$tlng")"; fi
+cfg1="$DC_tlt/1.cfg"
+cfg3="$DC_tlt/3.cfg"
+cfg4="$DC_tlt/4.cfg"
+if [ "$(wc -l < "$cfg4")" -gt 0 ]; then
+in1="$(grep -Fxvf "$cfg4" "$cfg1")"; else
+in1="$(< "$cfg1")"; fi
+if [ "$(wc -l < "$cfg3")" -gt 0 ]; then
+in2="$(grep -Fxvf "$cfg3" "$cfg1")"; else
+in2="$(< "$cfg1")"; fi
 in3="$(< "$DC_tlt/6.cfg")"
 [ -f "$DC_tlt/practice/log" ] && \
 in4="$(sed '/^$/d' < "$DC_tlt/practice/log" | sort | uniq | head -n 20)" || in4=""
@@ -62,7 +63,7 @@ if [ "$cfg" = 1 ]; then
     
 else
     n=0; > "$DC_s/1.cfg"
-    while [ $n -lt 19 ]; do
+    while [[ $n -lt 19 ]]; do
     echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
     ((n=n+1))
     done
@@ -81,17 +82,18 @@ function setting_1() {
 }
 
 if [ ! -f "$DT/.p_" ]; then
-l="--center"
-if grep -E 'vivid|wily' <<<"`lsb_release -a`"; then
-btn="gtk-media-play:0"; else btn="$(gettext "Play"):0"; fi
+btn2="--button="$(gettext "Cancel")":1"
+if grep -E 'vivid|wily' <<<"`lsb_release -a`">/dev/null 2>&1; then
+btn1="--button=gtk-media-play:0"; else
+btn1="--button=$(gettext "Play"):0"; fi
 else
 tpp="$(sed -n 2p "$DT/.p_")"
-l="--center"
+btn2="--button=gtk-media-stop:2"
+btn1="--button=$(gettext "Pause"):3"
 if grep TRUE <<<"$words$sentences$marks$practice"; then
 if [ "$tpp" != "$tpc" ]; then
 l="--text=<sup><b>Playing:  $tpp</b></sup>"; fi
 fi
-btn="gtk-media-stop:2"
 fi
 
 slct=$(mktemp "$DT"/slct.XXXX)
@@ -103,27 +105,28 @@ setting_1 | yad --list --title="$tpc" "$l" \
 --expand-column=2 --no-headers \
 --width=400 --height=300 --borders=5 \
 --column=IMG:IMG --column=TXT:TXT --column=CHK:CHK \
---button="$btn" \
---button="$(gettext "Close")":1 > "$slct"
+"$btn1" "$btn2" > "$slct"
 ret=$?
 
-if [ "$ret" -eq 0 ]; then
+if [[ $ret -eq 0 ]]; then
 
     cd "$DT"; > ./index.m3u; n=13
-    
     while [[ $n -lt 19 ]]; do
-
-        val=$(sed -n $((n-12))p < "$slct" | cut -d "|" -f3) # -f3
-        [ -n "$val" ] && sed -i "s/${sets[$n]}=.*/${sets[$n]}=\"$val\"/g" \
-        "$DC_s/1.cfg"
-
-        if [ "$val" = TRUE ]; then
+        val=$(sed -n $((n-12))p "$slct" | cut -d "|" -f3)
+        [[ -n "$val" ]] && sed -i "s/${sets[$n]}=.*/${sets[$n]}=\"$val\"/g" "$DC_s/1.cfg"
+        if sed -n 1,2p "$slct" | grep FALSE; then
+            if [ "$val" = TRUE ]; then
             [ -n "${!in[$((n-13))]}" ] && \
-            echo "${!in[$((n-13))]}" >> ./index.m3u
+            echo "${!in[$((n-13))]}" >> ./index.m3u; fi
+        else
+            [[ $n = 15 ]] && cat "$cfg1" >> ./index.m3u
+            if [ "$val" = TRUE ]; then
+            [[ -n "${!in[$((n-11))]}" ]] && \
+            echo "${!in[$((n-11))]}" >> ./index.m3u; fi
         fi
         ((n=n+1))
     done
-
+    
     rm -f "$slct";
     "$DS/stop.sh" 3
     if [ -d "$DM_tlt" ] && [ -n "$tpc" ]; then
@@ -141,11 +144,18 @@ if [ "$ret" -eq 0 ]; then
     sleep 1
     "$DS/bcle.sh" & exit 0
 
-elif [ "$ret" -eq 2 ]; then
+elif [[ $ret -eq 2 ]]; then
 
     [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
     [ -f "$DT/index.m3u" ] && rm -f "$DT/index.m3u"
     "$DS/stop.sh" 2
+    
+elif [[ $ret -eq 3 ]]; then
+
+    [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
+    [ -n "$(ps -A | pgrep -f "play")" ] && killall play &
+    [ -n "$(ps -A | pgrep -f "mplayer")" ] && killall mplayer &
+    > "$DT/.p"
 fi
 
 rm -f "$slct" & exit

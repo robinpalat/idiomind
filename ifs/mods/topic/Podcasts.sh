@@ -3,7 +3,6 @@
 
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
-date=$(date +%d)
 tpa="$(sed -n 1p "$DC_a/4.cfg")"
 if [ "$tpa" != 'Podcasts' ]; then
 [ ! -f "$DM_tl/Podcasts/.conf/8.cfg" ] \
@@ -40,7 +39,7 @@ function feedmode() {
     fdit=$(mktemp "$DT/fdit.XXXX")
     c=$(echo $(($RANDOM%100000))); KEY=$c
     [ -f "$DT/.uptp" ] && info="$(gettext "Updating Podcasts")" || info="$(gettext "Podcasts")"
-    infolabel="$(< "$DM_tl/Podcasts/$date")"
+    infolabel="$(< "$DMP"/*.updt)"
     
     list_1 | yad --list --tabnum=1 \
     --plug=$KEY --print-all --dclick-action="$DSP/vwr.sh" \
@@ -66,7 +65,7 @@ function feedmode() {
     --tab=" $(gettext "Episodes") " \
     --tab=" $(gettext "Saved episodes") " \
     --tab=" $(gettext "Notes") " \
-    --button="$(gettext "Lists")":"/usr/share/idiomind/play.sh" \
+    --button="$(gettext "Lists")":"$DS/play.sh" \
     --button="$(gettext "Update")":2 \
     --button="$(gettext "Close")":1
     ret=$?

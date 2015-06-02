@@ -22,5 +22,5 @@ yad --html --title="$item" \
 --window-icon="$DS/images/icon.png" --center --on-top \
 --width=680 --height=550 --borders=0 \
 --button=gtk-save-as:"$btncmd2" \
---button="$(gettext "Save")":"$btncmd" \
+--button="$btnlabel":"$btncmd" \
 --button="Close":1

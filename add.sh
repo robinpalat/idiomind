@@ -459,61 +459,6 @@ list_words_edit() {
     fi
 }
 
-list_words_dclik() {
-
-    tpe="$(sed -n 2p "$DT/.n_s_pr")"
-    DM_tlt="$DM_tl/${tpe}"
-    DC_tlt="$DM_tl/${tpe}/.conf"
-    DT_r=$(sed -n 1p "$DT/.n_s_pr")
-    cd "$DT_r"
-    echo "$3" > "$DT_r/lstws"
-    
-    if [ -z "${tpe}" ]; then
-    [ "$DT_r" ] && rm -fr "$DT_r"
-    msg "$(gettext "No topic is active")\n" info & exit 1; fi
-    
-    if [ "$(wc -l < "$DC_tlt/0.cfg")" -ge 200 ]; then
-    [ "$DT_r" ] && rm -fr "$DT_r"
-    msg "$(gettext "Maximum number of notes has been exceeded for this topic. Max allowed (200)")" info " " & exit; fi
-
-    info="-$((200 - $(wc -l < "$DC_tlt/0.cfg")))"
-    
-    if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
-        (
-        echo "1"
-        echo "# $(gettext "Processing")..." ;
-        srce="$(translate "$(cat lstws)" $lgtl $lgsl)"
-        cd "$DT_r"
-        r=$((RANDOM%1000))
-        clean_3 "$DT_r" "$r"
-        translate "$(sed '/^$/d' < $aw)" auto $lg | sed 's/,//g' \
-        | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
-        list_words "$DT_r" "$r"
-        echo "$pwrds"
-        list_words_3 "$DT_r/lstws" "$pwrds"
-        ) | dlg_progress_1
-    
-    else
-        list_words_3 ./lstws
-    fi
-
-    sname="$(< ./lstws)"
-    slt=$(mktemp "$DT/slt.XXXX.x")
-    dlg_checklist_1 ./lst "$info" "$slt"
-    ret=$(echo $?)
-    
-    if [[ $ret -eq 0 ]]; then
-    
-        while read chkst; do
-        sed 's/TRUE//g' <<<"${chkst}" >> "$DT_r/wrds"
-        echo "$sname" >> "$DT_r/wrdsls"
-        done <<<"$(sed 's/|//g' < "${slt}")"
-        rm -f "$slt"
-    fi
-    exit 1
-    
-} >/dev/null 2>&1
-
 list_words_sentence() {
 
     DM_tlt="$DM_tl/$4"
@@ -602,6 +547,61 @@ list_words_sentence() {
     [ "$DT_r" ] && rm -fr "$DT_r"
     exit 1
 }
+
+list_words_dclik() {
+
+    tpe="$(sed -n 2p "$DT/.n_s_pr")"
+    DM_tlt="$DM_tl/${tpe}"
+    DC_tlt="$DM_tl/${tpe}/.conf"
+    DT_r=$(sed -n 1p "$DT/.n_s_pr")
+    cd "$DT_r"
+    echo "$3" > "$DT_r/lstws"
+    
+    if [ -z "${tpe}" ]; then
+    [ "$DT_r" ] && rm -fr "$DT_r"
+    msg "$(gettext "No topic is active")\n" info & exit 1; fi
+    
+    if [ "$(wc -l < "$DC_tlt/0.cfg")" -ge 200 ]; then
+    [ "$DT_r" ] && rm -fr "$DT_r"
+    msg "$(gettext "Maximum number of notes has been exceeded for this topic. Max allowed (200)")" info " " & exit; fi
+
+    info="-$((200 - $(wc -l < "$DC_tlt/0.cfg")))"
+    
+    if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
+        (
+        echo "1"
+        echo "# $(gettext "Processing")..." ;
+        srce="$(translate "$(cat lstws)" $lgtl $lgsl)"
+        cd "$DT_r"
+        r=$((RANDOM%1000))
+        clean_3 "$DT_r" "$r"
+        translate "$(sed '/^$/d' < $aw)" auto $lg | sed 's/,//g' \
+        | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
+        list_words "$DT_r" "$r"
+        echo "$pwrds"
+        list_words_3 "$DT_r/lstws" "$pwrds"
+        ) | dlg_progress_1
+    
+    else
+        list_words_3 ./lstws
+    fi
+
+    sname="$(< ./lstws)"
+    slt=$(mktemp "$DT/slt.XXXX.x")
+    dlg_checklist_1 ./lst "$info" "$slt"
+    ret=$(echo $?)
+    
+    if [[ $ret -eq 0 ]]; then
+    
+        while read chkst; do
+        sed 's/TRUE//g' <<<"${chkst}" >> "$DT_r/wrds"
+        echo "$sname" >> "$DT_r/wrdsls"
+        done <<<"$(sed 's/|//g' < "${slt}")"
+        rm -f "$slt"
+    fi
+    exit 1
+    
+} >/dev/null 2>&1
 
 
 process() {
