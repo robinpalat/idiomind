@@ -37,6 +37,7 @@ position() {
     --column="":NUM \
     --column="":RD \
     --column="":TEXT \
+    --button="$(gettext "Inverse")":3 \
     --button="$(gettext "Cancel")":2 \
     --button="$(gettext "OK")":0)"
     ret=$?
@@ -67,13 +68,24 @@ position() {
             
             if [ "$(wc -l < "$DC_tlt/2.cfg")" = 0 ]; then
                 cp -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"
-                msg "$(gettext "The changes will have effect only after restarting the window.")\n" info
+                msg "$(gettext "The changes will be seen only after restarting the main window.")\n" info
                 
             else
-                msg "$(gettext "The changes will have effect only after restarting the index.")\n" info; fi
+                msg "$(gettext "The changes will be seen only after restarting the lists.")\n" info; fi
         fi
+        
+    elif [[ $ret -eq 3 ]]; then
+    
+        tac "$DC_tlt/0.cfg"  > "$DC_tlt/0.cfg.mv"; mv -f "$DC_tlt/0.cfg.mv" "$DC_tlt/0.cfg"
+        tac "$DC_tlt/.11.cfg"  > "$DC_tlt/.11.cfg.mv"; mv -f "$DC_tlt/.11.cfg.mv" "$DC_tlt/.11.cfg"
+        if [ "$(wc -l < "$DC_tlt/2.cfg")" = 0 ]; then
+        tac "$DC_tlt/1.cfg" > "$DC_tlt/1.cfg.mv"; mv -f "$DC_tlt/1.cfg.mv" "$DC_tlt/1.cfg"
+        msg "$(gettext "The changes will be seen only after restarting the main window.")\n" info   
+        else
+        msg "$(gettext "The changes will be seen only after restarting the lists.")\n" info; fi
+        
     fi
-    rm "$DC_tlt/0.cfg.mv"
+    [ -f "$DC_tlt/0.cfg.mv" ] && rm "$DC_tlt/0.cfg.mv"
     exit
 }
 
