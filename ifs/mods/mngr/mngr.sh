@@ -26,44 +26,53 @@ position() {
     [ ${#item} -gt 80 ] && label="${item:0:80}..." \
     || label="$item"
     mv="$(tac "$DC_tlt/0.cfg" | grep -vxF "$item" \
-    | awk '{print ((let++))"\nFALSE\n"$0}' \
-    | yad --list --title="$(gettext "Move")" \
+    | awk '{print ((let++))"\nFALSE\n"$0"\nFALSE"}' \
+    | yad --list --title="$(gettext "Move item and batch removal")" \
     --class=Idiomind --name=Idiomind \
-    --text="  [ $pos ]  \"$label\"\n" \
-    --always-print-result --print-column=3 --separator="" \
-    --window-icon="$DS/images/icon.png" --no-headers --on-top --center \
+    --text="  [ $pos ] $(gettext "Current position")\n" \
+    --always-print-result --print-all --separator="|" \
+    --no-click --dclick-action="" \
+    --window-icon="$DS/images/icon.png" --on-top --center \
     --expand-column=3 --ellipsize=END \
     --width=640 --height=560 --borders=8 \
     --column="":NUM \
-    --column="":RD \
-    --column="":TEXT \
+    --column="$(gettext "Move")":RD \
+    --column="$(gettext "Note")":TEXT \
+    --column="$(gettext "Delete")":CHK \
     --button="$(gettext "Inverse")":3 \
-    --button="$(gettext "Cancel")":2 \
-    --button="$(gettext "OK")":0)"
+    --button="$(gettext "Save")":0 \
+    --button="$(gettext "Cancel")":1)"
     ret=$?
 
     if [[ $ret -eq 0 ]]; then
-
+    
         [ -z "${mv}" ] && exit
         > "$DC_tlt/0.cfg.mv"
-        while read sec; do
 
-            if [ "$sec" = "${mv}" ]; then
-                echo -e "$mv" >> "$DC_tlt/0.cfg.mv"
-                echo -e "$item" >> "$DC_tlt/0.cfg.mv"
+        while read -r sec; do
+        f1=`cut -d "|" -f1 <<<"${sec}"`
+        f2=`cut -d "|" -f2 <<<"${sec}"`
+        f3=`cut -d "|" -f3 <<<"${sec}"`
+        f4=`cut -d "|" -f4 <<<"${sec}"`
+
+            if [ "$f2" = 'TRUE' ] && [ "${itr}" != "${item}" ]; then
                 
-            elif [ "$sec" = "${item}" ]; then
-                continue
+                echo -e "${item}" >> "$DC_tlt/0.cfg.mv"
+                echo -e "${f3}" >> "$DC_tlt/0.cfg.mv"
 
-            else echo "$sec" >> "$DC_tlt/0.cfg.mv"; fi
+            elif [ "$f4" = 'TRUE' ] && [ "${f3}" != "${item}" ]; then
             
-        done < "$DC_tlt/0.cfg"
+                delete_item_ok "${f3}"
+            
+            else echo "${f3}" >> "$DC_tlt/0.cfg.mv"; fi
+
+        done <<<"{$mv}"
 
         e=$?
         if [ $e != 0 ] ; then
             msg "$(gettext "Some changes were not made.")\n" dialog-warning
         else
-            cp -f "$DC_tlt/0.cfg.mv" "$DC_tlt/0.cfg"
+            tac "$DC_tlt/0.cfg.mv" > "$DC_tlt/0.cfg"
             cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
             
             if [ "$(wc -l < "$DC_tlt/2.cfg")" = 0 ]; then
@@ -74,10 +83,12 @@ position() {
                 msg "$(gettext "The changes will be seen only after restarting the lists.")\n" info; fi
         fi
         
+
     elif [[ $ret -eq 3 ]]; then
     
         tac "$DC_tlt/0.cfg"  > "$DC_tlt/0.cfg.mv"; mv -f "$DC_tlt/0.cfg.mv" "$DC_tlt/0.cfg"
         tac "$DC_tlt/.11.cfg"  > "$DC_tlt/.11.cfg.mv"; mv -f "$DC_tlt/.11.cfg.mv" "$DC_tlt/.11.cfg"
+        
         if [ "$(wc -l < "$DC_tlt/2.cfg")" = 0 ]; then
         tac "$DC_tlt/1.cfg" > "$DC_tlt/1.cfg.mv"; mv -f "$DC_tlt/1.cfg.mv" "$DC_tlt/1.cfg"
         msg "$(gettext "The changes will be seen only after restarting the main window.")\n" info   
@@ -109,7 +120,7 @@ function dlg_form_1() {
     --field="$(gettext "Mark")":CHK "$mark" \
     --field="<small>$(gettext "Listen")</small>":FBTN "$cmd_play" \
     --field=" ":LBL " " \
-    --button="$(gettext "Move")":"$cmd_move" \
+    --button="$(gettext "More")":"$cmd_move" \
     --button="$(gettext "Image")":"$cmd_image" \
     --button="$(gettext "Delete")":"$cmd_delete" \
     --button="gtk-go-down":2 \
@@ -137,7 +148,7 @@ function dlg_form_2() {
     --field="$(gettext "Listen")":FBTN "$cmd_play" \
     --field="<small>$(gettext "Topic")</small>":CB "$tpc!$tpcs" \
     --field="<small>$(gettext "Audio")</small>":FL "$DM_tlt/$fname.mp3" \
-    --button="$(gettext "Move")":"$cmd_move" \
+    --button="$(gettext "More")":"$cmd_move" \
     --button="$(gettext "Words")":"$cmd_words" \
     --button="$(gettext "Delete")":"$cmd_delete" \
     --button="gtk-go-down":2 \

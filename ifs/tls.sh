@@ -629,7 +629,9 @@ a_check_updates() {
 }
 
 about() {
-    
+
+#about.set_website(app_website)
+#about.set_website_label(web)
 c="$(gettext "Vocabulary learning tool")"
 website="$(gettext "Web Site")"
 export c website
@@ -671,8 +673,6 @@ class AboutDialog:
         about.set_comments(app_comments)
         about.set_copyright(app_copyright)
         about.set_license(app_license)
-        about.set_website(app_website)
-        about.set_website_label(web)
         about.set_authors(app_authors)
         about.set_artists(app_artists)
         about.run()

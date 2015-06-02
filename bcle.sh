@@ -29,7 +29,9 @@ if [ -s "$DT/index.m3u" ] \
     if [ "$repeat" = TRUE ]; then
         while [ 1 ]; do
             if [ -f "$DT/.p" ]; then
-            pos=`sed -n 1p "$DT/.p"`; rm "$DT/.p"; else
+            pos=`sed -n 1p "$DT/.p"`; rm "$DT/.p"
+            [ $pos -gt `wc -l < "$DT/index.m3u"` ] && \
+            pos=`wc -l < "$DT/index.m3u"`; else
             pos=`wc -l < "$DT/index.m3u"`; fi
             while [[ 1 -le $pos ]]; do
                 "$DS/chng.sh" chngi "$pos"
@@ -40,7 +42,9 @@ if [ -s "$DT/index.m3u" ] \
     
     else
         if [ -f "$DT/.p" ]; then
-        pos=`sed -n 1p "$DT/.p"`; rm "$DT/.p"; else
+        pos=`sed -n 1p "$DT/.p"`; rm "$DT/.p"
+        [ $pos -gt `wc -l < "$DT/index.m3u"` ] && \
+        pos=`wc -l < "$DT/index.m3u"`; else
         pos=`wc -l < "$DT/index.m3u"`; fi
         while [[ 1 -le $pos ]]; do
             "$DS/chng.sh" chngi "$pos"

@@ -30,7 +30,6 @@ sets=('grammar' 'list' 'tasks' 'trans' 'trd_trgt' 'text' 'audio' \
 'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' \
 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
 in=('in1' 'in2' 'in3' 'in4' 'in5' 'in6')
-l="--center"
 
 cfg1="$DC_tlt/1.cfg"
 cfg3="$DC_tlt/3.cfg"
@@ -81,23 +80,24 @@ function setting_1() {
     done
 }
 
+title="$tpc"
 if [ ! -f "$DT/.p_" ]; then
-btn2="--button="$(gettext "Cancel")":1"
+btn2=""$(gettext "Cancel")":1"
 if grep -E 'vivid|wily' <<<"`lsb_release -a`">/dev/null 2>&1; then
-btn1="--button=gtk-media-play:0"; else
-btn1="--button=$(gettext "Play"):0"; fi
+btn1="gtk-media-play:0"; else
+btn1="$(gettext "Play"):0"; fi
 else
 tpp="$(sed -n 2p "$DT/.p_")"
-btn2="--button=gtk-media-stop:2"
-btn1="--button=$(gettext "Pause"):3"
+btn2="gtk-media-stop:2"
+btn1="$(gettext "Pause"):3"
 if grep TRUE <<<"$words$sentences$marks$practice"; then
 if [ "$tpp" != "$tpc" ]; then
-l="--text=<sup><b>Playing:  $tpp</b></sup>"; fi
+title="$(gettext "Playing:") \"$tpp\"</sup>"; fi
 fi
 fi
 
 slct=$(mktemp "$DT"/slct.XXXX)
-setting_1 | yad --list --title="$tpc" "$l" \
+setting_1 | yad --list --title="$title" \
 --print-all --always-print-result --separator="|" \
 --class=Idiomind --name=Idiomind \
 --window-icon="$DS/images/icon.png" \
@@ -105,7 +105,7 @@ setting_1 | yad --list --title="$tpc" "$l" \
 --expand-column=2 --no-headers \
 --width=400 --height=300 --borders=5 \
 --column=IMG:IMG --column=TXT:TXT --column=CHK:CHK \
-"$btn1" "$btn2" > "$slct"
+--button="$btn1" --button="$btn2" > "$slct"
 ret=$?
 
 if [[ $ret -eq 0 ]]; then
