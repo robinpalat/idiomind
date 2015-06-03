@@ -19,15 +19,17 @@
 #  2015/02/27
 
 position() {
-
-    item="$(sed -n "$2"p "$3")"
-    pos=$(($(wc -l < "$3")-$2))
+    
     source "$DS/ifs/mods/cmns.sh"
-    [ ${#item} -gt 80 ] && label="${item:0:80}..." \
-    || label="$item"
+    cnt=$(wc -l < "${3}")
+    [ $cnt -lt 3 ] && msg "$(gettext "Unavailable")\n" \
+    info "$(gettext "Unavailable")" && exit 1
+    item="$(sed -n "$2"p "${3}")"
+    pos=$((cnt-$2))
+    
     mv="$(tac "$DC_tlt/0.cfg" | grep -vxF "$item" \
     | awk '{print ((let++))"\nFALSE\n"$0"\nFALSE"}' \
-    | yad --list --title="$(gettext "Move item and batch removal")" \
+    | yad --list --title="$(gettext "More")" \
     --class=Idiomind --name=Idiomind \
     --text="  [ $pos ] $(gettext "Current position")\n" \
     --always-print-result --print-all --separator="|" \
@@ -76,14 +78,11 @@ position() {
             cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
             
             if [ "$(wc -l < "$DC_tlt/2.cfg")" = 0 ]; then
-                cp -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"
-                msg "$(gettext "The changes will be seen only after restarting the main window.")\n" info
-                
-            else
-                msg "$(gettext "The changes will be seen only after restarting the lists.")\n" info; fi
+            cp -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"
+            msg "$(gettext "The changes will be seen only after restarting the main window.")\n" info
+            else msg "$(gettext "The changes will be seen only after restarting the lists.")\n" info; fi
         fi
         
-
     elif [[ $ret -eq 3 ]]; then
     
         tac "$DC_tlt/0.cfg"  > "$DC_tlt/0.cfg.mv"; mv -f "$DC_tlt/0.cfg.mv" "$DC_tlt/0.cfg"
@@ -92,8 +91,7 @@ position() {
         if [ "$(wc -l < "$DC_tlt/2.cfg")" = 0 ]; then
         tac "$DC_tlt/1.cfg" > "$DC_tlt/1.cfg.mv"; mv -f "$DC_tlt/1.cfg.mv" "$DC_tlt/1.cfg"
         msg "$(gettext "The changes will be seen only after restarting the main window.")\n" info   
-        else
-        msg "$(gettext "The changes will be seen only after restarting the lists.")\n" info; fi
+        else msg "$(gettext "The changes will be seen only after restarting the lists.")\n" info; fi
         
     fi
     [ -f "$DC_tlt/0.cfg.mv" ] && rm "$DC_tlt/0.cfg.mv"
@@ -102,7 +100,7 @@ position() {
 
 function dlg_form_1() {
     
-    yad --form --title="$trgt" \
+    yad --form --title="$(gettext "Edit")" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --separator="\n" --selectable-labels \
     --window-icon="$DS/images/icon.png" \
@@ -130,12 +128,12 @@ function dlg_form_1() {
 
 function dlg_form_2() {
     
-    if [ $(wc -w <<<"$item") -lt 4 ]; then
+    if [ `wc -w <<<"$item"` -lt 4 ]; then
     t=CHK; lbl_2="$(gettext "Is a word")"
     else t=LBL; fi
     
     #--button="$(gettext "Image")":"$cmd_image"
-    yad --form --title="$trgt" \
+    yad --form --title="$(gettext "Edit")" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --separator="\n" --selectable-labels \
     --window-icon="$DS/images/icon.png" \
@@ -160,12 +158,12 @@ function dialog_2() {
     
     yad --title="$tpc" \
     --class=Idiomind --name=Idiomind \
-    --text="<b>$(gettext "Reviewing all or only new?")</b>" \
+    --text=" $(gettext "Review all or only new items?") " \
     --window-icon="$DS/images/icon.png" \
     --image=dialog-question --center \
     --on-top --window-icon="$DS/images/icon.png" \
     --width=380 --height=120 --borders=3 \
-    --button="$(gettext "New Items")":3 \
+    --button="$(gettext "Only New")":3 \
     --button="$(gettext "Review All")":2
 }
 

@@ -173,7 +173,7 @@ function dialog_1() {
     --image=gtk-refresh \
     --window-icon="$DS/images/icon.png" \
     --buttons-layout=edge --center --on-top \
-    --width=420 --height=150 --borders=10 \
+    --width=420 --height=140 --borders=10 \
     --button=" $(gettext "Not Yet") ":1 \
     --button=" $(gettext "Yes") ":2
 }

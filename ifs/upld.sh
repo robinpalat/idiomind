@@ -106,6 +106,9 @@ infsd() {
 
 function upld() {
 
+if [ `wc -l < "$DC_tlt/0.cfg"` -lt 2 ]; then
+msg "$(gettext "Unavailable")\n" info "$(gettext "Unavailable")" & exit 1; fi
+
 if [ "$tpc" != "$2" ]; then
 msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit 1; fi
 
