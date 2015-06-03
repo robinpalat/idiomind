@@ -355,8 +355,8 @@ new_word() {
     mksure "$DM_tlt/words/$fname.mp3" "${trgt}" "${srce}"
     if [ $? = 0 ]; then
         tags_1 W "${trgt}" "${srce}" "$DM_tlt/words/$fname.mp3"
-        nt="$(echo "_$(check_grammar_2 "${trgt}")" | tr '\n' '_')"
-        eyeD3 --set-encoding=utf8 -A IWI3I0I"$nt"IWI3I0I "$DM_tlt/words/$fname.mp3"
+        nt="$(tr '\n' '_' <<<"_$(check_grammar_2 "${trgt}")")"
+        eyeD3 -A IWI3I0I"$nt"IWI3I0I "$DM_tlt/words/$fname.mp3"
         notify-send "${trgt}" "${srce}\\n(${tpe})" -t 5000
         index word "${trgt}" "${tpe}"
         printf "aitm.1.aitm\n" >> "$DC_s/8.cfg"

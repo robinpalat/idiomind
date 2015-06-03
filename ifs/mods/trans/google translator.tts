@@ -1,14 +1,14 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-DT_r="$3"; cd "$DT_r"
-if [ "$(sed -n 1p < "$HOME/.config/idiomind/addons/gts.cfg" \
-| grep -o set1=\"[^\"]* | grep -o '[^"]*$')" = TRUE ]; then
+f=1; DT_r="$3"; cd "$DT_r"
+if [[ "$(sed -n 1p "$HOME/.config/idiomind/addons/gts.cfg" \
+| grep -o set1=\"[^\"]* | grep -o '[^"]*$')" = TRUE ]]; then
 
-if [ ${#1} -gt 100 ]; then
+if [[ ${#1} -gt 100 ]]; then
 
-    f=1; while read -r chnk; do
-        if [ -n "$chnk" ]; then
+    while read -r chnk; do
+        if [[ -n "$chnk" ]]; then
         q="$(sed -s "s/|/\'/g" <<<"$chnk")"
         wget -q -U Mozilla -O "$DT_r/tmp$f.mp3" \
         "https://translate.google.com/translate_tts?ie=UTF-8&tl=$2&q=$q"
