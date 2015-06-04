@@ -186,8 +186,7 @@ check_index() {
     
     check() {
         
-        [ -d "$DM_tl/$2/.conf" ] && mkdir "$DM_tl/$2/.conf"
-
+        if [ ! -d "$DC_tlt" ]; then mkdir "$DC_tlt"; fi
         n=0
         while [[ $n -le 4 ]]; do
             [ ! -f "$DC_tlt/$n.cfg" ] && touch "$DC_tlt/$n.cfg"

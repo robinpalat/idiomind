@@ -5,14 +5,15 @@ echo "_" >> "$DT/stats.tmp" &
 [[ $1 = 1 ]] && index="${DC_tlt}/1.cfg"
 [[ $1 = 2 ]] && index="${DC_tlt}/2.cfg"
 re='^[0-9]+$'
-item_name="${2}"
+item_name=`sed 's/<[^>]*>//g' <<<"${2}"`
 index_pos="$3"
 listen="$(gettext "Listen")"
 if ! [[ $index_pos =~ $re ]]; then
 index_pos=$(grep -Fxon "${item_name}" < "${index}" \
 | sed -n 's/^\([0-9]*\)[:].*/\1/p')
 nll=" "; fi
-item="$(sed -n "$index_pos"p "${index}")"
+item="$(sed -n "$index_pos"p "${index}" |sed 's/<[^>]*>//g')"
+
 if [ -z "${item}" ]; then
 item="$(sed -n 1p "${index}")"
 index_pos=1; fi

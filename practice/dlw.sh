@@ -6,41 +6,42 @@ drts="$DS/practice"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
 log="$DC_s/8.cfg"
-all=$(wc -l < ./lwin)
+all=$(wc -l < ./c.0)
 easy=0
 hard=0
 ling=0
-[ -f lwin2 ] && rm lwin2
-[ -f lwin3 ] && rm lwin3
+[ -f c.2 ] && rm c.2
+[ -f c.3 ] && rm c.3
 
 score() {
 
-    if [[ $(($(< ./l_w)+$1)) -ge $all ]]; then
+    if [[ $(($(< ./c.l)+$1)) -ge $all ]]; then
         play "$drts/all.mp3" &
-        echo "w9.$(tr -s '\n' '|' < ./ok.w).w9" >> "$log"
-        rm lwin lwin1 lwin2 lwin3 ok.w
-        echo "$(date "+%a %d %B")" > lock_lw
-        echo 21 > .icon3
+        echo "w9.$(tr -s '\n' '|' < ./c.ok).w9" >> "$log"
+        rm c.0 c.1 c.2 c.3 c.ok
+        echo "$(date "+%a %d %B")" > c.lock
+        echo 21 > .3
         "$strt" 3 &
         exit 1
         
     else
-        [ -f l_w ] && echo $(($(< ./l_w)+easy)) > l_w || echo $easy > l_w
-        s=$(< ./l_w)
+        [ -f c.l ] && echo $(($(< ./c.l)+easy)) > c.l || echo $easy > c.l
+        s=$(< ./c.l)
         v=$((100*s/all))
         n=1; c=1
         while [[ $n -le 21 ]]; do
             if [ "$v" -le "$c" ]; then
-            echo "$n" > .icon3; break; fi
+            echo "$n" > .3; break; fi
             ((c=c+5))
             let n++
         done
         
-        [ -f lwin2 ] && rm lwin2
-        if [ -f lwin3 ]; then
-        echo "w6.$(tr -s '\n' '|' < lwin3).w6" >> "$log"
-        echo "$(< lwin3)" >> "log"
-        rm lwin3; fi
+        if [ -f c.2 ]; then
+        echo "$(< ./c.2)" >> "log2"; rm c.2 ; fi
+        
+        if [ -f c.3 ]; then
+        echo "w6.$(tr -s '\n' '|' < c.3).w6" >> "$log"
+        echo "$(< c.3)" >> "log3"; rm c.3; fi
         
         "$strt" 8 $easy $ling $hard & exit 1
     fi
@@ -88,21 +89,21 @@ while read trgt; do
     ans=$(echo "$?")
     
     if [ $ans = 2 ]; then
-            echo "$trgt" >> ok.w
+            echo "$trgt" >> c.ok
             easy=$((easy+1))
 
     elif [ $ans = 3 ]; then
-            echo "$trgt" >> lwin2
+            echo "$trgt" >> c.2
             hard=$((hard+1))
 
     elif [ $ans = 1 ]; then
         break &
-        "$drts/cls.sh" w $easy $ling $hard $all &
+        "$drts/cls.sh" comp_c $easy $ling $hard $all &
         exit 1
     fi
-done < ./lwin1
+done < ./c.1
 
-if [ ! -f ./lwin2 ]; then
+if [ ! -f ./c.2 ]; then
 
     score $easy
     
@@ -119,14 +120,14 @@ else
                 ling=$((ling+1))
                 
         elif [ $ans = 3 ]; then
-                echo "$trgt" >> lwin3
+                echo "$trgt" >> c.3
 
         elif [ $ans = 1 ]; then
             break &
-            "$drts/cls.sh" w $easy $ling $hard $all &
+            "$drts/cls.sh" comp_c $easy $ling $hard $all &
             exit 1
         fi
-    done < ./lwin2
+    done < ./c.2
     
     score $easy
 fi

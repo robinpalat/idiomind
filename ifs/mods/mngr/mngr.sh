@@ -99,7 +99,7 @@ function dlg_form_1() {
     --name=Idiomind --class=Idiomind \
     --always-print-result --separator="\n" --selectable-labels \
     --window-icon="$DS/images/icon.png" \
-    --align=center --text-align=center --columns=2 \
+    --align=left --text-align=center --columns=2 \
     --buttons-layout=end --scroll --center --on-top \
     --width=680 --height=540 --borders=10 \
     --field="<small>$lgtl</small>" "$trgt" \
@@ -107,12 +107,12 @@ function dlg_form_1() {
     --field="<small>$(gettext "Topic")</small>":CB "$tpc!$tpcs" \
     --field="<small>$(gettext "Audio")</small>":FL "$audiofile_1" \
     --field="<small>$(gettext "Example")</small>":TXT "$exmp" \
-    --field="<small>$(gettext "Definition")</small>":TXT "$dftn" \
+    --field="<small><a href='$link2'>$(gettext "Definition")</a></small>":TXT "$dftn" \
     --field="<small>$(gettext "Note")</small>":TXT "$note" \
-    --field=" ":LBL " " \
+    --field="<small><a href='$link1'>$(gettext "Translation")</a></small>":LBL " " \
     --field="$(gettext "Mark")":CHK "$mark" \
     --field="<small>$(gettext "Listen")</small>":FBTN "$cmd_play" \
-    --field="<small><a href='$link2'>$(gettext "Definition")</a>  <a href='$link1'>$(gettext "Translation")</a></small>":LBL " " \
+    --field=" ":LBL " " \
     --button="$(gettext "More")":"$cmd_move" \
     --button="$(gettext "Image")":"$cmd_image" \
     --button="$(gettext "Delete")":"$cmd_delete" \

@@ -27,16 +27,15 @@ if grep -Fxo "$topic" <<<"${restr}"; then
 else
     if [ -d "$DM_tlt" ]; then
 
-        if [ ! -d "$DM_tlt/.conf" ]; then
+        if [ ! -d "$DC_tlt" ]; then
         mkdir -p "$DM_tlt/words/images"
-        mkdir "$DM_tlt/.conf"
-        cd "$DM_tlt/.conf"
+        mkdir "$DC_tlt"; cd "$DC_tlt"
         c=0; while [[ $c -le 10 ]]; do
         touch "$c.cfg"; let c++
         done
-        rm "$DM_tlt/.conf/7.cfg"
-        rm "$DM_tlt/.conf/9.cfg"
-        echo " " > "$DM_tlt/.conf/10.cfg"
+        rm "$DC_tlt/7.cfg"
+        rm "$DC_tlt/9.cfg"
+        echo " " > "$DC_tlt/10.cfg"
         echo -e "$cfg" > "12.cfg"
         echo "1" > "8.cfg"
         cd "$HOME"
@@ -46,6 +45,9 @@ else
         echo "${topic}" > "$DC_s/7.cfg"
         echo "${topic}" > "$DT/tpe"
         echo '0' > "$DC_s/5.cfg"
+        
+        if [ ! -f "$DC_tlt/lst" ]; then
+        cp -f "$DC_tlt/1.cfg" "$DC_tlt/lst"; fi
         
         if [ ! -f "$DT/.n_s_pr" ]; then
         "$DS/ifs/tls.sh" check_index "$topic"; fi

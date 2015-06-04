@@ -132,7 +132,8 @@ function clean_0() {
     | sed 's/&//;s/://;s/\.//g' | sed "s/’/'/;s/|//g" \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \
-    | tr -s '“' ' ' | tr -s '”' ' ' | tr -s '"' ' '
+    | tr -s '“' ' ' | tr -s '”' ' ' | tr -s '"' ' ' \
+    | sed 's/<[^>]*>//g'
 }
 
 function clean_1() {
@@ -143,14 +144,14 @@ function clean_1() {
     | tr -s '“' ' ' | tr -s '”' ' ' | tr -s '"' ' ' \
     | tr -s '&' ' ' | tr -s ':' ' ' | tr -s '|' ' ' \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
-    | sed 's/^ *//; s/ *$//g' | sed 's/–//g'
+    | sed 's/^ *//; s/ *$//g' | sed 's/–//g' | sed 's/<[^>]*>//g'
     else
     echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" \
     | tr -s '“' ' ' | tr -s '”' ' ' | tr -s '"' ' ' \
     | tr -s '&' ' ' | tr -s ':' ' ' | tr -s '|' ' ' \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \
-    | sed 's/–//g'
+    | sed 's/–//g' | sed 's/<[^>]*>//g'
     fi
 }
 
@@ -159,7 +160,7 @@ function clean_2() {
     
     echo "${1}" | cut -d "|" -f1 | sed 's/!//;s/&//;s/\://; s/\&//g' \
     | sed "s/-//g" | sed 's/^[ \t]*//;s/[ \t]*$//' \
-    | sed 's|/||;s/^\s*./\U&\E/g' | sed 's/\：//g'
+    | sed 's|/||;s/^\s*./\U&\E/g' | sed 's/\：//g' | sed 's/<[^>]*>//g'
 }    
 
 
@@ -172,7 +173,7 @@ function clean_3() {
     echo "${vrbl}" | sed 's/ /\n/g' | grep -v '^.$' \
     | grep -v '^..$' | sed -n 1,50p | sed s'/&//'g \
     | sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
-    | tr -d ')' | tr -d '(' | sed 's/\]//;s/\[//g' \
+    | tr -d ')' | tr -d '(' | sed 's/\]//;s/\[//g' | sed 's/<[^>]*>//g'\
     | sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //;s/"//g' > "$aw"
 }
 
@@ -313,7 +314,7 @@ function tts() {
 
 function voice() {
     
-    synth="$(sed -n 13p < "$DC_s/1.cfg" \
+    synth="$(sed -n 13p "$DC_s/1.cfg" \
     | grep -o synth=\"[^\"]* | grep -o '[^"]*$')"
     DT_r="$2"; cd "$DT_r"
     

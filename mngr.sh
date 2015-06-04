@@ -259,6 +259,7 @@ delete_item_ok() {
     sed '/^$/d' "$DC_tlt/$n.cfg.tmp" > "$DC_tlt/$n.cfg"; fi
     let n++
     done
+    "$DS/mngr.sh" colorize &
     rm "$DC_tlt"/*.tmp
     rm -f "$DT/ps_lk" & exit 1
 }
@@ -326,6 +327,7 @@ delete_item() {
         done
         rm "$DC_tlt"/*.tmp
     fi
+    "$DS/mngr.sh" colorize &
     rm -f "$DT/ps_lk" & exit 1
 }
 
@@ -399,11 +401,14 @@ edit() {
                 if [ "$mark" != "$mark_mod" ]; then
                 
                     if [ "$mark_mod" = "TRUE" ]; then
+                    sed -i "${item_pos}s/^/<b>/;${item_pos}s/$/<\/b>/" "$DC_tlt/lst"
                     echo "$trgt" >> "$DC_tlt/6.cfg"; else
+                    sed -i "${item_pos}s/<b>//;${item_pos}s/<\/b>//" "$DC_tlt/lst"
                     grep -vxF "$trgt" "$DC_tlt/6.cfg" > "$DC_tlt/6.cfg.tmp"
                     sed '/^$/d' "$DC_tlt/6.cfg.tmp" > "$DC_tlt/6.cfg"
                     rm "$DC_tlt/6.cfg.tmp"; fi
                     tags_8 W "$mark_mod" "$DM_tlt/words/$fname.mp3"
+                    
                 fi
                 
                 if [ "$audio_mod" != "$audiofile_1" ]; then
@@ -424,6 +429,7 @@ edit() {
                     temp="$(gettext "Processing")..."
                     tags_1 W "$trgt_mod" "$temp" "$DM_tlt/words/$fname_mod.mp3"
                     index edit "${trgt}" "${tpc}" "${trgt_mod}"
+                    "$DS/mngr.sh" colorize &
                     (DT_r=$(mktemp -d "$DT/XXXX")
                     "$DS/add.sh" new_word "${trgt_mod}" "$DT_r" "${srce_mod}" 0) &
                     fname="$fname_mod"
@@ -456,7 +462,6 @@ edit() {
                 
             else
                 rm -f "$file_tmp"
-                #"$DS/stop.sh" 7
                 "$DS/vwr.sh" "$lists" "$trgt" "$item_pos" &
             fi
              
@@ -521,6 +526,7 @@ edit() {
                     list_words "$DT_r" "$r"
                     tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname_mod.mp3"
                     fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
+                    "$DS/mngr.sh" colorize &
                     [ "$DT_r" ] && rm -fr "$DT_r") &
                     fname="$fname_mod"
                 fi
@@ -528,7 +534,9 @@ edit() {
                 if [ "$mark" != "$mark_mod" ]; then
                 
                     if [ "$mark_mod" = "TRUE" ]; then
+                    sed -i "${item_pos}s/^/<b>/;${item_pos}s/$/<\/b>/" "$DC_tlt/lst"
                     echo "$trgt_mod" >> "$DC_tlt/6.cfg"; else
+                    sed -i "${item_pos}s/<b>//;${item_pos}s/<\/b>//" "$DC_tlt/lst"
                     grep -vxF "$trgt_mod" "$DC_tlt/6.cfg" > "$DC_tlt/6.cfg.tmp"
                     sed '/^$/d' "$DC_tlt/6.cfg.tmp" > "$DC_tlt/6.cfg"
                     rm "$DC_tlt/6.cfg.tmp"; fi
@@ -602,7 +610,6 @@ edit() {
 
             else
                 rm -f "$file_tmp"
-                #"$DS/stop.sh" 7
                 "$DS/vwr.sh" "$lists" "$trgt_mod" "$item_pos" &
             fi
     fi
@@ -610,6 +617,11 @@ edit() {
     exit
     
 } >/dev/null 2>&1
+
+colorize() {
+    
+    "$DS/practice/cls.sh colorize"
+}
 
 
 delete_topic() {
@@ -738,6 +750,8 @@ case "$1" in
     delete_topic "$@" ;;
     edit)
     edit "$@" ;;
+    colorize)
+    colorize "$@" ;;
     rename_topic)
     rename_topic "$@" ;;
 esac

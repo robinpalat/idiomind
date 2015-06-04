@@ -13,13 +13,13 @@ function word_view() {
     dftn="$(sed -n 2p <<<"$fields")"
     note="$(sed -n 3p <<<"$fields")"
     exmp="$(sed "s/"${trgt,,}"/<span background='#FDFBCF'>"${trgt,,}"<\/\span>/g" <<<"$exmp")"
-    [ -n "$dftn" ] && field_dftn="--field=<span font_desc='verdana 8'>$dftn</span>:lbl"
+    [ -n "$dftn" ] && field_dftn="--field=$dftn:lbl"
     [ -n "$note" ] && field_note="--field=$note\n:lbl"
     [ -n "$exmp" ] && field_exmp="--field=<i><span color='#737373'>$exmp</span></i>:lbl"
     [ -z "$trgt" ] && tm="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>"
-    [ "$mark" = TRUE ] && trgt="<sup>*</sup>$trgt"
+    [ "$mark" = TRUE ] && im="--image=$DS/images/mark.png"
     
-    yad --form --title="$item" \
+    yad --form --title="$item" $im \
     --selectable-labels --quoted-output \
     --text="<span font_desc='Sans Free Bold $fs'>$trgt</span>\n\n<i>$srce</i>\n\n" \
     --window-icon="$DS/images/icon.png" \
@@ -44,16 +44,17 @@ function sentence_view() {
     || trgt="$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"$tags")"
     srce="$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"$tags")"
     lwrd="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"$tags" | tr '_' '\n')"
-    [ "$(grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)' <<<"$tags")" = TRUE ] && trgt="<b>*</b> $trgt"
+    mark="$(grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)' <<<"$tags")"
+    [  "$mark" = TRUE ] && im="--image=$DS/images/mark.png"
     [ -z "$trgt" ] && tm="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>"
     else tm="<span color='#3F78A0'><tt>$(gettext "File not found")</tt></span>"; fi
     
-    echo "$lwrd" | yad --list --title=" " \
+    echo "$lwrd" | yad --list --title=" " $im \
     --text="$tm<span font_desc='Sans Free 15'>$trgt</span>\n\n<i>$srce</i>\n\n" \
     --selectable-labels --print-column=0 \
     --dclick-action="$DS/ifs/tls.sh 'dclik'" \
     --window-icon="$DS/images/icon.png" \
-    --skip-taskbar --center --image-on-top --center --on-top \
+    --skip-taskbar --image-on-top --center --on-top \
     --scroll --text-align=left --expand-column=0 --no-headers \
     --width=620 --height=380 --borders=20 \
     --column="":TEXT \
@@ -76,7 +77,7 @@ function notebook_1() {
     cmd_share="'$DS/ifs/upld.sh' upld "\"$tpc\"""
     cmd_play="$DS/play.sh"
 
-    tac "$ls1" | awk '{print $0"\n"}' | yad --list --tabnum=1 \
+    tac "$DC_tlt/lst" | awk '{print $0"\n"}' | yad --list --tabnum=1 \
     --plug=$KEY --print-all \
     --dclick-action="$DS/vwr.sh '1'" \
     --expand-column=1 --no-headers --ellipsize=END --tooltip-column=1 \
