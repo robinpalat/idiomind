@@ -4,18 +4,18 @@
 
 function word_view() {
 
-    tags="$(eyeD3 "$DM_tlt/words/$fname.mp3")"
     trgt="$item"
+    tags="$(eyeD3 "$DM_tlt/words/$fname.mp3")"
     srce="$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)' <<<"$tags")"
     fields="$(grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' <<<"$tags" | tr '_' '\n')"
     mark="$(grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)' <<<"$tags")"
     exmp="$(sed -n 1p <<<"$fields")"
     dftn="$(sed -n 2p <<<"$fields")"
     note="$(sed -n 3p <<<"$fields")"
-    [ -n "$dftn" ] && field_dftn="--field=<span font_desc='verdana 8'>$(gettext "Definition:") $dftn</span>:lbl"
-    [ -n "$note" ] && field_note="--field=$note\n:lbl"
-    hlgt="$(awk '{print tolower($0)}' <<<"$trgt")"
     exmp="$(sed "s/"${trgt,,}"/<span background='#FDFBCF'>"${trgt,,}"<\/\span>/g" <<<"$exmp")"
+    [ -n "$dftn" ] && field_dftn="--field=<span font_desc='verdana 8'>$dftn</span>:lbl"
+    [ -n "$note" ] && field_note="--field=$note\n:lbl"
+    [ -n "$exmp" ] && field_exmp="--field=<i><span color='#737373'>$exmp</span></i>:lbl"
     [ -z "$trgt" ] && tm="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>"
     [ "$mark" = TRUE ] && trgt="<sup>*</sup>$trgt"
     
@@ -23,11 +23,10 @@ function word_view() {
     --selectable-labels --quoted-output \
     --text="<span font_desc='Sans Free Bold $fs'>$trgt</span>\n\n<i>$srce</i>\n\n" \
     --window-icon="$DS/images/icon.png" \
-    --scroll --skip-taskbar --text-align=center \
+    --align=left --scroll --skip-taskbar --text-align=center \
     --image-on-top --center --on-top \
     --width=620 --height=380 --borders=$bs \
-    --field="":lbl \
-    --field="<i><span color='#737373'>$exmp</span></i>:lbl" "$field_dftn" "$field_note" \
+    --field="":lbl "$field_exmp" "$field_dftn" "$field_note" \
     --button=gtk-edit:4 \
     --button="$listen":"$cmd_listen" \
     --button=gtk-go-down:2 \
@@ -50,12 +49,12 @@ function sentence_view() {
     else tm="<span color='#3F78A0'><tt>$(gettext "File not found")</tt></span>"; fi
     
     echo "$lwrd" | yad --list --title=" " \
+    --text="$tm<span font_desc='Sans Free 15'>$trgt</span>\n\n<i>$srce</i>\n\n" \
     --selectable-labels --print-column=0 \
     --dclick-action="$DS/ifs/tls.sh 'dclik'" \
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --center --image-on-top --center --on-top \
     --scroll --text-align=left --expand-column=0 --no-headers \
-    --text="$tm<span font_desc='Sans Free 15'>$trgt</span>\n\n<i>$srce</i>\n\n" \
     --width=620 --height=380 --borders=20 \
     --column="":TEXT \
     --column="":TEXT \

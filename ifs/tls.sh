@@ -690,23 +690,22 @@ set_image() {
     if [ "$3" = word ]; then
     item=$(eyeD3 "$2" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
     elif [ "$3" = sentence ]; then
-    item=$(eyeD3 "$2" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
-    fi
-    search="$(sed "s/'//g" <<<"$item")"
+    item=$(eyeD3 "$2" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)'); fi
+    q="$(sed "s/'/ /g" <<<"$item")"
     file="$2"
     fname="$(nmfile "$item")"
     source "$DS/ifs/mods/add/add.sh"
 
     echo -e "<html><head>
-    <meta http-equiv=\"Refresh\" content=\"0;url=https://www.google.com/search?q="$search"&tbm=isch\">
-    </head><body><p>Search images for \"$search\"...</p></body></html>" > search.html
+    <meta http-equiv=\"Refresh\" content=\"0;url=https://www.google.com/search?q="$q"&tbm=isch\">
+    </head><body><p>Search images for \"$q\"...</p></body></html>" > search.html
     btn1="--button="$(gettext "Image")":3"
 
     if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
     image="--image=$DM_tlt/words/images/$fname.jpg"
     btn1="--button="$(gettext "Change")":3"
     btn2="--button="$(gettext "Delete")":2"
-    else label="--text=<small><a href='file://$DT/search.html'>"$(gettext "Search image...")"</a></small>"; fi
+    else label="--text=<small><a href='file://$DT/search.html'>"$(gettext "Search image")"</a></small>"; fi
 
     if [ "$3" = word ]; then
 

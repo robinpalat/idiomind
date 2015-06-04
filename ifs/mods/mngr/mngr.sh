@@ -52,22 +52,17 @@ position() {
         > "$DC_tlt/0.cfg.mv"
 
         while read -r sec; do
-        f1=`cut -d "|" -f1 <<<"${sec}"`
-        f2=`cut -d "|" -f2 <<<"${sec}"`
-        f3=`cut -d "|" -f3 <<<"${sec}"`
-        f4=`cut -d "|" -f4 <<<"${sec}"`
-
+        
+            f1=`cut -d "|" -f1 <<<"${sec}"`
+            f2=`cut -d "|" -f2 <<<"${sec}"`
+            f3=`cut -d "|" -f3 <<<"${sec}"`
+            f4=`cut -d "|" -f4 <<<"${sec}"`
             if [ "$f2" = 'TRUE' ] && [ "${itr}" != "${item}" ]; then
-                
-                echo -e "${item}" >> "$DC_tlt/0.cfg.mv"
-                echo -e "${f3}" >> "$DC_tlt/0.cfg.mv"
-
+            echo -e "${item}" >> "$DC_tlt/0.cfg.mv"
+            echo -e "${f3}" >> "$DC_tlt/0.cfg.mv"
             elif [ "$f4" = 'TRUE' ] && [ "${f3}" != "${item}" ]; then
-            
-                delete_item_ok "${f3}"
-            
+            delete_item_ok "${f3}"
             else echo "${f3}" >> "$DC_tlt/0.cfg.mv"; fi
-
         done <<<"{$mv}"
 
         e=$?
@@ -110,14 +105,14 @@ function dlg_form_1() {
     --field="<small>$lgtl</small>" "$trgt" \
     --field="<small>$lgsl</small>" "$srce" \
     --field="<small>$(gettext "Topic")</small>":CB "$tpc!$tpcs" \
-    --field="<small>$(gettext "Audio")</small>":FL "$DM_tlt/words/$fname.mp3" \
+    --field="<small>$(gettext "Audio")</small>":FL "$audiofile_1" \
     --field="<small>$(gettext "Example")</small>":TXT "$exmp" \
     --field="<small>$(gettext "Definition")</small>":TXT "$dftn" \
     --field="<small>$(gettext "Note")</small>":TXT "$note" \
-    --field="<small>$(gettext "Search definition")</small>":FBTN "$cmd_definition" \
+    --field=" ":LBL " " \
     --field="$(gettext "Mark")":CHK "$mark" \
     --field="<small>$(gettext "Listen")</small>":FBTN "$cmd_play" \
-    --field=" ":LBL " " \
+    --field="<small><a href='$link2'>$(gettext "Definition")</a>  <a href='$link1'>$(gettext "Translation")</a></small>":LBL " " \
     --button="$(gettext "More")":"$cmd_move" \
     --button="$(gettext "Image")":"$cmd_image" \
     --button="$(gettext "Delete")":"$cmd_delete" \
@@ -137,15 +132,16 @@ function dlg_form_2() {
     --name=Idiomind --class=Idiomind \
     --always-print-result --separator="\n" --selectable-labels \
     --window-icon="$DS/images/icon.png" \
-    --buttons-layout=end --align=center --center --on-top \
+    --buttons-layout=end --align=right --center --on-top \
     --width=650 --height=540 --borders=10 \
     --field="$(gettext "Mark")":CHK "$mark" \
     --field=" $lbl_2":$t "$type" \
     --field="<small>$lgtl</small>":TXT "$trgt" \
+    --field="<small><a href='$link1'>$(gettext "Translation")</a></small>\t":LBL " " \
     --field="<small>$lgsl</small>":TXT "$srce" \
     --field="$(gettext "Listen")":FBTN "$cmd_play" \
     --field="<small>$(gettext "Topic")</small>":CB "$tpc!$tpcs" \
-    --field="<small>$(gettext "Audio")</small>":FL "$DM_tlt/$fname.mp3" \
+    --field="<small>$(gettext "Audio")</small>":FL "$audiofile_2" \
     --button="$(gettext "More")":"$cmd_move" \
     --button="$(gettext "Words")":"$cmd_words" \
     --button="$(gettext "Delete")":"$cmd_delete" \

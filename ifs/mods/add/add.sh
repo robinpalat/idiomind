@@ -87,13 +87,15 @@ function index() {
 
 function check_grammar_1() {
     
-    g=$(sed 's/ /\n/g' <<<"$trgt")
-    cd "$1"; touch "A.$r" "B.$r" "g.$r"; n=1
-    while [[ $n -le $(wc -l <<<"$g") ]]; do
-        grmrk=$(sed -n "$n"p <<<"$g")
-        chck=$(sed -n "$n"p <<<"$g,," | sed 's/,//;s/\.//g')
+    touch "A.$r" "B.$r" "g.$r"
+    while read -r grmrk; do
+        chck=$(sed 's/,//;s/\.//g' <<<"${grmrk,,}")
         if grep -Fxq "$chck" <<<"$pronouns"; then
             echo "<span color='#3E539A'>$grmrk</span>" >> "g.$2"
+        elif grep -Fxq "$chck" <<<"$nouns_adjetives"; then
+            echo "<span color='#496E60'>$grmrk</span>" >> "g.$2"
+        elif grep -Fxq "$chck" <<<"$adjetives"; then
+            echo "<span color='#3E8A3B'>$grmrk</span>" >> "g.$2"
         elif grep -Fxq "$chck" <<<"$nouns_verbs"; then
             echo "<span color='#62426A'>$grmrk</span>" >> "g.$2"
         elif grep -Fxq "$chck" <<<"$conjunctions"; then
@@ -104,27 +106,22 @@ function check_grammar_1() {
             echo "<span color='#D67B2D'>$grmrk</span>" >> "g.$2"
         elif grep -Fxq "$chck" <<<"$adverbs"; then
             echo "<span color='#9C68BD'>$grmrk</span>" >> "g.$2"
-        elif grep -Fxq "$chck" <<<"$nouns_adjetives"; then
-            echo "<span color='#496E60'>$grmrk</span>" >> "g.$2"
-        elif grep -Fxq "$chck" <<<"$adjetives"; then
-            echo "<span color='#3E8A3B'>$grmrk</span>" >> "g.$2"
         else
             echo "$grmrk" >> "g.$2"
         fi
-        let n++
-    done
+    done < <(sed 's/ /\n/g' <<<"$trgt")
 }
 
 
 function check_grammar_2() {
 
     if grep -Fxq "${1,,}" <<<"$pronouns"; then echo 'Pron. ';
+    elif grep -Fxq "${1,,}" <<<"$nouns_adjetives"; then echo 'Noun, Adj. ';
+    elif grep -Fxq "${1,,}" <<<"$adjetives"; then echo 'Adj. ';
     elif grep -Fxq "${1,,}" <<<"$conjunctions"; then echo 'Conj. ';
     elif grep -Fxq "${1,,}" <<<"$prepositions"; then echo 'Prep. ';
-    elif grep -Fxq "${1,,}" <<<"$adverbs"; then echo 'adv. ';
-    elif grep -Fxq "${1,,}" <<<"$nouns_adjetives"; then echo 'Noun, Adj. ';
+    elif grep -Fxq "${1,,}" <<<"$adverbs"; then echo 'Adv. ';
     elif grep -Fxq "${1,,}" <<<"$nouns_verbs"; then echo 'Noun, Verb ';
-    elif grep -Fxq "${1,,}" <<<"$adjetives"; then echo 'adj. ';
     elif grep -Fxq "${1,,}" <<<"$verbs"; then echo 'verb. '; fi
 }
 
@@ -331,7 +328,7 @@ function voice() {
             echo "$1" | text2wave -o "$DT_r/s.wav"
             sox "$DT_r/s.wav" "${3}"
             else
-            msg "$(gettext "Sorry, <b>festival</b> can not process this language.")\n" error
+            msg "$(gettext "Sorry, can not process this language.")\n" error
             [ "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
         else
             echo "${1}" | "$synth"
@@ -344,7 +341,7 @@ function voice() {
         [ $lg = chinese ] && lg=Mandarin
         [ $lg = portuguese ] && lg=brazil
         [ $lg = vietnamese ] && lg=vietnam
-        if [ $lg = japanese ]; then msg "$(gettext "Sorry, <b>espeak</b> can not process Japanese language.")\n" error
+        if [ $lg = japanese ]; then msg "$(gettext "Sorry, can not process Japanese language.")\n" error
         [ "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
         
         espeak "${1}" -v $lg -k 1 -p 40 -a 80 -s 110 -w "$DT_r/s.wav"

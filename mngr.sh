@@ -344,13 +344,15 @@ edit() {
     index_1="${DC_tlt}/2.cfg"
     index_2="${DC_tlt}/1.cfg"
     [[ $item_pos -lt 1 ]] && item_pos=$inx2; fi
-    tpcs="$(egrep -v "${tpc}" "${DM_tl}/.2.cfg" | tr "\\n" '!' | sed 's/!\+$//g')"
+    tpcs="$(egrep -v "${tpc}" "${DM_tl}/.2.cfg" |tr "\\n" '!' |sed 's/!\+$//g')"
     c=$((RANDOM%10000))
     file_tmp="$(mktemp "$DT/file_tmp.XXXX")"
     item="$(sed -n "$item_pos"p "${index_1}")"
+    q_trad="$(sed "s/'/ /g" <<<"$item")"
     fname="$(echo -n "${item}" | md5sum | rev | cut -c 4- | rev)"
     audiofile_1="${DM_tlt}/words/$fname.mp3"
     audiofile_2="${DM_tlt}/$fname.mp3"
+    
     if [ ! -f "${audiofile_1}" ] && [ ! -f "${audiofile_2}" ] && [ -z "${item}" ]; then
     exit 1; fi
 
@@ -371,6 +373,8 @@ edit() {
         cmd_image="$DS/ifs/tls.sh set_image "\"${audiofile_1}\"" word"
         cmd_definition="/usr/share/idiomind/ifs/tls.sh definition '$trgt'"
         cmd_play="play "\"${DM_tlt}/words/$fname.mp3\"""
+        link1="https://translate.google.com/\#$lgt/$lgs/$q_trad"
+        link2="http://glosbe.com/$lgt/$lgs/${q_trad,,}"
         
         dlg_form_1 "$file_tmp"
         ret=$(echo "$?")
@@ -470,6 +474,7 @@ edit() {
         cmd_image="$DS/ifs/tls.sh set_image "\"${audiofile_2}\"" sentence"
         cmd_delete="$DS/mngr.sh delete_item "\"${item}\"""
         cmd_play="$DS/ifs/tls.sh play "\"${DM_tlt}/$fname.mp3\"""
+        link1="https://translate.google.com/\#$lgt/$lgs/$q_trad"
         [ -z "$trgt" ] && trgt="$item"
         
         dlg_form_2 "$file_tmp"
@@ -482,12 +487,12 @@ edit() {
             
                 include "$DS/ifs/mods/add"
                 source /usr/share/idiomind/ifs/c.conf
-                mark_mod="$(tail -8 < "$file_tmp" | sed -n 1p)"
-                type_mod="$(tail -8 < "$file_tmp" | sed -n 2p)"
-                trgt_mod="$(clean_1 "$(tail -8 < "$file_tmp" | sed -n 3p)")"
-                srce_mod="$(clean_1 "$(tail -8 < "$file_tmp" | sed -n 4p)")"
-                tpc_mod="$(tail -8 < "$file_tmp" | sed -n 6p)"
-                audio_mod="$(tail -8 < "$file_tmp" | sed -n 7p)"
+                mark_mod="$(tail -9 < "$file_tmp" | sed -n 1p)"
+                type_mod="$(tail -9 < "$file_tmp" | sed -n 2p)"
+                trgt_mod="$(clean_1 "$(tail -9 < "$file_tmp" | sed -n 3p)")"
+                srce_mod="$(clean_1 "$(tail -9 < "$file_tmp" | sed -n 5p)")"
+                tpc_mod="$(tail -9 < "$file_tmp" | sed -n 7p)"
+                audio_mod="$(tail -9 < "$file_tmp" | sed -n 8p)"
                 if [ $a = 1 ]; then trgt="_ _"; fi
                 rm -f "$file_tmp"
                 

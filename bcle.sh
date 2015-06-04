@@ -20,17 +20,16 @@
 
 source /usr/share/idiomind/ifs/c.conf
 [[ -z "$tpc" && -d "$DT" ]] && exit 1
-repeat=$(sed -n 8p < "$DC_s/1.cfg" \
-| grep -o repeat=\"[^\"]* | grep -o '[^"]*$')
+repeat=$(sed -n 8p "$DC_s/1.cfg" |grep -o repeat=\"[^\"]* |grep -o '[^"]*$')
 
 if [ -s "$DT/index.m3u" ] \
-&& [ "$(wc -l < "$DT/index.m3u")" -gt 0 ]; then
+&& [ `wc -l < "$DT/index.m3u"` -gt 0 ]; then
    
     if [ "$repeat" = TRUE ]; then
         while [ 1 ]; do
             if [ -f "$DT/.p" ]; then
             pos=`sed -n 1p "$DT/.p"`; rm "$DT/.p"
-            [ $pos -gt `wc -l < "$DT/index.m3u"` ] && \
+            [[ $pos -gt `wc -l < "$DT/index.m3u"` ]] && \
             pos=`wc -l < "$DT/index.m3u"`; else
             pos=`wc -l < "$DT/index.m3u"`; fi
             while [[ 1 -le $pos ]]; do
@@ -39,11 +38,10 @@ if [ -s "$DT/index.m3u" ] \
             done
             sleep 15
         done
-    
     else
         if [ -f "$DT/.p" ]; then
         pos=`sed -n 1p "$DT/.p"`; rm "$DT/.p"
-        [ $pos -gt `wc -l < "$DT/index.m3u"` ] && \
+        [[ $pos -gt `wc -l < "$DT/index.m3u"` ]] && \
         pos=`wc -l < "$DT/index.m3u"`; else
         pos=`wc -l < "$DT/index.m3u"`; fi
         while [[ 1 -le $pos ]]; do

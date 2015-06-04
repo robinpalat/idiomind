@@ -33,7 +33,7 @@ if [ -f "$DT/ps_lk" ]; then
 fi
 
 function new_session() {
-
+    
     #set -e
     echo "--new session"
     echo "$(date +%d)" > "$DC_s/10.cfg"
@@ -46,7 +46,7 @@ function new_session() {
     msg "$(gettext "Fail on try write in /tmp")\n" error & exit 1; fi
     
     touch "$DT/ps_lk"
-  
+    
     # start addons
     addons="$(cd "$DS/addons"; ls -d *)"
     n=1; > "$DC_s/2.cfg"
@@ -63,11 +63,11 @@ function new_session() {
     
     for strt in "$DS/ifs/mods/start"/*; do
     (sleep 20 && "$strt"); done &
-
+    
     #
     list_inadd > "$DM_tl/.2.cfg"
     cd /
-
+    
     s="$(xrandr | grep '*' | awk '{ print $1 }' \
     | sed 's/x/\n/')"
     sed -n 1p <<<"$s" >> "$DC_s/10.cfg"
@@ -76,7 +76,7 @@ function new_session() {
     gconftool-2 --get /desktop/gnome/interface/font_name \
     | cut -d ' ' -f 2 >> "$DC_s/10.cfg"
     [ `wc -l < "$DC_s/1.cfg"` -lt 19 ] && rm "$DC_s/1.cfg"
-
+    
     # log file
     if [ -f "$DC_s/8.cfg" ]; then
     if [ "$(du -sb "$DC_s/8.cfg" | awk '{ print $1 }')" -gt 100000 ]; then
@@ -116,7 +116,7 @@ function new_session() {
 }
 
 
-if grep -o '.idmnd' <<<"$1"; then
+if grep -o '.idmnd' <<<"${1: -6}"; then
 
     dte=$(date "+%d %B")
     c=$((RANDOM%1000))
@@ -138,7 +138,7 @@ if grep -o '.idmnd' <<<"$1"; then
     [ $level = 2 ] && level="$(gettext "Intermediate")"
     [ $level = 3 ] && level="$(gettext "Advanced")"
 
-    if [ "$tpi" != "$name" ]; then
+    if [[ "$tpi" != "$name" ]]; then
     
         [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c" \
         "$DT/$tpi.cfg" "$DT/import.tar.gz" & exit 1
@@ -206,13 +206,11 @@ if grep -o '.idmnd' <<<"$1"; then
                 if [ -d "$tmp/share" ]; then
                 cp -n "$tmp/share"/*.mp3 "$DM_t/$language_target/.share"/
                 rm -fr "$tmp/share"; fi
-                n=0
-                while [[ $n -le 13 ]]; do
+                n=0; while [[ $n -le 13 ]]; do
                 if [ ! -f "$tmp/conf/$n.cfg" ]; then
                 touch "$DC_tlt/$n.cfg"
                 else mv -f "$tmp/conf/$n.cfg" "$DC_tlt/$n.cfg"; fi
-                let n++
-                done
+                let n++; done
                 cp "$tmp/conf/info" "$DC_tlt/10.cfg"
                 cp "$tmp/conf/id" "$DC_tlt/12.cfg"
                 tee "$DC_tlt/.11.cfg" "$DC_tlt/1.cfg" < "$DC_tlt/0.cfg"
@@ -226,7 +224,8 @@ if grep -o '.idmnd' <<<"$1"; then
             fi
     fi
     [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c"
-    rm -f "$DT/import.tar.gz" "$DT/$tpi.cfg" & exit
+    rm -f "$DT/import.tar.gz" "$DT/$tpi.cfg" &
+    exit 1
 fi
     
 function topic() {

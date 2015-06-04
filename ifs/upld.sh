@@ -336,7 +336,6 @@ else
     info="$(gettext "A problem has occurred with the file upload, try again later.")\n"
     image=dialog-warning
 fi
-
 msg "$info" $image
 
 [ -d "$DT_u/$tpc" ] && rm -fr "$DT_u/$tpc"

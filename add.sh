@@ -278,10 +278,10 @@ new_word() {
 
     trgt="$(clean_0 "${2}")"
     srce="$(clean_0 "${4}")"
-    DT_r="$3"
-    cd "$DT_r"
+    DT_r="$3"; cd "$DT_r"
     DM_tlt="$DM_tl/${tpe}"
     DC_tlt="$DM_tl/${tpe}/.conf"
+    source "$DS/default/dicts/$lgt"
     
     if [ "$(wc -l < "$DC_tlt/0.cfg")" -ge 200 ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
