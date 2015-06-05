@@ -41,12 +41,11 @@ if [ "$(wc -l < "$cfg3")" -gt 0 ]; then
 in2="$(grep -Fxvf "$cfg3" "$cfg1")"; else
 in2="$(< "$cfg1")"; fi
 in3="$(< "$DC_tlt/6.cfg")"
-[ -f "$DC_tlt/practice/log3" ] && \
-in4="$(sed '/^$/d' < "$DC_tlt/practice/log3" | sort | uniq | head -n 20)" || in4=""
+in4="$(cd "$DC_tlt/practice/"; cat ./*.3 |sed '/^$/d'|sort|uniq|sed '/^$/d'|head -n 20)"
 [ -f "$DM_tl/Podcasts/.conf/1.cfg" ] && \
-in5="$(tac "$DM_tl/Podcasts/.conf/1.cfg" | sed '/^$/d')" || in5=""
+in5="$(tac "$DM_tl/Podcasts/.conf/1.cfg" |sed '/^$/d')" || in5=""
 [ -f "$DM_tl/Podcasts/.conf/2.cfg" ] && \
-in6="$(tac "$DM_tl/Podcasts/.conf/2.cfg" | sed '/^$/d')" || in6=""
+in6="$(tac "$DM_tl/Podcasts/.conf/2.cfg" |sed '/^$/d')" || in6=""
 [ ! -d "$DT" ] && mkdir "$DT"; cd "$DT"
 
 if [ "$cfg" = 1 ]; then

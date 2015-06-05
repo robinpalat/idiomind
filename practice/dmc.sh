@@ -11,15 +11,18 @@ all=$(wc -l < ./b.0)
 easy=0
 hard=0
 ling=0
-[ -f b.2 ] && rm b.2
-[ -f b.3 ] && rm b.3
 
 score() {
+    
+    touch b.0 b.1 b.2 b.3
+    awk '!a[$0]++' b.2 > b2.tmp
+    awk '!a[$0]++' b.3 > b3.tmp
+    grep -Fxvf b3.tmp b2.tmp > b.2
+    mv -f b3.tmp b.3
 
     if [[ $(($(< ./b.l)+$1)) -ge $all ]]; then
         play "$drts/all.mp3" &
-        echo "w9.$(tr -s '\n' '|' < ./b.ok).w9" >> "$log"
-        rm b.0 b.1 b.2 b.3 b.ok
+        echo "w9.$(tr -s '\n' '|' < ./b.1).w9" >> "$log"
         echo "$(date "+%a %d %B")" > b.lock
         echo 21 > .2
         "$strt" 2 &
@@ -36,13 +39,9 @@ score() {
             ((c=c+5))
             let n++
         done
-        
-        if [ -f b.2 ]; then
-        echo "$(< ./b.2)" >> "log2"; rm b.2 ; fi
-        
+
         if [ -f b.3 ]; then
-        echo "w6.$(tr -s '\n' '|' < ./b.3).w6" >> "$log"
-        echo "$(< ./b.3)" >> "log3"; rm b.3; fi
+        echo "w6.$(tr -s '\n' '|' < ./b.3).w6" >> "$log"; fi
         
         "$strt" 7 $easy $ling $hard & exit 1
     fi
@@ -53,12 +52,9 @@ fonts() {
     
     fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
     wes=$(eyeD3 "$drtt/$fname.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
-    ras=$(sort -Ru b.lst | egrep -v "$wes" | head -5)
-    ess=$(grep "$wes" ./b.lst)
-    printf "$ras\n$ess" > b.tmp
-    ells=$(sort -Ru b.tmp | head -6)
-    echo "$ells" > b.tmp
-    sed '/^$/d' b.tmp > b.w
+    ras=$(sort -Ru b.srces | egrep -v "$wes" | head -5)
+    ess=$(grep "$wes" ./b.srces)
+    echo -e "$ras\n$ess" | sort -Ru | head -6 | sed '/^$/d' > srce.tmp
     s=$((40-${#1}))
     cuestion="\n<span font_desc='Free Sans $s'><b>$1</b></span>\n\n"
     }
@@ -67,7 +63,7 @@ fonts() {
 ofonts() {
     while read item; do
         echo "<big>$item</big>"
-    done < ./b.w
+    done < ./srce.tmp
     }
 
 
@@ -94,7 +90,7 @@ while read trgt; do
     if [ $ret = 0 ]; then
     
         if echo "$dlg" | grep "$wes"; then
-            echo "$trgt" >> b.ok
+            echo "$trgt" >> b.1
             easy=$((easy+1))
             
         else
@@ -109,7 +105,7 @@ while read trgt; do
         exit 1
     fi
     
-done < ./b.1
+done < ./b.tmp
     
 if [ ! -f ./b.2 ]; then
 

@@ -145,7 +145,6 @@ Directories: $wcdirs
 Files: $wcfiles
 Others files: $others
 
-
 $(gettext "FILES")
 
 $files
@@ -563,6 +562,35 @@ fback() {
     --width=500 --height=450
      
 } >/dev/null 2>&1
+
+
+colorize() {
+
+    cd "${DC_tlt}/practice"; rm "${DC_tlt}/5.cfg"
+    m=`cat "${DC_tlt}/6.cfg"`
+    cfg5="${DC_tlt}/5.cfg"
+    
+    while read item; do
+        if cat ./*.1 | awk '++A[$1]==3' | grep -Fxo "$item"; then
+            if grep -Fxo "$item" <<<"$m"; then
+            echo "<b><big><span color='#458B00'>$item</span></big></b>" >> "$cfg5"
+            else echo "<span color='#458B00'>$item</span>" >> "$cfg5"; fi
+        elif cat ./*.2 | awk '++A[$1]==2' | grep -Fxo "$item"; then
+            if grep -Fxo "$item" <<<"$m"; then
+            echo "<b><big><span color='#CF590B'>$item</span></big></b>" >> "$cfg5"
+            else echo "<span color='#CF590B'>$item</span>" >> "$cfg5"; fi
+        elif cat ./*.3 | awk '++A[$1]==3' | grep -Fxo "$item"; then
+            if grep -Fxo "$item" <<<"$m"; then
+            echo "<b><big><span color='#A4183C'>$item</span></big></b>" >> "$cfg5"
+            else echo "<span color='#A4183C'>$item</span>" >> "$cfg5"; fi
+        else
+            if grep -Fxo "$item" <<<"$m"; then
+            echo "<b><big>$item</big></b>" >> "$cfg5"
+            else echo "$item" >> "$cfg5"; fi
+        fi
+    done < "${DC_tlt}/1.cfg"
+    cd ~/
+}
 
 check_updates() {
 
@@ -1032,6 +1060,8 @@ case "$1" in
     videourl "$@" ;;
     help)
     help ;;
+    colorize)
+    colorize "$@" ;;
     definition)
     definition "$@" ;;
     check_updates)

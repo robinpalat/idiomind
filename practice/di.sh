@@ -10,15 +10,18 @@ all=$(wc -l < ./e.0)
 easy=0
 hard=0
 ling=0
-[ -f e.2 ] && rm e.2
-[ -f e.3 ] && rm e.3
 
 score() {
+    
+    touch e.0 e.1 e.2 e.3
+    awk '!a[$0]++' e.2 > e2.tmp
+    awk '!a[$0]++' e.3 > e3.tmp
+    grep -Fxvf e3.tmp e2.tmp > e.2
+    mv -f e3.tmp e.3
 
     if [[ $(($(< ./e.l)+$1)) -ge $all ]]; then
         play "$drts/all.mp3" &
-        echo "w9.$(tr -s '\n' '|' < ./e.ok).w9" >> "$log"
-        rm e.0 e.1 e.2 e.ok
+        echo "w9.$(tr -s '\n' '|' < ./e.1).w9" >> "$log"
         echo "$(date "+%a %d %B")" > e.lock
         echo 21 > .5
         "$strt" 5 &
@@ -36,12 +39,8 @@ score() {
             let n++
         done
 
-        if [ -f e.2 ]; then
-        echo "$(< ./e.2)" >> "log2"; rm e.2 ; fi
-        
         if [ -f e.3 ]; then
-        echo "w6.$(tr -s '\n' '|' < ./e.3).w6" >> "$log"
-        echo "$(< ./e.3)" >> "log3"; rm e.3; fi
+        echo "w6.$(tr -s '\n' '|' < ./e.3).w6" >> "$log"; fi
         
         "$strt" 10 "$easy" "$ling" "$hard" & exit 1
     fi
@@ -54,10 +53,8 @@ fonts() {
     src=$(eyeD3 "$drtt/$fname.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
     img="$drtt/images/$fname.jpg"
     [ ! -f "$img" ] && img="$DS/practice/img_2.jpg"
-    s=$((24-${#src}))
-    t=$((45-${#1}))
-    srcel="\n\n<span font_desc='Free Sans $s'><i>$src</i></span>"
-    trgtl="<span font_desc='Free Sans $t'><b>$1</b></span>"
+    srcel="<span font_desc='Free Sans 10'><i>($src)</i></span>"
+    trgtl="<span font_desc='Free Sans 15'><b>$1</b></span>"
 }
 
 cuestion() {
@@ -66,25 +63,24 @@ cuestion() {
     --image="$img" \
     --skip-taskbar --text-align=center --align=center --center --on-top \
     --image-on-top --undecorated --buttons-layout=spread \
-    --width=415 --height=340 --borders=4 \
+    --width=415 --height=360 --borders=4 \
     --button="$(gettext "Exit")":1 \
     --button="    $(gettext "Answer") >>    ":0
 }
 
-
 answer() {
     
     yad --form --title="$(gettext "Practice")" \
+    --image="$img" \
     --timeout=20 --selectable-labels \
     --skip-taskbar --text-align=center --align=center --center --on-top \
-    --undecorated --buttons-layout=spread \
-    --width=415 --height=340 --borders=4 \
-    --field="\n$srcel":lbl \
-    --field="":lbl \
-    --field="$trgtl":lbl \
+    --image-on-top --undecorated --buttons-layout=spread \
+    --width=415 --height=360 --borders=4 \
+    --field="$trgtl   $srcel":lbl \
     --button="  $(gettext "I did not know it")  ":3 \
     --button="  $(gettext "I Knew it")  ":2
 }
+
 while read trgt; do
 
     fonts "$trgt"
@@ -101,7 +97,7 @@ while read trgt; do
         ans=$(echo "$?")
 
         if [ $ans = 2 ]; then
-            echo "$trgt" >> e.ok
+            echo "$trgt" >> e.1
             easy=$((easy+1))
 
         elif [ $ans = 3 ]; then
@@ -110,7 +106,7 @@ while read trgt; do
         fi
     fi
     
-done < ./e.1
+done < ./e.tmp
 
 if [ ! -f e.2 ]; then
 

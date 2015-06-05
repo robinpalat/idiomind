@@ -42,12 +42,14 @@ function index() {
             echo "${item}" >> "$DC_tlt/1.cfg"
             echo "${item}" >> "$DC_tlt/.11.cfg"; fi
             echo "${item}" >> "$DC_tlt/3.cfg"
+            echo "${item}" >> "$DC_tlt/5.cfg"
             
         elif [ "$1" = sentence ]; then
         
             echo "${item}" >> "$DC_tlt/0.cfg"
             echo "${item}" >> "$DC_tlt/1.cfg"
             echo "${item}" >> "$DC_tlt/4.cfg"
+            echo "${item}" >> "$DC_tlt/5.cfg"
             echo "${item}" >> "$DC_tlt/.11.cfg"
         fi
     fi
@@ -78,6 +80,7 @@ function index() {
         echo "${item}" >> "$DC_tlt/0.cfg"
         echo "${item}" >> "$DC_tlt/1.cfg"
         echo "${item}" >> "$DC_tlt/4.cfg"
+        echo "${item}" >> "$DC_tlt/5.cfg"
     fi
     
     sleep 0.5

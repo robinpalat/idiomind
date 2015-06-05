@@ -36,7 +36,7 @@ if [ -s "$DT/index.m3u" ] \
                 "$DS/chng.sh" chngi "$pos"
                 let pos--
             done
-            sleep 15
+            sleep 10
         done
     else
         if [ -f "$DT/.p" ]; then

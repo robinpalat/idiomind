@@ -620,35 +620,6 @@ edit() {
 } >/dev/null 2>&1
 
 
-colorize() {
-
-    cd "${DC_tlt}/practice"; > "${DC_tlt}/5.cfg"
-    n0=`cat ./*.ok | sort | uniq` || n0=""
-    [ -f ./log2 ] && n2=`cat ./log2 | head -n 50 | sort | uniq` || n2=""
-    [ -f ./log3 ] && n3=`cat ./log3 | head -n 50 | sort | uniq` || n3=""
-    m=`cat "${DC_tlt}/6.cfg"`
-    while read item; do
-        if grep -Fxo "$item" <<<"$n0"; then
-            if grep -Fxo "$item" <<<"$m"; then
-            echo "<b><big><span color='green'>$item</span></big></b>" >> "${DC_tlt}/5.cfg"
-            else echo "<span color='green'>$item</span>" >> "${DC_tlt}/5.cfg"; fi
-        elif grep -Fxo "$item" <<<"$n3"; then
-            if grep -Fxo "$item" <<<"$m"; then
-            echo "<b><big><span color='OrangeRed3'>$item</span></big></b>" >> "${DC_tlt}/5.cfg"
-            else echo "<span color='OrangeRed3'>$item</span>" >> "${DC_tlt}/5.cfg"; fi
-        elif grep -Fxo "$item" <<<"$n2"; then
-            if grep -Fxo "$item" <<<"$m"; then
-            echo "<b><big><span color='orange'>$item</span></big></b>" >> "${DC_tlt}/5.cfg"
-            else echo "<span color='orange'>$item</span>" >> "${DC_tlt}/5.cfg"; fi
-        else
-            if grep -Fxo "$item" <<<"$m"; then
-            echo "<b><big>$item</big></b>" >> "${DC_tlt}/5.cfg"
-            else echo "$item" >> "${DC_tlt}/5.cfg"; fi
-        fi
-    done < "${DC_tlt}/1.cfg"
-}
-
-
 delete_topic() {
     
     include "$DS/ifs/mods/mngr"

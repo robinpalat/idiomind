@@ -10,15 +10,18 @@ all=$(wc -l < ./c.0)
 easy=0
 hard=0
 ling=0
-[ -f c.2 ] && rm c.2
-[ -f c.3 ] && rm c.3
 
 score() {
+    
+    touch c.0 c.1 c.2 c.3
+    awk '!a[$0]++' c.2 > c2.tmp
+    awk '!a[$0]++' c.3 > c3.tmp
+    grep -Fxvf c3.tmp c2.tmp > c.2
+    mv -f c3.tmp c.3
 
     if [[ $(($(< ./c.l)+$1)) -ge $all ]]; then
         play "$drts/all.mp3" &
-        echo "w9.$(tr -s '\n' '|' < ./c.ok).w9" >> "$log"
-        rm c.0 c.1 c.2 c.3 c.ok
+        echo "w9.$(tr -s '\n' '|' < ./c.1).w9" >> "$log"
         echo "$(date "+%a %d %B")" > c.lock
         echo 21 > .3
         "$strt" 3 &
@@ -36,12 +39,8 @@ score() {
             let n++
         done
         
-        if [ -f c.2 ]; then
-        echo "$(< ./c.2)" >> "log2"; rm c.2 ; fi
-        
         if [ -f c.3 ]; then
-        echo "w6.$(tr -s '\n' '|' < c.3).w6" >> "$log"
-        echo "$(< c.3)" >> "log3"; rm c.3; fi
+        echo "w6.$(tr -s '\n' '|' < c.3).w6" >> "$log"; fi
         
         "$strt" 8 $easy $ling $hard & exit 1
     fi
@@ -89,7 +88,7 @@ while read trgt; do
     ans=$(echo "$?")
     
     if [ $ans = 2 ]; then
-            echo "$trgt" >> c.ok
+            echo "$trgt" >> c.1
             easy=$((easy+1))
 
     elif [ $ans = 3 ]; then
@@ -101,7 +100,7 @@ while read trgt; do
         "$drts/cls.sh" comp_c $easy $ling $hard $all &
         exit 1
     fi
-done < ./c.1
+done < ./c.tmp
 
 if [ ! -f ./c.2 ]; then
 

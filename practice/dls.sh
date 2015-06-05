@@ -15,8 +15,7 @@ score() {
 
     if [[ "$1" -ge $all ]]; then
         play "$drts/all.mp3" & 
-        echo "s9.$(tr -s '\n' '|' < ./d.ok).s9" >> "$log"
-        rm d.0 d.ok
+        echo "s9.$(tr -s '\n' '|' < ./d.1).s9" >> "$log"
         echo "$(date "+%a %d %B")" > d.lock
         echo 21 > .4
         "$strt" 4 &
@@ -86,35 +85,35 @@ result() {
     
     awk '{print tolower($0)}' <<<"$SE" | sed 's/ /\n/g' | grep -v '^.$' \
     | sed 's/,//;s/\!//;s/\?//;s/¿//;s/\¡//;s/(//;s/)//;s/"//g' \
-    | sed 's/\-//;s/\[//;s/\]//;s/\.//;s/\://;s/\|//;s/)//;s/"//g' > ./d.ing
+    | sed 's/\-//;s/\[//;s/\]//;s/\.//;s/\://;s/\|//;s/)//;s/"//g' > ./d_ing.tmp
     awk '{print tolower($0)}' < ./quote | sed 's/ /\n/g' | grep -v '^.$' \
     | sed 's/,//;s/\!//;s/\?//;s/¿//;s/\¡//;s/(//;s/)//;s/"//g' \
-    | sed 's/\-//;s/\[//;s/\]//;s/\.//;s/\://;s/\|//;s/)//;s/"//g' > ./d.all
+    | sed 's/\-//;s/\[//;s/\]//;s/\.//;s/\://;s/\|//;s/)//;s/"//g' > ./d_all.tmp
     
     (
     n=1;
     while read -r line; do
-    
-        if grep -oFx "$line" ./d.all; then
+        > ./d_words.tmp
+        if grep -oFx "$line" ./d_all.tmp; then
             sed -i "s/"$line"/<b>"$line"<\/b>/g" quote
             [ -n "$line" ] && echo \
-            "<span color='#3A9000'><b>${line^}</b></span>  " >> ./d.words
-            [ -n "$line" ] && echo "$line" >> w.ok
+            "<span color='#3A9000'><b>${line^}</b></span>  " >> ./d_words.tmp
+            [ -n "$line" ] && echo "$line" >> d_ok.tmp
         else
             [ -n "$line" ] && echo \
-            "<span color='#7B4A44'><b>${line^}</b></span>  " >> ./d.words
+            "<span color='#7B4A44'><b>${line^}</b></span>  " >> ./d_words.tmp
         fi
         let n++
         
-    done <<<"$(sed 's/ /\n/g' < ./d.ing)"
+    done <<<"$(sed 's/ /\n/g' < ./d_ing.tmp)"
     )
     
-    OK=$(tr '\n' ' ' < ./d.words)
-    sed 's/ /\n/g' < ./quote > d.all
-    porc=$((100*$(cat ./w.ok | wc -l)/$(cat ./d.all | wc -l)))
+    OK=$(tr '\n' ' ' < ./d_words.tmp)
+    sed 's/ /\n/g' < ./quote > d_all.tmp
+    porc=$((100*$(cat ./d_ok.tmp | wc -l)/$(cat ./d_all.tmp | wc -l)))
     
     if [[ $porc -ge 70 ]]; then
-        echo "$WEN" >> d.ok
+        echo "$WEN" >> d.1
         easy=$((easy+1))
         color=3AB452
         
@@ -133,9 +132,9 @@ result() {
     }
 
 n=1
-while [[ $n -le "$(wc -l < ./d.1)" ]]; do
+while [[ $n -le "$(wc -l < ./d.tmp)" ]]; do
 
-    trgt="$(sed -n "$n"p d.1)"
+    trgt="$(sed -n "$n"p d.tmp)"
     fname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
     
     if [[ $n = 1 ]]; then
@@ -167,17 +166,14 @@ while [[ $n -le "$(wc -l < ./d.1)" ]]; do
         if [ $ret = 1 ]; then
             break &
             killall play &
-            rm -f w.ok d.all d.ing d.words
             "$drts/cls.sh" comp_d $easy $ling $hard $all &
             exit 1
             
         elif [ $ret -eq 2 ]; then
             killall play &
-            rm -f w.ok d.words &
         fi
     fi
     let n++
 done
 
 score $easy
-
