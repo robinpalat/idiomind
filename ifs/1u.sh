@@ -23,12 +23,12 @@ TEXTDOMAINDIR=/usr/share/locale
 export TEXTDOMAINDIR
 Encoding=UTF-8
 alias gettext='gettext "idiomind"'
-user=$(echo "$(whoami)")
-text="<big><big><big>$(gettext "Welcome") ${USER^} </big></big></big>
-\n      $(gettext "To get started, please configure the following.")"
+
+text="<span font_desc='Free Sans Bold 14'>$(gettext "Welcome") ${USER^} </span>
+\n      $(gettext "To get started, please configure the following:")\n"
 lang=('English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian')
-sets=('grammar' 'list' 'tasks' 'trans' 'text' 'audio' \
+sets=('grammar' 'list' 'tasks' 'trans' 'trd_trgt' 'text' 'audio' \
 'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' \
 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
 
@@ -62,7 +62,7 @@ It seems that you have no installed on your system the program YAD.\t
 You can get it from here:  www.sourceforge.net/projects/yad-dlg
 or install it using the following commands:
 
-sudo add-apt-repository ppa:robinpala/idiomind
+sudo add-apt-repository ppa:robinpalat/idiomind
 sudo apt-get update
 sudo apt-get install yad")" \
 --no-wrap & exit; fi
@@ -71,8 +71,8 @@ dlg=$(yad --form --title="Idiomind" \
 --text="$text" \
 --class=Idiomind --name=Idiomind \
 --window-icon="/usr/share/idiomind/images/icon.png" \
---image-on-top --align=center --center --on-top --buttons-layout=end \
---width=420 --height=285 --borders=15 \
+--image-on-top --buttons-layout=end --align=center --center --on-top \
+--width=450 --height=285 --borders=15 \
 --field="$(gettext "Select the language you are studying")":lbl " " \
 --field=":CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
 --field="$(gettext "Select your native language")":lbl " " \
@@ -136,14 +136,14 @@ elif [ $ret -eq 0 ]; then
     done
     
     n=0; > "$DC_s/1.cfg"
-    while [ $n -lt 18 ]; do
+    while [ $n -lt 19 ]; do
     echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
     ((n=n+1))
     done
     touch "$DC_s/4.cfg"
     
     b=$(tr -dc a-z < /dev/urandom | head -c 1)
-    c=$(($RANDOM%100))
+    c=$((RANDOM%100))
     id="$b$c"
     echo ${id:0:3} > "$DC_s/3.cfg"
     

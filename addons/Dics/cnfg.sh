@@ -10,7 +10,7 @@ lgt=$(lnglss "$lgtl")
 lgs=$(lnglss "$lgsl")
 new_script="#!/bin/bash
 # argument 1 = \"word\"
-# eg.languages: en
+# e.g. languages: en
 Name=\"\"
 Language=\"\"
 Test=\"test\""
@@ -40,13 +40,13 @@ dict_list() {
         if [ -n "$dict" ]; then
         echo 'TRUE'
         echo "$dict" | sed 's/\./\n/g'; fi
-    done <<<"$(ls "$enables/")"
+    done < <(ls "$enables/")
     
     while read -r dict; do
         if [ -n "$dict" ]; then
         echo 'FALSE'
         echo "$dict" | sed 's/\./\n/g'; fi
-    done <<<"$(ls "$disables/")"
+    done < <(ls "$disables/")
 }
 
 
@@ -56,7 +56,7 @@ if [ "$1" = add_dlg ]; then
         script="$DT/new.sh"; else
         printf "$new_script" > "$DT/new.sh"
         script="$DT/new.sh"; fi
-        Name="untitled"
+        Name="New script"
         Language=""
         dialog_edit
         ret=$(echo $?)
@@ -149,7 +149,7 @@ elif [ -z "$1" ]; then
     --print-all --always-print-result --separator=" " \
     --dclick-action='/usr/share/idiomind/addons/Dics/cnfg.sh edit_dlg' \
     --window-icon="$DS/images/icon.png" \
-    --expand-column=2 --skip-taskbar --center \
+    --expand-column=2 --skip-taskbar --center --on-top \
     --width=480 --height=350 --borders=10 \
     --column=" ":CHK \
     --column="$(gettext "Available dictionaries")":TEXT \
@@ -157,7 +157,6 @@ elif [ -z "$1" ]; then
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Add")":2 \
     --button=OK:0)"
-    
     ret=$?
     
         if [[ $ret -eq 2 ]]; then

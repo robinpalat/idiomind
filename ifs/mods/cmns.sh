@@ -35,7 +35,7 @@ function msg_2() {
     --always-print-result \
     --window-icon="$DS/images/icon.png" \
     --image-on-top --on-top --sticky --center \
-    --width=380 --height=120 --borders=3 \
+    --width=400 --height=120 --borders=3 \
     "$btn3" --button="$4":1 --button="$3":0
 }
 
@@ -75,6 +75,13 @@ function check_index1() {
     done
 }
 
+function list_inadd() {
+    
+    while read -r t; do
+        if ! echo -e "$(ls "$DS/addons/")\n$(< "$DM_tl/.3.cfg")" \
+        | grep -Fxo "$t" >/dev/null 2>&1; then echo "$t"; fi
+    done < <(cd "$DM_tl"; ls -tNd */ | head -n 30 | sed 's/\///g')
+}
 
 function calculate_review() {
     

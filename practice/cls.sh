@@ -3,7 +3,6 @@
 
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 DIR="$DS/practice"
-
 [ -n "$(ps -A | pgrep -f "$DIR/df.sh")" ] && killall "$DIR/df.sh" &
 [ -n "$(ps -A | pgrep -f "$DIR/dmc.sh")" ] && killall "$DIR/dmc.sh" &
 [ -n "$(ps -A | pgrep -f "$DIR/dlw.sh")" ] && killall "$DIR/dlw.sh" &
@@ -12,36 +11,7 @@ DIR="$DS/practice"
 [ -n "$(ps -A | pgrep -f "$DIR/prct.sh")" ] && killall "$DIR/prct.sh" &
 [ -n "$(ps -A | pgrep -f "$DIR/strt.sh")" ] && killall "$DIR/strt.sh" &
 [ -n "$(ps -A | pgrep -f play)" ] && killall play &
-
 cd "$DC_tlt/practice"
-easy="$2"; ling="$3"; hard="$4"; all="$5"
-
-if [ "$1" = df ]; then
-    rm lock_f fin fin1 fin2 fin3 ok.f
-    echo "1" > .icon1
-    echo "0" > l_f
-    "$DIR/strt.sh" & exit
-elif [ "$1" = dm ]; then
-    rm lock_mc mcin1 mcin2 mcin3 word1.idx ok.m
-    echo "1" > .icon2
-    echo "0" > l_m
-    "$DIR/strt.sh" & exit
-elif [ "$1" = dw ]; then
-    rm lock_lw lwin lwin1 lwin2 lwin3 ok.w
-    echo "1" > .icon3
-    echo "0" > l_w
-    "$DIR/strt.sh" & exit
-elif [ "$1" = ds ]; then
-    rm lock_ls lsin ok.s
-    echo "1" > .icon4
-    echo "0" > l_s
-    "$DIR/strt.sh" & exit
-elif [ "$1" = di ]; then
-    rm lock_i iin iin1 iin2 iin3 ok.i
-    echo "1" > .icon5
-    echo "0" > l_i
-    "$DIR/strt.sh" & exit
-fi
 
 stats() {
     
@@ -54,43 +24,93 @@ stats() {
     done
 }
 
-if [ "$1" = f ]; then
+easy="$2"; ling="$3"; hard="$4"; all="$5"
 
-    [ ./fin3 ] && echo "$(< ./fin3)" >> log
-    [ ./l_f ] && echo $(($(< ./l_f)+easy)) > ./l_f || echo "$easy" > ./l_f
-    v=$((100*$(< ./l_f)/all))
-    stats ./.icon1
-    "$DIR/strt.sh" 6 "$easy" "$ling" "$hard" & exit 1
+if [ "$1" = restart_a ]; then
+    rm a.lock a.0 a.1 a.2 a.3
+    echo "1" > .1
+    echo "0" > a.l
+    "$DIR/strt.sh" & exit
+elif [ "$1" = restart_b ]; then
+    rm b.lock b.0 b.1 b.2 b.3 b.srces
+    echo "1" > .2
+    echo "0" > b.l
+    "$DIR/strt.sh" & exit
+elif [ "$1" = restart_c ]; then
+    rm c.lock c.0 c.1 c.2 c.3
+    echo "1" > .3
+    echo "0" > c.l
+    "$DIR/strt.sh" & exit
+elif [ "$1" = restart_d ]; then
+    rm d.lock d.0 d.1
+    echo "1" > .4
+    echo "0" > d.l
+    "$DIR/strt.sh" & exit
+elif [ "$1" = restart_e ]; then
+    rm e.lock e.0 e.1 e.2 e.3
+    echo "1" > .5
+    echo "0" > e.l
+    "$DIR/strt.sh" & exit
+fi
 
-elif [ "$1" = m ]; then
-
-    [ ./mcin3 ] && echo "$(< ./mcin3)" >> log
-    [ ./l_m ] && echo $(($(< ./l_m)+easy)) > ./l_m || echo "$easy" > ./l_m
-    v=$((100*$(< ./l_m)/all))
-    stats ./.icon2
-    "$DIR/strt.sh" 7 "$easy" "$ling" "$hard" & exit 1
-
-elif [ "$1" = w ]; then
-
-    [ ./lwin3 ] && echo "$(< ./lwin3)" >> log
-    [ ./l_w ] && echo $(($(< ./l_w)+easy)) > ./l_w || echo "$easy" > ./l_w
-    v=$((100*$(< ./l_w)/all))
-    stats ./.icon3
-    "$DIR/strt.sh" 8 "$easy" "$ling" "$hard" & exit 1
-
-elif [ "$1" = s ]; then
-
-    [ ./quote ] && rm quote; [ ./all ] && rm ./all; [ ./ing ] && rm ./ing
-    [ ./l_s ] && echo $(($(< ./l_s)+easy)) > ./l_s || echo "$easy" > ./l_s
-    v=$((100*$(< ./l_s)/all))
-    stats ./.icon4
-    "$DIR/strt.sh" 9 "$easy" "$ling" "$hard" & exit 1
+if [ "$1" = comp_a ]; then
     
-elif [ "$1" = i ]; then
+    touch a.0 a.1 a.2 a.3
+    awk '!a[$0]++' a.2 > a2.tmp
+    awk '!a[$0]++' a.3 > a3.tmp
+    grep -Fxvf a3.tmp a2.tmp > a.2
+    mv -f a3.tmp a.3
+    [ -f ./a.l ] && echo $(($(< ./a.l)+easy)) > ./a.l || echo "$easy" > ./a.l
+    v=$((100*$(< ./a.l)/all))
+    stats ./.1
+    "$DIR/strt.sh" 6 "$easy" "$ling" "$hard" & exit
 
-    [ ./iin3 ] && echo "$(< ./iin3)" >> log
-    [ ./l_i ] && echo $(($(< ./l_i)+easy)) > ./l_i || echo "$easy" > ./l_i
-    v=$((100*$(< ./l_i)/all))
-    stats ./.icon5
-    "$DIR/strt.sh" 10 "$easy" "$ling" "$hard" & exit 1
+elif [ "$1" = comp_b ]; then
+    
+    touch b.0 b.1 b.2 b.3
+    awk '!a[$0]++' b.2 > b2.tmp
+    awk '!a[$0]++' b.3 > b3.tmp
+    grep -Fxvf b3.tmp b2.tmp > b.2
+    mv -f b3.tmp b.3
+    [ -f ./b.l ] && echo $(($(< ./b.l)+easy)) > ./b.l || echo "$easy" > ./b.l
+    v=$((100*$(< ./b.l)/all))
+    stats ./.2
+    "$DIR/strt.sh" 7 "$easy" "$ling" "$hard" & exit
+
+elif [ "$1" = comp_c ]; then
+
+    touch c.0 c.1 c.2 c.3
+    awk '!a[$0]++' c.2 > c2.tmp
+    awk '!a[$0]++' c.3 > c3.tmp
+    grep -Fxvf c3.tmp c2.tmp > c.2
+    mv -f c3.tmp c.3
+    [ -f ./c.l ] && echo $(($(< ./c.l)+easy)) > ./c.l || echo "$easy" > ./c.l
+    v=$((100*$(< ./c.l)/all))
+    stats ./.3
+    "$DIR/strt.sh" 8 "$easy" "$ling" "$hard" & exit
+
+elif [ "$1" = comp_d ]; then
+
+    touch d.0 d.1 d.2 d.3
+    awk '!a[$0]++' d.2 > d2.tmp
+    awk '!a[$0]++' d.3 > d3.tmp
+    grep -Fxvf d3.tmp d2.tmp > d.2
+    mv -f d3.tmp d.3
+    [ -f ./quote ] && rm quote; rm *.tmp
+    [ -f ./d.l ] && echo $(($(< ./d.l)+easy)) > ./d.l || echo "$easy" > ./d.l
+    v=$((100*$(< ./d.l)/all))
+    stats ./.4
+    "$DIR/strt.sh" 9 "$easy" "$ling" "$hard" & exit
+    
+elif [ "$1" = comp_e ]; then
+
+    touch e.0 e.1 e.2 e.3
+    awk '!a[$0]++' e.2 > e2.tmp
+    awk '!a[$0]++' e.3 > e3.tmp
+    grep -Fxvf e3.tmp e2.tmp > e.2
+    mv -f e3.tmp e.3
+    [ -f ./e.l ] && echo $(($(< ./e.l)+easy)) > ./e.l || echo "$easy" > ./e.l
+    v=$((100*$(< ./e.l)/all))
+    stats ./.5
+    "$DIR/strt.sh" 10 "$easy" "$ling" "$hard" & exit
 fi

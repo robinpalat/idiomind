@@ -11,6 +11,7 @@ btnlabel="$(gettext "Delete")"
 btncmd="'$DSP/mngr.sh' delete_item"; else
 btnlabel="$(gettext "Keep")"
 btncmd="'$DSP/mngr.sh' new_item"; fi
+btncmd2="'$DSP/mngr.sh' sv_as"
 if [ -f "$dir/$fname.html" ]; then
 uri="$dir/$fname.html"; else
 uri=""; fi
@@ -20,5 +21,6 @@ yad --html --title="$item" \
 --uri="$dir/$fname.html" \
 --window-icon="$DS/images/icon.png" --center --on-top \
 --width=680 --height=550 --borders=0 \
+--button=gtk-save-as:"$btncmd2" \
 --button="$btnlabel":"$btncmd" \
 --button="Close":1

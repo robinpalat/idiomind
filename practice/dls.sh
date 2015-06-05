@@ -4,7 +4,7 @@
 drts="$DS/practice"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
-all=$(wc -l < ./lsin)
+all=$(wc -l < ./d.0)
 listen="Listen"
 easy=0
 hard=0
@@ -13,27 +13,32 @@ f=0
 
 score() {
 
+    touch d.0 d.1 d.2 d.3
+    awk '!a[$0]++' d.2 > d2.tmp
+    awk '!a[$0]++' d.3 > d3.tmp
+    grep -Fxvf d3.tmp d2.tmp > d.2
+    mv -f d3.tmp d.3
+    
     if [[ "$1" -ge $all ]]; then
         play "$drts/all.mp3" & 
-        echo "s9.$(tr -s '\n' '|' < ok.s).s9" >> "$log"
-        rm lsin ok.s
-        echo "$(date "+%a %d %B")" > lock_ls
-        echo 21 > .icon4
+        echo "s9.$(tr -s '\n' '|' < ./d.1).s9" >> "$log"
+        echo "$(date "+%a %d %B")" > d.lock
+        echo 21 > .4
         "$strt" 4 &
         exit 1
         
     else
-        [ -f ./l_s ] && echo $(($(< ./l_s)+easy)) > l_s || echo $easy > l_s
-        s=$(< ./l_s)
+        [ -f ./d.l ] && echo $(($(< ./d.l)+easy)) > d.l || echo $easy > d.l
+        s=$(< ./d.l)
         v=$((100*s/all))
         n=1; c=1
         while [[ $n -le 21 ]]; do
             if [ "$v" -le "$c" ]; then
-            echo "$n" > .icon4; break; fi
+            echo "$n" > .4; break; fi
             ((c=c+5))
             let n++
         done
-
+        echo "s9.$(tr -s '\n' '|' < d.1).s9" >> "$log"
         "$strt" 9 $easy $ling $hard & exit 1
     fi
 }
@@ -44,21 +49,20 @@ dialog2() {
     |sed 's/\b\(.\)/\u\1/g'|tr -s ',' ' ' \
     |sed 's|\.||;s|\,||;s|\;||g'|sed 's|[a-z]|\.|g'|sed 's| |\t|g' \
     |sed 's|\.|\ .|g' | tr "[:upper:]" "[:lower:]"|sed 's/^\s*./\U&\E/g')"
-    text="<span font_desc='Serif Bold 12'>$hint</span>\n"
+    text="<span font_desc='Free Sans Bold 11' color='#717171'>$hint</span>\n"
 
     SE=$(yad --text-info --title="$(gettext "Practice")" \
     --text="$text" \
-    --selectable-labels \
     --name=Idiomind --class=Idiomind \
     --fontname="Free Sans 14" --fore=4A4A4A --justify=fill \
     --margins=5 --editable --wrap \
     --window-icon="$DS/images/icon.png" --image="$DS/practice/bar.png" \
     --buttons-layout=end --skip-taskbar --undecorated --center --on-top \
     --text-align=left --align=left --image-on-top \
-    --height=225 --width=560 --borders=5 \
+    --height=215 --width=560 --borders=3 \
     --button="$(gettext "Exit")":1 \
-    --button="$(gettext "Listen")":"play '$DM_tlt/$fname.mp3'" \
-    --button=" $(gettext "OK") >> ":0)
+    --button="$(gettext "Listen")":"$cmd_play" \
+    --button=" $(gettext "Check") >> ":0)
     }
     
 check() {
@@ -71,8 +75,7 @@ check() {
     --skip-taskbar --wrap --scroll --image-on-top --center --on-top \
     --undecorated --buttons-layout=end \
     --width=560 --height=250 --borders=12 \
-    --button="$(gettext "Exit")":1 \
-    --button="$(gettext "Listen")":"play '$DM_tlt/$fname.mp3'" \
+    --button="$(gettext "Listen")":"$cmd_play" \
     --button="$(gettext "Next")":2 \
     --field="":lbl --text="<span font_desc='Free Sans 14'>$wes</span>\\n" \
     --field="<span font_desc='Free Sans 9'>$(sed 's/\,*$/\./g' <<<"$OK")\n\nhits $prc</span>\n":lbl
@@ -88,43 +91,45 @@ result() {
     
     awk '{print tolower($0)}' <<<"$SE" | sed 's/ /\n/g' | grep -v '^.$' \
     | sed 's/,//;s/\!//;s/\?//;s/¿//;s/\¡//;s/(//;s/)//;s/"//g' \
-    | sed 's/\-//;s/\[//;s/\]//;s/\.//;s/\://;s/\|//;s/)//;s/"//g' > ./ing
+    | sed 's/\-//;s/\[//;s/\]//;s/\.//;s/\://;s/\|//;s/)//;s/"//g' > ./d_ing.tmp
     awk '{print tolower($0)}' < ./quote | sed 's/ /\n/g' | grep -v '^.$' \
     | sed 's/,//;s/\!//;s/\?//;s/¿//;s/\¡//;s/(//;s/)//;s/"//g' \
-    | sed 's/\-//;s/\[//;s/\]//;s/\.//;s/\://;s/\|//;s/)//;s/"//g' > ./all
+    | sed 's/\-//;s/\[//;s/\]//;s/\.//;s/\://;s/\|//;s/)//;s/"//g' > ./d_all.tmp
     
     (
     n=1;
     while read -r line; do
-    
-        if grep -oFx "$line" ./all; then
+        > ./d_words.tmp
+        if grep -oFx "$line" ./d_all.tmp; then
             sed -i "s/"$line"/<b>"$line"<\/b>/g" quote
             [ -n "$line" ] && echo \
-            "<span color='#3A9000'><b>${line^}</b></span>  " >> ./wrds
-            [ -n "$line" ] && echo "$line" >> w.ok
+            "<span color='#3A9000'><b>${line^}</b></span>  " >> ./d_words.tmp
+            [ -n "$line" ] && echo "$line" >> d_ok.tmp
         else
             [ -n "$line" ] && echo \
-            "<span color='#7B4A44'><b>${line^}</b></span>  " >> ./wrds
+            "<span color='#7B4A44'><b>${line^}</b></span>  " >> ./d_words.tmp
         fi
         let n++
         
-    done <<<"$(sed 's/ /\n/g' < ./ing)"
+    done <<<"$(sed 's/ /\n/g' < ./d_ing.tmp)"
     )
     
-    OK=$(tr '\n' ' ' < ./wrds)
-    sed 's/ /\n/g' < ./quote > all
-    porc=$((100*$(cat ./w.ok | wc -l)/$(cat ./all | wc -l)))
+    OK=$(tr '\n' ' ' < ./d_words.tmp)
+    sed 's/ /\n/g' < ./quote > d_all.tmp
+    porc=$((100*$(cat ./d_ok.tmp | wc -l)/$(cat ./d_all.tmp | wc -l)))
     
     if [[ $porc -ge 70 ]]; then
-        echo "$WEN" >> ok.s
+        echo "$WEN" >> d.1
         easy=$((easy+1))
         color=3AB452
         
     elif [[ $porc -ge 50 ]]; then
+        echo "$WEN" >> d.2
         ling=$((ling+1))
         color=E5801D
         
     else
+        echo "$WEN" >> d.3
         hard=$((hard+1))
         color=D11B5D
     fi
@@ -135,9 +140,9 @@ result() {
     }
 
 n=1
-while [[ $n -le "$(wc -l < ./lsin1)" ]]; do
+while [[ $n -le "$(wc -l < ./d.tmp)" ]]; do
 
-    trgt="$(sed -n "$n"p lsin1)"
+    trgt="$(sed -n "$n"p d.tmp)"
     fname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
     
     if [[ $n = 1 ]]; then
@@ -147,6 +152,7 @@ while [[ $n -le "$(wc -l < ./lsin1)" ]]; do
     if [ -f "$DM_tlt/$fname.mp3" ]; then
 
         get_text "$trgt"
+        cmd_play="play "\"$DM_tlt/$fname.mp3\"""
 
         (sleep 0.5 && play "$DM_tlt/$fname.mp3") &
         dialog2 "$trgt"
@@ -155,7 +161,7 @@ while [[ $n -le "$(wc -l < ./lsin1)" ]]; do
         if [ $ret = 1 ]; then
             break &
             killall play
-            "$drts/cls.sh" s $easy $ling $hard $all &
+            "$drts/cls.sh" comp_d $easy $ling $hard $all &
             exit 1
         else
             killall play &
@@ -168,17 +174,14 @@ while [[ $n -le "$(wc -l < ./lsin1)" ]]; do
         if [ $ret = 1 ]; then
             break &
             killall play &
-            rm -f w.ok all ing wrds
-            "$drts/cls.sh" s $easy $ling $hard $all &
+            "$drts/cls.sh" comp_d $easy $ling $hard $all &
             exit 1
             
         elif [ $ret -eq 2 ]; then
             killall play &
-            rm -f w.ok wrds &
         fi
     fi
     let n++
 done
 
 score $easy
-

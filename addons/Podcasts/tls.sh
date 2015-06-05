@@ -5,11 +5,11 @@ source "$DS/ifs/mods/cmns.sh"
 IFS=$'\n\t'
 "$(gettext "Tell us if you think this is an error.")
 $(gettext "New episodes")
-$(gettext "Saved epidodes")
-$(gettext "Marks")" >/dev/null 2>&1
+$(gettext "Saved episodes")
+$(gettext "Marks")"
 #
-# rsync delete: disable 0/enable 1
-delete=0
+# rsync_delete: disable 0/enable 1
+rsync_delete=0
 
 play() {
 
@@ -95,7 +95,7 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
         
         n=1;
         while read -r get; do
-            if [ "$(wc -w <<<"$get")" -ge 1 ] && [ -z "$name" ]; then
+            if [[ $(wc -w <<<"$get") -ge 1 ]] && [ -z "$name" ]; then
             name="$get"
             n=2; fi
             if [ -n "$(grep 'http:/' <<<"$get")" ] && [ -z "$link" ]; then
@@ -112,22 +112,22 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
         n=1
         while read -r get; do
             [[ $n = 3 || $n = 5 || $n = 6 ]] && continue
-            if [ -n "$(grep -o -E '\.mp3|\.mp4|\.ogg|\.avi|\.m4v|\.mov|\.flv' <<< "${get}")" ] && [ -z "$media" ]; then
+            if [ -n "$(grep -o -E '\.mp3|\.mp4|\.ogg|\.avi|\.m4v|\.mov|\.flv' <<<"${get}")" ] && [ -z "$media" ]; then
             media="$n"; type=1; break; fi
             let n++
         done <<< "$items2"
         f3="$(sed -n 3p <<<"$items2")"
         f5="$(sed -n 5p <<<"$items2")"
         f6="$(sed -n 6p <<<"$items2")"
-        if [ "$(wc -w <<<"$f3")" -ge 2 ] && [ "$(wc -w <<<"$f3")" -le 200 ]; then
+        if [[ $(wc -w <<<"$f3") -ge 2 ]] && [ "$(wc -w <<<"$f3")" -le 200 ]; then
         title=3; fi
-        if [ "$(wc -w <<<"$f5")" -ge 2 ] && [ -n "$(grep -o -E '\<|\>|/>' <<<"$f5")" ]; then
+        if [[ $(wc -w <<<"$f5") -ge 2 ]] && [ -n "$(grep -o -E '\<|\>|/>' <<<"$f5")" ]; then
         sum1=5; fi
-        if [ "$(wc -w <<<"$f6")" -ge 2 ] && [ -n "$(grep -o -E '\<|\>|/>' <<<"$f6")" ]; then
+        if [[ $(wc -w <<<"$f6") -ge 2 ]] && [ -n "$(grep -o -E '\<|\>|/>' <<<"$f6")" ]; then
         sum1=6; fi
-        if [ "$(wc -w <<<"$f5")" -ge 2 ]; then
+        if [[ $(wc -w <<<"$f5") -ge 2 ]]; then
         sum2=5; fi
-        if [ "$(wc -w <<<"$f6")" -ge 2 ]; then
+        if [[ $(wc -w <<<"$f6") -ge 2 ]]; then
         sum2=6; fi
     }
     
@@ -141,13 +141,13 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
         done <<< "$items3"
         n=4
         while read -r get; do
-            if [ "$(wc -w <<<"$get")" -ge 1 ] && [ -z "$title" ]; then
+            if [[ $(wc -w <<<"$get") -ge 1 ]] && [ -z "$title" ]; then
             title="$n"; break ; fi
             let n++
         done <<< "$items3"
         n=6
         while read -r get; do
-            if [ "$(wc -w <<<"$get")" -ge 1 ] && [ -z "$summ" ]; then
+            if [[ $(wc -w <<<"$get") -ge 1 ]] && [ -z "$summ" ]; then
             summ="$n"; break ; fi
             let n++
         done <<< "$items3"
@@ -157,7 +157,7 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
 
         n=1
         while read -r get; do
-            if [ "$(wc -w <<<"$get")" -ge 1 ]; then
+            if [[ $(wc -w <<<"$get") -ge 1 ]]; then
             summ="$n"; break; fi
             let n++
         done <<< "$items3"
@@ -197,7 +197,7 @@ sync() {
    
     DIR2="$DM_tl/Podcasts/.conf"
     cfg="$DM_tl/Podcasts/.conf/0.cfg"
-    path="$(sed -n 3p < "$cfg" | grep -o 'path="[^"]*' | grep -o '[^"]*$')"
+    path="$(sed -n 3p "$cfg" | grep -o 'path="[^"]*' | grep -o '[^"]*$')"
     
     if  [ -f "$DT/l_sync" ] && [ "$2" != 0 ]; then
     msg_2 "$(gettext "A process is already running!")\n" info "OK" "gtk-stop" "Podcasts"
@@ -214,7 +214,7 @@ sync() {
     elif  [ -f "$DT/l_sync" ] && [ "$2" = 0 ]; then exit 1
 
     elif [ ! -d "$path" ] && [ "$2" != 0 ]; then
-    msg " $(gettext "The directory to synchronization does not exist \n Exiting.")" \
+    msg " $(gettext "The directory to synchronization does not exist.")\n" \
     dialog-warning
     [ -f "$DT/l_sync" ] && rm -f "$DT/l_sync"; exit 1
     
@@ -224,21 +224,25 @@ sync() {
     
     elif [ -d "$path" ]; then
         
-        touch "$DT/l_sync"; SYNCDIR="$path"
-        st1="$(cd "$SYNCDIR"; ls ./*.mp3 | wc -l)"
+        touch "$DT/l_sync"; SYNCDIR="$path/"
+        A="$(cd "$DM_tl/Podcasts/cache/"; ls ./*.mp3 | wc -l)"
+        B="$(cd "$SYNCDIR"; ls ./*.mp3 | wc -l)"
+        [ $? != 0 ] && B=0
         
         if [[ "$2" != 0 ]]; then
+        cd /
         (sleep 1 && notify-send -i idiomind \
         "$(gettext "Podcasts")" \
-        "$(gettext "Synchronizing") $st1 $(gettext "episode(s)")" -t 8000) &
+        "$(gettext "Synchronizing") $A $(gettext "episodes")" -t 8000) &
         fi
 
-        if [ "$delete" = 0 ]; then
-            
+        if [ "$rsync_delete" = 0 ]; then
+        
             rsync -az -v --exclude="*.item" --exclude="*.png" \
             --exclude="*.html" --omit-dir-times --ignore-errors "$DM_tl/Podcasts/cache/" "$SYNCDIR"
             exit=$?
-        elif [ "$delete" = 1 ]; then
+            
+        elif [ "$rsync_delete" = 1 ]; then
         
             rsync -az -v --delete --exclude="*.item" --exclude="*.png" \
             --exclude="*.html" --omit-dir-times --ignore-errors "$DM_tl/Podcasts/cache/" "$SYNCDIR"
@@ -246,30 +250,44 @@ sync() {
         fi
 
         if [[ $exit = 0 ]]; then
-            
-            st2="$(cd "$SYNCDIR"; ls ./*.mp3 | wc -l)"
-            re=$((st2-st1))
-            
-            if [[ $re -gt 0 ]] || [ "$2" != 0 ]; then
+
+            new=$((A-B))
+            if [[ $2 != 0 ]]; then
             (sleep 1 && notify-send -i idiomind \
             "$(gettext "Synchronization finished")" \
-            "$re $(gettext "New episode(s)")\n$st2 $(gettext "Total")" -t 8000) &
+            "$new $(gettext "New")" -t 8000) &
             fi
   
-        else
-            if [ "$2" != 0 ]; then
+        elif [[ $exit != 0 ]]; then
+        
+            if [[ $2 != 0 ]]; then
             (sleep 1 && notify-send -i idiomind \
             "$(gettext "Error")" \
             "$(gettext "Error while syncing")" -t 8000) &
-            else
-            echo "Error while syncing" >> "$DM_tl/Podcasts/.conf/feed.err"
+            elif [[ $2 = 0 ]]; then
+            echo "$(gettext "Error while syncing")" >> "$DM_tl/Podcasts/.conf/feed.err"
             fi
-
         fi
         
         [ -f "$DT/l_sync" ] && rm -f "$DT/l_sync"; exit
     fi
 }
+
+disc_podscats() {
+
+    [ "$lgtl" = English ] && src="\"podcasts learning English\" OR \"$(gettext "podcasts learning English")\""
+    [ "$lgtl" = French ] && src="\"podcasts learning French\" OR \"$(gettext "podcasts to learn French")\""
+    [ "$lgtl" = German ] && src="\"podcasts learning German\" OR \"$(gettext "podcasts to learn German")\""
+    [ "$lgtl" = Chinese ] && src="\"podcasts learning Chinese\" OR \"$(gettext "podcasts to learn Chinese")\""
+    [ "$lgtl" = Italian ] && src="\"podcasts learning Italian\" OR \"$(gettext "podcasts to learn Italian")\""
+    [ "$lgtl" = Japanese ] && src="\"podcasts learning Japanese\" OR \"$(gettext "podcasts to learn Japanese")\""
+    [ "$lgtl" = Portuguese ] && src="\"podcasts learning Portuguese\" OR \"$(gettext "podcasts to learn Portuguese")\""
+    [ "$lgtl" = Spanish ] && src="\"podcasts learning Spanish\" OR \"$(gettext "podcasts to learn Spanish")\""
+    [ "$lgtl" = Vietnamese ] && src="\"podcasts learning Vietnamese\" OR \"$(gettext "podcasts to learn Vietnamese")\""
+    [ "$lgtl" = Russian ] && src="\"podcasts learning Russian\" OR \"$(gettext "podcasts to learn Russian")\""
+    xdg-open https://www.google.com/search?q="$src"
+
+} >/dev/null 2>&1
 
 case "$1" in
     play)
@@ -278,4 +296,6 @@ case "$1" in
     set_channel "$@" ;;
     sync)
     sync "$@" ;;
+    dpods)
+    disc_podscats "$@" ;;
 esac

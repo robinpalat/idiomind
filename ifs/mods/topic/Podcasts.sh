@@ -8,18 +8,24 @@ if [ "$tpa" != 'Podcasts' ]; then
 [ ! -f "$DM_tl/Podcasts/.conf/8.cfg" ] \
 && echo "11" > "$DM_tl/Podcasts/.conf/8.cfg"
 echo "Podcasts" > "$DC_a/4.cfg"; fi
-[ "$1" = 2 ] && echo 2 > "$DC_s/5.cfg"
+if [ "$1" = 2 ]; then
+echo "Podcasts" > "$DC_s/7.cfg"
+echo 2 > "$DC_s/5.cfg"; fi
 
 function list_1() {
     while read list1; do
+        if [ -f "$DMP/cache/$(nmfile "$list1").png" ]; then
         echo "$DMP/cache/$(nmfile "$list1").png"
+        else echo "$DS_a/Podcasts/images/audio.png"; fi
         echo "$list1"
     done < "$DCP/1.cfg"
 }
 
 function list_2() {
     while read list2; do
+        if [ -f "$DMP/cache/$(nmfile "$list2").png" ]; then
         echo "$DMP/cache/$(nmfile "$list2").png"
+        else echo "$DS_a/Podcasts/images/audio.png"; fi
         echo "$list2"
     done < "$DCP/2.cfg"
 }
@@ -32,8 +38,8 @@ function feedmode() {
     nt="$DCP/10.cfg"
     fdit=$(mktemp "$DT/fdit.XXXX")
     c=$(echo $(($RANDOM%100000))); KEY=$c
-    [ -f "$DT/.uptp" ] && info="- $(gettext "Updating")..."
-    infolabel="$(< "$DM_tl/Podcasts/update")"
+    [ -f "$DT/.uptp" ] && info="$(gettext "Updating Podcasts")" || info="$(gettext "Podcasts")"
+    infolabel="$(< "$DMP"/*.updt)"
     
     list_1 | yad --list --tabnum=1 \
     --plug=$KEY --print-all --dclick-action="$DSP/vwr.sh" \
@@ -50,7 +56,7 @@ function feedmode() {
     --plug=$KEY --filename="$nt" \
     --wrap --editable --fore='gray30' \
     --show-uri --margins=14 --fontname='vendana 11' > "$fdit" &
-    yad --notebook --title="Podcasts  ${info^}" \
+    yad --notebook --title="Idiomind - $info" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
     --window-icon="$DS/images/icon.png" --image-on-top \
@@ -59,7 +65,7 @@ function feedmode() {
     --tab=" $(gettext "Episodes") " \
     --tab=" $(gettext "Saved episodes") " \
     --tab=" $(gettext "Notes") " \
-    --button="$(gettext "Lists")":"/usr/share/idiomind/play.sh" \
+    --button="$(gettext "Lists")":"$DS/play.sh" \
     --button="$(gettext "Update")":2 \
     --button="$(gettext "Close")":1
     ret=$?

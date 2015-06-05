@@ -24,7 +24,8 @@ DSP="$DS/addons/Podcasts"
 DMC="$DM_tl/Podcasts/cache"
 DCP="$DM_tl/Podcasts/.conf"
 dfimg="$DSP/images/audio.png"
-downloads=4
+date=$(date +%d)
+downloads=2
 
 tmplitem="<?xml version='1.0' encoding='UTF-8'?>
 <xsl:stylesheet version='1.0'
@@ -51,12 +52,12 @@ sets=('channel' 'link' 'logo' 'ntype' \
 conditions() {
     
     [ ! -f "$DCP/1.cfg" ] && touch "$DCP/1.cfg"
-    
-    if [ -f "$DT/.uptp" ] && [ -z "$1" ]; then
-        msg_2 "$(gettext "Wait till it finishes a previous process")\n" info OK gtk-stop
+
+    if [ -f "$DT/.uptp" ] && [ "$1" != 0 ]; then
+        msg_2 "$(gettext "Wait until it finishes a previous process")\n" info OK gtk-stop
         ret=$(echo $?)
-        [[ $ret -eq 1 ]] && "$DS/stop.sh" feed
-        [[ $ret -eq 0 ]] && exit 1
+        [[ $ret -eq 1 ]] && "$DS/stop.sh" 6
+        exit 1
     
     elif [ -f "$DT/.uptp" ] && [ "$1" = 0 ]; then
         exit 1
@@ -209,51 +210,54 @@ fetch_podcasts() {
             if [ "$ntype" = 1 ]; then
 
                 podcast_items="$(xsltproc - "$FEED" <<<"$tmplitem" 2> /dev/null)"
-                podcast_items="$(echo "$podcast_items" | tr '\n' ' ' \
+                podcast_items="$(echo "${podcast_items}" | tr '\n' ' ' \
                 | tr -s '[:space:]' | sed 's/EOL/\n/g' | head -n "$downloads")"
-                podcast_items="$(echo "$podcast_items" | sed '/^$/d')"
+                podcast_items="$(echo "${podcast_items}" | sed '/^$/d')"
                 
                 while read -r item; do
 
-                    fields="$(sed -r 's|-\!-|\n|g' <<<"$item")"
-                    enclosure=$(sed -n "$nmedia"p <<<"$fields")
-                    title=$(echo "$fields" | sed -n "$ntitle"p | sed 's/\://g' \
+                    fields="$(sed -r 's|-\!-|\n|g' <<<"${item}")"
+                    enclosure=$(sed -n "$nmedia"p <<<"${fields}")
+                    title=$(echo "${fields}" | sed -n "$ntitle"p | sed 's/\://g' \
                     | sed 's/\&/&amp;/g' | sed 's/^\s*./\U&\E/g' \
                     | sed 's/<[^>]*>//g' | sed 's/^ *//; s/ *$//; /^$/d')
-                    summary=$(echo "$fields" | sed -n "$nsumm"p)
+                    summary=$(echo "${fields}" | sed -n "$nsumm"p)
                     #| iconv -c -f utf8 -t ascii
-                    fname="$(nmfile "$title")"
+                    fname="$(nmfile "${title}")"
                     
                     if [ ${#title} -ge 300 ] \
                     || [ -z "$title" ]; then
                     continue; fi
                          
-                    if ! grep -Fxo "$title" "$DCP/1.cfg"; then
+                    if ! grep -Fxo "${title}" <<<"$(cat "$DCP/1.cfg" "$DCP/2.cfg" "$DCP/remove")"; then
                     
                         enclosure_url=$(curl -s -I -L -w %"{url_effective}" \
                         --url "$enclosure" | tail -n 1)
                         mediatype "$enclosure_url"
                         
                         if [ ! -f "$DMC/$fname.$ex" ]; then
-                        cd "$DT_r"; wget -q -c -T 30 -O "media.$ex" "$enclosure_url"
+                        cd "$DT_r"; wget -q -c -T 51 -O "media.$ex" "$enclosure_url"
                         else cd "$DT_r"; mv -f "$DMC/$fname.$ex" "media.$ex"; fi
-
+                        
+                        exit=$?
+                        if [[ $exit = 0 ]]; then
                         get_images
                         mv -f "media.$ex" "$DMC/$fname.$ex"
                         mkhtml
 
                         if [ -s "$DCP/1.cfg" ]; then
-                        sed -i -e "1i$title\\" "$DCP/1.cfg" # clean title
-                        else echo "$title" > "$DCP/1.cfg"; fi
+                        sed -i -e "1i${title}\\" "$DCP/1.cfg"
+                        else echo "${title}" > "$DCP/1.cfg"; fi
                         if grep '^$' "$DCP/1.cfg"; then
                         sed -i '/^$/d' "$DCP/1.cfg"; fi
-                        echo "$title" >> "$DCP/.11.cfg"
-                        echo "$title" >> "$DT_r/log"
-                        echo -e "channel=\"$channel\"" > "$DMC/$fname.item"
-                        echo -e "link=\"$link\"" >> "$DMC/$fname.item"
-                        echo -e "title=\"$title\"" >> "$DMC/$fname.item"
+                        echo "${title}" >> "$DCP/.11.cfg"
+                        echo "${title}" >> "$DT_r/log"
+                        echo -e "channel=\"${channel}\"" > "$DMC/$fname.item"
+                        echo -e "link=\"${link}\"" >> "$DMC/$fname.item"
+                        echo -e "title=\"${title}\"" >> "$DMC/$fname.item"
+                        fi
                     fi
-                done <<<"$podcast_items"
+                done <<<"${podcast_items}"
             fi
             
         else
@@ -282,7 +286,6 @@ removes() {
     while read item; do
        
         [ ! -f "$DMC/$fname.png" ] && cp "$dfimg" "$DMC/$fname.png"
-        
         if [ -f "$DMC/$fname.mp3" ] || [ -f "$DMC/$fname.ogg" ] \
         || [ -f "$DMC/$fname.mp4" ] || [ -f "$DMC/$fname.m4v" ] \
         || [ -f "$DMC/$fname.jpg" ] || [ -f "$DMC/$fname.png" ] \
@@ -294,6 +297,7 @@ removes() {
         sed '/^$/d' "$DT/rm.temp" > "$DCP/2.cfg"
         grep -vxF "$item" "$DCP/1.cfg" > "$DT/rm.temp"
         sed '/^$/d' "$DT/rm.temp" > "$DCP/1.cfg"
+        rm -f "$DT/rm.temp"
         find "$DMC" -name "$fname".* -exec rm {} \;
         fi 
     done < "$DCP/kept"
@@ -304,7 +308,7 @@ removes() {
     sed -i '/^$/d' "$DCP/1.cfg"; fi
     if grep '^$' "$DCP/2.cfg"; then
     sed -i '/^$/d' "$DCP/2.cfg"; fi
-    echo "$(< "$DCP/remove" | head -n 50)" > "$DCP/remove_"
+    echo "$(head -n 1000 < "$DCP/remove")" > "$DCP/remove_"
     mv -f "$DCP/remove_" "$DCP/remove"
     cp -f "$DCP/1.cfg" "$DCP/.11.cfg"
 }
@@ -322,18 +326,15 @@ fi
 if [ -f "$DCP/2.cfg" ]; then kept_episodes="$(wc -l < "$DCP/2.cfg")"
 else kept_episodes=0; fi
 echo -e " <b>$(gettext "Updating")</b>
- $(gettext "Latest downloads:") 0  $(gettext "Saved episodes:") \
-$kept_episodes" > "$DM_tl/Podcasts/update"
-> "$DT/.uptp"
+ $(gettext "Latest downloads:") 0" > "$DM_tl/Podcasts/$date.updt"
+> "$DT/.uptp"; rm "$DM_tl/Podcasts"/*.updt
 DT_r="$(mktemp -d "$DT/XXXX")"
-
 fetch_podcasts
 
 if [ -f "$DT_r/log" ]; then new_episodes="$(wc -l < "$DT_r/log")"
 else new_episodes=0; fi
 echo -e " $(gettext "Last update:") $(date "+%r %a %d %B")
- $(gettext "Latest downloads:") $new_episodes  $(gettext "Saved episodes:") \
-$kept_episodes "> "$DM_tl/Podcasts/update"
+ $(gettext "Latest downloads:") $new_episodes" > "$DM_tl/Podcasts/$date.updt"
 
 rm -fr "$DT_r" "$DT/.uptp"
 
@@ -348,7 +349,7 @@ else
     if [[ "$1" != 0 ]]; then
     notify-send -i idiomind \
     "$(gettext "Feeds updated")" \
-    "$(gettext "No change since the last update")" -t 8000
+    "$(gettext "Has not changed since last update")" -t 8000
     fi
 fi
 

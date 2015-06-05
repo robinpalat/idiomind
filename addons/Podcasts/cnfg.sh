@@ -4,9 +4,11 @@
 source "$DS/ifs/mods/cmns.sh"
 DCP="$DM_tl/Podcasts/.conf"
 DSP="$DS_a/Podcasts"
+date=$(date +%d)
 CNF=$(gettext "Configure")
 sets=('update' 'sync' 'path')
-[ -n "$(< "$DCP/0.cfg")" ] && cfg=1 || > "$DCP/0.cfg"
+if [ -n "$(< "$DCP/0.cfg")" ]; then cfg=1; else
+> "$DCP/0.cfg"; fi
 
 if [ ! -d "$DM_tl/Podcasts" ]; then
     mkdir "$DM_tl/Podcasts"
@@ -17,8 +19,7 @@ if [ ! -d "$DM_tl/Podcasts" ]; then
     echo 14 > "$DM_tl/Podcasts/.conf/8.cfg"
     echo " " > "$DM_tl/Podcasts/.conf/10.cfg"
     echo -e " $(gettext "Last update:")
- $(gettext "Latest downloads:") 0  $(gettext "Saved episodes:") \
-0 "> "$DM_tl/Podcasts/update"
+ $(gettext "Latest downloads:") 0"> "$DM_tl/Podcasts/$date.updt"
     "$DS/mngr.sh" mkmn
 fi
 
@@ -46,7 +47,6 @@ while [[ $n -lt 3 ]]; do
         val="FALSE"; else val="/uu"; fi
         echo -e "${sets[$n]}=\"$val\"" >> "$DCP/0.cfg"
     fi
-
     ((n=n+1))
 done
     
@@ -70,7 +70,7 @@ apply() {
 
     val1=$(cut -d "|" -f1 <<<"$CNFG")
     val2=$(cut -d "|" -f2 <<<"$CNFG")
-    val3=$(cut -d "|" -f18 <<<"$CNFG" | sed 's|/|\\/|g')
+    val3=$(cut -d "|" -f19 <<<"$CNFG" | sed 's|/|\\/|g')
     if [ ! -d "$val3" ] || [ -z "$val3" ]; then path=/uu; fi
     sed -i "s/update=.*/update=\"$val1\"/g" "$DCP/0.cfg"
     sed -i "s/sync=.*/sync=\"$val2\"/g" "$DCP/0.cfg"
@@ -80,9 +80,9 @@ apply() {
 
 if [ ! -d "$path" ] || [ ! -n "$path" ]; then path=/uu; fi
 if [ -f "$DM_tl/Podcasts/.conf/feed.err" ]; then
-e="$(head -n 2 < "$DM_tl/Podcasts/.conf/feed.err" | tr '&' ' ')"
+e="$(head -n 2 < "$DM_tl/Podcasts/.conf/feed.err" | tr '&' ' ' | uniq)"
 rm "$DM_tl/Podcasts/.conf/feed.err"
-(sleep 2 && msg "$(gettext "Errors found in log file") \n$e" info Info) &
+(sleep 2 && msg "$e\n" info "$(gettext "Errors found")") &
 fi
 
 CNFG=$(yad --form --title="$(gettext "Podcasts settings")" \
@@ -90,7 +90,7 @@ CNFG=$(yad --form --title="$(gettext "Podcasts settings")" \
 --always-print-result --print-all --separator="|" \
 --window-icon="$DS/images/icon.png" --center --scroll --on-top \
 --width=550 --height=440 --borders=10 \
---text="$(gettext "Configure feed urls to learn with educational podcasts.")" \
+--text="$(gettext "Configure language learning podcasts.")" \
 --field="$(gettext "Update at startup")":CHK "$update" \
 --field="$(gettext "Sync after update")":CHK "$sync" \
 --field="$(gettext "URL")":LBL " " \
@@ -98,12 +98,12 @@ CNFG=$(yad --form --title="$(gettext "Podcasts settings")" \
 --field="" "$url4" --field="" "$url5" --field="" "$url6" \
 --field="" "$url7" --field="" "$url8" --field="" "$url9" \
 --field="" "$url10" --field="" "$url11" --field="" "$url12" \
+--field="$(gettext "Discover podcasts")":FBTN "$DSP/tls.sh 'dpods'" \
 --field=" ":LBL " " \
 --field="$(gettext "Path where episodes should be synced")":LBL " " \
 --field="":DIR "$path" \
---field="$(gettext "Remove Episodes")":FBTN "$DSP/mngr.sh 'delete_1'" \
---field="$(gettext "Remove Saved Episodes")":FBTN "$DSP/mngr.sh 'delete_2'" \
 --button="$(gettext "Cancel")":1 \
+--button="$(gettext "Remove")":"$DSP/mngr.sh 'deleteall'" \
 --button="$(gettext "Syncronize")":5 \
 --button="gtk-apply":0)
 

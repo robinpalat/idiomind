@@ -25,7 +25,7 @@ if [ -z "$1" ]; then
     
     D=$(yad --list --radiolist --title="$(gettext "User Data")" \
     --name=Idiomind --class=Idiomind \
-    --text="$(gettext "Total size:") $size\n$others" \
+    --text="$(gettext "Total size:") $size" \
     --always-print-result --print-all --separator=" " \
     --window-icon="$DS/images/icon.png" \
     --center --on-top --expand-column=2 --image-on-top \
@@ -67,7 +67,7 @@ if [ -z "$1" ]; then
 
                 cd "$DM"
                 # TODO
-                tar cvzf backup.tar.gz \
+                tar cvzf "$DT/backup.tar.gz" \
                 --exclude='./topics/Italian/Podcasts' \
                 --exclude='./topics/French/Podcasts' \
                 --exclude='./topics/Portuguese/Podcasts' \
@@ -79,7 +79,7 @@ if [ -z "$1" ]; then
                 --exclude='./topics/Vietnamese/Podcasts' \
                 ./topics
 
-                mv -f backup.tar.gz "$DT/idiomind_data.tar.gz"
+                mv -f "$DT/backup.tar.gz" "$DT/idiomind_data.tar.gz"
                 mv -f "$DT/idiomind_data.tar.gz" "$exp"
                 echo "# $(gettext "Completing")" ; sleep 1
 
@@ -91,6 +91,7 @@ if [ -z "$1" ]; then
                 
                 if [ -f "$exp" ]; then
                 msg "$(gettext "Data exported successfully.")\n" info; else
+                [ -f "$DT/backup.tar.gz" ] && rm -f "$DT/backup.tar.gz"
                 msg "$(gettext "An error occurred while copying files.")\n" error; fi
             fi
             
@@ -138,7 +139,7 @@ if [ -z "$1" ]; then
                     
                     echo "$lng" >> ./.languages
                     
-                done <<< "$list"
+                done <<<"$list"
 
                 while read language; do
 
@@ -169,16 +170,13 @@ if [ -z "$1" ]; then
                     cp -r "$DT/import/topics/$language/Podcasts" "$DM_t/$language/Podcasts"; fi
                 
                 done < "$DT/import/topics/.languages"
-                
-                "$DS/mngr.sh" mkmn
-                rm -fr "$DT/import"
-                
+
                 ) | yad --progress --title="$(gettext "Copying")" \
                 --window-icon="$DS/images/icon.png" \
                 --pulsate --percentage="5" --auto-close \
                 --skip-taskbar --no-buttons --on-top --fixed \
                 --width=200 --height=50 --borders=4 --geometry=200x20-2-2
-                
+                "$DS/mngr.sh" mkmn; rm -fr "$DT/import"
                 msg "$(gettext "Data imported successfully.")\n" info
             fi
     
