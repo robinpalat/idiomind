@@ -64,19 +64,19 @@ Vietnamese"
     file="${dir}/conf/id"
     nu='^[0-9]+$'
     dirs="$(find "${dir}"/ -maxdepth 5 -type d | sed '/^$/d' | wc -l)"
-    name="$(sed -n 1p < "${file}" | grep -o 'name="[^"]*' | grep -o '[^"]*$')"
-    language_source=$(sed -n 2p < "${file}" | grep -o 'language_source="[^"]*' | grep -o '[^"]*$')
-    language_target=$(sed -n 3p < "${file}" | grep -o 'language_target="[^"]*' | grep -o '[^"]*$')
-    author="$(sed -n 4p < "${file}" | grep -o 'author="[^"]*' | grep -o '[^"]*$')"
-    contact=$(sed -n 5p < "${file}" | grep -o 'contact="[^"]*' | grep -o '[^"]*$')
-    category=$(sed -n 6p < "${file}" | grep -o 'category="[^"]*' | grep -o '[^"]*$')
-    link=$(sed -n 7p < "${file}" | grep -o 'link="[^"]*' | grep -o '[^"]*$')
-    date_c=$(sed -n 8p < "${file}" | grep -o 'date_c="[^"]*' | grep -o '[^"]*$' | tr -d '-')
-    date_u=$(sed -n 9p < "${file}" | grep -o 'date_u="[^"]*' | grep -o '[^"]*$' | tr -d '-')
-    nwords=$(sed -n 10p < "${file}" | grep -o 'nwords="[^"]*' | grep -o '[^"]*$')
-    nsentences=$(sed -n 11p < "${file}" | grep -o 'nsentences="[^"]*' | grep -o '[^"]*$')
-    nimages=$(sed -n 12p < "${file}" | grep -o 'nimages="[^"]*' | grep -o '[^"]*$')
-    level=$(sed -n 13p < "${file}" | grep -o 'level="[^"]*' | grep -o '[^"]*$')
+    name="$(sed -n 1p "${file}" | grep -o 'name="[^"]*' | grep -o '[^"]*$')"
+    language_source=$(sed -n 2p "${file}" | grep -o 'language_source="[^"]*' | grep -o '[^"]*$')
+    language_target=$(sed -n 3p "${file}" | grep -o 'language_target="[^"]*' | grep -o '[^"]*$')
+    author="$(sed -n 4p "${file}" | grep -o 'author="[^"]*' | grep -o '[^"]*$')"
+    contact=$(sed -n 5p "${file}" | grep -o 'contact="[^"]*' | grep -o '[^"]*$')
+    category=$(sed -n 6p "${file}" | grep -o 'category="[^"]*' | grep -o '[^"]*$')
+    link=$(sed -n 7p "${file}" | grep -o 'link="[^"]*' | grep -o '[^"]*$')
+    date_c=$(sed -n 8p "${file}" | grep -o 'date_c="[^"]*' | grep -o '[^"]*$' | tr -d '-')
+    date_u=$(sed -n 9p "${file}" | grep -o 'date_u="[^"]*' | grep -o '[^"]*$' | tr -d '-')
+    nwords=$(sed -n 10p "${file}" | grep -o 'nwords="[^"]*' | grep -o '[^"]*$')
+    nsentences=$(sed -n 11p "${file}" | grep -o 'nsentences="[^"]*' | grep -o '[^"]*$')
+    nimages=$(sed -n 12p "${file}" | grep -o 'nimages="[^"]*' | grep -o '[^"]*$')
+    level=$(sed -n 13p "${file}" | grep -o 'level="[^"]*' | grep -o '[^"]*$')
 
     if [ "${name}" != "${3}" ] || [ "${#name}" -gt 60 ] || \
     [ `grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${name}"` ]; then
@@ -181,27 +181,29 @@ $SRFL5" | yad --text-info --title="$(gettext "Installation details")" \
 check_index() {
 
     source /usr/share/idiomind/ifs/c.conf
-    DC_tlt="$DM_tl/$2/.conf"
-    DM_tlt="$DM_tl/$2"
+    DC_tlt="$DM_tl/${2}/.conf"
+    DM_tlt="$DM_tl/${2}"
     
     check() {
         
-        if [ ! -d "$DC_tlt" ]; then mkdir "$DC_tlt"; fi
+        if [ ! -d "${DC_tlt}" ]; then mkdir "${DC_tlt}"; fi
         n=0
-        while [[ $n -le 4 ]]; do
-            [ ! -f "$DC_tlt/$n.cfg" ] && touch "$DC_tlt/$n.cfg"
-            if grep '^$' "$DC_tlt/$n.cfg"; then
-            sed -i '/^$/d' "$DC_tlt/$n.cfg"; fi
-            check_index1 "$DC_tlt/$n.cfg"
-            chk=$(wc -l < "$DC_tlt/$n.cfg")
+        while [[ $n -le 5 ]]; do
+            [ ! -f "${DC_tlt}/$n.cfg" ] && touch "${DC_tlt}/$n.cfg"
+            if grep '^$' "${DC_tlt}/$n.cfg"; then
+            sed -i '/^$/d' "${DC_tlt}/$n.cfg"; fi
+            check_index1 "${DC_tlt}/$n.cfg"
+            chk=$(wc -l < "${DC_tlt}/$n.cfg")
             [ -z "$chk" ] && chk=0
             eval chk$n="$chk"
             ((n=n+1))
         done
         
-        if [ ! -f "$DC_tlt/8.cfg" ]; then
-        echo 1 > "$DC_tlt/8.cfg"; fi
-        eval stts=$(sed -n 1p "$DC_tlt/8.cfg")
+        if [[ `wc -l < "${DC_tlt}/5.cfg"` -lt 1 ]]; then
+        cp "${DC_tlt}/1.cfg" "${DC_tlt}/5.cfg"; fi
+        if [[ ! -f "${DC_tlt}/8.cfg" ]]; then
+        echo 1 > "${DC_tlt}/8.cfg"; fi
+        eval stts=$(sed -n 1p "${DC_tlt}/8.cfg")
     }
     
     fix() {
@@ -758,7 +760,7 @@ set_image() {
     fi
     rm -f "$DT"/*.jpeg
     (sleep 50 && rm -f "$DT/search.html") & exit
-}  >/dev/null 2>&1
+} >/dev/null 2>&1
 
 
 mkpdf() {
@@ -976,8 +978,7 @@ mkpdf() {
         </html>" >> doc.html
 
         wkhtmltopdf -s A4 -O Portrait ./doc.html ./tmp.pdf
-        mv -f ./tmp.pdf "$pdf"
-        rm -fr "$DT/mkhtml"
+        mv -f ./tmp.pdf "$pdf"; rm -fr "$DT/mkhtml"
     fi
     exit
 }

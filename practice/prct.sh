@@ -2,16 +2,16 @@
 # -*- ENCODING: UTF-8 -*-
 
 #  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
+#  it under the terms of the GNU General Public cfg1cense as published by
+#  the Free Software Foundation; either version 2 of the cfg1cense, or
 #  (at your option) any later version.
 #  
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
+#  GNU General Public cfg1cense for more details.
 #  
-#  You should have received a copy of the GNU General Public License
+#  You should have received a copy of the GNU General Public cfg1cense
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
@@ -26,9 +26,9 @@ DLW="$DS/practice/dlw.sh"
 DMC="$DS/practice/dmc.sh"
 DLS="$DS/practice/dls.sh"
 DI="$DS/practice/di.sh"
-Wi="$DC_tlt/3.cfg"
-Si="$DC_tlt/4.cfg"
-Li="$DC_tlt/1.cfg"
+cfg3="$DC_tlt/3.cfg"
+cfg4="$DC_tlt/4.cfg"
+cfg1="$DC_tlt/1.cfg"
 cd "$DC_tlt/practice"
 
 lock() {
@@ -44,20 +44,28 @@ lock() {
 
 get_list() {
     
-    if [ "$(wc -l < "$Si")" -gt 0 ]; then
-        grep -Fxvf "$Si" "$Li" > "$1"
+    > "$1"
+    if [ "$(wc -l < "${cfg4}")" -gt 0 ]; then
+        while read item; do
+        grep -Fxo "${item}" "${cfg3}" >> "$1"
+        done < "${cfg3}"
     else
-        cat "$Li" > "$1"
+        cat "${cfg1}" > "$1"
     fi
+    sed -i '/^$/d' "$1"
 }
 
 get_list_images() {
 
-    if [ "$(wc -l < "$Si")" -gt 0 ]; then
-        grep -Fxvf "$Si" "$Li" > "$DT/images"
+    > "$DT/images"
+    if [ "$(wc -l < "$cfg4")" -gt 0 ]; then
+        while read item; do
+        grep -Fxo "${item}" "${cfg3}" >> "$DT/images"
+        done < "${cfg3}"
     else
-        cat "$Li" > "$DT/images"
+        cat "$cfg1" > "$DT/images"
     fi
+    sed -i '/^$/d' "$DT/images"
     > "$1"
     
     while read itm; do
@@ -85,12 +93,12 @@ get_list_mchoice() {
 
 get_list_sentences() {
     
-    if [ "$(wc -l < "$Wi")" -gt 0 ]; then
-        grep -Fxvf "$Wi" "$Li" > "$DT/slist"
+    if [ "$(wc -l < "$cfg3")" -gt 0 ]; then
+        grep -Fxvf "$cfg3" "$cfg1" > "$DT/slist"
         tac "$DT/slist" > "$1"
         rm -f "$DT/slist"
     else
-        tac "$Li" > "$1"
+        tac "$cfg1" > "$1"
     fi
 }
 

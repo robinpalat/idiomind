@@ -13,34 +13,6 @@ DIR="$DS/practice"
 [ -n "$(ps -A | pgrep -f play)" ] && killall play &
 cd "$DC_tlt/practice"
 
-colorize() {
-    
-    > "$DC_tlt/lst"
-    n0=`cat ./*.ok | sort | uniq`
-    n2=`cat ./log2 | head -n 50 | sort | uniq`
-    n3=`cat ./log3 | head -n 50 | sort | uniq`
-    m=`cat "$DC_tlt/6.cfg"`
-    while read item; do
-        if grep -Fxo "$item" <<<"$n0"; then
-            if grep -Fxo "$item" <<<"$m"; then
-            echo "<b><big><span color='green'>$item</span></big></b>" >> "$DC_tlt/lst"
-            else echo "<span color='green'>$item</span>" >> "$DC_tlt/lst"; fi
-        elif grep -Fxo "$item" <<<"$n3"; then
-            if grep -Fxo "$item" <<<"$m"; then
-            echo "<b><big><span color='OrangeRed3'>$item</span></big></b>" >> "$DC_tlt/lst"
-            else echo "<span color='OrangeRed3'>$item</span>" >> "$DC_tlt/lst"; fi
-        elif grep -Fxo "$item" <<<"$n2"; then
-            if grep -Fxo "$item" <<<"$m"; then
-            echo "<b><big><span color='orange'>$item</span></big></b>" >> "$DC_tlt/lst"
-            else echo "<span color='orange'>$item</span>" >> "$DC_tlt/lst"; fi
-        else
-            if grep -Fxo "$item" <<<"$m"; then
-            echo "<b><big>$item</big></b>" >> "$DC_tlt/lst"
-            else echo "$item" >> "$DC_tlt/lst"; fi
-        fi
-    done < "$DC_tlt/1.cfg"
-}
-
 stats() {
     
     n=1; c=1
@@ -83,7 +55,8 @@ fi
 
 if [ "$1" = comp_a ]; then
 
-    [ ./a.3 ] && echo "$(< ./a.3)" >> log
+    [ ./a.2 ] && echo "$(< ./a.2)" >> log2
+    [ ./a.3 ] && echo "$(< ./a.3)" >> log3
     [ ./a.l ] && echo $(($(< ./a.l)+easy)) > ./a.l || echo "$easy" > ./a.l
     v=$((100*$(< ./a.l)/all))
     stats ./.1
@@ -91,7 +64,8 @@ if [ "$1" = comp_a ]; then
 
 elif [ "$1" = comp_b ]; then
 
-    [ ./b.3 ] && echo "$(< ./b.3)" >> log
+    [ ./b.2 ] && echo "$(< ./b.2)" >> log2
+    [ ./b.3 ] && echo "$(< ./b.3)" >> log3
     [ ./b.l ] && echo $(($(< ./b.l)+easy)) > ./b.l || echo "$easy" > ./b.l
     v=$((100*$(< ./b.l)/all))
     stats ./.2
@@ -99,7 +73,8 @@ elif [ "$1" = comp_b ]; then
 
 elif [ "$1" = comp_c ]; then
 
-    [ ./c.3 ] && echo "$(< ./c.3)" >> log
+    [ ./c.2 ] && echo "$(< ./c.2)" >> log2
+    [ ./c.3 ] && echo "$(< ./c.3)" >> log3
     [ ./c.l ] && echo $(($(< ./c.l)+easy)) > ./c.l || echo "$easy" > ./c.l
     v=$((100*$(< ./c.l)/all))
     stats ./.3
@@ -115,14 +90,10 @@ elif [ "$1" = comp_d ]; then
     
 elif [ "$1" = comp_e ]; then
 
-    [ ./e.3 ] && echo "$(< ./e.3)" >> log
+    [ ./e.2 ] && echo "$(< ./e.2)" >> log2
+    [ ./e.3 ] && echo "$(< ./e.3)" >> log3
     [ ./e.l ] && echo $(($(< ./e.l)+easy)) > ./e.l || echo "$easy" > ./e.l
     v=$((100*$(< ./e.l)/all))
     stats ./.5
     "$DIR/strt.sh" 10 "$easy" "$ling" "$hard" & exit 1
-fi
-
-
-if [ "$1" = comp ]; then
-    colorize
 fi

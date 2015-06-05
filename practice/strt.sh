@@ -117,7 +117,7 @@ elif [[ $ret -eq 3 ]]; then
     "$DS/practice/strt.sh" & exit
 else
     cd "$DC_tlt/practice"
-    "$DSP/cls.sh" comp
+    "$DS/mngr.sh" colorize
     [ -f a.1 ] && rm a.1; [ -f a.2 ] && rm a.2;
     [ -f b.1 ] && rm b.1; [ -f b.2 ] && rm b.2;
     [ -f c.1 ] && rm c.1; [ -f c.2 ] && rm c.2;

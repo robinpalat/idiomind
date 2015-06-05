@@ -402,13 +402,13 @@ edit() {
                 if [ "$mark" != "$mark_mod" ]; then
                 
                     if [ "$mark_mod" = "TRUE" ]; then
-                    sed -i "${item_pos}s/^/<b><big>/;${item_pos}s/$/<\/big><\/b>/" "$DC_tlt/lst"
-                    echo "$trgt" >> "$DC_tlt/6.cfg"; else
-                    sed -i "${item_pos}s/<b><big>//;${item_pos}s/<\/big><\/b>//" "$DC_tlt/lst"
-                    grep -vxF "$trgt" "$DC_tlt/6.cfg" > "$DC_tlt/6.cfg.tmp"
-                    sed '/^$/d' "$DC_tlt/6.cfg.tmp" > "$DC_tlt/6.cfg"
-                    rm "$DC_tlt/6.cfg.tmp"; fi
-                    tags_8 W "$mark_mod" "$DM_tlt/words/$fname.mp3"
+                    sed -i "${item_pos}s/^/<b><big>/;${item_pos}s/$/<\/big><\/b>/" "${DC_tlt}/5.cfg"
+                    echo "$trgt" >> "${DC_tlt}/6.cfg"; else
+                    sed -i "${item_pos}s/<b><big>//;${item_pos}s/<\/big><\/b>//" "${DC_tlt}/5.cfg"
+                    grep -vxF "${trgt}" "${DC_tlt}/6.cfg" > "${DC_tlt}/6.cfg.tmp"
+                    sed '/^$/d' "${DC_tlt}/6.cfg.tmp" > "${DC_tlt}/6.cfg"
+                    rm "${DC_tlt}/6.cfg.tmp"; fi
+                    tags_8 W "$mark_mod" "${DM_tlt}/words/$fname.mp3"
                     
                 fi
                 
@@ -535,13 +535,13 @@ edit() {
                 if [ "$mark" != "$mark_mod" ]; then
                 
                     if [ "$mark_mod" = "TRUE" ]; then
-                    sed -i "${item_pos}s/^/<b><big>/;${item_pos}s/$/<\/big><\/b>/" "$DC_tlt/lst"
-                    echo "$trgt_mod" >> "$DC_tlt/6.cfg"; else
-                    sed -i "${item_pos}s/<b><big>//;${item_pos}s/<\/big><\/b>//" "$DC_tlt/lst"
-                    grep -vxF "$trgt_mod" "$DC_tlt/6.cfg" > "$DC_tlt/6.cfg.tmp"
-                    sed '/^$/d' "$DC_tlt/6.cfg.tmp" > "$DC_tlt/6.cfg"
-                    rm "$DC_tlt/6.cfg.tmp"; fi
-                    tags_8 S "$mark_mod" "$DM_tlt/$fname.mp3"
+                    sed -i "${item_pos}s/^/<b><big>/;${item_pos}s/$/<\/big><\/b>/" "${DC_tlt}/5.cfg"
+                    echo "${trgt_mod}" >> "${DC_tlt}/6.cfg"; else
+                    sed -i "${item_pos}s/<b><big>//;${item_pos}s/<\/big><\/b>//" "${DC_tlt}/5.cfg"
+                    grep -vxF "$trgt_mod" "${DC_tlt}/6.cfg" > "${DC_tlt}/6.cfg.tmp"
+                    sed '/^$/d' "${DC_tlt}/6.cfg.tmp" > "${DC_tlt}/6.cfg"
+                    rm "${DC_tlt}/6.cfg.tmp"; fi
+                    tags_8 S "$mark_mod" "${DM_tlt}/$fname.mp3"
                 fi
                 
                 if [ -n "$audio_mod" ]; then
@@ -619,9 +619,33 @@ edit() {
     
 } >/dev/null 2>&1
 
+
 colorize() {
-    
-    "$DS/practice/cls.sh" colorize
+
+    cd "${DC_tlt}/practice"; > "${DC_tlt}/5.cfg"
+    n0=`cat ./*.ok | sort | uniq` || n0=""
+    [ -f ./log2 ] && n2=`cat ./log2 | head -n 50 | sort | uniq` || n2=""
+    [ -f ./log3 ] && n3=`cat ./log3 | head -n 50 | sort | uniq` || n3=""
+    m=`cat "${DC_tlt}/6.cfg"`
+    while read item; do
+        if grep -Fxo "$item" <<<"$n0"; then
+            if grep -Fxo "$item" <<<"$m"; then
+            echo "<b><big><span color='green'>$item</span></big></b>" >> "${DC_tlt}/5.cfg"
+            else echo "<span color='green'>$item</span>" >> "${DC_tlt}/5.cfg"; fi
+        elif grep -Fxo "$item" <<<"$n3"; then
+            if grep -Fxo "$item" <<<"$m"; then
+            echo "<b><big><span color='OrangeRed3'>$item</span></big></b>" >> "${DC_tlt}/5.cfg"
+            else echo "<span color='OrangeRed3'>$item</span>" >> "${DC_tlt}/5.cfg"; fi
+        elif grep -Fxo "$item" <<<"$n2"; then
+            if grep -Fxo "$item" <<<"$m"; then
+            echo "<b><big><span color='orange'>$item</span></big></b>" >> "${DC_tlt}/5.cfg"
+            else echo "<span color='orange'>$item</span>" >> "${DC_tlt}/5.cfg"; fi
+        else
+            if grep -Fxo "$item" <<<"$m"; then
+            echo "<b><big>$item</big></b>" >> "${DC_tlt}/5.cfg"
+            else echo "$item" >> "${DC_tlt}/5.cfg"; fi
+        fi
+    done < "${DC_tlt}/1.cfg"
 }
 
 

@@ -76,8 +76,10 @@ function notebook_1() {
     cmd_del="'$DS/mngr.sh' 'delete_topic' "\"$tpc\"""
     cmd_share="'$DS/ifs/upld.sh' upld "\"$tpc\"""
     cmd_play="$DS/play.sh"
+    if [ ! -f "${DC_tlt}/5.cfg" ]; then
+    cp "${DC_tlt}/1.cfg" "${DC_tlt}/5.cfg"; fi
 
-    tac "$DC_tlt/lst" | awk '{print $0"\n"}' | yad --list --tabnum=1 \
+    tac "${DC_tlt}/5.cfg" | awk '{print $0"\n"}' | yad --list --tabnum=1 \
     --plug=$KEY --print-all \
     --dclick-action="$DS/vwr.sh '1'" \
     --expand-column=1 --no-headers --ellipsize=END --tooltip-column=1 \
