@@ -18,29 +18,35 @@
 #
 #  2015/02/27
 
-[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
+source /usr/share/idiomind/ifs/c.conf
 [[ -z "$tpc" && -d "$DT" ]] && exit 1
-repeat=$(sed -n 7p < "$DC_s/1.cfg" \
-| grep -o repeat=\"[^\"]* | grep -o '[^"]*$')
+repeat=$(sed -n 8p "$DC_s/1.cfg" |grep -o repeat=\"[^\"]* |grep -o '[^"]*$')
 
 if [ -s "$DT/index.m3u" ] \
-&& [ "$(wc -l < "$DT/index.m3u")" -gt 0 ]; then
-
+&& [ `wc -l < "$DT/index.m3u"` -gt 0 ]; then
+   
     if [ "$repeat" = TRUE ]; then
         while [ 1 ]; do
-            index="$(wc -l < "$DT/index.m3u")"
-            while [[ 1 -le $index ]]; do
-                "$DS/chng.sh" chngi "$index"
-                let index--
+            if [ -f "$DT/.p" ]; then
+            pos=`sed -n 1p "$DT/.p"`; rm "$DT/.p"
+            [[ $pos -gt `wc -l < "$DT/index.m3u"` ]] && \
+            pos=`wc -l < "$DT/index.m3u"`; else
+            pos=`wc -l < "$DT/index.m3u"`; fi
+            while [[ 1 -le $pos ]]; do
+                "$DS/chng.sh" chngi "$pos"
+                let pos--
             done
             sleep 15
         done
-    
     else
-        index="$(wc -l < "$DT/index.m3u")"
-        while [[ 1 -le $index ]]; do
-        "$DS/chng.sh" chngi "$index"
-            let index--
+        if [ -f "$DT/.p" ]; then
+        pos=`sed -n 1p "$DT/.p"`; rm "$DT/.p"
+        [[ $pos -gt `wc -l < "$DT/index.m3u"` ]] && \
+        pos=`wc -l < "$DT/index.m3u"`; else
+        pos=`wc -l < "$DT/index.m3u"`; fi
+        while [[ 1 -le $pos ]]; do
+            "$DS/chng.sh" chngi "$pos"
+            let pos--
         done
         rm -fr "$DT/.p_"; exit 0
     fi

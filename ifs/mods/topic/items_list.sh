@@ -4,38 +4,40 @@
 
 function word_view() {
 
-    tags="$(eyeD3 "$DM_tlt/words/$fname.mp3")"
     trgt="$item"
+    tags="$(eyeD3 "$DM_tlt/words/$fname.mp3")"
     srce="$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)' <<<"$tags")"
     fields="$(grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' <<<"$tags" | tr '_' '\n')"
     mark="$(grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)' <<<"$tags")"
     exmp="$(sed -n 1p <<<"$fields")"
     dftn="$(sed -n 2p <<<"$fields")"
     note="$(sed -n 3p <<<"$fields")"
-    [ -n "$dftn" ] && field_dftn="--field=\n$dftn:lbl"
-    [ -n "$note" ] && field_note="--field=$note\n:lbl"
-    hlgt="$(awk '{print tolower($0)}' <<<"$trgt")"
     exmp="$(sed "s/"${trgt,,}"/<span background='#FDFBCF'>"${trgt,,}"<\/\span>/g" <<<"$exmp")"
+    [ -n "$dftn" ] && field_dftn="--field=<span font_desc='verdana 8'>$dftn</span>:lbl"
+    [ -n "$note" ] && field_note="--field=$note\n:lbl"
+    [ -n "$exmp" ] && field_exmp="--field=<i><span color='#737373'>$exmp</span></i>:lbl"
+    [ -z "$trgt" ] && tm="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>"
     [ "$mark" = TRUE ] && trgt="<sup>*</sup>$trgt"
     
     yad --form --title="$item" \
     --selectable-labels --quoted-output \
     --text="<span font_desc='Sans Free Bold $fs'>$trgt</span>\n\n<i>$srce</i>\n\n" \
     --window-icon="$DS/images/icon.png" \
-    --scroll --skip-taskbar --text-align=center \
+    --align=left --scroll --skip-taskbar --text-align=center \
     --image-on-top --center --on-top \
     --width=620 --height=380 --borders=$bs \
-    --field="":lbl \
-    --field="<i><span color='#737373'>$exmp</span></i>:lbl" "$field_dftn" "$field_note" \
+    --field="":lbl "$field_exmp" "$field_dftn" "$field_note" \
     --button=gtk-edit:4 \
     --button="$listen":"$cmd_listen" \
-    --button=gtk-go-up:3 \
-    --button=gtk-go-down:2
+    --button=gtk-go-down:2 \
+    --button=gtk-go-up:3
+    
 } >/dev/null 2>&1
 
 
 function sentence_view() {
 
+    if [ -f "$DM_tlt/$fname.mp3" ]; then
     tags="$(eyeD3 "$DM_tlt/$fname.mp3")"
     [ "$(sed -n 1p "$DC_s/1.cfg" | grep -o grammar=\"[^\"]* | grep -o '[^"]*$')"  = TRUE ] \
     && trgt="$(grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)' <<<"$tags")" \
@@ -43,52 +45,37 @@ function sentence_view() {
     srce="$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"$tags")"
     lwrd="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"$tags" | tr '_' '\n')"
     [ "$(grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)' <<<"$tags")" = TRUE ] && trgt="<b>*</b> $trgt"
-    [ ! -f "$DM_tlt/$fname.mp3" ] && exit 1
+    [ -z "$trgt" ] && tm="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>"
+    else tm="<span color='#3F78A0'><tt>$(gettext "File not found")</tt></span>"; fi
     
     echo "$lwrd" | yad --list --title=" " \
+    --text="$tm<span font_desc='Sans Free 15'>$trgt</span>\n\n<i>$srce</i>\n\n" \
     --selectable-labels --print-column=0 \
     --dclick-action="$DS/ifs/tls.sh 'dclik'" \
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --center --image-on-top --center --on-top \
     --scroll --text-align=left --expand-column=0 --no-headers \
-    --text="<span font_desc='Sans Free 15'>$trgt</span>\n\n<i>$srce</i>\n\n" \
     --width=620 --height=380 --borders=20 \
     --column="":TEXT \
     --column="":TEXT \
     --button=gtk-edit:4 \
     --button="$listen":"$cmd_listen" \
-    --button=gtk-go-up:3 \
-    --button=gtk-go-down:2
+    --button=gtk-go-down:2 \
+    --button=gtk-go-up:3
+    
 } >/dev/null 2>&1
 
-
-missing() {
-    
-    item=$(sed -n "$1"p "$index")
-    yad --form --title="$item" \
-    --selectable-labels \
-    --text="<span color='#3F78A0'>$(gettext "File not found")</span>" \
-    --field="":lbl " " \
-    --field="<b>$item</b>":lbl \
-    --window-icon="$DS/images/icon.png" \
-    --skip-taskbar --center --on-top \
-    --align=center --text-align=center \
-    --width=620 --height=380 --borders=$bs \
-    --button="$(gettext "Add")":5 \
-    --button=gtk-go-up:3 \
-    --button=gtk-go-down:2
-}
-export -f word_view sentence_view missing
+export -f word_view sentence_view
 
 
 function notebook_1() {
     
-    cmd_mark="'$DS/mngr.sh' 'mark_as_learned' '$tpc' 1"
+    cmd_mark="'$DS/mngr.sh' 'mark_as_learned' "\"$tpc\"" 1"
     cmd_attchs="'$DS/ifs/tls.sh' 'attachs'"
-    cmd_del="'$DS/mngr.sh' 'delete_topic' '$tpc'"
-    cmd_share="'$DS/ifs/upld.sh' 'upld' '$tpc'"
+    cmd_del="'$DS/mngr.sh' 'delete_topic' "\"$tpc\"""
+    cmd_share="'$DS/ifs/upld.sh' upld "\"$tpc\"""
     cmd_play="$DS/play.sh"
-    
+
     tac "$ls1" | awk '{print $0"\n"}' | yad --list --tabnum=1 \
     --plug=$KEY --print-all \
     --dclick-action="$DS/vwr.sh '1'" \
@@ -108,20 +95,20 @@ function notebook_1() {
     --text="$label_info1\n" \
     --scroll --borders=10 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "$tpc" \
-    --field="$(gettext "Mark as learned")":FBTN "$cmd_mark" \
+    --field="$(gettext "Mark as learnt")":FBTN "$cmd_mark" \
     --field=" ":LBL "$set1" \
     --field="$label_info2\n\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " \
-    --field="$(gettext "Attached Files")":FBTN "$cmd_attchs" \
+    --field="$(gettext "Files")":FBTN "$cmd_attchs" \
     --field="$(gettext "Share")":FBTN "$cmd_share" \
     --field="$(gettext "Delete")":FBTN "$cmd_del" \
     --field=" ":LBL " " > "$cnf4" &
-    yad --notebook --title="$tpc" \
+    yad --notebook --title="Idiomind - $tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
     --center --align=right "$img" --fixed --ellipsize=END --image-on-top \
     --window-icon="$DS/images/icon.png" --center \
     --tab="  $(gettext "Learning") ($inx1) " \
-    --tab="  $(gettext "Learned") ($inx2) " \
+    --tab="  $(gettext "Learnt") ($inx2) " \
     --tab=" $(gettext "Notes") " \
     --tab=" $(gettext "Edit") " \
     --width=$sx --height=$sy --borders=0 --tab-borders=3 \
@@ -133,10 +120,10 @@ function notebook_1() {
 
 function notebook_2() {
     
-    cmd_mark="'$DS/mngr.sh' 'mark_to_learn' '$tpc' 1"
+    cmd_mark="'$DS/mngr.sh' 'mark_to_learn' "\"$tpc\"" 1"
     cmd_attchs="'$DS/ifs/tls.sh' 'attachs'"
-    cmd_del="'$DS/mngr.sh' 'delete_topic' '$tpc'"
-    cmd_share="'$DS/ifs/upld.sh' 'upld' '$tpc'"
+    cmd_del="'$DS/mngr.sh' 'delete_topic' "\"$tpc\"""
+    cmd_share="'$DS/ifs/upld.sh' 'upld' "\"$tpc\"""
     
     yad --multi-progress --tabnum=1 \
     --text="$pres" \
@@ -159,17 +146,17 @@ function notebook_2() {
     --field="   $(gettext "Review")   ":FBTN "$cmd_mark" \
     --field=" ":LBL "$set1" \
     --field="$label_info2\n\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " \
-    --field="$(gettext "Attached Files")":FBTN "$cmd_attchs" \
+    --field="$(gettext "Files")":FBTN "$cmd_attchs" \
     --field="$(gettext "Share")":FBTN "$cmd_share" \
     --field="$(gettext "Delete")":FBTN "$cmd_del" \
     --field=" ":LBL " " > "$cnf4" &
-    yad --notebook --title="$tpc" \
+    yad --notebook --title="Idiomind - $tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
     --center --align=right "$img" --fixed --ellipsize=END --image-on-top \
     --window-icon="$DS/images/icon.png" --center \
     --tab="  $(gettext "Review")  " \
-    --tab="  $(gettext "Learned") ($inx2) " \
+    --tab="  $(gettext "Learnt") ($inx2) " \
     --tab=" $(gettext "Notes") " \
     --tab=" $(gettext "Edit") " \
     --width=$sx --height=$sy --borders=0 --tab-borders=3 \
@@ -181,10 +168,11 @@ function dialog_1() {
     
     yad --title="$tpc" \
     --class=idiomind --name=Idiomind \
-    --text="$(gettext "More than") $tdays $(gettext "days have passed since you mark this topic as learned.  You'd like to review?")" \
-    --image=dialog-question --on-top --center \
+    --text=" $(gettext "<b>Would you like to go over it?</b>\n The specified period already has been completed")" \
+    --image=gtk-refresh \
     --window-icon="$DS/images/icon.png" \
-    --width=450 --height=150 --borders=10 \
+    --buttons-layout=edge --center --on-top \
+    --width=420 --height=140 --borders=10 \
     --button=" $(gettext "Not Yet") ":1 \
     --button=" $(gettext "Yes") ":2
 }

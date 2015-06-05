@@ -21,9 +21,7 @@
 IFS=$'\n\t'
 if [ ! -d "$HOME/.idiomind" ]; then
     /usr/share/idiomind/ifs/1u.sh & exit
-    if [ ! -d "$HOME/.idiomind" ]; then
-        exit 1
-    fi
+    [ ! -d "$HOME/.idiomind" ] && exit 1
 fi
 
 source /usr/share/idiomind/ifs/c.conf
@@ -35,11 +33,10 @@ if [ -f "$DT/ps_lk" ]; then
 fi
 
 function new_session() {
-
+    
     #set -e
     echo "--new session"
     echo "$(date +%d)" > "$DC_s/10.cfg"
-    if [ -f "$DT/t_notify" ]; then rm -f "$DT/t_notify"; fi
     if [ -f "$DT/notify" ]; then rm -f "$DT/notify"; fi
     source "$DS/ifs/mods/cmns.sh"
     
@@ -49,12 +46,12 @@ function new_session() {
     msg "$(gettext "Fail on try write in /tmp")\n" error & exit 1; fi
     
     touch "$DT/ps_lk"
-  
+    
     # start addons
     addons="$(cd "$DS/addons"; ls -d *)"
     n=1; > "$DC_s/2.cfg"
     while [ $n -le "$(wc -l <<<"$addons")" ]; do
-        set=$(echo "$addons" | sed -n "$n"p)
+        set=$(sed -n "$n"p <<<"$addons")
         if [ -f "/usr/share/idiomind/addons/$set/icon.png" ]; then 
             echo "/usr/share/idiomind/addons/$set/icon.png" >> "$DC_s/2.cfg"
         else
@@ -66,21 +63,11 @@ function new_session() {
     
     for strt in "$DS/ifs/mods/start"/*; do
     (sleep 20 && "$strt"); done &
-
-    # fix
-    n=1; cd "$DM_tl"; cfg="$DM_tl/.2.cfg"
-    while [ $n -le "$(wc -l < "$cfg")" ]; do
-        chk=$(sed -n "$n"p "$cfg")
-        dirs="$(find ./ -maxdepth 1 -type d \
-        | sed 's|\./\.share||;s|\./||g')"
-        if ! grep -Fxo "$chk" <<<"$dirs"; then
-            grep -vxF "$chk" "$cfg" > "$DT/2.cfg.fix"
-            sed '/^$/d' "$DT/2.cfg.fix" > "$cfg"
-            rm -f "$DT/2.cfg.fix";fi
-        let n++
-    done; cd ~/
-
-    # 
+    
+    #
+    list_inadd > "$DM_tl/.2.cfg"
+    cd /
+    
     s="$(xrandr | grep '*' | awk '{ print $1 }' \
     | sed 's/x/\n/')"
     sed -n 1p <<<"$s" >> "$DC_s/10.cfg"
@@ -88,7 +75,8 @@ function new_session() {
     echo "$DESKTOP_SESSION" >> "$DC_s/10.cfg"
     gconftool-2 --get /desktop/gnome/interface/font_name \
     | cut -d ' ' -f 2 >> "$DC_s/10.cfg"
-
+    [ `wc -l < "$DC_s/1.cfg"` -lt 19 ] && rm "$DC_s/1.cfg"
+    
     # log file
     if [ -f "$DC_s/8.cfg" ]; then
     if [ "$(du -sb "$DC_s/8.cfg" | awk '{ print $1 }')" -gt 100000 ]; then
@@ -128,10 +116,10 @@ function new_session() {
 }
 
 
-if grep -o '.idmnd' <<<"$1"; then
+if grep -o '.idmnd' <<<"${1: -6}"; then
 
     dte=$(date "+%d %B")
-    c=$(($RANDOM%1000))
+    c=$((RANDOM%1000))
     source "$DS/ifs/mods/cmns.sh"
     [ ! -d "$DT" ] && mkdir "$DT"
     mkdir "$DT/dir$c"
@@ -145,12 +133,12 @@ if grep -o '.idmnd' <<<"$1"; then
     "$DS/ifs/tls.sh" check_source_1 "$tmp" "$tpi" &&
     source "$DT/$tpi.cfg"
     lng="$(lnglss "$language_target")"
-    infs="'$DS/ifs/tls.sh' 'details' '$tmp'"
+    cmd_infs="'$DS/ifs/tls.sh' 'details' "\"$tmp\"""
     [ $level = 1 ] && level="$(gettext "Beginner")"
     [ $level = 2 ] && level="$(gettext "Intermediate")"
     [ $level = 3 ] && level="$(gettext "Advanced")"
 
-    if [ "$tpi" != "$name" ]; then
+    if [[ "$tpi" != "$name" ]]; then
     
         [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c" \
         "$DT/$tpi.cfg" "$DT/import.tar.gz" & exit 1
@@ -159,10 +147,10 @@ if grep -o '.idmnd' <<<"$1"; then
         cd "$tmp"
         ws=$(wc -l < "$tmp/3.cfg")
         ss=$(wc -l < "$tmp/4.cfg")
-        itxt="<span font_desc='Free Sans 14'>$tpi</span><small>\n ${language_source^} > $language_target\n $nwords $(gettext "Words") $nsentences $(gettext "Sentences") $nimages $(gettext "Images")\n $(gettext "Level:") $level\n</small>"
+        itxt="<span font_desc='Free Sans 14'>$tpi</span><small>\n ${language_source^}-$language_target $nwords $(gettext "Words") $nsentences $(gettext "Sentences") $nimages $(gettext "Images")\n $(gettext "Level:") $level\n</small>"
         dclk="'$DS/default/vwr_tmp.sh' '$c'"
 
-        tac "$tmp/0.cfg" | awk '{print $0""}' | \
+        tac "$tmp/conf/0.cfg" | awk '{print $0""}' | \
         yad --list --title="Idiomind" \
         --text="$itxt" \
         --name=Idiomind --class=Idiomind \
@@ -172,7 +160,7 @@ if grep -o '.idmnd' <<<"$1"; then
         --scroll --center --tooltip-column=1 \
         --width=650 --height=580 --borders=10 \
         --column=Items \
-        --button="$(gettext "Info")":"$infs" \
+        --button="$(gettext "Info")":"$cmd_infs" \
         --button="$(gettext "Install")":0 \
         --button="$(gettext "Close")":1
         ret=$?
@@ -185,7 +173,7 @@ if grep -o '.idmnd' <<<"$1"; then
             elif [[ $ret -eq 0 ]]; then
                 
                 if2=$(wc -l < "$DM_t/$language_target/.1.cfg")
-                chck=$(grep -Fox "$tpi" < "$DM_t/$language_target/.1.cfg" | wc -l)
+                chck=$(grep -Fxo "$tpi" "$DM_t/$language_target/.1.cfg" | wc -l)
                 
                 if [ ${if2} -ge 80 ]; then
                     
@@ -196,8 +184,12 @@ if grep -o '.idmnd' <<<"$1"; then
                 
                 if [ ${chck} -ge 1 ]; then
                 
-                    tpi="$tpi $chck"
-                    msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "Name for the new topic\:")\n<b>$tpi</b>\n" info "$(gettext "OK")" "$(gettext "Cancel")"
+                    for i in {1..50}; do
+                    chck=$(grep -Fxo "$tpi ($i)" "$DM_t/$language_target/.1.cfg")
+                    [ -z "$chck" ] && break; done
+                
+                    tpi="$tpi ($i)"
+                    msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "The name for the newest will be\:")\n<b>$tpi</b>\n" info "$(gettext "OK")" "$(gettext "Cancel")"
                     ret=$(echo $?)
                     
                     if [[ $ret != 0 ]]; then
@@ -211,27 +203,29 @@ if grep -o '.idmnd' <<<"$1"; then
                 mkdir -p "$DM_t/$language_target/$tpi/.conf"
                 DM_tlt="$DM_t/$language_target/$tpi"
                 DC_tlt="$DM_t/$language_target/$tpi/.conf"
-                if [ -d "$tmp/audio" ]; then
-                cp -n "$tmp/audio"/*.mp3 "$DM_t/$language_target/.share"/
-                rm -fr "$tmp/audio"; fi
-                n=0
-                while [[ $n -le 13 ]]; do
-                if [ ! -f "$tmp/$n.cfg" ]; then
+                if [ -d "$tmp/share" ]; then
+                cp -n "$tmp/share"/*.mp3 "$DM_t/$language_target/.share"/
+                rm -fr "$tmp/share"; fi
+                n=0; while [[ $n -le 13 ]]; do
+                if [ ! -f "$tmp/conf/$n.cfg" ]; then
                 touch "$DC_tlt/$n.cfg"
-                else mv -f "$tmp/$n.cfg" "$DC_tlt/$n.cfg"; fi
-                let n++
-                done
+                else mv -f "$tmp/conf/$n.cfg" "$DC_tlt/$n.cfg"; fi
+                let n++; done
+                cp "$tmp/conf/info" "$DC_tlt/10.cfg"
+                cp "$tmp/conf/id" "$DC_tlt/12.cfg"
                 tee "$DC_tlt/.11.cfg" "$DC_tlt/1.cfg" < "$DC_tlt/0.cfg"
                 echo 1 > "$DC_tlt/8.cfg"; rm "$DC_tlt/9.cfg" "$DC_tlt/ls"
                 cp -fr "$tmp"/.* "$DM_tlt/"
                 echo "$language_target" > "$DC_s/6.cfg"
                 echo "$lgsl" >> "$DC_s/6.cfg"
                 echo "$dte" > "$DC_tlt/13.cfg"
+                echo "$tpi" >> "$DM_tl/.3.cfg"
                 "$DS/mngr.sh" mkmn; "$DS/default/tpc.sh" "$tpi" &
             fi
     fi
     [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c"
-    rm -f "$DT/import.tar.gz" "$DT/$tpi.cfg" & exit
+    rm -f "$DT/import.tar.gz" "$DT/$tpi.cfg" &
+    exit 1
 fi
     
 function topic() {
@@ -253,12 +247,13 @@ function topic() {
         [ ! -f "$DC_tlt/$n.cfg" ] && touch "$DC_tlt/$n.cfg"
         declare ls$n="$DC_tlt/$n.cfg"
         declare inx$n=$(wc -l < "$DC_tlt/$n.cfg")
+        export inx$n
         let n++
         done
         nt="$DC_tlt/10.cfg"
         author="$(sed -n 4p "$DC_tlt/12.cfg" \
         | grep -o 'author="[^"]*' | grep -o '[^"]*$')"
-        c=$(($RANDOM%100000)); KEY=$c
+        c=$((RANDOM%100000)); KEY=$c
         cnf1=$(mktemp "$DT/cnf1.XXX.x")
         cnf3=$(mktemp "$DT/cnf3.XXX.x")
         cnf4=$(mktemp "$DT/cnf4.XXX.x")
@@ -268,9 +263,9 @@ function topic() {
         img="--image=$DM_tlt/words/images/img.jpg"
         sx=608; sy=580; else sx=620; sy=560; fi
         printf "tpcs.$tpc.tpcs\n" >> "$DC_s/8.cfg"
-        [ ! -z "$author" ] && author=" $(gettext "Topic created by") $author"
+        [ ! -z "$author" ] && author=" $(gettext "Created by") $author"
 
-        label_info1="<span font_desc='Free Sans 15' color='#5A5A5A'>$tpc</span><small>\n $inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"
+        label_info1="<span font_desc='Free Sans 15' color='#505050'>$tpc</span><small>\n $inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"
 
         apply() {
 
@@ -279,11 +274,10 @@ function topic() {
             mv -f "$cnf3" "$DC_tlt/10.cfg"; fi
             
             ntpc=$(cut -d '|' -f 1 < "$cnf4")
-            if [ "$tpc" != "$ntpc" ] && [ -n "$ntpc" ]; then
-            if [ "$tpc" != "$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")" ]; then
-            msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
-            "$DS/mngr.sh" rename_topic "$ntpc" & exit
-            fi
+            if [ "${tpc}" != "${ntpc}" ] && [ -n "$ntpc" ]; then
+            if [ "${tpc}" != "$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")" ]; then
+            msg "$(gettext "Sorry, this topic is currently not active.")\n" info & exit; fi
+            "$DS/mngr.sh" rename_topic "${ntpc}" & exit; fi
 
             set1_=$(cut -d '|' -f 8 < "$cnf4")
             if [ "$set1" != "$set1_" ]; then
@@ -317,7 +311,7 @@ function topic() {
                 
             if [ ! -f "$DT/ps_lk" ]; then
                 
-                    apply
+                apply
             fi
             
             if [[ $ret -eq 5 ]]; then
@@ -440,18 +434,26 @@ panel() {
     if [ "$(date +%d)" != "$date" ] || [ ! -f "$DC_s/10.cfg" ]; then
     new_session; fi
     
+    if [ -f "$DC_s/10.cfg" ]; then
+    nu='^[0-9]+$'
     x=$(($(sed -n 2p "$DC_s/10.cfg")/2))
-    y=$(($(sed -n 3p "$DC_s/10.cfg")/2))
-    
+    y=$(($(sed -n 3p "$DC_s/10.cfg")/2)); fi
+    if ! [[ $x =~ $nu ]]; then x=100; fi
+    if ! [[ $y =~ $nu ]]; then y=100; fi
+
     yad --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
-    --window-icon="$DS/images/icon.png" \
+    --always-print-result \
+    --window-icon=idiomind \
     --form --fixed --on-top --no-buttons --align=center \
-    --width=130 --height=190 --borders=0 --geometry=150x190-$x-$y \
+    --width=130 --height=185 --borders=0 --geometry=150x190-$x-$y \
     --field=gtk-new:btn "$DS/add.sh 'new_items'" \
     --field=gtk-home:btn "idiomind 'topic'" \
     --field=gtk-index:btn "$DS/chng.sh" \
-    --field=gtk-preferences:btn "$DS/cnfg.sh" &
+    --field=gtk-preferences:btn "$DS/cnfg.sh"
+    ret=$?
+    [[ $ret != 0 ]] && "$DS/stop.sh" 1 &
+    exit 0
 }
 
 version() {
@@ -472,8 +474,6 @@ autostart() {
 case "$1" in
     topic)
     topic ;;
-    --version)
-    version ;;
     -v)
     version;;
     -s)

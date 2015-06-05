@@ -61,9 +61,8 @@ Spanish
 Vietnamese"
 
     dir="${2}"
-    file="${dir}/12.cfg"
+    file="${dir}/conf/id"
     nu='^[0-9]+$'
-    
     dirs="$(find "${dir}"/ -maxdepth 5 -type d | sed '/^$/d' | wc -l)"
     name="$(sed -n 1p < "${file}" | grep -o 'name="[^"]*' | grep -o '[^"]*$')"
     language_source=$(sed -n 2p < "${file}" | grep -o 'language_source="[^"]*' | grep -o '[^"]*$')
@@ -81,45 +80,46 @@ Vietnamese"
 
     if [ "${name}" != "${3}" ] || [ "${#name}" -gt 60 ] || \
     [ `grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${name}"` ]; then
-    msg "$(gettext "File is corrupted.") 1\n" error & exit 1
+    msg "1. $(gettext "File is corrupted.")\n" error & exit 1
     elif ! grep -Fox "${language_source}" <<<"${LANGUAGES}"; then
-    msg "$(gettext "File is corrupted.") 2\n" error && exit 1
+    msg "2. $(gettext "File is corrupted.")\n" error && exit 1
     elif ! grep -Fox "${language_target}" <<<"${LANGUAGES}"; then
-    msg "$(gettext "File is corrupted.") 3\n" error & exit 1
+    msg "3. $(gettext "File is corrupted.")\n" error & exit 1
     elif [ "${#author}" -gt 20 ] || \
     [ `grep -o -E '\.|\*|\/|\@|$|\)|\(|=|-' <<<"${author}"` ]; then
-    msg "$(gettext "File is corrupted.") 4\n" error & exit 1
+    msg "4. $(gettext "File is corrupted.")\n" error & exit 1
     elif [ "${#contact}" -gt 30 ] || \
     [ `grep -o -E '\*|\/|$|\)|\(|=' <<<"${contact}"` ]; then
-    msg "$(gettext "File is corrupted.") 5\n" error & exit 1
+    msg "5. $(gettext "File is corrupted.")\n" error & exit 1
     elif ! grep -Fox "${category}" <<<"${CATEGORIES}"; then
-    msg "$(gettext "File is corrupted.") 6\n" error & exit 1
-    elif ! [[ 1 =~ $nu ]] || [ "${#link}" -gt 400 ]; then
-    msg "$(gettext "File is corrupted.") 7\n" error & exit 1
+    msg "6. $(gettext "Unknown category.")\n" error & exit 1
+    elif ! [[ 1 =~ $nu ]] || [ "${#link}" -gt 4 ]; then
+    msg "7. $(gettext "File is corrupted.")\n" error & exit 1
     elif ! [[ $date_c =~ $nu ]] || [ "${#date_c}" -gt 12 ] && \
     [ -n "${date_c}" ]; then
-    msg "$(gettext "File is corrupted.") 8\n" error & exit 1
+    msg "8. $(gettext "File is corrupted.")\n" error & exit 1
     elif ! [[ $date_u =~ $nu ]] || [ "${#date_u}" -gt 12 ] && \
     [ -n "${date_u}" ]; then
-    msg "$(gettext "File is corrupted.") 9\n" error & exit 1
+    msg "9. $(gettext "File is corrupted.")\n" error & exit 1
     elif ! [[ $nwords =~ $nu ]] || [ "${nwords}" -gt 200 ]; then
-    msg "$(gettext "File is corrupted.") 10\n" error & exit 1
+    msg "10. $(gettext "File is corrupted.")\n" error & exit 1
     elif ! [[ $nsentences =~ $nu ]] || [ "${nsentences}" -gt 200 ]; then
-    msg "$(gettext "File is corrupted.") 11\n" error & exit 1
+    msg "11. $(gettext "File is corrupted.")\n" error & exit 1
     elif ! [[ $nimages =~ $nu ]] || [ "${nimages}" -gt 200 ]; then
-    msg "$(gettext "File is corrupted.") 12\n" error & exit 1
+    msg "12. $(gettext "File is corrupted.")\n" error & exit 1
     elif ! [[ $level =~ $nu ]] || [ "${#level}" -gt 2 ]; then
-    msg "$(gettext "File is corrupted.") 13\n" error & exit 1
+    msg "13. $(gettext "Incorrect value of \"Learning difficulty\".")\n" error & exit 1
     elif grep "invalid" <<<"$chckf"; then
-    msg "$(gettext "File is corrupted.") 14\n" error & exit 1
-    elif [[ $dirs -gt 5 ]] ; then
-    msg "$(gettext "File is corrupted.") 15\n" error & exit 1
+    msg "14. $(gettext "File is corrupted.")\n" error & exit 1
+    elif [[ $dirs -gt 6 ]] ; then
+    msg "15. $(gettext "File is corrupted.")\n" error & exit 1
     else
     head -n14 < "${file}" > "$DT/$name.cfg"
     fi
 }
 
 details() {
+    
     cd "$2"
     dirs="$(find . -maxdepth 5 -type d)"
     files="$(find . -type f -exec file {} \; 2> /dev/null)"
@@ -131,23 +131,23 @@ details() {
     wchfiles=`sed '/^$/d' <<<"${hfiles}" | wc -l`
     wcexfiles=`sed '/^$/d' <<<"${exfiles}" | wc -l`
     others=$((wchfiles+wcexfiles))
-    SRFL1=$(cat "./12.cfg")
-    SRFL2=$(cat "./10.cfg")
-    SRFL3=$(cat "./4.cfg")
-    SRFL4=$(cat "./3.cfg")
-    SRFL5=$(cat "./0.cfg")
+    SRFL1=$(cat "./conf/id")
+    SRFL2=$(cat "./conf/info")
+    SRFL3=$(cat "./conf/4.cfg")
+    SRFL4=$(cat "./conf/3.cfg")
+    SRFL5=$(cat "./conf/0.cfg")
     
 
     echo -e "
 $(gettext "SUMMARY")
-==========
+
 Directories: $wcdirs
 Files: $wcfiles
 Others files: $others
 
 
 $(gettext "FILES")
-==========
+
 $files
 
 ./files
@@ -158,8 +158,8 @@ $hfiles
 
 $exfiles
 
-$(gettext "CONTENTS OF TEXT FILES")
-====================
+$(gettext "TEXT FILES")
+
 
 $SRFL1
 
@@ -403,82 +403,92 @@ videourl() {
     --separator="" \
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --center --on-top \
-    --width=480 --height=100 --borders=5 \
-    --field="$(gettext "YouTube URL")" \
+    --width=420 --height=100 --borders=5 \
+    --field="$(gettext "URL")" \
     --button="$(gettext "Cancel")":1 \
     --button=gtk-ok:0)
-
-    [ ${#url} -gt 40 ] && \
+    [ $? = 1 ] && exit
+    if [ ${#url} -gt 40 ] && \
+    ([ ${url:0:29} = 'https://www.youtube.com/watch' ] \
+    || [ ${url:0:28} = 'http://www.youtube.com/watch' ]); then \
     echo "$url" > "$DM_tlt/files/video$n.url"
+    else msg "$(gettext "Invalid URL.")\n" error \
+    "$(gettext "Invalid URL")"; fi
 }
 
 attatchments() {
-    
+
     mkindex() {
 
-echo "<link rel=\"stylesheet\" \
+rename 's/_/ /g' "$DM_tlt/files"/*
+echo "<meta http-equiv=\"Content-Type\" \
+content=\"text/html; charset=UTF-8\" />
+<link rel=\"stylesheet\" \
 href=\"/usr/share/idiomind/default/attch.css\">\
-<body>" \
-> "$DC_tlt/att.html"
+<body>" > "$DC_tlt/att.html"
 
-        while read -r file; do
+while read -r file; do
 if grep ".mp3" <<<"${file: -4}"; then
-echo "<div class=\"summary\">
-<br><h2>${file::-4}</h2><audio controls>
+echo "${file::-4}<br><br><audio controls>
 <source src=\"../files/$file\" type=\"audio/mpeg\">
-</audio></div><br><br><br>" >> "$DC_tlt/att.html"
+</audio><br><br>" >> "$DC_tlt/att.html"
 elif grep ".ogg" <<<"${file: -4}"; then
-echo "<h2>${file::-4}</h2><audio controls>
+echo "${file::-4}<audio controls>
 <source src=\"../files/$file\" type=\"audio/mpeg\">
-</audio><br><br><br>" >> "$DC_tlt/att.html"
-elif grep ".mp4" <<<"${file: -4}"; then
-echo "<h2>${file::-4}</h2>
+</audio><br><br>" >> "$DC_tlt/att.html"; fi
+done <<<"$(ls "$DM_tlt/files")"
+
+while read -r file; do
+if grep ".txt" <<<"${file: -4}"; then
+txto=$(sed ':a;N;$!ba;s/\n/<br>/g' \
+< "$DM_tlt/files/$file" \
+| sed 's/\"/\&quot;/;s/\&/&amp;/g')
+echo "<div class=\"summary\">
+<h2>${file::-4}</h2><br>$txto \
+<br><br><br></div>" >> "$DC_tlt/att.html"; fi
+done <<<"$(ls "$DM_tlt/files")"
+
+while read -r file; do
+if grep ".mp4" <<<"${file: -4}"; then
+echo "${file::-4}<br><br>
 <video width=450 height=280 controls>
 <source src=\"../files/$file\" type=\"video/mp4\">
 </video><br><br><br>" >> "$DC_tlt/att.html"
 elif grep ".m4v" <<<"${file: -4}"; then
-echo "<h2>${file::-4}</h2>
+echo "${file::-4}<br><br>
 <video width=450 height=280 controls>
 <source src=\"../files/$file\" type=\"video/mp4\">
 </video><br><br><br>" >> "$DC_tlt/att.html"
 elif grep ".jpg" <<<"${file: -4}"; then
-echo "<h2>${file::-4}</h2>
+echo "${file::-4}<br><br>
 <img src=\"../files/$file\" alt=\"$name\" \
 style=\"width:100%;height:100%\"><br><br><br>" \
 >> "$DC_tlt/att.html"
 elif grep ".jpeg" <<<"${file: -5}"; then
-echo "<h2>${file::-5}</h2>
+echo "${file::-5}<br><br>
 <img src=\"../files/$file\" alt=\"$name\" \
 style=\"width:100%;height:100%\"><br><br><br>" \
 >> "$DC_tlt/att.html"
 elif grep ".png" <<<"${file: -4}"; then
-echo "<h2>${file::-4}</h2>
+echo "${file::-4}<br><br>
 <img src=\"../files/$file\" alt=\"$name\" \
 style=\"width:100%;height:100%\"><br><br><br>" \
 >> "$DC_tlt/att.html"
-elif grep ".txt" <<<"${file: -4}"; then
-txto=$(sed ':a;N;$!ba;s/\n/<br>/g' \
-< "$DM_tlt/files/$file" \
-| sed 's/\"/\&quot;/;s/\&/&amp;/g')
-echo "<br><br><div class=\"summary\">$txto \
-<br><br><br></div>" >> "$DC_tlt/att.html"
 elif grep ".url" <<<"${file: -4}"; then
 url=$(tr -d '=' < "$DM_tlt/files/$file" \
 | sed 's|watch?v|v\/|;s|https|http|g')
 echo "<iframe width=\"100%\" height=\"85%\" src=\"$url\" \
 frameborder=\"0\" allowfullscreen></iframe>
-<br>" >> "$DC_tlt/att.html"
+<br><br>" >> "$DC_tlt/att.html"
 elif grep ".gif" <<<"${file: -4}"; then
-echo "<h2>${file::-4}</h2>
+echo "${file::-4}<br><br>
 <img src=\"../files/$file\" alt=\"$name\" \
 style=\"width:100%;height:100%\"><br><br><br>" \
->> "$DC_tlt/att.html"
-fi
-        done <<<"$(ls "$DM_tlt/files")"
+>> "$DC_tlt/att.html"; fi
+done <<<"$(ls "$DM_tlt/files")"
+
+echo "</body>" >> "$DC_tlt/att.html"
     
-echo "<br><br>
-</body>" >> "$DC_tlt/att.html"
-            
     } >/dev/null 2>&1
     
     [ ! -d "$DM_tlt/files" ] && mkdir "$DM_tlt/files"
@@ -490,8 +500,8 @@ echo "<br><br>
         --name=Idiomind --class=Idiomind \
         --uri="$DC_tlt/att.html" --browser \
         --window-icon="$DS/images/icon.png" --center \
-        --width=660 --height=580 --borders=10 \
-        --button="$(gettext "Folder")":3 \
+        --width=680 --height=580 --borders=10 \
+        --button="$(gettext "Folder")":"xdg-open \"$DM_tlt\"/files" \
         --button="$(gettext "Video URL")":2 \
         --button="gtk-add":0 \
         --button="gtk-close":1
@@ -500,21 +510,18 @@ echo "<br><br>
             "$DS/ifs/tls.sh" add_file
             elif [ $ret = 2 ]; then
             "$DS/ifs/tls.sh" videourl
-            elif [ $ret = 3 ]; then 
-            xdg-open "$DM_tlt/files"
             fi
             if [ "$ch1" != "$(ls -A "$DM_tlt/files")" ]; then
-                mkindex
-            fi
+            mkindex; fi
         
     else
         yad --form --title="$(gettext "Attached Files")" \
-        --text="$(gettext "Save files related to topic.")" \
+        --text="  $(gettext "Save files related to topic")" \
         --name=Idiomind --class=Idiomind \
         --window-icon="$DS/images/icon.png" --center \
         --width=350 --height=180 --borders=5 \
         --field="$(gettext "Add File")":FBTN "$DS/ifs/tls.sh 'add_file'" \
-        --field="$(gettext "YouTube video URL")":FBTN "$DS/ifs/tls.sh 'videourl'" \
+        --field="$(gettext "YouTube Video URL")":FBTN "$DS/ifs/tls.sh 'videourl'" \
         --button="$(gettext "Cancel")":1 \
         --button="$(gettext "OK")":0
         ret=$?
@@ -526,36 +533,30 @@ echo "<br><br>
 
 help() {
 
-    internet
-    web="http://idiomind.sourceforge.net/doc/help.html"
-    yad --html --title="$(gettext "Help")" \
-    --name=Idiomind --class=Idiomind \
-    --uri="$web" --browser \
-    --window-icon="$DS/images/icon.png" --fixed \
-    --width=700 --height=600 \
-    --button="$(gettext "OK")":0
+    URL="http://idiomind.sourceforge.net/doc/$(gettext "help").pdf"
+    xdg-open "$URL"
      
 } >/dev/null 2>&1
     
 definition() {
 
-    web="http://glosbe.com/$lgt/$lgs/${2,,}"
-    xdg-open "$web"
+    URL="http://glosbe.com/$lgt/$lgs/${2,,}"
+    xdg-open "$URL"
 }
 
 web() {
 
-    web=http://idiomind.sourceforge.net
+    web="http://idiomind.sourceforge.net"
     xdg-open "$web/$lgs/${lgtl,,}" >/dev/null 2>&1
 }
 
 fback() {
     
     internet
-    web="http://idiomind.sourceforge.net/doc/msg.html"
+    URL="http://idiomind.sourceforge.net/doc/msg.html"
     yad --html --title="$(gettext "Feedback")" \
     --name=Idiomind --class=Idiomind \
-    --browser --uri="$web" \
+    --browser --uri="$URL" \
     --window-icon="$DS/images/icon.png" \
     --no-buttons --fixed \
     --width=500 --height=450
@@ -565,13 +566,15 @@ fback() {
 check_updates() {
 
     internet
-    rversion="$(curl http://idiomind.sourceforge.net/doc/release | sed -n 1p)"
+    nver=`curl http://idiomind.sourceforge.net/doc/release | sed -n 1p`
+    cver=`echo "$(idiomind -v)"`
     pkg='https://sourceforge.net/projects/idiomind/files/idiomind.deb/download'
     echo "$(date +%d)" > "$DC_s/9.cfg"
+    if [ ${#nver} -lt 9 ] && [ ${#cver} -lt 9 ] \
+    && [ ${#nver} -ge 3 ] && [ ${#cver} -ge 3 ] \
+    && [ "$nver" != "$cver" ]; then
     
-    if [ -n "${rversion##+([[:space:]])}" ] && [ "$rversion" != "$(idiomind -v)" ]; then
-    
-        msg_2 "<b> $(gettext "A new version of Idiomind available") </b>\n\n" \
+        msg_2 " <b>$(gettext "A new version of Idiomind available\!")</b>\n" \
         info "$(gettext "Download")" "$(gettext "Cancel")" $(gettext "Updates")
         ret=$(echo $?)
         
@@ -581,7 +584,7 @@ check_updates() {
         fi
         
     else
-        msg "$(gettext "No updates available.")\n" info $(gettext "Updates")
+        msg " $(gettext "No updates available.")\n" info $(gettext "Updates")
     fi
 
     exit 0
@@ -601,12 +604,14 @@ a_check_updates() {
         curl -v www.google.com 2>&1 | \
         grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
         echo "$d2" > "$DC_s/9.cfg"
-        rversion="$(curl http://idiomind.sourceforge.net/doc/release | sed -n 1p)"
+        nver=`curl http://idiomind.sourceforge.net/doc/release | sed -n 1p`
+        cver=`echo "$(idiomind -v)"`
         pkg='https://sourceforge.net/projects/idiomind/files/idiomind.deb/download'
-        
-        if [ -n "${rversion##+([[:space:]])}" ] && [ "$rversion" != "$(idiomind -v)" ]; then
+        if [ ${#nver} -lt 9 ] && [ ${#cver} -lt 9 ] \
+        && [ ${#nver} -ge 3 ] && [ ${#cver} -ge 3 ] \
+        && [ "$nver" != "$cver" ]; then
             
-            msg_2 "<b>$(gettext "A new version of Idiomind available")\n</b>\n$(gettext "Do you want to download it now?")\n" info "$(gettext "Yes")" "$(gettext "No")" "$(gettext "Updates")" "$(gettext "Ignore this update")"
+            msg_2 " <b>$(gettext "A new version of Idiomind available\!")\n</b>\n $(gettext "Do you want to download it now?")\n" info "$(gettext "Download")" "$(gettext "No")" "$(gettext "Updates")" "$(gettext "Ignore")"
             ret=$(echo $?)
             
             if [[ $ret -eq 0 ]]; then
@@ -625,13 +630,20 @@ a_check_updates() {
 
 about() {
 
+#about.set_website(app_website)
+#about.set_website_label(web)
+c="$(gettext "Vocabulary learning tool")"
+website="$(gettext "Web Site")"
+export c website
 python << END
 import gtk
 import os
 app_logo = os.path.join('/usr/share/idiomind/images/idiomind.png')
+app_icon = os.path.join('/usr/share/idiomind/images/icon.png')
 app_name = 'Idiomind'
 app_version = 'v2.2-beta'
-app_comments = 'Vocabulary learning tool'
+app_comments = os.environ['c']
+web = os.environ['website']
 app_copyright = 'Copyright (c) 2015 Robin Palatnik'
 app_website = 'http://idiomind.sourceforge.net/'
 app_license = (('This program is free software: you can redistribute it and/or modify\n'+
@@ -653,6 +665,7 @@ class AboutDialog:
     def __init__(self):
         about = gtk.AboutDialog()
         about.set_logo(gtk.gdk.pixbuf_new_from_file(app_logo))
+        about.set_icon_from_file(app_icon)
         about.set_wmclass('Idiomind', 'Idiomind')
         about.set_name(app_name)
         about.set_program_name(app_name)
@@ -660,8 +673,6 @@ class AboutDialog:
         about.set_comments(app_comments)
         about.set_copyright(app_copyright)
         about.set_license(app_license)
-        about.set_website(app_website)
-        about.set_website_label('Homepage')
         about.set_authors(app_authors)
         about.set_artists(app_artists)
         about.run()
@@ -671,7 +682,7 @@ if __name__ == "__main__":
     AboutDialog = AboutDialog()
     main()
 END
-}
+} >/dev/null 2>&1
 
 set_image() {
 
@@ -679,38 +690,32 @@ set_image() {
     if [ "$3" = word ]; then
     item=$(eyeD3 "$2" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
     elif [ "$3" = sentence ]; then
-    item=$(eyeD3 "$2" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)')
-    fi
-    search="$(sed "s/'//g" <<<"$item")"
+    item=$(eyeD3 "$2" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)'); fi
+    q="$(sed "s/'/ /g" <<<"$item")"
     file="$2"
     fname="$(nmfile "$item")"
+    source "$DS/ifs/mods/add/add.sh"
 
     echo -e "<html><head>
-    <meta http-equiv=\"Refresh\" content=\"0;url=https://www.google.com/search?q="$search"&tbm=isch\">
-    </head><body><p>Search images for \"$search\"...</p></body></html>" > search.html
+    <meta http-equiv=\"Refresh\" content=\"0;url=https://www.google.com/search?q="$q"&tbm=isch\">
+    </head><body><p>Search images for \"$q\"...</p></body></html>" > search.html
     btn1="--button="$(gettext "Image")":3"
 
     if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
     image="--image=$DM_tlt/words/images/$fname.jpg"
     btn1="--button="$(gettext "Change")":3"
     btn2="--button="$(gettext "Delete")":2"
-    else label="--text=\t<small><a href='file://$DT/search.html'>"$(gettext "Search image related")"</a></small>"; fi
+    else label="--text=<small><a href='file://$DT/search.html'>"$(gettext "Search image")"</a></small>"; fi
 
     if [ "$3" = word ]; then
-        
-        yad --form --title=$(gettext "Image") "$image" "$label" \
-        --name=Idiomind --class=Idiomind \
-        --window-icon="$DS/images/icon.png" \
-        --skip-taskbar --image-on-top \
-        --align=center --center --on-top \
-        --width=420 --height=320 --borders=5 \
-        "$btn1" "$btn2" --button=$(gettext "Close"):1
-        ret=$?
+
+        dlg_form_3
+        ret=$(echo $?)
             
             if [[ $ret -eq 3 ]]; then
             
             rm -f *.l
-            scrot -s --quality 80 "$fname.temp.jpeg"
+            scrot -s --quality 90 "$fname.temp.jpeg"
             /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 100x90^ \
             -gravity center -extent 100x90 -quality 90% "$item"_temp.jpeg
             /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 400x270^ \
@@ -729,18 +734,13 @@ set_image() {
             
     elif [ "$3" = sentence ]; then
     
-        yad --form --title=$(gettext "Image") "$image" "$label" \
-        --name=Idiomind --class=Idiomind \
-        --window-icon="$DS/images/icon.png" \
-        --skip-taskbar --image-on-top --center --on-top \
-        --width=420 --height=320 --borders=5 \
-        "$btn1" "$btn2" --button=$(gettext "Close"):1
-        ret=$?
+        dlg_form_3
+        ret=$(echo $?)
                 
             if [[ $ret -eq 3 ]]; then
             
             rm -f *.l
-            scrot -s --quality 80 "$fname.temp.jpeg"
+            scrot -s --quality 90 "$fname.temp.jpeg"
             /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 100x90^ \
             -gravity center -extent 100x90 -quality 90% "$item"_temp.jpeg
             /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 400x270^ \
@@ -757,9 +757,10 @@ set_image() {
             
             fi
     fi
-    
-    rm -f "$DT/search.html" "$DT"/*.jpeg & exit
+    rm -f "$DT"/*.jpeg
+    (sleep 50 && rm -f "$DT/search.html") & exit
 }  >/dev/null 2>&1
+
 
 mkpdf() {
 
@@ -1001,9 +1002,8 @@ elif [ "$1" = play_temp ]; then
 
     nmt=$(sed -n 1p "/tmp/.idmtp1.$USER/dir$2/folder")
     dir="/tmp/.idmtp1.$USER/dir$2/$nmt"
-    play "$dir/audio/${3,,}.mp3";
+    play "$dir/audio/${3,,}.mp3"
     exit
-
 fi
 
 gtext() {
@@ -1044,6 +1044,8 @@ case "$1" in
     set_image "$@" ;;
     pdf)
     mkpdf ;;
+    html)
+    mkhtml ;;
     fback)
     fback ;;
     about)

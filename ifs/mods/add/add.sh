@@ -1,16 +1,19 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+if ([ -z "$lgtl" ] || [ -z "$lgsl" ]); then
+msg "$(gettext "Please check the language settings in the preferences dialog.")\n" error & exit 1
+fi
 
 function mksure() {
     
     e=0
-    if [ ! -f "${1}" ] || \
-    [ `stat --printf="%s" "${1}" | cut -c -3` -lt 100 ]; then
+    if [[ ! -f "${1}" ]] || \
+    [[ `stat --printf="%s" "${1}" | cut -c -3` -lt 100 ]]; then
     e=1; fi
     for str in "${@}"; do
         shopt -s extglob
-        if [ -z "${str##+([[:space:]])}" ]; then
+        if [[ -z "${str##+([[:space:]])}" ]]; then
         e=1; break; fi
     done
     return $e
@@ -26,11 +29,11 @@ function index() {
     DC_tlt="$DM_tl/$3/.conf"
     item="${2}"
     
-    if [ ! -z "${item}" ] && ! grep -Fxo "${item}" < "$DC_tlt/0.cfg"; then
+    if [ ! -z "${item}" ] && ! grep -Fxo "${item}" "$DC_tlt/0.cfg"; then
     
         if [ "$1" = word ]; then
         
-            if [ "$(grep "$4" < "$DC_tlt/0.cfg")" ] && [ -n "$4" ]; then
+            if [ "$(grep "$4" "$DC_tlt/0.cfg")" ] && [ -n "$4" ]; then
             sed -i "s/${4}/${4}\n${item}/" "$DC_tlt/0.cfg"
             sed -i "s/${4}/${4}\n${item}/" "$DC_tlt/1.cfg"
             sed -i "s/${4}/${4}\n${item}/" "$DC_tlt/.11.cfg"
@@ -52,12 +55,29 @@ function index() {
     if [ "$1" = edit ]; then
             
         item="${item}"; item_mod="${4}"
-        sed -i "s/${item}/${item_mod}/" "$DC_tlt/0.cfg"
-        sed -i "s/${item}/${item_mod}/" "$DC_tlt/1.cfg"
-        sed -i "s/${item}/${item_mod}/" "$DC_tlt/2.cfg"
-        sed -i "s/${item}/${item_mod}/" "$DC_tlt/4.cfg"
         sed -i "s/${item}/${item_mod}/" "$DC_tlt/.11.cfg"
-        sed -i "s/${item}/${item_mod}/" "$DC_tlt/practice/lsin"
+        
+        sust(){
+            for inx in "${@}"; do
+                if grep -Fxo "${item}" "$inx"; then
+                sed -i "s/${item}/${item_mod}/" "$inx"
+                fi
+            done
+        }
+        
+        sust "$DC_tlt/0.cfg" \
+        "$DC_tlt/1.cfg" "$DC_tlt/2.cfg" \
+        "$DC_tlt/3.cfg" "$DC_tlt/4.cfg" \
+        "$DC_tlt/practice/lsin" \
+        "$DC_tlt/practice/fin" "$DC_tlt/practice/mcin" \
+        "$DC_tlt/practice/win" "$DC_tlt/practice/iin" \
+        "$DC_tlt/6.cfg"
+        
+    elif [ "$1" = txt_missing ]; then
+    
+        echo "${item}" >> "$DC_tlt/0.cfg"
+        echo "${item}" >> "$DC_tlt/1.cfg"
+        echo "${item}" >> "$DC_tlt/4.cfg"
     fi
     
     sleep 0.5
@@ -67,15 +87,17 @@ function index() {
 
 function check_grammar_1() {
     
-    g=$(sed 's/ /\n/g' <<<"$trgt")
-    cd "$1"; touch "A.$r" "B.$r" "g.$r"; n=1
-    while [[ $n -le $(wc -l <<<"$g") ]]; do
-        grmrk=$(sed -n "$n"p <<<"$g")
-        chck=$(sed -n "$n"p <<<"$g,," | sed 's/,//;s/\.//g')
+    touch "A.$r" "B.$r" "g.$r"
+    while read -r grmrk; do
+        chck=$(sed 's/,//;s/\.//g' <<<"${grmrk,,}")
         if grep -Fxq "$chck" <<<"$pronouns"; then
-            echo "<span color='#35559C'>$grmrk</span>" >> "g.$2"
+            echo "<span color='#3E539A'>$grmrk</span>" >> "g.$2"
+        elif grep -Fxq "$chck" <<<"$nouns_adjetives"; then
+            echo "<span color='#496E60'>$grmrk</span>" >> "g.$2"
+        elif grep -Fxq "$chck" <<<"$adjetives"; then
+            echo "<span color='#3E8A3B'>$grmrk</span>" >> "g.$2"
         elif grep -Fxq "$chck" <<<"$nouns_verbs"; then
-            echo "<span color='#896E7A'>$grmrk</span>" >> "g.$2"
+            echo "<span color='#62426A'>$grmrk</span>" >> "g.$2"
         elif grep -Fxq "$chck" <<<"$conjunctions"; then
             echo "<span color='#90B33B'>$grmrk</span>" >> "g.$2"
         elif grep -Fxq "$chck" <<<"$verbs"; then
@@ -84,46 +106,51 @@ function check_grammar_1() {
             echo "<span color='#D67B2D'>$grmrk</span>" >> "g.$2"
         elif grep -Fxq "$chck" <<<"$adverbs"; then
             echo "<span color='#9C68BD'>$grmrk</span>" >> "g.$2"
-        elif grep -Fxq "$chck" <<<"$nouns_adjetives"; then
-            echo "<span color='#496E60'>$grmrk</span>" >> "g.$2"
-        elif grep -Fxq "$chck" <<<"$adjetives"; then
-            echo "<span color='#3E8A3B'>$grmrk</span>" >> "g.$2"
         else
             echo "$grmrk" >> "g.$2"
         fi
-        let n++
-    done
+    done < <(sed 's/ /\n/g' <<<"$trgt")
 }
 
 
 function check_grammar_2() {
 
     if grep -Fxq "${1,,}" <<<"$pronouns"; then echo 'Pron. ';
+    elif grep -Fxq "${1,,}" <<<"$nouns_adjetives"; then echo 'Noun, Adj. ';
+    elif grep -Fxq "${1,,}" <<<"$adjetives"; then echo 'Adj. ';
     elif grep -Fxq "${1,,}" <<<"$conjunctions"; then echo 'Conj. ';
     elif grep -Fxq "${1,,}" <<<"$prepositions"; then echo 'Prep. ';
-    elif grep -Fxq "${1,,}" <<<"$adverbs"; then echo 'adv. ';
-    elif grep -Fxq "${1,,}" <<<"$nouns_adjetives"; then echo 'Noun, Adj. ';
+    elif grep -Fxq "${1,,}" <<<"$adverbs"; then echo 'Adv. ';
     elif grep -Fxq "${1,,}" <<<"$nouns_verbs"; then echo 'Noun, Verb ';
-    elif grep -Fxq "${1,,}" <<<"$adjetives"; then echo 'adj. ';
     elif grep -Fxq "${1,,}" <<<"$verbs"; then echo 'verb. '; fi
 }
 
 
+function clean_0() {
+    
+    echo "$1" | sed ':a;N;$!ba;s/\n/ /g' \
+    | sed 's/&//;s/://;s/\.//g' | sed "s/’/'/;s/|//g" \
+    | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
+    | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \
+    | tr -s '“' ' ' | tr -s '”' ' ' | tr -s '"' ' '
+}
+
 function clean_1() {
     
-    #iconv -c -f utf8 -t ascii 
+    #iconv -c -f utf8 -t ascii
     if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
-    echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' \
-    | sed 's/"//; s/“//;s/&//; s/”//;s/://'g | sed "s/’/'/g" \
-    | sed "s/|//g" \
+    echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" \
+    | tr -s '“' ' ' | tr -s '”' ' ' | tr -s '"' ' ' \
+    | tr -s '&' ' ' | tr -s ':' ' ' | tr -s '|' ' ' \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
-    | sed 's/^ *//; s/ *$//g'
+    | sed 's/^ *//; s/ *$//g' | sed 's/–//g'
     else
-    echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' \
-    | sed 's/“//;s/&//; s/”//;s/://'g | sed "s/’/'/g" \
-    | sed "s/|//g" \
+    echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" \
+    | tr -s '“' ' ' | tr -s '”' ' ' | tr -s '"' ' ' \
+    | tr -s '&' ' ' | tr -s ':' ' ' | tr -s '|' ' ' \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
-    | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g'
+    | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \
+    | sed 's/–//g'
     fi
 }
 
@@ -138,16 +165,20 @@ function clean_2() {
 
 function clean_3() {
     
-    cd "$1"; touch "swrd.$2" "twrd.$2"
+    cd /; cd "$1"; touch "swrd.$2" "twrd.$2"
     if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
     vrbl="${srce}"; lg=$lgt; aw="swrd.$2"; bw="twrd.$2"
     else vrbl="${trgt}"; lg=$lgs; aw="twrd.$2"; bw="swrd.$2"; fi
-    
     echo "${vrbl}" | sed 's/ /\n/g' | grep -v '^.$' \
     | grep -v '^..$' | sed -n 1,50p | sed s'/&//'g \
     | sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
     | tr -d ')' | tr -d '(' | sed 's/\]//;s/\[//g' \
     | sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //;s/"//g' > "$aw"
+}
+
+function clean_4() {
+    
+    echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' | sed 's/–//g' | sed '/^$/d'
 }
 
 
@@ -212,7 +243,7 @@ function tags_9() {
 
 function set_image_1() {
     
-    scrot -s --quality 80 img.jpg
+    scrot -s --quality 90 img.jpg
     /usr/bin/convert img.jpg -interlace Plane -thumbnail 110x90^ \
     -gravity center -extent 110x90 -quality 90% ico.jpg
 }
@@ -240,25 +271,29 @@ function list_words() {
     
     sed -i 's/\. /\n/g' "$bw"
     sed -i 's/\. /\n/g' "$aw"
-    cd "$1"; touch "A.$2" "B.$2" "g.$2"; n=1
+    DT_r="$1"; cd "$DT_r"; touch "$DT_r/A.$2" "$DT_r/B.$2" "$DT_r/g.$2"; n=1
     
     if [ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]; then
-        while [ $n -le "$(wc -l < "$aw")" ]; do
+        while [[ $n -le "$(wc -l < "$aw")" ]]; do
         s=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
         t=$(sed -n "$n"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-        echo ISTI"$n"I0I"$t"ISTI"$fetch_audion"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> "A.$2"
-        echo "$t"_"$s""" >> "B.$2"
+        echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> "$DT_r/A.$2"
+        echo "$t"_"$s""" >> "$DT_r/B.$2"
         let n++
         done
     else
-        while [ $n -le "$(wc -l < "$aw")" ]; do
+        while [[ $n -le "$(wc -l < "$aw")" ]]; do
         t=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
         s=$(sed -n "$n"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-        echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> "A.$2"
-        echo "$t"_"$s""" >> "B.$2"
+        echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> "$DT_r/A.$2"
+        echo "$t"_"$s""" >> "$DT_r/B.$2"
         let n++
         done
     fi
+    
+    grmrk="$(sed ':a;N;$!ba;s/\n/ /g' < "$DT_r/g.$r")"
+    lwrds="$(< "$DT_r/A.$r")"
+    pwrds="$(tr '\n' '_' < "$DT_r/B.$r")"
 }
 
 
@@ -278,10 +313,10 @@ function tts() {
 
 function voice() {
     
-    synth="$(sed -n 12p < "$DC_s/1.cfg" \
+    synth="$(sed -n 13p < "$DC_s/1.cfg" \
     | grep -o synth=\"[^\"]* | grep -o '[^"]*$')"
-
-    cd "$2"
+    DT_r="$2"; cd "$DT_r"
+    
     if [ -n "$synth" ]; then
     
         if [ "$synth" = 'festival' ] || [ "$synth" = 'text2wave' ]; then
@@ -290,28 +325,27 @@ function voice() {
             if ([ $lg = "english" ] \
             || [ $lg = "spanish" ] \
             || [ $lg = "russian" ]); then
-            echo "$1" | text2wave -o ./s.wav
-            sox ./s.wav "$3"
+            echo "$1" | text2wave -o "$DT_r/s.wav"
+            sox "$DT_r/s.wav" "${3}"
             else
-            msg "$(gettext "Sorry, <b>festival</b> can not process this language.")\n" error
+            msg "$(gettext "Sorry, can not process this language.")\n" error
             [ "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
         else
-            echo "$1" | "$synth"
-            [ -f *.mp3 ] && mv -f *.mp3 "$3"
-            [ -f *.wav ] && sox *.wav "$3"
+            echo "${1}" | "$synth"
+            [ -f *.mp3 ] && mv -f *.mp3 "${3}"
+            [ -f *.wav ] && sox *.wav "${3}"
         fi
-    else
-    
-        lg="${lgtl,,}"
         
+    else
+        lg="${lgtl,,}"
         [ $lg = chinese ] && lg=Mandarin
         [ $lg = portuguese ] && lg=brazil
         [ $lg = vietnamese ] && lg=vietnam
-        if [ $lg = japanese ]; then msg "$(gettext "Sorry, <b>espeak</b> can not process Japanese language.")\n" error
+        if [ $lg = japanese ]; then msg "$(gettext "Sorry, can not process Japanese language.")\n" error
         [ "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
         
-        espeak "$1" -v $lg -k 1 -p 40 -a 80 -s 110 -w ./s.wav
-        sox ./s.wav "$3"
+        espeak "${1}" -v $lg -k 1 -p 40 -a 80 -s 110 -w "$DT_r/s.wav"
+        sox "$DT_r/s.wav" "${3}"
     fi
 }
 
@@ -328,7 +362,7 @@ function fetch_audio() {
             dictt "${word,,}" $3
             
             if [ -f "$3/${word,,}.mp3" ]; then
-                    mv -f "$3/${word,,}.mp3" "$4/${word,,}.mp3"
+                mv -f "$3/${word,,}.mp3" "$4/${word,,}.mp3"
             else
                 voice "$word" "$3" "$4/${word,,}.mp3"
             fi
@@ -352,11 +386,14 @@ function list_words_2() {
 function list_words_3() {
 
     if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
-    echo "$2" | tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > lst
+    echo "$2" | sed 's/\[ \.\.\. ] //g' | sed 's/\.//g' \
+    | tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > lst
     else
-    cat "$1" | tr -c "[:alnum:]" '\n' | sed '/^$/d' | sed '/"("/d' \
-    | sed '/")"/d' | sed '/":"/d' | sort -u \
-    | head -n40 | egrep -v "FALSE" | egrep -v "TRUE" > lst
+    cat "$1" | sed 's/\[ \.\.\. ] //g' | sed 's/\.//g' \
+    | tr -s "[:blank:]" '\n' | sed '/^$/d' | sed '/"("/d' \
+    | grep -v '^.$' | grep -v '^..$' \
+    | sed '/")"/d' | sed '/":"/d' | sed 's/[^ ]\+/\L\u&/g' \
+    | head -n100 | egrep -v "FALSE" | egrep -v "TRUE" > lst
     fi
 }
 
@@ -374,16 +411,16 @@ function dlg_form_0() {
 
 
 function dlg_form_1() {
-
+    
     yad --form --title="$(gettext "New note")" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --separator="\n" \
     --skip-taskbar --center --on-top \
     --align=right --image="$img" \
     --window-icon="$DS/images/icon.png" \
-    --width=450 --height=140 --borders=0 \
+    --width=450 --height=130 --borders=0 \
     --field="" "$txt" \
-    --field=":CB" "$ltopic!$(gettext "New") *$e$tpcs" \
+    --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
     --button="$(gettext "Image")":3 \
     --button="$(gettext "Audio")":2 \
     --button=gtk-add:0
@@ -398,47 +435,44 @@ function dlg_form_2() {
     --skip-taskbar --center --on-top \
     --align=right --image="$img" \
     --window-icon="$DS/images/icon.png" \
-    --width=450 --height=170 --borders=0 \
+    --width=450 --height=150 --borders=0 \
     --field="" "$txt" \
     --field="" "$srce" \
-    --field=":CB" "$ltopic!$(gettext "New") *$e$tpcs" \
+    --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
     --button="$(gettext "Image")":3 \
     --button="$(gettext "Audio")":2 \
     --button=gtk-add:0
 }
 
-#<small>$lgtl</small>
-#<small>${lgsl^}</small>
-#$atopic
- 
+
 function dlg_radiolist_1() {
     
     echo "$1" | awk '{print "FALSE\n"$0}' | \
-    yad --list --radiolist --title="$(gettext "Listing words")" \
+    yad --list --radiolist --title="$(gettext "Word list")" \
     --text="<b>$te</b> <small> $info</small>" \
     --name=Idiomind --class=Idiomind \
     --separator="\n" \
     --window-icon="$DS/images/icon.png" \
-    --sticky --skip-taskbar --center --on-top --fixed --no-headers \
+    --skip-taskbar --center --on-top --fixed --no-headers \
     --width=150 --height=420 --borders=5 \
     --column=" " --column=" " \
-    --button=gtk-add:0
+    --button="gtk-add":0
 }
 
 
 function dlg_checklist_1() {
     
     cat "$1" | awk '{print "FALSE\n"$0}' | \
-    yad --list --checklist --title="$(gettext "Listing words")" \
+    yad --list --checklist --title="$(gettext "Word list")" \
     --text="<small> $2 </small>" \
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" \
-    --center --on-top --sticky --no-headers \
+    --center --on-top --no-headers \
     --text-align=right --buttons-layout=end \
     --width=400 --height=280 --borders=5  \
     --column=" " --column="Select" \
     --button="$(gettext "Close")":1 \
-    --button="$(gettext "Add")":0 > "$slt"
+    --button="gtk-add":0 > "$slt"
 }
 
 
@@ -449,16 +483,15 @@ function dlg_checklist_3() {
     yad --list --checklist --title="$2" \
     --text="<small>$info</small> " \
     --name=Idiomind --class=Idiomind \
-    --dclick-action="'/usr/share/idiomind/add.sh' 'dclik_list_words'" \
+    --dclick-action="'/usr/share/idiomind/add.sh' 'list_words_dclik'" \
     --window-icon="$DS/images/icon.png" \
-    --ellipsize=END --text-align=right --center --sticky --no-headers \
+    --ellipsize=END --text-align=right --center --no-headers \
     --width=600 --height=550 --borders=5 \
     --column="$(wc -l < "$1")" \
     --column="$(gettext "sentences")" \
     --button="$(gettext "Cancel")":1 \
-    --button=$(gettext "Reorder"):2 \
-    --button="$(gettext "New topic")":"$DS/add.sh 'new_topic'" \
-    --button=gtk-add:0 > "$slt"
+    --button=$(gettext "Edit"):2 \
+    --button="gtk-add":0 > "$slt"
 }
 
 
@@ -470,9 +503,9 @@ function dlg_text_info_1() {
     --editable \
     --window-icon="$DS/images/icon.png" \
     --wrap --margins=30 --fontname=vendana \
-    --sticky --skip-taskbar --center --on-top \
+    --skip-taskbar --center --on-top \
     --width=600 --height=550 --borders=5 \
-    --button=gtk-ok:0 > ./sort
+    --button="gtk-ok":0 > ./sort
 }
 
 
@@ -482,10 +515,22 @@ function dlg_text_info_3() {
     --text="$1" \
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" \
-    --wrap --margins=4 \
+    --wrap --margins=5 \
     --center --on-top \
-    --width=510 --height=330 --borders=5 \
+    --width=510 --height=450 --borders=5 \
     "$3" --button="$(gettext "OK")":1
+}
+
+
+function dlg_form_3() {
+    
+    yad --form --title=$(gettext "Image") "$image" "$label" \
+    --name=Idiomind --class=Idiomind \
+    --window-icon="$DS/images/icon.png" \
+    --skip-taskbar --image-on-top \
+    --align=center --text-align=center --center --on-top \
+    --width=420 --height=320 --borders=5 \
+    "$btn1" "$btn2" --button=$(gettext "Close"):1
 }
 
 
