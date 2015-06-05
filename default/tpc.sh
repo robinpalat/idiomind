@@ -47,7 +47,7 @@ else
         echo '0' > "$DC_s/5.cfg"
         
         if [ ! -f "$DC_tlt/lst" ]; then
-        cp -f "$DC_tlt/1.cfg" "$DC_tlt/lst"; fi
+        "$DS/mngr.sh" colorize; fi
         
         if [ ! -f "$DT/.n_s_pr" ]; then
         "$DS/ifs/tls.sh" check_index "$topic"; fi

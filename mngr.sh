@@ -202,7 +202,7 @@ mark_as_learned() {
         echo 3 > "$DC_tlt/8.cfg"
         fi
     fi
-    rm "$DC_tlt/2.cfg" "$DC_tlt/1.cfg"
+    rm "$DC_tlt/2.cfg" "$DC_tlt/1.cfg" "$DC_tlt/lst" 
     touch "$DC_tlt/1.cfg"
     cp -f "$DC_tlt/0.cfg" "$DC_tlt/2.cfg"
     "$DS/mngr.sh" mkmn &
@@ -259,7 +259,8 @@ delete_item_ok() {
     sed '/^$/d' "$DC_tlt/$n.cfg.tmp" > "$DC_tlt/$n.cfg"; fi
     let n++
     done
-    "$DS/mngr.sh" colorize &
+    
+    if [ -f "$DC_tlt/lst" ]; then rm "$DC_tlt/lst"; fi
     rm "$DC_tlt"/*.tmp
     rm -f "$DT/ps_lk" & exit 1
 }
@@ -401,9 +402,9 @@ edit() {
                 if [ "$mark" != "$mark_mod" ]; then
                 
                     if [ "$mark_mod" = "TRUE" ]; then
-                    sed -i "${item_pos}s/^/<b>/;${item_pos}s/$/<\/b>/" "$DC_tlt/lst"
+                    sed -i "${item_pos}s/^/<b><big>/;${item_pos}s/$/<\/big><\/b>/" "$DC_tlt/lst"
                     echo "$trgt" >> "$DC_tlt/6.cfg"; else
-                    sed -i "${item_pos}s/<b>//;${item_pos}s/<\/b>//" "$DC_tlt/lst"
+                    sed -i "${item_pos}s/<b><big>//;${item_pos}s/<\/big><\/b>//" "$DC_tlt/lst"
                     grep -vxF "$trgt" "$DC_tlt/6.cfg" > "$DC_tlt/6.cfg.tmp"
                     sed '/^$/d' "$DC_tlt/6.cfg.tmp" > "$DC_tlt/6.cfg"
                     rm "$DC_tlt/6.cfg.tmp"; fi
@@ -534,9 +535,9 @@ edit() {
                 if [ "$mark" != "$mark_mod" ]; then
                 
                     if [ "$mark_mod" = "TRUE" ]; then
-                    sed -i "${item_pos}s/^/<b>/;${item_pos}s/$/<\/b>/" "$DC_tlt/lst"
+                    sed -i "${item_pos}s/^/<b><big>/;${item_pos}s/$/<\/big><\/b>/" "$DC_tlt/lst"
                     echo "$trgt_mod" >> "$DC_tlt/6.cfg"; else
-                    sed -i "${item_pos}s/<b>//;${item_pos}s/<\/b>//" "$DC_tlt/lst"
+                    sed -i "${item_pos}s/<b><big>//;${item_pos}s/<\/big><\/b>//" "$DC_tlt/lst"
                     grep -vxF "$trgt_mod" "$DC_tlt/6.cfg" > "$DC_tlt/6.cfg.tmp"
                     sed '/^$/d' "$DC_tlt/6.cfg.tmp" > "$DC_tlt/6.cfg"
                     rm "$DC_tlt/6.cfg.tmp"; fi
@@ -620,7 +621,7 @@ edit() {
 
 colorize() {
     
-    "$DS/practice/cls.sh colorize"
+    "$DS/practice/cls.sh" colorize
 }
 
 

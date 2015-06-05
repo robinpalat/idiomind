@@ -250,6 +250,8 @@ function topic() {
         export inx$n
         let n++
         done
+        if [ ! -f "$DC_tlt/lst" ]; then 
+        "$DS/mngr.sh" colorize; fi
         nt="$DC_tlt/10.cfg"
         author="$(sed -n 4p "$DC_tlt/12.cfg" \
         | grep -o 'author="[^"]*' | grep -o '[^"]*$')"

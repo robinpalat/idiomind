@@ -23,19 +23,19 @@ colorize() {
     while read item; do
         if grep -Fxo "$item" <<<"$n0"; then
             if grep -Fxo "$item" <<<"$m"; then
-            echo "<b><span color='green'>$item</span></b>" >> "$DC_tlt/lst"
+            echo "<b><big><span color='green'>$item</span></big></b>" >> "$DC_tlt/lst"
             else echo "<span color='green'>$item</span>" >> "$DC_tlt/lst"; fi
         elif grep -Fxo "$item" <<<"$n3"; then
             if grep -Fxo "$item" <<<"$m"; then
-            echo "<b><span color='OrangeRed3'>$item</span></b>" >> "$DC_tlt/lst"
+            echo "<b><big><span color='OrangeRed3'>$item</span></big></b>" >> "$DC_tlt/lst"
             else echo "<span color='OrangeRed3'>$item</span>" >> "$DC_tlt/lst"; fi
         elif grep -Fxo "$item" <<<"$n2"; then
             if grep -Fxo "$item" <<<"$m"; then
-            echo "<b><span color='orange'>$item</span></b>" >> "$DC_tlt/lst"
+            echo "<b><big><span color='orange'>$item</span></big></b>" >> "$DC_tlt/lst"
             else echo "<span color='orange'>$item</span>" >> "$DC_tlt/lst"; fi
         else
             if grep -Fxo "$item" <<<"$m"; then
-            echo "<b>$item</b>" >> "$DC_tlt/lst"
+            echo "<b><big>$item</big></b>" >> "$DC_tlt/lst"
             else echo "$item" >> "$DC_tlt/lst"; fi
         fi
     done < "$DC_tlt/1.cfg"
