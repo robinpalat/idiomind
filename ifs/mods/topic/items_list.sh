@@ -77,15 +77,16 @@ function notebook_1() {
     cmd_play="$DS/play.sh"
     list() {
     if [ -f "${DC_tlt}/5.cfg" ]; then
-    cat "${DC_tlt}/5.cfg"; else
+    tac "${DC_tlt}/5.cfg"; else
     tac "$ls1" | \
-    awk '{print "/usr/share/idiomind/images/0.png\n"$0"\n "}'; fi
+    awk '{print $0"\n/usr/share/idiomind/images/0.png\nFALSE"}'; fi
     }
+
     list | yad --list --tabnum=1 \
-    --plug=$KEY --print-all \
+    --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh '1'" \
-    --expand-column=2 --no-headers --ellipsize=END --tooltip-column=2 \
-    --column=Name:IMG --column=Name:TEXT --column=Learned:CHK > "$cnf1" &
+    --expand-column=1 --no-headers --ellipsize=END --tooltip-column=1 \
+    --column=Name:TEXT --column=Name:IMG --column=Learned:CHK > "$cnf1" &
     tac "$ls2" | yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh '2'" \

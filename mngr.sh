@@ -139,7 +139,7 @@ mark_to_learn() {
     rm "$DC_tlt/2.cfg" "$DC_tlt/1.cfg"
     touch "$DC_tlt/2.cfg"
     cp -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"
-
+    "$DS/ifs/tls.sh" colorize
     "$DS/mngr.sh" mkmn &
 
     [[ "$3" = 1 ]] && idiomind topic &
@@ -262,6 +262,7 @@ delete_item_ok() {
     
     if [ -f "$DC_tlt/lst" ]; then rm "$DC_tlt/lst"; fi
     rm "$DC_tlt"/*.tmp
+    "$DS/ifs/tls.sh" colorize
     rm -f "$DT/ps_lk" & exit 1
 }
 
@@ -328,7 +329,7 @@ delete_item() {
         done
         rm "$DC_tlt"/*.tmp
     fi
-    "$DS/mngr.sh" colorize &
+    "$DS/ifs/tls.sh" colorize &
     rm -f "$DT/ps_lk" & exit 1
 }
 
@@ -400,16 +401,14 @@ edit() {
                 rm -f "$file_tmp"
                 
                 if [ "$mark" != "$mark_mod" ]; then
-                
+                    p=$((item_pos))
                     if [ "$mark_mod" = "TRUE" ]; then
-                    sed -i "${item_pos}s/^/<b><big>/;${item_pos}s/$/<\/big><\/b>/" "${DC_tlt}/5.cfg"
                     echo "$trgt" >> "${DC_tlt}/6.cfg"; else
-                    sed -i "${item_pos}s/<b><big>//;${item_pos}s/<\/big><\/b>//" "${DC_tlt}/5.cfg"
                     grep -vxF "${trgt}" "${DC_tlt}/6.cfg" > "${DC_tlt}/6.cfg.tmp"
                     sed '/^$/d' "${DC_tlt}/6.cfg.tmp" > "${DC_tlt}/6.cfg"
                     rm "${DC_tlt}/6.cfg.tmp"; fi
                     tags_8 W "$mark_mod" "${DM_tlt}/words/$fname.mp3"
-                    
+                    "$DS/ifs/tls.sh" colorize
                 fi
                 
                 if [ "$audio_mod" != "$audiofile_1" ]; then
@@ -430,7 +429,7 @@ edit() {
                     temp="$(gettext "Processing")..."
                     tags_1 W "$trgt_mod" "$temp" "$DM_tlt/words/$fname_mod.mp3"
                     index edit "${trgt}" "${tpc}" "${trgt_mod}"
-                    "$DS/mngr.sh" colorize &
+                    "$DS/ifs/tls.sh" colorize &
                     (DT_r=$(mktemp -d "$DT/XXXX")
                     "$DS/add.sh" new_word "${trgt_mod}" "$DT_r" "${srce_mod}" 0) &
                     fname="$fname_mod"
@@ -527,7 +526,7 @@ edit() {
                     list_words "$DT_r" "$r"
                     tags_3 W "$lwrds" "$pwrds" "$grmrk" "$DM_tlt/$fname_mod.mp3"
                     fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
-                    "$DS/mngr.sh" colorize &
+                    "$DS/ifs/tls.sh" colorize &
                     [ "$DT_r" ] && rm -fr "$DT_r") &
                     fname="$fname_mod"
                 fi
@@ -535,13 +534,12 @@ edit() {
                 if [ "$mark" != "$mark_mod" ]; then
                 
                     if [ "$mark_mod" = "TRUE" ]; then
-                    sed -i "${item_pos}s/^/<b><big>/;${item_pos}s/$/<\/big><\/b>/" "${DC_tlt}/5.cfg"
                     echo "${trgt_mod}" >> "${DC_tlt}/6.cfg"; else
-                    sed -i "${item_pos}s/<b><big>//;${item_pos}s/<\/big><\/b>//" "${DC_tlt}/5.cfg"
                     grep -vxF "$trgt_mod" "${DC_tlt}/6.cfg" > "${DC_tlt}/6.cfg.tmp"
                     sed '/^$/d' "${DC_tlt}/6.cfg.tmp" > "${DC_tlt}/6.cfg"
                     rm "${DC_tlt}/6.cfg.tmp"; fi
                     tags_8 S "$mark_mod" "${DM_tlt}/$fname.mp3"
+                    "$DS/ifs/tls.sh" colorize
                 fi
                 
                 if [ -n "$audio_mod" ]; then

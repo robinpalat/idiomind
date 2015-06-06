@@ -76,82 +76,63 @@ sed -i '/^$/d' "$items"
 
 if [ "$(wc -l < "$items")" -gt 0 ]; then
 
-while read item; do
+#while read item; do
 
-    n=1
-    while [[ $n -le 15 ]]; do
+    #n=1
+    #while [[ $n -le 15 ]]; do
     
-        tpc="tpc$n"
-        list_a="list_a$n"
-        list_b="list_b$n"
+        #tpc="tpc$n"
+        #list_a="list_a$n"
+        #list_b="list_b$n"
 
-        #if [ -n "${!tpc}" ]; then
+        ##if [ -n "${!tpc}" ]; then
         
-            #if [ -f "${!list_a}" ]; then
-                #if grep -Fxo "$item" "${!list_a}"; then
-                    #grep -vxF "$item" "${!list_a}" > "$DT/list_a.tmp"
-                    #sed '/^$/d' "$DT/list_a.tmp" > "${!list_a}"
-                    #if ! grep -Fxo "$item" "${!list_b}"; then
-                    #echo "$item" >> "$DM_tl/${!tpc}/.conf/5.cfg"
-                    #echo "$item" >> "${!list_b}"; printf "${!tpc}%s\n --> $item"
-                    #fi
-                #fi
+            ##if [ -f "${!list_a}" ]; then
+                ##if grep -Fxo "$item" "${!list_a}"; then
+                    ##grep -vxF "$item" "${!list_a}" > "$DT/list_a.tmp"
+                    ##sed '/^$/d' "$DT/list_a.tmp" > "${!list_a}"
+                    ##if ! grep -Fxo "$item" "${!list_b}"; then
+                    ##echo "$item" >> "$DM_tl/${!tpc}/.conf/5.cfg"
+                    ##echo "$item" >> "${!list_b}"; printf "${!tpc}%s\n --> $item"
+                    ##fi
+                ##fi
+            ##fi
+        ##fi
+        
+        
+        
+        #DC_tlt="$DM_tl/${!tpc}/.conf"
+        #cd "${DC_tlt}/practice"; rm "${DC_tlt}/5.cfg"
+        #m=`cat "${DC_tlt}/6.cfg"`
+        #cfg5="${DC_tlt}/5.cfg"
+        #img1='/usr/share/idiomind/images/1.png'
+        #img2='/usr/share/idiomind/images/2.png'
+        #img3='/usr/share/idiomind/images/3.png'
+        #img0='/usr/share/idiomind/images/0.png'
+        
+
+        #while read -r item; do
+        
+            #if grep -Fxo "$item" <<<"$items"; then
+            #b=TRUE; else b=FALSE; fi
+            #if grep -Fxo "$item" <<<"$m"; then
+            #item="<b><big>$item</big></b>"; fi
+            
+            #if awk '++A[$1]==2' ./*.3 |grep -Fxo "$item"; then
+                #echo -e "$img3\n$item\n$b" >> "$cfg5"
+            #elif awk '++A[$1]==3' ./*.1 |grep -Fxo "$item"; then
+                #echo -e "$img1\n$item\n$b" >> "$cfg5"
+            #elif awk '++A[$1]==2' ./*.2 |grep -Fxo "$item"; then
+                #echo -e "$img2\n$item\n$b" >> "$cfg5"
+            #else
+                #echo -e "$img0\n$item\n$b" >> "$cfg5"
             #fi
-        #fi
-        
-        
-        
-        DC_tlt="$DM_tl/${!tpc}/.conf"
-        cd "${DC_tlt}/practice"; rm "${DC_tlt}/5.cfg"
-        m=`cat "${DC_tlt}/6.cfg"`
-        cfg5="${DC_tlt}/5.cfg"
-        img1='/usr/share/idiomind/images/1.png'
-        img2='/usr/share/idiomind/images/2.png'
-        img3='/usr/share/idiomind/images/3.png'
-        img0='/usr/share/idiomind/images/0.png'
-        
-        
-        while read -r item; do
-        
-            if grep -Fxo "$item" <<<"$items"; then
-            b=TRUE; else b=FALSE; fi
-        
-            if cat ./*.1 |awk '++A[$1]==3'|grep -Fxo "$item"; then
-                if grep -Fxo "$item" <<<"$m"; then
-                echo -e "$img1\n<b><big>$item</big></b>\n$b" >> "$cfg5"
-                else echo -e "$img1\n$item\n$b" >> "$cfg5"; fi
-                
-            elif cat ./*.2 |awk '++A[$1]==2'|grep -Fxo "$item"; then
-                if grep -Fxo "$item" <<<"$m"; then
-                echo -e "$img2\n<b><big>$item</big></b>\n$b" >> "$cfg5"
-                else echo -e "$img2\n$item\n$b" >> "$cfg5"; fi
-                
-            elif cat ./*.3 |awk '++A[$1]==3'|grep -Fxo "$item"; then
-                if grep -Fxo "$item" <<<"$m"; then
-                echo -e "$img3\n<b><big>$item</big></b>\n$b" >> "$cfg5"
-                else echo -e "$img3\n$item\n$b" >> "$cfg5"; fi
-            else
-                if grep -Fxo "$item" <<<"$m"; then
-                echo -e "$img0\n<b><big>$item</big></b>\n$b" >> "$cfg5"
-                else echo -e "$img0\n$item\n$b" >> "$cfg5"; fi
-            fi
-        done < <(tac "${DC_tlt}/1.cfg")
-        cd ~/
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        let n++
-    done
+        #done < <(tac "${DC_tlt}/1.cfg")
 
-done < "$items"
+        #let n++
+    #done
+
+#done < "$items"
 
 if [ "$(wc -l < "$items")" -ge 5 ]; then
 echo "$(wc -l < "$items") $(gettext "items marked as learnt")" >> "$DT/notify"

@@ -320,6 +320,7 @@ check_index() {
         ((n=n+1))
     done
     rm -f "$DT/index"
+    "$DS/ifs/tls.sh" colorize
     "$DS/mngr.sh" mkmn
     fi
     
@@ -566,6 +567,9 @@ colorize() {
 
     cd "${DC_tlt}/practice"; rm "${DC_tlt}/5.cfg"
     m=`cat "${DC_tlt}/6.cfg"`
+    s3=`awk '++A[$1]==2' ./*.3`
+    s2=`awk '++A[$1]==2' ./*.2`
+    s1=`awk '++A[$1]==3' ./*.1`
     cfg5="${DC_tlt}/5.cfg"
     img1='/usr/share/idiomind/images/1.png'
     img2='/usr/share/idiomind/images/2.png'
@@ -573,26 +577,19 @@ colorize() {
     img0='/usr/share/idiomind/images/0.png'
     
     while read -r item; do
-        if cat ./*.1 |awk '++A[$1]==3'|grep -Fxo "$item"; then
-            if grep -Fxo "$item" <<<"$m"; then
-            echo -e "$img1\n<b><big>$item</big></b>\nFALSE" >> "$cfg5"
-            else echo -e "$img1\n$item\nFALSE" >> "$cfg5"; fi
-            
-        elif cat ./*.2 |awk '++A[$1]==2'|grep -Fxo "$item"; then
-            if grep -Fxo "$item" <<<"$m"; then
-            echo -e "$img2\n<b><big>$item</big></b>\nFALSE" >> "$cfg5"
-            else echo -e "$img2\n$item\nFALSE" >> "$cfg5"; fi
-            
-        elif cat ./*.3 |awk '++A[$1]==3'|grep -Fxo "$item"; then
-            if grep -Fxo "$item" <<<"$m"; then
-            echo -e "$img3\n<b><big>$item</big></b>\nFALSE" >> "$cfg5"
-            else echo -e "$img3\n$item\nFALSE" >> "$cfg5"; fi
+    
+        if grep -Fxo "${item}" <<<"${m}"; then
+        i="<b><big>${item}</big></b>";else i="${item}"; fi
+        if grep -Fxo "${item}" <<<"${s3}"; then
+            echo -e "FALSE\n$img3\n${i}" >> "$cfg5"
+        elif grep -Fxo "${item}" <<<"${s1}"; then
+            echo -e "FALSE\n$img1\n${i}" >> "$cfg5"
+        elif grep -Fxo "${item}" <<<"${s2}"; then
+            echo -e "FALSE\n$img2\n${i}" >> "$cfg5"
         else
-            if grep -Fxo "$item" <<<"$m"; then
-            echo -e "$img0\n<b><big>$item</big></b>\nFALSE" >> "$cfg5"
-            else echo -e "$img0\n$item\nFALSE" >> "$cfg5"; fi
+            echo -e "FALSE\n$img0\n${i}" >> "$cfg5"
         fi
-    done < <(tac "${DC_tlt}/1.cfg")
+    done < "${DC_tlt}/1.cfg"
     cd ~/
 }
 

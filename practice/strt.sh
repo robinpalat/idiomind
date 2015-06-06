@@ -116,8 +116,7 @@ elif [[ $ret -eq 3 ]]; then
     "$DS/practice/strt.sh" & exit
 else
     cd "$DC_tlt/practice"
-    if [ -f *.tmp ]; then
-    rm *.tmp; fi
+    rm *.tmp
     "$DS/ifs/tls.sh" colorize
     exit
 fi

@@ -26,7 +26,8 @@ function index() {
     if [ -f "$DT/i_lk" ]; then sleep 1
     else > "$DT/i_lk" & break; fi
     done
-    DC_tlt="$DM_tl/$3/.conf"
+    DC_tlt="$DM_tl/${3}/.conf"
+    img0='/usr/share/idiomind/images/0.png'
     item="${2}"
     
     if [ ! -z "${item}" ] && ! grep -Fxo "${item}" "$DC_tlt/0.cfg"; then
@@ -42,15 +43,15 @@ function index() {
             echo "${item}" >> "$DC_tlt/1.cfg"
             echo "${item}" >> "$DC_tlt/.11.cfg"; fi
             echo "${item}" >> "$DC_tlt/3.cfg"
-            echo "${item}" >> "$DC_tlt/5.cfg"
+            echo -e "\n${item}\n$img0" >> "$DC_tlt/5.cfg"
             
         elif [ "$1" = sentence ]; then
         
             echo "${item}" >> "$DC_tlt/0.cfg"
             echo "${item}" >> "$DC_tlt/1.cfg"
             echo "${item}" >> "$DC_tlt/4.cfg"
-            echo "${item}" >> "$DC_tlt/5.cfg"
             echo "${item}" >> "$DC_tlt/.11.cfg"
+            echo -e "\n${item}\n$img0" >> "$DC_tlt/5.cfg"
         fi
     fi
         
@@ -80,7 +81,7 @@ function index() {
         echo "${item}" >> "$DC_tlt/0.cfg"
         echo "${item}" >> "$DC_tlt/1.cfg"
         echo "${item}" >> "$DC_tlt/4.cfg"
-        echo "${item}" >> "$DC_tlt/5.cfg"
+        echo -e "\n${item}\n$img0" >> "$DC_tlt/5.cfg"
     fi
     
     sleep 0.5

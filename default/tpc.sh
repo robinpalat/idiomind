@@ -45,7 +45,8 @@ else
         echo "${topic}" > "$DC_s/7.cfg"
         echo "${topic}" > "$DT/tpe"
         echo '0' > "$DC_s/5.cfg"
-
+        
+        "$DS/ifs/tls.sh" colorize
         if [ ! -f "$DT/.n_s_pr" ]; then
         "$DS/ifs/tls.sh" check_index "${topic}"; fi
         

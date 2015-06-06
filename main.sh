@@ -114,7 +114,7 @@ function new_session() {
     rm -f  "$DT/ps_lk"
     "$DS/mngr.sh" mkmn &
 }
-#m
+
 
 if grep -o '.idmnd' <<<"${1: -6}"; then
 
@@ -283,17 +283,17 @@ function topic() {
                      mv tmpf1 "$tab1"
                 done
                 
-                sed -i 's/|TRUE|//g' "${cnf1}"
+                sed -i 's/|TRUE|//;s/|//;s/<[^>]*>//g' "${cnf1}"
                 cat "${cnf1}" >> "${ls2}"
 
-                cnt=$(wc -l < "$cnf1")
                 grep -Fxvf "$cnf1" "${ls1}" > "$DT/ls1.x"
                 mv -f "$DT/ls1.x" "${ls1}"
                 if [ -n "$(cat "${ls1}" | sort -n | uniq -dc)" ]; then
                     cat "$ls1" | awk '!array_temp[$0]++' > "$DT/ls1.x"
                     sed '/^$/d' "$DT/ls1.x" > "${ls1}"
                 fi
-                printf "okim.$cnt.okim\n" >> "$DC_s/8.cfg"
+                "$DS/ifs/tls.sh" colorize
+                printf "okim.$(wc -l < "$cnf1").okim\n" >> "$DC_s/8.cfg"
             fi
         }
     
