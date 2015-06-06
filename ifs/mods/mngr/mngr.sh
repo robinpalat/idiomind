@@ -89,6 +89,7 @@ position() {
         else msg "$(gettext "The changes will be seen only after restarting the lists.")\n" info; fi
         
     fi
+    "$DS/ifs/tls.sh" colorize &
     [ -f "$DC_tlt/0.cfg.mv" ] && rm "$DC_tlt/0.cfg.mv"
     exit
 }

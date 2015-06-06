@@ -136,10 +136,9 @@ mark_to_learn() {
     awk '!array_temp[$0]++' < "$DC_tlt/0.cfg" > "$DT/0.cfg.tmp"
     sed '/^$/d' "$DT/0.cfg.tmp" > "$DC_tlt/0.cfg"
     rm -f "$DT"/*.tmp
-    rm "$DC_tlt/2.cfg" "$DC_tlt/1.cfg"
+    rm "$DC_tlt/2.cfg" "$DC_tlt/1.cfg" "$DC_tlt/5.cfg"
     touch "$DC_tlt/2.cfg"
     cp -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"
-    "$DS/ifs/tls.sh" colorize
     "$DS/mngr.sh" mkmn &
 
     [[ "$3" = 1 ]] && idiomind topic &
