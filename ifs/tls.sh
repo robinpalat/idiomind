@@ -581,15 +581,15 @@ colorize() {
         if grep -Fxo "${item}" <<<"${m}"; then
         i="<b><big>${item}</big></b>";else i="${item}"; fi
         if grep -Fxo "${item}" <<<"${s3}"; then
-            echo -e "FALSE\n$img3\n${i}" >> "$cfg5"
+            echo -e "$img3\n${i}\nFALSE" >> "$cfg5"
         elif grep -Fxo "${item}" <<<"${s1}"; then
-            echo -e "FALSE\n$img1\n${i}" >> "$cfg5"
+            echo -e "$img1\n${i}\nFALSE" >> "$cfg5"
         elif grep -Fxo "${item}" <<<"${s2}"; then
-            echo -e "FALSE\n$img2\n${i}" >> "$cfg5"
+            echo -e "$img2\n${i}\nFALSE" >> "$cfg5"
         else
-            echo -e "FALSE\n$img0\n${i}" >> "$cfg5"
+            echo -e "$img0\n${i}\nFALSE" >> "$cfg5"
         fi
-    done < "${DC_tlt}/1.cfg"
+    done < <(tac "${DC_tlt}/1.cfg")
     cd ~/
 }
 
