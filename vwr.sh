@@ -1,6 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
-
+#
 echo "_" >> "$DT/stats.tmp" &
 [[ $1 = 1 ]] && index="${DC_tlt}/1.cfg"
 [[ $1 = 2 ]] && index="${DC_tlt}/2.cfg"
