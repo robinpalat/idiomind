@@ -2,10 +2,11 @@
 # -*- ENCODING: UTF-8 -*-
 #
 echo "_" >> "$DT/stats.tmp" &
-[[ $1 = 1 ]] && index="${DC_tlt}/1.cfg"
-[[ $1 = 2 ]] && index="${DC_tlt}/2.cfg"
+[[ $1 = 1 ]] && index="${DC_tlt}/1.cfg" \
+&& item_name=`sed 's/<[^>]*>//g' <<<"${3}"`
+[[ $1 = 2 ]] && index="${DC_tlt}/2.cfg" \
+&& item_name=`sed 's/<[^>]*>//g' <<<"${2}"`
 re='^[0-9]+$'
-item_name=`sed 's/<[^>]*>//g' <<<"${3}"`
 index_pos="$3"
 listen="$(gettext "Listen")"
 if ! [[ $index_pos =~ $re ]]; then
