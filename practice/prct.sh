@@ -48,7 +48,7 @@ get_list() {
     if [ "$(wc -l < "${cfg4}")" -gt 0 ]; then
         while read item; do
         grep -Fxo "${item}" "${cfg3}" >> "$1"
-        done < "${cfg3}"
+        done < "${cfg1}"
     else
         cat "${cfg1}" > "$1"
     fi
@@ -61,7 +61,7 @@ get_list_images() {
     if [ "$(wc -l < "$cfg4")" -gt 0 ]; then
         while read item; do
         grep -Fxo "${item}" "${cfg3}" >> "$DT/images"
-        done < "${cfg3}"
+        done < "${cfg1}"
     else
         cat "$cfg1" > "$DT/images"
     fi

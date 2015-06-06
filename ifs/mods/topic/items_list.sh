@@ -79,7 +79,7 @@ function notebook_1() {
     if [ -f "${DC_tlt}/5.cfg" ]; then
     cat "${DC_tlt}/5.cfg"; else
     cat "$ls1" | \
-    awk '{print $0"\n/usr/share/idiomind/images/0.png\nFALSE"}'; fi
+    awk '{print "/usr/share/idiomind/images/0.png\n"$0"\nFALSE"}'; fi
     }
 
     list | yad --list --tabnum=1 \
