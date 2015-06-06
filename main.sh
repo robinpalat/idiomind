@@ -114,7 +114,7 @@ function new_session() {
     rm -f  "$DT/ps_lk"
     "$DS/mngr.sh" mkmn &
 }
-
+#m
 
 if grep -o '.idmnd' <<<"${1: -6}"; then
 
