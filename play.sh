@@ -91,7 +91,7 @@ btn2="gtk-media-stop:2"
 btn1="$(gettext "Pause"):3"
 if grep TRUE <<<"$words$sentences$marks$practice"; then
 if [ "$tpp" != "$tpc" ]; then
-title="$(gettext "Playing:") \"$tpp\"</sup>"; fi
+title="$(gettext "Playing:") $tpp"; fi
 fi
 fi
 

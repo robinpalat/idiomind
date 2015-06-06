@@ -115,8 +115,9 @@ elif [[ $ret -eq 3 ]]; then
     cd "$DC_tlt/practice"; rm .*; rm *; fi
     "$DS/practice/strt.sh" & exit
 else
-    cd "$DC_tlt/practice"; rm *.tmp
+    cd "$DC_tlt/practice"
+    if [ -f *.tmp ]; then
+    rm *.tmp; fi
     "$DS/ifs/tls.sh" colorize
-    kill -9 $(pgrep -f "yad --form ")
     exit
 fi
