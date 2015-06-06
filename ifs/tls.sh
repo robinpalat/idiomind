@@ -187,7 +187,7 @@ check_index() {
         
         if [ ! -d "${DC_tlt}" ]; then mkdir "${DC_tlt}"; fi
         n=0
-        while [[ $n -le 5 ]]; do
+        while [[ $n -le 4 ]]; do
             [ ! -f "${DC_tlt}/$n.cfg" ] && touch "${DC_tlt}/$n.cfg"
             if grep '^$' "${DC_tlt}/$n.cfg"; then
             sed -i '/^$/d' "${DC_tlt}/$n.cfg"; fi
@@ -198,8 +198,6 @@ check_index() {
             ((n=n+1))
         done
         
-        if [[ `wc -l < "${DC_tlt}/5.cfg"` -lt 1 ]]; then
-        cp "${DC_tlt}/1.cfg" "${DC_tlt}/5.cfg"; fi
         if [[ ! -f "${DC_tlt}/8.cfg" ]]; then
         echo 1 > "${DC_tlt}/8.cfg"; fi
         eval stts=$(sed -n 1p "${DC_tlt}/8.cfg")
@@ -569,26 +567,32 @@ colorize() {
     cd "${DC_tlt}/practice"; rm "${DC_tlt}/5.cfg"
     m=`cat "${DC_tlt}/6.cfg"`
     cfg5="${DC_tlt}/5.cfg"
+    img1='/usr/share/idiomind/images/1.png'
+    img2='/usr/share/idiomind/images/2.png'
+    img3='/usr/share/idiomind/images/3.png'
+    img0='/usr/share/idiomind/images/0.png'
     
-    while read item; do
-        if cat ./*.1 | awk '++A[$1]==3' | grep -Fxo "$item"; then
+    while read -r item; do
+        if cat ./*.1 |awk '++A[$1]==3'|grep -Fxo "$item"; then
             if grep -Fxo "$item" <<<"$m"; then
-            echo "<b><big><span color='#458B00'>$item</span></big></b>" >> "$cfg5"
-            else echo "<span color='#458B00'>$item</span>" >> "$cfg5"; fi
-        elif cat ./*.2 | awk '++A[$1]==2' | grep -Fxo "$item"; then
+            echo -e "$img1\n<b><big>$item</big></b>\nFALSE" >> "$cfg5"
+            else echo -e "$img1\n$item\nFALSE" >> "$cfg5"; fi
+            
+        elif cat ./*.2 |awk '++A[$1]==2'|grep -Fxo "$item"; then
             if grep -Fxo "$item" <<<"$m"; then
-            echo "<b><big><span color='#CF590B'>$item</span></big></b>" >> "$cfg5"
-            else echo "<span color='#CF590B'>$item</span>" >> "$cfg5"; fi
-        elif cat ./*.3 | awk '++A[$1]==3' | grep -Fxo "$item"; then
+            echo -e "$img2\n<b><big>$item</big></b>\nFALSE" >> "$cfg5"
+            else echo -e "$img2\n$item\nFALSE" >> "$cfg5"; fi
+            
+        elif cat ./*.3 |awk '++A[$1]==3'|grep -Fxo "$item"; then
             if grep -Fxo "$item" <<<"$m"; then
-            echo "<b><big><span color='#A4183C'>$item</span></big></b>" >> "$cfg5"
-            else echo "<span color='#A4183C'>$item</span>" >> "$cfg5"; fi
+            echo -e "$img3\n<b><big>$item</big></b>\nFALSE" >> "$cfg5"
+            else echo -e "$img3\n$item\nFALSE" >> "$cfg5"; fi
         else
             if grep -Fxo "$item" <<<"$m"; then
-            echo "<b><big>$item</big></b>" >> "$cfg5"
-            else echo "$item" >> "$cfg5"; fi
+            echo -e "$img0\n<b><big>$item</big></b>\nFALSE" >> "$cfg5"
+            else echo -e "$img0\n$item\nFALSE" >> "$cfg5"; fi
         fi
-    done < "${DC_tlt}/1.cfg"
+    done < <(tac "${DC_tlt}/1.cfg")
     cd ~/
 }
 
@@ -1068,8 +1072,6 @@ case "$1" in
     check_updates ;;
     a_check_updates)
     a_check_updates ;;
-    check_index)
-    check_index "$@" ;;
     set_image)
     set_image "$@" ;;
     pdf)

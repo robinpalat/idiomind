@@ -5,7 +5,7 @@ echo "_" >> "$DT/stats.tmp" &
 [[ $1 = 1 ]] && index="${DC_tlt}/1.cfg"
 [[ $1 = 2 ]] && index="${DC_tlt}/2.cfg"
 re='^[0-9]+$'
-item_name=`sed 's/<[^>]*>//g' <<<"${2}"`
+item_name=`sed 's/<[^>]*>//g' <<<"${3}"`
 index_pos="$3"
 listen="$(gettext "Listen")"
 if ! [[ $index_pos =~ $re ]]; then

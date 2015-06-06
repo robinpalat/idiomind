@@ -1,7 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-
 function word_view() {
 
     trgt="$item"
@@ -19,7 +18,7 @@ function word_view() {
     [ -z "$trgt" ] && tm="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>"
     [ "$mark" = TRUE ] && im="--image=$DS/images/mark.png"
     
-    yad --form --title="$item" $im \
+    yad --form --title=" " $im \
     --selectable-labels --quoted-output \
     --text="<span font_desc='Sans Free Bold $fs'>$trgt</span>\n\n<i>$srce</i>\n\n" \
     --window-icon="$DS/images/icon.png" \
@@ -76,14 +75,17 @@ function notebook_1() {
     cmd_del="'$DS/mngr.sh' 'delete_topic' "\"$tpc\"""
     cmd_share="'$DS/ifs/upld.sh' upld "\"$tpc\"""
     cmd_play="$DS/play.sh"
-    if [ ! -f "${DC_tlt}/5.cfg" ]; then
-    cp "${DC_tlt}/1.cfg" "${DC_tlt}/5.cfg"; fi
-
-    tac "${DC_tlt}/5.cfg" | awk '{print $0"\n"}' | yad --list --tabnum=1 \
+    list() {
+    if [ -f "${DC_tlt}/5.cfg" ]; then
+    cat "${DC_tlt}/5.cfg"; else
+    tac "$ls1" | \
+    awk '{print "/usr/share/idiomind/images/0.png\n"$0"\n "}'; fi
+    }
+    list | yad --list --tabnum=1 \
     --plug=$KEY --print-all \
     --dclick-action="$DS/vwr.sh '1'" \
-    --expand-column=1 --no-headers --ellipsize=END --tooltip-column=1 \
-    --column=Name:TEXT --column=Learned:CHK > "$cnf1" &
+    --expand-column=2 --no-headers --ellipsize=END --tooltip-column=2 \
+    --column=Name:IMG --column=Name:TEXT --column=Learned:CHK > "$cnf1" &
     tac "$ls2" | yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh '2'" \
