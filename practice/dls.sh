@@ -28,12 +28,12 @@ score() {
         exit 1
         
     else
-        [ -f ./d.l ] && echo $(($(< ./d.l)+easy)) > d.l || echo $easy > d.l
+        [[ -f ./d.l ]] && echo $(($(< ./d.l)+easy)) > d.l || echo $easy > d.l
         s=$(< ./d.l)
         v=$((100*s/all))
         n=1; c=1
         while [[ $n -le 21 ]]; do
-            if [ "$v" -le "$c" ]; then
+            if [[ "$v" -le "$c" ]]; then
             echo "$n" > .4; break; fi
             ((c=c+5))
             let n++
@@ -95,7 +95,7 @@ result() {
     | sed 's/\-//;s/\[//;s/\]//;s/\.//;s/\://;s/\|//;s/)//;s/"//g'
     }
     
-    if [ `wc -w < ./chk.tmp` -gt 6 ]; then
+    if [[ `wc -w < ./chk.tmp` -gt 6 ]]; then
     awk '{print tolower($0)}' <<<"${SE}" | clean | grep -v '^.$' > ./img.tmp
     awk '{print tolower($0)}' < ./chk.tmp | clean | grep -v '^.$' > ./all.tmp
     else
@@ -109,11 +109,11 @@ result() {
     
         if grep -oFx "${line}" ./all.tmp; then
             sed -i "s/"${line}"/<b>"${line}"<\/b>/g" chk.tmp
-            [ -n "${line}" ] && echo \
+            [[ -n "${line}" ]] && echo \
             "<span color='#3A9000'><b>${line^}</b></span>  " >> ./words.tmp
-            [ -n "${line}" ] && echo "${line}" >> mtch.tmp
+            [[ -n "${line}" ]] && echo "${line}" >> mtch.tmp
         else
-            [ -n "${line}" ] && echo \
+            [[ -n "${line}" ]] && echo \
             "<span color='#7B4A44'><b>${line^}</b></span>  " >> ./words.tmp
         fi
         let n++
@@ -152,7 +152,7 @@ while [[ $n -le "$(wc -l < ./d.tmp)" ]]; do
     trgt="$(sed -n "$n"p d.tmp)"
     fname="$(echo -n "${trgt}" | md5sum | rev | cut -c 4- | rev)"
     
-    if [ -f "${DM_tlt}/$fname.mp3" ]; then
+    if [[ -f "${DM_tlt}/$fname.mp3" ]]; then
 
         get_text "${trgt}"
         cmd_play="play "\"${DM_tlt}/$fname.mp3\"""
@@ -161,7 +161,7 @@ while [[ $n -le "$(wc -l < ./d.tmp)" ]]; do
         dialog2 "${trgt}"
         ret=$(echo "$?")
         
-        if [ $ret = 1 ]; then
+        if [[ $ret = 1 ]]; then
             break &
             killall play
             "$drts/cls.sh" comp d $easy $ling $hard $all &
@@ -174,14 +174,14 @@ while [[ $n -le "$(wc -l < ./d.tmp)" ]]; do
         check "${trgt}"
         ret=$(echo "$?")
         
-        if [ $ret = 1 ]; then
+        if [[ $ret = 1 ]]; then
             break &
             killall play &
             rm -f mtch.tmp all.tmp img.tmp words.tmp
             "$drts/cls.sh" comp d $easy $ling $hard $all &
             exit 1
             
-        elif [ $ret -eq 2 ]; then
+        elif [[ $ret -eq 2 ]]; then
             killall play &
             rm -f mtch.tmp words.tmp &
         fi

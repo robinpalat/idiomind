@@ -28,18 +28,18 @@ score() {
         exit 1
         
     else
-        [ -f a.l ] && echo $(($(< ./a.l)+easy)) > a.l || echo "$easy" > a.l
+        [[ -f a.l ]] && echo $(($(< ./a.l)+easy)) > a.l || echo "$easy" > a.l
         s=$(< ./a.l)
         v=$((100*s/all))
         n=1; c=1
         while [[ $n -le 21 ]]; do
-            if [ "$v" -le "$c" ]; then
+            if [[ "$v" -le "$c" ]]; then
             echo "$n" > .1; break; fi
             ((c=c+5))
             let n++
         done
 
-        if [ -f a.3 ]; then
+        if [[ -f a.3 ]]; then
         echo "w6.$(tr -s '\n' '|' < ./a.3).w6" >> "$log"; fi
         
         "$strt" 6 "$easy" "$ling" "$hard" & exit 1
@@ -90,7 +90,7 @@ while read trgt; do
     cuestion
     ret=$(echo "$?")
 
-    if [ $ret = 1 ]; then
+    if [[ $ret = 1 ]]; then
         break &
         "$drts/cls.sh" comp a "$easy" "$ling" "$hard" "$all" &
         exit 1
@@ -99,18 +99,18 @@ while read trgt; do
         answer
         ans=$(echo "$?")
 
-        if [ $ans = 2 ]; then
+        if [[ $ans = 2 ]]; then
             echo "$trgt" >> a.1
             easy=$((easy+1))
 
-        elif [ $ans = 3 ]; then
+        elif [[ $ans = 3 ]]; then
             echo "$trgt" >> a.2
             hard=$((hard+1))
         fi
     fi
 done < ./a.tmp
 
-if [ ! -f ./a.2 ]; then
+if [[ ! -f ./a.2 ]]; then
 
     score "$easy"
     
@@ -121,7 +121,7 @@ else
         cuestion
         ret=$(echo "$?")
         
-        if [ $ret = 1 ]; then
+        if [[ $ret = 1 ]]; then
             break &
             "$drts/cls.sh" comp a "$easy" "$ling" "$hard" "$all" &
             exit 1
@@ -130,11 +130,11 @@ else
             answer
             ans=$(echo "$?")
             
-            if [ $ans = 2 ]; then
+            if [[ $ans = 2 ]]; then
                 hard=$((hard-1))
                 ling=$((ling+1))
                 
-            elif [ $ans = 3 ]; then
+            elif [[ $ans = 3 ]]; then
                 echo "$trgt" >> a.3
             fi
         fi

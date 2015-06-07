@@ -25,8 +25,8 @@ msg "$(gettext "No topic is active")\n" info & exit 1; fi
 [[ -n "$(< "$DC_s/1.cfg")" ]] && cfg=1 || > "$DC_s/1.cfg"
 
 lbls=('Words' 'Sentences' 'Marked items' 'Difficult words' \
-'New episodes <i><small>(Podcasts)</small></i>' \
-'Saved episodes <i><small>(Podcasts)</small></i>')
+'New episodes <i><small>Podcasts</small></i>' \
+'Saved episodes <i><small>Podcasts</small></i>')
 sets=('grammar' 'list' 'tasks' 'trans' 'trd_trgt' 'text' 'audio' \
 'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' \
 'words' 'sentences' 'marks' 'practice' 'news' 'saved')

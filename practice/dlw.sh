@@ -28,19 +28,19 @@ score() {
         exit 1
         
     else
-        [ -f c.l ] && echo $(($(< ./c.l)+easy)) > c.l || echo $easy > c.l
+        [[ -f c.l ]] && echo $(($(< ./c.l)+easy)) > c.l || echo $easy > c.l
         s=$(< ./c.l)
         v=$((100*s/all))
         n=1; c=1
         while [[ $n -le 21 ]]; do
-            if [ "$v" -le "$c" ]; then
+            if [[ "$v" -le "$c" ]]; then
             echo "$n" > .3; break; fi
             ((c=c+5))
             let n++
         done
         
-        if [ -f c.3 ]; then
-        echo "w6.$(tr -s '\n' '|' < c.3).w6" >> "$log"; fi
+        if [[ -f ./c.3 ]]; then
+        echo "w6.$(tr -s '\n' '|' < ./c.3).w6" >> "$log"; fi
         
         "$strt" 8 $easy $ling $hard & exit 1
     fi
@@ -48,10 +48,10 @@ score() {
 
 fonts() {
     
-    if [ $p = 2 ]; then
+    if [[ $p = 2 ]]; then
     [ $lgtl = Japanese ] || [ $lgtl = Chinese ] || [ $lgtl = Russian ] \
     && lst="${1:0:1} ${1:5:5}" || lst=$(echo "$1" | awk '$1=$1' FS= OFS=" " | tr aeiouy '.')
-    elif [ $p = 1 ]; then
+    elif [[ $p = 1 ]]; then
     [ $lgtl = Japanese ] || [ $lgtl = Chinese ] || [ $lgtl = Russian ] \
     && lst="${1:0:1} ${1:5:5}" || lst=$(echo "${1^}" | sed "s|[a-z]|"\ \."|g"); fi
     
@@ -87,22 +87,22 @@ while read trgt; do
     cuestion "$trgt"
     ans=$(echo "$?")
     
-    if [ $ans = 2 ]; then
+    if [[ $ans = 2 ]]; then
             echo "$trgt" >> c.1
             easy=$((easy+1))
 
-    elif [ $ans = 3 ]; then
+    elif [[ $ans = 3 ]]; then
             echo "$trgt" >> c.2
             hard=$((hard+1))
 
-    elif [ $ans = 1 ]; then
+    elif [[ $ans = 1 ]]; then
         break &
         "$drts/cls.sh" comp c $easy $ling $hard $all &
         exit 1
     fi
 done < ./c.tmp
 
-if [ ! -f ./c.2 ]; then
+if [[ ! -f ./c.2 ]]; then
 
     score $easy
     
@@ -114,14 +114,14 @@ else
         cuestion "$trgt"
         ans=$(echo "$?")
           
-        if [ $ans = 2 ]; then
+        if [[ $ans = 2 ]]; then
                 hard=$((hard-1))
                 ling=$((ling+1))
                 
-        elif [ $ans = 3 ]; then
+        elif [[ $ans = 3 ]]; then
                 echo "$trgt" >> c.3
 
-        elif [ $ans = 1 ]; then
+        elif [[ $ans = 1 ]]; then
             break &
             "$drts/cls.sh" comp c $easy $ling $hard $all &
             exit 1
