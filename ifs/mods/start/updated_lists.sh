@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
+[[ -z "$DM" ]] && source /usr/share/idiomind/ifs/c.conf
 
 LOG="$DC_s/8.cfg"
 tpclst=$(mktemp "$DT/tps.XXXX")
@@ -38,13 +38,12 @@ while [[ $n -le 100 ]]; do
 done
 
 sed -i '/^$/d' "$items"
-
-if [ "$(wc -l < "$items")" -gt 0 ]; then
+if [[ `wc -l < "$items"` -gt 0 ]]; then
 
     while read -r tpc_lst; do
 
             DC_tlt="$DM_tl/${tpc_lst}/.conf"
-            if [ -f "${DC_tlt}/1.cfg" ] && [ -d "${DC_tlt}/practice" ]; then
+            if [[ -f "${DC_tlt}/1.cfg" ]] && [[ -d "${DC_tlt}/practice" ]]; then
                 
                 cd "${DC_tlt}/practice"; rm "${DC_tlt}/5.cfg"
                 touch a.1 a.2 a.3
@@ -63,20 +62,20 @@ if [ "$(wc -l < "$items")" -gt 0 ]; then
                     if grep -Fxo "${item}" <<<"${m}">/dev/null 2>&1; then
                     i="<b><big>${item}</big></b>";else i="${item}"; fi
                     if grep -Fxo "${item}" < "$items"; then
-                    echo -e "$img1\n${i}\nTRUE" >> "$cfg5"
+                    echo -e "TRUE\n${i}\n$img1" >> "$cfg5"
                     else
                     if grep -Fxo "${item}" <<<"${s3}">/dev/null 2>&1; then
-                        echo -e "$img3\n${i}\nFALSE" >> "$cfg5"
+                        echo -e "FALSE\n${i}\n$img3" >> "$cfg5"
                     elif grep -Fxo "${item}" <<<"${s1}">/dev/null 2>&1; then
-                        echo -e "$img1\n${i}\nFALSE" >> "$cfg5"
+                        echo -e "FALSE\n${i}\n$img1" >> "$cfg5"
                     elif grep -Fxo "${item}" <<<"${s2}">/dev/null 2>&1; then
-                        echo -e "$img2\n${i}\nFALSE" >> "$cfg5"
+                        echo -e "FALSE\n${i}\n$img2" >> "$cfg5"
                     else
-                        echo -e "$img0\n${i}\n$B" >> "$cfg5"
+                        echo -e "FALSE\n${i}\n$img0" >> "$cfg5"
                     fi
                     fi
             
-            done < <(tac "${DC_tlt}/1.cfg")
+            done < "${DC_tlt}/1.cfg"
             fi
 
     done < "$tpclst"

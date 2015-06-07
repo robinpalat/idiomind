@@ -92,7 +92,7 @@ while read trgt; do
 
     if [ $ret = 1 ]; then
         break &
-        "$drts/cls.sh" comp_a "$easy" "$ling" "$hard" "$all" &
+        "$drts/cls.sh" comp a "$easy" "$ling" "$hard" "$all" &
         exit 1
         
     else
@@ -123,7 +123,7 @@ else
         
         if [ $ret = 1 ]; then
             break &
-            "$drts/cls.sh" comp_a "$easy" "$ling" "$hard" "$all" &
+            "$drts/cls.sh" comp a "$easy" "$ling" "$hard" "$all" &
             exit 1
         
         else

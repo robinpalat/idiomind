@@ -23,18 +23,18 @@ function mksure() {
 function index() {
 
     while true; do
-    if [ -f "$DT/i_lk" ]; then sleep 1
+    if [[ -f "$DT/i_lk" ]]; then sleep 1
     else > "$DT/i_lk" & break; fi
     done
     DC_tlt="$DM_tl/${3}/.conf"
     img0='/usr/share/idiomind/images/0.png'
     item="${2}"
     
-    if [ ! -z "${item}" ] && ! grep -Fxo "${item}" "$DC_tlt/0.cfg"; then
+    if [[ ! -z "${item}" ]] && ! grep -Fxo "${item}" "$DC_tlt/0.cfg"; then
     
-        if [ "$1" = word ]; then
+        if [[ "$1" = word ]]; then
         
-            if [ "$(grep "$4" "$DC_tlt/0.cfg")" ] && [ -n "$4" ]; then
+            if [[ "$(grep "$4" "$DC_tlt/0.cfg")" ]] && [[ -n "$4" ]]; then
             sed -i "s/${4}/${4}\n${item}/" "$DC_tlt/0.cfg"
             sed -i "s/${4}/${4}\n${item}/" "$DC_tlt/1.cfg"
             sed -i "s/${4}/${4}\n${item}/" "$DC_tlt/.11.cfg"
@@ -43,19 +43,19 @@ function index() {
             echo "${item}" >> "$DC_tlt/1.cfg"
             echo "${item}" >> "$DC_tlt/.11.cfg"; fi
             echo "${item}" >> "$DC_tlt/3.cfg"
-            echo -e "\n${item}\n$img0" >> "$DC_tlt/5.cfg"
-            
-        elif [ "$1" = sentence ]; then
+            echo -e "FALSE\n${item}\n$img0" >> "$DC_tlt/5.cfg"
+
+        elif [[ "$1" = sentence ]]; then
         
             echo "${item}" >> "$DC_tlt/0.cfg"
             echo "${item}" >> "$DC_tlt/1.cfg"
             echo "${item}" >> "$DC_tlt/4.cfg"
             echo "${item}" >> "$DC_tlt/.11.cfg"
-            echo -e "\n${item}\n$img0" >> "$DC_tlt/5.cfg"
+            echo -e "FALSE\n${item}\n$img0" >> "$DC_tlt/5.cfg"
         fi
     fi
         
-    if [ "$1" = edit ]; then
+    if [[ "$1" = edit ]]; then
             
         item="${item}"; item_mod="${4}"
         sed -i "s/${item}/${item_mod}/" "$DC_tlt/.11.cfg"
@@ -76,12 +76,12 @@ function index() {
         "$DC_tlt/practice/win" "$DC_tlt/practice/iin" \
         "$DC_tlt/6.cfg"
         
-    elif [ "$1" = txt_missing ]; then
+    elif [[ "$1" = txt_missing ]]; then
     
         echo "${item}" >> "$DC_tlt/0.cfg"
         echo "${item}" >> "$DC_tlt/1.cfg"
         echo "${item}" >> "$DC_tlt/4.cfg"
-        echo -e "\n${item}\n$img0" >> "$DC_tlt/5.cfg"
+        echo -e "FALSE\n${item}\n$img0" >> "$DC_tlt/5.cfg"
     fi
     
     sleep 0.5
@@ -322,9 +322,9 @@ function voice() {
     | grep -o synth=\"[^\"]* | grep -o '[^"]*$')"
     DT_r="$2"; cd "$DT_r"
     
-    if [ -n "$synth" ]; then
+    if [[ -n "$synth" ]]; then
     
-        if [ "$synth" = 'festival' ] || [ "$synth" = 'text2wave' ]; then
+        if [[ "$synth" = 'festival' ]] || [[ "$synth" = 'text2wave' ]]; then
             lg="${lgtl,,}"
 
             if ([ $lg = "english" ] \
