@@ -13,6 +13,12 @@ f=0
 
 score() {
 
+    touch d.0 d.1 d.2 d.3
+    awk '!a[$0]++' d.2 > d2.tmp
+    awk '!a[$0]++' d.3 > d3.tmp
+    grep -Fxvf d3.tmp d2.tmp > d.2
+    mv -f d3.tmp d.3
+    
     if [[ "$1" -ge $all ]]; then
         play "$drts/all.mp3" & 
         echo "s9.$(tr -s '\n' '|' < ./d.1).s9" >> "$log"
@@ -32,7 +38,7 @@ score() {
             ((c=c+5))
             let n++
         done
-
+        echo "s9.$(tr -s '\n' '|' < d.1).s9" >> "$log"
         "$strt" 9 $easy $ling $hard & exit 1
     fi
 }
@@ -118,10 +124,12 @@ result() {
         color=3AB452
         
     elif [[ $porc -ge 50 ]]; then
+        echo "$WEN" >> d.2
         ling=$((ling+1))
         color=E5801D
         
     else
+        echo "$WEN" >> d.3
         hard=$((hard+1))
         color=D11B5D
     fi

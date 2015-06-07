@@ -91,6 +91,11 @@ elif [ "$1" = comp_c ]; then
 
 elif [ "$1" = comp_d ]; then
 
+    touch d.0 d.1 d.2 d.3
+    awk '!a[$0]++' d.2 > d2.tmp
+    awk '!a[$0]++' d.3 > d3.tmp
+    grep -Fxvf d3.tmp d2.tmp > d.2
+    mv -f d3.tmp d.3
     [ -f ./quote ] && rm quote; rm *.tmp
     [ -f ./d.l ] && echo $(($(< ./d.l)+easy)) > ./d.l || echo "$easy" > ./d.l
     v=$((100*$(< ./d.l)/all))

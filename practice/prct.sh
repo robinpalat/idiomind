@@ -209,7 +209,6 @@ listen_sentences() {
     fi
 
     if [ -f ./d.0 ] && [ -f ./d.1 ]; then
-        echo "s9.$(tr -s '\n' '|' < d.1).s9" >> "$log"
         grep -Fxvf d.1 d.0 > d.tmp
         echo " practice --restarting session"
     else
