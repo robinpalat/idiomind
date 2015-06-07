@@ -5,12 +5,12 @@ function internet() {
 
     curl -v www.google.com 2>&1 \
     | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
-    yad --window-icon=idiomind --on-top \
-    --image=info --name=Idiomind --class=Idiomind \
-    --text=" $(gettext "No network connection\n Please connect to a network, then try again.") " \
-    --image-on-top --center --sticky \
-    --width=360 --height=120 --borders=3 \
-    --skip-taskbar --title=Idiomind \
+    yad --title="$(gettext "No network connection")" --image=info \
+    --name=Idiomind --class=Idiomind \
+    --window-icon="$DS/images/icon.png" \
+    --image-on-top --center --sticky --on-top --skip-taskbar \
+    --text="$(gettext "No network connection\nPlease connect to a network, then try again.")" \
+    --width=380 --height=120 --borders=3 \
     --button="$(gettext "OK")":0 >&2; exit 1;}
 }
 
@@ -18,20 +18,24 @@ function msg() {
         
     [ -n "$3" ] && title="$3" || title=Idiomind
     [ -n "$4" ] && btn="$4" || btn="$(gettext "OK")"
-    yad --window-icon=idiomind --name=Idiomind \
-    --image="$2" --on-top --text="$1" --class=Idiomind \
-    --image-on-top --center --sticky --button="$btn":0 \
-    --width=360 --height=120 --borders=5 --title="$title"
+    yad --title="$title" --text="$1" --image="$2" \
+    --name=Idiomind --class=Idiomind \
+    --window-icon="$DS/images/icon.png" \
+    --image-on-top --center --sticky --on-top \
+    --width=380 --height=120 --borders=3 \
+    --button="$btn":0
 }
 
 function msg_2() {
         
     [ -n "$5" ] && title="$5" || title=Idiomind
     [ -n "$6" ] && btn3="--button=$6:2" || btn3=""
-    yad --name=Idiomind --on-top --text="$1" --image="$2" \
-    --always-print-result --title="$title" \
-    --image-on-top --width=360 --height=120 --borders=3 \
-    --class=Idiomind --window-icon=idiomind --sticky --center \
+    yad --title="$title" --text="$1" --image="$2" \
+    --name=Idiomind --class=Idiomind \
+    --always-print-result \
+    --window-icon="$DS/images/icon.png" \
+    --image-on-top --on-top --sticky --center \
+    --width=400 --height=120 --borders=3 \
     "$btn3" --button="$4":1 --button="$3":0
 }
 
@@ -42,7 +46,7 @@ function nmfile() {
 
 function include() {
         
-  for f in $1/*; do source "$f"; done
+  for f in "$1"/*; do source "$f"; done
 
 }
 
@@ -64,9 +68,60 @@ function lnglss() {
 function check_index1() {
     
     for i in "${@}"; do
-        if [ -n "$(cat "$i" | sort -n | uniq -dc)" ]; then
-            cat "$i" | awk '!array_temp[$0]++' > $DT/tmp
-            sed '/^$/d' $DT/tmp > "$i"; rm -f $DT/tmp
+        if [ -n "$(sort -n < "$i" | uniq -dc)" ]; then
+            awk '!array_temp[$0]++' < "$i" > "$DT/tmp"
+            sed '/^$/d' "$DT/tmp" > "$i"; rm -f "$DT/tmp"
         fi
     done
+}
+
+function list_inadd() {
+    
+    while read -r t; do
+        if ! echo -e "$(ls "$DS/addons/")\n$(< "$DM_tl/.3.cfg")" \
+        | grep -Fxo "$t" >/dev/null 2>&1; then echo "$t"; fi
+    done < <(cd "$DM_tl"; ls -tNd */ | head -n 30 | sed 's/\///g')
+}
+
+function calculate_review() {
+    
+    DC_tlt="$DM_tl/$1/.conf"
+    dts=$(sed '/^$/d' < "$DC_tlt/9.cfg" | wc -l)
+    if [[ $dts = 1 ]]; then
+    dte=$(sed -n 1p "$DC_tlt/9.cfg")
+    adv="<b>  6 $cuestion_review </b>"
+    TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+    RM=$((100*TM/6))
+    tdays=6
+    elif [[ $dts = 2 ]]; then
+    dte=$(sed -n 2p "$DC_tlt/9.cfg")
+    adv="<b>  10 $cuestion_review </b>"
+    TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+    RM=$((100*TM/10))
+    tdays=10
+    elif [[ $dts = 3 ]]; then
+    dte=$(sed -n 3p "$DC_tlt/9.cfg")
+    adv="<b>  15 $cuestion_review </b>"
+    TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+    RM=$((100*TM/15))
+    tdays=15
+    elif [[ $dts = 4 ]]; then
+    dte=$(sed -n 4p "$DC_tlt/9.cfg")
+    adv="<b>  20 $cuestion_review </b>"
+    TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+    RM=$((100*TM/20))
+    tdays=20
+    elif [[ $dts = 5 ]]; then
+    dte=$(sed -n 5p "$DC_tlt/9.cfg")
+    adv="<b>  30 $cuestion_review </b>"
+    TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+    RM=$((100*TM/30))
+    tdays=30
+    elif [[ $dts = 6 ]]; then
+    dte=$(sed -n 6p "$DC_tlt/9.cfg")
+    adv="<b>  40 $cuestion_review </b>"
+    TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+    RM=$((100*TM/40))
+    tdays=40
+    fi
 }

@@ -18,27 +18,37 @@
 #
 #  2015/02/27
 
+source /usr/share/idiomind/ifs/c.conf
 [[ -z "$tpc" && -d "$DT" ]] && exit 1
-source "$DC_s/1.cfg"
-> "$DT/.p_"
-cd "$DT"
-n=1
+repeat=$(sed -n 8p "$DC_s/1.cfg" |grep -o repeat=\"[^\"]* |grep -o '[^"]*$')
 
-if ([ -n "$(cat ./index.m3u)" ] && [ $(wc -l < ./index.m3u) -gt 0 ]); then
-    if [ "$repeat" = "TRUE" ]; then
+if [ -s "$DT/index.m3u" ] \
+&& [ `wc -l < "$DT/index.m3u"` -gt 0 ]; then
+   
+    if [ "$repeat" = TRUE ]; then
         while [ 1 ]; do
-            while [ $n -le $(wc -l < ./index.m3u) ]; do
-                "$DS/chng.sh" chngi "$n"
-                let n++
+            if [ -f "$DT/.p" ]; then
+            pos=`sed -n 1p "$DT/.p"`; rm "$DT/.p"
+            [[ $pos -gt `wc -l < "$DT/index.m3u"` ]] && \
+            pos=`wc -l < "$DT/index.m3u"`; else
+            pos=`wc -l < "$DT/index.m3u"`; fi
+            while [[ 1 -le $pos ]]; do
+                "$DS/chng.sh" chngi "$pos"
+                let pos--
             done
+            sleep 10
         done
-        
     else
-        while [ $n -le $(wc -l < ./index.m3u) ]; do
-        "$DS/chng.sh" chngi "$n"
-            let n++
+        if [ -f "$DT/.p" ]; then
+        pos=`sed -n 1p "$DT/.p"`; rm "$DT/.p"
+        [[ $pos -gt `wc -l < "$DT/index.m3u"` ]] && \
+        pos=`wc -l < "$DT/index.m3u"`; else
+        pos=`wc -l < "$DT/index.m3u"`; fi
+        while [[ 1 -le $pos ]]; do
+            "$DS/chng.sh" chngi "$pos"
+            let pos--
         done
-        rm -fr "$DT/.p_" "$DT/tpp"
+        rm -fr "$DT/.p_"; exit 0
     fi
 else
     exit 1

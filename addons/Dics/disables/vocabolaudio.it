@@ -1,8 +1,7 @@
 #! /bin/bash
 
-name="vocabolaudio"
-lang="it"
-
-cd "$2"
+Name="Vocabolaudio"
+Language="it"
+Test="prova"
 wget "http://www.vocabolaudio.com/audio-it/$1.mp3"
 exit

@@ -1,148 +1,144 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-#source /usr/share/idiomind/ifs/c.conf
 drtt="$DM_tlt/words"
-drts="$DS/practice/"
+drts="$DS/practice"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
 log="$DC_s/8.cfg"
-all=$(cat fin | wc -l)
+all=$(wc -l < ./a.0)
 easy=0
 hard=0
 ling=0
-[ -f fin2 ] && rm fin2
-[ -f fin3 ] && rm fin3
 
-function score() {
+score() {
+    
+    touch a.0 a.1 a.2 a.3
+    awk '!a[$0]++' a.2 > a2.tmp
+    awk '!a[$0]++' a.3 > a3.tmp
+    grep -Fxvf a3.tmp a2.tmp > a.2
+    mv -f a3.tmp a.3
 
-    if [ "$(($(cat l_f)+$1))" -ge "$all" ]; then
-        echo "w9.$(tr -s '\n' ';' < ok.f).w9" >> "$log"
-        rm fin fin1 fin2 ok.f
-        echo "$(date "+%a %d %B")" > look_f
-        echo 21 > .iconf
-        play "$drts/all.mp3" & $strt 1 &
-        killall df.sh
+    if [[ $(($(< ./a.l)+$1)) -ge $all ]]; then
+        play "$drts/all.mp3" &
+        echo "w9.$(tr -s '\n' '|' < ./a.1).w9" >> "$log"
+        echo "$(date "+%a %d %B")" > a.lock
+        echo 21 > .1
+        "$strt" 1 &
         exit 1
         
     else
-        [ -f l_f ] && echo "$(($(cat l_f)+$easy))" > l_f || echo "$easy" > l_f
-        s=$(cat l_f)
-        v=$((100*$s/$all))
+        [ -f a.l ] && echo $(($(< ./a.l)+easy)) > a.l || echo "$easy" > a.l
+        s=$(< ./a.l)
+        v=$((100*s/all))
         n=1; c=1
-        while [ "$n" -le 21 ]; do
-                if [ "$v" -le "$c" ]; then
-                echo "$n" > .iconf; break; fi
-                ((c=c+5))
+        while [[ $n -le 21 ]]; do
+            if [ "$v" -le "$c" ]; then
+            echo "$n" > .1; break; fi
+            ((c=c+5))
             let n++
         done
+
+        if [ -f a.3 ]; then
+        echo "w6.$(tr -s '\n' '|' < ./a.3).w6" >> "$log"; fi
         
-        [ -f fin2 ] && rm fin2
-        if [ -f fin3 ]; then
-            echo "w6.$(tr -s '\n' ';' < fin3).w6" >> "$log"
-            rm fin3; fi
-        "$strt" 5 "$easy" "$ling" "$hard" & exit 1
+        "$strt" 6 "$easy" "$ling" "$hard" & exit 1
     fi
 }
 
-function fonts() {
+fonts() {
     
     fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
     src=$(eyeD3 "$drtt/$fname.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
-    if [ -f "$drtt/images/$fname.jpg" ]; then
-    s=$((25-$(echo "$1" | wc -c)))
-    img="$drtt/images/$fname.jpg"
-    lcuestion="<b>$1</b>"
-    lanswer="<small><small><small>$1</small></small></small> | <b>$src</b>"
-    else
-    s=$((40-$(echo "$1" | wc -c)))
-    img="/usr/share/idiomind/images/fc.png"
-    lcuestion="<b>$1</b>"
-    lanswer="<small><small><small>$1</small></small></small>\n<b>$src</b>"
-    fi
+    s=$((42-${#src}))
+    c=$((22-${#1}))
+    acuestion="\n\n<span font_desc='Free Sans $s'><b>$1</b></span>"
+    bcuestion="\n<span font_desc='Free Sans $c'>$1</span>"
+    answer="<span font_desc='Free Sans Bold $s'><i>$src</i></span>"
 }
 
-function cuestion() {
+cuestion() {
     
-    yad --form --text-align=center --undecorated \
-    --center --on-top --image-on-top --image="$img" \
-    --skip-taskbar --title=" " --borders=3 \
-    --buttons-layout=spread --align=center \
-    --field="<span font_desc='Free Sans $s'>$lcuestion</span>":lbl \
-    --width=371 --height=280 \
-    --button=" $(gettext "Exit") ":1 \
-    --button=" $(gettext "Answer") >> ":0
+    yad --form --title="$(gettext "Practice")" \
+    --timeout=10 \
+    --skip-taskbar --text-align=center --center --on-top \
+    --undecorated --buttons-layout=spread --align=center \
+    --width=395 --height=290 --borders=5 \
+    --field="$acuestion":lbl \
+    --button="$(gettext "Exit")":1 \
+    --button="    $(gettext "Answer") >>    ":0
 }
 
-function answer() {
+answer() {
     
-    yad --form --text-align=center --undecorated \
-    --center --on-top --image-on-top --image="$img" \
-    --skip-taskbar --title=" " --borders=3 \
-    --buttons-layout=spread --align=center \
-    --field="<span font_desc='Free Sans $s'>$lanswer</span>":lbl \
-    --width=371 --height=280 \
-    --button=" $(gettext "I don't know") ":3 \
-    --button=" $(gettext "I know") ":2
+    yad --form --title="$(gettext "Practice")" \
+    --timeout=10 --selectable-labels \
+    --skip-taskbar --text-align=center --center --on-top \
+    --undecorated --buttons-layout=spread --align=center \
+    --width=395 --height=290 --borders=5 \
+    --field="$bcuestion":lbl \
+    --field="":lbl \
+    --field="$answer":lbl \
+    --button="  $(gettext "I did not know it")  ":3 \
+    --button="  $(gettext "I Knew it")  ":2
 }
+
 
 while read trgt; do
 
     fonts "$trgt"
     cuestion
     ret=$(echo "$?")
-    
-    if [ $ret = 0 ]; then
+
+    if [ $ret = 1 ]; then
+        break &
+        "$drts/cls.sh" comp_a "$easy" "$ling" "$hard" "$all" &
+        exit 1
+        
+    else
         answer
         ans=$(echo "$?")
 
-        if [ "$ans" = 2 ]; then
-            echo "$trgt" >> ok.f
-            easy=$(($easy+1))
+        if [ $ans = 2 ]; then
+            echo "$trgt" >> a.1
+            easy=$((easy+1))
 
         elif [ $ans = 3 ]; then
-            echo "$trgt" >> fin2
-            hard=$(($hard+1))
+            echo "$trgt" >> a.2
+            hard=$((hard+1))
         fi
-
-    elif [ $ret = 1 ]; then
-        "$drts/cls" f "$easy" "$ling" "$hard" "$all" &
-        break &
-        exit 1
-        
     fi
-done < fin1
+done < ./a.tmp
 
-if [ ! -f fin2 ]; then
+if [ ! -f ./a.2 ]; then
 
     score "$easy"
     
 else
-
     while read trgt; do
 
         fonts "$trgt"
         cuestion
         ret=$(echo "$?")
         
-        if [ $ret = 0 ]; then
+        if [ $ret = 1 ]; then
+            break &
+            "$drts/cls.sh" comp_a "$easy" "$ling" "$hard" "$all" &
+            exit 1
+        
+        else
             answer
             ans=$(echo "$?")
             
             if [ $ans = 2 ]; then
-                hard=$(($hard-1))
-                ling=$(($ling+1))
+                hard=$((hard-1))
+                ling=$((ling+1))
                 
             elif [ $ans = 3 ]; then
-                echo "$trgt" >> fin3
+                echo "$trgt" >> a.3
             fi
-            
-        elif [ $ret = 1 ]; then
-            "$drts/cls" f "$easy" "$ling" "$hard" "$all" &
-            break &
-            exit 1
         fi
-    done < fin2
-    
+    done < ./a.2
+
     score "$easy"
 fi
