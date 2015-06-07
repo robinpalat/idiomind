@@ -15,7 +15,7 @@ play() {
 
     killall play
     DIR2="$DM_tl/Podcasts/.conf"
-    [ -f "$DIR2/0.cfg" ] && st3=$(sed -n 2p "$DIR2/0.cfg") || st3=FALSE
+    [ -f "$DIR2/0.lst" ] && st3=$(sed -n 2p "$DIR2/0.lst") || st3=FALSE
     [ $st3 = FALSE ] && fs="" || fs='-fs'
     
     if [ -f "$DM_tl/Podcasts/cache/$2.mp3" ]; then
@@ -196,7 +196,7 @@ url=\"$feed\""
 sync() {
    
     DIR2="$DM_tl/Podcasts/.conf"
-    cfg="$DM_tl/Podcasts/.conf/0.cfg"
+    cfg="$DM_tl/Podcasts/.conf/0.lst"
     path="$(sed -n 3p "$cfg" | grep -o 'path="[^"]*' | grep -o '[^"]*$')"
     
     if  [ -f "$DT/l_sync" ] && [ "$2" != 0 ]; then

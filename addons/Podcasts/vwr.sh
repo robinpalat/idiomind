@@ -6,7 +6,7 @@ item="${2}"
 dir="$DM_tl/Podcasts/cache"
 fname=$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)
 export item
-if grep -Fxo "$item" "$DM_tl/Podcasts/.conf/2.cfg"; then
+if grep -Fxo "$item" "$DM_tl/Podcasts/.conf/2.lst"; then
 btnlabel="$(gettext "Delete")"
 btncmd="'$DSP/mngr.sh' delete_item"; else
 btnlabel="$(gettext "Keep")"

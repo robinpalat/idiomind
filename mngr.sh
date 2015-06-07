@@ -407,7 +407,7 @@ edit() {
                     sed '/^$/d' "${DC_tlt}/6.cfg.tmp" > "${DC_tlt}/6.cfg"
                     rm "${DC_tlt}/6.cfg.tmp"; fi
                     tags_8 W "$mark_mod" "${DM_tlt}/words/$fname.mp3"
-                    "$DS/ifs/tls.sh" colorize
+                    "$DS/ifs/tls.sh" colorize &
                 fi
                 
                 if [ "$audio_mod" != "$audiofile_1" ]; then
@@ -538,7 +538,7 @@ edit() {
                     sed '/^$/d' "${DC_tlt}/6.cfg.tmp" > "${DC_tlt}/6.cfg"
                     rm "${DC_tlt}/6.cfg.tmp"; fi
                     tags_8 S "$mark_mod" "${DM_tlt}/$fname.mp3"
-                    "$DS/ifs/tls.sh" colorize
+                    "$DS/ifs/tls.sh" colorize &
                 fi
                 
                 if [ -n "$audio_mod" ]; then

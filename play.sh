@@ -24,8 +24,9 @@ msg "$(gettext "No topic is active")\n" info & exit 1; fi
 
 [ -n "$(< "$DC_s/1.cfg")" ] && cfg=1 || > "$DC_s/1.cfg"
 
-lbls=('Words' 'Sentences' 'Marked items' \
-'Difficult words' 'New episodes' 'Saved episodes')
+lbls=('Words' 'Sentences' 'Marked items' 'Difficult words' \
+'New episodes <i><small>(Podcasts)</small></i>' \
+'Saved episodes <i><small>(Podcasts)</small></i>')
 sets=('grammar' 'list' 'tasks' 'trans' 'trd_trgt' 'text' 'audio' \
 'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' \
 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
@@ -42,10 +43,10 @@ in2="$(grep -Fxvf "$cfg3" "$cfg1")"; else
 in2="$(< "$cfg1")"; fi
 in3="$(< "$DC_tlt/6.cfg")"
 in4="$(cd "$DC_tlt/practice/"; awk '++A[$1]==2' ./*.3 |sed '/^$/d')"
-[ -f "$DM_tl/Podcasts/.conf/1.cfg" ] && \
-in5="$(tac "$DM_tl/Podcasts/.conf/1.cfg" |sed '/^$/d')" || in5=""
-[ -f "$DM_tl/Podcasts/.conf/2.cfg" ] && \
-in6="$(tac "$DM_tl/Podcasts/.conf/2.cfg" |sed '/^$/d')" || in6=""
+[ -f "$DM_tl/Podcasts/.conf/1.lst" ] && \
+in5="$(tac "$DM_tl/Podcasts/.conf/1.lst" |sed '/^$/d')" || in5=""
+[ -f "$DM_tl/Podcasts/.conf/2.lst" ] && \
+in6="$(tac "$DM_tl/Podcasts/.conf/2.lst" |sed '/^$/d')" || in6=""
 [ ! -d "$DT" ] && mkdir "$DT"; cd "$DT"
 
 if [ "$cfg" = 1 ]; then

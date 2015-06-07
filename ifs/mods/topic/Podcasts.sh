@@ -18,7 +18,7 @@ function list_1() {
         echo "$DMP/cache/$(nmfile "$list1").png"
         else echo "$DS_a/Podcasts/images/audio.png"; fi
         echo "$list1"
-    done < "$DCP/1.cfg"
+    done < "$DCP/1.lst"
 }
 
 function list_2() {
@@ -27,7 +27,7 @@ function list_2() {
         echo "$DMP/cache/$(nmfile "$list2").png"
         else echo "$DS_a/Podcasts/images/audio.png"; fi
         echo "$list2"
-    done < "$DCP/2.cfg"
+    done < "$DCP/2.lst"
 }
 
 function feedmode() {

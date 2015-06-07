@@ -51,7 +51,7 @@ sets=('channel' 'link' 'logo' 'ntype' \
 
 conditions() {
     
-    [ ! -f "$DCP/1.cfg" ] && touch "$DCP/1.cfg"
+    [ ! -f "$DCP/1.lst" ] && touch "$DCP/1.lst"
 
     if [ -f "$DT/.uptp" ] && [ "$1" != 0 ]; then
         msg_2 "$(gettext "Wait until it finishes a previous process")\n" info OK gtk-stop
@@ -67,7 +67,7 @@ conditions() {
     mkdir -p "DM_tl/Podcasts/.conf"
     mkdir -p "DM_tl/Podcasts/cache"; fi
 
-    nps="$(sed '/^$/d' "$DCP/4.cfg" | wc -l)"
+    nps="$(sed '/^$/d' "$DCP/feeds.lst" | wc -l)"
     if [ "$nps" -le 0 ]; then
     [[ "$1" != 0 ]] && msg "$(gettext "Missing URL. Please check the settings in the preferences dialog.")\n" info
     [ -f "$DT_r" ] && rm -fr "$DT_r" "$DT/.uptp"
@@ -229,7 +229,7 @@ fetch_podcasts() {
                     || [ -z "$title" ]; then
                     continue; fi
                          
-                    if ! grep -Fxo "${title}" <<<"$(cat "$DCP/1.cfg" "$DCP/2.cfg" "$DCP/remove")"; then
+                    if ! grep -Fxo "${title}" <<<"$(cat "$DCP/1.lst" "$DCP/2.lst" "$DCP/remove")"; then
                     
                         enclosure_url=$(curl -s -I -L -w %"{url_effective}" \
                         --url "$enclosure" | tail -n 1)
@@ -245,11 +245,11 @@ fetch_podcasts() {
                         mv -f "media.$ex" "$DMC/$fname.$ex"
                         mkhtml
 
-                        if [ -s "$DCP/1.cfg" ]; then
-                        sed -i -e "1i${title}\\" "$DCP/1.cfg"
-                        else echo "${title}" > "$DCP/1.cfg"; fi
-                        if grep '^$' "$DCP/1.cfg"; then
-                        sed -i '/^$/d' "$DCP/1.cfg"; fi
+                        if [ -s "$DCP/1.lst" ]; then
+                        sed -i -e "1i${title}\\" "$DCP/1.lst"
+                        else echo "${title}" > "$DCP/1.lst"; fi
+                        if grep '^$' "$DCP/1.lst"; then
+                        sed -i '/^$/d' "$DCP/1.lst"; fi
                         echo "${title}" >> "$DCP/.11.cfg"
                         echo "${title}" >> "$DT_r/log"
                         echo -e "channel=\"${channel}\"" > "$DMC/$fname.item"
@@ -265,19 +265,19 @@ fetch_podcasts() {
         fi
         
         let n++
-    done < "$DCP/4.cfg"
+    done < "$DCP/feeds.lst"
 }
 
 removes() {
     
-    check_index1 "$DCP/1.cfg"
-    if grep '^$' "$DCP/1.cfg"; then
-    sed -i '/^$/d' "$DCP/1.cfg"; fi
-    echo "$(tail -n+51 < "$DCP/1.cfg")" >> "$DCP/remove"
-    echo "$(head -n 50 < "$DCP/1.cfg")" > "$DCP/kept"
+    check_index1 "$DCP/1.lst"
+    if grep '^$' "$DCP/1.lst"; then
+    sed -i '/^$/d' "$DCP/1.lst"; fi
+    echo "$(tail -n+51 < "$DCP/1.lst")" >> "$DCP/remove"
+    echo "$(head -n 50 < "$DCP/1.lst")" > "$DCP/kept"
 
     while read item; do
-        if ! grep -Fxo "$item" "$DCP/2.cfg"; then
+        if ! grep -Fxo "$item" "$DCP/2.lst"; then
         fname=$(nmfile "$item")
         find "$DMC" -type f -name "$fname.*" -exec rm {} +
         fi
@@ -293,24 +293,24 @@ removes() {
         && ([ -f "$DMC/$fname.html" ] && [ -f "$DMC/$fname.item" ]); then
             continue
         else
-        grep -vxF "$item" "$DCP/2.cfg" > "$DT/rm.temp"
-        sed '/^$/d' "$DT/rm.temp" > "$DCP/2.cfg"
-        grep -vxF "$item" "$DCP/1.cfg" > "$DT/rm.temp"
-        sed '/^$/d' "$DT/rm.temp" > "$DCP/1.cfg"
+        grep -vxF "$item" "$DCP/2.lst" > "$DT/rm.temp"
+        sed '/^$/d' "$DT/rm.temp" > "$DCP/2.lst"
+        grep -vxF "$item" "$DCP/1.lst" > "$DT/rm.temp"
+        sed '/^$/d' "$DT/rm.temp" > "$DCP/1.lst"
         rm -f "$DT/rm.temp"
         find "$DMC" -name "$fname".* -exec rm {} \;
         fi 
     done < "$DCP/kept"
     
-    mv -f "$DCP/kept" "$DCP/1.cfg"
-    check_index1 "$DCP/1.cfg" "$DCP/2.cfg"
-    if grep '^$' "$DCP/1.cfg"; then
-    sed -i '/^$/d' "$DCP/1.cfg"; fi
-    if grep '^$' "$DCP/2.cfg"; then
-    sed -i '/^$/d' "$DCP/2.cfg"; fi
+    mv -f "$DCP/kept" "$DCP/1.lst"
+    check_index1 "$DCP/1.lst" "$DCP/2.lst"
+    if grep '^$' "$DCP/1.lst"; then
+    sed -i '/^$/d' "$DCP/1.lst"; fi
+    if grep '^$' "$DCP/2.lst"; then
+    sed -i '/^$/d' "$DCP/2.lst"; fi
     echo "$(head -n 1000 < "$DCP/remove")" > "$DCP/remove_"
     mv -f "$DCP/remove_" "$DCP/remove"
-    cp -f "$DCP/1.cfg" "$DCP/.11.cfg"
+    cp -f "$DCP/1.lst" "$DCP/.11.cfg"
 }
 
 conditions "$1"
@@ -323,7 +323,7 @@ echo 11 > "$DCP/8.cfg"
 "$(gettext "Checking new episodes...")" -t 6000) &
 fi
 
-if [ -f "$DCP/2.cfg" ]; then kept_episodes="$(wc -l < "$DCP/2.cfg")"
+if [ -f "$DCP/2.lst" ]; then kept_episodes="$(wc -l < "$DCP/2.lst")"
 else kept_episodes=0; fi
 echo -e " <b>$(gettext "Updating")</b>
  $(gettext "Latest downloads:") 0" > "$DM_tl/Podcasts/$date.updt"
@@ -353,8 +353,8 @@ else
     fi
 fi
 
-cfg="$DM_tl/Podcasts/.conf/0.cfg"; if [ -f "$cfg" ]; then
-sync="$(sed -n 2p < "$cfg" | grep -o 'sync="[^"]*' | grep -o '[^"]*$')"
+cfg="$DM_tl/Podcasts/.conf/0.lst"; if [ -f "$cfg" ]; then
+sync="$(sed -n 2p "$cfg" | grep -o 'sync="[^"]*' | grep -o '[^"]*$')"
 if [ "$sync" = TRUE ]; then 
     if [[ "$1" != 0 ]]; then
     "$DSP/tls.sh" sync
