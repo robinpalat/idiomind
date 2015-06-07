@@ -304,6 +304,11 @@ removes() {
         fi
     done < "$DCP/kept"
     
+    while read k_item; do
+    
+       echo "$(nmfile "${k_item}")" >> "$DT/nmfile"
+    done < "$DCP/2.lst"
+    
     while read r_item; do
     
        r_file=`basename "$r_item" |sed "s/\(.*\).\{4\}/\1/" |tr -d '.'`

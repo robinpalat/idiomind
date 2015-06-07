@@ -207,7 +207,7 @@ sync() {
         killall rsync
         if ps -A | pgrep -f "rsync"; then killall rsync; fi
         [[ -f "$DT/cp.lock" ]] && rm -f "$DT/cp.lock"
-        [[ -f "$DT/cp.lock" ]] && rm -f "$DT/l_sync"
+        [[ -f "$DT/l_sync" ]] && rm -f "$DT/l_sync"
         killall tls.sh
         exit 1; fi
             
@@ -225,15 +225,15 @@ sync() {
     elif [[ -d "$path" ]]; then
         
         touch "$DT/l_sync"; SYNCDIR="$path/"
-        A="$(cd "$DM_tl/Podcasts/cache/"; ls ./*.mp3 | wc -l)"
-        B="$(cd "$SYNCDIR"; ls ./*.mp3 | wc -l)"
+        A="$(cd "$DM_tl/Podcasts/cache/"; \
+        ls --ignore="*.html" --ignore="*.item" --ignore="*.png" | wc -l)"
+        B="$(cd "$SYNCDIR"; ls * | wc -l)"
         [ $? != 0 ] && B=0
         
         if [[ "$2" != 0 ]]; then
         cd /
-        (sleep 1 && notify-send -i idiomind \
-        "$(gettext "Starting syncing")" \
-        "$A $(gettext "files")" -t 8000) &
+        (sleep 1 && notify-send \
+        "$(gettext "Starting syncing")" -t 8000) &
         fi
 
         if [[ $rsync_delete = 0 ]]; then
@@ -253,9 +253,10 @@ sync() {
 
             new=$((A-B))
             if [[ $2 != 0 ]]; then
-            (sleep 1 && notify-send -i idiomind \
-            "$(gettext "Synchronization finished")" \
-            "$new $(gettext "New episodes")" -t 8000) &
+            nf=$(gettext "new files in device")
+            [[ $new = 1 ]] && ne=$(gettext "new file in device")
+            (sleep 1 && notify-send \
+            "$(gettext "Synchronization finished")" "$new $nf" -t 8000) &
             fi
   
         elif [[ $exit != 0 ]]; then
