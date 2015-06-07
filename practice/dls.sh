@@ -1,204 +1,187 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
-#  
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#  
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software
-#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-#  MA 02110-1301, USA.
-#
-#  2015/02/27
-
-drts="$DS/practice/"
+drts="$DS/practice"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
-all=$(cat lsin | wc -l)
+all=$(wc -l < ./d.0)
 listen="Listen"
 easy=0
 hard=0
 ling=0
 f=0
 
-function score() {
+score() {
 
-    if [ "$1" -ge "$all" ] ; then
-        rm lsin ok.s
-        echo "$(date "+%a %d %B")" > look_ls
-        echo 21 > .iconls
-        play $drts/all.mp3 & $strt 4 &
-        killall dls.sh
+    touch d.0 d.1 d.2 d.3
+    awk '!a[$0]++' d.2 > d2.tmp
+    awk '!a[$0]++' d.3 > d3.tmp
+    grep -Fxvf d3.tmp d2.tmp > d.2
+    mv -f d3.tmp d.3
+    
+    if [[ "$1" -ge $all ]]; then
+        play "$drts/all.mp3" & 
+        echo "s9.$(tr -s '\n' '|' < ./d.1).s9" >> "$log"
+        echo "$(date "+%a %d %B")" > d.lock
+        echo 21 > .4
+        "$strt" 4 &
         exit 1
         
     else
-        [ -f l_s ] && echo "$(($(cat l_s)+$easy))" > l_s || echo $easy > l_s
-        s=$(cat l_s)
-        v=$((100*$s/$all))
+        [ -f ./d.l ] && echo $(($(< ./d.l)+easy)) > d.l || echo $easy > d.l
+        s=$(< ./d.l)
+        v=$((100*s/all))
         n=1; c=1
-        while [ "$n" -le 21 ]; do
-                if [ "$v" -le "$c" ]; then
-                echo "$n" > .iconls; break; fi
-                ((c=c+5))
+        while [[ $n -le 21 ]]; do
+            if [ "$v" -le "$c" ]; then
+            echo "$n" > .4; break; fi
+            ((c=c+5))
             let n++
         done
-
-        $strt 8 $easy $ling $hard & exit 1
+        echo "s9.$(tr -s '\n' '|' < d.1).s9" >> "$log"
+        "$strt" 9 $easy $ling $hard & exit 1
     fi
 }
 
+dialog2() {
+    
+    hint="$(echo "$@" | tr -s "'" ' '|awk '{print tolower($0)}' \
+    |sed 's/\b\(.\)/\u\1/g'|tr -s ',' ' ' \
+    |sed 's|\.||;s|\,||;s|\;||g'|sed 's|[a-z]|\.|g'|sed 's| |\t|g' \
+    |sed 's|\.|\ .|g' | tr "[:upper:]" "[:lower:]"|sed 's/^\s*./\U&\E/g')"
+    text="<span font_desc='Free Sans Bold 11' color='#717171'>$hint</span>\n"
 
-function dialog1() {
-    
-    hint="$(iconv -c -f utf8 -t ascii <<<"$1" | tr -s "'" " ")"
-    SE=$(yad --center --text-info --image="$IMAGE" "$info" --image-on-top \
-    --fontname="Free Sans 15" --justify=fill --editable --wrap \
-    --buttons-layout=end --borders=5 --title=" " --margins=8 \
-    --text-align=left --height=420 --width=470 --name=Idiomind \
-    --align=left --window-icon=idiomind --fore=4A4A4A --class=Idiomind \
-    --button="$(gettext "Hint")":"/usr/share/idiomind/practice/hint.sh ${hint}" \
-    --button="$listen":"play '$DM_tlt/$fname.mp3'" \
-    --button=" $(gettext "OK") >> ":0)
+    SE=$(yad --text-info --title="$(gettext "Practice")" \
+    --text="$text" \
+    --name=Idiomind --class=Idiomind \
+    --fontname="Free Sans 14" --fore=4A4A4A --justify=fill \
+    --margins=5 --editable --wrap \
+    --window-icon="$DS/images/icon.png" --image="$DS/practice/bar.png" \
+    --buttons-layout=end --skip-taskbar --undecorated --center --on-top \
+    --text-align=left --align=left --image-on-top \
+    --height=215 --width=560 --borders=3 \
+    --button="$(gettext "Exit")":1 \
+    --button="$(gettext "Listen")":"$cmd_play" \
+    --button=" $(gettext "Check") >> ":0)
     }
     
-function dialog2() {
+check() {
     
-    hint="$(iconv -c -f utf8 -t ascii <<<"$1" | tr -s "'" " ")"
-    SE=$(yad --center --text-info --fore=4A4A4A --skip-taskbar \
-    --fontname="Free Sans 15" --justify=fill --editable --wrap \
-    --buttons-layout=end --borders=5 --title=" " "$info" --margins=8 \
-    --text-align=left --height=180 --width=470 --name=Idiomind \
-    --align=left --window-icon=idiomind --image-on-top --class=Idiomind \
-    --button="$(gettext "Hint")":"/usr/share/idiomind/practice/hint.sh ${hint}" \
-    --button="$listen":"play '$DM_tlt/$fname.mp3'" \
-    --button=" $(gettext "OK") >> ":0)
-    }
-    
-function check() {
-    
-    yad --form --center --name=Idiomind --buttons-layout=end \
-    --width=560 --height=300 --on-top --skip-taskbar --scroll \
-    --class=Idiomind $aut --wrap --window-icon=idiomind \
-    --borders=10 --selectable-labels \
-    --title="" --button="$listen":"play '$DM_tlt/$fname.mp3'" \
-    --button="$(gettext "Next sentence")":2 \
+    yad --form --title="$(gettext "Practice")" \
+    --name=Idiomind --class=Idiomind \
+    --image="/usr/share/idiomind/practice/bar.png" $aut \
+    --selectable-labels \
+    --window-icon="$DS/images/icon.png" \
+    --skip-taskbar --wrap --scroll --image-on-top --center --on-top \
+    --undecorated --buttons-layout=end \
+    --width=560 --height=250 --borders=12 \
+    --button="$(gettext "Listen")":"$cmd_play" \
+    --button="$(gettext "Next")":2 \
     --field="":lbl --text="<span font_desc='Free Sans 14'>$wes</span>\\n" \
-    --field="<span font_desc='Free Sans 9'>$(echo $OK | sed 's/\,*$/\./g') $prc</span>\\n":lbl
+    --field="<span font_desc='Free Sans 9'>$(sed 's/\,*$/\./g' <<<"$OK")\n\nhits $prc</span>\n":lbl
     }
     
-function get_image_text() {
+get_text() {
     
     WEN=$(echo "$1" | sed 's/^ *//; s/ *$//')
-    eyeD3 --write-images=$DT "$DM_tlt/$fname.mp3"
     echo "$WEN" | awk '{print tolower($0)}' > quote
     }
 
-function result() {
+result() {
     
-    echo "$SE" | awk '{print tolower($0)}' \
-    | sed 's/ /\n/g' | grep -v '^.$' \
-    | sed s'/,//; s/\!//; s/\?//; s/¿//; s/\¡//; s/"//'g > ing
-    cat quote | awk '{print tolower($0)}' \
-    | sed 's/ /\n/g' | grep -v '^.$' \
-    | sed s'/,//; s/\!//; s/\?//; s/¿//; s/\¡//; s/"//'g > all
+    awk '{print tolower($0)}' <<<"$SE" | sed 's/ /\n/g' | grep -v '^.$' \
+    | sed 's/,//;s/\!//;s/\?//;s/¿//;s/\¡//;s/(//;s/)//;s/"//g' \
+    | sed 's/\-//;s/\[//;s/\]//;s/\.//;s/\://;s/\|//;s/)//;s/"//g' > ./d_ing.tmp
+    awk '{print tolower($0)}' < ./quote | sed 's/ /\n/g' | grep -v '^.$' \
+    | sed 's/,//;s/\!//;s/\?//;s/¿//;s/\¡//;s/(//;s/)//;s/"//g' \
+    | sed 's/\-//;s/\[//;s/\]//;s/\.//;s/\://;s/\|//;s/)//;s/"//g' > ./d_all.tmp
+    
     (
-    ff="$(cat ing | sed 's/ /\n/g')"
-    n=1
-    while [ $n -le $(echo "$ff" | wc -l) ]; do
-        line="$(echo "$ff" | sed -n "$n"p )"
-        if cat all | grep -oFx "$line"; then
+    n=1;
+    while read -r line; do
+        > ./d_words.tmp
+        if grep -oFx "$line" ./d_all.tmp; then
             sed -i "s/"$line"/<b>"$line"<\/b>/g" quote
             [ -n "$line" ] && echo \
-            "<span color='#3A9000'><b>${line^}</b></span>,  " >> wrds
-            [ -n "$line" ] && echo "$line" >> w.ok
+            "<span color='#3A9000'><b>${line^}</b></span>  " >> ./d_words.tmp
+            [ -n "$line" ] && echo "$line" >> d_ok.tmp
         else
             [ -n "$line" ] && echo \
-            "<span color='#7B4A44'><b>${line^}</b></span>,  " >> wrds
+            "<span color='#7B4A44'><b>${line^}</b></span>  " >> ./d_words.tmp
         fi
         let n++
-    done
+        
+    done <<<"$(sed 's/ /\n/g' < ./d_ing.tmp)"
     )
-    OK=$(cat wrds | tr '\n' ' ')
-    cat quote | sed 's/ /\n/g' > all
-    porc=$((100*$(cat w.ok | wc -l)/$(cat all | wc -l)))
     
-    if [ $porc -ge 70 ]; then
-        echo "$WEN" | tee -a ok.s $w9
-        easy=$(($easy+1))
-        clr=3AB452
-    elif [ $porc -ge 50 ]; then
-        ling=$(($ling+1))
-        clr=E5801D
+    OK=$(tr '\n' ' ' < ./d_words.tmp)
+    sed 's/ /\n/g' < ./quote > d_all.tmp
+    porc=$((100*$(cat ./d_ok.tmp | wc -l)/$(cat ./d_all.tmp | wc -l)))
+    
+    if [[ $porc -ge 70 ]]; then
+        echo "$WEN" >> d.1
+        easy=$((easy+1))
+        color=3AB452
+        
+    elif [[ $porc -ge 50 ]]; then
+        echo "$WEN" >> d.2
+        ling=$((ling+1))
+        color=E5801D
+        
     else
-        hard=$(($hard+1))
-        clr=D11B5D
+        echo "$WEN" >> d.3
+        hard=$((hard+1))
+        color=D11B5D
     fi
     
-    prc="<span background='#$clr'><span color='#FFFFFF'> <b>$porc%</b> </span></span>"
-    wes="$(cat quote)"
-    
+    prc="<b>$porc%</b>"
+    wes="$(< quote)"
     rm allc quote
     }
-    
-    
-n=1
-while [ $n -le $(wc -l < lsin1) ]; do
 
-    trgt="$(sed -n "$n"p lsin1)"
+n=1
+while [[ $n -le "$(wc -l < ./d.tmp)" ]]; do
+
+    trgt="$(sed -n "$n"p d.tmp)"
     fname="$(echo -n "$trgt" | md5sum | rev | cut -c 4- | rev)"
     
-    if [ $n = 1 ]; then
-    info="--text=<sup><tt> $(gettext "Try to write the phrase you're listening to")...</tt></sup>"
-    else
-    info=""; fi
+    if [[ $n = 1 ]]; then
+    info="<sub>$(gettext "Try to write the sentence you're listening to")...</sub>"
+    else info=""; fi
     
-    if [ -f "$DM_tlt/$fname".mp3 ]; then
-        if [ -f "$DT/ILLUSTRATION".jpeg ]; then
-            rm -f "$DT/ILLUSTRATION".jpeg; fi
-        
-        get_image_text "$trgt"
+    if [ -f "$DM_tlt/$fname.mp3" ]; then
 
-        if ( [ -f "$DT/ILLUSTRATION".jpeg ] && [ $n != 1 ] ); then
-            IMAGE="$DT/ILLUSTRATION".jpeg
-            (sleep 0.5 && play "$DM_tlt/$fname".mp3) &
-            dialog1 "$trgt"
-        else
-            (sleep 0.5 && play "$DM_tlt/$fname".mp3) &
-            dialog2 "$trgt"
-        fi
+        get_text "$trgt"
+        cmd_play="play "\"$DM_tlt/$fname.mp3\"""
+
+        (sleep 0.5 && play "$DM_tlt/$fname.mp3") &
+        dialog2 "$trgt"
         ret=$(echo "$?")
         
-        if [ $ret -eq 0 ]; then
-            killall play &
-            result "$trgt"
+        if [ $ret = 1 ]; then
+            break &
+            killall play
+            "$drts/cls.sh" comp_d $easy $ling $hard $all &
+            exit 1
         else
             killall play &
-            $drts/cls s $easy $ling $hard $all &
-            break &
-            exit 0; fi
+            result "$trgt"
+        fi
     
         check "$trgt"
         ret=$(echo "$?")
         
-        if [ $ret -eq 2 ]; then
-            killall play &
-            rm -f w.ok wrds $DT/*.jpeg *.png &
-        else
-            killall play &
-            rm -f w.ok all ing wrds $DT/*.jpeg *.png
-            $drts/cls s $easy $ling $hard $all &
+        if [ $ret = 1 ]; then
             break &
-            exit 0; fi
+            killall play &
+            "$drts/cls.sh" comp_d $easy $ling $hard $all &
+            exit 1
+            
+        elif [ $ret -eq 2 ]; then
+            killall play &
+        fi
     fi
     let n++
 done
 
 score $easy
-
