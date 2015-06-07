@@ -563,9 +563,13 @@ fback() {
 } >/dev/null 2>&1
 
 
+
+
 colorize() {
 
-    cd "${DC_tlt}/practice"; rm "${DC_tlt}/5.cfg"
+    rm "${DC_tlt}/5.cfg"
+    cd "${DC_tlt}/practice"
+    touch a.1 a.2 a.3
     m=`cat "${DC_tlt}/6.cfg"`
     s3=`awk '++A[$1]==2' ./*.3`
     s2=`awk '++A[$1]==2' ./*.2`
@@ -581,15 +585,15 @@ colorize() {
         if grep -Fxo "${item}" <<<"${m}"; then
         i="<b><big>${item}</big></b>";else i="${item}"; fi
         if grep -Fxo "${item}" <<<"${s3}"; then
-            echo -e "$img3\n${i}\nFALSE" >> "$cfg5"
+            echo -e "FALSE\n${i}\n$img3" >> "$cfg5"
         elif grep -Fxo "${item}" <<<"${s1}"; then
-            echo -e "$img1\n${i}\nFALSE" >> "$cfg5"
+            echo -e "FALSE\n${i}\n$img2" >> "$cfg5"
         elif grep -Fxo "${item}" <<<"${s2}"; then
-            echo -e "$img2\n${i}\nFALSE" >> "$cfg5"
+            echo -e "FALSE\n${i}\n$img2" >> "$cfg5"
         else
-            echo -e "$img0\n${i}\nFALSE" >> "$cfg5"
+            echo -e "FALSE\n${i}\n$img0" >> "$cfg5"
         fi
-    done < <(tac "${DC_tlt}/1.cfg")
+    done < "${DC_tlt}/1.cfg"
     cd ~/
 }
 
@@ -665,7 +669,7 @@ about() {
 c="$(gettext "Vocabulary learning tool")"
 website="$(gettext "Web Site")"
 export c website
-python << END
+python << ABOUT
 import gtk
 import os
 app_logo = os.path.join('/usr/share/idiomind/images/idiomind.png')
@@ -711,82 +715,56 @@ class AboutDialog:
 if __name__ == "__main__":
     AboutDialog = AboutDialog()
     main()
-END
+ABOUT
 } >/dev/null 2>&1
 
 set_image() {
 
     cd "$DT"
     if [ "$3" = word ]; then
-    item=$(eyeD3 "$2" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
+    item=$(eyeD3 "$2" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)'); k=word
     elif [ "$3" = sentence ]; then
-    item=$(eyeD3 "$2" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)'); fi
+    item=$(eyeD3 "$2" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)');  k=sentence; fi
     q="$(sed "s/'/ /g" <<<"$item")"
     file="$2"
     fname="$(nmfile "$item")"
     source "$DS/ifs/mods/add/add.sh"
+    ifile="${DM_tlt}/words/images/$fname.jpg"
 
     echo -e "<html><head>
     <meta http-equiv=\"Refresh\" content=\"0;url=https://www.google.com/search?q="$q"&tbm=isch\">
     </head><body><p>Search images for \"$q\"...</p></body></html>" > search.html
     btn1="--button="$(gettext "Image")":3"
 
-    if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
-    image="--image=$DM_tlt/words/images/$fname.jpg"
+    if [ -f "$ifile" ]; then
+    image="--image=$ifile"
     btn1="--button="$(gettext "Change")":3"
     btn2="--button="$(gettext "Delete")":2"
     else label="--text=<small><a href='file://$DT/search.html'>"$(gettext "Search image")"</a></small>"; fi
 
-    if [ "$3" = word ]; then
+        dlg_form_3
+        ret=$(echo $?)
+            
+            if [[ $ret -eq 3 ]]; then
+            
+            rm -f *.l
+            scrot -s --quality 90 "$fname.temp.jpeg"
+            /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 100x90^ \
+            -gravity center -extent 100x90 -quality 90% "$item"_temp.jpeg
+            /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 400x270^ \
+            -gravity center -extent 400x270 -quality 90% "$ifile"
+            eyeD3 --remove-images "$file"
+            eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file"
+            wait
+            "$DS/ifs/tls.sh" set_image "$file" $k & exit
+                
+            elif [[ $ret -eq 2 ]]; then
+            
+            eyeD3 --remove-image "$file"
+            rm -f "$file"
+            
+            fi
 
-        dlg_form_3
-        ret=$(echo $?)
-            
-            if [[ $ret -eq 3 ]]; then
-            
-            rm -f *.l
-            scrot -s --quality 90 "$fname.temp.jpeg"
-            /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 100x90^ \
-            -gravity center -extent 100x90 -quality 90% "$item"_temp.jpeg
-            /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 400x270^ \
-            -gravity center -extent 400x270 -quality 90% "$DM_tlt/words/images/$fname.jpg"
-            eyeD3 --remove-images "$file"
-            eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file"
-            wait
-            "$DS/ifs/tls.sh" set_image "$file" word & exit
-                
-            elif [[ $ret -eq 2 ]]; then
-            
-            eyeD3 --remove-image "$file"
-            rm -f "$DM_tlt/words/images/$fname.jpg"
-            
-            fi
-            
-    elif [ "$3" = sentence ]; then
-    
-        dlg_form_3
-        ret=$(echo $?)
-                
-            if [[ $ret -eq 3 ]]; then
-            
-            rm -f *.l
-            scrot -s --quality 90 "$fname.temp.jpeg"
-            /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 100x90^ \
-            -gravity center -extent 100x90 -quality 90% "$item"_temp.jpeg
-            /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 400x270^ \
-            -gravity center -extent 400x270 -quality 90% "$DM_tlt/words/images/$fname.jpg"
-            eyeD3 --remove-images "$file"
-            eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file"
-            wait
-            "$DS/ifs/tls.sh" set_image "$file" sentence & exit
-                
-            elif [[ $ret -eq 2 ]]; then
-            
-            eyeD3 --remove-image "$file"
-            rm -f "$DM_tlt/words/images/$fname.jpg"
-            
-            fi
-    fi
     rm -f "$DT"/*.jpeg
     (sleep 50 && rm -f "$DT/search.html") & exit
 } >/dev/null 2>&1

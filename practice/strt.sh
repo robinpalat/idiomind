@@ -25,11 +25,11 @@ learning="$3"
 [ ! -d "$DC_tlt/practice" ] \
 && mkdir "$DC_tlt/practice"
 cd "$DC_tlt/practice"
-[ ! -f .1 ] && echo 1 > .1
-[ ! -f .2 ] && echo 1 > .2
-[ ! -f .3 ] && echo 1 > .3
-[ ! -f .4 ] && echo 1 > .4
-[ ! -f .5 ] && echo 1 > .5
+[ ! -f ./.1 ] && echo 1 > .1
+[ ! -f ./.2 ] && echo 1 > .2
+[ ! -f ./.3 ] && echo 1 > .3
+[ ! -f ./.4 ] && echo 1 > .4
+[ ! -f ./.5 ] && echo 1 > .5
 
 if [[ -n "$1" ]]; then
 
@@ -76,11 +76,11 @@ if [[ -n "$1" ]]; then
     fi
 fi
 
-img1="$DSP/icons_st/$(< ./.1).png"
-img2="$DSP/icons_st/$(< ./.2).png"
-img3="$DSP/icons_st/$(< ./.3).png"
-img4="$DSP/icons_st/$(< ./.4).png"
-img5="$DSP/icons_st/$(< ./.5).png"
+img1="$DSP/icons_st/`< ./.1`.png"
+img2="$DSP/icons_st/`< ./.2`.png"
+img3="$DSP/icons_st/`< ./.3`.png"
+img4="$DSP/icons_st/`< ./.4`.png"
+img5="$DSP/icons_st/`< ./.5`.png"
 
 VAR="$(yad --list --title="$(gettext "Practice ")- $tpc" \
 $img --text="$info" \

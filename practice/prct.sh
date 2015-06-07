@@ -45,7 +45,7 @@ lock() {
 get_list() {
     
     > "$1"
-    if [ "$(wc -l < "${cfg4}")" -gt 0 ]; then
+    if [ `wc -l < "${cfg4}"` -gt 0 ]; then
         while read item; do
         grep -Fxo "${item}" "${cfg3}" >> "$1"
         done < "${cfg1}"
@@ -58,12 +58,12 @@ get_list() {
 get_list_images() {
 
     > "$DT/images"
-    if [ "$(wc -l < "$cfg4")" -gt 0 ]; then
+    if [ `wc -l < "${cfg4}"` -gt 0 ]; then
         while read item; do
         grep -Fxo "${item}" "${cfg3}" >> "$DT/images"
         done < "${cfg1}"
     else
-        cat "$cfg1" > "$DT/images"
+        cat "${cfg1}" > "$DT/images"
     fi
     sed -i '/^$/d' "$DT/images"
     > "$1"
@@ -93,12 +93,12 @@ get_list_mchoice() {
 
 get_list_sentences() {
     
-    if [ "$(wc -l < "$cfg3")" -gt 0 ]; then
-        grep -Fxvf "$cfg3" "$cfg1" > "$DT/slist"
+    if [ `wc -l < "${cfg3}"` -gt 0 ]; then
+        grep -Fxvf "${cfg3}" "${cfg1}" > "$DT/slist"
         tac "$DT/slist" > "$1"
         rm -f "$DT/slist"
     else
-        tac "$cfg1" > "$1"
+        tac "${cfg1}" > "$1"
     fi
 }
 
@@ -117,23 +117,23 @@ flashcards() {
 
     cd "$DC_tlt/practice"
     
-    if [ -f ./a.lock ]; then
-        lock "a.lock"
+    if [[ -f ./a.lock ]]; then
+        lock ./"a.lock"
         ret=$(echo "$?")
-        if [ "$ret" -eq 0 ]; then
-        "$cls" restart_a & exit
+        if [[ $ret -eq 0 ]]; then
+        "$cls" restart a & exit
         else
         "$strt" & exit
         fi
     fi
 
-    if [ -f ./a.0 ] && [ -f ./a.1 ]; then
-        echo "w9.$(tr -s '\n' '|' < a.1).w9" >> "$log"
-        grep -Fxvf a.1 a.0 > a.tmp
+    if [[ -f ./a.0 ]] && [[ -f ./a.1 ]]; then
+        echo "w9.$(tr -s '\n' '|' < ./a.1).w9" >> "$log"
+        grep -Fxvf ./a.1 ./a.0 > ./a.tmp
         echo " practice --restarting session"
     else
-        get_list a.0 && cp -f a.0 a.tmp
-        [[ "$(wc -l < ./a.0)" -lt 5 ]] && starting "$(gettext "Not enough words to start.")"
+        get_list ./a.0 && cp -f ./a.0 ./a.tmp
+        [[ `wc -l < ./a.0` -lt 5 ]] && starting "$(gettext "Not enough words to start.")"
         echo " practice --new session"
     fi
     "$DF"
@@ -143,26 +143,26 @@ multiple_choise() {
 
     cd "$DC_tlt/practice"
     
-    if [ -f ./b.lock ]; then
-        lock "b.lock"
+    if [[ -f ./b.lock ]]; then
+        lock ./"b.lock"
         ret=$(echo "$?")
-        if [[ "$ret" -eq 0 ]]; then
-        "$cls" restart_b & exit
+        if [[ $ret -eq 0 ]]; then
+        "$cls" restart b & exit
         else
         "$strt" & exit
         fi
     fi
 
-    if [ -f ./b.0 ] && [ -f ./b.tmp ]; then
-        echo "w9.$(tr -s '\n' '|' < b.tmp).w9" >> "$log"
-        grep -Fxvf b.tmp b.0 > b.tmp
+    if [[ -f ./b.0 ]] && [[ -f ./b.tmp ]]; then
+        echo "w9.$(tr -s '\n' '|' < ./b.tmp).w9" >> "$log"
+        grep -Fxvf ./b.tmp ./b.0 > ./b.tmp
         echo " practice --restarting session"
         
     else
-        get_list b.0 && cp -f b.0 b.tmp
-        if [ ! -f b.srces ]; then
+        get_list ./b.0 && cp -f ./b.0 ./b.tmp
+        if [[ ! -f ./b.srces ]]; then
             get_list_mchoice; fi
-        [[ "$(wc -l < ./b.0)" -lt 4 ]] && starting "$(gettext "Not enough words to start.")"
+        [[ `wc -l < ./b.0` -lt 4 ]] && starting "$(gettext "Not enough words to start.")"
          echo " practice --new session"
     fi
     "$DMC"
@@ -173,22 +173,22 @@ listen_words() {
     cd "$DC_tlt/practice"
     
     if [[ -f ./c.lock ]]; then
-        lock "c.lock"
+        lock ./"c.lock"
         ret=$(echo "$?")
-        if [[ "$ret" -eq 0 ]]; then
-        "$cls" restart_c & exit
+        if [[ $ret -eq 0 ]]; then
+        "$cls" restart c & exit
         else
         "$strt" & exit
         fi
     fi
 
-    if [ -f ./c.0 ] && [ -f ./c.1 ]; then
+    if [[ -f ./c.0 ]] && [[ -f ./c.1 ]]; then
         echo "w9.$(tr -s '\n' '|' < c.1).w9" >> "$log"
-        grep -Fxvf c.1 c.0 > c.tmp
+        grep -Fxvf ./c.1 ./c.0 > c.tmp
         echo " practice --restarting session"
     else
-        get_list c.0 && cp -f c.0 c.tmp
-        [[ "$(wc -l < ./c.0)" -lt 4 ]] && starting "$(gettext "Not enough words to start.")"
+        get_list ./c.0 && cp -f ./c.0 ./c.tmp
+        [[ `wc -l < ./c.0` -lt 4 ]] && starting "$(gettext "Not enough words to start.")"
         echo " practice --new session"
     fi
     "$DLW"
@@ -198,22 +198,22 @@ listen_sentences() {
 
     cd "$DC_tlt/practice"
     
-    if [ -f ./d.lock ]; then
-        lock "d.lock"
+    if [[ -f ./d.lock ]]; then
+        lock ./"d.lock"
         ret=$(echo "$?")
-        if [[ "$ret" -eq 0 ]]; then
-        "$cls" restart_d & exit
+        if [[ $ret -eq 0 ]]; then
+        "$cls" restart d & exit
         else
         "$strt" & exit
         fi
     fi
 
-    if [ -f ./d.0 ] && [ -f ./d.1 ]; then
-        grep -Fxvf d.1 d.0 > d.tmp
+    if [[ -f ./d.0 ]] && [[ -f ./d.1 ]]; then
+        grep -Fxvf ./d.1 ./d.0 > d.tmp
         echo " practice --restarting session"
     else
-        get_list_sentences d.0 && cp -f d.0 d.tmp
-        [[ "$(wc -l < ./d.0)" -lt 1 ]] && starting "$(gettext "Not enough sentences to start.")"
+        get_list_sentences ./d.0 && cp -f ./d.0 ./d.tmp
+        [[ `wc -l < ./d.0` -lt 1 ]] && starting "$(gettext "Not enough sentences to start.")"
         echo " practice --new session"
     fi
     "$DLS"
@@ -223,24 +223,24 @@ images() {
 
     cd "$DC_tlt/practice"
     
-    if [ -f e.lock ]; then
-        lock "e.lock"
+    if [[ -f ./e.lock ]]; then
+        lock ./"e.lock"
         ret=$(echo "$?")
-        if [ "$ret" -eq 0 ]; then
-        "$cls" restart_e & exit
+        if [[ $ret -eq 0 ]]; then
+        "$cls" restart e & exit
         else
         "$strt" & exit
         fi
     fi
 
-    if [ -f ./e.0 ] && [ -f ./e.1 ]; then
-        echo "w9.$(tr -s '\n' '|' < e.1).w9" >> "$log"
-        grep -Fxvf e.1 e.0 > e.tmp
+    if [[ -f ./e.0 ]] && [[ -f ./e.1 ]]; then
+        echo "w9.$(tr -s '\n' '|' < ./e.1).w9" >> "$log"
+        grep -Fxvf ./e.1 ./e.0 > ./e.tmp
         echo " practice --restarting session"
     else
         
-        get_list_images e.0 && cp -f e.0 e.tmp
-        [[ "$(wc -l < ./e.0)" -lt 3 ]] && starting "$(gettext "Not enough images to start.")"
+        get_list_images ./e.0 && cp -f ./e.0 ./e.tmp
+        [[ `wc -l < ./e.0` -lt 3 ]] && starting "$(gettext "Not enough images to start.")"
         echo " practice --new session"
     fi
     "$DI"

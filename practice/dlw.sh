@@ -97,7 +97,7 @@ while read trgt; do
 
     elif [ $ans = 1 ]; then
         break &
-        "$drts/cls.sh" comp_c $easy $ling $hard $all &
+        "$drts/cls.sh" comp c $easy $ling $hard $all &
         exit 1
     fi
 done < ./c.tmp
@@ -123,7 +123,7 @@ else
 
         elif [ $ans = 1 ]; then
             break &
-            "$drts/cls.sh" comp_c $easy $ling $hard $all &
+            "$drts/cls.sh" comp c $easy $ling $hard $all &
             exit 1
         fi
     done < ./c.2

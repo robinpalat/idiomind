@@ -77,8 +77,8 @@ function notebook_1() {
     cmd_play="$DS/play.sh"
     list() {
     if [ -f "${DC_tlt}/5.cfg" ]; then
-    cat "${DC_tlt}/5.cfg"; else
-    cat "$ls1" | \
+    tac "${DC_tlt}/5.cfg"; else
+    tac "$ls1" | \
     awk '{print "/usr/share/idiomind/images/0.png\n"$0"\nFALSE"}'; fi
     }
 
