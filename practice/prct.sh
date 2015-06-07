@@ -136,6 +136,7 @@ flashcards() {
         [[ `wc -l < ./a.0` -lt 5 ]] && starting "$(gettext "Not enough words to start.")"
         echo " practice --new session"
     fi
+    [ ./a.2 ] && rm ./a.2;  [ ./a.3 ] && rm ./a.3
     "$DF"
 }
 
@@ -165,6 +166,7 @@ multiple_choise() {
         [[ `wc -l < ./b.0` -lt 4 ]] && starting "$(gettext "Not enough words to start.")"
          echo " practice --new session"
     fi
+    [ ./b.2 ] && rm ./b.2;  [ ./b.3 ] && rm ./b.3
     "$DMC"
 }
 
@@ -191,6 +193,7 @@ listen_words() {
         [[ `wc -l < ./c.0` -lt 4 ]] && starting "$(gettext "Not enough words to start.")"
         echo " practice --new session"
     fi
+    [ ./c.2 ] && rm ./c.2;  [ ./c.3 ] && rm ./c.3
     "$DLW"
 }
 
@@ -216,6 +219,7 @@ listen_sentences() {
         [[ `wc -l < ./d.0` -lt 1 ]] && starting "$(gettext "Not enough sentences to start.")"
         echo " practice --new session"
     fi
+    [ ./d.2 ] && rm ./d.2;  [ ./d.3 ] && rm ./d.3
     "$DLS"
 }
 
@@ -243,6 +247,7 @@ images() {
         [[ `wc -l < ./e.0` -lt 3 ]] && starting "$(gettext "Not enough images to start.")"
         echo " practice --new session"
     fi
+    [ ./e.2 ] && rm ./e.2;  [ ./e.3 ] && rm ./e.3
     "$DI"
 }
 
