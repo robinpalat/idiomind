@@ -17,7 +17,7 @@
 #  MA 02110-1301, USA.
 #
 
-[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
+[[ -z "$DM" ]] && source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 include "$DS/ifs/mods/add"
 DSP="$DS/addons/Podcasts"
@@ -51,29 +51,29 @@ sets=('channel' 'link' 'logo' 'ntype' \
 
 conditions() {
     
-    [ ! -f "$DCP/1.lst" ] && touch "$DCP/1.lst"
+    [[ ! -f "$DCP/1.lst" ]] && touch "$DCP/1.lst"
 
-    if [ -f "$DT/.uptp" ] && [ "$1" != 0 ]; then
+    if [[ -f "$DT/.uptp" ]] && [[ $1 != 0 ]]; then
         msg_2 "$(gettext "Wait until it finishes a previous process")\n" info OK gtk-stop
         ret=$(echo $?)
         [[ $ret -eq 1 ]] && "$DS/stop.sh" 6
         exit 1
     
-    elif [ -f "$DT/.uptp" ] && [ "$1" = 0 ]; then
+    elif [[ -f "$DT/.uptp" ]] && [[ $1 = 0 ]]; then
         exit 1
     fi
     
-    if [ ! -d "$DM_tl/Podcasts/cache" ]; then
+    if [[ ! -d "$DM_tl/Podcasts/cache" ]]; then
     mkdir -p "DM_tl/Podcasts/.conf"
     mkdir -p "DM_tl/Podcasts/cache"; fi
 
     nps="$(sed '/^$/d' "$DCP/feeds.lst" | wc -l)"
-    if [ "$nps" -le 0 ]; then
+    if [[ "$nps" -le 0 ]]; then
     [[ "$1" != 0 ]] && msg "$(gettext "Missing URL. Please check the settings in the preferences dialog.")\n" info
-    [ -f "$DT_r" ] && rm -fr "$DT_r" "$DT/.uptp"
+    [[ -f "$DT_r" ]] && rm -fr "$DT_r" "$DT/.uptp"
     exit 1; fi
         
-    if [[ "$1" != 0 ]]; then internet; else curl -v www.google.com 2>&1 \
+    if [[ $1 != 0 ]]; then internet; else curl -v www.google.com 2>&1 \
     | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1; fi
 }
 
@@ -115,22 +115,22 @@ text="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
 $summary<br><br></div>
 </body>"
 
-    if [ "$tp" = vid ]; then
-        if [ "$ex" = m4v ] || [ $ex = mp4 ]; then t=mp4
-        elif [ "$ex" = avi ]; then t=avi; fi
+    if [[ "$tp" = vid ]]; then
+        if [[ "$ex" = m4v ]] || [[ $ex = mp4 ]]; then t=mp4
+        elif [[ "$ex" = avi ]]; then t=avi; fi
         echo -e "$video" > "$DMC/$fname.html"
 
-    elif [ "$tp" = aud ]; then
+    elif [[ "$tp" = aud ]]; then
         echo -e "$audio" > "$DMC/$fname.html"
 
-    elif [ "$tp" = txt ]; then
+    elif [[ "$tp" = txt ]]; then
         echo -e "text" > "$DMC/$fname.html"
     fi
 }
 
 get_images () {
 
-    if [ "$tp" = aud ]; then
+    if [[ "$tp" = aud ]]; then
         
         cd "$DT_r"; p=TRUE; rm -f ./*.jpeg ./*.jpg
         
@@ -153,7 +153,7 @@ get_images () {
         cp -f "$DSP/images/audio.png" "$DMC/$fname.png"
         p=""; fi
 
-    elif [ "$tp" = vid ]; then
+    elif [[ "$tp" = vid ]]; then
         
         cd "$DT_r"; p=TRUE; rm -f ./*.jpeg ./*.jpg
         mplayer -ss 60 -nosound -noconsolecontrols \
@@ -166,14 +166,14 @@ get_images () {
         cp -f "$DSP/images/video.png" "$DMC/$fname.png"
         p=""; fi
         
-    elif [ "$tp" = txt ]; then
+    elif [[ "$tp" = txt ]]; then
     
         cd "$DT_r"; p=TRUE
     
         img="media.$ex"
     fi
     
-    if [ "$p" = TRUE ] && [ -f "$DT_r/$img" ]; then
+    if [[ "$p" = TRUE ]] && [[ -f "$DT_r/$img" ]]; then
     layer="$DSP/images/layer.png"
     convert "$DT_r/$img" -interlace Plane -thumbnail 62x54^ \
     -gravity center -extent 62x54 -quality 100% tmp.png
@@ -191,9 +191,9 @@ fetch_podcasts() {
     n=1
     while read FEED; do
         
-        if [ ! -z "$FEED" ]; then
+        if [[ ! -z "$FEED" ]]; then
 
-            if [ -f "$DCP/$n.rss" ]; then
+            if [[ -f "$DCP/$n.rss" ]]; then
                 d=0
                 while [[ $d -lt 8 ]]; do
                     itn=$((d+1)); get=${sets[$d]}
@@ -207,7 +207,7 @@ fetch_podcasts() {
                 continue
             fi
 
-            if [ "$ntype" = 1 ]; then
+            if [[ "$ntype" = 1 ]]; then
 
                 podcast_items="$(xsltproc - "$FEED" <<<"$tmplitem" 2> /dev/null)"
                 podcast_items="$(echo "${podcast_items}" | tr '\n' ' ' \
@@ -225,17 +225,17 @@ fetch_podcasts() {
                     #| iconv -c -f utf8 -t ascii
                     fname="$(nmfile "${title}")"
                     
-                    if [ ${#title} -ge 300 ] \
-                    || [ -z "$title" ]; then
+                    if [[ ${#title} -ge 300 ]] \
+                    || [[ -z "$title" ]]; then
                     continue; fi
                          
-                    if ! grep -Fxo "${title}" <<<"$(cat "$DCP/1.lst" "$DCP/2.lst" "$DCP/remove")"; then
+                    if ! grep -Fxo "${title}" < <(cat "$DCP/1.lst" "$DCP/2.lst" "$DCP/remove"); then
                     
                         enclosure_url=$(curl -s -I -L -w %"{url_effective}" \
                         --url "$enclosure" | tail -n 1)
                         mediatype "$enclosure_url"
                         
-                        if [ ! -f "$DMC/$fname.$ex" ]; then
+                        if [[ ! -f "$DMC/$fname.$ex" ]]; then
                         cd "$DT_r"; wget -q -c -T 51 -O "media.$ex" "$enclosure_url"
                         else cd "$DT_r"; mv -f "$DMC/$fname.$ex" "media.$ex"; fi
                         
@@ -245,7 +245,7 @@ fetch_podcasts() {
                         mv -f "media.$ex" "$DMC/$fname.$ex"
                         mkhtml
 
-                        if [ -s "$DCP/1.lst" ]; then
+                        if [[ -s "$DCP/1.lst" ]]; then
                         sed -i -e "1i${title}\\" "$DCP/1.lst"
                         else echo "${title}" > "$DCP/1.lst"; fi
                         if grep '^$' "$DCP/1.lst"; then
@@ -261,7 +261,7 @@ fetch_podcasts() {
             fi
             
         else
-            [ -f "$DCP/$n.rss" ] && rm "$DCP/$n.rss"
+            [[ -f "$DCP/$n.rss" ]] && rm "$DCP/$n.rss"
         fi
         
         let n++
@@ -284,12 +284,14 @@ removes() {
     done < "$DCP/remove"
     
     while read item; do
-       
-        [ ! -f "$DMC/$fname.png" ] && cp "$dfimg" "$DMC/$fname.png"
-        if [ -f "$DMC/$fname.mp3" ] || [ -f "$DMC/$fname.ogg" ] \
-        || [ -f "$DMC/$fname.mp4" ] || [ -f "$DMC/$fname.m4v" ] \
-        || [ -f "$DMC/$fname.jpg" ] || [ -f "$DMC/$fname.png" ] \
-        || [ -f "$DMC/$fname.pdf" ] \
+    
+       fname="$(nmfile "${item}")"
+       echo "$fname" >> "$DT/nmfile"
+        [[ ! -f "$DMC/$fname.png" ]] && cp "$dfimg" "$DMC/$fname.png"
+        if [[ -f "$DMC/$fname.mp3" ]] || [[ -f "$DMC/$fname.ogg" ]] \
+        || [[ -f "$DMC/$fname.mp4" ]] || [[ -f "$DMC/$fname.m4v" ]] \
+        || [[ -f "$DMC/$fname.jpg" ]] || [[ -f "$DMC/$fname.png" ]] \
+        || [[ -f "$DMC/$fname.pdf" ]] \
         && ([ -f "$DMC/$fname.html" ] && [ -f "$DMC/$fname.item" ]); then
             continue
         else
@@ -299,9 +301,16 @@ removes() {
         sed '/^$/d' "$DT/rm.temp" > "$DCP/1.lst"
         rm -f "$DT/rm.temp"
         find "$DMC" -name "$fname".* -exec rm {} \;
-        fi 
+        fi
     done < "$DCP/kept"
     
+    while read r_item; do
+    
+       r_file=`basename "$r_item" |sed "s/\(.*\).\{4\}/\1/" |tr -d '.'`
+       if ! grep -Fox "${r_file}" < "$DT/nmfile"; then
+       [[ -f "$DMC/$r_item" ]] && rm "$DMC/$r_item"; fi
+    done < <(cd "$DMC"; find . -type f)
+
     mv -f "$DCP/kept" "$DCP/1.lst"
     check_index1 "$DCP/1.lst" "$DCP/2.lst"
     if grep '^$' "$DCP/1.lst"; then
@@ -311,34 +320,35 @@ removes() {
     echo "$(head -n 1000 < "$DCP/remove")" > "$DCP/remove_"
     mv -f "$DCP/remove_" "$DCP/remove"
     cp -f "$DCP/1.lst" "$DCP/.11.cfg"
+    rm "$DT/nmfile"
 }
 
-conditions "$1"
+conditions $1
 
-if [[ "$1" != 0 ]]; then
+if [[ $1 != 0 ]]; then
 echo "Podcasts" > "$DC_a/4.cfg"
 echo 2 > "$DC_s/5.cfg"
 echo 11 > "$DCP/8.cfg"
-(sleep 2 && notify-send -i idiomind "$(gettext "Updating")" \
+(sleep 1 && notify-send -i idiomind "$(gettext "Updating")" \
 "$(gettext "Checking new episodes...")" -t 6000) &
 fi
 
-if [ -f "$DCP/2.lst" ]; then kept_episodes="$(wc -l < "$DCP/2.lst")"
+if [[ -f "$DCP/2.lst" ]]; then kept_episodes=`wc -l < "$DCP/2.lst"`
 else kept_episodes=0; fi
+> "$DT/.uptp"; rm "$DM_tl/Podcasts"/*.updt
 echo -e " <b>$(gettext "Updating")</b>
  $(gettext "Latest downloads:") 0" > "$DM_tl/Podcasts/$date.updt"
-> "$DT/.uptp"; rm "$DM_tl/Podcasts"/*.updt
 DT_r="$(mktemp -d "$DT/XXXX")"
 fetch_podcasts
 
-if [ -f "$DT_r/log" ]; then new_episodes="$(wc -l < "$DT_r/log")"
+if [[ -f "$DT_r/log" ]]; then new_episodes=`wc -l < "$DT_r/log"`
 else new_episodes=0; fi
+rm "$DM_tl/Podcasts"/*.updt
 echo -e " $(gettext "Last update:") $(date "+%r %a %d %B")
  $(gettext "Latest downloads:") $new_episodes" > "$DM_tl/Podcasts/$date.updt"
-
 rm -fr "$DT_r" "$DT/.uptp"
 
-if [ "$new_episodes" -gt 0 ]; then
+if [[ $new_episodes -gt 0 ]]; then
 
     removes
     notify-send -i idiomind \
@@ -346,17 +356,17 @@ if [ "$new_episodes" -gt 0 ]; then
     "$new_episodes $(gettext "new episode(s)")" -t 8000
     
 else
-    if [[ "$1" != 0 ]]; then
+    if [[ $1 != 0 ]]; then
     notify-send -i idiomind \
     "$(gettext "Feeds updated")" \
     "$(gettext "Has not changed since last update")" -t 8000
     fi
 fi
 
-cfg="$DM_tl/Podcasts/.conf/0.lst"; if [ -f "$cfg" ]; then
+cfg="$DM_tl/Podcasts/.conf/0.lst"; if [[ -f "$cfg" ]]; then
 sync="$(sed -n 2p "$cfg" | grep -o 'sync="[^"]*' | grep -o '[^"]*$')"
-if [ "$sync" = TRUE ]; then 
-    if [[ "$1" != 0 ]]; then
+if [[ "$sync" = TRUE ]]; then 
+    if [[ $1 != 0 ]]; then
     "$DSP/tls.sh" sync
     else
     "$DSP/tls.sh" sync 0

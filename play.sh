@@ -18,11 +18,11 @@
 #
 #  2015/02/27
 
-[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
+[[ -z "$DM" ]] && source /usr/share/idiomind/ifs/c.conf
 if [ -z "$tpc" ]; then source "$DS/ifs/mods/cmns.sh"
 msg "$(gettext "No topic is active")\n" info & exit 1; fi
 
-[ -n "$(< "$DC_s/1.cfg")" ] && cfg=1 || > "$DC_s/1.cfg"
+[[ -n "$(< "$DC_s/1.cfg")" ]] && cfg=1 || > "$DC_s/1.cfg"
 
 lbls=('Words' 'Sentences' 'Marked items' 'Difficult words' \
 'New episodes <i><small>(Podcasts)</small></i>' \
@@ -35,10 +35,10 @@ in=('in1' 'in2' 'in3' 'in4' 'in5' 'in6')
 cfg1="$DC_tlt/1.cfg"
 cfg3="$DC_tlt/3.cfg"
 cfg4="$DC_tlt/4.cfg"
-if [ "$(wc -l < "$cfg4")" -gt 0 ]; then
+if [[ `wc -l < "$cfg4"` -gt 0 ]]; then
 in1="$(grep -Fxvf "$cfg4" "$cfg1")"; else
 in1="$(< "$cfg1")"; fi
-if [ "$(wc -l < "$cfg3")" -gt 0 ]; then
+if [[ `wc -l < "$cfg3"` -gt 0 ]]; then
 in2="$(grep -Fxvf "$cfg3" "$cfg1")"; else
 in2="$(< "$cfg1")"; fi
 in3="$(< "$DC_tlt/6.cfg")"
@@ -49,7 +49,7 @@ in5="$(tac "$DM_tl/Podcasts/.conf/1.lst" |sed '/^$/d')" || in5=""
 in6="$(tac "$DM_tl/Podcasts/.conf/2.lst" |sed '/^$/d')" || in6=""
 [ ! -d "$DT" ] && mkdir "$DT"; cd "$DT"
 
-if [ "$cfg" = 1 ]; then
+if [[ "$cfg" = 1 ]]; then
 
     n=13
     while [[ $n -lt 19 ]]; do
@@ -81,7 +81,7 @@ function setting_1() {
 }
 
 title="$tpc"
-if [ ! -f "$DT/.p_" ]; then
+if [[ ! -f "$DT/.p_" ]]; then
 btn2=""$(gettext "Cancel")":1"
 if grep -E 'vivid|wily' <<<"`lsb_release -a`">/dev/null 2>&1; then
 btn1="gtk-media-play:0"; else
