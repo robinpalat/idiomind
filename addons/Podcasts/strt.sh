@@ -329,8 +329,8 @@ if [[ $1 != 0 ]]; then
 echo "Podcasts" > "$DC_a/4.cfg"
 echo 2 > "$DC_s/5.cfg"
 echo 11 > "$DCP/8.cfg"
-(sleep 1 && notify-send -i idiomind "$(gettext "Updating")" \
-"$(gettext "Checking new episodes...")" -t 6000) &
+notify-send -i idiomind "$(gettext "Podcasts")" \
+"$(gettext "Checking for new episodes...")" -t 6000 &
 fi
 
 if [[ -f "$DCP/2.lst" ]]; then kept_episodes=`wc -l < "$DCP/2.lst"`
@@ -349,16 +349,18 @@ echo -e " $(gettext "Last update:") $(date "+%r %a %d %B")
 rm -fr "$DT_r" "$DT/.uptp"
 
 if [[ $new_episodes -gt 0 ]]; then
+    [[ $new_episodes = 1 ]] && ne=$(gettext "new episode")
+    [[ $new_episodes -gt 1 ]] && ne=$(gettext "new episodes")
 
     removes
     notify-send -i idiomind \
-    "$(gettext "Feeds updated")" \
-    "$new_episodes $(gettext "new episode(s)")" -t 8000
+    "$(gettext "Update finished")" \
+    "$new_episodes $ne" -t 8000
     
 else
     if [[ $1 != 0 ]]; then
     notify-send -i idiomind \
-    "$(gettext "Feeds updated")" \
+    "$(gettext "Update finished")" \
     "$(gettext "Has not changed since last update")" -t 8000
     fi
 fi

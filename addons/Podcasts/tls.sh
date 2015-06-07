@@ -232,8 +232,8 @@ sync() {
         if [[ "$2" != 0 ]]; then
         cd /
         (sleep 1 && notify-send -i idiomind \
-        "$(gettext "Podcasts")" \
-        "$(gettext "Synchronizing") $A $(gettext "files")" -t 8000) &
+        "$(gettext "Starting syncing")" \
+        "$A $(gettext "files")" -t 8000) &
         fi
 
         if [[ $rsync_delete = 0 ]]; then
