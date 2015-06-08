@@ -114,13 +114,13 @@ if [[ $ret -eq 0 ]]; then
     while [[ $n -lt 19 ]]; do
         val=$(sed -n $((n-12))p "$slct" | cut -d "|" -f3)
         [[ -n "$val" ]] && sed -i "s/${sets[$n]}=.*/${sets[$n]}=\"$val\"/g" "$DC_s/1.cfg"
-        if sed -n 1,2p "$slct" | grep FALSE; then
+        if sed -n 1,2p "$slct" | grep -o FALSE; then
             if [ "$val" = TRUE ]; then
             [ -n "${!in[$((n-13))]}" ] && \
             echo "${!in[$((n-13))]}" >> ./index.m3u; fi
         else
-            [[ $n = 15 ]] && cat "$cfg1" >> ./index.m3u
-            if [ "$val" = TRUE ]; then
+            if [[ $n = 15 ]]; then cat "$cfg1" >> ./index.m3u
+            elif [[ $n -gt 15 ]] && [[ "$val" = TRUE ]]; then
             [[ -n "${!in[$((n-11))]}" ]] && \
             echo "${!in[$((n-11))]}" >> ./index.m3u; fi
         fi
@@ -141,6 +141,7 @@ if [[ $ret -eq 0 ]]; then
     "$DS/stop.sh" 2 & exit 1; fi
     
     echo -e ".ply.$tpc.ply." >> "$DC_s/8.cfg" &
+    rm -f "$slct"
     sleep 1
     "$DS/bcle.sh" & exit 0
 
@@ -157,5 +158,5 @@ elif [[ $ret -eq 3 ]]; then
     if ps -A | pgrep -f "mplayer"; then killall mplayer & fi
     > "$DT/.p"
 fi
-
-rm -f "$slct" & exit
+[ -f "$slct" ] && rm -f "$slct"
+exit
