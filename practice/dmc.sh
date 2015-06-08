@@ -29,18 +29,18 @@ score() {
         exit 1
         
     else
-        [ -f b.l ] && echo $(($(< ./b.l)+easy)) > b.l || echo $easy > b.l
+        [[ -f b.l ]] && echo $(($(< ./b.l)+easy)) > b.l || echo $easy > b.l
         s=$(< ./b.l)
         v=$((100*s/all))
         n=1; c=1
         while [[ $n -le 21 ]]; do
-            if [ "$v" -le "$c" ]; then
+            if [[ "$v" -le "$c" ]]; then
             echo "$n" > .2; break; fi
             ((c=c+5))
             let n++
         done
 
-        if [ -f b.3 ]; then
+        if [[ -f b.3 ]]; then
         echo "w6.$(tr -s '\n' '|' < ./b.3).w6" >> "$log"; fi
         
         "$strt" 7 $easy $ling $hard & exit 1
@@ -87,7 +87,7 @@ while read trgt; do
     mchoise "$trgt"
     ret=$(echo "$?")
     
-    if [ $ret = 0 ]; then
+    if [[ $ret = 0 ]]; then
     
         if echo "$dlg" | grep "$wes"; then
             echo "$trgt" >> b.1
@@ -99,7 +99,7 @@ while read trgt; do
             hard=$((hard+1))
         fi  
             
-    elif [ $ret = 1 ]; then
+    elif [[ $ret = 1 ]]; then
         break &
         "$drts/cls.sh" comp b $easy $ling $hard $all &
         exit 1
@@ -107,7 +107,7 @@ while read trgt; do
     
 done < ./b.tmp
     
-if [ ! -f ./b.2 ]; then
+if [[ ! -f ./b.2 ]]; then
 
     score $easy
     
@@ -118,7 +118,7 @@ else
         mchoise "$trgt"
         ret=$(echo "$?")
         
-        if [ $ret = 0 ]; then
+        if [[ $ret = 0 ]]; then
         
             if echo "$dlg" | grep "$wes"; then
                 hard=$((hard-1))
@@ -129,7 +129,7 @@ else
                 echo "$trgt" >> b.3
             fi
 
-        elif [ $ret = 1 ]; then
+        elif [[ $ret = 1 ]]; then
             break &
             "$drts/cls.sh" comp b $easy $ling $hard $all &
             exit 1

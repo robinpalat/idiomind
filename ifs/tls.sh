@@ -587,7 +587,7 @@ colorize() {
         if grep -Fxo "${item}" <<<"${s3}"; then
             echo -e "FALSE\n${i}\n$img3" >> "$cfg5"
         elif grep -Fxo "${item}" <<<"${s1}"; then
-            echo -e "FALSE\n${i}\n$img2" >> "$cfg5"
+            echo -e "FALSE\n${i}\n$img1" >> "$cfg5"
         elif grep -Fxo "${item}" <<<"${s2}"; then
             echo -e "FALSE\n${i}\n$img2" >> "$cfg5"
         else

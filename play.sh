@@ -18,14 +18,15 @@
 #
 #  2015/02/27
 
-[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
+[[ -z "$DM" ]] && source /usr/share/idiomind/ifs/c.conf
 if [ -z "$tpc" ]; then source "$DS/ifs/mods/cmns.sh"
 msg "$(gettext "No topic is active")\n" info & exit 1; fi
 
-[ -n "$(< "$DC_s/1.cfg")" ] && cfg=1 || > "$DC_s/1.cfg"
+[[ -n "$(< "$DC_s/1.cfg")" ]] && cfg=1 || > "$DC_s/1.cfg"
 
-lbls=('Words' 'Sentences' 'Marked items' \
-'Difficult words' 'New episodes' 'Saved episodes')
+lbls=('Words' 'Sentences' 'Marked items' 'Difficult words' \
+'New episodes <i><small>Podcasts</small></i>' \
+'Saved episodes <i><small>Podcasts</small></i>')
 sets=('grammar' 'list' 'tasks' 'trans' 'trd_trgt' 'text' 'audio' \
 'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' \
 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
@@ -34,21 +35,21 @@ in=('in1' 'in2' 'in3' 'in4' 'in5' 'in6')
 cfg1="$DC_tlt/1.cfg"
 cfg3="$DC_tlt/3.cfg"
 cfg4="$DC_tlt/4.cfg"
-if [ "$(wc -l < "$cfg4")" -gt 0 ]; then
+if [[ `wc -l < "$cfg4"` -gt 0 ]]; then
 in1="$(grep -Fxvf "$cfg4" "$cfg1")"; else
 in1="$(< "$cfg1")"; fi
-if [ "$(wc -l < "$cfg3")" -gt 0 ]; then
+if [[ `wc -l < "$cfg3"` -gt 0 ]]; then
 in2="$(grep -Fxvf "$cfg3" "$cfg1")"; else
 in2="$(< "$cfg1")"; fi
 in3="$(< "$DC_tlt/6.cfg")"
 in4="$(cd "$DC_tlt/practice/"; awk '++A[$1]==2' ./*.3 |sed '/^$/d')"
-[ -f "$DM_tl/Podcasts/.conf/1.cfg" ] && \
-in5="$(tac "$DM_tl/Podcasts/.conf/1.cfg" |sed '/^$/d')" || in5=""
-[ -f "$DM_tl/Podcasts/.conf/2.cfg" ] && \
-in6="$(tac "$DM_tl/Podcasts/.conf/2.cfg" |sed '/^$/d')" || in6=""
+[ -f "$DM_tl/Podcasts/.conf/1.lst" ] && \
+in5="$(tac "$DM_tl/Podcasts/.conf/1.lst" |sed '/^$/d')" || in5=""
+[ -f "$DM_tl/Podcasts/.conf/2.lst" ] && \
+in6="$(tac "$DM_tl/Podcasts/.conf/2.lst" |sed '/^$/d')" || in6=""
 [ ! -d "$DT" ] && mkdir "$DT"; cd "$DT"
 
-if [ "$cfg" = 1 ]; then
+if [[ "$cfg" = 1 ]]; then
 
     n=13
     while [[ $n -lt 19 ]]; do
@@ -80,7 +81,7 @@ function setting_1() {
 }
 
 title="$tpc"
-if [ ! -f "$DT/.p_" ]; then
+if [[ ! -f "$DT/.p_" ]]; then
 btn2=""$(gettext "Cancel")":1"
 if grep -E 'vivid|wily' <<<"`lsb_release -a`">/dev/null 2>&1; then
 btn1="gtk-media-play:0"; else
@@ -128,12 +129,12 @@ if [[ $ret -eq 0 ]]; then
     
     rm -f "$slct";
     "$DS/stop.sh" 3
-    if [ -d "$DM_tlt" ] && [ -n "$tpc" ]; then
+    if [[ -d "$DM_tlt" ]] && [[ -n "$tpc" ]]; then
     echo "$DM_tlt" > "$DT/.p_"
     echo "$tpc" >> "$DT/.p_"
     else "$DS/stop.sh" 2 && exit 1; fi
     
-    if [ -z "$(< "$DT/index.m3u")" ]; then
+    if [[ -z "$(< "$DT/index.m3u")" ]]; then
     notify-send "$(gettext "Exiting")" \
     "$(gettext "Nothing to play")" -i idiomind -t 3000 &&
     sleep 4
@@ -145,15 +146,15 @@ if [[ $ret -eq 0 ]]; then
 
 elif [[ $ret -eq 2 ]]; then
 
-    [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
-    [ -f "$DT/index.m3u" ] && rm -f "$DT/index.m3u"
+    [[ -f "$DT/.p_" ]] && rm -f "$DT/.p_"
+    [[ -f "$DT/index.m3u" ]] && rm -f "$DT/index.m3u"
     "$DS/stop.sh" 2
     
 elif [[ $ret -eq 3 ]]; then
 
-    [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
-    [ -n "$(ps -A | pgrep -f "play")" ] && killall play &
-    [ -n "$(ps -A | pgrep -f "mplayer")" ] && killall mplayer &
+    [[ -f "$DT/.p_" ]] && rm -f "$DT/.p_"
+    if ps -A | pgrep -f "play"; then killall play & fi
+    if ps -A | pgrep -f "mplayer"; then killall mplayer & fi
     > "$DT/.p"
 fi
 

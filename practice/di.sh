@@ -28,18 +28,18 @@ score() {
         exit 1
         
     else
-        [ -f e.l ] && echo $(($(< ./e.l)+easy)) > e.l || echo "$easy" > e.l
+        [[ -f e.l ]] && echo $(($(< ./e.l)+easy)) > e.l || echo "$easy" > e.l
         s=$(< ./e.l)
         v=$((100*s/all))
         n=1; c=1
         while [[ $n -le 21 ]]; do
-            if [ "$v" -le "$c" ]; then
+            if [[ "$v" -le "$c" ]]; then
             echo "$n" > .5; break; fi
             ((c=c+5))
             let n++
         done
 
-        if [ -f e.3 ]; then
+        if [[ -f e.3 ]]; then
         echo "w6.$(tr -s '\n' '|' < ./e.3).w6" >> "$log"; fi
         
         "$strt" 10 "$easy" "$ling" "$hard" & exit 1
@@ -87,7 +87,7 @@ while read trgt; do
     cuestion
     ret=$(echo "$?")
     
-    if [ $ret = 1 ]; then
+    if [[ $ret = 1 ]]; then
         break &
         "$drts/cls.sh" comp e "$easy" "$ling" "$hard" "$all" &
         exit 1
@@ -96,11 +96,11 @@ while read trgt; do
         answer
         ans=$(echo "$?")
 
-        if [ $ans = 2 ]; then
+        if [[ $ans = 2 ]]; then
             echo "$trgt" >> e.1
             easy=$((easy+1))
 
-        elif [ $ans = 3 ]; then
+        elif [[ $ans = 3 ]]; then
             echo "$trgt" >> e.2
             hard=$((hard+1))
         fi
@@ -108,7 +108,7 @@ while read trgt; do
     
 done < ./e.tmp
 
-if [ ! -f e.2 ]; then
+if [[ ! -f e.2 ]]; then
 
     score "$easy"
     
@@ -119,7 +119,7 @@ else
         cuestion
         ret=$(echo "$?")
         
-        if [ $ret = 1 ]; then
+        if [[ $ret = 1 ]]; then
             break &
             "$drts/cls.sh" comp e "$easy" "$ling" "$hard" "$all" &
             exit 1
@@ -128,11 +128,11 @@ else
             answer
             ans=$(echo "$?")
             
-            if [ $ans = 2 ]; then
+            if [[ $ans = 2 ]]; then
                 hard=$((hard-1))
                 ling=$((ling+1))
                 
-            elif [ $ans = 3 ]; then
+            elif [[ $ans = 3 ]]; then
                 echo "$trgt" >> e.3
             fi
         fi

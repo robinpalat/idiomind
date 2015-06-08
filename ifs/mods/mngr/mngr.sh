@@ -57,10 +57,10 @@ position() {
             f2=`cut -d "|" -f2 <<<"${sec}"`
             f3=`cut -d "|" -f3 <<<"${sec}"`
             f4=`cut -d "|" -f4 <<<"${sec}"`
-            if [ "$f2" = 'TRUE' ] && [ "${itr}" != "${item}" ]; then
+            if [[ "$f2" = 'TRUE' ]] && [[ "${itr}" != "${item}" ]]; then
             echo -e "${item}" >> "$DC_tlt/0.cfg.mv"
             echo -e "${f3}" >> "$DC_tlt/0.cfg.mv"
-            elif [ "$f4" = 'TRUE' ] && [ "${f3}" != "${item}" ]; then
+            elif [[ "$f4" = 'TRUE' ]] && [[ "${f3}" != "${item}" ]]; then
             delete_item_ok "${f3}"
             else echo "${f3}" >> "$DC_tlt/0.cfg.mv"; fi
         done <<<"{$mv}"

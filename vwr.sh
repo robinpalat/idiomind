@@ -52,7 +52,7 @@ ret=$?
     "$DS/vwr.sh" "$1" "$nll" $ff &
     
     else 
-    printf "vwr.$(wc -l < "$DT/stats.tmp").vwr\n" >> "$DC_s/8.cfg"
+    echo -e "vwr.$(wc -l < "$DT/stats.tmp").vwr\n" >> "$DC_s/8.cfg"
     rm -f "$DT/stats.tmp" & exit 1
     fi
     
