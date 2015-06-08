@@ -10,7 +10,7 @@ sets=('update' 'sync' 'path')
 if [[ -n "$(< "$DCP/0.lst")" ]]; then cfg=1; else
 > "$DCP/0.lst"; fi
 
-if [ ! -d "$DM_tl/Podcasts" ]; then
+if [[ ! -d "$DM_tl/Podcasts" ]]; then
     mkdir "$DM_tl/Podcasts"
     mkdir "$DM_tl/Podcasts/.conf"
     mkdir "$DM_tl/Podcasts/cache"
@@ -18,8 +18,7 @@ if [ ! -d "$DM_tl/Podcasts" ]; then
     touch "0.lst" "1.lst" "2.lst" "feeds.lst" ".updt.lst"
     echo 14 > "$DM_tl/Podcasts/.conf/8.cfg"
     echo " " > "$DM_tl/Podcasts/.conf/10.cfg"
-    echo -e " $(gettext "Last update:")
- $(gettext "Latest downloads:") 0"> "$DM_tl/Podcasts/$date.updt"
+    echo -e "\n$(gettext "Latest downloads:") 0" > "$DM_tl/Podcasts/$date.updt"
     "$DS/mngr.sh" mkmn
 fi
 

@@ -4,13 +4,13 @@
 function word_view() {
 
     trgt="$item"
-    tags="$(eyeD3 "$DM_tlt/words/$fname.mp3")"
-    srce="$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)' <<<"$tags")"
-    fields="$(grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' <<<"$tags" | tr '_' '\n')"
-    mark="$(grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)' <<<"$tags")"
-    exmp="$(sed -n 1p <<<"$fields")"
-    dftn="$(sed -n 2p <<<"$fields")"
-    note="$(sed -n 3p <<<"$fields")"
+    tags="$(eyeD3 "${DM_tlt}/words/$fname.mp3")"
+    srce="$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)' <<<"${tags}")"
+    fields="$(grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' <<<"${tags}" | tr '_' '\n')"
+    mark="$(grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)' <<<"${tags}")"
+    exmp="$(sed -n 1p <<<"${fields}")"
+    dftn="$(sed -n 2p <<<"${fields}")"
+    note="$(sed -n 3p <<<"${fields}")"
     exmp="$(sed "s/"${trgt,,}"/<span background='#FDFBCF'>"${trgt,,}"<\/\span>/g" <<<"$exmp")"
     [ -n "$dftn" ] && field_dftn="--field=$dftn:lbl"
     [ -n "$note" ] && field_note="--field=$note\n:lbl"
@@ -39,11 +39,11 @@ function sentence_view() {
     if [ -f "$DM_tlt/$fname.mp3" ]; then
     tags="$(eyeD3 "$DM_tlt/$fname.mp3")"
     [ "$(sed -n 1p "$DC_s/1.cfg" | grep -o grammar=\"[^\"]* | grep -o '[^"]*$')"  = TRUE ] \
-    && trgt="$(grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)' <<<"$tags")" \
-    || trgt="$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"$tags")"
-    srce="$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"$tags")"
-    lwrd="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"$tags" | tr '_' '\n')"
-    mark="$(grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)' <<<"$tags")"
+    && trgt="$(grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)' <<<"${tags}")" \
+    || trgt="$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"${tags}")"
+    srce="$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"${tags}")"
+    lwrd="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"${tags}" | tr '_' '\n')"
+    mark="$(grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)' <<<"${tags}")"
     [  "$mark" = TRUE ] && im="--image=$DS/images/mark.png"
     [ -z "$trgt" ] && tm="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>"
     else tm="<span color='#3F78A0'><tt>$(gettext "File not found")</tt></span>"; fi
@@ -76,7 +76,8 @@ function notebook_1() {
     cmd_share="'$DS/ifs/upld.sh' upld "\"$tpc\"""
     cmd_play="$DS/play.sh"
     list() {
-    if [[ $((`wc -l < ${DC_tlt}/5.cfg`/3)) = `wc -l < ${DC_tlt}/1.cfg` ]]; then
+    if [[ $((`wc -l < "${DC_tlt}/5.cfg"`/3)) = \
+    `wc -l < "${DC_tlt}/1.cfg"` ]]; then
     tac "${DC_tlt}/5.cfg"; else
     tac "$ls1" | \
     awk '{print "/usr/share/idiomind/images/0.png\n"$0"\nFALSE"}'; fi

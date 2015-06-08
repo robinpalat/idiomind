@@ -37,16 +37,16 @@ else
         rm "${DC_tlt}/9.cfg"
         echo " " > "${DC_tlt}/10.cfg"
         echo -e "$cfg" > "12.cfg"
-        echo "1" > "8.cfg"
+        echo 1 > "8.cfg"
         cd "$HOME"
         fi
 
         echo "${topic}" > "$DC_s/4.cfg"
         echo "${topic}" > "$DC_s/7.cfg"
         echo "${topic}" > "$DT/tpe"
-        echo '0' > "$DC_s/5.cfg"
-        
-        "$DS/ifs/tls.sh" colorize
+        echo 0 > "$DC_s/5.cfg"
+
+        [[ ! -f "${DC_tlt}/5.cfg" ]] && touch "${DC_tlt}/5.cfg"
         if [[ ! -f "$DT/.n_s_pr" ]]; then
         "$DS/ifs/tls.sh" check_index "${topic}"; fi
         

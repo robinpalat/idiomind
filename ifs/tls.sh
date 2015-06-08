@@ -16,7 +16,7 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
 #  
-[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
+[[ -z "$DM" ]] && source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 lgt=$(lnglss "$lgtl")
 lgs=$(lnglss "$lgsl")
@@ -179,21 +179,20 @@ $SRFL5" | yad --text-info --title="$(gettext "Installation details")" \
 
 check_index() {
 
-    source /usr/share/idiomind/ifs/c.conf
     DC_tlt="$DM_tl/${2}/.conf"
     DM_tlt="$DM_tl/${2}"
     
     check() {
         
-        if [ ! -d "${DC_tlt}" ]; then mkdir "${DC_tlt}"; fi
+        if [[ ! -d "${DC_tlt}" ]]; then mkdir "${DC_tlt}"; fi
         n=0
         while [[ $n -le 4 ]]; do
-            [ ! -f "${DC_tlt}/$n.cfg" ] && touch "${DC_tlt}/$n.cfg"
+            [[ ! -f "${DC_tlt}/$n.cfg" ]] && touch "${DC_tlt}/$n.cfg"
             if grep '^$' "${DC_tlt}/$n.cfg"; then
             sed -i '/^$/d' "${DC_tlt}/$n.cfg"; fi
             check_index1 "${DC_tlt}/$n.cfg"
             chk=$(wc -l < "${DC_tlt}/$n.cfg")
-            [ -z "$chk" ] && chk=0
+            [[ -z "$chk" ]] && chk=0
             eval chk$n="$chk"
             ((n=n+1))
         done
@@ -298,30 +297,29 @@ check_index() {
 
     if [ $((chk3+chk4)) != $chk0 ] || [ $((chk1+chk2)) != $chk0 ] \
     || [ $stts = 13 ]; then
-    
-        (sleep 1
-        notify-send -i idiomind "$(gettext "Index Error")" "$(gettext "Fixing...")" -t 3000) &
-        > "$DT/ps_lk"
-        [ ! -d "$DM_tlt/.conf" ] && mkdir "$DM_tlt/.conf"
-        DC_tlt="$DM_tlt/.conf"
 
-        [ "$DC_tlt/.11.cfg" ] && sed -i '/^$/d' "$DC_tlt/.11.cfg"
-        if [ "$DC_tlt/.11.cfg" ] && [ -s "$DC_tlt/.11.cfg" ]; then
-        index="$DC_tlt/.11.cfg"
-        else 
-        namefiles
-        index="$DT/index"; fi
-        
-        fix
+            (sleep 1
+            notify-send -i idiomind "$(gettext "Index Error")" "$(gettext "Fixing...")" -t 3000) &
+            > "$DT/ps_lk"
+            [ ! -d "$DM_tlt/.conf" ] && mkdir "$DM_tlt/.conf"
+            DC_tlt="$DM_tlt/.conf"
 
-    n=0
-    while [[ $n -le 4 ]]; do
-        touch "$DC_tlt/$n.cfg"
-        ((n=n+1))
-    done
-    rm -f "$DT/index"
-    "$DS/ifs/tls.sh" colorize
-    "$DS/mngr.sh" mkmn
+            [ "$DC_tlt/.11.cfg" ] && sed -i '/^$/d' "$DC_tlt/.11.cfg"
+            if [ "$DC_tlt/.11.cfg" ] && [ -s "$DC_tlt/.11.cfg" ]; then
+            index="$DC_tlt/.11.cfg"
+            else 
+            namefiles
+            index="$DT/index"; fi
+            fix
+
+        n=0
+        while [[ $n -le 4 ]]; do
+            touch "$DC_tlt/$n.cfg"
+            ((n=n+1))
+        done
+        rm -f "$DT/index"
+        "$DS/ifs/tls.sh" colorize
+        "$DS/mngr.sh" mkmn
     fi
     
     exit
@@ -345,7 +343,7 @@ add_audio() {
     DT="$2"; cd "$DT"
     if [[ $ret -eq 0 ]]; then
     
-        if [ -f "$audio" ]; then
+        if [[ -f "$audio" ]]; then
         cp -f "$audio" "$DT/audtm.mp3"
         #eyeD3 -P itunes-podcast --remove $DT/audtm.mp3
         eyeD3 --remove-all "$DT/audtm.mp3" & exit
@@ -406,7 +404,7 @@ videourl() {
     --field="$(gettext "URL")" \
     --button="$(gettext "Cancel")":1 \
     --button=gtk-ok:0)
-    [ $? = 1 ] && exit
+    [[ $? = 1 ]] && exit
     if [ ${#url} -gt 40 ] && \
     ([ ${url:0:29} = 'https://www.youtube.com/watch' ] \
     || [ ${url:0:28} = 'http://www.youtube.com/watch' ]); then \
@@ -490,11 +488,11 @@ echo "</body>" >> "$DC_tlt/att.html"
     
     } >/dev/null 2>&1
     
-    [ ! -d "$DM_tlt/files" ] && mkdir "$DM_tlt/files"
+    [[ ! -d "$DM_tlt/files" ]] && mkdir "$DM_tlt/files"
     ch1="$(ls -A "$DM_tlt/files")"
     
-    if [ "$(ls -A "$DM_tlt/files")" ]; then
-        [ ! -f "$DC_tlt/att.html" ] && mkindex >/dev/null 2>&1
+    if [[ "$(ls -A "$DM_tlt/files")" ]]; then
+        [[ ! -f "$DC_tlt/att.html" ]] && mkindex >/dev/null 2>&1
         yad --html --title="$(gettext "Attached Files")" \
         --name=Idiomind --class=Idiomind \
         --uri="$DC_tlt/att.html" --browser \
@@ -505,12 +503,12 @@ echo "</body>" >> "$DC_tlt/att.html"
         --button="gtk-add":0 \
         --button="gtk-close":1
         ret=$?
-            if [ $ret = 0 ]; then 
+            if [[ $ret = 0 ]]; then 
             "$DS/ifs/tls.sh" add_file
-            elif [ $ret = 2 ]; then
+            elif [[ $ret = 2 ]]; then
             "$DS/ifs/tls.sh" videourl
             fi
-            if [ "$ch1" != "$(ls -A "$DM_tlt/files")" ]; then
+            if [[ "$ch1" != "$(ls -A "$DM_tlt/files")" ]]; then
             mkindex; fi
         
     else
@@ -524,7 +522,7 @@ echo "</body>" >> "$DC_tlt/att.html"
         --button="$(gettext "Cancel")":1 \
         --button="$(gettext "OK")":0
         ret=$?
-        if [ "$ch1" != "$(ls -A "$DM_tlt/files")" ] && [ $ret = 0 ]; then
+        if [[ "$ch1" != "$(ls -A "$DM_tlt/files")" ]] && [[ $ret = 0 ]]; then
             mkindex
         fi
     fi
@@ -569,11 +567,10 @@ colorize() {
 
     rm "${DC_tlt}/5.cfg"
     cd "${DC_tlt}/practice"
-    touch a.1 a.2 a.3
     m=`cat "${DC_tlt}/6.cfg"`
-    s3=`awk '++A[$1]==2' ./*.3`
-    s2=`awk '++A[$1]==2' ./*.2`
-    s1=`awk '++A[$1]==3' ./*.1`
+    log3=`< ./log.3`
+    log2=`< ./log.2`
+    log1=`< ./log.1`
     cfg5="${DC_tlt}/5.cfg"
     img1='/usr/share/idiomind/images/1.png'
     img2='/usr/share/idiomind/images/2.png'
@@ -584,11 +581,11 @@ colorize() {
     
         if grep -Fxo "${item}" <<<"${m}"; then
         i="<b><big>${item}</big></b>";else i="${item}"; fi
-        if grep -Fxo "${item}" <<<"${s3}"; then
+        if grep -Fxo "${item}" <<<"${log3}"; then
             echo -e "FALSE\n${i}\n$img3" >> "$cfg5"
-        elif grep -Fxo "${item}" <<<"${s1}"; then
+        elif grep -Fxo "${item}" <<<"${log1}"; then
             echo -e "FALSE\n${i}\n$img1" >> "$cfg5"
-        elif grep -Fxo "${item}" <<<"${s2}"; then
+        elif grep -Fxo "${item}" <<<"${log2}"; then
             echo -e "FALSE\n${i}\n$img2" >> "$cfg5"
         else
             echo -e "FALSE\n${i}\n$img0" >> "$cfg5"
@@ -609,7 +606,7 @@ check_updates() {
     && [ "$nver" != "$cver" ]; then
     
         msg_2 " <b>$(gettext "A new version of Idiomind available\!")</b>\n" \
-        info "$(gettext "Download")" "$(gettext "Cancel")" $(gettext "Updates")
+        info "$(gettext "Download")" "$(gettext "Cancel")" $(gettext "Idiomind - New Version")
         ret=$(echo $?)
         
         if [[ $ret -eq 0 ]]; then
@@ -626,14 +623,14 @@ check_updates() {
 
 a_check_updates() {
 
-    [ ! -f "$DC_s/9.cfg" ] && echo `date +%d` > "$DC_s/9.cfg" && exit
+    [[ ! -f "$DC_s/9.cfg" ]] && echo `date +%d` > "$DC_s/9.cfg" && exit
     d1=$(< "$DC_s/9.cfg"); d2=$(date +%d)
-    if [ "$(sed -n 1p "$DC_s/9.cfg")" = 28 ] && \
-    [ "$(wc -l < "$DC_s/9.cfg")" -gt 1 ]; then
+    if [[ "$(sed -n 1p "$DC_s/9.cfg")" = 28 ]] && \
+    [[ "$(wc -l < "$DC_s/9.cfg")" -gt 1 ]]; then
     rm -f "$DC_s/9.cfg"; fi
-    [ "$(wc -l < "$DC_s/9.cfg")" -gt 1 ] && exit 1
+    [[ "$(wc -l < "$DC_s/9.cfg")" -gt 1 ]] && exit 1
 
-    if [ "$d1" != "$d2" ]; then
+    if [[ "$d1" != "$d2" ]]; then
 
         curl -v www.google.com 2>&1 | \
         grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
@@ -645,7 +642,7 @@ a_check_updates() {
         && [ ${#nver} -ge 3 ] && [ ${#cver} -ge 3 ] \
         && [ "$nver" != "$cver" ]; then
             
-            msg_2 " <b>$(gettext "A new version of Idiomind available\!")\n</b>\n $(gettext "Do you want to download it now?")\n" info "$(gettext "Download")" "$(gettext "No")" "$(gettext "Updates")" "$(gettext "Ignore")"
+            msg_2 " <b>$(gettext "A new version of Idiomind available\!")\n</b>\n $(gettext "Do you want to download it now?")\n" info "$(gettext "Download")" "$(gettext "Cancel")" "$(gettext "Idiomind - New Version")" "$(gettext "Ignore")"
             ret=$(echo $?)
             
             if [[ $ret -eq 0 ]]; then
@@ -782,15 +779,15 @@ mkpdf() {
     --button="$(gettext "OK")":0)
     ret=$?
 
-    if [ "$ret" -eq 0 ]; then
+    if [[ $ret -eq 0 ]]; then
     
         dte=`date "+%d %B %Y"`
-        [ -d "$DT/mkhtml" ] && rm -f "$DT/mkhtml"
+        [[ -d "$DT/mkhtml" ]] && rm -f "$DT/mkhtml"
         mkdir "$DT/mkhtml"
         mkdir "$DT/mkhtml/images"
         nts="$(sed ':a;N;$!ba;s/\n/<br>/g' < "$DC_tlt/10.cfg" \
         | sed 's/\&/&amp;/g')"
-        if [ -f "$DM_tlt/words/images/img.jpg" ]; then
+        if [[ -f "$DM_tlt/words/images/img.jpg" ]]; then
         convert "$DM_tlt/words/images/img.jpg" \
         -alpha set -channel A -evaluate set 50% \
         "$DT/mkhtml/img.png"; fi
@@ -830,7 +827,7 @@ mkpdf() {
         <div><p></p>
         </div>
         <div>" >> doc.html
-        if [ -f "$DT/mkhtml/img.png" ]; then
+        if [[ -f "$DT/mkhtml/img.png" ]]; then
         echo -e "<table width=\"100%\" border=\"0\">
         <tr>
         <td><img src=\"$DT/mkhtml/img.png\" alt="" border=0 height=100% width=100%></img>
@@ -858,7 +855,7 @@ mkpdf() {
             
                     label1=$(sed -n "$n",$((n+1))p < ./image_list | sed -n 1p)
                     label2=$(sed -n "$n",$((n+1))p < ./image_list | sed -n 2p)
-                    if [ -n "$label1" ]; then
+                    if [[ -n "$label1" ]]; then
                         echo -e "<tr>
                         <td align=\"center\"><img src=\"images/$label1.png\" width=\"200\" height=\"140\"></td>" >> doc.html
                         if [ -n "$label2" ]; then
@@ -871,7 +868,7 @@ mkpdf() {
                         <p>&nbsp;</p>
                         <p>&nbsp;</p>
                         <p>&nbsp;</p></td>" >> doc.html
-                        if [ -n "$label2" ]; then
+                        if [[ -n "$label2" ]]; then
                         echo -e "<td align=\"center\" valign=\"top\"><p>$label2</p>
                         <p>&nbsp;</p>
                         <p>&nbsp;</p>
@@ -906,7 +903,7 @@ mkpdf() {
             echo "$trgt" >> trgt_words
             echo "$srce" >> srce_words
             
-            if [ -n "$trgt" ]; then
+            if [[ -n "$trgt" ]]; then
                 echo -e "<table width=\"55%\" border=\"0\" align=\"left\" cellpadding=\"10\" cellspacing=\"5\">
                 <tr>
                 <td bgcolor=\"#E6E6E6\" class=\"side\"></td>
@@ -919,19 +916,19 @@ mkpdf() {
                 echo -e "<table width=\"100%\" border=\"0\" align=\"center\" cellpadding=\"10\" class=\"efont\">
                 <tr>
                 <td width=\"10px\"></td>" >> doc.html
-                if [ -z "$dftn" ] && [ -z "$exmp1" ]; then
+                if [[ -z "$dftn" ]] && [[ -z "$exmp1" ]]; then
                 echo -e "<td width=\"466\" valign=\"top\" class=\"nfont\" >$ntes</td>
                 <td width=\"389\"</td>
                 </tr>
                 </table>" >> doc.html
                 else
                     echo -e "<td width=\"466\">" >> doc.html
-                    if [ -n "$dftn" ]; then
+                    if [[ -n "$dftn" ]]; then
                     echo -e "<dl>
                     <dd><dfn>$dftn</dfn></dd>
                     </dl>" >> doc.html
                     fi
-                    if [ -n "$exmp1" ]; then
+                    if [[ -n "$exmp1" ]]; then
                     echo -e "<dl>
                     <dt> </dt>
                     <dd><cite>$exmp1</cite></dd>
@@ -956,7 +953,7 @@ mkpdf() {
                 trgt="$trgsm"; fi
             done <<<"$(tr ' ' '\n' <<<"$trgt")"
 
-            if [ -n "$trgt" ]; then
+            if [[ -n "$trgt" ]]; then
                 srce=$(sed -n "$n"p "srce_sentences")
                 fn=$(sed -n "$n"p "./4.cfg")
                 echo -e "<h1>&nbsp;</h1>

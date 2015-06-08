@@ -85,130 +85,6 @@ mkmn() {
     exit 1
 }
 
-mark_to_learn() {
-    
-    include "$DS/ifs/mods/mngr"
-    
-    if [ "$tpc" != "$2" ]; then
-    msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
-    
-    if [ "$(wc -l < "$DC_tlt/0.cfg")" -le 10 ]; then
-    msg "$(gettext "Not enough items to perform the operation.")\n " \
-    info "$(gettext "Not enough items")" & exit; fi
-
-    if [ "$3" = 1 ]; then
-    kill -9 $(pgrep -f "yad --multi-progress ") &
-    kill -9 $(pgrep -f "yad --list ") &
-    kill -9 $(pgrep -f "yad --text-info ") &
-    kill -9 $(pgrep -f "yad --form ") &
-    kill -9 $(pgrep -f "yad --notebook ") &
-    fi
-
-    if [ "$(sed '/^$/d' < "$DC_tlt/1.cfg" | wc -l )" -ge 1 ]; then
-        include "$DS/ifs/mods/mngr"
-    
-        dialog_2
-        ret=$(echo $?)
-    
-        if [[ $ret -eq 3 ]]; then
-        
-            rm -f "$DC_tlt/7.cfg"
-            idiomind topic & exit 1
-        fi
-    fi
-
-    stts=$(sed -n 1p "$DC_tlt/8.cfg")
-    calculate_review "$tpc"
-    
-    if [[ $((stts%2)) = 0 ]]; then
-
-        echo 6 > "$DC_tlt/8.cfg"
-            
-    else
-        if [[ "$RM" -ge 50 ]]; then
-        echo 5 > "$DC_tlt/8.cfg"
-        else
-        echo 1 > "$DC_tlt/8.cfg"
-        fi
-    fi
-    
-    rm -f "$DC_tlt/7.cfg"
-    awk '!array_temp[$0]++' < "$DC_tlt/0.cfg" > "$DT/0.cfg.tmp"
-    sed '/^$/d' "$DT/0.cfg.tmp" > "$DC_tlt/0.cfg"
-    rm -f "$DT"/*.tmp
-    rm "$DC_tlt/2.cfg" "$DC_tlt/1.cfg" "$DC_tlt/5.cfg"
-    touch "$DC_tlt/2.cfg"
-    cp -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"
-    "$DS/mngr.sh" mkmn &
-
-    [[ "$3" = 1 ]] && idiomind topic &
-}
-
-mark_as_learned() {
-
-    include "$DS/ifs/mods/mngr"
-
-    if [ "$tpc" != "$2" ]; then
-    msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
-
-    if [ "$(wc -l < "$DC_tlt/0.cfg")" -le 10 ]; then
-    msg "$(gettext "Not enough items to perform the operation.")\n " \
-    info "$(gettext "Not enough items")" & exit; fi
-    
-    if [ "$((( $(date +%s) - $(date -d "$(sed -n 8p "$DC_tlt/12.cfg" \
-    | grep -o 'date_c="[^"]*' | grep -o '[^"]*$')" +%s) ) /(24 * 60 * 60 )))" -lt 5 ]; then
-    msg_2 "$(gettext "Are you sure it's not too soon?")\n" \
-    gtk-dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"; fi
-    ret=$(echo $?); if [ $ret = 1 ]; then exit 1; fi
-    
-    if [ $3 = 1 ]; then
-    kill -9 $(pgrep -f "yad --list ") &
-    kill -9 $(pgrep -f "yad --list ") &
-    kill -9 $(pgrep -f "yad --text-info ") &
-    kill -9 $(pgrep -f "yad --form ") &
-    kill -9 $(pgrep -f "yad --notebook ") &
-    fi
-
-    stts=$(sed -n 1p "$DC_tlt/8.cfg")
-
-    if [ ! -f "$DC_tlt/7.cfg" ]; then
-        if [ -f "$DC_tlt/9.cfg" ]; then
-        
-            calculate_review "$tpc"
-            steps=$(sed '/^$/d' < "$DC_tlt/9.cfg" | wc -l)
-            
-            if [[ "$steps" = 4 ]]; then
-            
-                stts=$((stts+1)); fi
-            
-            if [[ "$RM" -ge 50 ]]; then
-            
-                if [[ $steps = 6 ]]; then
-                echo -e "_\n_\n_\n_\n_\n$(date +%m/%d/%Y)" > "$DC_tlt/9.cfg"
-                else
-                echo "$(date +%m/%d/%Y)" >> "$DC_tlt/9.cfg"
-                fi
-            fi
-            
-        else
-            echo "$(date +%m/%d/%Y)" > "$DC_tlt/9.cfg"
-        fi
-
-        > "$DC_tlt/7.cfg"
-        if [[ $((stts%2)) = 0 ]]; then
-        echo 4 > "$DC_tlt/8.cfg"
-        else
-        echo 3 > "$DC_tlt/8.cfg"
-        fi
-    fi
-    rm "$DC_tlt/2.cfg" "$DC_tlt/1.cfg" "$DC_tlt/lst" 
-    touch "$DC_tlt/1.cfg"
-    cp -f "$DC_tlt/0.cfg" "$DC_tlt/2.cfg"
-    "$DS/mngr.sh" mkmn &
-
-    [[ $3 = 1 ]] && idiomind topic &
-    exit 1
-}
 
 delete_item_ok() {
 
@@ -333,7 +209,7 @@ delete_item() {
 }
 
 
-edit() {
+edit_item() {
 
     include "$DS/ifs/mods/mngr"
     lgt=$(lnglss $lgtl)
@@ -663,6 +539,7 @@ delete_topic() {
     rm -f "$DT/ps_lk" & exit 1
 }
 
+
 rename_topic() {
 
     source "$DS/ifs/mods/add/add.sh"
@@ -728,23 +605,151 @@ rename_topic() {
     fi
 }
 
+
+mark_to_learn_topic() {
+    
+    include "$DS/ifs/mods/mngr"
+    
+    if [ "$tpc" != "$2" ]; then
+    msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
+    
+    if [ "$(wc -l < "$DC_tlt/0.cfg")" -le 10 ]; then
+    msg "$(gettext "Not enough items to perform the operation.")\n " \
+    info "$(gettext "Not enough items")" & exit; fi
+
+    if [ "$3" = 1 ]; then
+    kill -9 $(pgrep -f "yad --multi-progress ") &
+    kill -9 $(pgrep -f "yad --list ") &
+    kill -9 $(pgrep -f "yad --text-info ") &
+    kill -9 $(pgrep -f "yad --form ") &
+    kill -9 $(pgrep -f "yad --notebook ") &
+    fi
+
+    if [ "$(sed '/^$/d' < "$DC_tlt/1.cfg" | wc -l )" -ge 1 ]; then
+        include "$DS/ifs/mods/mngr"
+    
+        dialog_2
+        ret=$(echo $?)
+    
+        if [[ $ret -eq 3 ]]; then
+        
+            rm -f "$DC_tlt/7.cfg"
+            idiomind topic & exit 1
+        fi
+    fi
+
+    stts=$(sed -n 1p "$DC_tlt/8.cfg")
+    calculate_review "$tpc"
+    
+    if [[ $((stts%2)) = 0 ]]; then
+
+        echo 6 > "$DC_tlt/8.cfg"
+            
+    else
+        if [[ "$RM" -ge 50 ]]; then
+        echo 5 > "$DC_tlt/8.cfg"
+        else
+        echo 1 > "$DC_tlt/8.cfg"
+        fi
+    fi
+    
+    rm -f "$DC_tlt/7.cfg"
+    awk '!array_temp[$0]++' < "$DC_tlt/0.cfg" > "$DT/0.cfg.tmp"
+    sed '/^$/d' "$DT/0.cfg.tmp" > "$DC_tlt/0.cfg"
+    rm -f "$DT"/*.tmp
+    rm "$DC_tlt/2.cfg" "$DC_tlt/1.cfg" "$DC_tlt/5.cfg"
+    touch "$DC_tlt/2.cfg"
+    cp -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"
+    "$DS/mngr.sh" mkmn &
+
+    [[ "$3" = 1 ]] && idiomind topic &
+}
+
+
+mark_as_learned_topic() {
+
+    include "$DS/ifs/mods/mngr"
+
+    if [ "$tpc" != "$2" ]; then
+    msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
+
+    if [ "$(wc -l < "$DC_tlt/0.cfg")" -le 10 ]; then
+    msg "$(gettext "Not enough items to perform the operation.")\n " \
+    info "$(gettext "Not enough items")" & exit; fi
+    
+    if [ "$((( $(date +%s) - $(date -d "$(sed -n 8p "$DC_tlt/12.cfg" \
+    | grep -o 'date_c="[^"]*' | grep -o '[^"]*$')" +%s) ) /(24 * 60 * 60 )))" -lt 5 ]; then
+    msg_2 "$(gettext "Are you sure it's not too soon?")\n" \
+    gtk-dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"; fi
+    ret=$(echo $?); if [ $ret = 1 ]; then exit 1; fi
+    
+    if [ $3 = 1 ]; then
+    kill -9 $(pgrep -f "yad --list ") &
+    kill -9 $(pgrep -f "yad --list ") &
+    kill -9 $(pgrep -f "yad --text-info ") &
+    kill -9 $(pgrep -f "yad --form ") &
+    kill -9 $(pgrep -f "yad --notebook ") &
+    fi
+
+    stts=$(sed -n 1p "$DC_tlt/8.cfg")
+
+    if [ ! -f "$DC_tlt/7.cfg" ]; then
+        if [ -f "$DC_tlt/9.cfg" ]; then
+        
+            calculate_review "$tpc"
+            steps=$(sed '/^$/d' < "$DC_tlt/9.cfg" | wc -l)
+            
+            if [[ "$steps" = 4 ]]; then
+            
+                stts=$((stts+1)); fi
+            
+            if [[ "$RM" -ge 50 ]]; then
+            
+                if [[ $steps = 6 ]]; then
+                echo -e "_\n_\n_\n_\n_\n$(date +%m/%d/%Y)" > "$DC_tlt/9.cfg"
+                else
+                echo "$(date +%m/%d/%Y)" >> "$DC_tlt/9.cfg"
+                fi
+            fi
+            
+        else
+            echo "$(date +%m/%d/%Y)" > "$DC_tlt/9.cfg"
+        fi
+
+        > "$DC_tlt/7.cfg"
+        if [[ $((stts%2)) = 0 ]]; then
+        echo 4 > "$DC_tlt/8.cfg"
+        else
+        echo 3 > "$DC_tlt/8.cfg"
+        fi
+    fi
+    rm "$DC_tlt/2.cfg" "$DC_tlt/1.cfg" "$DC_tlt/lst" 
+    touch "$DC_tlt/1.cfg"
+    cp -f "$DC_tlt/0.cfg" "$DC_tlt/2.cfg"
+    "$DS/mngr.sh" mkmn &
+
+    [[ $3 = 1 ]] && idiomind topic &
+    exit 1
+}
+
+
 case "$1" in
     mkmn)
     mkmn ;;
-    mark_as_learned)
-    mark_as_learned "$@" ;;
-    mark_to_learn)
-    mark_to_learn "$@" ;;
     delete_item_ok)
     delete_item_ok "$@" ;;
     delete_item)
     delete_item "$@" ;;
-    delete_topic)
-    delete_topic "$@" ;;
     edit)
-    edit "$@" ;;
+    edit_item "$@" ;;
     colorize)
     colorize "$@" ;;
+    delete_topic)
+    delete_topic "$@" ;;
     rename_topic)
     rename_topic "$@" ;;
+    mark_as_learned)
+    mark_as_learned_topic "$@" ;;
+    mark_to_learn)
+    mark_to_learn_topic "$@" ;;
 esac

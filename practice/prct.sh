@@ -30,6 +30,7 @@ cfg3="$DC_tlt/3.cfg"
 cfg4="$DC_tlt/4.cfg"
 cfg1="$DC_tlt/1.cfg"
 cd "$DC_tlt/practice"
+touch ./log.1 ./log.2 ./log.3
 
 lock() {
     
