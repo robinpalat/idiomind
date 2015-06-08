@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 function word_view() {
-
+    
     trgt="$item"
     tags="$(eyeD3 "${DM_tlt}/words/$fname.mp3")"
     srce="$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)' <<<"${tags}")"
@@ -35,7 +35,7 @@ function word_view() {
 
 
 function sentence_view() {
-
+    
     if [[ -f "$DM_tlt/$fname.mp3" ]]; then
     tags="$(eyeD3 "$DM_tlt/$fname.mp3")"
     [ "$(sed -n 1p "$DC_s/1.cfg" | grep -o grammar=\"[^\"]* | grep -o '[^"]*$')"  = TRUE ] \
@@ -67,7 +67,6 @@ function sentence_view() {
 
 export -f word_view sentence_view
 
-
 function notebook_1() {
     
     cmd_mark="'$DS/mngr.sh' 'mark_as_learned' "\"$tpc\"" 1"
@@ -82,7 +81,7 @@ function notebook_1() {
     tac "$ls1" | \
     awk '{print "/usr/share/idiomind/images/0.png\n"$0"\nFALSE"}'; fi
     }
-
+    
     list | yad --list --tabnum=1 \
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh '1'" \
@@ -103,7 +102,7 @@ function notebook_1() {
     --scroll --borders=10 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "$tpc" \
     --field="$(gettext "Mark as learnt")":FBTN "$cmd_mark" \
-    --field=" ":LBL "$set1" \
+    --field="$(gettext "Auto select items that could be marked as learnt")":CHK "$auto_mrk" \
     --field="$label_info2\n\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " \
     --field="$(gettext "Files")":FBTN "$cmd_attchs" \
     --field="$(gettext "Share")":FBTN "$cmd_share" \

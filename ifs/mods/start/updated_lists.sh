@@ -2,9 +2,6 @@
 # -*- ENCODING: UTF-8 -*-
 
 [[ -z "$DM" ]] && source /usr/share/idiomind/ifs/c.conf
-if [[ $(sed -n 6p "$DC_s/1.cfg" | \
-grep -o auto_mrk=\"[^\"]* |grep -o '[^"]*$') = TRUE ]]; then
-
 LOG="$DC_s/8.cfg"
 tpclst=$(mktemp "$DT/tps.XXXX")
 items=$(mktemp "$DT/w9.XXXX")
@@ -43,38 +40,44 @@ if [[ `wc -l < "$items"` -gt 0 ]]; then
 while read -r tpc_lst; do
 
     DC_tlt="$DM_tl/${tpc_lst}/.conf"
-    if [[ -f "${DC_tlt}/1.cfg" ]] && [[ -d "${DC_tlt}/practice" ]]; then
     
-    rm "${DC_tlt}/5.cfg"
-    cd "${DC_tlt}/practice"
-    cfg5="${DC_tlt}/5.cfg"
-    cfg6=`cat "${DC_tlt}/6.cfg"`
-    log3=`< "${DC_tlt}/practice/log.3"`
-    log2=`< "${DC_tlt}/practice/log.2"`
-    log1=`< "${DC_tlt}/practice/log.1"`
-    img1='/usr/share/idiomind/images/1.png'
-    img2='/usr/share/idiomind/images/2.png'
-    img3='/usr/share/idiomind/images/3.png'
-    img0='/usr/share/idiomind/images/0.png'
+    if [[ $(sed -n 14p "${DC_tlt}/12.cfg" | \
+    grep -o set1=\"[^\"]* |grep -o '[^"]*$') = TRUE ]]; then
+
+        if [[ -f "${DC_tlt}/1.cfg" ]] && [[ -d "${DC_tlt}/practice" ]]; then
     
-    while read -r item; do
-    
-        if grep -Fxo "${item}" <<<"${cfg6}">/dev/null 2>&1; then
-        i="<b><big>${item}</big></b>";else i="${item}"; fi
-        if grep -Fxo "${item}" < "$items"; then
-        echo -e "TRUE\n${i}\n$img1" >> "$cfg5"
-        else
-        if grep -Fxo "${item}" <<<"${log3}">/dev/null 2>&1; then
-            echo -e "FALSE\n${i}\n$img3" >> "$cfg5"
-        elif grep -Fxo "${item}" <<<"${log1}">/dev/null 2>&1; then
-            echo -e "FALSE\n${i}\n$img1" >> "$cfg5"
-        elif grep -Fxo "${item}" <<<"${log2}">/dev/null 2>&1; then
-            echo -e "FALSE\n${i}\n$img2" >> "$cfg5"
-        else
-            echo -e "FALSE\n${i}\n$img0" >> "$cfg5"
+        rm "${DC_tlt}/5.cfg"
+        cd "${DC_tlt}/practice"
+        cfg5="${DC_tlt}/5.cfg"
+        cfg6=`cat "${DC_tlt}/6.cfg"`
+        log3=`< "${DC_tlt}/practice/log.3"`
+        log2=`< "${DC_tlt}/practice/log.2"`
+        log1=`< "${DC_tlt}/practice/log.1"`
+        img1='/usr/share/idiomind/images/1.png'
+        img2='/usr/share/idiomind/images/2.png'
+        img3='/usr/share/idiomind/images/3.png'
+        img0='/usr/share/idiomind/images/0.png'
+        
+        while read -r item; do
+        
+            if grep -Fxo "${item}" <<<"${cfg6}">/dev/null 2>&1; then
+            i="<b><big>${item}</big></b>";else i="${item}"; fi
+            if grep -Fxo "${item}" < "$items"; then
+            echo -e "TRUE\n${i}\n$img1" >> "$cfg5"
+            else
+            if grep -Fxo "${item}" <<<"${log3}">/dev/null 2>&1; then
+                echo -e "FALSE\n${i}\n$img3" >> "$cfg5"
+            elif grep -Fxo "${item}" <<<"${log1}">/dev/null 2>&1; then
+                echo -e "FALSE\n${i}\n$img1" >> "$cfg5"
+            elif grep -Fxo "${item}" <<<"${log2}">/dev/null 2>&1; then
+                echo -e "FALSE\n${i}\n$img2" >> "$cfg5"
+            else
+                echo -e "FALSE\n${i}\n$img0" >> "$cfg5"
+            fi
+            fi
+        done < "${DC_tlt}/1.cfg"
+        
         fi
-        fi
-    done < "${DC_tlt}/1.cfg"
     fi
 
 done < "$tpclst"
@@ -83,5 +86,5 @@ cd /
 if [ "$(date +%u)" = 6 ]; then rm "$LOG"; touch "$LOG"; fi
 rm -f "$tpclst" "$items" "$DT/list_a.tmp"
 echo "--lists updated"
-fi
+
 exit

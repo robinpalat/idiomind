@@ -292,7 +292,7 @@ check_index() {
         | sort -k 1n,1 -k 7 | sed s'|\.\/words\/||'g \
         | sed s'|\.\/||'g | sed s'|\.mp3||'g > "$DT/index"
     }
-        
+
     check
 
     if [ $((chk3+chk4)) != $chk0 ] || [ $((chk1+chk2)) != $chk0 ] \

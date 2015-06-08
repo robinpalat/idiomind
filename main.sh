@@ -73,7 +73,7 @@ function new_session() {
     gconftool-2 --get /desktop/gnome/interface/font_name \
     | cut -d ' ' -f 2 >> "$DC_s/10.cfg"
     #
-    [[ `wc -l < "$DC_s/1.cfg"` -lt 20 ]] && rm "$DC_s/1.cfg"
+    [[ `wc -l < "$DC_s/1.cfg"` -lt 19 ]] && rm "$DC_s/1.cfg"
     
     # log file
     if [[ -f "$DC_s/8.cfg" ]]; then
@@ -251,6 +251,8 @@ function topic() {
         nt="${DC_tlt}/10.cfg"
         author="$(sed -n 4p "${DC_tlt}/12.cfg" \
         | grep -o 'author="[^"]*' | grep -o '[^"]*$')"
+        auto_mrk=$(sed -n 14p "${DC_tlt}/12.cfg" \
+        | grep -o set1=\"[^\"]* |grep -o '[^"]*$')
         c=$((RANDOM%100000)); KEY=$c
         cnf1=$(mktemp "$DT/cnf1.XXX.x")
         cnf3=$(mktemp "$DT/cnf3.XXX.x")
@@ -274,6 +276,11 @@ function topic() {
             if [[ "${tpc}" != "$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")" ]]; then
             msg "$(gettext "Sorry, this topic is currently not active.")\n" info & exit; fi
             "$DS/mngr.sh" rename_topic "${ntpc}" & exit; fi
+            
+            auto_mrk_mod=$(cut -d '|' -f 3 < "${cnf4}")
+            if [[ $auto_mrk_mod != $auto_mrk ]]; then
+            sed -i "s/set1=.*/set1=\"$auto_mrk_mod\"/g" "${DC_tlt}/12.cfg"
+            fi
 
             if [ -n "$(grep -o TRUE < "${cnf1}")" ]; then
                 grep -Rl "|FALSE|" "${cnf1}" | while read tab1 ; do
