@@ -16,11 +16,11 @@ function word_view() {
     [ -n "$note" ] && field_note="--field=$note\n:lbl"
     [ -n "$exmp" ] && field_exmp="--field=<i><span color='#737373'>$exmp</span></i>:lbl"
     [ -z "$trgt" ] && tm="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>"
-    [ "$mark" = TRUE ] && im="--image=$DS/images/mark.png"
+    [ "$mark" = TRUE ] && trgt="<b>$trgt</b>"
     
-    yad --form --title=" " $im \
+    yad --form --title=" " \
     --selectable-labels --quoted-output \
-    --text="<span font_desc='Sans Free Bold $fs'>$trgt</span>\n\n<i>$srce</i>\n\n" \
+    --text="<span font_desc='Sans Free $fs'>$trgt</span>\n\n<i>$srce</i>\n\n" \
     --window-icon="$DS/images/icon.png" \
     --align=left --scroll --skip-taskbar --text-align=center \
     --image-on-top --center --on-top \
@@ -44,11 +44,11 @@ function sentence_view() {
     srce="$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"${tags}")"
     lwrd="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"${tags}" | tr '_' '\n')"
     mark="$(grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)' <<<"${tags}")"
-    [ "$mark" = TRUE ] && im="--image=$DS/images/mark.png"
+    [ "$mark" = TRUE ] && trgt="<b>$trgt</b>"
     [ -z "$trgt" ] && tm="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>"
     else tm="<span color='#3F78A0'><tt>$(gettext "File not found")</tt></span>"; fi
     
-    echo "$lwrd" | yad --list --title=" " $im \
+    echo "$lwrd" | yad --list --title=" " \
     --text="$tm<span font_desc='Sans Free 15'>$trgt</span>\n\n<i>$srce</i>\n\n" \
     --selectable-labels --print-column=0 \
     --dclick-action="$DS/ifs/tls.sh 'dclik'" \

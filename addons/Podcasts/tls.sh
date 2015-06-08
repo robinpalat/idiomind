@@ -4,8 +4,8 @@ source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 IFS=$'\n\t'
 a="$(gettext "Tell us if you think this is an error.")"
-b="$(gettext "New episodes <i><small>(Podcasts)</small></i>")"
-c="$(gettext "Saved episodes <i><small>(Podcasts)</small></i>")"
+b="$(gettext "New episodes <i><small>Podcasts</small></i>")"
+c="$(gettext "Saved episodes <i><small>Podcasts</small></i>")"
 d="$(gettext "Marks")"
 #
 # rsync_delete: disable(0)/enable(1)
