@@ -324,6 +324,7 @@ new_word() {
         msg "$(gettext "You need to fill text fields.")\n" info & exit 1; fi
         
         fname="$(nmfile "${trgt^}")"
+        audio="${trgt,,}"
         
         if [ -f "$DT_r/audtm.mp3" ]; then
         

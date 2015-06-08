@@ -134,7 +134,7 @@ flashcards() {
         echo " practice --restarting session"
     else
         get_list ./a.0 && cp -f ./a.0 ./a.tmp
-        [[ `wc -l < ./a.0` -lt 5 ]] && starting "$(gettext "Not enough words to start.")"
+        [[ `wc -l < ./a.0` -lt 2 ]] && starting "$(gettext "Not enough words to start.")"
         echo " practice --new session"
     fi
     [ ./a.2 ] && rm ./a.2;  [ ./a.3 ] && rm ./a.3
@@ -191,7 +191,7 @@ listen_words() {
         echo " practice --restarting session"
     else
         get_list ./c.0 && cp -f ./c.0 ./c.tmp
-        [[ `wc -l < ./c.0` -lt 4 ]] && starting "$(gettext "Not enough words to start.")"
+        [[ `wc -l < ./c.0` -lt 2 ]] && starting "$(gettext "Not enough words to start.")"
         echo " practice --new session"
     fi
     [ ./c.2 ] && rm ./c.2;  [ ./c.3 ] && rm ./c.3
@@ -245,7 +245,7 @@ images() {
     else
         
         get_list_images ./e.0 && cp -f ./e.0 ./e.tmp
-        [[ `wc -l < ./e.0` -lt 3 ]] && starting "$(gettext "Not enough images to start.")"
+        [[ `wc -l < ./e.0` -lt 2 ]] && starting "$(gettext "Not enough images to start.")"
         echo " practice --new session"
     fi
     [ ./e.2 ] && rm ./e.2;  [ ./e.3 ] && rm ./e.3

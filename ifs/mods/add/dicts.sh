@@ -31,5 +31,5 @@ function dictt() {
             if [ -f "$dir_tmp/$w.mp3" ]; then
             break; fi
             
-    done <<<"$(find "$DC_a/dict/enables/" -type f)"
+    done < <(find "$DC_a"/dict/enables/ -type f)
 }

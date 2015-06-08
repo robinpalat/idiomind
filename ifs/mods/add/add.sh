@@ -364,15 +364,17 @@ function fetch_audio() {
         
         if [ ! -f "$DM_tls/${word,,}.mp3" ]; then
         
-            dictt "${word,,}" $3
+        yad --text="${word,,} $3"
+        
+            dictt "${word,,}" "$3"
             
             if [ -f "$3/${word,,}.mp3" ]; then
                 mv -f "$3/${word,,}.mp3" "$4/${word,,}.mp3"
             else
-                voice "$word" "$3" "$4/${word,,}.mp3"
+                voice "${word}" "$3" "$4/${word,,}.mp3"
             fi
         fi
-    done < "$words_list"
+    done < "${words_list}"
 }
 
 
