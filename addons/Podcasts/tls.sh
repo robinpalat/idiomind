@@ -9,7 +9,7 @@ c="$(gettext "Saved episodes <i><small>(Podcasts)</small></i>")"
 d="$(gettext "Marks")"
 #
 # rsync_delete: disable(0)/enable(1)
-rsync_delete=1
+rsync_delete=0
 
 play() {
 
