@@ -36,7 +36,7 @@ function word_view() {
 
 function sentence_view() {
 
-    if [ -f "$DM_tlt/$fname.mp3" ]; then
+    if [[ -f "$DM_tlt/$fname.mp3" ]]; then
     tags="$(eyeD3 "$DM_tlt/$fname.mp3")"
     [ "$(sed -n 1p "$DC_s/1.cfg" | grep -o grammar=\"[^\"]* | grep -o '[^"]*$')"  = TRUE ] \
     && trgt="$(grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)' <<<"${tags}")" \
@@ -44,7 +44,7 @@ function sentence_view() {
     srce="$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"${tags}")"
     lwrd="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"${tags}" | tr '_' '\n')"
     mark="$(grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)' <<<"${tags}")"
-    [  "$mark" = TRUE ] && im="--image=$DS/images/mark.png"
+    [ "$mark" = TRUE ] && im="--image=$DS/images/mark.png"
     [ -z "$trgt" ] && tm="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>"
     else tm="<span color='#3F78A0'><tt>$(gettext "File not found")</tt></span>"; fi
     

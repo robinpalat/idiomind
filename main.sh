@@ -72,7 +72,8 @@ function new_session() {
     echo "$DESKTOP_SESSION" >> "$DC_s/10.cfg"
     gconftool-2 --get /desktop/gnome/interface/font_name \
     | cut -d ' ' -f 2 >> "$DC_s/10.cfg"
-    [ `wc -l < "$DC_s/1.cfg"` -lt 19 ] && rm "$DC_s/1.cfg"
+    #
+    [[ `wc -l < "$DC_s/1.cfg"` -lt 20 ]] && rm "$DC_s/1.cfg"
     
     # log file
     if [[ -f "$DC_s/8.cfg" ]]; then
@@ -257,7 +258,7 @@ function topic() {
         if [[ -f "${DM_tlt}/words/images/img.jpg" ]]; then
         img="--image=${DM_tlt}/words/images/img.jpg"
         sx=608; sy=580; else sx=620; sy=560; fi
-        printf "tpcs.$tpc.tpcs" >> "$DC_s/8.cfg"
+        echo -e ".tpc.$tpc.tpc." >> "$DC_s/8.cfg"
         [ ! -z "$author" ] && author=" $(gettext "Created by") $author"
 
         label_info1="<span font_desc='Free Sans 15' color='#505050'>$tpc</span><small>\n $inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"
@@ -290,7 +291,7 @@ function topic() {
                     sed '/^$/d' "$DT/ls1.x" > "${ls1}"
                 fi
                 "$DS/ifs/tls.sh" colorize
-                printf "okim.$(wc -l < "$cnf1").okim\n" >> "$DC_s/8.cfg"
+                echo -e ".oki.$(wc -l < "$cnf1").oki." >> "$DC_s/8.cfg"
             fi
         }
     
@@ -416,7 +417,7 @@ function topic() {
 
 panel() {
     
-    printf "strt.1.strt\n" >> "$DC_s/8.cfg"
+    echo -e ".strt.1.strt." >> "$DC_s/8.cfg"
     if [ ! -d "$DT" ]; then new_session; fi
     [ ! -f "$DT/tpe" ] && echo "$(sed -n 1p "$DC_s/4.cfg")" > "$DT/tpe"
     [ "$(< "$DT/tpe")" != "${tpc}" ] && echo "$(sed -n 1p "$DC_s/4.cfg")" > "$DT/tpe"

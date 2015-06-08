@@ -23,11 +23,10 @@ if [ -z "$tpc" ]; then source "$DS/ifs/mods/cmns.sh"
 msg "$(gettext "No topic is active")\n" info & exit 1; fi
 
 [[ -n "$(< "$DC_s/1.cfg")" ]] && cfg=1 || > "$DC_s/1.cfg"
-
 lbls=('Words' 'Sentences' 'Marked items' 'Difficult words' \
 'New episodes <i><small>Podcasts</small></i>' \
 'Saved episodes <i><small>Podcasts</small></i>')
-sets=('grammar' 'list' 'tasks' 'trans' 'trd_trgt' 'text' 'audio' \
+sets=('grammar' 'list' 'tasks' 'trans' 'trd_trgt' 'auto_mrk' 'text' 'audio' \
 'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' \
 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
 in=('in1' 'in2' 'in3' 'in4' 'in5' 'in6')
@@ -42,7 +41,7 @@ if [[ `wc -l < "$cfg3"` -gt 0 ]]; then
 in2="$(grep -Fxvf "$cfg3" "$cfg1")"; else
 in2="$(< "$cfg1")"; fi
 in3="$(< "$DC_tlt/6.cfg")"
-in4="$(cd "$DC_tlt/practice/"; awk '++A[$1]==2' ./*.3 |sed '/^$/d')"
+in4="$(sed '/^$/d' "$DC_tlt/practice/log.3")"
 [ -f "$DM_tl/Podcasts/.conf/1.lst" ] && \
 in5="$(tac "$DM_tl/Podcasts/.conf/1.lst" |sed '/^$/d')" || in5=""
 [ -f "$DM_tl/Podcasts/.conf/2.lst" ] && \
@@ -51,8 +50,8 @@ in6="$(tac "$DM_tl/Podcasts/.conf/2.lst" |sed '/^$/d')" || in6=""
 
 if [[ "$cfg" = 1 ]]; then
 
-    n=13
-    while [[ $n -lt 19 ]]; do
+    n=14
+    while [[ $n -lt 20 ]]; do
         get="${sets[$n]}"
         val=$(sed -n $((n+1))p < "$DC_s/1.cfg" \
         | grep -o "$get"=\"[^\"]* | grep -o '[^"]*$')
@@ -62,7 +61,7 @@ if [[ "$cfg" = 1 ]]; then
     
 else
     n=0; > "$DC_s/1.cfg"
-    while [[ $n -lt 19 ]]; do
+    while [[ $n -lt 20 ]]; do
     echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
     ((n=n+1))
     done
@@ -75,7 +74,7 @@ function setting_1() {
             [[ -z ${!arr} ]] && echo "$DS/images/addi.png" \
             || echo "$DS/images/add.png"
         echo "  <span font_desc='Arial 11'>$(gettext "${lbls[$n]}")</span>"
-        echo "${!sets[$((n+13))]}"
+        echo "${!sets[$((n+14))]}"
         let n++
     done
 }
@@ -110,19 +109,19 @@ ret=$?
 
 if [[ $ret -eq 0 ]]; then
 
-    cd "$DT"; > ./index.m3u; n=13
-    while [[ $n -lt 19 ]]; do
-        val=$(sed -n $((n-12))p "$slct" | cut -d "|" -f3)
+    cd "$DT"; > ./index.m3u; n=14
+    while [[ $n -lt 20 ]]; do
+        val=$(sed -n $((n-13))p "$slct" | cut -d "|" -f3)
         [[ -n "$val" ]] && sed -i "s/${sets[$n]}=.*/${sets[$n]}=\"$val\"/g" "$DC_s/1.cfg"
         if sed -n 1,2p "$slct" | grep FALSE; then
             if [ "$val" = TRUE ]; then
-            [ -n "${!in[$((n-13))]}" ] && \
-            echo "${!in[$((n-13))]}" >> ./index.m3u; fi
+            [ -n "${!in[$((n-14))]}" ] && \
+            echo "${!in[$((n-14))]}" >> ./index.m3u; fi
         else
-            [[ $n = 15 ]] && cat "$cfg1" >> ./index.m3u
+            [[ $n = 16 ]] && cat "$cfg1" >> ./index.m3u
             if [ "$val" = TRUE ]; then
-            [[ -n "${!in[$((n-11))]}" ]] && \
-            echo "${!in[$((n-11))]}" >> ./index.m3u; fi
+            [[ -n "${!in[$((n-12))]}" ]] && \
+            echo "${!in[$((n-12))]}" >> ./index.m3u; fi
         fi
         ((n=n+1))
     done
@@ -140,7 +139,7 @@ if [[ $ret -eq 0 ]]; then
     sleep 4
     "$DS/stop.sh" 2 & exit 1; fi
     
-    printf "plyrt.$tpc.plyrt\n" >> "$DC_s/8.cfg" &
+    echo -e ".ply.$tpc.ply." >> "$DC_s/8.cfg" &
     sleep 1
     "$DS/bcle.sh" & exit 0
 

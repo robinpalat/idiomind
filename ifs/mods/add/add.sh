@@ -318,7 +318,7 @@ function tts() {
 
 function voice() {
     
-    synth="$(sed -n 13p "$DC_s/1.cfg" \
+    synth="$(sed -n 14p "$DC_s/1.cfg" \
     | grep -o synth=\"[^\"]* | grep -o '[^"]*$')"
     DT_r="$2"; cd "$DT_r"
     

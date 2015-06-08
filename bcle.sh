@@ -20,7 +20,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 [[ -z "$tpc" && -d "$DT" ]] && exit 1
-repeat=$(sed -n 8p "$DC_s/1.cfg" |grep -o repeat=\"[^\"]* |grep -o '[^"]*$')
+repeat=$(sed -n 9p "$DC_s/1.cfg" |grep -o repeat=\"[^\"]* |grep -o '[^"]*$')
 
 if [[ -s "$DT/index.m3u" ]] \
 && [[ `wc -l < "$DT/index.m3u"` -gt 0 ]]; then

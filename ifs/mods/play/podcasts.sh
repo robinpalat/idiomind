@@ -2,11 +2,11 @@
 # -*- ENCODING: UTF-8 -*-
 
 if [[ ! -n "$_videos" ]]; then
-_videos="$(sed -n 9p "$DC_s/1.cfg" \
+_videos="$(sed -n 10p "$DC_s/1.cfg" \
 | grep -o videos=\"[^\"]* | grep -o '[^"]*$')"
-_news="$(sed -n 18p "$DC_s/1.cfg" \
+_news="$(sed -n 19p "$DC_s/1.cfg" \
 | grep -o news=\"[^\"]* | grep -o '[^"]*$')"
-_saved="$(sed -n 19p "$DC_s/1.cfg" \
+_saved="$(sed -n 20p "$DC_s/1.cfg" \
 | grep -o saved=\"[^\"]* | grep -o '[^"]*$')"
 export _videos _news _saved
 fi

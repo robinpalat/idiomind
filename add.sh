@@ -269,7 +269,7 @@ new_sentence() {
     fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
     
     [ "$DT_r" ] && rm -fr "$DT_r"
-    printf "aitm.1.aitm\n" >> "$DC_s/8.cfg"
+    echo -e ".adi.1.adi." >> "$DC_s/8.cfg"
     exit 1
 }
 
@@ -359,7 +359,7 @@ new_word() {
         eyeD3 -A IWI3I0I"$nt"IWI3I0I "$DM_tlt/words/$fname.mp3"
         notify-send "${trgt}" "${srce}\\n(${tpe})" -t 5000
         index word "${trgt}" "${tpe}"
-        printf "aitm.1.aitm\n" >> "$DC_s/8.cfg"
+        printf ".adi.1.adi." >> "$DC_s/8.cfg"
     
     else
         [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
@@ -448,7 +448,7 @@ list_words_edit() {
             let n++
         done
 
-        printf "aitm.$lns.aitm\n" >> "$DC_s/8.cfg"
+        printf ".adi.$lns.adi." >> "$DC_s/8.cfg"
 
         if [ -f "$DT_r/logw" ]; then
         sleep 1
@@ -536,7 +536,7 @@ list_words_sentence() {
         let n++
     done
 
-    printf "aitm.$lns.aitm\n" >> "$DC_s/8.cfg" &
+    printf ".adi.$lns.adi." >> "$DC_s/8.cfg" &
 
     if [ -f "$DT_r/logw" ]; then
     sleep 1
@@ -992,7 +992,7 @@ process() {
                 if [[ $adds -ge 1 ]]; then
                     notify-send -i idiomind "${tpe}" \
                     "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
-                    printf "aitm.$adds.aitm\n" >> "$DC_s/8.cfg"
+                    printf ".adi.$adds.adi." >> "$DC_s/8.cfg"
                 fi
                 
                 if [ "$(cat ./slog ./wlog | wc -l)" -ge 1 ]; then

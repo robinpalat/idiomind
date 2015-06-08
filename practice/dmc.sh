@@ -22,7 +22,8 @@ score() {
 
     if [[ $(($(< ./b.l)+$1)) -ge $all ]]; then
         play "$drts/all.mp3" &
-        echo "w9.$(tr -s '\n' '|' < ./b.1).w9" >> "$log"
+        echo ".w9.$(tr -s '\n' '|' < ./b.1).w9." >> "$log"
+        echo -e ".okp.1.okp." >> "$log"
         echo "$(date "+%a %d %B")" > b.lock
         echo 21 > .2
         "$strt" 2 &
@@ -41,7 +42,7 @@ score() {
         done
 
         if [[ -f b.3 ]]; then
-        echo "w6.$(tr -s '\n' '|' < ./b.3).w6" >> "$log"; fi
+        echo ".w6.$(tr -s '\n' '|' < ./b.3).w6." >> "$log"; fi
         
         "$strt" 7 $easy $ling $hard & exit 1
     fi
