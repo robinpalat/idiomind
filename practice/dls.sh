@@ -133,8 +133,8 @@ result() {
         color=E5801D
         
     else
-        echo "${trgt}" >> d.3
-        hard=$((hard+1))
+        [ -n "$entry" ] && echo "${trgt}" >> d.3
+        [ -n "$entry" ] && hard=$((hard+1))
         color=D11B5D
     fi
     

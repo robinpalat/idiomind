@@ -22,7 +22,6 @@ source "$DS/ifs/mods/cmns.sh"
 
 mkmn() {
     
-    restr="$(ls "$DS/addons/")"
     cd "$DM_tl"
     [ -d "$DM_tl/images" ] && rm -r "$DM_tl/images"
     [ -d "$DM_tl/words" ] && rm -r "$DM_tl/words"
@@ -35,7 +34,7 @@ mkmn() {
     while [[ $n -le "$(head -100 < "$DM_tl/.1.cfg" | wc -l)" ]]; do
     
         tp=$(sed -n "$n"p "$DM_tl/.1.cfg")
-        if ! grep -Fxo "$tp" <<<"$restr"; then
+        if ! grep -Fxo "$tp" < <(ls "$DS/addons/"); then
         inx1=$(wc -l < "$DM_tl/$tp/.conf/1.cfg")
         inx2=$(wc -l < "$DM_tl/$tp/.conf/2.cfg")
         tooltips_1="$inx1 / $inx2"
@@ -544,11 +543,10 @@ rename_topic() {
 
     source "$DS/ifs/mods/add/add.sh"
     info2=$(wc -l < "$DM_tl/.1.cfg")
-    restr="$(ls "$DS/addons/")"
     if grep -Fxo "$tpc" < "$DM_tl/.3.cfg"; then i=1; fi
     jlb="$(clean_2 "${2}")"
     
-    if grep -Fxo "$jlb" <<<"$restr"; then jlb="$jlb."; fi
+    if grep -Fxo "$jlb" < <(ls "$DS/addons/"); then jlb="$jlb."; fi
     chck="$(grep -Fxo "$jlb" "$DM_tl/.1.cfg" | wc -l)"
   
     if [ -f "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "$tpc" ]; then
