@@ -129,7 +129,7 @@ if [[ $ret -eq 0 ]]; then
     
     rm -f "$slct";
     "$DS/stop.sh" 3
-    if [ -d "$DM_tlt" ] && [ -n "$tpc" ]; then
+    if [[ -d "$DM_tlt" ]] && [[ -n "$tpc" ]]; then
     echo "$DM_tlt" > "$DT/.p_"
     echo "$tpc" >> "$DT/.p_"
     else "$DS/stop.sh" 2 && exit 1; fi
@@ -146,15 +146,15 @@ if [[ $ret -eq 0 ]]; then
 
 elif [[ $ret -eq 2 ]]; then
 
-    [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
-    [ -f "$DT/index.m3u" ] && rm -f "$DT/index.m3u"
+    [[ -f "$DT/.p_" ]] && rm -f "$DT/.p_"
+    [[ -f "$DT/index.m3u" ]] && rm -f "$DT/index.m3u"
     "$DS/stop.sh" 2
     
 elif [[ $ret -eq 3 ]]; then
 
-    [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
-    [ -n "$(ps -A | pgrep -f "play")" ] && killall play &
-    [ -n "$(ps -A | pgrep -f "mplayer")" ] && killall mplayer &
+    [[ -f "$DT/.p_" ]] && rm -f "$DT/.p_"
+    if ps -A | pgrep -f "play"; then killall play & fi
+    if ps -A | pgrep -f "mplayer"; then killall mplayer & fi
     > "$DT/.p"
 fi
 
