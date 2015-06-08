@@ -103,7 +103,7 @@ function notebook_1() {
     --field="<small>$(gettext "Rename")</small>" "$tpc" \
     --field="$(gettext "Mark as learnt")":FBTN "$cmd_mark" \
     --field="$(gettext "Auto select items that could be marked as learnt")":CHK "$auto_mrk" \
-    --field="$label_info2\n\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " \
+    --field="$label_info2\n":LBL " " \
     --field="$(gettext "Files")":FBTN "$cmd_attchs" \
     --field="$(gettext "Share")":FBTN "$cmd_share" \
     --field="$(gettext "Delete")":FBTN "$cmd_del" \
