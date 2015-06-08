@@ -134,7 +134,7 @@ if [[ $ret -eq 0 ]]; then
     echo "$tpc" >> "$DT/.p_"
     else "$DS/stop.sh" 2 && exit 1; fi
     
-    if [ -z "$(< "$DT/index.m3u")" ]; then
+    if [[ -z "$(< "$DT/index.m3u")" ]]; then
     notify-send "$(gettext "Exiting")" \
     "$(gettext "Nothing to play")" -i idiomind -t 3000 &&
     sleep 4
