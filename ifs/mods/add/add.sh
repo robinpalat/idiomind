@@ -363,9 +363,7 @@ function fetch_audio() {
     while read word; do
         
         if [ ! -f "$DM_tls/${word,,}.mp3" ]; then
-        
-        yad --text="${word,,} $3"
-        
+
             dictt "${word,,}" "$3"
             
             if [ -f "$3/${word,,}.mp3" ]; then

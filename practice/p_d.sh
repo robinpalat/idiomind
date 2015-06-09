@@ -96,7 +96,7 @@ result() {
     | sed 's/\-//;s/\[//;s/\]//;s/\.//;s/\://;s/\|//;s/)//;s/"//g' \
     | tr -d '“' | tr -d '”' | tr -d '&' | tr -d ':' | tr -d '!'
     }
-    if [[ `wc -w < <<<"$chk"` -gt 6 ]]; then
+    if [[ `wc -w <<<"$chk"` -gt 6 ]]; then
     out=`awk '{print tolower($0)}' <<<"${entry}" | clean | grep -v '^.$'`
     in=`awk '{print tolower($0)}' <<<"${chk}" | clean | grep -v '^.$'`
     else
@@ -120,7 +120,7 @@ result() {
     done < <(sed 's/ /\n/g' <<<"$out")
     
     OK=$(tr '\n' ' ' < ./words.tmp)
-    sed 's/ /\n/g' < ./chk.tmp > all.tmp
+    sed 's/ /\n/g' < ./chk.tmp > all.tmp; touch ./mtch.tmp
     porc=$((100*$(cat ./mtch.tmp | wc -l)/$(wc -l < ./all.tmp)))
     
     if [[ $porc -ge 70 ]]; then

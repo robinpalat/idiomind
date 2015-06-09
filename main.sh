@@ -410,6 +410,11 @@ function topic() {
         
         # learned
         notebook_2
+        
+        if [[ ! -f "$DT/ps_lk" ]]; then
+                
+            apply
+        fi
       
         rm -f "$DT"/*.x & exit
     fi
