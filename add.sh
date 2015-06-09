@@ -283,7 +283,7 @@ new_word() {
     DC_tlt="$DM_tl/${tpe}/.conf"
     source "$DS/default/dicts/$lgt"
     
-    if [ "$(wc -l < "$DC_tlt/0.cfg")" -ge 200 ]; then
+    if [[ `wc -l < "$DC_tlt/0.cfg"` -ge 200 ]] && [[ "$5" != 0 ]]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
     msg "$(gettext "Maximum number of notes has been exceeded for this topic. Max allowed (200)")" info " " & exit 1; fi
     
@@ -358,7 +358,7 @@ new_word() {
         tags_1 W "${trgt}" "${srce}" "$DM_tlt/words/$fname.mp3"
         nt="$(tr '\n' '_' <<<"_$(check_grammar_2 "${trgt}")")"
         eyeD3 -A IWI3I0I"$nt"IWI3I0I "$DM_tlt/words/$fname.mp3"
-        notify-send "${trgt}" "${srce}\\n(${tpe})" -t 5000
+        [[ "$5" != 0 ]] && notify-send "${trgt}" "${srce}\\n(${tpe})" -t 5000
         index word "${trgt}" "${tpe}"
         printf ".adi.1.adi." >> "$DC_s/8.cfg"
     

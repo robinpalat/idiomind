@@ -258,7 +258,7 @@ edit_item() {
         dlg_form_1 "$file_tmp"
         ret=$(echo "$?")
         
-            if [ ! -f "$DM_tlt/words/$fname.mp3" ]; then
+            if [ ! -f "$DM_tlt/words/$fname.mp3" ] && [ $a != 1 ]; then
             rm -f "$file_tmp" & exit 1; fi
              
             if [[ $ret -eq 0 ]] || [[ $ret -eq 2 ]]; then
@@ -299,8 +299,11 @@ edit_item() {
                 if [ "$trgt_mod" != "$trgt" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
                 
                     fname_mod="$(nmfile "${trgt_mod}")"
+                    if [ -f "$DM_tlt/words/$fname.mp3" ]; then
                     mv -f "$DM_tlt/words/$fname.mp3" "$DM_tlt/words/$fname_mod.mp3"
-                    mv -f "$DM_tlt/words/images/$fname.jpg" "$DM_tlt/words/images/$fname_mod.jpg"
+                    else voice "${trgt_mod}" "$DT_r" "$DM_tlt/words/$fname_mod.mp3"; fi
+                    if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
+                    mv -f "$DM_tlt/words/images/$fname.jpg" "$DM_tlt/words/images/$fname_mod.jpg"; fi
                     temp="$(gettext "Processing")..."
                     tags_1 W "$trgt_mod" "$temp" "$DM_tlt/words/$fname_mod.mp3"
                     index edit "${trgt}" "${tpc}" "${trgt_mod}"
