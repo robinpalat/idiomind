@@ -721,23 +721,18 @@ set_image() {
     if [ "$3" = word ]; then
     item=$(eyeD3 "$2" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)'); k=word
     elif [ "$3" = sentence ]; then
-    item=$(eyeD3 "$2" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)');  k=sentence; fi
-    q="$(sed "s/'/ /g" <<<"$item")"
+    item=$(eyeD3 "$2" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)'); k=sentence; fi
     file="$2"
     fname="$(nmfile "$item")"
     source "$DS/ifs/mods/add/add.sh"
     ifile="${DM_tlt}/words/images/$fname.jpg"
-
-    echo -e "<html><head>
-    <meta http-equiv=\"Refresh\" content=\"0;url=https://www.google.com/search?q="$q"&tbm=isch\">
-    </head><body><p>Search images for \"$q\"...</p></body></html>" > search.html
     btn1="--button="$(gettext "Image")":3"
 
     if [ -f "$ifile" ]; then
     image="--image=$ifile"
     btn1="--button="$(gettext "Change")":3"
     btn2="--button="$(gettext "Delete")":2"
-    else label="--text=<small><a href='file://$DT/search.html'>"$(gettext "Search image")"</a></small>"; fi
+    else label="--text=<small></small>"; fi
 
         dlg_form_3
         ret=$(echo $?)

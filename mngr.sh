@@ -253,6 +253,7 @@ edit_item() {
         cmd_play="play "\"${DM_tlt}/words/$fname.mp3\"""
         link1="https://translate.google.com/\#$lgt/$lgs/$q_trad"
         link2="http://glosbe.com/$lgt/$lgs/${q_trad,,}"
+        link3='https://www.google.com/search?q='$q_trad'&amp;tbm=isch'
         
         dlg_form_1 "$file_tmp"
         ret=$(echo "$?")
