@@ -231,8 +231,8 @@ edit_item() {
     audiofile_1="${DM_tlt}/words/$fname.mp3"
     audiofile_2="${DM_tlt}/$fname.mp3"
     
-    if [ ! -f "${audiofile_1}" ] && [ ! -f "${audiofile_2}" ] && [ -z "${item}" ]; then
-    exit 1; fi
+    if [ ! -f "${audiofile_1}" ] && [ ! -f "${audiofile_2}" ] \
+    && [ -z "${item}" ]; then exit 1; fi
 
     if grep -Fxo "${item}" "${DC_tlt}/3.cfg"; then
     
@@ -245,11 +245,10 @@ edit_item() {
         exmp="$(sed -n 1p <<<"$fields")"
         dftn="$(sed -n 2p <<<"$fields")"
         note="$(sed -n 3p <<<"$fields")"
-        a=0; else a=1; fi
+        a=0; else trgt="${item}"; a=1; fi
         cmd_move="$DS/ifs/mods/mngr/mngr.sh 'position' '$item_pos' "\"${index_1}\"""
         cmd_delete="$DS/mngr.sh delete_item "\"${item}\"""
         cmd_image="$DS/ifs/tls.sh set_image "\"${audiofile_1}\"" word"
-        cmd_definition="/usr/share/idiomind/ifs/tls.sh definition '$trgt'"
         cmd_play="play "\"${DM_tlt}/words/$fname.mp3\"""
         link1="https://translate.google.com/\#$lgt/$lgs/$q_trad"
         link2="http://glosbe.com/$lgt/$lgs/${q_trad,,}"
@@ -296,7 +295,8 @@ edit_item() {
                     [ -d "$DT/idadtmptts" ] && rm -fr "$DT/idadtmptts"
                 fi
                 
-                if [ "$trgt_mod" != "$trgt" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
+                if ([ "$trgt_mod" != "$trgt" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]) \
+                || [ ! -z "${audio_mod##+([[:space:]])}" ] ; then
                 
                     fname_mod="$(nmfile "${trgt_mod}")"
                     if [ -f "$DM_tlt/words/$fname.mp3" ]; then
@@ -378,7 +378,8 @@ edit_item() {
                 if [ $a = 1 ]; then trgt="_ _"; fi
                 rm -f "$file_tmp"
                 
-                if [ "$trgt_mod" != "$trgt" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
+                if ([ "$trgt_mod" != "$trgt" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]) \
+                || [ ! -z "${audio_mod##+([[:space:]])}" ]; then
 
                     DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
                     fname_mod="$(nmfile "$trgt_mod")"

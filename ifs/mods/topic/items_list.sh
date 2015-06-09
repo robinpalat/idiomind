@@ -150,7 +150,7 @@ function notebook_2() {
     --scroll --borders=10 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "$tpc" \
     --field="   $(gettext "Review")   ":FBTN "$cmd_mark" \
-    --field=" ":LBL "_" \
+    --field=" ":LBL "\t\t\t\t\t\t\t\t\t\t\t\t\t\t" \
     --field="$label_info2\n":LBL " " \
     --field="$(gettext "Files")":FBTN "$cmd_attchs" \
     --field="$(gettext "Share")":FBTN "$cmd_share" \

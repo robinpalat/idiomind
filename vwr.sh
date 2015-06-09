@@ -12,7 +12,7 @@ listen="$(gettext "Listen")"
 if ! [[ $index_pos =~ $re ]]; then
 index_pos=$(grep -Fxon "${item_name}" < "${index}" \
 | sed -n 's/^\([0-9]*\)[:].*/\1/p')
-nll=" "; fi
+nll="_"; fi
 item="$(sed -n "$index_pos"p "${index}" |sed 's/<[^>]*>//g')"
 
 if [ -z "${item}" ]; then
@@ -41,7 +41,8 @@ ret=$?
     
         if [[ $index_pos = 1 ]]; then
         item=`tail -n 1 < "${index}"`
-        "$DS/vwr.sh" "$1" "${item}" &
+        ([[ $1 = 1 ]] && "$DS/vwr.sh" "$1" "$nll" "${item}"
+         [[ $1 = 2 ]] && "$DS/vwr.sh" "$1" "${item}") &
         else
         ff=$((index_pos-1))
         "$DS/vwr.sh" "$1" "$nll" $ff &

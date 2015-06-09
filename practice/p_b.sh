@@ -63,7 +63,7 @@ fonts() {
 
 ofonts() {
     while read item; do
-        echo "<big>$item</big>"
+        echo " <big> $item </big> "
     done < ./srce.tmp
     }
 
@@ -72,7 +72,7 @@ mchoise() {
     
     dlg=$(ofonts | yad --list --title="$(gettext "Practice")" \
     --text="$cuestion" \
-    --timeout=15 --selectable-labels \
+    --separator=" " --timeout=15 --selectable-labels \
     --skip-taskbar --text-align=center --center --on-top \
     --buttons-layout=edge --undecorated \
     --no-headers \
@@ -87,10 +87,11 @@ while read trgt; do
     fonts "$trgt"
     mchoise "$trgt"
     ret=$(echo "$?")
-    
+
     if [[ $ret = 0 ]]; then
-    
-        if echo "$dlg" | grep "$wes"; then
+
+        if grep -o "$wes" <<<"$dlg"; then
+
             echo "$trgt" >> b.1
             easy=$((easy+1))
             

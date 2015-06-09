@@ -54,7 +54,8 @@ fonts() {
     && lst="${1:0:1} ${1:5:5}" || lst=$(echo "$1" | awk '$1=$1' FS= OFS=" " | tr aeiouy '.')
     elif [[ $p = 1 ]]; then
     [ $lgtl = Japanese ] || [ $lgtl = Chinese ] || [ $lgtl = Russian ] \
-    && lst="${1:0:1} ${1:5:5}" || lst=$(echo "${1^}" | sed "s|[a-z]|"\ \."|g"); fi
+    && lst="${1:0:1} ${1:5:5}" || lst=$(echo "${1^}" | sed "s|[a-z]|"\ \."|g")
+    fi
     
     s=$((30-${#1}))
     img="/usr/share/idiomind/images/fc.png"

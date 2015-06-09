@@ -136,9 +136,8 @@ if [[ $ret -eq 0 ]]; then
     else "$DS/stop.sh" 2 && exit 1; fi
     
     if [[ -z "$(< "$DT/index.m3u")" ]]; then
-    notify-send "$(gettext "Exiting")" \
-    "$(gettext "Nothing to play")" -i idiomind -t 3000 &&
-    sleep 4
+    notify-send "$(gettext "Nothing to play")" \
+    "$(gettext "Exiting...")" -i idiomind -t 3000 &
     "$DS/stop.sh" 2 & exit 1; fi
     
     echo -e ".ply.$tpc.ply." >> "$DC_s/8.cfg" &
@@ -154,7 +153,6 @@ elif [[ $ret -eq 2 ]]; then
     
 elif [[ $ret -eq 3 ]]; then
 
-    [[ -f "$DT/.p_" ]] && rm -f "$DT/.p_"
     if ps -A | pgrep -f "play"; then killall play & fi
     if ps -A | pgrep -f "mplayer"; then killall mplayer & fi
     > "$DT/.p"

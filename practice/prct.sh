@@ -44,17 +44,17 @@ get_list() {
     
         > "$d/${nm}.0"
         if [[ `wc -l < "${cfg4}"` -gt 0 ]]; then
-            while read item; do
-            grep -Fxo "${item}" "${cfg3}" >> "$d/${nm}.0"
-            done < "${cfg1}"
+
+            grep -Fxvf "${cfg4}" "${cfg1}" > "$DT/${nm}.0"
+            tac "$DT/${nm}.0" | sed '/^$/d' > "$d/${nm}.0"
+            rm -f "$DT/${nm}.0"
         else
-            cat "${cfg1}" > "$d/${nm}.0"
+            tac "${cfg1}" | sed '/^$/d' > "$d/${nm}.0"
         fi
-        sed -i '/^$/d' "$d/${nm}.0"
         
         if [[ $nm = b ]]; then
         
-            if [[ ! -f "$d/b.srces" ]]; then
+            if [ ! -f "$d/b.srces" ]; then
             (
             echo "5"
             while read word; do
@@ -73,24 +73,22 @@ get_list() {
     
         if [[ `wc -l < "${cfg3}"` -gt 0 ]]; then
             grep -Fxvf "${cfg3}" "${cfg1}" > "$DT/slist"
-            tac "$DT/slist" > "$d/${nm}.0"
+            tac "$DT/slist" | sed '/^$/d' > "$d/${nm}.0"
             rm -f "$DT/slist"
         else
-            tac "${cfg1}" > "$d/${nm}.0"
+            tac "${cfg1}" | sed '/^$/d' > "$d/${nm}.0"
         fi
     
     elif [[ $nm = e ]]; then
     
         > "$DT/images"
         if [[ `wc -l < "${cfg4}"` -gt 0 ]]; then
-            while read item; do
-            grep -Fxo "${item}" "${cfg3}" >> "$DT/images"
-            done < "${cfg1}"
-        else
-            cat "${cfg1}" > "$DT/images"
-        fi
-        sed -i '/^$/d' "$DT/images"
         
+            grep -Fxvf "${cfg4}" "${cfg1}" > "$DT/images"
+        else
+            tac "${cfg1}" > "$DT/images"
+        fi
+
         > "$d/${nm}.0"
         while read itm; do
             fname="$(echo -n "$itm" | md5sum | rev | cut -c 4- | rev)"
@@ -106,8 +104,8 @@ get_list() {
 
 starting() {
     
-    yad --title=$(gettext "Practice ") \
-    --text="$1" --image=info \
+    yad --title="$1" \
+    --text=" $1.\n" --image=info \
     --window-icon="$DS/images/icon.png" --skip-taskbar --center --on-top \
     --width=360 --height=120 --borders=5 \
     --button=Ok:1
@@ -119,7 +117,7 @@ practice() {
     cd "$DC_tlt/practice"
     nm="${1}"
 
-    if [[ -f "$d/${nm}.lock" ]]; then
+    if [ -f "$d/${nm}.lock" ]; then
     
         lock  "$d/${nm}.lock"
         ret=$(echo "$?")
@@ -130,7 +128,7 @@ practice() {
         fi
     fi
 
-    if [[ -f "$d/${nm}.0" ]] && [[ -f "$d/${nm}.1" ]]; then
+    if [ -f "$d/${nm}.0" ] && [ -f "$d/${nm}.1" ]; then
     
         echo "w9.$(tr -s '\n' '|' < "$d/${nm}.1").w9" >> "$log"
         grep -Fxvf  "$d/${nm}.1" "$d/${nm}.0" > "$d/${nm}.tmp"
@@ -140,7 +138,7 @@ practice() {
         get_list
         cp -f "$d/${nm}.0" "$d/${nm}.tmp"
         
-        [[ `wc -l < "$d/${nm}.0"` -lt 2 ]] && starting "$(gettext "Not enough words to start.")"
+        [[ `wc -l < "$d/${nm}.0"` -lt 2 ]] && starting "$(gettext "Not enough words to start")"
         echo " practice --new session"
     fi
     

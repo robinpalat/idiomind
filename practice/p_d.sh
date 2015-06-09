@@ -5,6 +5,7 @@ drts="$DS/practice"
 strt="$drts/strt.sh"
 cd "${DC_tlt}/practice"
 all=$(wc -l < ./d.0)
+hits="$(gettext "Hits")"
 listen="Listen"
 easy=0
 hard=0
@@ -60,7 +61,7 @@ dialog2() {
     --window-icon="$DS/images/icon.png" --image="$DS/practice/bar.png" \
     --buttons-layout=end --skip-taskbar --undecorated --center --on-top \
     --text-align=left --align=left --image-on-top \
-    --height=215 --width=560 --borders=8 \
+    --height=220 --width=560 --borders=8 \
     --button="$(gettext "Exit")":1 \
     --button="$(gettext "Listen")":"$cmd_play" \
     --button=" $(gettext "Check") >> ":0)
@@ -75,11 +76,11 @@ check() {
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --wrap --scroll --image-on-top --center --on-top \
     --undecorated --buttons-layout=end \
-    --width=560 --height=250 --borders=12 \
+    --width=560 --height=260 --borders=12 \
     --button="$(gettext "Listen")":"$cmd_play" \
     --button="$(gettext "Next")":2 \
     --field="":lbl --text="<span font_desc='Free Sans 14'>${wes}</span>\\n" \
-    --field="<span font_desc='Free Sans 12'>$OK\n\nhits $prc</span>\n":lbl
+    --field="<span font_desc='Free Sans 12'>$OK\n\n$hits $prc</span>\n":lbl
     }
     
 get_text() {

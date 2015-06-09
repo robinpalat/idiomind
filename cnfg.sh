@@ -133,7 +133,7 @@ yad --notebook --key=$KEY --title="$(gettext "Settings")" \
 --tab-borders=5 --sticky --center \
 --tab="$(gettext "Preferences")" \
 --tab="$(gettext "Addons")" \
---width=460 --height=340 --borders=2 \
+--width=470 --height=350 --borders=2 \
 --button="$(gettext "Cancel")":1 \
 --button="$(gettext "OK")":0
 ret=$?
@@ -171,7 +171,7 @@ ret=$?
             [ "${lang[$n]}" != "$lgtl" ]; then
                 lgtl="${lang[$n]}"
                 if grep -o -E 'Chinese|Japanese|Russian|Vietnamese' <<< "$lgtl";
-                then info3="\n<b> $lgtl</b>\n $(gettext "Some features do not yet work with this language"). "; fi
+                then info3="\n$(gettext "Some features do not yet work with this language"). ($lgtl)"; fi
                 confirm "$info2$info3" dialog-question "$lgtl"
                 [ $? -eq 0 ] && set_lang "${lang[$n]}"
                 break
