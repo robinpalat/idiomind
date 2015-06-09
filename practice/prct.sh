@@ -24,8 +24,8 @@ log="$DC_s/8.cfg"
 cfg3="$DC_tlt/3.cfg"
 cfg4="$DC_tlt/4.cfg"
 cfg1="$DC_tlt/1.cfg"
-d="$DC_tlt/practice"
-touch "$d/log.1" "$d/log.2" "$d/log.3"
+directory="$DC_tlt/practice"
+touch "$directory/log.1" "$directory/log.2" "$directory/log.3"
 
 lock() {
     
@@ -40,28 +40,28 @@ lock() {
 
 get_list() {
     
-    if [[ $nm = a ]] || [[ $nm = b ]] || [[ $nm = c ]]; then
+    if [[ $ttest = a ]] || [[ $ttest = b ]] || [[ $ttest = c ]]; then
     
-        > "$d/${nm}.0"
+        > "$directory/${ttest}.0"
         if [[ `wc -l < "${cfg4}"` -gt 0 ]]; then
 
-            grep -Fxvf "${cfg4}" "${cfg1}" > "$DT/${nm}.0"
-            tac "$DT/${nm}.0" | sed '/^$/d' > "$d/${nm}.0"
-            rm -f "$DT/${nm}.0"
+            grep -Fvx -f "${cfg4}" "${cfg1}" > "$DT/${ttest}.0"
+            tac "$DT/${ttest}.0" |sed '/^$/d' > "$directory/${ttest}.0"
+            rm -f "$DT/${ttest}.0"
         else
-            tac "${cfg1}" | sed '/^$/d' > "$d/${nm}.0"
+            tac "${cfg1}" |sed '/^$/d' > "$directory/${ttest}.0"
         fi
         
-        if [[ $nm = b ]]; then
+        if [[ $ttest = b ]]; then
         
-            if [ ! -f "$d/b.srces" ]; then
+            if [ ! -f "$directory/b.srces" ]; then
             (
             echo "5"
             while read word; do
             fname="$(echo -n "$word" | md5sum | rev | cut -c 4- | rev)"
             file="$DM_tlt/words/$fname.mp3"
-            echo "$(eyeD3 "$file" | grep -o -P "(?<=IWI2I0I).*(?=IWI2I0I)")" >> "$d/b.srces"
-            done < "$d/${nm}.0"
+            echo "$(eyeD3 "$file" | grep -o -P "(?<=IWI2I0I).*(?=IWI2I0I)")" >> "$directory/b.srces"
+            done < "$directory/${ttest}.0"
             ) | yad --progress \
             --width 50 --height 35 --undecorated \
             --pulsate --auto-close \
@@ -69,17 +69,17 @@ get_list() {
             fi
         fi
     
-    elif [[ $nm = d ]]; then
+    elif [[ $ttest = d ]]; then
     
         if [[ `wc -l < "${cfg3}"` -gt 0 ]]; then
             grep -Fxvf "${cfg3}" "${cfg1}" > "$DT/slist"
-            tac "$DT/slist" | sed '/^$/d' > "$d/${nm}.0"
+            tac "$DT/slist" |sed '/^$/d' > "$directory/${ttest}.0"
             rm -f "$DT/slist"
         else
-            tac "${cfg1}" | sed '/^$/d' > "$d/${nm}.0"
+            tac "${cfg1}" |sed '/^$/d' > "$directory/${ttest}.0"
         fi
     
-    elif [[ $nm = e ]]; then
+    elif [[ $ttest = e ]]; then
     
         > "$DT/images"
         if [[ `wc -l < "${cfg4}"` -gt 0 ]]; then
@@ -89,14 +89,14 @@ get_list() {
             tac "${cfg1}" > "$DT/images"
         fi
 
-        > "$d/${nm}.0"
+        > "$directory/${ttest}.0"
         while read itm; do
             fname="$(echo -n "$itm" | md5sum | rev | cut -c 4- | rev)"
             if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
-            echo "$itm" >> "$d/${nm}.0"; fi
+            echo "$itm" >> "$directory/${ttest}.0"; fi
         done < "$DT/images"
         
-        sed -i '/^$/d' "$d/${nm}.0"
+        sed -i '/^$/d' "$directory/${ttest}.0"
         [ -f "$DT/images" ] && rm -f "$DT/images"
     
     fi
@@ -115,38 +115,38 @@ starting() {
 practice() {
 
     cd "$DC_tlt/practice"
-    nm="${1}"
+    ttest="${1}"
 
-    if [ -f "$d/${nm}.lock" ]; then
+    if [ -f "$directory/${ttest}.lock" ]; then
     
-        lock  "$d/${nm}.lock"
+        lock  "$directory/${ttest}.lock"
         ret=$(echo "$?")
         if [[ $ret -eq 0 ]]; then
-        "$cls" restart ${nm} & exit
+        "$cls" restart ${ttest} & exit
         else
         "$strt" & exit
         fi
     fi
 
-    if [ -f "$d/${nm}.0" ] && [ -f "$d/${nm}.1" ]; then
+    if [ -f "$directory/${ttest}.0" ] && [ -f "$directory/${ttest}.1" ]; then
     
-        echo "w9.$(tr -s '\n' '|' < "$d/${nm}.1").w9" >> "$log"
-        grep -Fxvf  "$d/${nm}.1" "$d/${nm}.0" > "$d/${nm}.tmp"
+        echo "w9.$(tr -s '\n' '|' < "$directory/${ttest}.1").w9" >> "$log"
+        grep -Fxvf  "$directory/${ttest}.1" "$directory/${ttest}.0" > "$directory/${ttest}.tmp"
         echo " practice --restarting session"
         
     else
         get_list
-        cp -f "$d/${nm}.0" "$d/${nm}.tmp"
+        cp -f "$directory/${ttest}.0" "$directory/${ttest}.tmp"
         
-        [[ `wc -l < "$d/${nm}.0"` -lt 2 ]] && starting "$(gettext "Not enough words to start")"
+        [[ `wc -l < "$directory/${ttest}.0"` -lt 2 ]] && \
+        starting "$(gettext "Not enough words to start")"
         echo " practice --new session"
     fi
     
-    [ "$d/${nm}.2" ] && rm "$d/${nm}.2"
-    [ "$d/${nm}.3" ] && rm "$d/${nm}.3"
-    "$DS/practice/p_$nm.sh"
+    [ "$directory/${ttest}.2" ] && rm "$directory/${ttest}.2"
+    [ "$directory/${ttest}.3" ] && rm "$directory/${ttest}.3"
+    "$DS/practice/p_$ttest.sh"
 }
-
 
 case "$1" in
     1)

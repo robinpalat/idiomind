@@ -18,12 +18,11 @@
 #
 #  2015/02/27
 
-[[ -z "$DM" ]] && source /usr/share/idiomind/ifs/c.conf
+[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 if [ -z "$tpc" ]; then source "$DS/ifs/mods/cmns.sh"
 msg "$(gettext "No topic is active")\n" info & exit 1; fi
 
-[[ -n "$(< "$DC_s/1.cfg")" ]] && cfg=1 || > "$DC_s/1.cfg"
-
+[ -n "$(< "$DC_s/1.cfg")" ] && cfg=1 || > "$DC_s/1.cfg"
 lbls=('Words' 'Sentences' 'Marked items' 'Difficult words' \
 'New episodes <i><small>Podcasts</small></i>' \
 'Saved episodes <i><small>Podcasts</small></i>')
@@ -114,7 +113,7 @@ if [[ $ret -eq 0 ]]; then
     cd "$DT"; > ./index.m3u; n=13
     while [[ $n -lt 19 ]]; do
         val=$(sed -n $((n-12))p "$slct" | cut -d "|" -f3)
-        [[ -n "$val" ]] && sed -i "s/${sets[$n]}=.*/${sets[$n]}=\"$val\"/g" "$DC_s/1.cfg"
+        [ -n "$val" ] && sed -i "s/${sets[$n]}=.*/${sets[$n]}=\"$val\"/g" "$DC_s/1.cfg"
         if sed -n 1,2p "$slct" | grep -o FALSE; then
             if [ "$val" = TRUE ]; then
             [ -n "${!in[$((n-13))]}" ] && \
@@ -122,7 +121,7 @@ if [[ $ret -eq 0 ]]; then
         else
             if [[ $n = 15 ]]; then cat "$cfg1" >> ./index.m3u
             elif [[ $n -gt 15 ]] && [[ "$val" = TRUE ]]; then
-            [[ -n "${!in[$((n-11))]}" ]] && \
+            [ -n "${!in[$((n-11))]}" ] && \
             echo "${!in[$((n-11))]}" >> ./index.m3u; fi
         fi
         ((n=n+1))
@@ -130,12 +129,12 @@ if [[ $ret -eq 0 ]]; then
     
     rm -f "$slct";
     "$DS/stop.sh" 3
-    if [[ -d "$DM_tlt" ]] && [[ -n "$tpc" ]]; then
+    if [ -d "$DM_tlt" ] && [ -n "$tpc" ]; then
     echo "$DM_tlt" > "$DT/.p_"
     echo "$tpc" >> "$DT/.p_"
     else "$DS/stop.sh" 2 && exit 1; fi
     
-    if [[ -z "$(< "$DT/index.m3u")" ]]; then
+    if [ -z "$(< "$DT/index.m3u")" ]; then
     notify-send "$(gettext "Nothing to play")" \
     "$(gettext "Exiting...")" -i idiomind -t 3000 &
     "$DS/stop.sh" 2 & exit 1; fi
@@ -147,8 +146,8 @@ if [[ $ret -eq 0 ]]; then
 
 elif [[ $ret -eq 2 ]]; then
 
-    [[ -f "$DT/.p_" ]] && rm -f "$DT/.p_"
-    [[ -f "$DT/index.m3u" ]] && rm -f "$DT/index.m3u"
+    [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
+    [ -f "$DT/index.m3u" ] && rm -f "$DT/index.m3u"
     "$DS/stop.sh" 2
     
 elif [[ $ret -eq 3 ]]; then

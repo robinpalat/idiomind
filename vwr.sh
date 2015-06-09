@@ -20,7 +20,7 @@ item="$(sed -n 1p "${index}")"
 index_pos=1; fi
 fname="$(echo -n "${item}" | md5sum | rev | cut -c 4- | rev)"
 align=left
-fs=24; bs=20
+fs=25; bs=20
 
 if [ -f "${DM_tlt}/words/${fname}.mp3" ]; then
 cmd_listen="play '${DM_tlt}/words/${fname}.mp3'"

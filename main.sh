@@ -406,8 +406,7 @@ function topic() {
         fi
         
         pres="<u><b>$(gettext "Learned topic")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
-        
-        # learned
+
         notebook_2
         
         if [[ ! -f "$DT/ps_lk" ]]; then

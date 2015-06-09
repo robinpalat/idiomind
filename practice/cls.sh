@@ -11,6 +11,7 @@ DIR="$DS/practice"
 [ -n "$(ps -A | pgrep -f "$DIR/prct.sh")" ] && killall "$DIR/prct.sh" &
 [ -n "$(ps -A | pgrep -f "$DIR/strt.sh")" ] && killall "$DIR/strt.sh" &
 [ -n "$(ps -A | pgrep -f play)" ] && killall play &
+if [ -d "$DC_tlt/practice" ]; then
 cd "$DC_tlt/practice"
 
 stats() {
@@ -18,7 +19,7 @@ stats() {
     n=1; c=1
     while [[ $n -le 21 ]]; do
         if [[ $v -le $c ]]; then
-        echo "$n" > "$1"; break; fi
+        echo $n > "${1}"; break; fi
         ((c=c+5))
         let n++
     done
@@ -33,11 +34,11 @@ easy="$3"; ling="$4"; hard="$5"; all="$6"
 
 if [[ "$1" = restart ]]; then
     
-    rm ./"$2.lock" ./"$2.0" ./"$2.1" \
-    ./"$2.2" ./"$2.3" ./log.1 ./log.2 ./log.3 
+    rm ./"${2}.lock" ./"${2}.0" ./"${2}.1" \
+    ./"${2}.2" ./"${2}.3" ./log.1 ./log.2 ./log.3 
     [ -f ./b.srces ] && rm ./b.srces
-    echo "1" > ."$icon"
-    echo "0" > "$2.l"
+    echo "1" > ./."${icon}"
+    echo "0" > ./"${2}.l"
     touch ./log.1 ./log.2 ./log.3 
     "$DIR/strt.sh" & exit
 
@@ -61,12 +62,12 @@ elif [[ $1 = comp ]]; then
     if [ -f ./"${2}.3" ]; then
     n=`awk '++A[$1]==1' ./"${2}.3"` && echo "$n" >> log.3; fi
     
-    [[ -f ./"${2}.l" ]] \
+    [ -f ./"${2}.l" ] \
     && echo $(($(< ./"${2}.l")+easy)) > ./"${2}.l" \
     || echo "$easy" > ./"${2}.l"
     
     v=$((100*$(< ./${2}.l)/all))
-    stats ./.$icon
+    stats ./."${icon}"
     "$DIR/strt.sh" $_stats "$easy" "$ling" "$hard" & exit
 fi
-
+fi

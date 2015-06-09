@@ -29,32 +29,32 @@ nu='^[0-9]+$'; if ! [[ $loop =~ $nu ]]; then loop=1; fi
 
 if [[ "$1" = chngi ]]; then
     
-    stop_loop() {
+    e_file() {
     if [ ! -f "$1" ]; then
     echo "_" >> "$DT/.l_loop"
     if [[ `wc -l < "$DT/.l_loop"` -gt 5 ]]; then
     rm -f "$DT/.p_" "$DT/.l_loop" &
     msg "$(gettext "An error has occurred. Playback stopped")" info &
     "$DS/stop.sh" 2 & exit 1; fi
+    exit 1
     fi
     }
     DM_tlt="$(sed -n 1p "$DT/.p_")"
     if [ ! -d "${DM_tlt}" ]; then
     msg "$(gettext "An error has occurred. Playback stopped")" info &
     "$DS/stop.sh" 2; fi
-    
-    index="$DT/index.m3u"
-    _item="$(sed -n "$2"p "$index")"
-    
+
     if [ -f "$DT/.p" ]; then
     echo $(($2+2)) > "$DT/.p"
     "$DS/stop.sh" 8 & exit 1; fi
     
+    index="$DT/index.m3u"
+    _item="$(sed -n "$2"p "$index")"
     fname="$(echo -n "${_item}" | md5sum | rev | cut -c 4- | rev)"
     [ -f "${DM_tlt}/$fname.mp3" ] && file="${DM_tlt}/$fname.mp3" && t=2
     [ -f "${DM_tlt}/words/$fname.mp3" ] && file="${DM_tlt}/words/$fname.mp3" && t=1
     include "$DS/ifs/mods/play"
-    stop_loop "$file"
+    e_file "$file"
     
     if [[ "$t" = 2 ]]; then
     tags=$(eyeD3 "$file") 

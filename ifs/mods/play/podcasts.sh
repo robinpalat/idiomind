@@ -50,11 +50,11 @@ else
     if [[ -f "$_file.item" ]]; then
         channel="$(sed -n 1p "$_file.item" \
         | grep -o channel=\"[^\"]* | grep -o '[^"]*$')"
-        [[ -f "$_file.mp3" ]] && file="$_file.mp3" && t=3
-        [[ -f "$_file.ogg" ]] && file="$_file.ogg" && t=3
-        [[ -f "$_file.m4v" ]] && file="$_file.m4v" && t=4
-        [[ -f "$_file.mp4" ]] && file="$_file.mp4" && t=4
-        [[ -f "$_file.avi" ]] && file="$_file.avi" && t=4
+        [ -f "$_file.mp3" ] && file="$_file.mp3" && t=3
+        [ -f "$_file.ogg" ] && file="$_file.ogg" && t=3
+        [ -f "$_file.m4v" ] && file="$_file.m4v" && t=4
+        [ -f "$_file.mp4" ] && file="$_file.mp4" && t=4
+        [ -f "$_file.avi" ] && file="$_file.avi" && t=4
 
         if [[ "$t" = 3 ]]; then
         trgt="$title"
