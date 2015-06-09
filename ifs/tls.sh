@@ -726,39 +726,36 @@ set_image() {
     fname="$(nmfile "$item")"
     source "$DS/ifs/mods/add/add.sh"
     ifile="${DM_tlt}/words/images/$fname.jpg"
-    btn1="--button="$(gettext "Image")":3"
 
     if [ -f "$ifile" ]; then
     image="--image=$ifile"
-    btn1="--button="$(gettext "Change")":3"
     btn2="--button="$(gettext "Delete")":2"
-    else label="--text=<small></small>"; fi
+    
+    dlg_form_3
+    ret=$(echo $?)
+        
+        if [[ $ret -eq 2 ]]; then
+        
+        eyeD3 --remove-image "$file"
+        rm -f "$ifile"
+        
+        fi
+            
+    else 
+        scrot -s --quality 90 "$fname.temp.jpeg"
+        /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 100x90^ \
+        -gravity center -extent 100x90 -quality 90% "$item"_temp.jpeg
+        /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 405x275^ \
+        -gravity center -extent 400x270 -quality 90% "$ifile"
+        eyeD3 --remove-images "$file"
+        eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file"
+        wait
+        "$DS/ifs/tls.sh" set_image "$file" $k & exit
 
-        dlg_form_3
-        ret=$(echo $?)
-            
-            if [[ $ret -eq 3 ]]; then
-            
-            rm -f *.l
-            scrot -s --quality 90 "$fname.temp.jpeg"
-            /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 100x90^ \
-            -gravity center -extent 100x90 -quality 90% "$item"_temp.jpeg
-            /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 400x270^ \
-            -gravity center -extent 400x270 -quality 90% "$ifile"
-            eyeD3 --remove-images "$file"
-            eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file"
-            wait
-            "$DS/ifs/tls.sh" set_image "$file" $k & exit
-                
-            elif [[ $ret -eq 2 ]]; then
-            
-            eyeD3 --remove-image "$file"
-            rm -f "$file"
-            
-            fi
+    fi
 
     rm -f "$DT"/*.jpeg
-    (sleep 50 && rm -f "$DT/search.html") & exit
+    exit
 } >/dev/null 2>&1
 
 
