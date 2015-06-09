@@ -50,7 +50,7 @@ dialog2() {
     |sed 's/\b\(.\)/\u\1/g'|tr -s ',' ' ' \
     |sed 's|\.||;s|\,||;s|\;||g'|sed 's|[a-z]|\.|g'|sed 's| |\t|g' \
     |sed 's|\.|\ .|g' | tr "[:upper:]" "[:lower:]"|sed 's/^\s*./\U&\E/g')"
-    text="<span font_desc='Free Sans Bold 11' color='#717171'>$hint</span>\n"
+    text="<span font_desc='Free Sans Bold 12' color='#717171'>$hint</span>\n"
     
     entry=$(>/dev/null | yad --text-info --title="$(gettext "Practice")" \
     --text="$text\n" \
@@ -60,7 +60,7 @@ dialog2() {
     --window-icon="$DS/images/icon.png" --image="$DS/practice/bar.png" \
     --buttons-layout=end --skip-taskbar --undecorated --center --on-top \
     --text-align=left --align=left --image-on-top \
-    --height=215 --width=560 --borders=5 \
+    --height=215 --width=560 --borders=8 \
     --button="$(gettext "Exit")":1 \
     --button="$(gettext "Listen")":"$cmd_play" \
     --button=" $(gettext "Check") >> ":0)
@@ -79,7 +79,7 @@ check() {
     --button="$(gettext "Listen")":"$cmd_play" \
     --button="$(gettext "Next")":2 \
     --field="":lbl --text="<span font_desc='Free Sans 14'>${wes}</span>\\n" \
-    --field="<span font_desc='Free Sans 9'>$(sed 's/\,*$/\./g' <<<"$OK")\n\nhits $prc</span>\n":lbl
+    --field="<span font_desc='Free Sans 12'>$OK\n\nhits $prc</span>\n":lbl
     }
     
 get_text() {
