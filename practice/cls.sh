@@ -3,11 +3,11 @@
 
 [[ -z "$DM" ]] && source /usr/share/idiomind/ifs/c.conf
 DIR="$DS/practice"
-[ -n "$(ps -A | pgrep -f "$DIR/df.sh")" ] && killall "$DIR/df.sh" &
-[ -n "$(ps -A | pgrep -f "$DIR/dmc.sh")" ] && killall "$DIR/dmc.sh" &
-[ -n "$(ps -A | pgrep -f "$DIR/dlw.sh")" ] && killall "$DIR/dlw.sh" &
-[ -n "$(ps -A | pgrep -f "$DIR/dls.sh")" ] && killall "$DIR/dls.sh" &
-[ -n "$(ps -A | pgrep -f "$DIR/di.sh")" ] && killall "$DIR/di.sh" &
+[ -n "$(ps -A | pgrep -f "$DIR/p_a.sh")" ] && killall "$DIR/p_a.sh" &
+[ -n "$(ps -A | pgrep -f "$DIR/p_b.sh")" ] && killall "$DIR/p_b.sh" &
+[ -n "$(ps -A | pgrep -f "$DIR/p_c.sh")" ] && killall "$DIR/p_c.sh" &
+[ -n "$(ps -A | pgrep -f "$DIR/p_d.sh")" ] && killall "$DIR/p_d.sh" &
+[ -n "$(ps -A | pgrep -f "$DIR/p_e.sh")" ] && killall "$DIR/p_e.sh" &
 [ -n "$(ps -A | pgrep -f "$DIR/prct.sh")" ] && killall "$DIR/prct.sh" &
 [ -n "$(ps -A | pgrep -f "$DIR/strt.sh")" ] && killall "$DIR/strt.sh" &
 [ -n "$(ps -A | pgrep -f play)" ] && killall play &
@@ -51,9 +51,9 @@ elif [[ $1 = comp ]]; then
     n=`awk '++A[$1]==3' ./*.1`; echo "$n" > log.1
     n=`awk '++A[$1]==2' ./*.2`; echo "$n" > log.2
     n=`awk '++A[$1]==2' ./*.3`; echo "$n" > log.3
-    n=`awk '++A[$1]==1' ./"${2}.1"`; echo "$n" >> log.1
-    n=`awk '++A[$1]==1' ./"${2}.2"`; echo "$n" >> log.2
-    n=`awk '++A[$1]==1' ./"${2}.3"`; echo "$n" >> log.3
+    [ -f ./"${2}.1" ]] && n=`awk '++A[$1]==1' ./"${2}.1"` && echo "$n" >> log.1
+    [ -f ./"${2}.2" ]] && n=`awk '++A[$1]==1' ./"${2}.2"` && echo "$n" >> log.2
+    [ -f ./"${2}.3" ]] && n=`awk '++A[$1]==1' ./"${2}.3"` && echo "$n" >> log.3
     
     [[ -f ./"${2}.l" ]] \
     && echo $(($(< ./"${2}.l")+easy)) > ./"${2}.l" \

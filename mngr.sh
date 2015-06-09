@@ -654,10 +654,11 @@ mark_to_learn_topic() {
     awk '!array_temp[$0]++' < "$DC_tlt/0.cfg" > "$DT/0.cfg.tmp"
     sed '/^$/d' "$DT/0.cfg.tmp" > "$DC_tlt/0.cfg"
     rm -f "$DT"/*.tmp
-    rm "$DC_tlt/2.cfg" "$DC_tlt/1.cfg" "$DC_tlt/5.cfg"
+    rm "$DC_tlt/2.cfg" "$DC_tlt/1.cfg"
     touch "$DC_tlt/2.cfg"
     cp -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"
     echo -e ".lrnt.$tpc.lrnt." >> "$DC_s/8.cfg" &
+    touch "$DC_tlt/5.cfg"
     "$DS/mngr.sh" mkmn &
 
     [[ "$3" = 1 ]] && idiomind topic &
@@ -713,7 +714,11 @@ mark_as_learned_topic() {
         else
             echo "$(date +%m/%d/%Y)" > "$DC_tlt/9.cfg"
         fi
-
+        
+        if [ -d "$DC_tlt/practice" ]; then
+        cd "$DC_tlt/practice"; rm .*; rm *
+        touch ./log.1 ./log.2 ./log.3; fi
+        
         > "$DC_tlt/7.cfg"
         if [[ $((stts%2)) = 0 ]]; then
         echo 4 > "$DC_tlt/8.cfg"

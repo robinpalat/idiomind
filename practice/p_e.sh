@@ -6,66 +6,65 @@ drts="$DS/practice"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
 log="$DC_s/8.cfg"
-all=$(wc -l < ./a.0)
+all=$(wc -l < ./e.0)
 easy=0
 hard=0
 ling=0
 
 score() {
     
-    touch a.0 a.1 a.2 a.3
-    awk '!a[$0]++' a.2 > a2.tmp
-    awk '!a[$0]++' a.3 > a3.tmp
-    grep -Fxvf a3.tmp a2.tmp > a.2
-    mv -f a3.tmp a.3
+    touch e.0 e.1 e.2 e.3
+    awk '!a[$0]++' e.2 > e2.tmp
+    awk '!a[$0]++' e.3 > e3.tmp
+    grep -Fxvf e3.tmp e2.tmp > e.2
+    mv -f e3.tmp e.3
 
-    if [[ $(($(< ./a.l)+$1)) -ge $all ]]; then
+    if [[ $(($(< ./e.l)+$1)) -ge $all ]]; then
         play "$drts/all.mp3" &
-        echo ".w9.$(tr -s '\n' '|' < ./a.1).w9." >> "$log"
+        echo ".w9.$(tr -s '\n' '|' < ./e.1).w9." >> "$log"
         echo -e ".okp.1.okp." >> "$log"
-        echo "$(date "+%a %d %B")" > a.lock
-        echo 21 > .1
-        "$strt" 1 &
+        echo "$(date "+%a %d %B")" > e.lock
+        echo 21 > .5
+        "$strt" 5 &
         exit 1
         
     else
-        [[ -f a.l ]] && echo $(($(< ./a.l)+easy)) > a.l || echo "$easy" > a.l
-        s=$(< ./a.l)
+        [[ -f e.l ]] && echo $(($(< ./e.l)+easy)) > e.l || echo "$easy" > e.l
+        s=$(< ./e.l)
         v=$((100*s/all))
         n=1; c=1
         while [[ $n -le 21 ]]; do
             if [[ "$v" -le "$c" ]]; then
-            echo "$n" > .1; break; fi
+            echo "$n" > .5; break; fi
             ((c=c+5))
             let n++
         done
 
-        if [[ -f a.3 ]]; then
-        echo ".w6.$(tr -s '\n' '|' < ./a.3).w6." >> "$log"; fi
+        if [[ -f e.3 ]]; then
+        echo ".w6.$(tr -s '\n' '|' < ./e.3).w6." >> "$log"; fi
         
-        "$strt" 6 "$easy" "$ling" "$hard" & exit 1
+        "$strt" 10 "$easy" "$ling" "$hard" & exit 1
     fi
 }
+
 
 fonts() {
     
     fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
     src=$(eyeD3 "$drtt/$fname.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
-    s=$((42-${#src}))
-    c=$((22-${#1}))
-    acuestion="\n\n<span font_desc='Free Sans $s'><b>$1</b></span>"
-    bcuestion="\n<span font_desc='Free Sans $c'>$1</span>"
-    answer="<span font_desc='Free Sans Bold $s'><i>$src</i></span>"
+    img="$drtt/images/$fname.jpg"
+    [ ! -f "$img" ] && img="$DS/practice/img_2.jpg"
+    srcel="<span font_desc='Free Sans 10'><i>($src)</i></span>"
+    trgtl="<span font_desc='Free Sans 15'><b>$1</b></span>"
 }
 
 cuestion() {
     
     yad --form --title="$(gettext "Practice")" \
-    --timeout=10 \
-    --skip-taskbar --text-align=center --center --on-top \
-    --undecorated --buttons-layout=spread --align=center \
-    --width=395 --height=290 --borders=5 \
-    --field="$acuestion":lbl \
+    --image="$img" \
+    --skip-taskbar --text-align=center --align=center --center --on-top \
+    --image-on-top --undecorated --buttons-layout=spread \
+    --width=418 --height=365 --borders=6 \
     --button="$(gettext "Exit")":1 \
     --button="    $(gettext "Answer") >>    ":0
 }
@@ -73,27 +72,25 @@ cuestion() {
 answer() {
     
     yad --form --title="$(gettext "Practice")" \
-    --timeout=10 --selectable-labels \
-    --skip-taskbar --text-align=center --center --on-top \
-    --undecorated --buttons-layout=spread --align=center \
-    --width=395 --height=290 --borders=5 \
-    --field="$bcuestion":lbl \
-    --field="":lbl \
-    --field="$answer":lbl \
+    --image="$img" \
+    --timeout=20 --selectable-labels \
+    --skip-taskbar --text-align=center --align=center --center --on-top \
+    --image-on-top --undecorated --buttons-layout=spread \
+    --width=418 --height=365 --borders=6 \
+    --field="$trgtl   $srcel":lbl \
     --button="  $(gettext "I did not know it")  ":3 \
     --button="  $(gettext "I Knew it")  ":2
 }
-
 
 while read trgt; do
 
     fonts "$trgt"
     cuestion
     ret=$(echo "$?")
-
+    
     if [[ $ret = 1 ]]; then
         break &
-        "$drts/cls.sh" comp a "$easy" "$ling" "$hard" "$all" &
+        "$drts/cls.sh" comp e "$easy" "$ling" "$hard" "$all" &
         exit 1
         
     else
@@ -101,17 +98,18 @@ while read trgt; do
         ans=$(echo "$?")
 
         if [[ $ans = 2 ]]; then
-            echo "$trgt" >> a.1
+            echo "$trgt" >> e.1
             easy=$((easy+1))
 
         elif [[ $ans = 3 ]]; then
-            echo "$trgt" >> a.2
+            echo "$trgt" >> e.2
             hard=$((hard+1))
         fi
     fi
-done < ./a.tmp
+    
+done < ./e.tmp
 
-if [[ ! -f ./a.2 ]]; then
+if [[ ! -f e.2 ]]; then
 
     score "$easy"
     
@@ -124,9 +122,9 @@ else
         
         if [[ $ret = 1 ]]; then
             break &
-            "$drts/cls.sh" comp a "$easy" "$ling" "$hard" "$all" &
+            "$drts/cls.sh" comp e "$easy" "$ling" "$hard" "$all" &
             exit 1
-        
+
         else
             answer
             ans=$(echo "$?")
@@ -136,10 +134,11 @@ else
                 ling=$((ling+1))
                 
             elif [[ $ans = 3 ]]; then
-                echo "$trgt" >> a.3
+                echo "$trgt" >> e.3
             fi
         fi
-    done < ./a.2
-
+        
+    done < ./e.2
+    
     score "$easy"
 fi
