@@ -15,26 +15,26 @@ play() {
 
     killall play
     DIR2="$DM_tl/Podcasts/.conf"
-    [[ -f "$DIR2/0.lst" ]] && st3=$(sed -n 2p "$DIR2/0.lst") || st3=FALSE
+    [ -f "$DIR2/0.lst" ] && st3=$(sed -n 2p "$DIR2/0.lst") || st3=FALSE
     [[ $st3 = FALSE ]] && fs="" || fs='-fs'
     
-    if [[ -f "$DM_tl/Podcasts/cache/$2.mp3" ]]; then
+    if [ -f "$DM_tl/Podcasts/cache/$2.mp3" ]; then
         play "$DM_tl/Podcasts/cache/$2.mp3" & exit
-    elif [[ -f "$DM_tl/Podcasts/cache/$2.ogg" ]]; then
+    elif [ -f "$DM_tl/Podcasts/cache/$2.ogg" ]; then
         play "$DM_tl/Podcasts/cache/$2.ogg" & exit
-    elif [[ -f "$DM_tl/Podcasts/cache/$2.mp4" ]]; then
+    elif [ -f "$DM_tl/Podcasts/cache/$2.mp4" ]; then
         mplayer "$fs" "$DM_tl/Podcasts/cache/$2.mp4" \
         >/dev/null 2>&1 & exit
-    elif [[ -f "$DM_tl/Podcasts/cache/$2.m4v" ]]; then
+    elif [ -f "$DM_tl/Podcasts/cache/$2.m4v" ]; then
         mplayer "$fs" "$DM_tl/Podcasts/cache/$2.m4v" \
         >/dev/null 2>&1 & exit
-    elif [[ -f "$DM_tl/Podcasts/cache/$2.avi" ]]; then
+    elif [ -f "$DM_tl/Podcasts/cache/$2.avi" ]; then
         mplayer "$fs" "$DM_tl/Podcasts/cache/$2.avi" \
         >/dev/null 2>&1 & exit
-    elif [[ -f "$DM_tl/Podcasts/cache/$2.flv" ]]; then
+    elif [ -f "$DM_tl/Podcasts/cache/$2.flv" ]; then
         mplayer "$fs" "$DM_tl/Podcasts/cache/$2.flv" \
         >/dev/null 2>&1 & exit
-    elif [[ -f "$DM_tl/Podcasts/cache/$2.mov" ]]; then
+    elif [ -f "$DM_tl/Podcasts/cache/$2.mov" ]; then
         mplayer "$fs" "$DM_tl/Podcasts/cache/$2.mov" \
         >/dev/null 2>&1 & exit
     fi
@@ -79,8 +79,8 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
 </xsl:template>
 </xsl:stylesheet>"
 
-    if [[ -z "$2" ]]; then
-    [[ "$DIR2/$3.rss" ]] && rm "$DIR2/$3.rss"; exit 1; fi
+    if [ -z "$2" ]; then
+    [ -f "$DIR2/$3.rss" ] && rm "$DIR2/$3.rss"; exit 1; fi
     feed="${2}"
     num="${3}"
     DIR2="$DM_tl/Podcasts/.conf"
@@ -112,22 +112,22 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
         n=1
         while read -r get; do
             [[ $n = 3 || $n = 5 || $n = 6 ]] && continue
-            if [[ -n "$(grep -o -E '\.mp3|\.mp4|\.ogg|\.avi|\.m4v|\.mov|\.flv' <<<"${get}")" ]] && [[ -z "${media}" ]]; then
+            if [[ -n "$(grep -o -E '\.mp3|\.mp4|\.ogg|\.avi|\.m4v|\.mov|\.flv' <<<"${get}")" ]] && [ -z "${media}" ]; then
             media="$n"; type=1; break; fi
             let n++
         done <<<"${items2}"
         f3="$(sed -n 3p <<<"${items2}")"
         f5="$(sed -n 5p <<<"${items2}")"
         f6="$(sed -n 6p <<<"${items2}")"
-        if [[ $(wc -w <<<"$f3") -ge 2 ]] && [[ "$(wc -w <<<"${f3}")" -le 200 ]]; then
+        if [ $(wc -w <<<"$f3") -ge 2 ] && [ "$(wc -w <<<"${f3}")" -le 200 ]; then
         title=3; fi
-        if [[ $(wc -w <<<"${f5}") -ge 2 ]] && [[ -n "$(grep -o -E '\<|\>|/>' <<<"${f5}")" ]]; then
+        if [ $(wc -w <<<"${f5}") -ge 2 ] && [ -n "$(grep -o -E '\<|\>|/>' <<<"${f5}")" ]; then
         sum1=5; fi
-        if [[ $(wc -w <<<"${f6}") -ge 2 ]] && [[ -n "$(grep -o -E '\<|\>|/>' <<<"${f6}")" ]]; then
+        if [ $(wc -w <<<"${f6}") -ge 2 ] && [ -n "$(grep -o -E '\<|\>|/>' <<<"${f6}")" ]; then
         sum1=6; fi
-        if [[ $(wc -w <<<"${f5}") -ge 2 ]]; then
+        if [ $(wc -w <<<"${f5}") -ge 2 ]; then
         sum2=5; fi
-        if [[ $(wc -w <<<"${f6}") -ge 2 ]]; then
+        if [ $(wc -w <<<"${f6}") -ge 2 ]; then
         sum2=6; fi
     }
     
@@ -135,19 +135,19 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
 
         n=1
         while read -r get; do
-            if [[ -n "$(grep -o -E '\.jpg|\.jpeg|\.png' <<<"${get}")" ]] && [[ -z "${image}" ]]; then
+            if [ -n "$(grep -o -E '\.jpg|\.jpeg|\.png' <<<"${get}")" ] && [ -z "${image}" ]; then
             image="$n"; type=2; break ; fi
             let n++
         done <<<"${items3}"
         n=4
         while read -r get; do
-            if [[ $(wc -w <<<"${get}") -ge 1 ]] && [[ -z "${title}" ]]; then
+            if [ $(wc -w <<<"${get}") -ge 1 ] && [ -z "${title}" ]; then
             title="$n"; break ; fi
             let n++
         done <<<"{$items3}"
         n=6
         while read -r get; do
-            if [[ $(wc -w <<<"${get}") -ge 1 ]] && [[ -z "${summ}" ]]; then
+            if [ $(wc -w <<<"${get}") -ge 1 ] && [ -z "${summ}" ]; then
             summ="$n"; break ; fi
             let n++
         done <<<"${items3}"
@@ -157,7 +157,7 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
 
         n=1
         while read -r get; do
-            if [[ $(wc -w <<<"${get}") -ge 1 ]]; then
+            if [ $(wc -w <<<"${get}") -ge 1 ]; then
             summ="$n"; break; fi
             let n++
         done <<<"${items3}"
@@ -166,7 +166,7 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
     fchannel
     ftype1
 
-    if [[ -z $sum2 ]]; then
+    if [ -z $sum2 ]; then
     summary="${sum1}"; else
     summary="${sum2}"; fi
     if [[ -n "${title}" && -n "${summary}" && -z "${image}" && -z "${media}" ]]; then
@@ -199,30 +199,30 @@ sync() {
     cfg="$DM_tl/Podcasts/.conf/0.lst"
     path="$(sed -n 3p "$cfg" | grep -o 'path="[^"]*' | grep -o '[^"]*$')"
     
-    if  [[ -f "$DT/l_sync" ]] && [[ $2 != 0 ]]; then
+    if  [ -f "$DT/l_sync" ] && [[ $2 != 0 ]]; then
     msg_2 "$(gettext "A process is already running!\nIf stopped, any rsync process will stop")" info "OK" "gtk-stop" "Podcasts"
     e=$(echo $?)
         
         if [[ $e -eq 1 ]]; then
         killall rsync
         if ps -A | pgrep -f "rsync"; then killall rsync; fi
-        [[ -f "$DT/cp.lock" ]] && rm -f "$DT/cp.lock"
-        [[ -f "$DT/l_sync" ]] && rm -f "$DT/l_sync"
+        [ -f "$DT/cp.lock" ] && rm -f "$DT/cp.lock"
+        [ -f "$DT/l_sync" ] && rm -f "$DT/l_sync"
         killall tls.sh
         exit 1; fi
             
-    elif  [[ -f "$DT/l_sync" ]] && [[ $2 = 0 ]]; then exit 1
+    elif  [ -f "$DT/l_sync" ] && [[ $2 = 0 ]]; then exit 1
 
-    elif [[ ! -d "$path" ]] && [[ $2 != 0 ]]; then
+    elif [ ! -d "$path" ] && [[ $2 != 0 ]]; then
     msg " $(gettext "The directory to synchronization does not exist.")\n" \
     dialog-warning
-    [[ -f "$DT/l_sync" ]] && rm -f "$DT/l_sync"; exit 1
+    [ -f "$DT/l_sync" ] && rm -f "$DT/l_sync"; exit 1
     
-    elif  [[ ! -d "$path" ]] && [[ $2 = 0 ]]; then
+    elif  [ ! -d "$path" ] && [[ $2 = 0 ]]; then
     echo "Synchronization error. Missing path" >> "$DM_tl/Podcasts/.conf/feed.err"
-    [[ -f "$DT/l_sync" ]] && rm -f "$DT/l_sync"; exit 1
+    [ -f "$DT/l_sync" ] && rm -f "$DT/l_sync"; exit 1
     
-    elif [[ -d "$path" ]]; then
+    elif [ -d "$path" ]; then
         
         touch "$DT/l_sync"; SYNCDIR="$path/"
         A="$(cd "$DM_tl/Podcasts/cache/"; \
@@ -235,7 +235,7 @@ sync() {
         (sleep 1 && notify-send \
         "$(gettext "Starting syncing")" -t 8000) &
         fi
-
+        
         if [[ $rsync_delete = 0 ]]; then
         
             rsync -az -v --exclude="*.item" --exclude="*.png" \

@@ -271,17 +271,10 @@ function topic() {
             if [ "$note_mod" != "$(< "${nt}")" ]; then
             mv -f "${cnf3}" "${DC_tlt}/10.cfg"; fi
             
-            ntpc=$(cut -d '|' -f 1 < "${cnf4}")
-            if [[ "${tpc}" != "${ntpc}" ]] && [[ -n "$ntpc" ]]; then
-            if [[ "${tpc}" != "$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")" ]]; then
-            msg "$(gettext "Sorry, this topic is currently not active.")\n" info & exit; fi
-            "$DS/mngr.sh" rename_topic "${ntpc}" & exit; fi
-            
             auto_mrk_mod=$(cut -d '|' -f 3 < "${cnf4}")
-            if [[ $auto_mrk_mod != $auto_mrk ]]; then
-            sed -i "s/set1=.*/set1=\"$auto_mrk_mod\"/g" "${DC_tlt}/12.cfg"
-            fi
-
+            if [[ $auto_mrk_mod != $auto_mrk ]] && [[ -n "$auto_mrk_mod" ]]; then
+            sed -i "s/set1=.*/set1=\"$auto_mrk_mod\"/g" "${DC_tlt}/12.cfg"; fi
+            
             if [ -n "$(grep -o TRUE < "${cnf1}")" ]; then
                 grep -Rl "|FALSE|" "${cnf1}" | while read tab1 ; do
                      sed '/|FALSE|/d' "${cnf1}" > "$DT/tmpf1"
@@ -300,6 +293,12 @@ function topic() {
                 "$DS/ifs/tls.sh" colorize
                 echo -e ".oki.$(wc -l < "$cnf1").oki." >> "$DC_s/8.cfg"
             fi
+        
+            ntpc=$(cut -d '|' -f 1 < "${cnf4}")
+            if [[ "${tpc}" != "${ntpc}" ]] && [[ -n "$ntpc" ]]; then
+            if [[ "${tpc}" != "$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")" ]]; then
+            msg "$(gettext "Sorry, this topic is currently not active.")\n" info & exit; fi
+            "$DS/mngr.sh" rename_topic "${ntpc}" & exit; fi
         }
     
     if [[ ${inx0} -lt 1 ]]; then 

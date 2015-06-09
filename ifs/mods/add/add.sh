@@ -183,7 +183,13 @@ function clean_3() {
 
 function clean_4() {
     
-    echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' | sed 's/–//g' | sed '/^$/d'
+    if [ `wc -c <<<"${1}"` -lt 150 ]; then
+    echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' | sed 's/ \+/ /g' \
+    | sed 's/–//g' | sed '/^$/d'
+    else 
+    echo "${1}" | sed ':a;N;$!ba;s/\n/\__/g' | sed 's/ \+/ /g' \
+    | sed 's/–//g' | sed '/^$/d'
+    fi
 }
 
 

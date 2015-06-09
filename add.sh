@@ -666,7 +666,8 @@ process() {
         | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. //g' \
         | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
         | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
-        | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' > ./sntsls_
+        | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' \
+        | sed 's/__/\n/g' > ./sntsls_
         ) | dlg_progress_1
 
     elif [ "$2" = "image" ]; then
@@ -700,7 +701,8 @@ process() {
         | sed 's/\&quot;/\"/g' | sed "s/\&#039;/\'/g" \
         | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
         | sed 's/ *<[^>]\+> */ /; s/[<>£§]//; s/\&amp;/\&/g' \
-        | sed 's/,/\n/g' | sed 's/。/\n/g' > ./sntsls_
+        | sed 's/,/\n/g' | sed 's/。/\n/g' \
+        | sed 's/__/\n/g' > ./sntsls_
         else
         echo "${conten}" \
         | sed 's/\[ \.\.\. \]//g' \
@@ -713,7 +715,8 @@ process() {
         | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. //g' \
         | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
         | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
-        | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' > ./sntsls_
+        | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' \
+        | sed 's/__/\n/g' > ./sntsls_
         fi
         ) | dlg_progress_1
     fi

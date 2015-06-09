@@ -319,7 +319,7 @@ edit_item() {
                 if [ "$infm" != "$fields" ]; then
                 
                     impr=$(echo "$infm" | tr '\n' '_')
-                    tags_6 W "$impr" "$DM_tlt/words/$fname.mp3" &
+                    tags_6 W "$impr" "$DM_tlt/words/$fname.mp3"
                 fi
 
                 if [ "${tpc}" != "${tpc_mod}" ]; then

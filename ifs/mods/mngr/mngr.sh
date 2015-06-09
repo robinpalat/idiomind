@@ -125,7 +125,7 @@ function dlg_form_1() {
 function dlg_form_2() {
     
     if [ `wc -w <<<"$item"` -lt 4 ]; then
-    t=CHK; lbl_2="$(gettext "Is a word")"
+    t=CHK; lbl_2="$(gettext "It is a compound word")"
     else t=LBL; fi
     
     #--button="$(gettext "Image")":"$cmd_image"
