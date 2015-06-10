@@ -35,18 +35,14 @@ cfg1="$DC_tlt/1.cfg"
 cfg2="$DC_tlt/2.cfg"
 cfg3="$DC_tlt/3.cfg"
 cfg4="$DC_tlt/4.cfg"
-if [[ `wc -l < "$cfg4"` -gt 0 ]]; then
-in1="$(grep -Fxvf "$cfg4" "$cfg1")"; else
-in1="$(< "$cfg1")"; fi
-if [[ `wc -l < "$cfg3"` -gt 0 ]]; then
-in2="$(grep -Fxvf "$cfg3" "$cfg1")"; else
-in2="$(< "$cfg1")"; fi
+in1="$(grep -Fxvf "$cfg4" "$cfg1")"
+in2="$(grep -Fxvf "$cfg3" "$cfg1")"
 in3="$(grep -Fxvf "$cfg2" "$DC_tlt/6.cfg")"
-in4="$(sed '/^$/d' "$DC_tlt/practice/log.3")"
+in4="$(grep -Fxvf "$cfg4" "$DC_tlt/practice/log.3")"
 [ -f "$DM_tl/Podcasts/.conf/1.lst" ] && \
-in5="$(tac "$DM_tl/Podcasts/.conf/1.lst" |sed '/^$/d')" || in5=""
+in5="$(tac "$DM_tl/Podcasts/.conf/1.lst")" || in5=""
 [ -f "$DM_tl/Podcasts/.conf/2.lst" ] && \
-in6="$(tac "$DM_tl/Podcasts/.conf/2.lst" |sed '/^$/d')" || in6=""
+in6="$(tac "$DM_tl/Podcasts/.conf/2.lst")" || in6=""
 [ ! -d "$DT" ] && mkdir "$DT"; cd "$DT"
 
 if [[ "$cfg" = 1 ]]; then

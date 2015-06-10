@@ -19,15 +19,15 @@
 #  2015/02/27
 
 IFS=$'\n\t'
-if [[ ! -d "$HOME/.idiomind" ]]; then
+if [ ! -d "$HOME/.idiomind" ]; then
     /usr/share/idiomind/ifs/1u.sh & exit 1
 fi
 
 source /usr/share/idiomind/ifs/c.conf
 
-if [[ -f "$DT/ps_lk" ]]; then
-    sleep 15
-    [[ -f "$DT/ps_lk" ]] && rm -f "$DT/ps_lk"
+if [ -f "$DT/ps_lk" ]; then
+    sleep 5
+    [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
     exit 1
 fi
 
@@ -40,7 +40,7 @@ function new_session() {
     source "$DS/ifs/mods/cmns.sh"
     
     # write in /tmp
-    if [[ ! -d "$DT" ]]; then mkdir "$DT"; fi
+    if [ ! -d "$DT" ]; then mkdir "$DT"; fi
     if [ $? -ne 0 ]; then
     msg "$(gettext "Fail on try write in /tmp")\n" error & exit 1; fi
     
@@ -76,7 +76,7 @@ function new_session() {
     [[ `wc -l < "$DC_s/1.cfg"` -lt 19 ]] && rm "$DC_s/1.cfg"
     
     # log file
-    if [[ -f "$DC_s/8.cfg" ]]; then
+    if [ -f "$DC_s/8.cfg" ]; then
     if [[ "$(du -sb "$DC_s/8.cfg" | awk '{ print $1 }')" -gt 100000 ]]; then
     tail -n2000 < "$DC_s/8.cfg" > "$DT/8.cfg"
     mv -f "$DT/8.cfg" "$DC_s/8.cfg"; fi
@@ -119,7 +119,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     dte=$(date "+%d %B")
     c=$((RANDOM%1000))
     source "$DS/ifs/mods/cmns.sh"
-    [[ ! -d "$DT" ]] && mkdir "$DT"
+    [ ! -d "$DT" ] && mkdir "$DT"
     mkdir "$DT/dir$c"
     cp "$1" "$DT/import.tmp"
     mv "$DT/import.tmp" "$DT/import.tar.gz"
@@ -136,7 +136,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     [ $level = 2 ] && level="$(gettext "Intermediate")"
     [ $level = 3 ] && level="$(gettext "Advanced")"
 
-    if [[ "$tpi" != "$name" ]]; then
+    if [ "$tpi" != "$name" ]; then
     
         [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c" \
         "$DT/${tpi}.cfg" "$DT/import.tar.gz" & exit 1
@@ -165,7 +165,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             
             if [[ $ret -eq 1 ]]; then
             
-                [[ -d "$DT/dir$c" ]] && rm -fr "$DT/dir$c"
+                [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c"
                 rm -f "$DT/import.tar.gz" "$DT/${tpi}.cfg" & exit
                 
             elif [[ $ret -eq 0 ]]; then
@@ -184,7 +184,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
                 
                     for i in {1..50}; do
                     chck=$(grep -Fxo "${tpi} ($i)" "$DM_t/$language_target/.1.cfg")
-                    [[ -z "$chck" ]] && break; done
+                    [ -z "$chck" ] && break; done
                 
                     tpi="${tpi} ($i)"
                     msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "The name for the newest will be\:")\n<b>$tpi</b>\n" info "$(gettext "OK")" "$(gettext "Cancel")"
@@ -195,17 +195,17 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
                     rm -f  "$DT/import.tar.gz" & exit 1; fi
                 fi
 
-                if [[ ! -d "$DM_t/$language_target" ]]; then
+                if [ ! -d "$DM_t/$language_target" ]; then
                 mkdir "$DM_t/$language_target"
                 mkdir "$DM_t/$language_target/.share"; fi
                 mkdir -p "$DM_t/$language_target/${tpi}/.conf"
                 DM_tlt="$DM_t/$language_target/${tpi}"
                 DC_tlt="$DM_t/$language_target/${tpi}/.conf"
-                if [[ -d "$tmp/share" ]]; then
+                if [ -d "$tmp/share" ]; then
                 cp -n "$tmp/share"/*.mp3 "$DM_t/$language_target/.share"/
                 rm -fr "$tmp/share"; fi
                 n=0; while [[ $n -le 13 ]]; do
-                if [[ ! -f "$tmp/conf/$n.cfg" ]]; then
+                if [ ! -f "$tmp/conf/$n.cfg" ]; then
                 touch "${DC_tlt}/$n.cfg"
                 else mv -f "${tmp}/conf/$n.cfg" "${DC_tlt}/$n.cfg"; fi
                 let n++; done
@@ -257,7 +257,7 @@ function topic() {
         cnf1=$(mktemp "$DT/cnf1.XXX.x")
         cnf3=$(mktemp "$DT/cnf3.XXX.x")
         cnf4=$(mktemp "$DT/cnf4.XXX.x")
-        if [[ -f "${DM_tlt}/words/images/img.jpg" ]]; then
+        if [ -f "${DM_tlt}/words/images/img.jpg" ]; then
         img="--image=${DM_tlt}/words/images/img.jpg"
         sx=608; sy=580; else sx=620; sy=560; fi
         echo -e ".tpc.$tpc.tpc." >> "$DC_s/8.cfg"
@@ -272,7 +272,7 @@ function topic() {
             mv -f "${cnf3}" "${DC_tlt}/10.cfg"; fi
             
             auto_mrk_mod=$(cut -d '|' -f 3 < "${cnf4}")
-            if [[ $auto_mrk_mod != $auto_mrk ]] && [[ -n "$auto_mrk_mod" ]]; then
+            if [[ $auto_mrk_mod != $auto_mrk ]] && [ -n "$auto_mrk_mod" ]; then
             sed -i "s/set1=.*/set1=\"$auto_mrk_mod\"/g" "${DC_tlt}/12.cfg"; fi
             
             if [ -n "$(grep -o TRUE < "${cnf1}")" ]; then
@@ -295,8 +295,8 @@ function topic() {
             fi
         
             ntpc=$(cut -d '|' -f 1 < "${cnf4}")
-            if [[ "${tpc}" != "${ntpc}" ]] && [[ -n "$ntpc" ]]; then
-            if [[ "${tpc}" != "$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")" ]]; then
+            if [ "${tpc}" != "${ntpc}" ] && [ -n "$ntpc" ]; then
+            if [ "${tpc}" != "$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")" ]]; then
             msg "$(gettext "Sorry, this topic is currently not active.")\n" info & exit; fi
             "$DS/mngr.sh" rename_topic "${ntpc}" & exit; fi
         }
@@ -307,7 +307,7 @@ function topic() {
      
         ret=$(echo $?)
                 
-            if [[ ! -f "$DT/ps_lk" ]]; then
+            if [ ! -f "$DT/ps_lk" ]; then
                 
                 apply
             fi
@@ -322,7 +322,7 @@ function topic() {
 
     elif [[ ${inx1} -ge 1 ]]; then
     
-        if [[ -f "${DC_tlt}/9.cfg" ]] && [[ -f "${DC_tlt}/7.cfg" ]]; then
+        if [ -f "${DC_tlt}/9.cfg" ] && [ -f "${DC_tlt}/7.cfg" ]; then
         
             calculate_review "$tpc"
             stts=$(sed -n 1p "${DC_tlt}/8.cfg")
@@ -365,7 +365,7 @@ function topic() {
                 "$DS/practice/strt.sh" &
                     
             else
-                if [[ ! -f "$DT/ps_lk" ]]; then
+                if [ ! -f "$DT/ps_lk" ]; then
                 
                     apply
                 fi
@@ -375,7 +375,7 @@ function topic() {
     
     elif [[ ${inx1} -eq 0 ]]; then
     
-        if [[ ! -f "${DC_tlt}/7.cfg" ]] || [[ ! -f "${DC_tlt}/9.cfg" ]]; then
+        if [ ! -f "${DC_tlt}/7.cfg" ] || [ ! -f "${DC_tlt}/9.cfg" ]; then
 
             "$DS/mngr.sh" mark_as_learned "${tpc}" 0
         fi
@@ -409,7 +409,7 @@ function topic() {
 
         notebook_2
         
-        if [[ ! -f "$DT/ps_lk" ]]; then
+        if [ ! -f "$DT/ps_lk" ]; then
                 
             apply
         fi
@@ -433,7 +433,7 @@ panel() {
     [ "$(< "$DT/tpe")" != "${tpc}" ] && echo "$(sed -n 1p "$DC_s/4.cfg")" > "$DT/tpe"
     [ -f "$DC_s/10.cfg" ] && date=$(sed -n 1p "$DC_s/10.cfg")
     
-    if [[ "$(date +%d)" != "$date" ]] || [[ ! -f "$DC_s/10.cfg" ]]; then
+    if [[ "$(date +%d)" != "$date" ]] || [ ! -f "$DC_s/10.cfg" ]; then
     new_session; fi
     
     if [[ -f "$DC_s/10.cfg" ]]; then

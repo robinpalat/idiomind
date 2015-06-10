@@ -118,6 +118,6 @@ elif [[ $ret -eq 3 ]]; then
 else
     cd "$DC_tlt/practice"
     rm *.tmp
-    "$DS/ifs/tls.sh" colorize
+    "$DS/ifs/tls.sh" colorize &
     exit
 fi

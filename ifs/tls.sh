@@ -565,6 +565,7 @@ fback() {
 
 colorize() {
 
+    > "$DT/ps_lk"
     rm "${DC_tlt}/5.cfg"
     cfg5="${DC_tlt}/5.cfg"
     cfg6=`< "${DC_tlt}/6.cfg"`
@@ -590,7 +591,7 @@ colorize() {
             echo -e "FALSE\n${i}\n$img0" >> "$cfg5"
         fi
     done < "${DC_tlt}/1.cfg"
-    cd ~/
+    rm -f "$DT/ps_lk"; cd ~/
 }
 
 check_updates() {
