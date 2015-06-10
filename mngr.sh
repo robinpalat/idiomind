@@ -295,9 +295,8 @@ edit_item() {
                     [ -d "$DT/idadtmptts" ] && rm -fr "$DT/idadtmptts"
                 fi
                 
-                if ([ "$trgt_mod" != "$trgt" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]) \
-                || [ ! -z "${audio_mod##+([[:space:]])}" ] ; then
-                
+                if [ "$trgt_mod" != "$trgt" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
+
                     fname_mod="$(nmfile "${trgt_mod}")"
                     if [ -f "$DM_tlt/words/$fname.mp3" ]; then
                     mv -f "$DM_tlt/words/$fname.mp3" "$DM_tlt/words/$fname_mod.mp3"
@@ -312,7 +311,7 @@ edit_item() {
                     "$DS/add.sh" new_word "${trgt_mod}" "$DT_r" "${srce_mod}" 0) &
                     fname="$fname_mod"
                 fi
-
+                
                 if [ "$srce_mod" != "$srce" ]; then
                 
                     tags_5 W "$srce_mod" "$DM_tlt/words/$fname.mp3"
@@ -378,8 +377,7 @@ edit_item() {
                 if [ $a = 1 ]; then trgt="_ _"; fi
                 rm -f "$file_tmp"
                 
-                if ([ "$trgt_mod" != "$trgt" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]) \
-                || [ ! -z "${audio_mod##+([[:space:]])}" ]; then
+                if [ "$trgt_mod" != "$trgt" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
 
                     DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
                     fname_mod="$(nmfile "$trgt_mod")"

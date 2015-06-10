@@ -142,7 +142,6 @@ function clean_0() {
 
 function clean_1() {
     
-    #iconv -c -f utf8 -t ascii
     if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
     echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" | sed "s|/||g" \
     | tr -s '“' ' ' | tr -s '”' ' ' | tr -s '"' ' ' \
@@ -185,10 +184,10 @@ function clean_4() {
     
     if [ `wc -c <<<"${1}"` -lt 150 ]; then
     echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' | sed 's/ \+/ /g' \
-    | sed 's/–//g' | sed '/^$/d'
+    | sed 's/ — / /g' | sed '/^$/d'
     else 
     echo "${1}" | sed ':a;N;$!ba;s/\n/\__/g' | sed 's/ \+/ /g' \
-    | sed 's/–//g' | sed '/^$/d'
+    | sed 's/ — /__/g' | sed '/^$/d'
     fi
 }
 

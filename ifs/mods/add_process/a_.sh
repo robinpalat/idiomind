@@ -76,7 +76,7 @@ function dlg_file_2() {
 if [[ "$conten" = A ]]; then
 
     cd "$DT_r"
-    left=$((200 - $(wc -l < "$DC_tlt/4.cfg")))
+    left=$((200 - $(wc -l < "${DC_tlt}/4.cfg")))
     key="$(sed -n 2p "$HOME/.config/idiomind/addons/gts.cfg" \
     | grep -o key=\"[^\"]* | grep -o '[^"]*$')"
     test="$DS/addons/Google translator/test.flac"
@@ -161,10 +161,10 @@ if [[ "$conten" = A ]]; then
         echo "# $(gettext "Processing")..." ; sleep 0.2
         cd "$DT_r"
         tpe=$(sed -n 2p "$DT/.n_s_pr")
-        DM_tlt="$DM_tl/$tpe"
-        DC_tlt="$DM_tl/$tpe/.conf"
+        DM_tlt="$DM_tl/${tpe}"
+        DC_tlt="$DM_tl/${tpe}/.conf"
 
-        if [ ! -d "$DM_tlt" ]; then
+        if [ ! -d "${DM_tlt}" ]; then
         msg " $(gettext "An error occurred.")\n" dialog-warning
         rm -fr "$DT_r" "$lckpr" "$slt" & exit 1; fi
         
@@ -208,10 +208,10 @@ if [[ "$conten" = A ]]; then
                 trgt="#$n [$(gettext "Text missing")]"
                 index txt_missing "$trgt" "$tpe"
                 fname=$(nmfile "$trgt")
-                cp -f "$n.mp3" "$DM_tlt/$fname.mp3"
+                cp -f "$n.mp3" "${DM_tlt}/$fname.mp3"
                 printf "\n\n#$n [$(gettext "Text missing")]" >> ./slog
                 
-                elif [ "$(wc -l < "$DC_tlt"/0.cfg)" -ge 200 ]; then
+                elif [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
                 printf "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> ./slog
                 
                 else
@@ -225,23 +225,23 @@ if [[ "$conten" = A ]]; then
                         trgt="$(clean_0 "${trgt}")"
                         fname=$(nmfile "${trgt}")
                         srce="$(clean_0 "${srce}")"
-                        mv -f "$n.mp3" "$DM_tlt/words/$fname.mp3"
+                        mv -f "$n.mp3" "${DM_tlt}/words/$fname.mp3"
                         
-                        mksure "$DM_tlt/words/$fname.mp3" "${trgt}" "${srce}"
+                        mksure "${DM_tlt}/words/$fname.mp3" "${trgt}" "${srce}"
                         if [ $? = 0 ]; then
-                            tags_1 W "${trgt}" "${srce}" "$DM_tlt/words/$fname.mp3"
+                            tags_1 W "${trgt}" "${srce}" "${DM_tlt}/words/$fname.mp3"
                             index word "${trgt}" "${tpe}"
                             echo "${trgt}" >> addw
                             
                         else
                             printf "\n\n#$n $trgt" >> ./wlog
-                            if [ -f "$DM_tlt/words/$fname.mp3" ]; then
-                            mv -f "$DM_tlt/words/$fname.mp3" ./"$n.mp3"; fi
+                            if [ -f "${DM_tlt}/words/$fname.mp3" ]; then
+                            mv -f "${DM_tlt}/words/$fname.mp3" ./"$n.mp3"; fi
                         fi
                             
                     elif [ $(wc -$c <<<"$trgt") -ge 1 ]; then
                     
-                        mv -f "$n.mp3" "$DM_tlt/$fname.mp3"
+                        mv -f "$n.mp3" "${DM_tlt}/$fname.mp3"
                         (
                         r=$((RANDOM%10000))
                         clean_3 "$DT_r" "$r"
@@ -250,18 +250,18 @@ if [[ "$conten" = A ]]; then
                         check_grammar_1 "$DT_r" "$r"
                         list_words "$DT_r" "$r"
                         
-                        mksure "$DM_tlt/$fname.mp3" "${trgt}" "${srce}" \
+                        mksure "${DM_tlt}/$fname.mp3" "${trgt}" "${srce}" \
                         "${lwrds}" "${pwrds}" "${grmrk}"
                             if [ $? = 0 ]; then
                                 echo "${trgt}" >> adds
                                 index sentence "${trgt}" "${tpe}"
-                                tags_1 S "${trgt}" "${srce}" "$DM_tlt/$fname.mp3"
-                                tags_3 W "${lwrds}" "${pwrds}" "${grmrk}" "$DM_tlt/$fname.mp3"
+                                tags_1 S "${trgt}" "${srce}" "${DM_tlt}/$fname.mp3"
+                                tags_3 W "${lwrds}" "${pwrds}" "${grmrk}" "${DM_tlt}/$fname.mp3"
                                 fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
                             else
                                 printf "\n\n#$n $trgt" >> ./slog
-                                if [ -f "$DM_tlt/$fname.mp3" ]; then
-                                mv -f "$DM_tlt/$fname.mp3" ./"$n.mp3"; fi
+                                if [ -f "${DM_tlt}/$fname.mp3" ]; then
+                                mv -f "${DM_tlt}/$fname.mp3" ./"$n.mp3"; fi
                             fi
                         cd "$DT"
                         rm -f *.$r "$aw" "$bw"
