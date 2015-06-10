@@ -146,11 +146,19 @@ Create one using the button below. ")" & exit 1; fi
             
                 if [ "$trans" = FALSE ] && ([ -z "${srce}" ] || [ -z "${trgt}" ]); then
                 [ "$DT_r" ] && rm -fr "$DT_r"
-                msg "$(gettext "You need to fill text fields.")\n" info & exit 1; fi
+                msg "$(gettext "You need to fill text fields.")\n" info " " & exit 1; fi
 
                 srce=$(translate "${trgt}" auto $lgs)
                 
-                if [[ "$(wc -w <<<"${srce}")" = 1 ]]; then
+                if [ `grep -o ':' <<<"${trgt}"` ] \
+                && [ `sed -e 's/\:\".*\"//' <<<"${trgt}" | wc -w` -lt 2 ] \
+                && [ -n "$(sed 's/^[^"]*"\([^"]*\)".*/\1/' <<<"${trgt}")" ]; then
+                    note=`sed 's/^[^"]*"\([^"]*\)".*/\1/' <<<"${trgt}"`
+                    trgt=`sed -e 's/\:\".*\"//' <<<"${trgt}"`
+                    srce=`[ -z "${srce}" ] && echo 0 || echo "${srce}"`
+                    "$DS/add.sh" new_word "${trgt}" "$DT_r" "${srce}" "${note}" & exit 1
+                
+                elif [[ "$(wc -w <<<"${srce}")" = 1 ]]; then
                     "$DS/add.sh" new_word "${trgt}" "$DT_r" "${srce}" & exit 1
                     
                 elif [ "$(wc -w <<<"${srce}")" -ge 1 -a ${#srce} -le 180 ]; then
@@ -161,10 +169,18 @@ Create one using the button below. ")" & exit 1; fi
             
                 if [ "$trans" = FALSE ]; then
                     if [ -z "${srce}" ] || [ -z "${trgt}" ]; then [ "$DT_r" ] && rm -fr "$DT_r"
-                    msg "$(gettext "You need to fill text fields.")\n" info & exit 1; fi
+                    msg "$(gettext "You need to fill text fields.")\n" info " " & exit 1; fi
                 fi
-            
-                if [[ "$(wc -w <<<"${trgt}")" = 1 ]]; then
+
+                if [ `grep -o ':' <<<"${trgt}"` ] \
+                && [ `sed -e 's/\:\".*\"//' <<<"${trgt}" | wc -w` -lt 2 ] \
+                && [ -n "$(sed 's/^[^"]*"\([^"]*\)".*/\1/' <<<"${trgt}")" ]; then
+                    note=`sed 's/^[^"]*"\([^"]*\)".*/\1/' <<<"${trgt}"`
+                    trgt=`sed -e 's/\:\".*\"//' <<<"${trgt}"`
+                    srce=`[ -z "${srce}" ] && echo 0 || echo "${srce}"`
+                    "$DS/add.sh" new_word "${trgt}" "$DT_r" "${srce}" 1 "${note}" & exit 1
+
+                elif [[ "$(wc -w <<<"${trgt}")" = 1 ]]; then
                     "$DS/add.sh" new_word "${trgt}" "$DT_r" "${srce}" & exit 1
                     
                 elif [ "$(wc -w <<<"${trgt}")" -ge 1 -a ${#trgt} -le 180 ]; then
@@ -221,7 +237,7 @@ new_sentence() {
     else 
         if [ -z "$4" ] || [ -z "$2" ]; then
         [ "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "You need to fill text fields.")\n" info & exit; fi
+        msg "$(gettext "You need to fill text fields.")\n" info " " & exit; fi
 
         fname="$(nmfile "${trgt}")"
         
@@ -246,28 +262,30 @@ new_sentence() {
     "${grmrk}" "${lwrds}" "${pwrds}"
     
     if [ $? = 1 ]; then
-    rm "${DM_tlt}/$fname.mp3"
-    msg "$(gettext "An error has occurred while saving the note.")\n" dialog-warning
-    [ "$DT_r" ] && rm -fr "$DT_r" & exit 1; fi
+        rm "${DM_tlt}/$fname.mp3"
+        msg "$(gettext "An error has occurred while saving the note.")\n" dialog-warning
+        [ "$DT_r" ] && rm -fr "$DT_r" & exit 1
     
-    tags_1 S "${trgt}" "${srce}" "${DM_tlt}/$fname.mp3"
+    else
+        tags_1 S "${trgt}" "${srce}" "${DM_tlt}/$fname.mp3"
 
-    if [ -f "$DT_r/img.jpg" ]; then
-    set_image_2 "${DM_tlt}/$fname.mp3" "${DM_tlt}/words/images/$fname.jpg"; fi
+        if [ -f "$DT_r/img.jpg" ]; then
+        set_image_2 "${DM_tlt}/$fname.mp3" "${DM_tlt}/words/images/$fname.jpg"; fi
 
-    tags_3 W "${lwrds}" "${pwrds}" "${grmrk}" "${DM_tlt}/$fname.mp3"
-    notify-send "${trgt}" "${srce}\\n(${tpe})" -t 10000
-    index sentence "${trgt}" "${tpe}"
+        tags_3 W "${lwrds}" "${pwrds}" "${grmrk}" "${DM_tlt}/$fname.mp3"
+        notify-send "${trgt}" "${srce}\\n(${tpe})" -t 10000
+        index sentence "${trgt}" "${tpe}"
 
-    (if [ "$list" = TRUE ]; then
-    "$DS/add.sh" list_words_sentence "${DM_tlt}/$fname.mp3" "${trgt}" "${tpe}"
-    fi) &
+        (if [ "$list" = TRUE ]; then
+        "$DS/add.sh" list_words_sentence "${DM_tlt}/$fname.mp3" "${trgt}" "${tpe}"
+        fi) &
 
-    fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
-    
-    [ "$DT_r" ] && rm -fr "$DT_r"
-    echo -e ".adi.1.adi." >> "$DC_s/8.cfg"
-    exit 1
+        fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
+        
+        [ "$DT_r" ] && rm -fr "$DT_r"
+        echo -e ".adi.1.adi." >> "$DC_s/8.cfg"
+        exit 1
+    fi
 }
 
 
@@ -279,7 +297,7 @@ new_word() {
     DM_tlt="$DM_tl/${tpe}"
     DC_tlt="$DM_tl/${tpe}/.conf"
     source "$DS/default/dicts/$lgt"
-    
+
     if [[ `wc -l < "${DC_tlt}/0.cfg"` -ge 200 ]] && [[ "$5" != 0 ]]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
     msg "$(gettext "Maximum number of notes has been exceeded for this topic. Max allowed (200)")" info " " & exit 1; fi
@@ -318,7 +336,7 @@ new_word() {
     else
         if [ -z "$4" ] || [ -z "$2" ]; then
         [ "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "You need to fill text fields.")\n" info & exit 1; fi
+        msg "$(gettext "You need to fill text fields.")\n" info " " & exit 1; fi
         
         fname="$(nmfile "${trgt^}")"
         audio="${trgt,,}"
@@ -353,8 +371,8 @@ new_word() {
     mksure "${DM_tlt}/words/$fname.mp3" "${trgt}" "${srce}"
     if [ $? = 0 ]; then
         tags_1 W "${trgt}" "${srce}" "${DM_tlt}/words/$fname.mp3"
-        nt="$(tr '\n' '_' <<<"_$(check_grammar_2 "${trgt}")")"
-        eyeD3 -A IWI3I0I"$nt"IWI3I0I "${DM_tlt}/words/$fname.mp3"
+        if [ -n "${6}" ]; then eyeD3 -A IWI3I0I"__${6}"IWI3I0I "${DM_tlt}/words/$fname.mp3"
+        echo -e "\n${trgt}: ${6}" >> "${DC_tlt}/10.cfg"; fi
         [[ "$5" != 0 ]] && notify-send "${trgt}" "${srce}\\n(${tpe})" -t 5000
         index word "${trgt}" "${tpe}"
         printf ".adi.1.adi." >> "$DC_s/8.cfg"
@@ -688,6 +706,9 @@ process() {
         ) | dlg_progress_1
 
     else
+        if [[ ${#conten} = 1 ]]; then
+        [ -d "$DT_r" ] && rm -fr "$DT_r"
+        rm -f ./ls "$lckpr"; exit 1; fi
         (echo "1"
         echo "# $(gettext "Processing")..." ;
         if [ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]; then
