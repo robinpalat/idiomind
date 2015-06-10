@@ -6,10 +6,9 @@ source "$DS/ifs/mods/cmns.sh"
 topic="${1}"
 DC_tlt="$DM_tl/${topic}/.conf"
 DM_tlt="$DM_tl/${topic}"
-restr="$(ls "$DS/addons/")"
-cfg="name=\"${topic}\"
-language_source=\"$lgsl\"
-language_target=\"$lgtl\"
+cfgfile="name=\"${topic}\"
+language_source=\"${lgsl^}\"
+language_target=\"${lgtl^}\"
 author=\"$Author\"
 contact=\"$Mail\"
 category=\"$Ctgry\"
@@ -19,9 +18,11 @@ date_u=\"$date_u\"
 nwords=\"$words\"
 nsentences=\"$sentences\"
 nimages=\"$images\"
-level=\"$level\""
+level=\"$level\"
+set1=\"FALSE\"
+set2=\"FALSE\""
 
-if grep -Fxo "${topic}" <<<"${restr}"; then
+if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
     "$DS/ifs/mods/topic/${topic}.sh" 2 & exit 1
 
 else
@@ -33,20 +34,20 @@ else
         c=0; while [[ $c -le 10 ]]; do
         touch "$c.cfg"; let c++
         done
-        rm "${DC_tlt}/7.cfg"
-        rm "${DC_tlt}/9.cfg"
+        rm "${DC_tlt}/7.cfg" "${DC_tlt}/9.cfg"
         echo " " > "${DC_tlt}/10.cfg"
-        echo -e "$cfg" > "12.cfg"
-        echo "1" > "8.cfg"
-        cd "$HOME"
+        echo -e "${cfgfile}" > "12.cfg"
+        echo 1 > "8.cfg"
+        cd /
         fi
-
         echo "${topic}" > "$DC_s/4.cfg"
         echo "${topic}" > "$DC_s/7.cfg"
         echo "${topic}" > "$DT/tpe"
-        echo '0' > "$DC_s/5.cfg"
+        echo 0 > "$DC_s/5.cfg"
         
-        "$DS/ifs/tls.sh" colorize
+        if [[ `wc -l < "${DC_tlt}/12.cfg"` -lt 15 ]]; then
+        echo -e "${cfgfile}" > "${DC_tlt}/12.cfg"; fi
+
         if [[ ! -f "$DT/.n_s_pr" ]]; then
         "$DS/ifs/tls.sh" check_index "${topic}"; fi
         

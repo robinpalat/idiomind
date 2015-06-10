@@ -5,6 +5,7 @@ drts="$DS/practice"
 strt="$drts/strt.sh"
 cd "${DC_tlt}/practice"
 all=$(wc -l < ./d.0)
+hits="$(gettext "Hits")"
 listen="Listen"
 easy=0
 hard=0
@@ -21,7 +22,8 @@ score() {
 
     if [[ "$1" -ge $all ]]; then
         play "$drts/all.mp3" & 
-        echo "s9.$(tr -s '\n' '|' < ./d.1).s9" >> "$log"
+        echo ".s9.$(tr -s '\n' '|' < ./d.1).s9." >> "$log"
+        echo -e ".okp.1.okp." >> "$log"
         echo "$(date "+%a %d %B")" > d.lock
         echo 21 > .4
         "$strt" 4 &
@@ -33,7 +35,7 @@ score() {
         v=$((100*s/all))
         n=1; c=1
         while [[ $n -le 21 ]]; do
-            if [[ "$v" -le "$c" ]]; then
+            if [[ $v -le $c ]]; then
             echo "$n" > .4; break; fi
             ((c=c+5))
             let n++
@@ -49,17 +51,17 @@ dialog2() {
     |sed 's/\b\(.\)/\u\1/g'|tr -s ',' ' ' \
     |sed 's|\.||;s|\,||;s|\;||g'|sed 's|[a-z]|\.|g'|sed 's| |\t|g' \
     |sed 's|\.|\ .|g' | tr "[:upper:]" "[:lower:]"|sed 's/^\s*./\U&\E/g')"
-    text="<span font_desc='Free Sans Bold 11' color='#717171'>$hint</span>\n"
-
-    SE=$(yad --text-info --title="$(gettext "Practice")" \
-    --text="$text" \
+    text="<span font_desc='Free Sans Bold 12' color='#717171'>$hint</span>\n"
+    
+    entry=$(>/dev/null | yad --text-info --title="$(gettext "Practice")" \
+    --text="$text\n" \
     --name=Idiomind --class=Idiomind \
     --fontname="Free Sans 14" --fore=4A4A4A --justify=fill \
     --margins=5 --editable --wrap \
     --window-icon="$DS/images/icon.png" --image="$DS/practice/bar.png" \
     --buttons-layout=end --skip-taskbar --undecorated --center --on-top \
     --text-align=left --align=left --image-on-top \
-    --height=215 --width=560 --borders=3 \
+    --height=220 --width=560 --borders=8 \
     --button="$(gettext "Exit")":1 \
     --button="$(gettext "Listen")":"$cmd_play" \
     --button=" $(gettext "Check") >> ":0)
@@ -74,17 +76,17 @@ check() {
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --wrap --scroll --image-on-top --center --on-top \
     --undecorated --buttons-layout=end \
-    --width=560 --height=250 --borders=12 \
+    --width=560 --height=260 --borders=12 \
     --button="$(gettext "Listen")":"$cmd_play" \
     --button="$(gettext "Next")":2 \
     --field="":lbl --text="<span font_desc='Free Sans 14'>${wes}</span>\\n" \
-    --field="<span font_desc='Free Sans 9'>$(sed 's/\,*$/\./g' <<<"$OK")\n\nhits $prc</span>\n":lbl
+    --field="<span font_desc='Free Sans 12'>$OK\n\n$hits $prc</span>\n":lbl
     }
     
 get_text() {
     
-    WEN=$(echo "${1}" | sed 's/^ *//; s/ *$//')
-    echo "${WEN}" | awk '{print tolower($0)}' > chk.tmp
+    trgt=$(echo "${1}" | sed 's/^ *//; s/ *$//')
+    chk=`echo "${trgt}" | awk '{print tolower($0)}'`
     }
 
 result() {
@@ -92,22 +94,21 @@ result() {
     clean() {
     sed 's/ /\n/g' \
     | sed 's/,//;s/\!//;s/\?//;s/¿//;s/\¡//;s/(//;s/)//;s/"//g' \
-    | sed 's/\-//;s/\[//;s/\]//;s/\.//;s/\://;s/\|//;s/)//;s/"//g'
+    | sed 's/\-//;s/\[//;s/\]//;s/\.//;s/\://;s/\|//;s/)//;s/"//g' \
+    | tr -d '“' | tr -d '”' | tr -d '&' | tr -d ':' | tr -d '!'
     }
-    
-    if [[ `wc -w < ./chk.tmp` -gt 6 ]]; then
-    awk '{print tolower($0)}' <<<"${SE}" | clean | grep -v '^.$' > ./img.tmp
-    awk '{print tolower($0)}' < ./chk.tmp | clean | grep -v '^.$' > ./all.tmp
+    if [[ `wc -w <<<"$chk"` -gt 6 ]]; then
+    out=`awk '{print tolower($0)}' <<<"${entry}" | clean | grep -v '^.$'`
+    in=`awk '{print tolower($0)}' <<<"${chk}" | clean | grep -v '^.$'`
     else
-    awk '{print tolower($0)}' <<<"${SE}" | clean > ./img.tmp
-    awk '{print tolower($0)}' < ./chk.tmp | clean > ./all.tmp
+    out=`awk '{print tolower($0)}' <<<"${entry}" | clean`
+    in=`awk '{print tolower($0)}' <<<"${chk}" | clean`
     fi
     
-    (
-    n=1;
+    echo "${chk}" > chk.tmp
     while read -r line; do
     
-        if grep -oFx "${line}" ./all.tmp; then
+        if grep -Fxq "${line}" <<<"$in"; then
             sed -i "s/"${line}"/<b>"${line}"<\/b>/g" chk.tmp
             [[ -n "${line}" ]] && echo \
             "<span color='#3A9000'><b>${line^}</b></span>  " >> ./words.tmp
@@ -116,42 +117,37 @@ result() {
             [[ -n "${line}" ]] && echo \
             "<span color='#7B4A44'><b>${line^}</b></span>  " >> ./words.tmp
         fi
-        let n++
         
-    done <<<"$(sed 's/ /\n/g' < ./img.tmp)"
-    )
+    done < <(sed 's/ /\n/g' <<<"$out")
     
     OK=$(tr '\n' ' ' < ./words.tmp)
-    sed 's/ /\n/g' < ./chk.tmp > all.tmp
-    porc=$((100*$(cat ./mtch.tmp | wc -l)/$(cat ./all.tmp | wc -l)))
+    sed 's/ /\n/g' < ./chk.tmp > all.tmp; touch ./mtch.tmp
+    porc=$((100*$(cat ./mtch.tmp | wc -l)/$(wc -l < ./all.tmp)))
     
     if [[ $porc -ge 70 ]]; then
-        echo "${WEN}" >> d.1
+        echo "${trgt}" >> d.1
         easy=$((easy+1))
         color=3AB452
         
     elif [[ $porc -ge 50 ]]; then
-        echo "${WEN}" >> d.2
+        echo "${trgt}" >> d.2
         ling=$((ling+1))
         color=E5801D
         
     else
-        echo "${WEN}" >> d.3
-        hard=$((hard+1))
+        [ -n "$entry" ] && echo "${trgt}" >> d.3
+        [ -n "$entry" ] && hard=$((hard+1))
         color=D11B5D
     fi
     
     prc="<b>$porc%</b>"
-    wes="$(< chk.tmp)"
+    wes="$(< ./chk.tmp)"
     rm chk.tmp
     }
 
-n=1
-while [[ $n -le "$(wc -l < ./d.tmp)" ]]; do
+while read trgt; do
 
-    trgt="$(sed -n "$n"p d.tmp)"
     fname="$(echo -n "${trgt}" | md5sum | rev | cut -c 4- | rev)"
-    
     if [[ -f "${DM_tlt}/$fname.mp3" ]]; then
 
         get_text "${trgt}"
@@ -177,7 +173,7 @@ while [[ $n -le "$(wc -l < ./d.tmp)" ]]; do
         if [[ $ret = 1 ]]; then
             break &
             killall play &
-            rm -f mtch.tmp all.tmp img.tmp words.tmp
+            rm -f mtch.tmp words.tmp
             "$drts/cls.sh" comp d $easy $ling $hard $all &
             exit 1
             
@@ -186,7 +182,7 @@ while [[ $n -le "$(wc -l < ./d.tmp)" ]]; do
             rm -f mtch.tmp words.tmp &
         fi
     fi
-    let n++
-done 
+
+done < ./d.tmp
 
 score $easy

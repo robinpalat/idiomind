@@ -21,7 +21,8 @@ score() {
 
     if [[ $(($(< ./a.l)+$1)) -ge $all ]]; then
         play "$drts/all.mp3" &
-        echo "w9.$(tr -s '\n' '|' < ./a.1).w9" >> "$log"
+        echo ".w9.$(tr -s '\n' '|' < ./a.1).w9." >> "$log"
+        echo -e ".okp.1.okp." >> "$log"
         echo "$(date "+%a %d %B")" > a.lock
         echo 21 > .1
         "$strt" 1 &
@@ -40,7 +41,7 @@ score() {
         done
 
         if [[ -f a.3 ]]; then
-        echo "w6.$(tr -s '\n' '|' < ./a.3).w6" >> "$log"; fi
+        echo ".w6.$(tr -s '\n' '|' < ./a.3).w6." >> "$log"; fi
         
         "$strt" 6 "$easy" "$ling" "$hard" & exit 1
     fi
@@ -63,7 +64,7 @@ cuestion() {
     --timeout=10 \
     --skip-taskbar --text-align=center --center --on-top \
     --undecorated --buttons-layout=spread --align=center \
-    --width=395 --height=290 --borders=5 \
+    --width=395 --height=290 --borders=8 \
     --field="$acuestion":lbl \
     --button="$(gettext "Exit")":1 \
     --button="    $(gettext "Answer") >>    ":0
@@ -75,7 +76,7 @@ answer() {
     --timeout=10 --selectable-labels \
     --skip-taskbar --text-align=center --center --on-top \
     --undecorated --buttons-layout=spread --align=center \
-    --width=395 --height=290 --borders=5 \
+    --width=395 --height=290 --borders=8 \
     --field="$bcuestion":lbl \
     --field="":lbl \
     --field="$answer":lbl \

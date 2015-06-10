@@ -12,7 +12,7 @@ listen="$(gettext "Listen")"
 if ! [[ $index_pos =~ $re ]]; then
 index_pos=$(grep -Fxon "${item_name}" < "${index}" \
 | sed -n 's/^\([0-9]*\)[:].*/\1/p')
-nll=" "; fi
+nll="_"; fi
 item="$(sed -n "$index_pos"p "${index}" |sed 's/<[^>]*>//g')"
 
 if [ -z "${item}" ]; then
@@ -20,7 +20,7 @@ item="$(sed -n 1p "${index}")"
 index_pos=1; fi
 fname="$(echo -n "${item}" | md5sum | rev | cut -c 4- | rev)"
 align=left
-fs=22; bs=20
+fs=25; bs=20
 
 if [ -f "${DM_tlt}/words/${fname}.mp3" ]; then
 cmd_listen="play '${DM_tlt}/words/${fname}.mp3'"
@@ -41,7 +41,8 @@ ret=$?
     
         if [[ $index_pos = 1 ]]; then
         item=`tail -n 1 < "${index}"`
-        "$DS/vwr.sh" "$1" "${item}" &
+        ([[ $1 = 1 ]] && "$DS/vwr.sh" "$1" "$nll" "${item}"
+         [[ $1 = 2 ]] && "$DS/vwr.sh" "$1" "${item}") &
         else
         ff=$((index_pos-1))
         "$DS/vwr.sh" "$1" "$nll" $ff &
@@ -52,7 +53,7 @@ ret=$?
     "$DS/vwr.sh" "$1" "$nll" $ff &
     
     else 
-    echo -e "vwr.$(wc -l < "$DT/stats.tmp").vwr\n" >> "$DC_s/8.cfg"
+    echo -e ".vwr.`wc -l < "$DT/stats.tmp"`.vwr." >> "$DC_s/8.cfg"
     rm -f "$DT/stats.tmp" & exit 1
     fi
     

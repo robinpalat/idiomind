@@ -34,12 +34,12 @@ sets=('grammar' 'list' 'tasks' 'trans' 'trd_trgt' 'text' 'audio' \
 
 _info() {
     
-    yad --form --title="$(gettext "Information")" \
-    --text="$(gettext "Some features do not yet work with this language:") $1 ." \
+    yad --form --title="$(gettext "Notice")" \
+    --text="$(gettext "Some features do not yet work with this language"). ($1)\n" \
     --image=info \
     --window-icon=info \
     --skip-taskbar --center --on-top \
-    --width=400 --height=120 --borders=5 \
+    --width=460 --height=120 --borders=5 \
     --button="$(gettext "OK")":0
 }
 
@@ -100,12 +100,12 @@ elif [ $ret -eq 0 ]; then
     mkdir "$HOME/.idiomind"
     if [ $? -ne 0 ]; then
     yad --title=Idiomind \
-    --text="$(gettext "Error while trying to write")\n" \
+    --text="$(gettext "Error occurred trying to write in file system")\n" \
     --image=error \
     --name=idiomind --class=idiomind \
     --window-icon="$DS/images/icon.png" \
-    --image-on-top --sticky --fixed --skip-taskbar --center \
-    --width=320 --height=80 --borders=2 \
+    --image-on-top --sticky --skip-taskbar --center \
+    --width=420 --height=120 --borders=2 \
     --button=gtk-ok:1 & exit 1
     fi
     

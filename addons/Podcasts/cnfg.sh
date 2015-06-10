@@ -10,7 +10,8 @@ sets=('update' 'sync' 'path')
 if [[ -n "$(< "$DCP/0.lst")" ]]; then cfg=1; else
 > "$DCP/0.lst"; fi
 
-if [ ! -d "$DM_tl/Podcasts" ]; then
+ini() {
+    
     mkdir "$DM_tl/Podcasts"
     mkdir "$DM_tl/Podcasts/.conf"
     mkdir "$DM_tl/Podcasts/cache"
@@ -18,14 +19,14 @@ if [ ! -d "$DM_tl/Podcasts" ]; then
     touch "0.lst" "1.lst" "2.lst" "feeds.lst" ".updt.lst"
     echo 14 > "$DM_tl/Podcasts/.conf/8.cfg"
     echo " " > "$DM_tl/Podcasts/.conf/10.cfg"
-    echo -e " $(gettext "Last update:")
- $(gettext "Latest downloads:") 0"> "$DM_tl/Podcasts/$date.updt"
+    echo -e "\n$(gettext "Latest downloads:") 0" > "$DM_tl/Podcasts/$date.updt"
     "$DS/mngr.sh" mkmn
-fi
+}
 
-[[ -e "$DT/cp.lock" ]] && exit || touch "$DT/cp.lock"
-[[ ! -f "$DCP/feeds.lst" ]] && touch "$DCP/feeds.lst"
-[[ -f "$DCP/0.lst" ]] && st2=$(sed -n 1p "$DCP/0.lst") || st2=FALSE
+if [ ! -d "$DM_tl/Podcasts" ]; then ini; fi
+[ -e "$DT/cp.lock" ] && exit || touch "$DT/cp.lock"
+[ ! -f "$DCP/feeds.lst" ] && touch "$DCP/feeds.lst"
+[ -f "$DCP/0.lst" ] && st2=$(sed -n 1p "$DCP/0.lst") || st2=FALSE
 
 n=1; while read feed; do
     declare url$n="$feed"
@@ -67,18 +68,17 @@ apply() {
     if ([ -n "$podcaststmp" ] && [ "$podcaststmp" != "$(cat "$DCP/feeds.lst")" ]); then
     mv -f "$DT/podcasts.tmp" "$DCP/feeds.lst"; else rm -f "$DT/podcasts.tmp"; fi
 
-
     val1=$(cut -d "|" -f1 <<<"$CNFG")
     val2=$(cut -d "|" -f2 <<<"$CNFG")
     val3=$(cut -d "|" -f19 <<<"$CNFG" | sed 's|/|\\/|g')
-    if [[ ! -d "$val3" ]] || [[ -z "$val3" ]]; then path=/uu; fi
+    if [ ! -d "$val3" ] || [ -z "$val3" ]; then path=/uu; fi
     sed -i "s/update=.*/update=\"$val1\"/g" "$DCP/0.lst"
     sed -i "s/sync=.*/sync=\"$val2\"/g" "$DCP/0.lst"
     sed -i "s/path=.*/path=\"${val3}\"/g" "$DCP/0.lst"
-    [[ -f "$DT/cp.lock" ]] && rm -f "$DT/cp.lock"
+    [ -f "$DT/cp.lock" ] && rm -f "$DT/cp.lock"
 }
 
-if [[ ! -d "$path" ]] || [[ ! -n "$path" ]]; then path=/uu; fi
+if [ ! -d "$path" ] || [ ! -n "$path" ]; then path=/uu; fi
 if [ -f "$DM_tl/Podcasts/.conf/feed.err" ]; then
 e="$(head -n 2 < "$DM_tl/Podcasts/.conf/feed.err" | tr '&' ' ' | uniq)"
 rm "$DM_tl/Podcasts/.conf/feed.err"
@@ -119,5 +119,5 @@ elif [[ $ret -eq 5 ]]; then
     "$DSP/tls.sh" sync
 fi
 
-[[ -f "$DT/cp.lock" ]] && rm -f "$DT/cp.lock"
+[ -f "$DT/cp.lock" ] && rm -f "$DT/cp.lock"
 exit

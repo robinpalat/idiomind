@@ -72,7 +72,8 @@ function new_session() {
     echo "$DESKTOP_SESSION" >> "$DC_s/10.cfg"
     gconftool-2 --get /desktop/gnome/interface/font_name \
     | cut -d ' ' -f 2 >> "$DC_s/10.cfg"
-    [ `wc -l < "$DC_s/1.cfg"` -lt 19 ] && rm "$DC_s/1.cfg"
+    #
+    [[ `wc -l < "$DC_s/1.cfg"` -lt 19 ]] && rm "$DC_s/1.cfg"
     
     # log file
     if [[ -f "$DC_s/8.cfg" ]]; then
@@ -250,6 +251,8 @@ function topic() {
         nt="${DC_tlt}/10.cfg"
         author="$(sed -n 4p "${DC_tlt}/12.cfg" \
         | grep -o 'author="[^"]*' | grep -o '[^"]*$')"
+        auto_mrk=$(sed -n 14p "${DC_tlt}/12.cfg" \
+        | grep -o set1=\"[^\"]* |grep -o '[^"]*$')
         c=$((RANDOM%100000)); KEY=$c
         cnf1=$(mktemp "$DT/cnf1.XXX.x")
         cnf3=$(mktemp "$DT/cnf3.XXX.x")
@@ -257,7 +260,7 @@ function topic() {
         if [[ -f "${DM_tlt}/words/images/img.jpg" ]]; then
         img="--image=${DM_tlt}/words/images/img.jpg"
         sx=608; sy=580; else sx=620; sy=560; fi
-        printf "tpcs.$tpc.tpcs" >> "$DC_s/8.cfg"
+        echo -e ".tpc.$tpc.tpc." >> "$DC_s/8.cfg"
         [ ! -z "$author" ] && author=" $(gettext "Created by") $author"
 
         label_info1="<span font_desc='Free Sans 15' color='#505050'>$tpc</span><small>\n $inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"
@@ -268,12 +271,10 @@ function topic() {
             if [ "$note_mod" != "$(< "${nt}")" ]; then
             mv -f "${cnf3}" "${DC_tlt}/10.cfg"; fi
             
-            ntpc=$(cut -d '|' -f 1 < "${cnf4}")
-            if [[ "${tpc}" != "${ntpc}" ]] && [[ -n "$ntpc" ]]; then
-            if [[ "${tpc}" != "$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")" ]]; then
-            msg "$(gettext "Sorry, this topic is currently not active.")\n" info & exit; fi
-            "$DS/mngr.sh" rename_topic "${ntpc}" & exit; fi
-
+            auto_mrk_mod=$(cut -d '|' -f 3 < "${cnf4}")
+            if [[ $auto_mrk_mod != $auto_mrk ]] && [[ -n "$auto_mrk_mod" ]]; then
+            sed -i "s/set1=.*/set1=\"$auto_mrk_mod\"/g" "${DC_tlt}/12.cfg"; fi
+            
             if [ -n "$(grep -o TRUE < "${cnf1}")" ]; then
                 grep -Rl "|FALSE|" "${cnf1}" | while read tab1 ; do
                      sed '/|FALSE|/d' "${cnf1}" > "$DT/tmpf1"
@@ -290,8 +291,14 @@ function topic() {
                     sed '/^$/d' "$DT/ls1.x" > "${ls1}"
                 fi
                 "$DS/ifs/tls.sh" colorize
-                printf "okim.$(wc -l < "$cnf1").okim\n" >> "$DC_s/8.cfg"
+                echo -e ".oki.$(wc -l < "$cnf1").oki." >> "$DC_s/8.cfg"
             fi
+        
+            ntpc=$(cut -d '|' -f 1 < "${cnf4}")
+            if [[ "${tpc}" != "${ntpc}" ]] && [[ -n "$ntpc" ]]; then
+            if [[ "${tpc}" != "$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")" ]]; then
+            msg "$(gettext "Sorry, this topic is currently not active.")\n" info & exit; fi
+            "$DS/mngr.sh" rename_topic "${ntpc}" & exit; fi
         }
     
     if [[ ${inx0} -lt 1 ]]; then 
@@ -399,9 +406,13 @@ function topic() {
         fi
         
         pres="<u><b>$(gettext "Learned topic")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
-        
-        # learned
+
         notebook_2
+        
+        if [[ ! -f "$DT/ps_lk" ]]; then
+                
+            apply
+        fi
       
         rm -f "$DT"/*.x & exit
     fi
@@ -416,7 +427,7 @@ function topic() {
 
 panel() {
     
-    printf "strt.1.strt\n" >> "$DC_s/8.cfg"
+    echo -e ".strt.1.strt." >> "$DC_s/8.cfg"
     if [ ! -d "$DT" ]; then new_session; fi
     [ ! -f "$DT/tpe" ] && echo "$(sed -n 1p "$DC_s/4.cfg")" > "$DT/tpe"
     [ "$(< "$DT/tpe")" != "${tpc}" ] && echo "$(sed -n 1p "$DC_s/4.cfg")" > "$DT/tpe"

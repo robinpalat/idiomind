@@ -21,7 +21,8 @@ score() {
 
     if [[ $(($(< ./c.l)+$1)) -ge $all ]]; then
         play "$drts/all.mp3" &
-        echo "w9.$(tr -s '\n' '|' < ./c.1).w9" >> "$log"
+        echo ".w9.$(tr -s '\n' '|' < ./c.1).w9." >> "$log"
+        echo -e ".okp.1.okp." >> "$log"
         echo "$(date "+%a %d %B")" > c.lock
         echo 21 > .3
         "$strt" 3 &
@@ -40,7 +41,7 @@ score() {
         done
         
         if [[ -f ./c.3 ]]; then
-        echo "w6.$(tr -s '\n' '|' < ./c.3).w6" >> "$log"; fi
+        echo ".w6.$(tr -s '\n' '|' < ./c.3).w6." >> "$log"; fi
         
         "$strt" 8 $easy $ling $hard & exit 1
     fi
@@ -53,7 +54,8 @@ fonts() {
     && lst="${1:0:1} ${1:5:5}" || lst=$(echo "$1" | awk '$1=$1' FS= OFS=" " | tr aeiouy '.')
     elif [[ $p = 1 ]]; then
     [ $lgtl = Japanese ] || [ $lgtl = Chinese ] || [ $lgtl = Russian ] \
-    && lst="${1:0:1} ${1:5:5}" || lst=$(echo "${1^}" | sed "s|[a-z]|"\ \."|g"); fi
+    && lst="${1:0:1} ${1:5:5}" || lst=$(echo "${1^}" | sed "s|[a-z]|"\ \."|g")
+    fi
     
     s=$((30-${#1}))
     img="/usr/share/idiomind/images/fc.png"
@@ -72,7 +74,7 @@ cuestion() {
     --timeout=20 \
     --skip-taskbar --text-align=center --center --on-top \
     --buttons-layout=spread --image-on-top --undecorated \
-    --width=370 --height=270 --borders=5 \
+    --width=370 --height=270 --borders=8 \
     --field="$(gettext "Play")":BTN "$cmd_play" \
     --button="$(gettext "Exit")":1 \
     --button="  $(gettext "No")  ":3 \

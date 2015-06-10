@@ -2,25 +2,25 @@
 # -*- ENCODING: UTF-8 -*-
 
 function word_view() {
-
+    
     trgt="$item"
-    tags="$(eyeD3 "$DM_tlt/words/$fname.mp3")"
-    srce="$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)' <<<"$tags")"
-    fields="$(grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' <<<"$tags" | tr '_' '\n')"
-    mark="$(grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)' <<<"$tags")"
-    exmp="$(sed -n 1p <<<"$fields")"
-    dftn="$(sed -n 2p <<<"$fields")"
-    note="$(sed -n 3p <<<"$fields")"
+    tags="$(eyeD3 "${DM_tlt}/words/$fname.mp3")"
+    srce="$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)' <<<"${tags}")"
+    fields="$(grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' <<<"${tags}" | tr '_' '\n')"
+    mark="$(grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)' <<<"${tags}")"
+    exmp="$(sed -n 1p <<<"${fields}")"
+    dftn="$(sed -n 2p <<<"${fields}")"
+    note="$(sed -n 3p <<<"${fields}")"
     exmp="$(sed "s/"${trgt,,}"/<span background='#FDFBCF'>"${trgt,,}"<\/\span>/g" <<<"$exmp")"
     [ -n "$dftn" ] && field_dftn="--field=$dftn:lbl"
     [ -n "$note" ] && field_note="--field=$note\n:lbl"
     [ -n "$exmp" ] && field_exmp="--field=<i><span color='#737373'>$exmp</span></i>:lbl"
     [ -z "$trgt" ] && tm="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>"
-    [ "$mark" = TRUE ] && im="--image=$DS/images/mark.png"
+    [ "$mark" = TRUE ] && trgt="<b>$trgt</b>"
     
-    yad --form --title=" " $im \
+    yad --form --title=" " \
     --selectable-labels --quoted-output \
-    --text="<span font_desc='Sans Free Bold $fs'>$trgt</span>\n\n<i>$srce</i>\n\n" \
+    --text="<span font_desc='Sans Free $fs'>$trgt</span>\n\n<i>$srce</i>\n\n" \
     --window-icon="$DS/images/icon.png" \
     --align=left --scroll --skip-taskbar --text-align=center \
     --image-on-top --center --on-top \
@@ -35,20 +35,20 @@ function word_view() {
 
 
 function sentence_view() {
-
-    if [ -f "$DM_tlt/$fname.mp3" ]; then
+    
+    if [[ -f "$DM_tlt/$fname.mp3" ]]; then
     tags="$(eyeD3 "$DM_tlt/$fname.mp3")"
     [ "$(sed -n 1p "$DC_s/1.cfg" | grep -o grammar=\"[^\"]* | grep -o '[^"]*$')"  = TRUE ] \
-    && trgt="$(grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)' <<<"$tags")" \
-    || trgt="$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"$tags")"
-    srce="$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"$tags")"
-    lwrd="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"$tags" | tr '_' '\n')"
-    mark="$(grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)' <<<"$tags")"
-    [  "$mark" = TRUE ] && im="--image=$DS/images/mark.png"
+    && trgt="$(grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)' <<<"${tags}")" \
+    || trgt="$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"${tags}")"
+    srce="$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"${tags}")"
+    lwrd="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"${tags}" | tr '_' '\n')"
+    mark="$(grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)' <<<"${tags}")"
+    [ "$mark" = TRUE ] && trgt="<b>$trgt</b>"
     [ -z "$trgt" ] && tm="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>"
     else tm="<span color='#3F78A0'><tt>$(gettext "File not found")</tt></span>"; fi
     
-    echo "$lwrd" | yad --list --title=" " $im \
+    echo "$lwrd" | yad --list --title=" " \
     --text="$tm<span font_desc='Sans Free 15'>$trgt</span>\n\n<i>$srce</i>\n\n" \
     --selectable-labels --print-column=0 \
     --dclick-action="$DS/ifs/tls.sh 'dclik'" \
@@ -67,7 +67,6 @@ function sentence_view() {
 
 export -f word_view sentence_view
 
-
 function notebook_1() {
     
     cmd_mark="'$DS/mngr.sh' 'mark_as_learned' "\"$tpc\"" 1"
@@ -76,12 +75,13 @@ function notebook_1() {
     cmd_share="'$DS/ifs/upld.sh' upld "\"$tpc\"""
     cmd_play="$DS/play.sh"
     list() {
-    if [[ $((`wc -l < ${DC_tlt}/5.cfg`/3)) = `wc -l < ${DC_tlt}/1.cfg` ]]; then
+    if [[ $((`wc -l < "${DC_tlt}/5.cfg"`/3)) = \
+    `wc -l < "${DC_tlt}/1.cfg"` ]]; then
     tac "${DC_tlt}/5.cfg"; else
     tac "$ls1" | \
     awk '{print "/usr/share/idiomind/images/0.png\n"$0"\nFALSE"}'; fi
     }
-
+    
     list | yad --list --tabnum=1 \
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh '1'" \
@@ -102,8 +102,8 @@ function notebook_1() {
     --scroll --borders=10 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "$tpc" \
     --field="$(gettext "Mark as learnt")":FBTN "$cmd_mark" \
-    --field=" ":LBL "$set1" \
-    --field="$label_info2\n\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " \
+    --field="$(gettext "Auto select items that could be marked as learnt")":CHK "$auto_mrk" \
+    --field="$label_info2\n":LBL " " \
     --field="$(gettext "Files")":FBTN "$cmd_attchs" \
     --field="$(gettext "Share")":FBTN "$cmd_share" \
     --field="$(gettext "Delete")":FBTN "$cmd_del" \
@@ -150,8 +150,8 @@ function notebook_2() {
     --scroll --borders=10 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "$tpc" \
     --field="   $(gettext "Review")   ":FBTN "$cmd_mark" \
-    --field=" ":LBL "$set1" \
-    --field="$label_info2\n\t\t\t\t\n\t\t\t\t\t\t\t\t\t\t\t\t":LBL " " \
+    --field=" ":LBL "\t\t\t\t\t\t\t\t\t\t\t\t\t\t" \
+    --field="$label_info2\n":LBL " " \
     --field="$(gettext "Files")":FBTN "$cmd_attchs" \
     --field="$(gettext "Share")":FBTN "$cmd_share" \
     --field="$(gettext "Delete")":FBTN "$cmd_del" \

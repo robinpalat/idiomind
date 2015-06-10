@@ -22,7 +22,6 @@ source "$DS/ifs/mods/cmns.sh"
 
 mkmn() {
     
-    restr="$(ls "$DS/addons/")"
     cd "$DM_tl"
     [ -d "$DM_tl/images" ] && rm -r "$DM_tl/images"
     [ -d "$DM_tl/words" ] && rm -r "$DM_tl/words"
@@ -35,7 +34,7 @@ mkmn() {
     while [[ $n -le "$(head -100 < "$DM_tl/.1.cfg" | wc -l)" ]]; do
     
         tp=$(sed -n "$n"p "$DM_tl/.1.cfg")
-        if ! grep -Fxo "$tp" <<<"$restr"; then
+        if ! grep -Fxo "$tp" < <(ls "$DS/addons/"); then
         inx1=$(wc -l < "$DM_tl/$tp/.conf/1.cfg")
         inx2=$(wc -l < "$DM_tl/$tp/.conf/2.cfg")
         tooltips_1="$inx1 / $inx2"
@@ -85,130 +84,6 @@ mkmn() {
     exit 1
 }
 
-mark_to_learn() {
-    
-    include "$DS/ifs/mods/mngr"
-    
-    if [ "$tpc" != "$2" ]; then
-    msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
-    
-    if [ "$(wc -l < "$DC_tlt/0.cfg")" -le 10 ]; then
-    msg "$(gettext "Not enough items to perform the operation.")\n " \
-    info "$(gettext "Not enough items")" & exit; fi
-
-    if [ "$3" = 1 ]; then
-    kill -9 $(pgrep -f "yad --multi-progress ") &
-    kill -9 $(pgrep -f "yad --list ") &
-    kill -9 $(pgrep -f "yad --text-info ") &
-    kill -9 $(pgrep -f "yad --form ") &
-    kill -9 $(pgrep -f "yad --notebook ") &
-    fi
-
-    if [ "$(sed '/^$/d' < "$DC_tlt/1.cfg" | wc -l )" -ge 1 ]; then
-        include "$DS/ifs/mods/mngr"
-    
-        dialog_2
-        ret=$(echo $?)
-    
-        if [[ $ret -eq 3 ]]; then
-        
-            rm -f "$DC_tlt/7.cfg"
-            idiomind topic & exit 1
-        fi
-    fi
-
-    stts=$(sed -n 1p "$DC_tlt/8.cfg")
-    calculate_review "$tpc"
-    
-    if [[ $((stts%2)) = 0 ]]; then
-
-        echo 6 > "$DC_tlt/8.cfg"
-            
-    else
-        if [[ "$RM" -ge 50 ]]; then
-        echo 5 > "$DC_tlt/8.cfg"
-        else
-        echo 1 > "$DC_tlt/8.cfg"
-        fi
-    fi
-    
-    rm -f "$DC_tlt/7.cfg"
-    awk '!array_temp[$0]++' < "$DC_tlt/0.cfg" > "$DT/0.cfg.tmp"
-    sed '/^$/d' "$DT/0.cfg.tmp" > "$DC_tlt/0.cfg"
-    rm -f "$DT"/*.tmp
-    rm "$DC_tlt/2.cfg" "$DC_tlt/1.cfg" "$DC_tlt/5.cfg"
-    touch "$DC_tlt/2.cfg"
-    cp -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"
-    "$DS/mngr.sh" mkmn &
-
-    [[ "$3" = 1 ]] && idiomind topic &
-}
-
-mark_as_learned() {
-
-    include "$DS/ifs/mods/mngr"
-
-    if [ "$tpc" != "$2" ]; then
-    msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
-
-    if [ "$(wc -l < "$DC_tlt/0.cfg")" -le 10 ]; then
-    msg "$(gettext "Not enough items to perform the operation.")\n " \
-    info "$(gettext "Not enough items")" & exit; fi
-    
-    if [ "$((( $(date +%s) - $(date -d "$(sed -n 8p "$DC_tlt/12.cfg" \
-    | grep -o 'date_c="[^"]*' | grep -o '[^"]*$')" +%s) ) /(24 * 60 * 60 )))" -lt 5 ]; then
-    msg_2 "$(gettext "Are you sure it's not too soon?")\n" \
-    gtk-dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"; fi
-    ret=$(echo $?); if [ $ret = 1 ]; then exit 1; fi
-    
-    if [ $3 = 1 ]; then
-    kill -9 $(pgrep -f "yad --list ") &
-    kill -9 $(pgrep -f "yad --list ") &
-    kill -9 $(pgrep -f "yad --text-info ") &
-    kill -9 $(pgrep -f "yad --form ") &
-    kill -9 $(pgrep -f "yad --notebook ") &
-    fi
-
-    stts=$(sed -n 1p "$DC_tlt/8.cfg")
-
-    if [ ! -f "$DC_tlt/7.cfg" ]; then
-        if [ -f "$DC_tlt/9.cfg" ]; then
-        
-            calculate_review "$tpc"
-            steps=$(sed '/^$/d' < "$DC_tlt/9.cfg" | wc -l)
-            
-            if [[ "$steps" = 4 ]]; then
-            
-                stts=$((stts+1)); fi
-            
-            if [[ "$RM" -ge 50 ]]; then
-            
-                if [[ $steps = 6 ]]; then
-                echo -e "_\n_\n_\n_\n_\n$(date +%m/%d/%Y)" > "$DC_tlt/9.cfg"
-                else
-                echo "$(date +%m/%d/%Y)" >> "$DC_tlt/9.cfg"
-                fi
-            fi
-            
-        else
-            echo "$(date +%m/%d/%Y)" > "$DC_tlt/9.cfg"
-        fi
-
-        > "$DC_tlt/7.cfg"
-        if [[ $((stts%2)) = 0 ]]; then
-        echo 4 > "$DC_tlt/8.cfg"
-        else
-        echo 3 > "$DC_tlt/8.cfg"
-        fi
-    fi
-    rm "$DC_tlt/2.cfg" "$DC_tlt/1.cfg" "$DC_tlt/lst" 
-    touch "$DC_tlt/1.cfg"
-    cp -f "$DC_tlt/0.cfg" "$DC_tlt/2.cfg"
-    "$DS/mngr.sh" mkmn &
-
-    [[ $3 = 1 ]] && idiomind topic &
-    exit 1
-}
 
 delete_item_ok() {
 
@@ -333,7 +208,7 @@ delete_item() {
 }
 
 
-edit() {
+edit_item() {
 
     include "$DS/ifs/mods/mngr"
     lgt=$(lnglss $lgtl)
@@ -356,8 +231,8 @@ edit() {
     audiofile_1="${DM_tlt}/words/$fname.mp3"
     audiofile_2="${DM_tlt}/$fname.mp3"
     
-    if [ ! -f "${audiofile_1}" ] && [ ! -f "${audiofile_2}" ] && [ -z "${item}" ]; then
-    exit 1; fi
+    if [ ! -f "${audiofile_1}" ] && [ ! -f "${audiofile_2}" ] \
+    && [ -z "${item}" ]; then exit 1; fi
 
     if grep -Fxo "${item}" "${DC_tlt}/3.cfg"; then
     
@@ -370,19 +245,19 @@ edit() {
         exmp="$(sed -n 1p <<<"$fields")"
         dftn="$(sed -n 2p <<<"$fields")"
         note="$(sed -n 3p <<<"$fields")"
-        a=0; else a=1; fi
+        a=0; else trgt="${item}"; a=1; fi
         cmd_move="$DS/ifs/mods/mngr/mngr.sh 'position' '$item_pos' "\"${index_1}\"""
         cmd_delete="$DS/mngr.sh delete_item "\"${item}\"""
         cmd_image="$DS/ifs/tls.sh set_image "\"${audiofile_1}\"" word"
-        cmd_definition="/usr/share/idiomind/ifs/tls.sh definition '$trgt'"
         cmd_play="play "\"${DM_tlt}/words/$fname.mp3\"""
         link1="https://translate.google.com/\#$lgt/$lgs/$q_trad"
         link2="http://glosbe.com/$lgt/$lgs/${q_trad,,}"
+        link3='https://www.google.com/search?q='$q_trad'&amp;tbm=isch'
         
         dlg_form_1 "$file_tmp"
         ret=$(echo "$?")
         
-            if [ ! -f "$DM_tlt/words/$fname.mp3" ]; then
+            if [ ! -f "$DM_tlt/words/$fname.mp3" ] && [ $a != 1 ]; then
             rm -f "$file_tmp" & exit 1; fi
              
             if [[ $ret -eq 0 ]] || [[ $ret -eq 2 ]]; then
@@ -420,11 +295,15 @@ edit() {
                     [ -d "$DT/idadtmptts" ] && rm -fr "$DT/idadtmptts"
                 fi
                 
-                if [ "$trgt_mod" != "$trgt" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
+                if ([ "$trgt_mod" != "$trgt" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]) \
+                || [ ! -z "${audio_mod##+([[:space:]])}" ] ; then
                 
                     fname_mod="$(nmfile "${trgt_mod}")"
+                    if [ -f "$DM_tlt/words/$fname.mp3" ]; then
                     mv -f "$DM_tlt/words/$fname.mp3" "$DM_tlt/words/$fname_mod.mp3"
-                    mv -f "$DM_tlt/words/images/$fname.jpg" "$DM_tlt/words/images/$fname_mod.jpg"
+                    else voice "${trgt_mod}" "$DT_r" "$DM_tlt/words/$fname_mod.mp3"; fi
+                    if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
+                    mv -f "$DM_tlt/words/images/$fname.jpg" "$DM_tlt/words/images/$fname_mod.jpg"; fi
                     temp="$(gettext "Processing")..."
                     tags_1 W "$trgt_mod" "$temp" "$DM_tlt/words/$fname_mod.mp3"
                     index edit "${trgt}" "${tpc}" "${trgt_mod}"
@@ -444,7 +323,6 @@ edit() {
                 
                     impr=$(echo "$infm" | tr '\n' '_')
                     tags_6 W "$impr" "$DM_tlt/words/$fname.mp3"
-                    printf "eitm.$tpc.eitm\n" >> "$DC_s/8.cfg" &
                 fi
 
                 if [ "${tpc}" != "${tpc_mod}" ]; then
@@ -500,7 +378,8 @@ edit() {
                 if [ $a = 1 ]; then trgt="_ _"; fi
                 rm -f "$file_tmp"
                 
-                if [ "$trgt_mod" != "$trgt" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
+                if ([ "$trgt_mod" != "$trgt" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]) \
+                || [ ! -z "${audio_mod##+([[:space:]])}" ]; then
 
                     DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
                     fname_mod="$(nmfile "$trgt_mod")"
@@ -663,15 +542,15 @@ delete_topic() {
     rm -f "$DT/ps_lk" & exit 1
 }
 
+
 rename_topic() {
 
     source "$DS/ifs/mods/add/add.sh"
     info2=$(wc -l < "$DM_tl/.1.cfg")
-    restr="$(ls "$DS/addons/")"
     if grep -Fxo "$tpc" < "$DM_tl/.3.cfg"; then i=1; fi
     jlb="$(clean_2 "${2}")"
     
-    if grep -Fxo "$jlb" <<<"$restr"; then jlb="$jlb."; fi
+    if grep -Fxo "$jlb" < <(ls "$DS/addons/"); then jlb="$jlb."; fi
     chck="$(grep -Fxo "$jlb" "$DM_tl/.1.cfg" | wc -l)"
   
     if [ -f "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "$tpc" ]; then
@@ -728,23 +607,158 @@ rename_topic() {
     fi
 }
 
+
+mark_to_learn_topic() {
+    
+    include "$DS/ifs/mods/mngr"
+    
+    if [ "$tpc" != "$2" ]; then
+    msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
+    
+    if [ "$(wc -l < "$DC_tlt/0.cfg")" -le 10 ]; then
+    msg "$(gettext "Not enough items to perform the operation.")\n " \
+    info "$(gettext "Not enough items")" & exit; fi
+
+    if [ "$3" = 1 ]; then
+    kill -9 $(pgrep -f "yad --multi-progress ") &
+    kill -9 $(pgrep -f "yad --list ") &
+    kill -9 $(pgrep -f "yad --text-info ") &
+    kill -9 $(pgrep -f "yad --form ") &
+    kill -9 $(pgrep -f "yad --notebook ") &
+    fi
+
+    if [ "$(sed '/^$/d' < "$DC_tlt/1.cfg" | wc -l )" -ge 1 ]; then
+        include "$DS/ifs/mods/mngr"
+    
+        dialog_2
+        ret=$(echo $?)
+    
+        if [[ $ret -eq 3 ]]; then
+        
+            rm -f "$DC_tlt/7.cfg"
+            idiomind topic & exit 1
+        fi
+    fi
+
+    stts=$(sed -n 1p "$DC_tlt/8.cfg")
+    calculate_review "$tpc"
+    
+    if [[ $((stts%2)) = 0 ]]; then
+
+        echo 6 > "$DC_tlt/8.cfg"
+            
+    else
+        if [[ "$RM" -ge 50 ]]; then
+        echo 5 > "$DC_tlt/8.cfg"
+        else
+        echo 1 > "$DC_tlt/8.cfg"
+        fi
+    fi
+    
+    rm -f "$DC_tlt/7.cfg"
+    awk '!array_temp[$0]++' < "$DC_tlt/0.cfg" > "$DT/0.cfg.tmp"
+    sed '/^$/d' "$DT/0.cfg.tmp" > "$DC_tlt/0.cfg"
+    rm -f "$DT"/*.tmp
+    rm "$DC_tlt/2.cfg" "$DC_tlt/1.cfg"
+    touch "$DC_tlt/2.cfg"
+    cp -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"
+    echo -e ".lrnt.$tpc.lrnt." >> "$DC_s/8.cfg" &
+    touch "$DC_tlt/5.cfg"
+    "$DS/mngr.sh" mkmn &
+
+    [[ "$3" = 1 ]] && idiomind topic &
+}
+
+
+mark_as_learned_topic() {
+
+    include "$DS/ifs/mods/mngr"
+
+    if [ "$tpc" != "$2" ]; then
+    msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
+
+    if [ "$(wc -l < "$DC_tlt/0.cfg")" -le 10 ]; then
+    msg "$(gettext "Not enough items to perform the operation.")\n " \
+    info "$(gettext "Not enough items")" & exit; fi
+    
+    if [ "$((( $(date +%s) - $(date -d "$(sed -n 8p "$DC_tlt/12.cfg" \
+    | grep -o 'date_c="[^"]*' | grep -o '[^"]*$')" +%s) ) /(24 * 60 * 60 )))" -lt 5 ]; then
+    msg_2 "$(gettext "Are you sure it's not too soon?")\n" \
+    gtk-dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"; fi
+    ret=$(echo $?); if [ $ret = 1 ]; then exit 1; fi
+    
+    if [ $3 = 1 ]; then
+    kill -9 $(pgrep -f "yad --list ") &
+    kill -9 $(pgrep -f "yad --list ") &
+    kill -9 $(pgrep -f "yad --text-info ") &
+    kill -9 $(pgrep -f "yad --form ") &
+    kill -9 $(pgrep -f "yad --notebook ") &
+    fi
+
+    stts=$(sed -n 1p "$DC_tlt/8.cfg")
+
+    if [ ! -f "$DC_tlt/7.cfg" ]; then
+        if [ -f "$DC_tlt/9.cfg" ]; then
+        
+            calculate_review "$tpc"
+            steps=$(sed '/^$/d' < "$DC_tlt/9.cfg" | wc -l)
+            
+            if [[ "$steps" = 4 ]]; then
+            
+                stts=$((stts+1)); fi
+            
+            if [[ "$RM" -ge 50 ]]; then
+            
+                if [[ $steps = 6 ]]; then
+                echo -e "_\n_\n_\n_\n_\n$(date +%m/%d/%Y)" > "$DC_tlt/9.cfg"
+                else
+                echo "$(date +%m/%d/%Y)" >> "$DC_tlt/9.cfg"
+                fi
+            fi
+            
+        else
+            echo "$(date +%m/%d/%Y)" > "$DC_tlt/9.cfg"
+        fi
+        
+        if [ -d "$DC_tlt/practice" ]; then
+        cd "$DC_tlt/practice"; rm .*; rm *
+        touch ./log.1 ./log.2 ./log.3; fi
+        
+        > "$DC_tlt/7.cfg"
+        if [[ $((stts%2)) = 0 ]]; then
+        echo 4 > "$DC_tlt/8.cfg"
+        else
+        echo 3 > "$DC_tlt/8.cfg"
+        fi
+    fi
+    rm "$DC_tlt/2.cfg" "$DC_tlt/1.cfg" "$DC_tlt/lst" 
+    touch "$DC_tlt/1.cfg"
+    cp -f "$DC_tlt/0.cfg" "$DC_tlt/2.cfg"
+    echo -e ".lrdt.$tpc.lrdt." >> "$DC_s/8.cfg" &
+    "$DS/mngr.sh" mkmn &
+
+    [[ $3 = 1 ]] && idiomind topic &
+    exit 1
+}
+
+
 case "$1" in
     mkmn)
     mkmn ;;
-    mark_as_learned)
-    mark_as_learned "$@" ;;
-    mark_to_learn)
-    mark_to_learn "$@" ;;
     delete_item_ok)
     delete_item_ok "$@" ;;
     delete_item)
     delete_item "$@" ;;
-    delete_topic)
-    delete_topic "$@" ;;
     edit)
-    edit "$@" ;;
+    edit_item "$@" ;;
     colorize)
     colorize "$@" ;;
+    delete_topic)
+    delete_topic "$@" ;;
     rename_topic)
     rename_topic "$@" ;;
+    mark_as_learned)
+    mark_as_learned_topic "$@" ;;
+    mark_to_learn)
+    mark_to_learn_topic "$@" ;;
 esac

@@ -21,7 +21,8 @@ score() {
 
     if [[ $(($(< ./e.l)+$1)) -ge $all ]]; then
         play "$drts/all.mp3" &
-        echo "w9.$(tr -s '\n' '|' < ./e.1).w9" >> "$log"
+        echo ".w9.$(tr -s '\n' '|' < ./e.1).w9." >> "$log"
+        echo -e ".okp.1.okp." >> "$log"
         echo "$(date "+%a %d %B")" > e.lock
         echo 21 > .5
         "$strt" 5 &
@@ -40,7 +41,7 @@ score() {
         done
 
         if [[ -f e.3 ]]; then
-        echo "w6.$(tr -s '\n' '|' < ./e.3).w6" >> "$log"; fi
+        echo ".w6.$(tr -s '\n' '|' < ./e.3).w6." >> "$log"; fi
         
         "$strt" 10 "$easy" "$ling" "$hard" & exit 1
     fi
@@ -63,7 +64,7 @@ cuestion() {
     --image="$img" \
     --skip-taskbar --text-align=center --align=center --center --on-top \
     --image-on-top --undecorated --buttons-layout=spread \
-    --width=415 --height=360 --borders=4 \
+    --width=418 --height=365 --borders=6 \
     --button="$(gettext "Exit")":1 \
     --button="    $(gettext "Answer") >>    ":0
 }
@@ -75,7 +76,7 @@ answer() {
     --timeout=20 --selectable-labels \
     --skip-taskbar --text-align=center --align=center --center --on-top \
     --image-on-top --undecorated --buttons-layout=spread \
-    --width=415 --height=360 --borders=4 \
+    --width=418 --height=365 --borders=6 \
     --field="$trgtl   $srcel":lbl \
     --button="  $(gettext "I did not know it")  ":3 \
     --button="  $(gettext "I Knew it")  ":2

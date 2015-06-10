@@ -17,24 +17,20 @@
 #  MA 02110-1301, USA.
 #  
 
-[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
+[[ -z "$DM" ]] && source /usr/share/idiomind/ifs/c.conf
 strt="$DS/practice/strt.sh"
 cls="$DS/practice/cls.sh"
 log="$DC_s/8.cfg"
-DF="$DS/practice/df.sh"
-DLW="$DS/practice/dlw.sh"
-DMC="$DS/practice/dmc.sh"
-DLS="$DS/practice/dls.sh"
-DI="$DS/practice/di.sh"
 cfg3="$DC_tlt/3.cfg"
 cfg4="$DC_tlt/4.cfg"
 cfg1="$DC_tlt/1.cfg"
-cd "$DC_tlt/practice"
+directory="$DC_tlt/practice"
+touch "$directory/log.1" "$directory/log.2" "$directory/log.3"
 
 lock() {
     
     yad --title="$(gettext "Practice Completed")" \
-    --text="<b>$(gettext "Practice Completed")</b>\\n   $(< $1)\n " \
+    --text="<b>$(gettext "Practice Completed")</b>\\n   $(< "$1")\n " \
     --window-icon="$DS/images/icon.png" --on-top --skip-taskbar \
     --center --image="$DS/practice/icons_st/21.png" \
     --width=360 --height=120 --borders=5 \
@@ -44,223 +40,124 @@ lock() {
 
 get_list() {
     
-    > "$1"
-    if [ `wc -l < "${cfg4}"` -gt 0 ]; then
-        while read item; do
-        grep -Fxo "${item}" "${cfg3}" >> "$1"
-        done < "${cfg1}"
-    else
-        cat "${cfg1}" > "$1"
-    fi
-    sed -i '/^$/d' "$1"
-}
-
-get_list_images() {
-
-    > "$DT/images"
-    if [ `wc -l < "${cfg4}"` -gt 0 ]; then
-        while read item; do
-        grep -Fxo "${item}" "${cfg3}" >> "$DT/images"
-        done < "${cfg1}"
-    else
-        cat "${cfg1}" > "$DT/images"
-    fi
-    sed -i '/^$/d' "$DT/images"
-    > "$1"
+    if [[ $ttest = a ]] || [[ $ttest = b ]] || [[ $ttest = c ]]; then
     
-    while read itm; do
-        fname="$(echo -n "$itm" | md5sum | rev | cut -c 4- | rev)"
-        if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
-        echo "$itm" >> "$1"; fi
-    done < "$DT/images"
-    [ -f "$DT/images" ] && rm -f "$DT/images"
-}
+        > "$directory/${ttest}.0"
+        if [[ `wc -l < "${cfg4}"` -gt 0 ]]; then
 
-get_list_mchoice() {
-
-    (
-    echo "5"
-    while read word; do
-        fname="$(echo -n "$word" | md5sum | rev | cut -c 4- | rev)"
-        file="$DM_tlt/words/$fname.mp3"
-        echo "$(eyeD3 "$file" | grep -o -P "(?<=IWI2I0I).*(?=IWI2I0I)")" >> b.srces
-    done < ./b.0
-    ) | yad --progress \
-    --width 50 --height 35 --undecorated \
-    --pulsate --auto-close \
-    --skip-taskbar --center --no-buttons
-}
-
-get_list_sentences() {
+            grep -Fvx -f "${cfg4}" "${cfg1}" > "$DT/${ttest}.0"
+            tac "$DT/${ttest}.0" |sed '/^$/d' > "$directory/${ttest}.0"
+            rm -f "$DT/${ttest}.0"
+        else
+            tac "${cfg1}" |sed '/^$/d' > "$directory/${ttest}.0"
+        fi
+        
+        if [[ $ttest = b ]]; then
+        
+            if [ ! -f "$directory/b.srces" ]; then
+            (
+            echo "5"
+            while read word; do
+            fname="$(echo -n "$word" | md5sum | rev | cut -c 4- | rev)"
+            file="$DM_tlt/words/$fname.mp3"
+            echo "$(eyeD3 "$file" | grep -o -P "(?<=IWI2I0I).*(?=IWI2I0I)")" >> "$directory/b.srces"
+            done < "$directory/${ttest}.0"
+            ) | yad --progress \
+            --width 50 --height 35 --undecorated \
+            --pulsate --auto-close \
+            --skip-taskbar --center --no-buttons
+            fi
+        fi
     
-    if [ `wc -l < "${cfg3}"` -gt 0 ]; then
-        grep -Fxvf "${cfg3}" "${cfg1}" > "$DT/slist"
-        tac "$DT/slist" > "$1"
-        rm -f "$DT/slist"
-    else
-        tac "${cfg1}" > "$1"
+    elif [[ $ttest = d ]]; then
+    
+        if [[ `wc -l < "${cfg3}"` -gt 0 ]]; then
+            grep -Fxvf "${cfg3}" "${cfg1}" > "$DT/slist"
+            tac "$DT/slist" |sed '/^$/d' > "$directory/${ttest}.0"
+            rm -f "$DT/slist"
+        else
+            tac "${cfg1}" |sed '/^$/d' > "$directory/${ttest}.0"
+        fi
+    
+    elif [[ $ttest = e ]]; then
+    
+        > "$DT/images"
+        if [[ `wc -l < "${cfg4}"` -gt 0 ]]; then
+        
+            grep -Fxvf "${cfg4}" "${cfg1}" > "$DT/images"
+        else
+            tac "${cfg1}" > "$DT/images"
+        fi
+
+        > "$directory/${ttest}.0"
+        while read itm; do
+            fname="$(echo -n "$itm" | md5sum | rev | cut -c 4- | rev)"
+            if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
+            echo "$itm" >> "$directory/${ttest}.0"; fi
+        done < "$DT/images"
+        
+        sed -i '/^$/d' "$directory/${ttest}.0"
+        [ -f "$DT/images" ] && rm -f "$DT/images"
+    
     fi
 }
 
 starting() {
     
-    yad --title=$(gettext "Practice ") \
-    --text="$1" --image=info \
+    yad --title="$1" \
+    --text=" $1.\n" --image=info \
     --window-icon="$DS/images/icon.png" --skip-taskbar --center --on-top \
     --width=360 --height=120 --borders=5 \
     --button=Ok:1
-    
     "$strt" & exit 1
 }
 
-flashcards() {
+practice() {
 
     cd "$DC_tlt/practice"
+    ttest="${1}"
+
+    if [ -f "$directory/${ttest}.lock" ]; then
     
-    if [[ -f ./a.lock ]]; then
-        lock ./"a.lock"
+        lock  "$directory/${ttest}.lock"
         ret=$(echo "$?")
         if [[ $ret -eq 0 ]]; then
-        "$cls" restart a & exit
+        "$cls" restart ${ttest} & exit
         else
         "$strt" & exit
         fi
     fi
 
-    if [[ -f ./a.0 ]] && [[ -f ./a.1 ]]; then
-        echo "w9.$(tr -s '\n' '|' < ./a.1).w9" >> "$log"
-        grep -Fxvf ./a.1 ./a.0 > ./a.tmp
-        echo " practice --restarting session"
-    else
-        get_list ./a.0 && cp -f ./a.0 ./a.tmp
-        [[ `wc -l < ./a.0` -lt 5 ]] && starting "$(gettext "Not enough words to start.")"
-        echo " practice --new session"
-    fi
-    [ ./a.2 ] && rm ./a.2;  [ ./a.3 ] && rm ./a.3
-    "$DF"
-}
-
-multiple_choise() {
-
-    cd "$DC_tlt/practice"
+    if [ -f "$directory/${ttest}.0" ] && [ -f "$directory/${ttest}.1" ]; then
     
-    if [[ -f ./b.lock ]]; then
-        lock ./"b.lock"
-        ret=$(echo "$?")
-        if [[ $ret -eq 0 ]]; then
-        "$cls" restart b & exit
-        else
-        "$strt" & exit
-        fi
-    fi
-
-    if [[ -f ./b.0 ]] && [[ -f ./b.tmp ]]; then
-        echo "w9.$(tr -s '\n' '|' < ./b.tmp).w9" >> "$log"
-        grep -Fxvf ./b.tmp ./b.0 > ./b.tmp
+        echo "w9.$(tr -s '\n' '|' < "$directory/${ttest}.1").w9" >> "$log"
+        grep -Fxvf  "$directory/${ttest}.1" "$directory/${ttest}.0" > "$directory/${ttest}.tmp"
         echo " practice --restarting session"
         
     else
-        get_list ./b.0 && cp -f ./b.0 ./b.tmp
-        if [[ ! -f ./b.srces ]]; then
-            get_list_mchoice; fi
-        [[ `wc -l < ./b.0` -lt 4 ]] && starting "$(gettext "Not enough words to start.")"
-         echo " practice --new session"
-    fi
-    [ ./b.2 ] && rm ./b.2;  [ ./b.3 ] && rm ./b.3
-    "$DMC"
-}
-
-listen_words() {
-
-    cd "$DC_tlt/practice"
-    
-    if [[ -f ./c.lock ]]; then
-        lock ./"c.lock"
-        ret=$(echo "$?")
-        if [[ $ret -eq 0 ]]; then
-        "$cls" restart c & exit
-        else
-        "$strt" & exit
-        fi
-    fi
-
-    if [[ -f ./c.0 ]] && [[ -f ./c.1 ]]; then
-        echo "w9.$(tr -s '\n' '|' < c.1).w9" >> "$log"
-        grep -Fxvf ./c.1 ./c.0 > c.tmp
-        echo " practice --restarting session"
-    else
-        get_list ./c.0 && cp -f ./c.0 ./c.tmp
-        [[ `wc -l < ./c.0` -lt 4 ]] && starting "$(gettext "Not enough words to start.")"
-        echo " practice --new session"
-    fi
-    [ ./c.2 ] && rm ./c.2;  [ ./c.3 ] && rm ./c.3
-    "$DLW"
-}
-
-listen_sentences() {
-
-    cd "$DC_tlt/practice"
-    
-    if [[ -f ./d.lock ]]; then
-        lock ./"d.lock"
-        ret=$(echo "$?")
-        if [[ $ret -eq 0 ]]; then
-        "$cls" restart d & exit
-        else
-        "$strt" & exit
-        fi
-    fi
-
-    if [[ -f ./d.0 ]] && [[ -f ./d.1 ]]; then
-        grep -Fxvf ./d.1 ./d.0 > d.tmp
-        echo " practice --restarting session"
-    else
-        get_list_sentences ./d.0 && cp -f ./d.0 ./d.tmp
-        [[ `wc -l < ./d.0` -lt 1 ]] && starting "$(gettext "Not enough sentences to start.")"
-        echo " practice --new session"
-    fi
-    [ ./d.2 ] && rm ./d.2;  [ ./d.3 ] && rm ./d.3
-    "$DLS"
-}
-
-images() {
-
-    cd "$DC_tlt/practice"
-    
-    if [[ -f ./e.lock ]]; then
-        lock ./"e.lock"
-        ret=$(echo "$?")
-        if [[ $ret -eq 0 ]]; then
-        "$cls" restart e & exit
-        else
-        "$strt" & exit
-        fi
-    fi
-
-    if [[ -f ./e.0 ]] && [[ -f ./e.1 ]]; then
-        echo "w9.$(tr -s '\n' '|' < ./e.1).w9" >> "$log"
-        grep -Fxvf ./e.1 ./e.0 > ./e.tmp
-        echo " practice --restarting session"
-    else
+        get_list
+        cp -f "$directory/${ttest}.0" "$directory/${ttest}.tmp"
         
-        get_list_images ./e.0 && cp -f ./e.0 ./e.tmp
-        [[ `wc -l < ./e.0` -lt 3 ]] && starting "$(gettext "Not enough images to start.")"
+        [[ `wc -l < "$directory/${ttest}.0"` -lt 2 ]] && \
+        starting "$(gettext "Not enough words to start")"
         echo " practice --new session"
     fi
-    [ ./e.2 ] && rm ./e.2;  [ ./e.3 ] && rm ./e.3
-    "$DI"
+    
+    [ "$directory/${ttest}.2" ] && rm "$directory/${ttest}.2"
+    [ "$directory/${ttest}.3" ] && rm "$directory/${ttest}.3"
+    "$DS/practice/p_$ttest.sh"
 }
 
 case "$1" in
     1)
-    flashcards ;;
+    practice a ;;
     2)
-    multiple_choise ;;
+    practice b ;;
     3)
-    listen_words ;;
+    practice c ;;
     4)
-    listen_sentences ;;
+    practice d ;;
     5)
-    images ;;
+    practice e ;;
 esac
 

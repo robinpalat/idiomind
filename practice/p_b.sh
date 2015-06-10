@@ -22,7 +22,8 @@ score() {
 
     if [[ $(($(< ./b.l)+$1)) -ge $all ]]; then
         play "$drts/all.mp3" &
-        echo "w9.$(tr -s '\n' '|' < ./b.1).w9" >> "$log"
+        echo ".w9.$(tr -s '\n' '|' < ./b.1).w9." >> "$log"
+        echo -e ".okp.1.okp." >> "$log"
         echo "$(date "+%a %d %B")" > b.lock
         echo 21 > .2
         "$strt" 2 &
@@ -41,7 +42,7 @@ score() {
         done
 
         if [[ -f b.3 ]]; then
-        echo "w6.$(tr -s '\n' '|' < ./b.3).w6" >> "$log"; fi
+        echo ".w6.$(tr -s '\n' '|' < ./b.3).w6." >> "$log"; fi
         
         "$strt" 7 $easy $ling $hard & exit 1
     fi
@@ -62,7 +63,7 @@ fonts() {
 
 ofonts() {
     while read item; do
-        echo "<big>$item</big>"
+        echo " <big> $item </big> "
     done < ./srce.tmp
     }
 
@@ -71,11 +72,11 @@ mchoise() {
     
     dlg=$(ofonts | yad --list --title="$(gettext "Practice")" \
     --text="$cuestion" \
-    --timeout=15 --selectable-labels \
+    --separator=" " --timeout=15 --selectable-labels \
     --skip-taskbar --text-align=center --center --on-top \
     --buttons-layout=edge --undecorated \
     --no-headers \
-    --width=410 --height=350 --borders=6 \
+    --width=410 --height=350 --borders=8 \
     --column=Option \
     --button="$(gettext "Exit")":1 \
     --button="$(gettext "OK")":0)
@@ -86,10 +87,11 @@ while read trgt; do
     fonts "$trgt"
     mchoise "$trgt"
     ret=$(echo "$?")
-    
+
     if [[ $ret = 0 ]]; then
-    
-        if echo "$dlg" | grep "$wes"; then
+
+        if grep -o "$wes" <<<"$dlg"; then
+
             echo "$trgt" >> b.1
             easy=$((easy+1))
             

@@ -106,13 +106,14 @@ if [[ $ret -eq 0 ]]; then
     msg " $(gettext "You must choose a practice.")\n" info
     "$DSP/strt.sh" & exit 1
     else
-    printf "prct.shc.$tpc.prct.shc\n" >> "$DC_s/8.cfg" &
+    echo -e ".prct.$tpc.prct." >> "$DC_s/8.cfg" &
     "$DSP/prct.sh" "$VAR" & exit 1
     fi
 
 elif [[ $ret -eq 3 ]]; then
     if [ -d "$DC_tlt/practice" ]; then
-    cd "$DC_tlt/practice"; rm .*; rm *; fi
+    cd "$DC_tlt/practice"; rm .*; rm *
+    touch ./log.1 ./log.2 ./log.3; fi
     "$DS/practice/strt.sh" & exit
 else
     cd "$DC_tlt/practice"

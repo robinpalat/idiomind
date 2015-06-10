@@ -269,7 +269,7 @@ new_sentence() {
     fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
     
     [ "$DT_r" ] && rm -fr "$DT_r"
-    printf "aitm.1.aitm\n" >> "$DC_s/8.cfg"
+    echo -e ".adi.1.adi." >> "$DC_s/8.cfg"
     exit 1
 }
 
@@ -283,7 +283,7 @@ new_word() {
     DC_tlt="$DM_tl/${tpe}/.conf"
     source "$DS/default/dicts/$lgt"
     
-    if [ "$(wc -l < "$DC_tlt/0.cfg")" -ge 200 ]; then
+    if [[ `wc -l < "$DC_tlt/0.cfg"` -ge 200 ]] && [[ "$5" != 0 ]]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
     msg "$(gettext "Maximum number of notes has been exceeded for this topic. Max allowed (200)")" info " " & exit 1; fi
     
@@ -324,6 +324,7 @@ new_word() {
         msg "$(gettext "You need to fill text fields.")\n" info & exit 1; fi
         
         fname="$(nmfile "${trgt^}")"
+        audio="${trgt,,}"
         
         if [ -f "$DT_r/audtm.mp3" ]; then
         
@@ -357,9 +358,9 @@ new_word() {
         tags_1 W "${trgt}" "${srce}" "$DM_tlt/words/$fname.mp3"
         nt="$(tr '\n' '_' <<<"_$(check_grammar_2 "${trgt}")")"
         eyeD3 -A IWI3I0I"$nt"IWI3I0I "$DM_tlt/words/$fname.mp3"
-        notify-send "${trgt}" "${srce}\\n(${tpe})" -t 5000
+        [[ "$5" != 0 ]] && notify-send "${trgt}" "${srce}\\n(${tpe})" -t 5000
         index word "${trgt}" "${tpe}"
-        printf "aitm.1.aitm\n" >> "$DC_s/8.cfg"
+        printf ".adi.1.adi." >> "$DC_s/8.cfg"
     
     else
         [ -f "$DM_tlt/words/$fname.mp3" ] && rm "$DM_tlt/words/$fname.mp3"
@@ -448,7 +449,7 @@ list_words_edit() {
             let n++
         done
 
-        printf "aitm.$lns.aitm\n" >> "$DC_s/8.cfg"
+        printf ".adi.$lns.adi." >> "$DC_s/8.cfg"
 
         if [ -f "$DT_r/logw" ]; then
         sleep 1
@@ -536,7 +537,7 @@ list_words_sentence() {
         let n++
     done
 
-    printf "aitm.$lns.aitm\n" >> "$DC_s/8.cfg" &
+    printf ".adi.$lns.adi." >> "$DC_s/8.cfg" &
 
     if [ -f "$DT_r/logw" ]; then
     sleep 1
@@ -665,7 +666,8 @@ process() {
         | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. //g' \
         | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
         | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
-        | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' > ./sntsls_
+        | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' \
+        | sed 's/__/\n/g' > ./sntsls_
         ) | dlg_progress_1
 
     elif [ "$2" = "image" ]; then
@@ -699,7 +701,8 @@ process() {
         | sed 's/\&quot;/\"/g' | sed "s/\&#039;/\'/g" \
         | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
         | sed 's/ *<[^>]\+> */ /; s/[<>£§]//; s/\&amp;/\&/g' \
-        | sed 's/,/\n/g' | sed 's/。/\n/g' > ./sntsls_
+        | sed 's/,/\n/g' | sed 's/。/\n/g' \
+        | sed 's/__/\n/g' > ./sntsls_
         else
         echo "${conten}" \
         | sed 's/\[ \.\.\. \]//g' \
@@ -712,7 +715,8 @@ process() {
         | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. //g' \
         | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
         | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
-        | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' > ./sntsls_
+        | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' \
+        | sed 's/__/\n/g' > ./sntsls_
         fi
         ) | dlg_progress_1
     fi
@@ -992,7 +996,7 @@ process() {
                 if [[ $adds -ge 1 ]]; then
                     notify-send -i idiomind "${tpe}" \
                     "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
-                    printf "aitm.$adds.aitm\n" >> "$DC_s/8.cfg"
+                    printf ".adi.$adds.adi." >> "$DC_s/8.cfg"
                 fi
                 
                 if [ "$(cat ./slog ./wlog | wc -l)" -ge 1 ]; then
