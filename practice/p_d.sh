@@ -5,7 +5,7 @@ drts="$DS/practice"
 strt="$drts/strt.sh"
 cd "${DC_tlt}/practice"
 all=$(wc -l < ./d.0)
-hits="$(gettext "Hits")"
+hits="$(gettext "hits")"
 listen="Listen"
 easy=0
 hard=0
@@ -46,12 +46,15 @@ score() {
 }
 
 dialog2() {
-    
-    hint="$(echo "$@" | tr -s "'" ' '|awk '{print tolower($0)}' \
-    |sed 's/\b\(.\)/\u\1/g'|tr -s ',' ' ' \
-    |sed 's|\.||;s|\,||;s|\;||g'|sed 's|[a-z]|\.|g'|sed 's| |\t|g' \
-    |sed 's|\.|\ .|g' | tr "[:upper:]" "[:lower:]"|sed 's/^\s*./\U&\E/g')"
-    text="<span font_desc='Free Sans Bold 12' color='#717171'>$hint</span>\n"
+
+    hint="$(echo "$@" | tr -d "',.;?!¿¡()" | tr -d '"' \
+    | awk '{print tolower($0)}' \
+    |sed 's/\b\(.\)/\u\1/g' | sed 's/ /         /g' \
+    |sed 's|[a-z]|\.|g' \
+    |sed 's|\.|\ .|g' \
+    | tr "[:upper:]" "[:lower:]" \
+    |sed 's/^\s*./\U&\E/g')"
+    text="<span font_desc='Free Sans Bold $sz' color='#717171'>$hint</span>\n"
     
     entry=$(>/dev/null | yad --text-info --title="$(gettext "Practice")" \
     --text="$text\n" \
@@ -61,7 +64,7 @@ dialog2() {
     --window-icon="$DS/images/icon.png" --image="$DS/practice/bar.png" \
     --buttons-layout=end --skip-taskbar --undecorated --center --on-top \
     --text-align=left --align=left --image-on-top \
-    --height=220 --width=560 --borders=8 \
+    --width=580 --height=230 --borders=8 \
     --button="$(gettext "Exit")":1 \
     --button="$(gettext "Listen")":"$cmd_play" \
     --button=" $(gettext "Check") >> ":0)
@@ -69,6 +72,7 @@ dialog2() {
     
 check() {
     
+    sz=$((sz+3))
     yad --form --title="$(gettext "Practice")" \
     --name=Idiomind --class=Idiomind \
     --image="/usr/share/idiomind/practice/bar.png" $aut \
@@ -76,16 +80,17 @@ check() {
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --wrap --scroll --image-on-top --center --on-top \
     --undecorated --buttons-layout=end \
-    --width=560 --height=260 --borders=12 \
+    --width=580 --height=260 --borders=12 \
     --button="$(gettext "Listen")":"$cmd_play" \
     --button="$(gettext "Next")":2 \
-    --field="":lbl --text="<span font_desc='Free Sans 14'>${wes}</span>\\n" \
-    --field="<span font_desc='Free Sans 12'>$OK\n\n$hits $prc</span>\n":lbl
+    --field="":lbl --text="<span font_desc='Free Sans $sz'>${wes}</span>\\n" \
+    --field="<span font_desc='Free Sans 11'>$OK\n\n$prc $hits</span>\n":lbl
     }
     
 get_text() {
     
     trgt=$(echo "${1}" | sed 's/^ *//; s/ *$//')
+    sz=`[ ${#trgt} -le 80 ] && echo 12; [ ${#trgt} -gt 80 ] && echo 11`
     chk=`echo "${trgt}" | awk '{print tolower($0)}'`
     }
 
@@ -95,7 +100,7 @@ result() {
     sed 's/ /\n/g' \
     | sed 's/,//;s/\!//;s/\?//;s/¿//;s/\¡//;s/(//;s/)//;s/"//g' \
     | sed 's/\-//;s/\[//;s/\]//;s/\.//;s/\://;s/\|//;s/)//;s/"//g' \
-    | tr -d '“' | tr -d '”' | tr -d '&' | tr -d ':' | tr -d '!'
+    | tr -d '“”&:!'
     }
     if [[ `wc -w <<<"$chk"` -gt 6 ]]; then
     out=`awk '{print tolower($0)}' <<<"${entry}" | clean | grep -v '^.$'`
@@ -105,7 +110,7 @@ result() {
     in=`awk '{print tolower($0)}' <<<"${chk}" | clean`
     fi
     
-    echo "${chk}" > chk.tmp
+    echo "${chk}" > ./chk.tmp
     while read -r line; do
     
         if grep -Fxq "${line}" <<<"$in"; then

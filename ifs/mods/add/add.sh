@@ -61,21 +61,26 @@ function index() {
         sed -i "s/${item}/${item_mod}/" "$DC_tlt/.11.cfg"
         
         sust(){
-            for inx in "${@}"; do
-                if grep -Fxo "${item}" "$inx"; then
-                sed -i "s/${item}/${item_mod}/" "$inx"
-                fi
-            done
+            if grep -Fxo "${item}" "${1}"; then
+            sed -i "s/${item}/${item_mod}/" "${1}"
+            fi
         }
         
-        sust "$DC_tlt/0.cfg" \
-        "$DC_tlt/1.cfg" "$DC_tlt/2.cfg" \
-        "$DC_tlt/3.cfg" "$DC_tlt/4.cfg" \
-        "$DC_tlt/practice/lsin" \
-        "$DC_tlt/practice/fin" "$DC_tlt/practice/mcin" \
-        "$DC_tlt/practice/win" "$DC_tlt/practice/iin" \
-        "$DC_tlt/6.cfg"
-        
+        n=0
+        while [ $n -le 6 ]; do
+            sust "${DC_tlt}/$n.cfg"
+            let n++
+        done
+
+        if [ -d "${DC_tlt}/practice" ]; then
+            cd "${DC_tlt}/practice"
+            while read file_pr; do
+                sust "${file_pr}"
+            done < <(ls ./*)
+            rm ./*.tmp
+            cd /
+        fi
+
     elif [[ "$1" = txt_missing ]]; then
     
         echo "${item}" >> "$DC_tlt/0.cfg"
@@ -133,10 +138,10 @@ function check_grammar_2() {
 function clean_0() {
     
     echo "$1" | sed ':a;N;$!ba;s/\n/ /g' \
-    | sed 's/&//;s/://;s/\.//g' | sed "s/’/'/;s/|//g" \
+    | sed 's/&//;s/://;s/\.//g' | sed "s/’/'/g" \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \
-    | tr -s '“' ' ' | tr -s '”' ' ' | tr -s '"' ' ' \
+    | tr -s '“”|"' ' ' \
     | sed 's/<[^>]*>//g'
 }
 
@@ -144,17 +149,15 @@ function clean_1() {
     
     if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
     echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" | sed "s|/||g" \
-    | tr -s '“' ' ' | tr -s '”' ' ' | tr -s '"' ' ' \
-    | tr -s '&' ' ' | tr -s ':' ' ' | tr -s '|' ' ' \
+    | tr -s '“”"&:|' ' ' \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
-    | sed 's/^ *//; s/ *$//g' | sed 's/–//g' | sed 's/<[^>]*>//g'
+    | sed 's/^ *//; s/ *$//g' | sed 's/ — /__/g' | sed 's/<[^>]*>//g'
     else
     echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" \
-    | tr -s '“' ' ' | tr -s '”' ' ' | tr -s '"' ' ' \
-    | tr -s '&' ' ' | tr -s ':' ' ' | tr -s '|' ' ' \
+    | tr -s '“”"&:|' ' ' \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \
-    | sed 's/–//g' | sed "s|/||g" | sed 's/<[^>]*>//g'
+    | sed 's/ — /__/g' | sed "s|/||g" | sed 's/<[^>]*>//g'
     fi
 }
 
@@ -176,7 +179,7 @@ function clean_3() {
     echo "${vrbl}" | sed 's/ /\n/g' | grep -v '^.$' \
     | grep -v '^..$' | sed -n 1,50p | sed s'/&//'g \
     | sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' | sed "s|/||g" \
-    | tr -d ')' | tr -d '(' | sed 's/\]//;s/\[//g' | sed 's/<[^>]*>//g' \
+    | tr -d ')(' | sed 's/\]//;s/\[//g' | sed 's/<[^>]*>//g' \
     | sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //;s/"//g' > "$aw"
 }
 
