@@ -66,6 +66,9 @@ conditions() {
     if [ ! -d "$DM_tl/Podcasts/cache" ]; then
     mkdir -p "DM_tl/Podcasts/.conf"
     mkdir -p "DM_tl/Podcasts/cache"; fi
+    [ ! -f "$DCP/old.lst" ] && touch "$DCP/old.lst"
+    [ ! -f "$DCP/1.lst" ] && touch "$DCP/1.lst"
+    [ ! -f "$DCP/2.lst" ] && touch "$DCP/2.lst"
 
     nps="$(sed '/^$/d' "$DCP/feeds.lst" | wc -l)"
     if [[ "$nps" -le 0 ]]; then
@@ -229,7 +232,7 @@ fetch_podcasts() {
                     || [ -z "$title" ]; then
                     continue; fi
                          
-                    if ! grep -Fxo "${title}" < <(cat "$DCP/1.lst" "$DCP/2.lst" "$DCP/remove"); then
+                    if ! grep -Fxo "${title}" < <(cat "$DCP/1.lst" "$DCP/2.lst" "$DCP/old.lst"); then
                     
                         enclosure_url=$(curl -s -I -L -w %"{url_effective}" \
                         --url "$enclosure" | tail -n 1)
@@ -270,24 +273,34 @@ fetch_podcasts() {
 
 removes() {
     
-    set e
     check_index1 "$DCP/1.lst"
     if grep '^$' "$DCP/1.lst"; then
     sed -i '/^$/d' "$DCP/1.lst"; fi
-    echo "$(tail -n+51 < "$DCP/1.lst")" >> "$DCP/remove"
-    echo "$(head -n 50 < "$DCP/1.lst")" > "$DCP/kept"
+    echo "$(tail -n+51 < "$DCP/1.lst")" |sed '/^$/d' >> "$DCP/old.lst"
+    echo "$(head -n 50 < "$DCP/1.lst")" |sed '/^$/d' > "$DCP/kept"
 
     while read item; do
         if ! grep -Fxo "$item" "$DCP/2.lst"; then
         fname=$(nmfile "$item")
         find "$DMC" -type f -name "$fname.*" -exec rm {} +
         fi
-    done < "$DCP/remove"
+    done < "$DCP/old.lst"
+
+    while read k_item; do
+    
+       echo "$(nmfile "${k_item}")" >> "$DT/nmfile"
+    done < <(cat "$DCP/1.lst" "$DCP/2.lst")
+    
+    while read r_item; do
+    
+       r_file=`basename "$r_item" |sed "s/\(.*\).\{4\}/\1/" |tr -d '.'`
+       if ! grep -Fox "${r_file}" "$DT/nmfile"; then
+       [ -f "$DMC/$r_item" ] && rm "$DMC/$r_item"; fi
+    done < <(cd "$DMC"; find . -type f)
     
     while read item; do
     
        fname="$(nmfile "${item}")"
-       echo "$fname" >> "$DT/nmfile"
         [ ! -f "$DMC/$fname.png" ] && cp "$dfimg" "$DMC/$fname.png"
         if [ -f "$DMC/$fname.mp3" ] || [ -f "$DMC/$fname.ogg" ] \
         || [ -f "$DMC/$fname.mp4" ] || [ -f "$DMC/$fname.m4v" ] \
@@ -304,18 +317,6 @@ removes() {
         find "$DMC" -name "$fname".* -exec rm {} \;
         fi
     done < "$DCP/kept"
-    
-    while read k_item; do
-    
-       echo "$(nmfile "${k_item}")" >> "$DT/nmfile"
-    done < "$DCP/2.lst"
-    
-    while read r_item; do
-    
-       r_file=`basename "$r_item" |sed "s/\(.*\).\{4\}/\1/" |tr -d '.'`
-       if ! grep -Fox "${r_file}" "$DT/nmfile"; then
-       [ -f "$DMC/$r_item" ] && rm "$DMC/$r_item"; fi
-    done < <(cd "$DMC"; find . -type f)
 
     mv -f "$DCP/kept" "$DCP/1.lst"
     check_index1 "$DCP/1.lst" "$DCP/2.lst"
@@ -323,8 +324,8 @@ removes() {
     sed -i '/^$/d' "$DCP/1.lst"; fi
     if grep '^$' "$DCP/2.lst"; then
     sed -i '/^$/d' "$DCP/2.lst"; fi
-    echo "$(head -n 1000 < "$DCP/remove")" > "$DCP/remove_"
-    mv -f "$DCP/remove_" "$DCP/remove"
+    echo "$(head -n 1000 < "$DCP/old.lst")" > "$DCP/old_.lst"
+    mv -f "$DCP/old_.lst" "$DCP/old.lst"
     cp -f "$DCP/1.lst" "$DCP/.11.cfg"
     rm "$DT/nmfile"
 }

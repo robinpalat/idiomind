@@ -61,7 +61,7 @@ dialog2() {
     --name=Idiomind --class=Idiomind \
     --fontname="Free Sans 14" --fore=4A4A4A --justify=fill \
     --margins=5 --editable --wrap \
-    --window-icon="$DS/images/icon.png" --image="$DS/practice/bar.png" \
+    --window-icon="$DS/images/icon.png" --image="$DS/practice/images/bar.png" \
     --buttons-layout=end --skip-taskbar --undecorated --center --on-top \
     --text-align=left --align=left --image-on-top \
     --width=580 --height=230 --borders=8 \

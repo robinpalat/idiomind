@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-[[ -z "$DM" ]] && source /usr/share/idiomind/ifs/c.conf
+[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 DMC="$DM_tl/Podcasts/cache"
 DCP="$DM_tl/Podcasts/.conf/"
@@ -12,7 +12,7 @@ if [[ "$1" = new_item ]]; then
     DMC="$DM_tl/Podcasts/cache"
     DCP="$DM_tl/Podcasts/.conf"
     fname="$(nmfile "${item}")"
-    if [[ -s "$DCP/2.lst" ]]; then
+    if [ -s "$DCP/2.lst" ]; then
     sed -i -e "1i$item\\" "$DCP/2.lst"
     else
     echo "$item" > "$DCP/2.lst"; fi
@@ -23,10 +23,10 @@ if [[ "$1" = new_item ]]; then
 elif [[ "$1" = sv_as ]]; then
 
     fname=$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)
-    [[ -f "$DMC/$fname.mp3" ]] && file="$DMC/$fname.mp3"
-    [[ -f "$DMC/$fname.ogg" ]] && file="$DMC/$fname.ogg"
-    [[ -f "$DMC/$fname.m4v" ]] && file="$DMC/$fname.m4v"
-    [[ -f "$DMC/$fname.mp4" ]] && file="$DMC/$fname.mp4"
+    [ -f "$DMC/$fname.mp3" ] && file="$DMC/$fname.mp3"
+    [ -f "$DMC/$fname.ogg" ] && file="$DMC/$fname.ogg"
+    [ -f "$DMC/$fname.m4v" ] && file="$DMC/$fname.m4v"
+    [ -f "$DMC/$fname.mp4" ] && file="$DMC/$fname.mp4"
     cd "$HOME"
     sv=$(yad --file --save --title="$(gettext "Save as")" \
     --filename="$item${file: -4}" \
@@ -52,15 +52,15 @@ elif [[ "$1" = delete_item ]]; then
     
         if [[ $ret -eq 0 ]]; then
             
-            [[ "$DMC/$fname.mp3" ]] && rm "$DMC/$fname.mp3"
-            [[ "$DMC/$fname.ogg" ]] && rm "$DMC/$fname.ogg"
-            [[ "$DMC/$fname.mp4" ]] && rm "$DMC/$fname.mp4"
-            [[ "$DMC/$fname.m4v" ]] && rm "$DMC/$fname.m4v"
-            [[ "$DMC/$fname.flv" ]] && rm "$DMC/$fname.flv"
-            [[ "$DMC/$fname.jpg" ]] && rm "$DMC/$fname.jpg"
-            [[ "$DMC/$fname.png" ]] && rm "$DMC/$fname.png"
-            [[ "$DMC/$fname.html" ]] && rm "$DMC/$fname.html"
-            [[ "$DMC/$fname.item" ]] && rm "$DMC/$fname.item"
+            [ -f "$DMC/$fname.mp3" ] && rm "$DMC/$fname.mp3"
+            [ -f "$DMC/$fname.ogg" ] && rm "$DMC/$fname.ogg"
+            [ -f "$DMC/$fname.mp4" ] && rm "$DMC/$fname.mp4"
+            [ -f "$DMC/$fname.m4v" ] && rm "$DMC/$fname.m4v"
+            [ -f "$DMC/$fname.flv" ] && rm "$DMC/$fname.flv"
+            [ -f "$DMC/$fname.jpg" ] && rm "$DMC/$fname.jpg"
+            [ -f "$DMC/$fname.png" ] && rm "$DMC/$fname.png"
+            [ -f "$DMC/$fname.html" ] && rm "$DMC/$fname.html"
+            [ -f "$DMC/$fname.item" ] && rm "$DMC/$fname.item"
             cd "$DCP"
             grep -vxF "$item" "$DCP/.22.cfg" > "$DCP/.22.cfg.tmp"
             sed '/^$/d' "$DCP/.22.cfg.tmp" > "$DCP/.22.cfg"
