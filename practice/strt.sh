@@ -76,11 +76,11 @@ if [[ -n "$1" ]]; then
     fi
 fi
 
-img1="$DSP/icons_st/`< ./.1`.png"
-img2="$DSP/icons_st/`< ./.2`.png"
-img3="$DSP/icons_st/`< ./.3`.png"
-img4="$DSP/icons_st/`< ./.4`.png"
-img5="$DSP/icons_st/`< ./.5`.png"
+img1="$DSP/images/`< ./.1`.png"
+img2="$DSP/images/`< ./.2`.png"
+img3="$DSP/images/`< ./.3`.png"
+img4="$DSP/images/`< ./.4`.png"
+img5="$DSP/images/`< ./.5`.png"
 
 VAR="$(yad --list --title="$(gettext "Practice ")- $tpc" \
 $img --text="$info" \

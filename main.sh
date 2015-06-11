@@ -473,6 +473,12 @@ autostart() {
     exit 0
 }
 
+add() {
+
+    dir=$(mktemp -d "$DT/XXXXXX")
+    "$DS/add.sh" new_items "$dir" 2 "${2}" & exit
+}
+
 case "$1" in
     topic)
     topic ;;
@@ -482,6 +488,8 @@ case "$1" in
     session;;
     autostart)
     autostart;;
+    add)
+    add "$@" ;;
     *)
     panel;;
 esac

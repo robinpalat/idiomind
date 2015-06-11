@@ -53,7 +53,7 @@ fonts() {
     fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
     src=$(eyeD3 "$drtt/$fname.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
     img="$drtt/images/$fname.jpg"
-    [ ! -f "$img" ] && img="$DS/practice/img_2.jpg"
+    [ ! -f "$img" ] && img="$DS/practice/images/img_2.jpg"
     srcel="<span font_desc='Free Sans 10'><i>($src)</i></span>"
     trgtl="<span font_desc='Free Sans 15'><b>$1</b></span>"
 }

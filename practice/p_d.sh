@@ -75,7 +75,7 @@ check() {
     sz=$((sz+3))
     yad --form --title="$(gettext "Practice")" \
     --name=Idiomind --class=Idiomind \
-    --image="/usr/share/idiomind/practice/bar.png" $aut \
+    --image="/usr/share/idiomind/practice/images/bar.png" $aut \
     --selectable-labels \
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --wrap --scroll --image-on-top --center --on-top \

@@ -314,7 +314,7 @@ removes() {
     
        r_file=`basename "$r_item" |sed "s/\(.*\).\{4\}/\1/" |tr -d '.'`
        if ! grep -Fox "${r_file}" "$DT/nmfile"; then
-       [[ -f "$DMC/$r_item" ]] && rm "$DMC/$r_item"; fi
+       [ -f "$DMC/$r_item" ] && rm "$DMC/$r_item"; fi
     done < <(cd "$DMC"; find . -type f)
 
     mv -f "$DCP/kept" "$DCP/1.lst"

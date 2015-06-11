@@ -32,7 +32,7 @@ lock() {
     yad --title="$(gettext "Practice Completed")" \
     --text="<b>$(gettext "Practice Completed")</b>\\n   $(< "$1")\n " \
     --window-icon="$DS/images/icon.png" --on-top --skip-taskbar \
-    --center --image="$DS/practice/icons_st/21.png" \
+    --center --image="$DS/practice/images/21.png" \
     --width=360 --height=120 --borders=5 \
     --button="   $(gettext "Restart")   ":0 \
     --button=Ok:2

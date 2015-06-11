@@ -26,9 +26,9 @@ if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
     "$DS/ifs/mods/topic/${topic}.sh" 2 & exit 1
 
 else
-    if [[ -d "${DM_tlt}" ]]; then
+    if [ -d "${DM_tlt}" ]; then
 
-        if [[ ! -d "${DC_tlt}" ]]; then
+        if [ ! -d "${DC_tlt}" ]; then
         mkdir -p "${DM_tlt}/words/images"
         mkdir "${DC_tlt}"; cd "${DC_tlt}"
         c=0; while [[ $c -le 10 ]]; do
@@ -48,14 +48,14 @@ else
         if [[ `wc -l < "${DC_tlt}/12.cfg"` -lt 15 ]]; then
         echo -e "${cfgfile}" > "${DC_tlt}/12.cfg"; fi
 
-        if [[ ! -f "$DT/.n_s_pr" ]]; then
+        if [ ! -f "$DT/.n_s_pr" ]; then
         "$DS/ifs/tls.sh" check_index "${topic}"; fi
         
         stts=$(sed -n 1p "${DC_tlt}/8.cfg")
         if [[ $(grep -Fxon "${topic}" "${DM_tl}/.1.cfg" \
         | sed -n 's/^\([0-9]*\)[:].*/\1/p') -ge 50 ]]; then
         
-            if [[ -f "${DC_tlt}/9.cfg" ]]; then
+            if [ -f "${DC_tlt}/9.cfg" ]; then
             
                 calculate_review "${topic}"
                 if [[ $((stts%2)) = 0 ]]; then
@@ -75,7 +75,7 @@ else
             "$DS/mngr.sh" mkmn
         fi
         
-        [[ -f "$DT/ps_lk" ]] && rm -f "$DT/ps_lk"
+        [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
         
         if [[ "$2" = 1 ]]; then 
         
@@ -88,7 +88,7 @@ else
         fi
         
     else
-        [[ -f "$DT/ps_lk" ]] && rm -f "$DT/ps_lk"
+        [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
         msg "$(gettext "No such file or directory")\n${topic}\n" error & exit 1
     fi
 fi

@@ -150,15 +150,7 @@ Create one using the button below. ")" & exit 1; fi
 
                 srce=$(translate "${trgt}" auto $lgs)
                 
-                if [ `grep -o ':' <<<"${trgt}"` ] \
-                && [ `sed -e 's/\:\".*\"//' <<<"${trgt}" | wc -w` -lt 2 ] \
-                && [ -n "$(sed 's/^[^"]*"\([^"]*\)".*/\1/' <<<"${trgt}")" ]; then
-                    note=`sed 's/^[^"]*"\([^"]*\)".*/\1/' <<<"${trgt}"`
-                    trgt=`sed -e 's/\:\".*\"//' <<<"${trgt}"`
-                    srce=`[ -z "${srce}" ] && echo 0 || echo "${srce}"`
-                    "$DS/add.sh" new_word "${trgt}" "$DT_r" "${srce}" "${note}" & exit 1
-                
-                elif [[ "$(wc -w <<<"${srce}")" = 1 ]]; then
+                if [[ "$(wc -w <<<"${srce}")" = 1 ]]; then
                     "$DS/add.sh" new_word "${trgt}" "$DT_r" "${srce}" & exit 1
                     
                 elif [ "$(wc -w <<<"${srce}")" -ge 1 -a ${#srce} -le 180 ]; then
@@ -172,15 +164,7 @@ Create one using the button below. ")" & exit 1; fi
                     msg "$(gettext "You need to fill text fields.")\n" info " " & exit 1; fi
                 fi
 
-                if [ `grep -o ':' <<<"${trgt}"` ] \
-                && [ `sed -e 's/\:\".*\"//' <<<"${trgt}" | wc -w` -lt 2 ] \
-                && [ -n "$(sed 's/^[^"]*"\([^"]*\)".*/\1/' <<<"${trgt}")" ]; then
-                    note=`sed 's/^[^"]*"\([^"]*\)".*/\1/' <<<"${trgt}"`
-                    trgt=`sed -e 's/\:\".*\"//' <<<"${trgt}"`
-                    srce=`[ -z "${srce}" ] && echo 0 || echo "${srce}"`
-                    "$DS/add.sh" new_word "${trgt}" "$DT_r" "${srce}" 1 "${note}" & exit 1
-
-                elif [[ "$(wc -w <<<"${trgt}")" = 1 ]]; then
+                if [[ "$(wc -w <<<"${trgt}")" = 1 ]]; then
                     "$DS/add.sh" new_word "${trgt}" "$DT_r" "${srce}" & exit 1
                     
                 elif [ "$(wc -w <<<"${trgt}")" -ge 1 -a ${#trgt} -le 180 ]; then
@@ -369,10 +353,9 @@ new_word() {
     fi
     
     mksure "${DM_tlt}/words/$fname.mp3" "${trgt}" "${srce}"
+    
     if [ $? = 0 ]; then
         tags_1 W "${trgt}" "${srce}" "${DM_tlt}/words/$fname.mp3"
-        if [ -n "${6}" ]; then eyeD3 -A IWI3I0I"__${6}"IWI3I0I "${DM_tlt}/words/$fname.mp3"
-        echo -e "\n${trgt}: ${6}" >> "${DC_tlt}/10.cfg"; fi
         [[ "$5" != 0 ]] && notify-send "${trgt}" "${srce}\\n(${tpe})" -t 5000
         index word "${trgt}" "${tpe}"
         printf ".adi.1.adi." >> "$DC_s/8.cfg"
@@ -546,7 +529,7 @@ list_words_sentence() {
             
             else
                 printf "\n\n#$n $trgt" >> ./logw
-                [ "${DM_tlt}/words/$fname.mp3" ] && rm "${DM_tlt}/words/$fname.mp3"
+                [ -f "${DM_tlt}/words/$fname.mp3" ] && rm "${DM_tlt}/words/$fname.mp3"
             fi
         fi
         let n++
