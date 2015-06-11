@@ -288,11 +288,11 @@ removes() {
     
        fname="$(nmfile "${item}")"
        echo "$fname" >> "$DT/nmfile"
-        [[ ! -f "$DMC/$fname.png" ]] && cp "$dfimg" "$DMC/$fname.png"
-        if [[ -f "$DMC/$fname.mp3" ]] || [[ -f "$DMC/$fname.ogg" ]] \
-        || [[ -f "$DMC/$fname.mp4" ]] || [[ -f "$DMC/$fname.m4v" ]] \
-        || [[ -f "$DMC/$fname.jpg" ]] || [[ -f "$DMC/$fname.png" ]] \
-        || [[ -f "$DMC/$fname.pdf" ]] \
+        [ ! -f "$DMC/$fname.png" ] && cp "$dfimg" "$DMC/$fname.png"
+        if [ -f "$DMC/$fname.mp3" ] || [ -f "$DMC/$fname.ogg" ] \
+        || [ -f "$DMC/$fname.mp4" ] || [ -f "$DMC/$fname.m4v" ] \
+        || [ -f "$DMC/$fname.jpg" ] || [ -f "$DMC/$fname.png" ] \
+        || [ -f "$DMC/$fname.pdf" ] \
         && ([ -f "$DMC/$fname.html" ] && [ -f "$DMC/$fname.item" ]); then
             continue
         else

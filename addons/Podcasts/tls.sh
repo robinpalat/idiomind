@@ -95,13 +95,13 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
         
         n=1;
         while read -r get; do
-            if [[ $(wc -w <<<"${get}") -ge 1 ]] && [ -z "${name}" ]]; then
+            if [[ $(wc -w <<<"${get}") -ge 1 ]] && [ -z "${name}" ]; then
             name="${get}"
             n=2; fi
-            if [[ -n "$(grep 'http:/' <<<"${get}")" ]] && [[ -z "${link}" ]]; then
+            if [[ -n "$(grep 'http:/' <<<"${get}")" ]] && [ -z "${link}" ]; then
             link="${get}"
             n=3; fi
-            if [[ -n "$(grep -E '.jpeg|.jpg|.png' <<<"${get}")" ]] && [[ -z "${logo}" ]]; then
+            if [[ -n "$(grep -E '.jpeg|.jpg|.png' <<<"${get}")" ]] && [ -z "${logo}" ]; then
             logo="${get}"; fi
             let n++
         done <<<"${items1}"
@@ -112,7 +112,7 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
         n=1
         while read -r get; do
             [[ $n = 3 || $n = 5 || $n = 6 ]] && continue
-            if [[ -n "$(grep -o -E '\.mp3|\.mp4|\.ogg|\.avi|\.m4v|\.mov|\.flv' <<<"${get}")" ]] && [ -z "${media}" ]; then
+            if [ -n "$(grep -o -E '\.mp3|\.mp4|\.ogg|\.avi|\.m4v|\.mov|\.flv' <<<"${get}")" ] && [ -z "${media}" ]; then
             media="$n"; type=1; break; fi
             let n++
         done <<<"${items2}"
@@ -169,7 +169,8 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
     if [ -z $sum2 ]; then
     summary="${sum1}"; else
     summary="${sum2}"; fi
-    if [[ -n "${title}" && -n "${summary}" && -z "${image}" && -z "${media}" ]]; then
+    if [[ -n "${title}" && -n "${summary}" \
+    && -z "${image}" && -z "${media}" ]]; then
     type=3; fi
     
     if [[ "$type" = 1 ]]; then
@@ -188,7 +189,7 @@ url=\"$feed\""
     else
         url="$(tr '&' ' ' <<<"${feed}")"
         msg "<b>$(gettext "Specified URL doesn't seem to contain any feeds:")</b>\n$url\n" dialog-warning Idiomind &
-        [[ "$DIR2/$num.rss" ]] && "$DIR2/$num.rss"
+        [ -f "$DIR2/$num.rss" ] && rm "$DIR2/$num.rss"
         rm -f "$DT/cpt.lock"; exit 1
     fi
 }

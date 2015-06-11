@@ -17,7 +17,7 @@ size="$(sed -n 3p < "$DC_a/user_data.cfg" \
 others="$(sed -n 4p < "$DC_a/user_data.cfg" \
 | grep -o others=\"[^\"]* | grep -o '[^"]*$')"
 
-[[ -f "$path/.udt" ]] && udt=$(< "$path/.udt") || udt=" "
+[ -f "$path/.udt" ] && udt=$(< "$path/.udt") || udt=" "
 dte=$(date +%F)
 
 if [ -z "$1" ]; then

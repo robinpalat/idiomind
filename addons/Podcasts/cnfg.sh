@@ -1,13 +1,13 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
-[[ -z "$DM" ]] && source /usr/share/idiomind/ifs/c.conf
+[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 DCP="$DM_tl/Podcasts/.conf"
 DSP="$DS_a/Podcasts"
 date=$(date +%d)
 CNF=$(gettext "Configure")
 sets=('update' 'sync' 'path')
-if [[ -n "$(< "$DCP/0.lst")" ]]; then cfg=1; else
+if [ -n "$(< "$DCP/0.lst")" ]; then cfg=1; else
 > "$DCP/0.lst"; fi
 
 ini() {
