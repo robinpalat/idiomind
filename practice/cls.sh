@@ -62,12 +62,16 @@ elif [[ $1 = comp ]]; then
     if [ -f ./"${2}.3" ]; then
     n=`awk '++A[$1]==1' ./"${2}.3"` && echo "$n" >> log.3; fi
     
-    [ -f ./"${2}.l" ] \
-    && echo $(($(< ./"${2}.l")+easy)) > ./"${2}.l" \
-    || echo "$easy" > ./"${2}.l"
+    if [ -n "$3" ]; then
     
-    v=$((100*$(< ./${2}.l)/all))
-    stats ./."${icon}"
-    "$DIR/strt.sh" $_stats "$easy" "$ling" "$hard" & exit
+        [ -f ./"${2}.l" ] \
+        && echo $(($(< ./"${2}.l")+easy)) > ./"${2}.l" \
+        || echo "$easy" > ./"${2}.l"
+        v=$((100*$(< ./${2}.l)/all))
+        stats ./."${icon}"
+        "$DIR/strt.sh" $_stats "$easy" "$ling" "$hard" &
+    fi
+    
+    exit
 fi
 fi

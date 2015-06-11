@@ -474,7 +474,6 @@ autostart() {
 }
 
 add() {
-
     dir=$(mktemp -d "$DT/XXXXXX")
     "$DS/add.sh" new_items "$dir" 2 "${2}" & exit
 }

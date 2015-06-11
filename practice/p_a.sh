@@ -13,11 +13,7 @@ ling=0
 
 score() {
     
-    touch a.0 a.1 a.2 a.3
-    awk '!a[$0]++' a.2 > a2.tmp
-    awk '!a[$0]++' a.3 > a3.tmp
-    grep -Fxvf a3.tmp a2.tmp > a.2
-    mv -f a3.tmp a.3
+    "$drts"/cls.sh comp a &
 
     if [[ $(($(< ./a.l)+$1)) -ge $all ]]; then
         play "$drts/all.mp3" &
@@ -29,18 +25,18 @@ score() {
         exit 1
         
     else
-        [[ -f a.l ]] && echo $(($(< ./a.l)+easy)) > a.l || echo "$easy" > a.l
+        [ -f ./a.l ] && echo $(($(< ./a.l)+easy)) > ./a.l || echo "$easy" > ./a.l
         s=$(< ./a.l)
         v=$((100*s/all))
         n=1; c=1
         while [[ $n -le 21 ]]; do
             if [[ "$v" -le "$c" ]]; then
-            echo "$n" > .1; break; fi
+            echo "$n" > ./.1; break; fi
             ((c=c+5))
             let n++
         done
 
-        if [[ -f a.3 ]]; then
+        if [ -f ./a.3 ]; then
         echo ".w6.$(tr -s '\n' '|' < ./a.3).w6." >> "$log"; fi
         
         "$strt" 6 "$easy" "$ling" "$hard" & exit 1
@@ -93,7 +89,7 @@ while read trgt; do
 
     if [[ $ret = 1 ]]; then
         break &
-        "$drts/cls.sh" comp a "$easy" "$ling" "$hard" "$all" &
+        "$drts"/cls.sh comp a "$easy" "$ling" "$hard" "$all" &
         exit 1
         
     else
@@ -111,7 +107,7 @@ while read trgt; do
     fi
 done < ./a.tmp
 
-if [[ ! -f ./a.2 ]]; then
+if [ ! -f ./a.2 ]; then
 
     score "$easy"
     
@@ -124,7 +120,7 @@ else
         
         if [[ $ret = 1 ]]; then
             break &
-            "$drts/cls.sh" comp a "$easy" "$ling" "$hard" "$all" &
+            "$drts"/cls.sh comp a "$easy" "$ling" "$hard" "$all" &
             exit 1
         
         else

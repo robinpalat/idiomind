@@ -13,11 +13,7 @@ ling=0
 
 score() {
     
-    touch c.0 c.1 c.2 c.3
-    awk '!a[$0]++' c.2 > c2.tmp
-    awk '!a[$0]++' c.3 > c3.tmp
-    grep -Fxvf c3.tmp c2.tmp > c.2
-    mv -f c3.tmp c.3
+    "$drts"/cls.sh comp c &
 
     if [[ $(($(< ./c.l)+$1)) -ge $all ]]; then
         play "$drts/all.mp3" &
@@ -29,18 +25,18 @@ score() {
         exit 1
         
     else
-        [[ -f c.l ]] && echo $(($(< ./c.l)+easy)) > c.l || echo $easy > c.l
+        [ -f ./c.l ] && echo $(($(< ./c.l)+easy)) > ./c.l || echo $easy > ./c.l
         s=$(< ./c.l)
         v=$((100*s/all))
         n=1; c=1
         while [[ $n -le 21 ]]; do
             if [[ "$v" -le "$c" ]]; then
-            echo "$n" > .3; break; fi
+            echo "$n" > ./.3; break; fi
             ((c=c+5))
             let n++
         done
         
-        if [[ -f ./c.3 ]]; then
+        if [ -f ./c.3 ]; then
         echo ".w6.$(tr -s '\n' '|' < ./c.3).w6." >> "$log"; fi
         
         "$strt" 8 $easy $ling $hard & exit 1
@@ -99,12 +95,12 @@ while read trgt; do
 
     elif [[ $ans = 1 ]]; then
         break &
-        "$drts/cls.sh" comp c $easy $ling $hard $all &
+        "$drts"/cls.sh comp c $easy $ling $hard $all &
         exit 1
     fi
 done < ./c.tmp
 
-if [[ ! -f ./c.2 ]]; then
+if [ ! -f ./c.2 ]; then
 
     score $easy
     
@@ -125,7 +121,7 @@ else
 
         elif [[ $ans = 1 ]]; then
             break &
-            "$drts/cls.sh" comp c $easy $ling $hard $all &
+            "$drts"/cls.sh comp c $easy $ling $hard $all &
             exit 1
         fi
     done < ./c.2

@@ -14,11 +14,7 @@ f=0
 
 score() {
 
-    touch d.0 d.1 d.2 d.3
-    awk '!a[$0]++' d.2 > d2.tmp
-    awk '!a[$0]++' d.3 > d3.tmp
-    grep -Fxvf d3.tmp d2.tmp > d.2
-    mv -f d3.tmp d.3
+    "$drts"/cls.sh comp d &
 
     if [[ "$1" -ge $all ]]; then
         play "$drts/all.mp3" & 
@@ -30,13 +26,13 @@ score() {
         exit 1
         
     else
-        [[ -f ./d.l ]] && echo $(($(< ./d.l)+easy)) > d.l || echo $easy > d.l
+        [ -f ./d.l ] && echo $(($(< ./d.l)+easy)) > ./d.l || echo $easy > ./d.l
         s=$(< ./d.l)
         v=$((100*s/all))
         n=1; c=1
         while [[ $n -le 21 ]]; do
             if [[ $v -le $c ]]; then
-            echo "$n" > .4; break; fi
+            echo "$n" > ./.4; break; fi
             ((c=c+5))
             let n++
         done
@@ -115,11 +111,11 @@ result() {
     
         if grep -Fxq "${line}" <<<"$in"; then
             sed -i "s/"${line}"/<b>"${line}"<\/b>/g" chk.tmp
-            [[ -n "${line}" ]] && echo \
+            [ -n "${line}" ] && echo \
             "<span color='#3A9000'><b>${line^}</b></span>  " >> ./words.tmp
-            [[ -n "${line}" ]] && echo "${line}" >> mtch.tmp
+            [ -n "${line}" ] && echo "${line}" >> mtch.tmp
         else
-            [[ -n "${line}" ]] && echo \
+            [ -n "${line}" ] && echo \
             "<span color='#7B4A44'><b>${line^}</b></span>  " >> ./words.tmp
         fi
         
@@ -153,7 +149,7 @@ result() {
 while read trgt; do
 
     fname="$(echo -n "${trgt}" | md5sum | rev | cut -c 4- | rev)"
-    if [[ -f "${DM_tlt}/$fname.mp3" ]]; then
+    if [ -f "${DM_tlt}/$fname.mp3" ]; then
 
         get_text "${trgt}"
         cmd_play="play "\"${DM_tlt}/$fname.mp3\"""
@@ -165,7 +161,7 @@ while read trgt; do
         if [[ $ret = 1 ]]; then
             break &
             killall play
-            "$drts/cls.sh" comp d $easy $ling $hard $all &
+            "$drts"/cls.sh comp d $easy $ling $hard $all &
             exit 1
         else
             killall play &
@@ -179,7 +175,7 @@ while read trgt; do
             break &
             killall play &
             rm -f mtch.tmp words.tmp
-            "$drts/cls.sh" comp d $easy $ling $hard $all &
+            "$drts"/cls.sh comp d $easy $ling $hard $all &
             exit 1
             
         elif [[ $ret -eq 2 ]]; then
