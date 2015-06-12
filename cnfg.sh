@@ -135,8 +135,8 @@ yad --notebook --key=$KEY --title="$(gettext "Settings")" \
 --tab="$(gettext "Preferences")" \
 --tab="$(gettext "Addons")" \
 --width=470 --height=350 --borders=2 \
---button="$(gettext "Cancel")":1 \
---button="$(gettext "OK")":0
+--button="$(gettext "Apply")":0 \
+--button="$(gettext "Cancel")":1
 ret=$?
 
     if [[ $ret -eq 0 ]]; then
