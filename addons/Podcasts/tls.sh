@@ -189,7 +189,7 @@ url=\"$feed\""
     else
         url="$(tr '&' ' ' <<<"${feed}")"
         msg "<b>$(gettext "Specified URL doesn't seem to contain any feeds:")</b>\n$url\n" dialog-warning Idiomind &
-        [ -f "$DIR2/$num.rss" ] && rm "$DIR2/$num.rss"
+        > "$DIR2/$num.rss"
         rm -f "$DT/cpt.lock"; exit 1
     fi
 }

@@ -60,6 +60,8 @@ apply() {
         mod="mod$n"; url="url$n"
         if [ "${!url}" != "${!mod}" ]; then
             "$DSP/tls.sh" set_channel "${!mod}" $n & fi
+        if [ ! -s "$DCP/$n.rss" ]; then
+            "$DSP/tls.sh" set_channel "${!mod}" $n & fi
         ((n=n+1))
     done < "$DT/podcasts.tmp"
 
@@ -79,16 +81,16 @@ apply() {
 
 if [ ! -d "$path" ] || [ ! -n "$path" ]; then path=/uu; fi
 if [ -f "$DM_tl/Podcasts/.conf/feed.err" ]; then
-e="$(head -n 2 < "$DM_tl/Podcasts/.conf/feed.err" | tr '&' ' ' | uniq)"
+e="$(head -n 4 < "$DM_tl/Podcasts/.conf/feed.err" |sed 's/\&/\&amp\;/g' |awk '!a[$0]++')"
 rm "$DM_tl/Podcasts/.conf/feed.err"
-(sleep 2 && msg "$e\n" info "$(gettext "Errors found")") &
+(sleep 2 && msg "$e\n\t" info "$(gettext "Errors found")") &
 fi
 
 CNFG=$(yad --form --title="$(gettext "Podcasts settings")" \
 --name=Idiomind --class=Idiomind \
 --always-print-result --print-all --separator="|" \
 --window-icon="$DS/images/icon.png" --center --scroll --on-top \
---width=550 --height=440 --borders=10 \
+--width=520 --height=400 --borders=10 \
 --text="$(gettext "Configure language learning podcasts.")" \
 --field="$(gettext "Update at startup")":CHK "$update" \
 --field="$(gettext "Sync after update")":CHK "$sync" \

@@ -22,7 +22,7 @@ score() {
         echo -e ".okp.1.okp." >> "$log"
         echo "$(date "+%a %d %B")" > d.lock
         echo 21 > .4
-        "$strt" 4 &
+        "$strt" 4 d &
         exit 1
         
     else
@@ -37,7 +37,7 @@ score() {
             let n++
         done
 
-        "$strt" 9 $easy $ling $hard & exit 1
+        "$strt" 9 d $easy $ling $hard & exit 1
     fi
 }
 

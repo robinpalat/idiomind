@@ -35,11 +35,11 @@ easy="$3"; ling="$4"; hard="$5"; all="$6"
 if [[ "$1" = restart ]]; then
     
     rm ./"${2}.lock" ./"${2}.0" ./"${2}.1" \
-    ./"${2}.2" ./"${2}.3" ./log.1 ./log.2 ./log.3 
+    ./"${2}.2" ./"${2}.3" ./log.1 ./log.2 ./log.3
     [ -f ./b.srces ] && rm ./b.srces
     echo "1" > ./."${icon}"
     echo "0" > ./"${2}.l"
-    touch ./log.1 ./log.2 ./log.3 
+    touch ./log.1 ./log.2 ./log.3
     "$DIR/strt.sh" & exit
 
 elif [[ $1 = comp ]]; then
@@ -71,7 +71,7 @@ elif [[ $1 = comp ]]; then
         || echo "$easy" > ./"${2}".l
         v=$((100*$(< ./"${2}".l)/all))
         stats ./."${icon}"
-        "$DIR/strt.sh" $_stats "$easy" "$ling" "$hard" &
+        "$DIR/strt.sh" $_stats ${2} "$easy" "$ling" "$hard" &
     fi
     
     exit

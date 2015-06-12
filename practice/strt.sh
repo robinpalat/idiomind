@@ -19,9 +19,9 @@
 
 source /usr/share/idiomind/ifs/c.conf
 DSP="$DS/practice"
-easys="$2"
-learning="$3"
-[[ "$4" -lt 0 ]] && hards=0 || hards="$4"
+easys="$3"
+learning="$4"
+[[ "$5" -lt 0 ]] && hards=0 || hards="$5"
 [ ! -d "$DC_tlt/practice" ] \
 && mkdir "$DC_tlt/practice"
 cd "$DC_tlt/practice"
@@ -83,7 +83,7 @@ img4="$DSP/images/`< ./.4`.png"
 img5="$DSP/images/`< ./.5`.png"
 
 VAR="$(yad --list --title="$(gettext "Practice ")- $tpc" \
-$img --text="$info" \
+$img --text="$info$hw" \
 --class=Idiomind --name=Idiomind \
 --print-column=1 --separator="" \
 --window-icon="$DS/images/icon.png" \

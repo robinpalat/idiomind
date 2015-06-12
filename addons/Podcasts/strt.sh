@@ -15,7 +15,7 @@
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
-#
+
 
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
@@ -85,13 +85,12 @@ mediatype () {
     if echo "$1" | grep -q ".mp3"; then ex=mp3; tp=aud
     elif echo "$1" | grep -q ".mp4"; then ex=mp4; tp=vid
     elif echo "$1" | grep -q ".ogg"; then ex=ogg; tp=aud
-    elif echo "$1" | grep -q ".avi"; then ex=avi; tp=vid
     elif echo "$1" | grep -q ".m4v"; then ex=m4v; tp=vid
     elif echo "$1" | grep -q ".mov"; then ex=mov; tp=vid
     elif echo "$1" | grep -o ".pdf"; then ex=pdf; tp=txt
     else
-        printf "Could not add some podcasts.\n$FEED" >> "$DM_tl/Podcasts/.conf/feed.err"
-        return; fi
+    echo -e "Could not add some podcasts.\n$FEED" >> "$DM_tl/Podcasts/.conf/feed.err"
+    return; fi
 }
 
 mkhtml () {
@@ -127,7 +126,7 @@ $summary<br><br></div>
         echo -e "$audio" > "$DMC/$fname.html"
 
     elif [ "$tp" = txt ]; then
-        echo -e "text" > "$DMC/$fname.html"
+        echo -e "$text" > "$DMC/$fname.html"
     fi
 }
 
@@ -137,8 +136,8 @@ get_images () {
         
         cd "$DT_r"; p=TRUE; rm -f ./*.jpeg ./*.jpg
         
-        eyeD3 --write-images="$DT_r" "media.$ex"
-        
+        (eyeD3 --write-images="$DT_r" "media.$ex")
+
         if ls | grep '.jpeg'; then img="$(ls | grep '.jpeg')"
         else img="$(ls | grep '.jpg')"; fi
         
@@ -193,76 +192,80 @@ fetch_podcasts() {
 
     n=1
     while read FEED; do
-        
+
         if [ ! -z "$FEED" ]; then
 
-            if [ -f "$DCP/$n.rss" ]; then
+            if [ ! -f "$DCP/$n.rss" ]; then
+            echo -e "$(gettext "Please, reconfigure this feed:")\n$FEED" >> "$DCP/feed.err"
+                
+            else
                 d=0
                 while [[ $d -lt 8 ]]; do
                     itn=$((d+1)); get=${sets[$d]}
-                    val=$(sed -n "$itn"p < "$DCP/$n.rss" \
+                    val=$(sed -n "$itn"p "$DCP/$n.rss" \
                     | grep -o "$get"=\"[^\"]* | grep -o '[^"]*$')
                     declare ${sets[$d]}="$val"
                     ((d=d+1))
                 done
-              
-            else
-                continue
-            fi
-
-            if [ "$ntype" = 1 ]; then
-
-                podcast_items="$(xsltproc - "$FEED" <<<"$tmplitem" 2> /dev/null)"
-                podcast_items="$(echo "${podcast_items}" | tr '\n' ' ' \
-                | tr -s '[:space:]' | sed 's/EOL/\n/g' | head -n "$downloads")"
-                podcast_items="$(echo "${podcast_items}" | sed '/^$/d')"
                 
-                while read -r item; do
-
-                    fields="$(sed -r 's|-\!-|\n|g' <<<"${item}")"
-                    enclosure=$(sed -n "$nmedia"p <<<"${fields}")
-                    title=$(echo "${fields}" | sed -n "$ntitle"p | sed 's/\://g' \
-                    | sed 's/\&/&amp;/g' | sed 's/^\s*./\U&\E/g' \
-                    | sed 's/<[^>]*>//g' | sed 's/^ *//; s/ *$//; /^$/d')
-                    summary=$(echo "${fields}" | sed -n "$nsumm"p)
-                    #| iconv -c -f utf8 -t ascii
-                    fname="$(nmfile "${title}")"
-                    
-                    if [[ ${#title} -ge 300 ]] \
-                    || [ -z "$title" ]; then
-                    continue; fi
-                         
-                    if ! grep -Fxo "${title}" < <(cat "$DCP/1.lst" "$DCP/2.lst" "$DCP/old.lst"); then
-                    
-                        enclosure_url=$(curl -s -I -L -w %"{url_effective}" \
-                        --url "$enclosure" | tail -n 1)
-                        mediatype "$enclosure_url"
-                        
-                        if [ ! -f "$DMC/$fname.$ex" ]; then
-                        cd "$DT_r"; wget -q -c -T 51 -O "media.$ex" "$enclosure_url"
-                        else cd "$DT_r"; mv -f "$DMC/$fname.$ex" "media.$ex"; fi
-                        
-                        exit=$?
-                        if [[ $exit = 0 ]]; then
-                        get_images
-                        mv -f "media.$ex" "$DMC/$fname.$ex"
-                        mkhtml
-
-                        if [[ -s "$DCP/1.lst" ]]; then
-                        sed -i -e "1i${title}\\" "$DCP/1.lst"
-                        else echo "${title}" > "$DCP/1.lst"; fi
-                        if grep '^$' "$DCP/1.lst"; then
-                        sed -i '/^$/d' "$DCP/1.lst"; fi
-                        echo "${title}" >> "$DCP/.11.cfg"
-                        echo "${title}" >> "$DT_r/log"
-                        echo -e "channel=\"${channel}\"" > "$DMC/$fname.item"
-                        echo -e "link=\"${link}\"" >> "$DMC/$fname.item"
-                        echo -e "title=\"${title}\"" >> "$DMC/$fname.item"
-                        fi
-                    fi
-                done <<<"${podcast_items}"
-            fi
+                if [ -z "$nmedia" ]; then
+                > "$DCP/$n.rss"
+                echo -e "$(gettext "Please, reconfigure this feed:")\n$FEED" >> "$DCP/feed.err"
+                continue; fi
             
+                if [ "$ntype" = 1 ]; then
+                
+                    podcast_items="$(xsltproc - "$FEED" <<<"$tmplitem" 2> /dev/null)"
+                    podcast_items="$(echo "${podcast_items}" | tr '\n' ' ' \
+                    | tr -s '[:space:]' | sed 's/EOL/\n/g' | head -n "$downloads")"
+                    podcast_items="$(echo "${podcast_items}" | sed '/^$/d')"
+                    
+                    while read -r item; do
+
+                        fields="$(sed -r 's|-\!-|\n|g' <<<"${item}")"
+                        enclosure=$(sed -n "$nmedia"p <<<"${fields}")
+                        title=$(echo "${fields}" | sed -n "$ntitle"p | sed 's/\://g' \
+                        | sed 's/\&/&amp;/g' | sed 's/^\s*./\U&\E/g' \
+                        | sed 's/<[^>]*>//g' | sed 's/^ *//; s/ *$//; /^$/d')
+                        summary=$(echo "${fields}" | sed -n "$nsumm"p)
+                        #| iconv -c -f utf8 -t ascii
+                        fname="$(nmfile "${title}")"
+                        
+                        if [[ ${#title} -ge 300 ]] \
+                        || [ -z "$title" ]; then
+                        continue; fi
+                             
+                        if ! grep -Fxo "${title}" < <(cat "$DCP/1.lst" "$DCP/2.lst" "$DCP/old.lst"); then
+                        
+                            enclosure_url=$(curl -s -I -L -w %"{url_effective}" \
+                            --url "$enclosure" | tail -n 1)
+                            mediatype "$enclosure_url"
+                            
+                            if [ ! -f "$DMC/$fname.$ex" ]; then
+                            cd "$DT_r"; wget -q -c -T 51 -O "media.$ex" "$enclosure_url"
+                            else cd "$DT_r"; mv -f "$DMC/$fname.$ex" "media.$ex"; fi
+                            
+                            exit=$?
+                            if [[ $exit = 0 ]]; then
+                            get_images
+                            mv -f "media.$ex" "$DMC/$fname.$ex"
+                            mkhtml
+
+                            if [[ -s "$DCP/1.lst" ]]; then
+                            sed -i -e "1i${title}\\" "$DCP/1.lst"
+                            else echo "${title}" > "$DCP/1.lst"; fi
+                            if grep '^$' "$DCP/1.lst"; then
+                            sed -i '/^$/d' "$DCP/1.lst"; fi
+                            echo "${title}" >> "$DCP/.11.cfg"
+                            echo "${title}" >> "$DT_r/log"
+                            echo -e "channel=\"${channel}\"" > "$DMC/$fname.item"
+                            echo -e "link=\"${link}\"" >> "$DMC/$fname.item"
+                            echo -e "title=\"${title}\"" >> "$DMC/$fname.item"
+                            fi
+                        fi
+                    done <<<"${podcast_items}"
+                fi
+            fi
         else
             [ -f "$DCP/$n.rss" ] && rm "$DCP/$n.rss"
         fi
@@ -276,19 +279,21 @@ removes() {
     check_index1 "$DCP/1.lst"
     if grep '^$' "$DCP/1.lst"; then
     sed -i '/^$/d' "$DCP/1.lst"; fi
-    echo "$(tail -n+51 < "$DCP/1.lst")" |sed '/^$/d' >> "$DCP/old.lst"
-    echo "$(head -n 50 < "$DCP/1.lst")" |sed '/^$/d' > "$DCP/kept"
-
+    tail -n +51 < "$DCP/1.lst" |sed '/^$/d' >> "$DCP/old.lst"
+    head -n 50 < "$DCP/1.lst" |sed '/^$/d' > "$DCP/kept"
+    grep -vFx -f 
+    
     while read item; do
         if ! grep -Fxo "$item" < <(cat "$DCP/2.lst" "$DCP/kept"); then
         fname=$(nmfile "$item")
-        find "$DMC" -type f -name "$fname.*" -exec rm {} +
+        if [ -n "$fname" ]; then
+        find "$DMC" -type f -name "$fname.*" -exec rm {} +; fi
         fi
     done < "$DCP/old.lst"
 
     while read k_item; do
     
-       echo "$(nmfile "${k_item}")" >> "$DT/nmfile"
+       nmfile "${k_item}" >> "$DT/nmfile"
     done < <(cat "$DCP/1.lst" "$DCP/2.lst")
     
     while read r_item; do
@@ -296,17 +301,13 @@ removes() {
        r_file=`basename "$r_item" |sed "s/\(.*\).\{4\}/\1/" |tr -d '.'`
        if ! grep -Fox "${r_file}" "$DT/nmfile"; then
        [ -f "$DMC/$r_item" ] && rm "$DMC/$r_item"; fi
-    done < <(cd "$DMC"; find . -type f)
+    done < <(find "$DMC" -type f)
     
     while read item; do
     
        fname="$(nmfile "${item}")"
         [ ! -f "$DMC/$fname.png" ] && cp "$dfimg" "$DMC/$fname.png"
-        if [ -f "$DMC/$fname.mp3" ] || [ -f "$DMC/$fname.ogg" ] \
-        || [ -f "$DMC/$fname.mp4" ] || [ -f "$DMC/$fname.m4v" ] \
-        || [ -f "$DMC/$fname.jpg" ] || [ -f "$DMC/$fname.png" ] \
-        || [ -f "$DMC/$fname.pdf" ] \
-        && ([ -f "$DMC/$fname.html" ] && [ -f "$DMC/$fname.item" ]); then
+        if [ -f "$DMC/$fname.html" ] && [ -f "$DMC/$fname.item" ]; then
             continue
         else
         grep -vxF "$item" "$DCP/2.lst" > "$DT/rm.temp"
@@ -314,7 +315,6 @@ removes() {
         grep -vxF "$item" "$DCP/1.lst" > "$DT/rm.temp"
         sed '/^$/d' "$DT/rm.temp" > "$DCP/1.lst"
         rm -f "$DT/rm.temp"
-        find "$DMC" -name "$fname".* -exec rm {} \;
         fi
     done < <(cat "$DCP/2.lst" "$DCP/kept")
 
@@ -324,7 +324,7 @@ removes() {
     sed -i '/^$/d' "$DCP/1.lst"; fi
     if grep '^$' "$DCP/2.lst"; then
     sed -i '/^$/d' "$DCP/2.lst"; fi
-    echo "$(head -n 500 < "$DCP/old.lst")" > "$DCP/old_.lst"
+    head -n 500 < "$DCP/old.lst" > "$DCP/old_.lst"
     mv -f "$DCP/old_.lst" "$DCP/old.lst"
     cp -f "$DCP/1.lst" "$DCP/.11.cfg"
     rm "$DT/nmfile"

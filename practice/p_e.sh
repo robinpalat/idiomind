@@ -21,7 +21,7 @@ score() {
         echo -e ".okp.1.okp." >> "$log"
         echo "$(date "+%a %d %B")" > e.lock
         echo 21 > .5
-        "$strt" 5 &
+        "$strt" 5 e &
         exit 1
         
     else
@@ -39,7 +39,7 @@ score() {
         if [ -f ./e.3 ]; then
         echo ".w6.$(tr -s '\n' '|' < ./e.3).w6." >> "$log"; fi
         
-        "$strt" 10 "$easy" "$ling" "$hard" & exit 1
+        "$strt" 10 e "$easy" "$ling" "$hard" & exit 1
     fi
 }
 
