@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 if [ ! -n "$_videos" ]; then
-_videos="$(sed -n 9p "$DC_s/1.cfg" \
+_videos="$(sed -n 8p "$DC_s/1.cfg" \
 | grep -o videos=\"[^\"]* | grep -o '[^"]*$')"
 _news="$(sed -n 18p "$DC_s/1.cfg" \
 | grep -o news=\"[^\"]* | grep -o '[^"]*$')"

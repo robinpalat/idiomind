@@ -22,7 +22,7 @@ DS="/usr/share/idiomind"
 DC_s="$HOME/.config/idiomind/s"
 source "$DS/ifs/mods/cmns.sh"
 loop=$(sed -n 10p "$DC_s/1.cfg" |grep -o loop=\"[^\"]* |grep -o '[^"]*$')
-text=$(sed -n 6p "$DC_s/1.cfg" |grep -o text=\"[^\"]* |grep -o '[^"]*$')
+text=$(sed -n 9p "$DC_s/1.cfg" |grep -o text=\"[^\"]* |grep -o '[^"]*$')
 audio=$(sed -n 7p "$DC_s/1.cfg" |grep -o audio=\"[^\"]* |grep -o '[^"]*$')
 if [[ "$text" != TRUE ]] && [[ "$audio" != TRUE ]]; then audio=TRUE; fi
 nu='^[0-9]+$'; if ! [[ $loop =~ $nu ]]; then loop=1; fi

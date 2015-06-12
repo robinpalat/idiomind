@@ -25,9 +25,9 @@ lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
 list=$(sed -n 2p "$DC_s/1.cfg" \
 | grep -o list=\"[^\"]* | grep -o '[^"]*$')
-trans=$(sed -n 4p "$DC_s/1.cfg" \
+trans=$(sed -n 3p "$DC_s/1.cfg" \
 | grep -o trans=\"[^\"]* | grep -o '[^"]*$')
-trd_trgt=$(sed -n 5p "$DC_s/1.cfg" \
+trd_trgt=$(sed -n 4p "$DC_s/1.cfg" \
 | grep -o trd_trgt=\"[^\"]* | grep -o '[^"]*$')
 
 new_topic() {
