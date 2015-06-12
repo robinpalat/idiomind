@@ -77,13 +77,13 @@ else
         
         [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
         
-        if [[ "$2" = 1 ]]; then 
+        if [[ "$2" = 1 ]]; then
         
             (sleep 2
             notify-send --icon=idiomind \
             "${topic}" "$(gettext "Is now your topic")" -t 4000) & exit
             
-        else
+        elif [[ -z "$2" ]]; then 
             idiomind topic & exit
         fi
         

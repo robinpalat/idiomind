@@ -53,8 +53,8 @@ conditions() {
     
     [ ! -f "$DCP/1.lst" ] && touch "$DCP/1.lst"
 
-    if [ -f "$DT/.uptp" ] && [[ $1 != 0 ]]; then
-        msg_2 "$(gettext "Wait until it finishes a previous process")\n" info OK gtk-stop
+    if [ -f "$DT/.uptp" ] && [[ $1 = 1 ]]; then
+        msg_2 "$(gettext "Wait until it finishes a previous process.")\n" info OK gtk-stop "$(gettext "Updating...")"
         ret=$(echo $?)
         [[ $ret -eq 1 ]] && "$DS/stop.sh" 6
         exit 1
@@ -72,11 +72,11 @@ conditions() {
 
     nps="$(sed '/^$/d' "$DCP/feeds.lst" | wc -l)"
     if [[ "$nps" -le 0 ]]; then
-    [[ "$1" != 0 ]] && msg "$(gettext "Missing URL. Please check the settings in the preferences dialog.")\n" info
+    [[ $1 = 1 ]] && msg "$(gettext "Missing URL. Please check the settings in the preferences dialog.")\n" info
     [ -f "$DT_r" ] && rm -fr "$DT_r" "$DT/.uptp"
     exit 1; fi
         
-    if [[ $1 != 0 ]]; then internet; else curl -v www.google.com 2>&1 \
+    if [[ $1 = 1 ]]; then internet; else curl -v www.google.com 2>&1 \
     | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1; fi
 }
 
@@ -280,7 +280,7 @@ removes() {
     echo "$(head -n 50 < "$DCP/1.lst")" |sed '/^$/d' > "$DCP/kept"
 
     while read item; do
-        if ! grep -Fxo "$item" "$DCP/2.lst"; then
+        if ! grep -Fxo "$item" < <(cat "$DCP/2.lst" "$DCP/kept"); then
         fname=$(nmfile "$item")
         find "$DMC" -type f -name "$fname.*" -exec rm {} +
         fi
@@ -316,7 +316,7 @@ removes() {
         rm -f "$DT/rm.temp"
         find "$DMC" -name "$fname".* -exec rm {} \;
         fi
-    done < "$DCP/kept"
+    done < <(cat "$DCP/2.lst" "$DCP/kept")
 
     mv -f "$DCP/kept" "$DCP/1.lst"
     check_index1 "$DCP/1.lst" "$DCP/2.lst"
@@ -324,7 +324,7 @@ removes() {
     sed -i '/^$/d' "$DCP/1.lst"; fi
     if grep '^$' "$DCP/2.lst"; then
     sed -i '/^$/d' "$DCP/2.lst"; fi
-    echo "$(head -n 1000 < "$DCP/old.lst")" > "$DCP/old_.lst"
+    echo "$(head -n 500 < "$DCP/old.lst")" > "$DCP/old_.lst"
     mv -f "$DCP/old_.lst" "$DCP/old.lst"
     cp -f "$DCP/1.lst" "$DCP/.11.cfg"
     rm "$DT/nmfile"
@@ -332,7 +332,7 @@ removes() {
 
 conditions $1
 
-if [[ $1 != 0 ]]; then
+if [[ $1 = 1 ]]; then
 echo "Podcasts" > "$DC_a/4.cfg"
 echo 2 > "$DC_s/5.cfg"
 echo 11 > "$DCP/8.cfg"
@@ -365,7 +365,7 @@ if [[ $new_episodes -gt 0 ]]; then
     "$new_episodes $ne" -t 8000
     
 else
-    if [[ $1 != 0 ]]; then
+    if [[ $1 = 1 ]]; then
     notify-send -i idiomind \
     "$(gettext "Update finished")" \
     "$(gettext "Has not changed since last update")" -t 8000
@@ -375,8 +375,8 @@ fi
 cfg="$DM_tl/Podcasts/.conf/0.lst"; if [ -f "$cfg" ]; then
 sync="$(sed -n 2p "$cfg" | grep -o 'sync="[^"]*' | grep -o '[^"]*$')"
 if [ "$sync" = TRUE ]; then 
-    if [[ $1 != 0 ]]; then
-    "$DSP/tls.sh" sync
+    if [[ $1 = 1 ]]; then
+    "$DSP/tls.sh" sync 1
     else
     "$DSP/tls.sh" sync 0
     fi

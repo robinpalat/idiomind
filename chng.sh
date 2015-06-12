@@ -99,6 +99,10 @@ elif [[ "$1" != chngi ]]; then
     text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/${lgtl,,}'>$(gettext "Shared")</a>   </small></small>"
     align="right"; fi
     
+    if [[ $((`wc -l < "$DC_s/0.cfg"`/3)) = \
+    `wc -l < "${DC_tlt}/1.cfg"` ]]; then
+    "$DS/mngr.sh" mkmn; fi
+
     tpc=$(cat "$DC_s/0.cfg" | \
     yad --list --title="$(gettext "Topics")" "$text" \
     --name=Idiomind --class=Idiomind \
@@ -111,10 +115,12 @@ elif [[ "$1" != chngi ]]; then
     --column=File:TEXT \
     --column=File:HD \
     --button=gtk-new:3 \
+    --button="$(gettext "Default")":5 \
     --button="$(gettext "Apply")":2 \
     --button="$(gettext "Close")":1)
     ret=$?
-        
+    tpc="$(sed 's/\*//g' <<<"$tpc")"
+    
     if [[ $ret -eq 3 ]]; then
     
             "$DS/add.sh" new_topic & exit
@@ -133,6 +139,16 @@ elif [[ "$1" != chngi ]]; then
 
             else
                 "$DS/default/tpc.sh" "$tpc" & exit
+            fi
+            
+    elif [[ $ret -eq 5 ]]; then
+            
+            if [ -z "$tpc" ]; then exit 1
+
+            else
+                echo "$tpc" > "$DM_tl"/.5.cfg
+                "$DS/default/tpc.sh" "$tpc" &
+                "$DS/mngr.sh" mkmn & exit
             fi
     fi
 fi

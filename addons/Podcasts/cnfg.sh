@@ -16,8 +16,8 @@ ini() {
     mkdir "$DM_tl/Podcasts/.conf"
     mkdir "$DM_tl/Podcasts/cache"
     cd "$DM_tl/Podcasts/.conf/"
-    touch "0.lst" "1.lst" "2.lst" "feeds.lst" ".updt.lst"
-    echo 14 > "$DM_tl/Podcasts/.conf/8.cfg"
+    touch "0.lst" "1.lst" "2.lst" "feeds.lst" "old.lst"
+    echo 11 > "$DM_tl/Podcasts/.conf/8.cfg"
     echo " " > "$DM_tl/Podcasts/.conf/10.cfg"
     echo -e "\n$(gettext "Latest downloads:") 0" > "$DM_tl/Podcasts/$date.updt"
     "$DS/mngr.sh" mkmn
@@ -116,7 +116,7 @@ if [[ $ret -eq 0 ]]; then
 elif [[ $ret -eq 5 ]]; then
 
     apply
-    "$DSP/tls.sh" sync
+    "$DSP/tls.sh" sync 1
 fi
 
 [ -f "$DT/cp.lock" ] && rm -f "$DT/cp.lock"

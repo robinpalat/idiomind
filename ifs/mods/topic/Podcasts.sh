@@ -6,7 +6,7 @@ source "$DS/ifs/mods/cmns.sh"
 tpa="$(sed -n 1p "$DC_a/4.cfg")"
 if [ "$tpa" != 'Podcasts' ]; then
 [ ! -f "$DM_tl/Podcasts/.conf/8.cfg" ] \
-&& echo "11" > "$DM_tl/Podcasts/.conf/8.cfg"
+&& echo 11 > "$DM_tl/Podcasts/.conf/8.cfg"
 echo "Podcasts" > "$DC_a/4.cfg"; fi
 if [ "$1" = 2 ]; then
 echo "Podcasts" > "$DC_s/7.cfg"
@@ -71,7 +71,7 @@ function feedmode() {
     ret=$?
         
     if [[ $ret -eq 2 ]]; then
-    "$DSP/strt.sh"; fi
+    "$DSP/strt.sh" 1; fi
     
     note_mod="$(< $fdit)"
     if [ "$note_mod" != "$(< $nt)" ]; then

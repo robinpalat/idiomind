@@ -25,6 +25,7 @@ mkmn() {
     cd "$DM_tl"
     [ -d "$DM_tl/images" ] && rm -r "$DM_tl/images"
     [ -d "$DM_tl/words" ] && rm -r "$DM_tl/words"
+    default="$(< "$DM_tl"/.5.cfg)"
     for i in "$(ls -tNd */ | sed 's/\///g')"; do \
     echo "${i%%/}"; done > "$DM_tl/.1.cfg"
     sed -i '/^$/d' "$DM_tl/.1.cfg"
@@ -53,9 +54,8 @@ mkmn() {
         [ -f "${DC_tlt}/8.cfg" ] && stts_=$(< "${DC_tlt}/8.cfg")
         if [ "$stts_" != 13 ]; then echo "$stts_" > "${DC_tlt}/8.cfg_"; fi
         i=13; echo 13 > "$DM_tl/${tp}/.conf/8.cfg";fi
-        echo "/usr/share/idiomind/images/img.$i.png" >> "$DC_s/0.cfg"
-        echo "${tp}" >> "$DC_s/0.cfg"
-        echo "$tooltips_1" >> "$DC_s/0.cfg"
+        [ "${default}" = "${tp}" ] && tp="*${tp}"
+        echo -e "/usr/share/idiomind/images/img.$i.png\n${tp}\n$tooltips_1" >> "$DC_s/0.cfg"
         let n++
     done
     n=1
@@ -72,13 +72,8 @@ mkmn() {
         [ ! "$DM_tl/${tp}/.conf/1.cfg" ] || \
         [ ! "$DM_tl/${tp}/.conf/3.cfg" ] || \
         [ ! "$DM_tl/${tp}/.conf/4.cfg" ] || \
-        [ ! -d "$DM_tl/${tp}" ]; then
-            echo '/usr/share/idiomind/images/img.13.png' >> "$DC_s/0.cfg"
-        else
-            echo '/usr/share/idiomind/images/img.12.png' >> "$DC_s/0.cfg"
-        fi
-        echo "${tp}" >> "$DC_s/0.cfg"
-        echo " / " >> "$DC_s/0.cfg"
+        [ ! -d "$DM_tl/${tp}" ]; then img=13; else img=12; fi
+        echo -e "/usr/share/idiomind/images/img.$img.png\n${tp}\n " >> "$DC_s/0.cfg"
         let n++
     done
     exit 1

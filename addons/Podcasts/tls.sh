@@ -200,8 +200,8 @@ sync() {
     cfg="$DM_tl/Podcasts/.conf/0.lst"
     path="$(sed -n 3p "$cfg" | grep -o 'path="[^"]*' | grep -o '[^"]*$')"
     
-    if  [ -f "$DT/l_sync" ] && [[ $2 != 0 ]]; then
-    msg_2 "$(gettext "A process is already running!\nIf stopped, any rsync process will stop")" info "OK" "gtk-stop" "Podcasts"
+    if  [ -f "$DT/l_sync" ] && [[ $2 = 1 ]]; then
+    msg_2 "$(gettext "A process is already running!\nIf stopped, any rsync process will stop")" info "OK" "gtk-stop" "$(gettext "Syncing...")"
     e=$(echo $?)
         
         if [[ $e -eq 1 ]]; then
@@ -214,7 +214,7 @@ sync() {
             
     elif  [ -f "$DT/l_sync" ] && [[ $2 = 0 ]]; then exit 1
 
-    elif [ ! -d "$path" ] && [[ $2 != 0 ]]; then
+    elif [ ! -d "$path" ] && [[ $2 = 1 ]]; then
     msg " $(gettext "The directory to synchronization does not exist.")\n" \
     dialog-warning
     [ -f "$DT/l_sync" ] && rm -f "$DT/l_sync"; exit 1
@@ -231,12 +231,9 @@ sync() {
         B="$(cd "$SYNCDIR"; ls * | wc -l)"
         [ $? != 0 ] && B=0
         
-        if [[ "$2" != 0 ]]; then
+        if [[ $2 = 3 ]]; then
         cd /
-        (sleep 1 && notify-send \
-        "$(gettext "Starting syncing")" -t 8000) &
-        fi
-        
+
         if [[ $rsync_delete = 0 ]]; then
         
             rsync -az -v --exclude="*.item" --exclude="*.png" \
@@ -249,20 +246,19 @@ sync() {
             --exclude="*.html" --omit-dir-times --ignore-errors "$DM_tl/Podcasts/cache/" "$SYNCDIR"
             exit=$?
         fi
-
+sleep 10
         if [[ $exit = 0 ]]; then
 
             new=$((A-B))
-            if [[ $2 != 0 ]]; then
-            nf=$(gettext "new files in device")
-            [[ $new = 1 ]] && ne=$(gettext "new file in device")
+            [[ $2 = 1 ]] && nf="$new $(gettext "new files in device")"
+            [[ $new = 1 ]] && nf="$new $(gettext "new file in device")"
+            [[ $new -lt 1 ]] && nf=$(gettext "No new files in device")
             (sleep 1 && notify-send \
-            "$(gettext "Synchronization finished")" "$new $nf" -t 8000) &
-            fi
+            "$(gettext "Synchronization finished")" "$nf" -t 8000) &
   
         elif [[ $exit != 0 ]]; then
         
-            if [[ $2 != 0 ]]; then
+            if [[ $2 = 1 ]]; then
             (sleep 1 && notify-send -i idiomind \
             "$(gettext "Error")" \
             "$(gettext "Error while syncing")" -t 8000) &
