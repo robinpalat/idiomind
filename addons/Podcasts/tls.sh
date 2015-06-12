@@ -249,11 +249,15 @@ sync() {
         if [[ $exit = 0 ]]; then
 
             new=$((A-B))
-            [[ $2 = 1 ]] && nf="$new $(gettext "new files in device")"
-            [[ $new = 1 ]] && nf="$new $(gettext "new file in device")"
-            [[ $new -lt 1 ]] && nf=$(gettext "No new files in device")
+            
+            [[ $new = 1 ]] && sum="$new $(gettext "new file in device")"
+            [[ $new -lt 1 ]] && sum=$(gettext "No new files in device")
+            [[ $new -gt 1 ]] && sum="$new $(gettext "new files in device")"
+            
+            if [[ $2 = 1 ]]; then
             (sleep 1 && notify-send \
-            "$(gettext "Synchronization finished")" "$nf" -t 8000) &
+            "$(gettext "Synchronization finished")" "$sum" -t 8000) &
+            fi
   
         elif [[ $exit != 0 ]]; then
         

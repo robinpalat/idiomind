@@ -100,18 +100,18 @@ video="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
 <video width=640 height=380 controls>
 <source src=\"$fname.$ex\" type=\"video/mp4\">
 Your browser does not support the video tag.</video><br><br>
-<div class=\"title\"><h3>$title</h3></div><br>
+<div class=\"title\"><h3><a href=\"$link\">$title</a></h3></div><br>
 <div class=\"summary\">$summary<br><br></div>"
 audio="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
 <link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwr.css\">
-<br><div class=\"title\"><h2>$title</h2></div><br>
+<br><div class=\"title\"><h2><a href=\"$link\">$title</a></h2></div><br>
 <div class=\"summary\"><audio controls><br>
 <source src=\"$fname.$ex\" type=\"audio/mpeg\">
 Your browser does not support the audio tag.</audio><br><br>
 $summary<br><br></div>"
 text="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
 <link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwr.css\">
-<body><br><div class=\"title\"><h2>$title</h2></div><br>
+<body><br><div class=\"title\"><h2><a href=\"$link\">$title</a></h2></div><br>
 <div class=\"summary\"><div class=\"image\">
 <img src=\"$fname.jpg\" alt=\"Image\" style=\"width:650px\"></div><br>
 $summary<br><br></div>
@@ -136,7 +136,7 @@ get_images () {
         
         cd "$DT_r"; p=TRUE; rm -f ./*.jpeg ./*.jpg
         
-        (eyeD3 --write-images="$DT_r" "media.$ex")
+        eyeD3 --write-images="$DT_r" "media.$ex"
 
         if ls | grep '.jpeg'; then img="$(ls | grep '.jpeg')"
         else img="$(ls | grep '.jpg')"; fi
@@ -256,7 +256,7 @@ fetch_podcasts() {
                             else echo "${title}" > "$DCP/1.lst"; fi
                             if grep '^$' "$DCP/1.lst"; then
                             sed -i '/^$/d' "$DCP/1.lst"; fi
-                            echo "${title}" >> "$DCP/.11.cfg"
+                            echo "${title}" >> "$DCP/.1.lst"
                             echo "${title}" >> "$DT_r/log"
                             echo -e "channel=\"${channel}\"" > "$DMC/$fname.item"
                             echo -e "link=\"${link}\"" >> "$DMC/$fname.item"
@@ -276,20 +276,23 @@ fetch_podcasts() {
 
 removes() {
     
+    set -e
     check_index1 "$DCP/1.lst"
     if grep '^$' "$DCP/1.lst"; then
     sed -i '/^$/d' "$DCP/1.lst"; fi
     tail -n +51 < "$DCP/1.lst" |sed '/^$/d' >> "$DCP/old.lst"
     head -n 50 < "$DCP/1.lst" |sed '/^$/d' > "$DCP/kept"
-    grep -vFx -f 
-    
+
+    cd "$DMC"/
     while read item; do
-        if ! grep -Fxo "$item" < <(cat "$DCP/2.lst" "$DCP/kept"); then
+    
+        if ! grep -Fxq "$item" < <(cat "$DCP/2.lst" "$DCP/kept"); then
         fname=$(nmfile "$item")
         if [ -n "$fname" ]; then
-        find "$DMC" -type f -name "$fname.*" -exec rm {} +; fi
+        find . -type f -name "$fname.*" -exec rm {} +; fi
         fi
     done < "$DCP/old.lst"
+    cd /
 
     while read k_item; do
     
@@ -299,7 +302,7 @@ removes() {
     while read r_item; do
     
        r_file=`basename "$r_item" |sed "s/\(.*\).\{4\}/\1/" |tr -d '.'`
-       if ! grep -Fox "${r_file}" "$DT/nmfile"; then
+       if ! grep -Fxq "${r_file}" "$DT/nmfile"; then
        [ -f "$DMC/$r_item" ] && rm "$DMC/$r_item"; fi
     done < <(find "$DMC" -type f)
     
@@ -326,8 +329,9 @@ removes() {
     sed -i '/^$/d' "$DCP/2.lst"; fi
     head -n 500 < "$DCP/old.lst" > "$DCP/old_.lst"
     mv -f "$DCP/old_.lst" "$DCP/old.lst"
-    cp -f "$DCP/1.lst" "$DCP/.11.cfg"
+    cp -f "$DCP/1.lst" "$DCP/.1.lst"
     rm "$DT/nmfile"
+    set +e
 }
 
 conditions $1
@@ -342,7 +346,7 @@ fi
 
 if [ -f "$DCP/2.lst" ]; then kept_episodes=`wc -l < "$DCP/2.lst"`
 else kept_episodes=0; fi
-> "$DT/.uptp"; rm "$DM_tl/Podcasts"/*.updt
+echo $$ > "$DT/.uptp"; rm "$DM_tl/Podcasts"/*.updt
 echo -e " <b>$(gettext "Updating.")</b>
  $(gettext "Latest downloads:") 0" > "$DM_tl/Podcasts/$date.updt"
 DT_r="$(mktemp -d "$DT/XXXX")"

@@ -115,6 +115,18 @@ function new_session() {
     "$DS/default/tpc.sh" "$tpd" 2; fi
     fi
     
+    # version ###############
+    if [ -f "$DC_s/1.cfg" ]; then
+    tasks=$(sed -n 5p "$DC_s/1.cfg" \
+    | grep -o tasks=\"[^\"]* | grep -o '[^"]*$')
+    if [[ "$tasks" != TRUE && "$tasks" != FALSE ]]; then
+    rm "$DC_s/1.cfg"; fi
+    fi
+    
+    if [ `cat "$DM_tl/Podcasts/.conf/8.cfg"` != 11 ]; then
+    echo 11 > "$DM_tl/Podcasts/.conf/8.cfg"; fi
+    ###############
+
     rm -f  "$DT/ps_lk"
     "$DS/mngr.sh" mkmn &
 }
