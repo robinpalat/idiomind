@@ -39,7 +39,7 @@ position() {
     --width=640 --height=560 --borders=8 \
     --column="":NUM \
     --column="$(gettext "Move")":RD \
-    --column="$(gettext "Note")":TEXT \
+    --column="$(gettext "Item")":TEXT \
     --column="$(gettext "Delete")":CHK \
     --button="$(gettext "Inverse")":3 \
     --button="$(gettext "Save")":0 \
@@ -57,10 +57,10 @@ position() {
             f2=`cut -d "|" -f2 <<<"${sec}"`
             f3=`cut -d "|" -f3 <<<"${sec}"`
             f4=`cut -d "|" -f4 <<<"${sec}"`
-            if [ "$f2" = 'TRUE' ] && [ "${itr}" != "${item}" ]; then
+            if [[ "$f2" = 'TRUE' ]] && [[ "${itr}" != "${item}" ]]; then
             echo -e "${item}" >> "$DC_tlt/0.cfg.mv"
             echo -e "${f3}" >> "$DC_tlt/0.cfg.mv"
-            elif [ "$f4" = 'TRUE' ] && [ "${f3}" != "${item}" ]; then
+            elif [[ "$f4" = 'TRUE' ]] && [[ "${f3}" != "${item}" ]]; then
             delete_item_ok "${f3}"
             else echo "${f3}" >> "$DC_tlt/0.cfg.mv"; fi
         done <<<"{$mv}"
@@ -89,6 +89,7 @@ position() {
         else msg "$(gettext "The changes will be seen only after restarting the lists.")\n" info; fi
         
     fi
+    "$DS/ifs/tls.sh" colorize &
     [ -f "$DC_tlt/0.cfg.mv" ] && rm "$DC_tlt/0.cfg.mv"
     exit
 }
@@ -99,7 +100,7 @@ function dlg_form_1() {
     --name=Idiomind --class=Idiomind \
     --always-print-result --separator="\n" --selectable-labels \
     --window-icon="$DS/images/icon.png" \
-    --align=center --text-align=center --columns=2 \
+    --align=left --text-align=center --columns=2 \
     --buttons-layout=end --scroll --center --on-top \
     --width=680 --height=540 --borders=10 \
     --field="<small>$lgtl</small>" "$trgt" \
@@ -107,12 +108,12 @@ function dlg_form_1() {
     --field="<small>$(gettext "Topic")</small>":CB "$tpc!$tpcs" \
     --field="<small>$(gettext "Audio")</small>":FL "$audiofile_1" \
     --field="<small>$(gettext "Example")</small>":TXT "$exmp" \
-    --field="<small>$(gettext "Definition")</small>":TXT "$dftn" \
+    --field="<small><a href='$link2'>$(gettext "Definition")</a></small>":TXT "$dftn" \
     --field="<small>$(gettext "Note")</small>":TXT "$note" \
-    --field=" ":LBL " " \
+    --field="<small><a href='$link1'>$(gettext "Translation")</a>\t<a href='$link3'>$(gettext "Images")</a></small>":LBL " " \
     --field="$(gettext "Mark")":CHK "$mark" \
     --field="<small>$(gettext "Listen")</small>":FBTN "$cmd_play" \
-    --field="<small><a href='$link2'>$(gettext "Definition")</a>  <a href='$link1'>$(gettext "Translation")</a></small>":LBL " " \
+    --field=" ":LBL " " \
     --button="$(gettext "More")":"$cmd_move" \
     --button="$(gettext "Image")":"$cmd_image" \
     --button="$(gettext "Delete")":"$cmd_delete" \
@@ -124,7 +125,7 @@ function dlg_form_1() {
 function dlg_form_2() {
     
     if [ `wc -w <<<"$item"` -lt 4 ]; then
-    t=CHK; lbl_2="$(gettext "Is a word")"
+    t=CHK; lbl_2="$(gettext "It is a compound word")"
     else t=LBL; fi
     
     #--button="$(gettext "Image")":"$cmd_image"

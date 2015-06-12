@@ -23,32 +23,29 @@ if [ -z "$tpc" ]; then source "$DS/ifs/mods/cmns.sh"
 msg "$(gettext "No topic is active")\n" info & exit 1; fi
 
 [ -n "$(< "$DC_s/1.cfg")" ] && cfg=1 || > "$DC_s/1.cfg"
-
-lbls=('Words' 'Sentences' 'Marked items' \
-'Difficult words' 'New episodes' 'Saved episodes')
+lbls=('Words' 'Sentences' 'Marked items' 'Difficult words' \
+'New episodes <i><small>Podcasts</small></i>' \
+'Saved episodes <i><small>Podcasts</small></i>')
 sets=('grammar' 'list' 'tasks' 'trans' 'trd_trgt' 'text' 'audio' \
 'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' \
 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
 in=('in1' 'in2' 'in3' 'in4' 'in5' 'in6')
 
 cfg1="$DC_tlt/1.cfg"
+cfg2="$DC_tlt/2.cfg"
 cfg3="$DC_tlt/3.cfg"
 cfg4="$DC_tlt/4.cfg"
-if [ "$(wc -l < "$cfg4")" -gt 0 ]; then
-in1="$(grep -Fxvf "$cfg4" "$cfg1")"; else
-in1="$(< "$cfg1")"; fi
-if [ "$(wc -l < "$cfg3")" -gt 0 ]; then
-in2="$(grep -Fxvf "$cfg3" "$cfg1")"; else
-in2="$(< "$cfg1")"; fi
-in3="$(< "$DC_tlt/6.cfg")"
-in4="$(cd "$DC_tlt/practice/"; awk '++A[$1]==2' ./*.3 |sed '/^$/d')"
-[ -f "$DM_tl/Podcasts/.conf/1.cfg" ] && \
-in5="$(tac "$DM_tl/Podcasts/.conf/1.cfg" |sed '/^$/d')" || in5=""
-[ -f "$DM_tl/Podcasts/.conf/2.cfg" ] && \
-in6="$(tac "$DM_tl/Podcasts/.conf/2.cfg" |sed '/^$/d')" || in6=""
+in1="$(grep -Fxvf "$cfg4" "$cfg1")"
+in2="$(grep -Fxvf "$cfg3" "$cfg1")"
+in3="$(grep -Fxvf "$cfg2" "$DC_tlt/6.cfg")"
+in4="$(grep -Fxvf "$cfg4" "$DC_tlt/practice/log.3")"
+[ -f "$DM_tl/Podcasts/.conf/1.lst" ] && \
+in5="$(tac "$DM_tl/Podcasts/.conf/1.lst")" || in5=""
+[ -f "$DM_tl/Podcasts/.conf/2.lst" ] && \
+in6="$(tac "$DM_tl/Podcasts/.conf/2.lst")" || in6=""
 [ ! -d "$DT" ] && mkdir "$DT"; cd "$DT"
 
-if [ "$cfg" = 1 ]; then
+if [[ "$cfg" = 1 ]]; then
 
     n=13
     while [[ $n -lt 19 ]]; do
@@ -80,7 +77,7 @@ function setting_1() {
 }
 
 title="$tpc"
-if [ ! -f "$DT/.p_" ]; then
+if [[ ! -f "$DT/.p_" ]]; then
 btn2=""$(gettext "Cancel")":1"
 if grep -E 'vivid|wily' <<<"`lsb_release -a`">/dev/null 2>&1; then
 btn1="gtk-media-play:0"; else
@@ -112,15 +109,15 @@ if [[ $ret -eq 0 ]]; then
     cd "$DT"; > ./index.m3u; n=13
     while [[ $n -lt 19 ]]; do
         val=$(sed -n $((n-12))p "$slct" | cut -d "|" -f3)
-        [[ -n "$val" ]] && sed -i "s/${sets[$n]}=.*/${sets[$n]}=\"$val\"/g" "$DC_s/1.cfg"
-        if sed -n 1,2p "$slct" | grep FALSE; then
+        [ -n "$val" ] && sed -i "s/${sets[$n]}=.*/${sets[$n]}=\"$val\"/g" "$DC_s/1.cfg"
+        if sed -n 1,2p "$slct" | grep -o FALSE; then
             if [ "$val" = TRUE ]; then
             [ -n "${!in[$((n-13))]}" ] && \
             echo "${!in[$((n-13))]}" >> ./index.m3u; fi
         else
-            [[ $n = 15 ]] && cat "$cfg1" >> ./index.m3u
-            if [ "$val" = TRUE ]; then
-            [[ -n "${!in[$((n-11))]}" ]] && \
+            if [[ $n = 15 ]]; then cat "$cfg1" >> ./index.m3u
+            elif [[ $n -gt 15 ]] && [[ "$val" = TRUE ]]; then
+            [ -n "${!in[$((n-11))]}" ] && \
             echo "${!in[$((n-11))]}" >> ./index.m3u; fi
         fi
         ((n=n+1))
@@ -134,12 +131,12 @@ if [[ $ret -eq 0 ]]; then
     else "$DS/stop.sh" 2 && exit 1; fi
     
     if [ -z "$(< "$DT/index.m3u")" ]; then
-    notify-send "$(gettext "Exiting")" \
-    "$(gettext "Nothing to play")" -i idiomind -t 3000 &&
-    sleep 4
+    notify-send "$(gettext "Nothing to play")" \
+    "$(gettext "Exiting...")" -i idiomind -t 3000 &
     "$DS/stop.sh" 2 & exit 1; fi
     
-    printf "plyrt.$tpc.plyrt\n" >> "$DC_s/8.cfg" &
+    echo -e ".ply.$tpc.ply." >> "$DC_s/8.cfg" &
+    rm -f "$slct"
     sleep 1
     "$DS/bcle.sh" & exit 0
 
@@ -151,10 +148,9 @@ elif [[ $ret -eq 2 ]]; then
     
 elif [[ $ret -eq 3 ]]; then
 
-    [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
-    [ -n "$(ps -A | pgrep -f "play")" ] && killall play &
-    [ -n "$(ps -A | pgrep -f "mplayer")" ] && killall mplayer &
+    if ps -A | pgrep -f "play"; then killall play & fi
+    if ps -A | pgrep -f "mplayer"; then killall mplayer & fi
     > "$DT/.p"
 fi
-
-rm -f "$slct" & exit
+[ -f "$slct" ] && rm -f "$slct"
+exit

@@ -4,8 +4,8 @@ body {margin:0;padding:0;background:#f6f6f6;font-family: 'Comfortaa', 'Century G
 .left {float:left;margin:15px 0 0 0;}
 .right {float:right;margin:15px 0 0 0;}
 .important-text {color:#000000;text-decoration:underline;}
-a:link, a:visited, a:active {color:#f66d52;text-decoration:none;opacity:1;}
-a:hover {color:#67a0a6;text-decoration:none;}
+a:link, a:visited, a:active {color:#67a0a6;text-decoration:none;opacity:1;}
+a:hover {color:#f66d52;text-decoration:none;}
 a.current {padding-bottom:3px;border-bottom:1px solid #f66d52;}
 h1 {padding:43px 0 8px 0;margin:0;color:#69a7ae;border-bottom:2px solid #ffffff; font-size:1.5em;clear:both;font-weight:normal;}
 h2 {padding:0 0 5px 0;margin:0;font-size:1.4em;color:#69a7ae;font-weight:normal;clear:both;}

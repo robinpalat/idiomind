@@ -13,36 +13,33 @@ ling=0
 
 score() {
     
-    touch e.0 e.1 e.2 e.3
-    awk '!a[$0]++' e.2 > e2.tmp
-    awk '!a[$0]++' e.3 > e3.tmp
-    grep -Fxvf e3.tmp e2.tmp > e.2
-    mv -f e3.tmp e.3
+    "$drts"/cls.sh comp e &
 
     if [[ $(($(< ./e.l)+$1)) -ge $all ]]; then
         play "$drts/all.mp3" &
-        echo "w9.$(tr -s '\n' '|' < ./e.1).w9" >> "$log"
+        echo ".w9.$(tr -s '\n' '|' < ./e.1).w9." >> "$log"
+        echo -e ".okp.1.okp." >> "$log"
         echo "$(date "+%a %d %B")" > e.lock
         echo 21 > .5
-        "$strt" 5 &
+        "$strt" 5 e &
         exit 1
         
     else
-        [ -f e.l ] && echo $(($(< ./e.l)+easy)) > e.l || echo "$easy" > e.l
+        [ -f ./e.l ] && echo $(($(< ./e.l)+easy)) > ./e.l || echo "$easy" > ./e.l
         s=$(< ./e.l)
         v=$((100*s/all))
         n=1; c=1
         while [[ $n -le 21 ]]; do
-            if [ "$v" -le "$c" ]; then
-            echo "$n" > .5; break; fi
+            if [[ "$v" -le "$c" ]]; then
+            echo "$n" > ./.5; break; fi
             ((c=c+5))
             let n++
         done
 
-        if [ -f e.3 ]; then
-        echo "w6.$(tr -s '\n' '|' < ./e.3).w6" >> "$log"; fi
+        if [ -f ./e.3 ]; then
+        echo ".w6.$(tr -s '\n' '|' < ./e.3).w6." >> "$log"; fi
         
-        "$strt" 10 "$easy" "$ling" "$hard" & exit 1
+        "$strt" 10 e "$easy" "$ling" "$hard" & exit 1
     fi
 }
 
@@ -52,7 +49,7 @@ fonts() {
     fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
     src=$(eyeD3 "$drtt/$fname.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
     img="$drtt/images/$fname.jpg"
-    [ ! -f "$img" ] && img="$DS/practice/img_2.jpg"
+    [ ! -f "$img" ] && img="$DS/practice/images/img_2.jpg"
     srcel="<span font_desc='Free Sans 10'><i>($src)</i></span>"
     trgtl="<span font_desc='Free Sans 15'><b>$1</b></span>"
 }
@@ -63,7 +60,7 @@ cuestion() {
     --image="$img" \
     --skip-taskbar --text-align=center --align=center --center --on-top \
     --image-on-top --undecorated --buttons-layout=spread \
-    --width=415 --height=360 --borders=4 \
+    --width=418 --height=365 --borders=6 \
     --button="$(gettext "Exit")":1 \
     --button="    $(gettext "Answer") >>    ":0
 }
@@ -75,7 +72,7 @@ answer() {
     --timeout=20 --selectable-labels \
     --skip-taskbar --text-align=center --align=center --center --on-top \
     --image-on-top --undecorated --buttons-layout=spread \
-    --width=415 --height=360 --borders=4 \
+    --width=418 --height=365 --borders=6 \
     --field="$trgtl   $srcel":lbl \
     --button="  $(gettext "I did not know it")  ":3 \
     --button="  $(gettext "I Knew it")  ":2
@@ -87,20 +84,20 @@ while read trgt; do
     cuestion
     ret=$(echo "$?")
     
-    if [ $ret = 1 ]; then
+    if [[ $ret = 1 ]]; then
         break &
-        "$drts/cls.sh" comp_e "$easy" "$ling" "$hard" "$all" &
+        "$drts"/cls.sh comp e "$easy" "$ling" "$hard" "$all" &
         exit 1
         
     else
         answer
         ans=$(echo "$?")
 
-        if [ $ans = 2 ]; then
+        if [[ $ans = 2 ]]; then
             echo "$trgt" >> e.1
             easy=$((easy+1))
 
-        elif [ $ans = 3 ]; then
+        elif [[ $ans = 3 ]]; then
             echo "$trgt" >> e.2
             hard=$((hard+1))
         fi
@@ -108,7 +105,7 @@ while read trgt; do
     
 done < ./e.tmp
 
-if [ ! -f e.2 ]; then
+if [ ! -f ./e.2 ]; then
 
     score "$easy"
     
@@ -119,20 +116,20 @@ else
         cuestion
         ret=$(echo "$?")
         
-        if [ $ret = 1 ]; then
+        if [[ $ret = 1 ]]; then
             break &
-            "$drts/cls.sh" comp_e "$easy" "$ling" "$hard" "$all" &
+            "$drts"/cls.sh comp e "$easy" "$ling" "$hard" "$all" &
             exit 1
 
         else
             answer
             ans=$(echo "$?")
             
-            if [ $ans = 2 ]; then
+            if [[ $ans = 2 ]]; then
                 hard=$((hard-1))
                 ling=$((ling+1))
                 
-            elif [ $ans = 3 ]; then
+            elif [[ $ans = 3 ]]; then
                 echo "$trgt" >> e.3
             fi
         fi
