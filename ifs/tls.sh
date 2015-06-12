@@ -808,6 +808,7 @@ mkpdf() {
             srce=$(grep -o -P "(?<=ISI2I0I).*(?=ISI2I0I)" <<<"$tgs")
             echo "${trgt}" >> ./trgt_sentences
             echo "${srce}" >> ./srce_sentences
+            echo "id.$n:[trgt={$trgt},srce={$srce},exmp={},defn={},note={},wrds={},grmr={},sum={}]" >> /home/robin/Desktop/template
             let n--
         done
         echo -e "<head>
@@ -894,6 +895,7 @@ mkpdf() {
             | sed "s/"$hlgt"/<b>"$hlgt"<\/\b>/g")
             echo "${trgt}" >> trgt_words
             echo "${srce}" >> srce_words
+            echo "id.$n:[trgt={$trgt},srce={$srce},exmp={$exm1},defn={$dftn},note={},wrds={},grmr={},sum={}]" >> /home/robin/Desktop/template
             
             if [ -n "${trgt}" ]; then
                 echo -e "<table width=\"55%\" border=\"0\" align=\"left\" cellpadding=\"10\" cellspacing=\"5\">
@@ -979,6 +981,35 @@ mkpdf() {
     exit
 }
 
+convert() {
+    > /home/robin/Desktop/template
+    n=1
+    while [[ $n -le "$(wc -l < "$DC_tlt/0.cfg")" ]]; do
+        Word="$(sed -n "$n"p "$DC_tlt/0.cfg")"
+        fname="$(nmfile "$Word")"
+        
+        if [ -f "${DM_tlt}/$fname.mp3" ]; then
+        tgs=$(eyeD3 "${DM_tlt}/$fname.mp3")
+        trgt=$(grep -o -P "(?<=ISI1I0I).*(?=ISI1I0I)" <<<"$tgs")
+        srce=$(grep -o -P "(?<=ISI2I0I).*(?=ISI2I0I)" <<<"$tgs")
+        elif [ -f "${DM_tlt}/words/$fname.mp3" ]; then
+        tgs=$(eyeD3 "${DM_tlt}/words/$fname.mp3")
+        trgt=$(grep -o -P "(?<=IWI1I0I).*(?=IWI1I0I)" <<<"$tgs")
+        srce=$(grep -o -P "(?<=IWI2I0I).*(?=IWI2I0I)" <<<"$tgs")
+        inf=$(grep -o -P "(?<=IWI3I0I).*(?=IWI3I0I)" <<<"$tgs" | tr '_' '\n')
+        hlgt="${trgt,,}"
+        exm1=$(echo "${inf}" | sed -n 1p | sed 's/\\n/ /g')
+        dftn=$(echo "${inf}" | sed -n 2p | sed 's/\\n/ /g')
+        exmp1=$(echo "${exm1}" \
+        | sed "s/"$hlgt"/<b>"$hlgt"<\/\b>/g")
+        fi
+        
+        echo "id.$n:[trgt={$trgt},srce={$srce},exmp={},defn={},note={},wrds={},grmr={},sum={}]" >> /home/robin/Desktop/template
+        let n++
+    done
+}
+
+
 if [ "$1" = play ]; then
 
     play "$2"
@@ -1039,6 +1070,8 @@ case "$1" in
     set_image "$@" ;;
     pdf)
     mkpdf ;;
+    conv)
+    convert ;;
     html)
     mkhtml ;;
     fback)

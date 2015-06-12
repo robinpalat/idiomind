@@ -39,6 +39,20 @@ function msg_2() {
     "$btn3" --button="$4":1 --button="$3":0
 }
 
+function get_item() {
+    
+    field=('id' 'trgt' 'srce' 'exmp' 'defn' 'note' 'wrds' 'grmr' 'sum')
+    n=1
+    while [[ $n -lt 9 ]]; do
+    val="${field[$n]}"
+    itm=$(sed -n "$1"p "$2" |grep -oE $val=\{[^\}]* |sed "s/${val}={//g")
+    declare "${field[$n]}"="$itm"
+    export "${field[$n]}"
+    ((n=n+1))
+    done
+
+}
+
 function nmfile() {
         
   echo -n "${1^}" | md5sum | rev | cut -c 4- | rev

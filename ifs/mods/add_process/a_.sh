@@ -230,7 +230,7 @@ if [[ "$conten" = A ]]; then
                         mksure "${DM_tlt}/words/$fname.mp3" "${trgt}" "${srce}"
                         if [ $? = 0 ]; then
                             tags_1 W "${trgt}" "${srce}" "${DM_tlt}/words/$fname.mp3"
-                            index word "${trgt}" "${tpe}"
+                            index word "${trgt}" z"${tpe}"
                             echo "${trgt}" >> addw
                             
                         else

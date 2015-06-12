@@ -1,17 +1,23 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+function get_item() {
+
+    field=('id' 'trgt' 'srce' 'exmp' 'defn' 'note' 'wrds' 'grmr' 'sum')
+    n=1
+    while [[ $n -lt 9 ]]; do
+    val="${field[$n]}"
+    itm=$(sed -n "$1"p "/home/robin/Desktop/template" |grep -oE $val=\{[^\}]* |sed "s/${val}={//g")
+    export "${field[$n]}"="$itm"
+    ((n=n+1))
+    done
+}
+    
+
 function word_view() {
     
-    trgt="$item"
-    tags="$(eyeD3 "${DM_tlt}/words/$fname.mp3")"
-    srce="$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)' <<<"${tags}")"
-    fields="$(grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' <<<"${tags}" | tr '_' '\n')"
-    mark="$(grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)' <<<"${tags}")"
-    exmp="$(sed -n 1p <<<"${fields}")"
-    dftn="$(sed -n 2p <<<"${fields}")"
-    note="$(sed -n 3p <<<"${fields}")"
-    exmp="$(sed "s/"${trgt,,}"/<span background='#FDFBCF'>"${trgt,,}"<\/\span>/g" <<<"$exmp")"
+    get_item $1
+    
     [ -n "$dftn" ] && field_dftn="--field=$dftn:lbl"
     [ -n "$note" ] && field_note="--field=$note\n:lbl"
     [ -n "$exmp" ] && field_exmp="--field=<i><span color='#737373'>$exmp</span></i>:lbl"
@@ -36,19 +42,14 @@ function word_view() {
 
 function sentence_view() {
     
+    get_item $1
+    
     if [[ -f "$DM_tlt/$fname.mp3" ]]; then
-    tags="$(eyeD3 "$DM_tlt/$fname.mp3")"
-    [ "$(sed -n 1p "$DC_s/1.cfg" | grep -o grammar=\"[^\"]* | grep -o '[^"]*$')"  = TRUE ] \
-    && trgt="$(grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)' <<<"${tags}")" \
-    || trgt="$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"${tags}")"
-    srce="$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"${tags}")"
-    lwrd="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"${tags}" | tr '_' '\n')"
-    mark="$(grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)' <<<"${tags}")"
     [ "$mark" = TRUE ] && trgt="<b>$trgt</b>"
     [ -z "$trgt" ] && tm="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>"
     else tm="<span color='#3F78A0'><tt>$(gettext "File not found")</tt></span>"; fi
     
-    echo "$lwrd" | yad --list --title=" " \
+    echo "lwrd" | yad --list --title=" " \
     --text="$tm<span font_desc='Sans Free 15'>$trgt</span>\n\n<i>$srce</i>\n\n" \
     --selectable-labels --print-column=0 \
     --dclick-action="$DS/ifs/tls.sh 'dclik'" \
@@ -65,7 +66,7 @@ function sentence_view() {
     
 } >/dev/null 2>&1
 
-export -f word_view sentence_view
+export -f word_view sentence_view get_item
 
 function notebook_1() {
     
