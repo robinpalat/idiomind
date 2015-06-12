@@ -53,16 +53,19 @@ elif [[ $1 = comp ]]; then
     grep -Fxvf ./"${2}3.tmp" ./"${2}2.tmp" > ./"${2}.2"
     mv -f ./"${2}3.tmp" ./"${2}.3"
     
-    n=`awk '++A[$1]==3' ./*.1`; echo "$n" > ./log.1
-    n=`awk '++A[$1]==2' ./*.2`; echo "$n" > ./log.2
-    n=`awk '++A[$1]==2' ./*.3`; echo "$n" > ./log.3
+    n=`awk '++A["$1"]==3' ./*.1`; echo "$n" > ./log.1
+    n=`awk '++A["$1"]==2' ./*.2`; echo "$n" > ./log.2
+    n=`awk '++A["$1"]==2' ./*.3`; echo "$n" > ./log.3
     
     if [ -f ./"${2}.1" ]; then
-    n=`awk '++A[$1]==1' ./"${2}.1"` && echo "$n" >> log.1; fi
+    n=`awk '++A[$1]==1' ./"${2}.1"`
+    echo "$n" >> log.1; fi
     if [ -f ./"${2}.2" ]; then
-    n=`awk '++A[$1]==1' ./"${2}.2"` && echo "$n" >> log.2; fi
+    n=`awk '++A[$1]==1' ./"${2}.2"`
+    echo "$n" >> log.2; fi
     if [ -f ./"${2}.3" ]; then
-    n=`awk '++A[$1]==1' ./"${2}.3"` && echo "$n" >> log.3; fi
+    n=`awk '++A[$1]==1' ./"${2}.3"`
+    echo "$n" >> log.3; fi
     
     if [ -n "$3" ]; then
     
