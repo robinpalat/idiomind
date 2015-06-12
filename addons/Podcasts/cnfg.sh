@@ -55,7 +55,6 @@ apply() {
     
     printf "$CNFG" | sed 's/|/\n/g' | sed -n 4,15p | \
     sed 's/^ *//; s/ *$//g' > "$DT/podcasts.tmp"
-
     n=1; while read feed; do
         declare mod$n="$feed"
         mod="mod$n"; url="url$n"

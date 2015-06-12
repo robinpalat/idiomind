@@ -231,7 +231,6 @@ sync() {
         B="$(cd "$SYNCDIR"; ls * | wc -l)"
         [ $? != 0 ] && B=0
         
-        if [[ $2 = 3 ]]; then
         cd /
 
         if [[ $rsync_delete = 0 ]]; then
@@ -246,7 +245,7 @@ sync() {
             --exclude="*.html" --omit-dir-times --ignore-errors "$DM_tl/Podcasts/cache/" "$SYNCDIR"
             exit=$?
         fi
-sleep 10
+        
         if [[ $exit = 0 ]]; then
 
             new=$((A-B))

@@ -13,10 +13,12 @@ if [[ "$1" = new_item ]]; then
     DCP="$DM_tl/Podcasts/.conf"
     fname="$(nmfile "${item}")"
     if [ -s "$DCP/2.lst" ]; then
+    sed -i -e "1i$item\\" "$DCP/.22.lst"
     sed -i -e "1i$item\\" "$DCP/2.lst"
     else
+    echo "$item" > "$DCP/.22.lst"
     echo "$item" > "$DCP/2.lst"; fi
-    check_index1 "$DCP/2.lst" "$DCP/.22.cfg"
+    check_index1 "$DCP/2.lst" "$DCP/.22.lst"
     notify-send -i info "$(gettext "Saved")" "$item" -t 3000
     exit
     
@@ -62,17 +64,17 @@ elif [[ "$1" = delete_item ]]; then
             [ -f "$DMC/$fname.html" ] && rm "$DMC/$fname.html"
             [ -f "$DMC/$fname.item" ] && rm "$DMC/$fname.item"
             cd "$DCP"
-            grep -vxF "$item" "$DCP/.22.cfg" > "$DCP/.22.cfg.tmp"
-            sed '/^$/d' "$DCP/.22.cfg.tmp" > "$DCP/.22.cfg"
+            grep -vxF "$item" "$DCP/.22.lst" > "$DCP/.22.lst.tmp"
+            sed '/^$/d' "$DCP/.22.lst.tmp" > "$DCP/.22.lst"
             grep -vxF "$item" "$DCP/2.lst" > "$DCP/2.lst.tmp"
             sed '/^$/d' "$DCP/2.lst.tmp" > "$DCP/2.lst"
             rm "$DCP"/*.tmp; fi
 
     else
-        notify-send -i info "$(gettext "Done")" "$item"
+        notify-send -i info "$(gettext "Deleted")" "$item"
         cd "$DCP"
-        grep -vxF "$item" "$DCP/.22.cfg" > "$DCP/.22.cfg.tmp"
-        sed '/^$/d' "$DCP/.22.cfg.tmp" > "$DCP/.22.cfg"
+        grep -vxF "$item" "$DCP/.22.lst" > "$DCP/.22.lst.tmp"
+        sed '/^$/d' "$DCP/.22.lst.tmp" > "$DCP/.22.lst"
         grep -vxF "$item" "$DCP/2.lst" > "$DCP/2.lst.tmp"
         sed '/^$/d' "$DCP/2.lst.tmp" > "$DCP/2.lst"
         rm "$DCP"/*.tmp
@@ -106,8 +108,8 @@ elif [[ "$1" = deleteall ]]; then
 
         if [[ $(cut -d "|" -f1 <<<"$dl") = TRUE ]]; then
 
-            rm "$DCP/2.lst" "$DCP/.22.cfg"
-            touch "$DCP/2.lst" "$DCP/.22.cfg"
+            rm "$DCP/2.lst" "$DCP/.22.lst"
+            touch "$DCP/2.lst" "$DCP/.22.lst"
         fi
     fi
 
