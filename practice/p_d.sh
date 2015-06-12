@@ -110,10 +110,10 @@ result() {
     while read -r line; do
     
         if grep -Fxq "${line}" <<<"$in"; then
-            sed -i "s/"${line}"/<b>"${line}"<\/b>/g" chk.tmp
+            sed -i "s/"${line}"/<b>"${line}"<\/b>/g" ./chk.tmp
             [ -n "${line}" ] && echo \
             "<span color='#3A9000'><b>${line^}</b></span>  " >> ./words.tmp
-            [ -n "${line}" ] && echo "${line}" >> mtch.tmp
+            [ -n "${line}" ] && echo "${line}" >> ./mtch.tmp
         else
             [ -n "${line}" ] && echo \
             "<span color='#7B4A44'><b>${line^}</b></span>  " >> ./words.tmp
@@ -122,28 +122,28 @@ result() {
     done < <(sed 's/ /\n/g' <<<"$out")
     
     OK=$(tr '\n' ' ' < ./words.tmp)
-    sed 's/ /\n/g' < ./chk.tmp > all.tmp; touch ./mtch.tmp
+    sed 's/ /\n/g' < ./chk.tmp > ./all.tmp; touch ./mtch.tmp
     porc=$((100*$(cat ./mtch.tmp | wc -l)/$(wc -l < ./all.tmp)))
     
     if [[ $porc -ge 70 ]]; then
-        echo "${trgt}" >> d.1
+        echo "${trgt}" >> ./d.1
         easy=$((easy+1))
         color=3AB452
         
     elif [[ $porc -ge 50 ]]; then
-        echo "${trgt}" >> d.2
+        echo "${trgt}" >> ./d.2
         ling=$((ling+1))
         color=E5801D
         
     else
-        [ -n "$entry" ] && echo "${trgt}" >> d.3
+        [ -n "$entry" ] && echo "${trgt}" >> ./d.3
         [ -n "$entry" ] && hard=$((hard+1))
         color=D11B5D
     fi
     
     prc="<b>$porc%</b>"
     wes="$(< ./chk.tmp)"
-    rm chk.tmp
+    rm ./chk.tmp
     }
 
 while read trgt; do
@@ -174,13 +174,13 @@ while read trgt; do
         if [[ $ret = 1 ]]; then
             break &
             killall play &
-            rm -f mtch.tmp words.tmp
+            rm -f ./mtch.tmp ./words.tmp
             "$drts"/cls.sh comp d $easy $ling $hard $all &
             exit 1
             
         elif [[ $ret -eq 2 ]]; then
             killall play &
-            rm -f mtch.tmp words.tmp &
+            rm -f ./mtch.tmp ./words.tmp &
         fi
     fi
 

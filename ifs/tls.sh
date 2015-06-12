@@ -568,14 +568,14 @@ colorize() {
     > "$DT/ps_lk"
     rm "${DC_tlt}/5.cfg"
     cfg5="${DC_tlt}/5.cfg"
-    cfg6=`< "${DC_tlt}/6.cfg"`
+    cfg6="$(< "${DC_tlt}/6.cfg")"
     img1='/usr/share/idiomind/images/1.png'
     img2='/usr/share/idiomind/images/2.png'
     img3='/usr/share/idiomind/images/3.png'
     img0='/usr/share/idiomind/images/0.png'
-    log3=`< "${DC_tlt}/practice/log.3"`
-    log2=`< "${DC_tlt}/practice/log.2"`
-    log1=`< "${DC_tlt}/practice/log.1"`
+    log3="$(< "${DC_tlt}/practice/log.3")"
+    log2="$(< "${DC_tlt}/practice/log.2")"
+    log1="$(< "${DC_tlt}/practice/log.1")"
     
     while read -r item; do
     

@@ -52,9 +52,11 @@ elif [[ $1 = comp ]]; then
     else > ./"${2}3.tmp"; fi
     grep -Fxvf ./"${2}3.tmp" ./"${2}2.tmp" > ./"${2}.2"
     mv -f ./"${2}3.tmp" ./"${2}.3"
-    n=`awk '++A[$1]==3' ./*.1`; echo "$n" > log.1
-    n=`awk '++A[$1]==2' ./*.2`; echo "$n" > log.2
-    n=`awk '++A[$1]==2' ./*.3`; echo "$n" > log.3
+    
+    n=`awk '++A[$1]==3' ./*.1`; echo "$n" > ./log.1
+    n=`awk '++A[$1]==2' ./*.2`; echo "$n" > ./log.2
+    n=`awk '++A[$1]==2' ./*.3`; echo "$n" > ./log.3
+    
     if [ -f ./"${2}.1" ]; then
     n=`awk '++A[$1]==1' ./"${2}.1"` && echo "$n" >> log.1; fi
     if [ -f ./"${2}.2" ]; then
@@ -64,10 +66,10 @@ elif [[ $1 = comp ]]; then
     
     if [ -n "$3" ]; then
     
-        [ -f ./"${2}.l" ] \
-        && echo $(($(< ./"${2}.l")+easy)) > ./"${2}.l" \
-        || echo "$easy" > ./"${2}.l"
-        v=$((100*$(< ./${2}.l)/all))
+        [ -f ./"${2}".l ] \
+        && echo $(($(< ./"${2}".l)+easy)) > ./"${2}".l \
+        || echo "$easy" > ./"${2}".l
+        v=$((100*$(< ./"${2}".l)/all))
         stats ./."${icon}"
         "$DIR/strt.sh" $_stats "$easy" "$ling" "$hard" &
     fi
