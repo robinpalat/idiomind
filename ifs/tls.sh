@@ -64,19 +64,19 @@ Vietnamese"
     file="${dir}/conf/id"
     nu='^[0-9]+$'
     dirs="$(find "${dir}"/ -maxdepth 5 -type d | sed '/^$/d' | wc -l)"
-    name="$(sed -n 1p < "${file}" | grep -o 'name="[^"]*' | grep -o '[^"]*$')"
-    language_source=$(sed -n 2p < "${file}" | grep -o 'language_source="[^"]*' | grep -o '[^"]*$')
-    language_target=$(sed -n 3p < "${file}" | grep -o 'language_target="[^"]*' | grep -o '[^"]*$')
-    author="$(sed -n 4p < "${file}" | grep -o 'author="[^"]*' | grep -o '[^"]*$')"
-    contact=$(sed -n 5p < "${file}" | grep -o 'contact="[^"]*' | grep -o '[^"]*$')
-    category=$(sed -n 6p < "${file}" | grep -o 'category="[^"]*' | grep -o '[^"]*$')
-    link=$(sed -n 7p < "${file}" | grep -o 'link="[^"]*' | grep -o '[^"]*$')
-    date_c=$(sed -n 8p < "${file}" | grep -o 'date_c="[^"]*' | grep -o '[^"]*$' | tr -d '-')
-    date_u=$(sed -n 9p < "${file}" | grep -o 'date_u="[^"]*' | grep -o '[^"]*$' | tr -d '-')
-    nwords=$(sed -n 10p < "${file}" | grep -o 'nwords="[^"]*' | grep -o '[^"]*$')
-    nsentences=$(sed -n 11p < "${file}" | grep -o 'nsentences="[^"]*' | grep -o '[^"]*$')
-    nimages=$(sed -n 12p < "${file}" | grep -o 'nimages="[^"]*' | grep -o '[^"]*$')
-    level=$(sed -n 13p < "${file}" | grep -o 'level="[^"]*' | grep -o '[^"]*$')
+    name="$(sed -n 1p "${file}" | grep -o 'name="[^"]*' | grep -o '[^"]*$')"
+    language_source=$(sed -n 2p "${file}" | grep -o 'language_source="[^"]*' | grep -o '[^"]*$')
+    language_target=$(sed -n 3p "${file}" | grep -o 'language_target="[^"]*' | grep -o '[^"]*$')
+    author="$(sed -n 4p "${file}" | grep -o 'author="[^"]*' | grep -o '[^"]*$')"
+    contact=$(sed -n 5p "${file}" | grep -o 'contact="[^"]*' | grep -o '[^"]*$')
+    category=$(sed -n 6p "${file}" | grep -o 'category="[^"]*' | grep -o '[^"]*$')
+    link=$(sed -n 7p "${file}" | grep -o 'link="[^"]*' | grep -o '[^"]*$')
+    date_c=$(sed -n 8p "${file}" | grep -o 'date_c="[^"]*' | grep -o '[^"]*$' | tr -d '-')
+    date_u=$(sed -n 9p "${file}" | grep -o 'date_u="[^"]*' | grep -o '[^"]*$' | tr -d '-')
+    nwords=$(sed -n 10p "${file}" | grep -o 'nwords="[^"]*' | grep -o '[^"]*$')
+    nsentences=$(sed -n 11p "${file}" | grep -o 'nsentences="[^"]*' | grep -o '[^"]*$')
+    nimages=$(sed -n 12p "${file}" | grep -o 'nimages="[^"]*' | grep -o '[^"]*$')
+    level=$(sed -n 13p "${file}" | grep -o 'level="[^"]*' | grep -o '[^"]*$')
 
     if [ "${name}" != "${3}" ] || [ "${#name}" -gt 60 ] || \
     [ `grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${name}"` ]; then
@@ -145,7 +145,6 @@ Directories: $wcdirs
 Files: $wcfiles
 Others files: $others
 
-
 $(gettext "FILES")
 
 $files
@@ -180,29 +179,27 @@ $SRFL5" | yad --text-info --title="$(gettext "Installation details")" \
 
 check_index() {
 
-    source /usr/share/idiomind/ifs/c.conf
-    DC_tlt="$DM_tl/$2/.conf"
-    DM_tlt="$DM_tl/$2"
+    DC_tlt="$DM_tl/${2}/.conf"
+    DM_tlt="$DM_tl/${2}"
     
     check() {
         
-        [ -d "$DM_tl/$2/.conf" ] && mkdir "$DM_tl/$2/.conf"
-
+        if [ ! -d "${DC_tlt}" ]; then mkdir "${DC_tlt}"; fi
         n=0
         while [[ $n -le 4 ]]; do
-            [ ! -f "$DC_tlt/$n.cfg" ] && touch "$DC_tlt/$n.cfg"
-            if grep '^$' "$DC_tlt/$n.cfg"; then
-            sed -i '/^$/d' "$DC_tlt/$n.cfg"; fi
-            check_index1 "$DC_tlt/$n.cfg"
-            chk=$(wc -l < "$DC_tlt/$n.cfg")
+            [ ! -f "${DC_tlt}/$n.cfg" ] && touch "${DC_tlt}/$n.cfg"
+            if grep '^$' "${DC_tlt}/$n.cfg"; then
+            sed -i '/^$/d' "${DC_tlt}/$n.cfg"; fi
+            check_index1 "${DC_tlt}/$n.cfg"
+            chk=$(wc -l < "${DC_tlt}/$n.cfg")
             [ -z "$chk" ] && chk=0
             eval chk$n="$chk"
             ((n=n+1))
         done
         
-        if [ ! -f "$DC_tlt/8.cfg" ]; then
-        echo 1 > "$DC_tlt/8.cfg"; fi
-        eval stts=$(sed -n 1p "$DC_tlt/8.cfg")
+        if [ ! -f "${DC_tlt}/8.cfg" ]; then
+        echo 1 > "${DC_tlt}/8.cfg"; fi
+        eval stts=$(sed -n 1p "${DC_tlt}/8.cfg")
     }
     
     fix() {
@@ -295,34 +292,34 @@ check_index() {
         | sort -k 1n,1 -k 7 | sed s'|\.\/words\/||'g \
         | sed s'|\.\/||'g | sed s'|\.mp3||'g > "$DT/index"
     }
-        
+
     check
 
     if [ $((chk3+chk4)) != $chk0 ] || [ $((chk1+chk2)) != $chk0 ] \
     || [ $stts = 13 ]; then
-    
-        (sleep 1
-        notify-send -i idiomind "$(gettext "Index Error")" "$(gettext "Fixing...")" -t 3000) &
-        > "$DT/ps_lk"
-        [ ! -d "$DM_tlt/.conf" ] && mkdir "$DM_tlt/.conf"
-        DC_tlt="$DM_tlt/.conf"
 
-        [ "$DC_tlt/.11.cfg" ] && sed -i '/^$/d' "$DC_tlt/.11.cfg"
-        if [ "$DC_tlt/.11.cfg" ] && [ -s "$DC_tlt/.11.cfg" ]; then
-        index="$DC_tlt/.11.cfg"
-        else 
-        namefiles
-        index="$DT/index"; fi
-        
-        fix
+            (sleep 1
+            notify-send -i idiomind "$(gettext "Index Error")" "$(gettext "Fixing...")" -t 3000) &
+            > "$DT/ps_lk"
+            [ ! -d "$DM_tlt/.conf" ] && mkdir "$DM_tlt/.conf"
+            DC_tlt="$DM_tlt/.conf"
 
-    n=0
-    while [[ $n -le 4 ]]; do
-        touch "$DC_tlt/$n.cfg"
-        ((n=n+1))
-    done
-    rm -f "$DT/index"
-    "$DS/mngr.sh" mkmn
+            [ "$DC_tlt/.11.cfg" ] && sed -i '/^$/d' "$DC_tlt/.11.cfg"
+            if [ "$DC_tlt/.11.cfg" ] && [ -s "$DC_tlt/.11.cfg" ]; then
+            index="$DC_tlt/.11.cfg"
+            else 
+            namefiles
+            index="$DT/index"; fi
+            fix
+
+        n=0
+        while [[ $n -le 4 ]]; do
+            touch "$DC_tlt/$n.cfg"
+            ((n=n+1))
+        done
+        rm -f "$DT/index"
+        "$DS/ifs/tls.sh" colorize
+        "$DS/mngr.sh" mkmn
     fi
     
     exit
@@ -346,7 +343,7 @@ add_audio() {
     DT="$2"; cd "$DT"
     if [[ $ret -eq 0 ]]; then
     
-        if [ -f "$audio" ]; then
+        if [[ -f "$audio" ]]; then
         cp -f "$audio" "$DT/audtm.mp3"
         #eyeD3 -P itunes-podcast --remove $DT/audtm.mp3
         eyeD3 --remove-all "$DT/audtm.mp3" & exit
@@ -407,7 +404,7 @@ videourl() {
     --field="$(gettext "URL")" \
     --button="$(gettext "Cancel")":1 \
     --button=gtk-ok:0)
-    [ $? = 1 ] && exit
+    [[ $? = 1 ]] && exit
     if [ ${#url} -gt 40 ] && \
     ([ ${url:0:29} = 'https://www.youtube.com/watch' ] \
     || [ ${url:0:28} = 'http://www.youtube.com/watch' ]); then \
@@ -491,11 +488,11 @@ echo "</body>" >> "$DC_tlt/att.html"
     
     } >/dev/null 2>&1
     
-    [ ! -d "$DM_tlt/files" ] && mkdir "$DM_tlt/files"
+    [[ ! -d "$DM_tlt/files" ]] && mkdir "$DM_tlt/files"
     ch1="$(ls -A "$DM_tlt/files")"
     
-    if [ "$(ls -A "$DM_tlt/files")" ]; then
-        [ ! -f "$DC_tlt/att.html" ] && mkindex >/dev/null 2>&1
+    if [[ "$(ls -A "$DM_tlt/files")" ]]; then
+        [[ ! -f "$DC_tlt/att.html" ]] && mkindex >/dev/null 2>&1
         yad --html --title="$(gettext "Attached Files")" \
         --name=Idiomind --class=Idiomind \
         --uri="$DC_tlt/att.html" --browser \
@@ -506,12 +503,12 @@ echo "</body>" >> "$DC_tlt/att.html"
         --button="gtk-add":0 \
         --button="gtk-close":1
         ret=$?
-            if [ $ret = 0 ]; then 
+            if [[ $ret = 0 ]]; then 
             "$DS/ifs/tls.sh" add_file
-            elif [ $ret = 2 ]; then
+            elif [[ $ret = 2 ]]; then
             "$DS/ifs/tls.sh" videourl
             fi
-            if [ "$ch1" != "$(ls -A "$DM_tlt/files")" ]; then
+            if [[ "$ch1" != "$(ls -A "$DM_tlt/files")" ]]; then
             mkindex; fi
         
     else
@@ -525,7 +522,7 @@ echo "</body>" >> "$DC_tlt/att.html"
         --button="$(gettext "Cancel")":1 \
         --button="$(gettext "OK")":0
         ret=$?
-        if [ "$ch1" != "$(ls -A "$DM_tlt/files")" ] && [ $ret = 0 ]; then
+        if [[ "$ch1" != "$(ls -A "$DM_tlt/files")" ]] && [[ $ret = 0 ]]; then
             mkindex
         fi
     fi
@@ -563,6 +560,40 @@ fback() {
      
 } >/dev/null 2>&1
 
+
+
+
+colorize() {
+
+    > "$DT/ps_lk"
+    rm "${DC_tlt}/5.cfg"
+    cfg5="${DC_tlt}/5.cfg"
+    cfg6="$(< "${DC_tlt}/6.cfg")"
+    img1='/usr/share/idiomind/images/1.png'
+    img2='/usr/share/idiomind/images/2.png'
+    img3='/usr/share/idiomind/images/3.png'
+    img0='/usr/share/idiomind/images/0.png'
+    log3="$(< "${DC_tlt}/practice/log.3")"
+    log2="$(< "${DC_tlt}/practice/log.2")"
+    log1="$(< "${DC_tlt}/practice/log.1")"
+    
+    while read -r item; do
+    
+        if grep -Fxo "${item}" <<<"${cfg6}"; then
+        i="<b><big>${item}</big></b>";else i="${item}"; fi
+        if grep -Fxo "${item}" <<<"${log3}"; then
+            echo -e "FALSE\n${i}\n$img3" >> "$cfg5"
+        elif grep -Fxo "${item}" <<<"${log1}"; then
+            echo -e "FALSE\n${i}\n$img1" >> "$cfg5"
+        elif grep -Fxo "${item}" <<<"${log2}"; then
+            echo -e "FALSE\n${i}\n$img2" >> "$cfg5"
+        else
+            echo -e "FALSE\n${i}\n$img0" >> "$cfg5"
+        fi
+    done < "${DC_tlt}/1.cfg"
+    rm -f "$DT/ps_lk"; cd ~/
+}
+
 check_updates() {
 
     internet
@@ -575,7 +606,7 @@ check_updates() {
     && [ "$nver" != "$cver" ]; then
     
         msg_2 " <b>$(gettext "A new version of Idiomind available\!")</b>\n" \
-        info "$(gettext "Download")" "$(gettext "Cancel")" $(gettext "Updates")
+        info "$(gettext "Download")" "$(gettext "Cancel")" $(gettext "Idiomind - New Version")
         ret=$(echo $?)
         
         if [[ $ret -eq 0 ]]; then
@@ -592,14 +623,14 @@ check_updates() {
 
 a_check_updates() {
 
-    [ ! -f "$DC_s/9.cfg" ] && echo `date +%d` > "$DC_s/9.cfg" && exit
+    [[ ! -f "$DC_s/9.cfg" ]] && echo `date +%d` > "$DC_s/9.cfg" && exit
     d1=$(< "$DC_s/9.cfg"); d2=$(date +%d)
-    if [ "$(sed -n 1p "$DC_s/9.cfg")" = 28 ] && \
-    [ "$(wc -l < "$DC_s/9.cfg")" -gt 1 ]; then
+    if [[ "$(sed -n 1p "$DC_s/9.cfg")" = 28 ]] && \
+    [[ "$(wc -l < "$DC_s/9.cfg")" -gt 1 ]]; then
     rm -f "$DC_s/9.cfg"; fi
-    [ "$(wc -l < "$DC_s/9.cfg")" -gt 1 ] && exit 1
+    [[ "$(wc -l < "$DC_s/9.cfg")" -gt 1 ]] && exit 1
 
-    if [ "$d1" != "$d2" ]; then
+    if [[ "$d1" != "$d2" ]]; then
 
         curl -v www.google.com 2>&1 | \
         grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
@@ -611,7 +642,7 @@ a_check_updates() {
         && [ ${#nver} -ge 3 ] && [ ${#cver} -ge 3 ] \
         && [ "$nver" != "$cver" ]; then
             
-            msg_2 " <b>$(gettext "A new version of Idiomind available\!")\n</b>\n $(gettext "Do you want to download it now?")\n" info "$(gettext "Download")" "$(gettext "No")" "$(gettext "Updates")" "$(gettext "Ignore")"
+            msg_2 " <b>$(gettext "A new version of Idiomind available\!")\n</b>\n $(gettext "Do you want to download it now?")\n" info "$(gettext "Download")" "$(gettext "Cancel")" "$(gettext "Idiomind - New Version")" "$(gettext "Ignore")"
             ret=$(echo $?)
             
             if [[ $ret -eq 0 ]]; then
@@ -635,7 +666,7 @@ about() {
 c="$(gettext "Vocabulary learning tool")"
 website="$(gettext "Web Site")"
 export c website
-python << END
+python << ABOUT
 import gtk
 import os
 app_logo = os.path.join('/usr/share/idiomind/images/idiomind.png')
@@ -681,85 +712,51 @@ class AboutDialog:
 if __name__ == "__main__":
     AboutDialog = AboutDialog()
     main()
-END
+ABOUT
 } >/dev/null 2>&1
 
 set_image() {
 
     cd "$DT"
     if [ "$3" = word ]; then
-    item=$(eyeD3 "$2" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)')
+    item=$(eyeD3 "$2" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)'); k=word
     elif [ "$3" = sentence ]; then
-    item=$(eyeD3 "$2" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)'); fi
-    q="$(sed "s/'/ /g" <<<"$item")"
+    item=$(eyeD3 "$2" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)'); k=sentence; fi
     file="$2"
     fname="$(nmfile "$item")"
     source "$DS/ifs/mods/add/add.sh"
+    ifile="${DM_tlt}/words/images/$fname.jpg"
 
-    echo -e "<html><head>
-    <meta http-equiv=\"Refresh\" content=\"0;url=https://www.google.com/search?q="$q"&tbm=isch\">
-    </head><body><p>Search images for \"$q\"...</p></body></html>" > search.html
-    btn1="--button="$(gettext "Image")":3"
-
-    if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
-    image="--image=$DM_tlt/words/images/$fname.jpg"
-    btn1="--button="$(gettext "Change")":3"
+    if [ -f "$ifile" ]; then
+    image="--image=$ifile"
     btn2="--button="$(gettext "Delete")":2"
-    else label="--text=<small><a href='file://$DT/search.html'>"$(gettext "Search image")"</a></small>"; fi
-
-    if [ "$3" = word ]; then
-
-        dlg_form_3
-        ret=$(echo $?)
-            
-            if [[ $ret -eq 3 ]]; then
-            
-            rm -f *.l
-            scrot -s --quality 90 "$fname.temp.jpeg"
-            /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 100x90^ \
-            -gravity center -extent 100x90 -quality 90% "$item"_temp.jpeg
-            /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 400x270^ \
-            -gravity center -extent 400x270 -quality 90% "$DM_tlt/words/images/$fname.jpg"
-            eyeD3 --remove-images "$file"
-            eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file"
-            wait
-            "$DS/ifs/tls.sh" set_image "$file" word & exit
-                
-            elif [[ $ret -eq 2 ]]; then
-            
-            eyeD3 --remove-image "$file"
-            rm -f "$DM_tlt/words/images/$fname.jpg"
-            
-            fi
-            
-    elif [ "$3" = sentence ]; then
     
-        dlg_form_3
-        ret=$(echo $?)
-                
-            if [[ $ret -eq 3 ]]; then
-            
-            rm -f *.l
-            scrot -s --quality 90 "$fname.temp.jpeg"
-            /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 100x90^ \
-            -gravity center -extent 100x90 -quality 90% "$item"_temp.jpeg
-            /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 400x270^ \
-            -gravity center -extent 400x270 -quality 90% "$DM_tlt/words/images/$fname.jpg"
-            eyeD3 --remove-images "$file"
-            eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file"
-            wait
-            "$DS/ifs/tls.sh" set_image "$file" sentence & exit
-                
-            elif [[ $ret -eq 2 ]]; then
-            
-            eyeD3 --remove-image "$file"
-            rm -f "$DM_tlt/words/images/$fname.jpg"
-            
-            fi
+    dlg_form_3
+    ret=$(echo $?)
+        
+        if [[ $ret -eq 2 ]]; then
+        
+        eyeD3 --remove-image "$file"
+        rm -f "$ifile"
+        
+        fi
+        
+    else 
+        scrot -s --quality 90 "$fname.temp.jpeg"
+        /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 100x90^ \
+        -gravity center -extent 100x90 -quality 90% "$item"_temp.jpeg
+        /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 405x275^ \
+        -gravity center -extent 400x270 -quality 90% "$ifile"
+        eyeD3 --remove-images "$file"
+        eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file"
+        wait
+        "$DS/ifs/tls.sh" set_image "$file" $k & exit
+
     fi
+
     rm -f "$DT"/*.jpeg
-    (sleep 50 && rm -f "$DT/search.html") & exit
-}  >/dev/null 2>&1
+    exit
+} >/dev/null 2>&1
 
 
 mkpdf() {
@@ -774,29 +771,29 @@ mkpdf() {
     --button="$(gettext "OK")":0)
     ret=$?
 
-    if [ "$ret" -eq 0 ]; then
+    if [[ $ret -eq 0 ]]; then
     
         dte=`date "+%d %B %Y"`
         [ -d "$DT/mkhtml" ] && rm -f "$DT/mkhtml"
         mkdir "$DT/mkhtml"
         mkdir "$DT/mkhtml/images"
-        nts="$(sed ':a;N;$!ba;s/\n/<br>/g' < "$DC_tlt/10.cfg" \
+        nts="$(sed ':a;N;$!ba;s/\n/<br>/g' < "${DC_tlt}/10.cfg" \
         | sed 's/\&/&amp;/g')"
-        if [ -f "$DM_tlt/words/images/img.jpg" ]; then
-        convert "$DM_tlt/words/images/img.jpg" \
+        if [ -f "${DM_tlt}/words/images/img.jpg" ]; then
+        convert "${DM_tlt}/words/images/img.jpg" \
         -alpha set -channel A -evaluate set 50% \
         "$DT/mkhtml/img.png"; fi
 
         cd "$DT/mkhtml"
-        cp -f "$DC_tlt/3.cfg" "./3.cfg"
-        cp -f "$DC_tlt/4.cfg" "./4.cfg"
+        cp -f "${DC_tlt}/3.cfg" ./"3.cfg"
+        cp -f "${DC_tlt}/4.cfg" ./"4.cfg"
 
-        n="$(wc -l < "./3.cfg" | awk '{print ($1)}')"
+        n="$(wc -l < ./"3.cfg" | awk '{print ($1)}')"
         while [[ $n -ge 1 ]]; do
-            Word=$(sed -n "$n"p "./3.cfg")
+            Word=$(sed -n "$n"p ./"3.cfg")
             fname="$(nmfile "$Word")"
-            if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
-            convert "$DM_tlt/words/images/$fname.jpg" -alpha set -virtual-pixel transparent \
+            if [ -f "${DM_tlt}/words/images/$fname.jpg" ]; then
+            convert "${DM_tlt}/words/images/$fname.jpg" -alpha set -virtual-pixel transparent \
             -channel A -blur 0x10 -level 50%,100% +channel "$DT/mkhtml/images/$Word.png"
             fi
             let n--
@@ -804,13 +801,13 @@ mkpdf() {
 
         n="$(wc -l < "./4.cfg" | awk '{print ($1)}')"
         while [[ $n -ge 1 ]]; do
-            Word=$(sed -n "$n"p "./4.cfg")
+            Word=$(sed -n "$n"p ./"4.cfg")
             fname="$(nmfile "$Word")"
-            tgs=$(eyeD3 "$DM_tlt/$fname.mp3")
+            tgs=$(eyeD3 "${DM_tlt}/$fname.mp3")
             trgt=$(grep -o -P "(?<=ISI1I0I).*(?=ISI1I0I)" <<<"$tgs")
             srce=$(grep -o -P "(?<=ISI2I0I).*(?=ISI2I0I)" <<<"$tgs")
-            echo "$trgt" >> trgt_sentences
-            echo "$srce" >> srce_sentences
+            echo "${trgt}" >> ./trgt_sentences
+            echo "${srce}" >> ./srce_sentences
             let n--
         done
         echo -e "<head>
@@ -838,7 +835,7 @@ mkpdf() {
         echo -e "<p>&nbsp;</p>
         <div>" >> doc.html
 
-        cd "$DM_tlt/words/images"
+        cd "${DM_tlt}/words/images"
         cnt=`ls -1 *.jpg | grep -v "img.jpg" | wc -l`
         if [[ $cnt != 0 ]]; then
             cd "$DT/mkhtml/images/"
@@ -850,21 +847,21 @@ mkpdf() {
             
                     label1=$(sed -n "$n",$((n+1))p < ./image_list | sed -n 1p)
                     label2=$(sed -n "$n",$((n+1))p < ./image_list | sed -n 2p)
-                    if [ -n "$label1" ]; then
+                    if [ -n "${label1}" ]; then
                         echo -e "<tr>
                         <td align=\"center\"><img src=\"images/$label1.png\" width=\"200\" height=\"140\"></td>" >> doc.html
-                        if [ -n "$label2" ]; then
+                        if [ -n "${label2}" ]; then
                         echo -e "<td align=\"center\"><img src=\"images/$label2.png\" width=\"200\" height=\"140\"></td></tr>" >> doc.html
                         else
                         echo '</tr>' >> doc.html
                         fi
                         echo -e "<tr>
-                        <td align=\"center\" valign=\"top\"><p>$label1</p>
+                        <td align=\"center\" valign=\"top\"><p>${label1}</p>
                         <p>&nbsp;</p>
                         <p>&nbsp;</p>
                         <p>&nbsp;</p></td>" >> doc.html
-                        if [ -n "$label2" ]; then
-                        echo -e "<td align=\"center\" valign=\"top\"><p>$label2</p>
+                        if [ -n "${label2}" ]; then
+                        echo -e "<td align=\"center\" valign=\"top\"><p>${label2}</p>
                         <p>&nbsp;</p>
                         <p>&nbsp;</p>
                         <p>&nbsp;</p></td>
@@ -882,55 +879,55 @@ mkpdf() {
         fi
 
         cd "$DT/mkhtml"
-        n="$(wc -l < "./3.cfg")"
+        n="$(wc -l < ./"3.cfg")"
         while [[ $n -ge 1 ]]; do
-            Word=$(sed -n "$n"p "./3.cfg")
+            Word=$(sed -n "$n"p ./"3.cfg")
             fname="$(nmfile "$Word")"
-            tgs=$(eyeD3 "$DM_tlt/words/$fname.mp3")
+            tgs=$(eyeD3 "${DM_tlt}/words/$fname.mp3")
             trgt=$(grep -o -P "(?<=IWI1I0I).*(?=IWI1I0I)" <<<"$tgs")
             srce=$(grep -o -P "(?<=IWI2I0I).*(?=IWI2I0I)" <<<"$tgs")
             inf=$(grep -o -P "(?<=IWI3I0I).*(?=IWI3I0I)" <<<"$tgs" | tr '_' '\n')
             hlgt="${trgt,,}"
-            exm1=$(echo "$inf" | sed -n 1p | sed 's/\\n/ /g')
-            dftn=$(echo "$inf" | sed -n 2p | sed 's/\\n/ /g')
-            exmp1=$(echo "$exm1" \
+            exm1=$(echo "${inf}" | sed -n 1p | sed 's/\\n/ /g')
+            dftn=$(echo "${inf}" | sed -n 2p | sed 's/\\n/ /g')
+            exmp1=$(echo "${exm1}" \
             | sed "s/"$hlgt"/<b>"$hlgt"<\/\b>/g")
-            echo "$trgt" >> trgt_words
-            echo "$srce" >> srce_words
+            echo "${trgt}" >> trgt_words
+            echo "${srce}" >> srce_words
             
-            if [ -n "$trgt" ]; then
+            if [ -n "${trgt}" ]; then
                 echo -e "<table width=\"55%\" border=\"0\" align=\"left\" cellpadding=\"10\" cellspacing=\"5\">
                 <tr>
                 <td bgcolor=\"#E6E6E6\" class=\"side\"></td>
-                <td bgcolor=\"#FFFFFF\"><w1>$trgt</w1></td>
+                <td bgcolor=\"#FFFFFF\"><w1>${trgt}</w1></td>
                 </tr><tr>
                 <td bgcolor=\"#E6E6E6\" class=\"side\"></td>
-                <td bgcolor=\"#FFFFFF\"><w2>$srce</w2></td>
+                <td bgcolor=\"#FFFFFF\"><w2>${srce}</w2></td>
                 </tr>
                 </table>" >> doc.html
                 echo -e "<table width=\"100%\" border=\"0\" align=\"center\" cellpadding=\"10\" class=\"efont\">
                 <tr>
                 <td width=\"10px\"></td>" >> doc.html
-                if [ -z "$dftn" ] && [ -z "$exmp1" ]; then
-                echo -e "<td width=\"466\" valign=\"top\" class=\"nfont\" >$ntes</td>
+                if [ -z "${dftn}" ] && [ -z "${exmp1}" ]; then
+                echo -e "<td width=\"466\" valign=\"top\" class=\"nfont\" >${ntes}</td>
                 <td width=\"389\"</td>
                 </tr>
                 </table>" >> doc.html
                 else
                     echo -e "<td width=\"466\">" >> doc.html
-                    if [ -n "$dftn" ]; then
+                    if [ -n "${dftn}" ]; then
                     echo -e "<dl>
-                    <dd><dfn>$dftn</dfn></dd>
+                    <dd><dfn>${dftn}</dfn></dd>
                     </dl>" >> doc.html
                     fi
-                    if [ -n "$exmp1" ]; then
+                    if [ -n "${exmp1}" ]; then
                     echo -e "<dl>
                     <dt> </dt>
-                    <dd><cite>$exmp1</cite></dd>
+                    <dd><cite>${exmp1}</cite></dd>
                     </dl>" >> doc.html
                     fi 
                     echo -e "</td>
-                    <td width=\"400\" valign=\"top\" class=\"nfont\">$ntes</td>
+                    <td width=\"400\" valign=\"top\" class=\"nfont\">${ntes}</td>
                     </tr>
                     </table>" >> doc.html
                 fi
@@ -939,26 +936,26 @@ mkpdf() {
         done
 
         n=1; trgt=""
-        while [[ $n -le "$(wc -l < "./4.cfg")" ]]; do
+        while [[ $n -le "$(wc -l < ./"4.cfg")" ]]; do
         
-            trgt=$(sed -n "$n"p "trgt_sentences")
+            trgt=$(sed -n "$n"p ./"trgt_sentences")
             while read -r mrk; do
-                if grep -Fxo ${mrk^} < "./3.cfg"; then
+                if grep -Fxo ${mrk^} < ./"3.cfg"; then
                 trgsm=$(sed "s|$mrk|<mark>$mrk<\/mark>|g" <<<"$trgt")
                 trgt="$trgsm"; fi
-            done <<<"$(tr ' ' '\n' <<<"$trgt")"
+            done <<<"$(tr ' ' '\n' <<<"${trgt}")"
 
-            if [ -n "$trgt" ]; then
-                srce=$(sed -n "$n"p "srce_sentences")
-                fn=$(sed -n "$n"p "./4.cfg")
+            if [ -n "${trgt}" ]; then
+                srce=$(sed -n "$n"p ./"srce_sentences")
+                fn=$(sed -n "$n"p ./"4.cfg")
                 echo -e "<h1>&nbsp;</h1>
                 <table width=\"100%\" border=\"0\" align=\"left\" cellpadding=\"10\" cellspacing=\"5\">
                 <tr>
                 <td bgcolor=\"#E6E6E6\" class=\"side\"></td>
-                <td bgcolor=\"#FFFFFF\"><h1>$trgt</h1></td>
+                <td bgcolor=\"#FFFFFF\"><h1>${trgt}</h1></td>
                 </tr><tr>
                 <td bgcolor=\"#E6E6E6\" class=\"side\"></td>
-                <td bgcolor=\"#FFFFFF\"><h2>$srce</h2></td>
+                <td bgcolor=\"#FFFFFF\"><h2>${srce}</h2></td>
                 </tr>
                 </table>
                 <h1>&nbsp;</h1>" >> doc.html
@@ -977,8 +974,7 @@ mkpdf() {
         </html>" >> doc.html
 
         wkhtmltopdf -s A4 -O Portrait ./doc.html ./tmp.pdf
-        mv -f ./tmp.pdf "$pdf"
-        rm -fr "$DT/mkhtml"
+        mv -f ./tmp.pdf "$pdf"; rm -fr "$DT/mkhtml"
     fi
     exit
 }
@@ -986,7 +982,6 @@ mkpdf() {
 if [ "$1" = play ]; then
 
     play "$2"
-    wait
     
 elif [ "$1" = listen_sntnc ]; then
 
@@ -1032,14 +1027,14 @@ case "$1" in
     videourl "$@" ;;
     help)
     help ;;
+    colorize)
+    colorize "$@" ;;
     definition)
     definition "$@" ;;
     check_updates)
     check_updates ;;
     a_check_updates)
     a_check_updates ;;
-    check_index)
-    check_index "$@" ;;
     set_image)
     set_image "$@" ;;
     pdf)

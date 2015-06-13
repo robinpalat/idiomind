@@ -37,8 +37,9 @@ StartupWMClass=Idiomind"
 
 lang=('English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian')
-sets=('grammar' 'list' 'tasks' 'trans' 'trd_trgt' 'text' 'audio' \
-'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' \
+
+sets=('grammar' 'list' 'trans' 'trd_trgt' 'tasks' 'repeat' 'audio' \
+ 'videos' 'text' 'loop' 't_lang' 's_lang' 'synth' \
 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
 c=$((RANDOM%100000)); KEY=$c
 
@@ -97,16 +98,16 @@ yad --plug=$KEY --form --tabnum=1 \
 --field=":LBL" " " \
 --field="$(gettext "Use color to grammar")":CHK "$grammar" \
 --field="$(gettext "List words after adding a sentence")":CHK "$list" \
---field="$(gettext "Perform tasks at startup")":CHK "$tasks" \
 --field="$(gettext "Use automatic translation, if available")":CHK "$trans" \
 --field="$(gettext "Detect language of source text (slower)")":CHK "$trd_trgt" \
+--field="$(gettext "Perform tasks at startup")":CHK "$tasks" \
 --field=" :LBL" " " \
 --field="$(gettext "Play Options")\t":LBL " " \
 --field=":LBL" " " \
---field="$(gettext "Desktop notifications")":CHK "$text" \
---field="$(gettext "Play audio")":CHK "$audio" \
 --field="$(gettext "Repeat")":CHK "$repeat" \
+--field="$(gettext "Play audio")":CHK "$audio" \
 --field="$(gettext "Only play videos")":CHK "$videos" \
+--field="$(gettext "Desktop notifications")":CHK "$text" \
 --field="$(gettext "Duration of pause between items:")":SCL "$loop" \
 --field=" :LBL" " " \
 --field="$(gettext "Languages")\t":LBL " " \
@@ -133,9 +134,9 @@ yad --notebook --key=$KEY --title="$(gettext "Settings")" \
 --tab-borders=5 --sticky --center \
 --tab="$(gettext "Preferences")" \
 --tab="$(gettext "Addons")" \
---width=460 --height=340 --borders=2 \
---button="$(gettext "Cancel")":1 \
---button="$(gettext "OK")":0
+--width=470 --height=350 --borders=2 \
+--button="$(gettext "Apply")":0 \
+--button="$(gettext "Cancel")":1
 ret=$?
 
     if [[ $ret -eq 0 ]]; then
@@ -155,7 +156,7 @@ ret=$?
         && mkdir "$HOME/.config/autostart"
         config_dir="$HOME/.config/autostart"
         
-        if cut -d "|" -f5 < "$cnf1" | grep "TRUE"; then
+        if cut -d "|" -f7 < "$cnf1" | grep "TRUE"; then
             if [ ! -f "$config_dir/idiomind.desktop" ]; then
             echo "$desktopfile" > "$config_dir/idiomind.desktop"
             fi
@@ -171,7 +172,7 @@ ret=$?
             [ "${lang[$n]}" != "$lgtl" ]; then
                 lgtl="${lang[$n]}"
                 if grep -o -E 'Chinese|Japanese|Russian|Vietnamese' <<< "$lgtl";
-                then info3="\n<b> $lgtl</b>\n $(gettext "Some features do not yet work with this language"). "; fi
+                then info3="\n$(gettext "Some features do not yet work with this language"). ($lgtl)"; fi
                 confirm "$info2$info3" dialog-question "$lgtl"
                 [ $? -eq 0 ] && set_lang "${lang[$n]}"
                 break

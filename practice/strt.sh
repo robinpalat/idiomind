@@ -19,17 +19,17 @@
 
 source /usr/share/idiomind/ifs/c.conf
 DSP="$DS/practice"
-easys="$2"
-learning="$3"
-[[ "$4" -lt 0 ]] && hards=0 || hards="$4"
+easys="$3"
+learning="$4"
+[[ "$5" -lt 0 ]] && hards=0 || hards="$5"
 [ ! -d "$DC_tlt/practice" ] \
 && mkdir "$DC_tlt/practice"
 cd "$DC_tlt/practice"
-[ ! -f .1 ] && echo 1 > .1
-[ ! -f .2 ] && echo 1 > .2
-[ ! -f .3 ] && echo 1 > .3
-[ ! -f .4 ] && echo 1 > .4
-[ ! -f .5 ] && echo 1 > .5
+[ ! -f ./.1 ] && echo 1 > .1
+[ ! -f ./.2 ] && echo 1 > .2
+[ ! -f ./.3 ] && echo 1 > .3
+[ ! -f ./.4 ] && echo 1 > .4
+[ ! -f ./.5 ] && echo 1 > .5
 
 if [[ -n "$1" ]]; then
 
@@ -76,14 +76,14 @@ if [[ -n "$1" ]]; then
     fi
 fi
 
-img1="$DSP/icons_st/$(< ./.1).png"
-img2="$DSP/icons_st/$(< ./.2).png"
-img3="$DSP/icons_st/$(< ./.3).png"
-img4="$DSP/icons_st/$(< ./.4).png"
-img5="$DSP/icons_st/$(< ./.5).png"
+img1="$DSP/images/`< ./.1`.png"
+img2="$DSP/images/`< ./.2`.png"
+img3="$DSP/images/`< ./.3`.png"
+img4="$DSP/images/`< ./.4`.png"
+img5="$DSP/images/`< ./.5`.png"
 
 VAR="$(yad --list --title="$(gettext "Practice ")- $tpc" \
-$img --text="$info" \
+$img --text="$info$hw" \
 --class=Idiomind --name=Idiomind \
 --print-column=1 --separator="" \
 --window-icon="$DS/images/icon.png" \
@@ -106,17 +106,18 @@ if [[ $ret -eq 0 ]]; then
     msg " $(gettext "You must choose a practice.")\n" info
     "$DSP/strt.sh" & exit 1
     else
-    printf "prct.shc.$tpc.prct.shc\n" >> "$DC_s/8.cfg" &
+    echo -e ".prct.$tpc.prct." >> "$DC_s/8.cfg" &
     "$DSP/prct.sh" "$VAR" & exit 1
     fi
 
 elif [[ $ret -eq 3 ]]; then
     if [ -d "$DC_tlt/practice" ]; then
-    cd "$DC_tlt/practice"; rm .*; rm *; fi
+    cd "$DC_tlt/practice"; rm .*; rm *
+    touch ./log.1 ./log.2 ./log.3; fi
     "$DS/practice/strt.sh" & exit
 else
     cd "$DC_tlt/practice"
     rm *.tmp
-    "$DS/ifs/tls.sh" colorize
+    "$DS/ifs/tls.sh" colorize &
     exit
 fi

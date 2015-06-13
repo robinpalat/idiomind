@@ -10,7 +10,6 @@ path=\"$HOME\"
 size=\"0\"
 others=\" \"" > "$DC_a/user_data.cfg"
 fi
-
 path="$(sed -n 2p < "$DC_a/user_data.cfg" \
 | grep -o path=\"[^\"]* | grep -o '[^"]*$')"
 size="$(sed -n 3p < "$DC_a/user_data.cfg" \
