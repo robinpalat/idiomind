@@ -992,6 +992,7 @@ convert() {
         tgs=$(eyeD3 "${DM_tlt}/$fname.mp3")
         trgt=$(grep -o -P "(?<=ISI1I0I).*(?=ISI1I0I)" <<<"$tgs")
         srce=$(grep -o -P "(?<=ISI2I0I).*(?=ISI2I0I)" <<<"$tgs")
+        
         elif [ -f "${DM_tlt}/words/$fname.mp3" ]; then
         tgs=$(eyeD3 "${DM_tlt}/words/$fname.mp3")
         trgt=$(grep -o -P "(?<=IWI1I0I).*(?=IWI1I0I)" <<<"$tgs")
@@ -1000,8 +1001,7 @@ convert() {
         hlgt="${trgt,,}"
         exm1=$(echo "${inf}" | sed -n 1p | sed 's/\\n/ /g')
         dftn=$(echo "${inf}" | sed -n 2p | sed 's/\\n/ /g')
-        exmp1=$(echo "${exm1}" \
-        | sed "s/"$hlgt"/<b>"$hlgt"<\/\b>/g")
+        note=$(echo "${inf}" | sed -n 3p | sed 's/\\n/ /g')
         fi
         
         echo "id.$n:[trgt={$trgt},srce={$srce},exmp={},defn={},note={},wrds={},grmr={},sum={}]" >> /home/robin/Desktop/template
