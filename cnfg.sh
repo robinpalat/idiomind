@@ -149,7 +149,7 @@ ret=$?
             ((v=v+1)); fi
             ((n=n+1))
         done
-        
+
         if [ "$clip" = FALSE ] && [ -f "$DT/.clip" ]; then
         kill "$(< "$DT/.clip")"; rm -f "$DT/.clip"; fi
 

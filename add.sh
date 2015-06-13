@@ -29,8 +29,8 @@ trans=$(sed -n 3p "$DC_s/1.cfg" \
 | grep -o trans=\"[^\"]* | grep -o '[^"]*$')
 trd_trgt=$(sed -n 4p "$DC_s/1.cfg" \
 | grep -o trd_trgt=\"[^\"]* | grep -o '[^"]*$')
-clip=$(sed -n 4p "$DC_s/1.cfg" \
-| grep -o trd_trgt=\"[^\"]* | grep -o '[^"]*$')
+clip=$(sed -n 5p "$DC_s/1.cfg" \
+| grep -o clip=\"[^\"]* | grep -o '[^"]*$')
 
 new_topic() {
 
