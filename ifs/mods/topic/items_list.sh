@@ -1,22 +1,17 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-function get_item() {
-
-    field=('id' 'trgt' 'srce' 'exmp' 'defn' 'note' 'wrds' 'grmr' 'sum')
-    n=1
-    while [[ $n -lt 9 ]]; do
-    val="${field[$n]}"
-    itm=$(sed -n "$1"p "/home/robin/Desktop/template" |grep -oE $val=\{[^\}]* |sed "s/${val}={//g")
-    export "${field[$n]}"="$itm"
-    ((n=n+1))
-    done
-}
-    
+ 
 
 function word_view() {
-    
-    get_item $1
+
+    item=`sed -n ${1}p "/home/robin/Desktop/template" |sed 's/},/}\n/g'`
+    trgt=`grep -oP '(?<=trgt={).*(?=})' <<<"$item"`
+    srce=`grep -oP '(?<=srce={).*(?=})' <<<"$item"`
+    exmp=`grep -oP '(?<=exmp={).*(?=})' <<<"$item"`
+    defn=`grep -oP '(?<=defn={).*(?=})' <<<"$item"`
+    note=`grep -oP '(?<=note={).*(?=})' <<<"$item"`
+    fname="$(echo -n "${trgt}" | md5sum | rev | cut -c 4- | rev)"
     
     [ -n "$dftn" ] && field_dftn="--field=$dftn:lbl"
     [ -n "$note" ] && field_note="--field=$note\n:lbl"
@@ -42,15 +37,20 @@ function word_view() {
 
 function sentence_view() {
     
-    get_item $1
+    item=`sed -n "$1"p "/home/robin/Desktop/template" |sed 's/},/}\n/g'`
+    trgt=`grep -oP '(?<=trgt={).*(?=})' <<<"$item"`
+    grmr=`grep -oP '(?<=grmr={).*(?=})' <<<"$item"`
+    srce=`grep -oP '(?<=srce={).*(?=})' <<<"$item"`
+    lwrd=`grep -oP '(?<=wrds={).*(?=})' <<<"$item" |tr '_' '\n'`
+    fname="$(echo -n "${trgt}" | md5sum | rev | cut -c 4- | rev)"
     
     if [[ -f "$DM_tlt/$fname.mp3" ]]; then
     [ "$mark" = TRUE ] && trgt="<b>$trgt</b>"
     [ -z "$trgt" ] && tm="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>"
     else tm="<span color='#3F78A0'><tt>$(gettext "File not found")</tt></span>"; fi
     
-    echo "lwrd" | yad --list --title=" " \
-    --text="$tm<span font_desc='Sans Free 15'>$trgt</span>\n\n<i>$srce</i>\n\n" \
+    echo "$lwrd" | yad --list --title=" " \
+    --text="$tm<span font_desc='Sans Free 15'>$grmr</span>\n\n<i>$srce</i>\n\n" \
     --selectable-labels --print-column=0 \
     --dclick-action="$DS/ifs/tls.sh 'dclik'" \
     --window-icon="$DS/images/icon.png" \
