@@ -29,6 +29,8 @@ trans=$(sed -n 3p "$DC_s/1.cfg" \
 | grep -o trans=\"[^\"]* | grep -o '[^"]*$')
 trd_trgt=$(sed -n 4p "$DC_s/1.cfg" \
 | grep -o trd_trgt=\"[^\"]* | grep -o '[^"]*$')
+clip=$(sed -n 4p "$DC_s/1.cfg" \
+| grep -o trd_trgt=\"[^\"]* | grep -o '[^"]*$')
 
 new_topic() {
 
@@ -85,6 +87,8 @@ Create one using the button below. ")" & exit 1; fi
     [ -z "$4" ] && txt="$(xclip -selection primary -o)" || txt="$4"
     txt="$(clean_4 "${txt}")"
     
+    if [ "$clip" = TRUE ] && [ ! -f "$DT/.clip" ]; then clip_watch; fi
+    
     if [ "$3" = 2 ]; then
     DT_r="$2"; cd "$DT_r"
     [ -n "$5" ] && srce="$5" || srce=""; else
@@ -99,7 +103,7 @@ Create one using the button below. ")" & exit 1; fi
 
     if [ "$trans" = TRUE ]; then lzgpr="$(dlg_form_1)"; \
     else lzgpr="$(dlg_form_2)"; fi
-
+    
     ret=$(echo "$?")
     trgt=$(echo "$lzgpr" | head -n -1 | sed -n 1p | sed 's/^\s*./\U&\E/g')
     srce=$(echo "$lzgpr" | sed -n 2p | sed 's/^\s*./\U&\E/g')
@@ -119,7 +123,9 @@ Create one using the button below. ")" & exit 1; fi
             "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
         
         elif [[ $ret -eq 0 ]]; then
-        
+            
+            xclip -i /dev/null
+            
             if [ -z "$chk" ]; then [ "$DT_r" ] && rm -fr "$DT_r";
             msg "$(gettext "No topic is active")\n" info & exit 1; fi
         

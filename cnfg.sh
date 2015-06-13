@@ -38,8 +38,8 @@ StartupWMClass=Idiomind"
 lang=('English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian')
 
-sets=('grammar' 'list' 'trans' 'trd_trgt' 'tasks' 'repeat' 'audio' \
- 'videos' 'text' 'loop' 't_lang' 's_lang' 'synth' \
+sets=('grammar' 'list' 'trans' 'trd_trgt' 'clip' 'tasks' 'repeat' 'audio' \
+'videos' 'text' 'loop' 't_lang' 's_lang' 'synth' \
 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
 c=$((RANDOM%100000)); KEY=$c
 
@@ -73,7 +73,7 @@ set_lang() {
 
 n=0
 if [ "$cfg" = 1 ]; then
-    while [[ $n -lt 14 ]]; do
+    while [[ $n -lt 15 ]]; do
         get="${sets[$n]}"
         val=$(sed -n $((n+1))p "$DC_s/1.cfg" \
         | grep -o "$get"=\"[^\"]* | grep -o '[^"]*$')
@@ -83,7 +83,7 @@ if [ "$cfg" = 1 ]; then
     
 else
     n=0; > "$DC_s/1.cfg"
-    while [[ $n -lt 19 ]]; do
+    while [[ $n -lt 20 ]]; do
     echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
     ((n=n+1))
     done
@@ -100,6 +100,7 @@ yad --plug=$KEY --form --tabnum=1 \
 --field="$(gettext "List words after adding a sentence")":CHK "$list" \
 --field="$(gettext "Use automatic translation, if available")":CHK "$trans" \
 --field="$(gettext "Detect language of source text (slower)")":CHK "$trd_trgt" \
+--field="$(gettext "Clipboard whatcher")":CHK "$clip" \
 --field="$(gettext "Perform tasks at startup")":CHK "$tasks" \
 --field=" :LBL" " " \
 --field="$(gettext "Play Options")\t":LBL " " \
@@ -141,22 +142,25 @@ ret=$?
 
     if [[ $ret -eq 0 ]]; then
         n=1; v=0
-        while [[ $n -le 21 ]]; do
+        while [[ $n -le 22 ]]; do
             val=$(cut -d "|" -f$n < "$cnf1")
             if [ -n "$val" ]; then
             sed -i "s/${sets[$v]}=.*/${sets[$v]}=\"$val\"/g" "$DC_s/1.cfg"
             ((v=v+1)); fi
             ((n=n+1))
         done
+        
+        if [ "$clip" = FALSE ] && [ -f "$DT/.clip" ]; then
+        kill "$(< "$DT/.clip")"; rm -f "$DT/.clip"; fi
 
-        val=$(cut -d "|" -f23 < "$cnf1")
-        sed -i "s/${sets[12]}=.*/${sets[12]}=\"$val\"/g" "$DC_s/1.cfg"
+        val=$(cut -d "|" -f24 < "$cnf1")
+        sed -i "s/${sets[13]}=.*/${sets[13]}=\"$val\"/g" "$DC_s/1.cfg"
         
         [ ! -d  "$HOME/.config/autostart" ] \
         && mkdir "$HOME/.config/autostart"
         config_dir="$HOME/.config/autostart"
         
-        if cut -d "|" -f7 < "$cnf1" | grep "TRUE"; then
+        if cut -d "|" -f8 < "$cnf1" | grep "TRUE"; then
             if [ ! -f "$config_dir/idiomind.desktop" ]; then
             echo "$desktopfile" > "$config_dir/idiomind.desktop"
             fi
@@ -168,7 +172,7 @@ ret=$?
         
         n=0
         while [[ $n -lt 10 ]]; do
-            if cut -d "|" -f19 < "$cnf1" | grep "${lang[$n]}" && \
+            if cut -d "|" -f20 < "$cnf1" | grep "${lang[$n]}" && \
             [ "${lang[$n]}" != "$lgtl" ]; then
                 lgtl="${lang[$n]}"
                 if grep -o -E 'Chinese|Japanese|Russian|Vietnamese' <<< "$lgtl";
@@ -182,7 +186,7 @@ ret=$?
         
         n=0
         while [[ $n -lt 10 ]]; do
-            if cut -d "|" -f20 < "$cnf1" | grep "${lang[$n]}" && \
+            if cut -d "|" -f21 < "$cnf1" | grep "${lang[$n]}" && \
             [ "${lang[$n]}" != "$lgsl" ]; then
                 confirm "$info1" dialog-warning
                 if [ $? -eq 0 ]; then

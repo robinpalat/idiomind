@@ -26,8 +26,8 @@ msg "$(gettext "No topic is active")\n" info & exit 1; fi
 lbls=('Words' 'Sentences' 'Marked items' 'Difficult words' \
 'New episodes <i><small>Podcasts</small></i>' \
 'Saved episodes <i><small>Podcasts</small></i>')
-sets=('grammar' 'list' 'tasks' 'trans' 'trd_trgt' 'text' 'audio' \
-'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' \
+sets=('grammar' 'list' 'trans' 'trd_trgt' 'clip' 'tasks' 'repeat' 'audio' \
+'videos' 'text' 'loop' 't_lang' 's_lang' 'synth' \
 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
 in=('in1' 'in2' 'in3' 'in4' 'in5' 'in6')
 
@@ -47,8 +47,8 @@ in6="$(tac "$DM_tl/Podcasts/.conf/2.lst")" || in6=""
 
 if [[ "$cfg" = 1 ]]; then
 
-    n=13
-    while [[ $n -lt 19 ]]; do
+    n=14
+    while [[ $n -lt 20 ]]; do
         get="${sets[$n]}"
         val=$(sed -n $((n+1))p < "$DC_s/1.cfg" \
         | grep -o "$get"=\"[^\"]* | grep -o '[^"]*$')
@@ -58,7 +58,7 @@ if [[ "$cfg" = 1 ]]; then
     
 else
     n=0; > "$DC_s/1.cfg"
-    while [[ $n -lt 19 ]]; do
+    while [[ $n -lt 20 ]]; do
     echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
     ((n=n+1))
     done
@@ -71,7 +71,7 @@ function setting_1() {
             [[ -z ${!arr} ]] && echo "$DS/images/addi.png" \
             || echo "$DS/images/add.png"
         echo "  <span font_desc='Arial 11'>$(gettext "${lbls[$n]}")</span>"
-        echo "${!sets[$((n+13))]}"
+        echo "${!sets[$((n+14))]}"
         let n++
     done
 }
@@ -106,19 +106,19 @@ ret=$?
 
 if [[ $ret -eq 0 ]]; then
 
-    cd "$DT"; > ./index.m3u; n=13
-    while [[ $n -lt 19 ]]; do
-        val=$(sed -n $((n-12))p "$slct" | cut -d "|" -f3)
+    cd "$DT"; > ./index.m3u; n=14
+    while [[ $n -lt 20 ]]; do
+        val=$(sed -n $((n-13))p "$slct" | cut -d "|" -f3)
         [ -n "$val" ] && sed -i "s/${sets[$n]}=.*/${sets[$n]}=\"$val\"/g" "$DC_s/1.cfg"
         if sed -n 1,2p "$slct" | grep -o FALSE; then
             if [ "$val" = TRUE ]; then
-            [ -n "${!in[$((n-13))]}" ] && \
-            echo "${!in[$((n-13))]}" >> ./index.m3u; fi
+            [ -n "${!in[$((n-14))]}" ] && \
+            echo "${!in[$((n-14))]}" >> ./index.m3u; fi
         else
-            if [[ $n = 15 ]]; then cat "$cfg1" >> ./index.m3u
-            elif [[ $n -gt 15 ]] && [[ "$val" = TRUE ]]; then
-            [ -n "${!in[$((n-11))]}" ] && \
-            echo "${!in[$((n-11))]}" >> ./index.m3u; fi
+            if [[ $n = 16 ]]; then cat "$cfg1" >> ./index.m3u
+            elif [[ $n -gt 16 ]] && [[ "$val" = TRUE ]]; then
+            [ -n "${!in[$((n-12))]}" ] && \
+            echo "${!in[$((n-12))]}" >> ./index.m3u; fi
         fi
         ((n=n+1))
     done
