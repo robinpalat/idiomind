@@ -87,7 +87,7 @@ Create one using the button below. ")" & exit 1; fi
     [ -z "$4" ] && txt="$(xclip -selection primary -o)" || txt="$4"
     txt="$(clean_4 "${txt}")"
     
-    if [ "$clip" = TRUE ] && [ ! -f "$DT/.clip" ]; then clip_watch; fi
+    if [ "$clip" = TRUE ] && [ ! -f "$DT/.clip" ]; then clip_watch & fi
     
     if [ "$3" = 2 ]; then
     DT_r="$2"; cd "$DT_r"
