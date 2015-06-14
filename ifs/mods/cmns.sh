@@ -54,8 +54,9 @@ function get_item() {
 }
 
 function nmfile() {
-        
-  echo -n "${1^}" | md5sum | rev | cut -c 4- | rev
+
+    id=":[type={$1},trgt={$2},srce={$3},exmp={$4},defn={$5},note={$6},wrds={$7},grmr={$8},]."
+    echo -n "${id}" | md5sum | rev | cut -c 4- | rev
 }
 
 function include() {

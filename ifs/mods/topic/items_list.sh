@@ -2,33 +2,23 @@
 # -*- ENCODING: UTF-8 -*-
 
  
-
 function word_view() {
 
-    item=`sed -n 46p "$DC_tlt/.11.cfg" |sed 's/},/}\n/g'`
-    trgt=`grep -oP '(?<=trgt={).*(?=})' <<<"$item"`
-    srce=`grep -oP '(?<=srce={).*(?=})' <<<"$item"`
-    exmp=`grep -oP '(?<=exmp={).*(?=})' <<<"$item"`
-    defn=`grep -oP '(?<=defn={).*(?=})' <<<"$item"`
-    note=`grep -oP '(?<=note={).*(?=})' <<<"$item"`
-    fname="$(echo -n "${trgt}" | md5sum | rev | cut -c 4- | rev)"
-    
     [ -n "$dftn" ] && field_dftn="--field=$dftn:lbl"
     [ -n "$note" ] && field_note="--field=$note\n:lbl"
     [ -n "$exmp" ] && field_exmp="--field=<i><span color='#737373'>$exmp</span></i>:lbl"
     [ -z "$trgt" ] && tm="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>"
-    [ "$mark" = TRUE ] && trgt="<b>$trgt</b>"
-    
+
     yad --form --title=" " \
     --selectable-labels --quoted-output \
-    --text="<span font_desc='Sans Free $fs'>$trgt</span>\n\n<i>$srce</i>\n\n" \
+    --text="<span font_desc='Sans Free 25'>$trgt</span>\n\n<i>$srce</i>\n\n" \
     --window-icon="$DS/images/icon.png" \
     --align=left --scroll --skip-taskbar --text-align=center \
     --image-on-top --center --on-top \
-    --width=620 --height=380 --borders=$bs \
+    --width=620 --height=380 --borders=20 \
     --field="":lbl "$field_exmp" "$field_dftn" "$field_note" \
     --button=gtk-edit:4 \
-    --button="$listen":"$cmd_listen" \
+    --button="$(gettext "Listen")":"$cmd_listen" \
     --button=gtk-go-down:2 \
     --button=gtk-go-up:3
     
@@ -36,21 +26,11 @@ function word_view() {
 
 
 function sentence_view() {
-    
-    item=`sed -n "$1"p "$DC_tlt/.11.cfg" |sed 's/},/}\n/g'`
-    trgt=`grep -oP '(?<=trgt={).*(?=})' <<<"$item"`
-    grmr=`grep -oP '(?<=grmr={).*(?=})' <<<"$item"`
-    srce=`grep -oP '(?<=srce={).*(?=})' <<<"$item"`
-    lwrd=`grep -oP '(?<=wrds={).*(?=})' <<<"$item" |tr '_' '\n'`
-    fname="$(echo -n "${trgt}" | md5sum | rev | cut -c 4- | rev)"
-    
-    if [[ -f "$DM_tlt/$fname.mp3" ]]; then
-    [ "$mark" = TRUE ] && trgt="<b>$trgt</b>"
+
     [ -z "$trgt" ] && tm="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>"
-    else tm="<span color='#3F78A0'><tt>$(gettext "File not found")</tt></span>"; fi
     
     echo "$lwrd" | yad --list --title=" " \
-    --text="$tm<span font_desc='Sans Free 15'>$grmr</span>\n\n<i>$srce</i>\n\n" \
+    --text="<span font_desc='Sans Free 15'>$grmr</span>\n\n<i>$srce</i>\n\n" \
     --selectable-labels --print-column=0 \
     --dclick-action="$DS/ifs/tls.sh 'dclik'" \
     --window-icon="$DS/images/icon.png" \
@@ -60,7 +40,7 @@ function sentence_view() {
     --column="":TEXT \
     --column="":TEXT \
     --button=gtk-edit:4 \
-    --button="$listen":"$cmd_listen" \
+    --button="$(gettext "Listen")":"$cmd_listen" \
     --button=gtk-go-down:2 \
     --button=gtk-go-up:3
     

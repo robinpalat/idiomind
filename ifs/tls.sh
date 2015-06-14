@@ -560,9 +560,6 @@ fback() {
      
 } >/dev/null 2>&1
 
-
-
-
 colorize() {
 
     > "$DT/ps_lk"
@@ -985,16 +982,22 @@ convert() {
     > "$DC_tlt/.11.cfg"
     n=1
     while [[ $n -le 200 ]]; do
-        Word="$(sed -n "$n"p "$DC_tlt/0.cfg")"
-        fname="$(nmfile "$Word")"
-        
+    
+        id=""; sum=""; type=""; trgt=""
+        srce=""; lwrd=""; grmr=""
+        exmp=""; dftn=""; note=""; tag=""
+    
+        item="$(sed -n "$n"p "$DC_tlt/0.cfg")"
+        fname="$(echo -n "${item}" | md5sum | rev | cut -c 4- | rev)"
+
         if [ -f "${DM_tlt}/$fname.mp3" ]; then
         tgs=$(eyeD3 "${DM_tlt}/$fname.mp3")
         trgt=$(grep -o -P "(?<=ISI1I0I).*(?=ISI1I0I)" <<<"$tgs")
         srce=$(grep -o -P "(?<=ISI2I0I).*(?=ISI2I0I)" <<<"$tgs")
         grmr="$(grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)' <<<"${tgs}")"
         lwrd="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"${tgs}")"
-        sum="$(nmfile "$trgt$srce")"
+        type=2
+        id="$(nmfile "${type}" "${trgt}" "${srce}" "${exmp}" "${dftn}" "${note}" "${lwrd}" "${grmr}")"
         
         elif [ -f "${DM_tlt}/words/$fname.mp3" ]; then
         tgs=$(eyeD3 "${DM_tlt}/words/$fname.mp3")
@@ -1005,20 +1008,17 @@ convert() {
         exmp="$(sed -n 1p <<<"${fields}")"
         dftn="$(sed -n 2p <<<"${fields}")"
         note="$(sed -n 3p <<<"${fields}")"
-        sum="$(nmfile "$trgt$srce")"
-        else
-        tgs=""; trgt=""; srce=""; lwrd=""; grmr=""
-        exmp=""; dftn=""; note=""; tag=""; sum=""
+        type=1
+        id="$(nmfile "${type}" "${trgt}" "${srce}" "${exmp}" "${dftn}" "${note}" "${lwrd}" "${grmr}")"
         fi
 
-        echo ".[$n]:[trgt={$trgt},srce={$srce},exmp={$exmp},defn={$dftn},note={$note},wrds={$lwrd},grmr={$grmr},tag={$tag},sum={$sum}]." >> "$DC_tlt/.11.cfg"
+        echo "$n:[type={$type},trgt={$trgt},srce={$srce},exmp={$exmp},defn={$dftn},note={$note},wrds={$lwrd},grmr={$grmr},].[tag={$tag},mark={$mark},].id=[$id]" >> "$DC_tlt/.11.cfg"
         let n++
     done
 }
+convert
 
-
-
-addd() {
+addx() {
 
     trgt=" hola como estsa"; srce="muy bien che!"
     pos=$(grep -Fon -m 1 "trgt={}" "$DC_tlt/.11.cfg" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
@@ -1036,18 +1036,12 @@ REM() {
         line=$(grep -oP "(?<=\[).*(?=]:)" <<<"$item")
         if [[ ${line} != ${n} ]]; then
         sed -i ""$n"s|\.\["$line"\]\:|\.\["$n"\]\:|g" "$DC_tlt/.11.cfg"
+        elif [ -z ${line} ]; then
+        echo "$n:[type={},trgt={},srce={},exmp={},defn={},note={},wrds={},grmr={},].[tag={},mark={},].id=[]" >> "$DC_tlt/.11.cfg"
         fi
         let n++
     done
 }
-
-
-
-
-
-
-
-
 
 
 

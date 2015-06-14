@@ -205,66 +205,58 @@ new_sentence() {
         fi
         srce="$(translate "${trgt}" $lgt $lgs)"
         srce="$(clean_1 "${srce}")"
-        fname="$(nmfile "${trgt}")"
-
-        if [ ! -f "$DT_r/audtm.mp3" ]; then
         
-            tts "${trgt}" "$lgt" "$DT_r" "${DM_tlt}/$fname.mp3"
-            
-                [ ! -f "${DM_tlt}/$fname.mp3" ] && \
-                voice "${trgt}" "$DT_r" "${DM_tlt}/$fname.mp3"
-            
-        else
-            cp -f "$DT_r/audtm.mp3" "${DM_tlt}/$fname.mp3"
-        fi
-    
     else 
         if [ -z "$4" ] || [ -z "$2" ]; then
         [ "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "You need to fill text fields.")\n" info " " & exit; fi
-
-        fname="$(nmfile "${trgt}")"
-        
-        if [ -f "$DT_r/audtm.mp3" ]; then
-        
-            mv -f "$DT_r/audtm.mp3" "${DM_tlt}/$fname.mp3"
-            
-        else
-            voice "${trgt}" "$DT_r" "${DM_tlt}/$fname.mp3"
-        fi
     fi
     
-    cd "$DT_r"
-    r=$((RANDOM%1000))
-    clean_3 "$DT_r" "$r"
-    translate "$(sed '/^$/d' "$aw")" auto $lg | sed 's/,//g' \
-    | sed 's/\?//g' | sed 's/\¿//g' | sed 's/;//g' > "$bw"
-    check_grammar_1 "$DT_r" "$r"
-    list_words "$DT_r" "$r"
-
-    mksure "${DM_tlt}/$fname.mp3" "${trgt}" "${srce}" \
-    "${grmrk}" "${lwrds}" "${pwrds}"
+    sentence_p "$DT_r"
+    
+    mksure "${trgt}" "${srce}" "${grmr}" "${wrds}"
     
     if [ $? = 1 ]; then
-        rm "${DM_tlt}/$fname.mp3"
         msg "$(gettext "An error has occurred while saving the note.")\n" dialog-warning
         [ "$DT_r" ] && rm -fr "$DT_r" & exit 1
     
     else
-        tags_1 S "${trgt}" "${srce}" "${DM_tlt}/$fname.mp3"
-
+        # add item if all is right
+        id=":[type={2},trgt={$trgt},srce={$srce},exmp={$4},defn={$5},note={$6},wrds={$wrds},grmr={$grmr},]."
+        fname="$(nmfile "${id}")"
+        add_item 2 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}" "$fname"
+        
+        # image
         if [ -f "$DT_r/img.jpg" ]; then
-        set_image_2 "${DM_tlt}/$fname.mp3" "${DM_tlt}/words/images/$fname.jpg"; fi
-
-        tags_3 W "${lwrds}" "${pwrds}" "${grmrk}" "${DM_tlt}/$fname.mp3"
-
+        mv -f  "$DT_r/img.jpg" "${DM_tlt}/images/$fname.jpg"; fi
+        
+        # audio
+        if [ ! -f "$DT_r/audtm.mp3" ]; then
+        
+             if [ "$trans" = TRUE ]; then
+             
+                tts "${trgt}" "$lgt" "$DT_r" "${DM_tlt}/$fname.mp3"
+                [ ! -f "${DM_tlt}/$fname.mp3" ] && \
+                voice "${trgt}" "$DT_r" "${DM_tlt}/$fname.mp3"
+                
+            else
+                voice "${trgt}" "$DT_r" "${DM_tlt}/$fname.mp3"
+            fi
+            
+        else
+            mv -f "$DT_r/audtm.mp3" "${DM_tlt}/$fname.mp3"
+        fi
+        
+        # notify
         notify-send "${trgt}" "${srce}\\n(${tpe})" -t 10000
         index sentence "${trgt}" "${tpe}"
 
+        # list words
         (if [ "$list" = TRUE ]; then
-        "$DS/add.sh" list_words_sentence "${DM_tlt}/$fname.mp3" "${trgt}" "${tpe}"
+        "$DS/add.sh" list_words_sentence "${pwrds}" "${trgt}" "${tpe}"
         fi) &
 
+        # feach audio of words
         fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
         
         [ "$DT_r" ] && rm -fr "$DT_r"
@@ -283,9 +275,9 @@ new_word() {
     DC_tlt="$DM_tl/${tpe}/.conf"
     source "$DS/default/dicts/$lgt"
 
-    if [[ `wc -l < "${DC_tlt}/0.cfg"` -ge 200 ]] && [[ "$5" != 0 ]]; then
+    if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
-    msg "$(gettext "Maximum number of notes has been exceeded for this topic. Max allowed (200)")" info " " & exit 1; fi
+    msg "$(gettext "Maximum number of notes has been exceeded for this topic. Max allowed (200)")" info " " & exit; fi
     
     if [ -z "${tpe}" ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
@@ -302,33 +294,36 @@ new_word() {
         fname="$(nmfile "${trgt^}")"
         audio="${trgt,,}"
         
-        if [ -f "$DM_tls/$audio.mp3" ]; then
-        
-            cp -f "$DM_tls/$audio.mp3" "$DT_r/$audio.mp3"
-            
-        else
-            dictt "$audio" "$DT_r"
-        fi
-        
-        if [ -f "$DT_r/$audio.mp3" ]; then
-
-            cp -f "$DT_r/$audio.mp3" "${DM_tlt}/words/$fname.mp3"
-            
-        else
-            voice "${trgt}" "$DT_r" "${DM_tlt}/words/$fname.mp3"
-        fi
-
-    else
+    else 
         if [ -z "$4" ] || [ -z "$2" ]; then
+        srce="$(clean_0 "${4}")"
         [ "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "You need to fill text fields.")\n" info " " & exit 1; fi
+        msg "$(gettext "You need to fill text fields.")\n" info " " & exit; fi
+    fi
+    
+    mksure "${trgt}" "${srce}"
+    
+    if [ $? = 1 ]; then
+        rm "${DM_tlt}/$fname.mp3"
+        msg "$(gettext "An error has occurred while saving the note.")\n" dialog-warning
+        [ "$DT_r" ] && rm -fr "$DT_r" & exit 1
+    
+    else
+        # add item if all is right
+        id=":[type={1},trgt={$trgt},srce={$srce},exmp={},defn={},note={},wrds={},grmr={},]."
+        fname="$(nmfile "${id}")"
+        add_item 1 "${trgt}" "${srce}" "" "" "" "" "" "$fname"
         
-        fname="$(nmfile "${trgt^}")"
+        # image
+        if [ -f "$DT_r/img.jpg" ]; then
+        mv -f  "$DT_r/img.jpg" "${DM_tlt}/images/$fname.jpg"; fi
+        
+        # audio
         audio="${trgt,,}"
         
         if [ -f "$DT_r/audtm.mp3" ]; then
         
-            mv -f "$DT_r/audtm.mp3" "${DM_tlt}/words/$fname.mp3"
+            mv -f "$DT_r/audtm.mp3" "${DM_tlt}/$fname.mp3"
             
         else
             if [ -f "$DM_tls/$audio.mp3" ]; then
@@ -341,33 +336,118 @@ new_word() {
             
             if [ -f "$DT_r/$audio.mp3" ]; then
 
-                cp -f "$DT_r/$audio.mp3" "${DM_tlt}/words/$fname.mp3"
+                cp -f "$DT_r/$audio.mp3" "${DM_tlt}/$fname.mp3"
                 
             else
-                voice "${trgt}" "$DT_r" "${DM_tlt}/words/$fname.mp3"
+                voice "${trgt}" "$DT_r" "${DM_tlt}/$fname.mp3"
             fi
         fi
-    fi
-
-    if [ -f "$DT_r/img.jpg" ]; then
-        set_image_3 "${DM_tlt}/words/$fname.mp3" "${DM_tlt}/words/images/$fname.jpg"
-    fi
-    
-    mksure "${DM_tlt}/words/$fname.mp3" "${trgt}" "${srce}"
-    
-    if [ $? = 0 ]; then
-        tags_1 W "${trgt}" "${srce}" "${DM_tlt}/words/$fname.mp3"
-        [[ "$5" != 0 ]] && notify-send "${trgt}" "${srce}\\n(${tpe})" -t 5000
+        
+        # notify
+        notify-send "${trgt}" "${srce}\\n(${tpe})" -t 10000
         index word "${trgt}" "${tpe}"
-        printf ".adi.1.adi." >> "$DC_s/8.cfg"
-    
-    else
-        [ -f "${DM_tlt}/words/$fname.mp3" ] && rm "${DM_tlt}/words/$fname.mp3"
-        msg "$(gettext "An error has occurred while saving the note.")\n" dialog-warning & exit 1; fi
 
-    [ "$DT_r" ] && rm -fr "$DT_r"
-    exit 1
+        
+        [ "$DT_r" ] && rm -fr "$DT_r"
+        echo -e ".adi.1.adi." >> "$DC_s/8.cfg"
+        exit 1
+    fi
 }
+
+#new_wordg() {
+
+    #trgt="$(clean_0 "${2}")"
+    #srce="$(clean_0 "${4}")"
+    #DT_r="$3"; cd "$DT_r"
+    #DM_tlt="$DM_tl/${tpe}"
+    #DC_tlt="$DM_tl/${tpe}/.conf"
+    #source "$DS/default/dicts/$lgt"
+
+    #if [[ `wc -l < "${DC_tlt}/0.cfg"` -ge 200 ]] && [[ "$5" != 0 ]]; then
+    #[ "$DT_r" ] && rm -fr "$DT_r"
+    #msg "$(gettext "Maximum number of notes has been exceeded for this topic. Max allowed (200)")" info " " & exit 1; fi
+    
+    #if [ -z "${tpe}" ]; then
+    #[ "$DT_r" ] && rm -fr "$DT_r"
+    #msg "$(gettext "No topic is active")\n" info & exit 1; fi
+    
+    #if [ "$trans" = TRUE ]; then
+    
+        #internet
+        #if [ "$trd_trgt" = TRUE ] && [ "$5" != 0 ]; then
+        #trgt="$(translate "${trgt}" auto "$lgt")"
+        #fi
+        #srce="$(translate "${trgt}" $lgt $lgs)"
+        #srce="$(clean_0 "${srce}")"
+        #fname="$(nmfile "${trgt^}")"
+        #audio="${trgt,,}"
+        
+        #if [ -f "$DM_tls/$audio.mp3" ]; then
+        
+            #cp -f "$DM_tls/$audio.mp3" "$DT_r/$audio.mp3"
+            
+        #else
+            #dictt "$audio" "$DT_r"
+        #fi
+        
+        #if [ -f "$DT_r/$audio.mp3" ]; then
+
+            #cp -f "$DT_r/$audio.mp3" "${DM_tlt}/words/$fname.mp3"
+            
+        #else
+            #voice "${trgt}" "$DT_r" "${DM_tlt}/words/$fname.mp3"
+        #fi
+
+    #else
+        #if [ -z "$4" ] || [ -z "$2" ]; then
+        #[ "$DT_r" ] && rm -fr "$DT_r"
+        #msg "$(gettext "You need to fill text fields.")\n" info " " & exit 1; fi
+        
+        #fname="$(nmfile "${trgt^}")"
+        #audio="${trgt,,}"
+        
+        #if [ -f "$DT_r/audtm.mp3" ]; then
+        
+            #mv -f "$DT_r/audtm.mp3" "${DM_tlt}/words/$fname.mp3"
+            
+        #else
+            #if [ -f "$DM_tls/$audio.mp3" ]; then
+            
+                #cp -f "$DM_tls/$audio.mp3" "$DT_r/$audio.mp3"
+                
+            #else
+                #dictt "$audio" "$DT_r"
+            #fi
+            
+            #if [ -f "$DT_r/$audio.mp3" ]; then
+
+                #cp -f "$DT_r/$audio.mp3" "${DM_tlt}/words/$fname.mp3"
+                
+            #else
+                #voice "${trgt}" "$DT_r" "${DM_tlt}/words/$fname.mp3"
+            #fi
+        #fi
+    #fi
+
+    #if [ -f "$DT_r/img.jpg" ]; then
+        #set_image_3 "${DM_tlt}/words/$fname.mp3" "${DM_tlt}/words/images/$fname.jpg"
+    #fi
+    
+    #mksure "${trgt}" "${srce}"
+    
+    #if [ $? = 0 ]; then
+        #add_item "${trgt}" "${srce}"
+        #[[ "$5" != 0 ]] && notify-send "${trgt}" "${srce}\\n(${tpe})" -t 5000
+        #index word "${trgt}" "${tpe}"
+        #printf ".adi.1.adi." >> "$DC_s/8.cfg"
+    
+    #else
+        #[ -f "${DM_tlt}/words/$fname.mp3" ] && rm "${DM_tlt}/words/$fname.mp3"
+        #msg "$(gettext "An error has occurred while saving the note.")\n" dialog-warning & exit 1; fi
+
+    #[ "$DT_r" ] && rm -fr "$DT_r"
+    #exit 1
+#}
 
 list_words_edit() {
 
