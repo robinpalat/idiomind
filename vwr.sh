@@ -9,11 +9,11 @@ echo "_" >> "$DT/stats.tmp" &
 re='^[0-9]+$'
 index_pos="$3"
 listen="$(gettext "Listen")"
-if ! [[ $index_pos =~ $re ]]; then
+if ! [[ ${index_pos} =~ $re ]]; then
 index_pos=$(grep -Fxon "${item_name}" < "${index}" \
 | sed -n 's/^\([0-9]*\)[:].*/\1/p')
 nll="_"; fi
-item="$(sed -n "$index_pos"p "${index}" |sed 's/<[^>]*>//g')"
+item="$(sed -n ${index_pos}p "${index}" |sed 's/<[^>]*>//g')"
 
 if [ -z "${item}" ]; then
 item="$(sed -n 1p "${index}")"
@@ -24,10 +24,10 @@ fs=25; bs=20
 
 if [ -f "${DM_tlt}/words/${fname}.mp3" ]; then
 cmd_listen="play '${DM_tlt}/words/${fname}.mp3'"
-word_view $index_pos
+word_view ${index_pos}
 elif [ -f "${DM_tlt}/${fname}.mp3" ]; then
 cmd_listen="'$DS/ifs/tls.sh' 'listen_sntnc' '${fname}'"
-sentence_view $index_pos
+sentence_view ${index_pos}
 else
 cmd_listen="'$DS/ifs/tls.sh' 'listen_sntnc' '${fname}'"
 sentence_view $index_pos
@@ -35,14 +35,14 @@ fi
 ret=$?
 
     if [[ $ret -eq 4 ]]; then
-    "$DS/mngr.sh" edit "$1" "$index_pos"
+    "$DS/mngr.sh" edit "$1" ${index_pos}
     
     elif [[ $ret -eq 2 ]]; then
     
-        if [[ $index_pos = 1 ]]; then
+        if [[ ${index_pos} = 1 ]]; then
         item=`tail -n 1 < "${index}"`
-        ([[ $1 = 1 ]] && "$DS/vwr.sh" "$1" "$nll" "${item}"
-         [[ $1 = 2 ]] && "$DS/vwr.sh" "$1" "${item}") &
+        [[ $1 = 1 ]] && "$DS/vwr.sh" "$1" "$nll" "${item}"
+        [[ $1 = 2 ]] && "$DS/vwr.sh" "$1" "${item}"
         else
         ff=$((index_pos-1))
         "$DS/vwr.sh" "$1" "$nll" $ff &

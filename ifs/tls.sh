@@ -982,9 +982,9 @@ mkpdf() {
 }
 
 convert() {
-    > /home/robin/Desktop/template
+    > "$DC_tlt/.11.cfg"
     n=1
-    while [[ $n -le "$(wc -l < "$DC_tlt/0.cfg")" ]]; do
+    while [[ $n -le 200 ]]; do
         Word="$(sed -n "$n"p "$DC_tlt/0.cfg")"
         fname="$(nmfile "$Word")"
         
@@ -994,6 +994,7 @@ convert() {
         srce=$(grep -o -P "(?<=ISI2I0I).*(?=ISI2I0I)" <<<"$tgs")
         grmr="$(grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)' <<<"${tgs}")"
         lwrd="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"${tgs}")"
+        sum="$(nmfile "$trgt$srce")"
         
         elif [ -f "${DM_tlt}/words/$fname.mp3" ]; then
         tgs=$(eyeD3 "${DM_tlt}/words/$fname.mp3")
@@ -1004,12 +1005,52 @@ convert() {
         exmp="$(sed -n 1p <<<"${fields}")"
         dftn="$(sed -n 2p <<<"${fields}")"
         note="$(sed -n 3p <<<"${fields}")"
+        sum="$(nmfile "$trgt$srce")"
+        else
+        tgs=""; trgt=""; srce=""; lwrd=""; grmr=""
+        exmp=""; dftn=""; note=""; tag=""; sum=""
         fi
-        
-        echo "id.$n:[trgt={$trgt},srce={$srce},exmp={$exmp},defn={$dftn},note={$note},wrds={$lwrd},grmr={$grmr},sum={}]" >> /home/robin/Desktop/template
+
+        echo ".[$n]:[trgt={$trgt},srce={$srce},exmp={$exmp},defn={$dftn},note={$note},wrds={$lwrd},grmr={$grmr},tag={$tag},sum={$sum}]." >> "$DC_tlt/.11.cfg"
         let n++
     done
 }
+
+
+
+addd() {
+
+    trgt=" hola como estsa"; srce="muy bien che!"
+    pos=$(grep -Fon -m 1 "trgt={}" "$DC_tlt/.11.cfg" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
+    sed -i "${pos}s|trgt={}|trgt={${trgt}}|; ${pos}s|srce={}|srce={sdf''ffsd'}|g" "$DC_tlt/.11.cfg"
+}
+
+
+
+
+REM() {
+    sed -i '/^$/d' "$DC_tlt/.11.cfg"
+    n=1
+    while [[ $n -le 200 ]]; do
+        item="$(sed -n "$n"p "$DC_tlt/.11.cfg")"
+        line=$(grep -oP "(?<=\[).*(?=]:)" <<<"$item")
+        if [[ ${line} != ${n} ]]; then
+        sed -i ""$n"s|\.\["$line"\]\:|\.\["$n"\]\:|g" "$DC_tlt/.11.cfg"
+        fi
+        let n++
+    done
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 if [ "$1" = play ]; then

@@ -257,6 +257,7 @@ new_sentence() {
         set_image_2 "${DM_tlt}/$fname.mp3" "${DM_tlt}/words/images/$fname.jpg"; fi
 
         tags_3 W "${lwrds}" "${pwrds}" "${grmrk}" "${DM_tlt}/$fname.mp3"
+
         notify-send "${trgt}" "${srce}\\n(${tpe})" -t 10000
         index sentence "${trgt}" "${tpe}"
 

@@ -201,6 +201,9 @@ function tags_1() {
     eyeD3 --set-encoding=utf8 \
     -t I$1I1I0I"$2"I$1I1I0I \
     -a I$1I2I0I"$3"I$1I2I0I "$4"
+    
+    pos=$(grep -Fon -m 1 "trgt={}" "$DC_tlt/.11.cfg" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
+    sed -i "${pos}s|trgt={}|trgt={${2}}|; ${pos}s|srce={}|srce={${3}}|g" "$DC_tlt/.11.cfg"
 }
 
 
@@ -210,13 +213,24 @@ function tags_2() {
     -t IWI1I0I"$2"IWI1I0I \
     -a IWI2I0I"$3"IWI2I0I \
     -A IWI3I0I"$4"IWI3I0I "$5"
+    
+    export pos=$(grep -Fon -m 1 "trgt={}" "$DC_tlt/.11.cfg" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
+    sed -i "${pos}s|trgt={}|trgt={${2}}|; ${pos}s|srce={}|srce={${3}}|; ${pos}s|exmp={}|exmp={${exmp_mod}}|; ${pos}s|defn={}|defn={${defn_mod}}|; ${pos}s|note={}|note={${note_mod}}|g" "$DC_tlt/.11.cfg"
+    
 }
 
 
 function tags_3() {
     
+    yad --text="$pos $3"
+    
     eyeD3 --set-encoding=utf8 \
     -A IWI3I0I"$2"IWI3I0IIPWI3I0I"$3"IPWI3I0IIGMI3I0I"$4"IGMI3I0I "$5"
+
+
+    sed -i "${pos}s|wrds={}|wrds={${3}}|; ${pos}s|grmr={}|grmr={${4}}|g" "$DC_tlt/.11.cfg"
+    
+    
 }
 
 
@@ -226,6 +240,9 @@ function tags_4() {
     -t ISI1I0I"$2"ISI1I0I \
     -a ISI2I0I"$3"ISI2I0I \
     -A IWI3I0I"$4"IWI3I0IIPWI3I0I"$5"IPWI3I0IIGMI3I0I"$6"IGMI3I0I "$7"
+    
+    pos=$(grep -Fon -m 1 "trgt={}" "$DC_tlt/.11.cfg" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
+    sed -i "${pos}s|trgt={}|trgt={${2}}|; ${pos}s|srce={}|srce={${3}}|; ${pos}s|wrds={}|wrds={${4}}|; ${pos}s|grmr={}|grmr={${6}}|g" "$DC_tlt/.11.cfg"
 }
 
 
@@ -233,6 +250,9 @@ function tags_5() {
     
     eyeD3 --set-encoding=utf8 \
     -a I$1I2I0I"$2"I$1I2I0I "$3"
+    
+    pos=$(grep -Fon -m 1 "trgt={}" "$DC_tlt/.11.cfg" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
+    sed -i "${pos}s|srce={}|srce={${3}}|g" "$DC_tlt/.11.cfg"
 }
 
 
@@ -240,6 +260,8 @@ function tags_6() {
     
     eyeD3 --set-encoding=utf8 \
     -A IWI3I0I"$2"IWI3I0I "$3"
+    pos=$(grep -Fon -m 1 "trgt={}" "$DC_tlt/.11.cfg" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
+    sed -i "${pos}s|trgt={}|trgt={${2}}|; ${pos}s|srce={}|srce={${3}}|g" "$DC_tlt/.11.cfg"
 }
 
 
@@ -251,7 +273,7 @@ function tags_8() {
 
 function tags_9() {
     
-    eyeD3 --set-encoding=utf8 -A IWI3I0I"$2"IWI3I0IIPWI3I0I"$3"IPWI3I0I "$4"
+    eyeD3 -A IWI3I0I"$2"IWI3I0IIPWI3I0I"$3"IPWI3I0I "$4"
 }
 
 

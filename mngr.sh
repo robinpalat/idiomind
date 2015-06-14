@@ -203,11 +203,19 @@ edit_item() {
     tpcs="$(egrep -v "${tpc}" "${DM_tl}/.2.cfg" |tr "\\n" '!' |sed 's/!\+$//g')"
     c=$((RANDOM%10000))
     file_tmp="$(mktemp "$DT/file_tmp.XXXX")"
-    item="$(sed -n "$item_pos"p "${index_1}")"
-    q_trad="$(sed "s/'/ /g" <<<"$item")"
-    fname="$(echo -n "${item}" | md5sum | rev | cut -c 4- | rev)"
+    
+    mark=FALSE
+    
+    item=`sed -n "$item_pos"p "$DC_tlt/.11.cfg" |sed 's/},/}\n/g'`
+    trgt=`grep -oP '(?<=trgt={).*(?=})' <<<"$item"`
+    grmr=`grep -oP '(?<=grmr={).*(?=})' <<<"$item"`
+    srce=`grep -oP '(?<=srce={).*(?=})' <<<"$item"`
+    lwrd=`grep -oP '(?<=wrds={).*(?=})' <<<"$item" |tr '_' '\n'`
+    fname="$(echo -n "${trgt}" | md5sum | rev | cut -c 4- | rev)"
     audiofile_1="${DM_tlt}/words/$fname.mp3"
     audiofile_2="${DM_tlt}/$fname.mp3"
+    q_trad="$(sed "s/'/ /g" <<<"$item")"
+    
     
     if [ ! -f "${audiofile_1}" ] && [ ! -f "${audiofile_2}" ] \
     && [ -z "${item}" ]; then exit 1; fi
@@ -215,17 +223,9 @@ edit_item() {
     if grep -Fxo "${item}" "${DC_tlt}/3.cfg"; then
     
         if [ -f "${audiofile_1}" ]; then
-        tags="$(eyeD3 "${audiofile_1}")"
-        trgt="$(grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)' <<<"${tags}")"
-        srce="$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)' <<<"${tags}")"
-        fields="$(grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' <<<"${tags}" | tr '_' '\n')"
-        mark="$(grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)' <<<"${tags}")"
-        exmp="$(sed -n 1p <<<"${fields}")"
-        dftn="$(sed -n 2p <<<"${fields}")"
-        note="$(sed -n 3p <<<"${fields}")"
         a=0; else trgt="${item}"; a=1; fi
         cmd_move="$DS/ifs/mods/mngr/mngr.sh 'position' '$item_pos' "\"${index_1}\"""
-        cmd_delete="$DS/mngr.sh delete_item "\"${item}\"""
+        cmd_delete="$DS/mngr.sh delete_item "\"${trgt}\"""
         cmd_image="$DS/ifs/tls.sh set_image "\"${audiofile_1}\"" word"
         cmd_play="play "\"${DM_tlt}/words/$fname.mp3\"""
         link1="https://translate.google.com/\#$lgt/$lgs/${q_trad}"
@@ -321,17 +321,11 @@ edit_item() {
              
     else
         if [ -f "${audiofile_2}" ]; then
-        tags="$(eyeD3 "${audiofile_2}")"
-        mark="$(grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)' <<<"${tags}")"
-        trgt="$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"${tags}")"
-        srce="$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"${tags}")"
-        lwrd="$(grep -o -P '(?<=IWI3I0I).*(?=IPWI3I0I)' <<<"${tags}")"
-        pwrds="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"${tags}")"
         a=0; else a=1; fi
         cmd_move="$DS/ifs/mods/mngr/mngr.sh 'position' '$item_pos' "\"${index_1}\"""
         cmd_words="$DS/add.sh list_words_edit "\"${audiofile_2}\"" F $c"
         cmd_image="$DS/ifs/tls.sh set_image "\"${audiofile_2}\"" sentence"
-        cmd_delete="$DS/mngr.sh delete_item "\"${item}\"""
+        cmd_delete="$DS/mngr.sh delete_item "\"${trgt}\"""
         cmd_play="$DS/ifs/tls.sh play "\"${DM_tlt}/$fname.mp3\"""
         link1="https://translate.google.com/\#$lgt/$lgs/${q_trad}"
         [ -z "${trgt}" ] && trgt="${item}"

@@ -5,7 +5,7 @@
 
 function word_view() {
 
-    item=`sed -n ${1}p "/home/robin/Desktop/template" |sed 's/},/}\n/g'`
+    item=`sed -n 46p "$DC_tlt/.11.cfg" |sed 's/},/}\n/g'`
     trgt=`grep -oP '(?<=trgt={).*(?=})' <<<"$item"`
     srce=`grep -oP '(?<=srce={).*(?=})' <<<"$item"`
     exmp=`grep -oP '(?<=exmp={).*(?=})' <<<"$item"`
@@ -37,7 +37,7 @@ function word_view() {
 
 function sentence_view() {
     
-    item=`sed -n "$1"p "/home/robin/Desktop/template" |sed 's/},/}\n/g'`
+    item=`sed -n "$1"p "$DC_tlt/.11.cfg" |sed 's/},/}\n/g'`
     trgt=`grep -oP '(?<=trgt={).*(?=})' <<<"$item"`
     grmr=`grep -oP '(?<=grmr={).*(?=})' <<<"$item"`
     srce=`grep -oP '(?<=srce={).*(?=})' <<<"$item"`
