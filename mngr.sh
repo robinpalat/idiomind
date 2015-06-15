@@ -371,9 +371,8 @@ edit_item() {
             ) &
             
             fi
-            
-            
-            
+
+            [[ -d "$DT/$c" ]] && ("$DS/add.sh" list_words_edit "${wrds_mod}" 2 "${c}" "${trgt_mod}") &
             [[ $col = 1 ]] && ("$DS/ifs/tls.sh" colorize) &
             [[ $mod = 1 ]] && sleep 0.2
             [[ $ret -eq 0 ]] && "$DS/vwr.sh" "$lists" "${trgt}" ${item_pos} &

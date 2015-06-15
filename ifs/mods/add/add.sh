@@ -230,10 +230,6 @@ function clean_4() {
 
 function tags_1() {
     
-    eyeD3 --set-encoding=utf8 \
-    -t I$1I1I0I"$2"I$1I1I0I \
-    -a I$1I2I0I"$3"I$1I2I0I "$4"
-    
     pos=$(grep -Fon -m 1 "trgt={}" "$DC_tlt/.11.cfg" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
     sed -i "${pos}s|trgt={}|trgt={${2}}|; ${pos}s|srce={}|srce={${3}}|g" "$DC_tlt/.11.cfg"
 }

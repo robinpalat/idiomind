@@ -40,15 +40,18 @@ ret=$?
     elif [[ $ret -eq 2 ]]; then
     
         if [[ ${index_pos} = 1 ]]; then
+        
         item=`tail -n 1 < "${index}"`
         [[ $1 = 1 ]] && "$DS/vwr.sh" "$1" "$nll" "${item}"
         [[ $1 = 2 ]] && "$DS/vwr.sh" "$1" "${item}"
         else
+        
         ff=$((index_pos-1))
         "$DS/vwr.sh" "$1" "$nll" $ff &
         fi
     
     elif [[ $ret -eq 3 ]]; then
+    
         ff=$((index_pos+1))
         "$DS/vwr.sh" "$1" "$nll" $ff &
     

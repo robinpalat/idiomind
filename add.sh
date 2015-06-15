@@ -222,29 +222,28 @@ new_sentence() {
     
     else
         # add item if all is right
-        id=":[type={2},trgt={$trgt},srce={$srce},exmp={$4},defn={$5},note={$6},wrds={$wrds},grmr={$grmr},]."
-        fname="$(nmfile "${id}")"
-        add_item 2 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}" "$fname"
+        id="$(set_name_file 1 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}")"
+        add_item 2 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}" "$id"
         
         # image
         if [ -f "$DT_r/img.jpg" ]; then
-        mv -f  "$DT_r/img.jpg" "${DM_tlt}/images/$fname.jpg"; fi
+        mv -f  "$DT_r/img.jpg" "${DM_tlt}/images/$id.jpg"; fi
         
         # audio
         if [ ! -f "$DT_r/audtm.mp3" ]; then
         
              if [ "$trans" = TRUE ]; then
              
-                tts "${trgt}" "$lgt" "$DT_r" "${DM_tlt}/$fname.mp3"
-                [ ! -f "${DM_tlt}/$fname.mp3" ] && \
-                voice "${trgt}" "$DT_r" "${DM_tlt}/$fname.mp3"
+                tts "${trgt}" "$lgt" "$DT_r" "${DM_tlt}/$id.mp3"
+                [ ! -f "${DM_tlt}/$id.mp3" ] && \
+                voice "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
                 
             else
-                voice "${trgt}" "$DT_r" "${DM_tlt}/$fname.mp3"
+                voice "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
             fi
             
         else
-            mv -f "$DT_r/audtm.mp3" "${DM_tlt}/$fname.mp3"
+            mv -f "$DT_r/audtm.mp3" "${DM_tlt}/$id.mp3"
         fi
         
         # notify
@@ -304,26 +303,25 @@ new_word() {
     mksure "${trgt}" "${srce}"
     
     if [ $? = 1 ]; then
-        rm "${DM_tlt}/$fname.mp3"
+        rm "${DM_tlt}/$id.mp3"
         msg "$(gettext "An error has occurred while saving the note.")\n" dialog-warning
         [ "$DT_r" ] && rm -fr "$DT_r" & exit 1
     
     else
         # add item if all is right
-        id=":[type={1},trgt={$trgt},srce={$srce},exmp={},defn={},note={},wrds={},grmr={},]."
-        fname="$(nmfile "${id}")"
-        add_item 1 "${trgt}" "${srce}" "" "" "" "" "" "$fname"
+        id="$(set_name_file 1 "${trgt}" "${srce}" {$exmp_} "" "" "" "")"
+        add_item 1 "${trgt}" "${srce}" "" "" "" "" "" "$id"
         
         # image
         if [ -f "$DT_r/img.jpg" ]; then
-        mv -f  "$DT_r/img.jpg" "${DM_tlt}/images/$fname.jpg"; fi
+        mv -f  "$DT_r/img.jpg" "${DM_tlt}/images/$id.jpg"; fi
         
         # audio
         audio="${trgt,,}"
         
         if [ -f "$DT_r/audtm.mp3" ]; then
         
-            mv -f "$DT_r/audtm.mp3" "${DM_tlt}/$fname.mp3"
+            mv -f "$DT_r/audtm.mp3" "${DM_tlt}/$id.mp3"
             
         else
             if [ -f "$DM_tls/$audio.mp3" ]; then
@@ -336,10 +334,10 @@ new_word() {
             
             if [ -f "$DT_r/$audio.mp3" ]; then
 
-                cp -f "$DT_r/$audio.mp3" "${DM_tlt}/$fname.mp3"
+                cp -f "$DT_r/$audio.mp3" "${DM_tlt}/$id.mp3"
                 
             else
-                voice "${trgt}" "$DT_r" "${DM_tlt}/$fname.mp3"
+                voice "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
             fi
         fi
         
@@ -392,10 +390,10 @@ new_word() {
         
         #if [ -f "$DT_r/$audio.mp3" ]; then
 
-            #cp -f "$DT_r/$audio.mp3" "${DM_tlt}/words/$fname.mp3"
+            #cp -f "$DT_r/$audio.mp3" "${DM_tlt}/words/$id.mp3"
             
         #else
-            #voice "${trgt}" "$DT_r" "${DM_tlt}/words/$fname.mp3"
+            #voice "${trgt}" "$DT_r" "${DM_tlt}/words/$id.mp3"
         #fi
 
     #else
@@ -408,7 +406,7 @@ new_word() {
         
         #if [ -f "$DT_r/audtm.mp3" ]; then
         
-            #mv -f "$DT_r/audtm.mp3" "${DM_tlt}/words/$fname.mp3"
+            #mv -f "$DT_r/audtm.mp3" "${DM_tlt}/words/$id.mp3"
             
         #else
             #if [ -f "$DM_tls/$audio.mp3" ]; then
@@ -421,16 +419,16 @@ new_word() {
             
             #if [ -f "$DT_r/$audio.mp3" ]; then
 
-                #cp -f "$DT_r/$audio.mp3" "${DM_tlt}/words/$fname.mp3"
+                #cp -f "$DT_r/$audio.mp3" "${DM_tlt}/words/$id.mp3"
                 
             #else
-                #voice "${trgt}" "$DT_r" "${DM_tlt}/words/$fname.mp3"
+                #voice "${trgt}" "$DT_r" "${DM_tlt}/words/$id.mp3"
             #fi
         #fi
     #fi
 
     #if [ -f "$DT_r/img.jpg" ]; then
-        #set_image_3 "${DM_tlt}/words/$fname.mp3" "${DM_tlt}/words/images/$fname.jpg"
+        #set_image_3 "${DM_tlt}/words/$id.mp3" "${DM_tlt}/words/images/$id.jpg"
     #fi
     
     #mksure "${trgt}" "${srce}"
@@ -442,7 +440,7 @@ new_word() {
         #printf ".adi.1.adi." >> "$DC_s/8.cfg"
     
     #else
-        #[ -f "${DM_tlt}/words/$fname.mp3" ] && rm "${DM_tlt}/words/$fname.mp3"
+        #[ -f "${DM_tlt}/words/$id.mp3" ] && rm "${DM_tlt}/words/$id.mp3"
         #msg "$(gettext "An error has occurred while saving the note.")\n" dialog-warning & exit 1; fi
 
     #[ "$DT_r" ] && rm -fr "$DT_r"
@@ -452,7 +450,7 @@ new_word() {
 list_words_edit() {
 
     c="$4"
-    if [ "$3" = "F" ]; then
+    if [[ $3 = 1 ]]; then
 
         tpe="${tpc}"
         if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
@@ -480,25 +478,24 @@ list_words_edit() {
                 rm -f "$slt"
             fi
         
-    elif [ "$3" = "S" ]; then
+    elif [[ $3 = 2 ]]; then
     
-        sname="$5"
+        exmp_="$5"
         DT_r="$DT/$c"; cd "$DT_r"
         
         n=1
-        while [ $n -le "$(wc -l < "$DT_r/slts")" ]; do
+        while [[ $n -le "$(wc -l < "$DT_r/slts")" ]]; do
 
-                trgt=$(sed -n "$n"p ./slts | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-                fname="$(nmfile "${trgt}")"
-                audio="${trgt,,}"
-                
             if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
-                printf "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> ./logw
+                echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> ./logw
             
             else
+                trgt=$(sed -n "$n"p ./slts | clean_0)
+                audio="${trgt,,}"
                 translate "${trgt}" auto $lgs > "tr.$c"
                 srce=$(< tr."$c")
                 srce="$(clean_0 <<<"${srce}")"
+                id="$(set_name_file 1 "${trgt}" "${srce}" {$exmp_} "" "" "" "")"
                 
                 if [ -f "$DM_tls/$audio.mp3" ]; then
                 
@@ -510,25 +507,26 @@ list_words_edit() {
                 
                 if [ -f "$DT_r/$audio.mp3" ]; then
 
-                    cp -f "$DT_r/$audio.mp3" "${DM_tlt}/$fname.mp3"
+                    cp -f "$DT_r/$audio.mp3" "${DM_tlt}/$id.mp3"
                 
                 else
-                    voice "${trgt}" "$DT_r" "${DM_tlt}/$fname.mp3"
+                    voice "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
                 fi
                 
-                mksure "${DM_tlt}/$fname.mp3" "${trgt}" "${srce}"
+                mksure "${trgt}" "${srce}"
+
                 if [ $? = 0 ]; then
-                    tags_2 W "${trgt}" "${srce}" "${5}" "${DM_tlt}/$fname.mp3" >/dev/null 2>&1
-                    index 1 "${trgt}" "${tpc}" "${sname}"
+                    add_item 1 "${trgt}" "${srce}" "${exmp_}" "" "" "" "" "${id}"
+                    index 1 "${trgt}" "${tpc}" "${exmp_}"
                 
                 else
-                    printf "\n\n#$n $trgt" >> ./logw
-                    [ -f "${DM_tlt}/$fname.mp3" ] && rm "${DM_tlt}/$fname.mp3"; fi
+                    echo -e "\n\n#$n $trgt" >> ./logw
+                    [ -f "${DM_tlt}/$id.mp3" ] && rm "${DM_tlt}/$id.mp3"; fi
             fi
             let n++
         done
 
-        printf ".adi.$lns.adi." >> "$DC_s/8.cfg"
+        echo -e ".adi.$lns.adi." >> "$DC_s/8.cfg"
 
         if [ -f "$DT_r/logw" ]; then
         sleep 1
@@ -597,26 +595,26 @@ list_words_sentence() {
             
             if [ -f "$DT_r/$audio.mp3" ]; then
 
-                cp -f "$DT_r/$audio.mp3" "${DM_tlt}/$fname.mp3"
+                cp -f "$DT_r/$audio.mp3" "${DM_tlt}/$id.mp3"
                 
             else
-                voice "${trgt}" "$DT_r" "${DM_tlt}/$fname.mp3"
+                voice "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
             fi
             
-            mksure "${DM_tlt}/$fname.mp3" "${trgt}" "${srce}"
+            mksure "${DM_tlt}/$id.mp3" "${trgt}" "${srce}"
             if [ $? = 0 ]; then
-                tags_2 W "${trgt}" "${srce}" "${3}" "${DM_tlt}/$fname.mp3" >/dev/null 2>&1
+                tags_2 W "${trgt}" "${srce}" "${3}" "${DM_tlt}/$id.mp3" >/dev/null 2>&1
                 index 1 "${trgt}" "${4}"
             
             else
-                printf "\n\n#$n $trgt" >> ./logw
-                [ -f "${DM_tlt}/$fname.mp3" ] && rm "${DM_tlt}/$fname.mp3"
+                echo -e "\n\n#$n $trgt" >> ./logw
+                [ -f "${DM_tlt}/$id.mp3" ] && rm "${DM_tlt}/$id.mp3"
             fi
         fi
         let n++
     done
 
-    printf ".adi.$lns.adi." >> "$DC_s/8.cfg" &
+    echo -e ".adi.$lns.adi." >> "$DC_s/8.cfg" &
 
     if [ -f "$DT_r/logw" ]; then
     sleep 1
@@ -908,7 +906,7 @@ process() {
                 
                     if [ "$(wc -$c <<<"${sntc}")" = 1 ]; then
                         if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
-                            printf "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $sntc" >> ./wlog
+                            echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $sntc" >> ./wlog
                     
                         else
                             trgt="$(clean_0 <<<"$trgt")"
@@ -918,41 +916,41 @@ process() {
                             
                             dictt "$audio" "$DT_r"
                             if [ -f "$DT_r/$audio.mp3" ]; then
-                                cp -f "$DT_r/$audio.mp3" "${DM_tlt}/$fname.mp3"
+                                cp -f "$DT_r/$audio.mp3" "${DM_tlt}/$id.mp3"
                             else
-                                voice "${trgt}" "$DT_r" "${DM_tlt}/$fname.mp3"
+                                voice "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
                             fi
 
-                            mksure "${DM_tlt}/$fname.mp3" "${trgt}" "${srce}"
+                            mksure "${DM_tlt}/$id.mp3" "${trgt}" "${srce}"
                             if [ $? = 0 ]; then
-                                tags_1 W "${trgt}" "${srce}" "${DM_tlt}/$fname.mp3"
+                                tags_1 W "${trgt}" "${srce}" "${DM_tlt}/$id.mp3"
                                 echo "${trgt}" >> addw
                                 index 1 "${trgt}" "${tpe}"
 
                             else
-                                printf "\n\n#$n $trgt" >> ./wlog
-                                [ -f "${DM_tlt}/$fname.mp3" ] && rm "${DM_tlt}/$fname.mp3"
+                                echo -e "\n\n#$n $trgt" >> ./wlog
+                                [ -f "${DM_tlt}/$id.mp3" ] && rm "${DM_tlt}/$id.mp3"
                             fi
                         fi
 
                     elif [ "$(wc -$c <<<"$sntc")" -ge 1 ]; then
                         
                         if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
-                            printf "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $sntc" >> ./slog
+                            echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $sntc" >> ./slog
                     
                         else
                             if [ ${#sntc} -ge 150 ]; then
-                                printf "\n\n#$n [$(gettext "Sentence too long")] $sntc" >> ./slog
+                                echo -e "\n\n#$n [$(gettext "Sentence too long")] $sntc" >> ./slog
                         
                             else
                                 if [ "$trans" = TRUE ]; then
                                 
-                                    tts "${trgt}" $lgt "$DT_r" "${DM_tlt}/$fname.mp3"
-                                        [ ! -f "${DM_tlt}/$fname.mp3" ] && \
-                                        voice "${trgt}" "$DT_r" "${DM_tlt}/$fname.mp3"
+                                    tts "${trgt}" $lgt "$DT_r" "${DM_tlt}/$id.mp3"
+                                        [ ! -f "${DM_tlt}/$id.mp3" ] && \
+                                        voice "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
                                     
                                 else
-                                    voice "${trgt}" "${DT_r}" "${DM_tlt}/$fname.mp3"
+                                    voice "${trgt}" "${DT_r}" "${DM_tlt}/$id.mp3"
                                 fi
 
                                 cd "$DT_r"
@@ -964,18 +962,18 @@ process() {
                                 check_grammar_1 "$DT_r" "$r"
                                 list_words "$DT_r" "$r"
 
-                                mksure "${DM_tlt}/$fname.mp3" "${trgt}" "${tpe}" \
+                                mksure "${DM_tlt}/$id.mp3" "${trgt}" "${tpe}" \
                                 "${lwrds}" "${pwrds}" "${grmrk}"
                                 if [ $? = 0 ]; then
-                                    echo "$fname" >> adds
+                                    echo "$id" >> adds
                                     index 2 "${trgt}" "${tpe}"
-                                    tags_1 S "${trgt}" "${srce}" "${DM_tlt}/$fname.mp3"
-                                    tags_3 W "${lwrds}" "${pwrds}" "${grmrk}" "${DM_tlt}/$fname.mp3"
+                                    tags_1 S "${trgt}" "${srce}" "${DM_tlt}/$id.mp3"
+                                    tags_3 W "${lwrds}" "${pwrds}" "${grmrk}" "${DM_tlt}/$id.mp3"
                                     fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
 
                                 else
-                                    printf "\n\n#$n $trgt" >> ./slog
-                                    [ -f "${DM_tlt}/$fname.mp3" ] && rm "${DM_tlt}/$fname.mp3"
+                                    echo -e "\n\n#$n $trgt" >> ./slog
+                                    [ -f "${DM_tlt}/$id.mp3" ] && rm "${DM_tlt}/$id.mp3"
                                 fi
                                 
                                 echo "__" >> x
@@ -996,13 +994,13 @@ process() {
                 n=1; touch wrds
                 while [[ $n -le "$(wc -l < ./wrds | head -200)" ]]; do
                 
-                    sname=$(sed -n "$n"p wrdsls | sed 's/\[ \.\.\. \]//g')
+                    exmp_=$(sed -n "$n"p wrdsls | sed 's/\[ \.\.\. \]//g')
                     trgt=$(sed -n "$n"p wrds | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
                     fname="$(nmfile "${trgt}")"
                     audio="${trgt,,}"
 
                     if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
-                        printf "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> ./wlog
+                        echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> ./wlog
                 
                     else
                         srce="$(translate "${trgt}" auto $lgs)"
@@ -1017,21 +1015,21 @@ process() {
                         
                         if [ -f "$DT_r/$audio.mp3" ]; then
 
-                            cp -f "$DT_r/$audio.mp3" "${DM_tlt}/$fname.mp3"
+                            cp -f "$DT_r/$audio.mp3" "${DM_tlt}/$id.mp3"
                             
                         else
-                            voice "${trgt}" "$DT_r" "${DM_tlt}/$fname.mp3"
+                            voice "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
                         fi
 
-                        mksure "${DM_tlt}/$fname.mp3" "${trgt}" "${srce}"
+                        mksure "${DM_tlt}/$id.mp3" "${trgt}" "${srce}"
                         if [ $? = 0 ]; then
-                            tags_2 W "${trgt}" "${srce}" "${sname}" "${DM_tlt}/$fname.mp3"
-                            index 1 "${trgt}" "${tpe}" "${sname}"
+                            tags_2 W "${trgt}" "${srce}" "${exmp_}" "${DM_tlt}/$id.mp3"
+                            index 1 "${trgt}" "${tpe}" "${exmp_}"
                             echo "${trgt}" >> addw
                             
                         else
-                            printf "\n\n#$n $trgt" >> ./wlog
-                            [ -f "${DM_tlt}/$fname.mp3" ] && rm "${DM_tlt}/$fname.mp3"
+                            echo -e "\n\n#$n $trgt" >> ./wlog
+                            [ -f "${DM_tlt}/$id.mp3" ] && rm "${DM_tlt}/$id.mp3"
                         fi
                     fi
                     
@@ -1076,7 +1074,7 @@ process() {
                 if [[ $adds -ge 1 ]]; then
                     notify-send -i idiomind "${tpe}" \
                     "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
-                    printf ".adi.$adds.adi." >> "$DC_s/8.cfg"
+                    echo -e ".adi.$adds.adi." >> "$DC_s/8.cfg"
                 fi
                 
                 if [ "$(cat ./slog ./wlog | wc -l)" -ge 1 ]; then
