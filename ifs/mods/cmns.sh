@@ -53,6 +53,17 @@ function get_item() {
 
 }
 
+
+function item_data() {
+    
+    cfg11_="$DM_tl/${1}/.conf/.11.cfg"; trgt_="${2}"
+    pos=`grep -Fon -m 1 "trgt={${trgt_}}" "${cfg11_}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
+    item=`sed -n ${pos}p "${cfg11_}" |sed 's/},/}\n/g'`
+    grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"
+     
+}
+
+
 function get_name_file() {
     
     cfg11_="$DM_tl/${1}/.conf/.11.cfg"; trgt_="${2}"

@@ -25,6 +25,7 @@ grmr=`grep -oP '(?<=grmr={).*(?=})' <<<"${item}"`
 tag=`grep -oP '(?<=tag={).*(?=})' <<<"${item}"`
 mark=`grep -oP '(?<=mark={).*(?=})' <<<"${item}"`
 lwrd=`grep -oP '(?<=wrds={).*(?=})' <<<"${item}" |tr '_' '\n'`
+exmp=`sed "s/"${trgt,,}"/<span background='#FDFBCF'>"${trgt,,}"<\/\span>/g" <<<"$exmp"`
 id=`grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"`
 
 cmd_listen="play '${DM_tlt}/$id.mp3'"

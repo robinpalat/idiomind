@@ -192,6 +192,16 @@ delete_item() {
 
 edit_item() {
 
+    # 3 position's items: item el list (item_pos), pos in data (edit_pos), pos variable for tpc_mod (tpc_pos)
+    #
+    #
+    #
+    #
+    #
+    #
+    #
+    #
+
     include "$DS/ifs/mods/mngr"
     lgt=$(lnglss $lgtl)
     lgs=$(lnglss $lgsl)
@@ -208,8 +218,8 @@ edit_item() {
     c=$((RANDOM%10000))
 
     item=`sed -n ${item_pos}p "${index_1}"`
-    pos=`grep -Fon -m 1 "trgt={${item}}" "${DC_tlt}/.11.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
-    item=`sed -n ${pos}p "${DC_tlt}/.11.cfg" |sed 's/},/}\n/g'`
+    edit_pos=`grep -Fon -m 1 "trgt={${item}}" "${DC_tlt}/.11.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
+    item=`sed -n ${edit_pos}p "${DC_tlt}/.11.cfg" |sed 's/},/}\n/g'`
     
     type=`grep -oP '(?<=type={).*(?=})' <<<"${item}"`
     trgt=`grep -oP '(?<=trgt={).*(?=})' <<<"$item"`
@@ -286,9 +296,9 @@ edit_item() {
             
             if [ "${trgt_mod}" != "${trgt}" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
                 temp="$(gettext "Processing")..."
-                sed -i "${item_pos}s|trgt={${trgt}}|trgt={${trgt_mod}}|;
-                ${item_pos}s|grmr={${grmr}}|grmr={${trgt_mod}}|;
-                ${item_pos}s|srce={${srce}}|srce={$temp}|g" "$DC_tlt/.11.cfg"
+                sed -i "${edit_pos}s|trgt={${trgt}}|trgt={${trgt_mod}}|;
+                ${edit_pos}s|grmr={${grmr}}|grmr={${trgt_mod}}|;
+                ${edit_pos}s|srce={${srce}}|srce={$temp}|g" "$DC_tlt/.11.cfg"
                 index edit "${trgt}" "${tpc}" "${trgt_mod}"
                 ind=1; col=1; mod=1
             fi
@@ -348,7 +358,7 @@ edit_item() {
 
                 elif [ "${tpc}" = "${tpc_mod}" ]; then
                     cfg11="$DC_tlt/.11.cfg"
-                    pos=${item_pos}
+                    pos=${edit_pos}
                 fi
 
                 sed -i "${pos}s|type={$type}|type={$type_mod}|;

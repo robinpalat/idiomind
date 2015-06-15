@@ -50,29 +50,22 @@ if [[ "$1" = chngi ]]; then
     
     index="$DT/index.m3u"
     _item="$(sed -n "$2"p "$index")"
-    fname="$(echo -n "${_item}" | md5sum | rev | cut -c 4- | rev)"
-    [ -f "${DM_tlt}/$fname.mp3" ] && file="${DM_tlt}/$fname.mp3" && t=2
-    [ -f "${DM_tlt}/$fname.mp3" ] && file="${DM_tlt}/$fname.mp3" && t=1
+    if [ -z "${_item}" ]; then _item="$(sed -n 1p "${index}")"; index_pos=1; fi
+    pos=`grep -Fon -m 1 "trgt={${_item}}" "$DC_tlt/.11.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
+    _item=`sed -n ${pos}p "$DC_tlt/.11.cfg" |sed 's/},/}\n/g'`
+    type=`grep -oP '(?<=type={).*(?=})' <<<"${_item}"`
+    trgt=`grep -oP '(?<=trgt={).*(?=})' <<<"${_item}"`
+    srce=`grep -oP '(?<=srce={).*(?=})' <<<"${_item}"`
+    id=`grep -oP '(?<=id=\[).*(?=\])' <<<"${_item}"`
+    file="${DM_tlt}/$id.mp3"
     include "$DS/ifs/mods/play"
     e_file "$file"
-    
-    if [[ "$t" = 2 ]]; then
-    tags=$(eyeD3 "$file") 
-    trgt=$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"$tags")
-    srce=$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"$tags")
     play=play
     
-    elif [[ "$t" = 1 ]]; then
-    tags=$(eyeD3 "$file")
-    trgt=$(grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)' <<<"$tags")
-    srce=$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)' <<<"$tags")
-    play=play
-    fi
-
     [ -z "$trgt" ] && trgt="$_item"
-    img="${DM_tlt}/images/$fname.jpg"
+    img="${DM_tlt}/images/$id.jpg"
     [ -f "$img" ] && icon="$img"
-            
+    
     if [ "$text" = "TRUE" ]; then
     notify-send -i "$icon" "$trgt" "$srce" -t 10000; fi &
     
@@ -84,7 +77,7 @@ if [[ "$1" = chngi ]]; then
     
     [ -f "$DT/.l_loop" ] && rm -f "$DT/.l_loop"
     
-
+    
 elif [[ "$1" != chngi ]]; then
 
     source /usr/share/idiomind/ifs/c.conf

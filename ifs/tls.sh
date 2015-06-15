@@ -1016,9 +1016,9 @@ sanity_1() {
     while [[ $n -le 200 ]]; do
         line=$(sed -n ${n}p "${cfg11}" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
         if [ -z ${line} ]; then
-        echo "$n:[type={},trgt={},srce={},exmp={},defn={},note={},wrds={},grmr={},].[tag={},mark={},].id=[]" >> "${cfg11}"
+            echo "$n:[type={},trgt={},srce={},exmp={},defn={},note={},wrds={},grmr={},].[tag={},mark={},].id=[]" >> "${cfg11}"
         elif [[ ${line} != ${n} ]]; then
-        sed -i ""$n"s|"$line"\:|"$n"\:|g" "${cfg11}"
+            sed -i ""$n"s|"$line"\:|"$n"\:|g" "${cfg11}"
         fi
         let n++
     done
