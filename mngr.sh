@@ -224,8 +224,11 @@ edit_item() {
     tpcs="$(egrep -v "${tpc}" "${DM_tl}/.2.cfg" |tr "\\n" '!' |sed 's/!\+$//g')"
     c=$((RANDOM%10000))
     file_tmp="$(mktemp "$DT/file_tmp.XXXX")"
+
+    item=`sed -n ${item_pos}p "${index_1}"`
+    pos=`grep -Fon -m 1 "trgt={${item}}" "$DC_tlt/.11.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
+    item=`sed -n ${pos}p "$DC_tlt/.11.cfg" |sed 's/},/}\n/g'`
     
-    item=`sed -n "$item_pos"p "$DC_tlt/.11.cfg" |sed 's/},/}\n/g'`
     type=`grep -oP '(?<=type={).*(?=})' <<<"${item}"`
     trgt=`grep -oP '(?<=trgt={).*(?=})' <<<"$item"`
     grmr=`grep -oP '(?<=grmr={).*(?=})' <<<"$item"`
@@ -235,6 +238,7 @@ edit_item() {
     note=`grep -oP '(?<=note={).*(?=})' <<<"$item"`
     grmr=`grep -oP '(?<=grmr={).*(?=})' <<<"$item"`
     wrds=`grep -oP '(?<=wrds={).*(?=})' <<<"$item"`
+    mark=`grep -oP '(?<=mark={).*(?=})' <<<"$item"`
     id=`grep -oP '(?<=id=\[).*(?=\])' <<<"$item"`
     [ -z "${srce}" ] && srce=""
     [ -z "${exmp}" ] && exmp=""
@@ -243,6 +247,7 @@ edit_item() {
     [ -z "${grmr}" ] && grmr=""
     [ -z "${wrds}" ] && wrds=""
     [ -z "${type}" ] && type=2
+    [ -z "${mark}" ] && mark=""
     [ -z "${id}" ] && id=""
     
     audiofile="${DM_tlt}/$id.mp3"
@@ -303,6 +308,7 @@ edit_item() {
                 [ -z "${grmr_mod}" ] && grmr_mod=""
                 [ -z "${wrds_mod}" ] && wrds_mod=""
                 [ -z "${type_mod}" ] && type_mod=2
+                [ -z "${mark_mod}" ] && mark_mod=""
                 [ -z "${id_mod}" ] && id=""
             
             
@@ -328,7 +334,7 @@ edit_item() {
                 grep -vxF "${trgt}" "${DC_tlt}/6.cfg" > "${DC_tlt}/6.cfg.tmp"
                 sed '/^$/d' "${DC_tlt}/6.cfg.tmp" > "${DC_tlt}/6.cfg"
                 rm "${DC_tlt}/6.cfg.tmp"; fi
-                colorize=1
+                colorize=1; mod=1
             fi
             
             if [ "${srce}" != "${srce_mod}" ]; then mod=1; fi
@@ -371,6 +377,7 @@ edit_item() {
                 ${pos}s|note={$note}|note={$note_mod}|;
                 ${pos}s|wrds={$wrds}|wrds={$wrds_mod}|;
                 ${pos}s|grmr={$grmr}|grmr={$grmr_mod}|;
+                ${pos}s|mark={$mark}|mark={$mark_mod}|;
                 ${pos}s|id=\[$id\]|id=\[$id_mod\]|g" "$DC_tlt/.11.cfg"
 
                 if [ "${audio_mod}" != "${audiofile}" ]; then

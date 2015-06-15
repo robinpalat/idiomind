@@ -1017,7 +1017,6 @@ convert() {
     done
 }
 
-
 addx() {
 
     trgt=" hola como estsa"; srce="muy bien che!"
