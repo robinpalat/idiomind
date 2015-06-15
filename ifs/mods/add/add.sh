@@ -89,11 +89,19 @@ function index() {
 
 function sentence_p() {
 
+    if [ $2 = 1 ]; then 
+    trgt_p="${trgt}"
+    srce_p="${srce}"
+    elif [ $2 = 2 ]; then
+    trgt_p="${trgt_mod}"
+    srce_p="${srce_mod}"
+    fi
+    
     r=$((RANDOM%10000))
     cd /; DT_r="$1"; cd "$DT_r"; touch "swrd.$r" "twrd.$r"
     if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
-    vrbl="${srce}"; lg=$lgt; aw="swrd.$r"; bw="twrd.$r"
-    else vrbl="${trgt}"; lg=$lgs; aw="twrd.$r"; bw="swrd.$r"; fi
+    vrbl="${srce_p}"; lg=$lgt; aw="swrd.$r"; bw="twrd.$r"
+    else vrbl="${trgt_p}"; lg=$lgs; aw="twrd.$r"; bw="swrd.$r"; fi
     
     echo "${vrbl}" | sed 's/ /\n/g' | grep -v '^.$' \
     | grep -v '^..$' | sed -n 1,50p | sed s'/&//'g \
@@ -126,7 +134,7 @@ function sentence_p() {
         else
             echo "$grmrk" >> "g.$r"
         fi
-    done < <(sed 's/ /\n/g' <<<"$trgt")
+    done < <(sed 's/ /\n/g' <<<"$trgt_p")
 
     sed -i 's/\. /\n/g' "$bw"
     sed -i 's/\. /\n/g' "$aw"
@@ -148,8 +156,10 @@ function sentence_p() {
         done
     fi
     
+    if [ $2 = 1 ]; then
     grmr="$(sed ':a;N;$!ba;s/\n/ /g' < "$DT_r/g.$r")"
     wrds="$(tr '\n' '_' < "$DT_r/B.$r")"
+    fi
 }
 
 
@@ -245,7 +255,7 @@ function add_item() {
     ${pos}s|trgt={}|trgt={${2}}|;
     ${pos}s|srce={}|srce={${3}}|;
     ${pos}s|exmp={}|exmp={${4}}|;
-    ${pos}s|defn={}|defn={${5}}|;
+    ${pos}s|dftn={}|defn={${5}}|;
     ${pos}s|note={}|note={${6}}|;
     ${pos}s|wrds={}|wrds={${7}}|;
     ${pos}s|grmr={}|grmr={${8}}|;

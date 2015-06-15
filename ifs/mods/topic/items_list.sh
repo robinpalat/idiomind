@@ -4,7 +4,7 @@
  
 function word_view() {
 
-    [ -n "$dftn" ] && field_dftn="--field=$dftn:lbl"
+    [ -n "$defn" ] && field_defn="--field=$defn:lbl"
     [ -n "$note" ] && field_note="--field=$note\n:lbl"
     [ -n "$exmp" ] && field_exmp="--field=<i><span color='#737373'>$exmp</span></i>:lbl"
     [ -z "$trgt" ] && tm="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>"
@@ -16,7 +16,7 @@ function word_view() {
     --align=left --scroll --skip-taskbar --text-align=center \
     --image-on-top --center --on-top \
     --width=620 --height=380 --borders=20 \
-    --field="":lbl "$field_exmp" "$field_dftn" "$field_note" \
+    --field="":lbl "$field_exmp" "$field_defn" "$field_note" \
     --button=gtk-edit:4 \
     --button="$(gettext "Listen")":"$cmd_listen" \
     --button=gtk-go-down:2 \
@@ -30,7 +30,7 @@ function sentence_view() {
     [ -z "$trgt" ] && tm="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>"
     
     echo "$lwrd" | yad --list --title=" " \
-    --text="<span font_desc='Sans Free 15'>$grmr</span>\n\n<i>$srce</i>\n\n" \
+    --text="<span font_desc='Sans Free 15'>$trgt</span>\n\n<i>$srce</i>\n\n" \
     --selectable-labels --print-column=0 \
     --dclick-action="$DS/ifs/tls.sh 'dclik'" \
     --window-icon="$DS/images/icon.png" \
@@ -46,7 +46,7 @@ function sentence_view() {
     
 } >/dev/null 2>&1
 
-export -f word_view sentence_view get_item
+export -f word_view sentence_view
 
 function notebook_1() {
     

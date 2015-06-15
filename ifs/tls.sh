@@ -1016,7 +1016,7 @@ convert() {
         let n++
     done
 }
-convert
+
 
 addx() {
 
@@ -1024,8 +1024,6 @@ addx() {
     pos=$(grep -Fon -m 1 "trgt={}" "$DC_tlt/.11.cfg" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
     sed -i "${pos}s|trgt={}|trgt={${trgt}}|; ${pos}s|srce={}|srce={sdf''ffsd'}|g" "$DC_tlt/.11.cfg"
 }
-
-
 
 
 REM() {
@@ -1042,8 +1040,6 @@ REM() {
         let n++
     done
 }
-
-
 
 
 
