@@ -232,6 +232,7 @@ edit_item() {
     cmd_move="$DS/ifs/mods/mngr/mngr.sh 'position' ${item_pos} "\"${index_1}\"""
     cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"" "\"${trgt}\"""
     cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"" "\"${trgt}\"""
+    cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"" 1 ${c}"
     cmd_play="play "\"${DM_tlt}\""/$id.mp3"
     link1="https://translate.google.com/\#$lgt/$lgs/${q_trad}"
     link2="http://glosbe.com/$lgt/$lgs/${q_trad,,}"
