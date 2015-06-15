@@ -235,7 +235,6 @@ edit_item() {
     [ "${mark}" = FALSE ] && mark=""
     [ -z "${id}" ] && id=""
     
-    audiofile="${DM_tlt}/$id.mp3"
     q_trad="$(sed "s/'/ /g" <<<"$trgt")"
     mod=0; col=0
     
@@ -243,17 +242,15 @@ edit_item() {
     cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"" "\"${trgt}\"""
     cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"" "\"${trgt}\"""
     cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"" 1 ${c}"
-    cmd_play="play "\"${DM_tlt}\""/$id.mp3"
     link1="https://translate.google.com/\#$lgt/$lgs/${q_trad}"
     link2="http://glosbe.com/$lgt/$lgs/${q_trad,,}"
     link3='https://www.google.com/search?q='$q_trad'&amp;tbm=isch'
     
 
-    if [ ! -f "${audiofile}" ] && [ -z "${item}" ]; then exit 1; fi
+    if [ -z "${item}" ]; then exit 1; fi
 
-
-    if  [ ${type} = 1 ]; then edit_dlg1=`dlg_form_1`
-    elif [ ${type} = 2 ]; then edit_dlg2=`dlg_form_2`; fi
+    if  [ ${type} = 1 ]; then audio="${DM_tls}/${trgt,,}.mp3"; edit_dlg1=`dlg_form_1`
+    elif [ ${type} = 2 ]; then audio="${DM_tlt}/$id.mp3"; edit_dlg2=`dlg_form_2`; fi
     ret=$?
 
         if [[ $ret -eq 0 ]] || [[ $ret -eq 2 ]]; then
@@ -323,16 +320,19 @@ edit_item() {
             (
                 if [ $ind = 1 ]; then
                 
-                        DT_r=$(mktemp -d "$DT/XXXX")
+                    DT_r=$(mktemp -d "$DT/XXXX")
+                    internet
                         
                     if [ ${type} = 1 ]; then
                         
-                        "$DS/add.sh" new_word "${trgt_mod}" "$DT_r" "${srce_mod}" 0
+                        srce_mod=$(translate "${trgt_mod}" $lgt $lgs | clean_0)
+                        audio="${trgt_mod,,}"
+                        dictt "$audio" "$DT_r"
                         srce="$temp"
 
                     elif [ ${type} = 2 ]; then
-                        internet
-                        srce_mod=$(translate "${trgt_mod}" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')
+                        
+                        srce_mod=$(translate "${trgt_mod}" $lgt $lgs | clean_1)
                         source "$DS/default/dicts/$lgt"
                         sentence_p "$DT_r" 2
                         fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
@@ -371,7 +371,7 @@ edit_item() {
                 ${pos}s|mark={$mark}|mark={$mark_mod}|;
                 ${pos}s|id=\[$id\]|id=\[$id_mod\]|g" "${cfg11}"
 
-                if [ "${audio_mod}" != "${audiofile}" ]; then
+                if [ "${audio}" != "${audio_mod}" ]; then
                 cp -f "${audio_mod}" "${DM_tlt}/$id_mod.mp3"
                 else
                 mv -f "${DM_tlt}/$id.mp3" "${DM_tlt}/$id_mod.mp3"; fi

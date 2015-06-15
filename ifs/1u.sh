@@ -72,7 +72,7 @@ dlg=$(yad --form --title="Idiomind" \
 --class=Idiomind --name=Idiomind \
 --window-icon="/usr/share/idiomind/images/icon.png" \
 --image-on-top --buttons-layout=end --align=center --center --on-top \
---width=450 --height=285 --borders=15 \
+--width=390 --height=310 --borders=15 \
 --field="$(gettext "Select the language you are studying")":lbl " " \
 --field=":CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
 --field="$(gettext "Select your native language")":lbl " " \

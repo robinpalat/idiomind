@@ -96,6 +96,7 @@ position() {
 
 function dlg_form_1() {
     
+    cmd_play="play "\"${audio}\"""
     yad --form --title="$(gettext "Edit")" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-all --separator="|" --selectable-labels \
@@ -106,7 +107,7 @@ function dlg_form_1() {
     --field="<small>$lgtl</small>" "$trgt" \
     --field="<small>$lgsl</small>" "$srce" \
     --field="<small>$(gettext "Topic")</small>":CB "$tpc!$tpcs" \
-    --field="<small>$(gettext "Audio")</small>":FL "$audiofile" \
+    --field="<small>$(gettext "Audio")</small>":FL "${audio}" \
     --field="<small>$(gettext "Example")</small>":TXT "$exmp" \
     --field="<small><a href='$link2'>$(gettext "Definition")</a></small>":TXT "$defn" \
     --field="<small>$(gettext "Note")</small>":TXT "$note" \
@@ -127,7 +128,7 @@ function dlg_form_2() {
     if [ `wc -w <<<"$item"` -lt 4 ]; then
     t=CHK; lbl_2="$(gettext "It is a compound word")"
     else t=LBL; fi
-    
+    cmd_play="play "\"${audio}\"""
     #--button="$(gettext "Image")":"$cmd_image"
     yad --form --title="$(gettext "Edit")" \
     --name=Idiomind --class=Idiomind \
@@ -142,7 +143,7 @@ function dlg_form_2() {
     --field="<small>$lgsl</small>":TXT "$srce" \
     --field="$(gettext "Listen")":FBTN "$cmd_play" \
     --field="<small>$(gettext "Topic")</small>":CB "$tpc!$tpcs" \
-    --field="<small>$(gettext "Audio")</small>":FL "$audiofile" \
+    --field="<small>$(gettext "Audio")</small>":FL "${audio}" \
     --button="$(gettext "More")":"$cmd_move" \
     --button="$(gettext "Words")":"$cmd_words" \
     --button="$(gettext "Delete")":"$cmd_delete" \

@@ -6,6 +6,8 @@ source "/usr/share/idiomind/ifs/mods/cmns.sh"
 DC_a="$HOME/.config/idiomind/addons"
 lgtl="$(sed -n 1p "$HOME/.config/idiomind/s/6.cfg")"
 lgt=$(lnglss "$lgtl")
+DM_tls="$HOME/.idiomind/topics/$lgtl/.share"
+
 
 if [ ! -d "$DC_a/dict/" ]; then
 mkdir -p "$DC_a/dict/enables"
@@ -22,13 +24,14 @@ echo "$lgtl" > "$DC_a/dict/.lng"; fi
 function dictt() {
     
     export lgt
-    dir_tmp="$2"
-    w="$1"
-
+    word="$1"
+    cd "${2}"/
+    
     while read -r dict; do
     
-        sh "$dict" "$w" "$dir_tmp"
-            if [ -f "$dir_tmp/$w.mp3" ]; then
+        sh "$dict" "$word"
+        
+            if [ -f ./"$word.mp3" ]; then
             break; fi
             
     done < <(find "$DC_a"/dict/enables/ -type f)

@@ -28,11 +28,13 @@ lwrd=`grep -oP '(?<=wrds={).*(?=})' <<<"${item}" |tr '_' '\n'`
 exmp=`sed "s/"${trgt,,}"/<span background='#FDFBCF'>"${trgt,,}"<\/\span>/g" <<<"$exmp"`
 id=`grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"`
 
-cmd_listen="play '${DM_tlt}/$id.mp3'"
+
 [ "$mark" = TRUE ] && trgt="<b>$trgt</b>" && grmr="<b>$grmr</b>"
 
-if [ ${type} = 1 ]; then word_view
-elif [ ${type} = 2 ]; then sentence_view
+if [ ${type} = 1 ]; then
+cmd_listen="play '$DM_tls/${trgt,,}.mp3'"; word_view
+elif [ ${type} = 2 ]; then
+cmd_listen="play '${DM_tlt}/$id.mp3'"; sentence_view
 fi
 ret=$?
 

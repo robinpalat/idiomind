@@ -87,6 +87,7 @@ function index() {
 }
 
 
+
 function sentence_p() {
 
     if [ $2 = 1 ]; then 
@@ -430,14 +431,9 @@ function fetch_audio() {
         
         if [ ! -f "$DM_tls/${word,,}.mp3" ]; then
 
-            dictt "${word,,}" "$3"
-            
-            if [ -f "$3/${word,,}.mp3" ]; then
-                mv -f "$3/${word,,}.mp3" "$4/${word,,}.mp3"
-            else
-                voice "${word}" "$3" "$4/${word,,}.mp3"
-            fi
+            dictt "${word,,}" "$DM_tls"
         fi
+        
     done < "${words_list}"
 }
 

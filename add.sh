@@ -256,7 +256,7 @@ new_sentence() {
         fi) &
 
         # feach audio of words
-        fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
+        fetch_audio "$aw" "$bw"
         
         [ "$DT_r" ] && rm -fr "$DT_r"
         echo -e ".adi.1.adi." >> "$DC_s/8.cfg"
@@ -290,7 +290,6 @@ new_word() {
         fi
         srce="$(translate "${trgt}" $lgt $lgs)"
         srce="$(clean_0 <<<"${srce}")"
-        fname="$(nmfile "${trgt^}")"
         audio="${trgt,,}"
         
     else 
@@ -317,28 +316,9 @@ new_word() {
         mv -f  "$DT_r/img.jpg" "${DM_tlt}/images/$id.jpg"; fi
         
         # audio
-        audio="${trgt,,}"
-        
-        if [ -f "$DT_r/audtm.mp3" ]; then
-        
-            mv -f "$DT_r/audtm.mp3" "${DM_tlt}/$id.mp3"
-            
-        else
-            if [ -f "$DM_tls/$audio.mp3" ]; then
-            
-                cp -f "$DM_tls/$audio.mp3" "$DT_r/$audio.mp3"
-                
-            else
-                dictt "$audio" "$DT_r"
-            fi
-            
-            if [ -f "$DT_r/$audio.mp3" ]; then
+        if [ ! -f "${DM_tls}/$audio.mp3" ]; then
 
-                cp -f "$DT_r/$audio.mp3" "${DM_tlt}/$id.mp3"
-                
-            else
-                voice "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
-            fi
+            dictt "$audio" "${DM_tls}"
         fi
         
         # notify
@@ -969,7 +949,7 @@ process() {
                                     index 2 "${trgt}" "${tpe}"
                                     tags_1 S "${trgt}" "${srce}" "${DM_tlt}/$id.mp3"
                                     tags_3 W "${lwrds}" "${pwrds}" "${grmrk}" "${DM_tlt}/$id.mp3"
-                                    fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
+                                    fetch_audio "$aw" "$bw"
 
                                 else
                                     echo -e "\n\n#$n $trgt" >> ./slog

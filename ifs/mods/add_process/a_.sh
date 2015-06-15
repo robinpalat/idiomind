@@ -257,7 +257,7 @@ if [[ "$conten" = A ]]; then
                                 index 2 "${trgt}" "${tpe}"
                                 tags_1 S "${trgt}" "${srce}" "${DM_tlt}/$fname.mp3"
                                 tags_3 W "${lwrds}" "${pwrds}" "${grmrk}" "${DM_tlt}/$fname.mp3"
-                                fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
+                                fetch_audio "$aw" "$bw"
                             else
                                 printf "\n\n#$n $trgt" >> ./slog
                                 if [ -f "${DM_tlt}/$fname.mp3" ]; then
