@@ -53,6 +53,16 @@ function get_item() {
 
 }
 
+function get_name_file() {
+    
+    cfg11_="$DM_tl/${1}/.conf/.11.cfg"; trgt_="${2}"
+    pos=`grep -Fon -m 1 "trgt={${trgt_}}" "${cfg11_}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
+    item=`sed -n ${pos}p "${cfg11_}" |sed 's/},/}\n/g'`
+    echo "$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
+     
+}
+
+
 function nmfile() {
 
     id=":[type={$1},trgt={$2},srce={$3},exmp={$4},defn={$5},note={$6},wrds={$7},grmr={$8},]."

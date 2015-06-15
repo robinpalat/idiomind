@@ -241,6 +241,7 @@ function tags_1() {
 
 function add_item() {
     
+    if ! grep -Fo "trgt={${2}}" "$DC_tlt/.11.cfg"; then
     pos=$(grep -Fon -m 1 "trgt={}" "$DC_tlt/.11.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
     sed -i "${pos}s|type={}|type={$1}|;
     ${pos}s|trgt={}|trgt={${2}}|;
@@ -252,6 +253,7 @@ function add_item() {
     ${pos}s|grmr={}|grmr={${8}}|;
     ${pos}s|id=\[\]|id=\[$9\]|g" \
     "${DC_tlt}/.11.cfg"
+    fi
 }
 
 

@@ -83,16 +83,16 @@ delete_item_ok() {
     touch "$DT/ps_lk"
     include "$DS/ifs/mods/mngr"
     source "$DS/ifs/mods/cmns.sh"
-    item="${3}"
-    id="$(nmfile "${3}")"
+    trgt="${3}"
+    file=`get_name_file "${trgt}" "${DC_tlt}/.11.cfg"`
     DM_tlt="$DM_tl/${2}"
     DC_tlt="$DM_tl/${2}/.conf"
 
-    if [ -f "${DM_tlt}/$id.mp3" ]; then
-    file="${DM_tlt}/$id.mp3"
+    if [ -f "${DM_tlt}/$file.mp3" ]; then
+    file="${DM_tlt}/$file.mp3"
         
-    elif [ -f "${DM_tlt}/$id.mp3" ]; then
-    file="${DM_tlt}/$id.mp3"
+    elif [ -f "${DM_tlt}/$file.mp3" ]; then
+    file="${DM_tlt}/$file.mp3"
 
     fi
     
@@ -101,21 +101,22 @@ delete_item_ok() {
     if [ -d "${DC_tlt}/practice" ]; then
         cd "${DC_tlt}/practice"
         while read file_pr; do
-            if grep -Fxq "${item}" "${file_pr}"; then
-                grep -vxF "${item}" "${file_pr}" > ./rm.tmp
+            if grep -Fxq "${trgt}" "${file_pr}"; then
+                grep -vxF "${trgt}" "${file_pr}" > ./rm.tmp
                 sed '/^$/d' ./rm.tmp > "${file_pr}"; fi
         done < <(ls ./*)
         rm ./*.tmp
         cd /
     fi
 
-    sed -i "${4}d" "${DC_tlt}/.11.cfg"
+    pos=`grep -Fon -m 1 "trgt={${trgt}}" "${DC_tlt}/.11.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
+    sed -i "${pos}d" "${DC_tlt}/.11.cfg"
     "$DS/ifs/tls.sh" sanity_1 "${DC_tlt}/.11.cfg" &
 
     n=0
     while [ $n -le 6 ]; do
     if [ -f "${DC_tlt}/$n.cfg" ]; then
-        grep -vxF "${item}" "${DC_tlt}/$n.cfg" > "${DC_tlt}/$n.cfg.tmp"
+        grep -vxF "${trgt}" "${DC_tlt}/$n.cfg" > "${DC_tlt}/$n.cfg.tmp"
         sed '/^$/d' "${DC_tlt}/$n.cfg.tmp" > "${DC_tlt}/$n.cfg"; fi
         let n++
     done
@@ -131,20 +132,20 @@ delete_item() {
     touch "$DT/ps_lk"
     include "$DS/ifs/mods/mngr"
     source "$DS/ifs/mods/cmns.sh"
-    item="${3}"
-    id="$(nmfile "${3}")"
+    trgt="${3}"
+    file=`get_name_file "${trgt}" "${DC_tlt}/.11.cfg"`
     DM_tlt="$DM_tl/${2}"
     DC_tlt="$DM_tl/${2}/.conf"
 
-    if [ -f "${DM_tlt}/$id.mp3" ]; then 
+    if [ -f "${DM_tlt}/$file.mp3" ]; then 
     
-    file="${DM_tlt}/$id.mp3"
+    file="${DM_tlt}/$file.mp3"
     msg_2 "$(gettext "Are you sure you want to delete this word?")\n" \
     gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
 
-    elif [ -f "${DM_tlt}/$id.mp3" ]; then
+    elif [ -f "${DM_tlt}/$file.mp3" ]; then
     
-    file="${DM_tlt}/$id.mp3"
+    file="${DM_tlt}/$file.mp3"
     msg_2 "$(gettext "Are you sure you want to delete this sentence?")\n" \
     gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
 
@@ -163,21 +164,21 @@ delete_item() {
         if [ -d "${DC_tlt}/practice" ]; then
             cd "${DC_tlt}/practice"
             while read file_pr; do
-                if grep -Fxq "${item}" "${file_pr}"; then
-                    grep -vxF "${item}" "${file_pr}" > ./rm.tmp
+                if grep -Fxq "${trgt}" "${file_pr}"; then
+                    grep -vxF "${trgt}" "${file_pr}" > ./rm.tmp
                     sed '/^$/d' ./rm.tmp > "${file_pr}"; fi
             done < <(ls ./*)
             rm ./*.tmp
             cd /
         fi
         
-        sed -i "${4}d" "${DC_tlt}/.11.cfg"
+        sed -i "${pos}d" "${DC_tlt}/.11.cfg"
         "$DS/ifs/tls.sh" sanity_1 "${DC_tlt}/.11.cfg" &
 
         n=0
         while [[ $n -le 6 ]]; do
             if [ -f "${DC_tlt}/$n.cfg" ]; then
-            grep -vxF "${item}" "${DC_tlt}/$n.cfg" > "${DC_tlt}/$n.cfg.tmp"
+            grep -vxF "${trgt}" "${DC_tlt}/$n.cfg" > "${DC_tlt}/$n.cfg.tmp"
             sed '/^$/d' "${DC_tlt}/$n.cfg.tmp" > "${DC_tlt}/$n.cfg"; fi
             let n++
         done
@@ -229,9 +230,9 @@ edit_item() {
     mod=0; col=0
     
     cmd_move="$DS/ifs/mods/mngr/mngr.sh 'position' ${item_pos} "\"${index_1}\"""
-    cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"" "\"${trgt}\"" ${item_pos}"
-    cmd_image="$DS/ifs/tls.sh set_image "\"${audiofile}\"" word"
-    cmd_play="play "\"${DM_tlt}/$id.mp3\"""
+    cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"" "\"${trgt}\"""
+    cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"" "\"${trgt}\"""
+    cmd_play="play "\"${DM_tlt}\""/$id.mp3"
     link1="https://translate.google.com/\#$lgt/$lgs/${q_trad}"
     link2="http://glosbe.com/$lgt/$lgs/${q_trad,,}"
     link3='https://www.google.com/search?q='$q_trad'&amp;tbm=isch'
@@ -270,7 +271,6 @@ edit_item() {
                 audio_mod="$(cut -d "|" -f8 <<<"${edit_dlg2}")"
                 grmr_mod="${grmr}"
                 wrds_mod="${wrds}"
-                
                 
                 [ "${type_mod}" = TRUE ] && type_mod=1
                 [ "${type_mod}" = FALSE ] && type_mod=2
@@ -340,7 +340,7 @@ edit_item() {
                     pos=$(grep -Fon -m 1 "trgt={}" "${cfg11}" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
                     [ -f "${audio_mod}" ] && mv -f "${audio_mod}" "$DM_tl/${tpc_mod}/$id_mod.mp3"
                     sed -i "${pos}s|trgt={}|trgt={$trgt_mod}|g" "${cfg11}"
-                    "$DS/mngr.sh" delete_item_ok "${tpc}" "${trgt}" ${item_pos}
+                    "$DS/mngr.sh" delete_item_ok "${tpc}" "${trgt}"
                     index ${type} "${trgt_mod}" "${tpc_mod}"
                     unset type trgt srce exmp defn note wrds grmr mark id
                     

@@ -106,7 +106,7 @@ function dlg_form_1() {
     --field="<small>$lgtl</small>" "$trgt" \
     --field="<small>$lgsl</small>" "$srce" \
     --field="<small>$(gettext "Topic")</small>":CB "$tpc!$tpcs" \
-    --field="<small>$(gettext "Audio")</small>":FL "$audiofile_1" \
+    --field="<small>$(gettext "Audio")</small>":FL "$audiofile" \
     --field="<small>$(gettext "Example")</small>":TXT "$exmp" \
     --field="<small><a href='$link2'>$(gettext "Definition")</a></small>":TXT "$defn" \
     --field="<small>$(gettext "Note")</small>":TXT "$note" \
@@ -142,7 +142,7 @@ function dlg_form_2() {
     --field="<small>$lgsl</small>":TXT "$srce" \
     --field="$(gettext "Listen")":FBTN "$cmd_play" \
     --field="<small>$(gettext "Topic")</small>":CB "$tpc!$tpcs" \
-    --field="<small>$(gettext "Audio")</small>":FL "$audiofile_2" \
+    --field="<small>$(gettext "Audio")</small>":FL "$audiofile" \
     --button="$(gettext "More")":"$cmd_move" \
     --button="$(gettext "Words")":"$cmd_words" \
     --button="$(gettext "Delete")":"$cmd_delete" \

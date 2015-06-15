@@ -715,44 +715,34 @@ ABOUT
 set_image() {
 
     cd "$DT"
-    if [ "$3" = word ]; then
-    item=$(eyeD3 "$2" | grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)'); k=word
-    elif [ "$3" = sentence ]; then
-    item=$(eyeD3 "$2" | grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)'); k=sentence; fi
-    file="$2"
-    fname="$(nmfile "$item")"
     source "$DS/ifs/mods/add/add.sh"
-    ifile="${DM_tlt}/images/$fname.jpg"
+    file=`get_name_file "${2}" "${3}"`
+    ifile="${DM_tlt}/images/$file.jpg"
 
     if [ -f "$ifile" ]; then
-    image="--image=$ifile"
-    btn2="--button="$(gettext "Delete")":2"
     
-    dlg_form_3
-    ret=$(echo $?)
+        image="--image=$ifile"
+        btn2="--button="$(gettext "Delete")":2"
+        dlg_form_3
+        ret=$?
         
         if [[ $ret -eq 2 ]]; then
-        
-        eyeD3 --remove-image "$file"
-        rm -f "$ifile"
-        
-        fi
+        rm -f "$ifile"; fi
         
     else 
-        scrot -s --quality 90 "$fname.temp.jpeg"
-        /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 100x90^ \
-        -gravity center -extent 100x90 -quality 90% "$item"_temp.jpeg
-        /usr/bin/convert "$fname.temp.jpeg" -interlace Plane -thumbnail 405x275^ \
+        scrot -s --quality 90 "$file.temp.jpeg"
+        /usr/bin/convert "$file.temp.jpeg" -interlace Plane -thumbnail 100x90^ \
+        -gravity center -extent 100x90 -quality 90% "$file"_temp.jpeg
+        /usr/bin/convert "$file.temp.jpeg" -interlace Plane -thumbnail 405x275^ \
         -gravity center -extent 400x270 -quality 90% "$ifile"
-        eyeD3 --remove-images "$file"
-        eyeD3 --add-image "$fname"_temp.jpeg:ILLUSTRATION "$file"
         wait
-        "$DS/ifs/tls.sh" set_image "$file" $k & exit
+        "$DS/ifs/tls.sh" set_image "${2}" "${3}" & exit
 
     fi
 
     rm -f "$DT"/*.jpeg
     exit
+    
 } >/dev/null 2>&1
 
 
@@ -1020,14 +1010,15 @@ convert() {
 
 sanity_1() {
 
-    sed -i '/^$/d' "${2}"
+    cfg11="$2"
+    sed -i '/^$/d' "${cfg11}"
     n=1
     while [[ $n -le 200 ]]; do
-        line=$(sed -n ${n}p "${2}" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
+        line=$(sed -n ${n}p "${cfg11}" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
         if [ -z ${line} ]; then
-        echo "$n:[type={},trgt={},srce={},exmp={},defn={},note={},wrds={},grmr={},].[tag={},mark={},].id=[]" >> "${2}"
+        echo "$n:[type={},trgt={},srce={},exmp={},defn={},note={},wrds={},grmr={},].[tag={},mark={},].id=[]" >> "${cfg11}"
         elif [[ ${line} != ${n} ]]; then
-        sed -i ""$n"s|"$line"\:|"$n"\:|g" "${2}"
+        sed -i ""$n"s|"$line"\:|"$n"\:|g" "${cfg11}"
         fi
         let n++
     done
