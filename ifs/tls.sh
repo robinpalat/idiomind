@@ -722,7 +722,7 @@ set_image() {
     file="$2"
     fname="$(nmfile "$item")"
     source "$DS/ifs/mods/add/add.sh"
-    ifile="${DM_tlt}/words/images/$fname.jpg"
+    ifile="${DM_tlt}/images/$fname.jpg"
 
     if [ -f "$ifile" ]; then
     image="--image=$ifile"
@@ -1017,29 +1017,21 @@ convert() {
     done
 }
 
-addx() {
 
-    trgt=" hola como estsa"; srce="muy bien che!"
-    pos=$(grep -Fon -m 1 "trgt={}" "$DC_tlt/.11.cfg" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
-    sed -i "${pos}s|trgt={}|trgt={${trgt}}|; ${pos}s|srce={}|srce={sdf''ffsd'}|g" "$DC_tlt/.11.cfg"
-}
+sanity_1() {
 
-
-REM() {
-    sed -i '/^$/d' "$DC_tlt/.11.cfg"
+    sed -i '/^$/d' "${2}"
     n=1
     while [[ $n -le 200 ]]; do
-        item="$(sed -n "$n"p "$DC_tlt/.11.cfg")"
-        line=$(grep -oP "(?<=\[).*(?=]:)" <<<"$item")
-        if [[ ${line} != ${n} ]]; then
-        sed -i ""$n"s|\.\["$line"\]\:|\.\["$n"\]\:|g" "$DC_tlt/.11.cfg"
-        elif [ -z ${line} ]; then
-        echo "$n:[type={},trgt={},srce={},exmp={},defn={},note={},wrds={},grmr={},].[tag={},mark={},].id=[]" >> "$DC_tlt/.11.cfg"
+        line=$(sed -n ${n}p "${2}" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
+        if [ -z ${line} ]; then
+        echo "$n:[type={},trgt={},srce={},exmp={},defn={},note={},wrds={},grmr={},].[tag={},mark={},].id=[]" >> "${2}"
+        elif [[ ${line} != ${n} ]]; then
+        sed -i ""$n"s|"$line"\:|"$n"\:|g" "${2}"
         fi
         let n++
     done
 }
-
 
 
 if [ "$1" = play ]; then
@@ -1106,6 +1098,8 @@ case "$1" in
     convert ;;
     html)
     mkhtml ;;
+    sanity_1)
+    sanity_1 "$@" ;;
     fback)
     fback ;;
     about)

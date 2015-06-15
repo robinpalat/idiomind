@@ -21,6 +21,8 @@ nimages=\"$images\"
 level=\"$level\"
 set1=\"FALSE\"
 set2=\"FALSE\""
+cfg11="[type={},trgt={},srce={},exmp={},defn={},\
+note={},wrds={},grmr={},].[tag={},mark={},].id=[]"
 
 if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
     "$DS/ifs/mods/topic/${topic}.sh" 2 & exit 1
@@ -29,10 +31,14 @@ else
     if [ -d "${DM_tlt}" ]; then
 
         if [ ! -d "${DC_tlt}" ]; then
-        mkdir -p "${DM_tlt}/words/images"
+        mkdir -p "${DM_tlt}/images"
         mkdir "${DC_tlt}"; cd "${DC_tlt}"
         c=0; while [[ $c -le 10 ]]; do
         touch "$c.cfg"; let c++
+        done
+        n=1; while [[ $n -le 200 ]]; do
+        echo "$n:${cfg11}">> "${DC_tlt}/.11.cfg"
+        let n++
         done
         rm "${DC_tlt}/7.cfg" "${DC_tlt}/9.cfg"
         echo " " > "${DC_tlt}/10.cfg"
@@ -43,6 +49,7 @@ else
         echo "${topic}" > "$DC_s/4.cfg"
         echo "${topic}" > "$DC_s/7.cfg"
         echo "${topic}" > "$DT/tpe"
+        cp -f "${DC_tlt}/o.cfg" "${DC_tlt}/.bk"
         echo 0 > "$DC_s/5.cfg"
         
         if [[ `wc -l < "${DC_tlt}/12.cfg"` -lt 15 ]]; then

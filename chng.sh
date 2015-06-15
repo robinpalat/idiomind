@@ -52,7 +52,7 @@ if [[ "$1" = chngi ]]; then
     _item="$(sed -n "$2"p "$index")"
     fname="$(echo -n "${_item}" | md5sum | rev | cut -c 4- | rev)"
     [ -f "${DM_tlt}/$fname.mp3" ] && file="${DM_tlt}/$fname.mp3" && t=2
-    [ -f "${DM_tlt}/words/$fname.mp3" ] && file="${DM_tlt}/words/$fname.mp3" && t=1
+    [ -f "${DM_tlt}/$fname.mp3" ] && file="${DM_tlt}/$fname.mp3" && t=1
     include "$DS/ifs/mods/play"
     e_file "$file"
     
@@ -70,7 +70,7 @@ if [[ "$1" = chngi ]]; then
     fi
 
     [ -z "$trgt" ] && trgt="$_item"
-    img="${DM_tlt}/words/images/$fname.jpg"
+    img="${DM_tlt}/images/$fname.jpg"
     [ -f "$img" ] && icon="$img"
             
     if [ "$text" = "TRUE" ]; then

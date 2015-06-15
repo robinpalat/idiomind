@@ -7,7 +7,7 @@ echo "_" >> "$DT/stats.tmp" &
 
 re='^[0-9]+$'; index_pos="$3"
 if ! [[ ${index_pos} =~ $re ]]; then
-index_pos=`grep -Fxon "${item_name}" "${index}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
+index_pos=`grep -Fxon -m 1 "${item_name}" "${index}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
 nll="_"; fi
 
 item=`sed -n ${index_pos}p "${index}"`
@@ -21,12 +21,13 @@ exmp=`grep -oP '(?<=exmp={).*(?=})' <<<"${item}"`
 defn=`grep -oP '(?<=defn={).*(?=})' <<<"${item}"`
 note=`grep -oP '(?<=note={).*(?=})' <<<"${item}"`
 grmr=`grep -oP '(?<=grmr={).*(?=})' <<<"${item}"`
+tag=`grep -oP '(?<=tag={).*(?=})' <<<"${item}"`
 mark=`grep -oP '(?<=mark={).*(?=})' <<<"${item}"`
 lwrd=`grep -oP '(?<=wrds={).*(?=})' <<<"${item}" |tr '_' '\n'`
 id=`grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"`
 
 cmd_listen="play '${DM_tlt}/$id.mp3'"
-[ "$mark" = TRUE ] && trgt="<b>$trgt</b>"
+[ "$mark" = TRUE ] && trgt="<b>$trgt</b>" && grmr="<b>$grmr</b>"
 
 if [ ${type} = 1 ]; then word_view
 elif [ ${type} = 2 ]; then sentence_view

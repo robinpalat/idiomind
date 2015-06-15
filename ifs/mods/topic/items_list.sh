@@ -11,7 +11,7 @@ function word_view() {
 
     yad --form --title=" " \
     --selectable-labels --quoted-output \
-    --text="<span font_desc='Sans Free 25'>$trgt</span>\n\n<i>$srce</i>\n\n" \
+    --text="$tag<span font_desc='Sans Free 25'>$trgt</span>\n\n<i>$srce</i>\n\n" \
     --window-icon="$DS/images/icon.png" \
     --align=left --scroll --skip-taskbar --text-align=center \
     --image-on-top --center --on-top \
@@ -32,7 +32,7 @@ function sentence_view() {
     trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
     
     echo "$lwrd" | yad --list --title=" " \
-    --text="<span font_desc='Sans Free 15'>${trgt_l}</span>\n\n<i>$srce</i>\n\n" \
+    --text="$tag<span font_desc='Sans Free 15'>${trgt_l}</span>\n\n<i>$srce</i>\n\n" \
     --selectable-labels --print-column=0 \
     --dclick-action="$DS/ifs/tls.sh 'dclik'" \
     --window-icon="$DS/images/icon.png" \

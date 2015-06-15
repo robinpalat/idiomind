@@ -184,8 +184,8 @@ new_sentence() {
     source "$DS/default/dicts/$lgt"
     DM_tlt="$DM_tl/${tpe}"
     DC_tlt="$DM_tl/${tpe}/.conf"
-    trgt=$(clean_1 "${2}")
-    srce=$(clean_1 "${4}")
+    trgt=$(clean_1 <<<"${2}")
+    srce=$(clean_1 <<<"${4}")
 
     if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
@@ -201,10 +201,10 @@ new_sentence() {
         cd "$DT_r"
         if [ "$trd_trgt" = TRUE ]; then
         trgt="$(translate "${trgt}" auto "$lgt")"
-        trgt=$(clean_1 "${trgt}")
+        trgt=$(clean_1 <<<"${trgt}")
         fi
         srce="$(translate "${trgt}" $lgt $lgs)"
-        srce="$(clean_1 "${srce}")"
+        srce="$(clean_1 <<<"${srce}")"
         
     else 
         if [ -z "$4" ] || [ -z "$2" ]; then
@@ -212,7 +212,7 @@ new_sentence() {
         msg "$(gettext "You need to fill text fields.")\n" info " " & exit; fi
     fi
     
-    sentence_p "$DT_r"
+    sentence_p "$DT_r" 1
     
     mksure "${trgt}" "${srce}" "${grmr}" "${wrds}"
     
@@ -249,7 +249,7 @@ new_sentence() {
         
         # notify
         notify-send "${trgt}" "${srce}\\n(${tpe})" -t 10000
-        index sentence "${trgt}" "${tpe}"
+        index 2 "${trgt}" "${tpe}"
 
         # list words
         (if [ "$list" = TRUE ]; then
@@ -268,8 +268,8 @@ new_sentence() {
 
 new_word() {
 
-    trgt="$(clean_0 "${2}")"
-    srce="$(clean_0 "${4}")"
+    trgt="$(clean_0 <<<"${2}")"
+    srce="$(clean_0 <<<"${4}")"
     DT_r="$3"; cd "$DT_r"
     DM_tlt="$DM_tl/${tpe}"
     DC_tlt="$DM_tl/${tpe}/.conf"
@@ -290,13 +290,13 @@ new_word() {
         trgt="$(translate "${trgt}" auto "$lgt")"
         fi
         srce="$(translate "${trgt}" $lgt $lgs)"
-        srce="$(clean_0 "${srce}")"
+        srce="$(clean_0 <<<"${srce}")"
         fname="$(nmfile "${trgt^}")"
         audio="${trgt,,}"
         
     else 
         if [ -z "$4" ] || [ -z "$2" ]; then
-        srce="$(clean_0 "${4}")"
+        srce="$(clean_0 <<<"${4}")"
         [ "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "You need to fill text fields.")\n" info " " & exit; fi
     fi
@@ -345,7 +345,7 @@ new_word() {
         
         # notify
         notify-send "${trgt}" "${srce}\\n(${tpe})" -t 10000
-        index word "${trgt}" "${tpe}"
+        index 1 "${trgt}" "${tpe}"
 
         
         [ "$DT_r" ] && rm -fr "$DT_r"
@@ -498,7 +498,7 @@ list_words_edit() {
             else
                 translate "${trgt}" auto $lgs > "tr.$c"
                 srce=$(< tr."$c")
-                srce="$(clean_0 "${srce}")"
+                srce="$(clean_0 <<<"${srce}")"
                 
                 if [ -f "$DM_tls/$audio.mp3" ]; then
                 
@@ -510,20 +510,20 @@ list_words_edit() {
                 
                 if [ -f "$DT_r/$audio.mp3" ]; then
 
-                    cp -f "$DT_r/$audio.mp3" "${DM_tlt}/words/$fname.mp3"
+                    cp -f "$DT_r/$audio.mp3" "${DM_tlt}/$fname.mp3"
                 
                 else
-                    voice "${trgt}" "$DT_r" "${DM_tlt}/words/$fname.mp3"
+                    voice "${trgt}" "$DT_r" "${DM_tlt}/$fname.mp3"
                 fi
                 
-                mksure "${DM_tlt}/words/$fname.mp3" "${trgt}" "${srce}"
+                mksure "${DM_tlt}/$fname.mp3" "${trgt}" "${srce}"
                 if [ $? = 0 ]; then
-                    tags_2 W "${trgt}" "${srce}" "${5}" "${DM_tlt}/words/$fname.mp3" >/dev/null 2>&1
-                    index word "${trgt}" "${tpc}" "${sname}"
+                    tags_2 W "${trgt}" "${srce}" "${5}" "${DM_tlt}/$fname.mp3" >/dev/null 2>&1
+                    index 1 "${trgt}" "${tpc}" "${sname}"
                 
                 else
                     printf "\n\n#$n $trgt" >> ./logw
-                    [ -f "${DM_tlt}/words/$fname.mp3" ] && rm "${DM_tlt}/words/$fname.mp3"; fi
+                    [ -f "${DM_tlt}/$fname.mp3" ] && rm "${DM_tlt}/$fname.mp3"; fi
             fi
             let n++
         done
@@ -585,7 +585,7 @@ list_words_sentence() {
         else
             translate "${trgt}" auto "$lgs" > tr."$c"
             srce=$(< ./tr."$c")
-            srce="$(clean_0 "${srce}")"
+            srce="$(clean_0 <<<"${srce}")"
 
             if [ -f "$DM_tls/$audio.mp3" ]; then
             
@@ -597,20 +597,20 @@ list_words_sentence() {
             
             if [ -f "$DT_r/$audio.mp3" ]; then
 
-                cp -f "$DT_r/$audio.mp3" "${DM_tlt}/words/$fname.mp3"
+                cp -f "$DT_r/$audio.mp3" "${DM_tlt}/$fname.mp3"
                 
             else
-                voice "${trgt}" "$DT_r" "${DM_tlt}/words/$fname.mp3"
+                voice "${trgt}" "$DT_r" "${DM_tlt}/$fname.mp3"
             fi
             
-            mksure "${DM_tlt}/words/$fname.mp3" "${trgt}" "${srce}"
+            mksure "${DM_tlt}/$fname.mp3" "${trgt}" "${srce}"
             if [ $? = 0 ]; then
-                tags_2 W "${trgt}" "${srce}" "${3}" "${DM_tlt}/words/$fname.mp3" >/dev/null 2>&1
-                index word "${trgt}" "${4}"
+                tags_2 W "${trgt}" "${srce}" "${3}" "${DM_tlt}/$fname.mp3" >/dev/null 2>&1
+                index 1 "${trgt}" "${4}"
             
             else
                 printf "\n\n#$n $trgt" >> ./logw
-                [ -f "${DM_tlt}/words/$fname.mp3" ] && rm "${DM_tlt}/words/$fname.mp3"
+                [ -f "${DM_tlt}/$fname.mp3" ] && rm "${DM_tlt}/$fname.mp3"
             fi
         fi
         let n++
@@ -898,12 +898,12 @@ process() {
                 while [[ $n -le "$(wc -l < slts | head -200)" ]]; do
                 
                     sntc=$(sed -n "$n"p ./slts)
-                    trgt="$(clean_1 "${sntc}")"
+                    trgt="$(clean_1 <<<"${sntc}")"
                     if [ "$trd_trgt" = TRUE ]; then
                     trgt="$(translate "${trgt}" auto $lgt)"
-                    trgt="$(clean_1 "${trgt}")"; fi
+                    trgt="$(clean_1 <<<"${trgt}")"; fi
                     srce="$(translate "${trgt}" $lgt $lgs)"
-                    srce="$(clean_1 "${srce}")"
+                    srce="$(clean_1 <<<"${srce}")"
                     fname=$(nmfile "${trgt}")
                 
                     if [ "$(wc -$c <<<"${sntc}")" = 1 ]; then
@@ -911,27 +911,27 @@ process() {
                             printf "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $sntc" >> ./wlog
                     
                         else
-                            trgt="$(clean_0 "$trgt")"
+                            trgt="$(clean_0 <<<"$trgt")"
                             fname=$(nmfile "$trgt")
-                            srce="$(clean_0 "$srce")"
+                            srce="$(clean_0 <<<"$srce")"
                             audio="${trgt,,}"
                             
                             dictt "$audio" "$DT_r"
                             if [ -f "$DT_r/$audio.mp3" ]; then
-                                cp -f "$DT_r/$audio.mp3" "${DM_tlt}/words/$fname.mp3"
+                                cp -f "$DT_r/$audio.mp3" "${DM_tlt}/$fname.mp3"
                             else
-                                voice "${trgt}" "$DT_r" "${DM_tlt}/words/$fname.mp3"
+                                voice "${trgt}" "$DT_r" "${DM_tlt}/$fname.mp3"
                             fi
 
-                            mksure "${DM_tlt}/words/$fname.mp3" "${trgt}" "${srce}"
+                            mksure "${DM_tlt}/$fname.mp3" "${trgt}" "${srce}"
                             if [ $? = 0 ]; then
-                                tags_1 W "${trgt}" "${srce}" "${DM_tlt}/words/$fname.mp3"
+                                tags_1 W "${trgt}" "${srce}" "${DM_tlt}/$fname.mp3"
                                 echo "${trgt}" >> addw
-                                index word "${trgt}" "${tpe}"
+                                index 1 "${trgt}" "${tpe}"
 
                             else
                                 printf "\n\n#$n $trgt" >> ./wlog
-                                [ -f "${DM_tlt}/words/$fname.mp3" ] && rm "${DM_tlt}/words/$fname.mp3"
+                                [ -f "${DM_tlt}/$fname.mp3" ] && rm "${DM_tlt}/$fname.mp3"
                             fi
                         fi
 
@@ -968,7 +968,7 @@ process() {
                                 "${lwrds}" "${pwrds}" "${grmrk}"
                                 if [ $? = 0 ]; then
                                     echo "$fname" >> adds
-                                    index sentence "${trgt}" "${tpe}"
+                                    index 2 "${trgt}" "${tpe}"
                                     tags_1 S "${trgt}" "${srce}" "${DM_tlt}/$fname.mp3"
                                     tags_3 W "${lwrds}" "${pwrds}" "${grmrk}" "${DM_tlt}/$fname.mp3"
                                     fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
@@ -1017,21 +1017,21 @@ process() {
                         
                         if [ -f "$DT_r/$audio.mp3" ]; then
 
-                            cp -f "$DT_r/$audio.mp3" "${DM_tlt}/words/$fname.mp3"
+                            cp -f "$DT_r/$audio.mp3" "${DM_tlt}/$fname.mp3"
                             
                         else
-                            voice "${trgt}" "$DT_r" "${DM_tlt}/words/$fname.mp3"
+                            voice "${trgt}" "$DT_r" "${DM_tlt}/$fname.mp3"
                         fi
 
-                        mksure "${DM_tlt}/words/$fname.mp3" "${trgt}" "${srce}"
+                        mksure "${DM_tlt}/$fname.mp3" "${trgt}" "${srce}"
                         if [ $? = 0 ]; then
-                            tags_2 W "${trgt}" "${srce}" "${sname}" "${DM_tlt}/words/$fname.mp3"
-                            index word "${trgt}" "${tpe}" "${sname}"
+                            tags_2 W "${trgt}" "${srce}" "${sname}" "${DM_tlt}/$fname.mp3"
+                            index 1 "${trgt}" "${tpe}" "${sname}"
                             echo "${trgt}" >> addw
                             
                         else
                             printf "\n\n#$n $trgt" >> ./wlog
-                            [ -f "${DM_tlt}/words/$fname.mp3" ] && rm "${DM_tlt}/words/$fname.mp3"
+                            [ -f "${DM_tlt}/$fname.mp3" ] && rm "${DM_tlt}/$fname.mp3"
                         fi
                     fi
                     

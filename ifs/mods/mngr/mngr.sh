@@ -98,7 +98,7 @@ function dlg_form_1() {
     
     yad --form --title="$(gettext "Edit")" \
     --name=Idiomind --class=Idiomind \
-    --always-print-result --separator="\n" --selectable-labels \
+    --always-print-result --print-all --separator="|" --selectable-labels \
     --window-icon="$DS/images/icon.png" \
     --align=left --text-align=center --columns=2 \
     --buttons-layout=end --scroll --center --on-top \
@@ -118,8 +118,8 @@ function dlg_form_1() {
     --button="$(gettext "Image")":"$cmd_image" \
     --button="$(gettext "Delete")":"$cmd_delete" \
     --button="gtk-go-down":2 \
-    --button="$(gettext "Close")":0 > "$1"
-} >/dev/null 2>&1
+    --button="$(gettext "Close")":0
+}
 
 
 function dlg_form_2() {
@@ -131,7 +131,7 @@ function dlg_form_2() {
     #--button="$(gettext "Image")":"$cmd_image"
     yad --form --title="$(gettext "Edit")" \
     --name=Idiomind --class=Idiomind \
-    --always-print-result --separator="\n" --selectable-labels \
+    --always-print-result --print-all --separator="|" --selectable-labels \
     --window-icon="$DS/images/icon.png" \
     --buttons-layout=end --align=right --center --on-top \
     --width=650 --height=540 --borders=10 \
@@ -147,8 +147,8 @@ function dlg_form_2() {
     --button="$(gettext "Words")":"$cmd_words" \
     --button="$(gettext "Delete")":"$cmd_delete" \
     --button="gtk-go-down":2 \
-    --button="$(gettext "Close")":0 > "$1"
-} >/dev/null 2>&1
+    --button="$(gettext "Close")":0
+}
 
 
 function dialog_2() {

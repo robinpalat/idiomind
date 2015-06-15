@@ -225,18 +225,18 @@ if [[ "$conten" = A ]]; then
                         trgt="$(clean_0 "${trgt}")"
                         fname=$(nmfile "${trgt}")
                         srce="$(clean_0 "${srce}")"
-                        mv -f "$n.mp3" "${DM_tlt}/words/$fname.mp3"
+                        mv -f "$n.mp3" "${DM_tlt}/$fname.mp3"
                         
-                        mksure "${DM_tlt}/words/$fname.mp3" "${trgt}" "${srce}"
+                        mksure "${DM_tlt}/$fname.mp3" "${trgt}" "${srce}"
                         if [ $? = 0 ]; then
-                            tags_1 W "${trgt}" "${srce}" "${DM_tlt}/words/$fname.mp3"
-                            index word "${trgt}" z"${tpe}"
+                            tags_1 W "${trgt}" "${srce}" "${DM_tlt}/$fname.mp3"
+                            index 1 "${trgt}" z"${tpe}"
                             echo "${trgt}" >> addw
                             
                         else
                             printf "\n\n#$n $trgt" >> ./wlog
-                            if [ -f "${DM_tlt}/words/$fname.mp3" ]; then
-                            mv -f "${DM_tlt}/words/$fname.mp3" ./"$n.mp3"; fi
+                            if [ -f "${DM_tlt}/$fname.mp3" ]; then
+                            mv -f "${DM_tlt}/$fname.mp3" ./"$n.mp3"; fi
                         fi
                             
                     elif [ $(wc -$c <<<"$trgt") -ge 1 ]; then
@@ -254,7 +254,7 @@ if [[ "$conten" = A ]]; then
                         "${lwrds}" "${pwrds}" "${grmrk}"
                             if [ $? = 0 ]; then
                                 echo "${trgt}" >> adds
-                                index sentence "${trgt}" "${tpe}"
+                                index 2 "${trgt}" "${tpe}"
                                 tags_1 S "${trgt}" "${srce}" "${DM_tlt}/$fname.mp3"
                                 tags_3 W "${lwrds}" "${pwrds}" "${grmrk}" "${DM_tlt}/$fname.mp3"
                                 fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"

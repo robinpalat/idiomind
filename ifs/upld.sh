@@ -160,7 +160,7 @@ mail=$(sed -n 2p "$DC_s/3.cfg")
 user=$(sed -n 3p "$DC_s/3.cfg")
 [ -z "$user" ] && user=$USER
 nt=$(< "${DC_tlt}/10.cfg")
-imgm="${DM_tlt}/words/images/img.jpg"
+imgm="${DM_tlt}/images/img.jpg"
 
 "$DS/ifs/tls.sh" check_index "$tpc"
 
@@ -197,7 +197,7 @@ msg "$(gettext "Sorry, the image size is not suitable.")\n " info "$(gettext "Er
 "$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
 /usr/bin/convert "${img}" -interlace Plane -thumbnail 600x150^ \
 -gravity center -extent 600x150 \
--quality 100% "${DM_tlt}/words/images/img.jpg"
+-quality 100% "${DM_tlt}/images/img.jpg"
 fi
 
 if [[ $ret = 2 ]]; then
@@ -255,7 +255,7 @@ internet; cd "$DT"
 mkdir "$DT/upload"
 DT_u="$DT/upload/"
 mkdir -p "$DT/upload/${tpc}/conf"
-cd "${DM_tlt}/words/images"
+cd "${DM_tlt}/images"
 if [ $(ls -1 *.jpg 2>/dev/null | wc -l) != 0 ]; then
 images=$(ls *.jpg | wc -l); else
 images=0; fi
@@ -284,8 +284,7 @@ $Author" > "$DC_s/3.cfg"
 
 cd "${DM_tlt}"
 cp -r ./* "$DT_u/${tpc}/"
-cp -r "./words" "$DT_u/${tpc}/"
-cp -r "./words/images" "$DT_u/${tpc}/words"
+cp -r "./images" "$DT_u/${tpc}/images"
 mkdir "$DT_u/${tpc}/files"
 mkdir "$DT_u/${tpc}/share"
 auds="$(uniq < "${DC_tlt}/4.cfg" \
