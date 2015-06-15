@@ -8,9 +8,10 @@ echo "_" >> "$DT/stats.tmp" &
 re='^[0-9]+$'; index_pos="$3"
 if ! [[ ${index_pos} =~ $re ]]; then
 index_pos=`grep -Fxon -m 1 "${item_name}" "${index}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
-nll="_"; fi
+nll=""; fi
 
 item=`sed -n ${index_pos}p "${index}"`
+if [ -z "${item}" ]; then item="$(sed -n 1p "${index}")"; index_pos=1; fi
 pos=`grep -Fon -m 1 "trgt={${item}}" "$DC_tlt/.11.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
 item=`sed -n ${pos}p "$DC_tlt/.11.cfg" |sed 's/},/}\n/g'`
 
