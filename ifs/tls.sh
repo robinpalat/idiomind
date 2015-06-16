@@ -368,6 +368,21 @@ text() {
     --button="$(gettext "Close")":0
 } >/dev/null 2>&1
 
+
+
+editadv() {
+
+    yad --form --title="$(gettext "Info")" \
+    --name=Idiomind --class=Idiomind \
+    --window-icon="$DS/images/icon.png" \
+    --scroll --fixed --center --on-top \
+    --width=300 --height=250 --borders=5 \
+    --field="$(< "$2")":lbl \
+    --button="$(gettext "Close")":0
+} >/dev/null 2>&1
+
+
+
 add_file() {
 
     cd "$HOME"
@@ -1065,6 +1080,8 @@ case "$1" in
     edit_audio "$@" ;;
     text)
     text "$@" ;;
+    adv)
+    editadv "$@" ;;
     attachs)
     attatchments "$@" ;;
     add_file)

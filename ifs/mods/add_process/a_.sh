@@ -91,15 +91,10 @@ if [[ "$conten" = A ]]; then
     cd "$HOME"; fl="$(dlg_file_1)"
     
     if [ -z "$fl" ];then
-    [ "$DT_r" ] && rm -fr "$DT_r"
-    rm -f "$lckpr" & exit 1
+    cleanups "$DT_r" "$lckpr" & exit 1
         
     else
-        sleep 1
-        if [ -z "$tpe" ]; then
-        [ "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "No topic is active")\n" info & exit 1; fi
-        
+        check_s "${tpe}"
         (
         echo "2"
         echo "# $(gettext "Processing... Wait.")";
@@ -155,8 +150,7 @@ if [[ "$conten" = A ]]; then
         data="$(audio_recog "$test" $lgt $lgt $key)"; fi
         if [ -z "$data" ]; then
         msg "$(gettext "The key is invalid or has exceeded its quota of daily requests")" error
-        [ "$DT_r" ] && rm -fr "$DT_r"
-        rm -f "$lckpr" & exit 1; fi
+        cleanups "$DT_r" "$lckpr" & exit 1; fi
         
         echo "# $(gettext "Processing")..." ; sleep 0.2
         cd "$DT_r"
@@ -166,7 +160,7 @@ if [[ "$conten" = A ]]; then
 
         if [ ! -d "${DM_tlt}" ]; then
         msg " $(gettext "An error occurred.")\n" dialog-warning
-        rm -fr "$DT_r" "$lckpr" "$slt" & exit 1; fi
+        cleanups "$DT_r" "$lckpr" "$slt" & exit 1; fi
         
         cd "$DT_r"
         touch ./wrds ./addw
@@ -190,8 +184,7 @@ if [[ "$conten" = A ]]; then
                 if [ -z "${data}" ]; then
                 msg "$(gettext "The key is invalid or has exceeded its quota of daily requests")\n" error
                 "$DS/stop.sh" 5
-                [ "$DT_r" ] && rm -fr "$DT_r"
-                rm -f ls "$lckpr" & break & exit 1; fi
+                cleanups "$DT_r" "$lckpr" & break & exit 1; fi
 
                 trgt="$(echo "${data}" | sed '1d' \
                 | sed 's/.*transcript":"//' \
@@ -207,8 +200,6 @@ if [[ "$conten" = A ]]; then
                 elif [ -z "$trgt" ]; then
                 trgt="#$n [$(gettext "Text missing")]"
                 index txt_missing "$trgt" "$tpe"
-                fname=$(nmfile "$trgt")
-                cp -f "$n.mp3" "${DM_tlt}/$fname.mp3"
                 printf "\n\n#$n [$(gettext "Text missing")]" >> ./slog
                 
                 elif [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
@@ -218,50 +209,47 @@ if [[ "$conten" = A ]]; then
                     trgt=$(clean_1 "${trgt}")
                     srce="$(translate "${trgt}" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')"
                     srce="$(clean_1 "${srce}")"
-                    fname=$(nmfile "${trgt}")
                     
                     if [ $(wc -$c <<<"${trgt}") -eq 1 ]; then
                     
                         trgt="$(clean_0 "${trgt}")"
-                        fname=$(nmfile "${trgt}")
                         srce="$(clean_0 "${srce}")"
-                        mv -f "$n.mp3" "${DM_tlt}/$fname.mp3"
-                        
-                        mksure "${DM_tlt}/$fname.mp3" "${trgt}" "${srce}"
+                        id="$(set_name_file 1 "${trgt}" "${srce}" "" "" "" "" "")"
+
+                        mksure "${trgt}" "${srce}"
                         if [ $? = 0 ]; then
-                            tags_1 W "${trgt}" "${srce}" "${DM_tlt}/$fname.mp3"
-                            index 1 "${trgt}" z"${tpe}"
+                        
+                            add_item 1 "${trgt}" "${srce}" "" "" "" "" "" "$id"
+                            index 1 "${trgt}" "${tpe}"
+                            mv -f "$n.mp3" "${DM_tlt}/$id.mp3"
                             echo "${trgt}" >> addw
                             
                         else
                             printf "\n\n#$n $trgt" >> ./wlog
-                            if [ -f "${DM_tlt}/$fname.mp3" ]; then
-                            mv -f "${DM_tlt}/$fname.mp3" ./"$n.mp3"; fi
+                            if [ -f "${DM_tlt}/$id.mp3" ]; then
+                            mv -f "${DM_tlt}/$id.mp3" ./"$n.mp3"; fi
                         fi
                             
                     elif [ $(wc -$c <<<"$trgt") -ge 1 ]; then
                     
-                        mv -f "$n.mp3" "${DM_tlt}/$fname.mp3"
+                        mv -f "$n.mp3" "${DM_tlt}/$id.mp3"
                         (
-                        r=$((RANDOM%10000))
-                        clean_3 "$DT_r" "$r"
-                        translate "$(sed '/^$/d' < "$aw")" auto $lg \
-                        | sed 's/,//; s/\?//; s/\¿//; s/;//g' > "$bw"
-                        check_grammar_1 "$DT_r" "$r"
-                        list_words "$DT_r" "$r"
-                        
-                        mksure "${DM_tlt}/$fname.mp3" "${trgt}" "${srce}" \
-                        "${lwrds}" "${pwrds}" "${grmrk}"
+                        sentence_p "$DT_r" 1
+                                
+                        mksure "${trgt}" "${tpe}" "${wrds}" "${grmr}"
                             if [ $? = 0 ]; then
-                                echo "${trgt}" >> adds
+
+                                id="$(set_name_file 1 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}")"
+                                add_item 2 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}" "$id"
                                 index 2 "${trgt}" "${tpe}"
-                                tags_1 S "${trgt}" "${srce}" "${DM_tlt}/$fname.mp3"
-                                tags_3 W "${lwrds}" "${pwrds}" "${grmrk}" "${DM_tlt}/$fname.mp3"
+                                mv -f "$n.mp3" "${DM_tlt}/$id.mp3"
+                                echo "${trgt}" >> adds
                                 fetch_audio "$aw" "$bw"
+                                
                             else
                                 printf "\n\n#$n $trgt" >> ./slog
-                                if [ -f "${DM_tlt}/$fname.mp3" ]; then
-                                mv -f "${DM_tlt}/$fname.mp3" ./"$n.mp3"; fi
+                                if [ -f "${DM_tlt}/$id.mp3" ]; then
+                                mv -f "${DM_tlt}/$id.mp3" ./"$n.mp3"; fi
                             fi
                         cd "$DT"
                         rm -f *.$r "$aw" "$bw"
@@ -338,8 +326,7 @@ if [[ "$conten" = A ]]; then
                 fi
         fi
         
-        [ -d "$DT_r" ] && rm -fr "$DT_r"
-        rm -f "$lckpr"
+        cleanups "$DT_r" "$lckpr"
     fi
     exit
     

@@ -141,9 +141,9 @@ practice() {
         get_list
         cp -f "$directory/${ttest}.0" "$directory/${ttest}.tmp"
         
-        [[ `wc -l < "$directory/${ttest}.0"` -lt 2 ]] && \
+        if [[ `wc -l < "$directory/${ttest}.0"` -lt 2 ]]; then \
         starting "$(gettext "Not enough words to start")"
-        echo " practice --new session"
+        echo " practice --new session"; fi
     fi
     
     [ "$directory/${ttest}.2" ] && rm "$directory/${ttest}.2"

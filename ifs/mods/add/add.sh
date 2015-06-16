@@ -5,6 +5,20 @@ if ([ -z "$lgtl" ] || [ -z "$lgsl" ]); then
 msg "$(gettext "Please check the language settings in the preferences dialog.")\n" error & exit 1
 fi
 
+function check_s() {
+    
+    DC_tlt="$DM_tl/${1}/.conf"
+    if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
+    [ -d "$DT_r" ] && rm -fr "$DT_r"
+    msg "$(gettext "Maximum number of notes has been exceeded for this topic. Max allowed (200)")" info " " & exit; fi
+    if [ -z "${tpe}" ]; then
+    [ -d "$DT_r" ] && rm -fr "$DT_r"
+    msg "$(gettext "No topic is active")\n" info & exit 1; fi
+}
+
+
+
+
 function mksure() {
     
     e=0
@@ -608,4 +622,17 @@ function dlg_progress_2() {
     --progress-text=" " --auto-close \
     --skip-taskbar --no-buttons --on-top --fixed \
     --width=200 --height=50 --borders=4 --geometry=240x20-4-4
+}
+
+
+function cleanups() {
+
+    for fl in "$@"; do
+    
+        if [ -d "${fl}" ]; then
+            rm -fr "${fl}"
+        elif [ -f "${fl}" ]; then
+            rm -f "${fl}"
+        fi
+    done
 }
