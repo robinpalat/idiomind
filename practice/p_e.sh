@@ -1,7 +1,8 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-drtt="$DM_tlt"
+drtt="$DM_tlt/images"
+cfg11_="$DC_tlt/.11.cfg"
 drts="$DS/practice"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
@@ -46,9 +47,11 @@ score() {
 
 fonts() {
     
-    fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
-    src=$(eyeD3 "$drtt/$fname.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
-    img="$drtt/images/$fname.jpg"
+    pos=`grep -Fon -m 1 "trgt={${1}}" "${cfg11_}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
+    item=`sed -n ${pos}p "${cfg11_}" |sed 's/},/}\n/g'`
+    src=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
+
+    img="$drtt/images/$id.jpg"
     [ ! -f "$img" ] && img="$DS/practice/images/img_2.jpg"
     srcel="<span font_desc='Free Sans 10'><i>($src)</i></span>"
     trgtl="<span font_desc='Free Sans 15'><b>$1</b></span>"

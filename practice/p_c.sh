@@ -1,7 +1,8 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-drtt="$DM_tlt/words"
+drtt="$DM_tls"
+cfg11_="$DC_tlt/.11.cfg"
 drts="$DS/practice"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
@@ -61,10 +62,14 @@ fonts() {
 
 cuestion() {
     
-    fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
-    cmd_play="play "\"$drtt/$fname.mp3\"""
+
+    pos=`grep -Fon -m 1 "trgt={${1}}" "${cfg11_}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
+    item=`sed -n ${pos}p "${cfg11_}" |sed 's/},/}\n/g'`
+    id=`grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"`
+
+    cmd_play="play "\"$drtt/${1,,}.mp3\"""
     
-    (sleep 0.5 && play "$drtt/$fname".mp3) &
+    (sleep 0.5 && play "$drtt/${1,,}".mp3) &
     yad --form --title="$(gettext "Practice")" \
     --text="$lcuestion" \
     --timeout=20 \

@@ -313,7 +313,7 @@ new_word() {
         
         # image
         if [ -f "$DT_r/img.jpg" ]; then
-        mv -f  "$DT_r/img.jpg" "${DM_tlt}/images/$id.jpg"; fi
+        set_image_3 "$DT_r/img.jpg" "${DM_tlt}/images/$id.jpg"; fi
         
         # audio
         if [ ! -f "${DM_tls}/$audio.mp3" ]; then

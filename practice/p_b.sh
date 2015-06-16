@@ -4,6 +4,7 @@
 drtt="$DM_tlt/words"
 drts="$DS/practice"
 strt="$drts/strt.sh"
+cfg11_="$DC_tlt/.11.cfg"
 snd="$drts/no.mp3"
 cd "$DC_tlt/practice"
 log="$DC_s/8.cfg"
@@ -47,8 +48,10 @@ score() {
 
 fonts() {
     
-    fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
-    wes=$(eyeD3 "$drtt/$fname.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
+    pos=`grep -Fon -m 1 "trgt={${1}}" "${cfg11_}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
+    item=`sed -n ${pos}p "${cfg11_}" |sed 's/},/}\n/g'`
+    wes=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
+
     ras=$(sort -Ru b.srces | egrep -v "$wes" | head -5)
     ess=$(grep "$wes" ./b.srces)
     echo -e "$ras\n$ess" | sort -Ru | head -6 | sed '/^$/d' > srce.tmp

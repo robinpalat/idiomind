@@ -24,6 +24,7 @@ log="$DC_s/8.cfg"
 cfg3="$DC_tlt/3.cfg"
 cfg4="$DC_tlt/4.cfg"
 cfg1="$DC_tlt/1.cfg"
+cfg11_="$DC_tlt/.11.cfg"
 directory="$DC_tlt/practice"
 touch "$directory/log.1" "$directory/log.2" "$directory/log.3"
 
@@ -58,9 +59,11 @@ get_list() {
             (
             echo "5"
             while read word; do
-            fname="$(echo -n "$word" | md5sum | rev | cut -c 4- | rev)"
-            file="$DM_tlt/words/$fname.mp3"
-            echo "$(eyeD3 "$file" | grep -o -P "(?<=IWI2I0I).*(?=IWI2I0I)")" >> "$directory/b.srces"
+            
+                pos=`grep -Fon -m 1 "trgt={${word}}" "${cfg11_}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
+                item=`sed -n ${pos}p "${cfg11_}" |sed 's/},/}\n/g'`
+                echo "$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")" >> "$directory/b.srces"
+            
             done < "$directory/${ttest}.0"
             ) | yad --progress \
             --width 50 --height 35 --undecorated \
