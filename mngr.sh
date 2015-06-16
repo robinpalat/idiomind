@@ -259,22 +259,21 @@ edit_item() {
             include "$DS/ifs/mods/add"
             
            if [ ${type} = 1 ]; then
-                trgt_mod="$(cut -d "|" -f1 <<<"${edit_dlg1}" | clean_0)"
-                srce_mod="$(cut -d "|" -f2 <<<"${edit_dlg1}" | clean_0)"
+                trgt_mod="$(clean_0 `cut -d "|" -f1 <<<"${edit_dlg1}"`)"
+                srce_mod="$(clean_0 `cut -d "|" -f2 <<<"${edit_dlg1}"`)"
                 tpc_mod="$(cut -d "|" -f3 <<<"${edit_dlg1}")"
                 audio_mod="$(cut -d "|" -f4 <<<"${edit_dlg1}")"
-                exmp_mod="$(cut -d "|" -f5 <<<"${edit_dlg1}" | clean_0)"
-                defn_mod="$(cut -d "|" -f6 <<<"${edit_dlg1}" | clean_0)"
-                note_mod="$(cut -d "|" -f7 <<<"${edit_dlg1}" | clean_0)"
+                exmp_mod="$(clean_0 `cut -d "|" -f5 <<<"${edit_dlg1}"`)"
+                defn_mod="$(clean_0 `cut -d "|" -f6 <<<"${edit_dlg1}"`)"
+                note_mod="$(clean_0 `cut -d "|" -f7 <<<"${edit_dlg1}"`)"
                 mark_mod="$(cut -d "|" -f9 <<<"${edit_dlg1}")"
                 type_mod=1
-                
 
             elif [ ${type} = 2 ]; then
                 mark_mod="$(cut -d "|" -f1 <<<"${edit_dlg2}")"
                 type_mod="$(cut -d "|" -f2 <<<"${edit_dlg2}")"
-                trgt_mod="$(cut -d "|" -f3 <<<"${edit_dlg2}" | clean_1)"
-                srce_mod="$(cut -d "|" -f5 <<<"${edit_dlg2}" | clean_1)"
+                trgt_mod="$(clean_1 `cut -d "|" -f3 <<<"${edit_dlg2}"`)"
+                srce_mod="$(clean_1 `cut -d "|" -f5 <<<"${edit_dlg2}"`)"
                 tpc_mod="$(cut -d "|" -f7 <<<"${edit_dlg2}")"
                 audio_mod="$(cut -d "|" -f8 <<<"${edit_dlg2}")"
                 grmr_mod="${grmr}"
@@ -309,12 +308,14 @@ edit_item() {
                 col=1; mod=1
             fi
             
+            
             [ "${srce}" != "${srce_mod}" ] && mod=1
             [ "${exmp}" != "${exmp_mod}" ] && mod=1
             [ "${defn}" != "${defn_mod}" ] && mod=1
             [ "${note}" != "${note_mod}" ] && mod=1
             [ "${tpc}" != "${tpc_mod}" ] && mod=1
-
+            
+            
             # ========================================================= modifications proced
             if [ $mod = 1 ]; then
             (
@@ -325,14 +326,14 @@ edit_item() {
                         
                     if [ ${type} = 1 ]; then
                         
-                        srce_mod=$(translate "${trgt_mod}" $lgt $lgs | clean_0)
+                        srce_mod="$(clean_0 `translate "${trgt_mod}" $lgt $lgs`)"
                         audio="${trgt_mod,,}"
                         dictt "$audio" "$DT_r"
                         srce="$temp"
 
                     elif [ ${type} = 2 ]; then
                         
-                        srce_mod=$(translate "${trgt_mod}" $lgt $lgs | clean_1)
+                        srce_mod="$(clean_1 `translate "${trgt_mod}" $lgt $lgs`)"
                         source "$DS/default/dicts/$lgt"
                         sentence_p "$DT_r" 2
                         fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
@@ -353,7 +354,7 @@ edit_item() {
                     sed -i "${pos}s|trgt={}|trgt={$trgt_mod}|g" "${cfg11}"
                     "$DS/mngr.sh" delete_item_ok "${tpc}" "${trgt}"
                     index ${type} "${trgt_mod}" "${tpc_mod}"
-                    unset type trgt srce exmp defn note wrds grmr mark id
+                    unset type trgt srce exmp defn note wrds grmr mark id ¿
                     
 
                 elif [ "${tpc}" = "${tpc_mod}" ]; then
