@@ -1,7 +1,5 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
-#PYTHONIOENCODING=utf_8
-#python -c 'print u"\u5000".encode("UTF-8")' >a.out
 
 if ([ -z "$lgtl" ] || [ -z "$lgsl" ]); then
 msg "$(gettext "Please check the language settings in the preferences dialog.")\n" error & exit 1
@@ -240,22 +238,24 @@ function tags_1() {
 
 function add_item() {
     
-    if ! grep -Fo "trgt={${2}}" "$DC_tlt/.11.cfg"; then
-    pos=`wc -l < "$DC_tlt/.11.cfg"`
-    item="${pos}:[type={$1},trgt={$2},srce={$3},exmp={$4},defn={$5},note={$6},wrds={$7},grmr={$8},].[tag={},mark={},].id=[]"
-    fcfg="${DC_tlt}/.11.cfg"
+    #if ! grep -Fo "trgt={${2}}" "$DC_tlt/.11.cfg"; then
+    #pos=`wc -l < "$DC_tlt/.11.cfg"`
+    #item="${pos}:[type={$1},trgt={$2},srce={$3},exmp={$4},defn={$5},note={$6},wrds={$7},grmr={$8},].[tag={},mark={},].id=[]"
+    #fcfg="${DC_tlt}/.11.cfg"
     
-    export item fcfg
+    #export item fcfg
     
-python << END
-import os
-item = os.environ['item']
-fcfg = os.environ['fcfg']
-text_file = open(fcfg, "a")
-text_file.write('\n' + item)
-text_file.close()
-END
-    fi
+#python << END
+#import os
+#item = os.environ['item']
+#fcfg = os.environ['fcfg']
+#text_file = open(fcfg, "a")
+#text_file.write('\n' + item)
+#text_file.close()
+#END
+    #fi
+    
+    yad --text="$2 $3"
 }
 
 
