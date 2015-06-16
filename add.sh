@@ -184,8 +184,9 @@ new_sentence() {
     source "$DS/default/dicts/$lgt"
     DM_tlt="$DM_tl/${tpe}"
     DC_tlt="$DM_tl/${tpe}/.conf"
-    trgt=$(echo "${2}" | clean_1)
-    srce=$(echo "${4}" | clean_1)
+
+    trgt="$(clean_0 "${2}")"
+    srce="$(clean_0 "${4}")"
 
     if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
@@ -201,10 +202,10 @@ new_sentence() {
         cd "$DT_r"
         if [ "$trd_trgt" = TRUE ]; then
         trgt="$(translate "${trgt}" auto "$lgt")"
-        trgt=$(echo "${trgt}" | clean_1)
+        trgt=$(clean_1 "${trgt}")
         fi
         srce="$(translate "${trgt}" $lgt $lgs)"
-        srce="$(echo "${srce}" | clean_1)"
+        srce="$(clean_1 "${srce}")"
         
     else 
         if [ -z "$4" ] || [ -z "$2" ]; then
@@ -267,8 +268,10 @@ new_sentence() {
 
 new_word() {
 
-    trgt="$(echo "${2}" | clean_0)"
-    srce="$(echo "${4}" | clean_0)"
+
+    trgt="$(clean_0 "${2}")"
+    srce="$(clean_0 "${4}")"
+    
     DT_r="$3"; cd "$DT_r"
     DM_tlt="$DM_tl/${tpe}"
     DC_tlt="$DM_tl/${tpe}/.conf"
@@ -289,12 +292,12 @@ new_word() {
         trgt="$(translate "${trgt}" auto "$lgt")"
         fi
         srce="$(translate "${trgt}" $lgt $lgs)"
-        srce="$(echo "${srce}" | clean_0)"
+        srce="$(clean_0 "${srce}")"
         audio="${trgt,,}"
         
     else 
         if [ -z "$4" ] || [ -z "$2" ]; then
-        srce="$(echo "${4}" | clean_0)"
+        srce="$(clean_0 "${4}")"
         [ "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "You need to fill text fields.")\n" info " " & exit; fi
     fi
@@ -376,11 +379,11 @@ list_words_edit() {
                 echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> ./logw
             
             else
-                trgt=$(sed -n "$n"p ./slts | clean_0)
+                trgt=$(clean_0 `sed -n "$n"p ./slts`)
                 audio="${trgt,,}"
                 translate "${trgt}" auto $lgs > "tr.$c"
                 srce=$(< tr."$c")
-                srce="$(echo "${srce}" | clean_0)"
+                srce="$(clean_0 "${srce}")"
                 id="$(set_name_file 1 "${trgt}" "${srce}" {$exmp_} "" "" "" "")"
                 
                 if [ -f "$DM_tls/$audio.mp3" ]; then
@@ -469,7 +472,7 @@ list_words_sentence() {
         else
             translate "${trgt}" auto "$lgs" > tr."$c"
             srce=$(< ./tr."$c")
-            srce="$(echo "${srce}" | clean_0)"
+            srce="$(clean_0 "${srce}")"
 
             if [ -f "$DM_tls/$audio.mp3" ]; then
             
@@ -782,12 +785,12 @@ process() {
                 while [[ $n -le "$(wc -l < slts | head -200)" ]]; do
                 
                     sntc=$(sed -n "$n"p ./slts)
-                    trgt="$(clean_1 <<<"${sntc}")"
+                    trgt="$(clean_1 "${sntc}")"
                     if [ "$trd_trgt" = TRUE ]; then
                     trgt="$(translate "${trgt}" auto $lgt)"
-                    trgt="$(echo "${trgt}" | clean_1)"; fi
+                    trgt="$(clean_1 "${trgt}")"; fi
                     srce="$(translate "${trgt}" $lgt $lgs)"
-                    srce="$(echo "${srce}" | clean_1)"
+                    srce="$(clean_1 "${srce}")"
                     fname=$(nmfile "${trgt}")
                 
                     if [ "$(wc -$c <<<"${sntc}")" = 1 ]; then
@@ -795,9 +798,9 @@ process() {
                             echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $sntc" >> ./wlog
                     
                         else
-                            trgt="$(clean_0 <<<"$trgt")"
+                            trgt="$(clean_0 "$trgt")"
                             fname=$(nmfile "$trgt")
-                            srce="$(clean_0 <<<"$srce")"
+                            srce="$(clean_0 "$srce")"
                             audio="${trgt,,}"
                             
                             dictt "$audio" "$DT_r"

@@ -182,24 +182,24 @@ function check_grammar_2() {
 
 function clean_0() {
     
-    sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' \
-    | sed "s/’/'/g" \
+    echo "$1" | sed ':a;N;$!ba;s/\n/ /g' \
+    | sed 's/&//;s/://;s/\.//g' | sed "s/’/'/g" \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \
-    | tr -d '*“”|",;!¿?¡()[]&:./' \
+    | tr -s '“”|"' ' ' \
     | sed 's/<[^>]*>//g'
 }
 
 function clean_1() {
     
     if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
-    sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" | sed "s|/||g" \
-    | tr -d '*' | tr -s '“”"&:|{}[]' ' ' \
+    echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" | sed "s|/||g" \
+    | tr -s '“”"&:|' ' ' \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//; s/ *$//g' | sed 's/ — /__/g' | sed 's/<[^>]*>//g'
     else
-    sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" \
-    | tr -d '*' | tr -s '“”"&:|{}[]' ' ' \
+    echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" \
+    | tr -s '“”"&:|' ' ' \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \
     | sed 's/ — /__/g' | sed "s|/||g" | sed 's/<[^>]*>//g'
@@ -212,8 +212,8 @@ function clean_2() {
     echo "${1}" | cut -d "|" -f1 | sed 's/!//;s/&//;s/\://; s/\&//g' \
     | sed "s/-//g" | sed 's/^[ \t]*//;s/[ \t]*$//' | sed "s|/||g" \
     | sed 's|/||;s/^\s*./\U&\E/g' | sed 's/\：//g' | sed 's/<[^>]*>//g' \
-    | tr -d '*' | tr -s '“”"&:|{}[]' ' '
-}    
+    | tr -d '*'
+}  
 
 
 
@@ -238,24 +238,21 @@ function tags_1() {
 
 function add_item() {
     
-    #if ! grep -Fo "trgt={${2}}" "$DC_tlt/.11.cfg"; then
-    #pos=`wc -l < "$DC_tlt/.11.cfg"`
-    #item="${pos}:[type={$1},trgt={$2},srce={$3},exmp={$4},defn={$5},note={$6},wrds={$7},grmr={$8},].[tag={},mark={},].id=[]"
-    #fcfg="${DC_tlt}/.11.cfg"
+    if ! grep -Fo "trgt={${2}}" "$DC_tlt/.11.cfg"; then
+    pos=`wc -l < "$DC_tlt/.11.cfg"`
+    item="${pos}:[type={$1},trgt={$2},srce={$3},exmp={$4},defn={$5},note={$6},wrds={$7},grmr={$8},].[tag={},mark={},].id=[$9]"
+    fcfg="${DC_tlt}/.11.cfg"
+    export item fcfg
     
-    #export item fcfg
-    
-#python << END
-#import os
-#item = os.environ['item']
-#fcfg = os.environ['fcfg']
-#text_file = open(fcfg, "a")
-#text_file.write('\n' + item)
-#text_file.close()
-#END
-    #fi
-    
-    yad --text="$2 $3"
+python << END
+import os
+item = os.environ['item']
+fcfg = os.environ['fcfg']
+text_file = open(fcfg, "a")
+text_file.write('\n' + item)
+text_file.close()
+END
+    fi
 }
 
 
