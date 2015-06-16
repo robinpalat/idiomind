@@ -72,6 +72,7 @@ function notebook_1() {
     cmd_mark="'$DS/mngr.sh' 'mark_as_learned' "\"$tpc\"" 1"
     cmd_attchs="'$DS/ifs/tls.sh' 'attachs'"
     cmd_del="'$DS/mngr.sh' 'delete_topic' "\"$tpc\"""
+    cmd_adv="'$DS/ifs/tls.sh' adv "\"$tpc\"""
     cmd_share="'$DS/ifs/upld.sh' upld "\"$tpc\"""
     cmd_play="$DS/play.sh"
     list() {
@@ -107,7 +108,7 @@ function notebook_1() {
     --field="$(gettext "Files")":FBTN "$cmd_attchs" \
     --field="$(gettext "Share")":FBTN "$cmd_share" \
     --field="$(gettext "Delete")":FBTN "$cmd_del" \
-    --field=" ":LBL " " > "$cnf4" &
+    --field="$(gettext "More")":FBTN "$cmd_adv" > "$cnf4" &
     yad --notebook --title="Idiomind - $tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
