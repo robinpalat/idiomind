@@ -242,8 +242,19 @@ function add_item() {
     
     if ! grep -Fo "trgt={${2}}" "$DC_tlt/.11.cfg"; then
     pos=`wc -l < "$DC_tlt/.11.cfg"`
-    echo "${pos}:[type={$1},trgt={$2},srce={$3},exmp={$4},defn={$5},note={$6},wrds={$7},grmr={$8},].[tag={},mark={},].id=[]" \
-    >> "${DC_tlt}/.11.cfg"
+    item="${pos}:[type={$1},trgt={$2},srce={$3},exmp={$4},defn={$5},note={$6},wrds={$7},grmr={$8},].[tag={},mark={},].id=[]"
+    fcfg="${DC_tlt}/.11.cfg"
+    
+    export item fcfg
+    
+python << END
+import os
+item = os.environ['item']
+fcfg = os.environ['fcfg']
+text_file = open(fcfg, "a")
+text_file.write('\n' + item)
+text_file.close()
+END
     fi
 }
 
