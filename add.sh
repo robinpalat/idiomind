@@ -184,8 +184,8 @@ new_sentence() {
     source "$DS/default/dicts/$lgt"
     DM_tlt="$DM_tl/${tpe}"
     DC_tlt="$DM_tl/${tpe}/.conf"
-    trgt=$(clean_1 <<<"${2}")
-    srce=$(clean_1 <<<"${4}")
+    trgt=$(echo "${2}" | clean_1)
+    srce=$(echo "${4}" | clean_1)
 
     if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
     [ "$DT_r" ] && rm -fr "$DT_r"
@@ -201,10 +201,10 @@ new_sentence() {
         cd "$DT_r"
         if [ "$trd_trgt" = TRUE ]; then
         trgt="$(translate "${trgt}" auto "$lgt")"
-        trgt=$(clean_1 <<<"${trgt}")
+        trgt=$(echo "${trgt}" | clean_1)
         fi
         srce="$(translate "${trgt}" $lgt $lgs)"
-        srce="$(clean_1 <<<"${srce}")"
+        srce="$(echo "${srce}" | clean_1)"
         
     else 
         if [ -z "$4" ] || [ -z "$2" ]; then
@@ -267,8 +267,8 @@ new_sentence() {
 
 new_word() {
 
-    trgt="$(clean_0 <<<"${2}")"
-    srce="$(clean_0 <<<"${4}")"
+    trgt="$(echo "${2}" | clean_0)"
+    srce="$(echo "${4}" | clean_0)"
     DT_r="$3"; cd "$DT_r"
     DM_tlt="$DM_tl/${tpe}"
     DC_tlt="$DM_tl/${tpe}/.conf"
@@ -289,12 +289,12 @@ new_word() {
         trgt="$(translate "${trgt}" auto "$lgt")"
         fi
         srce="$(translate "${trgt}" $lgt $lgs)"
-        srce="$(clean_0 <<<"${srce}")"
+        srce="$(echo "${srce}" | clean_0)"
         audio="${trgt,,}"
         
     else 
         if [ -z "$4" ] || [ -z "$2" ]; then
-        srce="$(clean_0 <<<"${4}")"
+        srce="$(echo "${4}" | clean_0)"
         [ "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "You need to fill text fields.")\n" info " " & exit; fi
     fi
@@ -380,7 +380,7 @@ list_words_edit() {
                 audio="${trgt,,}"
                 translate "${trgt}" auto $lgs > "tr.$c"
                 srce=$(< tr."$c")
-                srce="$(clean_0 <<<"${srce}")"
+                srce="$(echo "${srce}" | clean_0)"
                 id="$(set_name_file 1 "${trgt}" "${srce}" {$exmp_} "" "" "" "")"
                 
                 if [ -f "$DM_tls/$audio.mp3" ]; then
@@ -469,7 +469,7 @@ list_words_sentence() {
         else
             translate "${trgt}" auto "$lgs" > tr."$c"
             srce=$(< ./tr."$c")
-            srce="$(clean_0 <<<"${srce}")"
+            srce="$(echo "${srce}" | clean_0)"
 
             if [ -f "$DM_tls/$audio.mp3" ]; then
             
@@ -785,9 +785,9 @@ process() {
                     trgt="$(clean_1 <<<"${sntc}")"
                     if [ "$trd_trgt" = TRUE ]; then
                     trgt="$(translate "${trgt}" auto $lgt)"
-                    trgt="$(clean_1 <<<"${trgt}")"; fi
+                    trgt="$(echo "${trgt}" | clean_1)"; fi
                     srce="$(translate "${trgt}" $lgt $lgs)"
-                    srce="$(clean_1 <<<"${srce}")"
+                    srce="$(echo "${srce}" | clean_1)"
                     fname=$(nmfile "${trgt}")
                 
                     if [ "$(wc -$c <<<"${sntc}")" = 1 ]; then
