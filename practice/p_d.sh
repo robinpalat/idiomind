@@ -1,6 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+cfg11_="$DC_tlt/.11.cfg"
 drts="$DS/practice"
 strt="$drts/strt.sh"
 cd "${DC_tlt}/practice"

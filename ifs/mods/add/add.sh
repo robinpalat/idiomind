@@ -241,37 +241,10 @@ function tags_1() {
 function add_item() {
     
     if ! grep -Fo "trgt={${2}}" "$DC_tlt/.11.cfg"; then
-    pos=$(grep -Fon -m 1 "trgt={}" "$DC_tlt/.11.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
+    pos=`wc -l < "$DC_tlt/.11.cfg"`
+    echo "${pos}:[type={$1},trgt={$2},srce={$3},exmp={$4},defn={$5},note={$6},wrds={$7},grmr={$8},].[tag={},mark={},].id=[]" \
+    >> "${DC_tlt}/.11.cfg"
     fi
-    #sed -i "${pos}s|type={}|type={$1}|;
-    #${pos}s|trgt={}|trgt={${2}}|;
-    #${pos}s|srce={}|srce={${3}}|;
-    #${pos}s|exmp={}|exmp={${4}}|;
-    #${pos}s|dftn={}|defn={${5}}|;
-    #${pos}s|note={}|note={${6}}|;
-    #${pos}s|wrds={}|wrds={${7}}|;
-    #${pos}s|grmr={}|grmr={${8}}|;
-    #${pos}s|id=\[\]|id=\[$9\]|g" \
-    #"${DC_tlt}/.11.cfg"
-    #fi
-    
-    
-    #sed -i "${pos}s|type={}|type={$1}|;
-    #${pos}s|trgt={}|trgt={${2}}|;
-    #${pos}s|srce={}|srce={${3}}|;
-    #${pos}s|exmp={}|exmp={${4}}|;
-    #${pos}s|dftn={}|defn={${5}}|;
-    #${pos}s|note={}|note={${6}}|;
-    #${pos}s|wrds={}|wrds={${7}}|;
-    #${pos}s|grmr={}|grmr={${8}}|;
-    #${pos}s|id=\[\]|id=\[$9\]|g" \
-    #"${DC_tlt}/.11.cfg"
-    #fi
-    
-    id=":[type={$1},trgt={$2},srce={$3},exmp={$4},defn={$5},note={$6},wrds={$7},grmr={$8},]."
-    
-    python -c 'print u"${id}".encode("UTF-8")' >> "${DC_tlt}/.11.cfg"
-
 }
 
 

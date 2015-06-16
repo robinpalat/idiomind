@@ -1,6 +1,8 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+¿
+
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 topic="${1}"
@@ -36,10 +38,7 @@ else
         c=0; while [[ $c -le 10 ]]; do
         touch "$c.cfg"; let c++
         done
-        n=1; while [[ $n -le 200 ]]; do
-        echo "$n:${cfg11}">> "${DC_tlt}/.11.cfg"
-        let n++
-        done
+        > "${DC_tlt}/.11.cfg"
         rm "${DC_tlt}/7.cfg" "${DC_tlt}/9.cfg"
         echo " " > "${DC_tlt}/10.cfg"
         echo -e "${cfgfile}" > "12.cfg"

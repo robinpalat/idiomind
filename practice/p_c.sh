@@ -1,8 +1,8 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-drtt="$DM_tls"
 cfg11_="$DC_tlt/.11.cfg"
+drtt="$DM_tls"
 drts="$DS/practice"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
@@ -62,7 +62,6 @@ fonts() {
 
 cuestion() {
     
-
     pos=`grep -Fon -m 1 "trgt={${1}}" "${cfg11_}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
     item=`sed -n ${pos}p "${cfg11_}" |sed 's/},/}\n/g'`
     id=`grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"`

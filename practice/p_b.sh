@@ -1,10 +1,10 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-drtt="$DM_tlt/words"
+cfg11_="$DC_tlt/.11.cfg"
+drtt="$DM_tlt"
 drts="$DS/practice"
 strt="$drts/strt.sh"
-cfg11_="$DC_tlt/.11.cfg"
 snd="$drts/no.mp3"
 cd "$DC_tlt/practice"
 log="$DC_s/8.cfg"
