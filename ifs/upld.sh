@@ -359,12 +359,9 @@ else
 fi
 msg "$info" $image
 
-[ -d "$DT_u/${tpc}" ] && rm -fr "$DT_u/${tpc}"
-[ -f "$DT_u/$id.${tpc}.$lgt" ] && rm -f "$DT_u/$id.${tpc}.$lgt"
-[ -f "$DT_u/${tpc}.tar" ] && rm -f "$DT_u/${tpc}.tar"
-[ -f "$DT_u/${tpc}.tar.gz" ] && rm -f "$DT_u/${tpc}.tar.gz"
-[ -f "$DT/${tpc}.id" ] && rm -f "$DT/${tpc}.id"
-[ -d "$DT_u" ] && rm -fr "$DT_u"
+cleanups "$DT_u/${tpc}" "$DT_u/$id.${tpc}.$lgt" \
+"$DT_u/${tpc}.tar" "$DT/${tpc}.id" "$DT_u" "$DT_u/${tpc}.tar.gz"
+
 exit 0
 fi
     

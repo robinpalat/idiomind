@@ -25,14 +25,13 @@ function dictt() {
     
     export lgt
     word="$1"
-    cd "${2}"/
+    [ -d "${2}" ] && cd "${2}"/ || exit 1
     
     while read -r dict; do
     
         sh "$dict" "$word"
-        
-            if [ -f ./"$word.mp3" ]; then
+        if [ -f ./"$word.mp3" ]; then
             break; fi
             
-    done < <(find "$DC_a"/dict/enables/ -type f)
+    done < <(find "$DC_a/dict/enables"/ -type f)
 }

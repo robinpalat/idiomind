@@ -142,7 +142,7 @@ elif [ $ret -eq 0 ]; then
     done
     touch "$DC_s/4.cfg"
     
-    b=$(tr -dc a-z < /dev/urandom | head -c 1)
+    b=$(tr -dc a-z < /dev/urandom |head -c 1)
     c=$((RANDOM%100))
     id="$b$c"
     echo ${id:0:3} > "$DC_s/3.cfg"

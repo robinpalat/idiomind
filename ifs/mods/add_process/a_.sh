@@ -195,15 +195,15 @@ if [[ "$conten" = A ]]; then
                 | sed 's/}],"final":true}],"result_index":0}//g')"
 
                 if [ ${#trgt} -ge 400 ]; then
-                printf "\n\n#$n [$(gettext "Sentence too long")] $trgt" >> ./slog
+                echo -e "\n\n#$n [$(gettext "Sentence too long")] $trgt" >> ./slog
                 
                 elif [ -z "$trgt" ]; then
                 trgt="#$n [$(gettext "Text missing")]"
                 index txt_missing "$trgt" "$tpe"
-                printf "\n\n#$n [$(gettext "Text missing")]" >> ./slog
+                echo -e "\n\n#$n [$(gettext "Text missing")]" >> ./slog
                 
                 elif [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
-                printf "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> ./slog
+                echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> ./slog
                 
                 else
                     trgt=$(clean_2 "${trgt}")
@@ -215,41 +215,37 @@ if [[ "$conten" = A ]]; then
                         trgt="$(clean_1 "${trgt}")"
                         srce="$(clean_1 "${srce}")"
                         id="$(set_name_file 1 "${trgt}" "${srce}" "" "" "" "" "")"
-
+                        audio="${trgt,,}"
                         mksure "${trgt}" "${srce}"
+                        
                         if [ $? = 0 ]; then
                         
-                            add_item 1 "${trgt}" "${srce}" "" "" "" "" "" "$id"
                             index 1 "${trgt}" "${tpe}"
-                            mv -f "$n.mp3" "${DM_tlt}/$id.mp3"
+                            add_item 1 "${trgt}" "${srce}" "" "" "" "" "" "$id"
+                            mv -f "$DT_r/${n}.mp3" "${DM_tls}/$audio.mp3"
                             echo "${trgt}" >> addw
                             
                         else
-                            printf "\n\n#$n $trgt" >> ./wlog
-                            if [ -f "${DM_tlt}/$id.mp3" ]; then
-                            mv -f "${DM_tlt}/$id.mp3" ./"$n.mp3"; fi
+                            echo -e "\n\n#$n $trgt" >> ./wlog
                         fi
                             
                     elif [ $(wc -$c <<<"$trgt") -ge 1 ]; then
-                    
-                        mv -f "$n.mp3" "${DM_tlt}/$id.mp3"
+
                         (
                         sentence_p "$DT_r" 1
-                                
-                        mksure "${trgt}" "${tpe}" "${wrds}" "${grmr}"
+                        mksure "${trgt}" "${srce}" "${wrds}" "${grmr}"
+                        
                             if [ $? = 0 ]; then
-
-                                id="$(set_name_file 1 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}")"
-                                add_item 2 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}" "$id"
+                                
                                 index 2 "${trgt}" "${tpe}"
-                                mv -f "$n.mp3" "${DM_tlt}/$id.mp3"
+                                id="$(set_name_file 2 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}")"
+                                add_item 2 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}" "$id"
+                                mv -f "$DT_r/${n}.mp3" "${DM_tlt}/$id.mp3"
                                 echo "${trgt}" >> adds
                                 fetch_audio "$aw" "$bw"
                                 
                             else
-                                printf "\n\n#$n $trgt" >> ./slog
-                                if [ -f "${DM_tlt}/$id.mp3" ]; then
-                                mv -f "${DM_tlt}/$id.mp3" ./"$n.mp3"; fi
+                                echo -e "\n\n#$n $trgt" >> ./slog
                             fi
                         cd "$DT"
                         rm -f *.$r "$aw" "$bw"

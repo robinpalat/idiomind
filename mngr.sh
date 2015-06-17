@@ -46,9 +46,6 @@ mkmn() {
         
         if [ ! "$DM_tl/${tp}/.conf/8.cfg" ] || \
         [ ! "$DM_tl/${tp}/.conf/0.cfg" ] || \
-        [ ! "$DM_tl/${tp}/.conf/1.cfg" ] || \
-        [ ! "$DM_tl/${tp}/.conf/3.cfg" ] || \
-        [ ! "$DM_tl/${tp}/.conf/4.cfg" ] || \
         [ -z "$i" ] || [ ! -d "$DM_tl/${tp}" ]; then
         [ -f "${DC_tlt}/8.cfg" ] && stts_=$(< "${DC_tlt}/8.cfg")
         if [ "$stts_" != 13 ]; then echo "$stts_" > "${DC_tlt}/8.cfg_"; fi
@@ -67,9 +64,6 @@ mkmn() {
         else i=$(sed -n 1p "$DM_tl/${tp}/.conf/8.cfg"); fi
         if [ ! -f "$DM_tl/${tp}/.conf/8.cfg" ] || \
         [ ! "$DM_tl/${tp}/.conf/0.cfg" ] || \
-        [ ! "$DM_tl/${tp}/.conf/1.cfg" ] || \
-        [ ! "$DM_tl/${tp}/.conf/3.cfg" ] || \
-        [ ! "$DM_tl/${tp}/.conf/4.cfg" ] || \
         [ ! -d "$DM_tl/${tp}" ]; then img=13; else img=12; fi
         echo -e "/usr/share/idiomind/images/img.$img.png\n${tp}\n " >> "$DC_s/0.cfg"
         let n++
@@ -88,15 +82,8 @@ delete_item_ok() {
     DM_tlt="$DM_tl/${2}"
     DC_tlt="$DM_tl/${2}/.conf"
 
-    if [ -f "${DM_tlt}/$file.mp3" ]; then
-    file="${DM_tlt}/$file.mp3"
-        
-    elif [ -f "${DM_tlt}/$file.mp3" ]; then
-    file="${DM_tlt}/$file.mp3"
-
-    fi
-    
-    [ -f "${file}" ] && rm "${file}"
+    [ -f "${DM_tlt}/$file.mp3" ] && rm "${DM_tlt}/$file.mp3"
+    [ -f "${DM_tlt}/images/$file.jpg" ] && rm "${DM_tlt}/images/$file.jpg"
 
     if [ -d "${DC_tlt}/practice" ]; then
         cd "${DC_tlt}/practice"
@@ -109,11 +96,10 @@ delete_item_ok() {
         cd /
     fi
 
-    pos=`grep -Fon -m 1 "trgt={${trgt}}" "${DC_tlt}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
-    sed -i "${pos}d" "${DC_tlt}/0.cfg"
+    sed -i "/trgt={${trgt}}/d" "${DC_tlt}/0.cfg"
     "$DS/ifs/tls.sh" sanity_1 "${DC_tlt}/0.cfg" &
 
-    n=0
+    n=1
     while [ $n -le 6 ]; do
     if [ -f "${DC_tlt}/$n.cfg" ]; then
         grep -vxF "${trgt}" "${DC_tlt}/$n.cfg" > "${DC_tlt}/$n.cfg.tmp"
@@ -137,21 +123,15 @@ delete_item() {
     DM_tlt="$DM_tl/${2}"
     DC_tlt="$DM_tl/${2}/.conf"
 
-    if [ -f "${DM_tlt}/$file.mp3" ]; then 
-    
-    file="${DM_tlt}/$file.mp3"
+    if [ ! -f "${DM_tlt}/$file.mp3" ]; then 
+
     msg_2 "$(gettext "Are you sure you want to delete this word?")\n" \
     gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
 
-    elif [ -f "${DM_tlt}/$file.mp3" ]; then
-    
-    file="${DM_tlt}/$file.mp3"
+    else
     msg_2 "$(gettext "Are you sure you want to delete this sentence?")\n" \
     gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
 
-    else
-    msg_2 "$(gettext "Are you sure you want to delete this item?")\n" \
-    gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
     fi
     ret=$(echo "$?")
     
@@ -159,7 +139,8 @@ delete_item() {
         
         (sleep 0.1 && kill -9 $(pgrep -f "yad --form "))
         
-        [ -f "${file}" ] && rm "${file}"
+        [ -f "${DM_tlt}/$file.mp3" ] && rm "${DM_tlt}/$file.mp3"
+        [ -f "${DM_tlt}/images/$file.jpg" ] && rm "${DM_tlt}/images/$file.jpg"
         
         if [ -d "${DC_tlt}/practice" ]; then
             cd "${DC_tlt}/practice"
@@ -172,20 +153,21 @@ delete_item() {
             cd /
         fi
         
-        sed -i "${pos}d" "${DC_tlt}/0.cfg"
+        sed -i "/trgt={${trgt}}/d" "${DC_tlt}/0.cfg"
         "$DS/ifs/tls.sh" sanity_1 "${DC_tlt}/0.cfg" &
 
-        n=0
+        n=1
         while [[ $n -le 6 ]]; do
             if [ -f "${DC_tlt}/$n.cfg" ]; then
             grep -vxF "${trgt}" "${DC_tlt}/$n.cfg" > "${DC_tlt}/$n.cfg.tmp"
             sed '/^$/d' "${DC_tlt}/$n.cfg.tmp" > "${DC_tlt}/$n.cfg"; fi
             let n++
         done
+        
+        "$DS/ifs/tls.sh" colorize &
         rm "${DC_tlt}"/*.tmp
     fi
-    
-    "$DS/ifs/tls.sh" colorize &
+
     rm -f "$DT/ps_lk" & exit 1
 }
 
@@ -249,8 +231,8 @@ edit_item() {
 
     if [ -z "${item}" ]; then exit 1; fi
 
-    if  [ ${type} = 1 ]; then audio="${DM_tls}/${trgt,,}.mp3"; edit_dlg1=`dlg_form_1`
-    elif [ ${type} = 2 ]; then audio="${DM_tlt}/$id.mp3"; edit_dlg2=`dlg_form_2`; fi
+    if  [ ${type} = 1 ]; then audio="${DM_tls}/${trgt,,}.mp3"; edit_dlg1="$(dlg_form_1)"
+    elif [ ${type} = 2 ]; then audio="${DM_tlt}/$id.mp3"; edit_dlg2="$(dlg_form_2)"; fi
     ret=$?
     
 
@@ -260,23 +242,25 @@ edit_item() {
             include "$DS/ifs/mods/add"
             
            if [ ${type} = 1 ]; then
-                trgt_mod="$(clean_1 "$(cut -d "|" -f1 <<<"${edit_dlg1}")")"
-                srce_mod="$(clean_1 "$(cut -d "|" -f2 <<<"${edit_dlg1}")")"
-                tpc_mod="$(cut -d "|" -f3 <<<"${edit_dlg1}")"
-                audio_mod="$(cut -d "|" -f4 <<<"${edit_dlg1}")"
-                exmp_mod="$(clean_1 "$(cut -d "|" -f5 <<<"${edit_dlg1}")")"
-                defn_mod="$(clean_1 "$(cut -d "|" -f6 <<<"${edit_dlg1}")")"
-                note_mod="$(clean_1 "$(cut -d "|" -f7 <<<"${edit_dlg1}")")"
-                mark_mod="$(cut -d "|" -f9 <<<"${edit_dlg1}")"
+                edit_dlg="$(tail -n 1 <<<"${edit_dlg1}")"
+                trgt_mod="$(clean_1 "$(cut -d "|" -f1 <<<"${edit_dlg}")")"
+                srce_mod="$(clean_1 "$(cut -d "|" -f2 <<<"${edit_dlg}")")"
+                tpc_mod="$(cut -d "|" -f3 <<<"${edit_dlg}")"
+                audio_mod="$(cut -d "|" -f4 <<<"${edit_dlg}")"
+                exmp_mod="$(clean_1 "$(cut -d "|" -f5 <<<"${edit_dlg}")")"
+                defn_mod="$(clean_1 "$(cut -d "|" -f6 <<<"${edit_dlg}")")"
+                note_mod="$(clean_1 "$(cut -d "|" -f7 <<<"${edit_dlg}")")"
+                mark_mod="$(cut -d "|" -f9 <<<"${edit_dlg}")"
                 type_mod=1
 
             elif [ ${type} = 2 ]; then
-                mark_mod="$(cut -d "|" -f1 <<<"${edit_dlg2}")"
-                type_mod="$(cut -d "|" -f2 <<<"${edit_dlg2}")"
-                trgt_mod="$(clean_2 "$(cut -d "|" -f3 <<<"${edit_dlg2}")")"
-                srce_mod="$(clean_2 "$(cut -d "|" -f5 <<<"${edit_dlg2}")")"
-                tpc_mod="$(cut -d "|" -f7 <<<"${edit_dlg2}")"
-                audio_mod="$(cut -d "|" -f8 <<<"${edit_dlg2}")"
+                edit_dlg="$(tail -n 1 <<<"${edit_dlg2}")"
+                mark_mod="$(cut -d "|" -f1 <<<"${edit_dlg}")"
+                type_mod="$(cut -d "|" -f2 <<<"${edit_dlg}")"
+                trgt_mod="$(clean_2 "$(cut -d "|" -f3 <<<"${edit_dlg}")")"
+                srce_mod="$(clean_2 "$(cut -d "|" -f5 <<<"${edit_dlg}")")"
+                tpc_mod="$(cut -d "|" -f7 <<<"${edit_dlg}")"
+                audio_mod="$(cut -d "|" -f8 <<<"${edit_dlg}")"
                 grmr_mod="${grmr}"
                 wrds_mod="${wrds}"
                 
@@ -294,10 +278,10 @@ edit_item() {
             
             if [ "${trgt_mod}" != "${trgt}" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
                 temp="$(gettext "Processing")..."
+                index edit "${trgt}" "${tpc}" "${trgt_mod}"
                 sed -i "${edit_pos}s|trgt={${trgt}}|trgt={${trgt_mod}}|;
                 ${edit_pos}s|grmr={${grmr}}|grmr={${trgt_mod}}|;
                 ${edit_pos}s|srce={${srce}}|srce={$temp}|g" "$DC_tlt/0.cfg"
-                index edit "${trgt}" "${tpc}" "${trgt_mod}"
                 ind=1; col=1; mod=1
             fi
             

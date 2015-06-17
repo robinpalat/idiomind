@@ -453,11 +453,11 @@ echo "</body>" >> "$DC_tlt/att.html"
     
     } >/dev/null 2>&1
     
-    [[ ! -d "$DM_tlt/files" ]] && mkdir "$DM_tlt/files"
+    [ ! -d "$DM_tlt/files" ] && mkdir "$DM_tlt/files"
     ch1="$(ls -A "$DM_tlt/files")"
     
     if [[ "$(ls -A "$DM_tlt/files")" ]]; then
-        [[ ! -f "$DC_tlt/att.html" ]] && mkindex >/dev/null 2>&1
+        [ ! -f "$DC_tlt/att.html" ] && mkindex >/dev/null 2>&1
         yad --html --title="$(gettext "Attached Files")" \
         --name=Idiomind --class=Idiomind \
         --uri="$DC_tlt/att.html" --browser \
@@ -559,7 +559,7 @@ colorize() {
 check_updates() {
 
     internet
-    nver=`curl http://idiomind.sourceforge.net/doc/release | sed -n 1p`
+    nver=`curl http://idiomind.sourceforge.net/doc/release |sed -n 1p`
     cver=`echo "$(idiomind -v)"`
     pkg='https://sourceforge.net/projects/idiomind/files/idiomind.deb/download'
     echo "$(date +%d)" > "$DC_s/9.cfg"
@@ -731,8 +731,8 @@ mkpdf() {
         mkdir "$DT/mkhtml/images"
         nts="$(sed ':a;N;$!ba;s/\n/<br>/g' < "${DC_tlt}/info" \
         | sed 's/\&/&amp;/g')"
-        if [ -f "${DM_tlt}/words/images/img.jpg" ]; then
-        convert "${DM_tlt}/words/images/img.jpg" \
+        if [ -f "${DM_tlt}/images/img.jpg" ]; then
+        convert "${DM_tlt}/images/img.jpg" \
         -alpha set -channel A -evaluate set 50% \
         "$DT/mkhtml/img.png"; fi
 
@@ -744,8 +744,8 @@ mkpdf() {
         while [[ $n -ge 1 ]]; do
             Word=$(sed -n "$n"p ./"3.cfg")
             fname="$(nmfile "$Word")"
-            if [ -f "${DM_tlt}/words/images/$fname.jpg" ]; then
-            convert "${DM_tlt}/words/images/$fname.jpg" -alpha set -virtual-pixel transparent \
+            if [ -f "${DM_tlt}/images/$fname.jpg" ]; then
+            convert "${DM_tlt}/images/$fname.jpg" -alpha set -virtual-pixel transparent \
             -channel A -blur 0x10 -level 50%,100% +channel "$DT/mkhtml/images/$Word.png"
             fi
             let n--
@@ -788,7 +788,7 @@ mkpdf() {
         echo -e "<p>&nbsp;</p>
         <div>" >> doc.html
 
-        cd "${DM_tlt}/words/images"
+        cd "${DM_tlt}/images"
         cnt=`ls -1 *.jpg | grep -v "img.jpg" | wc -l`
         if [[ $cnt != 0 ]]; then
             cd "$DT/mkhtml/images/"
@@ -836,7 +836,7 @@ mkpdf() {
         while [[ $n -ge 1 ]]; do
             Word=$(sed -n "$n"p ./"3.cfg")
             fname="$(nmfile "$Word")"
-            tgs=$(eyeD3 "${DM_tlt}/words/$fname.mp3")
+            tgs=$(eyeD3 "${DM_tlt}/$fname.mp3")
             trgt=$(grep -o -P "(?<=IWI1I0I).*(?=IWI1I0I)" <<<"$tgs")
             srce=$(grep -o -P "(?<=IWI2I0I).*(?=IWI2I0I)" <<<"$tgs")
             inf=$(grep -o -P "(?<=IWI3I0I).*(?=IWI3I0I)" <<<"$tgs" | tr '_' '\n')
@@ -847,7 +847,7 @@ mkpdf() {
             | sed "s/"$hlgt"/<b>"$hlgt"<\/\b>/g")
             echo "${trgt}" >> trgt_words
             echo "${srce}" >> srce_words
-            echo "id.$n:[trgt={$trgt},srce={$srce},exmp={$exm1},defn={$dftn},note={},wrds={},grmr={},sum={}]" >> /home/robin/Desktop/template
+            echo "id.$n:[trgt={$trgt},srce={$srce},exmp={$exm1},defn={$dftn},note={},wrds={},grmr={},sum={}]" >> /home/
             
             if [ -n "${trgt}" ]; then
                 echo -e "<table width=\"55%\" border=\"0\" align=\"left\" cellpadding=\"10\" cellspacing=\"5\">
@@ -950,8 +950,8 @@ convert() {
     lwrd="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"${tgs}")"
     type=2
     id="$(nmfile "${type}" "${trgt}" "${srce}" "${exmp}" "${dftn}" "${note}" "${lwrd}" "${grmr}")"
-    elif [ -f "${DM_tlt}/words/$fname.mp3" ]; then
-    tgs=$(eyeD3 "${DM_tlt}/words/$fname.mp3")
+    elif [ -f "${DM_tlt}/$fname.mp3" ]; then
+    tgs=$(eyeD3 "${DM_tlt}/$fname.mp3")
     trgt=$(grep -o -P "(?<=IWI1I0I).*(?=IWI1I0I)" <<<"$tgs")
     srce=$(grep -o -P "(?<=IWI2I0I).*(?=IWI2I0I)" <<<"$tgs")
     fields="$(grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' <<<"${tgs}" | tr '_' '\n')"

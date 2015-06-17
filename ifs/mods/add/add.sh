@@ -5,6 +5,7 @@ if ([ -z "$lgtl" ] || [ -z "$lgsl" ]); then
 msg "$(gettext "Please check the language settings in the preferences dialog.")\n" error & exit 1
 fi
 
+
 function check_s() {
     
     DC_tlt="$DM_tl/${1}/.conf"
@@ -15,8 +16,6 @@ function check_s() {
     [ -d "$DT_r" ] && rm -fr "$DT_r"
     msg "$(gettext "No topic is active")\n" info & exit 1; fi
 }
-
-
 
 
 function mksure() {
@@ -41,22 +40,19 @@ function index() {
     img0='/usr/share/idiomind/images/0.png'
     item="${2}"
     
-    if [[ ! -z "${item}" ]] && ! grep -Fxo "${item}" "$DC_tlt/0.cfg"; then
+    if [[ ! -z "${item}" ]] && ! grep -Fo "trgt={${item}}" "$DC_tlt/0.cfg"; then
     
         if [[ $1 = 1 ]]; then
         
-            if [[ "$(grep "$4" "$DC_tlt/0.cfg")" ]] && [[ -n "$4" ]]; then
-            sed -i "s/${4}/${4}\n${item}/" "$DC_tlt/0.cfg"
+            if [[ "$(grep "$4" "$DC_tlt/1.cfg")" ]] && [[ -n "$4" ]]; then
             sed -i "s/${4}/${4}\n${item}/" "$DC_tlt/1.cfg"
             else
-            echo "${item}" >> "$DC_tlt/0.cfg"
             echo "${item}" >> "$DC_tlt/1.cfg"; fi
             echo "${item}" >> "$DC_tlt/3.cfg"
             echo -e "FALSE\n${item}\n$img0" >> "$DC_tlt/5.cfg"
 
         elif [[ $1 = 2 ]]; then
         
-            echo "${item}" >> "$DC_tlt/0.cfg"
             echo "${item}" >> "$DC_tlt/1.cfg"
             echo "${item}" >> "$DC_tlt/4.cfg"
             echo -e "FALSE\n${item}\n$img0" >> "$DC_tlt/5.cfg"
@@ -73,10 +69,10 @@ function index() {
             fi
         }
         
-        n=0
-        while [ $n -le 6 ]; do
-            sust "${DC_tlt}/$n.cfg"
-            let n++
+        n=1
+        while [ $s -le 6 ]; do
+            sust "${DC_tlt}/${s}.cfg"
+            let s++
         done
 
         if [ -d "${DC_tlt}/practice" ]; then
@@ -90,7 +86,6 @@ function index() {
 
     elif [[ "$1" = txt_missing ]]; then
     
-        echo "${item}" >> "$DC_tlt/0.cfg"
         echo "${item}" >> "$DC_tlt/1.cfg"
         echo "${item}" >> "$DC_tlt/4.cfg"
         echo -e "FALSE\n${item}\n$img0" >> "$DC_tlt/5.cfg"
@@ -99,7 +94,6 @@ function index() {
     sleep 0.5
     rm -f "$DT/i_lk"
 }
-
 
 
 function sentence_p() {
@@ -120,7 +114,7 @@ function sentence_p() {
     
     echo "${vrbl}" | sed 's/ /\n/g' | grep -v '^.$' \
     | grep -v '^..$' | sed -n 1,50p \
-    | tr -d '*)(/' | tr -s '“”"&:|{}[]' ' ' \
+    | tr -d '*)(/' | tr -s '"&:|{}[]' ' ' \
     | sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
     | sed 's/\]//;s/\[//g' | sed 's/<[^>]*>//g' \
     | sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //;s/"//g' > "$aw"
@@ -153,21 +147,21 @@ function sentence_p() {
 
     sed -i 's/\. /\n/g' "$bw"
     sed -i 's/\. /\n/g' "$aw"
-    touch "$DT_r/A.$r" "$DT_r/B.$r" "$DT_r/g.$r"; n=1
+    touch "$DT_r/A.$r" "$DT_r/B.$r" "$DT_r/g.$r"; bcle=1
     
     if [ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]; then
-        while [[ $n -le "$(wc -l < "$aw")" ]]; do
-        s=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-        t=$(sed -n "$n"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
+        while [[ $bcle -le "$(wc -l < "$aw")" ]]; do
+        s=$(sed -n "$bcle"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
+        t=$(sed -n "$bcle"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
         echo "$t"_"$s""" >> "$DT_r/B.$r"
-        let n++
+        let bcle++
         done
     else
-        while [[ $n -le "$(wc -l < "$aw")" ]]; do
-        t=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-        s=$(sed -n "$n"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
+        while [[ $bcle -le "$(wc -l < "$aw")" ]]; do
+        t=$(sed -n "$bcle"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
+        s=$(sed -n "$bcle"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
         echo "$t"_"$s""" >> "$DT_r/B.$r"
-        let n++
+        let bcle++
         done
     fi
     
@@ -193,27 +187,28 @@ function check_grammar_2() {
     elif grep -Fxq "${1,,}" <<<"$verbs"; then echo 'verb. '; fi
 }
 
-
+#“”
 function clean_1() {
     
-    echo "$1" | sed ':a;N;$!ba;s/\n/ /g' \
-    | sed 's/&//;s/://;s/\.//g' | sed "s/’/'/g" \
+    echo "$1" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' \
+    | sed "s/’/'/g" \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \
-    | tr -s '“”|"' ' ' \
-    | sed 's/<[^>]*>//g'
+    | tr -d '*|",;!¿?¡()[]&:./<>+' \
+    | sed 's/<[^>]*>//g' | sed 's/ \+/ /g'
 }
+
 
 function clean_2() {
     
     if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
-    echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" | sed "s|/||g" \
-    | tr -s '“”"&:|' ' ' \
+    echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" \
+    | tr -d '*//' | tr -s '"&:|{}[]<>+' ' ' \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//; s/ *$//g' | sed 's/ — /__/g' | sed 's/<[^>]*>//g'
     else
-    echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" \
-    | tr -s '“”"&:|' ' ' \
+    echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" \
+    | tr -d '*/' | tr -s '"&:|{}[]<>+' ' ' \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \
     | sed 's/ — /__/g' | sed "s|/||g" | sed 's/<[^>]*>//g'
@@ -226,27 +221,21 @@ function clean_3() {
     echo "${1}" | cut -d "|" -f1 | sed 's/!//;s/&//;s/\://; s/\&//g' \
     | sed "s/-//g" | sed 's/^[ \t]*//;s/[ \t]*$//' | sed "s|/||g" \
     | sed 's|/||;s/^\s*./\U&\E/g' | sed 's/\：//g' | sed 's/<[^>]*>//g' \
-    | tr -d '*'
+    | tr -d '*/' | tr -s '"&:|{}[]<>+' ' ' | sed 's/ \+/ /g'
 }  
-
 
 
 function clean_4() {
     
     if [ `wc -c <<<"${1}"` -lt 150 ]; then
-    echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' | sed 's/ \+/ /g' \
-    | sed 's/ — / /g' | sed '/^$/d'
+    echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' \
+    | tr -d '*/' | tr -s '"&:|{}[]<>+' ' ' \
+    | sed 's/ — / /g' | sed '/^$/d' | sed 's/ \+/ /g'
     else 
-    echo "${1}" | sed ':a;N;$!ba;s/\n/\__/g' | sed 's/ \+/ /g' \
-    | sed 's/ — /__/g' | sed '/^$/d'
+    echo "${1}" | sed ':a;N;$!ba;s/\n/\__/g' \
+    | tr -d '*/' | tr -s '"&:|{}[]<>+' ' ' \
+    | sed 's/ — /__/g' | sed '/^$/d' | sed 's/ \+/ /g'
     fi
-}
-
-
-function tags_1() {
-    
-    pos=$(grep -Fon -m 1 "trgt={}" "$DC_tlt/0.cfg" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
-    sed -i "${pos}s|trgt={}|trgt={${2}}|; ${pos}s|srce={}|srce={${3}}|g" "$DC_tlt/0.cfg"
 }
 
 
@@ -270,63 +259,6 @@ END
 }
 
 
-
-
-function tags_3() {
-    
-    eyeD3 --set-encoding=utf8 \
-    -A IWI3I0I"$2"IWI3I0IIPWI3I0I"$3"IPWI3I0IIGMI3I0I"$4"IGMI3I0I "$5"
-
-
-    sed -i "${pos}s|wrds={}|wrds={${3}}|; ${pos}s|grmr={}|grmr={${4}}|g" "$DC_tlt/0.cfg"
-    
-    
-}
-
-
-function tags_4() {
-    
-    eyeD3 --set-encoding=utf8 \
-    -t ISI1I0I"$2"ISI1I0I \
-    -a ISI2I0I"$3"ISI2I0I \
-    -A IWI3I0I"$4"IWI3I0IIPWI3I0I"$5"IPWI3I0IIGMI3I0I"$6"IGMI3I0I "$7"
-    
-    pos=$(grep -Fon -m 1 "trgt={}" "$DC_tlt/0.cfg" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
-    sed -i "${pos}s|trgt={}|trgt={${2}}|; ${pos}s|srce={}|srce={${3}}|; ${pos}s|wrds={}|wrds={${4}}|; ${pos}s|grmr={}|grmr={${6}}|g" "$DC_tlt/0.cfg"
-}
-
-
-function tags_5() {
-    
-    eyeD3 --set-encoding=utf8 \
-    -a I$1I2I0I"$2"I$1I2I0I "$3"
-    
-    pos=$(grep -Fon -m 1 "trgt={}" "$DC_tlt/0.cfg" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
-    sed -i "${pos}s|srce={}|srce={${3}}|g" "$DC_tlt/0.cfg"
-}
-
-
-function tags_6() {
-    
-    eyeD3 --set-encoding=utf8 \
-    -A IWI3I0I"$2"IWI3I0I "$3"
-    pos=$(grep -Fon -m 1 "trgt={}" "$DC_tlt/0.cfg" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
-    sed -i "${pos}s|trgt={}|trgt={${2}}|; ${pos}s|srce={}|srce={${3}}|g" "$DC_tlt/0.cfg"
-}
-
-
-function tags_8() {
-    
-    eyeD3 -p I$1I4I0I"$2"I$1I4I0I "$3"
-}
-
-
-function tags_9() {
-    
-    eyeD3 -A IWI3I0I"$2"IWI3I0IIPWI3I0I"$3"IPWI3I0I "$4"
-}
-
-
 function set_image_1() {
     
     scrot -s --quality 90 ./img.jpg
@@ -340,36 +272,6 @@ function set_image_2() {
     /usr/bin/convert ./img.jpg -interlace Plane -thumbnail 400x270^ \
     -gravity center -extent 400x270 -quality 90% ./imgs.jpg
     mv -f ./imgs.jpg "$2"
-}
-
-
-function list_words() {
-    
-    sed -i 's/\. /\n/g' "$bw"
-    sed -i 's/\. /\n/g' "$aw"
-    DT_r="$1"; cd "$DT_r"; touch "$DT_r/A.$2" "$DT_r/B.$2" "$DT_r/g.$2"; n=1
-    
-    if [ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]; then
-        while [[ $n -le "$(wc -l < "$aw")" ]]; do
-        s=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-        t=$(sed -n "$n"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-        echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> "$DT_r/A.$2"
-        echo "$t"_"$s""" >> "$DT_r/B.$2"
-        let n++
-        done
-    else
-        while [[ $n -le "$(wc -l < "$aw")" ]]; do
-        t=$(sed -n "$n"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-        s=$(sed -n "$n"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-        echo ISTI"$n"I0I"$t"ISTI"$n"I0IISSI"$n"I0I"$s"ISSI"$n"I0I >> "$DT_r/A.$2"
-        echo "$t"_"$s""" >> "$DT_r/B.$2"
-        let n++
-        done
-    fi
-    
-    grmrk="$(sed ':a;N;$!ba;s/\n/ /g' < "$DT_r/g.$r")"
-    lwrds="$(< "$DT_r/A.$r")"
-    pwrds="$(tr '\n' '_' < "$DT_r/B.$r")"
 }
 
 

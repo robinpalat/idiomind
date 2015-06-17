@@ -105,7 +105,7 @@ function notebook_1() {
     --button="$(gettext "Lists")":"$cmd_play" \
     --button="$(gettext "Practice")":5 \
     --button="$(gettext "Close")":1
-}
+} >/dev/null 2>&1
 
 
 function notebook_2() {
@@ -151,7 +151,7 @@ function notebook_2() {
     --tab=" $(gettext "Edit") " \
     --width=$sx --height=$sy --borders=0 --tab-borders=3 \
     --button="$(gettext "Close")":1
-}
+} >/dev/null 2>&1
 
 
 function dialog_1() {
