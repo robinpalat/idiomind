@@ -24,7 +24,7 @@ log="$DC_s/8.cfg"
 cfg3="$DC_tlt/3.cfg"
 cfg4="$DC_tlt/4.cfg"
 cfg1="$DC_tlt/1.cfg"
-cfg11_="$DC_tlt/.11.cfg"
+cfg11_="$DC_tlt/0.cfg"
 directory="$DC_tlt/practice"
 touch "$directory/log.1" "$directory/log.2" "$directory/log.3"
 

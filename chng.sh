@@ -51,16 +51,19 @@ if [[ "$1" = chngi ]]; then
     index="$DT/index.m3u"
     _item="$(sed -n "$2"p "$index")"
     if [ -z "${_item}" ]; then _item="$(sed -n 1p "${index}")"; index_pos=1; fi
-    pos=`grep -Fon -m 1 "trgt={${_item}}" "$DC_tlt/.11.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
-    _item=`sed -n ${pos}p "$DC_tlt/.11.cfg" |sed 's/},/}\n/g'`
-    type=`grep -oP '(?<=type={).*(?=})' <<<"${_item}"`
-    trgt=`grep -oP '(?<=trgt={).*(?=})' <<<"${_item}"`
-    srce=`grep -oP '(?<=srce={).*(?=})' <<<"${_item}"`
-    id=`grep -oP '(?<=id=\[).*(?=\])' <<<"${_item}"`
-    file="${DM_tlt}/$id.mp3"
-    include "$DS/ifs/mods/play"
-    e_file "$file"
-    play=play
+    #pos="$(grep -Fon -m 1 "trgt={${_item}}" "$DC_tlt/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p')"
+    #_item="$(sed -n ${pos}p "$DC_tlt/0.cfg" |sed 's/},/}\n/g')"
+    #type="$(grep -oP '(?<=type={).*(?=})' <<<"${_item}")"
+    #trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${_item}")"
+    #srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${_item}")"
+    #id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${_item}")"
+    #file="${DM_tlt}/$id.mp3"
+    #include "$DS/ifs/mods/play"
+    #e_file "$file"
+    #play=play
+    
+    #[ ${type} = 1 ] && file="$DM_tls/${trgt,,}.mp3"
+    #[ ${type} = 2 ] && file="$DM_tlt/$id.mp3"
     
     [ -z "$trgt" ] && trgt="$_item"
     img="${DM_tlt}/images/$id.jpg"

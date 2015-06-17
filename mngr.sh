@@ -84,7 +84,7 @@ delete_item_ok() {
     include "$DS/ifs/mods/mngr"
     source "$DS/ifs/mods/cmns.sh"
     trgt="${3}"
-    file=`get_name_file "${trgt}" "${DC_tlt}/.11.cfg"`
+    file="$(get_name_file "${trgt}" "${DC_tlt}/0.cfg")"
     DM_tlt="$DM_tl/${2}"
     DC_tlt="$DM_tl/${2}/.conf"
 
@@ -109,9 +109,9 @@ delete_item_ok() {
         cd /
     fi
 
-    pos=`grep -Fon -m 1 "trgt={${trgt}}" "${DC_tlt}/.11.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
-    sed -i "${pos}d" "${DC_tlt}/.11.cfg"
-    "$DS/ifs/tls.sh" sanity_1 "${DC_tlt}/.11.cfg" &
+    pos=`grep -Fon -m 1 "trgt={${trgt}}" "${DC_tlt}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
+    sed -i "${pos}d" "${DC_tlt}/0.cfg"
+    "$DS/ifs/tls.sh" sanity_1 "${DC_tlt}/0.cfg" &
 
     n=0
     while [ $n -le 6 ]; do
@@ -133,7 +133,7 @@ delete_item() {
     include "$DS/ifs/mods/mngr"
     source "$DS/ifs/mods/cmns.sh"
     trgt="${3}"
-    file=`get_name_file "${trgt}" "${DC_tlt}/.11.cfg"`
+    file="$(get_name_file "${trgt}" "${DC_tlt}/0.cfg")"
     DM_tlt="$DM_tl/${2}"
     DC_tlt="$DM_tl/${2}/.conf"
 
@@ -172,8 +172,8 @@ delete_item() {
             cd /
         fi
         
-        sed -i "${pos}d" "${DC_tlt}/.11.cfg"
-        "$DS/ifs/tls.sh" sanity_1 "${DC_tlt}/.11.cfg" &
+        sed -i "${pos}d" "${DC_tlt}/0.cfg"
+        "$DS/ifs/tls.sh" sanity_1 "${DC_tlt}/0.cfg" &
 
         n=0
         while [[ $n -le 6 ]]; do
@@ -217,9 +217,9 @@ edit_item() {
     tpcs="$(egrep -v "${tpc}" "${DM_tl}/.2.cfg" |tr "\\n" '!' |sed 's/!\+$//g')"
     c=$((RANDOM%10000))
 
-    item=`sed -n ${item_pos}p "${index_1}"`
-    edit_pos=`grep -Fon -m 1 "trgt={${item}}" "${DC_tlt}/.11.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
-    item=`sed -n ${edit_pos}p "${DC_tlt}/.11.cfg" |sed 's/},/}\n/g'`
+    item="$(sed -n ${item_pos}p "${index_1}")"
+    edit_pos=`grep -Fon -m 1 "trgt={${item}}" "${DC_tlt}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
+    item="$(sed -n ${edit_pos}p "${DC_tlt}/0.cfg" |sed 's/},/}\n/g')"
     
     type=`grep -oP '(?<=type={).*(?=})' <<<"${item}"`
     trgt=`grep -oP '(?<=trgt={).*(?=})' <<<"$item"`
@@ -252,6 +252,7 @@ edit_item() {
     if  [ ${type} = 1 ]; then audio="${DM_tls}/${trgt,,}.mp3"; edit_dlg1=`dlg_form_1`
     elif [ ${type} = 2 ]; then audio="${DM_tlt}/$id.mp3"; edit_dlg2=`dlg_form_2`; fi
     ret=$?
+    
 
         if [[ $ret -eq 0 ]] || [[ $ret -eq 2 ]]; then
         
@@ -259,21 +260,21 @@ edit_item() {
             include "$DS/ifs/mods/add"
             
            if [ ${type} = 1 ]; then
-                trgt_mod="$(clean_0 `cut -d "|" -f1 <<<"${edit_dlg1}"`)"
-                srce_mod="$(clean_0 `cut -d "|" -f2 <<<"${edit_dlg1}"`)"
+                trgt_mod="$(clean_1 "$(cut -d "|" -f1 <<<"${edit_dlg1}")")"
+                srce_mod="$(clean_1 "$(cut -d "|" -f2 <<<"${edit_dlg1}")")"
                 tpc_mod="$(cut -d "|" -f3 <<<"${edit_dlg1}")"
                 audio_mod="$(cut -d "|" -f4 <<<"${edit_dlg1}")"
-                exmp_mod="$(clean_0 `cut -d "|" -f5 <<<"${edit_dlg1}"`)"
-                defn_mod="$(clean_0 `cut -d "|" -f6 <<<"${edit_dlg1}"`)"
-                note_mod="$(clean_0 `cut -d "|" -f7 <<<"${edit_dlg1}"`)"
+                exmp_mod="$(clean_1 "$(cut -d "|" -f5 <<<"${edit_dlg1}")")"
+                defn_mod="$(clean_1 "$(cut -d "|" -f6 <<<"${edit_dlg1}")")"
+                note_mod="$(clean_1 "$(cut -d "|" -f7 <<<"${edit_dlg1}")")"
                 mark_mod="$(cut -d "|" -f9 <<<"${edit_dlg1}")"
                 type_mod=1
 
             elif [ ${type} = 2 ]; then
                 mark_mod="$(cut -d "|" -f1 <<<"${edit_dlg2}")"
                 type_mod="$(cut -d "|" -f2 <<<"${edit_dlg2}")"
-                trgt_mod="$(clean_1 `cut -d "|" -f3 <<<"${edit_dlg2}"`)"
-                srce_mod="$(clean_1 `cut -d "|" -f5 <<<"${edit_dlg2}"`)"
+                trgt_mod="$(clean_2 "$(cut -d "|" -f3 <<<"${edit_dlg2}")")"
+                srce_mod="$(clean_2 "$(cut -d "|" -f5 <<<"${edit_dlg2}")")"
                 tpc_mod="$(cut -d "|" -f7 <<<"${edit_dlg2}")"
                 audio_mod="$(cut -d "|" -f8 <<<"${edit_dlg2}")"
                 grmr_mod="${grmr}"
@@ -285,6 +286,7 @@ edit_item() {
                 
             fi
 
+
   
             [ "${mark_mod}" = FALSE ] && mark_mod=""
             [ -z "${id_mod}" ] && id=""
@@ -294,7 +296,7 @@ edit_item() {
                 temp="$(gettext "Processing")..."
                 sed -i "${edit_pos}s|trgt={${trgt}}|trgt={${trgt_mod}}|;
                 ${edit_pos}s|grmr={${grmr}}|grmr={${trgt_mod}}|;
-                ${edit_pos}s|srce={${srce}}|srce={$temp}|g" "$DC_tlt/.11.cfg"
+                ${edit_pos}s|srce={${srce}}|srce={$temp}|g" "$DC_tlt/0.cfg"
                 index edit "${trgt}" "${tpc}" "${trgt_mod}"
                 ind=1; col=1; mod=1
             fi
@@ -326,14 +328,14 @@ edit_item() {
                         
                     if [ ${type} = 1 ]; then
                         
-                        srce_mod="$(clean_0 `translate "${trgt_mod}" $lgt $lgs`)"
+                        srce_mod="$(clean_1 "$(translate "${trgt_mod}" $lgt $lgs)")"
                         audio="${trgt_mod,,}"
                         dictt "$audio" "$DT_r"
                         srce="$temp"
 
                     elif [ ${type} = 2 ]; then
                         
-                        srce_mod="$(clean_1 `translate "${trgt_mod}" $lgt $lgs`)"
+                        srce_mod="$(clean_2 "$(translate "${trgt_mod}" $lgt $lgs)")"
                         source "$DS/default/dicts/$lgt"
                         sentence_p "$DT_r" 2
                         fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
@@ -348,7 +350,7 @@ edit_item() {
 
                 if [ "${tpc}" != "${tpc_mod}" ]; then # lack move audio file and picture
                 
-                    cfg11="$DM_tl/${tpc_mod}/.conf/.11.cfg"
+                    cfg11="$DM_tl/${tpc_mod}/.conf/0.cfg"
                     pos=$(grep -Fon -m 1 "trgt={}" "${cfg11}" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
                     [ -f "${audio_mod}" ] && mv -f "${audio_mod}" "$DM_tl/${tpc_mod}/$id_mod.mp3"
                     sed -i "${pos}s|trgt={}|trgt={$trgt_mod}|g" "${cfg11}"
@@ -358,7 +360,7 @@ edit_item() {
                     
 
                 elif [ "${tpc}" = "${tpc_mod}" ]; then
-                    cfg11="$DC_tlt/.11.cfg"
+                    cfg11="$DC_tlt/0.cfg"
                     pos=${edit_pos}
                 fi
 
@@ -452,7 +454,7 @@ rename_topic() {
     source "$DS/ifs/mods/add/add.sh"
     info2=$(wc -l < "$DM_tl/.1.cfg")
     if grep -Fxo "$tpc" < "$DM_tl/.3.cfg"; then i=1; fi
-    jlb="$(clean_2 "${2}")"
+    jlb="$(clean_3 "${2}")"
     
     if grep -Fxo "${jlb}" < <(ls "$DS/addons/"); then jlb="$jlb."; fi
     chck="$(grep -Fxo "${jlb}" "$DM_tl/.1.cfg" | wc -l)"
@@ -483,9 +485,9 @@ rename_topic() {
     
     if [ -n "${jlb}" ]; then
 
-        mv -f "$DM_tl/${tpc}/.11.cfg" "$DT/.11.cfg"
+        mv -f "$DM_tl/${tpc}/0.cfg" "$DT/0.cfg"
         mv -f "$DM_tl/${tpc}" "$DM_tl/${jlb}"
-        mv -f "$DT/.11.cfg" "$DM_tl/${jlb}/.11.cfg"
+        mv -f "$DT/0.cfg" "$DM_tl/${jlb}/0.cfg"
         echo "$jlb" > "$DC_s/4.cfg"
         echo "$jlb" > "$DM_tl/.8.cfg"
         echo "$jlb" >> "$DM_tl/.1.cfg"
@@ -582,7 +584,7 @@ mark_as_learned_topic() {
     msg "$(gettext "Not enough items to perform the operation.")\n " \
     info "$(gettext "Not enough items")" & exit; fi
     
-    if [ "$((( $(date +%s) - $(date -d "$(sed -n 8p "${DC_tlt}/12.cfg" \
+    if [ "$((( $(date +%s) - $(date -d "$(sed -n 8p "${DC_tlt}/id.cfg" \
     | grep -o 'date_c="[^"]*' | grep -o '[^"]*$')" +%s) ) /(24 * 60 * 60 )))" -lt 5 ]; then
     msg_2 "$(gettext "Are you sure it's not too soon?")\n" \
     gtk-dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"; fi

@@ -159,7 +159,7 @@ id=${id:0:3}; fi
 mail=$(sed -n 2p "$DC_s/3.cfg")
 user=$(sed -n 3p "$DC_s/3.cfg")
 [ -z "$user" ] && user=$USER
-nt=$(< "${DC_tlt}/10.cfg")
+nt=$(< "${DC_tlt}/info")
 imgm="${DM_tlt}/images/img.jpg"
 
 "$DS/ifs/tls.sh" check_index "$tpc"
@@ -261,9 +261,11 @@ images=$(ls *.jpg | wc -l); else
 images=0; fi
 [ -f "${DC_tlt}/3.cfg" ] && words=$(wc -l < "${DC_tlt}/3.cfg")
 [ -f "${DC_tlt}/4.cfg" ] && sentences=$(wc -l < "${DC_tlt}/4.cfg")
-[ -f "${DC_tlt}/12.cfg" ] && date_c="$(sed -n 8p "${DC_tlt}/12.cfg" \
+[ -f "${DC_tlt}/id.cfg" ] && date_c="$(sed -n 8p "${DC_tlt}/id.cfg" \
 | grep -o 'date_c="[^"]*' | grep -o '[^"]*$')"
 date_u=$(date +%F)
+
+if [ ! -f "${DC_tlt}/id.cfg" ]; then
 echo -e "name=\"${tpc}\"
 language_source=\"$lgsl\"
 language_target=\"$lgtl\"
@@ -273,10 +275,29 @@ category=\"$Ctgry\"
 link=\"$id\"
 date_c=\"$date_c\"
 date_u=\"$date_u\"
+date_i=\"$date_i\"
 nwords=\"$words\"
 nsentences=\"$sentences\"
 nimages=\"$images\"
 level=\"$level\"" > "$DT_u/${tpc}/conf/id"
+else
+sed -i "s/language_source=.*/language_source=\"$lgsl\"/g" "${DC_tlt}/id.cfg"
+sed -i "s/language_target=.*/language_target=\"$lgtl\"/g" "${DC_tlt}/id.cfg"
+sed -i "s/author=.*/author=\"$Author\"/g" "${DC_tlt}/id.cfg"
+sed -i "s/contact=.*/contact=\"$Mail\"/g" "${DC_tlt}/id.cfg"
+sed -i "s/category=.*/category=\"$Ctgry\"/g" "${DC_tlt}/id.cfg"
+sed -i "s/link=.*/link=\"$id\"/g" "${DC_tlt}/id.cfg"
+sed -i "s/date_c=.*/date_c=\"$date_c\"/g" "${DC_tlt}/id.cfg"
+sed -i "s/date_u=.*/date_u=\"$date_u\"/g" "${DC_tlt}/id.cfg"
+sed -i "s/date_i=.*/date_i=\"$date_i\"/g" "${DC_tlt}/id.cfg"
+sed -i "s/link=.*/link=\"$id\"/g" "${DC_tlt}/id.cfg"
+sed -i "s/nwords=.*/nwords=\"$words\"/g" "${DC_tlt}/id.cfg"
+sed -i "s/nsentences=.*/nsentences=\"$sentences\"/g" "${DC_tlt}/id.cfg"
+sed -i "s/nimages=.*/nimages=\"$images\"/g" "${DC_tlt}/id.cfg"
+sed -i "s/level=.*/level=\"$level\"/g" "${DC_tlt}/id.cfg"
+cp -f "${DC_tlt}/id.cfg" "$DT_u/${tpc}/conf/id"
+fi
+
 cp -f "$DT_u/${tpc}/conf/id" "$DT/${tpc}.id"
 echo -e "$id
 $Mail
@@ -300,9 +321,7 @@ cp -f "$DM_tl/.share/$audio.mp3" "$DT_u/$tpc/share/$audio.mp3"; fi
 done <<<"$auds"
 
 cp -f "${DC_tlt}/0.cfg" "$DT_u/${tpc}/conf/0.cfg"
-cp -f "${DC_tlt}/3.cfg" "$DT_u/${tpc}/conf/3.cfg"
-cp -f "${DC_tlt}/4.cfg" "$DT_u/${tpc}/conf/4.cfg"
-printf "${notes}" > "${DC_tlt}/10.cfg"
+printf "${notes}" > "${DC_tlt}/info"
 printf "${notes}" > "$DT_u/${tpc}/conf/info"
 
 find "$DT_u" -type f -exec chmod 644 {} \;

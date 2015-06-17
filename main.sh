@@ -161,8 +161,6 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
         
     else
         cd "${tmp}"
-        ws=$(wc -l < "${tmp}/3.cfg")
-        ss=$(wc -l < "${tmp}/4.cfg")
         itxt="<span font_desc='Free Sans 14'>$tpi</span><small>\n ${language_source^}-$language_target $nwords $(gettext "Words") $nsentences $(gettext "Sentences") $nimages $(gettext "Images")\n $(gettext "Level:") $level\n</small>"
         dclk="'$DS/default/vwr_tmp.sh' '$c'"
 
@@ -227,14 +225,14 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
                 touch "${DC_tlt}/$n.cfg"
                 else mv -f "${tmp}/conf/$n.cfg" "${DC_tlt}/$n.cfg"; fi
                 let n++; done
-                cp "${tmp}/conf/info" "${DC_tlt}/10.cfg"
-                cp "${tmp}/conf/id" "${DC_tlt}/12.cfg"
-                tee "${DC_tlt}/.11.cfg" "${DC_tlt}/1.cfg" < "${DC_tlt}/0.cfg"
+                cp "${tmp}/conf/info" "${DC_tlt}/info"
+                cp "${tmp}/conf/id" "${DC_tlt}/id.cfg"
+                #tee "${DC_tlt}/0.cfg" "${DC_tlt}/1.cfg" < "${DC_tlt}/0.cfg" # TODO
                 echo 1 > "${DC_tlt}/8.cfg"; rm "${DC_tlt}/9.cfg" "${DC_tlt}/ls"
                 cp -fr "${tmp}"/.* "${DM_tlt}/"
                 echo "$language_target" > "$DC_s/6.cfg"
                 echo "$lgsl" >> "$DC_s/6.cfg"
-                echo "$dte" > "${DC_tlt}/13.cfg"
+                sed -i "s/date_i=.*/date_i=\"$dte\"/g" "${DC_tlt}/id.cfg"
                 echo "${tpi}" >> "$DM_tl/.3.cfg"
                 "$DS/mngr.sh" mkmn; "$DS/default/tpc.sh" "${tpi}" &
             fi
@@ -266,10 +264,10 @@ function topic() {
         export inx$n
         let n++
         done
-        nt="${DC_tlt}/10.cfg"
-        author="$(sed -n 4p "${DC_tlt}/12.cfg" \
+        nt="${DC_tlt}/info"
+        author="$(sed -n 4p "${DC_tlt}/id.cfg" \
         | grep -o 'author="[^"]*' | grep -o '[^"]*$')"
-        auto_mrk=$(sed -n 14p "${DC_tlt}/12.cfg" \
+        auto_mrk=$(sed -n 14p "${DC_tlt}/id.cfg" \
         | grep -o set1=\"[^\"]* |grep -o '[^"]*$')
         c=$((RANDOM%100000)); KEY=$c
         cnf1=$(mktemp "$DT/cnf1.XXX.x")
@@ -287,11 +285,11 @@ function topic() {
 
             note_mod="$(< "${cnf3}")"
             if [ "$note_mod" != "$(< "${nt}")" ]; then
-            mv -f "${cnf3}" "${DC_tlt}/10.cfg"; fi
+            mv -f "${cnf3}" "${DC_tlt}/info"; fi
             
             auto_mrk_mod=$(cut -d '|' -f 3 < "${cnf4}")
             if [[ $auto_mrk_mod != $auto_mrk ]] && [ -n "$auto_mrk_mod" ]; then
-            sed -i "s/set1=.*/set1=\"$auto_mrk_mod\"/g" "${DC_tlt}/12.cfg"; fi
+            sed -i "s/set1=.*/set1=\"$auto_mrk_mod\"/g" "${DC_tlt}/id.cfg"; fi
             
             if [ -n "$(grep -o TRUE < "${cnf1}")" ]; then
                 grep -Rl "|FALSE|" "${cnf1}" | while read tab1 ; do

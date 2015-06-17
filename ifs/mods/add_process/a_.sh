@@ -206,14 +206,14 @@ if [[ "$conten" = A ]]; then
                 printf "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> ./slog
                 
                 else
-                    trgt=$(clean_1 "${trgt}")
+                    trgt=$(clean_2 "${trgt}")
                     srce="$(translate "${trgt}" $lgt $lgs | sed ':a;N;$!ba;s/\n/ /g')"
-                    srce="$(clean_1 "${srce}")"
+                    srce="$(clean_2 "${srce}")"
                     
                     if [ $(wc -$c <<<"${trgt}") -eq 1 ]; then
                     
-                        trgt="$(clean_0 "${trgt}")"
-                        srce="$(clean_0 "${srce}")"
+                        trgt="$(clean_1 "${trgt}")"
+                        srce="$(clean_1 "${srce}")"
                         id="$(set_name_file 1 "${trgt}" "${srce}" "" "" "" "" "")"
 
                         mksure "${trgt}" "${srce}"
@@ -310,7 +310,7 @@ if [[ "$conten" = A ]]; then
             if [ "$(ls [0-9]* | wc -l)" -ge 1 ]; then
             btn="--button="$(gettext "Save Audio")":0"; fi
 
-            dlg_text_info_3 "$(gettext "Some items could not be added to your list:")" "$logs" "$btn" >/dev/null 2>&1
+            dlg_text_info_3 "$(gettext "Some items could not be added to your list")" "$logs" "$btn" >/dev/null 2>&1
             ret=$(echo "$?")
             
                 if  [[ "$ret" -eq 0 ]]; then

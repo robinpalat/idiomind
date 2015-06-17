@@ -194,7 +194,7 @@ function check_grammar_2() {
 }
 
 
-function clean_0() {
+function clean_1() {
     
     echo "$1" | sed ':a;N;$!ba;s/\n/ /g' \
     | sed 's/&//;s/://;s/\.//g' | sed "s/’/'/g" \
@@ -204,7 +204,7 @@ function clean_0() {
     | sed 's/<[^>]*>//g'
 }
 
-function clean_1() {
+function clean_2() {
     
     if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
     echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" | sed "s|/||g" \
@@ -221,7 +221,7 @@ function clean_1() {
 }
 
 
-function clean_2() {
+function clean_3() {
     
     echo "${1}" | cut -d "|" -f1 | sed 's/!//;s/&//;s/\://; s/\&//g' \
     | sed "s/-//g" | sed 's/^[ \t]*//;s/[ \t]*$//' | sed "s|/||g" \
@@ -245,17 +245,17 @@ function clean_4() {
 
 function tags_1() {
     
-    pos=$(grep -Fon -m 1 "trgt={}" "$DC_tlt/.11.cfg" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
-    sed -i "${pos}s|trgt={}|trgt={${2}}|; ${pos}s|srce={}|srce={${3}}|g" "$DC_tlt/.11.cfg"
+    pos=$(grep -Fon -m 1 "trgt={}" "$DC_tlt/0.cfg" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
+    sed -i "${pos}s|trgt={}|trgt={${2}}|; ${pos}s|srce={}|srce={${3}}|g" "$DC_tlt/0.cfg"
 }
 
 
 function add_item() {
     
-    if ! grep -Fo "trgt={${2}}" "$DC_tlt/.11.cfg"; then
-    pos=`wc -l < "$DC_tlt/.11.cfg"`
+    if ! grep -Fo "trgt={${2}}" "$DC_tlt/0.cfg"; then
+    pos=`wc -l < "$DC_tlt/0.cfg"`
     item="${pos}:[type={$1},trgt={$2},srce={$3},exmp={$4},defn={$5},note={$6},wrds={$7},grmr={$8},].[tag={},mark={},].id=[$9]"
-    fcfg="${DC_tlt}/.11.cfg"
+    fcfg="${DC_tlt}/0.cfg"
     export item fcfg
     
 python << END
@@ -278,7 +278,7 @@ function tags_3() {
     -A IWI3I0I"$2"IWI3I0IIPWI3I0I"$3"IPWI3I0IIGMI3I0I"$4"IGMI3I0I "$5"
 
 
-    sed -i "${pos}s|wrds={}|wrds={${3}}|; ${pos}s|grmr={}|grmr={${4}}|g" "$DC_tlt/.11.cfg"
+    sed -i "${pos}s|wrds={}|wrds={${3}}|; ${pos}s|grmr={}|grmr={${4}}|g" "$DC_tlt/0.cfg"
     
     
 }
@@ -291,8 +291,8 @@ function tags_4() {
     -a ISI2I0I"$3"ISI2I0I \
     -A IWI3I0I"$4"IWI3I0IIPWI3I0I"$5"IPWI3I0IIGMI3I0I"$6"IGMI3I0I "$7"
     
-    pos=$(grep -Fon -m 1 "trgt={}" "$DC_tlt/.11.cfg" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
-    sed -i "${pos}s|trgt={}|trgt={${2}}|; ${pos}s|srce={}|srce={${3}}|; ${pos}s|wrds={}|wrds={${4}}|; ${pos}s|grmr={}|grmr={${6}}|g" "$DC_tlt/.11.cfg"
+    pos=$(grep -Fon -m 1 "trgt={}" "$DC_tlt/0.cfg" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
+    sed -i "${pos}s|trgt={}|trgt={${2}}|; ${pos}s|srce={}|srce={${3}}|; ${pos}s|wrds={}|wrds={${4}}|; ${pos}s|grmr={}|grmr={${6}}|g" "$DC_tlt/0.cfg"
 }
 
 
@@ -301,8 +301,8 @@ function tags_5() {
     eyeD3 --set-encoding=utf8 \
     -a I$1I2I0I"$2"I$1I2I0I "$3"
     
-    pos=$(grep -Fon -m 1 "trgt={}" "$DC_tlt/.11.cfg" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
-    sed -i "${pos}s|srce={}|srce={${3}}|g" "$DC_tlt/.11.cfg"
+    pos=$(grep -Fon -m 1 "trgt={}" "$DC_tlt/0.cfg" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
+    sed -i "${pos}s|srce={}|srce={${3}}|g" "$DC_tlt/0.cfg"
 }
 
 
@@ -310,8 +310,8 @@ function tags_6() {
     
     eyeD3 --set-encoding=utf8 \
     -A IWI3I0I"$2"IWI3I0I "$3"
-    pos=$(grep -Fon -m 1 "trgt={}" "$DC_tlt/.11.cfg" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
-    sed -i "${pos}s|trgt={}|trgt={${2}}|; ${pos}s|srce={}|srce={${3}}|g" "$DC_tlt/.11.cfg"
+    pos=$(grep -Fon -m 1 "trgt={}" "$DC_tlt/0.cfg" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
+    sed -i "${pos}s|trgt={}|trgt={${2}}|; ${pos}s|srce={}|srce={${3}}|g" "$DC_tlt/0.cfg"
 }
 
 
@@ -582,8 +582,9 @@ function dlg_text_info_1() {
 
 function dlg_text_info_3() {
 
-    printf "$2" | yad --text-info --title="Idiomind" \
-    --text="$1" \
+    printf "${2}" | yad --text-info \
+    --title="$(gettext "Some items could not be added to your list")" \
+    --text="${1}" \
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" \
     --wrap --margins=5 \

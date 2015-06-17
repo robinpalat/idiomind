@@ -17,6 +17,7 @@ category=\"$Ctgry\"
 link=\"$link\"
 date_c=\"$(date +%F)\"
 date_u=\"$date_u\"
+date_i=\"$date_i\"
 nwords=\"$words\"
 nsentences=\"$sentences\"
 nimages=\"$images\"
@@ -38,24 +39,26 @@ else
         c=0; while [[ $c -le 10 ]]; do
         touch "$c.cfg"; let c++
         done
-        > "${DC_tlt}/.11.cfg"
+
         rm "${DC_tlt}/7.cfg" "${DC_tlt}/9.cfg"
-        echo " " > "${DC_tlt}/10.cfg"
-        echo -e "${cfgfile}" > "12.cfg"
+        echo " " > "${DC_tlt}/info"
+        echo -e "${cfgfile}" > "id.cfg"
         echo 1 > "8.cfg"
         cd /
         fi
         echo "${topic}" > "$DC_s/4.cfg"
         echo "${topic}" > "$DC_s/7.cfg"
         echo "${topic}" > "$DT/tpe"
-        cp -f "${DC_tlt}/o.cfg" "${DC_tlt}/.bk"
+        
+        [ ! -d "$HOME/.idiomind/backup" ] && mkdir "$HOME/.idiomind/backup"
+        cp -f "${DC_tlt}/0.cfg" "$HOME/.idiomind/backup/${tpc}"
         echo 0 > "$DC_s/5.cfg"
         
-        if [[ `wc -l < "${DC_tlt}/12.cfg"` -lt 15 ]]; then
-        echo -e "${cfgfile}" > "${DC_tlt}/12.cfg"; fi
+        if [[ `wc -l < "${DC_tlt}/id.cfg"` -lt 16 ]]; then
+        echo -e "${cfgfile}" > "${DC_tlt}/id.cfg"; fi
 
-        if [ ! -f "$DT/.n_s_pr" ]; then
-        "$DS/ifs/tls.sh" check_index "${topic}"; fi
+        #if [ ! -f "$DT/.n_s_pr" ]; then
+        #"$DS/ifs/tls.sh" check_index "${topic}"; fi
         
         stts=$(sed -n 1p "${DC_tlt}/8.cfg")
         if [[ $(grep -Fxon "${topic}" "${DM_tl}/.1.cfg" \

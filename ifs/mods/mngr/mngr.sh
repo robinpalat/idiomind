@@ -53,10 +53,10 @@ position() {
 
         while read -r sec; do
         
-            f1=`cut -d "|" -f1 <<<"${sec}"`
-            f2=`cut -d "|" -f2 <<<"${sec}"`
-            f3=`cut -d "|" -f3 <<<"${sec}"`
-            f4=`cut -d "|" -f4 <<<"${sec}"`
+            f1="$(cut -d "|" -f1 <<<"${sec}")"
+            f2="$(cut -d "|" -f2 <<<"${sec}")"
+            f3="$(cut -d "|" -f3 <<<"${sec}")"
+            f4="$(cut -d "|" -f4 <<<"${sec}")"
             if [[ "$f2" = 'TRUE' ]] && [[ "${itr}" != "${item}" ]]; then
             echo -e "${item}" >> "$DC_tlt/0.cfg.mv"
             echo -e "${f3}" >> "$DC_tlt/0.cfg.mv"
@@ -70,7 +70,7 @@ position() {
             msg "$(gettext "Some changes were not made.")\n" dialog-warning
         else
             tac "$DC_tlt/0.cfg.mv" > "$DC_tlt/0.cfg"
-            cp -f "$DC_tlt/0.cfg" "$DC_tlt/.11.cfg"
+            cp -f "$DC_tlt/0.cfg" "$DC_tlt/0.cfg"
             
             if [ "$(wc -l < "$DC_tlt/2.cfg")" = 0 ]; then
             cp -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"
@@ -80,8 +80,8 @@ position() {
         
     elif [[ $ret -eq 3 ]]; then
     
-        tac "$DC_tlt/0.cfg"  > "$DC_tlt/0.cfg.mv"; mv -f "$DC_tlt/0.cfg.mv" "$DC_tlt/0.cfg"
-        tac "$DC_tlt/.11.cfg"  > "$DC_tlt/.11.cfg.mv"; mv -f "$DC_tlt/.11.cfg.mv" "$DC_tlt/.11.cfg"
+        tac "$DC_tlt/0.cfg"  > "$DC_tlt/0.cfg.mv"
+        mv -f "$DC_tlt/0.cfg.mv" "$DC_tlt/0.cfg"
         
         if [ "$(wc -l < "$DC_tlt/2.cfg")" = 0 ]; then
         tac "$DC_tlt/1.cfg" > "$DC_tlt/1.cfg.mv"; mv -f "$DC_tlt/1.cfg.mv" "$DC_tlt/1.cfg"
