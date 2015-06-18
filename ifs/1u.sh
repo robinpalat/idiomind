@@ -28,9 +28,11 @@ text="<span font_desc='Free Sans Bold 14'>$(gettext "Welcome") ${USER^} </span>
 \n      $(gettext "To get started, please configure the following:")\n"
 lang=('English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian')
-sets=('grammar' 'list' 'tasks' 'trans' 'trd_trgt' 'text' 'audio' \
-'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' \
-'words' 'sentences' 'marks' 'practice' 'news' 'saved')
+
+sets=('gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
+'rplay' 'audio' 'video' 'ntosd' 'loop' \
+'langt' 'langs' 'synth' \
+'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi')
 
 _info() {
     
@@ -72,7 +74,7 @@ dlg=$(yad --form --title="Idiomind" \
 --class=Idiomind --name=Idiomind \
 --window-icon="/usr/share/idiomind/images/icon.png" \
 --image-on-top --buttons-layout=end --align=center --center --on-top \
---width=450 --height=285 --borders=15 \
+--width=440 --height=310 --borders=15 \
 --field="$(gettext "Select the language you are studying")":lbl " " \
 --field=":CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
 --field="$(gettext "Select your native language")":lbl " " \
@@ -136,16 +138,20 @@ elif [ $ret -eq 0 ]; then
     done
     
     n=0; > "$DC_s/1.cfg"
-    while [ $n -lt 19 ]; do
+    while [ $n -lt 20 ]; do
     echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
     ((n=n+1))
     done
     touch "$DC_s/4.cfg"
     
-    b=$(tr -dc a-z < /dev/urandom | head -c 1)
+    b=$(tr -dc a-z < /dev/urandom |head -c 1)
     c=$((RANDOM%100))
     id="$b$c"
-    echo ${id:0:3} > "$DC_s/3.cfg"
+    id=${id:0:3}
+config="usrid=\"$id\"
+iuser=\"\"
+cntct=\"\""
+    echo -e "${config}" > "$DC_s/3.cfg"
     
     idiomind -s
 

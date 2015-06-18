@@ -1,7 +1,8 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-drtt="$DM_tlt/words"
+cfg0="$DC_tlt/0.cfg"
+drtt="$DM_tlt/images"
 drts="$DS/practice"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
@@ -46,9 +47,11 @@ score() {
 
 fonts() {
     
-    fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
-    src=$(eyeD3 "$drtt/$fname.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
-    img="$drtt/images/$fname.jpg"
+    item="$(grep -F -m 1 "trgt={${1}}" "${cfg0}" |sed 's/},/}\n/g')"
+    src=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
+    id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
+
+    img="$drtt/$id.jpg"
     [ ! -f "$img" ] && img="$DS/practice/images/img_2.jpg"
     srcel="<span font_desc='Free Sans 10'><i>($src)</i></span>"
     trgtl="<span font_desc='Free Sans 15'><b>$1</b></span>"
@@ -60,7 +63,7 @@ cuestion() {
     --image="$img" \
     --skip-taskbar --text-align=center --align=center --center --on-top \
     --image-on-top --undecorated --buttons-layout=spread \
-    --width=418 --height=365 --borders=6 \
+    --width=418 --height=380 --borders=6 \
     --button="$(gettext "Exit")":1 \
     --button="    $(gettext "Answer") >>    ":0
 }
@@ -72,7 +75,7 @@ answer() {
     --timeout=20 --selectable-labels \
     --skip-taskbar --text-align=center --align=center --center --on-top \
     --image-on-top --undecorated --buttons-layout=spread \
-    --width=418 --height=365 --borders=6 \
+    --width=418 --height=380 --borders=6 \
     --field="$trgtl   $srcel":lbl \
     --button="  $(gettext "I did not know it")  ":3 \
     --button="  $(gettext "I Knew it")  ":2

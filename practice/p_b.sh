@@ -1,7 +1,8 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-drtt="$DM_tlt/words"
+cfg11_="$DC_tlt/0.cfg"
+drtt="$DM_tlt"
 drts="$DS/practice"
 strt="$drts/strt.sh"
 snd="$drts/no.mp3"
@@ -47,8 +48,9 @@ score() {
 
 fonts() {
     
-    fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
-    wes=$(eyeD3 "$drtt/$fname.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
+    item="$(grep -F -m 1 "trgt={${1}}" "${cfg11_}" |sed 's/},/}\n/g')"
+    wes=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
+
     ras=$(sort -Ru b.srces | egrep -v "$wes" | head -5)
     ess=$(grep "$wes" ./b.srces)
     echo -e "$ras\n$ess" | sort -Ru | head -6 | sed '/^$/d' > srce.tmp

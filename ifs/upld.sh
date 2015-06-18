@@ -21,12 +21,25 @@ source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
-sets=('channel' 'link' 'logo' 'ntype' \
-'nmedia' 'ntitle' 'nsumm' 'nimage' 'url')
+dateu=$(date +%Y-%m-%d)
+
+idfile() {
+    
+b=$(tr -dc a-z < /dev/urandom |head -c 1)
+c=$((RANDOM%100))
+id="$b$c"
+id=${id:0:3}
+echo -e "usrid=\"$id\"
+iuser=\"\"
+cntct=\"\"" > "$DC_s/3.cfg"
+}
+
+[ ! -f "$DC_s/3.cfg" ] && idfile
+
 
 vsd() {
 
-    cd "$DM_t/saved"; ls -t *.id | sed 's/\.id//g' | \
+    cd "$DM/backup"; ls -t *.id | sed 's/\.id//g' | \
     yad --list --title="$(gettext "Your Shared Topics")" \
     --name=Idiomind --class=Idiomind \
     --dclick-action="$DS/ifs/upld.sh 'infsd'" \
@@ -40,20 +53,21 @@ vsd() {
 
 infsd() {
 
-    file="$DM_t/saved/${2}.id"
-    id=$(sed -n 1p "$DC_s/3.cfg")
-    language_source=$(sed -n 2p "$file" | grep -o 'language_source="[^"]*' | grep -o '[^"]*$')
-    language_target=$(sed -n 3p "$file" | grep -o 'language_target="[^"]*' | grep -o '[^"]*$')
-    category=$(sed -n 6p "$file" | grep -o 'category="[^"]*' | grep -o '[^"]*$')
-    link=$(sed -n 7p "$file" | grep -o 'link="[^"]*' | grep -o '[^"]*$')
-    name=$(sed -n 1p "$file" | grep -o 'name="[^"]*' | grep -o '[^"]*$')
+    file="$DM/backup/${2}.id"
+
+    usrid="$(grep -o 'usrid="[^"]*' < "$DC_s/3.cfg" |grep -o '[^"]*$')"
+    language_source=$(grep -o 'langs="[^"]*' < "$file" |grep -o '[^"]*$')
+    language_target=$(grep -o 'langt="[^"]*' < "$file" |grep -o '[^"]*$')
+    category=$(grep -o 'ctgry="[^"]*' < "$file" |grep -o '[^"]*$')
+    link=$(grep -o 'ilink="[^"]*' < "$file" |grep -o '[^"]*$')
+    name=$(grep -o 'tname="[^"]*' < "$file" |grep -o '[^"]*$')
     lng=$(lnglss "$language_source")
     lnglbl="${language_target,,}"
     
     cd "$HOME"
     sleep 0.5
     sv=$(yad --file --save --title="$(gettext "Download")" \
-    --filename="$2.idmnd" \
+    --filename="${2}.idmnd" \
     --window-icon="$DS/images/icon.png" --skip-taskbar --center --on-top \
     --width=600 --height=500 --borders=10 \
     --button="$(gettext "Cancel")":1 --button="gtk-save":0)
@@ -151,18 +165,18 @@ science="$(gettext "Science")"
 interview="$(gettext "Interview")"
 funny="$(gettext "Funny")"
 lnglbl="${lgtl,,}"
-id=$(sed -n 1p $DC_s/3.cfg)
-if [ -z "$id" ] || [ ${#id} -gt 3 ]; then
+usrid="$(grep -o 'usrid="[^"]*' < "$DC_s/3.cfg" |grep -o '[^"]*$')"
+iuser="$(grep -o 'iuser="[^"]*' < "$DC_s/3.cfg" |grep -o '[^"]*$')"
+cntct="$(grep -o 'cntct="[^"]*' < "$DC_s/3.cfg" |grep -o '[^"]*$')"
+if [ -z "$usrid" ] || [ ${#id} -gt 3 ]; then
 b=$(tr -dc a-z < /dev/urandom | head -c 1)
-id="$b$((RANDOM%100))"
-id=${id:0:3}; fi
-mail=$(sed -n 2p "$DC_s/3.cfg")
-user=$(sed -n 3p "$DC_s/3.cfg")
-[ -z "$user" ] && user=$USER
-nt=$(< "${DC_tlt}/10.cfg")
-imgm="${DM_tlt}/words/images/img.jpg"
+usrid="$b$((RANDOM%100))"
+usrid=${usrid:0:3}; fi
+[ -z "$iuser" ] && iuser=$USER
+note=$(< "${DC_tlt}/info")
+imgm="${DM_tlt}/images/img.jpg"
 
-"$DS/ifs/tls.sh" check_index "$tpc"
+#"$DS/ifs/tls.sh" check_index "$tpc" # TODO ------------------------------------
 
 if [ $(cat "${DC_tlt}/0.cfg" | wc -l) -ge 20 ]; then
 btn="--button="$(gettext "Upload")":0"; else
@@ -176,12 +190,12 @@ upld=$(yad --form --title="$(gettext "Share")" \
 --align=right --center --on-top \
 --width=480 --height=460 --borders=12 \
 --field=" :lbl" "#1" \
---field="$(gettext "Author")" "$user" \
---field="\t$(gettext "Contact (Optional)")" "$mail" \
+--field="$(gettext "Author")" "$iuser" \
+--field="\t$(gettext "Contact (Optional)")" "$cntct" \
 --field="$(gettext "Category"):CBE" \
 "!$others!$article!$comics!$culture!$documentary!$entertainment!$funny!$family!$grammar!$history!$movies!$in_the_city!$interview!$internet!$music!$nature!$news!$office!$relations!$sport!$science!$shopping!$social_networks!$technology!$travel" \
 --field="$(gettext "Skill Level"):CB" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
---field="\n$(gettext "Description/Notes"):TXT" "${nt}" \
+--field="\n$(gettext "Description/Notes"):TXT" "${note}" \
 --field="$(gettext "Image 600x150px"):FL" "${imgm}" \
 --button="$(gettext "Cancel")":4 \
 --button="$(gettext "PDF")":2 "$btn")
@@ -197,7 +211,7 @@ msg "$(gettext "Sorry, the image size is not suitable.")\n " info "$(gettext "Er
 "$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
 /usr/bin/convert "${img}" -interlace Plane -thumbnail 600x150^ \
 -gravity center -extent 600x150 \
--quality 100% "${DM_tlt}/words/images/img.jpg"
+-quality 100% "${DM_tlt}/images/img.jpg"
 fi
 
 if [[ $ret = 2 ]]; then
@@ -237,9 +251,9 @@ level=$(echo "${upld}" | cut -d "|" -f5)
 [ "$level" = $(gettext "Intermediate") ] && level=2
 [ "$level" = $(gettext "Advanced") ] && level=3
 
-Author=$(echo "${upld}" | cut -d "|" -f2)
-Mail=$(echo "${upld}" | cut -d "|" -f3)
-notes=$(echo "${upld}" | cut -d "|" -f6)
+iuser_m=$(echo "${upld}" | cut -d "|" -f2)
+cntct_m=$(echo "${upld}" | cut -d "|" -f3)
+notes_m=$(echo "${upld}" | cut -d "|" -f6)
 
 if [ -z "${Ctgry}" ]; then
 msg "$(gettext "Please select a category.")\n " info
@@ -255,38 +269,62 @@ internet; cd "$DT"
 mkdir "$DT/upload"
 DT_u="$DT/upload/"
 mkdir -p "$DT/upload/${tpc}/conf"
-cd "${DM_tlt}/words/images"
+cd "${DM_tlt}/images"
 if [ $(ls -1 *.jpg 2>/dev/null | wc -l) != 0 ]; then
 images=$(ls *.jpg | wc -l); else
 images=0; fi
 [ -f "${DC_tlt}/3.cfg" ] && words=$(wc -l < "${DC_tlt}/3.cfg")
 [ -f "${DC_tlt}/4.cfg" ] && sentences=$(wc -l < "${DC_tlt}/4.cfg")
-[ -f "${DC_tlt}/12.cfg" ] && date_c="$(sed -n 8p "${DC_tlt}/12.cfg" \
+[ -f "${DC_tlt}/id.cfg" ] && date_c="$(sed -n 8p "${DC_tlt}/id.cfg" \
 | grep -o 'date_c="[^"]*' | grep -o '[^"]*$')"
 date_u=$(date +%F)
-echo -e "name=\"${tpc}\"
-language_source=\"$lgsl\"
-language_target=\"$lgtl\"
-author=\"$Author\"
-contact=\"$Mail\"
-category=\"$Ctgry\"
-link=\"$id\"
-date_c=\"$date_c\"
-date_u=\"$date_u\"
-nwords=\"$words\"
-nsentences=\"$sentences\"
-nimages=\"$images\"
-level=\"$level\"" > "$DT_u/${tpc}/conf/id"
-cp -f "$DT_u/${tpc}/conf/id" "$DT/${tpc}.id"
-echo -e "$id
-$Mail
-$Author" > "$DC_s/3.cfg"
+
+if [ ! -f "${DC_tlt}/id.cfg" ]; then
+echo -e "tname=\"${tpc}\"
+langs=\"$lgsl\"
+langt=\"$lgtl\"
+authr=\"$author_m\"
+cntct=\"$contc_m\"
+ctgry=\"$Ctgry\"
+ilink=\"$usrid\"
+datec=\"$date_c\"
+dateu=\"$dateu\"
+datei=\"$date_i\"
+nword=\"$words\"
+nsent=\"$sentences\"
+nimag=\"$images\"
+level=\"$level\"
+set_1=\"$set_1\"
+set_2=\"$set_2\"" > "$DT_u/${tpc}/conf/id.cfg"
+else
+sed -i "s/langs=.*/langs=\"$lgsl\"/g" "${DC_tlt}/id.cfg"
+sed -i "s/langt=.*/langt=\"$lgtl\"/g" "${DC_tlt}/id.cfg"
+sed -i "s/authr=.*/authr=\"$author_m\"/g" "${DC_tlt}/id.cfg"
+sed -i "s/cntct=.*/cntct=\"$contc_m\"/g" "${DC_tlt}/id.cfg"
+sed -i "s/ctgry=.*/ctgry=\"$Ctgry\"/g" "${DC_tlt}/id.cfg"
+sed -i "s/ilink=.*/ilink=\"$usrid\"/g" "${DC_tlt}/id.cfg"
+sed -i "s/datec=.*/datec=\"$datec\"/g" "${DC_tlt}/id.cfg"
+sed -i "s/dateu=.*/dateu=\"$dateu\"/g" "${DC_tlt}/id.cfg"
+sed -i "s/datei=.*/datei=\"$datei\"/g" "${DC_tlt}/id.cfg"
+sed -i "s/nword=.*/nword=\"$words\"/g" "${DC_tlt}/id.cfg"
+sed -i "s/nsent=.*/nsent=\"$sentences\"/g" "${DC_tlt}/id.cfg"
+sed -i "s/nimag=.*/nimag=\"$images\"/g" "${DC_tlt}/id.cfg"
+sed -i "s/level=.*/level=\"$level\"/g" "${DC_tlt}/id.cfg"
+cp -f "${DC_tlt}/id.cfg" "$DT_u/${tpc}/conf/id.cfg"
+fi
+
+cp -f "$DT_u/${tpc}/conf/id.cfg" "$DT/${tpc}.id"
+if [ "${iuser}" != "${iuser_m}" ] \
+|| [ "${cntct}" != "${cntct_m}" ]; then
+sed -i "s/usrid=.*/usrid=\"$usrid\"/g" "$DC_s/3.cfg"
+sed -i "s/iuser=.*/iuser=\"$iuser_m\"/g" "$DC_s/3.cfg"
+sed -i "s/cntct=.*/cntct=\"$cntct_m\"/g" "$DC_s/3.cfg"
+fi
 
 cd "${DM_tlt}"
 cp -r ./* "$DT_u/${tpc}/"
-cp -r "./words" "$DT_u/${tpc}/"
-cp -r "./words/images" "$DT_u/${tpc}/words"
 mkdir "$DT_u/${tpc}/files"
+
 mkdir "$DT_u/${tpc}/share"
 auds="$(uniq < "${DC_tlt}/4.cfg" \
 | sed 's/\n/ /g' | sed 's/ /\n/g' \
@@ -294,31 +332,35 @@ auds="$(uniq < "${DC_tlt}/4.cfg" \
 | sed 's/&//; s/,//; s/\?//; s/\¿//; s/;//'g \
 |  sed 's/\!//; s/\¡//; s/\]//; s/\[//; s/\.//; s/  / /'g \
 | tr -d ')' | tr -d '(' | tr '[:upper:]' '[:lower:]')"
-
 while read -r audio; do
 if [ -f "$DM_tl/.share/$audio.mp3" ]; then
 cp -f "$DM_tl/.share/$audio.mp3" "$DT_u/$tpc/share/$audio.mp3"; fi
 done <<<"$auds"
 
+> "${DC_tlt}/1.cfg"
+while read item_; do
+item="$(sed 's/},/}\n/g' <<<"${item_}")"
+trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
+[ -n "${trgt}" ] && echo "${trgt}" >> "${DC_tlt}/1.cfg"
+done < "$DC_tlt/0.cfg"
+cp -f "${DC_tlt}/1.cfg" "$DT_u/${tpc}/conf/1.cfg"
 cp -f "${DC_tlt}/0.cfg" "$DT_u/${tpc}/conf/0.cfg"
-cp -f "${DC_tlt}/3.cfg" "$DT_u/${tpc}/conf/3.cfg"
-cp -f "${DC_tlt}/4.cfg" "$DT_u/${tpc}/conf/4.cfg"
-printf "${notes}" > "${DC_tlt}/10.cfg"
-printf "${notes}" > "$DT_u/${tpc}/conf/info"
+echo -e "${notes}" > "${DC_tlt}/info"
+echo -e "${notes}" > "$DT_u/${tpc}/conf/info"
 
 find "$DT_u" -type f -exec chmod 644 {} \;
 cd "$DT_u"
 tar -cvf "${tpc}.tar" "${tpc}"
 gzip -9 "${tpc}.tar"
-mv "${tpc}.tar.gz" "$id.${tpc}.$lgt"
-du=$(du -h "$id.${tpc}.$lgt" | cut -f1)
+mv "${tpc}.tar.gz" "$usrid.${tpc}.$lgt"
+du=$(du -h "$usrid.${tpc}.$lgt" | cut -f1)
 [ -d "$DT_u/${tpc}" ] && rm -fr "$DT_u/${tpc}"
-dte=$(date "+%d %B %Y")
+
 notify-send "$(gettext "Upload in progress")" "$(gettext "This can take some time, please wait")" -t 6000
 
 url="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
 | grep -o 'UPLOADS="[^"]*' | grep -o '[^"]*$')"
-upld="$DT_u/$id.${tpc}.$lgt"
+upld="${DT_u}/${usrid}.${tpc}.${lgt}"
 export upld url
 python << END
 import requests
@@ -331,7 +373,8 @@ END
 
 exit=$?
 if [[ $exit = 0 ]]; then
-    mv -f "$DT/${tpc}.id" "$DM_t/saved/${tpc}.id"
+    [ ! -d "${DM}/backup" ] && mkdir "${DM}/backup"
+    mv -f "${DT}/${tpc}.id" "${DM}/backup/${tpc}.id"
     info=" <b>$(gettext "Uploaded correctly")</b>\n $tpc\n"
     image=dialog-ok
 else
@@ -341,12 +384,9 @@ else
 fi
 msg "$info" $image
 
-[ -d "$DT_u/${tpc}" ] && rm -fr "$DT_u/${tpc}"
-[ -f "$DT_u/$id.${tpc}.$lgt" ] && rm -f "$DT_u/$id.${tpc}.$lgt"
-[ -f "$DT_u/${tpc}.tar" ] && rm -f "$DT_u/${tpc}.tar"
-[ -f "$DT_u/${tpc}.tar.gz" ] && rm -f "$DT_u/${tpc}.tar.gz"
-[ -f "$DT/${tpc}.id" ] && rm -f "$DT/${tpc}.id"
-[ -d "$DT_u" ] && rm -fr "$DT_u"
+cleanups "${DT_u}/${tpc}" "${DT_u}/${usrid}.${tpc}.${lgt}" \
+"${DT_u}/${tpc}.tar" "${DT}/${tpc}.id" "${DT_u}" "${DT_u}/${tpc}.tar.gz"
+
 exit 0
 fi
     

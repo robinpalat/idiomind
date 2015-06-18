@@ -116,12 +116,8 @@ function new_session() {
     fi
     
     # version ###############
-    if [ -f "$DC_s/1.cfg" ]; then
-    tasks=$(sed -n 5p "$DC_s/1.cfg" \
-    | grep -o tasks=\"[^\"]* | grep -o '[^"]*$')
-    if [[ "$tasks" != TRUE && "$tasks" != FALSE ]]; then
+    if ! grep 'ttrgt' < "$DC_s/1.cfg"; then
     rm "$DC_s/1.cfg"; fi
-    fi
     
     if [ `cat "$DM_tl/Podcasts/.conf/8.cfg"` != 11 ]; then
     echo 11 > "$DM_tl/Podcasts/.conf/8.cfg"; fi
@@ -134,113 +130,115 @@ function new_session() {
 
 if grep -o '.idmnd' <<<"${1: -6}"; then
 
-    dte=$(date "+%d %B")
+    datei=$(date +%Y-%m-%d)
     c=$((RANDOM%1000))
     source "$DS/ifs/mods/cmns.sh"
     [ ! -d "$DT" ] && mkdir "$DT"
     mkdir "$DT/dir$c"
-    cp "$1" "$DT/import.tmp"
+    cp "${1}" "$DT/import.tmp"
     mv "$DT/import.tmp" "$DT/import.tar.gz"
     cd "$DT/dir$c"
     tar -xzvf ../import.tar.gz
     ls -tdN * > "$DT/dir$c/folder"
-    tpi=$(sed -n 1p "$DT/dir$c/folder")
-    tmp="$DT/dir$c/${tpi}"
-    "$DS/ifs/tls.sh" check_source_1 "${tmp}" "${tpi}" &&
-    source "$DT/${tpi}.cfg"
-    lng="$(lnglss "$language_target")"
+    tpf=$(sed -n 1p "$DT/dir$c/folder")
+    tmp="$DT/dir$c/${tpf}"
+    source "$DS/ifs/tls.sh"
+    check_source_1 "${tmp}" "${tpf}"
+    if [ -f "$DT/${tpf}.cfg" ]; then
     cmd_infs="'$DS/ifs/tls.sh' 'details' "\"$tmp\"""
     [ $level = 1 ] && level="$(gettext "Beginner")"
     [ $level = 2 ] && level="$(gettext "Intermediate")"
     [ $level = 3 ] && level="$(gettext "Advanced")"
 
-    if [ "$tpi" != "$name" ]; then
-    
-        [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c" \
-        "$DT/${tpi}.cfg" "$DT/import.tar.gz" & exit 1
+    cd "${tmp}"
+    itxt="<span font_desc='Free Sans 14'>$tname</span><small>\n ${langs^}-$langt $nword $(gettext "Words") $nsent $(gettext "Sentences") $nimag $(gettext "Images")\n $(gettext "Level:") $level\n</small>"
+    dclk="'$DS/default/vwr_tmp.sh' '$c'"
+
+    tac "${tmp}/conf/1.cfg" | awk '{print $0""}' | \
+    yad --list --title="Idiomind" \
+    --text="$itxt" \
+    --name=Idiomind --class=Idiomind \
+    --print-all --dclick-action="$dclk" \
+    --window-icon="$DS/images/icon.png" \
+    --no-headers --ellipsize=END --fixed \
+    --scroll --center --tooltip-column=1 \
+    --width=650 --height=580 --borders=10 \
+    --column=Items \
+    --button="$(gettext "Info")":"$cmd_infs" \
+    --button="$(gettext "Install")":0 \
+    --button="$(gettext "Close")":1
+    ret=$?
         
-    else
-        cd "${tmp}"
-        ws=$(wc -l < "${tmp}/3.cfg")
-        ss=$(wc -l < "${tmp}/4.cfg")
-        itxt="<span font_desc='Free Sans 14'>$tpi</span><small>\n ${language_source^}-$language_target $nwords $(gettext "Words") $nsentences $(gettext "Sentences") $nimages $(gettext "Images")\n $(gettext "Level:") $level\n</small>"
-        dclk="'$DS/default/vwr_tmp.sh' '$c'"
-
-        tac "${tmp}/conf/0.cfg" | awk '{print $0""}' | \
-        yad --list --title="Idiomind" \
-        --text="$itxt" \
-        --name=Idiomind --class=Idiomind \
-        --print-all --dclick-action="$dclk" \
-        --window-icon="$DS/images/icon.png" \
-        --no-headers --ellipsize=END --fixed \
-        --scroll --center --tooltip-column=1 \
-        --width=650 --height=580 --borders=10 \
-        --column=Items \
-        --button="$(gettext "Info")":"$cmd_infs" \
-        --button="$(gettext "Install")":0 \
-        --button="$(gettext "Close")":1
-        ret=$?
+        if [[ $ret -eq 1 ]]; then
+        
+            [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c"
+            rm -f "$DT/import.tar.gz" "$DT/${tpf}.cfg" & exit
             
-            if [[ $ret -eq 1 ]]; then
+        elif [[ $ret -eq 0 ]]; then
             
+            if2=$(wc -l < "$DM_t/$langt/.1.cfg")
+            chck=$(grep -Fxo "${tname}" "$DM_t/$langt/.1.cfg" | wc -l)
+            
+            if [[ ${if2} -ge 80 ]]; then
+                
+                msg "$(gettext "Sorry, you have reached the maximum number of topics")\n" info
                 [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c"
-                rm -f "$DT/import.tar.gz" "$DT/${tpi}.cfg" & exit
-                
-            elif [[ $ret -eq 0 ]]; then
-                
-                if2=$(wc -l < "$DM_t/$language_target/.1.cfg")
-                chck=$(grep -Fxo "${tpi}" "$DM_t/$language_target/.1.cfg" | wc -l)
-                
-                if [[ ${if2} -ge 80 ]]; then
-                    
-                    msg "$(gettext "Sorry, you have reached the maximum number of topics")\n" info
-                    [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c"
-                    rm -f "$DT/import.tar.gz" & exit
-                fi
-                
-                if [[ ${chck} -ge 1 ]]; then
-                
-                    for i in {1..50}; do
-                    chck=$(grep -Fxo "${tpi} ($i)" "$DM_t/$language_target/.1.cfg")
-                    [ -z "$chck" ] && break; done
-                
-                    tpi="${tpi} ($i)"
-                    msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "The name for the newest will be\:")\n<b>$tpi</b>\n" info "$(gettext "OK")" "$(gettext "Cancel")"
-                    ret=$(echo $?)
-                    
-                    if [[ $ret != 0 ]]; then
-                    [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c"
-                    rm -f  "$DT/import.tar.gz" & exit 1; fi
-                fi
-
-                if [ ! -d "$DM_t/$language_target" ]; then
-                mkdir "$DM_t/$language_target"
-                mkdir "$DM_t/$language_target/.share"; fi
-                mkdir -p "$DM_t/$language_target/${tpi}/.conf"
-                DM_tlt="$DM_t/$language_target/${tpi}"
-                DC_tlt="$DM_t/$language_target/${tpi}/.conf"
-                if [ -d "$tmp/share" ]; then
-                cp -n "$tmp/share"/*.mp3 "$DM_t/$language_target/.share"/
-                rm -fr "$tmp/share"; fi
-                n=0; while [[ $n -le 13 ]]; do
-                if [ ! -f "$tmp/conf/$n.cfg" ]; then
-                touch "${DC_tlt}/$n.cfg"
-                else mv -f "${tmp}/conf/$n.cfg" "${DC_tlt}/$n.cfg"; fi
-                let n++; done
-                cp "${tmp}/conf/info" "${DC_tlt}/10.cfg"
-                cp "${tmp}/conf/id" "${DC_tlt}/12.cfg"
-                tee "${DC_tlt}/.11.cfg" "${DC_tlt}/1.cfg" < "${DC_tlt}/0.cfg"
-                echo 1 > "${DC_tlt}/8.cfg"; rm "${DC_tlt}/9.cfg" "${DC_tlt}/ls"
-                cp -fr "${tmp}"/.* "${DM_tlt}/"
-                echo "$language_target" > "$DC_s/6.cfg"
-                echo "$lgsl" >> "$DC_s/6.cfg"
-                echo "$dte" > "${DC_tlt}/13.cfg"
-                echo "${tpi}" >> "$DM_tl/.3.cfg"
-                "$DS/mngr.sh" mkmn; "$DS/default/tpc.sh" "${tpi}" &
+                rm -f "$DT/import.tar.gz" & exit
             fi
+            
+            if [[ ${chck} -ge 1 ]]; then
+            
+                for i in {1..50}; do
+                chck=$(grep -Fxo "${tname} ($i)" "$DM_t/$langt/.1.cfg")
+                [ -z "$chck" ] && break; done
+            
+                tname="${tname} ($i)"
+                msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "The name for the newest will be\:")\n<b>$tname</b>\n" info "$(gettext "OK")" "$(gettext "Cancel")"
+                ret=$(echo $?)
+                
+                if [[ $ret != 0 ]]; then
+                [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c"
+                rm -f  "$DT/import.tar.gz" & exit 1; fi
+            fi
+
+            if [ ! -d "$DM_t/$langt" ]; then
+            mkdir "$DM_t/$langt"
+            mkdir "$DM_t/$langt/.share"; fi
+            mkdir -p "$DM_t/$langt/${tname}/.conf/practice"
+            DM_tlt="$DM_t/$langt/${tname}"
+            DC_tlt="$DM_t/$langt/${tname}/.conf"
+            
+            for i in {1..6}; do > "$DC_tlt/${i}.cfg"; done
+            for i in {1..3}; do > "$DC_tlt/practice/log.${i}"; done
+            cp -f "${tmp}/conf/0.cfg" "$DC_tlt/0.cfg"
+            cp -f "${tmp}/conf/id.cfg" "$DC_tlt/id.cfg"
+            cp -f "${tmp}/conf/info" "$DC_tlt/info"
+            sed -i "s/datei=.*/datei=\"$datei\"/g" "${DC_tlt}/id.cfg"
+            while read item_; do
+            item="$(sed 's/},/}\n/g' <<<"${item_}")"
+            type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
+            trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
+            if [ -n "${trgt}" ]; then
+                if [[ ${type} = 1 ]]; then
+                echo "${trgt}" >> "$DC_tlt/3.cfg"
+                else echo "${trgt}" >> "$DC_tlt/4.cfg"; fi
+                echo "${trgt}" >> "$DC_tlt/1.cfg"; fi
+            done < "${tmp}/conf/0.cfg"
+
+            cp -n "$tmp/share"/*.mp3 "$DM_t/$langt/.share"/
+            rm -fr "$tmp/share" "${tmp}/conf" "$tmp/folder"
+            cp -fr "${tmp}"/.* "${DM_tlt}/"
+            
+            "$DS/ifs/tls.sh" colorize
+            echo -e "$langt\n$lgsl" > "$DC_s/6.cfg"
+            echo 1 > "${DC_tlt}/8.cfg"
+            echo "${tname}" >> "$DM_tl/.3.cfg"
+            "$DS/mngr.sh" mkmn
+            "$DS/default/tpc.sh" "${tname}" &
+        fi
     fi
     [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c"
-    rm -f "$DT/import.tar.gz" "$DT/${tpi}.cfg" &
+    rm -f "$DT/import.tar.gz" "$DT/${tpf}.cfg"
     exit 1
 fi
     
@@ -266,17 +264,17 @@ function topic() {
         export inx$n
         let n++
         done
-        nt="${DC_tlt}/10.cfg"
-        author="$(sed -n 4p "${DC_tlt}/12.cfg" \
-        | grep -o 'author="[^"]*' | grep -o '[^"]*$')"
-        auto_mrk=$(sed -n 14p "${DC_tlt}/12.cfg" \
-        | grep -o set1=\"[^\"]* |grep -o '[^"]*$')
+        nt="${DC_tlt}/info"
+        author="$(sed -n 4p "${DC_tlt}/id.cfg" \
+        | grep -o 'authr="[^"]*' | grep -o '[^"]*$')"
+        auto_mrk=$(sed -n 15p "${DC_tlt}/id.cfg" \
+        | grep -o set_1=\"[^\"]* |grep -o '[^"]*$')
         c=$((RANDOM%100000)); KEY=$c
         cnf1=$(mktemp "$DT/cnf1.XXX.x")
         cnf3=$(mktemp "$DT/cnf3.XXX.x")
         cnf4=$(mktemp "$DT/cnf4.XXX.x")
-        if [ -f "${DM_tlt}/words/images/img.jpg" ]; then
-        img="--image=${DM_tlt}/words/images/img.jpg"
+        if [ -f "${DM_tlt}/images/img.jpg" ]; then
+        img="--image=${DM_tlt}/images/img.jpg"
         sx=608; sy=580; else sx=620; sy=560; fi
         echo -e ".tpc.$tpc.tpc." >> "$DC_s/8.cfg"
         [ ! -z "$author" ] && author=" $(gettext "Created by") $author"
@@ -287,11 +285,11 @@ function topic() {
 
             note_mod="$(< "${cnf3}")"
             if [ "$note_mod" != "$(< "${nt}")" ]; then
-            mv -f "${cnf3}" "${DC_tlt}/10.cfg"; fi
+            mv -f "${cnf3}" "${DC_tlt}/info"; fi
             
             auto_mrk_mod=$(cut -d '|' -f 3 < "${cnf4}")
             if [[ $auto_mrk_mod != $auto_mrk ]] && [ -n "$auto_mrk_mod" ]; then
-            sed -i "s/set1=.*/set1=\"$auto_mrk_mod\"/g" "${DC_tlt}/12.cfg"; fi
+            sed -i "s/set_1=.*/set_1=\"$auto_mrk_mod\"/g" "${DC_tlt}/id.cfg"; fi
             
             if [ -n "$(grep -o TRUE < "${cnf1}")" ]; then
                 grep -Rl "|FALSE|" "${cnf1}" | while read tab1 ; do

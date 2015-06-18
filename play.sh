@@ -26,9 +26,10 @@ msg "$(gettext "No topic is active")\n" info & exit 1; fi
 lbls=('Words' 'Sentences' 'Marked items' 'Difficult words' \
 'New episodes <i><small>Podcasts</small></i>' \
 'Saved episodes <i><small>Podcasts</small></i>')
-sets=('grammar' 'list' 'tasks' 'trans' 'trd_trgt' 'text' 'audio' \
-'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' \
-'words' 'sentences' 'marks' 'practice' 'news' 'saved')
+sets=('gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
+'rplay' 'audio' 'video' 'ntosd' 'loop' \
+'langt' 'langs' 'synth' \
+'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi')
 in=('in1' 'in2' 'in3' 'in4' 'in5' 'in6')
 
 cfg1="$DC_tlt/1.cfg"
@@ -47,11 +48,10 @@ in6="$(tac "$DM_tl/Podcasts/.conf/2.lst")" || in6=""
 
 if [[ "$cfg" = 1 ]]; then
 
-    n=13
-    while [[ $n -lt 19 ]]; do
+    n=14
+    while [[ $n -lt 20 ]]; do
         get="${sets[$n]}"
-        val=$(sed -n $((n+1))p < "$DC_s/1.cfg" \
-        | grep -o "$get"=\"[^\"]* | grep -o '[^"]*$')
+        val=$(grep -o "$get"=\"[^\"]* < "$DC_s/1.cfg" | grep -o '[^"]*$')
         declare ${sets[$n]}="$val"
         ((n=n+1))
     done
@@ -68,10 +68,11 @@ function setting_1() {
     n=0; 
     while [[ $n -le 5 ]]; do
             arr="in$((n+1))"
-            [[ -z ${!arr} ]] && echo "$DS/images/addi.png" \
+            [[ -z ${!arr} ]] \
+            && echo "$DS/images/addi.png" \
             || echo "$DS/images/add.png"
         echo "  <span font_desc='Arial 11'>$(gettext "${lbls[$n]}")</span>"
-        echo "${!sets[$((n+13))]}"
+        echo "${!sets[$((n+14))]}"
         let n++
     done
 }
@@ -105,35 +106,25 @@ setting_1 | yad --list --title="$title" \
 ret=$?
 
 if [[ $ret -eq 0 ]]; then
-
-    cd "$DT"; > ./index.m3u; n=13
-    while [[ $n -lt 19 ]]; do
-        val=$(sed -n $((n-12))p "$slct" | cut -d "|" -f3)
-        [ -n "$val" ] && sed -i "s/${sets[$n]}=.*/${sets[$n]}=\"$val\"/g" "$DC_s/1.cfg"
-        if sed -n 1,2p "$slct" | grep -o FALSE; then
-            if [ "$val" = TRUE ]; then
-            [ -n "${!in[$((n-13))]}" ] && \
-            echo "${!in[$((n-13))]}" >> ./index.m3u; fi
-        else
-            if [[ $n = 15 ]]; then cat "$cfg1" >> ./index.m3u
-            elif [[ $n -gt 15 ]] && [[ "$val" = TRUE ]]; then
-            [ -n "${!in[$((n-11))]}" ] && \
-            echo "${!in[$((n-11))]}" >> ./index.m3u; fi
-        fi
+    n=14
+    while [[ $n -lt 20 ]]; do
+        val=$(sed -n $((n-13))p "${slct}" | cut -d "|" -f3)
+        [ -n "${val}" ] && sed -i "s/${sets[$n]}=.*/${sets[$n]}=\"$val\"/g" "$DC_s/1.cfg"
         ((n=n+1))
     done
     
-    rm -f "$slct";
+
+    rm -f "$slct"
     "$DS/stop.sh" 3
     if [ -d "$DM_tlt" ] && [ -n "$tpc" ]; then
     echo "$DM_tlt" > "$DT/.p_"
     echo "$tpc" >> "$DT/.p_"
     else "$DS/stop.sh" 2 && exit 1; fi
     
-    if [ -z "$(< "$DT/index.m3u")" ]; then
-    notify-send "$(gettext "Nothing to play")" \
-    "$(gettext "Exiting...")" -i idiomind -t 3000 &
-    "$DS/stop.sh" 2 & exit 1; fi
+    #if [ -z "$(< "$DT/index.m3u")" ]; then
+    #notify-send "$(gettext "Nothing to play")" \
+    #"$(gettext "Exiting...")" -i idiomind -t 3000 &
+    #"$DS/stop.sh" 2 & exit 1; fi
     
     echo -e ".ply.$tpc.ply." >> "$DC_s/8.cfg" &
     rm -f "$slct"

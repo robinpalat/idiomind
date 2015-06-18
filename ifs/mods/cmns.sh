@@ -39,9 +39,40 @@ function msg_2() {
     "$btn3" --button="$4":1 --button="$3":0
 }
 
+function get_item() {
+    
+    field=('id' 'trgt' 'srce' 'exmp' 'defn' 'note' 'wrds' 'grmr' 'sum')
+    n=1
+    while [[ $n -lt 9 ]]; do
+    val="${field[$n]}"
+    itm=$(sed -n "$1"p "$2" |grep -oE $val=\{[^\}]* |sed "s/${val}={//g")
+    declare "${field[$n]}"="$itm"
+    export "${field[$n]}"
+    ((n=n+1))
+    done
+
+}
+
+
+function get_name_file() {
+    
+    cfg11_="$DM_tl/${1}/.conf/0.cfg"; trgt_="${2}"
+    pos=`grep -Fon -m 1 "trgt={${trgt_}}" "${cfg11_}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
+    item=`sed -n ${pos}p "${cfg11_}" |sed 's/},/}\n/g'`
+    grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"
+     
+}
+
+
 function nmfile() {
-        
-  echo -n "${1^}" | md5sum | rev | cut -c 4- | rev
+    echo -n "${1}" | md5sum | rev | cut -c 4- | rev
+}
+
+
+function set_name_file() {
+
+    id=":[type={$1},trgt={$2},srce={$3},exmp={$4},defn={$5},note={$6},wrds={$7},grmr={$8},]."
+    echo -n "${id}" | md5sum | rev | cut -c 4- | rev
 }
 
 function include() {
@@ -81,6 +112,18 @@ function list_inadd() {
         if ! echo -e "$(ls "$DS/addons/")\n$(< "$DM_tl/.3.cfg")" \
         | grep -Fxo "$t" >/dev/null 2>&1; then echo "$t"; fi
     done < <(cd "$DM_tl"; ls -tNd */ | head -n 30 | sed 's/\///g')
+}
+
+function cleanups() {
+
+    for fl in "$@"; do
+    
+        if [ -d "${fl}" ]; then
+            rm -fr "${fl}"
+        elif [ -f "${fl}" ]; then
+            rm -f "${fl}"
+        fi
+    done
 }
 
 function calculate_review() {

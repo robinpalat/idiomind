@@ -1,6 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+cfg11_="$DC_tlt/0.cfg"
 drts="$DS/practice"
 strt="$drts/strt.sh"
 cd "${DC_tlt}/practice"
@@ -16,7 +17,7 @@ score() {
 
     "$drts"/cls.sh comp d &
 
-    if [[ "$1" -ge $all ]]; then
+    if [[ $1 -ge $all ]]; then
         play "$drts/all.mp3" & 
         echo ".s9.$(tr -s '\n' '|' < ./d.1).s9." >> "$log"
         echo -e ".okp.1.okp." >> "$log"
@@ -86,9 +87,11 @@ check() {
 get_text() {
     
     trgt=$(echo "${1}" | sed 's/^ *//; s/ *$//')
-    sz=`[ ${#trgt} -le 80 ] && echo 12; [ ${#trgt} -gt 80 ] && echo 11`
+    [ ${#trgt} -ge 110 ] && sz=10 || sz=11
+    [ ${#trgt} -le 80 ] && sz=12
     chk=`echo "${trgt}" | awk '{print tolower($0)}'`
     }
+
 
 result() {
     
@@ -148,7 +151,10 @@ result() {
 
 while read trgt; do
 
-    fname="$(echo -n "${trgt}" | md5sum | rev | cut -c 4- | rev)"
+    pos=`grep -Fon -m 1 "trgt={${trgt}}" "${cfg11_}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
+    item=`sed -n ${pos}p "${cfg11_}" |sed 's/},/}\n/g'`
+    fname=`grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"`
+    
     if [ -f "${DM_tlt}/$fname.mp3" ]; then
 
         get_text "${trgt}"

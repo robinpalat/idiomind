@@ -21,9 +21,10 @@
 strt="$DS/practice/strt.sh"
 cls="$DS/practice/cls.sh"
 log="$DC_s/8.cfg"
+cfg0="$DC_tlt/0.cfg"
+cfg1="$DC_tlt/1.cfg"
 cfg3="$DC_tlt/3.cfg"
 cfg4="$DC_tlt/4.cfg"
-cfg1="$DC_tlt/1.cfg"
 directory="$DC_tlt/practice"
 touch "$directory/log.1" "$directory/log.2" "$directory/log.3"
 
@@ -40,7 +41,7 @@ lock() {
 
 get_list() {
     
-    if [[ $ttest = a ]] || [[ $ttest = b ]] || [[ $ttest = c ]]; then
+    if [[ $ttest = a || $ttest = b || $ttest = c ]]; then
     
         > "$directory/${ttest}.0"
         if [[ `wc -l < "${cfg4}"` -gt 0 ]]; then
@@ -58,9 +59,11 @@ get_list() {
             (
             echo "5"
             while read word; do
-            fname="$(echo -n "$word" | md5sum | rev | cut -c 4- | rev)"
-            file="$DM_tlt/words/$fname.mp3"
-            echo "$(eyeD3 "$file" | grep -o -P "(?<=IWI2I0I).*(?=IWI2I0I)")" >> "$directory/b.srces"
+            
+                pos=`grep -Fon -m 1 "trgt={${word}}" "${cfg0}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
+                item=`sed -n ${pos}p "${cfg0}" |sed 's/},/}\n/g'`
+                echo "$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")" >> "$directory/b.srces"
+            
             done < "$directory/${ttest}.0"
             ) | yad --progress \
             --width 50 --height 35 --undecorated \
@@ -90,11 +93,22 @@ get_list() {
         fi
 
         > "$directory/${ttest}.0"
+        
+        (
+        echo "5"
         while read itm; do
-            fname="$(echo -n "$itm" | md5sum | rev | cut -c 4- | rev)"
-            if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
-            echo "$itm" >> "$directory/${ttest}.0"; fi
+        
+            pos=`grep -Fon -m 1 "trgt={${itm}}" "${cfg0}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
+            item=`sed -n ${pos}p "${cfg0}" |sed 's/},/}\n/g'`
+            fname="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
+            if [ -f "$DM_tlt/images/$fname.jpg" ]; then
+                echo "$itm" >> "$directory/${ttest}.0"; fi
+
         done < "$DT/images"
+        ) | yad --progress \
+        --width 50 --height 35 --undecorated \
+        --pulsate --auto-close \
+        --skip-taskbar --center --no-buttons
         
         sed -i '/^$/d' "$directory/${ttest}.0"
         [ -f "$DT/images" ] && rm -f "$DT/images"
@@ -138,9 +152,9 @@ practice() {
         get_list
         cp -f "$directory/${ttest}.0" "$directory/${ttest}.tmp"
         
-        [[ `wc -l < "$directory/${ttest}.0"` -lt 2 ]] && \
+        if [[ `wc -l < "$directory/${ttest}.0"` -lt 2 ]]; then \
         starting "$(gettext "Not enough words to start")"
-        echo " practice --new session"
+        echo " practice --new session"; fi
     fi
     
     [ "$directory/${ttest}.2" ] && rm "$directory/${ttest}.2"

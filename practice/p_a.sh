@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-drtt="$DM_tlt/words"
+cfg11_="$DC_tlt/0.cfg"
 drts="$DS/practice"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
@@ -44,9 +44,10 @@ score() {
 }
 
 fonts() {
-    
-    fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
-    src=$(eyeD3 "$drtt/$fname.mp3" | grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)')
+
+    item="$(grep -F -m 1 "trgt={${1}}" "${cfg11_}" |sed 's/},/}\n/g')"
+    src="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
+
     s=$((42-${#src}))
     c=$((22-${#1}))
     acuestion="\n\n<span font_desc='Free Sans $s'><b>$1</b></span>"

@@ -1,7 +1,8 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-drtt="$DM_tlt/words"
+cfg0="$DC_tlt/0.cfg"
+drtt="$DM_tls"
 drts="$DS/practice"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
@@ -61,16 +62,18 @@ fonts() {
 
 cuestion() {
     
-    fname="$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)"
-    cmd_play="play "\"$drtt/$fname.mp3\"""
+    item="$(grep -F -m 1 "trgt={${1}}" "${cfg0}" |sed 's/},/}\n/g')"
+    id=`grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"`
+
+    cmd_play="play "\"$drtt/${1,,}.mp3\"""
     
-    (sleep 0.5 && play "$drtt/$fname".mp3) &
+    (sleep 0.5 && play "$drtt/${1,,}".mp3) &
     yad --form --title="$(gettext "Practice")" \
     --text="$lcuestion" \
     --timeout=20 \
     --skip-taskbar --text-align=center --center --on-top \
     --buttons-layout=spread --image-on-top --undecorated \
-    --width=370 --height=270 --borders=8 \
+    --width=380 --height=250 --borders=8 \
     --field="$(gettext "Play")":BTN "$cmd_play" \
     --button="$(gettext "Exit")":1 \
     --button="  $(gettext "No")  ":3 \

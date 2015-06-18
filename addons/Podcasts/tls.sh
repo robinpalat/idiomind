@@ -2,6 +2,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
+
 IFS=$'\n\t'
 a="$(gettext "Tell us if you think this is an error.")"
 b="$(gettext "New episodes <i><small>Podcasts</small></i>")"
