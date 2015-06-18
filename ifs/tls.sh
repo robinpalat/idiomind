@@ -41,7 +41,6 @@ restoresin() {
     done < "$DC_tlt/0.cfg"
 }
 
-restoresin
 function check_source_1() {
 CATEGORIES="others
 comics
@@ -297,17 +296,12 @@ add_audio() {
     --width=620 --height=500 --borders=5 \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "OK")":0)
-
     ret=$?
+    
     audio=$(cut -d "|" -f1 <<<"$AU")
-
     DT="$2"; cd "$DT"
     if [[ $ret -eq 0 ]]; then
-    
-        if [ -f "${audio}" ]; then
-        cp -f "${audio}" "$DT/audtm.mp3"
-        exit
-        fi
+    if [ -f "${audio}" ]; then cp -f "${audio}" "$DT/audtm.mp3"; fi
     fi
 } >/dev/null 2>&1
 
@@ -329,18 +323,25 @@ text() {
 } >/dev/null 2>&1
 
 
+trestore() {
 
-editadv() {
+    if [ "$2" = 1 ]; then
 
-    yad --form --title="$(gettext "Info")" \
-    --name=Idiomind --class=Idiomind \
-    --window-icon="$DS/images/icon.png" \
-    --scroll --fixed --center --on-top \
-    --width=300 --height=250 --borders=5 \
-    --field="$(< "$2")":lbl \
-    --button="$(gettext "Close")":0
-} >/dev/null 2>&1
+        if [ -f "$HOME/.idiomind/backup/${3}.bk" ]; then
+        
+            msg_2 "$(gettext "Are you sure you want to restore the content of active topic?")\t\n" \
+            dialog-warning "$(gettext "Yes")" "$(gettext "Cancel")" "${tpc}"
+            ret="$?"
+            
+            if [[ $ret -eq 0 ]]; then
+            cp -f "$HOME/.idiomind/backup/${2}.bk" "${DM_tl}/${2}/.conf/0.cfg"
+            fi
+        else
+            msg "$(gettext "Backup not found")\n" dialog-warning
+        fi
+    fi
 
+} 
 
 
 add_file() {
@@ -478,13 +479,12 @@ echo "</body>" >> "$DC_tlt/att.html"
         --button="gtk-add":0 \
         --button="gtk-close":1
         ret=$?
-            if [[ $ret = 0 ]]; then 
-            "$DS/ifs/tls.sh" add_file
-            elif [[ $ret = 2 ]]; then
-            "$DS/ifs/tls.sh" videourl
-            fi
-            if [[ "$ch1" != "$(ls -A "$DM_tlt/files")" ]]; then
-            mkindex; fi
+        
+        if [[ $ret = 0 ]]; then "$DS/ifs/tls.sh" add_file
+        elif [[ $ret = 2 ]]; then "$DS/ifs/tls.sh" videourl; fi
+        
+        if [[ "$ch1" != "$(ls -A "$DM_tlt/files")" ]]; then
+        mkindex; fi
         
     else
         yad --form --title="$(gettext "Attached Files")" \
@@ -497,6 +497,7 @@ echo "</body>" >> "$DC_tlt/att.html"
         --button="$(gettext "Cancel")":1 \
         --button="$(gettext "OK")":0
         ret=$?
+        
         if [[ "$ch1" != "$(ls -A "$DM_tlt/files")" ]] && [[ $ret = 0 ]]; then
             mkindex
         fi
@@ -509,7 +510,7 @@ help() {
     xdg-open "$URL"
      
 } >/dev/null 2>&1
-    
+
 definition() {
 
     URL="http://glosbe.com/$lgt/$lgs/${2,,}"
@@ -566,6 +567,7 @@ colorize() {
     rm -f "$DT/ps_lk"; cd ~/
 }
 
+
 check_updates() {
 
     internet
@@ -581,10 +583,7 @@ check_updates() {
         info "$(gettext "Download")" "$(gettext "Cancel")" $(gettext "Idiomind - New Version")
         ret=$(echo $?)
         
-        if [[ $ret -eq 0 ]]; then
-        
-            xdg-open "$pkg"
-        fi
+        if [[ $ret -eq 0 ]]; then xdg-open "$pkg"; fi
         
     else
         msg " $(gettext "No updates available.")\n" info $(gettext "Updates")
@@ -615,17 +614,11 @@ a_check_updates() {
         && [ "$nver" != "$cver" ]; then
             
             msg_2 " <b>$(gettext "A new version of Idiomind available\!")\n</b>\n $(gettext "Do you want to download it now?")\n" info "$(gettext "Download")" "$(gettext "Cancel")" "$(gettext "Idiomind - New Version")" "$(gettext "Ignore")"
-            ret=$(echo $?)
+            ret=$?
             
-            if [[ $ret -eq 0 ]]; then
+            if [[ $ret -eq 0 ]]; then xdg-open "$pkg"
             
-            xdg-open "$pkg"
-            
-            elif [[ $ret -eq 2 ]]; then
-            
-            echo "$d2" >> "$DC_s/9.cfg"
-            
-            fi
+            elif [[ $ret -eq 2 ]]; then echo "$d2" >> "$DC_s/9.cfg"; fi
         fi
     fi
     exit 0
@@ -701,8 +694,7 @@ set_image() {
         dlg_form_3
         ret=$?
         
-        if [[ $ret -eq 2 ]]; then
-        rm -f "$ifile"; fi
+        if [[ $ret -eq 2 ]]; then rm -f "$ifile"; fi
         
     else 
         scrot -s --quality 90 "$file.temp.jpeg"
@@ -719,7 +711,6 @@ set_image() {
     exit
     
 } >/dev/null 2>&1
-
 
 mkpdf() {
 
@@ -843,6 +834,7 @@ mkpdf() {
 
         cd "$DT/mkhtml"
         n="$(wc -l < ./"3.cfg")"
+        
         while [[ $n -ge 1 ]]; do
             Word=$(sed -n "$n"p ./"3.cfg")
             fname="$(nmfile "$Word")"
@@ -860,6 +852,7 @@ mkpdf() {
             echo "id.$n:[trgt={$trgt},srce={$srce},exmp={$exm1},defn={$dftn},note={},wrds={},grmr={},sum={}]" >> /home/
             
             if [ -n "${trgt}" ]; then
+            
                 echo -e "<table width=\"55%\" border=\"0\" align=\"left\" cellpadding=\"10\" cellspacing=\"5\">
                 <tr>
                 <td bgcolor=\"#E6E6E6\" class=\"side\"></td>
@@ -950,7 +943,7 @@ convert() {
     id=""; sum=""; type=""; trgt=""
     srce=""; lwrd=""; grmr=""
     exmp=""; dftn=""; note=""; tag=""
-    item="$(sed -n "$n"p "$DC_tlt/0.cfg")"
+    item="$(sed -n "$n"p "$DC_tlt/1.cfg")"
     fname="$(echo -n "${item}" | md5sum | rev | cut -c 4- | rev)"
     if [ -f "${DM_tlt}/$fname.mp3" ]; then
     tgs=$(eyeD3 "${DM_tlt}/$fname.mp3")
@@ -960,7 +953,8 @@ convert() {
     lwrd="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"${tgs}")"
     type=2
     id="$(nmfile "${type}" "${trgt}" "${srce}" "${exmp}" "${dftn}" "${note}" "${lwrd}" "${grmr}")"
-    elif [ -f "${DM_tlt}/$fname.mp3" ]; then
+    mv -f "${DM_tlt}/$fname.mp3" "${DM_tlt}/$id.mp3"
+    elif [ -f "${DM_tlt}/words/$fname.mp3" ]; then
     tgs=$(eyeD3 "${DM_tlt}/$fname.mp3")
     trgt=$(grep -o -P "(?<=IWI1I0I).*(?=IWI1I0I)" <<<"$tgs")
     srce=$(grep -o -P "(?<=IWI2I0I).*(?=IWI2I0I)" <<<"$tgs")
@@ -971,6 +965,7 @@ convert() {
     note="$(sed -n 3p <<<"${fields}")"
     type=1
     id="$(nmfile "${type}" "${trgt}" "${srce}" "${exmp}" "${dftn}" "${note}" "${lwrd}" "${grmr}")"
+    mv -f "${DM_tlt}/words/$fname.mp3" "${DM_tlt}/$id.mp3"
     fi
 
     echo "$n:[type={$type},trgt={$trgt},srce={$srce},exmp={$exmp},defn={$dftn},note={$note},wrds={$lwrd},grmr={$grmr},].[tag={$tag},mark={$mark},].id=[$id]" >> "$DC_tlt/0.cfg"
@@ -1045,6 +1040,8 @@ case "$1" in
     mkhtml ;;
     sanity_1)
     sanity_1 "$@" ;;
+    trestore)
+    trestore "$@" ;;
     fback)
     fback ;;
     about)

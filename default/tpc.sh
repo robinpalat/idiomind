@@ -7,7 +7,6 @@ topic="${1}"
 DC_tlt="$DM_tl/${topic}/.conf"
 DM_tlt="$DM_tl/${topic}"
 datec=$(date +%Y-%m-%d)
-
 cfgfile="tname=\"${topic}\"
 langs=\"${lgsl^}\"
 langt=\"${lgtl^}\"
@@ -50,7 +49,13 @@ else
         echo "${topic}" > "$DT/tpe"
         
         [ ! -d "$HOME/.idiomind/backup" ] && mkdir "$HOME/.idiomind/backup"
-        cp -f "${DC_tlt}/0.cfg" "$HOME/.idiomind/backup/${tpc}"
+        if ! grep "${tpc}.bk" < <(cd "$HOME/.idiomind/backup" \
+        find . -maxdepth 1 -name '*.bk' -mtime -1); then
+        if [ -f "$(< "${DC_tlt}/0.cfg")" ]; then
+        cp -f "${DC_tlt}/0.cfg" "$HOME/.idiomind/backup/${tpc}.bk"; fi
+        cd /
+        fi
+        
         echo 0 > "$DC_s/5.cfg"
         
         if [[ `wc -l < "${DC_tlt}/id.cfg"` -lt 16 ]]; then

@@ -48,8 +48,7 @@ score() {
 
 fonts() {
     
-    pos=`grep -Fon -m 1 "trgt={${1}}" "${cfg11_}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
-    item=`sed -n ${pos}p "${cfg11_}" |sed 's/},/}\n/g'`
+    item="$(grep -F -m 1 "trgt={${1}}" "${cfg11_}" |sed 's/},/}\n/g')"
     wes=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
 
     ras=$(sort -Ru b.srces | egrep -v "$wes" | head -5)

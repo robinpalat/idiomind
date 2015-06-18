@@ -20,12 +20,12 @@
 
 source /usr/share/idiomind/ifs/c.conf
 [[ -z "$tpc" && -d "$DT" ]] && exit 1
-if [ "$(grep -o repeat=\"[^\"]* < "$DC_s/1.cfg" \
+if [ "$(grep -o rplay=\"[^\"]* < "$DC_s/1.cfg" \
 |grep -o '[^"]*$')" = TRUE ]; then
 
     while [ 1 ]; do
 
-        "$DS/chng.sh" chngi "$pos"
+        "$DS/chng.sh" chngi
         sleep 10
     done
 else

@@ -133,7 +133,7 @@ delete_item() {
     gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
 
     fi
-    ret=$(echo "$?")
+    ret="$?"
     
     if [[ $ret -eq 0 ]]; then
         

@@ -26,9 +26,10 @@ msg "$(gettext "No topic is active")\n" info & exit 1; fi
 lbls=('Words' 'Sentences' 'Marked items' 'Difficult words' \
 'New episodes <i><small>Podcasts</small></i>' \
 'Saved episodes <i><small>Podcasts</small></i>')
-sets=('grammar' 'list' 'tasks' 'trans' 'trd_trgt' 'text' 'audio' \
-'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' \
-'words' 'sentences' 'marks' 'practice' 'news' 'saved')
+sets=('gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
+'rplay' 'audio' 'video' 'ntosd' 'loop' \
+'langt' 'langs' 'synth' \
+'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi')
 in=('in1' 'in2' 'in3' 'in4' 'in5' 'in6')
 
 cfg1="$DC_tlt/1.cfg"
@@ -47,8 +48,8 @@ in6="$(tac "$DM_tl/Podcasts/.conf/2.lst")" || in6=""
 
 if [[ "$cfg" = 1 ]]; then
 
-    n=13
-    while [[ $n -lt 19 ]]; do
+    n=14
+    while [[ $n -lt 20 ]]; do
         get="${sets[$n]}"
         val=$(grep -o "$get"=\"[^\"]* < "$DC_s/1.cfg" | grep -o '[^"]*$')
         declare ${sets[$n]}="$val"
@@ -71,7 +72,7 @@ function setting_1() {
             && echo "$DS/images/addi.png" \
             || echo "$DS/images/add.png"
         echo "  <span font_desc='Arial 11'>$(gettext "${lbls[$n]}")</span>"
-        echo "${!sets[$((n+13))]}"
+        echo "${!sets[$((n+14))]}"
         let n++
     done
 }
@@ -105,13 +106,10 @@ setting_1 | yad --list --title="$title" \
 ret=$?
 
 if [[ $ret -eq 0 ]]; then
-
-    while [[ $n -lt 19 ]]; do
-
-        val=$(sed -n $((n-12))p "${slct}" | cut -d "|" -f3)
-        
+    n=14
+    while [[ $n -lt 20 ]]; do
+        val=$(sed -n $((n-13))p "${slct}" | cut -d "|" -f3)
         [ -n "${val}" ] && sed -i "s/${sets[$n]}=.*/${sets[$n]}=\"$val\"/g" "$DC_s/1.cfg"
-
         ((n=n+1))
     done
     

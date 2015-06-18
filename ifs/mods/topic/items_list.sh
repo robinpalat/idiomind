@@ -28,7 +28,7 @@ function word_view() {
 function sentence_view() {
 
     [ -z "$trgt" ] && tm="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>"
-    if [ "$(sed -n 1p "$DC_s/1.cfg" | grep -o grammar=\"[^\"]* | grep -o '[^"]*$')"  = TRUE ]; then
+    if [ "$(grep -o gramr=\"[^\"]* < "$DC_s/1.cfg" | grep -o '[^"]*$')"  = TRUE ]; then
     trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
     
     echo "$lwrd" | yad --list --title=" " \
@@ -55,7 +55,6 @@ function notebook_1() {
     cmd_mark="'$DS/mngr.sh' 'mark_as_learned' "\"$tpc\"" 1"
     cmd_attchs="'$DS/ifs/tls.sh' 'attachs'"
     cmd_del="'$DS/mngr.sh' 'delete_topic' "\"$tpc\"""
-    cmd_adv="'$DS/ifs/tls.sh' adv "\"$tpc\"""
     cmd_share="'$DS/ifs/upld.sh' upld "\"$tpc\"""
     cmd_play="$DS/play.sh"
     list() {
@@ -91,7 +90,7 @@ function notebook_1() {
     --field="$(gettext "Files")":FBTN "$cmd_attchs" \
     --field="$(gettext "Share")":FBTN "$cmd_share" \
     --field="$(gettext "Delete")":FBTN "$cmd_del" \
-    --field="$(gettext "More")":FBTN "$cmd_adv" > "$cnf4" &
+    --field=" ":LBL " " > "$cnf4" &
     yad --notebook --title="Idiomind - $tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \

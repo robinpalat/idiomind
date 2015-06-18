@@ -21,42 +21,46 @@ DT="/tmp/.idmtp1.$USER"
 DS="/usr/share/idiomind"
 DC_s="$HOME/.config/idiomind/s"
 source "$DS/ifs/mods/cmns.sh"
+f=0
 
 if [[ "$1" = chngi ]]; then
 
-    w="$(grep -oP '(?<=words=\").*(?=\")' < "$DC_s/1.cfg")"
-    s="$(grep -oP '(?<=sentences=\").*(?=\")' < "$DC_s/1.cfg")"
-    m="$(grep -oP '(?<=marks=\").*(?=\")' < "$DC_s/1.cfg")"
-    p="$(grep -oP '(?<=pratc=\").*(?=\")' < "$DC_s/1.cfg")"
-    a="$(grep -oP '(?<=audio=\").*(?=\")' < "$DC_s/1.cfg")"
-    n="$(grep -oP '(?<=text=\").*(?=\")' < "$DC_s/1.cfg")"
-    l="$(grep -oP '(?<=loop=\").*(?=\")' < "$DC_s/1.cfg")"
-    export v="$(grep -oP '(?<=videos=\").*(?=\")' < "$DC_s/1.cfg")"
-    export ne="$(grep -oP '(?<=news=\").*(?=\")' < "$DC_s/1.cfg")"
-    export se="$(grep -oP '(?<=saved=\").*(?=\")' < "$DC_s/1.cfg")"
+    w="$(grep -oP '(?<=words=\").*(?=\")' "$DC_s/1.cfg")"
+    s="$(grep -oP '(?<=sntcs=\").*(?=\")' "$DC_s/1.cfg")"
+    m="$(grep -oP '(?<=marks=\").*(?=\")' "$DC_s/1.cfg")"
+    p="$(grep -oP '(?<=wprct=\").*(?=\")' "$DC_s/1.cfg")"
+    a="$(grep -oP '(?<=audio=\").*(?=\")' "$DC_s/1.cfg")"
+    n="$(grep -oP '(?<=ntosd=\").*(?=\")' "$DC_s/1.cfg")"
+    l="$(grep -oP '(?<=loop=\").*(?=\")' "$DC_s/1.cfg")"
+    export v="$(grep -oP '(?<=video=\").*(?=\")' < "$DC_s/1.cfg")"
+    export ne="$(grep -oP '(?<=nsepi=\").*(?=\")' < "$DC_s/1.cfg")"
+    export se="$(grep -oP '(?<=svepi=\").*(?=\")' < "$DC_s/1.cfg")"
     if [[ ${n} != TRUE ]] && [[ ${a} != TRUE ]]; then audio=TRUE; fi
     nu='^[0-9]+$'; if ! [[ $l =~ $nu ]]; then l=1; fi
 
     _play() {
         
-        if [ "$n" = "TRUE" ]; then
-        notify-send -i "$icon" "$trgt" "$srce" -t 10000; fi &
+        if [ ${n} = TRUE ]; then
+        notify-send -i "${icon}" "${trgt}" "${srce}" -t 10000; fi &
         
-        if [ "$a" = "TRUE" ]; then
-        "$play" "$file" && wait; fi
+        if [ ${a} = TRUE ]; then
+        "${play}" "${file}" && wait; fi
         
-        if [ "$n" = "TRUE" ] && [[ $l -lt 11 ]]; then l=11; fi
+        if [ ${n} = TRUE ] && [[ $l -lt 11 ]]; then l=11; fi
         
-        sleep "$l"
+        sleep ${l}
     }
-    
     export -f _play
     
     getitem() {
         
+        if [ ${f} -gt 5 ] || [ ! -d "${DM_tlt}" ]; then
+        msg "$(gettext "An error has occurred. Playback stopped")" info &
+        "$DS/stop.sh" 2; fi
+        
+        if [ -n "${item}" ]; then
         unset file
-        pos="$(grep -Fon -m 1 "trgt={${item}}" "$DC_tlt/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p')"
-        _item="$(sed -n ${pos}p "$DC_tlt/0.cfg" |sed 's/},/}\n/g')"
+        _item="$(grep -F -m 1 "trgt={${item}}" "$DC_tlt/0.cfg" |sed 's/},/}\n/g')"
         type="$(grep -oP '(?<=type={).*(?=})' <<<"${_item}")"
         trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${_item}")"
         srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${_item}")"
@@ -66,6 +70,7 @@ if [[ "$1" = chngi ]]; then
         [ ${type} = 1 ] && file="$DM_tls/${trgt,,}.mp3"
         [ ${type} = 2 ] && file="$DM_tlt/$id.mp3"
         play=play
+        else ((f=f+1)); fi
     }
     
     if [ ${w} = TRUE -a ${s} = TRUE ]; then
@@ -89,29 +94,7 @@ if [[ "$1" = chngi ]]; then
     done < <(grep -Fxv "$cfg4" "$DC_tlt/practice/log.3"); fi
     
     include "$DS/ifs/mods/play"
-    
-    
-    
-    #DM_tlt="$(sed -n 1p "$DT/.p_")"
-    #if [ ! -d "${DM_tlt}" ]; then
-    #msg "$(gettext "An error has occurred. Playback stopped")" info &
-    #"$DS/stop.sh" 2; fi
 
-    #if [ -f "$DT/.p" ]; then
-    #echo $(($2+2)) > "$DT/.p"
-    #"$DS/stop.sh" 8 & exit 1; fi
-    
-    #index="$DT/index.m3u"
-    
-    
-    
-    #if [ -z "${item}" ]; then item="$(sed -n 1p "${index}")"; index_pos=1; fi
-    
-
-    
-
-    
-    
 elif [[ "$1" != chngi ]]; then
 
     source /usr/share/idiomind/ifs/c.conf

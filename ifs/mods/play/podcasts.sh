@@ -1,8 +1,13 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
+f=0
 
 get_itep() {
     
+    if [ ${f} -gt 5 ] || [ ! -d "${DM_tl}/Podcasts/cache" ]; then
+    msg "$(gettext "An error has occurred. Playback stopped")" info &
+    "$DS/stop.sh" 2; fi
+        
     fname=$(echo -n "${item}" | md5sum | rev | cut -c 4- | rev)
     item="$DM_tl/Podcasts/cache/$fname"
     
@@ -30,10 +35,11 @@ get_itep() {
         play=mplayer
         icon=idiomind
         fi
-    fi
+    else ((f=f+1)); fi
 }
 
 if [ ${ne} = TRUE ] || [ ${se} = TRUE ]; then
+
 
     DMC="$DM_tl/Podcasts/cache"
     DPC="$DM_tl/Podcasts/.conf"
@@ -65,7 +71,8 @@ if [ ${ne} = TRUE ] || [ ${se} = TRUE ]; then
         "$(gettext "Exiting...")" -i idiomind -t 3000
         "$DS/stop.sh" 2 & exit
         else 
-        "$DS/stop.sh" 3 && mplayer -fs -playlist "$DT/index.m3u" & exit
+        "$DS/stop.sh" 3
+        mplayer -fs -playlist "$DT/index.m3u" & exit
         fi
     
     else

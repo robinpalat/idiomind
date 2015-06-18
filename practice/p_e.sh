@@ -47,8 +47,7 @@ score() {
 
 fonts() {
     
-    pos=`grep -Fon -m 1 "trgt={${1}}" "${cfg0}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
-    item=`sed -n ${pos}p "${cfg0}" |sed 's/},/}\n/g'`
+    item="$(grep -F -m 1 "trgt={${1}}" "${cfg0}" |sed 's/},/}\n/g')"
     src=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
     id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
 

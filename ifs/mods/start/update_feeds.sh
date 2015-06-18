@@ -10,7 +10,7 @@ if [ -f "$DCP/2.lst" ] \
 && [[ `wc -l < "$DCP/1.lst"` != `wc -l < "$DCP/.1.lst"` ]]; then
 cp "$DCP/.1.lst" "$DCP/1.lst"; fi
 if [ -f "$DCP/0.lst" ]; then
-update="$(sed -n 1p "$DCP/0.lst" | grep -o 'update="[^"]*' | grep -o '[^"]*$')"
+update="$(grep -o 'update="[^"]*' "$DCP/0.lst" | grep -o '[^"]*$')"
 if [ "$update" = TRUE ]; then (sleep 100 && "$DS_a/Podcasts/strt.sh" 0) &
 fi
 fi

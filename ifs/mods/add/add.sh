@@ -293,8 +293,7 @@ export -f translate tts
 
 function voice() {
     
-    synth="$(sed -n 13p "$DC_s/1.cfg" \
-    | grep -o synth=\"[^\"]* | grep -o '[^"]*$')"
+    synth="$(grep -o synth=\"[^\"]* < "$DC_s/1.cfg" | grep -o '[^"]*$')"
     DT_r="$2"; cd "$DT_r"
     
     if [[ -n "$synth" ]]; then
@@ -315,6 +314,10 @@ function voice() {
             [ -f *.mp3 ] && mv -f *.mp3 "${3}"
             [ -f *.wav ] && sox *.wav "${3}"
         fi
+        
+        if [ ! -f *.mp3 ] && [ ! -f *.wav ]; then
+        msg "$(gettext "Sorry, can not process this language.")\n" error
+        [ "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
         
     else
         lg="${lgtl,,}"

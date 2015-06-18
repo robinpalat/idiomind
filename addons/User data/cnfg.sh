@@ -22,6 +22,7 @@ dte=$(date +%F)
 
 if [ -z "$1" ]; then
     
+    cmd_rest="$DS/ifs/tls.sh trestore 1 "\"${tpc}\"""
     D=$(yad --list --radiolist --title="$(gettext "User Data")" \
     --name=Idiomind --class=Idiomind \
     --text="$(gettext "Total size:") $size" \
@@ -30,6 +31,7 @@ if [ -z "$1" ]; then
     --center --on-top --expand-column=2 --image-on-top \
     --skip-taskbar --image=folder \
     --width=480 --height=330 --borders=15 \
+    --button="$(gettext "Restore")":"${cmd_rest}" \
     --button="$(gettext "Cancel")":1 \
     --button=Ok:0 \
     --column="" \

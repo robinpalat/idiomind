@@ -45,9 +45,8 @@ score() {
 
 fonts() {
 
-    pos=`grep -Fon -m 1 "trgt={${1}}" "${cfg11_}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
-    item=`sed -n ${pos}p "${cfg11_}" |sed 's/},/}\n/g'`
-    src=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
+    item="$(grep -F -m 1 "trgt={${1}}" "${cfg11_}" |sed 's/},/}\n/g')"
+    src="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
 
     s=$((42-${#src}))
     c=$((22-${#1}))

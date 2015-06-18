@@ -23,12 +23,9 @@ source "$DS/ifs/mods/cmns.sh"
 include "$DS/ifs/mods/add"
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
-list=$(sed -n 2p "$DC_s/1.cfg" \
-| grep -o list=\"[^\"]* | grep -o '[^"]*$')
-trans=$(sed -n 3p "$DC_s/1.cfg" \
-| grep -o trans=\"[^\"]* | grep -o '[^"]*$')
-trd_trgt=$(sed -n 4p "$DC_s/1.cfg" \
-| grep -o trd_trgt=\"[^\"]* | grep -o '[^"]*$')
+wlist=$(grep -o wlist=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
+trans=$(grep -o trans=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
+ttrgt=$(grep -o ttrgt=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
 
 new_topic() {
     
@@ -192,7 +189,7 @@ new_sentence() {
     
         internet
         cd "$DT_r"
-        if [ "$trd_trgt" = TRUE ]; then
+        if [ "$ttrgt" = TRUE ]; then
         trgt="$(translate "${trgt}" auto "$lgt")"
         trgt=$(clean_2 "${trgt}"); fi
         srce="$(translate "${trgt}" $lgt $lgs)"
@@ -242,7 +239,7 @@ new_sentence() {
         notify-send "${trgt}" "${srce}\\n(${tpe})" -t 10000
 
         # list words
-        (if [ "$list" = TRUE ]; then
+        (if [ "$wlist" = TRUE ]; then
         "$DS/add.sh" list_words_sentence "${wrds}" "${trgt}" "${tpe}"
         fi) &
 
@@ -269,7 +266,7 @@ new_word() {
     if [ "$trans" = TRUE ]; then
     
         internet
-        if [ "$trd_trgt" = TRUE ] && [ "$5" != 0 ]; then
+        if [ "$ttrgt" = TRUE ] && [ "$5" != 0 ]; then
         trgt="$(translate "${trgt}" auto "$lgt")"
         trgt="$(clean_1 "${trgt}")"; fi
         srce="$(translate "${trgt}" $lgt $lgs)"
@@ -705,7 +702,7 @@ process() {
                 
                     sntc="$(sed -n ${n}p ./slts)"
                     trgt="$(clean_2 "${sntc}")"
-                    if [ "$trd_trgt" = TRUE ]; then
+                    if [ "$ttrgt" = TRUE ]; then
                     trgt="$(translate "${trgt}" auto $lgt)"
                     trgt="$(clean_2 "${trgt}")"; fi
                     srce="$(translate "${trgt}" $lgt $lgs)"
