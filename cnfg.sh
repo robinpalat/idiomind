@@ -90,8 +90,8 @@ else
     done
 fi
 
-if [ "$text" != TRUE ]; then audio=TRUE; fi
-if [ "$trans" != TRUE ]; then trd_trgt=FALSE; fi
+if [ "$ntosd" != TRUE ]; then audio=TRUE; fi
+if [ "$trans" != TRUE ]; then ttrgt=FALSE; fi
 yad --plug=$KEY --form --tabnum=1 \
 --align=right --scroll \
 --separator='|' --always-print-result --print-all \
@@ -153,6 +153,9 @@ ret=$?
 
         val=$(cut -d "|" -f24 < "$cnf1")
         sed -i "s/${sets[13]}=.*/${sets[13]}=\"$val\"/g" "$DC_s/1.cfg"
+        
+        if [ "$clipw" = FALSE ] && [ -f "$DT/.clip" ]; then
+        kill "$(< "$DT/.clip")"; rm -f "$DT/.clip"; fi
         
         [ ! -d  "$HOME/.config/autostart" ] \
         && mkdir "$HOME/.config/autostart"
