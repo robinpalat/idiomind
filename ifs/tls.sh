@@ -41,7 +41,7 @@ restoresin() {
     done < "$DC_tlt/0.cfg"
 }
 
-
+restoresin
 function check_source_1() {
 CATEGORIES="others
 comics

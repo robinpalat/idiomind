@@ -21,10 +21,10 @@
 strt="$DS/practice/strt.sh"
 cls="$DS/practice/cls.sh"
 log="$DC_s/8.cfg"
+cfg0="$DC_tlt/0.cfg"
+cfg1="$DC_tlt/1.cfg"
 cfg3="$DC_tlt/3.cfg"
 cfg4="$DC_tlt/4.cfg"
-cfg1="$DC_tlt/1.cfg"
-cfg0="$DC_tlt/0.cfg"
 directory="$DC_tlt/practice"
 touch "$directory/log.1" "$directory/log.2" "$directory/log.3"
 
@@ -41,7 +41,7 @@ lock() {
 
 get_list() {
     
-    if [[ $ttest = a ]] || [[ $ttest = b ]] || [[ $ttest = c ]]; then
+    if [[ $ttest = a || $ttest = b || $ttest = c ]]; then
     
         > "$directory/${ttest}.0"
         if [[ `wc -l < "${cfg4}"` -gt 0 ]]; then

@@ -124,7 +124,7 @@ Create one using the button below. ")" & exit 1; fi
             msg "$(gettext "No topic is active")\n" info & exit 1; fi
         
             if [ -z "${trgt}" ]; then
-            [ "$DT_r" ] && cleanups "$DT_r"; exit 1; fi
+            cleanups "$DT_r"; exit 1; fi
 
             if [[ "$chk" = "$(gettext "New") *" ]]; then
             "$DS/add.sh" new_topic
@@ -145,7 +145,7 @@ Create one using the button below. ")" & exit 1; fi
             elif [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
             
                 if [ "$trans" = FALSE ] && ([ -z "${srce}" ] || [ -z "${trgt}" ]); then
-                [ "$DT_r" ] && cleanups "$DT_r"
+                cleanups "$DT_r"
                 msg "$(gettext "You need to fill text fields.")\n" info " " & exit 1; fi
 
                 srce=$(translate "${trgt}" auto $lgs)
@@ -160,7 +160,7 @@ Create one using the button below. ")" & exit 1; fi
             elif [ $lgt != ja ] || [ $lgt != 'zh-cn' ] || [ $lgt != ru ]; then
             
                 if [ "$trans" = FALSE ]; then
-                    if [ -z "${srce}" ] || [ -z "${trgt}" ]; then [ "$DT_r" ] && cleanups "$DT_r"
+                    if [ -z "${srce}" ] || [ -z "${trgt}" ]; then cleanups "$DT_r"
                     msg "$(gettext "You need to fill text fields.")\n" info " " & exit 1; fi
                 fi
 
@@ -397,7 +397,6 @@ list_words_sentence() {
     DT_r=$(mktemp -d "$DT/XXXXXX")
     cd "$DT_r"
     check_s "${tpe}"
-
     info="-$((200-$(wc -l < "${DC_tlt}/0.cfg")))"
 
     list_words_2 "$2"

@@ -1,21 +1,44 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-if [ ! -n "$_videos" ]; then
-_videos="$(sed -n 8p "$DC_s/1.cfg" \
-| grep -o videos=\"[^\"]* | grep -o '[^"]*$')"
-_news="$(sed -n 18p "$DC_s/1.cfg" \
-| grep -o news=\"[^\"]* | grep -o '[^"]*$')"
-_saved="$(sed -n 19p "$DC_s/1.cfg" \
-| grep -o saved=\"[^\"]* | grep -o '[^"]*$')"
-export _videos _news _saved
-fi
-DMC="$DM_tl/Podcasts/cache"
-DPC="$DM_tl/Podcasts/.conf"
+get_itep() {
+    
+    fname=$(echo -n "${item}" | md5sum | rev | cut -c 4- | rev)
+    item="$DM_tl/Podcasts/cache/$fname"
+    
+    if [ -f "${item}.item" ]; then
+    
+        channel="$(grep -o channel=\"[^\"]* < "${item}.item" | grep -o '[^"]*$')"
+        title="$(grep -o title=\"[^\"]* < "${item}.item" | grep -o '[^"]*$')"
+        [ -f "$item.mp3" ] && file="$item.mp3" && t=3
+        [ -f "$item.ogg" ] && file="$item.ogg" && t=3
+        [ -f "$item.m4v" ] && file="$item.m4v" && t=4
+        [ -f "$item.mp4" ] && file="$item.mp4" && t=4
+        [ -f "$item.avi" ] && file="$item.avi" && t=4
+        
+        if [[ "$t" = 3 ]]; then
+        e_file "${file}"
+        trgt="${title}"
+        srce="${channel}"
+        play=play
+        icon=idiomind
+        
+        elif [[ "$t" = 4 ]]; then
+        e_file "$file"
+        trgt="${title}"
+        srce="${channel}"
+        play=mplayer
+        icon=idiomind
+        fi
+    fi
+}
 
-if [ "$_news" = "TRUE" ] || [ "$_saved" = "TRUE" ]; then
+if [ ${ne} = TRUE ] || [ ${se} = TRUE ]; then
 
-    if [ "$_videos" = "TRUE" ]; then
+    DMC="$DM_tl/Podcasts/cache"
+    DPC="$DM_tl/Podcasts/.conf"
+    
+    if [ ${v} = TRUE ]; then
 
         _filename() {
             fname=$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)
@@ -24,13 +47,13 @@ if [ "$_news" = "TRUE" ] || [ "$_saved" = "TRUE" ]; then
         }
         rm -f "$DT/index.m3u"
         
-        if [ "$_news" = "TRUE" ]; then
+        if [ ${ne} = TRUE ]; then
             while read item; do
             echo "$(_filename "$item")" >> "$DT/index.m3u"
             done < "$DPC/1.lst"
         fi
             
-        if [ "$_saved" = "TRUE" ]; then
+        if [ ${se} = "TRUE" ]; then
             while read item; do
             echo "$(_filename "$item")" >> "$DT/index.m3u"
             done < "$DPC/2.lst"
@@ -46,33 +69,12 @@ if [ "$_news" = "TRUE" ] || [ "$_saved" = "TRUE" ]; then
         fi
     
     else
-        fname=$(echo -n "$_item" | md5sum | rev | cut -c 4- | rev)
-        _file="$DM_tl/Podcasts/cache/$fname"
-        if [ -f "$_file.item" ]; then
-            channel="$(sed -n 1p "$_file.item" \
-            | grep -o channel=\"[^\"]* | grep -o '[^"]*$')"
-            [ -f "$_file.mp3" ] && file="$_file.mp3" && t=3
-            [ -f "$_file.ogg" ] && file="$_file.ogg" && t=3
-            [ -f "$_file.m4v" ] && file="$_file.m4v" && t=4
-            [ -f "$_file.mp4" ] && file="$_file.mp4" && t=4
-            [ -f "$_file.avi" ] && file="$_file.avi" && t=4
-            
-            if [[ "$t" = 3 ]]; then
-            e_file "$file"
-            trgt="$title"
-            srce="$channel"
-            play=play
-            icon=idiomind
-            
-            elif [[ "$t" = 4 ]]; then
-            e_file "$file"
-            trgt="$title"
-            srce="$channel"
-            play=mplayer
-            icon=idiomind
-            fi
-        fi
+        if [ ${ne} = TRUE ]; then
+        while read -r item; do get_itep; _play
+        done < "$DPC/1.lst"; fi
+        
+        if [ ${se} = TRUE ]; then
+        while read -r item; do get_itep; _play
+        done < "$DPC/2.lst"; fi
     fi
-    
-    
 fi

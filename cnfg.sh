@@ -75,8 +75,7 @@ n=0
 if [ "$cfg" = 1 ]; then
     while [[ $n -lt 14 ]]; do
         get="${sets[$n]}"
-        val=$(sed -n $((n+1))p "$DC_s/1.cfg" \
-        | grep -o "$get"=\"[^\"]* | grep -o '[^"]*$')
+        val=$(grep -o "$get"=\"[^\"]* < "$DC_s/1.cfg" | grep -o '[^"]*$')
         declare "${sets[$n]}"="$val"
         ((n=n+1))
     done

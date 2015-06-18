@@ -20,36 +20,16 @@
 
 source /usr/share/idiomind/ifs/c.conf
 [[ -z "$tpc" && -d "$DT" ]] && exit 1
-repeat=$(sed -n 6p "$DC_s/1.cfg" |grep -o repeat=\"[^\"]* |grep -o '[^"]*$')
+if [ "$(grep -o repeat=\"[^\"]* < "$DC_s/1.cfg" \
+|grep -o '[^"]*$')" = TRUE ]; then
 
-if [[ -s "$DT/index.m3u" ]] \
-&& [[ `wc -l < "$DT/index.m3u"` -gt 0 ]]; then
-   
-    if [ "$repeat" = TRUE ]; then
-        while [ 1 ]; do
-            if [[ -f "$DT/.p" ]]; then
-            pos=`sed -n 1p "$DT/.p"`; rm "$DT/.p"
-            [[ $pos -gt `wc -l < "$DT/index.m3u"` ]] && \
-            pos=`wc -l < "$DT/index.m3u"`; else
-            pos=`wc -l < "$DT/index.m3u"`; fi
-            while [[ 1 -le $pos ]]; do
-                "$DS/chng.sh" chngi "$pos"
-                let pos--
-            done
-            sleep 10
-        done
-    else
-        if [[ -f "$DT/.p" ]]; then
-        pos=`sed -n 1p "$DT/.p"`; rm "$DT/.p"
-        [[ $pos -gt `wc -l < "$DT/index.m3u"` ]] && \
-        pos=`wc -l < "$DT/index.m3u"`; else
-        pos=`wc -l < "$DT/index.m3u"`; fi
-        while [[ 1 -le $pos ]]; do
-            "$DS/chng.sh" chngi "$pos"
-            let pos--
-        done
-        rm -fr "$DT/.p_"; exit 0
-    fi
+    while [ 1 ]; do
+
+        "$DS/chng.sh" chngi "$pos"
+        sleep 10
+    done
 else
-    exit 1
+    "$DS/chng.sh" chngi
+
+    rm -fr "$DT/.p_"; exit 0
 fi
