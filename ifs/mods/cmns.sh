@@ -114,6 +114,18 @@ function list_inadd() {
     done < <(cd "$DM_tl"; ls -tNd */ | head -n 30 | sed 's/\///g')
 }
 
+function cleanups() {
+
+    for fl in "$@"; do
+    
+        if [ -d "${fl}" ]; then
+            rm -fr "${fl}"
+        elif [ -f "${fl}" ]; then
+            rm -f "${fl}"
+        fi
+    done
+}
+
 function calculate_review() {
     
     DC_tlt="$DM_tl/$1/.conf"

@@ -95,8 +95,8 @@ elif [[ "$1" != chngi ]]; then
     text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/${lgtl,,}'>$(gettext "Shared")</a>   </small></small>"
     align="right"; fi
     
-    if [[ $((`wc -l < "$DC_s/0.cfg"`/3)) = \
-    `wc -l < "${DC_tlt}/1.cfg"` ]]; then
+    if [ -f "${DC_tlt}/1.cfg" ] && \
+    [[ $((`wc -l < "$DC_s/0.cfg"`/3)) = `wc -l < "${DC_tlt}/1.cfg"` ]]; then
     "$DS/mngr.sh" mkmn; fi
 
     tpc=$(cat "$DC_s/0.cfg" | \

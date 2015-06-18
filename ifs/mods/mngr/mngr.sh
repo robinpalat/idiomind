@@ -27,7 +27,7 @@ position() {
     item="$(sed -n "$2"p "${3}")"
     pos=$((cnt-$2))
     
-    mv="$(tac "$DC_tlt/0.cfg" | grep -vxF "$item" \
+    mv="$(tac "$DC_tlt/1.cfg" | grep -vxF "$item" \
     | awk '{print ((let++))"\nFALSE\n"$0"\nFALSE"}' \
     | yad --list --title="$(gettext "More")" \
     --class=Idiomind --name=Idiomind \
@@ -49,7 +49,7 @@ position() {
     if [[ $ret -eq 0 ]]; then
     
         [ -z "${mv}" ] && exit
-        > "$DC_tlt/0.cfg.mv"
+        > "$DC_tlt/1.cfg.mv"
 
         while read -r sec; do
         
@@ -58,30 +58,29 @@ position() {
             f3="$(cut -d "|" -f3 <<<"${sec}")"
             f4="$(cut -d "|" -f4 <<<"${sec}")"
             if [[ "$f2" = 'TRUE' ]] && [[ "${itr}" != "${item}" ]]; then
-            echo -e "${item}" >> "$DC_tlt/0.cfg.mv"
-            echo -e "${f3}" >> "$DC_tlt/0.cfg.mv"
+            echo -e "${item}" >> "$DC_tlt/1.cfg.mv"
+            echo -e "${f3}" >> "$DC_tlt/1.cfg.mv"
             elif [[ "$f4" = 'TRUE' ]] && [[ "${f3}" != "${item}" ]]; then
             delete_item_ok "${f3}"
-            else echo "${f3}" >> "$DC_tlt/0.cfg.mv"; fi
+            else echo "${f3}" >> "$DC_tlt/1.cfg.mv"; fi
         done <<<"{$mv}"
 
         e=$?
         if [ $e != 0 ] ; then
             msg "$(gettext "Some changes were not made.")\n" dialog-warning
         else
-            tac "$DC_tlt/0.cfg.mv" > "$DC_tlt/0.cfg"
-            cp -f "$DC_tlt/0.cfg" "$DC_tlt/0.cfg"
+            tac "$DC_tlt/1.cfg.mv" > "$DC_tlt/1.cfg"
+            cp -f "$DC_tlt/1.cfg" "$DC_tlt/1.cfg"
             
             if [ "$(wc -l < "$DC_tlt/2.cfg")" = 0 ]; then
-            cp -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"
             msg "$(gettext "The changes will be seen only after restarting the main window.")\n" info
             else msg "$(gettext "The changes will be seen only after restarting the lists.")\n" info; fi
         fi
         
     elif [[ $ret -eq 3 ]]; then
     
-        tac "$DC_tlt/0.cfg"  > "$DC_tlt/0.cfg.mv"
-        mv -f "$DC_tlt/0.cfg.mv" "$DC_tlt/0.cfg"
+        tac "$DC_tlt/1.cfg"  > "$DC_tlt/1.cfg.mv"
+        mv -f "$DC_tlt/1.cfg.mv" "$DC_tlt/1.cfg"
         
         if [ "$(wc -l < "$DC_tlt/2.cfg")" = 0 ]; then
         tac "$DC_tlt/1.cfg" > "$DC_tlt/1.cfg.mv"; mv -f "$DC_tlt/1.cfg.mv" "$DC_tlt/1.cfg"
@@ -90,7 +89,7 @@ position() {
         
     fi
     "$DS/ifs/tls.sh" colorize &
-    [ -f "$DC_tlt/0.cfg.mv" ] && rm "$DC_tlt/0.cfg.mv"
+    [ -f "$DC_tlt/1.cfg.mv" ] && rm "$DC_tlt/1.cfg.mv"
     exit
 }
 
@@ -125,7 +124,7 @@ function dlg_form_1() {
 
 function dlg_form_2() {
     
-    if [ `wc -w <<<"$item"` -lt 4 ]; then
+    if [[ `wc -w <<<"$trgt"` -lt 4 ]]; then
     t=CHK; lbl_2="$(gettext "It is a compound word")"
     else t=LBL; fi
     cmd_play="play "\"${audio}\"""

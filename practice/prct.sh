@@ -24,7 +24,7 @@ log="$DC_s/8.cfg"
 cfg3="$DC_tlt/3.cfg"
 cfg4="$DC_tlt/4.cfg"
 cfg1="$DC_tlt/1.cfg"
-cfg11_="$DC_tlt/0.cfg"
+cfg0="$DC_tlt/0.cfg"
 directory="$DC_tlt/practice"
 touch "$directory/log.1" "$directory/log.2" "$directory/log.3"
 
@@ -60,8 +60,8 @@ get_list() {
             echo "5"
             while read word; do
             
-                pos=`grep -Fon -m 1 "trgt={${word}}" "${cfg11_}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
-                item=`sed -n ${pos}p "${cfg11_}" |sed 's/},/}\n/g'`
+                pos=`grep -Fon -m 1 "trgt={${word}}" "${cfg0}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
+                item=`sed -n ${pos}p "${cfg0}" |sed 's/},/}\n/g'`
                 echo "$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")" >> "$directory/b.srces"
             
             done < "$directory/${ttest}.0"
@@ -93,11 +93,22 @@ get_list() {
         fi
 
         > "$directory/${ttest}.0"
+        
+        (
+        echo "5"
         while read itm; do
-            fname="$(echo -n "$itm" | md5sum | rev | cut -c 4- | rev)"
-            if [ -f "$DM_tlt/words/images/$fname.jpg" ]; then
-            echo "$itm" >> "$directory/${ttest}.0"; fi
+        
+            pos=`grep -Fon -m 1 "trgt={${itm}}" "${cfg0}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
+            item=`sed -n ${pos}p "${cfg0}" |sed 's/},/}\n/g'`
+            fname="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
+            if [ -f "$DM_tlt/images/$fname.jpg" ]; then
+                echo "$itm" >> "$directory/${ttest}.0"; fi
+
         done < "$DT/images"
+        ) | yad --progress \
+        --width 50 --height 35 --undecorated \
+        --pulsate --auto-close \
+        --skip-taskbar --center --no-buttons
         
         sed -i '/^$/d' "$directory/${ttest}.0"
         [ -f "$DT/images" ] && rm -f "$DT/images"

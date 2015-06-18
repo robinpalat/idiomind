@@ -72,7 +72,7 @@ dlg=$(yad --form --title="Idiomind" \
 --class=Idiomind --name=Idiomind \
 --window-icon="/usr/share/idiomind/images/icon.png" \
 --image-on-top --buttons-layout=end --align=center --center --on-top \
---width=390 --height=310 --borders=15 \
+--width=440 --height=310 --borders=15 \
 --field="$(gettext "Select the language you are studying")":lbl " " \
 --field=":CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
 --field="$(gettext "Select your native language")":lbl " " \
@@ -145,7 +145,11 @@ elif [ $ret -eq 0 ]; then
     b=$(tr -dc a-z < /dev/urandom |head -c 1)
     c=$((RANDOM%100))
     id="$b$c"
-    echo ${id:0:3} > "$DC_s/3.cfg"
+    id=${id:0:3}
+config="usrid=\"$id\"
+iuser=\"\"
+cntct=\"\""
+    echo -e "${config}" > "$DC_s/3.cfg"
     
     idiomind -s
 

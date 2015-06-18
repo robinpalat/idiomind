@@ -21,8 +21,28 @@ source "$DS/ifs/mods/cmns.sh"
 lgt=$(lnglss "$lgtl")
 lgs=$(lnglss "$lgsl")
 
-check_source_1() {
+restoresin() {
 
+    > "$DC_tlt/1.cfg"; > "$DC_tlt/2.cfg"
+    > "$DC_tlt/3.cfg"; > "$DC_tlt/4.cfg"
+    
+    while read item_; do
+    item="$(sed 's/},/}\n/g' <<<"${item_}")"
+    type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
+    trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
+    
+    if [ -n "${trgt}" ]; then
+    if [[ ${type} = 1 ]]; then
+    echo "${trgt}" >> "$DC_tlt/3.cfg"
+    else echo "${trgt}" >> "$DC_tlt/4.cfg"; fi
+    echo "${trgt}" >> "$DC_tlt/1.cfg"
+    fi
+    
+    done < "$DC_tlt/0.cfg"
+}
+
+
+function check_source_1() {
 CATEGORIES="others
 comics
 culture
@@ -49,6 +69,9 @@ science
 interview
 funny"
 
+sets=('tname' 'langs' 'langt' 'authr' 'cntct' 'ctgry' 'ilink' \
+'datec' 'dateu' 'datei' 'nword' 'nsent' 'nimag' 'level' 'set_1' 'set_2')
+
 LANGUAGES="English
 Chinese
 French
@@ -60,61 +83,53 @@ Russian
 Spanish
 Vietnamese"
 
-    dir="${2}"
-    file="${dir}/conf/id"
+    dir="${1}"
+    file="${dir}/conf/id.cfg"
     nu='^[0-9]+$'
     dirs="$(find "${dir}"/ -maxdepth 5 -type d | sed '/^$/d' | wc -l)"
-    name="$(sed -n 1p "${file}" | grep -o 'name="[^"]*' | grep -o '[^"]*$')"
-    language_source=$(sed -n 2p "${file}" | grep -o 'language_source="[^"]*' | grep -o '[^"]*$')
-    language_target=$(sed -n 3p "${file}" | grep -o 'language_target="[^"]*' | grep -o '[^"]*$')
-    author="$(sed -n 4p "${file}" | grep -o 'author="[^"]*' | grep -o '[^"]*$')"
-    contact=$(sed -n 5p "${file}" | grep -o 'contact="[^"]*' | grep -o '[^"]*$')
-    category=$(sed -n 6p "${file}" | grep -o 'category="[^"]*' | grep -o '[^"]*$')
-    link=$(sed -n 7p "${file}" | grep -o 'link="[^"]*' | grep -o '[^"]*$')
-    date_c=$(sed -n 8p "${file}" | grep -o 'date_c="[^"]*' | grep -o '[^"]*$' | tr -d '-')
-    date_u=$(sed -n 9p "${file}" | grep -o 'date_u="[^"]*' | grep -o '[^"]*$' | tr -d '-')
-    nwords=$(sed -n 10p "${file}" | grep -o 'nwords="[^"]*' | grep -o '[^"]*$')
-    nsentences=$(sed -n 11p "${file}" | grep -o 'nsentences="[^"]*' | grep -o '[^"]*$')
-    nimages=$(sed -n 12p "${file}" | grep -o 'nimages="[^"]*' | grep -o '[^"]*$')
-    level=$(sed -n 13p "${file}" | grep -o 'level="[^"]*' | grep -o '[^"]*$')
 
-    if [ "${name}" != "${3}" ] || [ "${#name}" -gt 60 ] || \
-    [ `grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${name}"` ]; then
-    msg "1. $(gettext "File is corrupted.")\n" error & exit 1
-    elif ! grep -Fox "${language_source}" <<<"${LANGUAGES}"; then
-    msg "2. $(gettext "File is corrupted.")\n" error && exit 1
-    elif ! grep -Fox "${language_target}" <<<"${LANGUAGES}"; then
-    msg "3. $(gettext "File is corrupted.")\n" error & exit 1
-    elif [ "${#author}" -gt 20 ] || \
-    [ `grep -o -E '\.|\*|\/|\@|$|\)|\(|=|-' <<<"${author}"` ]; then
-    msg "4. $(gettext "File is corrupted.")\n" error & exit 1
-    elif [ "${#contact}" -gt 30 ] || \
-    [ `grep -o -E '\*|\/|$|\)|\(|=' <<<"${contact}"` ]; then
-    msg "5. $(gettext "File is corrupted.")\n" error & exit 1
-    elif ! grep -Fox "${category}" <<<"${CATEGORIES}"; then
-    msg "6. $(gettext "Unknown category.")\n" error & exit 1
-    elif ! [[ 1 =~ $nu ]] || [ "${#link}" -gt 4 ]; then
-    msg "7. $(gettext "File is corrupted.")\n" error & exit 1
-    elif ! [[ $date_c =~ $nu ]] || [ "${#date_c}" -gt 12 ] && \
-    [ -n "${date_c}" ]; then
-    msg "8. $(gettext "File is corrupted.")\n" error & exit 1
-    elif ! [[ $date_u =~ $nu ]] || [ "${#date_u}" -gt 12 ] && \
-    [ -n "${date_u}" ]; then
-    msg "9. $(gettext "File is corrupted.")\n" error & exit 1
-    elif ! [[ $nwords =~ $nu ]] || [ "${nwords}" -gt 200 ]; then
-    msg "10. $(gettext "File is corrupted.")\n" error & exit 1
-    elif ! [[ $nsentences =~ $nu ]] || [ "${nsentences}" -gt 200 ]; then
-    msg "11. $(gettext "File is corrupted.")\n" error & exit 1
-    elif ! [[ $nimages =~ $nu ]] || [ "${nimages}" -gt 200 ]; then
-    msg "12. $(gettext "File is corrupted.")\n" error & exit 1
-    elif ! [[ $level =~ $nu ]] || [ "${#level}" -gt 2 ]; then
-    msg "13. $(gettext "Incorrect value of \"Learning difficulty\".")\n" error & exit 1
-    elif grep "invalid" <<<"$chckf"; then
-    msg "14. $(gettext "File is corrupted.")\n" error & exit 1
-    elif [[ $dirs -gt 6 ]] ; then
-    msg "15. $(gettext "File is corrupted.")\n" error & exit 1
-    else
-    head -n14 < "${file}" > "$DT/$name.cfg"
+    invalid() {
+        exit=1
+        #rm -fr "${dir}" "$DT/import.tar.gz"
+        msg "$1. $(gettext "File is corrupted.")\n" error & exit 1
+    }
+    
+    [ ! -f "${file}" ] && invalid
+    n=0; exit=0
+    while read -r line; do
+    
+        get="${sets[$n]}"
+        val=$(echo "${line}" |grep -o "$get"=\"[^\"]* |grep -o '[^"]*$')
+        if [ ${#line} -gt $((8+${#val})) ]; then invalid 1; fi
+        if [[ $n = 0 ]]; then
+        if [ -z "${val}" ] || [ ${#val} -gt 60 ] || \
+        [ `grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${val}"` ] || \
+        [ ${#val} -gt 60 ]; then invalid 2; fi
+        elif [[ $n = 1 || $n = 2 ]]; then
+        if ! grep -Fox "${val}" <<<"${LANGUAGES}"; then invalid 3; fi
+        elif [[ $n = 3 || $n = 4 ]]; then
+        if [ ${#val} -gt 30 ] || \
+        [ `grep -o -E '\*|\/|$|\)|\(|=' <<<"${val}"` ]; then invalid 4; fi
+        elif [[ $n = 5 ]]; then
+        if ! grep -Fox "${val}" <<<"${CATEGORIES}"; then invalid 5; fi
+        elif [[ $n = 6 ]]; then
+        if [ ${#val} -gt 4 ]; then invalid 6; fi
+        elif [[ $n = 7 || $n = 8 || $n = 9 ]]; then
+        if [ -n "${val}" ]; then
+        if ! [[ ${val} =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] \
+        || [ ${#val} -gt 12 ]; then invalid 7; fi; fi
+        elif [[ $n = 10 || $n = 11 || $n = 12 ]]; then
+        if ! [[ $val =~ $nu ]] || [ ${val} -gt 200 ]; then invalid 8; fi
+        elif [[ $n = 13 ]]; then
+        if ! [[ $val =~ $nu ]] || [ ${#val} -gt 2 ]; then invalid 9; fi
+        fi
+        export ${sets[$n]}="${val}"
+        let n++
+        
+    done < "${file}"
+
+    if [[ $exit = 0 ]] ; then
+    > "$DT/${2}.cfg"
     fi
 }
 
@@ -131,7 +146,7 @@ details() {
     wchfiles=`sed '/^$/d' <<<"${hfiles}" | wc -l`
     wcexfiles=`sed '/^$/d' <<<"${exfiles}" | wc -l`
     others=$((wchfiles+wcexfiles))
-    SRFL1=$(cat "./conf/id")
+    SRFL1=$(cat "./conf/id.cfg")
     SRFL2=$(cat "./conf/info")
     SRFL5=$(cat "./conf/0.cfg")
     
@@ -146,9 +161,6 @@ Others files: $others
 $(gettext "FILES")
 
 $files
-
-./files
-
 $attchsdir
 
 $hfiles
@@ -157,15 +169,15 @@ $exfiles
 
 $(gettext "TEXT FILES")
 
-
 $SRFL1
 
 $SRFL2
 
 $SRFL5" | yad --text-info --title="$(gettext "Installation details")" \
     --name=Idiomind --class=Idiomind \
-    --window-icon="$DS/images/icon.png" --center \
-    --buttons-layout=edge --scroll --margins=10 \
+    --window-icon="$DS/images/icon.png" \
+    --fontname='monospace 9' --margins=10 \
+    --buttons-layout=edge --scroll --center \
     --width=600 --height=550 --borders=0 \
     --button="$(gettext "Open Folder")":"xdg-open '$2'" \
     --button="$(gettext "Close")":0
@@ -205,14 +217,13 @@ check_index() {
         item="$(sed 's/},/}\n/g' <<<"${item_}")"
         type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
         trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
-
+        
+        if [ -n "${trgt}" ]; then
         if [[ ${type} = 1 ]]; then
         echo "${trgt}" >> "$DC_tlt/3.cfg"
-            
         else echo "${trgt}" >> "$DC_tlt/4.cfg"; fi
-        
-        echo "${trgt}" >> "$DC_tlt/0.cfg"
         echo "${trgt}" >> "$DC_tlt/1.cfg"
+        fi
         
         done < "$DC_tlt/0.cfg"
     }
@@ -293,10 +304,9 @@ add_audio() {
     DT="$2"; cd "$DT"
     if [[ $ret -eq 0 ]]; then
     
-        if [[ -f "$audio" ]]; then
-        cp -f "$audio" "$DT/audtm.mp3"
-        #eyeD3 -P itunes-podcast --remove $DT/audtm.mp3
-        eyeD3 --remove-all "$DT/audtm.mp3" & exit
+        if [ -f "${audio}" ]; then
+        cp -f "${audio}" "$DT/audtm.mp3"
+        exit
         fi
     fi
 } >/dev/null 2>&1
@@ -999,8 +1009,6 @@ $(gettext "Difficult words")
 case "$1" in
     details)
     details "$@" ;;
-    check_source_1)
-    check_source_1 "$@" ;;
     check_index)
     check_index "$@" ;;
     add_audio)

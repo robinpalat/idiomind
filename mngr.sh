@@ -469,9 +469,8 @@ rename_topic() {
     
     if [ -n "${jlb}" ]; then
 
-        mv -f "$DM_tl/${tpc}/0.cfg" "$DT/0.cfg"
         mv -f "$DM_tl/${tpc}" "$DM_tl/${jlb}"
-        mv -f "$DT/0.cfg" "$DM_tl/${jlb}/0.cfg"
+        sed -i "s/tname=.*/tname=\"${jlb}\"/g" "$DM_tl/${jlb}/.conf/id.cfg"
         echo "$jlb" > "$DC_s/4.cfg"
         echo "$jlb" > "$DM_tl/.8.cfg"
         echo "$jlb" >> "$DM_tl/.1.cfg"
@@ -499,7 +498,7 @@ mark_to_learn_topic() {
     
     include "$DS/ifs/mods/mngr"
     
-    if [ "${tpc}" != "$2" ]; then
+    if [ "${tpc}" != "${2}" ]; then
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
     
     if [ "$(wc -l < "$DC_tlt/0.cfg")" -le 10 ]; then
@@ -569,7 +568,7 @@ mark_as_learned_topic() {
     info "$(gettext "Not enough items")" & exit; fi
     
     if [ "$((( $(date +%s) - $(date -d "$(sed -n 8p "${DC_tlt}/id.cfg" \
-    | grep -o 'date_c="[^"]*' | grep -o '[^"]*$')" +%s) ) /(24 * 60 * 60 )))" -lt 5 ]; then
+    | grep -o 'datec="[^"]*' | grep -o '[^"]*$')" +%s) ) /(24 * 60 * 60 )))" -lt 5 ]; then
     msg_2 "$(gettext "Are you sure it's not too soon?")\n" \
     gtk-dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"; fi
     ret=$(echo $?); if [ $ret = 1 ]; then exit 1; fi

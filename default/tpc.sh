@@ -1,31 +1,30 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-¿
-
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 topic="${1}"
 DC_tlt="$DM_tl/${topic}/.conf"
 DM_tlt="$DM_tl/${topic}"
-cfgfile="name=\"${topic}\"
-language_source=\"${lgsl^}\"
-language_target=\"${lgtl^}\"
-author=\"$Author\"
-contact=\"$Mail\"
-category=\"$Ctgry\"
-link=\"$link\"
-date_c=\"$(date +%F)\"
-date_u=\"$date_u\"
-date_i=\"$date_i\"
-nwords=\"$words\"
-nsentences=\"$sentences\"
-nimages=\"$images\"
+datec=$(date +%Y-%m-%d)
+
+cfgfile="tname=\"${topic}\"
+langs=\"${lgsl^}\"
+langt=\"${lgtl^}\"
+authr=\"$Author\"
+cntct=\"$Mail\"
+ctgry=\"$Ctgry\"
+ilink=\"$link\"
+datec=\"$datec\"
+dateu=\"$dateu\"
+datei=\"$datei\"
+nword=\"$words\"
+nsent=\"$sentences\"
+nimag=\"$images\"
 level=\"$level\"
-set1=\"FALSE\"
-set2=\"FALSE\""
-cfg11="[type={},trgt={},srce={},exmp={},defn={},\
-note={},wrds={},grmr={},].[tag={},mark={},].id=[]"
+set_1=\"FALSE\"
+set_2=\"FALSE\""
+
 
 if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
     "$DS/ifs/mods/topic/${topic}.sh" 2 & exit 1
@@ -44,8 +43,8 @@ else
         echo " " > "${DC_tlt}/info"
         echo -e "${cfgfile}" > "id.cfg"
         echo 1 > "8.cfg"
-        cd /
         fi
+        cd /
         echo "${topic}" > "$DC_s/4.cfg"
         echo "${topic}" > "$DC_s/7.cfg"
         echo "${topic}" > "$DT/tpe"

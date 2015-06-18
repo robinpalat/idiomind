@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-cfg11_="$DC_tlt/0.cfg"
+cfg0="$DC_tlt/0.cfg"
 drtt="$DM_tlt/images"
 drts="$DS/practice"
 strt="$drts/strt.sh"
@@ -47,11 +47,12 @@ score() {
 
 fonts() {
     
-    pos=`grep -Fon -m 1 "trgt={${1}}" "${cfg11_}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
-    item=`sed -n ${pos}p "${cfg11_}" |sed 's/},/}\n/g'`
+    pos=`grep -Fon -m 1 "trgt={${1}}" "${cfg0}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
+    item=`sed -n ${pos}p "${cfg0}" |sed 's/},/}\n/g'`
     src=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
+    id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
 
-    img="$drtt/images/$id.jpg"
+    img="$drtt/$id.jpg"
     [ ! -f "$img" ] && img="$DS/practice/images/img_2.jpg"
     srcel="<span font_desc='Free Sans 10'><i>($src)</i></span>"
     trgtl="<span font_desc='Free Sans 15'><b>$1</b></span>"
@@ -63,7 +64,7 @@ cuestion() {
     --image="$img" \
     --skip-taskbar --text-align=center --align=center --center --on-top \
     --image-on-top --undecorated --buttons-layout=spread \
-    --width=418 --height=365 --borders=6 \
+    --width=418 --height=380 --borders=6 \
     --button="$(gettext "Exit")":1 \
     --button="    $(gettext "Answer") >>    ":0
 }
@@ -75,7 +76,7 @@ answer() {
     --timeout=20 --selectable-labels \
     --skip-taskbar --text-align=center --align=center --center --on-top \
     --image-on-top --undecorated --buttons-layout=spread \
-    --width=418 --height=365 --borders=6 \
+    --width=418 --height=380 --borders=6 \
     --field="$trgtl   $srcel":lbl \
     --button="  $(gettext "I did not know it")  ":3 \
     --button="  $(gettext "I Knew it")  ":2
