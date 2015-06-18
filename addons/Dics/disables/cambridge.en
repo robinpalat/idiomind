@@ -4,9 +4,9 @@ Name="cambridge"
 Language="en"
 Test="testing"
 
-a="$(head -c 1 <<<"$1")"
-b="$(head -c 3 <<<"$1")"
-c="$(head -c 5 <<<"$1")"
+a="$(echo "$1" |head -c 1)"
+b="$(echo "$1" |head -c 3)"
+c="$(echo "$1" |head -c 5)"
 wget "http://dictionary.cambridge.org/media/british/us_pron/$a/$b/$c/$1.mp3"
-[ -f ./"$1"*.mp3 ] && mv ./"$1"*.mp3 "./$1.mp3"
+[ -f ./"${1}*.mp3" ] && mv ./"${1}*.mp3" ./"${1}.mp3"
 exit

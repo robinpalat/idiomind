@@ -28,18 +28,18 @@ text="<span font_desc='Free Sans Bold 14'>$(gettext "Welcome") ${USER^} </span>
 \n      $(gettext "To get started, please configure the following:")\n"
 lang=('English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian')
-sets=('grammar' 'list' 'tasks' 'trans' 'trd_trgt' 'text' 'audio' \
-'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' \
+sets=('grammar' 'list' 'trans' 'trd_trgt' 'clip' 'tasks' 'repeat' 'audio' \
+'videos' 'text' 'loop' 't_lang' 's_lang' 'synth' \
 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
 
 _info() {
     
-    yad --form --title="$(gettext "Information")" \
-    --text="$(gettext "Some features do not yet work with this language:") $1 ." \
+    yad --form --title="$(gettext "Notice")" \
+    --text="$(gettext "Some features do not yet work with this language"). ($1)\n" \
     --image=info \
     --window-icon=info \
     --skip-taskbar --center --on-top \
-    --width=400 --height=120 --borders=5 \
+    --width=460 --height=120 --borders=5 \
     --button="$(gettext "OK")":0
 }
 
@@ -100,12 +100,12 @@ elif [ $ret -eq 0 ]; then
     mkdir "$HOME/.idiomind"
     if [ $? -ne 0 ]; then
     yad --title=Idiomind \
-    --text="$(gettext "Error while trying to write")\n" \
+    --text="$(gettext "Error occurred trying to write in file system")\n" \
     --image=error \
     --name=idiomind --class=idiomind \
     --window-icon="$DS/images/icon.png" \
-    --image-on-top --sticky --fixed --skip-taskbar --center \
-    --width=320 --height=80 --borders=2 \
+    --image-on-top --sticky --skip-taskbar --center \
+    --width=420 --height=120 --borders=2 \
     --button=gtk-ok:1 & exit 1
     fi
     
@@ -136,7 +136,7 @@ elif [ $ret -eq 0 ]; then
     done
     
     n=0; > "$DC_s/1.cfg"
-    while [ $n -lt 19 ]; do
+    while [ $n -lt 20 ]; do
     echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
     ((n=n+1))
     done

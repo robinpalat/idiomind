@@ -23,17 +23,18 @@ function mksure() {
 function index() {
 
     while true; do
-    if [ -f "$DT/i_lk" ]; then sleep 1
+    if [[ -f "$DT/i_lk" ]]; then sleep 1
     else > "$DT/i_lk" & break; fi
     done
-    DC_tlt="$DM_tl/$3/.conf"
+    DC_tlt="$DM_tl/${3}/.conf"
+    img0='/usr/share/idiomind/images/0.png'
     item="${2}"
     
-    if [ ! -z "${item}" ] && ! grep -Fxo "${item}" "$DC_tlt/0.cfg"; then
+    if [[ ! -z "${item}" ]] && ! grep -Fxo "${item}" "$DC_tlt/0.cfg"; then
     
-        if [ "$1" = word ]; then
+        if [[ "$1" = word ]]; then
         
-            if [ "$(grep "$4" "$DC_tlt/0.cfg")" ] && [ -n "$4" ]; then
+            if [[ "$(grep "$4" "$DC_tlt/0.cfg")" ]] && [[ -n "$4" ]]; then
             sed -i "s/${4}/${4}\n${item}/" "$DC_tlt/0.cfg"
             sed -i "s/${4}/${4}\n${item}/" "$DC_tlt/1.cfg"
             sed -i "s/${4}/${4}\n${item}/" "$DC_tlt/.11.cfg"
@@ -42,42 +43,50 @@ function index() {
             echo "${item}" >> "$DC_tlt/1.cfg"
             echo "${item}" >> "$DC_tlt/.11.cfg"; fi
             echo "${item}" >> "$DC_tlt/3.cfg"
-            
-        elif [ "$1" = sentence ]; then
+            echo -e "FALSE\n${item}\n$img0" >> "$DC_tlt/5.cfg"
+
+        elif [[ "$1" = sentence ]]; then
         
             echo "${item}" >> "$DC_tlt/0.cfg"
             echo "${item}" >> "$DC_tlt/1.cfg"
             echo "${item}" >> "$DC_tlt/4.cfg"
             echo "${item}" >> "$DC_tlt/.11.cfg"
+            echo -e "FALSE\n${item}\n$img0" >> "$DC_tlt/5.cfg"
         fi
     fi
         
-    if [ "$1" = edit ]; then
+    if [[ "$1" = edit ]]; then
             
         item="${item}"; item_mod="${4}"
         sed -i "s/${item}/${item_mod}/" "$DC_tlt/.11.cfg"
         
         sust(){
-            for inx in "${@}"; do
-                if grep -Fxo "${item}" "$inx"; then
-                sed -i "s/${item}/${item_mod}/" "$inx"
-                fi
-            done
+            if grep -Fxo "${item}" "${1}"; then
+            sed -i "s/${item}/${item_mod}/" "${1}"
+            fi
         }
         
-        sust "$DC_tlt/0.cfg" \
-        "$DC_tlt/1.cfg" "$DC_tlt/2.cfg" \
-        "$DC_tlt/3.cfg" "$DC_tlt/4.cfg" \
-        "$DC_tlt/practice/lsin" \
-        "$DC_tlt/practice/fin" "$DC_tlt/practice/mcin" \
-        "$DC_tlt/practice/win" "$DC_tlt/practice/iin" \
-        "$DC_tlt/6.cfg"
-        
-    elif [ "$1" = txt_missing ]; then
+        n=0
+        while [ $n -le 6 ]; do
+            sust "${DC_tlt}/$n.cfg"
+            let n++
+        done
+
+        if [ -d "${DC_tlt}/practice" ]; then
+            cd "${DC_tlt}/practice"
+            while read file_pr; do
+                sust "${file_pr}"
+            done < <(ls ./*)
+            rm ./*.tmp
+            cd /
+        fi
+
+    elif [[ "$1" = txt_missing ]]; then
     
         echo "${item}" >> "$DC_tlt/0.cfg"
         echo "${item}" >> "$DC_tlt/1.cfg"
         echo "${item}" >> "$DC_tlt/4.cfg"
+        echo -e "FALSE\n${item}\n$img0" >> "$DC_tlt/5.cfg"
     fi
     
     sleep 0.5
@@ -129,28 +138,26 @@ function check_grammar_2() {
 function clean_0() {
     
     echo "$1" | sed ':a;N;$!ba;s/\n/ /g' \
-    | sed 's/&//;s/://;s/\.//g' | sed "s/’/'/;s/|//g" \
+    | sed 's/&//;s/://;s/\.//g' | sed "s/’/'/g" \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \
-    | tr -s '“' ' ' | tr -s '”' ' ' | tr -s '"' ' '
+    | tr -s '“”|"' ' ' \
+    | sed 's/<[^>]*>//g'
 }
 
 function clean_1() {
     
-    #iconv -c -f utf8 -t ascii
     if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
-    echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" \
-    | tr -s '“' ' ' | tr -s '”' ' ' | tr -s '"' ' ' \
-    | tr -s '&' ' ' | tr -s ':' ' ' | tr -s '|' ' ' \
+    echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" | sed "s|/||g" \
+    | tr -s '“”"&:|' ' ' \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
-    | sed 's/^ *//; s/ *$//g' | sed 's/–//g'
+    | sed 's/^ *//; s/ *$//g' | sed 's/ — /__/g' | sed 's/<[^>]*>//g'
     else
     echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" \
-    | tr -s '“' ' ' | tr -s '”' ' ' | tr -s '"' ' ' \
-    | tr -s '&' ' ' | tr -s ':' ' ' | tr -s '|' ' ' \
+    | tr -s '“”"&:|' ' ' \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \
-    | sed 's/–//g'
+    | sed 's/ — /__/g' | sed "s|/||g" | sed 's/<[^>]*>//g'
     fi
 }
 
@@ -158,8 +165,9 @@ function clean_1() {
 function clean_2() {
     
     echo "${1}" | cut -d "|" -f1 | sed 's/!//;s/&//;s/\://; s/\&//g' \
-    | sed "s/-//g" | sed 's/^[ \t]*//;s/[ \t]*$//' \
-    | sed 's|/||;s/^\s*./\U&\E/g' | sed 's/\：//g'
+    | sed "s/-//g" | sed 's/^[ \t]*//;s/[ \t]*$//' | sed "s|/||g" \
+    | sed 's|/||;s/^\s*./\U&\E/g' | sed 's/\：//g' | sed 's/<[^>]*>//g' \
+    | tr -d '*'
 }    
 
 
@@ -171,14 +179,20 @@ function clean_3() {
     else vrbl="${trgt}"; lg=$lgs; aw="twrd.$2"; bw="swrd.$2"; fi
     echo "${vrbl}" | sed 's/ /\n/g' | grep -v '^.$' \
     | grep -v '^..$' | sed -n 1,50p | sed s'/&//'g \
-    | sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
-    | tr -d ')' | tr -d '(' | sed 's/\]//;s/\[//g' \
+    | sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' | sed "s|/||g" \
+    | tr -d ')(' | sed 's/\]//;s/\[//g' | sed 's/<[^>]*>//g' \
     | sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //;s/"//g' > "$aw"
 }
 
 function clean_4() {
     
-    echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' | sed 's/–//g' | sed '/^$/d'
+    if [ `wc -c <<<"${1}"` -lt 150 ]; then
+    echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' | sed 's/ \+/ /g' \
+    | sed 's/ — / /g' | sed '/^$/d'
+    else 
+    echo "${1}" | sed ':a;N;$!ba;s/\n/\__/g' | sed 's/ \+/ /g' \
+    | sed 's/ — /__/g' | sed '/^$/d'
+    fi
 }
 
 
@@ -313,13 +327,13 @@ function tts() {
 
 function voice() {
     
-    synth="$(sed -n 13p < "$DC_s/1.cfg" \
+    synth="$(sed -n 14p "$DC_s/1.cfg" \
     | grep -o synth=\"[^\"]* | grep -o '[^"]*$')"
     DT_r="$2"; cd "$DT_r"
     
-    if [ -n "$synth" ]; then
+    if [[ -n "$synth" ]]; then
     
-        if [ "$synth" = 'festival' ] || [ "$synth" = 'text2wave' ]; then
+        if [[ "$synth" = 'festival' ]] || [[ "$synth" = 'text2wave' ]]; then
             lg="${lgtl,,}"
 
             if ([ $lg = "english" ] \
@@ -358,16 +372,16 @@ function fetch_audio() {
     while read word; do
         
         if [ ! -f "$DM_tls/${word,,}.mp3" ]; then
-        
-            dictt "${word,,}" $3
+
+            dictt "${word,,}" "$3"
             
             if [ -f "$3/${word,,}.mp3" ]; then
                 mv -f "$3/${word,,}.mp3" "$4/${word,,}.mp3"
             else
-                voice "$word" "$3" "$4/${word,,}.mp3"
+                voice "${word}" "$3" "$4/${word,,}.mp3"
             fi
         fi
-    done < "$words_list"
+    done < "${words_list}"
 }
 
 
@@ -412,7 +426,7 @@ function dlg_form_0() {
 
 function dlg_form_1() {
     
-    yad --form --title="$(gettext "New note")" \
+    yad --form --title="$(gettext "New")" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --separator="\n" \
     --skip-taskbar --center --on-top \
@@ -429,7 +443,7 @@ function dlg_form_1() {
 
 function dlg_form_2() {
     
-    yad --form --title="$(gettext "New note")" \
+    yad --form --title="$(gettext "New")" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --separator="\n" \
     --skip-taskbar --center --on-top \
@@ -530,7 +544,7 @@ function dlg_form_3() {
     --skip-taskbar --image-on-top \
     --align=center --text-align=center --center --on-top \
     --width=420 --height=320 --borders=5 \
-    "$btn1" "$btn2" --button=$(gettext "Close"):1
+    "$btn2" --button=$(gettext "Close"):1
 }
 
 

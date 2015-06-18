@@ -37,8 +37,9 @@ StartupWMClass=Idiomind"
 
 lang=('English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian')
-sets=('grammar' 'list' 'tasks' 'trans' 'trd_trgt' 'text' 'audio' \
-'repeat' 'videos' 'loop' 't_lang' 's_lang' 'synth' \
+
+sets=('grammar' 'list' 'trans' 'trd_trgt' 'clip' 'tasks' 'repeat' 'audio' \
+'videos' 'text' 'loop' 't_lang' 's_lang' 'synth' \
 'words' 'sentences' 'marks' 'practice' 'news' 'saved')
 c=$((RANDOM%100000)); KEY=$c
 
@@ -72,7 +73,7 @@ set_lang() {
 
 n=0
 if [ "$cfg" = 1 ]; then
-    while [[ $n -lt 14 ]]; do
+    while [[ $n -lt 15 ]]; do
         get="${sets[$n]}"
         val=$(sed -n $((n+1))p "$DC_s/1.cfg" \
         | grep -o "$get"=\"[^\"]* | grep -o '[^"]*$')
@@ -82,7 +83,7 @@ if [ "$cfg" = 1 ]; then
     
 else
     n=0; > "$DC_s/1.cfg"
-    while [[ $n -lt 19 ]]; do
+    while [[ $n -lt 20 ]]; do
     echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
     ((n=n+1))
     done
@@ -97,16 +98,17 @@ yad --plug=$KEY --form --tabnum=1 \
 --field=":LBL" " " \
 --field="$(gettext "Use color to grammar")":CHK "$grammar" \
 --field="$(gettext "List words after adding a sentence")":CHK "$list" \
---field="$(gettext "Perform tasks at startup")":CHK "$tasks" \
 --field="$(gettext "Use automatic translation, if available")":CHK "$trans" \
 --field="$(gettext "Detect language of source text (slower)")":CHK "$trd_trgt" \
+--field="$(gettext "Clipboard whatcher")":CHK "$clip" \
+--field="$(gettext "Perform tasks at startup")":CHK "$tasks" \
 --field=" :LBL" " " \
 --field="$(gettext "Play Options")\t":LBL " " \
 --field=":LBL" " " \
---field="$(gettext "Desktop notifications")":CHK "$text" \
---field="$(gettext "Play audio")":CHK "$audio" \
 --field="$(gettext "Repeat")":CHK "$repeat" \
+--field="$(gettext "Play audio")":CHK "$audio" \
 --field="$(gettext "Only play videos")":CHK "$videos" \
+--field="$(gettext "Desktop notifications")":CHK "$text" \
 --field="$(gettext "Duration of pause between items:")":SCL "$loop" \
 --field=" :LBL" " " \
 --field="$(gettext "Languages")\t":LBL " " \
@@ -133,14 +135,14 @@ yad --notebook --key=$KEY --title="$(gettext "Settings")" \
 --tab-borders=5 --sticky --center \
 --tab="$(gettext "Preferences")" \
 --tab="$(gettext "Addons")" \
---width=460 --height=340 --borders=2 \
---button="$(gettext "Cancel")":1 \
---button="$(gettext "OK")":0
+--width=470 --height=350 --borders=2 \
+--button="$(gettext "Apply")":0 \
+--button="$(gettext "Cancel")":1
 ret=$?
 
     if [[ $ret -eq 0 ]]; then
         n=1; v=0
-        while [[ $n -le 21 ]]; do
+        while [[ $n -le 22 ]]; do
             val=$(cut -d "|" -f$n < "$cnf1")
             if [ -n "$val" ]; then
             sed -i "s/${sets[$v]}=.*/${sets[$v]}=\"$val\"/g" "$DC_s/1.cfg"
@@ -148,14 +150,17 @@ ret=$?
             ((n=n+1))
         done
 
-        val=$(cut -d "|" -f23 < "$cnf1")
-        sed -i "s/${sets[12]}=.*/${sets[12]}=\"$val\"/g" "$DC_s/1.cfg"
+        if [ "$clip" = FALSE ] && [ -f "$DT/.clip" ]; then
+        kill "$(< "$DT/.clip")"; rm -f "$DT/.clip"; fi
+
+        val=$(cut -d "|" -f24 < "$cnf1")
+        sed -i "s/${sets[13]}=.*/${sets[13]}=\"$val\"/g" "$DC_s/1.cfg"
         
         [ ! -d  "$HOME/.config/autostart" ] \
         && mkdir "$HOME/.config/autostart"
         config_dir="$HOME/.config/autostart"
         
-        if cut -d "|" -f5 < "$cnf1" | grep "TRUE"; then
+        if cut -d "|" -f8 < "$cnf1" | grep "TRUE"; then
             if [ ! -f "$config_dir/idiomind.desktop" ]; then
             echo "$desktopfile" > "$config_dir/idiomind.desktop"
             fi
@@ -167,11 +172,11 @@ ret=$?
         
         n=0
         while [[ $n -lt 10 ]]; do
-            if cut -d "|" -f19 < "$cnf1" | grep "${lang[$n]}" && \
+            if cut -d "|" -f20 < "$cnf1" | grep "${lang[$n]}" && \
             [ "${lang[$n]}" != "$lgtl" ]; then
                 lgtl="${lang[$n]}"
                 if grep -o -E 'Chinese|Japanese|Russian|Vietnamese' <<< "$lgtl";
-                then info3="\n<b> $lgtl</b>\n $(gettext "Some features do not yet work with this language"). "; fi
+                then info3="\n$(gettext "Some features do not yet work with this language"). ($lgtl)"; fi
                 confirm "$info2$info3" dialog-question "$lgtl"
                 [ $? -eq 0 ] && set_lang "${lang[$n]}"
                 break
@@ -181,7 +186,7 @@ ret=$?
         
         n=0
         while [[ $n -lt 10 ]]; do
-            if cut -d "|" -f20 < "$cnf1" | grep "${lang[$n]}" && \
+            if cut -d "|" -f21 < "$cnf1" | grep "${lang[$n]}" && \
             [ "${lang[$n]}" != "$lgsl" ]; then
                 confirm "$info1" dialog-warning
                 if [ $? -eq 0 ]; then
