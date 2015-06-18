@@ -91,7 +91,7 @@ function notebook_1() {
     --field="$(gettext "Files")":FBTN "$cmd_attchs" \
     --field="$(gettext "Share")":FBTN "$cmd_share" \
     --field="$(gettext "Delete")":FBTN "$cmd_del" \
-    --field="$(gettext "More")":FBTN "$cmd_adv" > "$cnf4" &
+    --field=" ":LBL " " > "$cnf4" &
     yad --notebook --title="Idiomind - $tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \

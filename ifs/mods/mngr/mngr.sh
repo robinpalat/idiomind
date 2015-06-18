@@ -29,7 +29,7 @@ position() {
     
     mv="$(tac "$DC_tlt/1.cfg" | grep -vxF "$item" \
     | awk '{print ((let++))"\nFALSE\n"$0"\nFALSE"}' \
-    | yad --list --title="$(gettext "More")" \
+    | yad --list --title="$(gettext "Move - Delete - Invert list")" \
     --class=Idiomind --name=Idiomind \
     --text="  [ $pos ] $(gettext "Current position")\n" \
     --always-print-result --print-all --separator="|" \
@@ -107,7 +107,7 @@ function dlg_form_1() {
     --field="<small>$lgsl</small>" "$srce" \
     --field="<small>$(gettext "Topic")</small>":CB "$tpc!$tpcs" \
     --field="<small>$(gettext "Audio")</small>":FL "${audio}" \
-    --field="<small>$(gettext "Example")</small>":TXT "$exmp" \
+    --field="<small>$(gettext "Example")</small>\t\t\t\t\t\t\t\t\t\t":TXT "$exmp" \
     --field="<small><a href='$link2'>$(gettext "Definition")</a></small>":TXT "$defn" \
     --field="<small>$(gettext "Note")</small>":TXT "$note" \
     --field="<small><a href='$link1'>$(gettext "Translation")</a>\t<a href='$link3'>$(gettext "Images")</a></small>":LBL " " \
