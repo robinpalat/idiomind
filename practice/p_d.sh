@@ -61,7 +61,7 @@ dialog2() {
     --window-icon="$DS/images/icon.png" --image="$DS/practice/images/bar.png" \
     --buttons-layout=end --skip-taskbar --undecorated --center --on-top \
     --text-align=left --align=left --image-on-top \
-    --width=580 --height=230 --borders=8 \
+    --width=500 --height=220 --borders=8 \
     --button="$(gettext "Exit")":1 \
     --button="$(gettext "Listen")":"$cmd_play" \
     --button=" $(gettext "Check") >> ":0)
@@ -77,7 +77,7 @@ check() {
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --wrap --scroll --image-on-top --center --on-top \
     --undecorated --buttons-layout=end \
-    --width=580 --height=260 --borders=12 \
+    --width=500 --height=250 --borders=10 \
     --button="$(gettext "Listen")":"$cmd_play" \
     --button="$(gettext "Next")":2 \
     --field="":lbl --text="<span font_desc='Free Sans $sz'>${wes}</span>\\n" \
