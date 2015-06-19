@@ -323,27 +323,6 @@ text() {
 } >/dev/null 2>&1
 
 
-trestore() {
-
-    if [ "$2" = 1 ]; then
-
-        if [ -f "$HOME/.idiomind/backup/${3}.bk" ]; then
-        
-            msg_2 "$(gettext "Are you sure you want to restore the content of active topic?")\t\n" \
-            dialog-warning "$(gettext "Yes")" "$(gettext "Cancel")" "${tpc}"
-            ret="$?"
-            
-            if [[ $ret -eq 0 ]]; then
-            cp -f "$HOME/.idiomind/backup/${3}.bk" "${DM_tl}/${3}/.conf/0.cfg"
-            fi
-        else
-            msg "$(gettext "Backup not found")\n" dialog-warning
-        fi
-    fi
-
-} 
-
-
 add_file() {
 
     cd "$HOME"
@@ -1032,8 +1011,6 @@ case "$1" in
     mkhtml ;;
     sanity_1)
     sanity_1 "$@" ;;
-    trestore)
-    trestore "$@" ;;
     fback)
     fback ;;
     about)

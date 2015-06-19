@@ -21,6 +21,8 @@
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 if [ -z "$tpc" ]; then source "$DS/ifs/mods/cmns.sh"
 msg "$(gettext "No topic is active")\n" info & exit 1; fi
+tpc="$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")"
+DC_tlt="${DM_tl}/${tpc}/.conf"
 
 [ -n "$(< "$DC_s/1.cfg")" ] && cfg=1 || > "$DC_s/1.cfg"
 lbls=('Words' 'Sentences' 'Marked items' 'Difficult words' \
@@ -51,7 +53,7 @@ if [[ "$cfg" = 1 ]]; then
     n=14
     while [[ $n -lt 20 ]]; do
         get="${sets[$n]}"
-        val=$(grep -o "$get"=\"[^\"]* < "$DC_s/1.cfg" | grep -o '[^"]*$')
+        val=$(grep -o "$get"=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
         declare ${sets[$n]}="$val"
         ((n=n+1))
     done
@@ -93,8 +95,7 @@ title="$(gettext "Playing:") $tpp"; fi
 fi
 fi
 
-slct=$(mktemp "$DT"/slct.XXXX)
-setting_1 | yad --list --title="$title" \
+slct="$(setting_1 | yad --list --title="$title" \
 --print-all --always-print-result --separator="|" \
 --class=Idiomind --name=Idiomind \
 --window-icon="$DS/images/icon.png" \
@@ -102,19 +103,17 @@ setting_1 | yad --list --title="$title" \
 --expand-column=2 --no-headers \
 --width=400 --height=300 --borders=5 \
 --column=IMG:IMG --column=TXT:TXT --column=CHK:CHK \
---button="$btn1" --button="$btn2" > "$slct"
+--button="$btn1" --button="$btn2")"
 ret=$?
 
 if [[ $ret -eq 0 ]]; then
     n=14
     while [[ $n -lt 20 ]]; do
-        val=$(sed -n $((n-13))p "${slct}" | cut -d "|" -f3)
+        val=$(sed -n $((n-13))p <<<"${slct}" | cut -d "|" -f3)
         [ -n "${val}" ] && sed -i "s/${sets[$n]}=.*/${sets[$n]}=\"$val\"/g" "$DC_s/1.cfg"
         ((n=n+1))
     done
     
-
-    rm -f "$slct"
     "$DS/stop.sh" 3
     if [ -d "$DM_tlt" ] && [ -n "$tpc" ]; then
     echo "$DM_tlt" > "$DT/.p_"
@@ -127,7 +126,6 @@ if [[ $ret -eq 0 ]]; then
     #"$DS/stop.sh" 2 & exit 1; fi
     
     echo -e ".ply.$tpc.ply." >> "$DC_s/8.cfg" &
-    rm -f "$slct"
     sleep 1
     "$DS/bcle.sh" & exit 0
 
@@ -143,5 +141,5 @@ elif [[ $ret -eq 3 ]]; then
     if ps -A | pgrep -f "mplayer"; then killall mplayer & fi
     > "$DT/.p"
 fi
-[ -f "$slct" ] && rm -f "$slct"
+
 exit

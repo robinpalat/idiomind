@@ -44,7 +44,6 @@ score() {
     fi
 }
 
-
 fonts() {
     
     item="$(grep -F -m 1 "trgt={${1}}" "${cfg0}" |sed 's/},/}\n/g')"
@@ -84,7 +83,7 @@ while read trgt; do
 
     fonts "${trgt}"
     cuestion
-    ret=$(echo "$?")
+    ret="$?")
     
     if [[ $ret = 1 ]]; then
         break &
@@ -93,7 +92,7 @@ while read trgt; do
         
     else
         answer
-        ans=$(echo "$?")
+        ans="$?"
 
         if [[ $ans = 2 ]]; then
             echo "${trgt}" >> e.1

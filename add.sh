@@ -79,11 +79,11 @@ new_items() {
     "$DS/chng.sh" "$(gettext "To start adding notes you need to have a topic.
 Create one using the button below. ")" & exit 1; fi
 
-    [ -z "$4" ] && txt="$(xclip -selection primary -o; )" || txt="$4"
+    [ -z "$4" ] && txt="$(xclip -selection primary -o)" || txt="$4"
     txt="$(clean_4 "${txt}")"
     
     if [ "$3" = 2 ]; then
-    DT_r="$2"; cd "$DT_r"
+    [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
     [ -n "$5" ] && srce="$5" || srce=""; else
     DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"; fi
     
@@ -381,10 +381,9 @@ list_words_edit() {
 
         if [ -f "$DT_r/logw" ]; then
         dlg_text_info_3 "$(gettext "Some items could not be added to your list"):"; fi
-        cleanups "${DT_r}"
         echo -e ".adi.$lns.adi." >> "$DC_s/8.cfg"
-        exit
     fi
+    cleanups "${DT_r}" "$slt"; exit
 }
 
 list_words_sentence() {

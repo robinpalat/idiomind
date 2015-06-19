@@ -32,9 +32,9 @@ if [[ "$1" = chngi ]]; then
     a="$(grep -oP '(?<=audio=\").*(?=\")' "$DC_s/1.cfg")"
     n="$(grep -oP '(?<=ntosd=\").*(?=\")' "$DC_s/1.cfg")"
     l="$(grep -oP '(?<=loop=\").*(?=\")' "$DC_s/1.cfg")"
-    export v="$(grep -oP '(?<=video=\").*(?=\")' < "$DC_s/1.cfg")"
-    export ne="$(grep -oP '(?<=nsepi=\").*(?=\")' < "$DC_s/1.cfg")"
-    export se="$(grep -oP '(?<=svepi=\").*(?=\")' < "$DC_s/1.cfg")"
+    export v="$(grep -oP '(?<=video=\").*(?=\")' "$DC_s/1.cfg")"
+    export ne="$(grep -oP '(?<=nsepi=\").*(?=\")' "$DC_s/1.cfg")"
+    export se="$(grep -oP '(?<=svepi=\").*(?=\")' "$DC_s/1.cfg")"
     if [[ ${n} != TRUE ]] && [[ ${a} != TRUE ]]; then audio=TRUE; fi
     nu='^[0-9]+$'; if ! [[ $l =~ $nu ]]; then l=1; fi
 
@@ -46,7 +46,7 @@ if [[ "$1" = chngi ]]; then
         if [ ${a} = TRUE ]; then
         "${play}" "${file}" && wait; fi
         
-        if [ ${n} = TRUE ] && [[ $l -lt 11 ]]; then l=11; fi
+        if [ ${n} = TRUE ] && [[ ${l} -lt 11 ]]; then l=11; fi
         
         sleep ${l}
     }
@@ -67,8 +67,8 @@ if [[ "$1" = chngi ]]; then
         id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${_item}")"
         img="${DM_tlt}/images/$id.jpg"; [ -f "$img" ] && icon="$img"
         [ -z "$trgt" ] && trgt="$item"
-        [ ${type} = 1 ] && file="$DM_tls/${trgt,,}.mp3"
-        [ ${type} = 2 ] && file="$DM_tlt/$id.mp3"
+        [[ ${type} = 1 ]] && file="$DM_tls/${trgt,,}.mp3"
+        [[ ${type} = 2 ]] && file="$DM_tlt/$id.mp3"
         play=play
         else ((f=f+1)); fi
     }
@@ -102,12 +102,10 @@ elif [[ "$1" != chngi ]]; then
     lgs=$(lnglss $lgsl)
     
     if [ -n "$1" ]; then
-    text="--text=$1\n"
-    align="left"
-    img="--image=info"
+    text="--text=$1\n"; align="left"; img="--image=info"
     else
-    text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/${lgtl,,}'>$(gettext "Shared")</a>   </small></small>"
-    align="right"; fi
+    text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/${lgtl,,}'>$(gettext "Shared")</a>   </small></small>"; align="right"
+    fi
     
     if [ -f "${DC_tlt}/1.cfg" ] && \
     [[ $((`wc -l < "$DC_s/0.cfg"`/3)) = `wc -l < "${DC_tlt}/1.cfg"` ]]; then
@@ -129,7 +127,6 @@ elif [[ "$1" != chngi ]]; then
     --button="$(gettext "Apply")":2 \
     --button="$(gettext "Close")":1)
     ret=$?
-    tpc="$(sed 's/\*//g' <<<"$tpc")"
     
     if [[ $ret -eq 3 ]]; then
     

@@ -50,7 +50,7 @@ mkmn() {
         [ -f "${DC_tlt}/8.cfg" ] && stts_=$(< "${DC_tlt}/8.cfg")
         if [ "$stts_" != 13 ]; then echo "$stts_" > "${DC_tlt}/8.cfg_"; fi
         i=13; echo 13 > "$DM_tl/${tp}/.conf/8.cfg";fi
-        echo -e "/usr/share/idiomind/images/img.$i.png\n${tp}\n$tooltips_1" >> "$DC_s/0.cfg"
+        echo -e "/usr/share/idiomind/images/img.${i}.png\n${tp}\n$tooltips_1" >> "$DC_s/0.cfg"
         let n++
     done
     n=1
@@ -174,16 +174,6 @@ delete_item() {
 
 edit_item() {
 
-    # 3 position's items: item el list (item_pos), pos in data (edit_pos), pos variable for tpc_mod (tpc_pos)
-    #
-    #
-    #
-    #
-    #
-    #
-    #
-    #
-
     include "$DS/ifs/mods/mngr"
     lgt=$(lnglss $lgtl)
     lgs=$(lnglss $lgsl)
@@ -216,7 +206,6 @@ edit_item() {
     id=`grep -oP '(?<=id=\[).*(?=\])' <<<"$item"`
     [ "${mark}" = FALSE ] && mark=""
     [ -z "${id}" ] && id=""
-    
     q_trad="$(sed "s/'/ /g" <<<"$trgt")"
     mod=0; col=0
     
@@ -269,8 +258,6 @@ edit_item() {
                 
             fi
 
-
-  
             [ "${mark_mod}" = FALSE ] && mark_mod=""
             [ -z "${id_mod}" ] && id=""
             
@@ -292,16 +279,13 @@ edit_item() {
                 rm "${DC_tlt}/6.cfg.tmp"; fi
                 col=1; mod=1
             fi
-            
-            
+
             [ "${srce}" != "${srce_mod}" ] && mod=1
             [ "${exmp}" != "${exmp_mod}" ] && mod=1
             [ "${defn}" != "${defn_mod}" ] && mod=1
             [ "${note}" != "${note_mod}" ] && mod=1
             [ "${tpc}" != "${tpc_mod}" ] && mod=1
-            
-            
-            # ========================================================= modifications proced
+
             if [ $mod = 1 ]; then
             (
                 if [ $ind = 1 ]; then
@@ -323,7 +307,7 @@ edit_item() {
                         sentence_p "$DT_r" 2
                         fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
                         srce="$temp"
-                        grmr="$trgt_mod"
+                        grmr="${trgt_mod}"
                     fi
                 fi
             
@@ -368,14 +352,13 @@ edit_item() {
             
             fi
 
-            [[ -d "$DT/$c" ]] && ("$DS/add.sh" list_words_edit "${wrds_mod}" 2 "${c}" "${trgt_mod}") &
+            [[ -d "$DT/$c" ]] && ("$DS/add.sh" list_words_edit "${wrds_mod}" 2 ${c} "${trgt_mod}") &
             [[ $col = 1 ]] && ("$DS/ifs/tls.sh" colorize) &
             [[ $mod = 1 ]] && sleep 0.2
             [[ $ret -eq 0 ]] && "$DS/vwr.sh" "$lists" "${trgt}" ${item_pos} &
             [[ $ret -eq 2 ]] && "$DS/mngr.sh" edit "$lists" $((item_pos-1)) &
             
-            
-            
+
         else
             "$DS/vwr.sh" "$lists" "${trgt}" ${item_pos} &
         fi
@@ -405,8 +388,10 @@ delete_topic() {
             notify-send -i idiomind "$(gettext "Playback is stopped")" -t 5000 &
             "$DS/stop.sh" 2; fi
             
+            [ -f "$DM/backup/${tpc}.bk" ] && rm "$DM/backup/${tpc}.bk"
             if [ -d "$DM_tl/${tpc}" ] && [ -n "${tpc}" ]; then
             rm -r "$DM_tl/${tpc}"; fi
+            
             rm -f "$DT/tpe"
             > "$DM_tl/.8.cfg"
             > "$DC_s/4.cfg"
@@ -470,6 +455,7 @@ rename_topic() {
 
         mv -f "$DM_tl/${tpc}" "$DM_tl/${jlb}"
         sed -i "s/tname=.*/tname=\"${jlb}\"/g" "$DM_tl/${jlb}/.conf/id.cfg"
+        cp "$DM_tl/${jlb}/.conf/0.cfg" "$DM/backup/${jlb}.bk"
         echo "$jlb" > "$DC_s/4.cfg"
         echo "$jlb" > "$DM_tl/.8.cfg"
         echo "$jlb" >> "$DM_tl/.1.cfg"
@@ -486,6 +472,7 @@ rename_topic() {
         done
         rm "$DM_tl"/.*.tmp
         [ -d "$DM_tl/${tpc}" ] && rm -r "$DM_tl/${tpc}"
+        [ -f "$DM/backup/${tpc}.bk" ] && rm "$DM/backup/${tpc}.bk"
         [[ "$i" = 1 ]] &&  echo "${jlb}" >> "$DM_tl/.3.cfg"
         
         "$DS/mngr.sh" mkmn & exit 1

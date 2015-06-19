@@ -147,6 +147,8 @@ ret=$?
             val=$(cut -d "|" -f$n < "$cnf1")
             if [ -n "$val" ]; then
             sed -i "s/${sets[$v]}=.*/${sets[$v]}=\"$val\"/g" "$DC_s/1.cfg"
+            if [ ${v} = 4 ]; then
+            [ "$val" = FALSE ] && CW=0 || CW=1; fi
             ((v=v+1)); fi
             ((n=n+1))
         done
@@ -154,9 +156,11 @@ ret=$?
         val=$(cut -d "|" -f24 < "$cnf1")
         sed -i "s/${sets[13]}=.*/${sets[13]}=\"$val\"/g" "$DC_s/1.cfg"
         
-        if [ "$clipw" = FALSE ] && [ -f "$DT/.clip" ]; then
-        kill "$(< "$DT/.clip")"; rm -f "$DT/.clip"; fi
-        
+        if [ "$CW" = 0 ]; then
+        kill $(cat /tmp/.clipw); rm -f /tmp/.clipw
+        elif [ "$CW" = 1 ] && [ ! -f /tmp/.clipw ]; then
+        "$DS/ifs/mods/clipw.sh" & fi
+
         [ ! -d  "$HOME/.config/autostart" ] \
         && mkdir "$HOME/.config/autostart"
         config_dir="$HOME/.config/autostart"

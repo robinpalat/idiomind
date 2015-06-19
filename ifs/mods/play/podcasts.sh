@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
-f=0
 
+f=0
 get_itep() {
     
     if [ ${f} -gt 5 ] || [ ! -d "${DM_tl}/Podcasts/cache" ]; then
@@ -39,7 +39,6 @@ get_itep() {
 }
 
 if [ ${ne} = TRUE ] || [ ${se} = TRUE ]; then
-
 
     DMC="$DM_tl/Podcasts/cache"
     DPC="$DM_tl/Podcasts/.conf"

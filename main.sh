@@ -459,9 +459,8 @@ panel() {
     if ! [[ $x =~ $nu ]]; then x=100; fi
     if ! [[ $y =~ $nu ]]; then y=100; fi
     
-    #clipw=$(grep -o clipw=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
-    #if [ "$clipw" = TRUE ] && [ ! -f "$DT/.clip" ]; then
-    #"$DS/ifs/mods/add/clipw.sh" & fi
+    if [ `grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg"` = TRUE ] \
+    && [ ! -f /tmp/.clipw ]; then "$DS/ifs/mods/clipw.sh" & fi
     
     yad --title="Idiomind" \
     --name=Idiomind --class=Idiomind \

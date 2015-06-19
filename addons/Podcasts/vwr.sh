@@ -14,11 +14,12 @@ btncmd="'$DSP/mngr.sh' new_item"; fi
 btncmd2="'$DSP/mngr.sh' sv_as"
 if [ -f "$dir/$fname.html" ]; then
 uri="$dir/$fname.html"; else
-uri=""; fi
+source "$DS/ifs/mods/cmns.sh"
+msg "$(gettext "No such file or directory")\n${topic}\n" error Error & exit 1; fi
 
 yad --html --title="$item" \
 --name=Idiomind --class=Idiomind \
---uri="$dir/$fname.html" \
+--uri="${uri}" \
 --window-icon="$DS/images/icon.png" --center --on-top \
 --width=680 --height=550 --borders=0 \
 --button=gtk-save-as:"$btncmd2" \
