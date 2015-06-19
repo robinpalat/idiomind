@@ -106,7 +106,7 @@ if [[ $ret -eq 0 ]]; then
     msg " $(gettext "You must choose a practice.")\n" info
     "$DSP/strt.sh" & exit 1
     else
-    echo -e ".prct.$tpc.prct." >> "$DC_s/8.cfg" &
+    echo -e ".prct.$tpc.prct." >> "$DC_s/log" &
     "$DSP/prct.sh" "$VAR" & exit 1
     fi
 

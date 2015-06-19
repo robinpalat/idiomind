@@ -60,7 +60,7 @@ ret=$?
         "$DS/vwr.sh" "$1" "$nll" $ff &
     
     else 
-        echo -e ".vwr.`wc -l < "$DT/stats.tmp"`.vwr." >> "$DC_s/8.cfg"
+        echo -e ".vwr.`wc -l < "$DT/stats.tmp"`.vwr." >> "$DC_s/log"
         rm -f "$DT/stats.tmp" & exit 1
     fi
     

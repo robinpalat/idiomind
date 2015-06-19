@@ -215,10 +215,10 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
             trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
             if [ -n "${trgt}" ]; then
-                if [[ ${type} = 1 ]]; then
-                echo "${trgt}" >> "$DC_tlt/3.cfg"
-                else echo "${trgt}" >> "$DC_tlt/4.cfg"; fi
-                echo "${trgt}" >> "$DC_tlt/1.cfg"; fi
+            if [[ ${type} = 1 ]]; then
+            echo "${trgt}" >> "$DC_tlt/3.cfg"
+            else echo "${trgt}" >> "$DC_tlt/4.cfg"; fi
+            echo "${trgt}" >> "$DC_tlt/1.cfg"; fi
             done < "${tmp}/conf/0.cfg"
 
             cp -n "$tmp/share"/*.mp3 "$DM_t/$langt/.share"/
@@ -272,7 +272,7 @@ function topic() {
         if [ -f "${DM_tlt}/images/img.jpg" ]; then
         img="--image=${DM_tlt}/images/img.jpg"
         sx=608; sy=580; else sx=620; sy=560; fi
-        echo -e ".tpc.$tpc.tpc." >> "$DC_s/8.cfg"
+        echo -e ".tpc.$tpc.tpc." >> "$DC_s/log"
         [ ! -z "$author" ] && author=" $(gettext "Created by") $author"
 
         label_info1="<span font_desc='Free Sans 15' color='#505050'>$tpc</span><small>\n $inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"
@@ -303,7 +303,7 @@ function topic() {
                     sed '/^$/d' "$DT/ls1.x" > "${ls1}"
                 fi
                 "$DS/ifs/tls.sh" colorize
-                echo -e ".oki.$(wc -l < "$cnf1").oki." >> "$DC_s/8.cfg"
+                echo -e ".oki.$(wc -l < "$cnf1").oki." >> "$DC_s/log"
             fi
         
             ntpc=$(cut -d '|' -f 1 < "${cnf4}")
@@ -439,7 +439,7 @@ function topic() {
 
 panel() {
     
-    echo -e ".strt.1.strt." >> "$DC_s/8.cfg"
+    echo -e ".strt.1.strt." >> "$DC_s/log"
     if [ ! -d "$DT" ]; then new_session; fi
     [ ! -f "$DT/tpe" ] && echo "$(sed -n 1p "$DC_s/4.cfg")" > "$DT/tpe"
     [ "$(< "$DT/tpe")" != "${tpc}" ] && echo "$(sed -n 1p "$DC_s/4.cfg")" > "$DT/tpe"
@@ -470,7 +470,7 @@ panel() {
     --field=gtk-preferences:btn "$DS/cnfg.sh"
     ret=$?
     [[ $ret != 0 ]] && "$DS/stop.sh" 1 &
-    exit 0
+    exit
 }
 
 version() {

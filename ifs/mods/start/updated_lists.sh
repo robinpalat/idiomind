@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 [[ -z "$DM" ]] && source /usr/share/idiomind/ifs/c.conf
-LOG="$DC_s/8.cfg"
+LOG="$DC_s/log"
 tpclst=$(mktemp "$DT/tps.XXXX")
 items=$(mktemp "$DT/w9.XXXX")
 TOPICS=$(grep -o -P '(?<=.tpc.).*(?=\.tpc.)' "$LOG" \

@@ -59,7 +59,7 @@ if [ "$1" = add_dlg ]; then
         Name="New script"
         Language=""
         dialog_edit
-        ret=$(echo $?)
+        ret=$?
          
     if [[ $ret -eq 5 ]]; then
         
@@ -72,7 +72,7 @@ if [ "$1" = add_dlg ]; then
         Name=$(grep -o -P '(?<=Name=").*(?=")' "$DT/script.sh" | sed 's/\.//g')
         Language=$(grep -o -P '(?<=Language=").*(?=")' "$DT/script.sh" | sed 's/\.//g')
             
-        if ([ -n "$Name" ] && [ -n "$Language" ]); then
+        if [ -n "$Name" ] && [ -n "$Language" ]; then
         mv -f "$DT/script.sh" "$disables/$Name.$Language"
         fi
         "$DS_a/Dics/cnfg.sh"
@@ -103,7 +103,7 @@ elif [ "$1" = edit_dlg ]; then
     Name="$3"
     Language="$4"
     dialog_edit
-    ret=$(echo $?)
+    ret=$?
     
     if [[ $ret -eq 5 ]]; then
     

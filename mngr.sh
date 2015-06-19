@@ -534,7 +534,7 @@ mark_to_learn_topic() {
     rm "${DC_tlt}/2.cfg" "${DC_tlt}/1.cfg"
     touch "${DC_tlt}/2.cfg"
     cp -f "${DC_tlt}/0.cfg" "${DC_tlt}/1.cfg"
-    echo -e ".lrnt.$tpc.lrnt." >> "$DC_s/8.cfg" &
+    echo -e ".lrnt.$tpc.lrnt." >> "$DC_s/log" &
     touch "${DC_tlt}/5.cfg"
     "$DS/mngr.sh" mkmn &
 
@@ -606,7 +606,7 @@ mark_as_learned_topic() {
     rm "${DC_tlt}/2.cfg" "${DC_tlt}/1.cfg" "${DC_tlt}/lst" 
     touch "${DC_tlt}/1.cfg"
     cp -f "${DC_tlt}/0.cfg" "${DC_tlt}/2.cfg"
-    echo -e ".lrdt.$tpc.lrdt." >> "$DC_s/8.cfg" &
+    echo -e ".lrdt.$tpc.lrdt." >> "$DC_s/log" &
     "$DS/mngr.sh" mkmn &
 
     [[ $3 = 1 ]] && idiomind topic &

@@ -103,8 +103,6 @@ if [[ ${conten^} = A ]]; then
         if grep ".mp3" <<<"${fl: -4}"; then
         
             cp -f "$fl" "$DT_r/rv.mp3"
-            #eyeD3 -P itunes-podcast --remove "$DT_r"/rv.mp3
-            eyeD3 --remove-all "$DT_r/rv.mp3"
             sox "$DT_r/rv.mp3" "$DT_r/c_rv.mp3" remix - highpass 100 norm \
             compand 0.05,0.2 6:-54,-90,-36,-36,-24,-24,0,-12 0 -90 0.1 \
             vad -T 0.6 -p 0.2 -t 5 fade 0.1 reverse \
@@ -130,9 +128,9 @@ if [[ ${conten^} = A ]]; then
             unzip "$DT_r/rv.zip"
         fi
         
-        n=1; r=$c
-        while [[ $n -le $c ]]; do
-        mv -f ./$n.mp3 ./_$r.mp3
+        n=1; r=${c}
+        while [[ ${n} -le ${c} ]]; do
+        mv -f ./${n}.mp3 ./_${r}.mp3
         ((n=n+1))
         ((r=r-1))
         done
@@ -174,11 +172,11 @@ if [[ ${conten^} = A ]]; then
         cd "$DT_r"
         lns="$(ls ./[0-9]*.mp3 | wc -l | head -200)"
         n=1
-        while [[ $n -le $lns ]]; do
+        while [[ ${n} -le ${lns} ]]; do
 
-            if [ -f "./$n.mp3" ]; then
+            if [ -f "./${n}.mp3" ]; then
             
-                sox "./$n.mp3" info.flac rate 16k
+                sox "./${n}.mp3" info.flac rate 16k
                 data="$(audio_recog ./info.flac $lgt $lgt $key)"
                 
                 if [ -z "${data}" ]; then
@@ -202,7 +200,7 @@ if [[ ${conten^} = A ]]; then
                 index txt_missing "$trgt" "$tpe"
                 echo -e "\n\n#$n [$(gettext "Text missing")]" >> ./slog
                 
-                elif [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
+                elif [[ $(wc -l < "${DC_tlt}/0.cfg") -ge 200 ]]; then
                 echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> ./slog
                 
                 else
@@ -298,8 +296,7 @@ if [[ ${conten^} = A ]]; then
         notify-send -i idiomind \
         "$tpe" \
         "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
-        echo "aitm.$adds.aitm" >> \
-        $DC/addons/stats/.log; fi
+        echo ".adi.$adds.adi." >> "$DC_s/log"; fi
         
         if [ -n "$logs" ] || [ "$(ls [0-9]* | wc -l)" -ge 1 ]; then
         

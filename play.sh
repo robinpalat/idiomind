@@ -125,7 +125,7 @@ if [[ $ret -eq 0 ]]; then
     #"$(gettext "Exiting...")" -i idiomind -t 3000 &
     #"$DS/stop.sh" 2 & exit 1; fi
     
-    echo -e ".ply.$tpc.ply." >> "$DC_s/8.cfg" &
+    echo -e ".ply.$tpc.ply." >> "$DC_s/log" &
     sleep 1
     "$DS/bcle.sh" & exit 0
 
