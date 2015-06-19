@@ -130,7 +130,6 @@ function new_session() {
 
 if grep -o '.idmnd' <<<"${1: -6}"; then
 
-    datei=$(date +%Y-%m-%d)
     c=$((RANDOM%1000))
     source "$DS/ifs/mods/cmns.sh"
     [ ! -d "$DT" ] && mkdir "$DT"
@@ -175,18 +174,15 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             rm -f "$DT/import.tar.gz" "$DT/${tpf}.cfg" & exit
             
         elif [[ $ret -eq 0 ]]; then
-            
-            if2=$(wc -l < "$DM_t/$langt/.1.cfg")
-            chck=$(grep -Fxo "${tname}" "$DM_t/$langt/.1.cfg" | wc -l)
-            
-            if [[ ${if2} -ge 80 ]]; then
+
+            if [[ $(wc -l < "$DM_t/$langt/.1.cfg") -ge 120 ]]; then
                 
                 msg "$(gettext "Sorry, you have reached the maximum number of topics")\n" info
                 [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c"
                 rm -f "$DT/import.tar.gz" & exit
             fi
             
-            if [[ ${chck} -ge 1 ]]; then
+            if [[ $(grep -Fxo "${tname}" "$DM_t/$langt/.1.cfg" | wc -l) -ge 1 ]]; then
             
                 for i in {1..50}; do
                 chck=$(grep -Fxo "${tname} ($i)" "$DM_t/$langt/.1.cfg")
@@ -213,7 +209,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             cp -f "${tmp}/conf/0.cfg" "$DC_tlt/0.cfg"
             cp -f "${tmp}/conf/id.cfg" "$DC_tlt/id.cfg"
             cp -f "${tmp}/conf/info" "$DC_tlt/info"
-            sed -i "s/datei=.*/datei=\"$datei\"/g" "${DC_tlt}/id.cfg"
+            sed -i "s/datei=.*/datei=\"$(date +%Y-%m-%d)\"/g" "${DC_tlt}/id.cfg"
             while read item_; do
             item="$(sed 's/},/}\n/g' <<<"${item_}")"
             type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
