@@ -209,7 +209,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             cp -f "${tmp}/conf/0.cfg" "$DC_tlt/0.cfg"
             cp -f "${tmp}/conf/id.cfg" "$DC_tlt/id.cfg"
             cp -f "${tmp}/conf/info" "$DC_tlt/info"
-            sed -i "s/datei=.*/datei=\"$(date +%Y-%m-%d)\"/g" "${DC_tlt}/id.cfg"
+            sed -i "s/datei=.*/datei=\"$(date +%F)\"/g" "${DC_tlt}/id.cfg"
             while read item_; do
             item="$(sed 's/},/}\n/g' <<<"${item_}")"
             type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"

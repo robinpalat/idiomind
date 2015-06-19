@@ -73,7 +73,7 @@ function dlg_file_2() {
     --button=gtk-ok:0
 }
 
-if [[ "$conten" = A ]]; then
+if [[ ${conten^} = A ]]; then
 
     cd "$DT_r"
     left=$((200 - $(wc -l < "${DC_tlt}/4.cfg")))

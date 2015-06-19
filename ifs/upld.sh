@@ -21,7 +21,6 @@ source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
-dateu=$(date +%Y-%m-%d)
 
 idfile() {
     
@@ -265,7 +264,8 @@ if [ "$du" -gt 50000000 ]; then
 msg "$(gettext "Sorry, the size of the attachments is too large.")\n " info & exit 1; fi
 fi
 
-internet; cd "$DT"
+internet; [ -d "$DT" ] && cd "$DT" || exit 1
+[ -d "$DT/upload" ] && rm -fr "$DT/upload"
 mkdir "$DT/upload"
 DT_u="$DT/upload/"
 mkdir -p "$DT/upload/${tpc}/conf"
@@ -275,11 +275,11 @@ images=$(ls *.jpg | wc -l); else
 images=0; fi
 [ -f "${DC_tlt}/3.cfg" ] && words=$(wc -l < "${DC_tlt}/3.cfg")
 [ -f "${DC_tlt}/4.cfg" ] && sentences=$(wc -l < "${DC_tlt}/4.cfg")
-[ -f "${DC_tlt}/id.cfg" ] && date_c="$(sed -n 8p "${DC_tlt}/id.cfg" \
-| grep -o 'date_c="[^"]*' | grep -o '[^"]*$')"
-date_u=$(date +%F)
+[ -f "${DC_tlt}/id.cfg" ] && \
+datec="$(grep -o 'datec="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+datei="$(grep -o 'datei="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+dateu=$(date +%F)
 
-if [ ! -f "${DC_tlt}/id.cfg" ]; then
 echo -e "tname=\"${tpc}\"
 langs=\"$lgsl\"
 langt=\"$lgtl\"
@@ -287,33 +287,17 @@ authr=\"$iuser_m\"
 cntct=\"$cntct_m\"
 ctgry=\"$Ctgry\"
 ilink=\"$usrid\"
-datec=\"$date_c\"
+datec=\"$datec\"
 dateu=\"$dateu\"
-datei=\"$date_i\"
+datei=\"$datei\"
 nword=\"$words\"
 nsent=\"$sentences\"
 nimag=\"$images\"
 level=\"$level\"
 set_1=\"$set_1\"
-set_2=\"$set_2\"" > "$DT_u/${tpc}/conf/id.cfg"
-else
-sed -i "s/langs=.*/langs=\"$lgsl\"/g" "${DC_tlt}/id.cfg"
-sed -i "s/langt=.*/langt=\"$lgtl\"/g" "${DC_tlt}/id.cfg"
-sed -i "s/authr=.*/authr=\"$iuser_m\"/g" "${DC_tlt}/id.cfg"
-sed -i "s/cntct=.*/cntct=\"$cntct_m\"/g" "${DC_tlt}/id.cfg"
-sed -i "s/ctgry=.*/ctgry=\"$Ctgry\"/g" "${DC_tlt}/id.cfg"
-sed -i "s/ilink=.*/ilink=\"$usrid\"/g" "${DC_tlt}/id.cfg"
-sed -i "s/datec=.*/datec=\"$datec\"/g" "${DC_tlt}/id.cfg"
-sed -i "s/dateu=.*/dateu=\"$dateu\"/g" "${DC_tlt}/id.cfg"
-sed -i "s/datei=.*/datei=\"$datei\"/g" "${DC_tlt}/id.cfg"
-sed -i "s/nword=.*/nword=\"$words\"/g" "${DC_tlt}/id.cfg"
-sed -i "s/nsent=.*/nsent=\"$sentences\"/g" "${DC_tlt}/id.cfg"
-sed -i "s/nimag=.*/nimag=\"$images\"/g" "${DC_tlt}/id.cfg"
-sed -i "s/level=.*/level=\"$level\"/g" "${DC_tlt}/id.cfg"
+set_2=\"$set_2\"" > "${DC_tlt}/id.cfg"
 cp -f "${DC_tlt}/id.cfg" "$DT_u/${tpc}/conf/id.cfg"
-fi
 
-cp -f "$DT_u/${tpc}/conf/id.cfg" "$DT/${tpc}.id"
 if [ "${iuser}" != "${iuser_m}" ] \
 || [ "${cntct}" != "${cntct_m}" ]; then
 sed -i "s/usrid=.*/usrid=\"$usrid\"/g" "$DC_s/3.cfg"
@@ -337,12 +321,19 @@ if [ -f "$DM_tl/.share/$audio.mp3" ]; then
 cp -f "$DM_tl/.share/$audio.mp3" "$DT_u/$tpc/share/$audio.mp3"; fi
 done <<<"$auds"
 
+# remove from folder topic name characters weirds TODO
+echo -e "# -- listed items (md5sum) ----" > \
+"$DT_u/${tpc}/conf/${usrid}.${tpc}"
 > "${DC_tlt}/1.cfg"
 while read item_; do
 item="$(sed 's/},/}\n/g' <<<"${item_}")"
 trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
-[ -n "${trgt}" ] && echo "${trgt}" >> "${DC_tlt}/1.cfg"
+id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
+if [ -n "${trgt}" ]; then
+echo "${trgt}" >> "${DC_tlt}/1.cfg"
+echo "${id}" >> "$DT_u/${tpc}/conf/${usrid}.${tpc}"; fi
 done < "$DC_tlt/0.cfg"
+
 cp -f "${DC_tlt}/1.cfg" "$DT_u/${tpc}/conf/1.cfg"
 cp -f "${DC_tlt}/0.cfg" "$DT_u/${tpc}/conf/0.cfg"
 echo -e "${notes}" > "${DC_tlt}/info"
@@ -356,12 +347,14 @@ mv "${tpc}.tar.gz" "$usrid.${tpc}.$lgt"
 du=$(du -h "$usrid.${tpc}.$lgt" | cut -f1)
 [ -d "$DT_u/${tpc}" ] && rm -fr "$DT_u/${tpc}"
 
-notify-send "$(gettext "Upload in progress")" "$(gettext "This can take some time, please wait")" -t 6000
+notify-send "$(gettext "Upload in progress")" \
+"$(gettext "This can take some time, please wait")" -t 6000
 
 url="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
 | grep -o 'UPLOADS="[^"]*' | grep -o '[^"]*$')"
 upld="${DT_u}/${usrid}.${tpc}.${lgt}"
 export upld url
+
 python << END
 import requests
 import os
@@ -370,9 +363,9 @@ url = os.environ['url']
 files = {'file': open(upld, 'rb')}
 r = requests.post(url, files=files)
 END
+u=$?
 
-exit=$?
-if [[ $exit = 0 ]]; then
+if [[ $u = 0 ]]; then
     [ ! -d "${DM}/backup" ] && mkdir "${DM}/backup"
     mv -f "${DT}/${tpc}.id" "${DM}/backup/${tpc}.id"
     info=" <b>$(gettext "Uploaded correctly")</b>\n $tpc\n"

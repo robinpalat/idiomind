@@ -1,39 +1,44 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
-#[[ -z "$DM" ]] && source /usr/share/idiomind/ifs/c.conf
+ 
+#[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 #source "$DS/ifs/mods/cmns.sh"
 #DSV="$DM_t/saved"
+
+#xml="<?xml version='1.0' encoding='UTF-8'?>
+#<xsl:stylesheet version='1.0'
+#xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
+#xmlns:atom='http://www.w3.org/2005/Atom'>
+#<xsl:output method='text'/>
+#<xsl:template match='/'>
+#<xsl:for-each select='/rss/channel/item'>
+#<xsl:value-of select='id'/><xsl:text></xsl:text>
+#</xsl:for-each>
+#</xsl:template>
+#</xsl:stylesheet>"
 
 
 #update() {
 
-    #xml="<?xml version='1.0' encoding='UTF-8'?>
-    #<xsl:stylesheet version='1.0'
-    #xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
-    #xmlns:atom='http://www.w3.org/2005/Atom'>
-    #<xsl:output method='text'/>
-    #<xsl:template match='/'>
-    #<xsl:for-each select='/rss/channel/item'>
-    #<xsl:value-of select='id'/><xsl:text></xsl:text>
-    #</xsl:for-each>
-    #</xsl:template>
-    #</xsl:stylesheet>"
-
-    #feed="http://idiomind.sourceforge.net/test/Adriana y Candice.php"
+    #id="$(grep -o 'usrid="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
+    #feed="http://55.2fh.co/idiomind/?rss=${id}.${1}"
     #items="$(xsltproc - "$feed" <<<"$xml" 2> /dev/null)"
     #items="$(echo "${items}" |sed '/^$/d')"
-
+    
     #while read -r item; do
     
         #[ -z "$item" ] && continue
+
+        #if ! grep -F "id=[${item}]" "${DC_tlt}/0.cfg"; then
         
-        #if ! grep -Fxo "${item}" < "$DC_tlt/11.cfg"; then
-            #echo "${item}" >> /home/robin/Desktop/news
+            #item="$(grep -F -m 1 "id=[${item}]" "${DC_tlt}/0.cfg" |sed 's/},/}\n/g')"
+            #trgt=`grep -oP '(?<=trgt={).*(?=})' <<<"${item}"`
+            #echo "${trgt}" >> /home/robin/Desktop/news
         #fi
         
     #done < <(xsltproc - "$feed" <<<"$xml" 2> /dev/null)
 
-#}
+#} >/dev/null 2>&1
 
 
 #while read tps; do

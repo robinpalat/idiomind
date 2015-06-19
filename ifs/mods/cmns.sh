@@ -53,7 +53,6 @@ function get_item() {
 
 }
 
-
 function get_name_file() {
     
     cfg11_="$DM_tl/${1}/.conf/0.cfg"; trgt_="${2}"
@@ -63,11 +62,9 @@ function get_name_file() {
      
 }
 
-
 function nmfile() {
     echo -n "${1}" | md5sum | rev | cut -c 4- | rev
 }
-
 
 function set_name_file() {
 

@@ -129,7 +129,7 @@ Create one using the button below. ")" & exit 1; fi
             "$DS/add.sh" new_topic
             else echo "${tpe}" > "$DT/tpe"; fi
             
-            if [[ "${trgt}" = Ocr ]] || [[ "${trgt}" = I ]]; then
+            if [[ "${trgt}" = Ocr ]] || [[ ${trgt^} = I ]]; then
                 "$DS/add.sh" process image "$DT_r" & exit 1
 
             elif [[ ${#trgt} = 1 ]]; then
