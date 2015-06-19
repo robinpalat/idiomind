@@ -29,16 +29,17 @@ if [[ "$1" = chngi ]]; then
     s="$(grep -oP '(?<=sntcs=\").*(?=\")' "$DC_s/1.cfg")"
     m="$(grep -oP '(?<=marks=\").*(?=\")' "$DC_s/1.cfg")"
     p="$(grep -oP '(?<=wprct=\").*(?=\")' "$DC_s/1.cfg")"
-    a="$(grep -oP '(?<=audio=\").*(?=\")' "$DC_s/1.cfg")"
-    n="$(grep -oP '(?<=ntosd=\").*(?=\")' "$DC_s/1.cfg")"
-    l="$(grep -oP '(?<=loop=\").*(?=\")' "$DC_s/1.cfg")"
     export v="$(grep -oP '(?<=video=\").*(?=\")' "$DC_s/1.cfg")"
     export ne="$(grep -oP '(?<=nsepi=\").*(?=\")' "$DC_s/1.cfg")"
     export se="$(grep -oP '(?<=svepi=\").*(?=\")' "$DC_s/1.cfg")"
-    if [[ ${n} != TRUE ]] && [[ ${a} != TRUE ]]; then audio=TRUE; fi
-    nu='^[0-9]+$'; if ! [[ $l =~ $nu ]]; then l=1; fi
-
+    
     _play() {
+		
+		a="$(grep -oP '(?<=audio=\").*(?=\")' "$DC_s/1.cfg")"
+		n="$(grep -oP '(?<=ntosd=\").*(?=\")' "$DC_s/1.cfg")"
+		l="$(grep -oP '(?<=loop=\").*(?=\")' "$DC_s/1.cfg")"
+		if [[ ${n} != TRUE ]] && [[ ${a} != TRUE ]]; then audio=TRUE; fi
+		nu='^[0-9]+$'; if ! [[ $l =~ $nu ]]; then l=1; fi
         
         if [ ${n} = TRUE ]; then
         notify-send -i "${icon}" "${trgt}" "${srce}" -t 10000; fi &
