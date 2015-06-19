@@ -114,7 +114,7 @@ function sentence_p() {
     
     echo "${vrbl}" | sed 's/ /\n/g' | grep -v '^.$' \
     | grep -v '^..$' | sed -n 1,50p \
-    | tr -d '*)(/' | tr -s '"&:|{}[]' ' ' \
+    | tr -d '*)(' | tr -s '"&:|{}[]' ' ' \
     | sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
     | sed 's/\]//;s/\[//g' | sed 's/<[^>]*>//g' \
     | sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //;s/"//g' > "$aw"
@@ -187,15 +187,6 @@ function check_grammar_2() {
     elif grep -Fxq "${1,,}" <<<"$verbs"; then echo 'verb. '; fi
 }
 
-#function clean_1() {
-    
-    #echo "$1" | sed ':a;N;$!ba;s/\n/ /g' \
-    #| sed 's/&//;s/://;s/\.//g' | sed "s/’/'/g" \
-    #| sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
-    #| sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \
-    #| tr -s '“”|"' ' ' \
-    #| sed 's/<[^>]*>//g'
-#}
 
 function clean_1() {
     
@@ -203,22 +194,21 @@ function clean_1() {
     | sed "s/’/'/g" \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \
-    | tr -d '*|",;!¿?¡()[]&:./<>+' \
+    | tr -d '*|",;!¿?()[]&:./<>+'  | sed 's/\¡//g' \
     | sed 's/<[^>]*>//g' | sed 's/ \+/ /g'
 }
-
 
 
 function clean_2() {
     
     if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
-    echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" | sed "s|/||g" \
-    | tr -s '“”"&:|' ' ' \
+    echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" \
+    | tr -d '*//' | tr -s '"&:|{}[]<>+' ' ' \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//; s/ *$//g' | sed 's/ — /__/g' | sed 's/<[^>]*>//g'
     else
-    echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" \
-    | tr -s '“”"&:|' ' ' \
+    echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" \
+    | tr -d '*/' | tr -s '"&:|{}[]<>+' ' ' \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \
     | sed 's/ — /__/g' | sed "s|/||g" | sed 's/<[^>]*>//g'
@@ -231,61 +221,22 @@ function clean_3() {
     echo "${1}" | cut -d "|" -f1 | sed 's/!//;s/&//;s/\://; s/\&//g' \
     | sed "s/-//g" | sed 's/^[ \t]*//;s/[ \t]*$//' | sed "s|/||g" \
     | sed 's|/||;s/^\s*./\U&\E/g' | sed 's/\：//g' | sed 's/<[^>]*>//g' \
-    | tr -d '*'
+    | tr -d '*/' | tr -s '"&:|{}[]<>+' ' ' | sed 's/ \+/ /g'
 }  
-
 
 
 function clean_4() {
     
     if [ `wc -c <<<"${1}"` -lt 150 ]; then
-    echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' | sed 's/ \+/ /g' \
-    | sed 's/ — / /g' | sed '/^$/d'
+    echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' \
+    | tr -d '*/' | tr -s '"&:|{}[]<>+' ' ' \
+    | sed 's/ — / /g' | sed '/^$/d' | sed 's/ \+/ /g'
     else 
-    echo "${1}" | sed ':a;N;$!ba;s/\n/\__/g' | sed 's/ \+/ /g' \
-    | sed 's/ — /__/g' | sed '/^$/d'
+    echo "${1}" | sed ':a;N;$!ba;s/\n/\__/g' \
+    | tr -d '*/' | tr -s '"&:|{}[]<>+' ' ' \
+    | sed 's/ — /__/g' | sed '/^$/d' | sed 's/ \+/ /g'
     fi
 }
-
-
-#function clean_2() {
-    
-    #if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
-    #echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" \
-    #| tr -d '*//' | tr -s '"&:|{}[]<>+' ' ' \
-    #| sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
-    #| sed 's/^ *//; s/ *$//g' | sed 's/ — /__/g' | sed 's/<[^>]*>//g'
-    #else
-    #echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" \
-    #| tr -d '*/' | tr -s '"&:|{}[]<>+' ' ' \
-    #| sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
-    #| sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \
-    #| sed 's/ — /__/g' | sed "s|/||g" | sed 's/<[^>]*>//g'
-    #fi
-#}
-
-
-#function clean_3() {
-    
-    #echo "${1}" | cut -d "|" -f1 | sed 's/!//;s/&//;s/\://; s/\&//g' \
-    #| sed "s/-//g" | sed 's/^[ \t]*//;s/[ \t]*$//' | sed "s|/||g" \
-    #| sed 's|/||;s/^\s*./\U&\E/g' | sed 's/\：//g' | sed 's/<[^>]*>//g' \
-    #| tr -d '*/' | tr -s '"&:|{}[]<>+' ' ' | sed 's/ \+/ /g'
-#}  
-
-
-#function clean_4() {
-    
-    #if [ `wc -c <<<"${1}"` -lt 150 ]; then
-    #echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' \
-    #| tr -d '*/' | tr -s '"&:|{}[]<>+' ' ' \
-    #| sed 's/ — / /g' | sed '/^$/d' | sed 's/ \+/ /g'
-    #else 
-    #echo "${1}" | sed ':a;N;$!ba;s/\n/\__/g' \
-    #| tr -d '*/' | tr -s '"&:|{}[]<>+' ' ' \
-    #| sed 's/ — /__/g' | sed '/^$/d' | sed 's/ \+/ /g'
-    #fi
-#}
 
 
 function add_item() {
