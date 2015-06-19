@@ -725,43 +725,42 @@ mkpdf() {
 
     if [[ $ret -eq 0 ]]; then
     
-        dte=`date "+%d %B %Y"`
-        [ -d "$DT/mkhtml" ] && rm -f "$DT/mkhtml"
-        mkdir "$DT/mkhtml"
-        mkdir "$DT/mkhtml/images"
+        [ -d "$DT/mkhtml" ] && rm -fr "$DT/mkhtml"
+        mkdir -p "$DT/mkhtml/images"; wdir="$DT/mkhtml"
+        cfg0="${DC_tlt}/0.cfg"
+        cfg3="${DC_tlt}/3.cfg"
+        cfg4="${DC_tlt}/4.cfg"
         nts="$(sed ':a;N;$!ba;s/\n/<br>/g' < "${DC_tlt}/info" \
         | sed 's/\&/&amp;/g')"
         if [ -f "${DM_tlt}/images/img.jpg" ]; then
         convert "${DM_tlt}/images/img.jpg" \
-        -alpha set -channel A -evaluate set 50% \
-        "$DT/mkhtml/img.png"; fi
-
-        cd "$DT/mkhtml"
-        cp -f "${DC_tlt}/3.cfg" ./"3.cfg"
-        cp -f "${DC_tlt}/4.cfg" ./"4.cfg"
-        cfg0="${DC_tlt}/0.cfg"
-
-        while read word; do
+        -alpha set -channel A -evaluate set 50% "$wdir/img.png"; fi
+        
+        while read -r word; do
 
             item="$(grep -F -m 1 "trgt={${word}}" "${cfg0}" |sed 's/},/}\n/g')"
             fname="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
 
             if [ -f "${DM_tlt}/images/$fname.jpg" ]; then
+            trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
             convert "${DM_tlt}/images/$fname.jpg" -alpha set -virtual-pixel transparent \
-            -channel A -blur 0x10 -level 50%,100% +channel "$DT/mkhtml/images/$Word.png"
+            -channel A -blur 0x10 -level 50%,100% +channel "$wdir/images/$trgt.png"
+            echo "${trgt}" >> "$wdir/image_list"
             fi
 
-        done < "$DT/mkhtml/3.cfg"
+        done < <(tac "${cfg3}")
 
-        while read sntcs; do
+        while read -r sntcs; do
         
             item="$(grep -F -m 1 "trgt={${sntcs}}" "${cfg0}" |sed 's/},/}\n/g')"
             trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
             srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
-            echo "${trgt}" >> ./trgt_sentences
-            echo "${srce}" >> ./srce_sentences
+            if [ -n "${trgt}" ] && [ -n "${srce}" ]; then
+            echo "${trgt}" >> "$wdir/trgt_sentences"
+            echo "${srce}" >> "$wdir/srce_sentences"
+            fi
 
-        done < "$DT/mkhtml/4.cfg"
+        done < <(tac "${cfg4}")
         
         echo -e "<head>
         <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />
@@ -771,56 +770,55 @@ mkpdf() {
         <body>
         <div><p></p>
         </div>
-        <div>" >> doc.html
-        if [ -f "$DT/mkhtml/img.png" ]; then
+        <div>" >> "$wdir/doc.html"
+        if [ -f "$wdir/img.png" ]; then
         echo -e "<table width=\"100%\" border=\"0\">
         <tr>
-        <td><img src=\"$DT/mkhtml/img.png\" alt="" border=0 height=100% width=100%></img>
+        <td><img src=\"$wdir/img.png\" alt="" border=0 height=100% width=100%></img>
         </td>
         </tr>
-        </table>" >> doc.html; fi
+        </table>" >> "$wdir/doc.html"; fi
         echo -e "<p>&nbsp;</p>
         <h3>$tpc</h3>
         <hr>
         <div width=\"80%\" align=\"left\" border=\"0\" class=\"ifont\">
-        <br>" >> doc.html
-        printf "$nts" >> doc.html
+        <br>" >> "$wdir/doc.html"
+        printf "$nts" >> "$wdir/doc.html"
         echo -e "<p>&nbsp;</p>
-        <div>" >> doc.html
+        <div>" >> "$wdir/doc.html"
 
         cd "${DM_tlt}/images"
         cnt=`ls -1 *.jpg | grep -v "img.jpg" | wc -l`
-        if [[ $cnt != 0 ]]; then
-            cd "$DT/mkhtml/images/"
-            ls *.png | sed 's/\.png//g' > "$DT/mkhtml/image_list"
-            cd "$DT/mkhtml"
-            echo -e "<p>&nbsp;</p><table width=\"100%\" align=\"center\" border=\"0\" class=\"images\">" >> doc.html
+        if [[ $cnt -gt 0 ]]; then
+
+            cd "$wdir"
+            echo -e "<p>&nbsp;</p><table width=\"100%\" align=\"center\" border=\"0\" class=\"images\">" >> "$wdir/doc.html"
             n=1
-            while [[ $n -lt $(($(wc -l < ./image_list)+1)) ]]; do
+            while [[ $n -lt $(($(wc -l < "$wdir/image_list")+1)) ]]; do
             
-                    label1=$(sed -n "$n",$((n+1))p < ./image_list | sed -n 1p)
-                    label2=$(sed -n "$n",$((n+1))p < ./image_list | sed -n 2p)
+                    label1=$(sed -n ${n},$((n+1))p < "$wdir/image_list" |sed -n 1p)
+                    label2=$(sed -n ${n},$((n+1))p < "$wdir/image_list" |sed -n 2p)
                     if [ -n "${label1}" ]; then
                         echo -e "<tr>
-                        <td align=\"center\"><img src=\"images/$label1.png\" width=\"200\" height=\"140\"></td>" >> doc.html
+                        <td align=\"center\"><img src=\"images/$label1.png\" width=\"200\" height=\"140\"></td>" >> "$wdir/doc.html"
                         if [ -n "${label2}" ]; then
-                        echo -e "<td align=\"center\"><img src=\"images/$label2.png\" width=\"200\" height=\"140\"></td></tr>" >> doc.html
+                        echo -e "<td align=\"center\"><img src=\"images/$label2.png\" width=\"200\" height=\"140\"></td></tr>" >> "$wdir/doc.html"
                         else
-                        echo '</tr>' >> doc.html
+                        echo '</tr>' >> "$wdir/doc.html"
                         fi
                         echo -e "<tr>
                         <td align=\"center\" valign=\"top\"><p>${label1}</p>
                         <p>&nbsp;</p>
                         <p>&nbsp;</p>
-                        <p>&nbsp;</p></td>" >> doc.html
+                        <p>&nbsp;</p></td>" >> "$wdir/doc.html"
                         if [ -n "${label2}" ]; then
                         echo -e "<td align=\"center\" valign=\"top\"><p>${label2}</p>
                         <p>&nbsp;</p>
                         <p>&nbsp;</p>
                         <p>&nbsp;</p></td>
-                        </tr>" >> doc.html
+                        </tr>" >> "$wdir/doc.html"
                         else
-                        echo '</tr>' >> doc.html
+                        echo '</tr>' >> "$wdir/doc.html"
                         fi
                     else
                         break
@@ -828,12 +826,12 @@ mkpdf() {
 
                 ((n=n+2))
             done
-            echo -e "</table>" >> doc.html
+            echo -e "</table>" >> "$wdir/doc.html"
         fi
 
-        cd "$DT/mkhtml"
+        cd "$wdir"
         
-        while read word; do
+        while read -r word; do
         
             item="$(grep -F -m 1 "trgt={${word}}" "${cfg0}" |sed 's/},/}\n/g')"
             trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
@@ -843,12 +841,9 @@ mkpdf() {
             ntes="$(grep -oP '(?<=note={).*(?=})' <<<"${item}")"
             fname="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
             hlgt="${trgt,,}"
-            exmp1=$(echo "${exmp}" \
-            | sed "s/"$hlgt"/<b>"$hlgt"<\/\b>/g")
-            echo "${trgt}" >> trgt_words
-            echo "${srce}" >> srce_words
+            exmp1=$(echo "${exmp}" |sed "s/"$hlgt"/<b>"$hlgt"<\/\b>/g")
             
-            if [ -n "${trgt}" ]; then
+            if [ -n "${trgt}" ] && [ -n "${srce}" ]; then
             
                 echo -e "<table width=\"55%\" border=\"0\" align=\"left\" cellpadding=\"10\" cellspacing=\"5\">
                 <tr>
@@ -858,50 +853,49 @@ mkpdf() {
                 <td bgcolor=\"#E6E6E6\" class=\"side\"></td>
                 <td bgcolor=\"#FFFFFF\"><w2>${srce}</w2></td>
                 </tr>
-                </table>" >> doc.html
+                </table>" >> "$wdir/doc.html"
                 echo -e "<table width=\"100%\" border=\"0\" align=\"center\" cellpadding=\"10\" class=\"efont\">
                 <tr>
-                <td width=\"10px\"></td>" >> doc.html
+                <td width=\"10px\"></td>" >> "$wdir/doc.html"
                 if [ -z "${dftn}" ] && [ -z "${exmp1}" ]; then
                 echo -e "<td width=\"466\" valign=\"top\" class=\"nfont\" >${ntes}</td>
                 <td width=\"389\"</td>
                 </tr>
-                </table>" >> doc.html
+                </table>" >> "$wdir/doc.html"
                 else
-                    echo -e "<td width=\"466\">" >> doc.html
+                    echo -e "<td width=\"466\">" >> "$wdir/doc.html"
                     if [ -n "${dftn}" ]; then
                     echo -e "<dl>
                     <dd><dfn>${dftn}</dfn></dd>
-                    </dl>" >> doc.html
+                    </dl>" >> "$wdir/doc.html"
                     fi
                     if [ -n "${exmp1}" ]; then
                     echo -e "<dl>
                     <dt> </dt>
                     <dd><cite>${exmp1}</cite></dd>
-                    </dl>" >> doc.html
+                    </dl>" >> "$wdir/doc.html"
                     fi 
                     echo -e "</td>
                     <td width=\"400\" valign=\"top\" class=\"nfont\">${ntes}</td>
                     </tr>
-                    </table>" >> doc.html
+                    </table>" >> "$wdir/doc.html"
                 fi
             fi
             
-        done < "$DT/mkhtml/3.cfg"
+        done < <(tac "${cfg3}")
 
         n=1; trgt=""
-        while [[ $n -le "$(wc -l < ./"4.cfg")" ]]; do
+        while [[ $n -le "$(wc -l < "${cfg4}")" ]]; do
         
-            trgt=$(sed -n "$n"p ./"trgt_sentences")
+            trgt=$(sed -n ${n}p "$wdir/trgt_sentences")
             while read -r mrk; do
-                if grep -Fxo ${mrk^} < ./"3.cfg"; then
+                if grep -Fxo ${mrk^} < "${cfg3}"; then
                 trgsm=$(sed "s|$mrk|<mark>$mrk<\/mark>|g" <<<"$trgt")
                 trgt="$trgsm"; fi
             done <<<"$(tr ' ' '\n' <<<"${trgt}")"
 
             if [ -n "${trgt}" ]; then
-                srce=$(sed -n "$n"p ./"srce_sentences")
-                fn=$(sed -n "$n"p ./"4.cfg")
+                srce=$(sed -n ${n}p "$wdir/srce_sentences")
                 echo -e "<h1>&nbsp;</h1>
                 <table width=\"100%\" border=\"0\" align=\"left\" cellpadding=\"10\" cellspacing=\"5\">
                 <tr>
@@ -912,7 +906,7 @@ mkpdf() {
                 <td bgcolor=\"#FFFFFF\"><h2>${srce}</h2></td>
                 </tr>
                 </table>
-                <h1>&nbsp;</h1>" >> doc.html
+                <h1>&nbsp;</h1>" >> "$wdir/doc.html"
             fi
             let n++
         done
@@ -925,11 +919,11 @@ mkpdf() {
         </div>
         <span class=\"container\"></span>
         </body>
-        </html>" >> doc.html
+        </html>" >> "$wdir/doc.html"
 
-        wkhtmltopdf -s A4 -O Portrait ./doc.html ./tmp.pdf
-        mv -f ./tmp.pdf "$pdf"
-        rm -fr "$DT/mkhtml"
+        wkhtmltopdf -s A4 -O Portrait "$wdir/doc.html" "$wdir/tmp.pdf"
+        mv -f "$wdir/tmp.pdf" "$pdf"
+        rm -fr "$wdir"
     fi
     exit
 }
