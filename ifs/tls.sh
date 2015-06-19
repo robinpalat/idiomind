@@ -334,7 +334,7 @@ trestore() {
             ret="$?"
             
             if [[ $ret -eq 0 ]]; then
-            cp -f "$HOME/.idiomind/backup/${2}.bk" "${DM_tl}/${2}/.conf/0.cfg"
+            cp -f "$HOME/.idiomind/backup/${3}.bk" "${DM_tl}/${3}/.conf/0.cfg"
             fi
         else
             msg "$(gettext "Backup not found")\n" dialog-warning
@@ -702,7 +702,6 @@ set_image() {
         -gravity center -extent 100x90 -quality 90% "$file"_temp.jpeg
         /usr/bin/convert "$file.temp.jpeg" -interlace Plane -thumbnail 405x275^ \
         -gravity center -extent 400x270 -quality 90% "$ifile"
-        wait
         "$DS/ifs/tls.sh" set_image "${2}" "${3}" & exit
 
     fi
@@ -740,30 +739,30 @@ mkpdf() {
         cd "$DT/mkhtml"
         cp -f "${DC_tlt}/3.cfg" ./"3.cfg"
         cp -f "${DC_tlt}/4.cfg" ./"4.cfg"
+        cfg0="${DC_tlt}/0.cfg"
 
-        n="$(wc -l < ./"3.cfg" | awk '{print ($1)}')"
-        while [[ $n -ge 1 ]]; do
-            Word=$(sed -n "$n"p ./"3.cfg")
-            fname="$(nmfile "$Word")"
+        while read word; do
+
+            item="$(grep -F -m 1 "trgt={${word}}" "${cfg0}" |sed 's/},/}\n/g')"
+            fname="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
+
             if [ -f "${DM_tlt}/images/$fname.jpg" ]; then
             convert "${DM_tlt}/images/$fname.jpg" -alpha set -virtual-pixel transparent \
             -channel A -blur 0x10 -level 50%,100% +channel "$DT/mkhtml/images/$Word.png"
             fi
-            let n--
-        done
 
-        n="$(wc -l < "./4.cfg" | awk '{print ($1)}')"
-        while [[ $n -ge 1 ]]; do
-            Word=$(sed -n "$n"p ./"4.cfg")
-            fname="$(nmfile "$Word")"
-            tgs=$(eyeD3 "${DM_tlt}/$fname.mp3")
-            trgt=$(grep -o -P "(?<=ISI1I0I).*(?=ISI1I0I)" <<<"$tgs")
-            srce=$(grep -o -P "(?<=ISI2I0I).*(?=ISI2I0I)" <<<"$tgs")
+        done < "$DT/mkhtml/3.cfg"
+
+        while read sntcs; do
+        
+            item="$(grep -F -m 1 "trgt={${sntcs}}" "${cfg0}" |sed 's/},/}\n/g')"
+            trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
+            srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
             echo "${trgt}" >> ./trgt_sentences
             echo "${srce}" >> ./srce_sentences
-            echo "id.$n:[trgt={$trgt},srce={$srce},exmp={},defn={},note={},wrds={},grmr={},sum={}]" >> /home/robin/Desktop/template
-            let n--
-        done
+
+        done < "$DT/mkhtml/4.cfg"
+        
         echo -e "<head>
         <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />
         <title>$tpc</title><head>
@@ -833,23 +832,21 @@ mkpdf() {
         fi
 
         cd "$DT/mkhtml"
-        n="$(wc -l < ./"3.cfg")"
         
-        while [[ $n -ge 1 ]]; do
-            Word=$(sed -n "$n"p ./"3.cfg")
-            fname="$(nmfile "$Word")"
-            tgs=$(eyeD3 "${DM_tlt}/$fname.mp3")
-            trgt=$(grep -o -P "(?<=IWI1I0I).*(?=IWI1I0I)" <<<"$tgs")
-            srce=$(grep -o -P "(?<=IWI2I0I).*(?=IWI2I0I)" <<<"$tgs")
-            inf=$(grep -o -P "(?<=IWI3I0I).*(?=IWI3I0I)" <<<"$tgs" | tr '_' '\n')
+        while read word; do
+        
+            item="$(grep -F -m 1 "trgt={${word}}" "${cfg0}" |sed 's/},/}\n/g')"
+            trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
+            srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
+            exmp="$(grep -oP '(?<=exmp={).*(?=})' <<<"${item}")"
+            defn="$(grep -oP '(?<=defn={).*(?=})' <<<"${item}")"
+            ntes="$(grep -oP '(?<=note={).*(?=})' <<<"${item}")"
+            fname="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
             hlgt="${trgt,,}"
-            exm1=$(echo "${inf}" | sed -n 1p | sed 's/\\n/ /g')
-            dftn=$(echo "${inf}" | sed -n 2p | sed 's/\\n/ /g')
-            exmp1=$(echo "${exm1}" \
+            exmp1=$(echo "${exmp}" \
             | sed "s/"$hlgt"/<b>"$hlgt"<\/\b>/g")
             echo "${trgt}" >> trgt_words
             echo "${srce}" >> srce_words
-            echo "id.$n:[trgt={$trgt},srce={$srce},exmp={$exm1},defn={$dftn},note={},wrds={},grmr={},sum={}]" >> /home/
             
             if [ -n "${trgt}" ]; then
             
@@ -889,8 +886,8 @@ mkpdf() {
                     </table>" >> doc.html
                 fi
             fi
-            let n--
-        done
+            
+        done < "$DT/mkhtml/3.cfg"
 
         n=1; trgt=""
         while [[ $n -le "$(wc -l < ./"4.cfg")" ]]; do
@@ -931,12 +928,13 @@ mkpdf() {
         </html>" >> doc.html
 
         wkhtmltopdf -s A4 -O Portrait ./doc.html ./tmp.pdf
-        mv -f ./tmp.pdf "$pdf"; rm -fr "$DT/mkhtml"
+        mv -f ./tmp.pdf "$pdf"
+        rm -fr "$DT/mkhtml"
     fi
     exit
 }
 
-convert() {
+converti() {
     
     n=1; > "$DC_tlt/0.cfg"
     while [[ $n -le 200 ]]; do
@@ -1035,7 +1033,7 @@ case "$1" in
     pdf)
     mkpdf ;;
     conv)
-    convert ;;
+    converti ;;
     html)
     mkhtml ;;
     sanity_1)

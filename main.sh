@@ -458,7 +458,11 @@ panel() {
     y=$(($(sed -n 3p "$DC_s/10.cfg")/2)); fi
     if ! [[ $x =~ $nu ]]; then x=100; fi
     if ! [[ $y =~ $nu ]]; then y=100; fi
-
+    
+    #clipw=$(grep -o clipw=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
+    #if [ "$clipw" = TRUE ] && [ ! -f "$DT/.clip" ]; then
+    #"$DS/ifs/mods/add/clipw.sh" & fi
+    
     yad --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
     --always-print-result \

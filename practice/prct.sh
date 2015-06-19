@@ -60,8 +60,7 @@ get_list() {
             echo "5"
             while read word; do
             
-                pos=`grep -Fon -m 1 "trgt={${word}}" "${cfg0}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
-                item=`sed -n ${pos}p "${cfg0}" |sed 's/},/}\n/g'`
+                item="$(grep -F -m 1 "trgt={${word}}" "${cfg0}" |sed 's/},/}\n/g')"
                 echo "$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")" >> "$directory/b.srces"
             
             done < "$directory/${ttest}.0"
@@ -97,9 +96,8 @@ get_list() {
         (
         echo "5"
         while read itm; do
-        
-            pos=`grep -Fon -m 1 "trgt={${itm}}" "${cfg0}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
-            item=`sed -n ${pos}p "${cfg0}" |sed 's/},/}\n/g'`
+    
+            item="$(grep -F -m 1 "trgt={${itm}}" "${cfg0}" |sed 's/},/}\n/g')"
             fname="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
             if [ -f "$DM_tlt/images/$fname.jpg" ]; then
                 echo "$itm" >> "$directory/${ttest}.0"; fi

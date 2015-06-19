@@ -26,7 +26,6 @@ lgs=$(lnglss $lgsl)
 wlist=$(grep -o wlist=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
 trans=$(grep -o trans=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
 ttrgt=$(grep -o ttrgt=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
-clipw=$(grep -o clipw=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
 
 new_topic() {
     
@@ -80,11 +79,9 @@ new_items() {
     "$DS/chng.sh" "$(gettext "To start adding notes you need to have a topic.
 Create one using the button below. ")" & exit 1; fi
 
-    [ -z "$4" ] && txt="$(xclip -selection primary -o)" || txt="$4"
+    [ -z "$4" ] && txt="$(xclip -selection primary -o; )" || txt="$4"
     txt="$(clean_4 "${txt}")"
     
-    if [ "$clipw" = TRUE ] && [ ! -f "$DT/.clip" ]; then clip_watch & fi
-
     if [ "$3" = 2 ]; then
     DT_r="$2"; cd "$DT_r"
     [ -n "$5" ] && srce="$5" || srce=""; else
@@ -733,7 +730,7 @@ process() {
                                 dictt "$audio" "$DM_tls/$audio.mp3"; fi
                                 if [ ! -f "$DM_tls/$audio.mp3" ]; then
                                 voice "${trgt}" "$DT_r" "$DM_tls/$audio.mp3"; fi
-                                echo "${trgt}" >> addw
+                                echo "${trgt}" >> ./addw
 
                             else
                                 echo -e "\n\n#$n $trgt" >> ./wlog
@@ -766,7 +763,7 @@ process() {
                                     [ ! -f "${DM_tlt}/$id.mp3" ] && voice "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
                                     else voice "${trgt}" "${DT_r}" "${DM_tlt}/$id.mp3"; fi
                                     fetch_audio "$aw" "$bw"
-                                    echo "$id" >> adds
+                                    echo "${trgt}" >> ./adds
 
                                 else
                                     echo -e "\n\n#$n $trgt" >> ./slog

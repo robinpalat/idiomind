@@ -18,4 +18,3 @@ clip_watch() {
         fi
     done
 }
-

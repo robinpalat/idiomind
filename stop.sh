@@ -16,6 +16,9 @@ on_quit() {
     kill -9 $(pgrep -f "yad --text-info ") &
     kill -9 $(pgrep -f "yad --form ") &
     kill -9 $(pgrep -f "yad --notebook ") & fi
+    if [ -f "$DT/.clip" ]; then
+    kill "$(< "$DT/.clip")"; rm -f "$DT/.clip"; fi
+    #if ps -A | pgrep -f "/usr/share/idiomind/clipw.sh"; then killall clipw.sh & fi
     if [ -f "$DT/.p_" ]; then
     notify-send "$(gettext "Playback stopped")"
     rm -f "$DT/.p_" "$DT/tpp"
