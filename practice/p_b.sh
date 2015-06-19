@@ -17,7 +17,7 @@ score() {
     
     "$drts"/cls.sh comp b &
 
-    if [[ $(($(< ./b.l)+$1)) -ge $all ]]; then
+    if [[ $(($(< ./b.l)+${1})) -ge ${all} ]]; then
         play "$drts/all.mp3" &
         echo ".w9.$(tr -s '\n' '|' < ./b.1).w9." >> "$log"
         echo -e ".okp.1.okp." >> "$log"
@@ -27,13 +27,13 @@ score() {
         exit 1
         
     else
-        [ -f ./b.l ] && echo $(($(< ./b.l)+easy)) > ./b.l || echo $easy > ./b.l
+        [ -f ./b.l ] && echo $(($(< ./b.l)+easy)) > ./b.l || echo ${easy} > ./b.l
         s=$(< ./b.l)
         v=$((100*s/all))
         n=1; c=1
-        while [[ $n -le 21 ]]; do
-            if [[ "$v" -le "$c" ]]; then
-            echo "$n" > ./.2; break; fi
+        while [[ ${n} -le 21 ]]; do
+            if [[ ${v} -le ${c} ]]; then
+            echo ${n} > ./.2; break; fi
             ((c=c+5))
             let n++
         done
@@ -41,7 +41,7 @@ score() {
         if [ -f ./b.3 ]; then
         echo ".w6.$(tr -s '\n' '|' < ./b.3).w6." >> "$log"; fi
         
-        "$strt" 7 b $easy $ling $hard & exit 1
+        "$strt" 7 b ${easy} ${ling} ${hard} & exit 1
     fi
 }
 
@@ -82,26 +82,26 @@ mchoise() {
 
 while read trgt; do
 
-    fonts "$trgt"
-    mchoise "$trgt"
-    ret=$(echo "$?")
+    fonts "${trgt}"
+    mchoise "${trgt}"
+    ret="$?"
 
     if [[ $ret = 0 ]]; then
 
-        if grep -o "$wes" <<<"$dlg"; then
+        if grep -o "$wes" <<<"${dlg}"; then
 
-            echo "$trgt" >> b.1
+            echo "${trgt}" >> b.1
             easy=$((easy+1))
             
         else
             play "$snd" &
-            echo "$trgt" >> b.2
+            echo "${trgt}" >> b.2
             hard=$((hard+1))
         fi  
             
     elif [[ $ret = 1 ]]; then
         break &
-        "$drts"/cls.sh comp b $easy $ling $hard $all &
+        "$drts"/cls.sh comp b ${easy} ${ling} ${hard} ${all} &
         exit 1
     fi
     
@@ -109,14 +109,14 @@ done < ./b.tmp
     
 if [ ! -f ./b.2 ]; then
 
-    score $easy
+    score ${easy}
     
 else
     while read trgt; do
 
-        fonts "$trgt"
-        mchoise "$trgt"
-        ret=$(echo "$?")
+        fonts "${trgt}"
+        mchoise "${trgt}"
+        ret="$?"
         
         if [[ $ret = 0 ]]; then
         
@@ -126,16 +126,16 @@ else
                 
             else
                 play "$snd" &
-                echo "$trgt" >> b.3
+                echo "${trgt}" >> b.3
             fi
 
         elif [[ $ret = 1 ]]; then
             break &
-            "$drts"/cls.sh comp b $easy $ling $hard $all &
+            "$drts"/cls.sh comp b ${easy} ${ling} ${hard} ${all} &
             exit 1
         fi
         
     done < ./b.2
     
-    score $easy
+    score ${easy}
 fi

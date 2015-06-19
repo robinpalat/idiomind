@@ -17,7 +17,7 @@ score() {
 
     "$drts"/cls.sh comp d &
 
-    if [[ $1 -ge $all ]]; then
+    if [[ ${1} -ge ${all} ]]; then
         play "$drts/all.mp3" & 
         echo ".s9.$(tr -s '\n' '|' < ./d.1).s9." >> "$log"
         echo -e ".okp.1.okp." >> "$log"
@@ -27,18 +27,18 @@ score() {
         exit 1
         
     else
-        [ -f ./d.l ] && echo $(($(< ./d.l)+easy)) > ./d.l || echo $easy > ./d.l
+        [ -f ./d.l ] && echo $(($(< ./d.l)+easy)) > ./d.l || echo ${easy} > ./d.l
         s=$(< ./d.l)
         v=$((100*s/all))
         n=1; c=1
-        while [[ $n -le 21 ]]; do
-            if [[ $v -le $c ]]; then
-            echo "$n" > ./.4; break; fi
+        while [[ ${n} -le 21 ]]; do
+            if [[ ${v} -le ${c} ]]; then
+            echo ${n} > ./.4; break; fi
             ((c=c+5))
             let n++
         done
 
-        "$strt" 9 d $easy $ling $hard & exit 1
+        "$strt" 9 d ${easy} ${ling} ${hard} & exit 1
     fi
 }
 
@@ -162,12 +162,12 @@ while read trgt; do
 
         (sleep 0.5 && play "${DM_tlt}/$fname.mp3") &
         dialog2 "${trgt}"
-        ret=$(echo "$?")
+        ret="$?"
         
         if [[ $ret = 1 ]]; then
             break &
             killall play
-            "$drts"/cls.sh comp d $easy $ling $hard $all &
+            "$drts"/cls.sh comp d ${easy} ${ling} ${hard} ${all} &
             exit 1
         else
             killall play &
@@ -175,13 +175,13 @@ while read trgt; do
         fi
     
         check "${trgt}"
-        ret=$(echo "$?")
+        ret="$?"
         
         if [[ $ret = 1 ]]; then
             break &
             killall play &
             rm -f ./mtch.tmp ./words.tmp
-            "$drts"/cls.sh comp d $easy $ling $hard $all &
+            "$drts"/cls.sh comp d ${easy} ${ling} ${hard} ${all} &
             exit 1
             
         elif [[ $ret -eq 2 ]]; then
@@ -192,4 +192,4 @@ while read trgt; do
 
 done < ./d.tmp
 
-score $easy
+score ${easy}

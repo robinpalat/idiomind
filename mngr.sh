@@ -238,7 +238,6 @@ edit_item() {
 
         if [[ $ret -eq 0 ]] || [[ $ret -eq 2 ]]; then
         
-            source /usr/share/idiomind/ifs/c.conf
             include "$DS/ifs/mods/add"
             
            if [ ${type} = 1 ]; then
@@ -332,7 +331,7 @@ edit_item() {
                 "${exmp_mod}" "${defn_mod}" "${note_mod}" "${wrds_mod}" "${grmr_mod}")"
 
 
-                if [ "${tpc}" != "${tpc_mod}" ]; then # lack move audio file and picture
+                if [ "${tpc}" != "${tpc_mod}" ]; then # TODO lack move audio file and picture
                 
                     cfg11="$DM_tl/${tpc_mod}/.conf/0.cfg"
                     pos=$(grep -Fon -m 1 "trgt={}" "${cfg11}" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
@@ -517,7 +516,7 @@ mark_to_learn_topic() {
         include "$DS/ifs/mods/mngr"
     
         dialog_2
-        ret=$(echo $?)
+        ret="$?"
     
         if [[ $ret -eq 3 ]]; then
         

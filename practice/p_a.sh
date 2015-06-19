@@ -15,7 +15,7 @@ score() {
     
     "$drts"/cls.sh comp a &
 
-    if [[ $(($(< ./a.l)+$1)) -ge $all ]]; then
+    if [[ $(($(< ./a.l)+${1})) -ge ${all} ]]; then
         play "$drts/all.mp3" &
         echo ".w9.$(tr -s '\n' '|' < ./a.1).w9." >> "$log"
         echo -e ".okp.1.okp." >> "$log"
@@ -25,13 +25,13 @@ score() {
         exit 1
         
     else
-        [ -f ./a.l ] && echo $(($(< ./a.l)+easy)) > ./a.l || echo "$easy" > ./a.l
+        [ -f ./a.l ] && echo $(($(< ./a.l)+easy)) > ./a.l || echo ${easy} > ./a.l
         s=$(< ./a.l)
         v=$((100*s/all))
         n=1; c=1
-        while [[ $n -le 21 ]]; do
-            if [[ "$v" -le "$c" ]]; then
-            echo "$n" > ./.1; break; fi
+        while [[ ${n} -le 21 ]]; do
+            if [[ ${v} -le ${c} ]]; then
+            echo ${n} > ./.1; break; fi
             ((c=c+5))
             let n++
         done
@@ -39,7 +39,7 @@ score() {
         if [ -f ./a.3 ]; then
         echo ".w6.$(tr -s '\n' '|' < ./a.3).w6." >> "$log"; fi
         
-        "$strt" 6 a "$easy" "$ling" "$hard" & exit 1
+        "$strt" 6 a ${easy} ${ling} ${hard} & exit 1
     fi
 }
 
@@ -84,25 +84,25 @@ answer() {
 
 while read trgt; do
 
-    fonts "$trgt"
+    fonts "${trgt}"
     cuestion
-    ret=$(echo "$?")
+    ret="$?"
 
     if [[ $ret = 1 ]]; then
         break &
-        "$drts"/cls.sh comp a "$easy" "$ling" "$hard" "$all" &
+        "$drts"/cls.sh comp a ${easy} ${ling} ${hard} ${all} &
         exit 1
         
     else
         answer
-        ans=$(echo "$?")
+        ans="$?"
 
         if [[ $ans = 2 ]]; then
-            echo "$trgt" >> a.1
+            echo "${trgt}" >> a.1
             easy=$((easy+1))
 
         elif [[ $ans = 3 ]]; then
-            echo "$trgt" >> a.2
+            echo "${trgt}" >> a.2
             hard=$((hard+1))
         fi
     fi
@@ -110,33 +110,33 @@ done < ./a.tmp
 
 if [ ! -f ./a.2 ]; then
 
-    score "$easy"
+    score ${easy}
     
 else
     while read trgt; do
 
-        fonts "$trgt"
+        fonts "${trgt}"
         cuestion
-        ret=$(echo "$?")
+        ret="$?"
         
         if [[ $ret = 1 ]]; then
             break &
-            "$drts"/cls.sh comp a "$easy" "$ling" "$hard" "$all" &
+            "$drts"/cls.sh comp a ${easy} ${ling} ${hard} ${all} &
             exit 1
         
         else
             answer
-            ans=$(echo "$?")
+            ans="$?"
             
             if [[ $ans = 2 ]]; then
                 hard=$((hard-1))
                 ling=$((ling+1))
                 
             elif [[ $ans = 3 ]]; then
-                echo "$trgt" >> a.3
+                echo "${trgt}" >> a.3
             fi
         fi
     done < ./a.2
 
-    score "$easy"
+    score ${easy}
 fi
