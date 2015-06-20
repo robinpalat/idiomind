@@ -199,7 +199,7 @@ sync() {
    
     DIR2="$DM_tl/Podcasts/.conf"
     cfg="$DM_tl/Podcasts/.conf/0.lst"
-    path="$(sed -n 3p "$cfg" | grep -o 'path="[^"]*' | grep -o '[^"]*$')"
+    path="$(grep -o 'path="[^"]*' "$cfg" | grep -o '[^"]*$')"
     
     if  [ -f "$DT/l_sync" ] && [[ $2 = 1 ]]; then
     msg_2 "$(gettext "A process is already running!\nIf stopped, any rsync process will stop")" info "OK" "gtk-stop" "$(gettext "Syncing...")"
@@ -227,36 +227,28 @@ sync() {
     elif [ -d "$path" ]; then
         
         touch "$DT/l_sync"; SYNCDIR="$path/"
-        A="$(cd "$DM_tl/Podcasts/cache/"; \
-        ls --ignore="*.html" --ignore="*.item" --ignore="*.png" | wc -l)"
-        B="$(cd "$SYNCDIR"; ls * | wc -l)"
-        [ $? != 0 ] && B=0
-        
         cd /
 
         if [[ $rsync_delete = 0 ]]; then
         
-            rsync -az -v --exclude="*.item" --exclude="*.png" \
-            --exclude="*.html" --omit-dir-times --ignore-errors "$DM_tl/Podcasts/cache/" "$SYNCDIR"
+            rsync -amz --stats --exclude="*.item" --exclude="*.png" \
+            --exclude="*.html" --omit-dir-times --ignore-errors \
+            --log-file="$DT/l_sync" "$DM_tl/Podcasts/cache/" "$SYNCDIR"
             exit=$?
             
         elif [[ $rsync_delete = 1 ]]; then
         
-            rsync -az -v --delete --exclude="*.item" --exclude="*.png" \
-            --exclude="*.html" --omit-dir-times --ignore-errors "$DM_tl/Podcasts/cache/" "$SYNCDIR"
+            rsync -amz --stats --delete --exclude="*.item" --exclude="*.png" \
+            --exclude="*.html" --omit-dir-times --ignore-errors \
+            --log-file="$DT/l_sync" "$DM_tl/Podcasts/cache/" "$SYNCDIR"
             exit=$?
         fi
         
         if [[ $exit = 0 ]]; then
 
-            new=$((A-B))
-            
-            [[ $new = 1 ]] && sum="$new $(gettext "new file in device")"
-            [[ $new -lt 1 ]] && sum=$(gettext "No new files in device")
-            [[ $new -gt 1 ]] && sum="$new $(gettext "new files in device")"
-            
+            sum="$(tail -n 1 < "$DT/l_sync")"
             if [[ $2 = 1 ]]; then
-            (sleep 1 && notify-send \
+            (sleep 1 && notify-send -i idiomind \
             "$(gettext "Synchronization finished")" "$sum" -t 8000) &
             fi
   
@@ -270,8 +262,7 @@ sync() {
             echo "$(gettext "Error while syncing")" >> "$DM_tl/Podcasts/.conf/feed.err"
             fi
         fi
-        
-        [[ -f "$DT/l_sync" ]] && rm -f "$DT/l_sync"; exit
+        [ -f "$DT/l_sync" ] && rm -f "$DT/l_sync"; exit
     fi
 }
 

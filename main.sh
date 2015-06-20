@@ -163,7 +163,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     --scroll --center --tooltip-column=1 \
     --width=650 --height=580 --borders=10 \
     --column=Items \
-    --button="$(gettext "Info")":"$cmd_infs" \
+    --button="$(gettext "Files")":"$cmd_infs" \
     --button="$(gettext "Install")":0 \
     --button="$(gettext "Close")":1
     ret=$?

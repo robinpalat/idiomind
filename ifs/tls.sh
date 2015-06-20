@@ -176,8 +176,8 @@ $SRFL5" | yad --text-info --title="$(gettext "Installation details")" \
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" \
     --fontname='monospace 9' --margins=10 \
-    --buttons-layout=edge --scroll --center \
-    --width=600 --height=550 --borders=0 \
+    --scroll --center \
+    --width=280 --height=250 --borders=0 \
     --button="$(gettext "Open Folder")":"xdg-open '$2'" \
     --button="$(gettext "Close")":0
 } >/dev/null 2>&1
