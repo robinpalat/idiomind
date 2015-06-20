@@ -68,8 +68,12 @@ science
 interview
 funny"
 
-sets=('tname' 'langs' 'langt' 'authr' 'cntct' 'ctgry' 'ilink' \
-'datec' 'dateu' 'datei' 'nword' 'nsent' 'nimag' 'level' 'set_1' 'set_2')
+sets=('tname' \
+'langs' 'langt' \
+'authr' 'cntct' 'ctgry' 'ilink' \
+'datec' 'dateu' 'datei' \
+'nword' 'nsent' 'nimag' \
+'level' 'set_1' 'set_2')
 
 LANGUAGES="English
 Chinese
@@ -177,7 +181,7 @@ $SRFL5" | yad --text-info --title="$(gettext "Installation details")" \
     --window-icon="$DS/images/icon.png" \
     --fontname='monospace 9' --margins=10 \
     --scroll --center \
-    --width=280 --height=250 --borders=0 \
+    --width=340 --height=280 --borders=0 \
     --button="$(gettext "Open Folder")":"xdg-open '$2'" \
     --button="$(gettext "Close")":0
 } >/dev/null 2>&1
@@ -961,8 +965,8 @@ elif [ "$1" = dclik ]; then
 
 elif [ "$1" = play_temp ]; then
 
-    nmt=$(sed -n 1p "/tmp/.idmtp1.$USER/dir$2/folder")
-    dir="/tmp/.idmtp1.$USER/dir$2/$nmt"
+    nmt=$(sed -n 1p "/tmp/.idiomind-$USER/dir$2/folder")
+    dir="/tmp/.idiomind-$USER/dir$2/$nmt"
     play "$dir/audio/${3,,}.mp3"
     exit
 fi

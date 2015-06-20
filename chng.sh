@@ -17,7 +17,7 @@
 #  MA 02110-1301, USA.
 #  
 
-DT="/tmp/.idmtp1.$USER"
+DT="/tmp/.idiomind-$USER"
 DS="/usr/share/idiomind"
 DC_s="$HOME/.config/idiomind/s"
 source "$DS/ifs/mods/cmns.sh"
@@ -34,12 +34,12 @@ if [[ "$1" = chngi ]]; then
     export se="$(grep -oP '(?<=svepi=\").*(?=\")' "$DC_s/1.cfg")"
     
     _play() {
-		
-		a="$(grep -oP '(?<=audio=\").*(?=\")' "$DC_s/1.cfg")"
-		n="$(grep -oP '(?<=ntosd=\").*(?=\")' "$DC_s/1.cfg")"
-		l="$(grep -oP '(?<=loop=\").*(?=\")' "$DC_s/1.cfg")"
-		if [[ ${n} != TRUE ]] && [[ ${a} != TRUE ]]; then audio=TRUE; fi
-		nu='^[0-9]+$'; if ! [[ $l =~ $nu ]]; then l=1; fi
+        
+        a="$(grep -oP '(?<=audio=\").*(?=\")' "$DC_s/1.cfg")"
+        n="$(grep -oP '(?<=ntosd=\").*(?=\")' "$DC_s/1.cfg")"
+        l="$(grep -oP '(?<=loop=\").*(?=\")' "$DC_s/1.cfg")"
+        if [[ ${n} != TRUE ]] && [[ ${a} != TRUE ]]; then audio=TRUE; fi
+        nu='^[0-9]+$'; if ! [[ $l =~ $nu ]]; then l=1; fi
         
         if [ ${n} = TRUE ]; then
         notify-send -i "${icon}" "${trgt}" "${srce}" -t 10000; fi &
