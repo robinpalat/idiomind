@@ -535,7 +535,7 @@ process() {
     include "$DS/ifs/mods/add"
     include "$DS/ifs/mods/add_process"
     
-    if [ ${2:0:4} = 'Http' ]; then
+    if [[ ${2:0:4} = Http ]]; then
         (echo "1"
         internet
         echo "# $(gettext "Processing")..." ;
@@ -556,7 +556,7 @@ process() {
         | sed 's/__/\n/g' > ./sntsls_
         ) | dlg_progress_1
 
-    elif [ "$2" = "image" ]; then
+    elif [[ $2 = image ]]; then
         
         pars=`mktemp`
         trap rm "$pars*" EXIT
@@ -609,7 +609,7 @@ process() {
         ) | dlg_progress_1
     fi
 
-    [[ -f ./sntsls ]] && rm -f ./sntsls
+    [ -f ./sntsls ] && rm -f ./sntsls
 
     lenght() {
         if [ $(wc -c <<<"${1}") -le 150 ]; then
@@ -685,21 +685,22 @@ process() {
             
                 while read chkst; do
                     sed 's/TRUE//g' <<<"${chkst}"  >> ./slts
-                done <<<"$(tac "${slt}" | sed 's/|//g')"
+                done <<<"$(tac "${slt}" |sed '/^$/d' |sed 's/|//g')"
                 cleanups "$slt"
                 
                 cd "$DT_r"
-                touch ./wlog ./slog
+                touch ./wlog ./slog ./adds ./addw ./wrds
+               
                 {
                 echo "5"
                 echo "# $(gettext "Processing")... " ;
                 internet
                 [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ] && c=c || c=w
                 
-                lns="$(cat ./slts ./wrds | wc -l)"
+                lns="$(cat ./slts ./wrds |sed '/^$/d' |wc -l)"
                 # ----------------------------
                 n=1
-                while [[ $n -le "$(wc -l < slts | head -200)" ]]; do
+                while [[ ${n} -le $(wc -l < ./slts | head -200) ]]; do
                 
                     sntc="$(sed -n ${n}p ./slts)"
                     trgt="$(clean_2 "${sntc}")"
@@ -710,7 +711,7 @@ process() {
                     srce="$(clean_2 "${srce}")"
                     id="$(set_name_file 2 "${trgt}" "${srce}" "" "" "" "" "")"
 
-                    if [ "$(wc -$c <<<"${sntc}")" = 1 ]; then
+                    if [[ $(wc -$c <<<"${sntc}") = 1 ]]; then
                         if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
                             echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $sntc" >> ./wlog
                     
@@ -737,9 +738,9 @@ process() {
                             fi
                         fi
 
-                    elif [ "$(wc -$c <<<"$sntc")" -ge 1 ]; then
+                    elif [[ $(wc -$c <<<"$sntc") -ge 1 ]]; then
                         
-                        if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
+                        if [[ $(wc -l < "${DC_tlt}/0.cfg") -ge 200 ]]; then
                             echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $sntc" >> ./slog
                     
                         else
@@ -763,6 +764,7 @@ process() {
                                     else voice "${trgt}" "${DT_r}" "${DM_tlt}/$id.mp3"; fi
                                     fetch_audio "$aw" "$bw"
                                     echo "${trgt}" >> ./adds
+                                    ((adds=adds+1))
 
                                 else
                                     echo -e "\n\n#$n $trgt" >> ./slog
@@ -784,74 +786,64 @@ process() {
                 done
                 
                 #words
-                n=1; touch wrds
-                while [[ $n -le "$(wc -l < ./wrds | head -200)" ]]; do
+                if [ -n "$(< ./wrds)" ]; then
                 
-                    exmp_=$(sed -n "$n"p wrdsls | sed 's/\[ \.\.\. \]//g')
-                    trgt=$(sed -n "$n"p wrds | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-                    audio="${trgt,,}"
+                    n=1
+                    while [[ ${n} -le $(wc -l < ./wrds | head -200) ]]; do
                     
-                    if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
-                        echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> ./wlog
-                
-                    else
-                        srce="$(translate "${trgt}" auto $lgs)"
-                        id="$(set_name_file 1 "${trgt}" "${srce}" {$exmp_} "" "" "" "")"
-                        mksure "${trgt}" "${srce}"
+                        exmp_=$(sed -n ${n}p wrdsls |sed 's/\[ \.\.\. \]//g')
+                        trgt=$(sed -n ${n}p wrds | awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
+                        audio="${trgt,,}"
                         
-                        if [ $? = 0 ]; then
-                            
-                            index 1 "${trgt}" "${tpc}" "${exmp_}"
-                            add_item 1 "${trgt}" "${srce}" "${exmp_}" "" "" "" "" "${id}"
-                            if [ ! -f "${DM_tls}/$audio.mp3" ]; then
-                            dictt "$audio" "${DM_tls}"; fi
-                            if [ ! -f "${DM_tls}/$audio.mp3" ]; then
-                            voice "${trgt}" "$DT_r" "${DM_tls}/$audio.mp3"; fi
-                            echo "${trgt}" >> addw
-
+                        if [[ $(wc -l < "${DC_tlt}/0.cfg") -ge 200 ]]; then
+                            echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] ${trgt}" >> ./wlog
+                    
                         else
-                            echo -e "\n\n#$n $trgt" >> ./wlog
-                            cleanups "${DM_tlt}/$id.mp3"
-                        fi
-                    fi
-                    
-                    nn=$((n+$(wc -l < ./slts)-1))
-                    prg=$((100*nn/lns))
-                    echo "$prg"
-                    echo "# ${trgt:0:35}... " ;
-                    
-                    let n++
-                done
-                } | dlg_progress_2
+                            srce="$(translate "${trgt}" auto $lgs)"
+                            id="$(set_name_file 1 "${trgt}" "${srce}" {$exmp_} "" "" "" "")"
+                            mksure "${trgt}" "${srce}"
+                            
+                            if [ $? = 0 ]; then
+                                
+                                index 1 "${trgt}" "${tpc}" "${exmp_}"
+                                add_item 1 "${trgt}" "${srce}" "${exmp_}" "" "" "" "" "${id}"
+                                if [ ! -f "${DM_tls}/$audio.mp3" ]; then
+                                dictt "$audio" "${DM_tls}"; fi
+                                if [ ! -f "${DM_tls}/$audio.mp3" ]; then
+                                voice "${trgt}" "$DT_r" "${DM_tls}/$audio.mp3"; fi
+                                echo "${trgt}" >> addw
 
+                            else
+                                echo -e "\n\n#$n $trgt" >> ./wlog
+                                cleanups "${DM_tlt}/$id.mp3"
+                            fi
+                        fi
+                        
+                        nn=$((n+$(wc -l < ./slts)-1))
+                        prg=$((100*nn/lns))
+                        echo "$prg"
+                        echo "# ${trgt:0:35}... " ;
+                        
+                        let n++
+                    done
+                fi
+                
+                } | dlg_progress_2
+                
                 cd "$DT_r"
                 
-                if [ -f ./wlog ]; then
-                    wadds=" $(($(wc -l < ./addw) - $(sed '/^$/d' < ./wlog | wc -l)))"
-                    W=" $(gettext "Words")"
-                    if [ "$wadds" = 1 ]; then
-                    W=" $(gettext "Word")"; fi
-                else
-                    wadds=" $(wc -l < ./addw)"
-                    W=" $(gettext "Words")"
-                    if [ "$wadds" = 1 ]; then
-                    wadds=" $(wc -l < ./addw)"
-                    W=" $(gettext "Word")"; fi
-                fi
-                if [ -f ./slog ]; then
-                    sadds=" $(($( wc -l < ./adds) - $(sed '/^$/d' < ./slog | wc -l)))"
-                    S=" $(gettext "sentences")"
-                    if [ "$sadds" = 1 ]; then
-                    S=" $(gettext "sentence")"; fi
-                else
-                    sadds=" $(wc -l < ./adds)"
-                    S=" $(gettext "sentences")"
-                    if [ "$sadds" = 1 ]; then
-                    S=" $(gettext "sentence")"; fi
-                fi
-                
-                logs=$(cat ./slog ./wlog)
-                adds=$(cat ./adds ./addw | wc -l)
+                wadds=" $(($(wc -l < ./addw) - $(sed '/^$/d' < ./wlog | wc -l)))"
+                W=" $(gettext "words")"
+                if [ "$wadds" = 1 ]; then
+                W=" $(gettext "word")"; fi
+
+                sadds=" $(($( wc -l < ./adds) - $(sed '/^$/d' < ./slog | wc -l)))"
+                S=" $(gettext "sentences")"
+                if [ "$sadds" = 1 ]; then
+                S=" $(gettext "sentence")"; fi
+
+                log=$(cat ./slog ./wlog)
+                adds=$(cat ./adds ./addw |sed '/^$/d' | wc -l)
                 
                 if [[ $adds -ge 1 ]]; then
                     notify-send -i idiomind "${tpe}" \
@@ -859,9 +851,9 @@ process() {
                     echo -e ".adi.$adds.adi." >> "$DC_s/log"
                 fi
                 
-                if [ "$(cat ./slog ./wlog | wc -l)" -ge 1 ]; then
+                if [ -n "$log" ]; then
                 sleep 1
-                dlg_text_info_3 "$(gettext "Some items could not be added to your list"):" "$logs" >/dev/null 2>&1
+                dlg_text_info_3 "$(gettext "Some items could not be added to your list"):" "$log" >/dev/null 2>&1
                 fi
                 
                 cleanups "$DT_r" "$lckpr"

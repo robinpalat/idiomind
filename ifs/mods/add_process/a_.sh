@@ -161,7 +161,7 @@ if [[ ${conten^} = A ]]; then
         cleanups "$DT_r" "$lckpr" "$slt" & exit 1; fi
         
         cd "$DT_r"
-        touch ./wrds ./addw
+        touch ./wlog ./slog ./adds ./addw
 
         echo "1"
         echo "# $(gettext "Processing")...";
@@ -265,34 +265,20 @@ if [[ ${conten^} = A ]]; then
         ) | dlg_progress_2
         
         cd "$DT_r"
-        if [ -f ./wlog ]; then
         wadds=" $(($(wc -l < ./addw) - $(sed '/^$/d' ./wlog | wc -l)))"
-        W=" $(gettext "Words")"
+        W=" $(gettext "words")"
         if [ $wadds = 1 ]; then
-        W=" $(gettext "Word")"; fi
-        else
-        wadds=" $(wc -l < ./addw)"
-        W=" $(gettext "Words")"
-        if [ $wadds = 1 ]; then
-        wadds=" $(wc -l < ./addw)"
-        W=" $(gettext "Word")"; fi
-        fi
-        if [ -f ./slog ]; then
+        W=" $(gettext "word")"; fi
+
         sadds=" $(($(wc -l < ./adds) - $(sed '/^$/d' ./swlog | wc -l)))"
-        S=" $(gettext "Sentences")"
+        S=" $(gettext "sentences")"
         if [ $sadds = 1 ]; then
-        S=" $(gettext "Sentence")"; fi
-        else
-        sadds=" $(wc -l < ./adds)"
-        S=" $(gettext "Sentences")"
-        if [ $sadds = 1 ]; then
-        S=" $(gettext "Sentence")"; fi
-        fi
-        
+        S=" $(gettext "sentence")"; fi
+
         logs=$(cat ./slog ./wlog)
-        adds=$(cat ./adds ./addw | wc -l)
+        adds=$(cat ./adds ./addw |sed '/^$/d' |wc -l)
         
-        if [[ "$adds" -ge 1 ]]; then
+        if [[ ${adds} -ge 1 ]]; then
         notify-send -i idiomind \
         "$tpe" \
         "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
