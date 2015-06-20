@@ -322,8 +322,6 @@ cp -f "$DM_tl/.share/$audio.mp3" "$DT_u/$tpc/share/$audio.mp3"; fi
 done <<<"$auds"
 
 # remove from folder topic name characters weirds TODO
-echo -e "# -- listed items (md5sum) ----" > \
-"$DT_u/${tpc}/conf/${usrid}.${tpc}"
 > "${DC_tlt}/1.cfg"
 while read item_; do
 item="$(sed 's/},/}\n/g' <<<"${item_}")"
@@ -331,7 +329,7 @@ trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
 id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
 if [ -n "${trgt}" ]; then
 echo "${trgt}" >> "${DC_tlt}/1.cfg"
-echo "${id}" >> "$DT_u/${tpc}/conf/${usrid}.${tpc}"; fi
+echo "${trgt}|${id}" >> "$DT_u/${tpc}/conf/${usrid}.${tpc}"; fi
 done < "$DC_tlt/0.cfg"
 
 cp -f "${DC_tlt}/1.cfg" "$DT_u/${tpc}/conf/1.cfg"
