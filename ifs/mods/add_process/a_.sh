@@ -164,7 +164,6 @@ if [[ ${conten^} = A ]]; then
         internet
         if [ $lgt = ja ] || [ $lgt = "zh-cn" ] || [ $lgt = ru ];
         then c=c; else c=w; fi
-        # ---------------
 
         lns="$(ls "$DT_r"/[0-9]*.mp3 | wc -l | head -200)"
         n=1
@@ -261,12 +260,10 @@ if [[ ${conten^} = A ]]; then
         W=" $(gettext "words")"
         if [ $wadds = 1 ]; then
         W=" $(gettext "word")"; fi
-
         sadds=" $(($(wc -l < "$DT_r/adds") - $(sed '/^$/d' "$DT_r/swlog" | wc -l)))"
         S=" $(gettext "sentences")"
         if [ $sadds = 1 ]; then
         S=" $(gettext "sentence")"; fi
-
         logs=$(cat "$DT_r/slog" "$DT_r/wlog")
         adds=$(cat "$DT_r/adds" "$DT_r/addw" |sed '/^$/d' |wc -l)
         

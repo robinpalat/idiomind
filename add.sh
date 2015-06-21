@@ -29,9 +29,9 @@ ttrgt=$(grep -o ttrgt=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
 
 new_topic() {
     
-    if [ $(wc -l < "$DM_tl/.1.cfg") -ge 120 ]; then
-    msg "$(gettext "Sorry, you have reached the maximum number of topics")" info Info &&
-    killall add.sh & exit 1; fi
+    if [[ $(wc -l < "$DM_tl/.1.cfg") -ge 120 ]]; then
+    msg "$(gettext "Sorry, you have reached the maximum number of topics")" info Info &
+    exit 1; fi
 
     jlbi=$(dlg_form_0 "$2")
     ret="$?"
@@ -44,7 +44,7 @@ new_topic() {
     if grep -Fxo "$jlb" < <(ls "$DS/addons/"); then jlb="$jlb."; fi
     chck=$(grep -Fxo "$jlb" "$DM_tl/.1.cfg" | wc -l)
     
-    if [ "$chck" -ge 1 ]; then
+    if [[ ${chck} -ge 1 ]]; then
         
         for i in {1..50}; do
         chck=$(grep -Fxo "$jlb ($i)" "$DM_t/$language_target/.1.cfg")
@@ -54,9 +54,7 @@ new_topic() {
         ret="$?"
         [[ $ret -eq 1 ]] && exit 10
         
-    else
-        jlb="$jlb"
-    fi
+    else jlb="$jlb"; fi
     
     if [ -n "$jlb" ]; then
     
@@ -606,32 +604,34 @@ process() {
         echo -e "${1}" >> "$DT_r/sntsls"
         else echo -e "[ ... ]  ${1}" >> "$DT_r/sntsls"; fi
         }
+        
     if [ ${#@} -lt 4 ]; then
-    while read l; do
     
-        if [ $(wc -c <<<"${l}") -gt 150 ]; then
-            if grep -o -E '\,|\;' <<<"${l}"; then
+        while read l; do
+        
+            if [ $(wc -c <<<"${l}") -gt 150 ]; then
+                if grep -o -E '\,|\;' <<<"${l}"; then
 
-                while read -r split; do
+                    while read -r split; do
 
-                    if [ $(wc -c <<<"${split}") -le 150 ]; then
-                        lenght "${split}"
-                    else
-                        while read -r split2; do
-                            lenght "${split2}"
-                        done < <(tr -s ';' '\n' <<<"${split}")
-                    fi
+                        if [ $(wc -c <<<"${split}") -le 150 ]; then
+                            lenght "${split}"
+                        else
+                            while read -r split2; do
+                                lenght "${split2}"
+                            done < <(tr -s ';' '\n' <<<"${split}")
+                        fi
+                        
+                    done < <(sed 's/,/\n/g' <<<"${l}")
                     
-                done < <(sed 's/,/\n/g' <<<"${l}")
+                else
+                    lenght "${l}"
+                fi
                 
             else
                 lenght "${l}"
             fi
-            
-        else
-            lenght "${l}"
-        fi
-    done < "$DT_r/sntsls_"
+        done < "$DT_r/sntsls_"
 
     else mv "$DT_r/sntsls_" "$DT_r/sntsls"; fi
     
@@ -678,8 +678,7 @@ process() {
                     sed 's/TRUE//g' <<<"${chkst}"  >> "$DT_r/slts"
                 done <<<"$(tac "${slt}" |sed '/^$/d' |sed 's/|//g')"
                 cleanups "$slt"
-                
-                cd "$DT_r"
+
                 touch "$DT_r/wlog" "$DT_r/slog" "$DT_r/adds" \
                 "$DT_r/addw" "$DT_r/wrds"
                
@@ -817,18 +816,14 @@ process() {
                 
                 } | dlg_progress_2
                 
-                cd "$DT_r"
-                
                 wadds=" $(($(wc -l < "$DT_r/addw")-$(sed '/^$/d' < "$DT_r/wlog" | wc -l)))"
                 W=" $(gettext "words")"
                 if [ "$wadds" = 1 ]; then
                 W=" $(gettext "word")"; fi
-
                 sadds=" $(($( wc -l < "$DT_r/adds")-$(sed '/^$/d' < "$DT_r/slog" | wc -l)))"
                 S=" $(gettext "sentences")"
                 if [ "$sadds" = 1 ]; then
                 S=" $(gettext "sentence")"; fi
-
                 log=$(cat "$DT_r/slog" "$DT_r/wlog")
                 adds=$(cat "$DT_r/adds" "$DT_r/addw" |sed '/^$/d' | wc -l)
                 
