@@ -217,9 +217,8 @@ if [[ ${conten^} = A ]]; then
                         mksure "${trgt}" "${srce}"
                         
                         if [ $? = 0 ]; then
-                        
-                            index 1 "${trgt}" "${tpe}"
-                            add_item 1 "${trgt}" "${srce}" "" "" "" "" "" "$id"
+
+                            index 1 "${tpe}" "${trgt}" "${srce}" "" "" "" "" "${id}"
                             mv -f "$DT_r/${n}.mp3" "${DM_tls}/$audio.mp3"
                             echo "${trgt}" >> addw
                             
@@ -232,12 +231,11 @@ if [[ ${conten^} = A ]]; then
                         (
                         sentence_p "$DT_r" 1
                         mksure "${trgt}" "${srce}" "${wrds}" "${grmr}"
+                        id="$(set_name_file 2 "${trgt}" "${srce}" "" "" "${wrds}" "${grmr}")"
                         
                             if [ $? = 0 ]; then
                                 
-                                index 2 "${trgt}" "${tpe}"
-                                id="$(set_name_file 2 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}")"
-                                add_item 2 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}" "$id"
+                                index 2 "${tpe}" "${trgt}" "${srce}" "" "" "${wrds}" "${grmr}" "${id}"
                                 mv -f "$DT_r/${n}.mp3" "${DM_tlt}/$id.mp3"
                                 echo "${trgt}" >> adds
                                 fetch_audio "$aw" "$bw"
