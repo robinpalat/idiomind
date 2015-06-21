@@ -6,7 +6,7 @@ function dlg_checklist_5() {
     cmd_edit_="$DS/ifs/mods/add_process/a_.sh 'item_for_edit'"
     cmd_newtopic="$DS/add.sh 'new_topic'"
     slt=$(mktemp "$DT/slt.XXXX.x")
-    cat "$1" | awk '{print "FALSE\n"$0}' | \
+    cat "${1}" | awk '{print "FALSE\n"$0}' | \
     yad --list --checklist --title="$2" \
     --text="<small>$info</small> " \
     --name=Idiomind --class=Idiomind \
@@ -14,7 +14,7 @@ function dlg_checklist_5() {
     --window-icon="$DS/images/icon.png" \
     --text-align=right --center --sticky \
     --width=600 --height=550 --borders=3 \
-    --column="$(wc -l < "$1")" \
+    --column="$(wc -l < "${1}")" \
     --column="$(gettext "Items")" \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "New Topic")":"cmd_newtopic" \
@@ -23,7 +23,7 @@ function dlg_checklist_5() {
 
 function dlg_text_info_5() {
     
-    echo "$1" | yad --text-info --title=" " \
+    echo "${1}" | yad --text-info --title=" " \
     --name=Idiomind --class=Idiomind \
     --editable \
     --window-icon="$DS/images/icon.png" \
@@ -35,7 +35,7 @@ function dlg_text_info_5() {
 
 function dlg_text_info_4() {
     
-    echo "$1" | yad --text-info --title=Idiomind \
+    echo "${1}" | yad --text-info --title=Idiomind \
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" \
     --text=" " \
@@ -47,14 +47,14 @@ function dlg_text_info_4() {
 
 function audio_recog() {
     
-    echo "$(wget -q -U -T 200 "Mozilla/5.0" --post-file "$1" \
+    echo "$(wget -q -U -T 200 "Mozilla/5.0" --post-file "${1}" \
     --header="Content-Type: audio/x-flac; rate=16000" \
     -O - "https://www.google.com/speech-api/v2/recognize?&lang="$2"-"$3"&key=$4")"
 }
 
 function dlg_file_1() {
     
-    yad --file --title="Speech recognize" \
+    yad --file --title=" " \
     --name=Idiomind --class=Idiomind \
     --file-filter="*.mp3 *.tar *.zip" \
     --window-icon="$DS/images/icon.png" \
@@ -64,7 +64,7 @@ function dlg_file_1() {
 
 function dlg_file_2() {
     
-    yad --file --save --title="Save" \
+    yad --file --save --title="$(gettext "Save")" \
     --name=Idiomind --class=Idiomind \
     --filename="$(date +%m-%d-%Y)"_audio.tar.gz \
     --window-icon="$DS/images/icon.png" \
@@ -75,7 +75,6 @@ function dlg_file_2() {
 
 if [[ ${conten^} = A ]]; then
 
-    cd "$DT_r"
     left=$((200 - $(wc -l < "${DC_tlt}/4.cfg")))
     key="$(sed -n 2p "$HOME/.config/idiomind/addons/gts.cfg" \
     | grep -o key=\"[^\"]* | grep -o '[^"]*$')"
@@ -85,12 +84,11 @@ if [[ ${conten^} = A ]]; then
     
     if [ -z "$key" ]; then
     msg "$(gettext "For this feature you need to provide a key. Please get one from the:")   <a href='$LNK'>console.developers.google.com</a>\n" dialog-warning
-    [ "$DT_r" ] && rm -fr "$DT_r"
-    rm -f ls "$lckpr" & exit 1; fi
+    cleanups "$lckpr" "$DT_r" & exit 1; fi
     
     cd "$HOME"; fl="$(dlg_file_1)"
     
-    if [ -z "$fl" ];then
+    if [ -z "${fl}" ];then
     cleanups "$DT_r" "$lckpr" & exit 1
         
     else
@@ -102,16 +100,16 @@ if [[ ${conten^} = A ]]; then
         
         if grep ".mp3" <<<"${fl: -4}"; then
         
-            cp -f "$fl" "$DT_r/rv.mp3"
+            cp -f "${fl}" "$DT_r/rv.mp3"
             sox "$DT_r/rv.mp3" "$DT_r/c_rv.mp3" remix - highpass 100 norm \
             compand 0.05,0.2 6:-54,-90,-36,-36,-24,-24,0,-12 0 -90 0.1 \
             vad -T 0.6 -p 0.2 -t 5 fade 0.1 reverse \
             vad -T 0.6 -p 0.2 -t 5 fade 0.1 reverse norm -0.5
             rm -f "$DT_r/rv.mp3"
-            mp3splt -s -o @n *.mp3
-            c="$(ls [0-9]*.mp3 | wc -l)"
-            if [[ $c -ge 1 ]]; then
-            rename 's/^0*//' *.mp3
+            mp3splt -s -o @n "$DT_r"/*.mp3
+            c="$(ls "$DT_r"/[0-9]*.mp3 | wc -l)"
+            if [[ ${c} -ge 1 ]]; then
+            rename 's/^0*//' "$DT_r"/*.mp3
             elif [ $(du "$DT_r/c_rv.mp3" | cut -f1) -lt 400 ]; then
             mv -f "$DT_r/c_rv.mp3" "$DT_r/1.mp3"
             fi
@@ -130,38 +128,36 @@ if [[ ${conten^} = A ]]; then
         
         n=1; r=${c}
         while [[ ${n} -le ${c} ]]; do
-        mv -f ./${n}.mp3 ./_${r}.mp3
+        mv -f "$DT_r/${n}.mp3" "$DT_r/_${r}.mp3"
         ((n=n+1))
         ((r=r-1))
         done
-        rename 's/^_*//' *.mp3
-        
+        (cd "$DT_r"; rename 's/^_*//' *.mp3)
+
         internet
         echo "3"
         echo "# $(gettext "Checking key")..."; sleep 1
         data="$(audio_recog "$test" $lgt $lgt $key)"
-        if [ -z "$data" ]; then
+        if [ -z "${data}" ]; then
         key=$(sed -n 3p $DC_s/3.cfg)
         data="$(audio_recog "$test" $lgt $lgt $key)"; fi
-        if [ -z "$data" ]; then
+        if [ -z "${data}" ]; then
         key=$(sed -n 4p $DC_s/3.cfg)
         data="$(audio_recog "$test" $lgt $lgt $key)"; fi
-        if [ -z "$data" ]; then
+        if [ -z "${data}" ]; then
         msg "$(gettext "The key is invalid or has exceeded its quota of daily requests")" error
         cleanups "$DT_r" "$lckpr" & exit 1; fi
         
         echo "# $(gettext "Processing")..." ; sleep 0.2
-        cd "$DT_r"
+
         tpe=$(sed -n 2p "$DT/.n_s_pr")
         DM_tlt="$DM_tl/${tpe}"
         DC_tlt="$DM_tl/${tpe}/.conf"
+        touch "$DT_r/wlog" "$DT_r/slog" "$DT_r/adds" "$DT_r/addw"
 
         if [ ! -d "${DM_tlt}" ]; then
         msg " $(gettext "An error occurred.")\n" dialog-warning
         cleanups "$DT_r" "$lckpr" "$slt" & exit 1; fi
-        
-        cd "$DT_r"
-        touch ./wlog ./slog ./adds ./addw
 
         echo "1"
         echo "# $(gettext "Processing")...";
@@ -169,15 +165,15 @@ if [[ ${conten^} = A ]]; then
         if [ $lgt = ja ] || [ $lgt = "zh-cn" ] || [ $lgt = ru ];
         then c=c; else c=w; fi
         # ---------------
-        cd "$DT_r"
-        lns="$(ls ./[0-9]*.mp3 | wc -l | head -200)"
+
+        lns="$(ls "$DT_r"/[0-9]*.mp3 | wc -l | head -200)"
         n=1
         while [[ ${n} -le ${lns} ]]; do
 
-            if [ -f "./${n}.mp3" ]; then
+            if [ -f "$DT_r"/${n}.mp3 ]; then
             
-                sox "./${n}.mp3" info.flac rate 16k
-                data="$(audio_recog ./info.flac $lgt $lgt $key)"
+                sox "$DT_r"/${n}.mp3 "$DT_r/info.flac" rate 16k
+                data="$(audio_recog "$DT_r/info.flac" $lgt $lgt $key)"
                 
                 if [ -z "${data}" ]; then
                 msg "$(gettext "The key is invalid or has exceeded its quota of daily requests")\n" error
@@ -193,15 +189,15 @@ if [[ ${conten^} = A ]]; then
                 | sed 's/}],"final":true}],"result_index":0}//g')"
 
                 if [ ${#trgt} -ge 400 ]; then
-                echo -e "\n\n#$n [$(gettext "Sentence too long")] $trgt" >> ./slog
+                echo -e "\n\n#$n [$(gettext "Sentence too long")] $trgt" >> "$DT_r/slog"
                 
                 elif [ -z "$trgt" ]; then
                 trgt="#$n [$(gettext "Text missing")]"
                 index txt_missing "$trgt" "$tpe"
-                echo -e "\n\n#$n [$(gettext "Text missing")]" >> ./slog
+                echo -e "\n\n#$n [$(gettext "Text missing")]" >> "$DT_r/slog"
                 
                 elif [[ $(wc -l < "${DC_tlt}/0.cfg") -ge 200 ]]; then
-                echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> ./slog
+                echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> "$DT_r/slog"
                 
                 else
                     trgt=$(clean_2 "${trgt}")
@@ -220,10 +216,10 @@ if [[ ${conten^} = A ]]; then
 
                             index 1 "${tpe}" "${trgt}" "${srce}" "" "" "" "" "${id}"
                             mv -f "$DT_r/${n}.mp3" "${DM_tls}/$audio.mp3"
-                            echo "${trgt}" >> addw
+                            echo "${trgt}" >> "$DT_r/addw"
                             
                         else
-                            echo -e "\n\n#$n $trgt" >> ./wlog
+                            echo -e "\n\n#$n $trgt" >> "$DT_r/wlog"
                         fi
                             
                     elif [ $(wc -$c <<<"$trgt") -ge 1 ]; then
@@ -237,18 +233,17 @@ if [[ ${conten^} = A ]]; then
                                 
                                 index 2 "${tpe}" "${trgt}" "${srce}" "" "" "${wrds}" "${grmr}" "${id}"
                                 mv -f "$DT_r/${n}.mp3" "${DM_tlt}/$id.mp3"
-                                echo "${trgt}" >> adds
+                                echo "${trgt}" >> "$DT_r/adds"
                                 fetch_audio "$aw" "$bw"
                                 
                             else
-                                echo -e "\n\n#$n $trgt" >> ./slog
+                                echo -e "\n\n#$n $trgt" >> "$DT_r/slog"
                             fi
-                        cd "$DT"
-                        rm -f *.$r "$aw" "$bw"
+                        rm -f "$aw" "$bw"
                         )
                     fi
                 fi
-                rm -f ./info.flac ./info.ret
+                rm -f "$DT_r/info.flac" "$DT_r/info.ret"
             else
                 continue
             fi
@@ -262,44 +257,42 @@ if [[ ${conten^} = A ]]; then
 
         ) | dlg_progress_2
         
-        cd "$DT_r"
-        wadds=" $(($(wc -l < ./addw) - $(sed '/^$/d' ./wlog | wc -l)))"
+        wadds=" $(($(wc -l < "$DT_r/addw") - $(sed '/^$/d' "$DT_r/wlog" | wc -l)))"
         W=" $(gettext "words")"
         if [ $wadds = 1 ]; then
         W=" $(gettext "word")"; fi
 
-        sadds=" $(($(wc -l < ./adds) - $(sed '/^$/d' ./swlog | wc -l)))"
+        sadds=" $(($(wc -l < "$DT_r/adds") - $(sed '/^$/d' "$DT_r/swlog" | wc -l)))"
         S=" $(gettext "sentences")"
         if [ $sadds = 1 ]; then
         S=" $(gettext "sentence")"; fi
 
-        logs=$(cat ./slog ./wlog)
-        adds=$(cat ./adds ./addw |sed '/^$/d' |wc -l)
+        logs=$(cat "$DT_r/slog" "$DT_r/wlog")
+        adds=$(cat "$DT_r/adds" "$DT_r/addw" |sed '/^$/d' |wc -l)
         
         if [[ ${adds} -ge 1 ]]; then
-        notify-send -i idiomind \
-        "$tpe" \
+        notify-send -i idiomind "$tpe" \
         "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
         echo ".adi.$adds.adi." >> "$DC_s/log"; fi
         
-        if [ -n "$logs" ] || [ "$(ls [0-9]* | wc -l)" -ge 1 ]; then
+        if [ -n "$logs" ] || [ "$(ls "$DT_r"/[0-9]* | wc -l)" -ge 1 ]; then
         
-            if [ "$(ls [0-9]* | wc -l)" -ge 1 ]; then
+            if [ "$(ls "$DT_r"/[0-9]* | wc -l)" -ge 1 ]; then
             btn="--button="$(gettext "Save Audio")":0"; fi
 
             dlg_text_info_3 "$(gettext "Some items could not be added to your list")" "$logs" "$btn" >/dev/null 2>&1
-            ret=$(echo "$?")
+            ret="$?"
             
                 if  [[ "$ret" -eq 0 ]]; then
                     aud=`dlg_file_2`
-                    ret=$(echo "$?")
+                    ret="$?"
                     
                         if [[ "$ret" -eq 0 ]]; then
-                        mkdir ./rest
-                        mv -f [0-9]*.mp3 ./rest/
-                        cd ./rest/
-                        tar cvzf ./audio.tar.gz ./*
-                        mv -f ./audio.tar.gz "$aud"; fi
+                        mkdir "$DT_r/rest"
+                        mv -f "$DT_r"/[0-9]*.mp3 "$DT_r/rest"/
+                        cd "$DT_r/rest"
+                        tar cvzf "$DT_r/audio.tar.gz" "$DT_r"/*
+                        mv -f "$DT_r/audio.tar.gz" "${aud}"; fi
                 fi
         fi
         
