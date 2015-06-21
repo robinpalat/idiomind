@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-if [ -z "$lgtl" ] || [ -z "$lgsl" ]; then
+if ([ -z "$lgtl" ] || [ -z "$lgsl" ]); then
 msg "$(gettext "Please check the language settings in the preferences dialog.")\n" error & exit 1
 fi
 
@@ -36,34 +36,30 @@ function index() {
     if [[ -f "$DT/i_lk" ]]; then sleep 1
     else > "$DT/i_lk" & break; fi
     done
-    DC_tlt="${DM_tl}/${2}/.conf"
+    DC_tlt="$DM_tl/${3}/.conf"
     img0='/usr/share/idiomind/images/0.png'
-    item="${3}"
+    item="${2}"
     
-    if [ ! -z "${item}" ] && ! grep -Fo "trgt={${item}}" "${DC_tlt}/0.cfg"; then
-
-        pos=`wc -l < "${DC_tlt}/0.cfg"`
-        t_item="${pos}:[type={$1},trgt={$item},srce={$4},exmp={$5},defn={$6},note={},wrds={$7},grmr={$8},].[tag={},mark={},].id=[$9]"
-        echo -e "${t_item}" >> "${DC_tlt}/0.cfg"
-
-        if [[ ${1} = 1 ]]; then
+    if [[ ! -z "${item}" ]] && ! grep -Fo "trgt={${item}}" "$DC_tlt/0.cfg"; then
+    
+        if [[ $1 = 1 ]]; then
         
-            if [[ "$(grep "$4" "${DC_tlt}/1.cfg")" ]] && [[ -n "$4" ]]; then
-            sed -i "s/${4}/${4}\n${item}/" "${DC_tlt}/1.cfg"
+            if [[ "$(grep "$4" "$DC_tlt/1.cfg")" ]] && [[ -n "$4" ]]; then
+            sed -i "s/${4}/${4}\n${item}/" "$DC_tlt/1.cfg"
             else
-            echo "${item}" >> "${DC_tlt}/1.cfg"; fi
-            echo "${item}" >> "${DC_tlt}/3.cfg"
-            echo -e "FALSE\n${item}\n$img0" >> "${DC_tlt}/5.cfg"
+            echo "${item}" >> "$DC_tlt/1.cfg"; fi
+            echo "${item}" >> "$DC_tlt/3.cfg"
+            echo -e "FALSE\n${item}\n$img0" >> "$DC_tlt/5.cfg"
 
-        elif [[ ${1} = 2 ]]; then
+        elif [[ $1 = 2 ]]; then
         
-            echo "${item}" >> "${DC_tlt}/1.cfg"
-            echo "${item}" >> "${DC_tlt}/4.cfg"
-            echo -e "FALSE\n${item}\n$img0" >> "${DC_tlt}/5.cfg"
+            echo "${item}" >> "$DC_tlt/1.cfg"
+            echo "${item}" >> "$DC_tlt/4.cfg"
+            echo -e "FALSE\n${item}\n$img0" >> "$DC_tlt/5.cfg"
         fi
     fi
         
-    if [[ ${1} = edit ]]; then
+    if [[ "$1" = edit ]]; then
             
         item="${item}"; item_mod="${4}"
         
@@ -73,8 +69,8 @@ function index() {
             fi
         }
         
-        s=1
-        while [ ${s} -le 6 ]; do
+        n=1
+        while [ $s -le 6 ]; do
             sust "${DC_tlt}/${s}.cfg"
             let s++
         done
@@ -88,11 +84,11 @@ function index() {
             cd /
         fi
 
-    elif [[ ${1} = txt_missing ]]; then
+    elif [[ "$1" = txt_missing ]]; then
     
-        echo "${item}" >> "${DC_tlt}/1.cfg"
-        echo "${item}" >> "${DC_tlt}/4.cfg"
-        echo -e "FALSE\n${item}\n${img0}" >> "${DC_tlt}/5.cfg"
+        echo "${item}" >> "$DC_tlt/1.cfg"
+        echo "${item}" >> "$DC_tlt/4.cfg"
+        echo -e "FALSE\n${item}\n$img0" >> "$DC_tlt/5.cfg"
     fi
     
     sleep 0.5
@@ -102,10 +98,10 @@ function index() {
 
 function sentence_p() {
 
-    if [ ${2} = 1 ]; then 
+    if [ $2 = 1 ]; then 
     trgt_p="${trgt}"
     srce_p="${srce}"
-    elif [ ${2} = 2 ]; then
+    elif [ $2 = 2 ]; then
     trgt_p="${trgt_mod}"
     srce_p="${srce_mod}"
     fi
@@ -118,12 +114,12 @@ function sentence_p() {
     
     echo "${vrbl}" | sed 's/ /\n/g' | grep -v '^.$' \
     | grep -v '^..$' | sed -n 1,50p \
-    | tr -d '*)(' | tr -s ',;"&:|{}[]' ' ' \
+    | tr -d '*)(' | tr -s '"&:|{}[]' ' ' \
     | sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
     | sed 's/\]//;s/\[//g' | sed 's/<[^>]*>//g' \
     | sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //;s/"//g' > "$aw"
     
-    translate "$(sed '/^$/d' "$aw")" auto $lg | tr -d '!?¿,;' > "$bw"
+    translate "$(sed '/^$/d' "$aw")" auto $lg | tr -d '!¡?¿,;' > "$bw"
     
     touch "A.$r" "B.$r" "g.$r"
     while read -r grmrk; do
@@ -154,14 +150,14 @@ function sentence_p() {
     touch "$DT_r/A.$r" "$DT_r/B.$r" "$DT_r/g.$r"; bcle=1
     
     if [ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]; then
-        while [[ ${bcle} -le "$(wc -l < "$aw")" ]]; do
+        while [[ $bcle -le "$(wc -l < "$aw")" ]]; do
         s=$(sed -n "$bcle"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
         t=$(sed -n "$bcle"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
         echo "$t"_"$s""" >> "$DT_r/B.$r"
         let bcle++
         done
     else
-        while [[ ${bcle} -le "$(wc -l < "$aw")" ]]; do
+        while [[ $bcle -le "$(wc -l < "$aw")" ]]; do
         t=$(sed -n "$bcle"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
         s=$(sed -n "$bcle"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
         echo "$t"_"$s""" >> "$DT_r/B.$r"
@@ -169,10 +165,10 @@ function sentence_p() {
         done
     fi
     
-    if [ ${2} = 1 ]; then
+    if [ $2 = 1 ]; then
     grmr="$(sed ':a;N;$!ba;s/\n/ /g' < "$DT_r/g.$r")"
     wrds="$(tr '\n' '_' < "$DT_r/B.$r")"
-    elif [ ${2} = 2 ]; then
+    elif [ $2 = 2 ]; then
     grmr_mod="$(sed ':a;N;$!ba;s/\n/ /g' < "$DT_r/g.$r")"
     wrds_mod="$(tr '\n' '_' < "$DT_r/B.$r")"
     fi
@@ -207,12 +203,12 @@ function clean_2() {
     
     if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
     echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" \
-    | tr -d '*\/' | tr -s '"&:|{}[]<>+' ' ' \
+    | tr -d '*//' | tr -s '"&:|{}[]<>+' ' ' \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//; s/ *$//g' | sed 's/ — /__/g' | sed 's/<[^>]*>//g'
     else
     echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" \
-    | tr -d '*\/' | tr -s '"&:|{}[]<>+' ' ' \
+    | tr -d '*/' | tr -s '"&:|{}[]<>+' ' ' \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \
     | sed 's/ — /__/g' | sed "s|/||g" | sed 's/<[^>]*>//g'
@@ -243,19 +239,29 @@ function clean_4() {
 }
 
 
+function add_item() {
+    
+    if ! grep -Fo "trgt={${2}}" "$DC_tlt/0.cfg"; then
+    pos=`wc -l < "$DC_tlt/0.cfg"`
+    item="${pos}:[type={$1},trgt={$2},srce={$3},exmp={$4},defn={$5},note={$6},wrds={$7},grmr={$8},].[tag={},mark={},].id=[$9]"
+	echo -e "${item}" >> "${DC_tlt}/0.cfg"
+    fi
+}
+
+
 function set_image_1() {
     
-    scrot -s --quality 90 "$DT_r/img.jpg"
-    /usr/bin/convert "$DT_r/img.jpg" -interlace Plane -thumbnail 110x90^ \
-    -gravity center -extent 110x90 -quality 90% "$DT_r/ico.jpg"
+    scrot -s --quality 90 ./img.jpg
+    /usr/bin/convert ./img.jpg -interlace Plane -thumbnail 110x90^ \
+    -gravity center -extent 110x90 -quality 90% ./ico.jpg
 }
 
 
 function set_image_2() {
     
-    /usr/bin/convert "$DT_r/img.jpg" -interlace Plane -thumbnail 400x270^ \
-    -gravity center -extent 400x270 -quality 90% "$DT_r/imgs.jpg"
-    mv -f "$DT_r/imgs.jpg" "${2}"
+    /usr/bin/convert ./img.jpg -interlace Plane -thumbnail 400x270^ \
+    -gravity center -extent 400x270 -quality 90% ./imgs.jpg
+    mv -f ./imgs.jpg "$2"
 }
 
 
@@ -280,26 +286,28 @@ function voice() {
     synth="$(grep -o synth=\"[^\"]* < "$DC_s/1.cfg" | grep -o '[^"]*$')"
     DT_r="$2"; cd "$DT_r"
     
-    if [ -n "$synth" ]; then
+    if [[ -n "$synth" ]]; then
     
         if [[ "$synth" = 'festival' ]] || [[ "$synth" = 'text2wave' ]]; then
             lg="${lgtl,,}"
 
-            if [ $lg = "english" ] || [ $lg = "spanish" ] || [ $lg = "russian" ]; then
-            echo "${1}" | text2wave -o "$DT_r/s.wav"
+            if ([ $lg = "english" ] \
+            || [ $lg = "spanish" ] \
+            || [ $lg = "russian" ]); then
+            echo "$1" | text2wave -o "$DT_r/s.wav"
             sox "$DT_r/s.wav" "${3}"
             else
             msg "$(gettext "Sorry, can not process this language.")\n" error
-            [ -d "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
+            [ "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
         else
             echo "${1}" | "$synth"
-            [ -f "$DT_r"/*.mp3 ] && mv -f "$DT_r"/*.mp3 "${3}"
-            [ -f "$DT_r"/*.wav ] && sox "$DT_r"/*.wav "${3}"
+            [ -f *.mp3 ] && mv -f *.mp3 "${3}"
+            [ -f *.wav ] && sox *.wav "${3}"
         fi
         
-        if [ ! -f "$DT_r"/*.mp3 ] && [ ! -f "$DT_r"/*.wav ]; then
+        if [ ! -f *.mp3 ] && [ ! -f *.wav ]; then
         msg "$(gettext "Sorry, can not process this language.")\n" error
-        [ -d "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
+        [ "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
         
     else
         lg="${lgtl,,}"
@@ -307,7 +315,7 @@ function voice() {
         [ $lg = portuguese ] && lg=brazil
         [ $lg = vietnamese ] && lg=vietnam
         if [ $lg = japanese ]; then msg "$(gettext "Sorry, can not process Japanese language.")\n" error
-        [ -d "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
+        [ "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
         
         espeak "${1}" -v $lg -k 1 -p 40 -a 80 -s 110 -w "$DT_r/s.wav"
         sox "$DT_r/s.wav" "${3}"
@@ -334,9 +342,9 @@ function fetch_audio() {
 function list_words_2() {
 
     if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
-    echo "$1" | tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > "$DT_r/idlst"
+    echo "$1" | tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > idlst
     else
-    echo "$1" | tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > "$DT_r/idlst"
+    echo "$1" | tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > idlst
     fi
 }
 
@@ -345,14 +353,13 @@ function list_words_3() {
 
     if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
     echo "$2" | sed 's/\[ \.\.\. ] //g' | sed 's/\.//g' \
-    | tr '_' '\n' | tr -d ',;' | sed -n 1~2p | sed '/^$/d' > "$DT_r/lst"
+    | tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > lst
     else
     cat "$1" | sed 's/\[ \.\.\. ] //g' | sed 's/\.//g' \
-    | tr -s "[:blank:]" '\n' | tr -d ',;' \
-    | sed '/^$/d' | sed '/"("/d' \
+    | tr -s "[:blank:]" '\n' | sed '/^$/d' | sed '/"("/d' \
     | grep -v '^.$' | grep -v '^..$' \
     | sed '/")"/d' | sed '/":"/d' | sed 's/[^ ]\+/\L\u&/g' \
-    | head -n100 | egrep -v "FALSE" | egrep -v "TRUE" > "$DT_r/lst"
+    | head -n100 | egrep -v "FALSE" | egrep -v "TRUE" > lst
     fi
 }
 
