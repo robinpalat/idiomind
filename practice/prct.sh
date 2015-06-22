@@ -17,7 +17,8 @@
 #  MA 02110-1301, USA.
 #  
 
-[[ -z "$DM" ]] && source /usr/share/idiomind/ifs/c.conf
+source /usr/share/idiomind/ifs/c.conf
+
 strt="$DS/practice/strt.sh"
 cls="$DS/practice/cls.sh"
 log="$DC_s/8.cfg"

@@ -163,7 +163,6 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     --scroll --center --tooltip-column=1 \
     --width=650 --height=580 --borders=10 \
     --column=Items \
-    --button="$(gettext "Files")":"$cmd_infs" \
     --button="$(gettext "Install")":0 \
     --button="$(gettext "Close")":1
     ret=$?
@@ -190,7 +189,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             
                 tname="${tname} ($i)"
                 msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "The name for the newest will be\:")\n<b>$tname</b>\n" info "$(gettext "OK")" "$(gettext "Cancel")"
-                ret=$(echo $?)
+                ret=$?
                 
                 if [[ $ret != 0 ]]; then
                 [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c"
@@ -237,7 +236,7 @@ fi
     
 function topic() {
 
-    [ -z "${tpc}" ] && exit 1
+    
     mode=$(sed -n 1p "$DC_s/5.cfg")
     source "$DS/ifs/mods/cmns.sh"
     source "$DS/ifs/mods/topic/items_list.sh"
@@ -248,7 +247,8 @@ function topic() {
         "$DS/ifs/mods/topic/${tpa}.sh" & exit 1
 
     elif [[ ${mode} = 0 ]] || [[ ${mode} = 1 ]]; then
-    
+        
+        [ -z "${tpc}" ] && exit 1
         n=0
         while [[ ${n} -le 4 ]]; do
         [ ! -f "${DC_tlt}/$n.cfg" ] && touch "${DC_tlt}/$n.cfg"
@@ -312,7 +312,7 @@ function topic() {
         
         notebook_1
      
-        ret=$(echo $?)
+        ret=$?
                 
             if [ ! -f "$DT/ps_lk" ]; then
                 
@@ -343,7 +343,7 @@ function topic() {
                 
                 RM=100
                 dialog_1
-                ret=$(echo $?)
+                ret=$?
                 
                     if [[ $ret -eq 2 ]]; then
                     
@@ -364,7 +364,7 @@ function topic() {
             notebook_1
             
         fi
-            ret=$(echo $?)
+            ret=$?
 
             if [[ $ret -eq 5 ]]; then
             
@@ -399,7 +399,7 @@ function topic() {
             
             RM=100
             dialog_1
-            ret=$(echo $?)
+            ret=$?
                 
                 if [[ $ret -eq 2 ]]; then
 

@@ -244,22 +244,14 @@ sync() {
             exit=$?
         fi
         
-        if [[ $exit = 0 ]]; then
-
-            sum="$(tail -n 1 < "$DT/l_sync")"
-            if [[ $2 = 1 ]]; then
-            (sleep 1 && notify-send -i idiomind \
-            "$(gettext "Synchronization finished")" "$sum" -t 8000) &
-            fi
-  
-        elif [[ $exit != 0 ]]; then
+        if [[ $exit != 0 ]]; then
         
             if [[ $2 = 1 ]]; then
             (sleep 1 && notify-send -i idiomind \
             "$(gettext "Error")" \
             "$(gettext "Error while syncing")" -t 8000) &
             elif [[ $2 = 0 ]]; then
-            echo "$(gettext "Error while syncing")" >> "$DM_tl/Podcasts/.conf/feed.err"
+            echo "$(gettext "Error while syncing") - $(cat "$DT/l_sync")" >> "$DM_tl/Podcasts/.conf/feed.err"
             fi
         fi
         [ -f "$DT/l_sync" ] && rm -f "$DT/l_sync"; exit

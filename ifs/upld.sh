@@ -38,7 +38,7 @@ cntct=\"\"" > "$DC_s/3.cfg"
 
 vsd() {
 
-    cd "$DM/backup"; ls -t *.id | sed 's/\.id//g' | \
+    cd "$DM/backup"; ls -t *.idmnd | sed 's/\.idmnd//g' | \
     yad --list --title="$(gettext "Your Shared Topics")" \
     --name=Idiomind --class=Idiomind \
     --dclick-action="$DS/ifs/upld.sh 'infsd'" \
@@ -52,8 +52,7 @@ vsd() {
 
 infsd() {
 
-    file="$DM/backup/${2}.id"
-
+    file="$DM/backup/${2}.idmnd"
     usrid="$(grep -o 'usrid="[^"]*' < "$DC_s/3.cfg" |grep -o '[^"]*$')"
     language_source=$(grep -o 'langs="[^"]*' < "$file" |grep -o '[^"]*$')
     language_target=$(grep -o 'langt="[^"]*' < "$file" |grep -o '[^"]*$')
@@ -168,8 +167,8 @@ usrid="$(grep -o 'usrid="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
 iuser="$(grep -o 'iuser="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
 cntct="$(grep -o 'cntct="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
 if [ -z "$usrid" ] || [ ${#id} -gt 3 ]; then
-b=$(tr -dc a-z < /dev/urandom | head -c 1)
-usrid="$b$((RANDOM%100))"
+b=$(tr -dc a-z < /dev/urandom |head -c 1)
+usrid="$b$((RANDOM%1000))"
 usrid=${usrid:0:3}; fi
 [ -z "$iuser" ] && iuser=$USER
 note=$(< "${DC_tlt}/info")
@@ -264,20 +263,24 @@ if [ "$du" -gt 50000000 ]; then
 msg "$(gettext "Sorry, the size of the attachments is too large.")\n " info & exit 1; fi
 fi
 
-internet; [ -d "$DT" ] && cd "$DT" || exit 1
+internet
+[ -d "$DT" ] && cd "$DT" || exit 1
 [ -d "$DT/upload" ] && rm -fr "$DT/upload"
+
+# ---------------------------------------------------
 mkdir "$DT/upload"
 DT_u="$DT/upload/"
-mkdir -p "$DT/upload/${tpc}/conf"
+mkdir -p "$DT/upload/${usrid}.${tpc}/conf"
+
 cd "${DM_tlt}/images"
 if [ $(ls -1 *.jpg 2>/dev/null | wc -l) != 0 ]; then
 images=$(ls *.jpg | wc -l); else
 images=0; fi
 [ -f "${DC_tlt}/3.cfg" ] && words=$(wc -l < "${DC_tlt}/3.cfg")
 [ -f "${DC_tlt}/4.cfg" ] && sentences=$(wc -l < "${DC_tlt}/4.cfg")
-[ -f "${DC_tlt}/id.cfg" ] && \
+if [ -f "${DC_tlt}/id.cfg" ]; then
 datec="$(grep -o 'datec="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-datei="$(grep -o 'datei="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+datei="$(grep -o 'datei="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"; fi
 dateu=$(date +%F)
 
 echo -e "v=1
@@ -300,8 +303,8 @@ set_2=\"$set_2\"
 
 
 ------------------ content -----------------" > "${DC_tlt}/id.cfg"
-cp -f "${DC_tlt}/id.cfg" "$DT_u/${tpc}/conf/${usrid}.${tpc}.idmnd"
-cat "${DC_tlt}/0.cfg" >> "$DT_u/${tpc}/conf/${usrid}.${tpc}.idmnd"
+cp -f "${DC_tlt}/id.cfg" "$DT_u/${usrid}.${tpc}.$lgt"
+cat "${DC_tlt}/0.cfg" >> "$DT_u/${usrid}.${tpc}.$lgt"
 
 if [ "${iuser}" != "${iuser_m}" ] \
 || [ "${cntct}" != "${cntct_m}" ]; then
@@ -311,10 +314,10 @@ sed -i "s/cntct=.*/cntct=\"$cntct_m\"/g" "$DC_s/3.cfg"
 fi
 
 cd "${DM_tlt}"
-cp -r ./* "$DT_u/${tpc}/"
-mkdir "$DT_u/${tpc}/files"
+cp -r ./* "$DT_u/${usrid}.${tpc}/"
+mkdir "$DT_u/${usrid}.${tpc}/files"
 
-mkdir "$DT_u/${tpc}/share"
+mkdir "$DT_u/${usrid}.${tpc}/share"
 auds="$(uniq < "${DC_tlt}/4.cfg" \
 | sed 's/\n/ /g' | sed 's/ /\n/g' \
 | grep -v '^.$' | grep -v '^..$' \
@@ -323,41 +326,50 @@ auds="$(uniq < "${DC_tlt}/4.cfg" \
 | tr -d ')' | tr -d '(' | tr '[:upper:]' '[:lower:]')"
 while read -r audio; do
 if [ -f "$DM_tl/.share/$audio.mp3" ]; then
-cp -f "$DM_tl/.share/$audio.mp3" "$DT_u/$tpc/share/$audio.mp3"; fi
+cp -f "$DM_tl/.share/$audio.mp3" "$DT_u/${usrid}.${tpc}/share/$audio.mp3"; fi
 done <<<"$auds"
 
 # remove from folder topic name characters weirds TODO
-echo -e "${notes}" > "$DT_u/${tpc}/conf/info"
+echo -e "${notes}" > "$DT_u/${usrid}.${tpc}/conf/info"
 
 find "$DT_u" -type f -exec chmod 644 {} \;
 cd "$DT_u"
-tar -cvf "${tpc}.tar" "${tpc}"
-gzip -9 "${tpc}.tar"
-mv "${tpc}.tar.gz" "$usrid.${tpc}.$lgt"
-du=$(du -h "$usrid.${tpc}.$lgt" | cut -f1)
-[ -d "$DT_u/${tpc}" ] && rm -fr "$DT_u/${tpc}"
+tar -cvf ./"${usrid}.${tpc}.tar" ./"${usrid}.${tpc}"
+gzip -9 ./"${usrid}.${tpc}.tar"
+sum=`md5sum ./"${usrid}.${tpc}.tar.gz" | cut -d' ' -f1`
+
+echo -e "---------------end content -----------------
+
+md5sum=\"$sum\"
+" >> "$DT_u/${usrid}.${tpc}.$lgt"
+
+du=$(du -h "${usrid}.${tpc}.tar.gz" | cut -f1)
 
 notify-send "$(gettext "Upload in progress")" \
 "$(gettext "This can take some time, please wait")" -t 6000
 
 url="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
 | grep -o 'UPLOADS="[^"]*' | grep -o '[^"]*$')"
-upld="${DT_u}/${usrid}.${tpc}.${lgt}"
-export upld url
+_files="${DT_u}/${usrid}.${tpc}.tar.gz"
+idmnd="$DT_u/${usrid}.${tpc}.$lgt"
+export _files idmnd url
 
 python << END
 import requests
 import os
-upld = os.environ['upld']
+upld = os.environ['_files']
+idmnd = os.environ['idmnd']
 url = os.environ['url']
 files = {'file': open(upld, 'rb')}
+r = requests.post(url, files=files)
+files = {'file': open(idmnd, 'rb')}
 r = requests.post(url, files=files)
 END
 u=$?
 
 if [[ $u = 0 ]]; then
     [ ! -d "${DM}/backup" ] && mkdir "${DM}/backup"
-    mv -f "${DT}/${tpc}.id" "${DM}/backup/${tpc}.id"
+    mv -f "$DT_u/${usrid}.${tpc}.$lgt" "${DM}/backup/${tpc}.idmnd"
     info=" <b>$(gettext "Uploaded correctly")</b>\n $tpc\n"
     image=dialog-ok
 else

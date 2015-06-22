@@ -40,26 +40,32 @@ function index() {
     img0='/usr/share/idiomind/images/0.png'
     item="${3}"
     #
-    if [ ! -z "${item}" ] && ! grep -Fo "trgt={${item}}" "${DC_tlt}/0.cfg"; then
-
-        pos=`wc -l < "${DC_tlt}/0.cfg"`
-        t_item="${pos}:[type={$1},trgt={$item},srce={$4},exmp={$5},defn={$6},note={},wrds={$7},grmr={$8},].[tag={},mark={},].id=[$9]"
-        echo -e "${t_item}" >> "${DC_tlt}/0.cfg"
-
-        if [[ ${1} = 1 ]]; then
+    if [ ! -z "${item}" ]; then
+    
+        if ! grep -Fo "trgt={${item}}" "${DC_tlt}/0.cfg"; then
         
-            if [[ "$(grep "$4" "${DC_tlt}/1.cfg")" ]] && [[ -n "$4" ]]; then
-            sed -i "s/${4}/${4}\n${item}/" "${DC_tlt}/1.cfg"
-            else
-            echo "${item}" >> "${DC_tlt}/1.cfg"; fi
-            echo "${item}" >> "${DC_tlt}/3.cfg"
-            echo -e "FALSE\n${item}\n$img0" >> "${DC_tlt}/5.cfg"
-
-        elif [[ ${1} = 2 ]]; then
+            pos=`wc -l < "${DC_tlt}/0.cfg"`
+            t_item="${pos}:[type={$1},trgt={$item},srce={$4},exmp={$5},defn={$6},note={},wrds={$7},grmr={$8},].[tag={},mark={},].id=[$9]"
+            echo -e "${t_item}" >> "${DC_tlt}/0.cfg"
+        fi
         
-            echo "${item}" >> "${DC_tlt}/1.cfg"
-            echo "${item}" >> "${DC_tlt}/4.cfg"
-            echo -e "FALSE\n${item}\n$img0" >> "${DC_tlt}/5.cfg"
+        if ! grep -Fxq "${item}" < <(cat "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg"); then
+
+            if [[ ${1} = 1 ]]; then
+
+                if [ "$(grep "$4" "${DC_tlt}/1.cfg")" ] && [ -n "$4" ]; then
+                sed -i "s/${4}/${4}\n${item}/" "${DC_tlt}/1.cfg"
+                else
+                echo "${item}" >> "${DC_tlt}/1.cfg"; fi
+                echo "${item}" >> "${DC_tlt}/3.cfg"
+                echo -e "FALSE\n${item}\n$img0" >> "${DC_tlt}/5.cfg"
+
+            elif [[ ${1} = 2 ]]; then
+            
+                echo "${item}" >> "${DC_tlt}/1.cfg"
+                echo "${item}" >> "${DC_tlt}/4.cfg"
+                echo -e "FALSE\n${item}\n$img0" >> "${DC_tlt}/5.cfg"
+            fi
         fi
     fi
         

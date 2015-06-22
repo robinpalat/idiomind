@@ -7,7 +7,6 @@ function word_view() {
     [ -n "$defn" ] && field_defn="--field=$defn:lbl"
     [ -n "$note" ] && field_note="--field=$note\n:lbl"
     [ -n "$exmp" ] && field_exmp="--field=<i><span color='#737373'>$exmp</span></i>:lbl"
-    [ -z "$trgt" ] && tm="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>"
 
     yad --form --title=" " \
     --selectable-labels --quoted-output \
@@ -29,7 +28,6 @@ function sentence_view() {
 
     if [ "$(grep -o gramr=\"[^\"]* < "$DC_s/1.cfg" | grep -o '[^"]*$')"  = TRUE ]; then
     trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
-    [ -z "$trgt_l" ] && tm="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>"
     
     echo "$lwrd" | yad --list --title=" " \
     --text="$tag<span font_desc='Sans Free 15'>${trgt_l}</span>\n\n<i>$srce</i>\n\n" \
@@ -48,7 +46,23 @@ function sentence_view() {
     
 } >/dev/null 2>&1
 
-export -f word_view sentence_view
+
+function m_text() {
+
+    yad --form --title=" " \
+    --text="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>\n\n\n\n" \
+    --window-icon="$DS/images/icon.png" \
+    --align=left --skip-taskbar --text-align=left \
+    --image-on-top --center --on-top \
+    --width=620 --height=380 --borders=20 \
+    --button=gtk-edit:5 \
+    --button=gtk-go-down:2 \
+    --button=gtk-go-up:3
+    
+} >/dev/null 2>&1
+
+export -f word_view sentence_view m_text
+
 
 function notebook_1() {
     

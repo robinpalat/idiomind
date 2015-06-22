@@ -33,34 +33,34 @@ new_topic() {
     msg "$(gettext "Sorry, you have reached the maximum number of topics")" info Info &
     exit 1; fi
 
-    jlbi=$(dlg_form_0 "$2")
+    jlbi=$(dlg_form_0 "${2}")
     ret="$?"
-    jlb="$(clean_3 "$jlbi")"
+    jlb="$(clean_3 "${jlbi}")"
     
     if [[ ${#jlb} -gt 55 ]]; then
     msg "$(gettext "Sorry, name too long.")\n" info
-    "$DS/add.sh" new_topic "$jlb" & exit 1; fi
+    "$DS/add.sh" new_topic "${jlb}" & exit 1; fi
     
-    if grep -Fxo "$jlb" < <(ls "$DS/addons/"); then jlb="$jlb."; fi
-    chck=$(grep -Fxo "$jlb" "$DM_tl/.1.cfg" | wc -l)
+    if grep -Fxo "${jlb}" < <(ls "$DS/addons/"); then jlb="${jlb} (1)"; fi
+    chck=$(grep -Fxo "${jlb}" "$DM_tl/.1.cfg" | wc -l)
     
     if [[ ${chck} -ge 1 ]]; then
         
         for i in {1..50}; do
-        chck=$(grep -Fxo "$jlb ($i)" "$DM_t/$language_target/.1.cfg")
-        [ -z "$chck" ] && break; done
-        jlb="$jlb ($i)"
-        msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "The name for the newest will be\:")\n<b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
+        chck=$(grep -Fxo "${jlb} ($i)" "$DM_t/$language_target/.1.cfg")
+        [ -z "${chck}" ] && break; done
+        jlb="${jlb} ($i)"
+        msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "The name for the newest will be\:")\n<b>${jlb}</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
         ret="$?"
         [[ $ret -eq 1 ]] && exit 10
         
-    else jlb="$jlb"; fi
+    else jlb="${jlb}"; fi
     
-    if [ -n "$jlb" ]; then
+    if [ -n "${jlb}" ]; then
     
-        mkdir "$DM_tl/$jlb"
+        mkdir "$DM_tl/${jlb}"
         list_inadd > "$DM_tl/.2.cfg"
-        "$DS/default/tpc.sh" "$jlb" 1
+        "$DS/default/tpc.sh" "${jlb}" 1
         "$DS/mngr.sh" mkmn
     fi
     exit
@@ -90,14 +90,20 @@ Create one using the button below. ")" & exit 1; fi
     | tr "\\n" '!' | sed 's/\!*$//g')
     [ -n "$tpcs" ] && e='!'; [ -z "${tpe}" ] && tpe=' '
 
-    if [ "$trans" = TRUE ]; then lzgpr="$(dlg_form_1)"; \
-    else lzgpr="$(dlg_form_2)"; fi
-    ret="$?"
+    if [[ "$3" != 3 ]]; then
     
-    trgt=$(echo "${lzgpr}" | head -n -1 | sed -n 1p)
-    srce=$(echo "${lzgpr}" | sed -n 2p)
-    chk=$(echo "${lzgpr}" | tail -1)
-    tpe=$(grep -Fxo "${chk}" "$DM_tl/.1.cfg")
+        if [ "$trans" = TRUE ]; then lzgpr="$(dlg_form_1)"; \
+        else lzgpr="$(dlg_form_2)"; fi
+        
+        ret="$?"
+        trgt=$(echo "${lzgpr}" | head -n -1 | sed -n 1p)
+        srce=$(echo "${lzgpr}" | sed -n 2p)
+        chk=$(echo "${lzgpr}" | tail -1)
+        tpe=$(grep -Fxo "${chk}" "$DM_tl/.1.cfg")
+    else
+        trgt="${4}"
+        srce="${5}"
+    fi
 
         if [[ $ret -eq 3 ]]; then
         
@@ -113,17 +119,17 @@ Create one using the button below. ")" & exit 1; fi
             "$DS/ifs/tls.sh" add_audio "$DT_r"
             "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
         
-        elif [[ $ret -eq 0 ]]; then
-        
+        elif [[ $ret -eq 0 ]] || [ "$3" != 3 ]; then
+
             if [ "$3" = 2 ]; then
             [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")
             else DT_r=$(mktemp -d "$DT/XXXXXX"); fi
             cd "$DT_r"
             xclip -i /dev/null
         
-            if [ -z "${chk}" ]; then cleanups "$DT_r";
+            if [ -z "${chk}" ] && [[ "$3" != 3 ]]; then cleanups "$DT_r"
             msg "$(gettext "No topic is active")\n" info & exit 1; fi
-        
+
             if [ -z "${trgt}" ]; then
             cleanups "$DT_r"; exit 1; fi
 
@@ -358,8 +364,6 @@ list_words_edit() {
                     index 1 "${tpe}" "${trgt}" "${srce}" "${exmp_}" "" "" "" "${id}"
                     if [ ! -f "$DM_tls/$audio.mp3" ]; then
                     dictt "$audio" "$DM_tls"; fi
-                    if [ ! -f "$DM_tls/$audio.mp3" ]; then
-                    voice "${trgt}" "$DT_r" "$DM_tls/$audio.mp3";fi
                 
                 else
                     echo -e "\n\n#$n $trgt" >> "$DT_r/logw"
@@ -425,8 +429,6 @@ list_words_sentence() {
                 index 1 "${tpe}" "${trgt}" "${srce}" "${exmp_}" "" "" "" "${id}"
                 if [ ! -f "$DM_tls/$audio.mp3" ]; then
                 dictt "$audio" "$DM_tls"; fi
-                if [ ! -f "$DM_tls/$audio.mp3" ]; then
-                voice "${trgt}" "$DT_r" "$DM_tls/$audio.mp3";fi
             
             else
                 echo -e "\n\n#$n $trgt" >> "$DT_r/logw"
@@ -718,8 +720,6 @@ process() {
                                 index 1 "${tpe}" "${trgt}" "${srce}" "" "" "" "" "${id}"
                                 if [ ! -f "$DM_tls/$audio.mp3" ]; then
                                 dictt "$audio" "$DM_tls/$audio.mp3"; fi
-                                if [ ! -f "$DM_tls/$audio.mp3" ]; then
-                                voice "${trgt}" "$DT_r" "$DM_tls/$audio.mp3"; fi
                                 echo "${trgt}" >> "$DT_r/addw"
 
                             else
@@ -795,8 +795,6 @@ process() {
                                 index 1 "${tpc}" "${trgt}" "${srce}" "${exmp_}" "" "" "" "${id}"
                                 if [ ! -f "${DM_tls}/$audio.mp3" ]; then
                                 dictt "$audio" "${DM_tls}"; fi
-                                if [ ! -f "${DM_tls}/$audio.mp3" ]; then
-                                voice "${trgt}" "$DT_r" "${DM_tls}/$audio.mp3"; fi
                                 echo "${trgt}" >> "$DT_r/addw"
 
                             else

@@ -188,14 +188,14 @@ check_index() {
 
     DC_tlt="$DM_tl/${2}/.conf"
     DM_tlt="$DM_tl/${2}"
-    nv=0; f=0
+    nv=0; f=0; a=0
     
     _check() {
         
         if [ ! -d "${DC_tlt}" ]; then mkdir "${DC_tlt}"; fi
         n=0
         while [[ $n -le 6 ]]; do
-            [ ! -f "${DC_tlt}/$n.cfg" ] && touch "${DC_tlt}/$n.cfg"
+            [ ! -f "${DC_tlt}/$n.cfg" ] && touch "${DC_tlt}/$n.cfg" && a=1
             if grep '^$' "${DC_tlt}/$n.cfg"; then
             sed -i '/^$/d' "${DC_tlt}/$n.cfg"; fi
             check_index1 "${DC_tlt}/$n.cfg"
@@ -213,22 +213,30 @@ check_index() {
     
     _restore() {
     
-        rm "$DC_tlt/0.cfg" "$DC_tlt/1.cfg" \
-        "$DC_tlt/3.cfg" "$DC_tlt/4.cfg"
-
+        if [ ! "${DC_tlt}/0.cfg" ]; then
+            if [ "$HOME/.idiomind/backup/${2}.bk" ]; then
+            cp -f "$HOME/.idiomind/backup/${2}.bk" "${DC_tlt}/0.cfg"
+            else msg "$(gettext "Unable to fix the index.")\n" error "$(gettext "Error")"
+            exit 1; fi
+        fi
+        
+        rm "${DC_tlt}/1.cfg" "${DC_tlt}/3.cfg" "${DC_tlt}/4.cfg"
         while read item_; do
         item="$(sed 's/},/}\n/g' <<<"${item_}")"
         type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
         trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
         
         if [ -n "${trgt}" ]; then
-        if [[ ${type} = 1 ]]; then
-        echo "${trgt}" >> "$DC_tlt/3.cfg"
-        else echo "${trgt}" >> "$DC_tlt/4.cfg"; fi
-        echo "${trgt}" >> "$DC_tlt/1.cfg"
+        
+            if [[ ${type} = 1 ]]; then
+            echo "${trgt}" >> "${DC_tlt}/3.cfg"
+            else
+            echo "${trgt}" >> "${DC_tlt}/4.cfg"; fi
+            echo "${trgt}" >> "${DC_tlt}/1.cfg"
         fi
         
-        done < "$DC_tlt/0.cfg"
+        done < "${DC_tlt}/0.cfg"
+        > "${DC_tlt}/2.cfg"
     }
 
     _sanity() {
@@ -303,10 +311,6 @@ check_index() {
     
     fix() {
         
-        if [ $? -ne 0 ]; then
-        [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
-        msg "$(gettext "File not found")\n" error & exit 1; fi
-        
         if [ "$stts" = 13 ]; then
             if [ -f "$DC_tlt/8.cfg_" ] && \
             [ -n $(< "$DC_tlt/8.cfg_") ]; then
@@ -338,9 +342,19 @@ check_index() {
         _new_version
         fi
         
+        if [ ${a} = 1 ]; then
+        (sleep 1
+        notify-send -i idiomind "$(gettext "Index Error")" \
+        "$(gettext "Fixing...")" -t 3000) &
+        > "$DT/ps_lk"
+        _restore
+        fi
+
         "$DS/ifs/tls.sh" colorize
         "$DS/mngr.sh" mkmn
     fi
+    
+     if [ -f "$DT/ps_lk" ]; then rm -f "$DT/ps_lk"; fi
     
     exit
 }
@@ -966,7 +980,6 @@ mkpdf() {
     fi
     exit
 }
-
 
 if [ "$1" = play ]; then
 

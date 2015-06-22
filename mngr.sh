@@ -314,17 +314,17 @@ edit_item() {
 
                 if [ "${tpc}" != "${tpc_mod}" ]; then # TODO lack move audio file and picture
                 
-                    cfg11="$DM_tl/${tpc_mod}/.conf/0.cfg"
-                    pos=$(grep -Fon -m 1 "trgt={}" "${cfg11}" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
+                    cfg0="$DM_tl/${tpc_mod}/.conf/0.cfg"
+                    pos=$(grep -Fon -m 1 "trgt={}" "${cfg0}" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
                     [ -f "${audio_mod}" ] && mv -f "${audio_mod}" "$DM_tl/${tpc_mod}/$id_mod.mp3"
-                    sed -i "${pos}s|trgt={}|trgt={$trgt_mod}|g" "${cfg11}"
+                    sed -i "${pos}s|trgt={}|trgt={$trgt_mod}|g" "${cfg0}"
                     "$DS/mngr.sh" delete_item_ok "${tpc}" "${trgt}"
                     index ${type} "${trgt_mod}" "${tpc_mod}"
-                    unset type trgt srce exmp defn note wrds grmr mark id ¿
+                    unset type trgt srce exmp defn note wrds grmr mark id
                     
 
                 elif [ "${tpc}" = "${tpc_mod}" ]; then
-                    cfg11="$DC_tlt/0.cfg"
+                    cfg0="$DC_tlt/0.cfg"
                     pos=${edit_pos}
                 fi
 
@@ -336,7 +336,7 @@ edit_item() {
                 ${pos}s|wrds={$wrds}|wrds={$wrds_mod}|;
                 ${pos}s|grmr={$grmr}|grmr={$grmr_mod}|;
                 ${pos}s|mark={$mark}|mark={$mark_mod}|;
-                ${pos}s|id=\[$id\]|id=\[$id_mod\]|g" "${cfg11}"
+                ${pos}s|id=\[$id\]|id=\[$id_mod\]|g" "${cfg0}"
 
                 if [ "${audio}" != "${audio_mod}" ]; then
                 cp -f "${audio_mod}" "${DM_tlt}/$id_mod.mp3"
@@ -349,15 +349,15 @@ edit_item() {
             
             fi
 
-            [[ -d "$DT/$c" ]] && ("$DS/add.sh" list_words_edit "${wrds_mod}" 2 ${c} "${trgt_mod}") &
-            [[ $col = 1 ]] && ("$DS/ifs/tls.sh" colorize) &
+            [[ -d "$DT/$c" ]] && "$DS/add.sh" list_words_edit "${wrds_mod}" 2 ${c} "${trgt_mod}" &
+            [[ $col = 1 ]] && "$DS/ifs/tls.sh" colorize &
             [[ $mod = 1 ]] && sleep 0.2
+            [[ $ret -eq 2 ]] && "$DS/mngr.sh" edit "$lists" $((item_pos-1))
             [[ $ret -eq 0 ]] && "$DS/vwr.sh" "$lists" "${trgt}" ${item_pos} &
-            [[ $ret -eq 2 ]] && "$DS/mngr.sh" edit "$lists" $((item_pos-1)) &
             
 
         else
-            "$DS/vwr.sh" "$lists" "${trgt}" ${item_pos} &
+            "$DS/vwr.sh" "$lists" "${trgt}" $((item_pos-1)) &
         fi
 
     exit
@@ -365,10 +365,42 @@ edit_item() {
 } >/dev/null 2>&1
 
 
+mtext() {
+    
+    trgt="$(sed -n ${3}p "${2}")"
+    vmtext="$(yad --form --title="$(gettext "Edit")" \
+    --name=Idiomind --class=Idiomind \
+    --always-print-result --print-all --separator="|" --selectable-labels \
+    --window-icon="$DS/images/icon.png" \
+    --buttons-layout=end --align=right --center --on-top \
+    --width=550 --height=350 --borders=10 \
+    --field="<small>$lgtl</small>":TXT "$trgt" \
+    --field="<small><a href='$link1'>$(gettext "Translation")</a></small>\t":LBL " " \
+    --field="<small>$lgsl</small>":TXT "$srce" \
+    --field="<small>$(gettext "Audio")</small>":FL "${audio}" \
+    --button="$(gettext "Delete")":2 \
+    --button="$(gettext "Save")":0)"
+    
+        if [[ $? = 2 ]]; then
+        "$DS/mngr.sh" delete_item "${tpc}" "${trgt}" & exit
+        
+        elif [[ $? = 0 ]]; then
+        out="$(tail -n 1 <<<"${vmtext}")"
+        val1="$(cut -d "|" -f1 <<<"${out}")"
+        val2="$(cut -d "|" -f3 <<<"${out}")"
+        val3="$(cut -d "|" -f5 <<<"${out}")"
+        [ -f "$val3" ] && cp "$val3" "$DT_r/audtm.mp3"
+        "$DS/add.sh" new_items " " 3 "${val1}" "${val2}" & exit
+        
+        else exit 1; fi
+}
+
+
+
 delete_topic() {
     
     include "$DS/ifs/mods/mngr"
-    
+
     if [ "${tpc}" != "${2}" ]; then
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
 
@@ -377,6 +409,8 @@ delete_topic() {
     ret=$(echo "$?")
         
         if [[ $ret -eq 0 ]]; then
+            
+            touch "$DT/ps_lk"
             
             if [ -f "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "${tpc}" ]; then
             "$DS/stop.sh" 5; fi
@@ -395,7 +429,7 @@ delete_topic() {
             
             n=0
             while [[ ${n} -le 4 ]]; do
-            if [ "$DM_tl/.$n.cfg" ]; then
+            if [ -f "$DM_tl/.$n.cfg" ]; then
             grep -vxF "${tpc}" "$DM_tl/.$n.cfg" > "$DT/cfg.tmp"
             sed '/^$/d' "$DT/cfg.tmp" > "$DM_tl/.$n.cfg"; fi
             let n++
@@ -421,8 +455,10 @@ rename_topic() {
     if grep -Fxo "${tpc}" < "$DM_tl/.3.cfg"; then i=1; fi
     jlb="$(clean_3 "${2}")"
     
-    if grep -Fxo "${jlb}" < <(ls "$DS/addons/"); then jlb="${jlb}."; fi
+    if grep -Fxo "${jlb}" < <(ls "$DS/addons/"); then jlb="${jlb} (1)"; fi
     chck="$(grep -Fxo "${jlb}" "$DM_tl/.1.cfg" | wc -l)"
+    
+    if [ ! -d "$DM_tl/${tpc}" ]; then exit 1; fi
   
     if [ -f "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "${tpc}" ]; then
     msg "$(gettext "Unable to rename at this time. Please try later ")\n" \
@@ -517,6 +553,10 @@ mark_to_learn_topic() {
         fi
     fi
 
+    for i in {1..4}; do rm "${DC_tlt}/${i}.cfg"; done
+    rm "${DC_tlt}/7.cfg"
+    touch "${DC_tlt}/5.cfg" "${DC_tlt}/2.cfg"
+    
     while read item_; do
     
         item="$(sed 's/},/}\n/g' <<<"${item_}")"
@@ -541,8 +581,7 @@ mark_to_learn_topic() {
     kill -9 $(pgrep -f "yad --form ") &
     kill -9 $(pgrep -f "yad --notebook ") & fi
 
-    rm -f "${DC_tlt}/7.cfg" "${DC_tlt}/2.cfg"
-    touch "${DC_tlt}/5.cfg" "${DC_tlt}/2.cfg"
+   
     echo -e ".lrnt.$tpc.lrnt." >> "$DC_s/log"
     "$DS/mngr.sh" mkmn &
 
@@ -599,13 +638,18 @@ mark_as_learned_topic() {
         fi
     fi
     
+    rm "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg"
+    touch "${DC_tlt}/1.cfg"
+    
     while read item_; do
+    
         item="$(sed 's/},/}\n/g' <<<"${item_}")"
         trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
         
         if [ -n "${trgt}" ]; then
         echo "${trgt}" >> "${DC_tlt}/2.cfg"
         fi
+        
     done < "$DC_tlt/0.cfg"
     
     ) | progr_3
@@ -617,7 +661,6 @@ mark_as_learned_topic() {
     kill -9 $(pgrep -f "yad --form ") &
     kill -9 $(pgrep -f "yad --notebook ") & fi
     
-    rm  "${DC_tlt}/1.cfg"; touch "${DC_tlt}/1.cfg"
     echo -e ".lrdt.$tpc.lrdt." >> "$DC_s/log"
     "$DS/mngr.sh" mkmn &
 
@@ -635,6 +678,8 @@ case "$1" in
     delete_item "$@" ;;
     edit)
     edit_item "$@" ;;
+    mtext)
+    mtext "$@" ;;
     colorize)
     colorize "$@" ;;
     delete_topic)

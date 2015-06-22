@@ -1,12 +1,13 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-cfg11_="$DC_tlt/0.cfg"
+cfg0="$DC_tlt/0.cfg"
 drts="$DS/practice"
 strt="$drts/strt.sh"
 cd "${DC_tlt}/practice"
 all=$(wc -l < ./d.0)
 hits="$(gettext "hits")"
+synth="$(grep -o synth=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')"
 listen="Listen"
 easy=0
 hard=0
@@ -54,14 +55,14 @@ dialog2() {
     text="<span font_desc='Free Sans Bold $sz' color='#717171'>$hint</span>\n"
     
     entry=$(>/dev/null | yad --text-info --title="$(gettext "Practice")" \
-    --text="$text\n" \
+    --text="$text" \
     --name=Idiomind --class=Idiomind \
     --fontname="Free Sans 14" --fore=4A4A4A --justify=fill \
     --margins=5 --editable --wrap \
     --window-icon="$DS/images/icon.png" --image="$DS/practice/images/bar.png" \
     --buttons-layout=end --skip-taskbar --undecorated --center --on-top \
     --text-align=left --align=left --image-on-top \
-    --width=500 --height=220 --borders=8 \
+    --width=510 --height=220 --borders=5 \
     --button="$(gettext "Exit")":1 \
     --button="$(gettext "Listen")":"$cmd_play" \
     --button=" $(gettext "Check") >> ":0)
@@ -77,7 +78,7 @@ check() {
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --wrap --scroll --image-on-top --center --on-top \
     --undecorated --buttons-layout=end \
-    --width=500 --height=250 --borders=10 \
+    --width=510 --height=250 --borders=10 \
     --button="$(gettext "Listen")":"$cmd_play" \
     --button="$(gettext "Next")":2 \
     --field="":lbl --text="<span font_desc='Free Sans $sz'>${wes}</span>\\n" \
@@ -151,43 +152,49 @@ result() {
 
 while read trgt; do
 
-    pos=`grep -Fon -m 1 "trgt={${trgt}}" "${cfg11_}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
-    item=`sed -n ${pos}p "${cfg11_}" |sed 's/},/}\n/g'`
+    pos=`grep -Fon -m 1 "trgt={${trgt}}" "${cfg0}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
+    item=`sed -n ${pos}p "${cfg0}" |sed 's/},/}\n/g'`
     fname=`grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"`
+    get_text "${trgt}"
     
     if [ -f "${DM_tlt}/$fname.mp3" ]; then
-
-        get_text "${trgt}"
-        cmd_play="play "\"${DM_tlt}/$fname.mp3\"""
-
-        (sleep 0.5 && play "${DM_tlt}/$fname.mp3") &
-        dialog2 "${trgt}"
-        ret="$?"
-        
-        if [[ $ret = 1 ]]; then
-            break &
-            killall play
-            "$drts"/cls.sh comp d ${easy} ${ling} ${hard} ${all} &
-            exit 1
+    cmd_play="play "\"${DM_tlt}/$fname.mp3\"""
+    (sleep 0.5 && play "${DM_tlt}/${fname}.mp3") &
+    else
+        if [ -n "${synth}" ]; then
+        cmd_play="${synth} "\"${trgt}\"""
+        (sleep 0.5 && "${synth}" "${trgt}") &
         else
-            killall play &
-            result "${trgt}"
-        fi
+        cmd_play="espeak -v $lg -k 1 -s 150 "\"${trgt}\"""
+        (sleep 0.5 && espeak -v $lg -k 1 -s 150 "${trgt}") & fi
+    fi
     
-        check "${trgt}"
-        ret="$?"
+    dialog2 "${trgt}"
+    ret="$?"
+    
+    if [[ $ret = 1 ]]; then
+        break &
+        killall play
+        "$drts"/cls.sh comp d ${easy} ${ling} ${hard} ${all} &
+        exit 1
+    else
+        killall play &
+        result "${trgt}"
+    fi
+
+    check "${trgt}"
+    ret="$?"
+    
+    if [[ $ret = 1 ]]; then
+        break &
+        killall play &
+        rm -f ./mtch.tmp ./words.tmp
+        "$drts"/cls.sh comp d ${easy} ${ling} ${hard} ${all} &
+        exit 1
         
-        if [[ $ret = 1 ]]; then
-            break &
-            killall play &
-            rm -f ./mtch.tmp ./words.tmp
-            "$drts"/cls.sh comp d ${easy} ${ling} ${hard} ${all} &
-            exit 1
-            
-        elif [[ $ret -eq 2 ]]; then
-            killall play &
-            rm -f ./mtch.tmp ./words.tmp &
-        fi
+    elif [[ $ret -eq 2 ]]; then
+        killall play &
+        rm -f ./mtch.tmp ./words.tmp &
     fi
 
 done < ./d.tmp

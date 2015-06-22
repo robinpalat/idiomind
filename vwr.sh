@@ -2,52 +2,60 @@
 # -*- ENCODING: UTF-8 -*-
 #
 echo "_" >> "$DT/stats.tmp" &
-[[ $1 = 1 ]] && index="${DC_tlt}/1.cfg" && item_name=`sed 's/<[^>]*>//g' <<<"${3}"`
-[[ $1 = 2 ]] && index="${DC_tlt}/2.cfg" && item_name=`sed 's/<[^>]*>//g' <<<"${2}"`
+[[ $1 = 1 ]] && index="${DC_tlt}/1.cfg" && item_name="$(sed 's/<[^>]*>//g' <<<"${3}")"
+[[ $1 = 2 ]] && index="${DC_tlt}/2.cfg" && item_name="$(sed 's/<[^>]*>//g' <<<"${2}")"
 
 re='^[0-9]+$'; index_pos="$3"
 if ! [[ ${index_pos} =~ $re ]]; then
 index_pos=`grep -Fxon -m 1 "${item_name}" "${index}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
 nll=""; fi
 
-item=`sed -n ${index_pos}p "${index}"`
+item="$(sed -n ${index_pos}p "${index}")"
 if [ -z "${item}" ]; then item="$(sed -n 1p "${index}")"; index_pos=1; fi
-#pos=`grep -Fon -m 1 "trgt={${item}}" "$DC_tlt/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
 item="$(grep -F -m 1 "trgt={${item}}" "$DC_tlt/0.cfg" |sed 's/},/}\n/g')"
 
-type=`grep -oP '(?<=type={).*(?=})' <<<"${item}"`
-trgt=`grep -oP '(?<=trgt={).*(?=})' <<<"${item}"`
-srce=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
-exmp=`grep -oP '(?<=exmp={).*(?=})' <<<"${item}"`
-defn=`grep -oP '(?<=defn={).*(?=})' <<<"${item}"`
-note=`grep -oP '(?<=note={).*(?=})' <<<"${item}"`
-grmr=`grep -oP '(?<=grmr={).*(?=})' <<<"${item}"`
-tag=`grep -oP '(?<=tag={).*(?=})' <<<"${item}"`
-mark=`grep -oP '(?<=mark={).*(?=})' <<<"${item}"`
-lwrd=`grep -oP '(?<=wrds={).*(?=})' <<<"${item}" |tr '_' '\n'`
-exmp=`sed "s/"${trgt,,}"/<span background='#FDFBCF'>"${trgt,,}"<\/\span>/g" <<<"$exmp"`
-id=`grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"`
-
+type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
+trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
+srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
+exmp="$(grep -oP '(?<=exmp={).*(?=})' <<<"${item}")"
+defn="$(grep -oP '(?<=defn={).*(?=})' <<<"${item}")"
+note="$(grep -oP '(?<=note={).*(?=})' <<<"${item}")"
+grmr="$(grep -oP '(?<=grmr={).*(?=})' <<<"${item}")"
+tag="$(grep -oP '(?<=tag={).*(?=})' <<<"${item}")"
+mark="$(grep -oP '(?<=mark={).*(?=})' <<<"${item}")"
+lwrd="$(grep -oP '(?<=wrds={).*(?=})' <<<"${item}" |tr '_' '\n')"
+exmp="$(sed "s/"${trgt,,}"/<span background='#FDFBCF'>"${trgt,,}"<\/\span>/g" <<<"$exmp")"
+id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
 
 [ "$mark" = TRUE ] && trgt="<b>$trgt</b>" && grmr="<b>$grmr</b>"
 
 if [ ${type} = 1 ]; then
-cmd_listen="play '$DM_tls/${trgt,,}.mp3'"
-word_view
+
+    if [ -f "$DM_tls/${trgt,,}.mp3" ]; then
+    cmd_listen="play '$DM_tls/${trgt,,}.mp3'"
+    else cmd_listen="espeak -v $lg -k 1 -s 120 \"${trgt}\""; fi
+    
+    word_view
+
 elif [ ${type} = 2 ]; then
-cmd_listen="play "\"${DM_tlt}/$id.mp3\"""
-sentence_view
+
+    if [ -f "${DM_tlt}/$id.mp3" ]; then
+    cmd_listen="play "\"${DM_tlt}/$id.mp3\"""
+    else cmd_listen="espeak -v $lg -k 1 -s 140 \"${trgt}\""; fi
+
+    sentence_view
+
 #else
-#cmd_listen=" "
-#trgt="${item_name}"
-#grmr="${item_name}"
-#sentence_view
+    #m_text
 fi
 
 ret=$?
 
-    if [[ $ret -eq 4 ]]; then
-        "$DS/mngr.sh" edit "$1" ${index_pos}
+    if [[ $ret -eq 5 ]]; then
+        "$DS/mngr.sh" mtext "${index}" ${index_pos}
+
+    elif [[ $ret -eq 4 ]]; then
+        "$DS/mngr.sh" edit ${1} ${index_pos}
     
     elif [[ $ret -eq 2 ]]; then
     

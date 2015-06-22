@@ -48,10 +48,10 @@ else
         echo "${topic}" > "$DT/tpe"
         
         [ ! -d "$HOME/.idiomind/backup" ] && mkdir "$HOME/.idiomind/backup"
-        if ! grep "${tpc}.bk" < <(cd "$HOME/.idiomind/backup" \
+        if ! grep "${topic}.bk" < <(cd "$HOME/.idiomind/backup" \
         find . -maxdepth 1 -name '*.bk' -mtime -1); then
-        if [ -f "$(< "${DC_tlt}/0.cfg")" ]; then
-        cp -f "${DC_tlt}/0.cfg" "$HOME/.idiomind/backup/${tpc}.bk"; fi
+        if [ -n "$(< "${DC_tlt}/0.cfg")" ]; then
+        cp -f "${DC_tlt}/0.cfg" "$HOME/.idiomind/backup/${topic}.bk"; fi
         cd /
         fi
         
