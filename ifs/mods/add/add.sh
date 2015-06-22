@@ -341,9 +341,9 @@ function fetch_audio() {
 function list_words_2() {
 
     if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
-    echo "$1" | tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > "$DT_r/idlst"
+    echo "${1}" | tr '_' '\n' |sed -n 1~2p |sed '/^$/d' > "$DT/$c/idlst"
     else
-    echo "$1" | tr '_' '\n' | sed -n 1~2p | sed '/^$/d' > "$DT_r/idlst"
+    echo "${1}" | tr '_' '\n' |sed -n 1~2p |sed '/^$/d' > "$DT/$c/idlst"
     fi
 }
 

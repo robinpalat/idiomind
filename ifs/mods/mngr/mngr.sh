@@ -130,7 +130,6 @@ function dlg_form_2() {
     t=CHK; lbl_2="$(gettext "It is a compound word")"
     else t=LBL; fi
     cmd_play="play "\"${audio}\"""
-    #--button="$(gettext "Image")":"$cmd_image"
     yad --form --title="$(gettext "Edit")" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-all --separator="|" --selectable-labels \
