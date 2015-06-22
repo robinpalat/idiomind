@@ -205,8 +205,9 @@ check_index() {
             ((n=n+1))
         done
         
+        if [ -n "$(< "${DC_tlt}/0.cfg")" ]; then
         if ! grep '},trgt={' "${DC_tlt}/0.cfg"; then
-        eval nv=1; fi
+        eval nv=1; fi; fi
         
         if [ ! -f "${DC_tlt}/8.cfg" ]; then
         echo 1 > "${DC_tlt}/8.cfg"; fi

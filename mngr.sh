@@ -31,7 +31,7 @@ mkmn() {
     > "$DC_s/0.cfg"
     
     n=1
-    while [[ $n -le "$(head -100 < "$DM_tl/.1.cfg" | wc -l)" ]]; do
+    while [[ ${n} -le "$(head -100 < "$DM_tl/.1.cfg" | wc -l)" ]]; do
     
         tp=$(sed -n "$n"p "$DM_tl/.1.cfg")
         if ! grep -Fxo "${tp}" < <(ls "$DS/addons/"); then
@@ -53,7 +53,7 @@ mkmn() {
         let n++
     done
     n=1
-    while [[ $n -le "$(tail -n+101 < "$DM_tl/.1.cfg" | wc -l)" ]]; do
+    while [[ ${n} -le "$(tail -n+101 < "$DM_tl/.1.cfg" | wc -l)" ]]; do
     
         f=$(tail -n+51 < "$DM_tl/.1.cfg")
         tp=$(sed -n "$n"p <<<"${f}")
@@ -100,7 +100,7 @@ delete_item_ok() {
     "$DS/ifs/tls.sh" sanity_1 "${DC_tlt}/0.cfg" &
 
     n=1
-    while [ $n -le 6 ]; do
+    while [ ${n} -le 6 ]; do
     if [ -f "${DC_tlt}/$n.cfg" ]; then
         grep -vxF "${trgt}" "${DC_tlt}/$n.cfg" > "${DC_tlt}/$n.cfg.tmp"
         sed '/^$/d' "${DC_tlt}/$n.cfg.tmp" > "${DC_tlt}/$n.cfg"; fi
@@ -157,7 +157,7 @@ delete_item() {
         "$DS/ifs/tls.sh" sanity_1 "${DC_tlt}/0.cfg" &
 
         n=1
-        while [[ $n -le 6 ]]; do
+        while [[ ${n} -le 6 ]]; do
             if [ -f "${DC_tlt}/$n.cfg" ]; then
             grep -vxF "${trgt}" "${DC_tlt}/$n.cfg" > "${DC_tlt}/$n.cfg.tmp"
             sed '/^$/d' "${DC_tlt}/$n.cfg.tmp" > "${DC_tlt}/$n.cfg"; fi
@@ -394,7 +394,7 @@ delete_topic() {
             > "$DC_s/4.cfg"
             
             n=0
-            while [[ $n -le 4 ]]; do
+            while [[ ${n} -le 4 ]]; do
             if [ "$DM_tl/.$n.cfg" ]; then
             grep -vxF "${tpc}" "$DM_tl/.$n.cfg" > "$DT/cfg.tmp"
             sed '/^$/d' "$DT/cfg.tmp" > "$DM_tl/.$n.cfg"; fi
@@ -418,17 +418,17 @@ rename_topic() {
 
     source "$DS/ifs/mods/add/add.sh"
     info2=$(wc -l < "$DM_tl/.1.cfg")
-    if grep -Fxo "$tpc" < "$DM_tl/.3.cfg"; then i=1; fi
+    if grep -Fxo "${tpc}" < "$DM_tl/.3.cfg"; then i=1; fi
     jlb="$(clean_3 "${2}")"
     
-    if grep -Fxo "${jlb}" < <(ls "$DS/addons/"); then jlb="$jlb."; fi
+    if grep -Fxo "${jlb}" < <(ls "$DS/addons/"); then jlb="${jlb}."; fi
     chck="$(grep -Fxo "${jlb}" "$DM_tl/.1.cfg" | wc -l)"
   
-    if [ -f "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "$tpc" ]; then
+    if [ -f "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "${tpc}" ]; then
     msg "$(gettext "Unable to rename at this time. Please try later ")\n" \
     dialog-warning "$(gettext "Rename")" & exit 1; fi
         
-    if [ -f "$DT/.p_" ] && [ "$(sed -n 2p "$DT/.p_")" = "$tpc" ]; then
+    if [ -f "$DT/.p_" ] && [ "$(sed -n 2p "$DT/.p_")" = "${tpc}" ]; then
     msg "$(gettext "Unable to rename at this time. Please try later ")\n" \
     dialog-warning "$(gettext "Rename")" & exit 1; fi
 
@@ -436,7 +436,7 @@ rename_topic() {
     msg "$(gettext "Sorry, new name too long.")\n" \
     info "$(gettext "Rename")" & exit 1; fi
 
-    if [ "$chck" -ge 1 ]; then
+    if [[ ${chck} -ge 1 ]]; then
     
         for i in {1..50}; do
         chck=$(grep -Fxo "${jlb} ($i)" "$DM_t/$language_target/.1.cfg")
@@ -453,15 +453,15 @@ rename_topic() {
         mv -f "$DM_tl/${tpc}" "$DM_tl/${jlb}"
         sed -i "s/tname=.*/tname=\"${jlb}\"/g" "$DM_tl/${jlb}/.conf/id.cfg"
         cp "$DM_tl/${jlb}/.conf/0.cfg" "$DM/backup/${jlb}.bk"
-        echo "$jlb" > "$DC_s/4.cfg"
-        echo "$jlb" > "$DM_tl/.8.cfg"
-        echo "$jlb" >> "$DM_tl/.1.cfg"
+        echo "${jlb}" > "$DC_s/4.cfg"
+        echo "${jlb}" > "$DM_tl/.8.cfg"
+        echo "${jlb}" >> "$DM_tl/.1.cfg"
         list_inadd > "$DM_tl/.2.cfg"
         echo "${jlb}" > "$DT/tpe"
         echo 0 > "$DC_s/5.cfg"
         
         n=1
-        while [[ $n -le 3 ]]; do
+        while [[ ${n} -le 3 ]]; do
         if [ -f "$DM_tl/.$n.cfg" ]; then
         grep -vxF "${tpc}" "$DM_tl/.$n.cfg" > "$DM_tl/.$n.cfg.tmp"
         sed '/^$/d' "$DM_tl/.$n.cfg.tmp" > "$DM_tl/.$n.cfg"; fi
@@ -470,7 +470,7 @@ rename_topic() {
         rm "$DM_tl"/.*.tmp
         [ -d "$DM_tl/${tpc}" ] && rm -r "$DM_tl/${tpc}"
         [ -f "$DM/backup/${tpc}.bk" ] && rm "$DM/backup/${tpc}.bk"
-        [[ "$i" = 1 ]] &&  echo "${jlb}" >> "$DM_tl/.3.cfg"
+        [[ ${i} = 1 ]] &&  echo "${jlb}" >> "$DM_tl/.3.cfg"
         
         "$DS/mngr.sh" mkmn & exit 1
     fi
@@ -485,16 +485,8 @@ mark_to_learn_topic() {
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
     
     if [ "$(wc -l < "$DC_tlt/0.cfg")" -le 10 ]; then
-    msg "$(gettext "Not enough items to perform the operation.")\n " \
-    info "$(gettext "Not enough items")" & exit; fi
-
-    if [ "$3" = 1 ]; then
-    kill -9 $(pgrep -f "yad --multi-progress ") &
-    kill -9 $(pgrep -f "yad --list ") &
-    kill -9 $(pgrep -f "yad --text-info ") &
-    kill -9 $(pgrep -f "yad --form ") &
-    kill -9 $(pgrep -f "yad --notebook ") &
-    fi
+    msg "$(gettext "Not enough items to perform the operation")\n " \
+    info "$(gettext "Not enough items to perform the operation")" & exit; fi
 
     if [ "$(sed '/^$/d' < "${DC_tlt}/1.cfg" | wc -l )" -ge 1 ]; then
         include "$DS/ifs/mods/mngr"
@@ -509,6 +501,7 @@ mark_to_learn_topic() {
         fi
     fi
 
+    (echo "5"
     stts=$(sed -n 1p "${DC_tlt}/8.cfg")
     calculate_review "${tpc}"
     
@@ -523,19 +516,37 @@ mark_to_learn_topic() {
         echo 1 > "${DC_tlt}/8.cfg"
         fi
     fi
+
+    while read item_; do
     
-    rm -f "${DC_tlt}/7.cfg"
-    awk '!array_temp[$0]++' < "${DC_tlt}/0.cfg" > "$DT/0.cfg.tmp"
-    sed '/^$/d' "$DT/0.cfg.tmp" > "${DC_tlt}/0.cfg"
-    rm -f "$DT"/*.tmp
-    rm "${DC_tlt}/2.cfg" "${DC_tlt}/1.cfg"
-    touch "${DC_tlt}/2.cfg"
-    cp -f "${DC_tlt}/0.cfg" "${DC_tlt}/1.cfg"
-    echo -e ".lrnt.$tpc.lrnt." >> "$DC_s/log" &
-    touch "${DC_tlt}/5.cfg"
+        item="$(sed 's/},/}\n/g' <<<"${item_}")"
+        type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
+        trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
+        
+        if [ -n "${trgt}" ]; then
+        if [[ ${type} = 1 ]]; then
+        echo "${trgt}" >> "${DC_tlt}/3.cfg"
+        else echo "${trgt}" >> "${DC_tlt}/4.cfg"; fi
+        echo "${trgt}" >> "${DC_tlt}/1.cfg"
+        fi
+        
+    done < "$DC_tlt/0.cfg"
+    
+    ) | progr_3
+
+    if [[ ${3} = 1 ]]; then
+    kill -9 $(pgrep -f "yad --multi-progress ") &
+    kill -9 $(pgrep -f "yad --list ") &
+    kill -9 $(pgrep -f "yad --text-info ") &
+    kill -9 $(pgrep -f "yad --form ") &
+    kill -9 $(pgrep -f "yad --notebook ") & fi
+
+    rm -f "${DC_tlt}/7.cfg" "${DC_tlt}/2.cfg"
+    touch "${DC_tlt}/5.cfg" "${DC_tlt}/2.cfg"
+    echo -e ".lrnt.$tpc.lrnt." >> "$DC_s/log"
     "$DS/mngr.sh" mkmn &
 
-    [[ "$3" = 1 ]] && idiomind topic &
+    [[ ${3} = 1 ]] && idiomind topic &
 }
 
 
@@ -550,20 +561,7 @@ mark_as_learned_topic() {
     msg "$(gettext "Not enough items to perform the operation.")\n " \
     info "$(gettext "Not enough items")" & exit; fi
     
-    if [ "$((( $(date +%s) - $(date -d "$(sed -n 8p "${DC_tlt}/id.cfg" \
-    | grep -o 'datec="[^"]*' | grep -o '[^"]*$')" +%s) ) /(24 * 60 * 60 )))" -lt 5 ]; then
-    msg_2 "$(gettext "Are you sure it's not too soon?")\n" \
-    gtk-dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"; fi
-    ret=$(echo $?); if [ $ret = 1 ]; then exit 1; fi
-    
-    if [ $3 = 1 ]; then
-    kill -9 $(pgrep -f "yad --list ") &
-    kill -9 $(pgrep -f "yad --list ") &
-    kill -9 $(pgrep -f "yad --text-info ") &
-    kill -9 $(pgrep -f "yad --form ") &
-    kill -9 $(pgrep -f "yad --notebook ") &
-    fi
-
+    (echo "5"
     stts=$(sed -n 1p "${DC_tlt}/8.cfg")
 
     if [ ! -f "${DC_tlt}/7.cfg" ]; then
@@ -590,8 +588,8 @@ mark_as_learned_topic() {
         fi
         
         if [ -d "${DC_tlt}/practice" ]; then
-        cd "${DC_tlt}/practice"; rm .*; rm *
-        touch ./log.1 ./log.2 ./log.3; fi
+        (cd "${DC_tlt}/practice"; rm .*; rm *
+        touch ./log.1 ./log.2 ./log.3); fi
         
         > "${DC_tlt}/7.cfg"
         if [[ $((stts%2)) = 0 ]]; then
@@ -600,13 +598,30 @@ mark_as_learned_topic() {
         echo 3 > "${DC_tlt}/8.cfg"
         fi
     fi
-    rm "${DC_tlt}/2.cfg" "${DC_tlt}/1.cfg" "${DC_tlt}/lst" 
-    touch "${DC_tlt}/1.cfg"
-    cp -f "${DC_tlt}/0.cfg" "${DC_tlt}/2.cfg"
-    echo -e ".lrdt.$tpc.lrdt." >> "$DC_s/log" &
+    
+    while read item_; do
+        item="$(sed 's/},/}\n/g' <<<"${item_}")"
+        trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
+        
+        if [ -n "${trgt}" ]; then
+        echo "${trgt}" >> "${DC_tlt}/2.cfg"
+        fi
+    done < "$DC_tlt/0.cfg"
+    
+    ) | progr_3
+
+    if [[ ${3} = 1 ]]; then
+    kill -9 $(pgrep -f "yad --list ") &
+    kill -9 $(pgrep -f "yad --list ") &
+    kill -9 $(pgrep -f "yad --text-info ") &
+    kill -9 $(pgrep -f "yad --form ") &
+    kill -9 $(pgrep -f "yad --notebook ") & fi
+    
+    rm  "${DC_tlt}/1.cfg"; touch "${DC_tlt}/1.cfg"
+    echo -e ".lrdt.$tpc.lrdt." >> "$DC_s/log"
     "$DS/mngr.sh" mkmn &
 
-    [[ $3 = 1 ]] && idiomind topic &
+    [[ ${3} = 1 ]] && idiomind topic &
     exit 1
 }
 

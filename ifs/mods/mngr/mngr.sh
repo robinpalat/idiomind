@@ -166,6 +166,16 @@ function dialog_2() {
     --button="$(gettext "Review All")":2
 }
 
+
+function progr_3() {
+
+    yad --progress \
+    --width 50 --height 35 --undecorated \
+    --pulsate --auto-close \
+    --skip-taskbar --center --no-buttons
+}
+
+
 case "$1" in
     position)
     position "$@" ;;

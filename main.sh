@@ -238,7 +238,7 @@ fi
     
 function topic() {
 
-    [[ -z "${tpc}" ]] && exit 1
+    [ -z "${tpc}" ] && exit 1
     mode=$(sed -n 1p "$DC_s/5.cfg")
     source "$DS/ifs/mods/cmns.sh"
     source "$DS/ifs/mods/topic/items_list.sh"
@@ -251,7 +251,7 @@ function topic() {
     elif [[ ${mode} = 0 ]] || [[ ${mode} = 1 ]]; then
     
         n=0
-        while [[ $n -le 4 ]]; do
+        while [[ ${n} -le 4 ]]; do
         [ ! -f "${DC_tlt}/$n.cfg" ] && touch "${DC_tlt}/$n.cfg"
         declare ls$n="${DC_tlt}/$n.cfg"
         declare inx$n=$(wc -l < "${DC_tlt}/$n.cfg")
@@ -259,10 +259,8 @@ function topic() {
         let n++
         done
         nt="${DC_tlt}/info"
-        author="$(sed -n 4p "${DC_tlt}/id.cfg" \
-        | grep -o 'authr="[^"]*' | grep -o '[^"]*$')"
-        auto_mrk=$(sed -n 15p "${DC_tlt}/id.cfg" \
-        | grep -o set_1=\"[^\"]* |grep -o '[^"]*$')
+        author="$(grep -o 'authr="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+        auto_mrk=$(grep -o 'set_1=\"[^\"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')
         c=$((RANDOM%100000)); KEY=$c
         cnf1=$(mktemp "$DT/cnf1.XXX.x")
         cnf3=$(mktemp "$DT/cnf3.XXX.x")
