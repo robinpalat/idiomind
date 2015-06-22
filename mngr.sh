@@ -270,6 +270,7 @@ edit_item() {
             ind=1; col=1; mod=1
             fi
             
+            
             if [ "$mark" != "$mark_mod" ]; then
             if [ "$mark_mod" = "TRUE" ]; then
             echo "$trgt" >> "${DC_tlt}/6.cfg"; else
@@ -349,6 +350,7 @@ edit_item() {
             
             fi
 
+            
             [[ -d "$DT/$c" ]] && "$DS/add.sh" list_words_edit "${wrds_mod}" 2 ${c} "${trgt_mod}" &
             [[ $col = 1 ]] && "$DS/ifs/tls.sh" colorize &
             [[ $mod = 1 ]] && sleep 0.2
@@ -367,7 +369,9 @@ edit_item() {
 
 mtext() {
     
-    trgt="$(sed -n ${3}p "${2}")"
+    [[ $2 = 1 ]] && index="${DC_tlt}/1.cfg" 
+    [[ $2 = 2 ]] && index="${DC_tlt}/2.cfg"
+    trgt="$(sed -n ${3}p "${index}")"
     vmtext="$(yad --form --title="$(gettext "Edit")" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-all --separator="|" --selectable-labels \
@@ -375,24 +379,24 @@ mtext() {
     --buttons-layout=end --align=right --center --on-top \
     --width=550 --height=350 --borders=10 \
     --field="<small>$lgtl</small>":TXT "$trgt" \
-    --field="<small><a href='$link1'>$(gettext "Translation")</a></small>\t":LBL " " \
     --field="<small>$lgsl</small>":TXT "$srce" \
     --field="<small>$(gettext "Audio")</small>":FL "${audio}" \
+    --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Delete")":2 \
     --button="$(gettext "Save")":0)"
     
         if [[ $? = 2 ]]; then
-        "$DS/mngr.sh" delete_item "${tpc}" "${trgt}" & exit
+        "$DS/mngr.sh" delete_item "${tpc}" "${trgt}" &
         
         elif [[ $? = 0 ]]; then
         out="$(tail -n 1 <<<"${vmtext}")"
         val1="$(cut -d "|" -f1 <<<"${out}")"
-        val2="$(cut -d "|" -f3 <<<"${out}")"
-        val3="$(cut -d "|" -f5 <<<"${out}")"
+        val2="$(cut -d "|" -f2 <<<"${out}")"
+        val3="$(cut -d "|" -f3 <<<"${out}")"
         [ -f "$val3" ] && cp "$val3" "$DT_r/audtm.mp3"
-        "$DS/add.sh" new_items " " 3 "${val1}" "${val2}" & exit
+        "$DS/add.sh" new_items " " 3 "${val1}" "${val2}" & fi
         
-        else exit 1; fi
+        "$DS/vwr.sh" ${2} "${trgt}" ${3} & exit
 }
 
 

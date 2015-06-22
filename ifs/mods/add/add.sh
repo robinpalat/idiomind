@@ -71,7 +71,8 @@ function index() {
         
     if [[ ${1} = edit ]]; then
             
-        item="${item}"; item_mod="${4}"
+        item="${2}"; item_mod="${4}"
+        DC_tlt="$DM_tl/${3}/.conf"
         
         sust(){
             if grep -Fxo "${item}" "${1}"; then

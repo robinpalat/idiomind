@@ -45,14 +45,14 @@ elif [ ${type} = 2 ]; then
 
     sentence_view
 
-#else
-    #m_text
+else
+    m_text
 fi
 
 ret=$?
 
     if [[ $ret -eq 5 ]]; then
-        "$DS/mngr.sh" mtext "${index}" ${index_pos}
+        "$DS/mngr.sh" mtext ${1} ${index_pos}
 
     elif [[ $ret -eq 4 ]]; then
         "$DS/mngr.sh" edit ${1} ${index_pos}

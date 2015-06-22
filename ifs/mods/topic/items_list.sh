@@ -50,9 +50,9 @@ function sentence_view() {
 function m_text() {
 
     yad --form --title=" " \
-    --text="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>\n\n\n\n" \
+    --text="<span font_desc='monospace 10'>$(gettext "Text missing")</span>\n\n\n\n" \
     --window-icon="$DS/images/icon.png" \
-    --align=left --skip-taskbar --text-align=left \
+    --align=center --skip-taskbar --text-align=center \
     --image-on-top --center --on-top \
     --width=620 --height=380 --borders=20 \
     --button=gtk-edit:5 \
