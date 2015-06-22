@@ -83,7 +83,7 @@ while read trgt; do
 
     fonts "${trgt}"
     cuestion
-    ret="$?")
+    ret="$?"
     
     if [[ $ret = 1 ]]; then
         break &

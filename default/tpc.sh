@@ -60,8 +60,8 @@ else
         if [[ `wc -l < "${DC_tlt}/id.cfg"` -lt 16 ]]; then
         echo -e "${cfgfile}" > "${DC_tlt}/id.cfg"; fi
 
-        #if [ ! -f "$DT/.n_s_pr" ]; then
-        #"$DS/ifs/tls.sh" check_index "${topic}"; fi
+        if [ ! -f "$DT/.n_s_pr" ]; then
+        "$DS/ifs/tls.sh" check_index "${topic}"; fi
         
         stts=$(sed -n 1p "${DC_tlt}/8.cfg")
         if [[ $(grep -Fxon "${topic}" "${DM_tl}/.1.cfg" \

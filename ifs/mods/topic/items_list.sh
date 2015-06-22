@@ -27,9 +27,9 @@ function word_view() {
 
 function sentence_view() {
 
-    [ -z "$trgt" ] && tm="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>"
     if [ "$(grep -o gramr=\"[^\"]* < "$DC_s/1.cfg" | grep -o '[^"]*$')"  = TRUE ]; then
     trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
+    [ -z "$trgt_l" ] && tm="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>"
     
     echo "$lwrd" | yad --list --title=" " \
     --text="$tag<span font_desc='Sans Free 15'>${trgt_l}</span>\n\n<i>$srce</i>\n\n" \

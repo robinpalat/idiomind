@@ -76,15 +76,15 @@ if [[ "$1" = chngi ]]; then
     
     if [ ${w} = TRUE -a ${s} = TRUE ]; then
     while read item; do getitem; _play
-    done < "$DC_tlt/1.cfg"; fi
+    done < <(tac "$DC_tlt/1.cfg"); fi
     
     if [ ${w} = TRUE -a ${s} = FALSE ]; then
     while read item; do getitem; _play
-    done < "$DC_tlt/3.cfg"; fi
+    done < <(tac "$DC_tlt/3.cfg"); fi
     
     if [ ${w} = FALSE -a ${s} = TRUE ]; then
     while read item; do getitem; _play
-    done < "$DC_tlt/4.cfg"; fi
+    done < <(tac "$DC_tlt/4.cfg"); fi
     
     if [ ${m} = TRUE ]; then
     while read item; do getitem; _play

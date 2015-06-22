@@ -38,8 +38,7 @@ mkmn() {
         inx1=$(wc -l < "$DM_tl/${tp}/.conf/1.cfg")
         inx2=$(wc -l < "$DM_tl/${tp}/.conf/2.cfg")
         tooltips_1="$inx1 / $inx2"
-        else tooltips_1=""
-        fi
+        else tooltips_1=""; fi
         if [ ! -f "$DM_tl/${tp}/.conf/8.cfg" ]; then
         i=13; echo 13 > "$DM_tl/${tp}/.conf/8.cfg"
         else i=$(sed -n 1p "$DM_tl/${tp}/.conf/8.cfg"); fi
@@ -55,6 +54,7 @@ mkmn() {
     done
     n=1
     while [[ $n -le "$(tail -n+101 < "$DM_tl/.1.cfg" | wc -l)" ]]; do
+    
         f=$(tail -n+51 < "$DM_tl/.1.cfg")
         tp=$(sed -n "$n"p <<<"${f}")
         if [ ! -f "$DM_tl/${tp}/.conf/8.cfg" ]; then
@@ -192,7 +192,6 @@ edit_item() {
     item="$(sed -n ${item_pos}p "${index_1}")"
     edit_pos=`grep -Fon -m 1 "trgt={${item}}" "${DC_tlt}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
     item="$(sed -n ${edit_pos}p "${DC_tlt}/0.cfg" |sed 's/},/}\n/g')"
-    
     type=`grep -oP '(?<=type={).*(?=})' <<<"${item}"`
     trgt=`grep -oP '(?<=trgt={).*(?=})' <<<"$item"`
     grmr=`grep -oP '(?<=grmr={).*(?=})' <<<"$item"`
@@ -230,31 +229,31 @@ edit_item() {
             include "$DS/ifs/mods/add"
             
            if [ ${type} = 1 ]; then
-                edit_dlg="$(tail -n 1 <<<"${edit_dlg1}")"
-                trgt_mod="$(clean_1 "$(cut -d "|" -f1 <<<"${edit_dlg}")")"
-                srce_mod="$(clean_1 "$(cut -d "|" -f2 <<<"${edit_dlg}")")"
-                tpc_mod="$(cut -d "|" -f3 <<<"${edit_dlg}")"
-                audio_mod="$(cut -d "|" -f4 <<<"${edit_dlg}")"
-                exmp_mod="$(clean_1 "$(cut -d "|" -f5 <<<"${edit_dlg}")")"
-                defn_mod="$(clean_1 "$(cut -d "|" -f6 <<<"${edit_dlg}")")"
-                note_mod="$(clean_1 "$(cut -d "|" -f7 <<<"${edit_dlg}")")"
-                mark_mod="$(cut -d "|" -f9 <<<"${edit_dlg}")"
-                type_mod=1
+            edit_dlg="$(tail -n 1 <<<"${edit_dlg1}")"
+            trgt_mod="$(clean_1 "$(cut -d "|" -f1 <<<"${edit_dlg}")")"
+            srce_mod="$(clean_1 "$(cut -d "|" -f2 <<<"${edit_dlg}")")"
+            tpc_mod="$(cut -d "|" -f3 <<<"${edit_dlg}")"
+            audio_mod="$(cut -d "|" -f4 <<<"${edit_dlg}")"
+            exmp_mod="$(clean_1 "$(cut -d "|" -f5 <<<"${edit_dlg}")")"
+            defn_mod="$(clean_1 "$(cut -d "|" -f6 <<<"${edit_dlg}")")"
+            note_mod="$(clean_1 "$(cut -d "|" -f7 <<<"${edit_dlg}")")"
+            mark_mod="$(cut -d "|" -f9 <<<"${edit_dlg}")"
+            type_mod=1
 
             elif [ ${type} = 2 ]; then
-                edit_dlg="$(tail -n 1 <<<"${edit_dlg2}")"
-                mark_mod="$(cut -d "|" -f1 <<<"${edit_dlg}")"
-                type_mod="$(cut -d "|" -f2 <<<"${edit_dlg}")"
-                trgt_mod="$(clean_2 "$(cut -d "|" -f3 <<<"${edit_dlg}")")"
-                srce_mod="$(clean_2 "$(cut -d "|" -f5 <<<"${edit_dlg}")")"
-                tpc_mod="$(cut -d "|" -f7 <<<"${edit_dlg}")"
-                audio_mod="$(cut -d "|" -f8 <<<"${edit_dlg}")"
-                grmr_mod="${grmr}"
-                wrds_mod="${wrds}"
-                
-                [ "${type_mod}" = TRUE ] && type_mod=1
-                [ "${type_mod}" = FALSE ] && type_mod=2
-                [ -z "${type_mod}" ] && type_mod=2
+            edit_dlg="$(tail -n 1 <<<"${edit_dlg2}")"
+            mark_mod="$(cut -d "|" -f1 <<<"${edit_dlg}")"
+            type_mod="$(cut -d "|" -f2 <<<"${edit_dlg}")"
+            trgt_mod="$(clean_2 "$(cut -d "|" -f3 <<<"${edit_dlg}")")"
+            srce_mod="$(clean_2 "$(cut -d "|" -f5 <<<"${edit_dlg}")")"
+            tpc_mod="$(cut -d "|" -f7 <<<"${edit_dlg}")"
+            audio_mod="$(cut -d "|" -f8 <<<"${edit_dlg}")"
+            grmr_mod="${grmr}"
+            wrds_mod="${wrds}"
+            
+            [ "${type_mod}" = TRUE ] && type_mod=1
+            [ "${type_mod}" = FALSE ] && type_mod=2
+            [ -z "${type_mod}" ] && type_mod=2
                 
             fi
 
@@ -263,21 +262,21 @@ edit_item() {
             
             
             if [ "${trgt_mod}" != "${trgt}" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
-                temp="$(gettext "Processing")..."
-                index edit "${trgt}" "${tpc}" "${trgt_mod}"
-                sed -i "${edit_pos}s|trgt={${trgt}}|trgt={${trgt_mod}}|;
-                ${edit_pos}s|grmr={${grmr}}|grmr={${trgt_mod}}|;
-                ${edit_pos}s|srce={${srce}}|srce={$temp}|g" "$DC_tlt/0.cfg"
-                ind=1; col=1; mod=1
+            temp="$(gettext "Processing")..."
+            index edit "${trgt}" "${tpc}" "${trgt_mod}"
+            sed -i "${edit_pos}s|trgt={${trgt}}|trgt={${trgt_mod}}|;
+            ${edit_pos}s|grmr={${grmr}}|grmr={${trgt_mod}}|;
+            ${edit_pos}s|srce={${srce}}|srce={$temp}|g" "$DC_tlt/0.cfg"
+            ind=1; col=1; mod=1
             fi
             
             if [ "$mark" != "$mark_mod" ]; then
-                if [ "$mark_mod" = "TRUE" ]; then
-                echo "$trgt" >> "${DC_tlt}/6.cfg"; else
-                grep -vxF "${trgt}" "${DC_tlt}/6.cfg" > "${DC_tlt}/6.cfg.tmp"
-                sed '/^$/d' "${DC_tlt}/6.cfg.tmp" > "${DC_tlt}/6.cfg"
-                rm "${DC_tlt}/6.cfg.tmp"; fi
-                col=1; mod=1
+            if [ "$mark_mod" = "TRUE" ]; then
+            echo "$trgt" >> "${DC_tlt}/6.cfg"; else
+            grep -vxF "${trgt}" "${DC_tlt}/6.cfg" > "${DC_tlt}/6.cfg.tmp"
+            sed '/^$/d' "${DC_tlt}/6.cfg.tmp" > "${DC_tlt}/6.cfg"
+            rm "${DC_tlt}/6.cfg.tmp"; fi
+            col=1; mod=1
             fi
 
             [ "${srce}" != "${srce_mod}" ] && mod=1
@@ -294,20 +293,18 @@ edit_item() {
                     internet
                         
                     if [ ${type} = 1 ]; then
-                        
-                        srce_mod="$(clean_1 "$(translate "${trgt_mod}" $lgt $lgs)")"
-                        audio="${trgt_mod,,}"
-                        dictt "$audio" "$DT_r"
-                        srce="$temp"
+                    srce_mod="$(clean_1 "$(translate "${trgt_mod}" $lgt $lgs)")"
+                    audio="${trgt_mod,,}"
+                    dictt "$audio" "$DT_r"
+                    srce="$temp"
 
                     elif [ ${type} = 2 ]; then
-                        
-                        srce_mod="$(clean_2 "$(translate "${trgt_mod}" $lgt $lgs)")"
-                        source "$DS/default/dicts/$lgt"
-                        sentence_p "$DT_r" 2
-                        fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
-                        srce="$temp"
-                        grmr="${trgt_mod}"
+                    srce_mod="$(clean_2 "$(translate "${trgt_mod}" $lgt $lgs)")"
+                    source "$DS/default/dicts/$lgt"
+                    sentence_p "$DT_r" 2
+                    fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
+                    srce="$temp"
+                    grmr="${trgt_mod}"
                     fi
                 fi
             

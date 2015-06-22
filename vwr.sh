@@ -32,10 +32,18 @@ id=`grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"`
 [ "$mark" = TRUE ] && trgt="<b>$trgt</b>" && grmr="<b>$grmr</b>"
 
 if [ ${type} = 1 ]; then
-cmd_listen="play '$DM_tls/${trgt,,}.mp3'"; word_view
+cmd_listen="play '$DM_tls/${trgt,,}.mp3'"
+word_view
 elif [ ${type} = 2 ]; then
-cmd_listen="play '${DM_tlt}/$id.mp3'"; sentence_view
+cmd_listen="play "\"${DM_tlt}/$id.mp3\"""
+sentence_view
+#else
+#cmd_listen=" "
+#trgt="${item_name}"
+#grmr="${item_name}"
+#sentence_view
 fi
+
 ret=$?
 
     if [[ $ret -eq 4 ]]; then

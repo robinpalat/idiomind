@@ -186,32 +186,34 @@ $SRFL5" | yad --text-info --title="$(gettext "Installation details")" \
     --button="$(gettext "Close")":0
 } >/dev/null 2>&1
 
+
 check_index() {
 
     DC_tlt="$DM_tl/${2}/.conf"
     DM_tlt="$DM_tl/${2}"
+    nv=0; f=0
     
-    check() {
+    _check() {
         
         if [ ! -d "${DC_tlt}" ]; then mkdir "${DC_tlt}"; fi
         n=0
-        while [[ $n -le 4 ]]; do
+        while [[ $n -le 6 ]]; do
             [ ! -f "${DC_tlt}/$n.cfg" ] && touch "${DC_tlt}/$n.cfg"
             if grep '^$' "${DC_tlt}/$n.cfg"; then
             sed -i '/^$/d' "${DC_tlt}/$n.cfg"; fi
             check_index1 "${DC_tlt}/$n.cfg"
-            chk=$(wc -l < "${DC_tlt}/$n.cfg")
-            [ -z "$chk" ] && chk=0
-            eval chk$n="$chk"
             ((n=n+1))
         done
+        
+        if ! grep '},trgt={' "${DC_tlt}/0.cfg"; then
+        eval nv=1; fi
         
         if [ ! -f "${DC_tlt}/8.cfg" ]; then
         echo 1 > "${DC_tlt}/8.cfg"; fi
         eval stts=$(sed -n 1p "${DC_tlt}/8.cfg")
     }
     
-    restoresin() {
+    _restore() {
     
         rm "$DC_tlt/0.cfg" "$DC_tlt/1.cfg" \
         "$DC_tlt/3.cfg" "$DC_tlt/4.cfg"
@@ -231,7 +233,7 @@ check_index() {
         done < "$DC_tlt/0.cfg"
     }
 
-    sanity_1() {
+    _sanity() {
 
         cfg11="$2"
         sed -i '/^$/d' "${cfg11}"
@@ -247,6 +249,59 @@ check_index() {
         done
     }
     
+    _new_version() {
+    
+        tac "$DC_tlt/0.cfg" > "$DC_tlt/1.cfg"
+        rm "$DC_tlt/2.cfg" "$DC_tlt/.11.cfg"
+        if [ ! -d "${DM_tlt}/images" ]; then
+        mkdir "${DM_tlt}/images"; fi
+        touch "$DC_tlt/2.cfg"
+        > "$DC_tlt/0.cfg"
+        
+        n=1
+        while [[ $n -le 200 ]]; do
+        
+            unset id type trgt srce exmp dftn note tag lwrd grmr
+            item="$(sed -n ${n}p "$DC_tlt/1.cfg")"
+            if [ -z "$item" ]; then break; fi
+            fname="$(echo -n "${item}" | md5sum | rev | cut -c 4- | rev)"
+
+            if [ -f "${DM_tlt}/$fname.mp3" ]; then
+            tgs=$(eyeD3 "${DM_tlt}/$fname.mp3")
+            trgt=$(grep -o -P "(?<=ISI1I0I).*(?=ISI1I0I)" <<<"$tgs")
+            srce=$(grep -o -P "(?<=ISI2I0I).*(?=ISI2I0I)" <<<"$tgs")
+            grmr="$(grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)' <<<"${tgs}")"
+            lwrd="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"${tgs}")"
+            type=2
+            id="$(set_name_file "${type}" "${trgt}" "${srce}" "${exmp}" "${dftn}" "${note}" "${lwrd}" "${grmr}")"
+            mv -f "${DM_tlt}/$fname.mp3" "${DM_tlt}/$id.mp3"
+            
+            elif [ -f "${DM_tlt}/words/$fname.mp3" ]; then
+            tgs=$(eyeD3 "${DM_tlt}/words/$fname.mp3")
+            trgt=$(grep -o -P "(?<=IWI1I0I).*(?=IWI1I0I)" <<<"$tgs")
+            srce=$(grep -o -P "(?<=IWI2I0I).*(?=IWI2I0I)" <<<"$tgs")
+            fields="$(grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' <<<"${tgs}" | tr '_' '\n')"
+            mark="$(grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)' <<<"${tgs}")"
+            exmp="$(sed -n 1p <<<"${fields}")"
+            dftn="$(sed -n 2p <<<"${fields}")"
+            note="$(sed -n 3p <<<"${fields}")"
+            type=1
+            id="$(set_name_file "${type}" "${trgt}" "${srce}" "${exmp}" "${dftn}" "${note}" "${lwrd}" "${grmr}")"
+            mv -f "${DM_tlt}/words/$fname.mp3" "${DM_tlt}/$id.mp3"
+            fi
+            
+            if [ -f "${DM_tlt}/words/images/$fname.jpg" ]; then
+            mv -f "${DM_tlt}/words/images/$fname.jpg" "${DM_tlt}/images/$id.jpg"
+            fi
+            
+            echo "$n:[type={$type},trgt={$trgt},srce={$srce},exmp={$exmp},defn={$dftn},note={$note},wrds={$lwrd},grmr={$grmr},].[tag={$tag},mark={$mark},].id=[$id]" >> "$DC_tlt/0.cfg"
+            let n++
+        done
+        
+        if [ -f "${DM_tlt}/words/images/img.jpg" ]; then
+        mv "${DM_tlt}/words/images/img.jpg" "${DM_tlt}/images/img.jpg"; fi
+        if [ -d "${DM_tlt}/words" ]; then rm -r "${DM_tlt}/words"; fi
+    }
     
     fix() {
         
@@ -264,24 +319,27 @@ check_index() {
         fi
     }
     
-    check
-
-    if [ $((chk3+chk4)) != $chk0 ] || [ $((chk1+chk2)) != $chk0 ] \
-    || [ $stts = 13 ]; then
-
+    _check
+    
+    if [ ${f} = 1 ] || [ ${nv} = 1 ]; then
+    
+        if [ ${f} = 1 ]; then
         (sleep 1
-        notify-send -i idiomind "$(gettext "Index Error")" "$(gettext "Fixing...")" -t 3000) &
+        notify-send -i idiomind "$(gettext "Index Error")" \
+        "$(gettext "Fixing...")" -t 3000) &
         > "$DT/ps_lk"
         [ ! -d "$DM_tlt/.conf" ] && mkdir "$DM_tlt/.conf"
         DC_tlt="$DM_tlt/.conf"
+        fi
         
-        n=0
-        while [[ $n -le 4 ]]; do
-            touch "$DC_tlt/$n.cfg"
-            ((n=n+1))
-        done
+        if [ ${nv} = 1 ]; then
+        (sleep 1
+        notify-send -i idiomind "$(gettext "Fixing index")" \
+        "$(gettext "Migrating to new version...")" -t 3000) &
+        > "$DT/ps_lk"
+        _new_version
+        fi
         
-        rm -f "$DT/index"
         "$DS/ifs/tls.sh" colorize
         "$DS/mngr.sh" mkmn
     fi
@@ -909,43 +967,6 @@ mkpdf() {
         rm -fr "$wdir"
     fi
     exit
-}
-
-converti() {
-    
-    n=1; > "$DC_tlt/0.cfg"
-    while [[ $n -le 200 ]]; do
-    id=""; sum=""; type=""; trgt=""
-    srce=""; lwrd=""; grmr=""
-    exmp=""; dftn=""; note=""; tag=""
-    item="$(sed -n "$n"p "$DC_tlt/1.cfg")"
-    fname="$(echo -n "${item}" | md5sum | rev | cut -c 4- | rev)"
-    if [ -f "${DM_tlt}/$fname.mp3" ]; then
-    tgs=$(eyeD3 "${DM_tlt}/$fname.mp3")
-    trgt=$(grep -o -P "(?<=ISI1I0I).*(?=ISI1I0I)" <<<"$tgs")
-    srce=$(grep -o -P "(?<=ISI2I0I).*(?=ISI2I0I)" <<<"$tgs")
-    grmr="$(grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)' <<<"${tgs}")"
-    lwrd="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"${tgs}")"
-    type=2
-    id="$(nmfile "${type}" "${trgt}" "${srce}" "${exmp}" "${dftn}" "${note}" "${lwrd}" "${grmr}")"
-    mv -f "${DM_tlt}/$fname.mp3" "${DM_tlt}/$id.mp3"
-    elif [ -f "${DM_tlt}/words/$fname.mp3" ]; then
-    tgs=$(eyeD3 "${DM_tlt}/$fname.mp3")
-    trgt=$(grep -o -P "(?<=IWI1I0I).*(?=IWI1I0I)" <<<"$tgs")
-    srce=$(grep -o -P "(?<=IWI2I0I).*(?=IWI2I0I)" <<<"$tgs")
-    fields="$(grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' <<<"${tgs}" | tr '_' '\n')"
-    mark="$(grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)' <<<"${tgs}")"
-    exmp="$(sed -n 1p <<<"${fields}")"
-    dftn="$(sed -n 2p <<<"${fields}")"
-    note="$(sed -n 3p <<<"${fields}")"
-    type=1
-    id="$(nmfile "${type}" "${trgt}" "${srce}" "${exmp}" "${dftn}" "${note}" "${lwrd}" "${grmr}")"
-    mv -f "${DM_tlt}/words/$fname.mp3" "${DM_tlt}/$id.mp3"
-    fi
-
-    echo "$n:[type={$type},trgt={$trgt},srce={$srce},exmp={$exmp},defn={$dftn},note={$note},wrds={$lwrd},grmr={$grmr},].[tag={$tag},mark={$mark},].id=[$id]" >> "$DC_tlt/0.cfg"
-    let n++
-    done
 }
 
 
