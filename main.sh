@@ -133,9 +133,8 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     source "$DS/ifs/mods/cmns.sh"
     [ ! -d "$DT" ] && mkdir "$DT"
     source "$DS/ifs/tls.sh"
-
     check_source_1 "${1}"
-    idmd="${1}"
+    file="${1}"
     cmd_infs="'$DS/ifs/tls.sh' 'details' "\"$tmp\"""
     
     l=( "$(gettext "Beginner")" \
@@ -144,19 +143,18 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     level="${l[${level}]}"
 
     itxt="<span font_desc='Free Sans 14'>$tname</span><small>\n ${langs^}-$langt $nword $(gettext "Words") $nsent $(gettext "Sentences") $nimag $(gettext "Images")\n $(gettext "Level:") $level\n</small>"
-    dclk="'$DS/default/vwr_tmp.sh' '$idmd'"
+    dclk="'$DS/default/vwr_tmp.sh' '$file'"
     
-    idmd="${1}"
     sett() {
+        
         while read item; do
         item="$(echo "$item" |sed 's/},/}\n/g')"
         trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
         [ -n "$trgt" ] && echo "$trgt"
-        done < <(tail -n +19 < "${idmd}")
+        done < <(tail -n +19 < "${file}")
     }
 
-    sett | \
-    yad --list --title="Idiomind" \
+    sett | yad --list --title="Idiomind" \
     --text="$itxt" \
     --name=Idiomind --class=Idiomind \
     --print-all --dclick-action="$dclk" \
@@ -209,7 +207,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             for i in {1..6}; do > "$DC_tlt/${i}.cfg"; done
             for i in {1..3}; do > "$DC_tlt/practice/log.${i}"; done
             
-            echo "$(head -n 15 < "${idmd}")" > "$DC_tlt/id.cfg"
+            echo "$(head -n 15 < "${file}")" > "$DC_tlt/id.cfg"
             sed -i "s/datei=.*/datei=\"$(date +%F)\"/g" "${DC_tlt}/id.cfg"
             
             while read item_; do
@@ -222,7 +220,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             else echo "${trgt}" >> "$DC_tlt/4.cfg"; fi
             echo "${trgt}" >> "$DC_tlt/1.cfg"
             echo "${item_}" >> "$DC_tlt/0.cfg"; fi
-            done < <(tail -n +20 < "${idmd}")
+            done < <(tail -n +20 < "${file}")
 
             "$DS/ifs/tls.sh" colorize
             echo -e "$langt\n$lgsl" > "$DC_s/6.cfg"

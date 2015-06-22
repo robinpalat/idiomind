@@ -68,7 +68,7 @@ science
 interview
 funny"
 
-sets=('tname' \
+sets=('v' 'tname' \
 'langs' 'langt' \
 'authr' 'cntct' 'ctgry' 'ilink' \
 'datec' 'dateu' 'datei' \
@@ -87,13 +87,11 @@ Spanish
 Vietnamese"
 
     dir="${1}"
-    file="${dir}/conf/id.cfg"
+    file="${1}"
     nu='^[0-9]+$'
-    dirs="$(find "${dir}"/ -maxdepth 5 -type d | sed '/^$/d' | wc -l)"
-
+    
     invalid() {
         exit=1
-        #rm -fr "${dir}" "$DT/import.tar.gz"
         msg "$1. $(gettext "File is corrupted.")\n" error & exit 1
     }
     
@@ -101,35 +99,34 @@ Vietnamese"
     n=0; exit=0
     while read -r line; do
     
+        if [ -z "$line" ]; then continue; fi
         get="${sets[$n]}"
         val=$(echo "${line}" |grep -o "$get"=\"[^\"]* |grep -o '[^"]*$')
-        if [ ${#line} -gt $((8+${#val})) ]; then invalid 1; fi
-        if [[ $n = 0 ]]; then
+        if [[ $n = 1 ]]; then
         if [ -z "${val}" ] || [ ${#val} -gt 60 ] || \
-        [ `grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${val}"` ] || \
-        [ ${#val} -gt 60 ]; then invalid 2; fi
-        elif [[ $n = 1 || $n = 2 ]]; then
+        [ `grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${val}"` ]; then invalid 2; fi
+        elif [[ $n = 2 || $n = 3 ]]; then
         if ! grep -Fox "${val}" <<<"${LANGUAGES}"; then invalid 3; fi
-        elif [[ $n = 3 || $n = 4 ]]; then
+        elif [[ $n = 4 || $n = 5 ]]; then
         if [ ${#val} -gt 30 ] || \
         [ `grep -o -E '\*|\/|$|\)|\(|=' <<<"${val}"` ]; then invalid 4; fi
-        elif [[ $n = 5 ]]; then
-        if ! grep -Fox "${val}" <<<"${CATEGORIES}"; then invalid 5; fi
         elif [[ $n = 6 ]]; then
+        if ! grep -Fox "${val}" <<<"${CATEGORIES}"; then invalid 5; fi
+        elif [[ $n = 7 ]]; then
         if [ ${#val} -gt 4 ]; then invalid 6; fi
-        elif [[ $n = 7 || $n = 8 || $n = 9 ]]; then
+        elif [[ $n = 8 || $n = 9 || $n = 10 ]]; then
         if [ -n "${val}" ]; then
         if ! [[ ${val} =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] \
         || [ ${#val} -gt 12 ]; then invalid 7; fi; fi
-        elif [[ $n = 10 || $n = 11 || $n = 12 ]]; then
+        elif [[ $n = 11 || $n = 12 || $n = 13 ]]; then
         if ! [[ $val =~ $nu ]] || [ ${val} -gt 200 ]; then invalid 8; fi
-        elif [[ $n = 13 ]]; then
+        elif [[ $n = 14 ]]; then
         if ! [[ $val =~ $nu ]] || [ ${#val} -gt 2 ]; then invalid 9; fi
         fi
         export ${sets[$n]}="${val}"
         let n++
-        
-    done < "${file}"
+         
+    done < <(head -n 15 < "${file}")
 
     if [[ $exit = 0 ]] ; then
     > "$DT/${2}.cfg"

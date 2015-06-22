@@ -246,9 +246,9 @@ level=$(echo "${upld}" | cut -d "|" -f5)
 [ "$Ctgry" = "$science" ] && Ctgry=science
 [ "$Ctgry" = "$funny" ] && Ctgry=funny
 [ "$Ctgry" = "$others" ] && Ctgry=others
-[ "$level" = $(gettext "Beginner") ] && level=1
-[ "$level" = $(gettext "Intermediate") ] && level=2
-[ "$level" = $(gettext "Advanced") ] && level=3
+[ "$level" = $(gettext "Beginner") ] && level=0
+[ "$level" = $(gettext "Intermediate") ] && level=1
+[ "$level" = $(gettext "Advanced") ] && level=2
 
 iuser_m=$(echo "${upld}" | cut -d "|" -f2)
 cntct_m=$(echo "${upld}" | cut -d "|" -f3)
@@ -280,7 +280,8 @@ datec="$(grep -o 'datec="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
 datei="$(grep -o 'datei="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
 dateu=$(date +%F)
 
-echo -e "tname=\"${tpc}\"
+echo -e "v=1
+tname=\"${tpc}\"
 langs=\"$lgsl\"
 langt=\"$lgtl\"
 authr=\"$iuser_m\"
@@ -295,8 +296,12 @@ nsent=\"$sentences\"
 nimag=\"$images\"
 level=\"$level\"
 set_1=\"$set_1\"
-set_2=\"$set_2\"" > "${DC_tlt}/id.cfg"
-cp -f "${DC_tlt}/id.cfg" "$DT_u/${tpc}/conf/id.cfg"
+set_2=\"$set_2\" 
+
+
+------------------ content -----------------" > "${DC_tlt}/id.cfg"
+cp -f "${DC_tlt}/id.cfg" "$DT_u/${tpc}/conf/${usrid}.${tpc}.idmnd"
+cat "${DC_tlt}/0.cfg" >> "$DT_u/${tpc}/conf/${usrid}.${tpc}.idmnd"
 
 if [ "${iuser}" != "${iuser_m}" ] \
 || [ "${cntct}" != "${cntct_m}" ]; then
@@ -322,19 +327,6 @@ cp -f "$DM_tl/.share/$audio.mp3" "$DT_u/$tpc/share/$audio.mp3"; fi
 done <<<"$auds"
 
 # remove from folder topic name characters weirds TODO
-> "${DC_tlt}/1.cfg"
-while read item_; do
-item="$(sed 's/},/}\n/g' <<<"${item_}")"
-trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
-id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
-if [ -n "${trgt}" ]; then
-echo "${trgt}" >> "${DC_tlt}/1.cfg"
-echo "${trgt}|${id}" >> "$DT_u/${tpc}/conf/${usrid}.${tpc}"; fi
-done < "$DC_tlt/0.cfg"
-
-cp -f "${DC_tlt}/1.cfg" "$DT_u/${tpc}/conf/1.cfg"
-cp -f "${DC_tlt}/0.cfg" "$DT_u/${tpc}/conf/0.cfg"
-echo -e "${notes}" > "${DC_tlt}/info"
 echo -e "${notes}" > "$DT_u/${tpc}/conf/info"
 
 find "$DT_u" -type f -exec chmod 644 {} \;
