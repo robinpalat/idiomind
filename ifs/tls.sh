@@ -251,7 +251,7 @@ check_index() {
     
     _new_version() {
     
-        tac "$DC_tlt/0.cfg" > "$DC_tlt/1.cfg"
+        mv -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"
         rm "$DC_tlt/2.cfg" "$DC_tlt/.11.cfg"
         if [ ! -d "${DM_tlt}/images" ]; then
         mkdir "${DM_tlt}/images"; fi
