@@ -130,28 +130,32 @@ function new_session() {
 
 if grep -o '.idmnd' <<<"${1: -6}"; then
 
-    c=$((RANDOM%1000))
     source "$DS/ifs/mods/cmns.sh"
     [ ! -d "$DT" ] && mkdir "$DT"
-    mkdir "$DT/dir$c"
-    cd "$DT/dir$c"
-    tar -xzvf "${1}"
-    ls -tdN * > "$DT/dir$c/folder"
-    tpf=$(sed -n 1p "$DT/dir$c/folder")
-    tmp="$DT/dir$c/${tpf}"
     source "$DS/ifs/tls.sh"
-    check_source_1 "${tmp}" "${tpf}"
-    if [ -f "$DT/${tpf}.cfg" ]; then
+
+    check_source_1 "${1}"
+    idmd="${1}"
     cmd_infs="'$DS/ifs/tls.sh' 'details' "\"$tmp\"""
-    [ $level = 1 ] && level="$(gettext "Beginner")"
-    [ $level = 2 ] && level="$(gettext "Intermediate")"
-    [ $level = 3 ] && level="$(gettext "Advanced")"
+    
+    l=( "$(gettext "Beginner")" \
+    "$(gettext "Intermediate")" \
+    "$(gettext "Advanced")" )
+    level="${l[${level}]}"
 
-    cd "${tmp}"
     itxt="<span font_desc='Free Sans 14'>$tname</span><small>\n ${langs^}-$langt $nword $(gettext "Words") $nsent $(gettext "Sentences") $nimag $(gettext "Images")\n $(gettext "Level:") $level\n</small>"
-    dclk="'$DS/default/vwr_tmp.sh' '$c'"
+    dclk="'$DS/default/vwr_tmp.sh' '$idmd'"
+    
+    idmd="${1}"
+    sett() {
+        while read item; do
+        item="$(echo "$item" |sed 's/},/}\n/g')"
+        trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
+        [ -n "$trgt" ] && echo "$trgt"
+        done < <(tail -n +19 < "${idmd}")
+    }
 
-    tac "${tmp}/conf/1.cfg" | awk '{print $0""}' | \
+    sett | \
     yad --list --title="Idiomind" \
     --text="$itxt" \
     --name=Idiomind --class=Idiomind \
@@ -204,10 +208,10 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             
             for i in {1..6}; do > "$DC_tlt/${i}.cfg"; done
             for i in {1..3}; do > "$DC_tlt/practice/log.${i}"; done
-            cp -f "${tmp}/conf/0.cfg" "$DC_tlt/0.cfg"
-            cp -f "${tmp}/conf/id.cfg" "$DC_tlt/id.cfg"
-            cp -f "${tmp}/conf/info" "$DC_tlt/info"
+            
+            echo "$(head -n 15 < "${idmd}")" > "$DC_tlt/id.cfg"
             sed -i "s/datei=.*/datei=\"$(date +%F)\"/g" "${DC_tlt}/id.cfg"
+            
             while read item_; do
             item="$(sed 's/},/}\n/g' <<<"${item_}")"
             type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
@@ -216,13 +220,10 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             if [[ ${type} = 1 ]]; then
             echo "${trgt}" >> "$DC_tlt/3.cfg"
             else echo "${trgt}" >> "$DC_tlt/4.cfg"; fi
-            echo "${trgt}" >> "$DC_tlt/1.cfg"; fi
-            done < "${tmp}/conf/0.cfg"
+            echo "${trgt}" >> "$DC_tlt/1.cfg"
+            echo "${item_}" >> "$DC_tlt/0.cfg"; fi
+            done < <(tail -n +20 < "${idmd}")
 
-            cp -n "$tmp/share"/*.mp3 "$DM_t/$langt/.share"/
-            rm -fr "$tmp/share" "${tmp}/conf" "$tmp/folder"
-            cp -fr "${tmp}"/.* "${DM_tlt}/"
-            
             "$DS/ifs/tls.sh" colorize
             echo -e "$langt\n$lgsl" > "$DC_s/6.cfg"
             echo 1 > "${DC_tlt}/8.cfg"
@@ -230,7 +231,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             "$DS/mngr.sh" mkmn
             "$DS/default/tpc.sh" "${tname}" &
         fi
-    fi
+    #fi
     [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c"
     rm -f "$DT/import.tar.gz" "$DT/${tpf}.cfg"
     exit 1
