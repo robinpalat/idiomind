@@ -48,9 +48,9 @@ while read -r tpc_lst; do
     cd "${DC_tlt}/practice"
     cfg5="${DC_tlt}/5.cfg"
     cfg6=`cat "${DC_tlt}/6.cfg"`
-    log3=`< "${DC_tlt}/practice/log.3"`
-    log2=`< "${DC_tlt}/practice/log.2"`
-    log1=`< "${DC_tlt}/practice/log.1"`
+    log3=`< "${DC_tlt}/practice/log3"`
+    log2=`< "${DC_tlt}/practice/log2"`
+    log1=`< "${DC_tlt}/practice/log1"`
     img1='/usr/share/idiomind/images/1.png'
     img2='/usr/share/idiomind/images/2.png'
     img3='/usr/share/idiomind/images/3.png'
