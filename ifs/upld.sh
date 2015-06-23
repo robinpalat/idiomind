@@ -123,30 +123,39 @@ function dwld() {
 
     idcfg="$DM_tl/${2}/.conf/id.cfg"
     link=$(grep -o 'ilink="[^"]*' "${idcfg}" |grep -o '[^"]*$')
-    tname=$(grep -o 'tname="[^"]*' "${idcfg}" |grep -o '[^"]*$')
-    langs=$(grep -o 'langs="[^"]*' "${idcfg}" |grep -o '[^"]*$')
+    oname=$(grep -o 'oname="[^"]*' "${idcfg}" |grep -o '[^"]*$')
     langt=$(grep -o 'langt="[^"]*' "${idcfg}" |grep -o '[^"]*$')
-    lgs=$(lnglss $langs)
     url="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
     | grep -o 'DOWNLOADS="[^"]*' | grep -o '[^"]*$')"
-    URL="$url/$lgs/${lgtl,,}/$link.${tname}.tar.gz"
+    URL="$url/c/$link.${oname}.tar.gz"
     
-    if ! wget -S --spider $URL  2>&1 | grep 'HTTP/1.1 200 OK'; then
-    msg "$(gettext "The file is not yet available for download from the server.")\n" info & exit; fi
+    if ! wget -S --spider "$URL" 2>&1 | grep 'HTTP/1.1 200 OK'; then
+        msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" info & exit; fi
     
     notify-send "$(gettext "Downloading content...")"
-    wget -q -c -T 50 -O  "$url/$lgs/${lgtl,,}/$link.$t{name}.tar.gz"
-    
-    if [ "$DT/${tname}.tar.gz" ]; then
+    wget -q -c -T 50 -O "$DT/${oname}.tar.gz" "$URL"
 
-        tar -xzvf "$DT/${tname}.tar.gz"
-        tmp="$DT/${tname}"
-        cp -f "${tmp}/conf/info" "$DC_tlt/info"
-        cp -n "$tmp/share"/*.mp3 "$DM_t/$langt/.share"/
-        rm -fr "$tmp/share" "${tmp}/conf"
-        cp -fr "${tmp}"/.* "${DM_tlt}/"
-        echo "${tname}" >> "$DM_tl/.3.cfg"
+    if [ -f "$DT/${oname}.tar.gz" ]; then
+        cd "$DT"/
+        tar -xzvf "$DT/${oname}.tar.gz"
+        
+        if [ -d "$DT/${oname}" ]; then 
+            tmp="$DT/${oname}"
+            cp -f "${tmp}/conf/info" "$DC_tlt/info"
+            cp -n "$tmp/share"/*.mp3 "$DM_t/$langt/.share"/
+            rm -fr "$tmp/share" "${tmp}/conf"
+            cp -fr "${tmp}"/* "${DM_tlt}"/
+            echo "${oname}" >> "$DM_tl/.3.cfg"
+            rm -fr "${tmp}" "$DT/${oname}.tar.gz"
+        
+        else
+            msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" info & exit
+        fi
+    else
+        msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" info & exit
     fi
+    exit
+    
 }
 
 
@@ -210,8 +219,6 @@ imgm="${DM_tlt}/images/img.jpg"
 if [ $(cat "${DC_tlt}/0.cfg" | wc -l) -ge 20 ]; then
 btn="--button="$(gettext "Upload")":0"; else
 btn="--center"; fi
-
-
 cd "$HOME"
 
 if ! grep -Fxq "${tpc}" "$DM_tl/.3.cfg"; then
@@ -230,8 +237,8 @@ if ! grep -Fxq "${tpc}" "$DM_tl/.3.cfg"; then
     --field="$(gettext "Skill Level"):CB" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
     --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
     --field="$(gettext "Image 600x150px"):FL" "${imgm}" \
-    --button="$(gettext "Cancel")":4 \
-    --button="$(gettext "PDF")":2 "$btn")
+    --button="$(gettext "PDF")":2 "$btn" \
+    --button="$(gettext "Close")":4)
     ret=$?
 
     img=$(echo "${upld}" | cut -d "|" -f7)
@@ -259,7 +266,7 @@ else
     --field="$(gettext "Download content"):FBTN" "${cmd_dl}" \
     --field="$(gettext "Image 600x150px"):FL" "${imgm}" \
     --button="$(gettext "PDF")":2 \
-    --button="$(gettext "Cancel")":4)
+    --button="$(gettext "Close")":4)
     ret=$?
  
 fi
@@ -322,7 +329,7 @@ internet
 # ---------------------------------------------------
 mkdir "$DT/upload"
 DT_u="$DT/upload/"
-mkdir -p "$DT/upload/${usrid}.${tpc}/conf"
+mkdir -p "$DT/upload/${tpc}/conf"
 
 cd "${DM_tlt}/images"
 if [ $(ls -1 *.jpg 2>/dev/null | wc -l) != 0 ]; then
@@ -343,6 +350,7 @@ authr=\"$iuser_m\"
 cntct=\"$cntct_m\"
 ctgry=\"$Ctgry\"
 ilink=\"$usrid\"
+oname=\"${tpc}\"
 datec=\"$datec\"
 dateu=\"$dateu\"
 datei=\"$datei\"
@@ -352,7 +360,6 @@ nimag=\"$images\"
 level=\"$level\"
 set_1=\"$set_1\"
 set_2=\"$set_2\" 
-
 
 ------------------ content -----------------" > "${DC_tlt}/id.cfg"
 cp -f "${DC_tlt}/id.cfg" "$DT_u/${usrid}.${tpc}.$lgt"
@@ -366,10 +373,10 @@ sed -i "s/cntct=.*/cntct=\"$cntct_m\"/g" "$DC_s/3.cfg"
 fi
 
 cd "${DM_tlt}"
-cp -r ./* "$DT_u/${usrid}.${tpc}/"
-mkdir "$DT_u/${usrid}.${tpc}/files"
+cp -r ./* "$DT_u/${tpc}/"
+mkdir "$DT_u/${tpc}/files"
 
-mkdir "$DT_u/${usrid}.${tpc}/share"
+mkdir "$DT_u/${tpc}/share"
 auds="$(uniq < "${DC_tlt}/4.cfg" \
 | sed 's/\n/ /g' | sed 's/ /\n/g' \
 | grep -v '^.$' | grep -v '^..$' \
@@ -378,22 +385,20 @@ auds="$(uniq < "${DC_tlt}/4.cfg" \
 | tr -d ')' | tr -d '(' | tr '[:upper:]' '[:lower:]')"
 while read -r audio; do
 if [ -f "$DM_tl/.share/$audio.mp3" ]; then
-cp -f "$DM_tl/.share/$audio.mp3" "$DT_u/${usrid}.${tpc}/share/$audio.mp3"; fi
+cp -f "$DM_tl/.share/$audio.mp3" "$DT_u/${tpc}/share/$audio.mp3"; fi
 done <<<"$auds"
 
 # remove from folder topic name characters weirds TODO
-echo -e "${notes}" > "$DT_u/${usrid}.${tpc}/conf/info"
+echo -e "${notes}" > "$DT_u/${tpc}/conf/info"
 
 find "$DT_u" -type f -exec chmod 644 {} \;
-cd "$DT_u"
-tar -cvf ./"${usrid}.${tpc}.tar" ./"${usrid}.${tpc}"
+cd "$DT/upload"
+tar -cvf ./"${usrid}.${tpc}.tar" ./"${tpc}"
 gzip -9 ./"${usrid}.${tpc}.tar"
 sum=`md5sum ./"${usrid}.${tpc}.tar.gz" | cut -d' ' -f1`
 
 echo -e "---------------end content -----------------
-
-md5sum=\"$sum\"
-" >> "$DT_u/${usrid}.${tpc}.$lgt"
+md5sum=\"$sum\"" >> "$DT_u/${usrid}.${tpc}.$lgt"
 
 du=$(du -h "${usrid}.${tpc}.tar.gz" | cut -f1)
 

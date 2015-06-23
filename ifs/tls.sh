@@ -21,25 +21,7 @@ source "$DS/ifs/mods/cmns.sh"
 lgt=$(lnglss "$lgtl")
 lgs=$(lnglss "$lgsl")
 
-restoresin() {
 
-    > "$DC_tlt/1.cfg"; > "$DC_tlt/2.cfg"
-    > "$DC_tlt/3.cfg"; > "$DC_tlt/4.cfg"
-    
-    while read item_; do
-    item="$(sed 's/},/}\n/g' <<<"${item_}")"
-    type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
-    trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
-    
-    if [ -n "${trgt}" ]; then
-    if [[ ${type} = 1 ]]; then
-    echo "${trgt}" >> "$DC_tlt/3.cfg"
-    else echo "${trgt}" >> "$DC_tlt/4.cfg"; fi
-    echo "${trgt}" >> "$DC_tlt/1.cfg"
-    fi
-    
-    done < "$DC_tlt/0.cfg"
-}
 
 function check_source_1() {
 CATEGORIES="others
@@ -68,12 +50,12 @@ science
 interview
 funny"
 
-sets=('v' 'tname' \
+sets=( 'v' 'tname' \
 'langs' 'langt' \
-'authr' 'cntct' 'ctgry' 'ilink' \
+'authr' 'cntct' 'ctgry' 'ilink' 'oname' \
 'datec' 'dateu' 'datei' \
 'nword' 'nsent' 'nimag' \
-'level' 'set_1' 'set_2')
+'level' 'set_1' 'set_2' )
 
 LANGUAGES="English
 Chinese
@@ -113,14 +95,17 @@ Vietnamese"
         elif [[ $n = 6 ]]; then
         if ! grep -Fox "${val}" <<<"${CATEGORIES}"; then invalid 5; fi
         elif [[ $n = 7 ]]; then
-        if [ ${#val} -gt 4 ]; then invalid 6; fi
-        elif [[ $n = 8 || $n = 9 || $n = 10 ]]; then
+        if [ ${#val} -gt 8 ]; then invalid 6; fi
+        if [ -z "${val}" ] || [ ${#val} -gt 60 ] || \
+        [ `grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${val}"` ]; then invalid 2; fi
+        elif [[ $n = 9 || $n = 10 || $n = 11 ]]; then
         if [ -n "${val}" ]; then
         if ! [[ ${val} =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] \
         || [ ${#val} -gt 12 ]; then invalid 7; fi; fi
-        elif [[ $n = 11 || $n = 12 || $n = 13 ]]; then
+        
+        elif [[ $n = 12 || $n = 13 || $n = 14 ]]; then
         if ! [[ $val =~ $nu ]] || [ ${val} -gt 200 ]; then invalid 8; fi
-        elif [[ $n = 14 ]]; then
+        elif [[ $n = 15 ]]; then
         if ! [[ $val =~ $nu ]] || [ ${#val} -gt 2 ]; then invalid 9; fi
         fi
         export ${sets[$n]}="${val}"
@@ -819,11 +804,8 @@ mkpdf() {
         <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />
         <title>$tpc</title><head>
         <link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/pdf.css\">
-        </head>
-        <body>
-        <div><p></p>
-        </div>
-        <div>" >> "$wdir/doc.html"
+        </head><body><div><p></p></div><div>" >> "$wdir/doc.html"
+        
         if [ -f "$wdir/img.png" ]; then
         echo -e "<table width=\"100%\" border=\"0\">
         <tr>
@@ -964,15 +946,8 @@ mkpdf() {
             let n++
         done
 
-        echo -e "<p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <h3>&nbsp;</h3>
-        <p>&nbsp;</p>
-        </div>
-        </div>
-        <span class=\"container\"></span>
-        </body>
-        </html>" >> "$wdir/doc.html"
+        echo -e "</div></div>
+        <span class=\"container\"></span></body></html>" >> "$wdir/doc.html"
 
         wkhtmltopdf -s A4 -O Portrait "$wdir/doc.html" "$wdir/tmp.pdf"
         mv -f "$wdir/tmp.pdf" "$pdf"
@@ -1009,8 +984,6 @@ $(gettext "Difficult words")
 }>/dev/null 2>&1
 
 case "$1" in
-    details)
-    details "$@" ;;
     check_index)
     check_index "$@" ;;
     add_audio)
@@ -1019,8 +992,6 @@ case "$1" in
     edit_audio "$@" ;;
     text)
     text "$@" ;;
-    adv)
-    editadv "$@" ;;
     attachs)
     attatchments "$@" ;;
     add_file)
@@ -1041,12 +1012,8 @@ case "$1" in
     set_image "$@" ;;
     pdf)
     mkpdf ;;
-    conv)
-    converti ;;
     html)
     mkhtml ;;
-    sanity_1)
-    sanity_1 "$@" ;;
     fback)
     fback ;;
     about)

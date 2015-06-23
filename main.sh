@@ -206,7 +206,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             for i in {1..6}; do > "$DC_tlt/${i}.cfg"; done
             for i in {1..3}; do > "$DC_tlt/practice/log.${i}"; done
             
-            echo "$(head -n 15 < "${file}")" > "$DC_tlt/id.cfg"
+            head -n19 "${file}" > "$DC_tlt/id.cfg"
             sed -i "s/datei=.*/datei=\"$(date +%F)\"/g" "${DC_tlt}/id.cfg"
             
             while read item_; do
