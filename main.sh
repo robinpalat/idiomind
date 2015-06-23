@@ -112,7 +112,7 @@ function new_session() {
     if [ -f "$DM_tl/.5.cfg" ]; then
     tpd="$(< "$DM_tl/.5.cfg")"
     if grep -Fxq "${tpd}" "$DM_tl/.1.cfg"; then
-    "$DS/default/tpc.sh" "$tpd" 2; fi
+    "$DS/default/tpc.sh" "${tpd}" 2; fi
     fi
     
     # version ###############
@@ -203,11 +203,11 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             DM_tlt="$DM_t/$langt/${tname}"
             DC_tlt="$DM_t/$langt/${tname}/.conf"
             
-            for i in {1..6}; do > "$DC_tlt/${i}.cfg"; done
-            for i in {1..3}; do > "$DC_tlt/practice/log.${i}"; done
+            for i in {1..6}; do > "${DC_tlt}/${i}.cfg"; done
+            for i in {1..3}; do > "${DC_tlt}/practice/log.${i}"; done
             
-            head -n19 "${file}" > "$DC_tlt/id.cfg"
-            > "$DC_tlt/11.cfg"
+            head -n19 "${file}" > "${DC_tlt}/id.cfg"
+            > "${DC_tlt}/11.cfg"
             sed -i "s/datei=.*/datei=\"$(date +%F)\"/g" "${DC_tlt}/id.cfg"
             
             while read item_; do
@@ -216,10 +216,10 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
             if [ -n "${trgt}" ]; then
             if [[ ${type} = 1 ]]; then
-            echo "${trgt}" >> "$DC_tlt/3.cfg"
-            else echo "${trgt}" >> "$DC_tlt/4.cfg"; fi
-            echo "${trgt}" >> "$DC_tlt/1.cfg"
-            echo "${item_}" >> "$DC_tlt/0.cfg"; fi
+            echo "${trgt}" >> "${DC_tlt}/3.cfg"
+            else echo "${trgt}" >> "${DC_tlt}/4.cfg"; fi
+            echo "${trgt}" >> "${DC_tlt}/1.cfg"
+            echo "${item_}" >> "${DC_tlt}/0.cfg"; fi
             done < <(tail -n +20 < "${file}")
 
             "$DS/ifs/tls.sh" colorize
@@ -276,7 +276,7 @@ function topic() {
         apply() {
 
             note_mod="$(< "${cnf3}")"
-            if [ "$note_mod" != "$(< "${nt}")" ]; then
+            if [ "${note_mod}" != "$(< "${nt}")" ]; then
             mv -f "${cnf3}" "${DC_tlt}/info"; fi
             
             auto_mrk_mod=$(cut -d '|' -f 3 < "${cnf4}")
@@ -292,14 +292,14 @@ function topic() {
                 sed -i 's/|TRUE|//;s/|//;s/<[^>]*>//g' "${cnf1}"
                 cat "${cnf1}" >> "${ls2}"
 
-                grep -Fxvf "$cnf1" "${ls1}" > "$DT/ls1.x"
+                grep -Fxvf "${cnf1}" "${ls1}" > "$DT/ls1.x"
                 mv -f "$DT/ls1.x" "${ls1}"
                 if [ -n "$(cat "${ls1}" | sort -n | uniq -dc)" ]; then
-                    cat "$ls1" | awk '!array_temp[$0]++' > "$DT/ls1.x"
+                    cat "${ls1}" | awk '!array_temp[$0]++' > "$DT/ls1.x"
                     sed '/^$/d' "$DT/ls1.x" > "${ls1}"
                 fi
                 "$DS/ifs/tls.sh" colorize
-                echo -e ".oki.$(wc -l < "$cnf1").oki." >> "$DC_s/log"
+                echo -e ".oki.$(wc -l < "${cnf1}").oki." >> "$DC_s/log"
             fi
         
             ntpc=$(cut -d '|' -f 1 < "${cnf4}")
