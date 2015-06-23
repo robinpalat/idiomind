@@ -56,8 +56,8 @@ infsd() {
     
         #[ -f "$DM/backup/${2}.idmnd" ] && \
         #btn="--button="$(gettext "Download")":2"
-        yad --title="$(gettext "Confirm")" \
-        --text="$(gettext "Confirm")\t\n" \
+        yad --title="${2}" \
+        --text="$(gettext "Confirm Restore")\n\n" \
         --image=dialog-question \
         --name=Idiomind --class=Idiomind \
         --always-print-result \

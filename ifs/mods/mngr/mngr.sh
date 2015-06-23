@@ -115,7 +115,6 @@ function dlg_form_1() {
     --field="$(gettext "Mark")":CHK "$mark" \
     --field="<small>$(gettext "Listen")</small>":FBTN "$cmd_play" \
     --field=" ":LBL " " \
-    --button="$(gettext "More")":"$cmd_move" \
     --button="$(gettext "Image")":"$cmd_image" \
     --button="$(gettext "Delete")":"$cmd_delete" \
     --button="gtk-go-down":2 \
@@ -143,7 +142,6 @@ function dlg_form_2() {
     --field="$(gettext "Listen")":FBTN "$cmd_play" \
     --field="<small>$(gettext "Topic")</small>":CB "$tpc!$tpcs" \
     --field="<small>$(gettext "Audio")</small>":FL "${audio}" \
-    --button="$(gettext "More")":"$cmd_move" \
     --button="$(gettext "Words")":"$cmd_words" \
     --button="$(gettext "Delete")":"$cmd_delete" \
     --button="gtk-go-down":2 \
