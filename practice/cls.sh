@@ -35,11 +35,11 @@ easy="$3"; ling="$4"; hard="$5"; all="$6"
 if [[ "$1" = restart ]]; then
     
     rm ./"${2}.lock" ./"${2}.0" ./"${2}.1" \
-    ./"${2}.2" ./"${2}.3" ./log.1 ./log.2 ./log.3
+    ./"${2}.2" ./"${2}.3" ./log1 ./log2 ./log3
     [ -f ./b.srces ] && rm ./b.srces
     echo "1" > ./."${icon}"
     echo "0" > ./"${2}.l"
-    touch ./log.1 ./log.2 ./log.3
+    touch ./log1 ./log2 ./log3
     "$DIR/strt.sh" & exit
 
 elif [[ $1 = comp ]]; then
@@ -47,25 +47,27 @@ elif [[ $1 = comp ]]; then
     if [ -f ./"${2}.2" ]; then
     awk '!a[$0]++' ./"${2}.2" > ./"${2}2.tmp"
     else > ./"${2}2.tmp"; fi
+    
     if [ -f ./"${2}.3" ]; then
     awk '!a[$0]++' ./"${2}.3" > ./"${2}3.tmp"
     else > ./"${2}3.tmp"; fi
+    
     grep -Fxvf ./"${2}3.tmp" ./"${2}2.tmp" > ./"${2}.2"
     mv -f ./"${2}3.tmp" ./"${2}.3"
     
-    n=`awk '++A["$1"]==3' ./*.1`; echo "$n" > ./log.1
-    n=`awk '++A["$1"]==2' ./*.2`; echo "$n" > ./log.2
-    n=`awk '++A["$1"]==2' ./*.3`; echo "$n" > ./log.3
+    awk '++A["$1"]==3' a.1 > ./log1
+    awk '++A["$1"]==2' < <(cat *.2) > ./log2
+    awk '++A["$1"]==2' < <(cat *.3) > ./log3
     
-    if [ -f ./"${2}.1" ]; then
-    n=`awk '++A[$1]==1' ./"${2}.1"`
-    echo "$n" >> log.1; fi
-    if [ -f ./"${2}.2" ]; then
-    n=`awk '++A[$1]==1' ./"${2}.2"`
-    echo "$n" >> log.2; fi
-    if [ -f ./"${2}.3" ]; then
-    n=`awk '++A[$1]==1' ./"${2}.3"`
-    echo "$n" >> log.3; fi
+    #if [ -f ./"${2}.1" ]; then
+    #n=`awk '++A[$1]==1' ./"${2}.1"`
+    #echo "$n" >> log1; fi
+    #if [ -f ./"${2}.2" ]; then
+    #n=`awk '++A[$1]==1' ./"${2}.2"`
+    #echo "$n" >> log2; fi
+    #if [ -f ./"${2}.3" ]; then
+    #n=`awk '++A[$1]==1' ./"${2}.3"`
+    #echo "$n" >> log3; fi
     
     if [ -n "$3" ]; then
     

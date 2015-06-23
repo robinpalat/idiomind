@@ -124,8 +124,7 @@ Create one using the button below. ")" & exit 1; fi
             if [ "$3" = 2 ]; then
             [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")
             else DT_r=$(mktemp -d "$DT/XXXXXX"); fi
-            cd "$DT_r"
-            xclip -i /dev/null
+            xclip -i /dev/null; cd "$DT_r"
         
             if [ -z "${chk}" ] && [[ "$3" != 3 ]]; then cleanups "$DT_r"
             msg "$(gettext "No topic is active")\n" info & exit 1; fi

@@ -27,7 +27,7 @@ cfg1="$DC_tlt/1.cfg"
 cfg3="$DC_tlt/3.cfg"
 cfg4="$DC_tlt/4.cfg"
 directory="$DC_tlt/practice"
-touch "$directory/log.1" "$directory/log.2" "$directory/log.3"
+touch "$directory/log1" "$directory/log2" "$directory/log3"
 
 lock() {
     

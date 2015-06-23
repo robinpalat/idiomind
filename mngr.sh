@@ -193,16 +193,16 @@ edit_item() {
     edit_pos=`grep -Fon -m 1 "trgt={${item}}" "${DC_tlt}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
     item="$(sed -n ${edit_pos}p "${DC_tlt}/0.cfg" |sed 's/},/}\n/g')"
     type=`grep -oP '(?<=type={).*(?=})' <<<"${item}"`
-    trgt=`grep -oP '(?<=trgt={).*(?=})' <<<"$item"`
-    grmr=`grep -oP '(?<=grmr={).*(?=})' <<<"$item"`
-    srce=`grep -oP '(?<=srce={).*(?=})' <<<"$item"`
-    exmp=`grep -oP '(?<=exmp={).*(?=})' <<<"$item"`
-    defn=`grep -oP '(?<=defn={).*(?=})' <<<"$item"`
-    note=`grep -oP '(?<=note={).*(?=})' <<<"$item"`
-    grmr=`grep -oP '(?<=grmr={).*(?=})' <<<"$item"`
-    wrds=`grep -oP '(?<=wrds={).*(?=})' <<<"$item"`
-    mark=`grep -oP '(?<=mark={).*(?=})' <<<"$item"`
-    id=`grep -oP '(?<=id=\[).*(?=\])' <<<"$item"`
+    trgt=`grep -oP '(?<=trgt={).*(?=})' <<<"${item}"`
+    grmr=`grep -oP '(?<=grmr={).*(?=})' <<<"${item}"`
+    srce=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
+    exmp=`grep -oP '(?<=exmp={).*(?=})' <<<"${item}"`
+    defn=`grep -oP '(?<=defn={).*(?=})' <<<"${item}"`
+    note=`grep -oP '(?<=note={).*(?=})' <<<"${item}"`
+    grmr=`grep -oP '(?<=grmr={).*(?=})' <<<"${item}"`
+    wrds=`grep -oP '(?<=wrds={).*(?=})' <<<"${item}"`
+    mark=`grep -oP '(?<=mark={).*(?=})' <<<"${item}"`
+    id=`grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"`
     [ "${mark}" = FALSE ] && mark=""
     [ -z "${id}" ] && id=""
     q_trad="$(sed "s/'/ /g" <<<"$trgt")"
@@ -313,39 +313,42 @@ edit_item() {
                 "${exmp_mod}" "${defn_mod}" "${note_mod}" "${wrds_mod}" "${grmr_mod}")"
 
 
-                if [ "${tpc}" != "${tpc_mod}" ]; then # TODO lack move audio file and picture
-                
-                    cfg0="$DM_tl/${tpc_mod}/.conf/0.cfg"
-                    pos=$(grep -Fon -m 1 "trgt={}" "${cfg0}" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
-                    [ -f "${audio_mod}" ] && mv -f "${audio_mod}" "$DM_tl/${tpc_mod}/$id_mod.mp3"
-                    sed -i "${pos}s|trgt={}|trgt={$trgt_mod}|g" "${cfg0}"
+                if [ "${tpc}" != "${tpc_mod}" ]; then # TODO security
+                    
+                    if [ "${audio}" != "${audio_mod}" ]; then
+                    cp -f "${audio_mod}" "$DM_tl/${tpc_mod}/$id_mod.mp3"
+                    else mv -f "${DM_tlt}/$id.mp3" "$DM_tl/${tpc_mod}/$id_mod.mp3"; fi
+                    if [ -f "${DM_tlt}/images/$id.jpg" ]; then
+                    mv -f "${DM_tlt}/images/$id.jpg" "$DM_tl/${tpc_mod}/images/$id_mod.jpg"; fi
                     "$DS/mngr.sh" delete_item_ok "${tpc}" "${trgt}"
-                    index ${type} "${trgt_mod}" "${tpc_mod}"
+                    index ${type} "${tpc_mod}" "${trgt_mod}" "${srce_mod}" \
+                    "${exmp_mod}" "${defn_mod}" "${wrds_mod}" "${grmr_mod}" "${id_mod}"
                     unset type trgt srce exmp defn note wrds grmr mark id
                     
 
                 elif [ "${tpc}" = "${tpc_mod}" ]; then
-                    cfg0="$DC_tlt/0.cfg"
-                    pos=${edit_pos}
-                fi
-
-                sed -i "${pos}s|type={$type}|type={$type_mod}|;
-                ${pos}s|srce={$srce}|srce={$srce_mod}|;
-                ${pos}s|exmp={$exmp}|exmp={$exmp_mod}|;
-                ${pos}s|defn={$defn}|defn={$defn_mod}|;
-                ${pos}s|note={$note}|note={$note_mod}|;
-                ${pos}s|wrds={$wrds}|wrds={$wrds_mod}|;
-                ${pos}s|grmr={$grmr}|grmr={$grmr_mod}|;
-                ${pos}s|mark={$mark}|mark={$mark_mod}|;
-                ${pos}s|id=\[$id\]|id=\[$id_mod\]|g" "${cfg0}"
-
-                if [ "${audio}" != "${audio_mod}" ]; then
-                cp -f "${audio_mod}" "${DM_tlt}/$id_mod.mp3"
-                else
-                mv -f "${DM_tlt}/$id.mp3" "${DM_tlt}/$id_mod.mp3"; fi
                 
-                if [ -f "${DM_tlt}/images/$id.jpg" ]; then
-                mv -f "${DM_tlt}/images/$id.jpg" "${DM_tlt}/images/$id_mod.jpg"; fi
+                    cfg0="${DC_tlt}/0.cfg"
+                    pos=${edit_pos}
+                
+                    sed -i "${pos}s|type={$type}|type={$type_mod}|;
+                    ${pos}s|srce={$srce}|srce={$srce_mod}|;
+                    ${pos}s|exmp={$exmp}|exmp={$exmp_mod}|;
+                    ${pos}s|defn={$defn}|defn={$defn_mod}|;
+                    ${pos}s|note={$note}|note={$note_mod}|;
+                    ${pos}s|wrds={$wrds}|wrds={$wrds_mod}|;
+                    ${pos}s|grmr={$grmr}|grmr={$grmr_mod}|;
+                    ${pos}s|mark={$mark}|mark={$mark_mod}|;
+                    ${pos}s|id=\[$id\]|id=\[$id_mod\]|g" "${cfg0}"
+
+                    if [ "${audio}" != "${audio_mod}" ]; then
+                    cp -f "${audio_mod}" "${DM_tlt}/$id_mod.mp3"
+                    else mv -f "${DM_tlt}/$id.mp3" "${DM_tlt}/$id_mod.mp3"; fi
+                    
+                    if [ -f "${DM_tlt}/images/$id.jpg" ]; then
+                    mv -f "${DM_tlt}/images/$id.jpg" "${DM_tlt}/images/$id_mod.jpg"; fi
+                
+                fi
             ) &
             
             fi
@@ -532,7 +535,7 @@ mark_to_learn_topic() {
         include "$DS/ifs/mods/mngr"
     
         dialog_2
-        ret="$?"
+        ret=$?
     
         if [[ $ret -eq 3 ]]; then
         
@@ -632,7 +635,7 @@ mark_as_learned_topic() {
         
         if [ -d "${DC_tlt}/practice" ]; then
         (cd "${DC_tlt}/practice"; rm .*; rm *
-        touch ./log.1 ./log.2 ./log.3); fi
+        touch ./log1 ./log2 ./log3); fi
         
         > "${DC_tlt}/7.cfg"
         if [[ $((stts%2)) = 0 ]]; then

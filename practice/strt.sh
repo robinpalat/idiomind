@@ -113,7 +113,7 @@ if [[ $ret -eq 0 ]]; then
 elif [[ $ret -eq 3 ]]; then
     if [ -d "$DC_tlt/practice" ]; then
     cd "$DC_tlt/practice"; rm .*; rm *
-    touch ./log.1 ./log.2 ./log.3; fi
+    touch ./log1 ./log2 ./log3; fi
     "$DS/practice/strt.sh" & exit
 else
     cd "$DC_tlt/practice"
