@@ -279,7 +279,8 @@ edit_item() {
             rm "${DC_tlt}/6.cfg.tmp"; fi
             col=1; mod=1
             fi
-
+            
+            [ "${type}" != "${type_mod}" ] && mod=1
             [ "${srce}" != "${srce_mod}" ] && mod=1
             [ "${exmp}" != "${exmp_mod}" ] && mod=1
             [ "${defn}" != "${defn_mod}" ] && mod=1
@@ -293,13 +294,13 @@ edit_item() {
                     DT_r=$(mktemp -d "$DT/XXXX")
                     internet
                         
-                    if [ ${type} = 1 ]; then
+                    if [ ${type_mod} = 1 ]; then
                     srce_mod="$(clean_1 "$(translate "${trgt_mod}" $lgt $lgs)")"
                     audio="${trgt_mod,,}"
                     dictt "$audio" "$DT_r"
                     srce="$temp"
 
-                    elif [ ${type} = 2 ]; then
+                    elif [ ${type_mod} = 2 ]; then
                     srce_mod="$(clean_2 "$(translate "${trgt_mod}" $lgt $lgs)")"
                     source "$DS/default/dicts/$lgt"
                     sentence_p "$DT_r" 2
@@ -315,13 +316,14 @@ edit_item() {
 
                 if [ "${tpc}" != "${tpc_mod}" ]; then # TODO security
                     
+                    if [ ${type_mod} = 2 ]; then
                     if [ "${audio}" != "${audio_mod}" ]; then
                     cp -f "${audio_mod}" "$DM_tl/${tpc_mod}/$id_mod.mp3"
-                    else mv -f "${DM_tlt}/$id.mp3" "$DM_tl/${tpc_mod}/$id_mod.mp3"; fi
+                    else mv -f "${audio}" "$DM_tl/${tpc_mod}/$id_mod.mp3"; fi; fi
                     if [ -f "${DM_tlt}/images/$id.jpg" ]; then
                     mv -f "${DM_tlt}/images/$id.jpg" "$DM_tl/${tpc_mod}/images/$id_mod.jpg"; fi
                     "$DS/mngr.sh" delete_item_ok "${tpc}" "${trgt}"
-                    index ${type} "${tpc_mod}" "${trgt_mod}" "${srce_mod}" \
+                    index ${type_mod} "${tpc_mod}" "${trgt_mod}" "${srce_mod}" \
                     "${exmp_mod}" "${defn_mod}" "${wrds_mod}" "${grmr_mod}" "${id_mod}"
                     unset type trgt srce exmp defn note wrds grmr mark id
                     

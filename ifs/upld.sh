@@ -50,6 +50,7 @@ vsd() {
     exit
 } >/dev/null 2>&1
 
+
 infsd() {
 
     if [ -f "$HOME/.idiomind/backup/${2}.bk" ]; then
@@ -118,7 +119,7 @@ infsd() {
 
 function dwld() {
 
-	notify-send "$(gettext "Downloading...")"
+    notify-send "$(gettext "Downloading...")"
     idcfg="$DM_tl/${2}/.conf/id.cfg"
     link=$(grep -o 'ilink="[^"]*' "${idcfg}" |grep -o '[^"]*$')
     oname=$(grep -o 'oname="[^"]*' "${idcfg}" |grep -o '[^"]*$')
@@ -226,7 +227,6 @@ note=$(< "${DC_tlt}/info")
 imgm="${DM_tlt}/images/img.jpg"
 
 #"$DS/ifs/tls.sh" check_index "$tpc" # TODO ------------------------------------
-
 if [ $(cat "${DC_tlt}/0.cfg" | wc -l) -ge 20 ]; then
 btn="--button="$(gettext "Upload")":0"; else
 btn="--center"; fi
