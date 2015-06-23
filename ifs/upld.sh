@@ -118,6 +118,7 @@ infsd() {
 
 function dwld() {
 
+	notify-send "$(gettext "Downloading...")"
     idcfg="$DM_tl/${2}/.conf/id.cfg"
     link=$(grep -o 'ilink="[^"]*' "${idcfg}" |grep -o '[^"]*$')
     oname=$(grep -o 'oname="[^"]*' "${idcfg}" |grep -o '[^"]*$')
@@ -129,7 +130,6 @@ function dwld() {
     if ! wget -S --spider "$URL" 2>&1 | grep 'HTTP/1.1 200 OK'; then
         msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" info & exit; fi
     
-    notify-send "$(gettext "Downloading content...")"
     wget -q -c -T 50 -O "$DT/${oname}.tar.gz" "$URL"
 
     if [ -f "$DT/${oname}.tar.gz" ]; then
@@ -276,8 +276,8 @@ else
         --name=Idiomind --class=Idiomind \
         --window-icon="$DS/images/icon.png" --buttons-layout=end \
         --align=left --center --on-top \
-        --width=440 --height=400 --borders=12 \
-        --field="\n\n\n$info:lbl" "#1" \
+        --width=350 --height=240 --borders=12 \
+        --field="\n$info:lbl" "#1" \
         --field="$(gettext "Download"):BTN" "${cmd_dl}" \
         --button="$(gettext "PDF")":2 \
         --button="$(gettext "Close")":4)
@@ -293,7 +293,7 @@ else
         --name=Idiomind --class=Idiomind \
         --window-icon="$DS/images/icon.png" --buttons-layout=end \
         --align=left --center --on-top \
-        --width=450 --height=400 --borders=12 \
+        --width=420 --height=300 --borders=12 \
         --field="$(cat "$DC_tlt/11.cfg")\n:lbl" "#1" \
         --field="$(gettext "Subscribe"):CB" "$opt1!$opt2!$opt3" \
         --button="$(gettext "PDF")":2 \
