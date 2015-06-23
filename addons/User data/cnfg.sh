@@ -32,7 +32,6 @@ if [ -z "$1" ]; then
     --skip-taskbar --image=folder \
     --width=480 --height=330 --borders=15 \
     --button="$(gettext "Cancel")":1 \
-    --button="$(gettext "Restore")":"${cmd_rest}" \
     --button=Ok:0 \
     --column="" \
     --column=Options \

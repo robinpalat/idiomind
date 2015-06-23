@@ -242,7 +242,7 @@ new_sentence() {
 
         notify-send "${trgt}" "${srce}\\n(${tpe})" -t 10000
 
-        (if [ "$wlist" = TRUE ]; then
+        (if [ "$wlist" = TRUE ] && [ -n "${wrds}" ]; then
         "$DS/add.sh" list_words_sentence "${wrds}" "${trgt}" "${tpe}"
         fi) &
 

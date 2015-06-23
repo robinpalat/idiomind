@@ -38,8 +38,8 @@ cntct=\"\"" > "$DC_s/3.cfg"
 
 vsd() {
 
-    cd "$DM/backup"; ls -t *.idmnd | sed 's/\.idmnd//g' | \
-    yad --list --title="$(gettext "Your Shared Topics")" \
+    cd "$DM/backup"; ls -t *.bk | sed 's/\.bk//g' | \
+    yad --list --title="$(gettext "Backups")" \
     --name=Idiomind --class=Idiomind \
     --dclick-action="$DS/ifs/upld.sh 'infsd'" \
     --window-icon="$DS/images/icon.png" --center --on-top \
@@ -52,70 +52,67 @@ vsd() {
 
 infsd() {
 
-    file="$DM/backup/${2}.idmnd"
-    usrid="$(grep -o 'usrid="[^"]*' < "$DC_s/3.cfg" |grep -o '[^"]*$')"
-    language_source=$(grep -o 'langs="[^"]*' < "$file" |grep -o '[^"]*$')
-    language_target=$(grep -o 'langt="[^"]*' < "$file" |grep -o '[^"]*$')
-    category=$(grep -o 'ctgry="[^"]*' < "$file" |grep -o '[^"]*$')
-    link=$(grep -o 'ilink="[^"]*' < "$file" |grep -o '[^"]*$')
-    name=$(grep -o 'tname="[^"]*' < "$file" |grep -o '[^"]*$')
-    lng=$(lnglss "$language_source")
-    lnglbl="${language_target,,}"
+    if [ -f "$HOME/.idiomind/backup/${2}.bk" ]; then
     
-    cd "$HOME"
-    sleep 0.5
-    sv=$(yad --file --save --title="$(gettext "Download")" \
-    --filename="${2}.idmnd" \
-    --window-icon="$DS/images/icon.png" --skip-taskbar --center --on-top \
-    --width=600 --height=500 --borders=10 \
-    --button="$(gettext "Cancel")":1 --button="gtk-save":0)
-    ret=$?
-    
-    if [[ $ret -eq 0 ]]; then
-        
-        internet; cd "$DT"
-        DOWNLOADS="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP | \
-        grep -o 'DOWNLOADS="[^"]*' | grep -o '[^"]*$')"
-        file="$DOWNLOADS/${lng}/${lnglbl}/${category}/${link}.${name}.idmnd"
-        [ -z "$DOWNLOADS" ] && msg "$(gettext "The server is not available at the moment.")" dialog-warning && exit
-        
-        WGET() {
-        rand="$RANDOM `date`"
-        pipe="/tmp/pipe.$(echo '$rand' | md5sum | tr -d ' -')"
-        mkfifo "$pipe"
-        wget -c "$1" 2>&1 | while read data;do
-        if [ "`echo $data | grep '^Length:'`" ]; then
-        total_size=$(echo $data | grep "^Length:" | sed 's/.*\((.*)\).*/\1/' | tr -d '()')
-        fi
-        if [ "$(echo $data | grep '[0-9]*%' )" ];then
-        percent=$(echo $data | grep -o "[0-9]*%" | tr -d '%')
-        echo "$percent"
-        echo "# $(gettext "Downloading...")  $percent%"
-        fi
-        done > "$pipe" &
-        wget_info=$(ps ax |grep "wget.*$1" |awk '{print $1"|"$2}')
-        wget_pid=$(echo $wget_info | cut -d'|' -f1)
-        yad --progress --title="$(gettext "Downloading")" \
-        --progress-text=" " --auto-close \
+        #[ -f "$DM/backup/${2}.idmnd" ] && \
+        #btn="--button="$(gettext "Download")":2"
+        yad --title="$(gettext "Confirm")" \
+        --text="$(gettext "Confirm")\t\n" \
+        --image=dialog-question \
+        --name=Idiomind --class=Idiomind \
+        --always-print-result \
         --window-icon="$DS/images/icon.png" \
-        --skip-taskbar --no-buttons --on-top --fixed \
-        --width=200 --height=50 --borders=4 --geometry=240x20-4-4 < "$pipe"
-
-        if [ "$(ps -A |grep "$wget_pid")" ];then
-        kill "$wget_pid"
-        fi
-        rm -f "$pipe"
-        }
-        WGET "${file}"
+        --image-on-top --on-top --sticky --center \
+        --width=340 --height=100 --borders=5 \
+        --button="$(gettext "Cancel")":1 "$btn" \
+        --button="$(gettext "Restore")":0
+        ret="$?"
         
-        if [ -f "$DT/$link.${name}.idmnd" ] ; then
-        [ -f "$sv" ] && rm "$sv"
-        mv -f "$DT/$link.${name}.idmnd" "$sv"
-        else
-        msg "$(gettext "The file is not yet available for download from the server.")\n" info & exit
+        if [[ $ret -eq 0 ]]; then
+        cp -f "$HOME/.idiomind/backup/${2}.bk" "${DM_tl}/${2}/.conf/0.cfg"
+        
+        elif [[ $ret -eq 2 ]]; then
+        file="$DM/backup/${2}.idmnd"
+        usrid="$(grep -o 'usrid="[^"]*' < "$DC_s/3.cfg" |grep -o '[^"]*$')"
+        language_source=$(grep -o 'langs="[^"]*' < "$file" |grep -o '[^"]*$')
+        language_target=$(grep -o 'langt="[^"]*' < "$file" |grep -o '[^"]*$')
+        category=$(grep -o 'ctgry="[^"]*' < "$file" |grep -o '[^"]*$')
+        link=$(grep -o 'ilink="[^"]*' < "$file" |grep -o '[^"]*$')
+        name=$(grep -o 'tname="[^"]*' < "$file" |grep -o '[^"]*$')
+        lng=$(lnglss "$language_source")
+        lnglbl="${language_target,,}"
+        
+        cd "$HOME"
+        sleep 0.5
+        sv=$(yad --file --save --title="$(gettext "Download")" \
+        --filename="${2}.idmnd" \
+        --window-icon="$DS/images/icon.png" --skip-taskbar --center --on-top \
+        --width=600 --height=500 --borders=10 \
+        --button="$(gettext "Cancel")":1 --button="gtk-save":0)
+        ret=$?
+        
+            if [[ $ret -eq 0 ]]; then
+            internet; cd "$DT"
+            DOWNLOADS="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP | \
+            grep -o 'DOWNLOADS="[^"]*' | grep -o '[^"]*$')"
+            file="$DOWNLOADS/${lng}/${lnglbl}/${category}/${link}.${name}.idmnd"
+            [ -z "$DOWNLOADS" ] && msg "$(gettext "The server is not available at the moment.")" dialog-warning && exit
+            
+            wget -q -c -T 50 -O "$DT/$link.${name}.idmnd" "${file}"
+            
+            if [ -f "$DT/$link.${name}.idmnd" ] ; then
+            [ -f "$sv" ] && rm "$sv"
+            mv -f "$DT/$link.${name}.idmnd" "$sv"
+            else
+            msg "$(gettext "The file is not yet available for download from the server.")\n" info & exit
+            fi
+            fi
         fi
+        exit
+    
+    else
+        msg "$(gettext "Backup not found")\n" dialog-warning
     fi
-    exit
 }
 
 
@@ -139,14 +136,29 @@ function dwld() {
         cd "$DT"/
         tar -xzvf "$DT/${oname}.tar.gz"
         
-        if [ -d "$DT/${oname}" ]; then 
+        if [ -d "$DT/${oname}" ]; then
+        
             tmp="$DT/${oname}"
-            cp -f "${tmp}/conf/info" "$DC_tlt/info"
-            cp -n "$tmp/share"/*.mp3 "$DM_t/$langt/.share"/
+            total=$(find "$tmp" -maxdepth 5 -type f | wc -l)
+            audio=$(find "$tmp" -maxdepth 5 -name '*.mp3' | wc -l)
+            images=$(find "$tmp" -maxdepth 5 -name '*.jpg' | wc -l)
+            hfiles="$(cd "$tmp"; ls -d ./.[^.]* | less | wc -l)"
+            exfiles="$(find "$tmp" -maxdepth 5 -perm -111 -type f | wc -l)"
+            atfiles=$(find "$tmp/files" -maxdepth 5 -name | wc -l)
+            others=$((wchfiles+wcexfiles))
+            mv -f "${tmp}/conf/info" "$DC_tlt/info"
+            mv -n "$tmp/share"/*.mp3 "$DM_t/$langt/.share"/
             rm -fr "$tmp/share" "${tmp}/conf"
-            cp -fr "${tmp}"/* "${DM_tlt}"/
+            mv -f "${tmp}"/* "${DM_tlt}"/
             echo "${oname}" >> "$DM_tl/.3.cfg"
             rm -fr "${tmp}" "$DT/${oname}.tar.gz"
+echo -e ""$(gettext "Latest downloads")"
+$(gettext "Total"): $total
+$(gettext "Audio files"): $audio
+$(gettext "Images"): $images
+$(gettext "Aditional files"): $atfiles
+$(gettext "Others files"): $others
+" > "$DC_tlt/11.cfg"
         
         else
             msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" info & exit
@@ -155,7 +167,6 @@ function dwld() {
         msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" info & exit
     fi
     exit
-    
 }
 
 
@@ -255,20 +266,41 @@ if ! grep -Fxq "${tpc}" "$DM_tl/.3.cfg"; then
     fi
     
 else
-    cmd_dl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
-    upld=$(yad --form --title="$(gettext "Share")" \
-    --text="<span font_desc='Free Sans Bold 10' color='#5A5A5A'>${tpc}</span>" \
-    --name=Idiomind --class=Idiomind \
-    --window-icon="$DS/images/icon.png" --buttons-layout=end \
-    --align=right --center --on-top \
-    --width=380 --height=300 --borders=12 \
-    --field="\n\n\n\n\n:lbl" "#1" \
-    --field="$(gettext "Download content"):FBTN" "${cmd_dl}" \
-    --field="$(gettext "Image 600x150px"):FL" "${imgm}" \
-    --button="$(gettext "PDF")":2 \
-    --button="$(gettext "Close")":4)
-    ret=$?
- 
+    if [ -f "$DC_tlt/11.cfg" ]; then
+    
+        if [ -z "$(< "$DC_tlt/11.cfg")" ]; then
+        cmd_dl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
+        info="$(gettext "Additional content available")"
+        upld=$(yad --form --title="$(gettext "Share")" \
+        --text="<span font_desc='Free Sans Bold 10' color='#5A5A5A'>${tpc}</span>" \
+        --name=Idiomind --class=Idiomind \
+        --window-icon="$DS/images/icon.png" --buttons-layout=end \
+        --align=left --center --on-top \
+        --width=440 --height=400 --borders=12 \
+        --field="\n\n\n$info:lbl" "#1" \
+        --field="$(gettext "Download"):BTN" "${cmd_dl}" \
+        --button="$(gettext "PDF")":2 \
+        --button="$(gettext "Close")":4)
+        ret=$?
+        
+        elif [ -n "$(< "$DC_tlt/11.cfg")" ]; then
+        opt1="$(gettext "Not do anything")"
+        opt2="$(gettext "Notify me of updates")"
+        opt3="$(gettext "Automatically download")"
+
+        upld=$(yad --form --title="$(gettext "Share")" \
+        --text="<span font_desc='Free Sans Bold 10' color='#5A5A5A'>${tpc}</span>" \
+        --name=Idiomind --class=Idiomind \
+        --window-icon="$DS/images/icon.png" --buttons-layout=end \
+        --align=left --center --on-top \
+        --width=450 --height=400 --borders=12 \
+        --field="$(cat "$DC_tlt/11.cfg")\n:lbl" "#1" \
+        --field="$(gettext "Subscribe"):CB" "$opt1!$opt2!$opt3" \
+        --button="$(gettext "PDF")":2 \
+        --button="$(gettext "Close")":4)
+        ret=$?
+        fi
+    fi
 fi
 
 if [[ $ret = 2 ]]; then

@@ -123,7 +123,7 @@ yad --plug=$KEY --form --tabnum=1 \
 --field="$(gettext "Help")":BTN "$DS/ifs/tls.sh help" \
 --field="$(gettext "Feedback")":BTN "$DS/ifs/tls.sh 'fback'" \
 --field="$(gettext "Check for Updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
---field="$(gettext "Your Shared Topics")":BTN "$DS/ifs/upld.sh 'vsd'" \
+--field="$(gettext "Backups")":BTN "$DS/ifs/upld.sh 'vsd'" \
 --field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" > "$cnf1" &
 cat "$DC_s/2.cfg" | yad --plug=$KEY --tabnum=2 --list \
 --text="<sub>  $(gettext "Double click to set") </sub>" \
