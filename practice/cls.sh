@@ -44,30 +44,9 @@ if [[ "$1" = restart ]]; then
 
 elif [[ $1 = comp ]]; then
 
-    if [ -f ./"${2}.2" ]; then
-    awk '!a[$0]++' ./"${2}.2" > ./"${2}2.tmp"
-    else > ./"${2}2.tmp"; fi
-    
-    if [ -f ./"${2}.3" ]; then
-    awk '!a[$0]++' ./"${2}.3" > ./"${2}3.tmp"
-    else > ./"${2}3.tmp"; fi
-    
-    grep -Fxvf ./"${2}3.tmp" ./"${2}2.tmp" > ./"${2}.2"
-    mv -f ./"${2}3.tmp" ./"${2}.3"
-    
-    awk '++A["$1"]==3' a.1 > ./log1
-    awk '++A["$1"]==2' < <(cat *.2) > ./log2
-    awk '++A["$1"]==2' < <(cat *.3) > ./log3
-    
-    #if [ -f ./"${2}.1" ]; then
-    #n=`awk '++A[$1]==1' ./"${2}.1"`
-    #echo "$n" >> log1; fi
-    #if [ -f ./"${2}.2" ]; then
-    #n=`awk '++A[$1]==1' ./"${2}.2"`
-    #echo "$n" >> log2; fi
-    #if [ -f ./"${2}.3" ]; then
-    #n=`awk '++A[$1]==1' ./"${2}.3"`
-    #echo "$n" >> log3; fi
+    awk '++A[$1]==3' *.1 | head -n20 > ./log1
+    awk '++A[$1]==2' *.2 | head -n20 > ./log2
+    awk '++A[$1]==2' *.3 | head -n20 > ./log3
     
     if [ -n "$3" ]; then
     

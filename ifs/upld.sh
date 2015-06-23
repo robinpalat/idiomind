@@ -119,6 +119,32 @@ infsd() {
 }
 
 
+function dwld() {
+    
+    idcfg="$DM_tl/${1}/.conf/id.cfg"
+    link=$(grep -o 'ilink="[^"]*' < "${idcfg}" |grep -o '[^"]*$')
+    name=$(grep -o 'tname="[^"]*' < "${idcfg}" |grep -o '[^"]*$')
+    langs=$(grep -o 'langs="[^"]*' < "${idcfg}" |grep -o '[^"]*$')
+    langt=$(grep -o 'langt="[^"]*' < "${idcfg}" |grep -o '[^"]*$')
+    lgs=$(lnglss $langs)
+    url="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
+    | grep -o 'DOWNLOADS="[^"]*' | grep -o '[^"]*$')"
+    wget -q -c -T 51 -O  "$url/$lgs/${lgtl,,}/$link.$name.tar.gz"
+    
+    if [ "$DT/$name.tar.gz" ]; then
+    
+   
+   
+    
+    
+    
+    
+}
+
+
+
+
+
 function upld() {
 
 if [ `wc -l < "${DC_tlt}/0.cfg"` -lt 2 ]; then
@@ -180,36 +206,58 @@ if [ $(cat "${DC_tlt}/0.cfg" | wc -l) -ge 20 ]; then
 btn="--button="$(gettext "Upload")":0"; else
 btn="--center"; fi
 
-cd "$HOME"
-upld=$(yad --form --title="$(gettext "Share")" \
---text="<span font_desc='Free Sans Bold 10' color='#5A5A5A'>${tpc}</span>" \
---name=Idiomind --class=Idiomind \
---window-icon="$DS/images/icon.png" --buttons-layout=end \
---align=right --center --on-top \
---width=480 --height=460 --borders=12 \
---field=" :lbl" "#1" \
---field="$(gettext "Author")" "$iuser" \
---field="\t$(gettext "Contact (Optional)")" "$cntct" \
---field="$(gettext "Category"):CBE" \
-"!$others!$article!$comics!$culture!$documentary!$entertainment!$funny!$family!$grammar!$history!$movies!$in_the_city!$interview!$internet!$music!$nature!$news!$office!$relations!$sport!$science!$shopping!$social_networks!$technology!$travel" \
---field="$(gettext "Skill Level"):CB" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
---field="\n$(gettext "Description/Notes"):TXT" "${note}" \
---field="$(gettext "Image 600x150px"):FL" "${imgm}" \
---button="$(gettext "Cancel")":4 \
---button="$(gettext "PDF")":2 "$btn")
-ret=$?
 
-img=$(echo "${upld}" | cut -d "|" -f7)
-if [ -f "${img}" ] && [ "${img}" != "${imgm}" ]; then
-wsize="$(identify "${img}" | cut -d ' ' -f 3 | cut -d 'x' -f 1)"
-esize="$(identify "${img}" | cut -d ' ' -f 3 | cut -d 'x' -f 2)"
-if [ "$wsize" -gt 1000 ] || [ "$wsize" -lt 600 ] \
-|| [ "$esize" -lt 100 ] || [ "$esize" -gt 400 ]; then
-msg "$(gettext "Sorry, the image size is not suitable.")\n " info "$(gettext "Error")"
-"$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
-/usr/bin/convert "${img}" -interlace Plane -thumbnail 600x150^ \
--gravity center -extent 600x150 \
--quality 100% "${DM_tlt}/images/img.jpg"
+cd "$HOME"
+
+if grep -Fxq "${tpc}" "$DM_tl/.3.cfg"; then
+
+    #upld=$(yad --form --title="$(gettext "Share")" \
+    #--text="<span font_desc='Free Sans Bold 10' color='#5A5A5A'>${tpc}</span>" \
+    #--name=Idiomind --class=Idiomind \
+    #--window-icon="$DS/images/icon.png" --buttons-layout=end \
+    #--align=right --center --on-top \
+    #--width=480 --height=460 --borders=12 \
+    #--field=" :lbl" "#1" \
+    #--field="$(gettext "Author")" "$iuser" \
+    #--field="\t$(gettext "Contact (Optional)")" "$cntct" \
+    #--field="$(gettext "Category"):CBE" \
+    #"!$others!$article!$comics!$culture!$documentary!$entertainment!$funny!$family!$grammar!$history!$movies!$in_the_city!$interview!$internet!$music!$nature!$news!$office!$relations!$sport!$science!$shopping!$social_networks!$technology!$travel" \
+    #--field="$(gettext "Skill Level"):CB" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
+    #--field="\n$(gettext "Description/Notes"):TXT" "${note}" \
+    #--field="$(gettext "Image 600x150px"):FL" "${imgm}" \
+    #--button="$(gettext "Cancel")":4 \
+    #--button="$(gettext "PDF")":2 "$btn")
+    #ret=$?
+
+    #img=$(echo "${upld}" | cut -d "|" -f7)
+    #if [ -f "${img}" ] && [ "${img}" != "${imgm}" ]; then
+    #wsize="$(identify "${img}" | cut -d ' ' -f 3 | cut -d 'x' -f 1)"
+    #esize="$(identify "${img}" | cut -d ' ' -f 3 | cut -d 'x' -f 2)"
+    #if [ "$wsize" -gt 1000 ] || [ "$wsize" -lt 600 ] \
+    #|| [ "$esize" -lt 100 ] || [ "$esize" -gt 400 ]; then
+    #msg "$(gettext "Sorry, the image size is not suitable.")\n " info "$(gettext "Error")"
+    #"$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
+    #/usr/bin/convert "${img}" -interlace Plane -thumbnail 600x150^ \
+    #-gravity center -extent 600x150 \
+    #-quality 100% "${DM_tlt}/images/img.jpg"
+    #fi
+    echo
+else
+
+    cmd_dl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
+    upld=$(yad --form --title="$(gettext "Share")" \
+    --text="<span font_desc='Free Sans Bold 10' color='#5A5A5A'>${tpc}</span>" \
+    --name=Idiomind --class=Idiomind \
+    --window-icon="$DS/images/icon.png" --buttons-layout=end \
+    --align=right --center --on-top \
+    --width=380 --height=300 --borders=12 \
+    --field="\n\n\n\n\n:lbl" "#1" \
+    --field="$(gettext "Download content"):FBTN" $cmd_dl \
+    --field="$(gettext "Image 600x150px"):FL" "${imgm}" \
+    --button="$(gettext "PDF")":2 \
+    --button="$(gettext "Cancel")":4)
+    ret=$?
+ 
 fi
 
 if [[ $ret = 2 ]]; then
