@@ -351,6 +351,8 @@ iuser_m=$(echo "${upld}" | cut -d "|" -f2)
 cntct_m=$(echo "${upld}" | cut -d "|" -f3)
 notes_m=$(echo "${upld}" | cut -d "|" -f6)
 
+yad --text="$cntct_m"
+
 if [ -z "${Ctgry}" ]; then
 msg "$(gettext "Please select a category.")\n " info
 "$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi

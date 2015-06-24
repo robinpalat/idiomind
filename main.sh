@@ -142,7 +142,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     "$(gettext "Advanced")" )
     level="${l[${level}]}"
 
-    itxt="<span font_desc='Free Sans 14'>$tname</span><small>\n ${langs^}-$langt $nword $(gettext "Words") $nsent $(gettext "Sentences") $nimag $(gettext "Images")\n $(gettext "Level:") $level\n</small>"
+    itxt="<span font_desc='Free Sans 14'>$tname</span><small>\n $nword $(gettext "Words") $nsent $(gettext "Sentences") $nimag $(gettext "Images")\n ${langs^}-$langt  $(gettext "Level:") $level</small>"
     dclk="'$DS/default/vwr_tmp.sh' '$file'"
     
     sett() {
@@ -155,14 +155,14 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     }
 
     sett | yad --list --title="Idiomind" \
-    --text="$itxt" \
+    --text="$itxt" --image=info \
     --name=Idiomind --class=Idiomind \
     --print-all --dclick-action="$dclk" \
     --window-icon="$DS/images/icon.png" \
-    --no-headers --ellipsize=END --fixed \
+    --image-on-top --ellipsize=END --fixed \
     --scroll --center --tooltip-column=1 \
     --width=650 --height=580 --borders=10 \
-    --column=Items \
+    --column="" \
     --button="$(gettext "Install")":0 \
     --button="$(gettext "Close")":1
     ret=$?
