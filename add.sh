@@ -119,7 +119,7 @@ Create one using the button below. ")" & exit 1; fi
             "$DS/ifs/tls.sh" add_audio "$DT_r"
             "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
         
-        elif [[ $ret -eq 0 ]] || [ "$3" != 3 ]; then
+        elif [[ $ret -eq 0 ]]; then
 
             if [ "$3" = 2 ]; then
             [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")

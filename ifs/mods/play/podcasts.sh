@@ -9,32 +9,33 @@ get_itep() {
     "$DS/stop.sh" 2; fi
         
     fname=$(echo -n "${item}" | md5sum | rev | cut -c 4- | rev)
-    item="$DM_tl/Podcasts/cache/$fname"
+    item="$DM_tl/Podcasts/cache/$fname.item"
     
-    if [ -f "${item}.item" ]; then
+    if [ -f "${item}" ]; then
     
-        channel="$(grep -o channel=\"[^\"]* < "${item}.item" | grep -o '[^"]*$')"
-        title="$(grep -o title=\"[^\"]* < "${item}.item" | grep -o '[^"]*$')"
-        [ -f "$item.mp3" ] && file="$item.mp3" && t=3
-        [ -f "$item.ogg" ] && file="$item.ogg" && t=3
-        [ -f "$item.m4v" ] && file="$item.m4v" && t=4
-        [ -f "$item.mp4" ] && file="$item.mp4" && t=4
-        [ -f "$item.avi" ] && file="$item.avi" && t=4
+        channel="$(grep -o channel=\"[^\"]* < "${item}" | grep -o '[^"]*$')"
+        title="$(grep -o title=\"[^\"]* < "${item}" | grep -o '[^"]*$')"
+        [ -f "$DMC/$fname.mp3" ] && file="$DMC/$fname.mp3" && t=3
+        [ -f "$DMC/$fname.ogg" ] && file="$DMC/$fname.ogg" && t=3
+        [ -f "$DMC/$fname.m4v" ] && file="$DMC/$fname.m4v" && t=4
+        [ -f "$DMC/$fname.mp4" ] && file="$DMC/$fname.mp4" && t=4
+        [ -f "$DMC/$fname.avi" ] && file="$DMC/$fname.avi" && t=4
         
-        if [[ "$t" = 3 ]]; then
+        if [[ $t = 3 ]]; then
         e_file "${file}"
         trgt="${title}"
         srce="${channel}"
         play=play
         icon=idiomind
         
-        elif [[ "$t" = 4 ]]; then
+        elif [[ $t = 4 ]]; then
         e_file "$file"
         trgt="${title}"
         srce="${channel}"
         play=mplayer
         icon=idiomind
-        fi
+        else ((f=f+1)); fi
+        
     else ((f=f+1)); fi
 }
 

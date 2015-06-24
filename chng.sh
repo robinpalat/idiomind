@@ -38,6 +38,7 @@ if [[ "$1" = chngi ]]; then
         a="$(grep -oP '(?<=audio=\").*(?=\")' "$DC_s/1.cfg")"
         n="$(grep -oP '(?<=ntosd=\").*(?=\")' "$DC_s/1.cfg")"
         l="$(grep -oP '(?<=loop=\").*(?=\")' "$DC_s/1.cfg")"
+        
         if [[ ${n} != TRUE ]] && [[ ${a} != TRUE ]]; then audio=TRUE; fi
         nu='^[0-9]+$'; if ! [[ $l =~ $nu ]]; then l=1; fi
         
