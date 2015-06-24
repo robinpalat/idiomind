@@ -139,27 +139,25 @@ function dwld() {
         
         if [ -d "$DT/${oname}" ]; then
         
-            tmp="$DT/${oname}"
-            total=$(find "$tmp" -maxdepth 5 -type f | wc -l)
-            audio=$(find "$tmp" -maxdepth 5 -name '*.mp3' | wc -l)
-            images=$(find "$tmp" -maxdepth 5 -name '*.jpg' | wc -l)
-            hfiles="$(cd "$tmp"; ls -d ./.[^.]* | less | wc -l)"
-            exfiles="$(find "$tmp" -maxdepth 5 -perm -111 -type f | wc -l)"
-            atfiles=$(find "$tmp/files" -maxdepth 5 -name | wc -l)
-            others=$((wchfiles+wcexfiles))
-            mv -f "${tmp}/conf/info" "$DC_tlt/info"
-            mv -n "$tmp/share"/*.mp3 "$DM_t/$langt/.share"/
-            rm -fr "$tmp/share" "${tmp}/conf"
-            mv -f "${tmp}"/* "${DM_tlt}"/
-            echo "${oname}" >> "$DM_tl/.3.cfg"
-            rm -fr "${tmp}" "$DT/${oname}.tar.gz"
-echo -e ""$(gettext "Latest downloads")"
-$(gettext "Total"): $total
+        tmp="$DT/${oname}"
+        total=$(find "$tmp" -maxdepth 5 -type f | wc -l)
+        audio=$(find "$tmp" -maxdepth 5 -name '*.mp3' | wc -l)
+        images=$(find "$tmp" -maxdepth 5 -name '*.jpg' | wc -l)
+        hfiles="$(cd "$tmp"; ls -d ./.[^.]* | less | wc -l)"
+        exfiles="$(find "$tmp" -maxdepth 5 -perm -111 -type f | wc -l)"
+        atfiles=$(find "$tmp/files" -maxdepth 5 -name | wc -l)
+        others=$((wchfiles+wcexfiles))
+        mv -f "${tmp}/conf/info" "$DC_tlt/info"
+        mv -n "$tmp/share"/*.mp3 "$DM_t/$langt/.share"/
+        rm -fr "$tmp/share" "${tmp}/conf"
+        mv -f "${tmp}"/* "${DM_tlt}"/
+        echo "${oname}" >> "$DM_tl/.3.cfg"
+        rm -fr "${tmp}" "$DT/${oname}.tar.gz"
+echo -e "$(gettext "Total"): $total
 $(gettext "Audio files"): $audio
 $(gettext "Images"): $images
 $(gettext "Aditional files"): $atfiles
-$(gettext "Others files"): $others
-" > "$DC_tlt/11.cfg"
+$(gettext "Others"): $others" > "${DC_tlt}/11.cfg"
         
         else
             msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" info & exit
@@ -272,13 +270,16 @@ else
         cmd_dl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
         info="$(gettext "Additional content available")"
         upld=$(yad --form --title="$(gettext "Share")" \
+        --columns=2 \
         --text="<span font_desc='Free Sans Bold 10' color='#5A5A5A'>${tpc}</span>" \
         --name=Idiomind --class=Idiomind \
         --window-icon="$DS/images/icon.png" --buttons-layout=end \
         --align=left --center --on-top \
-        --width=350 --height=240 --borders=12 \
-        --field="\n$info:lbl" "#1" \
+        --width=480 --height=460 --borders=12 \
+        --field="\n\n\n$info:lbl" "#1" \
         --field="$(gettext "Download"):BTN" "${cmd_dl}" \
+        --field=" \t\t\t\t\t\t\t\t\t:lbl" "#1" \
+        --field=" :lbl" "#1" \
         --button="$(gettext "PDF")":2 \
         --button="$(gettext "Close")":4)
         ret=$?
@@ -289,12 +290,14 @@ else
         opt3="$(gettext "Automatically download")"
 
         upld=$(yad --form --title="$(gettext "Share")" \
-        --text="<span font_desc='Free Sans Bold 10' color='#5A5A5A'>${tpc}</span>" \
+        --columns=2 \
+        --text="<span font_desc='Free Sans Bold 10'> ${tpc}</span>" \
         --name=Idiomind --class=Idiomind \
         --window-icon="$DS/images/icon.png" --buttons-layout=end \
         --align=left --center --on-top \
-        --width=420 --height=300 --borders=12 \
-        --field="$(cat "$DC_tlt/11.cfg")\n:lbl" "#1" \
+        --width=480 --height=460 --borders=12 \
+        --field="\n<b>$(gettext "Latest download")</b>\n$(cat "$DC_tlt/11.cfg"):lbl" "#1" \
+        --field=" :lbl" "#1" \
         --field="$(gettext "Subscribe"):CB" "$opt1!$opt2!$opt3" \
         --button="$(gettext "PDF")":2 \
         --button="$(gettext "Close")":4)
