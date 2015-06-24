@@ -150,7 +150,11 @@ function dwld() {
         mv -f "${tmp}/conf/info" "$DC_tlt/info"
         mv -n "$tmp/share"/*.mp3 "$DM_t/$langt/.share"/
         rm -fr "$tmp/share" "${tmp}/conf"
-        mv -f "${tmp}"/* "${DM_tlt}"/
+        mv -f "${tmp}"/*.mp3 "${DM_tlt}"/
+        [ ! -f "${DM_tlt}/images" ] && mkdir "${DM_tlt}/images"
+        mv -f "${tmp}"/images/*.jpg "${DM_tlt}"/images/
+        [ ! -f "${DM_tlt}/files" ] && mkdir "${DM_tlt}/files"
+        mv -f "${tmp}"/files/* "${DM_tlt}"/files/
         echo "${oname}" >> "$DM_tl/.3.cfg"
         rm -fr "${tmp}" "$DT/${oname}.tar.gz"
 echo -e "$(gettext "Total"): $total
@@ -230,10 +234,52 @@ btn="--button="$(gettext "Upload")":0"; else
 btn="--center"; fi
 cd "$HOME"
 
-if ! grep -Fxq "${tpc}" "$DM_tl/.3.cfg"; then
+if grep -Fxq "${tpc}" "$DM_tl/.3.cfg"; then
 
+	if [ -f "$DC_tlt/11.cfg" ]; then
+    
+        if [ -z "$(< "$DC_tlt/11.cfg")" ]; then
+        cmd_dl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
+        info="$(gettext "Additional content available")"
+        upld=$(yad --form --title="$(gettext "Share")" \
+        --columns=2 \
+        --text="<span font_desc='Free Sans 15'> ${tpc}</span>" \
+        --name=Idiomind --class=Idiomind \
+        --window-icon="$DS/images/icon.png" --buttons-layout=end \
+        --align=left --center --on-top \
+        --width=480 --height=460 --borders=12 \
+        --field="\n\n\n$info:lbl" "#1" \
+        --field="$(gettext "Download"):BTN" "${cmd_dl}" \
+        --field=" \t\t\t\t\t\t\t\t\t:lbl" "#1" \
+        --field=" :lbl" "#1" \
+        --button="$(gettext "PDF")":2 \
+        --button="$(gettext "Close")":4)
+        ret=$?
+        
+        elif [ -n "$(< "$DC_tlt/11.cfg")" ]; then
+        opt1="$(gettext "Not do anything")"
+        opt2="$(gettext "Notify me of updates")"
+        opt3="$(gettext "Automatically download")"
+
+        upld=$(yad --form --title="$(gettext "Share")" \
+        --columns=2 \
+        --text="<span font_desc='Free Sans 15'> ${tpc}</span>" \
+        --name=Idiomind --class=Idiomind \
+        --window-icon="$DS/images/icon.png" --buttons-layout=end \
+        --align=left --center --on-top \
+        --width=480 --height=460 --borders=12 \
+        --field="\n<u>$(gettext "Latest Download")</u>\n$(cat "$DC_tlt/11.cfg"):lbl" "#1" \
+        --field=" :lbl" "#1" \
+        --field="$(gettext "Subscribe"):CB" "$opt1!$opt2!$opt3" \
+        --button="$(gettext "PDF")":2 \
+        --button="$(gettext "Close")":4)
+        ret=$?
+        fi
+    fi
+    
+else
     upld=$(yad --form --title="$(gettext "Share")" \
-    --text="<span font_desc='Free Sans Bold 10' color='#5A5A5A'>${tpc}</span>" \
+    --text="<span font_desc='Free Sans 14'>${tpc}</span>" \
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" --buttons-layout=end \
     --align=right --center --on-top \
@@ -261,48 +307,6 @@ if ! grep -Fxq "${tpc}" "$DM_tl/.3.cfg"; then
     /usr/bin/convert "${img}" -interlace Plane -thumbnail 600x150^ \
     -gravity center -extent 600x150 \
     -quality 100% "${DM_tlt}/images/img.jpg"
-    fi
-    
-else
-    if [ -f "$DC_tlt/11.cfg" ]; then
-    
-        if [ -z "$(< "$DC_tlt/11.cfg")" ]; then
-        cmd_dl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
-        info="$(gettext "Additional content available")"
-        upld=$(yad --form --title="$(gettext "Share")" \
-        --columns=2 \
-        --text="<span font_desc='Free Sans Bold 10' color='#5A5A5A'>${tpc}</span>" \
-        --name=Idiomind --class=Idiomind \
-        --window-icon="$DS/images/icon.png" --buttons-layout=end \
-        --align=left --center --on-top \
-        --width=480 --height=460 --borders=12 \
-        --field="\n\n\n$info:lbl" "#1" \
-        --field="$(gettext "Download"):BTN" "${cmd_dl}" \
-        --field=" \t\t\t\t\t\t\t\t\t:lbl" "#1" \
-        --field=" :lbl" "#1" \
-        --button="$(gettext "PDF")":2 \
-        --button="$(gettext "Close")":4)
-        ret=$?
-        
-        elif [ -n "$(< "$DC_tlt/11.cfg")" ]; then
-        opt1="$(gettext "Not do anything")"
-        opt2="$(gettext "Notify me of updates")"
-        opt3="$(gettext "Automatically download")"
-
-        upld=$(yad --form --title="$(gettext "Share")" \
-        --columns=2 \
-        --text="<span font_desc='Free Sans Bold 10'> ${tpc}</span>" \
-        --name=Idiomind --class=Idiomind \
-        --window-icon="$DS/images/icon.png" --buttons-layout=end \
-        --align=left --center --on-top \
-        --width=480 --height=460 --borders=12 \
-        --field="\n<b>$(gettext "Latest download")</b>\n$(cat "$DC_tlt/11.cfg"):lbl" "#1" \
-        --field=" :lbl" "#1" \
-        --field="$(gettext "Subscribe"):CB" "$opt1!$opt2!$opt3" \
-        --button="$(gettext "PDF")":2 \
-        --button="$(gettext "Close")":4)
-        ret=$?
-        fi
     fi
 fi
 
