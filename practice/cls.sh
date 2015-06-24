@@ -47,6 +47,8 @@ elif [[ $1 = comp ]]; then
     awk '{a[$0]++}END{for(i in a){if(a[i]==3)print i}}' *.1 > ./log1
     awk '{a[$0]++}END{for(i in a){if(a[i]==2)print i}}' *.2 > ./log2
     awk '{a[$0]++}END{for(i in a){if(a[i]==2)print i}}' *.3 > ./log3
+    
+    #sort ./textfile | uniq -c | awk '$1 == 3 {$1 = ""; print}' > ./log
 
     if [ -n "$3" ]; then
     
