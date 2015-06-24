@@ -54,7 +54,7 @@ sets=( 'v' 'tname' \
 'langs' 'langt' \
 'authr' 'cntct' 'ctgry' 'ilink' 'oname' \
 'datec' 'dateu' 'datei' \
-'nword' 'nsent' 'nimag' \
+'nword' 'nsent' 'nimag' 'naudi' 'nsize' \
 'level' 'set_1' 'set_2' )
 
 LANGUAGES="English
@@ -78,40 +78,46 @@ Vietnamese"
     }
     
     [ ! -f "${file}" ] && invalid
-    n=0; exit=0
+    shopt -s extglob; n=0; exit=0
     while read -r line; do
     
         if [ -z "$line" ]; then continue; fi
         get="${sets[$n]}"
         val=$(echo "${line}" |grep -o "$get"=\"[^\"]* |grep -o '[^"]*$')
-        if [[ $n = 1 ]]; then
-        if [ -z "${val}" ] || [ ${#val} -gt 60 ] || \
-        [ `grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${val}"` ]; then invalid 2; fi
-        elif [[ $n = 2 || $n = 3 ]]; then
-        if ! grep -Fox "${val}" <<<"${LANGUAGES}"; then invalid 3; fi
-        elif [[ $n = 4 || $n = 5 ]]; then
-        if [ ${#val} -gt 30 ] || \
-        [ `grep -o -E '\*|\/|$|\)|\(|=' <<<"${val}"` ]; then invalid 4; fi
-        elif [[ $n = 6 ]]; then
-        if ! grep -Fox "${val}" <<<"${CATEGORIES}"; then invalid 5; fi
-        elif [[ $n = 7 ]]; then
-        if [ ${#val} -gt 8 ]; then invalid 6; fi
-        if [ -z "${val}" ] || [ ${#val} -gt 60 ] || \
-        [ `grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${val}"` ]; then invalid 2; fi
-        elif [[ $n = 9 || $n = 10 || $n = 11 ]]; then
-        if [ -n "${val}" ]; then
-        if ! [[ ${val} =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] \
-        || [ ${#val} -gt 12 ]; then invalid 7; fi; fi
         
-        elif [[ $n = 12 || $n = 13 || $n = 14 ]]; then
-        if ! [[ $val =~ $nu ]] || [ ${val} -gt 200 ]; then invalid 8; fi
-        elif [[ $n = 15 ]]; then
-        if ! [[ $val =~ $nu ]] || [ ${#val} -gt 2 ]; then invalid 9; fi
+        if [[ $n = 1 ]]; then # name
+            if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
+            [ `grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${val}"` ]; then invalid 2; fi
+        elif [[ $n = 2 || $n = 3 ]]; then # lang
+            if ! grep -Fox "${val}" <<<"${LANGUAGES}"; then invalid 3; fi
+        elif [[ $n = 4 || $n = 5 ]]; then # user contact
+            if [ ${#val} -gt 30 ] || \
+            [ `grep -o -E '\*|\/|$|\)|\(|=' <<<"${val}"` ]; then invalid 4; fi
+        elif [[ $n = 6 ]]; then # categ
+            if ! grep -Fox "${val}" <<<"${CATEGORIES}"; then invalid 5; fi
+        elif [[ $n = 7 ]]; then # id
+            if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 8 ]; then invalid 6; fi
+        elif [[ $n = 8 ]]; then # name 
+            if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
+            [ `grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${val}"` ]; then invalid 7; fi
+        elif [[ $n = 9 || $n = 10 || $n = 11 ]]; then # date
+            if [ -n "${val}" ]; then
+            if ! [[ ${val} =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] \
+            || [ ${#val} -gt 12 ]; then invalid 8; fi; fi
+        elif [[ $n = 12 || $n = 13 || $n = 14 ]]; then # count
+            if ! [[ $val =~ $nu ]] || [ ${val} -gt 200 ]; then invalid 9; fi
+        elif [[ $n = 15 ]]; then # size 
+             if ! [[ $val =~ $nu ]] || [ ${val} -gt 1000 ]; then invalid 10; fi
+        elif [[ $n = 16 ]]; then # size 
+             if [ `grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${val}"` ] || \
+             [ ${#val} -gt 9 ]; then invalid 11; fi
+        elif [[ $n = 17 ]]; then # level
+            if ! [[ $val =~ $nu ]] || [ ${#val} -gt 2 ]; then invalid 12; fi
         fi
         export ${sets[$n]}="${val}"
         let n++
          
-    done < <(head -n 15 < "${file}")
+    done < <(head -n 17 < "${file}")
 
     if [[ $exit = 0 ]] ; then
     > "$DT/${2}.cfg"

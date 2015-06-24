@@ -151,15 +151,15 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
         item="$(echo "$item" |sed 's/},/}\n/g')"
         trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
         [ -n "$trgt" ] && echo "$trgt"
-        done < <(tail -n +19 < "${file}")
+        done < <(tail -n +21 < "${file}")
     }
 
     sett | yad --list --title="Idiomind" \
-    --text="$itxt" --image=info \
+    --text="$itxt" --image="/media/Archivos/.store/copy/Projects/IDIOMIND/desing/iconos/flags/png/32/China-flag.png" \
     --name=Idiomind --class=Idiomind \
     --print-all --dclick-action="$dclk" \
     --window-icon="$DS/images/icon.png" \
-    --image-on-top --ellipsize=END --fixed \
+    --no-headers --image-on-top --ellipsize=END --fixed \
     --scroll --center --tooltip-column=1 \
     --width=650 --height=580 --borders=10 \
     --column="" \
@@ -206,7 +206,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             for i in {1..6}; do > "${DC_tlt}/${i}.cfg"; done
             for i in {1..3}; do > "${DC_tlt}/practice/log.${i}"; done
             
-            head -n19 "${file}" > "${DC_tlt}/id.cfg"
+            head -n21 "${file}" > "${DC_tlt}/id.cfg"
             > "${DC_tlt}/11.cfg"
             sed -i "s/datei=.*/datei=\"$(date +%F)\"/g" "${DC_tlt}/id.cfg"
             
@@ -220,7 +220,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             else echo "${trgt}" >> "${DC_tlt}/4.cfg"; fi
             echo "${trgt}" >> "${DC_tlt}/1.cfg"
             echo "${item_}" >> "${DC_tlt}/0.cfg"; fi
-            done < <(tail -n +20 < "${file}")
+            done < <(tail -n +25 < "${file}")
 
             "$DS/ifs/tls.sh" colorize
             echo -e "$langt\n$lgsl" > "$DC_s/6.cfg"

@@ -120,6 +120,7 @@ infsd() {
 function dwld() {
 
     notify-send "$(gettext "Downloading...")"
+    mkdir "$DT/download"
     idcfg="$DM_tl/${2}/.conf/id.cfg"
     link=$(grep -o 'ilink="[^"]*' "${idcfg}" |grep -o '[^"]*$')
     oname=$(grep -o 'oname="[^"]*' "${idcfg}" |grep -o '[^"]*$')
@@ -131,15 +132,15 @@ function dwld() {
     if ! wget -S --spider "$URL" 2>&1 | grep 'HTTP/1.1 200 OK'; then
         msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" info & exit; fi
     
-    wget -q -c -T 50 -O "$DT/${oname}.tar.gz" "$URL"
+    wget -q -c -T 50 -O "$DT/download/${oname}.tar.gz" "$URL"
 
-    if [ -f "$DT/${oname}.tar.gz" ]; then
-        cd "$DT"/
-        tar -xzvf "$DT/${oname}.tar.gz"
+    if [ -f "$DT/download/${oname}.tar.gz" ]; then
+        cd "$DT/download"/
+        tar -xzvf "$DT/download/${oname}.tar.gz"
         
-        if [ -d "$DT/${oname}" ]; then
+        if [ -d "$DT/download/${oname}" ]; then
         
-        tmp="$DT/${oname}"
+        tmp="$DT/download/${oname}"
         total=$(find "$tmp" -maxdepth 5 -type f | wc -l)
         audio=$(find "$tmp" -maxdepth 5 -name '*.mp3' | wc -l)
         images=$(find "$tmp" -maxdepth 5 -name '*.jpg' | wc -l)
@@ -156,12 +157,13 @@ function dwld() {
         [ ! -f "${DM_tlt}/files" ] && mkdir "${DM_tlt}/files"
         mv -f "${tmp}"/files/* "${DM_tlt}"/files/
         echo "${oname}" >> "$DM_tl/.3.cfg"
-        rm -fr "${tmp}" "$DT/${oname}.tar.gz"
+        rm -fr "$DT/download"
 echo -e "$(gettext "Total"): $total
 $(gettext "Audio files"): $audio
 $(gettext "Images"): $images
 $(gettext "Aditional files"): $atfiles
 $(gettext "Others"): $others" > "${DC_tlt}/11.cfg"
+        rm -f "$DT/upload"
         
         else
             msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" info & exit
@@ -181,7 +183,7 @@ msg "$(gettext "Unavailable")\n" info "$(gettext "Unavailable")" & exit 1; fi
 if [ "${tpc}" != "${2}" ]; then
 msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit 1; fi
 
-if [ -d "$DT/upload" ]; then
+if [ -d "$DT/upload" ] || [ -d "$DT/download" ]; then
 msg_2 "$(gettext "Wait until it finishes a previous process")\n" info OK gtk-stop "$(gettext "Warning")"
 ret=$(echo "$?")
 if [[ $ret -eq 1 ]]; then
@@ -236,11 +238,16 @@ cd "$HOME"
 
 if grep -Fxq "${tpc}" "$DM_tl/.3.cfg"; then
 
-	if [ -f "$DC_tlt/11.cfg" ]; then
+    if [ -f "$DC_tlt/11.cfg" ]; then
     
         if [ -z "$(< "$DC_tlt/11.cfg")" ]; then
+        
+        audio="$(grep -o 'naudi="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+        fsize="$(grep -o 'nsize="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+        imgs="$(grep -o 'nimag="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         cmd_dl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
-        info="$(gettext "Additional content available")"
+        info="$(gettext "Additional content available for download")"
+        info2="$(gettext "Audio files:") $audio\n$(gettext "Images:") $imgs\n$(gettext "Size:") $fsize"
         upld=$(yad --form --title="$(gettext "Share")" \
         --columns=2 \
         --text="<span font_desc='Free Sans 15'> ${tpc}</span>" \
@@ -248,9 +255,9 @@ if grep -Fxq "${tpc}" "$DM_tl/.3.cfg"; then
         --window-icon="$DS/images/icon.png" --buttons-layout=end \
         --align=left --center --on-top \
         --width=480 --height=460 --borders=12 \
-        --field="\n\n\n$info:lbl" "#1" \
+        --field="\n\n\n$info\n$info2:lbl" "#1" \
         --field="$(gettext "Download"):BTN" "${cmd_dl}" \
-        --field=" \t\t\t\t\t\t\t\t\t:lbl" "#1" \
+        --field="\t\t\t\t\t:lbl" "#1" \
         --field=" :lbl" "#1" \
         --button="$(gettext "PDF")":2 \
         --button="$(gettext "Close")":4)
@@ -351,8 +358,6 @@ iuser_m=$(echo "${upld}" | cut -d "|" -f2)
 cntct_m=$(echo "${upld}" | cut -d "|" -f3)
 notes_m=$(echo "${upld}" | cut -d "|" -f6)
 
-yad --text="$cntct_m"
-
 if [ -z "${Ctgry}" ]; then
 msg "$(gettext "Please select a category.")\n " info
 "$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
@@ -368,6 +373,9 @@ internet
 [ -d "$DT/upload" ] && rm -fr "$DT/upload"
 
 # ---------------------------------------------------
+notify-send "$(gettext "Upload in progress")" \
+"$(gettext "This can take some time, please wait")" -t 6000
+
 mkdir "$DT/upload"
 DT_u="$DT/upload/"
 mkdir -p "$DT/upload/${tpc}/conf"
@@ -376,6 +384,7 @@ cd "${DM_tlt}/images"
 if [ $(ls -1 *.jpg 2>/dev/null | wc -l) != 0 ]; then
 images=$(ls *.jpg | wc -l); else
 images=0; fi
+
 [ -f "${DC_tlt}/3.cfg" ] && words=$(wc -l < "${DC_tlt}/3.cfg")
 [ -f "${DC_tlt}/4.cfg" ] && sentences=$(wc -l < "${DC_tlt}/4.cfg")
 if [ -f "${DC_tlt}/id.cfg" ]; then
@@ -383,34 +392,11 @@ datec="$(grep -o 'datec="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
 datei="$(grep -o 'datei="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"; fi
 dateu=$(date +%F)
 
-echo -e "v=1
-tname=\"${tpc}\"
-langs=\"$lgsl\"
-langt=\"$lgtl\"
-authr=\"$iuser_m\"
-cntct=\"$cntct_m\"
-ctgry=\"$Ctgry\"
-ilink=\"$usrid\"
-oname=\"${tpc}\"
-datec=\"$datec\"
-dateu=\"$dateu\"
-datei=\"$datei\"
-nword=\"$words\"
-nsent=\"$sentences\"
-nimag=\"$images\"
-level=\"$level\"
-set_1=\"$set_1\"
-set_2=\"$set_2\" 
-
------------------- content -----------------" > "${DC_tlt}/id.cfg"
-cp -f "${DC_tlt}/id.cfg" "$DT_u/${usrid}.${tpc}.$lgt"
-cat "${DC_tlt}/0.cfg" >> "$DT_u/${usrid}.${tpc}.$lgt"
-
 if [ "${iuser}" != "${iuser_m}" ] \
 || [ "${cntct}" != "${cntct_m}" ]; then
-sed -i "s/usrid=.*/usrid=\"$usrid\"/g" "$DC_s/3.cfg"
-sed -i "s/iuser=.*/iuser=\"$iuser_m\"/g" "$DC_s/3.cfg"
-sed -i "s/cntct=.*/cntct=\"$cntct_m\"/g" "$DC_s/3.cfg"
+echo -e "usrid=\"$usrid\"
+iuser=\"$iuser_m\"
+cntct=\"$cntct_m\"" > "$DC_s/3.cfg"
 fi
 
 cd "${DM_tlt}"
@@ -428,6 +414,7 @@ while read -r audio; do
 if [ -f "$DM_tl/.share/$audio.mp3" ]; then
 cp -f "$DM_tl/.share/$audio.mp3" "$DT_u/${tpc}/share/$audio.mp3"; fi
 done <<<"$auds"
+c_audio=$(find "$DT_u/${tpc}" -maxdepth 5 -name '*.mp3' | wc -l)
 
 # remove from folder topic name characters weirds TODO
 echo -e "${notes}" > "$DT_u/${tpc}/conf/info"
@@ -437,14 +424,37 @@ cd "$DT/upload"
 tar -cvf ./"${usrid}.${tpc}.tar" ./"${tpc}"
 gzip -9 ./"${usrid}.${tpc}.tar"
 sum=`md5sum ./"${usrid}.${tpc}.tar.gz" | cut -d' ' -f1`
+f_size=$(du -h ./"${usrid}.${tpc}.tar.gz" | cut -f1)
 
+echo -e "v=1
+tname=\"${tpc}\"
+langs=\"$lgsl\"
+langt=\"$lgtl\"
+authr=\"$iuser_m\"
+cntct=\"$cntct_m\"
+ctgry=\"$Ctgry\"
+ilink=\"$usrid\"
+oname=\"${tpc}\"
+datec=\"$datec\"
+dateu=\"$dateu\"
+datei=\"$datei\"
+nword=\"$words\"
+nsent=\"$sentences\"
+nimag=\"$images\"
+naudi=\"$c_audio\"
+nsize=\"$f_size\"
+level=\"$level\"
+set_1=\"$set_1\"
+set_2=\"$set_2\"
+
+
+
+------------------ content -----------------" > "${DC_tlt}/id.cfg"
+cp -f "${DC_tlt}/id.cfg" "$DT_u/${usrid}.${tpc}.$lgt"
+cat "${DC_tlt}/0.cfg" >> "$DT_u/${usrid}.${tpc}.$lgt"
 echo -e "---------------end content -----------------
 md5sum=\"$sum\"" >> "$DT_u/${usrid}.${tpc}.$lgt"
 
-du=$(du -h "${usrid}.${tpc}.tar.gz" | cut -f1)
-
-notify-send "$(gettext "Upload in progress")" \
-"$(gettext "This can take some time, please wait")" -t 6000
 
 url="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
 | grep -o 'UPLOADS="[^"]*' | grep -o '[^"]*$')"
