@@ -28,11 +28,11 @@ DC_tlt="${DM_tl}/${tpc}/.conf"
 lbls=('Words' 'Sentences' 'Marked items' 'Difficult words' \
 'New episodes <i><small>Podcasts</small></i>' \
 'Saved episodes <i><small>Podcasts</small></i>')
-sets=('gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
+sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
 'rplay' 'audio' 'video' 'ntosd' 'loop' \
 'langt' 'langs' 'synth' \
-'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi')
-in=('in1' 'in2' 'in3' 'in4' 'in5' 'in6')
+'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi' )
+in=( 'in1' 'in2' 'in3' 'in4' 'in5' 'in6' )
 
 cfg1="$DC_tlt/1.cfg"
 cfg2="$DC_tlt/2.cfg"

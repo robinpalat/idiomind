@@ -1,6 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+if [ -z "${1}" ]; then exit 1; fi
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 topic="${1}"
@@ -73,16 +74,16 @@ else
                 calculate_review "${topic}"
                 if [[ $((stts%2)) = 0 ]]; then
                 
-                    if [[ $RM -ge 180 ]]; then
-                    echo 10 > "${DC_tlt}/8.cfg"
-                    elif [[ $RM -ge 100 ]]; then
-                    echo 8 > "${DC_tlt}/8.cfg"; fi
-                    
-                    else
-                    if [[ $RM -ge 180 ]]; then
-                    echo 9 > "${DC_tlt}/8.cfg"
-                    elif [[ $RM -ge 100 ]]; then
-                    echo 7 > "${DC_tlt}/8.cfg"; fi
+                if [[ $RM -ge 180 ]]; then
+                echo 10 > "${DC_tlt}/8.cfg"
+                elif [[ $RM -ge 100 ]]; then
+                echo 8 > "${DC_tlt}/8.cfg"; fi
+                
+                else
+                if [[ $RM -ge 180 ]]; then
+                echo 9 > "${DC_tlt}/8.cfg"
+                elif [[ $RM -ge 100 ]]; then
+                echo 7 > "${DC_tlt}/8.cfg"; fi
                 fi
             fi
             "$DS/mngr.sh" mkmn

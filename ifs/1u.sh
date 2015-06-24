@@ -26,13 +26,13 @@ alias gettext='gettext "idiomind"'
 
 text="<span font_desc='Free Sans Bold 14'>$(gettext "Welcome") ${USER^} </span>
 \n      $(gettext "To get started, please configure the following:")\n"
-lang=('English' 'Spanish' 'Italian' 'Portuguese' 'German' \
-'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian')
+lang=( 'English' 'Spanish' 'Italian' 'Portuguese' 'German' \
+'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian' )
 
-sets=('gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
+sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
 'rplay' 'audio' 'video' 'ntosd' 'loop' \
 'langt' 'langs' 'synth' \
-'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi')
+'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi' )
 
 _info() {
     

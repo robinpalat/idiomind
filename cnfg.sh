@@ -35,13 +35,13 @@ Type=Application
 Icon=idiomind
 StartupWMClass=Idiomind"
 
-lang=('English' 'Spanish' 'Italian' 'Portuguese' 'German' \
-'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian')
+lang=( 'English' 'Spanish' 'Italian' 'Portuguese' 'German' \
+'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian' )
 
-sets=('gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
+sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
 'rplay' 'audio' 'video' 'ntosd' 'loop' \
 'langt' 'langs' 'synth' \
-'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi')
+'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi' )
 
 c=$((RANDOM%100000)); KEY=$c
 

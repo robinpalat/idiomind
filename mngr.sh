@@ -34,11 +34,6 @@ mkmn() {
     while [[ ${n} -le "$(head -100 < "$DM_tl/.1.cfg" | wc -l)" ]]; do
     
         tp=$(sed -n "$n"p "$DM_tl/.1.cfg")
-        if ! grep -Fxo "${tp}" < <(ls "$DS/addons/"); then
-        inx1=$(wc -l < "$DM_tl/${tp}/.conf/1.cfg")
-        inx2=$(wc -l < "$DM_tl/${tp}/.conf/2.cfg")
-        tooltips_1="$inx1 / $inx2"
-        else tooltips_1=""; fi
         if [ ! -f "$DM_tl/${tp}/.conf/8.cfg" ]; then
         i=13; echo 13 > "$DM_tl/${tp}/.conf/8.cfg"
         else i=$(sed -n 1p "$DM_tl/${tp}/.conf/8.cfg"); fi
@@ -49,7 +44,7 @@ mkmn() {
         [ -f "${DC_tlt}/8.cfg" ] && stts_=$(< "${DC_tlt}/8.cfg")
         if [ "$stts_" != 13 ]; then echo "$stts_" > "${DC_tlt}/8.cfg_"; fi
         i=13; echo 13 > "$DM_tl/${tp}/.conf/8.cfg";fi
-        echo -e "/usr/share/idiomind/images/img.${i}.png\n${tp}\n$tooltips_1" >> "$DC_s/0.cfg"
+        echo -e "/usr/share/idiomind/images/img.${i}.png\n${tp}" >> "$DC_s/0.cfg"
         let n++
     done
     n=1
@@ -60,6 +55,7 @@ mkmn() {
         if [ ! -f "$DM_tl/${tp}/.conf/8.cfg" ]; then
         [ -f "${DC_tlt}/8.cfg" ] && stts_=$(< "${DC_tlt}/8.cfg")
         if [ "$stts_" != 13 ]; then echo "$stts_" > "${DC_tlt}/8.cfg_"; fi
+        
         i=13; echo 13 > "$DM_tl/${tp}/.conf/8.cfg"
         else i=$(sed -n 1p "$DM_tl/${tp}/.conf/8.cfg"); fi
         if [ ! -f "$DM_tl/${tp}/.conf/8.cfg" ] || \
@@ -373,22 +369,11 @@ edit_item() {
 
 
 mtext() {
-    
+    include "$DS/ifs/mods/mngr"
     [[ $2 = 1 ]] && index="${DC_tlt}/1.cfg" 
     [[ $2 = 2 ]] && index="${DC_tlt}/2.cfg"
     trgt="$(sed -n ${3}p "${index}")"
-    vmtext="$(yad --form --title="$(gettext "Edit")" \
-    --name=Idiomind --class=Idiomind \
-    --always-print-result --print-all --separator="|" --selectable-labels \
-    --window-icon="$DS/images/icon.png" \
-    --buttons-layout=end --align=right --center --on-top \
-    --width=550 --height=350 --borders=10 \
-    --field="<small>$lgtl</small>":TXT "$trgt" \
-    --field="<small>$lgsl</small>":TXT "$srce" \
-    --field="<small>$(gettext "Audio")</small>":FL "${audio}" \
-    --button="$(gettext "Cancel")":1 \
-    --button="$(gettext "Delete")":2 \
-    --button="$(gettext "Save")":0)"
+    vmtext="$(dlg_form_2)"
     
         if [[ $? = 2 ]]; then
         "$DS/mngr.sh" delete_item "${tpc}" "${trgt}" &

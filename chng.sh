@@ -62,38 +62,38 @@ if [[ "$1" = chngi ]]; then
         
         if [ -n "${item}" ]; then
         unset file
-        _item="$(grep -F -m 1 "trgt={${item}}" "$DC_tlt/0.cfg" |sed 's/},/}\n/g')"
+        _item="$(grep -F -m 1 "trgt={${item}}" "${DC_tlt}/0.cfg" |sed 's/},/}\n/g')"
         type="$(grep -oP '(?<=type={).*(?=})' <<<"${_item}")"
         trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${_item}")"
         srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${_item}")"
         id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${_item}")"
         img="${DM_tlt}/images/$id.jpg"; [ -f "$img" ] && icon="$img"
         [ -z "$trgt" ] && trgt="$item"
-        [[ ${type} = 1 ]] && file="$DM_tls/${trgt,,}.mp3"
-        [[ ${type} = 2 ]] && file="$DM_tlt/$id.mp3"
+        [[ ${type} = 1 ]] && file="${DM_tls}/${trgt,,}.mp3"
+        [[ ${type} = 2 ]] && file="${DM_tlt}/$id.mp3"
         play=play
         else ((f=f+1)); fi
     }
     
     if [ ${w} = TRUE -a ${s} = TRUE ]; then
     while read item; do getitem; _play
-    done < <(tac "$DC_tlt/1.cfg"); fi
+    done < <(tac "${DC_tlt}/1.cfg"); fi
     
     if [ ${w} = TRUE -a ${s} = FALSE ]; then
     while read item; do getitem; _play
-    done < <(tac "$DC_tlt/3.cfg"); fi
+    done < <(tac "${DC_tlt}/3.cfg"); fi
     
     if [ ${w} = FALSE -a ${s} = TRUE ]; then
     while read item; do getitem; _play
-    done < <(tac "$DC_tlt/4.cfg"); fi
+    done < <(tac "${DC_tlt}/4.cfg"); fi
     
     if [ ${m} = TRUE ]; then
     while read item; do getitem; _play
-    done < "$DC_tlt/6.cfg"; fi
+    done < "${DC_tlt}/6.cfg"; fi
     
     if [ ${p} = TRUE ]; then
     while read item; do getitem; _play
-    done < <(grep -Fxv "$cfg4" "$DC_tlt/practice/log.3"); fi
+    done < <(grep -Fxv "${DC_tlt}/4.cfg" "${DC_tlt}/practice/log.3"); fi
     
     include "$DS/ifs/mods/play"
 
@@ -104,9 +104,12 @@ elif [[ "$1" != chngi ]]; then
     lgs=$(lnglss $lgsl)
     
     if [ -n "$1" ]; then
-    text="--text=$1\n"; align="left"; img="--image=info"
+    text="--text=$1\n"
+    align="left"
+    img="--image=info"
     else
-    text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/${lgtl,,}'>$(gettext "Shared")</a>   </small></small>"; align="right"
+    text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/${lgtl,,}'>$(gettext "Shared")</a>   </small></small>"
+    align="right"
     fi
     
     if [ -f "${DC_tlt}/1.cfg" ] && \
@@ -119,47 +122,27 @@ elif [[ "$1" != chngi ]]; then
     --always-print-result --print-column=2 --separator="" \
     --window-icon="$DS/images/icon.png" \
     --text-align=$align --center $img --image-on-top \
-    --no-headers --ellipsize=END --expand-column=2 --tooltip-column=3 \
+    --no-headers --ellipsize=END --expand-column=2 \
     --width=600 --height=560 --borders=8 \
     --column=img:IMG \
     --column=File:TEXT \
-    --column=File:HD \
     --button=gtk-new:3 \
     --button="$(gettext "Default")":5 \
     --button="$(gettext "Apply")":2 \
     --button="$(gettext "Close")":1)
     ret=$?
     
-    if [[ $ret -eq 3 ]]; then
     
-            "$DS/add.sh" new_topic & exit
+    
+    if [[ $ret -eq 3 ]]; then "$DS/add.sh" new_topic &
             
-    elif [[ $ret -eq 2 ]]; then
-            
-            if [ -z "$tpc" ]; then exit 1
+    elif [[ $ret -eq 2 ]]; then "$DS/default/tpc.sh" "$tpc" 1 &
 
-            else
-                "$DS/default/tpc.sh" "$tpc" 1 & exit
-            fi
+    elif [[ $ret -eq 0 ]]; then "$DS/default/tpc.sh" "$tpc" &
 
-    elif [[ $ret -eq 0 ]]; then
-            
-            if [ -z "$tpc" ]; then exit 1
-
-            else
-                "$DS/default/tpc.sh" "$tpc" & exit
-            fi
-            
-    elif [[ $ret -eq 5 ]]; then
-            
-            if [ -z "$tpc" ]; then exit 1
-
-            else
-                echo "$tpc" > "$DM_tl"/.5.cfg
-                "$DS/default/tpc.sh" "$tpc" &
-                "$DS/mngr.sh" mkmn & exit
-            fi
+    elif [[ $ret -eq 5 ]]; then "$DS/default/tpc.sh" "$tpc" &
+    echo "$tpc" > "$DM_tl"/.5.cfg
     fi
+    
+    exit
 fi
-
-exit
