@@ -456,9 +456,9 @@ import os
 upld = os.environ['_files']
 idmnd = os.environ['idmnd']
 url = os.environ['url']
-files = {'file': open(upld, 'rb')}
-r = requests.post(url, files=files)
 files = {'file': open(idmnd, 'rb')}
+r = requests.post(url, files=files)
+files = {'file': open(upld, 'rb')}
 r = requests.post(url, files=files)
 END
 u=$?
