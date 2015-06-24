@@ -255,7 +255,7 @@ if grep -Fxq "${tpc}" "$DM_tl/.3.cfg"; then
         --window-icon="$DS/images/icon.png" --buttons-layout=end \
         --align=left --center --on-top \
         --width=480 --height=460 --borders=12 \
-        --field="\n\n\n$info\n$info2:lbl" "#1" \
+        --field="\n\n$info\n$info2:lbl" "#1" \
         --field="$(gettext "Download"):BTN" "${cmd_dl}" \
         --field="\t\t\t\t\t:lbl" "#1" \
         --field=" :lbl" "#1" \
@@ -275,7 +275,7 @@ if grep -Fxq "${tpc}" "$DM_tl/.3.cfg"; then
         --window-icon="$DS/images/icon.png" --buttons-layout=end \
         --align=left --center --on-top \
         --width=480 --height=460 --borders=12 \
-        --field="\n<u>$(gettext "Latest Download")</u>\n$(cat "$DC_tlt/11.cfg"):lbl" "#1" \
+        --field="\n$(gettext "Latest Download")\n$(cat "$DC_tlt/11.cfg"):lbl" "#1" \
         --field=" :lbl" "#1" \
         --field="$(gettext "Subscribe"):CB" "$opt1!$opt2!$opt3" \
         --button="$(gettext "PDF")":2 \
@@ -461,6 +461,8 @@ url="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
 _files="${DT_u}/${usrid}.${tpc}.tar.gz"
 idmnd="$DT_u/${usrid}.${tpc}.$lgt"
 export _files idmnd url
+
+#7z a -v3m
 
 python << END
 import requests
