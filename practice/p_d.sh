@@ -54,7 +54,7 @@ dialog2() {
     |sed 's/^\s*./\U&\E/g')"
     text="<span font_desc='Free Sans Bold $sz' color='#717171'>$hint</span>\n"
     
-    entry=$(>/dev/null | yad --text-info --title="$(gettext "Practice")" \
+    entry=$(>/dev/null | yad --form --title="$(gettext "Practice")" \
     --text="$text" \
     --name=Idiomind --class=Idiomind \
     --fontname="Free Sans 14" --fore=4A4A4A --justify=fill \
@@ -62,16 +62,18 @@ dialog2() {
     --window-icon="$DS/images/icon.png" --image="$DS/practice/images/bar.png" \
     --buttons-layout=end --skip-taskbar --undecorated --center --on-top \
     --text-align=left --align=left --image-on-top \
-    --width=510 --height=220 --borders=5 \
+    --width=510 --height=220 --borders=10 \
+    --field="" "" \
+    --field="$(gettext "Listen"):BTN" "$cmd_play" \
     --button="$(gettext "Exit")":1 \
-    --button="$(gettext "Listen")":"$cmd_play" \
-    --button=" $(gettext "Check") >> ":0)
+    --button="  $(gettext "Check")  ":0)
     }
     
 check() {
     
     sz=$((sz+3))
     yad --form --title="$(gettext "Practice")" \
+    --text="<span font_desc='Free Sans $sz'>${wes}</span>\\n" \
     --name=Idiomind --class=Idiomind \
     --image="/usr/share/idiomind/practice/images/bar.png" $aut \
     --selectable-labels \
@@ -79,10 +81,9 @@ check() {
     --skip-taskbar --wrap --scroll --image-on-top --center --on-top \
     --undecorated --buttons-layout=end \
     --width=510 --height=250 --borders=10 \
-    --button="$(gettext "Listen")":"$cmd_play" \
-    --button="$(gettext "Next")":2 \
-    --field="":lbl --text="<span font_desc='Free Sans $sz'>${wes}</span>\\n" \
-    --field="<span font_desc='Free Sans 11'>$OK\n\n$prc $hits</span>\n":lbl
+    --button="$(gettext "Next >>")":2 \
+    --field="":lbl \
+    --field="<span font_desc='Free Sans 10'>$OK\n\n$prc $hits</span>":lbl
     }
     
 get_text() {
@@ -100,7 +101,7 @@ result() {
     sed 's/ /\n/g' \
     | sed 's/,//;s/\!//;s/\?//;s/¿//;s/\¡//;s/(//;s/)//;s/"//g' \
     | sed 's/\-//;s/\[//;s/\]//;s/\.//;s/\://;s/\|//;s/)//;s/"//g' \
-    | tr -d '“”&:!'
+    | tr -d '|“”&:!'
     }
     if [[ `wc -w <<<"$chk"` -gt 6 ]]; then
     out=`awk '{print tolower($0)}' <<<"${entry}" | clean | grep -v '^.$'`

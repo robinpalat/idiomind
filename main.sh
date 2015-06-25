@@ -115,7 +115,7 @@ function new_session() {
     "$DS/default/tpc.sh" "${tpd}" 2; fi
     fi
     
-    # version ###############
+    ################
     if ! grep 'ttrgt' < "$DC_s/1.cfg"; then
     rm "$DC_s/1.cfg"; fi
     
@@ -157,7 +157,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     --no-click --print-colummn=1 --dclick-action="$dclk" \
     --window-icon="$DS/images/icon.png" \
     --ellipsize=END --center \
-    --width=580 --height=540 --borders=10 \
+    --width=610 --height=550 --borders=10 \
     --column="$langt                                                                   " \
     --column="$langs" \
     --button="$(gettext "Install")":0 \
@@ -202,8 +202,6 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             
             for i in {1..6}; do > "${DC_tlt}/${i}.cfg"; done
             for i in {1..3}; do > "${DC_tlt}/practice/log.${i}"; done
-            
-            
             tail -n 1 < "${file}" |tr '&' '\n' > "${DC_tlt}/id.cfg"
             > "${DC_tlt}/11.cfg"
             sed -i "s/datei=.*/datei=\"$(date +%F)\"/g" "${DC_tlt}/id.cfg"
