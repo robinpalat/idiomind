@@ -154,7 +154,7 @@ ret=$?
         done
 
         val=$(cut -d "|" -f24 < "$cnf1")
-        sed -i "s/${sets[13]}=.*/${sets[13]}=\"$val\"/g" "$DC_s/1.cfg"
+        sed -i "s/${sets[13]}=.*/${sets[13]}=\"$(sed 's|/|\\/|g' <<<"$val")\"/g" "$DC_s/1.cfg"
         
         if [ "$CW" = 0 ]; then
         kill $(cat /tmp/.clipw); rm -f /tmp/.clipw

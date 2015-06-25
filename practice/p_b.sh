@@ -8,7 +8,7 @@ strt="$drts/strt.sh"
 snd="$drts/no.mp3"
 cd "$DC_tlt/practice"
 log="$DC_s/8.cfg"
-all=$(wc -l < ./b.0)
+all=$(egrep -cv '#|^$' ./b.0)
 easy=0
 hard=0
 ling=0
@@ -21,10 +21,9 @@ score() {
         play "$drts/all.mp3" &
         echo ".w9.$(tr -s '\n' '|' < ./b.1).w9." >> "$log"
         echo -e ".okp.1.okp." >> "$log"
-        echo "$(date "+%a %d %B")" > b.lock
+        echo "$(date "+%a %d %B")" > ./b.lock
         echo 21 > .2
-        "$strt" 2 b &
-        exit 1
+        "$strt" 2 b & exit
         
     else
         [ -f ./b.l ] && echo $(($(< ./b.l)+easy)) > ./b.l || echo ${easy} > ./b.l
@@ -41,7 +40,7 @@ score() {
         if [ -f ./b.3 ]; then
         echo ".w6.$(tr -s '\n' '|' < ./b.3).w6." >> "$log"; fi
         
-        "$strt" 7 b ${easy} ${ling} ${hard} & exit 1
+        "$strt" 7 b ${easy} ${ling} ${hard} & exit
     fi
 }
 
@@ -101,8 +100,7 @@ while read trgt; do
             
     elif [[ $ret = 1 ]]; then
         break &
-        "$drts"/cls.sh comp b ${easy} ${ling} ${hard} ${all} &
-        exit 1
+        "$drts"/cls.sh comp b ${easy} ${ling} ${hard} ${all} & exit
     fi
     
 done < ./b.tmp
@@ -131,8 +129,7 @@ else
 
         elif [[ $ret = 1 ]]; then
             break &
-            "$drts"/cls.sh comp b ${easy} ${ling} ${hard} ${all} &
-            exit 1
+            "$drts"/cls.sh comp b ${easy} ${ling} ${hard} ${all} & exit
         fi
         
     done < ./b.2

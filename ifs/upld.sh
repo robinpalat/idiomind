@@ -74,12 +74,12 @@ infsd() {
         
         elif [[ $ret -eq 2 ]]; then
         file="$DM/backup/${2}.idmnd"
-        usrid="$(grep -o 'usrid="[^"]*' < "$DC_s/3.cfg" |grep -o '[^"]*$')"
-        language_source=$(grep -o 'langs="[^"]*' < "$file" |grep -o '[^"]*$')
-        language_target=$(grep -o 'langt="[^"]*' < "$file" |grep -o '[^"]*$')
-        category=$(grep -o 'ctgry="[^"]*' < "$file" |grep -o '[^"]*$')
-        link=$(grep -o 'ilink="[^"]*' < "$file" |grep -o '[^"]*$')
-        name=$(grep -o 'tname="[^"]*' < "$file" |grep -o '[^"]*$')
+        usrid="$(grep -o 'usrid="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
+        language_source=$(grep -o 'langs="[^"]*' "$file" |grep -o '[^"]*$')
+        language_target=$(grep -o 'langt="[^"]*' "$file" |grep -o '[^"]*$')
+        category=$(grep -o 'ctgry="[^"]*' "$file" |grep -o '[^"]*$')
+        link=$(grep -o 'ilink="[^"]*' "$file" |grep -o '[^"]*$')
+        name=$(grep -o 'tname="[^"]*' "$file" |grep -o '[^"]*$')
         lng=$(lnglss "$language_source")
         lnglbl="${language_target,,}"
         
@@ -236,10 +236,8 @@ btn="--button="$(gettext "Upload")":0"; else
 btn="--center"; fi
 cd "$HOME"
 
-if grep -Fxq "${tpc}" "$DM_tl/.3.cfg"; then
+if [ -n `grep -Fxq "${tpc}" "$DM_tl/.3.cfg"` ] && [ -f "$DC_tlt/11.cfg" ]; then
 
-    if [ -f "$DC_tlt/11.cfg" ]; then
-    
         if [ -z "$(< "$DC_tlt/11.cfg")" ]; then
         
         audio="$(grep -o 'naudi="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
@@ -281,8 +279,7 @@ if grep -Fxq "${tpc}" "$DM_tl/.3.cfg"; then
         --button="$(gettext "Close")":4)
         ret=$?
         fi
-    fi
-    
+        
 else
     upld=$(yad --form --title="$(gettext "Share")" \
     --text="<span font_desc='Free Sans 14'>${tpc}</span>" \
@@ -455,12 +452,11 @@ url="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
 _files="${DT_u}/${usrid}.${tpc}.tar.gz"
 idmnd="$DT_u/${usrid}.${tpc}.$lgt"
 export _files idmnd url
-
 #7z a -v3m
-
 python << END
-import requests
-import os
+import os, sys, requests
+reload(sys)
+sys.setdefaultencoding("utf-8")
 upld = os.environ['_files']
 idmnd = os.environ['idmnd']
 url = os.environ['url']
@@ -483,8 +479,7 @@ else
 fi
 msg "$info" $image
 
-cleanups "${DT_u}/${tpc}" "${DT_u}/${usrid}.${tpc}.${lgt}" \
-"${DT_u}/${tpc}.tar" "${DT}/${tpc}.id" "${DT_u}" "${DT_u}/${tpc}.tar.gz"
+cleanups "${DT_u}"
 
 exit 0
 fi

@@ -49,13 +49,20 @@ function sentence_view() {
 
 function m_text() {
 
+    include "$DS/ifs/mods/mngr"
+    trgt="${1}"
+    cmd_del="$DS/mngr.sh delete_item "\"${tpc}\"" "\"${trgt}\"""
+    cmd_add="$DS/add.sh new_items "" 2 "\"${trgt}\"" "\"${trgt}\"""
+    text="<span font_desc='monospace 10'>$(gettext "Text missing")</span>\n\n\n\n"
+
     yad --form --title=" " \
-    --text="<span font_desc='monospace 10'>$(gettext "Text missing")</span>\n\n\n\n" \
+    --text="${text}" \
     --window-icon="$DS/images/icon.png" \
     --align=center --skip-taskbar --text-align=center \
     --image-on-top --center --on-top \
     --width=620 --height=380 --borders=20 \
-    --button=gtk-edit:5 \
+    --button="$(gettext "Delete")":"$cmd_del" \
+    --button=gtk-add:"$cmd_add" \
     --button=gtk-go-down:2 \
     --button=gtk-go-up:3
     

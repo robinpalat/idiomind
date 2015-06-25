@@ -6,7 +6,7 @@ drts="$DS/practice"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
 log="$DC_s/8.cfg"
-all=$(wc -l < ./a.0)
+all=$(egrep -cv '#|^$' ./a.0)
 easy=0
 hard=0
 ling=0
@@ -19,10 +19,9 @@ score() {
         play "$drts/all.mp3" &
         echo ".w9.$(tr -s '\n' '|' < ./a.1).w9." >> "$log"
         echo -e ".okp.1.okp." >> "$log"
-        echo "$(date "+%a %d %B")" > a.lock
+        echo "$(date "+%a %d %B")" > ./a.lock
         echo 21 > .1
-        "$strt" 1 a &
-        exit 1
+        "$strt" 1 a & exit
         
     else
         [ -f ./a.l ] && echo $(($(< ./a.l)+easy)) > ./a.l || echo ${easy} > ./a.l
@@ -39,7 +38,7 @@ score() {
         if [ -f ./a.3 ]; then
         echo ".w6.$(tr -s '\n' '|' < ./a.3).w6." >> "$log"; fi
         
-        "$strt" 6 a ${easy} ${ling} ${hard} & exit 1
+        "$strt" 6 a ${easy} ${ling} ${hard} & exit
     fi
 }
 
@@ -61,7 +60,7 @@ cuestion() {
     --timeout=10 \
     --skip-taskbar --text-align=center --center --on-top \
     --undecorated --buttons-layout=spread --align=center \
-    --width=395 --height=290 --borders=8 \
+    --width=395 --height=280 --borders=8 \
     --field="$acuestion":lbl \
     --button="$(gettext "Exit")":1 \
     --button="    $(gettext "Answer") >>    ":0
@@ -73,7 +72,7 @@ answer() {
     --timeout=10 --selectable-labels \
     --skip-taskbar --text-align=center --center --on-top \
     --undecorated --buttons-layout=spread --align=center \
-    --width=395 --height=290 --borders=8 \
+    --width=395 --height=280 --borders=8 \
     --field="$bcuestion":lbl \
     --field="":lbl \
     --field="$answer":lbl \
@@ -90,8 +89,7 @@ while read trgt; do
 
     if [[ $ret = 1 ]]; then
         break &
-        "$drts"/cls.sh comp a ${easy} ${ling} ${hard} ${all} &
-        exit 1
+        "$drts"/cls.sh comp a ${easy} ${ling} ${hard} ${all} & exit
         
     else
         answer
@@ -121,8 +119,7 @@ else
         
         if [[ $ret = 1 ]]; then
             break &
-            "$drts"/cls.sh comp a ${easy} ${ling} ${hard} ${all} &
-            exit 1
+            "$drts"/cls.sh comp a ${easy} ${ling} ${hard} ${all} & exit
         
         else
             answer

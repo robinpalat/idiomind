@@ -141,14 +141,14 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     "$(gettext "Advanced")" )
     level="${l[${level}]}"
 
-    itxt="<span font_desc='Free Sans 14'> $tname</span><sup>\n $nword $(gettext "Words") $nsent $(gettext "Sentences") $nimag $(gettext "Images")\n $langt $(gettext "Level:") $level</sup>"
+    itxt="<span font_desc='Droid Sans 14'> $tname</span>\n <small>$nword $(gettext "Words") $nsent $(gettext "Sentences") $nimag $(gettext "Images") $langt $(gettext "Level:") $level</small>"
     dclk="'$DS/default/vwr_tmp.sh' "\"${file}\"""
     
     _set() {
     while read -r item; do
     grep -oP '(?<=trgt={).*(?=},srce)' <<<"${item}"
     grep -oP '(?<=srce={).*(?=},exmp)' <<<"${item}"
-    done < <(head -n -2 < "${file}")
+    done < <(tac "${file}")
     }
 
     _set | yad --list --title="Idiomind" \

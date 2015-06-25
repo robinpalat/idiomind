@@ -90,43 +90,37 @@ Create one using the button below. ")" & exit 1; fi
     | tr "\\n" '!' | sed 's/\!*$//g')
     [ -n "$tpcs" ] && e='!'; [ -z "${tpe}" ] && tpe=' '
 
-    if [[ "$3" != 3 ]]; then
+    if [ "$trans" = TRUE ]; then lzgpr="$(dlg_form_1)"; \
+    else lzgpr="$(dlg_form_2)"; fi
     
-        if [ "$trans" = TRUE ]; then lzgpr="$(dlg_form_1)"; \
-        else lzgpr="$(dlg_form_2)"; fi
-        
-        ret="$?"
-        trgt=$(echo "${lzgpr}" | head -n -1 | sed -n 1p)
-        srce=$(echo "${lzgpr}" | sed -n 2p)
-        chk=$(echo "${lzgpr}" | tail -1)
-        tpe=$(grep -Fxo "${chk}" "$DM_tl/.1.cfg")
-    else
-        trgt="${4}"
-        srce="${5}"
-    fi
+    ret="$?"
+    trgt=$(echo "${lzgpr}" | head -n -1 | sed -n 1p)
+    srce=$(echo "${lzgpr}" | sed -n 2p)
+    chk=$(echo "${lzgpr}" | tail -1)
+    tpe=$(grep -Fxo "${chk}" "$DM_tl/.1.cfg")
 
-        if [[ $ret -eq 3 ]]; then
+        if [ $ret -eq 3 ]; then
         
             [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")
             echo "${tpe}" > "$DT/tpe"
             cd "$DT_r"; set_image_1
             "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
         
-        elif [[ $ret -eq 2 ]]; then
+        elif [ $ret -eq 2 ]; then
         
             [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")
             echo "${tpe}" > "$DT/tpe"
             "$DS/ifs/tls.sh" add_audio "$DT_r"
             "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
         
-        elif [[ $ret -eq 0 ]]; then
+        elif [ $ret -eq 0 ]; then
 
             if [ "$3" = 2 ]; then
             [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")
             else DT_r=$(mktemp -d "$DT/XXXXXX"); fi
             xclip -i /dev/null; cd "$DT_r"
         
-            if [ -z "${chk}" ] && [[ "$3" != 3 ]]; then cleanups "$DT_r"
+            if [ -z "${chk}" ] && [[ ${3} != 3 ]]; then cleanups "$DT_r"
             msg "$(gettext "No topic is active")\n" info & exit 1; fi
 
             if [ -z "${trgt}" ]; then
@@ -268,7 +262,7 @@ new_word() {
     if [ "$trans" = TRUE ]; then
     
         internet
-        if [ "$ttrgt" = TRUE ] && [[ "${5}" != 0 ]]; then
+        if [ "$ttrgt" = TRUE ] && [ ${5} != 0 ]; then
         trgt="$(translate "${trgt}" auto "$lgt")"
         trgt="$(clean_1 "${trgt}")"; fi
         srce="$(translate "${trgt}" $lgt $lgs)"
@@ -325,17 +319,14 @@ list_words_edit() {
         info=" -$((200-$(wc -l < "${DC_tlt}/0.cfg")))"
         mkdir "$DT/$c"; cd "$DT/$c"
 
-        list_words_2 "${2}"
-        
-        slt=$(mktemp "$DT/slt.XXXX.x")
-        dlg_checklist_1 "$DT/$c/idlst" "$info" "$slt"
+        words="$(list_words_2 "${2}")"
+        slt="$(dlg_checklist_1 "${words}" "$info")"
 
             if [[ $? -eq 0 ]]; then
                 
                 while read chkst; do
                 sed 's/TRUE//g' <<<"${chkst}" >> "$DT/$c/slts"
-                done <<<"$(sed 's/|//g' < "${slt}")"
-                rm -f "$slt"
+                done <<<"$(sed 's/|//g' <<<"${slt}")"
             fi
         
     elif [[ $3 = 2 ]]; then
@@ -389,18 +380,15 @@ list_words_sentence() {
     check_s "${tpe}"
     info="-$((200-$(wc -l < "${DC_tlt}/0.cfg")))"
 
-    list_words_2 "${2}"
-    
-    slt=$(mktemp "$DT/slt.XXXX.x")
-    dlg_checklist_1 "$DT_r/idlst" "${info}" "$slt"
+    wrds="$(list_words_2 "${2}")"
+    slt="$(dlg_checklist_1 "${wrds}" "${info}")"
     ret="$?"
         
         if [[ $ret -eq 0 ]]; then
             
             while read chkst; do
             sed 's/TRUE//g' <<<"${chkst}"  >> "$DT_r/slts"
-            done <<<"$(sed 's/|//g' < "${slt}")"
-            rm -f "$slt"
+            done <<<"$(sed 's/|//g' <<<"${slt}")"
 
         elif [[ $ret -eq 1 ]]; then
         
@@ -451,7 +439,8 @@ list_words_dclik() {
     DC_tlt="$DM_tl/${tpe}/.conf"
     DT_r=$(sed -n 1p "$DT/.n_s_pr")
     cd "$DT_r"
-    echo "${3}" > "$DT_r/lstws"
+    words="${3}"
+    sname="${3}"
     check_s "${tpe}"
     info="-$((200 - $(wc -l < "${DC_tlt}/0.cfg")))"
     
@@ -459,29 +448,26 @@ list_words_dclik() {
         (
         echo "1"
         echo "# $(gettext "Processing")..." ;
-        srce="$(translate "$(cat "$DT_r/lstws")" $lgtl $lgsl)"
+        srce="$(translate "${words}" $lgtl $lgsl)"
         cd "$DT_r"
         sentence_p "$DT_r" 1
         echo "$wrds"
-        list_words_3 "$DT_r/lstws" "${wrds}"
+        list_words_3 "${words}" "${wrds}"
         ) | dlg_progress_1
     
     else
-        list_words_3 "$DT_r/lstws"
+        list_words_3 "${words}"
     fi
-
-    sname="$(< "$DT_r/lstws")"
-    slt=$(mktemp "$DT/slt.XXXX.x")
-    dlg_checklist_1 "$DT_r/lst" "${info}" "$slt"
+    wrds="$(cat "$DT_r/lst")"
+    slt="$(dlg_checklist_1 "${wrds}" "${info}")"
     ret="$?"
     
-    if [[ $ret -eq 0 ]]; then
+    if [ $ret -eq 0 ]; then
     
         while read chkst; do
         sed 's/TRUE//g' <<<"${chkst}" >> "$DT_r/wrds"
         echo "$sname" >> "$DT_r/wrdsls"
-        done <<<"$(sed 's/|//g' < "${slt}")"
-        cleanups "$slt"
+        done <<<"$(sed 's/|//g' <<<"${slt}")"
     fi
     exit 1
     

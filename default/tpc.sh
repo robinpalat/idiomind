@@ -59,7 +59,8 @@ else
         cd /
         fi
         
-        echo 0 > "$DC_s/5.cfg"
+        if [ `< "$DC_s/5.cfg"` != 0 ]; then
+        echo 0 > "$DC_s/5.cfg"; fi
         
         if [[ `wc -l < "${DC_tlt}/id.cfg"` -lt 16 ]]; then
         echo -e "${cfgfile}" > "${DC_tlt}/id.cfg"; fi

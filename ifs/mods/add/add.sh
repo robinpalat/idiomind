@@ -214,12 +214,12 @@ function clean_2() {
     
     if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
     echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" \
-    | tr -d '*\/' | tr -s '"&:|{}[]<>+' ' ' \
+    | tr -d '*\/' | tr -s '*"&:|{}[]<>+' ' ' \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//; s/ *$//g' | sed 's/ — /__/g' | sed 's/<[^>]*>//g'
     else
     echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" \
-    | tr -d '*\/' | tr -s '"&:|{}[]<>+' ' ' \
+    | tr -d '*\/' | tr -s '*"&:|{}[]<>+' ' ' \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \
     | sed 's/ — /__/g' | sed "s|/||g" | sed 's/<[^>]*>//g'
@@ -231,7 +231,7 @@ function clean_3() {
     
     echo "${1}" | cut -d "|" -f1 | sed 's/!//;s/&//;s/\://; s/\&//g' \
     | sed "s/-//g" | sed 's/^[ \t]*//;s/[ \t]*$//' | sed "s|/||g" \
-    | sed 's|/||;s/^\s*./\U&\E/g' | sed 's/\：//g' | sed 's/<[^>]*>//g' \
+    | sed 's/^\s*./\U&\E/g' | sed 's/\：//g' | sed 's/<[^>]*>//g' \
     | tr -d '*/' | tr -s '"&:|{}[]<>+' ' ' | sed 's/ \+/ /g'
 }  
 
@@ -284,7 +284,7 @@ export -f translate tts
 
 function voice() {
     
-    synth="$(grep -o synth=\"[^\"]* < "$DC_s/1.cfg" | grep -o '[^"]*$')"
+    synth="$(grep -o synth=\"[^\"]* "$DC_s/1.cfg" | grep -o '[^"]*$')"
     DT_r="$2"; cd "$DT_r"
     
     if [ -n "$synth" ]; then
@@ -341,9 +341,9 @@ function fetch_audio() {
 function list_words_2() {
 
     if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
-    echo "${1}" | tr '_' '\n' |sed -n 1~2p |sed '/^$/d' > "$DT/$c/idlst"
+    echo "${1}" | tr '_' '\n' |sed -n 1~2p |sed '/^$/d'
     else
-    echo "${1}" | tr '_' '\n' |sed -n 1~2p |sed '/^$/d' > "$DT/$c/idlst"
+    echo "${1}" | tr '_' '\n' |sed -n 1~2p |sed '/^$/d'
     fi
 }
 
@@ -354,7 +354,7 @@ function list_words_3() {
     echo "$2" | sed 's/\[ \.\.\. ] //g' | sed 's/\.//g' \
     | tr '_' '\n' | tr -d ',;' | sed -n 1~2p | sed '/^$/d' > "$DT_r/lst"
     else
-    cat "$1" | sed 's/\[ \.\.\. ] //g' | sed 's/\.//g' \
+    echo "$1" | sed 's/\[ \.\.\. ] //g' | sed 's/\.//g' \
     | tr -s "[:blank:]" '\n' | tr -d ',;' \
     | sed '/^$/d' | sed '/"("/d' \
     | grep -v '^.$' | grep -v '^..$' \
@@ -428,7 +428,7 @@ function dlg_radiolist_1() {
 
 function dlg_checklist_1() {
     
-    cat "$1" | awk '{print "FALSE\n"$0}' | \
+    echo "$1" | awk '{print "FALSE\n"$0}' | \
     yad --list --checklist --title="$(gettext "Word list")" \
     --text="<small> $2 </small>" \
     --name=Idiomind --class=Idiomind \
@@ -438,7 +438,7 @@ function dlg_checklist_1() {
     --width=400 --height=280 --borders=5  \
     --column=" " --column="Select" \
     --button="$(gettext "Close")":1 \
-    --button="gtk-add":0 > "$slt"
+    --button="gtk-add":0
 }
 
 

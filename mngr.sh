@@ -30,41 +30,35 @@ mkmn() {
     sed -i '/^$/d' "$DM_tl/.1.cfg"
     > "$DC_s/0.cfg"
     
-    n=1
-    while [[ ${n} -le "$(head -100 < "$DM_tl/.1.cfg" | wc -l)" ]]; do
+    while read -r tpc; do
     
-        tp=$(sed -n "$n"p "$DM_tl/.1.cfg")
-        if [ ! -f "$DM_tl/${tp}/.conf/8.cfg" ]; then
-        i=13; echo 13 > "$DM_tl/${tp}/.conf/8.cfg"
-        else i=$(sed -n 1p "$DM_tl/${tp}/.conf/8.cfg"); fi
-        
-        if [ ! "$DM_tl/${tp}/.conf/8.cfg" ] || \
-        [ ! "$DM_tl/${tp}/.conf/0.cfg" ] || \
-        [ -z "$i" ] || [ ! -d "$DM_tl/${tp}" ]; then
-        [ -f "${DC_tlt}/8.cfg" ] && stts_=$(< "${DC_tlt}/8.cfg")
-        if [ "$stts_" != 13 ]; then echo "$stts_" > "${DC_tlt}/8.cfg_"; fi
-        i=13; echo 13 > "$DM_tl/${tp}/.conf/8.cfg";fi
-        echo -e "/usr/share/idiomind/images/img.${i}.png\n${tp}" >> "$DC_s/0.cfg"
-        let n++
-    done
-    n=1
-    while [[ ${n} -le "$(tail -n+101 < "$DM_tl/.1.cfg" | wc -l)" ]]; do
-    
-        f=$(tail -n+51 < "$DM_tl/.1.cfg")
-        tp=$(sed -n "$n"p <<<"${f}")
-        if [ ! -f "$DM_tl/${tp}/.conf/8.cfg" ]; then
-        [ -f "${DC_tlt}/8.cfg" ] && stts_=$(< "${DC_tlt}/8.cfg")
-        if [ "$stts_" != 13 ]; then echo "$stts_" > "${DC_tlt}/8.cfg_"; fi
-        
-        i=13; echo 13 > "$DM_tl/${tp}/.conf/8.cfg"
-        else i=$(sed -n 1p "$DM_tl/${tp}/.conf/8.cfg"); fi
-        if [ ! -f "$DM_tl/${tp}/.conf/8.cfg" ] || \
-        [ ! "$DM_tl/${tp}/.conf/0.cfg" ] || \
-        [ ! -d "$DM_tl/${tp}" ]; then img=13; else img=12; fi
-        echo -e "/usr/share/idiomind/images/img.$img.png\n${tp}\n " >> "$DC_s/0.cfg"
-        let n++
-    done
-    exit 1
+        if [ ! -f "$DM_tl/${tpc}/.conf/8.cfg" ]; then
+        i=13; echo 13 > "$DM_tl/${tpc}/.conf/8.cfg"
+        else i=$(sed -n 1p "$DM_tl/${tpc}/.conf/8.cfg"); fi
+        if [ ! "$DM_tl/${tpc}/.conf/8.cfg" ] || \
+        [ ! "$DM_tl/${tpc}/.conf/0.cfg" ] || \
+        [ -z "$i" ] || [ ! -d "$DM_tl/${tpc}" ]; then
+        [ -f "$DM_tl/${tpc}/.conf/8.cfg" ] && stts_=$(< "$DM_tl/${tpc}/.conf/8.cfg")
+        if [ "$stts_" != 13 ]; then echo "$stts_" > "$DM_tl/${tpc}/.conf/8.cfg_"; fi
+        i=13; echo 13 > "$DM_tl/${tpc}/.conf/8.cfg";fi
+        echo -e "/usr/share/idiomind/images/img.${i}.png\n${tpc}" >> "$DC_s/0.cfg"
+
+    done < <(head -100 < "$DM_tl/.1.cfg")
+
+    while read -r tpc; do
+
+        if [ ! -f "$DM_tl/${tpc}/.conf/8.cfg" ]; then
+        [ -f "$DM_tl/${tpc}/.conf/8.cfg" ] && stts_=$(< "$DM_tl/${tpc}/.conf/8.cfg")
+        if [ "$stts_" != 13 ]; then echo "$stts_" > "$DM_tl/${tpc}/.conf/8.cfg_"; fi
+        i=13; echo 13 > "$DM_tl/${tpc}/.conf/8.cfg"
+        else i=$(sed -n 1p "$DM_tl/${tpc}/.conf/8.cfg"); fi
+        if [ ! -f "$DM_tl/${tpc}/.conf/8.cfg" ] || \
+        [ ! "$DM_tl/${tpc}/.conf/0.cfg" ] || \
+        [ ! -d "$DM_tl/${tpc}" ]; then img=13; else img=12; fi
+        echo -e "/usr/share/idiomind/images/img.$img.png\n${tpc}\n " >> "$DC_s/0.cfg"
+
+    done < <(tail -n+101 < "$DM_tl/.1.cfg")
+    exit
 }
 
 
@@ -83,7 +77,7 @@ delete_item_ok() {
 
     if [ -d "${DC_tlt}/practice" ]; then
         cd "${DC_tlt}/practice"
-        while read file_pr; do
+        while read -r file_pr; do
             if grep -Fxq "${trgt}" "${file_pr}"; then
                 grep -vxF "${trgt}" "${file_pr}" > ./rm.tmp
                 sed '/^$/d' ./rm.tmp > "${file_pr}"; fi
@@ -119,16 +113,9 @@ delete_item() {
     DM_tlt="$DM_tl/${2}"
     DC_tlt="$DM_tl/${2}/.conf"
 
-    if [ ! -f "${DM_tlt}/$file.mp3" ]; then 
-
-    msg_2 "$(gettext "Are you sure you want to delete this word?")\n" \
+    msg_2 "$(gettext "Are you sure you want to delete this item?")\n" \
     gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
 
-    else
-    msg_2 "$(gettext "Are you sure you want to delete this sentence?")\n" \
-    gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
-
-    fi
     ret="$?"
     
     if [[ $ret -eq 0 ]]; then
@@ -174,17 +161,18 @@ edit_item() {
     lgt=$(lnglss $lgtl)
     lgs=$(lnglss $lgsl)
     lists="$2";  item_pos="$3"
+    c=$((RANDOM%10000))
+    
     if [ "$lists" = 1 ]; then
     index_1="${DC_tlt}/1.cfg"
     index_2="${DC_tlt}/2.cfg"
-    [[ $item_pos -lt 1 ]] && item_pos=$inx1
+    [ ${item_pos} -lt 1 ] && item_pos=$inx1
     elif [ "$lists" = 2 ]; then
     index_1="${DC_tlt}/2.cfg"
     index_2="${DC_tlt}/1.cfg"
-    [[ $item_pos -lt 1 ]] && item_pos=$inx2; fi
-    tpcs="$(egrep -v "${tpc}" "${DM_tl}/.2.cfg" |tr "\\n" '!' |sed 's/!\+$//g')"
-    c=$((RANDOM%10000))
+    [ ${item_pos} -lt 1 ] && item_pos=$inx2; fi
 
+    tpcs="$(egrep -v "${tpc}" "${DM_tl}/.2.cfg" |tr "\\n" '!' |sed 's/!\+$//g')"
     item="$(sed -n ${item_pos}p "${index_1}")"
     edit_pos=`grep -Fon -m 1 "trgt={${item}}" "${DC_tlt}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
     item="$(sed -n ${edit_pos}p "${DC_tlt}/0.cfg" |sed 's/},/}\n/g')"
@@ -199,11 +187,10 @@ edit_item() {
     wrds=`grep -oP '(?<=wrds={).*(?=})' <<<"${item}"`
     mark=`grep -oP '(?<=mark={).*(?=})' <<<"${item}"`
     id=`grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"`
-    [ "${mark}" = FALSE ] && mark=""
     [ -z "${id}" ] && id=""
     q_trad="$(sed "s/'/ /g" <<<"$trgt")"
     mod=0; col=0
-    
+   
     cmd_move="$DS/ifs/mods/mngr/mngr.sh 'position' ${item_pos} "\"${index_1}\"""
     cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"" "\"${trgt}\"""
     cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"" "\"${trgt}\"""
@@ -220,7 +207,7 @@ edit_item() {
     ret=$?
     
 
-        if [[ $ret -eq 0 ]] || [[ $ret -eq 2 ]]; then
+        if [ ${ret} -eq 0 -o ${ret} -eq 2 ]; then
         
             include "$DS/ifs/mods/add"
             
@@ -252,10 +239,7 @@ edit_item() {
             [ -z "${type_mod}" ] && type_mod=2
                 
             fi
-
-            [ "${mark_mod}" = FALSE ] && mark_mod=""
-            [ -z "${id_mod}" ] && id=""
-            
+ 
             
             if [ "${trgt_mod}" != "${trgt}" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
             temp="$(gettext "Processing")..."
@@ -269,10 +253,8 @@ edit_item() {
             
             if [ "$mark" != "$mark_mod" ]; then
             if [ "$mark_mod" = "TRUE" ]; then
-            echo "$trgt" >> "${DC_tlt}/6.cfg"; else
-            grep -vxF "${trgt}" "${DC_tlt}/6.cfg" > "${DC_tlt}/6.cfg.tmp"
-            sed '/^$/d' "${DC_tlt}/6.cfg.tmp" > "${DC_tlt}/6.cfg"
-            rm "${DC_tlt}/6.cfg.tmp"; fi
+            echo "${trgt}" >> "${DC_tlt}/6.cfg"; else
+            sed -i "/${trgt}/d" "${DC_tlt}/6.cfg"; fi
             col=1; mod=1
             fi
             
@@ -281,6 +263,7 @@ edit_item() {
             [ "${exmp}" != "${exmp_mod}" ] && mod=1
             [ "${defn}" != "${defn_mod}" ] && mod=1
             [ "${note}" != "${note_mod}" ] && mod=1
+            [ "${mark}" != "${mark_mod}" ] && mod=1
             [ "${tpc}" != "${tpc_mod}" ] && mod=1
 
             if [ $mod = 1 ]; then
@@ -352,15 +335,15 @@ edit_item() {
             fi
 
             
-            [[ -d "$DT/$c" ]] && "$DS/add.sh" list_words_edit "${wrds_mod}" 2 ${c} "${trgt_mod}" &
-            [[ $col = 1 ]] && "$DS/ifs/tls.sh" colorize &
-            [[ $mod = 1 ]] && sleep 0.2
-            [[ $ret -eq 2 ]] && "$DS/mngr.sh" edit "$lists" $((item_pos-1))
-            [[ $ret -eq 0 ]] && "$DS/vwr.sh" "$lists" "${trgt}" ${item_pos} &
+            [ -d "$DT/$c" ] && "$DS/add.sh" list_words_edit "${wrds_mod}" 2 ${c} "${trgt_mod}" &
+            [ ${col} -eq 1 ] && "$DS/ifs/tls.sh" colorize &
+            [ ${mod} -eq 1 ] && sleep 0.2
+            [ ${ret} -eq 2 ] && "$DS/mngr.sh" edit "$lists" $((item_pos+1))
+            [ ${ret} -eq 0 ] && "$DS/vwr.sh" "$lists" "${trgt}" ${item_pos} &
             
 
         else
-            "$DS/vwr.sh" "$lists" "${trgt}" $((item_pos-1)) &
+            "$DS/vwr.sh" "$lists" "${trgt}" $((item_pos+1)) &
         fi
 
     exit
@@ -368,26 +351,37 @@ edit_item() {
 } >/dev/null 2>&1
 
 
-mtext() {
-    include "$DS/ifs/mods/mngr"
-    [[ $2 = 1 ]] && index="${DC_tlt}/1.cfg" 
-    [[ $2 = 2 ]] && index="${DC_tlt}/2.cfg"
-    trgt="$(sed -n ${3}p "${index}")"
-    vmtext="$(dlg_form_2)"
+#mtext() {
     
-        if [[ $? = 2 ]]; then
-        "$DS/mngr.sh" delete_item "${tpc}" "${trgt}" &
+
+    #include "$DS/ifs/mods/mngr"
+    #[ ${2} = 1 ] && index="${DC_tlt}/1.cfg" 
+    #[ ${2} = 2 ] && index="${DC_tlt}/2.cfg"
+    #trgt="$(sed -n ${3}p "${index}")"
+    #cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"" "\"${trgt}\"""
+    #cmd_words=" "
+    
+    #"$DS/add.sh" new_items "" 2 "${trgt}"
+
+    ##vmtext="$(dlg_form_2)"
+    ##ret=$?
+
+        ##if [ $ret = 2 ]; then
+            ##"$DS/mngr.sh" delete_item "${tpc}" "${trgt}" &
         
-        elif [[ $? = 0 ]]; then
-        out="$(tail -n 1 <<<"${vmtext}")"
-        val1="$(cut -d "|" -f1 <<<"${out}")"
-        val2="$(cut -d "|" -f2 <<<"${out}")"
-        val3="$(cut -d "|" -f3 <<<"${out}")"
-        [ -f "$val3" ] && cp "$val3" "$DT_r/audtm.mp3"
-        "$DS/add.sh" new_items " " 3 "${val1}" "${val2}" & fi
-        
-        "$DS/vwr.sh" ${2} "${trgt}" ${3} & exit
-}
+        ##elif [ $ret = 0 ]; then
+            ##out="$(tail -n 1 <<<"${vmtext}")"
+            ##val1="$(cut -d "|" -f3 <<<"${out}")"
+            ##val2="$(cut -d "|" -f4 <<<"${out}")"
+            ##val3="$(cut -d "|" -f3 <<<"${out}")"
+            ##[ -f "$val3" ] && cp "$val3" "$DT_r/audtm.mp3"
+            ##"$DS/add.sh" new_items "" 3 "${val1}" "${val2}" &
+            ##"$DS/vwr.sh" ${2} 0 ${3}
+        ##else
+    #"$DS/vwr.sh" ${2} "${trgt}" ${3} &
+        ##fi
+    #exit
+#}
 
 
 
@@ -402,7 +396,7 @@ delete_topic() {
     gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
     ret=$(echo "$?")
         
-        if [[ $ret -eq 0 ]]; then
+        if [ ${ret} -eq 0 ]; then
             
             touch "$DT/ps_lk"
             
@@ -462,11 +456,11 @@ rename_topic() {
     msg "$(gettext "Unable to rename at this time. Please try later ")\n" \
     dialog-warning "$(gettext "Rename")" & exit 1; fi
 
-    if [[ ${#jlb} -gt 55 ]]; then
+    if [ ${#jlb} -gt 55 ]; then
     msg "$(gettext "Sorry, new name too long.")\n" \
     info "$(gettext "Rename")" & exit 1; fi
 
-    if [[ ${chck} -ge 1 ]]; then
+    if [ ${chck} -ge 1 ]; then
     
         for i in {1..50}; do
         chck=$(grep -Fxo "${jlb} ($i)" "$DM_t/$language_target/.1.cfg")
@@ -475,7 +469,7 @@ rename_topic() {
         jlb="${jlb} ($i)"
         msg_2 "$(gettext "Another topic with the same name already exist.") \n$(gettext "The name for the newest will be\:")\n<b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
         ret="$?"
-        if [[ $ret -eq 1 ]]; then exit 1; fi
+        if [ ${ret} -eq 1 ]; then exit 1; fi
     fi
     
     if [ -n "${jlb}" ]; then
@@ -524,7 +518,7 @@ mark_to_learn_topic() {
         dialog_2
         ret=$?
     
-        if [[ $ret -eq 3 ]]; then
+        if [ ${ret} -eq 3 ]; then
         
             rm -f "${DC_tlt}/7.cfg"
             idiomind topic & exit 1
@@ -535,12 +529,12 @@ mark_to_learn_topic() {
     stts=$(sed -n 1p "${DC_tlt}/8.cfg")
     calculate_review "${tpc}"
     
-    if [[ $((stts%2)) = 0 ]]; then
+    if [ $((stts%2)) = 0 ]; then
 
         echo 6 > "${DC_tlt}/8.cfg"
             
     else
-        if [[ $RM -ge 50 ]]; then
+        if [ ${RM} -ge 50 ]; then
         echo 5 > "${DC_tlt}/8.cfg"
         else
         echo 1 > "${DC_tlt}/8.cfg"
@@ -558,7 +552,7 @@ mark_to_learn_topic() {
         trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
         
         if [ -n "${trgt}" ]; then
-        if [[ ${type} = 1 ]]; then
+        if [ ${type} -eq 1 ]; then
         echo "${trgt}" >> "${DC_tlt}/3.cfg"
         else echo "${trgt}" >> "${DC_tlt}/4.cfg"; fi
         echo "${trgt}" >> "${DC_tlt}/1.cfg"
@@ -601,15 +595,15 @@ mark_as_learned_topic() {
         if [ -f "${DC_tlt}/9.cfg" ]; then
         
             calculate_review "${tpc}"
-            steps=$(sed '/^$/d' < "${DC_tlt}/9.cfg" | wc -l)
+            steps=$(egrep -cv '#|^$' < "${DC_tlt}/9.cfg")
             
-            if [[ "$steps" = 4 ]]; then
+            if [ ${steps} -eq 4 ]; then
             
                 stts=$((stts+1)); fi
             
-            if [[ $RM -ge 50 ]]; then
+            if [ ${RM} -ge 50 ]; then
             
-                if [[ $steps = 6 ]]; then
+                if [ ${steps} -eq 6 ]; then
                 echo -e "_\n_\n_\n_\n_\n$(date +%m/%d/%Y)" > "${DC_tlt}/9.cfg"
                 else
                 echo "$(date +%m/%d/%Y)" >> "${DC_tlt}/9.cfg"

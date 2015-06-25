@@ -5,7 +5,7 @@ cfg0="$DC_tlt/0.cfg"
 drts="$DS/practice"
 strt="$drts/strt.sh"
 cd "${DC_tlt}/practice"
-all=$(wc -l < ./d.0)
+all=$(egrep -cv '#|^$' ./d.0)
 hits="$(gettext "hits")"
 synth="$(grep -o synth=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')"
 listen="Listen"
@@ -15,17 +15,16 @@ ling=0
 f=0
 
 score() {
-
+    
     "$drts"/cls.sh comp d &
 
     if [[ ${1} -ge ${all} ]]; then
         play "$drts/all.mp3" & 
         echo ".s9.$(tr -s '\n' '|' < ./d.1).s9." >> "$log"
         echo -e ".okp.1.okp." >> "$log"
-        echo "$(date "+%a %d %B")" > d.lock
+        echo "$(date "+%a %d %B")" > ./d.lock
         echo 21 > .4
-        "$strt" 4 d &
-        exit 1
+        "$strt" 4 d & exit
         
     else
         [ -f ./d.l ] && echo $(($(< ./d.l)+easy)) > ./d.l || echo ${easy} > ./d.l
@@ -39,7 +38,7 @@ score() {
             let n++
         done
 
-        "$strt" 9 d ${easy} ${ling} ${hard} & exit 1
+        "$strt" 9 d ${easy} ${ling} ${hard} & exit
     fi
 }
 
@@ -57,8 +56,7 @@ dialog2() {
     entry=$(>/dev/null | yad --form --title="$(gettext "Practice")" \
     --text="$text" \
     --name=Idiomind --class=Idiomind \
-    --fontname="Free Sans 14" --fore=4A4A4A --justify=fill \
-    --margins=5 --editable --wrap \
+    --separator="" \
     --window-icon="$DS/images/icon.png" --image="$DS/practice/images/bar.png" \
     --buttons-layout=end --skip-taskbar --undecorated --center --on-top \
     --text-align=left --align=left --image-on-top \
@@ -130,19 +128,19 @@ result() {
     sed 's/ /\n/g' < ./chk.tmp > ./all.tmp; touch ./mtch.tmp
     porc=$((100*$(cat ./mtch.tmp | wc -l)/$(wc -l < ./all.tmp)))
     
-    if [[ $porc -ge 70 ]]; then
+    if [ ${porc} -ge 70 ]; then
         echo "${trgt}" >> ./d.1
-        easy=$((easy+1))
+        export easy=$((easy+1))
         color=3AB452
         
-    elif [[ $porc -ge 50 ]]; then
+    elif [ ${porc} -ge 50 ]; then
         echo "${trgt}" >> ./d.2
-        ling=$((ling+1))
+         export ling=$((ling+1))
         color=E5801D
         
     else
         [ -n "$entry" ] && echo "${trgt}" >> ./d.3
-        [ -n "$entry" ] && hard=$((hard+1))
+        [ -n "$entry" ] && export hard=$((hard+1))
         color=D11B5D
     fi
     
@@ -176,8 +174,7 @@ while read trgt; do
     if [[ $ret = 1 ]]; then
         break &
         killall play
-        "$drts"/cls.sh comp d ${easy} ${ling} ${hard} ${all} &
-        exit 1
+        "$drts"/cls.sh comp d ${easy} ${ling} ${hard} ${all} & exit
     else
         killall play &
         result "${trgt}"
@@ -190,8 +187,7 @@ while read trgt; do
         break &
         killall play &
         rm -f ./mtch.tmp ./words.tmp
-        "$drts"/cls.sh comp d ${easy} ${ling} ${hard} ${all} &
-        exit 1
+        "$drts"/cls.sh comp d ${easy} ${ling} ${hard} ${all} & exit
         
     elif [[ $ret -eq 2 ]]; then
         killall play &

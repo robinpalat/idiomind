@@ -6,7 +6,7 @@ drts="$DS/practice"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
 log="$DC_s/8.cfg"
-all=$(wc -l < ./c.0)
+all=$(egrep -cv '#|^$' ./c.0)
 synth="$(grep -o synth=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')"
 easy=0
 hard=0
@@ -22,10 +22,9 @@ score() {
         play "$drts/all.mp3" &
         echo ".w9.$(tr -s '\n' '|' < ./c.1).w9." >> "$log"
         echo -e ".okp.1.okp." >> "$log"
-        echo "$(date "+%a %d %B")" > c.lock
+        echo "$(date "+%a %d %B")" > ./c.lock
         echo 21 > .3
-        "$strt" 3 c &
-        exit 1
+        "$strt" 3 c & exit
         
     else
         [ -f ./c.l ] && echo $(($(< ./c.l)+easy)) > ./c.l || echo ${easy} > ./c.l
@@ -42,7 +41,7 @@ score() {
         if [ -f ./c.3 ]; then
         echo ".w6.$(tr -s '\n' '|' < ./c.3).w6." >> "$log"; fi
         
-        "$strt" 8 c ${easy} ${ling} ${hard} & exit 1
+        "$strt" 8 c ${easy} ${ling} ${hard} & exit
     fi
 }
 
@@ -58,7 +57,7 @@ fonts() {
     
     s=$((30-${#1}))
     img="/usr/share/idiomind/images/fc.png"
-    lcuestion="\n\n<span font_desc='Verdana $s' color='#717171'><b>$lst</b></span>\n\n\n\n\n"
+    lcuestion="\n\n<span font_desc='Verdana $s' color='#717171'><b>$lst</b></span>\n\n\n\n"
 
     }
 
@@ -83,7 +82,7 @@ cuestion() {
     --timeout=20 \
     --skip-taskbar --text-align=center --center --on-top \
     --buttons-layout=spread --image-on-top --undecorated \
-    --width=380 --height=250 --borders=8 \
+    --width=380 --height=240 --borders=8 \
     --field="$(gettext "Play")":BTN "$cmd_play" \
     --button="$(gettext "Exit")":1 \
     --button="  $(gettext "No")  ":3 \
@@ -108,8 +107,7 @@ while read trgt; do
 
     elif [[ $ans = 1 ]]; then
         break &
-        "$drts"/cls.sh comp c ${easy} ${ling} ${hard} ${all} &
-        exit 1
+        "$drts"/cls.sh comp c ${easy} ${ling} ${hard} ${all} & exit
     fi
 done < ./c.tmp
 
@@ -134,8 +132,7 @@ else
 
         elif [[ $ans = 1 ]]; then
             break &
-            "$drts"/cls.sh comp c ${easy} ${ling} ${hard} ${all} &
-            exit 1
+            "$drts"/cls.sh comp c ${easy} ${ling} ${hard} ${all} & exit
         fi
     done < ./c.2
     

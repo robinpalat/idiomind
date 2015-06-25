@@ -2,17 +2,17 @@
 # -*- ENCODING: UTF-8 -*-
 #
 echo "_" >> "$DT/stats.tmp" &
-[[ $1 = 1 ]] && index="${DC_tlt}/1.cfg" && item_name="$(sed 's/<[^>]*>//g' <<<"${3}")"
-[[ $1 = 2 ]] && index="${DC_tlt}/2.cfg" && item_name="$(sed 's/<[^>]*>//g' <<<"${2}")"
+[ ${1} = 1 ] && index="${DC_tlt}/1.cfg" && item_name="$(sed 's/<[^>]*>//g' <<<"${3}")"
+[ ${1} = 2 ] && index="${DC_tlt}/2.cfg" && item_name="$(sed 's/<[^>]*>//g' <<<"${2}")"
 
 re='^[0-9]+$'; index_pos="$3"
 if ! [[ ${index_pos} =~ $re ]]; then
 index_pos=`grep -Fxon -m 1 "${item_name}" "${index}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
 nll=""; fi
 
-item="$(sed -n ${index_pos}p "${index}")"
-if [ -z "${item}" ]; then item="$(sed -n 1p "${index}")"; index_pos=1; fi
-item="$(grep -F -m 1 "trgt={${item}}" "$DC_tlt/0.cfg" |sed 's/},/}\n/g')"
+_item="$(sed -n ${index_pos}p "${index}")"
+if [ -z "${_item}" ]; then _item="$(sed -n 1p "${index}")"; index_pos=1; fi
+item="$(grep -F -m 1 "trgt={${_item}}" "$DC_tlt/0.cfg" |sed 's/},/}\n/g')"
 
 type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
 trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
@@ -46,34 +46,34 @@ elif [ ${type} = 2 ]; then
     sentence_view
 
 else
-    m_text
+    m_text "${_item}"
 fi
 
 ret=$?
 
-    if [[ $ret -eq 5 ]]; then
+    if [ $ret -eq 5 ]; then
         "$DS/mngr.sh" mtext ${1} ${index_pos}
 
-    elif [[ $ret -eq 4 ]]; then
+    elif [ $ret -eq 4 ]; then
         "$DS/mngr.sh" edit ${1} ${index_pos}
     
-    elif [[ $ret -eq 2 ]]; then
+    elif [ $ret -eq 2 ]; then
     
         if [[ ${index_pos} = 1 ]]; then
         
         item=`tail -n 1 < "${index}"`
-        [[ $1 = 1 ]] && "$DS/vwr.sh" "$1" "$nll" "${item}"
-        [[ $1 = 2 ]] && "$DS/vwr.sh" "$1" "${item}"
+        [ ${1} = 1 ] && "$DS/vwr.sh" ${1} "" "${item}"
+        [ ${1} = 2 ] && "$DS/vwr.sh" ${1} "${item}"
         else
         
         ff=$((index_pos-1))
-        "$DS/vwr.sh" "$1" "$nll" $ff &
+        "$DS/vwr.sh" ${1} "" ${ff} &
         fi
     
-    elif [[ $ret -eq 3 ]]; then
+    elif [ $ret -eq 3 ]; then
     
         ff=$((index_pos+1))
-        "$DS/vwr.sh" "$1" "$nll" $ff &
+        "$DS/vwr.sh" ${1} "" ${ff} &
     
     else 
         echo -e ".vwr.`wc -l < "$DT/stats.tmp"`.vwr." >> "$DC_s/log"

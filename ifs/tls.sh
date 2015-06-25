@@ -183,9 +183,11 @@ check_index() {
     
     _check() {
         
+        if [ ! -f "${DC_tlt}/0.cfg" ]; then f=1; fi
+        
         if [ ! -d "${DC_tlt}" ]; then mkdir "${DC_tlt}"; fi
         n=0
-        while [[ $n -le 6 ]]; do
+        while [ ${n} -le 6 ]; do
             [ ! -f "${DC_tlt}/$n.cfg" ] && touch "${DC_tlt}/$n.cfg" && a=1
             if grep '^$' "${DC_tlt}/$n.cfg"; then
             sed -i '/^$/d' "${DC_tlt}/$n.cfg"; fi
@@ -195,11 +197,18 @@ check_index() {
         
         if [ -n "$(< "${DC_tlt}/0.cfg")" ]; then
         if ! grep '},trgt={' "${DC_tlt}/0.cfg"; then
-        eval nv=1; fi; fi
+        export nv=1; fi; fi
         
         if [ ! -f "${DC_tlt}/8.cfg" ]; then
         echo 1 > "${DC_tlt}/8.cfg"; fi
-        eval stts=$(sed -n 1p "${DC_tlt}/8.cfg")
+        export stts=$(sed -n 1p "${DC_tlt}/8.cfg")
+        
+        cnt0=`wc -l < "${DC_tlt}/0.cfg"`
+        cnt1=`egrep -cv '#|^$' < "${DC_tlt}/1.cfg"`
+        cnt2=`egrep -cv '#|^$' < "${DC_tlt}/2.cfg"`
+        
+        if [ $((cnt1+cnt2)) != ${cnt0} ]; then
+        export a=1; fi
     }
     
     _restore() {
@@ -219,7 +228,7 @@ check_index() {
         
         if [ -n "${trgt}" ]; then
         
-            if [[ ${type} = 1 ]]; then
+            if [ ${type} = 1 ]; then
             echo "${trgt}" >> "${DC_tlt}/3.cfg"
             else
             echo "${trgt}" >> "${DC_tlt}/4.cfg"; fi
@@ -235,7 +244,7 @@ check_index() {
         cfg11="$2"
         sed -i '/^$/d' "${cfg11}"
         n=1
-        while [[ $n -le 200 ]]; do
+        while [ ${n} -le 200 ]; do
             line=$(sed -n ${n}p "${cfg11}" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
             if [ -z ${line} ]; then
                 echo "$n:[type={},trgt={},srce={},exmp={},defn={},note={},wrds={},grmr={},].[tag={},mark={},].id=[]" >> "${cfg11}"
@@ -246,7 +255,7 @@ check_index() {
         done
     }
     
-    _new_version() {
+    _version() {
     
         mv -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"
         rm "$DC_tlt/2.cfg" "$DC_tlt/.11.cfg"
@@ -256,7 +265,7 @@ check_index() {
         > "$DC_tlt/0.cfg"
         
         n=1
-        while [[ $n -le 200 ]]; do
+        while [ ${n} -le 200 ]; do
         
             unset id type trgt srce exmp dftn note tag lwrd grmr
             item="$(sed -n ${n}p "$DC_tlt/1.cfg")"
@@ -302,7 +311,7 @@ check_index() {
     
     fix() {
         
-        if [ "$stts" = 13 ]; then
+        if [ ${stts} -eq 13 ]; then
             if [ -f "$DC_tlt/8.cfg_" ] && \
             [ -n $(< "$DC_tlt/8.cfg_") ]; then
             stts=$(sed -n 1p "$DC_tlt/8.cfg_")
@@ -314,28 +323,25 @@ check_index() {
     
     _check
     
-    if [ ${f} = 1 ] || [ ${nv} = 1 ]; then
+    if [ ${f} = 1 -o ${nv} = 1 -o ${a} = 1 ]; then
     
         if [ ${f} = 1 ]; then
-        (sleep 1
-        notify-send -i idiomind "$(gettext "Index Error")" \
+        (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
         "$(gettext "Fixing...")" -t 3000) &
         > "$DT/ps_lk"
         [ ! -d "$DM_tlt/.conf" ] && mkdir "$DM_tlt/.conf"
-        DC_tlt="$DM_tlt/.conf"
+        _restore
         fi
         
         if [ ${nv} = 1 ]; then
-        (sleep 1
-        notify-send -i idiomind "$(gettext "Fixing index")" \
+        (sleep 1; notify-send -i idiomind "$(gettext "Fixing index")" \
         "$(gettext "Migrating to new version...")" -t 3000) &
         > "$DT/ps_lk"
-        _new_version
+        _version
         fi
         
         if [ ${a} = 1 ]; then
-        (sleep 1
-        notify-send -i idiomind "$(gettext "Index Error")" \
+        (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
         "$(gettext "Fixing...")" -t 3000) &
         > "$DT/ps_lk"
         _restore
