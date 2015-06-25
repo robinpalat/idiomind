@@ -66,8 +66,6 @@ cuestion() {
     
     item="$(grep -F -m 1 "trgt={${1}}" "${cfg0}" |sed 's/},/}\n/g')"
     
-    alias espeak='espeak -v english -k 1 -p 40 -a 80 -s 110'
-    
     if [ -f "$DM_tls/${1,,}.mp3" ]; then
     cmd_play="play "\"$DM_tls/${1,,}.mp3\"""
     (sleep 0.5 && play "$DM_tls/${1,,}".mp3) &
