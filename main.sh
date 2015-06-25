@@ -135,34 +135,31 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     source "$DS/ifs/tls.sh"
     check_source_1 "${1}"
     file="${1}"
-    cmd_infs="'$DS/ifs/tls.sh' 'details' "\"$tmp\"""
     
     l=( "$(gettext "Beginner")" \
     "$(gettext "Intermediate")" \
     "$(gettext "Advanced")" )
     level="${l[${level}]}"
 
-    itxt="<span font_desc='Free Sans 14'>$tname</span><small>\n $nword $(gettext "Words") $nsent $(gettext "Sentences") $nimag $(gettext "Images")\n ${langs^}-$langt  $(gettext "Level:") $level</small>"
-    dclk="'$DS/default/vwr_tmp.sh' '$file'"
+    itxt="<span font_desc='Free Sans 14'> $tname</span><sup>\n $nword $(gettext "Words") $nsent $(gettext "Sentences") $nimag $(gettext "Images")\n $langt $(gettext "Level:") $level</sup>"
+    dclk="'$DS/default/vwr_tmp.sh' "\"${file}\"""
     
-    sett() {
-        
-        while read item; do
-        item="$(echo "$item" |sed 's/},/}\n/g')"
-        trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
-        [ -n "$trgt" ] && echo "$trgt"
-        done < <(head -n -2 < "${file}")
+    _set() {
+    while read -r item; do
+    grep -oP '(?<=trgt={).*(?=},srce)' <<<"${item}"
+    grep -oP '(?<=srce={).*(?=},exmp)' <<<"${item}"
+    done < <(head -n -2 < "${file}")
     }
 
-    sett | yad --list --title="Idiomind" \
-    --text="$itxt" --image="/media/Archivos/.store/copy/Projects/IDIOMIND/desing/iconos/flags/png/32/China-flag.png" \
+    _set | yad --list --title="Idiomind" \
+    --text="$itxt" \
     --name=Idiomind --class=Idiomind \
-    --print-all --dclick-action="$dclk" \
+    --no-click --print-colummn=1 --dclick-action="$dclk" \
     --window-icon="$DS/images/icon.png" \
-    --no-headers --image-on-top --ellipsize=END --fixed \
-    --scroll --center --tooltip-column=1 \
-    --width=650 --height=580 --borders=10 \
-    --column="" \
+    --ellipsize=END --center \
+    --width=580 --height=540 --borders=10 \
+    --column="$langt                                                                   " \
+    --column="$langs" \
     --button="$(gettext "Install")":0 \
     --button="$(gettext "Close")":1
     ret=$?
