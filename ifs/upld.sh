@@ -140,6 +140,11 @@ function dwld() {
         
         if [ -d "$DT/download/${oname}" ]; then
         
+        ltotal="$(gettext "Total:")"
+        laudio="$(gettext "Audio files:")"
+        limage="$(gettext "Images:")"
+        lfiles="$(gettext "Aditional files:")"
+        lothers="$(gettext "Others:")"
         tmp="$DT/download/${oname}"
         total=$(find "$tmp" -maxdepth 5 -type f | wc -l)
         audio=$(find "$tmp" -maxdepth 5 -name '*.mp3' | wc -l)
@@ -157,13 +162,8 @@ function dwld() {
         [ ! -f "${DM_tlt}/files" ] && mkdir "${DM_tlt}/files"
         mv -f "${tmp}"/files/* "${DM_tlt}"/files/
         echo "${oname}" >> "$DM_tl/.3.cfg"
+        echo -e "$ltotal $total\n$laudio $audio\n$limage $images\n$lfiles $atfiles\n$lothers $others" > "${DC_tlt}/11.cfg"
         rm -fr "$DT/download"
-echo -e "$(gettext "Total"): $total
-$(gettext "Audio files"): $audio
-$(gettext "Images"): $images
-$(gettext "Aditional files"): $atfiles
-$(gettext "Others"): $others" > "${DC_tlt}/11.cfg"
-        rm -f "$DT/upload"
         
         else
             msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" info & exit
@@ -267,7 +267,6 @@ if grep -Fxq "${tpc}" "$DM_tl/.3.cfg"; then
         opt1="$(gettext "Not do anything")"
         opt2="$(gettext "Notify me of updates")"
         opt3="$(gettext "Automatically download")"
-
         upld=$(yad --form --title="$(gettext "Share")" \
         --columns=2 \
         --text="<span font_desc='Free Sans 15'> ${tpc}</span>" \
@@ -275,7 +274,7 @@ if grep -Fxq "${tpc}" "$DM_tl/.3.cfg"; then
         --window-icon="$DS/images/icon.png" --buttons-layout=end \
         --align=left --center --on-top \
         --width=480 --height=460 --borders=12 \
-        --field="\n$(gettext "Latest Download")\n$(cat "$DC_tlt/11.cfg"):lbl" "#1" \
+        --field="\n$(gettext "Latest Download")\n$(< "${DC_tlt}/11.cfg"):lbl" "#1" \
         --field=" :lbl" "#1" \
         --field="$(gettext "Subscribe"):CB" "$opt1!$opt2!$opt3" \
         --button="$(gettext "PDF")":2 \
@@ -445,16 +444,11 @@ naudi=\"$c_audio\"
 nsize=\"$f_size\"
 level=\"$level\"
 set_1=\"$set_1\"
-set_2=\"$set_2\"
+set_2=\"$set_2\"" > "${DC_tlt}/id.cfg"
 
-
-
------------------- content -----------------" > "${DC_tlt}/id.cfg"
-cp -f "${DC_tlt}/id.cfg" "$DT_u/${usrid}.${tpc}.$lgt"
-cat "${DC_tlt}/0.cfg" >> "$DT_u/${usrid}.${tpc}.$lgt"
-echo -e "---------------end content -----------------
-md5sum=\"$sum\"" >> "$DT_u/${usrid}.${tpc}.$lgt"
-
+cp -f "${DC_tlt}/0.cfg" "$DT_u/${usrid}.${tpc}.$lgt"
+echo -e "md5sum=\"$sum\"" >> "$DT_u/${usrid}.${tpc}.$lgt"
+tr '\n' '&' < "${DC_tlt}/id.cfg" >> "$DT_u/${usrid}.${tpc}.$lgt"
 
 url="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
 | grep -o 'UPLOADS="[^"]*' | grep -o '[^"]*$')"

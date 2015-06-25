@@ -1,14 +1,11 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-nmt=$(sed -n 1p "/tmp/.idiomind-$USER/dir$1/folder")
 vwr="/usr/share/idiomind/default/vwr_tmp.sh"
-dir="/tmp/.idiomind-$USER/dir$1/$nmt"
 re='^[0-9]+$'
 item="$2"
 pos="$3"
-cfg0="$(tail -n +20 < "${1}")"
-cd "$dir"
+cfg0="$(head -n -2 < "${1}")"
 
 re='^[0-9]+$'
 if ! [[ ${pos} =~ $re ]]; then

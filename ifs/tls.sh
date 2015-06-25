@@ -117,7 +117,7 @@ Vietnamese"
         export ${sets[$n]}="${val}"
         let n++
          
-    done < <(head -n 17 < "${file}")
+    done < <(tail -n 1 < "${file}" |tr '&' '\n')
 
     if [[ $exit = 0 ]] ; then
     > "$DT/${2}.cfg"
