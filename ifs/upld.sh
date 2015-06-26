@@ -24,13 +24,13 @@ lgs=$(lnglss $lgsl)
 
 _cfg() {
     
-b=$(tr -dc a-z < /dev/urandom |head -c 1)
-c=$((RANDOM%100))
-id="$b$c"
-id=${id:0:3}
-echo -e "usrid=\"$id\"
-iuser=\"\"
-cntct=\"\"" > "$DC_s/3.cfg"
+    b=$(tr -dc a-z < /dev/urandom |head -c 1)
+    c=$((RANDOM%100))
+    id="$b$c"
+    id=${id:0:3}
+    echo -e "usrid=\"$id\"
+    iuser=\"\"
+    cntct=\"\"" > "$DC_s/3.cfg"
 }
 
 [ ! $(grep -oP '(?<=usrid=\").*(?=\")' "$DC_s/3.cfg") ] && _cfg
@@ -175,17 +175,17 @@ if [ -n `grep -Fxq "${tpc}" "$DM_tl/.3.cfg"` ] && [ -f "$DC_tlt/11.cfg" ]; then
         --window-icon="$DS/images/icon.png" --buttons-layout=end \
         --align=left --center --on-top \
         --width=380 --height=260 --borders=12 \
-        --field="\n\n$info:lbl" "#1" \
+        --field="\n\n$info:lbl" " " \
         --field="$(gettext "Download"):BTN" "${cmd_dl}" \
-        --field="$info2:lbl" "#1" \
-        --field="\t\t\t\t\t:lbl" "#1" \
-        --field=" :lbl" "#1" \
+        --field="$info2:lbl" " " \
+        --field="\t\t\t\t\t:lbl" " " \
+        --field=" :lbl" " " \
         --button="$(gettext "PDF")":2 \
         --button="$(gettext "Close")":4)
         ret=$?
         
         elif [ -n "$(< "$DC_tlt/11.cfg")" ]; then
-        opt1="$(gettext "Not do anything")"
+        opt1="$(gettext "No subscribe")"
         opt2="$(gettext "Notify me of updates")"
         opt3="$(gettext "Automatically download")"
         d=$(yad --form --title="$(gettext "Share")" \
@@ -195,9 +195,10 @@ if [ -n `grep -Fxq "${tpc}" "$DM_tl/.3.cfg"` ] && [ -f "$DC_tlt/11.cfg" ]; then
         --window-icon="$DS/images/icon.png" --buttons-layout=end \
         --align=left --center --on-top \
         --width=380 --height=260 --borders=12 \
-        --field="\n$(gettext "Latest Download")\n$(< "${DC_tlt}/11.cfg"):lbl" "#1" \
-        --field=" :lbl" "#1" \
-        --field="$(gettext "Subscribe"):CB" "$opt1!$opt2!$opt3" \
+        --field="\n$(gettext "Latest Download"):lbl" " " \
+        --field="$(< "${DC_tlt}/11.cfg"):lbl" " " \
+        --field=" :lbl" " " \
+        --field=" :CB" "$opt1!$opt2!$opt3" \
         --button="$(gettext "PDF")":2 \
         --button="$(gettext "Close")":4)
         ret=$?
@@ -209,7 +210,7 @@ else
     --window-icon="$DS/images/icon.png" --buttons-layout=end \
     --align=right --center --on-top \
     --width=480 --height=460 --borders=12 \
-    --field=" :lbl" "#1" \
+    --field=" :lbl" " " \
     --field="$(gettext "Author")" "$iuser" \
     --field="\t$(gettext "Contact (Optional)")" "$cntct" \
     --field="$(gettext "Category"):CBE" \
@@ -318,7 +319,6 @@ fi
 cd "${DM_tlt}"
 cp -r ./* "$DT_u/${tpc}/"
 mkdir "$DT_u/${tpc}/files"
-
 mkdir "$DT_u/${tpc}/share"
 auds="$(uniq < "${DC_tlt}/4.cfg" \
 | sed 's/\n/ /g' | sed 's/ /\n/g' \
@@ -331,9 +331,7 @@ if [ -f "$DM_tl/.share/$audio.mp3" ]; then
 cp -f "$DM_tl/.share/$audio.mp3" "$DT_u/${tpc}/share/$audio.mp3"; fi
 done <<<"$auds"
 c_audio=$(find "$DT_u/${tpc}" -maxdepth 5 -name '*.mp3' | wc -l)
-
 echo -e "${notes}" > "$DT_u/${tpc}/conf/info"
-
 
 cd "$DT/upload"
 find "$DT_u" -type f -exec chmod 644 {} \;
