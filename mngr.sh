@@ -351,40 +351,6 @@ edit_item() {
 } >/dev/null 2>&1
 
 
-#mtext() {
-    
-
-    #include "$DS/ifs/mods/mngr"
-    #[ ${2} = 1 ] && index="${DC_tlt}/1.cfg" 
-    #[ ${2} = 2 ] && index="${DC_tlt}/2.cfg"
-    #trgt="$(sed -n ${3}p "${index}")"
-    #cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"" "\"${trgt}\"""
-    #cmd_words=" "
-    
-    #"$DS/add.sh" new_items "" 2 "${trgt}"
-
-    ##vmtext="$(dlg_form_2)"
-    ##ret=$?
-
-        ##if [ $ret = 2 ]; then
-            ##"$DS/mngr.sh" delete_item "${tpc}" "${trgt}" &
-        
-        ##elif [ $ret = 0 ]; then
-            ##out="$(tail -n 1 <<<"${vmtext}")"
-            ##val1="$(cut -d "|" -f3 <<<"${out}")"
-            ##val2="$(cut -d "|" -f4 <<<"${out}")"
-            ##val3="$(cut -d "|" -f3 <<<"${out}")"
-            ##[ -f "$val3" ] && cp "$val3" "$DT_r/audtm.mp3"
-            ##"$DS/add.sh" new_items "" 3 "${val1}" "${val2}" &
-            ##"$DS/vwr.sh" ${2} 0 ${3}
-        ##else
-    #"$DS/vwr.sh" ${2} "${trgt}" ${3} &
-        ##fi
-    #exit
-#}
-
-
-
 delete_topic() {
     
     include "$DS/ifs/mods/mngr"
