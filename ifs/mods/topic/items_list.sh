@@ -52,7 +52,7 @@ function m_text() {
     include "$DS/ifs/mods/mngr"
     trgt="${1}"
     cmd_del="$DS/mngr.sh delete_item "\"${tpc}\"" "\"${trgt}\"""
-    cmd_add="$DS/add.sh new_items "" 2 "\"${trgt}\"" "\"${trgt}\"""
+    cmd_add="$DS/add.sh new_items "" 2 "\"${trgt}\"""
     text="<span font_desc='monospace 10'>$(gettext "Text missing")</span>\n\n\n\n"
 
     yad --form --title=" " \

@@ -21,14 +21,14 @@ get_itep() {
         [ -f "$DMC/$fname.mp4" ] && file="$DMC/$fname.mp4" && t=4
         [ -f "$DMC/$fname.avi" ] && file="$DMC/$fname.avi" && t=4
         
-        if [[ $t = 3 ]]; then
+        if [ ${t} = 3 ]; then
         e_file "${file}"
         trgt="${title}"
         srce="${channel}"
         play=play
         icon=idiomind
         
-        elif [[ $t = 4 ]]; then
+        elif [ ${t} = 4 ]; then
         e_file "$file"
         trgt="${title}"
         srce="${channel}"
@@ -77,11 +77,11 @@ if [ ${ne} = TRUE ] || [ ${se} = TRUE ]; then
     
     else
         if [ ${ne} = TRUE ]; then
-        while read -r item; do get_itep; _play
+        while read -r item; do get_itep; _play; sleep 2
         done < "$DPC/1.lst"; fi
         
         if [ ${se} = TRUE ]; then
-        while read -r item; do get_itep; _play
+        while read -r item; do get_itep; _play; sleep 2
         done < "$DPC/2.lst"; fi
     fi
 fi

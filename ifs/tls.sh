@@ -68,7 +68,6 @@ Russian
 Spanish
 Vietnamese"
 
-    dir="${1}"
     file="${1}"
     nu='^[0-9]+$'
     
@@ -82,36 +81,36 @@ Vietnamese"
     while read -r line; do
     
         if [ -z "$line" ]; then continue; fi
-        get="${sets[$n]}"
+        get="${sets[${n}]}"
         val=$(echo "${line}" |grep -o "$get"=\"[^\"]* |grep -o '[^"]*$')
         
-        if [[ $n = 1 ]]; then # name
+        if [[ ${n} = 1 ]]; then # name
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
             [ `grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${val}"` ]; then invalid 2; fi
-        elif [[ $n = 2 || $n = 3 ]]; then # lang
+        elif [[ ${n} = 2 || ${n} = 3 ]]; then # lang
             if ! grep -Fox "${val}" <<<"${LANGUAGES}"; then invalid 3; fi
-        elif [[ $n = 4 || $n = 5 ]]; then # user contact
+        elif [[ ${n} = 4 || ${n} = 5 ]]; then # user contact
             if [ ${#val} -gt 30 ] || \
             [ `grep -o -E '\*|\/|$|\)|\(|=' <<<"${val}"` ]; then invalid 4; fi
-        elif [[ $n = 6 ]]; then # categ
+        elif [[ ${n} = 6 ]]; then # categ
             if ! grep -Fox "${val}" <<<"${CATEGORIES}"; then invalid 5; fi
-        elif [[ $n = 7 ]]; then # id
+        elif [[ ${n} = 7 ]]; then # id
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 8 ]; then invalid 6; fi
-        elif [[ $n = 8 ]]; then # name 
+        elif [[ ${n} = 8 ]]; then # name 
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
             [ `grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${val}"` ]; then invalid 7; fi
-        elif [[ $n = 9 || $n = 10 || $n = 11 ]]; then # date
+        elif [[ ${n} = 9 || ${n} = 10 || ${n} = 11 ]]; then # date
             if [ -n "${val}" ]; then
             if ! [[ ${val} =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] \
             || [ ${#val} -gt 12 ]; then invalid 8; fi; fi
-        elif [[ $n = 12 || $n = 13 || $n = 14 ]]; then # count
+        elif [[ ${n} = 12 || ${n} = 13 || ${n} = 14 ]]; then # count
             if ! [[ $val =~ $nu ]] || [ ${val} -gt 200 ]; then invalid 9; fi
-        elif [[ $n = 15 ]]; then # size 
+        elif [[ ${n} = 15 ]]; then # size 
              if ! [[ $val =~ $nu ]] || [ ${val} -gt 1000 ]; then invalid 10; fi
-        elif [[ $n = 16 ]]; then # size 
+        elif [[ ${n} = 16 ]]; then # size 
              if [ `grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${val}"` ] || \
              [ ${#val} -gt 9 ]; then invalid 11; fi
-        elif [[ $n = 17 ]]; then # level
+        elif [[ ${n} = 17 ]]; then # level
             if ! [[ $val =~ $nu ]] || [ ${#val} -gt 2 ]; then invalid 12; fi
         fi
         export ${sets[$n]}="${val}"
@@ -119,60 +118,49 @@ Vietnamese"
          
     done < <(tail -n 1 < "${file}" |tr '&' '\n')
 
-    if [[ $exit = 0 ]] ; then
-    > "$DT/${2}.cfg"
-    fi
+    export ${n}
+
 }
 
-details() {
-    
-    cd "$2"
-    dirs="$(find . -maxdepth 5 -type d)"
-    files="$(find . -type f -exec file {} \; 2> /dev/null)"
-    hfiles="$(ls -d ./.[^.]* | less)"
-    exfiles="$(find . -maxdepth 5 -perm -111 -type f)"
-    attchsdir="$(cd "./files/"; find . -maxdepth 5 -type f)"
-    wcdirs=`sed '/^$/d' <<<"${dirs}" | wc -l`
-    wcfiles=`sed '/^$/d' <<<"${files}" | wc -l`
-    wchfiles=`sed '/^$/d' <<<"${hfiles}" | wc -l`
-    wcexfiles=`sed '/^$/d' <<<"${exfiles}" | wc -l`
-    others=$((wchfiles+wcexfiles))
-    SRFL1=$(cat "./conf/id.cfg")
-    SRFL2=$(cat "./conf/info")
-    SRFL5=$(cat "./conf/0.cfg")
-    
 
-    echo -e "
-$(gettext "SUMMARY")
+_backup() {
 
-Directories: $wcdirs
-Files: $wcfiles
-Others files: $others
-
-$(gettext "FILES")
-
-$files
-$attchsdir
-
-$hfiles
-
-$exfiles
-
-$(gettext "TEXT FILES")
-
-$SRFL1
-
-$SRFL2
-
-$SRFL5" | yad --text-info --title="$(gettext "Installation details")" \
+    cd "$DM/backup"; ls -t *.bk | sed 's/\.bk//g' | \
+    yad --list --title="$(gettext "Backups")" \
     --name=Idiomind --class=Idiomind \
-    --window-icon="$DS/images/icon.png" \
-    --fontname='monospace 9' --margins=10 \
-    --scroll --center \
-    --width=340 --height=280 --borders=0 \
-    --button="$(gettext "Open Folder")":"xdg-open '$2'" \
-    --button="$(gettext "Close")":0
+    --dclick-action="$DS/ifs/tls.sh '_restfile'" \
+    --window-icon="$DS/images/icon.png" --center --on-top \
+    --width=520 --height=380 --borders=10 \
+    --print-column=1 --no-headers \
+    --column=Nombre:TEXT \
+    --button=gtk-close:1
+
 } >/dev/null 2>&1
+
+
+_restfile() {
+
+    if [ -f "$HOME/.idiomind/backup/${2}.bk" ]; then
+        yad --title="${2}" \
+        --text="$(gettext "Confirm Restore")\n\n" \
+        --image=dialog-question \
+        --name=Idiomind --class=Idiomind \
+        --always-print-result \
+        --window-icon="$DS/images/icon.png" \
+        --image-on-top --on-top --sticky --center \
+        --width=340 --height=100 --borders=5 \
+        --button="$(gettext "Cancel")":1 \
+        --button="$(gettext "Restore")":0
+        ret="$?"
+        
+        if [ $ret -eq 0 ]; then
+        cp -f "$HOME/.idiomind/backup/${2}.bk" "${DM_tl}/${2}/.conf/0.cfg"
+        fi
+        
+    else
+        msg "$(gettext "Backup not found")\n" dialog-warning
+    fi
+}
 
 
 check_index() {
@@ -184,15 +172,15 @@ check_index() {
     _check() {
         
         if [ ! -f "${DC_tlt}/0.cfg" ]; then f=1; fi
-        
         if [ ! -d "${DC_tlt}" ]; then mkdir "${DC_tlt}"; fi
+        
         n=0
-        while [ ${n} -le 6 ]; do
-            [ ! -f "${DC_tlt}/$n.cfg" ] && touch "${DC_tlt}/$n.cfg" && a=1
-            if grep '^$' "${DC_tlt}/$n.cfg"; then
-            sed -i '/^$/d' "${DC_tlt}/$n.cfg"; fi
-            check_index1 "${DC_tlt}/$n.cfg"
-            ((n=n+1))
+        while [ ${n} -le 4 ]; do
+        [ ! -f "${DC_tlt}/$n.cfg" ] && touch "${DC_tlt}/$n.cfg" && a=1
+        if grep '^$' "${DC_tlt}/$n.cfg"; then
+        sed -i '/^$/d' "${DC_tlt}/$n.cfg"; fi
+        check_index1 "${DC_tlt}/$n.cfg"
+        ((n=n+1))
         done
         
         if [ -n "$(< "${DC_tlt}/0.cfg")" ]; then
@@ -206,7 +194,6 @@ check_index() {
         cnt0=`wc -l < "${DC_tlt}/0.cfg"`
         cnt1=`egrep -cv '#|^$' < "${DC_tlt}/1.cfg"`
         cnt2=`egrep -cv '#|^$' < "${DC_tlt}/2.cfg"`
-        
         if [ $((cnt1+cnt2)) != ${cnt0} ]; then
         export a=1; fi
     }
@@ -214,11 +201,10 @@ check_index() {
     _restore() {
     
         if [ ! "${DC_tlt}/0.cfg" ]; then
-            if [ "$HOME/.idiomind/backup/${2}.bk" ]; then
-            cp -f "$HOME/.idiomind/backup/${2}.bk" "${DC_tlt}/0.cfg"
-            else msg "$(gettext "Unable to fix the index.")\n" error "$(gettext "Error")"
-            exit 1; fi
-        fi
+        if [ "$HOME/.idiomind/backup/${2}.bk" ]; then
+        cp -f "$HOME/.idiomind/backup/${2}.bk" "${DC_tlt}/0.cfg"
+        else msg "$(gettext "Unable to fix the index.")\n" error "$(gettext "Error")"
+        exit 1; fi; fi
         
         rm "${DC_tlt}/1.cfg" "${DC_tlt}/3.cfg" "${DC_tlt}/4.cfg"
         while read item_; do
@@ -241,9 +227,7 @@ check_index() {
 
     _sanity() {
 
-        cfg11="$2"
-        sed -i '/^$/d' "${cfg11}"
-        n=1
+        cfg11="$2"; sed -i '/^$/d' "${cfg11}"; n=1
         while [ ${n} -le 200 ]; do
             line=$(sed -n ${n}p "${cfg11}" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
             if [ -z ${line} ]; then
@@ -561,11 +545,6 @@ help() {
      
 } >/dev/null 2>&1
 
-definition() {
-
-    URL="http://glosbe.com/$lgt/$lgs/${2,,}"
-    xdg-open "$URL"
-}
 
 web() {
 
@@ -996,6 +975,10 @@ $(gettext "Difficult words")
 }>/dev/null 2>&1
 
 case "$1" in
+    _backup)
+    _backup "$@" ;;
+    _restfile)
+    _restfile "$@" ;;
     check_index)
     check_index "$@" ;;
     add_audio)
@@ -1014,8 +997,6 @@ case "$1" in
     help ;;
     colorize)
     colorize "$@" ;;
-    definition)
-    definition "$@" ;;
     check_updates)
     check_updates ;;
     a_check_updates)

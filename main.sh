@@ -134,6 +134,8 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     [ ! -d "$DT" ] && mkdir "$DT"
     source "$DS/ifs/tls.sh"
     check_source_1 "${1}"
+    if [ $n != 20 ]; then
+    msg "$(gettext "File is corrupted.")\n" error & exit 1; fi
     file="${1}"
     
     l=( "$(gettext "Beginner")" \
@@ -141,13 +143,13 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     "$(gettext "Advanced")" )
     level="${l[${level}]}"
 
-    itxt="<span font_desc='Droid Sans 14'> $tname</span>\n <small>$nword $(gettext "Words") $nsent $(gettext "Sentences") $nimag $(gettext "Images") $langt $(gettext "Level:") $level</small>"
+    itxt="<span font_desc='Droid Sans 14'> $tname</span>\n $nword $(gettext "Words")  $nsent $(gettext "Sentences")  $nimag $(gettext "Images")  $langt $(gettext "Level:") $level"
     dclk="'$DS/default/vwr_tmp.sh' "\"${file}\"""
     
     _set() {
     while read -r item; do
-    grep -oP '(?<=trgt={).*(?=},srce)' <<<"${item}"
     grep -oP '(?<=srce={).*(?=},exmp)' <<<"${item}"
+    grep -oP '(?<=trgt={).*(?=},srce)' <<<"${item}"
     done < <(tac "${file}")
     }
 
@@ -158,8 +160,8 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     --window-icon="$DS/images/icon.png" \
     --ellipsize=END --center \
     --width=610 --height=550 --borders=10 \
-    --column="$langt                                                                   " \
     --column="$langs" \
+    --column="$langt" \
     --button="$(gettext "Install")":0 \
     --button="$(gettext "Close")":1
     ret=$?
