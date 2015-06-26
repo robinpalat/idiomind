@@ -575,9 +575,10 @@ colorize() {
     img2='/usr/share/idiomind/images/2.png'
     img3='/usr/share/idiomind/images/3.png'
     img0='/usr/share/idiomind/images/0.png'
-    log3="$(< "${DC_tlt}/practice/log3")"
-    log2="$(< "${DC_tlt}/practice/log2")"
-    log1="$(< "${DC_tlt}/practice/log1")"
+    cd "$DC_tlt/practice"
+    log3="$(cat ./log3 ./d.3)"
+    log2="$(cat ./log2 ./d.2)"
+    log1="$(cat ./log1 ./d.1)"
     
     while read -r item; do
     
