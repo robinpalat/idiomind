@@ -185,11 +185,18 @@ if [ -n `grep -Fxq "${tpc}" "$DM_tl/.3.cfg"` ] && [ -f "$DC_tlt/11.cfg" ]; then
         ret=$?
         
         elif [ -n "$(< "$DC_tlt/11.cfg")" ]; then
-        opt1="$(gettext "No subscribe")"
-        opt2="$(gettext "Notify me of updates")"
-        opt3="$(gettext "Automatically download")"
+        
+        gset="$(grep -o 'set_2="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+        opts=( "$(gettext "No subscribe")" \
+        "$(gettext "Notify me of updates")" \
+        "$(gettext "Automatically download")" )
+        set="$(echo "${opts[$gset]}")"
+        unset opts[$gset]
+        lst=$(for i in "${opts[@]}"; do echo -n "!$i"; done)
+        lst_opts="$set$lst"
+        
         d=$(yad --form --title="$(gettext "Share")" \
-        --columns=2 \
+        --columns=2 --separator="|" \
         --text="<span font_desc='Free Sans 15'> ${tpc}</span>" \
         --name=Idiomind --class=Idiomind \
         --window-icon="$DS/images/icon.png" --buttons-layout=end \
@@ -198,10 +205,19 @@ if [ -n `grep -Fxq "${tpc}" "$DM_tl/.3.cfg"` ] && [ -f "$DC_tlt/11.cfg" ]; then
         --field="\n$(gettext "Latest Download"):lbl" " " \
         --field="$(< "${DC_tlt}/11.cfg"):lbl" " " \
         --field=" :lbl" " " \
-        --field=" :CB" "$opt1!$opt2!$opt3" \
+        --field=" :CB" "$lst_opts" \
         --button="$(gettext "PDF")":2 \
         --button="$(gettext "Close")":4)
         ret=$?
+        opts=( "$(gettext "No subscribe")" \
+        "$(gettext "Notify me of updates")" \
+        "$(gettext "Automatically download")" )
+        t="$(echo "${d}" | cut -d "|" -f4)"
+        [ "${opts[0]}" = "$t" ] && n=0
+        [ "${opts[1]}" = "$t" ] && n=1
+        [ "${opts[2]}" = "$t" ] && n=2
+        if [ ${gset} != ${n} ]; then
+        sed -i "s/set_2=.*/set_2=\"$n\"/g" "${DC_tlt}/id.cfg"; fi
         fi
 else
     d=$(yad --form --title="$(gettext "Share")" \
@@ -360,7 +376,9 @@ naudi=\"$c_audio\"
 nsize=\"$f_size\"
 level=\"$level\"
 set_1=\"$set_1\"
-set_2=\"$set_2\"" > "${DC_tlt}/id.cfg"
+set_2=\"$set_2\"
+set_3=\"$set_3\"
+set_4=\"$set_4\"" > "${DC_tlt}/id.cfg"
 
 cp -f "${DC_tlt}/0.cfg" "$DT_u/${usrid}.${tpc}.$lgt"
 echo -e "md5sum=\"\"" >> "$DT_u/${usrid}.${tpc}.$lgt"

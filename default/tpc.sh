@@ -25,7 +25,9 @@ naudi=\"$audio\"
 nsize=\"$size\"
 level=\"$level\"
 set_1=\"FALSE\"
-set_2=\"FALSE\""
+set_2=\"FALSE\"
+set_3=\"FALSE\"
+set_4=\"FALSE\""
 
 
 if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
