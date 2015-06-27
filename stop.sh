@@ -19,7 +19,7 @@ on_quit() {
     if [ -f /tmp/.clipw ]; then
     kill "$(< /tmp/.clipw)"; rm -f /tmp/.clipw; fi
     if [ -f "$DT/.p_" ]; then
-    notify-send "$(gettext "Playback stopped")"
+    #notify-send "$(gettext "Playback stopped")"
     rm -f "$DT/.p_" "$DT/tpp"
     rm -f "$DT/index.m3u"; fi
     exit

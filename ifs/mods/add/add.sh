@@ -36,38 +36,6 @@ function index() {
     if [[ -f "$DT/i_lk" ]]; then sleep 1
     else > "$DT/i_lk" & break; fi
     done
-    DC_tlt="${DM_tl}/${2}/.conf"
-    img0='/usr/share/idiomind/images/0.png'
-    item="${3}"
-    #
-    if [ ! -z "${item}" ]; then
-    
-        if ! grep -Fo "trgt={${item}}" "${DC_tlt}/0.cfg"; then
-        
-            pos=`wc -l < "${DC_tlt}/0.cfg"`
-            t_item="${pos}:[type={$1},trgt={$item},srce={$4},exmp={$5},defn={$6},note={},wrds={$7},grmr={$8},].[tag={},mark={},].id=[$9]"
-            echo -e "${t_item}" >> "${DC_tlt}/0.cfg"
-        fi
-        
-        if ! grep -Fxq "${item}" < <(cat "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg"); then
-
-            if [[ ${1} = 1 ]]; then
-
-                if [ "$(grep "$4" "${DC_tlt}/1.cfg")" ] && [ -n "$4" ]; then
-                sed -i "s/${4}/${4}\n${item}/" "${DC_tlt}/1.cfg"
-                else
-                echo "${item}" >> "${DC_tlt}/1.cfg"; fi
-                echo "${item}" >> "${DC_tlt}/3.cfg"
-                echo -e "FALSE\n${item}\n$img0" >> "${DC_tlt}/5.cfg"
-
-            elif [[ ${1} = 2 ]]; then
-            
-                echo "${item}" >> "${DC_tlt}/1.cfg"
-                echo "${item}" >> "${DC_tlt}/4.cfg"
-                echo -e "FALSE\n${item}\n$img0" >> "${DC_tlt}/5.cfg"
-            fi
-        fi
-    fi
         
     if [[ ${1} = edit ]]; then
             
@@ -95,11 +63,39 @@ function index() {
             cd /
         fi
 
-    elif [[ ${1} = txt_missing ]]; then
-    
-        echo "${item}" >> "${DC_tlt}/1.cfg"
-        echo "${item}" >> "${DC_tlt}/4.cfg"
-        echo -e "FALSE\n${item}\n${img0}" >> "${DC_tlt}/5.cfg"
+    else
+        item="${3}"; DC_tlt="${DM_tl}/${2}/.conf"
+        img0='/usr/share/idiomind/images/0.png'
+        #
+        if [ ! -z "${item}" ]; then
+        
+            if ! grep -Fo "trgt={${item}}" "${DC_tlt}/0.cfg"; then
+            
+                pos=`wc -l < "${DC_tlt}/0.cfg"`
+                t_item="${pos}:[type={$1},trgt={$item},srce={$4},exmp={$5},defn={$6},note={},wrds={$7},grmr={$8},].[tag={},mark={},].id=[$9]"
+                echo -e "${t_item}" >> "${DC_tlt}/0.cfg"
+            fi
+            
+            if ! grep -Fxq "${item}" < <(cat "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg"); then
+
+                if [[ ${1} = 1 ]]; then
+
+                    if [ "$(grep "$4" "${DC_tlt}/1.cfg")" ] && [ -n "$4" ]; then
+                    sed -i "s/${4}/${4}\n${item}/" "${DC_tlt}/1.cfg"
+                    else
+                    echo "${item}" >> "${DC_tlt}/1.cfg"; fi
+                    echo "${item}" >> "${DC_tlt}/3.cfg"
+                    echo -e "FALSE\n${item}\n$img0" >> "${DC_tlt}/5.cfg"
+
+                elif [[ ${1} = 2 ]]; then
+                
+                    echo "${item}" >> "${DC_tlt}/1.cfg"
+                    echo "${item}" >> "${DC_tlt}/4.cfg"
+                    echo -e "FALSE\n${item}\n$img0" >> "${DC_tlt}/5.cfg"
+                fi
+            fi
+        fi
+
     fi
     
     sleep 0.5
@@ -505,7 +501,7 @@ function dlg_progress_1() {
     
     yad --progress --title="$(gettext "Processing")" \
     --window-icon="$DS/images/icon.png" \
-    --progress-text=" " --pulsate --percentage="5" --auto-close \
+    --always-print-result  --progress-text=" " --pulsate --percentage="5" --auto-close \
     --skip-taskbar --no-buttons --on-top --fixed \
     --width=200 --height=50 --borders=4 --geometry=240x20-4-4
 }
@@ -515,7 +511,7 @@ function dlg_progress_2() {
 
     yad --progress --title="$(gettext "Progress")" \
     --window-icon="$DS/images/icon.png" \
-    --progress-text=" " --auto-close \
+    --always-print-result --progress-text=" " --auto-close \
     --skip-taskbar --no-buttons --on-top --fixed \
     --width=200 --height=50 --borders=4 --geometry=240x20-4-4
 }

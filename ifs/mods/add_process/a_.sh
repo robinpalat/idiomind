@@ -47,7 +47,7 @@ function dlg_text_info_4() {
 
 function audio_recog() {
     
-    echo "$(wget -q -U -T 200 "Mozilla/5.0" --post-file "${1}" \
+    echo "$(wget -q -U -T 101 -c "Mozilla/5.0" --post-file "${1}" \
     --header="Content-Type: audio/x-flac; rate=16000" \
     -O - "https://www.google.com/speech-api/v2/recognize?&lang="$2"-"$3"&key=$4")"
 }
@@ -56,7 +56,7 @@ function dlg_file_1() {
     
     yad --file --title=" " \
     --name=Idiomind --class=Idiomind \
-    --file-filter="*.mp3 *.tar *.zip" \
+    --file-filter="*.mp3 *.tar *.zip *.tar.gz" \
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --on-top --center \
     --width=600 --height=450 --borders=0
@@ -109,7 +109,7 @@ if [[ ${conten^} = A ]]; then
             mp3splt -s -o @n "$DT_r"/*.mp3
             c="$(ls "$DT_r"/[0-9]*.mp3 | wc -l)"
             if [[ ${c} -ge 1 ]]; then
-            rename 's/^0*//' "$DT_r"/*.mp3
+            (cd "$DT_r"; rename 's/^0*//' *.mp3)
             elif [ $(du "$DT_r/c_rv.mp3" | cut -f1) -lt 400 ]; then
             mv -f "$DT_r/c_rv.mp3" "$DT_r/1.mp3"
             fi
@@ -119,16 +119,23 @@ if [[ ${conten^} = A ]]; then
         
             cp -f "$fl" "$DT_r/rv.tar"
             tar -xvf "$DT_r/rv.tar"
-            
+        
+        elif grep ".tar.gz" <<<"${fl: -7}"; then
+        
+            cp -f "$fl" "$DT_r/rv.tar.gz"
+            tar -xzvf "$DT_r/rv.tar.gz"
+        
         elif grep ".zip" <<<"${fl: -4}"; then
         
             cp -f "$fl" "$DT_r/rv.zip"
             unzip "$DT_r/rv.zip"
         fi
         
+        c="$(ls "$DT_r"/[0-9]*.mp3 | wc -l)"
         n=1; r=${c}
         while [[ ${n} -le ${c} ]]; do
-        mv -f "$DT_r/${n}.mp3" "$DT_r/_${r}.mp3"
+        [ -f "$DT_r"/${n}.mp3 ] && \
+        mv -f "$DT_r"/${n}.mp3 "$DT_r"/_${r}.mp3
         ((n=n+1))
         ((r=r-1))
         done
@@ -191,8 +198,10 @@ if [[ ${conten^} = A ]]; then
                 echo -e "\n\n#$n [$(gettext "Sentence too long")] $trgt" >> "$DT_r/slog"
                 
                 elif [ -z "$trgt" ]; then
-                trgt="#$n [$(gettext "Text missing")]"
-                index txt_missing "$trgt" "$tpe"
+                trgt="#$n -$(gettext "Text missing")"
+                id="$(set_name_file 2 "${trgt}" "" "" "" "" "")"
+                index 2 "${tpe}" "${trgt}" "" "" "" "" "" "${id}"
+                mv -f "$DT_r/${n}.mp3" "${DM_tlt}/$id.mp3"
                 echo -e "\n\n#$n [$(gettext "Text missing")]" >> "$DT_r/slog"
                 
                 elif [[ $(wc -l < "${DC_tlt}/0.cfg") -ge 200 ]]; then
@@ -252,9 +261,27 @@ if [[ ${conten^} = A ]]; then
             echo "# ${trgt:0:35}..." ;
             
             let n++
-        done
+        done 
 
         ) | dlg_progress_2
+        
+        if  [ $? != 0 ] && [ "$(ls "$DT_r"/[0-9]* | wc -l)" -ge 1 ]; then
+            
+            kill -9 $(pgrep -f "wget -q -U -T 101 -c")
+            btn="--button="$(gettext "Save Audio")":0"
+            dlg_text_info_3 "$(gettext "Some items could not be added to your list")" "$logs" "$btn" >/dev/null 2>&1
+
+                if  [ $? -eq 0 ]; then
+                    aud=`dlg_file_2`
+
+                    if [ $? -eq 0 ]; then
+                        mkdir "$DT_r/rest"
+                        mv -f "$DT_r"/[0-9]*.mp3 "$DT_r/rest"/
+                        cd "$DT_r/rest"
+                        tar cvzf "$DT_r/audio.tar.gz" ./*
+                        mv -f "$DT_r/audio.tar.gz" "${aud}"; fi
+                fi
+        fi
         
         wadds=" $(($(wc -l < "$DT_r/addw") - $(sed '/^$/d' "$DT_r/wlog" | wc -l)))"
         W=" $(gettext "words")"
@@ -272,23 +299,21 @@ if [[ ${conten^} = A ]]; then
         "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
         echo ".adi.$adds.adi." >> "$DC_s/log"; fi
         
-        if [ -n "$logs" ] || [ "$(ls "$DT_r"/[0-9]* | wc -l)" -ge 1 ]; then
+        if [ -n "$logs" -o "$(ls "$DT_r"/[0-9]* | wc -l)" -ge 1 ]; then
         
             if [ "$(ls "$DT_r"/[0-9]* | wc -l)" -ge 1 ]; then
             btn="--button="$(gettext "Save Audio")":0"; fi
 
             dlg_text_info_3 "$(gettext "Some items could not be added to your list")" "$logs" "$btn" >/dev/null 2>&1
-            ret="$?"
-            
-                if  [[ "$ret" -eq 0 ]]; then
+
+                if  [ $? -eq 0 ]; then
                     aud=`dlg_file_2`
-                    ret="$?"
-                    
-                        if [[ "$ret" -eq 0 ]]; then
+
+                        if [ $? -eq 0 ]; then
                         mkdir "$DT_r/rest"
                         mv -f "$DT_r"/[0-9]*.mp3 "$DT_r/rest"/
                         cd "$DT_r/rest"
-                        tar cvzf "$DT_r/audio.tar.gz" "$DT_r"/*
+                        tar cvzf "$DT_r/audio.tar.gz" ./*
                         mv -f "$DT_r/audio.tar.gz" "${aud}"; fi
                 fi
         fi

@@ -131,8 +131,7 @@ practice() {
     if [ -f "$dir/${ttest}.lock" ]; then
     
         lock "$dir/${ttest}.lock"
-        ret="$?"
-        if [[ $ret -eq 0 ]]; then
+        if [ $? -eq 0 ]; then
         "$cls" restart ${ttest} & exit
         else
         "$strt" & exit
@@ -143,7 +142,6 @@ practice() {
     
         echo "w9.$(tr -s '\n' '|' < "$dir/${ttest}.1").w9" >> "$log"
         grep -Fxvf  "$dir/${ttest}.1" "$dir/${ttest}.0" > "$dir/${ttest}.tmp"
-        "$dir/${ttest}.tmp"
         
         if [ "$(egrep -cv '#|^$' < "$dir/${ttest}.tmp")" = 0 ]; then
         lock "$dir/${ttest}.lock" & exit; fi

@@ -134,7 +134,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     [ ! -d "$DT" ] && mkdir "$DT"
     source "$DS/ifs/tls.sh"
     check_source_1 "${1}"
-    if [ $n != 20 ]; then
+    if [ $n != 22 ]; then
     msg "$(gettext "File is corrupted.")\n" error & exit 1; fi
     file="${1}"
     
