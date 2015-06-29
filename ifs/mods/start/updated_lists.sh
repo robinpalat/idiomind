@@ -13,7 +13,7 @@ QUOTES=$(grep -o -P '(?<=.s9.).*(?=\.s9.)' "${LOG}" | tr -s '|' '\n' \
 | sort | uniq -dc | sort -n -r | sed 's/ \+/ /g')
 
 n=1
-while [[ ${n} -le 15 ]]; do
+while [ ${n} -le 15 ]; do
 
 if [[ "$(sed -n "$n"p <<<"${TOPICS}" | awk '{print ($1)}')" -ge 3 ]]; then
 echo "$(sed -n "$n"p <<<"${TOPICS}" | cut -d " " -f2-)" >> "${tpclst}"; fi
@@ -21,7 +21,7 @@ let n++
 done
 
 n=1
-while [[ ${n} -le 100 ]]; do
+while [ ${n} -le 100 ]; do
 
 if [[ $(sed -n "$n"p <<<"${WORDS}" | awk '{print ($1)}') -ge 3 ]]; then
     fwk=$(sed -n "$n"p <<<"${WORDS}" | awk '{print ($2)}')
@@ -35,13 +35,13 @@ let n++
 done
 
 sed -i '/^$/d' "${items}"
-if [[ `wc -l < "${items}"` -gt 0 ]]; then
+if [ `wc -l < "${items}"` -gt 0 ]; then
 
 while read -r tpc_lst; do
 
     DC_tlt="$DM_tl/${tpc_lst}/.conf"
     if [ -f "${DC_tlt}/1.cfg" ] && [ -d "${DC_tlt}/practice" ]; then
-    if [ $(grep -o set1=\"[^\"]* "${DC_tlt}/id.cfg" |grep -o '[^"]*$') = TRUE ]; then
+    if [ $(grep -o set_1=\"[^\"]* "${DC_tlt}/id.cfg" |grep -o '[^"]*$') = TRUE ]; then
 
     rm "${DC_tlt}/5.cfg"
     cd "${DC_tlt}/practice"

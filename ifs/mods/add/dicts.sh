@@ -13,7 +13,6 @@ if [ ! -d "$DC_a/dict/" ]; then
 mkdir -p "$DC_a/dict/enables"
 mkdir -p "$DC_a/dict/disables"
 cp -f "$DS_a/Dics/disables"/* "$DC_a/dict/disables"/; fi
-[ ! -f "$DC_a/dict/.dicts" ] && touch "$DC_a/dict/.dicts"
 [ ! -f "$DC_a/dict/.lng" ] && echo "$lgtl" > "$DC_a/dict/.lng"
 
 if  [ -z "$(ls "$DC_a/dict/enables/")" ] \
@@ -33,5 +32,5 @@ function dictt() {
         if [ -f ./"$word.mp3" ]; then
             break; fi
             
-    done < <(find "$DC_a/dict/enables"/ -type f)
+    done < <(ls "$DC_a/dict/enables"/)
 }

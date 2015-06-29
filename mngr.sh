@@ -24,8 +24,7 @@ mkmn() {
     
     cd "$DM_tl"
     [ -d "$DM_tl/images" ] && rm -r "$DM_tl/images"
-    [ -d "$DM_tl/words" ] && rm -r "$DM_tl/words"
-    for i in "$(ls -tNd */ | sed 's/\///g')"; do \
+    for i in "$(ls -tNd */ | cut -f1 -d'/')"; do \
     echo "${i%%/}"; done > "$DM_tl/.1.cfg"
     sed -i '/^$/d' "$DM_tl/.1.cfg"
     > "$DC_s/0.cfg"
@@ -202,7 +201,7 @@ edit_item() {
 
     if [ -z "${item}" ]; then exit 1; fi
 
-    if  [ ${type} = 1 ]; then audio="${DM_tls}/${trgt,,}.mp3"; edit_dlg1="$(dlg_form_1)"
+    if [ ${type} = 1 ]; then audio="${DM_tls}/${trgt,,}.mp3"; edit_dlg1="$(dlg_form_1)"
     elif [ ${type} = 2 ]; then audio="${DM_tlt}/$id.mp3"; edit_dlg2="$(dlg_form_2)"; fi
     ret=$?
     
@@ -345,10 +344,78 @@ edit_item() {
         else
             "$DS/vwr.sh" "$lists" "${trgt}" $((item_pos+1)) &
         fi
-
-    exit
     
 } >/dev/null 2>&1
+
+edit_list() {
+    
+    direc="$DM_tl/${2}/.conf"
+    cp -f "${direc}/0.cfg" "$DM/backup/${2}.bk"
+    > "$DT/_tmp1"; > "$DT/0.cfg"
+    
+    while read -r item_; do
+        item="$(sed 's/},/}\n/g' <<<"${item_}")"
+        trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
+        [ -n "${trgt}" ] && echo "${trgt}" >> "$DT/_tmp1"
+    done < <(tac "${direc}/0.cfg")
+
+    cat "$DT/_tmp1" | yad --list --title="" \
+    --text="$(gettext "Drap and drop to change position. Double-clic to edit")" \
+    --name=Idiomind --class=Idiomind \
+    --editable --separator='' \
+    --always-print-result --print-all \
+    --window-icon="$DS/images/icon.png" \
+    --no-headers --scroll --center \
+    --width=310 --height=250 --borders=5 \
+    --column="" \
+    --button="$(gettext "Cancel")":1 \
+    --button="$(gettext "Invert")":2 \
+    --button="$(gettext "Save")":0 > "$DT/tmp1"
+    ret=$?
+    
+    if [ $ret -eq 0 -o $ret -eq 2 ]; then
+    
+        [ $ret = 0 ] && cmd=tac
+        [ $ret = 2 ] && cmd=cat
+        touch "$DT/ps_lk"
+
+        rm "${direc}/1.cfg" "${direc}/3.cfg" "${direc}/4.cfg"
+        n=1; while read item_; do # reading output list
+
+            # if just change position (easy)
+            if grep -F -m 1 "trgt={${item_}}" "${direc}/0.cfg"; then
+            
+                item="$(grep -F -m 1 "trgt={${item_}}" "${direc}/0.cfg" |sed 's/},/}\n/g')"
+                line="$(sed -n 's/^\([0-9]*\)[:].*/\1/p' <<<"${item}")"
+                type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
+                trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
+
+                if [ ${type} = 1 ]; then
+                echo "${trgt}" >> "${direc}/3.cfg"
+                elif [ ${type} = 2 ]; then
+                echo "${trgt}" >> "${direc}/4.cfg"; fi
+                if ! grep -Fxo "${trgt}" "${direc}/2.cfg"; then
+                echo "${trgt}" >> "${direc}/1.cfg"; fi
+                grep -F -m 1 "trgt={${item_}}" "${direc}/0.cfg" >> "$DT/tmp0" # index
+            
+            # if mod trgt (hard)
+            else
+                echo "trgt={${item_}}" >> "$DT/tmp0" # index
+            fi
+            
+            #sed -i ""${n}"s|"${line}"\:|"${n}"\:|g" "${direc}/0.cfg"
+            
+            let n++
+        done < <($cmd "$DT/tmp1")
+        touch "${direc}/3.cfg" "${direc}/4.cfg"
+        mv -f "$DT/tmp0" "${direc}/0.cfg"
+        "$DS/ifs/tls.sh" colorize
+    fi
+    rm -f "$DT/tmp1" "$DT/_tmp1"
+    rm -f "$DT/ps_lk" & exit 1
+    
+} >/dev/null 2>&1
+
 
 
 delete_topic() {
@@ -381,8 +448,7 @@ delete_topic() {
             > "$DM_tl/.8.cfg"
             > "$DC_s/4.cfg"
             
-            n=0
-            while [[ ${n} -le 4 ]]; do
+            n=0; while [ ${n} -le 4 ]; do
             if [ -f "$DM_tl/.$n.cfg" ]; then
             grep -vxF "${tpc}" "$DM_tl/.$n.cfg" > "$DT/cfg.tmp"
             sed '/^$/d' "$DT/cfg.tmp" > "$DM_tl/.$n.cfg"; fi
@@ -450,8 +516,7 @@ rename_topic() {
         echo "${jlb}" > "$DT/tpe"
         echo 0 > "$DC_s/5.cfg"
         
-        n=1
-        while [[ ${n} -le 3 ]]; do
+        n=1; while [[ ${n} -le 3 ]]; do
         if [ -f "$DM_tl/.$n.cfg" ]; then
         grep -vxF "${tpc}" "$DM_tl/.$n.cfg" > "$DM_tl/.$n.cfg.tmp"
         sed '/^$/d' "$DM_tl/.$n.cfg.tmp" > "$DM_tl/.$n.cfg"; fi
@@ -632,8 +697,8 @@ case "$1" in
     delete_item "$@" ;;
     edit)
     edit_item "$@" ;;
-    mtext)
-    mtext "$@" ;;
+    edit_list)
+    edit_list "$@" ;;
     colorize)
     colorize "$@" ;;
     delete_topic)

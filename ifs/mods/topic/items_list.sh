@@ -78,6 +78,7 @@ function notebook_1() {
     cmd_del="'$DS/mngr.sh' 'delete_topic' "\"$tpc\"""
     cmd_adv="'$DS/ifs/tls.sh' adv "\"$tpc\"""
     cmd_share="'$DS/ifs/upld.sh' upld "\"$tpc\"""
+    cmd_eind="'$DS/mngr.sh' edit_list "\"$tpc\"""
     cmd_play="$DS/play.sh"
     list() {
     if [[ $((`wc -l < "${DC_tlt}/5.cfg"`/3)) = \
@@ -112,7 +113,7 @@ function notebook_1() {
     --field="$(gettext "Files")":FBTN "$cmd_attchs" \
     --field="$(gettext "Share")":FBTN "$cmd_share" \
     --field="$(gettext "Delete")":FBTN "$cmd_del" \
-    --field=" ":LBL " " > "$cnf4" &
+    --field="$(gettext "Edit Index")":FBTN "$cmd_eind" > "$cnf4" &
     yad --notebook --title="Idiomind - $tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
@@ -160,7 +161,7 @@ function notebook_2() {
     --field="$(gettext "Files")":FBTN "$cmd_attchs" \
     --field="$(gettext "Share")":FBTN "$cmd_share" \
     --field="$(gettext "Delete")":FBTN "$cmd_del" \
-    --field=" ":LBL " " > "$cnf4" &
+    --field="$(gettext "Edit Index")":FBTN "$cmd_eind" > "$cnf4" &
     yad --notebook --title="Idiomind - $tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \

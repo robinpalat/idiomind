@@ -34,7 +34,7 @@ new_topic() {
     exit 1; fi
 
     jlbi=$(dlg_form_0 "${2}")
-    ret="$?"
+    [ -z"${jlbi}" ] && exit 1
     jlb="$(clean_3 "${jlbi}")"
     
     if [[ ${#jlb} -gt 55 ]]; then
@@ -51,8 +51,7 @@ new_topic() {
         [ -z "${chck}" ] && break; done
         jlb="${jlb} ($i)"
         msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "The name for the newest will be\:")\n<b>${jlb}</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
-        ret="$?"
-        [[ $ret -eq 1 ]] && exit 10
+        [ $? -eq 1 ] && exit 1
         
     else jlb="${jlb}"; fi
     
@@ -126,11 +125,11 @@ Create one using the button below. ")" & exit 1; fi
             if [ -z "${trgt}" ]; then
             cleanups "$DT_r"; exit 1; fi
 
-            if [[ "${chk}" = "$(gettext "New") *" ]]; then
+            if [ "${chk}" = "$(gettext "New") *" ]; then
             "$DS/add.sh" new_topic
             else echo "${tpe}" > "$DT/tpe"; fi
             
-            if [[ "${trgt}" = Ocr ]] || [[ ${trgt^} = I ]]; then
+            if [[ ${trgt,,} = ocr ]] || [[ ${trgt^} = I ]]; then
                 "$DS/add.sh" process image "$DT_r" & exit 1
 
             elif [[ ${#trgt} = 1 ]]; then
@@ -150,7 +149,7 @@ Create one using the button below. ")" & exit 1; fi
 
                 srce=$(translate "${trgt}" auto $lgs)
                 
-                if [[ "$(wc -w <<<"${srce}")" = 1 ]]; then
+                if [ $(wc -w <<<"${srce}") = 1 ]; then
                     "$DS/add.sh" new_word "${trgt}" "$DT_r" "${srce}" & exit 1
                     
                 elif [ "$(wc -w <<<"${srce}")" -ge 1 -a ${#srce} -le 180 ]; then
@@ -164,7 +163,7 @@ Create one using the button below. ")" & exit 1; fi
                     msg "$(gettext "You need to fill text fields.")\n" info " " & exit 1; fi
                 fi
 
-                if [[ "$(wc -w <<<"${trgt}")" = 1 ]]; then
+                if [ $(wc -w <<<"${trgt}") = 1 ]; then
                     "$DS/add.sh" new_word "${trgt}" "$DT_r" "${srce}" & exit 1
                     
                 elif [ "$(wc -w <<<"${trgt}")" -ge 1 -a ${#trgt} -le 180 ]; then
@@ -172,7 +171,7 @@ Create one using the button below. ")" & exit 1; fi
                 fi
             fi
         else
-            cleanups "$DT_r"
+             xclip -i /dev/null; cleanups "$DT_r"
             exit 1
         fi
 }
@@ -382,15 +381,14 @@ list_words_sentence() {
 
     wrds="$(list_words_2 "${2}")"
     slt="$(dlg_checklist_1 "${wrds}" "${info}")"
-    ret="$?"
         
-        if [[ $ret -eq 0 ]]; then
+        if [[ $? -eq 0 ]]; then
             
             while read chkst; do
             sed 's/TRUE//g' <<<"${chkst}"  >> "$DT_r/slts"
             done <<<"$(sed 's/|//g' <<<"${slt}")"
 
-        elif [[ $ret -eq 1 ]]; then
+        elif [[ $? -eq 1 ]]; then
         
             rm -f "$DT"/*."$c"
             cleanups "$DT_r"
@@ -460,9 +458,8 @@ list_words_dclik() {
     fi
     wrds="$(cat "$DT_r/lst")"
     slt="$(dlg_checklist_1 "${wrds}" "${info}")"
-    ret="$?"
     
-    if [ $ret -eq 0 ]; then
+    if [ $? -eq 0 ]; then
     
         while read chkst; do
         sed 's/TRUE//g' <<<"${chkst}" >> "$DT_r/wrds"
@@ -489,9 +486,8 @@ process() {
     if [ -f "$lckpr" ] && [ ${#@} -lt 4 ]; then
     
         msg_2 "$(gettext "Wait until it finishes a previous process")\n" info OK gtk-stop "$(gettext "Warning")"
-        ret="$?"
-
-        if [[ $ret -eq 1 ]]; then
+        
+        if [[ $? -eq 1 ]]; then
         rm=$(sed -n 1p "$DT/.n_s_pr")
         cleanups "${rm}" "$DT/.n_s_pr"
         "$DS/stop.sh" 5
@@ -640,9 +636,8 @@ process() {
                 cleanups "$slt"
                 
                 dlg_text_info_1 "$DT_r/sntsls" "${tpe}"
-                ret="$?"
                     
-                    if [[ $ret -eq 0 ]]; then
+                    if [[ $? -eq 0 ]]; then
                         "$DS/add.sh" process "$(< "$DT_r/sort")" \
                         "$DT_r" "$(sed -n 2p "$lckpr")" &
                         exit 1

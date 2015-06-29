@@ -86,19 +86,19 @@ Vietnamese"
         
         if [[ ${n} = 1 ]]; then # name
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
-            [ `grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${val}"` ]; then invalid 2; fi
+            [ "$(grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${val}")" ]; then invalid 2; fi
         elif [[ ${n} = 2 || ${n} = 3 ]]; then # lang
             if ! grep -Fox "${val}" <<<"${LANGUAGES}"; then invalid 3; fi
         elif [[ ${n} = 4 || ${n} = 5 ]]; then # user contact
             if [ ${#val} -gt 30 ] || \
-            [ `grep -o -E '\*|\/|$|\)|\(|=' <<<"${val}"` ]; then invalid 4; fi
+            [ "$(grep -o -E '\*|\/|$|\)|\(|=' <<<"${val}")" ]; then invalid 4; fi
         elif [[ ${n} = 6 ]]; then # categ
             if ! grep -Fox "${val}" <<<"${CATEGORIES}"; then invalid 5; fi
         elif [[ ${n} = 7 ]]; then # id
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 8 ]; then invalid 6; fi
         elif [[ ${n} = 8 ]]; then # name 
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
-            [ `grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${val}"` ]; then invalid 7; fi
+            [ "$(grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${val}")" ]; then invalid 7; fi
         elif [[ ${n} = 9 || ${n} = 10 || ${n} = 11 ]]; then # date
             if [ -n "${val}" ]; then
             if ! [[ ${val} =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] \
@@ -108,7 +108,7 @@ Vietnamese"
         elif [[ ${n} = 15 ]]; then # size 
              if ! [[ $val =~ $nu ]] || [ ${val} -gt 1000 ]; then invalid 10; fi
         elif [[ ${n} = 16 ]]; then # size 
-             if [ `grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${val}"` ] || \
+             if [ "$(grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${val}")" ] || \
              [ ${#val} -gt 9 ]; then invalid 11; fi
         elif [[ ${n} = 17 ]]; then # level
             if ! [[ $val =~ $nu ]] || [ ${#val} -gt 2 ]; then invalid 12; fi
@@ -118,8 +118,7 @@ Vietnamese"
          
     done < <(tail -n 1 < "${file}" |tr '&' '\n')
 
-    export ${n}
-
+    return ${n}
 }
 
 
@@ -173,6 +172,7 @@ check_index() {
         
         if [ ! -f "${DC_tlt}/0.cfg" ]; then f=1; fi
         if [ ! -d "${DC_tlt}" ]; then mkdir "${DC_tlt}"; fi
+        if [ ! -d "${DM_tlt}/images" ]; then mkdir "${DM_tlt}/images"; fi
         
         n=0
         while [ ${n} -le 4 ]; do
@@ -191,7 +191,7 @@ check_index() {
         echo 1 > "${DC_tlt}/8.cfg"; fi
         export stts=$(sed -n 1p "${DC_tlt}/8.cfg")
         
-        cnt0=`wc -l < "${DC_tlt}/0.cfg"`
+        cnt0=`wc -l < "${DC_tlt}/0.cfg" |sed '/^$/d'`
         cnt1=`egrep -cv '#|^$' < "${DC_tlt}/1.cfg"`
         cnt2=`egrep -cv '#|^$' < "${DC_tlt}/2.cfg"`
         if [ $((cnt1+cnt2)) != ${cnt0} ]; then
@@ -200,40 +200,42 @@ check_index() {
     
     _restore() {
     
-        if [ ! "${DC_tlt}/0.cfg" ]; then
-        if [ "$HOME/.idiomind/backup/${2}.bk" ]; then
+        if [ ! -f "${DC_tlt}/0.cfg" ]; then
+        if [ -f "$HOME/.idiomind/backup/${2}.bk" ]; then
         cp -f "$HOME/.idiomind/backup/${2}.bk" "${DC_tlt}/0.cfg"
         else msg "$(gettext "Unable to fix the index.")\n" error "$(gettext "Error")"
         exit 1; fi; fi
         
         rm "${DC_tlt}/1.cfg" "${DC_tlt}/3.cfg" "${DC_tlt}/4.cfg"
-        while read item_; do
-        item="$(sed 's/},/}\n/g' <<<"${item_}")"
-        type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
-        trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
-        
-        if [ -n "${trgt}" ]; then
-        
-            if [ ${type} = 1 ]; then
-            echo "${trgt}" >> "${DC_tlt}/3.cfg"
-            else
-            echo "${trgt}" >> "${DC_tlt}/4.cfg"; fi
-            echo "${trgt}" >> "${DC_tlt}/1.cfg"
-        fi
-        
+        while read -r item_; do
+            item="$(sed 's/},/}\n/g' <<<"${item_}")"
+            type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
+            trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
+            
+            if [ -n "${trgt}" ]; then
+            
+                if [ ${type} = 1 ]; then
+                echo "${trgt}" >> "${DC_tlt}/3.cfg"
+                elif [ ${type} = 2 ]; then
+                echo "${trgt}" >> "${DC_tlt}/4.cfg"; fi
+                echo "${trgt}" >> "${DC_tlt}/1.cfg"
+                echo "${item_}" >> "$DT/cfg0"
+            fi
         done < "${DC_tlt}/0.cfg"
+        mv -f "$DT/cfg0" "${DC_tlt}/0.cfg"
         > "${DC_tlt}/2.cfg"
     }
 
     _sanity() {
 
-        cfg11="$2"; sed -i '/^$/d' "${cfg11}"; n=1
+        cfg0="${DC_tlt}/0.cfg"
+        sed -i '/^$/d' "${cfg0}"; n=1
         while [ ${n} -le 200 ]; do
-            line=$(sed -n ${n}p "${cfg11}" | sed -n 's/^\([0-9]*\)[:].*/\1/p')
-            if [ -z ${line} ]; then
-                echo "$n:[type={},trgt={},srce={},exmp={},defn={},note={},wrds={},grmr={},].[tag={},mark={},].id=[]" >> "${cfg11}"
-            elif [[ ${line} != ${n} ]]; then
-                sed -i ""$n"s|"$line"\:|"$n"\:|g" "${cfg11}"
+            line=$(sed -n ${n}p "${cfg0}" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
+            if [ -n ${line} ]; then
+            if [ ${line} != ${n} ]; then
+                sed -i ""${n}"s|"${line}"\:|"${n}"\:|g" "${cfg0}"
+            fi
             fi
             let n++
         done
@@ -242,7 +244,7 @@ check_index() {
     _version() {
     
         mv -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"
-        rm "$DC_tlt/2.cfg" "$DC_tlt/.11.cfg"
+        rm "$DC_tlt/2.cfg" "$DC_tlt/.11.cfg" "$DC_tlt/11.cfg"
         if [ ! -d "${DM_tlt}/images" ]; then
         mkdir "${DM_tlt}/images"; fi
         touch "$DC_tlt/2.cfg"
@@ -296,8 +298,7 @@ check_index() {
     fix() {
         
         if [ ${stts} -eq 13 ]; then
-            if [ -f "$DC_tlt/8.cfg_" ] && \
-            [ -n $(< "$DC_tlt/8.cfg_") ]; then
+            if [ -f "$DC_tlt/8.cfg_" ] && [ -n $(< "$DC_tlt/8.cfg_") ]; then
             stts=$(sed -n 1p "$DC_tlt/8.cfg_")
             rm "$DC_tlt/8.cfg_"
             else stts=1; fi
@@ -335,7 +336,7 @@ check_index() {
         "$DS/mngr.sh" mkmn
     fi
     
-     if [ -f "$DT/ps_lk" ]; then rm -f "$DT/ps_lk"; fi
+    if [ -f "$DT/ps_lk" ]; then rm -f "$DT/ps_lk"; fi
     
     exit
 }

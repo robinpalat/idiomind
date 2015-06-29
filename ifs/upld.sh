@@ -153,13 +153,13 @@ usrid=${usrid:0:3}; fi
 note=$(< "${DC_tlt}/info")
 imgm="${DM_tlt}/images/img.jpg"
 
-#"$DS/ifs/tls.sh" check_index "$tpc" # TODO ------------------------------------
+"$DS/ifs/tls.sh" check_index "${tpc}"
 if [ $(cat "${DC_tlt}/0.cfg" | wc -l) -ge 20 ]; then
 btn="--button="$(gettext "Upload")":0"; else
 btn="--center"; fi
 cd "$HOME"
 
-if [ -n `grep -Fxq "${tpc}" "$DM_tl/.3.cfg"` ] && [ -f "$DC_tlt/11.cfg" ]; then
+if [ -f "$DC_tlt/11.cfg" ]; then
 
         if [ -z "$(< "$DC_tlt/11.cfg")" ]; then
         audio="$(grep -o 'naudi="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
@@ -292,6 +292,16 @@ notes_m=$(echo "${d}" | cut -d "|" -f6)
 [ "$level" = $(gettext "Intermediate") ] && level=1
 [ "$level" = $(gettext "Advanced") ] && level=2
 
+if [ -z "${iuser_m##+([[:space:]])}" ] || [ ${#iuser_m} -gt 60 ] || \
+[ "$(grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${iuser_m}")" ]; then
+msg "$(gettext "Name user no valid.")\n " info
+"$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
+
+if [ ${#cntct_m} -gt 30 ] || \
+[ "$(grep -o -E '\*|\/|$|\)|\(|=' <<<"${cntct_m}")" ]; then
+msg "$(gettext "Contact no valid.")\n " info
+"$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
+
 if [ -z "${Ctgry}" ]; then
 msg "$(gettext "Please select a category.")\n " info
 "$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
@@ -385,6 +395,7 @@ echo -e "md5sum=\"\"" >> "$DT_u/${usrid}.${tpc}.$lgt"
 tr '\n' '&' < "${DC_tlt}/id.cfg" >> "$DT_u/${usrid}.${tpc}.$lgt"
 sum=`md5sum "$DT_u/${usrid}.${tpc}.$lgt" | cut -d' ' -f1`
 sed -i "s/md5sum=.*/md5sum=\"$sum\"/g" "$DT_u/${usrid}.${tpc}.$lgt"
+
 # uploading files to http://server_temp/lang/xxx.name.idmnd
 url="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
 | grep -o 'UPLOADS="[^"]*' | grep -o '[^"]*$')"

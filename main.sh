@@ -95,17 +95,24 @@ function new_session() {
         || [ $stts = 7 ] || [ $stts = 8 ]) && \
         [[ -f "${DM_tlt}/.conf/9.cfg" ]]; then
             calculate_review "${line}"
+            
             if [[ $((stts%2)) = 0 ]]; then
-            if [[ "$RM" -ge 180 ]]; then
-            echo 10 > "${DM_tlt}/.conf/8.cfg"
-            elif [[ "$RM" -ge 100 ]]; then
-            echo 8 > "${DM_tlt}/.conf/8.cfg"; fi
+            
+                if [[ "$RM" -ge 180 ]]; then
+                echo 10 > "${DM_tlt}/.conf/8.cfg"
+                touch "${DM_tlt}"
+                elif [[ "$RM" -ge 100 ]]; then
+                echo 8 > "${DM_tlt}/.conf/8.cfg"
+                touch "${DM_tlt}"; fi
             else
-            if [[ "$RM" -ge 180 ]]; then
-            echo 9 > "${DM_tlt}/.conf/8.cfg"
-            elif [[ "$RM" -ge 100 ]]; then
-            echo 7 > "${DM_tlt}/.conf/8.cfg"; fi
+                if [[ "$RM" -ge 180 ]]; then
+                echo 9 > "${DM_tlt}/.conf/8.cfg"
+                touch "${DM_tlt}"
+                elif [[ "$RM" -ge 100 ]]; then
+                echo 7 > "${DM_tlt}/.conf/8.cfg"
+                touch "${DM_tlt}"; fi
             fi
+            
         fi
     done < "$DM_tl/.1.cfg"
     
@@ -134,7 +141,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     [ ! -d "$DT" ] && mkdir "$DT"
     source "$DS/ifs/tls.sh"
     check_source_1 "${1}"
-    if [ $n != 22 ]; then
+    if [ $? != 22 ]; then
     msg "$(gettext "File is corrupted.")\n" error & exit 1; fi
     file="${1}"
     
@@ -143,35 +150,34 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     "$(gettext "Advanced")" )
     level="${l[${level}]}"
 
-    itxt="<span font_desc='Droid Sans 14'> $tname</span>\n $nword $(gettext "Words")  $nsent $(gettext "Sentences")  $nimag $(gettext "Images")  $langt $(gettext "Level:") $level"
+    itxt="<span font_desc='Droid Sans 12'> $tname</span>\n <small>$nword $(gettext "Words")  $nsent $(gettext "Sentences")  $nimag $(gettext "Images")  \n $(gettext "Language:") $langt  $(gettext "Level:") $level</small>"
     dclk="'$DS/default/vwr_tmp.sh' "\"${file}\"""
     
     _set() {
     while read -r item; do
-    grep -oP '(?<=srce={).*(?=},exmp)' <<<"${item}"
     grep -oP '(?<=trgt={).*(?=},srce)' <<<"${item}"
+    grep -oP '(?<=srce={).*(?=},exmp)' <<<"${item}"
     done < <(tac "${file}")
     }
 
     _set | yad --list --title="Idiomind" \
     --text="$itxt" \
     --name=Idiomind --class=Idiomind \
-    --no-click --print-colummn=1 --dclick-action="$dclk" \
+    --no-click --print-column=0 --dclick-action="$dclk" \
     --window-icon="$DS/images/icon.png" \
     --ellipsize=END --center \
-    --width=610 --height=550 --borders=10 \
-    --column="$langs" \
-    --column="$langt" \
+    --width=610 --height=550 --borders=5 \
+    --column="$langt    " \
+    --column="$langs    " \
     --button="$(gettext "Install")":0 \
     --button="$(gettext "Close")":1
-    ret=$?
         
-        if [[ $ret -eq 1 ]]; then
+        if [[ $? -eq 1 ]]; then
         
             [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c"
             rm -f "$DT/import.tar.gz" "$DT/${tpf}.cfg" & exit
             
-        elif [[ $ret -eq 0 ]]; then
+        elif [[ $? -eq 0 ]]; then
 
             if [[ $(wc -l < "$DM_t/$langt/.1.cfg") -ge 120 ]]; then
                 
@@ -188,9 +194,8 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             
                 tname="${tname} ($i)"
                 msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "The name for the newest will be\:")\n<b>$tname</b>\n" info "$(gettext "OK")" "$(gettext "Cancel")"
-                ret=$?
-                
-                if [[ $ret != 0 ]]; then
+  
+                if [ $? != 0 ]; then
                 [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c"
                 rm -f  "$DT/import.tar.gz" & exit 1; fi
             fi
@@ -337,6 +342,7 @@ function topic() {
                 if [ $((stts%2)) = 0 ]; then
                 echo 8 > "${DC_tlt}/8.cfg"; else
                 echo 7 > "${DC_tlt}/8.cfg"; fi
+                touch "${DM_tlt}"
                 
                 "$DS/mngr.sh" mkmn &
                 
@@ -393,6 +399,7 @@ function topic() {
             if [[ $((stts%2)) = 0 ]]; then
             echo 8 > "${DC_tlt}/8.cfg"; else
             echo 7 > "${DC_tlt}/8.cfg"; fi
+            touch "${DM_tlt}"
             
             "$DS/mngr.sh" mkmn &
             
@@ -449,7 +456,7 @@ panel() {
     if ! [[ $x =~ $nu ]]; then x=100; fi
     if ! [[ $y =~ $nu ]]; then y=100; fi
     
-    if [ `grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg"` = TRUE ] \
+    if [ "$(grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg")" = TRUE ] \
     && [ ! -f /tmp/.clipw ]; then "$DS/ifs/mods/clipw.sh" & fi
     
     yad --title="Idiomind" \
@@ -462,8 +469,7 @@ panel() {
     --field=gtk-home:btn "idiomind 'topic'" \
     --field=gtk-index:btn "$DS/chng.sh" \
     --field=gtk-preferences:btn "$DS/cnfg.sh"
-    ret=$?
-    [[ $ret != 0 ]] && "$DS/stop.sh" 1 &
+    [ $? != 0 ] && "$DS/stop.sh" 1 &
     exit
 }
 
@@ -483,8 +489,7 @@ autostart() {
 }
 
 add() {
-    dir=$(mktemp -d "$DT/XXXXXX")
-    "$DS/add.sh" new_items "$dir" 2 "${2}" & exit
+    "$DS/add.sh" new_items "$dir" 2 "${2}"
 }
 
 case "$1" in

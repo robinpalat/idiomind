@@ -31,20 +31,22 @@ if [[ ${type} = 1 ]]; then
     --text="$tm<span font_desc='Sans Free Bold 22'>$trgt</span>\n\n<i>$srce</i>\n\n" \
     --quoted-output \
     --window-icon="/usr/share/idiomind/images/icon.png" \
-    --no-buttons --skip-taskbar --scroll --text-align=center --center --on-top \
-    --width=650 --height=400 --borders=20 \
+    --skip-taskbar --scroll --text-align=center --center --on-top \
+    --width=650 --height=400 --borders=15 \
     --field="":lbl \
-    --field="<i><span color='#808080'>$exmp1</span></i>\\n:lbl" "$dfnts" "$ntess"
+    --field="<i><span color='#808080'>$exmp1</span></i>\\n:lbl" "$dfnts" "$ntess" \
+    --button="$(gettext "Close")":1
     
 elif [[ ${type} = 2 ]]; then
     echo "$lwrd" | awk '{print $0""}' | yad --list --title=" " \
-    --text="$tm<span font_desc='Sans Free 15'>$trgt</span>\n\n<i>$srce</i>\n\n\n" \
+    --text="$tm<span font_desc='Sans Free 15'>$trgt</span>\n\n<i>$srce</i>\n\n" \
     --window-icon="/usr/share/idiomind/images/icon.png" \
-    --no-buttons --scroll --no-headers \
+    --scroll --no-headers \
     --expand-column=0 --skip-taskbar --center --on-top \
-    --width=650 --height=400 --borders=20 \
+    --width=650 --height=400 --borders=15 \
     --column="":TEXT \
-    --column="":TEXT
+    --column="":TEXT \
+    --button="$(gettext "Close")":1
 fi
 
 

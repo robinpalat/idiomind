@@ -59,9 +59,8 @@ if [ "$1" = add_dlg ]; then
         Name="New script"
         Language=""
         dialog_edit
-        ret=$?
          
-    if [[ $ret -eq 5 ]]; then
+    if [ $? -eq 5 ]; then
         
         if [ -z "$(< "$DT/script.sh")" ]; then
         
@@ -78,7 +77,7 @@ if [ "$1" = add_dlg ]; then
         "$DS_a/Dics/cnfg.sh"
         fi
         
-    elif [[ $ret -eq 4 ]]; then
+    elif [ $? -eq 4 ]; then
         
         test=$(grep -o -P '(?<=Test=").*(?=")' "$DT/script.sh")
         cd "$DT"; sh "$DT/script.sh" "${test,,}"
@@ -103,9 +102,8 @@ elif [ "$1" = edit_dlg ]; then
     Name="$3"
     Language="$4"
     dialog_edit
-    ret=$?
-    
-    if [[ $ret -eq 5 ]]; then
+
+    if [ $? -eq 5 ]; then
     
         Name=$(grep -F "Name=" "$script" | grep -o -P '(?<=Name=").*(?=")' | sed 's/\.//g')
         Language=$(grep -F "Language=" "$script" | grep -o -P '(?<=Language=").*(?=")' | sed 's/\.//g')
@@ -118,7 +116,7 @@ elif [ "$1" = edit_dlg ]; then
         mv -f "$DT/script.sh" "$dir/$stts/$Name.$Language" & exit
         fi
         
-    elif [[ $ret -eq 4 ]]; then
+    elif [ $? -eq 4 ]; then
 
         test=$(grep -o -P '(?<=Test=").*(?=")' "$DT/script.sh")
         cd "$DT"; sh "$DT/script.sh" "${test,,}"
@@ -132,7 +130,7 @@ elif [ "$1" = edit_dlg ]; then
         "$DS_a/Dics/cnfg.sh" edit_dlg "$2" "$Name" "$Language"
     fi
     
-elif [ -z "$1" ]; then
+elif [ -z "${1}" ]; then
 
     if [ ! -d "$DC_a/dict/" ]; then
         mkdir -p "$enables"
@@ -140,7 +138,7 @@ elif [ -z "$1" ]; then
         cp -f "$DS/addons/Dics/disables"/* "$disables/"
     fi
     
-    if [ "$2" = f ]; then
+    if [ "${2}" = f ]; then
     tex="--text=$3\n"; else
     tex="--center"; fi
     
@@ -159,11 +157,11 @@ elif [ -z "$1" ]; then
     --button=OK:0)"
     ret=$?
     
-        if [[ $ret -eq 2 ]]; then
+        if [ $ret -eq 2 ]; then
         
                 "$DS_a/Dics/cnfg.sh" add_dlg
         
-        elif [[ $ret -eq 0 ]]; then
+        elif [ $ret -eq 0 ]; then
         
             n=1
             while [ $n -le "$(echo "$sel" | wc -l)" ]; do

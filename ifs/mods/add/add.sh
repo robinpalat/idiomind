@@ -119,15 +119,15 @@ function sentence_p() {
     vrbl="${srce_p}"; lg=$lgt; aw="swrd.$r"; bw="twrd.$r"
     else vrbl="${trgt_p}"; lg=$lgs; aw="twrd.$r"; bw="swrd.$r"; fi
     
-    echo "${vrbl}" | sed 's/ /\n/g' | grep -v '^.$' \
-    | grep -v '^..$' | sed -n 1,50p \
+    echo "${vrbl}" | awk 'BEGIN{RS=ORS=" "}!a[$0]++' \
+    | sed 's/ /\n/g' | grep -v '^.$' | grep -v '^..$' | sed -n 1,50p \
     | tr -d '*)(' | tr -s ',;"&:|{}[]' ' ' \
     | sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
     | sed 's/\]//;s/\[//g' | sed 's/<[^>]*>//g' \
-    | sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //;s/"//g' > "$aw"
-    
-    translate "$(sed '/^$/d' "$aw")" auto $lg | tr -d '!?¿,;' > "$bw"
-    
+    | sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //;s/"//g' \
+    | tr -d '.' | sed 's/^ *//; s/ *$//; /^$/d' > "$aw"
+    translate "$(sed '/^$/d' "$aw")" auto $lg | tr -d '!?¿,;.' > "$bw"
+
     touch "A.$r" "B.$r" "g.$r"
     while read -r grmrk; do
         chck=$(sed 's/,//;s/\.//g' <<<"${grmrk,,}")
@@ -285,10 +285,10 @@ function voice() {
     
     if [ -n "$synth" ]; then
     
-        if [[ "$synth" = 'festival' ]] || [[ "$synth" = 'text2wave' ]]; then
+        if [ "$synth" = 'festival' -o "$synth" = 'text2wave' ]; then
             lg="${lgtl,,}"
 
-            if [ $lg = "english" ] || [ $lg = "spanish" ] || [ $lg = "russian" ]; then
+            if [ $lg = "english" -o $lg = "spanish" -o $lg = "russian" ]; then
             echo "${1}" | text2wave -o "$DT_r/s.wav"
             sox "$DT_r/s.wav" "${3}"
             else
@@ -321,7 +321,7 @@ function voice() {
 function fetch_audio() {
     
     if [ $lgt = ja ] || [ $lgt = "zh-cn" ] || [ $lgt = ru ]; then
-    words_list="$2"; else words_list="$1"; fi
+    words_list="${2}"; else words_list="${1}"; fi
     
     while read word; do
         
@@ -337,9 +337,11 @@ function fetch_audio() {
 function list_words_2() {
 
     if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
-    echo "${1}" | tr '_' '\n' |sed -n 1~2p |sed '/^$/d'
+    echo "${1}" | awk 'BEGIN{RS=ORS=" "}!a[$0]++' \
+    | tr '_' '\n' |sed -n 1~2p |sed '/^$/d'
     else
-    echo "${1}" | tr '_' '\n' |sed -n 1~2p |sed '/^$/d'
+    echo "${1}" | awk 'BEGIN{RS=ORS=" "}!a[$0]++' \
+    | tr '_' '\n' |sed -n 1~2p |sed '/^$/d'
     fi
 }
 
@@ -347,10 +349,12 @@ function list_words_2() {
 function list_words_3() {
 
     if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
-    echo "$2" | sed 's/\[ \.\.\. ] //g' | sed 's/\.//g' \
+    echo "${2}" | awk 'BEGIN{RS=ORS=" "}!a[$0]++' \
+    | sed 's/\[ \.\.\. ] //g' | sed 's/\.//g' \
     | tr '_' '\n' | tr -d ',;' | sed -n 1~2p | sed '/^$/d' > "$DT_r/lst"
     else
-    echo "$1" | sed 's/\[ \.\.\. ] //g' | sed 's/\.//g' \
+    echo "${1}" | awk 'BEGIN{RS=ORS=" "}!a[$0]++' \
+    | sed 's/\[ \.\.\. ] //g' | sed 's/\.//g' \
     | tr -s "[:blank:]" '\n' | tr -d ',;' \
     | sed '/^$/d' | sed '/"("/d' \
     | grep -v '^.$' | grep -v '^..$' \
