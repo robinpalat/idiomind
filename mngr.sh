@@ -337,12 +337,12 @@ edit_item() {
             [ -d "$DT/$c" ] && "$DS/add.sh" list_words_edit "${wrds_mod}" 2 ${c} "${trgt_mod}" &
             [ ${col} -eq 1 ] && "$DS/ifs/tls.sh" colorize &
             [ ${mod} -eq 1 ] && sleep 0.2
-            [ ${ret} -eq 2 ] && "$DS/mngr.sh" edit "$lists" $((item_pos+1))
-            [ ${ret} -eq 0 ] && "$DS/vwr.sh" "$lists" "${trgt}" ${item_pos} &
+            [ $ret -eq 2 ] && "$DS/mngr.sh" edit "$lists" $((item_pos-1))
+            [ $ret -eq 0 ] && "$DS/vwr.sh" "$lists" "${trgt}" ${item_pos} &
             
 
         else
-            "$DS/vwr.sh" "$lists" "${trgt}" $((item_pos+1)) &
+            "$DS/vwr.sh" "$lists" "${trgt}" $item_pos &
         fi
     
 } >/dev/null 2>&1
@@ -360,7 +360,7 @@ edit_list() {
     done < <(tac "${direc}/0.cfg")
 
     cat "$DT/_tmp1" | yad --list --title="" \
-    --text="$(gettext "Drap and drop to change position. Double-clic to edit")" \
+    --text="$(gettext "Drag and drop to reposition an item. Double-click to edit")" \
     --name=Idiomind --class=Idiomind \
     --editable --separator='' \
     --always-print-result --print-all \
@@ -380,9 +380,8 @@ edit_list() {
         touch "$DT/ps_lk"
 
         rm "${direc}/1.cfg" "${direc}/3.cfg" "${direc}/4.cfg"
-        n=1; while read item_; do # reading output list
+        n=1; while read item_; do
 
-            # if just change position (easy)
             if grep -F -m 1 "trgt={${item_}}" "${direc}/0.cfg"; then
             
                 item="$(grep -F -m 1 "trgt={${item_}}" "${direc}/0.cfg" |sed 's/},/}\n/g')"
@@ -397,8 +396,7 @@ edit_list() {
                 if ! grep -Fxo "${trgt}" "${direc}/2.cfg"; then
                 echo "${trgt}" >> "${direc}/1.cfg"; fi
                 grep -F -m 1 "trgt={${item_}}" "${direc}/0.cfg" >> "$DT/tmp0" # index
-            
-            # if mod trgt (hard)
+
             else
                 echo "trgt={${item_}}" >> "$DT/tmp0" # index
             fi
