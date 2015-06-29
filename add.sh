@@ -33,9 +33,7 @@ new_topic() {
     msg "$(gettext "Sorry, you have reached the maximum number of topics")" info Info &
     exit 1; fi
 
-    jlbi=$(dlg_form_0 "${2}")
-    [ -z"${jlbi}" ] && exit 1
-    jlb="$(clean_3 "${jlbi}")"
+    jlb="$(clean_3 "$(dlg_form_0 "${2}")")"
     
     if [[ ${#jlb} -gt 55 ]]; then
     msg "$(gettext "Sorry, name too long.")\n" info
@@ -85,8 +83,7 @@ Create one using the button below. ")" & exit 1; fi
     [ -f "$DT_r/ico.jpg" ] && img="$DT_r/ico.jpg" \
     || img="$DS/images/nw.png"
     
-    tpcs=$(grep -vFx "${tpe}" "$DM_tl/.2.cfg" \
-    | tr "\\n" '!' | sed 's/\!*$//g')
+    tpcs="$(grep -vFx "${tpe}" "$DM_tl/.2.cfg" |tr "\\n" '!' |sed 's/\!*$//g')"
     [ -n "$tpcs" ] && e='!'; [ -z "${tpe}" ] && tpe=' '
 
     if [ "$trans" = TRUE ]; then lzgpr="$(dlg_form_1)"; \
@@ -97,7 +94,8 @@ Create one using the button below. ")" & exit 1; fi
     srce=$(echo "${lzgpr}" | sed -n 2p)
     chk=$(echo "${lzgpr}" | tail -1)
     tpe=$(grep -Fxo "${chk}" "$DM_tl/.1.cfg")
-
+    
+    
         if [ $ret -eq 3 ]; then
         
             [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")
@@ -114,6 +112,10 @@ Create one using the button below. ")" & exit 1; fi
         
         elif [ $ret -eq 0 ]; then
 
+            if [ "${chk}" = "$(gettext "New") *" ]; then
+            "$DS/add.sh" new_topic
+            else echo "${tpe}" > "$DT/tpe"; fi
+            
             if [ "$3" = 2 ]; then
             [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")
             else DT_r=$(mktemp -d "$DT/XXXXXX"); fi
@@ -125,10 +127,6 @@ Create one using the button below. ")" & exit 1; fi
             if [ -z "${trgt}" ]; then
             cleanups "$DT_r"; exit 1; fi
 
-            if [ "${chk}" = "$(gettext "New") *" ]; then
-            "$DS/add.sh" new_topic
-            else echo "${tpe}" > "$DT/tpe"; fi
-            
             if [[ ${trgt,,} = ocr ]] || [[ ${trgt^} = I ]]; then
                 "$DS/add.sh" process image "$DT_r" & exit 1
 
@@ -368,6 +366,7 @@ list_words_edit() {
     cleanups "${DT_r}" "$slt"; exit
 }
 
+
 list_words_sentence() {
 
     DM_tlt="$DM_tl/${4}"
@@ -429,6 +428,7 @@ list_words_sentence() {
     echo -e ".adi.$lns.adi." >> "$DC_s/log"
     exit
 }
+
 
 list_words_dclik() {
 

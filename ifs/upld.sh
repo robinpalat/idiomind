@@ -202,7 +202,7 @@ if [ -f "$DC_tlt/11.cfg" ]; then
         --window-icon="$DS/images/icon.png" --buttons-layout=end \
         --align=left --center --on-top \
         --width=380 --height=260 --borders=12 \
-        --field="\n$(gettext "Latest Download"):lbl" " " \
+        --field="\n$(gettext "Latest Download:"):lbl" " " \
         --field="$(< "${DC_tlt}/11.cfg"):lbl" " " \
         --field=" :lbl" " " \
         --field=" :CB" "$lst_opts" \

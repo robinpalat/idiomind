@@ -22,7 +22,6 @@ lgt=$(lnglss "$lgtl")
 lgs=$(lnglss "$lgsl")
 
 
-
 function check_source_1() {
 CATEGORIES="others
 comics

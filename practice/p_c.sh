@@ -8,9 +8,11 @@ cd "$DC_tlt/practice"
 log="$DC_s/8.cfg"
 all=$(egrep -cv '#|^$' ./c.0)
 synth="$(grep -o synth=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')"
+
 easy=0
 hard=0
 ling=0
+alias synth="$synth"
 
 
 
@@ -70,8 +72,8 @@ cuestion() {
     (sleep 0.5 && play "$DM_tls/${1,,}".mp3) &
     else
         if [ -n "${synth}" ]; then
-        cmd_play="${synth} \"${1}\""
-        (sleep 0.5 && "${synth}" "${1}") &
+        cmd_play="echo -e "$1" | $synth"
+        (sleep 0.5 && echo "${1}" | $synth) &
         else
         cmd_play="espeak -v $lg -k 1 -s 120 \"${1}\""
         (sleep 0.5 && espeak -v $lg -k 1 -s 120 "${1}") & fi

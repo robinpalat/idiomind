@@ -440,7 +440,8 @@ delete_topic() {
             
             [ -f "$DM/backup/${tpc}.bk" ] && rm "$DM/backup/${tpc}.bk"
             if [ -d "$DM_tl/${tpc}" ] && [ -n "${tpc}" ]; then
-            rm -r "$DM_tl/${tpc}"; fi
+            rm -fr "$DM_tl/${tpc}"; fi; if [ -d "$DM_tl/${tpc}" ]; then sleep 0.5
+            msg "$(gettext "Could not remove the directory:")\n$DM_tl/${tpc}\n$(gettext "You must delete manually.")" info; fi
             
             rm -f "$DT/tpe"
             > "$DM_tl/.8.cfg"

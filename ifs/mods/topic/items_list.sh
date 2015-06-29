@@ -113,7 +113,7 @@ function notebook_1() {
     --field="$(gettext "Files")":FBTN "$cmd_attchs" \
     --field="$(gettext "Share")":FBTN "$cmd_share" \
     --field="$(gettext "Delete")":FBTN "$cmd_del" \
-    --field="$(gettext "Edit Index")":FBTN "$cmd_eind" > "$cnf4" &
+    --field="$(gettext "Edit index")":FBTN "$cmd_eind" > "$cnf4" &
     yad --notebook --title="Idiomind - $tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
@@ -161,7 +161,7 @@ function notebook_2() {
     --field="$(gettext "Files")":FBTN "$cmd_attchs" \
     --field="$(gettext "Share")":FBTN "$cmd_share" \
     --field="$(gettext "Delete")":FBTN "$cmd_del" \
-    --field="$(gettext "Edit Index")":FBTN "$cmd_eind" > "$cnf4" &
+    --field="$(gettext "Edit index")":FBTN "$cmd_eind" > "$cnf4" &
     yad --notebook --title="Idiomind - $tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
