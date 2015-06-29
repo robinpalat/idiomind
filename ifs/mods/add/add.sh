@@ -114,7 +114,7 @@ function sentence_p() {
     
     r=$((RANDOM%10000))
     cd /; DT_r="$1"; cd "$DT_r"; touch "swrd.$r" "twrd.$r"
-    if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
+    if [ "$lgt" = ja -o "$lgt" = "zh-cn" -o "$lgt" = ru ]; then
     vrbl="${srce_p}"; lg=$lgt; aw="swrd.$r"; bw="twrd.$r"
     else vrbl="${trgt_p}"; lg=$lgs; aw="twrd.$r"; bw="swrd.$r"; fi
     
@@ -207,7 +207,7 @@ function clean_1() {
 
 function clean_2() {
     
-    if ([ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]); then
+    if [ "$lgt" = ja -o "$lgt" = "zh-cn" -o "$lgt" = ru ]; then
     echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" \
     | tr -d '*\/' | tr -s '*"&:|{}[]<>+' ' ' \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
@@ -319,7 +319,7 @@ function voice() {
 
 function fetch_audio() {
     
-    if [ $lgt = ja ] || [ $lgt = "zh-cn" ] || [ $lgt = ru ]; then
+    if [ $lgt = ja -o $lgt = "zh-cn" -o $lgt = ru ]; then
     words_list="${2}"; else words_list="${1}"; fi
     
     while read word; do
@@ -335,7 +335,7 @@ function fetch_audio() {
 
 function list_words_2() {
 
-    if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
+    if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
     echo "${1}" | awk 'BEGIN{RS=ORS=" "}!a[$0]++' \
     | tr '_' '\n' |sed -n 1~2p |sed '/^$/d'
     else
@@ -347,7 +347,7 @@ function list_words_2() {
 
 function list_words_3() {
 
-    if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
+    if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
     echo "${2}" | awk 'BEGIN{RS=ORS=" "}!a[$0]++' \
     | sed 's/\[ \.\.\. ] //g' | sed 's/\.//g' \
     | tr '_' '\n' | tr -d ',;' | sed -n 1~2p | sed '/^$/d' > "$DT_r/lst"
