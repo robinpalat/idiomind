@@ -503,9 +503,11 @@ function dlg_form_3() {
 function dlg_progress_1() {
     
     yad --progress --title="$(gettext "Processing")" \
+    --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" \
-    --always-print-result  --progress-text=" " --pulsate --percentage="5" --auto-close \
-    --skip-taskbar --no-buttons --on-top --fixed \
+    --always-print-result  --progress-text=" " \
+    --pulsate --percentage="5" --auto-close \
+    --no-buttons --on-top --fixed \
     --width=200 --height=50 --borders=4 --geometry=240x20-4-4
 }
 
@@ -513,9 +515,10 @@ function dlg_progress_1() {
 function dlg_progress_2() {
 
     yad --progress --title="$(gettext "Progress")" \
+    --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" \
     --always-print-result --progress-text=" " --auto-close \
-    --skip-taskbar --no-buttons --on-top --fixed \
+    --no-buttons --on-top --fixed \
     --width=200 --height=50 --borders=4 --geometry=240x20-4-4
 }
 

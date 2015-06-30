@@ -82,9 +82,8 @@ while read trgt; do
 
     fonts "${trgt}"
     cuestion
-    ret="$?"
     
-    if [[ $ret = 1 ]]; then
+    if [ $? = 1 ]; then
         break &
         "$drts"/cls.sh comp e ${easy} ${ling} ${hard} ${all} & exit
         
@@ -92,11 +91,11 @@ while read trgt; do
         answer
         ans="$?"
 
-        if [[ $ans = 2 ]]; then
+        if [ ${ans} = 2 ]; then
             echo "${trgt}" >> e.1
             easy=$((easy+1))
 
-        elif [[ $ans = 3 ]]; then
+        elif [ ${ans} = 3 ]; then
             echo "${trgt}" >> e.2
             hard=$((hard+1))
         fi
@@ -113,9 +112,8 @@ else
 
         fonts "${trgt}"
         cuestion
-        ret="$?"
-        
-        if [[ $ret = 1 ]]; then
+
+        if [ $? = 1 ]; then
             break &
             "$drts"/cls.sh comp e ${easy} ${ling} ${hard} ${all} & exit
 
@@ -123,11 +121,11 @@ else
             answer
             ans="$?"
             
-            if [[ $ans = 2 ]]; then
+            if [ ${ans} = 2 ]; then
                 hard=$((hard-1))
                 ling=$((ling+1))
                 
-            elif [[ $ans = 3 ]]; then
+            elif [ ${ans} = 3 ]; then
                 echo "${trgt}" >> e.3
             fi
         fi

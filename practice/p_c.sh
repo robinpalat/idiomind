@@ -50,10 +50,10 @@ score() {
 fonts() {
     
     if [[ $p = 2 ]]; then
-    [ $lgtl = Japanese ] || [ $lgtl = Chinese ] || [ $lgtl = Russian ] \
+    [ $lgtl = Japanese -o $lgtl = Chinese -o $lgtl = Russian ] \
     && lst="${1:0:1} ${1:5:5}" || lst=$(echo "$1" | awk '$1=$1' FS= OFS=" " | tr aeiouy '.')
     elif [[ $p = 1 ]]; then
-    [ $lgtl = Japanese ] || [ $lgtl = Chinese ] || [ $lgtl = Russian ] \
+    [ $lgtl = Japanese -o $lgtl = Chinese -o $lgtl = Russian ] \
     && lst="${1:0:1} ${1:5:5}" || lst=$(echo "${1^}" | sed "s|[a-z]|"\ \."|g")
     fi
     
@@ -99,15 +99,15 @@ while read trgt; do
     cuestion "${trgt}"
     ans="$?"
     
-    if [[ $ans = 2 ]]; then
-            echo "${trgt}" >> c.1
-            easy=$((easy+1))
+    if [ ${ans} = 2 ]; then
+        echo "${trgt}" >> c.1
+        easy=$((easy+1))
 
-    elif [[ $ans = 3 ]]; then
-            echo "${trgt}" >> c.2
-            hard=$((hard+1))
+    elif [ ${ans} = 3 ]; then
+        echo "${trgt}" >> c.2
+        hard=$((hard+1))
 
-    elif [[ $ans = 1 ]]; then
+    elif [ ${ans} = 1 ]; then
         break &
         "$drts"/cls.sh comp c ${easy} ${ling} ${hard} ${all} & exit
     fi
@@ -125,14 +125,14 @@ else
         cuestion "${trgt}"
         ans="$?"
           
-        if [[ $ans = 2 ]]; then
-                hard=$((hard-1))
-                ling=$((ling+1))
+        if [ ${ans} = 2 ]; then
+            hard=$((hard-1))
+            ling=$((ling+1))
                 
-        elif [[ $ans = 3 ]]; then
-                echo "${trgt}" >> c.3
+        elif [ ${ans} = 3 ]; then
+            echo "${trgt}" >> c.3
 
-        elif [[ $ans = 1 ]]; then
+        elif [ ${ans} = 1 ]; then
             break &
             "$drts"/cls.sh comp c ${easy} ${ling} ${hard} ${all} & exit
         fi

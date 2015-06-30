@@ -76,7 +76,7 @@ function setting_1() {
 }
 
 title="$tpc"
-if [[ ! -f "$DT/.p_" ]]; then
+if [ ! -f "$DT/.p_" ]; then
     btn2=""$(gettext "Cancel")":1"
     if grep -E 'vivid|wily' <<<"`lsb_release -a`">/dev/null 2>&1; then
     btn1="gtk-media-play:0"; else
@@ -102,13 +102,13 @@ slct="$(setting_1 | yad --list --title="$title" \
 --button="$btn1" --button="$btn2")"
 ret=$?
 
-if [[ $ret -eq 0 ]]; then
+if [ $ret -eq 0 ]; then
     n=14
-    while [[ $n -lt 20 ]]; do
+    while [[ ${n} -lt 20 ]]; do
     
         val=$(sed -n $((n-13))p <<<"${slct}" | cut -d "|" -f3)
         [ -n "${val}" ] && \
-        sed -i "s/${sets[$n]}=.*/${sets[$n]}=\"$val\"/g" "$DC_s/1.cfg"
+        sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" "$DC_s/1.cfg"
         
         if [ "$val" = TRUE ]; then
         count=$((count+$(egrep -cv '#|^$' <<<"${!in[$((n-14))]}"))); fi
@@ -123,22 +123,20 @@ if [[ $ret -eq 0 ]]; then
 
     "$DS/stop.sh" 3
     if [ -d "$DM_tlt" ] && [ -n "$tpc" ]; then
-    echo "$DM_tlt" > "$DT/.p_"
-    echo "$tpc" >> "$DT/.p_"
+    echo -e "$DM_tlt\n$tpc" > "$DT/.p_"
     else "$DS/stop.sh" 2 && exit 1; fi
-    
     
     echo -e ".ply.$tpc.ply." >> "$DC_s/log" &
     sleep 1
     "$DS/bcle.sh" & exit 0
 
-elif [[ $ret -eq 2 ]]; then
+elif [ $ret -eq 2 ]; then
 
     [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
     [ -f "$DT/index.m3u" ] && rm -f "$DT/index.m3u"
     "$DS/stop.sh" 2
     
-elif [[ $ret -eq 3 ]]; then
+elif [ $ret -eq 3 ]; then
 
     if ps -A | pgrep -f "play"; then killall play & fi
     if ps -A | pgrep -f "mplayer"; then killall mplayer & fi

@@ -91,24 +91,22 @@ function new_session() {
         
         DM_tlt="$DM_tl/${line}"
         stts=$(sed -n 1p "${DM_tlt}/.conf/8.cfg")
-        if ([ $stts = 3 ] || [ $stts = 4 ] \
-        || [ $stts = 7 ] || [ $stts = 8 ]) && \
-        [[ -f "${DM_tlt}/.conf/9.cfg" ]]; then
-            calculate_review "${line}"
+        if [ ${stts} = 3 -o ${stts} = 4 -o ${stts} = 7 -o ${stts} = 8 ] \
+        && [ -f "${DM_tlt}/.conf/9.cfg" ]; then calculate_review "${line}"
             
             if [[ $((stts%2)) = 0 ]]; then
             
-                if [[ "$RM" -ge 180 ]]; then
+                if [[ ${RM} -ge 180 ]]; then
                 echo 10 > "${DM_tlt}/.conf/8.cfg"
                 touch "${DM_tlt}"
-                elif [[ "$RM" -ge 100 ]]; then
+                elif [[ ${RM} -ge 100 ]]; then
                 echo 8 > "${DM_tlt}/.conf/8.cfg"
                 touch "${DM_tlt}"; fi
             else
-                if [[ "$RM" -ge 180 ]]; then
+                if [[ ${RM} -ge 180 ]]; then
                 echo 9 > "${DM_tlt}/.conf/8.cfg"
                 touch "${DM_tlt}"
-                elif [[ "$RM" -ge 100 ]]; then
+                elif [[ ${RM} -ge 100 ]]; then
                 echo 7 > "${DM_tlt}/.conf/8.cfg"
                 touch "${DM_tlt}"; fi
             fi

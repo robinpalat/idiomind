@@ -83,9 +83,8 @@ while read trgt; do
 
     fonts "${trgt}"
     mchoise "${trgt}"
-    ret="$?"
 
-    if [[ $ret = 0 ]]; then
+    if [ $? = 0 ]; then
 
         if grep -o "$wes" <<<"${dlg}"; then
 
@@ -98,7 +97,7 @@ while read trgt; do
             hard=$((hard+1))
         fi  
             
-    elif [[ $ret = 1 ]]; then
+    elif [ $? = 1 ]; then
         break &
         "$drts"/cls.sh comp b ${easy} ${ling} ${hard} ${all} & exit
     fi
@@ -114,9 +113,8 @@ else
 
         fonts "${trgt}"
         mchoise "${trgt}"
-        ret="$?"
         
-        if [[ $ret = 0 ]]; then
+        if [ $? = 0 ]; then
         
             if echo "$dlg" | grep "$wes"; then
                 hard=$((hard-1))
@@ -127,7 +125,7 @@ else
                 echo "${trgt}" >> b.3
             fi
 
-        elif [[ $ret = 1 ]]; then
+        elif [ $? = 1 ]; then
             break &
             "$drts"/cls.sh comp b ${easy} ${ling} ${hard} ${all} & exit
         fi
