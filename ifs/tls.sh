@@ -948,27 +948,6 @@ mkpdf() {
     exit
 }
 
-if [ "$1" = play ]; then
-
-    play "$2"
-    
-elif [ "$1" = listen_sntnc ]; then
-
-    play "$DM_tlt/$2.mp3" >/dev/null 2>&1
-    exit
-
-elif [ "$1" = dclik ]; then
-
-    play "$DM_tls/${2,,}.mp3" >/dev/null 2>&1
-    exit
-
-elif [ "$1" = play_temp ]; then
-
-    nmt=$(sed -n 1p "/tmp/.idiomind-$USER/dir$2/folder")
-    dir="/tmp/.idiomind-$USER/dir$2/$nmt"
-    play "$dir/audio/${3,,}.mp3"
-    exit
-fi
 
 gtext() {
 $(gettext "Marked items")

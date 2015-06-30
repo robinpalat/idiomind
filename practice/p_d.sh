@@ -7,7 +7,6 @@ strt="$drts/strt.sh"
 cd "${DC_tlt}/practice"
 all=$(egrep -cv '#|^$' ./d.0)
 hits="$(gettext "hits")"
-synth="$(grep -o synth=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')"
 listen="Listen"
 easy=0
 hard=0
@@ -156,18 +155,9 @@ while read trgt; do
     fname=`grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"`
     get_text "${trgt}"
     
-    if [ -f "${DM_tlt}/$fname.mp3" ]; then
-    cmd_play="play "\"${DM_tlt}/$fname.mp3\"""
-    (sleep 0.8 && play "${DM_tlt}/${fname}.mp3") &
-    else
-        if [ -n "${synth}" ]; then
-        cmd_play="${synth} "\"${trgt}\"""
-        (sleep 0.8 && "${synth}" "${trgt}") &
-        else
-        cmd_play="espeak -v $lg -k 1 -s 150 "\"${trgt}\"""
-        (sleep 0.8 && espeak -v $lg -k 1 -s 150 "${trgt}") & fi
-    fi
-    
+    cmd_play="$DS/play.sh play_sentence ${fname} "\"${trgt}\"""
+    (sleep 0.5 && "$DS/play.sh" play_sentence ${fname} "${trgt}") &
+
     dialog2 "${trgt}"
     ret="$?"
     

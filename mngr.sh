@@ -403,7 +403,7 @@ edit_list() {
                 if ! grep -Fxo "${trgt}" "${direc}/2.cfg"; then
                 echo "${trgt}" >> "${direc}/1.cfg"; fi
                 grep -F -m 1 "trgt={${trgt}}" "${direc}/0.cfg" | \
-                sed "s/${line}\:/${n}\:/g" >> "$DT/tmp0"
+                sed "s/${line}\:\[/${n}\:\[/g" >> "$DT/tmp0"
 
             else
                 if [ $(wc -$c <<<"${trgt}") = 1 ]; then

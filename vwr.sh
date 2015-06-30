@@ -31,18 +31,12 @@ id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
 
 if [ ${type} = 1 ]; then
 
-    if [ -f "$DM_tls/${trgt,,}.mp3" ]; then
-    cmd_listen="play '$DM_tls/${trgt,,}.mp3'"
-    else cmd_listen="espeak -v $lg -k 1 -s 120 \"${trgt}\""; fi
-    
+    cmd_listen="$DS/play.sh play_word ${trgt}"
     word_view
 
 elif [ ${type} = 2 ]; then
 
-    if [ -f "${DM_tlt}/$id.mp3" ]; then
-    cmd_listen="play "\"${DM_tlt}/$id.mp3\"""
-    else cmd_listen="espeak -v $lg -k 1 -s 140 \"${trgt}\""; fi
-
+    cmd_listen="$DS/play.sh play_sentence ${id} "\"${trgt}\"""
     sentence_view
 
 else

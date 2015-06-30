@@ -7,8 +7,6 @@ strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
 log="$DC_s/8.cfg"
 all=$(egrep -cv '#|^$' ./c.0)
-synth="$(grep -o synth=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')"
-
 easy=0
 hard=0
 ling=0
@@ -65,19 +63,8 @@ fonts() {
 
 cuestion() {
     
-    item="$(grep -F -m 1 "trgt={${1}}" "${cfg0}" |sed 's/},/}\n/g')"
-    
-    if [ -f "$DM_tls/${1,,}.mp3" ]; then
-    cmd_play="play "\"$DM_tls/${1,,}.mp3\"""
-    (sleep 0.5 && play "$DM_tls/${1,,}".mp3) &
-    else
-        if [ -n "${synth}" ]; then
-        cmd_play="echo -e "$1" | $synth"
-        (sleep 0.5 && echo "${1}" | $synth) &
-        else
-        cmd_play="espeak -v $lg -k 1 -s 120 \"${1}\""
-        (sleep 0.5 && espeak -v $lg -k 1 -s 120 "${1}") & fi
-    fi
+    cmd_play="$DS/play.sh play_word ${1}"
+    (sleep 0.5 && "$DS/play.sh" play_word "${1}") &
 
     yad --form --title="$(gettext "Practice")" \
     --text="$lcuestion" \

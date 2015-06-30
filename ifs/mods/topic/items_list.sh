@@ -79,7 +79,7 @@ function notebook_1() {
     cmd_adv="'$DS/ifs/tls.sh' adv "\"$tpc\"""
     cmd_share="'$DS/ifs/upld.sh' upld "\"$tpc\"""
     cmd_eind="'$DS/mngr.sh' edit_list "\"$tpc\"""
-    cmd_play="$DS/play.sh"
+    cmd_play="$DS/play.sh play_list"
     list() {
     if [[ $((`wc -l < "${DC_tlt}/5.cfg"`/3)) = \
     `wc -l < "${DC_tlt}/1.cfg"` ]]; then

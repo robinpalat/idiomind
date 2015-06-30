@@ -90,12 +90,11 @@ function new_session() {
     while read line; do
         
         DM_tlt="$DM_tl/${line}"
-        stts=$(sed -n 1p "${DM_tlt}/.conf/8.cfg")
+        stts=$(sed -n 1p "${DM_tlt}/.conf/8.cfg"); [ -z $stts ] && stts=1
         if [ ${stts} = 3 -o ${stts} = 4 -o ${stts} = 7 -o ${stts} = 8 ] \
         && [ -f "${DM_tlt}/.conf/9.cfg" ]; then calculate_review "${line}"
             
             if [[ $((stts%2)) = 0 ]]; then
-            
                 if [[ ${RM} -ge 180 ]]; then
                 echo 10 > "${DM_tlt}/.conf/8.cfg"
                 touch "${DM_tlt}"
@@ -149,7 +148,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     level="${l[${level}]}"
 
     itxt="<span font_desc='Droid Sans 12'> $tname</span>\n <small>$nword $(gettext "Words")  $nsent $(gettext "Sentences")  $nimag $(gettext "Images")  \n $(gettext "Language:") $langt  $(gettext "Level:") $level</small>"
-    dclk="'$DS/default/vwr_tmp.sh' "\"${file}\"""
+    dclk="$DS/play.sh play_word"
     
     _set() {
     while read -r item; do
@@ -243,12 +242,12 @@ function topic() {
     source "$DS/ifs/mods/cmns.sh"
     source "$DS/ifs/mods/topic/items_list.sh"
     
-    if [[ ${mode} = 2 ]]; then
+    if [ ${mode} = 2 ]; then
         
         tpa="$(sed -n 1p "$DC_a/4.cfg")"
         "$DS/ifs/mods/topic/${tpa}.sh" & exit 1
 
-    elif [[ ${mode} = 0 ]] || [[ ${mode} = 1 ]]; then
+    elif [ ${mode} = 0 -o ${mode} = 1 ]; then
         
         [ -z "${tpc}" ] && exit 1
         n=0
