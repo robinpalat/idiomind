@@ -98,9 +98,3 @@ function progr_3() {
     --pulsate --auto-close \
     --skip-taskbar --center --no-buttons
 }
-
-
-case "$1" in
-    position)
-    position "$@" ;;
-esac

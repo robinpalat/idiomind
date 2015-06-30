@@ -56,7 +56,7 @@ if [[ "$1" = chngi ]]; then
     
     getitem() {
         
-        if [ ${f} -gt 5 ] || [ ! -d "${DM_tlt}" ]; then
+        if [ ${f} -gt 5 -o ! -d "${DM_tlt}" ]; then
         msg "$(gettext "An error has occurred. Playback stopped")" info &
         "$DS/stop.sh" 2; fi
         

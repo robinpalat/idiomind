@@ -497,7 +497,7 @@ delete_topic() {
             [ -f "$DM/backup/${tpc}.bk" ] && rm "$DM/backup/${tpc}.bk"
             if [ -d "$DM_tl/${tpc}" ] && [ -n "${tpc}" ]; then
             rm -fr "$DM_tl/${tpc}"; fi; if [ -d "$DM_tl/${tpc}" ]; then sleep 0.5
-            msg "$(gettext "Could not remove the directory:")\n$DM_tl/${tpc}\n$(gettext "You must delete manually.")" info; fi
+            msg "$(gettext "Could not remove the directory:")\n$DM_tl/${tpc}\n$(gettext "You must manually remove it.")" info; fi
             
             rm -f "$DT/tpe"
             > "$DM_tl/.8.cfg"
@@ -605,7 +605,11 @@ mark_to_learn_topic() {
         ret=$?
     
         if [ ${ret} -eq 3 ]; then
-        
+            kill -9 $(pgrep -f "yad --multi-progress ") &
+            kill -9 $(pgrep -f "yad --list ") &
+            kill -9 $(pgrep -f "yad --text-info ") &
+            kill -9 $(pgrep -f "yad --form ") &
+            kill -9 $(pgrep -f "yad --notebook ") &
             rm -f "${DC_tlt}/7.cfg"
             idiomind topic & exit 1
         fi

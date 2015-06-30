@@ -294,12 +294,12 @@ notes_m=$(echo "${d}" | cut -d "|" -f6)
 
 if [ -z "${iuser_m##+([[:space:]])}" ] || [ ${#iuser_m} -gt 60 ] || \
 [ "$(grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${iuser_m}")" ]; then
-msg "$(gettext "Name user no valid.")\n " info
+msg "$(gettext "Name author not válid.")\n " info
 "$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
 
 if [ ${#cntct_m} -gt 30 ] || \
 [ "$(grep -o -E '\*|\/|$|\)|\(|=' <<<"${cntct_m}")" ]; then
-msg "$(gettext "Contact no valid.")\n " info
+msg "$(gettext "Invalid contact format.")\n " info
 "$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
 
 if [ -z "${Ctgry}" ]; then
