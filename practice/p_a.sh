@@ -5,7 +5,7 @@ cfg11_="$DC_tlt/0.cfg"
 drts="$DS/practice"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
-log="$DC_s/8.cfg"
+log="$DC_s/log"
 all=$(egrep -cv '#|^$' ./a.0)
 easy=0
 hard=0
@@ -60,7 +60,7 @@ cuestion() {
     --timeout=10 \
     --skip-taskbar --text-align=center --center --on-top \
     --undecorated --buttons-layout=spread --align=center \
-    --width=395 --height=280 --borders=8 \
+    --width=375 --height=260 --borders=8 \
     --field="$acuestion":lbl \
     --button="$(gettext "Exit")":1 \
     --button="    $(gettext "Answer") >>    ":0
@@ -72,7 +72,7 @@ answer() {
     --timeout=10 --selectable-labels \
     --skip-taskbar --text-align=center --center --on-top \
     --undecorated --buttons-layout=spread --align=center \
-    --width=395 --height=280 --borders=8 \
+    --width=375 --height=260 --borders=8 \
     --field="$bcuestion":lbl \
     --field="":lbl \
     --field="$answer":lbl \

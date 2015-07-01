@@ -7,7 +7,7 @@ drts="$DS/practice"
 strt="$drts/strt.sh"
 snd="$drts/no.mp3"
 cd "$DC_tlt/practice"
-log="$DC_s/8.cfg"
+log="$DC_s/log"
 all=$(egrep -cv '#|^$' ./b.0)
 easy=0
 hard=0
@@ -73,7 +73,7 @@ mchoise() {
     --skip-taskbar --text-align=center --center --on-top \
     --buttons-layout=edge --undecorated \
     --no-headers \
-    --width=410 --height=350 --borders=8 \
+    --width=380 --height=350 --borders=8 \
     --column=Option \
     --button="$(gettext "Exit")":1 \
     --button="$(gettext "OK")":0)

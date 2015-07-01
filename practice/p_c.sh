@@ -5,7 +5,7 @@ cfg0="$DC_tlt/0.cfg"
 drts="$DS/practice"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
-log="$DC_s/8.cfg"
+log="$DC_s/log"
 all=$(egrep -cv '#|^$' ./c.0)
 "$DS/stop.sh" 2
 easy=0
@@ -56,7 +56,7 @@ fonts() {
     
     s=$((30-${#1}))
     img="/usr/share/idiomind/images/fc.png"
-    lcuestion="\n\n<span font_desc='Verdana $s' color='#717171'><b>$lst</b></span>\n\n\n\n"
+    lcuestion="\n\n<span font_desc='Verdana $s' color='#717171'><b>$lst</b></span>\n\n\n"
 
     }
 
@@ -70,7 +70,7 @@ cuestion() {
     --timeout=20 \
     --skip-taskbar --text-align=center --center --on-top \
     --buttons-layout=spread --image-on-top --undecorated \
-    --width=380 --height=240 --borders=8 \
+    --width=360 --height=220 --borders=8 \
     --field="$(gettext "Play")":BTN "$cmd_play" \
     --button="$(gettext "Exit")":1 \
     --button="  $(gettext "No")  ":3 \

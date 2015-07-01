@@ -6,7 +6,7 @@ drtt="$DM_tlt/images"
 drts="$DS/practice"
 strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
-log="$DC_s/8.cfg"
+log="$DC_s/log"
 all=$(egrep -cv '#|^$' ./e.0)
 easy=0
 hard=0

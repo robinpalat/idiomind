@@ -19,7 +19,7 @@ if [[ "$1" = new_item ]]; then
     echo "$item" > "$DCP/.2.lst"
     echo "$item" > "$DCP/2.lst"; fi
     check_index1 "$DCP/2.lst" "$DCP/.2.lst"
-    notify-send -i info "$(gettext "Saved")" "$item" -t 3000
+    notify-send -i info "$(gettext "Episode saved")" "$item" -t 3000
     exit
     
 elif [[ "$1" = sv_as ]]; then
@@ -71,7 +71,7 @@ elif [[ "$1" = delete_item ]]; then
             rm "$DCP"/*.tmp; fi
 
     else
-        notify-send -i info "$(gettext "Deleted")" "$item"
+        notify-send -i info "$(gettext "Episode removed")" "$item"
         cd "$DCP"
         grep -vxF "$item" "$DCP/.2.lst" > "$DCP/.2.lst.tmp"
         sed '/^$/d' "$DCP/.2.lst.tmp" > "$DCP/.2.lst"

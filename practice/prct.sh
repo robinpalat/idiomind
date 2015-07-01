@@ -19,7 +19,7 @@
 
 strt="$DS/practice/strt.sh"
 cls="$DS/practice/cls.sh"
-log="$DC_s/8.cfg"
+log="$DC_s/log"
 cfg0="$DC_tlt/0.cfg"
 cfg1="$DC_tlt/1.cfg"
 cfg3="$DC_tlt/3.cfg"
