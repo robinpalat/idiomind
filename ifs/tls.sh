@@ -617,8 +617,8 @@ check_updates() {
     && [ "$nver" != "$cver" ]; then
     
         msg_2 " <b>$(gettext "A new version of Idiomind available\!")</b>\n" \
-        info "$(gettext "Download")" "$(gettext "Cancel")" $(gettext "Idiomind - New Version")
-        ret=$(echo $?)
+        info "$(gettext "Download")" "$(gettext "Cancel")" "$(gettext "Idiomind - New Version")"
+        ret=$?
         
         if [[ $ret -eq 0 ]]; then xdg-open "$pkg"; fi
         
@@ -674,7 +674,7 @@ import os
 app_logo = os.path.join('/usr/share/idiomind/images/idiomind.png')
 app_icon = os.path.join('/usr/share/idiomind/images/icon.png')
 app_name = 'Idiomind'
-app_version = 'v2.2-beta'
+app_version = 'v2.3-beta'
 app_comments = os.environ['c']
 web = os.environ['website']
 app_copyright = 'Copyright (c) 2015 Robin Palatnik'

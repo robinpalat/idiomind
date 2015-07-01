@@ -451,7 +451,7 @@ panel() {
 }
 
 version() {
-    echo "2.2-beta"
+    echo -n "2.3-beta"
 }
 
 session() {

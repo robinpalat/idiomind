@@ -32,7 +32,7 @@ function sentence_view() {
     echo "$lwrd" | yad --list --title=" " \
     --text="$tag<span font_desc='Sans Free 15'>${trgt_l}</span>\n\n<i>$srce</i>\n\n" \
     --selectable-labels --print-column=0 \
-    --dclick-action="$DS/ifs/tls.sh 'dclik'" \
+    --dclick-action="$DS/play.sh 'play_word'" \
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --image-on-top --center --on-top \
     --scroll --text-align=left --expand-column=0 --no-headers \
