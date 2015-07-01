@@ -53,7 +53,7 @@ fonts() {
     ras=$(sort -Ru b.srces | egrep -v "$wes" | head -5)
     ess=$(grep "$wes" ./b.srces)
     echo -e "$ras\n$ess" | sort -Ru | head -6 | sed '/^$/d' > srce.tmp
-    s=$((40-${#1}))
+    s=$((36-${#1}))
     cuestion="\n<span font_desc='Free Sans $s'><b>$1</b></span>\n\n"
     }
 
@@ -73,7 +73,7 @@ mchoise() {
     --skip-taskbar --text-align=center --center --on-top \
     --buttons-layout=edge --undecorated \
     --no-headers \
-    --width=380 --height=350 --borders=8 \
+    --width=380 --height=360 --borders=8 \
     --column=Option \
     --button="$(gettext "Exit")":1 \
     --button="$(gettext "OK")":0)
