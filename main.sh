@@ -36,7 +36,6 @@ function new_session() {
     #set -e
     echo "--new session"
     echo "$(date +%d)" > "$DC_s/10.cfg"
-    if [ -f "$DT/notify" ]; then rm -f "$DT/notify"; fi
     source "$DS/ifs/mods/cmns.sh"
     
     # write in /tmp
@@ -74,10 +73,10 @@ function new_session() {
     [[ `wc -l < "$DC_s/1.cfg"` -lt 19 ]] && rm "$DC_s/1.cfg"
     
     # log file
-    if [ -f "$DC_s/8.cfg" ]; then
-    if [[ "$(du -sb "$DC_s/8.cfg" | awk '{ print $1 }')" -gt 100000 ]]; then
-    tail -n2000 < "$DC_s/8.cfg" > "$DT/8.cfg"
-    mv -f "$DT/8.cfg" "$DC_s/8.cfg"; fi
+    if [ -f "$DC_s/log" ]; then
+    if [[ "$(du -sb "$DC_s/log" | awk '{ print $1 }')" -gt 100000 ]]; then
+    tail -n2000 < "$DC_s/log" > "$DT/log"
+    mv -f "$DT/log" "$DC_s/log"; fi
     fi
     
     # check for updates
@@ -139,12 +138,10 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     if [ $? != 22 ]; then
     msg "$(gettext "File is corrupted.")\n" error & exit 1; fi
     file="${1}"
-    
     l=( "$(gettext "Beginner")" \
     "$(gettext "Intermediate")" \
     "$(gettext "Advanced")" )
     level="${l[${level}]}"
-
     itxt="<span font_desc='Droid Sans 12'> $tname</span>\n <small>$nword $(gettext "Words")  $nsent $(gettext "Sentences")  $nimag $(gettext "Images")  \n $(gettext "Language:") $langt  $(gettext "Level:") $level</small>"
     dclk="$DS/play.sh play_word"
     
@@ -168,18 +165,13 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     --button="$(gettext "Close")":1
     ret=$?
         
-        if [[ $ret -eq 1 ]]; then
-        
-            [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c"
-            rm -f "$DT/import.tar.gz" "$DT/${tpf}.cfg" & exit
+        if [[ $ret -eq 1 ]]; then exit
             
         elif [[ $ret -eq 0 ]]; then
 
             if [[ $(wc -l < "$DM_t/$langt/.1.cfg") -ge 120 ]]; then
                 
-                msg "$(gettext "Sorry, you have reached the maximum number of topics")\n" info
-                [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c"
-                rm -f "$DT/import.tar.gz" & exit
+                msg "$(gettext "Sorry, you have reached the maximum number of topics")\n" info & exit
             fi
             
             if [[ $(grep -Fxo "${tname}" "$DM_t/$langt/.1.cfg" | wc -l) -ge 1 ]]; then
@@ -191,9 +183,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
                 tname="${tname} ($i)"
                 msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "The name for the newest will be\:")\n<b>$tname</b>\n" info "$(gettext "OK")" "$(gettext "Cancel")"
   
-                if [ $? != 0 ]; then
-                [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c"
-                rm -f  "$DT/import.tar.gz" & exit 1; fi
+                if [ $? != 0 ]; then exit 1; fi
             fi
 
             if [ ! -d "$DM_t/$langt" ]; then
@@ -229,8 +219,6 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             "$DS/default/tpc.sh" "${tname}" &
         fi
     #fi
-    [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c"
-    rm -f "$DT/import.tar.gz" "$DT/${tpf}.cfg"
     exit 1
 fi
     
@@ -268,7 +256,6 @@ function topic() {
         sx=608; sy=580; else sx=620; sy=560; fi
         echo -e ".tpc.$tpc.tpc." >> "$DC_s/log"
         [ ! -z "$author" ] && author=" $(gettext "Created by") $author"
-
         label_info1="<span font_desc='Free Sans 15' color='#505050'>$tpc</span><small>\n $inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"
 
         apply() {
@@ -310,7 +297,6 @@ function topic() {
     if [[ ${inx0} -lt 1 ]]; then 
         
         notebook_1
-     
         ret=$?
                 
             if [ ! -f "$DT/ps_lk" ]; then
@@ -338,7 +324,6 @@ function topic() {
                 echo 8 > "${DC_tlt}/8.cfg"; else
                 echo 7 > "${DC_tlt}/8.cfg"; fi
                 touch "${DM_tlt}"
-                
                 "$DS/mngr.sh" mkmn &
                 
                 RM=100
@@ -362,7 +347,6 @@ function topic() {
             
         else
             notebook_1
-            
         fi
             ret=$?
 

@@ -169,7 +169,7 @@ if [[ ${conten^} = A ]]; then
         echo "1"
         echo "# $(gettext "Processing")...";
         internet
-        if [ $lgt = ja ] || [ $lgt = "zh-cn" ] || [ $lgt = ru ];
+        if [ $lgt = ja -o $lgt = "zh-cn" -o $lgt = ru ];
         then c=c; else c=w; fi
 
         lns="$(ls "$DT_r"/[0-9]*.mp3 | wc -l | head -200)"

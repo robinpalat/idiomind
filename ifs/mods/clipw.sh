@@ -4,7 +4,7 @@
 id=$(xinput --list | grep -i -m 1 'mouse' | grep -o 'id=[0-9]\+' | grep -o '[0-9]\+')
 echo $$ > /tmp/.clipw
 
-clip_watch() {
+_watch() {
 
     while [ 1 ]; do
     
@@ -28,4 +28,4 @@ clip_watch() {
     done
     exit
 }
-clip_watch
+_watch

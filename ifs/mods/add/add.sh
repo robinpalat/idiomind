@@ -94,7 +94,6 @@ function index() {
                 fi
             fi
         fi
-
     fi
     
     sleep 0.5

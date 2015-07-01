@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-cfg11_="$DC_tlt/0.cfg"
+cfg0="$DC_tlt/0.cfg"
 drtt="$DM_tlt"
 drts="$DS/practice"
 strt="$drts/strt.sh"
@@ -47,7 +47,7 @@ score() {
 
 fonts() {
     
-    item="$(grep -F -m 1 "trgt={${1}}" "${cfg11_}" |sed 's/},/}\n/g')"
+    item="$(grep -F -m 1 "trgt={${1}}" "${cfg0}" |sed 's/},/}\n/g')"
     wes=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
 
     ras=$(sort -Ru b.srces | egrep -v "$wes" | head -5)

@@ -668,7 +668,7 @@ process() {
                 echo "5"
                 echo "# $(gettext "Processing")... " ;
                 internet
-                [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ] && c=c || c=w
+                [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ] && c=c || c=w
                 
                 lns="$(cat "$DT_r/slts" "$DT_r/wrds" |sed '/^$/d' |wc -l)"
                 # ----------------------------
