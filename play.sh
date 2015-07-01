@@ -111,7 +111,7 @@ play_list() {
     else
         tpp="$(sed -n 2p "$DT/.p_")"
         btn2="gtk-media-stop:2"
-        btn1="$(gettext "Pause"):3"
+        btn1="$(gettext "Skip"):$DS/stop.sh 9"
         if grep TRUE <<<"$words$sentences$marks$practice"; then
         if [ "$tpp" != "$tpc" ]; then
         title="$(gettext "Playing:") $tpp"; fi
@@ -163,14 +163,19 @@ play_list() {
         [ -f "$DT/index.m3u" ] && rm -f "$DT/index.m3u"
         "$DS/stop.sh" 2
         
-    elif [ $ret -eq 3 ]; then
-
-        if ps -A | pgrep -f "play"; then killall play & fi
-        if ps -A | pgrep -f "mplayer"; then killall mplayer & fi
-        > "$DT/.p"
     fi
 }
 
+play_file() {
+
+    if [ -f "${2}" ]; then
+    play "${2}" >/dev/null 2>&1
+    elif [ -n "$synth" ]; then
+    echo "${3}." | $synth
+    else
+    echo "${3}." | festival --tts
+    fi
+}
 
 case "$1" in
     play_word)
@@ -179,4 +184,6 @@ case "$1" in
     play_sentence "$@" ;;
     play_list)
     play_list "$@" ;;
+    play_file)
+    play_file "$@" ;;
 esac

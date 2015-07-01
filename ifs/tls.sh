@@ -54,7 +54,7 @@ sets=( 'v' 'tname' \
 'authr' 'cntct' 'ctgry' 'ilink' 'oname' \
 'datec' 'dateu' 'datei' \
 'nword' 'nsent' 'nimag' 'naudi' 'nsize' \
-'level' 'set_1' 'set_2' )
+'level' 'set_1' 'set_2' 'set_3' 'set_4' )
 
 LANGUAGES="English
 Chinese

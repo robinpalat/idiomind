@@ -15,20 +15,20 @@ get_itep() {
     
         channel="$(grep -o channel=\"[^\"]* < "${item}" | grep -o '[^"]*$')"
         title="$(grep -o title=\"[^\"]* < "${item}" | grep -o '[^"]*$')"
-        [ -f "$DMC/$fname.mp3" ] && file="$DMC/$fname.mp3" && t=3
-        [ -f "$DMC/$fname.ogg" ] && file="$DMC/$fname.ogg" && t=3
-        [ -f "$DMC/$fname.m4v" ] && file="$DMC/$fname.m4v" && t=4
-        [ -f "$DMC/$fname.mp4" ] && file="$DMC/$fname.mp4" && t=4
-        [ -f "$DMC/$fname.avi" ] && file="$DMC/$fname.avi" && t=4
+        [ -f "$DMC/$fname.mp3" ] && file="$DMC/$fname.mp3" && type=3
+        [ -f "$DMC/$fname.ogg" ] && file="$DMC/$fname.ogg" && type=3
+        [ -f "$DMC/$fname.m4v" ] && file="$DMC/$fname.m4v" && type=4
+        [ -f "$DMC/$fname.mp4" ] && file="$DMC/$fname.mp4" && type=4
+        [ -f "$DMC/$fname.avi" ] && file="$DMC/$fname.avi" && type=4
         
-        if [ ${t} = 3 ]; then
+        if [ ${type} = 3 ]; then
         e_file "${file}"
         trgt="${title}"
         srce="${channel}"
         play=play
         icon=idiomind
         
-        elif [ ${t} = 4 ]; then
+        elif [ ${type} = 4 ]; then
         e_file "$file"
         trgt="${title}"
         srce="${channel}"
@@ -47,7 +47,7 @@ if [ ${ne} = TRUE ] || [ ${se} = TRUE ]; then
     if [ ${v} = TRUE ]; then
 
         _filename() {
-            fname=$(echo -n "$1" | md5sum | rev | cut -c 4- | rev)
+            fname=$(echo -n "${1}" | md5sum | rev | cut -c 4- | rev)
             [ -f "$DMC/$fname.m4v" ] && echo "$DMC/$fname.m4v"
             [ -f "$DMC/$fname.mp4" ] && echo "$DMC/$fname.mp4"
         }

@@ -7,11 +7,10 @@ strt="$drts/strt.sh"
 cd "$DC_tlt/practice"
 log="$DC_s/8.cfg"
 all=$(egrep -cv '#|^$' ./c.0)
+"$DS/stop.sh" 2
 easy=0
 hard=0
 ling=0
-alias synth="$synth"
-
 
 
 score() {

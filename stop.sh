@@ -91,6 +91,13 @@ on_play2() {
     exit
 }
 
+on_play3() {
+    
+    if ps -A | pgrep -f "play"; then killall play & fi
+    if ps -A | pgrep -f "mplayer"; then killall mplayer & fi
+    exit
+}
+
 case $1 in
     1)
     on_quit ;;
@@ -108,4 +115,6 @@ case $1 in
     on_edit ;;
     8)
     on_play2 ;;
+    9)
+    on_play3 ;;
 esac

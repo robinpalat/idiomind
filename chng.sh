@@ -46,9 +46,9 @@ if [[ "$1" = chngi ]]; then
         notify-send -i "${icon}" "${trgt}" "${srce}" -t 10000; fi &
         
         if [ ${a} = TRUE ]; then
-        "${play}" "${file}" && wait; fi
+        "$DS/play.sh" play_file "${file}" "${trgt}" && wait; fi
         
-        if [ ${n} = TRUE ] && [[ ${l} -lt 11 ]]; then l=11; fi
+        if [ ${n} = TRUE -a ${l} -lt 11 -a ${type} -lt 3 ]; then l=11; fi
         
         sleep ${l}
     }

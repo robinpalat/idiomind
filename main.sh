@@ -168,13 +168,14 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     --column="$langs    " \
     --button="$(gettext "Install")":0 \
     --button="$(gettext "Close")":1
+    ret=$?
         
-        if [[ $? -eq 1 ]]; then
+        if [[ $ret -eq 1 ]]; then
         
             [ -d "$DT/dir$c" ] && rm -fr "$DT/dir$c"
             rm -f "$DT/import.tar.gz" "$DT/${tpf}.cfg" & exit
             
-        elif [[ $? -eq 0 ]]; then
+        elif [[ $ret -eq 0 ]]; then
 
             if [[ $(wc -l < "$DM_t/$langt/.1.cfg") -ge 120 ]]; then
                 
