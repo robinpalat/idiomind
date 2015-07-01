@@ -73,12 +73,10 @@ dlg=$(yad --form --title="Idiomind" \
 --text="$text" \
 --class=Idiomind --name=Idiomind \
 --window-icon="/usr/share/idiomind/images/icon.png" \
---image-on-top --buttons-layout=end --align=center --center --on-top \
---width=440 --height=310 --borders=15 \
---field="$(gettext "Select the language you are studying")":lbl " " \
---field=":CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
---field="$(gettext "Select your native language")":lbl " " \
---field=":CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
+--image-on-top --buttons-layout=end --align=right --center --on-top \
+--width=440 --height=260 --borders=15 \
+--field="$(gettext "Select the language you are studying"):CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
+--field="$(gettext "Select your native language"):CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
 --button=Cancel:1 \
 --button=gtk-ok:0)
 

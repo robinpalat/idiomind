@@ -86,7 +86,7 @@ delete_item_ok() {
     fi
 
     sed -i "/trgt={${trgt}}/d" "${DC_tlt}/0.cfg"
-    "$DS/ifs/tls.sh" sanity_1 "${DC_tlt}/0.cfg" &
+    "$DS/ifs/tls.sh" sanity_1 "${DC_tlt}/0.cfg" & #TODO
 
     n=1
     while [ ${n} -le 6 ]; do
@@ -136,7 +136,7 @@ delete_item() {
         fi
         
         sed -i "/trgt={${trgt}}/d" "${DC_tlt}/0.cfg"
-        "$DS/ifs/tls.sh" sanity_1 "${DC_tlt}/0.cfg" &
+        "$DS/ifs/tls.sh" sanity_1 "${DC_tlt}/0.cfg" & #TODO
 
         n=1
         while [[ ${n} -le 6 ]]; do
@@ -661,6 +661,7 @@ mark_to_learn_topic() {
 
    
     echo -e ".lrnt.$tpc.lrnt." >> "$DC_s/log"
+    touch "${DC_tlt}"
     "$DS/mngr.sh" mkmn &
 
     [[ ${3} = 1 ]] && idiomind topic &

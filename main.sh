@@ -70,8 +70,6 @@ function new_session() {
     sed -n 1p <<<"$s" >> "$DC_s/10.cfg"
     sed -n 2p <<<"$s" >> "$DC_s/10.cfg"
     echo "$DESKTOP_SESSION" >> "$DC_s/10.cfg"
-    gconftool-2 --get /desktop/gnome/interface/font_name \
-    | cut -d ' ' -f 2 >> "$DC_s/10.cfg"
     #
     [[ `wc -l < "$DC_s/1.cfg"` -lt 19 ]] && rm "$DC_s/1.cfg"
     
@@ -86,36 +84,36 @@ function new_session() {
     "$DS/ifs/tls.sh" a_check_updates &
     
     # status update
-    [[ ! -f "$DM_tl/.1.cfg" ]] && touch "$DM_tl/.1.cfg"
+    [ ! -f "$DM_tl/.1.cfg" ] && touch "$DM_tl/.1.cfg"
     while read line; do
         
         DM_tlt="$DM_tl/${line}"
-        stts=$(sed -n 1p "${DM_tlt}/.conf/8.cfg"); [ -z $stts ] && stts=1
-        if [ ${stts} = 3 -o ${stts} = 4 -o ${stts} = 7 -o ${stts} = 8 ] \
-        && [ -f "${DM_tlt}/.conf/9.cfg" ]; then calculate_review "${line}"
-            
+        stts=$(sed -n 1p "${DM_tlt}/.conf/8.cfg")
+        [ -z $stts ] && stts=1
+
+        if [ -f "${DM_tlt}/.conf/9.cfg" ] && \
+        [ -f "${DM_tlt}/.conf/7.cfg" ]; then
+        
+            calculate_review "${line}"
             if [[ $((stts%2)) = 0 ]]; then
-                if [[ ${RM} -ge 180 ]]; then
-                echo 10 > "${DM_tlt}/.conf/8.cfg"
-                touch "${DM_tlt}"
-                elif [[ ${RM} -ge 100 ]]; then
-                echo 8 > "${DM_tlt}/.conf/8.cfg"
-                touch "${DM_tlt}"; fi
+                if [ ${RM} -ge 180 -a ${stts} = 8 ]; then
+                echo 10 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"
+                elif [ ${RM} -ge 100 -a ${stts} -lt 8 ]; then
+                echo 8 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"; fi
+
             else
-                if [[ ${RM} -ge 180 ]]; then
-                echo 9 > "${DM_tlt}/.conf/8.cfg"
-                touch "${DM_tlt}"
-                elif [[ ${RM} -ge 100 ]]; then
-                echo 7 > "${DM_tlt}/.conf/8.cfg"
-                touch "${DM_tlt}"; fi
+                if [ ${RM} -ge 180 -a ${stts} = 7 ]; then
+                echo 9 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"
+                elif [ ${RM} -ge 100 -a ${stts} -lt 7 ]; then
+                echo 7 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"; fi
             fi
-            
         fi
     done < "$DM_tl/.1.cfg"
     
     if [ -f "$DM_tl/.5.cfg" ]; then
     tpd="$(< "$DM_tl/.5.cfg")"
     if grep -Fxq "${tpd}" "$DM_tl/.1.cfg"; then
+    touch "$DM_tl/${tpd}"
     "$DS/default/tpc.sh" "${tpd}" 2; fi
     fi
     
@@ -238,7 +236,6 @@ fi
     
 function topic() {
 
-    
     mode=$(sed -n 1p "$DC_s/5.cfg")
     source "$DS/ifs/mods/cmns.sh"
     source "$DS/ifs/mods/topic/items_list.sh"
@@ -333,7 +330,7 @@ function topic() {
     
         if [ -f "${DC_tlt}/9.cfg" ] && [ -f "${DC_tlt}/7.cfg" ]; then
         
-            calculate_review "$tpc"
+            calculate_review "${tpc}"
             stts=$(sed -n 1p "${DC_tlt}/8.cfg")
             if [[ ${RM} -ge 100 ]]; then
             
@@ -397,8 +394,6 @@ function topic() {
             if [[ $((stts%2)) = 0 ]]; then
             echo 8 > "${DC_tlt}/8.cfg"; else
             echo 7 > "${DC_tlt}/8.cfg"; fi
-            touch "${DM_tlt}"
-            
             "$DS/mngr.sh" mkmn &
             
             RM=100

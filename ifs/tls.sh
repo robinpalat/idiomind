@@ -148,7 +148,7 @@ _restfile() {
         --image-on-top --on-top --sticky --center \
         --width=340 --height=100 --borders=5 \
         --button="$(gettext "Cancel")":1 \
-        --button="$(gettext "Restore")":0
+        --button="$(gettext "OK")":0
         ret="$?"
         
         if [ $ret -eq 0 ]; then

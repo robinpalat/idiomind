@@ -25,9 +25,9 @@ play_word() {
     if [ -f "$DM_tls/${2,,}.mp3" ]; then
     play "$DM_tls/${2,,}.mp3" >/dev/null 2>&1 &
     elif [ -n "$synth" ]; then
-    echo "${2}" | $synth &
+    echo "${2}." | $synth &
     else
-    echo "${2}" | festival --tts &
+    echo "${2}." | festival --tts &
     fi
 }
 
@@ -37,9 +37,9 @@ play_sentence() {
     if [ -f "${DM_tlt}/$2.mp3" ]; then
     play "${DM_tlt}/$2.mp3" >/dev/null 2>&1 &
     elif [ -n "$synth" ]; then
-    echo "${3}" | $synth &
+    echo "${3}." | $synth &
     else
-    echo "${3}" | festival --tts &
+    echo "${3}." | festival --tts &
     fi
 }
 
@@ -110,8 +110,8 @@ play_list() {
         btn1="$(gettext "Play"):0"; fi
     else
         tpp="$(sed -n 2p "$DT/.p_")"
-        btn2="gtk-media-stop:2"
-        btn1="$(gettext "Skip"):$DS/stop.sh 9"
+        btn1="gtk-media-stop:2"
+        btn2="$(gettext "Skip"):$DS/stop.sh 9"
         if grep TRUE <<<"$words$sentences$marks$practice"; then
         if [ "$tpp" != "$tpc" ]; then
         title="$(gettext "Playing:") $tpp"; fi
@@ -126,7 +126,7 @@ play_list() {
     --expand-column=2 --no-headers \
     --width=400 --height=300 --borders=5 \
     --column=IMG:IMG --column=TXT:TXT --column=CHK:CHK \
-    --button="$btn1" --button="$btn2")"
+    --button="$btn1")"
     ret=$?
 
     if [ $ret -eq 0 ]; then
