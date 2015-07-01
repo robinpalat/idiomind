@@ -64,7 +64,7 @@ function dwld() {
         ltotal="$(gettext "Total:")"
         laudio="$(gettext "Audio files:")"
         limage="$(gettext "Images:")"
-        lfiles="$(gettext "Aditional files:")"
+        lfiles="$(gettext "Additional files:")"
         lothers="$(gettext "Others:")"
         tmp="$DT/download/${oname}"
         total=$(find "$tmp" -maxdepth 5 -type f | wc -l)

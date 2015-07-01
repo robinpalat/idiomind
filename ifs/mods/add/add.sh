@@ -155,7 +155,7 @@ function sentence_p() {
     sed -i 's/\. /\n/g' "$aw"
     touch "$DT_r/A.$r" "$DT_r/B.$r" "$DT_r/g.$r"; bcle=1
     
-    if [ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]; then
+    if [ "$lgt" = ja -o "$lgt" = "zh-cn" -o "$lgt" = ru ]; then
         while [[ ${bcle} -le "$(wc -l < "$aw")" ]]; do
         s=$(sed -n "$bcle"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
         t=$(sed -n "$bcle"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
@@ -279,40 +279,20 @@ export -f translate tts
 
 function voice() {
     
-    synth="$(grep -o synth=\"[^\"]* "$DC_s/1.cfg" | grep -o '[^"]*$')"
+    txaud="$(grep -o txaud=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')"
     DT_r="$2"; cd "$DT_r"
     
-    if [ -n "$synth" ]; then
+    if [ -n "$txaud" ]; then
     
-        if [ "$synth" = 'festival' -o "$synth" = 'text2wave' ]; then
-            lg="${lgtl,,}"
-
-            if [ $lg = "english" -o $lg = "spanish" -o $lg = "russian" ]; then
-            echo "${1}" | text2wave -o "$DT_r/s.wav"
-            sox "$DT_r/s.wav" "${3}"
-            else
-            msg "$(gettext "Sorry, can not process this language.")\n" error
-            [ -d "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
-        else
-            echo "${1}" | "$synth"
-            [ -f "$DT_r"/*.mp3 ] && mv -f "$DT_r"/*.mp3 "${3}"
-            [ -f "$DT_r"/*.wav ] && sox "$DT_r"/*.wav "${3}"
+        echo "${1}" | $txaud "$DT_r"/text.wav
+        sox "$DT_r"/*.wav "${3}"
+        
+        if [ $? != 0 ]; then
+        msg "$(gettext "Please check the speech synthesizer configuration in the preferences dialog.")" dialog-warning & exit 1
         fi
         
-        if [ ! -f "$DT_r"/*.mp3 ] && [ ! -f "$DT_r"/*.wav ]; then
-        msg "$(gettext "Sorry, can not process this language.")\n" error
-        [ -d "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
+        [ -d "$DT_r" ] && rm -fr "$DT_r"; exit 1
         
-    else
-        lg="${lgtl,,}"
-        [ $lg = chinese ] && lg=Mandarin
-        [ $lg = portuguese ] && lg=brazil
-        [ $lg = vietnamese ] && lg=vietnam
-        if [ $lg = japanese ]; then msg "$(gettext "Sorry, can not process Japanese language.")\n" error
-        [ -d "$DT_r" ] && rm -fr "$DT_r"; exit 1; fi
-        
-        espeak "${1}" -v $lg -k 1 -p 40 -a 80 -s 110 -w "$DT_r/s.wav"
-        sox "$DT_r/s.wav" "${3}"
     fi
 }
 

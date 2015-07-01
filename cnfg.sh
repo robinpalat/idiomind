@@ -40,7 +40,7 @@ lang=( 'English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 
 sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
 'rplay' 'audio' 'video' 'ntosd' 'loop' \
-'langt' 'langs' 'synth' \
+'langt' 'langs' 'synth' 'txaud' \
 'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi' )
 
 c=$((RANDOM%100000)); KEY=$c
@@ -58,7 +58,7 @@ confirm() {
 
 set_lang() {
     
-    echo "$tpc" > "$DM_tl/.8.cfg"
+    echo "${tpc}" > "$DM_tl/.8.cfg"
     language="$1"
     if [ ! -d "$DM_t/$language/.share" ]; then
     mkdir -p "$DM_t/$language/.share"; fi
@@ -75,7 +75,7 @@ set_lang() {
 
 n=0
 if [ "$cfg" = 1 ]; then
-    while [[ $n -lt 15 ]]; do
+    while [ ${n} -lt 16 ]; do
         get="${sets[$n]}"
         val=$(grep -o "$get"=\"[^\"]* "$DC_s/1.cfg" | grep -o '[^"]*$')
         declare "${sets[$n]}"="$val"
@@ -84,7 +84,7 @@ if [ "$cfg" = 1 ]; then
     
 else
     n=0; > "$DC_s/1.cfg"
-    while [[ $n -lt 20 ]]; do
+    while [ ${n} -lt 21 ]; do
     echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
     ((n=n+1))
     done
@@ -118,7 +118,8 @@ yad --plug=$KEY --form --tabnum=1 \
 --field="$(gettext "My language is")":CB "$lgsl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
 --field=" :LBL" " " \
 --field=":LBL" " " \
---field="<small>$(gettext "Speech Synthesizer (default espeak)")</small>" "$synth" \
+--field="<small>$(gettext "Use this speech synthesizer instead eSpeak")</small>" "$synth" \
+--field="<small>$(gettext "Program to convert text to audio file")</small>" "$txaud" \
 --field=" :LBL" " " \
 --field="$(gettext "Help")":BTN "$DS/ifs/tls.sh help" \
 --field="$(gettext "Feedback")":BTN "$DS/ifs/tls.sh 'fback'" \
@@ -136,14 +137,14 @@ yad --notebook --key=$KEY --title="$(gettext "Settings")" \
 --tab-borders=5 --sticky --center \
 --tab="$(gettext "Preferences")" \
 --tab="$(gettext "Addons")" \
---width=470 --height=350 --borders=2 \
+--width=480 --height=350 --borders=2 \
 --button="$(gettext "Apply")":0 \
 --button="$(gettext "Cancel")":1
 ret=$?
 
     if [[ $ret -eq 0 ]]; then
         n=1; v=0
-        while [[ $n -le 22 ]]; do
+        while [ ${n} -le 23 ]; do
             val=$(cut -d "|" -f$n < "$cnf1")
             if [ -n "$val" ]; then
             sed -i "s/${sets[$v]}=.*/${sets[$v]}=\"$val\"/g" "$DC_s/1.cfg"
@@ -155,6 +156,8 @@ ret=$?
 
         val=$(cut -d "|" -f24 < "$cnf1")
         sed -i "s/${sets[13]}=.*/${sets[13]}=\"$(sed 's|/|\\/|g' <<<"$val")\"/g" "$DC_s/1.cfg"
+        val=$(cut -d "|" -f25 < "$cnf1")
+        sed -i "s/${sets[14]}=.*/${sets[14]}=\"$(sed 's|/|\\/|g' <<<"$val")\"/g" "$DC_s/1.cfg"
         
         if [ "$CW" = 0 ]; then
         kill $(cat /tmp/.clipw); rm -f /tmp/.clipw
@@ -176,7 +179,7 @@ ret=$?
         fi
         
         n=0
-        while [[ $n -lt 10 ]]; do
+        while [ ${n} -lt 10 ]; do
             if cut -d "|" -f20 < "$cnf1" | grep "${lang[$n]}" && \
             [ "${lang[$n]}" != "$lgtl" ]; then
                 lgtl="${lang[$n]}"
@@ -190,7 +193,7 @@ ret=$?
         done
         
         n=0
-        while [[ $n -lt 10 ]]; do
+        while [ ${n} -lt 10 ]; do
             if cut -d "|" -f21 < "$cnf1" | grep "${lang[$n]}" && \
             [ "${lang[$n]}" != "$lgsl" ]; then
                 confirm "$info1" dialog-warning

@@ -27,7 +27,7 @@ play_word() {
     elif [ -n "$synth" ]; then
     echo "${2}." | $synth &
     else
-    echo "${2}." | festival --tts &
+    echo "${2}." | espeak -v $lg -s 150 &
     fi
 }
 
@@ -39,7 +39,7 @@ play_sentence() {
     elif [ -n "$synth" ]; then
     echo "${3}." | $synth &
     else
-    echo "${3}." | festival --tts &
+    echo "${3}." | espeak -v $lg -s 150 &
     fi
 }
 
@@ -57,7 +57,7 @@ play_list() {
     'Saved episodes <i><small>Podcasts</small></i> ')
     sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
     'rplay' 'audio' 'video' 'ntosd' 'loop' \
-    'langt' 'langs' 'synth' \
+    'langt' 'langs' 'synth' 'txaud' \
     'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi' )
     in=( 'in1' 'in2' 'in3' 'in4' 'in5' 'in6' )
 
@@ -73,8 +73,8 @@ play_list() {
 
     if [[ ${cfg} = 1 ]]; then
 
-        n=14
-        while [[ $n -lt 20 ]]; do
+        n=15
+        while [[ $n -lt 21 ]]; do
             get="${sets[$n]}"
             val=$(grep -o "$get"=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
             declare ${sets[$n]}="$val"
@@ -83,7 +83,7 @@ play_list() {
         
     else
         n=0; > "$DC_s/1.cfg"
-        while [[ $n -lt 19 ]]; do
+        while [[ $n -lt 21 ]]; do
         echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
         ((n=n+1))
         done
@@ -97,7 +97,7 @@ play_list() {
                 && echo "$DS/images/addi.png" \
                 || echo "$DS/images/add.png"
             echo "  <span font_desc='Arial 11'>$(gettext "${lbls[$n]}")</span>"
-            echo "${!sets[$((n+14))]}"
+            echo "${!sets[$((n+15))]}"
             let n++
         done
     }
@@ -130,15 +130,15 @@ play_list() {
     ret=$?
 
     if [ $ret -eq 0 ]; then
-        n=14
-        while [[ ${n} -lt 20 ]]; do
+        n=15
+        while [[ ${n} -lt 21 ]]; do
         
-            val=$(sed -n $((n-13))p <<<"${slct}" | cut -d "|" -f3)
+            val=$(sed -n $((n-14))p <<<"${slct}" | cut -d "|" -f3)
             [ -n "${val}" ] && \
             sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" "$DC_s/1.cfg"
             
             if [ "$val" = TRUE ]; then
-            count=$((count+$(egrep -cv '#|^$' <<<"${!in[$((n-14))]}"))); fi
+            count=$((count+$(egrep -cv '#|^$' <<<"${!in[$((n-15))]}"))); fi
             
             ((n=n+1))
         done
@@ -173,7 +173,7 @@ play_file() {
     elif [ -n "$synth" ]; then
     echo "${3}." | $synth
     else
-    echo "${3}." | festival --tts
+    echo "${3}." | espeak -v $lg -s 150
     fi
 }
 

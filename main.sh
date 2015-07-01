@@ -118,10 +118,10 @@ function new_session() {
     fi
     
     ################
-    if ! grep 'ttrgt' < "$DC_s/1.cfg"; then
+    if ! grep 'txtau' < "$DC_s/1.cfg"; then
     rm "$DC_s/1.cfg"; fi
     
-    if [ `cat "$DM_tl/Podcasts/.conf/8.cfg"` != 11 ]; then
+    if [[ `cat "$DM_tl/Podcasts/.conf/8.cfg"` != 11 ]]; then
     echo 11 > "$DM_tl/Podcasts/.conf/8.cfg"; fi
     ###############
 
@@ -240,12 +240,12 @@ function topic() {
     source "$DS/ifs/mods/cmns.sh"
     source "$DS/ifs/mods/topic/items_list.sh"
     
-    if [ ${mode} = 2 ]; then
+    if [[ ${mode} = 2 ]]; then
         
         tpa="$(sed -n 1p "$DC_a/4.cfg")"
         "$DS/ifs/mods/topic/${tpa}.sh" & exit 1
 
-    elif [ ${mode} = 0 -o ${mode} = 1 ]; then
+    elif [[ ${mode} = 0 ]] || [[ ${mode} = 1 ]]; then
         
         [ -z "${tpc}" ] && exit 1
         n=0

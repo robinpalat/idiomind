@@ -31,7 +31,7 @@ lang=( 'English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 
 sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
 'rplay' 'audio' 'video' 'ntosd' 'loop' \
-'langt' 'langs' 'synth' \
+'langt' 'langs' 'synth' 'txaud' \
 'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi' )
 
 _info() {
@@ -74,7 +74,7 @@ dlg=$(yad --form --title="Idiomind" \
 --class=Idiomind --name=Idiomind \
 --window-icon="/usr/share/idiomind/images/icon.png" \
 --image-on-top --buttons-layout=end --align=right --center --on-top \
---width=440 --height=260 --borders=15 \
+--width=450 --height=270 --borders=15 \
 --field="$(gettext "Select the language you are studying"):CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
 --field="$(gettext "Select your native language"):CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
 --button=Cancel:1 \
@@ -86,8 +86,8 @@ if [ $ret -eq 1 ]; then
     killall 1u.sh & exit 1
 
 elif [ $ret -eq 0 ]; then
-    target=$(echo "$dlg" | cut -d "|" -f2)
-    source=$(echo "$dlg" | cut -d "|" -f4)
+    target=$(echo "$dlg" | cut -d "|" -f1)
+    source=$(echo "$dlg" | cut -d "|" -f2)
     
     if [ -z "$dlg" ]; then
     /usr/share/idiomind/ifs/1u.sh & exit 1
@@ -117,7 +117,7 @@ elif [ $ret -eq 0 ]; then
     mkdir "$HOME/.config/idiomind/addons"
     
     n=0
-    while [ $n -lt 10 ]; do
+    while [ ${n} -lt 10 ]; do
         if echo "$target" | grep "${lang[$n]}"; then
         set_lang "${lang[$n]}"
         if grep -o -E 'Chinese|Japanese|Russian|Vietnamese' <<< "$target";
@@ -128,7 +128,7 @@ elif [ $ret -eq 0 ]; then
     done
     
     n=0
-    while [ $n -lt 10 ]; do
+    while [ ${n} -lt 10 ]; do
         if echo "$source" | grep "${lang[$n]}"; then
         echo "${lang[$n]}" >> "$DC_s/6.cfg" & break
         fi
@@ -136,7 +136,7 @@ elif [ $ret -eq 0 ]; then
     done
     
     n=0; > "$DC_s/1.cfg"
-    while [ $n -lt 20 ]; do
+    while [ ${n} -lt 21 ]; do
     echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
     ((n=n+1))
     done
