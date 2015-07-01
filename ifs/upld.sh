@@ -323,6 +323,8 @@ mkdir "$DT/upload"
 DT_u="$DT/upload/"
 mkdir -p "$DT/upload/${tpc}/conf"
 
+"$DS/ifs/tls.sh" check_index "${tpc}" 1
+
 cd "${DM_tlt}/images"
 if [ $(ls -1 *.jpg 2>/dev/null | wc -l) != 0 ]; then
 images=$(ls *.jpg | wc -l); else

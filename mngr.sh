@@ -210,8 +210,8 @@ edit_item() {
         
             include "$DS/ifs/mods/add"
             
-           if [ ${type} = 1 ]; then
-            edit_dlg="$(tail -n 1 <<<"${edit_dlg1}")"
+            if [ ${type} = 1 ]; then
+            edit_dlg="${edit_dlg1}"
             tpc_mod="$(cut -d "|" -f3 <<<"${edit_dlg}")"
             trgt_mod="$(clean_1 "$(cut -d "|" -f1 <<<"${edit_dlg}")")"
             srce_mod="$(clean_1 "$(cut -d "|" -f2 <<<"${edit_dlg}")")"
@@ -223,7 +223,7 @@ edit_item() {
             type_mod=1
 
             elif [ ${type} = 2 ]; then
-            edit_dlg="$(tail -n 1 <<<"${edit_dlg2}")"
+            edit_dlg="${edit_dlg2}"
             tpc_mod="$(cut -d "|" -f7 <<<"${edit_dlg}")"
             mark_mod="$(cut -d "|" -f1 <<<"${edit_dlg}")"
             type_mod="$(cut -d "|" -f2 <<<"${edit_dlg}")"
@@ -390,7 +390,6 @@ edit_list() {
         n=1; while read -r trgt; do
 
             if grep -F -m 1 "trgt={${trgt}}" "${direc}/0.cfg"; then
-            
                 item="$(grep -F -m 1 "trgt={${trgt}}" "${direc}/0.cfg" |sed 's/},/}\n/g')"
                 line="$(sed -n 's/^\([0-9]*\)[:].*/\1/p' <<<"${item}")"
                 type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
@@ -432,25 +431,24 @@ edit_list() {
             internet
         
             while read -r trgt; do
-                
+            
                 trgt_mod="${trgt}"
                 pos=`grep -Fon -m 1 "trgt={${trgt}}" "${direc}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
                 item="$(sed -n ${pos}p "${direc}/0.cfg" |sed 's/},/}\n/g')"
                 type=`grep -oP '(?<=type={).*(?=})' <<<"${item}"`
                 trgt=`grep -oP '(?<=trgt={).*(?=})' <<<"${item}"`
+                srce="$temp"
                 
                 if [ ${type} = 1 ]; then
                 srce_mod="$(clean_1 "$(translate "${trgt}" $lgt $lgs)")"
                 audio="${trgt,,}"
                 dictt "$audio" "$DT_r"
-                srce="$temp"
-                
+
                 elif [ ${type} = 2 ]; then
                 srce_mod="$(clean_2 "$(translate "${trgt}" $lgt $lgs)")"
                 source "$DS/default/dicts/$lgt"
                 sentence_p "$DT_r" 2
                 fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
-                srce="$temp"
                 fi
                  
                 id_mod="$(set_name_file "${type}" "${trgt}" "${srce_mod}" \

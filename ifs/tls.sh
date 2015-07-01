@@ -153,6 +153,7 @@ _restfile() {
         
         if [ $ret -eq 0 ]; then
         cp -f "$HOME/.idiomind/backup/${2}.bk" "${DM_tl}/${2}/.conf/0.cfg"
+        "$DS/ifs/tls.sh" check_index "${2}" 1
         fi
         
     else
@@ -166,6 +167,7 @@ check_index() {
     DC_tlt="$DM_tl/${2}/.conf"
     DM_tlt="$DM_tl/${2}"
     nv=0; f=0; a=0
+    [[ ${3} = 1 ]] && r=1 || r=0
     
     _check() {
         
@@ -173,8 +175,8 @@ check_index() {
         if [ ! -d "${DC_tlt}" ]; then mkdir "${DC_tlt}"; fi
         if [ ! -d "${DM_tlt}/images" ]; then mkdir "${DM_tlt}/images"; fi
         
-        n=0
-        while [ ${n} -le 4 ]; do
+        
+        n=0; while [ ${n} -le 4 ]; do
         [ ! -f "${DC_tlt}/$n.cfg" ] && touch "${DC_tlt}/$n.cfg" && a=1
         if grep '^$' "${DC_tlt}/$n.cfg"; then
         sed -i '/^$/d' "${DC_tlt}/$n.cfg"; fi
@@ -228,14 +230,14 @@ check_index() {
     _sanity() {
 
         cfg0="${DC_tlt}/0.cfg"
-        sed -i '/^$/d' "${cfg0}"; n=1
-        while [ ${n} -le 200 ]; do
+        sed -i "/trgt={}/d" "${cfg0}"
+        sed -i '/^$/d' "${cfg0}"
+        n=1; while [ ${n} -le 200 ]; do
             line=$(sed -n ${n}p "${cfg0}" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
-            if [ -n ${line} ]; then
-            if [ ${line} != ${n} ]; then
-                sed -i ""${n}"s|"${line}"\:|"${n}"\:|g" "${cfg0}"
-            fi
-            fi
+            if [ -n "${line}" ]; then
+            if [[ ${line} -ne ${n} ]]; then
+            sed -i ""${n}"s|"${line}"\:|"${n}"\:|g" "${cfg0}"; fi
+            else break; fi
             let n++
         done
     }
@@ -249,8 +251,7 @@ check_index() {
         touch "$DC_tlt/2.cfg"
         > "$DC_tlt/0.cfg"
         
-        n=1
-        while [ ${n} -le 200 ]; do
+        n=1; while [ ${n} -le 200 ]; do
         
             unset id type trgt srce exmp dftn note tag lwrd grmr
             item="$(sed -n ${n}p "$DC_tlt/1.cfg")"
@@ -307,9 +308,9 @@ check_index() {
     
     _check
     
-    if [ ${f} = 1 -o ${nv} = 1 -o ${a} = 1 ]; then
-    
-        if [ ${f} = 1 ]; then
+    if [ ${f} -eq 1 -o ${nv} -eq 1 -o ${a} -eq 1 -o ${r} -eq 1 ]; then
+
+        if [ ${f} -eq 1 ]; then
         (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
         "$(gettext "Fixing...")" -t 3000) &
         > "$DT/ps_lk"
@@ -317,17 +318,23 @@ check_index() {
         _restore
         fi
         
-        if [ ${nv} = 1 ]; then
+        if [ ${nv} -eq 1 ]; then
         (sleep 1; notify-send -i idiomind "$(gettext "Fixing index")" \
         "$(gettext "Migrating to new version...")" -t 3000) &
         > "$DT/ps_lk"
         _version
         fi
         
-        if [ ${a} = 1 ]; then
+        if [ ${a} -eq 1 ]; then
         (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
         "$(gettext "Fixing...")" -t 3000) &
         > "$DT/ps_lk"
+        _restore
+        fi
+        
+        if [ ${r} -eq 1 ]; then
+        > "$DT/ps_lk"
+        _sanity
         _restore
         fi
 
