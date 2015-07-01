@@ -37,7 +37,7 @@ _cfg() {
 
 function dwld() {
 
-    # downloading from http://server_temp/c/xxx.md5sum.tar.gz
+    # downloading from http://server_temp/c/xxx.md5sum.tar.gz 
     notify-send "$(gettext "Downloading...")"
     mkdir "$DT/download"
     idcfg="$DM_tl/${2}/.conf/id.cfg"
