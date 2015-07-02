@@ -54,7 +54,7 @@ play_list() {
     [ -n "$(< "$DC_s/1.cfg")" ] && cfg=1 || > "$DC_s/1.cfg"
     lbls=( 'Words' 'Sentences' 'Marked items' 'Difficult words' \
     'New episodes <i><small>Podcasts</small></i>' \
-    'Saved episodes <i><small>Podcasts</small></i> ')
+    'Saved episodes <i><small>Podcasts</small></i>' )
     sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
     'rplay' 'audio' 'video' 'ntosd' 'loop' \
     'langt' 'langs' 'synth' 'txaud' \

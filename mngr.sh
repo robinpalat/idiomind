@@ -365,7 +365,7 @@ edit_list() {
     done < <(tac "${direc}/0.cfg")
 
     cat "$DT/_tmp1" | yad --list --title="$(gettext "Edit")" \
-    --text="$(gettext "Drag and drop to reposition an item, \ndouble-click to edit.")" \
+    --text="$(gettext "Double-click to edit an item, drag and drop to reposition it")" \
     --name=Idiomind --class=Idiomind \
     --editable --separator='' \
     --always-print-result --print-all \
