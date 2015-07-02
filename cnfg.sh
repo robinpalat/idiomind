@@ -137,7 +137,7 @@ yad --notebook --key=$KEY --title="$(gettext "Settings")" \
 --tab-borders=5 --sticky --center \
 --tab="$(gettext "Preferences")" \
 --tab="$(gettext "Addons")" \
---width=470 --height=350 --borders=2 \
+--width=470 --height=330 --borders=2 \
 --button="$(gettext "Apply")":0 \
 --button="$(gettext "Cancel")":1
 ret=$?
