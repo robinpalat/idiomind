@@ -721,8 +721,7 @@ set_image() {
 
     cd "$DT"
     source "$DS/ifs/mods/add/add.sh"
-    file=`get_name_file "${2}" "${3}"`
-    ifile="${DM_tlt}/images/$file.jpg"
+    ifile="${DM_tlt}/images/$3.jpg"
 
     if [ -f "$ifile" ]; then
     

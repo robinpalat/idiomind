@@ -50,7 +50,7 @@ fonts() {
     id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
     img="$drtt/$id.jpg"
     [ ! -f "$img" ] && img="$DS/practice/images/img_2.jpg"
-    srcel="<span font_desc='Free Sans 10'><i>($src)</i></span>"
+    srcel="<span font_desc='Free Sans 10'>  <i>$src</i></span>"
     trgtl="<span font_desc='Free Sans 15'><b>$1</b></span>"
 }
 

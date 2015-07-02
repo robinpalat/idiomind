@@ -190,9 +190,8 @@ edit_item() {
     q_trad="$(sed "s/'/ /g" <<<"$trgt")"
     mod=0; col=0
    
-    cmd_move="$DS/ifs/mods/mngr/mngr.sh 'position' ${item_pos} "\"${index_1}\"""
     cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"" "\"${trgt}\"""
-    cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"" "\"${trgt}\"""
+    cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"" "\"${id}\"""
     cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"" 1 ${c}"
     link1="https://translate.google.com/\#$lgt/$lgs/${q_trad}"
     link2="http://glosbe.com/$lgt/$lgs/${q_trad,,}"
@@ -204,7 +203,6 @@ edit_item() {
     if [ ${type} = 1 ]; then audf="${DM_tls}/${trgt,,}.mp3"; edit_dlg1="$(dlg_form_1)"
     elif [ ${type} = 2 ]; then audf="${DM_tlt}/$id.mp3"; edit_dlg2="$(dlg_form_2)"; fi
     ret=$?
-    
 
         if [ ${ret} -eq 0 -o ${ret} -eq 2 ]; then
         
@@ -345,6 +343,8 @@ edit_item() {
         else
             "$DS/vwr.sh" "$lists" "${trgt}" $item_pos &
         fi
+       
+    exit
     
 } >/dev/null 2>&1
 

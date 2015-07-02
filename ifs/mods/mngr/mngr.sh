@@ -43,7 +43,6 @@ function dlg_form_1() {
     --field=" ":LBL " " \
     --button="$(gettext "Image")":"${cmd_image}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \
-    --button="gtk-go-down":2 \
     --button="$(gettext "Close")":0 |tail -n 1 |tr '\n' ' '
 }
 
@@ -61,7 +60,7 @@ function dlg_form_2() {
     --buttons-layout=end --align=right --center --on-top \
     --width=650 --height=540 --borders=10 \
     --field="$(gettext "Mark")":CHK "$mark" \
-    --field=" $lbl_2":$t "$type" \
+    --field=" $lbl_2":${t} "$type" \
     --field="<small>$lgtl</small>":TXT "${trgt}" \
     --field="<small><a href='$link1'>$(gettext "Translation")</a></small>\t":LBL " " \
     --field="<small>$lgsl</small>":TXT "${srce}" \
@@ -70,7 +69,6 @@ function dlg_form_2() {
     --field="<small>$(gettext "Audio")</small>":FL "${audf}" \
     --button="$(gettext "Words")":"${cmd_words}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \
-    --button="gtk-go-down":2 \
     --button="$(gettext "Close")":0 |tail -n 1 |tr '\n' ' '
 }
 
