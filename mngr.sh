@@ -114,7 +114,6 @@ delete_item() {
 
     msg_2 "$(gettext "Are you sure you want to delete this item?")\n" \
     gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
-
     ret="$?"
     
     if [[ $ret -eq 0 ]]; then

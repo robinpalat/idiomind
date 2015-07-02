@@ -117,7 +117,7 @@ function new_session() {
     fi
     
     ################
-    if ! grep 'txtau' < "$DC_s/1.cfg"; then
+    if ! grep 'txaud' < "$DC_s/1.cfg"; then
     rm "$DC_s/1.cfg"; fi
     
     if [[ `cat "$DM_tl/Podcasts/.conf/8.cfg"` != 11 ]]; then
@@ -450,36 +450,18 @@ panel() {
     exit
 }
 
-version() {
-    echo -n "2.3-beta"
-}
-
-session() {
-    new_session
-    idiomind &
-}
-
-autostart() {
-    sleep 50
-    [ ! -f "$DT/ps_lk" ] && new_session
-    exit 0
-}
-
-add() {
-    "$DS/add.sh" new_items "$dir" 2 "${2}"
-}
 
 case "$1" in
     topic)
     topic ;;
     -v)
-    version;;
+    echo -n "2.3-beta";;
     -s)
-    session;;
+    new_session; idiomind &;;
     autostart)
-    autostart;;
+    sleep 50; [ ! -f "$DT/ps_lk" ] && new_session;;
     add)
-    add "$@" ;;
+    "$DS/add.sh" new_items "$dir" 2 "${2}";;
     *)
     panel;;
 esac

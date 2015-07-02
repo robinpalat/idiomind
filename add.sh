@@ -202,10 +202,9 @@ new_sentence() {
     fi
     
     sentence_p "$DT_r" 1
-    mksure "${trgt}" "${srce}" "${grmr}" "${wrds}"
     id="$(set_name_file 1 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}")"
-    
-    
+    mksure "${trgt}" "${srce}" "${grmr}" "${wrds}"
+
     if [ $? = 1 ]; then
         msg "$(gettext "An error has occurred while saving the note.")\n" dialog-warning
         cleanups "$DT_r" & exit 1
@@ -272,8 +271,8 @@ new_word() {
     fi
     
     audio="${trgt,,}"
-    mksure "${trgt}" "${srce}"
     id="$(set_name_file 1 "${trgt}" "${srce}" "${exmp_}" "" "" "" "")"
+    mksure "${trgt}" "${srce}"
     
     if [ $? = 1 ]; then
         cleanups "$DT_r"
@@ -405,8 +404,8 @@ list_words_sentence() {
             translate "${trgt}" auto $lgs > "$DT_r/tr.$c"
             srce=$(< "$DT_r/tr.$c")
             srce="$(clean_1 "${srce}")"
-            mksure "${trgt}" "${srce}"
             id="$(set_name_file 1 "${trgt}" "${srce}" "${exmp_}" "" "" "" "")"
+            mksure "${trgt}" "${srce}"
             
             if [ $? = 0 ]; then
 
@@ -721,8 +720,8 @@ process() {
                                 cd "$DT_r"
                                 (
                                 sentence_p "$DT_r" 1
-                                mksure "${trgt}" "${srce}" "${wrds}" "${grmr}"
                                 id="$(set_name_file 1 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}")"
+                                mksure "${trgt}" "${srce}" "${wrds}" "${grmr}"
                                 
                                 if [ $? = 0 ]; then
 
@@ -767,8 +766,8 @@ process() {
                     
                         else
                             srce="$(translate "${trgt}" auto $lgs)"
-                            mksure "${trgt}" "${srce}"
                             id="$(set_name_file 1 "${trgt}" "${srce}" "${exmp_}" "" "" "" "")"
+                            mksure "${trgt}" "${srce}"
                             
                             if [ $? = 0 ]; then
 
@@ -796,23 +795,22 @@ process() {
                 
                 wadds=" $(($(wc -l < "$DT_r/addw")-$(sed '/^$/d' < "$DT_r/wlog" | wc -l)))"
                 W=" $(gettext "words")"
-                if [ "$wadds" = 1 ]; then
+                if [[ ${wadds} = 1 ]]; then
                 W=" $(gettext "word")"; fi
                 sadds=" $(($( wc -l < "$DT_r/adds")-$(sed '/^$/d' < "$DT_r/slog" | wc -l)))"
                 S=" $(gettext "sentences")"
-                if [ "$sadds" = 1 ]; then
+                if [[ ${sadds} = 1 ]]; then
                 S=" $(gettext "sentence")"; fi
                 log=$(cat "$DT_r/slog" "$DT_r/wlog")
                 adds=$(cat "$DT_r/adds" "$DT_r/addw" |sed '/^$/d' | wc -l)
                 
-                if [[ $adds -ge 1 ]]; then
-                    notify-send -i idiomind "${tpe}" \
-                    "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
-                    echo -e ".adi.$adds.adi." >> "$DC_s/log"
+                if [[ ${adds} -ge 1 ]]; then
+                notify-send -i idiomind "${tpe}" \
+                "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
+                echo -e ".adi.$adds.adi." >> "$DC_s/log"
                 fi
                 
-                if [ -n "$log" ]; then
-                sleep 1
+                if [ -n "$log" ]; then sleep 1
                 dlg_text_info_3 "$(gettext "Some items could not be added to your list"):" "$log" >/dev/null 2>&1
                 fi
                 

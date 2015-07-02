@@ -119,7 +119,7 @@ yad --plug=$KEY --form --tabnum=1 \
 --field=" :LBL" " " \
 --field=":LBL" " " \
 --field="<small>$(gettext "Use this speech synthesizer instead eSpeak")</small>" "$synth" \
---field="<small>$(gettext "Program to convert text to audio file")</small>" "$txaud" \
+--field="<small>$(gettext "Program to convert text to WAV file")</small>" "$txaud" \
 --field=" :LBL" " " \
 --field="$(gettext "Help")":BTN "$DS/ifs/tls.sh help" \
 --field="$(gettext "Feedback")":BTN "$DS/ifs/tls.sh 'fback'" \

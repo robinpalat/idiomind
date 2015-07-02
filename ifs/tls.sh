@@ -822,15 +822,15 @@ mkpdf() {
 
         cd "${DM_tlt}/images"
         cnt=`ls -1 *.jpg | grep -v "img.jpg" | wc -l`
-        if [[ $cnt -gt 0 ]]; then
+        if [[ ${cnt} -gt 0 ]]; then
 
             cd "$wdir"
             echo -e "<p>&nbsp;</p><table width=\"100%\" align=\"center\" border=\"0\" class=\"images\">" >> "$wdir/doc.html"
             n=1
-            while [[ $n -lt $(($(wc -l < "$wdir/image_list")+1)) ]]; do
+            while [[ ${n} -lt $(($(wc -l < "$wdir/image_list")+1)) ]]; do
             
-                    label1=$(sed -n ${n},$((n+1))p < "$wdir/image_list" |sed -n 1p)
-                    label2=$(sed -n ${n},$((n+1))p < "$wdir/image_list" |sed -n 2p)
+                    label1=$(sed -n ${n},$((n+1))p "$wdir/image_list" |sed -n 1p)
+                    label2=$(sed -n ${n},$((n+1))p "$wdir/image_list" |sed -n 2p)
                     if [ -n "${label1}" ]; then
                         echo -e "<tr>
                         <td align=\"center\"><img src=\"images/$label1.png\" width=\"200\" height=\"140\"></td>" >> "$wdir/doc.html"
@@ -878,7 +878,7 @@ mkpdf() {
             
             if [ -n "${trgt}" ] && [ -n "${srce}" ]; then
             
-                echo -e "<table width=\"55%\" border=\"0\" align=\"left\" cellpadding=\"10\" cellspacing=\"5\">
+                echo -e "<table width=\"55%\" border=\"0\" align=\"left\" cellpadding=\"6\" cellspacing=\"0\">
                 <tr>
                 <td bgcolor=\"#E6E6E6\" class=\"side\"></td>
                 <td bgcolor=\"#FFFFFF\"><w1>${trgt}</w1></td>
@@ -918,7 +918,7 @@ mkpdf() {
         done < <(tac "${cfg3}")
 
         n=1; trgt=""
-        while [[ $n -le "$(wc -l < "${cfg4}")" ]]; do
+        while [[ ${n} -le "$(wc -l < "${cfg4}")" ]]; do
         
             trgt=$(sed -n ${n}p "$wdir/trgt_sentences")
             while read -r mrk; do
@@ -929,17 +929,16 @@ mkpdf() {
 
             if [ -n "${trgt}" ]; then
                 srce=$(sed -n ${n}p "$wdir/srce_sentences")
-                echo -e "<h1>&nbsp;</h1>
-                <table width=\"100%\" border=\"0\" align=\"left\" cellpadding=\"10\" cellspacing=\"5\">
+                echo -e "&nbsp;
+                <table width=\"100%\" border=\"0\" align=\"left\" cellpadding=\"6\" cellspacing=\"0\">
                 <tr>
                 <td bgcolor=\"#E6E6E6\" class=\"side\"></td>
                 <td bgcolor=\"#FFFFFF\"><h1>${trgt}</h1></td>
                 </tr><tr>
-                <td bgcolor=\"#E6E6E6\" class=\"side\"></td>
+                <td bgcolor=\"#FFFFFF\" class=\"side\"></td>
                 <td bgcolor=\"#FFFFFF\"><h2>${srce}</h2></td>
                 </tr>
-                </table>
-                <h1>&nbsp;</h1>" >> "$wdir/doc.html"
+                </table>" >> "$wdir/doc.html"
             fi
             let n++
         done

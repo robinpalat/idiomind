@@ -106,10 +106,12 @@ if [[ ${conten^} = A ]]; then
             vad -T 0.6 -p 0.2 -t 5 fade 0.1 reverse \
             vad -T 0.6 -p 0.2 -t 5 fade 0.1 reverse norm -0.5
             rm -f "$DT_r/rv.mp3"
-            mp3splt -s -o @n "$DT_r"/*.mp3
-            c="$(ls "$DT_r"/[0-9]*.mp3 | wc -l)"
+            sox "$DT_r/c_rv.mp3" s.mp3 \
+            silence 1 0.5 1% 1 0.5 1% : newfile : restart
+
+            c="$(ls "$DT_r"/s[0-9]*.mp3 | wc -l)"
             if [[ ${c} -ge 1 ]]; then
-            (cd "$DT_r"; rename 's/^0*//' *.mp3)
+            (cd "$DT_r"; rename 's/^s0*//' *.mp3)
             elif [ $(du "$DT_r/c_rv.mp3" | cut -f1) -lt 400 ]; then
             mv -f "$DT_r/c_rv.mp3" "$DT_r/1.mp3"
             fi
@@ -140,7 +142,7 @@ if [[ ${conten^} = A ]]; then
         ((r=r-1))
         done
         (cd "$DT_r"; rename 's/^_*//' *.mp3)
-
+        
         internet
         echo "3"
         echo "# $(gettext "Checking key")..."; sleep 1
@@ -234,8 +236,8 @@ if [[ ${conten^} = A ]]; then
 
                         (
                         sentence_p "$DT_r" 1
-                        mksure "${trgt}" "${srce}" "${wrds}" "${grmr}"
                         id="$(set_name_file 2 "${trgt}" "${srce}" "" "" "${wrds}" "${grmr}")"
+                        mksure "${trgt}" "${srce}" "${wrds}" "${grmr}"
                         
                             if [ $? = 0 ]; then
                                 

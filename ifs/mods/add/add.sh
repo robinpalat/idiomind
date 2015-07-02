@@ -282,8 +282,7 @@ function voice() {
     DT_r="$2"; cd "$DT_r"
     
     if [ -n "$txaud" ]; then
-    
-        echo "${1}" | $txaud "$DT_r"/text.wav
+        echo "${1}" | $txaud "$DT_r"/f.wav
         sox "$DT_r"/*.wav "${3}"
         
         if [ $? != 0 ]; then
@@ -291,7 +290,6 @@ function voice() {
         fi
         
         [ -d "$DT_r" ] && rm -fr "$DT_r"; exit 1
-        
     fi
 }
 
@@ -415,7 +413,7 @@ function dlg_checklist_1() {
     --text-align=right --buttons-layout=end \
     --width=400 --height=280 --borders=5  \
     --column=" " --column="Select" \
-    --button="$(gettext "Close")":1 \
+    --button="$(gettext "Cancel")":1 \
     --button="gtk-add":0
 }
 
@@ -486,7 +484,7 @@ function dlg_progress_1() {
     --window-icon="$DS/images/icon.png" \
     --always-print-result  --progress-text=" " \
     --pulsate --percentage="5" --auto-close \
-    --no-buttons --on-top --fixed \
+    --skip-taskbar --no-buttons --on-top --fixed \
     --width=200 --height=50 --borders=4 --geometry=240x20-4-4
 }
 
@@ -497,7 +495,7 @@ function dlg_progress_2() {
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" \
     --always-print-result --progress-text=" " --auto-close \
-    --no-buttons --on-top --fixed \
+    --skip-taskbar --no-buttons --on-top --fixed \
     --width=200 --height=50 --borders=4 --geometry=240x20-4-4
 }
 

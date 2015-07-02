@@ -22,16 +22,13 @@ source "$DS/ifs/mods/cmns.sh"
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
 
-_cfg() {
-    
-    b=$(tr -dc a-z < /dev/urandom |head -c 1)
+_cfg() {  b=$(tr -dc a-z < /dev/urandom |head -c 1)
     c=$((RANDOM%100))
     id="$b$c"
     id=${id:0:3}
     echo -e "usrid=\"$id\"
     iuser=\"\"
-    cntct=\"\"" > "$DC_s/3.cfg"
-}
+    cntct=\"\"" > "$DC_s/3.cfg"; }
 
 [ ! $(grep -oP '(?<=usrid=\").*(?=\")' "$DC_s/3.cfg") ] && _cfg
 
@@ -242,8 +239,8 @@ else
     if [ -f "${img}" ] && [ "${img}" != "${imgm}" ]; then
     wsize="$(identify "${img}" | cut -d ' ' -f 3 | cut -d 'x' -f 1)"
     esize="$(identify "${img}" | cut -d ' ' -f 3 | cut -d 'x' -f 2)"
-    if [ "$wsize" -gt 1000 ] || [ "$wsize" -lt 600 ] \
-    || [ "$esize" -lt 100 ] || [ "$esize" -gt 400 ]; then
+    if [ ${wsize} -gt 1000 ] || [ ${wsize} -lt 400 ] \
+    || [ ${esize} -lt 100 ] || [ ${esize} -gt 600 ]; then
     msg "$(gettext "Sorry, the image size is not suitable.")\n " info "$(gettext "Error")"
     "$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
     /usr/bin/convert "${img}" -interlace Plane -thumbnail 600x150^ \
