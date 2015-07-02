@@ -41,17 +41,16 @@ function dwld() {
     link=$(grep -o 'ilink="[^"]*' "${idcfg}" |grep -o '[^"]*$')
     md5id=$(grep -o 'md5id="[^"]*' "${idcfg}" |grep -o '[^"]*$')
     oname=$(grep -o 'oname="[^"]*' "${idcfg}" |grep -o '[^"]*$')
-    oname=$(echo -n "$oname" | md5sum | rev | cut -c 4- | rev)
     langt=$(grep -o 'langt="[^"]*' "${idcfg}" |grep -o '[^"]*$')
     url="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
     | grep -o 'DOWNLOADS="[^"]*' | grep -o '[^"]*$')"
     URL="$url/c/$link.${md5id}.tar.gz"
-    
+
     if ! wget -S --spider "${URL}" 2>&1 | grep 'HTTP/1.1 200 OK'; then
         cleanups "$DT/download"
         msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" info & exit; fi
     
-    wget -q -c -T 50 -O "$DT/download/${oname}.tar.gz" "${URL}"
+    wget -q -c -T 80 -O "$DT/download/${oname}.tar.gz" "${URL}"
 
     if [ -f "$DT/download/${oname}.tar.gz" ]; then
         cd "$DT/download"/
