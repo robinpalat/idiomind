@@ -365,13 +365,13 @@ edit_list() {
     done < <(tac "${direc}/0.cfg")
 
     cat "$DT/_tmp1" | yad --list --title="$(gettext "Edit")" \
-    --text="$(gettext "Drag and drop to reposition an item. Double-click to edit")" \
+    --text="$(gettext "Drag and drop to reposition an item, \ndouble-click to edit.")" \
     --name=Idiomind --class=Idiomind \
     --editable --separator='' \
     --always-print-result --print-all \
     --window-icon="$DS/images/icon.png" \
     --no-headers --scroll --center \
-    --width=310 --height=250 --borders=5 \
+    --width=330 --height=250 --borders=5 \
     --column="" \
     --button="$(gettext "Invert")":2 \
     --button="$(gettext "Save")":0 \
