@@ -25,9 +25,9 @@ play_word() {
     if [ -f "$DM_tls/${2,,}.mp3" ]; then
     play "$DM_tls/${2,,}.mp3" >/dev/null 2>&1 &
     elif [ -n "$synth" ]; then
-    echo "${2}." | $synth &
+    sed 's/<[^>]*>//g' <<<"${2}." | $synth &
     else
-    echo "${2}." | espeak -v $lg -s 150 &
+    sed 's/<[^>]*>//g' <<<"${2}." | espeak -v $lg -s 150 &
     fi
 }
 
@@ -37,9 +37,9 @@ play_sentence() {
     if [ -f "${DM_tlt}/$2.mp3" ]; then
     play "${DM_tlt}/$2.mp3" >/dev/null 2>&1 &
     elif [ -n "$synth" ]; then
-    echo "${3}." | $synth &
+    sed 's/<[^>]*>//g' <<<"${3}." | $synth &
     else
-    echo "${3}." | espeak -v $lg -s 150 &
+    sed 's/<[^>]*>//g' <<<"${3}." | espeak -v $lg -s 150 &
     fi
 }
 
@@ -171,9 +171,9 @@ play_file() {
     if [ -f "${2}" ]; then
     play "${2}" >/dev/null 2>&1
     elif [ -n "$synth" ]; then
-    echo "${3}." | $synth
+    sed 's/<[^>]*>//g' <<<"${3}." | $synth
     else
-    echo "${3}." | espeak -v $lg -s 150
+    sed 's/<[^>]*>//g' <<<"${3}." | espeak -v $lg -s 150
     fi
 }
 
