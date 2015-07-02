@@ -36,7 +36,7 @@ if [[ "$1" = restart ]]; then
     
     rm ./"${2}.lock" ./"${2}.0" ./"${2}.1" \
     ./"${2}.2" ./"${2}.3" ./log1 ./log2 ./log3
-    [ -f ./b.srces ] && rm ./b.srces
+    [ -f ./"${2}.srces" ] && rm ./"${2}.srces"
     echo "1" > ./."${icon}"
     echo "0" > ./"${2}.l"
     touch ./log1 ./log2 ./log3

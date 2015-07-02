@@ -60,7 +60,7 @@ fonts() {
 
 ofonts() {
     while read item; do
-        echo " <big> $item </big> "
+        echo " <b> $item </b> "
     done < ./srce.tmp
     }
 
@@ -73,7 +73,7 @@ mchoise() {
     --skip-taskbar --text-align=center --center --on-top \
     --buttons-layout=edge --undecorated \
     --no-headers \
-    --width=380 --height=360 --borders=8 \
+    --width=380 --height=330 --borders=8 \
     --column=Option \
     --button="$(gettext "Exit")":1 \
     --button="$(gettext "OK")":0)

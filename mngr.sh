@@ -373,9 +373,9 @@ edit_list() {
     --no-headers --scroll --center \
     --width=310 --height=250 --borders=5 \
     --column="" \
-    --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Invert")":2 \
-    --button="$(gettext "Save")":0 > "$DT/tmp1"
+    --button="$(gettext "Save")":0 \
+    --button="$(gettext "Cancel")":1 > "$DT/tmp1"
     ret=$?
     
     if [ $ret -eq 0 -o $ret -eq 2 ]; then
