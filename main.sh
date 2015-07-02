@@ -135,7 +135,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     [ ! -d "$DT" ] && mkdir "$DT"
     source "$DS/ifs/tls.sh"
     check_source_1 "${1}"
-    if [ $? != 22 ]; then
+    if [ $? != 23 ]; then
     msg "$(gettext "File is corrupted.")\n" error & exit 1; fi
     file="${1}"
     l=( "$(gettext "Beginner")" \
@@ -209,7 +209,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             else echo "${trgt}" >> "${DC_tlt}/4.cfg"; fi
             echo "${trgt}" >> "${DC_tlt}/1.cfg"
             echo "${item_}" >> "${DC_tlt}/0.cfg"; fi
-            done < <(head -n -2 < "${file}")
+            done < <(head -n -1 < "${file}")
 
             "$DS/ifs/tls.sh" colorize
             echo -e "$langt\n$lgsl" > "$DC_s/6.cfg"

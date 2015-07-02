@@ -39,12 +39,13 @@ function dwld() {
     mkdir "$DT/download"
     idcfg="$DM_tl/${2}/.conf/id.cfg"
     link=$(grep -o 'ilink="[^"]*' "${idcfg}" |grep -o '[^"]*$')
+    md5id=$(grep -o 'md5id="[^"]*' "${idcfg}" |grep -o '[^"]*$')
     oname=$(grep -o 'oname="[^"]*' "${idcfg}" |grep -o '[^"]*$')
     oname=$(echo -n "$oname" | md5sum | rev | cut -c 4- | rev)
     langt=$(grep -o 'langt="[^"]*' "${idcfg}" |grep -o '[^"]*$')
     url="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
     | grep -o 'DOWNLOADS="[^"]*' | grep -o '[^"]*$')"
-    URL="$url/c/$link.${oname}.tar.gz"
+    URL="$url/c/$link.${md5id}.tar.gz"
     
     if ! wget -S --spider "${URL}" 2>&1 | grep 'HTTP/1.1 200 OK'; then
         cleanups "$DT/download"
@@ -326,13 +327,14 @@ cd "${DM_tlt}/images"
 if [ $(ls -1 *.jpg 2>/dev/null | wc -l) != 0 ]; then
 images=$(ls *.jpg | wc -l); else
 images=0; fi
-
+words=0; sentences=0
 [ -f "${DC_tlt}/3.cfg" ] && words=$(wc -l < "${DC_tlt}/3.cfg")
 [ -f "${DC_tlt}/4.cfg" ] && sentences=$(wc -l < "${DC_tlt}/4.cfg")
 if [ -f "${DC_tlt}/id.cfg" ]; then
 datec="$(grep -o 'datec="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
 datei="$(grep -o 'datei="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"; fi
 dateu=$(date +%F)
+sum=`md5sum "${DC_tlt}/0.cfg" | cut -d' ' -f1`
 
 if [ "${iuser}" != "${iuser_m}" ] \
 || [ "${cntct}" != "${cntct_m}" ]; then
@@ -360,9 +362,7 @@ echo -e "${notes}" > "$DT_u/${tpc}/conf/info"
 
 cd "$DT/upload"
 find "$DT_u" -type f -exec chmod 644 {} \;
-stpc=$(echo -n "$tpc" | md5sum | rev | cut -c 4- | rev)
-tar czpvf - ./"${tpc}" | split -d -b 2500k - ./"${usrid}.${stpc}"
-find . -type f -exec mv '{}' '{}'.tar \;
+tar czpvf - ./"${tpc}" | split -d -b 2500k - ./"$usrid.${sum}"
 rm -fr ./"${tpc}"
 f_size=$(du -h . | cut -f1)
 
@@ -387,13 +387,10 @@ level=\"$level\"
 set_1=\"$set_1\"
 set_2=\"$set_2\"
 set_3=\"$set_3\"
-set_4=\"$set_4\"" > "${DC_tlt}/id.cfg"
-
-cp -f "${DC_tlt}/0.cfg" "$DT_u/${usrid}.${tpc}.$lgt"
-echo -e "md5sum=\"\"" >> "$DT_u/${usrid}.${tpc}.$lgt"
-tr '\n' '&' < "${DC_tlt}/id.cfg" >> "$DT_u/${usrid}.${tpc}.$lgt"
-sum=`md5sum "$DT_u/${usrid}.${tpc}.$lgt" | cut -d' ' -f1`
-sed -i "s/md5sum=.*/md5sum=\"$sum\"/g" "$DT_u/${usrid}.${tpc}.$lgt"
+set_4=\"$set_4\"
+md5id=\"$sum\"" > "${DC_tlt}/id.cfg"
+cp -f "${DC_tlt}/0.cfg" "$DT_u/$usrid.${tpc}.$lgt"
+tr '\n' '&' < "${DC_tlt}/id.cfg" >> "$DT_u/$usrid.${tpc}.$lgt"
 
 # uploading files to http://server_temp/lang/xxx.name.idmnd
 url="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
