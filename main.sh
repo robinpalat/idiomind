@@ -142,7 +142,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     "$(gettext "Intermediate")" \
     "$(gettext "Advanced")" )
     level="${l[${level}]}"
-    itxt="<span font_desc='Droid Sans Bold 12' color='#717171'> $tname</span>\n <small>$nword $(gettext "Words")  $nsent $(gettext "Sentences")  $nimag $(gettext "Images")  \n $(gettext "Language:") $langt  $(gettext "Level:") $level</small>"
+    itxt="<span font_desc='Droid Sans Bold 12' color='#616161'> $tname</span>\n<small>  $nword $(gettext "Words")  $nsent $(gettext "Sentences")  $nimag $(gettext "Images")\n  $(gettext "Language:") $langt  $(gettext "Level:") $level</small>"
     dclk="$DS/play.sh play_word"
     
     _set() {
