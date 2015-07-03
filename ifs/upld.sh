@@ -183,15 +183,6 @@ if [ -f "$DC_tlt/11.cfg" ]; then
         
         elif [ -n "$(< "$DC_tlt/11.cfg")" ]; then
         
-        gset="$(grep -o 'set_2="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-        opts=( "$(gettext "No subscribe")" \
-        "$(gettext "Notify me of updates")" \
-        "$(gettext "Automatically download")" )
-        set="$(echo "${opts[$gset]}")"
-        unset opts[$gset]
-        lst=$(for i in "${opts[@]}"; do echo -n "!$i"; done)
-        lst_opts="$set$lst"
-        
         d=$(yad --form --title="$(gettext "Share")" \
         --columns=2 --separator="|" \
         --text="<span font_desc='Free Sans 15'> ${tpc}</span>" \
@@ -199,22 +190,13 @@ if [ -f "$DC_tlt/11.cfg" ]; then
         --window-icon="$DS/images/icon.png" --buttons-layout=end \
         --align=left --center --on-top \
         --width=380 --height=260 --borders=12 \
-        --field="\n$(gettext "Latest Download:"):lbl" " " \
+        --field="$(gettext "Latest Download:"):lbl" " " \
         --field="$(< "${DC_tlt}/11.cfg"):lbl" " " \
         --field=" :lbl" " " \
-        --field=" :CB" "$lst_opts" \
         --button="$(gettext "PDF")":2 \
         --button="$(gettext "Close")":4)
         ret=$?
-        opts=( "$(gettext "No subscribe")" \
-        "$(gettext "Notify me of updates")" \
-        "$(gettext "Automatically download")" )
-        t="$(echo "${d}" | cut -d "|" -f4)"
-        [ "${opts[0]}" = "$t" ] && n=0
-        [ "${opts[1]}" = "$t" ] && n=1
-        [ "${opts[2]}" = "$t" ] && n=2
-        if [ ${gset} != ${n} ]; then
-        sed -i "s/set_2=.*/set_2=\"$n\"/g" "${DC_tlt}/id.cfg"; fi
+        
         fi
 else
     d=$(yad --form --title="$(gettext "Share")" \
