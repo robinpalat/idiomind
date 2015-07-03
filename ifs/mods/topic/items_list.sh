@@ -128,7 +128,7 @@ function notebook_1() {
     --button="$(gettext "Preferences")":"$cmd_pref" \
     --button="$(gettext "Lists")":"$cmd_play" \
     --button="$(gettext "Practice")":5 \
-    --button="$(gettext "Close")":1
+    --button="gtk-close":1
 } >/dev/null 2>&1
 
 
@@ -176,7 +176,7 @@ function notebook_2() {
     --tab=" $(gettext "Edit") " \
     --width=$sx --height=$sy --borders=0 --tab-borders=3 \
     --button="$(gettext "Preferences")":"$cmd_pref" \
-    --button="$(gettext "Close")":1
+    --button="gtk-close":1
 } >/dev/null 2>&1
 
 

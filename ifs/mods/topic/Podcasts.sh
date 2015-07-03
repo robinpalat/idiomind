@@ -73,7 +73,7 @@ function feedmode() {
     --button="$(gettext "Preferences")":"$cmd_pref" \
     --button="$(gettext "Lists")":"$DS/play.sh play_list" \
     --button="$(gettext "Update")":2 \
-    --button="$(gettext "Close")":1
+    --button="gtk-close":1
     ret=$?
         
     if [[ $ret -eq 2 ]]; then
