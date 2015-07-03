@@ -353,6 +353,7 @@ edit_list() {
     [ -f "$DT/add_lst" -o -f "$DT/ps_lk" ] && exit
     [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ] && c=c || c=w
     direc="$DM_tl/${2}/.conf"
+    [ ! -s "${direc}/0.cfg" ] && exit 1
     lgt=$(lnglss $lgtl)
     lgs=$(lnglss $lgsl)
     > "$DT/_tmp1"
@@ -591,6 +592,8 @@ mark_to_learn_topic() {
     if [ "${tpc}" != "${2}" ]; then
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
     
+    [ ! -s "$DC_tlt/0.cfg" ] && exit 1
+    
     if [ "$(wc -l < "$DC_tlt/0.cfg")" -le 10 ]; then
     msg "$(gettext "Not enough items to perform the operation")\n " \
     info "$(gettext "Not enough items to perform the operation")" & exit; fi
@@ -671,6 +674,8 @@ mark_as_learned_topic() {
 
     if [ "${tpc}" != "${2}" ]; then
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
+    
+    [ ! -s "$DC_tlt/0.cfg" ] && exit 1
 
     if [ "$(wc -l < "${DC_tlt}/0.cfg")" -le 10 ]; then
     msg "$(gettext "Not enough items to perform the operation.")\n " \
