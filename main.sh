@@ -62,6 +62,7 @@ function new_session() {
     
     #
     list_inadd > "$DM_tl/.2.cfg"
+    check_index1 "$DM_tl/.3.cfg"
     cd /
     
     s="$(xrandr | grep '*' | awk '{ print $1 }' \
@@ -70,7 +71,6 @@ function new_session() {
     sed -n 2p <<<"$s" >> "$DC_s/10.cfg"
     echo "$DESKTOP_SESSION" >> "$DC_s/10.cfg"
     #
-    [[ `wc -l < "$DC_s/1.cfg"` -lt 19 ]] && rm "$DC_s/1.cfg"
     
     # log file
     if [ -f "$DC_s/log" ]; then
