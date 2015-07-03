@@ -350,20 +350,18 @@ check_index() {
 add_audio() {
 
     cd "$HOME"
-    AU=$(yad --file --title="$(gettext "Add Audio")" \
+    aud="$(yad --file --title="$(gettext "Add Audio")" \
     --text=" $(gettext "Browse to and select the audio file that you want to add.")" \
     --class=Idiomind --name=Idiomind \
     --file-filter="*.mp3" \
     --window-icon="$DS/images/icon.png" --center --on-top \
     --width=620 --height=500 --borders=5 \
     --button="$(gettext "Cancel")":1 \
-    --button="$(gettext "OK")":0)
+    --button="$(gettext "OK")":0 |cut -d "|" -f1)"
     ret=$?
-    
-    audio=$(cut -d "|" -f1 <<<"$AU")
-    DT="$2"; cd "$DT"
+
     if [[ $ret -eq 0 ]]; then
-    if [ -f "${audio}" ]; then cp -f "${audio}" "$DT/audtm.mp3"; fi
+    if [ -f "${aud}" ]; then cp -f "${aud}" "$DT/audtm.mp3"; fi
     fi
 } >/dev/null 2>&1
 
@@ -410,6 +408,7 @@ videourl() {
     --field="$(gettext "URL")" \
     --button="$(gettext "Cancel")":1 \
     --button=gtk-ok:0)
+    
     [[ $? = 1 ]] && exit
     if [ ${#url} -gt 40 ] && \
     ([ ${url:0:29} = 'https://www.youtube.com/watch' ] \

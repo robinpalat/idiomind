@@ -372,7 +372,7 @@ edit_list() {
     --always-print-result --print-all \
     --window-icon="$DS/images/icon.png" \
     --no-headers --scroll --center \
-    --width=330 --height=250 --borders=5 \
+    --width=340 --height=250 --borders=5 \
     --column="" \
     --button="$(gettext "Invert")":2 \
     --button="$(gettext "Save")":0 \

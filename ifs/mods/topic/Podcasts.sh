@@ -39,6 +39,7 @@ function feedmode() {
     DMP="$DM_tl/Podcasts"
     DCP="$DM_tl/Podcasts/.conf"
     DSP="$DS/addons/Podcasts"
+    cmd_pref="$DS/cnfg.sh"
     nt="$DCP/10.cfg"
     fdit=$(mktemp "$DT/fdit.XXXX")
     c=$(echo $(($RANDOM%100000))); KEY=$c
@@ -69,6 +70,7 @@ function feedmode() {
     --tab=" $(gettext "Episodes") " \
     --tab=" $(gettext "Saved episodes") " \
     --tab=" $(gettext "Notes") " \
+    --button="$(gettext "Preferences")":"$cmd_pref" \
     --button="$(gettext "Lists")":"$DS/play.sh play_list" \
     --button="$(gettext "Update")":2 \
     --button="$(gettext "Close")":1

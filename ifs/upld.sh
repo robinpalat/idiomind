@@ -163,7 +163,7 @@ if [ -f "$DC_tlt/11.cfg" ]; then
         fsize="$(grep -o 'nsize="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         imgs="$(grep -o 'nimag="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         cmd_dl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
-        info="$(gettext "Additional content available for download")"
+        info="<b>$(gettext "Additional content available for download")</b>"
         info2="$(gettext "Audio files:") $audio\n$(gettext "Images:") $imgs\n$(gettext "Size:") $fsize"
         d=$(yad --form --title="$(gettext "Share")" \
         --columns=2 \
