@@ -40,7 +40,7 @@ lang=( 'English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 
 sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
 'rplay' 'audio' 'video' 'ntosd' 'loop' \
-'langt' 'langs' 'synth' 'txaud' \
+'langt' 'langs' 'synth' 'txaud' 'intrf' \
 'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi' )
 
 c=$((RANDOM%100000)); KEY=$c
@@ -75,7 +75,7 @@ set_lang() {
 
 n=0
 if [ "$cfg" = 1 ]; then
-    while [ ${n} -lt 16 ]; do
+    while [ ${n} -lt 17 ]; do
         get="${sets[$n]}"
         val=$(grep -o "$get"=\"[^\"]* "$DC_s/1.cfg" | grep -o '[^"]*$')
         declare "${sets[$n]}"="$val"
@@ -84,14 +84,17 @@ if [ "$cfg" = 1 ]; then
     
 else
     n=0; > "$DC_s/1.cfg"
-    while [ ${n} -lt 21 ]; do
+    while [ ${n} -lt 22 ]; do
     echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
     ((n=n+1))
     done
 fi
 
+if [ -z "$intrf" ]; then intrf=Default; fi
+lst="$intrf"$(sed "s/\!$intrf//g" <<<"!Default!en!es!pt")""
 if [ "$ntosd" != TRUE ]; then audio=TRUE; fi
 if [ "$trans" != TRUE ]; then ttrgt=FALSE; fi
+
 yad --plug=$KEY --form --tabnum=1 \
 --align=right --scroll \
 --separator='|' --always-print-result --print-all \
@@ -120,6 +123,7 @@ yad --plug=$KEY --form --tabnum=1 \
 --field=":LBL" " " \
 --field="<small>$(gettext "Use this speech synthesizer instead eSpeak")</small>" "$synth" \
 --field="<small>$(gettext "Program to convert text to WAV file")</small>" "$txaud" \
+--field="$(gettext "Display in")":CB "$lst" \
 --field=" :LBL" " " \
 --field="$(gettext "Help")":BTN "$DS/ifs/tls.sh help" \
 --field="$(gettext "Feedback")":BTN "$DS/ifs/tls.sh 'fback'" \
@@ -137,8 +141,8 @@ yad --notebook --key=$KEY --title="$(gettext "Settings")" \
 --tab-borders=5 --sticky --center \
 --tab="$(gettext "Preferences")" \
 --tab="$(gettext "Addons")" \
---width=470 --height=330 --borders=2 \
---button="$(gettext "Apply")":0 \
+--width=460 --height=330 --borders=2 \
+--button="$(gettext "OK")":0 \
 --button="$(gettext "Cancel")":1
 ret=$?
 
@@ -155,9 +159,14 @@ ret=$?
         done
 
         val=$(cut -d "|" -f24 < "$cnf1")
+        [[ "$val" != "$synth" ]] && \
         sed -i "s/${sets[13]}=.*/${sets[13]}=\"$(sed 's|/|\\/|g' <<<"$val")\"/g" "$DC_s/1.cfg"
         val=$(cut -d "|" -f25 < "$cnf1")
+        [[ "$val" != "$txaud" ]] && \
         sed -i "s/${sets[14]}=.*/${sets[14]}=\"$(sed 's|/|\\/|g' <<<"$val")\"/g" "$DC_s/1.cfg"
+        val=$(cut -d "|" -f26 < "$cnf1")
+        [[ "$val" != "$intrf" ]] && \
+        sed -i "s/${sets[15]}=.*/${sets[15]}=\"$val\"/g" "$DC_s/1.cfg"
         
         if [ "$CW" = 0 ]; then
         kill $(cat /tmp/.clipw); rm -f /tmp/.clipw
@@ -205,6 +214,7 @@ ret=$?
             fi
             ((n=n+1))
         done
+    
     fi
     
     rm -f "$cnf1" "$DT/.lc"

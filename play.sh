@@ -31,7 +31,6 @@ play_word() {
     fi
 }
 
-
 play_sentence() {
 
     if [ -f "${DM_tlt}/$2.mp3" ]; then
@@ -42,7 +41,6 @@ play_sentence() {
     sed 's/<[^>]*>//g' <<<"${3}." | espeak -v $lg -s 150 &
     fi
 }
-
 
 play_list() {
     
@@ -57,7 +55,7 @@ play_list() {
     'Saved episodes <i><small>Podcasts</small></i>' )
     sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
     'rplay' 'audio' 'video' 'ntosd' 'loop' \
-    'langt' 'langs' 'synth' 'txaud' \
+    'langt' 'langs' 'synth' 'txaud' 'intrf' \
     'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi' )
     in=( 'in1' 'in2' 'in3' 'in4' 'in5' 'in6' )
 
@@ -73,8 +71,8 @@ play_list() {
 
     if [[ ${cfg} = 1 ]]; then
 
-        n=15
-        while [[ $n -lt 21 ]]; do
+        n=16
+        while [[ $n -lt 22 ]]; do
             get="${sets[$n]}"
             val=$(grep -o "$get"=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
             declare ${sets[$n]}="$val"
@@ -83,7 +81,7 @@ play_list() {
         
     else
         n=0; > "$DC_s/1.cfg"
-        while [[ $n -lt 21 ]]; do
+        while [[ $n -lt 22 ]]; do
         echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
         ((n=n+1))
         done
@@ -97,7 +95,7 @@ play_list() {
                 && echo "$DS/images/addi.png" \
                 || echo "$DS/images/add.png"
             echo "  <span font_desc='Arial 11'>$(gettext "${lbls[$n]}")</span>"
-            echo "${!sets[$((n+15))]}"
+            echo "${!sets[$((n+16))]}"
             let n++
         done
     }
@@ -129,41 +127,43 @@ play_list() {
     --button="$btn1")"
     ret=$?
 
-    if [ $ret -eq 0 ]; then
-        n=15
-        while [[ ${n} -lt 21 ]]; do
+    if [ $ret -eq 0 -o $ret -eq 2 ]; then
         
-            val=$(sed -n $((n-14))p <<<"${slct}" | cut -d "|" -f3)
+        n=16; while [[ ${n} -lt 22 ]]; do
+        
+            val=$(sed -n $((n-15))p <<<"${slct}" | cut -d "|" -f3)
             [ -n "${val}" ] && \
             sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" "$DC_s/1.cfg"
-            
             if [ "$val" = TRUE ]; then
-            count=$((count+$(egrep -cv '#|^$' <<<"${!in[$((n-15))]}"))); fi
+            count=$((count+$(egrep -cv '#|^$' <<<"${!in[$((n-16))]}"))); fi
             
             ((n=n+1))
         done
         
-        if [ ${count} -lt 1 ]; then
-        notify-send "$(gettext "Nothing to play")" \
-        "$(gettext "Exiting...")" -i idiomind -t 3000 &
-        "$DS/stop.sh" 2 & exit 1; fi
-
-        "$DS/stop.sh" 3
-        if [ -d "$DM_tlt" ] && [ -n "$tpc" ]; then
-        echo -e "$DM_tlt\n$tpc" > "$DT/.p_"
-        else "$DS/stop.sh" 2 && exit 1; fi
+        if [ $ret -eq 0 ]; then
         
-        echo -e ".ply.$tpc.ply." >> "$DC_s/log" &
-        sleep 1
-        "$DS/bcle.sh" & exit 0
+            if [ ${count} -lt 1 ]; then
+            notify-send "$(gettext "Nothing to play")" \
+            "$(gettext "Exiting...")" -i idiomind -t 3000 &
+            "$DS/stop.sh" 2 & exit 1; fi
 
-    elif [ $ret -eq 2 ]; then
+            "$DS/stop.sh" 3
+            if [ -d "$DM_tlt" ] && [ -n "$tpc" ]; then
+            echo -e "$DM_tlt\n$tpc" > "$DT/.p_"
+            else "$DS/stop.sh" 2 && exit 1; fi
+            
+            echo -e ".ply.$tpc.ply." >> "$DC_s/log" &
+            sleep 1; "$DS/bcle.sh" &
 
-        [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
-        [ -f "$DT/index.m3u" ] && rm -f "$DT/index.m3u"
-        "$DS/stop.sh" 2
+        elif [ $ret -eq 2 ]; then
+
+            [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
+            [ -f "$DT/index.m3u" ] && rm -f "$DT/index.m3u"
+            "$DS/stop.sh" 2 &
+        fi
         
     fi
+    exit 0
 }
 
 play_file() {

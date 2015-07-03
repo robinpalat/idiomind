@@ -31,7 +31,7 @@ lang=( 'English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 
 sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
 'rplay' 'audio' 'video' 'ntosd' 'loop' \
-'langt' 'langs' 'synth' 'txaud' \
+'langt' 'langs' 'synth' 'txaud' 'intrf' \
 'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi' )
 
 _info() {
@@ -136,7 +136,7 @@ elif [ $ret -eq 0 ]; then
     done
     
     n=0; > "$DC_s/1.cfg"
-    while [ ${n} -lt 21 ]; do
+    while [ ${n} -lt 22 ]; do
     echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
     ((n=n+1))
     done

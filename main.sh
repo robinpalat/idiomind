@@ -117,7 +117,7 @@ function new_session() {
     fi
     
     ################
-    if ! grep 'txaud' < "$DC_s/1.cfg"; then
+    if ! grep 'intrf' < "$DC_s/1.cfg"; then
     rm "$DC_s/1.cfg"; fi
     
     if [[ `cat "$DM_tl/Podcasts/.conf/8.cfg"` != 11 ]]; then
