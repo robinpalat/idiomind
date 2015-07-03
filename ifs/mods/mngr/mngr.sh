@@ -21,7 +21,7 @@
 
 function dlg_form_1() {
     
-    cmd_play="$DS/play.sh play_word ${trgt}"
+    cmd_play="$DS/play.sh play_word "\"${trgt}\"""
     yad --form --title="$(gettext "Edit")" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-all --separator="|" --selectable-labels \

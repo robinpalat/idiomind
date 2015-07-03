@@ -31,7 +31,7 @@ id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
 
 if [ ${type} = 1 ]; then
 
-    cmd_listen="$DS/play.sh play_word ${trgt}"
+    cmd_listen="$DS/play.sh play_word "\"${trgt}\"""
     word_view
 
 elif [ ${type} = 2 ]; then

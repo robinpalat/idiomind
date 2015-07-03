@@ -20,7 +20,7 @@ msg "$(gettext "No such file or directory")\n${topic}\n" error Error & exit 1; f
 
 yad --html --title="$channel" \
 --name=Idiomind --class=Idiomind \
---uri="${uri}" \
+--encoding=UTF-8 --uri="${uri}" \
 --window-icon="$DS/images/icon.png" --center --on-top \
 --width=680 --height=550 --borders=0 \
 --button=gtk-save-as:"$btncmd2" \

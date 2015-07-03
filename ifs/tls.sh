@@ -373,17 +373,6 @@ edit_audio() {
     (cd "$3"; "$cmd" "$2") & exit
 }
 
-text() {
-
-    yad --form --title="$(gettext "Info")" \
-    --name=Idiomind --class=Idiomind \
-    --window-icon="$DS/images/icon.png" \
-    --scroll --fixed --center --on-top \
-    --width=300 --height=250 --borders=5 \
-    --field="$(< "$2")":lbl \
-    --button="$(gettext "Close")":0
-} >/dev/null 2>&1
-
 
 add_file() {
 
@@ -502,8 +491,7 @@ style=\"width:100%;height:100%\"><br><br><br>" \
 done <<<"$(ls "$DM_tlt/files")"
 
 echo "</body>" >> "$DC_tlt/att.html"
-    
-    } >/dev/null 2>&1
+} >/dev/null 2>&1
     
     [ ! -d "$DM_tlt/files" ] && mkdir "$DM_tlt/files"
     ch1="$(ls -A "$DM_tlt/files")"
@@ -512,7 +500,7 @@ echo "</body>" >> "$DC_tlt/att.html"
         [ ! -f "$DC_tlt/att.html" ] && mkindex >/dev/null 2>&1
         yad --html --title="$(gettext "Attached Files")" \
         --name=Idiomind --class=Idiomind \
-        --uri="$DC_tlt/att.html" --browser \
+        --encoding=UTF-8 --uri="$DC_tlt/att.html" --browser \
         --window-icon="$DS/images/icon.png" --center \
         --width=680 --height=580 --borders=10 \
         --button="$(gettext "Folder")":"xdg-open \"$DM_tlt\"/files" \
@@ -548,7 +536,7 @@ echo "</body>" >> "$DC_tlt/att.html"
 help() {
 
     URL="http://idiomind.sourceforge.net/doc/$(gettext "help").pdf"
-    xdg-open "$URL"
+    (xdg-open "$URL") &
      
 } >/dev/null 2>&1
 
@@ -966,10 +954,6 @@ case "$1" in
     check_index "$@" ;;
     add_audio)
     add_audio "$@" ;;
-    edit_audio)
-    edit_audio "$@" ;;
-    text)
-    text "$@" ;;
     attachs)
     attatchments "$@" ;;
     add_file)
