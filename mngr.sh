@@ -31,6 +31,7 @@ mkmn() {
     
     while read -r tpc; do
     
+        unset $i
         if [ ! -f "$DM_tl/${tpc}/.conf/8.cfg" ]; then
         i=13; echo 13 > "$DM_tl/${tpc}/.conf/8.cfg"
         else i=$(sed -n 1p "$DM_tl/${tpc}/.conf/8.cfg"); fi
@@ -598,23 +599,6 @@ mark_to_learn_topic() {
     msg "$(gettext "Not enough items to perform the operation")\n " \
     info "$(gettext "Not enough items to perform the operation")" & exit; fi
 
-    if [ "$(sed '/^$/d' < "${DC_tlt}/1.cfg" | wc -l )" -ge 1 ]; then
-        include "$DS/ifs/mods/mngr"
-    
-        dialog_2
-        ret=$?
-    
-        if [ ${ret} -eq 3 ]; then
-            kill -9 $(pgrep -f "yad --multi-progress ") &
-            kill -9 $(pgrep -f "yad --list ") &
-            kill -9 $(pgrep -f "yad --text-info ") &
-            kill -9 $(pgrep -f "yad --form ") &
-            kill -9 $(pgrep -f "yad --notebook ") &
-            rm -f "${DC_tlt}/7.cfg"
-            idiomind topic & exit 1
-        fi
-    fi
-
     (echo "5"
     stts=$(sed -n 1p "${DC_tlt}/8.cfg")
     calculate_review "${tpc}"
@@ -659,7 +643,6 @@ mark_to_learn_topic() {
     kill -9 $(pgrep -f "yad --form ") &
     kill -9 $(pgrep -f "yad --notebook ") & fi
 
-   
     echo -e ".lrnt.$tpc.lrnt." >> "$DC_s/log"
     touch "${DC_tlt}"
     "$DS/mngr.sh" mkmn &

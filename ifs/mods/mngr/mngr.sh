@@ -73,20 +73,6 @@ function dlg_form_2() {
 }
 
 
-function dialog_2() {
-    
-    yad --title="$tpc" \
-    --class=Idiomind --name=Idiomind \
-    --text=" $(gettext "Review all or only new items?") " \
-    --window-icon="$DS/images/icon.png" \
-    --image=dialog-question --center \
-    --on-top --window-icon="$DS/images/icon.png" \
-    --width=380 --height=120 --borders=3 \
-    --button="$(gettext "Only New")":3 \
-    --button="$(gettext "Review All")":2
-}
-
-
 function progr_3() {
 
     yad --progress \

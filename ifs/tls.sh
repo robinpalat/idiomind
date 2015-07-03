@@ -733,16 +733,14 @@ set_image() {
         if [[ $ret -eq 2 ]]; then rm -f "$ifile"; fi
         
     else 
-        scrot -s --quality 90 "$file.temp.jpeg"
-        /usr/bin/convert "$file.temp.jpeg" -interlace Plane -thumbnail 100x90^ \
-        -gravity center -extent 100x90 -quality 90% "$file"_temp.jpeg
-        /usr/bin/convert "$file.temp.jpeg" -interlace Plane -thumbnail 405x275^ \
+        scrot -s --quality 90 "$DT/temp.jpg"
+        /usr/bin/convert "$DT/temp.jpg" -interlace Plane -thumbnail 405x275^ \
         -gravity center -extent 400x270 -quality 90% "$ifile"
         "$DS/ifs/tls.sh" set_image "${2}" "${3}" & exit
 
     fi
 
-    rm -f "$DT"/*.jpeg
+    rm -f "$DT/temp.jpg"
     exit
     
 } >/dev/null 2>&1

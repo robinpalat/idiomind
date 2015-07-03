@@ -85,7 +85,8 @@ function new_session() {
     # status update
     [ ! -f "$DM_tl/.1.cfg" ] && touch "$DM_tl/.1.cfg"
     while read line; do
-        
+    
+        unset $stts
         DM_tlt="$DM_tl/${line}"
         stts=$(sed -n 1p "${DM_tlt}/.conf/8.cfg")
         [ -z $stts ] && stts=1
@@ -317,15 +318,8 @@ function topic() {
         if [ -f "${DC_tlt}/9.cfg" ] && [ -f "${DC_tlt}/7.cfg" ]; then
         
             calculate_review "${tpc}"
-            stts=$(sed -n 1p "${DC_tlt}/8.cfg")
             if [[ ${RM} -ge 100 ]]; then
             
-                if [ $((stts%2)) = 0 ]; then
-                echo 8 > "${DC_tlt}/8.cfg"; else
-                echo 7 > "${DC_tlt}/8.cfg"; fi
-                touch "${DM_tlt}"
-                "$DS/mngr.sh" mkmn &
-                
                 RM=100
                 dialog_1
                 ret=$?
@@ -369,17 +363,12 @@ function topic() {
         if [ ! -f "${DC_tlt}/7.cfg" ] || [ ! -f "${DC_tlt}/9.cfg" ]; then
 
             "$DS/mngr.sh" mark_as_learned "${tpc}" 0
+            
         fi
         
         calculate_review "${tpc}"
         if [[ ${RM} -ge 100 ]]; then
 
-            stts=$(sed -n 1p "${DC_tlt}/8.cfg")
-            if [[ $((stts%2)) = 0 ]]; then
-            echo 8 > "${DC_tlt}/8.cfg"; else
-            echo 7 > "${DC_tlt}/8.cfg"; fi
-            "$DS/mngr.sh" mkmn &
-            
             RM=100
             dialog_1
             ret=$?
