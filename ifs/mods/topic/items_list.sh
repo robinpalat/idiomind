@@ -79,7 +79,6 @@ function notebook_1() {
     cmd_adv="'$DS/ifs/tls.sh' adv "\"$tpc\"""
     cmd_share="'$DS/ifs/upld.sh' upld "\"$tpc\"""
     cmd_eind="'$DS/mngr.sh' edit_list "\"$tpc\"""
-    cmd_pref="$DS/cnfg.sh"
     cmd_play="$DS/play.sh play_list"
     list() {
     if [[ $((`wc -l < "${DC_tlt}/5.cfg"`/3)) = \
@@ -125,7 +124,6 @@ function notebook_1() {
     --tab=" $(gettext "Notes") " \
     --tab=" $(gettext "Edit") " \
     --width=$sx --height=$sy --borders=0 --tab-borders=3 \
-    --button="$(gettext "Preferences")":"$cmd_pref" \
     --button="$(gettext "Lists")":"$cmd_play" \
     --button="$(gettext "Practice")":5 \
     --button="gtk-close":1
@@ -138,8 +136,7 @@ function notebook_2() {
     cmd_attchs="'$DS/ifs/tls.sh' 'attachs'"
     cmd_del="'$DS/mngr.sh' 'delete_topic' "\"$tpc\"""
     cmd_share="'$DS/ifs/upld.sh' 'upld' "\"$tpc\"""
-    cmd_pref="$DS/cnfg.sh"
-    
+
     yad --multi-progress --tabnum=1 \
     --text="$pres" \
     --plug=$KEY \
@@ -175,7 +172,6 @@ function notebook_2() {
     --tab=" $(gettext "Notes") " \
     --tab=" $(gettext "Edit") " \
     --width=$sx --height=$sy --borders=0 --tab-borders=3 \
-    --button="$(gettext "Preferences")":"$cmd_pref" \
     --button="gtk-close":1
 } >/dev/null 2>&1
 

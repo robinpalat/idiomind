@@ -430,10 +430,11 @@ panel() {
     --always-print-result \
     --window-icon=idiomind \
     --form --fixed --on-top --no-buttons --align=center \
-    --width=128 --height=145 --borders=0 --geometry=120x145-$x-$y \
-    --field=gtk-new:fbtn "$DS/add.sh 'new_items'" \
-    --field=gtk-home:fbtn "idiomind 'topic'" \
-    --field=gtk-index:fbtn "$DS/chng.sh"
+    --width=130 --height=190 --borders=0 --geometry=130x190-$x-$y \
+    --field=gtk-new:btn "$DS/add.sh 'new_items'" \
+    --field=gtk-home:btn "idiomind 'topic'" \
+    --field=gtk-index:btn "$DS/chng.sh" \
+    --field=gtk-preferences:btn "$DS/cnfg.sh"
     [ $? != 0 ] && "$DS/stop.sh" 1 &
     exit
 }
