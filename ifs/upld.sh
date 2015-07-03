@@ -46,7 +46,7 @@ function dwld() {
     | grep -o 'DOWNLOADS="[^"]*' | grep -o '[^"]*$')"
     URL="$url/c/$link.${md5id}.tar.gz"
 
-    if ! wget -S --spider "${URL}" 2>&1 | grep 'HTTP/1.1 200 OK'; then
+    if ! wget -S --spider "${URL}" 2>&1 |grep 'HTTP/1.1 200 OK'; then
         cleanups "$DT/download"
         msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" info & exit; fi
     
@@ -322,10 +322,7 @@ mkdir -p "$DT/upload/${tpc}/conf"
 
 "$DS/ifs/tls.sh" check_index "${tpc}" 1
 
-cd "${DM_tlt}/images"
-if [ $(ls -1 *.jpg 2>/dev/null | wc -l) != 0 ]; then
-images=$(ls *.jpg | wc -l); else
-images=0; fi
+images=$(cd "${DM_tlt}/images"; ls --ignore="img.jpg" |wc -l)
 words=0; sentences=0
 [ -f "${DC_tlt}/3.cfg" ] && words=$(wc -l < "${DC_tlt}/3.cfg")
 [ -f "${DC_tlt}/4.cfg" ] && sentences=$(wc -l < "${DC_tlt}/4.cfg")
@@ -356,12 +353,12 @@ while read -r audio; do
 if [ -f "$DM_tl/.share/$audio.mp3" ]; then
 cp -f "$DM_tl/.share/$audio.mp3" "$DT_u/${tpc}/share/$audio.mp3"; fi
 done <<<"$auds"
-c_audio=$(find "$DT_u/${tpc}" -maxdepth 5 -name '*.mp3' | wc -l)
-echo -e "${notes}" > "$DT_u/${tpc}/conf/info"
+c_audio=$(find "$DT_u/${tpc}" -maxdepth 5 -name '*.mp3' |wc -l)
+echo -e "${notes_m}" > "$DT_u/${tpc}/conf/info"
 
 cd "$DT/upload"
 find "$DT_u" -type f -exec chmod 644 {} \;
-tar czpvf - ./"${tpc}" | split -d -b 2500k - ./"$usrid.${sum}"
+tar czpvf - ./"${tpc}" |split -d -b 2500k - ./"$usrid.${sum}"
 rm -fr ./"${tpc}"
 f_size=$(du -h . | cut -f1)
 
