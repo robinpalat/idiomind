@@ -361,7 +361,7 @@ add_audio() {
     ret=$?
 
     if [[ $ret -eq 0 ]]; then
-    if [ -f "${aud}" ]; then cp -f "${aud}" "$DT/audtm.mp3"; fi
+    if [ -f "${aud}" ]; then cp -f "${aud}" "${2}/audtm.mp3"; fi
     fi
 } >/dev/null 2>&1
 

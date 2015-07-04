@@ -129,7 +129,7 @@ elif [[ "$1" != chngi ]]; then
     --button=gtk-new:3 \
     --button="$(gettext "Default")":5 \
     --button="$(gettext "Apply")":2 \
-    --button="$(gettext "Close")":1)
+    --button="gtk-close":1)
     ret=$?
 
     if [[ $ret -eq 3 ]]; then "$DS/add.sh" new_topic &

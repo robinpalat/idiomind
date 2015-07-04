@@ -389,7 +389,7 @@ function dlg_form_2() {
 
 function dlg_radiolist_1() {
     
-    echo "$1" | awk '{print "FALSE\n"$0}' | \
+    echo "${1}" | awk '{print "FALSE\n"$0}' | \
     yad --list --radiolist --title="$(gettext "Word list")" \
     --text="<b>$te</b> <small> $info</small>" \
     --name=Idiomind --class=Idiomind \
@@ -404,7 +404,7 @@ function dlg_radiolist_1() {
 
 function dlg_checklist_1() {
     
-    echo "$1" | awk '{print "FALSE\n"$0}' | \
+    echo "${1}" | awk '{print "FALSE\n"$0}' | \
     yad --list --checklist --title="$(gettext "Word list")" \
     --text="<small> $2 </small>" \
     --name=Idiomind --class=Idiomind \
@@ -421,7 +421,7 @@ function dlg_checklist_1() {
 function dlg_checklist_3() {
 
     slt=$(mktemp $DT/slt.XXXX.x)
-    cat "$1" | awk '{print "FALSE\n"$0}' | \
+    cat "${1}" | awk '{print "FALSE\n"$0}' | \
     yad --list --checklist --title="$2" \
     --text="<small>$info</small> " \
     --name=Idiomind --class=Idiomind \
@@ -439,7 +439,7 @@ function dlg_checklist_3() {
 
 function dlg_text_info_1() {
     
-    cat "$1" | awk '{print "\n\n\n"$0}' | \
+    cat "${1}" | awk '{print "\n\n\n"$0}' | \
     yad --text-info --title="$2" \
     --name=Idiomind --class=Idiomind \
     --editable \
