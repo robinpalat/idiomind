@@ -191,6 +191,7 @@ check_index() {
         if [ ! -f "${DC_tlt}/8.cfg" ]; then
         echo 1 > "${DC_tlt}/8.cfg"; fi
         export stts=$(sed -n 1p "${DC_tlt}/8.cfg")
+        [ $stts = 13 ] && export f=1
         
         cnt0=`wc -l < "${DC_tlt}/0.cfg" |sed '/^$/d'`
         cnt1=`egrep -cv '#|^$' < "${DC_tlt}/1.cfg"`
@@ -295,7 +296,7 @@ check_index() {
         if [ -d "${DM_tlt}/words" ]; then rm -r "${DM_tlt}/words"; fi
     }
     
-    fix() {
+    _fix() {
         
         if [ ${stts} -eq 13 ]; then
             if [ -f "$DC_tlt/8.cfg_" ] && [ -n $(< "$DC_tlt/8.cfg_") ]; then
@@ -315,6 +316,8 @@ check_index() {
         "$(gettext "Fixing...")" -t 3000) &
         > "$DT/ps_lk"
         [ ! -d "$DM_tlt/.conf" ] && mkdir "$DM_tlt/.conf"
+        [ ! -d "$DM_tlt/images" ] && mkdir "$DM_tlt/images"
+        _fix
         _restore
         fi
         
