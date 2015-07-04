@@ -133,7 +133,6 @@ function new_session() {
 if grep -o '.idmnd' <<<"${1: -6}"; then
 
     source "$DS/ifs/mods/cmns.sh"
-    [ ! -d "$DT" ] && mkdir "$DT"
     source "$DS/ifs/tls.sh"
     check_source_1 "${1}"
     if [ $? != 23 ]; then
@@ -145,13 +144,10 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     level="${l[${level}]}"
     itxt="<span font_desc='Droid Sans Bold 12' color='#616161'>$tname</span>\n<sup>$nword $(gettext "Words")  $nsent $(gettext "Sentences")  $nimag $(gettext "Images")\n$(gettext "Language:") $langt  $(gettext "Level:") $level</sup>"
     dclk="$DS/play.sh play_word"
-    
-    _set() {
-    while read -r item; do
+    _set() { while read -r item; do
     grep -oP '(?<=trgt={).*(?=},srce)' <<<"${item}"
     grep -oP '(?<=srce={).*(?=},exmp)' <<<"${item}"
-    done < <(tac "${file}")
-    }
+    done < <(tac "${file}"); }
 
     _set | yad --list --title="Idiomind" \
     --text="$itxt" \

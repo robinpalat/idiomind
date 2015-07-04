@@ -293,7 +293,11 @@ new_word() {
             fi
             
         else
-            mv -f "$DT_r/audtm.mp3" "${DM_tls}/$audio.mp3"
+        
+            if [ -f "${DM_tls}/$audio.mp3" ]; then
+                msg_3 "$(gettext "A file named "${DM_tls}/$audio.mp3" already exists. Replace?.")\n" dialog-question "${trgt}"
+                if [ $? -eq 0 ]; then mv -f "$DT_r/audtm.mp3" "${DM_tls}/$audio.mp3"; fi
+            fi
         fi
 
         notify-send "${trgt}" "${srce}\\n(${tpe})" -t 10000
@@ -486,7 +490,7 @@ process() {
     
         msg_2 "$(gettext "Wait until it finishes a previous process")\n" info OK gtk-stop "$(gettext "Warning")"
         
-        if [[ $? -eq 1 ]]; then
+        if [ $? -eq 1 ]; then
         rm=$(sed -n 1p "$DT/.n_s_pr")
         cleanups "${rm}" "$DT/.n_s_pr"
         "$DS/stop.sh" 5
@@ -509,21 +513,7 @@ process() {
         (echo "1"
         internet
         echo "# $(gettext "Processing")..." ;
-        lynx -dump -nolist "${2}"  | sed -n -e '1x;1!H;${x;s-\n- -gp}' \
-        | sed 's/<[^>]*>//g' | sed 's/ \+/ /g' \
-        | sed '/^$/d' |  sed 's/ \+/ /;s/\://;s/"//g' \
-        | sed 's/^[ \t]*//;s/[ \t]*$//;s/^ *//; s/ *$//g' \
-        | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' | grep -v '^..$' \
-        | grep -v '^.$' | sed 's/<[^>]\+>//;s/\://g' \
-        | sed 's/\&quot;/\"/g' | sed "s/\&#039;/\'/g" \
-        | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
-        | sed 's/ — /\n/g' \
-        | sed 's/[<>£§]//; s/&amp;/\&/g' | sed 's/ *<[^>]\+> */ /g' \
-        | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. //g' \
-        | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
-        | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
-        | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' \
-        | sed 's/__/\n/g' > "$DT_r/sntsls_"
+        lynx -dump -nolist "${2}"  | clean_5 > "$DT_r/sntsls_"
         ) | dlg_progress_1
 
     elif [[ $2 = image ]]; then
@@ -535,14 +525,7 @@ process() {
         echo "# $(gettext "Processing")..." ;
         mogrify -modulate 100,0 -resize 400% "$pars.png"
         tesseract "$pars.png" "$pars" &> /dev/null # -l $lgt
-        cat "$pars.txt" | sed 's/\\n/./g' \
-        | sed '/^$/d' | sed 's/^[ \t]*//;s/[ \t]*$//' \
-        |sed 's/ — /\n/g' \
-        | sed 's/ \+/ /;s/\://;s/\&quot;/\"/;s/^ *//;s/ *$//g' \
-        | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. //g' \
-        | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
-        | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
-        | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' > "$DT_r/sntsls_"
+        cat "$pars.txt" | clean_6 > "$DT_r/sntsls_"
         rm "$pars.png"
         ) | dlg_progress_1
 
@@ -552,29 +535,9 @@ process() {
         (echo "1"
         echo "# $(gettext "Processing")..." ;
         if [ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]; then
-        echo "${conten}" \
-        | sed 's/^ *//;s/ *$//g' | sed 's/^[ \t]*//;s/[ \t]*$//' \
-        | sed 's/ \+/ /;s/\://;s/"//g' \
-        | sed '/^$/d' | sed 's/ — /\n/g' \
-        | sed 's/\&quot;/\"/g' | sed "s/\&#039;/\'/g" \
-        | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
-        | sed 's/ *<[^>]\+> */ /; s/[<>£§]//; s/\&amp;/\&/g' \
-        | sed 's/,/\n/g' | sed 's/。/\n/g' \
-        | sed 's/__/\n/g' > "$DT_r/sntsls_"
+        echo "${conten}" | clean_7 > "$DT_r/sntsls_"
         else
-        echo "${conten}" \
-        | sed 's/\[ \.\.\. \]//g' \
-        | sed 's/^ *//;s/ *$//g' | sed 's/^[ \t]*//;s/[ \t]*$//' \
-        | sed 's/ \+/ /;s/\://;s/"//g' \
-        | sed '/^$/d' | sed 's/ — /\n/g' \
-        | sed 's/\&quot;/\"/g' | sed "s/\&#039;/\'/g" \
-        | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
-        | sed 's/ *<[^>]\+> */ /; s/[<>£§]//; s/\&amp;/\&/g' \
-        | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. //g' \
-        | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
-        | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
-        | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' \
-        | sed 's/__/\n/g' > "$DT_r/sntsls_"
+        echo "${conten}" | clean_8 > "$DT_r/sntsls_"
         fi
         ) | dlg_progress_1
     fi

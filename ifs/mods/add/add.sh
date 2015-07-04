@@ -244,6 +244,68 @@ function clean_4() {
 }
 
 
+function clean_5() {
+    
+    sed -n -e '1x;1!H;${x;s-\n- -gp}' \
+    | sed 's/<[^>]*>//g' | sed 's/ \+/ /g' \
+    | sed '/^$/d' |  sed 's/ \+/ /;s/\://;s/"//g' \
+    | sed 's/^[ \t]*//;s/[ \t]*$//;s/^ *//; s/ *$//g' \
+    | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' | grep -v '^..$' \
+    | grep -v '^.$' | sed 's/<[^>]\+>//;s/\://g' \
+    | sed 's/\&quot;/\"/g' | sed "s/\&#039;/\'/g" \
+    | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
+    | sed 's/ — /\n/g' \
+    | sed 's/[<>£§]//; s/&amp;/\&/g' | sed 's/ *<[^>]\+> */ /g' \
+    | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. //g' \
+    | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
+    | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
+    | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' \
+    | sed 's/__/\n/g'
+}
+
+
+function clean_6() {
+    
+    sed 's/\\n/./g' \
+    | sed '/^$/d' | sed 's/^[ \t]*//;s/[ \t]*$//' \
+    | sed 's/ — /\n/g' \
+    | sed 's/ \+/ /;s/\://;s/\&quot;/\"/;s/^ *//;s/ *$//g' \
+    | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. //g' \
+    | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
+    | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
+    | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g'
+    
+}
+    
+function clean_7() {
+    
+    sed 's/^ *//;s/ *$//g' | sed 's/^[ \t]*//;s/[ \t]*$//' \
+    | sed 's/ \+/ /;s/\://;s/"//g' \
+    | sed '/^$/d' | sed 's/ — /\n/g' \
+    | sed 's/\&quot;/\"/g' | sed "s/\&#039;/\'/g" \
+    | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
+    | sed 's/ *<[^>]\+> */ /; s/[<>£§]//; s/\&amp;/\&/g' \
+    | sed 's/,/\n/g' | sed 's/。/\n/g' \
+    | sed 's/__/\n/g'
+}
+
+function clean_8() {
+   
+     sed 's/\[ \.\.\. \]//g' \
+    | sed 's/^ *//;s/ *$//g' | sed 's/^[ \t]*//;s/[ \t]*$//' \
+    | sed 's/ \+/ /;s/\://;s/"//g' \
+    | sed '/^$/d' | sed 's/ — /\n/g' \
+    | sed 's/\&quot;/\"/g' | sed "s/\&#039;/\'/g" \
+    | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
+    | sed 's/ *<[^>]\+> */ /; s/[<>£§]//; s/\&amp;/\&/g' \
+    | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. //g' \
+    | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
+    | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
+    | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' \
+    | sed 's/__/\n/g'
+}
+
+
 function set_image_1() {
     
     scrot -s --quality 90 "$DT_r/img.jpg"
@@ -434,6 +496,22 @@ function dlg_checklist_3() {
     --button="$(gettext "Cancel")":1 \
     --button=$(gettext "Edit"):2 \
     --button="gtk-add":0 > "$slt"
+}
+
+
+function msg_3() {
+
+    cmd_listen="$DS/play.sh play_word "\"${3}\"""
+    [ -n "$5" ] && title="$5" || title=Idiomind
+    yad --title="$title" --text="$1" --image="$2" \
+    --name=Idiomind --class=Idiomind \
+    --always-print-result \
+    --window-icon="$DS/images/icon.png" \
+    --image-on-top --on-top --sticky --center \
+    --width=400 --height=120 --borders=3 \
+    --button="$(gettext "Cancel")":1 \
+    --button="$(gettext "Play")":"$cmd_listen" \
+    --button="$(gettext "Yes")":0
 }
 
 

@@ -87,7 +87,6 @@ delete_item_ok() {
     fi
 
     sed -i "/trgt={${trgt}}/d" "${DC_tlt}/0.cfg"
-    "$DS/ifs/tls.sh" sanity_1 "${DC_tlt}/0.cfg" & #TODO
 
     n=1
     while [ ${n} -le 6 ]; do
@@ -136,7 +135,6 @@ delete_item() {
         fi
         
         sed -i "/trgt={${trgt}}/d" "${DC_tlt}/0.cfg"
-        "$DS/ifs/tls.sh" sanity_1 "${DC_tlt}/0.cfg" & #TODO
 
         n=1
         while [[ ${n} -le 6 ]]; do
@@ -291,12 +289,13 @@ edit_item() {
                 "${exmp_mod}" "${defn_mod}" "${note_mod}" "${wrds_mod}" "${grmr_mod}")"
 
 
-                if [ "${tpc}" != "${tpc_mod}" ]; then # TODO security
-                    
-                    if [ ${type_mod} = 2 ]; then
+                if [ "${tpc}" != "${tpc_mod}" ]; then
+
                     if [ "${audf}" != "${audf_mod}" ]; then
-                    cp -f "${audf_mod}" "$DM_tl/${tpc_mod}/$id_mod.mp3"
-                    else mv -f "${audf}" "$DM_tl/${tpc_mod}/$id_mod.mp3"; fi; fi
+                    if [ ${type_mod} = 1 ]; then cp -f "${audf_mod}" "${DM_tls}/${trgt_mod,,}.mp3"
+                    elif [ ${type_mod} = 2 ]; then cp -f "${audf_mod}" "$DM_tl/${tpc_mod}/$id_mod.mp3"; fi
+                    else [ -f "${audf}" ] && mv -f "${audf}" "$DM_tl/${tpc_mod}/$id_mod.mp3"; fi
+                    
                     if [ -f "${DM_tlt}/images/$id.jpg" ]; then
                     mv -f "${DM_tlt}/images/$id.jpg" "$DM_tl/${tpc_mod}/images/$id_mod.jpg"; fi
                     "$DS/mngr.sh" delete_item_ok "${tpc}" "${trgt}"
@@ -319,10 +318,11 @@ edit_item() {
                     ${pos}s|grmr={$grmr}|grmr={$grmr_mod}|;
                     ${pos}s|mark={$mark}|mark={$mark_mod}|;
                     ${pos}s|id=\[$id\]|id=\[$id_mod\]|g" "${cfg0}"
-
+                    
                     if [ "${audf}" != "${audf_mod}" ]; then
-                    cp -f "${audf_mod}" "${DM_tlt}/$id_mod.mp3"
-                    else mv -f "${DM_tlt}/$id.mp3" "${DM_tlt}/$id_mod.mp3"; fi
+                    if [ ${type_mod} = 1 ]; then cp -f "${audf_mod}" "${DM_tls}/${trgt_mod,,}.mp3"
+                    elif [ ${type_mod} = 2 ]; then cp -f "${audf_mod}" "${DM_tlt}/$id_mod.mp3"; fi
+                    else [ -f "${DM_tlt}/$id.mp3" ] && mv -f "${DM_tlt}/$id.mp3" "${DM_tlt}/$id_mod.mp3"; fi
                     
                     if [ -f "${DM_tlt}/images/$id.jpg" ]; then
                     mv -f "${DM_tlt}/images/$id.jpg" "${DM_tlt}/images/$id_mod.jpg"; fi
@@ -355,6 +355,7 @@ edit_list() {
     [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ] && c=c || c=w
     direc="$DM_tl/${2}/.conf"
     [ ! -s "${direc}/0.cfg" ] && exit 1
+    source "$DS/ifs/mods/mngr/mngr.sh"
     lgt=$(lnglss $lgtl)
     lgs=$(lnglss $lgsl)
     > "$DT/_tmp1"
@@ -365,18 +366,7 @@ edit_list() {
         [ -n "${trgt}" ] && echo "${trgt}" >> "$DT/_tmp1"
     done < <(tac "${direc}/0.cfg")
 
-    cat "$DT/_tmp1" | yad --list --title="$(gettext "Edit")" \
-    --text="$(gettext "Double-click to edit an item, drag and drop to reposition it")" \
-    --name=Idiomind --class=Idiomind \
-    --editable --separator='' \
-    --always-print-result --print-all \
-    --window-icon="$DS/images/icon.png" \
-    --no-headers --scroll --center \
-    --width=340 --height=250 --borders=5 \
-    --column="" \
-    --button="$(gettext "Invert")":2 \
-    --button="$(gettext "Save")":0 \
-    --button="$(gettext "Cancel")":1 > "$DT/tmp1"
+    cat "$DT/_tmp1" | edit_list_list > "$DT/tmp1"
     ret=$?
     
     if [ $ret -eq 0 -o $ret -eq 2 ]; then
