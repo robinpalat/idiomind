@@ -63,7 +63,7 @@ cuestion() {
     --width=375 --height=270 --borders=8 \
     --field="$acuestion":lbl \
     --button="$(gettext "Exit")":1 \
-    --button="    $(gettext "Answer") >>    ":0
+    --button="    $(gettext "Continue") >>    ":0
 }
 
 answer() {
