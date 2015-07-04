@@ -95,7 +95,7 @@ if [[ ${conten^} = A ]]; then
         check_s "${tpe}"
         (
         echo "2"
-        echo "# $(gettext "Processing, Wait...")";
+        echo "# $(gettext "Processing... Wait.")";
         cd "$DT_r"
         
         if grep ".mp3" <<<"${fl: -4}"; then
