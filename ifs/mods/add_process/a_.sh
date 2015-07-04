@@ -47,9 +47,9 @@ function dlg_text_info_4() {
 
 function audio_recog() {
     
-    echo "$(wget -q -U -T 101 -c "Mozilla/5.0" --post-file "${1}" \
+    wget -q -U -T 101 -c "Mozilla/5.0" --post-file "${1}" \
     --header="Content-Type: audio/x-flac; rate=16000" \
-    -O - "https://www.google.com/speech-api/v2/recognize?&lang="$2"-"$3"&key=$4")"
+    -O - "https://www.google.com/speech-api/v2/recognize?&lang=${2}-${3}&key=$4"
 }
 
 function dlg_file_1() {
