@@ -60,7 +60,7 @@ cuestion() {
     --timeout=10 \
     --skip-taskbar --text-align=center --center --on-top \
     --undecorated --buttons-layout=spread --align=center \
-    --width=375 --height=260 --borders=8 \
+    --width=375 --height=270 --borders=8 \
     --field="$acuestion":lbl \
     --button="$(gettext "Exit")":1 \
     --button="    $(gettext "Answer") >>    ":0
@@ -72,7 +72,7 @@ answer() {
     --timeout=10 --selectable-labels \
     --skip-taskbar --text-align=center --center --on-top \
     --undecorated --buttons-layout=spread --align=center \
-    --width=375 --height=260 --borders=8 \
+    --width=375 --height=270 --borders=8 \
     --field="$bcuestion":lbl \
     --field="":lbl \
     --field="$answer":lbl \
