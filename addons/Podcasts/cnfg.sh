@@ -1,5 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
+
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 DCP="$DM_tl/Podcasts/.conf"
