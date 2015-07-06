@@ -56,12 +56,12 @@ apply() {
     printf "$CNFG" | sed 's/|/\n/g' | sed -n 4,15p | \
     sed 's/^ *//; s/ *$//g' > "$DT/podcasts.tmp"
     n=1; while read feed; do
-        declare mod$n="$feed"
-        mod="mod$n"; url="url$n"
+        declare mod${n}="$feed"
+        mod="mod${n}"; url="url${n}"
         if [ "${!url}" != "${!mod}" ]; then
-            "$DSP/tls.sh" set_channel "${!mod}" $n & fi
-        if [ ! -s "$DCP/$n.rss" ]; then
-            "$DSP/tls.sh" set_channel "${!mod}" $n & fi
+        "$DSP/tls.sh" set_channel "${!mod}" ${n} & fi
+        if [ ! -s "$DCP/${n}.rss" ]; then
+        "$DSP/tls.sh" set_channel "${!mod}" ${n} & fi
         ((n=n+1))
     done < "$DT/podcasts.tmp"
 
@@ -107,7 +107,6 @@ CNFG=$(yad --form --title="$(gettext "Podcasts settings")" \
 --button="$(gettext "Remove")":"$DSP/mngr.sh 'deleteall'" \
 --button="$(gettext "Syncronize")":5 \
 --button="gtk-apply":0)
-
 ret=$?
 
 if [[ $ret -eq 0 ]]; then

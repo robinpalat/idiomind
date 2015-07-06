@@ -29,7 +29,6 @@ set_2=\"FALSE\"
 set_3=\"FALSE\"
 set_4=\"FALSE\""
 
-
 if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
     "$DS/ifs/mods/topic/${topic}.sh" 2 & exit 1
 
@@ -58,8 +57,7 @@ else
         find . -maxdepth 1 -name '*.bk' -mtime -1); then
         if [ -n "$(< "${DC_tlt}/0.cfg")" ]; then
         cp -f "${DC_tlt}/0.cfg" "$HOME/.idiomind/backup/${topic}.bk"; fi
-        cd /
-        fi
+        cd /; fi
         
         if [[ `< "$DC_s/5.cfg"` != 0 ]]; then
         echo 0 > "$DC_s/5.cfg"; fi

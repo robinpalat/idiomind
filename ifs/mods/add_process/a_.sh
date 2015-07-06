@@ -107,7 +107,7 @@ if [[ ${conten^} = A ]]; then
             vad -T 0.6 -p 0.2 -t 5 fade 0.1 reverse norm -0.5
             rm -f "$DT_r/rv.mp3"
             sox "$DT_r/c_rv.mp3" s.mp3 \
-            silence 1 0.3 1% 1 0.3 1% : newfile : restart
+            silence 1 0.5 1% 1 0.5 1% : newfile : restart
 
             c="$(ls "$DT_r"/s[0-9]*.mp3 | wc -l)"
             if [[ ${c} -ge 1 ]]; then

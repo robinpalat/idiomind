@@ -4,7 +4,7 @@
 DSP="$DS/addons/Podcasts"
 item="${2}"
 dir="$DM_tl/Podcasts/cache"
-fname=$(echo -n "$item" | md5sum | rev | cut -c 4- | rev)
+fname=$(echo -n "${item}" | md5sum | rev | cut -c 4- | rev)
 channel="$(grep -o channel=\"[^\"]* < "$dir/${fname}.item" | grep -o '[^"]*$')"
 export item
 if grep -Fxo "$item" "$DM_tl/Podcasts/.conf/2.lst"; then

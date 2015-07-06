@@ -180,19 +180,6 @@ function sentence_p() {
 }
 
 
-function check_grammar_2() {
-
-    if grep -Fxq "${1,,}" <<<"$pronouns"; then echo 'Pron. ';
-    elif grep -Fxq "${1,,}" <<<"$nouns_adjetives"; then echo 'Noun, Adj. ';
-    elif grep -Fxq "${1,,}" <<<"$adjetives"; then echo 'Adj. ';
-    elif grep -Fxq "${1,,}" <<<"$conjunctions"; then echo 'Conj. ';
-    elif grep -Fxq "${1,,}" <<<"$prepositions"; then echo 'Prep. ';
-    elif grep -Fxq "${1,,}" <<<"$adverbs"; then echo 'Adv. ';
-    elif grep -Fxq "${1,,}" <<<"$nouns_verbs"; then echo 'Noun, Verb ';
-    elif grep -Fxq "${1,,}" <<<"$verbs"; then echo 'verb. '; fi
-}
-
-
 function clean_1() {
     
     echo "$1" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' \

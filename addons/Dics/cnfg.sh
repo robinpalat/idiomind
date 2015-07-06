@@ -15,7 +15,6 @@ Name=\"\"
 Language=\"\"
 Test=\"test\""
 
-
 dialog_edit() {
     
     yad --text-info --title="$Name" \
@@ -48,7 +47,6 @@ dict_list() {
         echo "$dict" | sed 's/\./\n/g'; fi
     done < <(ls "$disables/")
 }
-
 
 if [ "$1" = add_dlg ]; then
 
@@ -92,7 +90,6 @@ if [ "$1" = add_dlg ]; then
     else
         "$DS_a/Dics/cnfg.sh"
     fi
-
 
 elif [ "$1" = edit_dlg ]; then
 

@@ -42,8 +42,7 @@ elif [ ${type} = 2 ]; then
 else
     m_text "${_item}"
 fi
-
-ret=$?
+    ret=$?
 
     if [ $ret -eq 5 ]; then
         "$DS/mngr.sh" mtext ${1} ${index_pos}

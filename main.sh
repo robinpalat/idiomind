@@ -38,7 +38,7 @@ function new_session() {
     echo "$(date +%d)" > "$DC_s/10.cfg"
     source "$DS/ifs/mods/cmns.sh"
     
-    # write in /tmp
+    # mkdir /tmp/user
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
     if [ $? -ne 0 ]; then
     msg "$(gettext "Fail on try write in /tmp")\n" error & exit 1; fi
@@ -82,7 +82,7 @@ function new_session() {
     # check for updates
     "$DS/ifs/tls.sh" a_check_updates &
     
-    # status update
+    # update status
     [ ! -f "$DM_tl/.1.cfg" ] && touch "$DM_tl/.1.cfg"
     while read line; do
     
@@ -117,13 +117,13 @@ function new_session() {
     "$DS/default/tpc.sh" "${tpd}" 2; fi
     fi
     
-    ################
+    ###
     if ! grep 'intrf' < "$DC_s/1.cfg"; then
     rm "$DC_s/1.cfg"; fi
     
     if [[ `cat "$DM_tl/Podcasts/.conf/8.cfg"` != 11 ]]; then
     echo 11 > "$DM_tl/Podcasts/.conf/8.cfg"; fi
-    ###############
+    ###
 
     rm -f  "$DT/ps_lk"
     "$DS/mngr.sh" mkmn &
@@ -205,7 +205,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             echo "${trgt}" >> "${DC_tlt}/3.cfg"
             else echo "${trgt}" >> "${DC_tlt}/4.cfg"; fi
             echo "${trgt}" >> "${DC_tlt}/1.cfg"
-            echo "${item_}" >> "${DC_tlt}/0.cfg"; fi
+            echo "${item_}" >> "${DC_tlt}/0.cfg"; fi    
             done < <(head -n -1 < "${file}")
 
             "$DS/ifs/tls.sh" colorize
@@ -215,7 +215,6 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             "$DS/mngr.sh" mkmn
             "$DS/default/tpc.sh" "${tname}" &
         fi
-    #fi
     exit 1
 fi
     
@@ -426,7 +425,7 @@ panel() {
     --always-print-result \
     --window-icon=idiomind \
     --form --fixed --on-top --no-buttons --align=center \
-    --width=130 --height=190 --borders=0 --geometry=130x190-$x-$y \
+    --width=130 --height=190 --borders=0 --geometry=130x190-${x}-${y} \
     --field=gtk-new:btn "$DS/add.sh 'new_items'" \
     --field=gtk-home:btn "idiomind 'topic'" \
     --field=gtk-index:btn "$DS/chng.sh" \

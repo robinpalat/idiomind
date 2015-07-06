@@ -35,7 +35,7 @@ _cfg() {  b=$(tr -dc a-z < /dev/urandom |head -c 1)
 function dwld() {
 
     # downloading from http://server_temp/c/xxx.md5sum.tar.gz 
-    notify-send "$(gettext "Downloading...")"
+    msg "$(gettext "Downloading 1 article(s) from Wikipedia. When the download completes the book will be added to your calibre library....")" idiomind
     mkdir "$DT/download"
     idcfg="$DM_tl/${2}/.conf/id.cfg"
     link=$(grep -o 'ilink="[^"]*' "${idcfg}" |grep -o '[^"]*$')

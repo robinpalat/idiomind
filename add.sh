@@ -738,7 +738,7 @@ process() {
                                 if [ ! -f "${DM_tls}/$audio.mp3" ]; then
                                 dictt "$audio" "${DM_tls}"; fi
                                 echo "${trgt}" >> "$DT_r/addw"
-
+                                
                             else
                                 echo -e "\n\n#$n $trgt" >> "$DT_r/wlog"
                                 cleanups "${DM_tlt}/$id.mp3"

@@ -46,8 +46,8 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
 </xsl:template>
 </xsl:stylesheet>"
 
-sets=('channel' 'link' 'logo' 'ntype' \
-'nmedia' 'ntitle' 'nsumm' 'nimage' 'url')
+sets=( 'channel' 'link' 'logo' 'ntype' \
+'nmedia' 'ntitle' 'nsumm' 'nimage' 'url' )
 
 conditions() {
     
@@ -118,8 +118,8 @@ $summary<br><br></div>
 </body>"
 
     if [ "$tp" = vid ]; then
-        if [ "$ex" = m4v ] || [ $ex = mp4 ]; then t=mp4
-        elif [ "$ex" = avi ]; then t=avi; fi
+        if [ $ex = m4v ] || [ $ex = mp4 ]; then t=mp4
+        elif [ $ex = avi ]; then t=avi; fi
         echo -e "$video" > "$DMC/$fname.html"
 
     elif [ "$tp" = aud ]; then
@@ -183,7 +183,7 @@ get_images () {
     -border 2 \( +clone -background black \
     -shadow 70x3+2+2 \) +swap -background transparent \
     -layers merge +repage tmp.png
-    composite -compose Dst_Over tmp.png "$layer" "$DMC/$fname.png"
+    composite -compose Dst_Over tmp.png "${layer}" "$DMC/$fname.png"
     rm -f *.jpeg *.jpg *.png
     fi
 }
@@ -195,12 +195,12 @@ fetch_podcasts() {
 
         if [ ! -z "$FEED" ]; then
 
-            if [ ! -f "$DCP/$n.rss" ]; then
+            if [ ! -f "$DCP/${n}.rss" ]; then
             echo -e "$(gettext "Please, reconfigure this feed:")\n$FEED" >> "$DCP/feed.err"
                 
             else
                 d=0
-                while [[ $d -lt 8 ]]; do
+                while [[ ${d} -lt 8 ]]; do
                     itn=$((d+1)); get=${sets[$d]}
                     val=$(sed -n "$itn"p "$DCP/$n.rss" \
                     | grep -o "$get"=\"[^\"]* | grep -o '[^"]*$')
@@ -215,19 +215,19 @@ fetch_podcasts() {
             
                 if [ "$ntype" = 1 ]; then
                 
-                    podcast_items="$(xsltproc - "$FEED" <<<"$tmplitem" 2> /dev/null)"
+                    podcast_items="$(xsltproc - "${FEED}" <<<"${tmplitem}" 2> /dev/null)"
                     podcast_items="$(echo "${podcast_items}" | tr '\n' ' ' \
-                    | tr -s '[:space:]' | sed 's/EOL/\n/g' | head -n "$downloads")"
+                    | tr -s '[:space:]' | sed 's/EOL/\n/g' | head -n ${downloads})"
                     podcast_items="$(echo "${podcast_items}" | sed '/^$/d')"
                     
                     while read -r item; do
 
                         fields="$(sed -r 's|-\!-|\n|g' <<<"${item}")"
-                        enclosure=$(sed -n "$nmedia"p <<<"${fields}")
-                        title=$(echo "${fields}" | sed -n "$ntitle"p | sed 's/\://g' \
+                        enclosure=$(sed -n ${nmedia}p <<<"${fields}")
+                        title=$(echo "${fields}" | sed -n ${ntitle}p | sed 's/\://g' \
                         | sed 's/\&/&amp;/g' | sed 's/^\s*./\U&\E/g' \
                         | sed 's/<[^>]*>//g' | sed 's/^ *//; s/ *$//; /^$/d')
-                        summary=$(echo "${fields}" | sed -n "$nsumm"p)
+                        summary=$(echo "${fields}" | sed -n ${nsumm}p)
                         #| iconv -c -f utf8 -t ascii
                         fname="$(nmfile "${title}")"
                         
@@ -334,9 +334,9 @@ removes() {
     set +e
 }
 
-conditions $1
+conditions ${1}
 
-if [[ $1 = 1 ]]; then
+if [[ ${1} = 1 ]]; then
 echo "Podcasts" > "$DC_a/4.cfg"
 echo 2 > "$DC_s/5.cfg"
 echo 11 > "$DCP/8.cfg"
@@ -359,9 +359,9 @@ echo -e " $(gettext "Last update:") $(date "+%r %a %d %B")
  $(gettext "Latest downloads:") $new_episodes" > "$DM_tl/Podcasts/$date.updt"
 rm -fr "$DT_r" "$DT/.uptp"
 
-if [[ $new_episodes -gt 0 ]]; then
-    [[ $new_episodes = 1 ]] && ne=$(gettext "new episode")
-    [[ $new_episodes -gt 1 ]] && ne=$(gettext "new episodes")
+if [[ ${new_episodes} -gt 0 ]]; then
+    [[ ${new_episodes} = 1 ]] && ne=$(gettext "new episode")
+    [[ ${new_episodes} -gt 1 ]] && ne=$(gettext "new episodes")
 
     removes
     notify-send -i idiomind \
@@ -369,7 +369,7 @@ if [[ $new_episodes -gt 0 ]]; then
     "$new_episodes $ne" -t 8000
     
 else
-    if [[ $1 = 1 ]]; then
+    if [[ ${1} = 1 ]]; then
     notify-send -i idiomind \
     "$(gettext "Update finished")" \
     "$(gettext "Has not changed since last update")" -t 8000
@@ -379,7 +379,7 @@ fi
 cfg="$DM_tl/Podcasts/.conf/0.lst"; if [ -f "$cfg" ]; then
 sync="$(sed -n 2p "$cfg" | grep -o 'sync="[^"]*' | grep -o '[^"]*$')"
 if [ "$sync" = TRUE ]; then 
-    if [[ $1 = 1 ]]; then
+    if [[ ${1} = 1 ]]; then
     "$DSP/tls.sh" sync 1
     else
     "$DSP/tls.sh" sync 0

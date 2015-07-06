@@ -16,6 +16,7 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
 #  MA 02110-1301, USA.
 #  
+
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 lgt=$(lnglss "$lgtl")
@@ -116,7 +117,6 @@ Vietnamese"
         let n++
          
     done < <(tail -n 1 < "${file}" |tr '&' '\n')
-
     return ${n}
 }
 

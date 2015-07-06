@@ -185,6 +185,7 @@ ntitle=\"$title\"
 nsumm=\"$summary\"
 nimage=\"$image\"
 url=\"$feed\""
+
         echo -e "${cfg}" > "$DIR2/$num.rss"; exit 0
         
     else

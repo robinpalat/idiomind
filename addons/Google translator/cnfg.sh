@@ -3,14 +3,11 @@
 
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 if [ ! -f "$DC_a/gts.cfg" ] \
-|| [ -z "$(< "$DC_a/gts.cfg")" ]; then
+|| [[ -z "$(< "$DC_a/gts.cfg")" ]]; then
 echo -e "set1=\"\"" > "$DC_a/gts.cfg"
 echo -e "key=\"\"" >> "$DC_a/gts.cfg";fi
-
-set1=$(sed -n 1p < "$DC_a/gts.cfg" \
-| grep -o set1=\"[^\"]* | grep -o '[^"]*$')
-key=$(sed -n 2p < "$DC_a/gts.cfg" \
-| grep -o key=\"[^\"]* | grep -o '[^"]*$')
+set1=$(grep -o set1=\"[^\"]* "$DC_a/gts.cfg" |grep -o '[^"]*$')
+key=$(grep -o key=\"[^\"]* "$DC_a/gts.cfg" |grep -o '[^"]*$')
 
 c=$(yad --form --title="$(gettext "Google Translate")" \
 --name=Idiomind --class=Idiomind \

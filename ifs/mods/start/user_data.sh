@@ -2,15 +2,13 @@
 # -*- ENCODING: UTF-8 -*-
 
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
-sizes() {
-for i in "$DS/addons/"* ; do
+sizes() { for i in "$DS/addons/"* ; do
 dir=`basename "$i"`
 if [ -d "$DM_tl/$dir" ]; then
 du="$(du -b -h "$DM_tl/$dir" | tail -1 | awk '{print ($1)}')"
 echo -e "$du "
 fi
-done
-}
+done; }
 others=`sizes`
 du=`du -b -h "$DM" | tail -1 | awk '{print ($1)}'`
 if [ ! -f "$DC_a/user_data.cfg" ]; then
