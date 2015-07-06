@@ -64,6 +64,7 @@ $img --text="$info$hw" \
 ret=$?
 
 if [[ $ret -eq 0 ]]; then
+
     if [ -z "$VAR" ]; then
     source "$DS/ifs/mods/cmns.sh"
     msg " $(gettext "You must choose a practice.")\n" info
@@ -74,6 +75,7 @@ if [[ $ret -eq 0 ]]; then
     fi
 
 elif [[ $ret -eq 3 ]]; then
+
     if [ -d "$DC_tlt/practice" ]; then
     cd "$DC_tlt/practice"; rm .*; rm *
     touch ./log1 ./log2 ./log3; fi

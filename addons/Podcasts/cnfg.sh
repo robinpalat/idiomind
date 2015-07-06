@@ -7,8 +7,8 @@ DCP="$DM_tl/Podcasts/.conf"
 DSP="$DS_a/Podcasts"
 date=$(date +%d)
 CNF=$(gettext "Configure")
-sets=('update' 'sync' 'path')
-if [ -n "$(< "$DCP/0.lst")" ]; then cfg=1; else
+sets=( 'update' 'sync' 'path' )
+if [[ -n "$(< "$DCP/0.lst")" ]]; then cfg=1; else
 > "$DCP/0.lst"; fi
 
 ini() {
@@ -54,7 +54,7 @@ done
     
 apply() {
     
-    printf "$CNFG" | sed 's/|/\n/g' | sed -n 4,15p | \
+    printf "$CNFG" |sed 's/|/\n/g' |sed -n 4,15p | \
     sed 's/^ *//; s/ *$//g' > "$DT/podcasts.tmp"
     n=1; while read feed; do
         declare mod${n}="$feed"
@@ -67,7 +67,7 @@ apply() {
     done < "$DT/podcasts.tmp"
 
     podcaststmp="$(cat "$DT/podcasts.tmp")"
-    if ([ -n "$podcaststmp" ] && [ "$podcaststmp" != "$(cat "$DCP/feeds.lst")" ]); then
+    if [ -n "$podcaststmp" ] && [[ "$podcaststmp" != "$(cat "$DCP/feeds.lst")" ]]; then
     mv -f "$DT/podcasts.tmp" "$DCP/feeds.lst"; else rm -f "$DT/podcasts.tmp"; fi
 
     val1=$(cut -d "|" -f1 <<<"$CNFG")

@@ -17,10 +17,9 @@ function dlg_form_1() {
     --field="<small>$(gettext "Topic")</small>":CB "${tpc}!${tpcs}" \
     --field="<small>$(gettext "Audio")</small>":FL "${audf}" \
     --field="<small>$(gettext "Example")</small>\t\t\t\t\t\t\t\t\t":TXT "${exmp}" \
-    --field="<small>$(gettext "Definition")\
-    <a href='$link2'>$(gettext "Search Definition")</a></small>":TXT "${defn}" \
+    --field="<small><a href='$link2'>$(gettext "Definition")</a></small>":TXT "${defn}" \
     --field="<small>$(gettext "Note")</small>":TXT "${note}" \
-    --field="<small>\t<a href='$link3'>$(gettext "Images")</a>\t<a href='$link1'>$(gettext "Translation")</a></small>":LBL " " \
+    --field="<small>$(gettext "Search:")  <a href='$link3'>$(gettext "Images")</a>  <a href='$link1'>$(gettext "Translation")</a></small>":LBL " " \
     --field="$(gettext "Mark")":CHK "$mark" \
     --field="<small>$(gettext "Listen")</small>":FBTN "${cmd_play}" \
     --field=" ":LBL " " \

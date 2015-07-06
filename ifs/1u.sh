@@ -59,7 +59,7 @@ dlg=$(yad --form --title="Idiomind" \
 --window-icon="/usr/share/idiomind/images/icon.png" \
 --image-on-top --buttons-layout=end --align=right --center --on-top \
 --width=450 --height=270 --borders=15 \
---field="$(gettext "Select the language you are studying"):CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
+--field="$(gettext "Select the language for study"):CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
 --field="$(gettext "Select your native language"):CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
 --button=Cancel:1 \
 --button=gtk-ok:0)

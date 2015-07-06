@@ -24,7 +24,7 @@ lock() {
 
 get_list() {
     
-    if [[ $ttest = a || $ttest = b || $ttest = c ]]; then
+    if [ $ttest = a -o $ttest = b -o $ttest = c ]; then
     
         > "$dir/${ttest}.0"
         if [[ `wc -l < "${cfg4}"` -gt 0 ]]; then
@@ -36,7 +36,7 @@ get_list() {
             tac "${cfg1}" |sed '/^$/d' > "$dir/${ttest}.0"
         fi
         
-        if [[ $ttest = b ]]; then
+        if [ $ttest = b ]; then
         
             if [ ! -f "$dir/b.srces" ]; then
             (
@@ -54,7 +54,7 @@ get_list() {
             fi
         fi
     
-    elif [[ $ttest = d ]]; then
+    elif [ $ttest = d ]; then
     
         if [[ `wc -l < "${cfg3}"` -gt 0 ]]; then
             grep -Fxvf "${cfg3}" "${cfg1}" > "$DT/slist"
@@ -64,7 +64,7 @@ get_list() {
             tac "${cfg1}" |sed '/^$/d' > "$dir/${ttest}.0"
         fi
     
-    elif [[ $ttest = e ]]; then
+    elif [ $ttest = e ]; then
     
         > "$DT/images"
         if [[ `wc -l < "${cfg4}"` -gt 0 ]]; then
@@ -122,14 +122,12 @@ practice() {
         fi
     fi
 
-    if [ -f "$dir/${ttest}.0" ] && [ -f "$dir/${ttest}.1" ]; then
+    if [ -f "$dir/${ttest}.0" -a -f "$dir/${ttest}.1" ]; then
     
         echo "w9.$(tr -s '\n' '|' < "$dir/${ttest}.1").w9" >> "$log"
         grep -Fxvf  "$dir/${ttest}.1" "$dir/${ttest}.0" > "$dir/${ttest}.tmp"
-        
-        if [ "$(egrep -cv '#|^$' < "$dir/${ttest}.tmp")" = 0 ]; then
+        if [[ "$(egrep -cv '#|^$' < "$dir/${ttest}.tmp")" = 0 ]]; then
         lock "$dir/${ttest}.lock" & exit; fi
-
         echo " practice --restarting session"
         
     else
