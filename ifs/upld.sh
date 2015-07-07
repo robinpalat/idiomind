@@ -19,7 +19,7 @@ _cfg() {  b=$(tr -dc a-z < /dev/urandom |head -c 1)
 function dwld() {
 
     # downloading from http://server_temp/c/xxx.md5sum.tar.gz 
-    msg "$(gettext "Downloading 1 article(s) from Wikipedia. When the download completes the book will be added to your calibre library....")" idiomind
+    msg "$(gettext "Downloading... When the download completes the files will be added to topic directory.")" info
     mkdir "$DT/download"
     idcfg="$DM_tl/${2}/.conf/id.cfg"
     link=$(grep -o 'ilink="[^"]*' "${idcfg}" |grep -o '[^"]*$')
@@ -278,7 +278,6 @@ internet
 [ -d "$DT" ] && cd "$DT" || exit 1
 [ -d "$DT/upload" ] && rm -fr "$DT/upload"
 
-# ---------------------------------------------------
 notify-send "$(gettext "Upload in progress")" \
 "$(gettext "This can take some time, please wait")" -t 6000
 

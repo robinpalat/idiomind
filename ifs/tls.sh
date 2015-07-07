@@ -334,6 +334,7 @@ check_index() {
     exit
 }
 
+
 add_audio() {
 
     cd "$HOME"
@@ -351,12 +352,6 @@ add_audio() {
     if [ -f "${aud}" ]; then cp -f "${aud}" "${2}/audtm.mp3"; fi
     fi
 } >/dev/null 2>&1
-
-edit_audio() {
-
-    cmd="$(sed -n 16p $DC_s/1.cfg)"
-    (cd "$3"; "$cmd" "$2") & exit
-}
 
 
 add_file() {
@@ -383,6 +378,7 @@ add_file() {
     
 } >/dev/null
 
+
 videourl() {
 
     n=$(ls *.url "$DM_tlt/files/" | wc -l)
@@ -404,6 +400,7 @@ videourl() {
     else msg "$(gettext "Invalid URL.")\n" error \
     "$(gettext "Invalid URL")"; fi
 }
+
 
 attatchments() {
 
@@ -519,6 +516,7 @@ echo "</body>" >> "$DC_tlt/att.html"
     fi
 } >/dev/null 2>&1
 
+
 help() {
 
     URL="http://idiomind.sourceforge.net/doc/$(gettext "help").pdf"
@@ -526,12 +524,6 @@ help() {
      
 } >/dev/null 2>&1
 
-
-web() {
-
-    web="http://idiomind.sourceforge.net"
-    xdg-open "$web/$lgs/${lgtl,,}" >/dev/null 2>&1
-}
 
 fback() {
     
@@ -545,6 +537,7 @@ fback() {
     --width=500 --height=450
      
 } >/dev/null 2>&1
+
 
 colorize() {
 
@@ -603,6 +596,7 @@ check_updates() {
     exit 0
 }
 
+
 a_check_updates() {
 
     [[ ! -f "$DC_s/9.cfg" ]] && echo `date +%d` > "$DC_s/9.cfg" && exit
@@ -634,6 +628,7 @@ a_check_updates() {
     fi
     exit 0
 }
+
 
 about() {
 
@@ -693,6 +688,7 @@ if __name__ == "__main__":
 ABOUT
 } >/dev/null 2>&1
 
+
 set_image() {
 
     cd "$DT"
@@ -720,6 +716,7 @@ set_image() {
     exit
     
 } >/dev/null 2>&1
+
 
 mkpdf() {
 
@@ -916,7 +913,6 @@ mkpdf() {
             fi
             let n++
         done
-
         echo -e "</div></div>
         <span class=\"container\"></span></body></html>" >> "$wdir/doc.html"
 
@@ -926,7 +922,6 @@ mkpdf() {
     fi
     exit
 }
-
 
 gtext() {
 $(gettext "Marked items")
