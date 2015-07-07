@@ -645,14 +645,14 @@ export c website
 python << ABOUT
 import gtk
 import os
-app_logo = os.path.join('/usr/share/idiomind/images/idiomind-96.png')
+app_logo = os.path.join('/usr/share/idiomind/images/idiomind.png')
 app_icon = os.path.join('/usr/share/idiomind/images/icon.png')
 app_name = 'Idiomind'
 app_version = 'v2.3-beta'
 app_comments = os.environ['c']
 web = os.environ['website']
 app_copyright = 'Copyright (c) 2015 Robin Palatnik'
-app_website = 'http://idiomind.sourceforge.net/'
+app_website = 'http://idiomind.com/'
 app_license = (('This program is free software: you can redistribute it and/or modify\n'+
 'it under the terms of the GNU General Public License as published by\n'+
 'the Free Software Foundation, either version 3 of the License, or\n'+
@@ -682,6 +682,8 @@ class AboutDialog:
         about.set_license(app_license)
         about.set_authors(app_authors)
         about.set_artists(app_artists)
+        about.set_website(app_website)
+        about.set_website_label(web)
         about.run()
         about.destroy()
 

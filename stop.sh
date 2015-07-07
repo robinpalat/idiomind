@@ -32,9 +32,6 @@ on_play() {
     if ps -A | pgrep -f "notify-osd"; then (sleep 6 && killall notify-osd) & fi
     if ps -A | pgrep -f "play"; then killall play & fi
     if ps -A | pgrep -f "mplayer"; then killall mplayer & fi
-    [ -f "$DT/.p_" ] && rm -fr "$DT/.p_"
-    [ -f "$DT/.p" ] && rm -fr "$DT/.p"
-    [ -f "$DT/index.m3u" ] && rm -fr "$DT/index.m3u"
     exit
 }
 

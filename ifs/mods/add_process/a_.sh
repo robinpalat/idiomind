@@ -200,7 +200,7 @@ if [[ ${conten^} = A ]]; then
                 echo -e "\n\n#$n [$(gettext "Sentence too long")] $trgt" >> "$DT_r/slog"
                 
                 elif [ -z "$trgt" ]; then
-                trgt="$n [$(gettext "Text missing")]"
+                trgt="$n -------------------------------"
                 id="$(set_name_file 2 "${trgt}" "" "" "" "" "")"
                 index 2 "${tpe}" "${trgt}" "" "" "" "" "" "${id}"
                 mv -f "$DT_r/${n}.mp3" "${DM_tlt}/$id.mp3"

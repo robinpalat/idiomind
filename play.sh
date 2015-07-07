@@ -84,15 +84,15 @@ play_list() {
     }
 
     title="$tpc"
+    if grep -E 'vivid|wily' <<<"`lsb_release -a`">/dev/null 2>&1; then
+    btn1="gtk-media-play:0"; else
+    btn1="$(gettext "Play"):0"; fi
+    
     if [ ! -f "$DT/.p_" ]; then
-        btn2=""$(gettext "Cancel")":1"
-        if grep -E 'vivid|wily' <<<"`lsb_release -a`">/dev/null 2>&1; then
-        btn1="gtk-media-play:0"; else
-        btn1="$(gettext "Play"):0"; fi
+        btn2="--center"
     else
         tpp="$(sed -n 2p "$DT/.p_")"
-        btn1="gtk-media-stop:2"
-        btn2="$(gettext "Skip"):$DS/stop.sh 9"
+        btn2="--button=gtk-media-stop:2"
         if grep TRUE <<<"$words$sentences$marks$practice"; then
         if [ "$tpp" != "$tpc" ]; then
         title="$(gettext "Playing:") $tpp"; fi
@@ -106,8 +106,10 @@ play_list() {
     --skip-taskbar --align=right --center --on-top \
     --expand-column=2 --no-headers \
     --width=400 --height=300 --borders=5 \
-    --column=IMG:IMG --column=TXT:TXT --column=CHK:CHK \
-    --button="$btn1")"
+    --column=IMG:IMG \
+    --column=TXT:TXT \
+    --column=CHK:CHK \
+    "$btn2" --button="$btn1")"
     ret=$?
 
     if [ $ret -eq 0 -o $ret -eq 2 ]; then
@@ -130,7 +132,7 @@ play_list() {
             "$(gettext "Exiting...")" -i idiomind -t 3000 &
             "$DS/stop.sh" 2 & exit 1; fi
 
-            "$DS/stop.sh" 3
+            "$DS/stop.sh" 2 &
             if [ -d "$DM_tlt" ] && [ -n "$tpc" ]; then
             echo -e "$DM_tlt\n$tpc" > "$DT/.p_"
             else "$DS/stop.sh" 2 && exit 1; fi

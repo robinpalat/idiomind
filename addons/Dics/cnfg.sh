@@ -12,8 +12,7 @@ new_script="#!/bin/bash
 # argument 1 = \"word\"
 # e.g. languages: en
 Name=\"\"
-Language=\"\"
-Test=\"test\""
+Language=\"\""
 
 dialog_edit() {
     
@@ -25,7 +24,6 @@ dialog_edit() {
     --width=490 --height=360 --borders=0 \
     --editable --fontname=monospace --margins=4 --wrap \
     --button=Cancel:1 \
-    --button=Test:4 \
     --button=Save:5 > "$DT/script.sh"
 }
 
@@ -69,24 +67,13 @@ if [ "$1" = add_dlg ]; then
         Name=$(grep -o -P '(?<=Name=").*(?=")' "$DT/script.sh" | sed 's/\.//g')
         Language=$(grep -o -P '(?<=Language=").*(?=")' "$DT/script.sh" | sed 's/\.//g')
             
-        if [ -n "$Name" ] && [ -n "$Language" ]; then
-        mv -f "$DT/script.sh" "$disables/$Name.$Language"
-        fi
+            if [ -n "$Name" ] && [ -n "$Language" ]; then
+            mv -f "$DT/script.sh" "$disables/$Name.$Language"
+            fi
+            
         "$DS_a/Dics/cnfg.sh"
         fi
         
-    elif [ $? -eq 4 ]; then
-        
-        test=$(grep -o -P '(?<=Test=").*(?=")' "$DT/script.sh")
-        cd "$DT"; sh "$DT/script.sh" "${test,,}"
-        if [ "$DT"/*.mp3 ]; then play "$DT"/*.mp3; fi
-        if [ "$DT"/*.wav ]; then play "$DT"/*.wav; fi
-        if [ "$DT"/*.ogg ]; then play "$DT"/*.ogg; fi
-        if [ -f "$DT"/*.mp3 ]; then rm -f "$DT"/*.mp3; fi
-        if [ -f "$DT"/*.wav ]; then rm -f "$DT"/*.wav; fi
-        if [ -f "$DT"/*.ogg ]; then rm -f "$DT"/*.ogg; fi
-        mv -f "$DT/script.sh" "$DT/new.sh"
-        "$DS_a/Dics/cnfg.sh" add_dlg 2
     else
         "$DS_a/Dics/cnfg.sh"
     fi
@@ -113,18 +100,6 @@ elif [ "$1" = edit_dlg ]; then
         mv -f "$DT/script.sh" "$dir/$stts/$Name.$Language" & exit
         fi
         
-    elif [ $? -eq 4 ]; then
-
-        test=$(grep -o -P '(?<=Test=").*(?=")' "$DT/script.sh")
-        cd "$DT"; sh "$DT/script.sh" "${test,,}"
-        if [ "$DT"/*.mp3 ]; then play "$DT"/*.mp3; fi
-        if [ "$DT"/*.wav ]; then play "$DT"/*.wav; fi
-        if [ "$DT"/*.ogg ]; then play "$DT"/*.ogg; fi
-        if [ -f "$DT"/*.mp3 ]; then rm -f "$DT"/*.mp3; fi
-        if [ -f "$DT"/*.wav ]; then rm -f "$DT"/*.wav; fi
-        if [ -f "$DT"/*.ogg ]; then rm -f "$DT"/*.ogg; fi
-        mv -f "$DT/script.sh" "$dir/$stts/$Name.$Language"
-        "$DS_a/Dics/cnfg.sh" edit_dlg "$2" "$Name" "$Language"
     fi
     
 elif [ -z "${1}" ]; then
@@ -161,9 +136,9 @@ elif [ -z "${1}" ]; then
         elif [ $ret -eq 0 ]; then
         
             n=1
-            while [ $n -le "$(echo "$sel" | wc -l)" ]; do
+            while [ ${n} -le "$(echo "$sel" | wc -l)" ]; do
             
-                dict=$(echo "$sel" | sed -n "$n"p)
+                dict=$(echo "$sel" | sed -n ${n}p)
                 d=$(echo "$dict" | awk '{print ($2)}')
                 
                 if echo "$dict" | grep 'FALSE'; then
