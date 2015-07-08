@@ -643,7 +643,7 @@ import os
 app_logo = os.path.join('/usr/share/idiomind/images/idiomind.png')
 app_icon = os.path.join('/usr/share/idiomind/images/icon.png')
 app_name = 'Idiomind'
-app_version = 'v2.3-beta'
+app_version = 'v0.1-beta'
 app_comments = os.environ['c']
 web = os.environ['website']
 app_copyright = 'Copyright (c) 2015 Robin Palatnik'

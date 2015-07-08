@@ -439,7 +439,7 @@ case "$1" in
     topic)
     topic ;;
     -v)
-    echo -n "2.3-beta";;
+    echo -n "0.1";;
     -s)
     new_session; idiomind &;;
     autostart)

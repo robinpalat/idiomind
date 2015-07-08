@@ -23,7 +23,7 @@ lang=( 'English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian' )
 
 sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
-'rplay' 'audio' 'video' 'ntosd' 'loop' \
+'loop' 'rplay' 'audio' 'video' 'ntosd' \
 'langt' 'langs' 'synth' 'txaud' 'intrf' \
 'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi' )
 
@@ -93,11 +93,11 @@ yad --plug=$KEY --form --tabnum=1 \
 --field=" :LBL" " " \
 --field="$(gettext "Play Options")\t":LBL " " \
 --field=":LBL" " " \
+--field="$(gettext "Duration of pause between items")":SCL "$loop" \
 --field="$(gettext "Repeat")":CHK "$rplay" \
 --field="$(gettext "Play audio")":CHK "$audio" \
 --field="$(gettext "Only play videos")":CHK "$video" \
 --field="$(gettext "Desktop notifications")":CHK "$ntosd" \
---field="$(gettext "Duration of pause between items:")":SCL "$loop" \
 --field=" :LBL" " " \
 --field="$(gettext "Languages")\t":LBL " " \
 --field=":LBL" " " \
@@ -189,7 +189,7 @@ ret=$?
         while [ ${n} -lt 10 ]; do
             if cut -d "|" -f21 < "$cnf1" | grep "${lang[$n]}" && \
             [ "${lang[$n]}" != "$lgsl" ]; then
-                confirm "$info1" dialog-warning
+                confirm "$info1" dialog-question
                 if [ $? -eq 0 ]; then
                     echo "$lgtl" > "$DC_s/6.cfg"
                     echo "${lang[$n]}" >> "$DC_s/6.cfg"

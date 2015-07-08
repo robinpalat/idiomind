@@ -37,7 +37,7 @@ play_list() {
     'New episodes <i><small>Podcasts</small></i>' \
     'Saved episodes <i><small>Podcasts</small></i>' )
     sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
-    'rplay' 'audio' 'video' 'ntosd' 'loop' \
+    'loop' 'rplay' 'audio' 'video' 'ntosd' \
     'langt' 'langs' 'synth' 'txaud' 'intrf' \
     'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi' )
     in=( 'in1' 'in2' 'in3' 'in4' 'in5' 'in6' )
