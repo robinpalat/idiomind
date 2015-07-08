@@ -93,7 +93,7 @@ play_list() {
     else
         tpp="$(sed -n 2p "$DT/.p_")"
         btn2="--button=gtk-media-stop:2"
-        if grep TRUE <<<"$words$sentences$marks$practice"; then
+        if grep TRUE <<<"$words$sntcs$marks$wprct"; then
         if [ "$tpp" != "$tpc" ]; then
         title="$(gettext "Playing:") $tpp"; fi
         fi
