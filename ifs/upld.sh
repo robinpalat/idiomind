@@ -135,7 +135,7 @@ note=$(< "${DC_tlt}/info")
 imgm="${DM_tlt}/images/img.jpg"
 
 "$DS/ifs/tls.sh" check_index "${tpc}"
-if [ $(cat "${DC_tlt}/0.cfg" | wc -l) -ge 20 ]; then
+if [ $(cat "${DC_tlt}/0.cfg" | wc -l) -ge 15 ]; then
 btn="--button="$(gettext "Upload")":0"; else
 btn="--center"; fi
 cd "$HOME"

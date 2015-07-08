@@ -269,7 +269,7 @@ edit_item() {
                     fi
                 fi
             
-                id_mod="$(set_name_file "${type_mod}" "${trgt_mod}" "${srce_mod}" \
+                id_mod="$(set_name_file ${type_mod} "${trgt_mod}" "${srce_mod}" \
                 "${exmp_mod}" "${defn_mod}" "${note_mod}" "${wrds_mod}" "${grmr_mod}")"
 
 
@@ -305,7 +305,8 @@ edit_item() {
                     
                     if [ "${audf}" != "${audf_mod}" ]; then
                     if [ ${type_mod} = 1 ]; then cp -f "${audf_mod}" "${DM_tls}/${trgt_mod,,}.mp3"
-                    elif [ ${type_mod} = 2 ]; then cp -f "${audf_mod}" "${DM_tlt}/$id_mod.mp3"; fi
+                    elif [ ${type_mod} = 2 ]; then [ -f "${DM_tlt}/$id.mp3" ] && rm "${DM_tlt}/$id.mp3"
+                    cp -f "${audf_mod}" "${DM_tlt}/$id_mod.mp3"; fi
                     else [ -f "${DM_tlt}/$id.mp3" ] && mv -f "${DM_tlt}/$id.mp3" "${DM_tlt}/$id_mod.mp3"; fi
                     
                     if [ -f "${DM_tlt}/images/$id.jpg" ]; then
