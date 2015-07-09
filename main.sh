@@ -155,7 +155,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     --no-click --print-column=0 --dclick-action="$dclk" \
     --window-icon="$DS/images/icon.png" \
     --ellipsize=END --center \
-    --width=610 --height=550 --borders=5 \
+    --width=610 --height=550 --borders=6 \
     --column="$langt    " \
     --column="$langs    " \
     --button="$(gettext "Install")":0 \

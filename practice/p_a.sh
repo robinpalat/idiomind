@@ -49,9 +49,10 @@ fonts() {
 
     s=$((38-${#src}))
     c=$((28-${#1}))
+    h=$((34-${#1}))
     acuestion="\n<span font_desc='Free Sans $s'><b>$1</b></span>"
     bcuestion="\n<span font_desc='Free Sans $c'>$1</span>"
-    answer="<span font_desc='Free Sans Bold $s'><i>$src</i></span>"
+    answer="<span font_desc='Free Sans Bold $h'><i>$src</i></span>"
 }
 
 cuestion() {
