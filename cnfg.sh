@@ -136,8 +136,7 @@ ret=$?
             val=$(cut -d "|" -f$n < "$cnf1")
             if [ -n "$val" ]; then
             sed -i "s/${sets[$v]}=.*/${sets[$v]}=\"$val\"/g" "$DC_s/1.cfg"
-            if [ ${v} = 4 ]; then
-            [ "$val" = FALSE ] && CW=0 || CW=1; fi
+            if [ ${v} = 4 ]; then [ "$val" = FALSE ] && CW=0 || CW=1; fi
             ((v=v+1)); fi
             ((n=n+1))
         done
