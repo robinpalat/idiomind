@@ -420,17 +420,21 @@ panel() {
     if [ "$(grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg")" = TRUE ] \
     && [ ! -f /tmp/.clipw ]; then "$DS/ifs/mods/clipw.sh" & fi
     
-    yad --title="Idiomind" \
-    --name=Idiomind --class=Idiomind \
-    --always-print-result \
-    --window-icon=idiomind \
-    --form --fixed --on-top --no-buttons --align=center \
-    --width=130 --height=190 --borders=0 --geometry=130x190-${x}-${y} \
-    --field=gtk-new:btn "$DS/add.sh 'new_items'" \
-    --field=gtk-home:btn "idiomind 'topic'" \
-    --field=gtk-index:btn "$DS/chng.sh" \
-    --field=gtk-preferences:btn "$DS/cnfg.sh"
-    [ $? != 0 ] && "$DS/stop.sh" 1 &
+    #yad --title="Idiomind" \
+    #--name=Idiomind --class=Idiomind \
+    #--always-print-result \
+    #--window-icon=idiomind \
+    #--form --fixed --on-top --no-buttons --align=center \
+    #--width=130 --height=190 --borders=0 --geometry=130x190-${x}-${y} \
+    #--field=gtk-new:btn "$DS/add.sh 'new_items'" \
+    #--field=gtk-home:btn "idiomind 'topic'" \
+    #--field=gtk-index:btn "$DS/chng.sh" \
+    #--field=gtk-preferences:btn "$DS/cnfg.sh"
+    #[ $? != 0 ] && "$DS/stop.sh" 1 &
+    
+    ps -A | pgrep -f "python /usr/share/idiomind/ifs/systray.py"
+    if (($? != 0)); then
+    python "$DS/ifs/systray.py" & fi
     exit
 }
 
