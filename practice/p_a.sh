@@ -49,7 +49,7 @@ fonts() {
 
     s=$((38-${#src}))
     c=$((28-${#1}))
-    acuestion="\n\n<span font_desc='Free Sans $s'><b>$1</b></span>"
+    acuestion="\n<span font_desc='Free Sans $s'><b>$1</b></span>"
     bcuestion="\n<span font_desc='Free Sans $c'>$1</span>"
     answer="<span font_desc='Free Sans Bold $s'><i>$src</i></span>"
 }
@@ -60,8 +60,8 @@ cuestion() {
     --timeout=10 \
     --skip-taskbar --text-align=center --center --on-top \
     --undecorated --buttons-layout=spread --align=center \
-    --width=375 --height=270 --borders=8 \
-    --field="$acuestion":lbl \
+    --width=360 --height=250 --borders=8 \
+    --field="\n$acuestion":lbl \
     --button="$(gettext "Exit")":1 \
     --button="    $(gettext "Continue") >>    ":0
 }
@@ -72,7 +72,7 @@ answer() {
     --timeout=10 --selectable-labels \
     --skip-taskbar --text-align=center --center --on-top \
     --undecorated --buttons-layout=spread --align=center \
-    --width=375 --height=270 --borders=8 \
+    --width=360 --height=250 --borders=8 \
     --field="$bcuestion":lbl \
     --field="":lbl \
     --field="$answer":lbl \

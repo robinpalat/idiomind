@@ -69,8 +69,8 @@ cuestion() {
     --text="$lcuestion" \
     --timeout=20 \
     --skip-taskbar --text-align=center --center --on-top \
-    --buttons-layout=spread --image-on-top --undecorated \
-    --width=360 --height=220 --borders=8 \
+    --buttons-layout=edge --image-on-top --undecorated \
+    --width=350 --height=210 --borders=8 \
     --field="$(gettext "Play")":BTN "$cmd_play" \
     --button="$(gettext "Exit")":1 \
     --button="  $(gettext "No")  ":3 \

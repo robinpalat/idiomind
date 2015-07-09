@@ -54,7 +54,7 @@ fonts() {
     ess=$(grep "$wes" ./b.srces)
     echo -e "$ras\n$ess" | sort -Ru | head -6 | sed '/^$/d' > srce.tmp
     s=$((36-${#1}))
-    cuestion="\n<span font_desc='Free Sans $s'><b>$1</b></span>\n\n"
+    cuestion="\n<span font_desc='Free Sans $s' color='#717171'><b>$1</b></span>\n\n"
     }
 
 

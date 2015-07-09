@@ -62,7 +62,7 @@ cuestion() {
     --image-on-top --undecorated --buttons-layout=spread \
     --width=418 --height=370 --borders=6 \
     --button="$(gettext "Exit")":1 \
-    --button="    $(gettext "Continue") >>    ":0
+    --button=" $(gettext "Continue") >> ":0
 }
 
 answer() {
