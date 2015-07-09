@@ -492,7 +492,7 @@ delete_topic() {
             
             "$DS/mngr.sh" mkmn &
         fi
-        
+    > "$DC_s/7.cfg"
     rm -f "$DT/ps_lk" & exit 1
 }
 

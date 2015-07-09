@@ -46,7 +46,7 @@ class MiroAppIndicator:
             menu_items.append(("Play", self.on_play))
         elif self.stts == 1:
             menu_items.append(("Stop", self.on_stop))
-            menu_items.append(("Next", self.on_next))
+            #menu_items.append(("Next", self.on_next))
         return menu_items
         
     def change_label(self):
@@ -54,7 +54,6 @@ class MiroAppIndicator:
         try:
             m = open(self.cfg).readlines()
             menutopic = m
-            
         except IOError:
             menutopic = []
         popup_menu = gtk.Menu()
@@ -63,7 +62,6 @@ class MiroAppIndicator:
             if not label and not callback:
                 item = gtk.SeparatorMenuItem()
             else:
-                print label
                 item = gtk.ImageMenuItem(label)
                 item.connect('activate', callback)
             popup_menu.append(item)
@@ -72,9 +70,10 @@ class MiroAppIndicator:
             label = bm.rstrip('\n')
             if not label:
                 label = ""
-        item = self.create_menu_icon(label, "gtk-home")
-        item.connect("activate", self.on_Home)
-        popup_menu.append(item)
+            item = self.create_menu_icon(label, "gtk-home")
+            item.connect("activate", self.on_Home)
+            popup_menu.append(item)
+        
         item = gtk.SeparatorMenuItem()
         popup_menu.append(item)
         item = self.create_menu_label("Topics")
@@ -102,10 +101,6 @@ class MiroAppIndicator:
         
     def on_Settings_click(self, widget):
         subprocess.Popen('/usr/share/idiomind/cnfg.sh')
-    
-    def on_Topic_Changed(self, filemonitor, file, other_file, event_type):
-        if event_type == gio.FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
-            self.update_menu()
 
     def on_play(self, widget):
         self.stts = 1

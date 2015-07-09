@@ -89,7 +89,7 @@ yad --plug=$KEY --form --tabnum=1 \
 --field="$(gettext "Use automatic translation, if available")":CHK "$trans" \
 --field="$(gettext "Detect language of source text (slower)")":CHK "$ttrgt" \
 --field="$(gettext "Clipboard watcher")":CHK "$clipw" \
---field="$(gettext "Perform tasks at startup")":CHK "$stsks" \
+--field="$(gettext "Run at startup")":CHK "$stsks" \
 --field=" :LBL" " " \
 --field="$(gettext "Play Options")\t":LBL " " \
 --field=":LBL" " " \

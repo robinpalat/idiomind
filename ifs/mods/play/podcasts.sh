@@ -22,21 +22,20 @@ get_itep() {
         [ -f "$DMC/$fname.avi" ] && file="$DMC/$fname.avi" && type=4
         
         if [ ${type} = 3 ]; then
-        e_file "${file}"
         trgt="${title}"
         srce="${channel}"
-        play=play
         icon=idiomind
         
         elif [ ${type} = 4 ]; then
-        e_file "$file"
         trgt="${title}"
         srce="${channel}"
-        play=mplayer
         icon=idiomind
+        
         else ((f=f+1)); fi
         
     else ((f=f+1)); fi
+    
+    export trgt srce icon
 }
 
 if [ ${ne} = TRUE ] || [ ${se} = TRUE ]; then

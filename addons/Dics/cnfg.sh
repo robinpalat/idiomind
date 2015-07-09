@@ -120,7 +120,7 @@ elif [ -z "${1}" ]; then
     --dclick-action='/usr/share/idiomind/addons/Dics/cnfg.sh edit_dlg' \
     --window-icon="$DS/images/icon.png" \
     --expand-column=2 --skip-taskbar --center --on-top \
-    --width=480 --height=350 --borders=10 \
+    --width=420 --height=300 --borders=10 \
     --column=" ":CHK \
     --column="$(gettext "Available dictionaries")":TEXT \
     --column=" ":TEXT \

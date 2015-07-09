@@ -34,7 +34,7 @@ if [[ "$1" = chngi ]]; then
         
         if [ ${n} = TRUE -a ${l} -lt 11 -a ${type} -lt 3 ]; then l=11; fi
         
-        sleep ${l}
+        [[ ${strue} = 1 ]] && sleep ${l}
     }
     export -f _play
     
@@ -55,7 +55,7 @@ if [[ "$1" = chngi ]]; then
         [ -z "$trgt" ] && trgt="$item"
         [[ ${type} = 1 ]] && file="${DM_tls}/${trgt,,}.mp3"
         [[ ${type} = 2 ]] && file="${DM_tlt}/$id.mp3"
-        play=play
+        strue=1
         else ((f=f+1)); fi
     }
     
