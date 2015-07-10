@@ -413,9 +413,9 @@ sys_tray_icon() {
     if [ "$(grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg")" = TRUE ] \
     && [ ! -f /tmp/.clipw ]; then "$DS/ifs/mods/clipw.sh" & fi
     
-    ps -A | pgrep -f "python /usr/share/idiomind/ifs/systray.py"
-    if (($? != 0)); then
-    python "$DS/ifs/systray.py" & fi
+    if ps -A | pgrep -f "python /usr/share/idiomind/ifs/systray"; then
+    kill -9 $(pgrep -f "/usr/share/idiomind/ifs/systray"); fi
+    python "$DS/ifs/systray" &
     exit
 }
 

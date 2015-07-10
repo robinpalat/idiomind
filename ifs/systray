@@ -12,7 +12,7 @@ import signal
 import subprocess
 import os.path
 import gettext
-icon = '/usr/share/idiomind/images/tray.png'
+icon = 'gtk-edit'
 
 class MiroAppIndicator:
 
@@ -44,7 +44,7 @@ class MiroAppIndicator:
 
     def make_menu_items(self):
         menu_items = []
-        menu_items.append(("Add", self.on_Add_click))
+        menu_items.append(("gtk-new", self.on_Add_click))
         if self.stts == 0:
             menu_items.append(("Play", self.on_play))
         elif self.stts == 1:
@@ -87,7 +87,7 @@ class MiroAppIndicator:
         popup_menu.append(item)
         item = gtk.SeparatorMenuItem()
         popup_menu.append(item)
-        item = self.create_menu_label("Quit")
+        item = self.create_menu_label("Quit Idiomind")
         item.connect("activate", self.on_Quit_click)
         popup_menu.append(item)
         
