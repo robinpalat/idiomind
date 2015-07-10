@@ -9,7 +9,7 @@ import signal
 import subprocess
 import os.path
 import gettext
-icon = '/usr/share/idiomind/images/tray.xpm'
+icon = '/usr/share/idiomind/images/tray.png'
 
 class MiroAppIndicator:
 
