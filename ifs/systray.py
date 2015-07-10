@@ -82,6 +82,8 @@ class MiroAppIndicator:
         item = self.create_menu_label("Settings")
         item.connect("activate", self.on_Settings_click)
         popup_menu.append(item)
+        item = gtk.SeparatorMenuItem()
+        popup_menu.append(item)
         item = self.create_menu_label("Quit")
         item.connect("activate", self.on_Quit_click)
         popup_menu.append(item)
