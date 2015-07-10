@@ -399,7 +399,7 @@ function topic() {
     fi
 }
 
-sys_tray_icon() {
+panel() {
     
     echo -e ".strt.1.strt." >> "$DC_s/log"
     if [ ! -d "$DT" ]; then new_session; fi
@@ -410,12 +410,27 @@ sys_tray_icon() {
     if [[ "$(date +%d)" != "$date" ]] || [ ! -f "$DC_s/10.cfg" ]; then
     new_session; fi
     
+    if [[ -f "$DC_s/10.cfg" ]]; then
+    nu='^[0-9]+$'
+    x=$(($(sed -n 2p "$DC_s/10.cfg")/2))
+    y=$(($(sed -n 3p "$DC_s/10.cfg")/2)); fi
+    if ! [[ $x =~ $nu ]]; then x=100; fi
+    if ! [[ $y =~ $nu ]]; then y=100; fi
+    
     if [ "$(grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg")" = TRUE ] \
     && [ ! -f /tmp/.clipw ]; then "$DS/ifs/mods/clipw.sh" & fi
     
-    if ps -A | pgrep -f "python /usr/share/idiomind/ifs/systray"; then
-    kill -9 $(pgrep -f "/usr/share/idiomind/ifs/systray"); fi
-    python "$DS/ifs/systray" &
+    yad --title="Idiomind" \
+    --name=Idiomind --class=Idiomind \
+    --always-print-result \
+    --window-icon=idiomind \
+    --form --fixed --on-top --no-buttons --align=center \
+    --width=130 --height=190 --borders=0 --geometry=130x190-${x}-${y} \
+    --field=gtk-new:btn "$DS/add.sh 'new_items'" \
+    --field=gtk-home:btn "idiomind 'topic'" \
+    --field=gtk-index:btn "$DS/chng.sh" \
+    --field=gtk-preferences:btn "$DS/cnfg.sh"
+    [ $? != 0 ] && "$DS/stop.sh" 1 &
     exit
 }
 
@@ -428,9 +443,9 @@ case "$1" in
     -s)
     new_session; idiomind &;;
     autostart)
-    sleep 50; [ ! -f "$DT/ps_lk" ] && idiomind;;
+    sleep 50; [ ! -f "$DT/ps_lk" ] && new_session;;
     add)
     "$DS/add.sh" new_items "$dir" 2 "${2}";;
     *)
-    sys_tray_icon;;
+    panel;;
 esac

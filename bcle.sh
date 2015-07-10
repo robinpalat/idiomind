@@ -2,12 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-
-if [ -d "$DM_tlt" ] && [ -n "$tpc" ]; then
-echo -e "$DM_tlt\n$tpc" > "$DT/.p_"
-else "$DS/stop.sh" 2 && exit 1; fi
-echo -e ".ply.$tpc.ply." >> "$DC_s/log" &
-sleep 0.5
+[[ -z "$tpc" && -d "$DT" ]] && exit 1
 if [ "$(grep -o rplay=\"[^\"]* < "$DC_s/1.cfg" \
 |grep -o '[^"]*$')" = TRUE ]; then
 

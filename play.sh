@@ -84,12 +84,19 @@ play_list() {
     }
 
     title="$tpc"
-    if [ -f "$DT/.p_" ]; then
-    tpp="$(sed -n 2p "$DT/.p_")"
-    if grep TRUE <<<"$words$sntcs$marks$wprct"; then
-    if [ "$tpp" != "$tpc" ]; then
-    title="$(gettext "Playing:") $tpp"; fi
-    fi
+    if grep -E 'vivid|wily' <<<"`lsb_release -a`">/dev/null 2>&1; then
+    btn1="gtk-media-play:0"; else
+    btn1="$(gettext "Play"):0"; fi
+    
+    if [ ! -f "$DT/.p_" ]; then
+        btn2="--center"
+    else
+        tpp="$(sed -n 2p "$DT/.p_")"
+        btn2="--button=gtk-media-stop:2"
+        if grep TRUE <<<"$words$sntcs$marks$wprct"; then
+        if [ "$tpp" != "$tpc" ]; then
+        title="$(gettext "Playing:") $tpp"; fi
+        fi
     fi
 
     slct="$(setting_1 | yad --list --title="$title" \
@@ -102,11 +109,10 @@ play_list() {
     --column=IMG:IMG \
     --column=TXT:TXT \
     --column=CHK:CHK \
-    --button="$(gettext "OK")":0 \
-    --button="$(gettext "Cancel")":1)"
+    "$btn2" --button="$btn1")"
     ret=$?
 
-    if [ $ret -eq 0 ]; then
+    if [ $ret -eq 0 -o $ret -eq 2 ]; then
         
         n=16; while [[ ${n} -lt 22 ]]; do
         
@@ -118,12 +124,29 @@ play_list() {
             
             ((n=n+1))
         done
+        
+        if [ $ret -eq 0 ]; then
+        
+            if [ ${count} -lt 1 ]; then
+            notify-send "$(gettext "Nothing to play")" \
+            "$(gettext "Exiting...")" -i idiomind -t 3000 &
+            "$DS/stop.sh" 2 & exit 1; fi
 
-            #if [ ${count} -lt 1 ]; then
-            #notify-send "$(gettext "Nothing to play")" \
-            #"$(gettext "Exiting...")" -i idiomind -t 3000 &
-            #"$DS/stop.sh" 2 & exit 1; fi
+            "$DS/stop.sh" 2 &
+            if [ -d "$DM_tlt" ] && [ -n "$tpc" ]; then
+            echo -e "$DM_tlt\n$tpc" > "$DT/.p_"
+            else "$DS/stop.sh" 2 && exit 1; fi
+            
+            echo -e ".ply.$tpc.ply." >> "$DC_s/log" &
+            sleep 1; "$DS/bcle.sh" &
 
+        elif [ $ret -eq 2 ]; then
+
+            [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
+            [ -f "$DT/index.m3u" ] && rm -f "$DT/index.m3u"
+            "$DS/stop.sh" 2 &
+        fi
+        
     fi
     exit 0
 }
@@ -131,18 +154,13 @@ play_list() {
 play_file() {
 
     if [ -f "${2}" ]; then
-        if grep ".mp3" <<<"${2: -4}"; then
-            play "${2}"
-        else
-            mplayer "${2}"
-        fi
+    play "${2}" >/dev/null 2>&1
     elif [ -n "$synth" ]; then
     sed 's/<[^>]*>//g' <<<"${3}." | $synth
     else
     sed 's/<[^>]*>//g' <<<"${3}." | espeak -v $lg -s 150
     fi
-    
-} >/dev/null 2>&1
+}
 
 case "$1" in
     play_word)
