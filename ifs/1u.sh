@@ -14,7 +14,7 @@ lang=( 'English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian' )
 
 sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
-'loop' 'rplay' 'audio' 'video' 'ntosd' \
+'rplay' 'audio' 'video' 'ntosd' 'loop' \
 'langt' 'langs' 'synth' 'txaud' 'intrf' \
 'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi' )
 

@@ -6,24 +6,40 @@
 play_word() {
 
     if [ -f "$DM_tls/${2,,}.mp3" ]; then
-    play "$DM_tls/${2,,}.mp3" >/dev/null 2>&1 &
+    play "$DM_tls/${2,,}.mp3" &
     elif [ -n "$synth" ]; then
     sed 's/<[^>]*>//g' <<<"${2}." | $synth &
     else
     sed 's/<[^>]*>//g' <<<"${2}." | espeak -v $lg -s 150 &
     fi
-}
+} >/dev/null 2>&1
 
 play_sentence() {
 
     if [ -f "${DM_tlt}/$2.mp3" ]; then
-    play "${DM_tlt}/$2.mp3" >/dev/null 2>&1 &
+    play "${DM_tlt}/$2.mp3" &
     elif [ -n "$synth" ]; then
     sed 's/<[^>]*>//g' <<<"${3}." | $synth &
     else
     sed 's/<[^>]*>//g' <<<"${3}." | espeak -v $lg -s 150 &
     fi
-}
+} >/dev/null 2>&1
+
+play_file() {
+
+    if [ -f "${2}" ]; then
+        if grep ".mp3" <<<"${2: -4}"; then
+            play "${2}"
+        else
+            mplayer "${2}" -noconsolecontrols -title "${2}"
+        fi
+    elif [ -n "$synth" ]; then
+    sed 's/<[^>]*>//g' <<<"${3}." | $synth
+    else
+    sed 's/<[^>]*>//g' <<<"${3}." | espeak -v $lg -s 150
+    fi
+    
+} >/dev/null 2>&1
 
 play_list() {
     
@@ -37,7 +53,7 @@ play_list() {
     'New episodes <i><small>Podcasts</small></i>' \
     'Saved episodes <i><small>Podcasts</small></i>' )
     sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
-    'loop' 'rplay' 'audio' 'video' 'ntosd' \
+    'rplay' 'audio' 'video' 'ntosd' 'loop' \
     'langt' 'langs' 'synth' 'txaud' 'intrf' \
     'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi' )
     in=( 'in1' 'in2' 'in3' 'in4' 'in5' 'in6' )
@@ -54,7 +70,7 @@ play_list() {
 
     if [[ ${cfg} = 1 ]]; then
 
-        n=16
+        n=6
         while [[ $n -lt 22 ]]; do
             get="${sets[$n]}"
             val=$(grep -o "$get"=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
@@ -72,7 +88,7 @@ play_list() {
 
     function setting_1() {
         n=0; 
-        while [[ $n -le 5 ]]; do
+        while [ ${n} -le 5 ]; do
                 arr="in$((n+1))"
                 [[ -z ${!arr} ]] \
                 && echo "$DS/images/addi.png" \
@@ -98,33 +114,65 @@ play_list() {
         title="$(gettext "Playing:") $tpp"; fi
         fi
     fi
-
-    slct="$(setting_1 | yad --list --title="$title" \
+    
+    tab1=$(mktemp "$DT/XXX.p")
+    tab2=$(mktemp "$DT/XXX.p")
+    c=$((RANDOM%100000)); KEY=$c
+    setting_1 | yad --plug=$KEY --tabnum=1 --list \
     --print-all --always-print-result --separator="|" \
-    --class=Idiomind --name=Idiomind \
-    --window-icon="$DS/images/icon.png" \
-    --skip-taskbar --align=right --center --on-top \
-    --expand-column=2 --no-headers \
-    --width=400 --height=300 --borders=5 \
+    --expand-column=2 --no-headers --borders=5 \
     --column=IMG:IMG \
     --column=TXT:TXT \
-    --column=CHK:CHK \
-    "$btn2" --button="$btn1")"
+    --column=CHK:CHK > $tab1 &
+    yad --plug=$KEY --form --tabnum=2 --borders=5 \
+    --align=right \
+    --separator='|' --always-print-result --print-all \
+    --field="$(gettext "Repeat")":CHK "$rplay" \
+    --field="$(gettext "Play audio")":CHK "$audio" \
+    --field="$(gettext "Only play videos")":CHK "$video" \
+    --field="$(gettext "Desktop notifications")":CHK "$ntosd" \
+    --field="$(gettext "Pause duration")":SCL "$loop" > $tab2 &
+    yad --notebook --key=$KEY --title="$title" \
+    --name=Idiomind --class=Idiomind \
+    --always-print-result --print-all \
+    --window-icon="$DS/images/icon.png" \
+    --align=right --fixed --center --on-top \
+    --tab-pos=right --tab-borders=0 \
+    --tab=" $(gettext "Lists") " \
+    --tab="$(gettext "Options")" \
+    --width=420 --height=320 --borders=0 \
+    "$btn2" --button="$btn1"
     ret=$?
 
     if [ $ret -eq 0 -o $ret -eq 2 ]; then
         
-        n=16; while [[ ${n} -lt 22 ]]; do
+        tab1=$(< $tab1)
+        tab2=$(< $tab2)
+        rm -f "$DT"/*.p
+        f=1
+        n=6
+        while [ ${n} -lt 22 ]; do
         
-            val=$(sed -n $((n-15))p <<<"${slct}" | cut -d "|" -f3)
-            [ -n "${val}" ] && \
-            sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" "$DC_s/1.cfg"
-            if [ "$val" = TRUE ]; then
-            count=$((count+$(egrep -cv '#|^$' <<<"${!in[$((n-16))]}"))); fi
+            if [ ${n} -gt 5 -a ${n} -lt 11 ]; then
+            
+                sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\""$(cut -d "|" -f${f} <<<"$tab2")"\"/g" \
+                "$DC_s/1.cfg"
+                ((f=f+1))
+
+            elif [ ${n} -ge 16 ]; then
+            
+                val=$(sed -n $((n-15))p <<<"${tab1}" | cut -d "|" -f3)
+                [ -n "${val}" ] && \
+                sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" "$DC_s/1.cfg"
+                        
+                if [ "$val" = TRUE ]; then
+                count=$((count+$(egrep -cv '#|^$' <<<"${!in[$((n-16))]}"))); fi
+
+            fi
             
             ((n=n+1))
         done
-        
+
         if [ $ret -eq 0 ]; then
         
             if [ ${count} -lt 1 ]; then
@@ -148,32 +196,17 @@ play_list() {
         fi
         
     fi
+    rm -f "$DT"/*.p
     exit 0
 }
-
-play_file() {
-
-    if [ -f "${2}" ]; then
-        if grep ".mp3" <<<"${2: -4}"; then
-            play "${2}"
-        else
-            mplayer "${2}" -noconsolecontrols -title "${2}"
-        fi
-    elif [ -n "$synth" ]; then
-    sed 's/<[^>]*>//g' <<<"${3}." | $synth
-    else
-    sed 's/<[^>]*>//g' <<<"${3}." | espeak -v $lg -s 150
-    fi
-    
-} >/dev/null 2>&1
 
 case "$1" in
     play_word)
     play_word "$@" ;;
     play_sentence)
     play_sentence "$@" ;;
-    play_list)
-    play_list "$@" ;;
     play_file)
     play_file "$@" ;;
+    play_list)
+    play_list "$@" ;;
 esac

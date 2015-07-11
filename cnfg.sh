@@ -23,7 +23,7 @@ lang=( 'English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian' )
 
 sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
-'loop' 'rplay' 'audio' 'video' 'ntosd' \
+'rplay' 'audio' 'video' 'ntosd' 'loop' \
 'langt' 'langs' 'synth' 'txaud' 'intrf' \
 'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi' )
 
@@ -93,11 +93,11 @@ yad --plug=$KEY --form --tabnum=1 \
 --field=" :LBL" " " \
 --field="$(gettext "Play Options")\t":LBL " " \
 --field=":LBL" " " \
---field="$(gettext "Duration of pause between items")":SCL "$loop" \
 --field="$(gettext "Repeat")":CHK "$rplay" \
 --field="$(gettext "Play audio")":CHK "$audio" \
 --field="$(gettext "Only play videos")":CHK "$video" \
 --field="$(gettext "Desktop notifications")":CHK "$ntosd" \
+--field="$(gettext "Duration of pause between items")":SCL "$loop" \
 --field=" :LBL" " " \
 --field="$(gettext "Languages")\t":LBL " " \
 --field=":LBL" " " \
