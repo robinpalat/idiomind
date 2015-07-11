@@ -16,23 +16,22 @@ on_quit() {
     kill -9 $(pgrep -f "yad --text-info ") &
     kill -9 $(pgrep -f "yad --form ") &
     kill -9 $(pgrep -f "yad --notebook ") & fi
+    if [ -f /tmp/.clipw ]; then
+    kill "$(< /tmp/.clipw)"; rm -f /tmp/.clipw; fi
     if [ -f "$DT/.p_" ]; then
-    notify-send "$(gettext "Playback stopped")"
+    #notify-send "$(gettext "Playback stopped")"
     rm -f "$DT/.p_" "$DT/tpp"
     rm -f "$DT/index.m3u"; fi
     exit
 }
 
 on_play() {
+    if ps -A | pgrep -f "play"; then killall play & fi
+    if ps -A | pgrep -f "mplayer"; then killall mplayer & fi
     killall bcle.sh &
     if ps -A | pgrep -f "/usr/share/idiomind/bcle.sh"; then killall bcle.sh & fi
     if ps -A | pgrep -f "/usr/share/idiomind/chng.sh"; then killall chng.sh; fi
     if ps -A | pgrep -f "notify-osd"; then (sleep 6 && killall notify-osd) & fi
-    if ps -A | pgrep -f "play"; then killall play & fi
-    if ps -A | pgrep -f "mplayer"; then killall mplayer & fi
-    [ -f "$DT/.p_" ] && rm -fr "$DT/.p_"
-    [ -f "$DT/.p" ] && rm -fr "$DT/.p"
-    [ -f "$DT/index.m3u" ] && rm -fr "$DT/index.m3u"
     exit
 }
 
@@ -89,6 +88,13 @@ on_play2() {
     exit
 }
 
+on_play3() {
+    
+    if ps -A | pgrep -f "play"; then killall play & fi
+    if ps -A | pgrep -f "mplayer"; then killall mplayer & fi
+    exit
+}
+
 case $1 in
     1)
     on_quit ;;
@@ -106,4 +112,6 @@ case $1 in
     on_edit ;;
     8)
     on_play2 ;;
+    9)
+    on_play3 ;;
 esac

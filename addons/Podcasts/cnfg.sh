@@ -1,13 +1,14 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
+
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 DCP="$DM_tl/Podcasts/.conf"
 DSP="$DS_a/Podcasts"
 date=$(date +%d)
 CNF=$(gettext "Configure")
-sets=('update' 'sync' 'path')
-if [ -n "$(< "$DCP/0.lst")" ]; then cfg=1; else
+sets=( 'update' 'sync' 'path' )
+if [[ -n "$(< "$DCP/0.lst")" ]]; then cfg=1; else
 > "$DCP/0.lst"; fi
 
 ini() {
@@ -53,20 +54,20 @@ done
     
 apply() {
     
-    printf "$CNFG" | sed 's/|/\n/g' | sed -n 4,15p | \
+    printf "$CNFG" |sed 's/|/\n/g' |sed -n 4,15p | \
     sed 's/^ *//; s/ *$//g' > "$DT/podcasts.tmp"
     n=1; while read feed; do
-        declare mod$n="$feed"
-        mod="mod$n"; url="url$n"
+        declare mod${n}="$feed"
+        mod="mod${n}"; url="url${n}"
         if [ "${!url}" != "${!mod}" ]; then
-            "$DSP/tls.sh" set_channel "${!mod}" $n & fi
-        if [ ! -s "$DCP/$n.rss" ]; then
-            "$DSP/tls.sh" set_channel "${!mod}" $n & fi
+        "$DSP/tls.sh" set_channel "${!mod}" ${n} & fi
+        if [ ! -s "$DCP/${n}.rss" ]; then
+        "$DSP/tls.sh" set_channel "${!mod}" ${n} & fi
         ((n=n+1))
     done < "$DT/podcasts.tmp"
 
     podcaststmp="$(cat "$DT/podcasts.tmp")"
-    if ([ -n "$podcaststmp" ] && [ "$podcaststmp" != "$(cat "$DCP/feeds.lst")" ]); then
+    if [ -n "$podcaststmp" ] && [[ "$podcaststmp" != "$(cat "$DCP/feeds.lst")" ]]; then
     mv -f "$DT/podcasts.tmp" "$DCP/feeds.lst"; else rm -f "$DT/podcasts.tmp"; fi
 
     val1=$(cut -d "|" -f1 <<<"$CNFG")
@@ -107,7 +108,6 @@ CNFG=$(yad --form --title="$(gettext "Podcasts settings")" \
 --button="$(gettext "Remove")":"$DSP/mngr.sh 'deleteall'" \
 --button="$(gettext "Syncronize")":5 \
 --button="gtk-apply":0)
-
 ret=$?
 
 if [[ $ret -eq 0 ]]; then

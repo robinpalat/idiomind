@@ -1,22 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
-#  
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#  
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software
-#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-#  MA 02110-1301, USA.
-#  
-
 source /usr/share/idiomind/ifs/c.conf
 DSP="$DS/practice"
 easys="$3"
@@ -33,54 +17,33 @@ cd "$DC_tlt/practice"
 
 if [[ -n "$1" ]]; then
 
-    if [ "$1" = 1 ]; then
-        info1="* "; info6="<b>$(gettext "Test completed!")</b>"
-        echo 21 > .1
-    elif [ "$1" = 2 ]; then
-        info2="* "; info7="<b>$(gettext "Test completed!")</b>"
-        echo 21 > .2
-    elif [ "$1" = 3 ]; then
-        info3="* "; info8="<b>$(gettext "Test completed!")</b>"
-        echo 21 > .3
-    elif [ "$1" = 4 ]; then
-        info4="* "; info9="<b>$(gettext "Test completed!")</b>"
-        echo 21 > .4
-    elif [ "$1" = 5 ]; then
-        info5="* "; info10="<b>$(gettext "Test completed!")</b>"
-        echo 21 > .5
-    elif [ "$1" = 6 ]; then
-        learned=$(< ./a.l)
-        num=$(< ./.1)
-        info1="* "
-        info="  <b><big>$learned </big></b><small>$(gettext "Learned")</small>   <span color='#3AB451'><b><big>$easys </big></b></span><small>$(gettext "Easy")</small>   <span color='#E78C1E'><b><big>$learning </big></b></span><small>$(gettext "Learning")</small>   <span color='#D11B5D'><b><big>$hards </big></b></span><small>$(gettext "Difficult")</small>  \\n"
-    elif [ $1 = 7 ]; then
-        learned=$(< ./b.l)
-        num=$(< ./.2)
-        info2="* "
-        info="  <b><big>$learned </big></b><small>$(gettext "Learned")</small>   <span color='#3AB451'><b><big>$easys </big></b></span><small>$(gettext "Easy")</small>   <span color='#E78C1E'><b><big>$learning </big></b></span><small>$(gettext "Learning")</small>   <span color='#D11B5D'><b><big>$hards </big></b></span><small>$(gettext "Difficult")</small>  \\n"
-    elif [ $1 = 8 ]; then
-        learned=$(< ./c.l)
-        num=$(< ./.3)
-        info3="* "
-        info="  <b><big>$learned </big></b><small>$(gettext "Learned")</small>   <span color='#3AB451'><b><big>$easys </big></b></span><small>$(gettext "Easy")</small>   <span color='#E78C1E'><b><big>$learning </big></b></span><small>$(gettext "Learning")</small>   <span color='#D11B5D'><b><big>$hards </big></b></span><small>$(gettext "Difficult")</small>  \\n"
-    elif [ $1 = 9 ]; then
-        learned=$(< ./d.l)
-        num=$(< ./.4)
-        info4="* "
-        info="  <b><big>$learned </big></b><small>$(gettext "Learned")</small>   <span color='#3AB451'><b><big>$easys </big></b></span><small>$(gettext "Easy")</small>   <span color='#E78C1E'><b><big>$learning </big></b></span><small>$(gettext "Learning")</small>   <span color='#D11B5D'><b><big>$hards </big></b></span><small>$(gettext "Difficult")</small>  \\n"
-    elif [ $1 = 10 ]; then
-        learned=$(< ./e.l)
-        num=$(< ./.5)
-        info5="* "
-        info="  <b><big>$learned </big></b><small>$(gettext "Learned")</small>   <span color='#3AB451'><b><big>$easys </big></b></span><small>$(gettext "Easy")</small>   <span color='#E78C1E'><b><big>$learning </big></b></span><small>$(gettext "Learning")</small>   <span color='#D11B5D'><b><big>$hards </big></b></span><small>$(gettext "Difficult")</small>  \\n"
+    if [ ${1} = 1 ]; then
+    info1="* "; info6="<b>$(gettext "Test completed!")</b>"; echo 21 > .1
+    elif [ ${1} = 2 ]; then
+    info2="* "; info7="<b>$(gettext "Test completed!")</b>"; echo 21 > .2
+    elif [ ${1} = 3 ]; then
+    info3="* "; info8="<b>$(gettext "Test completed!")</b>"; echo 21 > .3
+    elif [ ${1} = 4 ]; then
+    info4="* "; info9="<b>$(gettext "Test completed!")</b>"; echo 21 > .4
+    elif [ ${1} = 5 ]; then
+    info5="* "; info10="<b>$(gettext "Test completed!")</b>"; echo 21 > .5
+    elif [ ${1} = 6 ]; then
+    learned=$(< ./a.l); info1="* "
+    info="  <b><big>$learned </big></b><small>$(gettext "Learned")</small>   <span color='#3AB451'><b><big>$easys </big></b></span><small>$(gettext "Easy")</small>   <span color='#E78C1E'><b><big>$learning </big></b></span><small>$(gettext "Learning")</small>   <span color='#D11B5D'><b><big>$hards </big></b></span><small>$(gettext "Difficult")</small>  \\n"
+    elif [ ${1} = 7 ]; then
+    learned=$(< ./b.l); info2="* "
+    info="  <b><big>$learned </big></b><small>$(gettext "Learned")</small>   <span color='#3AB451'><b><big>$easys </big></b></span><small>$(gettext "Easy")</small>   <span color='#E78C1E'><b><big>$learning </big></b></span><small>$(gettext "Learning")</small>   <span color='#D11B5D'><b><big>$hards </big></b></span><small>$(gettext "Difficult")</small>  \\n"
+    elif [ ${1} = 8 ]; then
+    learned=$(< ./c.l); info3="* "
+    info="  <b><big>$learned </big></b><small>$(gettext "Learned")</small>   <span color='#3AB451'><b><big>$easys </big></b></span><small>$(gettext "Easy")</small>   <span color='#E78C1E'><b><big>$learning </big></b></span><small>$(gettext "Learning")</small>   <span color='#D11B5D'><b><big>$hards </big></b></span><small>$(gettext "Difficult")</small>  \\n"
+    elif [ ${1} = 9 ]; then
+    learned=$(< ./d.l); info4="* "
+    info="  <b><big>$learned </big></b><small>$(gettext "Learned")</small>   <span color='#3AB451'><b><big>$easys </big></b></span><small>$(gettext "Easy")</small>   <span color='#E78C1E'><b><big>$learning </big></b></span><small>$(gettext "Learning")</small>   <span color='#D11B5D'><b><big>$hards </big></b></span><small>$(gettext "Difficult")</small>  \\n"
+    elif [ ${1} = 10 ]; then
+    learned=$(< ./e.l); info5="* "
+    info="  <b><big>$learned </big></b><small>$(gettext "Learned")</small>   <span color='#3AB451'><b><big>$easys </big></b></span><small>$(gettext "Easy")</small>   <span color='#E78C1E'><b><big>$learning </big></b></span><small>$(gettext "Learning")</small>   <span color='#D11B5D'><b><big>$hards </big></b></span><small>$(gettext "Difficult")</small>  \\n"
     fi
 fi
-
-img1="$DSP/images/`< ./.1`.png"
-img2="$DSP/images/`< ./.2`.png"
-img3="$DSP/images/`< ./.3`.png"
-img4="$DSP/images/`< ./.4`.png"
-img5="$DSP/images/`< ./.5`.png"
 
 VAR="$(yad --list --title="$(gettext "Practice ")- $tpc" \
 $img --text="$info$hw" \
@@ -91,33 +54,60 @@ $img --text="$info$hw" \
 --ellipsize=NONE --no-headers --expand-column=2 --hide-column=1 \
 --width=500 --height=450 --borders=10 \
 --column="Action" --column="Pick":IMG --column="Label" \
-1 $img1 "    $info1 $info6   $(gettext "Flashcards")" \
-2 $img2 "    $info2 $info7   $(gettext "Multiple Choice")" \
-3 $img3 "    $info3 $info8   $(gettext "Recognizing Words")" \
-4 $img4 "    $info4 $info9   $(gettext "Writing Sentences")" \
-5 $img5 "    $info5 $info10   $(gettext "Images")" \
+1 "$DSP/images/`< ./.1`.png" "    $info1 $info6   $(gettext "Flashcards")" \
+2 "$DSP/images/`< ./.2`.png" "    $info2 $info7   $(gettext "Multiple Choice")" \
+3 "$DSP/images/`< ./.3`.png" "    $info3 $info8   $(gettext "Recognizing Words")" \
+4 "$DSP/images/`< ./.4`.png" "    $info4 $info9   $(gettext "Writing Sentences")" \
+5 "$DSP/images/`< ./.5`.png" "    $info5 $info10   $(gettext "Images")" \
 --button="$(gettext "Restart")":3 \
 --button="$(gettext "Start")":0)"
 ret=$?
 
 if [[ $ret -eq 0 ]]; then
+
     if [ -z "$VAR" ]; then
     source "$DS/ifs/mods/cmns.sh"
     msg " $(gettext "You must choose a practice.")\n" info
     "$DSP/strt.sh" & exit 1
     else
-    echo -e ".prct.$tpc.prct." >> "$DC_s/8.cfg" &
+    echo -e "prct.$tpc.prct" >> "$DC_s/log" &
     "$DSP/prct.sh" "$VAR" & exit 1
     fi
 
 elif [[ $ret -eq 3 ]]; then
+
     if [ -d "$DC_tlt/practice" ]; then
     cd "$DC_tlt/practice"; rm .*; rm *
-    touch ./log.1 ./log.2 ./log.3; fi
+    touch ./log1 ./log2 ./log3; fi
     "$DS/practice/strt.sh" & exit
 else
     cd "$DC_tlt/practice"
-    rm *.tmp
-    "$DS/ifs/tls.sh" colorize &
+    rm *.tmp; > "$DT/ps_lk"
+    rm "${DC_tlt}/5.cfg"
+    cfg5="${DC_tlt}/5.cfg"
+    cfg6="$(< "${DC_tlt}/6.cfg")"
+    img1='/usr/share/idiomind/images/1.png'
+    img2='/usr/share/idiomind/images/2.png'
+    img3='/usr/share/idiomind/images/3.png'
+    img0='/usr/share/idiomind/images/0.png'
+    log3="$(cat ./log3 ./d.3)"
+    log2="$(cat ./log2 ./d.2)"
+    log1="$(cat ./log1 ./d.1)"
+    
+    while read -r item; do
+    if grep -Fxo "${item}" <<<"${cfg6}"; then
+    i="<b><big>${item}</big></b>";else i="${item}"; fi
+    if grep -Fxo "${item}" <<<"${log3}"; then
+        echo -e "FALSE\n${i}\n$img3" >> "$cfg5"
+    elif grep -Fxo "${item}" <<<"${log1}"; then
+        echo -e "FALSE\n${i}\n$img1" >> "$cfg5"
+    elif grep -Fxo "${item}" <<<"${log2}"; then
+        echo -e "FALSE\n${i}\n$img2" >> "$cfg5"
+    else
+        echo -e "FALSE\n${i}\n$img0" >> "$cfg5"
+    fi
+    done < "${DC_tlt}/1.cfg"
+    rm -f "$DT/ps_lk"
+
     exit
 fi

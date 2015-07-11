@@ -2,6 +2,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
+
 IFS=$'\n\t'
 a="$(gettext "Tell us if you think this is an error.")"
 b="$(gettext "New episodes <i><small>Podcasts</small></i>")"
@@ -184,6 +185,7 @@ ntitle=\"$title\"
 nsumm=\"$summary\"
 nimage=\"$image\"
 url=\"$feed\""
+
         echo -e "${cfg}" > "$DIR2/$num.rss"; exit 0
         
     else
@@ -198,7 +200,7 @@ sync() {
    
     DIR2="$DM_tl/Podcasts/.conf"
     cfg="$DM_tl/Podcasts/.conf/0.lst"
-    path="$(sed -n 3p "$cfg" | grep -o 'path="[^"]*' | grep -o '[^"]*$')"
+    path="$(grep -o 'path="[^"]*' "$cfg" | grep -o '[^"]*$')"
     
     if  [ -f "$DT/l_sync" ] && [[ $2 = 1 ]]; then
     msg_2 "$(gettext "A process is already running!\nIf stopped, any rsync process will stop")" info "OK" "gtk-stop" "$(gettext "Syncing...")"
@@ -226,51 +228,34 @@ sync() {
     elif [ -d "$path" ]; then
         
         touch "$DT/l_sync"; SYNCDIR="$path/"
-        A="$(cd "$DM_tl/Podcasts/cache/"; \
-        ls --ignore="*.html" --ignore="*.item" --ignore="*.png" | wc -l)"
-        B="$(cd "$SYNCDIR"; ls * | wc -l)"
-        [ $? != 0 ] && B=0
-        
         cd /
 
         if [[ $rsync_delete = 0 ]]; then
         
-            rsync -az -v --exclude="*.item" --exclude="*.png" \
-            --exclude="*.html" --omit-dir-times --ignore-errors "$DM_tl/Podcasts/cache/" "$SYNCDIR"
+            rsync -amz --stats --exclude="*.item" --exclude="*.png" \
+            --exclude="*.html" --omit-dir-times --ignore-errors \
+            --log-file="$DT/l_sync" "$DM_tl/Podcasts/cache/" "$SYNCDIR"
             exit=$?
             
         elif [[ $rsync_delete = 1 ]]; then
         
-            rsync -az -v --delete --exclude="*.item" --exclude="*.png" \
-            --exclude="*.html" --omit-dir-times --ignore-errors "$DM_tl/Podcasts/cache/" "$SYNCDIR"
+            rsync -amz --stats --delete --exclude="*.item" --exclude="*.png" \
+            --exclude="*.html" --omit-dir-times --ignore-errors \
+            --log-file="$DT/l_sync" "$DM_tl/Podcasts/cache/" "$SYNCDIR"
             exit=$?
         fi
         
-        if [[ $exit = 0 ]]; then
-
-            new=$((A-B))
-            
-            [[ $new = 1 ]] && sum="$new $(gettext "new file in device")"
-            [[ $new -lt 1 ]] && sum=$(gettext "No new files in device")
-            [[ $new -gt 1 ]] && sum="$new $(gettext "new files in device")"
-            
-            if [[ $2 = 1 ]]; then
-            (sleep 1 && notify-send \
-            "$(gettext "Synchronization finished")" "$sum" -t 8000) &
-            fi
-  
-        elif [[ $exit != 0 ]]; then
+        if [[ $exit != 0 ]]; then
         
             if [[ $2 = 1 ]]; then
             (sleep 1 && notify-send -i idiomind \
             "$(gettext "Error")" \
             "$(gettext "Error while syncing")" -t 8000) &
             elif [[ $2 = 0 ]]; then
-            echo "$(gettext "Error while syncing")" >> "$DM_tl/Podcasts/.conf/feed.err"
+            echo "$(gettext "Error while syncing") - $(cat "$DT/l_sync")" >> "$DM_tl/Podcasts/.conf/feed.err"
             fi
         fi
-        
-        [[ -f "$DT/l_sync" ]] && rm -f "$DT/l_sync"; exit
+        [ -f "$DT/l_sync" ] && rm -f "$DT/l_sync"; exit
     fi
 }
 

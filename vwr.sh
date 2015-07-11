@@ -1,60 +1,75 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 #
-echo "_" >> "$DT/stats.tmp" &
-[[ $1 = 1 ]] && index="${DC_tlt}/1.cfg" \
-&& item_name=`sed 's/<[^>]*>//g' <<<"${3}"`
-[[ $1 = 2 ]] && index="${DC_tlt}/2.cfg" \
-&& item_name=`sed 's/<[^>]*>//g' <<<"${2}"`
-re='^[0-9]+$'
-index_pos="$3"
-listen="$(gettext "Listen")"
-if ! [[ $index_pos =~ $re ]]; then
-index_pos=$(grep -Fxon "${item_name}" < "${index}" \
-| sed -n 's/^\([0-9]*\)[:].*/\1/p')
-nll="_"; fi
-item="$(sed -n "$index_pos"p "${index}" |sed 's/<[^>]*>//g')"
 
-if [ -z "${item}" ]; then
-item="$(sed -n 1p "${index}")"
-index_pos=1; fi
-fname="$(echo -n "${item}" | md5sum | rev | cut -c 4- | rev)"
-align=left
-fs=25; bs=20
+[ ${1} = 1 ] && index="${DC_tlt}/1.cfg" && item_name="$(sed 's/<[^>]*>//g' <<<"${3}")"
+[ ${1} = 2 ] && index="${DC_tlt}/2.cfg" && item_name="$(sed 's/<[^>]*>//g' <<<"${2}")"
 
-if [ -f "${DM_tlt}/words/${fname}.mp3" ]; then
-cmd_listen="play '${DM_tlt}/words/${fname}.mp3'"
-word_view
-elif [ -f "${DM_tlt}/${fname}.mp3" ]; then
-cmd_listen="'$DS/ifs/tls.sh' 'listen_sntnc' '${fname}'"
-sentence_view
+re='^[0-9]+$'; index_pos="$3"
+if ! [[ ${index_pos} =~ $re ]]; then
+index_pos=`grep -Fxon -m 1 "${item_name}" "${index}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
+nll=""; fi
+
+_item="$(sed -n ${index_pos}p "${index}")"
+if [ -z "${_item}" ]; then _item="$(sed -n 1p "${index}")"; index_pos=1; fi
+item="$(grep -F -m 1 "trgt={${_item}}" "$DC_tlt/0.cfg" |sed 's/},/}\n/g')"
+
+type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
+trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
+srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
+exmp="$(grep -oP '(?<=exmp={).*(?=})' <<<"${item}")"
+defn="$(grep -oP '(?<=defn={).*(?=})' <<<"${item}")"
+note="$(grep -oP '(?<=note={).*(?=})' <<<"${item}")"
+grmr="$(grep -oP '(?<=grmr={).*(?=})' <<<"${item}")"
+tag="$(grep -oP '(?<=tag={).*(?=})' <<<"${item}")"
+mark="$(grep -oP '(?<=mark={).*(?=})' <<<"${item}")"
+lwrd="$(grep -oP '(?<=wrds={).*(?=})' <<<"${item}" |tr '_' '\n')"
+exmp="$(sed "s/"${trgt,,}"/<span background='#FDFBCF'>"${trgt,,}"<\/\span>/g" <<<"$exmp")"
+id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
+
+[ "$mark" = TRUE ] && trgt="<b>$trgt</b>" && grmr="<b>$grmr</b>"
+
+if [ ${type} = 1 ]; then
+
+    cmd_listen="$DS/play.sh play_word "\"${trgt}\"""
+    word_view
+
+elif [ ${type} = 2 ]; then
+
+    cmd_listen="$DS/play.sh play_sentence ${id} "\"${trgt}\"""
+    sentence_view
+
 else
-cmd_listen="'$DS/ifs/tls.sh' 'listen_sntnc' '${fname}'"
-sentence_view
+    m_text "${_item}"
 fi
-ret=$?
+    ret=$?
 
-    if [[ $ret -eq 4 ]]; then
-    "$DS/mngr.sh" edit "$1" "$index_pos"
+    if [ $ret -eq 5 ]; then
+        "$DS/mngr.sh" mtext ${1} ${index_pos}
+
+    elif [ $ret -eq 4 ]; then
+        "$DS/mngr.sh" edit ${1} ${index_pos}
     
-    elif [[ $ret -eq 2 ]]; then
+    elif [ $ret -eq 2 ]; then
     
-        if [[ $index_pos = 1 ]]; then
+        if [[ ${index_pos} = 1 ]]; then
+        
         item=`tail -n 1 < "${index}"`
-        ([[ $1 = 1 ]] && "$DS/vwr.sh" "$1" "$nll" "${item}"
-         [[ $1 = 2 ]] && "$DS/vwr.sh" "$1" "${item}") &
+        [ ${1} = 1 ] && "$DS/vwr.sh" ${1} "" "${item}"
+        [ ${1} = 2 ] && "$DS/vwr.sh" ${1} "${item}"
         else
+        
         ff=$((index_pos-1))
-        "$DS/vwr.sh" "$1" "$nll" $ff &
+        "$DS/vwr.sh" ${1} "" ${ff} &
         fi
     
-    elif [[ $ret -eq 3 ]]; then
-    ff=$((index_pos+1))
-    "$DS/vwr.sh" "$1" "$nll" $ff &
+    elif [ $ret -eq 3 ]; then
+    
+        ff=$((index_pos+1))
+        "$DS/vwr.sh" ${1} "" ${ff} &
     
     else 
-    echo -e ".vwr.`wc -l < "$DT/stats.tmp"`.vwr." >> "$DC_s/8.cfg"
-    rm -f "$DT/stats.tmp" & exit 1
+        exit 1
     fi
     
 exit

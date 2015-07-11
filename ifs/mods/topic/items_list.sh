@@ -1,33 +1,23 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+ 
 function word_view() {
-    
-    trgt="$item"
-    tags="$(eyeD3 "${DM_tlt}/words/$fname.mp3")"
-    srce="$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)' <<<"${tags}")"
-    fields="$(grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' <<<"${tags}" | tr '_' '\n')"
-    mark="$(grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)' <<<"${tags}")"
-    exmp="$(sed -n 1p <<<"${fields}")"
-    dftn="$(sed -n 2p <<<"${fields}")"
-    note="$(sed -n 3p <<<"${fields}")"
-    exmp="$(sed "s/"${trgt,,}"/<span background='#FDFBCF'>"${trgt,,}"<\/\span>/g" <<<"$exmp")"
-    [ -n "$dftn" ] && field_dftn="--field=$dftn:lbl"
+
+    [ -n "$defn" ] && field_defn="--field=$defn:lbl"
     [ -n "$note" ] && field_note="--field=$note\n:lbl"
     [ -n "$exmp" ] && field_exmp="--field=<i><span color='#737373'>$exmp</span></i>:lbl"
-    [ -z "$trgt" ] && tm="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>"
-    [ "$mark" = TRUE ] && trgt="<b>$trgt</b>"
-    
+
     yad --form --title=" " \
     --selectable-labels --quoted-output \
-    --text="<span font_desc='Sans Free $fs'>$trgt</span>\n\n<i>$srce</i>\n\n" \
+    --text="$tag<span font_desc='Sans Free 25'>$trgt</span>\n\n<i>$srce</i>\n\n" \
     --window-icon="$DS/images/icon.png" \
     --align=left --scroll --skip-taskbar --text-align=center \
     --image-on-top --center --on-top \
-    --width=620 --height=380 --borders=$bs \
-    --field="":lbl "$field_exmp" "$field_dftn" "$field_note" \
+    --width=620 --height=380 --borders=20 \
+    --field="":lbl "$field_exmp" "$field_defn" "$field_note" \
     --button=gtk-edit:4 \
-    --button="$listen":"$cmd_listen" \
+    --button="$(gettext "Listen")":"$cmd_listen" \
     --button=gtk-go-down:2 \
     --button=gtk-go-up:3
     
@@ -35,23 +25,14 @@ function word_view() {
 
 
 function sentence_view() {
-    
-    if [[ -f "$DM_tlt/$fname.mp3" ]]; then
-    tags="$(eyeD3 "$DM_tlt/$fname.mp3")"
-    [ "$(sed -n 1p "$DC_s/1.cfg" | grep -o grammar=\"[^\"]* | grep -o '[^"]*$')"  = TRUE ] \
-    && trgt="$(grep -o -P '(?<=IGMI3I0I).*(?=IGMI3I0I)' <<<"${tags}")" \
-    || trgt="$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"${tags}")"
-    srce="$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"${tags}")"
-    lwrd="$(grep -o -P '(?<=IPWI3I0I).*(?=IPWI3I0I)' <<<"${tags}" | tr '_' '\n')"
-    mark="$(grep -o -P '(?<=ISI4I0I).*(?=ISI4I0I)' <<<"${tags}")"
-    [ "$mark" = TRUE ] && trgt="<b>$trgt</b>"
-    [ -z "$trgt" ] && tm="<span color='#3F78A0'><tt>$(gettext "Text missing")</tt></span>"
-    else tm="<span color='#3F78A0'><tt>$(gettext "File not found")</tt></span>"; fi
+
+    if [ "$(grep -o gramr=\"[^\"]* < "$DC_s/1.cfg" | grep -o '[^"]*$')"  = TRUE ]; then
+    trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
     
     echo "$lwrd" | yad --list --title=" " \
-    --text="$tm<span font_desc='Sans Free 15'>$trgt</span>\n\n<i>$srce</i>\n\n" \
+    --text="$tag<span font_desc='Sans Free 15'>${trgt_l}</span>\n\n<i>$srce</i>\n\n" \
     --selectable-labels --print-column=0 \
-    --dclick-action="$DS/ifs/tls.sh 'dclik'" \
+    --dclick-action="$DS/play.sh 'play_word'" \
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --image-on-top --center --on-top \
     --scroll --text-align=left --expand-column=0 --no-headers \
@@ -59,28 +40,51 @@ function sentence_view() {
     --column="":TEXT \
     --column="":TEXT \
     --button=gtk-edit:4 \
-    --button="$listen":"$cmd_listen" \
+    --button="$(gettext "Listen")":"$cmd_listen" \
     --button=gtk-go-down:2 \
     --button=gtk-go-up:3
     
 } >/dev/null 2>&1
 
-export -f word_view sentence_view
+
+function m_text() {
+
+    include "$DS/ifs/mods/mngr"
+    trgt="${1}"
+    cmd_del="$DS/mngr.sh delete_item "\"${tpc}\"" "\"${trgt}\"""
+    cmd_add="$DS/add.sh new_items (2) (3) "\"${trgt}\"""
+    text="<span font_desc='monospace 10'>$(gettext "Text missing")</span>\n\n\n\n"
+
+    yad --form --title=" " \
+    --text="${text}" \
+    --window-icon="$DS/images/icon.png" \
+    --align=center --skip-taskbar --text-align=center \
+    --image-on-top --center --on-top \
+    --width=620 --height=380 --borders=20 \
+    --button="$(gettext "Delete")":"$cmd_del" \
+    --button=gtk-add:"$cmd_add" \
+    --button=gtk-go-down:2 \
+    --button=gtk-go-up:3
+    
+} >/dev/null 2>&1
+
+export -f word_view sentence_view m_text
+
 
 function notebook_1() {
     
     cmd_mark="'$DS/mngr.sh' 'mark_as_learned' "\"$tpc\"" 1"
     cmd_attchs="'$DS/ifs/tls.sh' 'attachs'"
     cmd_del="'$DS/mngr.sh' 'delete_topic' "\"$tpc\"""
+    cmd_adv="'$DS/ifs/tls.sh' adv "\"$tpc\"""
     cmd_share="'$DS/ifs/upld.sh' upld "\"$tpc\"""
-    cmd_play="$DS/play.sh"
-    list() {
-    if [[ $((`wc -l < "${DC_tlt}/5.cfg"`/3)) = \
+    cmd_eind="'$DS/mngr.sh' edit_list "\"$tpc\"""
+    cmd_play="$DS/play.sh play_list"
+    
+    list() { if [[ $((`wc -l < "${DC_tlt}/5.cfg"`/3)) = \
     `wc -l < "${DC_tlt}/1.cfg"` ]]; then
-    tac "${DC_tlt}/5.cfg"; else
-    tac "$ls1" | \
-    awk '{print "/usr/share/idiomind/images/0.png\n"$0"\nFALSE"}'; fi
-    }
+    tac "${DC_tlt}/5.cfg"; else tac "$ls1" | \
+    awk '{print "/usr/share/idiomind/images/0.png\n"$0"\nFALSE"}'; fi; }
     
     list | yad --list --tabnum=1 \
     --plug=$KEY --print-all --separator='|' \
@@ -107,7 +111,7 @@ function notebook_1() {
     --field="$(gettext "Files")":FBTN "$cmd_attchs" \
     --field="$(gettext "Share")":FBTN "$cmd_share" \
     --field="$(gettext "Delete")":FBTN "$cmd_del" \
-    --field=" ":LBL " " > "$cnf4" &
+    --field="$(gettext "Edit list")":FBTN "$cmd_eind" > "$cnf4" &
     yad --notebook --title="Idiomind - $tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
@@ -120,8 +124,8 @@ function notebook_1() {
     --width=$sx --height=$sy --borders=0 --tab-borders=3 \
     --button="$(gettext "Lists")":"$cmd_play" \
     --button="$(gettext "Practice")":5 \
-    --button="$(gettext "Close")":1
-}
+    --button="gtk-close":1
+} >/dev/null 2>&1
 
 
 function notebook_2() {
@@ -130,7 +134,7 @@ function notebook_2() {
     cmd_attchs="'$DS/ifs/tls.sh' 'attachs'"
     cmd_del="'$DS/mngr.sh' 'delete_topic' "\"$tpc\"""
     cmd_share="'$DS/ifs/upld.sh' 'upld' "\"$tpc\"""
-    
+
     yad --multi-progress --tabnum=1 \
     --text="$pres" \
     --plug=$KEY \
@@ -155,7 +159,7 @@ function notebook_2() {
     --field="$(gettext "Files")":FBTN "$cmd_attchs" \
     --field="$(gettext "Share")":FBTN "$cmd_share" \
     --field="$(gettext "Delete")":FBTN "$cmd_del" \
-    --field=" ":LBL " " > "$cnf4" &
+    --field="$(gettext "Edit list")":FBTN "$cmd_eind" > "$cnf4" &
     yad --notebook --title="Idiomind - $tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
@@ -166,8 +170,8 @@ function notebook_2() {
     --tab=" $(gettext "Notes") " \
     --tab=" $(gettext "Edit") " \
     --width=$sx --height=$sy --borders=0 --tab-borders=3 \
-    --button="$(gettext "Close")":1
-}
+    --button="gtk-close":1
+} >/dev/null 2>&1
 
 
 function dialog_1() {

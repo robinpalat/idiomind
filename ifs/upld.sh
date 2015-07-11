@@ -1,107 +1,79 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
-#  
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#  
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software
-#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-#  MA 02110-1301, USA.
-#  
-
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
-sets=('channel' 'link' 'logo' 'ntype' \
-'nmedia' 'ntitle' 'nsumm' 'nimage' 'url')
 
-vsd() {
+_cfg() {  b=$(tr -dc a-z < /dev/urandom |head -c 1)
+    c=$((RANDOM%100))
+    id="$b$c"
+    id=${id:0:3}
+    echo -e "usrid=\"$id\"
+    iuser=\"\"
+    cntct=\"\"" > "$DC_s/3.cfg"; }
 
-    cd "$DM_t/saved"; ls -t *.id | sed 's/\.id//g' | \
-    yad --list --title="$(gettext "Your Shared Topics")" \
-    --name=Idiomind --class=Idiomind \
-    --dclick-action="$DS/ifs/upld.sh 'infsd'" \
-    --window-icon="$DS/images/icon.png" --center --on-top \
-    --width=520 --height=380 --borders=10 \
-    --print-column=1 --no-headers \
-    --column=Nombre:TEXT \
-    --button=gtk-close:1
-    exit
-} >/dev/null 2>&1
+[ ! $(grep -oP '(?<=usrid=\").*(?=\")' "$DC_s/3.cfg") ] && _cfg
 
-infsd() {
+function dwld() {
 
-    file="$DM_t/saved/${2}.id"
-    id=$(sed -n 1p "$DC_s/3.cfg")
-    language_source=$(sed -n 2p "$file" | grep -o 'language_source="[^"]*' | grep -o '[^"]*$')
-    language_target=$(sed -n 3p "$file" | grep -o 'language_target="[^"]*' | grep -o '[^"]*$')
-    category=$(sed -n 6p "$file" | grep -o 'category="[^"]*' | grep -o '[^"]*$')
-    link=$(sed -n 7p "$file" | grep -o 'link="[^"]*' | grep -o '[^"]*$')
-    name=$(sed -n 1p "$file" | grep -o 'name="[^"]*' | grep -o '[^"]*$')
-    lng=$(lnglss "$language_source")
-    lnglbl="${language_target,,}"
+    # downloading from http://server_temp/c/xxx.md5sum.tar.gz 
+    msg "$(gettext "Downloading... When the download completes the files will be added to topic directory.")" info
+    mkdir "$DT/download"
+    idcfg="$DM_tl/${2}/.conf/id.cfg"
+    link=$(grep -o 'ilink="[^"]*' "${idcfg}" |grep -o '[^"]*$')
+    md5id=$(grep -o 'md5id="[^"]*' "${idcfg}" |grep -o '[^"]*$')
+    oname=$(grep -o 'oname="[^"]*' "${idcfg}" |grep -o '[^"]*$')
+    langt=$(grep -o 'langt="[^"]*' "${idcfg}" |grep -o '[^"]*$')
+    url="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
+    | grep -o 'DOWNLOADS="[^"]*' | grep -o '[^"]*$')"
+    URL="$url/c/$link.${md5id}.tar.gz"
+
+    if ! wget -S --spider "${URL}" 2>&1 |grep 'HTTP/1.1 200 OK'; then
+        cleanups "$DT/download"
+        msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" info & exit; fi
     
-    cd "$HOME"
-    sleep 0.5
-    sv=$(yad --file --save --title="$(gettext "Download")" \
-    --filename="$2.idmnd" \
-    --window-icon="$DS/images/icon.png" --skip-taskbar --center --on-top \
-    --width=600 --height=500 --borders=10 \
-    --button="$(gettext "Cancel")":1 --button="gtk-save":0)
-    ret=$?
-    
-    if [[ $ret -eq 0 ]]; then
-        
-        internet; cd "$DT"
-        DOWNLOADS="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP | \
-        grep -o 'DOWNLOADS="[^"]*' | grep -o '[^"]*$')"
-        file="$DOWNLOADS/${lng}/${lnglbl}/${category}/${link}.${name}.idmnd"
-        [ -z "$DOWNLOADS" ] && msg "$(gettext "The server is not available at the moment.")" dialog-warning && exit
-        
-        WGET() {
-        rand="$RANDOM `date`"
-        pipe="/tmp/pipe.$(echo '$rand' | md5sum | tr -d ' -')"
-        mkfifo "$pipe"
-        wget -c "$1" 2>&1 | while read data;do
-        if [ "`echo $data | grep '^Length:'`" ]; then
-        total_size=$(echo $data | grep "^Length:" | sed 's/.*\((.*)\).*/\1/' | tr -d '()')
-        fi
-        if [ "$(echo $data | grep '[0-9]*%' )" ];then
-        percent=$(echo $data | grep -o "[0-9]*%" | tr -d '%')
-        echo "$percent"
-        echo "# $(gettext "Downloading...")  $percent%"
-        fi
-        done > "$pipe" &
-        wget_info=$(ps ax |grep "wget.*$1" |awk '{print $1"|"$2}')
-        wget_pid=$(echo $wget_info | cut -d'|' -f1)
-        yad --progress --title="$(gettext "Downloading")" \
-        --progress-text=" " --auto-close \
-        --window-icon="$DS/images/icon.png" \
-        --skip-taskbar --no-buttons --on-top --fixed \
-        --width=200 --height=50 --borders=4 --geometry=240x20-4-4 < "$pipe"
+    wget -q -c -T 80 -O "$DT/download/${oname}.tar.gz" "${URL}"
 
-        if [ "$(ps -A |grep "$wget_pid")" ];then
-        kill "$wget_pid"
-        fi
-        rm -f "$pipe"
-        }
-        WGET "${file}"
+    if [ -f "$DT/download/${oname}.tar.gz" ]; then
+        cd "$DT/download"/
+        tar -xzvf "$DT/download/${oname}.tar.gz"
         
-        if [ -f "$DT/$link.${name}.idmnd" ] ; then
-        [ -f "$sv" ] && rm "$sv"
-        mv -f "$DT/$link.${name}.idmnd" "$sv"
+        if [ -d "$DT/download/${oname}" ]; then
+        
+        ltotal="$(gettext "Total:")"
+        laudio="$(gettext "Audio files:")"
+        limage="$(gettext "Images:")"
+        lfiles="$(gettext "Additional files:")"
+        lothers="$(gettext "Others:")"
+        tmp="$DT/download/${oname}"
+        total=$(find "$tmp" -maxdepth 5 -type f | wc -l)
+        audio=$(find "$tmp" -maxdepth 5 -name '*.mp3' | wc -l)
+        images=$(find "$tmp" -maxdepth 5 -name '*.jpg' | wc -l)
+        hfiles="$(cd "$tmp"; ls -d ./.[^.]* | less | wc -l)"
+        exfiles="$(find "$tmp" -maxdepth 5 -perm -111 -type f | wc -l)"
+        atfiles=$(find "$tmp/files" -maxdepth 5 -name | wc -l)
+        others=$((wchfiles+wcexfiles))
+        mv -f "${tmp}/conf/info" "$DC_tlt/info"
+        mv -n "$tmp/share"/*.mp3 "$DM_t/$langt/.share"/
+        rm -fr "$tmp/share" "${tmp}/conf"
+        mv -f "${tmp}"/*.mp3 "${DM_tlt}"/
+        [ ! -f "${DM_tlt}/images" ] && mkdir "${DM_tlt}/images"
+        mv -f "${tmp}"/images/*.jpg "${DM_tlt}"/images/
+        [ ! -f "${DM_tlt}/files" ] && mkdir "${DM_tlt}/files"
+        mv -f "${tmp}"/files/* "${DM_tlt}"/files/
+        echo "${oname}" >> "$DM_tl/.3.cfg"
+        echo -e "$ltotal $total\n$laudio $audio\n$limage $images\n$lfiles $atfiles\n$lothers $others" > "${DC_tlt}/11.cfg"
+        rm -fr "$DT/download"
+        
         else
-        msg "$(gettext "The file is not yet available for download from the server.")\n" info & exit
+            cleanups "$DT/download"
+            msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" info & exit
         fi
+    else
+        cleanups "$DT/download"
+        msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" info & exit
     fi
     exit
 }
@@ -115,11 +87,11 @@ msg "$(gettext "Unavailable")\n" info "$(gettext "Unavailable")" & exit 1; fi
 if [ "${tpc}" != "${2}" ]; then
 msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit 1; fi
 
-if [ -d "$DT/upload" ]; then
+if [ -d "$DT/upload" ] || [ -d "$DT/download" ]; then
 msg_2 "$(gettext "Wait until it finishes a previous process")\n" info OK gtk-stop "$(gettext "Warning")"
-ret=$(echo "$?")
-if [[ $ret -eq 1 ]]; then
-rm -fr "$DT/upload"
+ret="$?"
+if [ $ret -eq 1 ]; then
+cleanups "$DT/upload" "$DT/download"
 "$DS/stop.sh" 5
 fi
 exit 1
@@ -151,53 +123,96 @@ science="$(gettext "Science")"
 interview="$(gettext "Interview")"
 funny="$(gettext "Funny")"
 lnglbl="${lgtl,,}"
-id=$(sed -n 1p $DC_s/3.cfg)
-if [ -z "$id" ] || [ ${#id} -gt 3 ]; then
-b=$(tr -dc a-z < /dev/urandom | head -c 1)
-id="$b$((RANDOM%100))"
-id=${id:0:3}; fi
-mail=$(sed -n 2p "$DC_s/3.cfg")
-user=$(sed -n 3p "$DC_s/3.cfg")
-[ -z "$user" ] && user=$USER
-nt=$(< "${DC_tlt}/10.cfg")
-imgm="${DM_tlt}/words/images/img.jpg"
+usrid="$(grep -o 'usrid="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
+iuser="$(grep -o 'iuser="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
+cntct="$(grep -o 'cntct="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
+if [ -z "$usrid" ] || [ ${#id} -gt 3 ]; then
+b=$(tr -dc a-z < /dev/urandom |head -c 1)
+usrid="$b$((RANDOM%1000))"
+usrid=${usrid:0:3}; fi
+[ -z "$iuser" ] && iuser=$USER
+note=$(< "${DC_tlt}/info")
+imgm="${DM_tlt}/images/img.jpg"
 
-"$DS/ifs/tls.sh" check_index "$tpc"
-
-if [ $(cat "${DC_tlt}/0.cfg" | wc -l) -ge 20 ]; then
+"$DS/ifs/tls.sh" check_index "${tpc}"
+if [ $(cat "${DC_tlt}/0.cfg" | wc -l) -ge 15 ]; then
 btn="--button="$(gettext "Upload")":0"; else
 btn="--center"; fi
-
 cd "$HOME"
-upld=$(yad --form --title="$(gettext "Share")" \
---text="<span font_desc='Free Sans Bold 10' color='#5A5A5A'>${tpc}</span>" \
---name=Idiomind --class=Idiomind \
---window-icon="$DS/images/icon.png" --buttons-layout=end \
---align=right --center --on-top \
---width=480 --height=460 --borders=12 \
---field=" :lbl" "#1" \
---field="$(gettext "Author")" "$user" \
---field="\t$(gettext "Contact (Optional)")" "$mail" \
---field="$(gettext "Category"):CBE" \
-"!$others!$article!$comics!$culture!$documentary!$entertainment!$funny!$family!$grammar!$history!$movies!$in_the_city!$interview!$internet!$music!$nature!$news!$office!$relations!$sport!$science!$shopping!$social_networks!$technology!$travel" \
---field="$(gettext "Skill Level"):CB" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
---field="\n$(gettext "Description/Notes"):TXT" "${nt}" \
---field="$(gettext "Image 600x150px"):FL" "${imgm}" \
---button="$(gettext "Cancel")":4 \
---button="$(gettext "PDF")":2 "$btn")
-ret=$?
 
-img=$(echo "${upld}" | cut -d "|" -f7)
-if [ -f "${img}" ] && [ "${img}" != "${imgm}" ]; then
-wsize="$(identify "${img}" | cut -d ' ' -f 3 | cut -d 'x' -f 1)"
-esize="$(identify "${img}" | cut -d ' ' -f 3 | cut -d 'x' -f 2)"
-if [ "$wsize" -gt 1000 ] || [ "$wsize" -lt 600 ] \
-|| [ "$esize" -lt 100 ] || [ "$esize" -gt 400 ]; then
-msg "$(gettext "Sorry, the image size is not suitable.")\n " info "$(gettext "Error")"
-"$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
-/usr/bin/convert "${img}" -interlace Plane -thumbnail 600x150^ \
--gravity center -extent 600x150 \
--quality 100% "${DM_tlt}/words/images/img.jpg"
+if [ -f "$DC_tlt/11.cfg" ]; then
+
+        if [ -z "$(< "$DC_tlt/11.cfg")" ]; then
+        audio="$(grep -o 'naudi="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+        fsize="$(grep -o 'nsize="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+        imgs="$(grep -o 'nimag="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+        cmd_dl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
+        info="<b>$(gettext "Additional content available for download")</b>"
+        info2="$(gettext "Audio files:") $audio\n$(gettext "Images:") $imgs\n$(gettext "Size:") $fsize"
+        d=$(yad --form --title="$(gettext "Share")" \
+        --columns=2 \
+        --text="<span font_desc='Free Sans 15'> ${tpc}</span>" \
+        --name=Idiomind --class=Idiomind \
+        --window-icon="$DS/images/icon.png" --buttons-layout=end \
+        --align=left --center --on-top \
+        --width=380 --height=260 --borders=12 \
+        --field="\n\n$info:lbl" " " \
+        --field="$(gettext "Download"):BTN" "${cmd_dl}" \
+        --field="$info2:lbl" " " \
+        --field="\t\t\t\t\t:lbl" " " \
+        --field=" :lbl" " " \
+        --button="$(gettext "PDF")":2 \
+        --button="$(gettext "Close")":4)
+        ret=$?
+        
+        elif [ -n "$(< "$DC_tlt/11.cfg")" ]; then
+        
+        d=$(yad --form --title="$(gettext "Share")" \
+        --columns=2 --separator="|" \
+        --text="<span font_desc='Free Sans 15'> ${tpc}</span>" \
+        --name=Idiomind --class=Idiomind \
+        --window-icon="$DS/images/icon.png" --buttons-layout=end \
+        --align=left --center --on-top \
+        --width=380 --height=260 --borders=12 \
+        --field="$(gettext "Latest Download:"):lbl" " " \
+        --field="$(< "${DC_tlt}/11.cfg"):lbl" " " \
+        --field=" :lbl" " " \
+        --button="$(gettext "PDF")":2 \
+        --button="$(gettext "Close")":4)
+        ret=$?
+        
+        fi
+else
+    d=$(yad --form --title="$(gettext "Share")" \
+    --text="<span font_desc='Free Sans 14'>${tpc}</span>" \
+    --name=Idiomind --class=Idiomind \
+    --window-icon="$DS/images/icon.png" --buttons-layout=end \
+    --align=right --center --on-top \
+    --width=480 --height=460 --borders=12 \
+    --field=" :lbl" " " \
+    --field="$(gettext "Author")" "$iuser" \
+    --field="\t$(gettext "Contact (Optional)")" "$cntct" \
+    --field="$(gettext "Category"):CBE" \
+    "!$others!$article!$comics!$culture!$documentary!$entertainment!$funny!$family!$grammar!$history!$movies!$in_the_city!$interview!$internet!$music!$nature!$news!$office!$relations!$sport!$science!$shopping!$social_networks!$technology!$travel" \
+    --field="$(gettext "Skill Level"):CB" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
+    --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
+    --field="$(gettext "Image 600x150px"):FL" "${imgm}" \
+    --button="$(gettext "PDF")":2 "$btn" \
+    --button="$(gettext "Close")":4)
+    ret=$?
+
+    img=$(echo "${d}" | cut -d "|" -f7)
+    if [ -f "${img}" ] && [ "${img}" != "${imgm}" ]; then
+    wsize="$(identify "${img}" | cut -d ' ' -f 3 | cut -d 'x' -f 1)"
+    esize="$(identify "${img}" | cut -d ' ' -f 3 | cut -d 'x' -f 2)"
+    if [ ${wsize} -gt 1000 ] || [ ${wsize} -lt 400 ] \
+    || [ ${esize} -lt 100 ] || [ ${esize} -gt 600 ]; then
+    msg "$(gettext "Sorry, the image size is not suitable.")\n " info "$(gettext "Error")"
+    "$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
+    /usr/bin/convert "${img}" -interlace Plane -thumbnail 600x150^ \
+    -gravity center -extent 600x150 \
+    -quality 100% "${DM_tlt}/images/img.jpg"
+    fi
 fi
 
 if [[ $ret = 2 ]]; then
@@ -205,8 +220,11 @@ if [[ $ret = 2 ]]; then
     
 elif [[ $ret = 0 ]]; then
 
-Ctgry=$(echo "${upld}" | cut -d "|" -f4)
-level=$(echo "${upld}" | cut -d "|" -f5)
+Ctgry=$(echo "${d}" | cut -d "|" -f4)
+level=$(echo "${d}" | cut -d "|" -f5)
+iuser_m=$(echo "${d}" | cut -d "|" -f2)
+cntct_m=$(echo "${d}" | cut -d "|" -f3)
+notes_m=$(echo "${d}" | cut -d "|" -f6)
 [ "$Ctgry" = "$others" ] && Ctgry=others
 [ "$Ctgry" = "$comics" ] && Ctgry=comics
 [ "$Ctgry" = "$culture" ] && Ctgry=culture
@@ -233,13 +251,19 @@ level=$(echo "${upld}" | cut -d "|" -f5)
 [ "$Ctgry" = "$science" ] && Ctgry=science
 [ "$Ctgry" = "$funny" ] && Ctgry=funny
 [ "$Ctgry" = "$others" ] && Ctgry=others
-[ "$level" = $(gettext "Beginner") ] && level=1
-[ "$level" = $(gettext "Intermediate") ] && level=2
-[ "$level" = $(gettext "Advanced") ] && level=3
+[ "$level" = $(gettext "Beginner") ] && level=0
+[ "$level" = $(gettext "Intermediate") ] && level=1
+[ "$level" = $(gettext "Advanced") ] && level=2
 
-Author=$(echo "${upld}" | cut -d "|" -f2)
-Mail=$(echo "${upld}" | cut -d "|" -f3)
-notes=$(echo "${upld}" | cut -d "|" -f6)
+if [ -z "${iuser_m##+([[:space:]])}" ] || [ ${#iuser_m} -gt 60 ] || \
+[ "$(grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${iuser_m}")" ]; then
+msg "$(gettext "Name author not válid.")\n " info
+"$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
+
+if [ ${#cntct_m} -gt 30 ] || \
+[ "$(grep -o -E '\*|\/|$|\)|\(|=' <<<"${cntct_m}")" ]; then
+msg "$(gettext "Invalid contact format.")\n " info
+"$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
 
 if [ -z "${Ctgry}" ]; then
 msg "$(gettext "Please select a category.")\n " info
@@ -248,44 +272,40 @@ msg "$(gettext "Please select a category.")\n " info
 if [ -d "${DM_tlt}/files" ]; then
 du=$(du -sb "${DM_tlt}/files" | cut -f1)
 if [ "$du" -gt 50000000 ]; then
-msg "$(gettext "Sorry, the size of the attachments is too large.")\n " info & exit 1; fi
-fi
+msg "$(gettext "Sorry, the size of the attachments is too large.")\n " info & exit 1; fi; fi
 
-internet; cd "$DT"
+internet
+[ -d "$DT" ] && cd "$DT" || exit 1
+[ -d "$DT/upload" ] && rm -fr "$DT/upload"
+
+notify-send "$(gettext "Upload in progress")" \
+"$(gettext "This can take some time, please wait")" -t 6000
+
 mkdir "$DT/upload"
 DT_u="$DT/upload/"
 mkdir -p "$DT/upload/${tpc}/conf"
-cd "${DM_tlt}/words/images"
-if [ $(ls -1 *.jpg 2>/dev/null | wc -l) != 0 ]; then
-images=$(ls *.jpg | wc -l); else
-images=0; fi
+
+"$DS/ifs/tls.sh" check_index "${tpc}" 1
+
+images=$(cd "${DM_tlt}/images"; ls --ignore="img.jpg" |wc -l)
+words=0; sentences=0
 [ -f "${DC_tlt}/3.cfg" ] && words=$(wc -l < "${DC_tlt}/3.cfg")
 [ -f "${DC_tlt}/4.cfg" ] && sentences=$(wc -l < "${DC_tlt}/4.cfg")
-[ -f "${DC_tlt}/12.cfg" ] && date_c="$(sed -n 8p "${DC_tlt}/12.cfg" \
-| grep -o 'date_c="[^"]*' | grep -o '[^"]*$')"
-date_u=$(date +%F)
-echo -e "name=\"${tpc}\"
-language_source=\"$lgsl\"
-language_target=\"$lgtl\"
-author=\"$Author\"
-contact=\"$Mail\"
-category=\"$Ctgry\"
-link=\"$id\"
-date_c=\"$date_c\"
-date_u=\"$date_u\"
-nwords=\"$words\"
-nsentences=\"$sentences\"
-nimages=\"$images\"
-level=\"$level\"" > "$DT_u/${tpc}/conf/id"
-cp -f "$DT_u/${tpc}/conf/id" "$DT/${tpc}.id"
-echo -e "$id
-$Mail
-$Author" > "$DC_s/3.cfg"
+if [ -f "${DC_tlt}/id.cfg" ]; then
+datec="$(grep -o 'datec="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+datei="$(grep -o 'datei="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"; fi
+dateu=$(date +%F)
+sum=`md5sum "${DC_tlt}/0.cfg" | cut -d' ' -f1`
+
+if [ "${iuser}" != "${iuser_m}" ] \
+|| [ "${cntct}" != "${cntct_m}" ]; then
+echo -e "usrid=\"$usrid\"
+iuser=\"$iuser_m\"
+cntct=\"$cntct_m\"" > "$DC_s/3.cfg"
+fi
 
 cd "${DM_tlt}"
 cp -r ./* "$DT_u/${tpc}/"
-cp -r "./words" "$DT_u/${tpc}/"
-cp -r "./words/images" "$DT_u/${tpc}/words"
 mkdir "$DT_u/${tpc}/files"
 mkdir "$DT_u/${tpc}/share"
 auds="$(uniq < "${DC_tlt}/4.cfg" \
@@ -294,44 +314,73 @@ auds="$(uniq < "${DC_tlt}/4.cfg" \
 | sed 's/&//; s/,//; s/\?//; s/\¿//; s/;//'g \
 |  sed 's/\!//; s/\¡//; s/\]//; s/\[//; s/\.//; s/  / /'g \
 | tr -d ')' | tr -d '(' | tr '[:upper:]' '[:lower:]')"
-
 while read -r audio; do
 if [ -f "$DM_tl/.share/$audio.mp3" ]; then
-cp -f "$DM_tl/.share/$audio.mp3" "$DT_u/$tpc/share/$audio.mp3"; fi
+cp -f "$DM_tl/.share/$audio.mp3" "$DT_u/${tpc}/share/$audio.mp3"; fi
 done <<<"$auds"
+c_audio=$(find "$DT_u/${tpc}" -maxdepth 5 -name '*.mp3' |wc -l)
+echo -e "${notes_m}" > "$DT_u/${tpc}/conf/info"
 
-cp -f "${DC_tlt}/0.cfg" "$DT_u/${tpc}/conf/0.cfg"
-cp -f "${DC_tlt}/3.cfg" "$DT_u/${tpc}/conf/3.cfg"
-cp -f "${DC_tlt}/4.cfg" "$DT_u/${tpc}/conf/4.cfg"
-printf "${notes}" > "${DC_tlt}/10.cfg"
-printf "${notes}" > "$DT_u/${tpc}/conf/info"
-
+cd "$DT/upload"
 find "$DT_u" -type f -exec chmod 644 {} \;
-cd "$DT_u"
-tar -cvf "${tpc}.tar" "${tpc}"
-gzip -9 "${tpc}.tar"
-mv "${tpc}.tar.gz" "$id.${tpc}.$lgt"
-du=$(du -h "$id.${tpc}.$lgt" | cut -f1)
-[ -d "$DT_u/${tpc}" ] && rm -fr "$DT_u/${tpc}"
-dte=$(date "+%d %B %Y")
-notify-send "$(gettext "Upload in progress")" "$(gettext "This can take some time, please wait")" -t 6000
+tar czpvf - ./"${tpc}" |split -d -b 2500k - ./"$usrid.${sum}"
+rm -fr ./"${tpc}"
+f_size=$(du -h . | cut -f1)
 
+echo -e "v=1
+tname=\"${tpc}\"
+langs=\"$lgsl\"
+langt=\"$lgtl\"
+authr=\"$iuser_m\"
+cntct=\"$cntct_m\"
+ctgry=\"$Ctgry\"
+ilink=\"$usrid\"
+oname=\"${tpc}\"
+datec=\"$datec\"
+dateu=\"$dateu\"
+datei=\"$datei\"
+nword=\"$words\"
+nsent=\"$sentences\"
+nimag=\"$images\"
+naudi=\"$c_audio\"
+nsize=\"$f_size\"
+level=\"$level\"
+set_1=\"$set_1\"
+set_2=\"$set_2\"
+set_3=\"$set_3\"
+set_4=\"$set_4\"
+md5id=\"$sum\"" > "${DC_tlt}/id.cfg"
+cp -f "${DC_tlt}/0.cfg" "$DT_u/$usrid.${tpc}.$lgt"
+tr '\n' '&' < "${DC_tlt}/id.cfg" >> "$DT_u/$usrid.${tpc}.$lgt"
+
+# uploading files to http://server_temp/lang/xxx.name.idmnd
 url="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
 | grep -o 'UPLOADS="[^"]*' | grep -o '[^"]*$')"
-upld="$DT_u/$id.${tpc}.$lgt"
-export upld url
-python << END
-import requests
-import os
-upld = os.environ['upld']
-url = os.environ['url']
-files = {'file': open(upld, 'rb')}
-r = requests.post(url, files=files)
-END
+direc="$DT_u"
+log="$DT_u/log"
+export direc url log
 
-exit=$?
-if [[ $exit = 0 ]]; then
-    mv -f "$DT/${tpc}.id" "$DM_t/saved/${tpc}.id"
+python << END
+import os, sys, requests, time
+reload(sys)
+sys.setdefaultencoding("utf-8")
+url = os.environ['url']
+direc = os.environ['direc']
+log = os.environ['log']
+volumes = [i for i in os.listdir(direc)]
+for f in volumes:
+    file = {'file': open(f, 'rb')}
+    r = requests.post(url, files=file)
+    p = open(log, "w")
+    p.write("xxx")
+    p.close()
+    time.sleep(5)
+END
+u=$?
+
+if [[ $u = 0 ]]; then
+    [ ! -d "${DM}/backup" ] && mkdir "${DM}/backup"
+    mv -f "$DT_u/${usrid}.${tpc}.$lgt" "${DM}/backup/${tpc}.idmnd"
     info=" <b>$(gettext "Uploaded correctly")</b>\n $tpc\n"
     image=dialog-ok
 else
@@ -341,23 +390,20 @@ else
 fi
 msg "$info" $image
 
-[ -d "$DT_u/${tpc}" ] && rm -fr "$DT_u/${tpc}"
-[ -f "$DT_u/$id.${tpc}.$lgt" ] && rm -f "$DT_u/$id.${tpc}.$lgt"
-[ -f "$DT_u/${tpc}.tar" ] && rm -f "$DT_u/${tpc}.tar"
-[ -f "$DT_u/${tpc}.tar.gz" ] && rm -f "$DT_u/${tpc}.tar.gz"
-[ -f "$DT/${tpc}.id" ] && rm -f "$DT/${tpc}.id"
-[ -d "$DT_u" ] && rm -fr "$DT_u"
+cleanups "${DT_u}"
+
 exit 0
 fi
     
 } >/dev/null 2>&1
-
 
 case "$1" in
     vsd)
     vsd "$@" ;;
     infsd)
     infsd "$@" ;;
+    dwld)
+    dwld "$@" ;;
     upld)
     upld "$@" ;;
     share)

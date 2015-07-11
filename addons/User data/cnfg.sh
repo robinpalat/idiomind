@@ -10,18 +10,17 @@ path=\"$HOME\"
 size=\"0\"
 others=\" \"" > "$DC_a/user_data.cfg"
 fi
-path="$(sed -n 2p < "$DC_a/user_data.cfg" \
-| grep -o path=\"[^\"]* | grep -o '[^"]*$')"
-size="$(sed -n 3p < "$DC_a/user_data.cfg" \
-| grep -o size=\"[^\"]* | grep -o '[^"]*$')"
-others="$(sed -n 4p < "$DC_a/user_data.cfg" \
-| grep -o others=\"[^\"]* | grep -o '[^"]*$')"
+
+path="$(grep -o path=\"[^\"]* "$DC_a/user_data.cfg"| grep -o '[^"]*$')"
+size="$(grep -o size=\"[^\"]* "$DC_a/user_data.cfg"| grep -o '[^"]*$')"
+others="$(grep -o others=\"[^\"]* "$DC_a/user_data.cfg"| grep -o '[^"]*$')"
 
 [ -f "$path/.udt" ] && udt=$(< "$path/.udt") || udt=" "
 dte=$(date +%F)
 
 if [ -z "$1" ]; then
-    
+
+    cmd_rest="'$DS_a/User data/cnfg.sh' restore 1 "\"${tpc}\"""
     D=$(yad --list --radiolist --title="$(gettext "User Data")" \
     --name=Idiomind --class=Idiomind \
     --text="$(gettext "Total size:") $size" \
@@ -35,20 +34,16 @@ if [ -z "$1" ]; then
     --column="" \
     --column=Options \
     "FALSE" "$(gettext "Import")" "FALSE" "$(gettext "Export")")
-    
     ret=$?
 
     if [[ $ret -eq 0 ]]; then
 
         in=$(sed -n 1p <<<"$D")
         ex=$(sed -n 2p <<<"$D")
-        
         # export
         if grep "TRUE $(gettext "Export")" <<<"$ex"; then
         
             set -e
-            IFS=$'\n\t'
-            
             cd "$HOME"
             exp=$(yad --file --save --title="$(gettext "Export")" \
             --filename="idiomind_data.tar.gz" \
@@ -138,7 +133,7 @@ if [ -z "$1" ]; then
                     
                     echo "$lng" >> ./.languages
                     
-                done <<<"$list"
+                done <<<"${list}"
 
                 while read language; do
 
@@ -151,15 +146,15 @@ if [ -z "$1" ]; then
                     
                     while read topic; do
                         
-                        if [ -d "$DM_t/$language/$topic" ]; then continue; fi
-                        if [ -d "$DT/import/topics/$language/$topic" ]; then
-                        cp -fr "$DT/import/topics/$language/$topic" "$DM_t/$language/$topic"
+                        if [ -d "$DM_t/$language/${topic}" ]; then continue; fi
+                        if [ -d "$DT/import/topics/$language/${topic}" ]; then
+                        cp -fr "$DT/import/topics/$language/${topic}" "$DM_t/$language/${topic}"
                         else continue; fi
-                        if [ ! -d "$DM_t/$language/$topic/.conf" ]; then
-                        mkdir "$DM_t/$language/$topic/.conf"; fi
-                        if [ ! -f "$DM_t/$language/$topic/.conf/8.cfg" ]; then
-                        echo 1 > "$DM_t/$language/$topic/.conf/8.cfg"; fi
-                        if [ -d "$DT/import/topics/$language/$topic" ]; then
+                        if [ ! -d "$DM_t/$language/${topic}/.conf" ]; then
+                        mkdir "$DM_t/$language/${topic}/.conf"; fi
+                        if [ ! -f "$DM_t/$language/${topic}/.conf/8.cfg" ]; then
+                        echo 1 > "$DM_t/$language/${topic}/.conf/8.cfg"; fi
+                        if [ -d "$DT/import/topics/$language/${topic}" ]; then
                         echo "$topic" >> "$DM_t/$language/.3.cfg"; fi
                         cd "$DT/import/topics"
 
@@ -181,5 +176,29 @@ if [ -z "$1" ]; then
     
         fi
     fi
+
+elif [[ $1 = restore ]]; then
+
+    if [ -f "$HOME/.idiomind/backup/${3}.bk" ]; then
+    
+        yad --title="$(gettext "Confirm")" \
+        --text="$(gettext "Are you sure you want to restore the content of active topic?")\t\n(${3})" \
+        --image=dialog-warning \
+        --name=Idiomind --class=Idiomind \
+        --always-print-result \
+        --window-icon="$DS/images/icon.png" \
+        --image-on-top --on-top --sticky --center \
+        --width=480 --height=140 --borders=5 \
+        --button="$(gettext "Cancel")":1 \
+        --button="$(gettext "Yes")":0
+        ret=$?
+        
+        if [[ $ret -eq 0 ]]; then
+        cp -f "$HOME/.idiomind/backup/${3}.bk" "${DM_tl}/${3}/.conf/0.cfg"
+        fi
+    else
+        msg "$(gettext "Backup not found")\n" dialog-warning
+    fi
 fi
+
 exit

@@ -2,6 +2,5 @@
 
 name="gstatic"
 lang="en"
-Test="testing"
 wget "http://ssl.gstatic.com/dictionary/static/sounds/de/0/$1.mp3"
 exit

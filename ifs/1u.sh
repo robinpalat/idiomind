@@ -1,22 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
-#  
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#  
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software
-#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-#  MA 02110-1301, USA.
-#  27.02.2015
-
 TEXTDOMAIN=idiomind
 export TEXTDOMAIN
 TEXTDOMAINDIR=/usr/share/locale
@@ -26,11 +10,13 @@ alias gettext='gettext "idiomind"'
 
 text="<span font_desc='Free Sans Bold 14'>$(gettext "Welcome") ${USER^} </span>
 \n      $(gettext "To get started, please configure the following:")\n"
-lang=('English' 'Spanish' 'Italian' 'Portuguese' 'German' \
-'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian')
-sets=('grammar' 'list' 'trans' 'trd_trgt' 'clip' 'tasks' 'repeat' 'audio' \
-'videos' 'text' 'loop' 't_lang' 's_lang' 'synth' \
-'words' 'sentences' 'marks' 'practice' 'news' 'saved')
+lang=( 'English' 'Spanish' 'Italian' 'Portuguese' 'German' \
+'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian' )
+
+sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
+'loop' 'rplay' 'audio' 'video' 'ntosd' \
+'langt' 'langs' 'synth' 'txaud' 'intrf' \
+'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi' )
 
 _info() {
     
@@ -71,12 +57,10 @@ dlg=$(yad --form --title="Idiomind" \
 --text="$text" \
 --class=Idiomind --name=Idiomind \
 --window-icon="/usr/share/idiomind/images/icon.png" \
---image-on-top --buttons-layout=end --align=center --center --on-top \
---width=450 --height=285 --borders=15 \
---field="$(gettext "Select the language you are studying")":lbl " " \
---field=":CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
---field="$(gettext "Select your native language")":lbl " " \
---field=":CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
+--image-on-top --buttons-layout=end --align=right --center --on-top \
+--width=450 --height=270 --borders=15 \
+--field="$(gettext "Select the language for study"):CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
+--field="$(gettext "Select your native language"):CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
 --button=Cancel:1 \
 --button=gtk-ok:0)
 
@@ -86,8 +70,8 @@ if [ $ret -eq 1 ]; then
     killall 1u.sh & exit 1
 
 elif [ $ret -eq 0 ]; then
-    target=$(echo "$dlg" | cut -d "|" -f2)
-    source=$(echo "$dlg" | cut -d "|" -f4)
+    target=$(echo "$dlg" | cut -d "|" -f1)
+    source=$(echo "$dlg" | cut -d "|" -f2)
     
     if [ -z "$dlg" ]; then
     /usr/share/idiomind/ifs/1u.sh & exit 1
@@ -117,7 +101,7 @@ elif [ $ret -eq 0 ]; then
     mkdir "$HOME/.config/idiomind/addons"
     
     n=0
-    while [ $n -lt 10 ]; do
+    while [ ${n} -lt 10 ]; do
         if echo "$target" | grep "${lang[$n]}"; then
         set_lang "${lang[$n]}"
         if grep -o -E 'Chinese|Japanese|Russian|Vietnamese' <<< "$target";
@@ -128,7 +112,7 @@ elif [ $ret -eq 0 ]; then
     done
     
     n=0
-    while [ $n -lt 10 ]; do
+    while [ ${n} -lt 10 ]; do
         if echo "$source" | grep "${lang[$n]}"; then
         echo "${lang[$n]}" >> "$DC_s/6.cfg" & break
         fi
@@ -136,16 +120,20 @@ elif [ $ret -eq 0 ]; then
     done
     
     n=0; > "$DC_s/1.cfg"
-    while [ $n -lt 20 ]; do
+    while [ ${n} -lt 22 ]; do
     echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
     ((n=n+1))
     done
     touch "$DC_s/4.cfg"
     
-    b=$(tr -dc a-z < /dev/urandom | head -c 1)
+    b=$(tr -dc a-z < /dev/urandom |head -c 1)
     c=$((RANDOM%100))
     id="$b$c"
-    echo ${id:0:3} > "$DC_s/3.cfg"
+    id=${id:0:3}
+config="usrid=\"$id\"
+iuser=\"\"
+cntct=\"\""
+    echo -e "${config}" > "$DC_s/3.cfg"
     
     idiomind -s
 

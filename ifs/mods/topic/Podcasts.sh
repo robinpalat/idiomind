@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
-source "$DS/ifs/mods/cmns.sh"
+
 tpa="$(sed -n 1p "$DC_a/4.cfg")"
 if [ "$tpa" != 'Podcasts' ]; then
 [ ! -f "$DM_tl/Podcasts/.conf/8.cfg" ] \
@@ -11,6 +11,10 @@ echo "Podcasts" > "$DC_a/4.cfg"; fi
 if [ "$1" = 2 ]; then
 echo "Podcasts" > "$DC_s/7.cfg"
 echo 2 > "$DC_s/5.cfg"; fi
+
+nmfile() {
+    echo -n "${1}" | md5sum | rev | cut -c 4- | rev
+}
 
 function list_1() {
     while read list1; do
@@ -35,6 +39,7 @@ function feedmode() {
     DMP="$DM_tl/Podcasts"
     DCP="$DM_tl/Podcasts/.conf"
     DSP="$DS/addons/Podcasts"
+    cmd_pref="$DS/cnfg.sh"
     nt="$DCP/10.cfg"
     fdit=$(mktemp "$DT/fdit.XXXX")
     c=$(echo $(($RANDOM%100000))); KEY=$c
@@ -65,9 +70,9 @@ function feedmode() {
     --tab=" $(gettext "Episodes") " \
     --tab=" $(gettext "Saved episodes") " \
     --tab=" $(gettext "Notes") " \
-    --button="$(gettext "Lists")":"$DS/play.sh" \
+    --button="$(gettext "Lists")":"$DS/play.sh play_list" \
     --button="$(gettext "Update")":2 \
-    --button="$(gettext "Close")":1
+    --button="gtk-close":1
     ret=$?
         
     if [[ $ret -eq 2 ]]; then

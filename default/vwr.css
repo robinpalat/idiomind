@@ -1,5 +1,4 @@
 
-body {margin:0;padding:0;background:#f6f6f6;font-family: 'Comfortaa', 'Century Gothic', Arial;font-size:100%;line-height:1.8em;letter-spacing:.5px;color:#646D71;font-weight:normal;}
 .clear {clear:both;}
 .left {float:left;margin:15px 0 0 0;}
 .right {float:right;margin:15px 0 0 0;}
@@ -21,3 +20,4 @@ video {right:0;bottom:0;min-width:100%;min-height:100%;line-height:1em;backgroun
 image {right:0;bottom:0;min-width:100%;min-height:100%;background:#000000;width:650;height:410;}
 .title {text-align:left;margin-left:40px;margin-right:40px;}
 .summary {text-align:justify;margin-left:40px;margin-right:40px;}
+body {margin:0;padding:0;background:#f6f6f6;font-family: 'Comfortaa', 'Century Gothic', Arial;font-size:100%;line-height:1.8em;letter-spacing:.5px;color:#646D71;font-weight:normal;}

@@ -1,89 +1,85 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
-#  
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#  
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software
-#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-#  MA 02110-1301, USA.
-#  
-
-DT="/tmp/.idmtp1.$USER"
+DT="/tmp/.idiomind-$USER"
 DS="/usr/share/idiomind"
 DC_s="$HOME/.config/idiomind/s"
 source "$DS/ifs/mods/cmns.sh"
-loop=$(sed -n 11p "$DC_s/1.cfg" |grep -o loop=\"[^\"]* |grep -o '[^"]*$')
-text=$(sed -n 10p "$DC_s/1.cfg" |grep -o text=\"[^\"]* |grep -o '[^"]*$')
-audio=$(sed -n 8p "$DC_s/1.cfg" |grep -o audio=\"[^\"]* |grep -o '[^"]*$')
-if [[ "$text" != TRUE ]] && [[ "$audio" != TRUE ]]; then audio=TRUE; fi
-nu='^[0-9]+$'; if ! [[ $loop =~ $nu ]]; then loop=1; fi
+f=0
 
 if [[ "$1" = chngi ]]; then
+
+    w="$(grep -oP '(?<=words=\").*(?=\")' "$DC_s/1.cfg")"
+    s="$(grep -oP '(?<=sntcs=\").*(?=\")' "$DC_s/1.cfg")"
+    m="$(grep -oP '(?<=marks=\").*(?=\")' "$DC_s/1.cfg")"
+    p="$(grep -oP '(?<=wprct=\").*(?=\")' "$DC_s/1.cfg")"
+    export v="$(grep -oP '(?<=video=\").*(?=\")' "$DC_s/1.cfg")"
+    export ne="$(grep -oP '(?<=nsepi=\").*(?=\")' "$DC_s/1.cfg")"
+    export se="$(grep -oP '(?<=svepi=\").*(?=\")' "$DC_s/1.cfg")"
     
-    e_file() {
-    if [ ! -f "$1" ]; then
-    echo "_" >> "$DT/.l_loop"
-    if [[ `wc -l < "$DT/.l_loop"` -gt 5 ]]; then
-    rm -f "$DT/.p_" "$DT/.l_loop" &
-    msg "$(gettext "An error has occurred. Playback stopped")" info &
-    "$DS/stop.sh" 2 & exit 1; fi
-    exit 1
-    fi
+    _play() {
+        
+        a="$(grep -oP '(?<=audio=\").*(?=\")' "$DC_s/1.cfg")"
+        n="$(grep -oP '(?<=ntosd=\").*(?=\")' "$DC_s/1.cfg")"
+        l="$(grep -oP '(?<=loop=\").*(?=\")' "$DC_s/1.cfg")"
+        
+        if [[ ${n} != TRUE ]] && [[ ${a} != TRUE ]]; then audio=TRUE; fi
+        nu='^[0-9]+$'; if ! [[ $l =~ $nu ]]; then l=1; fi
+        
+        if [ ${n} = TRUE ]; then
+        notify-send -i "${icon}" "${trgt}" "${srce}" -t 10000; fi &
+        
+        if [ ${a} = TRUE ]; then
+        "$DS/play.sh" play_file "${file}" "${trgt}" && wait; fi
+        
+        if [ ${n} = TRUE -a ${l} -lt 11 -a ${type} -lt 3 ]; then l=11; fi
+        
+        [[ ${strue} = 1 ]] && sleep ${l}
     }
-    DM_tlt="$(sed -n 1p "$DT/.p_")"
-    if [ ! -d "${DM_tlt}" ]; then
-    msg "$(gettext "An error has occurred. Playback stopped")" info &
-    "$DS/stop.sh" 2; fi
-
-    if [ -f "$DT/.p" ]; then
-    echo $(($2+2)) > "$DT/.p"
-    "$DS/stop.sh" 8 & exit 1; fi
+    export -f _play
     
-    index="$DT/index.m3u"
-    _item="$(sed -n "$2"p "$index")"
-    fname="$(echo -n "${_item}" | md5sum | rev | cut -c 4- | rev)"
-    [ -f "${DM_tlt}/$fname.mp3" ] && file="${DM_tlt}/$fname.mp3" && t=2
-    [ -f "${DM_tlt}/words/$fname.mp3" ] && file="${DM_tlt}/words/$fname.mp3" && t=1
+    getitem() {
+        
+        if [ ${f} -gt 5 -o ! -d "${DM_tlt}" ]; then
+        msg "$(gettext "An error has occurred. Playback stopped")" info &
+        "$DS/stop.sh" 2; fi
+        
+        if [ -n "${item}" ]; then
+        unset file
+        _item="$(grep -F -m 1 "trgt={${item}}" "${DC_tlt}/0.cfg" |sed 's/},/}\n/g')"
+        type="$(grep -oP '(?<=type={).*(?=})' <<<"${_item}")"
+        trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${_item}")"
+        srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${_item}")"
+        id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${_item}")"
+        img="${DM_tlt}/images/$id.jpg"; [ -f "$img" ] && icon="$img"
+        [ -z "$trgt" ] && trgt="$item"
+        [[ ${type} = 1 ]] && file="${DM_tls}/${trgt,,}.mp3"
+        [[ ${type} = 2 ]] && file="${DM_tlt}/$id.mp3"
+        strue=1
+        else ((f=f+1)); fi
+    }
+    
+    if [ ${w} = TRUE -a ${s} = TRUE ]; then
+    while read item; do getitem; _play
+    done < <(tac "${DC_tlt}/1.cfg"); fi
+    
+    if [ ${w} = TRUE -a ${s} = FALSE ]; then
+    while read item; do getitem; _play
+    done < <(tac "${DC_tlt}/3.cfg"); fi
+    
+    if [ ${w} = FALSE -a ${s} = TRUE ]; then
+    while read item; do getitem; _play
+    done < <(tac "${DC_tlt}/4.cfg"); fi
+    
+    if [ ${m} = TRUE ]; then
+    while read item; do getitem; _play
+    done < "${DC_tlt}/6.cfg"; fi
+    
+    if [ ${p} = TRUE ]; then
+    while read item; do getitem; _play
+    done < <(grep -Fxv "${DC_tlt}/4.cfg" "${DC_tlt}/practice/log.3"); fi
+    
     include "$DS/ifs/mods/play"
-    e_file "$file"
-    
-    if [[ "$t" = 2 ]]; then
-    tags=$(eyeD3 "$file") 
-    trgt=$(grep -o -P '(?<=ISI1I0I).*(?=ISI1I0I)' <<<"$tags")
-    srce=$(grep -o -P '(?<=ISI2I0I).*(?=ISI2I0I)' <<<"$tags")
-    play=play
-    
-    elif [[ "$t" = 1 ]]; then
-    tags=$(eyeD3 "$file")
-    trgt=$(grep -o -P '(?<=IWI1I0I).*(?=IWI1I0I)' <<<"$tags")
-    srce=$(grep -o -P '(?<=IWI2I0I).*(?=IWI2I0I)' <<<"$tags")
-    play=play
-    fi
-
-    [ -z "$trgt" ] && trgt="$_item"
-    img="${DM_tlt}/words/images/$fname.jpg"
-    [ -f "$img" ] && icon="$img"
-            
-    if [ "$text" = "TRUE" ]; then
-    notify-send -i "$icon" "$trgt" "$srce" -t 10000; fi &
-    
-    if [ "$audio" = "TRUE" ]; then
-    "$play" "$file" && wait; fi
-    
-    if [ "$text" = "TRUE" ] && [[ $loop -lt 11 ]]; then loop=11; fi
-    sleep "$loop"
-    
-    [ -f "$DT/.l_loop" ] && rm -f "$DT/.l_loop"
-    
 
 elif [[ "$1" != chngi ]]; then
 
@@ -97,10 +93,11 @@ elif [[ "$1" != chngi ]]; then
     img="--image=info"
     else
     text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/${lgtl,,}'>$(gettext "Shared")</a>   </small></small>"
-    align="right"; fi
+    align="right"
+    fi
     
-    if [[ $((`wc -l < "$DC_s/0.cfg"`/3)) = \
-    `wc -l < "${DC_tlt}/1.cfg"` ]]; then
+    if [ -f "${DC_tlt}/1.cfg" ] && \
+    [[ $((`wc -l < "$DC_s/0.cfg"`/3)) = `wc -l < "${DC_tlt}/1.cfg"` ]]; then
     "$DS/mngr.sh" mkmn; fi
 
     tpc=$(cat "$DC_s/0.cfg" | \
@@ -109,48 +106,25 @@ elif [[ "$1" != chngi ]]; then
     --always-print-result --print-column=2 --separator="" \
     --window-icon="$DS/images/icon.png" \
     --text-align=$align --center $img --image-on-top \
-    --no-headers --ellipsize=END --expand-column=2 --tooltip-column=3 \
+    --no-headers --ellipsize=END --expand-column=2 \
     --width=600 --height=560 --borders=8 \
     --column=img:IMG \
     --column=File:TEXT \
-    --column=File:HD \
     --button=gtk-new:3 \
     --button="$(gettext "Default")":5 \
     --button="$(gettext "Apply")":2 \
-    --button="$(gettext "Close")":1)
+    --button="gtk-close":1)
     ret=$?
-    tpc="$(sed 's/\*//g' <<<"$tpc")"
-    
-    if [[ $ret -eq 3 ]]; then
-    
-            "$DS/add.sh" new_topic & exit
-            
-    elif [[ $ret -eq 2 ]]; then
-            
-            if [ -z "$tpc" ]; then exit 1
 
-            else
-                "$DS/default/tpc.sh" "$tpc" 1 & exit
-            fi
-
-    elif [[ $ret -eq 0 ]]; then
+    if [[ $ret -eq 3 ]]; then "$DS/add.sh" new_topic &
             
-            if [ -z "$tpc" ]; then exit 1
+    elif [[ $ret -eq 2 ]]; then "$DS/default/tpc.sh" "$tpc" 1 &
 
-            else
-                "$DS/default/tpc.sh" "$tpc" & exit
-            fi
-            
-    elif [[ $ret -eq 5 ]]; then
-            
-            if [ -z "$tpc" ]; then exit 1
+    elif [[ $ret -eq 0 ]]; then "$DS/default/tpc.sh" "$tpc" &
 
-            else
-                echo "$tpc" > "$DM_tl"/.5.cfg
-                "$DS/default/tpc.sh" "$tpc" &
-                "$DS/mngr.sh" mkmn & exit
-            fi
+    elif [[ $ret -eq 5 ]]; then "$DS/default/tpc.sh" "$tpc" &
+    echo "$tpc" > "$DM_tl"/.5.cfg
     fi
+    
+    exit
 fi
-
-exit

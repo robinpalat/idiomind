@@ -1,22 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
-#  
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#  
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software
-#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-#  MA 02110-1301, USA.
-#
-
 source /usr/share/idiomind/ifs/c.conf
 [[ ! -d "$DC" ]] && "$DS/ifs/1u.sh" && exit
 info2=" $(gettext "Are you sure you want to change the language set to learn?")  "
@@ -35,12 +19,14 @@ Type=Application
 Icon=idiomind
 StartupWMClass=Idiomind"
 
-lang=('English' 'Spanish' 'Italian' 'Portuguese' 'German' \
-'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian')
+lang=( 'English' 'Spanish' 'Italian' 'Portuguese' 'German' \
+'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian' )
 
-sets=('grammar' 'list' 'trans' 'trd_trgt' 'clip' 'tasks' 'repeat' 'audio' \
-'videos' 'text' 'loop' 't_lang' 's_lang' 'synth' \
-'words' 'sentences' 'marks' 'practice' 'news' 'saved')
+sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
+'loop' 'rplay' 'audio' 'video' 'ntosd' \
+'langt' 'langs' 'synth' 'txaud' 'intrf' \
+'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi' )
+
 c=$((RANDOM%100000)); KEY=$c
 
 confirm() {
@@ -56,7 +42,7 @@ confirm() {
 
 set_lang() {
     
-    echo "$tpc" > "$DM_tl/.8.cfg"
+    echo "${tpc}" > "$DM_tl/.8.cfg"
     language="$1"
     if [ ! -d "$DM_t/$language/.share" ]; then
     mkdir -p "$DM_t/$language/.share"; fi
@@ -73,43 +59,45 @@ set_lang() {
 
 n=0
 if [ "$cfg" = 1 ]; then
-    while [[ $n -lt 15 ]]; do
+    while [ ${n} -lt 17 ]; do
         get="${sets[$n]}"
-        val=$(sed -n $((n+1))p "$DC_s/1.cfg" \
-        | grep -o "$get"=\"[^\"]* | grep -o '[^"]*$')
+        val=$(grep -o "$get"=\"[^\"]* "$DC_s/1.cfg" | grep -o '[^"]*$')
         declare "${sets[$n]}"="$val"
         ((n=n+1))
     done
     
 else
     n=0; > "$DC_s/1.cfg"
-    while [[ $n -lt 20 ]]; do
+    while [ ${n} -lt 22 ]; do
     echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
     ((n=n+1))
     done
 fi
 
-if [ "$text" != TRUE ]; then audio=TRUE; fi
-if [ "$trans" != TRUE ]; then trd_trgt=FALSE; fi
+if [ -z "$intrf" ]; then intrf=Default; fi
+lst="$intrf"$(sed "s/\!$intrf//g" <<<"!Default!en!es!pt")""
+if [ "$ntosd" != TRUE ]; then audio=TRUE; fi
+if [ "$trans" != TRUE ]; then ttrgt=FALSE; fi
+
 yad --plug=$KEY --form --tabnum=1 \
 --align=right --scroll \
 --separator='|' --always-print-result --print-all \
 --field="$(gettext "General Options")\t":lbl " " \
 --field=":LBL" " " \
---field="$(gettext "Use color to grammar")":CHK "$grammar" \
---field="$(gettext "List words after adding a sentence")":CHK "$list" \
+--field="$(gettext "Use color to grammar")":CHK "$gramr" \
+--field="$(gettext "List words after adding a sentence")":CHK "$wlist" \
 --field="$(gettext "Use automatic translation, if available")":CHK "$trans" \
---field="$(gettext "Detect language of source text (slower)")":CHK "$trd_trgt" \
---field="$(gettext "Clipboard whatcher")":CHK "$clip" \
---field="$(gettext "Perform tasks at startup")":CHK "$tasks" \
+--field="$(gettext "Detect language of source text (slower)")":CHK "$ttrgt" \
+--field="$(gettext "Clipboard watcher")":CHK "$clipw" \
+--field="$(gettext "Perform tasks at startup")":CHK "$stsks" \
 --field=" :LBL" " " \
 --field="$(gettext "Play Options")\t":LBL " " \
 --field=":LBL" " " \
---field="$(gettext "Repeat")":CHK "$repeat" \
+--field="$(gettext "Duration of pause between items")":SCL "$loop" \
+--field="$(gettext "Repeat")":CHK "$rplay" \
 --field="$(gettext "Play audio")":CHK "$audio" \
---field="$(gettext "Only play videos")":CHK "$videos" \
---field="$(gettext "Desktop notifications")":CHK "$text" \
---field="$(gettext "Duration of pause between items:")":SCL "$loop" \
+--field="$(gettext "Only play videos")":CHK "$video" \
+--field="$(gettext "Desktop notifications")":CHK "$ntosd" \
 --field=" :LBL" " " \
 --field="$(gettext "Languages")\t":LBL " " \
 --field=":LBL" " " \
@@ -117,12 +105,14 @@ yad --plug=$KEY --form --tabnum=1 \
 --field="$(gettext "My language is")":CB "$lgsl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
 --field=" :LBL" " " \
 --field=":LBL" " " \
---field="<small>$(gettext "Speech Synthesizer (default espeak)")</small>" "$synth" \
+--field="<small>$(gettext "Use this speech synthesizer instead eSpeak")</small>" "$synth" \
+--field="<small>$(gettext "Program to convert text to WAV file")</small>" "$txaud" \
+--field="$(gettext "Display in")":CB "$lst" \
 --field=" :LBL" " " \
 --field="$(gettext "Help")":BTN "$DS/ifs/tls.sh help" \
 --field="$(gettext "Feedback")":BTN "$DS/ifs/tls.sh 'fback'" \
 --field="$(gettext "Check for Updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
---field="$(gettext "Your Shared Topics")":BTN "$DS/ifs/upld.sh 'vsd'" \
+--field="$(gettext "Backups")":BTN "$DS/ifs/tls.sh '_backup'" \
 --field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" > "$cnf1" &
 cat "$DC_s/2.cfg" | yad --plug=$KEY --tabnum=2 --list \
 --text="<sub>  $(gettext "Double click to set") </sub>" \
@@ -135,27 +125,37 @@ yad --notebook --key=$KEY --title="$(gettext "Settings")" \
 --tab-borders=5 --sticky --center \
 --tab="$(gettext "Preferences")" \
 --tab="$(gettext "Addons")" \
---width=470 --height=350 --borders=2 \
---button="$(gettext "Apply")":0 \
+--width=460 --height=330 --borders=2 \
+--button="$(gettext "OK")":0 \
 --button="$(gettext "Cancel")":1
 ret=$?
 
     if [[ $ret -eq 0 ]]; then
         n=1; v=0
-        while [[ $n -le 22 ]]; do
+        while [ ${n} -le 23 ]; do
             val=$(cut -d "|" -f$n < "$cnf1")
             if [ -n "$val" ]; then
             sed -i "s/${sets[$v]}=.*/${sets[$v]}=\"$val\"/g" "$DC_s/1.cfg"
+            if [ ${v} = 4 ]; then [ "$val" = FALSE ] && CW=0 || CW=1; fi
             ((v=v+1)); fi
             ((n=n+1))
         done
 
-        if [ "$clip" = FALSE ] && [ -f "$DT/.clip" ]; then
-        kill "$(< "$DT/.clip")"; rm -f "$DT/.clip"; fi
-
         val=$(cut -d "|" -f24 < "$cnf1")
-        sed -i "s/${sets[13]}=.*/${sets[13]}=\"$val\"/g" "$DC_s/1.cfg"
+        [[ "$val" != "$synth" ]] && \
+        sed -i "s/${sets[13]}=.*/${sets[13]}=\"$(sed 's|/|\\/|g' <<<"$val")\"/g" "$DC_s/1.cfg"
+        val=$(cut -d "|" -f25 < "$cnf1")
+        [[ "$val" != "$txaud" ]] && \
+        sed -i "s/${sets[14]}=.*/${sets[14]}=\"$(sed 's|/|\\/|g' <<<"$val")\"/g" "$DC_s/1.cfg"
+        val=$(cut -d "|" -f26 < "$cnf1")
+        [[ "$val" != "$intrf" ]] && \
+        sed -i "s/${sets[15]}=.*/${sets[15]}=\"$val\"/g" "$DC_s/1.cfg"
         
+        if [ "$CW" = 0 ]; then
+        kill $(cat /tmp/.clipw); rm -f /tmp/.clipw
+        elif [ "$CW" = 1 ] && [ ! -f /tmp/.clipw ]; then
+        "$DS/ifs/mods/clipw.sh" & fi
+
         [ ! -d  "$HOME/.config/autostart" ] \
         && mkdir "$HOME/.config/autostart"
         config_dir="$HOME/.config/autostart"
@@ -171,7 +171,7 @@ ret=$?
         fi
         
         n=0
-        while [[ $n -lt 10 ]]; do
+        while [ ${n} -lt 10 ]; do
             if cut -d "|" -f20 < "$cnf1" | grep "${lang[$n]}" && \
             [ "${lang[$n]}" != "$lgtl" ]; then
                 lgtl="${lang[$n]}"
@@ -185,10 +185,10 @@ ret=$?
         done
         
         n=0
-        while [[ $n -lt 10 ]]; do
+        while [ ${n} -lt 10 ]; do
             if cut -d "|" -f21 < "$cnf1" | grep "${lang[$n]}" && \
             [ "${lang[$n]}" != "$lgsl" ]; then
-                confirm "$info1" dialog-warning
+                confirm "$info1" dialog-question
                 if [ $? -eq 0 ]; then
                     echo "$lgtl" > "$DC_s/6.cfg"
                     echo "${lang[$n]}" >> "$DC_s/6.cfg"
@@ -197,6 +197,7 @@ ret=$?
             fi
             ((n=n+1))
         done
+    
     fi
     
     rm -f "$cnf1" "$DT/.lc"

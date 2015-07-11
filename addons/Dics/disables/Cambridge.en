@@ -2,7 +2,6 @@
 
 Name="cambridge"
 Language="en"
-Test="testing"
 
 a="$(echo "$1" |head -c 1)"
 b="$(echo "$1" |head -c 3)"
