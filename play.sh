@@ -154,13 +154,18 @@ play_list() {
 play_file() {
 
     if [ -f "${2}" ]; then
-    play "${2}" >/dev/null 2>&1
+        if grep ".mp3" <<<"${2: -4}"; then
+            play "${2}"
+        else
+            mplayer "${2}" -noconsolecontrols
+        fi
     elif [ -n "$synth" ]; then
     sed 's/<[^>]*>//g' <<<"${3}." | $synth
     else
     sed 's/<[^>]*>//g' <<<"${3}." | espeak -v $lg -s 150
     fi
-}
+    
+} >/dev/null 2>&1
 
 case "$1" in
     play_word)
