@@ -21,8 +21,7 @@ score() {
 
     if [[ ${1} -ge ${all} ]]; then
         play "$drts/all.mp3" & 
-        echo ".s9.$(tr -s '\n' '|' < ./d.1).s9." >> "$log"
-        echo -e ".okp.1.okp." >> "$log"
+        echo -e ".s9.$(tr -s '\n' '|' < ./d.1).s9.\n.okp.1.okp." >> "$log"
         echo "$(date "+%a %d %B")" > ./d.lock
         echo 21 > .4
         "$strt" 4 d & exit
@@ -32,7 +31,7 @@ score() {
         s=$(< ./d.l)
         v=$((100*s/all))
         n=1; c=1
-        while [[ ${n} -le 21 ]]; do
+        while [[ ${n} -lt 21 ]]; do
             if [[ ${v} -le ${c} ]]; then
             echo ${n} > ./.4; break; fi
             ((c=c+5))
@@ -45,6 +44,9 @@ score() {
 
 dialog2() {
 
+    if [ $lgtl = Japanese -o $lgtl = Chinese -o $lgtl = Russian ]; then
+    hint=" "
+    else
     hint="$(echo "$@" | tr -d "',.;?!¿¡()" | tr -d '"' \
     | awk '{print tolower($0)}' \
     |sed 's/\b\(.\)/\u\1/g' | sed 's/ /         /g' \
@@ -52,6 +54,7 @@ dialog2() {
     |sed 's|\.|\ .|g' \
     | tr "[:upper:]" "[:lower:]" \
     |sed 's/^\s*./\U&\E/g')"
+    fi
     text="<span font_desc='Free Sans Bold $sz' color='#717171'>$hint</span>\n"
     
     entry=$(>/dev/null | yad --form --title="$(gettext "Practice")" \

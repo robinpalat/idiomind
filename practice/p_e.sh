@@ -18,8 +18,7 @@ score() {
 
     if [[ $(($(< ./e.l)+${1})) -ge ${all} ]]; then
         play "$drts/all.mp3" &
-        echo ".w9.$(tr -s '\n' '|' < ./e.1).w9." >> "$log"
-        echo -e ".okp.1.okp." >> "$log"
+        echo -e "w9.$(tr -s '\n' '|' < ./e.1).w9\nokp.1.okp" >> "$log"
         echo "$(date "+%a %d %B")" > ./e.lock
         echo 21 > .5
         "$strt" 5 e & exit
@@ -29,7 +28,7 @@ score() {
         s=$(< ./e.l)
         v=$((100*s/all))
         n=1; c=1
-        while [[ ${n} -le 21 ]]; do
+        while [[ ${n} -lt 21 ]]; do
             if [[ ${v} -le ${c} ]]; then
             echo ${n} > ./.5; break; fi
             ((c=c+5))
@@ -37,7 +36,7 @@ score() {
         done
 
         if [ -f ./e.3 ]; then
-        echo ".w6.$(tr -s '\n' '|' < ./e.3).w6." >> "$log"; fi
+        echo -e "w6.$(tr -s '\n' '|' < ./e.3).w6" >> "$log"; fi
         
         "$strt" 10 e ${easy} ${ling} ${hard} & exit
     fi
@@ -69,7 +68,7 @@ answer() {
     
     yad --form --title="$(gettext "Practice")" \
     --image="$img" \
-    --timeout=20 --selectable-labels \
+    --selectable-labels \
     --skip-taskbar --text-align=center --align=center --center --on-top \
     --image-on-top --undecorated --buttons-layout=spread \
     --width=418 --height=370 --borders=6 \

@@ -19,8 +19,7 @@ score() {
 
     if [[ $(($(< ./b.l)+${1})) -ge ${all} ]]; then
         play "$drts/all.mp3" &
-        echo ".w9.$(tr -s '\n' '|' < ./b.1).w9." >> "$log"
-        echo -e ".okp.1.okp." >> "$log"
+        echo -e ".w9.$(tr -s '\n' '|' < ./b.1).w9.\n.okp.1.okp." >> "$log"
         echo "$(date "+%a %d %B")" > ./b.lock
         echo 21 > .2
         "$strt" 2 b & exit
@@ -30,7 +29,7 @@ score() {
         s=$(< ./b.l)
         v=$((100*s/all))
         n=1; c=1
-        while [[ ${n} -le 21 ]]; do
+        while [[ ${n} -lt 21 ]]; do
             if [[ ${v} -le ${c} ]]; then
             echo ${n} > ./.2; break; fi
             ((c=c+5))
@@ -38,7 +37,7 @@ score() {
         done
 
         if [ -f ./b.3 ]; then
-        echo ".w6.$(tr -s '\n' '|' < ./b.3).w6." >> "$log"; fi
+        echo -e ".w6.$(tr -s '\n' '|' < ./b.3).w6." >> "$log"; fi
         
         "$strt" 7 b ${easy} ${ling} ${hard} & exit
     fi
@@ -69,7 +68,7 @@ mchoise() {
     
     dlg=$(ofonts | yad --list --title="$(gettext "Practice")" \
     --text="$cuestion" \
-    --separator=" " --timeout=15 --selectable-labels \
+    --separator=" " --selectable-labels \
     --skip-taskbar --text-align=center --center --on-top \
     --buttons-layout=edge --undecorated \
     --no-headers \

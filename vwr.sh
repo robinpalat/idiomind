@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 #
-echo "_" >> "$DT/stats.tmp" &
+
 [ ${1} = 1 ] && index="${DC_tlt}/1.cfg" && item_name="$(sed 's/<[^>]*>//g' <<<"${3}")"
 [ ${1} = 2 ] && index="${DC_tlt}/2.cfg" && item_name="$(sed 's/<[^>]*>//g' <<<"${2}")"
 
@@ -69,8 +69,7 @@ fi
         "$DS/vwr.sh" ${1} "" ${ff} &
     
     else 
-        echo -e ".vwr.`wc -l < "$DT/stats.tmp"`.vwr." >> "$DC_s/log"
-        rm -f "$DT/stats.tmp" & exit 1
+        exit 1
     fi
     
 exit

@@ -15,7 +15,7 @@ mkmn() {
     
     while read -r tpc; do
     
-        unset $i
+        unset i
         if [ ! -f "$DM_tl/${tpc}/.conf/8.cfg" ]; then
         i=13; echo 13 > "$DM_tl/${tpc}/.conf/8.cfg"
         else i=$(sed -n 1p "$DM_tl/${tpc}/.conf/8.cfg"); fi

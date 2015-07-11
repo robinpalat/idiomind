@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-[[ -z "$DM" ]] && source /usr/share/idiomind/ifs/c.conf
+[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 DIR="$DS/practice"
 [ -n "$(ps -A | pgrep -f "$DIR/p_a.sh")" ] && killall "$DIR/p_a.sh" &
 [ -n "$(ps -A | pgrep -f "$DIR/p_b.sh")" ] && killall "$DIR/p_b.sh" &
@@ -37,21 +37,18 @@ if [[ "$1" = restart ]]; then
     rm ./"${2}.lock" ./"${2}.0" ./"${2}.1" \
     ./"${2}.2" ./"${2}.3" ./log1 ./log2 ./log3
     [ -f ./"${2}.srces" ] && rm ./"${2}.srces"
-    echo "1" > ./."${icon}"
-    echo "0" > ./"${2}.l"
-    touch ./log1 ./log2 ./log3
+    echo 1 > ./."${icon}"
+    echo 0 > ./"${2}.l"
+    touch ./log1 ./log2 ./log3 ./.1 ./.2 ./.3
     "$DIR/strt.sh" & exit
 
 elif [[ $1 = comp ]]; then
-    
-    
+
     if [ "${2}" != d ]; then
     awk '{a[$0]++}END{for(i in a){if(a[i]==3)print i}}' *.1 > ./log1
     awk '{a[$0]++}END{for(i in a){if(a[i]==2)print i}}' *.2 > ./log2
     awk '{a[$0]++}END{for(i in a){if(a[i]==2)print i}}' *.3 > ./log3
     fi
-
-    #sort ./textfile | uniq -c | awk '$1 == 3 {$1 = ""; print}' > ./log
 
     if [ -n "$3" ]; then
     

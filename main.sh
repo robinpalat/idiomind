@@ -86,7 +86,7 @@ function new_session() {
     [ ! -f "$DM_tl/.1.cfg" ] && touch "$DM_tl/.1.cfg"
     while read line; do
     
-        unset $stts
+        unset stts
         DM_tlt="$DM_tl/${line}"
         stts=$(sed -n 1p "${DM_tlt}/.conf/8.cfg")
         [ -z $stts ] && stts=1
@@ -155,9 +155,9 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     --no-click --print-column=0 --dclick-action="$dclk" \
     --window-icon="$DS/images/icon.png" \
     --ellipsize=END --center \
-    --width=610 --height=550 --borders=6 \
-    --column="$langt    " \
-    --column="$langs    " \
+    --width=660 --height=550 --borders=6 \
+    --column="$langt                   " \
+    --column="$langs                   " \
     --button="$(gettext "Install")":0 \
     --button="$(gettext "Close")":1
     ret=$?
@@ -331,7 +331,6 @@ function topic() {
             fi
 
             pres="<u><b>$(gettext "Learned topic")</b></u>  $(gettext "* however you have new items") ($inx1).\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
-
             notebook_2
             
         else
@@ -380,7 +379,6 @@ function topic() {
         fi
         
         pres="<u><b>$(gettext "Learned topic")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
-
         notebook_2
         
         if [ ! -f "$DT/ps_lk" ]; then
@@ -410,7 +408,7 @@ panel() {
     if [[ "$(date +%d)" != "$date" ]] || [ ! -f "$DC_s/10.cfg" ]; then
     new_session; fi
     
-    if [[ -f "$DC_s/10.cfg" ]]; then
+    if [ -f "$DC_s/10.cfg" ]; then
     nu='^[0-9]+$'
     x=$(($(sed -n 2p "$DC_s/10.cfg")/2))
     y=$(($(sed -n 3p "$DC_s/10.cfg")/2)); fi
@@ -433,7 +431,6 @@ panel() {
     [ $? != 0 ] && "$DS/stop.sh" 1 &
     exit
 }
-
 
 case "$1" in
     topic)

@@ -7,9 +7,9 @@ tpclst=$(mktemp "$DT/tps.XXXX")
 items=$(mktemp "$DT/w9.XXXX")
 TOPICS=$(grep -o -P '(?<=.tpc.).*(?=\.tpc.)' "${LOG}" \
 | sort | uniq -dc | sort -n -r | head -15 | sed -e 's/^ *//' -e 's/ *$//')
-WORDS=$(grep -o -P '(?<=.w9.).*(?=\.w9.)' "${LOG}" | tr -s '|' '\n' \
+WORDS=$(grep -o -P '(?<=w9.).*(?=\.w9)' "${LOG}" |tr '|' '\n' \
 | sort | uniq -dc | sort -n -r | sed 's/ \+/ /g')
-QUOTES=$(grep -o -P '(?<=.s9.).*(?=\.s9.)' "${LOG}" | tr -s '|' '\n' \
+QUOTES=$(grep -o -P '(?<=.s9).*(?=\.s9)' "${LOG}" |tr '|' '\n' \
 | sort | uniq -dc | sort -n -r | sed 's/ \+/ /g')
 
 n=1
