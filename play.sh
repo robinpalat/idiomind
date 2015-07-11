@@ -157,7 +157,7 @@ play_file() {
         if grep ".mp3" <<<"${2: -4}"; then
             play "${2}"
         else
-            mplayer "${2}" -noconsolecontrols
+            mplayer "${2}" -noconsolecontrols -title "${2}"
         fi
     elif [ -n "$synth" ]; then
     sed 's/<[^>]*>//g' <<<"${3}." | $synth
