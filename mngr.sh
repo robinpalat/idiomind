@@ -618,7 +618,7 @@ mark_to_learn_topic() {
     kill -9 $(pgrep -f "yad --form ") &
     kill -9 $(pgrep -f "yad --notebook ") & fi
 
-    echo -e ".lrnt.$tpc.lrnt." >> "$DC_s/log"
+    echo -e "lrnt.$tpc.lrnt" >> "$DC_s/log"
     touch "${DC_tlt}"
     "$DS/mngr.sh" mkmn &
 
@@ -700,7 +700,7 @@ mark_as_learned_topic() {
     kill -9 $(pgrep -f "yad --form ") &
     kill -9 $(pgrep -f "yad --notebook ") & fi
     
-    echo -e ".lrdt.$tpc.lrdt." >> "$DC_s/log"
+    echo -e "lrdt.$tpc.lrdt" >> "$DC_s/log"
     "$DS/mngr.sh" mkmn &
 
     [[ ${3} = 1 ]] && idiomind topic &

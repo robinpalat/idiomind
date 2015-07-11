@@ -123,7 +123,6 @@ practice() {
 
     if [ -f "$dir/${ttest}.0" -a -f "$dir/${ttest}.1" ]; then
     
-        echo -e "w9.$(tr -s '\n' '|' < "$dir/${ttest}.1").w9" >> "$log"
         grep -Fxvf  "$dir/${ttest}.1" "$dir/${ttest}.0" > "$dir/${ttest}.tmp"
         if [[ "$(egrep -cv '#|^$' < "$dir/${ttest}.tmp")" = 0 ]]; then
         lock "$dir/${ttest}.lock" & exit; fi

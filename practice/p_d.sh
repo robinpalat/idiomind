@@ -21,7 +21,7 @@ score() {
 
     if [[ ${1} -ge ${all} ]]; then
         play "$drts/all.mp3" & 
-        echo -e ".s9.$(tr -s '\n' '|' < ./d.1).s9.\n.okp.1.okp." >> "$log"
+        echo -e "s9.$(tr -s '\n' '|' < ./d.1).s9\nokp.1.okp" >> "$log"
         echo "$(date "+%a %d %B")" > ./d.lock
         echo 21 > .4
         "$strt" 4 d & exit
@@ -31,8 +31,9 @@ score() {
         s=$(< ./d.l)
         v=$((100*s/all))
         n=1; c=1
-        while [[ ${n} -lt 21 ]]; do
-            if [[ ${v} -le ${c} ]]; then
+        while [ ${n} -le 21 ]; do
+            if [ ${n} -eq 21 ]; then echo $((n-1)) > ./.4
+            elif [ ${v} -le ${c} ]; then
             echo ${n} > ./.4; break; fi
             ((c=c+5))
             let n++

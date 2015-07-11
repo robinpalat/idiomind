@@ -17,7 +17,7 @@ score() {
 
     if [[ $(($(< ./a.l)+${1})) -ge ${all} ]]; then
         play "$drts/all.mp3" &
-        echo -e ".w9.$(tr -s '\n' '|' < ./a.1).w9.\n.okp.1.okp." >> "$log"
+        echo -e "w9.$(tr -s '\n' '|' < ./a.1).w9\nokp.1.okp" >> "$log"
         echo "$(date "+%a %d %B")" > ./a.lock
         echo 21 > .1
         "$strt" 1 a & exit
@@ -27,15 +27,16 @@ score() {
         s=$(< ./a.l)
         v=$((100*s/all))
         n=1; c=1
-        while [[ ${n} -lt 21 ]]; do
-            if [[ ${v} -le ${c} ]]; then
+        while [ ${n} -le 21 ]; do
+            if [ ${n} -eq 21 ]; then echo $((n-1)) > ./.1
+            elif [ ${v} -le ${c} ]; then
             echo ${n} > ./.1; break; fi
             ((c=c+5))
             let n++
         done
 
         if [ -f ./a.3 ]; then
-        echo -e ".w6.$(tr -s '\n' '|' < ./a.3).w6." >> "$log"; fi
+        echo -e "w6.$(tr -s '\n' '|' < ./a.3).w6" >> "$log"; fi
         
         "$strt" 6 a ${easy} ${ling} ${hard} & exit
     fi

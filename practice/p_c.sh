@@ -29,15 +29,16 @@ score() {
         s=$(< ./c.l)
         v=$((100*s/all))
         n=1; c=1
-        while [[ ${n} -lt 21 ]]; do
-            if [[ ${v} -le ${c} ]]; then
+        while [ ${n} -le 21 ]; do
+            if [ ${n} -eq 21 ]; then echo $((n-1)) > ./.3
+            elif [ ${v} -le ${c} ]; then
             echo ${n} > ./.3; break; fi
             ((c=c+5))
             let n++
         done
         
         if [ -f ./c.3 ]; then
-        echo -e ".w6.$(tr -s '\n' '|' < ./c.3).w6." >> "$log"; fi
+        echo -e "w6.$(tr -s '\n' '|' < ./c.3).w6" >> "$log"; fi
         
         "$strt" 8 c ${easy} ${ling} ${hard} & exit
     fi

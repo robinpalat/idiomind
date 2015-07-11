@@ -5,18 +5,18 @@
 LOG="$DC_s/log"
 tpclst=$(mktemp "$DT/tps.XXXX")
 items=$(mktemp "$DT/w9.XXXX")
-TOPICS=$(grep -o -P '(?<=.tpc.).*(?=\.tpc.)' "${LOG}" \
+TOPICS=$(grep -o -P '(?<=tpc.).*(?=\.tpc)' "${LOG}" \
 | sort | uniq -dc | sort -n -r | head -15 | sed -e 's/^ *//' -e 's/ *$//')
 WORDS=$(grep -o -P '(?<=w9.).*(?=\.w9)' "${LOG}" |tr '|' '\n' \
 | sort | uniq -dc | sort -n -r | sed 's/ \+/ /g')
-QUOTES=$(grep -o -P '(?<=.s9).*(?=\.s9)' "${LOG}" |tr '|' '\n' \
+QUOTES=$(grep -o -P '(?<=s9.).*(?=\.s9)' "${LOG}" |tr '|' '\n' \
 | sort | uniq -dc | sort -n -r | sed 's/ \+/ /g')
 
 n=1
 while [ ${n} -le 15 ]; do
 
-if [[ "$(sed -n "$n"p <<<"${TOPICS}" | awk '{print ($1)}')" -ge 3 ]]; then
-echo "$(sed -n "$n"p <<<"${TOPICS}" | cut -d " " -f2-)" >> "${tpclst}"; fi
+if [[ "$(sed -n "$n"p <<<"${TOPICS}" |awk '{print ($1)}')" -ge 3 ]]; then
+echo "$(sed -n "$n"p <<<"${TOPICS}" |cut -d " " -f2-)" >> "${tpclst}"; fi
 let n++
 done
 
@@ -25,11 +25,11 @@ while [ ${n} -le 100 ]; do
 
 if [[ $(sed -n "$n"p <<<"${WORDS}" | awk '{print ($1)}') -ge 3 ]]; then
     fwk=$(sed -n "$n"p <<<"${WORDS}" | awk '{print ($2)}')
-    echo "$fwk" >> "${items}"
+    [ -n "${fwk}" ] && echo "${fwk}" >> "${items}"
 fi
 if [[ $(sed -n "$n"p <<<"${QUOTES}" | awk '{print ($1)}') -ge 1 ]]; then
     fwk=$(sed -n "$n"p <<<"${QUOTES}" | cut -c 4-)
-    echo "$fwk" >> "${items}"
+    [ -n "${fwk}" ] && echo "${fwk}" >> "${items}"
 fi
 let n++
 done

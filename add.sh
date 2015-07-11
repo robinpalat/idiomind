@@ -222,7 +222,7 @@ new_sentence() {
         fetch_audio "$aw" "$bw"
         
         cleanups "$DT_r"
-        echo -e ".adi.1.adi." >> "$DC_s/log"
+        echo -e "adi.1.adi" >> "$DC_s/log"
         exit 1
     fi
 }
@@ -286,7 +286,7 @@ new_word() {
         notify-send "${trgt}" "${srce}\\n(${tpe})" -t 10000
 
         cleanups "${DT_r}"
-        echo -e ".adi.1.adi." >> "$DC_s/log"
+        echo -e "adi.1.adi" >> "$DC_s/log"
         exit
     fi
 }
@@ -347,7 +347,7 @@ list_words_edit() {
 
         if [ -f "$DT_r/logw" ]; then
         dlg_text_info_3 "$(gettext "Some items could not be added to your list"):"; fi
-        echo -e ".adi.$lns.adi." >> "$DC_s/log"
+        echo -e "adi.$lns.adi" >> "$DC_s/log"
     fi
     cleanups "${DT_r}" "$slt"; exit
 }
@@ -411,7 +411,7 @@ list_words_sentence() {
     logs="$(< "$DT_r/logw")"
     dlg_text_info_3 "$(gettext "Some items could not be added to your list"):" "$logs"; fi
     cleanups "$DT_r"
-    echo -e ".adi.$lns.adi." >> "$DC_s/log"
+    echo -e "adi.$lns.adi" >> "$DC_s/log"
     exit
 }
 
@@ -753,7 +753,7 @@ process() {
                 if [[ ${adds} -ge 1 ]]; then
                 notify-send -i idiomind "${tpe}" \
                 "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
-                echo -e ".adi.$adds.adi." >> "$DC_s/log"
+                echo -e "adi.$adds.adi" >> "$DC_s/log"
                 fi
                 
                 if [ -n "$log" ]; then sleep 1

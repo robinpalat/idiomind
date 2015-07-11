@@ -299,7 +299,7 @@ if [[ ${conten^} = A ]]; then
         if [[ ${adds} -ge 1 ]]; then
         notify-send -i idiomind "$tpe" \
         "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
-        echo ".adi.$adds.adi." >> "$DC_s/log"; fi
+        echo "adi.$adds.adi" >> "$DC_s/log"; fi
         
         if [ -n "$logs" -o "$(ls "$DT_r"/[0-9]* | wc -l)" -ge 1 ]; then
         

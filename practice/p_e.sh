@@ -28,8 +28,9 @@ score() {
         s=$(< ./e.l)
         v=$((100*s/all))
         n=1; c=1
-        while [[ ${n} -lt 21 ]]; do
-            if [[ ${v} -le ${c} ]]; then
+        while [ ${n} -le 21 ]; do
+            if [ ${n} -eq 21 ]; then echo $((n-1)) > ./.5
+            elif [ ${v} -le ${c} ]; then
             echo ${n} > ./.5; break; fi
             ((c=c+5))
             let n++

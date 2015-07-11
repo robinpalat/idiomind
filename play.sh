@@ -137,7 +137,7 @@ play_list() {
             echo -e "$DM_tlt\n$tpc" > "$DT/.p_"
             else "$DS/stop.sh" 2 && exit 1; fi
             
-            echo -e ".ply.$tpc.ply." >> "$DC_s/log" &
+            echo -e "ply.$tpc.ply" >> "$DC_s/log" &
             sleep 1; "$DS/bcle.sh" &
 
         elif [ $ret -eq 2 ]; then
