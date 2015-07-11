@@ -100,7 +100,7 @@ play_list() {
     }
 
     title="$tpc"
-    if grep -E 'vivid|wily' <<<"`lsb_release -a`">/dev/null 2>&1; then
+    if grep -E 'vivid|wily' <<<"`lsb_release -a`" >/dev/null 2>&1; then
     btn1="gtk-media-play:0"; else
     btn1="$(gettext "Play"):0"; fi
     
@@ -130,8 +130,8 @@ play_list() {
     --field="$(gettext "Repeat")":CHK "$rplay" \
     --field="$(gettext "Play audio")":CHK "$audio" \
     --field="$(gettext "Only play videos")":CHK "$video" \
-    --field="$(gettext "Desktop notifications")":CHK "$ntosd" \
-    --field="$(gettext "Pause duration")":SCL "$loop" > $tab2 &
+    --field="$(gettext "Use desktop notifications")":CHK "$ntosd" \
+    --field="$(gettext "Pause between items (sec)")":SCL "$loop" > $tab2 &
     yad --notebook --key=$KEY --title="$title" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-all \

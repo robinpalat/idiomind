@@ -70,7 +70,7 @@ function feedmode() {
     --tab=" $(gettext "Episodes") " \
     --tab=" $(gettext "Saved episodes") " \
     --tab=" $(gettext "Notes") " \
-    --button="$(gettext "Lists")":"$DS/play.sh play_list" \
+    --button="$(gettext "Play")":"$DS/play.sh play_list" \
     --button="$(gettext "Update")":2 \
     --button="gtk-close":1
     ret=$?

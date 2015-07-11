@@ -96,8 +96,8 @@ yad --plug=$KEY --form --tabnum=1 \
 --field="$(gettext "Repeat")":CHK "$rplay" \
 --field="$(gettext "Play audio")":CHK "$audio" \
 --field="$(gettext "Only play videos")":CHK "$video" \
---field="$(gettext "Desktop notifications")":CHK "$ntosd" \
---field="$(gettext "Duration of pause between items")":SCL "$loop" \
+--field="$(gettext "Use desktop notifications")":CHK "$ntosd" \
+--field="$(gettext "Pause between items (sec)")":SCL "$loop" \
 --field=" :LBL" " " \
 --field="$(gettext "Languages")\t":LBL " " \
 --field=":LBL" " " \
