@@ -122,7 +122,7 @@ function notebook_1() {
     --tab=" $(gettext "Notes") " \
     --tab=" $(gettext "Edit") " \
     --width=$sx --height=$sy --borders=0 --tab-borders=3 \
-    --button="$(gettext "Lists")":"$cmd_play" \
+    --button="$(gettext "Play")":"$cmd_play" \
     --button="$(gettext "Practice")":5 \
     --button="gtk-close":1
 } >/dev/null 2>&1
