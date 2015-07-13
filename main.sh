@@ -155,8 +155,8 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     --window-icon="$DS/images/icon.png" \
     --ellipsize=END --center \
     --width=600 --height=510 --borders=6 \
-    --column="$langt                   " \
-    --column="$langs                   " \
+    --column="$langt              " \
+    --column="$langs              " \
     --button="$(gettext "Install")":0 \
     --button="$(gettext "Close")":1
     ret=$?
