@@ -486,7 +486,7 @@ echo "</body>" >> "$DC_tlt/att.html"
         --encoding=UTF-8 --uri="$DC_tlt/att.html" --browser \
         --window-icon="$DS/images/icon.png" --center \
         --width=680 --height=580 --borders=10 \
-        --button="$(gettext "Folder")":"xdg-open \"$DM_tlt\"/files" \
+        --button="$(gettext "Open Folder")":"xdg-open \"$DM_tlt\"/files" \
         --button="$(gettext "Video URL")":2 \
         --button="gtk-add":0 \
         --button="gtk-close":1
@@ -519,7 +519,7 @@ echo "</body>" >> "$DC_tlt/att.html"
 
 help() {
 
-    URL="http://idiomind.sourceforge.net/doc/$(gettext "help").pdf"
+    URL="http://idiomind.sourceforge.net/doc/help.pdf"
     (xdg-open "$URL") &
      
 } >/dev/null 2>&1

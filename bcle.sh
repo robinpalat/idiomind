@@ -2,7 +2,8 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-[[ -z "$tpc" && -d "$DT" ]] && exit 1
+[ -z "$tpc" && -d "$DT" ] && exit 1
+
 if [ "$(grep -o rplay=\"[^\"]* < "$DC_s/1.cfg" \
 |grep -o '[^"]*$')" = TRUE ]; then
 
@@ -11,6 +12,7 @@ if [ "$(grep -o rplay=\"[^\"]* < "$DC_s/1.cfg" \
         "$DS/chng.sh" chngi
         sleep 10
     done
+    
 else
     "$DS/chng.sh" chngi
 

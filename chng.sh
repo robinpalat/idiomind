@@ -23,6 +23,8 @@ if [[ "$1" = chngi ]]; then
         n="$(grep -oP '(?<=ntosd=\").*(?=\")' "$DC_s/1.cfg")"
         l="$(grep -oP '(?<=loop=\").*(?=\")' "$DC_s/1.cfg")"
         
+        [ ! -f "$DT/.p_" ] && > "$DT/.p_"
+        
         if [[ ${n} != TRUE ]] && [[ ${a} != TRUE ]]; then audio=TRUE; fi
         nu='^[0-9]+$'; if ! [[ $l =~ $nu ]]; then l=1; fi
         
@@ -123,8 +125,8 @@ elif [[ "$1" != chngi ]]; then
     elif [[ $ret -eq 0 ]]; then "$DS/default/tpc.sh" "$tpc" &
 
     elif [[ $ret -eq 5 ]]; then "$DS/default/tpc.sh" "$tpc" &
+    
     echo "$tpc" > "$DM_tl"/.5.cfg
     fi
-    
     exit
 fi

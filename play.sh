@@ -8,9 +8,9 @@ play_word() {
     if [ -f "$DM_tls/${2,,}.mp3" ]; then
     play "$DM_tls/${2,,}.mp3" &
     elif [ -n "$synth" ]; then
-    sed 's/<[^>]*>//g' <<<"${2}." | $synth &
+    echo "${2}." | $synth &
     else
-    sed 's/<[^>]*>//g' <<<"${2}." | espeak -v $lg -s 150 &
+    echo "${2}." | espeak -v $lg -s 150 &
     fi
 } >/dev/null 2>&1
 
@@ -19,9 +19,9 @@ play_sentence() {
     if [ -f "${DM_tlt}/$2.mp3" ]; then
     play "${DM_tlt}/$2.mp3" &
     elif [ -n "$synth" ]; then
-    sed 's/<[^>]*>//g' <<<"${3}." | $synth &
+    echo "${3}." | $synth &
     else
-    sed 's/<[^>]*>//g' <<<"${3}." | espeak -v $lg -s 150 &
+    echo "${3}." | espeak -v $lg -s 150 &
     fi
 } >/dev/null 2>&1
 
@@ -31,24 +31,23 @@ play_file() {
         if grep ".mp3" <<<"${2: -4}"; then
             play "${2}"
         else
-            mplayer "${2}" -noconsolecontrols -title "${2}"
+            mplayer "${2}" -noconsolecontrols -title "${3}"
         fi
     elif [ -n "$synth" ]; then
-    sed 's/<[^>]*>//g' <<<"${3}." | $synth
+    echo "${3}." | $synth
     else
-    sed 's/<[^>]*>//g' <<<"${3}." | espeak -v $lg -s 150
+    echo "${3}." | espeak -v $lg -s 150
     fi
-    
 } >/dev/null 2>&1
 
 play_list() {
     
     if [ -z "$tpc" ]; then source "$DS/ifs/mods/cmns.sh"
     msg "$(gettext "No topic is active")\n" info & exit 1; fi
+    
     tpc="$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")"
     DC_tlt="${DM_tl}/${tpc}/.conf"
-
-    [ -n "$(< "$DC_s/1.cfg")" ] && cfg=1 || > "$DC_s/1.cfg"
+    [[ -n "$(< "$DC_s/1.cfg")" ]] && cfg=1 || > "$DC_s/1.cfg"
     lbls=( 'Words' 'Sentences' 'Marked items' 'Difficult words' \
     'New episodes <i><small>Podcasts</small></i>' \
     'Saved episodes <i><small>Podcasts</small></i>' )
@@ -57,7 +56,6 @@ play_list() {
     'langt' 'langs' 'synth' 'txaud' 'intrf' \
     'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi' )
     in=( 'in1' 'in2' 'in3' 'in4' 'in5' 'in6' )
-
     in1="$(grep -Fxvf "$DC_tlt/4.cfg" "$DC_tlt/1.cfg")"
     in2="$(grep -Fxvf "$DC_tlt/3.cfg" "$DC_tlt/1.cfg")"
     in3="$(grep -Fxvf "$DC_tlt/2.cfg" "$DC_tlt/6.cfg")"
@@ -71,7 +69,7 @@ play_list() {
     if [[ ${cfg} = 1 ]]; then
 
         n=6
-        while [[ $n -lt 22 ]]; do
+        while [ ${n} -lt 22 ]; do
             get="${sets[$n]}"
             val=$(grep -o "$get"=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
             declare ${sets[$n]}="$val"
@@ -80,7 +78,7 @@ play_list() {
         
     else
         n=0; > "$DC_s/1.cfg"
-        while [[ $n -lt 22 ]]; do
+        while [ ${n} -lt 22 ]; do
         echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
         ((n=n+1))
         done
@@ -120,7 +118,7 @@ play_list() {
     c=$((RANDOM%100000)); KEY=$c
     setting_1 | yad --plug=$KEY --tabnum=1 --list \
     --print-all --always-print-result --separator="|" \
-    --expand-column=2 --no-headers --borders=5 \
+    --expand-column=2 --no-headers --borders=0 \
     --column=IMG:IMG \
     --column=TXT:TXT \
     --column=CHK:CHK > $tab1 &
@@ -137,10 +135,10 @@ play_list() {
     --always-print-result --print-all \
     --window-icon="$DS/images/icon.png" \
     --align=right --fixed --center --on-top \
-    --tab-pos=right --tab-borders=0 \
+    --tab-pos=bottom --tab-borders=0 \
     --tab=" $(gettext "Lists") " \
     --tab="$(gettext "Options")" \
-    --width=420 --height=320 --borders=0 \
+    --width=400 --height=315 --borders=0 \
     "$btn2" --button="$btn1"
     ret=$?
 
@@ -149,8 +147,7 @@ play_list() {
         tab1=$(< $tab1)
         tab2=$(< $tab2)
         rm -f "$DT"/*.p
-        f=1
-        n=6
+        f=1; n=6
         while [ ${n} -lt 22 ]; do
         
             if [ ${n} -gt 5 -a ${n} -lt 11 ]; then
@@ -167,7 +164,6 @@ play_list() {
                         
                 if [ "$val" = TRUE ]; then
                 count=$((count+$(egrep -cv '#|^$' <<<"${!in[$((n-16))]}"))); fi
-
             fi
             
             ((n=n+1))
@@ -194,7 +190,6 @@ play_list() {
             [ -f "$DT/index.m3u" ] && rm -f "$DT/index.m3u"
             "$DS/stop.sh" 2 &
         fi
-        
     fi
     rm -f "$DT"/*.p
     exit 0

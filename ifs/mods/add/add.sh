@@ -139,13 +139,14 @@ function sentence_p() {
             echo "<span color='#62426A'>$grmrk</span>" >> "g.$r"
         elif grep -Fxq "$chck" <<<"$conjunctions"; then
             echo "<span color='#90B33B'>$grmrk</span>" >> "g.$r"
-        elif grep -Fxq "$chck" <<<"$verbs"; then
-            echo "<span color='#CF387F'>$grmrk</span>" >> "g.$r"
         elif grep -Fxq "$chck" <<<"$prepositions"; then
             echo "<span color='#D67B2D'>$grmrk</span>" >> "g.$r"
         elif grep -Fxq "$chck" <<<"$adverbs"; then
             echo "<span color='#9C68BD'>$grmrk</span>" >> "g.$r"
+        elif grep -Fxq "$chck" <<<"$verbs"; then
+            echo "<span color='#CF387F'>$grmrk</span>" >> "g.$r"
         else
+        
             echo "$grmrk" >> "g.$r"
         fi
     done < <(sed 's/ /\n/g' <<<"$trgt_p")
@@ -386,7 +387,7 @@ function list_words_3() {
     | sed '/")"/d' | sed '/":"/d' | sed 's/[^ ]\+/\L\u&/g' \
     | head -n100 | egrep -v "FALSE" | egrep -v "TRUE" > "$DT_r/lst"
     fi
-}
+} >/dev/null 2>&1
 
 
 function dlg_form_0() {

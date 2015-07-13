@@ -71,8 +71,8 @@ Create one using the button below. ")" & exit 1; fi
 
     if [ "$trans" = TRUE ]; then lzgpr="$(dlg_form_1)"; \
     else lzgpr="$(dlg_form_2)"; fi
-    
     ret="$?"
+    
     trgt=$(echo "${lzgpr}" | head -n -1 | sed -n 1p)
     srce=$(echo "${lzgpr}" | sed -n 2p)
     chk=$(echo "${lzgpr}" | tail -1)

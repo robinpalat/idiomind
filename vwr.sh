@@ -1,6 +1,5 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
-#
 
 [ ${1} = 1 ] && index="${DC_tlt}/1.cfg" && item_name="$(sed 's/<[^>]*>//g' <<<"${3}")"
 [ ${1} = 2 ] && index="${DC_tlt}/2.cfg" && item_name="$(sed 's/<[^>]*>//g' <<<"${2}")"
@@ -27,16 +26,16 @@ lwrd="$(grep -oP '(?<=wrds={).*(?=})' <<<"${item}" |tr '_' '\n')"
 exmp="$(sed "s/"${trgt,,}"/<span background='#FDFBCF'>"${trgt,,}"<\/\span>/g" <<<"$exmp")"
 id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
 
-[ "$mark" = TRUE ] && trgt="<b>$trgt</b>" && grmr="<b>$grmr</b>"
-
 if [ ${type} = 1 ]; then
 
     cmd_listen="$DS/play.sh play_word "\"${trgt}\"""
+    [ "$mark" = TRUE ] && trgt="<b>$trgt</b>" && grmr="<b>$grmr</b>"
     word_view
 
 elif [ ${type} = 2 ]; then
 
     cmd_listen="$DS/play.sh play_sentence ${id} "\"${trgt}\"""
+    [ "$mark" = TRUE ] && trgt="<b>$trgt</b>" && grmr="<b>$grmr</b>"
     sentence_view
 
 else

@@ -1,10 +1,9 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
-if [ ! -f "$DC_a/gts.cfg" ] \ || [[ -z "$(< "$DC_a/gts.cfg")" ]]; then
-echo -e "set1=\"\"" > "$DC_a/gts.cfg"
-echo -e "key=\"\"" >> "$DC_a/gts.cfg";fi
+DC_a="$HOME/.config/idiomind/addons"
+if [ ! -f "$DC_a/gts.cfg" ] || [[ -z "$(< "$DC_a/gts.cfg")" ]]; then
+echo -e "set1=\"\"\nkey=\"\"" > "$DC_a/gts.cfg"; fi
 
 set1=$(grep -o set1=\"[^\"]* "$DC_a/gts.cfg" |grep -o '[^"]*$')
 key=$(grep -o key=\"[^\"]* "$DC_a/gts.cfg" |grep -o '[^"]*$')
@@ -20,10 +19,11 @@ c=$(yad --form --title="$(gettext "Google Translate")" \
 $(gettext "Help improve Google Translate")</a>\n\n":LBL " " \
 --button="$(gettext "Cancel")":1 \
 --button="$(gettext "OK")":0)
+ret=$?
 
-if [ $? = 0 ]; then
-val1="$(cut -d "|" -f1 <<< "$c")"
-val2="$(cut -d "|" -f2 <<< "$c")"
+if [ $ret = 0 ]; then
+val1="$(cut -d "|" -f1 <<<"$c")"
+val2="$(cut -d "|" -f2 <<<"$c")"
 sed -i "s/set1=.*/set1=\"$val1\"/g" "$DC_a/gts.cfg"
 sed -i "s/key=.*/key=\"$val2\"/g" "$DC_a/gts.cfg"
 fi

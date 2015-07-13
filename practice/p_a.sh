@@ -58,10 +58,9 @@ fonts() {
 cuestion() {
     
     yad --form --title="$(gettext "Practice")" \
-    --timeout=10 \
     --skip-taskbar --text-align=center --center --on-top \
     --undecorated --buttons-layout=spread --align=center \
-    --width=360 --height=250 --borders=8 \
+    --width=360 --height=260 --borders=8 \
     --field="\n$acuestion":lbl \
     --button="$(gettext "Exit")":1 \
     --button="    $(gettext "Continue") >>    ":0
@@ -70,10 +69,10 @@ cuestion() {
 answer() {
     
     yad --form --title="$(gettext "Practice")" \
-    --timeout=10 --selectable-labels \
+    --selectable-labels \
     --skip-taskbar --text-align=center --center --on-top \
     --undecorated --buttons-layout=spread --align=center \
-    --width=360 --height=250 --borders=8 \
+    --width=360 --height=260 --borders=8 \
     --field="$bcuestion":lbl \
     --field="":lbl \
     --field="$answer":lbl \

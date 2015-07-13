@@ -51,8 +51,7 @@ function new_session() {
 
         if [[ -f "/usr/share/idiomind/addons/$set/icon.png" ]]; then 
         echo "/usr/share/idiomind/addons/$set/icon.png" >> "$DC_s/2.cfg"
-        else echo "/usr/share/idiomind/images/thumb.png" >> "$DC_s/2.cfg"
-        fi
+        else echo "/usr/share/idiomind/images/thumb.png" >> "$DC_s/2.cfg"; fi
         echo "$set" >> "$DC_s/2.cfg"
 
     done < <(cd "$DS/addons"; ls -d *)
@@ -121,7 +120,7 @@ function new_session() {
     if ! grep 'intrf' < "$DC_s/1.cfg"; then
     rm "$DC_s/1.cfg"; fi
     
-    if [[ `cat "$DM_tl/Podcasts/.conf/8.cfg"` != 11 ]]; then
+    if [[ "$(< "$DM_tl/Podcasts/.conf/8.cfg")" != 11 ]]; then
     echo 11 > "$DM_tl/Podcasts/.conf/8.cfg"; fi
     ###
 
@@ -155,7 +154,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     --no-click --print-column=0 --dclick-action="$dclk" \
     --window-icon="$DS/images/icon.png" \
     --ellipsize=END --center \
-    --width=660 --height=550 --borders=6 \
+    --width=600 --height=510 --borders=6 \
     --column="$langt                   " \
     --column="$langs                   " \
     --button="$(gettext "Install")":0 \

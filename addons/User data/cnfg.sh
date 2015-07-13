@@ -28,7 +28,7 @@ if [ -z "$1" ]; then
     --window-icon="$DS/images/icon.png" \
     --center --on-top --expand-column=2 --image-on-top \
     --skip-taskbar --image=folder \
-    --width=480 --height=330 --borders=15 \
+    --width=450 --height=300 --borders=10 \
     --button="$(gettext "Cancel")":1 \
     --button=Ok:0 \
     --column="" \

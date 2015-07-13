@@ -1,6 +1,6 @@
 #!/bin/bash
 
-[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
+DT="/tmp/.idiomind-$USER"
 
 on_quit() {
     if ps -A | pgrep -f "/usr/share/idiomind/bcle.sh"; then killall bcle.sh & fi

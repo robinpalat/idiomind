@@ -111,7 +111,7 @@ elif [ -z "${1}" ]; then
     fi
     
     if [ "${2}" = f ]; then
-    tex="--text=$3\n"; else
+    tex="--text=$3"; else
     tex="--center"; fi
     
     sel="$(dict_list | yad --list --title="$(gettext "Dictionaries")" \
@@ -120,10 +120,10 @@ elif [ -z "${1}" ]; then
     --dclick-action='/usr/share/idiomind/addons/Dics/cnfg.sh edit_dlg' \
     --window-icon="$DS/images/icon.png" \
     --expand-column=2 --skip-taskbar --center --on-top \
-    --width=420 --height=300 --borders=10 \
+    --width=450 --height=300 --borders=10 \
     --column=" ":CHK \
     --column="$(gettext "Available dictionaries")":TEXT \
-    --column=" ":TEXT \
+    --column="$(gettext "Lang")  ":TEXT \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Add")":2 \
     --button=OK:0)"

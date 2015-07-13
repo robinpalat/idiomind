@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-[[ ! -d "$DC" ]] && "$DS/ifs/1u.sh" && exit
+[ ! -d "$DC" ] && "$DS/ifs/1u.sh" && exit
 info2=" $(gettext "Are you sure you want to change the language set to learn?")  "
 info1=" $(gettext "Are you sure you want to change the source language setting?")  "
 cd "$DS/addons"
@@ -51,8 +51,8 @@ set_lang() {
     "$DS/stop.sh" 4
     source /usr/share/idiomind/ifs/c.conf
     if [ -f "$DM/topics/$language/.8.cfg" ]; then
-    lst=$(sed -n 1p "$DM/topics/$language/.8.cfg")
-    "$DS/default/tpc.sh" "$lst" 1
+    lst="$(sed -n 1p "$DM/topics/$language/.8.cfg")"
+    "$DS/default/tpc.sh" "${lst}" 1
     else rm "$DC_s/4.cfg" && > "$DC_s/4.cfg"; fi
     "$DS/mngr.sh" mkmn &
 }
@@ -115,7 +115,7 @@ yad --plug=$KEY --form --tabnum=1 \
 --field="$(gettext "Backups")":BTN "$DS/ifs/tls.sh '_backup'" \
 --field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" > "$cnf1" &
 cat "$DC_s/2.cfg" | yad --plug=$KEY --tabnum=2 --list \
---text="<sub>  $(gettext "Double click to set") </sub>" \
+--text=" $(gettext "Double-click to set") " \
 --print-all --dclick-action="$DS/ifs/dclik.sh" \
 --expand-column=2 --no-headers \
 --column=icon:IMG --column=Action &
@@ -130,7 +130,7 @@ yad --notebook --key=$KEY --title="$(gettext "Settings")" \
 --button="$(gettext "Cancel")":1
 ret=$?
 
-    if [[ $ret -eq 0 ]]; then
+    if [ $ret -eq 0 ]; then
         n=1; v=0
         while [ ${n} -le 23 ]; do
             val=$(cut -d "|" -f$n < "$cnf1")
@@ -151,9 +151,9 @@ ret=$?
         [[ "$val" != "$intrf" ]] && \
         sed -i "s/${sets[15]}=.*/${sets[15]}=\"$val\"/g" "$DC_s/1.cfg"
         
-        if [ "$CW" = 0 ]; then
+        if [ ${CW} = 0 -a -f /tmp/.clipw ]; then
         kill $(cat /tmp/.clipw); rm -f /tmp/.clipw
-        elif [ "$CW" = 1 ] && [ ! -f /tmp/.clipw ]; then
+        elif [ ${CW} = 1 -a ! -f /tmp/.clipw ]; then
         "$DS/ifs/mods/clipw.sh" & fi
 
         [ ! -d  "$HOME/.config/autostart" ] \
