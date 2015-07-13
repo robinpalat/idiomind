@@ -8,50 +8,23 @@ lgs=$(lnglss "$lgsl")
 
 
 function check_source_1() {
-CATEGORIES="others
-comics
-culture
-family
-entertainment
-grammar
-history
-documentary
-in_the_city
-movies
-internet
-music
-nature
-news
-office
-relations
-sport
-social_networks
-shopping
-technology
-travel
-article
-science
-interview
-funny"
-
-sets=( 'v' 'tname' \
-'langs' 'langt' \
-'authr' 'cntct' 'ctgry' 'ilink' 'oname' \
-'datec' 'dateu' 'datei' \
-'nword' 'nsent' 'nimag' 'naudi' 'nsize' \
-'level' 'set_1' 'set_2' 'set_3' 'set_4' )
-
-LANGUAGES="English
-Chinese
-French
-German
-Italian
-Japanese
-Portuguese
-Russian
-Spanish
-Vietnamese"
-
+    
+    LANGUAGES=( 'English' 'Chinese' 'French' \
+    'German' 'Italian' 'Japanese' 'Portuguese' \
+    'Russian' 'Spanish' 'Vietnamese' )
+    CATEGORIES=( 'others' 'comics' 'culture' \
+    'family' 'entertainment' 'grammar' 'history' \
+    'documentary' 'in_the_city' 'movies' 'internet' \
+    'music' 'nature' 'news' 'office' \
+    'relations' 'sport' 'social_networks' 'shopping' \
+    'technology' 'travel' 'article' 'science' \
+    'interview' 'funny' )
+    sets=( 'v' 'tname' \
+    'langs' 'langt' \
+    'authr' 'cntct' 'ctgry' 'ilink' 'oname' \
+    'datec' 'dateu' 'datei' \
+    'nword' 'nsent' 'nimag' 'naudi' 'nsize' \
+    'level' 'set_1' 'set_2' 'set_3' 'set_4' )
     file="${1}"
     nu='^[0-9]+$'
     
@@ -72,12 +45,12 @@ Vietnamese"
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
             [ "$(grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${val}")" ]; then invalid 2; fi
         elif [[ ${n} = 2 || ${n} = 3 ]]; then # lang
-            if ! grep -Fox "${val}" <<<"${LANGUAGES}"; then invalid 3; fi
+            if ! grep -Fo "${val}" <<<"${LANGUAGES[@]}"; then invalid 3; fi
         elif [[ ${n} = 4 || ${n} = 5 ]]; then # user contact
             if [ ${#val} -gt 30 ] || \
             [ "$(grep -o -E '\*|\/|$|\)|\(|=' <<<"${val}")" ]; then invalid 4; fi
         elif [[ ${n} = 6 ]]; then # categ
-            if ! grep -Fox "${val}" <<<"${CATEGORIES}"; then invalid 5; fi
+            if ! grep -Fo "${val}" <<<"${CATEGORIES[@]}"; then invalid 5; fi
         elif [[ ${n} = 7 ]]; then # id
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 8 ]; then invalid 6; fi
         elif [[ ${n} = 8 ]]; then # name 
@@ -632,8 +605,6 @@ a_check_updates() {
 
 about() {
 
-#about.set_website(app_website)
-#about.set_website_label(web)
 c="$(gettext "Vocabulary learning tool")"
 website="$(gettext "Web Site")"
 export c website
@@ -647,7 +618,7 @@ app_version = 'v0.1-beta'
 app_comments = os.environ['c']
 web = os.environ['website']
 app_copyright = 'Copyright (c) 2015 Robin Palatnik'
-app_website = 'http://idiomind.com/'
+app_website = 'http://idiomind.sourceforge.net'
 app_license = (('This program is free software: you can redistribute it and/or modify\n'+
 'it under the terms of the GNU General Public License as published by\n'+
 'the Free Software Foundation, either version 3 of the License, or\n'+

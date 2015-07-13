@@ -161,9 +161,9 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     --button="$(gettext "Close")":1
     ret=$?
         
-        if [[ $ret -eq 1 ]]; then exit
+        if [ $ret -eq 1 ]; then exit
             
-        elif [[ $ret -eq 0 ]]; then
+        elif [ $ret -eq 0 ]; then
 
             if [[ $(wc -l < "$DM_t/$langt/.1.cfg") -ge 120 ]]; then
                 
@@ -299,7 +299,7 @@ function topic() {
                 apply
             fi
             
-            if [[ $ret -eq 5 ]]; then
+            if [ $ret -eq 5 ]; then
             
                 rm -f "$DT"/*.x
                 "$DS/practice/strt.sh" &
@@ -318,12 +318,12 @@ function topic() {
                 dialog_1
                 ret=$?
                 
-                    if [[ $ret -eq 2 ]]; then
+                    if [ $ret -eq 2 ]; then
                     
                         "$DS/mngr.sh" mark_to_learn "${tpc}" 0
                         idiomind topic & exit 1
                     
-                    elif [[ $ret -eq 3 ]]; then
+                    elif [ $ret -eq 3 ]; then
                     
                        exit 1
                     fi 
@@ -337,7 +337,7 @@ function topic() {
         fi
             ret=$?
 
-            if [[ $ret -eq 5 ]]; then
+            if [ $ret -eq 5 ]; then
             
                 rm -f "$DT"/*.x
                 "$DS/practice/strt.sh" &
@@ -366,12 +366,12 @@ function topic() {
             dialog_1
             ret=$?
                 
-                if [[ $ret -eq 2 ]]; then
+                if [ $ret -eq 2 ]; then
 
                     "$DS/mngr.sh" mark_to_learn "${tpc}" 0
                     idiomind topic & exit 1
                     
-                elif [[ $ret -eq 3 ]]; then
+                elif [ $ret -eq 3 ]; then
                     
                        exit 1
                 fi 
