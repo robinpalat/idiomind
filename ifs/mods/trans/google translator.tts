@@ -9,19 +9,19 @@ if [[ "$(grep -o set1=\"[^\"]* "$HOME/.config/idiomind/addons/gts.cfg" \
     if [[ ${#1} -gt 100 ]]; then
 
         while read -r chnk; do
-            if [[ -n "$chnk" ]]; then
-            q="$(sed -s "s/|/\'/g" <<<"$chnk")"
-            wget -q -U Mozilla -O "$DT_r/tmp$f.mp3" \
-            "https://translate.google.com/translate_tts?ie=UTF-8&tl=$2&q=$q"
+            if [[ -n "${chnk}" ]]; then
+            q="$(sed -s "s/|/\'/g" <<<"${chnk}")"
+            wget -q -U Mozilla -O "$DT_r/tmp${f}.mp3" \
+            "https://translate.google.com/translate_tts?ie=UTF-8&tl=$2&q=${q}"
             fi
             ((f=f+1))
-        done < <(tr -s "'" "|" <<<"$1" |xargs -n7)
+        done < <(tr -s "'" "|" <<<"${1}" |xargs -n7)
         cat $(ls "$DT_r"/tmp[0-9]*.mp3 |sort -n |tr '\n' ' ') > "${4}"
         rm -f "$DT_r"/*.mp3
 
     else
         wget -q -U Mozilla -O "$DT_r/tmp1.mp3" \
-        "https://translate.google.com/translate_tts?ie=UTF-8&tl=$2&q=$1"
+        "https://translate.google.com/translate_tts?ie=UTF-8&tl=$2&q=${1}"
         mv -f "$DT_r/tmp1.mp3" "${4}"
     fi
 fi

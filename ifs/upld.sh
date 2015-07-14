@@ -18,8 +18,10 @@ _cfg() {  b=$(tr -dc a-z < /dev/urandom |head -c 1)
 
 function dwld() {
 
-    # downloading from http://server_temp/c/xxx.md5sum.tar.gz 
+    # downloading from http://server_temp/c/xxx.md5sum.tar.gz
+    sleep 0.5
     msg "$(gettext "Downloading... When the download completes the files will be added to topic directory.")" info
+    kill -9 $(pgrep -f "yad --form --columns=2")
     mkdir "$DT/download"
     idcfg="$DM_tl/${2}/.conf/id.cfg"
     link=$(grep -o 'ilink="[^"]*' "${idcfg}" |grep -o '[^"]*$')
@@ -149,8 +151,7 @@ if [ -f "$DC_tlt/11.cfg" ]; then
         cmd_dl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
         info="<b>$(gettext "Additional content available for download")</b>"
         info2="$(gettext "Audio files:") $audio\n$(gettext "Images:") $imgs\n$(gettext "Size:") $fsize"
-        d=$(yad --form --title="$(gettext "Share")" \
-        --columns=2 \
+        d=$(yad --form --columns=2 --title="$(gettext "Share")" \
         --text="<span font_desc='Free Sans 15'> ${tpc}</span>" \
         --name=Idiomind --class=Idiomind \
         --window-icon="$DS/images/icon.png" --buttons-layout=end \

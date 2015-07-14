@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-if [ -z "$lgtl" ] || [ -z "$lgsl" ]; then
+if [ -z "$lgtl" -o -z "$lgsl" ]; then
 msg "$(gettext "Please check the language settings in the preferences dialog.")\n" error & exit 1
 fi
 
@@ -183,11 +183,11 @@ function sentence_p() {
 
 function clean_1() {
     
-    echo "$1" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' \
+    echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' \
     | sed "s/’/'/g" \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \
-    | tr -d '*|",;!¿?()[]&:./<>+'  | sed 's/\¡//g' \
+    | tr -d '*|",;!¿?()[]&:.<>+'  | sed 's/\¡//g' \
     | sed 's/<[^>]*>//g' | sed 's/ \+/ /g'
 }
 

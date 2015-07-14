@@ -38,7 +38,7 @@ elif [[ "$1" = sv_as ]]; then
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Save")":0)
     ret=$?
-    if [[ $ret -eq 0 ]]; then
+    if [ $ret -eq 0 ]; then
     cp "$file" "$sv"; fi
     
         
@@ -52,7 +52,7 @@ elif [[ "$1" = delete_item ]]; then
         msg_2 "$(gettext "Are you sure you want to delete this episode here?")\n" gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
         ret=$(echo "$?")
     
-        if [[ $ret -eq 0 ]]; then
+        if [ $ret -eq 0 ]; then
             
             [ -f "$DMC/$fname.mp3" ] && rm "$DMC/$fname.mp3"
             [ -f "$DMC/$fname.ogg" ] && rm "$DMC/$fname.ogg"
@@ -99,7 +99,7 @@ elif [[ "$1" = deleteall ]]; then
     --button="$(gettext "Yes")":0)
     ret="$?"
             
-    if [[ $ret -eq 0 ]]; then
+    if [ $ret -eq 0 ]; then
 
         rm "$DM_tl/Podcasts/cache"/*
         rm "$DM_tl/Podcasts/.conf/1.lst"

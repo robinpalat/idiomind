@@ -1,7 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 sizes() { for i in "$DS/addons/"* ; do
 dir=`basename "$i"`
 if [ -d "$DM_tl/$dir" ]; then
