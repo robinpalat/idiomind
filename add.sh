@@ -231,7 +231,7 @@ new_sentence() {
 new_word() {
 
     trgt="$(clean_1 "${2}")"
-    srce="$(clean_1 "${4}")"
+    srce="$(clean_0 "${4}")"
     DT_r="$3"; cd "$DT_r"
     DM_tlt="$DM_tl/${tpe}"
     DC_tlt="$DM_tl/${tpe}/.conf"
@@ -244,7 +244,7 @@ new_word() {
         trgt="$(translate "${trgt}" auto "$lgt")"
         trgt="$(clean_1 "${trgt}")"; fi
         srce="$(translate "${trgt}" $lgt $lgs)"
-        srce="$(clean_1 "${srce}")"
+        srce="$(clean_0 "${srce}")"
         
     else 
         if [ -z "${4}" ] || [ -z "${2}" ]; then

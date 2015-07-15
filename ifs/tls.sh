@@ -633,7 +633,7 @@ app_license = (('This program is free software: you can redistribute it and/or m
 'You should have received a copy of the GNU General Public License\n'+
 'along with this program.  If not, see <http://www.gnu.org/licenses/>.'))
 app_authors = ['Robin Palatnik <patapatass@hotmail.com>']
-app_artists = [' ']
+app_artists = ["Logo based on rg1024's openclipart Ufo Cartoon."]
 
 class AboutDialog:
     def __init__(self):

@@ -22,8 +22,7 @@ function mksure() {
     e=0
     for str in "${@}"; do
         shopt -s extglob
-        if [[ -z "${str##+([[:space:]])}" ]]; then
-        e=1; break; fi
+        if [ -z "${str##+([[:space:]])}" ]; then e=1; break; fi
     done
     return $e
 }
@@ -128,6 +127,28 @@ function sentence_p() {
     touch "A.$r" "B.$r" "g.$r"
     
     while read -r w; do
+    
+        if [ "$lgt" = ja -o "$lgt" = "zh-cn" -o "$lgt" = vi -o "$lgt" = ru ]; then
+        if [[ `sqlite3 $db "SELECT words from pronouns WHERE words IS '${w}';"` = "${w}" ]]; then
+            echo "<span color='#3E539A'>${w}</span>" >> "g.$r"
+        elif [[ `sqlite3 $db "SELECT words from nouns_adjetives WHERE words IS '${w}';"` = "${w}" ]]; then
+            echo "<span color='#496E60'>${w}</span>" >> "g.$r"
+        elif [[ `sqlite3 $db "SELECT words from adjetives WHERE words IS '${w}';"` = "${w}" ]]; then
+            echo "<span color='#3E8A3B'>${w}</span>" >> "g.$r"
+        elif [[ `sqlite3 $db "SELECT words from nouns_verbs WHERE words IS '${w}';"` = "${w}" ]]; then
+            echo "<span color='#62426A'>${w}</span>" >> "g.$r"
+        elif [[ `sqlite3 $db "SELECT words from conjunctions WHERE words IS '${w}';"` = "${w}" ]]; then
+            echo "<span color='#90B33B'>${w}</span>" >> "g.$r"
+        elif [[ `sqlite3 $db "SELECT words from prepositions WHERE words IS '${w}';"` = "${w}" ]]; then
+            echo "<span color='#D67B2D'>${w}</span>" >> "g.$r"
+        elif [[ `sqlite3 $db "SELECT words from adverbs WHERE words IS '${w}';"` = "${w}" ]]; then
+            echo "<span color='#9C68BD'>${w}</span>" >> "g.$r"
+        elif [[ `sqlite3 $db "SELECT words from verbs WHERE words IS '${w}';"` = "${w}" ]]; then
+            echo "<span color='#CF387F'>${w}</span>" >> "g.$r"
+        else
+            echo "${w}" >> "g.$r"
+        fi 
+        else
         f=${w:0:1}
         if [[ `sqlite3 $db "SELECT pronouns from $f WHERE pronouns IS '${w}';"` = "${w}" ]]; then
             echo "<span color='#3E539A'>${w}</span>" >> "g.$r"
@@ -148,6 +169,7 @@ function sentence_p() {
         else
             echo "${w}" >> "g.$r"
         fi  
+        fi
     done < <(sed 's/ /\n/g' <<<"${trgt_p}" |tr -d '\.,;' |awk '{print tolower($0)}')
     
     sed -i 's/\. /\n/g' "$bw"
@@ -181,6 +203,16 @@ function sentence_p() {
 
 
 function clean_1() {
+    
+    echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' \
+    | sed "s/’/'/g" \
+    | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
+    | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \
+    | tr -d '/*|",;!¿?()[]&:.<>+'  | sed 's/\¡//g' \
+    | sed 's/<[^>]*>//g' | sed 's/ \+/ /g'
+}
+
+function clean_0() {
     
     echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' \
     | sed "s/’/'/g" \
@@ -568,7 +600,6 @@ function dlg_progress_2() {
 function cleanups() {
 
     for fl in "$@"; do
-    
         if [ -d "${fl}" ]; then
             rm -fr "${fl}"
         elif [ -f "${fl}" ]; then

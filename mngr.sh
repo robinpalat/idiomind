@@ -194,7 +194,7 @@ edit_item() {
             edit_dlg="${edit_dlg1}"
             tpc_mod="$(cut -d "|" -f3 <<<"${edit_dlg}")"
             trgt_mod="$(clean_1 "$(cut -d "|" -f1 <<<"${edit_dlg}")")"
-            srce_mod="$(clean_1 "$(cut -d "|" -f2 <<<"${edit_dlg}")")"
+            srce_mod="$(clean_0 "$(cut -d "|" -f2 <<<"${edit_dlg}")")"
             audf_mod="$(cut -d "|" -f4 <<<"${edit_dlg}")"
             exmp_mod="$(clean_1 "$(cut -d "|" -f5 <<<"${edit_dlg}")")"
             defn_mod="$(clean_1 "$(cut -d "|" -f6 <<<"${edit_dlg}")")"
