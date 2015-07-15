@@ -125,32 +125,31 @@ function sentence_p() {
     | sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //;s/"//g' \
     | tr -d '.' | sed 's/^ *//; s/ *$//; /^$/d' > "$aw"
     translate "$(sed '/^$/d' "$aw")" auto $lg | tr -d '!?¿,;.' > "$bw"
-
     touch "A.$r" "B.$r" "g.$r"
-    while read -r grmrk; do
-        chck=$(sed 's/,//;s/\.//g' <<<"${grmrk,,}")
-        if grep -Fxq "$chck" <<<"$pronouns"; then
-            echo "<span color='#3E539A'>$grmrk</span>" >> "g.$r"
-        elif grep -Fxq "$chck" <<<"$nouns_adjetives"; then
-            echo "<span color='#496E60'>$grmrk</span>" >> "g.$r"
-        elif grep -Fxq "$chck" <<<"$adjetives"; then
-            echo "<span color='#3E8A3B'>$grmrk</span>" >> "g.$r"
-        elif grep -Fxq "$chck" <<<"$nouns_verbs"; then
-            echo "<span color='#62426A'>$grmrk</span>" >> "g.$r"
-        elif grep -Fxq "$chck" <<<"$conjunctions"; then
-            echo "<span color='#90B33B'>$grmrk</span>" >> "g.$r"
-        elif grep -Fxq "$chck" <<<"$prepositions"; then
-            echo "<span color='#D67B2D'>$grmrk</span>" >> "g.$r"
-        elif grep -Fxq "$chck" <<<"$adverbs"; then
-            echo "<span color='#9C68BD'>$grmrk</span>" >> "g.$r"
-        elif grep -Fxq "$chck" <<<"$verbs"; then
-            echo "<span color='#CF387F'>$grmrk</span>" >> "g.$r"
+    
+    while read -r w; do
+        f=${w:0:1}
+        if [[ `sqlite3 $db "SELECT pronouns from $f WHERE pronouns IS '${w}';"` = "${w}" ]]; then
+            echo "<span color='#3E539A'>${w}</span>" >> "g.$r"
+        elif [[ `sqlite3 $db "SELECT nouns_adjetives from $f WHERE nouns_adjetives IS '${w}';"` = "${w}" ]]; then
+            echo "<span color='#496E60'>${w}</span>" >> "g.$r"
+        elif [[ `sqlite3 $db "SELECT adjetives from $f WHERE adjetives IS '${w}';"` = "${w}" ]]; then
+            echo "<span color='#3E8A3B'>${w}</span>" >> "g.$r"
+        elif [[ `sqlite3 $db "SELECT nouns_verbs from $f WHERE nouns_verbs IS '${w}';"` = "${w}" ]]; then
+            echo "<span color='#62426A'>${w}</span>" >> "g.$r"
+        elif [[ `sqlite3 $db "SELECT conjunctions from $f WHERE conjunctions IS '${w}';"` = "${w}" ]]; then
+            echo "<span color='#90B33B'>${w}</span>" >> "g.$r"
+        elif [[ `sqlite3 $db "SELECT prepositions from $f WHERE prepositions IS '${w}';"` = "${w}" ]]; then
+            echo "<span color='#D67B2D'>${w}</span>" >> "g.$r"
+        elif [[ `sqlite3 $db "SELECT adverbs from $f WHERE adverbs IS '${w}';"` = "${w}" ]]; then
+            echo "<span color='#9C68BD'>${w}</span>" >> "g.$r"
+        elif [[ `sqlite3 $db "SELECT verbs from $f WHERE verbs IS '${w}';"` = "${w}" ]]; then
+            echo "<span color='#CF387F'>${w}</span>" >> "g.$r"
         else
-        
-            echo "$grmrk" >> "g.$r"
-        fi
-    done < <(sed 's/ /\n/g' <<<"$trgt_p")
-
+            echo "${w}" >> "g.$r"
+        fi  
+    done < <(sed 's/ /\n/g' <<<"${trgt_p}" |tr -d '\.,;' |awk '{print tolower($0)}')
+    
     sed -i 's/\. /\n/g' "$bw"
     sed -i 's/\. /\n/g' "$aw"
     touch "$DT_r/A.$r" "$DT_r/B.$r" "$DT_r/g.$r"; bcle=1

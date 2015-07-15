@@ -161,7 +161,7 @@ Create one using the button below. ")" & exit 1; fi
 new_sentence() {
 
     DT_r="$3"
-    source "$DS/default/dicts/$lgt"
+    db="$DS/default/dicts/$lgt"
     DM_tlt="$DM_tl/${tpe}"
     DC_tlt="$DM_tl/${tpe}/.conf"
     trgt="$(clean_2 "${2}")"
@@ -235,7 +235,6 @@ new_word() {
     DT_r="$3"; cd "$DT_r"
     DM_tlt="$DM_tl/${tpe}"
     DC_tlt="$DM_tl/${tpe}/.conf"
-    source "$DS/default/dicts/$lgt"
     check_s "${tpe}"
 
     if [ "$trans" = TRUE ]; then
@@ -460,7 +459,7 @@ list_words_dclik() {
 process() {
     
     ns=$(wc -l < "${DC_tlt}/0.cfg")
-    source "$DS/default/dicts/$lgt"
+    db="$DS/default/dicts/$lgt"
     if [ -f "$DT/.n_s_pr" ]; then
     tpe="$(sed -n 2p "$DT/.n_s_pr")"; fi
     DM_tlt="$DM_tl/${tpe}"
@@ -704,7 +703,7 @@ process() {
                     while [[ ${n} -le $(wc -l < "$DT_r/wrds" | head -200) ]]; do
                     
                         exmp_=$(sed -n ${n}p "$DT_r/wrdsls" |sed 's/\[ \.\.\. \]//g')
-                        trgt=$(sed -n ${n}p "$DT_r/wrds" | awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
+                        trgt=$(sed -n ${n}p "$DT_r/wrds" |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
                         audio="${trgt,,}"
                         
                         if [[ $(wc -l < "${DC_tlt}/0.cfg") -ge 200 ]]; then

@@ -364,8 +364,9 @@ videourl() {
     --field="$(gettext "URL")" \
     --button="$(gettext "Cancel")":1 \
     --button=gtk-ok:0)
+    ret=$?
     
-    [[ $? = 1 ]] && exit
+    [ $ret = 1 -o -z "$url" ] && exit
     if [ ${#url} -gt 40 ] && \
     ([ ${url:0:29} = 'https://www.youtube.com/watch' ] \
     || [ ${url:0:28} = 'http://www.youtube.com/watch' ]); then \

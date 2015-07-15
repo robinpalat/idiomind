@@ -261,7 +261,7 @@ edit_item() {
 
                     elif [ ${type_mod} = 2 ]; then
                     srce_mod="$(clean_2 "$(translate "${trgt_mod}" $lgt $lgs)")"
-                    source "$DS/default/dicts/$lgt"
+                    db="$DS/default/dicts/$lgt"
                     sentence_p "$DT_r" 2
                     fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
                     srce="$temp"
@@ -422,7 +422,7 @@ edit_list() {
 
                 elif [ ${type} = 2 ]; then
                 srce_mod="$(clean_2 "$(translate "${trgt}" $lgt $lgs)")"
-                source "$DS/default/dicts/$lgt"
+                db="$DS/default/dicts/$lgt"
                 sentence_p "$DT_r" 2
                 fetch_audio "$aw" "$bw" "$DT_r" "$DM_tls"
                 fi

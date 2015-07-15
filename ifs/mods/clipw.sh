@@ -22,10 +22,10 @@ _watch() {
             if grep 'down' <<<$(comm -13 <(echo "$stt1") <(echo "$stt2")); then break; fi
             done
 
-        "/usr/share/idiomind/add.sh" new_items " " 2 "$(xclip -selection primary -o)"
+        "/usr/share/idiomind/add.sh" new_items "" 2 "$(xclip -selection primary -o)"
         fi
  
     done
-    exit
+    exit 0
 }
 _watch
