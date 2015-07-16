@@ -116,8 +116,8 @@ function new_session() {
     "$DS/default/tpc.sh" "${tpd}" 2; fi
     fi
     
-    ###
-    if ! grep 'intrf' < "$DC_s/1.cfg"; then
+    ####
+    if grep 'rplay' < "$DC_s/1.cfg"; then
     rm "$DC_s/1.cfg"; fi
     
     if [[ "$(< "$DM_tl/Podcasts/.conf/8.cfg")" != 11 ]]; then

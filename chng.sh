@@ -5,27 +5,29 @@ DT="/tmp/.idiomind-$USER"
 DS="/usr/share/idiomind"
 DC_s="$HOME/.config/idiomind/s"
 source "$DS/ifs/mods/cmns.sh"
+cfg="$DC_tlt/10.cfg"
 f=0
 
 if [[ "$1" = chngi ]]; then
 
-    w="$(grep -oP '(?<=words=\").*(?=\")' "$DC_s/1.cfg")"
-    s="$(grep -oP '(?<=sntcs=\").*(?=\")' "$DC_s/1.cfg")"
-    m="$(grep -oP '(?<=marks=\").*(?=\")' "$DC_s/1.cfg")"
-    p="$(grep -oP '(?<=wprct=\").*(?=\")' "$DC_s/1.cfg")"
-    export v="$(grep -oP '(?<=video=\").*(?=\")' "$DC_s/1.cfg")"
-    export ne="$(grep -oP '(?<=nsepi=\").*(?=\")' "$DC_s/1.cfg")"
-    export se="$(grep -oP '(?<=svepi=\").*(?=\")' "$DC_s/1.cfg")"
+    w="$(grep -oP '(?<=words=\").*(?=\")' "$cfg")"
+    s="$(grep -oP '(?<=sntcs=\").*(?=\")' "$cfg")"
+    m="$(grep -oP '(?<=marks=\").*(?=\")' "$cfg")"
+    p="$(grep -oP '(?<=wprct=\").*(?=\")' "$cfg")"
+    export v="$(grep -oP '(?<=video=\").*(?=\")' "$cfg")"
+    export ne="$(grep -oP '(?<=nsepi=\").*(?=\")' "$cfg")"
+    export se="$(grep -oP '(?<=svepi=\").*(?=\")' "$cfg")"
     
     _play() {
         
-        a="$(grep -oP '(?<=audio=\").*(?=\")' "$DC_s/1.cfg")"
-        n="$(grep -oP '(?<=ntosd=\").*(?=\")' "$DC_s/1.cfg")"
-        l="$(grep -oP '(?<=loop=\").*(?=\")' "$DC_s/1.cfg")"
+        a="$(grep -oP '(?<=audio=\").*(?=\")' "$cfg")"
+        n="$(grep -oP '(?<=ntosd=\").*(?=\")' "$cfg")"
+        l="$(grep -oP '(?<=loop=\").*(?=\")' "$cfg")"
         
         [ ! -f "$DT/.p_" ] && > "$DT/.p_"
-        
-        if [[ ${n} != TRUE ]] && [[ ${a} != TRUE ]]; then audio=TRUE; fi
+
+        if [ ${n} != TRUE -a ${a} != TRUE ]; then "$DS/stop.sh" 2 & exit 1; fi
+        if ! grep TRUE <<<"$n$w$s$m$p$ne$se"; then "$DS/stop.sh" 2 & exit 1; fi
         nu='^[0-9]+$'; if ! [[ $l =~ $nu ]]; then l=1; fi
         
         if [ ${n} = TRUE ]; then

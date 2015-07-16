@@ -21,13 +21,8 @@ StartupWMClass=Idiomind"
 
 lang=( 'English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian' )
-
 sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
-'rplay' 'audio' 'video' 'ntosd' 'loop' \
-'langt' 'langs' 'synth' 'txaud' 'intrf' \
-'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi' )
-
-c=$((RANDOM%100000)); KEY=$c
+'langt' 'langs' 'synth' 'txaud' 'intrf' )
 
 confirm() {
 
@@ -59,7 +54,7 @@ set_lang() {
 
 n=0
 if [ "$cfg" = 1 ]; then
-    while [ ${n} -lt 17 ]; do
+    while [ ${n} -lt 11 ]; do
         get="${sets[$n]}"
         val=$(grep -o "$get"=\"[^\"]* "$DC_s/1.cfg" | grep -o '[^"]*$')
         declare "${sets[$n]}"="$val"
@@ -68,7 +63,7 @@ if [ "$cfg" = 1 ]; then
     
 else
     n=0; > "$DC_s/1.cfg"
-    while [ ${n} -lt 22 ]; do
+    while [ ${n} -lt 11 ]; do
     echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
     ((n=n+1))
     done
@@ -79,6 +74,7 @@ lst="$intrf"$(sed "s/\!$intrf//g" <<<"!Default!en!es!pt")""
 if [ "$ntosd" != TRUE ]; then audio=TRUE; fi
 if [ "$trans" != TRUE ]; then ttrgt=FALSE; fi
 
+c=$((RANDOM%100000)); KEY=$c
 yad --plug=$KEY --form --tabnum=1 \
 --align=right --scroll \
 --separator='|' --always-print-result --print-all \
@@ -90,14 +86,6 @@ yad --plug=$KEY --form --tabnum=1 \
 --field="$(gettext "Detect language of source text (slower)")":CHK "$ttrgt" \
 --field="$(gettext "Clipboard watcher")":CHK "$clipw" \
 --field="$(gettext "Perform tasks at startup")":CHK "$stsks" \
---field=" :LBL" " " \
---field="$(gettext "Play Options")\t":LBL " " \
---field=":LBL" " " \
---field="$(gettext "Repeat")":CHK "$rplay" \
---field="$(gettext "Play audio")":CHK "$audio" \
---field="$(gettext "Only play videos")":CHK "$video" \
---field="$(gettext "Use desktop notifications")":CHK "$ntosd" \
---field="$(gettext "Pause between items (sec)")":SCL "$loop" \
 --field=" :LBL" " " \
 --field="$(gettext "Languages")\t":LBL " " \
 --field=":LBL" " " \
@@ -132,7 +120,7 @@ ret=$?
 
     if [ $ret -eq 0 ]; then
         n=1; v=0
-        while [ ${n} -le 23 ]; do
+        while [ ${n} -le 15 ]; do
             val=$(cut -d "|" -f$n < "$cnf1")
             if [ -n "$val" ]; then
             sed -i "s/${sets[$v]}=.*/${sets[$v]}=\"$val\"/g" "$DC_s/1.cfg"
@@ -141,15 +129,15 @@ ret=$?
             ((n=n+1))
         done
 
-        val=$(cut -d "|" -f24 < "$cnf1")
+        val=$(cut -d "|" -f16 < "$cnf1")
         [[ "$val" != "$synth" ]] && \
-        sed -i "s/${sets[13]}=.*/${sets[13]}=\"$(sed 's|/|\\/|g' <<<"$val")\"/g" "$DC_s/1.cfg"
-        val=$(cut -d "|" -f25 < "$cnf1")
+        sed -i "s/${sets[8]}=.*/${sets[8]}=\"$(sed 's|/|\\/|g' <<<"$val")\"/g" "$DC_s/1.cfg"
+        val=$(cut -d "|" -f17 < "$cnf1")
         [[ "$val" != "$txaud" ]] && \
-        sed -i "s/${sets[14]}=.*/${sets[14]}=\"$(sed 's|/|\\/|g' <<<"$val")\"/g" "$DC_s/1.cfg"
-        val=$(cut -d "|" -f26 < "$cnf1")
+        sed -i "s/${sets[9]}=.*/${sets[9]}=\"$(sed 's|/|\\/|g' <<<"$val")\"/g" "$DC_s/1.cfg"
+        val=$(cut -d "|" -f18 < "$cnf1")
         [[ "$val" != "$intrf" ]] && \
-        sed -i "s/${sets[15]}=.*/${sets[15]}=\"$val\"/g" "$DC_s/1.cfg"
+        sed -i "s/${sets[10]}=.*/${sets[10]}=\"$val\"/g" "$DC_s/1.cfg"
         
         if [ ${CW} = 0 -a -f /tmp/.clipw ]; then
         kill $(cat /tmp/.clipw); rm -f /tmp/.clipw
@@ -172,7 +160,7 @@ ret=$?
         
         n=0
         while [ ${n} -lt 10 ]; do
-            if cut -d "|" -f20 < "$cnf1" | grep "${lang[$n]}" && \
+            if cut -d "|" -f12 < "$cnf1" | grep "${lang[$n]}" && \
             [ "${lang[$n]}" != "$lgtl" ]; then
                 lgtl="${lang[$n]}"
                 if grep -o -E 'Chinese|Japanese|Russian|Vietnamese' <<< "$lgtl";
@@ -186,7 +174,7 @@ ret=$?
         
         n=0
         while [ ${n} -lt 10 ]; do
-            if cut -d "|" -f21 < "$cnf1" | grep "${lang[$n]}" && \
+            if cut -d "|" -f13 < "$cnf1" | grep "${lang[$n]}" && \
             [ "${lang[$n]}" != "$lgsl" ]; then
                 confirm "$info1" dialog-question
                 if [ $? -eq 0 ]; then

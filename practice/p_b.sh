@@ -46,22 +46,20 @@ score() {
 
 
 fonts() {
-    
-    item="$(grep -F -m 1 "trgt={${1}}" "${cfg0}" |sed 's/},/}\n/g')"
-    wes=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
 
-    ras=$(sort -Ru b.srces | egrep -v "$wes" | head -5)
-    ess=$(grep "$wes" ./b.srces)
-    echo -e "$ras\n$ess" | sort -Ru | head -6 | sed '/^$/d' > srce.tmp
-    s=$((36-${#1}))
-    cuestion="\n<span font_desc='Free Sans $s' color='#636363'><b>$1</b></span>\n\n"
+    item="$(grep -F -m 1 "trgt={${trgt}}" "${cfg0}" |sed 's/},/}\n/g')"
+    srce=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
+    ras=$(sort -Ru b.srces |egrep -v "$srce" |head -${P})
+    tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
+    srce_s=$((36-${#trgt}))
+    cuestion="\n<span font_desc='Free Sans ${srce_s}' color='#636363'><b>${trgt}</b></span>\n\n"
     }
 
 
-ofonts() {
-    while read item; do
-        echo " <b> $item </b> "
-    done < ./srce.tmp
+ofonts() { 
+    while read -r item; do
+    echo " <span font_desc='Free Sans Bold ${s}'> $item </span> "
+    done <<<"$tmp"
     }
 
 
@@ -73,20 +71,21 @@ mchoise() {
     --skip-taskbar --text-align=center --center --on-top \
     --buttons-layout=edge --undecorated \
     --no-headers \
-    --width=380 --height=330 --borders=8 \
+    --width=380 --height=335 --borders=8 \
     --column=Option \
     --button="$(gettext "Exit")":1 \
     --button="$(gettext "OK")":0)
 }
 
+P=5; s=11
 while read trgt; do
 
-    fonts "${trgt}"
-    mchoise "${trgt}"
+    fonts
+    mchoise
 
     if [ $? = 0 ]; then
 
-        if grep -o "$wes" <<<"${dlg}"; then
+        if grep -o "$srce" <<<"${dlg}"; then
 
             echo "${trgt}" >> b.1
             easy=$((easy+1))
@@ -109,14 +108,15 @@ if [ ! -f ./b.2 ]; then
     score ${easy}
     
 else
+    P=2; s=12
     while read trgt; do
 
-        fonts "${trgt}"
-        mchoise "${trgt}"
+        fonts
+        mchoise
         
         if [ $? = 0 ]; then
         
-            if echo "$dlg" | grep "$wes"; then
+            if grep -o "$srce" <<<"${dlg}"; then
                 hard=$((hard-1))
                 ling=$((ling+1))
                 

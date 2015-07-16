@@ -47,39 +47,37 @@ play_list() {
     
     tpc="$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")"
     DC_tlt="${DM_tl}/${tpc}/.conf"
-    [[ -n "$(< "$DC_s/1.cfg")" ]] && cfg=1 || > "$DC_s/1.cfg"
+    [[ -n "$(< "$DC_tlt/10.cfg")" ]] && cfg=1 || > "$DC_tlt/10.cfg"
     lbls=( 'Words' 'Sentences' 'Marked items' 'Difficult words' \
     'New episodes <i><small>Podcasts</small></i>' \
     'Saved episodes <i><small>Podcasts</small></i>' )
-    sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
-    'rplay' 'audio' 'video' 'ntosd' 'loop' \
-    'langt' 'langs' 'synth' 'txaud' 'intrf' \
-    'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi' )
-    in=( 'in1' 'in2' 'in3' 'in4' 'in5' 'in6' )
-    in1="$(grep -Fxvf "$DC_tlt/4.cfg" "$DC_tlt/1.cfg")"
-    in2="$(grep -Fxvf "$DC_tlt/3.cfg" "$DC_tlt/1.cfg")"
-    in3="$(grep -Fxvf "$DC_tlt/2.cfg" "$DC_tlt/6.cfg")"
-    in4="$(grep -Fxvf "$DC_tlt/4.cfg" "$DC_tlt/practice/log.3")"
+    sets=( 'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi' \
+    'rplay' 'audio' 'video' 'ntosd' 'loop' )
+    in=( 'in0' 'in1' 'in2' 'in3' 'in4' 'in5' )
+    in0="$(grep -Fxvf "$DC_tlt/4.cfg" "$DC_tlt/1.cfg")"
+    in1="$(grep -Fxvf "$DC_tlt/3.cfg" "$DC_tlt/1.cfg")"
+    in2="$(grep -Fxvf "$DC_tlt/2.cfg" "$DC_tlt/6.cfg")"
+    in3="$(grep -Fxvf "$DC_tlt/4.cfg" "$DC_tlt/practice/log.3")"
     [ -f "$DM_tl/Podcasts/.conf/1.lst" ] && \
-    in5="$(tac "$DM_tl/Podcasts/.conf/1.lst")" || in5=""
+    in4="$(tac "$DM_tl/Podcasts/.conf/1.lst")" || in5=""
     [ -f "$DM_tl/Podcasts/.conf/2.lst" ] && \
-    in6="$(tac "$DM_tl/Podcasts/.conf/2.lst")" || in6=""
+    in5="$(tac "$DM_tl/Podcasts/.conf/2.lst")" || in6=""
     [ ! -d "$DT" ] && mkdir "$DT"; cd "$DT"
 
     if [[ ${cfg} = 1 ]]; then
 
-        n=6
-        while [ ${n} -lt 22 ]; do
+        n=0
+        while [ ${n} -le 10 ]; do
             get="${sets[$n]}"
-            val=$(grep -o "$get"=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
+            val=$(grep -o "$get"=\"[^\"]* "$DC_tlt/10.cfg" |grep -o '[^"]*$')
             declare ${sets[$n]}="$val"
             ((n=n+1))
         done
         
     else
-        n=0; > "$DC_s/1.cfg"
-        while [ ${n} -lt 22 ]; do
-        echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
+        n=0; > "$DC_tlt/10.cfg"
+        while [ ${n} -le 10 ]; do
+        echo -e "${sets[$n]}=\"\"" >> "$DC_tlt/10.cfg"
         ((n=n+1))
         done
     fi
@@ -87,12 +85,12 @@ play_list() {
     function setting_1() {
         n=0; 
         while [ ${n} -le 5 ]; do
-                arr="in$((n+1))"
+                arr="in${n}"
                 [[ -z ${!arr} ]] \
                 && echo "$DS/images/addi.png" \
                 || echo "$DS/images/add.png"
             echo "  <span font_desc='Arial 11'>$(gettext "${lbls[$n]}")</span>"
-            echo "${!sets[$((n+16))]}"
+            echo "${!sets[${n}]}"
             let n++
         done
     }
@@ -123,7 +121,7 @@ play_list() {
     --column=TXT:TXT \
     --column=CHK:CHK > $tab1 &
     yad --plug=$KEY --form --tabnum=2 --borders=5 \
-    --align=right \
+    --scroll --align=right \
     --separator='|' --always-print-result --print-all \
     --field="$(gettext "Repeat")":CHK "$rplay" \
     --field="$(gettext "Play audio")":CHK "$audio" \
@@ -142,28 +140,24 @@ play_list() {
     "$btn2" --button="$btn1"
     ret=$?
 
-    if [ $ret -eq 0 -o $ret -eq 2 ]; then
-        
         tab1=$(< $tab1)
         tab2=$(< $tab2)
         rm -f "$DT"/*.p
-        f=1; n=6
-        while [ ${n} -lt 22 ]; do
         
-            if [ ${n} -gt 5 -a ${n} -lt 11 ]; then
+        f=1; n=0
+        while [ ${n} -le 10 ]; do
+        
+            if [ ${n} -lt 6 ]; then
+                val=$(sed -n $((${n}+1))p <<<"${tab1}" | cut -d "|" -f3)
+                [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
+                "$DC_tlt/10.cfg"
+                if [ "$val" = TRUE ]; then 
+                count=$((count+$(egrep -cv '#|^$' <<<"${!in[${n}]}"))); fi
             
+            else
                 sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\""$(cut -d "|" -f${f} <<<"$tab2")"\"/g" \
-                "$DC_s/1.cfg"
-                ((f=f+1))
-
-            elif [ ${n} -ge 16 ]; then
-            
-                val=$(sed -n $((n-15))p <<<"${tab1}" | cut -d "|" -f3)
-                [ -n "${val}" ] && \
-                sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" "$DC_s/1.cfg"
-                        
-                if [ "$val" = TRUE ]; then
-                count=$((count+$(egrep -cv '#|^$' <<<"${!in[$((n-16))]}"))); fi
+                "$DC_tlt/10.cfg"
+                ((f=f+1))   
             fi
             
             ((n=n+1))
@@ -190,7 +184,7 @@ play_list() {
             [ -f "$DT/index.m3u" ] && rm -f "$DT/index.m3u"
             "$DS/stop.sh" 2 &
         fi
-    fi
+
     rm -f "$DT"/*.p
     exit 0
 }

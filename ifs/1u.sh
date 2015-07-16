@@ -12,11 +12,8 @@ text="<span font_desc='Free Sans Bold 14'>$(gettext "Welcome") ${USER^} </span>
 \n      $(gettext "To get started, please configure the following:")\n"
 lang=( 'English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian' )
-
 sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
-'rplay' 'audio' 'video' 'ntosd' 'loop' \
-'langt' 'langs' 'synth' 'txaud' 'intrf' \
-'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi' )
+'langt' 'langs' 'synth' 'txaud' 'intrf' )
 
 _info() {
     
@@ -63,15 +60,14 @@ dlg=$(yad --form --title="Idiomind" \
 --field="$(gettext "Select your native language"):CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
 --button=Cancel:1 \
 --button=gtk-ok:0)
-
 ret=$?
 
 if [ $ret -eq 1 ]; then
     killall 1u.sh & exit 1
 
 elif [ $ret -eq 0 ]; then
-    target=$(echo "$dlg" | cut -d "|" -f1)
-    source=$(echo "$dlg" | cut -d "|" -f2)
+    target=$(echo "$dlg" |cut -d "|" -f1)
+    source=$(echo "$dlg" |cut -d "|" -f2)
     
     if [ -z "$dlg" ]; then
     /usr/share/idiomind/ifs/1u.sh & exit 1
@@ -120,7 +116,7 @@ elif [ $ret -eq 0 ]; then
     done
     
     n=0; > "$DC_s/1.cfg"
-    while [ ${n} -lt 22 ]; do
+    while [ ${n} -lt 11 ]; do
     echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
     ((n=n+1))
     done

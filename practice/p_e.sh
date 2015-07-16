@@ -45,13 +45,13 @@ score() {
 
 fonts() {
     
-    item="$(grep -F -m 1 "trgt={${1}}" "${cfg0}" |sed 's/},/}\n/g')"
-    src=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
+    item="$(grep -F -m 1 "trgt={${trgt}}" "${cfg0}" |sed 's/},/}\n/g')"
+    srce=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
     id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
     img="$drtt/$id.jpg"
     [ ! -f "$img" ] && img="$DS/practice/images/img_2.jpg"
-    srcel="<span font_desc='Free Sans 10'>[$src]</span>"
-    trgtl="<span font_desc='Free Sans 15'><b>$1</b></span>"
+    srcel="<span font_desc='Free Sans 10'>${srce}</span>"
+    trgtl="<span font_desc='Free Sans 15'><b>${trgt}</b></span>"
 }
 
 cuestion() {
@@ -73,14 +73,14 @@ answer() {
     --skip-taskbar --text-align=center --align=center --center --on-top \
     --image-on-top --undecorated --buttons-layout=spread \
     --width=418 --height=370 --borders=6 \
-    --field="$trgtl   $srcel":lbl \
+    --field="$trgtl / $srcel":lbl \
     --button="  $(gettext "I did not know it")  ":3 \
     --button="  $(gettext "I Knew it")  ":2
 }
 
 while read trgt; do
 
-    fonts "${trgt}"
+    fonts
     cuestion
     
     if [ $? = 1 ]; then
@@ -110,7 +110,7 @@ if [ ! -f ./e.2 ]; then
 else
     while read trgt; do
 
-        fonts "${trgt}"
+        fonts
         cuestion
 
         if [ $? = 1 ]; then

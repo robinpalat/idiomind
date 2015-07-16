@@ -44,15 +44,14 @@ score() {
 
 fonts() {
 
-    item="$(grep -F -m 1 "trgt={${1}}" "${cfg0}" |sed 's/},/}\n/g')"
-    src="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
-
-    s=$((38-${#src}))
-    c=$((28-${#1}))
-    h=$((34-${#1}))
-    acuestion="\n<span font_desc='Free Sans $s'><b>$1</b></span>"
-    bcuestion="\n<span font_desc='Free Sans $c'>$1</span>"
-    answer="<span font_desc='Free Sans Bold $h'><i>$src</i></span>"
+    item="$(grep -F -m 1 "trgt={${trgt}}" "${cfg0}" |sed 's/},/}\n/g')"
+    srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
+    trgt_f_c=$((38-${#trgt}))
+    trgt_f_a=$((25-${#trgt}))
+    srce_f_a=$((38-${#srce}))
+    cuestion="\n<span font_desc='Free Sans Bold ${trgt_f_c}'>${trgt}</span>"
+    answer1="\n<span font_desc='Free Sans ${trgt_f_a}'>${trgt}</span>"
+    answer2="<span font_desc='Free Sans Bold ${srce_f_a}'><i>${srce}</i></span>"
 }
 
 cuestion() {
@@ -61,7 +60,7 @@ cuestion() {
     --skip-taskbar --text-align=center --center --on-top \
     --undecorated --buttons-layout=spread --align=center \
     --width=360 --height=260 --borders=8 \
-    --field="\n$acuestion":lbl \
+    --field="\n$cuestion":lbl \
     --button="$(gettext "Exit")":1 \
     --button="    $(gettext "Continue") >>    ":0
 }
@@ -73,9 +72,9 @@ answer() {
     --skip-taskbar --text-align=center --center --on-top \
     --undecorated --buttons-layout=spread --align=center \
     --width=360 --height=260 --borders=8 \
-    --field="$bcuestion":lbl \
+    --field="$answer1":lbl \
     --field="":lbl \
-    --field="$answer":lbl \
+    --field="$answer2":lbl \
     --button="  $(gettext "I did not know it")  ":3 \
     --button="  $(gettext "I Knew it")  ":2
 }
@@ -83,7 +82,7 @@ answer() {
 
 while read trgt; do
 
-    fonts "${trgt}"
+    fonts
     cuestion
 
     if [ $? = 1 ]; then
@@ -112,7 +111,7 @@ if [ ! -f ./a.2 ]; then
 else
     while read trgt; do
 
-        fonts "${trgt}"
+        fonts
         cuestion
         
         if [ $? = 1 ]; then

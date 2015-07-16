@@ -71,7 +71,7 @@ if [ ${ne} = TRUE ] || [ ${se} = TRUE ]; then
         "$DS/stop.sh" 2 & exit
         else 
         "$DS/stop.sh" 3
-        mplayer -fs -noconsolecontrols -title "$(gettext "Videos")" -playlist "$DT/index.m3u" & exit
+        mplayer -noconsolecontrols -title "$(gettext "Videos")" -playlist "$DT/index.m3u" & exit
         fi
     
     else

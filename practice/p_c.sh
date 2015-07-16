@@ -48,22 +48,20 @@ fonts() {
     
     if [[ $p = 2 ]]; then
     [ $lgtl = Japanese -o $lgtl = Chinese -o $lgtl = Russian ] \
-    && lst="${1:0:1} ${1:5:5}" || lst=$(echo "$1" | awk '$1=$1' FS= OFS=" " | tr aeiouy '.')
+    && lst="${trgt:0:1} ${trgt:5:5}" || lst=$(echo "${trgt,,}" |awk '$1=$1' FS= OFS=" " |tr aeiouy '.')
     elif [[ $p = 1 ]]; then
     [ $lgtl = Japanese -o $lgtl = Chinese -o $lgtl = Russian ] \
-    && lst="${1:0:1} ${1:5:5}" || lst=$(echo "${1^}" | sed "s|[a-z]|"\ \."|g")
+    && lst="${trgt:0:1} ${trgt:5:5}" || lst=$(echo "${trgt^}" |sed "s|[a-z]|"\ \."|g")
     fi
     
-    s=$((30-${#1}))
-    img="/usr/share/idiomind/images/fc.png"
-    lcuestion="\n\n<span font_desc='Verdana $s' color='#717171'><b>$lst</b></span>\n\n\n"
-
+    s=$((30-${#trgt}))
+    lcuestion="\n\n<span font_desc='Verdana ${s}' color='#717171'><b>${lst}</b></span>\n\n\n"
     }
 
 cuestion() {
     
-    cmd_play="$DS/play.sh play_word ${1}"
-    (sleep 0.5 && "$DS/play.sh" play_word "${1}") &
+    cmd_play="$DS/play.sh play_word ${trgt}"
+    (sleep 0.5 && "$DS/play.sh" play_word "${trgt}") &
 
     yad --form --title="$(gettext "Practice")" \
     --text="$lcuestion" \
@@ -80,8 +78,8 @@ cuestion() {
 p=1
 while read trgt; do
 
-    fonts "${trgt,,}"
-    cuestion "${trgt}"
+    fonts 
+    cuestion
     ans="$?"
     
     if [ ${ans} = 2 ]; then
@@ -106,8 +104,8 @@ else
     p=2
     while read trgt; do
 
-        fonts "${trgt,,}"
-        cuestion "${trgt}"
+        fonts
+        cuestion
         ans="$?"
           
         if [ ${ans} = 2 ]; then
