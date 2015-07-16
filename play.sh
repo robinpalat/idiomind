@@ -45,15 +45,18 @@ play_list() {
     if [ -z "$tpc" ]; then source "$DS/ifs/mods/cmns.sh"
     msg "$(gettext "No topic is active")\n" info & exit 1; fi
     
+    
     tpc="$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")"
     DC_tlt="${DM_tl}/${tpc}/.conf"
     [[ -n "$(< "$DC_tlt/10.cfg")" ]] && cfg=1 || > "$DC_tlt/10.cfg"
+    tim="$(gettext "Time")"; tims="$(gettext "Times")"
     lbls=( 'Words' 'Sentences' 'Marked items' 'Difficult words' \
     'New episodes <i><small>Podcasts</small></i>' \
     'Saved episodes <i><small>Podcasts</small></i>' )
     sets=( 'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi' \
-    'rplay' 'audio' 'video' 'ntosd' 'loop' )
+    'rplay' 'audio' 'ntosd' 'loop' 'ritem' )
     in=( 'in0' 'in1' 'in2' 'in3' 'in4' 'in5' )
+    iteml=( '1 $tim' '2 $tims' '3 $tims' '4 $tims' ) 
     in0="$(grep -Fxvf "$DC_tlt/4.cfg" "$DC_tlt/1.cfg")"
     in1="$(grep -Fxvf "$DC_tlt/3.cfg" "$DC_tlt/1.cfg")"
     in2="$(grep -Fxvf "$DC_tlt/2.cfg" "$DC_tlt/6.cfg")"
@@ -95,6 +98,8 @@ play_list() {
         done
     }
 
+    iteml
+    
     title="$tpc"
     if grep -E 'vivid|wily' <<<"`lsb_release -a`" >/dev/null 2>&1; then
     btn1="gtk-media-play:0"; else
@@ -110,7 +115,7 @@ play_list() {
         title="$(gettext "Playing:") $tpp"; fi
         fi
     fi
-    
+
     tab1=$(mktemp "$DT/XXX.p")
     tab2=$(mktemp "$DT/XXX.p")
     c=$((RANDOM%100000)); KEY=$c
@@ -120,14 +125,20 @@ play_list() {
     --column=IMG:IMG \
     --column=TXT:TXT \
     --column=CHK:CHK > $tab1 &
+    
+    if [ ${mode} -le 2 ]; then
     yad --plug=$KEY --form --tabnum=2 --borders=5 \
-    --scroll --align=right \
+    --align=right --scroll \
     --separator='|' --always-print-result --print-all \
-    --field="$(gettext "Repeat")":CHK "$rplay" \
+    --field="$(gettext "Repeat all")":CHK "$rplay" \
     --field="$(gettext "Play audio")":CHK "$audio" \
     --field="$(gettext "Only play videos")":CHK "$video" \
-    --field="$(gettext "Use desktop notifications")":CHK "$ntosd" \
-    --field="$(gettext "Pause between items (sec)")":SCL "$loop" > $tab2 &
+    --field="$(gettext "Pause between items (sec)")":SCL "$loop" \
+    --field="$(gettext "Repeat item")":CB "1 time!2 time!3 time !4 time" \
+    --field="":LBL "" \
+    --field="$(gettext "Only play Videopodcasts")":CHK "$loop" > $tab2 &
+    fi
+    
     yad --notebook --key=$KEY --title="$title" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-all \

@@ -219,7 +219,7 @@ fi
     
 function topic() {
 
-    mode=$(sed -n 1p "$DC_s/5.cfg")
+    export mode=$(sed -n 1p "$DC_s/5.cfg")
     source "$DS/ifs/mods/cmns.sh"
     source "$DS/ifs/mods/topic/items_list.sh"
     
