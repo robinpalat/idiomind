@@ -110,10 +110,7 @@ elif [ -z "${1}" ]; then
         cp -f "$DS/addons/Dics/disables"/* "$disables/"
     fi
     
-    if [ "${2}" = f ]; then
-    tex="--text=$3"; else
-    tex="--center"; fi
-    
+    [[ "${2}" = f ]] && tex="--text=$3" || tex="--center"
     sel="$(dict_list | yad --list --title="$(gettext "Dictionaries")" \
     --name=Idiomind --class=Idiomind "$tex" \
     --print-all --always-print-result --separator=" " \

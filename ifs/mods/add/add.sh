@@ -19,10 +19,9 @@ function check_s() {
 
 function mksure() {
     
-    e=0
+    e=0; shopt -s extglob
     for str in "${@}"; do
-        shopt -s extglob
-        if [ -z "${str##+([[:space:]])}" ]; then e=1; break; fi
+    if [ -z "${str##+([[:space:]])}" ]; then e=1; break; fi
     done
     return $e
 }
@@ -113,14 +112,15 @@ function sentence_p() {
     r=$((RANDOM%10000))
     cd /; DT_r="$1"; cd "$DT_r"; touch "swrd.$r" "twrd.$r"
     if [ "$lgt" = ja -o "$lgt" = "zh-cn" -o "$lgt" = ru ]; then
-    vrbl="${srce_p}"; lg=$lgt; aw="swrd.$r"; bw="twrd.$r"
-    else vrbl="${trgt_p}"; lg=$lgs; aw="twrd.$r"; bw="swrd.$r"; fi
+    vrbl="${srce_p}"; lg=$lgt; aw="./swrd.$r"; bw="./twrd.$r"
+    else vrbl="${trgt_p}"; lg=$lgs; aw="./twrd.$r"; bw="./swrd.$r"; fi
     
-    echo "${vrbl}" | awk 'BEGIN{RS=ORS=" "}!a[$0]++' \
-    | sed 's/ /\n/g' | grep -v '^.$' | grep -v '^..$' | sed -n 1,50p \
+    echo "${vrbl}" \
+    | python -c 'import sys; print(" ".join(sorted(set(sys.stdin.read().split()))))' \
+    | sed 's/ /\n/g' | grep -v '^.$' | grep -v '^..$' \
     | tr -d '*)(' | tr -s ',;"&:|{}[]' ' ' \
     | sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
-    | sed 's/\]//;s/\[//g' | sed 's/<[^>]*>//g' \
+    | sed 's/\]//;s/\[//;s/<[^>]*>//g' \
     | sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //;s/"//g' \
     | tr -d '.' | sed 's/^ *//; s/ *$//; /^$/d' > "$aw"
     translate "$(sed '/^$/d' "$aw")" auto $lg | tr -d '!?¿,;.' > "$bw"
@@ -178,15 +178,15 @@ function sentence_p() {
     
     if [ "$lgt" = ja -o "$lgt" = "zh-cn" -o "$lgt" = ru ]; then
         while [[ ${bcle} -le "$(wc -l < "$aw")" ]]; do
-        s=$(sed -n "$bcle"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-        t=$(sed -n "$bcle"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
+        s=$(sed -n "$bcle"p $aw |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
+        t=$(sed -n "$bcle"p $bw |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
         echo "$t"_"$s""" >> "$DT_r/B.$r"
         let bcle++
         done
     else
         while [[ ${bcle} -le "$(wc -l < "$aw")" ]]; do
-        t=$(sed -n "$bcle"p $aw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
-        s=$(sed -n "$bcle"p $bw | awk '{print tolower($0)}' | sed 's/^\s*./\U&\E/g')
+        t=$(sed -n "$bcle"p $aw |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
+        s=$(sed -n "$bcle"p $bw |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
         echo "$t"_"$s""" >> "$DT_r/B.$r"
         let bcle++
         done
