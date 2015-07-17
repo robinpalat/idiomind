@@ -97,7 +97,7 @@ _restfile() {
 
     if [ -f "$HOME/.idiomind/backup/${2}.bk" ]; then
         yad --title="${2}" \
-        --text="$(gettext "Confirm Restore")\n\n" \
+        --text="$(gettext "Confirm Restore")\n" \
         --image=dialog-question \
         --name=Idiomind --class=Idiomind \
         --always-print-result \
@@ -105,7 +105,7 @@ _restfile() {
         --image-on-top --on-top --sticky --center \
         --width=340 --height=100 --borders=5 \
         --button="$(gettext "Cancel")":1 \
-        --button="$(gettext "OK")":0
+        --button="$(gettext "Restore")":0
         ret="$?"
         
         if [ $ret -eq 0 ]; then
@@ -163,7 +163,8 @@ check_index() {
         if [ -f "$HOME/.idiomind/backup/${2}.bk" ]; then
         cp -f "$HOME/.idiomind/backup/${2}.bk" "${DC_tlt}/0.cfg"
         else msg "$(gettext "Unable to fix the index.")\n" error "$(gettext "Error")"
-        exit 1; fi; fi
+        exit 1; fi
+        fi
         
         rm "${DC_tlt}/1.cfg" "${DC_tlt}/3.cfg" "${DC_tlt}/4.cfg"
         while read -r item_; do
@@ -230,7 +231,7 @@ check_index() {
             tgs=$(eyeD3 "${DM_tlt}/words/$fname.mp3")
             trgt=$(grep -o -P "(?<=IWI1I0I).*(?=IWI1I0I)" <<<"$tgs")
             srce=$(grep -o -P "(?<=IWI2I0I).*(?=IWI2I0I)" <<<"$tgs")
-            fields="$(grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' <<<"${tgs}" | tr '_' '\n')"
+            fields="$(grep -o -P '(?<=IWI3I0I).*(?=IWI3I0I)' <<<"${tgs}" |tr '_' '\n')"
             mark="$(grep -o -P '(?<=IWI4I0I).*(?=IWI4I0I)' <<<"${tgs}")"
             exmp="$(sed -n 1p <<<"${fields}")"
             dftn="$(sed -n 2p <<<"${fields}")"
@@ -260,8 +261,10 @@ check_index() {
             stts=$(sed -n 1p "$DC_tlt/8.cfg_")
             rm "$DC_tlt/8.cfg_"
             else stts=1; fi
-            echo "$stts" > "$DC_tlt/8.cfg"
+            echo ${stts} > "$DC_tlt/8.cfg"
         fi
+        touch "$DC_tlt/0.cfg" "$DC_tlt/1.cfg" "$DC_tlt/2.cfg" \
+        "$DC_tlt/3.cfg" "$DC_tlt/4.cfg"
     }
     
     _check
@@ -274,8 +277,8 @@ check_index() {
         > "$DT/ps_lk"
         [ ! -d "$DM_tlt/.conf" ] && mkdir "$DM_tlt/.conf"
         [ ! -d "$DM_tlt/images" ] && mkdir "$DM_tlt/images"
-        _fix
         _restore
+        _fix
         fi
         
         if [ ${nv} -eq 1 ]; then

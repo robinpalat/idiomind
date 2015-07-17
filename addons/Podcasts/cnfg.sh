@@ -17,7 +17,8 @@ ini() {
     mkdir "$DM_tl/Podcasts/.conf"
     mkdir "$DM_tl/Podcasts/cache"
     cd "$DM_tl/Podcasts/.conf/"
-    touch "10.cfg" "1.lst" "2.lst" "feeds.lst" "old.lst" "info"
+    touch "./10.cfg" "./1.lst" "./2.lst" \
+    "./feeds.lst" "./old.lst"
     echo 11 > "$DM_tl/Podcasts/.conf/8.cfg"
     echo " " > "$DM_tl/Podcasts/.conf/info"
     echo -e "\n$(gettext "Latest downloads:") 0" > "$DM_tl/Podcasts/$date.updt"

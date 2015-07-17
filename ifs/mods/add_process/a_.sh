@@ -244,7 +244,7 @@ if [[ ${conten^} = A ]]; then
                                 index 2 "${tpe}" "${trgt}" "${srce}" "" "" "${wrds}" "${grmr}" "${id}"
                                 mv -f "$DT_r/${n}.mp3" "${DM_tlt}/$id.mp3"
                                 echo "${trgt}" >> "$DT_r/adds"
-                                fetch_audio "$aw" "$bw"
+                                ( fetch_audio "$aw" "$bw" )
                                 
                             else
                                 echo -e "\n\n#$n $trgt" >> "$DT_r/slog"

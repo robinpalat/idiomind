@@ -59,7 +59,7 @@ cuestion() {
     yad --form --title="$(gettext "Practice")" \
     --skip-taskbar --text-align=center --center --on-top \
     --undecorated --buttons-layout=spread --align=center \
-    --width=360 --height=260 --borders=8 \
+    --width=360 --height=260 --borders=10 \
     --field="\n$cuestion":lbl \
     --button="$(gettext "Exit")":1 \
     --button="    $(gettext "Continue") >>    ":0
@@ -71,7 +71,7 @@ answer() {
     --selectable-labels \
     --skip-taskbar --text-align=center --center --on-top \
     --undecorated --buttons-layout=spread --align=center \
-    --width=360 --height=260 --borders=8 \
+    --width=360 --height=260 --borders=10 \
     --field="$answer1":lbl \
     --field="":lbl \
     --field="$answer2":lbl \

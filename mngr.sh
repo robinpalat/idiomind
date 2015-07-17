@@ -455,7 +455,7 @@ delete_topic() {
 
     msg_2 "$(gettext "Are you sure you want to delete this Topic?")\n" \
     gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
-    ret=$(echo "$?")
+    ret="$?"
         
         if [ ${ret} -eq 0 ]; then
             
@@ -470,19 +470,19 @@ delete_topic() {
             
             [ -f "$DM/backup/${tpc}.bk" ] && rm "$DM/backup/${tpc}.bk"
             if [ -d "$DM_tl/${tpc}" ] && [ -n "${tpc}" ]; then
-            rm -fr "$DM_tl/${tpc}"; fi; if [ -d "$DM_tl/${tpc}" ]; then sleep 0.5
+            rm -fr "$DM_tl/${tpc}"; fi
+            if [ -d "$DM_tl/${tpc}" ]; then sleep 0.5
             msg "$(gettext "Could not remove the directory:")\n$DM_tl/${tpc}\n$(gettext "You must manually remove it.")" info; fi
             
             rm -f "$DT/tpe"
             > "$DM_tl/.8.cfg"
             > "$DC_s/4.cfg"
             
-            n=0; while [ ${n} -le 4 ]; do
-            if [ -f "$DM_tl/.$n.cfg" ]; then
-            grep -vxF "${tpc}" "$DM_tl/.$n.cfg" > "$DT/cfg.tmp"
-            sed '/^$/d' "$DT/cfg.tmp" > "$DM_tl/.$n.cfg"; fi
-            let n++
-            done; rm "$DT/cfg.tmp"
+            for n in {0..4}; do
+            if [ -f "$DM_tl/.${n}.cfg" ]; then
+            grep -vxF "${tpc}" "$DM_tl/.$n.cfg" > "$DM_tl/.${n}.cfg.tmp"
+            sed '/^$/d' "$DM_tl/.$n.cfg.tmp" > "$DM_tl/.${n}.cfg"; fi
+            done
             
             kill -9 $(pgrep -f "yad --list ") &
             kill -9 $(pgrep -f "yad --list ") &
@@ -493,7 +493,7 @@ delete_topic() {
             "$DS/mngr.sh" mkmn &
         fi
     > "$DC_s/7.cfg"
-    rm -f "$DT/ps_lk" & exit 1
+    rm -f "$DT/ps_lk" "$DM_tl"/.*.tmp & exit 1
 }
 
 
@@ -545,12 +545,12 @@ rename_topic() {
         echo "${jlb}" > "$DT/tpe"
         echo 0 > "$DC_s/5.cfg"
         
-        n=1; while [[ ${n} -le 3 ]]; do
-        if [ -f "$DM_tl/.$n.cfg" ]; then
-        grep -vxF "${tpc}" "$DM_tl/.$n.cfg" > "$DM_tl/.$n.cfg.tmp"
-        sed '/^$/d' "$DM_tl/.$n.cfg.tmp" > "$DM_tl/.$n.cfg"; fi
-        let n++
+        for n in {1..3}; do
+        if [ -f "$DM_tl/.${n}.cfg" ]; then
+        grep -vxF "${tpc}" "$DM_tl/.$n.cfg" > "$DM_tl/.${n}.cfg.tmp"
+        sed '/^$/d' "$DM_tl/.$n.cfg.tmp" > "$DM_tl/.${n}.cfg"; fi
         done
+        
         rm "$DM_tl"/.*.tmp
         [ -d "$DM_tl/${tpc}" ] && rm -r "$DM_tl/${tpc}"
         [ -f "$DM/backup/${tpc}.bk" ] && rm "$DM/backup/${tpc}.bk"
@@ -594,7 +594,7 @@ mark_to_learn_topic() {
     rm "${DC_tlt}/7.cfg"
     touch "${DC_tlt}/5.cfg" "${DC_tlt}/2.cfg"
     
-    while read item_; do
+    while read -r item_; do
     
         item="$(sed 's/},/}\n/g' <<<"${item_}")"
         type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"

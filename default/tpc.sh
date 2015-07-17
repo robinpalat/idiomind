@@ -24,10 +24,10 @@ nimag=\"$images\"
 naudi=\"$audio\"
 nsize=\"$size\"
 level=\"$level\"
-set_1=\"FALSE\"
-set_2=\"FALSE\"
-set_3=\"FALSE\"
-set_4=\"FALSE\""
+set_1=\" \"
+set_2=\" \"
+set_3=\" \"
+set_4=\" \""
 
 if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
     "$DS/ifs/mods/topic/${topic}.sh" 2 & exit 1
@@ -68,25 +68,26 @@ else
         if [ ! -f "$DT/.n_s_pr" ]; then
         "$DS/ifs/tls.sh" check_index "${topic}"; fi
         
-        stts=$(sed -n 1p "${DC_tlt}/8.cfg")
         if [[ $(grep -Fxon "${topic}" "${DM_tl}/.1.cfg" \
-        | sed -n 's/^\([0-9]*\)[:].*/\1/p') -ge 50 ]]; then
+        | sed -n 's/^\([0-9]*\)[:].*/\1/p') -ge 100 ]]; then
+        
+            stts=$(sed -n 1p "${DC_tlt}/8.cfg")
         
             if [ -f "${DC_tlt}/9.cfg" ]; then
             
                 calculate_review "${topic}"
+                
                 if [[ $((stts%2)) = 0 ]]; then
-                
-                if [[ $RM -ge 180 ]]; then
-                echo 10 > "${DC_tlt}/8.cfg"
-                elif [[ $RM -ge 100 ]]; then
-                echo 8 > "${DC_tlt}/8.cfg"; fi
-                
+                if [ ${RM} -ge 180 -a ${stts} = 8 ]; then
+                echo 10 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"
+                elif [ ${RM} -ge 100 -a ${stts} -lt 8 ]; then
+                echo 8 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"; fi
+
                 else
-                if [[ $RM -ge 180 ]]; then
-                echo 9 > "${DC_tlt}/8.cfg"
-                elif [[ $RM -ge 100 ]]; then
-                echo 7 > "${DC_tlt}/8.cfg"; fi
+                if [ ${RM} -ge 180 -a ${stts} = 7 ]; then
+                echo 9 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"
+                elif [ ${RM} -ge 100 -a ${stts} -lt 7 ]; then
+                echo 7 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"; fi
                 fi
             fi
             "$DS/mngr.sh" mkmn
@@ -96,9 +97,9 @@ else
         
         if [[ "$2" = 1 ]]; then
         
-            (sleep 2
+            ( sleep 2
             notify-send --icon=idiomind \
-            "${topic}" "$(gettext "Is now your topic")" -t 4000) & exit
+            "${topic}" "$(gettext "Is now your topic")" -t 4000 ) & exit
             
         elif [[ -z "$2" ]]; then 
             idiomind topic & exit

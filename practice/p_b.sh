@@ -71,7 +71,7 @@ mchoise() {
     --skip-taskbar --text-align=center --center --on-top \
     --buttons-layout=edge --undecorated \
     --no-headers \
-    --width=380 --height=335 --borders=8 \
+    --width=380 --height=335 --borders=10 \
     --column=Option \
     --button="$(gettext "Exit")":1 \
     --button="$(gettext "OK")":0)

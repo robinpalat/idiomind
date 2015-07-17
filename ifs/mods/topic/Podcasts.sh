@@ -4,11 +4,11 @@
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 
 tpa="$(sed -n 1p "$DC_a/4.cfg")"
-if [ "$tpa" != 'Podcasts' ]; then
+if [[ "$tpa" != 'Podcasts' ]]; then
 [ ! -f "$DM_tl/Podcasts/.conf/8.cfg" ] \
 && echo 11 > "$DM_tl/Podcasts/.conf/8.cfg"
 echo "Podcasts" > "$DC_a/4.cfg"; fi
-if [ "$1" = 2 ]; then
+if [[ ${1} = 2 ]]; then
 echo "Podcasts" > "$DC_s/7.cfg"
 echo 2 > "$DC_s/5.cfg"; fi
 
@@ -16,7 +16,7 @@ nmfile() {
     echo -n "${1}" | md5sum | rev | cut -c 4- | rev
 }
 
-function list_1() {
+function _list_1() {
     while read list1; do
         if [ -f "$DMP/cache/$(nmfile "$list1").png" ]; then
         echo "$DMP/cache/$(nmfile "$list1").png"
@@ -25,7 +25,7 @@ function list_1() {
     done < "$DCP/1.lst"
 }
 
-function list_2() {
+function _list_2() {
     while read list2; do
         if [ -f "$DMP/cache/$(nmfile "$list2").png" ]; then
         echo "$DMP/cache/$(nmfile "$list2").png"
@@ -46,12 +46,12 @@ function feedmode() {
     [ -f "$DT/.uptp" ] && info="$(gettext "Updating Podcasts")" || info="$(gettext "Podcasts")"
     infolabel="$(< "$DMP"/*.updt)"
     
-    list_1 | yad --list --tabnum=1 \
+    _list_1 | yad --list --tabnum=1 \
     --plug=$KEY --print-all --dclick-action="$DSP/vwr.sh" \
     --no-headers --expand-column=2 --ellipsize=END \
     --column=Name:IMG \
     --column=Name:TXT &
-    list_2 | yad --list --tabnum=2 \
+    _list_2 | yad --list --tabnum=2 \
     --plug=$KEY --print-all --dclick-action="$DSP/vwr.sh" \
     --no-headers --expand-column=2 --ellipsize=END \
     --column=Name:IMG \
@@ -75,7 +75,7 @@ function feedmode() {
     --button="gtk-close":1
     ret=$?
         
-    if [[ $ret -eq 2 ]]; then
+    if [ $ret -eq 2 ]; then
     "$DSP/strt.sh" 1; fi
     
     note_mod="$(< $fdit)"

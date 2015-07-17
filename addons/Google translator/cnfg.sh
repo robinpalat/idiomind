@@ -1,5 +1,4 @@
 #!/bin/bash
-# -*- ENCODING: UTF-8 -*-
 
 DC_a="$HOME/.config/idiomind/addons"
 if [ ! -f "$DC_a/gts.cfg" ] || [[ -z "$(< "$DC_a/gts.cfg")" ]]; then

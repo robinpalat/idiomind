@@ -90,10 +90,10 @@ play_list() {
     function setting_1() {
         n=0; 
         while [ ${n} -le 5 ]; do
-                arr="in${n}"
-                [[ -z ${!arr} ]] \
-                && echo "$DS/images/addi.png" \
-                || echo "$DS/images/add.png"
+            arr="in${n}"
+            [[ -z ${!arr} ]] \
+            && echo "$DS/images/addi.png" \
+            || echo "$DS/images/add.png"
             echo "  <span font_desc='Arial 11'>$(gettext "${lbls[$n]}")</span>"
             echo "${!sets[${n}]}"
             let n++
@@ -148,7 +148,7 @@ play_list() {
     --tab-pos=bottom --tab-borders=0 \
     --tab=" $(gettext "Lists") " \
     --tab="$(gettext "Options")" \
-    --width=400 --height=315 --borders=0 \
+    --width=420 --height=315 --borders=0 \
     "$btn2" --button="$btn1"
     ret=$?
 
@@ -175,18 +175,18 @@ play_list() {
         
         elif [ ${n} -lt 10 ]; then
         val="$(cut -d "|" -f${f} <<<"${tab2}")"
-        sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
+        [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
         "$DC_tlt/10.cfg"
         let f++
             
         elif [ ${n} = 10 ]; then
         val="$(cut -d "|" -f5 <<<"${tab2}"|grep -P -o "[0-9]+")"
-        sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
+        [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
         "$DC_tlt/10.cfg"
             
         elif [ ${n} = 11 ]; then
         val="$(cut -d "|" -f7 <<<"${tab2}")"
-        sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
+        [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
         "$DC_tlp/10.cfg"
 
         fi

@@ -83,7 +83,7 @@ function new_session() {
     
     # update status
     [ ! -f "$DM_tl/.1.cfg" ] && touch "$DM_tl/.1.cfg"
-    while read line; do
+    while read -r line; do
     
         unset stts
         DM_tlt="$DM_tl/${line}"
@@ -155,8 +155,8 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     --window-icon="$DS/images/icon.png" \
     --ellipsize=END --center \
     --width=600 --height=510 --borders=6 \
-    --column="$langt              " \
-    --column="$langs              " \
+    --column="$langt            " \
+    --column="$langs            " \
     --button="$(gettext "Install")":0 \
     --button="$(gettext "Close")":1
     ret=$?
@@ -411,8 +411,8 @@ panel() {
     nu='^[0-9]+$'
     x=$(($(sed -n 2p "$DC_s/10.cfg")/2))
     y=$(($(sed -n 3p "$DC_s/10.cfg")/2)); fi
-    if ! [[ $x =~ $nu ]]; then x=100; fi
-    if ! [[ $y =~ $nu ]]; then y=100; fi
+    if ! [[ ${x} =~ $nu ]]; then x=100; fi
+    if ! [[ ${y} =~ $nu ]]; then y=100; fi
     
     if [ "$(grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg")" = TRUE ] \
     && [ ! -f /tmp/.clipw ]; then "$DS/ifs/mods/clipw.sh" & fi
