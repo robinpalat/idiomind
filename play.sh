@@ -1,8 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
-
 play_word() {
 
     if [ -f "$DM_tls/${2,,}.mp3" ]; then
@@ -168,7 +166,7 @@ play_list() {
         if [ "$val" = TRUE ]; then 
         count=$((count+$(egrep -cv '#|^$' <<<"${!in[${n}]}"))); fi
         
-        elif [ ${n} -lt 6 ]; then
+        elif [ ${n} = 4 -o ${n} = 5 ]; then
         val=$(sed -n $((${n}+1))p <<<"${tab1}" | cut -d "|" -f3)
         [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
         "$DC_tlp/10.cfg"
@@ -179,27 +177,21 @@ play_list() {
         val="$(cut -d "|" -f${f} <<<"${tab2}")"
         sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
         "$DC_tlt/10.cfg"
-        ((f=f+1))
+        let f++
             
         elif [ ${n} = 10 ]; then
-        val="$(cut -d "|" -f${f} <<<"${tab2}"|grep -P -o "[0-9]+")"
+        val="$(cut -d "|" -f5 <<<"${tab2}"|grep -P -o "[0-9]+")"
         sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
         "$DC_tlt/10.cfg"
-        ((f=f+1))
             
         elif [ ${n} = 11 ]; then
-        val="$(cut -d "|" -f${f} <<<"${tab2}" |grep -P -o "[0-9]+")"
-        sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
-        "$DC_tlt/10.cfg"
-        ((f=f+1))
-        
-        elif [ ${n} = 12 ]; then
-        val="$(cut -d "|" -f${f} <<<"${tab2}")"
+        val="$(cut -d "|" -f7 <<<"${tab2}")"
         sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
         "$DC_tlp/10.cfg"
+
         fi
             
-            ((n=n+1))
+        ((n=n+1))
         done
 
         if [ $ret -eq 0 ]; then
