@@ -112,7 +112,7 @@ play_list() {
     else
         tpp="$(sed -n 1p "$DT/.p_")"
         btn2="--button=gtk-media-stop:2"
-        if [ -n "$tpp" ]; then
+        if [ -n "$tpp" -a ! -f "$DT/list.m3u" ]; then
         [ "$tpp" != "$tpc" ] && title="$(gettext "Playing:") $tpp"
         fi
     fi

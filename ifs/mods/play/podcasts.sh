@@ -13,8 +13,8 @@ get_itep() {
     
     if [ -f "${item}" ]; then
     
-        channel="$(grep -o channel=\"[^\"]* < "${item}" | grep -o '[^"]*$')"
-        title="$(grep -o title=\"[^\"]* < "${item}" | grep -o '[^"]*$')"
+        channel="$(grep -o channel=\"[^\"]* "${item}" | grep -o '[^"]*$')"
+        title="$(grep -o title=\"[^\"]* "${item}" | grep -o '[^"]*$')"
         [ -f "$DMC/$fname.mp3" ] && file="$DMC/$fname.mp3" && type=3
         [ -f "$DMC/$fname.ogg" ] && file="$DMC/$fname.ogg" && type=3
         [ -f "$DMC/$fname.m4v" ] && file="$DMC/$fname.m4v" && type=4
@@ -42,6 +42,7 @@ if [ ${ne} = TRUE ] || [ ${se} = TRUE ]; then
 
     DMC="$DM_tl/Podcasts/cache"
     DPC="$DM_tl/Podcasts/.conf"
+    > "$DT/list.m3u"
     
     if [ ${v} = TRUE ]; then
 
@@ -50,28 +51,28 @@ if [ ${ne} = TRUE ] || [ ${se} = TRUE ]; then
             [ -f "$DMC/$fname.m4v" ] && echo "$DMC/$fname.m4v"
             [ -f "$DMC/$fname.mp4" ] && echo "$DMC/$fname.mp4"
         }
-        rm -f "$DT/index.m3u"
+        rm -f "$DT/list.m3u"
         
         if [ ${ne} = TRUE ]; then
             while read item; do
-            echo "$(_filename "$item")" >> "$DT/index.m3u"
+            echo "$(_filename "$item")" >> "$DT/list.m3u"
             done < "$DPC/1.lst"
         fi
             
         if [ ${se} = "TRUE" ]; then
             while read item; do
-            echo "$(_filename "$item")" >> "$DT/index.m3u"
+            echo "$(_filename "$item")" >> "$DT/list.m3u"
             done < "$DPC/2.lst"
         fi
         
-        sed -i '/^$/d' "$DT/index.m3u"
-        if [ -z "$(< "$DT/index.m3u")" ]; then
+        sed -i '/^$/d' "$DT/list.m3u"
+        if [ -z "$(< "$DT/list.m3u")" ]; then
         notify-send "$(gettext "No videos to play")" \
         "$(gettext "Exiting...")" -i idiomind -t 3000
         "$DS/stop.sh" 2 & exit
         else 
         "$DS/stop.sh" 3
-        mplayer -noconsolecontrols -title "$(gettext "Videos")" -playlist "$DT/index.m3u" & exit
+        mplayer -noconsolecontrols -title "$(gettext "Videos")" -playlist "$DT/list.m3u" & exit
         fi
     
     else

@@ -25,7 +25,6 @@ if [[ ${1} = 0 ]]; then
         n="$(grep -oP '(?<=ntosd=\").*(?=\")' "$cfg")"
         l="$(grep -oP '(?<=loop=\").*(?=\")' "$cfg")"
         t="$(grep -oP '(?<=ritem=\").*(?=\")' "$cfg")"
-
         [ ! -f "$DT/.p_" ] && > "$DT/.p_"
 
         if [ ${n} != TRUE -a ${a} != TRUE ]; then "$DS/stop.sh" 2 & exit 1; fi
@@ -57,6 +56,7 @@ if [[ ${1} = 0 ]]; then
         if [ ${f} -gt 5 -o ! -d "${DM_tlt}" ]; then
         msg "$(gettext "An error has occurred. Playback stopped")" info &
         "$DS/stop.sh" 2; fi
+        [ -f "$DT/list.m3u" ] && rm -f "$DT/list.m3u"
         
         if [ -n "${item}" ]; then
         unset file
@@ -79,11 +79,11 @@ if [[ ${1} = 0 ]]; then
     
     if [ ${w} = TRUE -a ${s} = FALSE ]; then
     while read item; do getitem; _play
-    done < <(tac "${DC_tlt}/3.cfg"); fi
-    
+    done < <(grep -Fxvf "$DC_tlt/4.cfg" "$DC_tlt/1.cfg" |tac); fi
+
     if [ ${w} = FALSE -a ${s} = TRUE ]; then
     while read item; do getitem; _play
-    done < <(tac "${DC_tlt}/4.cfg"); fi
+    done < <(grep -Fxvf "$DC_tlt/3.cfg" "$DC_tlt/1.cfg" |tac); fi
     
     if [ ${m} = TRUE ]; then
     while read item; do getitem; _play

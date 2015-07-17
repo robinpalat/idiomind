@@ -21,7 +21,7 @@ on_quit() {
     if [ -f "$DT/.p_" ]; then
     #notify-send "$(gettext "Playback stopped")"
     rm -f "$DT/.p_" "$DT/tpp"
-    rm -f "$DT/index.m3u"; fi
+    [ -f "$DT/list.m3u" ] && rm -f "$DT/list.m3u"; fi
     exit
 }
 
@@ -32,6 +32,7 @@ on_play() {
     if ps -A | pgrep -f "/usr/share/idiomind/bcle.sh"; then killall bcle.sh & fi
     if ps -A | pgrep -f "/usr/share/idiomind/chng.sh"; then killall chng.sh; fi
     if ps -A | pgrep -f "notify-osd"; then (sleep 6 && killall notify-osd) & fi
+    [ -f "$DT/list.m3u" ] && rm -f "$DT/list.m3u"
     exit
 }
 
@@ -84,6 +85,7 @@ on_play2() {
     if ps -A | pgrep -f "notify-osd"; then killall notify-osd & fi
     if ps -A | pgrep -f "play"; then killall play & fi
     if ps -A | pgrep -f "mplayer"; then killall mplayer & fi
+    [ -f "$DT/list.m3u" ] && rm -f "$DT/list.m3u"
     [ -f "$DT/.p_" ] && rm -fr "$DT/.p_"
     exit
 }
@@ -92,6 +94,7 @@ on_play3() {
     
     if ps -A | pgrep -f "play"; then killall play & fi
     if ps -A | pgrep -f "mplayer"; then killall mplayer & fi
+    [ -f "$DT/list.m3u" ] && rm -f "$DT/list.m3u"
     exit
 }
 
