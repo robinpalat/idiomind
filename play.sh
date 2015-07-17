@@ -58,6 +58,7 @@ play_list() {
     _time="$(gettext "time")"
     _times="$(gettext "times")"
     iteml=( "$_nore" "1 $_time" "2 $_times" "3 $_times" "4 $_times" )
+    
     in0="$(grep -Fxvf "$DC_tlt/4.cfg" "$DC_tlt/1.cfg")"
     in1="$(grep -Fxvf "$DC_tlt/3.cfg" "$DC_tlt/1.cfg")"
     in2="$(grep -Fxvf "$DC_tlt/2.cfg" "$DC_tlt/6.cfg")"

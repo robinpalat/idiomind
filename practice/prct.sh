@@ -133,7 +133,7 @@ practice() {
         cp -f "$dir/${ttest}.0" "$dir/${ttest}.tmp"
         
         if [[ `wc -l < "$dir/${ttest}.0"` -lt 2 ]]; then \
-        starting "$(gettext "Not enough words to start")"
+        starting "$(gettext "Not enough items to start")"
         echo " practice --new session"; fi
     fi
     

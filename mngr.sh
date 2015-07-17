@@ -11,7 +11,7 @@ mkmn() {
     for i in "$(ls -tNd */ | cut -f1 -d'/')"; do \
     echo "${i%%/}"; done > "$DM_tl/.1.cfg"
     sed -i '/^$/d' "$DM_tl/.1.cfg"
-    > "$DC_s/0.cfg"
+    > "$DM_tl/.0.cfg"
     
     while read -r tpc; do
         unset stts
@@ -20,7 +20,7 @@ mkmn() {
         || [ ! "$DM_tl/${tpc}/.conf/0.cfg" ]; then
         stts=13; echo 13 > "$DM_tl/${tpc}/.conf/8.cfg"
         else stts=$(sed -n 1p "$DM_tl/${tpc}/.conf/8.cfg"); fi
-        echo -e "/usr/share/idiomind/images/img.${stts}.png\n${tpc}" >> "$DC_s/0.cfg"
+        echo -e "/usr/share/idiomind/images/img.${stts}.png\n${tpc}" >> "$DM_tl/.0.cfg"
     done < <(head -100 < "$DM_tl/.1.cfg")
 
     while read -r tpc; do
@@ -30,7 +30,7 @@ mkmn() {
         || [ ! "$DM_tl/${tpc}/.conf/0.cfg" ]; then
         stts=13; echo 13 > "$DM_tl/${tpc}/.conf/8.cfg"
         else stts=12; fi
-        echo -e "/usr/share/idiomind/images/img.${stts}.png\n${tpc}" >> "$DC_s/0.cfg"
+        echo -e "/usr/share/idiomind/images/img.${stts}.png\n${tpc}" >> "$DM_tl/.0.cfg"
     done < <(tail -n+101 < "$DM_tl/.1.cfg")
     exit
 }

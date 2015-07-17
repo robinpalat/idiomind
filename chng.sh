@@ -98,7 +98,8 @@ if [[ ${1} = 0 ]]; then
 elif [[ ${1} != 0 ]]; then
 
     source /usr/share/idiomind/ifs/c.conf
-    [ ! -f "$DC_s/0.cfg" ] && > "$DC_s/0.cfg"
+    [ ! -f "$DM_tl/.0.cfg" ] && > "$DM_tl/.0.cfg"
+    [ ! -f "$DM_tl/.1.cfg" ] && > "$DM_tl/.1.cfg"
     lgs=$(lnglss $lgsl)
     
     if [ -n "$1" ]; then
@@ -110,11 +111,10 @@ elif [[ ${1} != 0 ]]; then
     align="right"
     fi
     
-    if [ -f "${DC_tlt}/1.cfg" ] && \
-    [[ $((`wc -l < "$DC_s/0.cfg"`/3)) = `wc -l < "${DC_tlt}/1.cfg"` ]]; then
+    if [[ $((`wc -l < "$DM_tl/.0.cfg"`/2)) != `wc -l < "$DM_tl/.1.cfg"` ]]; then
     "$DS/mngr.sh" mkmn; fi
 
-    tpc=$(cat "$DC_s/0.cfg" | \
+    tpc=$(cat "$DM_tl/.0.cfg" | \
     yad --list --title="$(gettext "Topics")" "$text" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-column=2 --separator="" \
@@ -130,15 +130,15 @@ elif [[ ${1} != 0 ]]; then
     --button="gtk-close":1)
     ret=$?
 
-    if [[ $ret -eq 3 ]]; then "$DS/add.sh" new_topic &
+    if [ $ret -eq 3 ]; then "$DS/add.sh" new_topic &
             
-    elif [[ $ret -eq 2 ]]; then "$DS/default/tpc.sh" "$tpc" 1 &
+    elif [ $ret -eq 2 ]; then "$DS/default/tpc.sh" "$tpc" 1 &
 
-    elif [[ $ret -eq 0 ]]; then "$DS/default/tpc.sh" "$tpc" &
+    elif [ $ret -eq 0 ]; then "$DS/default/tpc.sh" "$tpc" &
 
-    elif [[ $ret -eq 5 ]]; then "$DS/default/tpc.sh" "$tpc" &
+    elif [ $ret -eq 5 ]; then "$DS/default/tpc.sh" "$tpc" &
+    echo "${tpc}" > "$DM_tl"/.5.cfg
     
-    echo "$tpc" > "$DM_tl"/.5.cfg
     fi
     exit
 fi

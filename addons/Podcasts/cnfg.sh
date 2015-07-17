@@ -110,7 +110,7 @@ CNFG=$(yad --form --title="$(gettext "Podcasts settings")" \
 --button="$(gettext "Cancel")":1 \
 --button="$(gettext "Remove")":"$DSP/mngr.sh 'deleteall'" \
 --button="$(gettext "Syncronize")":5 \
---button="gtk-apply":0)
+--button="gtk-ok":0)
 ret=$?
 
 if [ $ret -eq 0 ]; then
