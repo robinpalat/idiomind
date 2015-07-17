@@ -73,13 +73,10 @@ play_list() {
 
         n=0
         while [ ${n} -le 11 ]; do
+            get="${sets[$n]}"
             if [ ${n} = 4 -o ${n} = 5 -o ${n} = 11 ]; then
-            get="${sets[$n]}"
-            val=$(grep -o "$get"=\"[^\"]* "$DC_tlp/10.cfg" |grep -o '[^"]*$')
-            else
-            get="${sets[$n]}"
-            val=$(grep -o "$get"=\"[^\"]* "$DC_tlt/10.cfg" |grep -o '[^"]*$')
-            fi
+            cfg="$DC_tlp/10.cfg"; else cfg="$DC_tlt/10.cfg"; fi
+            val=$(grep -o "$get"=\"[^\"]* "${cfg}" |grep -o '[^"]*$')
             declare ${sets[$n]}="$val"
             ((n=n+1))
         done
@@ -164,43 +161,43 @@ play_list() {
         f=1; n=0
         while [ ${n} -le 12 ]; do
         
-            if [ ${n} -lt 4 ]; then
-            val=$(sed -n $((${n}+1))p <<<"${tab1}" | cut -d "|" -f3)
-            [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
-            "$DC_tlt/10.cfg"
-            if [ "$val" = TRUE ]; then 
-            count=$((count+$(egrep -cv '#|^$' <<<"${!in[${n}]}"))); fi
+        if [ ${n} -lt 4 ]; then
+        val=$(sed -n $((${n}+1))p <<<"${tab1}" | cut -d "|" -f3)
+        [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
+        "$DC_tlt/10.cfg"
+        if [ "$val" = TRUE ]; then 
+        count=$((count+$(egrep -cv '#|^$' <<<"${!in[${n}]}"))); fi
+        
+        elif [ ${n} -lt 6 ]; then
+        val=$(sed -n $((${n}+1))p <<<"${tab1}" | cut -d "|" -f3)
+        [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
+        "$DC_tlp/10.cfg"
+        if [ "$val" = TRUE ]; then 
+        count=$((count+$(egrep -cv '#|^$' <<<"${!in[${n}]}"))); fi
+        
+        elif [ ${n} -lt 10 ]; then
+        val="$(cut -d "|" -f${f} <<<"${tab2}")"
+        sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
+        "$DC_tlt/10.cfg"
+        ((f=f+1))
             
-            elif [ ${n} -lt 6 ]; then
-            val=$(sed -n $((${n}+1))p <<<"${tab1}" | cut -d "|" -f3)
-            [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
-            "$DC_tlp/10.cfg"
-            if [ "$val" = TRUE ]; then 
-            count=$((count+$(egrep -cv '#|^$' <<<"${!in[${n}]}"))); fi
+        elif [ ${n} = 10 ]; then
+        val="$(cut -d "|" -f${f} <<<"${tab2}"|grep -P -o "[0-9]+")"
+        sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
+        "$DC_tlt/10.cfg"
+        ((f=f+1))
             
-            elif [ ${n} -lt 10 ]; then
-            val="$(cut -d "|" -f${f} <<<"${tab2}")"
-            sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
-            "$DC_tlt/10.cfg"
-            ((f=f+1))
-                
-            elif [ ${n} = 10 ]; then
-            val="$(cut -d "|" -f${f} <<<"${tab2}" |grep -P -o "[0-9]+")"
-            sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
-            "$DC_tlt/10.cfg"
-            ((f=f+1))
-                
-            elif [ ${n} = 11 ]; then
-            val="$(cut -d "|" -f${f} <<<"${tab2}" |grep -P -o "[0-9]+")"
-            sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
-            "$DC_tlt/10.cfg"
-            ((f=f+1))
-            
-            elif [ ${n} = 12 ]; then
-            val="$(cut -d "|" -f${f} <<<"${tab2}")"
-            sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
-            "$DC_tlp/10.cfg"
-            fi
+        elif [ ${n} = 11 ]; then
+        val="$(cut -d "|" -f${f} <<<"${tab2}" |grep -P -o "[0-9]+")"
+        sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
+        "$DC_tlt/10.cfg"
+        ((f=f+1))
+        
+        elif [ ${n} = 12 ]; then
+        val="$(cut -d "|" -f${f} <<<"${tab2}")"
+        sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
+        "$DC_tlp/10.cfg"
+        fi
             
             ((n=n+1))
         done
