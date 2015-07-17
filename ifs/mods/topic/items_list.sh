@@ -106,7 +106,7 @@ function notebook_1() {
     --scroll --borders=10 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "$tpc" \
     --field="$(gettext "Mark as learnt")":FBTN "$cmd_mark" \
-    --field="$(gettext "Auto select items that could be marked as learnt")":CHK "$auto_mrk" \
+    --field="$(gettext "Auto select items")\t\t\t\t\t\t\t\t\t":CHK "$auto_mrk" \
     --field="$label_info2\n":LBL " " \
     --field="$(gettext "Files")":FBTN "$cmd_attchs" \
     --field="$(gettext "Share")":FBTN "$cmd_share" \

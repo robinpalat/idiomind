@@ -14,33 +14,23 @@ mkmn() {
     > "$DC_s/0.cfg"
     
     while read -r tpc; do
-    
-        unset i
-        if [ ! -f "$DM_tl/${tpc}/.conf/8.cfg" ]; then
-        i=13; echo 13 > "$DM_tl/${tpc}/.conf/8.cfg"
-        else i=$(sed -n 1p "$DM_tl/${tpc}/.conf/8.cfg"); fi
-        if [ ! "$DM_tl/${tpc}/.conf/8.cfg" ] || \
-        [ ! "$DM_tl/${tpc}/.conf/0.cfg" ] || \
-        [ -z "$i" ] || [ ! -d "$DM_tl/${tpc}" ]; then
-        [ -f "$DM_tl/${tpc}/.conf/8.cfg" ] && stts_=$(< "$DM_tl/${tpc}/.conf/8.cfg")
-        if [ "$stts_" != 13 ]; then echo "$stts_" > "$DM_tl/${tpc}/.conf/8.cfg_"; fi
-        i=13; echo 13 > "$DM_tl/${tpc}/.conf/8.cfg";fi
-        echo -e "/usr/share/idiomind/images/img.${i}.png\n${tpc}" >> "$DC_s/0.cfg"
-
+        unset stts
+        [ ! -d "$DM_tl/${tpc}/.conf" ] && mkdir -p "$DM_tl/${tpc}/.conf"
+        if [ ! -f "$DM_tl/${tpc}/.conf/8.cfg" ] \
+        || [ ! "$DM_tl/${tpc}/.conf/0.cfg" ]; then
+        stts=13; echo 13 > "$DM_tl/${tpc}/.conf/8.cfg"
+        else stts=$(sed -n 1p "$DM_tl/${tpc}/.conf/8.cfg"); fi
+        echo -e "/usr/share/idiomind/images/img.${stts}.png\n${tpc}" >> "$DC_s/0.cfg"
     done < <(head -100 < "$DM_tl/.1.cfg")
 
     while read -r tpc; do
-
-        if [ ! -f "$DM_tl/${tpc}/.conf/8.cfg" ]; then
-        [ -f "$DM_tl/${tpc}/.conf/8.cfg" ] && stts_=$(< "$DM_tl/${tpc}/.conf/8.cfg")
-        if [ "$stts_" != 13 ]; then echo "$stts_" > "$DM_tl/${tpc}/.conf/8.cfg_"; fi
-        i=13; echo 13 > "$DM_tl/${tpc}/.conf/8.cfg"
-        else i=$(sed -n 1p "$DM_tl/${tpc}/.conf/8.cfg"); fi
-        if [ ! -f "$DM_tl/${tpc}/.conf/8.cfg" ] || \
-        [ ! "$DM_tl/${tpc}/.conf/0.cfg" ] || \
-        [ ! -d "$DM_tl/${tpc}" ]; then img=13; else img=12; fi
-        echo -e "/usr/share/idiomind/images/img.$img.png\n${tpc}\n " >> "$DC_s/0.cfg"
-
+        unset stts
+        [ ! -d "$DM_tl/${tpc}/.conf" ] && mkdir -p "$DM_tl/${tpc}/.conf"
+        if [ ! -f "$DM_tl/${tpc}/.conf/8.cfg" ] \
+        || [ ! "$DM_tl/${tpc}/.conf/0.cfg" ]; then
+        stts=13; echo 13 > "$DM_tl/${tpc}/.conf/8.cfg"
+        else stts=12; fi
+        echo -e "/usr/share/idiomind/images/img.${stts}.png\n${tpc}" >> "$DC_s/0.cfg"
     done < <(tail -n+101 < "$DM_tl/.1.cfg")
     exit
 }
@@ -59,6 +49,8 @@ delete_item_ok() {
     [ -f "${DM_tlt}/$file.mp3" ] && rm "${DM_tlt}/$file.mp3"
     [ -f "${DM_tlt}/images/$file.jpg" ] && rm "${DM_tlt}/images/$file.jpg"
 
+    sed -i "/trgt={${trgt}}/d" "${DC_tlt}/0.cfg"
+
     if [ -d "${DC_tlt}/practice" ]; then
         cd "${DC_tlt}/practice"
         while read -r file_pr; do
@@ -69,15 +61,11 @@ delete_item_ok() {
         rm ./*.tmp
         cd /
     fi
-
-    sed -i "/trgt={${trgt}}/d" "${DC_tlt}/0.cfg"
-
-    n=1
-    while [ ${n} -le 6 ]; do
-    if [ -f "${DC_tlt}/$n.cfg" ]; then
-        grep -vxF "${trgt}" "${DC_tlt}/$n.cfg" > "${DC_tlt}/$n.cfg.tmp"
-        sed '/^$/d' "${DC_tlt}/$n.cfg.tmp" > "${DC_tlt}/$n.cfg"; fi
-        let n++
+    
+    for n in {1..6}; do
+        if [ -f "${DC_tlt}/${n}.cfg" ]; then
+        grep -vxF "${trgt}" "${DC_tlt}/${n}.cfg" > "${DC_tlt}/${n}.cfg.tmp"
+        sed '/^$/d' "${DC_tlt}/${n}.cfg.tmp" > "${DC_tlt}/${n}.cfg"; fi
     done
     
     if [ -f "${DC_tlt}/lst" ]; then rm "${DC_tlt}/lst"; fi
@@ -107,6 +95,8 @@ delete_item() {
         [ -f "${DM_tlt}/$file.mp3" ] && rm "${DM_tlt}/$file.mp3"
         [ -f "${DM_tlt}/images/$file.jpg" ] && rm "${DM_tlt}/images/$file.jpg"
         
+        sed -i "/trgt={${trgt}}/d" "${DC_tlt}/0.cfg"
+        
         if [ -d "${DC_tlt}/practice" ]; then
             cd "${DC_tlt}/practice"
             while read file_pr; do
@@ -117,15 +107,11 @@ delete_item() {
             rm ./*.tmp
             cd /
         fi
-        
-        sed -i "/trgt={${trgt}}/d" "${DC_tlt}/0.cfg"
 
-        n=1
-        while [[ ${n} -le 6 ]]; do
-            if [ -f "${DC_tlt}/$n.cfg" ]; then
-            grep -vxF "${trgt}" "${DC_tlt}/$n.cfg" > "${DC_tlt}/$n.cfg.tmp"
-            sed '/^$/d' "${DC_tlt}/$n.cfg.tmp" > "${DC_tlt}/$n.cfg"; fi
-            let n++
+        for n in {1..6}; do
+            if [ -f "${DC_tlt}/${n}.cfg" ]; then
+            grep -vxF "${trgt}" "${DC_tlt}/${n}.cfg" > "${DC_tlt}/${n}.cfg.tmp"
+            sed '/^$/d' "${DC_tlt}/${n}.cfg.tmp" > "${DC_tlt}/${n}.cfg"; fi
         done
         
         "$DS/ifs/tls.sh" colorize &
@@ -619,7 +605,7 @@ mark_to_learn_topic() {
     kill -9 $(pgrep -f "yad --notebook ") & fi
 
     echo -e "lrnt.$tpc.lrnt" >> "$DC_s/log"
-    touch "${DC_tlt}"
+    touch "${DM_tlt}"
     "$DS/mngr.sh" mkmn &
 
     [[ ${3} = 1 ]] && idiomind topic &
@@ -655,7 +641,8 @@ mark_as_learned_topic() {
             if [ ${RM} -ge 50 ]; then
             
                 if [ ${steps} -eq 6 ]; then
-                echo -e "_\n_\n_\n_\n_\n$(date +%m/%d/%Y)" > "${DC_tlt}/9.cfg"
+                dts="$(head -5 < "${DC_tlt}/9.cfg")"
+                echo -e "${dts}\n$(date +%m/%d/%Y)" > "${DC_tlt}/9.cfg"
                 else
                 echo "$(date +%m/%d/%Y)" >> "${DC_tlt}/9.cfg"
                 fi

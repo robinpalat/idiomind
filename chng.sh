@@ -9,7 +9,7 @@ cfg="$DC_tlt/10.cfg"
 cfgp="$DM_tl/Podcasts/.conf/10.cfg"
 f=0; ritem=0
 
-if [[ "$1" = chngi ]]; then
+if [[ ${1} = 0 ]]; then
 
     w="$(grep -oP '(?<=words=\").*(?=\")' "$cfg")"
     s="$(grep -oP '(?<=sntcs=\").*(?=\")' "$cfg")"
@@ -95,7 +95,7 @@ if [[ "$1" = chngi ]]; then
     
     include "$DS/ifs/mods/play"
 
-elif [[ "$1" != chngi ]]; then
+elif [[ ${1} != 0 ]]; then
 
     source /usr/share/idiomind/ifs/c.conf
     [ ! -f "$DC_s/0.cfg" ] && > "$DC_s/0.cfg"

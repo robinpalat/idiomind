@@ -131,14 +131,11 @@ check_index() {
         if [ ! -f "${DC_tlt}/0.cfg" ]; then f=1; fi
         if [ ! -d "${DC_tlt}" ]; then mkdir "${DC_tlt}"; fi
         if [ ! -d "${DM_tlt}/images" ]; then mkdir "${DM_tlt}/images"; fi
-        
-        
-        n=0; while [ ${n} -le 4 ]; do
+        for n in {0..4}; do
         [ ! -f "${DC_tlt}/$n.cfg" ] && touch "${DC_tlt}/$n.cfg" && a=1
         if grep '^$' "${DC_tlt}/$n.cfg"; then
         sed -i '/^$/d' "${DC_tlt}/$n.cfg"; fi
         check_index1 "${DC_tlt}/$n.cfg"
-        ((n=n+1))
         done
         
         if [ -n "$(< "${DC_tlt}/0.cfg")" ]; then
@@ -191,13 +188,12 @@ check_index() {
         cfg0="${DC_tlt}/0.cfg"
         sed -i "/trgt={}/d" "${cfg0}"
         sed -i '/^$/d' "${cfg0}"
-        n=1; while [ ${n} -le 200 ]; do
+        for n in {1..200}; do
             line=$(sed -n ${n}p "${cfg0}" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
             if [ -n "${line}" ]; then
             if [[ ${line} -ne ${n} ]]; then
             sed -i ""${n}"s|"${line}"\:|"${n}"\:|g" "${cfg0}"; fi
             else break; fi
-            let n++
         done
     }
     
@@ -210,7 +206,7 @@ check_index() {
         touch "$DC_tlt/2.cfg"
         > "$DC_tlt/0.cfg"
         
-        n=1; while [ ${n} -le 200 ]; do
+        for n in {1..200}; do
         
             unset id type trgt srce exmp dftn note tag lwrd grmr
             item="$(sed -n ${n}p "$DC_tlt/1.cfg")"
@@ -246,7 +242,6 @@ check_index() {
             fi
             
             echo "$n:[type={$type},trgt={$trgt},srce={$srce},exmp={$exmp},defn={$dftn},note={$note},wrds={$lwrd},grmr={$grmr},].[tag={$tag},mark={$mark},].id=[$id]" >> "$DC_tlt/0.cfg"
-            let n++
         done
         
         if [ -f "${DM_tlt}/words/images/img.jpg" ]; then
@@ -930,8 +925,6 @@ case "$1" in
     set_image "$@" ;;
     pdf)
     mkpdf ;;
-    html)
-    mkhtml ;;
     fback)
     fback ;;
     about)

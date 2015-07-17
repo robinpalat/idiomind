@@ -231,13 +231,11 @@ function topic() {
     elif [[ ${mode} = 0 ]] || [[ ${mode} = 1 ]]; then
         
         [ -z "${tpc}" ] && exit 1
-        n=0
-        while [[ ${n} -le 4 ]]; do
-        [ ! -f "${DC_tlt}/$n.cfg" ] && touch "${DC_tlt}/$n.cfg"
-        declare ls$n="${DC_tlt}/$n.cfg"
-        declare inx$n=$(wc -l < "${DC_tlt}/$n.cfg")
-        export inx$n
-        let n++
+        for n in {0..4}; do
+        [ ! -f "${DC_tlt}/${n}.cfg" ] && touch "${DC_tlt}/${n}.cfg"
+        declare ls${n}="${DC_tlt}/${n}.cfg"
+        declare inx${n}=$(wc -l < "${DC_tlt}/${n}.cfg")
+        export inx${n}
         done
         nt="${DC_tlt}/info"
         author="$(grep -o 'authr="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
@@ -435,13 +433,17 @@ case "$1" in
     topic)
     topic ;;
     -v)
-    echo -n "0.1";;
+    echo -n "0.1" ;;
     -s)
-    new_session; idiomind &;;
+    new_session; idiomind & ;;
     autostart)
-    sleep 50; [ ! -f "$DT/ps_lk" ] && new_session;;
+    sleep 50; [ ! -f "$DT/ps_lk" ] && new_session ;;
     add)
-    "$DS/add.sh" new_items "$dir" 2 "${2}";;
+    "$DS/add.sh" new_items "$dir" 2 "${2}" ;;
+    play)
+    "$DS/bcle.sh" ;;
+    stop)
+    "$DS/stop.sh" 2 ;;
     *)
-    panel;;
+    panel ;;
 esac

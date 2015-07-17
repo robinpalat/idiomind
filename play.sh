@@ -54,9 +54,10 @@ play_list() {
     sets=( 'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi' \
     'rplay' 'audio' 'ntosd' 'loop' 'ritem' 'video' )
     in=( 'in0' 'in1' 'in2' 'in3' 'in4' 'in5' )
+    _nore="$(gettext "no repeat")"
     _time="$(gettext "time")"
     _times="$(gettext "times")"
-    iteml=( "0 $_time" "1 $_time" "2 $_times" "3 $_times" "4 $_times" )
+    iteml=( "$_nore" "1 $_time" "2 $_times" "3 $_times" "4 $_times" )
     in0="$(grep -Fxvf "$DC_tlt/4.cfg" "$DC_tlt/1.cfg")"
     in1="$(grep -Fxvf "$DC_tlt/3.cfg" "$DC_tlt/1.cfg")"
     in2="$(grep -Fxvf "$DC_tlt/2.cfg" "$DC_tlt/6.cfg")"
@@ -108,11 +109,10 @@ play_list() {
     if [ ! -f "$DT/.p_" ]; then
         btn2="--center"
     else
-        tpp="$(sed -n 2p "$DT/.p_")"
+        tpp="$(sed -n 1p "$DT/.p_")"
         btn2="--button=gtk-media-stop:2"
-        if grep TRUE <<<"$words$sntcs$marks$wprct"; then
-        if [ "$tpp" != "$tpc" ]; then
-        title="$(gettext "Playing:") $tpp"; fi
+        if [ -n "$tpp" ]; then
+        [ "$tpp" != "$tpc" ] && title="$(gettext "Playing:") $tpp"
         fi
     fi
     
@@ -155,22 +155,22 @@ play_list() {
         tab1=$(< $tab1)
         tab2=$(< $tab2)
         rm -f "$DT"/*.p
-        
         f=1; n=0
+        
         while [ ${n} -le 12 ]; do
         
         if [ ${n} -lt 4 ]; then
-        val=$(sed -n $((${n}+1))p <<<"${tab1}" | cut -d "|" -f3)
+        val=$(sed -n $((${n}+1))p <<<"${tab1}" |cut -d "|" -f3)
         [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
         "$DC_tlt/10.cfg"
-        if [ "$val" = TRUE ]; then 
+        if [ "$val" = TRUE ]; then
         count=$((count+$(egrep -cv '#|^$' <<<"${!in[${n}]}"))); fi
         
         elif [ ${n} = 4 -o ${n} = 5 ]; then
-        val=$(sed -n $((${n}+1))p <<<"${tab1}" | cut -d "|" -f3)
+        val=$(sed -n $((${n}+1))p <<<"${tab1}" |cut -d "|" -f3)
         [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
         "$DC_tlp/10.cfg"
-        if [ "$val" = TRUE ]; then 
+        if [ "$val" = TRUE ]; then
         count=$((count+$(egrep -cv '#|^$' <<<"${!in[${n}]}"))); fi
         
         elif [ ${n} -lt 10 ]; then
@@ -180,7 +180,8 @@ play_list() {
         let f++
             
         elif [ ${n} = 10 ]; then
-        val="$(cut -d "|" -f5 <<<"${tab2}"|grep -P -o "[0-9]+")"
+        if [ "$(cut -d "|" -f5 <<<"${tab2}")" = "$_nore" ]; then val=0
+        else val="$(cut -d "|" -f5 <<<"${tab2}"|grep -P -o "[0-9]+")"; fi
         [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
         "$DC_tlt/10.cfg"
             
@@ -203,7 +204,8 @@ play_list() {
 
             "$DS/stop.sh" 2 &
             if [ -d "$DM_tlt" ] && [ -n "$tpc" ]; then
-            echo -e "$DM_tlt\n$tpc" > "$DT/.p_"
+                if grep TRUE <<<"$words$sntcs$marks$wprct"; then
+                echo -e "$tpc" > "$DT/.p_"; else > "$DT/.p_"; fi
             else "$DS/stop.sh" 2 && exit 1; fi
             
             echo -e "ply.$tpc.ply" >> "$DC_s/log" &

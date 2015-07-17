@@ -41,7 +41,7 @@ while read -r tpc_lst; do
 
     DC_tlt="$DM_tl/${tpc_lst}/.conf"
     if [ -f "${DC_tlt}/1.cfg" ] && [ -d "${DC_tlt}/practice" ]; then
-    if [ $(grep -o set_1=\"[^\"]* "${DC_tlt}/id.cfg" |grep -o '[^"]*$') = TRUE ]; then
+    if [[ $(grep -o set_1=\"[^\"]* "${DC_tlt}/id.cfg" |grep -o '[^"]*$') = TRUE ]]; then
 
     rm "${DC_tlt}/5.cfg"
     cd "${DC_tlt}/practice"
