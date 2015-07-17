@@ -12,34 +12,34 @@ d="$(gettext "Marks")"
 # rsync_delete: disable(0)/enable(1)
 rsync_delete=0
 
-play() {
+#play() {
 
-    killall play
-    DIR2="$DM_tl/Podcasts/.conf"
-    [ -f "$DIR2/0.lst" ] && st3=$(sed -n 2p "$DIR2/0.lst") || st3=FALSE
-    [[ $st3 = FALSE ]] && fs="" || fs='-fs'
+    #killall play
+    #DIR2="$DM_tl/Podcasts/.conf"
+    #[ -f "$DIR2/0.lst" ] && st3=$(sed -n 2p "$DIR2/0.lst") || st3=FALSE
+    #[[ $st3 = FALSE ]] && fs="" || fs='-fs'
     
-    if [ -f "$DM_tl/Podcasts/cache/$2.mp3" ]; then
-        play "$DM_tl/Podcasts/cache/$2.mp3" & exit
-    elif [ -f "$DM_tl/Podcasts/cache/$2.ogg" ]; then
-        play "$DM_tl/Podcasts/cache/$2.ogg" & exit
-    elif [ -f "$DM_tl/Podcasts/cache/$2.mp4" ]; then
-        mplayer "$fs" "$DM_tl/Podcasts/cache/$2.mp4" \
-        >/dev/null 2>&1 & exit
-    elif [ -f "$DM_tl/Podcasts/cache/$2.m4v" ]; then
-        mplayer "$fs" "$DM_tl/Podcasts/cache/$2.m4v" \
-        >/dev/null 2>&1 & exit
-    elif [ -f "$DM_tl/Podcasts/cache/$2.avi" ]; then
-        mplayer "$fs" "$DM_tl/Podcasts/cache/$2.avi" \
-        >/dev/null 2>&1 & exit
-    elif [ -f "$DM_tl/Podcasts/cache/$2.flv" ]; then
-        mplayer "$fs" "$DM_tl/Podcasts/cache/$2.flv" \
-        >/dev/null 2>&1 & exit
-    elif [ -f "$DM_tl/Podcasts/cache/$2.mov" ]; then
-        mplayer "$fs" "$DM_tl/Podcasts/cache/$2.mov" \
-        >/dev/null 2>&1 & exit
-    fi
-}
+    #if [ -f "$DM_tl/Podcasts/cache/$2.mp3" ]; then
+        #play "$DM_tl/Podcasts/cache/$2.mp3" & exit
+    #elif [ -f "$DM_tl/Podcasts/cache/$2.ogg" ]; then
+        #play "$DM_tl/Podcasts/cache/$2.ogg" & exit
+    #elif [ -f "$DM_tl/Podcasts/cache/$2.mp4" ]; then
+        #mplayer "$fs" "$DM_tl/Podcasts/cache/$2.mp4" \
+        #>/dev/null 2>&1 & exit
+    #elif [ -f "$DM_tl/Podcasts/cache/$2.m4v" ]; then
+        #mplayer "$fs" "$DM_tl/Podcasts/cache/$2.m4v" \
+        #>/dev/null 2>&1 & exit
+    #elif [ -f "$DM_tl/Podcasts/cache/$2.avi" ]; then
+        #mplayer "$fs" "$DM_tl/Podcasts/cache/$2.avi" \
+        #>/dev/null 2>&1 & exit
+    #elif [ -f "$DM_tl/Podcasts/cache/$2.flv" ]; then
+        #mplayer "$fs" "$DM_tl/Podcasts/cache/$2.flv" \
+        #>/dev/null 2>&1 & exit
+    #elif [ -f "$DM_tl/Podcasts/cache/$2.mov" ]; then
+        #mplayer "$fs" "$DM_tl/Podcasts/cache/$2.mov" \
+        #>/dev/null 2>&1 & exit
+    #fi
+#}
 
 set_channel() {
     
@@ -174,7 +174,7 @@ xmlns:atom='http://www.w3.org/2005/Atom'>
     && -z "${image}" && -z "${media}" ]]; then
     type=3; fi
     
-    if [ ${type} = 1 ]; then
+    if [[ ${type} = 1 ]]; then
         
 cfg="channel=\"$name\"
 link=\"$link\"
@@ -199,7 +199,7 @@ url=\"$feed\""
 sync() {
    
     DIR2="$DM_tl/Podcasts/.conf"
-    cfg="$DM_tl/Podcasts/.conf/0.lst"
+    cfg="$DM_tl/Podcasts/.conf/10.cfg"
     path="$(grep -o 'path="[^"]*' "$cfg" | grep -o '[^"]*$')"
     
     if  [ -f "$DT/l_sync" ] && [[ $2 = 1 ]]; then

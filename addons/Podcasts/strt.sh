@@ -375,8 +375,8 @@ else
     fi
 fi
 
-cfg="$DM_tl/Podcasts/.conf/0.lst"; if [ -f "$cfg" ]; then
-sync="$(sed -n 2p "$cfg" | grep -o 'sync="[^"]*' | grep -o '[^"]*$')"
+cfg="$DM_tl/Podcasts/.conf/10.cfg"; if [ -f "$cfg" ]; then
+sync="$(grep -o 'sync="[^"]*' "$cfg" | grep -o '[^"]*$')"
 if [ "$sync" = TRUE ]; then 
     if [[ ${1} = 1 ]]; then
     "$DSP/tls.sh" sync 1

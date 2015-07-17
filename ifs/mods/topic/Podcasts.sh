@@ -40,7 +40,7 @@ function feedmode() {
     DCP="$DM_tl/Podcasts/.conf"
     DSP="$DS/addons/Podcasts"
     cmd_pref="$DS/cnfg.sh"
-    nt="$DCP/10.cfg"
+    nt="$DCP/info"
     fdit=$(mktemp "$DT/fdit.XXXX")
     c=$(echo $(($RANDOM%100000))); KEY=$c
     [ -f "$DT/.uptp" ] && info="$(gettext "Updating Podcasts")" || info="$(gettext "Podcasts")"

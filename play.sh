@@ -44,19 +44,21 @@ play_list() {
     
     if [ -z "$tpc" ]; then source "$DS/ifs/mods/cmns.sh"
     msg "$(gettext "No topic is active")\n" info & exit 1; fi
-    
-    
+
     tpc="$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")"
     DC_tlt="${DM_tl}/${tpc}/.conf"
+    DC_tlp="${DM_tl}/Podcasts/.conf"
     [[ -n "$(< "$DC_tlt/10.cfg")" ]] && cfg=1 || > "$DC_tlt/10.cfg"
-    tim="$(gettext "Time")"; tims="$(gettext "Times")"
+    
     lbls=( 'Words' 'Sentences' 'Marked items' 'Difficult words' \
     'New episodes <i><small>Podcasts</small></i>' \
     'Saved episodes <i><small>Podcasts</small></i>' )
     sets=( 'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi' \
-    'rplay' 'audio' 'ntosd' 'loop' 'ritem' )
+    'rplay' 'audio' 'ntosd' 'loop' 'ritem' 'video' )
     in=( 'in0' 'in1' 'in2' 'in3' 'in4' 'in5' )
-    iteml=( '1 $tim' '2 $tims' '3 $tims' '4 $tims' ) 
+    _time="$(gettext "time")"
+    _times="$(gettext "times")"
+    iteml=( "0 $_time" "1 $_time" "2 $_times" "3 $_times" "4 $_times" )
     in0="$(grep -Fxvf "$DC_tlt/4.cfg" "$DC_tlt/1.cfg")"
     in1="$(grep -Fxvf "$DC_tlt/3.cfg" "$DC_tlt/1.cfg")"
     in2="$(grep -Fxvf "$DC_tlt/2.cfg" "$DC_tlt/6.cfg")"
@@ -70,9 +72,14 @@ play_list() {
     if [[ ${cfg} = 1 ]]; then
 
         n=0
-        while [ ${n} -le 10 ]; do
+        while [ ${n} -le 11 ]; do
+            if [ ${n} = 4 -o ${n} = 5 -o ${n} = 11 ]; then
+            get="${sets[$n]}"
+            val=$(grep -o "$get"=\"[^\"]* "$DC_tlp/10.cfg" |grep -o '[^"]*$')
+            else
             get="${sets[$n]}"
             val=$(grep -o "$get"=\"[^\"]* "$DC_tlt/10.cfg" |grep -o '[^"]*$')
+            fi
             declare ${sets[$n]}="$val"
             ((n=n+1))
         done
@@ -98,8 +105,6 @@ play_list() {
         done
     }
 
-    iteml
-    
     title="$tpc"
     if grep -E 'vivid|wily' <<<"`lsb_release -a`" >/dev/null 2>&1; then
     btn1="gtk-media-play:0"; else
@@ -115,7 +120,12 @@ play_list() {
         title="$(gettext "Playing:") $tpp"; fi
         fi
     fi
-
+    
+    set="$(echo "${iteml[${ritem}]}")"
+    unset iteml[${ritem}]
+    lst=$(for i in "${iteml[@]}"; do echo -n "!$i"; done)
+    lst_opts="$set$lst"
+    
     tab1=$(mktemp "$DT/XXX.p")
     tab2=$(mktemp "$DT/XXX.p")
     c=$((RANDOM%100000)); KEY=$c
@@ -125,20 +135,16 @@ play_list() {
     --column=IMG:IMG \
     --column=TXT:TXT \
     --column=CHK:CHK > $tab1 &
-    
-    if [ ${mode} -le 2 ]; then
     yad --plug=$KEY --form --tabnum=2 --borders=5 \
     --align=right --scroll \
     --separator='|' --always-print-result --print-all \
     --field="$(gettext "Repeat all")":CHK "$rplay" \
     --field="$(gettext "Play audio")":CHK "$audio" \
-    --field="$(gettext "Only play videos")":CHK "$video" \
+    --field="$(gettext "Use desktop notifications")":CHK "$ntosd" \
     --field="$(gettext "Pause between items (sec)")":SCL "$loop" \
-    --field="$(gettext "Repeat item")":CB "1 time!2 time!3 time !4 time" \
+    --field="$(gettext "Repeat item")":CB "$lst_opts" \
     --field="":LBL "" \
-    --field="$(gettext "Only play Videopodcasts")":CHK "$loop" > $tab2 &
-    fi
-    
+    --field="$(gettext "Only play Videopodcasts")":CHK "$video" > $tab2 &
     yad --notebook --key=$KEY --title="$title" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-all \
@@ -156,19 +162,44 @@ play_list() {
         rm -f "$DT"/*.p
         
         f=1; n=0
-        while [ ${n} -le 10 ]; do
+        while [ ${n} -le 12 ]; do
         
-            if [ ${n} -lt 6 ]; then
-                val=$(sed -n $((${n}+1))p <<<"${tab1}" | cut -d "|" -f3)
-                [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
-                "$DC_tlt/10.cfg"
-                if [ "$val" = TRUE ]; then 
-                count=$((count+$(egrep -cv '#|^$' <<<"${!in[${n}]}"))); fi
+            if [ ${n} -lt 4 ]; then
+            val=$(sed -n $((${n}+1))p <<<"${tab1}" | cut -d "|" -f3)
+            [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
+            "$DC_tlt/10.cfg"
+            if [ "$val" = TRUE ]; then 
+            count=$((count+$(egrep -cv '#|^$' <<<"${!in[${n}]}"))); fi
             
-            else
-                sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\""$(cut -d "|" -f${f} <<<"$tab2")"\"/g" \
-                "$DC_tlt/10.cfg"
-                ((f=f+1))   
+            elif [ ${n} -lt 6 ]; then
+            val=$(sed -n $((${n}+1))p <<<"${tab1}" | cut -d "|" -f3)
+            [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
+            "$DC_tlp/10.cfg"
+            if [ "$val" = TRUE ]; then 
+            count=$((count+$(egrep -cv '#|^$' <<<"${!in[${n}]}"))); fi
+            
+            elif [ ${n} -lt 10 ]; then
+            val="$(cut -d "|" -f${f} <<<"${tab2}")"
+            sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
+            "$DC_tlt/10.cfg"
+            ((f=f+1))
+                
+            elif [ ${n} = 10 ]; then
+            val="$(cut -d "|" -f${f} <<<"${tab2}" |grep -P -o "[0-9]+")"
+            sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
+            "$DC_tlt/10.cfg"
+            ((f=f+1))
+                
+            elif [ ${n} = 11 ]; then
+            val="$(cut -d "|" -f${f} <<<"${tab2}" |grep -P -o "[0-9]+")"
+            sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
+            "$DC_tlt/10.cfg"
+            ((f=f+1))
+            
+            elif [ ${n} = 12 ]; then
+            val="$(cut -d "|" -f${f} <<<"${tab2}")"
+            sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
+            "$DC_tlp/10.cfg"
             fi
             
             ((n=n+1))

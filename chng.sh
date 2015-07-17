@@ -6,7 +6,8 @@ DS="/usr/share/idiomind"
 DC_s="$HOME/.config/idiomind/s"
 source "$DS/ifs/mods/cmns.sh"
 cfg="$DC_tlt/10.cfg"
-f=0
+cfgp="$DM_tl/Podcasts/.conf/10.cfg"
+f=0; ritem=0
 
 if [[ "$1" = chngi ]]; then
 
@@ -14,27 +15,36 @@ if [[ "$1" = chngi ]]; then
     s="$(grep -oP '(?<=sntcs=\").*(?=\")' "$cfg")"
     m="$(grep -oP '(?<=marks=\").*(?=\")' "$cfg")"
     p="$(grep -oP '(?<=wprct=\").*(?=\")' "$cfg")"
-    export v="$(grep -oP '(?<=video=\").*(?=\")' "$cfg")"
-    export ne="$(grep -oP '(?<=nsepi=\").*(?=\")' "$cfg")"
-    export se="$(grep -oP '(?<=svepi=\").*(?=\")' "$cfg")"
+    export v="$(grep -oP '(?<=video=\").*(?=\")' "$cfgp")"
+    export ne="$(grep -oP '(?<=nsepi=\").*(?=\")' "$cfgp")"
+    export se="$(grep -oP '(?<=svepi=\").*(?=\")' "$cfgp")"
     
     _play() {
         
         a="$(grep -oP '(?<=audio=\").*(?=\")' "$cfg")"
         n="$(grep -oP '(?<=ntosd=\").*(?=\")' "$cfg")"
         l="$(grep -oP '(?<=loop=\").*(?=\")' "$cfg")"
-        
+        t="$(grep -oP '(?<=ritem=\").*(?=\")' "$cfg")"
+
         [ ! -f "$DT/.p_" ] && > "$DT/.p_"
 
         if [ ${n} != TRUE -a ${a} != TRUE ]; then "$DS/stop.sh" 2 & exit 1; fi
         if ! grep TRUE <<<"$n$w$s$m$p$ne$se"; then "$DS/stop.sh" 2 & exit 1; fi
         nu='^[0-9]+$'; if ! [[ $l =~ $nu ]]; then l=1; fi
-        
+        if ! [[ $t =~ $nu ]]; then t=1; fi
+
         if [ ${n} = TRUE ]; then
         notify-send -i "${icon}" "${trgt}" "${srce}" -t 10000; fi &
         
         if [ ${a} = TRUE ]; then
-        "$DS/play.sh" play_file "${file}" "${trgt}" && wait; fi
+        ( while [ ${ritem} -le ${t} ]; do
+        "$DS/play.sh" play_file "${file}" "${trgt}"
+        [ ${ritem} = 1 ] && sleep 2.5
+        [ ${ritem} = 2 ] && sleep 1
+        [ ${ritem} = 3 ] && sleep 0.5
+        let ritem++
+        done )
+        fi
         
         if [ ${n} = TRUE -a ${l} -lt 11 -a ${type} -lt 3 ]; then l=11; fi
         
