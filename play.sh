@@ -86,7 +86,7 @@ play_list() {
     else
         n=0; > "$DC_tlt/10.cfg"
         while [ ${n} -le 11 ]; do
-        echo -e "${sets[$n]}=\"\"" >> "$DC_tlt/10.cfg"
+        echo -e "${sets[$n]}=\"0\"" >> "$DC_tlt/10.cfg"
         ((n=n+1))
         done
     fi

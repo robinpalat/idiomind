@@ -5,7 +5,7 @@ source /usr/share/idiomind/ifs/c.conf
 [ -z "$tpc" && -d "$DT" ] && exit 1
 export tpc DC_tlt
 
-if [ "$(grep -o rplay=\"[^\"]* < "$DC_s/1.cfg" \
+if [ "$(grep -o rplay=\"[^\"]* "$DC_tlt/10.cfg" \
 |grep -o '[^"]*$')" = TRUE ]; then
 
     while [ 1 ]; do

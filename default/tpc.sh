@@ -7,7 +7,16 @@ source "$DS/ifs/mods/cmns.sh"
 topic="${1}"
 DC_tlt="$DM_tl/${topic}/.conf"
 DM_tlt="$DM_tl/${topic}"
-cfgfile="tname=\"${topic}\"
+
+if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
+    "$DS/ifs/mods/topic/${topic}.sh" 2 & exit 1
+
+else
+    if [ -d "${DM_tlt}" ]; then
+
+        if [ ! -d "${DC_tlt}" ]; then
+        
+c1="tname=\"${topic}\"
 langs=\"${lgsl^}\"
 langt=\"${lgtl^}\"
 authr=\"$Author\"
@@ -24,28 +33,35 @@ nimag=\"$images\"
 naudi=\"$audio\"
 nsize=\"$size\"
 level=\"$level\"
-set_1=\" \"
-set_2=\" \"
-set_3=\" \"
-set_4=\" \""
+set_1=\"\"
+set_2=\"\"
+set_3=\"\"
+set_4=\"\""
+c2="words=\"\"
+sntcs=\"\"
+marks=\"\"
+wprct=\"\"
+nsepi=\"\"
+svepi=\"\"
+rplay=\"\"
+audio=\"\"
+ntosd=\"\"
+loop=\"0\"
+rword=\"0\"
+rsntc=\"0\""
+        
+            mkdir -p "${DM_tlt}/images"
+            mkdir "${DC_tlt}"; cd "${DC_tlt}"
+            c=0; while [[ $c -le 10 ]]; do
+            touch "$c.cfg"; let c++
+            done
 
-if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
-    "$DS/ifs/mods/topic/${topic}.sh" 2 & exit 1
-
-else
-    if [ -d "${DM_tlt}" ]; then
-
-        if [ ! -d "${DC_tlt}" ]; then
-        mkdir -p "${DM_tlt}/images"
-        mkdir "${DC_tlt}"; cd "${DC_tlt}"
-        c=0; while [[ $c -le 10 ]]; do
-        touch "$c.cfg"; let c++
-        done
-
-        rm "${DC_tlt}/7.cfg" "${DC_tlt}/9.cfg"
-        echo " " > "${DC_tlt}/info"
-        echo -e "${cfgfile}" > "id.cfg"
-        echo 1 > "8.cfg"
+            rm "${DC_tlt}/7.cfg" "${DC_tlt}/9.cfg"
+            echo " " > "${DC_tlt}/info"
+            echo -e "${c1}" > ./"id.cfg"
+            echo -e "${c2}" > ./"10.cfg"
+            
+            echo 1 > "8.cfg"
         fi
         cd /
         echo "${topic}" > "$DC_s/4.cfg"
