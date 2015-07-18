@@ -142,6 +142,9 @@ check_index() {
         if ! grep '},trgt={' "${DC_tlt}/0.cfg"; then
         export nv=1; fi; fi
         
+        if ! grep 'rsntc=' < "${DC_tlt}/10.cfg"; then
+        rm "${DC_tlt}/10.cfg"; fi
+        
         if [ ! -f "${DC_tlt}/8.cfg" ]; then
         echo 1 > "${DC_tlt}/8.cfg"; fi
         export stts=$(sed -n 1p "${DC_tlt}/8.cfg")

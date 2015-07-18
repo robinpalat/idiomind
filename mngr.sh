@@ -127,17 +127,17 @@ edit_item() {
     include "$DS/ifs/mods/mngr"
     lgt=$(lnglss $lgtl)
     lgs=$(lnglss $lgsl)
-    lists="${2}";  item_pos="$3"
+    lists="${2}";  item_pos="${3}"
     c=$((RANDOM%10000))
     
     if [ "$lists" = 1 ]; then
     index_1="${DC_tlt}/1.cfg"
     index_2="${DC_tlt}/2.cfg"
-    [ ${item_pos} -lt 1 ] && item_pos=$inx1
+    [ ${item_pos} -lt 1 ] && item_pos=${inx1}
     elif [ "$lists" = 2 ]; then
     index_1="${DC_tlt}/2.cfg"
     index_2="${DC_tlt}/1.cfg"
-    [ ${item_pos} -lt 1 ] && item_pos=$inx2; fi
+    [ ${item_pos} -lt 1 ] && item_pos=${inx2}; fi
 
     tpcs="$(egrep -v "${tpc}" "${DM_tl}/.2.cfg" |tr "\\n" '!' |sed 's/!\+$//g')"
     item="$(sed -n ${item_pos}p "${index_1}")"
@@ -155,7 +155,7 @@ edit_item() {
     mark=`grep -oP '(?<=mark={).*(?=})' <<<"${item}"`
     id=`grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"`
     [ -z "${id}" ] && id=""
-    q_trad="$(sed "s/'/ /g" <<<"$trgt")"
+    q_trad="$(sed "s/'/ /g" <<<"${trgt}")"
     mod=0; col=0
    
     cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"" "\"${trgt}\"""
@@ -168,8 +168,11 @@ edit_item() {
 
     if [ -z "${item}" ]; then exit 1; fi
 
-    if [ ${type} = 1 ]; then audf="${DM_tls}/${trgt,,}.mp3"; edit_dlg1="$(dlg_form_1)"
-    elif [ ${type} = 2 ]; then audf="${DM_tlt}/$id.mp3"; edit_dlg2="$(dlg_form_2)"; fi
+    if [ -f "${DM_tlt}/$id.mp3" ]; then
+    audf="${DM_tlt}/$id.mp3"; else
+    audf="${DM_tls}/${trgt,,}.mp3"; fi
+    if [ ${type} = 1 ]; then edit_dlg1="$(dlg_form_1)"
+    elif [ ${type} = 2 ]; then edit_dlg2="$(dlg_form_2)"; fi
     ret=$?
 
         if [ ${ret} -eq 0 -o ${ret} -eq 2 ]; then
@@ -232,9 +235,9 @@ edit_item() {
             [ "${audf}" != "${audf_mod}" ] && mod=1
             [ "${tpc}" != "${tpc_mod}" ] && mod=1
 
-            if [ $mod = 1 ]; then
+            if [ ${mod} = 1 ]; then
             (
-                if [ $ind = 1 ]; then
+                if [ ${ind} = 1 ]; then
                 
                     DT_r=$(mktemp -d "$DT/XXXX")
                     internet
@@ -312,7 +315,7 @@ edit_item() {
             
 
         else
-            "$DS/vwr.sh" "$lists" "${trgt}" $item_pos &
+            "$DS/vwr.sh" "$lists" "${trgt}" ${item_pos} &
         fi
        
     exit
@@ -345,11 +348,11 @@ edit_list() {
         [ $ret = 0 ] && cmd=tac
         [ $ret = 2 ] && cmd=cat
         include "$DS/ifs/mods/add"
-        touch "$DT/ps_lk"
+        n=1; touch "$DT/ps_lk"
         cp -f "${direc}/0.cfg" "$DM/backup/${2}.bk"
         rm "${direc}/1.cfg" "${direc}/3.cfg" "${direc}/4.cfg"
         
-        n=1; while read -r trgt; do
+        while read -r trgt; do
 
             if grep -F -m 1 "trgt={${trgt}}" "${direc}/0.cfg"; then
                 item="$(grep -F -m 1 "trgt={${trgt}}" "${direc}/0.cfg" |sed 's/},/}\n/g')"

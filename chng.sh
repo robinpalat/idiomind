@@ -24,25 +24,31 @@ if [[ ${1} = 0 ]]; then
         a="$(grep -oP '(?<=audio=\").*(?=\")' "$cfg")"
         n="$(grep -oP '(?<=ntosd=\").*(?=\")' "$cfg")"
         l="$(grep -oP '(?<=loop=\").*(?=\")' "$cfg")"
-        t="$(grep -oP '(?<=ritem=\").*(?=\")' "$cfg")"
+        rw="$(grep -oP '(?<=rword=\").*(?=\")' "$cfg")"
+        rs="$(grep -oP '(?<=rsntc=\").*(?=\")' "$cfg")"
         [ ! -f "$DT/.p_" ] && > "$DT/.p_"
 
         if [ ${n} != TRUE -a ${a} != TRUE ]; then "$DS/stop.sh" 2 & exit 1; fi
         if ! grep TRUE <<<"$n$w$s$m$p$ne$se"; then "$DS/stop.sh" 2 & exit 1; fi
         nu='^[0-9]+$'; if ! [[ $l =~ $nu ]]; then l=1; fi
-        if ! [[ $t =~ $nu ]]; then t=1; fi
-
+        if ! [[ $rw =~ $nu ]]; then rw=0; fi
+        if ! [[ $rs =~ $nu ]]; then rs=0; fi
+        
         if [ ${n} = TRUE ]; then
         notify-send -i "${icon}" "${trgt}" "${srce}" -t 10000; fi &
         
         if [ ${a} = TRUE ]; then
-        ( while [ ${ritem} -le ${t} ]; do
+        [ ${type} = 1 ] && spn=${rw} || spn=${rs}
+
+        ( while [ ${ritem} -le ${spn} ]; do
         "$DS/play.sh" play_file "${file}" "${trgt}"
+        [ ${ritem} = 0 ] && sleep 0.5
         [ ${ritem} = 1 ] && sleep 2.5
         [ ${ritem} = 2 ] && sleep 1
         [ ${ritem} = 3 ] && sleep 0.5
         let ritem++
         done )
+
         fi
         
         if [ ${n} = TRUE -a ${l} -lt 11 -a ${type} -lt 3 ]; then l=11; fi
@@ -67,8 +73,11 @@ if [[ ${1} = 0 ]]; then
         id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${_item}")"
         img="${DM_tlt}/images/$id.jpg"; [ -f "$img" ] && icon="$img"
         [ -z "$trgt" ] && trgt="$item"
-        [[ ${type} = 1 ]] && file="${DM_tls}/${trgt,,}.mp3"
-        [[ ${type} = 2 ]] && file="${DM_tlt}/$id.mp3"
+        
+        if [ -f "${DM_tlt}/$id.mp3" ]; then
+        file="${DM_tlt}/$id.mp3"; else
+        file="${DM_tls}/${trgt,,}.mp3"; fi
+        
         strue=1
         else ((f=f+1)); fi
     }

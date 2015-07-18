@@ -5,6 +5,8 @@ play_word() {
 
     if [ -f "$DM_tls/${2,,}.mp3" ]; then
     play "$DM_tls/${2,,}.mp3" &
+    elif [ -f "${DM_tlt}/$3.mp3" ]; then
+    play "${DM_tlt}/$3.mp3" &
     elif [ -n "$synth" ]; then
     echo "${2}." | $synth &
     else
@@ -52,12 +54,12 @@ play_list() {
     'New episodes <i><small>Podcasts</small></i>' \
     'Saved episodes <i><small>Podcasts</small></i>' )
     sets=( 'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi' \
-    'rplay' 'audio' 'ntosd' 'loop' 'ritem' 'video' )
+    'rplay' 'audio' 'ntosd' 'loop' 'rword' 'rsntc' 'video' )
     in=( 'in0' 'in1' 'in2' 'in3' 'in4' 'in5' )
     _nore="$(gettext "no repeat")"
     _time="$(gettext "time")"
     _times="$(gettext "times")"
-    iteml=( "$_nore" "1 $_time" "2 $_times" "3 $_times" "4 $_times" )
+    iteml=( "$_nore" "1 $_time" "2 $_times" "3 $_times" )
     
     in0="$(grep -Fxvf "$DC_tlt/4.cfg" "$DC_tlt/1.cfg")"
     in1="$(grep -Fxvf "$DC_tlt/3.cfg" "$DC_tlt/1.cfg")"
@@ -72,9 +74,9 @@ play_list() {
     if [[ ${cfg} = 1 ]]; then
 
         n=0
-        while [ ${n} -le 11 ]; do
+        while [ ${n} -le 12 ]; do
             get="${sets[$n]}"
-            if [ ${n} = 4 -o ${n} = 5 -o ${n} = 11 ]; then
+            if [ ${n} = 4 -o ${n} = 5 -o ${n} = 12 ]; then
             cfg="$DC_tlp/10.cfg"; else cfg="$DC_tlt/10.cfg"; fi
             val=$(grep -o "$get"=\"[^\"]* "${cfg}" |grep -o '[^"]*$')
             declare ${sets[$n]}="$val"
@@ -83,7 +85,7 @@ play_list() {
         
     else
         n=0; > "$DC_tlt/10.cfg"
-        while [ ${n} -le 10 ]; do
+        while [ ${n} -le 11 ]; do
         echo -e "${sets[$n]}=\"\"" >> "$DC_tlt/10.cfg"
         ((n=n+1))
         done
@@ -117,10 +119,15 @@ play_list() {
         fi
     fi
     
-    set="$(echo "${iteml[${ritem}]}")"
-    unset iteml[${ritem}]
+    set="$(echo "${iteml[${rword}]}")"
+    unset iteml[${rword}]
     lst=$(for i in "${iteml[@]}"; do echo -n "!$i"; done)
-    lst_opts="$set$lst"
+    lst_opts1="$set$lst"
+    iteml[${rword}]="${set}"
+    set="$(echo "${iteml[${rsntc}]}")"
+    unset iteml[${rsntc}]
+    lst=$(for i in "${iteml[@]}"; do echo -n "!$i"; done)
+    lst_opts2="$set$lst"
     
     tab1=$(mktemp "$DT/XXX.p")
     tab2=$(mktemp "$DT/XXX.p")
@@ -138,7 +145,8 @@ play_list() {
     --field="$(gettext "Play audio")":CHK "$audio" \
     --field="$(gettext "Use desktop notifications")":CHK "$ntosd" \
     --field="$(gettext "Pause between items (sec)")":SCL "$loop" \
-    --field="$(gettext "Repeat item")":CB "$lst_opts" \
+    --field="$(gettext "Repeat words")":CB "$lst_opts1" \
+    --field="$(gettext "Repeat sentences")":CB "$lst_opts2" \
     --field="":LBL "" \
     --field="$(gettext "Only play Videopodcasts")":CHK "$video" > $tab2 &
     yad --notebook --key=$KEY --title="$title" \
@@ -185,12 +193,18 @@ play_list() {
         else val="$(cut -d "|" -f5 <<<"${tab2}"|grep -P -o "[0-9]+")"; fi
         [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
         "$DC_tlt/10.cfg"
-            
+        
         elif [ ${n} = 11 ]; then
-        val="$(cut -d "|" -f7 <<<"${tab2}")"
+        if [ "$(cut -d "|" -f6 <<<"${tab2}")" = "$_nore" ]; then val=0
+        else val="$(cut -d "|" -f6 <<<"${tab2}"|grep -P -o "[0-9]+")"; fi
+        [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
+        "$DC_tlt/10.cfg"
+            
+        elif [ ${n} = 12 ]; then
+        val="$(cut -d "|" -f8 <<<"${tab2}")"
         [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
         "$DC_tlp/10.cfg"
-
+        
         fi
             
         ((n=n+1))

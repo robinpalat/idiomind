@@ -28,7 +28,7 @@ id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
 
 if [ ${type} = 1 ]; then
 
-    cmd_listen="$DS/play.sh play_word "\"${trgt}\"""
+    cmd_listen="$DS/play.sh play_word "\"${trgt}\"" ${id}"
     [ "$mark" = TRUE ] && trgt="<b>$trgt</b>" && grmr="<b>$grmr</b>"
     word_view
 
