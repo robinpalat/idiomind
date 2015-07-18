@@ -12,26 +12,22 @@ WORDS=$(grep -o -P '(?<=w9.).*(?=\.w9)' "${LOG}" |tr '|' '\n' \
 QUOTES=$(grep -o -P '(?<=s9.).*(?=\.s9)' "${LOG}" |tr '|' '\n' \
 | sort | uniq -dc | sort -n -r | sed 's/ \+/ /g')
 
-n=1
-while [ ${n} -le 15 ]; do
+for n in {1..15}; do
 
-if [[ "$(sed -n "$n"p <<<"${TOPICS}" |awk '{print ($1)}')" -ge 3 ]]; then
-echo "$(sed -n "$n"p <<<"${TOPICS}" |cut -d " " -f2-)" >> "${tpclst}"; fi
-let n++
+if [[ "$(sed -n ${n}p <<<"${TOPICS}" |awk '{print ($1)}')" -ge 3 ]]; then
+echo "$(sed -n ${n}p <<<"${TOPICS}" |cut -d " " -f2-)" >> "${tpclst}"; fi
 done
 
-n=1
-while [ ${n} -le 100 ]; do
+for n in {1..100}; do
 
-if [[ $(sed -n "$n"p <<<"${WORDS}" | awk '{print ($1)}') -ge 3 ]]; then
-    fwk=$(sed -n "$n"p <<<"${WORDS}" | awk '{print ($2)}')
-    [ -n "${fwk}" ] && echo "${fwk}" >> "${items}"
-fi
-if [[ $(sed -n "$n"p <<<"${QUOTES}" | awk '{print ($1)}') -ge 1 ]]; then
-    fwk=$(sed -n "$n"p <<<"${QUOTES}" | cut -c 4-)
-    [ -n "${fwk}" ] && echo "${fwk}" >> "${items}"
-fi
-let n++
+    if [[ $(sed -n ${n}p <<<"${WORDS}" | awk '{print ($1)}') -ge 3 ]]; then
+        fwk=$(sed -n ${n}p <<<"${WORDS}" | awk '{print ($2)}')
+        [ -n "${fwk}" ] && echo "${fwk}" >> "${items}"
+    fi
+    if [[ $(sed -n ${n}p <<<"${QUOTES}" | awk '{print ($1)}') -ge 1 ]]; then
+        fwk=$(sed -n ${n}p <<<"${QUOTES}" | cut -c 4-)
+        [ -n "${fwk}" ] && echo "${fwk}" >> "${items}"
+    fi
 done
 
 sed -i '/^$/d' "${items}"

@@ -117,11 +117,8 @@ function new_session() {
     fi
     
     ####
-    if grep 'rplay' < "$DC_s/1.cfg"; then
+    if grep -o 'rplay' < "$DC_s/1.cfg"; then
     rm "$DC_s/1.cfg"; fi
-    
-    if [[ "$(< "$DM_tl/Podcasts/.conf/8.cfg")" != 11 ]]; then
-    echo 11 > "$DM_tl/Podcasts/.conf/8.cfg"; fi
     ###
 
     rm -f  "$DT/ps_lk"
@@ -235,8 +232,7 @@ function topic() {
         [ ! -f "${DC_tlt}/${n}.cfg" ] && touch "${DC_tlt}/${n}.cfg"
         declare ls${n}="${DC_tlt}/${n}.cfg"
         declare inx${n}=$(wc -l < "${DC_tlt}/${n}.cfg")
-        export inx${n}
-        done
+        export inx${n}; done
         nt="${DC_tlt}/info"
         author="$(grep -o 'authr="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         auto_mrk=$(grep -o 'set_1=\"[^\"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')

@@ -62,6 +62,16 @@ conditions() {
         exit 1
     fi
     
+    if [ -f "$DCP/2.lst" ] && [[ `wc -l < "$DCP/2.lst"` != `wc -l < "$DCP/.2.lst"` ]]; then
+    cp "$DCP/.2.lst" "$DCP/2.lst"; fi
+    if [ -f "$DCP/1.lst" ] && [[ `wc -l < "$DCP/1.lst"` != `wc -l < "$DCP/.1.lst"` ]]; then
+    cp "$DCP/.1.lst" "$DCP/1.lst"; fi
+    if [ -f "$DCP/10.cfg" ]; then
+    if ! grep -o 'svepi' < "$DCP/10.cfg" >/dev/null 2>&1; then
+    rm "$DCP/10.cfg"; fi; fi
+    if [[ "$(< "$DCP/8.cfg")" != 11 ]]; then
+    echo 11 > "$DCP/8.cfg"; fi
+
     if [ ! -d "$DM_tl/Podcasts/cache" ]; then
     mkdir -p "DM_tl/Podcasts/.conf"
     mkdir -p "DM_tl/Podcasts/cache"; fi

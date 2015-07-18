@@ -13,8 +13,7 @@ ttrgt=$(grep -o ttrgt=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
 new_topic() {
     
     if [[ $(wc -l < "$DM_tl/.1.cfg") -ge 120 ]]; then
-    msg "$(gettext "Sorry, you have reached the maximum number of topics")" info Info &
-    exit 1; fi
+    msg "$(gettext "Sorry, you have reached the maximum number of topics")" info Info & exit 1; fi
 
     jlb="$(clean_3 "$(dlg_form_0 "${2}")")"
     
@@ -77,7 +76,6 @@ Create one using the button below. ")" & exit 1; fi
     srce=$(echo "${lzgpr}" | sed -n 2p)
     chk=$(echo "${lzgpr}" | tail -1)
     tpe=$(grep -Fxo "${chk}" "$DM_tl/.1.cfg")
-    
     
         if [ $ret -eq 3 ]; then
         
@@ -304,14 +302,14 @@ list_words_edit() {
         words="$(list_words_2 "${2}")"
         slt="$(dlg_checklist_1 "${words}" "$info")"
 
-            if [[ $? -eq 0 ]]; then
+            if [ $? -eq 0 ]; then
                 
                 while read -r chkst; do
                 sed 's/TRUE//g' <<<"${chkst}" >> "$DT/$c/slts"
                 done <<<"$(sed 's/|//g' <<<"${slt}")"
             fi
         
-    elif [[ $3 = 2 ]]; then
+    elif [[ ${3} = 2 ]]; then
     
         exmp_="${5}"
         DT_r="$DT/$c"; cd "$DT_r"
@@ -475,8 +473,7 @@ process() {
         if [ $? -eq 1 ]; then
         rm=$(sed -n 1p "$DT/.n_s_pr")
         cleanups "${rm}" "$DT/.n_s_pr"
-        "$DS/stop.sh" 5
-        fi
+        "$DS/stop.sh" 5; fi
         cleanups "$DT_r"
         exit 1
     fi
@@ -618,7 +615,6 @@ process() {
                 
                 lns="$(cat "$DT_r/slts" "$DT_r/wrds" |sed '/^$/d' |wc -l)"
                 
-                # ----------------------------
                 n=1
                 while read -r trgt; do
                 

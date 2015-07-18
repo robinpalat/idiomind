@@ -48,11 +48,9 @@ if [[ ${1} = 0 ]]; then
         [ ${ritem} = 3 ] && sleep 0.5
         let ritem++
         done )
-
         fi
         
         if [ ${n} = TRUE -a ${l} -lt 11 -a ${type} -lt 3 ]; then l=11; fi
-        
         [[ ${strue} = 1 ]] && sleep ${l}
     }
     export -f _play

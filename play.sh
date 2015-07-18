@@ -141,7 +141,7 @@ play_list() {
     yad --plug=$KEY --form --tabnum=2 --borders=5 \
     --align=right --scroll \
     --separator='|' --always-print-result --print-all \
-    --field="$(gettext "Repeat all")":CHK "$rplay" \
+    --field="$(gettext "Repeat")":CHK "$rplay" \
     --field="$(gettext "Play audio")":CHK "$audio" \
     --field="$(gettext "Use desktop notifications")":CHK "$ntosd" \
     --field="$(gettext "Pause between items (sec)")":SCL "$loop" \
