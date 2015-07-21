@@ -66,9 +66,9 @@ conditions() {
     cp "$DCP/.2.lst" "$DCP/2.lst"; fi
     if [ -f "$DCP/1.lst" ] && [[ `wc -l < "$DCP/1.lst"` != `wc -l < "$DCP/.1.lst"` ]]; then
     cp "$DCP/.1.lst" "$DCP/1.lst"; fi
-    if [ -f "$DCP/10.cfg" ]; then
-    if ! grep -o 'svepi' < "$DCP/10.cfg" >/dev/null 2>&1; then
-    rm "$DCP/10.cfg"; fi; fi
+    if [ -f "$DCP/podcasts.cfg" ]; then
+    if ! grep -o 'svepi' < "$DCP/podcasts.cfg" >/dev/null 2>&1; then
+    rm "$DCP/podcasts.cfg"; fi; fi
     if [[ "$(< "$DCP/8.cfg")" != 11 ]]; then
     echo 11 > "$DCP/8.cfg"; fi
 
@@ -385,7 +385,7 @@ else
     fi
 fi
 
-cfg="$DM_tl/Podcasts/.conf/10.cfg"; if [ -f "$cfg" ]; then
+cfg="$DM_tl/Podcasts/.conf/podcasts.cfg"; if [ -f "$cfg" ]; then
 sync="$(grep -o 'sync="[^"]*' "$cfg" | grep -o '[^"]*$')"
 if [ "$sync" = TRUE ]; then 
     if [[ ${1} = 1 ]]; then

@@ -170,7 +170,7 @@ url=\"$feed\""
 sync() {
    
     DIR2="$DM_tl/Podcasts/.conf"
-    cfg="$DM_tl/Podcasts/.conf/10.cfg"
+    cfg="$DM_tl/Podcasts/.conf/podcasts.cfg"
     path="$(grep -o 'path="[^"]*' "$cfg" | grep -o '[^"]*$')"
     
     if  [ -f "$DT/l_sync" ] && [[ $2 = 1 ]]; then

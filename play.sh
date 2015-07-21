@@ -48,7 +48,7 @@ play_list() {
     tpc="$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")"
     DC_tlt="${DM_tl}/${tpc}/.conf"
     DC_tlp="${DM_tl}/Podcasts/.conf"
-    [[ -n "$(< "$DC_tlt/10.cfg")" ]] && cfg=1 || > "$DC_tlt/10.cfg"
+    [[ -n "$(< "$DC_tlt/10.cfg")" ]] && cfg=1 || cfg=0
     
     lbls=( 'Words' 'Sentences' 'Marked items' 'Difficult words' \
     'New episodes <i><small>Podcasts</small></i>' \
@@ -71,13 +71,13 @@ play_list() {
     in5="$(tac "$DM_tl/Podcasts/.conf/2.lst")" || in6=""
     [ ! -d "$DT" ] && mkdir "$DT"; cd "$DT"
 
-    if [[ ${cfg} = 1 ]]; then
+    if [ ${cfg} = 1 ]; then
 
         n=0
         while [ ${n} -le 11 ]; do
             get="${sets[$n]}"
             if [ ${n} = 4 -o ${n} = 5 -o ${n} = 11 ]; then
-            cfg="$DC_tlp/10.cfg"; else cfg="$DC_tlt/10.cfg"; fi
+            cfg="$DC_tlp/podcasts.cfg"; else cfg="$DC_tlt/10.cfg"; fi
             val=$(grep -o "$get"=\"[^\"]* "${cfg}" |grep -o '[^"]*$')
             declare ${sets[$n]}="$val"
             ((n=n+1))
@@ -172,7 +172,7 @@ play_list() {
         elif [ ${n} = 4 -o ${n} = 5 ]; then
         val=$(sed -n $((${n}+1))p <<<"${tab1}" |cut -d "|" -f3)
         [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
-        "$DC_tlp/10.cfg"
+        "$DC_tlp/podcasts.cfg"
         if [ "$val" = TRUE ]; then
         count=$((count+$(egrep -cv '#|^$' <<<"${!in[${n}]}"))); fi
         
@@ -191,7 +191,7 @@ play_list() {
         elif [ ${n} = 11 ]; then
         val="$(cut -d "|" -f7 <<<"${tab2}")"
         [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
-        "$DC_tlp/10.cfg"
+        "$DC_tlp/podcasts.cfg"
         
         fi
         

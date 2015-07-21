@@ -8,8 +8,8 @@ DSP="$DS_a/Podcasts"
 date=$(date +%d)
 CNF="$(gettext "Configure")"
 sets=( 'update' 'sync' 'path' 'video' 'nsepi' 'svepi' )
-if [[ -n "$(< "$DCP/10.cfg")" ]]; then cfg=1
-else cfg=0; > "$DCP/10.cfg"; fi
+if [[ -n "$(< "$DCP/podcasts.cfg")" ]]; then cfg=1
+else cfg=0; > "$DCP/podcasts.cfg"; fi
 
 ini() {
     
@@ -17,7 +17,7 @@ ini() {
     mkdir "$DM_tl/Podcasts/.conf"
     mkdir "$DM_tl/Podcasts/cache"
     cd "$DM_tl/Podcasts/.conf/"
-    touch "./10.cfg" "./1.lst" "./2.lst" \
+    touch "./podcasts.cfg" "./1.lst" "./2.lst" \
     "./feeds.lst" "./old.lst"
     echo 11 > "$DM_tl/Podcasts/.conf/8.cfg"
     echo " " > "$DM_tl/Podcasts/.conf/info"
@@ -41,7 +41,7 @@ if [ ${cfg} = 1 ]; then
     while [ ${n} -lt 3 ]; do
     itn=$((n+1))
     get="${sets[$n]}"
-    val=$(sed -n "$itn"p < "$DCP/10.cfg" \
+    val=$(sed -n "$itn"p < "$DCP/podcasts.cfg" \
     | grep -o "$get"=\"[^\"]* | grep -o '[^"]*$')
     declare ${sets[$n]}="$val"
     ((n=n+1))
@@ -49,7 +49,7 @@ if [ ${cfg} = 1 ]; then
     
 else
     while [ ${n} -lt 6 ]; do
-    echo -e "${sets[$n]}=\"FALSE\"" >> "$DCP/10.cfg"
+    echo -e "${sets[$n]}=\"FALSE\"" >> "$DCP/podcasts.cfg"
     ((n=n+1))
     done
 fi
@@ -77,9 +77,9 @@ apply() {
     val2=$(cut -d "|" -f2 <<<"$CNFG")
     val3=$(cut -d "|" -f19 <<<"$CNFG" | sed 's|/|\\/|g')
     if [ ! -d "$val3" -o -z "$val3" ]; then path=FALSE; fi
-    sed -i "s/update=.*/update=\"$val1\"/g" "$DCP/10.cfg"
-    sed -i "s/sync=.*/sync=\"$val2\"/g" "$DCP/10.cfg"
-    sed -i "s/path=.*/path=\"${val3}\"/g" "$DCP/10.cfg"
+    sed -i "s/update=.*/update=\"$val1\"/g" "$DCP/podcasts.cfg"
+    sed -i "s/sync=.*/sync=\"$val2\"/g" "$DCP/podcasts.cfg"
+    sed -i "s/path=.*/path=\"${val3}\"/g" "$DCP/podcasts.cfg"
     [ -f "$DT/cp.lock" ] && rm -f "$DT/cp.lock"
 }
 

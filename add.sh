@@ -238,7 +238,7 @@ new_word() {
     if [ "$trans" = TRUE ]; then
     
         internet
-        if [ "$ttrgt" = TRUE ] && [ ${5} != 0 ]; then
+        if [ "$ttrgt" = TRUE ] && [[ ${5} != 0 ]]; then
         trgt="$(translate "${trgt}" auto "$lgt")"
         trgt="$(clean_1 "${trgt}")"; fi
         srce="$(translate "${trgt}" $lgt $lgs)"

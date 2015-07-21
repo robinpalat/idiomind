@@ -4,7 +4,7 @@
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 cfg="$DC_tlt/10.cfg"
-cfgp="$DM_tl/Podcasts/.conf/10.cfg"
+cfgp="$DM_tl/Podcasts/.conf/podcasts.cfg"
 f=0
 ritem=0
 stnrd=0
