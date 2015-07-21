@@ -42,22 +42,21 @@ else
     m_text "${_item}"
 fi
     ret=$?
-
     if [ $ret -eq 5 ]; then
+    
         "$DS/mngr.sh" mtext ${1} ${index_pos}
 
     elif [ $ret -eq 4 ]; then
+    
         "$DS/mngr.sh" edit ${1} ${index_pos}
     
     elif [ $ret -eq 2 ]; then
     
         if [[ ${index_pos} = 1 ]]; then
-        
         item=`tail -n 1 < "${index}"`
         [ ${1} = 1 ] && "$DS/vwr.sh" ${1} "" "${item}"
         [ ${1} = 2 ] && "$DS/vwr.sh" ${1} "${item}"
         else
-        
         ff=$((index_pos-1))
         "$DS/vwr.sh" ${1} "" ${ff} &
         fi
@@ -70,5 +69,4 @@ fi
     else 
         exit 1
     fi
-    
 exit

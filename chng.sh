@@ -1,14 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-DT="/tmp/.idiomind-$USER"
-DS="/usr/share/idiomind"
-DC_s="$HOME/.config/idiomind/s"
-source "$DS/ifs/mods/cmns.sh"
-cfg="$DC_tlt/10.cfg"
-cfgp="$DM_tl/Podcasts/.conf/10.cfg"
-f=0; ritem=0
-
 if [[ ${1} = 0 ]]; then
 
     w="$(grep -oP '(?<=words=\").*(?=\")' "$cfg")"
@@ -25,33 +17,36 @@ if [[ ${1} = 0 ]]; then
         n="$(grep -oP '(?<=ntosd=\").*(?=\")' "$cfg")"
         l="$(grep -oP '(?<=loop=\").*(?=\")' "$cfg")"
         rw="$(grep -oP '(?<=rword=\").*(?=\")' "$cfg")"
-        rs="$(grep -oP '(?<=rsntc=\").*(?=\")' "$cfg")"
-        [ ! -f "$DT/.p_" ] && > "$DT/.p_"
+        [ ! -f "$DT"/.p_ ] && > "$DT"/.p_
 
-        if [ ${n} != TRUE -a ${a} != TRUE ]; then "$DS/stop.sh" 2 & exit 1; fi
-        if ! grep TRUE <<<"$n$w$s$m$p$ne$se"; then "$DS/stop.sh" 2 & exit 1; fi
-        nu='^[0-9]+$'; if ! [[ $l =~ $nu ]]; then l=1; fi
-        if ! [[ $rw =~ $nu ]]; then rw=0; fi
-        if ! [[ $rs =~ $nu ]]; then rs=0; fi
+        if [ ${n} != TRUE -a ${a} != TRUE -a ${stnrd} = 1 ]; then "$DS"/stop.sh 2 & exit 1; fi
+        if ! grep TRUE <<<"$n$w$s$m$p$ne$se">/dev/null 2>&1; then "$DS"/stop.sh 2 & exit 1; fi
+        if ! [[ ${l} =~ $nu ]]; then l=1; fi
+        if ! [[ ${rw} =~ $nu ]]; then rw=0; fi
         
-        if [ ${n} = TRUE ]; then
-        notify-send -i "${icon}" "${trgt}" "${srce}" -t 10000; fi &
+        if [ ${stnrd} = 1 ]; then
         
-        if [ ${a} = TRUE ]; then
-        [ ${type} = 1 ] && spn=${rw} || spn=${rs}
-
-        ( while [ ${ritem} -le ${spn} ]; do
-        "$DS/play.sh" play_file "${file}" "${trgt}"
-        [ ${ritem} = 0 ] && sleep 0.5
-        [ ${ritem} = 1 ] && sleep 2.5
-        [ ${ritem} = 2 ] && sleep 1
-        [ ${ritem} = 3 ] && sleep 0.5
-        let ritem++
-        done )
+            if [ ${n} = TRUE ]; then
+            notify-send -i "${icon}" "${trgt}" "${srce}" -t 10000; fi &
+            if [ ${a} = TRUE ]; then
+            [ ${type} = 1 ] && spn=${rw} || spn=0
+            ( while [ ${ritem} -le ${spn} ]; do
+            "$DS"/play.sh play_file "${file}" "${trgt}"
+            [ ${ritem} = 0 ] && sleep 0.5
+            [ ${ritem} = 1 ] && sleep 2.5
+            [ ${ritem} = 2 ] && sleep 1
+            [ ${ritem} = 3 ] && sleep 0.5
+            let ritem++
+            done )
+            fi
+            
+        else
+            notify-send -i "${icon}" "${trgt}" "${srce}" -t 10000 &
+            "$DS"/play.sh play_file "${file}" "${trgt}"
         fi
         
         if [ ${n} = TRUE -a ${l} -lt 11 -a ${type} -lt 3 ]; then l=11; fi
-        [[ ${strue} = 1 ]] && sleep ${l}
+        [ ${stnrd} = 1 ] && sleep ${l}
     }
     export -f _play
     
@@ -59,7 +54,7 @@ if [[ ${1} = 0 ]]; then
         
         if [ ${f} -gt 5 -o ! -d "${DM_tlt}" ]; then
         msg "$(gettext "An error has occurred. Playback stopped")" info &
-        "$DS/stop.sh" 2; fi
+        "$DS"/stop.sh 2; fi
         [ -f "$DT/list.m3u" ] && rm -f "$DT/list.m3u"
         
         if [ -n "${item}" ]; then
@@ -76,7 +71,7 @@ if [[ ${1} = 0 ]]; then
         file="${DM_tlt}/$id.mp3"; else
         file="${DM_tls}/${trgt,,}.mp3"; fi
         
-        strue=1
+        stnrd=1
         else ((f=f+1)); fi
     }
     

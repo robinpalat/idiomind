@@ -142,7 +142,7 @@ check_index() {
         if ! grep '},trgt={' "${DC_tlt}/0.cfg"; then
         export nv=1; fi; fi
         
-        if ! grep 'rsntc=' < "${DC_tlt}/10.cfg"; then
+        if grep 'rsntc=' "${DC_tlt}/10.cfg"; then
         rm "${DC_tlt}/10.cfg"; fi
         
         if [ ! -f "${DC_tlt}/8.cfg" ]; then
@@ -724,7 +724,7 @@ mkpdf() {
             if [ -f "${DM_tlt}/images/$fname.jpg" ]; then
             trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
             convert "${DM_tlt}/images/$fname.jpg" -alpha set -virtual-pixel transparent \
-            -channel A -blur 0x10 -level 50%,100% +channel "$wdir/images/$trgt.png"
+            -channel A -blur 0x10 -level 70%,100% +channel "$wdir/images/$trgt.png"
             echo "${trgt}" >> "$wdir/image_list"
             fi
 

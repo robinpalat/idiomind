@@ -8,10 +8,8 @@ mkmn() {
     
     cd "$DM_tl"
     [ -d "$DM_tl/images" ] && rm -r "$DM_tl/images"
-    for i in "$(ls -tNd */ | cut -f1 -d'/')"; do \
-    echo "${i%%/}"; done > "$DM_tl/.1.cfg"
-    sed -i '/^$/d' "$DM_tl/.1.cfg"
-    > "$DM_tl/.0.cfg"
+    for i in "$(ls -tNd */ | cut -f1 -d'/')"; do echo "${i%%/}"; done > "$DM_tl/.1.cfg"
+    sed -i '/^$/d' "$DM_tl/.1.cfg"; > "$DM_tl/.0.cfg"
     
     while read -r tpc; do
         unset stts

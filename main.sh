@@ -146,7 +146,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     done < <(tac "${file}"); }
 
     _set | yad --list --title="Idiomind" \
-    --text="$itxt" \
+    --text="${itxt}" \
     --name=Idiomind --class=Idiomind \
     --no-click --print-column=0 --dclick-action="$dclk" \
     --window-icon="$DS/images/icon.png" \

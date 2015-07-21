@@ -52,7 +52,7 @@ $img --text="$info$hw" \
 --window-icon="$DS/images/icon.png" \
 --buttons-layout=edge --image-on-top --center --on-top --text-align=center \
 --ellipsize=NONE --no-headers --expand-column=2 --hide-column=1 \
---width=500 --height=450 --borders=10 \
+--width=500 --height=460 --borders=10 \
 --column="Action" --column="Pick":IMG --column="Label" \
 1 "$DSP/images/`< ./.1`.png" "    $info1 $info6   $(gettext "Flashcards")" \
 2 "$DSP/images/`< ./.2`.png" "    $info2 $info7   $(gettext "Multiple Choice")" \

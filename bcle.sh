@@ -2,8 +2,17 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/ifs/c.conf
-[ -z "$tpc" && -d "$DT" ] && exit 1
-export tpc DC_tlt
+source "$DS/ifs/mods/cmns.sh"
+cfg="$DC_tlt/10.cfg"
+cfgp="$DM_tl/Podcasts/.conf/10.cfg"
+f=0
+ritem=0
+stnrd=0
+nu='^[0-9]+$'
+
+[ -z "$tpc" -a ! -d "$DC_tlt" ] && exit 1
+export tpc DC_tlt cfg cfgp f ritem stnrd nu
+export -f include msg
 
 if [ "$(grep -o rplay=\"[^\"]* "$DC_tlt/10.cfg" \
 |grep -o '[^"]*$')" = TRUE ]; then
