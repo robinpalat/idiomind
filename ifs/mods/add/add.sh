@@ -127,49 +127,34 @@ function sentence_p() {
     touch "A.$r" "B.$r" "g.$r"
     
     while read -r w; do
-    
-        if [ "$lgt" = ja -o "$lgt" = "zh-cn" -o "$lgt" = vi -o "$lgt" = ru ]; then
-        if [[ `sqlite3 $db "SELECT words from pronouns WHERE words IS '${w,,}';"` = "${w,,}" ]]; then
+
+        if [[ `sqlite3 $db "SELECT items from pronouns WHERE items IS '${w,,}';"` = "${w,,}" ]]; then
             echo "<span color='#3E539A'>${w}</span>" >> "g.$r"
-        elif [[ `sqlite3 $db "SELECT words from nouns_adjetives WHERE words IS '${w,,}';"` = "${w,,}" ]]; then
+            
+        elif [[ `sqlite3 $db "SELECT items from nouns_adjetives WHERE items IS '${w,,}';"` = "${w,,}" ]]; then
             echo "<span color='#496E60'>${w}</span>" >> "g.$r"
-        elif [[ `sqlite3 $db "SELECT words from adjetives WHERE words IS '${w,,}';"` = "${w,,}" ]]; then
-            echo "<span color='#3E8A3B'>${w}</span>" >> "g.$r"
-        elif [[ `sqlite3 $db "SELECT words from nouns_verbs WHERE words IS '${w,,}';"` = "${w,,}" ]]; then
+
+        elif [[ `sqlite3 $db "SELECT items from nouns_verbs WHERE items IS '${w,,}';"` = "${w,,}" ]]; then
             echo "<span color='#62426A'>${w}</span>" >> "g.$r"
-        elif [[ `sqlite3 $db "SELECT words from conjunctions WHERE words IS '${w,,}';"` = "${w,,}" ]]; then
+            
+        elif [[ `sqlite3 $db "SELECT items from conjunctions WHERE items IS '${w,,}';"` = "${w,,}" ]]; then
             echo "<span color='#90B33B'>${w}</span>" >> "g.$r"
-        elif [[ `sqlite3 $db "SELECT words from prepositions WHERE words IS '${w,,}';"` = "${w,,}" ]]; then
+            
+        elif [[ `sqlite3 $db "SELECT items from prepositions WHERE items IS '${w,,}';"` = "${w,,}" ]]; then
             echo "<span color='#D67B2D'>${w}</span>" >> "g.$r"
-        elif [[ `sqlite3 $db "SELECT words from adverbs WHERE words IS '${w,,}';"` = "${w,,}" ]]; then
+            
+        elif [[ `sqlite3 $db "SELECT items from adverbs WHERE items IS '${w,,}';"` = "${w,,}" ]]; then
             echo "<span color='#9C68BD'>${w}</span>" >> "g.$r"
-        elif [[ `sqlite3 $db "SELECT words from verbs WHERE words IS '${w,,}';"` = "${w,,}" ]]; then
+            
+        elif [[ `sqlite3 $db "SELECT items from adjetives WHERE items IS '${w,,}';"` = "${w,,}" ]]; then
+            echo "<span color='#3E8A3B'>${w}</span>" >> "g.$r"
+            
+        elif [[ `sqlite3 $db "SELECT items from verbs WHERE items IS '${w,,}';"` = "${w,,}" ]]; then
             echo "<span color='#CF387F'>${w}</span>" >> "g.$r"
         else
             echo "${w}" >> "g.$r"
         fi 
-        else
-        f=${w:0:1}
-        if [[ `sqlite3 $db "SELECT pronouns from $f WHERE pronouns IS '${w,,}';"` = "${w,,}" ]]; then
-            echo "<span color='#3E539A'>${w}</span>" >> "g.$r"
-        elif [[ `sqlite3 $db "SELECT nouns_adjetives from $f WHERE nouns_adjetives IS '${w,,}';"` = "${w,,}" ]]; then
-            echo "<span color='#496E60'>${w}</span>" >> "g.$r"
-        elif [[ `sqlite3 $db "SELECT adjetives from $f WHERE adjetives IS '${w,,}';"` = "${w,,}" ]]; then
-            echo "<span color='#3E8A3B'>${w}</span>" >> "g.$r"
-        elif [[ `sqlite3 $db "SELECT nouns_verbs from $f WHERE nouns_verbs IS '${w,,}';"` = "${w,,}" ]]; then
-            echo "<span color='#62426A'>${w}</span>" >> "g.$r"
-        elif [[ `sqlite3 $db "SELECT conjunctions from $f WHERE conjunctions IS '${w,,}';"` = "${w,,}" ]]; then
-            echo "<span color='#90B33B'>${w}</span>" >> "g.$r"
-        elif [[ `sqlite3 $db "SELECT prepositions from $f WHERE prepositions IS '${w,,}';"` = "${w,,}" ]]; then
-            echo "<span color='#D67B2D'>${w}</span>" >> "g.$r"
-        elif [[ `sqlite3 $db "SELECT adverbs from $f WHERE adverbs IS '${w,,}';"` = "${w,,}" ]]; then
-            echo "<span color='#9C68BD'>${w}</span>" >> "g.$r"
-        elif [[ `sqlite3 $db "SELECT verbs from $f WHERE verbs IS '${w,,}';"` = "${w,,}" ]]; then
-            echo "<span color='#CF387F'>${w}</span>" >> "g.$r"
-        else
-            echo "${w}" >> "g.$r"
-        fi  
-        fi
+
     done < <(sed 's/ /\n/g' <<<"${trgt_p}" |tr -d '\.,;')
     
     sed -i 's/\. /\n/g' "$bw"

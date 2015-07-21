@@ -6,7 +6,7 @@ get_itep() {
     
     stnrd=0
     
-    if [ ${f} -gt 5 ] || [ ! -d "${DM_tl}/Podcasts/cache" ]; then
+    if [ ${f} -gt 5 -o ! -d "${DM_tl}/Podcasts/cache" ]; then
     msg "$(gettext "An error has occurred. Playback stopped")" info &
     "$DS/stop.sh" 2; fi
         
@@ -22,7 +22,7 @@ get_itep() {
         [ -f "$DMC/$fname.m4v" ] && file="$DMC/$fname.m4v" && type=4
         [ -f "$DMC/$fname.mp4" ] && file="$DMC/$fname.mp4" && type=4
         [ -f "$DMC/$fname.avi" ] && file="$DMC/$fname.avi" && type=4
-        
+
         if [ ${type} = 3 ]; then
         trgt="${title}"
         srce="${channel}"
@@ -37,10 +37,10 @@ get_itep() {
         
     else ((f=f+1)); fi
     
-    export trgt srce icon stnrd
+    export trgt srce icon stnrd file
 }
 
-if [ ${ne} = TRUE ] || [ ${se} = TRUE ]; then
+if [ ${ne} = TRUE -o ${se} = TRUE ]; then
 
     DMC="$DM_tl/Podcasts/cache"
     DPC="$DM_tl/Podcasts/.conf"
