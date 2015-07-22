@@ -123,7 +123,7 @@ check_index() {
 
     DC_tlt="$DM_tl/${2}/.conf"
     DM_tlt="$DM_tl/${2}"
-    nv=0; f=0; a=0
+    nv=0; f=0; a=0; i=0
     [[ ${3} = 1 ]] && r=1 || r=0
     
     _check() {
@@ -157,7 +157,7 @@ check_index() {
         export a=1; fi
         
         cnt=`ls "${DM_tlt}/images"/*.jpg |wc -l`
-        [[ ${cnt} -gt 0 ]] && export i=1
+        [[ ${cnt} -gt 1 ]] && export i=1
     }
     
     _restore() {
@@ -749,8 +749,8 @@ mkpdf() {
 
             if [ -f "${DM_tls}/images/${word,,}-0.jpg" ]; then
             convert "${DM_tls}/images/${word,,}-0.jpg" -alpha set -virtual-pixel transparent \
-            -channel A -blur 0x10 -level 70%,100% +channel "$wdir/images/$trgt.png"
-            echo "${trgt}" >> "$wdir/image_list"
+            -channel A -blur 0x10 -level 70%,100% +channel "$wdir/images/$word.png"
+            echo "${word}" >> "$wdir/image_list"
             fi
 
         done < <(tac "${cfg3}")

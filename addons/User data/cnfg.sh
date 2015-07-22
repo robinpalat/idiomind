@@ -18,7 +18,7 @@ others="$(grep -o others=\"[^\"]* "$DC_a/user_data.cfg"| grep -o '[^"]*$')"
 [ -f "$path/.udt" ] && udt=$(< "$path/.udt") || udt=" "
 dte=$(date +%F)
 
-if [ -z "$1" ]; then
+if [ -z "${1}" ]; then
 
     cmd_rest="'$DS_a/User data/cnfg.sh' restore 1 "\"${tpc}\"""
     D=$(yad --list --radiolist --title="$(gettext "User Data")" \
@@ -59,7 +59,7 @@ if [ -z "$1" ]; then
                 (
                 echo "# $(gettext "Copying")..."
 
-                cd "$DM"
+                [ -d "${DM}" ] && cd "${DM}" || msg "$(gettext "An error occurred while copying files.")\n" error && exit 1
                 # TODO
                 tar cvzf "$DT/backup.tar.gz" \
                 --exclude='./topics/Italian/Podcasts' \
@@ -71,10 +71,10 @@ if [ -z "$1" ]; then
                 --exclude='./topics/Chinese/Podcasts' \
                 --exclude='./topics/Japanese/Podcasts' \
                 --exclude='./topics/Vietnamese/Podcasts' \
-                ./topics
+                .
 
                 mv -f "$DT/backup.tar.gz" "$DT/idiomind_data.tar.gz"
-                mv -f "$DT/idiomind_data.tar.gz" "$exp"
+                mv -f "$DT/idiomind_data.tar.gz" "${exp}"
                 echo "# $(gettext "Completing")" ; sleep 1
 
                 ) | yad --progress --title="$(gettext "Copying")" \
@@ -83,7 +83,7 @@ if [ -z "$1" ]; then
                 --skip-taskbar --no-buttons --on-top --fixed \
                 --width=200 --height=50 --borders=4 --geometry=200x20-2-2
                 
-                if [ -f "$exp" ]; then
+                if [ -f "${exp}" ]; then
                 msg "$(gettext "Data exported successfully.")\n" info; else
                 [ -f "$DT/backup.tar.gz" ] && rm -f "$DT/backup.tar.gz"
                 msg "$(gettext "An error occurred while copying files.")\n" error; fi
@@ -105,7 +105,7 @@ if [ -z "$1" ]; then
             
             if [[ $ret -eq 0 ]]; then
             
-                if [ -z "$add" ] || [ ! -d "$DM" ]; then
+                if [ -z "${add}" ] || [ ! -d "${DM}" ]; then
                     exit 1
                 fi
                 
@@ -118,6 +118,8 @@ if [ -z "$1" ]; then
                 cp -f "$add" "$DT/import/import.tar.gz"
                 cd "$DT/import"
                 tar -xzvf import.tar.gz
+                if [ -d "$DT/import/backup/" ]; then
+                cp -f "$DT/import/backup"/* "$DM/backup"/; fi
                 cd "$DT/import/topics/"
                 list="$(ls * -d | sed 's/saved//g' | sed '/^$/d')"
 
