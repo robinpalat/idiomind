@@ -51,6 +51,7 @@ sets=( 'channel' 'link' 'logo' 'ntype' \
 conditions() {
     
     [ ! -f "$DCP/1.lst" ] && touch "$DCP/1.lst"
+    [ ! -f "$DCP/2.lst" ] && touch "$DCP/2.lst"
 
     if [ -f "$DT/.uptp" ] && [[ ${1} = 1 ]]; then
         msg_2 "$(gettext "Wait until it finishes a previous process.")\n" info OK gtk-stop "$(gettext "Updating...")"
@@ -76,8 +77,6 @@ conditions() {
     mkdir -p "DM_tl/Podcasts/.conf"
     mkdir -p "DM_tl/Podcasts/cache"; fi
     [ ! -f "$DCP/old.lst" ] && touch "$DCP/old.lst"
-    [ ! -f "$DCP/1.lst" ] && touch "$DCP/1.lst"
-    [ ! -f "$DCP/2.lst" ] && touch "$DCP/2.lst"
 
     if [[ `sed '/^$/d' "$DCP/feeds.lst" | wc -l` -le 0 ]]; then
     [[ ${1} = 1 ]] && msg "$(gettext "Missing URL. Please check the settings in the preferences dialog.")\n" info
@@ -97,7 +96,7 @@ mediatype () {
     elif echo "$1" | grep -q ".mov"; then ex=mov; tp=vid
     elif echo "$1" | grep -o ".pdf"; then ex=pdf; tp=txt
     else
-    echo -e "Could not add some podcasts.\n$FEED" >> "$DM_tl/Podcasts/.conf/feed.err"
+    echo -e "$(gettext "Could not add some podcasts.")\n$FEED" >> "$DM_tl/Podcasts/.conf/feed.err"
     return; fi
 }
 
@@ -145,7 +144,6 @@ get_images () {
         cd "$DT_r"; p=TRUE; rm -f ./*.jpeg ./*.jpg
         
         eyeD3 --write-images="$DT_r" "media.$ex"
-
         if ls | grep '.jpeg'; then img="$(ls | grep '.jpeg')"
         else img="$(ls | grep '.jpg')"; fi
         
@@ -153,7 +151,6 @@ get_images () {
         
             wget -q -O- "$FEED" | grep -o '<itunes:image href="[^"]*' \
             | grep -o '[^"]*$' | xargs wget -c
-            
             if ls | grep '.jpeg'; then img="$(ls | grep '.jpeg')"
             elif ls | grep '.png'; then img="$(ls | grep '.png')"
             else img="$(ls | grep '.jpg')"; fi
@@ -237,7 +234,6 @@ fetch_podcasts() {
                         | sed 's/\&/\&amp;/g' | sed 's/^\s*./\U&\E/g' \
                         | sed 's/<[^>]*>//g' | sed 's/^ *//; s/ *$//; /^$/d')
                         summary=$(echo "${fields}" | sed -n ${nsumm}p)
-                        #| iconv -c -f utf8 -t ascii
                         fname="$(nmfile "${title}")"
                         
                         if [[ ${#title} -ge 300 ]] \

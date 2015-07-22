@@ -117,7 +117,7 @@ if [ $ret -eq 0 ]; then
     
 elif [ $ret -eq 5 ]; then
 
-    apply; "$DSP/tls.sh" sync 1
+    apply && "$DSP/tls.sh" sync 1
 fi
 
 [ -f "$DT/cp.lock" ] && rm -f "$DT/cp.lock"
