@@ -52,13 +52,13 @@ conditions() {
     
     [ ! -f "$DCP/1.lst" ] && touch "$DCP/1.lst"
 
-    if [ -f "$DT/.uptp" ] && [[ $1 = 1 ]]; then
+    if [ -f "$DT/.uptp" ] && [[ ${1} = 1 ]]; then
         msg_2 "$(gettext "Wait until it finishes a previous process.")\n" info OK gtk-stop "$(gettext "Updating...")"
-        ret=$(echo $?)
-        [[ $ret -eq 1 ]] && "$DS/stop.sh" 6
+        ret=$?
+        [ $ret -eq 1 ] && "$DS/stop.sh" 6
         exit 1
     
-    elif [ -f "$DT/.uptp" ] && [[ $1 = 0 ]]; then
+    elif [ -f "$DT/.uptp" ] && [[ ${1} = 0 ]]; then
         exit 1
     fi
     
@@ -79,13 +79,12 @@ conditions() {
     [ ! -f "$DCP/1.lst" ] && touch "$DCP/1.lst"
     [ ! -f "$DCP/2.lst" ] && touch "$DCP/2.lst"
 
-    nps="$(sed '/^$/d' "$DCP/feeds.lst" | wc -l)"
-    if [[ "$nps" -le 0 ]]; then
-    [[ $1 = 1 ]] && msg "$(gettext "Missing URL. Please check the settings in the preferences dialog.")\n" info
+    if [[ `sed '/^$/d' "$DCP/feeds.lst" | wc -l` -le 0 ]]; then
+    [[ ${1} = 1 ]] && msg "$(gettext "Missing URL. Please check the settings in the preferences dialog.")\n" info
     [ -f "$DT_r" ] && rm -fr "$DT_r" "$DT/.uptp"
     exit 1; fi
         
-    if [[ $1 = 1 ]]; then internet; else curl -v www.google.com 2>&1 \
+    if [[ ${1} = 1 ]]; then internet; else curl -v www.google.com 2>&1 \
     | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1; fi
 }
 
@@ -127,7 +126,7 @@ $summary<br><br></div>
 </body>"
 
     if [ "$tp" = vid ]; then
-        if [ $ex = m4v ] || [ $ex = mp4 ]; then t=mp4
+        if [ $ex = m4v -o $ex = mp4 ]; then t=mp4
         elif [ $ex = avi ]; then t=avi; fi
         echo -e "$video" > "$DMC/$fname.html"
 
@@ -209,16 +208,16 @@ fetch_podcasts() {
                 
             else
                 d=0
-                while [[ ${d} -lt 8 ]]; do
-                    itn=$((d+1)); get=${sets[$d]}
-                    val=$(sed -n "$itn"p "$DCP/$n.rss" \
+                while [ ${d} -lt 8 ]; do
+                    itn=$((d+1)); get=${sets[${d}]}
+                    val=$(sed -n ${itn}p "$DCP/${n}.rss" \
                     | grep -o "$get"=\"[^\"]* | grep -o '[^"]*$')
-                    declare ${sets[$d]}="$val"
+                    declare ${sets[${d}]}="$val"
                     ((d=d+1))
                 done
                 
-                if [ -z "$nmedia" ]; then
-                > "$DCP/$n.rss"
+                if [ -z "${nmedia}" ]; then
+                > "$DCP/${n}.rss"
                 echo -e "$(gettext "Please, reconfigure this feed:")\n$FEED" >> "$DCP/feed.err"
                 continue; fi
             
@@ -234,7 +233,8 @@ fetch_podcasts() {
                         fields="$(sed -r 's|-\!-|\n|g' <<<"${item}")"
                         enclosure=$(sed -n ${nmedia}p <<<"${fields}")
                         title=$(echo "${fields}" | sed -n ${ntitle}p | sed 's/\://g' \
-                        | sed 's/\&/&amp;/g' | sed 's/^\s*./\U&\E/g' \
+                        | sed 's/\&quot;/\"/g' \
+                        | sed 's/\&/\&amp;/g' | sed 's/^\s*./\U&\E/g' \
                         | sed 's/<[^>]*>//g' | sed 's/^ *//; s/ *$//; /^$/d')
                         summary=$(echo "${fields}" | sed -n ${nsumm}p)
                         #| iconv -c -f utf8 -t ascii
@@ -246,16 +246,15 @@ fetch_podcasts() {
                              
                         if ! grep -Fxo "${title}" < <(cat "$DCP/1.lst" "$DCP/2.lst" "$DCP/old.lst"); then
                         
-                            enclosure_url=$(curl -s -I -L -w %"{url_effective}" \
-                            --url "$enclosure" | tail -n 1)
+                            enclosure_url=$(curl -sILw %"{url_effective}" --url "$enclosure" |tail -n 1)
                             mediatype "$enclosure_url"
                             
                             if [ ! -f "$DMC/$fname.$ex" ]; then
                             cd "$DT_r"; wget -q -c -T 51 -O "media.$ex" "$enclosure_url"
                             else cd "$DT_r"; mv -f "$DMC/$fname.$ex" "media.$ex"; fi
                             
-                            exit=$?
-                            if [[ $exit = 0 ]]; then
+                            e=$?
+                            if [ $e = 0 ]; then
                             get_images
                             mv -f "media.$ex" "$DMC/$fname.$ex"
                             mkhtml
@@ -276,7 +275,7 @@ fetch_podcasts() {
                 fi
             fi
         else
-            [ -f "$DCP/$n.rss" ] && rm "$DCP/$n.rss"
+            [ -f "$DCP/${n}.rss" ] && rm "$DCP/${n}.rss"
         fi
         
         let n++
@@ -387,12 +386,11 @@ fi
 
 cfg="$DM_tl/Podcasts/.conf/podcasts.cfg"; if [ -f "$cfg" ]; then
 sync="$(grep -o 'sync="[^"]*' "$cfg" | grep -o '[^"]*$')"
-if [ "$sync" = TRUE ]; then 
-    if [[ ${1} = 1 ]]; then
-    "$DSP/tls.sh" sync 1
-    else
-    "$DSP/tls.sh" sync 0
-    fi
+if [ "$sync" = TRUE ]; then
+
+    if [[ ${1} = 1 ]]; then "$DSP/tls.sh" sync 1
+    else "$DSP/tls.sh" sync 0; fi
 fi
 fi
 exit
+

@@ -175,7 +175,7 @@ sync() {
     
     if  [ -f "$DT/l_sync" ] && [[ $2 = 1 ]]; then
     msg_2 "$(gettext "A process is already running!\nIf stopped, any rsync process will stop")" info "OK" "gtk-stop" "$(gettext "Syncing...")"
-    e=$(echo $?)
+    e=$?
         
         if [[ $e -eq 1 ]]; then
         killall rsync

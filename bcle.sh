@@ -26,5 +26,5 @@ if [ "$(grep -o rplay=\"[^\"]* "$DC_tlt/10.cfg" \
 else
     "$DS/chng.sh" 0
 
-    rm -fr "$DT/.p_"; exit 0
+    rm -fr "$DT/.p_" & exit 0
 fi

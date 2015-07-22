@@ -29,8 +29,8 @@ if [ ! -d "$DM_tl/Podcasts" ]; then ini; fi
 [ -e "$DT/cp.lock" ] && exit || touch "$DT/cp.lock"
 [ ! -f "$DCP/feeds.lst" ] && touch "$DCP/feeds.lst"
 
-n=1; 
-while read feed; do
+n=1
+while read -r feed; do
     declare url${n}="$feed"
     ((n=n+1))
 done < "$DCP/feeds.lst"
@@ -39,17 +39,15 @@ n=0
 if [ ${cfg} = 1 ]; then
 
     while [ ${n} -lt 3 ]; do
-    itn=$((n+1))
-    get="${sets[$n]}"
-    val=$(sed -n "$itn"p < "$DCP/podcasts.cfg" \
-    | grep -o "$get"=\"[^\"]* | grep -o '[^"]*$')
-    declare ${sets[$n]}="$val"
+    get="${sets[${n}]}"
+    val=$(grep -o "$get"=\"[^\"]* "$DCP/podcasts.cfg" |grep -o '[^"]*$')
+    declare ${sets[${n}]}="$val"
     ((n=n+1))
     done
     
 else
     while [ ${n} -lt 6 ]; do
-    echo -e "${sets[$n]}=\"FALSE\"" >> "$DCP/podcasts.cfg"
+    echo -e "${sets[${n}]}=\"FALSE\"" >> "$DCP/podcasts.cfg"
     ((n=n+1))
     done
 fi

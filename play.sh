@@ -192,7 +192,6 @@ play_list() {
         val="$(cut -d "|" -f7 <<<"${tab2}")"
         [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
         "$DC_tlp/podcasts.cfg"
-        
         fi
         
         ((n=n+1))
