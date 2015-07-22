@@ -33,7 +33,7 @@ function set_lang() {
     touch "$DM_t/$1/.1.cfg"
     touch "$DM_t/$1/.2.cfg"
     touch "$DM_t/$1/.3.cfg"
-    mkdir "$DM_t/$1/.share"; fi
+    mkdir -p "$DM_t/$1/.share/images"; fi
     echo "$1" > "$DC_s/6.cfg"
 }
 

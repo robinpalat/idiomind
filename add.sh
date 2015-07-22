@@ -263,7 +263,16 @@ new_word() {
         index 1 "${tpe}" "${trgt}" "${srce}" "${exmp_}" "" "" "" "${id}"
 
         if [ -f "$DT_r/img.jpg" ]; then
-        set_image_2 "$DT_r/img.jpg" "${DM_tlt}/images/$id.jpg"; fi
+        
+            if [ -f "${DM_tls}/images/${trgt,,}-0.jpg" ]; then
+                n=`ls "${DM_tls}/images/${trgt,,}-"*.jpg |wc -l`
+                name_img="${DM_tls}/images/${trgt,,}-"${n}.jpg
+            else
+                name_img="${DM_tls}/images/${trgt,,}-0.jpg"
+            fi
+
+        set_image_2 "$DT_r/img.jpg" "$name_img"
+        fi
 
         if [ ! -f "$DT_r/audtm.mp3" ]; then
         

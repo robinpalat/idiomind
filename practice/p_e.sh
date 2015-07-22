@@ -47,8 +47,7 @@ fonts() {
     
     item="$(grep -F -m 1 "trgt={${trgt}}" "${cfg0}" |sed 's/},/}\n/g')"
     srce=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
-    id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
-    img="$drtt/$id.jpg"
+    img="$DM_tls/images/${trgt,,}-0.jpg"
     [ ! -f "$img" ] && img="$DS/practice/images/img_2.jpg"
     srcel="<span font_desc='Free Sans 10'>${srce}</span>"
     trgtl="<span font_desc='Free Sans 15'><b>${trgt}</b></span>"

@@ -115,9 +115,10 @@ function new_session() {
     "$DS/default/tpc.sh" "${tpd}" 2; fi
     fi
     
-    ####
+    #### changes to version
     if grep -o 'rplay' < "$DC_s/1.cfg"; then
     rm "$DC_s/1.cfg"; fi
+    [ ! -d "${DM_tls}/images" ] && mkdir -p "${DM_tls}/images"
     ###
 
     rm -f  "$DT/ps_lk"
@@ -180,7 +181,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
 
             if [ ! -d "$DM_t/$langt" ]; then
             mkdir "$DM_t/$langt"
-            mkdir "$DM_t/$langt/.share"; fi
+            mkdir -p "$DM_t/$langt/.share/images"; fi
             mkdir -p "$DM_t/$langt/${tname}/.conf/practice"
             DM_tlt="$DM_t/$langt/${tname}"
             DC_tlt="$DM_t/$langt/${tname}/.conf"

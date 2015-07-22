@@ -58,11 +58,21 @@ function dwld() {
         atfiles=$(find "$tmp/files" -maxdepth 5 -name | wc -l)
         others=$((wchfiles+wcexfiles))
         mv -f "${tmp}/conf/info" "$DC_tlt/info"
+        [ ! -d "$DM_t/$langt/.share" ] && mkdir -p "$DM_t/$langt/.share/images"
         mv -n "$tmp/share"/*.mp3 "$DM_t/$langt/.share"/
-        rm -fr "$tmp/share" "${tmp}/conf"
-        mv -f "${tmp}"/*.mp3 "${DM_tlt}"/
         [ ! -f "${DM_tlt}/images" ] && mkdir "${DM_tlt}/images"
-        mv -f "${tmp}"/images/*.jpg "${DM_tlt}"/images/
+        [ -f "${tmp}"/images/img.jpg  ] && \
+        mv "${tmp}"/images/img.jpg "${DM_tlt}"/images/img.jpg
+        while read -r img; do
+        if [ -f "$tmp/images/${img,,}-0.jpg" ]; then
+        if [ -f "$DM_t/$langt/.share/images/${img,,}-0.jpg" ]; then
+        n=`ls "$DM_t/$langt/.share/images/${img,,}-"*.jpg |wc -l`
+        name_img="${DM_tls}/images/${trgt,,}-"${n}.jpg
+        else name_img="${DM_tls}/images/${trgt,,}-0.jpg"; fi
+        mv -f "$tmp/images/${img,,}-0.jpg" "$name_img"; fi
+        done < "${DC_tlt}/3.cfg"
+        rm -fr "$tmp/share" "${tmp}/conf" "${tmp}/images"
+        mv -f "${tmp}"/*.mp3 "${DM_tlt}"/
         [ ! -f "${DM_tlt}/files" ] && mkdir "${DM_tlt}/files"
         mv -f "${tmp}"/files/* "${DM_tlt}"/files/
         echo "${oname}" >> "$DM_tl/.3.cfg"
@@ -288,7 +298,6 @@ mkdir -p "$DT/upload/${tpc}/conf"
 
 "$DS/ifs/tls.sh" check_index "${tpc}" 1
 
-images=$(cd "${DM_tlt}/images"; ls --ignore="img.jpg" |wc -l)
 words=0; sentences=0
 [ -f "${DC_tlt}/3.cfg" ] && words=$(wc -l < "${DC_tlt}/3.cfg")
 [ -f "${DC_tlt}/4.cfg" ] && sentences=$(wc -l < "${DC_tlt}/4.cfg")
@@ -309,6 +318,8 @@ cd "${DM_tlt}"
 cp -r ./* "$DT_u/${tpc}/"
 mkdir "$DT_u/${tpc}/files"
 mkdir "$DT_u/${tpc}/share"
+[ ! -d "$DT_u/${tpc}/images" ] && mkdir "$DT_u/${tpc}/images"
+
 auds="$(uniq < "${DC_tlt}/4.cfg" \
 | sed 's/\n/ /g' | sed 's/ /\n/g' \
 | grep -v '^.$' | grep -v '^..$' \
@@ -320,6 +331,13 @@ if [ -f "$DM_tl/.share/$audio.mp3" ]; then
 cp -f "$DM_tl/.share/$audio.mp3" "$DT_u/${tpc}/share/$audio.mp3"; fi
 done <<<"$auds"
 c_audio=$(find "$DT_u/${tpc}" -maxdepth 5 -name '*.mp3' |wc -l)
+
+while read -r img; do
+if [ -f "$DM_tl/.share/images/${img,,}-0.jpg" ]; then
+cp -f "$DM_tl/.share/images/${img,,}-0.jpg" "$DT_u/${tpc}/images/${img,,}-0.jpg"; fi
+done < "${DC_tlt}/3.cfg"
+c_images=$(cd "$DT_u/${tpc}/images"/; ls *.jpg |wc -l)
+
 echo -e "${notes_m}" > "$DT_u/${tpc}/conf/info"
 
 cd "$DT/upload"
@@ -342,7 +360,7 @@ dateu=\"$dateu\"
 datei=\"$datei\"
 nword=\"$words\"
 nsent=\"$sentences\"
-nimag=\"$images\"
+nimag=\"$c_images\"
 naudi=\"$c_audio\"
 nsize=\"$f_size\"
 level=\"$level\"

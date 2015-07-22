@@ -78,12 +78,8 @@ get_list() {
         (
         echo "5"
         while read itm; do
-    
-            item="$(grep -F -m 1 "trgt={${itm}}" "${cfg0}" |sed 's/},/}\n/g')"
-            fname="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
-            if [ -f "$DM_tlt/images/$fname.jpg" ]; then
-                echo "$itm" >> "$dir/${ttest}.0"; fi
-
+        if [ -f "$DM_tls/images/${itm,,}-0.jpg" ]; then
+        echo "${itm}" >> "$dir/${ttest}.0"; fi
         done < "$DT/images"
         ) | yad --progress \
         --width 50 --height 35 --undecorated \

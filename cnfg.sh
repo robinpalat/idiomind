@@ -39,8 +39,8 @@ set_lang() {
     
     echo "${tpc}" > "$DM_tl/.8.cfg"
     language="$1"
-    if [ ! -d "$DM_t/$language/.share" ]; then
-    mkdir -p "$DM_t/$language/.share"; fi
+    if [ ! -d "$DM_t/$language/.share/images" ]; then
+    mkdir -p "$DM_t/$language/.share/images"; fi
     echo "$language" > "$DC_s/6.cfg"
     echo "$lgsl" >> "$DC_s/6.cfg"
     "$DS/stop.sh" 4

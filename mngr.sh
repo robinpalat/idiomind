@@ -45,7 +45,6 @@ delete_item_ok() {
     DC_tlt="$DM_tl/${2}/.conf"
 
     [ -f "${DM_tlt}/$file.mp3" ] && rm "${DM_tlt}/$file.mp3"
-    [ -f "${DM_tlt}/images/$file.jpg" ] && rm "${DM_tlt}/images/$file.jpg"
 
     sed -i "/trgt={${trgt}}/d" "${DC_tlt}/0.cfg"
 
@@ -91,7 +90,6 @@ delete_item() {
         (sleep 0.1 && kill -9 $(pgrep -f "yad --form "))
         
         [ -f "${DM_tlt}/$file.mp3" ] && rm "${DM_tlt}/$file.mp3"
-        [ -f "${DM_tlt}/images/$file.jpg" ] && rm "${DM_tlt}/images/$file.jpg"
         
         sed -i "/trgt={${trgt}}/d" "${DC_tlt}/0.cfg"
         
@@ -157,7 +155,7 @@ edit_item() {
     mod=0; col=0
    
     cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"" "\"${trgt}\"""
-    cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"" "\"${id}\"""
+    cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"" "\"${trgt}\"""
     cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"" 1 ${c}"
     link1="https://translate.google.com/\#$lgt/$lgs/${q_trad}"
     link2="http://glosbe.com/$lgt/$lgs/${q_trad,,}"
@@ -267,8 +265,6 @@ edit_item() {
                     elif [ ${type_mod} = 2 ]; then cp -f "${audf_mod}" "$DM_tl/${tpc_mod}/$id_mod.mp3"; fi
                     else [ -f "${audf}" ] && mv -f "${audf}" "$DM_tl/${tpc_mod}/$id_mod.mp3"; fi
                     
-                    if [ -f "${DM_tlt}/images/$id.jpg" ]; then
-                    mv -f "${DM_tlt}/images/$id.jpg" "$DM_tl/${tpc_mod}/images/$id_mod.jpg"; fi
                     "$DS/mngr.sh" delete_item_ok "${tpc}" "${trgt}"
                     index ${type_mod} "${tpc_mod}" "${trgt_mod}" "${srce_mod}" \
                     "${exmp_mod}" "${defn_mod}" "${wrds_mod}" "${grmr_mod}" "${id_mod}"
@@ -295,9 +291,6 @@ edit_item() {
                     elif [ ${type_mod} = 2 ]; then [ -f "${DM_tlt}/$id.mp3" ] && rm "${DM_tlt}/$id.mp3"
                     cp -f "${audf_mod}" "${DM_tlt}/$id_mod.mp3"; fi
                     else [ -f "${DM_tlt}/$id.mp3" ] && mv -f "${DM_tlt}/$id.mp3" "${DM_tlt}/$id_mod.mp3"; fi
-                    
-                    if [ -f "${DM_tlt}/images/$id.jpg" ]; then
-                    mv -f "${DM_tlt}/images/$id.jpg" "${DM_tlt}/images/$id_mod.jpg"; fi
                 
                 fi
             ) &

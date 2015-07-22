@@ -64,7 +64,7 @@ if [[ ${1} = 0 ]]; then
         trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${_item}")"
         srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${_item}")"
         id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${_item}")"
-        img="${DM_tlt}/images/$id.jpg"; [ -f "$img" ] && icon="$img"
+        img="${DM_tls}/images/${trgt,,}-0.jpg"; [ -f "$img" ] && icon="$img"
         [ -z "$trgt" ] && trgt="$item"
         
         if [ -f "${DM_tlt}/$id.mp3" ]; then

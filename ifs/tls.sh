@@ -155,6 +155,9 @@ check_index() {
         cnt2=`egrep -cv '#|^$' < "${DC_tlt}/2.cfg"`
         if [ $((cnt1+cnt2)) != ${cnt0} ]; then
         export a=1; fi
+        
+        cnt=`ls "${DM_tlt}/images"/*.jpg |wc -l`
+        [[ ${cnt} -gt 0 ]] && export i=1
     }
     
     _restore() {
@@ -204,8 +207,7 @@ check_index() {
     
         mv -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"
         rm "$DC_tlt/2.cfg" "$DC_tlt/.11.cfg" "$DC_tlt/11.cfg"
-        if [ ! -d "${DM_tlt}/images" ]; then
-        mkdir "${DM_tlt}/images"; fi
+        [ ! -d "${DM_tlt}/images" ] && mkdir "${DM_tlt}/images"
         touch "$DC_tlt/2.cfg"
         > "$DC_tlt/0.cfg"
         
@@ -241,7 +243,7 @@ check_index() {
             fi
             
             if [ -f "${DM_tlt}/words/images/$fname.jpg" ]; then
-            mv -f "${DM_tlt}/words/images/$fname.jpg" "${DM_tlt}/images/$id.jpg"
+            mv -f "${DM_tlt}/words/images/$fname.jpg" "${DM_tls}/images/${trgt,,}-0.jpg"
             fi
             
             echo "$n:[type={$type},trgt={$trgt},srce={$srce},exmp={$exmp},defn={$dftn},note={$note},wrds={$lwrd},grmr={$grmr},].[tag={$tag},mark={$mark},].id=[$id]" >> "$DC_tlt/0.cfg"
@@ -251,6 +253,18 @@ check_index() {
         mv "${DM_tlt}/words/images/img.jpg" "${DM_tlt}/images/img.jpg"; fi
         if [ -d "${DM_tlt}/words" ]; then rm -r "${DM_tlt}/words"; fi
     }
+    
+    _version_2() {
+    
+        while read -r trgt; do
+            img="$(grep -F -m 1 "trgt={${trgt}}" "$DC_tlt/0.cfg" |sed 's/},/}\n/g')"
+            id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${img}")"
+            if [[ -f "${DM_tlt}/images/$id.jpg" ]]; then
+            name_img="${DM_tls}/images/${trgt,,}-0.jpg"
+            mv -f "${DM_tlt}/images/$id.jpg" "$name_img"; fi
+        done < "${DC_tlt}/3.cfg"
+    }
+    
     
     _fix() {
         
@@ -267,7 +281,7 @@ check_index() {
     
     _check
     
-    if [ ${f} -eq 1 -o ${nv} -eq 1 -o ${a} -eq 1 -o ${r} -eq 1 ]; then
+    if [ ${f} -eq 1 -o ${nv} -eq 1 -o ${a} -eq 1 -o ${r} -eq 1 -o ${i} -eq 1 ]; then
 
         if [ ${f} -eq 1 ]; then
         (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
@@ -286,6 +300,14 @@ check_index() {
         _version
         fi
         
+        if [ ${i} -eq 1 ]; then
+        (sleep 1; notify-send -i idiomind "$(gettext "Fixing index")" \
+        "$(gettext "Migrating to new version...")" -t 3000) &
+        > "$DT/ps_lk"
+        [ ! -d "${DM_tls}/images" ] && mkdir -p "${DM_tls}/images"
+        _version_2
+        fi
+        
         if [ ${a} -eq 1 ]; then
         (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
         "$(gettext "Fixing...")" -t 3000) &
@@ -298,7 +320,7 @@ check_index() {
         _sanity
         _restore
         fi
-
+        
         "$DS/ifs/tls.sh" colorize
         "$DS/mngr.sh" mkmn
     fi
@@ -664,9 +686,9 @@ ABOUT
 
 set_image() {
 
-    cd "$DT"
+    cd "$DT"; r=0
     source "$DS/ifs/mods/add/add.sh"
-    ifile="${DM_tlt}/images/$3.jpg"
+    ifile="${DM_tls}/images/${3,,}-0.jpg"
 
     if [ -f "$ifile" ]; then
     
@@ -675,7 +697,14 @@ set_image() {
         dlg_form_3
         ret=$?
         
-        if [[ $ret -eq 2 ]]; then rm -f "$ifile"; fi
+        if [ $ret -eq 2 ]; then
+        
+            rm -f "$ifile"
+            ls "${DM_tls}/images/${3,,}"-*.jpg | while read -r img; do
+            mv -f "$img" "${DM_tls}/images/${3,,}"-${r}.jpg
+            let r++
+            done
+        fi
         
     else 
         scrot -s --quality 90 "$DT/temp.jpg"
@@ -685,7 +714,7 @@ set_image() {
 
     fi
 
-    rm -f "$DT/temp.jpg"
+    cleanups "$DT/temp.jpg"
     exit
     
 } >/dev/null 2>&1
@@ -703,7 +732,7 @@ mkpdf() {
     --button="$(gettext "OK")":0)
     ret=$?
 
-    if [[ $ret -eq 0 ]]; then
+    if [ $ret -eq 0 ]; then
     
         [ -d "$DT/mkhtml" ] && rm -fr "$DT/mkhtml"
         mkdir -p "$DT/mkhtml/images"; wdir="$DT/mkhtml"
@@ -718,12 +747,8 @@ mkpdf() {
         
         while read -r word; do
 
-            item="$(grep -F -m 1 "trgt={${word}}" "${cfg0}" |sed 's/},/}\n/g')"
-            fname="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
-
-            if [ -f "${DM_tlt}/images/$fname.jpg" ]; then
-            trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
-            convert "${DM_tlt}/images/$fname.jpg" -alpha set -virtual-pixel transparent \
+            if [ -f "${DM_tls}/images/${word,,}-0.jpg" ]; then
+            convert "${DM_tls}/images/${word,,}-0.jpg" -alpha set -virtual-pixel transparent \
             -channel A -blur 0x10 -level 70%,100% +channel "$wdir/images/$trgt.png"
             echo "${trgt}" >> "$wdir/image_list"
             fi
@@ -764,8 +789,7 @@ mkpdf() {
         echo -e "<p>&nbsp;</p>
         <div>" >> "$wdir/doc.html"
 
-        cd "${DM_tlt}/images"
-        cnt=`ls -1 *.jpg | grep -v "img.jpg" | wc -l`
+        cnt=`wc -l < "$wdir/image_list"`
         if [[ ${cnt} -gt 0 ]]; then
 
             cd "$wdir"
