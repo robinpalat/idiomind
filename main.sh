@@ -59,7 +59,6 @@ function new_session() {
     for strt in "$DS/ifs/mods/start"/*; do
     (sleep 20 && "$strt"); done &
     
-    #
     list_inadd > "$DM_tl/.2.cfg"
     check_index1 "$DM_tl/.3.cfg"
     cd /
