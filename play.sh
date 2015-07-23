@@ -175,8 +175,7 @@ play_list() {
         elif [ ${n} -lt 10 ]; then
         val="$(cut -d "|" -f${f} <<<"${tab2}")"
         [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
-        "$DC_tlt/10.cfg"
-        let f++
+        "$DC_tlt/10.cfg"; let f++
             
         elif [ ${n} = 10 ]; then
         if [ "$(cut -d "|" -f5 <<<"${tab2}")" = "${_nore}" ]; then val=0

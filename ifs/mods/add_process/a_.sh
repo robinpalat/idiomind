@@ -4,7 +4,6 @@
 function dlg_checklist_5() {
     
     cmd_edit_="$DS/ifs/mods/add_process/a_.sh 'item_for_edit'"
-    cmd_newtopic="$DS/add.sh 'new_topic'"
     slt=$(mktemp "$DT/slt.XXXX.x")
     cat "${1}" | awk '{print "FALSE\n"$0}' | \
     yad --list --checklist --title="$2" \
@@ -17,7 +16,6 @@ function dlg_checklist_5() {
     --column="$(wc -l < "${1}")" \
     --column="$(gettext "Items")" \
     --button="$(gettext "Cancel")":1 \
-    --button="$(gettext "New Topic")":"cmd_newtopic" \
     --button=gtk-add:0 > "$slt"
 }
 
@@ -107,7 +105,7 @@ if [[ ${conten^} = A ]]; then
             vad -T 0.6 -p 0.2 -t 5 fade 0.1 reverse norm -0.5
             rm -f "$DT_r/rv.mp3"
             sox "$DT_r/c_rv.mp3" s.mp3 \
-            silence 1 0.5 1% 1 0.5 1% : newfile : restart
+            silence 1 0.8 1% 1 0.8 1% : newfile : restart
 
             c="$(ls "$DT_r"/s[0-9]*.mp3 | wc -l)"
             if [[ ${c} -ge 1 ]]; then
@@ -185,8 +183,8 @@ if [[ ${conten^} = A ]]; then
                 
                 if [ -z "${data}" ]; then
                 msg "$(gettext "The key is invalid or has exceeded its quota of daily requests")\n" error
-                "$DS/stop.sh" 5
-                cleanups "$DT_r" "$lckpr" & break & exit 1; fi
+                cleanups "$DT_r" "$lckpr"
+                "$DS/stop.sh" 5 & break & exit 1; fi
 
                 trgt="$(echo "${data}" | sed '1d' \
                 | sed 's/.*transcript":"//' \

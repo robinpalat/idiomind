@@ -24,13 +24,13 @@ function dwld() {
     kill -9 $(pgrep -f "yad --form --columns=2")
     mkdir "$DT/download"
     idcfg="$DM_tl/${2}/.conf/id.cfg"
-    link=$(grep -o 'ilink="[^"]*' "${idcfg}" |grep -o '[^"]*$')
+    ilink=$(grep -o 'ilink="[^"]*' "${idcfg}" |grep -o '[^"]*$')
     md5id=$(grep -o 'md5id="[^"]*' "${idcfg}" |grep -o '[^"]*$')
     oname=$(grep -o 'oname="[^"]*' "${idcfg}" |grep -o '[^"]*$')
     langt=$(grep -o 'langt="[^"]*' "${idcfg}" |grep -o '[^"]*$')
     url="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
     | grep -o 'DOWNLOADS="[^"]*' | grep -o '[^"]*$')"
-    URL="$url/c/$link.${md5id}.tar.gz"
+    URL="$url/c/$ilink.${md5id}.tar.gz"
 
     if ! wget -S --spider "${URL}" 2>&1 |grep 'HTTP/1.1 200 OK'; then
         cleanups "$DT/download"
@@ -99,7 +99,7 @@ msg "$(gettext "Unavailable")\n" info "$(gettext "Unavailable")" & exit 1; fi
 if [ "${tpc}" != "${2}" ]; then
 msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit 1; fi
 
-if [ -d "$DT/upload" ] || [ -d "$DT/download" ]; then
+if [ -d "$DT/upload" -o -d "$DT/download" ]; then
 msg_2 "$(gettext "Wait until it finishes a previous process")\n" info OK gtk-stop "$(gettext "Warning")"
 ret="$?"
 if [ $ret -eq 1 ]; then
@@ -138,7 +138,7 @@ lnglbl="${lgtl,,}"
 usrid="$(grep -o 'usrid="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
 iuser="$(grep -o 'iuser="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
 cntct="$(grep -o 'cntct="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
-if [ -z "$usrid" ] || [ ${#id} -gt 3 ]; then
+if [ -z "$usrid" -o ${#id} -gt 3 ]; then
 b=$(tr -dc a-z < /dev/urandom |head -c 1)
 usrid="$b$((RANDOM%1000))"
 usrid=${usrid:0:3}; fi
@@ -177,7 +177,6 @@ if [ -f "$DC_tlt/11.cfg" ]; then
         ret=$?
         
         elif [ -n "$(< "$DC_tlt/11.cfg")" ]; then
-        
         d=$(yad --form --title="$(gettext "Share")" \
         --columns=2 --separator="|" \
         --text="<span font_desc='Free Sans 15'> ${tpc}</span>" \
@@ -213,7 +212,7 @@ else
     ret=$?
 
     img=$(echo "${d}" | cut -d "|" -f7)
-    if [ -f "${img}" ] && [ "${img}" != "${imgm}" ]; then
+    if [ -f "${img}" -a "${img}" != "${imgm}" ]; then
     wsize="$(identify "${img}" | cut -d ' ' -f 3 | cut -d 'x' -f 1)"
     esize="$(identify "${img}" | cut -d ' ' -f 3 | cut -d 'x' -f 2)"
     if [ ${wsize} -gt 1000 ] || [ ${wsize} -lt 400 ] \
@@ -226,10 +225,10 @@ else
     fi
 fi
 
-if [[ $ret = 2 ]]; then
+if [ $ret = 2 ]; then
     "$DS/ifs/tls.sh" pdf & exit 1
     
-elif [[ $ret = 0 ]]; then
+elif [ $ret = 0 ]; then
 
 Ctgry=$(echo "${d}" | cut -d "|" -f4)
 level=$(echo "${d}" | cut -d "|" -f5)
@@ -282,7 +281,7 @@ msg "$(gettext "Please select a category.")\n " info
 
 if [ -d "${DM_tlt}/files" ]; then
 du=$(du -sb "${DM_tlt}/files" | cut -f1)
-if [ "$du" -gt 50000000 ]; then
+if [[ "$du" -gt 50000000 ]]; then
 msg "$(gettext "Sorry, the size of the attachments is too large.")\n " info & exit 1; fi; fi
 
 internet
@@ -397,7 +396,7 @@ for f in volumes:
 END
 u=$?
 
-if [[ $u = 0 ]]; then
+if [ $u = 0 ]; then
     [ ! -d "${DM}/backup" ] && mkdir "${DM}/backup"
     mv -f "$DT_u/${usrid}.${tpc}.$lgt" "${DM}/backup/${tpc}.idmnd"
     info=" <b>$(gettext "Uploaded correctly")</b>\n $tpc\n"
