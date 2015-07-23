@@ -28,11 +28,7 @@ play_sentence() {
 play_file() {
 
     if [ -f "${2}" ]; then
-        if grep ".mp3" <<<"${2: -4}"; then
-            play "${2}"
-        else
-            mplayer "${2}" -noconsolecontrols -title "${3}"
-        fi
+    mplayer "${2}" -noconsolecontrols -title "${3}"
     elif [ -n "$synth" ]; then
     echo "${3}." | $synth
     else
