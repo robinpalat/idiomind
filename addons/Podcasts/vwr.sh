@@ -8,7 +8,7 @@ fname=$(echo -n "${item}" | md5sum | rev | cut -c 4- | rev)
 channel="$(grep -o channel=\"[^\"]* < "$dir/${fname}.item" | grep -o '[^"]*$')"
 export item
 if grep -Fxo "$item" "$DM_tl/Podcasts/.conf/2.lst"; then
-btnlabel="$(gettext "Delete")"
+btnlabel="gtk-delete"
 btncmd="'$DSP/mngr.sh' delete_item"; else
 btnlabel="$(gettext "Save")"
 btncmd="'$DSP/mngr.sh' new_item"; fi
