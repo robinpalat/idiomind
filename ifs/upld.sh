@@ -20,7 +20,7 @@ function dwld() {
 
     # downloading from http://server_temp/c/xxx.md5sum.tar.gz
     sleep 0.5
-    msg "$(gettext "Downloading... When the download completes the files will be added to topic directory.")" info
+    msg "$(gettext "Downloading...\nWhen the download completes the files will be added to topic directory.")" info
     kill -9 $(pgrep -f "yad --form --columns=2")
     mkdir "$DT/download"
     idcfg="$DM_tl/${2}/.conf/id.cfg"
