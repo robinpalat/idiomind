@@ -21,10 +21,10 @@ echo "$lgtl" > "$DC_a/dict/.lng"; fi
 function dictt() {
     
     export lgt
-    word="$1"
+    word="${1}"
     [ -d "${2}" ] && cd "${2}"/ || exit 1
-    while read -r dict; do
-        sh "$DC_a/dict/enables/$dict" "${word}"
-        if [ -f ./"${word}.mp3" ]; then break; fi
-    done < <(ls "$DC_a/dict/enables"/)
+    for dict in "$DC_a/dict/enables"/*; do
+    "${dict}" "${word}"
+    if [ -f ./"${word}.mp3" ]; then break; fi
+    done
 }

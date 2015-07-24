@@ -14,7 +14,7 @@ if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
 else
     if [ -d "${DM_tlt}" ]; then
 
-        if [ ! -d "${DC_tlt}" ]; then
+    if [ ! -d "${DC_tlt}" ]; then
         
 c1="tname=\"${topic}\"
 langs=\"${lgsl^}\"
@@ -49,18 +49,18 @@ ntosd=\"\"
 loop=\"0\"
 rword=\"0\""
         
-            mkdir -p "${DM_tlt}/images"
-            mkdir "${DC_tlt}"; cd "${DC_tlt}"
-            c=0; while [[ $c -le 10 ]]; do
-            touch "$c.cfg"; let c++
-            done
+        mkdir -p "${DM_tlt}/images"
+        mkdir "${DC_tlt}"; cd "${DC_tlt}"
+        c=0; while [[ $c -le 10 ]]; do
+        touch "$c.cfg"; let c++
+        done
 
-            rm "${DC_tlt}/7.cfg" "${DC_tlt}/9.cfg"
-            echo " " > "${DC_tlt}/info"
-            echo -e "${c1}" > ./"id.cfg"
-            echo -e "${c2}" > ./"10.cfg"
-            
-            echo 1 > "8.cfg"
+        rm "${DC_tlt}/7.cfg" "${DC_tlt}/9.cfg"
+        echo " " > "${DC_tlt}/info"
+        echo -e "${c1}" > ./"id.cfg"
+        echo -e "${c2}" > ./"10.cfg"
+        
+        echo 1 > "8.cfg"
         fi
         cd /
         echo "${topic}" > "$DC_s/4.cfg"

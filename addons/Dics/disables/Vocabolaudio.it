@@ -2,5 +2,6 @@
 
 Name="Vocabolaudio"
 Language="it"
-wget "http://www.vocabolaudio.com/audio-it/$1.mp3"
+
+wget -q -U Mozilla "http://www.vocabolaudio.com/audio-it/${1}.mp3"
 exit

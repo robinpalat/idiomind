@@ -2,6 +2,7 @@
 
 name="googletranslate"
 lang="auto"
-wget -q -U Mozilla -O tmp.mp3 "http://translate.google.com/translate_tts?ie=UTF-8&tl=$lgt&q=$1"
-sox ./tmp.mp3 ./"$1.mp3" speed 0.9
+
+wget -q -U Mozilla -O tmp.mp3 "http://translate.google.com/translate_tts?ie=UTF-8&tl=$lgt&q=${1}"
+[ -f ./tmp.mp3 ] && sox ./tmp.mp3 ./"${1}.mp3" speed 0.9 && rm ./tmp.mp3
 exit

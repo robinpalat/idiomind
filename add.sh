@@ -276,17 +276,17 @@ new_word() {
 
         if [ ! -f "$DT_r/audtm.mp3" ]; then
         
-            if [ ! -f "${DM_tls}/$audio.mp3" ]; then
+            if [ ! -f "${DM_tls}/${audio}.mp3" ]; then
 
-                dictt "$audio" "${DM_tls}"
+                dictt "${audio}" "${DM_tls}"
             fi
             
         else
-            if [ -f "${DM_tls}/$audio.mp3" ]; then
-                msg_3 "$(gettext "A file named "${DM_tls}/$audio.mp3" already exists. Replace?.")\n" dialog-question "${trgt}"
-                if [ $? -eq 0 ]; then mv -f "$DT_r/audtm.mp3" "${DM_tls}/$audio.mp3"; fi
+            if [ -f "${DM_tls}/${audio}.mp3" ]; then
+                msg_3 "$(gettext "A file named "${DM_tls}/${audio}.mp3" already exists. Replace?.")\n" dialog-question "${trgt}"
+                if [ $? -eq 0 ]; then mv -f "$DT_r/audtm.mp3" "${DM_tls}/${audio}.mp3"; fi
             else
-                mv -f "$DT_r/audtm.mp3" "${DM_tls}/$audio.mp3"; fi
+                mv -f "$DT_r/audtm.mp3" "${DM_tls}/${audio}.mp3"; fi
         fi
 
         notify-send "${trgt}" "${srce}\\n(${tpe})" -t 10000
