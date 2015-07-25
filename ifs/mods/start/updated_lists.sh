@@ -48,9 +48,9 @@ while read -r tpc_lst; do
     cfg5="${DC_tlt}/5.cfg"
     cfg6=`cat "${DC_tlt}/6.cfg"`
     cd "$DC_tlt/practice"
-    log3="$(< ./log3)"
-    log2="$(< ./log2)"
-    log1="$(< ./log1)"
+    log3="$(cat ./log3 ./d.3)"
+    log2="$(cat ./log2 ./d.2)"
+    log1="$(cat ./log1 ./d.1)"
     
     while read -r item; do
     

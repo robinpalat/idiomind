@@ -28,24 +28,23 @@ if [[ ${1} = 0 ]]; then
         
             if [ ${n} = TRUE ]; then
             notify-send -i "${icon}" "${trgt}" "${srce}" -t 10000; fi &
-            if [ ${a} = TRUE ]; then
+            if [ ${a} = TRUE ]; then sleep 1
             [ ${type} = 1 ] && spn=${rw} || spn=0
             ( while [ ${ritem} -le ${spn} ]; do
             "$DS"/play.sh play_file "${file}" "${trgt}"
             [ ${ritem} = 0 ] && sleep 0.5
             [ ${ritem} = 1 ] && sleep 2.5
-            [ ${ritem} = 2 ] && sleep 1
-            [ ${ritem} = 3 ] && sleep 0.5
+            [ ${ritem} = 2 ] && sleep 2
             let ritem++
             done )
             fi
             
         else
             notify-send -i "${icon}" "${trgt}" "${srce}" -t 10000 &
-            "$DS"/play.sh play_file "${file}" "${trgt}"
+            sleep 1 && "$DS"/play.sh play_file "${file}" "${trgt}"
         fi
         
-        if [ ${n} = TRUE -a ${l} -lt 11 -a ${type} -lt 3 ]; then l=11; fi
+        if [ ${n} = TRUE -a ${l} -lt 8 -a ${type} -lt 3 ]; then l=8; fi
         [ ${stnrd} = 1 ] && sleep ${l}
     }
     export -f _play
