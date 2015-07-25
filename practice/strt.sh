@@ -6,9 +6,9 @@ DSP="$DS/practice"
 easys="$3"
 learning="$4"
 [[ "$5" -lt 0 ]] && hards=0 || hards="$5"
-[ ! -d "$DC_tlt/practice" ] \
-&& mkdir "$DC_tlt/practice"
-cd "$DC_tlt/practice"
+[ ! -d "${DC_tlt}/practice" ] \
+&& mkdir "${DC_tlt}/practice"
+cd "${DC_tlt}/practice"
 [ ! -f ./.1 ] && echo 1 > .1
 [ ! -f ./.2 ] && echo 1 > .2
 [ ! -f ./.3 ] && echo 1 > .3
@@ -63,7 +63,7 @@ $img --text="$info$hw" \
 --button="$(gettext "Start")":0)"
 ret=$?
 
-if [[ $ret -eq 0 ]]; then
+if [ $ret -eq 0 ]; then
 
     if [ -z "$VAR" ]; then
     source "$DS/ifs/mods/cmns.sh"
@@ -74,14 +74,14 @@ if [[ $ret -eq 0 ]]; then
     "$DSP/prct.sh" "$VAR" & exit 1
     fi
 
-elif [[ $ret -eq 3 ]]; then
+elif [ $ret -eq 3 ]; then
 
-    if [ -d "$DC_tlt/practice" ]; then
-    cd "$DC_tlt/practice"; rm .*; rm *
+    if [ -d "${DC_tlt}/practice" ]; then
+    cd "${DC_tlt}/practice"; rm .*; rm *
     touch ./log1 ./log2 ./log3; fi
     "$DS/practice/strt.sh" & exit
 else
-    cd "$DC_tlt/practice"
+    cd "${DC_tlt}/practice"
     rm *.tmp; > "$DT/ps_lk"
     rm "${DC_tlt}/5.cfg"
     cfg5="${DC_tlt}/5.cfg"
@@ -90,9 +90,9 @@ else
     img2='/usr/share/idiomind/images/2.png'
     img3='/usr/share/idiomind/images/3.png'
     img0='/usr/share/idiomind/images/0.png'
-    log3="$(cat ./log3 ./d.3)"
-    log2="$(cat ./log2 ./d.2)"
-    log1="$(cat ./log1 ./d.1)"
+    log3="$(< ./log3)"
+    log2="$(< ./log2)"
+    log1="$(< ./log1)"
     
     while read -r item; do
     if grep -Fxo "${item}" <<<"${cfg6}"; then

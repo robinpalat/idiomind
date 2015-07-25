@@ -77,6 +77,7 @@ function dwld() {
         mv -f "${tmp}"/files/* "${DM_tlt}"/files/
         echo "${oname}" >> "$DM_tl/.3.cfg"
         echo -e "$ltotal $total\n$laudio $audio\n$limage $images\n$lfiles $atfiles\n$lothers $others" > "${DC_tlt}/11.cfg"
+        "$DS/ifs/tls.sh" colorize
         rm -fr "$DT/download"
         
         else

@@ -86,7 +86,7 @@ elif [[ "$1" = deleteall ]]; then
     
     if [[ "$(wc -l < "$DCP/2.lst")" -gt 0 ]]; then
     chk="--field="$(gettext "Delete saved episodes")":CHK"; fi
-    if [[ "$(wc -l < "$DCP/1.lst")" -lt 0 ]]; then exit 1; fi
+    if [[ "$(wc -l < "$DCP/1.lst")" -lt 1 ]]; then exit 1; fi
     
     dl=$(yad --form --title="$(gettext "Confirm")" \
     --image=gtk-delete \
