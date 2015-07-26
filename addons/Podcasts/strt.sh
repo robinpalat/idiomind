@@ -96,7 +96,7 @@ mediatype () {
     elif echo "$1" | grep -q ".mov"; then ex=mov; tp=vid
     elif echo "$1" | grep -o ".pdf"; then ex=pdf; tp=txt
     else
-    echo -e "$(gettext "Could not add some podcasts.")\n$FEED" >> "$DM_tl/Podcasts/.conf/feed.err"
+    echo -e "$(gettext "Could not add some podcasts:")\n$FEED" >> "$DM_tl/Podcasts/.conf/feed.err"
     return; fi
 }
 

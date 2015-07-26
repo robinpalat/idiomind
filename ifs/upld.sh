@@ -51,8 +51,8 @@ function dwld() {
         lothers="$(gettext "Others:")"
         tmp="$DT/download/${oname}"
         total=$(find "$tmp" -maxdepth 5 -type f | wc -l)
-        audio=$(find "$tmp" -maxdepth 5 -name '*.mp3' | wc -l)
-        images=$(find "$tmp" -maxdepth 5 -name '*.jpg' | wc -l)
+        c_audio=$(find "$tmp" -maxdepth 5 -name '*.mp3' | wc -l)
+        c_images=$(find "$tmp" -maxdepth 5 -name '*.jpg' | wc -l)
         hfiles="$(cd "$tmp"; ls -d ./.[^.]* | less | wc -l)"
         exfiles="$(find "$tmp" -maxdepth 5 -perm -111 -type f | wc -l)"
         atfiles=$(find "$tmp/files" -maxdepth 5 -name | wc -l)
@@ -76,7 +76,7 @@ function dwld() {
         [ ! -f "${DM_tlt}/files" ] && mkdir "${DM_tlt}/files"
         mv -f "${tmp}"/files/* "${DM_tlt}"/files/
         echo "${oname}" >> "$DM_tl/.3.cfg"
-        echo -e "$ltotal $total\n$laudio $audio\n$limage $images\n$lfiles $atfiles\n$lothers $others" > "${DC_tlt}/11.cfg"
+        echo -e "$ltotal $total\n$laudio $c_audio\n$limage $c_images\n$lfiles $atfiles\n$lothers $others" > "${DC_tlt}/11.cfg"
         "$DS/ifs/tls.sh" colorize
         rm -fr "$DT/download"
         
@@ -156,20 +156,20 @@ cd "$HOME"
 if [ -f "$DC_tlt/11.cfg" ]; then
 
         if [ -z "$(< "$DC_tlt/11.cfg")" ]; then
-        audio="$(grep -o 'naudi="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+        c_audio="$(grep -o 'naudi="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+        c_images="$(grep -o 'nimag="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         fsize="$(grep -o 'nsize="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-        imgs="$(grep -o 'nimag="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-        cmd_dl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
-        info="<b>$(gettext "Additional content available for download")</b>"
-        info2="$(gettext "Audio files:") $audio\n$(gettext "Images:") $imgs\n$(gettext "Size:") $fsize"
-        d=$(yad --form --columns=2 --title="$(gettext "Share")" \
+        cmd_dwl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
+        info="<b>$(gettext "Additional content available")</b>"
+        info2="$(gettext "Audio files:") $c_audio\n$(gettext "Images:") $c_images\n$(gettext "Size:") $fsize"
+        dlg=$(yad --form --columns=2 --title="$(gettext "Share")" \
         --text="<span font_desc='Free Sans 15'> ${tpc}</span>" \
         --name=Idiomind --class=Idiomind \
         --window-icon="$DS/images/icon.png" --buttons-layout=end \
         --align=left --center --on-top \
         --width=380 --height=260 --borders=12 \
         --field="\n\n$info:lbl" " " \
-        --field="$(gettext "Download"):BTN" "${cmd_dl}" \
+        --field="$(gettext "Download"):BTN" "${cmd_dwl}" \
         --field="$info2:lbl" " " \
         --field="\t\t\t\t\t:lbl" " " \
         --field=" :lbl" " " \
@@ -178,7 +178,7 @@ if [ -f "$DC_tlt/11.cfg" ]; then
         ret=$?
         
         elif [ -n "$(< "$DC_tlt/11.cfg")" ]; then
-        d=$(yad --form --title="$(gettext "Share")" \
+        dlg=$(yad --form --title="$(gettext "Share")" \
         --columns=2 --separator="|" \
         --text="<span font_desc='Free Sans 15'> ${tpc}</span>" \
         --name=Idiomind --class=Idiomind \
@@ -194,7 +194,7 @@ if [ -f "$DC_tlt/11.cfg" ]; then
         
         fi
 else
-    d=$(yad --form --title="$(gettext "Share")" \
+    dlg=$(yad --form --title="$(gettext "Share")" \
     --text="<span font_desc='Free Sans 14'>${tpc}</span>" \
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" --buttons-layout=end \
@@ -212,7 +212,7 @@ else
     --button="$(gettext "Close")":4)
     ret=$?
 
-    img=$(echo "${d}" | cut -d "|" -f7)
+    img=$(echo "${dlg}" | cut -d "|" -f7)
     if [ -f "${img}" -a "${img}" != "${imgm}" ]; then
     wsize="$(identify "${img}" | cut -d ' ' -f 3 | cut -d 'x' -f 1)"
     esize="$(identify "${img}" | cut -d ' ' -f 3 | cut -d 'x' -f 2)"
@@ -231,11 +231,11 @@ if [ $ret = 2 ]; then
     
 elif [ $ret = 0 ]; then
 
-Ctgry=$(echo "${d}" | cut -d "|" -f4)
-level=$(echo "${d}" | cut -d "|" -f5)
-iuser_m=$(echo "${d}" | cut -d "|" -f2)
-cntct_m=$(echo "${d}" | cut -d "|" -f3)
-notes_m=$(echo "${d}" | cut -d "|" -f6)
+Ctgry=$(echo "${dlg}" | cut -d "|" -f4)
+level=$(echo "${dlg}" | cut -d "|" -f5)
+iuser_m=$(echo "${dlg}" | cut -d "|" -f2)
+cntct_m=$(echo "${dlg}" | cut -d "|" -f3)
+notes_m=$(echo "${dlg}" | cut -d "|" -f6)
 [ "$Ctgry" = "$others" ] && Ctgry=others
 [ "$Ctgry" = "$comics" ] && Ctgry=comics
 [ "$Ctgry" = "$culture" ] && Ctgry=culture
@@ -298,9 +298,9 @@ mkdir -p "$DT/upload/${tpc}/conf"
 
 "$DS/ifs/tls.sh" check_index "${tpc}" 1
 
-words=0; sentences=0
-[ -f "${DC_tlt}/3.cfg" ] && words=$(wc -l < "${DC_tlt}/3.cfg")
-[ -f "${DC_tlt}/4.cfg" ] && sentences=$(wc -l < "${DC_tlt}/4.cfg")
+c_words=0; c_sntncs=0
+[ -f "${DC_tlt}/3.cfg" ] && c_words=$(wc -l < "${DC_tlt}/3.cfg")
+[ -f "${DC_tlt}/4.cfg" ] && c_sntncs=$(wc -l < "${DC_tlt}/4.cfg")
 if [ -f "${DC_tlt}/id.cfg" ]; then
 datec="$(grep -o 'datec="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
 datei="$(grep -o 'datei="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"; fi
@@ -358,8 +358,8 @@ oname=\"${tpc}\"
 datec=\"$datec\"
 dateu=\"$dateu\"
 datei=\"$datei\"
-nword=\"$words\"
-nsent=\"$sentences\"
+nword=\"$c_words\"
+nsent=\"$c_sntncs\"
 nimag=\"$c_images\"
 naudi=\"$c_audio\"
 nsize=\"$f_size\"

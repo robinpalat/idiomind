@@ -11,7 +11,7 @@ mkmn() {
     for i in "$(ls -tNd */ | cut -f1 -d'/')"; do echo "${i%%/}"; done > "$DM_tl/.1.cfg"
     sed -i '/^$/d' "$DM_tl/.1.cfg"; > "$DM_tl/.0.cfg"
     
-    while read -r tpc; do
+    head -100 < "$DM_tl/.1.cfg" | while read -r tpc; do
         unset stts
         [ ! -d "$DM_tl/${tpc}/.conf" ] && mkdir -p "$DM_tl/${tpc}/.conf"
         if [ ! -f "$DM_tl/${tpc}/.conf/8.cfg" ] \
@@ -19,9 +19,9 @@ mkmn() {
         stts=13; echo 13 > "$DM_tl/${tpc}/.conf/8.cfg"
         else stts=$(sed -n 1p "$DM_tl/${tpc}/.conf/8.cfg"); fi
         echo -e "/usr/share/idiomind/images/img.${stts}.png\n${tpc}" >> "$DM_tl/.0.cfg"
-    done < <(head -100 < "$DM_tl/.1.cfg")
+    done
 
-    while read -r tpc; do
+    tail -n+101 < "$DM_tl/.1.cfg" | while read -r tpc; do
         unset stts
         [ ! -d "$DM_tl/${tpc}/.conf" ] && mkdir -p "$DM_tl/${tpc}/.conf"
         if [ ! -f "$DM_tl/${tpc}/.conf/8.cfg" ] \
@@ -29,7 +29,7 @@ mkmn() {
         stts=13; echo 13 > "$DM_tl/${tpc}/.conf/8.cfg"
         else stts=12; fi
         echo -e "/usr/share/idiomind/images/img.${stts}.png\n${tpc}" >> "$DM_tl/.0.cfg"
-    done < <(tail -n+101 < "$DM_tl/.1.cfg")
+    done
     exit
 }
 
@@ -45,7 +45,6 @@ delete_item_ok() {
     DC_tlt="$DM_tl/${2}/.conf"
 
     [ -f "${DM_tlt}/$file.mp3" ] && rm "${DM_tlt}/$file.mp3"
-
     sed -i "/trgt={${trgt}}/d" "${DC_tlt}/0.cfg"
 
     if [ -d "${DC_tlt}/practice" ]; then
@@ -88,9 +87,7 @@ delete_item() {
     if [[ $ret -eq 0 ]]; then
         
         (sleep 0.1 && kill -9 $(pgrep -f "yad --form "))
-        
         [ -f "${DM_tlt}/$file.mp3" ] && rm "${DM_tlt}/$file.mp3"
-        
         sed -i "/trgt={${trgt}}/d" "${DC_tlt}/0.cfg"
         
         if [ -d "${DC_tlt}/practice" ]; then
@@ -325,13 +322,13 @@ edit_list() {
     lgs=$(lnglss $lgsl)
     > "$DT/_tmp1"
     
-    while read -r item_; do
+    tac "${direc}/0.cfg" | while read -r item_; do
         item="$(sed 's/},/}\n/g' <<<"${item_}")"
         trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
         [ -n "${trgt}" ] && echo "${trgt}" >> "$DT/_tmp1"
-    done < <(tac "${direc}/0.cfg")
+    done
 
-    cat "$DT/_tmp1" | edit_list_list > "$DT/tmp1"
+    cat "$DT/_tmp1" |edit_list_list > "$DT/tmp1"
     ret=$?
     
     if [ $ret -eq 0 -o $ret -eq 2 ]; then
@@ -343,7 +340,7 @@ edit_list() {
         cp -f "${direc}/0.cfg" "$DM/backup/${2}.bk"
         rm "${direc}/1.cfg" "${direc}/3.cfg" "${direc}/4.cfg"
         
-        while read -r trgt; do
+        $cmd "$DT/tmp1" | while read -r trgt; do
 
             if grep -F -m 1 "trgt={${trgt}}" "${direc}/0.cfg"; then
                 item="$(grep -F -m 1 "trgt={${trgt}}" "${direc}/0.cfg" |sed 's/},/}\n/g')"
@@ -370,10 +367,8 @@ edit_list() {
                 echo "${trgt}" >> "$DT/add_lst"
                 echo "${trgt}" >> "${direc}/1.cfg"
             fi
-            
             let n++
-            
-        done < <($cmd "$DT/tmp1")
+        done
         
         touch "${direc}/3.cfg" "${direc}/4.cfg"
         mv -f "$DT/tmp0" "${direc}/0.cfg"

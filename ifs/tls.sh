@@ -265,7 +265,6 @@ check_index() {
         done < "${DC_tlt}/3.cfg"
     }
     
-    
     _fix() {
         
         if [ ${stts} -eq 13 ]; then
@@ -281,7 +280,8 @@ check_index() {
     
     _check
     
-    if [ ${f} -eq 1 -o ${nv} -eq 1 -o ${a} -eq 1 -o ${r} -eq 1 -o ${i} -eq 1 ]; then
+    if [ ${f} -eq 1 -o ${nv} -eq 1 -o ${a} -eq 1 \
+    -o ${r} -eq 1 -o ${i} -eq 1 ]; then
 
         if [ ${f} -eq 1 ]; then
         (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
@@ -289,37 +289,30 @@ check_index() {
         > "$DT/ps_lk"
         [ ! -d "$DM_tlt/.conf" ] && mkdir "$DM_tlt/.conf"
         [ ! -d "$DM_tlt/images" ] && mkdir "$DM_tlt/images"
-        _restore
-        _fix
-        fi
+        _restore; _fix; fi
         
         if [ ${nv} -eq 1 ]; then
         (sleep 1; notify-send -i idiomind "$(gettext "Fixing index")" \
         "$(gettext "Migrating to new version...")" -t 3000) &
         > "$DT/ps_lk"
-        _version
-        fi
+        _version; fi
         
         if [ ${i} -eq 1 ]; then
         (sleep 1; notify-send -i idiomind "$(gettext "Fixing index")" \
         "$(gettext "Migrating to new version...")" -t 3000) &
         > "$DT/ps_lk"
         [ ! -d "${DM_tls}/images" ] && mkdir -p "${DM_tls}/images"
-        _version_2
-        fi
+        _version_2; fi
         
         if [ ${a} -eq 1 ]; then
         (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
         "$(gettext "Fixing...")" -t 3000) &
         > "$DT/ps_lk"
-        _restore
-        fi
+        _restore; fi
         
         if [ ${r} -eq 1 ]; then
         > "$DT/ps_lk"
-        _sanity
-        _restore
-        fi
+        _sanity; _restore; fi
         
         "$DS/ifs/tls.sh" colorize
         "$DS/mngr.sh" mkmn
@@ -344,7 +337,7 @@ add_audio() {
     --button="$(gettext "OK")":0 |cut -d "|" -f1)"
     ret=$?
 
-    if [[ $ret -eq 0 ]]; then
+    if [ $ret -eq 0 ]; then
     if [ -f "${aud}" ]; then cp -f "${aud}" "${2}/audtm.mp3"; fi
     fi
 } >/dev/null 2>&1
@@ -364,7 +357,7 @@ add_file() {
     --button="$(gettext "OK")":0)
     ret=$?
 
-    if [[ $ret -eq 0 ]]; then
+    if [ $ret -eq 0 ]; then
     
         while read -r file; do
         [ -f "$file" ] && cp -f "$file" \
@@ -489,8 +482,8 @@ echo "</body>" >> "$DC_tlt/att.html"
         --button="gtk-close":1
         ret=$?
         
-        if [[ $ret = 0 ]]; then "$DS/ifs/tls.sh" add_file
-        elif [[ $ret = 2 ]]; then "$DS/ifs/tls.sh" videourl; fi
+        if [ $ret = 0 ]; then "$DS/ifs/tls.sh" add_file
+        elif [ $ret = 2 ]; then "$DS/ifs/tls.sh" videourl; fi
         
         if [[ "$ch1" != "$(ls -A "$DM_tlt/files")" ]]; then
         mkindex; fi
@@ -507,7 +500,7 @@ echo "</body>" >> "$DC_tlt/att.html"
         --button="$(gettext "OK")":0
         ret=$?
         
-        if [[ "$ch1" != "$(ls -A "$DM_tlt/files")" ]] && [[ $ret = 0 ]]; then
+        if [[ "$ch1" != "$(ls -A "$DM_tlt/files")" ]] && [ $ret = 0 ]; then
             mkindex
         fi
     fi

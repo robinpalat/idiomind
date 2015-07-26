@@ -140,12 +140,12 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     level="${l[${level}]}"
     itxt="<span font_desc='Droid Sans Bold 12' color='#616161'>$tname</span>\n<sup>$nword $(gettext "Words")  $nsent $(gettext "Sentences")  $nimag $(gettext "Images")\n$(gettext "Language:") $langt  $(gettext "Level:") $level</sup>"
     dclk="$DS/play.sh play_word"
-    _set() { while read -r item; do
+    _lst() { while read -r item; do
     grep -oP '(?<=trgt={).*(?=},srce)' <<<"${item}"
     grep -oP '(?<=srce={).*(?=},exmp)' <<<"${item}"
     done < <(tac "${file}"); }
 
-    _set | yad --list --title="Idiomind" \
+    _lst | yad --list --title="Idiomind" \
     --text="${itxt}" \
     --name=Idiomind --class=Idiomind \
     --no-click --print-column=0 --dclick-action="$dclk" \

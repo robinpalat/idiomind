@@ -117,12 +117,12 @@ play_list() {
     
     set="$(echo "${iteml[${rword}]}")"
     unset iteml[${rword}]
-    lst=$(for i in "${iteml[@]}"; do echo -n "!$i"; done)
+    lst=`for i in "${iteml[@]}"; do echo -n "!$i"; done`
     lst_opts1="$set$lst"
-
     tab1=$(mktemp "$DT/XXX.p")
     tab2=$(mktemp "$DT/XXX.p")
     c=$((RANDOM%100000)); KEY=$c
+    
     setting_1 | yad --plug=$KEY --tabnum=1 --list \
     --print-all --always-print-result --separator="|" \
     --expand-column=2 --no-headers --borders=0 \
@@ -154,8 +154,8 @@ play_list() {
         tab1=$(< $tab1)
         tab2=$(< $tab2)
         rm -f "$DT"/*.p
-        f=1; n=0
         
+        f=1; n=0
         while [ ${n} -le 11 ]; do
         
         if [ ${n} -lt 4 ]; then
