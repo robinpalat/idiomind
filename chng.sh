@@ -80,11 +80,11 @@ if [[ ${1} = 0 ]]; then
     
     if [ ${w} = TRUE -a ${s} = FALSE ]; then
     while read item; do getitem; _play
-    done < <(grep -Fxvf "$DC_tlt/4.cfg" "$DC_tlt/1.cfg" |tac); fi
+    done < <(grep -Fxvf "${DC_tlt}/4.cfg" "${DC_tlt}/1.cfg" |tac); fi
 
     if [ ${w} = FALSE -a ${s} = TRUE ]; then
     while read item; do getitem; _play
-    done < <(grep -Fxvf "$DC_tlt/3.cfg" "$DC_tlt/1.cfg" |tac); fi
+    done < <(grep -Fxvf "${DC_tlt}/3.cfg" "${DC_tlt}/1.cfg" |tac); fi
     
     if [ ${m} = TRUE ]; then
     while read item; do getitem; _play

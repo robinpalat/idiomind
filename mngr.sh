@@ -6,7 +6,7 @@ source "$DS/ifs/mods/cmns.sh"
 
 mkmn() {
     
-    cd "$DM_tl"
+    f_lock "$DT/mn_lk"; cd "$DM_tl"
     [ -d "$DM_tl/images" ] && rm -r "$DM_tl/images"
     for i in "$(ls -tNd */ | cut -f1 -d'/')"; do echo "${i%%/}"; done > "$DM_tl/.1.cfg"
     sed -i '/^$/d' "$DM_tl/.1.cfg"; > "$DM_tl/.0.cfg"
@@ -30,13 +30,15 @@ mkmn() {
         else stts=12; fi
         echo -e "/usr/share/idiomind/images/img.${stts}.png\n${tpc}" >> "$DM_tl/.0.cfg"
     done
-    exit
+    
+    rm -f "$DT/mn_lk"; exit
 }
 
 
 delete_item_ok() {
 
-    touch "$DT/ps_lk"
+
+    f_lock "$DT/ps_lk"
     include "$DS/ifs/mods/mngr"
     source "$DS/ifs/mods/cmns.sh"
     trgt="${3}"
@@ -66,13 +68,13 @@ delete_item_ok() {
     
     if [ -f "${DC_tlt}/lst" ]; then rm "${DC_tlt}/lst"; fi
     rm "${DC_tlt}"/*.tmp
-    "$DS/ifs/tls.sh" colorize
     rm -f "$DT/ps_lk" & exit 1
 }
 
+
 delete_item() {
 
-    touch "$DT/ps_lk"
+    f_lock "$DT/ps_lk"
     include "$DS/ifs/mods/mngr"
     source "$DS/ifs/mods/cmns.sh"
     trgt="${3}"
@@ -84,7 +86,7 @@ delete_item() {
     gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
     ret="$?"
     
-    if [[ $ret -eq 0 ]]; then
+    if [ $ret -eq 0 ]; then
         
         (sleep 0.1 && kill -9 $(pgrep -f "yad --form "))
         [ -f "${DM_tlt}/$file.mp3" ] && rm "${DM_tlt}/$file.mp3"
@@ -207,7 +209,7 @@ edit_item() {
             index edit "${trgt}" "${tpc}" "${trgt_mod}"
             sed -i "${edit_pos}s|trgt={${trgt}}|trgt={${trgt_mod}}|;
             ${edit_pos}s|grmr={${grmr}}|grmr={${trgt_mod}}|;
-            ${edit_pos}s|srce={${srce}}|srce={$temp}|g" "$DC_tlt/0.cfg"
+            ${edit_pos}s|srce={${srce}}|srce={$temp}|g" "${DC_tlt}/0.cfg"
             ind=1; col=1; mod=1
             fi
             
@@ -313,7 +315,8 @@ edit_item() {
 
 edit_list() {
     
-    [ -f "$DT/add_lst" -o -f "$DT/ps_lk" ] && exit
+    [ -f "$DT/add_lst" -o -f "$DT/el_lk" ] && exit
+    [ $((inx3+inx4)) -le 1 ] && exit
     [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ] && c=c || c=w
     direc="$DM_tl/${2}/.conf"
     [ ! -s "${direc}/0.cfg" ] && exit 1
@@ -336,7 +339,7 @@ edit_list() {
         [ $ret = 0 ] && cmd=tac
         [ $ret = 2 ] && cmd=cat
         include "$DS/ifs/mods/add"
-        n=1; touch "$DT/ps_lk"
+        n=1; f_lock "$DT/el_lk"
         cp -f "${direc}/0.cfg" "$DM/backup/${2}.bk"
         rm "${direc}/1.cfg" "${direc}/3.cfg" "${direc}/4.cfg"
         
@@ -373,7 +376,7 @@ edit_list() {
         touch "${direc}/3.cfg" "${direc}/4.cfg"
         mv -f "$DT/tmp0" "${direc}/0.cfg"
         "$DS/ifs/tls.sh" colorize
-        rm -f "$DT/ps_lk"
+        rm -f "$DT/el_lk"
 
         if [ -f "$DT/add_lst" ]; then
         
@@ -434,7 +437,7 @@ delete_topic() {
         
         if [ ${ret} -eq 0 ]; then
             
-            touch "$DT/ps_lk"
+            f_lock "$DT/rm_lk"
             
             if [ -f "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "${tpc}" ]; then
             "$DS/stop.sh" 5; fi
@@ -468,7 +471,7 @@ delete_topic() {
             "$DS/mngr.sh" mkmn &
         fi
     > "$DC_s/7.cfg"
-    rm -f "$DT/ps_lk" "$DM_tl"/.*.tmp & exit 1
+    rm -f "$DT/rm_lk" "$DM_tl"/.*.tmp & exit 1
 }
 
 
@@ -509,7 +512,8 @@ rename_topic() {
     fi
     
     if [ -n "${jlb}" ]; then
-
+    
+        f_lock "$DT/rm_lk"
         mv -f "$DM_tl/${tpc}" "$DM_tl/${jlb}"
         sed -i "s/tname=.*/tname=\"${jlb}\"/g" "$DM_tl/${jlb}/.conf/id.cfg"
         cp "$DM_tl/${jlb}/.conf/0.cfg" "$DM/backup/${jlb}.bk"
@@ -531,7 +535,7 @@ rename_topic() {
         [ -f "$DM/backup/${tpc}.bk" ] && rm "$DM/backup/${tpc}.bk"
         [[ ${i} = 1 ]] &&  echo "${jlb}" >> "$DM_tl/.3.cfg"
         
-        "$DS/mngr.sh" mkmn & exit 1
+        rm -f "$DT/rm_lk"; "$DS/mngr.sh" mkmn & exit 1
     fi
 }
 
@@ -543,9 +547,9 @@ mark_to_learn_topic() {
     if [ "${tpc}" != "${2}" ]; then
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
     
-    [ ! -s "$DC_tlt/0.cfg" ] && exit 1
+    [ ! -s "${DC_tlt}/0.cfg" ] && exit 1
     
-    if [ "$(wc -l < "$DC_tlt/0.cfg")" -le 10 ]; then
+    if [ $((inx3+inx4)) -le 10 ]; then
     msg "$(gettext "Not enough items to perform the operation")\n " \
     info "$(gettext "Not enough items to perform the operation")" & exit; fi
 
@@ -582,7 +586,7 @@ mark_to_learn_topic() {
         echo "${trgt}" >> "${DC_tlt}/1.cfg"
         fi
         
-    done < "$DC_tlt/0.cfg"
+    done < "${DC_tlt}/0.cfg"
     
     ) | progr_3
 
@@ -608,9 +612,9 @@ mark_as_learned_topic() {
     if [ "${tpc}" != "${2}" ]; then
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
     
-    [ ! -s "$DC_tlt/0.cfg" ] && exit 1
+    [ ! -s "${DC_tlt}/0.cfg" ] && exit 1
 
-    if [ "$(wc -l < "${DC_tlt}/0.cfg")" -le 10 ]; then
+    if [ $((inx3+inx4)) -le 10 ]; then
     msg "$(gettext "Not enough items to perform the operation.")\n " \
     info "$(gettext "Not enough items")" & exit; fi
     
@@ -665,7 +669,7 @@ mark_as_learned_topic() {
         echo "${trgt}" >> "${DC_tlt}/2.cfg"
         fi
         
-    done < "$DC_tlt/0.cfg"
+    done < "${DC_tlt}/0.cfg"
     
     ) | progr_3
 

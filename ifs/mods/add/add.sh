@@ -29,10 +29,10 @@ function mksure() {
 
 function index() {
 
-    while true; do
-    if [[ -f "$DT/i_lk" ]]; then sleep 1
-    else > "$DT/i_lk" & break; fi
-    done
+    brk=0; while true; do
+    if [ ! -f "$DT/i_lk" -o ${brk} -gt 20 ]; then > "$DT/i_lk" & break
+    elif [ -f "$DT/i_lk" ]; then sleep 1; fi
+    let brk++; done
         
     if [[ ${1} = edit ]]; then
             

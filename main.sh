@@ -43,7 +43,7 @@ function new_session() {
     if [ $? -ne 0 ]; then
     msg "$(gettext "Fail on try write in /tmp")\n" error & exit 1; fi
     
-    touch "$DT/ps_lk"
+    f_lock "$DT/ps_lk"
     
     # start addons
     > "$DC_s/2.cfg"
@@ -121,7 +121,7 @@ function new_session() {
     [ ! -d "${DM_tls}/images" ] && mkdir -p "${DM_tls}/images"
     ###
 
-    rm -f  "$DT/ps_lk"
+    rm -f "$DT/ps_lk"
     "$DS/mngr.sh" mkmn &
 }
 
@@ -243,9 +243,9 @@ function topic() {
         if [ -f "${DM_tlt}/images/img.jpg" ]; then
         img="--image=${DM_tlt}/images/img.jpg"
         sx=608; sy=580; else sx=620; sy=560; fi
-        echo -e "tpc.$tpc.tpc" >> "$DC_s/log"
+        echo -e "tpc.${tpc}.tpc" >> "$DC_s/log"
         [ ! -z "$author" ] && author=" $(gettext "Created by") $author"
-        label_info1="<span font_desc='Free Sans 15' color='#505050'>$tpc</span><small>\n $inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"
+        label_info1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><small>\n $inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"
 
         apply() {
 
@@ -268,7 +268,7 @@ function topic() {
 
                 grep -Fxvf "${cnf1}" "${ls1}" > "$DT/ls1.x"
                 mv -f "$DT/ls1.x" "${ls1}"
-                if [ -n "$(cat "${ls1}" | sort -n | uniq -dc)" ]; then
+                if [ -n "$(cat "${ls1}" |sort -n |uniq -dc)" ]; then
                     cat "${ls1}" | awk '!array_temp[$0]++' > "$DT/ls1.x"
                     sed '/^$/d' "$DT/ls1.x" > "${ls1}"
                 fi

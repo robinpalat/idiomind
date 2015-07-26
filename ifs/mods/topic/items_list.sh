@@ -73,12 +73,12 @@ export -f word_view sentence_view m_text
 
 function notebook_1() {
     
-    cmd_mark="'$DS/mngr.sh' 'mark_as_learned' "\"$tpc\"" 1"
+    cmd_mark="'$DS/mngr.sh' 'mark_as_learned' "\"${tpc}\"" 1"
     cmd_attchs="'$DS/ifs/tls.sh' 'attachs'"
-    cmd_del="'$DS/mngr.sh' 'delete_topic' "\"$tpc\"""
-    cmd_adv="'$DS/ifs/tls.sh' adv "\"$tpc\"""
-    cmd_share="'$DS/ifs/upld.sh' upld "\"$tpc\"""
-    cmd_eind="'$DS/mngr.sh' edit_list "\"$tpc\"""
+    cmd_del="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
+    cmd_adv="'$DS/ifs/tls.sh' adv "\"${tpc}\"""
+    cmd_share="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
+    cmd_eind="'$DS/mngr.sh' edit_list "\"${tpc}\"""
     cmd_play="$DS/play.sh play_list"
     
     list() { if [[ $((`wc -l < "${DC_tlt}/5.cfg"`/3)) = \
@@ -130,10 +130,10 @@ function notebook_1() {
 
 function notebook_2() {
     
-    cmd_mark="'$DS/mngr.sh' 'mark_to_learn' "\"$tpc\"" 1"
+    cmd_mark="'$DS/mngr.sh' 'mark_to_learn' "\"${tpc}\"" 1"
     cmd_attchs="'$DS/ifs/tls.sh' 'attachs'"
-    cmd_del="'$DS/mngr.sh' 'delete_topic' "\"$tpc\"""
-    cmd_share="'$DS/ifs/upld.sh' 'upld' "\"$tpc\"""
+    cmd_del="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
+    cmd_share="'$DS/ifs/upld.sh' 'upld' "\"${tpc}\"""
 
     yad --multi-progress --tabnum=1 \
     --text="$pres" \
@@ -176,7 +176,7 @@ function notebook_2() {
 
 function dialog_1() {
     
-    yad --title="$tpc" \
+    yad --title="${tpc}" \
     --class=idiomind --name=Idiomind \
     --text=" $(gettext "<b>Would you like to go over it?</b>\n The specified period already has been completed")" \
     --image=gtk-refresh \

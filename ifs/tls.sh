@@ -205,16 +205,16 @@ check_index() {
     
     _version() {
     
-        mv -f "$DC_tlt/0.cfg" "$DC_tlt/1.cfg"
-        rm "$DC_tlt/2.cfg" "$DC_tlt/.11.cfg" "$DC_tlt/11.cfg"
+        mv -f "${DC_tlt}/0.cfg" "${DC_tlt}/1.cfg"
+        rm "${DC_tlt}/2.cfg" "${DC_tlt}/.11.cfg" "${DC_tlt}/11.cfg"
         [ ! -d "${DM_tlt}/images" ] && mkdir "${DM_tlt}/images"
-        touch "$DC_tlt/2.cfg"
-        > "$DC_tlt/0.cfg"
+        touch "${DC_tlt}/2.cfg"
+        > "${DC_tlt}/0.cfg"
         
         for n in {1..200}; do
         
             unset id type trgt srce exmp dftn note tag lwrd grmr
-            item="$(sed -n ${n}p "$DC_tlt/1.cfg")"
+            item="$(sed -n ${n}p "${DC_tlt}/1.cfg")"
             if [ -z "$item" ]; then break; fi
             fname="$(echo -n "${item}" | md5sum | rev | cut -c 4- | rev)"
 
@@ -246,7 +246,7 @@ check_index() {
             mv -f "${DM_tlt}/words/images/$fname.jpg" "${DM_tls}/images/${trgt,,}-0.jpg"
             fi
             
-            echo "$n:[type={$type},trgt={$trgt},srce={$srce},exmp={$exmp},defn={$dftn},note={$note},wrds={$lwrd},grmr={$grmr},].[tag={$tag},mark={$mark},].id=[$id]" >> "$DC_tlt/0.cfg"
+            echo "$n:[type={$type},trgt={$trgt},srce={$srce},exmp={$exmp},defn={$dftn},note={$note},wrds={$lwrd},grmr={$grmr},].[tag={$tag},mark={$mark},].id=[$id]" >> "${DC_tlt}/0.cfg"
         done
         
         if [ -f "${DM_tlt}/words/images/img.jpg" ]; then
@@ -257,38 +257,41 @@ check_index() {
     _version_2() {
     
         while read -r trgt; do
-            img="$(grep -F -m 1 "trgt={${trgt}}" "$DC_tlt/0.cfg" |sed 's/},/}\n/g')"
+            img="$(grep -F -m 1 "trgt={${trgt}}" "${DC_tlt}/0.cfg" |sed 's/},/}\n/g')"
             id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${img}")"
             if [[ -f "${DM_tlt}/images/$id.jpg" ]]; then
             name_img="${DM_tls}/images/${trgt,,}-0.jpg"
             mv -f "${DM_tlt}/images/$id.jpg" "$name_img"; fi
         done < "${DC_tlt}/3.cfg"
+        cnt=`ls "${DM_tlt}/images"/*.jpg |wc -l`
+        if [[ ${cnt} -gt 1 ]] && [ -d "${DM_tlt}/images" ]; then
+        find "${DM_tlt}/images"/ ! -name 'img.jpg' -type f -exec rm -f {} +;
+        fi
     }
     
     _fix() {
         
         if [ ${stts} -eq 13 ]; then
-            if [ -f "$DC_tlt/8.cfg_" ] && [ -n $(< "$DC_tlt/8.cfg_") ]; then
-            stts=$(sed -n 1p "$DC_tlt/8.cfg_")
-            rm "$DC_tlt/8.cfg_"
+            if [ -f "${DC_tlt}/8.cfg_" ] && [ -n $(< "${DC_tlt}/8.cfg_") ]; then
+            stts=$(sed -n 1p "${DC_tlt}/8.cfg_")
+            rm "${DC_tlt}/8.cfg_"
             else stts=1; fi
-            echo ${stts} > "$DC_tlt/8.cfg"
+            echo ${stts} > "${DC_tlt}/8.cfg"
         fi
-        touch "$DC_tlt/0.cfg" "$DC_tlt/1.cfg" "$DC_tlt/2.cfg" \
-        "$DC_tlt/3.cfg" "$DC_tlt/4.cfg"
+        touch "${DC_tlt}/0.cfg" "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg" \
+        "${DC_tlt}/3.cfg" "${DC_tlt}/4.cfg"
     }
     
     _check
     
-    if [ ${f} -eq 1 -o ${nv} -eq 1 -o ${a} -eq 1 \
-    -o ${r} -eq 1 -o ${i} -eq 1 ]; then
+    if [ ${f} = 1 -o ${nv} = 1 -o ${a} = 1 -o ${r} = 1 -o ${i} = 1 ]; then
 
         if [ ${f} -eq 1 ]; then
         (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
         "$(gettext "Fixing...")" -t 3000) &
         > "$DT/ps_lk"
-        [ ! -d "$DM_tlt/.conf" ] && mkdir "$DM_tlt/.conf"
-        [ ! -d "$DM_tlt/images" ] && mkdir "$DM_tlt/images"
+        [ ! -d "${DM_tlt}/.conf" ] && mkdir "${DM_tlt}/.conf"
+        [ ! -d "${DM_tlt}/images" ] && mkdir "${DM_tlt}/images"
         _restore; _fix; fi
         
         if [ ${nv} -eq 1 ]; then
@@ -360,8 +363,8 @@ add_file() {
     if [ $ret -eq 0 ]; then
     
         while read -r file; do
-        [ -f "$file" ] && cp -f "$file" \
-        "$DM_tlt/files/$(basename "$file" |iconv -c -f utf8 -t ascii)"
+        [ -f "${file}" ] && cp -f "${file}" \
+        "${DM_tlt}/files/$(basename "$file" |iconv -c -f utf8 -t ascii)"
         done <<<"$(tr '|' '\n' <<<"$FL")"
     fi
     
@@ -370,7 +373,7 @@ add_file() {
 
 videourl() {
 
-    n=$(ls *.url "$DM_tlt/files/" | wc -l)
+    n=$(ls *.url "${DM_tlt}/files/" | wc -l)
     url=$(yad --form --title=" " \
     --name=Idiomind --class=Idiomind \
     --separator="" \
@@ -386,7 +389,7 @@ videourl() {
     if [ ${#url} -gt 40 ] && \
     ([ ${url:0:29} = 'https://www.youtube.com/watch' ] \
     || [ ${url:0:28} = 'http://www.youtube.com/watch' ]); then \
-    echo "$url" > "$DM_tlt/files/video$n.url"
+    echo "$url" > "${DM_tlt}/files/video$n.url"
     else msg "$(gettext "Invalid URL.")\n" error \
     "$(gettext "Invalid URL")"; fi
 }
@@ -396,87 +399,87 @@ attatchments() {
 
     mkindex() {
 
-rename 's/_/ /g' "$DM_tlt/files"/*
+rename 's/_/ /g' "${DM_tlt}/files"/*
 echo "<meta http-equiv=\"Content-Type\" \
 content=\"text/html; charset=UTF-8\" />
 <link rel=\"stylesheet\" \
 href=\"/usr/share/idiomind/default/attch.css\">\
-<body>" > "$DC_tlt/att.html"
+<body>" > "${DC_tlt}/att.html"
 
 while read -r file; do
 if grep ".mp3" <<<"${file: -4}"; then
 echo "${file::-4}<br><br><audio controls>
 <source src=\"../files/$file\" type=\"audio/mpeg\">
-</audio><br><br>" >> "$DC_tlt/att.html"
+</audio><br><br>" >> "${DC_tlt}/att.html"
 elif grep ".ogg" <<<"${file: -4}"; then
 echo "${file::-4}<audio controls>
 <source src=\"../files/$file\" type=\"audio/mpeg\">
-</audio><br><br>" >> "$DC_tlt/att.html"; fi
-done <<<"$(ls "$DM_tlt/files")"
+</audio><br><br>" >> "${DC_tlt}/att.html"; fi
+done <<<"$(ls "${DM_tlt}/files")"
 
 while read -r file; do
 if grep ".txt" <<<"${file: -4}"; then
 txto=$(sed ':a;N;$!ba;s/\n/<br>/g' \
-< "$DM_tlt/files/$file" \
+< "${DM_tlt}/files/$file" \
 | sed 's/\"/\&quot;/;s/\&/&amp;/g')
 echo "<div class=\"summary\">
 <h2>${file::-4}</h2><br>$txto \
-<br><br><br></div>" >> "$DC_tlt/att.html"; fi
-done <<<"$(ls "$DM_tlt/files")"
+<br><br><br></div>" >> "${DC_tlt}/att.html"; fi
+done <<<"$(ls "${DM_tlt}/files")"
 
 while read -r file; do
 if grep ".mp4" <<<"${file: -4}"; then
 echo "${file::-4}<br><br>
 <video width=450 height=280 controls>
 <source src=\"../files/$file\" type=\"video/mp4\">
-</video><br><br><br>" >> "$DC_tlt/att.html"
+</video><br><br><br>" >> "${DC_tlt}/att.html"
 elif grep ".m4v" <<<"${file: -4}"; then
 echo "${file::-4}<br><br>
 <video width=450 height=280 controls>
 <source src=\"../files/$file\" type=\"video/mp4\">
-</video><br><br><br>" >> "$DC_tlt/att.html"
+</video><br><br><br>" >> "${DC_tlt}/att.html"
 elif grep ".jpg" <<<"${file: -4}"; then
 echo "${file::-4}<br><br>
 <img src=\"../files/$file\" alt=\"$name\" \
 style=\"width:100%;height:100%\"><br><br><br>" \
->> "$DC_tlt/att.html"
+>> "${DC_tlt}/att.html"
 elif grep ".jpeg" <<<"${file: -5}"; then
 echo "${file::-5}<br><br>
 <img src=\"../files/$file\" alt=\"$name\" \
 style=\"width:100%;height:100%\"><br><br><br>" \
->> "$DC_tlt/att.html"
+>> "${DC_tlt}/att.html"
 elif grep ".png" <<<"${file: -4}"; then
 echo "${file::-4}<br><br>
 <img src=\"../files/$file\" alt=\"$name\" \
 style=\"width:100%;height:100%\"><br><br><br>" \
->> "$DC_tlt/att.html"
+>> "${DC_tlt}/att.html"
 elif grep ".url" <<<"${file: -4}"; then
-url=$(tr -d '=' < "$DM_tlt/files/$file" \
+url=$(tr -d '=' < "${DM_tlt}/files/$file" \
 | sed 's|watch?v|v\/|;s|https|http|g')
 echo "<iframe width=\"100%\" height=\"85%\" src=\"$url\" \
 frameborder=\"0\" allowfullscreen></iframe>
-<br><br>" >> "$DC_tlt/att.html"
+<br><br>" >> "${DC_tlt}/att.html"
 elif grep ".gif" <<<"${file: -4}"; then
 echo "${file::-4}<br><br>
 <img src=\"../files/$file\" alt=\"$name\" \
 style=\"width:100%;height:100%\"><br><br><br>" \
->> "$DC_tlt/att.html"; fi
-done <<<"$(ls "$DM_tlt/files")"
+>> "${DC_tlt}/att.html"; fi
+done <<<"$(ls "${DM_tlt}/files")"
 
-echo "</body>" >> "$DC_tlt/att.html"
+echo "</body>" >> "${DC_tlt}/att.html"
 } >/dev/null 2>&1
     
-    [ ! -d "$DM_tlt/files" ] && mkdir "$DM_tlt/files"
-    ch1="$(ls -A "$DM_tlt/files")"
+    [ ! -d "${DM_tlt}/files" ] && mkdir "${DM_tlt}/files"
+    ch1="$(ls -A "${DM_tlt}/files")"
     
-    if [[ "$(ls -A "$DM_tlt/files")" ]]; then
-        [ ! -f "$DC_tlt/att.html" ] && mkindex >/dev/null 2>&1
+    if [[ "$(ls -A "${DM_tlt}/files")" ]]; then
+        [ ! -f "${DC_tlt}/att.html" ] && mkindex >/dev/null 2>&1
         yad --html --title="$(gettext "Attached Files")" \
         --name=Idiomind --class=Idiomind \
-        --encoding=UTF-8 --uri="$DC_tlt/att.html" --browser \
+        --encoding=UTF-8 --uri="${DC_tlt}/att.html" --browser \
         --window-icon="$DS/images/icon.png" --center \
         --width=680 --height=580 --borders=10 \
-        --button="$(gettext "Open Folder")":"xdg-open \"$DM_tlt\"/files" \
+        --button="$(gettext "Open Folder")":"xdg-open \"${DM_tlt}\"/files" \
         --button="$(gettext "Video URL")":2 \
         --button="gtk-add":0 \
         --button="gtk-close":1
@@ -485,7 +488,7 @@ echo "</body>" >> "$DC_tlt/att.html"
         if [ $ret = 0 ]; then "$DS/ifs/tls.sh" add_file
         elif [ $ret = 2 ]; then "$DS/ifs/tls.sh" videourl; fi
         
-        if [[ "$ch1" != "$(ls -A "$DM_tlt/files")" ]]; then
+        if [[ "$ch1" != "$(ls -A "${DM_tlt}/files")" ]]; then
         mkindex; fi
         
     else
@@ -500,7 +503,7 @@ echo "</body>" >> "$DC_tlt/att.html"
         --button="$(gettext "OK")":0
         ret=$?
         
-        if [[ "$ch1" != "$(ls -A "$DM_tlt/files")" ]] && [ $ret = 0 ]; then
+        if [[ "$ch1" != "$(ls -A "${DM_tlt}/files")" ]] && [ $ret = 0 ]; then
             mkindex
         fi
     fi
@@ -531,7 +534,7 @@ fback() {
 
 colorize() {
 
-    > "$DT/ps_lk"
+    f_lock "$DT/co_lk"
     rm "${DC_tlt}/5.cfg"
     cfg5="${DC_tlt}/5.cfg"
     cfg6="$(< "${DC_tlt}/6.cfg")"
@@ -539,7 +542,7 @@ colorize() {
     img2='/usr/share/idiomind/images/2.png'
     img3='/usr/share/idiomind/images/3.png'
     img0='/usr/share/idiomind/images/0.png'
-    cd "$DC_tlt/practice"
+    cd "${DC_tlt}/practice"
     log3="$(cat ./log3 ./d.3)"
     log2="$(cat ./log2 ./d.2)"
     log1="$(cat ./log1 ./d.1)"
@@ -558,7 +561,7 @@ colorize() {
             echo -e "FALSE\n${i}\n$img0" >> "$cfg5"
         fi
     done < "${DC_tlt}/1.cfg"
-    rm -f "$DT/ps_lk"; cd ~/
+    rm -f "$DT/co_lk"; cd ~/
 }
 
 

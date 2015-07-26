@@ -56,6 +56,14 @@ function include() {
 
 }
 
+function f_lock() {
+    
+    brk=0; while true; do
+    if [ ! -e "${1}" -o ${brk} -gt 20 ]; then touch "${1}" & break
+    elif [ -e "${1}" ]; then sleep 1; fi
+    let brk++; done
+}
+
 function lnglss() {
 
     [ "${1^}" = English ] && lg=en
@@ -85,7 +93,7 @@ function list_inadd() {
     
     while read -r t; do
         if ! echo -e "$(ls "$DS/addons/")\n$(< "$DM_tl/.3.cfg")" \
-        | grep -Fxo "$t" >/dev/null 2>&1; then echo "$t"; fi
+        | grep -Fxo "${t}" >/dev/null 2>&1; then echo "${t}"; fi
     done < <(cd "$DM_tl"; ls -tNd */ | head -n 30 | sed 's/\///g')
 }
 

@@ -3,8 +3,8 @@
 
 play_word() {
 
-    if [ -f "$DM_tls/${2,,}.mp3" ]; then
-    play "$DM_tls/${2,,}.mp3" &
+    if [ -f "${DM_tls}/${2,,}.mp3" ]; then
+    play "${DM_tls}/${2,,}.mp3" &
     elif [ -f "${DM_tlt}/$3.mp3" ]; then
     play "${DM_tlt}/$3.mp3" &
     elif [ -n "$synth" ]; then
@@ -38,13 +38,14 @@ play_file() {
 
 play_list() {
     
-    if [ -z "$tpc" ]; then source "$DS/ifs/mods/cmns.sh"
+    if [ -z "${tpc}" ]; then source "$DS/ifs/mods/cmns.sh"
     msg "$(gettext "No topic is active")\n" info & exit 1; fi
 
     tpc="$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")"
+    touch "${DC_tlt}/practice/log.3"
     DC_tlt="${DM_tl}/${tpc}/.conf"
     DC_tlp="${DM_tl}/Podcasts/.conf"
-    [[ -n "$(< "$DC_tlt/10.cfg")" ]] && cfg=1 || cfg=0
+    [[ -n "$(< "${DC_tlt}/10.cfg")" ]] && cfg=1 || cfg=0
     
     lbls=( 'Words' 'Sentences' 'Marked items' 'Difficult words' \
     'New episodes <i><small>Podcasts</small></i>' \
@@ -57,14 +58,14 @@ play_list() {
     _times="$(gettext "times")"
     iteml=( "$_nore" "1 $_time" "2 $_times" "3 $_times" )
     
-    in0="$(grep -Fxvf "$DC_tlt/4.cfg" "$DC_tlt/1.cfg")"
-    in1="$(grep -Fxvf "$DC_tlt/3.cfg" "$DC_tlt/1.cfg")"
-    in2="$(grep -Fxvf "$DC_tlt/2.cfg" "$DC_tlt/6.cfg")"
-    in3="$(grep -Fxvf "$DC_tlt/4.cfg" "$DC_tlt/practice/log.3")"
+    in0="$(grep -Fxvf "${DC_tlt}/4.cfg" "${DC_tlt}/1.cfg" |wc -l)"
+    in1="$(grep -Fxvf "${DC_tlt}/3.cfg" "${DC_tlt}/1.cfg" |wc -l)"
+    in2="$(grep -Fxvf "${DC_tlt}/2.cfg" "${DC_tlt}/6.cfg" |wc -l)"
+    in3="$(grep -Fxvf "${DC_tlt}/4.cfg" "${DC_tlt}/practice/log.3" |wc -l)"
     [ -f "$DM_tl/Podcasts/.conf/1.lst" ] && \
-    in4="$(tac "$DM_tl/Podcasts/.conf/1.lst")" || in5=""
+    in4="$(wc -l < "$DM_tl/Podcasts/.conf/1.lst")" || in5=0
     [ -f "$DM_tl/Podcasts/.conf/2.lst" ] && \
-    in5="$(tac "$DM_tl/Podcasts/.conf/2.lst")" || in6=""
+    in5="$(wc -l < "$DM_tl/Podcasts/.conf/2.lst")" || in6=0
     [ ! -d "$DT" ] && mkdir "$DT"; cd "$DT"
 
     if [ ${cfg} = 1 ]; then
@@ -73,16 +74,16 @@ play_list() {
         while [ ${n} -le 11 ]; do
             get="${sets[$n]}"
             if [ ${n} = 4 -o ${n} = 5 -o ${n} = 11 ]; then
-            cfg="$DC_tlp/podcasts.cfg"; else cfg="$DC_tlt/10.cfg"; fi
+            cfg="$DC_tlp/podcasts.cfg"; else cfg="${DC_tlt}/10.cfg"; fi
             val=$(grep -o "$get"=\"[^\"]* "${cfg}" |grep -o '[^"]*$')
             declare ${sets[$n]}="$val"
             ((n=n+1))
         done
         
     else
-        n=0; > "$DC_tlt/10.cfg"
+        n=0; > "${DC_tlt}/10.cfg"
         while [ ${n} -le 11 ]; do
-        echo -e "${sets[$n]}=\"0\"" >> "$DC_tlt/10.cfg"
+        echo -e "${sets[$n]}=\"0\"" >> "${DC_tlt}/10.cfg"
         ((n=n+1))
         done
     fi
@@ -91,7 +92,7 @@ play_list() {
         n=0; 
         while [ ${n} -le 5 ]; do
             arr="in${n}"
-            [[ -z ${!arr} ]] \
+            [[ ${!arr} -lt 1 ]] \
             && echo "$DS/images/addi.png" \
             || echo "$DS/images/add.png"
             echo "  <span font_desc='Arial 11'>$(gettext "${lbls[$n]}")</span>"
@@ -161,32 +162,32 @@ play_list() {
         if [ ${n} -lt 4 ]; then
         val=$(sed -n $((${n}+1))p <<<"${tab1}" |cut -d "|" -f3)
         [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
-        "$DC_tlt/10.cfg"
+        "${DC_tlt}/10.cfg"
         if [ "$val" = TRUE ]; then
         count=$((count+$(egrep -cv '#|^$' <<<"${!in[${n}]}"))); fi
         
         elif [ ${n} = 4 -o ${n} = 5 ]; then
         val=$(sed -n $((${n}+1))p <<<"${tab1}" |cut -d "|" -f3)
         [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
-        "$DC_tlp/podcasts.cfg"
+        "${DC_tlp}/podcasts.cfg"
         if [ "$val" = TRUE ]; then
         count=$((count+$(egrep -cv '#|^$' <<<"${!in[${n}]}"))); fi
         
         elif [ ${n} -lt 10 ]; then
         val="$(cut -d "|" -f${f} <<<"${tab2}")"
         [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
-        "$DC_tlt/10.cfg"; let f++
+        "${DC_tlt}/10.cfg"; let f++
             
         elif [ ${n} = 10 ]; then
         if [ "$(cut -d "|" -f5 <<<"${tab2}")" = "${_nore}" ]; then val=0
         else val="$(cut -d "|" -f5 <<<"${tab2}"|grep -P -o "[0-9]+")"; fi
         [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
-        "$DC_tlt/10.cfg"
+        "${DC_tlt}/10.cfg"
          
         elif [ ${n} = 11 ]; then
         val="$(cut -d "|" -f7 <<<"${tab2}")"
         [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
-        "$DC_tlp/podcasts.cfg"
+        "${DC_tlp}/podcasts.cfg"
         fi
         
         ((n=n+1))
@@ -200,7 +201,7 @@ play_list() {
             "$DS/stop.sh" 2 & exit 1; fi
 
             "$DS/stop.sh" 2 &
-            if [ -d "$DM_tlt" ] && [ -n "$tpc" ]; then
+            if [ -d "${DM_tlt}" ] && [ -n "$tpc" ]; then
                 if grep TRUE <<<"$words$sntcs$marks$wprct"; then
                 echo -e "$tpc" > "$DT/.p_"; else > "$DT/.p_"; fi
             else "$DS/stop.sh" 2 && exit 1; fi

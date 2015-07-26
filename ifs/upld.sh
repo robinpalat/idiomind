@@ -50,28 +50,28 @@ function dwld() {
         lfiles="$(gettext "Additional files:")"
         lothers="$(gettext "Others:")"
         tmp="$DT/download/${oname}"
-        total=$(find "$tmp" -maxdepth 5 -type f | wc -l)
-        c_audio=$(find "$tmp" -maxdepth 5 -name '*.mp3' | wc -l)
-        c_images=$(find "$tmp" -maxdepth 5 -name '*.jpg' | wc -l)
-        hfiles="$(cd "$tmp"; ls -d ./.[^.]* | less | wc -l)"
-        exfiles="$(find "$tmp" -maxdepth 5 -perm -111 -type f | wc -l)"
-        atfiles=$(find "$tmp/files" -maxdepth 5 -name | wc -l)
+        total=$(find "${tmp}" -maxdepth 5 -type f | wc -l)
+        c_audio=$(find "${tmp}" -maxdepth 5 -name '*.mp3' | wc -l)
+        c_images=$(find "${tmp}" -maxdepth 5 -name '*.jpg' | wc -l)
+        hfiles="$(cd "${tmp}"; ls -d ./.[^.]* | less | wc -l)"
+        exfiles="$(find "${tmp}" -maxdepth 5 -perm -111 -type f | wc -l)"
+        atfiles=$(find "${tmp}/files" -maxdepth 5 -name | wc -l)
         others=$((wchfiles+wcexfiles))
-        mv -f "${tmp}/conf/info" "$DC_tlt/info"
+        mv -f "${tmp}/conf/info" "${DC_tlt}/info"
         [ ! -d "$DM_t/$langt/.share" ] && mkdir -p "$DM_t/$langt/.share/images"
-        mv -n "$tmp/share"/*.mp3 "$DM_t/$langt/.share"/
+        mv -n "${tmp}/share"/*.mp3 "$DM_t/$langt/.share"/
         [ ! -f "${DM_tlt}/images" ] && mkdir "${DM_tlt}/images"
         [ -f "${tmp}"/images/img.jpg  ] && \
         mv "${tmp}"/images/img.jpg "${DM_tlt}"/images/img.jpg
         while read -r img; do
-        if [ -f "$tmp/images/${img,,}-0.jpg" ]; then
+        if [ -f "${tmp}/images/${img,,}-0.jpg" ]; then
         if [ -f "$DM_t/$langt/.share/images/${img,,}-0.jpg" ]; then
         n=`ls "$DM_t/$langt/.share/images/${img,,}-"*.jpg |wc -l`
         name_img="${DM_tls}/images/${trgt,,}-"${n}.jpg
         else name_img="${DM_tls}/images/${trgt,,}-0.jpg"; fi
-        mv -f "$tmp/images/${img,,}-0.jpg" "$name_img"; fi
+        mv -f "${tmp}/images/${img,,}-0.jpg" "$name_img"; fi
         done < "${DC_tlt}/3.cfg"
-        rm -fr "$tmp/share" "${tmp}/conf" "${tmp}/images"
+        rm -fr "${tmp}/share" "${tmp}/conf" "${tmp}/images"
         mv -f "${tmp}"/*.mp3 "${DM_tlt}"/
         [ ! -f "${DM_tlt}/files" ] && mkdir "${DM_tlt}/files"
         mv -f "${tmp}"/files/* "${DM_tlt}"/files/
@@ -94,7 +94,7 @@ function dwld() {
 
 function upld() {
 
-if [ `wc -l < "${DC_tlt}/0.cfg"` -lt 2 ]; then
+if [ $((inx3+inx4)) -lt 2 ]; then
 msg "$(gettext "Unavailable")\n" info "$(gettext "Unavailable")" & exit 1; fi
 
 if [ "${tpc}" != "${2}" ]; then
@@ -148,14 +148,14 @@ note=$(< "${DC_tlt}/info")
 imgm="${DM_tlt}/images/img.jpg"
 
 "$DS/ifs/tls.sh" check_index "${tpc}"
-if [ $(cat "${DC_tlt}/0.cfg" | wc -l) -ge 15 ]; then
+if [ $((inx3+inx4)) -ge 15 ]; then
 btn="--button="$(gettext "Upload")":0"; else
 btn="--center"; fi
 cd "$HOME"
 
-if [ -f "$DC_tlt/11.cfg" ]; then
+if [ -f "${DC_tlt}/11.cfg" ]; then
 
-        if [ -z "$(< "$DC_tlt/11.cfg")" ]; then
+        if [ -z "$(< "${DC_tlt}/11.cfg")" ]; then
         c_audio="$(grep -o 'naudi="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         c_images="$(grep -o 'nimag="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         fsize="$(grep -o 'nsize="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
@@ -177,7 +177,7 @@ if [ -f "$DC_tlt/11.cfg" ]; then
         --button="$(gettext "Close")":4)
         ret=$?
         
-        elif [ -n "$(< "$DC_tlt/11.cfg")" ]; then
+        elif [ -n "$(< "${DC_tlt}/11.cfg")" ]; then
         dlg=$(yad --form --title="$(gettext "Share")" \
         --columns=2 --separator="|" \
         --text="<span font_desc='Free Sans 15'> ${tpc}</span>" \
@@ -298,9 +298,9 @@ mkdir -p "$DT/upload/${tpc}/conf"
 
 "$DS/ifs/tls.sh" check_index "${tpc}" 1
 
-c_words=0; c_sntncs=0
-[ -f "${DC_tlt}/3.cfg" ] && c_words=$(wc -l < "${DC_tlt}/3.cfg")
-[ -f "${DC_tlt}/4.cfg" ] && c_sntncs=$(wc -l < "${DC_tlt}/4.cfg")
+c_words=${inx3}
+c_sntncs=${inx4}
+
 if [ -f "${DC_tlt}/id.cfg" ]; then
 datec="$(grep -o 'datec="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
 datei="$(grep -o 'datei="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"; fi

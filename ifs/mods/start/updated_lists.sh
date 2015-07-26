@@ -3,10 +3,7 @@
 
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 log="$DC_s/log"
-tpclst=$(mktemp "$DT/tps.XXXX")
 items=$(mktemp "$DT/w9.XXXX")
-tpcs=$(grep -o -P '(?<=tpc.).*(?=\.tpc)' "${log}" \
-| sort | uniq -dc | sort -n -r | head -15 | sed -e 's/^ *//' -e 's/ *$//')
 words=$(grep -o -P '(?<=w9.).*(?=\.w9)' "${log}" |tr '|' '\n' \
 | sort | uniq -dc | sort -n -r | sed 's/ \+/ /g')
 sentences=$(grep -o -P '(?<=s9.).*(?=\.s9)' "${log}" |tr '|' '\n' \
@@ -15,12 +12,6 @@ img1='/usr/share/idiomind/images/1.png'
 img2='/usr/share/idiomind/images/2.png'
 img3='/usr/share/idiomind/images/3.png'
 img0='/usr/share/idiomind/images/0.png'
-
-for n in {1..15}; do
-
-if [[ "$(sed -n ${n}p <<<"${tpcs}" |awk '{print ($1)}')" -ge 3 ]]; then
-echo "$(sed -n ${n}p <<<"${tpcs}" |cut -d " " -f2-)" >> "${tpclst}"; fi
-done
 
 for n in {1..100}; do
 
@@ -75,12 +66,12 @@ while read -r tpc_lst; do
     fi
     fi
 
-done < "${tpclst}"
+done < <(head -n50 < "${DM_tl}/.1.cfg")
 fi
 cd /
 if [ $(date +%d) = 28 -o $(date +%d) = 14 ]; then
 rm "$log"; touch "$log"; fi
-rm -f "$tpclst" "$items" "$DT/list_a.tmp"
+rm -f "$items"
 echo "--lists updated"
 
 exit

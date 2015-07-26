@@ -62,11 +62,11 @@ $img --text="$info$hw" \
 --button="$(gettext "Restart")":3 \
 --button="$(gettext "Start")":0)"
 ret=$?
+source "$DS/ifs/mods/cmns.sh"
 
 if [ $ret -eq 0 ]; then
 
     if [ -z "$VAR" ]; then
-    source "$DS/ifs/mods/cmns.sh"
     msg " $(gettext "You must choose a practice.")\n" info
     "$DSP/strt.sh" & exit 1
     else
@@ -82,7 +82,7 @@ elif [ $ret -eq 3 ]; then
     "$DS/practice/strt.sh" & exit
 else
     cd "${DC_tlt}/practice"
-    rm *.tmp; > "$DT/ps_lk"
+    rm *.tmp; f_lock "$DT/ps_lk"
     rm "${DC_tlt}/5.cfg"
     cfg5="${DC_tlt}/5.cfg"
     cfg6="$(< "${DC_tlt}/6.cfg")"
