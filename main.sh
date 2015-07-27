@@ -236,7 +236,6 @@ function topic() {
         if [ -f "${DM_tlt}/images/img.jpg" ]; then
         img="--image=${DM_tlt}/images/img.jpg"
         sx=608; sy=580; else sx=620; sy=560; fi
-        echo -e "tpc.${tpc}.tpc" >> "$DC_s/log"
         [ ! -z "$author" ] && author=" $(gettext "Created by") $author"
         label_info1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><small>\n $inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"
 

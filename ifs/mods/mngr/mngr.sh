@@ -58,13 +58,13 @@ function dlg_form_2() {
 function edit_list_list() {
     
     yad --list --title="$(gettext "Edit")" \
-    --text="$(gettext "Double-click to edit an item, drag and drop to reposition it.")" \
+    --text="$(gettext "Double-click to edit an item. Drag and drop to reposition it.")" \
     --name=Idiomind --class=Idiomind \
     --editable --separator='' \
     --always-print-result --print-all \
     --window-icon="$DS/images/icon.png" \
     --no-headers --scroll --center \
-    --width=340 --height=250 --borders=5 \
+    --width=340 --height=220 --borders=5 \
     --column="" \
     --button="$(gettext "Invert")":2 \
     --button="$(gettext "Save")":0 \

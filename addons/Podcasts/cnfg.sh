@@ -92,15 +92,15 @@ CNFG=$(yad --form --title="$(gettext "Podcasts settings")" \
 --name=Idiomind --class=Idiomind \
 --always-print-result --print-all --separator="|" \
 --window-icon="$DS/images/icon.png" --center --scroll --on-top \
---width=520 --height=350 --borders=10 \
+--width=510 --height=380 --borders=10 \
 --text="$(gettext "Configure podcasts to language learning.")" \
 --field="$(gettext "Update at startup")":CHK "$update" \
 --field="$(gettext "Sync after update")":CHK "$sync" \
 --field="$(gettext "URL")":LBL " " \
---field="" "$url1" --field="" "$url2" --field="" "$url3" \
---field="" "$url4" --field="" "$url5" --field="" "$url6" \
---field="" "$url7" --field="" "$url8" --field="" "$url9" \
---field="" "$url10" --field="" "$url11" --field="" "$url12" \
+--field="" "${url1}" --field="" "${url2}" --field="" "${url3}" \
+--field="" "${url4}" --field="" "${url5}" --field="" "${url6}" \
+--field="" "${url7}" --field="" "${url8}" --field="" "${url9}" \
+--field="" "${url10}" --field="" "${url11}" --field="" "${url12}" \
 --field="$(gettext "Discover podcasts")":FBTN "$DSP/tls.sh 'dpods'" \
 --field=" ":LBL " " \
 --field="$(gettext "Path where episodes should be synced")":LBL " " \
@@ -112,11 +112,9 @@ CNFG=$(yad --form --title="$(gettext "Podcasts settings")" \
 ret=$?
 
 if [ $ret -eq 0 ]; then
-    
     apply
     
 elif [ $ret -eq 5 ]; then
-
     apply && "$DSP/tls.sh" sync 1
 fi
 
