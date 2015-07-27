@@ -63,7 +63,7 @@ function new_session() {
     check_index1 "$DM_tl/.3.cfg"
     cd /
     
-    s="$(xrandr | grep '*' | awk '{ print $1 }' \
+    s="$(xrandr | grep '*' |awk '{ print $1 }' \
     | sed 's/x/\n/')"
     sed -n 1p <<<"$s" >> "$DC_s/10.cfg"
     sed -n 2p <<<"$s" >> "$DC_s/10.cfg"
@@ -72,7 +72,7 @@ function new_session() {
     
     # log file
     if [ -f "$DC_s/log" ]; then
-    if [[ "$(du -sb "$DC_s/log" | awk '{ print $1 }')" -gt 100000 ]]; then
+    if [[ "$(du -sb "$DC_s/log" |awk '{ print $1 }')" -gt 100000 ]]; then
     tail -n2000 < "$DC_s/log" > "$DT/log"
     mv -f "$DT/log" "$DC_s/log"; fi
     fi
@@ -110,16 +110,9 @@ function new_session() {
     
     if [ -f "$DM_tl/.5.cfg" ]; then
     tpd="$(< "$DM_tl/.5.cfg")"
-    if grep -Fxq "${tpd}" "$DM_tl/.1.cfg"; then
-    touch "$DM_tl/${tpd}"
+    if grep -Fxq "${tpd}" "$DM_tl/.1.cfg"; then touch "$DM_tl/${tpd}"
     "$DS/default/tpc.sh" "${tpd}" 2; fi
     fi
-    
-    #### changes to version
-    if grep -o 'rplay' < "$DC_s/1.cfg"; then
-    rm "$DC_s/1.cfg"; fi
-    [ ! -d "${DM_tls}/images" ] && mkdir -p "${DM_tls}/images"
-    ###
 
     rm -f "$DT/ps_lk"
     "$DS/mngr.sh" mkmn &
@@ -416,7 +409,7 @@ panel() {
     --always-print-result \
     --window-icon=idiomind \
     --form --fixed --on-top --no-buttons --align=center \
-    --width=130 --height=190 --borders=0 --geometry=130x190-${x}-${y} \
+    --width=140 --height=190 --borders=0 --geometry=130x190-${x}-${y} \
     --field=gtk-new:btn "$DS/add.sh 'new_items'" \
     --field=gtk-home:btn "idiomind 'topic'" \
     --field=gtk-index:btn "$DS/chng.sh" \

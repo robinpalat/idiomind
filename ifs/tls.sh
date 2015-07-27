@@ -123,8 +123,8 @@ check_index() {
 
     DC_tlt="$DM_tl/${2}/.conf"
     DM_tlt="$DM_tl/${2}"
-    nv=0; f=0; a=0; i=0
-    [[ ${3} = 1 ]] && r=1 || r=0
+    mkmn=0; nv=0; f=0; a=0; v_img=0
+    [[ "${3}" = 1 ]] && r=1 || r=0
     
     _check() {
         
@@ -157,7 +157,7 @@ check_index() {
         export a=1; fi
         
         cnt=`ls "${DM_tlt}/images"/*.jpg |wc -l`
-        [[ ${cnt} -gt 1 ]] && export i=1
+        [ ${cnt} -gt 1 ] && export v_img=1
     }
     
     _restore() {
@@ -284,46 +284,48 @@ check_index() {
     
     _check
     
-    if [ ${f} = 1 -o ${nv} = 1 -o ${a} = 1 -o ${r} = 1 -o ${i} = 1 ]; then
-
-        if [ ${f} -eq 1 ]; then
-        (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
-        "$(gettext "Fixing...")" -t 3000) &
-        > "$DT/ps_lk"
-        [ ! -d "${DM_tlt}/.conf" ] && mkdir "${DM_tlt}/.conf"
-        [ ! -d "${DM_tlt}/images" ] && mkdir "${DM_tlt}/images"
-        _restore; _fix; fi
-        
-        if [ ${nv} -eq 1 ]; then
-        (sleep 1; notify-send -i idiomind "$(gettext "Fixing index")" \
-        "$(gettext "Migrating to new version...")" -t 3000) &
-        > "$DT/ps_lk"
-        _version; fi
-        
-        if [ ${i} -eq 1 ]; then
-        (sleep 1; notify-send -i idiomind "$(gettext "Fixing index")" \
-        "$(gettext "Migrating to new version...")" -t 3000) &
-        > "$DT/ps_lk"
-        [ ! -d "${DM_tls}/images" ] && mkdir -p "${DM_tls}/images"
-        _version_2; fi
-        
-        if [ ${a} -eq 1 ]; then
-        (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
-        "$(gettext "Fixing...")" -t 3000) &
-        > "$DT/ps_lk"
-        _restore; fi
-        
-        if [ ${r} -eq 1 ]; then
-        > "$DT/ps_lk"
-        _sanity; _restore; fi
-        
-        "$DS/ifs/tls.sh" colorize
-        "$DS/mngr.sh" mkmn
+    if [ ${f} -eq 1 ]; then
+    (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
+    "$(gettext "Fixing...")" -t 3000) &
+    > "$DT/ps_lk"
+    [ ! -d "${DM_tlt}/.conf" ] && mkdir "${DM_tlt}/.conf"
+    [ ! -d "${DM_tlt}/images" ] && mkdir "${DM_tlt}/images"
+    _restore; _fix; mkmn=1
     fi
     
-    if [ -f "$DT/ps_lk" ]; then rm -f "$DT/ps_lk"; fi
+    if [ ${nv} -eq 1 ]; then
+    (sleep 1; notify-send -i idiomind "$(gettext "Fixing index")" \
+    "$(gettext "Migrating to new version...")" -t 3000) &
+    > "$DT/ps_lk"
+    _version; mkmn=1
+    fi
     
-    exit
+    if [ ${v_img} -eq 1 ]; then
+    (sleep 1; notify-send -i idiomind "$(gettext "Fixing index")" \
+    "$(gettext "Migrating to new version...")" -t 3000) &
+    > "$DT/ps_lk"
+    [ ! -d "${DM_tls}/images" ] && mkdir -p "${DM_tls}/images"
+    _version_2
+    fi
+    
+    if [ ${a} -eq 1 ]; then
+    (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
+    "$(gettext "Fixing...")" -t 3000) &
+    > "$DT/ps_lk"
+    _restore; mkmn=1
+    fi
+    
+    if [ ${r} -eq 1 ]; then
+    > "$DT/ps_lk"
+    _sanity; _restore; mkmn=1
+    fi
+    
+    if [ ${mkmn} -eq 1 ] ;then
+    "$DS/ifs/tls.sh" colorize
+    "$DS/mngr.sh" mkmn
+    fi
+
+    if [ -f "$DT/ps_lk" ]; then rm -f "$DT/ps_lk"; fi
 }
 
 

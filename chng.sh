@@ -3,20 +3,20 @@
 
 if [[ ${1} = 0 ]]; then
 
-    w="$(grep -oP '(?<=words=\").*(?=\")' "$cfg")"
-    s="$(grep -oP '(?<=sntcs=\").*(?=\")' "$cfg")"
-    m="$(grep -oP '(?<=marks=\").*(?=\")' "$cfg")"
-    p="$(grep -oP '(?<=wprct=\").*(?=\")' "$cfg")"
-    export v="$(grep -oP '(?<=video=\").*(?=\")' "$cfgp")"
-    export ne="$(grep -oP '(?<=nsepi=\").*(?=\")' "$cfgp")"
-    export se="$(grep -oP '(?<=svepi=\").*(?=\")' "$cfgp")"
+    w="$(grep -oP '(?<=words=\").*(?=\")' "${cfg}")"
+    s="$(grep -oP '(?<=sntcs=\").*(?=\")' "${cfg}")"
+    m="$(grep -oP '(?<=marks=\").*(?=\")' "${cfg}")"
+    p="$(grep -oP '(?<=wprct=\").*(?=\")' "${cfg}")"
+    export v="$(grep -oP '(?<=video=\").*(?=\")' "${cfgp}")"
+    export ne="$(grep -oP '(?<=nsepi=\").*(?=\")' "${cfgp}")"
+    export se="$(grep -oP '(?<=svepi=\").*(?=\")' "${cfgp}")"
     
     _play() {
         
-        a="$(grep -oP '(?<=audio=\").*(?=\")' "$cfg")"
-        n="$(grep -oP '(?<=ntosd=\").*(?=\")' "$cfg")"
-        l="$(grep -oP '(?<=loop=\").*(?=\")' "$cfg")"
-        rw="$(grep -oP '(?<=rword=\").*(?=\")' "$cfg")"
+        a="$(grep -oP '(?<=audio=\").*(?=\")' "${cfg}")"
+        n="$(grep -oP '(?<=ntosd=\").*(?=\")' "${cfg}")"
+        l="$(grep -oP '(?<=loop=\").*(?=\")' "${cfg}")"
+        rw="$(grep -oP '(?<=rword=\").*(?=\")' "${cfg}")"
         [ ! -f "$DT"/.p_ ] && > "$DT"/.p_
 
         if [ ${n} != TRUE -a ${a} != TRUE -a ${stnrd} = 1 ]; then "$DS"/stop.sh 2 & exit 1; fi
