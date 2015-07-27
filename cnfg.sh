@@ -30,7 +30,7 @@ confirm() {
     --image=$2 --text="$1\n" \
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --center --on-top \
-    --width=500 --height=130 --borders=5 \
+    --width=540 --height=130 --borders=5 \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Yes")":0
 }

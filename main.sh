@@ -47,13 +47,12 @@ function new_session() {
     
     # start addons
     > "$DC_s/2.cfg"
-    while read -r set; do
-
-        if [[ -f "/usr/share/idiomind/addons/$set/icon.png" ]]; then 
-        echo "/usr/share/idiomind/addons/$set/icon.png" >> "$DC_s/2.cfg"
-        else echo "/usr/share/idiomind/images/thumb.png" >> "$DC_s/2.cfg"; fi
-        echo "$set" >> "$DC_s/2.cfg"
-
+    while read -r _set; do
+    
+    if [ -e "/usr/share/idiomind/addons/${_set}/icon.png" ]; then
+    echo -e "/usr/share/idiomind/addons/${_set}/icon.png\n${_set}" >> "$DC_s/2.cfg"
+    else echo -e "/usr/share/idiomind/images/thumb.png\n${_set}" >> "$DC_s/2.cfg"; fi
+    
     done < <(cd "$DS/addons"; ls -d *)
     
     for strt in "$DS/ifs/mods/start"/*; do
@@ -68,8 +67,7 @@ function new_session() {
     sed -n 1p <<<"$s" >> "$DC_s/10.cfg"
     sed -n 2p <<<"$s" >> "$DC_s/10.cfg"
     echo "$DESKTOP_SESSION" >> "$DC_s/10.cfg"
-    #
-    
+
     # log file
     if [ -f "$DC_s/log" ]; then
     if [[ "$(du -sb "$DC_s/log" |awk '{ print $1 }')" -gt 100000 ]]; then
@@ -84,28 +82,28 @@ function new_session() {
     [ ! -f "$DM_tl/.1.cfg" ] && touch "$DM_tl/.1.cfg"
     while read -r line; do
     
-        unset stts
-        DM_tlt="$DM_tl/${line}"
-        stts=$(sed -n 1p "${DM_tlt}/.conf/8.cfg")
-        [ -z $stts ] && stts=1
+    unset stts
+    DM_tlt="$DM_tl/${line}"
+    stts=$(sed -n 1p "${DM_tlt}/.conf/8.cfg")
+    [ -z $stts ] && stts=1
 
-        if [ -f "${DM_tlt}/.conf/9.cfg" ] && \
-        [ -f "${DM_tlt}/.conf/7.cfg" ]; then
-        
-            calculate_review "${line}"
-            if [[ $((stts%2)) = 0 ]]; then
-                if [ ${RM} -ge 180 -a ${stts} = 8 ]; then
-                echo 10 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"
-                elif [ ${RM} -ge 100 -a ${stts} -lt 8 ]; then
-                echo 8 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"; fi
+    if [ -f "${DM_tlt}/.conf/9.cfg" ] && \
+    [ -f "${DM_tlt}/.conf/7.cfg" ]; then
+    
+        calculate_review "${line}"
+        if [[ $((stts%2)) = 0 ]]; then
+            if [ ${RM} -ge 180 -a ${stts} = 8 ]; then
+            echo 10 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"
+            elif [ ${RM} -ge 100 -a ${stts} -lt 8 ]; then
+            echo 8 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"; fi
 
-            else
-                if [ ${RM} -ge 180 -a ${stts} = 7 ]; then
-                echo 9 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"
-                elif [ ${RM} -ge 100 -a ${stts} -lt 7 ]; then
-                echo 7 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"; fi
-            fi
+        else
+            if [ ${RM} -ge 180 -a ${stts} = 7 ]; then
+            echo 9 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"
+            elif [ ${RM} -ge 100 -a ${stts} -lt 7 ]; then
+            echo 7 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"; fi
         fi
+    fi
     done < "$DM_tl/.1.cfg"
     
     if [ -f "$DM_tl/.5.cfg" ]; then
