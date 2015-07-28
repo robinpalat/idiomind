@@ -139,7 +139,7 @@ elif [[ ${1} != 0 ]]; then
     elif [ $ret -eq 0 ]; then "$DS/default/tpc.sh" "$tpc" &
 
     elif [ $ret -eq 5 ]; then "$DS/default/tpc.sh" "$tpc" &
-    echo "${tpc}" > "$DM_tl"/.5.cfg
+    [ -n "${tpc}" ] && echo "${tpc}" > "$DM_tl"/.5.cfg
     
     fi
     exit

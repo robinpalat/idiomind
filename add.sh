@@ -45,7 +45,6 @@ new_topic() {
     exit
 }
 
-
 new_items() {
 
     if [ ! -d "$DT" ]; then new_session; fi
@@ -155,7 +154,6 @@ Create one using the button below. ")" & exit 1; fi
         fi
 }
 
-
 new_sentence() {
 
     DT_r="$3"
@@ -224,7 +222,6 @@ new_sentence() {
         exit 1
     fi
 }
-
 
 new_word() {
 
@@ -297,7 +294,6 @@ new_word() {
     fi
 }
 
-
 list_words_edit() {
 
     c="${4}"
@@ -357,7 +353,6 @@ list_words_edit() {
     fi
     cleanups "${DT_r}" "$slt"; exit
 }
-
 
 list_words_sentence() {
 
@@ -421,7 +416,6 @@ list_words_sentence() {
     exit
 }
 
-
 list_words_dclik() {
 
     tpe="$(sed -n 2p "$DT/.n_s_pr")"
@@ -461,7 +455,6 @@ list_words_dclik() {
     exit 1
     
 } >/dev/null 2>&1
-
 
 process() {
     
@@ -769,7 +762,6 @@ process() {
                 cleanups "$DT_r" "$lckpr" & exit
             fi
 }
-
 
 case "$1" in
     new_topic)

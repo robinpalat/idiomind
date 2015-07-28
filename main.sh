@@ -115,7 +115,6 @@ function new_session() {
     "$DS/mngr.sh" mkmn &
 }
 
-
 if grep -o '.idmnd' <<<"${1: -6}"; then
 
     source "$DS/ifs/mods/cmns.sh"

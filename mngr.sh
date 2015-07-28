@@ -34,7 +34,6 @@ mkmn() {
     rm -f "$DT/mn_lk"; exit
 }
 
-
 delete_item_ok() {
 
 
@@ -70,7 +69,6 @@ delete_item_ok() {
     rm "${DC_tlt}"/*.tmp
     rm -f "$DT/ps_lk" & exit 1
 }
-
 
 delete_item() {
 
@@ -115,7 +113,6 @@ delete_item() {
 
     rm -f "$DT/ps_lk" & exit 1
 }
-
 
 edit_item() {
 
@@ -312,7 +309,6 @@ edit_item() {
     
 } >/dev/null 2>&1
 
-
 edit_list() {
     
     [ -f "$DT/add_lst" -o -f "$DT/el_lk" ] && exit
@@ -422,8 +418,6 @@ edit_list() {
     
 } >/dev/null 2>&1
 
-
-
 delete_topic() {
     
     include "$DS/ifs/mods/mngr"
@@ -473,7 +467,6 @@ delete_topic() {
     > "$DC_s/7.cfg"
     rm -f "$DT/rm_lk" "$DM_tl"/.*.tmp & exit 1
 }
-
 
 rename_topic() {
 
@@ -539,7 +532,6 @@ rename_topic() {
     fi
 }
 
-
 mark_to_learn_topic() {
     
     include "$DS/ifs/mods/mngr"
@@ -603,7 +595,6 @@ mark_to_learn_topic() {
 
     [[ ${3} = 1 ]] && idiomind topic &
 }
-
 
 mark_as_learned_topic() {
 
@@ -686,7 +677,6 @@ mark_as_learned_topic() {
     [[ ${3} = 1 ]] && idiomind topic &
     exit 1
 }
-
 
 case "$1" in
     mkmn)
