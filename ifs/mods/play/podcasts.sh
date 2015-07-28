@@ -5,7 +5,6 @@ f=0
 get_itep() {
     
     stnrd=0
-    
     if [ ${f} -gt 5 -o ! -d "${DM_tl}/Podcasts/cache" ]; then
     msg "$(gettext "An error has occurred. Playback stopped")" info &
     "$DS/stop.sh" 2; fi

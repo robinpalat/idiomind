@@ -18,7 +18,6 @@
 #
 #  2015/02/27
 
-IFS=$'\n\t'
 if [ ! -d "$HOME/.idiomind" ]; then
     /usr/share/idiomind/ifs/1u.sh & exit 1
 fi

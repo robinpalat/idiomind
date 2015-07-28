@@ -139,36 +139,28 @@ get_images () {
     if [ "$tp" = aud ]; then
         
         cd "$DT_r"; p=TRUE; rm -f ./*.jpeg ./*.jpg
-        
-        eyeD3 --write-images="$DT_r" "media.$ex"
+        wget -q -O- "$FEED" | grep -o '<itunes:image href="[^"]*' \
+        | grep -o '[^"]*$' | xargs wget -c
         if ls | grep '.jpeg'; then img="$(ls | grep '.jpeg')"
+        elif ls | grep '.png'; then img="$(ls | grep '.png')"
         else img="$(ls | grep '.jpg')"; fi
-        
-        if [ ! -f "$DT_r/$img" ]; then
-        
-            wget -q -O- "$FEED" | grep -o '<itunes:image href="[^"]*' \
-            | grep -o '[^"]*$' | xargs wget -c
-            if ls | grep '.jpeg'; then img="$(ls | grep '.jpeg')"
-            elif ls | grep '.png'; then img="$(ls | grep '.png')"
-            else img="$(ls | grep '.jpg')"; fi
-        fi
-        
+
         if [ ! -f "$DT_r/$img" ]; then
         cp -f "$DSP/images/audio.png" "$DMC/$fname.png"
-        p=""; fi
+        p=FALSE; fi
 
     elif [ "$tp" = vid ]; then
         
         cd "$DT_r"; p=TRUE; rm -f ./*.jpeg ./*.jpg
         mplayer -ss 60 -nosound -noconsolecontrols \
-        -vo jpeg -frames 3 "media.$ex" >/dev/null
+        -vo jpeg -frames 3 ./"media.$ex" >/dev/null
 
         if ls | grep '.jpeg'; then img="$(ls | grep '.jpeg' | head -n1)"
         else img="$(ls | grep '.jpg' | head -n1)"; fi
         
         if [ ! -f "$DT_r/$img" ]; then
-        cp -f "$DSP/images/video.png" "$DMC/$fname.png"
-        p=""; fi
+        cp -f "$DSP/images/audio.png" "$DMC/$fname.png"
+        p=FALSE; fi
         
     elif [ "$tp" = txt ]; then
     
@@ -177,7 +169,7 @@ get_images () {
         img="media.$ex"
     fi
     
-    if [ "$p" = TRUE ] && [ -f "$DT_r/$img" ]; then
+    if [ $p = TRUE -a -f "$DT_r/$img" ]; then
     layer="$DSP/images/layer.png"
     convert "$DT_r/$img" -interlace Plane -thumbnail 62x54^ \
     -gravity center -extent 62x54 -quality 100% tmp.png
@@ -243,13 +235,13 @@ fetch_podcasts() {
                             mediatype "$enclosure_url"
                             
                             if [ ! -f "$DMC/$fname.$ex" ]; then
-                            cd "$DT_r"; wget -q -c -T 51 -O "media.$ex" "$enclosure_url"
-                            else cd "$DT_r"; mv -f "$DMC/$fname.$ex" "media.$ex"; fi
+                            cd "$DT_r"; wget -q -c -T 51 -O ./"media.$ex" "$enclosure_url"
+                            else cd "$DT_r"; mv -f "$DMC/$fname.$ex" ./"media.$ex"; fi
                             
                             e=$?
                             if [ $e = 0 ]; then
                             get_images
-                            mv -f "media.$ex" "$DMC/$fname.$ex"
+                            mv -f ./"media.$ex" "$DMC/$fname.$ex"
                             mkhtml
 
                             if [[ -s "$DCP/1.lst" ]]; then

@@ -41,33 +41,33 @@ function check_source_1() {
         get="${sets[${n}]}"
         val=$(echo "${line}" |grep -o "$get"=\"[^\"]* |grep -o '[^"]*$')
         
-        if [[ ${n} = 1 ]]; then # name
+        if [[ ${n} = 1 ]]; then
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
             [ "$(grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${val}")" ]; then invalid 2; fi
-        elif [[ ${n} = 2 || ${n} = 3 ]]; then # lang
+        elif [[ ${n} = 2 || ${n} = 3 ]]; then
             if ! grep -Fo "${val}" <<<"${LANGUAGES[@]}"; then invalid 3; fi
-        elif [[ ${n} = 4 || ${n} = 5 ]]; then # user contact
+        elif [[ ${n} = 4 || ${n} = 5 ]]; then
             if [ ${#val} -gt 30 ] || \
             [ "$(grep -o -E '\*|\/|$|\)|\(|=' <<<"${val}")" ]; then invalid 4; fi
-        elif [[ ${n} = 6 ]]; then # categ
+        elif [[ ${n} = 6 ]]; then
             if ! grep -Fo "${val}" <<<"${CATEGORIES[@]}"; then invalid 5; fi
-        elif [[ ${n} = 7 ]]; then # id
+        elif [[ ${n} = 7 ]]; then
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 8 ]; then invalid 6; fi
-        elif [[ ${n} = 8 ]]; then # name 
+        elif [[ ${n} = 8 ]]; then
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
             [ "$(grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${val}")" ]; then invalid 7; fi
-        elif [[ ${n} = 9 || ${n} = 10 || ${n} = 11 ]]; then # date
+        elif [[ ${n} = 9 || ${n} = 10 || ${n} = 11 ]]; then
             if [ -n "${val}" ]; then
             if ! [[ ${val} =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] \
             || [ ${#val} -gt 12 ]; then invalid 8; fi; fi
-        elif [[ ${n} = 12 || ${n} = 13 || ${n} = 14 ]]; then # count
+        elif [[ ${n} = 12 || ${n} = 13 || ${n} = 14 ]]; then
             if ! [[ $val =~ $nu ]] || [ ${val} -gt 200 ]; then invalid 9; fi
-        elif [[ ${n} = 15 ]]; then # size 
+        elif [[ ${n} = 15 ]]; then
              if ! [[ $val =~ $nu ]] || [ ${val} -gt 1000 ]; then invalid 10; fi
-        elif [[ ${n} = 16 ]]; then # size 
+        elif [[ ${n} = 16 ]]; then
              if [ "$(grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${val}")" ] || \
              [ ${#val} -gt 9 ]; then invalid 11; fi
-        elif [[ ${n} = 17 ]]; then # level
+        elif [[ ${n} = 17 ]]; then
             if ! [[ $val =~ $nu ]] || [ ${#val} -gt 2 ]; then invalid 12; fi
         fi
         export ${sets[$n]}="${val}"
@@ -550,7 +550,6 @@ colorize() {
     log1="$(cat ./log1 ./d.1)"
     
     while read -r item; do
-    
         if grep -Fxo "${item}" <<<"${cfg6}"; then
         i="<b><big>${item}</big></b>";else i="${item}"; fi
         if grep -Fxo "${item}" <<<"${log3}"; then
@@ -709,7 +708,6 @@ set_image() {
         /usr/bin/convert "$DT/temp.jpg" -interlace Plane -thumbnail 405x275^ \
         -gravity center -extent 400x270 -quality 90% "$ifile"
         "$DS/ifs/tls.sh" set_image "${2}" "${3}" & exit
-
     fi
 
     cleanups "$DT/temp.jpg"

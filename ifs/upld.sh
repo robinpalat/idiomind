@@ -153,7 +153,7 @@ btn="--button="$(gettext "Upload")":0"; else
 btn="--center"; fi
 cd "$HOME"
 
-if [ -f "${DC_tlt}/11.cfg" ]; then
+if [ -e "${DC_tlt}/11.cfg" ]; then
 
         if [ -z "$(< "${DC_tlt}/11.cfg")" ]; then
         c_audio="$(grep -o 'naudi="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
