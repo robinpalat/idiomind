@@ -130,7 +130,7 @@ Create one using the button below. ")" & exit 1; fi
                 if [ $(wc -w <<<"${srce}") = 1 ]; then
                     "$DS/add.sh" new_word "${trgt}" "$DT_r" "${srce}" & exit 1
                     
-                elif [ "$(wc -w <<<"${srce}")" -ge 1 -a ${#srce} -le 180 ]; then
+                elif [ "$(wc -w <<<"${srce}")" -ge 1 -a ${#srce} -le 150 ]; then
                     "$DS/add.sh" new_sentence "${trgt}" "$DT_r" "${srce}" & exit 1
                 fi
                 
@@ -144,7 +144,7 @@ Create one using the button below. ")" & exit 1; fi
                 if [ $(wc -w <<<"${trgt}") = 1 ]; then
                     "$DS/add.sh" new_word "${trgt}" "$DT_r" "${srce}" & exit 1
                     
-                elif [ "$(wc -w <<<"${trgt}")" -ge 1 -a ${#trgt} -le 180 ]; then
+                elif [ "$(wc -w <<<"${trgt}")" -ge 1 -a ${#trgt} -le 150 ]; then
                     "$DS/add.sh" new_sentence "${trgt}" "$DT_r" "${srce}" & exit 1
                 fi
             fi
@@ -562,6 +562,7 @@ process() {
     else mv "$DT_r/sntsls_" "$DT_r/sntsls"; fi
     
     sed -i '/^$/d' "$DT_r/sntsls"
+    chk=`tr -s '\n' ' ' < "$DT_r/sntsls" |wc -c`
     tpe="$(sed -n 2p "$lckpr")"
     info="-$((200-ns))"
 
@@ -570,8 +571,13 @@ process() {
         msg " $(gettext "Failed to get text.")\n" info
         cleanups "$DT_r" "$lckpr" "$slt" & exit 1
     
-    else
-        tpe="$(sed -n 2p "$lckpr")"
+    elif [[ ${chk} -le 150 ]]; then
+    
+        "$DS/add.sh" new_items "" 2 "$(tr -s '\n' ' ' < "$DT_r/sntsls")"
+        cleanups "$DT_r" "$lckpr" "$slt" & exit 1
+    
+    elif [[ ${chk} -gt 150 ]]; then
+        
         slt=$(mktemp $DT/slt.XXXX.x)
         dlg_checklist_3 "$DT_r/sntsls" "${tpe}"
         ret="$?"
