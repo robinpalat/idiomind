@@ -4,18 +4,18 @@
  
 function word_view() {
 
-    [ -n "$defn" ] && field_defn="--field=$defn:lbl"
-    [ -n "$note" ] && field_note="--field=$note\n:lbl"
+    [ -n "$defn" ] && field_defn="--field=<small>$defn</small>:lbl"
+    [ -n "$note" ] && field_note="--field=<small>$note</small>\n:lbl"
     [ -n "$exmp" ] && field_exmp="--field=<i><span color='#737373'>$exmp</span></i>:lbl"
 
     yad --form --title=" " \
     --selectable-labels --quoted-output \
-    --text="$tag<span font_desc='Sans Free 25'>$trgt</span>\n\n<i>$srce</i>\n\n" \
+    --text="$tag<span font_desc='Sans Free 25'>${trgt}</span>\n\n<i>$srce</i>\n\n" \
     --window-icon="$DS/images/icon.png" \
     --align=left --scroll --skip-taskbar --text-align=center \
     --image-on-top --center --on-top \
     --width=620 --height=380 --borders=20 \
-    --field="":lbl "$field_exmp" "$field_defn" "$field_note" \
+    --field="":lbl "${field_exmp}" "${field_defn}" "${field_note}" \
     --button=gtk-edit:4 \
     --button="$(gettext "Listen")":"$cmd_listen" \
     --button=gtk-go-down:2 \
@@ -29,7 +29,7 @@ function sentence_view() {
     if [ "$(grep -o gramr=\"[^\"]* < "$DC_s/1.cfg" | grep -o '[^"]*$')"  = TRUE ]; then
     trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
     
-    echo "$lwrd" | yad --list --title=" " \
+    echo "${lwrd}" | yad --list --title=" " \
     --text="$tag<span font_desc='Sans Free 15'>${trgt_l}</span>\n\n<i>$srce</i>\n\n" \
     --selectable-labels --print-column=0 \
     --dclick-action="$DS/play.sh 'play_word'" \

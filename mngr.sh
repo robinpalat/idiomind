@@ -177,9 +177,9 @@ edit_item() {
             trgt_mod="$(clean_1 "$(cut -d "|" -f1 <<<"${edit_dlg}")")"
             srce_mod="$(clean_0 "$(cut -d "|" -f2 <<<"${edit_dlg}")")"
             audf_mod="$(cut -d "|" -f4 <<<"${edit_dlg}")"
-            exmp_mod="$(clean_1 "$(cut -d "|" -f5 <<<"${edit_dlg}")")"
-            defn_mod="$(clean_1 "$(cut -d "|" -f6 <<<"${edit_dlg}")")"
-            note_mod="$(clean_1 "$(cut -d "|" -f7 <<<"${edit_dlg}")")"
+            exmp_mod="$(clean_0 "$(cut -d "|" -f5 <<<"${edit_dlg}")")"
+            defn_mod="$(clean_0 "$(cut -d "|" -f6 <<<"${edit_dlg}")")"
+            note_mod="$(clean_0 "$(cut -d "|" -f7 <<<"${edit_dlg}")")"
             mark_mod="$(cut -d "|" -f9 <<<"${edit_dlg}")"
             type_mod=1
 

@@ -289,7 +289,7 @@ internet
 [ -d "$DT" ] && cd "$DT" || exit 1
 [ -d "$DT/upload" ] && rm -fr "$DT/upload"
 
-notify-send "$(gettext "Upload in progress")" \
+notify-send -i info "$(gettext "Upload in progress")" \
 "$(gettext "This can take some time, please wait")" -t 6000
 
 mkdir "$DT/upload"
