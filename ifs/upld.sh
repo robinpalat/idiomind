@@ -28,16 +28,22 @@ function dwld() {
     md5id=$(grep -o 'md5id="[^"]*' "${idcfg}" |grep -o '[^"]*$')
     oname=$(grep -o 'oname="[^"]*' "${idcfg}" |grep -o '[^"]*$')
     langt=$(grep -o 'langt="[^"]*' "${idcfg}" |grep -o '[^"]*$')
-    url="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
-    | grep -o 'DOWNLOADS="[^"]*' | grep -o '[^"]*$')"
-    URL="$url/c/$ilink.${md5id}.tar.gz"
+    url1="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
+    |grep -o 'DOWNLOADS="[^"]*' |grep -o '[^"]*$')"
+    url2="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
+    |grep -o 'DOWNLOADS2="[^"]*' |grep -o '[^"]*$')"
+    url1="$url1/c/$langt/$ilink.$md5id.tar.gz"
+    url2="$url2/c/$langt/$ilink.$md5id.tar.gz"
 
-    if ! wget -S --spider "${URL}" 2>&1 |grep 'HTTP/1.1 200 OK'; then
-        cleanups "$DT/download"
-        msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" info & exit; fi
+    if wget -S --spider "${url1}" 2>&1 |grep 'HTTP/1.1 200 OK'; then
+    URL="${url1}"
+    elif wget -S --spider "${url2}" 2>&1 |grep 'HTTP/1.1 200 OK'; then
+    URL="${url2}"
+    else cleanups "$DT/download"
+    msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" info & exit
+    fi
     
     wget -q -c -T 80 -O "$DT/download/${oname}.tar.gz" "${URL}"
-
     if [ -f "$DT/download/${oname}.tar.gz" ]; then
         cd "$DT/download"/
         tar -xzvf "$DT/download/${oname}.tar.gz"
@@ -156,44 +162,44 @@ cd "$HOME"
 
 if [ -e "${DC_tlt}/11.cfg" ]; then
 
-        if [ -z "$(< "${DC_tlt}/11.cfg")" ]; then
-        c_audio="$(grep -o 'naudi="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-        c_images="$(grep -o 'nimag="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-        fsize="$(grep -o 'nsize="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-        cmd_dwl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
-        info="<b>$(gettext "Additional content available")</b>"
-        info2="$(gettext "Audio files:") $c_audio\n$(gettext "Images:") $c_images\n$(gettext "Size:") $fsize"
-        dlg=$(yad --form --columns=2 --title="$(gettext "Share")" \
-        --text="<span font_desc='Free Sans 15'> ${tpc}</span>" \
-        --name=Idiomind --class=Idiomind \
-        --window-icon="$DS/images/icon.png" --buttons-layout=end \
-        --align=left --center --on-top \
-        --width=380 --height=260 --borders=12 \
-        --field="\n\n$info:lbl" " " \
-        --field="$(gettext "Download"):BTN" "${cmd_dwl}" \
-        --field="$info2:lbl" " " \
-        --field="\t\t\t\t\t:lbl" " " \
-        --field=" :lbl" " " \
-        --button="$(gettext "PDF")":2 \
-        --button="$(gettext "Close")":4)
-        ret=$?
-        
-        elif [ -n "$(< "${DC_tlt}/11.cfg")" ]; then
-        dlg=$(yad --form --title="$(gettext "Share")" \
-        --columns=2 --separator="|" \
-        --text="<span font_desc='Free Sans 15'> ${tpc}</span>" \
-        --name=Idiomind --class=Idiomind \
-        --window-icon="$DS/images/icon.png" --buttons-layout=end \
-        --align=left --center --on-top \
-        --width=380 --height=260 --borders=12 \
-        --field="$(gettext "Latest Download:"):lbl" " " \
-        --field="$(< "${DC_tlt}/11.cfg"):lbl" " " \
-        --field=" :lbl" " " \
-        --button="$(gettext "PDF")":2 \
-        --button="$(gettext "Close")":4)
-        ret=$?
-        
-        fi
+    if [ -z "$(< "${DC_tlt}/11.cfg")" ]; then
+    c_audio="$(grep -o 'naudi="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+    c_images="$(grep -o 'nimag="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+    fsize="$(grep -o 'nsize="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+    cmd_dwl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
+    info="<b>$(gettext "Additional content available")</b>"
+    info2="$(gettext "Audio files:") $c_audio\n$(gettext "Images:") $c_images\n$(gettext "Size:") $fsize"
+    dlg=$(yad --form --columns=2 --title="$(gettext "Share")" \
+    --text="<span font_desc='Free Sans 15'> ${tpc}</span>" \
+    --name=Idiomind --class=Idiomind \
+    --window-icon="$DS/images/icon.png" --buttons-layout=end \
+    --align=left --center --on-top \
+    --width=380 --height=260 --borders=12 \
+    --field="\n\n$info:lbl" " " \
+    --field="$(gettext "Download"):BTN" "${cmd_dwl}" \
+    --field="$info2:lbl" " " \
+    --field="\t\t\t\t\t:lbl" " " \
+    --field=" :lbl" " " \
+    --button="$(gettext "PDF")":2 \
+    --button="$(gettext "Close")":4)
+    ret=$?
+    
+    elif [ -n "$(< "${DC_tlt}/11.cfg")" ]; then
+    dlg=$(yad --form --title="$(gettext "Share")" \
+    --columns=2 --separator="|" \
+    --text="<span font_desc='Free Sans 15'> ${tpc}</span>" \
+    --name=Idiomind --class=Idiomind \
+    --window-icon="$DS/images/icon.png" --buttons-layout=end \
+    --align=left --center --on-top \
+    --width=380 --height=260 --borders=12 \
+    --field="$(gettext "Latest Download:"):lbl" " " \
+    --field="$(< "${DC_tlt}/11.cfg"):lbl" " " \
+    --field=" :lbl" " " \
+    --button="$(gettext "PDF")":2 \
+    --button="$(gettext "Close")":4)
+    ret=$?
+    
+    fi
 else
     dlg=$(yad --form --title="$(gettext "Share")" \
     --text="<span font_desc='Free Sans 14'>${tpc}</span>" \
