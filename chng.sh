@@ -123,7 +123,7 @@ elif [[ ${1} != 0 ]]; then
     --window-icon="$DS/images/icon.png" \
     --text-align=$align --center $img --image-on-top \
     --no-headers --ellipsize=END --expand-column=2 \
-    --width=600 --height=560 --borders=8 \
+    --width=620 --height=580 --borders=8 \
     --column=img:IMG \
     --column=File:TEXT \
     --button=gtk-new:3 \

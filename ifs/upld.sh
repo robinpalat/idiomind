@@ -57,6 +57,7 @@ function dwld() {
         exfiles="$(find "${tmp}" -maxdepth 5 -perm -111 -type f | wc -l)"
         atfiles=$(find "${tmp}/files" -maxdepth 5 -name | wc -l)
         others=$((wchfiles+wcexfiles))
+        
         mv -f "${tmp}/conf/info" "${DC_tlt}/info"
         [ ! -d "$DM_t/$langt/.share" ] && mkdir -p "$DM_t/$langt/.share/images"
         mv -n "${tmp}/share"/*.mp3 "$DM_t/$langt/.share"/
@@ -66,10 +67,10 @@ function dwld() {
         while read -r img; do
         if [ -f "${tmp}/images/${img,,}-0.jpg" ]; then
         if [ -f "$DM_t/$langt/.share/images/${img,,}-0.jpg" ]; then
-        n=`ls "$DM_t/$langt/.share/images/${img,,}-"*.jpg |wc -l`
-        name_img="${DM_tls}/images/${trgt,,}-"${n}.jpg
-        else name_img="${DM_tls}/images/${trgt,,}-0.jpg"; fi
-        mv -f "${tmp}/images/${img,,}-0.jpg" "$name_img"; fi
+        n=`ls "${DM_tls}/images/${img,,}"-*.jpg |wc -l`
+        name_img="${DM_tls}/images/${img,,}"-${n}.jpg
+        else name_img="${DM_tls}/images/${img,,}-0.jpg"; fi
+        mv -f "${tmp}/images/${img,,}-0.jpg" "${name_img}"; fi
         done < "${DC_tlt}/3.cfg"
         rm -fr "${tmp}/share" "${tmp}/conf" "${tmp}/images"
         mv -f "${tmp}"/*.mp3 "${DM_tlt}"/
@@ -330,6 +331,11 @@ while read -r audio; do
 if [ -f "$DM_tl/.share/$audio.mp3" ]; then
 cp -f "$DM_tl/.share/$audio.mp3" "$DT_u/${tpc}/share/$audio.mp3"; fi
 done <<<"$auds"
+while read -r audio; do
+if [ -f "$DM_tl/.share/${audio,,}.mp3" ]; then
+cp -f "$DM_tl/.share/${audio,,}.mp3" "$DT_u/${tpc}/share/${audio,,}.mp3"; fi
+done < "${DC_tlt}/3.cfg"
+
 c_audio=$(find "$DT_u/${tpc}" -maxdepth 5 -name '*.mp3' |wc -l)
 
 while read -r img; do

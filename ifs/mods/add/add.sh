@@ -320,7 +320,7 @@ function set_image_1() {
 
 function set_image_2() {
     
-    /usr/bin/convert "$DT_r/img.jpg" -interlace Plane -thumbnail 400x270^ \
+    /usr/bin/convert "$DT_r/img.jpg" -interlace Plane -thumbnail 405x275^ \
     -gravity center -extent 400x270 -quality 90% "$DT_r/imgs.jpg"
     mv -f "$DT_r/imgs.jpg" "${2}"
 }
