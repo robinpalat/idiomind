@@ -197,7 +197,7 @@ new_sentence() {
         
              if [ "$trans" = TRUE ]; then
              
-                tts "${trgt}" "$lgt" "$DT_r" "${DM_tlt}/$id.mp3"
+                tts "${trgt}" "$lgt" "$DT_r" "${DM_tlt}/$id.mp3" #TODO
                     [ ! -f "${DM_tlt}/$id.mp3" ] && \
                     voice "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
                 
@@ -679,7 +679,7 @@ process() {
                                     if [ "$trans" = TRUE ]; then
                                     tts "${trgt}" $lgt "$DT_r" "${DM_tlt}/$id.mp3"
                                     [ ! -f "${DM_tlt}/$id.mp3" ] && voice "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
-                                    else voice "${trgt}" "${DT_r}" "${DM_tlt}/$id.mp3"; fi
+                                    else voice "${trgt}" "${DT_r}" "${DM_tlt}/$id.mp3"; fi #TODO
                                     ( fetch_audio "$aw" "$bw" )
                                     echo "${trgt}" >> "$DT_r/adds"
                                     ((adds=adds+1))

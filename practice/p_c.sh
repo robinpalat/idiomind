@@ -53,14 +53,16 @@ fonts() {
     && lst="${trgt:0:1} ${trgt:5:5}" || lst=$(echo "${trgt^}" |sed "s|[a-z]|"\ \."|g")
     fi
     
+    item="$(grep -F -m 1 "trgt={${trgt}}" "${cfg0}" |sed 's/},/}\n/g')"
+    id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
     s=$((30-${#trgt}))
     lcuestion="\n\n<span font_desc='Verdana ${s}' color='#717171'><b>${lst}</b></span>\n\n\n"
     }
 
 cuestion() {
     
-    cmd_play="$DS/play.sh play_word ${trgt}"
-    (sleep 0.5 && "$DS/play.sh" play_word "${trgt}") &
+    cmd_play="$DS/play.sh play_word "\"${trgt}\"" ${id}"
+    (sleep 0.5 && "$DS/play.sh" play_word "${trgt}" ${id}) &
 
     yad --form --title="$(gettext "Practice")" \
     --text="$lcuestion" \

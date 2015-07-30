@@ -371,6 +371,8 @@ edit_list() {
         
         touch "${direc}/3.cfg" "${direc}/4.cfg"
         mv -f "$DT/tmp0" "${direc}/0.cfg"
+        if [[ "$(cat "${direc}/1.cfg" "${direc}/2.cfg" |wc -l)" -lt 1 ]]; then
+        > "${direc}/0.cfg"; fi
         "$DS/ifs/tls.sh" colorize
         rm -f "$DT/el_lk"
 
@@ -436,8 +438,7 @@ delete_topic() {
             if [ -f "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "${tpc}" ]; then
             "$DS/stop.sh" 5; fi
             
-            if [ -f "$DT/.p_" ] && [ "$(sed -n 2p "$DT/.p_")" = "${tpc}" ]; then
-            notify-send -i idiomind "$(gettext "Playback is stopped")" -t 5000 &
+            if [ -f "$DT/.p_" ] && [ "$(sed -n 2p "$DT/.p_")" = "${tpc}" ]; then 
             "$DS/stop.sh" 2; fi
             
             [ -f "$DM/backup/${tpc}.bk" ] && rm "$DM/backup/${tpc}.bk"
@@ -464,6 +465,12 @@ delete_topic() {
             
             "$DS/mngr.sh" mkmn &
         fi
+    
+    if [ -e "$DM_tl/.5.cfg" ]; then
+    tpd="$(< "$DM_tl/.5.cfg")"
+    if grep -Fxq "${tpd}" "$DM_tl/.1.cfg"; then
+    "$DS/default/tpc.sh" "${tpd}" 2; fi
+    fi
     > "$DC_s/7.cfg"
     rm -f "$DT/rm_lk" "$DM_tl"/.*.tmp & exit 1
 }

@@ -271,7 +271,7 @@ function topic() {
             "$DS/mngr.sh" rename_topic "${ntpc}" & exit; fi
         }
     
-    if [[ ${inx0} -lt 1 ]]; then 
+    if [[ ${inx0} -lt 1 ]]; then
         
         notebook_1
         ret=$?
