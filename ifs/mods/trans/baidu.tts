@@ -1,0 +1,32 @@
+#!/bin/bash
+# -*- ENCODING: UTF-8 -*-
+
+DT_r="$3"; f=1
+if [[ `pwd` != "${3}" ]]; then exit; fi
+
+if [ "$2" = zh-cn ]; then t=zh
+elif [ "$2" = en ]; then t=en
+elif [ "$2" = ja ]; then t=jp
+elif [ "$2" = pt ]; then t=pt
+else exit; fi
+
+if [[ ${#1} -gt 100 ]]; then
+
+    while read -r chnk; do
+        if [[ -n "${chnk}" ]]; then
+        q="$(sed -s "s/|/\'/g" <<<"${chnk}")"
+        wget -q -U Mozilla -O "$DT_r/tmp${f}.mp3" \
+        "http://tts.baidu.com/text2audio?lan=$t&ie=UTF-8&text=${q}" || rm -f "$DT_r/tmp${f}.mp3"
+        fi
+        ((f=f+1))
+    done < <(tr -s "'" "|" <<<"${1}" |xargs -n7)
+    [ -e "$DT_r/tmp1.mp3" ] && cat $(ls "$DT_r"/tmp[0-9]*.mp3 |sort -n |tr '\n' ' ') > "${4}"
+    rm -f "$DT_r"/*.mp3
+
+else
+    wget -q -U Mozilla -O "$DT_r/tmp1.mp3" \
+    "http://tts.baidu.com/text2audio?lan=$t&ie=UTF-8&text=${1}" || rm -f "$DT_r/tmp1.mp3"
+    [ -e "$DT_r/tmp1.mp3" ] && mv -f "$DT_r/tmp1.mp3" "${4}"
+fi
+
+exit
