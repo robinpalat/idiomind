@@ -198,7 +198,6 @@ new_sentence() {
              if [ "$trans" = TRUE ]; then
              
                 tts "${trgt}" "$lgt" "$DT_r" "${DM_tlt}/$id.mp3"
-                rem_ffile "${DM_tlt}/$id.mp3"
                 
                     [ ! -f "${DM_tlt}/$id.mp3" ] && \
                     voice "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
@@ -680,7 +679,6 @@ process() {
                                     index 2 "${tpe}" "${trgt}" "${srce}" "" "" "${wrds}" "${grmr}" "${id}"
                                     if [ "$trans" = TRUE ]; then
                                     tts "${trgt}" $lgt "$DT_r" "${DM_tlt}/$id.mp3"
-                                    rem_ffile "${DM_tlt}/$id.mp3"
                                     [ ! -f "${DM_tlt}/$id.mp3" ] && voice "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
                                     else voice "${trgt}" "${DT_r}" "${DM_tlt}/$id.mp3"; fi #TODO
                                     ( fetch_audio "$aw" "$bw" )
