@@ -26,6 +26,10 @@ function mksure() {
     return $e
 }
 
+function rem_ffile() {
+    
+    if [[ `du "${1}" |cut -f1 ` = 0 ]]; then rm "${1}"; fi
+}
 
 function index() {
 

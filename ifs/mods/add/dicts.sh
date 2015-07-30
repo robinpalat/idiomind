@@ -6,7 +6,7 @@ DC_a="$HOME/.config/idiomind/addons"
 lgtl="$(sed -n 1p "$HOME/.config/idiomind/s/6.cfg")"
 lgt=$(lnglss "$lgtl")
 DM_tls="$HOME/.idiomind/topics/$lgtl/.share"
-v=vj27
+v=vj27z
 
 if [ ! -d "$DC_a/dict/" ]; then
 mkdir -p "$DC_a/dict/enables"
@@ -26,6 +26,7 @@ function dictt() {
     [ -d "${2}" ] && cd "${2}"/ || exit 1
     for dict in "$DC_a/dict/enables"/*; do
     "${dict}" "${word}"
+    if [ `du ./"${word}.mp3" |cut -f1` = 0 ]; then rm ./"${word}.mp3"
     if [ -f ./"${word}.mp3" ]; then break; fi
     done
 }
