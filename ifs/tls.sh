@@ -138,6 +138,8 @@ check_index() {
         check_index1 "${DC_tlt}/$n.cfg"
         done
         
+        for i in "${DM_tlt}"/*.mp3 ; do [[ ! -s "${i}" ]] && rm "${i}" ; done
+        
         if [ -n "$(< "${DC_tlt}/0.cfg")" ]; then
         if ! grep '},trgt={' "${DC_tlt}/0.cfg"; then
         export nv=1; fi; fi
