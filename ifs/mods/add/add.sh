@@ -28,7 +28,9 @@ function mksure() {
 
 function rem_ffile() {
     
-    if [[ `du "${1}" |cut -f1 ` = 0 ]]; then rm "${1}"; fi
+    if [ -e "${1}" ]; then
+    if [ `du "${1}" |cut -f1 ` = 0 ]; then rm "${1}"; fi
+    fi
 }
 
 function index() {

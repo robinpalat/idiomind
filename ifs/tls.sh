@@ -130,6 +130,7 @@ check_index() {
         
         if [ ! -f "${DC_tlt}/0.cfg" ]; then f=1; fi
         if [ ! -d "${DC_tlt}" ]; then mkdir "${DC_tlt}"; fi
+        if [ ! -d "${DM_tlt}" ]; then mkdir "${DC_tlt}"; fi
         if [ ! -d "${DM_tlt}/images" ]; then mkdir "${DM_tlt}/images"; fi
         for n in {0..4}; do
         [ ! -f "${DC_tlt}/$n.cfg" ] && touch "${DC_tlt}/$n.cfg" && a=1

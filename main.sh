@@ -287,7 +287,7 @@ function topic() {
 
     elif [[ ${inx1} -ge 1 ]]; then
     
-        if [ -f "${DC_tlt}/9.cfg" ] && [ -f "${DC_tlt}/7.cfg" ]; then
+        if [ -f "${DC_tlt}/9.cfg" -a -f "${DC_tlt}/7.cfg" ]; then
         
             calculate_review "${tpc}"
             if [[ ${RM} -ge 100 ]]; then
@@ -326,7 +326,7 @@ function topic() {
 
     elif [[ ${inx1} -eq 0 ]]; then
     
-        if [ ! -f "${DC_tlt}/7.cfg" ] || [ ! -f "${DC_tlt}/9.cfg" ]; then
+        if [ ! -f "${DC_tlt}/7.cfg" -o ! -f "${DC_tlt}/9.cfg" ]; then
 
             "$DS/mngr.sh" mark_as_learned "${tpc}" 0
             
