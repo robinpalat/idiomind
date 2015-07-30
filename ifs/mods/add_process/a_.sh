@@ -91,6 +91,7 @@ if [[ ${conten^} = A ]]; then
         
     else
         check_s "${tpe}"
+        sleep 1
         (
         echo "2"
         echo "# $(gettext "Processing... Wait.")";

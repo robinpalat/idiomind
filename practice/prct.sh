@@ -39,32 +39,21 @@ get_list() {
         if [ $ttest = b ]; then
         
             if [ ! -f "$dir/b.srces" ]; then
-            (
-            echo "5"
+            
+            ( echo "5"
             while read word; do
             
                 item="$(grep -F -m 1 "trgt={${word}}" "${cfg0}" |sed 's/},/}\n/g')"
                 echo "$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")" >> "$dir/b.srces"
             
-            done < "$dir/${ttest}.0"
-            ) | yad --progress \
+            done < "$dir/${ttest}.0" ) | yad --progress \
             --width 50 --height 35 --undecorated \
             --pulsate --auto-close \
             --skip-taskbar --center --no-buttons
             fi
         fi
-    
+        
     elif [ $ttest = d ]; then
-    
-        if [[ `wc -l < "${cfg3}"` -gt 0 ]]; then
-            grep -Fxvf "${cfg3}" "${cfg1}" > "$DT/slist"
-            tac "$DT/slist" |sed '/^$/d' > "$dir/${ttest}.0"
-            rm -f "$DT/slist"
-        else
-            tac "${cfg1}" |sed '/^$/d' > "$dir/${ttest}.0"
-        fi
-    
-    elif [ $ttest = e ]; then
     
         > "$DT/images"
         if [[ `wc -l < "${cfg4}"` -gt 0 ]]; then
@@ -75,13 +64,11 @@ get_list() {
         fi
         > "$dir/${ttest}.0"
         
-        (
-        echo "5"
-        while read itm; do
+        ( echo "5"
+        while read -r itm; do
         if [ -f "$DM_tls/images/${itm,,}-0.jpg" ]; then
         echo "${itm}" >> "$dir/${ttest}.0"; fi
-        done < "$DT/images"
-        ) | yad --progress \
+        done < "$DT/images" ) | yad --progress \
         --width 50 --height 35 --undecorated \
         --pulsate --auto-close \
         --skip-taskbar --center --no-buttons
@@ -89,6 +76,15 @@ get_list() {
         sed -i '/^$/d' "$dir/${ttest}.0"
         [ -f "$DT/images" ] && rm -f "$DT/images"
     
+    elif [ $ttest = e ]; then
+    
+        if [[ `wc -l < "${cfg3}"` -gt 0 ]]; then
+            grep -Fxvf "${cfg3}" "${cfg1}" > "$DT/slist"
+            tac "$DT/slist" |sed '/^$/d' > "$dir/${ttest}.0"
+            rm -f "$DT/slist"
+        else
+            tac "${cfg1}" |sed '/^$/d' > "$dir/${ttest}.0"
+        fi
     fi
 }
 

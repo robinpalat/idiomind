@@ -44,7 +44,7 @@ if [[ $1 = restart ]]; then
 
 elif [[ $1 = comp ]]; then
 
-    if [ "${2}" != d ]; then
+    if [ "${2}" != e ]; then
     awk '{a[$0]++}END{for(i in a){if(a[i]==3)print i}}' *.1 > ./log1
     awk '{a[$0]++}END{for(i in a){if(a[i]==2)print i}}' *.2 > ./log2
     awk '{a[$0]++}END{for(i in a){if(a[i]==2)print i}}' *.3 > ./log3
@@ -53,8 +53,7 @@ elif [[ $1 = comp ]]; then
     if [[ -n "$3" ]]; then
     
         [ -f ./"${2}".l ] \
-        && echo $(($(< ./"${2}".l)+easy)) > ./"${2}".l \
-        || echo "$easy" > ./"${2}".l
+        && echo $(($(< ./"${2}".l)+easy)) > ./"${2}".l || echo "$easy" > ./"${2}".l
         v=$((100*$(< ./"${2}".l)/all))
         stats ./."${icon}"
         "$DIR/strt.sh" $_stats ${2} "$easy" "$ling" "$hard" &

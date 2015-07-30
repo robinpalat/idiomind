@@ -2,25 +2,23 @@
 # -*- ENCODING: UTF-8 -*-
 
 cfg0="$DC_tlt/0.cfg"
+drtt="$DM_tlt/images"
 drts="$DS/practice"
 strt="$drts/strt.sh"
-cd "${DC_tlt}/practice"
-all=$(egrep -cv '#|^$' ./d.0)
-hits="$(gettext "hits")"
-listen="Listen"
+cd "$DC_tlt/practice"
 log="$DC_s/log"
+all=$(egrep -cv '#|^$' ./d.0)
 easy=0
 hard=0
 ling=0
-f=0
 
 score() {
     
     "$drts"/cls.sh comp d &
 
-    if [[ ${1} -ge ${all} ]]; then
-        play "$drts/all.mp3" & 
-        echo -e "s9.$(tr -s '\n' '|' < ./d.1).s9\nokp.1.okp" >> "$log"
+    if [[ $(($(< ./d.l)+${1})) -ge ${all} ]]; then
+        play "$drts/all.mp3" &
+        echo -e "w9.$(tr -s '\n' '|' < ./d.1).w9\nokp.1.okp" >> "$log"
         echo "$(date "+%a %d %B")" > ./d.lock
         echo 21 > .4
         "$strt" 4 d & exit
@@ -38,157 +36,108 @@ score() {
             let n++
         done
 
+        if [ -f ./d.3 ]; then
+        echo -e "w6.$(tr -s '\n' '|' < ./d.3).w9" >> "$log"; fi
+        
         "$strt" 9 d ${easy} ${ling} ${hard} & exit
     fi
 }
 
-dialog2() {
+fonts() {
+    
+    item="$(grep -F -m 1 "trgt={${trgt}}" "${cfg0}" |sed 's/},/}\n/g')"
+    srce=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
+    img="$DM_tls/images/${trgt,,}-0.jpg"
+    [ ${#trgt} -gt 10 -o ${#srce} -gt 10 ] && trgt_f_c=11 || trgt_f_c=14
+    [ ! -f "$img" ] && img="$DS/practice/images/img_2.jpg"
+    aswer="<span font_desc='Free Sans ${trgt_f_c}'><b>${trgt} | ${srce}</b></span>"
+}
 
-    if [ $lgtl = Japanese -o $lgtl = Chinese -o $lgtl = Russian ]; then
-    hint=" "
-    else
-    hint="$(echo "$@" | tr -d "',.;?!¿¡()" | tr -d '"' \
-    | awk '{print tolower($0)}' \
-    |sed 's/\b\(.\)/\u\1/g' | sed 's/ /         /g' \
-    |sed 's|[a-z]|\.|g' \
-    |sed 's|\.|\ .|g' \
-    | tr "[:upper:]" "[:lower:]" \
-    |sed 's/^\s*./\U&\E/g')"
-    fi
-    text="<span font_desc='Free Sans Bold $sz' color='#717171'>$hint</span>\n"
+cuestion() {
     
-    entry=$(>/dev/null | yad --form --title="$(gettext "Practice")" \
-    --text="$text" \
-    --name=Idiomind --class=Idiomind \
-    --separator="" \
-    --window-icon="$DS/images/icon.png" --image="$DS/practice/images/bar.png" \
-    --buttons-layout=end --skip-taskbar --undecorated --center --on-top \
-    --text-align=left --align=left --image-on-top \
-    --width=510 --height=220 --borders=10 \
-    --field="" "" \
-    --field="$(gettext "Listen"):BTN" "$cmd_play" \
-    --button="$(gettext "Exit")":1 \
-    --button="  $(gettext "Check")  ":0)
-    }
-    
-check() {
-    
-    sz=$((sz+3))
     yad --form --title="$(gettext "Practice")" \
-    --text="<span font_desc='Free Sans $sz'>${wes}</span>\\n" \
-    --name=Idiomind --class=Idiomind \
-    --image="/usr/share/idiomind/practice/images/bar.png" $aut \
+    --image="$img" \
+    --skip-taskbar --text-align=center --align=center --center --on-top \
+    --image-on-top --undecorated --buttons-layout=spread \
+    --width=418 --height=370 --borders=6 \
+    --button="$(gettext "Exit")":1 \
+    --button=" $(gettext "Continue") >> ":0
+}
+
+answer() {
+    
+    yad --form --title="$(gettext "Practice")" \
+    --image="$img" \
     --selectable-labels \
-    --window-icon="$DS/images/icon.png" \
-    --skip-taskbar --wrap --scroll --image-on-top --center --on-top \
-    --undecorated --buttons-layout=end \
-    --width=510 --height=250 --borders=10 \
-    --button="$(gettext "Continue")":2 \
-    --field="":lbl \
-    --field="<span font_desc='Free Sans 10'>$OK\n\n$prc $hits</span>":lbl
-    }
-    
-get_text() {
-    
-    trgt=$(echo "${1}" | sed 's/^ *//; s/ *$//')
-    [ ${#trgt} -ge 110 ] && sz=10 || sz=11
-    [ ${#trgt} -le 80 ] && sz=12
-    chk=`echo "${trgt}" | awk '{print tolower($0)}'`
-    }
+    --skip-taskbar --text-align=center --align=center --center --on-top \
+    --image-on-top --undecorated --buttons-layout=spread \
+    --width=418 --height=370 --borders=6 \
+    --field="$aswer":lbl \
+    --button="  $(gettext "I did not know it")  ":3 \
+    --button="  $(gettext "I Knew it")  ":2
+}
 
+while read -r trgt; do
 
-result() {
+    fonts
+    cuestion
     
-    clean() {
-    sed 's/ /\n/g' \
-    | sed 's/,//;s/\!//;s/\?//;s/¿//;s/\¡//;s/(//;s/)//;s/"//g' \
-    | sed 's/\-//;s/\[//;s/\]//;s/\.//;s/\://;s/\|//;s/)//;s/"//g' \
-    | tr -d '|“”&:!'
-    }
-    if [[ `wc -w <<<"$chk"` -gt 6 ]]; then
-    out=`awk '{print tolower($0)}' <<<"${entry}" | clean | grep -v '^.$'`
-    in=`awk '{print tolower($0)}' <<<"${chk}" | clean | grep -v '^.$'`
+    if [ $? = 1 ]; then
+        break &
+        "$drts"/cls.sh comp d ${easy} ${ling} ${hard} ${all} & exit
+        
     else
-    out=`awk '{print tolower($0)}' <<<"${entry}" | clean`
-    in=`awk '{print tolower($0)}' <<<"${chk}" | clean`
-    fi
-    
-    echo "${chk}" > ./chk.tmp
-    while read -r line; do
-    
-        if grep -Fxq "${line}" <<<"$in"; then
-            sed -i "s/"${line}"/<b>"${line}"<\/b>/g" ./chk.tmp
-            [ -n "${line}" ] && echo \
-            "<span color='#3A9000'><b>${line^}</b></span>  " >> ./words.tmp
-            [ -n "${line}" ] && echo "${line}" >> ./mtch.tmp
-        else
-            [ -n "${line}" ] && echo \
-            "<span color='#7B4A44'><b>${line^}</b></span>  " >> ./words.tmp
+        answer
+        ans="$?"
+
+        if [ ${ans} = 2 ]; then
+            echo "${trgt}" >> d.1
+            easy=$((easy+1))
+
+        elif [ ${ans} = 3 ]; then
+            echo "${trgt}" >> d.2
+            hard=$((hard+1))
         fi
-        
-    done < <(sed 's/ /\n/g' <<<"$out")
-    
-    OK=$(tr '\n' ' ' < ./words.tmp)
-    sed 's/ /\n/g' < ./chk.tmp > ./all.tmp; touch ./mtch.tmp
-    porc=$((100*$(cat ./mtch.tmp | wc -l)/$(wc -l < ./all.tmp)))
-    
-    if [ ${porc} -ge 70 ]; then
-        echo "${trgt}" >> ./d.1
-        export easy=$((easy+1))
-        color=3AB452
-        
-    elif [ ${porc} -ge 50 ]; then
-        echo "${trgt}" >> ./d.2
-         export ling=$((ling+1))
-        color=E5801D
-        
-    else
-        [ -n "$entry" ] && echo "${trgt}" >> ./d.3
-        [ -n "$entry" ] && export hard=$((hard+1))
-        color=D11B5D
     fi
     
-    prc="<b>$porc%</b>"
-    wes="$(< ./chk.tmp)"
-    rm ./chk.tmp
-    }
-
-while read trgt; do
-
-    pos=`grep -Fon -m 1 "trgt={${trgt}}" "${cfg0}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
-    item=`sed -n ${pos}p "${cfg0}" |sed 's/},/}\n/g'`
-    fname=`grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"`
-    get_text "${trgt}"
-    
-    cmd_play="$DS/play.sh play_sentence ${fname} "\"${trgt}\"""
-    (sleep 0.5 && "$DS/play.sh" play_sentence ${fname} "${trgt}") &
-
-    dialog2 "${trgt}"
-    ret="$?"
-    
-    if [[ $ret = 1 ]]; then
-        break &
-        killall play
-        "$drts"/cls.sh comp d ${easy} ${ling} ${hard} ${all} & exit
-    else
-        killall play &
-        result "${trgt}"
-    fi
-
-    check "${trgt}"
-    ret="$?"
-    
-    if [[ $ret = 1 ]]; then
-        break &
-        killall play &
-        rm -f ./mtch.tmp ./words.tmp
-        "$drts"/cls.sh comp d ${easy} ${ling} ${hard} ${all} & exit
-        
-    elif [[ $ret -eq 2 ]]; then
-        killall play &
-        rm -f ./mtch.tmp ./words.tmp &
-    fi
-
 done < ./d.tmp
 
-score ${easy}
+if [ ! -f ./d.2 ]; then
+
+    score ${easy}
+    
+else
+    while read -r trgt; do
+
+        fonts
+        cuestion
+
+        if [ $? = 1 ]; then
+            break &
+            "$drts"/cls.sh comp d ${easy} ${ling} ${hard} ${all} & exit
+
+        else
+            answer
+            ans="$?"
+            
+            if [ ${ans} = 2 ]; then
+                hard=$((hard-1))
+                ling=$((ling+1))
+                
+            elif [ ${ans} = 3 ]; then
+                echo "${trgt}" >> d.3
+            fi
+        fi
+        
+    done < ./d.2
+    
+    score ${easy}
+fi
+
+
+
+
+
+
+
+

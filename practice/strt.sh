@@ -57,8 +57,8 @@ $img --text="$info$hw" \
 1 "$DSP/images/`< ./.1`.png" "    $info1 $info6   $(gettext "Flashcards")" \
 2 "$DSP/images/`< ./.2`.png" "    $info2 $info7   $(gettext "Multiple Choice")" \
 3 "$DSP/images/`< ./.3`.png" "    $info3 $info8   $(gettext "Recognizing Words")" \
-4 "$DSP/images/`< ./.4`.png" "    $info4 $info9   $(gettext "Writing Sentences")" \
-5 "$DSP/images/`< ./.5`.png" "    $info5 $info10   $(gettext "Images")" \
+4 "$DSP/images/`< ./.4`.png" "    $info4 $info9   $(gettext "Images")" \
+5 "$DSP/images/`< ./.5`.png" "    $info5 $info10   $(gettext "Writing Sentences")" \
 --button="$(gettext "Restart")":3 \
 --button="$(gettext "Start")":0)"
 ret=$?
@@ -90,9 +90,9 @@ else
     img2='/usr/share/idiomind/images/2.png'
     img3='/usr/share/idiomind/images/3.png'
     img0='/usr/share/idiomind/images/0.png'
-    log3="$(cat ./log3 ./d.3)"
-    log2="$(cat ./log2 ./d.2)"
-    log1="$(cat ./log1 ./d.1)"
+    log3="$(cat ./log3 ./e.3)"
+    log2="$(cat ./log2 ./e.2)"
+    log1="$(cat ./log1 ./e.1)"
     
     while read -r item; do
     if grep -Fxo "${item}" <<<"${cfg6}"; then
