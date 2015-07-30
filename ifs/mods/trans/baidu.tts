@@ -18,7 +18,7 @@ if [[ ${#1} -gt 100 ]]; then
         wget -q -U Mozilla -O "$DT_r/tmp${f}.mp3" \
         "http://tts.baidu.com/text2audio?lan=$t&ie=UTF-8&text=${q}" || rm -f "$DT_r/tmp${f}.mp3"
         fi
-        ((f=f+1))
+         let f++
     done < <(tr -s "'" "|" <<<"${1}" |xargs -n7)
     [ -e "$DT_r/tmp1.mp3" ] && cat $(ls "$DT_r"/tmp[0-9]*.mp3 |sort -n |tr '\n' ' ') > "${4}"
     rm -f "$DT_r"/*.mp3

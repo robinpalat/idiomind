@@ -329,14 +329,14 @@ function set_image_2() {
 function translate() {
     
     for trans in "$DS/ifs/mods/trans"/*.trad; do
-    "$trans" "$@"; done
+    "$trans" "$@" && break; done
 }
 
 
 function tts() {
     
     for convert in "$DS/ifs/mods/trans"/*.tts; do
-    "$convert" "$@"; done
+    "$convert" "$@"; if [ -e "${4}" ]; then break; fi; done
 }
 
 export -f translate tts
