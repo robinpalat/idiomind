@@ -276,14 +276,10 @@ function topic() {
         notebook_1
         ret=$?
                 
-            if [ ! -f "$DT/ps_lk" ]; then
-                
-                apply
-            fi
+            if [ ! -f "$DT/ps_lk" ]; then apply; fi
             
             if [ $ret -eq 5 ]; then
             
-                rm -f "$DT"/*.x
                 "$DS/practice/strt.sh" &
             fi
 
@@ -319,20 +315,15 @@ function topic() {
         fi
             ret=$?
 
+            if [ ! -f "$DT/ps_lk" ]; then apply; fi
+            
             if [ $ret -eq 5 ]; then
             
-                rm -f "$DT"/*.x
                 "$DS/practice/strt.sh" &
-                    
-            else
-                if [ ! -f "$DT/ps_lk" ]; then
-                
-                    apply
-                fi
-                
-                rm -f $DT/*.x
             fi
-    
+
+            rm -f "$DT"/*.x
+
     elif [[ ${inx1} -eq 0 ]]; then
     
         if [ ! -f "${DC_tlt}/7.cfg" ] || [ ! -f "${DC_tlt}/9.cfg" ]; then
@@ -362,10 +353,7 @@ function topic() {
         pres="<u><b>$(gettext "Learned topic")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
         notebook_2
         
-        if [ ! -f "$DT/ps_lk" ]; then
-                
-            apply
-        fi
+        if [ ! -f "$DT/ps_lk" ]; then apply; fi
       
         rm -f "$DT"/*.x & exit
     fi
