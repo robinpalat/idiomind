@@ -126,36 +126,30 @@ function sentence_p() {
     translate "$(sed '/^$/d' "$aw")" auto $lg | tr -d '!?¿,;.' > "$bw"
     touch "A.$r" "B.$r" "g.$r"
     
-    while read -r w; do
-
-        if [[ `sqlite3 $db "SELECT items from pronouns WHERE items IS '${w,,}';"` = "${w,,}" ]]; then
-            echo "<span color='#3E539A'>${w}</span>" >> "g.$r"
-            
-        elif [[ `sqlite3 $db "SELECT items from nouns_adjetives WHERE items IS '${w,,}';"` = "${w,,}" ]]; then
-            echo "<span color='#496E60'>${w}</span>" >> "g.$r"
-
-        elif [[ `sqlite3 $db "SELECT items from nouns_verbs WHERE items IS '${w,,}';"` = "${w,,}" ]]; then
-            echo "<span color='#62426A'>${w}</span>" >> "g.$r"
-            
-        elif [[ `sqlite3 $db "SELECT items from conjunctions WHERE items IS '${w,,}';"` = "${w,,}" ]]; then
-            echo "<span color='#90B33B'>${w}</span>" >> "g.$r"
-            
-        elif [[ `sqlite3 $db "SELECT items from prepositions WHERE items IS '${w,,}';"` = "${w,,}" ]]; then
-            echo "<span color='#D67B2D'>${w}</span>" >> "g.$r"
-            
-        elif [[ `sqlite3 $db "SELECT items from adverbs WHERE items IS '${w,,}';"` = "${w,,}" ]]; then
-            echo "<span color='#9C68BD'>${w}</span>" >> "g.$r"
-            
-        elif [[ `sqlite3 $db "SELECT items from adjetives WHERE items IS '${w,,}';"` = "${w,,}" ]]; then
-            echo "<span color='#3E8A3B'>${w}</span>" >> "g.$r"
-            
-        elif [[ `sqlite3 $db "SELECT items from verbs WHERE items IS '${w,,}';"` = "${w,,}" ]]; then
-            echo "<span color='#CF387F'>${w}</span>" >> "g.$r"
+    while read -r wrd; do
+        
+        w="$(tr -d '\.,;' <<<"${wrd,,}")"
+        if [[ `sqlite3 $db "SELECT items from pronouns WHERE items IS '${w}';"` = "${w}" ]]; then
+            echo "<span color='#3E539A'>${wrd}</span>" >> ./"g.$r"
+        elif [[ `sqlite3 $db "SELECT items from nouns_adjetives WHERE items IS '${w}';"` = "${w}" ]]; then
+            echo "<span color='#496E60'>${wrd}</span>" >> ./"g.$r"
+        elif [[ `sqlite3 $db "SELECT items from nouns_verbs WHERE items IS '${w}';"` = "${w}" ]]; then
+            echo "<span color='#62426A'>${wrd}</span>" >> ./"g.$r"
+        elif [[ `sqlite3 $db "SELECT items from conjunctions WHERE items IS '${w}';"` = "${w}" ]]; then
+            echo "<span color='#90B33B'>${wrd}</span>" >> ./"g.$r"
+        elif [[ `sqlite3 $db "SELECT items from prepositions WHERE items IS '${w}';"` = "${w}" ]]; then
+            echo "<span color='#D67B2D'>${wrd}</span>" >> ./"g.$r"
+        elif [[ `sqlite3 $db "SELECT items from adverbs WHERE items IS '${w}';"` = "${w}" ]]; then
+            echo "<span color='#9C68BD'>${wrd}</span>" >> ./"g.$r"
+        elif [[ `sqlite3 $db "SELECT items from adjetives WHERE items IS '${w}';"` = "${w}" ]]; then
+            echo "<span color='#3E8A3B'>${wrd}</span>" >> ./"g.$r"
+        elif [[ `sqlite3 $db "SELECT items from verbs WHERE items IS '${w}';"` = "${w}" ]]; then
+            echo "<span color='#CF387F'>${wrd}</span>" >> ./"g.$r"
         else
-            echo "${w}" >> "g.$r"
+            echo "${wrd}" >> ./"g.$r"
         fi 
 
-    done < <(sed 's/ /\n/g' <<<"${trgt_p}" |tr -d '\.,;')
+    done < <(sed 's/ /\n/g' <<<"${trgt_p}")
     
     sed -i 's/\. /\n/g' "$bw"
     sed -i 's/\. /\n/g' "$aw"
@@ -328,18 +322,35 @@ function set_image_2() {
 
 function translate() {
     
-    for trans in "$DS/ifs/mods/trans"/*.trad; do
-    "$trans" "$@" && break; done
+    for trans in "$DC_d"/*."Traslator online.Translator".*; do
+    "${trans}" "$@" && break; done
 }
 
 
 function tts() {
     
-    for convert in "$DS/ifs/mods/trans"/*.tts; do
-    "$convert" "$@"; if [ -e "${4}" ]; then break; fi; done
+    for convert in "$DC_d"/*."TTS online.Pronunciation".*; do
+    "${convert}" "$@"
+    if [ -e "${4}" ]; then break; fi; done
 }
 
 export -f translate tts
+
+
+function tts_word() {
+    
+    [ -d "${2}" ] && cd "${2}"/ || exit 1
+    
+    for convert in "$DC_d"/*."TTS online.Word pronunciation.$lgt"; do
+    "${convert}" "${1}"
+    if [ -e "${2}/${1}.mp3" ]; then break; fi; done
+    
+    if [ ! -e "${2}/${1}.mp3" ]; then
+        for convert in "$DC_d"/*."TTS online.Word pronunciation.various"; do
+        "${convert}" "${1}"
+        if [ -e "${2}/${1}.mp3" ]; then break; fi; done
+    fi
+}
 
 
 function voice() {
@@ -366,12 +377,22 @@ function fetch_audio() {
     words_list="${2}"; else words_list="${1}"; fi
     
     while read word; do
+    
+        [ -d "$DM_tls" ] && cd "$DM_tls"/ || exit 1
+        word="${word,,}"
         
-        if [ ! -f "$DM_tls/${word,,}.mp3" ]; then
+        if [ ! -e "$DM_tls/${word}.mp3" ]; then
 
-            dictt "${word,,}" "$DM_tls"
+            for dict in "$DC_d"/*."TTS online.Word pronunciation.$lgt"; do
+                if [ ! -e ./"${word}.mp3" ]; then "${dict}" "${word}"; fi
+            done
+            
+            if [ ! -e ./"${word}.mp3" ]; then
+                for dict in "$DC_d"/*."TTS online.Word pronunciation.various"; do
+                    if [ ! -e ./"${word}.mp3" ]; then "${dict}" "${word}" "${lgt}"; fi
+                done
+            fi
         fi
-        
     done < "${words_list}"
 }
 

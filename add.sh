@@ -276,7 +276,7 @@ new_word() {
         
             if [ ! -f "${DM_tls}/${audio}.mp3" ]; then
 
-                dictt "${audio}" "${DM_tls}"
+                tts_word "${audio}" "${DM_tls}"
             fi
             
         else
@@ -339,7 +339,7 @@ list_words_edit() {
                 
                     index 1 "${tpe}" "${trgt}" "${srce}" "${exmp_}" "" "" "" "${id}"
                     if [ ! -f "$DM_tls/$audio.mp3" ]; then
-                    ( dictt "$audio" "$DM_tls" ); fi
+                    ( tts_word "$audio" "$DM_tls" ); fi
                 
                 else
                     echo -e "\n\n#$n $trgt" >> "$DT_r/logw"
@@ -400,7 +400,7 @@ list_words_sentence() {
 
                 index 1 "${tpe}" "${trgt}" "${srce}" "${exmp_}" "" "" "" "${id}"
                 if [ ! -f "$DM_tls/$audio.mp3" ]; then
-                ( dictt "$audio" "$DM_tls" ); fi
+                ( tts_word "$audio" "$DM_tls" ); fi
             
             else
                 echo -e "\n\n#$n $trgt" >> "$DT_r/logw"
@@ -650,7 +650,7 @@ process() {
 
                                 index 1 "${tpe}" "${trgt}" "${srce}" "" "" "" "" "${id}"
                                 if [ ! -f "$DM_tls/$audio.mp3" ]; then
-                                ( dictt "$audio" "$DM_tls" ); fi
+                                ( tts_word "$audio" "$DM_tls" ); fi
                                 echo "${trgt}" >> "$DT_r/addw"
 
                             else
@@ -722,7 +722,7 @@ process() {
 
                                 index 1 "${tpc}" "${trgt}" "${srce}" "${exmp_}" "" "" "" "${id}"
                                 if [ ! -f "${DM_tls}/$audio.mp3" ]; then
-                                ( dictt "$audio" "${DM_tls}" ); fi
+                                ( tts_word "$audio" "${DM_tls}" ); fi
                                 echo "${trgt}" >> "$DT_r/addw"
                                 
                             else

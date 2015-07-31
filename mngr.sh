@@ -154,7 +154,7 @@ edit_item() {
     cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"" "\"${trgt}\"""
     cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"" 1 ${c}"
     link1="https://translate.google.com/\#$lgt/$lgs/${q_trad}"
-    link2="http://glosbe.com/$lgt/$lgs/${q_trad,,}"
+    link2="$(< "/home/quincemil/.config/idiomind/addons/dict/enables/Glosbe.Link.Search definition.various")"
     link3='https://www.google.com/search?q='$q_trad'&amp;tbm=isch'
     
 
