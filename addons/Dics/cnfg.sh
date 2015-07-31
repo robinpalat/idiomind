@@ -98,7 +98,7 @@ elif [ -z "${1}" ]; then
     echo -e "$lgtl\n$v_dicts" > "$DC_a/dict/.dict"
     for r in "$DS_a/Dics/dicts"/*; do > "$disables/$(basename "$r")"; done; fi
     
-    [[ "${2}" = f ]] && tex="--text=$3" || tex="--center"
+    [[ "${2}" = 1 ]] && tex="--text=$3" || tex="--center"
     sel="$(dict_list | yad --list --title="$(gettext "Dictionaries")" \
     --name=Idiomind --class=Idiomind "$tex" \
     --print-all --always-print-result --separator="|" \
