@@ -6,14 +6,8 @@ source "$DS/ifs/mods/cmns.sh"
 dir="$DC/addons/dict"
 enables="$DC/addons/dict/enables"
 disables="$DC/addons/dict/disables"
-
 lgt=$(lnglss "$lgtl")
 lgs=$(lnglss "$lgsl")
-new_script="#!/bin/bash
-# argument 1 = \"word\"
-# e.g. languages: en
-Name=\"\"
-Language=\"\""
 
 dialog_edit() {
     
@@ -107,8 +101,9 @@ elif [ "$1" = edit_dlg ]; then
     
 elif [ -z "${1}" ]; then
 
-    if [ ! -d "$DC_a/dict/enables" ]; then
+    if [ ! -d "$DC_d" -o ! -d "$DC_a/dict/disables" ]; then
     mkdir -p "$enables"; mkdir -p "$disables"
+    echo -e "$lgtl\n$v_dicts" > "$DC_a/dict/.dict"
     cp -f "$DS/addons/Dics/disables"/* "$disables/"; fi
     
     [[ "${2}" = f ]] && tex="--text=$3" || tex="--center"

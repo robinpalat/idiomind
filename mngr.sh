@@ -213,7 +213,7 @@ edit_item() {
             
             if [ "$mark" != "$mark_mod" ]; then
             if [ "$mark_mod" = "TRUE" ]; then
-            echo "${trgt}" >> "${DC_tlt}/6.cfg"; else
+            mmod=1; echo "${trgt}" >> "${DC_tlt}/6.cfg"; else
             sed -i "/${trgt}/d" "${DC_tlt}/6.cfg"; fi
             col=1; mod=1
             fi
@@ -293,7 +293,7 @@ edit_item() {
             
             fi
 
-            
+            include "$DS/ifs/mods/mngr/a"
             [ -d "$DT/$c" ] && "$DS/add.sh" list_words_edit "${wrds_mod}" 2 ${c} "${trgt_mod}" &
             [ ${col} -eq 1 ] && "$DS/ifs/tls.sh" colorize &
             [ ${mod} -eq 1 ] && sleep 0.2
