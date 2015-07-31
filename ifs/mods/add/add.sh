@@ -326,6 +326,7 @@ function set_image_2() {
 function translate() {
     
     for trans in "$DC_d"/*."Traslator online.Translator".*; do
+    trans="$DS_a/Dics/dicts/$(basename "${trans}")"
     "${trans}" "$@" && break; done
 }
 
@@ -333,6 +334,7 @@ function translate() {
 function tts() {
     
     for convert in "$DC_d"/*."TTS online.Pronunciation".*; do
+    convert="$DS_a/Dics/dicts/$(basename "${convert}")"
     "${convert}" "$@"
     if [ -e "${4}" ]; then break; fi; done
 }
@@ -345,11 +347,13 @@ function tts_word() {
     [ -d "${2}" ] && cd "${2}"/ || exit 1
     
     for convert in "$DC_d"/*."TTS online.Word pronunciation.$lgt"; do
+    convert="$DS_a/Dics/dicts/$(basename "${convert}")"
     "${convert}" "${1}"
     if [ -e "${2}/${1}.mp3" ]; then break; fi; done
     
     if [ ! -e "${2}/${1}.mp3" ]; then
         for convert in "$DC_d"/*."TTS online.Word pronunciation.various"; do
+        convert="$DS_a/Dics/dicts/$(basename "${convert}")"
         "${convert}" "${1}"
         if [ -e "${2}/${1}.mp3" ]; then break; fi; done
     fi
@@ -387,11 +391,13 @@ function fetch_audio() {
         if [ ! -e "$DM_tls/${word}.mp3" ]; then
 
             for dict in "$DC_d"/*."TTS online.Word pronunciation.$lgt"; do
+                dict="$DS_a/Dics/dicts/$(basename "${dict}")"
                 if [ ! -e ./"${word}.mp3" ]; then "${dict}" "${word}"; fi
             done
             
             if [ ! -e ./"${word}.mp3" ]; then
                 for dict in "$DC_d"/*."TTS online.Word pronunciation.various"; do
+                    dict="$DS_a/Dics/dicts/$(basename "${dict}")"
                     if [ ! -e ./"${word}.mp3" ]; then "${dict}" "${word}" "${lgt}"; fi
                 done
             fi

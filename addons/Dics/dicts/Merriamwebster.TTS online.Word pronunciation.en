@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ "$1" = dlgcnfg ]]; then
-yad --form --title="Gstatic" \
+yad --form --title="Merriam-webster" \
 --image=info \
 --text="$(gettext "Does not need configuration.")\n" \
 --name=Idiomind --class=Idiomind \
@@ -16,9 +16,13 @@ echo
 fi
 
 else
-name="gstatic"
+name="merriamwebster"
 lang="en"
-wget -q -U Mozilla "http://ssl.gstatic.com/dictionary/static/sounds/de/0/${1}.mp3"
+
+c=0000000
+wget -T 51 -q -U Mozilla "http://media.merriam-webster.com/soundc11/${1:0:1}/${1}${c::-${#1}}1.wav"
+[ -f ./"${1}${c::-${#1}}1.wav" ] && sox ./"${1}${c::-${#1}}1.wav" ./"${1}.mp3" && rm ./"${1}${c::-${#1}}1.wav"
 exit
 fi
+
 

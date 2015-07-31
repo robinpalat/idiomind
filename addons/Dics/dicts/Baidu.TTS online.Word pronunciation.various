@@ -1,7 +1,8 @@
-#! /bin/bash
+#!/bin/bash
+# -*- ENCODING: UTF-8 -*-
 
 if [[ "$1" = dlgcnfg ]]; then
-yad --form --title="Vocabolaudio" \
+yad --form --title="Baidu" \
 --image=info \
 --text="$(gettext "Does not need configuration.")\n" \
 --name=Idiomind --class=Idiomind \
@@ -17,10 +18,15 @@ fi
 
 
 else
-Name="Vocabolaudio"
-Language="it"
+Name="baidu"
+Language="auto"
 
-wget -q -U Mozilla "http://www.vocabolaudio.com/audio-it/${1}.mp3"
+if [ "$2" = zh-cn ]; then t=zh
+elif [ "$2" = en ]; then t=en
+elif [ "$2" = ja ]; then t=jp
+elif [ "$2" = pt ]; then t=pt
+else exit; fi
+wget -T 51 -q -U Mozilla -O ./"${1}.mp3" "http://tts.baidu.com/text2audio?lan=$t&ie=UTF-8&text=${1}"
 exit
 fi
 

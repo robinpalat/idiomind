@@ -65,23 +65,38 @@ if [ "$1" = add_dlg ]; then
 
         if [ ${i} = TRUE ]; then
         msg "$(gettext "Invalid format").\n" error "$(gettext "Invalid format")"
-        else cp -f "${add}" "$DC_a/dict/disables"/; fi
+        else
+        if [ -f /usr/bin/gksu ]; then
+            gksu -S -m "Idiomind requires admin privileges for this task" "$DS_a/Dics/cnfg.sh" \
+            cpfile "${add}" "$DS_a/Dics/dicts"/
+        elif [ -f /usr/bin/kdesudo ]; then
+            kdesudo -d --comment="Idiomind requires admin privileges for this task" "$DS_a/Dics/cnfg.sh" \
+            cpfile "${add}" "$DS_a/Dics/dicts"/
+        else
+        msg "$(gettext "No authentication program found").\n" error \
+        "$(gettext "No authentication program found")"
+        exit 1
+        fi
+        > "$DC_a/dict/disables/$(basename "${add}")"; fi
     fi
-    
     "$DS_a/Dics/cnfg.sh"
 
 elif [ "$1" = dclk ]; then
 
     [ "$2" = TRUE ] && dir=enables
     [ "$2" = FALSE ] && dir=disables
-    "$DC_a/dict/$dir/$3.$4.$5.$6" "dlgcnfg"
+    "$DC_a/dict/$dir/$3.$4.$5.$6" dlgcnfg
+    
+elif [ "$1" = cpfile ]; then
+
+    cp -f "${2}" "${3}"/
     
 elif [ -z "${1}" ]; then
 
     if [ ! -d "$DC_d" -o ! -d "$DC_a/dict/disables" ]; then
     mkdir -p "$enables"; mkdir -p "$disables"
     echo -e "$lgtl\n$v_dicts" > "$DC_a/dict/.dict"
-    cp -f "$DS/addons/Dics/disables"/* "$disables/"; fi
+    for r in "$DS_a/Dics/dicts"/*; do > "$disables/$(basename "$r")"; done; fi
     
     [[ "${2}" = f ]] && tex="--text=$3" || tex="--center"
     sel="$(dict_list | yad --list --title="$(gettext "Dictionaries")" \
@@ -137,7 +152,6 @@ elif [ -z "${1}" ]; then
 
             done <<<"$sel"
         fi
-        
-    rm -f "$DT/new.sh" "$DT/script.sh"
+
     exit 1
 fi

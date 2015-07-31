@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ "$1" = dlgcnfg ]]; then
-yad --form --title="Merriam-webster" \
+yad --form --title="Spanishdict" \
 --image=info \
 --text="$(gettext "Does not need configuration.")\n" \
 --name=Idiomind --class=Idiomind \
@@ -16,12 +16,11 @@ echo
 fi
 
 else
-name="merriamwebster"
-lang="en"
+name="spanishdict"
+lang="es"
 
-c=0000000
-wget -q -U Mozilla "http://media.merriam-webster.com/soundc11/${1:0:1}/${1}${c::-${#1}}1.wav"
-[ -f ./"${1}${c::-${#1}}1.wav" ] && sox ./"${1}${c::-${#1}}1.wav" ./"${1}.mp3" && rm ./"${1}${c::-${#1}}1.wav"
+wget -T 51 -O ./"${1}.mp3" -q -U Mozilla "http://audio1.spanishdict.com/audio?lang=es&text=${1}"
+
 exit
 fi
 

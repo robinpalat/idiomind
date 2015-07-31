@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 if [[ "$1" = dlgcnfg ]]; then
-yad --form --title="TTS-API.COM" \
+yad --form --title="Spanishdict" \
 --image=info \
 --text="$(gettext "Does not need configuration.")\n" \
 --name=Idiomind --class=Idiomind \
@@ -16,16 +16,19 @@ if [ $ret = 0 ]; then
 echo
 fi
 
-
 else
 DT_r="$3"; f=1
 if [[ `pwd` != "${3}" ]]; then exit; fi
 
 if [ "$2" = en ]; then t=en
+elif [ "$2" = es ]; then t=es
 else exit; fi
 
-wget -q -U Mozilla -O "$DT_r/tmp1.mp3" "http://tts-api.com/tts.mp3?q=${1}" || rm -f "$DT_r/tmp1.mp3"
+wget -T 51 -q -U Mozilla -O "$DT_r/tmp1.mp3" \
+"http://audio1.spanishdict.com/audio?lang=$t&text=${q}" || rm -f "$DT_r/tmp1.mp3"
 [ -e "$DT_r/tmp1.mp3" ] && mv -f "$DT_r/tmp1.mp3" "${4}"
 
 exit
 fi
+
+

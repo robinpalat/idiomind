@@ -21,7 +21,7 @@ Name="cambridge"
 Language="en"
 
 [[ ${#1} -lt 5 ]] && s="${1:0:5}_" || s="${1:0:5}"
-wget -q -U Mozilla "http://dictionary.cambridge.org/media/british/us_pron/${1:0:1}/${1:0:3}/$s/${1}.mp3"
+wget -T 51 -q -U Mozilla "http://dictionary.cambridge.org/media/british/us_pron/${1:0:1}/${1:0:3}/$s/${1}.mp3"
 [ -f ./"${1}*.mp3" ] && mv ./"${1}*.mp3" ./"${1}.mp3"
 exit
 fi
