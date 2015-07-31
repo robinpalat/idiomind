@@ -1,6 +1,22 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+if [[ "$1" = dlgcnfg ]]; then
+yad --form --title="Yandex" \
+--image=info \
+--text="$(gettext "Does not need configuration.")\n" \
+--name=Idiomind --class=Idiomind \
+--window-icon="$DS/images/icon.png" --center \
+--on-top --skip-taskbar --expand-column=3 \
+--width=400 --height=120 --borders=5 \
+--always-print-result --editable --print-all \
+--button="$(gettext "OK")":1
+ret=$?
+if [ $ret = 0 ]; then
+echo
+fi
+
+else
 if [ "$2" = en ]; then t=en_GB
 elif [ "$2" = es ]; then t=es_ES
 elif [ "$2" = pt ]; then t=pt_PT
@@ -12,3 +28,4 @@ else exit; fi
 
 wget -q -U Mozilla -O ./"${1}.mp3" "http://tts.voicetech.yandex.net/tts?format=mp3&quality=hi&platform=web&application=translate&lang=$t&text=${1}"
 exit
+fi

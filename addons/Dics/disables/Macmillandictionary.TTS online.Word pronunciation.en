@@ -1,5 +1,21 @@
 #!/bin/bash
 
+if [[ "$1" = dlgcnfg ]]; then
+yad --form --title="Macmillandictionary" \
+--image=info \
+--text="$(gettext "Does not need configuration.")\n" \
+--name=Idiomind --class=Idiomind \
+--window-icon="$DS/images/icon.png" --center \
+--on-top --skip-taskbar --expand-column=3 \
+--width=400 --height=120 --borders=5 \
+--always-print-result --editable --print-all \
+--button="$(gettext "OK")":1
+ret=$?
+if [ $ret = 0 ]; then
+echo
+fi
+
+else
 name="macmillandictionary"
 lang="en"
 
@@ -7,3 +23,4 @@ lang="en"
 wget -q -U Mozilla "http://www.macmillandictionary.com/media/british/uk_pron/${1:0:1}/${1:0:3}/$s/${1}_British_English_pronunciation.mp3"
 [ -f ./"${1}_British_English_pronunciation.mp3" ] && mv -f ./"${1}_British_English_pronunciation.mp3" ./"${1}.mp3"
 exit
+fi

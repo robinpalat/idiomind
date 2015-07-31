@@ -1,6 +1,23 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+if [[ "$1" = dlgcnfg ]]; then
+yad --form --title="Baidu" \
+--image=info \
+--text="$(gettext "Does not need configuration.")\n" \
+--name=Idiomind --class=Idiomind \
+--window-icon="$DS/images/icon.png" --center \
+--on-top --skip-taskbar --expand-column=3 \
+--width=400 --height=120 --borders=5 \
+--always-print-result --editable --print-all \
+--button="$(gettext "OK")":1
+ret=$?
+if [ $ret = 0 ]; then
+echo
+fi
+
+
+else
 Name="baidu"
 Language="auto"
 
@@ -9,7 +26,7 @@ elif [ "$2" = en ]; then t=en
 elif [ "$2" = ja ]; then t=jp
 elif [ "$2" = pt ]; then t=pt
 else exit; fi
-
 wget -q -U Mozilla -O ./"${1}.mp3" "http://tts.baidu.com/text2audio?lan=$t&ie=UTF-8&text=${1}"
-
 exit
+fi
+

@@ -1,6 +1,23 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+if [[ "$1" = dlgcnfg ]]; then
+yad --form --title="Yandex" \
+--image=info \
+--text="$(gettext "Does not need configuration.")\n" \
+--name=Idiomind --class=Idiomind \
+--window-icon="$DS/images/icon.png" --center \
+--on-top --skip-taskbar --expand-column=3 \
+--width=400 --height=120 --borders=5 \
+--always-print-result --editable --print-all \
+--button="$(gettext "OK")":1
+ret=$?
+if [ $ret = 0 ]; then
+echo
+fi
+
+
+else
 DT_r="$3"; f=1
 if [[ `pwd` != "${3}" ]]; then exit; fi
 
@@ -31,5 +48,5 @@ else
     "http://tts.voicetech.yandex.net/tts?format=mp3&quality=hi&platform=web&application=translate&lang=$t&text=${1}" || rm -f "$DT_r/tmp1.mp3"
     [ -e "$DT_r/tmp1.mp3" ] && mv -f "$DT_r/tmp1.mp3" "${4}"
 fi
-
 exit
+fi

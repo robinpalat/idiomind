@@ -9,19 +9,6 @@ disables="$DC/addons/dict/disables"
 lgt=$(lnglss "$lgtl")
 lgs=$(lnglss "$lgsl")
 
-dialog_edit() {
-    
-    yad --text-info --title="$Name" \
-    --name=Idiomind --class=Idiomind \
-    --filename="$script" --print-all --always-print-result \
-    --window-icon="$DS/images/icon.png" \
-    --skip-taskbar --buttons-layout=end --center --on-top \
-    --width=490 --height=360 --borders=0 \
-    --editable --fontname=monospace --margins=4 --wrap \
-    --button=Cancel:1 \
-    --button=Save:5 > "$DT/script.sh"
-}
-
 dict_list() {
 
     cd "$enables/"
@@ -44,60 +31,51 @@ dict_list() {
 
 if [ "$1" = add_dlg ]; then
 
-        if [[ "$2" = 2 ]]; then 
-        script="$DT/new.sh"; else
-        printf "$new_script" > "$DT/new.sh"
-        script="$DT/new.sh"; fi
-        Name="New script"
-        Language=""
-        dialog_edit
-         
-    if [ $? -eq 5 ]; then
-        
-        if [ -z "$(< "$DT/script.sh")" ]; then
-        
-        rm "$DT/script.sh"
-        "$DS_a/Dics/cnfg.sh" & exit
-            
-        else
-        Name=$(grep -o -P '(?<=Name=").*(?=")' "$DT/script.sh" | sed 's/\.//g')
-        Language=$(grep -o -P '(?<=Language=").*(?=")' "$DT/script.sh" | sed 's/\.//g')
-            
-            if [ -n "$Name" ] && [ -n "$Language" ]; then
-            mv -f "$DT/script.sh" "$disables/$Name.$Language"
-            fi
-            
-        "$DS_a/Dics/cnfg.sh"
-        fi
-        
-    else
-        "$DS_a/Dics/cnfg.sh"
-    fi
+    taks=( 'Word pronunciation' 'Pronunciation' 'Translator' \
+    'Search definition' 'Search images' 'Download images' )
+    langs=( 'various' 'zh-cn' 'en' 'fr' 'de' 'it' 'ja' 'pt' \
+    'ru' 'es' 'vi' )
+    i=FALSE
 
-elif [ "$1" = edit_dlg ]; then
-
-    [ "$2" = TRUE ] && stts=enables
-    [ "$2" = FALSE ] && stts=disables
-    script="$dir/$stts/$3.$4.$5"
-    Name="$3"
-    Type="$4"
-    Language="$5"
-    dialog_edit
-
-    if [ $? -eq 5 ]; then
+    cd "$HOME"
+    add="$(yad --file --title="$(gettext "Add resource")" \
+    --text=" $(gettext "Browse to and select the file that you want to add.")" \
+    --class=Idiomind --name=Idiomind \
+    --window-icon="$DS/images/icon.png" --center --on-top \
+    --width=620 --height=500 --borders=5 \
+    --button="$(gettext "Cancel")":1 \
+    --button="$(gettext "OK")":0 |cut -d "|" -f1)"
+    ret=$?
     
-        Name=$(grep -F "Name=" "$script" | grep -o -P '(?<=Name=").*(?=")' | sed 's/\.//g')
-        Language=$(grep -F "Language=" "$script" | grep -o -P '(?<=Language=").*(?=")' | sed 's/\.//g')
-        [ -z "$Name" ] && Name="$3"
-        [ -z "$Language" ] && Language="$4"
-            
-        if [ -z "$(< "$DT/script.sh")" ]; then
-        rm "$DT/script.sh" "$dir/$stts/$Name.$Language" & exit
-        else
-        mv -f "$DT/script.sh" "$dir/$stts/$Name.$Language" & exit
-        fi
-        
+    if [ $ret -eq 0 -a -f "${add}" ]; then
+
+        info="$(basename "${add}")"
+        name="$(cut -d "." -f1 <<<"$info")"
+        type="$(cut -d "." -f2 <<<"$info")"
+        tget="$(cut -d "." -f3  <<<"$info")"
+        lang="$(cut -d "." -f4  <<<"$info")"
+        test="$(cut -d "." -f5  <<<"$info")"
+        if [ -z "$name" ]; then i=TRUE; fi
+        if [ -z "$type" ]; then i=TRUE; fi
+        if [ -z "$tget" ]; then i=TRUE; fi
+        if [ -z "$lang" ]; then i=TRUE; fi
+        if [ -n "$test" ]; then i=TRUE; fi
+        if [ ${#name} -gt 50 -o ${#type} -gt 50 ]; then i=TRUE; fi
+        if ! grep -Fo "${tget}" <<<"${taks[@]}"; then i=TRUE; fi
+        if ! grep -Fo "${lang}" <<<"${langs[@]}"; then i=TRUE; fi
+
+        if [ ${i} = TRUE ]; then
+        msg "$(gettext "Invalid format").\n" error "$(gettext "Invalid format")"
+        else cp -f "${add}" "$DC_a/dict/disables"/; fi
     fi
+    
+    "$DS_a/Dics/cnfg.sh"
+
+elif [ "$1" = dclk ]; then
+
+    [ "$2" = TRUE ] && dir=enables
+    [ "$2" = FALSE ] && dir=disables
+    "$DC_a/dict/$dir/$3.$4.$5.$6" "dlgcnfg"
     
 elif [ -z "${1}" ]; then
 
@@ -110,7 +88,7 @@ elif [ -z "${1}" ]; then
     sel="$(dict_list | yad --list --title="$(gettext "Dictionaries")" \
     --name=Idiomind --class=Idiomind "$tex" \
     --print-all --always-print-result --separator="|" \
-    --dclick-action='_' \
+    --dclick-action="$DS_a/Dics/cnfg.sh dclk" \
     --window-icon="$DS/images/icon.png" \
     --expand-column=2 --search-column=3 --hide-column=3 \
     --tooltip-column=3 --regex-search \
