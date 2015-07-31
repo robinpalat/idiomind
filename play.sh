@@ -92,9 +92,7 @@ play_list() {
         n=0; 
         while [ ${n} -le 5 ]; do
             arr="in${n}"
-            [[ ${!arr} -lt 1 ]] \
-            && echo "$DS/images/addi.png" \
-            || echo "$DS/images/add.png"
+            [[ ${!arr} -lt 1 ]] && echo "$DS/images/addi.png" || echo "$DS/images/add.png"
             echo "  <span font_desc='Arial 11'>$(gettext "${lbls[$n]}")</span>"
             echo "${!sets[${n}]}"
             let n++

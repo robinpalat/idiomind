@@ -147,15 +147,18 @@ edit_item() {
     mark=`grep -oP '(?<=mark={).*(?=})' <<<"${item}"`
     id=`grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"`
     [ -z "${id}" ] && id=""
-    q_trad="$(sed "s/'/ /g" <<<"${trgt}")"
+    query="$(sed "s/'/ /g" <<<"${trgt}")"
     mod=0; col=0
    
     cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"" "\"${trgt}\"""
     cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"" "\"${trgt}\"""
     cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"" 1 ${c}"
-    link1="https://translate.google.com/\#$lgt/$lgs/${q_trad}"
-    link2="$(< "/home/quincemil/.config/idiomind/addons/dict/enables/Glosbe.Link.Search definition.various")"
-    link3='https://www.google.com/search?q='$q_trad'&amp;tbm=isch'
+    
+    f="$(ls "$DC_d"/*."Link.Search definition".* |head -n1)"
+    eval _url="$(< "$f")"
+    link1="https://translate.google.com/\#$lgt/$lgs/${query}"
+    link2="$_url"
+    link3='https://www.google.com/search?q='$query'&amp;tbm=isch'
     
 
     if [ -z "${item}" ]; then exit 1; fi

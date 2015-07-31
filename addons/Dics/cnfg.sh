@@ -26,7 +26,6 @@ dict_list() {
         echo 'FALSE'
         echo "$dict" | sed 's/\./\n/g'; fi
     done < <(ls "$disables/")
-    
 }
 
 if [ "$1" = add_dlg ]; then
@@ -97,7 +96,7 @@ elif [ -z "${1}" ]; then
     --column=" ":CHK \
     --column="$(gettext "Available resources")":TEXT \
     --column="$(gettext "Type")":TEXT \
-    --column="$(gettext "Task")                                ":TEXT \
+    --column="$(gettext "Task")                                      ":TEXT \
     --column="$(gettext "Language")":TEXT \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Add")":2 \

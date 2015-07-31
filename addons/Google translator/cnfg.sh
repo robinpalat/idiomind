@@ -1,10 +1,13 @@
 #!/bin/bash
 
 DC_a="$HOME/.config/idiomind/addons"
-if [ ! -f "$DC_a/gts.cfg" ] || [[ -z "$(< "$DC_a/gts.cfg")" ]]; then
-echo -e "set1=\"\"\nkey=\"\"" > "$DC_a/gts.cfg"; fi
 
-set1=$(grep -o set1=\"[^\"]* "$DC_a/gts.cfg" |grep -o '[^"]*$')
+if [ ! -e "$DC_d/Google translate.Traslator online.Translator.various" ]; then set1=FALSE
+elif [ -e "$DC_d/Google translate.Traslator online.Translator.various" ]; then set1=TRUE; fi
+
+if [ ! -f "$DC_a/gts.cfg" ] || [[ -z "$(< "$DC_a/gts.cfg")" ]]; then
+echo -e "key=\"\"" > "$DC_a/gts.cfg"; fi
+
 key=$(grep -o key=\"[^\"]* "$DC_a/gts.cfg" |grep -o '[^"]*$')
 c=$(yad --form --title="$(gettext "Google Translate")" \
 --name=Idiomind --class=Idiomind \
@@ -23,7 +26,14 @@ ret=$?
 if [ $ret = 0 ]; then
 val1="$(cut -d "|" -f1 <<<"$c")"
 val2="$(cut -d "|" -f2 <<<"$c")"
-sed -i "s/set1=.*/set1=\"$val1\"/g" "$DC_a/gts.cfg"
+
+if [ ${val1} = TRUE -a ! -e "$DC_d/Google translate.Traslator online.Translator.various" ]; then
+mv -f "$DC_a/dict/disables/Google translate.Traslator online.Translator.various" \
+"$DC_d/Google translate.Traslator online.Translator.various"
+elif [ ${val1} = FALSE -a -e "$DC_d/Google translate.Traslator online.Translator.various" ]; then
+mv -f "$DC_d/Google translate.Traslator online.Translator.various" \
+"$DC_a/dict/disables/Google translate.Traslator online.Translator.various"; fi
+
 sed -i "s/key=.*/key=\"$val2\"/g" "$DC_a/gts.cfg"
 fi
 
