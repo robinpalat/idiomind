@@ -120,7 +120,7 @@ elif [ -z "${1}" ]; then
     --expand-column=2 --search-column=3 --hide-column=3 \
     --tooltip-column=3 --regex-search \
     --center --on-top \
-    --width=640 --height=400 --borders=10 \
+    --width=600 --height=360 --borders=10 \
     --column=" ":CHK \
     --column="$(gettext "Available resources")":TEXT \
     --column="$(gettext "Type")":TEXT \

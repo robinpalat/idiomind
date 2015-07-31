@@ -464,14 +464,15 @@ delete_topic() {
             kill -9 $(pgrep -f "yad --notebook ") &
             
             "$DS/mngr.sh" mkmn &
+            
+            if [ -e "$DM_tl/.5.cfg" ]; then
+            tpd="$(< "$DM_tl/.5.cfg")"
+            if grep -Fxq "${tpd}" "$DM_tl/.1.cfg"; then
+            "$DS/default/tpc.sh" "${tpd}" 2; fi
+            fi
+            > "$DC_s/7.cfg"
         fi
     
-    if [ -e "$DM_tl/.5.cfg" ]; then
-    tpd="$(< "$DM_tl/.5.cfg")"
-    if grep -Fxq "${tpd}" "$DM_tl/.1.cfg"; then
-    "$DS/default/tpc.sh" "${tpd}" 2; fi
-    fi
-    > "$DC_s/7.cfg"
     rm -f "$DT/rm_lk" "$DM_tl"/.*.tmp & exit 1
 }
 

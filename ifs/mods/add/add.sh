@@ -191,6 +191,7 @@ function clean_1() {
     | sed 's/<[^>]*>//g' | sed 's/ \+/ /g'
 }
 
+
 function clean_0() {
     
     echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' \
@@ -274,7 +275,8 @@ function clean_6() {
     | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g'
     
 }
-    
+
+
 function clean_7() {
     
     sed 's/^ *//;s/ *$//g' | sed 's/^[ \t]*//;s/[ \t]*$//' \
@@ -286,6 +288,7 @@ function clean_7() {
     | sed 's/,/\n/g' | sed 's/。/\n/g' \
     | sed 's/__/\n/g'
 }
+
 
 function clean_8() {
    
