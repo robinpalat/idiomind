@@ -68,16 +68,16 @@ if [ "$1" = add_dlg ]; then
         else
         if [ -f /usr/bin/gksu ]; then
             gksu -S -m "Idiomind requires admin privileges for this task" "$DS_a/Dics/cnfg.sh" \
-            cpfile "${add}" "$DS_a/Dics/dicts"/
+            cpfile "${add}" "$DS_a/Dics/dicts"/ "$DC_a/dict/disables/$(basename "${add}")"
         elif [ -f /usr/bin/kdesudo ]; then
             kdesudo -d --comment="Idiomind requires admin privileges for this task" "$DS_a/Dics/cnfg.sh" \
-            cpfile "${add}" "$DS_a/Dics/dicts"/
+            cpfile "${add}" "$DS_a/Dics/dicts"/ "$DC_a/dict/disables/$(basename "${add}")"
         else
         msg "$(gettext "No authentication program found").\n" error \
         "$(gettext "No authentication program found")"
         exit 1
         fi
-        > "$DC_a/dict/disables/$(basename "${add}")"; fi
+        fi
     fi
     "$DS_a/Dics/cnfg.sh"
 
@@ -90,6 +90,7 @@ elif [ "$1" = dclk ]; then
 elif [ "$1" = cpfile ]; then
 
     cp -f "${2}" "${3}"/
+    > "${4}"; sudo chmod 777 "${4}"
     
 elif [ -z "${1}" ]; then
 
