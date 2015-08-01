@@ -288,7 +288,7 @@ new_word() {
         fi
 
         notify-send "${trgt}" "${srce}\\n(${tpe})" -t 10000
-
+        _fetch_img &
         cleanups "${DT_r}"
         echo -e "adi.1.adi" >> "$DC_s/log"
         exit

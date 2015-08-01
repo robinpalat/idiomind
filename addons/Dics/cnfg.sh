@@ -67,11 +67,11 @@ if [ "$1" = add_dlg ]; then
         msg "$(gettext "Invalid format").\n" error "$(gettext "Invalid format")"
         else
         if [ -f /usr/bin/gksu ]; then
-            gksu -S -m "Idiomind requires admin privileges for this task" "$DS_a/Dics/cnfg.sh" \
-            cpfile "${add}" "$DS_a/Dics/dicts"/ "$DC_a/dict/disables/$(basename "${add}")"
+        gksu -S -m "$(gettext "Idiomind requires admin privileges for this task")" "$DS_a/Dics/cnfg.sh" \
+        cpfile "${add}" "$DS_a/Dics/dicts"/ "$DC_a/dict/disables/$(basename "${add}")"
         elif [ -f /usr/bin/kdesudo ]; then
-            kdesudo -d --comment="Idiomind requires admin privileges for this task" "$DS_a/Dics/cnfg.sh" \
-            cpfile "${add}" "$DS_a/Dics/dicts"/ "$DC_a/dict/disables/$(basename "${add}")"
+        kdesudo -d --comment="$(gettext "Idiomind requires admin privileges for this task")" "$DS_a/Dics/cnfg.sh" \
+        cpfile "${add}" "$DS_a/Dics/dicts"/ "$DC_a/dict/disables/$(basename "${add}")"
         else
         msg "$(gettext "No authentication program found").\n" error \
         "$(gettext "No authentication program found")"
