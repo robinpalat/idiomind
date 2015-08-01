@@ -347,38 +347,57 @@ function tts_word() {
     [ -d "${2}" ] && cd "${2}"/ || exit 1
     
     for convert in "$DC_d"/*."TTS online.Word pronunciation.$lgt"; do
-    convert="$DS_a/Dics/dicts/$(basename "${convert}")"
-    "${convert}" "${1}"
-    if [ -e "${2}/${1}.mp3" ]; then break; fi; done
+    convert="$DS_a/Dics/dicts/$(basename "${convert}")"; "${convert}" "${1}"
+    
+    if [ -e "${2}/${1}.mp3" ]; then
+    if [[ `du "${2}/${1}.mp3" |cut -f1` -gt 10 ]]; then
+    break; else rm -f "${2}/${1}.mp3"; fi; fi
+    done
     
     if [ ! -e "${2}/${1}.mp3" ]; then
-        for convert in "$DC_d"/*."TTS online.Word pronunciation.various"; do
-        convert="$DS_a/Dics/dicts/$(basename "${convert}")"
-        "${convert}" "${1}"
-        if [ -e "${2}/${1}.mp3" ]; then break; fi; done
+    for convert in "$DC_d"/*."TTS online.Word pronunciation.various"; do
+    convert="$DS_a/Dics/dicts/$(basename "${convert}")"; "${convert}" "${1}"
+    
+    if [ -e "${2}/${1}.mp3" ]; then
+    if [[ `du "${2}/${1}.mp3" |cut -f1` -gt 10 ]]; then
+    break; else rm -f "${2}/${1}.mp3"; fi; fi
+    done
     fi
 }
 
+
 function img_word() {
-    
-    [ -d "${2}" ] && cd "${2}"/ || exit 1
     
     if [ ! -e "${DM_tls}/images/${1,,}-0.jpg" ]; then
     
         touch "$DT/img${1}.lk"
         for img in "$DC_d"/*."Script.Download image".*; do
-        img="$DS_a/Dics/dicts/$(basename "${img}")"
-        "${img}" "${1}"
-        if [ -e "$DT/$1.jpg" ]; then break; fi; done
+        img="$DS_a/Dics/dicts/$(basename "${img}")"; "${img}" "${1}"
         
-        if [ -e "$DT/$1.jpg" ]; then
-        name_img="${DM_tls}/images/${1,,}-0.jpg"
-        /usr/bin/convert "$DT/$1.jpg" -interlace Plane -thumbnail 405x275^ \
-        -gravity center -extent 400x270 -quality 90% "${name_img}"
-        rm -f "$DT/$1.jpg"; fi
+        if [ -e "$DT/${1}.jpg" ]; then
+        if [[ `du "$DT/${1}.jpg" |cut -f1` -gt 10 ]]; then
+        break; else rm -f "$DT/${1}.jpg"; fi; fi
+        done
+        
+        if [ ! -e "$DT/${1}.jpg" ]; then
+        for img in "$DC_d"/*."Script.Download image".*; do
+        img="$DS_a/Dics/dicts/$(basename "${img}")"; "${img}" "${2}"
+        
+        if [ -e "$DT/${2}.jpg" ]; then
+        if [[ `du "$DT/${2}.jpg" |cut -f1` -gt 10 ]]; then
+        break; else rm -f "$DT/${2}.jpg"; fi; fi
+        done; fi
+        
+        if [ -e "$DT/${1}.jpg" -o -e "$DT/${2}.jpg" ]; then
+        [ -e "$DT/${1}.jpg" ] && img_file="$DT/${1}.jpg" || img_file="$DT/${2}.jpg"
+        /usr/bin/convert "${img_file}" -interlace Plane -thumbnail 405x275^ \
+        -gravity center -extent 400x270 -quality 90% "${DM_tls}/images/${1,,}-0.jpg"
+        rm -f "${img_file}"; fi
+            
         rm -f "$DT/img${1}.lk"
     fi
 }
+
 
 function voice() {
     
@@ -386,14 +405,12 @@ function voice() {
     DT_r="$2"; cd "$DT_r"
     
     if [ -n "$txaud" ]; then
-        echo "${1}" | $txaud "$DT_r"/f.wav
+        echo "${1}" | $txaud "$DT_r/f.wav"
         sox "$DT_r"/*.wav "${3}"
         
         if [ $? != 0 ]; then
         msg "$(gettext "Please check the speech synthesizer configuration in the preferences dialog.")" dialog-warning & exit 1
         fi
-        
-        [ -d "$DT_r" ] && rm -fr "$DT_r"; exit 1
     fi
 }
 

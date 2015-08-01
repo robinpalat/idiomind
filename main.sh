@@ -144,7 +144,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     --column="$langt            " \
     --column="$langs            " \
     --button="$(gettext "Install")":0 \
-    --button="$(gettext "Close")":1
+    --button="gtk-close":1
     ret=$?
         
         if [ $ret -eq 1 ]; then exit
@@ -394,7 +394,7 @@ panel() {
     --form --fixed --on-top --no-buttons --align=center \
     --width=140 --height=190 --borders=0 --geometry=130x190-${x}-${y} \
     --field=gtk-new:btn "$DS/add.sh 'new_items'" \
-    --field=gtk-home:btn "idiomind 'topic'" \
+    --field=$(gettext "Home"):btn "idiomind 'topic'" \
     --field=gtk-index:btn "$DS/chng.sh" \
     --field=gtk-preferences:btn "$DS/cnfg.sh"
     [ $? != 0 ] && "$DS/stop.sh" 1 &

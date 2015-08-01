@@ -70,7 +70,7 @@ else
 fi
 
 if [ -z "$intrf" ]; then intrf=Default; fi
-lst="$intrf"$(sed "s/\!$intrf//g" <<<"!Default!en!es!pt")""
+lst="$intrf"$(sed "s/\!$intrf//g" <<<"!Default!en!es!pt!fr!it")""
 if [ "$ntosd" != TRUE ]; then audio=TRUE; fi
 if [ "$trans" != TRUE ]; then ttrgt=FALSE; fi
 
@@ -95,7 +95,7 @@ yad --plug=$KEY --form --tabnum=1 \
 --field=":LBL" " " \
 --field="<small>$(gettext "Use this speech synthesizer instead eSpeak")</small>" "$synth" \
 --field="<small>$(gettext "Program to convert text to WAV file")</small>" "$txaud" \
---field="<small>$(gettext "Display in")</small>":CB "$lst" \
+--field="$(gettext "Display in")":CB "$lst" \
 --field=" :LBL" " " \
 --field="$(gettext "Help")":BTN "$DS/ifs/tls.sh help" \
 --field="$(gettext "Feedback")":BTN "$DS/ifs/tls.sh 'fback'" \
@@ -113,7 +113,7 @@ yad --notebook --key=$KEY --title="$(gettext "Settings")" \
 --tab-borders=5 --sticky --center \
 --tab="$(gettext "Preferences")" \
 --tab="$(gettext "Addons")" \
---width=460 --height=330 --borders=2 \
+--width=500 --height=350 --borders=2 \
 --button="$(gettext "OK")":0 \
 --button="$(gettext "Cancel")":1
 ret=$?

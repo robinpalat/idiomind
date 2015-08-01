@@ -32,7 +32,7 @@ if [ -z "${1}" ]; then
     --button="$(gettext "Cancel")":1 \
     --button=Ok:0 \
     --column="" \
-    --column=Options \
+    --column="$(gettext "Options")" \
     "FALSE" "$(gettext "Import")" "FALSE" "$(gettext "Export")")
     ret=$?
 
