@@ -286,9 +286,9 @@ new_word() {
             else
                 mv -f "$DT_r/audtm.mp3" "${DM_tls}/${audio}.mp3"; fi
         fi
-
+        img_word "${trgt}" "${DM_tls}" &
+        
         notify-send "${trgt}" "${srce}\\n(${tpe})" -t 10000
-        _fetch_img &
         cleanups "${DT_r}"
         echo -e "adi.1.adi" >> "$DC_s/log"
         exit
@@ -340,6 +340,7 @@ list_words_edit() {
                     index 1 "${tpe}" "${trgt}" "${srce}" "${exmp_}" "" "" "" "${id}"
                     if [ ! -f "$DM_tls/$audio.mp3" ]; then
                     ( tts_word "$audio" "$DM_tls" ); fi
+                    ( img_word "${trgt}" "${DM_tls}" ) &
                 
                 else
                     echo -e "\n\n#$n $trgt" >> "$DT_r/logw"
@@ -400,7 +401,8 @@ list_words_sentence() {
 
                 index 1 "${tpe}" "${trgt}" "${srce}" "${exmp_}" "" "" "" "${id}"
                 if [ ! -f "$DM_tls/$audio.mp3" ]; then
-                ( tts_word "$audio" "$DM_tls" ); fi
+                ( tts_word "${audio}" "${DM_tls}" ); fi
+                ( img_word "${trgt}" "${DM_tls}" ) &
             
             else
                 echo -e "\n\n#$n $trgt" >> "$DT_r/logw"
@@ -651,6 +653,7 @@ process() {
                                 index 1 "${tpe}" "${trgt}" "${srce}" "" "" "" "" "${id}"
                                 if [ ! -f "$DM_tls/$audio.mp3" ]; then
                                 ( tts_word "$audio" "$DM_tls" ); fi
+                                ( img_word "${trgt}" "${DM_tls}" ) &
                                 echo "${trgt}" >> "$DT_r/addw"
 
                             else

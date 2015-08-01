@@ -50,7 +50,7 @@ fonts() {
     img="$DM_tls/images/${trgt,,}-0.jpg"
     [ ${#trgt} -gt 10 -o ${#srce} -gt 10 ] && trgt_f_c=14 || trgt_f_c=15
     [ ! -f "$img" ] && img="$DS/practice/images/img_2.jpg"
-    aswer="<span font_desc='Monospace ${trgt_f_c}'><b>${trgt}</b></span>" #<small>${srce}</small>
+    aswer="<span font_desc='Free Sans Bold ${trgt_f_c}'>${trgt}</span>" #<small>${srce}</small>
 }
 
 cuestion() {

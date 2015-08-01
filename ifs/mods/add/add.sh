@@ -359,6 +359,26 @@ function tts_word() {
     fi
 }
 
+function img_word() {
+    
+    [ -d "${2}" ] && cd "${2}"/ || exit 1
+    
+    if [ ! -e "${DM_tls}/images/${1,,}-0.jpg" ]; then
+    
+        touch "$DT/img${1}.lk"
+        for img in "$DC_d"/*."Script.Download image".*; do
+        img="$DS_a/Dics/dicts/$(basename "${img}")"
+        "${img}" "${1}"
+        if [ -e "$DT/$1.jpg" ]; then break; fi; done
+        
+        if [ -e "$DT/$1.jpg" ]; then
+        name_img="${DM_tls}/images/${1,,}-0.jpg"
+        /usr/bin/convert "$DT/$1.jpg" -interlace Plane -thumbnail 405x275^ \
+        -gravity center -extent 400x270 -quality 90% "${name_img}"
+        rm -f "$DT/$1.jpg"; fi
+        rm -f "$DT/img${1}.lk"
+    fi
+}
 
 function voice() {
     

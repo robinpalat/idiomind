@@ -41,7 +41,7 @@ if [ "$1" = add_dlg ]; then
     --text=" $(gettext "Browse to and select the file that you want to add.")" \
     --class=Idiomind --name=Idiomind \
     --window-icon="$DS/images/icon.png" --center --on-top \
-    --width=620 --height=500 --borders=5 \
+    --width=650 --height=550 --borders=5 \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "OK")":0 |cut -d "|" -f1)"
     ret=$?
@@ -85,7 +85,7 @@ elif [ "$1" = dclk ]; then
 
     [ "$2" = TRUE ] && dir=enables
     [ "$2" = FALSE ] && dir=disables
-    "$DC_a/dict/$dir/$3.$4.$5.$6" dlgcnfg
+    "$DS_a/Dics/dicts/$3.$4.$5.$6" dlgcnfg
     
 elif [ "$1" = cpfile ]; then
 

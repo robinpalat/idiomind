@@ -689,6 +689,10 @@ set_image() {
     cd "$DT"; r=0
     source "$DS/ifs/mods/add/add.sh"
     ifile="${DM_tls}/images/${3,,}-0.jpg"
+    
+    if [ -e "$DT/img$3.lk" ]; then
+    msg_2 "$(gettext "Attempting download image")...\n" info OK gtk-stop "$(gettext "Warning")"
+    if [ $? -eq 1 ]; then "$DT/img$3.lk"; else exit 1 ; fi; fi
 
     if [ -f "$ifile" ]; then
     
