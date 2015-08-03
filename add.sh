@@ -192,6 +192,8 @@ new_sentence() {
         index 2 "${tpe}" "${trgt}" "${srce}" "" "" "${wrds}" "${grmr}" "$id"
         if [ -f "$DT_r/img.jpg" ]; then
         mv -f  "$DT_r/img.jpg" "${DM_tlt}/images/$id.jpg"; fi
+        
+        notify-send "${trgt}" "${srce}\\n(${tpe})" -t 10000
 
         if [ ! -f "$DT_r/audtm.mp3" ]; then
         
@@ -209,8 +211,6 @@ new_sentence() {
         else
             mv -f "$DT_r/audtm.mp3" "${DM_tlt}/$id.mp3"
         fi
-
-        notify-send "${trgt}" "${srce}\\n(${tpe})" -t 10000
 
         (if [ "$wlist" = TRUE ] && [ -n "${wrds}" ]; then
         "$DS/add.sh" list_words_sentence "${wrds}" "${trgt}" "${tpe}"
@@ -272,6 +272,8 @@ new_word() {
         set_image_2 "$DT_r/img.jpg" "$name_img"
         fi
 
+        notify-send "${trgt}" "${srce}\\n(${tpe})" -t 10000
+        
         if [ ! -f "$DT_r/audtm.mp3" ]; then
         
             if [ ! -f "${DM_tls}/${audio}.mp3" ]; then
@@ -288,7 +290,6 @@ new_word() {
         fi
         img_word "${trgt}" "${srce}" &
         
-        notify-send "${trgt}" "${srce}\\n(${tpe})" -t 10000
         cleanups "${DT_r}"
         echo -e "adi.1.adi" >> "$DC_s/log"
         exit

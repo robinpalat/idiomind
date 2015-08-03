@@ -84,7 +84,7 @@ conditions() {
     | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1; fi
 }
 
-mediatype () {
+mediatype() {
 
     if echo "$1" | grep -q ".mp3"; then ex=mp3; tp=aud
     elif echo "$1" | grep -q ".mp4"; then ex=mp4; tp=vid
@@ -97,7 +97,7 @@ mediatype () {
     return; fi
 }
 
-mkhtml () {
+mkhtml() {
 
 video="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
 <link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwr.css\">
@@ -134,7 +134,7 @@ $summary<br><br></div>
     fi
 }
 
-get_images () {
+get_images() {
 
     if [ "$tp" = aud ]; then
         
