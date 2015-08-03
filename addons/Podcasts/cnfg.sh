@@ -105,9 +105,9 @@ CNFG=$(yad --form --title="$(gettext "Podcasts settings")" \
 --field=" ":LBL " " \
 --field="$(gettext "Path where episodes should be synced")":LBL " " \
 --field="":DIR "$path" \
---button="$(gettext "Cancel")":1 \
 --button="$(gettext "Remove")":"$DSP/mngr.sh 'deleteall'" \
 --button="$(gettext "Syncronize")":5 \
+--button="$(gettext "Cancel")":1 \
 --button="gtk-ok":0)
 ret=$?
 
