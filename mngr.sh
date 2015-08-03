@@ -170,7 +170,7 @@ edit_item() {
     elif [ ${type} = 2 ]; then edit_dlg2="$(dlg_form_2)"; fi
     ret=$?
 
-        if [ ${ret} -eq 0 -o ${ret} -eq 2 ]; then
+        if [ ${ret} -eq 0  ]; then
         
             include "$DS/ifs/mods/add"
             

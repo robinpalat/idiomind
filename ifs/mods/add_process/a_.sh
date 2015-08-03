@@ -176,7 +176,8 @@ if [[ ${conten^} = A ]]; then
         lns="$(ls "$DT_r"/[0-9]*.mp3 | wc -l | head -200)"
         n=1
         while [[ ${n} -le ${lns} ]]; do
-
+            
+            unset trgt srce wrds grmr id
             if [ -f "$DT_r"/${n}.mp3 ]; then
             
                 sox "$DT_r"/${n}.mp3 "$DT_r/info.flac" rate 16k
@@ -199,7 +200,7 @@ if [[ ${conten^} = A ]]; then
                 echo -e "\n\n#$n [$(gettext "Sentence too long")] $trgt" >> "$DT_r/slog"
                 
                 elif [ -z "$trgt" ]; then
-                trgt="$n -------------------------------"
+                trgt="$n  . . ."
                 id="$(set_name_file 2 "${trgt}" "" "" "" "" "")"
                 index 2 "${tpe}" "${trgt}" "" "" "" "" "" "${id}"
                 mv -f "$DT_r/${n}.mp3" "${DM_tlt}/$id.mp3"

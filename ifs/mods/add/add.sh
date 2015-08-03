@@ -374,7 +374,7 @@ function tts_word() {
 
 function img_word() {
     
-    if ls "$DC_d"/*."TTS online.Word pronunciation".* 1> /dev/null 2>&1; then
+    if ls "$DC_d"/*."Script.Download image".* 1> /dev/null 2>&1; then
     if [ ! -e "${DM_tls}/images/${1,,}-0.jpg" ]; then
     
         touch "$DT/img${1}.lk"

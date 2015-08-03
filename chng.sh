@@ -28,7 +28,7 @@ if [[ ${1} = 0 ]]; then
         
             if [ ${n} = TRUE ]; then
             notify-send -i "${icon}" "${trgt}" "${srce}" -t 10000; fi &
-            if [ ${a} = TRUE ]; then sleep 1
+            if [ ${a} = TRUE ]; then sleep 0.5
             if [ ${type} = 1 -a ${rw} = 0 ]; then spn=3; else spn=1; fi
             ( while [ ${ritem} -lt ${spn} ]; do
             "$DS"/play.sh play_file "${file}" "${trgt}"
