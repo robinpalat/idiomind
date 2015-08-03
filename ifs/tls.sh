@@ -78,47 +78,6 @@ function check_source_1() {
 }
 
 
-_backup() {
-
-    cd "$DM/backup"; ls -t *.bk | sed 's/\.bk//g' | \
-    yad --list --title="$(gettext "Backups")" \
-    --name=Idiomind --class=Idiomind \
-    --dclick-action="$DS/ifs/tls.sh '_restfile'" \
-    --window-icon="$DS/images/icon.png" --center --on-top \
-    --width=520 --height=380 --borders=10 \
-    --print-column=1 --no-headers \
-    --column=Nombre:TEXT \
-    --button=gtk-close:1
-
-} >/dev/null 2>&1
-
-
-_restfile() {
-
-    if [ -f "$HOME/.idiomind/backup/${2}.bk" ]; then
-        yad --title="${2}" \
-        --text="$(gettext "Confirm Restore")\n" \
-        --image=dialog-question \
-        --name=Idiomind --class=Idiomind \
-        --always-print-result \
-        --window-icon="$DS/images/icon.png" \
-        --image-on-top --on-top --sticky --center \
-        --width=340 --height=100 --borders=5 \
-        --button="$(gettext "Cancel")":1 \
-        --button="$(gettext "Restore")":0
-        ret="$?"
-        
-        if [ $ret -eq 0 ]; then
-        cp -f "$HOME/.idiomind/backup/${2}.bk" "${DM_tl}/${2}/.conf/0.cfg"
-        "$DS/ifs/tls.sh" check_index "${2}" 1
-        fi
-        
-    else
-        msg "$(gettext "Backup not found")\n" dialog-warning
-    fi
-}
-
-
 check_index() {
 
     DC_tlt="$DM_tl/${2}/.conf"
@@ -349,6 +308,48 @@ add_audio() {
     if [ -f "${aud}" ]; then cp -f "${aud}" "${2}/audtm.mp3"; fi
     fi
 } >/dev/null 2>&1
+
+
+_backup() {
+
+    cd "$DM/backup"; ls -t *.bk | sed 's/\.bk//g' | \
+    yad --list --title="$(gettext "Backups")" \
+    --name=Idiomind --class=Idiomind \
+    --dclick-action="$DS/ifs/tls.sh '_restfile'" \
+    --window-icon="$DS/images/icon.png" --center --on-top \
+    --width=520 --height=380 --borders=10 \
+    --print-column=1 --no-headers \
+    --column=Nombre:TEXT \
+    --button=gtk-close:1
+
+} >/dev/null 2>&1
+
+
+_restfile() {
+
+    if [ -f "$HOME/.idiomind/backup/${2}.bk" ]; then
+        info=`stat "$HOME/.idiomind/backup/${2}.bk"|sed -n 6p|cut -d" " -f2`
+        yad --title="${2}" \
+        --text="$(gettext "Revert to the previous version")  ($info)\n" \
+        --image=dialog-warning \
+        --name=Idiomind --class=Idiomind \
+        --always-print-result \
+        --window-icon="$DS/images/icon.png" \
+        --image-on-top --on-top --sticky --center \
+        --width=440 --height=100 --borders=5 \
+        --button="$(gettext "Cancel")":1 \
+        --button="$(gettext "Restore")":0
+        ret="$?"
+        
+        if [ $ret -eq 0 ]; then
+        cp -f "$HOME/.idiomind/backup/${2}.bk" "${DM_tl}/${2}/.conf/0.cfg"
+        "$DS/ifs/tls.sh" check_index "${2}" 1
+        fi
+        
+    else
+        msg "$(gettext "Backup not found")\n" dialog-warning
+    fi
+}
 
 
 add_file() {
@@ -654,7 +655,7 @@ app_license = (('This program is free software: you can redistribute it and/or m
 'GNU General Public License for more details.\n'+
 '\n'+
 'You should have received a copy of the GNU General Public License\n'+
-'along with this program.  If not, see <http://www.gnu.org/licenses/>.'))
+'along with this program.  If not, see http://www.gnu.org/licenses.'))
 app_authors = ['Robin Palatnik <patapatass@hotmail.com>']
 app_artists = ["Logo based on rg1024's openclipart Ufo Cartoon."]
 
