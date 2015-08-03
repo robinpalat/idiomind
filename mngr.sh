@@ -155,8 +155,9 @@ edit_item() {
     cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"" 1 ${c}"
     
     f="$(ls "$DC_d"/*."Link.Search definition".* |head -n1)"
+    if [ -z "$f" ]; then "$DS_a/Dics/cnfg.sh" 3
+    f="$(ls "$DC_d"/*."Link.Search definition".* |head -n1)"; fi
     eval _url="$(< "$DS_a/Dics/dicts/$(basename "$f")")"
-    if [ -z "$f" ]; then "$DS_a/Dics/cnfg.sh" 3; fi
     link1="https://translate.google.com/\#$lgt/$lgs/${query}"
     link2="$_url"
     
