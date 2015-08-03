@@ -29,19 +29,19 @@ if [[ -n "$1" ]]; then
     info5="* "; info10="<b>$(gettext "Test completed!")</b>"; echo 21 > .5
     elif [ ${1} = 6 ]; then
     learned=$(< ./a.l); info1="* "
-    info="  <span color='#5D5D5D'><b><big>$learned </big></b></span><small>$(gettext "Learned")</small>   <span color='#5D5D5D'><b><big>$easys </big></b></span><small>$(gettext "Easy")</small>   <span color='#5D5D5D'><b><big>$learning </big></b></span><small>$(gettext "Learning")</small>   <span color='#5D5D5D'><b><big>$hards </big></b></span><small>$(gettext "Difficult")</small>  \\n"
+    info="  <span color='#696969'><b><big>$learned </big></b></span><small>$(gettext "Learned")</small>   <span color='#696969'><b><big>$easys </big></b></span><small>$(gettext "Easy")</small>   <span color='#696969'><b><big>$learning </big></b></span><small>$(gettext "Learning")</small>   <span color='#696969'><b><big>$hards </big></b></span><small>$(gettext "Difficult")</small>  \\n"
     elif [ ${1} = 7 ]; then
     learned=$(< ./b.l); info2="* "
-    info="  <span color='#5D5D5D'><b><big>$learned </big></b></span><small>$(gettext "Learned")</small>   <span color='#5D5D5D'><b><big>$easys </big></b></span><small>$(gettext "Easy")</small>   <span color='#5D5D5D'><b><big>$learning </big></b></span><small>$(gettext "Learning")</small>   <span color='#5D5D5D'><b><big>$hards </big></b></span><small>$(gettext "Difficult")</small>  \\n"
+    info="  <span color='#696969'><b><big>$learned </big></b></span><small>$(gettext "Learned")</small>   <span color='#696969'><b><big>$easys </big></b></span><small>$(gettext "Easy")</small>   <span color='#696969'><b><big>$learning </big></b></span><small>$(gettext "Learning")</small>   <span color='#696969'><b><big>$hards </big></b></span><small>$(gettext "Difficult")</small>  \\n"
     elif [ ${1} = 8 ]; then
     learned=$(< ./c.l); info3="* "
-    info="  <span color='#5D5D5D'><b><big>$learned </big></b></span><small>$(gettext "Learned")</small>   <span color='#5D5D5D'><b><big>$easys </big></b></span><small>$(gettext "Easy")</small>   <span color='#5D5D5D'><b><big>$learning </big></b></span><small>$(gettext "Learning")</small>   <span color='#5D5D5D'><b><big>$hards </big></b></span><small>$(gettext "Difficult")</small>  \\n"
+    info="  <span color='#696969'><b><big>$learned </big></b></span><small>$(gettext "Learned")</small>   <span color='#696969'><b><big>$easys </big></b></span><small>$(gettext "Easy")</small>   <span color='#696969'><b><big>$learning </big></b></span><small>$(gettext "Learning")</small>   <span color='#696969'><b><big>$hards </big></b></span><small>$(gettext "Difficult")</small>  \\n"
     elif [ ${1} = 9 ]; then
     learned=$(< ./d.l); info4="* "
-    info="  <span color='#5D5D5D'><b><big>$learned </big></b></span><small>$(gettext "Learned")</small>   <span color='#5D5D5D'><b><big>$easys </big></b></span><small>$(gettext "Easy")</small>   <span color='#5D5D5D'><b><big>$learning </big></b></span><small>$(gettext "Learning")</small>   <span color='#5D5D5D'><b><big>$hards </big></b></span><small>$(gettext "Difficult")</small>  \\n"
+    info="  <span color='#696969'><b><big>$learned </big></b></span><small>$(gettext "Learned")</small>   <span color='#696969'><b><big>$easys </big></b></span><small>$(gettext "Easy")</small>   <span color='#696969'><b><big>$learning </big></b></span><small>$(gettext "Learning")</small>   <span color='#696969'><b><big>$hards </big></b></span><small>$(gettext "Difficult")</small>  \\n"
     elif [ ${1} = 10 ]; then
     learned=$(< ./e.l); info5="* "
-    info="  <span color='#5D5D5D'><b><big>$learned </big></b></span><small>$(gettext "Learned")</small>   <span color='#5D5D5D'><b><big>$easys </big></b></span><small>$(gettext "Easy")</small>   <span color='#5D5D5D'><b><big>$learning </big></b></span><small>$(gettext "Learning")</small>   <span color='#5D5D5D'><b><big>$hards </big></b></span><small>$(gettext "Difficult")</small>  \\n"
+    info="  <span color='#696969'><b><big>$learned </big></b></span><small>$(gettext "Learned")</small>   <span color='#696969'><b><big>$easys </big></b></span><small>$(gettext "Easy")</small>   <span color='#696969'><b><big>$learning </big></b></span><small>$(gettext "Learning")</small>   <span color='#696969'><b><big>$hards </big></b></span><small>$(gettext "Difficult")</small>  \\n"
     fi
 fi
 
