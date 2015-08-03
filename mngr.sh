@@ -156,9 +156,9 @@ edit_item() {
     
     f="$(ls "$DC_d"/*."Link.Search definition".* |head -n1)"
     eval _url="$(< "$DS_a/Dics/dicts/$(basename "$f")")"
+    if [ -z "$f" ]; then "$DS_a/Dics/cnfg.sh" 3; fi
     link1="https://translate.google.com/\#$lgt/$lgs/${query}"
     link2="$_url"
-    link3='https://www.google.com/search?q='$query'&amp;tbm=isch'
     
 
     if [ -z "${item}" ]; then exit 1; fi
@@ -262,7 +262,10 @@ edit_item() {
                     if [ "${audf}" != "${audf_mod}" ]; then
                     if [ ${type_mod} = 1 ]; then cp -f "${audf_mod}" "${DM_tls}/${trgt_mod,,}.mp3"
                     elif [ ${type_mod} = 2 ]; then cp -f "${audf_mod}" "$DM_tl/${tpc_mod}/$id_mod.mp3"; fi
-                    else [ -f "${audf}" ] && mv -f "${audf}" "$DM_tl/${tpc_mod}/$id_mod.mp3"; fi
+                    else
+                    if [ ${type_mod} = 2 ]; then
+                    [ -f "${audf}" ] && mv -f "${audf}" "$DM_tl/${tpc_mod}/$id_mod.mp3"; fi
+                    fi
                     
                     "$DS/mngr.sh" delete_item_ok "${tpc}" "${trgt}"
                     index ${type_mod} "${tpc_mod}" "${trgt_mod}" "${srce_mod}" \
@@ -289,7 +292,10 @@ edit_item() {
                     if [ ${type_mod} = 1 ]; then cp -f "${audf_mod}" "${DM_tls}/${trgt_mod,,}.mp3"
                     elif [ ${type_mod} = 2 ]; then [ -f "${DM_tlt}/$id.mp3" ] && rm "${DM_tlt}/$id.mp3"
                     cp -f "${audf_mod}" "${DM_tlt}/$id_mod.mp3"; fi
-                    else [ -f "${DM_tlt}/$id.mp3" ] && mv -f "${DM_tlt}/$id.mp3" "${DM_tlt}/$id_mod.mp3"; fi
+                    else
+                    if [ ${type_mod} = 2 ]; then
+                    [ -f "${DM_tlt}/$id.mp3" ] && mv -f "${DM_tlt}/$id.mp3" "${DM_tlt}/$id_mod.mp3"; fi
+                    fi
                 
                 fi
             ) &
@@ -371,9 +377,17 @@ edit_list() {
             fi
             let n++
         done
-        
+
         touch "${direc}/3.cfg" "${direc}/4.cfg"
         mv -f "$DT/tmp0" "${direc}/0.cfg"
+        
+        if [ -d "$DM_tl/${2}" -a `wc -l < "${direc}/0.cfg"` -ge 1 ]; then
+        while read -r r_item; do
+           id=`basename "${r_item}" |sed "s/\(.*\).\{4\}/\1/" |tr -d '.'`
+           if ! grep "${id}" "${direc}/0.cfg"; then
+           [ -f "${r_item}" ] && rm "${r_item}"; fi
+        done < <(find "$DM_tl/${2}"/*.mp3); fi
+
         if [[ "$(cat "${direc}/1.cfg" "${direc}/2.cfg" |wc -l)" -lt 1 ]]; then
         > "${direc}/0.cfg"; fi
         "$DS/ifs/tls.sh" colorize

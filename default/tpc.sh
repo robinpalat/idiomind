@@ -47,12 +47,12 @@ rplay=\"\"
 audio=\"TRUE\"
 ntosd=\"\"
 loop=\"0\"
-rword=\"0\""
+rword=\"1\""
         
         mkdir -p "${DM_tlt}/images"
         mkdir "${DC_tlt}"; cd "${DC_tlt}"
-        c=0; while [[ $c -le 10 ]]; do
-        touch "$c.cfg"; let c++
+        c=0; while [[ ${c} -le 10 ]]; do
+        touch "${c}.cfg"; let c++
         done
 
         rm "${DC_tlt}/7.cfg" "${DC_tlt}/9.cfg"

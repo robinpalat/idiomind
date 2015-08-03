@@ -325,6 +325,8 @@ function set_image_2() {
 
 function translate() {
     
+    if ! ls "$DC_d"/*."Traslator online.Translator".* 1> /dev/null 2>&1; then
+    "$DS_a/Dics/cnfg.sh" 2; fi
     for trans in "$DC_d"/*."Traslator online.Translator".*; do
     trans="$DS_a/Dics/dicts/$(basename "${trans}")"
     "${trans}" "$@" && break; done
@@ -333,6 +335,8 @@ function translate() {
 
 function tts() {
     
+    if ! ls "$DC_d"/*."TTS online.Pronunciation".* 1> /dev/null 2>&1; then
+    "$DS_a/Dics/cnfg.sh" 1; fi
     for convert in "$DC_d"/*."TTS online.Pronunciation".*; do
     convert="$DS_a/Dics/dicts/$(basename "${convert}")"
     "${convert}" "$@"
@@ -345,6 +349,8 @@ export -f translate tts
 function tts_word() {
     
     [ -d "${2}" ] && cd "${2}"/ || exit 1
+    if ! ls "$DC_d"/*."TTS online.Word pronunciation".* 1> /dev/null 2>&1; then
+    "$DS_a/Dics/cnfg.sh" 0; fi
     
     for convert in "$DC_d"/*."TTS online.Word pronunciation.$lgt"; do
     convert="$DS_a/Dics/dicts/$(basename "${convert}")"; "${convert}" "${1}"
@@ -368,6 +374,7 @@ function tts_word() {
 
 function img_word() {
     
+    if ls "$DC_d"/*."TTS online.Word pronunciation".* 1> /dev/null 2>&1; then
     if [ ! -e "${DM_tls}/images/${1,,}-0.jpg" ]; then
     
         touch "$DT/img${1}.lk"
@@ -396,6 +403,7 @@ function img_word() {
             
         rm -f "$DT/img${1}.lk"
     fi
+    fi
 }
 
 
@@ -416,6 +424,9 @@ function voice() {
 
 
 function fetch_audio() {
+    
+    if ! ls "$DC_d"/*."TTS online.Word pronunciation".* 1> /dev/null 2>&1; then
+    "$DS_a/Dics/cnfg.sh" 0; fi
     
     if [ $lgt = ja -o $lgt = "zh-cn" -o $lgt = ru ]; then
     words_list="${2}"; else words_list="${1}"; fi
@@ -609,7 +620,7 @@ function dlg_text_info_3() {
     --wrap --margins=5 \
     --center --on-top \
     --width=510 --height=450 --borders=5 \
-    "$3" --button="$(gettext "OK")":1
+    "${3}" --button="$(gettext "OK")":1
 }
 
 
@@ -621,7 +632,7 @@ function dlg_form_3() {
     --skip-taskbar --image-on-top \
     --align=center --text-align=center --center --on-top \
     --width=420 --height=320 --borders=5 \
-    "$btn2" --button=$(gettext "Close"):1
+    "${btn2}" --button="    $(gettext "Close")    ":1
 }
 
 

@@ -147,7 +147,7 @@ usrid="$(grep -o 'usrid="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
 iuser="$(grep -o 'iuser="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
 cntct="$(grep -o 'cntct="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
 if [ -z "$usrid" -o ${#id} -gt 3 ]; then
-b=$(tr -dc a-z < /dev/urandom |head -c 1)
+b=$(tr -dc a-z < /dev/urandom |head -c 1) # uranium?:D
 usrid="$b$((RANDOM%1000))"
 usrid=${usrid:0:3}; fi
 [ -z "$iuser" ] && iuser=$USER
@@ -209,12 +209,12 @@ else
     --width=480 --height=460 --borders=12 \
     --field=" :lbl" " " \
     --field="$(gettext "Author")" "$iuser" \
-    --field="\t$(gettext "Contact (Optional)")" "$cntct" \
+    --field="\t$(gettext "Contact (optional)")" "$cntct" \
     --field="$(gettext "Category"):CBE" \
     "!$others!$article!$comics!$culture!$documentary!$entertainment!$funny!$family!$grammar!$history!$movies!$in_the_city!$interview!$internet!$music!$nature!$news!$office!$relations!$sport!$science!$shopping!$social_networks!$technology!$travel" \
     --field="$(gettext "Skill Level"):CB" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
     --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
-    --field="$(gettext "Image 600x150px"):FL" "${imgm}" \
+    --field="$(gettext "Image 600x150px (optional)"):FL" "${imgm}" \
     --button="$(gettext "PDF")":2 "$btn" \
     --button="$(gettext "Close")":4)
     ret=$?
@@ -403,7 +403,7 @@ for f in volumes:
     file = {'file': open(f, 'rb')}
     r = requests.post(url, files=file)
     p = open(log, "w")
-    p.write("xxx")
+    p.write("x")
     p.close()
     time.sleep(5)
 END

@@ -70,7 +70,7 @@ else
 fi
 
 if [ -z "$intrf" ]; then intrf=Default; fi
-lst="$intrf"$(sed "s/\!$intrf//g" <<<"!Default!en!es!pt!fr!it")""
+lst="$intrf"$(sed "s/\!$intrf//g" <<<"!Default!en!es!fr!it!pt")""
 if [ "$ntosd" != TRUE ]; then audio=TRUE; fi
 if [ "$trans" != TRUE ]; then ttrgt=FALSE; fi
 
@@ -113,7 +113,7 @@ yad --notebook --key=$KEY --title="$(gettext "Settings")" \
 --tab-borders=5 --sticky --center \
 --tab="$(gettext "Preferences")" \
 --tab="$(gettext "Addons")" \
---width=500 --height=350 --borders=2 \
+--width=460 --height=320 --borders=2 \
 --button="$(gettext "OK")":0 \
 --button="$(gettext "Cancel")":1
 ret=$?

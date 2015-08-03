@@ -697,7 +697,7 @@ set_image() {
     if [ -f "$ifile" ]; then
     
         image="--image=$ifile"
-        btn2="--button="$(gettext "Delete")":2"
+        btn2="--button=gtk-delete:2"
         dlg_form_3
         ret=$?
         
@@ -854,7 +854,7 @@ mkpdf() {
                 <td bgcolor=\"#E6E6E6\" class=\"side\"></td>
                 <td bgcolor=\"#FFFFFF\"><w1>${trgt}</w1></td>
                 </tr><tr>
-                <td bgcolor=\"#E6E6E6\" class=\"side\"></td>
+                <td bgcolor=\"#FFFFFF\" class=\"side\"></td>
                 <td bgcolor=\"#FFFFFF\"><w2>${srce}</w2></td>
                 </tr>
                 </table>" >> "$wdir/doc.html"

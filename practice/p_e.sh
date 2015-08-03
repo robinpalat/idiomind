@@ -19,7 +19,7 @@ score() {
     "$drts"/cls.sh comp d &
 
     if [[ ${1} -ge ${all} ]]; then
-        play "$drts/all.mp3" & 
+        play "$drts/all.mp3" &
         echo -e "s9.$(tr -s '\n' '|' < ./e.1).s9\nokp.1.okp" >> "$log"
         echo "$(date "+%a %d %B")" > ./e.lock
         echo 21 > .5

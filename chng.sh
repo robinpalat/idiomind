@@ -29,8 +29,8 @@ if [[ ${1} = 0 ]]; then
             if [ ${n} = TRUE ]; then
             notify-send -i "${icon}" "${trgt}" "${srce}" -t 10000; fi &
             if [ ${a} = TRUE ]; then sleep 1
-            [ ${type} = 1 ] && spn=${rw} || spn=0
-            ( while [ ${ritem} -le ${spn} ]; do
+            if [ ${type} = 1 -a ${rw} = 0 ]; then spn=3; else spn=1; fi
+            ( while [ ${ritem} -lt ${spn} ]; do
             "$DS"/play.sh play_file "${file}" "${trgt}"
             [ ${ritem} = 0 ] && sleep 0.5
             [ ${ritem} = 1 ] && sleep 2.5
@@ -44,7 +44,7 @@ if [[ ${1} = 0 ]]; then
             sleep 1 && "$DS"/play.sh play_file "${file}" "${trgt}"
         fi
         
-        if [ ${n} = TRUE -a ${l} -lt 8 -a ${type} -lt 3 ]; then l=8; fi
+        if [ ${n} = TRUE -a ${l} -lt 11 -a ${type} -lt 3 ]; then l=11; fi
         [ ${stnrd} = 1 ] && sleep ${l}
     }
     export -f _play
@@ -57,7 +57,7 @@ if [[ ${1} = 0 ]]; then
         [ -f "$DT/list.m3u" ] && rm -f "$DT/list.m3u"
         
         if [ -n "${item}" ]; then
-        unset file
+        unset file icon
         _item="$(grep -F -m 1 "trgt={${item}}" "${DC_tlt}/0.cfg" |sed 's/},/}\n/g')"
         type="$(grep -oP '(?<=type={).*(?=})' <<<"${_item}")"
         trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${_item}")"

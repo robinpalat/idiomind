@@ -9,7 +9,7 @@ Encoding=UTF-8
 alias gettext='gettext "idiomind"'
 
 text="<span font_desc='Free Sans Bold 14'>$(gettext "Welcome") ${USER^} </span>
-\n      $(gettext "To get started, please configure the following:")\n\n"
+\n      $(gettext "To get started, please configure the following:")\n"
 lang=( 'English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian' )
 sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
@@ -55,7 +55,7 @@ dlg=$(yad --form --title="Idiomind" \
 --class=Idiomind --name=Idiomind \
 --window-icon="/usr/share/idiomind/images/icon.png" \
 --image-on-top --buttons-layout=end --align=right --center --on-top \
---width=460 --height=280 --borders=15 \
+--width=460 --height=260 --borders=15 \
 --field="$(gettext "Select the language for study"):CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
 --field="$(gettext "Select your native language"):CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
 --button=Cancel:1 \

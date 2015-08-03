@@ -2,7 +2,7 @@
 
 if [[ "$1" = dlgcnfg ]]; then
 source "$DS/ifs/mods/cmns.sh"
-msg "$(gettext "Does not need configuration.")\n" info "Merriam-webster"
+msg "$(gettext "Does not need configuration.")\n" info "$4"
 
 
 else

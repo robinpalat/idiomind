@@ -2,11 +2,11 @@
 
 if [[ "$1" = dlgcnfg ]]; then
 source "$DS/ifs/mods/cmns.sh"
-msg "$(gettext "Does not need configuration.")\n" info "Yandex"
+msg "$(gettext "Does not need configuration.")\n" info "$4"
 
 
 else
-DT_r="$3"; f=1
+DT_r="$3"; cd "$DT_r"
 if [[ `pwd` != "${3}" ]]; then exit; fi
 
 if [ "$2" = en ]; then t=en_GB

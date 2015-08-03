@@ -71,7 +71,8 @@ if [ ${ne} = TRUE -o ${se} = TRUE ]; then
         notify-send "$(gettext "No videos to play")" \
         "$(gettext "Exiting...")" -i idiomind -t 3000
         "$DS/stop.sh" 2 & exit
-        else 
+        else
+        "$DS/stop.sh" 3 &
         mplayer -noconsolecontrols -title "$(gettext "Videos")" -playlist "$DT/list.m3u" & exit
         fi
     

@@ -85,7 +85,7 @@ elif [[ "$1" = delete_item ]]; then
 elif [[ "$1" = deleteall ]]; then
     
     if [[ "$(wc -l < "$DCP/2.lst")" -gt 0 ]]; then
-    chk="--field="$(gettext "Delete saved episodes")":CHK"; fi
+    chk="--field="$(gettext "Also delete saved episodes")":CHK"; fi
     if [[ "$(wc -l < "$DCP/1.lst")" -lt 1 ]]; then exit 1; fi
     
     dl=$(yad --form --title="$(gettext "Confirm")" \
@@ -94,7 +94,7 @@ elif [[ "$1" = deleteall ]]; then
     --always-print-result --print-all --separator="|" \
     --window-icon="$DS/images/icon.png" --center --on-top \
     --width=400 --height=120 --borders=3 \
-    --text="$(gettext "Are you sure you want to delete all episodes?")" "$chk" \
+    --text="$(gettext "Are you sure you want to delete all episodes?")  " "$chk" \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Yes")":0)
     ret="$?"

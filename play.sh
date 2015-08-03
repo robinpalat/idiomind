@@ -53,10 +53,7 @@ play_list() {
     sets=( 'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi' \
     'rplay' 'audio' 'ntosd' 'loop' 'rword' 'video' )
     in=( 'in0' 'in1' 'in2' 'in3' 'in4' 'in5' )
-    _nore="$(gettext "no repeat")"
-    _time="$(gettext "time")"
-    _times="$(gettext "times")"
-    iteml=( "$_nore" "1 $_time" "2 $_times" "3 $_times" )
+    iteml=( "$(gettext "Yes")" "$(gettext "No")" )
     
     in0="$(grep -Fxvf "${DC_tlt}/4.cfg" "${DC_tlt}/1.cfg" |wc -l)"
     in1="$(grep -Fxvf "${DC_tlt}/3.cfg" "${DC_tlt}/1.cfg" |wc -l)"
@@ -135,9 +132,9 @@ play_list() {
     --field="$(gettext "Play audio")":CHK "$audio" \
     --field="$(gettext "Use desktop notifications")":CHK "$ntosd" \
     --field="$(gettext "Pause between items (sec)")":SCL "$loop" \
-    --field="$(gettext "Repeat words")":CB "$lst_opts1" \
+    --field="$(gettext "Repeat sounding out words")":CB "$lst_opts1" \
     --field="":LBL "" \
-    --field="$(gettext "Only play Videopodcasts")":CHK "$video" > $tab2 &
+    --field="$(gettext "Podcasts: Only play videos")":CHK "$video" > $tab2 &
     yad --notebook --key=$KEY --title="$title" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-all \
@@ -150,8 +147,7 @@ play_list() {
     "$btn2" --button="$btn1"
     ret=$?
 
-        tab1=$(< $tab1)
-        tab2=$(< $tab2)
+        tab1=$(< $tab1); tab2=$(< $tab2)
         rm -f "$DT"/*.p
         
         f=1; n=0
@@ -177,8 +173,7 @@ play_list() {
         "${DC_tlt}/10.cfg"; let f++
             
         elif [ ${n} = 10 ]; then
-        if [ "$(cut -d "|" -f5 <<<"${tab2}")" = "${_nore}" ]; then val=0
-        else val="$(cut -d "|" -f5 <<<"${tab2}"|grep -P -o "[0-9]+")"; fi
+        [[ "$(cut -d "|" -f5 <<<"${tab2}")" = "$(gettext "Yes")" ]] && val=0 || val=1
         [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
         "${DC_tlt}/10.cfg"
          
@@ -199,12 +194,12 @@ play_list() {
             "$DS/stop.sh" 2 & exit 1; fi
 
             "$DS/stop.sh" 2 &
-            if [ -d "${DM_tlt}" ] && [ -n "$tpc" ]; then
-                if grep TRUE <<<"$words$sntcs$marks$wprct"; then
-                echo -e "$tpc" > "$DT/.p_"; else > "$DT/.p_"; fi
+            if [ -d "${DM_tlt}" ] && [ -n "${tpc}" ]; then
+            if grep TRUE <<<"$words$sntcs$marks$wprct"; then
+            echo -e "$tpc" > "$DT/.p_"; else > "$DT/.p_"; fi
             else "$DS/stop.sh" 2 && exit 1; fi
             
-            echo -e "ply.$tpc.ply" >> "$DC_s/log" &
+            echo -e "ply.${tpc}.ply" >> "$DC_s/log" &
             sleep 1; "$DS/bcle.sh" &
 
         elif [ $ret -eq 2 ]; then

@@ -3,7 +3,7 @@
 
 if [[ "$1" = dlgcnfg ]]; then
 source "$DS/ifs/mods/cmns.sh"
-msg "$(gettext "Does not need configuration.")\n" info "Spanishdict"
+msg "$(gettext "Does not need configuration.")\n" info "$4"
 
 
 else
@@ -15,7 +15,7 @@ elif [ "$2" = es ]; then t=es
 else exit; fi
 
 wget -T 51 -q -U Mozilla -O "$DT_r/tmp1.mp3" \
-"http://audio1.spanishdict.com/audio?lang=$t&text=${q}" || rm -f "$DT_r/tmp1.mp3"
+"http://audio1.spanishdict.com/audio?lang=$t&text=${1}" || rm -f "$DT_r/tmp1.mp3"
 [ -e "$DT_r/tmp1.mp3" ] && mv -f "$DT_r/tmp1.mp3" "${4}"
 
 exit

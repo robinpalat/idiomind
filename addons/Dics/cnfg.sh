@@ -8,35 +8,14 @@ enables="$DC/addons/dict/enables"
 disables="$DC/addons/dict/disables"
 lgt=$(lnglss "$lgtl")
 lgs=$(lnglss "$lgsl")
+task=( 'Word pronunciation' 'Pronunciation' 'Translator' \
+'Search definition' 'Search images' 'Download images' '_' )
 
-dict_list() {
 
-    cd "$enables/"
-    find . -not -name "*.$lgt" -and -not -name "*.various" -type f \
-    -exec mv --target-directory="$disables/" {} +
-    
-    while read -r dict; do
-        if [ -n "$dict" ]; then
-        echo 'TRUE'
-        echo "$dict" | sed 's/\./\n/g'; fi
-    done < <(ls "$enables/")
-    
-    while read -r dict; do
-        if [ -n "$dict" ]; then
-        echo 'FALSE'
-        echo "$dict" | sed 's/\./\n/g'; fi
-    done < <(ls "$disables/")
-}
+function add_dlg() {
 
-if [ "$1" = add_dlg ]; then
-
-    taks=( 'Word pronunciation' 'Pronunciation' 'Translator' \
-    'Search definition' 'Search images' 'Download images' )
-    langs=( 'various' 'zh-cn' 'en' 'fr' 'de' 'it' 'ja' 'pt' \
-    'ru' 'es' 'vi' )
-    i=FALSE
-
-    cd "$HOME"
+    langs=( 'various' 'zh-cn' 'en' 'fr' 'de' 'it' 'ja' 'pt' 'ru' 'es' 'vi' )
+    i=FALSE; cd "$HOME"
     add="$(yad --file --title="$(gettext "Add resource")" \
     --text=" $(gettext "Browse to and select the file that you want to add.")" \
     --class=Idiomind --name=Idiomind \
@@ -60,7 +39,7 @@ if [ "$1" = add_dlg ]; then
         if [ -z "$lang" ]; then i=TRUE; fi
         if [ -n "$test" ]; then i=TRUE; fi
         if [ ${#name} -gt 50 -o ${#type} -gt 50 ]; then i=TRUE; fi
-        if ! grep -Fo "${tget}" <<<"${taks[@]}"; then i=TRUE; fi
+        if ! grep -Fo "${tget}" <<<"${task[@]}"; then i=TRUE; fi
         if ! grep -Fo "${lang}" <<<"${langs[@]}"; then i=TRUE; fi
 
         if [ ${i} = TRUE ]; then
@@ -80,28 +59,54 @@ if [ "$1" = add_dlg ]; then
         fi
     fi
     "$DS_a/Dics/cnfg.sh"
+}
 
-elif [ "$1" = dclk ]; then
+function dclk() {
 
     [ "$2" = TRUE ] && dir=enables
     [ "$2" = FALSE ] && dir=disables
-    "$DS_a/Dics/dicts/$3.$4.$5.$6" dlgcnfg
-    
-elif [ "$1" = cpfile ]; then
+    "$DS_a/Dics/dicts/$3.$4.$5.$6" dlgcnfg "$@"
+}
+
+function cpfile() {
 
     cp -f "${2}" "${3}"/
     > "${4}"; sudo chmod 777 "${4}"
+}
     
-elif [ -z "${1}" ]; then
+function dlg() {
+    
+    dict_list() {
 
+    cd "$enables/"
+    find . -not -name "*.$lgt" -and -not -name "*.various" -type f \
+    -exec mv --target-directory="$disables/" {} +
+    
+    while read -r dict; do
+        if [ -n "$dict" ]; then
+        echo 'TRUE'
+        echo "$dict" | sed 's/\./\n/g'; fi
+    done < <(ls "$enables/")
+    
+    while read -r dict; do
+        if [ -n "$dict" ]; then
+        echo 'FALSE'
+        echo "$dict" | sed 's/\./\n/g'; fi
+    done < <(ls "$disables/")
+    }
+   
     if [ ! -d "$DC_d" -o ! -d "$DC_a/dict/disables" ]; then
     mkdir -p "$enables"; mkdir -p "$disables"
     echo -e "$lgtl\n$v_dicts" > "$DC_a/dict/.dict"
     for r in "$DS_a/Dics/dicts"/*; do > "$disables/$(basename "$r")"; done; fi
     
-    [[ "${2}" = 1 ]] && tex="--text=$3" || tex="--center"
-    sel="$(dict_list | yad --list --title="$(gettext "Dictionaries")" \
-    --name=Idiomind --class=Idiomind "$tex" \
+    txtinf=" $(gettext "Please, select at least one resource for each task")"
+    if [[ -n "${1}" ]]; then text="--text=$txtinf"; n=${1}
+    else text="--center"; n=6; fi
+
+    sel="$(dict_list |sed "s|${task[$n]}|<b>${task[$n]}<\/b>|g" \
+    | yad --list --title="$(gettext "Dictionaries")" \
+    --name=Idiomind --class=Idiomind "${text}" \
     --print-all --always-print-result --separator="|" \
     --dclick-action="$DS_a/Dics/cnfg.sh dclk" \
     --window-icon="$DS/images/icon.png" \
@@ -114,9 +119,9 @@ elif [ -z "${1}" ]; then
     --column="$(gettext "Type")":TEXT \
     --column="$(gettext "Task")                                      ":TEXT \
     --column="$(gettext "Language")":TEXT \
-    --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Add")":2 \
-    --button=OK:0)"
+    --button=OK:0 \
+    --button="$(gettext "Cancel")":1)"
     ret=$?
     
         if [ $ret -eq 2 ]; then
@@ -133,26 +138,42 @@ elif [ -z "${1}" ]; then
                 if grep 'FALSE' <<<"$dict"; then
                     if [ ! -f "$disables/$name.$type.$tget.$lgt" ]; then
                         [ -f "$enables/$name.$type.$tget.$lgt" ] \
-                        && mv -f "$enables/$name.$type.$tget.$lgt" "$disables/$name.$type.$tget.$lgt"
+                        && mv -f "$enables/$name.$type.$tget.$lgt" \
+                        "$disables/$name.$type.$tget.$lgt"
                     fi
                     if [ ! -f "$disables/$name.$type.$tget.various" ]; then
                         [ -f "$enables/$name.$type.$tget.various" ] \
-                        && mv -f "$enables/$name.$type.$tget.various" "$disables/$name.$type.$tget.various"
+                        && mv -f "$enables/$name.$type.$tget.various" \
+                        "$disables/$name.$type.$tget.various"
                     fi
                 fi
                 if grep 'TRUE'  <<<"$dict"; then
                     if [ ! -f "$enables/$name.$type.$tget.$lgt" ]; then
                         [ -f "$disables/$name.$type.$tget.$lgt" ] \
-                        && mv -f "$disables/$name.$type.$tget.$lgt" "$enables/$name.$type.$tget.$lgt"
+                        && mv -f "$disables/$name.$type.$tget.$lgt" \
+                        "$enables/$name.$type.$tget.$lgt"
                     fi
                     if [ ! -f "$enables/$name.$type.$tget.various" ]; then
                         [ -f "$disables/$name.$type.$tget.various" ] \
-                        && mv -f "$disables/$name.$type.$tget.various" "$enables/$name.$type.$tget.various"
+                        && mv -f "$disables/$name.$type.$tget.various" \
+                        "$enables/$name.$type.$tget.various"
                     fi
                 fi
-
-            done <<<"$sel"
+            done < <(sed 's/<[^>]*>//g' <<<"$sel")
         fi
-
     exit 1
-fi
+    
+} >/dev/null 2>&1
+
+
+case "$1" in
+    add_dlg)
+    add_dlg "$@" ;;
+    dclk)
+    dclk "$@" ;;
+    cpfile)
+    cpfile "$@" ;;
+    *)
+    dlg "$@" ;;
+esac
+

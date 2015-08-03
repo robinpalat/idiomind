@@ -107,8 +107,8 @@ function new_session() {
     
     if [ -f "$DM_tl/.5.cfg" ]; then
     tpd="$(< "$DM_tl/.5.cfg")"
-    if grep -Fxq "${tpd}" "$DM_tl/.1.cfg"; then touch "$DM_tl/${tpd}"
-    "$DS/default/tpc.sh" "${tpd}" 2; fi
+    if grep -Fxq "${tpd}" "$DM_tl/.1.cfg"; then
+    touch "$DM_tl/${tpd}"; "$DS/default/tpc.sh" "${tpd}" 2; fi
     fi
 
     rm -f "$DT/ps_lk"
@@ -394,7 +394,7 @@ panel() {
     --form --fixed --on-top --no-buttons --align=center \
     --width=140 --height=190 --borders=0 --geometry=130x190-${x}-${y} \
     --field=gtk-new:btn "$DS/add.sh 'new_items'" \
-    --field=$(gettext "Home"):btn "idiomind 'topic'" \
+    --field=gtk-home:btn "idiomind 'topic'" \
     --field=gtk-index:btn "$DS/chng.sh" \
     --field=gtk-preferences:btn "$DS/cnfg.sh"
     [ $? != 0 ] && "$DS/stop.sh" 1 &

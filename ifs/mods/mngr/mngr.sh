@@ -11,7 +11,7 @@ function dlg_form_1() {
     --window-icon="$DS/images/icon.png" \
     --align=left --text-align=center --columns=2 \
     --buttons-layout=end --scroll --center --on-top \
-    --width=700 --height=520 --borders=10 \
+    --width=680 --height=520 --borders=10 \
     --field="<small>$lgtl</small>" "${trgt}" \
     --field="<small>$lgsl</small>" "${srce}" \
     --field="<small>$(gettext "Topic")</small>":CB "${tpc}!${tpcs}" \
@@ -19,7 +19,7 @@ function dlg_form_1() {
     --field="<small>$(gettext "Example")</small>\t\t\t\t\t\t\t\t\t\t\t":TXT "${exmp}" \
     --field="<small>$(gettext "Definition")</small>":TXT "${defn}" \
     --field="<small>$(gettext "Note")</small>":TXT "${note}" \
-    --field="<small>$(gettext "Search")  <a href='$link1'>$(gettext "Translation")</a>  <a href='$link2'>$(gettext "Definition")</a>  <a href='$link3'>$(gettext "Images")</a></small>":LBL " " \
+    --field="<small>$(gettext "Search")  <a href='$link1'>$(gettext "Translation")</a>  <a href='$link2'>$(gettext "Definition")</a>  </small>":LBL " " \
     --field="$(gettext "Mark")":CHK "$mark" \
     --field="<small>$(gettext "Listen")</small>":FBTN "${cmd_play}" \
     --field=" ":LBL " " \
