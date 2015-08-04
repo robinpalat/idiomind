@@ -108,7 +108,8 @@ if [ "${tpc}" != "${2}" ]; then
 msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit 1; fi
 
 if [ -d "$DT/upload" -o -d "$DT/download" ]; then
-msg_2 "$(gettext "Wait until it finishes a previous process")\n" info OK gtk-stop "$(gettext "Warning")"
+[ -e "$DT/download" ] && t="$(gettext "Downloading")..." || t="$(gettext "Uploading")..."
+msg_2 "$(gettext "Wait until it finishes a previous process")\n" dialog-warning OK gtk-stop "$t"
 ret="$?"
 if [ $ret -eq 1 ]; then
 cleanups "$DT/upload" "$DT/download"

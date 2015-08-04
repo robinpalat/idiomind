@@ -1,14 +1,21 @@
 #!/bin/bash
 
+# ----------------------------
 if [ -e "$DC_a/dict/.dict" ]; then
-if [[ `sed -n 2p "$DC_a/dict/.dict"` != $v_dicts ]]; then
-rm "$DC_a/dict/enables"/*; rm "$DC_a/dict/disables"/*
-for r in "$DS_a/Dics/dicts"/*; do >  "$DC_a/dict/disables/$(basename "$r")"; done
-echo -e "$lgtl\n$v_dicts" > "$DC_a/dict/.dict"; fi; fi
 
+    if [[ `sed -n 2p "$DC_a/dict/.dict"` != $v_dicts ]]; then
+    for r in "$DS_a/Dics/dicts"/*; do
+    if [ ! -f "$DC_a/dict/enables/$(basename "$r")" -o \
+    ! -f "$DC_a/dict/disables/$(basename "$r")" ]; then
+    >  "$DC_a/dict/disables/$(basename "$r")"; fi
+    done
+    echo -e "$lgtl\n$v_dicts" > "$DC_a/dict/.dict"; fi
+fi
+
+ ----------------------------
 if grep -o 'rplay' "$DC_s/1.cfg"; then rm "$DC_s/1.cfg"; fi
 
-[ ! -d "${DM_tls}/images" ] && mkdir -p "${DM_tls}/images"
+if [ ! -d "${DM_tls}/images" ]; then mkdir -p "${DM_tls}/images"; fi
 
 DCP="$DM_tl/Podcasts/.conf"
 if [ -d "$DM_tl/Podcasts/.conf" ]; then
@@ -18,6 +25,6 @@ if [ -d "$DM_tl/Podcasts/.conf" ]; then
     
     if [ -e "$DCP/podcasts.cfg" ]; then
     if ! grep -o 'svepi' "$DCP/podcasts.cfg" >/dev/null 2>&1; then
-    rm "$DCP/podcasts.cfg"; fi; fi
-    
+    rm "$DCP/podcasts.cfg"; fi
+    fi
 fi

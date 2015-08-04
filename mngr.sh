@@ -36,7 +36,6 @@ mkmn() {
 
 delete_item_ok() {
 
-
     f_lock "$DT/ps_lk"
     include "$DS/ifs/mods/mngr"
     source "$DS/ifs/mods/cmns.sh"
@@ -299,6 +298,8 @@ edit_item() {
                     fi
                 
                 fi
+                
+                cleanups "$DT_r"
             ) &
             
             fi
@@ -307,12 +308,12 @@ edit_item() {
             [ -d "$DT/$c" ] && "$DS/add.sh" list_words_edit "${wrds_mod}" 2 ${c} "${trgt_mod}" &
             [ ${col} -eq 1 ] && "$DS/ifs/tls.sh" colorize &
             [ ${mod} -eq 1 ] && sleep 0.2
-            [ $ret -eq 2 ] && "$DS/mngr.sh" edit "$lists" $((item_pos-1))
-            [ $ret -eq 0 ] && "$DS/vwr.sh" "$lists" "${trgt}" ${item_pos} &
+            [ $ret -eq 2 ] && "$DS/mngr.sh" edit "${lists}" $((item_pos-1))
+            [ $ret -eq 0 ] && "$DS/vwr.sh" "${lists}" "${trgt}" ${item_pos} &
             
 
         else
-            "$DS/vwr.sh" "$lists" "${trgt}" ${item_pos} &
+            "$DS/vwr.sh" "${lists}" "${trgt}" ${item_pos} &
         fi
        
     exit
@@ -615,7 +616,7 @@ mark_to_learn_topic() {
     kill -9 $(pgrep -f "yad --form ") &
     kill -9 $(pgrep -f "yad --notebook ") & fi
 
-    echo -e "lrnt.$tpc.lrnt" >> "$DC_s/log"
+    echo -e "lrnt.${tpc}.lrnt" >> "$DC_s/log"
     touch "${DM_tlt}"
     "$DS/mngr.sh" mkmn &
 

@@ -80,7 +80,6 @@ function new_session() {
     # update status
     [ ! -f "$DM_tl/.1.cfg" ] && touch "$DM_tl/.1.cfg"
     while read -r line; do
-    
     unset stts
     DM_tlt="$DM_tl/${line}"
     stts=$(sed -n 1p "${DM_tlt}/.conf/8.cfg")
@@ -127,7 +126,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     "$(gettext "Intermediate")" \
     "$(gettext "Advanced")" )
     level="${l[${level}]}"
-    itxt="<span font_desc='Droid Sans Bold 12' color='#616161'>$tname</span>\n<sup>$nword $(gettext "Words")  $nsent $(gettext "Sentences")  $nimag $(gettext "Images")\n$(gettext "Language:") $langt  $(gettext "Level:") $level</sup>"
+    itxt="<span font_desc='Droid Sans Bold 12' color='#616161'>$tname</span>\n<sup>$(gettext "Words") $nword  $(gettext "Sentences") $nsent  $(gettext "Images") $nimag \n$(gettext "Language:") $langt  $(gettext "Level:") $level</sup>"
     dclk="$DS/play.sh play_word"
     _lst() { while read -r item; do
     grep -oP '(?<=trgt={).*(?=},srce)' <<<"${item}"
@@ -245,7 +244,8 @@ function topic() {
             if [[ $auto_mrk_mod != $auto_mrk ]] && [ -n "$auto_mrk_mod" ]; then
             sed -i "s/set_1=.*/set_1=\"$auto_mrk_mod\"/g" "${DC_tlt}/id.cfg"; fi
             
-            if [ -n "$(grep -o TRUE < "${cnf1}")" ]; then
+            if grep TRUE "${cnf1}"; then
+
                 grep -Rl "|FALSE|" "${cnf1}" | while read tab1 ; do
                      sed '/|FALSE|/d' "${cnf1}" > "$DT/tmpf1"
                      mv "$DT/tmpf1" "$tab1"
