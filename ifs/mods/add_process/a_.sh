@@ -76,7 +76,7 @@ if [[ ${conten^} = A ]]; then
     left=$((200 - $(wc -l < "${DC_tlt}/4.cfg")))
     key="$(sed -n 2p "$HOME/.config/idiomind/addons/gts.cfg" \
     | grep -o key=\"[^\"]* | grep -o '[^"]*$')"
-    test="$DS/addons/Google translator/test.flac"
+    test="$DS/addons/Dics/g/test.flac"
     LNK='https://console.developers.google.com'
     source "$DS/ifs/mods/cmns.sh"
     

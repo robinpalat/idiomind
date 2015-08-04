@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ "$1" = dlgcnfg ]]; then
-"$DS_a/Google translator/cnfg.sh" & exit
+"$DS_a/Dics/g/cnfg.sh" & exit
 
 
 else
