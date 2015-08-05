@@ -13,7 +13,7 @@ ttrgt=$(grep -o ttrgt=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
 new_topic() {
     
     if [[ $(wc -l < "$DM_tl/.1.cfg") -ge 120 ]]; then
-    msg "$(gettext "Sorry, you have reached the maximum number of topics")" info Info & exit 1; fi
+    msg "$(gettext "Sorry, you have reached the maximum number of topics allowed")" info Info & exit 1; fi
 
     jlb="$(clean_3 "$(dlg_form_0 "${2}")")"
     

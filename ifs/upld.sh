@@ -193,7 +193,7 @@ if [ -e "${DC_tlt}/11.cfg" ]; then
     --window-icon="$DS/images/icon.png" --buttons-layout=end \
     --align=left --center --on-top \
     --width=380 --height=260 --borders=12 \
-    --field="$(gettext "Latest Download:"):lbl" " " \
+    --field="$(gettext "Latest downloads:"):lbl" " " \
     --field="$(< "${DC_tlt}/11.cfg"):lbl" " " \
     --field=" :lbl" " " \
     --button="$(gettext "PDF")":2 \

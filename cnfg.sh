@@ -80,7 +80,7 @@ yad --plug=$KEY --form --tabnum=1 \
 --separator='|' --always-print-result --print-all \
 --field="$(gettext "General Options")\t":lbl " " \
 --field=":LBL" " " \
---field="$(gettext "Use color to grammar")":CHK "$gramr" \
+--field="$(gettext "Use color to highlight grammar")":CHK "$gramr" \
 --field="$(gettext "List words after adding a sentence")":CHK "$wlist" \
 --field="$(gettext "Use automatic translation, if available")":CHK "$trans" \
 --field="$(gettext "Detect language of source text (slower)")":CHK "$ttrgt" \
@@ -98,7 +98,7 @@ yad --plug=$KEY --form --tabnum=1 \
 --field="$(gettext "Display in")":CB "$lst" \
 --field=" :LBL" " " \
 --field="$(gettext "Help")":BTN "$DS/ifs/tls.sh help" \
---field="$(gettext "Feedback")":BTN "$DS/ifs/tls.sh 'fback'" \
+--field="$(gettext "Send Feedback")":BTN "$DS/ifs/tls.sh 'fback'" \
 --field="$(gettext "Check for Updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
 --field="$(gettext "Backups")":BTN "$DS/ifs/tls.sh '_backup'" \
 --field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" > "$cnf1" &

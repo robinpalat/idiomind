@@ -24,9 +24,10 @@ fi
 
 source /usr/share/idiomind/ifs/c.conf
 
-if [ -f "$DT/ps_lk" ]; then
+if [ -e "$DT/ps_lk" -o -e "$DT/el_lk" ]; then
     sleep 5
-    [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
+    [ -e "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
+    [ -e "$DT/el_lk" ] && rm -f "$DT/el_lk"
     exit 1
 fi
 
@@ -78,15 +79,15 @@ function new_session() {
     "$DS/ifs/tls.sh" a_check_updates &
     
     # update status
-    [ ! -f "$DM_tl/.1.cfg" ] && touch "$DM_tl/.1.cfg"
+    [ ! -e "$DM_tl/.1.cfg" ] && touch "$DM_tl/.1.cfg"
     while read -r line; do
     unset stts
     DM_tlt="$DM_tl/${line}"
     stts=$(sed -n 1p "${DM_tlt}/.conf/8.cfg")
     [ -z $stts ] && stts=1
 
-    if [ -f "${DM_tlt}/.conf/9.cfg" ] && \
-    [ -f "${DM_tlt}/.conf/7.cfg" ]; then
+    if [ -e "${DM_tlt}/.conf/9.cfg" ] && \
+    [ -e "${DM_tlt}/.conf/7.cfg" ]; then
     
         calculate_review "${line}"
         if [[ $((stts%2)) = 0 ]]; then
@@ -104,7 +105,7 @@ function new_session() {
     fi
     done < "$DM_tl/.1.cfg"
     
-    if [ -f "$DM_tl/.5.cfg" ]; then
+    if [ -e "$DM_tl/.5.cfg" ]; then
     tpd="$(< "$DM_tl/.5.cfg")"
     if grep -Fxq "${tpd}" "$DM_tl/.1.cfg"; then
     touch "$DM_tl/${tpd}"; "$DS/default/tpc.sh" "${tpd}" 2; fi
@@ -217,7 +218,7 @@ function topic() {
         
         [ -z "${tpc}" ] && exit 1
         for n in {0..4}; do
-        [ ! -f "${DC_tlt}/${n}.cfg" ] && touch "${DC_tlt}/${n}.cfg"
+        [ ! -e "${DC_tlt}/${n}.cfg" ] && touch "${DC_tlt}/${n}.cfg"
         declare ls${n}="${DC_tlt}/${n}.cfg"
         declare inx${n}=$(wc -l < "${DC_tlt}/${n}.cfg")
         export inx${n}; done

@@ -396,7 +396,7 @@ videourl() {
     ([ ${url:0:29} = 'https://www.youtube.com/watch' ] \
     || [ ${url:0:28} = 'http://www.youtube.com/watch' ]); then \
     echo "$url" > "${DM_tlt}/files/video$n.url"
-    else msg "$(gettext "Invalid URL.")\n" error \
+    else msg "$(gettext "Invalid URL").\n" error \
     "$(gettext "Invalid URL")"; fi
 }
 
@@ -528,7 +528,7 @@ fback() {
     
     internet
     URL="http://idiomind.sourceforge.net/doc/msg.html"
-    yad --html --title="$(gettext "Feedback")" \
+    yad --html --title="$(gettext "Send Feedback")" \
     --name=Idiomind --class=Idiomind \
     --browser --uri="$URL" \
     --window-icon="$DS/images/icon.png" \

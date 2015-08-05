@@ -264,7 +264,9 @@ edit_item() {
                     elif [ ${type_mod} = 2 ]; then cp -f "${audf_mod}" "$DM_tl/${tpc_mod}/$id_mod.mp3"; fi
                     else
                     if [ ${type_mod} = 2 ]; then
-                    [ -f "${audf}" ] && mv -f "${audf}" "$DM_tl/${tpc_mod}/$id_mod.mp3"; fi
+                    [ -f "${DM_tlt}/$id.mp3" ] && mv -f "${DM_tlt}/$id.mp3" "$DM_tl/${tpc_mod}/$id_mod.mp3"
+                    elif [ ${type_mod} = 1 ]; then
+                    [ -f "${DM_tlt}/$id.mp3" ] && mv -f "${DM_tlt}/$id.mp3" "$DM_tl/${tpc_mod}/$id_mod.mp3"; fi
                     fi
                     
                     "$DS/mngr.sh" delete_item_ok "${tpc}" "${trgt}"
@@ -294,6 +296,8 @@ edit_item() {
                     cp -f "${audf_mod}" "${DM_tlt}/$id_mod.mp3"; fi
                     else
                     if [ ${type_mod} = 2 ]; then
+                    [ -f "${DM_tlt}/$id.mp3" ] && mv -f "${DM_tlt}/$id.mp3" "${DM_tlt}/$id_mod.mp3"
+                    elif [ ${type_mod} = 1 ]; then
                     [ -f "${DM_tlt}/$id.mp3" ] && mv -f "${DM_tlt}/$id.mp3" "${DM_tlt}/$id_mod.mp3"; fi
                     fi
                 
@@ -477,7 +481,6 @@ delete_topic() {
             done
             
             kill -9 $(pgrep -f "yad --list ") &
-            kill -9 $(pgrep -f "yad --list ") &
             kill -9 $(pgrep -f "yad --text-info ") &
             kill -9 $(pgrep -f "yad --form ") &
             kill -9 $(pgrep -f "yad --notebook ") &
@@ -633,7 +636,7 @@ mark_as_learned_topic() {
     [ ! -s "${DC_tlt}/0.cfg" ] && exit 1
 
     if [ $((inx3+inx4)) -le 10 ]; then
-    msg "$(gettext "Not enough items to perform the operation.")\n " \
+    msg "$(gettext "Not enough items to perform the operation").\n " \
     info "$(gettext "Not enough items")" & exit; fi
     
     (echo "5"
@@ -692,7 +695,6 @@ mark_as_learned_topic() {
     ) | progr_3
 
     if [[ ${3} = 1 ]]; then
-    kill -9 $(pgrep -f "yad --list ") &
     kill -9 $(pgrep -f "yad --list ") &
     kill -9 $(pgrep -f "yad --text-info ") &
     kill -9 $(pgrep -f "yad --form ") &

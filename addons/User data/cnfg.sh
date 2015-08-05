@@ -175,32 +175,7 @@ if [ -z "${1}" ]; then
                 "$DS/mngr.sh" mkmn; rm -fr "$DT/import"
                 msg "$(gettext "Data imported successfully.")\n" info
             fi
-    
         fi
-    fi
-
-elif [[ $1 = restore ]]; then
-
-    if [ -f "$HOME/.idiomind/backup/${3}.bk" ]; then
-    
-        yad --title="$(gettext "Confirm")" \
-        --text="$(gettext "Are you sure you want to restore the content of active topic?")\t\n(${3})" \
-        --image=dialog-warning \
-        --name=Idiomind --class=Idiomind \
-        --always-print-result \
-        --window-icon="$DS/images/icon.png" \
-        --image-on-top --on-top --sticky --center \
-        --width=480 --height=140 --borders=5 \
-        --button="$(gettext "Cancel")":1 \
-        --button="$(gettext "Yes")":0
-        ret=$?
-        
-        if [[ $ret -eq 0 ]]; then
-        cp -f "$HOME/.idiomind/backup/${3}.bk" "${DM_tl}/${3}/.conf/0.cfg"
-        fi
-    else
-        msg "$(gettext "Backup not found")\n" dialog-warning
     fi
 fi
-
 exit

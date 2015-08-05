@@ -7,7 +7,7 @@ IFS=$'\n\t'
 a="$(gettext "Tell us if you think this is an error.")"
 b="$(gettext "New episodes <i><small>Podcasts</small></i>")"
 c="$(gettext "Saved episodes <i><small>Podcasts</small></i>")"
-d="$(gettext "Marks")"
+
 #
 # rsync_delete: disable(0)/enable(1)
 rsync_delete=0

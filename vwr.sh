@@ -22,7 +22,7 @@ note="$(grep -oP '(?<=note={).*(?=})' <<<"${item}")"
 grmr="$(grep -oP '(?<=grmr={).*(?=})' <<<"${item}")"
 mark="$(grep -oP '(?<=mark={).*(?=})' <<<"${item}")"
 lwrd="$(grep -oP '(?<=wrds={).*(?=})' <<<"${item}" |tr '_' '\n')"
-exmp="$(sed "s/"${trgt,,}"/<span background='#FDFBCF'>"${trgt,,}"<\/\span>/g" <<<"$exmp")"
+exmp="$(sed "s/${trgt,,}/<span background='#FDFBCF'>${trgt,,}<\/\span>/g" <<<"$exmp")"
 id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
 
 if [ ${type} = 1 ]; then
