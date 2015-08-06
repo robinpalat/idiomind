@@ -644,7 +644,7 @@ app_comments = os.environ['c']
 web = os.environ['website']
 app_copyright = 'Copyright (c) 2015 Robin Palatnik'
 app_website = 'http://idiomind.sourceforge.net'
-app_license = (('This program is free software: you can redistribute it and/or modify\n'+
+app_license = (('Idiomind is free software: you can redistribute it and/or modify\n'+
 'it under the terms of the GNU General Public License as published by\n'+
 'the Free Software Foundation, either version 3 of the License, or\n'+
 '(at your option) any later version.\n'+
@@ -655,7 +655,7 @@ app_license = (('This program is free software: you can redistribute it and/or m
 'GNU General Public License for more details.\n'+
 '\n'+
 'You should have received a copy of the GNU General Public License\n'+
-'along with this program.  If not, see http://www.gnu.org/licenses.'))
+'along with this program.  If not, see http://www.gnu.org/licenses'))
 app_authors = ['Robin Palatnik <patapatass@hotmail.com>']
 app_artists = ["Logo based on rg1024's openclipart Ufo Cartoon."]
 
