@@ -25,12 +25,13 @@ if [[ ${1} = 0 ]]; then
         if ! [[ ${rw} =~ $nu ]]; then rw=0; fi
         
         if [ ${stnrd} = 1 ]; then
-            sle=0.5
+            
             if [ ${n} = TRUE ]; then
             notify-send -i "${icon}" "${trgt}" "${srce}" -t 10000; fi &
-            if [ ${a} = TRUE ]; then sleep 0.5
-            if [ ${type} = 1 -a ${rw} = 1 ]; then spn=3; else spn=1; fi
-            if [ ${type} = 2 -a ${rw} = 2 ]; then spn=2; sle=2; else spn=1; fi
+            if [ ${a} = TRUE ]; then sleep 0.5; sle=0.2; spn=1
+            [ ${type} = 1 -a ${rw} = 1 ] && spn=3
+            [ ${type} = 2 -a ${rw} = 2 ] && spn=2 && sle=2.5
+
             ( while [ ${ritem} -lt ${spn} ]; do
             "$DS"/play.sh play_file "${file}" "${trgt}"
             [ ${ritem} = 0 ] && sleep ${sle}
@@ -45,7 +46,7 @@ if [[ ${1} = 0 ]]; then
             sleep 1 && "$DS"/play.sh play_file "${file}" "${trgt}"
         fi
         
-        if [ ${n} = TRUE -a ${l} -lt 11 -a ${type} -lt 3 ]; then l=11; fi
+        [ ${n} = TRUE -a ${l} -lt 11 -a ${type} -lt 3 ] && l=11
         [ ${stnrd} = 1 ] && sleep ${l}
     }
     export -f _play

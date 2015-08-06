@@ -66,8 +66,8 @@ function edit_list_list() {
     --no-headers --scroll --center \
     --width=410 --height=260 --borders=5 \
     --column="" \
-    --button="$(gettext "Reverse list")":2 \
-    --button="$(gettext "Save")":0 \
+    --button="$(gettext "Reverse List")":2 \
+    --button="gtk-apply":0 \
     --button="$(gettext "Cancel")":1
 }
 

@@ -358,8 +358,8 @@ edit_list() {
     
     if [ $ret -eq 0 -o $ret -eq 2 ]; then
     
-        [ $ret = 0 ] && cmd=tac
-        [ $ret = 2 ] && cmd=cat
+        [ $ret = 0 ] && cmd=tac && invrt_msg=FALSE
+        [ $ret = 2 ] && cmd=cat && invrt_msg=TRUE
         include "$DS/ifs/mods/add"
         n=1; f_lock "$DT/el_lk"
         cp -f "${direc}/0.cfg" "$DM/backup/${2}.bk"
@@ -434,7 +434,7 @@ edit_list() {
                 srce_mod="$(clean_2 "$(translate "${trgt}" $lgt $lgs)")"
                 db="$DS/default/dicts/$lgt"
                 sentence_p "$DT_r" 2
-                fetch_audio "$aw" "$bw" "$DT_r" "${DM_tls}"
+                fetch_audio "${aw}" "${bw}" "$DT_r" "${DM_tls}"
                 fi
                  
                 id_mod="$(set_name_file ${type} "${trgt}" "${srce_mod}" \
@@ -449,6 +449,9 @@ edit_list() {
 
             done < "$DT/add_lst"
         fi
+        
+        [ ${invrt_msg} = FALSE ] && msg "$(gettext "Changes will become visible only after you close and reopen the main window.  ")" info " "
+        [ ${invrt_msg} = TRUE ] && msg "$(gettext "The order of the list has been reversed. Changes will become visible only after you close and reopen the main window.  ")" info " "
     fi
     
     rm -f "$DT/tmp1" "$DT/_tmp1" "$DT/add_lst" "$DT_r"
@@ -463,7 +466,7 @@ delete_topic() {
     if [ "${tpc}" != "${2}" ]; then
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
 
-    msg_2 "$(gettext "Are you sure you want to delete this Topic?")\n" \
+    msg_2 "$(gettext "Are you sure you want to delete this topic?")\n" \
     gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
     ret="$?"
         
