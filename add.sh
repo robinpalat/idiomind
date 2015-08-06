@@ -49,11 +49,15 @@ new_items() {
 
     if [ ! -d "$DT" ]; then new_session; fi
     [ ! "$DT/tpe" ] && echo "${tpc}" > "$DT/tpe"
-    
+
     if [ "$(grep -vFx 'Podcasts' "$DM_tl/.1.cfg" | wc -l)" -lt 1 ]; then
     cleanups "$DT_r"
     "$DS/chng.sh" "$(gettext "To start adding notes you need to have a topic.
 Create one using the button below. ")" & exit 1; fi
+
+    if [ -e "$DC_s/img_first_run" ]; then ( sleep 2
+    msg_2 "$(gettext "NOTE: To add an image to a note use the screen clipping way.  ")\n" \
+    info "$(gettext "Ok")" "$(gettext "Do not show again")" " "; [ $? = 1 ] && rm -f "$DC_s/img_first_run" ) & fi
 
     [ -z "${4}" ] && txt="$(xclip -selection primary -o)" || txt="${4}"
     txt="$(clean_4 "${txt}")"

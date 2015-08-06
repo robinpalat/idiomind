@@ -170,13 +170,12 @@ if [ -e "${DC_tlt}/11.cfg" ]; then
     cmd_dwl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
     info="<b>$(gettext "Additional content available")</b>"
     info2="$(gettext "Audio files:") $c_audio\n$(gettext "Images:") $c_images\n$(gettext "Size:") $fsize"
-    dlg=$(yad --form --columns=2 --title="$(gettext "Share")" \
-    --text="<span font_desc='Free Sans 15'> ${tpc}</span>" \
+    dlg=$(yad --form --columns=2 --title="${tpc}" \
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" --buttons-layout=end \
     --align=left --center --on-top \
     --width=380 --height=260 --borders=12 \
-    --field="\n\n$info:lbl" " " \
+    --field="\n$info:lbl" " " \
     --field="$(gettext "Download"):BTN" "${cmd_dwl}" \
     --field="$info2:lbl" " " \
     --field="\t\t\t\t\t:lbl" " " \
@@ -186,13 +185,12 @@ if [ -e "${DC_tlt}/11.cfg" ]; then
     ret=$?
     
     elif [ -n "$(< "${DC_tlt}/11.cfg")" ]; then
-    dlg=$(yad --form --title="$(gettext "Share")" \
+    dlg=$(yad --form --title="${tpc}" \
     --columns=2 --separator="|" \
-    --text="<span font_desc='Free Sans 15'> ${tpc}</span>" \
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" --buttons-layout=end \
     --align=left --center --on-top \
-    --width=380 --height=260 --borders=12 \
+    --width=390 --height=260 --borders=12 \
     --field="$(gettext "Latest downloads:"):lbl" " " \
     --field="$(< "${DC_tlt}/11.cfg"):lbl" " " \
     --field=" :lbl" " " \
