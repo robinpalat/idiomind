@@ -53,7 +53,7 @@ play_list() {
     sets=( 'words' 'sntcs' 'marks' 'wprct' 'nsepi' 'svepi' \
     'rplay' 'audio' 'ntosd' 'loop' 'rword' 'video' )
     in=( 'in0' 'in1' 'in2' 'in3' 'in4' 'in5' )
-    iteml=( "$(gettext "Yes")" "$(gettext "No")" )
+    iteml=( "$(gettext "No repeat")" "$(gettext "Words")" "$(gettext "Sentences")" )
     
     in0="$(grep -Fxvf "${DC_tlt}/4.cfg" "${DC_tlt}/1.cfg" |wc -l)"
     in1="$(grep -Fxvf "${DC_tlt}/3.cfg" "${DC_tlt}/1.cfg" |wc -l)"
@@ -132,7 +132,7 @@ play_list() {
     --field="$(gettext "Play audio")":CHK "$audio" \
     --field="$(gettext "Use desktop notifications")":CHK "$ntosd" \
     --field="$(gettext "Pause between items (sec)")":SCL "$loop" \
-    --field="$(gettext "Repeat sounding out words")":CB "$lst_opts1" \
+    --field="$(gettext "Repeat sounding out")":CB "$lst_opts1" \
     --field="":LBL "" \
     --field="$(gettext "Podcasts: Only play videos")":CHK "$video" > $tab2 &
     yad --notebook --key=$KEY --title="$title" \
@@ -173,7 +173,10 @@ play_list() {
         "${DC_tlt}/10.cfg"; let f++
             
         elif [ ${n} = 10 ]; then
-        [[ "$(cut -d "|" -f5 <<<"${tab2}")" = "$(gettext "Yes")" ]] && val=0 || val=1
+        pval="$(cut -d "|" -f5 <<<"${tab2}")"
+        if [[ "$pval" = "$(gettext "Words")" ]]; then  val=1
+        elif [[ "$pval" = "$(gettext "Sentences")" ]]; then  val=2
+        else  val=0; fi
         [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
         "${DC_tlt}/10.cfg"
          

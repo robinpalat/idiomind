@@ -64,7 +64,7 @@ function edit_list_list() {
     --always-print-result --print-all \
     --window-icon="$DS/images/icon.png" \
     --no-headers --scroll --center \
-    --width=380 --height=260 --borders=5 \
+    --width=410 --height=260 --borders=5 \
     --column="" \
     --button="$(gettext "Reverse list")":2 \
     --button="$(gettext "Save")":0 \

@@ -25,14 +25,15 @@ if [[ ${1} = 0 ]]; then
         if ! [[ ${rw} =~ $nu ]]; then rw=0; fi
         
         if [ ${stnrd} = 1 ]; then
-        
+            sle=0.5
             if [ ${n} = TRUE ]; then
             notify-send -i "${icon}" "${trgt}" "${srce}" -t 10000; fi &
             if [ ${a} = TRUE ]; then sleep 0.5
-            if [ ${type} = 1 -a ${rw} = 0 ]; then spn=3; else spn=1; fi
+            if [ ${type} = 1 -a ${rw} = 1 ]; then spn=3; else spn=1; fi
+            if [ ${type} = 2 -a ${rw} = 2 ]; then spn=2; sle=2; else spn=1; fi
             ( while [ ${ritem} -lt ${spn} ]; do
             "$DS"/play.sh play_file "${file}" "${trgt}"
-            [ ${ritem} = 0 ] && sleep 0.5
+            [ ${ritem} = 0 ] && sleep ${sle}
             [ ${ritem} = 1 ] && sleep 2.5
             [ ${ritem} = 2 ] && sleep 2
             let ritem++
