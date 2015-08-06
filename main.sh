@@ -45,7 +45,7 @@ function new_session() {
     
     f_lock "$DT/ps_lk"
     
-    # start addons
+    # addons
     > "$DC_s/2.cfg"
     while read -r _set; do
     
@@ -75,7 +75,7 @@ function new_session() {
     mv -f "$DT/log" "$DC_s/log"; fi
     fi
     
-    # check for updates
+    # check updates
     "$DS/ifs/tls.sh" a_check_updates &
     
     # update status
@@ -308,7 +308,7 @@ function topic() {
                     fi 
             fi
 
-            pres="<u><b>$(gettext "Learned topic")</b></u>  $(gettext "* however you have new items") ($inx1).\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
+            pres="<u><b>$(gettext "Topic learnt")</b></u>  $(gettext "* however you have new items") ($inx1).\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
             notebook_2
             
         else
@@ -351,7 +351,7 @@ function topic() {
                 fi 
         fi
         
-        pres="<u><b>$(gettext "Learned topic")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
+        pres="<u><b>$(gettext "Topic learnt")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
         notebook_2
         
         if [ ! -f "$DT/ps_lk" ]; then apply; fi

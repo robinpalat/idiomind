@@ -181,7 +181,7 @@ new_sentence() {
     fi
     
     sentence_p "$DT_r" 1
-    id="$(set_name_file 1 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}")"
+    id="$(set_name_file 2 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}")"
     mksure "${trgt}" "${srce}" "${grmr}" "${wrds}"
 
     if [ $? = 1 ]; then
@@ -652,8 +652,15 @@ process() {
                             if [ $? = 0 ]; then
 
                                 index 1 "${tpe}" "${trgt}" "${srce}" "" "" "" "" "${id}"
-                                if [ ! -f "$DM_tls/$audio.mp3" ]; then
-                                ( tts_word "$audio" "$DM_tls" ); fi
+
+                                ( tts_word "${audio}" "${DM_tlt}" ) &&
+                                if [ -f "${DM_tlt}/${audio}.mp3" ]; then
+                                mv "${DM_tlt}/${audio}.mp3" "${DM_tlt}/$id.mp3"
+                                else
+                                if [ -f "${DM_tls}/${audio}.mp3" ]; then
+                                cp "${DM_tls}/${audio}.mp3" "${DM_tlt}/$id.mp3"; fi
+                                fi
+                                
                                 ( img_word "${trgt}" "${srce}" ) &
                                 echo "${trgt}" >> "$DT_r/addw"
 

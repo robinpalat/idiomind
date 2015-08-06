@@ -202,7 +202,7 @@ if [ -e "${DC_tlt}/11.cfg" ]; then
     
     fi
 else
-    dlg=$(yad --form --title="$(gettext "Share")" \
+    dlg=$(yad --form --title="$(gettext "Could you share what you learn?")" \
     --text="<span font_desc='Free Sans 14'>${tpc}</span>" \
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" --buttons-layout=end \

@@ -356,16 +356,16 @@ function tts_word() {
     convert="$DS_a/Dics/dicts/$(basename "${convert}")"; "${convert}" "${1}"
     
     if [ -e "${2}/${1}.mp3" ]; then
-    if [[ `du "${2}/${1}.mp3" |cut -f1` -gt 10 ]]; then
+    if [[ `du "${2}/${1}.mp3" |cut -f1` -gt 1 ]]; then
     break; else rm -f "${2}/${1}.mp3"; fi; fi
     done
     
     if [ ! -e "${2}/${1}.mp3" ]; then
     for convert in "$DC_d"/*."TTS online.Word pronunciation.various"; do
-    convert="$DS_a/Dics/dicts/$(basename "${convert}")"; "${convert}" "${1}"
+    convert="$DS_a/Dics/dicts/$(basename "${convert}")"; "${convert}" "${1}" ${lgt}
     
     if [ -e "${2}/${1}.mp3" ]; then
-    if [[ `du "${2}/${1}.mp3" |cut -f1` -gt 10 ]]; then
+    if [[ `du "${2}/${1}.mp3" |cut -f1` -gt 1 ]]; then
     break; else rm -f "${2}/${1}.mp3"; fi; fi
     done
     fi
@@ -446,7 +446,7 @@ function fetch_audio() {
             if [ ! -e ./"${word}.mp3" ]; then
                 for dict in "$DC_d"/*."TTS online.Word pronunciation.various"; do
                     dict="$DS_a/Dics/dicts/$(basename "${dict}")"
-                    if [ ! -e ./"${word}.mp3" ]; then "${dict}" "${word}" "${lgt}"; fi
+                    if [ ! -e ./"${word}.mp3" ]; then "${dict}" "${word}" ${lgt}; fi
                 done
             fi
         fi

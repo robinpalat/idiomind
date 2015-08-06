@@ -12,7 +12,7 @@ if [ -e "$DC_a/dict/.dict" ]; then
     echo -e "$lgtl\n$v_dicts" > "$DC_a/dict/.dict"; fi
 fi
 
- ----------------------------
+# ----------------------------
 if grep -o 'rplay' "$DC_s/1.cfg"; then rm "$DC_s/1.cfg"; fi
 
 # ----------------------------

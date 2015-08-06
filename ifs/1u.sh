@@ -130,6 +130,7 @@ config="usrid=\"$id\"
 iuser=\"\"
 cntct=\"\""
     echo -e "${config}" > "$DC_s/3.cfg"
+    touch "$DC_s/first_run"
     
     idiomind -s
 

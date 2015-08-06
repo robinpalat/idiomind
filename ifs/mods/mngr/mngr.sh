@@ -57,8 +57,8 @@ function dlg_form_2() {
 
 function edit_list_list() {
     
-    yad --list --title="$(gettext "Edit")" \
-    --text="$(gettext "Double-click to edit an item. Drag and drop to reposition it.")" \
+    yad --list --title="$(gettext "Edit list")" \
+    --text="$(gettext "You can move any item by dragging and dropping or double click to edit it further.")" \
     --name=Idiomind --class=Idiomind \
     --editable --separator='' \
     --always-print-result --print-all \
@@ -66,7 +66,7 @@ function edit_list_list() {
     --no-headers --scroll --center \
     --width=380 --height=260 --borders=5 \
     --column="" \
-    --button="$(gettext "Invert")":2 \
+    --button="$(gettext "Reverse list")":2 \
     --button="$(gettext "Save")":0 \
     --button="$(gettext "Cancel")":1
 }
