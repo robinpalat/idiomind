@@ -77,21 +77,26 @@ function cpfile() {
 function dlg() {
     
     dict_list() {
-
+        
+    sus="${task[$1]}"
     cd "$enables/"
     find . -not -name "*.$lgt" -and -not -name "*.various" -type f \
     -exec mv --target-directory="$disables/" {} +
     
     while read -r dict; do
-        if [ -n "$dict" ]; then
+        if [ -n "${dict}" ]; then
         echo 'TRUE'
-        echo "$dict" | sed 's/\./\n/g'; fi
+        sed 's/\./\n/g' <<<"${dict}"; fi
     done < <(ls "$enables/")
     
     while read -r dict; do
-        if [ -n "$dict" ]; then
+        if [ -n "${dict}" ]; then
         echo 'FALSE'
-        echo "$dict" | sed 's/\./\n/g'; fi
+        if grep -E ".$lgt|.various" <<<"${dict}">/dev/null 2>&1; then
+        sed 's/\./\n/g' <<<"${dict}"| \
+        sed "3s|${sus}|<span color='#333333' background='#F2DADA'>${sus}<\/span>|"
+        else echo "${dict}" |sed 's/\./\n/g'; fi
+        fi
     done < <(ls "$disables/")
     }
    
@@ -104,18 +109,18 @@ function dlg() {
     if [[ -n "${1}" ]]; then text="--text=$txtinf"; n=${1}
     else text="--center"; n=6; fi
 
-    sel="$(dict_list |sed "s|${task[$n]}|<b>${task[$n]}<\/b>|g" \
-    | yad --list --title="$(gettext "Dictionaries")" \
+    sel="$(dict_list ${n} | yad --list \
+    --title="$(gettext "Dictionaries")" \
     --name=Idiomind --class=Idiomind "${text}" \
     --print-all --always-print-result --separator="|" \
     --dclick-action="$DS_a/Dics/cnfg.sh dclk" \
     --window-icon="$DS/images/icon.png" \
-    --expand-column=2 --search-column=3 --hide-column=3 \
-    --tooltip-column=3 --regex-search \
+    --expand-column=2 --hide-column=3 \
+    --search-column=4 --regex-search --tooltip-column=3 \
     --center --on-top \
     --width=650 --height=380 --borders=10 \
     --column="$(gettext "Enable")":CHK \
-    --column="$(gettext "Available resources")":TEXT \
+    --column="$(gettext "Resource")":TEXT \
     --column="$(gettext "Type")":TEXT \
     --column="$(gettext "Task")                                         ":TEXT \
     --column="$(gettext "Language")          ":TEXT \

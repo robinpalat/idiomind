@@ -125,6 +125,7 @@ elif [[ ${1} != 0 ]]; then
     --window-icon="$DS/images/icon.png" \
     --text-align=$align --center $img --image-on-top \
     --no-headers --ellipsize=END --expand-column=2 \
+    --search-column=2 --regex-search \
     --width=620 --height=580 --borders=8 \
     --column=img:IMG \
     --column=File:TEXT \

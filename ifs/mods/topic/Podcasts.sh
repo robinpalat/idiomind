@@ -43,7 +43,7 @@ function feedmode() {
     nt="$DCP/info"
     fdit=$(mktemp "$DT/fdit.XXXX")
     c=$(echo $(($RANDOM%100000))); KEY=$c
-    [ -f "$DT/.uptp" ] && info="$(gettext "Updating Podcasts")" || info="$(gettext "Podcasts")"
+    [ -f "$DT/.uptp" ] && info="$(gettext "Updating Podcasts")..." || info="$(gettext "Podcasts")"
     infolabel="$(< "$DMP"/*.updt)"
     
     _list_1 | yad --list --tabnum=1 \

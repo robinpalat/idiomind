@@ -411,7 +411,7 @@ function voice() {
     
     txaud="$(grep -o txaud=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')"
     DT_r="$2"; cd "$DT_r"
-    
+
     if [ -n "$txaud" ]; then
         echo "${1}" | $txaud "$DT_r/f.wav"
         sox "$DT_r"/*.wav "${3}"

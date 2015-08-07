@@ -216,9 +216,9 @@ new_sentence() {
             mv -f "$DT_r/audtm.mp3" "${DM_tlt}/$id.mp3"
         fi
 
-        (if [ "$wlist" = TRUE ] && [ -n "${wrds}" ]; then
+        ( if [ "$wlist" = TRUE ] && [ -n "${wrds}" ]; then
         "$DS/add.sh" list_words_sentence "${wrds}" "${trgt}" "${tpe}"
-        fi) &
+        fi ) &
 
         fetch_audio "$aw" "$bw"
         
@@ -502,7 +502,7 @@ process() {
         (echo "1"
         internet
         echo "# $(gettext "Processing")..." ;
-        lynx -dump -nolist "${2}"  | clean_5 > "$DT_r/sntsls_"
+        lynx -dump -nolist "${2}" | clean_5 > "$DT_r/sntsls_"
         ) | dlg_progress_1
 
     elif [[ $2 = image ]]; then

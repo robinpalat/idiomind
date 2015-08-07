@@ -340,7 +340,7 @@ fi
 if [ -f "$DCP/2.lst" ]; then kept_episodes=`wc -l < "$DCP/2.lst"`
 else kept_episodes=0; fi
 echo $$ > "$DT/.uptp"; rm "$DM_tl/Podcasts"/*.updt
-echo -e " <b>$(gettext "Updating.")</b>
+echo -e " <b>$(gettext "Updating")</b>
  $(gettext "Latest downloads:") 0" > "$DM_tl/Podcasts/$date.updt"
 DT_r="$(mktemp -d "$DT/XXXX")"
 fetch_podcasts

@@ -90,6 +90,7 @@ function notebook_1() {
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh '1'" \
     --expand-column=2 --no-headers --ellipsize=END --tooltip-column=2 \
+    --search-column=2 --regex-search \
     --column=Name:IMG --column=Name:TEXT --column=Learned:CHK > "$cnf1" &
     tac "$ls2" | yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
@@ -104,7 +105,7 @@ function notebook_1() {
     --plug=$KEY \
     --text="$label_info1\n" \
     --scroll --borders=10 --columns=2 \
-    --field="<small>$(gettext "Rename")</small>" "$tpc" \
+    --field="<small>$(gettext "Rename")</small>" "${tpc}" \
     --field="$(gettext "Mark as learnt")":FBTN "$cmd_mark" \
     --field="$(gettext "Auto select items")\t\t\t\t\t\t\t":CHK "$auto_mrk" \
     --field="$label_info2\n":LBL " " \
@@ -143,6 +144,7 @@ function notebook_2() {
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh '2'" \
     --expand-column=0 --no-headers --ellipsize=END --tooltip-column=1 \
+    --search-column=1 --regex-search \
     --column=Name:TEXT &
     yad --text-info --tabnum=3 \
     --plug=$KEY \
@@ -152,7 +154,7 @@ function notebook_2() {
     --plug=$KEY \
     --text="$label_info1\n" \
     --scroll --borders=10 --columns=2 \
-    --field="<small>$(gettext "Rename")</small>" "$tpc" \
+    --field="<small>$(gettext "Rename")</small>" "${tpc}" \
     --field="   $(gettext "Review")   ":FBTN "$cmd_mark" \
     --field="\t\t\t\t\t\t\t\t\t\t\t\t\t\t":LBL "_" \
     --field="$label_info2\n":LBL " " \
