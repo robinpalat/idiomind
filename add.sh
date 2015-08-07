@@ -56,7 +56,7 @@ new_items() {
 Create one using the button below. ")" & exit 1; fi
 
     if [ -e "$DC_s/img_first_run" ]; then ( sleep 2
-    msg_2 "$(gettext "NOTE: To add an image to a note use the screen clipping way.  ")\n" \
+    msg_2 "$(gettext "NOTE: To add an image to a note use the screen clipping.  ")\n" \
     info "$(gettext "Ok")" "$(gettext "Do not show again")" " "; [ $? = 1 ] && rm -f "$DC_s/img_first_run" ) & fi
 
     [ -z "${4}" ] && txt="$(xclip -selection primary -o)" || txt="${4}"

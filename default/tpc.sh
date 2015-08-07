@@ -47,7 +47,7 @@ rplay=\"\"
 audio=\"TRUE\"
 ntosd=\"\"
 loop=\"0\"
-rword=\"1\""
+rword=\"0\""
         
         mkdir -p "${DM_tlt}/images"
         mkdir "${DC_tlt}"; cd "${DC_tlt}"

@@ -72,6 +72,6 @@ cd /
 if [ $(date +%d) = 28 -o $(date +%d) = 14 ]; then
 rm "$log"; touch "$log"; fi
 rm -f "$items"
-echo "--lists updated"
+echo "--updated lists"
 
 exit

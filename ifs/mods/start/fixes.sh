@@ -3,10 +3,11 @@
 # ----------------------------
 if [ -e "$DC_a/dict/.dict" ]; then
 
-    if [[ `sed -n 2p "$DC_a/dict/.dict"` != $v_dicts ]]; then
+    if [[ `sed -n 2p "$DC_a/dict/.dict"` != v_dicts ]]; then
     for re in "$DS_a/Dics/dicts"/*; do
     if [ ! -f "$DC_a/dict/enables/$(basename "${re}")" -a \
     ! -f "$DC_a/dict/disables/$(basename "${re}")" ]; then
+    echo "--added dict: $(basename "${re}")"
     >  "$DC_a/dict/disables/$(basename "${re}")"; fi
     done
     echo -e "$lgtl\n$v_dicts" > "$DC_a/dict/.dict"; fi
