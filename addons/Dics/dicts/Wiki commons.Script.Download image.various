@@ -2,7 +2,7 @@
 
 if [[ "$1" = dlgcnfg ]]; then
 source "$DS/ifs/mods/cmns.sh"
-msg "$(gettext "Does not need configuration.")\n" info "$4"
+msg "$(gettext "Does not need configuration")\n" info "$4"
 
 else
 url="https://commons.wikimedia.org/wiki/$1"

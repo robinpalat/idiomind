@@ -51,7 +51,7 @@ fonts() {
     srce=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
     ras=$(sort -Ru b.srces |egrep -v "$srce" |head -${P})
     tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
-    srce_s=$((28-${#trgt}))
+    srce_s=$((32-${#trgt}))
     cuestion="\n<span font_desc='Free Sans ${srce_s}' color='#636363'><b>${trgt}</b></span>\n"
     }
 

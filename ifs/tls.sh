@@ -581,14 +581,14 @@ check_updates() {
     && [ ${#nver} -ge 3 ] && [ ${#cver} -ge 3 ] \
     && [ "$nver" != "$cver" ]; then
     
-        msg_2 " <b>$(gettext "A new version of Idiomind available\!")</b>\n" \
-        info "$(gettext "Download")" "$(gettext "Cancel")" "$(gettext "Idiomind - New Version")"
+        msg_2 " <b>$(gettext "A new version of Idiomind available\!")</b>       \n" \
+        info "$(gettext "Download")" "$(gettext "Cancel")" "$(gettext "New Version")"
         ret=$?
         
         if [[ $ret -eq 0 ]]; then xdg-open "$pkg"; fi
         
     else
-        msg " $(gettext "No updates available.")\n" info $(gettext "Updates")
+        msg " $(gettext "No updates available.")\n" info "$(gettext "Info")"
     fi
 
     exit 0
@@ -609,14 +609,16 @@ a_check_updates() {
         curl -v www.google.com 2>&1 | \
         grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
         echo "$d2" > "$DC_s/9.cfg"
-        nver=`curl http://idiomind.sourceforge.net/doc/release | sed -n 1p`
+        # nver=`curl http://idiomind.sourceforge.net/doc/release | sed -n 1p`
+        # This is a crude attempt to generate statistics.. until I take the time to filter traffic in google analytics
+        nver=`wget --user-agent 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0' -qO - http://bit.ly/latest_release |sed -n 1p`
         cver=`echo "$(idiomind -v)"`
         pkg='https://sourceforge.net/projects/idiomind/files/idiomind.deb/download'
         if [ ${#nver} -lt 9 ] && [ ${#cver} -lt 9 ] \
         && [ ${#nver} -ge 3 ] && [ ${#cver} -ge 3 ] \
         && [ "$nver" != "$cver" ]; then
             
-            msg_2 " <b>$(gettext "A new version of Idiomind available\!")\n</b>\n $(gettext "Do you want to download it now?")\n" info "$(gettext "Download")" "$(gettext "Cancel")" "$(gettext "Idiomind - New Version")" "$(gettext "Ignore")"
+            msg_2 " <b>$(gettext "A new version of Idiomind available\!")       \n</b> $(gettext "Do you want to download it now?")\n" info "$(gettext "Download")" "$(gettext "Cancel")" "$(gettext "New Version")" "$(gettext "Ignore")"
             ret=$?
             
             if [[ $ret -eq 0 ]]; then xdg-open "$pkg"
@@ -927,6 +929,7 @@ mkpdf() {
 gtext() {
 $(gettext "Marked items")
 $(gettext "Difficult words")
+$(gettext "Does not need configuration")
 }>/dev/null 2>&1
 
 case "$1" in
