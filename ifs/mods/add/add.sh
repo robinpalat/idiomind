@@ -23,6 +23,7 @@ function mksure() {
     for str in "${@}"; do
     if [ -z "${str##+([[:space:]])}" ]; then e=1; break; fi
     done
+    
     return $e
 }
 
@@ -329,7 +330,7 @@ function translate() {
     "$DS_a/Dics/cnfg.sh" 2; fi
     for trans in "$DC_d"/*."Traslator online.Translator".*; do
     trans="$DS_a/Dics/dicts/$(basename "${trans}")"
-    "${trans}" "$@" && break; done
+    [ -e "${trans}" ] && "${trans}" "$@" && break; done
 }
 
 
@@ -339,7 +340,7 @@ function tts() {
     "$DS_a/Dics/cnfg.sh" 1; fi
     for convert in "$DC_d"/*."TTS online.Pronunciation".*; do
     convert="$DS_a/Dics/dicts/$(basename "${convert}")"
-    "${convert}" "$@"
+    [ -e "${convert}" ] && "${convert}" "$@"
     if [ -e "${4}" ]; then break; fi; done
 }
 
@@ -353,22 +354,26 @@ function tts_word() {
     "$DS_a/Dics/cnfg.sh" 0; fi
     
     for convert in "$DC_d"/*."TTS online.Word pronunciation.$lgt"; do
-    convert="$DS_a/Dics/dicts/$(basename "${convert}")"; "${convert}" "${1}"
+    convert="$DS_a/Dics/dicts/$(basename "${convert}")"
+    [ -e "${convert}" ] && "${convert}" "${1}"
     
     if [ -e "${2}/${1}.mp3" ]; then
     if [[ `du "${2}/${1}.mp3" |cut -f1` -gt 1 ]]; then
     break; else rm -f "${2}/${1}.mp3"; fi; fi
     done
     
-    if [ ! -e "${2}/${1}.mp3" ]; then
-    for convert in "$DC_d"/*."TTS online.Word pronunciation.various"; do
-    convert="$DS_a/Dics/dicts/$(basename "${convert}")"; "${convert}" "${1}" ${lgt}
-    
-    if [ -e "${2}/${1}.mp3" ]; then
-    if [[ `du "${2}/${1}.mp3" |cut -f1` -gt 1 ]]; then
-    break; else rm -f "${2}/${1}.mp3"; fi; fi
-    done
-    fi
+        if ls "$DC_d"/*."TTS online.Word pronunciation.various" 1> /dev/null 2>&1; then
+        if [ ! -e "${2}/${1}.mp3" ]; then
+        for convert in "$DC_d"/*."TTS online.Word pronunciation.various"; do
+        convert="$DS_a/Dics/dicts/$(basename "${convert}")"
+        [ -e "${convert}" ] && "${convert}" "${1}" ${lgt}
+        
+        if [ -e "${2}/${1}.mp3" ]; then
+        if [[ `du "${2}/${1}.mp3" |cut -f1` -gt 1 ]]; then
+        break; else rm -f "${2}/${1}.mp3"; fi; fi
+        done
+        fi
+        fi
 }
 
 
@@ -379,7 +384,8 @@ function img_word() {
     
         touch "$DT/img${1}.lk"
         for img in "$DC_d"/*."Script.Download image".*; do
-        img="$DS_a/Dics/dicts/$(basename "${img}")"; "${img}" "${1}"
+        img="$DS_a/Dics/dicts/$(basename "${img}")"
+        [ -e "${img}" ] && "${img}" "${1}"
         
         if [ -e "$DT/${1}.jpg" ]; then
         if [[ `du "$DT/${1}.jpg" |cut -f1` -gt 10 ]]; then
@@ -388,7 +394,8 @@ function img_word() {
         
         if [ ! -e "$DT/${1}.jpg" ]; then
         for img in "$DC_d"/*."Script.Download image".*; do
-        img="$DS_a/Dics/dicts/$(basename "${img}")"; "${img}" "${2}"
+        img="$DS_a/Dics/dicts/$(basename "${img}")"
+        [ -e "${img}" ] && "${img}" "${2}"
         
         if [ -e "$DT/${2}.jpg" ]; then
         if [[ `du "$DT/${2}.jpg" |cut -f1` -gt 10 ]]; then
@@ -431,24 +438,28 @@ function fetch_audio() {
     if [ $lgt = ja -o $lgt = "zh-cn" -o $lgt = ru ]; then
     words_list="${2}"; else words_list="${1}"; fi
     
-    while read word; do
+    while read Word; do
     
         [ -d "$DM_tls" ] && cd "$DM_tls"/ || exit 1
-        word="${word,,}"
+        word="${Word,,}"
         
         if [ ! -e "$DM_tls/${word}.mp3" ]; then
 
             for dict in "$DC_d"/*."TTS online.Word pronunciation.$lgt"; do
-                dict="$DS_a/Dics/dicts/$(basename "${dict}")"
-                if [ ! -e ./"${word}.mp3" ]; then "${dict}" "${word}"; fi
+            dict="$DS_a/Dics/dicts/$(basename "${dict}")"
+            if [ ! -e ./"${word}.mp3" ]; then
+            [ -e "${dict}" ] && "${dict}" "${word}"; fi
             done
             
-            if [ ! -e ./"${word}.mp3" ]; then
+                if ls "$DC_d"/*."TTS online.Word pronunciation.various" 1> /dev/null 2>&1; then
+                if [ ! -e ./"${word}.mp3" ]; then
                 for dict in "$DC_d"/*."TTS online.Word pronunciation.various"; do
-                    dict="$DS_a/Dics/dicts/$(basename "${dict}")"
-                    if [ ! -e ./"${word}.mp3" ]; then "${dict}" "${word}" ${lgt}; fi
+                dict="$DS_a/Dics/dicts/$(basename "${dict}")"
+                if [ ! -e ./"${word}.mp3" ]; then
+                [ -e "${dict}" ] && "${dict}" "${word}" ${lgt}; fi
                 done
-            fi
+                fi
+                fi
         fi
     done < "${words_list}"
 }
