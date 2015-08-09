@@ -19,9 +19,10 @@ play_sentence() {
     if [ -f "${DM_tlt}/$2.mp3" ]; then
     play "${DM_tlt}/$2.mp3" &
     elif [ -n "$synth" ]; then
-    echo "${3}." | $synth &
+    
+    echo "${trgt}." | $synth &
     else
-    echo "${3}." | espeak -v $lg -s 150 &
+    echo "${trgt}." | espeak -v $lg -s 150 &
     fi
 } >/dev/null 2>&1
 

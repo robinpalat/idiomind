@@ -14,7 +14,7 @@ if [ -z "${_item}" ]; then _item="$(sed -n 1p "${index}")"; index_pos=1; fi
 item="$(grep -F -m 1 "trgt={${_item}}" "$DC_tlt/0.cfg" |sed 's/},/}\n/g')"
 
 type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
-trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
+export trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
 srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
 exmp="$(grep -oP '(?<=exmp={).*(?=})' <<<"${item}")"
 defn="$(grep -oP '(?<=defn={).*(?=})' <<<"${item}")"
@@ -33,7 +33,7 @@ if [ ${type} = 1 ]; then
 
 elif [ ${type} = 2 ]; then
 
-    cmd_listen="$DS/play.sh play_sentence ${id} "\"${trgt}\"""
+    cmd_listen="$DS/play.sh play_sentence ${id}"
     [ "$mark" = TRUE ] && trgt="<b>$trgt</b>" && grmr="<b>$grmr</b>"
     sentence_view
 

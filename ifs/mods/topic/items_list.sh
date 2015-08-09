@@ -14,7 +14,7 @@ function word_view() {
     --window-icon="$DS/images/icon.png" \
     --align=left --scroll --skip-taskbar --text-align=center \
     --image-on-top --center --on-top \
-    --width=620 --height=380 --borders=20 \
+    --width=630 --height=390 --borders=20 \
     --field="":lbl "${field_exmp}" "${field_defn}" "${field_note}" \
     --button=gtk-edit:4 \
     --button="$(gettext "Listen")":"$cmd_listen" \
@@ -36,7 +36,7 @@ function sentence_view() {
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --image-on-top --center --on-top \
     --scroll --text-align=left --expand-column=0 --no-headers \
-    --width=620 --height=380 --borders=20 \
+    --width=630 --height=390 --borders=20 \
     --column="":TEXT \
     --column="":TEXT \
     --button=gtk-edit:4 \
@@ -80,9 +80,10 @@ function notebook_1() {
     cmd_share="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
     cmd_eind="'$DS/mngr.sh' edit_list "\"${tpc}\"""
     cmd_play="$DS/play.sh play_list"
+    chk1=$((`wc -l < "${DC_tlt}/1.cfg"`*3))
+    chk5=`wc -l < "${DC_tlt}/5.cfg"`
     
-    list() { if [[ $((`wc -l < "${DC_tlt}/5.cfg"`/3)) = \
-    `wc -l < "${DC_tlt}/1.cfg"` ]]; then
+    list() { if [[ ${chk1} = ${chk5} ]]; then
     tac "${DC_tlt}/5.cfg"; else tac "$ls1" | \
     awk '{print "/usr/share/idiomind/images/0.png\n"$0"\nFALSE"}'; fi; }
     

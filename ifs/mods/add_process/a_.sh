@@ -270,8 +270,9 @@ if [[ ${conten^} = A ]]; then
         if  [ $? != 0 ] && [ "$(ls "$DT_r"/[0-9]* | wc -l)" -ge 1 ]; then
             
             kill -9 $(pgrep -f "wget -q -U -T 101 -c")
+            _log=$(cat "$DT_r/slog" "$DT_r/wlog")
             btn="--button="$(gettext "Save Audio")":0"
-            dlg_text_info_3 "$(gettext "Some items could not be added to your list")" "$logs" "$btn" >/dev/null 2>&1
+            dlg_text_info_3 "$(gettext "Some items could not be added to your list")" "$_log" "$btn" >/dev/null 2>&1
 
                 if  [ $? -eq 0 ]; then
                     aud=`dlg_file_2`
@@ -293,7 +294,7 @@ if [[ ${conten^} = A ]]; then
         S=" $(gettext "sentences")"
         if [ $sadds = 1 ]; then
         S=" $(gettext "sentence")"; fi
-        logs=$(cat "$DT_r/slog" "$DT_r/wlog")
+        _log=$(cat "$DT_r/slog" "$DT_r/wlog")
         adds=$(cat "$DT_r/adds" "$DT_r/addw" |sed '/^$/d' |wc -l)
         
         if [[ ${adds} -ge 1 ]]; then
@@ -301,12 +302,12 @@ if [[ ${conten^} = A ]]; then
         "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
         echo "adi.$adds.adi" >> "$DC_s/log"; fi
         
-        if [ -n "$logs" -o "$(ls "$DT_r"/[0-9]* | wc -l)" -ge 1 ]; then
+        if [ -n "$_log" -o "$(ls "$DT_r"/[0-9]* | wc -l)" -ge 1 ]; then
         
             if [ "$(ls "$DT_r"/[0-9]* | wc -l)" -ge 1 ]; then
             btn="--button="$(gettext "Save Audio")":0"; fi
 
-            dlg_text_info_3 "$(gettext "Some items could not be added to your list")" "$logs" "$btn" >/dev/null 2>&1
+            dlg_text_info_3 "$(gettext "Some items could not be added to your list")" "$_log" "$btn" >/dev/null 2>&1
 
                 if  [ $? -eq 0 ]; then
                     aud=`dlg_file_2`

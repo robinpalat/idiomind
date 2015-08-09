@@ -33,7 +33,7 @@ if [[ ${1} = 0 ]]; then
             [ ${type} = 2 -a ${rw} = 2 ] && spn=2 && sle=2.5
 
             ( while [ ${ritem} -lt ${spn} ]; do
-            "$DS"/play.sh play_file "${file}" "${trgt}"
+            "$DS"/play.sh play_file "${file}"
             [ ${ritem} = 0 ] && sleep ${sle}
             [ ${ritem} = 1 ] && sleep 2.5
             [ ${ritem} = 2 ] && sleep 2
@@ -62,7 +62,7 @@ if [[ ${1} = 0 ]]; then
         unset file icon
         _item="$(grep -F -m 1 "trgt={${item}}" "${DC_tlt}/0.cfg" |sed 's/},/}\n/g')"
         type="$(grep -oP '(?<=type={).*(?=})' <<<"${_item}")"
-        trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${_item}")"
+        export trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${_item}")"
         srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${_item}")"
         id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${_item}")"
         img="${DM_tls}/images/${trgt,,}-0.jpg"; [ -f "$img" ] && icon="$img"

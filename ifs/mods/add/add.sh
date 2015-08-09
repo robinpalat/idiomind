@@ -207,13 +207,15 @@ function clean_0() {
 function clean_2() {
     
     if [ "$lgt" = ja -o "$lgt" = "zh-cn" -o "$lgt" = ru ]; then
-    echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" \
-    | tr -d '*\/' | tr -s '*"&:|{}[]<>+' ' ' \
+    echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' \
+    | sed "s/’/'/g" \
+    | tr -d '*\/' | tr -s '*&|{}[]<>+' ' ' \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//; s/ *$//g' | sed 's/ — /__/g' | sed 's/<[^>]*>//g'
     else
-    echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' | sed "s/’/'/g" \
-    | tr -d '*\/' | tr -s '*"&:|{}[]<>+' ' ' \
+    echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' \
+    | sed "s/’/'/g" \
+    | tr -d '*\/' | tr -s '*&|{}[]<>+' ' ' \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \
     | sed 's/ — /__/g' | sed "s|/||g" | sed 's/<[^>]*>//g'
@@ -223,20 +225,20 @@ function clean_2() {
 
 function clean_3() {
     
-    echo "${1}" | cut -d "|" -f1 | sed 's/!//;s/&//;s/\://; s/\&//g' \
+    echo "${1}" | cut -d "|" -f1 | sed 's/!//;s/&//;s/\://g' \
     | sed "s/-//g" | sed 's/^[ \t]*//;s/[ \t]*$//' | sed "s|/||g" \
     | sed 's/^\s*./\U&\E/g' | sed 's/\：//g' | sed 's/<[^>]*>//g' \
-    | tr -d '*/' | tr -s '"&:|{}[]<>+' ' ' | sed 's/ \+/ /g'
+    | tr -d '*/' | tr -s '&:|{}[]<>+' ' ' | sed 's/ \+/ /g'
 }  
 
 
 function clean_4() {
     
-    if [ `wc -c <<<"${1}"` -lt 150 ]; then
+    if [ `wc -c <<<"${1}"` -lt 180 ]; then
     echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' \
     | tr -d '*/' | tr -s '"&:|{}[]<>+' ' ' \
     | sed 's/ — / /g' | sed '/^$/d' | sed 's/ \+/ /g'
-    else 
+    else
     echo "${1}" | sed ':a;N;$!ba;s/\n/\__/g' \
     | tr -d '*/' | tr -s '"&:|{}[]<>+' ' ' \
     | sed 's/ — /__/g' | sed '/^$/d' | sed 's/ \+/ /g'
@@ -623,7 +625,7 @@ function dlg_text_info_1() {
 
 function dlg_text_info_3() {
 
-    printf "${2}" | yad --text-info \
+    echo -e "${2}" | yad --text-info \
     --title="$(gettext "Some items could not be added to your list")" \
     --text="${1}" \
     --name=Idiomind --class=Idiomind \

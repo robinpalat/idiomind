@@ -150,8 +150,8 @@ edit_item() {
     query="$(sed "s/'/ /g" <<<"${trgt}")"
     mod=0; col=0; prcess_tmp=0
    
-    cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"" "\"${trgt}\"""
-    cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"" "\"${trgt}\"""
+    cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"""
+    cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"""
     cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"" 1 ${c}"
     
     f="$(ls "$DC_d"/*."Link.Search definition".* |head -n1)"

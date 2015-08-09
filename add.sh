@@ -120,7 +120,7 @@ Create one using the button below. ")" & exit 1; fi
             elif [[ ${trgt:0:4} = 'Http' ]]; then
                 "$DS/add.sh" process "${trgt}" "$DT_r" & exit 1
             
-            elif [[ ${#trgt} -gt 150 ]]; then
+            elif [[ ${#trgt} -gt 180 ]]; then
                 "$DS/add.sh" process "${trgt}" "$DT_r" & exit 1
                 
             elif [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
@@ -134,7 +134,7 @@ Create one using the button below. ")" & exit 1; fi
                 if [ $(wc -w <<<"${srce}") = 1 ]; then
                     "$DS/add.sh" new_word "${trgt}" "$DT_r" "${srce}" & exit 1
                     
-                elif [ "$(wc -w <<<"${srce}")" -ge 1 -a ${#srce} -le 150 ]; then
+                elif [ "$(wc -w <<<"${srce}")" -ge 1 -a ${#srce} -le 180 ]; then
                     "$DS/add.sh" new_sentence "${trgt}" "$DT_r" "${srce}" & exit 1
                 fi
                 
@@ -148,7 +148,7 @@ Create one using the button below. ")" & exit 1; fi
                 if [ $(wc -w <<<"${trgt}") = 1 ]; then
                     "$DS/add.sh" new_word "${trgt}" "$DT_r" "${srce}" & exit 1
                     
-                elif [ "$(wc -w <<<"${trgt}")" -ge 1 -a ${#trgt} -le 150 ]; then
+                elif [ "$(wc -w <<<"${trgt}")" -ge 1 -a ${#trgt} -le 180 ]; then
                     "$DS/add.sh" new_sentence "${trgt}" "$DT_r" "${srce}" & exit 1
                 fi
             fi
@@ -355,7 +355,8 @@ list_words_edit() {
         done < <(head -200 < "$DT_r/slts")
 
         if [ -f "$DT_r/logw" ]; then
-        dlg_text_info_3 "$(gettext "Some items could not be added to your list"):"; fi
+        _log="$(< "$DT_r/logw")"
+        dlg_text_info_3 "$(gettext "Some items could not be added to your list"):" "$_log"; fi
         echo -e "adi.$lns.adi" >> "$DC_s/log"
     fi
     cleanups "${DT_r}" "$slt"; exit
@@ -417,8 +418,8 @@ list_words_sentence() {
     done < <(head -200 < "$DT_r/slts")
 
     if [ -f "$DT_r/logw" ]; then
-    logs="$(< "$DT_r/logw")"
-    dlg_text_info_3 "$(gettext "Some items could not be added to your list"):" "$logs"; fi
+    _log="$(< "$DT_r/logw")"
+    dlg_text_info_3 "$(gettext "Some items could not be added to your list"):" "$_log"; fi
     cleanups "$DT_r"
     echo -e "adi.$lns.adi" >> "$DC_s/log"
     exit
@@ -534,7 +535,7 @@ process() {
     [ -f "$DT_r/sntsls" ] && rm -f "$DT_r/sntsls"
 
     lenght() {
-        if [ $(wc -c <<<"${1}") -le 150 ]; then
+        if [ $(wc -c <<<"${1}") -le 180 ]; then
         echo -e "${1}" >> "$DT_r/sntsls"
         else echo -e "[ ... ]  ${1}" >> "$DT_r/sntsls"; fi
         }
@@ -543,20 +544,23 @@ process() {
     
         while read l; do
         
-            if [ $(wc -c <<<"${l}") -gt 150 ]; then
+            if [ $(wc -c <<<"${l}") -gt 180 ]; then
                 if grep -o -E '\,|\;' <<<"${l}"; then
 
                     while read -r split; do
 
-                        if [ $(wc -c <<<"${split}") -le 150 ]; then
+                        if [ $(wc -c <<<"${split}") -le 180 ]; then
                             lenght "${split}"
                         else
                             while read -r split2; do
                                 lenght "${split2}"
-                            done < <(tr -s ';' '\n' <<<"${split}")
+                            done < <(tr -s ';' '\n' <<<"${split}") #TODO
                         fi
                         
-                    done < <(sed 's/,/\n/g' <<<"${l}")
+                    done < <(sed 's/,/\n/g' <<<"${l}") #TODO
+                    
+                    # number_of_occurrences=$(grep -o "," <<< "$var" | wc -l)
+                    # lst=`for i in "${iteml[@]}"; do echo -n "!$i"; done`
                     
                 else
                     lenght "${l}"
@@ -579,12 +583,12 @@ process() {
         msg " $(gettext "Failed to get text.")\n" info
         cleanups "$DT_r" "$lckpr" "$slt" & exit 1
     
-    elif [[ ${chk} -le 150 ]]; then
+    elif [[ ${chk} -le 180 ]]; then
     
         "$DS/add.sh" new_items "" 2 "$(tr -s '\n' ' ' < "$DT_r/sntsls")"
         cleanups "$DT_r" "$lckpr" "$slt" & exit 1
     
-    elif [[ ${chk} -gt 150 ]]; then
+    elif [[ ${chk} -gt 180 ]]; then
         
         slt=$(mktemp $DT/slt.XXXX.x)
         dlg_checklist_3 "$DT_r/sntsls" "${tpe}"
@@ -680,7 +684,7 @@ process() {
                             echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> "$DT_r/slog"
                     
                         else
-                            if [ ${#trgt} -ge 150 ]; then
+                            if [ ${#trgt} -ge 180 ]; then
                                 echo -e "\n\n#$n [$(gettext "Sentence too long")] $trgt" >> "$DT_r/slog"
                         
                             else

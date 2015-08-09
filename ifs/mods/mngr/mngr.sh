@@ -34,7 +34,7 @@ function dlg_form_2() {
     if [[ `wc -w <<<"${trgt}"` -lt 4 ]]; then
     t=CHK; lbl_2="$(gettext "It is a compound word")"
     else t=LBL; fi
-    cmd_play="$DS/play.sh play_sentence ${id} "\"${trgt}\"""
+    cmd_play="$DS/play.sh play_sentence ${id}"
     yad --form --title="$(gettext "Edit")" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-all --separator="|" --selectable-labels \

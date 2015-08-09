@@ -154,14 +154,15 @@ result() {
     }
 
 while read -r trgt; do
-
+    
+    export trgt
     pos=`grep -Fon -m 1 "trgt={${trgt}}" "${cfg0}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
     item=`sed -n ${pos}p "${cfg0}" |sed 's/},/}\n/g'`
     fname=`grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"`
     get_text "${trgt}"
     
-    cmd_play="$DS/play.sh play_sentence ${fname} "\"${trgt}\"""
-    (sleep 0.5 && "$DS/play.sh" play_sentence ${fname} "${trgt}") &
+    cmd_play="$DS/play.sh play_sentence ${fname}"
+    (sleep 0.5 && "$DS/play.sh" play_sentence ${fname}) &
 
     dialog2 "${trgt}"
     ret="$?"
