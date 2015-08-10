@@ -55,9 +55,9 @@ dlg=$(yad --form --title="Idiomind" \
 --class=Idiomind --name=Idiomind \
 --window-icon="/usr/share/idiomind/images/icon.png" \
 --image-on-top --buttons-layout=end --align=right --center --on-top \
---width=460 --height=270 --borders=15 \
---field="$(gettext "Select foreign language"):CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
---field="$(gettext "Select native language"):CB" " !English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
+--width=470 --height=270 --borders=15 \
+--field="$(gettext "Select foreign language"):CB" "English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
+--field="$(gettext "Select native language"):CB" "English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
 --button=Cancel:1 \
 --button=gtk-ok:0)
 ret=$?
@@ -75,6 +75,8 @@ elif [ $ret -eq 0 ]; then
     elif [ -z $source ]; then
     /usr/share/idiomind/ifs/1u.sh & exit 1
     elif [ -z $target ]; then
+    /usr/share/idiomind/ifs/1u.sh t & exit 1
+    elif [ $target = $source ]; then
     /usr/share/idiomind/ifs/1u.sh t & exit 1
     fi
     

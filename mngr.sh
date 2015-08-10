@@ -587,8 +587,8 @@ mark_to_learn_topic() {
     [ ! -s "${DC_tlt}/0.cfg" ] && exit 1
     
     if [ $((inx3+inx4)) -le 10 ]; then
-    msg "$(gettext "Not enough items to perform the operation")\n " \
-    info "$(gettext "Not enough items to perform the operation")" & exit; fi
+    msg "$(gettext "Not enough items to perform the operation").\t\n " \
+    info "$(gettext "Information")" & exit; fi
 
     (echo "5"
     stts=$(sed -n 1p "${DC_tlt}/8.cfg")
@@ -651,8 +651,8 @@ mark_as_learned_topic() {
     [ ! -s "${DC_tlt}/0.cfg" ] && exit 1
 
     if [ $((inx3+inx4)) -le 10 ]; then
-    msg "$(gettext "Not enough items to perform the operation").\n " \
-    info "$(gettext "Not enough items")" & exit; fi
+    msg "$(gettext "Not enough items to perform the operation").\t\n " \
+    info "$(gettext "Information")" & exit; fi
     
     (echo "5"
     stts=$(sed -n 1p "${DC_tlt}/8.cfg")

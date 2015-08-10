@@ -10,7 +10,7 @@ function internet() {
     --window-icon="$DS/images/icon.png" \
     --image-on-top --center --sticky --on-top --skip-taskbar \
     --text="$(gettext "No network connection\nPlease connect to a network, then try again.")" \
-    --width=400 --height=120 --borders=3 \
+    --width=410 --height=130 --borders=3 \
     --button="$(gettext "OK")":0 >&2; exit 1;}
 }
 
@@ -22,7 +22,7 @@ function msg() {
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" \
     --image-on-top --center --sticky --on-top \
-    --width=400 --height=120 --borders=3 \
+    --width=410 --height=130 --borders=3 \
     --button="$btn":0
 }
 

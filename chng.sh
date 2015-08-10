@@ -27,7 +27,7 @@ if [[ ${1} = 0 ]]; then
         if [ ${stnrd} = 1 ]; then
             
             if [ ${n} = TRUE ]; then
-            notify-send -i "${icon}" "${trgt}" "${srce}" -t 10000; fi &
+            notify-send -i "${icon}" "${trgt}" "${srce}"; fi &
             if [ ${a} = TRUE ]; then sleep 0.5; sle=0.2; spn=1
             [ ${type} = 1 -a ${rw} = 1 ] && spn=3
             [ ${type} = 2 -a ${rw} = 2 ] && spn=2 && sle=2.5

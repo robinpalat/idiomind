@@ -101,8 +101,7 @@ function dwld() {
 
 function upld() {
 
-if [ $((inx3+inx4)) -lt 2 ]; then
-msg "$(gettext "Unavailable")\n" info "$(gettext "Unavailable")" & exit 1; fi
+if [ $((inx3+inx4)) -lt 2 ]; then exit 1; fi
 
 if [ "${tpc}" != "${2}" ]; then
 msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit 1; fi
@@ -409,8 +408,6 @@ END
 u=$?
 
 if [ $u = 0 ]; then
-    [ ! -d "${DM}/backup" ] && mkdir "${DM}/backup"
-    mv -f "$DT_u/${usrid}.${tpc}.$lgt" "${DM}/backup/${tpc}.idmnd"
     info=" <b>$(gettext "Uploaded correctly")</b>\n $tpc\n"
     image=dialog-ok
 else

@@ -14,9 +14,9 @@ if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
 else
     if [ -d "${DM_tlt}" ]; then
 
-    if [ ! -d "${DC_tlt}" ]; then
+    if [ ! -d "${DC_tlt}" -o ! -e "${DC_tlt}/id.cfg" ]; then
         
-c1="tname=\"${topic}\"
+export c1="tname=\"${topic}\"
 langs=\"${lgsl^}\"
 langt=\"${lgtl^}\"
 authr=\"$Author\"

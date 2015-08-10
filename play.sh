@@ -8,9 +8,9 @@ play_word() {
     elif [ -f "${DM_tlt}/$3.mp3" ]; then
     play "${DM_tlt}/$3.mp3" &
     elif [ -n "$synth" ]; then
-    echo "${2}." | $synth &
+    echo "${2}." |$synth &
     else
-    echo "${2}." | espeak -v $lg -s 150 &
+    echo "${2}." |espeak -v $lg -s 150 &
     fi
 } >/dev/null 2>&1
 
@@ -20,9 +20,9 @@ play_sentence() {
     play "${DM_tlt}/$2.mp3" &
     elif [ -n "$synth" ]; then
     
-    echo "${trgt}." | $synth &
+    echo "${trgt}." |$synth &
     else
-    echo "${trgt}." | espeak -v $lg -s 150 &
+    echo "${trgt}." |espeak -v $lg -s 150 &
     fi
 } >/dev/null 2>&1
 
@@ -31,9 +31,9 @@ play_file() {
     if [ -f "${2}" ]; then
     mplayer "${2}" -noconsolecontrols -title "${3}"
     elif [ -n "$synth" ]; then
-    echo "${3}." | $synth
+    echo "${3}." |$synth
     else
-    echo "${3}." | espeak -v $lg -s 150
+    echo "${3}." |espeak -v $lg -s 150
     fi
 } >/dev/null 2>&1
 
@@ -97,7 +97,7 @@ play_list() {
         done
     }
 
-    title="$tpc"
+    title="${tpc}"
     if grep -E 'vivid|wily' <<<"`lsb_release -a`" >/dev/null 2>&1; then
     btn1="gtk-media-play:0"; else
     btn1="$(gettext "Play"):0"; fi
@@ -107,8 +107,8 @@ play_list() {
     else
         tpp="$(sed -n 1p "$DT/.p_")"
         btn2="--button=gtk-media-stop:2"
-        if [ -n "$tpp" -a ! -f "$DT/list.m3u" ]; then
-        [ "$tpp" != "$tpc" ] && title="$(gettext "Playing:") $tpp"
+        if [ -n "${tpp}" ] && [ ! -f "$DT/list.m3u" ]; then
+        [ "${tpp}" != "${tpc}" ] && title="$(gettext "Playing:") ${tpp}"
         fi
     fi
     

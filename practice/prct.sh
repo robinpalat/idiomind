@@ -11,16 +11,6 @@ cfg4="$DC_tlt/4.cfg"
 dir="$DC_tlt/practice"
 touch "$dir/log1" "$dir/log2" "$dir/log3"
 
-lock() {
-    
-    yad --title="$(gettext "Practice Completed")" \
-    --text="<b>$(gettext "Practice Completed")</b>\\n   $(< "$1")\n " \
-    --window-icon="$DS/images/icon.png" --on-top --skip-taskbar \
-    --center --image="$DS/practice/images/21.png" \
-    --width=360 --height=120 --borders=5 \
-    --button="   $(gettext "Restart")   ":0 \
-    --button=Ok:2
-}
 
 get_list() {
     
@@ -88,13 +78,24 @@ get_list() {
     fi
 }
 
+lock() {
+    
+    yad --title="$(gettext "Practice Completed")" \
+    --text="<b>$(gettext "Practice Completed")</b>\\n   $(< "$1")\n " \
+    --window-icon="$DS/images/icon.png" --on-top --skip-taskbar \
+    --center --image="$DS/practice/images/21.png" \
+    --width=400 --height=130 --borders=5 \
+    --button="    $(gettext "Restart")    ":0 \
+    --button="    $(gettext "Ok")    ":2
+}
+
 starting() {
     
     yad --title="$1" \
     --text=" $1.\n" --image=info \
     --window-icon="$DS/images/icon.png" --skip-taskbar --center --on-top \
-    --width=360 --height=120 --borders=5 \
-    --button=Ok:1
+    --width=400 --height=130 --borders=5 \
+    --button="    $(gettext "Ok")    ":1
     "$strt" & exit 1
 }
 

@@ -119,7 +119,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
 
     source "$DS/ifs/mods/cmns.sh"
     source "$DS/ifs/tls.sh"
-    check_source_1 "${1}"
+    check_format_1 "${1}"
     if [ $? != 23 ]; then
     msg "$(gettext "File is corrupted.")\n" error & exit 1; fi
     file="${1}"

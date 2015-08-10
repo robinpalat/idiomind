@@ -119,7 +119,7 @@ function sentence_p() {
     echo "${vrbl}" \
     | python -c 'import sys; print(" ".join(sorted(set(sys.stdin.read().split()))))' \
     | sed 's/ /\n/g' | grep -v '^.$' | grep -v '^..$' \
-    | tr -d '*)(' | tr -s ',;"&:|{}[]' ' ' \
+    | tr -d '*)(,;"“”:' | tr -s '&|{}[]' ' ' \
     | sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
     | sed 's/\]//;s/\[//;s/<[^>]*>//g' \
     | sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //;s/"//g' \
@@ -129,7 +129,7 @@ function sentence_p() {
     
     while read -r wrd; do
         
-        w="$(tr -d '\.,;' <<<"${wrd,,}")"
+        w="$(tr -d '\.,;“”"' <<<"${wrd,,}")"
         if [[ `sqlite3 $db "SELECT items from pronouns WHERE items IS '${w}';"` = "${w}" ]]; then
             echo "<span color='#3E539A'>${wrd}</span>" >> ./"g.$r"
         elif [[ `sqlite3 $db "SELECT items from nouns_adjetives WHERE items IS '${w}';"` = "${w}" ]]; then
@@ -228,7 +228,7 @@ function clean_3() {
     echo "${1}" | cut -d "|" -f1 | sed 's/!//;s/&//;s/\://g' \
     | sed "s/-//g" | sed 's/^[ \t]*//;s/[ \t]*$//' | sed "s|/||g" \
     | sed 's/^\s*./\U&\E/g' | sed 's/\：//g' | sed 's/<[^>]*>//g' \
-    | tr -d '*/' | tr -s '&:|{}[]<>+' ' ' | sed 's/ \+/ /g'
+    | tr -d '*/' | tr -s '&:|{}[]<>+' ' ' | sed 's/ \+/ /g' 
 }  
 
 
@@ -236,12 +236,12 @@ function clean_4() {
     
     if [ `wc -c <<<"${1}"` -lt 180 ]; then
     echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' \
-    | tr -d '*/' | tr -s '"&:|{}[]<>+' ' ' \
-    | sed 's/ — / /g' | sed '/^$/d' | sed 's/ \+/ /g'
+    | tr -d '*/“”"' | tr -s '&:|{}[]<>+' ' ' \
+    | sed 's/ — / /;s/--/ /g' | sed '/^$/d' | sed 's/ \+/ /g'
     else
     echo "${1}" | sed ':a;N;$!ba;s/\n/\__/g' \
-    | tr -d '*/' | tr -s '"&:|{}[]<>+' ' ' \
-    | sed 's/ — /__/g' | sed '/^$/d' | sed 's/ \+/ /g'
+    | tr -d '*/“”"' | tr -s '&:|{}[]<>+' ' ' \
+    | sed 's/ — /__/;s/--/ /g' | sed '/^$/d' | sed 's/ \+/ /g'
     fi
 }
 
@@ -471,10 +471,10 @@ function list_words_2() {
 
     if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
     echo "${1}" | awk 'BEGIN{RS=ORS=" "}!a[$0]++' \
-    | tr '_' '\n' |sed -n 1~2p |sed '/^$/d'
+    | tr -d '*/“”"' | tr '_' '\n' | sed -n 1~2p | sed '/^$/d'
     else
     echo "${1}" | awk 'BEGIN{RS=ORS=" "}!a[$0]++' \
-    | tr '_' '\n' |sed -n 1~2p |sed '/^$/d'
+    | tr -d '*/“”"' | tr '_' '\n' | sed -n 1~2p | sed '/^$/d'
     fi
 }
 
@@ -579,17 +579,31 @@ function dlg_checklist_3() {
 
     cat "${1}" | awk '{print "FALSE\n"$0}' | \
     yad --list --checklist --title="$2" \
-    --text="<small>$info</small> " \
     --name=Idiomind --class=Idiomind \
     --dclick-action="'/usr/share/idiomind/add.sh' 'list_words_dclik'" \
     --window-icon="$DS/images/icon.png" \
-    --ellipsize=END --text-align=right --center --no-headers \
-    --width=600 --height=550 --borders=5 \
-    --column="$(wc -l < "$1")" \
-    --column="$(gettext "sentences")" \
+    --ellipsize=END --center --no-click --text-align=right \
+    --width=700 --height=500 --borders=5 \
+    --column="$(gettext "Select")" \
+    --column="$(wc -l < "${1}") $(gettext "Items")" \
     --button="$(gettext "Cancel")":1 \
     --button=$(gettext "Edit"):2 \
     --button="gtk-add":0 > "$slt"
+    #
+}
+
+
+function dlg_text_info_1() {
+    
+    cat "${1}" | awk '{print "\n\n\n"$0}' | \
+    yad --text-info --title="$2" \
+    --name=Idiomind --class=Idiomind \
+    --editable \
+    --window-icon="$DS/images/icon.png" \
+    --wrap --margins=30 --fontname=vendana \
+    --skip-taskbar --center --on-top \
+    --width=700 --height=500 --borders=5 \
+    --button="gtk-ok":0 > ./sort
 }
 
 
@@ -606,20 +620,6 @@ function msg_3() {
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Play")":"$cmd_listen" \
     --button="$(gettext "Yes")":0
-}
-
-
-function dlg_text_info_1() {
-    
-    cat "${1}" | awk '{print "\n\n\n"$0}' | \
-    yad --text-info --title="$2" \
-    --name=Idiomind --class=Idiomind \
-    --editable \
-    --window-icon="$DS/images/icon.png" \
-    --wrap --margins=30 --fontname=vendana \
-    --skip-taskbar --center --on-top \
-    --width=600 --height=550 --borders=5 \
-    --button="gtk-ok":0 > ./sort
 }
 
 

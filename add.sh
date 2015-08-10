@@ -64,6 +64,8 @@ Create one using the button below. ")" & exit 1; fi
     
     [ -d "${2}" ] && DT_r="${2}"
     [ -n "${5}" ] && srce="${5}" || srce=""
+    
+    if [ ${#txt} -gt 180 ]; then "$DS/add.sh" process "${txt}" & exit 1; fi
 
     [ -f "$DT_r/ico.jpg" ] && img="$DT_r/ico.jpg" \
     || img="$DS/images/nw.png"
@@ -473,7 +475,8 @@ process() {
     tpe="$(sed -n 2p "$DT/.n_s_pr")"; fi
     DM_tlt="$DM_tl/${tpe}"
     DC_tlt="$DM_tl/${tpe}/.conf"
-    DT_r="$3"; cd "$DT_r"
+    [ -d "$3" ] && DT_r="$3" || DT_r=$(mktemp -d "$DT/XXXXXX")
+    cd "$DT_r"
     lckpr="$DT/.n_s_pr"
     check_s "${tpe}"
 
@@ -559,8 +562,8 @@ process() {
                         
                     done < <(sed 's/,/\n/g' <<<"${l}") #TODO
                     
-                    # number_of_occurrences=$(grep -o "," <<< "$var" | wc -l)
-                    # lst=`for i in "${iteml[@]}"; do echo -n "!$i"; done`
+                    # s=$(grep -o "," <<< "$var" | wc -l)
+                    # t=`for i in "${iteml[@]}"; do echo -n "!$i"; done`
                     
                 else
                     lenght "${l}"
@@ -574,6 +577,7 @@ process() {
     else mv "$DT_r/sntsls_" "$DT_r/sntsls"; fi
     
     sed -i '/^$/d' "$DT_r/sntsls"
+    #sed -i 's/^\(.\)/\U\1/' "$DT_r/sntsls"
     chk=`tr -s '\n' ' ' < "$DT_r/sntsls" |wc -c`
     tpe="$(sed -n 2p "$lckpr")"
     info="-$((200-ns))"
