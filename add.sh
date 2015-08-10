@@ -13,7 +13,7 @@ ttrgt=$(grep -o ttrgt=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
 new_topic() {
     
     if [[ $(wc -l < "$DM_tl/.1.cfg") -ge 120 ]]; then
-    msg "$(gettext "Sorry, you have reached the maximum number of topics allowed")" info Info & exit 1; fi
+    msg "$(gettext "Maximum number of topics reached.")" info Info & exit 1; fi
 
     jlb="$(clean_3 "$(dlg_form_0 "${2}")")"
     
@@ -30,7 +30,7 @@ new_topic() {
         chck=$(grep -Fxo "${jlb} ($i)" "$DM_t/$language_target/.1.cfg")
         [ -z "${chck}" ] && break; done
         jlb="${jlb} ($i)"
-        msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "The name for the newest will be\:")\n<b>${jlb}</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
+        msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "Notice that the name for this one is now\:")\n<b>${jlb}</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
         [ $? -eq 1 ] && exit 1
         
     else jlb="${jlb}"; fi

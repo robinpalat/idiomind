@@ -11,7 +11,7 @@ function check_s() {
     DC_tlt="$DM_tl/${1}/.conf"
     if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
     [ -d "$DT_r" ] && rm -fr "$DT_r"
-    msg "$(gettext "Maximum number of notes has been exceeded for this topic. Max allowed (200)")" info " " & exit; fi
+    msg "$(gettext "You've reached the maximum number of notes you can add for a topic. Max allowed (200)")" info " " & exit; fi
     if [ -z "${tpe}" ]; then [ -d "$DT_r" ] && rm -fr "$DT_r" &
     msg "$(gettext "No topic is active")\n" info & exit 1; fi
 }

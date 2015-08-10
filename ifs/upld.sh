@@ -273,12 +273,12 @@ notes_m=$(echo "${dlg}" | cut -d "|" -f6)
 
 if [ -z "${iuser_m##+([[:space:]])}" ] || [ ${#iuser_m} -gt 60 ] || \
 [ "$(grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${iuser_m}")" ]; then
-msg "$(gettext "Name author not válid.")\n " info
+msg "$(gettext "You have entered an invalid author name.")\n " info
 "$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
 
 if [ ${#cntct_m} -gt 30 ] || \
 [ "$(grep -o -E '\*|\/|$|\)|\(|=' <<<"${cntct_m}")" ]; then
-msg "$(gettext "Invalid contact format.")\n " info
+msg "$(gettext "You have entered an invalid contact format.")\n " info
 "$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
 
 if [ -z "${Ctgry}" ]; then

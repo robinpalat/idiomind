@@ -3,7 +3,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 [ ! -d "$DC" ] && "$DS/ifs/1u.sh" && exit
-info2=" $(gettext "Are you sure you want to change the language set to learn?")  "
+info2=" $(gettext "Are you sure you want to change the language established to learn?")  "
 info1=" $(gettext "Are you sure you want to change the source language setting?")  "
 cd "$DS/addons"
 [[ -n "$(< "$DC_s/1.cfg")" ]] && cfg=1 || > "$DC_s/1.cfg"

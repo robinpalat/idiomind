@@ -544,7 +544,7 @@ rename_topic() {
         [ -z "${chck}" ] && break; done
         
         jlb="${jlb} ($i)"
-        msg_2 "$(gettext "Another topic with the same name already exist.") \n$(gettext "The name for the newest will be\:")\n<b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
+        msg_2 "$(gettext "Another topic with the same name already exist.") \n$(gettext "Notice that the name for this one is now\:")\n<b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
         ret="$?"
         if [ ${ret} -eq 1 ]; then exit 1; fi
     fi

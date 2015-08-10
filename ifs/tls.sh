@@ -303,8 +303,8 @@ videourl() {
     ([ ${url:0:29} = 'https://www.youtube.com/watch' ] \
     || [ ${url:0:28} = 'http://www.youtube.com/watch' ]); then \
     echo "$url" > "${DM_tlt}/files/video$n.url"
-    else msg "$(gettext "Invalid URL").\n" error \
-    "$(gettext "Invalid URL")"; fi
+    else msg "$(gettext "You have entered an invalid URL").\n" error \
+    "$(gettext "You have entered an invalid URL")"; fi
 }
 
 

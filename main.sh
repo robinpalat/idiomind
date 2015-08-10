@@ -153,7 +153,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
 
             if [[ $(wc -l < "$DM_t/$langt/.1.cfg") -ge 120 ]]; then
                 
-                msg "$(gettext "Sorry, you have reached the maximum number of topics")\n" info & exit
+                msg "$(gettext "Maximum number of topics reached.")\n" info & exit
             fi
             
             if [[ $(grep -Fxo "${tname}" "$DM_t/$langt/.1.cfg" | wc -l) -ge 1 ]]; then
@@ -163,7 +163,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
                 [ -z "$chck" ] && break; done
             
                 tname="${tname} ($i)"
-                msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "The name for the newest will be\:")\n<b>$tname</b>\n" info "$(gettext "OK")" "$(gettext "Cancel")"
+                msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "Notice that the name for this one is now\:")\n<b>$tname</b>\n" info "$(gettext "OK")" "$(gettext "Cancel")"
   
                 if [ $? != 0 ]; then exit 1; fi
             fi

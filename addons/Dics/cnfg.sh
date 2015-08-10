@@ -43,7 +43,8 @@ function add_dlg() {
         if ! grep -Fo "${lang}" <<<"${langs[@]}"; then i=TRUE; fi
 
         if [ ${i} = TRUE ]; then
-        msg "$(gettext "Invalid format").\n" error "$(gettext "Invalid format")"
+        msg "$(gettext "You have entered an Invalid format").\n" \
+        error "$(gettext "You have entered an Invalid format")"
         else
         if [ -f /usr/bin/gksu ]; then
         gksu -S -m "$(gettext "Idiomind requires admin privileges for this task")" "$DS_a/Dics/cnfg.sh" \
