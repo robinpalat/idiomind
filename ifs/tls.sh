@@ -480,7 +480,7 @@ colorize() {
 check_updates() {
 
     internet
-    nver=`curl http://idiomind.sourceforge.net/doc/release |sed -n 1p`
+    nver=`wget --user-agent 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0' -qO - http://bit.ly/latest_release |sed -n 1p`
     cver=`echo "$(idiomind -v)"`
     pkg='https://sourceforge.net/projects/idiomind/files/idiomind.deb/download'
     echo "$(date +%d)" > "$DC_s/9.cfg"
@@ -516,8 +516,7 @@ a_check_updates() {
         sleep 50; curl -v www.google.com 2>&1 | \
         grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
         echo "$d2" > "$DC_s/9.cfg"
-        nver=`curl http://idiomind.sourceforge.net/doc/release |sed -n 1p`
-        # nver=`wget --user-agent 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0' -qO - http://bit.ly/latest_release |sed -n 1p`
+        nver=`wget --user-agent 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0' -qO - http://bit.ly/latest_release |sed -n 1p`
         cver=`echo "$(idiomind -v)"`
         pkg='https://sourceforge.net/projects/idiomind/files/idiomind.deb/download'
         if [ ${#nver} -lt 9 ] && [ ${#cver} -lt 9 ] \

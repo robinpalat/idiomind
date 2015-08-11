@@ -8,12 +8,11 @@ a="$(gettext "Tell us if you think this is an error.")"
 b="$(gettext "New episodes <i><small>Podcasts</small></i>")"
 c="$(gettext "Saved episodes <i><small>Podcasts</small></i>")"
 
-#
-# rsync_delete: disable(0)/enable(1)
+# rsync_delete: disable 0/enable 1
 rsync_delete=0
 
 set_channel() {
-    
+
 tmpl1="<?xml version='1.0' encoding='UTF-8'?>
 <xsl:stylesheet version='1.0'
 xmlns:xsl='http://www.w3.org/1999/XSL/Transform'

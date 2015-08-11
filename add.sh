@@ -50,7 +50,7 @@ new_items() {
     if [ ! -d "$DT" ]; then new_session; fi
     [ ! "$DT/tpe" ] && echo "${tpc}" > "$DT/tpe"
 
-    if [ "$(grep -vFx 'Podcasts' "$DM_tl/.1.cfg" | wc -l)" -lt 1 ]; then
+    if [[ "$(grep -vFx 'Podcasts' "$DM_tl/.1.cfg" | wc -l)" -lt 1 ]]; then
     cleanups "$DT_r"
     "$DS/chng.sh" "$(gettext "To start adding notes you need to have a topic.
 Create one using the button below. ")" & exit 1; fi
@@ -181,7 +181,7 @@ new_sentence() {
         srce="$(clean_2 "${srce}")"
         
     else 
-        if [ -z "${4}" ] || [ -z "${2}" ]; then
+        if [ -z "${4}" -o -z "${2}" ]; then
         cleanups "$DT_r"
         msg "$(gettext "You need to fill text fields.")\n" info " " & exit; fi
     fi
@@ -249,7 +249,7 @@ new_word() {
         srce="$(clean_0 "${srce}")"
         
     else 
-        if [ -z "${4}" ] || [ -z "${2}" ]; then
+        if [ -z "${4}" -o -z "${2}" ]; then
         cleanups "$DT_r"
         msg "$(gettext "You need to fill text fields.")\n" info " " & exit; fi
     fi
@@ -439,7 +439,7 @@ list_words_dclik() {
     check_s "${tpe}"
     info="-$((200 - $(wc -l < "${DC_tlt}/0.cfg")))"
     
-    if [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
+    if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
         (
         echo "1"
         echo "# $(gettext "Processing")..." ;
@@ -480,7 +480,7 @@ process() {
     lckpr="$DT/.n_s_pr"
     check_s "${tpe}"
 
-    if [ -f "$lckpr" ] && [ ${#@} -lt 4 ]; then
+    if [ -f "$lckpr" -a ${#@} -lt 4 ]; then
     
         msg_2 "$(gettext "Wait until it finishes a previous process")\n" info OK gtk-stop "$(gettext "Warning")"
         
@@ -527,7 +527,7 @@ process() {
         cleanups "$DT_r" "$lckpr"; exit 1; fi
         (echo "1"
         echo "# $(gettext "Processing")..." ;
-        if [ "$lgt" = ja ] || [ "$lgt" = "zh-cn" ] || [ "$lgt" = ru ]; then
+        if [ "$lgt" = ja -o "$lgt" = "zh-cn" -o "$lgt" = ru ]; then
         echo "${conten}" | clean_7 > "$DT_r/sntsls_"
         else
         echo "${conten}" | clean_8 > "$DT_r/sntsls_"

@@ -60,7 +60,6 @@ if [ -z "${1}" ]; then
                 echo "# $(gettext "Copying")..."
 
                 [ -d "${DM}" ] && cd "${DM}" || msg "$(gettext "An error occurred while copying files.")\n" error && exit 1
-                # TODO
                 tar cvzf "$DT/backup.tar.gz" \
                 --exclude='./topics/Italian/Podcasts' \
                 --exclude='./topics/French/Podcasts' \

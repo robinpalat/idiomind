@@ -83,9 +83,9 @@ check() {
     --skip-taskbar --wrap --scroll --image-on-top --center --on-top \
     --undecorated --buttons-layout=end \
     --width=510 --height=250 --borders=10 \
-    --button="$(gettext "Continue")":2 \
     --field="":lbl \
-    --field="<span font_desc='Free Sans 10'>$OK\n\n$prc $hits</span>":lbl
+    --field="<span font_desc='Free Sans 10'>$OK\n\n$prc $hits</span>":lbl \
+    --button="$(gettext "Continue")":2
     }
     
 get_text() {

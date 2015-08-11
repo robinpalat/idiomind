@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# ----------------------------
 if [ -e "$DC_a/dict/.dict" ]; then
 
     if [[ `sed -n 2p "$DC_a/dict/.dict"` != v_dicts ]]; then
@@ -13,13 +12,10 @@ if [ -e "$DC_a/dict/.dict" ]; then
     echo -e "$lgtl\n$v_dicts" > "$DC_a/dict/.dict"; fi
 fi
 
-# ----------------------------
 if grep -o 'rplay' "$DC_s/1.cfg"; then rm "$DC_s/1.cfg"; fi
 
-# ----------------------------
 if [ ! -d "${DM_tls}/images" ]; then mkdir -p "${DM_tls}/images"; fi
 
-# ----------------------------
 DCP="$DM_tl/Podcasts/.conf"
 if [ -d "$DM_tl/Podcasts/.conf" ]; then
 

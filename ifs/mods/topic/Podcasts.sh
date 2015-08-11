@@ -12,9 +12,7 @@ if [[ ${1} = 2 ]]; then
 echo "Podcasts" > "$DC_s/7.cfg"
 echo 2 > "$DC_s/5.cfg"; fi
 
-nmfile() {
-    echo -n "${1}" | md5sum | rev | cut -c 4- | rev
-}
+nmfile() { echo -n "${1}" | md5sum | rev | cut -c 4- | rev; }
 
 function _list_1() {
     while read list1; do

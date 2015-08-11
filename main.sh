@@ -123,10 +123,8 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     if [ $? != 23 ]; then
     msg "$(gettext "File is corrupted.")\n" error & exit 1; fi
     file="${1}"
-    l=( "$(gettext "Beginner")" \
-    "$(gettext "Intermediate")" \
-    "$(gettext "Advanced")" )
-    level="${l[${level}]}"
+    lv=( "$(gettext "Beginner")" "$(gettext "Intermediate")" "$(gettext "Advanced")" )
+    level="${lv[${level}]}"
     itxt="<span font_desc='Droid Sans Bold 12' color='#616161'>$tname</span>\n<sup>$(gettext "Words") $nword  $(gettext "Sentences") $nsent  $(gettext "Images") $nimag \n$(gettext "Language:") $langt  $(gettext "Level:") $level</sup>"
     dclk="$DS/play.sh play_word"
     _lst() { while read -r item; do
