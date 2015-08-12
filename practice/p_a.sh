@@ -49,6 +49,9 @@ fonts() {
     trgt_f_c=$((38-${#trgt}))
     trgt_f_a=$((25-${#trgt}))
     srce_f_a=$((38-${#srce}))
+    [ ${trgt_f_c} -lt 5 ] && trgt_f_c=8
+    [ ${trgt_f_a} -lt 5 ] && trgt_f_a=8
+    [ ${srce_f_a} -lt 5 ] && srce_f_a=8
     cuestion="\n<span font_desc='Free Sans Bold ${trgt_f_c}'>${trgt}</span>"
     answer1="\n<span font_desc='Free Sans ${trgt_f_a}'>${trgt}</span>"
     answer2="<span font_desc='Free Sans Bold ${srce_f_a}'><i>${srce}</i></span>"
