@@ -236,11 +236,11 @@ function clean_4() {
     
     if [ `wc -c <<<"${1}"` -lt 180 ]; then
     echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' \
-    | tr -d '*/“”"' | tr -s '&:|{}[]<>+' ' ' \
+    | tr -d '*/"' | tr -s '&:|{}[]<>+' ' ' \
     | sed 's/ — / /;s/--/ /g' | sed '/^$/d' | sed 's/ \+/ /g'
     else
     echo "${1}" | sed ':a;N;$!ba;s/\n/\__/g' \
-    | tr -d '*/“”"' | tr -s '&:|{}[]<>+' ' ' \
+    | tr -d '*/"' | tr -s '&:|{}[]<>+' ' ' \
     | sed 's/ — /__/;s/--/ /g' | sed '/^$/d' | sed 's/ \+/ /g'
     fi
 }

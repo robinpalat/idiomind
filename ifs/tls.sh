@@ -43,7 +43,7 @@ function check_format_1() {
         
         if [[ ${n} = 1 ]]; then
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
-            [ "$(grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${val}")" ]; then invalid 2; fi
+            [ "$(grep -o -E '\*|\/|\@|$|=|-' <<<"${val}")" ]; then invalid 2; fi
         elif [[ ${n} = 2 || ${n} = 3 ]]; then
             if ! grep -Fo "${val}" <<<"${LANGUAGES[@]}"; then invalid 3; fi
         elif [[ ${n} = 4 || ${n} = 5 ]]; then
@@ -55,7 +55,7 @@ function check_format_1() {
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 8 ]; then invalid 6; fi
         elif [[ ${n} = 8 ]]; then
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
-            [ "$(grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${val}")" ]; then invalid 7; fi
+            [ "$(grep -o -E '\*|\/|\@|$|=|-' <<<"${val}")" ]; then invalid 7; fi
         elif [[ ${n} = 9 || ${n} = 10 || ${n} = 11 ]]; then
             if [ -n "${val}" ]; then
             if ! [[ ${val} =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] \

@@ -66,7 +66,6 @@ function new_session() {
     | sed 's/x/\n/')"
     sed -n 1p <<<"$s" >> "$DC_s/10.cfg"
     sed -n 2p <<<"$s" >> "$DC_s/10.cfg"
-    echo "$DESKTOP_SESSION" >> "$DC_s/10.cfg"
 
     # log file
     if [ -f "$DC_s/log" ]; then
