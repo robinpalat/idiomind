@@ -316,6 +316,7 @@ edit_item() {
 
             include "$DS/ifs/mods/mngr/a"
             [ -d "$DT/$c" ] && "$DS/add.sh" list_words_edit "${wrds_mod}" 2 ${c} "${trgt_mod}" &
+            [ ${type} != ${type_mod} -a ${type_mod} = 1 ] && ( img_word "${trgt}" "${srce}" ) &
             [ ${col} -eq 1 ] && "$DS/ifs/tls.sh" colorize &
             [ ${mod} -eq 1 ] && sleep 0.2
             [ $ret -eq 2 ] && "$DS/mngr.sh" edit "${lists}" $((item_pos-1))
