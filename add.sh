@@ -745,7 +745,8 @@ process() {
 
                                 index 1 "${tpc}" "${trgt}" "${srce}" "${exmp_}" "" "" "" "${id}"
                                 if [ ! -f "${DM_tls}/$audio.mp3" ]; then
-                                ( tts_word "$audio" "${DM_tls}" ); fi
+                                ( tts_word "$audio" "${DM_tls}" )
+                                ( img_word "${trgt}" "${srce}" ) & fi
                                 echo "${trgt}" >> "$DT_r/addw"
                                 
                             else
