@@ -185,7 +185,7 @@ check_index() {
     [ ! -d "${DM_tlt}/images" ] && mkdir "${DM_tlt}/images"
     _restore; _fix; mkmn=1; fi
     
-    if [ ${a} = 1 ]; then _restore; mkmn=1; fi
+    if [ ${a} = 1 ]; then _sanity; _restore; mkmn=1; fi
     
     if [ ${r} = 1 ]; then _sanity; _restore; mkmn=1; fi
     
@@ -212,7 +212,7 @@ add_audio() {
     ret=$?
 
     if [ $ret -eq 0 ]; then
-    if [ -f "${aud}" ]; then cp -f "${aud}" "${2}/audtm.mp3"; fi
+    if [ -f "${aud}" ]; then mv -f "${aud}" "${2}/audtm.mp3"; fi
     fi
 } >/dev/null 2>&1
 
