@@ -83,7 +83,7 @@ check_index() {
     DC_tlt="$DM_tl/${2}/.conf"
     DM_tlt="$DM_tl/${2}"
     mkmn=0; f=0; a=0
-    [[ "${3}" = 1 ]] && r=1 || r=0
+    [[ ${3} = 1 ]] && r=1 || r=0
     
     _check() {
         
@@ -99,9 +99,7 @@ check_index() {
         done
         
         [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "${c1}" > "${DC_tlt}/id.cfg"
-        
         for i in "${DM_tlt}"/*.mp3 ; do [[ ! -s "${i}" ]] && rm "${i}" ; done
-        
         if grep 'rsntc=' "${DC_tlt}/10.cfg"; then
         rm "${DC_tlt}/10.cfg"; fi
         
@@ -176,7 +174,7 @@ check_index() {
     
     _check
     
-    if [ ${f} = 1 -o ${a} = 1 -o ${r} = 1 ]; then
+    if [ ${f} = 1 -o ${a} = 1 ]; then
     > "$DT/ps_lk"; (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
     "$(gettext "Fixing...")" -t 3000) & fi
     
@@ -187,7 +185,7 @@ check_index() {
     
     if [ ${a} = 1 ]; then _sanity; _restore; mkmn=1; fi
     
-    if [ ${r} = 1 ]; then _sanity; _restore; mkmn=1; fi
+    if [ ${r} = 1 ]; then _sanity; _restore; fi
     
     if [ ${mkmn} = 1 ] ;then
     "$DS/ifs/tls.sh" colorize

@@ -141,10 +141,10 @@ play_list() {
     --always-print-result --print-all \
     --window-icon="$DS/images/icon.png" \
     --align=right --fixed --center --on-top \
-    --tab-pos=bottom --tab-borders=0 \
+    --tab-pos=right --tab-borders=0 \
     --tab=" $(gettext "Lists") " \
     --tab="$(gettext "Options")" \
-    --width=420 --height=315 --borders=0 \
+    --width=400 --height=300 --borders=0 \
     "$btn2" --button="$btn1"
     ret=$?
 

@@ -137,7 +137,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     --no-click --print-column=0 --dclick-action="$dclk" \
     --window-icon="$DS/images/icon.png" \
     --ellipsize=END --center \
-    --width=600 --height=510 --borders=6 \
+    --width=638 --height=580 --borders=6 \
     --column="$langt            " \
     --column="$langs            " \
     --button="$(gettext "Install")":0 \
@@ -227,8 +227,9 @@ function topic() {
         cnf3=$(mktemp "$DT/cnf3.XXX.x")
         cnf4=$(mktemp "$DT/cnf4.XXX.x")
         if [ -f "${DM_tlt}/images/img.jpg" ]; then
-        img="--image=${DM_tlt}/images/img.jpg"
-        sx=608; sy=580; else sx=620; sy=560; fi
+        img="--image=${DM_tlt}/images/img.jpg"; fi
+        sx=638; sy=590
+
         [ ! -z "$author" ] && author=" $(gettext "Created by") $author"
         label_info1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><small>\n $inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"
 
