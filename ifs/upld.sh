@@ -200,33 +200,31 @@ if [ -e "${DC_tlt}/11.cfg" ]; then
     fi
 else
     dlg=$(yad --form --title="$(gettext "Could you share what you learn?")" \
-    --text="<span font_desc='Free Sans 14'>${tpc}</span>" \
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" --buttons-layout=end \
     --align=right --center --on-top \
     --width=480 --height=460 --borders=12 \
-    --field=" :lbl" " " \
     --field="$(gettext "Author")" "$iuser" \
     --field="\t$(gettext "Contact (optional)")" "$cntct" \
     --field="$(gettext "Category"):CBE" \
     "!$others!$article!$comics!$culture!$documentary!$entertainment!$funny!$family!$grammar!$history!$movies!$in_the_city!$interview!$internet!$music!$nature!$news!$office!$relations!$sport!$science!$shopping!$social_networks!$technology!$travel" \
     --field="$(gettext "Skill Level"):CB" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
     --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
-    --field="$(gettext "Image 600x150px (optional)"):FL" "${imgm}" \
+    --field="$(gettext "Image 630x150px (optional)"):FL" "${imgm}" \
     --button="$(gettext "PDF")":2 "$btn" \
     --button="$(gettext "Close")":4)
     ret=$?
 
-    img=$(echo "${dlg}" | cut -d "|" -f7)
+    img=$(echo "${dlg}" | cut -d "|" -f6)
     if [ -f "${img}" -a "${img}" != "${imgm}" ]; then
     wsize="$(identify "${img}" | cut -d ' ' -f 3 | cut -d 'x' -f 1)"
     esize="$(identify "${img}" | cut -d ' ' -f 3 | cut -d 'x' -f 2)"
     if [ ${wsize} -gt 1000 ] || [ ${wsize} -lt 400 ] \
-    || [ ${esize} -lt 100 ] || [ ${esize} -gt 600 ]; then
+    || [ ${esize} -lt 100 ] || [ ${esize} -gt 630 ]; then
     msg "$(gettext "Sorry, the image size is not suitable.")\n " info "$(gettext "Error")"
     "$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
-    /usr/bin/convert "${img}" -interlace Plane -thumbnail 600x150^ \
-    -gravity center -extent 600x150 \
+    /usr/bin/convert "${img}" -interlace Plane -thumbnail 630x150^ \
+    -gravity center -extent 630x150 \
     -quality 100% "${DM_tlt}/images/img.jpg"
     fi
 fi
@@ -236,11 +234,11 @@ if [ $ret = 2 ]; then
     
 elif [ $ret = 0 ]; then
 
-Ctgry=$(echo "${dlg}" | cut -d "|" -f4)
-level=$(echo "${dlg}" | cut -d "|" -f5)
-iuser_m=$(echo "${dlg}" | cut -d "|" -f2)
-cntct_m=$(echo "${dlg}" | cut -d "|" -f3)
-notes_m=$(echo "${dlg}" | cut -d "|" -f6)
+Ctgry=$(echo "${dlg}" | cut -d "|" -f3)
+level=$(echo "${dlg}" | cut -d "|" -f4)
+iuser_m=$(echo "${dlg}" | cut -d "|" -f1)
+cntct_m=$(echo "${dlg}" | cut -d "|" -f2)
+notes_m=$(echo "${dlg}" | cut -d "|" -f5)
 [ "$Ctgry" = "$others" ] && Ctgry=others
 [ "$Ctgry" = "$comics" ] && Ctgry=comics
 [ "$Ctgry" = "$culture" ] && Ctgry=culture
@@ -271,7 +269,7 @@ notes_m=$(echo "${dlg}" | cut -d "|" -f6)
 [ "$level" = $(gettext "Intermediate") ] && level=1
 [ "$level" = $(gettext "Advanced") ] && level=2
 
-if [ -z "${iuser_m##+([[:space:]])}" ] || [ ${#iuser_m} -gt 60 ] || \
+if [ -z "${iuser_m##+([[:space:]])}" -o ${#iuser_m} -gt 60 ] || \
 [ "$(grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${iuser_m}")" ]; then
 msg "$(gettext "You have entered an invalid author name.")\n " info
 "$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
