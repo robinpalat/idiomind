@@ -385,7 +385,8 @@ panel() {
     
     if [ "$(grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg")" = TRUE ] \
     && [ ! -f /tmp/.clipw ]; then "$DS/ifs/mods/clipw.sh" & fi
-    
+
+    home=gtk-home; if [[ ${intrf} = fr ]]; then home=Home; fi
     yad --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
     --always-print-result \
@@ -393,7 +394,7 @@ panel() {
     --form --fixed --on-top --no-buttons --align=center \
     --width=140 --height=190 --borders=0 --geometry=130x190-${x}-${y} \
     --field=gtk-new:btn "$DS/add.sh 'new_items'" \
-    --field=gtk-home:btn "idiomind 'topic'" \
+    --field="$home":btn "idiomind 'topic'" \
     --field=gtk-index:btn "$DS/chng.sh" \
     --field=gtk-preferences:btn "$DS/cnfg.sh"
     [ $? != 0 ] && "$DS/stop.sh" 1 &

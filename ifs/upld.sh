@@ -43,7 +43,9 @@ function dwld() {
     msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" info & exit
     fi
     
-    wget -q -c -T 80 -O "$DT/download/${oname}.tar.gz" "${URL}"
+    wget -q -c -T 80 -O "$DT/download/${oname}.tar.gz" "${URL}" || \
+    msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" info & exit
+    
     if [ -f "$DT/download/${oname}.tar.gz" ]; then
         cd "$DT/download"/
         tar -xzvf "$DT/download/${oname}.tar.gz"
