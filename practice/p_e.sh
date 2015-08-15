@@ -97,14 +97,15 @@ get_text() {
     }
 
 
-result() {
-    
-    clean() {
+clean() {
     sed 's/ /\n/g' \
     | sed 's/,//;s/\!//;s/\?//;s/¿//;s/\¡//;s/(//;s/)//;s/"//g' \
     | sed 's/\-//;s/\[//;s/\]//;s/\.//;s/\://;s/\|//;s/)//;s/"//g' \
     | tr -d '|“”&:!'
     }
+
+result() {
+    
     if [[ `wc -w <<<"$chk"` -gt 6 ]]; then
     out=`awk '{print tolower($0)}' <<<"${entry}" | clean | grep -v '^.$'`
     in=`awk '{print tolower($0)}' <<<"${chk}" | clean | grep -v '^.$'`
@@ -130,7 +131,7 @@ result() {
     
     OK=$(tr '\n' ' ' < ./words.tmp)
     sed 's/ /\n/g' < ./chk.tmp > ./all.tmp; touch ./mtch.tmp
-    porc=$((100*$(cat ./mtch.tmp | wc -l)/$(wc -l < ./all.tmp)))
+    porc=$((100*$(wc -l < ./mtch.tmp)/$(wc -l <<<"$out")))
     
     if [ ${porc} -ge 70 ]; then
         echo "${trgt}" >> ./e.1
@@ -162,7 +163,7 @@ while read -r trgt; do
     get_text "${trgt}"
     
     cmd_play="$DS/play.sh play_sentence ${fname}"
-    (sleep 0.5 && "$DS/play.sh" play_sentence ${fname}) &
+    ( sleep 0.5 && "$DS/play.sh" play_sentence ${fname} ) &
 
     dialog2 "${trgt}"
     ret="$?"
