@@ -1,6 +1,24 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+source "$DS/ifs/mods/cmns.sh"
+
+function installds() {
+    
+    msg_2 "$(gettext "Confirm install mp3splt")\n" dialog-question "$(gettext "Install")" "$(gettext "Cancel")" 
+    if [ $? = 0 ]; then
+    if [ -f /usr/bin/gksu ]; then
+    gksu -S -m "$(gettext "Idiomind requires admin privileges for this task")" sudo apt-get install mp3splt
+    elif [ -f /usr/bin/kdesudo ]; then
+    kdesudo -d --comment="$(gettext "Idiomind requires admin privileges for this task")" sudo apt-get install mp3splt
+    else
+    msg "$(gettext "No authentication program found").\n" error \
+    "$(gettext "No authentication program found")"
+    exit 1
+    fi
+    fi
+}
+
 function dlg_checklist_5() {
     
     cmd_edit_="$DS/ifs/mods/add_process/a_.sh 'item_for_edit'"
@@ -18,6 +36,7 @@ function dlg_checklist_5() {
     --button="$(gettext "Cancel")":1 \
     --button=gtk-add:0 > "$slt"
 }
+
 
 function dlg_text_info_5() {
     
@@ -78,7 +97,7 @@ if [[ ${conten^} = A ]]; then
     | grep -o key=\"[^\"]* | grep -o '[^"]*$')"
     test="$DS/addons/Dics/g/test.flac"
     LNK='https://console.developers.google.com'
-    source "$DS/ifs/mods/cmns.sh"
+    if [ ! -e /usr/bin/mp3splt ]; then installds; fi
     
     if [ -z "$key" ]; then
     msg "$(gettext "For this feature you need to provide a key. Please get one from the:")   <a href='$LNK'>console.developers.google.com</a>\n" dialog-warning
@@ -105,8 +124,9 @@ if [[ ${conten^} = A ]]; then
             vad -T 0.6 -p 0.2 -t 5 fade 0.1 reverse \
             vad -T 0.6 -p 0.2 -t 5 fade 0.1 reverse norm -0.5
             rm -f "$DT_r/rv.mp3"
-            sox "$DT_r/c_rv.mp3" s.mp3 \
-            silence 1 0.2 1% 1 0.2 1% : newfile : restart
+            mp3splt -s -o @n *.mp3
+            #rename 's/^0*//' *.mp3
+            rm -f "$DT_r/c_rv.mp3"
 
             c="$(ls "$DT_r"/s[0-9]*.mp3 | wc -l)"
             if [[ ${c} -ge 1 ]]; then

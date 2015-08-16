@@ -18,6 +18,11 @@ _cfg() {  b=$(tr -dc a-z < /dev/urandom |head -c 1)
 
 function dwld() {
 
+    err() {
+        cleanups "$DT/download" &
+        msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" info
+    }
+
     # downloading from http://server_temp/c/xxx.md5sum.tar.gz
     sleep 0.5
     msg "$(gettext "When the download completes the files will be added to topic directory.")" info "$(gettext "Downloading")..."
@@ -39,12 +44,11 @@ function dwld() {
     URL="${url1}"
     elif wget -S --spider "${url2}" 2>&1 |grep 'HTTP/1.1 200 OK'; then
     URL="${url2}"
-    else cleanups "$DT/download"
-    msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" info & exit
+    else err & exit
     fi
     
-    wget -q -c -T 80 -O "$DT/download/${oname}.tar.gz" "${URL}" || \
-    msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" info & exit
+    wget -q -c -T 80 -O "$DT/download/${oname}.tar.gz" "${URL}"
+    [ $? != 0 ] && err && exit 1
     
     if [ -f "$DT/download/${oname}.tar.gz" ]; then
         cd "$DT/download"/
@@ -90,12 +94,10 @@ function dwld() {
         rm -fr "$DT/download"
         
         else
-            cleanups "$DT/download"
-            msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" info & exit
+            err & exit
         fi
     else
-        cleanups "$DT/download"
-        msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" info & exit
+        err & exit
     fi
     exit
 }
