@@ -386,7 +386,9 @@ panel() {
     if [ "$(grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg")" = TRUE ] \
     && [ ! -f /tmp/.clipw ]; then "$DS/ifs/mods/clipw.sh" & fi
 
-    home=gtk-home; if [[ ${intrf} = fr ]]; then home=Home; fi
+    home=gtk-home
+    if [[ ${intrf} = fr ]]; then home=Home; fi
+    if [[ ${intrf} = pt ]]; then home=Home; fi
     yad --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
     --always-print-result \

@@ -378,6 +378,7 @@ attatchments() {
     done <<<"$(ls "${DM_tlt}/files")"
 
     echo -e "</body>" >> "${DC_tlt}/att.html"
+    sed -ie 's/^[ \t]*//' "${DC_tlt}/att.html"
     
     } >/dev/null 2>&1
     
@@ -430,20 +431,6 @@ help() {
 } >/dev/null 2>&1
 
 
-fback() {
-    
-    internet
-    URL="http://idiomind.sourceforge.net/doc/msg.html"
-    yad --html --title="$(gettext "Send Feedback")" \
-    --name=Idiomind --class=Idiomind \
-    --browser --uri="$URL" \
-    --window-icon="$DS/images/icon.png" \
-    --no-buttons --fixed \
-    --width=500 --height=450
-     
-} >/dev/null 2>&1
-
-
 colorize() {
 
     f_lock "$DT/co_lk"
@@ -474,6 +461,20 @@ colorize() {
     done < "${DC_tlt}/1.cfg"
     rm -f "$DT/co_lk"; cd ~/
 }
+
+
+fback() {
+    
+    internet
+    URL="http://idiomind.sourceforge.net/doc/msg.html"
+    yad --html --title="$(gettext "Send Feedback")" \
+    --name=Idiomind --class=Idiomind \
+    --browser --uri="$URL" \
+    --window-icon="$DS/images/icon.png" \
+    --no-buttons --fixed \
+    --width=500 --height=450
+     
+} >/dev/null 2>&1
 
 
 check_updates() {

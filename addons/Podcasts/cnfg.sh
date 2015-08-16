@@ -8,7 +8,7 @@ CNF="$(gettext "Configure")"
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 DMC="$DM_tl/Podcasts/cache"
-DCP="$DM_tl/Podcasts/.conf/"
+DCP="$DM_tl/Podcasts/.conf"
 DSP="$DS_a/Podcasts"
 dfimg="$DSP/images/audio.png"
 date=$(date +%d)
@@ -35,7 +35,8 @@ function dlgconfig() {
         "./feeds.lst" "./old.lst"
         echo 11 > "$DM_tl/Podcasts/.conf/8.cfg"
         echo " " > "$DM_tl/Podcasts/.conf/info"
-        echo -e "\n$(gettext "Latest downloads:") 0" > "$DM_tl/Podcasts/$date.updt"
+        echo -e "\n$(gettext "Latest downloads:") 0" \
+        > "$DM_tl/Podcasts/$date.updt"
         "$DS/cnfg.sh" mkmn
     }
 
@@ -72,7 +73,7 @@ function dlgconfig() {
         sed 's/^ *//; s/ *$//g' > "$DT/podcasts.tmp"
         n=1
         while read feed; do
-            declare mod${n}="$feed"
+            declare mod${n}="${feed}"
             mod="mod${n}"; url="url${n}"
             if [ "${!url}" != "${!mod}" ]; then
             "$DSP/cnfg.sh" set_channel "${!mod}" ${n} & fi
@@ -156,22 +157,20 @@ function strt() {
     \r</xsl:for-each>
     \r</xsl:template>
     \r</xsl:stylesheet>"
-
-    sets=( 'channel' 'link' 'logo' 'ntype' \
-    'nmedia' 'ntitle' 'nsumm' 'nimage' 'url' )
+    sets=( 'channel' 'link' 'logo' 'ntype' 'nmedia' 'ntitle' 'nsumm' 'nimage' 'url' )
 
     conditions() {
         
         [ ! -f "$DCP/1.lst" ] && touch "$DCP/1.lst"
         [ ! -f "$DCP/2.lst" ] && touch "$DCP/2.lst"
 
-        if [ -f "$DT/.uptp" ] && [[ ${1} = 1 ]]; then
+        if [ -f "$DT/.uptp" ] && [[ ${2} = 1 ]]; then
             msg_2 "$(gettext "Wait until it finishes a previous process").\n" info OK gtk-stop "$(gettext "Updating...")"
             ret=$?
             [ $ret -eq 1 ] && "$DS/stop.sh" 6
             exit 1
         
-        elif [ -f "$DT/.uptp" ] && [[ ${1} = 0 ]]; then
+        elif [ -f "$DT/.uptp" ] && [[ ${2} = 0 ]]; then
             exit 1
         fi
         
@@ -188,11 +187,11 @@ function strt() {
         [ ! -f "$DCP/old.lst" ] && touch "$DCP/old.lst"
 
         if [[ `sed '/^$/d' "$DCP/feeds.lst" | wc -l` -le 0 ]]; then
-        [[ ${1} = 1 ]] && msg "$(gettext "Missing URL. Please check the settings in the preferences dialog.")\n" info
+        [[ ${2} = 1 ]] && msg "$(gettext "Missing URL. Please check the settings in the preferences dialog.")\n" info
         [ -f "$DT_r" ] && rm -fr "$DT_r" "$DT/.uptp"
         exit 1; fi
             
-        if [[ ${1} = 1 ]]; then internet; else curl -v www.google.com 2>&1 \
+        if [[ ${2} = 1 ]]; then internet; else curl -v www.google.com 2>&1 \
         | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1; fi
     }
 
@@ -211,38 +210,39 @@ function strt() {
 
     mkhtml() {
 
-    video="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
-    \r<link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwr.css\">
-    \r<video width=640 height=380 controls>
-    \r<source src=\"$fname.$ex\" type=\"video/mp4\">
-    \rYour browser does not support the video tag.</video><br><br>
-    \r<div class=\"title\"><h3><a href=\"$link\">$title</a></h3></div><br>
-    \r<div class=\"summary\">$summary<br><br></div>"
-    audio="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
-    \r<link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwr.css\">
-    \r<br><div class=\"title\"><h2><a href=\"$link\">$title</a></h2></div><br>
-    \r<div class=\"summary\"><audio controls><br>
-    \r<source src=\"$fname.$ex\" type=\"audio/mpeg\">
-    \rYour browser does not support the audio tag.</audio><br><br>
-    \r$summary<br><br></div>"
-    text="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
-    \r<link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwr.css\">
-    \r<body><br><div class=\"title\"><h2><a href=\"$link\">$title</a></h2></div><br>
-    \r<div class=\"summary\"><div class=\"image\">
-    \r<img src=\"$fname.jpg\" alt=\"Image\" style=\"width:650px\"></div><br>
-    \r$summary<br><br></div>
-    \r</body>"
+        itm="$DMC/$fname.html"
+        video="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
+        \r<link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwr.css\">
+        \r<video width=640 height=380 controls>
+        \r<source src=\"$fname.$ex\" type=\"video/mp4\">
+        \rYour browser does not support the video tag.</video><br><br>
+        \r<div class=\"title\"><h3><a href=\"$link\">$title</a></h3></div><br>
+        \r<div class=\"summary\">$summary<br><br></div>"
+        audio="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
+        \r<link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwr.css\">
+        \r<br><div class=\"title\"><h2><a href=\"$link\">$title</a></h2></div><br>
+        \r<div class=\"summary\"><audio controls><br>
+        \r<source src=\"$fname.$ex\" type=\"audio/mpeg\">
+        \rYour browser does not support the audio tag.</audio><br><br>
+        \r$summary<br><br></div>"
+        text="<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
+        \r<link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/vwr.css\">
+        \r<body><br><div class=\"title\"><h2><a href=\"$link\">$title</a></h2></div><br>
+        \r<div class=\"summary\"><div class=\"image\">
+        \r<img src=\"$fname.jpg\" alt=\"Image\" style=\"width:650px\"></div><br>
+        \r$summary<br><br></div>
+        \r</body>"
 
         if [[ ${tp} = vid ]]; then
             if [ $ex = m4v -o $ex = mp4 ]; then t=mp4
             elif [ $ex = avi ]; then t=avi; fi
-            echo -e "${video}" > "$DMC/$fname.html"
+            echo -e "${video}" |sed -e 's/^[ \t]*//' |tr -d '\n' > "$itm"
 
         elif [[ ${tp} = aud ]]; then
-            echo -e "${audio}" > "$DMC/$fname.html"
+            echo -e "${audio}" |sed -e 's/^[ \t]*//' |tr -d '\n' > "$itm"
 
         elif [[ ${tp} = txt ]]; then
-            echo -e "${text}" > "$DMC/$fname.html"
+            echo -e "${text}" |sed -e 's/^[ \t]*//' |tr -d '\n' > "$itm"
         fi
     }
 
@@ -321,7 +321,8 @@ function strt() {
                 
                     if [ "$ntype" = 1 ]; then
                     
-                        podcast_items="$(xsltproc - "${FEED}" < <(echo -e "${tmplitem}") 2> /dev/null)"
+                        podcast_items="$(xsltproc - "${FEED}" < <(echo -e "${tmplitem}" \
+                        |sed -e 's/^[ \t]*//' |tr -d '\n') 2> /dev/null)"
                         podcast_items="$(echo "${podcast_items}" | tr '\n' ' ' \
                         | tr -s '[:space:]' | sed 's/EOL/\n/g' | head -n ${downloads})"
                         podcast_items="$(echo "${podcast_items}" | sed '/^$/d')"
@@ -363,9 +364,11 @@ function strt() {
                                 sed -i '/^$/d' "$DCP/1.lst"; fi
                                 echo "${title}" >> "$DCP/.1.lst"
                                 echo "${title}" >> "$DT_r/log"
-                                echo -e "channel=\"${channel}\"" > "$DMC/$fname.item"
-                                echo -e "link=\"${link}\"" >> "$DMC/$fname.item"
-                                echo -e "title=\"${title}\"" >> "$DMC/$fname.item"
+                                echo -e "channel=\"${channel}\"
+                                \rlink=\"${link}\"
+                                \rtitle=\"${title}\"" \
+                                |sed -e 's/^[ \t]*//' \
+                                |tr -d '\n' >> "$DMC/$fname.item"
                                 fi
                             fi
                         done <<<"${podcast_items}"
@@ -438,9 +441,9 @@ function strt() {
         rm "$DT/nmfile"
     }
 
-    conditions ${1}
+    conditions ${2}
 
-    if [[ ${1} = 1 ]]; then
+    if [[ ${2} = 1 ]]; then
     echo "Podcasts" > "$DC_a/4.cfg"
     echo 2 > "$DC_s/5.cfg"
     echo 11 > "$DCP/8.cfg"
@@ -451,16 +454,18 @@ function strt() {
     if [ -f "$DCP/2.lst" ]; then kept_episodes=`wc -l < "$DCP/2.lst"`
     else kept_episodes=0; fi
     echo $$ > "$DT/.uptp"; rm "$DM_tl/Podcasts"/*.updt
-    echo -e " <b>$(gettext "Updating")</b>
-     $(gettext "Latest downloads:") 0" > "$DM_tl/Podcasts/$date.updt"
+    echo -e "<b>$(gettext "Updating")</b>
+    \r$(gettext "Latest downloads:") 0" \
+    |sed -e 's/^[ \t]*//' |tr -d '\n' > "$DM_tl/Podcasts/$date.updt"
     DT_r="$(mktemp -d "$DT/XXXX")"
     fetch_podcasts
 
     if [ -f "$DT_r/log" ]; then new_episodes=`wc -l < "$DT_r/log"`
     else new_episodes=0; fi
     rm "$DM_tl/Podcasts"/*.updt
-    echo -e " $(gettext "Last update:") $(date "+%r %a %d %B")
-     $(gettext "Latest downloads:") $new_episodes" > "$DM_tl/Podcasts/$date.updt"
+    echo -e "$(gettext "Last update:") $(date "+%r %a %d %B")
+    \r$(gettext "Latest downloads:") $new_episodes" \
+    |sed -e 's/^[ \t]*//' |tr -d '\n' > "$DM_tl/Podcasts/$date.updt"
     rm -fr "$DT_r" "$DT/.uptp"
 
     if [[ ${new_episodes} -gt 0 ]]; then
@@ -473,7 +478,7 @@ function strt() {
         "$new_episodes $ne" -t 8000
         
     else
-        if [[ ${1} = 1 ]]; then
+        if [[ ${2} = 1 ]]; then
         notify-send -i idiomind \
         "$(gettext "Update finished")" \
         "$(gettext "Has not changed since last update")" -t 8000
@@ -484,7 +489,7 @@ function strt() {
     sync="$(grep -o 'sync="[^"]*' "$cfg" | grep -o '[^"]*$')"
     if [ "$sync" = TRUE ]; then
 
-        if [[ ${1} = 1 ]]; then "$DSP/tls.sh" sync 1
+        if [[ ${2} = 1 ]]; then "$DSP/tls.sh" sync 1
         else "$DSP/tls.sh" sync 0; fi
     fi
     fi
@@ -565,13 +570,15 @@ function set_channel() {
         feed="${2}"
         num="${3}"
         DIR2="$DM_tl/Podcasts/.conf"
-        xml="$(xsltproc - "${feed}" < <(echo -e "${tmpl1}") 2> /dev/null)"
+        xml="$(xsltproc - "${feed}" < <(echo -e "${tmpl1}" \
+        |sed -e 's/^[ \t]*//' |tr -d '\n') 2> /dev/null)"
         items1="$(echo "${xml}" | tr '\n' ' ' | tr -s '[:space:]' \
         | sed 's/EOL/\n/g' | head -n 1 | sed -r 's|-\!-|\n|g')"
-        xml="$(xsltproc - "${feed}" < <(echo -e "${tmpl2}") 2> /dev/null)"
+        xml="$(xsltproc - "${feed}" < <(echo -e "${tmpl2}" \
+        |sed -e 's/^[ \t]*//' |tr -d '\n') 2> /dev/null)"
         items2="$(echo "${xml}" | tr '\n' ' ' | tr -s "[:space:]" \
         | sed 's/EOL/\n/g' | head -n 1 | sed -r 's|-\!-|\n|g')"
-        
+
         fchannel() {
             
             n=1;
@@ -657,7 +664,7 @@ function set_channel() {
         if [[ ${type} = 1 ]]; then
             
             cfg="channel=\"$name\"
-            \rlink=\"$link\"\r
+            \rlink=\"$link\"
             \rlogo=\"$logo\"
             \rntype=\"$type\"
             \rnmedia=\"$media\"
@@ -665,7 +672,8 @@ function set_channel() {
             \rnsumm=\"$summary\"
             \rnimage=\"$image\"
             \rurl=\"$feed\""
-            echo -e "${cfg}" > "$DIR2/$num.rss"; exit 0
+            echo -e "${cfg}" |sed -e 's/^[ \t]*//' \
+            |tr -d '\n' > "$DIR2/$num.rss"; exit
             
         else
             url="$(tr '&' ' ' <<<"${feed}")"
