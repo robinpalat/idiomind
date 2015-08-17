@@ -144,7 +144,8 @@ function podmode() {
     [ ! -f "$DM_tl/Podcasts/.conf/8.cfg" ] \
     && echo 11 > "$DM_tl/Podcasts/.conf/8.cfg"
     echo "Podcasts" > "$DC_a/4.cfg"; fi
-    if [[ ${1} = 2 ]]; then
+    
+    if [[ ${2} = 2 ]]; then
     echo "Podcasts" > "$DC_s/7.cfg"
     echo 2 > "$DC_s/5.cfg"; fi
 
