@@ -223,8 +223,8 @@ else
     if [ -f "${img}" -a "${img}" != "${imgm}" ]; then
     wsize="$(identify "${img}" | cut -d ' ' -f 3 | cut -d 'x' -f 1)"
     esize="$(identify "${img}" | cut -d ' ' -f 3 | cut -d 'x' -f 2)"
-    if [ ${wsize} -gt 1000 ] || [ ${wsize} -lt 400 ] \
-    || [ ${esize} -lt 100 ] || [ ${esize} -gt 630 ]; then
+    if [ ${wsize} -gt 2000 ] || [ ${wsize} -lt 400 ] \
+    || [ ${esize} -lt 100 ] || [ ${esize} -gt 1500 ]; then
     msg "$(gettext "Sorry, the image size is not suitable.")\n " info "$(gettext "Error")"
     "$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
     /usr/bin/convert "${img}" -interlace Plane -thumbnail 630x150^ \

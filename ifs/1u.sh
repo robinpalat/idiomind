@@ -133,7 +133,7 @@ config="usrid=\"$id\"
 iuser=\"\"
 cntct=\"\""
     echo -e "${config}" > "$DC_s/3.cfg"
-    touch "$DC_s/elist_first_run" "$DC_s/img_first_run"
+    /usr/share/idiomind/ifs/tls.sh first_run
     
     idiomind -s
 

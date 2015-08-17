@@ -55,9 +55,8 @@ new_items() {
     "$DS/chng.sh" "$(gettext "To start adding notes you need to have a topic.
 Create one using the button below. ")" & exit 1; fi
 
-    if [ -e "$DC_s/img_first_run" ]; then ( sleep 2
-    msg_2 "$(gettext "NOTE: To add an image to a note use the screen clipping.  ")\n" \
-    info "$(gettext "Ok")" "$(gettext "Do not show again")" " "; [ $? = 1 ] && rm -f "$DC_s/img_first_run" ) & fi
+    if [ -e "$DC_s/add_first_run" ]; then
+    "$DS/ifs/tls.sh" first_run add & fi
 
     [ -z "${4}" ] && txt="$(xclip -selection primary -o)" || txt="${4}"
     txt="$(clean_4 "${txt}")"
@@ -547,12 +546,12 @@ process() {
     
         while read l; do
         
-            if [ $(wc -c <<<"${l}") -gt 180 ]; then
+            if [ $(wc -c <<<"${l}") -gt 140 ]; then
                 if grep -o -E '\,|\;' <<<"${l}"; then
 
                     while read -r split; do
 
-                        if [ $(wc -c <<<"${split}") -le 180 ]; then
+                        if [ $(wc -c <<<"${split}") -le 140 ]; then
                             lenght "${split}"
                         else
                             while read -r split2; do

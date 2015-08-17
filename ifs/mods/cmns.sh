@@ -39,7 +39,6 @@ function msg_2() {
     "$btn3" --button="$4":1 --button="$3":0
 }
 
-
 function nmfile() {
     echo -n "${1}" | md5sum | rev | cut -c 4- | rev
 }

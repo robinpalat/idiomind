@@ -403,9 +403,12 @@ panel() {
     exit
 }
 
+
 case "$1" in
     topic)
     topic ;;
+    -h)
+    "$DS/ifs/tls.sh" first_run ;;
     -v)
     echo -n "0.1" ;;
     -s)

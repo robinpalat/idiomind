@@ -50,7 +50,8 @@ fonts() {
     img="$DM_tls/images/${trgt,,}-0.jpg"
     [ ${#trgt} -gt 10 -o ${#srce} -gt 10 ] && trgt_f_c=14 || trgt_f_c=15
     [ ! -f "$img" ] && img="$DS/practice/images/img_2.jpg"
-    aswer="<span font_desc='Free Sans Bold ${trgt_f_c}'>${trgt}</span>" #<small>${srce}</small>
+    cuest="<span font_desc='Free Sans ${trgt_f_c}'> ${srce} </span>"
+    aswer="<span font_desc='Free Sans Bold ${trgt_f_c}'>${trgt}</span>"
 }
 
 cuestion() {
@@ -60,6 +61,7 @@ cuestion() {
     --skip-taskbar --text-align=center --align=center --center --on-top \
     --image-on-top --undecorated --buttons-layout=spread \
     --width=418 --height=370 --borders=5 \
+    --field="$cuest":lbl \
     --button="$(gettext "Exit")":1 \
     --button=" $(gettext "Continue") >> ":0
 }

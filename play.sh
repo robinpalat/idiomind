@@ -134,8 +134,9 @@ play_list() {
     --field="$(gettext "Use desktop notifications")":CHK "$ntosd" \
     --field="$(gettext "Pause between items (sec)")":SCL "$loop" \
     --field="$(gettext "Repeat sounding out")":CB "$lst_opts1" \
-    --field="":LBL "" \
-    --field="$(gettext "Podcasts: Only play videos")":CHK "$video" > $tab2 &
+    --field="":LBL "" --field=" ":LBL "" \
+    --field="$(gettext "Podcasts: Only play videos")":CHK "$video" \
+    --field=" ":LBL "" > $tab2 &
     yad --notebook --key=$KEY --title="$title" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-all \
@@ -152,7 +153,7 @@ play_list() {
         rm -f "$DT"/*.p
         
         f=1; n=0
-        while [ ${n} -le 11 ]; do
+        while [ ${n} -le 12 ]; do
         
         if [ ${n} -lt 4 ]; then
         val=$(sed -n $((${n}+1))p <<<"${tab1}" |cut -d "|" -f3)
@@ -182,7 +183,7 @@ play_list() {
         "${DC_tlt}/10.cfg"
          
         elif [ ${n} = 11 ]; then
-        val="$(cut -d "|" -f7 <<<"${tab2}")"
+        val="$(cut -d "|" -f8 <<<"${tab2}")"
         [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
         "${DC_tlp}/podcasts.cfg"
         fi

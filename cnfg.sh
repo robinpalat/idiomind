@@ -164,7 +164,7 @@ ret=$?
             [ "${lang[$n]}" != "$lgtl" ]; then
                 lgtl="${lang[$n]}"
                 if grep -o -E 'Chinese|Japanese|Russian|Vietnamese' <<< "$lgtl";
-                then info3="\n$(gettext "Some features do not yet work with this language"). ($lgtl)"; fi
+                then info3="\n $(gettext "Some features do not yet work with this language"). ($lgtl)"; fi
                 confirm "$info2$info3" dialog-question "$lgtl"
                 [ $? -eq 0 ] && set_lang "${lang[$n]}"
                 break

@@ -234,14 +234,14 @@ _restfile() {
 
     if [ -f "$HOME/.idiomind/backup/${2}.bk" ]; then
         info=`stat "$HOME/.idiomind/backup/${2}.bk"|sed -n 6p|cut -d" " -f2`
-        yad --title="${2}" \
-        --text="$(gettext "Revert to the previous version")  ($info)\n" \
+        yad --title="$(gettext "Backups")" \
+        --text="<b>${2}</b> ($info)\n  $(gettext "Revert to this previous version") \n" \
         --image=dialog-warning \
         --name=Idiomind --class=Idiomind \
         --always-print-result \
         --window-icon="$DS/images/icon.png" \
-        --image-on-top --on-top --sticky --center \
-        --width=440 --height=100 --borders=5 \
+        --image-on-top --on-top --center \
+        --width=450 --height=100 --borders=5 \
         --button="$(gettext "Cancel")":1 \
         --button="$(gettext "Restore")":0
         ret="$?"
@@ -489,13 +489,13 @@ check_updates() {
     && [ "$nver" != "$cver" ]; then
     
         msg_2 " <b>$(gettext "A new version of Idiomind available\!")</b>\t\n" \
-        info "$(gettext "Download")" "$(gettext "Cancel")" "$(gettext "New Version")"
+        info "$(gettext "Download")" "$(gettext "Cancel")" "$(gettext "Information")"
         ret=$?
         
         if [ $ret -eq 0 ]; then xdg-open "$pkg"; fi
         
     else
-        msg " $(gettext "No updates available.")\n" info "$(gettext "Info")"
+        msg " $(gettext "No updates available.")\n" info "$(gettext "Information")"
     fi
 
     exit 0
@@ -591,6 +591,45 @@ if __name__ == "__main__":
 ABOUT
 } >/dev/null 2>&1
 
+
+first_run() {
+    
+    NOTE1="$(gettext "NOTE:\n  1)  In the upper text field, enter text in the language that you are learning\n  2)  In the field below, enter text in the source language\n  3)  To add an image to a note use the screen clipping")\n"
+    NOTE2="$(gettext "NOTE: If you change the text of an item here listed, then its audio file can be overwritten by another new file. To avoid this, you can edit it individually through its edit dialog.")"
+
+    if [[ ${2} = add ]]; then
+        title="$(gettext "How to add notes?")"
+        note="${NOTE1}"
+        file="$DC_s/add_first_run"
+        image=gtk-help
+        
+    elif [[ ${2} = edit_list ]]; then
+        title="$(gettext "Tip")"
+        note="${NOTE2}"
+        file="$DC_s/elist_first_run"
+        image=gtk-help
+        
+    elif [[ -z "${2}" ]]; then
+        touch "$DC_s/add_first_run" "$DC_s/elist_first_run"
+        exit
+        
+    else exit; fi
+    
+    sleep 2
+    yad --title="${title}" --text="${note}" \
+    --name=Idiomind --class=Idiomind \
+    --image="$image" \
+    --always-print-result --selectable-labels \
+    --window-icon="$DS/images/icon.png" \
+    --image-on-top --on-top --sticky --center \
+    --width=600 --height=140 --borders=8 \
+    --button="$(gettext "Do not show again")":1 \
+    --button="$(gettext "Ok")":0
+    
+    [ $? = 1 ] && rm -f "${file}"
+
+    exit
+}
 
 set_image() {
 
@@ -862,6 +901,8 @@ case "$1" in
     a_check_updates ;;
     set_image)
     set_image "$@" ;;
+    first_run)
+    first_run "$@" ;;
     pdf)
     mkpdf ;;
     fback)

@@ -19,7 +19,7 @@ downloads=2
 rsync_delete=0
 
 
-function dlgconfig() {
+function dlg_config() {
     
     sets=( 'update' 'sync' 'path' 'video' 'nsepi' 'svepi' )
     if [[ -n "$(< "$DCP/podcasts.cfg")" ]]; then cfg=1
@@ -37,7 +37,7 @@ function dlgconfig() {
         echo " " > "$DM_tl/Podcasts/.conf/info"
         echo -e "\n$(gettext "Latest downloads:") 0" \
         > "$DM_tl/Podcasts/$date.updt"
-        "$DS/cnfg.sh" mkmn
+        "$DS/mngr.sh" mkmn
     }
 
     if [ ! -d "$DM_tl/Podcasts" ]; then ini; fi
@@ -136,7 +136,7 @@ function dlgconfig() {
 }
 
 
-function strt() {
+function update() {
     
     include "$DS/ifs/mods/add"
     tmplitem="<?xml version='1.0' encoding='UTF-8'?>
@@ -164,13 +164,13 @@ function strt() {
         [ ! -f "$DCP/1.lst" ] && touch "$DCP/1.lst"
         [ ! -f "$DCP/2.lst" ] && touch "$DCP/2.lst"
 
-        if [ -f "$DT/.uptp" ] && [[ ${2} = 1 ]]; then
+        if [ -f "$DT/.uptp" ] && [[ ${1} = 1 ]]; then
             msg_2 "$(gettext "Wait until it finishes a previous process").\n" info OK gtk-stop "$(gettext "Updating...")"
             ret=$?
             [ $ret -eq 1 ] && "$DS/stop.sh" 6
             exit 1
         
-        elif [ -f "$DT/.uptp" ] && [[ ${2} = 0 ]]; then
+        elif [ -f "$DT/.uptp" ] && [[ ${1} = 0 ]]; then
             exit 1
         fi
         
@@ -187,11 +187,11 @@ function strt() {
         [ ! -f "$DCP/old.lst" ] && touch "$DCP/old.lst"
 
         if [[ `sed '/^$/d' "$DCP/feeds.lst" | wc -l` -le 0 ]]; then
-        [[ ${2} = 1 ]] && msg "$(gettext "Missing URL. Please check the settings in the preferences dialog.")\n" info
+        [[ ${1} = 1 ]] && msg "$(gettext "Missing URL. Please check the settings in the preferences dialog.")\n" info
         [ -f "$DT_r" ] && rm -fr "$DT_r" "$DT/.uptp"
         exit 1; fi
             
-        if [[ ${2} = 1 ]]; then internet; else curl -v www.google.com 2>&1 \
+        if [[ ${1} = 1 ]]; then internet; else curl -v www.google.com 2>&1 \
         | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1; fi
     }
 
@@ -565,122 +565,122 @@ function set_channel() {
     \r</xsl:template>
     \r</xsl:stylesheet>"
 
-        if [[ -z "${2}" ]]; then
-        [ -f "$DIR2/$3.rss" ] && rm "$DIR2/$3.rss"; exit 1; fi
-        feed="${2}"
-        num="${3}"
-        DIR2="$DM_tl/Podcasts/.conf"
-        xml="$(xsltproc - "${feed}" < <(echo -e "${tmpl1}" \
-        |sed -e 's/^[ \t]*//' |tr -d '\n') 2> /dev/null)"
-        items1="$(echo "${xml}" | tr '\n' ' ' | tr -s '[:space:]' \
-        | sed 's/EOL/\n/g' | head -n 1 | sed -r 's|-\!-|\n|g')"
-        xml="$(xsltproc - "${feed}" < <(echo -e "${tmpl2}" \
-        |sed -e 's/^[ \t]*//' |tr -d '\n') 2> /dev/null)"
-        items2="$(echo "${xml}" | tr '\n' ' ' | tr -s "[:space:]" \
-        | sed 's/EOL/\n/g' | head -n 1 | sed -r 's|-\!-|\n|g')"
+    if [[ -z "${2}" ]]; then
+    [ -f "$DIR2/$3.rss" ] && rm "$DIR2/$3.rss"; exit 1; fi
+    feed="${2}"
+    num="${3}"
+    DIR2="$DM_tl/Podcasts/.conf"
+    xml="$(xsltproc - "${feed}" < <(echo -e "${tmpl1}" \
+    |sed -e 's/^[ \t]*//' |tr -d '\n') 2> /dev/null)"
+    items1="$(echo "${xml}" | tr '\n' ' ' | tr -s '[:space:]' \
+    | sed 's/EOL/\n/g' | head -n 1 | sed -r 's|-\!-|\n|g')"
+    xml="$(xsltproc - "${feed}" < <(echo -e "${tmpl2}" \
+    |sed -e 's/^[ \t]*//' |tr -d '\n') 2> /dev/null)"
+    items2="$(echo "${xml}" | tr '\n' ' ' | tr -s "[:space:]" \
+    | sed 's/EOL/\n/g' | head -n 1 | sed -r 's|-\!-|\n|g')"
 
-        fchannel() {
-            
-            n=1;
-            while read -r get; do
-                if [[ $(wc -w <<<"${get}") -ge 1 ]] && [ -z "${name}" ]; then
-                name="${get}"
-                n=2; fi
-                if [[ -n "$(grep 'http:/' <<<"${get}")" ]] && [ -z "${link}" ]; then
-                link="${get}"
-                n=3; fi
-                if [[ -n "$(grep -E '.jpeg|.jpg|.png' <<<"${get}")" ]] && [ -z "${logo}" ]; then
-                logo="${get}"; fi
-                let n++
-            done <<<"${items1}"
-        }
+    fchannel() {
         
-        ftype1() {
-            
-            n=1
-            while read -r get; do
-                [[ ${n} = 3 || ${n} = 5 || ${n} = 6 ]] && continue
-                if [ -n "$(grep -o -E '\.mp3|\.mp4|\.ogg|\.avi|\.m4v|\.mov|\.flv' <<<"${get}")" ] && [ -z "${media}" ]; then
-                media="$n"; type=1; break; fi
-                let n++
-            done <<<"${items2}"
-            f3="$(sed -n 3p <<<"${items2}")"
-            f5="$(sed -n 5p <<<"${items2}")"
-            f6="$(sed -n 6p <<<"${items2}")"
-            if [ $(wc -w <<<"$f3") -ge 2 ] && [ "$(wc -w <<<"${f3}")" -le 200 ]; then
-            title=3; fi
-            if [ $(wc -w <<<"${f5}") -ge 2 ] && [ -n "$(grep -o -E '\<|\>|/>' <<<"${f5}")" ]; then
-            sum1=5; fi
-            if [ $(wc -w <<<"${f6}") -ge 2 ] && [ -n "$(grep -o -E '\<|\>|/>' <<<"${f6}")" ]; then
-            sum1=6; fi
-            if [ $(wc -w <<<"${f5}") -ge 2 ]; then
-            sum2=5; fi
-            if [ $(wc -w <<<"${f6}") -ge 2 ]; then
-            sum2=6; fi
-        }
+        n=1;
+        while read -r get; do
+            if [[ $(wc -w <<<"${get}") -ge 1 ]] && [ -z "${name}" ]; then
+            name="${get}"
+            n=2; fi
+            if [[ -n "$(grep 'http:/' <<<"${get}")" ]] && [ -z "${link}" ]; then
+            link="${get}"
+            n=3; fi
+            if [[ -n "$(grep -E '.jpeg|.jpg|.png' <<<"${get}")" ]] && [ -z "${logo}" ]; then
+            logo="${get}"; fi
+            let n++
+        done <<<"${items1}"
+    }
+    
+    ftype1() {
         
-        ftype2() {
+        n=1
+        while read -r get; do
+            [[ ${n} = 3 || ${n} = 5 || ${n} = 6 ]] && continue
+            if [ -n "$(grep -o -E '\.mp3|\.mp4|\.ogg|\.avi|\.m4v|\.mov|\.flv' <<<"${get}")" ] && [ -z "${media}" ]; then
+            media="$n"; type=1; break; fi
+            let n++
+        done <<<"${items2}"
+        f3="$(sed -n 3p <<<"${items2}")"
+        f5="$(sed -n 5p <<<"${items2}")"
+        f6="$(sed -n 6p <<<"${items2}")"
+        if [ $(wc -w <<<"$f3") -ge 2 ] && [ "$(wc -w <<<"${f3}")" -le 200 ]; then
+        title=3; fi
+        if [ $(wc -w <<<"${f5}") -ge 2 ] && [ -n "$(grep -o -E '\<|\>|/>' <<<"${f5}")" ]; then
+        sum1=5; fi
+        if [ $(wc -w <<<"${f6}") -ge 2 ] && [ -n "$(grep -o -E '\<|\>|/>' <<<"${f6}")" ]; then
+        sum1=6; fi
+        if [ $(wc -w <<<"${f5}") -ge 2 ]; then
+        sum2=5; fi
+        if [ $(wc -w <<<"${f6}") -ge 2 ]; then
+        sum2=6; fi
+    }
+    
+    ftype2() {
 
-            n=1
-            while read -r get; do
-                if [ -n "$(grep -o -E '\.jpg|\.jpeg|\.png' <<<"${get}")" ] && [ -z "${image}" ]; then
-                image="$n"; type=2; break ; fi
-                let n++
-            done <<<"${items3}"
-            n=4
-            while read -r get; do
-                if [ $(wc -w <<<"${get}") -ge 1 ] && [ -z "${title}" ]; then
-                title="$n"; break ; fi
-                let n++
-            done <<<"{$items3}"
-            n=6
-            while read -r get; do
-                if [ $(wc -w <<<"${get}") -ge 1 ] && [ -z "${summ}" ]; then
-                summ="$n"; break ; fi
-                let n++
-            done <<<"${items3}"
-        }
+        n=1
+        while read -r get; do
+            if [ -n "$(grep -o -E '\.jpg|\.jpeg|\.png' <<<"${get}")" ] && [ -z "${image}" ]; then
+            image="$n"; type=2; break ; fi
+            let n++
+        done <<<"${items3}"
+        n=4
+        while read -r get; do
+            if [ $(wc -w <<<"${get}") -ge 1 ] && [ -z "${title}" ]; then
+            title="$n"; break ; fi
+            let n++
+        done <<<"{$items3}"
+        n=6
+        while read -r get; do
+            if [ $(wc -w <<<"${get}") -ge 1 ] && [ -z "${summ}" ]; then
+            summ="$n"; break ; fi
+            let n++
+        done <<<"${items3}"
+    }
 
-        get_summ() {
+    get_summ() {
 
-            n=1
-            while read -r get; do
-                if [ $(wc -w <<<"${get}") -ge 1 ]; then
-                summ="$n"; break; fi
-                let n++
-            done <<<"${items3}"
-        }
+        n=1
+        while read -r get; do
+            if [ $(wc -w <<<"${get}") -ge 1 ]; then
+            summ="$n"; break; fi
+            let n++
+        done <<<"${items3}"
+    }
+    
+    fchannel
+    ftype1
+
+    if [ -z $sum2 ]; then
+    summary="${sum1}"; else
+    summary="${sum2}"; fi
+    if [[ -n "${title}" && -n "${summary}" \
+    && -z "${image}" && -z "${media}" ]]; then
+    type=3; fi
+    
+    if [[ ${type} = 1 ]]; then
         
-        fchannel
-        ftype1
-
-        if [ -z $sum2 ]; then
-        summary="${sum1}"; else
-        summary="${sum2}"; fi
-        if [[ -n "${title}" && -n "${summary}" \
-        && -z "${image}" && -z "${media}" ]]; then
-        type=3; fi
+        cfg="channel=\"$name\"
+        \rlink=\"$link\"
+        \rlogo=\"$logo\"
+        \rntype=\"$type\"
+        \rnmedia=\"$media\"
+        \rntitle=\"$title\"
+        \rnsumm=\"$summary\"
+        \rnimage=\"$image\"
+        \rurl=\"$feed\""
+        echo -e "${cfg}" |sed -e 's/^[ \t]*//' \
+        |tr -d '\n' > "$DIR2/$num.rss"; exit
         
-        if [[ ${type} = 1 ]]; then
-            
-            cfg="channel=\"$name\"
-            \rlink=\"$link\"
-            \rlogo=\"$logo\"
-            \rntype=\"$type\"
-            \rnmedia=\"$media\"
-            \rntitle=\"$title\"
-            \rnsumm=\"$summary\"
-            \rnimage=\"$image\"
-            \rurl=\"$feed\""
-            echo -e "${cfg}" |sed -e 's/^[ \t]*//' \
-            |tr -d '\n' > "$DIR2/$num.rss"; exit
-            
-        else
-            url="$(tr '&' ' ' <<<"${feed}")"
-            msg "<b>$(gettext "Specified URL doesn't seem to contain any feeds:")</b>\n$url\n" dialog-warning Idiomind &
-            > "$DIR2/$num.rss"
-            rm -f "$DT/cpt.lock"; exit 1
-        fi
+    else
+        url="$(tr '&' ' ' <<<"${feed}")"
+        msg "<b>$(gettext "Specified URL doesn't seem to contain any feeds:")</b>\n$url\n" dialog-warning Idiomind &
+        > "$DIR2/$num.rss"
+        rm -f "$DT/cpt.lock"; exit 1
+    fi
 }
 
 
@@ -879,8 +879,8 @@ function deleteall() {
 
 
 case "$1" in
-    strt)
-    strt "$@" ;;
+    update)
+    update "$@" ;;
     vwr)
     vwr "$@" ;;
     set_channel)
@@ -891,12 +891,12 @@ case "$1" in
     disc_podscats "$@" ;;
     new_item)
     new_item "$@" ;;
-    sv_as)
+    save_as)
     save_as "$@" ;;
     delete_item)
     delete_item "$@" ;;
     deleteall)
     deleteall "$@" ;;
     *)
-    dlgconfig "$@" ;;
+    dlg_config "$@" ;;
 esac

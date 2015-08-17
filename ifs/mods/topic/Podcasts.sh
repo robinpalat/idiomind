@@ -74,7 +74,7 @@ function feedmode() {
     ret=$?
         
     if [ $ret -eq 2 ]; then
-    "$DSP/cnfg.sh" strt 1; fi
+    "$DSP/cnfg.sh" update 1; fi
     
     note_mod="$(< $fdit)"
     if [ "$note_mod" != "$(< $nt)" ]; then

@@ -336,8 +336,8 @@ edit_list() {
     [ -e "$DT/add_lst" -o -e "$DT/el_lk" ] && exit
     [ $((inx3+inx4)) -le 1 ] && exit
     
-    if [ -e "$DC_s/elist_first_run" ]; then ( sleep 2
-    msg_2 "$(gettext "NOTE: If you change the text of an item here listed, then its audio file can be overwritten by another new file. To avoid this, you can edit it individually through its edit dialog.  ")" info "$(gettext "Ok")" "$(gettext "Do not show again")" " "; [ $? = 1 ] && rm -f "$DC_s/elist_first_run" ) &  fi
+    if [ -e "$DC_s/elist_first_run" ]; then 
+    "$DS/ifs/tls.sh" first_run edit_list & fi
     
     [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ] && c=c || c=w
     direc="$DM_tl/${2}/.conf"

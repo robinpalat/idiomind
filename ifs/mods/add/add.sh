@@ -488,10 +488,10 @@ function list_words_3() {
     else
     echo "${1}" | awk 'BEGIN{RS=ORS=" "}!a[$0]++' \
     | sed 's/\[ \.\.\. ] //g' | sed 's/\.//g' \
-    | tr -s "[:blank:]" '\n' | tr -d ',;' \
+    | tr -s "[:blank:]" '\n' | tr -d ',;()' \
     | sed '/^$/d' | sed '/"("/d' \
     | grep -v '^.$' | grep -v '^..$' \
-    | sed '/")"/d' | sed '/":"/d' | sed 's/[^ ]\+/\L\u&/g' \
+    | sed 's/[^ ]\+/\L\u&/g' \
     | head -n100 | egrep -v "FALSE" | egrep -v "TRUE" > "$DT_r/lst"
     fi
 } >/dev/null 2>&1
@@ -585,7 +585,7 @@ function dlg_checklist_3() {
     --ellipsize=END --center --no-click --text-align=right \
     --width=700 --height=500 --borders=5 \
     --column="$(gettext "Select")" \
-    --column="$(wc -l < "${1}") $(gettext "Items")" \
+    --column="$(wc -l < "${1}") $(gettext "Items found")" \
     --button="$(gettext "Cancel")":1 \
     --button=$(gettext "Edit"):2 \
     --button="gtk-add":0 > "$slt"
