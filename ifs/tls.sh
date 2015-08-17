@@ -594,7 +594,7 @@ ABOUT
 
 first_run() {
     
-    NOTE1="$(gettext "NOTE:\n  1)  In the upper text field, enter text in the language that you are learning\n  2)  In the field below, enter text in the source language\n  3)  To add an image to a note use the screen clipping")\n"
+    NOTE1="$(gettext "NOTE: In the upper text field, enter text in the language that you are learning.  In the field below, enter text in the source language.  To add an image to a note use the screen clipping.")\n"
     NOTE2="$(gettext "NOTE: If you change the text of an item here listed, then its audio file can be overwritten by another new file. To avoid this, you can edit it individually through its edit dialog.")"
 
     if [[ ${2} = add ]]; then
@@ -610,20 +610,21 @@ first_run() {
         image=gtk-help
         
     elif [[ -z "${2}" ]]; then
+        echo "-- done --"
         touch "$DC_s/add_first_run" "$DC_s/elist_first_run"
         exit
         
     else exit; fi
     
     sleep 2
-    yad --title="${title}" --text="${note}" \
+    yad --title="${title}" --text="<small>${note}</small>" \
     --name=Idiomind --class=Idiomind \
     --image="$image" \
     --always-print-result --selectable-labels \
     --window-icon="$DS/images/icon.png" \
     --image-on-top --on-top --sticky --center \
-    --width=600 --height=140 --borders=8 \
-    --button="$(gettext "Do not show again")":1 \
+    --width=500 --height=140 --borders=5 \
+    --button="<small>$(gettext "Do not show again")</small>":1 \
     --button="$(gettext "Ok")":0
     
     [ $? = 1 ] && rm -f "${file}"

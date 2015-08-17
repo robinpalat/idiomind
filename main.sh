@@ -407,8 +407,8 @@ panel() {
 case "$1" in
     topic)
     topic ;;
-    -h)
-    "$DS/ifs/tls.sh" first_run ;;
+    first_run)
+    "$DS/ifs/tls.sh" first_run & exit;;
     -v)
     echo -n "0.1" ;;
     -s)
