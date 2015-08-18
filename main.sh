@@ -56,7 +56,7 @@ function new_session() {
     done < <(cd "$DS/addons"; ls -d *)
     
     for strt in "$DS/ifs/mods/start"/*; do
-    (sleep 20 && "$strt"); done &
+    ( sleep 20 && "${strt}" ); done &
     
     list_inadd > "$DM_tl/.2.cfg"
     check_index1 "$DM_tl/.3.cfg"
@@ -369,14 +369,14 @@ panel() {
     
     echo -e "strt.1.strt" >> "$DC_s/log"
     if [ ! -d "$DT" ]; then new_session; fi
-    [ ! -f "$DT/tpe" ] && echo "$(sed -n 1p "$DC_s/4.cfg")" > "$DT/tpe"
+    [ ! -e "$DT/tpe" ] && echo "$(sed -n 1p "$DC_s/4.cfg")" > "$DT/tpe"
     [ "$(< "$DT/tpe")" != "${tpc}" ] && echo "$(sed -n 1p "$DC_s/4.cfg")" > "$DT/tpe"
-    [ -f "$DC_s/10.cfg" ] && date=$(sed -n 1p "$DC_s/10.cfg")
+    [ -e "$DC_s/10.cfg" ] && date=$(sed -n 1p "$DC_s/10.cfg")
     
-    if [[ "$(date +%d)" != "$date" ]] || [ ! -f "$DC_s/10.cfg" ]; then
+    if [[ "$(date +%d)" != "$date" ]] || [ ! -e "$DC_s/10.cfg" ]; then
     new_session; fi
     
-    if [ -f "$DC_s/10.cfg" ]; then
+    if [ -e "$DC_s/10.cfg" ]; then
     nu='^[0-9]+$'
     x=$(($(sed -n 2p "$DC_s/10.cfg")/2))
     y=$(($(sed -n 3p "$DC_s/10.cfg")/2)); fi
@@ -384,7 +384,7 @@ panel() {
     if ! [[ ${y} =~ $nu ]]; then y=100; fi
     
     if [ "$(grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg")" = TRUE ] \
-    && [ ! -f /tmp/.clipw ]; then "$DS/ifs/mods/clipw.sh" & fi
+    && [ ! -e /tmp/.clipw ]; then "$DS/ifs/mods/clipw.sh" & fi
 
     home=gtk-home
     if [[ ${intrf} = fr ]]; then home=Home; fi
@@ -408,13 +408,13 @@ case "$1" in
     topic)
     topic ;;
     first_run)
-    "$DS/ifs/tls.sh" first_run & exit;;
+    "$DS/ifs/tls.sh" first_run ;;
     -v)
     echo -n "0.1" ;;
     -s)
     new_session; idiomind & ;;
     autostart)
-    sleep 50; [ ! -f "$DT/ps_lk" ] && new_session ;;
+    sleep 50; [ ! -e "$DT/ps_lk" ] && new_session ;;
     add)
     "$DS/add.sh" new_items "$dir" 2 "${2}" ;;
     play)
