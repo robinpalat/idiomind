@@ -63,7 +63,7 @@ function edit_list_list() {
     --editable --separator='' \
     --always-print-result --print-all \
     --window-icon="$DS/images/icon.png" \
-    --no-headers --scroll --center \
+    --no-headers --center \
     --width=410 --height=260 --borders=5 \
     --column="" \
     --button="$(gettext "Reverse List")":2 \

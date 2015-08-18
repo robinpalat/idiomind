@@ -472,7 +472,7 @@ fback() {
     --browser --uri="$URL" \
     --window-icon="$DS/images/icon.png" \
     --no-buttons --fixed \
-    --width=500 --height=450
+    --width=500 --height=510
      
 } >/dev/null 2>&1
 
@@ -480,7 +480,7 @@ fback() {
 check_updates() {
 
     internet
-    nver=`wget --user-agent 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0' -qO - http://bit.ly/latest_release |sed -n 1p`
+    nver=`wget --user-agent 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0' -qO - http://idiomind.sourceforge.net/doc/release |sed -n 1p`
     cver=`echo "$(idiomind -v)"`
     pkg='https://sourceforge.net/projects/idiomind/files/idiomind.deb/download'
     echo "$(date +%d)" > "$DC_s/9.cfg"
@@ -516,7 +516,7 @@ a_check_updates() {
         sleep 50; curl -v www.google.com 2>&1 | \
         grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
         echo "$d2" > "$DC_s/9.cfg"
-        nver=`wget --user-agent 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0' -qO - http://bit.ly/latest_release |sed -n 1p`
+        nver=`wget --user-agent 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0' -qO - http://idiomind.sourceforge.net/doc/release |sed -n 1p`
         cver=`echo "$(idiomind -v)"`
         pkg='https://sourceforge.net/projects/idiomind/files/idiomind.deb/download'
         if [ ${#nver} -lt 9 ] && [ ${#cver} -lt 9 ] \
@@ -604,31 +604,31 @@ first_run() {
         image=gtk-help
         
     elif [[ ${2} = edit_list ]]; then
-        title="$(gettext "Tip")"
+        title=" "
         note="${NOTE2}"
         file="$DC_s/elist_first_run"
         image=gtk-help
         
     elif [[ -z "${2}" ]]; then
-        echo "-- done --"
+        echo "-- done"
         touch "$DC_s/add_first_run" "$DC_s/elist_first_run"
         exit
         
     else exit; fi
     
-    sleep 2
-    yad --title="${title}" --text="<small>${note}</small>" \
+    sleep 2; mv -f "${file}" "${file}".p
+    yad --title="${title}" --text="${note}" \
     --name=Idiomind --class=Idiomind \
     --image="$image" \
     --always-print-result --selectable-labels \
     --window-icon="$DS/images/icon.png" \
     --image-on-top --on-top --sticky --center \
     --width=500 --height=140 --borders=5 \
-    --button="<small>$(gettext "Do not show again")</small>":1 \
+    --button="$(gettext "Do not show again")":1 \
     --button="$(gettext "Ok")":0
     
-    [ $? = 1 ] && rm -f "${file}"
-
+    if [ $? = 1 ]; then rm -f "${file}" "${file}".p
+    else sleep 100; touch "${file}"; rm -f "${file}".p; fi
     exit
 }
 

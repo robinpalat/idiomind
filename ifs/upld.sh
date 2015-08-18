@@ -37,8 +37,8 @@ function dwld() {
     |grep -o 'DOWNLOADS="[^"]*' |grep -o '[^"]*$')"
     url2="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
     |grep -o 'DOWNLOADS2="[^"]*' |grep -o '[^"]*$')"
-    url1="$url1/c/$langt/$ilink.$md5id.tar.gz"
-    url2="$url2/c/$langt/$ilink.$md5id.tar.gz"
+    url1="$url1/c/${langt,,}/$ilink.$md5id.tar.gz"
+    url2="$url2/c/${langt,,}/$ilink.$md5id.tar.gz"
 
     if wget -S --spider "${url1}" 2>&1 |grep 'HTTP/1.1 200 OK'; then
     URL="${url1}"

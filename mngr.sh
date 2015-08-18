@@ -3,6 +3,7 @@
 
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
+include "$DS/ifs/mods/mngr"
 
 mkmn() {
     
@@ -37,8 +38,6 @@ mkmn() {
 delete_item_ok() {
 
     f_lock "$DT/ps_lk"
-    include "$DS/ifs/mods/mngr"
-    source "$DS/ifs/mods/cmns.sh"
     trgt="${3}"
     file="$(get_name_file "${trgt}" "${DC_tlt}/0.cfg")"
     DM_tlt="$DM_tl/${2}"
@@ -72,8 +71,6 @@ delete_item_ok() {
 delete_item() {
 
     f_lock "$DT/ps_lk"
-    include "$DS/ifs/mods/mngr"
-    source "$DS/ifs/mods/cmns.sh"
     trgt="${3}"
     file="$(get_name_file "${trgt}" "${DC_tlt}/0.cfg")"
     DM_tlt="$DM_tl/${2}"
@@ -115,7 +112,6 @@ delete_item() {
 
 edit_item() {
 
-    include "$DS/ifs/mods/mngr"
     temp="$(gettext "Processing")..."
     lgt=$(lnglss $lgtl)
     lgs=$(lnglss $lgsl)
@@ -342,7 +338,6 @@ edit_list() {
     [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ] && c=c || c=w
     direc="$DM_tl/${2}/.conf"
     [ ! -s "${direc}/0.cfg" ] && exit 1
-    source "$DS/ifs/mods/mngr/mngr.sh"
     lgt=$(lnglss $lgtl)
     lgs=$(lnglss $lgsl)
     > "$DT/_tmp1"
@@ -459,9 +454,24 @@ edit_list() {
     
 } >/dev/null 2>&1
 
+chng_lng() {
+
+    d=`cd "$DC_tlt/"; ls -t *.dat |sed 's/\.dat//g' \
+    |awk '{print "FALSE\n"$0}' |lang_chng_list`
+    ret=$?
+    if [ $ret = 0 ]; then
+    mod="$(cut -d "|" -f2 <<<"${d}")"
+    if [ -e "${DC_tlt}/${mod}.dat" -a "${mod}" != "${lgsl^} (default)" ]; then
+    mv "${DC_tlt}/0.cfg" "${DC_tlt}/${lgsl^} (default).dat"
+    ln -s "${DC_tlt}/${mod}.dat" "${DC_tlt}/0.cfg"
+    elif [ -e "${DC_tlt}/${mod}.dat" -a "${mod}" = "${lgsl^} (default)" ]; then
+    yad; rm "${DC_tlt}/0.cfg"
+    mv -f "${DC_tlt}/${lgsl^} (default).dat" "${DC_tlt}/0.cfg"
+    fi
+    else exit 1; fi
+}
+
 delete_topic() {
-    
-    include "$DS/ifs/mods/mngr"
 
     if [ "${tpc}" != "${2}" ]; then
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
@@ -580,8 +590,6 @@ rename_topic() {
 
 mark_to_learn_topic() {
     
-    include "$DS/ifs/mods/mngr"
-    
     if [ "${tpc}" != "${2}" ]; then
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
     
@@ -643,8 +651,6 @@ mark_to_learn_topic() {
 }
 
 mark_as_learned_topic() {
-
-    include "$DS/ifs/mods/mngr"
 
     if [ "${tpc}" != "${2}" ]; then
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
@@ -736,6 +742,8 @@ case "$1" in
     edit_list "$@" ;;
     colorize)
     colorize "$@" ;;
+    chng_lng)
+    chng_lng "$@" ;;
     delete_topic)
     delete_topic "$@" ;;
     rename_topic)

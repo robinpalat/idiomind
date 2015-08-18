@@ -60,6 +60,9 @@ function new_session() {
     
     list_inadd > "$DM_tl/.2.cfg"
     check_index1 "$DM_tl/.3.cfg"
+    
+    if ls "$DC_s"/*.p 1> /dev/null 2>&1; then
+    cd "$DC_s"/; rename 's/\.p$//' *.p; fi
     cd /
     
     s="$(xrandr | grep '*' |awk '{ print $1 }' \
@@ -73,7 +76,7 @@ function new_session() {
     tail -n2000 < "$DC_s/log" > "$DT/log"
     mv -f "$DT/log" "$DC_s/log"; fi
     fi
-    
+
     # check updates
     "$DS/ifs/tls.sh" a_check_updates &
     
@@ -124,7 +127,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     file="${1}"
     lv=( "$(gettext "Beginner")" "$(gettext "Intermediate")" "$(gettext "Advanced")" )
     level="${lv[${level}]}"
-    itxt="<span font_desc='Droid Sans Bold 12' color='#616161'>$tname</span>\n<sup>$(gettext "Words") $nword  $(gettext "Sentences") $nsent  $(gettext "Images") $nimag \n$(gettext "Language:") $langt  $(gettext "Level:") $level</sup>"
+    itxt="<span font_desc='Droid Sans Bold 12' color='#616161'>$tname</span>\n<sup>$(gettext "Words") $nword  $(gettext "Sentences") $nsent  $(gettext "Images") $nimag \n$(gettext "Level:") $level \n$(gettext "Language:") $langt  $(gettext "Traslation:") $langs</sup>"
     dclk="$DS/play.sh play_word"
     _lst() { while read -r item; do
     grep -oP '(?<=trgt={).*(?=},srce)' <<<"${item}"

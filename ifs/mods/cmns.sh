@@ -65,16 +65,17 @@ function f_lock() {
 
 function lnglss() {
 
-    [ "${1^}" = English ] && lg=en
-    [ "${1^}" = French ] && lg=fr
-    [ "${1^}" = German ] && lg=de
-    [ "${1^}" = Chinese ] && lg=zh-cn
-    [ "${1^}" = Italian ] && lg=it
-    [ "${1^}" = Japanese ] && lg=ja
-    [ "${1^}" = Portuguese ] && lg=pt
-    [ "${1^}" = Spanish ] && lg=es
-    [ "${1^}" = Vietnamese ] && lg=vi
-    [ "${1^}" = Russian ] && lg=ru
+    if [ "${1^}" = English ]; then lg=en
+    elif [ "${1^}" = French ]; then lg=fr
+    elif [ "${1^}" = German ]; then lg=de
+    elif [ "${1^}" = Chinese ]; then lg=zh-cn
+    elif [ "${1^}" = Italian ]; then lg=it
+    elif [ "${1^}" = Japanese ]; then lg=ja
+    elif [ "${1^}" = Portuguese ]; then lg=pt
+    elif [ "${1^}" = Spanish ]; then lg=es
+    elif [ "${1^}" = Vietnamese ]; then lg=vi
+    elif [ "${1^}" = Russian ]; then lg=ru
+    fi
     echo "$lg"
 }
 
