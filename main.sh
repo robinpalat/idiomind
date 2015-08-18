@@ -127,7 +127,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     file="${1}"
     lv=( "$(gettext "Beginner")" "$(gettext "Intermediate")" "$(gettext "Advanced")" )
     level="${lv[${level}]}"
-    itxt="<span font_desc='Droid Sans Bold 12' color='#616161'>$tname</span>\n<sup>$(gettext "Words") $nword  $(gettext "Sentences") $nsent  $(gettext "Images") $nimag \n$(gettext "Level:") $level \n$(gettext "Language:") $langt  $(gettext "Traslation:") $langs</sup>"
+    itxt="<span font_desc='Droid Sans Bold 12' color='#616161'>$tname</span>\n<sup>$(gettext "Words") $nword  $(gettext "Sentences") $nsent  $(gettext "Images") $nimag \n$(gettext "Level:") $level \n$(gettext "Language:") $langt  $(gettext "Translation:") $langs</sup>"
     dclk="$DS/play.sh play_word"
     _lst() { while read -r item; do
     grep -oP '(?<=trgt={).*(?=},srce)' <<<"${item}"
