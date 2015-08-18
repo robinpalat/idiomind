@@ -97,7 +97,7 @@ check_index() {
         sed -i '/^$/d' "${DC_tlt}/$n.cfg"; fi
         check_index1 "${DC_tlt}/$n.cfg"
         done
-        
+
         [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "${c1}" > "${DC_tlt}/id.cfg"
         for i in "${DM_tlt}"/*.mp3 ; do [[ ! -s "${i}" ]] && rm "${i}" ; done
         if grep 'rsntc=' "${DC_tlt}/10.cfg"; then
@@ -431,38 +431,6 @@ help() {
 } >/dev/null 2>&1
 
 
-colorize() {
-
-    f_lock "$DT/co_lk"
-    rm "${DC_tlt}/5.cfg"
-    cfg5="${DC_tlt}/5.cfg"
-    cfg6="$(< "${DC_tlt}/6.cfg")"
-    img1='/usr/share/idiomind/images/1.png'
-    img2='/usr/share/idiomind/images/2.png'
-    img3='/usr/share/idiomind/images/3.png'
-    img0='/usr/share/idiomind/images/0.png'
-    cd "${DC_tlt}/practice"
-    log3="$(cat ./log3 ./e.3)"
-    log2="$(cat ./log2 ./e.2)"
-    log1="$(cat ./log1 ./e.1)"
-    
-    while read -r item; do
-        if grep -Fxo "${item}" <<<"${cfg6}"; then
-        i="<b><big>${item}</big></b>";else i="${item}"; fi
-        if grep -Fxo "${item}" <<<"${log3}"; then
-            echo -e "FALSE\n${i}\n$img3" >> "$cfg5"
-        elif grep -Fxo "${item}" <<<"${log1}"; then
-            echo -e "FALSE\n${i}\n$img1" >> "$cfg5"
-        elif grep -Fxo "${item}" <<<"${log2}"; then
-            echo -e "FALSE\n${i}\n$img2" >> "$cfg5"
-        else
-            echo -e "FALSE\n${i}\n$img0" >> "$cfg5"
-        fi
-    done < "${DC_tlt}/1.cfg"
-    rm -f "$DT/co_lk"; cd ~/
-}
-
-
 fback() {
     
     internet
@@ -472,7 +440,7 @@ fback() {
     --browser --uri="$URL" \
     --window-icon="$DS/images/icon.png" \
     --no-buttons --fixed \
-    --width=500 --height=510
+    --width=500 --height=350
      
 } >/dev/null 2>&1
 
@@ -480,7 +448,8 @@ fback() {
 check_updates() {
 
     internet
-    nver=`wget --user-agent 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0' -qO - http://idiomind.sourceforge.net/doc/release |sed -n 1p`
+    nver=`wget --user-agent 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) \
+    Gecko/20100101 Firefox/31.0' -qO - http://idiomind.sourceforge.net/doc/release |sed -n 1p`
     cver=`echo "$(idiomind -v)"`
     pkg='https://sourceforge.net/projects/idiomind/files/idiomind.deb/download'
     echo "$(date +%d)" > "$DC_s/9.cfg"
@@ -516,7 +485,8 @@ a_check_updates() {
         sleep 50; curl -v www.google.com 2>&1 | \
         grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
         echo "$d2" > "$DC_s/9.cfg"
-        nver=`wget --user-agent 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0' -qO - http://idiomind.sourceforge.net/doc/release |sed -n 1p`
+        nver=`wget --user-agent 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) \
+        Gecko/20100101 Firefox/31.0' -qO - http://idiomind.sourceforge.net/doc/release |sed -n 1p`
         cver=`echo "$(idiomind -v)"`
         pkg='https://sourceforge.net/projects/idiomind/files/idiomind.deb/download'
         if [ ${#nver} -lt 9 ] && [ ${#cver} -lt 9 ] \
@@ -533,63 +503,6 @@ a_check_updates() {
     fi
     exit 0
 }
-
-
-about() {
-
-c="$(gettext "Vocabulary learning tool")"
-website="$(gettext "Web Site")"
-export c website
-python << ABOUT
-import gtk
-import os
-app_logo = os.path.join('/usr/share/idiomind/images/idiomind.png')
-app_icon = os.path.join('/usr/share/idiomind/images/icon.png')
-app_name = 'Idiomind'
-app_version = 'v0.1-beta'
-app_comments = os.environ['c']
-web = os.environ['website']
-app_copyright = 'Copyright (c) 2015 Robin Palatnik'
-app_website = 'http://idiomind.sourceforge.net'
-app_license = (('Idiomind is free software: you can redistribute it and/or modify\n'+
-'it under the terms of the GNU General Public License as published by\n'+
-'the Free Software Foundation, either version 3 of the License, or\n'+
-'(at your option) any later version.\n'+
-'\n'+
-'This program is distributed in the hope that it will be useful,\n'+
-'but WITHOUT ANY WARRANTY; without even the implied warranty of\n'+
-'MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n'+
-'GNU General Public License for more details.\n'+
-'\n'+
-'You should have received a copy of the GNU General Public License\n'+
-'along with this program.  If not, see http://www.gnu.org/licenses'))
-app_authors = ['Robin Palatnik <patapatass@hotmail.com>']
-app_artists = ["Logo based on rg1024's openclipart Ufo Cartoon."]
-
-class AboutDialog:
-    def __init__(self):
-        about = gtk.AboutDialog()
-        about.set_logo(gtk.gdk.pixbuf_new_from_file(app_logo))
-        about.set_icon_from_file(app_icon)
-        about.set_wmclass('Idiomind', 'Idiomind')
-        about.set_name(app_name)
-        about.set_program_name(app_name)
-        about.set_version(app_version)
-        about.set_comments(app_comments)
-        about.set_copyright(app_copyright)
-        about.set_license(app_license)
-        about.set_authors(app_authors)
-        about.set_artists(app_artists)
-        about.set_website(app_website)
-        about.set_website_label(web)
-        about.run()
-        about.destroy()
-
-if __name__ == "__main__":
-    AboutDialog = AboutDialog()
-    main()
-ABOUT
-} >/dev/null 2>&1
 
 
 first_run() {
@@ -627,8 +540,7 @@ first_run() {
     --button="$(gettext "Do not show again")":1 \
     --button="$(gettext "Ok")":0
     
-    if [ $? = 1 ]; then rm -f "${file}" "${file}".p
-    else sleep 100; touch "${file}"; rm -f "${file}".p; fi
+    if [ $? = 1 ]; then rm -f "${file}" "${file}".p; fi
     exit
 }
 
@@ -871,6 +783,122 @@ mkpdf() {
     exit
 }
 
+
+colorize() {
+
+    f_lock "$DT/co_lk"
+    rm "${DC_tlt}/5.cfg"
+    [ ! -e "${DC_tlt}/1.cfg" ] && touch "${DC_tlt}/1.cfg"
+    [ ! -e "${DC_tlt}/6.cfg" ] && touch "${DC_tlt}/6.cfg"
+    img1='/usr/share/idiomind/images/1.png'
+    img2='/usr/share/idiomind/images/2.png'
+    img3='/usr/share/idiomind/images/3.png'
+    img0='/usr/share/idiomind/images/0.png'
+    cfg1="${DC_tlt}/1.cfg"
+    cfg5="${DC_tlt}/5.cfg"
+    cfg6="${DC_tlt}/6.cfg"
+    cd "${DC_tlt}/practice"
+    log3="$(cat ./log3 ./e.3)"
+    log2="$(cat ./log2 ./e.2)"
+    log1="$(cat ./log1 ./e.1)"
+    export cfg1 cfg5 cfg6 log1 log2 log3 img0 img1 img2 img3
+    cd / 
+
+python <<PY
+import os
+cfg1 = os.environ['cfg1']
+cfg5 = os.environ['cfg5']
+cfg6 = os.environ['cfg6']
+log1 = os.environ['log1']
+log2 = os.environ['log2']
+log3 = os.environ['log3']
+img0 = os.environ['img0']
+img1 = os.environ['img1']
+img2 = os.environ['img2']
+img3 = os.environ['img3']
+items = [line.strip() for line in open(cfg1)]
+marks = [line.strip() for line in open(cfg6)]
+f = open(cfg5, "w")
+
+n = 0
+while n < len(items):
+    item = items[n]
+    if item in marks:
+        i="<b><big>"+item+"</big></b>"
+    else:
+        i=item
+    if item in log3:
+        f.write("FALSE\n"+i+"\n"+img3+"\n")
+    elif item in log1:
+        f.write("FALSE\n"+i+"\n"+img1+"\n")
+    elif item in log2:
+        f.write("FALSE\n"+i+"\n"+img2+"\n")
+    else:
+        f.write("FALSE\n"+i+"\n"+img0+"\n")
+    n += 1
+f.close()
+PY
+    rm -f "$DT/co_lk"
+}
+
+
+about() {
+
+c="$(gettext "Vocabulary learning tool")"
+website="$(gettext "Web Site")"
+export c website
+python << ABOUT
+import gtk
+import os
+app_logo = os.path.join('/usr/share/idiomind/images/idiomind.png')
+app_icon = os.path.join('/usr/share/idiomind/images/icon.png')
+app_name = 'Idiomind'
+app_version = 'v0.1-beta'
+app_comments = os.environ['c']
+web = os.environ['website']
+app_copyright = 'Copyright (c) 2015 Robin Palatnik'
+app_website = 'http://idiomind.sourceforge.net'
+app_license = (('Idiomind is free software: you can redistribute it and/or modify\n'+
+'it under the terms of the GNU General Public License as published by\n'+
+'the Free Software Foundation, either version 3 of the License, or\n'+
+'(at your option) any later version.\n'+
+'\n'+
+'This program is distributed in the hope that it will be useful,\n'+
+'but WITHOUT ANY WARRANTY; without even the implied warranty of\n'+
+'MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n'+
+'GNU General Public License for more details.\n'+
+'\n'+
+'You should have received a copy of the GNU General Public License\n'+
+'along with this program.  If not, see http://www.gnu.org/licenses'))
+app_authors = ['Robin Palatnik <patapatass@hotmail.com>']
+app_artists = ["Logo based on rg1024's openclipart Ufo Cartoon."]
+
+class AboutDialog:
+    def __init__(self):
+        about = gtk.AboutDialog()
+        about.set_logo(gtk.gdk.pixbuf_new_from_file(app_logo))
+        about.set_icon_from_file(app_icon)
+        about.set_wmclass('Idiomind', 'Idiomind')
+        about.set_name(app_name)
+        about.set_program_name(app_name)
+        about.set_version(app_version)
+        about.set_comments(app_comments)
+        about.set_copyright(app_copyright)
+        about.set_license(app_license)
+        about.set_authors(app_authors)
+        about.set_artists(app_artists)
+        about.set_website(app_website)
+        about.set_website_label(web)
+        about.run()
+        about.destroy()
+
+if __name__ == "__main__":
+    AboutDialog = AboutDialog()
+    main()
+ABOUT
+} >/dev/null 2>&1
+
+
 gtext() {
 $(gettext "Marked items")
 $(gettext "Difficult words")
@@ -894,8 +922,6 @@ case "$1" in
     videourl "$@" ;;
     help)
     help ;;
-    colorize)
-    colorize "$@" ;;
     check_updates)
     check_updates ;;
     a_check_updates)
@@ -904,10 +930,12 @@ case "$1" in
     set_image "$@" ;;
     first_run)
     first_run "$@" ;;
-    pdf)
-    mkpdf ;;
     fback)
     fback ;;
+    pdf)
+    mkpdf ;;
+    colorize)
+    colorize "$@" ;;
     about)
     about ;;
 esac

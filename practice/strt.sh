@@ -83,31 +83,6 @@ elif [ $ret -eq 3 ]; then
 else
     cd "${DC_tlt}/practice"
     rm *.tmp; f_lock "$DT/ps_lk"
-    rm "${DC_tlt}/5.cfg"
-    cfg5="${DC_tlt}/5.cfg"
-    cfg6="$(< "${DC_tlt}/6.cfg")"
-    img1='/usr/share/idiomind/images/1.png'
-    img2='/usr/share/idiomind/images/2.png'
-    img3='/usr/share/idiomind/images/3.png'
-    img0='/usr/share/idiomind/images/0.png'
-    log3="$(cat ./log3 ./e.3)"
-    log2="$(cat ./log2 ./e.2)"
-    log1="$(cat ./log1 ./e.1)"
-    
-    while read -r item; do
-    if grep -Fxo "${item}" <<<"${cfg6}"; then
-    i="<b><big>${item}</big></b>";else i="${item}"; fi
-    if grep -Fxo "${item}" <<<"${log3}"; then
-        echo -e "FALSE\n${i}\n$img3" >> "$cfg5"
-    elif grep -Fxo "${item}" <<<"${log1}"; then
-        echo -e "FALSE\n${i}\n$img1" >> "$cfg5"
-    elif grep -Fxo "${item}" <<<"${log2}"; then
-        echo -e "FALSE\n${i}\n$img2" >> "$cfg5"
-    else
-        echo -e "FALSE\n${i}\n$img0" >> "$cfg5"
-    fi
-    done < "${DC_tlt}/1.cfg"
-    rm -f "$DT/ps_lk"
-
+    "$DS/ifs/tls.sh" colorize &
     exit
 fi
