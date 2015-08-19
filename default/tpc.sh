@@ -9,7 +9,8 @@ DC_tlt="$DM_tl/${topic}/.conf"
 DM_tlt="$DM_tl/${topic}"
 
 if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
-    "$DS/ifs/mods/topic/${topic}.sh" 2 & exit 1
+    source "$DS/ifs/mods/topic/${topic}.sh"
+    tpa="$(sed -n 1p "$DC_a/4.cfg")"; ${tpa} 2 & exit
 
 else
     if [ -d "${DM_tlt}" ]; then

@@ -507,7 +507,7 @@ a_check_updates() {
 
 first_run() {
     
-    NOTE1="$(gettext "NOTE: In the upper text field, enter text in the language that you are learning.  In the field below, enter text in the source language.  To add an image to a note use the screen clipping.")\n"
+    NOTE1="$(gettext "<b>How to add notes?</b>\nIn the upper text field, enter text in the language that you are learning.  In the field below, enter text in the source language.  To add an image to a note use the screen clipping.")\n"
     NOTE2="$(gettext "NOTE: If you change the text of an item here listed, then its audio file can be overwritten by another new file. To avoid this, you can edit it individually through its edit dialog.")"
 
     if [[ ${2} = add ]]; then

@@ -1,4 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-/usr/share/idiomind/addons/Podcasts/cnfg.sh podmode $1 & exit
+function Podcasts() {
+/usr/share/idiomind/addons/Podcasts/podcasts podmode $1 & exit
+}

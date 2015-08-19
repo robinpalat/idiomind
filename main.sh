@@ -207,16 +207,17 @@ function topic() {
 
     export mode=$(sed -n 1p "$DC_s/5.cfg")
     source "$DS/ifs/mods/cmns.sh"
-    source "$DS/ifs/mods/topic/items_list.sh"
-    
+
     if [[ ${mode} = 2 ]]; then
         
         tpa="$(sed -n 1p "$DC_a/4.cfg")"
-        "$DS/ifs/mods/topic/${tpa}.sh" & exit 1
+        source "$DS/ifs/mods/topic/${tpa}.sh"
+        ${tpa} & exit 1
 
     elif [[ ${mode} = 0 ]] || [[ ${mode} = 1 ]]; then
-        
+    
         [ -z "${tpc}" ] && exit 1
+        source "$DS/ifs/mods/topic/items_list.sh"
         for n in {0..4}; do
         [ ! -e "${DC_tlt}/${n}.cfg" ] && touch "${DC_tlt}/${n}.cfg"
         declare ls${n}="${DC_tlt}/${n}.cfg"
