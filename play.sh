@@ -119,6 +119,8 @@ play_list() {
     tab1=$(mktemp "$DT/XXX.p")
     tab2=$(mktemp "$DT/XXX.p")
     c=$((RANDOM%100000)); KEY=$c
+    [ ${ntosd} != TRUE -a ${audio} != TRUE ] && audio=TRUE
+    
     
     setting_1 | yad --plug=$KEY --tabnum=1 --list \
     --print-all --always-print-result --separator="|" \
@@ -134,9 +136,9 @@ play_list() {
     --field="$(gettext "Use desktop notifications")":CHK "$ntosd" \
     --field="$(gettext "Pause between items (sec)")":SCL "$loop" \
     --field="$(gettext "Repeat sounding out")":CB "$lst_opts1" \
-    --field="":LBL "" --field=" ":LBL "" \
+    --field="":LBL " " --field=" ":LBL " " \
     --field="$(gettext "Podcasts: Only play videos")":CHK "$video" \
-    --field=" ":LBL "" > $tab2 &
+    --field=" ":LBL " " > $tab2 &
     yad --notebook --key=$KEY --title="$title" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-all \

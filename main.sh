@@ -180,6 +180,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             tail -n 1 < "${file}" |tr '&' '\n' > "${DC_tlt}/id.cfg"
             > "${DC_tlt}/11.cfg"
             sed -i "s/datei=.*/datei=\"$(date +%F)\"/g" "${DC_tlt}/id.cfg"
+            sed -i "s/datei=.*/datei=\"TRUE\"/g" "${DC_tlt}/id.cfg"
             
             while read item_; do
             item="$(sed 's/},/}\n/g' <<<"${item_}")"
@@ -229,7 +230,7 @@ function topic() {
         cnf1=$(mktemp "$DT/cnf1.XXX.x")
         cnf3=$(mktemp "$DT/cnf3.XXX.x")
         cnf4=$(mktemp "$DT/cnf4.XXX.x")
-        if [ -f "${DM_tlt}/images/img.jpg" ]; then
+        if [ -e "${DM_tlt}/images/img.jpg" ]; then
         img="--image=${DM_tlt}/images/img.jpg"; fi
         sx=638; sy=590
 
