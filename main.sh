@@ -180,7 +180,6 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             tail -n 1 < "${file}" |tr '&' '\n' > "${DC_tlt}/id.cfg"
             > "${DC_tlt}/11.cfg"
             sed -i "s/datei=.*/datei=\"$(date +%F)\"/g" "${DC_tlt}/id.cfg"
-            sed -i "s/datei=.*/datei=\"TRUE\"/g" "${DC_tlt}/id.cfg"
             
             while read item_; do
             item="$(sed 's/},/}\n/g' <<<"${item_}")"

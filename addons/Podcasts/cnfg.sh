@@ -14,7 +14,7 @@ DSP="$DS_a/Podcasts"
 dfimg="$DSP/images/audio.png"
 date=$(date +%d)
 
-# Downloads by each feed. Recomended=2
+# Downloads by each feed, recomended: 2
 downloads=2
 # rsync delete: disable 0/enable 1
 rsync_delete=0
@@ -588,7 +588,7 @@ function vwr() {
     btncmd="'$DSP/cnfg.sh' delete_item"; else
     btnlabel="$(gettext "Save")"
     btncmd="'$DSP/cnfg.sh' new_item"; fi
-    btncmd2="'$DSP/cnfg.sh' sv_as"
+    btncmd2="'$DSP/cnfg.sh' save_as"
     if [ -f "$dir/$fname.html" ]; then
     uri="$dir/$fname.html"; else
     source "$DS/ifs/mods/cmns.sh"
