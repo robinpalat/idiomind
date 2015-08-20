@@ -49,13 +49,14 @@ while read -r tpc_lst; do
             
                 if grep -Fxo "${item}" <<<"${cfg6}">/dev/null 2>&1; then
                 i="<b><big>${item}</big></b>";else i="${item}"; fi
-                if grep -Fxo "${item}" < "${items}"; then
-                    echo -e "TRUE\n${i}\n$img1" >> "${cfg5}"
-
-                elif [[ `wc -l < "${DC_tlt}/9.cfg"` -gt 2 ]] \
+   
+                if [[ `wc -l < "${DC_tlt}/9.cfg"` -ge 1 ]] \
                 && grep -Fxo "${item}" < "${log1}"; then
                     echo -e "TRUE\n${i}\n$img1" >> "${cfg5}"
-                    
+                
+                elif grep -Fxo "${item}" < "${items}"; then
+                    echo -e "TRUE\n${i}\n$img1" >> "${cfg5}"
+ 
                 else
                     if grep -Fxo "${item}" <<<"${log3}">/dev/null 2>&1; then
                         echo -e "FALSE\n${i}\n$img3" >> "${cfg5}"

@@ -544,13 +544,18 @@ function update() {
     rm -fr "$DT_r" "$DT/.uptp"
 
     if [[ ${new_episodes} -gt 0 ]]; then
-        [[ ${new_episodes} = 1 ]] && ne=$(gettext "new episode")
-        [[ ${new_episodes} -gt 1 ]] && ne=$(gettext "new episodes")
+        [[ ${new_episodes} = 1 ]] \
+        && ne=$(gettext "new episode") && de=$(gettext "new episode downloaded")
+        [[ ${new_episodes} -gt 1 ]] \
+        && ne=$(gettext "new episodes") && de=$(gettext "new episodes downloaded")
 
         removes
-        notify-send -i idiomind \
+        [[ ${2} = 1 ]] && notify-send -i idiomind \
         "$(gettext "Update finished")" \
         "$new_episodes $ne" -t 8000
+        [[ ${2} = 0 ]] && notify-send -i idiomind \
+        "$(gettext "Podcasts")" \
+        "$new_episodes $de" -t 8000
         
     else
         if [[ ${2} = 1 ]]; then

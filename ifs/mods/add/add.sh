@@ -578,7 +578,7 @@ function dlg_checklist_1() {
 function dlg_checklist_3() {
 
     cat "${1}" | awk '{print "FALSE\n"$0}' | \
-    yad --list --checklist --title="$2" \
+    yad --list --checklist --title="Idiomind - $2" \
     --name=Idiomind --class=Idiomind \
     --dclick-action="'/usr/share/idiomind/add.sh' 'list_words_dclik'" \
     --window-icon="$DS/images/icon.png" \
@@ -586,10 +586,9 @@ function dlg_checklist_3() {
     --width=750 --height=500 --borders=5 \
     --column="$(gettext "Select")" \
     --column="$(wc -l < "${1}") $(gettext "Items found")" \
-    --button="$(gettext "Cancel")":1 \
     --button=$(gettext "Edit"):2 \
+    --button="$(gettext "Cancel")":1 \
     --button="gtk-add":0 > "$slt"
-    #
 }
 
 

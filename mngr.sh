@@ -112,6 +112,7 @@ delete_item() {
 
 edit_item() {
 
+    [ -z ${2} -o -z ${3} ] && exit 1
     temp="$(gettext "Processing")..."
     lgt=$(lnglss $lgtl)
     lgs=$(lnglss $lgsl)
