@@ -129,9 +129,7 @@ elif [ $ret -eq 0 ]; then
     c=$((RANDOM%100))
     id="$b$c"
     id=${id:0:3}
-config="usrid=\"$id\"
-iuser=\"\"
-cntct=\"\""
+    config="usrid=\"$id\"\niuser=\"\"\ncntct=\"\""
     echo -e "${config}" > "$DC_s/3.cfg"
     /usr/share/idiomind/ifs/tls.sh first_run
     

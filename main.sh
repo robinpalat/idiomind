@@ -413,6 +413,8 @@ case "$1" in
     topic ;;
     first_run)
     "$DS/ifs/tls.sh" first_run ;;
+    translate)
+    "$DS/ifs/tls.sh" $@ ;;
     -v)
     echo -n "0.1" ;;
     -s)
