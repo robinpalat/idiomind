@@ -784,6 +784,104 @@ mkpdf() {
 }
 
 
+translate_to() {
+    
+    if [ $2 = restore ]; then
+    
+        if [ -e "${DC_tlt}/0.data" ]; then
+        mv -f "${DC_tlt}/0.data" "${DC_tlt}/0.cfg"
+        echo -e "  --done"; else echo -e "  --error"; fi
+        
+    else
+        if [ -e "${DC_tlt}/$2.data" ]; then
+            mv -f "${DC_tlt}/$2.data" "${DC_tlt}/0.cfg"
+            echo -e "  --done"
+
+        else
+            source /usr/share/idiomind/ifs/c.conf
+            include "$DS/ifs/mods/add"
+            echo -e "\n  --translating \"$tpc\" to $2...\n"
+            
+            > "$DT/words.trad_tmp"
+            > "$DT/index.trad_tmp"
+            
+            while read -r item_; do
+            item="$(sed 's/},/}\n/g' <<<"${item_}")"
+            type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
+            trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
+
+            if [ -n "${trgt}" ]; then
+            echo "${trgt}" \
+            | python -c 'import sys; print(" ".join(sorted(set(sys.stdin.read().split()))))' \
+            | sed 's/ /\n/g' | grep -v '^.$' | grep -v '^..$' \
+            | tr -d '*)(,;"“”:' | tr -s '&{}[]' ' ' \
+            | sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
+            | sed 's/\]//;s/\[//;s/<[^>]*>//g' \
+            | sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //;s/"//g' \
+            | tr -d '.' | sed 's/^ *//; s/ *$//; /^$/d' >> "$DT/words.trad_tmp"
+            echo "|" >> "$DT/words.trad_tmp"
+            echo "${trgt} |" >> "$DT/index.trad_tmp"; fi
+
+            done < "${DC_tlt}/0.cfg"
+
+
+            sed -i ':a;N;$!ba;s/\n/\. /g' "$DT/words.trad_tmp"
+            sed -i 's/|/|\n/g' "$DT/words.trad_tmp"
+            sed -i 's/^..//' "$DT/words.trad_tmp"
+            index_to_trad="$(< "$DT/index.trad_tmp")"
+            words_to_trad="$(< "$DT/words.trad_tmp")"
+            translate "${index_to_trad}" en $2 > "$DT/index.trad"
+            translate "${words_to_trad}" en $2 > "$DT/words.trad"
+            sed -i ':a;N;$!ba;s/\n/ /g' "$DT/index.trad"
+            sed -i 's/|/\n/g' "$DT/index.trad"
+            sed -i 's/^ *//; s/ *$//g' "$DT/index.trad"
+            sed -i ':a;N;$!ba;s/\n/ /g' "$DT/words.trad"
+            sed -i 's/|/\n/g' "$DT/words.trad"
+            sed -i 's/^ *//; s/ *$//g' "$DT/words.trad"
+            paste -d '&' "$DT/words.trad" "$DT/words.trad_tmp" > "$DT/mix_words.trad_tmp"
+            
+            
+            n=1
+            while read -r item_; do
+            
+                item="$(sed 's/},/}\n/g' <<<"${item_}")"
+                type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
+                trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
+                grmr="$(grep -oP '(?<=grmr={).*(?=})' <<<"${item}")"
+                exmp="$(grep -oP '(?<=exmp={).*(?=})' <<<"${item}")"
+                defn="$(grep -oP '(?<=defn={).*(?=})' <<<"${item}")"
+                id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
+                srce="$(sed -n ${n}p "$DT/index.trad")"
+                tt="$(sed -n ${n}p "$DT/mix_words.trad_tmp" |cut -d '&' -f2 \
+                |sed 's/\. /\n/g' |sed 's/^ *//; s/ *$//g' | tr -d '|.')"
+                st="$(sed -n ${n}p "$DT/mix_words.trad_tmp" |cut -d '&' -f1 \
+                |sed 's/\. /\n/g' |sed 's/^ *//; s/ *$//g' | tr -d '|.')"
+
+                ( bcle=1
+                while [[ ${bcle} -le `wc -l <<<"$tt"` ]]; do
+                s="$(sed -n ${bcle}p <<<"$st" |sed 's/^\s*./\U&\E/g')"
+                t="$(sed -n ${bcle}p <<<"$tt" |sed 's/^\s*./\U&\E/g')"
+                echo "$t"_"$s" >> "$DT/w.tmp"
+                let bcle++
+                done )
+                wrds="$(tr '\n' '_' < "$DT/w.tmp" |sed '/^$/d')"; rm -f "$DT/w.tmp"
+                
+                t_item="${n}:[type={$type},trgt={$trgt},srce={$srce},exmp={$exmp},defn={$defn},note={},wrds={$wrds},grmr={$grmr},].[tag={},mark={},].id=[$id]"
+                echo -e "${t_item}" >> "${DC_tlt}/$2.data"
+
+            let n++
+            done < "${DC_tlt}/0.cfg"
+            
+            rm -f "$DT"/*.tmp "$DT"/*.trad "$DT"/*.trad_tmp
+            if [ ! -e "${DC_tlt}/0.data" ]; then
+            mv "${DC_tlt}/0.cfg" "${DC_tlt}/0.data"; fi
+            cp -f "${DC_tlt}/$2.data" "${DC_tlt}/0.cfg"
+            echo -e "  --done"
+        fi
+    fi
+}
+
+
 colorize() {
 
     f_lock "$DT/co_lk"
@@ -801,7 +899,8 @@ colorize() {
     log3="$(cat ./log3 ./e.3)"
     log2="$(cat ./log2 ./e.2)"
     log1="$(cat ./log1 ./e.1)"
-    export cfg1 cfg5 cfg6 log1 log2 log3 img0 img1 img2 img3
+    export cfg1 cfg5 cfg6 log1 \
+    log2 log3 img0 img1 img2 img3
     cd / 
 
 python <<PY
@@ -936,6 +1035,8 @@ case "$1" in
     mkpdf ;;
     colorize)
     colorize "$@" ;;
+    translate)
+    translate_to "$@" ;;
     about)
     about ;;
 esac
