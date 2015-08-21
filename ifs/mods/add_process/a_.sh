@@ -95,12 +95,12 @@ if [[ ${conten^} = A ]]; then
     left=$((200 - $(wc -l < "${DC_tlt}/4.cfg")))
     key="$(sed -n 2p "$HOME/.config/idiomind/addons/gts.cfg" \
     | grep -o key=\"[^\"]* | grep -o '[^"]*$')"
-    test="$DS/addons/Dics/g/test.flac"
+    test="$DS/addons/Dics/test.flac"
     LNK='https://console.developers.google.com'
     if [ ! -e /usr/bin/mp3splt ]; then installds; fi
     
     if [ -z "$key" ]; then
-    msg "$(gettext "For this feature you need to provide a key. Please get one from the:")   <a href='$LNK'>console.developers.google.com</a>\n" dialog-warning
+    msg "$(gettext "For this feature you need to provide a key. Please get one from the:")   <a href='$LNK'>wwww.console.developers.google.com</a>\n" dialog-warning
     cleanups "$lckpr" "$DT_r" & exit 1; fi
     
     cd "$HOME"; fl="$(dlg_file_1)"
@@ -125,8 +125,6 @@ if [[ ${conten^} = A ]]; then
             vad -T 0.6 -p 0.2 -t 5 fade 0.1 reverse norm -0.5
             rm -f "$DT_r/rv.mp3"
             mp3splt -s -o @n *.mp3
-            #rename 's/^0*//' *.mp3
-            rm -f "$DT_r/c_rv.mp3"
 
             c="$(ls "$DT_r"/s[0-9]*.mp3 | wc -l)"
             if [[ ${c} -ge 1 ]]; then
@@ -151,7 +149,7 @@ if [[ ${conten^} = A ]]; then
             cp -f "$fl" "$DT_r/rv.zip"
             unzip "$DT_r/rv.zip"
         fi
-        
+        rename 's/^0*//' *.mp3
         c="$(ls "$DT_r"/[0-9]*.mp3 | wc -l)"
         n=1; r=${c}
         while [[ ${n} -le ${c} ]]; do
@@ -177,7 +175,6 @@ if [[ ${conten^} = A ]]; then
         cleanups "$DT_r" "$lckpr" & exit 1; fi
         
         echo "# $(gettext "Processing")..." ; sleep 0.2
-
         tpe=$(sed -n 2p "$DT/.n_s_pr")
         DM_tlt="$DM_tl/${tpe}"
         DC_tlt="$DM_tl/${tpe}/.conf"
