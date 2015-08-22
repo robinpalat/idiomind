@@ -12,7 +12,7 @@ dir="$DC_tlt/practice"
 touch "$dir/log1" "$dir/log2" "$dir/log3"
 
 
-function p_a() {
+function practice_a() {
 
     score() {
         
@@ -143,7 +143,7 @@ function p_a() {
 }
 
 
-function p_b(){
+function practice_b(){
     
     score() {
         
@@ -188,7 +188,8 @@ function p_b(){
         }
 
 
-    ofonts() { 
+    ofonts() {
+        
         while read -r item; do
         echo " <span font_desc='Free Sans Bold ${s}'> $item </span> "
         done <<<"$tmp"
@@ -203,7 +204,7 @@ function p_b(){
         --skip-taskbar --text-align=center --center --on-top \
         --buttons-layout=edge --undecorated \
         --no-headers \
-        --width=380 --height=325 --borders=12 \
+        --width=380 --height=340 --borders=12 \
         --column=Option \
         --button="$(gettext "Exit")":1 \
         --button="$(gettext "OK")":0)
@@ -269,7 +270,7 @@ function p_b(){
 }
 
 
-function p_c() {
+function practice_c() {
 
     score() {
         
@@ -386,7 +387,7 @@ function p_c() {
 }
 
 
-function p_d() {
+function practice_d() {
 
     score() {
         
@@ -426,7 +427,7 @@ function p_d() {
         img="$DM_tls/images/${trgt,,}-0.jpg"
         [ ${#trgt} -gt 10 -o ${#srce} -gt 10 ] && trgt_f_c=14 || trgt_f_c=15
         [ ! -f "$img" ] && img="$DS/practice/images/img_2.jpg"
-        cuest="<span font_desc='Free Sans ${trgt_f_c}'> ${srce} </span>"
+        cuest="<span font_desc='Free Sans Bold ${trgt_f_c}' color='#777777'> ${srce} </span>"
         aswer="<span font_desc='Free Sans Bold ${trgt_f_c}'>${trgt}</span>"
     }
 
@@ -514,7 +515,7 @@ function p_d() {
 }
 
 
-function p_e() {
+function practice_e() {
     
     score() {
         
@@ -835,7 +836,7 @@ practice() {
     ling=0
     f=0
 
-    p_${ttest}
+    practice_${ttest}
     
 }
 
