@@ -56,11 +56,11 @@ function dwld() {
         
         if [ -d "$DT/download/${oname}" ]; then
         
-        ltotal="$(gettext "Total:")"
-        laudio="$(gettext "Audio files:")"
-        limage="$(gettext "Images:")"
-        lfiles="$(gettext "Additional files:")"
-        lothers="$(gettext "Others:")"
+        ltotal="$(gettext "Total=")"
+        laudio="$(gettext "Audio files=")"
+        limage="$(gettext "Images=")"
+        lfiles="$(gettext "Additional files=")"
+        lothers="$(gettext "Others=")"
         tmp="$DT/download/${oname}"
         total=$(find "${tmp}" -maxdepth 5 -type f | wc -l)
         c_audio=$(find "${tmp}" -maxdepth 5 -name '*.mp3' | wc -l)
@@ -151,7 +151,7 @@ usrid="$(grep -o 'usrid="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
 iuser="$(grep -o 'iuser="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
 cntct="$(grep -o 'cntct="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
 if [ -z "$usrid" -o ${#id} -gt 3 ]; then
-b=$(tr -dc a-z < /dev/urandom |head -c 1) # uranium?:D
+b=$(tr -dc a-z < /dev/urandom |head -c 1) # uranium?
 usrid="$b$((RANDOM%1000))"
 usrid=${usrid:0:3}; fi
 [ -z "$iuser" ] && iuser=$USER

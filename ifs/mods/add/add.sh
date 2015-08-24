@@ -514,7 +514,7 @@ function dlg_form_1() {
     yad --form --title="$(gettext "New")" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --separator="\n" \
-    --skip-taskbar --center --on-top \
+    --skip-taskbar --mouse --on-top \
     --align=right --image="$img" \
     --window-icon="$DS/images/icon.png" \
     --width=450 --height=130 --borders=0 \
@@ -531,7 +531,7 @@ function dlg_form_2() {
     yad --form --title="$(gettext "New")" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --separator="\n" \
-    --skip-taskbar --center --on-top \
+    --skip-taskbar --mouse --on-top \
     --align=right --image="$img" \
     --window-icon="$DS/images/icon.png" \
     --width=450 --height=150 --borders=0 \
