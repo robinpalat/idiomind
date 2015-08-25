@@ -10,7 +10,7 @@ function word_view() {
 
     yad --form --title=" " \
     --selectable-labels --quoted-output \
-    --text="$tag<span font_desc='Sans Free 25'>${trgt}</span>\n\n<i>$srce</i>\n\n" \
+    --text="$tag<span font_desc='Sans Free 26'>${trgt}</span>\n\n<i>$srce</i>\n\n" \
     --window-icon="$DS/images/icon.png" \
     --align=left --scroll --skip-taskbar --text-align=center \
     --image-on-top --center --on-top \
