@@ -93,7 +93,7 @@ function dlg_config() {
         [ -f "$DT/cp.lock" ] && rm -f "$DT/cp.lock"
     }
 
-    if [ ! -d "$path" -o ! -n "$path" ]; then path=FALSE; fi
+    if [ ! -d "$path" -o ! -n "$path" ]; then path=/null; fi
     if [ -f "$DM_tl/Podcasts/.conf/feed.err" ]; then
     e="$(head -n 4 < "$DM_tl/Podcasts/.conf/feed.err" |sed 's/\&/\&amp\;/g' |awk '!a[$0]++')"
     rm "$DM_tl/Podcasts/.conf/feed.err"

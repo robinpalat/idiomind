@@ -154,7 +154,7 @@ Create one using the button below. ")" & exit 1; fi
                 fi
             fi
         else
-             xclip -i /dev/null; cleanups "$DT_r"
+            xclip -i /dev/null; cleanups "$DT_r"
             exit 1
         fi
 }
@@ -594,6 +594,7 @@ process() {
     elif [[ ${chk} -gt 180 ]]; then
         
         slt=$(mktemp $DT/slt.XXXX.x)
+        xclip -i /dev/null
         dlg_checklist_3 "$DT_r/sntsls" "${tpe}"
         ret="$?"
     fi

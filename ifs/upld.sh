@@ -56,11 +56,11 @@ function dwld() {
         
         if [ -d "$DT/download/${oname}" ]; then
         
-        ltotal="$(gettext "Total=")"
-        laudio="$(gettext "Audio files=")"
-        limage="$(gettext "Images=")"
-        lfiles="$(gettext "Additional files=")"
-        lothers="$(gettext "Others=")"
+        ltotal="$(gettext "Total")="
+        laudio="$(gettext "Audio files")="
+        limage="$(gettext "Images")="
+        lfiles="$(gettext "Additional files=")="
+        lothers="$(gettext "Others")="
         tmp="$DT/download/${oname}"
         total=$(find "${tmp}" -maxdepth 5 -type f | wc -l)
         c_audio=$(find "${tmp}" -maxdepth 5 -name '*.mp3' | wc -l)
