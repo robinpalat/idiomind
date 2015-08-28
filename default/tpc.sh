@@ -75,12 +75,15 @@ rword=\"0\""
         cp -f "${DC_tlt}/0.cfg" "$HOME/.idiomind/backup/${topic}.bk"; fi
         cd /; fi
         
-        if [[ `< "$DC_s/5.cfg"` != 0 ]]; then
-        echo 0 > "$DC_s/5.cfg"; fi
-        
         if [[ ! -e "$DC_s/5.cfg" ]]; then
         echo 0 > "$DC_s/5.cfg"; fi
         
+        if [[ `< "$DC_s/5.cfg"` != 0 ]]; then
+        echo 0 > "$DC_s/5.cfg"; fi
+
+        if [[ ! -e "$DC_s/9.cfg" ]]; then
+        toch "$DC_s/9.cfg"; fi
+
         if [[ `wc -l < "${DC_tlt}/id.cfg"` -lt 16 ]]; then
         echo -e "${cfgfile}" > "${DC_tlt}/id.cfg"; fi
 

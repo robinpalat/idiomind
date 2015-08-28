@@ -15,78 +15,60 @@ function stats() {
     n=1; c=1
     while [ ${n} -le 21 ]; do
         if [ ${v} -le ${c} ]; then
-        echo ${n} > "${1}"; break; fi
+        echo ${n} > ./.${icon}; break
+        fi
         ((c=c+5))
         let n++
     done
 }
 
-function restart() {
+function score() {
     
-    rm ./"${practice}.lock" ./"${practice}.0" ./"${practice}.1" \
-    ./"${practice}.2" ./"${practice}.3" ./log1 ./log2 ./log3
-    [ -f ./"${practice}.srces" ] && rm ./"${practice}.srces"
-    echo 1 > ./."${icon}"
-    echo 0 > ./"${practice}.l"
-    touch ./log1 ./log2 ./log3 ./.1 ./.2 ./.3
-    "$strt" &
+    [ ! -e ./${practice}.l ] && touch ./${practice}.l
+    if [[ $(($(< ./${practice}.l)+easy)) -ge ${all} ]]; then
+    
+        play "$drts/all.mp3" &
+        echo -e "w9.$(tr -s '\n' '|' < ./${practice}.1).w9\nokp.1.okp" >> "$log"
+        echo "$(date "+%a %d %B")" > ./${practice}.lock
+        echo 21 > .${icon}
+        comp 0 & "$strt" ${icon} ${practice} & exit
+    else
+        [ -e ./${practice}.l ] && \
+        echo $(($(< ./${practice}.l)+easy)) > ./${practice}.l || \
+        echo ${easy} > ./${practice}.l
+        s=$(< ./${practice}.l)
+        v=$((100*s/all))
+        n=1; c=1
+        while [ ${n} -le 21 ]; do
+            if [ ${n} -eq 21 ]; then
+                echo $((n-1)) > .${icon}
+            elif [ ${v} -le ${c} ]; then
+                echo ${n} > .${icon}; break
+            fi
+            ((c=c+5))
+            let n++
+        done
+        comp 1 & stats
+        "$strt" ${_stats} ${practice} ${easy} ${ling} ${hard} & exit
+    fi
 }
-
+    
 function comp() {
 
-    if [ ${practice} != e -a ${1} = 1 ]; then
-    awk '{a[$0]++}END{for(i in a){if(a[i]==2)print i}}' *.1 > ./log1
-        if [ ${step} = 1 ]; then
-            cat *.2 > ./log3
-        elif [ ${step} = 2 ]; then
-            cat *.2 > ./log2
-            cat *.3 > ./log3
-        fi
+    if [ ${1} = 0 ]; then
+        > ./${practice}.2
+        > ./${practice}.3
     fi
-
-    if [[ ${1} = 1 ]]; then
-
-        [ -f ./"${practice}".l ] \
-        && echo $(($(< ./"${practice}".l)+easy)) > ./"${practice}".l || echo "$easy" > ./"${practice}".l
-        v=$((100*$(< ./"${practice}".l)/all))
-        stats ./."${icon}"
-        "$strt" ${_stats} ${practice} ${easy} ${ling} ${hard} &
+    cat *.1 > ./log1
+    if [ ${step} = 1 ]; then
+        cat *.2 > ./log2
+    elif [ ${step} = 2 ]; then
+        cat *.2 > ./log2
+        cat *.3 > ./log3
     fi
-    "$DS/stop.sh" 10
 }
 
 function practice_a() {
-
-    score() {
-        
-        comp 0 &
-
-        ! [ "./a.l" ] && touch ./a.l
-        if [[ $(($(< ./a.l)+${1})) -ge ${all} ]]; then
-            play "$drts/all.mp3" &
-            echo -e "w9.$(tr -s '\n' '|' < ./a.1).w9\nokp.1.okp" >> "$log"
-            echo "$(date "+%a %d %B")" > ./a.lock
-            echo 21 > .1
-            "$strt" 1 a & exit
-            
-        else
-            [ -f ./a.l ] && echo $(($(< ./a.l)+easy)) > ./a.l || echo ${easy} > ./a.l
-            s=$(< ./a.l)
-            v=$((100*s/all))
-            n=1; c=1
-            while [ ${n} -le 21 ]; do
-                if [ ${n} -eq 21 ]; then echo $((n-1)) > .1
-                elif [ ${v} -le ${c} ]; then
-                echo ${n} > .1; break; fi
-                ((c=c+5))
-                let n++
-            done
-
-            if [ -f ./a.3 ]; then
-            echo -e "w6.$(tr -s '\n' '|' < ./a.3).w6" >> "$log"; fi
-            "$strt" 6 a ${easy} ${ling} ${hard} & exit
-        fi
-    }
 
     fonts() {
 
@@ -128,13 +110,13 @@ function practice_a() {
         --button="  $(gettext "I Knew it")  ":2
     }
 
-    step=1
     while read trgt; do
 
         fonts; cuestion
 
         if [ $? = 1 ]; then
-            break & comp 1 && exit
+            ling=${hard}; hard=0
+            break & score && exit
             
         else
             answer
@@ -153,7 +135,7 @@ function practice_a() {
 
     if [ ! -f ./a.2 ]; then
 
-        score ${easy}
+        score
         
     step=2
     else
@@ -162,7 +144,7 @@ function practice_a() {
             fonts; cuestion
             
             if [ $? = 1 ]; then
-                break & comp 1 && exit
+                break & score && exit
             
             else
                 answer
@@ -177,46 +159,14 @@ function practice_a() {
                 fi
             fi
         done < ./a.2
-
-        score ${easy}
+        score
     fi
 }
 
 
 function practice_b(){
-    
-    score() {
-        
-        comp 0 &
-        
-        ! [ "./b.l" ] && touch ./b.l
-        if [[ $(($(< ./b.l)+${1})) -ge ${all} ]]; then
-            play "$drts/all.mp3" &
-            echo -e "w9.$(tr -s '\n' '|' < ./b.1).w9\nokp.1.okp" >> "$log"
-            echo "$(date "+%a %d %B")" > ./b.lock
-            echo 21 > .2
-            "$strt" 2 b & exit
-            
-        else
-            [ -f ./b.l ] && echo $(($(< ./b.l)+easy)) > ./b.l || echo ${easy} > ./b.l
-            s=$(< ./b.l)
-            v=$((100*s/all))
-            n=1; c=1
-            while [ ${n} -le 21 ]; do
-                if [ ${n} -eq 21 ]; then echo $((n-1)) > ./.2
-                elif [ ${v} -le ${c} ]; then
-                echo ${n} > ./.2; break; fi
-                ((c=c+5))
-                let n++
-            done
 
-            if [ -f ./b.3 ]; then
-            echo -e "w6.$(tr -s '\n' '|' < ./b.3).w6" >> "$log"; fi
-            "$strt" 7 b ${easy} ${ling} ${hard} & exit
-        fi
-    }
-
-
+    snd="$drts/no.mp3"
     fonts() {
 
         item="$(grep -F -m 1 "trgt={${trgt}}" "${cfg0}" |sed 's/},/}\n/g')"
@@ -227,15 +177,13 @@ function practice_b(){
         cuestion="\n<span font_desc='Free Sans ${srce_s}' color='#636363'><b>${trgt}</b></span>\n\n"
         }
 
-
     ofonts() {
         
         while read -r item; do
         echo " <span font_desc='Free Sans Bold ${s}'> $item </span> "
         done <<<"$tmp"
         }
-
-
+        
     mchoise() {
         
         dlg=$(ofonts | yad --list --title="$(gettext "Practice")" \
@@ -250,7 +198,7 @@ function practice_b(){
         --button="$(gettext "OK")":0)
     }
 
-    step=1, P=5; s=11
+    P=5; s=11
     while read trgt; do
 
         fonts; mchoise
@@ -269,14 +217,15 @@ function practice_b(){
             fi  
                 
         elif [ $? = 1 ]; then
-            break & comp 1 && exit
+            ling=${hard}; hard=0
+            break & score && exit
         fi
         
     done < ./b.tmp
         
     if [ ! -f ./b.2 ]; then
 
-        score ${easy}
+        score
         
     else
         step=2; P=2; s=12
@@ -296,48 +245,16 @@ function practice_b(){
                 fi
 
             elif [ $? = 1 ]; then
-                break & comp 1 && exit
+                break & score && exit
             fi
             
         done < ./b.2
-        
-        score ${easy}
+        score
     fi
 }
 
 
 function practice_c() {
-
-    score() {
-        
-        comp 0 &
-        
-        ! [ "./c.l" ] && touch ./c.l
-        if [[ $(($(< ./c.l)+${1})) -ge ${all} ]]; then
-            play "$drts/all.mp3" &
-            echo -e "w9.$(tr -s '\n' '|' < ./c.1).w9\nokp.1.okp" >> "$log"
-            echo "$(date "+%a %d %B")" > ./c.lock
-            echo 21 > .3
-            "$strt" 3 c & exit
-            
-        else
-            [ -f ./c.l ] && echo $(($(< ./c.l)+easy)) > ./c.l || echo ${easy} > ./c.l
-            s=$(< ./c.l)
-            v=$((100*s/all))
-            n=1; c=1
-            while [ ${n} -le 21 ]; do
-                if [ ${n} -eq 21 ]; then echo $((n-1)) > ./.3
-                elif [ ${v} -le ${c} ]; then
-                echo ${n} > ./.3; break; fi
-                ((c=c+5))
-                let n++
-            done
-            
-            if [ -f ./c.3 ]; then
-            echo -e "w6.$(tr -s '\n' '|' < ./c.3).w6" >> "$log"; fi
-            "$strt" 8 c ${easy} ${ling} ${hard} & exit
-        fi
-    }
 
     fonts() {
         
@@ -371,8 +288,7 @@ function practice_c() {
         --button="  $(gettext "Yes")  ":2
         }
 
-
-    step=1; p=1
+    p=1
     while read trgt; do
 
         fonts; cuestion
@@ -387,13 +303,14 @@ function practice_c() {
             hard=$((hard+1))
 
         elif [ ${ans} = 1 ]; then
-            break & comp 1 && exit
+            ling=${hard}; hard=0
+            break & score && exit
         fi
     done < ./c.tmp
 
     if [ ! -f ./c.2 ]; then
 
-        score ${easy}
+        score
         
     else
         step=2; p=2
@@ -410,47 +327,15 @@ function practice_c() {
                 echo "${trgt}" >> c.3
 
             elif [ ${ans} = 1 ]; then
-                break & comp 1 && exit
+                break & score && exit
             fi
         done < ./c.2
-        
-        score ${easy}
+        score
     fi
 }
 
 
 function practice_d() {
-
-    score() {
-        
-        comp 0 &
-
-        ! [ "./d.l" ] && touch ./d.l
-        if [[ $(($(< ./d.l)+${1})) -ge ${all} ]]; then
-            play "$drts/all.mp3" &
-            echo -e "w9.$(tr -s '\n' '|' < ./d.1).w9\nokp.1.okp" >> "$log"
-            echo "$(date "+%a %d %B")" > ./d.lock
-            echo 21 > .4
-            "$strt" 4 d & exit
-            
-        else
-            [ -f ./d.l ] && echo $(($(< ./d.l)+easy)) > ./d.l || echo ${easy} > ./d.l
-            s=$(< ./d.l)
-            v=$((100*s/all))
-            n=1; c=1
-            while [ ${n} -le 21 ]; do
-                if [ ${n} -eq 21 ]; then echo $((n-1)) > ./.4
-                elif [ ${v} -le ${c} ]; then
-                echo ${n} > ./.4; break; fi
-                ((c=c+5))
-                let n++
-            done
-
-            if [ -f ./d.3 ]; then
-            echo -e "w6.$(tr -s '\n' '|' < ./d.3).w9" >> "$log"; fi
-            "$strt" 9 d ${easy} ${ling} ${hard} & exit
-        fi
-    }
 
     fonts() {
         
@@ -488,13 +373,13 @@ function practice_d() {
         --button="  $(gettext "I Knew it")  ":2
     }
     
-    step=1
     while read -r trgt; do
 
         fonts; cuestion
         
         if [ $? = 1 ]; then
-            break & comp 1 && exit
+            ling=${hard}; hard=0
+            break & score && exit
             
         else
             answer
@@ -513,17 +398,17 @@ function practice_d() {
     done < ./d.tmp
 
     if [ ! -f ./d.2 ]; then
-
-        score ${easy}
     
-    step=2
+        score
+        
     else
+        step=2
         while read -r trgt; do
 
             fonts; cuestion
 
             if [ $? = 1 ]; then
-                break & comp 1 && exit
+                break & score && exit
 
             else
                 answer
@@ -539,40 +424,12 @@ function practice_d() {
             fi
             
         done < ./d.2
-        
-        score ${easy}
+        score
     fi
 }
 
 
 function practice_e() {
-    
-    score() {
-        
-        comp 0 &
-
-        if [[ ${1} -ge ${all} ]]; then
-            play "$drts/all.mp3" &
-            echo -e "s9.$(tr -s '\n' '|' < ./e.1).s9\nokp.1.okp" >> "$log"
-            echo "$(date "+%a %d %B")" > ./e.lock
-            echo 21 > .5
-            "$strt" 5 e & exit
-            
-        else
-            [ -f ./e.l ] && echo $(($(< ./e.l)+easy)) > ./e.l || echo ${easy} > ./e.l
-            s=$(< ./e.l)
-            v=$((100*s/all))
-            n=1; c=1
-            while [ ${n} -le 21 ]; do
-                if [ ${n} -eq 21 ]; then echo $((n-1)) > ./.5
-                elif [ ${v} -le ${c} ]; then
-                echo ${n} > ./.5; break; fi
-                ((c=c+5))
-                let n++
-            done
-            "$strt" 10 e ${easy} ${ling} ${hard} & exit
-        fi
-    }
 
     dialog2() {
 
@@ -627,7 +484,6 @@ function practice_e() {
         [ ${#trgt} -le 80 ] && sz=12
         chk=`echo "${trgt}" | awk '{print tolower($0)}'`
         }
-
 
     clean() {
         sed 's/ /\n/g' \
@@ -703,7 +559,7 @@ function practice_e() {
         if [[ $ret = 1 ]]; then
             break &
             killall play
-            comp 1 && exit
+            score && exit
         else
             killall play &
             result "${trgt}"
@@ -716,7 +572,7 @@ function practice_e() {
             break &
             killall play &
             rm -f ./mtch.tmp ./words.tmp
-            comp 1 && exit
+            score && exit
             
         elif [[ $ret -eq 2 ]]; then
             killall play &
@@ -724,8 +580,7 @@ function practice_e() {
         fi
 
     done < ./e.tmp
-
-    score ${easy}
+    score
 }
 
 
@@ -796,21 +651,34 @@ get_list() {
 }
 
 lock() {
-    
-    yad --title="$(gettext "Practice Completed")" \
-    --text="<b>$(gettext "Practice Completed")</b>\\n   $(< "$1")\n " \
-    --window-icon="$DS/images/icon.png" --on-top --skip-taskbar \
-    --center --image="$DS/practice/images/21.png" \
-    --width=400 --height=130 --borders=5 \
-    --button="    $(gettext "Restart")    ":0 \
-    --button="    $(gettext "Ok")    ":2
+
+    if [ -f "$dir/${practice}.lock" ]; then
+
+        info="$dir/${practice}.lock"
+        yad --title="$(gettext "Practice Completed")" \
+        --text="<b>$(gettext "Practice Completed")</b>\\n   $(< "$info")\n " \
+        --window-icon="$DS/images/icon.png" --on-top --skip-taskbar \
+        --center --image="$DS/practice/images/21.png" \
+        --width=400 --height=130 --borders=5 \
+        --button="    $(gettext "Restart")    ":0 \
+        --button="    $(gettext "Ok")    ":2
+        
+        if [ $? -eq 0 ]; then
+            rm ./${practice}.lock ./${practice}.0 ./${practice}.1 \
+            ./${practice}.2 ./${practice}.3
+            [ -f ./${practice}.srces ] && rm ./${practice}.srces
+            echo 1 > ./.${icon}; echo 0 > ./${practice}.l
+        fi
+        "$strt" & exit
+    fi
 }
 
 starting() {
     
     yad --title="$1" \
     --text=" $1.\n" --image=info \
-    --window-icon="$DS/images/icon.png" --skip-taskbar --center --on-top \
+    --window-icon="$DS/images/icon.png" \
+    --skip-taskbar --center --on-top \
     --width=400 --height=130 --borders=5 \
     --button="    $(gettext "Ok")    ":1
     "$strt" & exit 1
@@ -818,31 +686,21 @@ starting() {
 
 practice() {
 
-    cd "$DC_tlt/practice"
+    cd "${DC_tlt}/practice"
     practice="${1}"
     [[ $practice = a ]] && icon=1 && _stats=6
     [[ $practice = b ]] && icon=2 && _stats=7
     [[ $practice = c ]] && icon=3 && _stats=8
     [[ $practice = d ]] && icon=4 && _stats=9
     [[ $practice = e ]] && icon=5 && _stats=10
-
-    if [ -f "$dir/${practice}.lock" ]; then
     
-        lock "$dir/${practice}.lock"
-        if [ $? -eq 0 ]; then
-        restart
-        else
-        "$strt" & exit
-        fi
-    fi
-
+    lock
     if [ -f "$dir/${practice}.0" -a -f "$dir/${practice}.1" ]; then
     
-        grep -Fxvf  "$dir/${practice}.1" "$dir/${practice}.0" > "$dir/${practice}.tmp"
+        grep -Fxvf "$dir/${practice}.1" "$dir/${practice}.0" > "$dir/${practice}.tmp"
         if [[ "$(egrep -cv '#|^$' < "$dir/${practice}.tmp")" = 0 ]]; then
-        lock "$dir/${practice}.lock" & exit; fi
+        lock && exit; fi
         echo " practice --restarting session"
-        
     else
         get_list
         cp -f "$dir/${practice}.0" "$dir/${practice}.tmp"
@@ -854,20 +712,14 @@ practice() {
     
     [ -f "$dir/${practice}.2" ] && rm "$dir/${practice}.2"
     [ -f "$dir/${practice}.3" ] && rm "$dir/${practice}.3"
-    
-    drtt="$DM_tlt"
     drts="$DS/practice"
-    strt="$drts/strt.sh"
-    snd="$drts/no.mp3"
-    cd "$DC_tlt/practice"
-    drtt="$DM_tlt/images"
     cd "$DC_tlt/practice"
     all=$(egrep -cv '#|^$' ./${practice}.0)
     hits="$(gettext "hits")"
-    listen="Listen"
     easy=0
     hard=0
     ling=0
+    step=1
     f=0
     practice_${practice}
 }

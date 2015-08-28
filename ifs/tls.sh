@@ -903,9 +903,9 @@ colorize() {
     cfg5="${DC_tlt}/5.cfg"
     cfg6="${DC_tlt}/6.cfg"
     cd "${DC_tlt}/practice"
-    log3="$(cat ./log3 ./e.3)"
-    log2="$(cat ./log2 ./e.2)"
-    log1="$(cat ./log1 ./e.1)"
+    log3="$(cat ./log3)"
+    log2="$(cat ./log2)"
+    log1="$(cat ./log1)"
     export cfg1 cfg5 cfg6 log1 \
     log2 log3 img0 img1 img2 img3
     cd / 
@@ -935,10 +935,10 @@ while n < len(items):
         i=item
     if item in log3:
         f.write("FALSE\n"+i+"\n"+img3+"\n")
-    elif item in log1:
-        f.write("FALSE\n"+i+"\n"+img1+"\n")
     elif item in log2:
         f.write("FALSE\n"+i+"\n"+img2+"\n")
+    elif item in log1:
+        f.write("FALSE\n"+i+"\n"+img1+"\n")
     else:
         f.write("FALSE\n"+i+"\n"+img0+"\n")
     n += 1
