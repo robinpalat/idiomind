@@ -503,8 +503,7 @@ function practice_e() {
         fi
         
         echo "${chk}" > ./chk.tmp
-        while read -r line; do
-        
+        for line in `sed 's/ /\n/g' <<<"$out"`; do
             if grep -Fxq "${line}" <<<"$in"; then
                 sed -i "s/"${line}"/<b>"${line}"<\/b>/g" ./chk.tmp
                 [ -n "${line}" ] && echo \
@@ -514,17 +513,12 @@ function practice_e() {
                 [ -n "${line}" ] && echo \
                 "<span color='#7B4A44'><b>${line^}</b></span>  " >> ./words.tmp
             fi
-            
-        done < <(sed 's/ /\n/g' <<<"$out")
+        done
         
         OK=$(tr '\n' ' ' < ./words.tmp)
-        
         sed 's/ /\n/g' < ./chk.tmp > ./all.tmp; touch ./mtch.tmp
-        
-        val1=$(wc -l < ./mtch.tmp); val2=$(wc -l <<<"$out")
-        
-        yad --text="$val1 ... $val2"
-        
+        val1=$(cat ./mtch.tmp | wc -l)
+        val2=$(wc -l < ./all.tmp)
         porc=$((100*val1/val2))
         
         if [ ${porc} -ge 70 ]; then
