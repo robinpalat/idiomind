@@ -174,10 +174,12 @@ new_sentence() {
         internet
         cd "$DT_r"
         if [ "$ttrgt" = TRUE ]; then
-        trgt="$(translate "${trgt}" auto "$lgt")"
+        trgt="$(translate "${trgt,,}" auto "$lgt")"
         trgt=$(clean_2 "${trgt}"); fi
-        srce="$(translate "${trgt}" $lgt $lgs)"
+        srce="$(translate "${trgt,,}" $lgt $lgs)"
         srce="$(clean_2 "${srce}")"
+        trgt="${trgt^}"
+        srce="${srce^}"
         
     else 
         if [ -z "${4}" -o -z "${2}" ]; then

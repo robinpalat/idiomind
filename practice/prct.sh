@@ -518,8 +518,14 @@ function practice_e() {
         done < <(sed 's/ /\n/g' <<<"$out")
         
         OK=$(tr '\n' ' ' < ./words.tmp)
+        
         sed 's/ /\n/g' < ./chk.tmp > ./all.tmp; touch ./mtch.tmp
-        porc=$((100*$(wc -l < ./mtch.tmp)/$(wc -l <<<"$out")))
+        
+        val1=$(wc -l < ./mtch.tmp); val2=$(wc -l <<<"$out")
+        
+        yad --text="$val1 ... $val2"
+        
+        porc=$((100*val1/val2))
         
         if [ ${porc} -ge 70 ]; then
             echo "${trgt}" >> ./e.1
