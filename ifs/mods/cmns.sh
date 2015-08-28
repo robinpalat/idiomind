@@ -39,6 +39,8 @@ function msg_2() {
     "$btn3" --button="$4":1 --button="$3":0
 }
 
+numer='^[0-9]+$'
+
 function nmfile() {
     echo -n "${1}" | md5sum | rev | cut -c 4- | rev
 }
@@ -113,6 +115,7 @@ function calculate_review() {
     
     DC_tlt="$DM_tl/${1}/.conf"
     dts=$(sed '/^$/d' < "${DC_tlt}/9.cfg" | wc -l)
+    
     if [ ${dts} = 1 ]; then
     dte=$(sed -n 1p "${DC_tlt}/9.cfg")
     adv="<b>  6 $cuestion_review </b>"
@@ -121,34 +124,48 @@ function calculate_review() {
     tdays=6
     elif [ ${dts} = 2 ]; then
     dte=$(sed -n 2p "${DC_tlt}/9.cfg")
+    adv="<b>  6 $cuestion_review </b>"
+    TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+    RM=$((100*TM/6))
+    tdays=6
+    elif [ ${dts} = 3 ]; then
+    dte=$(sed -n 3p "${DC_tlt}/9.cfg")
     adv="<b>  10 $cuestion_review </b>"
     TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
     RM=$((100*TM/10))
     tdays=10
-    elif [ ${dts} = 3 ]; then
-    dte=$(sed -n 3p "${DC_tlt}/9.cfg")
+    elif [ ${dts} = 4 ]; then
+    dte=$(sed -n 4p "${DC_tlt}/9.cfg")
     adv="<b>  15 $cuestion_review </b>"
     TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
     RM=$((100*TM/15))
     tdays=15
-    elif [ ${dts} = 4 ]; then
-    dte=$(sed -n 4p "${DC_tlt}/9.cfg")
+    elif [ ${dts} = 5 ]; then
+    dte=$(sed -n 5p "${DC_tlt}/9.cfg")
     adv="<b>  20 $cuestion_review </b>"
     TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
     RM=$((100*TM/20))
     tdays=20
-    elif [ ${dts} = 5 ]; then
-    dte=$(sed -n 5p "${DC_tlt}/9.cfg")
+    elif [ ${dts} = 6 ]; then
+    dte=$(sed -n 6p "${DC_tlt}/9.cfg")
     adv="<b>  30 $cuestion_review </b>"
     TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
     RM=$((100*TM/30))
     tdays=30
-    elif [ ${dts} = 6 ]; then
-    dte=$(sed -n 6p "${DC_tlt}/9.cfg")
+    elif [ ${dts} = 7 ]; then
+    dte=$(sed -n 7p "${DC_tlt}/9.cfg")
     adv="<b>  40 $cuestion_review </b>"
     TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
     RM=$((100*TM/40))
     tdays=40
+    elif [ ${dts} = 8 ]; then
+    dte=$(sed -n 8p "${DC_tlt}/9.cfg")
+    adv="<b>  60 $cuestion_review </b>"
+    TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+    RM=$((100*TM/60))
+    tdays=60
     fi
     return ${RM}
 }
+
+

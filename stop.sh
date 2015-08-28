@@ -97,6 +97,14 @@ on_play3() {
     exit
 }
 
+on_practice() {
+    
+    dir="/usr/share/idiomind/practice"
+    if ps -A | pgrep -f "$dir/prct.sh"; then killall "$dir/prct.sh" & fi
+    if ps -A | pgrep -f play; then  killall play & fi
+    exit
+}
+
 case $1 in
     1)
     on_quit ;;
@@ -116,4 +124,6 @@ case $1 in
     on_play2 ;;
     9)
     on_play3 ;;
+    10)
+    on_practice ;;
 esac

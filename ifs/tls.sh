@@ -26,7 +26,7 @@ function check_format_1() {
     'nword' 'nsent' 'nimag' 'naudi' 'nsize' \
     'level' 'set_1' 'set_2' 'set_3' 'set_4' )
     file="${1}"
-    nu='^[0-9]+$'
+
     
     invalid() {
         exit=1
@@ -61,14 +61,14 @@ function check_format_1() {
             if ! [[ ${val} =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] \
             || [ ${#val} -gt 12 ]; then invalid 8; fi; fi
         elif [[ ${n} = 12 || ${n} = 13 || ${n} = 14 ]]; then
-            if ! [[ $val =~ $nu ]] || [ ${val} -gt 200 ]; then invalid 9; fi
+            if ! [[ $val =~ $numer ]] || [ ${val} -gt 200 ]; then invalid 9; fi
         elif [[ ${n} = 15 ]]; then
-             if ! [[ $val =~ $nu ]] || [ ${val} -gt 1000 ]; then invalid 10; fi
+             if ! [[ $val =~ $numer ]] || [ ${val} -gt 1000 ]; then invalid 10; fi
         elif [[ ${n} = 16 ]]; then
              if [ "$(grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${val}")" ] || \
              [ ${#val} -gt 9 ]; then invalid 11; fi
         elif [[ ${n} = 17 ]]; then
-            if ! [[ $val =~ $nu ]] || [ ${#val} -gt 2 ]; then invalid 12; fi
+            if ! [[ $val =~ $numer ]] || [ ${#val} -gt 2 ]; then invalid 12; fi
         fi
         export ${sets[$n]}="${val}"
         let n++

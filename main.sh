@@ -381,11 +381,11 @@ panel() {
     new_session; fi
     
     if [ -e "$DC_s/10.cfg" ]; then
-    nu='^[0-9]+$'
+
     x=$(($(sed -n 2p "$DC_s/10.cfg")/2))
     y=$(($(sed -n 3p "$DC_s/10.cfg")/2)); fi
-    if ! [[ ${x} =~ $nu ]]; then x=100; fi
-    if ! [[ ${y} =~ $nu ]]; then y=100; fi
+    if ! [[ ${x} =~ $numer ]]; then x=100; fi
+    if ! [[ ${y} =~ $numer ]]; then y=100; fi
     
     if [ "$(grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg")" = TRUE ] \
     && [ ! -e /tmp/.clipw ]; then "$DS/ifs/mods/clipw.sh" & fi
@@ -396,7 +396,7 @@ panel() {
     yad --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
     --always-print-result \
-    --window-icon=idiomind \
+    --window-icon="$DS/images/icon.png" \
     --form --fixed --on-top --no-buttons --align=center \
     --width=140 --height=190 --borders=0 --geometry=130x190-${x}-${y} \
     --field=gtk-new:btn "$DS/add.sh 'new_items'" \

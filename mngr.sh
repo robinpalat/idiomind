@@ -602,10 +602,11 @@ mark_to_learn_topic() {
 
     (echo "5"
     stts=$(sed -n 1p "${DC_tlt}/8.cfg")
+    ! [[ ${stts} =~ ${numer} ]] && stts=1
+    
     calculate_review "${tpc}"
     
     if [ $((stts%2)) = 0 ]; then
-
         echo 6 > "${DC_tlt}/8.cfg"
             
     else
@@ -664,21 +665,25 @@ mark_as_learned_topic() {
     
     (echo "5"
     stts=$(sed -n 1p "${DC_tlt}/8.cfg")
+    ! [[ ${stts} =~ ${numer} ]] && stts=1
 
     if [ ! -f "${DC_tlt}/7.cfg" ]; then
         if [ -f "${DC_tlt}/9.cfg" ]; then
         
             calculate_review "${tpc}"
             steps=$(egrep -cv '#|^$' < "${DC_tlt}/9.cfg")
+            ! [[ ${steps} =~ ${numer} ]] && steps=1
             
             if [ ${steps} -eq 4 ]; then
-            
                 stts=$((stts+1)); fi
             
             if [ ${RM} -ge 50 ]; then
             
-                if [ ${steps} -eq 6 ]; then
-                dts="$(head -5 < "${DC_tlt}/9.cfg")"
+                if [ ${steps} -eq 8 ]; then
+                sed -i '$ d' "${DC_tlt}/9.cfg"
+                echo "$(date +%m/%d/%Y)" >> "${DC_tlt}/9.cfg"
+                elif [ ${steps} -gt 8 ]; then
+                dts="$(head -7 < "${DC_tlt}/9.cfg")"
                 echo -e "${dts}\n$(date +%m/%d/%Y)" > "${DC_tlt}/9.cfg"
                 else
                 echo "$(date +%m/%d/%Y)" >> "${DC_tlt}/9.cfg"

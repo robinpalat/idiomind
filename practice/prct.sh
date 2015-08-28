@@ -2,7 +2,6 @@
 # -*- ENCODING: UTF-8 -*-
 
 strt="$DS/practice/strt.sh"
-cls="$DS/practice/cls.sh"
 log="$DC_s/log"
 cfg0="$DC_tlt/0.cfg"
 cfg1="$DC_tlt/1.cfg"
@@ -11,13 +10,58 @@ cfg4="$DC_tlt/4.cfg"
 dir="$DC_tlt/practice"
 touch "$dir/log1" "$dir/log2" "$dir/log3"
 
+function stats() {
+    
+    n=1; c=1
+    while [ ${n} -le 21 ]; do
+        if [ ${v} -le ${c} ]; then
+        echo ${n} > "${1}"; break; fi
+        ((c=c+5))
+        let n++
+    done
+}
+
+function restart() {
+    
+    rm ./"${practice}.lock" ./"${practice}.0" ./"${practice}.1" \
+    ./"${practice}.2" ./"${practice}.3" ./log1 ./log2 ./log3
+    [ -f ./"${practice}.srces" ] && rm ./"${practice}.srces"
+    echo 1 > ./."${icon}"
+    echo 0 > ./"${practice}.l"
+    touch ./log1 ./log2 ./log3 ./.1 ./.2 ./.3
+    "$strt" &
+}
+
+function comp() {
+
+    if [ ${practice} != e -a ${1} = 1 ]; then
+    awk '{a[$0]++}END{for(i in a){if(a[i]==2)print i}}' *.1 > ./log1
+        if [ ${step} = 1 ]; then
+            cat *.2 > ./log3
+        elif [ ${step} = 2 ]; then
+            cat *.2 > ./log2
+            cat *.3 > ./log3
+        fi
+    fi
+
+    if [[ ${1} = 1 ]]; then
+
+        [ -f ./"${practice}".l ] \
+        && echo $(($(< ./"${practice}".l)+easy)) > ./"${practice}".l || echo "$easy" > ./"${practice}".l
+        v=$((100*$(< ./"${practice}".l)/all))
+        stats ./."${icon}"
+        "$strt" ${_stats} ${practice} ${easy} ${ling} ${hard} &
+    fi
+    "$DS/stop.sh" 10
+}
 
 function practice_a() {
 
     score() {
         
-        "$drts"/cls.sh comp a &
+        comp 0 &
 
+        ! [ "./a.l" ] && touch ./a.l
         if [[ $(($(< ./a.l)+${1})) -ge ${all} ]]; then
             play "$drts/all.mp3" &
             echo -e "w9.$(tr -s '\n' '|' < ./a.1).w9\nokp.1.okp" >> "$log"
@@ -31,16 +75,15 @@ function practice_a() {
             v=$((100*s/all))
             n=1; c=1
             while [ ${n} -le 21 ]; do
-                if [ ${n} -eq 21 ]; then echo $((n-1)) > ./.1
+                if [ ${n} -eq 21 ]; then echo $((n-1)) > .1
                 elif [ ${v} -le ${c} ]; then
-                echo ${n} > ./.1; break; fi
+                echo ${n} > .1; break; fi
                 ((c=c+5))
                 let n++
             done
 
             if [ -f ./a.3 ]; then
             echo -e "w6.$(tr -s '\n' '|' < ./a.3).w6" >> "$log"; fi
-            
             "$strt" 6 a ${easy} ${ling} ${hard} & exit
         fi
     }
@@ -85,15 +128,13 @@ function practice_a() {
         --button="  $(gettext "I Knew it")  ":2
     }
 
-
+    step=1
     while read trgt; do
 
-        fonts
-        cuestion
+        fonts; cuestion
 
         if [ $? = 1 ]; then
-            break &
-            "$drts"/cls.sh comp a ${easy} ${ling} ${hard} ${all} & exit
+            break & comp 1 && exit
             
         else
             answer
@@ -114,15 +155,14 @@ function practice_a() {
 
         score ${easy}
         
+    step=2
     else
         while read trgt; do
 
-            fonts
-            cuestion
+            fonts; cuestion
             
             if [ $? = 1 ]; then
-                break &
-                "$drts"/cls.sh comp a ${easy} ${ling} ${hard} ${all} & exit
+                break & comp 1 && exit
             
             else
                 answer
@@ -147,8 +187,9 @@ function practice_b(){
     
     score() {
         
-        "$drts"/cls.sh comp b &
-
+        comp 0 &
+        
+        ! [ "./b.l" ] && touch ./b.l
         if [[ $(($(< ./b.l)+${1})) -ge ${all} ]]; then
             play "$drts/all.mp3" &
             echo -e "w9.$(tr -s '\n' '|' < ./b.1).w9\nokp.1.okp" >> "$log"
@@ -171,7 +212,6 @@ function practice_b(){
 
             if [ -f ./b.3 ]; then
             echo -e "w6.$(tr -s '\n' '|' < ./b.3).w6" >> "$log"; fi
-            
             "$strt" 7 b ${easy} ${ling} ${hard} & exit
         fi
     }
@@ -210,11 +250,10 @@ function practice_b(){
         --button="$(gettext "OK")":0)
     }
 
-    P=5; s=11
+    step=1, P=5; s=11
     while read trgt; do
 
-        fonts
-        mchoise
+        fonts; mchoise
 
         if [ $? = 0 ]; then
 
@@ -230,8 +269,7 @@ function practice_b(){
             fi  
                 
         elif [ $? = 1 ]; then
-            break &
-            "$drts"/cls.sh comp b ${easy} ${ling} ${hard} ${all} & exit
+            break & comp 1 && exit
         fi
         
     done < ./b.tmp
@@ -241,11 +279,10 @@ function practice_b(){
         score ${easy}
         
     else
-        P=2; s=12
+        step=2; P=2; s=12
         while read trgt; do
 
-            fonts
-            mchoise
+            fonts; mchoise
             
             if [ $? = 0 ]; then
             
@@ -259,8 +296,7 @@ function practice_b(){
                 fi
 
             elif [ $? = 1 ]; then
-                break &
-                "$drts"/cls.sh comp b ${easy} ${ling} ${hard} ${all} & exit
+                break & comp 1 && exit
             fi
             
         done < ./b.2
@@ -274,8 +310,9 @@ function practice_c() {
 
     score() {
         
-        "$drts"/cls.sh comp c &
-
+        comp 0 &
+        
+        ! [ "./c.l" ] && touch ./c.l
         if [[ $(($(< ./c.l)+${1})) -ge ${all} ]]; then
             play "$drts/all.mp3" &
             echo -e "w9.$(tr -s '\n' '|' < ./c.1).w9\nokp.1.okp" >> "$log"
@@ -298,7 +335,6 @@ function practice_c() {
             
             if [ -f ./c.3 ]; then
             echo -e "w6.$(tr -s '\n' '|' < ./c.3).w6" >> "$log"; fi
-            
             "$strt" 8 c ${easy} ${ling} ${hard} & exit
         fi
     }
@@ -336,11 +372,10 @@ function practice_c() {
         }
 
 
-    p=1
+    step=1; p=1
     while read trgt; do
 
-        fonts 
-        cuestion
+        fonts; cuestion
         ans="$?"
         
         if [ ${ans} = 2 ]; then
@@ -352,8 +387,7 @@ function practice_c() {
             hard=$((hard+1))
 
         elif [ ${ans} = 1 ]; then
-            break &
-            "$drts"/cls.sh comp c ${easy} ${ling} ${hard} ${all} & exit
+            break & comp 1 && exit
         fi
     done < ./c.tmp
 
@@ -362,11 +396,10 @@ function practice_c() {
         score ${easy}
         
     else
-        p=2
+        step=2; p=2
         while read trgt; do
 
-            fonts
-            cuestion
+            fonts; cuestion
             ans="$?"
               
             if [ ${ans} = 2 ]; then
@@ -377,8 +410,7 @@ function practice_c() {
                 echo "${trgt}" >> c.3
 
             elif [ ${ans} = 1 ]; then
-                break &
-                "$drts"/cls.sh comp c ${easy} ${ling} ${hard} ${all} & exit
+                break & comp 1 && exit
             fi
         done < ./c.2
         
@@ -391,8 +423,9 @@ function practice_d() {
 
     score() {
         
-        "$drts"/cls.sh comp d &
+        comp 0 &
 
+        ! [ "./d.l" ] && touch ./d.l
         if [[ $(($(< ./d.l)+${1})) -ge ${all} ]]; then
             play "$drts/all.mp3" &
             echo -e "w9.$(tr -s '\n' '|' < ./d.1).w9\nokp.1.okp" >> "$log"
@@ -415,7 +448,6 @@ function practice_d() {
 
             if [ -f ./d.3 ]; then
             echo -e "w6.$(tr -s '\n' '|' < ./d.3).w9" >> "$log"; fi
-            
             "$strt" 9 d ${easy} ${ling} ${hard} & exit
         fi
     }
@@ -455,15 +487,14 @@ function practice_d() {
         --button="  $(gettext "I did not know it")  ":3 \
         --button="  $(gettext "I Knew it")  ":2
     }
-
+    
+    step=1
     while read -r trgt; do
 
-        fonts
-        cuestion
+        fonts; cuestion
         
         if [ $? = 1 ]; then
-            break &
-            "$drts"/cls.sh comp d ${easy} ${ling} ${hard} ${all} & exit
+            break & comp 1 && exit
             
         else
             answer
@@ -484,16 +515,15 @@ function practice_d() {
     if [ ! -f ./d.2 ]; then
 
         score ${easy}
-        
+    
+    step=2
     else
         while read -r trgt; do
 
-            fonts
-            cuestion
+            fonts; cuestion
 
             if [ $? = 1 ]; then
-                break &
-                "$drts"/cls.sh comp d ${easy} ${ling} ${hard} ${all} & exit
+                break & comp 1 && exit
 
             else
                 answer
@@ -519,7 +549,7 @@ function practice_e() {
     
     score() {
         
-        "$drts"/cls.sh comp d &
+        comp 0 &
 
         if [[ ${1} -ge ${all} ]]; then
             play "$drts/all.mp3" &
@@ -540,7 +570,6 @@ function practice_e() {
                 ((c=c+5))
                 let n++
             done
-
             "$strt" 10 e ${easy} ${ling} ${hard} & exit
         fi
     }
@@ -674,7 +703,7 @@ function practice_e() {
         if [[ $ret = 1 ]]; then
             break &
             killall play
-            "$drts"/cls.sh comp e ${easy} ${ling} ${hard} ${all} & exit
+            comp 1 && exit
         else
             killall play &
             result "${trgt}"
@@ -687,7 +716,7 @@ function practice_e() {
             break &
             killall play &
             rm -f ./mtch.tmp ./words.tmp
-            "$drts"/cls.sh comp e ${easy} ${ling} ${hard} ${all} & exit
+            comp 1 && exit
             
         elif [[ $ret -eq 2 ]]; then
             killall play &
@@ -702,19 +731,19 @@ function practice_e() {
 
 get_list() {
     
-    if [ $ttest = a -o $ttest = b -o $ttest = c ]; then
+    if [ $practice = a -o $practice = b -o $practice = c ]; then
     
-        > "$dir/${ttest}.0"
+        > "$dir/${practice}.0"
         if [[ `wc -l < "${cfg4}"` -gt 0 ]]; then
 
-            grep -Fvx -f "${cfg4}" "${cfg1}" > "$DT/${ttest}.0"
-            tac "$DT/${ttest}.0" |sed '/^$/d' > "$dir/${ttest}.0"
-            rm -f "$DT/${ttest}.0"
+            grep -Fvx -f "${cfg4}" "${cfg1}" > "$DT/${practice}.0"
+            tac "$DT/${practice}.0" |sed '/^$/d' > "$dir/${practice}.0"
+            rm -f "$DT/${practice}.0"
         else
-            tac "${cfg1}" |sed '/^$/d' > "$dir/${ttest}.0"
+            tac "${cfg1}" |sed '/^$/d' > "$dir/${practice}.0"
         fi
         
-        if [ $ttest = b ]; then
+        if [ $practice = b ]; then
         
             if [ ! -f "$dir/b.srces" ]; then
             
@@ -724,14 +753,14 @@ get_list() {
                 item="$(grep -F -m 1 "trgt={${word}}" "${cfg0}" |sed 's/},/}\n/g')"
                 echo "$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")" >> "$dir/b.srces"
             
-            done < "$dir/${ttest}.0" ) | yad --progress \
+            done < "$dir/${practice}.0" ) | yad --progress \
             --width 50 --height 35 --undecorated \
             --pulsate --auto-close \
             --skip-taskbar --center --no-buttons
             fi
         fi
         
-    elif [ $ttest = d ]; then
+    elif [ $practice = d ]; then
     
         > "$DT/images"
         if [[ `wc -l < "${cfg4}"` -gt 0 ]]; then
@@ -740,28 +769,28 @@ get_list() {
         else
             tac "${cfg1}" > "$DT/images"
         fi
-        > "$dir/${ttest}.0"
+        > "$dir/${practice}.0"
         
         ( echo "5"
         while read -r itm; do
         if [ -f "$DM_tls/images/${itm,,}-0.jpg" ]; then
-        echo "${itm}" >> "$dir/${ttest}.0"; fi
+        echo "${itm}" >> "$dir/${practice}.0"; fi
         done < "$DT/images" ) | yad --progress \
         --width 50 --height 35 --undecorated \
         --pulsate --auto-close \
         --skip-taskbar --center --no-buttons
         
-        sed -i '/^$/d' "$dir/${ttest}.0"
+        sed -i '/^$/d' "$dir/${practice}.0"
         [ -f "$DT/images" ] && rm -f "$DT/images"
     
-    elif [ $ttest = e ]; then
+    elif [ $practice = e ]; then
     
         if [[ `wc -l < "${cfg3}"` -gt 0 ]]; then
             grep -Fxvf "${cfg3}" "${cfg1}" > "$DT/slist"
-            tac "$DT/slist" |sed '/^$/d' > "$dir/${ttest}.0"
+            tac "$DT/slist" |sed '/^$/d' > "$dir/${practice}.0"
             rm -f "$DT/slist"
         else
-            tac "${cfg1}" |sed '/^$/d' > "$dir/${ttest}.0"
+            tac "${cfg1}" |sed '/^$/d' > "$dir/${practice}.0"
         fi
     fi
 }
@@ -790,36 +819,41 @@ starting() {
 practice() {
 
     cd "$DC_tlt/practice"
-    ttest="${1}"
+    practice="${1}"
+    [[ $practice = a ]] && icon=1 && _stats=6
+    [[ $practice = b ]] && icon=2 && _stats=7
+    [[ $practice = c ]] && icon=3 && _stats=8
+    [[ $practice = d ]] && icon=4 && _stats=9
+    [[ $practice = e ]] && icon=5 && _stats=10
 
-    if [ -f "$dir/${ttest}.lock" ]; then
+    if [ -f "$dir/${practice}.lock" ]; then
     
-        lock "$dir/${ttest}.lock"
+        lock "$dir/${practice}.lock"
         if [ $? -eq 0 ]; then
-        "$cls" restart ${ttest} & exit
+        restart
         else
         "$strt" & exit
         fi
     fi
 
-    if [ -f "$dir/${ttest}.0" -a -f "$dir/${ttest}.1" ]; then
+    if [ -f "$dir/${practice}.0" -a -f "$dir/${practice}.1" ]; then
     
-        grep -Fxvf  "$dir/${ttest}.1" "$dir/${ttest}.0" > "$dir/${ttest}.tmp"
-        if [[ "$(egrep -cv '#|^$' < "$dir/${ttest}.tmp")" = 0 ]]; then
-        lock "$dir/${ttest}.lock" & exit; fi
+        grep -Fxvf  "$dir/${practice}.1" "$dir/${practice}.0" > "$dir/${practice}.tmp"
+        if [[ "$(egrep -cv '#|^$' < "$dir/${practice}.tmp")" = 0 ]]; then
+        lock "$dir/${practice}.lock" & exit; fi
         echo " practice --restarting session"
         
     else
         get_list
-        cp -f "$dir/${ttest}.0" "$dir/${ttest}.tmp"
+        cp -f "$dir/${practice}.0" "$dir/${practice}.tmp"
         
-        if [[ `wc -l < "$dir/${ttest}.0"` -lt 2 ]]; then \
+        if [[ `wc -l < "$dir/${practice}.0"` -lt 2 ]]; then \
         starting "$(gettext "Not enough items to start")"
         echo " practice --new session"; fi
     fi
     
-    [ -f "$dir/${ttest}.2" ] && rm "$dir/${ttest}.2"
-    [ -f "$dir/${ttest}.3" ] && rm "$dir/${ttest}.3"
+    [ -f "$dir/${practice}.2" ] && rm "$dir/${practice}.2"
+    [ -f "$dir/${practice}.3" ] && rm "$dir/${practice}.3"
     
     drtt="$DM_tlt"
     drts="$DS/practice"
@@ -828,16 +862,14 @@ practice() {
     cd "$DC_tlt/practice"
     drtt="$DM_tlt/images"
     cd "$DC_tlt/practice"
-    all=$(egrep -cv '#|^$' ./${ttest}.0)
+    all=$(egrep -cv '#|^$' ./${practice}.0)
     hits="$(gettext "hits")"
     listen="Listen"
     easy=0
     hard=0
     ling=0
     f=0
-
-    practice_${ttest}
-    
+    practice_${practice}
 }
 
 case "$1" in

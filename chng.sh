@@ -20,9 +20,10 @@ if [[ ${1} = 0 ]]; then
         [ ! -f "$DT"/.p_ ] && > "$DT"/.p_
 
         if [ ${n} != TRUE -a ${a} != TRUE -a ${stnrd} = 1 ]; then a=TRUE; fi
-        if ! grep TRUE <<<"$n$w$s$m$p$ne$se">/dev/null 2>&1; then "$DS"/stop.sh 2 & exit 1; fi
-        if ! [[ ${l} =~ $nu ]]; then l=1; fi
-        if ! [[ ${rw} =~ $nu ]]; then rw=0; fi
+        if ! grep TRUE <<<"$n$w$s$m$p$ne$se">/dev/null 2>&1; then
+        "$DS"/stop.sh 2 & exit 1; fi
+        if ! [[ ${l} =~ $numer ]]; then l=1; fi
+        if ! [[ ${rw} =~ $numer ]]; then rw=0; fi
         
         if [ ${stnrd} = 1 ]; then
             
