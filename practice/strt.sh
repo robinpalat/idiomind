@@ -6,63 +6,6 @@ source "$DS/ifs/mods/cmns.sh"
 dir="${DC_tlt}/practice"
 dirs="$DS/practice"
 
-function strt() {
-    
-    echo "$practice..."
-    [ ${hard} -lt 0 ] && hard=0
-    [ ! -d "${dir}" ] && mkdir -p "${dir}"
-    cd "${dir}"
-    [ ! -f ./.1 ] && echo 1 > .1
-    [ ! -f ./.2 ] && echo 1 > .2
-    [ ! -f ./.3 ] && echo 1 > .3
-    [ ! -f ./.4 ] && echo 1 > .4
-    [ ! -f ./.5 ] && echo 1 > .5
-
-    if [ ${1} = 1 ]; then
-        declare info${icon}="<b>$(gettext "Test completed!")</b>"
-        echo 21 > .${icon}
-    elif [ ${1} = 2 ]; then
-        learnt=$(< ./${practice}.l); declare info${icon}="* "
-        info="$(gettext "Learned") <span color='#6E6E6E'><b><big>$learnt </big></b></span>   $(gettext "Easy") <span color='#6E6E6E'><b><big>$easy </big></b></span>   $(gettext "Learning") <span color='#6E6E6E'><b><big>$ling </big></b></span>   $(gettext "Difficult") <span color='#6E6E6E'><b><big>$hard </big></b></span>\n"
-    fi
-
-    VAR="$(yad --list --title="$(gettext "Practice ")- $tpc" \
-    --text="$info" \
-    --class=Idiomind --name=Idiomind \
-    --print-column=1 --separator="" \
-    --window-icon="$DS/images/icon.png" \
-    --buttons-layout=edge --image-on-top --center --on-top --text-align=center \
-    --ellipsize=NONE --no-headers --expand-column=2 --hide-column=1 \
-    --width=500 --height=460 --borders=10 \
-    --column="Action" --column="Pick":IMG --column="Label" \
-    a "$dirs/images/`< ./.1`.png" "   $info1   $(gettext "Flashcards")" \
-    b "$dirs/images/`< ./.2`.png" "   $info2   $(gettext "Multiple Choice")" \
-    c "$dirs/images/`< ./.3`.png" "   $info3   $(gettext "Recognizing Words")" \
-    d "$dirs/images/`< ./.4`.png" "   $info4   $(gettext "Images")" \
-    e "$dirs/images/`< ./.5`.png" "   $info5   $(gettext "Writing Sentences")" \
-    --button="$(gettext "Restart")":3 \
-    --button="$(gettext "Start")":0)"
-    ret=$?
-    unset practice info info1 info2 info3 info4 info5
-
-    if [ $ret -eq 0 ]; then
-        if [ -z "$VAR" ]; then
-        msg " $(gettext "You must choose a practice.")\n" info
-        strt 0
-        else
-        practices "$VAR"
-        fi
-    elif [ $ret -eq 3 ]; then
-        if [ -d "${dir}" ]; then
-        cd "${dir}"; rm .*; rm *
-        touch ./log1 ./log2 ./log3; fi
-        strt 0
-    else
-        "$DS/ifs/tls.sh" colorize & exit
-    fi
-}
-
-
 function log() \
 { echo "w9.$(tr -s '\n' '|' < ./${1}.1).w9" >> "$log"; }
 
@@ -704,11 +647,12 @@ function practices() {
     hits="$(gettext "hits")"
     touch "$dir/log1" "$dir/log2" "$dir/log3"
     practice="${1}"
-    [[ $practice = a ]] && icon=1
-    [[ $practice = b ]] && icon=2
-    [[ $practice = c ]] && icon=3
-    [[ $practice = d ]] && icon=4
-    [[ $practice = e ]] && icon=5
+    if [ $practice = a ]; then icon=1
+    elif [ $practice = b ]; then icon=2
+    elif [ $practice = c ]; then icon=3
+    elif [ $practice = d ]; then icon=4
+    elif [ $practice = e ]; then icon=5
+    else exit; fi
     lock
     
     if [ -f "$dir/${practice}.0" -a -f "$dir/${practice}.1" ]; then
@@ -733,8 +677,63 @@ function practices() {
     hard=0
     ling=0
     step=1
-    f=0
     practice_${practice}
+}
+
+function strt() {
+    
+    echo "$practice..."
+    [[ ${hard} -lt 0 ]] && hard=0
+    [ ! -d "${dir}" ] && mkdir -p "${dir}"
+    cd "${dir}"
+    [ ! -f ./.1 ] && echo 1 > .1
+    [ ! -f ./.2 ] && echo 1 > .2
+    [ ! -f ./.3 ] && echo 1 > .3
+    [ ! -f ./.4 ] && echo 1 > .4
+    [ ! -f ./.5 ] && echo 1 > .5
+
+    if [ ${1} = 1 ]; then
+        declare info${icon}="<b>$(gettext "Test completed!")</b>"
+        echo 21 > .${icon}
+    elif [ ${1} = 2 ]; then
+        learnt=$(< ./${practice}.l); declare info${icon}="* "
+        info="$(gettext "Learned") <span color='#6E6E6E'><b><big>$learnt </big></b></span>   $(gettext "Easy") <span color='#6E6E6E'><b><big>$easy </big></b></span>   $(gettext "Learning") <span color='#6E6E6E'><b><big>$ling </big></b></span>   $(gettext "Difficult") <span color='#6E6E6E'><b><big>$hard </big></b></span>\n"
+    fi
+
+    VAR="$(yad --list --title="$(gettext "Practice ")- $tpc" \
+    --text="$info" \
+    --class=Idiomind --name=Idiomind \
+    --print-column=1 --separator="" \
+    --window-icon="$DS/images/icon.png" \
+    --buttons-layout=edge --image-on-top --center --on-top --text-align=center \
+    --ellipsize=NONE --no-headers --expand-column=2 --hide-column=1 \
+    --width=500 --height=460 --borders=10 \
+    --column="Action" --column="Pick":IMG --column="Label" \
+    "a" "$dirs/images/`< ./.1`.png" "   $info1   $(gettext "Flashcards")" \
+    "b" "$dirs/images/`< ./.2`.png" "   $info2   $(gettext "Multiple Choice")" \
+    "c" "$dirs/images/`< ./.3`.png" "   $info3   $(gettext "Recognizing Words")" \
+    "d" "$dirs/images/`< ./.4`.png" "   $info4   $(gettext "Images")" \
+    "e" "$dirs/images/`< ./.5`.png" "   $info5   $(gettext "Writing Sentences")" \
+    --button="$(gettext "Restart")":3 \
+    --button="$(gettext "Start")":0)"
+    ret=$?
+    unset practice info info1 info2 info3 info4 info5
+
+    if [ $ret -eq 0 ]; then
+        if [ -z "$VAR" ]; then
+        msg " $(gettext "You must choose a practice.")\n" info
+        strt 0
+        else
+        practices $VAR
+        fi
+    elif [ $ret -eq 3 ]; then
+        if [ -d "${dir}" ]; then
+        cd "${dir}"; rm .*; rm *
+        touch ./log1 ./log2 ./log3; fi
+        strt 0
+    else
+        "$DS/ifs/tls.sh" colorize & exit
+    fi
 }
 
 strt 0

@@ -2,6 +2,9 @@
 # -*- ENCODING: UTF-8 -*-
 
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
+b="$(gettext "New episodes <i><small>Podcasts</small></i>")"
+c="$(gettext "Saved episodes <i><small>Podcasts</small></i>")"
+CNF="$(gettext "Configure")"
 source "$DS/ifs/mods/cmns.sh"
 DMC="$DM_tl/Podcasts/cache"
 DCP="$DM_tl/Podcasts/.conf"
@@ -79,13 +82,13 @@ function dlg_config() {
             ((n=n+1))
         done < "$DT/podcasts.tmp"
 
-        podcaststmp="$(cat "$DT/podcasts.tmp")"
-        if [ -n "$podcaststmp" ] && [[ "$podcaststmp" != "$(cat "$DCP/feeds.lst")" ]]; then
+        podcasts_tmp="$(cat "$DT/podcasts.tmp")"
+        if [ -n "$podcasts_tmp" ] && [[ "$podcasts_tmp" != "$(cat "$DCP/feeds.lst")" ]]; then
         mv -f "$DT/podcasts.tmp" "$DCP/feeds.lst"; else rm -f "$DT/podcasts.tmp"; fi
 
         val1=$(cut -d "|" -f1 <<<"$CNFG")
         val2=$(cut -d "|" -f2 <<<"$CNFG")
-        val3=$(cut -d "|" -f19 <<<"$CNFG" | sed 's|/|\\/|g')
+        val3=$(cut -d "|" -f19 <<<"$CNFG" |sed 's|/|\\/|g')
         if [ ! -d "$val3" -o -z "$val3" ]; then path=FALSE; fi
         sed -i "s/update=.*/update=\"$val1\"/g" "$DCP/podcasts.cfg"
         sed -i "s/sync=.*/sync=\"$val2\"/g" "$DCP/podcasts.cfg"
@@ -93,7 +96,7 @@ function dlg_config() {
         [ -f "$DT/cp.lock" ] && rm -f "$DT/cp.lock"
     }
 
-    if [ ! -d "$path" -o ! -n "$path" ]; then path=/null; fi
+    if [ ! -d "${path}" -o ! -n "${path}" ]; then path=/null; fi
     if [ -f "$DM_tl/Podcasts/.conf/feed.err" ]; then
     e="$(head -n 4 < "$DM_tl/Podcasts/.conf/feed.err" |sed 's/\&/\&amp\;/g' |awk '!a[$0]++')"
     rm "$DM_tl/Podcasts/.conf/feed.err"
@@ -523,8 +526,7 @@ function update() {
     echo 2 > "$DC_s/5.cfg"
     echo 11 > "$DCP/8.cfg"
     notify-send -i idiomind "$(gettext "Podcasts")" \
-    "$(gettext "Checking for new episodes...")" -t 6000 &
-    fi
+    "$(gettext "Checking for new episodes...")" -t 6000 & fi
 
     if [ -f "$DCP/2.lst" ]; then kept_episodes=`wc -l < "$DCP/2.lst"`
     else kept_episodes=0; fi
@@ -791,23 +793,23 @@ function sync() {
     echo "Synchronization error. Missing path" >> "$DM_tl/Podcasts/.conf/feed.err"
     [ -f "$DT/l_sync" ] && rm -f "$DT/l_sync"; exit 1
     
-    elif [ -d "$path" ]; then
+    elif [ -d "${path}" ]; then
         
-        touch "$DT/l_sync"; SYNCDIR="$path/"
+        touch "$DT/l_sync"; SYNCDIR="${path}/"
         cd /
 
         if [[ $rsync_delete = 0 ]]; then
         
             rsync -amz --stats --exclude="*.item" --exclude="*.png" \
             --exclude="*.html" --omit-dir-times --ignore-errors \
-            --log-file="$DT/l_sync" "$DM_tl/Podcasts/cache/" "$SYNCDIR"
+            --log-file="$DT/l_sync" "$DM_tl/Podcasts/cache/" "${SYNCDIR}"
             exit=$?
             
         elif [[ $rsync_delete = 1 ]]; then
         
             rsync -amz --stats --delete --exclude="*.item" --exclude="*.png" \
             --exclude="*.html" --omit-dir-times --ignore-errors \
-            --log-file="$DT/l_sync" "$DM_tl/Podcasts/cache/" "$SYNCDIR"
+            --log-file="$DT/l_sync" "$DM_tl/Podcasts/cache/" "${SYNCDIR}"
             exit=$?
         fi
         
@@ -954,11 +956,6 @@ function delete_all() {
     fi
     exit
 }
-
-b="$(gettext "New episodes <i><small>Podcasts</small></i>")"
-c="$(gettext "Saved episodes <i><small>Podcasts</small></i>")"
-CNF="$(gettext "Configure")"
-
 
 case "$1" in
     update)
