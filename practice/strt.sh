@@ -9,8 +9,8 @@ dirs="$DS/practice"
 function strt() {
     
     echo "$practice..."
-    [[ ${hard} -lt 0 ]] && hard=0
-    [ ! -d "${dir}" ] && mkdir -p"${dir}"
+    [ ${hard} -lt 0 ] && hard=0
+    [ ! -d "${dir}" ] && mkdir -p "${dir}"
     cd "${dir}"
     [ ! -f ./.1 ] && echo 1 > .1
     [ ! -f ./.2 ] && echo 1 > .2
@@ -35,11 +35,11 @@ function strt() {
     --ellipsize=NONE --no-headers --expand-column=2 --hide-column=1 \
     --width=500 --height=460 --borders=10 \
     --column="Action" --column="Pick":IMG --column="Label" \
-    a "$dirs/images/`< ./.1`.png" "    $info1   $(gettext "Flashcards")" \
-    b "$dirs/images/`< ./.2`.png" "    $info2   $(gettext "Multiple Choice")" \
-    c "$dirs/images/`< ./.3`.png" "    $info3   $(gettext "Recognizing Words")" \
-    d "$dirs/images/`< ./.4`.png" "    $info4   $(gettext "Images")" \
-    e "$dirs/images/`< ./.5`.png" "    $info5   $(gettext "Writing Sentences")" \
+    a "$dirs/images/`< ./.1`.png" "   $info1   $(gettext "Flashcards")" \
+    b "$dirs/images/`< ./.2`.png" "   $info2   $(gettext "Multiple Choice")" \
+    c "$dirs/images/`< ./.3`.png" "   $info3   $(gettext "Recognizing Words")" \
+    d "$dirs/images/`< ./.4`.png" "   $info4   $(gettext "Images")" \
+    e "$dirs/images/`< ./.5`.png" "   $info5   $(gettext "Writing Sentences")" \
     --button="$(gettext "Restart")":3 \
     --button="$(gettext "Start")":0)"
     ret=$?
@@ -701,6 +701,7 @@ function practices() {
     cfg1="$DC_tlt/1.cfg"
     cfg3="$DC_tlt/3.cfg"
     cfg4="$DC_tlt/4.cfg"
+    hits="$(gettext "hits")"
     touch "$dir/log1" "$dir/log2" "$dir/log3"
     practice="${1}"
     [[ $practice = a ]] && icon=1
@@ -728,7 +729,6 @@ function practices() {
     [ -f "$dir/${practice}.2" ] && rm "$dir/${practice}.2"
     [ -f "$dir/${practice}.3" ] && rm "$dir/${practice}.3"
     all=$(egrep -cv '#|^$' ./${practice}.0)
-    hits="$(gettext "hits")"
     easy=0
     hard=0
     ling=0
