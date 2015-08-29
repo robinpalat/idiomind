@@ -29,19 +29,19 @@ if [[ -n "$1" ]]; then
     info5="* "; info10="<b>$(gettext "Test completed!")</b>"; echo 21 > .5
     elif [ ${1} = 6 ]; then
     learned=$(< ./a.l); info1="* "
-    info="<small>$(gettext "Learned")</small> <span color='#6E6E6E'><b><big>$learned </big></b></span>   <small>$(gettext "Easy")</small> <span color='#6E6E6E'><b><big>$easys </big></b></span>   <small>$(gettext "Learning")</small> <span color='#6E6E6E'><b><big>$learning </big></b></span>   <small>$(gettext "Difficult")</small> <span color='#6E6E6E'><b><big>$hards </big></b></span>\n"
+    info="$(gettext "Learned") <span color='#6E6E6E'><b><big>$learned </big></b></span>   $(gettext "Easy") <span color='#6E6E6E'><b><big>$easys </big></b></span>   $(gettext "Learning") <span color='#6E6E6E'><b><big>$learning </big></b></span>   $(gettext "Difficult") <span color='#6E6E6E'><b><big>$hards </big></b></span>\n"
     elif [ ${1} = 7 ]; then
     learned=$(< ./b.l); info2="* "
-    info="<small>$(gettext "Learned")</small> <span color='#6E6E6E'><b><big>$learned </big></b></span>   <small>$(gettext "Easy")</small> <span color='#6E6E6E'><b><big>$easys </big></b></span>   <small>$(gettext "Learning")</small> <span color='#6E6E6E'><b><big>$learning </big></b></span>   <small>$(gettext "Difficult")</small> <span color='#6E6E6E'><b><big>$hards </big></b></span>\n"
+    info="$(gettext "Learned") <span color='#6E6E6E'><b><big>$learned </big></b></span>   $(gettext "Easy") <span color='#6E6E6E'><b><big>$easys </big></b></span>   $(gettext "Learning") <span color='#6E6E6E'><b><big>$learning </big></b></span>   $(gettext "Difficult") <span color='#6E6E6E'><b><big>$hards </big></b></span>\n"
     elif [ ${1} = 8 ]; then
     learned=$(< ./c.l); info3="* "
-    info="<small>$(gettext "Learned")</small> <span color='#6E6E6E'><b><big>$learned </big></b></span>   <small>$(gettext "Easy")</small> <span color='#6E6E6E'><b><big>$easys </big></b></span>   <small>$(gettext "Learning")</small> <span color='#6E6E6E'><b><big>$learning </big></b></span>   <small>$(gettext "Difficult")</small> <span color='#6E6E6E'><b><big>$hards </big></b></span>\n"
+    info="$(gettext "Learned") <span color='#6E6E6E'><b><big>$learned </big></b></span>   $(gettext "Easy") <span color='#6E6E6E'><b><big>$easys </big></b></span>   $(gettext "Learning") <span color='#6E6E6E'><b><big>$learning </big></b></span>   $(gettext "Difficult") <span color='#6E6E6E'><b><big>$hards </big></b></span>\n"
     elif [ ${1} = 9 ]; then
     learned=$(< ./d.l); info4="* "
-    info="<small>$(gettext "Learned")</small> <span color='#6E6E6E'><b><big>$learned </big></b></span>   <small>$(gettext "Easy")</small> <span color='#6E6E6E'><b><big>$easys </big></b></span>   <small>$(gettext "Learning")</small> <span color='#6E6E6E'><b><big>$learning </big></b></span>   <small>$(gettext "Difficult")</small> <span color='#6E6E6E'><b><big>$hards </big></b></span> \n"
+    info="$(gettext "Learned") <span color='#6E6E6E'><b><big>$learned </big></b></span>   $(gettext "Easy") <span color='#6E6E6E'><b><big>$easys </big></b></span>   $(gettext "Learning") <span color='#6E6E6E'><b><big>$learning </big></b></span>   $(gettext "Difficult") <span color='#6E6E6E'><b><big>$hards </big></b></span> \n"
     elif [ ${1} = 10 ]; then
     learned=$(< ./e.l); info5="* "
-    info="  <small>$(gettext "Learned")</small> <span color='#6E6E6E'><b><big>$learned </big></b></span>   <small>$(gettext "Easy")</small> <span color='#6E6E6E'><b><big>$easys </big></b></span>   <small>$(gettext "Learning")</small> <span color='#6E6E6E'><b><big>$learning </big></b></span>   <small>$(gettext "Difficult")</small> <span color='#6E6E6E'><b><big>$hards </big></b></span>\n"
+    info="  $(gettext "Learned") <span color='#6E6E6E'><b><big>$learned </big></b></span>   $(gettext "Easy") <span color='#6E6E6E'><b><big>$easys </big></b></span>   $(gettext "Learning") <span color='#6E6E6E'><b><big>$learning </big></b></span>   $(gettext "Difficult") <span color='#6E6E6E'><b><big>$hards </big></b></span>\n"
     fi
 fi
 

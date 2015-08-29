@@ -10,6 +10,9 @@ cfg4="$DC_tlt/4.cfg"
 dir="$DC_tlt/practice"
 touch "$dir/log1" "$dir/log2" "$dir/log3"
 
+function log() \
+{ echo "w9.$(tr -s '\n' '|' < ./${1}.1).w9" >> "$log"; }
+
 function stats() {
     
     n=1; c=1
@@ -26,9 +29,7 @@ function score() {
     
     [ ! -e ./${practice}.l ] && touch ./${practice}.l
     if [[ $(($(< ./${practice}.l)+easy)) -ge ${all} ]]; then
-    
-        play "$drts/all.mp3" &
-        echo -e "w9.$(tr -s '\n' '|' < ./${practice}.1).w9\nokp.1.okp" >> "$log"
+        log ${practice}; play "$drts/all.mp3" &
         echo "$(date "+%a %d %B")" > ./${practice}.lock
         echo 21 > .${icon}
         comp 0 & "$strt" ${icon} ${practice} & exit
@@ -163,7 +164,6 @@ function practice_a() {
     fi
 }
 
-
 function practice_b(){
 
     snd="$drts/no.mp3"
@@ -253,7 +253,6 @@ function practice_b(){
     fi
 }
 
-
 function practice_c() {
 
     fonts() {
@@ -333,7 +332,6 @@ function practice_c() {
         score
     fi
 }
-
 
 function practice_d() {
 
@@ -427,7 +425,6 @@ function practice_d() {
         score
     fi
 }
-
 
 function practice_e() {
 
@@ -583,10 +580,9 @@ function practice_e() {
     score
 }
 
-
-get_list() {
+function get_list() {
     
-    if [ $practice = a -o $practice = b -o $practice = c ]; then
+    if [ ${practice} = a -o ${practice} = b -o ${practice} = c ]; then
     
         > "$dir/${practice}.0"
         if [[ `wc -l < "${cfg4}"` -gt 0 ]]; then
@@ -598,7 +594,7 @@ get_list() {
             tac "${cfg1}" |sed '/^$/d' > "$dir/${practice}.0"
         fi
         
-        if [ $practice = b ]; then
+        if [ ${practice} = b ]; then
         
             if [ ! -f "$dir/b.srces" ]; then
             
@@ -615,7 +611,7 @@ get_list() {
             fi
         fi
         
-    elif [ $practice = d ]; then
+    elif [ ${practice} = d ]; then
     
         > "$DT/images"
         if [[ `wc -l < "${cfg4}"` -gt 0 ]]; then
@@ -638,7 +634,7 @@ get_list() {
         sed -i '/^$/d' "$dir/${practice}.0"
         [ -f "$DT/images" ] && rm -f "$DT/images"
     
-    elif [ $practice = e ]; then
+    elif [ ${practice} = e ]; then
     
         if [[ `wc -l < "${cfg3}"` -gt 0 ]]; then
             grep -Fxvf "${cfg3}" "${cfg1}" > "$DT/slist"
@@ -650,7 +646,7 @@ get_list() {
     fi
 }
 
-lock() {
+function lock() {
 
     if [ -f "$dir/${practice}.lock" ]; then
 
@@ -673,7 +669,7 @@ lock() {
     fi
 }
 
-starting() {
+function starting() {
     
     yad --title="$1" \
     --text=" $1.\n" --image=info \
@@ -684,7 +680,7 @@ starting() {
     "$strt" & exit 1
 }
 
-practice() {
+function practice() {
 
     cd "${DC_tlt}/practice"
     practice="${1}"
