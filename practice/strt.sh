@@ -81,7 +81,5 @@ elif [ $ret -eq 3 ]; then
     touch ./log1 ./log2 ./log3; fi
     "$DS/practice/strt.sh" & exit
 else
-    cd "${DC_tlt}/practice"; rm *.tmp
-    "$DS/ifs/tls.sh" colorize &
-    exit
+    "$DS/ifs/tls.sh" colorize & exit
 fi

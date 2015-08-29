@@ -207,7 +207,7 @@ else
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" --buttons-layout=end \
     --align=right --center --on-top \
-    --width=480 --height=460 --borders=12 \
+    --width=450 --height=440 --borders=12 \
     --field="$(gettext "Author")" "$iuser" \
     --field="\t$(gettext "Contact (optional)")" "$cntct" \
     --field="$(gettext "Category"):CBE" \

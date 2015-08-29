@@ -1,15 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-strt="$DS/practice/strt.sh"
-log="$DC_s/log"
-cfg0="$DC_tlt/0.cfg"
-cfg1="$DC_tlt/1.cfg"
-cfg3="$DC_tlt/3.cfg"
-cfg4="$DC_tlt/4.cfg"
-dir="$DC_tlt/practice"
-touch "$dir/log1" "$dir/log2" "$dir/log3"
-
 function log() \
 { echo "w9.$(tr -s '\n' '|' < ./${1}.1).w9" >> "$log"; }
 
@@ -27,6 +18,7 @@ function stats() {
 
 function score() {
     
+    rm ./*.tmp
     [ ! -e ./${practice}.l ] && touch ./${practice}.l
     if [[ $(($(< ./${practice}.l)+easy)) -ge ${all} ]]; then
         log ${practice}; play "$drts/all.mp3" &
@@ -112,21 +104,17 @@ function practice_a() {
     }
 
     while read trgt; do
-
+    
         fonts; cuestion
-
         if [ $? = 1 ]; then
             ling=${hard}; hard=0
             break & score && exit
-            
         else
             answer
-            ans="$?"
-
+            ans=$?
             if [ ${ans} = 2 ]; then
                 echo "${trgt}" >> a.1
                 easy=$((easy+1))
-
             elif [ ${ans} = 3 ]; then
                 echo "${trgt}" >> a.2
                 hard=$((hard+1))
@@ -135,7 +123,6 @@ function practice_a() {
     done < ./a.tmp
 
     if [ ! -f ./a.2 ]; then
-
         score
         
     step=2
@@ -143,18 +130,14 @@ function practice_a() {
         while read trgt; do
 
             fonts; cuestion
-            
             if [ $? = 1 ]; then
                 break & score && exit
-            
             else
                 answer
-                ans="$?"
-                
+                ans=$?
                 if [ ${ans} = 2 ]; then
                     hard=$((hard-1))
                     ling=$((ling+1))
-                    
                 elif [ ${ans} = 3 ]; then
                     echo "${trgt}" >> a.3
                 fi
@@ -180,7 +163,7 @@ function practice_b(){
     ofonts() {
         
         while read -r item; do
-        echo " <span font_desc='Free Sans Bold ${s}'> $item </span> "
+        echo "<span font_desc='Free Sans Bold ${s}'> $item </span> "
         done <<<"$tmp"
         }
         
@@ -200,22 +183,17 @@ function practice_b(){
 
     P=5; s=11
     while read trgt; do
-
+    
         fonts; mchoise
-
         if [ $? = 0 ]; then
-
             if grep -o "$srce" <<<"${dlg}"; then
-
                 echo "${trgt}" >> b.1
                 easy=$((easy+1))
-                
             else
                 play "$snd" &
                 echo "${trgt}" >> b.2
                 hard=$((hard+1))
             fi  
-                
         elif [ $? = 1 ]; then
             ling=${hard}; hard=0
             break & score && exit
@@ -224,26 +202,21 @@ function practice_b(){
     done < ./b.tmp
         
     if [ ! -f ./b.2 ]; then
-
         score
         
     else
         step=2; P=2; s=12
         while read trgt; do
-
+        
             fonts; mchoise
-            
             if [ $? = 0 ]; then
-            
                 if grep -o "$srce" <<<"${dlg}"; then
                     hard=$((hard-1))
                     ling=$((ling+1))
-                    
                 else
                     play "$snd" &
                     echo "${trgt}" >> b.3
                 fi
-
             elif [ $? = 1 ]; then
                 break & score && exit
             fi
@@ -289,18 +262,15 @@ function practice_c() {
 
     p=1
     while read trgt; do
-
+    
         fonts; cuestion
-        ans="$?"
-        
+        ans=$?
         if [ ${ans} = 2 ]; then
             echo "${trgt}" >> c.1
             easy=$((easy+1))
-
         elif [ ${ans} = 3 ]; then
             echo "${trgt}" >> c.2
             hard=$((hard+1))
-
         elif [ ${ans} = 1 ]; then
             ling=${hard}; hard=0
             break & score && exit
@@ -308,23 +278,19 @@ function practice_c() {
     done < ./c.tmp
 
     if [ ! -f ./c.2 ]; then
-
         score
         
     else
         step=2; p=2
         while read trgt; do
-
+        
             fonts; cuestion
-            ans="$?"
-              
+            ans=$?
             if [ ${ans} = 2 ]; then
                 hard=$((hard-1))
                 ling=$((ling+1))
-                    
             elif [ ${ans} = 3 ]; then
                 echo "${trgt}" >> c.3
-
             elif [ ${ans} = 1 ]; then
                 break & score && exit
             fi
@@ -372,21 +338,17 @@ function practice_d() {
     }
     
     while read -r trgt; do
-
+    
         fonts; cuestion
-        
         if [ $? = 1 ]; then
             ling=${hard}; hard=0
             break & score && exit
-            
         else
             answer
-            ans="$?"
-
+            ans=$?
             if [ ${ans} = 2 ]; then
                 echo "${trgt}" >> d.1
                 easy=$((easy+1))
-
             elif [ ${ans} = 3 ]; then
                 echo "${trgt}" >> d.2
                 hard=$((hard+1))
@@ -396,26 +358,21 @@ function practice_d() {
     done < ./d.tmp
 
     if [ ! -f ./d.2 ]; then
-    
         score
         
     else
         step=2
         while read -r trgt; do
-
+        
             fonts; cuestion
-
             if [ $? = 1 ]; then
                 break & score && exit
-
             else
                 answer
-                ans="$?"
-                
+                ans=$?
                 if [ ${ans} = 2 ]; then
                     hard=$((hard-1))
                     ling=$((ling+1))
-                    
                 elif [ ${ans} = 3 ]; then
                     echo "${trgt}" >> d.3
                 fi
@@ -499,7 +456,7 @@ function practice_e() {
         in=`awk '{print tolower($0)}' <<<"${chk}" | clean`
         fi
         
-        echo "${chk}" > ./chk.tmp
+        echo "${chk}" > ./chk.tmp; touch ./words.tmp
         for line in `sed 's/ /\n/g' <<<"$out"`; do
             if grep -Fxq "${line}" <<<"$in"; then
                 sed -i "s/"${line}"/<b>"${line}"<\/b>/g" ./chk.tmp
@@ -522,23 +479,21 @@ function practice_e() {
             echo "${trgt}" >> ./e.1
             export easy=$((easy+1))
             color=3AB452
-            
         elif [ ${porc} -ge 50 ]; then
             echo "${trgt}" >> ./e.2
              export ling=$((ling+1))
             color=E5801D
-            
         else
             [ -n "$entry" ] && echo "${trgt}" >> ./e.3
             [ -n "$entry" ] && export hard=$((hard+1))
             color=D11B5D
         fi
-        
         prc="<b>$porc%</b>"
         wes="$(< ./chk.tmp)"
         rm ./chk.tmp
         }
-
+        
+    step=2
     while read -r trgt; do
         
         export trgt
@@ -551,8 +506,7 @@ function practice_e() {
         ( sleep 0.5 && "$DS/play.sh" play_sentence ${fname} ) &
 
         dialog2 "${trgt}"
-        ret="$?"
-        
+        ret=$?
         if [[ $ret = 1 ]]; then
             break &
             killall play
@@ -563,14 +517,12 @@ function practice_e() {
         fi
 
         check "${trgt}"
-        ret="$?"
-        
+        ret=$?
         if [[ $ret = 1 ]]; then
             break &
             killall play &
             rm -f ./mtch.tmp ./words.tmp
             score && exit
-            
         elif [[ $ret -eq 2 ]]; then
             killall play &
             rm -f ./mtch.tmp ./words.tmp &
@@ -682,15 +634,25 @@ function starting() {
 
 function practice() {
 
-    cd "${DC_tlt}/practice"
+    strt="$DS/practice/strt.sh"
+    log="$DC_s/log"
+    cfg0="$DC_tlt/0.cfg"
+    cfg1="$DC_tlt/1.cfg"
+    cfg3="$DC_tlt/3.cfg"
+    cfg4="$DC_tlt/4.cfg"
+    dir="$DC_tlt/practice"
+    touch "$dir/log1" "$dir/log2" "$dir/log3"
     practice="${1}"
     [[ $practice = a ]] && icon=1 && _stats=6
     [[ $practice = b ]] && icon=2 && _stats=7
     [[ $practice = c ]] && icon=3 && _stats=8
     [[ $practice = d ]] && icon=4 && _stats=9
     [[ $practice = e ]] && icon=5 && _stats=10
-    
+    if [ ! -d "${DC_tlt}/practice" ]; then
+    mkdir -p "${DC_tlt}/practice"; fi
+    cd "${DC_tlt}/practice"
     lock
+    
     if [ -f "$dir/${practice}.0" -a -f "$dir/${practice}.1" ]; then
     
         grep -Fxvf "$dir/${practice}.1" "$dir/${practice}.0" > "$dir/${practice}.tmp"
@@ -709,7 +671,6 @@ function practice() {
     [ -f "$dir/${practice}.2" ] && rm "$dir/${practice}.2"
     [ -f "$dir/${practice}.3" ] && rm "$dir/${practice}.3"
     drts="$DS/practice"
-    cd "$DC_tlt/practice"
     all=$(egrep -cv '#|^$' ./${practice}.0)
     hits="$(gettext "hits")"
     easy=0
