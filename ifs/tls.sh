@@ -895,6 +895,10 @@ colorize() {
     rm "${DC_tlt}/5.cfg"
     [ ! -e "${DC_tlt}/1.cfg" ] && touch "${DC_tlt}/1.cfg"
     [ ! -e "${DC_tlt}/6.cfg" ] && touch "${DC_tlt}/6.cfg"
+    [ ! -e "${DC_tlt}/9.cfg" ] && touch "${DC_tlt}/9.cfg"
+    if [[ `egrep -cv '#|^$' < "${DC_tlt}/9.cfg"` -ge 4 ]]; then
+    chk=TRUE; else chk=FALSE; fi
+
     img1='/usr/share/idiomind/images/1.png'
     img2='/usr/share/idiomind/images/2.png'
     img3='/usr/share/idiomind/images/3.png'
@@ -906,12 +910,13 @@ colorize() {
     log3="$(cat ./log3)"
     log2="$(cat ./log2)"
     log1="$(cat ./log1)"
-    export cfg1 cfg5 cfg6 log1 \
+    export chk cfg1 cfg5 cfg6 log1 \
     log2 log3 img0 img1 img2 img3
     cd / 
 
 python <<PY
 import os
+chk = os.environ['chk']
 cfg1 = os.environ['cfg1']
 cfg5 = os.environ['cfg5']
 cfg6 = os.environ['cfg6']
@@ -938,7 +943,7 @@ while n < len(items):
     elif item in log2:
         f.write("FALSE\n"+i+"\n"+img2+"\n")
     elif item in log1:
-        f.write("FALSE\n"+i+"\n"+img1+"\n")
+        f.write(chk+"\n"+i+"\n"+img1+"\n")
     else:
         f.write("FALSE\n"+i+"\n"+img0+"\n")
     n += 1

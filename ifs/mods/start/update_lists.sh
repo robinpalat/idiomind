@@ -2,6 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
+source "$DS/ifs/mods/cmns.sh"
 log="$DC_s/log"
 items=$(mktemp "$DT/w9.XXXX")
 words=$(grep -o -P '(?<=w9.).*(?=\.w9)' "${log}" |tr '|' '\n' \
@@ -12,6 +13,9 @@ img1='/usr/share/idiomind/images/1.png'
 img2='/usr/share/idiomind/images/2.png'
 img3='/usr/share/idiomind/images/3.png'
 img0='/usr/share/idiomind/images/0.png'
+[ ! -e "${DC_tlt}/1.cfg" ] && touch "${DC_tlt}/1.cfg"
+[ ! -e "${DC_tlt}/6.cfg" ] && touch "${DC_tlt}/6.cfg"
+[ ! -e "${DC_tlt}/9.cfg" ] && touch "${DC_tlt}/9.cfg"
 
 for n in {1..100}; do
     if [[ $(sed -n ${n}p <<<"${words}" |awk '{print ($1)}') -ge 3 ]]; then
@@ -25,51 +29,85 @@ for n in {1..100}; do
 done
 
 sed -i '/^$/d' "${items}"
-while read -r tpc_lst; do
-    DC_tlt="$DM_tl/${tpc_lst}/.conf"
-    if [ -e "${DC_tlt}/1.cfg" ] && [ -d "${DC_tlt}/practice" ] && [ ! -e "${DC_tlt}/7.cfg" ]; then
-        if [[ $(grep -o set_1=\"[^\"]* "${DC_tlt}/id.cfg" |grep -o '[^"]*$') = TRUE ]]; then
+f_lock "$DT/co_lk"
+> "${DC_tlt}/5.cfg"
+dir="$DM_tl/"
+topics="${DM_tl}/.1.cfg"
+lstp="${items}"
+export dir topics lstp img0 img1 img2 img3
+python <<PY
+import os
+topics = os.environ['topics']
+topics = [line.strip() for line in open(topics)]
+dir = os.environ['dir']
+img0 = os.environ['img0']
+img1 = os.environ['img1']
+img2 = os.environ['img2']
+img3 = os.environ['img3']
+lstp = os.environ['lstp']
+lstp = [line.strip() for line in open(lstp)]
+for tpc in topics:
+    cfg1 = dir + tpc + "/.conf/1.cfg"
+    if os.path.exists(cfg1):
+        try:
+            cont = str
+            cfg = dir + tpc + "/.conf/id.cfg"
+            cfg5 = dir + tpc + "/.conf/5.cfg"
+            cfg6 = dir + tpc + "/.conf/6.cfg"
+            cfg7 = dir + tpc + "/.conf/7.cfg"
+            cfg9 = dir + tpc + "/.conf/9.cfg"
+            log1 = dir + tpc + "/.conf/practice/log1"
+            log2 = dir + tpc + "/.conf/practice/log2"
+            log3 = dir + tpc + "/.conf/practice/log3"
+            try:
+                cfg = [line.strip() for line in open(cfg)]
+                cont = (cfg[18].split('set_1="'))[1].split('"')[0]
+            except:
+                pass
+            if cont == 'TRUE':
+                cont = True
+                print tpc + ": " + str(cont)
+            else:
+                cont = False
+            if os.path.exists(cfg1) and not os.path.exists(cfg7):
+                cont = True
+            if not os.path.exists(dir + tpc + "/.conf/practice") or not os.path.exists(cfg9):
+                cont = False
+            if cont == True:
+                items = [line.strip() for line in open(cfg1)]
+                marks = [line.strip() for line in open(cfg6)]
+                steps = [line.strip() for line in open(cfg9)]
+                chk = False
+                if len(steps) > 3:
+                    chk = True
+                f = open(cfg5, "w")
+                n = 0
+                while n < len(items):
+                    item = items[n]
+                    if item in marks:
+                        i="<b><big>"+item+"</big></b>"
+                    else:
+                        i=item
+                    if item in lstp:
+                        chk = True
+                    if item in log3:
+                        f.write("FALSE\n"+i+"\n"+img3+"\n")
+                    elif item in log2:
+                        f.write("FALSE\n"+i+"\n"+img2+"\n")
+                    elif item in log1:
+                        print '- > ' + item
+                        f.write(chk+"\n"+i+"\n"+img1+"\n")
+                    else:
+                        f.write("FALSE\n"+i+"\n"+img0+"\n")
+                    n += 1
+                f.close()
+        except:
+            print 'err  -> ' + tpc
+PY
 
-            > "${DC_tlt}/5.cfg"
-            cd "${DC_tlt}/practice"
-            cfg5="${DC_tlt}/5.cfg"
-            cfg6=`cat "${DC_tlt}/6.cfg"`
-            cd "${DC_tlt}/practice"
-            log3="$(cat ./log3)"
-            log2="$(cat ./log2)"
-            log1="$(cat ./log1)"
-
-            while read -r item; do
-                if grep -Fxo "${item}" <<<"${cfg6}">/dev/null 2>&1; then
-                i="<b><big>${item}</big></b>";else i="${item}"; fi
-                if grep -Fxq "${item}" <<<"${log1}"; then
-                    if [ -e "${DC_tlt}/9.cfg" ]; then
-                        echo "$item"
-                        echo -e "TRUE\n${i}\n$img1" >> "${cfg5}"
-                    fi
-                elif grep -Fxo "${item}" "${items}"; then
-                    echo -e "TRUE\n${i}\n$img1" >> "${cfg5}"
-                else
-                    if grep -Fxo "${item}" <<<"${log3}">/dev/null 2>&1; then
-                        echo -e "FALSE\n${i}\n$img3" >> "${cfg5}"
-                    elif grep -Fxo "${item}" <<<"${log2}">/dev/null 2>&1; then
-                        echo -e "FALSE\n${i}\n$img2" >> "${cfg5}"
-                    elif grep -Fxo "${item}" <<<"${log1}">/dev/null 2>&1; then
-                        echo -e "FALSE\n${i}\n$img1" >> "${cfg5}"
-                    else
-                        echo -e "FALSE\n${i}\n$img0" >> "${cfg5}"
-                    fi
-                fi
-            done < "${DC_tlt}/1.cfg"
-            cd ~/
-        fi
-    fi
-done < <(head -n50 < "${DM_tl}/.1.cfg")
-
-cd /
+rm -f "$DT/co_lk"
 if [ $(date +%d) = 28 -o $(date +%d) = 14 ]; then
 rm "$log"; touch "$log"; fi
 rm -f "$items"
 echo "--updated lists"
-
 exit

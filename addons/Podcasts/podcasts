@@ -18,7 +18,6 @@ downloads=2
 # rsync delete: disable 0/enable 1
 rsync_delete=0
 
-
 function dlg_config() {
     
     sets=( 'update' 'sync' 'path' 'video' 'nsepi' 'svepi' )
@@ -135,7 +134,6 @@ function dlg_config() {
     exit
 }
 
-
 function podmode() {
 
     tpa="$(sed -n 1p "$DC_a/4.cfg")"
@@ -212,7 +210,6 @@ function podmode() {
     
     [ -f "$fdit" ] && rm -f "$fdit"
 }
-
 
 function update() {
     
@@ -578,7 +575,6 @@ function update() {
     exit
 }
 
-
 function vwr() {
     
     dir="$DM_tl/Podcasts/cache"
@@ -604,7 +600,6 @@ function vwr() {
     --button="${btnlabel}":"${btncmd}" \
     --button="gtk-close":1
 }
-
 
 function set_channel() {
 
@@ -763,7 +758,6 @@ function set_channel() {
     fi
 }
 
-
 function sync() {
    
     DIR2="$DM_tl/Podcasts/.conf"
@@ -827,7 +821,6 @@ function sync() {
     fi
 }
 
-
 function disc_podscats() {
 
     [ "$lgtl" = English ] && src="\"podcasts learning English\" OR \"$(gettext "podcasts learning English")\""
@@ -844,7 +837,6 @@ function disc_podscats() {
 
 } >/dev/null 2>&1
 
-
 function new_item() {
 
     DMC="$DM_tl/Podcasts/cache"
@@ -860,7 +852,6 @@ function new_item() {
     notify-send -i info "$(gettext "Episode saved")" "$item" -t 3000
     exit
 }
-
 
 function save_as() {
 
@@ -881,7 +872,6 @@ function save_as() {
     if [ $ret -eq 0 ]; then
     cp "$file" "$sv"; fi
 }
-
 
 function remove_item() {
 
@@ -922,7 +912,6 @@ function remove_item() {
     fi
     rm -f "$DT/ps_lk"; exit 1
 }
-
 
 function delete_all() {
     

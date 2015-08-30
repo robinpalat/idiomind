@@ -168,14 +168,14 @@ function practice_b(){
     ofonts() {
         
         while read -r item; do
-        echo "<span font_desc='Free Sans Bold ${s}'> $item </span> "
-        done <<<"$tmp"
+        echo "<span font_desc='Free Sans Bold 12'> $item </span>"
+        done <<<"${tmp}"
         }
         
     mchoise() {
         
         dlg=$(ofonts | yad --list --title="$(gettext "Practice")" \
-        --text="$cuestion" \
+        --text="${cuestion}" \
         --separator=" " --selectable-labels \
         --skip-taskbar --text-align=center --center --on-top \
         --buttons-layout=edge --undecorated \
