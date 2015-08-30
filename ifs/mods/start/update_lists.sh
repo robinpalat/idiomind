@@ -59,14 +59,16 @@ for tpc in topics:
             log1 = dir + tpc + "/.conf/practice/log1"
             log2 = dir + tpc + "/.conf/practice/log2"
             log3 = dir + tpc + "/.conf/practice/log3"
+            cfg = [line.strip() for line in open(cfg)]
             try:
-                cfg = [line.strip() for line in open(cfg)]
                 cont = (cfg[18].split('set_1="'))[1].split('"')[0]
             except:
-                pass
+                try:
+                    cont = (cfg[17].split('set_1="'))[1].split('"')[0]
+                except:
+                    pass
             if cont == 'TRUE':
                 cont = True
-                print tpc + ": " + str(cont)
             else:
                 cont = False
             if os.path.exists(cfg1) and not os.path.exists(cfg7):
@@ -81,9 +83,7 @@ for tpc in topics:
                 if len(steps) > 3:
                     chk = True
                 f = open(cfg5, "w")
-                n = 0
-                while n < len(items):
-                    item = items[n]
+                for item in items:
                     if item in marks:
                         i="<b><big>"+item+"</big></b>"
                     else:
@@ -95,16 +95,14 @@ for tpc in topics:
                     elif item in log2:
                         f.write("FALSE\n"+i+"\n"+img2+"\n")
                     elif item in log1:
-                        print '- > ' + item
+                        print 'check - > ' + item
                         f.write(chk+"\n"+i+"\n"+img1+"\n")
                     else:
                         f.write("FALSE\n"+i+"\n"+img0+"\n")
-                    n += 1
                 f.close()
         except:
-            print 'err  -> ' + tpc
+            print 'err -> ' + tpc
 PY
-
 rm -f "$DT/co_lk"
 if [ $(date +%d) = 28 -o $(date +%d) = 14 ]; then
 rm "$log"; touch "$log"; fi

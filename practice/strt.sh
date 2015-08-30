@@ -700,7 +700,7 @@ function strt() {
         info="$(gettext "Learned") <span color='#6E6E6E'><b><big>$learnt </big></b></span>   $(gettext "Easy") <span color='#6E6E6E'><b><big>$easy </big></b></span>   $(gettext "Learning") <span color='#6E6E6E'><b><big>$ling </big></b></span>   $(gettext "Difficult") <span color='#6E6E6E'><b><big>$hard </big></b></span>\n"
     fi
 
-    VAR="$(yad --list --title="$(gettext "Practice ")- $tpc" \
+    VAR="$(yad --list --title="$(gettext "Practice ")" \
     --text="$info" \
     --class=Idiomind --name=Idiomind \
     --print-column=1 --separator="" \
