@@ -43,9 +43,9 @@ val2="$(cut -d "|" -f1 <<<"$c")"
 sed -i "s/key=.*/key=\"$val2\"/g" "$DC_a/gts.cfg"
 fi
 
-
 else
-result=$(curl -s -i --user-agent "" -d "sl=$2" -d "tl=$3" --data-urlencode text="${1}" https://translate.google.com)
+useragent='Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0'
+result=$(curl -s -i --user-agent "$useragent" -d "sl=$2" -d "tl=$3" --data-urlencode text="${1,}" https://translate.google.com)
 encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"${result}")
 iconv -f "${encoding}" <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8
 fi

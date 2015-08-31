@@ -45,7 +45,6 @@ function index() {
             sust "${DC_tlt}/${s}.cfg"
             let s++
         done
-
         if [ -d "${DC_tlt}/practice" ]; then
             cd "${DC_tlt}/practice"
             while read file_pr; do
@@ -59,15 +58,12 @@ function index() {
         img0='/usr/share/idiomind/images/0.png'
         #
         if [ ! -z "${item}" ]; then
-        
             if ! grep -Fo "trgt={${item}}" "${DC_tlt}/0.cfg"; then
                 pos=`wc -l < "${DC_tlt}/0.cfg"`
                 t_item="${pos}:[type={$1},trgt={$item},srce={$4},exmp={$5},defn={$6},note={},wrds={$7},grmr={$8},].[tag={},mark={},].id=[$9]"
                 echo -e "${t_item}" >> "${DC_tlt}/0.cfg"
             fi
-            
             if ! grep -Fxq "${item}" < <(cat "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg"); then
-
                 if [[ ${1} = 1 ]]; then
                     if [ "$(grep "$4" "${DC_tlt}/1.cfg")" ] && [ -n "$4" ]; then
                     sed -i "s/${4}/${4}\n${item}/" "${DC_tlt}/1.cfg"

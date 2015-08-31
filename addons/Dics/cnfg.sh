@@ -41,20 +41,20 @@ function add_dlg() {
         if ! grep -Fo "${lang}" <<<"${langs[@]}"; then i=TRUE; fi
 
         if [ ${i} = TRUE ]; then
-        msg "$(gettext "You have entered an Invalid format").\n" \
-        error "$(gettext "You have entered an Invalid format")"
+            msg "$(gettext "You have entered an Invalid format").\n" \
+            error "$(gettext "You have entered an Invalid format")"
         else
-        if [ -f /usr/bin/gksu ]; then
-        gksu -S -m "$(gettext "Idiomind requires admin privileges for this task")" "$DS_a/Dics/cnfg.sh" \
-        cpfile "${add}" "$DS_a/Dics/dicts"/ "$DC_a/dict/disables/$(basename "${add}")"
-        elif [ -f /usr/bin/kdesudo ]; then
-        kdesudo -d --comment="$(gettext "Idiomind requires admin privileges for this task")" "$DS_a/Dics/cnfg.sh" \
-        cpfile "${add}" "$DS_a/Dics/dicts"/ "$DC_a/dict/disables/$(basename "${add}")"
-        else
-        msg "$(gettext "No authentication program found").\n" error \
-        "$(gettext "No authentication program found")"
-        exit 1
-        fi
+            if [ -f /usr/bin/gksu ]; then
+                gksu -S -m "$(gettext "Idiomind requires admin privileges for this task")" "$DS_a/Dics/cnfg.sh" \
+                cpfile "${add}" "$DS_a/Dics/dicts"/ "$DC_a/dict/disables/$(basename "${add}")"
+                elif [ -f /usr/bin/kdesudo ]; then
+                kdesudo -d --comment="$(gettext "Idiomind requires admin privileges for this task")" "$DS_a/Dics/cnfg.sh" \
+                cpfile "${add}" "$DS_a/Dics/dicts"/ "$DC_a/dict/disables/$(basename "${add}")"
+                else
+                msg "$(gettext "No authentication program found").\n" error \
+                "$(gettext "No authentication program found")"
+                exit 1
+            fi
         fi
     fi
     "$DS_a/Dics/cnfg.sh"
