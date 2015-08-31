@@ -144,7 +144,6 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
         if [ $ret -eq 1 ]; then exit
             
         elif [ $ret -eq 0 ]; then
-
             if [[ $(wc -l < "$DM_t/$langt/.1.cfg") -ge 120 ]]; then
                 msg "$(gettext "Maximum number of topics reached.")\n" info & exit
             fi
@@ -174,15 +173,15 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             sed -i "s/datei=.*/datei=\"$(date +%F)\"/g" "${DC_tlt}/id.cfg"
             
             while read item_; do
-            item="$(sed 's/},/}\n/g' <<<"${item_}")"
-            type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
-            trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
-            if [ -n "${trgt}" ]; then
-            if [[ ${type} = 1 ]]; then
-            echo "${trgt}" >> "${DC_tlt}/3.cfg"
-            else echo "${trgt}" >> "${DC_tlt}/4.cfg"; fi
-            echo "${trgt}" >> "${DC_tlt}/1.cfg"
-            echo "${item_}" >> "${DC_tlt}/0.cfg"; fi    
+                item="$(sed 's/},/}\n/g' <<<"${item_}")"
+                type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
+                trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
+                if [ -n "${trgt}" ]; then
+                    if [[ ${type} = 1 ]]; then
+                    echo "${trgt}" >> "${DC_tlt}/3.cfg"
+                    else echo "${trgt}" >> "${DC_tlt}/4.cfg"; fi
+                    echo "${trgt}" >> "${DC_tlt}/1.cfg"
+                    echo "${item_}" >> "${DC_tlt}/0.cfg"; fi    
             done < <(head -n -1 < "${file}")
 
             "$DS/ifs/tls.sh" colorize
@@ -269,7 +268,6 @@ function topic() {
             if [ ! -f "$DT/ps_lk" ]; then apply; fi
             
             if [ $ret -eq 5 ]; then
-            
                 "$DS/practice/strt.sh" &
             fi
 
@@ -306,20 +304,16 @@ function topic() {
             ret=$?
 
             if [ ! -f "$DT/ps_lk" ]; then apply; fi
-            
+
             if [ $ret -eq 5 ]; then
-            
                 "$DS/practice/strt.sh" &
             fi
 
             rm -f "$DT"/*.x
 
     elif [[ ${inx1} -eq 0 ]]; then
-    
         if [ ! -f "${DC_tlt}/7.cfg" -o ! -f "${DC_tlt}/9.cfg" ]; then
-
             "$DS/mngr.sh" mark_as_learned "${tpc}" 0
-            
         fi
         
         calculate_review "${tpc}"
@@ -330,12 +324,10 @@ function topic() {
             ret=$?
                 
                 if [ $ret -eq 2 ]; then
-
                     "$DS/mngr.sh" mark_to_learn "${tpc}" 0
                     idiomind topic & exit 1
                     
                 elif [ $ret -eq 3 ]; then
-                    
                        exit 1
                 fi 
         fi
