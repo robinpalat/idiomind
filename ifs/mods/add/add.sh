@@ -19,7 +19,6 @@ function mksure() {
     for str in "${@}"; do
     if [ -z "${str##+([[:space:]])}" ]; then e=1; break; fi
     done
-    
     return $e
 }
 

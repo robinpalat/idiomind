@@ -11,7 +11,7 @@ nll=""; fi
 
 _item="$(sed -n ${index_pos}p "${index}")"
 if [ -z "${_item}" ]; then
-_item="$(sed -n 1p "${index}")"; index_pos=1; fi
+    _item="$(sed -n 1p "${index}")"; index_pos=1; fi
 item="$(grep -F -m 1 "trgt={${_item}}" "$DC_tlt/0.cfg" |sed 's/},/}\n/g')"
 
 type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"

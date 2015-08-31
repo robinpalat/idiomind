@@ -17,7 +17,7 @@ mkmn() {
         [ ! -d "$DM_tl/${tpc}/.conf" ] && mkdir -p "$DM_tl/${tpc}/.conf"
         if [ ! -f "$DM_tl/${tpc}/.conf/8.cfg" ] \
         || [ ! "$DM_tl/${tpc}/.conf/0.cfg" ]; then
-        stts=13; echo 13 > "$DM_tl/${tpc}/.conf/8.cfg"
+            stts=13; echo 13 > "$DM_tl/${tpc}/.conf/8.cfg"
         else stts=$(sed -n 1p "$DM_tl/${tpc}/.conf/8.cfg"); fi
         echo -e "/usr/share/idiomind/images/img.${stts}.png\n${tpc}" >> "$DM_tl/.0.cfg"
     done
@@ -27,7 +27,7 @@ mkmn() {
         [ ! -d "$DM_tl/${tpc}/.conf" ] && mkdir -p "$DM_tl/${tpc}/.conf"
         if [ ! -f "$DM_tl/${tpc}/.conf/8.cfg" ] \
         || [ ! "$DM_tl/${tpc}/.conf/0.cfg" ]; then
-        stts=13; echo 13 > "$DM_tl/${tpc}/.conf/8.cfg"
+            stts=13; echo 13 > "$DM_tl/${tpc}/.conf/8.cfg"
         else stts=12; fi
         echo -e "/usr/share/idiomind/images/img.${stts}.png\n${tpc}" >> "$DM_tl/.0.cfg"
     done
@@ -117,13 +117,13 @@ edit_item() {
     lists="${2}";  item_pos="${3}"
     c=$((RANDOM%10000))
     if [ "$lists" = 1 ]; then
-    index_1="${DC_tlt}/1.cfg"
-    index_2="${DC_tlt}/2.cfg"
-    [ ${item_pos} -lt 1 ] && item_pos=${inx1}
+        index_1="${DC_tlt}/1.cfg"
+        index_2="${DC_tlt}/2.cfg"
+        [ ${item_pos} -lt 1 ] && item_pos=${inx1}
     elif [ "$lists" = 2 ]; then
-    index_1="${DC_tlt}/2.cfg"
-    index_2="${DC_tlt}/1.cfg"
-    [ ${item_pos} -lt 1 ] && item_pos=${inx2}; fi
+        index_1="${DC_tlt}/2.cfg"
+        index_2="${DC_tlt}/1.cfg"
+        [ ${item_pos} -lt 1 ] && item_pos=${inx2}; fi
     tpcs="$(egrep -v "${tpc}" "${DM_tl}/.2.cfg" |tr "\\n" '!' |sed 's/!\+$//g')"
     item="$(sed -n ${item_pos}p "${index_1}")"
     edit_pos=`grep -Fon -m 1 "trgt={${item}}" "${DC_tlt}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
@@ -160,8 +160,9 @@ edit_item() {
     if [ $? -eq 1 ]; then srce="" ;prcess_tmp=1 ; else "$DS/vwr.sh" "${lists}" "${trgt}" ${item_pos} & exit 1; fi; fi
 
     if [ -e "${DM_tlt}/$id.mp3" ]; then
-    audf="${DM_tlt}/$id.mp3"; else
-    audf="${DM_tls}/${trgt,,}.mp3"; fi
+        audf="${DM_tlt}/$id.mp3"
+    else
+        audf="${DM_tls}/${trgt,,}.mp3"; fi
     if [ ${type} = 1 ]; then edit_dlg1="$(dlg_form_1)"
     elif [ ${type} = 2 ]; then edit_dlg2="$(dlg_form_2)"; fi
     ret=$?
@@ -169,30 +170,30 @@ edit_item() {
         if [ ${ret} -eq 0  ]; then
             include "$DS/ifs/mods/add"
             if [ ${type} = 1 ]; then
-            edit_dlg="${edit_dlg1}"
-            tpc_mod="$(cut -d "|" -f3 <<<"${edit_dlg}")"
-            trgt_mod="$(clean_1 "$(cut -d "|" -f1 <<<"${edit_dlg}")")"
-            srce_mod="$(clean_0 "$(cut -d "|" -f2 <<<"${edit_dlg}")")"
-            audf_mod="$(cut -d "|" -f4 <<<"${edit_dlg}")"
-            exmp_mod="$(clean_0 "$(cut -d "|" -f5 <<<"${edit_dlg}")")"
-            defn_mod="$(clean_0 "$(cut -d "|" -f6 <<<"${edit_dlg}")")"
-            note_mod="$(clean_0 "$(cut -d "|" -f7 <<<"${edit_dlg}")")"
-            mark_mod="$(cut -d "|" -f9 <<<"${edit_dlg}")"
-            type_mod=1
+                edit_dlg="${edit_dlg1}"
+                tpc_mod="$(cut -d "|" -f3 <<<"${edit_dlg}")"
+                trgt_mod="$(clean_1 "$(cut -d "|" -f1 <<<"${edit_dlg}")")"
+                srce_mod="$(clean_0 "$(cut -d "|" -f2 <<<"${edit_dlg}")")"
+                audf_mod="$(cut -d "|" -f4 <<<"${edit_dlg}")"
+                exmp_mod="$(clean_0 "$(cut -d "|" -f5 <<<"${edit_dlg}")")"
+                defn_mod="$(clean_0 "$(cut -d "|" -f6 <<<"${edit_dlg}")")"
+                note_mod="$(clean_0 "$(cut -d "|" -f7 <<<"${edit_dlg}")")"
+                mark_mod="$(cut -d "|" -f9 <<<"${edit_dlg}")"
+                type_mod=1
             elif [ ${type} = 2 ]; then
-            edit_dlg="${edit_dlg2}"
-            tpc_mod="$(cut -d "|" -f7 <<<"${edit_dlg}")"
-            mark_mod="$(cut -d "|" -f1 <<<"${edit_dlg}")"
-            type_mod="$(cut -d "|" -f2 <<<"${edit_dlg}")"
-            trgt_mod="$(clean_2 "$(cut -d "|" -f3 <<<"${edit_dlg}")")"
-            srce_mod="$(clean_2 "$(cut -d "|" -f5 <<<"${edit_dlg}")")"
-            audf_mod="$(cut -d "|" -f8 <<<"${edit_dlg}")"
-            grmr_mod="${grmr}"
-            wrds_mod="${wrds}"
-            
-            [ "${type_mod}" = TRUE ] && type_mod=1
-            [ "${type_mod}" = FALSE ] && type_mod=2
-            [ -z "${type_mod}" ] && type_mod=2
+                edit_dlg="${edit_dlg2}"
+                tpc_mod="$(cut -d "|" -f7 <<<"${edit_dlg}")"
+                mark_mod="$(cut -d "|" -f1 <<<"${edit_dlg}")"
+                type_mod="$(cut -d "|" -f2 <<<"${edit_dlg}")"
+                trgt_mod="$(clean_2 "$(cut -d "|" -f3 <<<"${edit_dlg}")")"
+                srce_mod="$(clean_2 "$(cut -d "|" -f5 <<<"${edit_dlg}")")"
+                audf_mod="$(cut -d "|" -f8 <<<"${edit_dlg}")"
+                grmr_mod="${grmr}"
+                wrds_mod="${wrds}"
+                
+                [ "${type_mod}" = TRUE ] && type_mod=1
+                [ "${type_mod}" = FALSE ] && type_mod=2
+                [ -z "${type_mod}" ] && type_mod=2
             fi
  
             if [ "${trgt_mod}" != "${trgt}" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
@@ -204,10 +205,10 @@ edit_item() {
             fi
             
             if [ "${mark}" != "${mark_mod}" ]; then
-            if [ "${mark_mod}" = "TRUE" ]; then
-            mmod=1; echo "${trgt}" >> "${DC_tlt}/6.cfg"; else
-            sed -i "/${trgt}/d" "${DC_tlt}/6.cfg"; fi
-            col=1; mod=1
+                if [ "${mark_mod}" = "TRUE" ]; then
+                mmod=1; echo "${trgt}" >> "${DC_tlt}/6.cfg"; else
+                sed -i "/${trgt}/d" "${DC_tlt}/6.cfg"; fi
+                col=1; mod=1
             fi
             
             [[ "${prcess_tmp}" = 1 ]] && srce="$temp"
@@ -224,23 +225,20 @@ edit_item() {
             if [ ${mod} = 1 ]; then
             (
                 if [ ${ind} = 1 ]; then
-                
                     DT_r=$(mktemp -d "$DT/XXXX")
                     internet
-                        
                     if [ ${type_mod} = 1 ]; then
-                    srce_mod="$(clean_1 "$(translate "${trgt_mod}" $lgt $lgs)")"
-                    audio="${trgt_mod,,}"
-                    tts_word "${audio}" "$DT_r"
-                    srce="$temp"
-
+                        srce_mod="$(clean_1 "$(translate "${trgt_mod}" $lgt $lgs)")"
+                        audio="${trgt_mod,,}"
+                        tts_word "${audio}" "$DT_r"
+                        srce="$temp"
                     elif [ ${type_mod} = 2 ]; then
-                    srce_mod="$(clean_2 "$(translate "${trgt_mod}" $lgt $lgs)")"
-                    db="$DS/default/dicts/$lgt"
-                    sentence_p "$DT_r" 2
-                    fetch_audio "${aw}" "${bw}" "$DT_r" "${DM_tls}"
-                    srce="$temp"
-                    grmr="${trgt_mod}"
+                        srce_mod="$(clean_2 "$(translate "${trgt_mod}" $lgt $lgs)")"
+                        db="$DS/default/dicts/$lgt"
+                        sentence_p "$DT_r" 2
+                        fetch_audio "${aw}" "${bw}" "$DT_r" "${DM_tls}"
+                        srce="$temp"
+                        grmr="${trgt_mod}"
                     fi
                 fi
             
@@ -400,14 +398,14 @@ edit_list() {
                 srce="$temp"
                 
                 if [ ${type} = 1 ]; then
-                srce_mod="$(clean_1 "$(translate "${trgt}" $lgt $lgs)")"
-                audio="${trgt,,}"
-                tts_word "${audio}" "$DT_r"
+                    srce_mod="$(clean_1 "$(translate "${trgt}" $lgt $lgs)")"
+                    audio="${trgt,,}"
+                    tts_word "${audio}" "$DT_r"
                 elif [ ${type} = 2 ]; then
-                srce_mod="$(clean_2 "$(translate "${trgt}" $lgt $lgs)")"
-                db="$DS/default/dicts/$lgt"
-                sentence_p "$DT_r" 2
-                fetch_audio "${aw}" "${bw}" "$DT_r" "${DM_tls}"
+                    srce_mod="$(clean_2 "$(translate "${trgt}" $lgt $lgs)")"
+                    db="$DS/default/dicts/$lgt"
+                    sentence_p "$DT_r" 2
+                    fetch_audio "${aw}" "${bw}" "$DT_r" "${DM_tls}"
                 fi
                  
                 id_mod="$(set_name_file ${type} "${trgt}" "${srce_mod}" \
@@ -440,11 +438,11 @@ chng_lng() {
     if [ $ret = 0 ]; then
     mod="$(cut -d "|" -f2 <<<"${d}")"
     if [ -e "${DC_tlt}/${mod}.dat" -a "${mod}" != "${lgsl^} (default)" ]; then
-    mv "${DC_tlt}/0.cfg" "${DC_tlt}/${lgsl^} (default).dat"
-    ln -s "${DC_tlt}/${mod}.dat" "${DC_tlt}/0.cfg"
+        mv "${DC_tlt}/0.cfg" "${DC_tlt}/${lgsl^} (default).dat"
+        ln -s "${DC_tlt}/${mod}.dat" "${DC_tlt}/0.cfg"
     elif [ -e "${DC_tlt}/${mod}.dat" -a "${mod}" = "${lgsl^} (default)" ]; then
-    yad; rm "${DC_tlt}/0.cfg"
-    mv -f "${DC_tlt}/${lgsl^} (default).dat" "${DC_tlt}/0.cfg"
+        rm "${DC_tlt}/0.cfg"
+        mv -f "${DC_tlt}/${lgsl^} (default).dat" "${DC_tlt}/0.cfg"
     fi
     else exit 1; fi
 }
@@ -478,9 +476,9 @@ delete_topic() {
             > "$DC_s/4.cfg"
             
             for n in {0..4}; do
-            if [ -f "$DM_tl/.${n}.cfg" ]; then
-            grep -vxF "${tpc}" "$DM_tl/.$n.cfg" > "$DM_tl/.${n}.cfg.tmp"
-            sed '/^$/d' "$DM_tl/.$n.cfg.tmp" > "$DM_tl/.${n}.cfg"; fi
+                if [ -f "$DM_tl/.${n}.cfg" ]; then
+                grep -vxF "${tpc}" "$DM_tl/.$n.cfg" > "$DM_tl/.${n}.cfg.tmp"
+                sed '/^$/d' "$DM_tl/.$n.cfg.tmp" > "$DM_tl/.${n}.cfg"; fi
             done
             
             kill -9 $(pgrep -f "yad --list ") &
@@ -491,9 +489,9 @@ delete_topic() {
             "$DS/mngr.sh" mkmn &
             
             if [ -e "$DM_tl/.5.cfg" ]; then
-            tpd="$(< "$DM_tl/.5.cfg")"
-            if grep -Fxq "${tpd}" "$DM_tl/.1.cfg"; then
-            "$DS/default/tpc.sh" "${tpd}" 2; fi
+                tpd="$(< "$DM_tl/.5.cfg")"
+                if grep -Fxq "${tpd}" "$DM_tl/.1.cfg"; then
+                "$DS/default/tpc.sh" "${tpd}" 2; fi
             fi
             > "$DC_s/7.cfg"
         fi
@@ -601,10 +599,10 @@ mark_to_learn_topic() {
         trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
         
         if [ -n "${trgt}" ]; then
-        if [ ${type} -eq 1 ]; then
-        echo "${trgt}" >> "${DC_tlt}/3.cfg"
-        else echo "${trgt}" >> "${DC_tlt}/4.cfg"; fi
-        echo "${trgt}" >> "${DC_tlt}/1.cfg"
+            if [ ${type} -eq 1 ]; then
+            echo "${trgt}" >> "${DC_tlt}/3.cfg"
+            else echo "${trgt}" >> "${DC_tlt}/4.cfg"; fi
+            echo "${trgt}" >> "${DC_tlt}/1.cfg"
         fi
     done < "${DC_tlt}/0.cfg"
     

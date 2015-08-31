@@ -49,7 +49,6 @@ function set_name_file() {
 
 function include() {
   for f in "$1"/*; do source "$f"; done
-
 }
 
 function f_lock() {
