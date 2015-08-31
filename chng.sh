@@ -12,7 +12,6 @@ if [[ ${1} = 0 ]]; then
     export se="$(grep -oP '(?<=svepi=\").*(?=\")' "${cfgp}")"
     
     _play() {
-        
         a="$(grep -oP '(?<=audio=\").*(?=\")' "${cfg}")"
         n="$(grep -oP '(?<=ntosd=\").*(?=\")' "${cfg}")"
         l="$(grep -oP '(?<=loop=\").*(?=\")' "${cfg}")"
@@ -53,49 +52,46 @@ if [[ ${1} = 0 ]]; then
     export -f _play
     
     getitem() {
-        
         if [ ${f} -gt 5 -o ! -d "${DM_tlt}" ]; then
-        msg "$(gettext "An error has occurred. Playback stopped")" info &
-        "$DS"/stop.sh 2; fi
+            msg "$(gettext "An error has occurred. Playback stopped")" info &
+            "$DS"/stop.sh 2; fi
         [ -f "$DT/list.m3u" ] && rm -f "$DT/list.m3u"
-        
+            
         if [ -n "${item}" ]; then
-        unset file icon
-        _item="$(grep -F -m 1 "trgt={${item}}" "${DC_tlt}/0.cfg" |sed 's/},/}\n/g')"
-        type="$(grep -oP '(?<=type={).*(?=})' <<<"${_item}")"
-        export trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${_item}")"
-        srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${_item}")"
-        id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${_item}")"
-        img="${DM_tls}/images/${trgt,,}-0.jpg"; [ -f "$img" ] && icon="$img"
-        [ -z "$trgt" ] && trgt="$item"
-        
-        if [ -f "${DM_tlt}/$id.mp3" ]; then
-        file="${DM_tlt}/$id.mp3"; else
-        file="${DM_tls}/${trgt,,}.mp3"; fi
-        
-        stnrd=1
-        else ((f=f+1)); fi
+            unset file icon
+            _item="$(grep -F -m 1 "trgt={${item}}" "${DC_tlt}/0.cfg" |sed 's/},/}\n/g')"
+            type="$(grep -oP '(?<=type={).*(?=})' <<<"${_item}")"
+            export trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${_item}")"
+            srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${_item}")"
+            id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${_item}")"
+            img="${DM_tls}/images/${trgt,,}-0.jpg"; [ -f "$img" ] && icon="$img"
+            [ -z "$trgt" ] && trgt="$item"
+            
+            if [ -f "${DM_tlt}/$id.mp3" ]; then
+                file="${DM_tlt}/$id.mp3"
+            else
+                file="${DM_tls}/${trgt,,}.mp3"; fi
+            stnrd=1
+        else
+            ((f=f+1))
+        fi
     }
     
     if [ ${w} = TRUE -a ${s} = TRUE ]; then
-    while read item; do getitem; _play
-    done < <(tac "${DC_tlt}/1.cfg"); fi
-    
+        while read item; do getitem; _play
+        done < <(tac "${DC_tlt}/1.cfg"); fi
     if [ ${w} = TRUE -a ${s} = FALSE ]; then
-    while read item; do getitem; _play
-    done < <(grep -Fxvf "${DC_tlt}/4.cfg" "${DC_tlt}/1.cfg" |tac); fi
-
+        while read item; do getitem; _play
+        done < <(grep -Fxvf "${DC_tlt}/4.cfg" "${DC_tlt}/1.cfg" |tac); fi
     if [ ${w} = FALSE -a ${s} = TRUE ]; then
-    while read item; do getitem; _play
-    done < <(grep -Fxvf "${DC_tlt}/3.cfg" "${DC_tlt}/1.cfg" |tac); fi
-    
+        while read item; do getitem; _play
+        done < <(grep -Fxvf "${DC_tlt}/3.cfg" "${DC_tlt}/1.cfg" |tac); fi
     if [ ${m} = TRUE ]; then
-    while read item; do getitem; _play
-    done < "${DC_tlt}/6.cfg"; fi
-    
+        while read item; do getitem; _play
+        done < "${DC_tlt}/6.cfg"; fi
     if [ ${p} = TRUE ]; then
-    while read item; do getitem; _play
-    done < <(grep -Fxv "${DC_tlt}/4.cfg" "${DC_tlt}/practice/log.3"); fi
+        while read item; do getitem; _play
+        done < <(grep -Fxv "${DC_tlt}/4.cfg" "${DC_tlt}/practice/log.3"); fi
     
     include "$DS/ifs/mods/play"
 
@@ -136,15 +132,15 @@ elif [[ ${1} != 0 ]]; then
     --button="gtk-close":1)
     ret=$?
 
-    if [ $ret -eq 3 ]; then "$DS/add.sh" new_topic &
-            
-    elif [ $ret -eq 2 ]; then "$DS/default/tpc.sh" "$tpc" 1 &
-
-    elif [ $ret -eq 0 ]; then "$DS/default/tpc.sh" "$tpc" &
-
-    elif [ $ret -eq 5 ]; then "$DS/default/tpc.sh" "$tpc" &
+    if [ $ret -eq 3 ]; then
+        "$DS/add.sh" new_topic &  
+    elif [ $ret -eq 2 ]; then
+        "$DS/default/tpc.sh" "$tpc" 1 &
+    elif [ $ret -eq 0 ]; then
+        "$DS/default/tpc.sh" "$tpc" &
+    elif [ $ret -eq 5 ]; then
+        "$DS/default/tpc.sh" "$tpc" &
     [ -n "${tpc}" ] && echo "${tpc}" > "$DM_tl"/.5.cfg
-    
     fi
     exit
 fi

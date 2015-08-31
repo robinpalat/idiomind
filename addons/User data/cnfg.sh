@@ -19,7 +19,6 @@ others="$(grep -o others=\"[^\"]* "$DC_a/user_data.cfg"| grep -o '[^"]*$')"
 dte=$(date +%F)
 
 if [ -z "${1}" ]; then
-
     cmd_rest="'$DS_a/User data/cnfg.sh' restore 1 "\"${tpc}\"""
     D=$(yad --list --radiolist --title="$(gettext "User Data")" \
     --name=Idiomind --class=Idiomind \
@@ -37,7 +36,6 @@ if [ -z "${1}" ]; then
     ret=$?
 
     if [[ $ret -eq 0 ]]; then
-
         in=$(sed -n 1p <<<"$D")
         ex=$(sed -n 2p <<<"$D")
         # export
@@ -55,7 +53,6 @@ if [ -z "${1}" ]; then
             ret=$?
                 
             if [[ $ret -eq 0 ]]; then
-                
                 (
                 echo "# $(gettext "Copying")..."
 
@@ -71,7 +68,6 @@ if [ -z "${1}" ]; then
                 --exclude='./topics/Japanese/Podcasts' \
                 --exclude='./topics/Vietnamese/Podcasts' \
                 .
-
                 mv -f "$DT/backup.tar.gz" "$DT/idiomind_data.tar.gz"
                 mv -f "$DT/idiomind_data.tar.gz" "${exp}"
                 echo "# $(gettext "Completing")" ; sleep 1
@@ -90,7 +86,6 @@ if [ -z "${1}" ]; then
             
         # import
         elif grep "TRUE $(gettext "Import")" <<<"$in"; then
-            
             set -e
             set u pipefail
             cd "$HOME"
@@ -103,11 +98,9 @@ if [ -z "${1}" ]; then
             --button=Ok:0)
             
             if [[ $ret -eq 0 ]]; then
-            
                 if [ -z "${add}" ] || [ ! -d "${DM}" ]; then
                     exit 1
                 fi
-                
                 (
                 [ -d "$DT/import" ] && rm -fr "$DT/import"
                 rm -f "$DT/*.XXXXXXXX"
@@ -123,7 +116,6 @@ if [ -z "${1}" ]; then
                 list="$(ls * -d | sed 's/saved//g' | sed '/^$/d')"
 
                 while read -r lng; do
-                
                     if [ ! -d "$DM_t/$lng" ]; then
                     mkdir "$DM_t/$lng"; fi
                     if [ ! -d "$DM_t/$lng/.share" ]; then
@@ -133,11 +125,9 @@ if [ -z "${1}" ]; then
                     fi
                     
                     echo "$lng" >> ./.languages
-                    
                 done <<<"${list}"
 
                 while read language; do
-
                     if [ -d "$DT/import/topics/$language/" ] &&  \
                     [ "$(ls -A "$DT/import/topics/$language/")" ] ; then
                     cd "$DT/import/topics/$language/"; else continue; fi
@@ -146,7 +136,6 @@ if [ -z "${1}" ]; then
                     "$DT/import/topics/$language/.topics"
                     
                     while read topic; do
-                        
                         if [ -d "$DM_t/$language/${topic}" ]; then continue; fi
                         if [ -d "$DT/import/topics/$language/${topic}" ]; then
                         cp -fr "$DT/import/topics/$language/${topic}" "$DM_t/$language/${topic}"
@@ -158,12 +147,10 @@ if [ -z "${1}" ]; then
                         if [ -d "$DT/import/topics/$language/${topic}" ]; then
                         echo "$topic" >> "$DM_t/$language/.3.cfg"; fi
                         cd "$DT/import/topics"
-
                     done < "$DT/import/topics/$language/.topics"
                     
                     if [ -d "$DT/import/topics/$language/Podcasts" ]; then
                     cp -r "$DT/import/topics/$language/Podcasts" "$DM_t/$language/Podcasts"; fi
-                
                 done < "$DT/import/topics/.languages"
 
                 ) | yad --progress --title="$(gettext "Copying")" \

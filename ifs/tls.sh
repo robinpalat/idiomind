@@ -6,9 +6,7 @@ source "$DS/ifs/mods/cmns.sh"
 lgt=$(lnglss "$lgtl")
 lgs=$(lnglss "$lgsl")
 
-
 function check_format_1() {
-    
     LANGUAGES=( 'English' 'Chinese' 'French' \
     'German' 'Italian' 'Japanese' 'Portuguese' \
     'Russian' 'Spanish' 'Vietnamese' )
@@ -36,7 +34,6 @@ function check_format_1() {
     [ ! -f "${file}" ] && invalid
     shopt -s extglob; n=0; exit=0
     while read -r line; do
-    
         if [ -z "$line" ]; then continue; fi
         get="${sets[${n}]}"
         val=$(echo "${line}" |grep -o "$get"=\"[^\"]* |grep -o '[^"]*$')
@@ -77,34 +74,31 @@ function check_format_1() {
     return ${n}
 }
 
-
 check_index() {
-
     DC_tlt="$DM_tl/${2}/.conf"
     DM_tlt="$DM_tl/${2}"
     mkmn=0; f=0; a=0
     [[ ${3} = 1 ]] && r=1 || r=0
     
     _check() {
-        
         if [ ! -f "${DC_tlt}/0.cfg" ]; then f=1; fi
         if [ ! -d "${DC_tlt}" ]; then mkdir "${DC_tlt}"; fi
         if [ ! -d "${DM_tlt}" ]; then mkdir "${DC_tlt}"; fi
         if [ ! -d "${DM_tlt}/images" ]; then mkdir "${DM_tlt}/images"; fi
         for n in {0..4}; do
-        [ ! -e "${DC_tlt}/$n.cfg" ] && touch "${DC_tlt}/$n.cfg" && a=1
-        if grep '^$' "${DC_tlt}/$n.cfg"; then
-        sed -i '/^$/d' "${DC_tlt}/$n.cfg"; fi
-        check_index1 "${DC_tlt}/$n.cfg"
+            [ ! -e "${DC_tlt}/$n.cfg" ] && touch "${DC_tlt}/$n.cfg" && a=1
+            if grep '^$' "${DC_tlt}/$n.cfg"; then
+                sed -i '/^$/d' "${DC_tlt}/$n.cfg"; fi
+            check_index1 "${DC_tlt}/$n.cfg"
         done
 
         [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "${c1}" > "${DC_tlt}/id.cfg"
         for i in "${DM_tlt}"/*.mp3 ; do [[ ! -s "${i}" ]] && rm "${i}" ; done
         if grep 'rsntc=' "${DC_tlt}/10.cfg"; then
-        rm "${DC_tlt}/10.cfg"; fi
+            rm "${DC_tlt}/10.cfg"; fi
         
         if [ ! -f "${DC_tlt}/8.cfg" ]; then
-        echo 1 > "${DC_tlt}/8.cfg"; fi
+            echo 1 > "${DC_tlt}/8.cfg"; fi
         export stts=$(sed -n 1p "${DC_tlt}/8.cfg")
         [ $stts = 13 ] && export f=1
         
@@ -112,16 +106,16 @@ check_index() {
         cnt1=`egrep -cv '#|^$' < "${DC_tlt}/1.cfg"`
         cnt2=`egrep -cv '#|^$' < "${DC_tlt}/2.cfg"`
         if [ $((cnt1+cnt2)) != ${cnt0} ]; then
-        export a=1; fi
+            export a=1; fi
         
     }
     
     _restore() {
-    
         if [ ! -f "${DC_tlt}/0.cfg" ]; then
         if [ -f "$HOME/.idiomind/backup/${2}.bk" ]; then
-        cp -f "$HOME/.idiomind/backup/${2}.bk" "${DC_tlt}/0.cfg"
-        else msg "$(gettext "Unable to fix the index.")\n" error "$(gettext "Error")"
+            cp -f "$HOME/.idiomind/backup/${2}.bk" "${DC_tlt}/0.cfg"
+        else
+            msg "$(gettext "Unable to fix the index.")\n" error "$(gettext "Error")"
         exit 1; fi
         fi
         
@@ -132,11 +126,10 @@ check_index() {
             trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
             
             if [ -n "${trgt}" ]; then
-            
                 if [ ${type} = 1 ]; then
-                echo "${trgt}" >> "${DC_tlt}/3.cfg"
+                    echo "${trgt}" >> "${DC_tlt}/3.cfg"
                 elif [ ${type} = 2 ]; then
-                echo "${trgt}" >> "${DC_tlt}/4.cfg"; fi
+                    echo "${trgt}" >> "${DC_tlt}/4.cfg"; fi
                 echo "${trgt}" >> "${DC_tlt}/1.cfg"
                 echo "${item_}" >> "$DT/cfg0"
             fi
@@ -146,7 +139,6 @@ check_index() {
     }
 
     _sanity() {
-
         cfg0="${DC_tlt}/0.cfg"
         sed -i "/trgt={}/d" "${cfg0}"
         sed -i '/^$/d' "${cfg0}"
@@ -160,7 +152,6 @@ check_index() {
     }
     
     _fix() {
-        
         if [ ${stts} -eq 13 ]; then
             if [ -f "${DC_tlt}/8.cfg_" ] && [ -n $(< "${DC_tlt}/8.cfg_") ]; then
             stts=$(sed -n 1p "${DC_tlt}/8.cfg_")
@@ -175,29 +166,27 @@ check_index() {
     _check
     
     if [ ${f} = 1 -o ${a} = 1 ]; then
-    > "$DT/ps_lk"; (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
-    "$(gettext "Fixing...")" -t 3000) & fi
+        > "$DT/ps_lk"; (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
+        "$(gettext "Fixing...")" -t 3000) & fi
     
     if [ ${f} = 1 ]; then
-    [ ! -d "${DM_tlt}/.conf" ] && mkdir "${DM_tlt}/.conf"
-    [ ! -d "${DM_tlt}/images" ] && mkdir "${DM_tlt}/images"
-    _restore; _fix; mkmn=1; fi
+        [ ! -d "${DM_tlt}/.conf" ] && mkdir "${DM_tlt}/.conf"
+        [ ! -d "${DM_tlt}/images" ] && mkdir "${DM_tlt}/images"
+        _restore; _fix; mkmn=1; fi
     
     if [ ${a} = 1 ]; then _sanity; _restore; mkmn=1; fi
     
     if [ ${r} = 1 ]; then _sanity; _restore; fi
     
     if [ ${mkmn} = 1 ] ;then
-    "$DS/ifs/tls.sh" colorize
-    "$DS/mngr.sh" mkmn
+        "$DS/ifs/tls.sh" colorize
+        "$DS/mngr.sh" mkmn
     fi
 
     if [ -f "$DT/ps_lk" ]; then rm -f "$DT/ps_lk"; fi
 }
 
-
 add_audio() {
-
     cd "$HOME"
     aud="$(yad --file --title="$(gettext "Add Audio")" \
     --text=" $(gettext "Browse to and select the audio file that you want to add.")" \
@@ -208,15 +197,12 @@ add_audio() {
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "OK")":0 |cut -d "|" -f1)"
     ret=$?
-
     if [ $ret -eq 0 ]; then
     if [ -f "${aud}" ]; then mv -f "${aud}" "${2}/audtm.mp3"; fi
     fi
 } >/dev/null 2>&1
 
-
 _backup() {
-
     cd "$DM/backup"; ls -t *.bk | sed 's/\.bk//g' | \
     yad --list --title="$(gettext "Backups")" \
     --name=Idiomind --class=Idiomind \
@@ -229,9 +215,7 @@ _backup() {
 
 } >/dev/null 2>&1
 
-
 _restfile() {
-
     if [ -f "$HOME/.idiomind/backup/${2}.bk" ]; then
         info=`stat "$HOME/.idiomind/backup/${2}.bk"|sed -n 6p|cut -d" " -f2`
         yad --title="$(gettext "Backups")" \
@@ -245,20 +229,16 @@ _restfile() {
         --button="$(gettext "Cancel")":1 \
         --button="$(gettext "Restore")":0
         ret="$?"
-        
         if [ $ret -eq 0 ]; then
         cp -f "$HOME/.idiomind/backup/${2}.bk" "${DM_tl}/${2}/.conf/0.cfg"
         "$DS/ifs/tls.sh" check_index "${2}" 1
         fi
-        
     else
         msg "$(gettext "Backup not found")\n" dialog-warning
     fi
 }
 
-
 add_file() {
-
     cd "$HOME"
     FL=$(yad --file --title="$(gettext "Add File")" \
     --text=" $(gettext "Browse to and select the file that you want to add.")" \
@@ -270,9 +250,7 @@ add_file() {
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "OK")":0)
     ret=$?
-
     if [ $ret -eq 0 ]; then
-    
         while read -r file; do
         [ -f "${file}" ] && cp -f "${file}" \
         "${DM_tlt}/files/$(basename "$file" |iconv -c -f utf8 -t ascii)"
@@ -281,9 +259,7 @@ add_file() {
     
 } >/dev/null
 
-
 videourl() {
-
     n=$(ls *.url "${DM_tlt}/files/" | wc -l)
     url=$(yad --form --title=" " \
     --name=Idiomind --class=Idiomind \
@@ -295,21 +271,18 @@ videourl() {
     --button="$(gettext "Cancel")":1 \
     --button=gtk-ok:0)
     ret=$?
-    
     [ $ret = 1 -o -z "$url" ] && exit
     if [ ${#url} -gt 40 ] && \
-    ([ ${url:0:29} = 'https://www.youtube.com/watch' ] \
-    || [ ${url:0:28} = 'http://www.youtube.com/watch' ]); then \
-    echo "$url" > "${DM_tlt}/files/video$n.url"
-    else msg "$(gettext "You have entered an invalid URL").\n" error \
-    "$(gettext "You have entered an invalid URL")"; fi
+        ([ ${url:0:29} = 'https://www.youtube.com/watch' ] \
+        || [ ${url:0:28} = 'http://www.youtube.com/watch' ]); then \
+        echo "$url" > "${DM_tlt}/files/video$n.url"
+    else 
+        msg "$(gettext "You have entered an invalid URL").\n" error \
+        "$(gettext "You have entered an invalid URL")"; fi
 }
 
-
 attatchments() {
-
     mkindex() {
-
     rename 's/_/ /g' "${DM_tlt}/files"/*
     echo -e "<meta http-equiv=\"Content-Type\" \
     \rcontent=\"text/html; charset=UTF-8\" />
@@ -327,7 +300,6 @@ attatchments() {
     \r<source src=\"../files/$file\" type=\"audio/mpeg\">
     \r</audio><br><br>" >> "${DC_tlt}/att.html"; fi
     done <<<"$(ls "${DM_tlt}/files")"
-
     while read -r file; do
     if grep ".txt" <<<"${file: -4}"; then
     txto=$(sed ':a;N;$!ba;s/\n/<br>/g' \
@@ -337,7 +309,6 @@ attatchments() {
     \r<h2>${file::-4}</h2><br>$txto \
     \r<br><br><br></div>" >> "${DC_tlt}/att.html"; fi
     done <<<"$(ls "${DM_tlt}/files")"
-
     while read -r file; do
     if grep ".mp4" <<<"${file: -4}"; then
     echo -e "${file::-4}<br><br>
@@ -376,7 +347,6 @@ attatchments() {
     \rstyle=\"width:100%;height:100%\"><br><br><br>" \
     >> "${DC_tlt}/att.html"; fi
     done <<<"$(ls "${DM_tlt}/files")"
-
     echo -e "</body>" >> "${DC_tlt}/att.html"
     sed -ie 's/^[ \t]*//' "${DC_tlt}/att.html"
     
@@ -403,7 +373,6 @@ attatchments() {
         
         if [[ "$ch1" != "$(ls -A "${DM_tlt}/files")" ]]; then
         mkindex; fi
-        
     else
         yad --form --title="$(gettext "Attached Files")" \
         --text="  $(gettext "Save files related to topic")" \
@@ -415,24 +384,19 @@ attatchments() {
         --button="$(gettext "Cancel")":1 \
         --button="$(gettext "OK")":0
         ret=$?
-        
         if [[ "$ch1" != "$(ls -A "${DM_tlt}/files")" ]] && [ $ret = 0 ]; then
             mkindex
         fi
     fi
 } >/dev/null 2>&1
 
-
 help() {
-
     URL="http://idiomind.sourceforge.net/doc/help.pdf"
     (xdg-open "$URL") &
      
 } >/dev/null 2>&1
 
-
 fback() {
-    
     internet
     URL="http://idiomind.sourceforge.net/doc/msg.html"
     yad --html --title="$(gettext "Send Feedback")" \
@@ -444,9 +408,7 @@ fback() {
      
 } >/dev/null 2>&1
 
-
 check_updates() {
-
     internet
     nver=`wget --user-agent 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) \
     Gecko/20100101 Firefox/31.0' -qO - http://idiomind.sourceforge.net/doc/release |sed -n 1p`
@@ -456,23 +418,17 @@ check_updates() {
     if [ ${#nver} -lt 9 ] && [ ${#cver} -lt 9 ] \
     && [ ${#nver} -ge 3 ] && [ ${#cver} -ge 3 ] \
     && [ "$nver" != "$cver" ]; then
-    
         msg_2 " <b>$(gettext "A new version of Idiomind available\!")</b>\t\n" \
         info "$(gettext "Download")" "$(gettext "Cancel")" "$(gettext "Information")"
         ret=$?
-        
         if [ $ret -eq 0 ]; then xdg-open "$pkg"; fi
-        
     else
         msg " $(gettext "No updates available.")\n" info "$(gettext "Information")"
     fi
-
     exit 0
 }
 
-
 a_check_updates() {
-
     [[ ! -f "$DC_s/9.cfg" ]] && echo `date +%d` > "$DC_s/9.cfg" && exit
     d1=$(< "$DC_s/9.cfg"); d2=$(date +%d)
     if [[ "$(sed -n 1p "$DC_s/9.cfg")" = 28 ]] && \
@@ -481,7 +437,6 @@ a_check_updates() {
     [[ "$(wc -l < "$DC_s/9.cfg")" -gt 1 ]] && exit 1
 
     if [[ "$d1" != "$d2" ]]; then
-        
         sleep 50; curl -v www.google.com 2>&1 | \
         grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
         echo "$d2" > "$DC_s/9.cfg"
@@ -495,18 +450,14 @@ a_check_updates() {
             
             msg_2 " <b>$(gettext "A new version of Idiomind available\!")\t\n</b> $(gettext "Do you want to download it now?")\n" info "$(gettext "Download")" "$(gettext "Cancel")" "$(gettext "New Version")" "$(gettext "Ignore")"
             ret=$?
-            
             if [ $ret -eq 0 ]; then xdg-open "$pkg"
-            
             elif [ $ret -eq 2 ]; then echo "$d2" >> "$DC_s/9.cfg"; fi
         fi
     fi
     exit 0
 }
 
-
 first_run() {
-    
     NOTE1="$(gettext "<b>How to add notes?</b>\nIn the upper text field, enter text in the language that you are learning.  In the field below, enter text in the source language.  To add an image to a note use the screen clipping.")\n"
     NOTE2="$(gettext "NOTE: If you change the text of an item here listed, then its audio file can be overwritten by another new file. To avoid this, you can edit it individually through its edit dialog.")"
 
@@ -515,18 +466,15 @@ first_run() {
         note="${NOTE1}"
         file="$DC_s/add_first_run"
         image=gtk-help
-        
     elif [[ ${2} = edit_list ]]; then
         title=" "
         note="${NOTE2}"
         file="$DC_s/elist_first_run"
         image=gtk-help
-        
     elif [[ -z "${2}" ]]; then
         echo "-- done"
         touch "$DC_s/add_first_run" "$DC_s/elist_first_run"
         exit
-        
     else exit; fi
     
     sleep 2; mv -f "${file}" "${file}".p
@@ -545,7 +493,6 @@ first_run() {
 }
 
 set_image() {
-
     cd "$DT"; r=0
     source "$DS/ifs/mods/add/add.sh"
     ifile="${DM_tls}/images/${trgt,,}-0.jpg"
@@ -555,36 +502,29 @@ set_image() {
     if [ $? -eq 1 ]; then "$DT/img$trgt.lk"; else exit 1 ; fi; fi
 
     if [ -f "$ifile" ]; then
-    
         image="--image=$ifile"
         btn2="--button=gtk-delete:2"
         dlg_form_3
         ret=$?
-        
         if [ $ret -eq 2 ]; then
-        
             rm -f "$ifile"
             ls "${DM_tls}/images/${trgt,,}"-*.jpg | while read -r img; do
             mv -f "$img" "${DM_tls}/images/${trgt,,}"-${r}.jpg
             let r++
             done
         fi
-        
     else 
         scrot -s --quality 90 "$DT/temp.jpg"
         /usr/bin/convert "$DT/temp.jpg" -interlace Plane -thumbnail 405x275^ \
         -gravity center -extent 400x270 -quality 90% "$ifile"
         "$DS/ifs/tls.sh" set_image "${2}" "${trgt}" & exit
     fi
-
     cleanups "$DT/temp.jpg"
     exit
     
 } >/dev/null 2>&1
 
-
 mkpdf() {
-
     cd "$HOME"
     pdf=$(yad --file --save --title="$(gettext "Export to PDF")" \
     --name=Idiomind --class=Idiomind \
@@ -596,7 +536,6 @@ mkpdf() {
     ret=$?
 
     if [ $ret -eq 0 ]; then
-    
         [ -d "$DT/mkhtml" ] && rm -fr "$DT/mkhtml"
         mkdir -p "$DT/mkhtml/images"; wdir="$DT/mkhtml"
         cfg0="${DC_tlt}/0.cfg"
@@ -609,25 +548,21 @@ mkpdf() {
         -alpha set -channel A -evaluate set 50% "$wdir/img.png"; fi
         
         while read -r word; do
-
             if [ -f "${DM_tls}/images/${word,,}-0.jpg" ]; then
-            convert "${DM_tls}/images/${word,,}-0.jpg" -alpha set -virtual-pixel transparent \
-            -channel A -blur 0x10 -level 70%,100% +channel "$wdir/images/$word.png"
-            echo "${word}" >> "$wdir/image_list"
+                convert "${DM_tls}/images/${word,,}-0.jpg" -alpha set -virtual-pixel transparent \
+                -channel A -blur 0x10 -level 70%,100% +channel "$wdir/images/$word.png"
+                echo "${word}" >> "$wdir/image_list"
             fi
-
         done < <(tac "${cfg3}")
 
         while read -r sntcs; do
-        
             item="$(grep -F -m 1 "trgt={${sntcs}}" "${cfg0}" |sed 's/},/}\n/g')"
             trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
             srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
             if [ -n "${trgt}" -a -n "${srce}" ]; then
-            echo "${trgt}" >> "$wdir/trgt_sentences"
-            echo "${srce}" >> "$wdir/srce_sentences"
+                echo "${trgt}" >> "$wdir/trgt_sentences"
+                echo "${srce}" >> "$wdir/srce_sentences"
             fi
-
         done < <(tac "${cfg4}")
         
         echo -e "<head>
@@ -659,7 +594,6 @@ mkpdf() {
             echo -e "<p>&nbsp;</p><table width=\"100%\" align=\"center\" border=\"0\" class=\"images\">" >> "$wdir/doc.html"
             n=1
             while [[ ${n} -lt $(($(wc -l < "$wdir/image_list")+1)) ]]; do
-            
                     label1=$(sed -n ${n},$((n+1))p "$wdir/image_list" |sed -n 1p)
                     label2=$(sed -n ${n},$((n+1))p "$wdir/image_list" |sed -n 2p)
                     if [ -n "${label1}" ]; then
@@ -696,7 +630,6 @@ mkpdf() {
         cd "$wdir"
         
         while read -r word; do
-        
             item="$(grep -F -m 1 "trgt={${word}}" "${cfg0}" |sed 's/},/}\n/g')"
             trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
             srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
@@ -708,7 +641,6 @@ mkpdf() {
             exmp1=$(echo "${exmp}" |sed "s/"$hlgt"/<b>"$hlgt"<\/\b>/g")
             
             if [ -n "${trgt}" -a -n "${srce}" ]; then
-            
                 echo -e "<table width=\"55%\" border=\"0\" align=\"left\" cellpadding=\"6\" cellspacing=\"0\">
                 <tr>
                 <td bgcolor=\"#E6E6E6\" class=\"side\"></td>
@@ -745,12 +677,10 @@ mkpdf() {
                     </table>" >> "$wdir/doc.html"
                 fi
             fi
-            
         done < <(tac "${cfg3}")
 
         n=1; trgt=""
         while [[ ${n} -le "$(wc -l < "${cfg4}")" ]]; do
-        
             trgt=$(sed -n ${n}p "$wdir/trgt_sentences")
             while read -r mrk; do
                 if grep -Fxo ${mrk^} < "${cfg3}"; then
@@ -783,53 +713,45 @@ mkpdf() {
     exit
 }
 
-
 translate_to() {
-    
     [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "  -- error" && exit 1
     lgtl="$(grep -o 'langt="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
     local lgt=$(lnglss $lgtl)
     
     if [ $2 = restore ]; then
-    
         if [ -e "${DC_tlt}/0.data" ]; then
-        mv -f "${DC_tlt}/0.data" "${DC_tlt}/0.cfg"
-        echo -e "  -- done"; else echo -e "  -- error"; fi
-        
+            mv -f "${DC_tlt}/0.data" "${DC_tlt}/0.cfg"
+            echo -e "  -- done"; else echo -e "  -- error"; fi
     else
         if [ -e "${DC_tlt}/$2.data" ]; then
             cp -f "${DC_tlt}/$2.data" "${DC_tlt}/0.cfg"
             echo -e "  -- done"
-
         else
             source /usr/share/idiomind/ifs/c.conf
             include "$DS/ifs/mods/add"
             echo -e "\n\n  --translating \"$tpc\"...\n"
             cnt=`wc -l "${DC_tlt}/0.cfg"`
-
             > "$DT/words.trad_tmp"
             > "$DT/index.trad_tmp"
             
             while read -r item_; do
-            
-            item="$(sed 's/},/}\n/g' <<<"${item_}")"
-            type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
-            trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
-            pos="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
+                item="$(sed 's/},/}\n/g' <<<"${item_}")"
+                type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
+                trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
+                pos="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
 
-            if [ -n "${trgt}" ]; then
-            echo "${trgt}" \
-            | python -c 'import sys; print(" ".join(sorted(set(sys.stdin.read().split()))))' \
-            | sed 's/ /\n/g' | grep -v '^.$' | grep -v '^..$' \
-            | tr -d '*)(,;"“”:' | tr -s '&{}[]' ' ' \
-            | sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
-            | sed 's/\]//;s/\[//;s/<[^>]*>//g' \
-            | sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //;s/"//g' \
-            | tr -d '.' | sed 's/^ *//; s/ *$//; /^$/d' >> "$DT/words.trad_tmp"
-            echo "|" >> "$DT/words.trad_tmp"
-            echo "${trgt} |" >> "$DT/index.trad_tmp"; fi
+                if [ -n "${trgt}" ]; then
+                    echo "${trgt}" \
+                    | python -c 'import sys; print(" ".join(sorted(set(sys.stdin.read().split()))))' \
+                    | sed 's/ /\n/g' | grep -v '^.$' | grep -v '^..$' \
+                    | tr -d '*)(,;"“”:' | tr -s '&{}[]' ' ' \
+                    | sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
+                    | sed 's/\]//;s/\[//;s/<[^>]*>//g' \
+                    | sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //;s/"//g' \
+                    | tr -d '.' | sed 's/^ *//; s/ *$//; /^$/d' >> "$DT/words.trad_tmp"
+                    echo "|" >> "$DT/words.trad_tmp"
+                    echo "${trgt} |" >> "$DT/index.trad_tmp"; fi
             done < "${DC_tlt}/0.cfg"
-
 
             sed -i ':a;N;$!ba;s/\n/\. /g' "$DT/words.trad_tmp"
             sed -i 's/|/|\n/g' "$DT/words.trad_tmp"
@@ -846,10 +768,8 @@ translate_to() {
             sed -i 's/^ *//; s/ *$//;s/\。/\. /g' "$DT/words.trad"
             paste -d '&' "$DT/words.trad_tmp" "$DT/words.trad" > "$DT/mix_words.trad_tmp"
             
-            
             n=1
             while read -r item_; do
-            
                 item="$(sed 's/},/}\n/g' <<<"${item_}")"
                 type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
                 trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
@@ -866,31 +786,28 @@ translate_to() {
                 ( bcle=1
                 > "$DT/w.tmp"
                 while [[ ${bcle} -le `wc -l <<<"$tt"` ]]; do
-                t="$(sed -n ${bcle}p <<<"$tt" |sed 's/^\s*./\U&\E/g')"
-                s="$(sed -n ${bcle}p <<<"$st" |sed 's/^\s*./\U&\E/g')"
-                echo "${t}_${s}" >> "$DT/w.tmp"
-                let bcle++
+                    t="$(sed -n ${bcle}p <<<"$tt" |sed 's/^\s*./\U&\E/g')"
+                    s="$(sed -n ${bcle}p <<<"$st" |sed 's/^\s*./\U&\E/g')"
+                    echo "${t}_${s}" >> "$DT/w.tmp"
+                    let bcle++
                 done )
                 wrds="$(tr '\n' '_' < "$DT/w.tmp" |sed '/^$/d')"
                 
                 t_item="${n}:[type={$type},trgt={$trgt},srce={$srce},exmp={$exmp},defn={$defn},note={},wrds={$wrds},grmr={$grmr},].[tag={},mark={},].id=[$id]"
                 echo -e "${t_item}" >> "${DC_tlt}/$2.data"
-
             let n++
             done < "${DC_tlt}/0.cfg"
             
             rm -f "$DT"/*.tmp "$DT"/*.trad "$DT"/*.trad_tmp
             if [ ! -e "${DC_tlt}/0.data" ]; then
-            mv "${DC_tlt}/0.cfg" "${DC_tlt}/0.data"; fi
+                mv "${DC_tlt}/0.cfg" "${DC_tlt}/0.data"; fi
             cp -f "${DC_tlt}/$2.data" "${DC_tlt}/0.cfg"
             echo -e "  -- done"
         fi
     fi
 }
 
-
 colorize() {
-
     f_lock "$DT/co_lk"
     rm "${DC_tlt}/5.cfg"
     [ ! -e "${DC_tlt}/1.cfg" ] && touch "${DC_tlt}/1.cfg"
@@ -898,7 +815,6 @@ colorize() {
     [ ! -e "${DC_tlt}/9.cfg" ] && touch "${DC_tlt}/9.cfg"
     if [[ `egrep -cv '#|^$' < "${DC_tlt}/9.cfg"` -ge 4 ]]; then
     chk=TRUE; else chk=FALSE; fi
-
     img1='/usr/share/idiomind/images/1.png'
     img2='/usr/share/idiomind/images/2.png'
     img3='/usr/share/idiomind/images/3.png'
@@ -952,9 +868,7 @@ PY
     rm -f "$DT/co_lk"
 }
 
-
 about() {
-
 c="$(gettext "Vocabulary learning tool")"
 website="$(gettext "Web Site")"
 export c website
@@ -1008,7 +922,6 @@ if __name__ == "__main__":
     main()
 ABOUT
 } >/dev/null 2>&1
-
 
 gtext() {
 $(gettext "Marked items")

@@ -10,7 +10,6 @@ function log() \
 { echo "w9.$(tr -s '\n' '|' < ./${1}.1).w9" >> "$log"; }
 
 function stats() {
-    
     n=1; c=1
     while [ ${n} -le 21 ]; do
         if [ ${v} -le ${c} ]; then
@@ -22,7 +21,6 @@ function stats() {
 }
 
 function score() {
-    
     rm ./*.tmp
     [ ! -e ./${practice}.l ] && touch ./${practice}.l
     if [[ $(($(< ./${practice}.l)+easy)) -ge ${all} ]]; then
@@ -52,7 +50,6 @@ function score() {
 }
     
 function comp() {
-
     if [ ${1} = 0 ]; then
         > ./${practice}.2
         > ./${practice}.3
@@ -67,9 +64,8 @@ function comp() {
 }
 
 function practice_a() {
-
+    
     fonts() {
-
         item="$(grep -F -m 1 "trgt={${trgt}}" "${cfg0}" |sed 's/},/}\n/g')"
         srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
         trgt_f_c=$((38-${#trgt}))
@@ -84,7 +80,6 @@ function practice_a() {
     }
 
     cuestion() {
-        
         yad --form --title="$(gettext "Practice")" \
         --skip-taskbar --text-align=center --center --on-top \
         --undecorated --buttons-layout=spread --align=center \
@@ -95,7 +90,6 @@ function practice_a() {
     }
 
     answer() {
-        
         yad --form --title="$(gettext "Practice")" \
         --selectable-labels \
         --skip-taskbar --text-align=center --center --on-top \
@@ -156,7 +150,6 @@ function practice_b(){
 
     snd="$dirs/no.mp3"
     fonts() {
-
         item="$(grep -F -m 1 "trgt={${trgt}}" "${cfg0}" |sed 's/},/}\n/g')"
         srce=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
         ras=$(sort -Ru b.srces |egrep -v "$srce" |head -${P})
@@ -166,14 +159,12 @@ function practice_b(){
         }
 
     ofonts() {
-        
         while read -r item; do
         echo "<span font_desc='Free Sans Bold 12'> $item </span>"
         done <<<"${tmp}"
         }
         
     mchoise() {
-        
         dlg=$(ofonts | yad --list --title="$(gettext "Practice")" \
         --text="${cuestion}" \
         --separator=" " --selectable-labels \
@@ -234,7 +225,6 @@ function practice_b(){
 function practice_c() {
 
     fonts() {
-        
         if [[ $p = 2 ]]; then
         [ $lgtl = Japanese -o $lgtl = Chinese -o $lgtl = Russian ] \
         && lst="${trgt:0:1} ${trgt:5:5}" || lst=$(echo "${trgt,,}" |awk '$1=$1' FS= OFS=" " |tr aeiouy '.')
@@ -250,7 +240,6 @@ function practice_c() {
         }
 
     cuestion() {
-        
         cmd_play="$DS/play.sh play_word "\"${trgt}\"" ${id}"
         (sleep 0.5 && "$DS/play.sh" play_word "${trgt}" ${id}) &
 
@@ -307,7 +296,6 @@ function practice_c() {
 function practice_d() {
 
     fonts() {
-        
         item="$(grep -F -m 1 "trgt={${trgt}}" "${cfg0}" |sed 's/},/}\n/g')"
         srce=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
         img="$DM_tls/images/${trgt,,}-0.jpg"
@@ -318,7 +306,6 @@ function practice_d() {
     }
 
     cuestion() {
-        
         yad --form --title="$(gettext "Practice")" \
         --image="$img" \
         --skip-taskbar --text-align=center --align=center --center --on-top \
@@ -330,7 +317,6 @@ function practice_d() {
     }
 
     answer() {
-        
         yad --form --title="$(gettext "Practice")" \
         --image="$img" \
         --selectable-labels \
@@ -391,7 +377,6 @@ function practice_d() {
 function practice_e() {
 
     dialog2() {
-
         if [ $lgtl = Japanese -o $lgtl = Chinese -o $lgtl = Russian ]; then
         hint=" "
         else
@@ -420,7 +405,6 @@ function practice_e() {
         }
         
     check() {
-        
         sz=$((sz+3))
         yad --form --title="$(gettext "Practice")" \
         --text="<span font_desc='Free Sans $sz'>${wes}</span>\\n" \
@@ -437,7 +421,6 @@ function practice_e() {
         }
         
     get_text() {
-        
         trgt=$(echo "${1}" | sed 's/^ *//; s/ *$//')
         [ ${#trgt} -ge 110 ] && sz=10 || sz=11
         [ ${#trgt} -le 80 ] && sz=12
@@ -452,7 +435,6 @@ function practice_e() {
         }
 
     result() {
-        
         if [[ `wc -w <<<"$chk"` -gt 6 ]]; then
         out=`awk '{print tolower($0)}' <<<"${entry}" | clean | grep -v '^.$'`
         in=`awk '{print tolower($0)}' <<<"${chk}" | clean | grep -v '^.$'`
@@ -540,7 +522,6 @@ function practice_e() {
 function get_list() {
     
     if [ ${practice} = a -o ${practice} = b -o ${practice} = c ]; then
-    
         > "$dir/${practice}.0"
         if [[ `wc -l < "${cfg4}"` -gt 0 ]]; then
 
@@ -552,7 +533,6 @@ function get_list() {
         fi
         
         if [ ${practice} = b ]; then
-        
             if [ ! -f "$dir/b.srces" ]; then
             
             ( echo "5"
@@ -569,7 +549,6 @@ function get_list() {
         fi
         
     elif [ ${practice} = d ]; then
-    
         > "$DT/images"
         if [[ `wc -l < "${cfg4}"` -gt 0 ]]; then
         
@@ -592,7 +571,6 @@ function get_list() {
         [ -f "$DT/images" ] && rm -f "$DT/images"
     
     elif [ ${practice} = e ]; then
-    
         if [[ `wc -l < "${cfg3}"` -gt 0 ]]; then
             grep -Fxvf "${cfg3}" "${cfg1}" > "$DT/slist"
             tac "$DT/slist" |sed '/^$/d' > "$dir/${practice}.0"
@@ -604,7 +582,6 @@ function get_list() {
 }
 
 function lock() {
-
     if [ -f "$dir/${practice}.lock" ]; then
 
         dt="$dir/${practice}.lock"
@@ -627,7 +604,6 @@ function lock() {
 }
 
 function starting() {
-    
     yad --title="$1" \
     --text=" $1.\n" --image=info \
     --window-icon="$DS/images/icon.png" \
@@ -638,7 +614,6 @@ function starting() {
 }
 
 function practices() {
-
     log="$DC_s/log"
     cfg0="$DC_tlt/0.cfg"
     cfg1="$DC_tlt/1.cfg"
@@ -656,7 +631,6 @@ function practices() {
     lock
     
     if [ -f "$dir/${practice}.0" -a -f "$dir/${practice}.1" ]; then
-    
         grep -Fxvf "$dir/${practice}.1" "$dir/${practice}.0" > "$dir/${practice}.tmp"
         if [[ "$(egrep -cv '#|^$' < "$dir/${practice}.tmp")" = 0 ]]; then
         lock; fi
@@ -681,7 +655,6 @@ function practices() {
 }
 
 function strt() {
-    
     echo "$practice..."
     [[ ${hard} -lt 0 ]] && hard=0
     [ ! -d "${dir}" ] && mkdir -p "${dir}"

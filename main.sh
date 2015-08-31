@@ -48,11 +48,9 @@ function new_session() {
     # addons
     > "$DC_s/2.cfg"
     while read -r _set; do
-    
     if [ -e "/usr/share/idiomind/addons/${_set}/icon.png" ]; then
     echo -e "/usr/share/idiomind/addons/${_set}/icon.png\n${_set}" >> "$DC_s/2.cfg"
     else echo -e "/usr/share/idiomind/images/thumb.png\n${_set}" >> "$DC_s/2.cfg"; fi
-    
     done < <(cd "$DS/addons"; ls -d *)
     
     for strt in "$DS/ifs/mods/start"/*; do
@@ -72,9 +70,9 @@ function new_session() {
 
     # log file
     if [ -f "$DC_s/log" ]; then
-    if [[ "$(du -sb "$DC_s/log" |awk '{ print $1 }')" -gt 100000 ]]; then
-    tail -n2000 < "$DC_s/log" > "$DT/log"
-    mv -f "$DT/log" "$DC_s/log"; fi
+        if [[ "$(du -sb "$DC_s/log" |awk '{ print $1 }')" -gt 100000 ]]; then
+        tail -n2000 < "$DC_s/log" > "$DT/log"
+        mv -f "$DT/log" "$DC_s/log"; fi
     fi
 
     # check updates
@@ -87,22 +85,19 @@ function new_session() {
     DM_tlt="$DM_tl/${line}"
     stts=$(sed -n 1p "${DM_tlt}/.conf/8.cfg")
     [ -z $stts ] && stts=1
-
     if [ -e "${DM_tlt}/.conf/9.cfg" ] && \
     [ -e "${DM_tlt}/.conf/7.cfg" ]; then
-    
         calculate_review "${line}"
         if [[ $((stts%2)) = 0 ]]; then
             if [ ${RM} -ge 180 -a ${stts} = 8 ]; then
-            echo 10 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"
+                echo 10 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"
             elif [ ${RM} -ge 100 -a ${stts} -lt 8 ]; then
-            echo 8 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"; fi
-
+                echo 8 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"; fi
         else
             if [ ${RM} -ge 180 -a ${stts} = 7 ]; then
-            echo 9 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"
+                echo 9 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"
             elif [ ${RM} -ge 100 -a ${stts} -lt 7 ]; then
-            echo 7 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"; fi
+                echo 7 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"; fi
         fi
     fi
     done < "$DM_tl/.1.cfg"
@@ -118,7 +113,6 @@ function new_session() {
 }
 
 if grep -o '.idmnd' <<<"${1: -6}"; then
-
     source "$DS/ifs/mods/cmns.sh"
     source "$DS/ifs/tls.sh"
     check_format_1 "${1}"
@@ -152,12 +146,10 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
         elif [ $ret -eq 0 ]; then
 
             if [[ $(wc -l < "$DM_t/$langt/.1.cfg") -ge 120 ]]; then
-                
                 msg "$(gettext "Maximum number of topics reached.")\n" info & exit
             fi
             
             if [[ $(grep -Fxo "${tname}" "$DM_t/$langt/.1.cfg" | wc -l) -ge 1 ]]; then
-            
                 for i in {1..50}; do
                 chck=$(grep -Fxo "${tname} ($i)" "$DM_t/$langt/.1.cfg")
                 [ -z "$chck" ] && break; done
@@ -209,13 +201,10 @@ function topic() {
     source "$DS/ifs/mods/cmns.sh"
 
     if [[ ${mode} = 2 ]]; then
-        
         tpa="$(sed -n 1p "$DC_a/4.cfg")"
         source "$DS/ifs/mods/topic/${tpa}.sh"
         ${tpa} & exit 1
-
     elif [[ ${mode} = 0 ]] || [[ ${mode} = 1 ]]; then
-    
         [ -z "${tpc}" ] && exit 1
         source "$DS/ifs/mods/topic/items_list.sh"
         for n in {0..4}; do
@@ -233,7 +222,6 @@ function topic() {
         if [ -e "${DM_tlt}/images/img.jpg" ]; then
         img="--image=${DM_tlt}/images/img.jpg"; fi
         sx=638; sy=580
-
         [ ! -z "$author" ] && author=" $(gettext "Created by") $author"
         label_info1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><small>\n $inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"
 
@@ -248,7 +236,6 @@ function topic() {
             sed -i "s/set_1=.*/set_1=\"$auto_mrk_mod\"/g" "${DC_tlt}/id.cfg"; fi
             
             if grep TRUE "${cnf1}"; then
-
                 grep -Rl "|FALSE|" "${cnf1}" | while read tab1 ; do
                      sed '/|FALSE|/d' "${cnf1}" > "$DT/tmpf1"
                      mv "$DT/tmpf1" "$tab1"
@@ -381,18 +368,15 @@ panel() {
     new_session; fi
     
     if [ -e "$DC_s/10.cfg" ]; then
+        x=$(($(sed -n 2p "$DC_s/10.cfg")/2))
+        y=$(($(sed -n 3p "$DC_s/10.cfg")/2)); fi
+    if ! [[ ${x} =~ $numer ]]; then x=100; y=100; fi
 
-    x=$(($(sed -n 2p "$DC_s/10.cfg")/2))
-    y=$(($(sed -n 3p "$DC_s/10.cfg")/2)); fi
-    if ! [[ ${x} =~ $numer ]]; then x=100; fi
-    if ! [[ ${y} =~ $numer ]]; then y=100; fi
-    
     if [ "$(grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg")" = TRUE ] \
     && [ ! -e /tmp/.clipw ]; then "$DS/ifs/mods/clipw.sh" & fi
 
-    home=gtk-home
-    if [[ ${intrf} = fr ]]; then home=Home; fi
-    if [[ ${intrf} = pt ]]; then home=Home; fi
+    _home=gtk-home
+    if [[ ${intrf} = fr || ${intrf} = pt ]]; then _home=Home; fi
     yad --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
     --always-print-result \
@@ -400,13 +384,12 @@ panel() {
     --form --fixed --on-top --no-buttons --align=center \
     --width=140 --height=190 --borders=0 --geometry=130x190-${x}-${y} \
     --field=gtk-new:btn "$DS/add.sh 'new_items'" \
-    --field="$home":btn "idiomind 'topic'" \
+    --field="$_home":btn "idiomind 'topic'" \
     --field=gtk-index:btn "$DS/chng.sh" \
     --field=gtk-preferences:btn "$DS/cnfg.sh"
     [ $? != 0 ] && "$DS/stop.sh" 1 &
     exit
 }
-
 
 case "$1" in
     topic)

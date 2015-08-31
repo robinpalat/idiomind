@@ -13,12 +13,10 @@ export tpc DC_tlt cfg cfgp f ritem stnrd numer
 export -f include msg
 
 if [[ "$rplay" = TRUE ]]; then
-
     while [ 1 ]; do
         "$DS/chng.sh" 0
         sleep 10
     done
-    
 else
     "$DS/chng.sh" 0
     rm -fr "$DT/.p_" & exit 0

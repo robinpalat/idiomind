@@ -16,7 +16,6 @@ sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
 'langt' 'langs' 'synth' 'txaud' 'intrf' )
 
 _info() {
-    
     yad --form --title="$(gettext "Notice")" \
     --text="$(gettext "Some features do not yet work with this language"). ($1)\n" \
     --image=info \
@@ -27,7 +26,6 @@ _info() {
 }
 
 function set_lang() {
-    
     if [ ! -d "$DM_t/$1" ]; then
     mkdir "$DM_t/$1"
     touch "$DM_t/$1/.1.cfg"

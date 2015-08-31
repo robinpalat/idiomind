@@ -13,7 +13,6 @@ task=( 'Word pronunciation' 'Pronunciation' 'Translator' \
 
 
 function add_dlg() {
-
     langs=( 'various' 'zh-cn' 'en' 'fr' 'de' 'it' 'ja' 'pt' 'ru' 'es' 'vi' )
     i=FALSE; cd "$HOME"
     add="$(yad --file --title="$(gettext "Add resource")" \
@@ -26,7 +25,6 @@ function add_dlg() {
     ret=$?
     
     if [ $ret -eq 0 -a -f "${add}" ]; then
-
         info="$(basename "${add}")"
         name="$(cut -d "." -f1 <<<"$info")"
         type="$(cut -d "." -f2 <<<"$info")"
@@ -63,14 +61,12 @@ function add_dlg() {
 }
 
 function dclk() {
-
     [ "$2" = TRUE ] && dir=enables
     [ "$2" = FALSE ] && dir=disables
     "$DS_a/Dics/dicts/$3.$4.$5.$6" dlgcnfg "$@"
 }
 
 function cpfile() {
-
     cp -f "${2}" "${3}"/
     > "${4}"; sudo chmod 777 "${4}"
 }
@@ -78,7 +74,6 @@ function cpfile() {
 function dlg() {
     
     dict_list() {
-        
     sus="${task[$1]}"
     cd "$enables/"
     find . -not -name "*.$lgt" -and -not -name "*.various" -type f \
@@ -131,11 +126,8 @@ function dlg() {
     ret=$?
     
         if [ $ret -eq 2 ]; then
-        
                 "$DS_a/Dics/cnfg.sh" add_dlg
-        
         elif [ $ret -eq 0 ]; then
-
             while read -r dict; do
                 name="$(cut -d "|" -f2 <<<"$dict")"
                 type="$(cut -d "|" -f3 <<<"$dict")"
@@ -170,7 +162,6 @@ function dlg() {
     exit 1
     
 } >/dev/null 2>&1
-
 
 case "$1" in
     add_dlg)

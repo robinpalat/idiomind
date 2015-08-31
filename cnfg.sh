@@ -25,7 +25,6 @@ sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
 'langt' 'langs' 'synth' 'txaud' 'intrf' )
 
 confirm() {
-
     yad --form --title="Idiomind" \
     --image=$2 --text="$1\n" \
     --window-icon="$DS/images/icon.png" \
@@ -36,7 +35,6 @@ confirm() {
 }
 
 set_lang() {
-    
     echo "${tpc}" > "$DM_tl/.8.cfg"
     language="$1"
     if [ ! -d "$DM_t/$language/.share/images" ]; then
@@ -60,7 +58,6 @@ if [ "$cfg" = 1 ]; then
         declare "${sets[$n]}"="$val"
         ((n=n+1))
     done
-    
 else
     n=0; > "$DC_s/1.cfg"
     while [ ${n} -lt 11 ]; do

@@ -2,7 +2,6 @@
 # -*- ENCODING: UTF-8 -*-
 
 function internet() {
-
     curl -v www.google.com 2>&1 \
     | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
     yad --title="$(gettext "No network connection")" --image=info \
@@ -15,7 +14,6 @@ function internet() {
 }
 
 function msg() {
-        
     [ -n "$3" ] && title="$3" || title=Idiomind
     [ -n "$4" ] && btn="$4" || btn="$(gettext "OK")"
     yad --title="$title" --text="$1" --image="$2" \
@@ -27,7 +25,6 @@ function msg() {
 }
 
 function msg_2() {
-        
     [ -n "$5" ] && title="$5" || title=Idiomind
     [ -n "$6" ] && btn3="--button=$6:2" || btn3=""
     yad --title="$title" --text="$1" --image="$2" \
@@ -46,19 +43,16 @@ function nmfile() {
 }
 
 function set_name_file() {
-
     id=":[type={$1},trgt={$2},srce={$3},exmp={$4},defn={$5},note={$6},wrds={$7},grmr={$8},]."
     echo -n "${id}" | md5sum | rev | cut -c 4- | rev
 }
 
 function include() {
-        
   for f in "$1"/*; do source "$f"; done
 
 }
 
 function f_lock() {
-    
     brk=0; while true; do
     if [ ! -e "${1}" -o ${brk} -gt 20 ]; then touch "${1}" & break
     elif [ -e "${1}" ]; then sleep 1; fi
@@ -66,7 +60,6 @@ function f_lock() {
 }
 
 function lnglss() {
-
     if [ "${1^}" = English ]; then lg=en
     elif [ "${1^}" = French ]; then lg=fr
     elif [ "${1^}" = German ]; then lg=de
@@ -82,7 +75,6 @@ function lnglss() {
 }
 
 function check_index1() {
-    
     for i in "${@}"; do
         if [ -n "$(sort -n < "$i" | uniq -dc)" ]; then
             awk '!array_temp[$0]++' < "$i" > "$DT/tmp"
@@ -92,7 +84,6 @@ function check_index1() {
 }
 
 function list_inadd() {
-    
     while read -r t; do
         if ! echo -e "$(ls "$DS/addons/")\n$(< "$DM_tl/.3.cfg")" \
         | grep -Fxo "${t}" >/dev/null 2>&1; then echo "${t}"; fi
@@ -100,7 +91,6 @@ function list_inadd() {
 }
 
 function cleanups() {
-
     for fl in "$@"; do
     
         if [ -d "${fl}" ]; then
@@ -112,7 +102,6 @@ function cleanups() {
 }
 
 function calculate_review() {
-    
     DC_tlt="$DM_tl/${1}/.conf"
     dts=$(sed '/^$/d' < "${DC_tlt}/9.cfg" | wc -l)
     

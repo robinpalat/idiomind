@@ -10,7 +10,8 @@ index_pos=`grep -Fxon -m 1 "${item_name}" "${index}" |sed -n 's/^\([0-9]*\)[:].*
 nll=""; fi
 
 _item="$(sed -n ${index_pos}p "${index}")"
-if [ -z "${_item}" ]; then _item="$(sed -n 1p "${index}")"; index_pos=1; fi
+if [ -z "${_item}" ]; then
+_item="$(sed -n 1p "${index}")"; index_pos=1; fi
 item="$(grep -F -m 1 "trgt={${_item}}" "$DC_tlt/0.cfg" |sed 's/},/}\n/g')"
 
 type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
@@ -26,45 +27,36 @@ exmp="$(sed "s/${trgt,,}/<span background='#FDFBCF'>${trgt,,}<\/\span>/g" <<<"$e
 id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
 
 if [ ${type} = 1 ]; then
-
     cmd_listen="$DS/play.sh play_word "\"${trgt}\"" ${id}"
     [ "$mark" = TRUE ] && trgt="<b>$trgt</b>" && grmr="<b>$grmr</b>"
     word_view
-
 elif [ ${type} = 2 ]; then
-
     cmd_listen="$DS/play.sh play_sentence ${id}"
     [ "$mark" = TRUE ] && trgt="<b>$trgt</b>" && grmr="<b>$grmr</b>"
     sentence_view
-
 else
     m_text "${_item}"
 fi
     ret=$?
     if [ $ret -eq 5 ]; then
-    
         "$DS/mngr.sh" mtext ${1} ${index_pos}
 
     elif [ $ret -eq 4 ]; then
-    
         "$DS/mngr.sh" edit ${1} ${index_pos}
     
     elif [ $ret -eq 2 ]; then
-    
         if [[ ${index_pos} = 1 ]]; then
-        item=`tail -n 1 < "${index}"`
-        [ ${1} = 1 ] && "$DS/vwr.sh" ${1} "" "${item}"
-        [ ${1} = 2 ] && "$DS/vwr.sh" ${1} "${item}"
+            item=`tail -n 1 < "${index}"`
+            [ ${1} = 1 ] && "$DS/vwr.sh" ${1} "" "${item}"
+            [ ${1} = 2 ] && "$DS/vwr.sh" ${1} "${item}"
         else
-        ff=$((index_pos-1))
-        "$DS/vwr.sh" ${1} "" ${ff} &
+            ff=$((index_pos-1))
+            "$DS/vwr.sh" ${1} "" ${ff} &
         fi
     
     elif [ $ret -eq 3 ]; then
-    
         ff=$((index_pos+1))
         "$DS/vwr.sh" ${1} "" ${ff} &
-    
     else 
         exit 1
     fi

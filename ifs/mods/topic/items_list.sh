@@ -1,9 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
- 
 function word_view() {
-
     [ -n "$defn" ] && field_defn="--field=<small>$defn</small>:lbl"
     [ -n "$note" ] && field_note="--field=<small>$note</small>\n:lbl"
     [ -n "$exmp" ] && field_exmp="--field=<i><span color='#737373'>$exmp</span></i>:lbl"
@@ -23,9 +21,7 @@ function word_view() {
     
 } >/dev/null 2>&1
 
-
 function sentence_view() {
-
     if [ "$(grep -o gramr=\"[^\"]* < "$DC_s/1.cfg" | grep -o '[^"]*$')"  = TRUE ]; then
     trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
     
@@ -46,9 +42,7 @@ function sentence_view() {
     
 } >/dev/null 2>&1
 
-
 function m_text() {
-
     include "$DS/ifs/mods/mngr"
     trgt="${1}"
     cmd_del="$DS/mngr.sh delete_item "\"${tpc}\"" "\"${trgt}\"""
@@ -70,9 +64,7 @@ function m_text() {
 
 export -f word_view sentence_view m_text
 
-
 function notebook_1() {
-    
     cmd_mark="'$DS/mngr.sh' 'mark_as_learned' "\"${tpc}\"" 1"
     cmd_attchs="'$DS/ifs/tls.sh' 'attachs'"
     cmd_del="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
@@ -129,9 +121,7 @@ function notebook_1() {
     --button="gtk-close":1
 } >/dev/null 2>&1
 
-
 function notebook_2() {
-    
     cmd_mark="'$DS/mngr.sh' 'mark_to_learn' "\"${tpc}\"" 1"
     cmd_attchs="'$DS/ifs/tls.sh' 'attachs'"
     cmd_del="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
@@ -176,9 +166,7 @@ function notebook_2() {
     --button="gtk-close":1
 } >/dev/null 2>&1
 
-
 function dialog_1() {
-    
     yad --title="${tpc}" \
     --class=idiomind --name=Idiomind \
     --text=" $(gettext "<b>Would you like to go over it?</b>\n The specified period already has been completed")" \

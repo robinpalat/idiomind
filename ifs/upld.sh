@@ -55,7 +55,6 @@ function dwld() {
         tar -xzvf "$DT/download/${oname}.tar.gz"
         
         if [ -d "$DT/download/${oname}" ]; then
-        
         ltotal="$(gettext "Total")="
         laudio="$(gettext "Audio files")="
         limage="$(gettext "Images")="
@@ -77,12 +76,12 @@ function dwld() {
         [ -f "${tmp}"/images/img.jpg  ] && \
         mv "${tmp}"/images/img.jpg "${DM_tlt}"/images/img.jpg
         while read -r img; do
-        if [ -f "${tmp}/images/${img,,}-0.jpg" ]; then
-        if [ -f "$DM_t/$langt/.share/images/${img,,}-0.jpg" ]; then
-        n=`ls "${DM_tls}/images/${img,,}"-*.jpg |wc -l`
-        name_img="${DM_tls}/images/${img,,}"-${n}.jpg
-        else name_img="${DM_tls}/images/${img,,}-0.jpg"; fi
-        mv -f "${tmp}/images/${img,,}-0.jpg" "${name_img}"; fi
+            if [ -f "${tmp}/images/${img,,}-0.jpg" ]; then
+            if [ -f "$DM_t/$langt/.share/images/${img,,}-0.jpg" ]; then
+            n=`ls "${DM_tls}/images/${img,,}"-*.jpg |wc -l`
+            name_img="${DM_tls}/images/${img,,}"-${n}.jpg
+            else name_img="${DM_tls}/images/${img,,}-0.jpg"; fi
+            mv -f "${tmp}/images/${img,,}-0.jpg" "${name_img}"; fi
         done < "${DC_tlt}/3.cfg"
         rm -fr "${tmp}/share" "${tmp}/conf" "${tmp}/images"
         mv -f "${tmp}"/*.mp3 "${DM_tlt}"/
@@ -92,7 +91,6 @@ function dwld() {
         echo -e "$ltotal $total\n$laudio $c_audio\n$limage $c_images\n$lfiles $atfiles\n$lothers $others" > "${DC_tlt}/11.cfg"
         "$DS/ifs/tls.sh" colorize
         rm -fr "$DT/download"
-        
         else
             err & exit
         fi

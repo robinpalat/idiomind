@@ -2,43 +2,38 @@
 # -*- ENCODING: UTF-8 -*-
 
 play_word() {
-
     if [ -f "${DM_tls}/${2,,}.mp3" ]; then
-    play "${DM_tls}/${2,,}.mp3" &
+        play "${DM_tls}/${2,,}.mp3" &
     elif [ -f "${DM_tlt}/$3.mp3" ]; then
-    play "${DM_tlt}/$3.mp3" &
+        play "${DM_tlt}/$3.mp3" &
     elif [ -n "$synth" ]; then
-    echo "${2}." |$synth &
+        echo "${2}." |$synth &
     else
-    echo "${2}." |espeak -v $lg -s 150 &
+        echo "${2}." |espeak -v $lg -s 150 &
     fi
 } >/dev/null 2>&1
 
 play_sentence() {
-
     if [ -f "${DM_tlt}/$2.mp3" ]; then
-    play "${DM_tlt}/$2.mp3" &
+        play "${DM_tlt}/$2.mp3" &
     elif [ -n "$synth" ]; then
-    
-    echo "${trgt}." |$synth &
+        echo "${trgt}." |$synth &
     else
-    echo "${trgt}." |espeak -v $lg -s 150 &
+        echo "${trgt}." |espeak -v $lg -s 150 &
     fi
 } >/dev/null 2>&1
 
 play_file() {
-
     if [ -f "${2}" ]; then
-    mplayer "${2}" -noconsolecontrols -title "${3}"
+        mplayer "${2}" -noconsolecontrols -title "${3}"
     elif [ -n "$synth" ]; then
-    echo "${3}." |$synth
+        echo "${3}." |$synth
     else
-    echo "${3}." |espeak -v $lg -s 150
+        echo "${3}." |espeak -v $lg -s 150
     fi
 } >/dev/null 2>&1
 
 play_list() {
-    
     if [ -z "${tpc}" ]; then source "$DS/ifs/mods/cmns.sh"
     msg "$(gettext "No topic is active")\n" info & exit 1; fi
 
@@ -55,7 +50,9 @@ play_list() {
     'rplay' 'audio' 'ntosd' 'loop' 'rword' 'video' )
     in=( 'in0' 'in1' 'in2' 'in3' 'in4' 'in5' )
     iteml=( "$(gettext "No repeat")" "$(gettext "Words")" "$(gettext "Sentences")" )
-    
+    ##join lists
+    #function join { local IFS="$1"; shift; echo "$*"; }
+    #join "\n" "${in[@]}" "${lbls[@]}"
     in0="$(grep -Fxvf "${DC_tlt}/4.cfg" "${DC_tlt}/1.cfg" |wc -l)"
     in1="$(grep -Fxvf "${DC_tlt}/3.cfg" "${DC_tlt}/1.cfg" |wc -l)"
     in2="$(grep -Fxvf "${DC_tlt}/2.cfg" "${DC_tlt}/6.cfg" |wc -l)"
@@ -67,7 +64,6 @@ play_list() {
     [ ! -d "$DT" ] && mkdir "$DT"; cd "$DT"
 
     if [ ${cfg} = 1 ]; then
-
         n=0
         while [ ${n} -le 11 ]; do
             get="${sets[$n]}"
@@ -77,7 +73,6 @@ play_list() {
             declare ${sets[$n]}="$val"
             ((n=n+1))
         done
-        
     else
         n=0; > "${DC_tlt}/10.cfg"
         while [ ${n} -le 11 ]; do
@@ -86,7 +81,7 @@ play_list() {
         done
     fi
 
-    function setting_1() {
+    setting_1() {
         n=0; 
         while [ ${n} -le 5 ]; do
             arr="in${n}"
@@ -97,7 +92,7 @@ play_list() {
         done
     }
 
-    title="${tpc}"
+    title="$(gettext "Play")"
     if grep -E 'vivid|wily' <<<"`lsb_release -a`" >/dev/null 2>&1; then
     btn1="gtk-media-play:0"; else
     btn1="$(gettext "Play"):0"; fi
@@ -120,7 +115,6 @@ play_list() {
     tab2=$(mktemp "$DT/XXX.p")
     c=$((RANDOM%100000)); KEY=$c
     [ ${ntosd} != TRUE -a ${audio} != TRUE ] && audio=TRUE
-    
     
     setting_1 | yad --plug=$KEY --tabnum=1 --list \
     --print-all --always-print-result --separator="|" \
@@ -156,68 +150,55 @@ play_list() {
         
         f=1; n=0
         while [ ${n} -le 12 ]; do
-        
         if [ ${n} -lt 4 ]; then
-        val=$(sed -n $((${n}+1))p <<<"${tab1}" |cut -d "|" -f3)
-        [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
-        "${DC_tlt}/10.cfg"
-        if [ "$val" = TRUE ]; then
-        count=$((count+$(egrep -cv '#|^$' <<<"${!in[${n}]}"))); fi
-        
-        elif [ ${n} = 4 -o ${n} = 5 ]; then
-        val=$(sed -n $((${n}+1))p <<<"${tab1}" |cut -d "|" -f3)
-        [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
-        "${DC_tlp}/podcasts.cfg"
-        if [ "$val" = TRUE ]; then
-        count=$((count+$(egrep -cv '#|^$' <<<"${!in[${n}]}"))); fi
-        
-        elif [ ${n} -lt 10 ]; then
-        val="$(cut -d "|" -f${f} <<<"${tab2}")"
-        [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
-        "${DC_tlt}/10.cfg"; let f++
-            
+            val=$(sed -n $((${n}+1))p <<<"${tab1}" |cut -d "|" -f3)
+            [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
+            "${DC_tlt}/10.cfg"
+            if [ "$val" = TRUE ]; then
+                count=$((count+$(egrep -cv '#|^$' <<<"${!in[${n}]}"))); fi
+            elif [ ${n} = 4 -o ${n} = 5 ]; then
+                val=$(sed -n $((${n}+1))p <<<"${tab1}" |cut -d "|" -f3)
+                [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
+                "${DC_tlp}/podcasts.cfg"
+            if [ "$val" = TRUE ]; then
+                count=$((count+$(egrep -cv '#|^$' <<<"${!in[${n}]}"))); fi
+            elif [ ${n} -lt 10 ]; then
+                val="$(cut -d "|" -f${f} <<<"${tab2}")"
+                [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
+                "${DC_tlt}/10.cfg"; let f++
         elif [ ${n} = 10 ]; then
-        pval="$(cut -d "|" -f5 <<<"${tab2}")"
-        if [[ "$pval" = "$(gettext "Words")" ]]; then  val=1
-        elif [[ "$pval" = "$(gettext "Sentences")" ]]; then  val=2
-        else  val=0; fi
-        [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
-        "${DC_tlt}/10.cfg"
-         
+            pval="$(cut -d "|" -f5 <<<"${tab2}")"
+            if [[ "$pval" = "$(gettext "Words")" ]]; then  val=1
+            elif [[ "$pval" = "$(gettext "Sentences")" ]]; then  val=2
+            else  val=0; fi
+            [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
+            "${DC_tlt}/10.cfg"
         elif [ ${n} = 11 ]; then
-        val="$(cut -d "|" -f8 <<<"${tab2}")"
-        [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
-        "${DC_tlp}/podcasts.cfg"
+            val="$(cut -d "|" -f8 <<<"${tab2}")"
+            [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
+            "${DC_tlp}/podcasts.cfg"
         fi
-        
         ((n=n+1))
         done
 
         if [ $ret -eq 0 ]; then
-        
             if [ ${count} -lt 1 ]; then
-            notify-send "$(gettext "Nothing to play")" \
-            "$(gettext "Exiting...")" -i idiomind -t 3000 &
-            "$DS/stop.sh" 2 & exit 1; fi
-
+                notify-send "$(gettext "Nothing to play")" \
+                "$(gettext "Exiting...")" -i idiomind -t 3000 &
+                "$DS/stop.sh" 2 & exit 1; fi
             "$DS/stop.sh" 2 &
             if [ -d "${DM_tlt}" ] && [ -n "${tpc}" ]; then
-            if grep TRUE <<<"$words$sntcs$marks$wprct"; then
-            echo -e "$tpc" > "$DT/.p_"; else > "$DT/.p_"; fi
-            else "$DS/stop.sh" 2 && exit 1; fi
-            
-            echo -e "ply.${tpc}.ply" >> "$DC_s/log" &
+                if grep TRUE <<<"$words$sntcs$marks$wprct"; then
+                echo -e "$tpc" > "$DT/.p_"; else > "$DT/.p_"; fi
+                else "$DS/stop.sh" 2 && exit 1; fi
             sleep 1; "$DS/bcle.sh" &
-
         elif [ $ret -eq 2 ]; then
-
             [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
             [ -f "$DT/index.m3u" ] && rm -f "$DT/index.m3u"
             "$DS/stop.sh" 2 &
         fi
 
-    rm -f "$DT"/*.p
-    exit 0
+    rm -f "$DT"/*.p; exit 0
 }
 
 case "$1" in

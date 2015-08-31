@@ -25,18 +25,16 @@ new_topic() {
     chck=$(grep -Fxo "${jlb}" "$DM_tl/.1.cfg" | wc -l)
     
     if [[ ${chck} -ge 1 ]]; then
-        
         for i in {1..50}; do
         chck=$(grep -Fxo "${jlb} ($i)" "$DM_t/$language_target/.1.cfg")
         [ -z "${chck}" ] && break; done
         jlb="${jlb} ($i)"
         msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "Notice that the name for this one is now\:")\n<b>${jlb}</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
         [ $? -eq 1 ] && exit 1
-        
+
     else jlb="${jlb}"; fi
     
     if [ -n "${jlb}" ]; then
-    
         mkdir "$DM_tl/${jlb}"
         list_inadd > "$DM_tl/.2.cfg"
         "$DS/default/tpc.sh" "${jlb}" 1
@@ -82,21 +80,18 @@ Create one using the button below. ")" & exit 1; fi
     tpe=$(grep -Fxo "${chk}" "$DM_tl/.1.cfg")
     
         if [ $ret -eq 3 ]; then
-        
             [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")
             echo "${tpe}" > "$DT/tpe"
             cd "$DT_r"; set_image_1
             "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
         
         elif [ $ret -eq 2 ]; then
-        
             [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")
             echo "${tpe}" > "$DT/tpe"
             "$DS/ifs/tls.sh" add_audio "$DT_r"
             "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
         
         elif [ $ret -eq 0 ]; then
-
             if [ "${chk}" = "$(gettext "New") *" ]; then
             "$DS/add.sh" new_topic
             else echo "${tpe}" > "$DT/tpe"; fi
@@ -180,7 +175,6 @@ new_sentence() {
         srce="$(clean_2 "${srce}")"
         trgt="${trgt^}"
         srce="${srce^}"
-        
     else 
         if [ -z "${4}" -o -z "${2}" ]; then
         cleanups "$DT_r"
@@ -194,7 +188,6 @@ new_sentence() {
     if [ $? = 1 ]; then
         msg "$(gettext "An error has occurred while saving the note.")\n" dialog-warning
         cleanups "$DT_r" & exit 1
-    
     else
         index 2 "${tpe}" "${trgt}" "${srce}" "" "" "${wrds}" "${grmr}" "$id"
         if [ -f "$DT_r/img.jpg" ]; then
@@ -210,11 +203,9 @@ new_sentence() {
                 
                     [ ! -f "${DM_tlt}/$id.mp3" ] && \
                     voice "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
-                
             else
                 voice "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
             fi
-            
         else
             mv -f "$DT_r/audtm.mp3" "${DM_tlt}/$id.mp3"
         fi
@@ -248,7 +239,6 @@ new_word() {
         trgt="$(clean_1 "${trgt}")"; fi
         srce="$(translate "${trgt}" $lgt $lgs)"
         srce="$(clean_0 "${srce}")"
-        
     else 
         if [ -z "${4}" -o -z "${2}" ]; then
         cleanups "$DT_r"
@@ -263,7 +253,6 @@ new_word() {
         cleanups "$DT_r"
         msg "$(gettext "An error has occurred while saving the note.")\n" dialog-warning
         exit 1
-    
     else
         index 1 "${tpe}" "${trgt}" "${srce}" "${exmp_}" "" "" "" "${id}"
 
@@ -284,10 +273,8 @@ new_word() {
         if [ ! -f "$DT_r/audtm.mp3" ]; then
         
             if [ ! -f "${DM_tls}/${audio}.mp3" ]; then
-
                 tts_word "${audio}" "${DM_tls}"
             fi
-            
         else
             if [ -f "${DM_tls}/${audio}.mp3" ]; then
                 msg_3 "$(gettext "A file named "${DM_tls}/${audio}.mp3" already exists. Replace?.")\n" dialog-question "${trgt}"
@@ -317,7 +304,6 @@ list_words_edit() {
         slt="$(dlg_checklist_1 "${words}" "$info")"
 
             if [ $? -eq 0 ]; then
-                
                 while read -r chkst; do
                 sed 's/TRUE//g' <<<"${chkst}" >> "$DT/$c/slts"
                 done <<<"$(sed 's/|//g' <<<"${slt}")"
@@ -333,7 +319,6 @@ list_words_edit() {
 
             if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
                 echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> ./logw
-            
             else
                 trgt="$(clean_1 "${trgt}")"
                 audio="${trgt,,}"
@@ -344,12 +329,10 @@ list_words_edit() {
                 mksure "${trgt}" "${srce}"
 
                 if [ $? = 0 ]; then
-                
                     index 1 "${tpe}" "${trgt}" "${srce}" "${exmp_}" "" "" "" "${id}"
                     if [ ! -f "$DM_tls/$audio.mp3" ]; then
                     ( tts_word "$audio" "$DM_tls" ); fi
                     ( img_word "${trgt}" "${srce}" ) &
-                
                 else
                     echo -e "\n\n#$n $trgt" >> "$DT_r/logw"
                     cleanups "${DM_tlt}/$id.mp3"; fi
@@ -380,13 +363,11 @@ list_words_sentence() {
     slt="$(dlg_checklist_1 "${wrds}" "${info}")"
         
         if [ $? -eq 0 ]; then
-            
             while read -r chkst; do
             sed 's/TRUE//g' <<<"${chkst}"  >> "$DT_r/slts"
             done <<<"$(sed 's/|//g' <<<"${slt}")"
 
         elif [ $? -eq 1 ]; then
-        
             rm -f "$DT"/*."$c"
             cleanups "$DT_r"
             exit 1
@@ -407,12 +388,10 @@ list_words_sentence() {
             mksure "${trgt}" "${srce}"
             
             if [ $? = 0 ]; then
-
                 index 1 "${tpe}" "${trgt}" "${srce}" "${exmp_}" "" "" "" "${id}"
                 if [ ! -f "$DM_tls/$audio.mp3" ]; then
                 ( tts_word "${audio}" "${DM_tls}" ); fi
                 ( img_word "${trgt}" "${srce}" ) &
-            
             else
                 echo -e "\n\n#$n $trgt" >> "$DT_r/logw"
             fi
@@ -450,7 +429,6 @@ list_words_dclik() {
         echo "$wrds"
         list_words_3 "${words}" "${wrds}"
         ) | dlg_progress_1
-    
     else
         list_words_3 "${words}"
     fi
@@ -458,7 +436,6 @@ list_words_dclik() {
     slt="$(dlg_checklist_1 "${wrds}" "${info}")"
     
     if [ $? -eq 0 ]; then
-    
         while read -r chkst; do
         sed 's/TRUE//g' <<<"${chkst}" >> "$DT_r/wrds"
         echo "$sname" >> "$DT_r/wrdsls"
@@ -482,9 +459,7 @@ process() {
     check_s "${tpe}"
 
     if [ -f "$lckpr" -a ${#@} -lt 4 ]; then
-    
         msg_2 "$(gettext "Wait until it finishes a previous process")\n" info OK gtk-stop "$(gettext "Warning")"
-        
         if [ $? -eq 1 ]; then
         rm=$(sed -n 1p "$DT/.n_s_pr")
         cleanups "${rm}" "$DT/.n_s_pr"
@@ -494,7 +469,6 @@ process() {
     fi
     
     if [ -n "$2" ]; then
-    
         [ -d "$DT_r" ] && echo "$DT_r" > "$DT/.n_s_pr"
         [ -n "${tpe}" ] && echo "${tpe}" >> "$DT/.n_s_pr"
         lckpr="$DT/.n_s_pr"
@@ -509,9 +483,7 @@ process() {
         echo "# $(gettext "Processing")..." ;
         lynx -dump -nolist "${2}" | clean_5 > "$DT_r/sntsls_"
         ) | dlg_progress_1
-
     elif [[ $2 = image ]]; then
-        
         pars=`mktemp`
         trap rm "$pars*" EXIT
         scrot -s "$pars.png"
@@ -522,7 +494,6 @@ process() {
         cat "$pars.txt" | clean_6 > "$DT_r/sntsls_"
         rm "$pars.png"
         ) | dlg_progress_1
-
     else
         if [[ ${#conten} = 1 ]]; then
         cleanups "$DT_r" "$lckpr"; exit 1; fi
@@ -562,14 +533,11 @@ process() {
                         fi
                         
                     done < <(sed 's/,/\n/g' <<<"${l}") #TODO
-                    
                     # s=$(grep -o "," <<< "$var" | wc -l)
                     # t=`for i in "${iteml[@]}"; do echo -n "!$i"; done`
-                    
                 else
                     lenght "${l}"
                 fi
-                
             else
                 lenght "${l}"
             fi
@@ -584,24 +552,20 @@ process() {
     info="-$((200-ns))"
 
     if [ -z "$(< "$DT_r/sntsls")" ]; then
-    
         msg " $(gettext "Failed to get text.")\n" info
         cleanups "$DT_r" "$lckpr" "$slt" & exit 1
     
     elif [[ ${chk} -le 180 ]]; then
-    
         "$DS/add.sh" new_items "" 2 "$(tr -s '\n' ' ' < "$DT_r/sntsls")"
         cleanups "$DT_r" "$lckpr" "$slt" & exit 1
     
     elif [[ ${chk} -gt 180 ]]; then
-        
         slt=$(mktemp $DT/slt.XXXX.x)
         xclip -i /dev/null
         dlg_checklist_3 "$DT_r/sntsls" "${tpe}"
         ret="$?"
     fi
             if [ $ret -eq 2 ]; then
-            
                 cleanups "$slt"
                 dlg_text_info_1 "$DT_r/sntsls" "${tpe}"
                     
@@ -614,7 +578,6 @@ process() {
                     fi
             
             elif [ $ret -eq 0 ]; then
-                
                 sleep 1
                 tpe=$(sed -n 2p "$lckpr")
                 DM_tlt="$DM_tl/${tpe}"
@@ -643,7 +606,6 @@ process() {
                 
                 n=1
                 while read -r trgt; do
-                
                     trgt="$(clean_2 "${trgt}")"
                     if [ "$ttrgt" = TRUE ]; then
                     trgt="$(translate "${trgt}" auto $lgt)"
@@ -655,7 +617,6 @@ process() {
                     if [[ $(wc -$c <<<"${trgt}") = 1 ]]; then
                         if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
                             echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] ${trgt}" >> "$DT_r/wlog"
-                    
                         else
                             trgt="$(clean_1 "${trgt}")"
                             srce="$(clean_0 "${srce}")"
@@ -664,9 +625,7 @@ process() {
                             mksure "${trgt}" "${srce}"
                             
                             if [ $? = 0 ]; then
-
                                 index 1 "${tpe}" "${trgt}" "${srce}" "" "" "" "" "${id}"
-
                                 ( tts_word "${audio}" "${DM_tlt}" ) &&
                                 if [ -f "${DM_tlt}/${audio}.mp3" ]; then
                                 mv "${DM_tlt}/${audio}.mp3" "${DM_tlt}/$id.mp3"
@@ -677,7 +636,6 @@ process() {
                                 
                                 ( img_word "${trgt}" "${srce}" ) &
                                 echo "${trgt}" >> "$DT_r/addw"
-
                             else
                                 echo -e "\n\n#$n ${trgt}" >> "$DT_r/wlog"
                                 rm "${DM_tlt}/$id.mp3"
@@ -688,11 +646,9 @@ process() {
                         
                         if [[ $(wc -l < "${DC_tlt}/0.cfg") -ge 200 ]]; then
                             echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> "$DT_r/slog"
-                    
                         else
                             if [ ${#trgt} -ge 180 ]; then
                                 echo -e "\n\n#$n [$(gettext "Sentence too long")] $trgt" >> "$DT_r/slog"
-                        
                             else
                                 cd "$DT_r"
                                 ( sentence_p "$DT_r" 1
@@ -709,7 +665,6 @@ process() {
                                     ( fetch_audio "$aw" "$bw" )
                                     echo "${trgt}" >> "$DT_r/adds"
                                     ((adds=adds+1))
-
                                 else
                                     echo -e "\n\n#$n $trgt" >> "$DT_r/slog"
                                     rm "${DM_tlt}/$id.mp3"
@@ -730,27 +685,23 @@ process() {
                 
                     n=1
                     while read -r trgt; do
-                    
                         exmp_=$(sed -n ${n}p "$DT_r/wrdsls" |sed 's/\[ \.\.\. \]//g')
                         trgt=$(echo "${trgt,,}" |sed 's/^\s*./\U&\E/g')
                         audio="${trgt,,}"
                         
                         if [[ $(wc -l < "${DC_tlt}/0.cfg") -ge 200 ]]; then
                             echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] ${trgt}" >> "$DT_r/wlog"
-                    
                         else
                             srce="$(translate "${trgt}" auto $lgs)"
                             id="$(set_name_file 1 "${trgt}" "${srce}" "${exmp_}" "" "" "" "")"
                             mksure "${trgt}" "${srce}"
                             
                             if [ $? = 0 ]; then
-
                                 index 1 "${tpc}" "${trgt}" "${srce}" "${exmp_}" "" "" "" "${id}"
                                 if [ ! -f "${DM_tls}/$audio.mp3" ]; then
                                 ( tts_word "$audio" "${DM_tls}" )
                                 ( img_word "${trgt}" "${srce}" ) & fi
                                 echo "${trgt}" >> "$DT_r/addw"
-                                
                             else
                                 echo -e "\n\n#$n $trgt" >> "$DT_r/wlog"
                                 cleanups "${DM_tlt}/$id.mp3"
@@ -790,7 +741,6 @@ process() {
                 fi
                 
                 cleanups "$DT_r" "$lckpr"
-                
             else
                 cleanups "$DT_r" "$lckpr" & exit
             fi
