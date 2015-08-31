@@ -11,7 +11,6 @@ lgs=$(lnglss "$lgsl")
 task=( 'Word pronunciation' 'Pronunciation' 'Translator' \
 'Search definition' 'Search images' 'Download images' '_' )
 
-
 function add_dlg() {
     langs=( 'various' 'zh-cn' 'en' 'fr' 'de' 'it' 'ja' 'pt' 'ru' 'es' 'vi' )
     i=FALSE; cd "$HOME"
