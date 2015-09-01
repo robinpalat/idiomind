@@ -71,12 +71,12 @@ play_list() {
     fi
 
     setting_1() {
-        n=0; 
+        n=0
         while [ ${n} -le 3 ]; do
             arr="in${n}"
             [[ ${!arr} -lt 1 ]] && echo "$DS/images/addi.png" || echo "$DS/images/add.png"
             echo "  <span font_desc='Arial 11'>$(gettext "${lbls[$n]}")</span>"
-            echo "${!sets[${n}]}"
+            echo ${!sets[${n}]}
             let n++
         done
         for ad in "$DS/ifs/mods/play"/*; do
@@ -143,57 +143,54 @@ play_list() {
         tab1=$(< $tab1); tab2=$(< $tab2)
         rm -f "$DT"/*.p
         
-        f=1; n=0
-        while [ ${n} -le 12 ]; do
-        if [ ${n} -lt 4 ]; then
+        f=1; n=0; count=0
+        for item in "${sets[@]:0:4}"; do
             val=$(sed -n $((${n}+1))p <<<"${tab1}" |cut -d "|" -f3)
-            [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
-            "${DC_tlt}/10.cfg"
+            [ -n "${val}" ] && sed -i "s/$item=.*/$item=\"$val\"/g" "${DC_tlt}/10.cfg"
             if [ "$val" = TRUE ]; then
                 count=$((count+$(egrep -cv '#|^$' <<<"${!in[${n}]}"))); fi
-            elif [ ${n} = 4 -o ${n} = 5 ]; then
-                val=$(sed -n $((${n}+1))p <<<"${tab1}" |cut -d "|" -f3)
-                [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
-                "${DC_tlp}/podcasts.cfg"
-            if [ "$val" = TRUE ]; then
-                count=$((count+$(egrep -cv '#|^$' <<<"${!in[${n}]}"))); fi
-            elif [ ${n} -lt 10 ]; then
-                val="$(cut -d "|" -f${f} <<<"${tab2}")"
-                [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
-                "${DC_tlt}/10.cfg"; let f++
-        elif [ ${n} = 10 ]; then
-            pval="$(cut -d "|" -f5 <<<"${tab2}")"
-            if [[ "$pval" = "$(gettext "Words")" ]]; then  val=1
-            elif [[ "$pval" = "$(gettext "Sentences")" ]]; then  val=2
-            else  val=0; fi
-            [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
-            "${DC_tlt}/10.cfg"
-        elif [ ${n} = 11 ]; then
-            val="$(cut -d "|" -f8 <<<"${tab2}")"
-            [ -n "${val}" ] && sed -i "s/${sets[${n}]}=.*/${sets[${n}]}=\"$val\"/g" \
-            "${DC_tlp}/podcasts.cfg"
-        fi
-        ((n=n+1))
+            ((n=n+1))
         done
-
+        for ad in "$DS/ifs/mods/play"/*; do
+            source "${ad}"
+            for item in "${!items[@]}"; do
+                val=$(sed -n $((${n}+1))p <<<"${tab1}" |cut -d "|" -f3)
+                [ -n "${val}" ] && sed -i "s/${items[$item]}=.*/${items[$item]}=\"$val\"/g" "${file_cfg}"
+                count=$((count+1))
+                ((n=n+1))
+            done
+            unset items
+        done
+        for item in "${sets[@]:4:8}"; do
+            val="$(cut -d "|" -f${f} <<<"${tab2}")"
+            [ -n "${val}" ] && sed -i "s/$item=.*/$item=\"$val\"/g" "${DC_tlt}/10.cfg"
+            let f++
+        done
+        
+        pval="$(cut -d "|" -f5 <<<"${tab2}")"
+        if [[ "$pval" = "$(gettext "Words")" ]]; then  val=1
+        elif [[ "$pval" = "$(gettext "Sentences")" ]]; then  val=2
+        else  val=0; fi
+        [ -n "${val}" ] && sed -i "s/rword=.*/rword=\"$val\"/g" "${DC_tlt}/10.cfg"
+ 
         if [ $ret -eq 0 ]; then
             if [ ${count} -lt 1 ]; then
                 notify-send "$(gettext "Nothing to play")" \
                 "$(gettext "Exiting...")" -i idiomind -t 3000 &
+                [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
                 "$DS/stop.sh" 2 & exit 1; fi
-            "$DS/stop.sh" 2 &
             if [ -d "${DM_tlt}" ] && [ -n "${tpc}" ]; then
                 if grep TRUE <<<"$words$sntcs$marks$wprct"; then
                 echo -e "$tpc" > "$DT/.p_"; else > "$DT/.p_"; fi
                 else "$DS/stop.sh" 2 && exit 1; fi
+            "$DS/stop.sh" 2 &
             sleep 1; "$DS/bcle.sh" &
         elif [ $ret -eq 2 ]; then
             [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
             [ -f "$DT/index.m3u" ] && rm -f "$DT/index.m3u"
             "$DS/stop.sh" 2 &
         fi
-
-    rm -f "$DT"/*.p; exit 0
+    exit 0
 }
 
 case "$1" in

@@ -7,11 +7,22 @@ c="$(gettext "Saved episodes <i><small>Podcasts</small></i>")"
 CNF="$(gettext "Configure")"
 source "$DS/ifs/mods/cmns.sh"
 DMC="$DM_tl/Podcasts/cache"
-DCP="$DM_tl/Podcasts/.conf"
 DMP="$DM_tl/Podcasts"
 DSP="$DS_a/Podcasts"
 dfimg="$DSP/images/audio.png"
 date=$(date +%d)
+
+if [ -d "$DM_tl/.Podcasts" ]; then
+    export DCP="$DM_tl/.Podcasts/.conf"
+elif [ -d "$DM_tl/Podcasts" ]; then
+    export DCP="$DM_tl/Podcasts/.conf"
+else
+    mkdir -p "$DM_tl/.Podcasts/.conf"
+    mkdir "$DM_tl/.Podcasts/cache"
+    touch "$DM_tl/.Podcasts/.conf/podcasts.cfg" \
+    "$DM_tl/.Podcasts/.conf/feeds.lst"
+    export DCP="$DM_tl/.Podcasts/.conf"
+fi
 
 # Downloads by each feed, recomended: 2
 downloads=2
@@ -24,9 +35,12 @@ function dlg_config() {
     else cfg=0; > "$DCP/podcasts.cfg"; fi
 
     ini() {
-        mkdir "$DM_tl/Podcasts"
-        mkdir "$DM_tl/Podcasts/.conf"
-        mkdir "$DM_tl/Podcasts/cache"
+        if [ -d "$DM_tl/.Podcasts" ]; then
+            mv "$DM_tl/.Podcasts" "$DM_tl/Podcasts"
+        fi
+        [ ! -d "$DM_tl/Podcasts" ] && mkdir "$DM_tl/Podcasts"
+        [ ! -d "$DM_tl/Podcasts/.conf" ] && mkdir "$DM_tl/Podcasts/.conf"
+        [ ! -d "$DM_tl/Podcasts/cache" ] && mkdir "$DM_tl/Podcasts/cache"
         cd "$DM_tl/Podcasts/.conf/"
         touch "./podcasts.cfg" "./1.lst" "./2.lst" \
         "./feeds.lst" "./old.lst"
@@ -37,7 +51,6 @@ function dlg_config() {
         "$DS/mngr.sh" mkmn
     }
 
-    if [ ! -d "$DM_tl/Podcasts" ]; then ini; fi
     [ -e "$DT/cp.lock" ] && exit || touch "$DT/cp.lock"
     [ ! -f "$DCP/feeds.lst" ] && touch "$DCP/feeds.lst"
 
@@ -65,17 +78,19 @@ function dlg_config() {
     apply() {
         printf "$CNFG" |sed 's/|/\n/g' |sed -n 5,17p | \
         sed 's/^ *//; s/ *$//g' > "$DT/podcasts.tmp"
-        n=1
+        n=1; echo
         while read feed; do
             declare mod${n}="${feed}"
             mod="mod${n}"; url="url${n}"
             if [ "${!url}" != "${!mod}" ]; then
-                "$DSP/podcasts" set_channel "${!mod}" ${n} & fi
-            if [ ! -s "$DCP/${n}.rss" ]; then
+                echo "  --set_channel (mod) ${!mod} ${n}"
+                "$DSP/podcasts" set_channel "${!mod}" ${n} &
+            elif [ ! -s "$DCP/${n}.rss" -a -n "${!mod}" ]; then
+                echo "  --set_channel (noconfig) ${!mod} ${n}"
                 "$DSP/podcasts" set_channel "${!mod}" ${n} & fi
             ((n=n+1))
         done < "$DT/podcasts.tmp"
-
+        echo
         podcasts_tmp="$(cat "$DT/podcasts.tmp")"
         if [ -n "$podcasts_tmp" ] && [[ "$podcasts_tmp" != "$(cat "$DCP/feeds.lst")" ]]; then
         mv -f "$DT/podcasts.tmp" "$DCP/feeds.lst"; else rm -f "$DT/podcasts.tmp"; fi
@@ -89,6 +104,14 @@ function dlg_config() {
         sed -i "s/update=.*/update=\"$val2\"/g" "$DCP/podcasts.cfg"
         sed -i "s/sync=.*/sync=\"$val3\"/g" "$DCP/podcasts.cfg"
         sed -i "s/path=.*/path=\"${val4}\"/g" "$DCP/podcasts.cfg"
+        
+        if [ "$val1" = TRUE ]; then
+            if [ ! -d "$DM_tl/Podcasts" ]; then ini; fi
+        elif [ "$val1" = FALSE ]; then
+            if [ -d "$DM_tl/Podcasts" ]; then
+                > "$DM_tl/.8.cfg"; > "$DC_a/4.cfg"
+                mv "$DM_tl/Podcasts" "$DM_tl/.Podcasts"; "$DS/mngr.sh" mkmn; fi
+        fi
         [ -f "$DT/cp.lock" ] && rm -f "$DT/cp.lock"
     }
 
@@ -123,10 +146,10 @@ function dlg_config() {
     --button="gtk-ok":0)
     ret=$?
 
-    if [ $ret -eq 0 ]; then apply
-        
-    elif [ $ret -eq 5 ]; then apply && "$DSP/podcasts" sync 1
-    
+    if [ $ret -eq 0 ]; then
+        apply
+    elif [ $ret -eq 5 ]; then 
+        apply && "$DSP/podcasts" sync 1
     fi
     [ -f "$DT/cp.lock" ] && rm -f "$DT/cp.lock"
     exit
@@ -199,12 +222,10 @@ function podmode() {
     ret=$?
         
     if [ $ret -eq 2 ]; then
-    "$DSP/podcasts" update 1; fi
-    
+        "$DSP/podcasts" update 1; fi
     note_mod="$(< $fdit)"
     if [ "$note_mod" != "$(< $nt)" ]; then
-    mv -f "$fdit" "$nt"; fi
-    
+        mv -f "$fdit" "$nt"; fi
     [ -f "$fdit" ] && rm -f "$fdit"
 }
 
@@ -233,6 +254,8 @@ function update() {
     conditions() {
         [ ! -f "$DCP/1.lst" ] && touch "$DCP/1.lst"
         [ ! -f "$DCP/2.lst" ] && touch "$DCP/2.lst"
+        [ ! -f "$DCP/.1.lst" ] && touch "$DCP/.1.lst"
+        [ ! -f "$DCP/.2.lst" ] && touch "$DCP/.2.lst"
 
         if [ -f "$DT/.uptp" ] && [[ ${1} = 1 ]]; then
             msg_2 "$(gettext "Wait until it finishes a previous process").\n" info OK gtk-stop "$(gettext "Updating...")"
@@ -324,7 +347,6 @@ function update() {
             if [ ! -f "$DT_r/$img" ]; then
             cp -f "$DSP/images/audio.png" "$DMC/$fname.png"
             p=FALSE; fi
-
         elif [ "$tp" = vid ]; then
             cd "$DT_r"; p=TRUE; rm -f ./*.jpeg ./*.jpg
             mplayer -ss 60 -nosound -noconsolecontrols \
@@ -336,7 +358,6 @@ function update() {
             if [ ! -f "$DT_r/$img" ]; then
             cp -f "$DSP/images/audio.png" "$DMC/$fname.png"
             p=FALSE; fi
-            
         elif [ "$tp" = txt ]; then
             cd "$DT_r"; p=TRUE
             img="media.$ex"
@@ -359,19 +380,20 @@ function update() {
         n=1
         while read FEED; do
             if [ ! -z "$FEED" ]; then
+                echo -e "\n  --updating $FEED\n"
                 if [ ! -f "$DCP/${n}.rss" ]; then
+                echo -e "  --updating nocofig-file! feed=${n} $FEED\n"
                 echo -e "$(gettext "Please, reconfigure this feed:")\n$FEED" >> "$DCP/feed.err"
                 else
-                    d=0
-                    while [ ${d} -lt 8 ]; do
-                        itn=$((d+1)); get=${sets[${d}]}
-                        val=$(sed -n ${itn}p "$DCP/${n}.rss" \
-                        | grep -o "$get"=\"[^\"]* | grep -o '[^"]*$')
-                        declare ${sets[${d}]}="$val"
-                        ((d=d+1))
+                    echo -e "  --updating read-config=${n}"
+                    for get in "${sets[@]}"; do
+                        val=$(grep -o "$get"=\"[^\"]* "$DCP/${n}.rss"| grep -o '[^"]*$')
+                        echo -e "  --updating read-config $get=$val"
+                        declare $get="$val"
                     done
-                    
+                    echo
                     if [ -z "${nmedia}" ]; then
+                        echo -e "  --updating no-media! $FEED\n"
                         > "$DCP/${n}.rss"
                         echo -e "$(gettext "Please, reconfigure this feed:")\n$FEED" >> "$DCP/feed.err"
                         continue; fi

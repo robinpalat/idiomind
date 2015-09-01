@@ -600,9 +600,9 @@ mark_to_learn_topic() {
         
         if [ -n "${trgt}" ]; then
             if [ ${type} -eq 1 ]; then
-            echo "${trgt}" >> "${DC_tlt}/3.cfg"
+                echo "${trgt}" >> "${DC_tlt}/3.cfg"
             else echo "${trgt}" >> "${DC_tlt}/4.cfg"; fi
-            echo "${trgt}" >> "${DC_tlt}/1.cfg"
+                echo "${trgt}" >> "${DC_tlt}/1.cfg"
         fi
     done < "${DC_tlt}/0.cfg"
     
@@ -649,29 +649,28 @@ mark_as_learned_topic() {
             
             if [ ${RM} -ge 50 ]; then
                 if [ ${steps} -eq 8 ]; then
-                sed -i '$ d' "${DC_tlt}/9.cfg"
-                echo "$(date +%m/%d/%Y)" >> "${DC_tlt}/9.cfg"
+                    sed -i '$ d' "${DC_tlt}/9.cfg"
+                    echo "$(date +%m/%d/%Y)" >> "${DC_tlt}/9.cfg"
                 elif [ ${steps} -gt 8 ]; then
-                dts="$(head -7 < "${DC_tlt}/9.cfg")"
-                echo -e "${dts}\n$(date +%m/%d/%Y)" > "${DC_tlt}/9.cfg"
+                    dts="$(head -7 < "${DC_tlt}/9.cfg")"
+                    echo -e "${dts}\n$(date +%m/%d/%Y)" > "${DC_tlt}/9.cfg"
                 else
-                echo "$(date +%m/%d/%Y)" >> "${DC_tlt}/9.cfg"
+                    echo "$(date +%m/%d/%Y)" >> "${DC_tlt}/9.cfg"
                 fi
             fi
-            
         else
             echo "$(date +%m/%d/%Y)" > "${DC_tlt}/9.cfg"
         fi
         
         if [ -d "${DC_tlt}/practice" ]; then
-        (cd "${DC_tlt}/practice"; rm .*; rm *
-        touch ./log1 ./log2 ./log3); fi
+            (cd "${DC_tlt}/practice"; rm .*; rm *
+            touch ./log1 ./log2 ./log3); fi
         
         > "${DC_tlt}/7.cfg"
         if [[ $((stts%2)) = 0 ]]; then
-        echo 4 > "${DC_tlt}/8.cfg"
+            echo 4 > "${DC_tlt}/8.cfg"
         else
-        echo 3 > "${DC_tlt}/8.cfg"
+            echo 3 > "${DC_tlt}/8.cfg"
         fi
     fi
     

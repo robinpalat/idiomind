@@ -48,9 +48,9 @@ function new_session() {
     # addons
     > "$DC_s/2.cfg"
     while read -r _set; do
-    if [ -e "/usr/share/idiomind/addons/${_set}/icon.png" ]; then
-    echo -e "/usr/share/idiomind/addons/${_set}/icon.png\n${_set}" >> "$DC_s/2.cfg"
-    else echo -e "/usr/share/idiomind/images/thumb.png\n${_set}" >> "$DC_s/2.cfg"; fi
+        if [ -e "/usr/share/idiomind/addons/${_set}/icon.png" ]; then
+        echo -e "/usr/share/idiomind/addons/${_set}/icon.png\n${_set}" >> "$DC_s/2.cfg"
+        else echo -e "/usr/share/idiomind/images/thumb.png\n${_set}" >> "$DC_s/2.cfg"; fi
     done < <(cd "$DS/addons"; ls -d *)
     
     for strt in "$DS/ifs/mods/start"/*; do
@@ -225,7 +225,6 @@ function topic() {
         label_info1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><small>\n $inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"
 
         apply() {
-
             note_mod="$(< "${cnf3}")"
             if [ "${note_mod}" != "$(< "${nt}")" ]; then
             mv -f "${cnf3}" "${DC_tlt}/info"; fi

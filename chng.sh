@@ -7,40 +7,35 @@ if [[ ${1} = 0 ]]; then
     s="$(grep -oP '(?<=sntcs=\").*(?=\")' "${cfg}")"
     m="$(grep -oP '(?<=marks=\").*(?=\")' "${cfg}")"
     p="$(grep -oP '(?<=wprct=\").*(?=\")' "${cfg}")"
-    export v="$(grep -oP '(?<=video=\").*(?=\")' "${cfgp}")"
-    export ne="$(grep -oP '(?<=nsepi=\").*(?=\")' "${cfgp}")"
-    export se="$(grep -oP '(?<=svepi=\").*(?=\")' "${cfgp}")"
-    
-    _play() {
-        a="$(grep -oP '(?<=audio=\").*(?=\")' "${cfg}")"
-        n="$(grep -oP '(?<=ntosd=\").*(?=\")' "${cfg}")"
-        l="$(grep -oP '(?<=loop=\").*(?=\")' "${cfg}")"
-        rw="$(grep -oP '(?<=rword=\").*(?=\")' "${cfg}")"
-        [ ! -f "$DT"/.p_ ] && > "$DT"/.p_
 
-        if [ ${n} != TRUE -a ${a} != TRUE -a ${stnrd} = 1 ]; then a=TRUE; fi
-        if ! grep TRUE <<<"$n$w$s$m$p$ne$se">/dev/null 2>&1; then
-        "$DS"/stop.sh 2 & exit 1; fi
-        if ! [[ ${l} =~ $numer ]]; then l=1; fi
-        if ! [[ ${rw} =~ $numer ]]; then rw=0; fi
+    _play() {
         
         if [ ${stnrd} = 1 ]; then
-            
-            if [ ${n} = TRUE ]; then
-            notify-send -i "${icon}" "${trgt}" "${srce}"; fi &
-            if [ ${a} = TRUE ]; then sleep 0.5; sle=0.2; spn=1
-            [ ${type} = 1 -a ${rw} = 1 ] && spn=3
-            [ ${type} = 2 -a ${rw} = 2 ] && spn=2 && sle=2.5
+            a="$(grep -oP '(?<=audio=\").*(?=\")' "${cfg}")"
+            n="$(grep -oP '(?<=ntosd=\").*(?=\")' "${cfg}")"
+            l="$(grep -oP '(?<=loop=\").*(?=\")' "${cfg}")"
+            rw="$(grep -oP '(?<=rword=\").*(?=\")' "${cfg}")"
+            [ ! -f "$DT"/.p_ ] && > "$DT"/.p_
 
-            ( while [ ${ritem} -lt ${spn} ]; do
-            "$DS"/play.sh play_file "${file}"
-            [ ${ritem} = 0 ] && sleep ${sle}
-            [ ${ritem} = 1 ] && sleep 2.5
-            [ ${ritem} = 2 ] && sleep 2
-            let ritem++
-            done )
+            if [ ${n} != TRUE -a ${a} != TRUE -a ${stnrd} = 1 ]; then a=TRUE; fi
+            if ! grep TRUE <<<"$n$w$s$m$p$ne$se">/dev/null 2>&1; then
+            "$DS"/stop.sh 2 & exit 1; fi
+            if ! [[ ${l} =~ $numer ]]; then l=1; fi
+            if ! [[ ${rw} =~ $numer ]]; then rw=0; fi
+
+            if [ ${n} = TRUE ]; then
+                notify-send -i "${icon}" "${trgt}" "${srce}"; fi &
+            if [ ${a} = TRUE ]; then sleep 0.5; sle=0.5; spn=1
+                [ ${type} = 1 -a ${rw} = 1 ] && spn=3
+                [ ${type} = 2 -a ${rw} = 2 ] && spn=2 && sle=2.5
+                ( while [ ${ritem} -lt ${spn} ]; do
+                    "$DS"/play.sh play_file "${file}"
+                    [ ${ritem} = 0 ] && sleep ${sle}
+                    [ ${ritem} = 1 ] && sleep 2.5
+                    [ ${ritem} = 2 ] && sleep 2
+                    let ritem++
+                done )
             fi
-            
         else
             notify-send -i "${icon}" "${trgt}" "${srce}" -t 10000 &
             sleep 1 && "$DS"/play.sh play_file "${file}" "${trgt}"
@@ -93,7 +88,7 @@ if [[ ${1} = 0 ]]; then
         while read item; do getitem; _play
         done < <(grep -Fxv "${DC_tlt}/4.cfg" "${DC_tlt}/practice/log.3"); fi
     
-    include "$DS/ifs/mods/play"
+    include "$DS/ifs/mods/chng"
 
 elif [[ ${1} != 0 ]]; then
 
@@ -104,12 +99,12 @@ elif [[ ${1} != 0 ]]; then
     lgs=$(lnglss $lgsl)
     
     if [ -n "$1" ]; then
-    text="--text=$1\n"
-    align="left"
-    img="--image=info"
+        text="--text=$1\n"
+        align="left"
+        img="--image=info"
     else
-    text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/${lgtl,,}'>$(gettext "Shared")</a>   </small></small>"
-    align="right"
+        text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/${lgtl,,}'>$(gettext "Shared")</a>   </small></small>"
+        align="right"
     fi
     
     if [[ $((`wc -l < "$DM_tl/.0.cfg"`/2)) != `wc -l < "$DM_tl/.1.cfg"` ]]; then

@@ -1,19 +1,22 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+source /usr/share/idiomind/ifs/c.conf
+file_cfg="${DM_tl}"/Podcasts/.conf/podcasts.cfg
+video="$(grep -oP '(?<=video=\").*(?=\")' "${file_cfg}")"
+nsepi="$(grep -oP '(?<=nsepi=\").*(?=\")' "${file_cfg}")"
+svepi="$(grep -oP '(?<=svepi=\").*(?=\")' "${file_cfg}")"
+
 f=0
 get_itep() {
-    
     stnrd=0
     if [ ${f} -gt 5 -o ! -d "${DM_tl}/Podcasts/cache" ]; then
     msg "$(gettext "An error has occurred. Playback stopped")" info &
     "$DS/stop.sh" 2; fi
-        
     fname=$(echo -n "${item}" | md5sum | rev | cut -c 4- | rev)
     item="$DM_tl/Podcasts/cache/$fname.item"
     
     if [ -f "${item}" ]; then
-    
         channel="$(grep -o channel=\"[^\"]* "${item}" | grep -o '[^"]*$')"
         title="$(grep -o title=\"[^\"]* "${item}" | grep -o '[^"]*$')"
         [ -f "$DMC/$fname.mp3" ] && file="$DMC/$fname.mp3" && type=3
@@ -23,30 +26,24 @@ get_itep() {
         [ -f "$DMC/$fname.avi" ] && file="$DMC/$fname.avi" && type=4
 
         if [ ${type} = 3 ]; then
-        trgt="${title}"
-        srce="${channel}"
-        icon=idiomind
-        
+            trgt="${title}"
+            srce="${channel}"
+            icon=idiomind
         elif [ ${type} = 4 ]; then
-        trgt="${title}"
-        srce="${channel}"
-        icon=idiomind
-        
+            trgt="${title}"
+            srce="${channel}"
+            icon=idiomind
         else ((f=f+1)); fi
-        
     else ((f=f+1)); fi
-    
     export trgt srce icon stnrd file
 }
 
-if [ ${ne} = TRUE -o ${se} = TRUE ]; then
-
+if [[ ${nsepi} = TRUE ]] || [[ ${svepi} = TRUE ]]; then
     DMC="$DM_tl/Podcasts/cache"
     DPC="$DM_tl/Podcasts/.conf"
     > "$DT/list.m3u"
     
-    if [ ${v} = TRUE ]; then
-
+    if [ ${video} = TRUE ]; then
         _filename() {
             fname=$(echo -n "${1}" | md5sum | rev | cut -c 4- | rev)
             [ -f "$DMC/$fname.m4v" ] && echo "$DMC/$fname.m4v"
@@ -54,13 +51,13 @@ if [ ${ne} = TRUE -o ${se} = TRUE ]; then
         }
         rm -f "$DT/list.m3u"
         
-        if [ ${ne} = TRUE ]; then
+        if [ ${nsepi} = TRUE ]; then
             while read item; do
             echo "$(_filename "$item")" >> "$DT/list.m3u"
             done < "$DPC/1.lst"
         fi
             
-        if [ ${se} = "TRUE" ]; then
+        if [ ${svepi} = "TRUE" ]; then
             while read item; do
             echo "$(_filename "$item")" >> "$DT/list.m3u"
             done < "$DPC/2.lst"
@@ -68,20 +65,19 @@ if [ ${ne} = TRUE -o ${se} = TRUE ]; then
         
         sed -i '/^$/d' "$DT/list.m3u"
         if [ -z "$(< "$DT/list.m3u")" ]; then
-        notify-send "$(gettext "No videos to play")" \
-        "$(gettext "Exiting...")" -i idiomind -t 3000
-        "$DS/stop.sh" 2 & exit
+            notify-send "$(gettext "No videos to play")" \
+            "$(gettext "Exiting...")" -i idiomind -t 3000
+            "$DS/stop.sh" 2 & exit
         else
-        "$DS/stop.sh" 3 &
-        mplayer -noconsolecontrols -title "$(gettext "Videos")" -playlist "$DT/list.m3u" & exit
+            "$DS/stop.sh" 3 &
+            mplayer -noconsolecontrols -title "$(gettext "Videos")" -playlist "$DT/list.m3u" & exit
         fi
-    
     else
-        if [ ${ne} = TRUE ]; then
+        if [ ${nsepi} = TRUE ]; then
         while read -r item; do get_itep; _play; sleep 2
         done < "$DPC/1.lst"; fi
         
-        if [ ${se} = TRUE ]; then
+        if [ ${svepi} = TRUE ]; then
         while read -r item; do get_itep; _play; sleep 2
         done < "$DPC/2.lst"; fi
     fi

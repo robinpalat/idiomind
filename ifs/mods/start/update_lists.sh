@@ -30,7 +30,6 @@ done
 
 sed -i '/^$/d' "${items}"
 f_lock "$DT/co_lk"
-> "${DC_tlt}/5.cfg"
 dir="$DM_tl/"
 topics="${DM_tl}/.1.cfg"
 lstp="${items}"
