@@ -131,7 +131,7 @@ function dlg_config() {
     --field="$(gettext "Enable")":CHK "$enable" \
     --field="$(gettext "Update at startup")":CHK "$update" \
     --field="$(gettext "Sync after update")":CHK "$sync" \
-    --field="\n$(gettext "URL")":LBL " " \
+    --field="$(gettext "URL")":LBL " " \
     --field="" "${url1}" --field="" "${url2}" --field="" "${url3}" \
     --field="" "${url4}" --field="" "${url5}" --field="" "${url6}" \
     --field="" "${url7}" --field="" "${url8}" --field="" "${url9}" \
