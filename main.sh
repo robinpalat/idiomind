@@ -44,15 +44,8 @@ function new_session() {
     msg "$(gettext "Fail on try write in /tmp")\n" error & exit 1; fi
     
     f_lock "$DT/ps_lk"
-    
-    # addons
-    > "$DC_s/2.cfg"
-    while read -r _set; do
-        if [ -e "/usr/share/idiomind/addons/${_set}/icon.png" ]; then
-        echo -e "/usr/share/idiomind/addons/${_set}/icon.png\n${_set}" >> "$DC_s/2.cfg"
-        else echo -e "/usr/share/idiomind/images/thumb.png\n${_set}" >> "$DC_s/2.cfg"; fi
-    done < <(cd "$DS/addons"; ls -d *)
-    
+    menu_pref
+
     for strt in "$DS/ifs/mods/start"/*; do
     ( sleep 20 && "${strt}" ); done &
     
@@ -348,6 +341,15 @@ function topic() {
     fi
 }
 
+function menu_pref() {
+    > "$DC_s/2.cfg"
+    while read -r _set; do
+        if [ -e "/usr/share/idiomind/addons/${_set}/icon.png" ]; then
+        echo -e "/usr/share/idiomind/addons/${_set}/icon.png\n${_set}" >> "$DC_s/2.cfg"
+        else echo -e "/usr/share/idiomind/images/thumb.png\n${_set}" >> "$DC_s/2.cfg"; fi
+    done < <(cd "$DS/addons"; ls -d *)
+}
+
 panel() {
     
     echo -e "strt.1.strt" >> "$DC_s/log"
@@ -394,6 +396,8 @@ case "$1" in
     echo -n "0.1" ;;
     -s)
     new_session; idiomind & ;;
+    update_menu)
+    menu_pref ;;
     autostart)
     sleep 50; [ ! -e "$DT/ps_lk" ] && new_session ;;
     add)
