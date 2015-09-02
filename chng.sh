@@ -92,8 +92,9 @@ if [[ ${1} = 0 ]]; then
 
 elif [[ ${1} != 0 ]]; then
 
-    source /usr/share/idiomind/ifs/c.conf
     source "$DS/ifs/mods/cmns.sh"
+    if [ -e "/tmp/update-MENULIST" ]; then
+    rm -f "/tmp/update-MENULIST"; "$DS/mngr.sh" mkmn; fi
     [ ! -f "$DM_tl/.0.cfg" ] && > "$DM_tl/.0.cfg"
     [ ! -f "$DM_tl/.1.cfg" ] && > "$DM_tl/.1.cfg"
     lgs=$(lnglss $lgsl)

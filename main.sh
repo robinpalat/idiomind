@@ -44,7 +44,6 @@ function new_session() {
     msg "$(gettext "Fail on try write in /tmp")\n" error & exit 1; fi
     
     f_lock "$DT/ps_lk"
-    menu_pref
 
     for strt in "$DS/ifs/mods/start"/*; do
     ( sleep 20 && "${strt}" ); done &
@@ -341,18 +340,18 @@ function topic() {
     fi
 }
 
-function menu_pref() {
-    > "$DC_s/2.cfg"
+function menu_addons() {
+    > /usr/share/idiomind/addons/.menu_list
     while read -r _set; do
         if [ -e "/usr/share/idiomind/addons/${_set}/icon.png" ]; then
-        echo -e "/usr/share/idiomind/addons/${_set}/icon.png\n${_set}" >> "$DC_s/2.cfg"
-        else echo -e "/usr/share/idiomind/images/thumb.png\n${_set}" >> "$DC_s/2.cfg"; fi
+            echo -e "/usr/share/idiomind/addons/${_set}/icon.png\n${_set}" >> \
+            /usr/share/idiomind/addons/.menu_list
+        else echo -e "/usr/share/idiomind/images/thumb.png\n${_set}" >> \
+            /usr/share/idiomind/addons/.menu_list; fi
     done < <(cd "$DS/addons"; ls -d *)
 }
 
 panel() {
-    
-    echo -e "strt.1.strt" >> "$DC_s/log"
     if [ ! -d "$DT" ]; then new_session; fi
     [ ! -e "$DT/tpe" ] && echo "$(sed -n 1p "$DC_s/4.cfg")" > "$DT/tpe"
     [ "$(< "$DT/tpe")" != "${tpc}" ] && echo "$(sed -n 1p "$DC_s/4.cfg")" > "$DT/tpe"
@@ -360,7 +359,7 @@ panel() {
     
     if [[ "$(date +%d)" != "$date" ]] || [ ! -e "$DC_s/10.cfg" ]; then
     new_session; fi
-    
+
     if [ -e "$DC_s/10.cfg" ]; then
         x=$(($(sed -n 2p "$DC_s/10.cfg")/2))
         y=$(($(sed -n 3p "$DC_s/10.cfg")/2)); fi
@@ -397,7 +396,7 @@ case "$1" in
     -s)
     new_session; idiomind & ;;
     update_menu)
-    menu_pref ;;
+    menu_addons ;;
     autostart)
     sleep 50; [ ! -e "$DT/ps_lk" ] && new_session ;;
     add)
