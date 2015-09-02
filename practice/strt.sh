@@ -448,7 +448,7 @@ function practice_e() {
         echo "${chk}" > ./chk.tmp; touch ./words.tmp
         for line in `sed 's/ /\n/g' <<<"$out"`; do
             if grep -Fxq "${line}" <<<"$in"; then
-                sed -i "s/"${line}"/<b>"${line}"<\/b>/g" ./chk.tmp
+                sed -i "s/"${line}"/<b>"${line}"<\/b>/g" ./chk.tmp # TODO
                 [ -n "${line}" ] && echo \
                 "<span color='#3A9000'><b>${line^}</b></span>  " >> ./words.tmp
                 [ -n "${line}" ] && echo "${line}" >> ./mtch.tmp

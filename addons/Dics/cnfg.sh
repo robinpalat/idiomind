@@ -80,16 +80,16 @@ function dlg() {
     
     while read -r dict; do
         if [ -n "${dict}" ]; then
-        echo 'TRUE'
-        sed 's/\./\n/g' <<<"${dict}"; fi
+            echo 'TRUE'
+            sed 's/\./\n/g' <<<"${dict}"; fi
     done < <(ls "$enables/")
     
     while read -r dict; do
         if [ -n "${dict}" ]; then
-        echo 'FALSE'
+            echo 'FALSE'
         if grep -E ".$lgt|.various" <<<"${dict}">/dev/null 2>&1; then
-        sed 's/\./\n/g' <<<"${dict}"| \
-        sed "3s|${sus}|<span color='#0038FF'>${sus}<\/span>|"
+            sed 's/\./\n/g' <<<"${dict}"| \
+            sed "3s|${sus}|<span color='#0038FF'>${sus}<\/span>|"
         else echo "${dict}" |sed 's/\./\n/g'; fi
         fi
     done < <(ls "$disables/")
@@ -131,7 +131,6 @@ function dlg() {
                 name="$(cut -d "|" -f2 <<<"$dict")"
                 type="$(cut -d "|" -f3 <<<"$dict")"
                 tget="$(cut -d "|" -f4  <<<"$dict")"
-                
                 if grep 'FALSE' <<<"$dict"; then
                     if [ ! -f "$disables/$name.$type.$tget.$lgt" ]; then
                         [ -f "$enables/$name.$type.$tget.$lgt" ] \
@@ -162,6 +161,15 @@ function dlg() {
     
 } >/dev/null 2>&1
 
+function update_config_dir() {
+    while read -r dict; do
+        if [ ! -e "$enables/$(basename "${dict}")" \
+            -a ! -e "$disables/$(basename "${dict}")" ]; then
+            echo "--added dict: $(basename "${dict}")"
+            >  "$disables/$(basename "${dict}")"; fi
+    done < <(ls "$DS_a/Dics/dicts/")
+}
+
 case "$1" in
     add_dlg)
     add_dlg "$@" ;;
@@ -169,6 +177,8 @@ case "$1" in
     dclk "$@" ;;
     cpfile)
     cpfile "$@" ;;
+    updt_dicts)
+    update_config_dir "$@" ;;
     *)
     dlg "$@" ;;
 esac
