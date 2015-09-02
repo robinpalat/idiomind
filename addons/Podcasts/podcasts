@@ -31,7 +31,7 @@ rsync_delete=0
 
 function dlg_config() {
     sets=( 'enable' 'update' 'sync' 'path' 'video' 'nsepi' 'svepi' )
-    if [[ -n "$(< "$DCP/podcasts.cfg")" ]]; then cfg=1
+    if [[ `wc -l < "$DCP/podcasts.cfg"` = 7 ]]; then cfg=1
     else cfg=0; > "$DCP/podcasts.cfg"; fi
 
     ini() {
@@ -69,7 +69,7 @@ function dlg_config() {
             ((n=n+1))
         done
     else
-        while [ ${n} -lt 6 ]; do
+        while [ ${n} -le 6 ]; do
             echo -e "${sets[${n}]}=\"FALSE\"" >> "$DCP/podcasts.cfg"
             ((n=n+1))
         done
@@ -422,29 +422,30 @@ function update() {
                             if ! grep -Fxo "${title}" < <(cat "$DCP/1.lst" "$DCP/2.lst" "$DCP/old.lst"); then
                                 enclosure_url=$(curl -sILw %"{url_effective}" --url "$enclosure" |tail -n 1)
                                 mediatype "$enclosure_url"
+                                if [ ! -d "$DMC" ]; then break; exit 1; fi
                                 if [ ! -f "$DMC/$fname.$ex" ]; then
                                 cd "$DT_r"; wget -q -c -T 51 -O ./"media.$ex" "$enclosure_url"
                                 else cd "$DT_r"; mv -f "$DMC/$fname.$ex" ./"media.$ex"; fi
                                 
                                 e=$?
                                 if [ $e = 0 ]; then
-                                get_images
-                                mv -f ./"media.$ex" "$DMC/$fname.$ex"
-                                mkhtml
+                                    get_images
+                                    mv -f ./"media.$ex" "$DMC/$fname.$ex"
+                                    mkhtml
 
-                                if [[ -s "$DCP/1.lst" ]]; then
-                                    sed -i -e "1i${title}\\" "$DCP/1.lst"
-                                else 
-                                    echo "${title}" > "$DCP/1.lst"; fi
-                                if grep '^$' "$DCP/1.lst"; then
-                                    sed -i '/^$/d' "$DCP/1.lst"; fi
-                                echo "${title}" >> "$DCP/.1.lst"
-                                echo "${title}" >> "$DT_r/log"
-                                echo -e "channel=\"${channel}\"
-                                \rlink=\"${link}\"
-                                \rtitle=\"${title}\"" \
-                                |sed -e 's/^[ \t]*//' \
-                                |tr -d '\n' >> "$DMC/$fname.item"
+                                    if [[ -s "$DCP/1.lst" ]]; then
+                                        sed -i -e "1i${title}\\" "$DCP/1.lst"
+                                    else 
+                                        echo "${title}" > "$DCP/1.lst"; fi
+                                    if grep '^$' "$DCP/1.lst"; then
+                                        sed -i '/^$/d' "$DCP/1.lst"; fi
+                                    echo "${title}" >> "$DCP/.1.lst"
+                                    echo "${title}" >> "$DT_r/log"
+                                    echo -e "channel=\"${channel}\"
+                                    \rlink=\"${link}\"
+                                    \rtitle=\"${title}\"" \
+                                    |sed -e 's/^[ \t]*//' \
+                                    |tr -d '\n' >> "$DMC/$fname.item"
                                 fi
                             fi
                         done <<<"${podcast_items}"
@@ -453,7 +454,6 @@ function update() {
             else
                 [ -f "$DCP/${n}.rss" ] && rm "$DCP/${n}.rss"
             fi
-            
             let n++
         done < "$DCP/feeds.lst"
     }
@@ -633,10 +633,9 @@ function set_channel() {
     \r</xsl:stylesheet>"
 
     if [[ -z "${2}" ]]; then
-    [ -f "$DIR2/$3.rss" ] && rm "$DIR2/$3.rss"; exit 1; fi
+    [ -f "$DCP/$3.rss" ] && rm "$DCP/$3.rss"; exit 1; fi
     feed="${2}"
     num="${3}"
-    DIR2="$DM_tl/Podcasts/.conf"
     xml="$(xsltproc - "${feed}" < <(echo -e "${tmpl1}" \
     |sed -e 's/^[ \t]*//' |tr -d '\n') 2> /dev/null)"
     items1="$(echo "${xml}" | tr '\n' ' ' | tr -s '[:space:]' \
@@ -735,17 +734,16 @@ function set_channel() {
         \rnimage=\"$image\"
         \rurl=\"$feed\""
         echo -e "${cfg}" |sed -e 's/^[ \t]*//' \
-        |tr -d '\n' > "$DIR2/$num.rss"; exit
+        |tr -d '\n' > "$DCP/$num.rss"; exit
     else
         url="$(tr '&' ' ' <<<"${feed}")"
         msg "<b>$(gettext "Specified URL doesn't seem to contain any feeds:")</b>\n$url\n" dialog-warning Idiomind &
-        > "$DIR2/$num.rss"
+        > "$DCP/$num.rss"
         rm -f "$DT/cpt.lock"; exit 1
     fi
 }
 
 function sync() {
-    DIR2="$DM_tl/Podcasts/.conf"
     cfg="$DM_tl/Podcasts/.conf/podcasts.cfg"
     path="$(grep -o 'path="[^"]*' "$cfg" | grep -o '[^"]*$')"
     
@@ -858,7 +856,6 @@ function remove_item() {
     if ! grep -Fxo "$item" "$DCP/1.lst"; then
         msg_2 "$(gettext "Are you sure you want to delete this episode here?")\n" gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
         ret=$(echo "$?")
-    
         if [ $ret -eq 0 ]; then
             [ -f "$DMC/$fname.mp3" ] && rm "$DMC/$fname.mp3"
             [ -f "$DMC/$fname.ogg" ] && rm "$DMC/$fname.ogg"

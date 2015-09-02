@@ -124,8 +124,8 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     itxt="<span font_desc='Droid Sans Bold 12' color='#616161'>$tname</span>\n<sup>$(gettext "Words") $nword  $(gettext "Sentences") $nsent  $(gettext "Images") $nimag \n$(gettext "Level:") $level \n$(gettext "Language:") $langt  $(gettext "Translation:") $langs</sup>"
     dclk="$DS/play.sh play_word"
     _lst() { while read -r item; do
-    grep -oP '(?<=trgt={).*(?=},srce)' <<<"${item}"
-    grep -oP '(?<=srce={).*(?=},exmp)' <<<"${item}"
+        grep -oP '(?<=trgt={).*(?=},srce)' <<<"${item}"
+        grep -oP '(?<=srce={).*(?=},exmp)' <<<"${item}"
     done < <(tac "${file}"); }
 
     _lst | yad --list --title="Idiomind" \
@@ -207,10 +207,11 @@ function topic() {
         [ -z "${tpc}" ] && exit 1
         source "$DS/ifs/mods/topic/items_list.sh"
         for n in {0..4}; do
-        [ ! -e "${DC_tlt}/${n}.cfg" ] && touch "${DC_tlt}/${n}.cfg"
-        declare ls${n}="${DC_tlt}/${n}.cfg"
-        declare inx${n}=$(wc -l < "${DC_tlt}/${n}.cfg")
-        export inx${n}; done
+            [ ! -e "${DC_tlt}/${n}.cfg" ] && touch "${DC_tlt}/${n}.cfg"
+            declare ls${n}="${DC_tlt}/${n}.cfg"
+            declare inx${n}=$(wc -l < "${DC_tlt}/${n}.cfg")
+            export inx${n}
+        done
         nt="${DC_tlt}/info"
         author="$(grep -o 'authr="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         auto_mrk=$(grep -o 'set_1=\"[^\"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')
