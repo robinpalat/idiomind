@@ -12,8 +12,10 @@ function log() \
 function stats() {
     n=1; c=1
     while [ ${n} -le 21 ]; do
-        if [ ${v} -le ${c} ]; then
-        echo ${n} > ./.${icon}; break
+        if [ ${n} -eq 21 ]; then
+            echo $((n-1)) > .${icon}; break
+        elif [ ${v} -le ${c} ]; then
+            echo ${n} > ./.${icon}; break
         fi
         ((c=c+5))
         let n++
@@ -37,9 +39,9 @@ function score() {
         n=1; c=1
         while [ ${n} -le 21 ]; do
             if [ ${n} -eq 21 ]; then
-                echo $((n-1)) > .${icon}
+                echo $((n-1)) > .${icon}; break
             elif [ ${v} -le ${c} ]; then
-                echo ${n} > .${icon}; break
+                echo ${n} > ./.${icon}; break
             fi
             ((c=c+5))
             let n++
