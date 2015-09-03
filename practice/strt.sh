@@ -484,7 +484,6 @@ function practice_e() {
         
     step=2
     while read -r trgt; do
-        
         export trgt
         pos=`grep -Fon -m 1 "trgt={${trgt}}" "${cfg0}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
         item=`sed -n ${pos}p "${cfg0}" |sed 's/},/}\n/g'`
@@ -522,7 +521,6 @@ function practice_e() {
 }
 
 function get_list() {
-    
     if [ ${practice} = a -o ${practice} = b -o ${practice} = c ]; then
         > "$dir/${practice}.0"
         if [[ `wc -l < "${cfg4}"` -gt 0 ]]; then

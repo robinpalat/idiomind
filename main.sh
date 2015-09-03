@@ -55,8 +55,7 @@ function new_session() {
     cd "$DC_s"/; rename 's/\.p$//' *.p; fi
     cd /
     
-    s="$(xrandr | grep '*' |awk '{ print $1 }' \
-    | sed 's/x/\n/')"
+    s="$(xrandr | grep '*' |awk '{ print $1 }' |sed 's/x/\n/')"
     sed -n 1p <<<"$s" >> "$DC_s/10.cfg"
     sed -n 2p <<<"$s" >> "$DC_s/10.cfg"
 
@@ -152,8 +151,8 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             fi
 
             if [ ! -d "$DM_t/$langt" ]; then
-            mkdir "$DM_t/$langt"
-            mkdir -p "$DM_t/$langt/.share/images"; fi
+                mkdir "$DM_t/$langt"
+                mkdir -p "$DM_t/$langt/.share/images"; fi
             mkdir -p "$DM_t/$langt/${tname}/.conf/practice"
             DM_tlt="$DM_t/$langt/${tname}"
             DC_tlt="$DM_t/$langt/${tname}/.conf"
@@ -170,10 +169,10 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
                 trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
                 if [ -n "${trgt}" ]; then
                     if [[ ${type} = 1 ]]; then
-                    echo "${trgt}" >> "${DC_tlt}/3.cfg"
+                        echo "${trgt}" >> "${DC_tlt}/3.cfg"
                     else echo "${trgt}" >> "${DC_tlt}/4.cfg"; fi
-                    echo "${trgt}" >> "${DC_tlt}/1.cfg"
-                    echo "${item_}" >> "${DC_tlt}/0.cfg"; fi    
+                        echo "${trgt}" >> "${DC_tlt}/1.cfg"
+                        echo "${item_}" >> "${DC_tlt}/0.cfg"; fi    
             done < <(head -n -1 < "${file}")
 
             "$DS/ifs/tls.sh" colorize
@@ -187,7 +186,6 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
 fi
     
 function topic() {
-
     export mode=$(sed -n 1p "$DC_s/5.cfg")
     source "$DS/ifs/mods/cmns.sh"
 
@@ -252,89 +250,80 @@ function topic() {
             "$DS/mngr.sh" rename_topic "${ntpc}" & exit; fi
         }
     
-    if [[ ${inx0} -lt 1 ]]; then
-        
-        notebook_1
-        ret=$?
+        if [[ ${inx0} -lt 1 ]]; then
+            
+            notebook_1; ret=$?
+                    
+                if [ ! -f "$DT/ps_lk" ]; then apply; fi
                 
-            if [ ! -f "$DT/ps_lk" ]; then apply; fi
-            
-            if [ $ret -eq 5 ]; then
-                "$DS/practice/strt.sh" &
-            fi
-
-        rm -f "$DT"/*.x
-
-    elif [[ ${inx1} -ge 1 ]]; then
-    
-        if [ -f "${DC_tlt}/9.cfg" -a -f "${DC_tlt}/7.cfg" ]; then
-        
-            calculate_review "${tpc}"
-            if [[ ${RM} -ge 100 ]]; then
-            
-                RM=100
-                dialog_1
-                ret=$?
-                
-                    if [ $ret -eq 2 ]; then
-                    
-                        "$DS/mngr.sh" mark_to_learn "${tpc}" 0
-                        idiomind topic & exit 1
-                    
-                    elif [ $ret -eq 3 ]; then
-                    
-                       exit 1
-                    fi 
-            fi
-
-            pres="<u><b>$(gettext "Topic learnt")</b></u>  $(gettext "* however you have new items") ($inx1).\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
-            notebook_2
-            
-        else
-            notebook_1
-        fi
-            ret=$?
-
-            if [ ! -f "$DT/ps_lk" ]; then apply; fi
-
-            if [ $ret -eq 5 ]; then
-                "$DS/practice/strt.sh" &
-            fi
+                if [ $ret -eq 5 ]; then
+                    "$DS/practice/strt.sh" &
+                fi
 
             rm -f "$DT"/*.x
 
-    elif [[ ${inx1} -eq 0 ]]; then
-        if [ ! -f "${DC_tlt}/7.cfg" -o ! -f "${DC_tlt}/9.cfg" ]; then
-            "$DS/mngr.sh" mark_as_learned "${tpc}" 0
-        fi
+        elif [[ ${inx1} -ge 1 ]]; then
         
-        calculate_review "${tpc}"
-        if [[ ${RM} -ge 100 ]]; then
-
-            RM=100
-            dialog_1
-            ret=$?
+            if [ -f "${DC_tlt}/9.cfg" -a -f "${DC_tlt}/7.cfg" ]; then
+            
+                calculate_review "${tpc}"
+                if [[ ${RM} -ge 100 ]]; then
                 
-                if [ $ret -eq 2 ]; then
-                    "$DS/mngr.sh" mark_to_learn "${tpc}" 0
-                    idiomind topic & exit 1
+                    RM=100; dialog_1; ret=$?
                     
-                elif [ $ret -eq 3 ]; then
-                       exit 1
-                fi 
+                        if [ $ret -eq 2 ]; then
+                            "$DS/mngr.sh" mark_to_learn "${tpc}" 0
+                            idiomind topic & exit 1
+                        
+                        elif [ $ret -eq 3 ]; then
+                           exit 1
+                        fi 
+                fi
+
+                pres="<u><b>$(gettext "Topic learnt")</b></u>  $(gettext "* however you have new items") ($inx1).\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
+                notebook_2
+            else
+                notebook_1
+            fi
+                ret=$?
+
+                if [ ! -f "$DT/ps_lk" ]; then apply; fi
+
+                if [ $ret -eq 5 ]; then
+                    "$DS/practice/strt.sh" &
+                fi
+
+                rm -f "$DT"/*.x
+
+        elif [[ ${inx1} -eq 0 ]]; then
+            if [ ! -f "${DC_tlt}/7.cfg" -o ! -f "${DC_tlt}/9.cfg" ]; then
+                "$DS/mngr.sh" mark_as_learned "${tpc}" 0
+            fi
+            
+            calculate_review "${tpc}"
+            if [[ ${RM} -ge 100 ]]; then
+
+                RM=100; dialog_1; ret=$?
+                    
+                    if [ $ret -eq 2 ]; then
+                        "$DS/mngr.sh" mark_to_learn "${tpc}" 0
+                        idiomind topic & exit 1
+                        
+                    elif [ $ret -eq 3 ]; then
+                        exit 1
+                    fi 
+            fi
+            
+            pres="<u><b>$(gettext "Topic learnt")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
+            notebook_2
+            
+            if [ ! -f "$DT/ps_lk" ]; then apply; fi
+          
+            rm -f "$DT"/*.x & exit
         fi
-        
-        pres="<u><b>$(gettext "Topic learnt")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
-        notebook_2
-        
-        if [ ! -f "$DT/ps_lk" ]; then apply; fi
-      
-        rm -f "$DT"/*.x & exit
-    fi
-    rm -f "$DT"/*.x
-    
+        rm -f "$DT"/*.x
     else
-        if [[ "$(wc -l < "$DM_tl/.1.cfg")" -ge 1 ]]; then
+        if [[ `wc -l < "$DM_tl/.1.cfg"` -ge 1 ]]; then
             exit 1
         fi
     fi

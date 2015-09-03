@@ -35,54 +35,17 @@ mkmn() {
 }
 
 delete_item_ok() {
-    set -e
+
     f_lock "$DT/ps_lk"
     trgt="${3}"; DM_tlt="$DM_tl/${2}"; DC_tlt="$DM_tl/${2}/.conf"
     file="$(get_name_file "${trgt}" "${DC_tlt}/0.cfg")"
-
-    [ -f "${DM_tlt}/$file.mp3" ] && rm "${DM_tlt}/$file.mp3"
-    sed -i "/trgt={${trgt}}/d" "${DC_tlt}/0.cfg"
-
-    if [ -d "${DC_tlt}/practice" ]; then
-        cd "${DC_tlt}/practice"
-        while read -r file_pr; do
-            if grep -Fxq "${trgt}" "${file_pr}"; then
-                grep -vxF "${trgt}" "${file_pr}" > ./rm.tmp
-                sed '/^$/d' ./rm.tmp > "${file_pr}"; fi
-        done < <(ls ./*)
-        rm ./*.tmp
-        cd /
-    fi
-    
-    for n in {1..6}; do
-        if [ -f "${DC_tlt}/${n}.cfg" ]; then
-        grep -vxF "${trgt}" "${DC_tlt}/${n}.cfg" > "${DC_tlt}/${n}.cfg.tmp"
-        sed '/^$/d' "${DC_tlt}/${n}.cfg.tmp" > "${DC_tlt}/${n}.cfg"; fi
-    done
-    
-    if [ -f "${DC_tlt}/lst" ]; then rm "${DC_tlt}/lst"; fi
-    rm "${DC_tlt}"/*.tmp
-    rm -f "$DT/ps_lk" & exit 1
-}
-
-delete_item() {
-    set -e
-    f_lock "$DT/ps_lk"
-    trgt="${3}"; DM_tlt="$DM_tl/${2}"; DC_tlt="$DM_tl/${2}/.conf"
-    file="$(get_name_file "${trgt}" "${DC_tlt}/0.cfg")"
-
-    msg_2 "$(gettext "Are you sure you want to delete this item?")\n" \
-    gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
-    ret="$?"
-    
-    if [ $ret -eq 0 ]; then
-        (sleep 0.1 && kill -9 $(pgrep -f "yad --form "))
+    if [ -n "$file" ]; then
         [ -f "${DM_tlt}/$file.mp3" ] && rm "${DM_tlt}/$file.mp3"
         sed -i "/trgt={${trgt}}/d" "${DC_tlt}/0.cfg"
-        
+
         if [ -d "${DC_tlt}/practice" ]; then
             cd "${DC_tlt}/practice"
-            while read file_pr; do
+            while read -r file_pr; do
                 if grep -Fxq "${trgt}" "${file_pr}"; then
                     grep -vxF "${trgt}" "${file_pr}" > ./rm.tmp
                     sed '/^$/d' ./rm.tmp > "${file_pr}"; fi
@@ -90,15 +53,53 @@ delete_item() {
             rm ./*.tmp
             cd /
         fi
-
+        
         for n in {1..6}; do
             if [ -f "${DC_tlt}/${n}.cfg" ]; then
             grep -vxF "${trgt}" "${DC_tlt}/${n}.cfg" > "${DC_tlt}/${n}.cfg.tmp"
             sed '/^$/d' "${DC_tlt}/${n}.cfg.tmp" > "${DC_tlt}/${n}.cfg"; fi
         done
         
-        "$DS/ifs/tls.sh" colorize &
+        if [ -f "${DC_tlt}/lst" ]; then rm "${DC_tlt}/lst"; fi
         rm "${DC_tlt}"/*.tmp
+    fi
+    rm -f "$DT/ps_lk" & exit 1
+}
+
+delete_item() {
+    f_lock "$DT/ps_lk"
+    trgt="${3}"; DM_tlt="$DM_tl/${2}"; DC_tlt="$DM_tl/${2}/.conf"
+    file="$(get_name_file "${trgt}" "${DC_tlt}/0.cfg")"
+    if [ -n "$file" ]; then
+        msg_2 "$(gettext "Are you sure you want to delete this item?")\n" \
+        gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
+        ret="$?"
+        
+        if [ $ret -eq 0 ]; then
+            (sleep 0.1 && kill -9 $(pgrep -f "yad --form "))
+            [ -f "${DM_tlt}/$file.mp3" ] && rm "${DM_tlt}/$file.mp3"
+            sed -i "/trgt={${trgt}}/d" "${DC_tlt}/0.cfg"
+            
+            if [ -d "${DC_tlt}/practice" ]; then
+                cd "${DC_tlt}/practice"
+                while read file_pr; do
+                    if grep -Fxq "${trgt}" "${file_pr}"; then
+                        grep -vxF "${trgt}" "${file_pr}" > ./rm.tmp
+                        sed '/^$/d' ./rm.tmp > "${file_pr}"; fi
+                done < <(ls ./*)
+                rm ./*.tmp
+                cd /
+            fi
+
+            for n in {1..6}; do
+                if [ -f "${DC_tlt}/${n}.cfg" ]; then
+                grep -vxF "${trgt}" "${DC_tlt}/${n}.cfg" > "${DC_tlt}/${n}.cfg.tmp"
+                sed '/^$/d' "${DC_tlt}/${n}.cfg.tmp" > "${DC_tlt}/${n}.cfg"; fi
+            done
+            
+            "$DS/ifs/tls.sh" colorize &
+            rm "${DC_tlt}"/*.tmp
+        fi
     fi
     rm -f "$DT/ps_lk" & exit 1
 }
@@ -425,7 +426,7 @@ edit_list() {
 
 
 delete_topic() {
-    set -e
+
     if [ "${tpc}" != "${2}" ]; then
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
 
@@ -436,15 +437,23 @@ delete_topic() {
         if [ ${ret} -eq 0 ]; then
             f_lock "$DT/rm_lk"
             
-            if [ -f "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "${tpc}" ]; then
-            "$DS/stop.sh" 5; fi
+            if [ -f "$DT/.n_s_pr" ]; then
+                if [ "$(sed -n 2p "$DT/.n_s_pr")" = "${tpc}" ]; then
+                "$DS/stop.sh" 5; fi
+            fi
             
-            if [ -f "$DT/.p_" ] && [ "$(sed -n 2p "$DT/.p_")" = "${tpc}" ]; then 
-            "$DS/stop.sh" 2; fi
+            if [ -f "$DT/.p_" ]; then
+                if [ "$(sed -n 2p "$DT/.p_")" = "${tpc}" ]; then 
+                "$DS/stop.sh" 2; fi
+            fi
             
             [ -f "$DM/backup/${tpc}.bk" ] && rm "$DM/backup/${tpc}.bk"
-            if [ -d "$DM_tl/${tpc}" ] && [ -n "${tpc}" ]; then
-            rm -fr "$DM_tl/${tpc}"; fi
+            
+            if [ -n "${tpc}" ]; then
+                if [ -d "$DM_tl/${tpc}" ]; then
+                rm -fr "$DM_tl/${tpc}"; fi
+            fi
+
             if [ -d "$DM_tl/${tpc}" ]; then sleep 0.5
             msg "$(gettext "Could not remove the directory:")\n$DM_tl/${tpc}\n$(gettext "You must manually remove it.")" info; fi
             
@@ -472,7 +481,6 @@ delete_topic() {
             fi
             > "$DC_s/7.cfg"
         fi
-    
     rm -f "$DT/rm_lk" "$DM_tl"/.*.tmp & exit 1
 }
 

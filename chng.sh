@@ -2,14 +2,12 @@
 # -*- ENCODING: UTF-8 -*-
 
 if [[ ${1} = 0 ]]; then
-
     w="$(grep -oP '(?<=words=\").*(?=\")' "${cfg}")"
     s="$(grep -oP '(?<=sntcs=\").*(?=\")' "${cfg}")"
     m="$(grep -oP '(?<=marks=\").*(?=\")' "${cfg}")"
     p="$(grep -oP '(?<=wprct=\").*(?=\")' "${cfg}")"
 
     _play() {
-        
         if [ ${stnrd} = 1 ]; then
             a="$(grep -oP '(?<=audio=\").*(?=\")' "${cfg}")"
             n="$(grep -oP '(?<=ntosd=\").*(?=\")' "${cfg}")"
@@ -87,19 +85,23 @@ if [[ ${1} = 0 ]]; then
     if [ ${p} = TRUE ]; then
         while read item; do getitem; _play
         done < <(grep -Fxv "${DC_tlt}/4.cfg" "${DC_tlt}/practice/log.3"); fi
-    
     include "$DS/ifs/mods/chng"
 
 elif [[ ${1} != 0 ]]; then
-    rm -f /tmp/update-MENULIST
+
     source "$DS/ifs/mods/cmns.sh"
-    if [ -e /tmp/update-MENULIST ]; then
-    rm="$(sed -n 1p  /tmp/update-MENULIST)"
-    if [ -n "$rm" ]; then
-        ( set -e ; if [ -d "$DM_tl/${rm}" ];
-        then rm -fr "$DM_tl/${rm}"; fi )
-    fi
-    rm -f /tmp/update-MENULIST; "$DS/mngr.sh" mkmn; fi
+    ( set -e
+    if [ -e /tmp/update-Menulst ]; then
+        rm="$(sed -n 1p  /tmp/update-Menulst)"
+        if [ -n "${rm}" ]; then
+            if [ -d "$DM_tl/${rm}" ]; then
+            ( echo "5"; sleep 1; rm -fr "$DM_tl/${rm}"; "$DS/mngr.sh" mkmn ) \
+            | progress "$(gettext "Removing") ${rm}"
+            fi
+        fi
+        rm -f /tmp/update-Menulst
+    fi )
+    
     [ ! -f "$DM_tl/.0.cfg" ] && > "$DM_tl/.0.cfg"
     [ ! -f "$DM_tl/.1.cfg" ] && > "$DM_tl/.1.cfg"
     lgs=$(lnglss $lgsl)

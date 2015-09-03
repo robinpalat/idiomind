@@ -1,7 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 lgt=$(lnglss "$lgtl")
 lgs=$(lnglss "$lgsl")
@@ -713,6 +712,7 @@ mkpdf() {
 }
 
 translate_to() {
+    source /usr/share/idiomind/ifs/c.conf
     [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "  -- error" && exit 1
     lgtl="$(grep -o 'langt="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
     local lgt=$(lnglss $lgtl)
@@ -726,7 +726,6 @@ translate_to() {
             cp -f "${DC_tlt}/$2.data" "${DC_tlt}/0.cfg"
             echo -e "  -- done"
         else
-            source /usr/share/idiomind/ifs/c.conf
             include "$DS/ifs/mods/add"
             echo -e "\n\n  --translating \"$tpc\"...\n"
             cnt=`wc -l "${DC_tlt}/0.cfg"`

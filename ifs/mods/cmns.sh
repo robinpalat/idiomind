@@ -52,10 +52,12 @@ function include() {
 }
 
 function f_lock() {
-    brk=0; while true; do
-    if [ ! -e "${1}" -o ${brk} -gt 20 ]; then touch "${1}" & break
-    elif [ -e "${1}" ]; then sleep 1; fi
-    let brk++; done
+    brk=0
+    while true; do
+        if [ ! -e "${1}" -o ${brk} -gt 20 ]; then touch "${1}" & break
+        elif [ -e "${1}" ]; then sleep 1; fi
+        let brk++
+    done
 }
 
 function lnglss() {
@@ -91,13 +93,20 @@ function list_inadd() {
 
 function cleanups() {
     for fl in "$@"; do
-    
         if [ -d "${fl}" ]; then
             rm -fr "${fl}"
         elif [ -f "${fl}" ]; then
             rm -f "${fl}"
         fi
     done
+}
+
+function progress() {
+    yad --progress \
+    --progress-text="$1" \
+    --width 50 --height 35 --undecorated \
+    --pulsate --auto-close \
+    --skip-taskbar --center --no-buttons
 }
 
 function calculate_review() {
