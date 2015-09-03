@@ -162,11 +162,13 @@ function dlg() {
 } >/dev/null 2>&1
 
 function update_config_dir() {
+    [ ! -d "$enables" ] && mkdir -p "$enables"
+    [ ! -d "$disables" ] && mkdir -p "$disables"
     while read -r dict; do
         if [ ! -e "$enables/$(basename "${dict}")" \
             -a ! -e "$disables/$(basename "${dict}")" ]; then
             echo "--added dict: $(basename "${dict}")"
-            >  "$disables/$(basename "${dict}")"; fi
+            > "$disables/$(basename "${dict}")"; fi
     done < <(ls "$DS_a/Dics/dicts/")
 }
 

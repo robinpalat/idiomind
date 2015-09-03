@@ -456,37 +456,51 @@ a_check_updates() {
 }
 
 first_run() {
+    dlg() {
+        sleep 2; mv -f "${file}" "${file}".p
+        yad --title="${title}" --text="${note}" \
+        --name=Idiomind --class=Idiomind \
+        --image="$image" \
+        --always-print-result --selectable-labels \
+        --window-icon="$DS/images/icon.png" \
+        --image-on-top --on-top --sticky --center \
+        --width=500 --height=140 --borders=5 \
+        --button="$(gettext "Do not show again")":1 \
+        --button="$(gettext "OK")":0
+        if [ $? = 1 ]; then rm -f "${file}" "${file}".p; fi
+    }
+    source /usr/share/idiomind/ifs/c.conf
     NOTE1="$(gettext "<b>How to add notes?</b>\nIn the upper text field, enter text in the language that you are learning.  In the field below, enter text in the source language.  To add an image to a note use the screen clipping.")\n"
     NOTE2="$(gettext "NOTE: If you change the text of an item here listed, then its audio file can be overwritten by another new file. To avoid this, you can edit it individually through its edit dialog.")"
+    NOTE3="$(gettext "To start adding notes you need to have a topic.\nCreate one using the button below. ")"
 
     if [[ ${2} = add ]]; then
         title="$(gettext "How to add notes?")"
         note="${NOTE1}"
         file="$DC_s/add_first_run"
         image=gtk-help
+        dlg
     elif [[ ${2} = edit_list ]]; then
         title=" "
         note="${NOTE2}"
         file="$DC_s/elist_first_run"
         image=gtk-help
+        dlg
+    elif [[ ${2} = topics ]]; then
+        "$DS/chng.sh" "$NOTE3"; sleep 0.5
+        source /usr/share/idiomind/ifs/c.conf
+        if [ -n "$tpc" ]; then
+        rm -f "$DC_s/topics_first_run"
+        "$DS/add.sh" new_items & fi
+        exit
     elif [[ -z "${2}" ]]; then
         echo "-- done"
-        touch "$DC_s/add_first_run" "$DC_s/elist_first_run"
+        touch "$DC_s/add_first_run" "$DC_s/elist_first_run" \
+        "$DC_s/topics_first_run"
         exit
-    else exit; fi
-    
-    sleep 2; mv -f "${file}" "${file}".p
-    yad --title="${title}" --text="${note}" \
-    --name=Idiomind --class=Idiomind \
-    --image="$image" \
-    --always-print-result --selectable-labels \
-    --window-icon="$DS/images/icon.png" \
-    --image-on-top --on-top --sticky --center \
-    --width=500 --height=140 --borders=5 \
-    --button="$(gettext "Do not show again")":1 \
-    --button="$(gettext "OK")":0
-    
-    if [ $? = 1 ]; then rm -f "${file}" "${file}".p; fi
+    else 
+        exit
+    fi
     exit
 }
 
@@ -806,14 +820,14 @@ translate_to() {
 }
 
 menu_addons() {
-    > /usr/share/idiomind/addons/.menu_list
+    > /usr/share/idiomind/addons/menu_list
     while read -r _set; do
         if [ -e "/usr/share/idiomind/addons/${_set}/icon.png" ]; then
             echo -e "/usr/share/idiomind/addons/${_set}/icon.png\n${_set}" >> \
-            /usr/share/idiomind/addons/.menu_list
+            /usr/share/idiomind/addons/menu_list
         else echo -e "/usr/share/idiomind/images/thumb.png\n${_set}" >> \
-            /usr/share/idiomind/addons/.menu_list; fi
-    done < <(cd "/usr/share/idiomind/addons/"; ls -d *)
+            /usr/share/idiomind/addons/menu_list; fi
+    done < <(cd "/usr/share/idiomind/addons/"; set -- */; printf "%s\n" "${@%/}")
 }
 
 colorize() {

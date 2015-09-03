@@ -88,23 +88,31 @@ if [[ ${1} = 0 ]]; then
     include "$DS/ifs/mods/chng"
 
 elif [[ ${1} != 0 ]]; then
-
     source "$DS/ifs/mods/cmns.sh"
-    ( set -e
-    if [ -e /tmp/update-Menulst ]; then
-        rm="$(sed -n 1p  /tmp/update-Menulst)"
-        if [ -n "${rm}" ]; then
-            if [ -d "$DM_tl/${rm}" ]; then
-            ( echo "5"; sleep 1; rm -fr "$DM_tl/${rm}"; "$DS/mngr.sh" mkmn ) \
-            | progress "$(gettext "Removing") ${rm}"
-            fi
-        fi
-        rm -f /tmp/update-Menulst
-    fi )
-    
-    [ ! -f "$DM_tl/.0.cfg" ] && > "$DM_tl/.0.cfg"
-    [ ! -f "$DM_tl/.1.cfg" ] && > "$DM_tl/.1.cfg"
     lgs=$(lnglss $lgsl)
+    
+    remove_d() {
+        ins="$(cd "/usr/share/idiomind/addons/"
+        set -- */; printf "%s\n" "${@%/}")"
+        old="$(cat "$DC_a/list")"
+        set -e
+        while read -r _rm; do
+            if [ -n "${_rm}" ]; then
+                if [ -d "$DM_tl/${_rm}" ]; then
+                ( echo "5"; sleep 1; rm -fr "$DM_tl/${_rm}"; "$DS/mngr.sh" mkmn ) \
+                | progress "$(gettext "Removing") ${_rm}"
+                fi
+            fi
+        done < <(grep -Fvx "${ins}" <<<"${old}")
+        echo "$ins" > "$DC_a/list"
+    }
+
+    if [ ! -e "$DM_tl/.0.cfg" ]; then > "$DM_tl/.0.cfg"; fi
+    if [ ! -e "$DM_tl/.1.cfg" ]; then > "$DM_tl/.1.cfg"; fi
+    if [ ! -e "$DC_a/list" ]; then
+        echo "$(cd "/usr/share/idiomind/addons/"
+        set -- */; printf "%s\n" "${@%/}")" > "$DC_a/list"
+    fi
     
     if [ -n "$1" ]; then
         text="--text=$1\n"
@@ -114,9 +122,14 @@ elif [[ ${1} != 0 ]]; then
         text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/${lgtl,,}'>$(gettext "Shared")</a>   </small></small>"
         align="right"
     fi
-    
-    if [[ $((`wc -l < "$DM_tl/.0.cfg"`/2)) != `wc -l < "$DM_tl/.1.cfg"` ]]; then
-    "$DS/mngr.sh" mkmn; fi
+    chk_list_addons1=$(wc -l < "$DS_a/menu_list")
+    chk_list_addons2=$((`wc -l < "$DC_a/list"`*2))
+    chk_list_topics1=$((`wc -l < "$DM_tl/.0.cfg"`/2))
+    chk_list_topics2=$(wc -l < "$DM_tl/.1.cfg")
+    if [[ ${chk_list_addons1} != ${chk_list_addons1} ]]; then
+        remove_d; fi
+    if [[ ${chk_list_topics1} != ${chk_list_topics2} ]]; then
+        "$DS/mngr.sh" mkmn; fi
 
     tpc=$(cat "$DM_tl/.0.cfg" | \
     yad --list --title="$(gettext "Topics")" "$text" \
@@ -136,7 +149,7 @@ elif [[ ${1} != 0 ]]; then
     ret=$?
 
     if [ $ret -eq 3 ]; then
-        "$DS/add.sh" new_topic &  
+        "$DS/add.sh" new_topic
     elif [ $ret -eq 2 ]; then
         "$DS/default/tpc.sh" "$tpc" 1 &
     elif [ $ret -eq 0 ]; then

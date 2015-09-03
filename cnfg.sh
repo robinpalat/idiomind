@@ -99,7 +99,7 @@ yad --plug=$KEY --form --tabnum=1 \
 --field="$(gettext "Check for Updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
 --field="$(gettext "Backups")":BTN "$DS/ifs/tls.sh '_backup'" \
 --field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" > "$cnf1" &
-cat "$DS_a/.menu_list" | yad --plug=$KEY --tabnum=2 --list \
+cat "$DS_a/menu_list" | yad --plug=$KEY --tabnum=2 --list \
 --text=" $(gettext "Double-click to set") " \
 --print-all --dclick-action="$DS/ifs/dclik.sh" \
 --expand-column=2 --no-headers \

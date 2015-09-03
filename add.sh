@@ -48,11 +48,9 @@ new_items() {
     if [ ! -d "$DT" ]; then new_session; fi
     [ ! "$DT/tpe" ] && echo "${tpc}" > "$DT/tpe"
 
-    if [[ "$(grep -vFx 'Podcasts' "$DM_tl/.1.cfg" | wc -l)" -lt 1 ]]; then
-    cleanups "$DT_r"
-    "$DS/chng.sh" "$(gettext "To start adding notes you need to have a topic.
-Create one using the button below. ")" & exit 1; fi
-
+    if [ -e "$DC_s/topics_first_run" ]; then
+    "$DS/ifs/tls.sh" first_run topics & exit 1; fi
+    
     if [ -e "$DC_s/add_first_run" ]; then
     "$DS/ifs/tls.sh" first_run add & fi
 
