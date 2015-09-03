@@ -25,7 +25,6 @@ function check_format_1() {
     'level' 'set_1' 'set_2' 'set_3' 'set_4' )
     file="${1}"
 
-    
     invalid() {
         exit=1
         msg "$1. $(gettext "File is corrupted.")\n" error & exit 1
@@ -807,6 +806,17 @@ translate_to() {
     fi
 }
 
+menu_addons() {
+    > /usr/share/idiomind/addons/.menu_list
+    while read -r _set; do
+        if [ -e "/usr/share/idiomind/addons/${_set}/icon.png" ]; then
+            echo -e "/usr/share/idiomind/addons/${_set}/icon.png\n${_set}" >> \
+            /usr/share/idiomind/addons/.menu_list
+        else echo -e "/usr/share/idiomind/images/thumb.png\n${_set}" >> \
+            /usr/share/idiomind/addons/.menu_list; fi
+    done < <(cd "/usr/share/idiomind/addons/"; ls -d *)
+}
+
 colorize() {
     f_lock "$DT/co_lk"
     rm "${DC_tlt}/5.cfg"
@@ -958,6 +968,8 @@ case "$1" in
     fback ;;
     pdf)
     mkpdf ;;
+    update_menu)
+    menu_addons ;;
     colorize)
     colorize "$@" ;;
     translate)

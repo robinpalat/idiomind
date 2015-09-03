@@ -340,17 +340,6 @@ function topic() {
     fi
 }
 
-function menu_addons() {
-    > /usr/share/idiomind/addons/.menu_list
-    while read -r _set; do
-        if [ -e "/usr/share/idiomind/addons/${_set}/icon.png" ]; then
-            echo -e "/usr/share/idiomind/addons/${_set}/icon.png\n${_set}" >> \
-            /usr/share/idiomind/addons/.menu_list
-        else echo -e "/usr/share/idiomind/images/thumb.png\n${_set}" >> \
-            /usr/share/idiomind/addons/.menu_list; fi
-    done < <(cd "$DS/addons"; ls -d *)
-}
-
 panel() {
     if [ ! -d "$DT" ]; then new_session; fi
     [ ! -e "$DT/tpe" ] && echo "$(sed -n 1p "$DC_s/4.cfg")" > "$DT/tpe"
@@ -395,8 +384,6 @@ case "$1" in
     echo -n "0.1" ;;
     -s)
     new_session; idiomind & ;;
-    update_menu)
-    menu_addons ;;
     autostart)
     sleep 50; [ ! -e "$DT/ps_lk" ] && new_session ;;
     add)
