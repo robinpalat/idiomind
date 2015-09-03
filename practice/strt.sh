@@ -5,6 +5,7 @@ source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 dir="${DC_tlt}/practice"
 dirs="$DS/practice"
+export -f f_lock
 
 function log() \
 { echo "w9.$(tr -s '\n' '|' < ./${1}.1).w9" >> "$log"; }
@@ -697,7 +698,7 @@ function strt() {
         msg " $(gettext "You must choose a practice.")\n" info
         strt 0
         else
-        practices $VAR
+        practices ${VAR}
         fi
     elif [ $ret -eq 3 ]; then
         if [ -d "${dir}" ]; then

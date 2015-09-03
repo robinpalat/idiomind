@@ -3,7 +3,8 @@
 
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
-log="$DC_s/log"
+if [ ! -e "$DC_s/log" ]; then exit 1
+else log="$DC_s/log"; fi
 items=$(mktemp "$DT/w9.XXXX")
 words=$(grep -o -P '(?<=w9.).*(?=\.w9)' "${log}" |tr '|' '\n' \
 | sort | uniq -dc | sort -n -r | sed 's/ \+/ /g')

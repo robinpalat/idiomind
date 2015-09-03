@@ -63,14 +63,6 @@ on_add() {
     exit
 }
 
-on_addons() {
-    killall strt.sh &
-    if ps -A | pgrep -f "wget -q -c -T 51"; then kill -9 $(pgrep -f "wget -q -c -T 51") & fi
-    kill $(cat "$DT/.uptp")
-    [ -f "$DT/.uptp" ] && rm -fr "$DT/.uptp"
-    exit
-}
-
 on_edit() {
     if ps -A | pgrep -f "/usr/share/idiomind/mngr.sh"; then killall mngr.sh & fi
     [ -f "$DT/.uptp" ] && rm -fr "$DT/.uptp"

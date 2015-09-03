@@ -1,11 +1,10 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-source "$DS/ifs/mods/cmns.sh"
-lgt=$(lnglss "$lgtl")
-lgs=$(lnglss "$lgsl")
-
 function check_format_1() {
+    source "$DS/ifs/mods/cmns.sh"
+    lgt=$(lnglss "$lgtl")
+    lgs=$(lnglss "$lgsl")
     LANGUAGES=( 'English' 'Chinese' 'French' \
     'German' 'Italian' 'Japanese' 'Portuguese' \
     'Russian' 'Spanish' 'Vietnamese' )
@@ -73,6 +72,7 @@ function check_format_1() {
 }
 
 check_index() {
+    source "$DS/ifs/mods/cmns.sh"
     DC_tlt="$DM_tl/${2}/.conf"
     DM_tlt="$DM_tl/${2}"
     mkmn=0; f=0; a=0
@@ -214,6 +214,7 @@ _backup() {
 } >/dev/null 2>&1
 
 _restfile() {
+    source "$DS/ifs/mods/cmns.sh"
     if [ -f "$HOME/.idiomind/backup/${2}.bk" ]; then
         info=`stat "$HOME/.idiomind/backup/${2}.bk"|sed -n 6p|cut -d" " -f2`
         yad --title="$(gettext "Backups")" \
@@ -258,6 +259,7 @@ add_file() {
 } >/dev/null
 
 videourl() {
+    source "$DS/ifs/mods/cmns.sh"
     n=$(ls *.url "${DM_tlt}/files/" | wc -l)
     url=$(yad --form --title=" " \
     --name=Idiomind --class=Idiomind \
@@ -280,6 +282,7 @@ videourl() {
 }
 
 attatchments() {
+    source "$DS/ifs/mods/cmns.sh"
     mkindex() {
     rename 's/_/ /g' "${DM_tlt}/files"/*
     echo -e "<meta http-equiv=\"Content-Type\" \
@@ -395,6 +398,7 @@ help() {
 } >/dev/null 2>&1
 
 fback() {
+    source "$DS/ifs/mods/cmns.sh"
     internet
     URL="http://idiomind.sourceforge.net/doc/msg.html"
     yad --html --title="$(gettext "Send Feedback")" \
@@ -407,6 +411,7 @@ fback() {
 } >/dev/null 2>&1
 
 check_updates() {
+    source "$DS/ifs/mods/cmns.sh"
     internet
     nver=`wget --user-agent 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) \
     Gecko/20100101 Firefox/31.0' -qO - http://idiomind.sourceforge.net/doc/release |sed -n 1p`
@@ -427,6 +432,7 @@ check_updates() {
 }
 
 a_check_updates() {
+    source "$DS/ifs/mods/cmns.sh"
     [[ ! -f "$DC_s/9.cfg" ]] && echo `date +%d` > "$DC_s/9.cfg" && exit
     d1=$(< "$DC_s/9.cfg"); d2=$(date +%d)
     if [[ "$(sed -n 1p "$DC_s/9.cfg")" = 28 ]] && \
@@ -457,7 +463,7 @@ a_check_updates() {
 
 first_run() {
     dlg() {
-        sleep 2; mv -f "${file}" "${file}".p
+        sleep 3; mv -f "${file}" "${file}".p
         yad --title="${title}" --text="${note}" \
         --name=Idiomind --class=Idiomind \
         --image="$image" \
@@ -487,7 +493,7 @@ first_run() {
         image=gtk-help
         dlg
     elif [[ ${2} = topics ]]; then
-        "$DS/chng.sh" "$NOTE3"; sleep 0.5
+        "$DS/chng.sh" "$NOTE3"; sleep 1
         source /usr/share/idiomind/ifs/c.conf
         if [ -n "$tpc" ]; then
         rm -f "$DC_s/topics_first_run"
@@ -505,6 +511,7 @@ first_run() {
 }
 
 set_image() {
+    source "$DS/ifs/mods/cmns.sh"
     cd "$DT"; r=0
     source "$DS/ifs/mods/add/add.sh"
     ifile="${DM_tls}/images/${trgt,,}-0.jpg"
@@ -537,6 +544,7 @@ set_image() {
 } >/dev/null 2>&1
 
 mkpdf() {
+    source "$DS/ifs/mods/cmns.sh"
     cd "$HOME"
     pdf=$(yad --file --save --title="$(gettext "Export to PDF")" \
     --name=Idiomind --class=Idiomind \
@@ -727,6 +735,7 @@ mkpdf() {
 
 translate_to() {
     source /usr/share/idiomind/ifs/c.conf
+    source "$DS/ifs/mods/cmns.sh"
     [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "  -- error" && exit 1
     lgtl="$(grep -o 'langt="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
     local lgt=$(lnglss $lgtl)

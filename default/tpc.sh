@@ -10,7 +10,7 @@ DM_tlt="$DM_tl/${topic}"
 
 if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
     source "$DS/ifs/mods/topic/${topic}.sh"
-    ${topic} 2 & exit
+    export mode=2; ${topic} 2 & exit
 else
     if [ -d "${DM_tlt}" ]; then
     if [ ! -d "${DC_tlt}" -o ! -e "${DC_tlt}/id.cfg" ]; then

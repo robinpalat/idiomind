@@ -104,7 +104,7 @@ play_list() {
         [ "${tpp}" != "${tpc}" ] && title="$(gettext "Playing:") ${tpp}"
         fi
     fi
-    
+    [ ${mode} -gt 1 ] && title="$(gettext "Play") - ${tpc}"
     set="$(echo "${iteml[${rword}]}")"
     unset iteml[${rword}]
     lst=`for i in "${iteml[@]}"; do echo -n "!$i"; done`
