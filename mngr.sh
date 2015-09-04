@@ -35,12 +35,13 @@ mkmn() {
 }
 
 delete_item_ok() {
-
     f_lock "$DT/ps_lk"
     trgt="${3}"; DM_tlt="$DM_tl/${2}"; DC_tlt="$DM_tl/${2}/.conf"
-    file="$(get_name_file "${trgt}" "${DC_tlt}/0.cfg")"
-    if [ -n "$file" ]; then
-        [ -f "${DM_tlt}/$file.mp3" ] && rm "${DM_tlt}/$file.mp3"
+    item="$(grep -F -m 1 "trgt={${trgt}}" "$DC_tlt/0.cfg" |sed 's/},/}\n/g')"
+    id=`grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"`
+
+    if [ -n "${trgt}" ]; then
+        [ -f "${DM_tlt}/$id.mp3" ] && rm "${DM_tlt}/$id.mp3"
         sed -i "/trgt={${trgt}}/d" "${DC_tlt}/0.cfg"
 
         if [ -d "${DC_tlt}/practice" ]; then
@@ -50,8 +51,7 @@ delete_item_ok() {
                     grep -vxF "${trgt}" "${file_pr}" > ./rm.tmp
                     sed '/^$/d' ./rm.tmp > "${file_pr}"; fi
             done < <(ls ./*)
-            rm ./*.tmp
-            cd /
+            rm ./*.tmp; cd /
         fi
         
         for n in {1..6}; do
@@ -68,16 +68,15 @@ delete_item_ok() {
 
 delete_item() {
     f_lock "$DT/ps_lk"
-    trgt="${3}"; DM_tlt="$DM_tl/${2}"; DC_tlt="$DM_tl/${2}/.conf"
-    file="$(get_name_file "${trgt}" "${DC_tlt}/0.cfg")"
-    if [ -n "$file" ]; then
+    DM_tlt="$DM_tl/${2}"; DC_tlt="$DM_tl/${2}/.conf"
+    if [ -n "${trgt}" ]; then
         msg_2 "$(gettext "Are you sure you want to delete this item?")\n" \
         gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
         ret="$?"
         
         if [ $ret -eq 0 ]; then
             (sleep 0.1 && kill -9 $(pgrep -f "yad --form "))
-            [ -f "${DM_tlt}/$file.mp3" ] && rm "${DM_tlt}/$file.mp3"
+            [ -f "${DM_tlt}/$id.mp3" ] && rm "${DM_tlt}/$id.mp3"
             sed -i "/trgt={${trgt}}/d" "${DC_tlt}/0.cfg"
             
             if [ -d "${DC_tlt}/practice" ]; then
@@ -87,16 +86,13 @@ delete_item() {
                         grep -vxF "${trgt}" "${file_pr}" > ./rm.tmp
                         sed '/^$/d' ./rm.tmp > "${file_pr}"; fi
                 done < <(ls ./*)
-                rm ./*.tmp
-                cd /
+                rm ./*.tmp; cd /
             fi
-
             for n in {1..6}; do
                 if [ -f "${DC_tlt}/${n}.cfg" ]; then
                 grep -vxF "${trgt}" "${DC_tlt}/${n}.cfg" > "${DC_tlt}/${n}.cfg.tmp"
                 sed '/^$/d' "${DC_tlt}/${n}.cfg.tmp" > "${DC_tlt}/${n}.cfg"; fi
             done
-            
             "$DS/ifs/tls.sh" colorize &
             rm "${DC_tlt}"/*.tmp
         fi
@@ -124,7 +120,7 @@ edit_item() {
     edit_pos=`grep -Fon -m 1 "trgt={${item}}" "${DC_tlt}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
     item="$(sed -n ${edit_pos}p "${DC_tlt}/0.cfg" |sed 's/},/}\n/g')"
     type=`grep -oP '(?<=type={).*(?=})' <<<"${item}"`
-    trgt=`grep -oP '(?<=trgt={).*(?=})' <<<"${item}"`
+    export trgt=`grep -oP '(?<=trgt={).*(?=})' <<<"${item}"`
     grmr=`grep -oP '(?<=grmr={).*(?=})' <<<"${item}"`
     srce=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
     exmp=`grep -oP '(?<=exmp={).*(?=})' <<<"${item}"`
@@ -133,7 +129,7 @@ edit_item() {
     grmr=`grep -oP '(?<=grmr={).*(?=})' <<<"${item}"`
     wrds=`grep -oP '(?<=wrds={).*(?=})' <<<"${item}"`
     mark=`grep -oP '(?<=mark={).*(?=})' <<<"${item}"`
-    id=`grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"`
+    export id=`grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"`
     [ -z "${id}" ] && id=""
     query="$(sed "s/'/ /g" <<<"${trgt}")"
     mod=0; col=0; prcess_tmp=0
@@ -426,61 +422,50 @@ edit_list() {
 
 
 delete_topic() {
-
     if [ "${tpc}" != "${2}" ]; then
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
-
     msg_2 "$(gettext "Are you sure you want to delete this topic?")\n" \
     gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
     ret="$?"
+    if [ ${ret} -eq 0 ]; then
+        f_lock "$DT/rm_lk"
         
-        if [ ${ret} -eq 0 ]; then
-            f_lock "$DT/rm_lk"
-            
-            if [ -f "$DT/.n_s_pr" ]; then
-                if [ "$(sed -n 2p "$DT/.n_s_pr")" = "${tpc}" ]; then
-                "$DS/stop.sh" 5; fi
-            fi
-            
-            if [ -f "$DT/.p_" ]; then
-                if [ "$(sed -n 2p "$DT/.p_")" = "${tpc}" ]; then 
-                "$DS/stop.sh" 2; fi
-            fi
-            
-            [ -f "$DM/backup/${tpc}.bk" ] && rm "$DM/backup/${tpc}.bk"
-            
-            if [ -n "${tpc}" ]; then
-                if [ -d "$DM_tl/${tpc}" ]; then
-                rm -fr "$DM_tl/${tpc}"; fi
-            fi
-
-            if [ -d "$DM_tl/${tpc}" ]; then sleep 0.5
-            msg "$(gettext "Could not remove the directory:")\n$DM_tl/${tpc}\n$(gettext "You must manually remove it.")" info; fi
-            
-            rm -f "$DT/tpe"
-            > "$DM_tl/.8.cfg"
-            > "$DC_s/4.cfg"
-            
-            for n in {0..4}; do
-                if [ -f "$DM_tl/.${n}.cfg" ]; then
-                grep -vxF "${tpc}" "$DM_tl/.$n.cfg" > "$DM_tl/.${n}.cfg.tmp"
-                sed '/^$/d' "$DM_tl/.$n.cfg.tmp" > "$DM_tl/.${n}.cfg"; fi
-            done
-            
-            kill -9 $(pgrep -f "yad --list ") &
-            kill -9 $(pgrep -f "yad --text-info ") &
-            kill -9 $(pgrep -f "yad --form ") &
-            kill -9 $(pgrep -f "yad --notebook ") &
-            
-            "$DS/mngr.sh" mkmn &
-            
-            if [ -e "$DM_tl/.5.cfg" ]; then
-                tpd="$(< "$DM_tl/.5.cfg")"
-                if grep -Fxq "${tpd}" "$DM_tl/.1.cfg"; then
-                "$DS/default/tpc.sh" "${tpd}" 2; fi
-            fi
-            > "$DC_s/7.cfg"
+        if [ -f "$DT/.n_s_pr" ]; then
+            if [ "$(sed -n 2p "$DT/.n_s_pr")" = "${tpc}" ]; then
+            "$DS/stop.sh" 5; fi
         fi
+        if [ -f "$DT/.p_" ]; then
+            if [ "$(sed -n 2p "$DT/.p_")" = "${tpc}" ]; then 
+            "$DS/stop.sh" 2; fi
+        fi
+        [ -f "$DM/backup/${tpc}.bk" ] && rm "$DM/backup/${tpc}.bk"
+        if [ -n "${tpc}" ]; then
+            if [ -d "$DM_tl/${tpc}" ]; then
+            rm -fr "$DM_tl/${tpc}"; fi
+        fi
+        if [ -d "$DM_tl/${tpc}" ]; then sleep 0.5
+        msg "$(gettext "Could not remove the directory:")\n$DM_tl/${tpc}\n$(gettext "You must manually remove it.")" info; fi
+        
+        rm -f "$DT/tpe"
+        > "$DM_tl/.8.cfg"
+        > "$DC_s/4.cfg"
+        for n in {0..4}; do
+            if [ -f "$DM_tl/.${n}.cfg" ]; then
+            grep -vxF "${tpc}" "$DM_tl/.$n.cfg" > "$DM_tl/.${n}.cfg.tmp"
+            sed '/^$/d' "$DM_tl/.$n.cfg.tmp" > "$DM_tl/.${n}.cfg"; fi
+        done
+        kill -9 $(pgrep -f "yad --list ") &
+        kill -9 $(pgrep -f "yad --text-info ") &
+        kill -9 $(pgrep -f "yad --form ") &
+        kill -9 $(pgrep -f "yad --notebook ") &
+        "$DS/mngr.sh" mkmn &
+        if [ -e "$DM_tl/.5.cfg" ]; then
+            tpd="$(< "$DM_tl/.5.cfg")"
+            if grep -Fxq "${tpd}" "$DM_tl/.1.cfg"; then
+            "$DS/default/tpc.sh" "${tpd}" 2; fi
+        fi
+        > "$DC_s/7.cfg"
+    fi
     rm -f "$DT/rm_lk" "$DM_tl"/.*.tmp & exit 1
 }
 

@@ -490,7 +490,6 @@ function practice_e() {
         item=`sed -n ${pos}p "${cfg0}" |sed 's/},/}\n/g'`
         fname=`grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"`
         get_text "${trgt}"
-        
         cmd_play="$DS/play.sh play_sentence ${fname}"
         ( sleep 0.5 && "$DS/play.sh" play_sentence ${fname} ) &
 
@@ -525,7 +524,6 @@ function get_list() {
     if [ ${practice} = a -o ${practice} = b -o ${practice} = c ]; then
         > "$dir/${practice}.0"
         if [[ `wc -l < "${cfg4}"` -gt 0 ]]; then
-
             grep -Fvx -f "${cfg4}" "${cfg1}" > "$DT/${practice}.0"
             tac "$DT/${practice}.0" |sed '/^$/d' > "$dir/${practice}.0"
             rm -f "$DT/${practice}.0"
@@ -535,13 +533,10 @@ function get_list() {
         
         if [ ${practice} = b ]; then
             if [ ! -f "$dir/b.srces" ]; then
-            
             ( echo "5"
             while read word; do
-            
                 item="$(grep -F -m 1 "trgt={${word}}" "${cfg0}" |sed 's/},/}\n/g')"
                 echo "$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")" >> "$dir/b.srces"
-            
             done < "$dir/${practice}.0" ) | yad --progress \
             --width 50 --height 35 --undecorated \
             --pulsate --auto-close \
@@ -552,7 +547,6 @@ function get_list() {
     elif [ ${practice} = d ]; then
         > "$DT/images"
         if [[ `wc -l < "${cfg4}"` -gt 0 ]]; then
-        
             grep -Fxvf "${cfg4}" "${cfg1}" > "$DT/images"
         else
             tac "${cfg1}" > "$DT/images"
