@@ -7,6 +7,7 @@ source "$DS/ifs/mods/cmns.sh"
 topic="${1}"
 DC_tlt="$DM_tl/${topic}/.conf"
 DM_tlt="$DM_tl/${topic}"
+export "$DM_tl"
 
 if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
     source "$DS/ifs/mods/topic/${topic}.sh"
@@ -35,7 +36,7 @@ set_1=\"\"
 set_2=\"\"
 set_3=\"\"
 set_4=\"\""
-c2="words=\"\"
+export c2="words=\"\"
 sntcs=\"\"
 marks=\"\"
 wprct=\"\"
@@ -61,25 +62,11 @@ rword=\"0\""
         echo "${topic}" > "$DC_s/4.cfg"
         echo "${topic}" > "$DC_s/7.cfg"
         echo "${topic}" > "$DT/tpe"
-        
-        [ ! -d "$HOME/.idiomind/backup" ] && mkdir "$HOME/.idiomind/backup"
-        if ! grep "${topic}.bk" < <(cd "$HOME/.idiomind/backup" \
-            find . -maxdepth 1 -name '*.bk' -mtime -1); then
-            if [ -n "$(< "${DC_tlt}/0.cfg")" ]; then
-                if [ -e "$HOME/.idiomind/backup/${topic}_1.bk" ]; then
-                    mv -f "$HOME/.idiomind/backup/${topic}_1.bk" \
-                    "$HOME/.idiomind/backup/${topic}_2.bk"; fi
-                cp -f "${DC_tlt}/0.cfg" "$HOME/.idiomind/backup/${topic}_1.bk"
-            fi
-        fi 
+        ( sleep 10 && "$DS/ifs/tls.sh" backup "${topic}" ) &
         if [[ ! -e "$DC_s/5.cfg" ]]; then
             echo 0 > "$DC_s/5.cfg"; fi
         if [[ `< "$DC_s/5.cfg"` != 0 ]]; then
             echo 0 > "$DC_s/5.cfg"; fi
-        if [[ ! -e "$DC_s/9.cfg" ]]; then
-            toch "$DC_s/9.cfg"; fi
-        if [[ `wc -l < "${DC_tlt}/id.cfg"` -lt 16 ]]; then
-            echo -e "${cfgfile}" > "${DC_tlt}/id.cfg"; fi
         if [ ! -f "$DT/.n_s_pr" ]; then
             "$DS/ifs/tls.sh" check_index "${topic}"; fi
         if [[ $(grep -Fxon "${topic}" "${DM_tl}/.1.cfg" \

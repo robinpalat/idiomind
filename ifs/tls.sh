@@ -34,7 +34,6 @@ function check_format_1() {
         if [ -z "$line" ]; then continue; fi
         get="${sets[${n}]}"
         val=$(echo "${line}" |grep -o "$get"=\"[^\"]* |grep -o '[^"]*$')
-        
         if [[ ${n} = 1 ]]; then
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
             [ "$(grep -o -E '\*|\/|\@|$|=|-' <<<"${val}")" ]; then invalid 2; fi
@@ -66,7 +65,6 @@ function check_format_1() {
         fi
         export ${sets[$n]}="${val}"
         let n++
-         
     done < <(tail -n 1 < "${file}" |tr '&' '\n')
     return ${n}
 }
@@ -89,8 +87,11 @@ check_index() {
                 sed -i '/^$/d' "${DC_tlt}/$n.cfg"; fi
             check_index1 "${DC_tlt}/$n.cfg"
         done
-
         [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "${c1}" > "${DC_tlt}/id.cfg"
+        [ ! -e "${DC_tlt}/10.cfg" ] && echo -e "${c2}" > "${DC_tlt}/10.cfg"
+        [ ! -e "${DC_tlt}/9.cfg" ] && toch "${DC_tlt}/9.cfg"
+        if [[ `wc -l < "${DC_tlt}/id.cfg"` -lt 16 ]]; then
+        echo -e "${c1}" > "${DC_tlt}/id.cfg"; fi
         for i in "${DM_tlt}"/*.mp3 ; do [[ ! -s "${i}" ]] && rm "${i}" ; done
         if grep 'rsntc=' "${DC_tlt}/10.cfg"; then
             rm "${DC_tlt}/10.cfg"; fi
@@ -105,18 +106,10 @@ check_index() {
         cnt2=`egrep -cv '#|^$' < "${DC_tlt}/2.cfg"`
         if [ $((cnt1+cnt2)) != ${cnt0} ]; then
             export a=1; fi
-        
     }
     
     _restore() {
-        if [ ! -f "${DC_tlt}/0.cfg" ]; then
-        if [ -f "$HOME/.idiomind/backup/${2}.bk" ]; then
-            cp -f "$HOME/.idiomind/backup/${2}.bk" "${DC_tlt}/0.cfg"
-        else
-            msg "$(gettext "Unable to fix the index.")\n" error "$(gettext "Error")"
-        exit 1; fi
-        fi
-        
+        #"$DS/ifs/tls.sh" _restfile "${2}"
         rm "${DC_tlt}/1.cfg" "${DC_tlt}/3.cfg" "${DC_tlt}/4.cfg"
         while read -r item_; do
             item="$(sed 's/},/}\n/g' <<<"${item_}")"
@@ -200,10 +193,30 @@ add_audio() {
     fi
 } >/dev/null 2>&1
 
-
-
 _backup() {
-    cd "$DM/backup"; ls -t *.bk1 |sed 's/\.bk1//g' | \
+    dt=$(date +%F)
+    [ ! -d "$HOME/.idiomind/backup" ] \
+    && mkdir "$HOME/.idiomind/backup"
+    file="$HOME/.idiomind/backup/${2}.bk"
+    if ! grep "${t}.bk" < <(cd "$HOME/.idiomind/backup"/; find . -maxdepth 1 -name '*.bk' -mtime -2); then
+        if [ -s "$DM_tl/${2}/.conf/0.cfg" ]; then
+            if [ -e "${file}" ]; then
+                dt2=`grep '\----- newest' "${file}" |cut -d' ' -f3`
+                old="$(sed -n  '/----- newest/,/----- oldest/p' "${file}" \
+                |grep -v '\----- newest' |grep -v '\----- oldest')"
+            fi
+            new="$(cat "$DM_tl/${2}/.conf/0.cfg")"
+            echo "----- newest $dt" > "${file}"
+            echo "${new}" >> "${file}"
+            echo "----- oldest $dt2" >> "${file}"
+            echo "${old}" >> "${file}"
+            echo "----- end" >> "${file}"
+        fi
+    fi 
+}
+
+dlg_backups() {
+    cd "$DM/backup"; ls -t *.bk |sed 's/\.bk//g' | \
     yad --list --title="$(gettext "Backups")" \
     --name=Idiomind --class=Idiomind \
     --dclick-action="$DS/ifs/tls.sh '_restfile'" \
@@ -215,42 +228,44 @@ _backup() {
 
 } >/dev/null 2>&1
 
-_restfile() {
-    echo
-    #source "$DS/ifs/mods/cmns.sh"
-    #if [ -f "$HOME/.idiomind/backup/${2}.bk1" ]; then
-        #info=`stat "$HOME/.idiomind/backup/${2}.bk1"|sed -n 6p|cut -d" " -f2`
-        #if [ -f "$HOME/.idiomind/backup/${2}.bk2" ]; then
-            #info2=`stat "$HOME/.idiomind/backup/${2}.bk2"|sed -n 6p|cut -d" " -f2`
-            #dat="$HOME/.idiomind/backup/${2}.bk1 $info $HOME/.idiomind/backup/${2}.bk2 $info2"
-        #else
-            #dat="$HOME/.idiomind/backup/${2}.bk1 $info"
-        #fi
-
-        #echo "$dat" | yad --list --radiolist --title="$(gettext "Backups")" \
-        #--text="<b>${2}</b> ($info)\n($info2)\n  $(gettext "Revert to this previous version") \n" \
-        #--image=dialog-warning \
-        #--name=Idiomind --class=Idiomind \
-        #--print-all --hide-column=1 \
-        #--window-icon="$DS/images/icon.png" \
-        #--image-on-top --on-top --center \
-        #--width=450 --height=350 --borders=5 \
-        #--column="$lang" \
-        #--column="$lan" \
-        #--button="$(gettext "Cancel")":1 \
-        #--button="$(gettext "Restore")":0
-        #ret="$?"
-        #if [ $ret -eq 0 -o $ret -eq 2 ]; then
-            #if [ ! -d "${DM_tl}/${2}" ]; then
-            #mkdir -p "${DM_tl}/${2}/.conf/practice"; fi
-            #[ $ret -eq 0 ] && cp -f "$HOME/.idiomind/backup/${2}.bk1" "${DM_tl}/${2}/.conf/0.cfg"
-            #[ $ret -eq 2 ] && cp -f "$HOME/.idiomind/backup/${2}.bk2" "${DM_tl}/${2}/.conf/0.cfg"
-            #"$DS/ifs/tls.sh" check_index "${2}" 1
-            #"$DS/default/tpc.sh" "${2}" 1 &
-        #fi
-    #else
-        #msg "$(gettext "Backup not found")\n" dialog-warning
-    #fi
+dlg_restfile() {
+    file="$HOME/.idiomind/backup/${2}.bk"
+    date1=`grep '\----- newest' "${file}" |cut -d' ' -f3`
+    date2=`grep '\----- oldest' "${file}" |cut -d' ' -f3`
+    [ -n "$date2" ] && val='\nFALSE'
+    source "$DS/ifs/mods/cmns.sh"
+    if [ -f "${file}" ]; then
+        rest="$(echo -e "FALSE\n$date1$val\n$date2" \
+        | sed '/^$/d' | yad --list --title="$(gettext "Restore")" \
+        --text="<b>${2}</b>\n" \
+        --name=Idiomind --class=Idiomind \
+        --print-all --expand-column=2 --no-click \
+        --window-icon="$DS/images/icon.png" \
+        --image-on-top --on-top --center \
+        --width=450 --height=220 --borders=5 \
+        --column="$(gettext "Select")":RD \
+        --column="$(gettext "Revert to this previous version")":TXT \
+        --button="$(gettext "Cancel")":1 \
+        --button="$(gettext "OK")":0)"
+        ret="$?"
+        if [ $ret -eq 0 ]; then
+            if [ ! -d "${DM_tl}/${2}" ]; then
+                mkdir -p "${DM_tl}/${2}/.conf/practice"; fi
+            if grep TRUE <<< "$(sed -n 1p <<<"$rest")"; then
+                sed -n  '/----- newest/,/----- oldest/p' "${file}" \
+                |grep -v '\----- newest' |grep -v '\----- oldest' > \
+                "${DM_tl}/${2}/.conf/0.cfg"
+            elif grep TRUE <<< "$(sed -n 2p <<<"$rest")"; then
+                sed -n  '/----- oldest/,/----- end/p' "${file}" \
+                |grep -v '\----- oldest' |grep -v '\----- end' > \
+                "${DM_tl}/${2}/.conf/0.cfg"
+            fi
+            "$DS/ifs/tls.sh" check_index "${2}" 1
+            "$DS/default/tpc.sh" "${2}" 1 &
+        fi
+    else
+        msg "$(gettext "Backup not found")\n" dialog-warning
+    fi
 }
 
 add_file() {
@@ -978,10 +993,12 @@ $(gettext "Does not need configuration")
 }>/dev/null 2>&1
 
 case "$1" in
-    _backup)
+    backup)
     _backup "$@" ;;
+    dlg_backups)
+    dlg_backups "$@" ;;
     _restfile)
-    _restfile "$@" ;;
+    dlg_restfile "$@" ;;
     check_index)
     check_index "$@" ;;
     add_audio)
