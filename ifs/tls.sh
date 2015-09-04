@@ -721,6 +721,7 @@ mkpdf() {
                 fi
             fi
         done < <(tac "${cfg3}")
+        echo -e "<br><br><br><br>" >> "$wdir/temp.html"
 
         n=1; trgt=""
         while [[ ${n} -le "$(wc -l < "${cfg4}")" ]]; do
