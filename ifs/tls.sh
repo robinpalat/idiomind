@@ -394,7 +394,7 @@ attatchments() {
         --width=680 --height=580 --borders=10 \
         --button="$(gettext "Open Folder")":"xdg-open \"${DM_tlt}\"/files" \
         --button="$(gettext "Video URL")":2 \
-        --button="gtk-add":0 \
+        --button="$(gettext "Add")":0 \
         --button="gtk-close":1
         ret=$?
         

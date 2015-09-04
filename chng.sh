@@ -1,8 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-source /usr/share/idiomind/ifs/c.conf
-
+[ -z"${DM}" ] && source /usr/share/idiomind/ifs/c.conf
 if [[ ${1} = 0 ]]; then
     w="$(grep -oP '(?<=words=\").*(?=\")' "${cfg}")"
     s="$(grep -oP '(?<=sntcs=\").*(?=\")' "${cfg}")"
