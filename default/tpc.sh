@@ -2,12 +2,10 @@
 # -*- ENCODING: UTF-8 -*-
 
 if [ -z "${1}" ]; then exit 1; fi
-source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 topic="${1}"
 DC_tlt="$DM_tl/${topic}/.conf"
 DM_tlt="$DM_tl/${topic}"
-export "$DM_tl"
 
 if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
     source "$DS/ifs/mods/topic/${topic}.sh"

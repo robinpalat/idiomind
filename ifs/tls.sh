@@ -125,7 +125,6 @@ check_index() {
                 echo "${item_}" >> "$DT/cfg0"
             fi
         done < "${DC_tlt}/0.cfg"
-        mv -f "$DT/cfg0" "${DC_tlt}/0.cfg"
         > "${DC_tlt}/2.cfg"
     }
 
@@ -197,6 +196,7 @@ add_audio() {
 
 _backup() {
     dt=$(date +%F)
+    source /usr/share/idiomind/ifs/c.conf
     [ ! -d "$HOME/.idiomind/backup" ] \
     && mkdir "$HOME/.idiomind/backup"
     file="$HOME/.idiomind/backup/${2}.bk"
@@ -311,7 +311,8 @@ videourl() {
         echo "$url" > "${DM_tlt}/files/video$n.url"
     else 
         msg "$(gettext "You have entered an invalid URL").\n" error \
-        "$(gettext "You have entered an invalid URL")"; fi
+        "$(gettext "You have entered an invalid URL")"
+    fi
 }
 
 attatchments() {
@@ -383,9 +384,7 @@ attatchments() {
     done <<<"$(ls "${DM_tlt}/files")"
     echo -e "</body>" >> "${DC_tlt}/att.html"
     sed -ie 's/^[ \t]*//' "${DC_tlt}/att.html"
-    
     } >/dev/null 2>&1
-    
     [ ! -d "${DM_tlt}/files" ] && mkdir "${DM_tlt}/files"
     ch1="$(ls -A "${DM_tlt}/files")"
     
@@ -484,7 +483,6 @@ a_check_updates() {
         if [ ${#nver} -lt 9 ] && [ ${#cver} -lt 9 ] \
         && [ ${#nver} -ge 3 ] && [ ${#cver} -ge 3 ] \
         && [ "$nver" != "$cver" ]; then
-            
             msg_2 " <b>$(gettext "A new version of Idiomind available\!")\t\n</b> $(gettext "Do you want to download it now?")\n" info "$(gettext "Download")" "$(gettext "Cancel")" "$(gettext "New Version")" "$(gettext "Ignore")"
             ret=$?
             if [ $ret -eq 0 ]; then xdg-open "$pkg"
