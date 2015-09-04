@@ -1,13 +1,13 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+source /usr/share/idiomind/ifs/c.conf
+
 if [[ ${1} = 0 ]]; then
-    source /usr/share/idiomind/ifs/c.conf
     w="$(grep -oP '(?<=words=\").*(?=\")' "${cfg}")"
     s="$(grep -oP '(?<=sntcs=\").*(?=\")' "${cfg}")"
     m="$(grep -oP '(?<=marks=\").*(?=\")' "${cfg}")"
     p="$(grep -oP '(?<=wprct=\").*(?=\")' "${cfg}")"
-
     _play() {
         if [ ${stnrd} = 1 ]; then
             a="$(grep -oP '(?<=audio=\").*(?=\")' "${cfg}")"
@@ -70,7 +70,6 @@ if [[ ${1} = 0 ]]; then
             ((f=f+1))
         fi
     }
-    
     if [ ${w} = TRUE -a ${s} = TRUE ]; then
         while read item; do getitem; _play
         done < <(tac "${DC_tlt}/1.cfg"); fi
@@ -91,7 +90,6 @@ if [[ ${1} = 0 ]]; then
 elif [[ ${1} != 0 ]]; then
     source "$DS/ifs/mods/cmns.sh"
     lgs=$(lnglss $lgsl)
-    
     remove_d() {
         ins="$(cd "/usr/share/idiomind/addons/"
         set -- */; printf "%s\n" "${@%/}")"
@@ -107,14 +105,12 @@ elif [[ ${1} != 0 ]]; then
         done < <(grep -Fvx "${ins}" <<<"${old}")
         echo "$ins" > "$DC_a/list"
     }
-
     if [ ! -e "$DM_tl/.0.cfg" ]; then > "$DM_tl/.0.cfg"; fi
     if [ ! -e "$DM_tl/.1.cfg" ]; then > "$DM_tl/.1.cfg"; fi
     if [ ! -e "$DC_a/list" ]; then
         echo "$(cd "/usr/share/idiomind/addons/"
         set -- */; printf "%s\n" "${@%/}")" > "$DC_a/list"
     fi
-    
     if [ -n "$1" ]; then
         text="--text=$1\n"
         align="left"

@@ -755,20 +755,25 @@ mkpdf() {
 }
 
 translate_to() {
+    # usage: 
+    # idiomind translate [language] // e.g. language: en.
+    # idiomind translate restore // for restore original language
     source /usr/share/idiomind/ifs/c.conf
     source "$DS/ifs/mods/cmns.sh"
     [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "  -- error" && exit 1
-    lgtl="$(grep -o 'langt="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-    local lgt=$(lnglss $lgtl)
-    
+    l="$(grep -o 'langt="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+    lgt=$(lnglss $l)
+    if [ -z "$lgt" ]; then
+        lgt=$(lnglss $l)
+    fi
     if [ $2 = restore ]; then
         if [ -e "${DC_tlt}/0.data" ]; then
             mv -f "${DC_tlt}/0.data" "${DC_tlt}/0.cfg"
-            echo -e "  -- done"; else echo -e "  -- error"; fi
+            echo -e "  done!"; else echo -e "  -- error"; fi
     else
         if [ -e "${DC_tlt}/$2.data" ]; then
             cp -f "${DC_tlt}/$2.data" "${DC_tlt}/0.cfg"
-            echo -e "  -- done"
+            echo -e "  done!"
         else
             include "$DS/ifs/mods/add"
             echo -e "\n\n  --translating \"$tpc\"...\n"
@@ -844,7 +849,7 @@ translate_to() {
             if [ ! -e "${DC_tlt}/0.data" ]; then
                 mv "${DC_tlt}/0.cfg" "${DC_tlt}/0.data"; fi
             cp -f "${DC_tlt}/$2.data" "${DC_tlt}/0.cfg"
-            echo -e "  -- done"
+            echo -e "  done!"
         fi
     fi
 }
