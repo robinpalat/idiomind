@@ -158,23 +158,25 @@ check_index() {
     
     if [ ${f} = 1 -o ${a} = 1 ] && [[ ${3} != 1 ]]; then
         > "$DT/ps_lk"; (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
-        "$(gettext "Fixing...")" -t 3000) & fi
-    
+        "$(gettext "Fixing...")" -t 3000) & 
+    fi
     if [ ${f} = 1 ]; then
         [ ! -d "${DM_tlt}/.conf" ] && mkdir "${DM_tlt}/.conf"
         [ ! -d "${DM_tlt}/images" ] && mkdir "${DM_tlt}/images"
         _restore; _fix; mkmn=1; fi
-    
-    if [ ${a} = 1 ]; then _sanity; _restore; mkmn=1; fi
-    
-    if [ ${r} = 1 ]; then _sanity; _restore; fi
-    
+    if [ ${a} = 1 ]; then
+        _sanity; _restore; mkmn=1
+    fi
+    if [ ${r} = 1 ]; then
+        _sanity; _restore
+    fi
     if [ ${mkmn} = 1 ] ;then
         "$DS/ifs/tls.sh" colorize
         "$DS/mngr.sh" mkmn
     fi
-
-    if [ -f "$DT/ps_lk" ]; then rm -f "$DT/ps_lk"; fi
+    if [ -f "$DT/ps_lk" ]; then 
+        rm -f "$DT/ps_lk"
+    fi
 }
 
 add_audio() {
@@ -237,12 +239,12 @@ dlg_restfile() {
     if [ -f "${file}" ]; then
         rest="$(echo -e "FALSE\n$date1$val\n$date2" \
         | sed '/^$/d' | yad --list --title="$(gettext "Restore")" \
-        --text="<b>${2}</b>\n" \
+        --text="${2}" \
         --name=Idiomind --class=Idiomind \
         --print-all --expand-column=2 --no-click \
         --window-icon="$DS/images/icon.png" \
         --image-on-top --on-top --center \
-        --width=450 --height=220 --borders=5 \
+        --width=450 --height=180 --borders=5 \
         --column="$(gettext "Select")":RD \
         --column="$(gettext "Revert to this previous version")":TXT \
         --button="$(gettext "Cancel")":1 \
