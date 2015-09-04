@@ -39,14 +39,12 @@ function dwld() {
     |grep -o 'DOWNLOADS2="[^"]*' |grep -o '[^"]*$')"
     url1="$url1/c/${langt,,}/$ilink.$md5id.tar.gz"
     url2="$url2/c/${langt,,}/$ilink.$md5id.tar.gz"
-
     if wget -S --spider "${url1}" 2>&1 |grep 'HTTP/1.1 200 OK'; then
-    URL="${url1}"
+        URL="${url1}"
     elif wget -S --spider "${url2}" 2>&1 |grep 'HTTP/1.1 200 OK'; then
-    URL="${url2}"
+        URL="${url2}"
     else err & exit
     fi
-    
     wget -q -c -T 80 -O "$DT/download/${oname}.tar.gz" "${URL}"
     [ $? != 0 ] && err && exit 1
     
@@ -55,42 +53,42 @@ function dwld() {
         tar -xzvf "$DT/download/${oname}.tar.gz"
         
         if [ -d "$DT/download/${oname}" ]; then
-        ltotal="$(gettext "Total")="
-        laudio="$(gettext "Audio files")="
-        limage="$(gettext "Images")="
-        lfiles="$(gettext "Additional files=")="
-        lothers="$(gettext "Others")="
-        tmp="$DT/download/${oname}"
-        total=$(find "${tmp}" -maxdepth 5 -type f | wc -l)
-        c_audio=$(find "${tmp}" -maxdepth 5 -name '*.mp3' | wc -l)
-        c_images=$(find "${tmp}" -maxdepth 5 -name '*.jpg' | wc -l)
-        hfiles="$(cd "${tmp}"; ls -d ./.[^.]* | less | wc -l)"
-        exfiles="$(find "${tmp}" -maxdepth 5 -perm -111 -type f | wc -l)"
-        atfiles=$(find "${tmp}/files" -maxdepth 5 -name | wc -l)
-        others=$((wchfiles+wcexfiles))
-        
-        mv -f "${tmp}/conf/info" "${DC_tlt}/info"
-        [ ! -d "$DM_t/$langt/.share" ] && mkdir -p "$DM_t/$langt/.share/images"
-        mv -n "${tmp}/share"/*.mp3 "$DM_t/$langt/.share"/
-        [ ! -f "${DM_tlt}/images" ] && mkdir "${DM_tlt}/images"
-        [ -f "${tmp}"/images/img.jpg  ] && \
-        mv "${tmp}"/images/img.jpg "${DM_tlt}"/images/img.jpg
-        while read -r img; do
-            if [ -f "${tmp}/images/${img,,}-0.jpg" ]; then
-            if [ -f "$DM_t/$langt/.share/images/${img,,}-0.jpg" ]; then
-            n=`ls "${DM_tls}/images/${img,,}"-*.jpg |wc -l`
-            name_img="${DM_tls}/images/${img,,}"-${n}.jpg
-            else name_img="${DM_tls}/images/${img,,}-0.jpg"; fi
-            mv -f "${tmp}/images/${img,,}-0.jpg" "${name_img}"; fi
-        done < "${DC_tlt}/3.cfg"
-        rm -fr "${tmp}/share" "${tmp}/conf" "${tmp}/images"
-        mv -f "${tmp}"/*.mp3 "${DM_tlt}"/
-        [ ! -f "${DM_tlt}/files" ] && mkdir "${DM_tlt}/files"
-        mv -f "${tmp}"/files/* "${DM_tlt}"/files/
-        echo "${oname}" >> "$DM_tl/.3.cfg"
-        echo -e "$ltotal $total\n$laudio $c_audio\n$limage $c_images\n$lfiles $atfiles\n$lothers $others" > "${DC_tlt}/11.cfg"
-        "$DS/ifs/tls.sh" colorize
-        rm -fr "$DT/download"
+            ltotal="$(gettext "Total")="
+            laudio="$(gettext "Audio files")="
+            limage="$(gettext "Images")="
+            lfiles="$(gettext "Additional files=")="
+            lothers="$(gettext "Others")="
+            tmp="$DT/download/${oname}"
+            total=$(find "${tmp}" -maxdepth 5 -type f | wc -l)
+            c_audio=$(find "${tmp}" -maxdepth 5 -name '*.mp3' | wc -l)
+            c_images=$(find "${tmp}" -maxdepth 5 -name '*.jpg' | wc -l)
+            hfiles="$(cd "${tmp}"; ls -d ./.[^.]* | less | wc -l)"
+            exfiles="$(find "${tmp}" -maxdepth 5 -perm -111 -type f | wc -l)"
+            atfiles=$(find "${tmp}/files" -maxdepth 5 -name | wc -l)
+            others=$((wchfiles+wcexfiles))
+            
+            mv -f "${tmp}/conf/info" "${DC_tlt}/info"
+            [ ! -d "$DM_t/$langt/.share" ] && mkdir -p "$DM_t/$langt/.share/images"
+            mv -n "${tmp}/share"/*.mp3 "$DM_t/$langt/.share"/
+            [ ! -f "${DM_tlt}/images" ] && mkdir "${DM_tlt}/images"
+            [ -f "${tmp}"/images/img.jpg  ] && \
+            mv "${tmp}"/images/img.jpg "${DM_tlt}"/images/img.jpg
+            while read -r img; do
+                if [ -f "${tmp}/images/${img,,}-0.jpg" ]; then
+                if [ -f "$DM_t/$langt/.share/images/${img,,}-0.jpg" ]; then
+                    n=`ls "${DM_tls}/images/${img,,}"-*.jpg |wc -l`
+                    name_img="${DM_tls}/images/${img,,}"-${n}.jpg
+                else name_img="${DM_tls}/images/${img,,}-0.jpg"; fi
+                    mv -f "${tmp}/images/${img,,}-0.jpg" "${name_img}"; fi
+            done < "${DC_tlt}/3.cfg"
+            rm -fr "${tmp}/share" "${tmp}/conf" "${tmp}/images"
+            mv -f "${tmp}"/*.mp3 "${DM_tlt}"/
+            [ ! -f "${DM_tlt}/files" ] && mkdir "${DM_tlt}/files"
+            mv -f "${tmp}"/files/* "${DM_tlt}"/files/
+            echo "${oname}" >> "$DM_tl/.3.cfg"
+            echo -e "$ltotal $total\n$laudio $c_audio\n$limage $c_images\n$lfiles $atfiles\n$lothers $others" > "${DC_tlt}/11.cfg"
+            "$DS/ifs/tls.sh" colorize
+            rm -fr "$DT/download"
         else
             err & exit
         fi
@@ -106,17 +104,18 @@ function upld() {
 if [ $((inx3+inx4)) -lt 2 ]; then exit 1; fi
 
 if [ "${tpc}" != "${2}" ]; then
-msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit 1; fi
+    msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit 1
+fi
 
 if [ -d "$DT/upload" -o -d "$DT/download" ]; then
-[ -e "$DT/download" ] && t="$(gettext "Downloading")..." || t="$(gettext "Uploading")..."
-msg_2 "$(gettext "Wait until it finishes a previous process")\n" dialog-warning OK gtk-stop "$t"
-ret="$?"
-if [ $ret -eq 1 ]; then
-cleanups "$DT/upload" "$DT/download"
-"$DS/stop.sh" 5
-fi
-exit 1
+    [ -e "$DT/download" ] && t="$(gettext "Downloading")..." || t="$(gettext "Uploading")..."
+    msg_2 "$(gettext "Wait until it finishes a previous process")\n" dialog-warning OK gtk-stop "$t"
+    ret="$?"
+    if [ $ret -eq 1 ]; then
+        cleanups "$DT/upload" "$DT/download"
+        "$DS/stop.sh" 5
+    fi
+    exit 1
 fi
 
 others="$(gettext "Others")"
@@ -163,7 +162,6 @@ btn="--center"; fi
 cd "$HOME"
 
 if [ -e "${DC_tlt}/11.cfg" ]; then
-
     if [ -z "$(< "${DC_tlt}/11.cfg")" ]; then
     c_audio="$(grep -o 'naudi="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
     c_images="$(grep -o 'nimag="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
@@ -184,7 +182,6 @@ if [ -e "${DC_tlt}/11.cfg" ]; then
     --button="$(gettext "PDF")":2 \
     --button="$(gettext "Close")":4)
     ret=$?
-    
     elif [ -n "$(< "${DC_tlt}/11.cfg")" ]; then
     dlg=$(yad --form --title="${tpc}" \
     --columns=2 --separator="|" \
@@ -198,7 +195,6 @@ if [ -e "${DC_tlt}/11.cfg" ]; then
     --button="$(gettext "PDF")":2 \
     --button="$(gettext "Close")":4)
     ret=$?
-    
     fi
 else
     dlg=$(yad --form --title="$(gettext "Could you share what you learn?")" \
@@ -216,7 +212,6 @@ else
     --button="$(gettext "PDF")":2 "$btn" \
     --button="$(gettext "Close")":4)
     ret=$?
-
     img=$(echo "${dlg}" | cut -d "|" -f6)
     if [ -f "${img}" -a "${img}" != "${imgm}" ]; then
     wsize="$(identify "${img}" | cut -d ' ' -f 3 | cut -d 'x' -f 1)"
@@ -235,7 +230,6 @@ if [ $ret = 2 ]; then
     "$DS/ifs/tls.sh" pdf & exit 1
     
 elif [ $ret = 0 ]; then
-
 Ctgry=$(echo "${dlg}" | cut -d "|" -f3)
 level=$(echo "${dlg}" | cut -d "|" -f4)
 iuser_m=$(echo "${dlg}" | cut -d "|" -f1)
@@ -278,17 +272,18 @@ msg "$(gettext "You have entered an invalid author name.")\n " info
 
 if [ ${#cntct_m} -gt 30 ] || \
 [ "$(grep -o -E '\*|\/|$|\)|\(|=' <<<"${cntct_m}")" ]; then
-msg "$(gettext "You have entered an invalid contact format.")\n " info
-"$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
+    msg "$(gettext "You have entered an invalid contact format.")\n " info
+    "$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
 
 if [ -z "${Ctgry}" ]; then
-msg "$(gettext "Please select a category.")\n " info
-"$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
+    msg "$(gettext "Please select a category.")\n " info
+    "$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
 
 if [ -d "${DM_tlt}/files" ]; then
-du=$(du -sb "${DM_tlt}/files" | cut -f1)
-if [[ "$du" -gt 50000000 ]]; then
-msg "$(gettext "Sorry, the size of the attachments is too large.")\n " info & exit 1; fi; fi
+    du=$(du -sb "${DM_tlt}/files" | cut -f1)
+    if [[ "$du" -gt 50000000 ]]; then
+    msg "$(gettext "Sorry, the size of the attachments is too large.")\n " info & exit 1; fi
+fi
 
 internet
 [ -d "$DT" ] && cd "$DT" || exit 1
@@ -307,16 +302,16 @@ c_words=${inx3}
 c_sntncs=${inx4}
 
 if [ -f "${DC_tlt}/id.cfg" ]; then
-datec="$(grep -o 'datec="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-datei="$(grep -o 'datei="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"; fi
+    datec="$(grep -o 'datec="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+    datei="$(grep -o 'datei="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"; fi
 dateu=$(date +%F)
 sum=`md5sum "${DC_tlt}/0.cfg" | cut -d' ' -f1`
 
 if [ "${iuser}" != "${iuser_m}" ] \
 || [ "${cntct}" != "${cntct_m}" ]; then
-echo -e "usrid=\"$usrid\"
-iuser=\"$iuser_m\"
-cntct=\"$cntct_m\"" > "$DC_s/3.cfg"
+    echo -e "usrid=\"$usrid\"
+    iuser=\"$iuser_m\"
+    cntct=\"$cntct_m\"" > "$DC_s/3.cfg"
 fi
 
 cd "${DM_tlt}"
@@ -332,19 +327,19 @@ auds="$(uniq < "${DC_tlt}/4.cfg" \
 |  sed 's/\!//; s/\¡//; s/\]//; s/\[//; s/\.//; s/  / /'g \
 | tr -d ')' | tr -d '(' | tr '[:upper:]' '[:lower:]')"
 while read -r audio; do
-if [ -f "$DM_tl/.share/$audio.mp3" ]; then
-cp -f "$DM_tl/.share/$audio.mp3" "$DT_u/${tpc}/share/$audio.mp3"; fi
+    if [ -f "$DM_tl/.share/$audio.mp3" ]; then
+    cp -f "$DM_tl/.share/$audio.mp3" "$DT_u/${tpc}/share/$audio.mp3"; fi
 done <<<"$auds"
 while read -r audio; do
-if [ -f "$DM_tl/.share/${audio,,}.mp3" ]; then
-cp -f "$DM_tl/.share/${audio,,}.mp3" "$DT_u/${tpc}/share/${audio,,}.mp3"; fi
+    if [ -f "$DM_tl/.share/${audio,,}.mp3" ]; then
+    cp -f "$DM_tl/.share/${audio,,}.mp3" "$DT_u/${tpc}/share/${audio,,}.mp3"; fi
 done < "${DC_tlt}/3.cfg"
 
 c_audio=$(find "$DT_u/${tpc}" -maxdepth 5 -name '*.mp3' |wc -l)
 
 while read -r img; do
-if [ -f "$DM_tl/.share/images/${img,,}-0.jpg" ]; then
-cp -f "$DM_tl/.share/images/${img,,}-0.jpg" "$DT_u/${tpc}/images/${img,,}-0.jpg"; fi
+    if [ -f "$DM_tl/.share/images/${img,,}-0.jpg" ]; then
+    cp -f "$DM_tl/.share/images/${img,,}-0.jpg" "$DT_u/${tpc}/images/${img,,}-0.jpg"; fi
 done < "${DC_tlt}/3.cfg"
 c_images=$(cd "$DT_u/${tpc}/images"/; ls *.jpg |wc -l)
 
