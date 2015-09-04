@@ -46,20 +46,18 @@ audio=\"TRUE\"
 ntosd=\"\"
 loop=\"0\"
 rword=\"0\""
-        
-        mkdir -p "${DM_tlt}/images"
-        mkdir "${DC_tlt}"; cd "${DC_tlt}"
-        c=0
-        while [[ ${c} -le 10 ]]; do
-        touch "${c}.cfg"; let c++
-        done
-        rm "${DC_tlt}/7.cfg" "${DC_tlt}/9.cfg"
-        echo " " > "${DC_tlt}/info"
-        echo -e "${c1}" > ./"id.cfg"
-        echo -e "${c2}" > ./"10.cfg"
-        echo 1 > "8.cfg"
+            mkdir -p "${DM_tlt}/images"
+            mkdir "${DC_tlt}"; cd "${DC_tlt}"
+            c=0
+            while [[ ${c} -le 10 ]]; do
+            touch "${c}.cfg"; let c++
+            done
+            rm "${DC_tlt}/7.cfg" "${DC_tlt}/9.cfg"
+            echo " " > "${DC_tlt}/info"
+            echo -e "${c1}" > ./"id.cfg"
+            echo -e "${c2}" > ./"10.cfg"
+            echo 1 > "8.cfg"; cd /
         fi
-        cd /
         echo "${topic}" > "$DC_s/4.cfg"
         echo "${topic}" > "$DC_s/7.cfg"
         echo "${topic}" > "$DT/tpe"
@@ -68,8 +66,12 @@ rword=\"0\""
         if ! grep "${topic}.bk" < <(cd "$HOME/.idiomind/backup" \
             find . -maxdepth 1 -name '*.bk' -mtime -1); then
             if [ -n "$(< "${DC_tlt}/0.cfg")" ]; then
-                cp -f "${DC_tlt}/0.cfg" "$HOME/.idiomind/backup/${topic}.bk"; fi
-            cd /; fi
+                if [ -e "$HOME/.idiomind/backup/${topic}_1.bk" ]; then
+                    mv -f "$HOME/.idiomind/backup/${topic}_1.bk" \
+                    "$HOME/.idiomind/backup/${topic}_2.bk"; fi
+                cp -f "${DC_tlt}/0.cfg" "$HOME/.idiomind/backup/${topic}_1.bk"
+            fi
+        fi 
         if [[ ! -e "$DC_s/5.cfg" ]]; then
             echo 0 > "$DC_s/5.cfg"; fi
         if [[ `< "$DC_s/5.cfg"` != 0 ]]; then

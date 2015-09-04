@@ -2,6 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 if [[ ${1} = 0 ]]; then
+    source /usr/share/idiomind/ifs/c.conf
     w="$(grep -oP '(?<=words=\").*(?=\")' "${cfg}")"
     s="$(grep -oP '(?<=sntcs=\").*(?=\")' "${cfg}")"
     m="$(grep -oP '(?<=marks=\").*(?=\")' "${cfg}")"
@@ -27,7 +28,7 @@ if [[ ${1} = 0 ]]; then
                 [ ${type} = 1 -a ${rw} = 1 ] && spn=3
                 [ ${type} = 2 -a ${rw} = 2 ] && spn=2 && sle=2.5
                 ( while [ ${ritem} -lt ${spn} ]; do
-                    "$DS"/play.sh play_file "${file}"
+                    "$DS"/play.sh play_file "${file}" "${trgt}"
                     [ ${ritem} = 0 ] && sleep ${sle}
                     [ ${ritem} = 1 ] && sleep 2.5
                     [ ${ritem} = 2 ] && sleep 2
@@ -126,7 +127,7 @@ elif [[ ${1} != 0 ]]; then
     chk_list_addons2=$((`wc -l < "$DC_a/list"`*2))
     chk_list_topics1=$((`wc -l < "$DM_tl/.0.cfg"`/2))
     chk_list_topics2=$(wc -l < "$DM_tl/.1.cfg")
-    if [[ ${chk_list_addons1} != ${chk_list_addons1} ]]; then
+    if [[ ${chk_list_addons1} != ${chk_list_addons2} ]]; then
         remove_d; fi
     if [[ ${chk_list_topics1} != ${chk_list_topics2} ]]; then
         "$DS/mngr.sh" mkmn; fi

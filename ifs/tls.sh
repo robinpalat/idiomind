@@ -163,7 +163,7 @@ check_index() {
     
     _check
     
-    if [ ${f} = 1 -o ${a} = 1 ]; then
+    if [ ${f} = 1 -o ${a} = 1 ] && [[ ${3} != 1 ]]; then
         > "$DT/ps_lk"; (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
         "$(gettext "Fixing...")" -t 3000) & fi
     
@@ -200,8 +200,10 @@ add_audio() {
     fi
 } >/dev/null 2>&1
 
+
+
 _backup() {
-    cd "$DM/backup"; ls -t *.bk | sed 's/\.bk//g' | \
+    cd "$DM/backup"; ls -t *.bk1 |sed 's/\.bk1//g' | \
     yad --list --title="$(gettext "Backups")" \
     --name=Idiomind --class=Idiomind \
     --dclick-action="$DS/ifs/tls.sh '_restfile'" \
@@ -214,27 +216,41 @@ _backup() {
 } >/dev/null 2>&1
 
 _restfile() {
-    source "$DS/ifs/mods/cmns.sh"
-    if [ -f "$HOME/.idiomind/backup/${2}.bk" ]; then
-        info=`stat "$HOME/.idiomind/backup/${2}.bk"|sed -n 6p|cut -d" " -f2`
-        yad --title="$(gettext "Backups")" \
-        --text="<b>${2}</b> ($info)\n  $(gettext "Revert to this previous version") \n" \
-        --image=dialog-warning \
-        --name=Idiomind --class=Idiomind \
-        --always-print-result \
-        --window-icon="$DS/images/icon.png" \
-        --image-on-top --on-top --center \
-        --width=450 --height=100 --borders=5 \
-        --button="$(gettext "Cancel")":1 \
-        --button="$(gettext "Restore")":0
-        ret="$?"
-        if [ $ret -eq 0 ]; then
-        cp -f "$HOME/.idiomind/backup/${2}.bk" "${DM_tl}/${2}/.conf/0.cfg"
-        "$DS/ifs/tls.sh" check_index "${2}" 1
-        fi
-    else
-        msg "$(gettext "Backup not found")\n" dialog-warning
-    fi
+    echo
+    #source "$DS/ifs/mods/cmns.sh"
+    #if [ -f "$HOME/.idiomind/backup/${2}.bk1" ]; then
+        #info=`stat "$HOME/.idiomind/backup/${2}.bk1"|sed -n 6p|cut -d" " -f2`
+        #if [ -f "$HOME/.idiomind/backup/${2}.bk2" ]; then
+            #info2=`stat "$HOME/.idiomind/backup/${2}.bk2"|sed -n 6p|cut -d" " -f2`
+            #dat="$HOME/.idiomind/backup/${2}.bk1 $info $HOME/.idiomind/backup/${2}.bk2 $info2"
+        #else
+            #dat="$HOME/.idiomind/backup/${2}.bk1 $info"
+        #fi
+
+        #echo "$dat" | yad --list --radiolist --title="$(gettext "Backups")" \
+        #--text="<b>${2}</b> ($info)\n($info2)\n  $(gettext "Revert to this previous version") \n" \
+        #--image=dialog-warning \
+        #--name=Idiomind --class=Idiomind \
+        #--print-all --hide-column=1 \
+        #--window-icon="$DS/images/icon.png" \
+        #--image-on-top --on-top --center \
+        #--width=450 --height=350 --borders=5 \
+        #--column="$lang" \
+        #--column="$lan" \
+        #--button="$(gettext "Cancel")":1 \
+        #--button="$(gettext "Restore")":0
+        #ret="$?"
+        #if [ $ret -eq 0 -o $ret -eq 2 ]; then
+            #if [ ! -d "${DM_tl}/${2}" ]; then
+            #mkdir -p "${DM_tl}/${2}/.conf/practice"; fi
+            #[ $ret -eq 0 ] && cp -f "$HOME/.idiomind/backup/${2}.bk1" "${DM_tl}/${2}/.conf/0.cfg"
+            #[ $ret -eq 2 ] && cp -f "$HOME/.idiomind/backup/${2}.bk2" "${DM_tl}/${2}/.conf/0.cfg"
+            #"$DS/ifs/tls.sh" check_index "${2}" 1
+            #"$DS/default/tpc.sh" "${2}" 1 &
+        #fi
+    #else
+        #msg "$(gettext "Backup not found")\n" dialog-warning
+    #fi
 }
 
 add_file() {
