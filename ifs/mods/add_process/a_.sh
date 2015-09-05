@@ -18,47 +18,8 @@ function installds() {
     fi
 }
 
-function dlg_checklist_5() {
-    cmd_edit_="$DS/ifs/mods/add_process/a_.sh 'item_for_edit'"
-    slt=$(mktemp "$DT/slt.XXXX.x")
-    cat "${1}" | awk '{print "FALSE\n"$0}' | \
-    yad --list --checklist --title="$2" \
-    --text="<small>$info</small> " \
-    --name=Idiomind --class=Idiomind \
-    --dclick-action="$cmd_edit_" \
-    --window-icon="$DS/images/icon.png" \
-    --text-align=right --center --sticky \
-    --width=600 --height=550 --borders=3 \
-    --column="$(wc -l < "${1}")" \
-    --column="$(gettext "Items")" \
-    --button="$(gettext "Cancel")":1 \
-    --button=gtk-add:0 > "$slt"
-}
-
-function dlg_text_info_5() {
-    echo "${1}" | yad --text-info --title=" " \
-    --name=Idiomind --class=Idiomind \
-    --editable \
-    --window-icon="$DS/images/icon.png" \
-    --margins=5 --wrap \
-    --center --sticky \
-    --width=520 --height=150 --borders=5 \
-    --button=Ok:0 > "$1.txt"
-}
-
-function dlg_text_info_4() {
-    echo "${1}" | yad --text-info --title=Idiomind \
-    --name=Idiomind --class=Idiomind \
-    --window-icon="$DS/images/icon.png" \
-    --text=" " \
-    --margins=8 --wrap \
-    --center --sticky \
-    --width=600 --height=550 --borders=5 \
-    --button=Ok:0
-}
-
 function audio_recog() {
-    wget -q -U -T 101 -c "Mozilla/5.0" --post-file "${1}" \
+    wget -q -U -T 51 -c "Mozilla/5.0" --post-file "${1}" \
     --header="Content-Type: audio/x-flac; rate=16000" \
     -O - "https://www.google.com/speech-api/v2/recognize?&lang=${2}-${3}&key=$4"
 }
@@ -83,8 +44,6 @@ function dlg_file_2() {
 }
 
 if [[ ${conten^} = A ]]; then
-
-    left=$((200 - $(wc -l < "${DC_tlt}/4.cfg")))
     key="$(sed -n 2p "$HOME/.config/idiomind/addons/gts.cfg" \
     | grep -o key=\"[^\"]* | grep -o '[^"]*$')"
     test="$DS/addons/Dics/test.flac"
@@ -261,23 +220,8 @@ if [[ ${conten^} = A ]]; then
 
         ) | dlg_progress_2
         
-        if  [ $? != 0 ] && [ "$(ls "$DT_r"/[0-9]* | wc -l)" -ge 1 ]; then
-            
-            kill -9 $(pgrep -f "wget -q -U -T 101 -c")
-            _log=$(cat "$DT_r/slog" "$DT_r/wlog")
-            btn="--button="$(gettext "Save Audio")":0"
-            dlg_text_info_3 "$(gettext "Some items could not be added to your list")" "$_log" "$btn" >/dev/null 2>&1
-
-                if  [ $? -eq 0 ]; then
-                    aud=`dlg_file_2`
-
-                    if [ $? -eq 0 ]; then
-                        mkdir "$DT_r/rest"
-                        mv -f "$DT_r"/[0-9]*.mp3 "$DT_r/rest"/
-                        cd "$DT_r/rest"
-                        tar cvzf "$DT_r/audio.tar.gz" ./*
-                        mv -f "$DT_r/audio.tar.gz" "${aud}"; fi
-                fi
+        if  [ $? != 0 ]; then
+            "$DS/stop.sh" 5
         fi
         
         wadds=" $(($(wc -l < "$DT_r/addw") - $(sed '/^$/d' "$DT_r/wlog" | wc -l)))"
@@ -305,20 +249,15 @@ if [[ ${conten^} = A ]]; then
                 if  [ $? -eq 0 ]; then
                     aud=`dlg_file_2`
                         if [ $? -eq 0 ]; then
-                        mkdir "$DT_r/rest"
-                        mv -f "$DT_r"/[0-9]*.mp3 "$DT_r/rest"/
-                        cd "$DT_r/rest"
-                        tar cvzf "$DT_r/audio.tar.gz" ./*
-                        mv -f "$DT_r/audio.tar.gz" "${aud}"; fi
+                            mkdir "$DT_r/rest"
+                            mv -f "$DT_r"/[0-9]*.mp3 "$DT_r/rest"/
+                            cd "$DT_r/rest"
+                            tar cvzf "$DT_r/audio.tar.gz" ./*
+                            mv -f "$DT_r/audio.tar.gz" "${aud}"
+                    fi
                 fi
         fi
         cleanups "$DT_r" "$lckpr"
     fi
     exit
-    
-elif [ "$1" = item_for_edit ]; then
-
-    DT_r=$(sed -n 1p "$DT/.n_s_pr"); cd "$DT_r"
-    dlg_text_info_5 "$3"
-    $? >/dev/null 2>&1
 fi

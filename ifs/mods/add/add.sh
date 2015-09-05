@@ -450,7 +450,7 @@ function dlg_form_0() {
 }
 
 function dlg_form_1() {
-    yad --form --title="$(gettext "New")" \
+    yad --form --title="$(gettext "Add")" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --separator="\n" \
     --skip-taskbar --center --on-top \
@@ -465,7 +465,7 @@ function dlg_form_1() {
 }
 
 function dlg_form_2() {
-    yad --form --title="$(gettext "New")" \
+    yad --form --title="$(gettext "Add")" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --separator="\n" \
     --skip-taskbar --center --on-top \
@@ -478,19 +478,6 @@ function dlg_form_2() {
     --button="$(gettext "Image")":3 \
     --button="$(gettext "Audio")":2 \
     --button=gtk-add:0
-}
-
-function dlg_radiolist_1() {
-    echo "${1}" | awk '{print "FALSE\n"$0}' | \
-    yad --list --radiolist --title="$(gettext "Word list")" \
-    --text="<b>$te</b> <small> $info</small>" \
-    --name=Idiomind --class=Idiomind \
-    --separator="\n" \
-    --window-icon="$DS/images/icon.png" \
-    --skip-taskbar --center --on-top --fixed --no-headers \
-    --width=150 --height=420 --borders=5 \
-    --column=" " --column=" " \
-    --button="gtk-add":0
 }
 
 function dlg_checklist_1() {
@@ -509,7 +496,7 @@ function dlg_checklist_1() {
 
 function dlg_checklist_3() {
     cat "${1}" | awk '{print "FALSE\n"$0}' | \
-    yad --list --checklist --title="Idiomind - $2" \
+    yad --list --checklist --title="$(gettext "Add")" \
     --name=Idiomind --class=Idiomind \
     --dclick-action="'/usr/share/idiomind/add.sh' 'list_words_dclik'" \
     --window-icon="$DS/images/icon.png" \
@@ -556,7 +543,7 @@ function dlg_text_info_3() {
     --window-icon="$DS/images/icon.png" \
     --wrap --margins=5 \
     --center --on-top \
-    --width=510 --height=450 --borders=5 \
+    --width=510 --height=300 --borders=5 \
     "${3}" --button="$(gettext "OK")":1
 }
 

@@ -327,7 +327,6 @@ edit_list() {
         [ $ret = 2 ] && cmd=cat && invrt_msg=TRUE
         include "$DS/ifs/mods/add"
         n=1; f_lock "$DT/el_lk"
-        cp -f "${direc}/0.cfg" "$DM/backup/${2}.bk"
         rm "${direc}/1.cfg" "${direc}/3.cfg" "${direc}/4.cfg"
         
         $cmd "$DT/tmp1" | while read -r trgt; do
@@ -508,7 +507,6 @@ rename_topic() {
         f_lock "$DT/rm_lk"
         mv -f "$DM_tl/${tpc}" "$DM_tl/${jlb}"
         sed -i "s/tname=.*/tname=\"${jlb}\"/g" "$DM_tl/${jlb}/.conf/id.cfg"
-        cp "$DM_tl/${jlb}/.conf/0.cfg" "$DM/backup/${jlb}.bk"
         echo "${jlb}" > "$DC_s/4.cfg"
         echo "${jlb}" > "$DM_tl/.8.cfg"
         echo "${jlb}" >> "$DM_tl/.1.cfg"

@@ -441,7 +441,6 @@ list_words_dclik() {
 } >/dev/null 2>&1
 
 process() {
-    
     ns=$(wc -l < "${DC_tlt}/0.cfg")
     db="$DS/default/dicts/$lgt"
     if [ -f "$DT/.n_s_pr" ]; then
@@ -713,7 +712,9 @@ process() {
         fi
         
         } | dlg_progress_2
-        
+        if  [ $? != 0 ]; then
+            "$DS/stop.sh" 5
+        fi
         wadds=" $(($(wc -l < "$DT_r/addw")-$(sed '/^$/d' < "$DT_r/wlog" | wc -l)))"
         W=" $(gettext "words")"
         if [[ ${wadds} = 1 ]]; then
@@ -734,7 +735,6 @@ process() {
         if [ -n "$log" ]; then sleep 1
         dlg_text_info_3 "$(gettext "Some items could not be added to your list"):" "$log" >/dev/null 2>&1
         fi
-        
         cleanups "$DT_r" "$lckpr"
     else
         cleanups "$DT_r" "$lckpr" & exit
