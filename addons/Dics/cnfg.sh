@@ -120,8 +120,8 @@ function dlg() {
     --column="$(gettext "Task")                                         ":TEXT \
     --column="$(gettext "Language")          ":TEXT \
     --button="$(gettext "Add")":2 \
-    --button=OK:0 \
-    --button="$(gettext "Cancel")":1)"
+    --button="$(gettext "Cancel")":1 \
+    --button=OK:0 )"
     ret=$?
     
         if [ $ret -eq 2 ]; then
