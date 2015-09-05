@@ -88,7 +88,7 @@ check_index() {
         [ ! -e "${DC_tlt}/9.cfg" ] && touch "${DC_tlt}/9.cfg"
         [[ `wc -l < "${DC_tlt}/id.cfg"` = 21 ]] && id=1
         if [[ ${id} != 1 ]]; then
-            eval c1="$(< $DS/default/id)"
+            eval c1="$(< $DS/default/topicid)"
             echo -e "${c1}" > "${DC_tlt}/id.cfg"; fi
         for i in "${DM_tlt}"/*.mp3 ; do [[ ! -s "${i}" ]] && rm "${i}" ; done
         if grep 'rsntc=' "${DC_tlt}/10.cfg"; then
