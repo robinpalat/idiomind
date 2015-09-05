@@ -39,7 +39,7 @@ play_list() {
     tpc="$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")"
     touch "${DC_tlt}/practice/log.3"
     DC_tlt="${DM_tl}/${tpc}/.conf"; cfg=0
-    [[ `wc -l < "${DC_tlt}/10.cfg"` = 11 ]] && cfg=1
+    [[ `wc -l < "${DC_tlt}/10.cfg"` = 9 ]] && cfg=1
     
     lbls=( 'Words' 'Sentences' 'Marked items' 'Difficult words' )
     sets=( 'words' 'sntcs' 'marks' 'wprct' 'rplay' 'audio' 'ntosd' 'loop' 'rword' )
