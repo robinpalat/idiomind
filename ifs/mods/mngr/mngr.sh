@@ -1,9 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-
 function dlg_form_1() {
-    
     cmd_play="$DS/play.sh play_word "\"${trgt}\"" ${id}"
     yad --form --title="$(gettext "Edit")" \
     --name=Idiomind --class=Idiomind \
@@ -28,9 +26,7 @@ function dlg_form_1() {
     --button="$(gettext "Close")":0 |tail -n 1 |tr '\n' ' '
 }
 
-
 function dlg_form_2() {
-    
     if [[ `wc -w <<<"${trgt}"` -lt 4 ]]; then
     t=CHK; lbl_2="$(gettext "It is a compound word")"
     else t=LBL; fi
@@ -54,9 +50,7 @@ function dlg_form_2() {
     --button="$(gettext "Close")":0 |tail -n 1 |tr '\n' ' '
 }
 
-
 function edit_list_list() {
-    
     yad --list --title="$(gettext "Edit list")" \
     --text="$(gettext "You can move any item by dragging and dropping or double click to edit it further.")" \
     --name=Idiomind --class=Idiomind \
@@ -66,14 +60,13 @@ function edit_list_list() {
     --no-headers --center \
     --width=410 --height=260 --borders=5 \
     --column="" \
+    --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Reverse List")":2 \
-    --button="gtk-apply":0 \
-    --button="$(gettext "Cancel")":1
+    --button="gtk-apply":0
+    
 }
 
-
 function progr_3() {
-
     yad --progress \
     --width 50 --height 35 --undecorated \
     --pulsate --auto-close \
