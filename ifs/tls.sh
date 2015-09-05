@@ -589,6 +589,7 @@ mkpdf() {
         cfg0="${DC_tlt}/0.cfg"
         cfg3="${DC_tlt}/3.cfg"
         cfg4="${DC_tlt}/4.cfg"
+        cntwords=`wc -l < "$cfg3"`
         nts="$(sed ':a;N;$!ba;s/\n/<br>/g' < "${DC_tlt}/info" \
         | sed 's/\&/&amp;/g')"
         if [ -f "${DM_tlt}/images/img.jpg" ]; then
@@ -721,7 +722,7 @@ mkpdf() {
                 fi
             fi
         done < <(tac "${cfg3}")
-        echo -e "<br><br><br><br>" >> "$wdir/temp.html"
+        [ ${cntwords} -gt 0 ] && echo -e "<br><br><br><br>" >> "$wdir/temp.html"
 
         n=1; trgt=""
         while [[ ${n} -le "$(wc -l < "${cfg4}")" ]]; do

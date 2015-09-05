@@ -501,7 +501,7 @@ function dlg_checklist_3() {
     --dclick-action="'/usr/share/idiomind/add.sh' 'list_words_dclik'" \
     --window-icon="$DS/images/icon.png" \
     --ellipsize=END --center --no-click --text-align=right \
-    --width=750 --height=500 --borders=5 \
+    --width=700 --height=380 --borders=5 \
     --column="$(gettext "Select")" \
     --column="$(wc -l < "${1}") $(gettext "Items found")" \
     --button=$(gettext "Edit"):2 \

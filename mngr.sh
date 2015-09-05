@@ -411,7 +411,7 @@ edit_list() {
         fi
         
         [ ${invrt_msg} = FALSE ] && msg "$(gettext "Changes will become visible only after you close and reopen the main window.  ")" info " "
-        [ ${invrt_msg} = TRUE ] && msg "$(gettext "The order of the list has been reversed. Changes will become visible only after you close and reopen the main window.  ")" info " "
+        [ ${invrt_msg} = TRUE ] && msg "$(gettext "Changes will become visible only after you close and reopen the main window.  ")" info " "
     fi
     
     rm -f "$DT/tmp1" "$DT/_tmp1" "$DT/add_lst" "$DT_r"
