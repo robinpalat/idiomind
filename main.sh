@@ -128,8 +128,8 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     --width=638 --height=570 --borders=6 \
     --column="$langt            " \
     --column="$langs            " \
-    --button="$(gettext "Install")":0 \
-    --button="gtk-close":1
+    --button="gtk-close":1 \
+    --button="$(gettext "Install")":0
     ret=$?
         
         if [ $ret -eq 1 ]; then exit
