@@ -13,48 +13,14 @@ if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
 else
     if [ -d "${DM_tlt}" ]; then
     if [ ! -d "${DC_tlt}" -o ! -e "${DC_tlt}/id.cfg" ]; then
-export c1="tname=\"${topic}\"
-langs=\"${lgsl^}\"
-langt=\"${lgtl^}\"
-authr=\"$Author\"
-cntct=\"$Mail\"
-ctgry=\"$Ctgry\"
-ilink=\"$link\"
-oname=\"${topic}\"
-datec=\"$(date +%F)\"
-dateu=\"$dateu\"
-datei=\"$datei\"
-nword=\"$words\"
-nsent=\"$sentences\"
-nimag=\"$images\"
-naudi=\"$audio\"
-nsize=\"$size\"
-level=\"$level\"
-set_1=\"\"
-set_2=\"\"
-set_3=\"\"
-set_4=\"\""
-export c2="words=\"\"
-sntcs=\"\"
-marks=\"\"
-wprct=\"\"
-nsepi=\"\"
-svepi=\"\"
-rplay=\"\"
-audio=\"TRUE\"
-ntosd=\"\"
-loop=\"0\"
-rword=\"0\""
             mkdir -p "${DM_tlt}/images"
             mkdir "${DC_tlt}"; cd "${DC_tlt}"
             c=0
             while [[ ${c} -le 10 ]]; do
-            touch "${c}.cfg"; let c++
+                touch "${c}.cfg"; let c++
             done
             rm "${DC_tlt}/7.cfg" "${DC_tlt}/9.cfg"
             echo " " > "${DC_tlt}/info"
-            echo -e "${c1}" > ./"id.cfg"
-            echo -e "${c2}" > ./"10.cfg"
             echo 1 > "8.cfg"; cd /
         fi
         echo "${topic}" > "$DC_s/4.cfg"

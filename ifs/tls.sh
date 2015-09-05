@@ -15,8 +15,7 @@ function check_format_1() {
     'relations' 'sport' 'social_networks' 'shopping' \
     'technology' 'travel' 'article' 'science' \
     'interview' 'funny' )
-    sets=( 'v' 'tname' \
-    'langs' 'langt' \
+    sets=( 'v' 'tname' 'langs' 'langt' \
     'authr' 'cntct' 'ctgry' 'ilink' 'oname' \
     'datec' 'dateu' 'datei' \
     'nword' 'nsent' 'nimag' 'naudi' 'nsize' \
@@ -70,7 +69,7 @@ function check_format_1() {
 check_index() {
     source "$DS/ifs/mods/cmns.sh"
     DC_tlt="$DM_tl/${2}/.conf"; DM_tlt="$DM_tl/${2}"
-    mkmn=0; f=0; a=0
+    topic="${2}"; mkmn=0; f=0; a=0; id=0
     [[ ${3} = 1 ]] && r=1 || r=0
     
     _check() {
@@ -86,9 +85,11 @@ check_index() {
         done
         [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "${c1}" > "${DC_tlt}/id.cfg"
         [ ! -e "${DC_tlt}/10.cfg" ] && echo -e "${c2}" > "${DC_tlt}/10.cfg"
-        [ ! -e "${DC_tlt}/9.cfg" ] && toch "${DC_tlt}/9.cfg"
-        if [[ `wc -l < "${DC_tlt}/id.cfg"` -lt 16 ]]; then
-        echo -e "${c1}" > "${DC_tlt}/id.cfg"; fi
+        [ ! -e "${DC_tlt}/9.cfg" ] && touch "${DC_tlt}/9.cfg"
+        [[ `wc -l < "${DC_tlt}/id.cfg"` = 21 ]] && id=1
+        if [[ ${id} != 1 ]]; then
+            eval c1="$(< $DS/default/id)"
+            echo -e "${c1}" > "${DC_tlt}/id.cfg"; fi
         for i in "${DM_tlt}"/*.mp3 ; do [[ ! -s "${i}" ]] && rm "${i}" ; done
         if grep 'rsntc=' "${DC_tlt}/10.cfg"; then
             rm "${DC_tlt}/10.cfg"; fi
@@ -106,7 +107,6 @@ check_index() {
     }
     
     _restore() {
-        #"$DS/ifs/tls.sh" _restfile "${2}"
         rm "${DC_tlt}/1.cfg" "${DC_tlt}/3.cfg" "${DC_tlt}/4.cfg"
         while read -r item_; do
             item="$(sed 's/},/}\n/g' <<<"${item_}")"
@@ -756,8 +756,8 @@ mkpdf() {
 
 translate_to() {
     # usage: 
-    # idiomind translate [language] // e.g. language: en.
-    # idiomind translate restore // for restore original language
+    # idiomind translate [language] / e.g. language: en.
+    # idiomind translate restore / for restore original language.
     source /usr/share/idiomind/ifs/c.conf
     source "$DS/ifs/mods/cmns.sh"
     [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "  -- error" && exit 1
