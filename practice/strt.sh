@@ -163,7 +163,7 @@ function practice_b(){
 
     ofonts() {
         while read -r item; do
-        echo "<span font_desc='Free Sans Bold 12'> $item </span>"
+        echo "<span font_desc='Free Sans 12'> $item </span>"
         done <<<"${tmp}"
         }
         
