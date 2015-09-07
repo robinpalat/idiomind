@@ -112,7 +112,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     file="${1}"
     lv=( "$(gettext "Beginner")" "$(gettext "Intermediate")" "$(gettext "Advanced")" )
     level="${lv[${level}]}"
-    itxt="<span font_desc='Droid Sans Bold 12' color='#616161'>$tname</span>\n<sup>$(gettext "Words") $nword  $(gettext "Sentences") $nsent  $(gettext "Images") $nimag \n$(gettext "Level:") $level \n$(gettext "Language:") $langt  $(gettext "Translation:") $langs</sup>"
+    itxt="<span font_desc='Droid Sans Bold 12' color='#616161'>$tname</span>\n<sup>$nword $(gettext "Words") $nsent $(gettext "Sentences") $nimag $(gettext "Images") \n$(gettext "Level:") $level \n$(gettext "Language:") $langt  $(gettext "Translation:") $langs</sup>"
     dclk="$DS/play.sh play_word"
     _lst() { while read -r item; do
         grep -oP '(?<=trgt={).*(?=},srce)' <<<"${item}"
@@ -138,7 +138,6 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             if [[ $(wc -l < "$DM_t/$langt/.1.cfg") -ge 120 ]]; then
                 msg "$(gettext "Maximum number of topics reached.")\n" info & exit
             fi
-            
             if [[ $(grep -Fxo "${tname}" "$DM_t/$langt/.1.cfg" | wc -l) -ge 1 ]]; then
                 for i in {1..50}; do
                 chck=$(grep -Fxo "${tname} ($i)" "$DM_t/$langt/.1.cfg")
@@ -149,7 +148,6 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
   
                 if [ $? != 0 ]; then exit 1; fi
             fi
-
             if [ ! -d "$DM_t/$langt" ]; then
                 mkdir "$DM_t/$langt"
                 mkdir -p "$DM_t/$langt/.share/images"; fi
