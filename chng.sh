@@ -70,18 +70,23 @@ if [[ ${1} = 0 ]]; then
         fi
     }
     if [ ${w} = TRUE -a ${s} = TRUE ]; then
+        echo "${tpc}" > "$DT/.p_"
         while read item; do getitem; _play
         done < <(tac "${DC_tlt}/1.cfg"); fi
     if [ ${w} = TRUE -a ${s} = FALSE ]; then
+        echo "${tpc}" > "$DT/.p_"
         while read item; do getitem; _play
         done < <(grep -Fxvf "${DC_tlt}/4.cfg" "${DC_tlt}/1.cfg" |tac); fi
     if [ ${w} = FALSE -a ${s} = TRUE ]; then
+        echo "${tpc}" > "$DT/.p_"
         while read item; do getitem; _play
         done < <(grep -Fxvf "${DC_tlt}/3.cfg" "${DC_tlt}/1.cfg" |tac); fi
     if [ ${m} = TRUE ]; then
+        echo "${tpc}" > "$DT/.p_"
         while read item; do getitem; _play
         done < "${DC_tlt}/6.cfg"; fi
     if [ ${p} = TRUE ]; then
+        echo "${tpc}" > "$DT/.p_"
         while read item; do getitem; _play
         done < <(grep -Fxv "${DC_tlt}/4.cfg" "${DC_tlt}/practice/log.3"); fi
     include "$DS/ifs/mods/chng"

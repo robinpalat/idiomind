@@ -87,22 +87,17 @@ play_list() {
             unset items
         done
     }
-
-    title="$(gettext "Play")"
     if grep -E 'vivid|wily' <<<"`lsb_release -a`" >/dev/null 2>&1; then
     btn1="gtk-media-play:0"; else
     btn1="$(gettext "Play"):0"; fi
-    
     if [ ! -f "$DT/.p_" ]; then
         btn2="--center"
+        title="$(gettext "Play")"
     else
         tpp="$(sed -n 1p "$DT/.p_")"
+        title="$(gettext "Currently playing:") ${tpp}"
         btn2="--button=gtk-media-stop:2"
-        if [ -n "${tpp}" ] && [ ! -f "$DT/list.m3u" ]; then
-        [ "${tpp}" != "${tpc}" ] && title="$(gettext "Playing:") ${tpp}"
-        fi
     fi
-    [ ${mode} -gt 1 ] && title="$(gettext "Play") - ${tpc}"
     set="$(echo "${iteml[${rword}]}")"
     unset iteml[${rword}]
     lst=`for i in "${iteml[@]}"; do echo -n "!$i"; done`
@@ -130,7 +125,7 @@ play_list() {
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-all \
     --window-icon="$DS/images/icon.png" \
-    --align=right --fixed --center --on-top \
+    --align=right --center --on-top \
     --tab-pos=right --tab-borders=0 \
     --tab=" $(gettext "Lists") " \
     --tab="$(gettext "Options")" \
