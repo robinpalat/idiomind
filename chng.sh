@@ -144,7 +144,6 @@ elif [[ ${1} != 0 ]]; then
     --column=img:IMG \
     --column=File:TEXT \
     --button=gtk-new:3 \
-    --button="$(gettext "Default")":5 \
     --button="$(gettext "Apply")":2 \
     --button="gtk-close":1)
     ret=$?
@@ -155,9 +154,6 @@ elif [[ ${1} != 0 ]]; then
         "$DS/default/tpc.sh" "$tpc" 1 &
     elif [ $ret -eq 0 ]; then
         "$DS/default/tpc.sh" "$tpc" &
-    elif [ $ret -eq 5 ]; then
-        "$DS/default/tpc.sh" "$tpc" &
-    [ -n "${tpc}" ] && echo "${tpc}" > "$DM_tl"/.5.cfg
     fi
     exit
 fi

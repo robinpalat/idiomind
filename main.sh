@@ -92,13 +92,6 @@ function new_session() {
         fi
     fi
     done < "$DM_tl/.1.cfg"
-    
-    if [ -e "$DM_tl/.5.cfg" ]; then
-    tpd="$(< "$DM_tl/.5.cfg")"
-    if grep -Fxq "${tpd}" "$DM_tl/.1.cfg"; then
-    touch "$DM_tl/${tpd}"; "$DS/default/tpc.sh" "${tpd}" 2; fi
-    fi
-
     rm -f "$DT/ps_lk"
     "$DS/mngr.sh" mkmn &
 }
