@@ -20,7 +20,6 @@ mkmn() {
         else stts=$(sed -n 1p "$DM_tl/${tpc}/.conf/8.cfg"); fi
         echo -e "/usr/share/idiomind/images/img.${stts}.png\n${tpc}" >> "$DM_tl/.0.cfg"
     done
-
     tail -n+101 < "$DM_tl/.1.cfg" | while read -r tpc; do
         unset stts
         [ ! -d "$DM_tl/${tpc}/.conf" ] && mkdir -p "$DM_tl/${tpc}/.conf"
@@ -133,11 +132,10 @@ edit_item() {
     [ -z "${id}" ] && id=""
     query="$(sed "s/'/ /g" <<<"${trgt}")"
     mod=0; col=0; prcess_tmp=0
-   
+    
     cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"""
     cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"""
     cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"" 1 ${c}"
-    
     f="$(ls "$DC_d"/*."Link.Search definition".* |head -n1)"
     if [ -z "$f" ]; then "$DS_a/Dics/cnfg.sh" 3
     f="$(ls "$DC_d"/*."Link.Search definition".* |head -n1)"; fi
@@ -181,12 +179,11 @@ edit_item() {
                 audf_mod="$(cut -d "|" -f8 <<<"${edit_dlg}")"
                 grmr_mod="${grmr}"
                 wrds_mod="${wrds}"
-                
                 [ "${type_mod}" = TRUE ] && type_mod=1
                 [ "${type_mod}" = FALSE ] && type_mod=2
                 [ -z "${type_mod}" ] && type_mod=2
             fi
- 
+            
             if [ "${trgt_mod}" != "${trgt}" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
             index edit "${trgt}" "${tpc}" "${trgt_mod}"
             sed -i "${edit_pos}s|trgt={${trgt}}|trgt={${trgt_mod}}|;
@@ -194,16 +191,13 @@ edit_item() {
             ${edit_pos}s|srce={${srce}}|srce={$temp}|g" "${DC_tlt}/0.cfg"
             ind=1; col=1; mod=1
             fi
-            
             if [ "${mark}" != "${mark_mod}" ]; then
                 if [ "${mark_mod}" = "TRUE" ]; then
                 mmod=1; echo "${trgt}" >> "${DC_tlt}/6.cfg"; else
                 sed -i "/${trgt}/d" "${DC_tlt}/6.cfg"; fi
                 col=1; mod=1
             fi
-            
             [[ "${prcess_tmp}" = 1 ]] && srce="$temp"
-
             [ "${type}" != "${type_mod}" ] && mod=1
             [ "${srce}" != "${srce_mod}" ] && mod=1
             [ "${exmp}" != "${exmp_mod}" ] && mod=1
@@ -232,7 +226,6 @@ edit_item() {
                         grmr="${trgt_mod}"
                     fi
                 fi
-            
                 id_mod="$(set_name_file ${type_mod} "${trgt_mod}" "${srce_mod}" \
                 "${exmp_mod}" "${defn_mod}" "${note_mod}" "${wrds_mod}" "${grmr_mod}")"
 
@@ -246,13 +239,11 @@ edit_item() {
                     elif [ ${type_mod} = 1 ]; then
                     [ -e "${DM_tlt}/$id.mp3" ] && mv -f "${DM_tlt}/$id.mp3" "$DM_tl/${tpc_mod}/$id_mod.mp3"; fi
                     fi
-                    
                     "$DS/mngr.sh" delete_item_ok "${tpc}" "${trgt}"
                     index ${type_mod} "${tpc_mod}" "${trgt_mod}" "${srce_mod}" \
                     "${exmp_mod}" "${defn_mod}" "${wrds_mod}" "${grmr_mod}" "${id_mod}"
                     unset type trgt srce exmp defn note wrds grmr mark id
-                    
-                    
+
                 elif [ "${tpc}" = "${tpc_mod}" ]; then
                     cfg0="${DC_tlt}/0.cfg"
                     pos=${edit_pos}
@@ -276,13 +267,10 @@ edit_item() {
                     elif [ ${type_mod} = 1 ]; then
                     [ -e "${DM_tlt}/$id.mp3" ] && mv -f "${DM_tlt}/$id.mp3" "${DM_tlt}/$id_mod.mp3"; fi
                     fi
-                
                 fi
                 cleanups "$DT_r"
             ) &
-            
             fi
-
             include "$DS/ifs/mods/mngr/a"
             [ -d "$DT/$c" ] && "$DS/add.sh" list_words_edit "${wrds_mod}" 2 ${c} "${trgt_mod}" &
             [ ${type} != ${type_mod} -a ${type_mod} = 1 ] && ( img_word "${trgt}" "${srce}" ) &
@@ -293,25 +281,20 @@ edit_item() {
         else
             "$DS/vwr.sh" "${lists}" "${trgt}" ${item_pos} &
         fi
-       
     exit
-    
 } >/dev/null 2>&1
 
 edit_list() {
     [ -e "$DT/add_lst" -o -e "$DT/el_lk" ] && exit
     [ $((inx3+inx4)) -le 1 ] && exit
-    
     if [ -e "$DC_s/elist_first_run" ]; then 
     "$DS/ifs/tls.sh" first_run edit_list & fi
-    
     [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ] && c=c || c=w
     direc="$DM_tl/${2}/.conf"
     [ ! -s "${direc}/0.cfg" ] && exit 1
     lgt=$(lnglss $lgtl)
     lgs=$(lnglss $lgsl)
     > "$DT/_tmp1"
-    
     tac "${direc}/0.cfg" | while read -r item_; do
         item="$(sed 's/},/}\n/g' <<<"${item_}")"
         trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
@@ -322,13 +305,11 @@ edit_list() {
     ret=$?
     
     if [ $ret -eq 0 -o $ret -eq 2 ]; then
-    
         [ $ret = 0 ] && cmd=tac && invrt_msg=FALSE
         [ $ret = 2 ] && cmd=cat && invrt_msg=TRUE
         include "$DS/ifs/mods/add"
         n=1; f_lock "$DT/el_lk"
         rm "${direc}/1.cfg" "${direc}/3.cfg" "${direc}/4.cfg"
-        
         $cmd "$DT/tmp1" | while read -r trgt; do
             if grep -F -m 1 "trgt={${trgt}}" "${direc}/0.cfg"; then
                 item="$(grep -F -m 1 "trgt={${trgt}}" "${direc}/0.cfg" |sed 's/},/}\n/g')"
@@ -359,25 +340,21 @@ edit_list() {
 
         touch "${direc}/3.cfg" "${direc}/4.cfg"
         mv -f "$DT/tmp0" "${direc}/0.cfg"
-        
         if [ -d "$DM_tl/${2}" -a `wc -l < "${direc}/0.cfg"` -ge 1 ]; then
         while read -r r_item; do
            id=`basename "${r_item}" |sed "s/\(.*\).\{4\}/\1/" |tr -d '.'`
            if ! grep "${id}" "${direc}/0.cfg"; then
            [ -f "${r_item}" ] && rm "${r_item}"; fi
         done < <(find "$DM_tl/${2}"/*.mp3); fi
-
         if [[ "$(cat "${direc}/1.cfg" "${direc}/2.cfg" |wc -l)" -lt 1 ]]; then
         > "${direc}/0.cfg"; fi
         "$DS/ifs/tls.sh" colorize
         rm -f "$DT/el_lk"
 
         if [ -f "$DT/add_lst" ]; then
-        
             DT_r=$(mktemp -d "$DT/XXXX")
             temp="$(gettext "Processing")..."
             internet
-        
             while read -r trgt; do
                 trgt_mod="${trgt}"
                 pos=`grep -Fon -m 1 "trgt={${trgt}}" "${direc}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
@@ -385,7 +362,6 @@ edit_list() {
                 type=`grep -oP '(?<=type={).*(?=})' <<<"${item}"`
                 trgt=`grep -oP '(?<=trgt={).*(?=})' <<<"${item}"`
                 srce="$temp"
-                
                 if [ ${type} = 1 ]; then
                     srce_mod="$(clean_1 "$(translate "${trgt}" $lgt $lgs)")"
                     audio="${trgt,,}"
@@ -406,17 +382,13 @@ edit_list() {
                 ${pos}s|wrds={}|wrds={$wrds_mod}|;
                 ${pos}s|grmr={$trgt}|grmr={$grmr_mod}|;
                 ${pos}s|id=\[\]|id=\[$id_mod\]|g" "${direc}/0.cfg"
-
             done < "$DT/add_lst"
         fi
-        
         [ ${invrt_msg} = FALSE ] && msg "$(gettext "Changes will become visible only after you close and reopen the main window.  ")" info " "
         [ ${invrt_msg} = TRUE ] && msg "$(gettext "Changes will become visible only after you close and reopen the main window.  ")" info " "
     fi
-    
     rm -f "$DT/tmp1" "$DT/_tmp1" "$DT/add_lst" "$DT_r"
     exit 1
-    
 } >/dev/null 2>&1
 
 
@@ -492,7 +464,6 @@ rename_topic() {
     info "$(gettext "Rename")" & exit 1; fi
 
     if [ ${chck} -ge 1 ]; then
-    
         for i in {1..50}; do
         chck=$(grep -Fxo "${jlb} ($i)" "$DM_t/$language_target/.1.cfg")
         [ -z "${chck}" ] && break; done
@@ -502,7 +473,6 @@ rename_topic() {
         ret="$?"
         if [ ${ret} -eq 1 ]; then exit 1; fi
     fi
-    
     if [ -n "${jlb}" ]; then
         f_lock "$DT/rm_lk"
         mv -f "$DM_tl/${tpc}" "$DM_tl/${jlb}"
@@ -581,10 +551,8 @@ mark_to_learn_topic() {
     kill -9 $(pgrep -f "yad --form ") &
     kill -9 $(pgrep -f "yad --notebook ") & fi
 
-    echo -e "lrnt.${tpc}.lrnt" >> "$DC_s/log"
     touch "${DM_tlt}"
     "$DS/mngr.sh" mkmn &
-
     [[ ${3} = 1 ]] && idiomind topic &
 }
 
@@ -602,11 +570,12 @@ mark_as_learned_topic() {
     stts=$(sed -n 1p "${DC_tlt}/8.cfg")
     ! [[ ${stts} =~ ${numer} ]] && stts=1
 
-    if [ ! -f "${DC_tlt}/7.cfg" ]; then
-        if [ -f "${DC_tlt}/9.cfg" ]; then
+    if [ ! -e "${DC_tlt}/7.cfg" ]; then
+        [ ! -e "${DC_tlt}/9.cfg" ] && touch "${DC_tlt}/9.cfg"
+        calculate_review "${tpc}"
+        steps=$(egrep -cv '#|^$' < "${DC_tlt}/9.cfg")
         
-            calculate_review "${tpc}"
-            steps=$(egrep -cv '#|^$' < "${DC_tlt}/9.cfg")
+        if [ -s "${DC_tlt}/9.cfg" ]; then
             ! [[ ${steps} =~ ${numer} ]] && steps=1
             
             if [ ${steps} -eq 4 ]; then
@@ -659,9 +628,7 @@ mark_as_learned_topic() {
     kill -9 $(pgrep -f "yad --form ") &
     kill -9 $(pgrep -f "yad --notebook ") & fi
     
-    echo -e "lrdt.$tpc.lrdt" >> "$DC_s/log"
     "$DS/mngr.sh" mkmn &
-
     [[ ${3} = 1 ]] && idiomind topic &
     exit 1
 }

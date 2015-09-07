@@ -138,9 +138,7 @@ play_list() {
     "$btn2" --button="$btn1"
     ret=$?
 
-        tab1=$(< $tab1); tab2=$(< $tab2)
-        rm -f "$DT"/*.p
-        
+        tab1=$(< $tab1); tab2=$(< $tab2); rm -f "$DT"/*.p
         f=1; n=0; count=0
         for item in "${sets[@]:0:4}"; do
             val=$(sed -n $((${n}+1))p <<<"${tab1}" |cut -d "|" -f3)

@@ -13,8 +13,8 @@ function check_format_1() {
     'documentary' 'in_the_city' 'movies' 'internet' \
     'music' 'nature' 'news' 'office' \
     'relations' 'sport' 'social_networks' 'shopping' \
-    'technology' 'travel' 'article' 'science' \
-    'interview' 'funny' )
+    'technology' 'travel' 'article' \
+    'science' 'interview' 'funny' )
     sets=( 'v' 'tname' 'langs' 'langt' \
     'authr' 'cntct' 'ctgry' 'ilink' 'oname' \
     'datec' 'dateu' 'datei' \
@@ -444,7 +444,7 @@ check_updates() {
     internet
     nver=`wget --user-agent 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) \
     Gecko/20100101 Firefox/31.0' -qO - http://idiomind.sourceforge.net/doc/release |sed -n 1p`
-    cver=`echo "$(idiomind -v)"`
+    cver=`idiomind -v`
     pkg='https://sourceforge.net/projects/idiomind/files/idiomind.deb/download'
     echo "$(date +%d)" > "$DC_s/9.cfg"
     if [ ${#nver} -lt 9 ] && [ ${#cver} -lt 9 ] \
@@ -475,7 +475,7 @@ a_check_updates() {
         echo "$d2" > "$DC_s/9.cfg"
         nver=`wget --user-agent 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) \
         Gecko/20100101 Firefox/31.0' -qO - http://idiomind.sourceforge.net/doc/release |sed -n 1p`
-        cver=`echo "$(idiomind -v)"`
+        cver=`idiomind -v`
         pkg='https://sourceforge.net/projects/idiomind/files/idiomind.deb/download'
         if [ ${#nver} -lt 9 ] && [ ${#cver} -lt 9 ] \
         && [ ${#nver} -ge 3 ] && [ ${#cver} -ge 3 ] \
@@ -504,7 +504,7 @@ first_run() {
         if [ $? = 1 ]; then rm -f "${file}" "${file}".p; fi
     }
     source /usr/share/idiomind/ifs/c.conf
-    NOTE1="$(gettext "<b>How to add notes?</b>\nIn the upper text field, enter text in the language that you are learning.  In the field below, enter text in the source language.  To add an image to a note use the screen clipping.")\n"
+    NOTE1="$(gettext "<b>How to add notes?</b>\nIn the upper text field, enter text in language that you are learning. In the field below, enter text in the source language. To add an image to a note use the screen clipping.")\n"
     NOTE2="$(gettext "NOTE: If you change the text of an item here listed, then its audio file can be overwritten by another new file. To avoid this, you can edit it individually through its edit dialog.")"
     NOTE3="$(gettext "To start adding notes you need to have a topic.\nCreate one using the button below. ")"
 
@@ -905,7 +905,6 @@ img3 = os.environ['img3']
 items = [line.strip() for line in open(cfg1)]
 marks = [line.strip() for line in open(cfg6)]
 f = open(cfg5, "w")
-
 n = 0
 while n < len(items):
     item = items[n]

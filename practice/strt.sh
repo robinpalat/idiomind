@@ -86,10 +86,10 @@ function practice_a() {
         yad --form --title="$(gettext "Practice")" \
         --skip-taskbar --text-align=center --center --on-top \
         --undecorated --buttons-layout=spread --align=center \
-        --width=360 --height=260 --borders=10 \
+        --width=380 --height=270 --borders=8 \
         --field="\n$cuestion":lbl \
         --button="$(gettext "Exit")":1 \
-        --button="    $(gettext "Continue") >>    ":0
+        --button="  $(gettext "Continue") >>  !$img_cont":0
     }
 
     answer() {
@@ -97,12 +97,12 @@ function practice_a() {
         --selectable-labels \
         --skip-taskbar --text-align=center --center --on-top \
         --undecorated --buttons-layout=spread --align=center \
-        --width=360 --height=260 --borders=10 \
+        --width=380 --height=270 --borders=8 \
         --field="$answer1":lbl \
         --field="":lbl \
         --field="$answer2":lbl \
-        --button="  $(gettext "I did not know it")  ":3 \
-        --button="  $(gettext "I Knew it")  ":2
+        --button="$(gettext "I did not know it")!$img_no":3 \
+        --button="$(gettext "I Knew it")!$img_yes":2
     }
 
     while read trgt; do
@@ -174,13 +174,13 @@ function practice_b(){
         --skip-taskbar --text-align=center --center --on-top \
         --buttons-layout=edge --undecorated \
         --no-headers \
-        --width=380 --height=340 --borders=12 \
+        --width=390 --height=315 --borders=8 \
         --column=Option \
         --button="$(gettext "Exit")":1 \
-        --button="$(gettext "OK")":0)
+        --button="   $(gettext "Continue")   !$img_cont":0)
     }
 
-    P=5; s=11
+    P=4; s=11
     while read trgt; do
     
         fonts; mchoise
@@ -250,11 +250,11 @@ function practice_c() {
         --text="$lcuestion" \
         --skip-taskbar --text-align=center --center --on-top \
         --buttons-layout=edge --image-on-top --undecorated \
-        --width=350 --height=210 --borders=10 \
-        --field="$(gettext "Pronounce")":BTN "$cmd_play" \
+        --width=370 --height=230 --borders=10 \
+        --field="!$DS/images/listen.png":BTN "$cmd_play" \
         --button="$(gettext "Exit")":1 \
-        --button="  $(gettext "No")  ":3 \
-        --button="  $(gettext "Yes")  ":2
+        --button=" $(gettext "No") !$img_no":3 \
+        --button=" $(gettext "Yes") !$img_yes":2
         }
 
     p=1
@@ -304,7 +304,7 @@ function practice_d() {
         img="$DM_tls/images/${trgt,,}-0.jpg"
         [ ${#trgt} -gt 10 -o ${#srce} -gt 10 ] && trgt_f_c=14 || trgt_f_c=15
         [ ! -f "$img" ] && img="$DS/practice/images/img_2.jpg"
-        cuest="<span font_desc='Free Sans Bold ${trgt_f_c}' color='#777777'> ${srce} </span>"
+        cuest="<span font_desc='Free Sans Bold ${trgt_f_c}' color='#565656'> ${srce} </span>"
         aswer="<span font_desc='Free Sans Bold ${trgt_f_c}'>${trgt}</span>"
     }
 
@@ -316,7 +316,7 @@ function practice_d() {
         --width=418 --height=370 --borders=5 \
         --field="$cuest":lbl \
         --button="$(gettext "Exit")":1 \
-        --button=" $(gettext "Continue") >> ":0
+        --button=" $(gettext "Continue") >>!$img_cont":0
     }
 
     answer() {
@@ -327,8 +327,8 @@ function practice_d() {
         --image-on-top --undecorated --buttons-layout=spread \
         --width=418 --height=370 --borders=5 \
         --field="$aswer":lbl \
-        --button="  $(gettext "I did not know it")  ":3 \
-        --button="  $(gettext "I Knew it")  ":2
+        --button="$(gettext "I did not know it")!$img_no":3 \
+        --button="$(gettext "I Knew it")!$img_yes":2
     }
     
     while read -r trgt; do
@@ -402,9 +402,9 @@ function practice_e() {
         --text-align=left --align=left --image-on-top \
         --width=510 --height=220 --borders=10 \
         --field="" "" \
-        --field="$(gettext "Listen"):BTN" "$cmd_play" \
+        --field="!$DS/images/listen.png:BTN" "$cmd_play" \
         --button="$(gettext "Exit")":1 \
-        --button="  $(gettext "Check")  ":0)
+        --button="  $(gettext "Check")  !"$img_cont:0)
         }
         
     check() {
@@ -420,7 +420,7 @@ function practice_e() {
         --width=510 --height=250 --borders=10 \
         --field="":lbl \
         --field="<span font_desc='Free Sans 10'>$OK\n\n$prc $hits</span>":lbl \
-        --button="$(gettext "Continue")":2
+        --button="$(gettext "Continue")!$img_cont":2
         }
         
     get_text() {
@@ -642,6 +642,9 @@ function practices() {
     [ -f "$dir/${practice}.2" ] && rm "$dir/${practice}.2"
     [ -f "$dir/${practice}.3" ] && rm "$dir/${practice}.3"
     all=$(egrep -cv '#|^$' ./${practice}.0)
+    img_cont="$DS/images/cont.png"
+    img_no="$DS/images/no.png"
+    img_yes="$DS/images/yes.png"
     easy=0
     hard=0
     ling=0

@@ -171,8 +171,9 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
                     if [[ ${type} = 1 ]]; then
                         echo "${trgt}" >> "${DC_tlt}/3.cfg"
                     else echo "${trgt}" >> "${DC_tlt}/4.cfg"; fi
-                        echo "${trgt}" >> "${DC_tlt}/1.cfg"
-                        echo "${item_}" >> "${DC_tlt}/0.cfg"; fi    
+                    echo "${trgt}" >> "${DC_tlt}/1.cfg"
+                    echo "${item_}" >> "${DC_tlt}/0.cfg"
+                fi    
             done < <(head -n -1 < "${file}")
 
             "$DS/ifs/tls.sh" colorize
@@ -245,7 +246,7 @@ function topic() {
         
             ntpc=$(cut -d '|' -f 1 < "${cnf4}")
             if [ "${tpc}" != "${ntpc}" ] && [ -n "$ntpc" ]; then
-            if [ "${tpc}" != "$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")" ]]; then
+            if [[ "${tpc}" != "$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")" ]]; then
             msg "$(gettext "Sorry, this topic is currently not active.")\n" info & exit; fi
             "$DS/mngr.sh" rename_topic "${ntpc}" & exit; fi
         }
@@ -343,11 +344,11 @@ panel() {
         y=$(($(sed -n 3p "$DC_s/10.cfg")/2)); fi
     if ! [[ ${x} =~ $numer ]]; then x=100; y=100; fi
 
-    if [ "$(grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg")" = TRUE ] \
+    if [[ `grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg"` = TRUE ]] \
     && [ ! -e /tmp/.clipw ]; then "$DS/ifs/mods/clipw.sh" & fi
 
     _home=gtk-home
-    if [[ ${intrf} = fr || ${intrf} = pt ]]; then _home=Home; fi
+    if [[ ${intrf} = fr || ${intrf} = pt ]]; then _home='Home!gtk-home'; fi
     yad --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
     --always-print-result \

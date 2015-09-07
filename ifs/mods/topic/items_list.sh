@@ -15,7 +15,7 @@ function word_view() {
     --width=630 --height=390 --borders=20 \
     --field="":lbl "${field_exmp}" "${field_defn}" "${field_note}" \
     --button=gtk-edit:4 \
-    --button="$(gettext "Listen")":"$cmd_listen" \
+    --button="!$DS/images/listen.png":"$cmd_listen" \
     --button=gtk-go-down:2 \
     --button=gtk-go-up:3
     
@@ -36,7 +36,7 @@ function sentence_view() {
     --column="":TEXT \
     --column="":TEXT \
     --button=gtk-edit:4 \
-    --button="$(gettext "Listen")":"$cmd_listen" \
+    --button="!$DS/images/listen.png":"$cmd_listen" \
     --button=gtk-go-down:2 \
     --button=gtk-go-up:3
     
@@ -99,7 +99,7 @@ function notebook_1() {
     --text="$label_info1\n" \
     --scroll --borders=10 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
-    --field="$(gettext "Mark as learnt")":FBTN "$cmd_mark" \
+    --field=" $(gettext "Mark as learnt") ":FBTN "$cmd_mark" \
     --field="$(gettext "Auto select items")\t\t\t\t\t\t\t":CHK "$auto_mrk" \
     --field="$label_info2\n":LBL " " \
     --field="$(gettext "Files")":FBTN "$cmd_attchs" \
@@ -146,7 +146,7 @@ function notebook_2() {
     --text="$label_info1\n" \
     --scroll --borders=10 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
-    --field="   $(gettext "Review")   ":FBTN "$cmd_mark" \
+    --field=" $(gettext "Review") ":FBTN "$cmd_mark" \
     --field="\t\t\t\t\t\t\t\t\t\t\t\t\t\t":LBL "_" \
     --field="$label_info2\n":LBL " " \
     --field="$(gettext "Files")":FBTN "$cmd_attchs" \

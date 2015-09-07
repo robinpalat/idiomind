@@ -82,7 +82,6 @@ on_play2() {
 }
 
 on_play3() {
-    
     if ps -A | pgrep -f "play"; then killall play & fi
     if ps -A | pgrep -f "mplayer"; then killall mplayer & fi
     [ -f "$DT/list.m3u" ] && rm -f "$DT/list.m3u"
@@ -90,7 +89,6 @@ on_play3() {
 }
 
 on_practice() {
-    
     dir="/usr/share/idiomind/practice"
     if ps -A | pgrep -f "$dir/prct.sh"; then killall "$dir/prct.sh" & fi
     if ps -A | pgrep -f play; then  killall play & fi

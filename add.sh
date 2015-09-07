@@ -11,7 +11,6 @@ trans=$(grep -o trans=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
 ttrgt=$(grep -o ttrgt=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
 
 new_topic() {
-    
     if [[ $(wc -l < "$DM_tl/.1.cfg") -ge 120 ]]; then
     msg "$(gettext "Maximum number of topics reached.")" info Info & exit 1; fi
 
@@ -44,7 +43,6 @@ new_topic() {
 }
 
 new_items() {
-
     if [ ! -d "$DT" ]; then new_session; fi
     [ ! "$DT/tpe" ] && echo "${tpc}" > "$DT/tpe"
 
@@ -153,7 +151,6 @@ new_items() {
 }
 
 new_sentence() {
-
     DT_r="$3"
     db="$DS/default/dicts/$lgt"
     DM_tlt="$DM_tl/${tpe}"
@@ -163,7 +160,6 @@ new_sentence() {
     check_s "${tpe}"
     
     if [ "$trans" = TRUE ]; then
-    
         internet
         cd "$DT_r"
         if [ "$ttrgt" = TRUE ]; then
@@ -222,7 +218,6 @@ new_sentence() {
 }
 
 new_word() {
-
     trgt="$(clean_1 "${2}")"
     srce="$(clean_0 "${4}")"
     DT_r="$3"; cd "$DT_r"
@@ -287,10 +282,8 @@ new_word() {
 }
 
 list_words_edit() {
-
     c="${4}"
     if [[ ${3} = 1 ]]; then
-
         tpe="${tpc}"
         check_s "${tpe}"
         info=" -$((200-$(wc -l < "${DC_tlt}/0.cfg")))"
@@ -306,13 +299,11 @@ list_words_edit() {
             fi
         
     elif [[ ${3} = 2 ]]; then
-    
         exmp_="${5}"
         DT_r="$DT/$c"; cd "$DT_r"
         
         n=1
         while read -r trgt; do
-
             if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
                 echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> ./logw
             else
@@ -345,7 +336,6 @@ list_words_edit() {
 }
 
 list_words_sentence() {
-
     DM_tlt="$DM_tl/${4}"
     DC_tlt="$DM_tl/${4}/.conf"
     exmp_="${3}"
@@ -403,7 +393,6 @@ list_words_sentence() {
 }
 
 list_words_dclik() {
-
     tpe="$(sed -n 2p "$DT/.n_s_pr")"
     DM_tlt="$DM_tl/${tpe}"
     DC_tlt="$DM_tl/${tpe}/.conf"
@@ -510,14 +499,10 @@ process() {
         }
         
     if [ ${#@} -lt 4 ]; then
-    
         while read l; do
-        
             if [ $(wc -c <<<"${l}") -gt 140 ]; then
                 if grep -o -E '\,|\;' <<<"${l}"; then
-
                     while read -r split; do
-
                         if [ $(wc -c <<<"${split}") -le 140 ]; then
                             lenght "${split}"
                         else
@@ -525,7 +510,6 @@ process() {
                                 lenght "${split2}"
                             done < <(tr -s ';' '\n' <<<"${split}") #TODO
                         fi
-                        
                     done < <(sed 's/,/\n/g' <<<"${l}") #TODO
                     # s=$(grep -o "," <<< "$var" | wc -l)
                     # t=`for i in "${iteml[@]}"; do echo -n "!$i"; done`
@@ -671,7 +655,6 @@ process() {
             prg=$((100*n/lns-1))
             echo "$prg"
             echo "# ${trgt:0:35}... " ;
-            
             let n++
         done < <(head -200 < "$DT_r/slts")
         
