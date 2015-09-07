@@ -872,7 +872,9 @@ colorize() {
     [ ! -e "${DC_tlt}/1.cfg" ] && touch "${DC_tlt}/1.cfg"
     [ ! -e "${DC_tlt}/6.cfg" ] && touch "${DC_tlt}/6.cfg"
     [ ! -e "${DC_tlt}/9.cfg" ] && touch "${DC_tlt}/9.cfg"
-    if [[ `egrep -cv '#|^$' < "${DC_tlt}/9.cfg"` -ge 4 ]]; then
+    e="$(grep -oP '(?<=set_1=\").*(?=\")' "${DC_tlt}/id.cfg")"
+    if [[ `egrep -cv '#|^$' < "${DC_tlt}/9.cfg"` -ge 4 ]] \
+    && [[ `grep -oP '(?<=set_1=\").*(?=\")' "${DC_tlt}/id.cfg"` = TRUE ]]; then
     chk=TRUE; else chk=FALSE; fi
     img1='/usr/share/idiomind/images/1.png'
     img2='/usr/share/idiomind/images/2.png'

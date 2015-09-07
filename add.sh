@@ -508,11 +508,9 @@ process() {
                         else
                             while read -r split2; do
                                 lenght "${split2}"
-                            done < <(tr -s ';' '\n' <<<"${split}") #TODO
+                            done < <(sed 's/;/ \n/g' <<<"${split}") #TODO
                         fi
-                    done < <(sed 's/,/\n/g' <<<"${l}") #TODO
-                    # s=$(grep -o "," <<< "$var" | wc -l)
-                    # t=`for i in "${iteml[@]}"; do echo -n "!$i"; done`
+                    done < <(sed 's/,/ \n/g' <<<"${l}") #TODO
                 else
                     lenght "${l}"
                 fi
@@ -524,7 +522,6 @@ process() {
     else mv "$DT_r/sntsls_" "$DT_r/sntsls"; fi
     
     sed -i '/^$/d' "$DT_r/sntsls"
-    #sed -i 's/^\(.\)/\U\1/' "$DT_r/sntsls"
     chk=`tr -s '\n' ' ' < "$DT_r/sntsls" |wc -c`
     tpe="$(sed -n 2p "$lckpr")"
     info="-$((200-ns))"
@@ -579,7 +576,6 @@ process() {
         echo "# $(gettext "Processing")... " ;
         internet
         [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ] && c=c || c=w
-        
         lns="$(cat "$DT_r/slts" "$DT_r/wrds" |sed '/^$/d' |wc -l)"
         
         n=1
@@ -611,7 +607,6 @@ process() {
                         if [ -f "${DM_tls}/${audio}.mp3" ]; then
                         cp "${DM_tls}/${audio}.mp3" "${DM_tlt}/$id.mp3"; fi
                         fi
-                        
                         ( img_word "${trgt}" "${srce}" ) &
                         echo "${trgt}" >> "$DT_r/addw"
                     else
@@ -634,7 +629,6 @@ process() {
                         mksure "${trgt}" "${srce}" "${wrds}" "${grmr}"
                         
                         if [ $? = 0 ]; then
-
                             index 2 "${tpe}" "${trgt}" "${srce}" "" "" "${wrds}" "${grmr}" "${id}"
                             if [ "$trans" = TRUE ]; then
                             tts "${trgt}" $lgt "$DT_r" "${DM_tlt}/$id.mp3"
@@ -659,7 +653,6 @@ process() {
         done < <(head -200 < "$DT_r/slts")
         
         if [ -n "$(< "$DT_r/wrds")" ]; then
-        
             n=1
             while read -r trgt; do
                 exmp_=$(sed -n ${n}p "$DT_r/wrdsls" |sed 's/\[ \.\.\. \]//g')
@@ -701,22 +694,22 @@ process() {
         wadds=" $(($(wc -l < "$DT_r/addw")-$(sed '/^$/d' < "$DT_r/wlog" | wc -l)))"
         W=" $(gettext "words")"
         if [[ ${wadds} = 1 ]]; then
-        W=" $(gettext "word")"; fi
+            W=" $(gettext "word")"; fi
         sadds=" $(($( wc -l < "$DT_r/adds")-$(sed '/^$/d' < "$DT_r/slog" | wc -l)))"
         S=" $(gettext "sentences")"
         if [[ ${sadds} = 1 ]]; then
-        S=" $(gettext "sentence")"; fi
+            S=" $(gettext "sentence")"; fi
         log=$(cat "$DT_r/slog" "$DT_r/wlog")
         adds=$(cat "$DT_r/adds" "$DT_r/addw" |sed '/^$/d' | wc -l)
         
         if [[ ${adds} -ge 1 ]]; then
-        notify-send -i idiomind "${tpe}" \
-        "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
-        echo -e "adi.$adds.adi" >> "$DC_s/log"
+            notify-send -i idiomind "${tpe}" \
+            "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
+            echo -e "adi.$adds.adi" >> "$DC_s/log"
         fi
         
         if [ -n "$log" ]; then sleep 1
-        dlg_text_info_3 "$(gettext "Some items could not be added to your list"):" "$log" >/dev/null 2>&1
+            dlg_text_info_3 "$(gettext "Some items could not be added to your list"):" "$log" >/dev/null 2>&1
         fi
         cleanups "$DT_r" "$lckpr"
     else

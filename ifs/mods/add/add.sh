@@ -265,11 +265,11 @@ function clean_8() {
     | sed 's/\&quot;/\"/g' | sed "s/\&#039;/\'/g" \
     | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
     | sed 's/ *<[^>]\+> */ /; s/[<>£§]//; s/\&amp;/\&/g' \
-    | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. //g' \
-    | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
-    | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
-    | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' \
-    | sed 's/__/\n/g'
+    | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. / /g' \
+    | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? / /g' \
+    | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! / /g' \
+    | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… / /g' \
+    | sed 's/__/ \n/g' | sed 's/ \+/ /g'
 }
 
 function set_image_1() {
