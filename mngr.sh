@@ -352,6 +352,7 @@ edit_list() {
         rm -f "$DT/el_lk"
 
         if [ -f "$DT/add_lst" ]; then
+            invrt_msg=FALSE
             DT_r=$(mktemp -d "$DT/XXXX")
             temp="$(gettext "Processing")..."
             internet
@@ -383,8 +384,8 @@ edit_list() {
                 ${pos}s|grmr={$trgt}|grmr={$grmr_mod}|;
                 ${pos}s|id=\[\]|id=\[$id_mod\]|g" "${direc}/0.cfg"
             done < "$DT/add_lst"
+            notify-send -i idiomind "$(gettext "Changes done")" "$(gettext "Changes will become visible only after you close and reopen the main window")" 
         fi
-        [ ${invrt_msg} = FALSE ] && msg "$(gettext "Changes will become visible only after you close and reopen the main window.  ")" info " "
         [ ${invrt_msg} = TRUE ] && msg "$(gettext "Changes will become visible only after you close and reopen the main window.  ")" info " "
     fi
     rm -f "$DT/tmp1" "$DT/_tmp1" "$DT/add_lst" "$DT_r"

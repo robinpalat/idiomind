@@ -19,7 +19,7 @@ function dlg_form_1() {
     --field="<small>$(gettext "Note")</small>":TXT "${note}" \
     --field="<small>$(gettext "Search")  <a href='$link1'>$(gettext "Translation")</a>  <a href='$link2'>$(gettext "Definition")</a>  </small>":LBL " " \
     --field="$(gettext "Mark")":CHK "$mark" \
-    --field="<small>$(gettext "Listen")</small>":FBTN "${cmd_play}" \
+    --field="!$DS/images/listen.png":FBTN "${cmd_play}" \
     --field=" ":LBL " " \
     --button="$(gettext "Image")":"${cmd_image}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \
@@ -42,7 +42,7 @@ function dlg_form_2() {
     --field="<small>$lgtl</small>":TXT "${trgt}" \
     --field="<small><a href='$link1'>$(gettext "Translation")</a></small>\t":LBL " " \
     --field="<small>$lgsl</small>":TXT "${srce}" \
-    --field="$(gettext "Listen")":FBTN "${cmd_play}" \
+    --field="!$DS/images/listen.png":FBTN "${cmd_play}" \
     --field="<small>$(gettext "Topic")</small>":CB "${tpc}!${tpcs}" \
     --field="<small>$(gettext "Audio")</small>":FL "${audf}" \
     --button="$(gettext "Words")":"${cmd_words}" \
