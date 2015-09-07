@@ -250,7 +250,7 @@ function practice_c() {
         --text="$lcuestion" \
         --skip-taskbar --text-align=center --center --on-top \
         --buttons-layout=edge --image-on-top --undecorated \
-        --width=370 --height=230 --borders=10 \
+        --width=360 --height=230 --borders=10 \
         --field="!$DS/images/listen.png":BTN "$cmd_play" \
         --button="$(gettext "Exit")":1 \
         --button=" $(gettext "No") !$img_no":3 \
