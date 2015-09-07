@@ -64,17 +64,17 @@ for tpc in topics:
             log3 = [line.strip() for line in open(log3)]
             cfg = [line.strip() for line in open(cfg)]
             try:
-                mrk = (cfg[18].split('set_1="'))[1].split('"')[0]
+                auto_mrk = (cfg[18].split('set_1="'))[1].split('"')[0]
             except:
                 try:
-                    mrk = (cfg[17].split('set_1="'))[1].split('"')[0]
+                    auto_mrk = (cfg[17].split('set_1="'))[1].split('"')[0]
                 except:
                     pass
                     
-            if mrk == 'TRUE':
-                mrk = True
+            if auto_mrk == 'TRUE':
+                auto_mrk = True
             else:
-                mrk = False
+                auto_mrk = False
             if os.path.exists(cfg1) and not os.path.exists(cfg7):
                 cont = True
             if not os.path.exists(dir + tpc + "/.conf/practice"):
@@ -87,7 +87,7 @@ for tpc in topics:
                 items = [line.strip() for line in open(cfg1)]
                 marks = [line.strip() for line in open(cfg6)]
                 chk = 'FALSE'
-                if len(steps) > 3:
+                if len(steps) > 3 and auto_mrk == True:
                     chk = 'TRUE'
                 f = open(cfg5, "w")
                 for item in items:
@@ -95,14 +95,14 @@ for tpc in topics:
                         i="<b><big>"+item+"</big></b>"
                     else:
                         i=item
-                    if item in lstp:
+                    if item in lstp and auto_mrk == True:
                         chk = 'TRUE'
                     if item in log3:
                         f.write("FALSE\n"+i+"\n"+img3+"\n")
                     elif item in log2:
                         f.write("FALSE\n"+i+"\n"+img2+"\n")
                     elif item in log1:
-                        print 'check - > ' + item
+                        print chk + ' check -> ' + item
                         f.write(chk+"\n"+i+"\n"+img1+"\n")
                     else:
                         f.write("FALSE\n"+i+"\n"+img0+"\n")
