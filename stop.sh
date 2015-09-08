@@ -1,7 +1,6 @@
 #!/bin/bash
 
 DT="/tmp/.idiomind-$USER"
-
 on_quit() {
     if ps -A | pgrep -f "/usr/share/idiomind/bcle.sh"; then killall bcle.sh & fi
     if ps -A | pgrep -f "/usr/share/idiomind/bcle.sh"; then killall bcle.sh; fi

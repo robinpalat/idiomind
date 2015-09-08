@@ -67,7 +67,6 @@ play_list() {
         ((n=n+1))
         done
     fi
-
     setting_1() {
         n=0
         while [ ${n} -le 3 ]; do
@@ -174,8 +173,8 @@ play_list() {
                 if grep TRUE <<<"$words$sntcs$marks$wprct"; then
                 echo -e "$tpc" > "$DT/.p_"; else > "$DT/.p_"; fi
                 else "$DS/stop.sh" 2 && exit 1; fi
-            "$DS/stop.sh" 2 &
-            sleep 1; "$DS/bcle.sh" &
+            "$DS/stop.sh" 2
+            "$DS/bcle.sh" &
         elif [ $ret -eq 2 ]; then
             [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
             [ -f "$DT/index.m3u" ] && rm -f "$DT/index.m3u"
