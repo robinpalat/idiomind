@@ -149,7 +149,7 @@ usrid=${usrid:0:3}; fi
 note=$(< "${DC_tlt}/info")
 imgm="${DM_tlt}/images/img.jpg"
 
-"$DS/ifs/tls.sh" check_index "${tpc}"
+"$DS/ifs/tls.sh" check_index "${tpc}" 1
 if [ $((inx3+inx4)) -ge 15 ]; then
 btn="--button="$(gettext "Upload")":0"; else
 btn="--center"; fi
@@ -168,7 +168,7 @@ if [ -e "${DC_tlt}/11.cfg" ]; then
         --image="$DS/images/download.png" \
         --window-icon="$DS/images/icon.png" --buttons-layout=end \
         --align=left --center --on-top \
-        --width=400 --height=240 --borders=12 \
+        --width=400 --height=200 --borders=12 \
         --field="$info:lbl" " " \
         --field="$info2:lbl" " " \
         --field="$(gettext "Download"):BTN" "${cmd_dwl}" \
@@ -183,7 +183,7 @@ if [ -e "${DC_tlt}/11.cfg" ]; then
         --name=Idiomind --class=Idiomind \
         --window-icon="$DS/images/icon.png" --buttons-layout=end \
         --align=left --center --on-top \
-        --width=400 --height=240 --borders=12 \
+        --width=400 --height=200 --borders=12 \
         --field="$(gettext "Latest downloads:"):lbl" " " \
         --field="$(< "${DC_tlt}/11.cfg"):lbl" " " \
         --field=" :lbl" " " \
@@ -290,9 +290,6 @@ notify-send -i info "$(gettext "Upload in progress")" \
 mkdir "$DT/upload"
 DT_u="$DT/upload/"
 mkdir -p "$DT/upload/${tpc}/conf"
-
-"$DS/ifs/tls.sh" check_index "${tpc}" 1
-
 c_words=${inx3}
 c_sntncs=${inx4}
 
@@ -380,7 +377,6 @@ for f in volumes:
     time.sleep(5)
 END
 u=$?
-
 if [ $u = 0 ]; then
     info=" <b>$(gettext "Uploaded correctly")</b>\n $tpc\n"
     image=dialog-ok
@@ -392,7 +388,6 @@ fi
 msg "$info" $image
 
 cleanups "${DT_u}"
-
 exit 0
 fi
     

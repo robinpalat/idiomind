@@ -497,10 +497,10 @@ function practice_e() {
         ret=$?
         if [[ $ret = 1 ]]; then
             break &
-            killall play
+            if ps -A | pgrep -f 'play'; then killall play & fi
             score
         else
-            killall play &
+            if ps -A | pgrep -f 'play'; then killall play & fi
             result "${trgt}"
         fi
 
@@ -508,11 +508,11 @@ function practice_e() {
         ret=$?
         if [[ $ret = 1 ]]; then
             break &
-            killall play &
+            if ps -A | pgrep -f 'play'; then killall play & fi
             rm -f ./mtch.tmp ./words.tmp
             score
         elif [[ $ret -eq 2 ]]; then
-            killall play &
+            if ps -A | pgrep -f 'play'; then killall play & fi
             rm -f ./mtch.tmp ./words.tmp &
         fi
 
