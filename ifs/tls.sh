@@ -15,49 +15,48 @@ function check_format_1() {
     'relations' 'sport' 'social_networks' 'shopping' \
     'technology' 'travel' 'article' \
     'science' 'interview' 'funny' )
-    sets=( 'v' 'tname' 'langs' 'langt' \
+    sets=( 'tname' 'langs' 'langt' \
     'authr' 'cntct' 'ctgry' 'ilink' 'oname' \
     'datec' 'dateu' 'datei' \
     'nword' 'nsent' 'nimag' 'naudi' 'nsize' \
-    'level' 'set_1' 'set_2' 'set_3' 'set_4' )
+    'level' 'md5id' )
     file="${1}"
     invalid() {
-        exit=1
         msg "$1. $(gettext "File is corrupted.")\n" error & exit 1
     }
     [ ! -f "${file}" ] && invalid
-    shopt -s extglob; n=0; exit=0
+    shopt -s extglob; n=0
     while read -r line; do
         if [ -z "$line" ]; then continue; fi
         get="${sets[${n}]}"
         val=$(echo "${line}" |grep -o "$get"=\"[^\"]* |grep -o '[^"]*$')
-        if [[ ${n} = 1 ]]; then
+        if [[ ${n} = 0 ]]; then
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
             [ "$(grep -o -E '\*|\/|\@|$|=|-' <<<"${val}")" ]; then invalid 2; fi
-        elif [[ ${n} = 2 || ${n} = 3 ]]; then
+        elif [[ ${n} = 1 || ${n} = 2 ]]; then
             if ! grep -Fo "${val}" <<<"${LANGUAGES[@]}"; then invalid 3; fi
-        elif [[ ${n} = 4 || ${n} = 5 ]]; then
+        elif [[ ${n} = 3 || ${n} = 4 ]]; then
             if [ ${#val} -gt 30 ] || \
             [ "$(grep -o -E '\*|\/|$|\)|\(|=' <<<"${val}")" ]; then invalid 4; fi
-        elif [[ ${n} = 6 ]]; then
+        elif [[ ${n} = 5 ]]; then
             if ! grep -Fo "${val}" <<<"${CATEGORIES[@]}"; then invalid 5; fi
-        elif [[ ${n} = 7 ]]; then
+        elif [[ ${n} = 6 ]]; then
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 8 ]; then invalid 6; fi
-        elif [[ ${n} = 8 ]]; then
+        elif [[ ${n} = 7 ]]; then
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
             [ "$(grep -o -E '\*|\/|\@|$|=|-' <<<"${val}")" ]; then invalid 7; fi
-        elif [[ ${n} = 9 || ${n} = 10 || ${n} = 11 ]]; then
+        elif [[ ${n} = 8 || ${n} = 9 || ${n} = 10 ]]; then
             if [ -n "${val}" ]; then
             if ! [[ ${val} =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] \
             || [ ${#val} -gt 12 ]; then invalid 8; fi; fi
-        elif [[ ${n} = 12 || ${n} = 13 || ${n} = 14 ]]; then
+        elif [[ ${n} = 11 || ${n} = 12 || ${n} = 13 ]]; then
             if ! [[ $val =~ $numer ]] || [ ${val} -gt 200 ]; then invalid 9; fi
-        elif [[ ${n} = 15 ]]; then
+        elif [[ ${n} = 14 ]]; then
              if ! [[ $val =~ $numer ]] || [ ${val} -gt 1000 ]; then invalid 10; fi
-        elif [[ ${n} = 16 ]]; then
+        elif [[ ${n} = 15 ]]; then
              if [ "$(grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${val}")" ] || \
              [ ${#val} -gt 9 ]; then invalid 11; fi
-        elif [[ ${n} = 17 ]]; then
+        elif [[ ${n} = 16 ]]; then
             if ! [[ $val =~ $numer ]] || [ ${#val} -gt 2 ]; then invalid 12; fi
         fi
         export ${sets[$n]}="${val}"
@@ -69,7 +68,7 @@ function check_format_1() {
 check_index() {
     source "$DS/ifs/mods/cmns.sh"
     DC_tlt="$DM_tl/${2}/.conf"; DM_tlt="$DM_tl/${2}"
-    topic="${2}"; mkmn=0; f=0; a=0; id=0
+    tpc="${2}"; mkmn=0; f=0; a=0; id=0
     [[ ${3} = 1 ]] && r=1 || r=0
     
     _check() {
@@ -86,10 +85,12 @@ check_index() {
         [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "${c1}" > "${DC_tlt}/id.cfg"
         [ ! -e "${DC_tlt}/10.cfg" ] && echo -e "${c2}" > "${DC_tlt}/10.cfg"
         [ ! -e "${DC_tlt}/9.cfg" ] && touch "${DC_tlt}/9.cfg"
-        [[ `wc -l < "${DC_tlt}/id.cfg"` = 21 ]] && id=1
+        [[ `egrep -cv '#|^$' < "${DC_tlt}/id.cfg"` = 19 ]] && id=1
         if [[ ${id} != 1 ]]; then
-            eval c1="$(< $DS/default/topicid)"
-            echo -e "${c1}" > "${DC_tlt}/id.cfg"; fi
+            eval c="$(< $DS/default/topicid)"
+            echo -n "${c}" > "${DC_tlt}/id.cfg"
+            echo -ne "\nidiomind-`idiomind -v`" >> "${DC_tlt}/id.cfg"
+        fi
         for i in "${DM_tlt}"/*.mp3 ; do [[ ! -s "${i}" ]] && rm "${i}" ; done
         if grep 'rsntc=' "${DC_tlt}/10.cfg"; then
             rm "${DC_tlt}/10.cfg"; fi
@@ -112,7 +113,6 @@ check_index() {
             item="$(sed 's/},/}\n/g' <<<"${item_}")"
             type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
             trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
-            
             if [ -n "${trgt}" ]; then
                 if [ ${type} = 1 ]; then
                     echo "${trgt}" >> "${DC_tlt}/3.cfg"
@@ -874,7 +874,7 @@ colorize() {
     [ ! -e "${DC_tlt}/9.cfg" ] && touch "${DC_tlt}/9.cfg"
     e="$(grep -oP '(?<=set_1=\").*(?=\")' "${DC_tlt}/id.cfg")"
     if [[ `egrep -cv '#|^$' < "${DC_tlt}/9.cfg"` -ge 4 ]] \
-    && [[ `grep -oP '(?<=set_1=\").*(?=\")' "${DC_tlt}/id.cfg"` = TRUE ]]; then
+    && [[ `grep -oP '(?<=acheck=\").*(?=\")' "${DC_tlt}/10.cfg"` = TRUE ]]; then
     chk=TRUE; else chk=FALSE; fi
     img1='/usr/share/idiomind/images/1.png'
     img2='/usr/share/idiomind/images/2.png'

@@ -51,7 +51,7 @@ for tpc in topics:
     if os.path.exists(cfg1):
         try:
             cont = str
-            cfg = dir + tpc + "/.conf/id.cfg"
+            cfg = dir + tpc + "/.conf/10.cfg"
             cfg5 = dir + tpc + "/.conf/5.cfg"
             cfg6 = dir + tpc + "/.conf/6.cfg"
             cfg7 = dir + tpc + "/.conf/7.cfg"
@@ -64,10 +64,10 @@ for tpc in topics:
             log3 = [line.strip() for line in open(log3)]
             cfg = [line.strip() for line in open(cfg)]
             try:
-                auto_mrk = (cfg[18].split('set_1="'))[1].split('"')[0]
+                auto_mrk = (cfg[9].split('acheck="'))[1].split('"')[0]
             except:
                 try:
-                    auto_mrk = (cfg[17].split('set_1="'))[1].split('"')[0]
+                    auto_mrk = (cfg[10].split('acheck="'))[1].split('"')[0]
                 except:
                     pass
                     

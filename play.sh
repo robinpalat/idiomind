@@ -39,10 +39,10 @@ play_list() {
     tpc="$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")"
     touch "${DC_tlt}/practice/log.3"
     DC_tlt="${DM_tl}/${tpc}/.conf"; cfg=0
-    [[ `wc -l < "${DC_tlt}/10.cfg"` = 9 ]] && cfg=1
+    [[ `wc -l < "${DC_tlt}/10.cfg"` = 10 ]] && cfg=1
     
     lbls=( 'Words' 'Sentences' 'Marked items' 'Difficult words' )
-    sets=( 'words' 'sntcs' 'marks' 'wprct' 'rplay' 'audio' 'ntosd' 'loop' 'rword' )
+    sets=( 'words' 'sntcs' 'marks' 'wprct' 'rplay' 'audio' 'ntosd' 'loop' 'rword' 'acheck' )
     in=( 'in0' 'in1' 'in2' 'in3' )
     iteml=( "$(gettext "No repeat")" "$(gettext "Words")" "$(gettext "Sentences")" )
     in0="$(grep -Fxvf "${DC_tlt}/4.cfg" "${DC_tlt}/1.cfg" |wc -l)"
@@ -62,9 +62,8 @@ play_list() {
         done
     else
         n=0; > "${DC_tlt}/10.cfg"
-        while [ ${n} -le 8 ]; do
-        echo -e "${sets[$n]}=\"0\"" >> "${DC_tlt}/10.cfg"
-        ((n=n+1))
+        for s in "${sets[@]}"; do
+            echo -e "${s}=\"0\"" >> "${DC_tlt}/10.cfg"
         done
     fi
     setting_1() {
@@ -131,7 +130,6 @@ play_list() {
     --width=400 --height=300 --borders=0 \
     "$btn2" --button="$btn1"
     ret=$?
-
         tab1=$(< $tab1); tab2=$(< $tab2); rm -f "$DT"/*.p
         f=1; n=0; count=0
         for item in "${sets[@]:0:4}"; do
@@ -156,7 +154,6 @@ play_list() {
             [ -n "${val}" ] && sed -i "s/$item=.*/$item=\"$val\"/g" "${DC_tlt}/10.cfg"
             let f++
         done
-        
         pval="$(cut -d "|" -f5 <<<"${tab2}")"
         if [[ "$pval" = "$(gettext "Words")" ]]; then  val=1
         elif [[ "$pval" = "$(gettext "Sentences")" ]]; then  val=2

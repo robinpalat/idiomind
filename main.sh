@@ -17,6 +17,7 @@
 #  MA 02110-1301, USA.
 #
 #  2015/02/27
+__version='0.1'
 
 if [ ! -d "$HOME/.idiomind" ]; then
     /usr/share/idiomind/ifs/1u.sh & exit 1
@@ -100,7 +101,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     source "$DS/ifs/mods/cmns.sh"
     source "$DS/ifs/tls.sh"
     check_format_1 "${1}"
-    if [ $? != 23 ]; then
+    if [ $? != 18 ]; then
     msg "$(gettext "File is corrupted.")\n" error & exit 1; fi
     file="${1}"
     lv=( "$(gettext "Beginner")" "$(gettext "Intermediate")" "$(gettext "Advanced")" )
@@ -131,7 +132,9 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             if [[ $(wc -l < "$DM_t/$langt/.1.cfg") -ge 120 ]]; then
                 msg "$(gettext "Maximum number of topics reached.")\n" info & exit
             fi
-            if [[ $(grep -Fxo "${tname}" "$DM_t/$langt/.1.cfg" | wc -l) -ge 1 ]]; then
+            cn=0
+            if [[ `grep -Fxo "${tname}" "$DM_t/$langt/.1.cfg" |wc -l` -ge 1 ]]; then
+                cn=1
                 for i in {1..50}; do
                 chck=$(grep -Fxo "${tname} ($i)" "$DM_t/$langt/.1.cfg")
                 [ -z "$chck" ] && break; done
@@ -152,6 +155,8 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             for i in {1..3}; do > "${DC_tlt}/practice/log.${i}"; done
             tail -n 1 < "${file}" |tr '&' '\n' > "${DC_tlt}/id.cfg"
             > "${DC_tlt}/11.cfg"
+            if [ ${cn} = 1  ]; then
+            sed -i "s/tname=.*/tname=\"${tname}\"/g" "${DC_tlt}/id.cfg"; fi
             sed -i "s/datei=.*/datei=\"$(date +%F)\"/g" "${DC_tlt}/id.cfg"
             
             while read item_; do
@@ -196,7 +201,7 @@ function topic() {
         done
         nt="${DC_tlt}/info"
         author="$(grep -o 'authr="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-        auto_mrk=$(grep -o 'set_1=\"[^\"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')
+        auto_mrk=$(grep -o 'acheck=\"[^\"]*' "${DC_tlt}/10.cfg" |grep -o '[^"]*$')
         c=$((RANDOM%100000)); KEY=$c
         cnf1=$(mktemp "$DT/cnf1.XXX.x")
         cnf3=$(mktemp "$DT/cnf3.XXX.x")
@@ -214,7 +219,7 @@ function topic() {
             
             auto_mrk_mod=$(cut -d '|' -f 3 < "${cnf4}")
             if [[ $auto_mrk_mod != $auto_mrk ]] && [ -n "$auto_mrk_mod" ]; then
-            sed -i "s/set_1=.*/set_1=\"$auto_mrk_mod\"/g" "${DC_tlt}/id.cfg"; fi
+            sed -i "s/acheck=.*/acheck=\"$auto_mrk_mod\"/g" "${DC_tlt}/10.cfg"; fi
             
             if grep TRUE "${cnf1}"; then
                 grep -Rl "|FALSE|" "${cnf1}" | while read tab1 ; do
@@ -277,7 +282,6 @@ function topic() {
                 notebook_1
             fi
                 ret=$?
-
                 if [ ! -f "$DT/ps_lk" ]; then apply; fi
 
                 if [ $ret -eq 5 ]; then
@@ -356,11 +360,11 @@ case "$1" in
     topic)
     topic ;;
     first_run)
-    "$DS/ifs/tls.sh" first_run ;;
+    "$DS/ifs/tls.sh" $@ ;;
     translate)
     "$DS/ifs/tls.sh" $@ ;;
     -v)
-    echo -n "0.1" ;;
+    echo -n "$__version" ;;
     -s)
     new_session; idiomind & ;;
     autostart)
