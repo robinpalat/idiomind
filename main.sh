@@ -236,7 +236,7 @@ function topic() {
             fi
         
             ntpc=$(cut -d '|' -f 1 < "${cnf4}")
-            if [ "${tpc}" != "${ntpc}" ] && [ -n "$ntpc" ]; then
+            if [ "${tpc}" != "${ntpc}" -a -n "$ntpc" ]; then
             if [[ "${tpc}" != "$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")" ]]; then
             msg "$(gettext "Sorry, this topic is currently not active.")\n" info & exit; fi
             "$DS/mngr.sh" rename_topic "${ntpc}" & exit; fi
@@ -266,7 +266,6 @@ function topic() {
                         if [ $ret -eq 2 ]; then
                             "$DS/mngr.sh" mark_to_learn "${tpc}" 0
                             idiomind topic & exit 1
-                        
                         elif [ $ret -eq 3 ]; then
                            exit 1
                         fi 
@@ -300,7 +299,6 @@ function topic() {
                     if [ $ret -eq 2 ]; then
                         "$DS/mngr.sh" mark_to_learn "${tpc}" 0
                         idiomind topic & exit 1
-                        
                     elif [ $ret -eq 3 ]; then
                         exit 1
                     fi 

@@ -17,8 +17,9 @@ new_topic() {
     jlb="$(clean_3 "$(dlg_form_0 "${2}")")"
     
     if [[ ${#jlb} -gt 55 ]]; then
-    msg "$(gettext "Sorry, name too long.")\n" info
-    "$DS/add.sh" new_topic "${jlb}" & exit 1; fi
+        msg "$(gettext "Sorry, name too long.")\n" info
+        "$DS/add.sh" new_topic "${jlb}" & exit 1
+    fi
     
     if grep -Fxo "${jlb}" < <(ls "$DS/addons/"); then jlb="${jlb} (1)"; fi
     chck=$(grep -Fxo "${jlb}" "$DM_tl/.1.cfg" | wc -l)
@@ -30,9 +31,9 @@ new_topic() {
         jlb="${jlb} ($i)"
         msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "Notice that the name for this one is now\:")\n<b>${jlb}</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
         [ $? -eq 1 ] && exit 1
-
-    else jlb="${jlb}"; fi
-    
+    else
+        jlb="${jlb}"
+    fi
     if [ -n "${jlb}" ]; then
         mkdir "$DM_tl/${jlb}"
         list_inadd > "$DM_tl/.2.cfg"
@@ -256,7 +257,7 @@ new_word() {
             else
                 name_img="${DM_tls}/images/${trgt,,}-0.jpg"
             fi
-
+            
         set_image_2 "$DT_r/img.jpg" "$name_img"
         fi
 
@@ -352,13 +353,11 @@ list_words_sentence() {
             while read -r chkst; do
             sed 's/TRUE//g' <<<"${chkst}"  >> "$DT_r/slts"
             done <<<"$(sed 's/|//g' <<<"${slt}")"
-
         elif [ $? -eq 1 ]; then
             rm -f "$DT"/*."$c"
             cleanups "$DT_r"
             exit 1
         fi
-
     n=1
     while read -r trgt; do
         if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
@@ -450,7 +449,6 @@ process() {
         cleanups "$DT_r"
         exit 1
     fi
-    
     if [ -n "$2" ]; then
         [ -d "$DT_r" ] && echo "$DT_r" > "$DT/.n_s_pr"
         [ -n "${tpe}" ] && echo "${tpe}" >> "$DT/.n_s_pr"
@@ -508,9 +506,9 @@ process() {
                         else
                             while read -r split2; do
                                 lenght "${split2}"
-                            done < <(sed 's/;/ \n/g' <<<"${split}") #TODO
+                            done < <(sed 's/;/ \n/g' <<<"${split}") # TODO
                         fi
-                    done < <(sed 's/,/ \n/g' <<<"${l}") #TODO
+                    done < <(sed 's/,/ \n/g' <<<"${l}") # TODO
                 else
                     lenght "${l}"
                 fi
@@ -614,7 +612,6 @@ process() {
                         rm "${DM_tlt}/$id.mp3"
                     fi
                 fi
-
             elif [[ $(wc -$c <<<"${trgt}") -ge 1 ]]; then
                 
                 if [[ $(wc -l < "${DC_tlt}/0.cfg") -ge 200 ]]; then
