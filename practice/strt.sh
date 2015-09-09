@@ -250,7 +250,7 @@ function practice_c() {
         --text="$lcuestion" \
         --skip-taskbar --text-align=center --center --on-top \
         --buttons-layout=edge --image-on-top --undecorated \
-        --width=360 --height=230 --borders=10 \
+        --width=370 --height=240 --borders=10 \
         --field="!$DS/images/listen.png":BTN "$cmd_play" \
         --button="$(gettext "Exit")":1 \
         --button=" $(gettext "No") !$img_no":3 \
@@ -302,7 +302,7 @@ function practice_d() {
         item="$(grep -F -m 1 "trgt={${trgt}}" "${cfg0}" |sed 's/},/}\n/g')"
         srce=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
         img="$DM_tls/images/${trgt,,}-0.jpg"
-        [ ${#trgt} -gt 10 -o ${#srce} -gt 10 ] && trgt_f_c=14 || trgt_f_c=15
+        [ ${#trgt} -gt 10 -o ${#srce} -gt 10 ] && trgt_f_c=13 || trgt_f_c=14
         [ ! -f "$img" ] && img="$DS/practice/images/img_2.jpg"
         cuest="<span font_desc='Free Sans ${trgt_f_c}' color='#565656'> ${srce} </span>"
         aswer="<span font_desc='Free Sans ${trgt_f_c}'>${trgt}</span>"
