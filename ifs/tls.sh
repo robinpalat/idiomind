@@ -117,7 +117,8 @@ check_index() {
                 if [ ${type} = 1 ]; then
                     echo "${trgt}" >> "${DC_tlt}/3.cfg"
                 elif [ ${type} = 2 ]; then
-                    echo "${trgt}" >> "${DC_tlt}/4.cfg"; fi
+                    echo "${trgt}" >> "${DC_tlt}/4.cfg"
+                fi
                 echo "${trgt}" >> "${DC_tlt}/1.cfg"
                 echo "${item_}" >> "$DT/cfg0"
             fi
@@ -132,18 +133,23 @@ check_index() {
         for n in {1..200}; do
             line=$(sed -n ${n}p "${cfg0}" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
             if [ -n "${line}" ]; then
-            if [[ ${line} -ne ${n} ]]; then
-            sed -i ""${n}"s|"${line}"\:|"${n}"\:|g" "${cfg0}"; fi
-            else break; fi
+                if [[ ${line} -ne ${n} ]]; then
+                    sed -i ""${n}"s|"${line}"\:|"${n}"\:|g" "${cfg0}"
+                fi
+            else 
+                break
+            fi
         done
     }
     
     _fix() {
         if [ ${stts} -eq 13 ]; then
             if [ -f "${DC_tlt}/8.cfg_" ] && [ -n $(< "${DC_tlt}/8.cfg_") ]; then
-            stts=$(sed -n 1p "${DC_tlt}/8.cfg_")
-            rm "${DC_tlt}/8.cfg_"
-            else stts=1; fi
+                stts=$(sed -n 1p "${DC_tlt}/8.cfg_")
+                rm "${DC_tlt}/8.cfg_"
+            else
+                stts=1
+            fi
             echo ${stts} > "${DC_tlt}/8.cfg"
         fi
         touch "${DC_tlt}/0.cfg" "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg" \

@@ -149,7 +149,6 @@ usrid=${usrid:0:3}; fi
 note=$(< "${DC_tlt}/info")
 imgm="${DM_tlt}/images/img.jpg"
 
-"$DS/ifs/tls.sh" check_index "${tpc}" 1
 if [ $((inx3+inx4)) -ge 15 ]; then
 btn="--button="$(gettext "Upload")":0"; else
 btn="--center"; fi
@@ -287,6 +286,7 @@ internet
 notify-send -i info "$(gettext "Upload in progress")" \
 "$(gettext "This can take some time, please wait")" -t 6000
 
+"$DS/ifs/tls.sh" check_index "${tpc}" 1
 mkdir "$DT/upload"
 DT_u="$DT/upload/"
 mkdir -p "$DT/upload/${tpc}/conf"

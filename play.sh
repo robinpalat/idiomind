@@ -91,6 +91,8 @@ play_list() {
     if [ ! -f "$DT/.p_" ]; then
         btn2="--center"
         title="$(gettext "Play")"
+        [ ${mode} -gt 1 -a -n "${tpc}" ] \
+        && title="$(gettext "Play")  (${tpc})"
     else
         tpp="$(sed -n 1p "$DT/.p_")"
         title="$(gettext "Currently playing:") ${tpp}"
@@ -167,9 +169,14 @@ play_list() {
                 [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
                 "$DS/stop.sh" 2 & exit 1; fi
             if [ -d "${DM_tlt}" ] && [ -n "${tpc}" ]; then
-                if grep TRUE <<<"$words$sntcs$marks$wprct"; then
-                echo -e "$tpc" > "$DT/.p_"; else > "$DT/.p_"; fi
-                else "$DS/stop.sh" 2 && exit 1; fi
+                    if grep TRUE <<<"$words$sntcs$marks$wprct"; then
+                        echo -e "$tpc" > "$DT/.p_"
+                    else 
+                        > "$DT/.p_"
+                    fi
+                else
+                    "$DS/stop.sh" 2 && exit 1
+                fi
             "$DS/stop.sh" 2
             "$DS/bcle.sh" &
         elif [ $ret -eq 2 ]; then
