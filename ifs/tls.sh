@@ -32,32 +32,34 @@ function check_format_1() {
         val=$(echo "${line}" |grep -o "$get"=\"[^\"]* |grep -o '[^"]*$')
         if [[ ${n} = 0 ]]; then
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
-            [ "$(grep -o -E '\*|\/|\@|$|=|-' <<<"${val}")" ]; then invalid 2; fi
+            [ "$(grep -o -E '\*|\/|\@|$|=|-' <<<"${val}")" ]; then invalid $n; fi
         elif [[ ${n} = 1 || ${n} = 2 ]]; then
-            if ! grep -Fo "${val}" <<<"${LANGUAGES[@]}"; then invalid 3; fi
+            if ! grep -Fo "${val}" <<<"${LANGUAGES[@]}"; then invalid $n; fi
         elif [[ ${n} = 3 || ${n} = 4 ]]; then
             if [ ${#val} -gt 30 ] || \
-            [ "$(grep -o -E '\*|\/|$|\)|\(|=' <<<"${val}")" ]; then invalid 4; fi
+            [ "$(grep -o -E '\*|\/|$|\)|\(|=' <<<"${val}")" ]; then invalid $n; fi
         elif [[ ${n} = 5 ]]; then
-            if ! grep -Fo "${val}" <<<"${CATEGORIES[@]}"; then invalid 5; fi
+            if ! grep -Fo "${val}" <<<"${CATEGORIES[@]}"; then invalid $n; fi
         elif [[ ${n} = 6 ]]; then
-            if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 8 ]; then invalid 6; fi
+            if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 8 ]; then invalid $n; fi
         elif [[ ${n} = 7 ]]; then
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
-            [ "$(grep -o -E '\*|\/|\@|$|=|-' <<<"${val}")" ]; then invalid 7; fi
+            [ "$(grep -o -E '\*|\/|\@|$|=|-' <<<"${val}")" ]; then invalid $n; fi
         elif [[ ${n} = 8 || ${n} = 9 || ${n} = 10 ]]; then
             if [ -n "${val}" ]; then
             if ! [[ ${val} =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] \
-            || [ ${#val} -gt 12 ]; then invalid 8; fi; fi
+            || [ ${#val} -gt 12 ]; then invalid $n; fi; fi
         elif [[ ${n} = 11 || ${n} = 12 || ${n} = 13 ]]; then
-            if ! [[ $val =~ $numer ]] || [ ${val} -gt 200 ]; then invalid 9; fi
+            if ! [[ $val =~ $numer ]] || [ ${val} -gt 200 ]; then invalid $n; fi
         elif [[ ${n} = 14 ]]; then
-             if ! [[ $val =~ $numer ]] || [ ${val} -gt 1000 ]; then invalid 10; fi
+             if ! [[ $val =~ $numer ]] || [ ${val} -gt 1000 ]; then invalid $n; fi
         elif [[ ${n} = 15 ]]; then
-             if [ "$(grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${val}")" ] || \
-             [ ${#val} -gt 9 ]; then invalid 11; fi
+            if [ ${#val} -gt 6 ]; then invalid $n; fi
         elif [[ ${n} = 16 ]]; then
-            if ! [[ $val =~ $numer ]] || [ ${#val} -gt 2 ]; then invalid 12; fi
+            if ! [[ $val =~ $numer ]] || [ ${#val} -gt 2 ]; then invalid $n; fi
+        elif [[ ${n} = 17 ]]; then
+            if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 40 ] || \
+            [ "$(grep -o -E '\*|\/|\@|$|=|-' <<<"${val}")" ]; then invalid $n; fi
         fi
         export ${sets[$n]}="${val}"
         let n++
