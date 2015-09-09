@@ -154,7 +154,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             for i in {1..6}; do > "${DC_tlt}/${i}.cfg"; done
             for i in {1..3}; do > "${DC_tlt}/practice/log.${i}"; done
             tail -n 1 < "${file}" |tr '&' '\n' > "${DC_tlt}/id.cfg"
-            > "${DC_tlt}/11.cfg"
+            > "${DC_tlt}/download.cfg"
             if [ ${cn} = 1  ]; then
             sed -i "s/tname=.*/tname=\"${tname}\"/g" "${DC_tlt}/id.cfg"; fi
             sed -i "s/datei=.*/datei=\"$(date +%F)\"/g" "${DC_tlt}/id.cfg"
@@ -206,8 +206,8 @@ function topic() {
         cnf1=$(mktemp "$DT/cnf1.XXX.x")
         cnf3=$(mktemp "$DT/cnf3.XXX.x")
         cnf4=$(mktemp "$DT/cnf4.XXX.x")
-        if [ -e "${DM_tlt}/images/img.jpg" ]; then
-        img="--image=${DM_tlt}/images/img.jpg"; fi
+        if [ -e "${DM_tlt}/images/Cover.jpg" ]; then
+        img="--image=${DM_tlt}/images/Cover.jpg"; fi
         sx=638; sy=580
         [ ! -z "$author" ] && author=" $(gettext "Created by") $author"
         label_info1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><small>\n $inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"

@@ -84,7 +84,7 @@ function dwld() {
             [ ! -f "${DM_tlt}/files" ] && mkdir "${DM_tlt}/files"
             mv -f "${tmp}"/files/* "${DM_tlt}"/files/
             echo "${oname}" >> "$DM_tl/.3.cfg"
-            echo -e "$ltotal $total\n$laudio $c_audio\n$limage $c_images\n$lfiles $atfiles\n$lothers $others" > "${DC_tlt}/11.cfg"
+            echo -e "$ltotal $total\n$laudio $c_audio\n$limage $c_images\n$lfiles $atfiles\n$lothers $others" > "${DC_tlt}/download"
             "$DS/ifs/tls.sh" colorize
             rm -fr "$DT/download"
         else
@@ -147,15 +147,15 @@ usrid="$b$((RANDOM%1000))"
 usrid=${usrid:0:3}; fi
 [ -z "$iuser" ] && iuser=$USER
 note=$(< "${DC_tlt}/info")
-imgm="${DM_tlt}/images/img.jpg"
+imgm="${DM_tlt}/images/Cover.jpg"
 
 if [ $((inx3+inx4)) -ge 15 ]; then
 btn="--button="$(gettext "Upload")":0"; else
 btn="--center"; fi
 cd "$HOME"
 
-if [ -e "${DC_tlt}/11.cfg" ]; then
-    if [ ! -s "${DC_tlt}/11.cfg" ]; then
+if [ -e "${DC_tlt}/download" ]; then
+    if [ ! -s "${DC_tlt}/download" ]; then
         c_audio="$(grep -o 'naudi="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         c_images="$(grep -o 'nimag="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         fsize="$(grep -o 'nsize="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
@@ -176,7 +176,7 @@ if [ -e "${DC_tlt}/11.cfg" ]; then
         --button="$(gettext "PDF")":2 \
         --button="$(gettext "Close")":4)
         ret=$?
-    elif [ -s "${DC_tlt}/11.cfg" ]; then
+    elif [ -s "${DC_tlt}/download" ]; then
         dlg=$(yad --form --title="$(gettext "Share")" \
         --columns=2 --separator="|" \
         --name=Idiomind --class=Idiomind \
@@ -184,7 +184,7 @@ if [ -e "${DC_tlt}/11.cfg" ]; then
         --align=left --center --on-top \
         --width=400 --height=200 --borders=12 \
         --field="$(gettext "Latest downloads:"):lbl" " " \
-        --field="$(< "${DC_tlt}/11.cfg"):lbl" " " \
+        --field="$(< "${DC_tlt}/download"):lbl" " " \
         --field=" :lbl" " " \
         --button="$(gettext "PDF")":2 \
         --button="$(gettext "Close")":4)
@@ -216,7 +216,7 @@ else
     "$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
     /usr/bin/convert "${img}" -interlace Plane -thumbnail 630x150^ \
     -gravity center -extent 630x150 \
-    -quality 100% "${DM_tlt}/images/img.jpg"
+    -quality 100% "${DM_tlt}/images/Cover.jpg"
     fi
 fi
 

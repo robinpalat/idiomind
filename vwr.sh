@@ -40,10 +40,8 @@ fi
     ret=$?
     if [ $ret -eq 5 ]; then
         "$DS/mngr.sh" mtext ${1} ${index_pos}
-
     elif [ $ret -eq 4 ]; then
         "$DS/mngr.sh" edit ${1} ${index_pos}
-    
     elif [ $ret -eq 2 ]; then
         if [[ ${index_pos} = 1 ]]; then
             item=`tail -n 1 < "${index}"`
@@ -53,7 +51,6 @@ fi
             ff=$((index_pos-1))
             "$DS/vwr.sh" ${1} "" ${ff} &
         fi
-    
     elif [ $ret -eq 3 ]; then
         ff=$((index_pos+1))
         "$DS/vwr.sh" ${1} "" ${ff} &

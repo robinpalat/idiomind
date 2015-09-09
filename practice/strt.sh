@@ -304,8 +304,8 @@ function practice_d() {
         img="$DM_tls/images/${trgt,,}-0.jpg"
         [ ${#trgt} -gt 10 -o ${#srce} -gt 10 ] && trgt_f_c=14 || trgt_f_c=15
         [ ! -f "$img" ] && img="$DS/practice/images/img_2.jpg"
-        cuest="<span font_desc='Free Sans Bold ${trgt_f_c}' color='#565656'> ${srce} </span>"
-        aswer="<span font_desc='Free Sans Bold ${trgt_f_c}'>${trgt}</span>"
+        cuest="<span font_desc='Free Sans ${trgt_f_c}' color='#565656'> ${srce} </span>"
+        aswer="<span font_desc='Free Sans ${trgt_f_c}'>${trgt}</span>"
     }
 
     cuestion() {
@@ -578,7 +578,6 @@ function get_list() {
 
 function lock() {
     if [ -f "$dir/${practice}.lock" ]; then
-
         dt="$dir/${practice}.lock"
         yad --title="$(gettext "Practice Completed")" \
         --text="<b>$(gettext "Practice Completed")</b>\\n   $(< "$dt")\n " \
