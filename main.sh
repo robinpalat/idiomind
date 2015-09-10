@@ -33,8 +33,6 @@ if [ -e "$DT/ps_lk" -o -e "$DT/el_lk" ]; then
 fi
 
 function new_session() {
-    
-    #set -e
     echo "--new session"
     echo "$(date +%d)" > "$DC_s/10.cfg"
     source "$DS/ifs/mods/cmns.sh"
@@ -183,7 +181,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
 fi
     
 function topic() {
-    export mode=$(sed -n 1p "$DC_s/5.cfg")
+    export mode=`sed -n 1p "$DC_s/5.cfg"`
     source "$DS/ifs/mods/cmns.sh"
 
     if [[ ${mode} = 2 ]]; then

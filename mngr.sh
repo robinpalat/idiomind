@@ -29,7 +29,6 @@ mkmn() {
         else stts=12; fi
         echo -e "/usr/share/idiomind/images/img.${stts}.png\n${tpc}" >> "$DM_tl/.0.cfg"
     done
-    
     rm -f "$DT/mn_lk"; exit
 }
 
@@ -52,7 +51,6 @@ delete_item_ok() {
             done < <(ls ./*)
             rm ./*.tmp; cd /
         fi
-        
         for n in {1..6}; do
             if [ -f "${DC_tlt}/${n}.cfg" ]; then
             grep -vxF "${trgt}" "${DC_tlt}/${n}.cfg" > "${DC_tlt}/${n}.cfg.tmp"
@@ -155,7 +153,6 @@ edit_item() {
     if [ ${type} = 1 ]; then edit_dlg1="$(dlg_form_1)"
     elif [ ${type} = 2 ]; then edit_dlg2="$(dlg_form_2)"; fi
     ret=$?
-
         if [ ${ret} -eq 0  ]; then
             include "$DS/ifs/mods/add"
             if [ ${type} = 1 ]; then
@@ -231,13 +228,15 @@ edit_item() {
 
                 if [ "${tpc}" != "${tpc_mod}" ]; then
                     if [ "${audf}" != "${audf_mod}" ]; then
-                    if [ ${type_mod} = 1 ]; then cp -f "${audf_mod}" "${DM_tls}/${trgt_mod,,}.mp3"
-                    elif [ ${type_mod} = 2 ]; then cp -f "${audf_mod}" "$DM_tl/${tpc_mod}/$id_mod.mp3"; fi
+                        if [ ${type_mod} = 1 ]; then
+                            cp -f "${audf_mod}" "${DM_tls}/${trgt_mod,,}.mp3"
+                        elif [ ${type_mod} = 2 ]; then
+                            cp -f "${audf_mod}" "$DM_tl/${tpc_mod}/$id_mod.mp3"; fi
                     else
-                    if [ ${type_mod} = 2 ]; then
-                    [ -e "${DM_tlt}/$id.mp3" ] && mv -f "${DM_tlt}/$id.mp3" "$DM_tl/${tpc_mod}/$id_mod.mp3"
-                    elif [ ${type_mod} = 1 ]; then
-                    [ -e "${DM_tlt}/$id.mp3" ] && mv -f "${DM_tlt}/$id.mp3" "$DM_tl/${tpc_mod}/$id_mod.mp3"; fi
+                        if [ ${type_mod} = 2 ]; then
+                            [ -e "${DM_tlt}/$id.mp3" ] && mv -f "${DM_tlt}/$id.mp3" "$DM_tl/${tpc_mod}/$id_mod.mp3"
+                        elif [ ${type_mod} = 1 ]; then
+                            [ -e "${DM_tlt}/$id.mp3" ] && mv -f "${DM_tlt}/$id.mp3" "$DM_tl/${tpc_mod}/$id_mod.mp3"; fi
                     fi
                     "$DS/mngr.sh" delete_item_ok "${tpc}" "${trgt}"
                     index ${type_mod} "${tpc_mod}" "${trgt_mod}" "${srce_mod}" \
@@ -258,14 +257,16 @@ edit_item() {
                     ${pos}s|id=\[$id\]|id=\[$id_mod\]|g" "${cfg0}"
                     
                     if [ "${audf}" != "${audf_mod}" ]; then
-                    if [ ${type_mod} = 1 ]; then cp -f "${audf_mod}" "${DM_tls}/${trgt_mod,,}.mp3"
-                    elif [ ${type_mod} = 2 ]; then [ -e "${DM_tlt}/$id.mp3" ] && rm "${DM_tlt}/$id.mp3"
-                    cp -f "${audf_mod}" "${DM_tlt}/$id_mod.mp3"; fi
+                        if [ ${type_mod} = 1 ]; then
+                            cp -f "${audf_mod}" "${DM_tls}/${trgt_mod,,}.mp3"
+                        elif [ ${type_mod} = 2 ]; then
+                            [ -e "${DM_tlt}/$id.mp3" ] && rm "${DM_tlt}/$id.mp3"
+                            cp -f "${audf_mod}" "${DM_tlt}/$id_mod.mp3"; fi
                     else
-                    if [ ${type_mod} = 2 ]; then
-                    [ -e "${DM_tlt}/$id.mp3" ] && mv -f "${DM_tlt}/$id.mp3" "${DM_tlt}/$id_mod.mp3"
-                    elif [ ${type_mod} = 1 ]; then
-                    [ -e "${DM_tlt}/$id.mp3" ] && mv -f "${DM_tlt}/$id.mp3" "${DM_tlt}/$id_mod.mp3"; fi
+                        if [ ${type_mod} = 2 ]; then
+                            [ -e "${DM_tlt}/$id.mp3" ] && mv -f "${DM_tlt}/$id.mp3" "${DM_tlt}/$id_mod.mp3"
+                        elif [ ${type_mod} = 1 ]; then
+                            [ -e "${DM_tlt}/$id.mp3" ] && mv -f "${DM_tlt}/$id.mp3" "${DM_tlt}/$id_mod.mp3"; fi
                     fi
                 fi
                 cleanups "$DT_r"
@@ -378,7 +379,6 @@ edit_list() {
                 "${exmp_mod}" "${defn_mod}" "${note_mod}" "${wrds_mod}" "${grmr_mod}")"
                 [ ${type} = 2 ] && cd "$DT_r"; tts "${trgt}" "$lgt" "$DT_r" "${DM_tlt}/$id_mod.mp3"
                 
-
                 sed -i "${pos}s|srce={$srce}|srce={$srce_mod}|;
                 ${pos}s|wrds={}|wrds={$wrds_mod}|;
                 ${pos}s|grmr={$trgt}|grmr={$grmr_mod}|;
@@ -394,8 +394,10 @@ edit_list() {
 
 
 delete_topic() {
+    
+    if [ -z "${tpc}" ]; then exit 1; fi
     if [ "${tpc}" != "${2}" ]; then
-    msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
+        msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
     msg_2 "$(gettext "Are you sure you want to delete this topic?")\n" \
     gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
     ret="$?"
@@ -411,10 +413,10 @@ delete_topic() {
             "$DS/stop.sh" 2; fi
         fi
         [ -f "$DM/backup/${tpc}.bk" ] && rm "$DM/backup/${tpc}.bk"
-        if [ -n "${tpc}" ]; then
-            if [ -d "$DM_tl/${tpc}" ]; then
+
+        if [ -d "$DM_tl/${tpc}" ]; then
             rm -fr "$DM_tl/${tpc}"; fi
-        fi
+     
         if [ -d "$DM_tl/${tpc}" ]; then sleep 0.5
         msg "$(gettext "Could not remove the directory:")\n$DM_tl/${tpc}\n$(gettext "You must manually remove it.")" info; fi
         
@@ -422,7 +424,7 @@ delete_topic() {
         > "$DM_tl/.8.cfg"
         > "$DC_s/4.cfg"
         for n in {0..4}; do
-            if [ -f "$DM_tl/.${n}.cfg" ]; then
+            if [ -e "$DM_tl/.${n}.cfg" ]; then
             grep -vxF "${tpc}" "$DM_tl/.$n.cfg" > "$DM_tl/.${n}.cfg.tmp"
             sed '/^$/d' "$DM_tl/.$n.cfg.tmp" > "$DM_tl/.${n}.cfg"; fi
         done
@@ -431,6 +433,7 @@ delete_topic() {
         kill -9 $(pgrep -f "yad --form ") &
         kill -9 $(pgrep -f "yad --notebook ") &
         "$DS/mngr.sh" mkmn &
+        
         if [ -e "$DM_tl/.5.cfg" ]; then
             tpd="$(< "$DM_tl/.5.cfg")"
             if grep -Fxq "${tpd}" "$DM_tl/.1.cfg"; then
@@ -534,12 +537,13 @@ mark_to_learn_topic() {
         item="$(sed 's/},/}\n/g' <<<"${item_}")"
         type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
         trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
-        
         if [ -n "${trgt}" ]; then
             if [ ${type} -eq 1 ]; then
                 echo "${trgt}" >> "${DC_tlt}/3.cfg"
-            else echo "${trgt}" >> "${DC_tlt}/4.cfg"; fi
-                echo "${trgt}" >> "${DC_tlt}/1.cfg"
+            else 
+                echo "${trgt}" >> "${DC_tlt}/4.cfg"
+            fi
+            echo "${trgt}" >> "${DC_tlt}/1.cfg"
         fi
     done < "${DC_tlt}/0.cfg"
     
@@ -614,9 +618,8 @@ mark_as_learned_topic() {
     while read item_; do
         item="$(sed 's/},/}\n/g' <<<"${item_}")"
         trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
-        
         if [ -n "${trgt}" ]; then
-        echo "${trgt}" >> "${DC_tlt}/2.cfg"
+            echo "${trgt}" >> "${DC_tlt}/2.cfg"
         fi
     done < "${DC_tlt}/0.cfg"
     

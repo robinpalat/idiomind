@@ -8,7 +8,7 @@ function internet() {
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" \
     --image-on-top --center --sticky --on-top --skip-taskbar \
-    --text="$(gettext "No network connection\nPlease connect to a network, then try again.")" \
+    --text="$(gettext "No network connection\nPlease connect to a network, then try again.")  " \
     --width=410 --height=130 --borders=3 \
     --button="$(gettext "OK")":0 >&2; exit 1;}
 }
@@ -87,8 +87,10 @@ function check_index1() {
 function list_inadd() {
     while read -r t; do
         if ! echo -e "$(ls "$DS/addons/")\n$(< "$DM_tl/.3.cfg")" \
-        | grep -Fxo "${t}" >/dev/null 2>&1; then echo "${t}"; fi
-    done < <(cd "$DM_tl"; ls -tNd */ | head -n 30 | sed 's/\///g')
+        |grep -Fxo "${t}" >/dev/null 2>&1; then
+            echo "${t}"
+        fi
+    done < <(cd "$DM_tl"; ls -tNd */ |head -n 20 |sed 's/\///g')
 }
 
 function cleanups() {

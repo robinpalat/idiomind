@@ -649,7 +649,7 @@ process() {
             let n++
         done < <(head -200 < "$DT_r/slts")
         
-        if [ -n "$(< "$DT_r/wrds")" ]; then
+        if [ -s "$DT_r/wrds" ]; then
             n=1
             while read -r trgt; do
                 exmp_=$(sed -n ${n}p "$DT_r/wrdsls" |sed 's/\[ \.\.\. \]//g')
