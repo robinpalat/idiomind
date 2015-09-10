@@ -106,7 +106,6 @@ function practice_a() {
     }
 
     while read trgt; do
-    
         fonts; cuestion
         if [ $? = 1 ]; then
             ling=${hard}; hard=0
@@ -126,11 +125,9 @@ function practice_a() {
 
     if [ ! -f ./a.2 ]; then
         score
-        
-    step=2
     else
+        step=2
         while read trgt; do
-
             fonts; cuestion
             if [ $? = 1 ]; then
                 break & score
@@ -182,7 +179,6 @@ function practice_b(){
 
     P=4; s=11
     while read trgt; do
-    
         fonts; mchoise
         if [ $? = 0 ]; then
             if grep -o "$srce" <<<"${dlg}"; then
@@ -197,16 +193,13 @@ function practice_b(){
             ling=${hard}; hard=0
             break & score
         fi
-        
     done < ./b.tmp
         
     if [ ! -f ./b.2 ]; then
         score
-        
     else
         step=2; P=2; s=12
         while read trgt; do
-        
             fonts; mchoise
             if [ $? = 0 ]; then
                 if grep -o "$srce" <<<"${dlg}"; then
@@ -219,7 +212,6 @@ function practice_b(){
             elif [ $? = 1 ]; then
                 break & score
             fi
-            
         done < ./b.2
         score
     fi
@@ -259,7 +251,6 @@ function practice_c() {
 
     p=1
     while read trgt; do
-    
         fonts; cuestion
         ans=$?
         if [ ${ans} = 2 ]; then
@@ -276,11 +267,9 @@ function practice_c() {
 
     if [ ! -f ./c.2 ]; then
         score
-        
     else
         step=2; p=2
         while read trgt; do
-        
             fonts; cuestion
             ans=$?
             if [ ${ans} = 2 ]; then
@@ -332,7 +321,6 @@ function practice_d() {
     }
     
     while read -r trgt; do
-    
         fonts; cuestion
         if [ $? = 1 ]; then
             ling=${hard}; hard=0
@@ -348,16 +336,13 @@ function practice_d() {
                 hard=$((hard+1))
             fi
         fi
-        
     done < ./d.tmp
 
     if [ ! -f ./d.2 ]; then
         score
-        
     else
         step=2
         while read -r trgt; do
-        
             fonts; cuestion
             if [ $? = 1 ]; then
                 break & score
@@ -371,7 +356,6 @@ function practice_d() {
                     echo "${trgt}" >> d.3
                 fi
             fi
-            
         done < ./d.2
         score
     fi
@@ -515,7 +499,6 @@ function practice_e() {
             if ps -A | pgrep -f 'play'; then killall play & fi
             rm -f ./mtch.tmp ./words.tmp &
         fi
-
     done < ./e.tmp
     score
 }
@@ -632,10 +615,9 @@ function practices() {
     else
         get_list
         cp -f "$dir/${practice}.0" "$dir/${practice}.tmp"
-        
         if [[ `wc -l < "$dir/${practice}.0"` -lt 2 ]]; then \
-        starting "$(gettext "Not enough items to start")"
-        echo " practice --new session"; fi
+            starting "$(gettext "Not enough items to start")"; return 1; fi
+        echo " practice --new session"
     fi
     
     [ -f "$dir/${practice}.2" ] && rm "$dir/${practice}.2"
