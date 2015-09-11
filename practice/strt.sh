@@ -292,7 +292,7 @@ function practice_d() {
         srce=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
         img="$DM_tls/images/${trgt,,}-0.jpg"
         [ ${#trgt} -gt 20 -o ${#srce} -gt 20 ] && trgt_f_c=10 || trgt_f_c=11
-        [ ! -f "$img" ] && img="$DS/practice/images/img_2.jpg"
+        [ ! -f "$img" ] && img="$DS/images/imgmiss.jpg"
         cuest="<span font_desc='Free Sans ${trgt_f_c}' color='#565656'> ${srce} </span>"
         aswer="<span font_desc='Free Sans ${trgt_f_c}'>${trgt}</span>"
     }
@@ -381,7 +381,7 @@ function practice_e() {
         --text="$text" \
         --name=Idiomind --class=Idiomind \
         --separator="" \
-        --window-icon="$DS/images/icon.png" --image="$DS/practice/images/bar.png" \
+        --window-icon="$DS/images/icon.png" --image="$DS/images/bar.png" \
         --buttons-layout=end --skip-taskbar --undecorated --center --on-top \
         --text-align=left --align=left --image-on-top \
         --width=510 --height=220 --borders=10 \
@@ -396,7 +396,7 @@ function practice_e() {
         yad --form --title="$(gettext "Practice")" \
         --text="<span font_desc='Free Sans $sz'>${wes}</span>\\n" \
         --name=Idiomind --class=Idiomind \
-        --image="/usr/share/idiomind/practice/images/bar.png" $aut \
+        --image="$DS/images/bar.png" $aut \
         --selectable-labels \
         --window-icon="$DS/images/icon.png" \
         --skip-taskbar --wrap --scroll --image-on-top --center --on-top \
@@ -565,7 +565,7 @@ function lock() {
         yad --title="$(gettext "Practice Completed")" \
         --text="<b>$(gettext "Practice Completed")</b>\\n   $(< "$dt")\n " \
         --window-icon="$DS/images/icon.png" --on-top --skip-taskbar \
-        --center --image="$DS/practice/images/21.png" \
+        --center --image=gtk-ok \
         --width=400 --height=130 --borders=5 \
         --button="    $(gettext "Restart")    ":0 \
         --button="    $(gettext "Ok")    ":2
@@ -649,7 +649,7 @@ function strt() {
         echo 21 > .${icon}
     elif [ ${1} = 2 ]; then
         learnt=$(< ./${practice}.l); declare info${icon}="* "
-        info="$(gettext "Learned") <span color='#6E6E6E'><b><big>$learnt </big></b></span>   $(gettext "Easy") <span color='#6E6E6E'><b><big>$easy </big></b></span>   $(gettext "Learning") <span color='#6E6E6E'><b><big>$ling </big></b></span>   $(gettext "Difficult") <span color='#6E6E6E'><b><big>$hard </big></b></span>\n"
+        info="<small>$(gettext "Learned")</small> <span color='#6E6E6E'><b><big>$learnt </big></b></span>   <small>$(gettext "Easy")</small> <span color='#6E6E6E'><b><big>$easy </big></b></span>   <small>$(gettext "Learning")</small> <span color='#6E6E6E'><b><big>$ling </big></b></span>   <small>$(gettext "Difficult")</small> <span color='#6E6E6E'><b><big>$hard </big></b></span>\n"
     fi
 
     VAR="$(yad --list --title="$(gettext "Practice ")" \

@@ -17,12 +17,13 @@ function dlg_form_1() {
     --field="<small>$(gettext "Example")</small>\t\t\t\t\t\t\t\t\t\t\t":TXT "${exmp}" \
     --field="<small>$(gettext "Definition")</small>":TXT "${defn}" \
     --field="<small>$(gettext "Note")</small>":TXT "${note}" \
-    --field="<small>$(gettext "Search")  <a href='$link1'>$(gettext "Translation")</a>  <a href='$link2'>$(gettext "Definition")</a>  </small>":LBL " " \
+    --field="<small>$(gettext "Search")  <a href='$link1'>$(gettext "Translation")</a>  </small>":LBL " " \
     --field="$(gettext "Mark")":CHK "$mark" \
-    --field="!$DS/images/listen.png":FBTN "${cmd_play}" \
+    --field="$(gettext "Definition")!$DS/images/info.png":FBTN "${cmd_def}" \
     --field=" ":LBL " " \
     --button="$(gettext "Image")":"${cmd_image}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \
+    --button="!$DS/images/listen.png!$(gettext "Listen")":"$cmd_play" \
     --button="$(gettext "Close")":0 |tail -n 1 |tr '\n' ' '
 }
 
@@ -36,17 +37,17 @@ function dlg_form_2() {
     --always-print-result --print-all --separator="|" --selectable-labels \
     --window-icon="$DS/images/icon.png" \
     --buttons-layout=end --align=right --center --on-top \
-    --width=650 --height=500 --borders=10 \
+    --width=650 --height=450 --borders=10 \
     --field="$(gettext "Mark")":CHK "$mark" \
     --field=" $lbl_2":${t} "$type" \
     --field="<small>$lgtl</small>":TXT "${trgt}" \
     --field="<small><a href='$link1'>$(gettext "Translation")</a></small>\t":LBL " " \
     --field="<small>$lgsl</small>":TXT "${srce}" \
-    --field="!$DS/images/listen.png":FBTN "${cmd_play}" \
     --field="<small>$(gettext "Topic")</small>":CB "${tpc}!${tpcs}" \
     --field="<small>$(gettext "Audio")</small>":FL "${audf}" \
     --button="$(gettext "Words")":"${cmd_words}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \
+    --button="!$DS/images/listen.png!$(gettext "Listen")":"$cmd_play" \
     --button="$(gettext "Close")":0 |tail -n 1 |tr '\n' ' '
 }
 

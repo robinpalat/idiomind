@@ -134,6 +134,8 @@ edit_item() {
     cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"""
     cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"""
     cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"" 1 ${c}"
+    cmd_def="'$DS/ifs/tls.sh' 'find_def' "\"${trgt}\"""
+    
     f="$(ls "$DC_d"/*."Link.Search definition".* |head -n1)"
     if [ -z "$f" ]; then "$DS_a/Dics/cnfg.sh" 3
     f="$(ls "$DC_d"/*."Link.Search definition".* |head -n1)"; fi
@@ -168,12 +170,12 @@ edit_item() {
                 type_mod=1
             elif [ ${type} = 2 ]; then
                 edit_dlg="${edit_dlg2}"
-                tpc_mod="$(cut -d "|" -f7 <<<"${edit_dlg}")"
+                tpc_mod="$(cut -d "|" -f6 <<<"${edit_dlg}")"
                 mark_mod="$(cut -d "|" -f1 <<<"${edit_dlg}")"
                 type_mod="$(cut -d "|" -f2 <<<"${edit_dlg}")"
                 trgt_mod="$(clean_2 "$(cut -d "|" -f3 <<<"${edit_dlg}")")"
                 srce_mod="$(clean_2 "$(cut -d "|" -f5 <<<"${edit_dlg}")")"
-                audf_mod="$(cut -d "|" -f8 <<<"${edit_dlg}")"
+                audf_mod="$(cut -d "|" -f7 <<<"${edit_dlg}")"
                 grmr_mod="${grmr}"
                 wrds_mod="${wrds}"
                 [ "${type_mod}" = TRUE ] && type_mod=1

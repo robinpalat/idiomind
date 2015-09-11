@@ -462,6 +462,8 @@ function dlg_form_1() {
     --button="$(gettext "Image")":3 \
     --button="$(gettext "Audio")":2 \
     --button=gtk-add:0
+    #--button="!$DS/images/image_add.png!$(gettext "Add a image")":3 \
+    #--button="!$DS/images/audio_add.png!$(gettext "Add an audio file")":2
 }
 
 function dlg_form_2() {

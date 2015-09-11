@@ -36,7 +36,7 @@ if [[ ${1} = 0 ]]; then
             fi
         else
             notify-send -i "${icon}" "${trgt}" "${srce}" -t 10000 &
-            sleep 1 && "$DS"/play.sh play_file "${file}" "${trgt}"
+            "$DS"/play.sh play_file "${file}" "${trgt}"
         fi
         
         [ ${n} = TRUE -a ${l} -lt 11 -a ${type} -lt 3 ] && l=11

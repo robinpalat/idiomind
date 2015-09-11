@@ -447,6 +447,24 @@ fback() {
      
 } >/dev/null 2>&1
 
+_definition() {
+    source /usr/share/idiomind/ifs/c.conf
+    source "$DS/ifs/mods/cmns.sh"
+    lgt=$(lnglss $lgtl); lgs=$(lnglss $lgsl)
+    query="$(sed 's/<[^>]*>//g' <<<"${2}")"
+    f="$(ls "$DC_d"/*."Link.Search definition".* |head -n1)"
+    if [ -z "$f" ]; then "$DS_a/Dics/cnfg.sh" 3
+    f="$(ls "$DC_d"/*."Link.Search definition".* |head -n1)"; fi
+    eval _url="$(< "$DS_a/Dics/dicts/$(basename "$f")")"
+    yad --html --title="$(gettext "Definition") - ${query}" \
+    --name=Idiomind --class=Idiomind \
+    --browser --uri="${_url}" \
+    --window-icon="$DS/images/icon.png" \
+    --no-buttons --fixed --on-top \
+    --width=680 --height=520 --borders=2
+     
+} >/dev/null 2>&1
+
 check_updates() {
     source "$DS/ifs/mods/cmns.sh"
     internet
@@ -1026,6 +1044,8 @@ case "$1" in
     first_run "$@" ;;
     fback)
     fback ;;
+    find_def)
+    _definition "$@" ;;
     pdf)
     mkpdf ;;
     update_menu)
