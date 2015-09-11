@@ -62,9 +62,10 @@ if [[ ${conten^} = A ]]; then
     else
         check_s "${tpe}"
         sleep 1
-        (
-        echo "2"
-        echo "# $(gettext "Processing... Wait.")";
+        
+        notify-send -i idiomind \
+        $(gettext "Batch processing")" \
+        $(gettext "It Might take some time")"
         cd "$DT_r"
         
         if grep ".mp3" <<<"${fl: -4}"; then
@@ -129,8 +130,6 @@ if [[ ${conten^} = A ]]; then
         msg " $(gettext "An error occurred.")\n" dialog-warning
         cleanups "$DT_r" "$lckpr" "$slt" & exit 1; fi
 
-        echo "1"
-        echo "# $(gettext "Processing")...";
         internet
         if [ $lgt = ja -o $lgt = "zh-cn" -o $lgt = ru ];
         then c=c; else c=w; fi
@@ -216,13 +215,7 @@ if [[ ${conten^} = A ]]; then
             echo "# ${trgt:0:35}..." ;
             
             let n++
-        done 
-
-        ) | dlg_progress_2
-        
-        if  [ $? != 0 ]; then
-            "$DS/stop.sh" 5
-        fi
+        done
         
         wadds=" $(($(wc -l < "$DT_r/addw") - $(sed '/^$/d' "$DT_r/wlog" | wc -l)))"
         W=" $(gettext "words")"

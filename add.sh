@@ -568,10 +568,11 @@ process() {
 
         touch "$DT_r/wlog" "$DT_r/slog" "$DT_r/adds" \
         "$DT_r/addw" "$DT_r/wrds"
-       
-        {
-        echo "5"
-        echo "# $(gettext "Processing")... " ;
+        
+        notify-send -i idiomind \
+        $(gettext "Batch processing")" \
+        $(gettext "It Might take some time")"
+
         internet
         [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ] && c=c || c=w
         lns="$(cat "$DT_r/slts" "$DT_r/wrds" |sed '/^$/d' |wc -l)"
@@ -683,8 +684,7 @@ process() {
                 let n++
             done < <(head -200 < "$DT_r/wrds")
         fi
-        
-        } | dlg_progress_2
+
         if  [ $? != 0 ]; then
             "$DS/stop.sh" 5
         fi
