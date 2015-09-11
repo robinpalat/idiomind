@@ -19,7 +19,7 @@ function dlg_form_1() {
     --field="<small>$(gettext "Note")</small>":TXT "${note}" \
     --field="<small>$(gettext "Search")  <a href='$link1'>$(gettext "Translation")</a>  </small>":LBL " " \
     --field="$(gettext "Mark")":CHK "$mark" \
-    --field="$(gettext "Definition")!$DS/images/info.png":FBTN "${cmd_def}" \
+    --field="$(gettext "Definition")!gtk-info":FBTN "${cmd_def}" \
     --field=" ":LBL " " \
     --button="$(gettext "Image")":"${cmd_image}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \

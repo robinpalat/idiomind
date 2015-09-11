@@ -92,8 +92,7 @@ if [[ ${1} = 0 ]]; then
     include "$DS/ifs/mods/chng"
 
 elif [[ ${1} != 0 ]]; then
-    source "$DS/ifs/mods/cmns.sh"
-    lgs=$(lnglss $lgsl)
+
     remove_d() {
         ins="$(cd "/usr/share/idiomind/addons/"
         set -- */; printf "%s\n" "${@%/}")"
@@ -120,7 +119,7 @@ elif [[ ${1} != 0 ]]; then
         align="left"
         img="--image=info"
     else
-        text="--text=<small><small><a href='http://idiomind.sourceforge.net/$lgs/${lgtl,,}'>$(gettext "Shared")</a>   </small></small>"
+        text="--text=<small><small><a href='http://idiomind.sourceforge.net/community/${lgtl,,}'>$(gettext "Shared")</a>   </small></small>"
         align="right"
     fi
     chk_list_addons1=$(wc -l < "$DS_a/menu_list")

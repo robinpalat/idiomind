@@ -135,14 +135,8 @@ edit_item() {
     cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"""
     cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"" 1 ${c}"
     cmd_def="'$DS/ifs/tls.sh' 'find_def' "\"${trgt}\"""
-    
-    f="$(ls "$DC_d"/*."Link.Search definition".* |head -n1)"
-    if [ -z "$f" ]; then "$DS_a/Dics/cnfg.sh" 3
-    f="$(ls "$DC_d"/*."Link.Search definition".* |head -n1)"; fi
-    eval _url="$(< "$DS_a/Dics/dicts/$(basename "$f")")"
     link1="https://translate.google.com/\#$lgt/$lgs/${query}"
-    link2="$_url"
-    
+
     if [ -z "${item}" ]; then exit 1; fi
     if grep "${temp}" <<<"${srce}"; then
     msg_2 "$(gettext "Wait until it finishes a previous process")\n" info OK gtk-stop "$(gettext "Warning")"
