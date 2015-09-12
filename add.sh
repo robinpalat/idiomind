@@ -193,7 +193,7 @@ new_sentence() {
         notify-send "${trgt}" "${srce}\\n(${tpe})" -t 10000
 
         if [ ! -f "$DT_r/audtm.mp3" ]; then
-             if [ "$trans" = TRUE ]; then
+            if [ "$trans" = TRUE ]; then
                 tts "${trgt}" "$lgt" "$DT_r" "${DM_tlt}/$id.mp3"
                     if [ ! -f "${DM_tlt}/$id.mp3" ]; then
                         voice "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"

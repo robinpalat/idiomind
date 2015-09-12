@@ -581,7 +581,12 @@ function lock() {
 }
 
 function starting() {
-    zenity --name=Idiomind --class=Idiomind --info --text="$1" 
+    yad --title=$(gettext "Information") \
+    --text=" $1 \n" --image=info \
+    --window-icon="$DS/images/icon.png" \
+    --skip-taskbar --center --on-top \
+    --width=300 --height=120 --borders=5 \
+    --button="    $(gettext "Ok")    ":1
     strt 0
 }
 

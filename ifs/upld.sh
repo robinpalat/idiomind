@@ -191,7 +191,7 @@ if [ -e "${DC_tlt}/download" ]; then
         ret=$?
     fi
 else
-    dlg=$(yad --form --title="$(gettext "Could you share what you learn?")" \
+    dlg=$(yad --form --title="$(gettext "Share")" \
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" --buttons-layout=end \
     --align=right --center --on-top \

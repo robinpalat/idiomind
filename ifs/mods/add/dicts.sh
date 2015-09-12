@@ -1,9 +1,9 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 cmsg() {
-    zenity --question --class=Idiomind name=Idiomind \
-    --title="$(gettext "Dictionaries")" --cancel-label="$(gettext "Cancel")" \
-    --text="$(gettext "You may need to configure the list of Internet resources.\nDo you want to do this now?")"
+    source source "$DS/ifs/mods/cmns.sh"
+    msg_2 "$(gettext "You may need to configure the list of Internet resources. \nDo you want to do this now?")" \
+    info "$(gettext "Yes")" "$(gettext "Cancel")"
     if [ $? = 0 ]; then s=1; "$DS_a/Dics/cnfg.sh" 6; fi
 }
 s=0
