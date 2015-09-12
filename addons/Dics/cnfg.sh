@@ -69,7 +69,7 @@ function cpfile() {
     cp -f "${2}" "${3}"/
     > "${4}"; sudo chmod 777 "${4}"
 }
-    
+
 function dlg() {
     
     dict_list() {
@@ -100,7 +100,7 @@ function dlg() {
     echo -e "$lgtl\n$v_dicts" > "$DC_a/dict/.dict"
     for r in "$DS_a/Dics/dicts"/*; do > "$disables/$(basename "$r")"; done; fi
     
-    txtinf=" $(gettext "Please, select at least one resource for each task")"
+    txtinf=" $(gettext "Please, select at least one resource (script) for each task")"
     if [[ -n "${1}" ]]; then text="--text=$txtinf"; n=${1}
     else text="--center"; n=6; fi
 

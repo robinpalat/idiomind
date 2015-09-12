@@ -428,12 +428,6 @@ attatchments() {
     fi
 } >/dev/null 2>&1
 
-help() {
-    URL="http://idiomind.sourceforge.net/doc/help.pdf"
-    (xdg-open "$URL") &
-     
-} >/dev/null 2>&1
-
 fback() {
     source "$DS/ifs/mods/cmns.sh"
     internet
@@ -442,7 +436,7 @@ fback() {
     --name=Idiomind --class=Idiomind \
     --browser --uri="$URL" \
     --window-icon="$DS/images/icon.png" \
-    --no-buttons --fixed \
+    --no-buttons --fixed --on-top --mouse \
     --width=500 --height=350
      
 } >/dev/null 2>&1
@@ -460,7 +454,19 @@ _definition() {
     --name=Idiomind --class=Idiomind \
     --browser --uri="${_url}" \
     --window-icon="$DS/images/icon.png" \
-    --no-buttons --fixed --on-top \
+    --no-buttons --fixed --on-top --mouse \
+    --width=680 --height=520 --borders=2
+     
+} >/dev/null 2>&1
+
+_quick_help() {
+    source /usr/share/idiomind/ifs/c.conf
+    _url='http://idiomind.com/doc/help.html'
+    yad --html --title="$(gettext "Reference")" \
+    --name=Idiomind --class=Idiomind \
+    --browser --uri="${_url}" \
+    --window-icon="$DS/images/icon.png" \
+    --no-buttons --fixed --on-top --mouse \
     --width=680 --height=520 --borders=2
      
 } >/dev/null 2>&1
@@ -530,17 +536,10 @@ first_run() {
         if [ $? = 1 ]; then rm -f "${file}" "${file}".p; fi
     }
     source /usr/share/idiomind/ifs/c.conf
-    NOTE1="$(gettext "<b>How to add notes?</b>\nIn the upper text field, enter text in language that you are learning. In the field below, enter text in the source language. To add an image to a note use the screen clipping.")\n"
     NOTE2="$(gettext "NOTE: If you change the text of an item here listed, then its audio file can be overwritten by another new file. To avoid this, you can edit it individually through its edit dialog.")"
-    NOTE3="$(gettext "To start adding notes you need to have a topic.\nCreate one using the button below. ")"
+    NOTE3="$(gettext "To start adding notes you need to have a topic.\nTo create one, you can click on the New button...")"
 
-    if [[ ${2} = add ]]; then
-        title="$(gettext "How to add notes?")"
-        note="${NOTE1}"
-        file="$DC_s/add_first_run"
-        image=gtk-help
-        dlg
-    elif [[ ${2} = edit_list ]]; then
+    if [[ ${2} = edit_list ]]; then
         title=" "
         note="${NOTE2}"
         file="$DC_s/elist_first_run"
@@ -555,7 +554,7 @@ first_run() {
         exit
     elif [[ -z "${2}" ]]; then
         echo "-- done"
-        touch "$DC_s/add_first_run" "$DC_s/elist_first_run" \
+        touch "$DC_s/elist_first_run" \
         "$DC_s/topics_first_run"
         exit
     else 
@@ -1033,7 +1032,7 @@ case "$1" in
     videourl)
     videourl "$@" ;;
     help)
-    help ;;
+    _quick_help ;;
     check_updates)
     check_updates ;;
     a_check_updates)

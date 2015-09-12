@@ -3,14 +3,9 @@
 
 function internet() {
     curl -v www.google.com 2>&1 \
-    | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
-    yad --title="$(gettext "No network connection")" --image=info \
-    --name=Idiomind --class=Idiomind \
-    --window-icon="$DS/images/icon.png" \
-    --image-on-top --center --sticky --on-top --skip-taskbar \
+    | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { zenity --info \
     --text="$(gettext "No network connection\nPlease connect to a network, then try again.")  " \
-    --width=410 --height=130 --borders=3 \
-    --button="$(gettext "OK")":0 >&2; exit 1;}
+    >&2; exit 1;}
 }
 
 function msg() {

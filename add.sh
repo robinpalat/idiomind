@@ -3,7 +3,8 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
-include "$DS/ifs/mods/add"
+if [ $1 != new_topic -a $1 != new_items ]; then
+include "$DS/ifs/mods/add"; fi
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
 wlist=$(grep -o wlist=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
@@ -11,9 +12,11 @@ trans=$(grep -o trans=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
 ttrgt=$(grep -o ttrgt=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
 
 new_topic() {
+
     if [[ $(wc -l < "$DM_tl/.1.cfg") -ge 120 ]]; then
     msg "$(gettext "Maximum number of topics reached.")" info Info & exit 1; fi
-
+    
+    source "$DS/ifs/mods/add/add.sh"
     jlb="$(clean_3 "$(dlg_form_0 "${2}")")"
     
     if [[ ${#jlb} -gt 55 ]]; then
@@ -22,7 +25,7 @@ new_topic() {
     fi
     
     if grep -Fxo "${jlb}" < <(ls "$DS/addons/"); then jlb="${jlb} (1)"; fi
-    chck=$(grep -Fxo "${jlb}" "$DM_tl/.1.cfg" | wc -l)
+    chck=$(grep -Fxo "${jlb}" "$DM_tl/.1.cfg" |wc -l)
     
     if [[ ${chck} -ge 1 ]]; then
         for i in {1..50}; do
@@ -50,8 +53,7 @@ new_items() {
     if [ -e "$DC_s/topics_first_run" ]; then
     "$DS/ifs/tls.sh" first_run topics & exit 1; fi
     
-    if [ -e "$DC_s/add_first_run" ]; then
-    "$DS/ifs/tls.sh" first_run add & fi
+    source "$DS/ifs/mods/add/add.sh"
 
     [ -z "${4}" ] && txt="$(xclip -selection primary -o)" || txt="${4}"
     txt="$(clean_4 "${txt}")"
