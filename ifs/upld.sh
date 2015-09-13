@@ -43,12 +43,12 @@ function dwld() {
         URL="${url2}"
     else err & exit
     fi
-    wget -q -c -T 80 -O "$DT/download/${oname}.tar.gz" "${URL}"
+    wget -q -c -T 80 -O "$DT/download/${md5id}.tar.gz" "${URL}"
     [ $? != 0 ] && err && exit 1
     
-    if [ -f "$DT/download/${oname}.tar.gz" ]; then
+    if [ -f "$DT/download/${md5id}.tar.gz" ]; then
         cd "$DT/download"/
-        tar -xzvf "$DT/download/${oname}.tar.gz"
+        tar -xzvf "$DT/download/${md5id}.tar.gz"
         
         if [ -d "$DT/download/${oname}" ]; then
             ltotal="$(gettext "Total")"
@@ -167,7 +167,7 @@ if [ -e "${DC_tlt}/download" ]; then
         --image="$DS/images/download.png" \
         --window-icon="$DS/images/icon.png" --buttons-layout=end \
         --align=left --center --on-top \
-        --width=400 --height=200 --borders=12 \
+        --width=400 --height=280 --borders=12 \
         --field="$info:lbl" " " \
         --field="$info2:lbl" " " \
         --field="$(gettext "Download"):BTN" "${cmd_dwl}" \
@@ -208,8 +208,8 @@ else
     ret=$?
     img=$(echo "${dlg}" | cut -d "|" -f6)
     if [ -f "${img}" -a "${img}" != "${imgm}" ]; then
-    wsize="$(identify "${img}" | cut -d ' ' -f 3 | cut -d 'x' -f 1)"
-    esize="$(identify "${img}" | cut -d ' ' -f 3 | cut -d 'x' -f 2)"
+    wsize="$(identify "${img}" | cut -d ' ' -f 3 |cut -d 'x' -f 1)"
+    esize="$(identify "${img}" | cut -d ' ' -f 3 |cut -d 'x' -f 2)"
     if [ ${wsize} -gt 2000 ] || [ ${wsize} -lt 400 ] \
     || [ ${esize} -lt 100 ] || [ ${esize} -gt 1500 ]; then
     msg "$(gettext "Sorry, the image size is not suitable.")\n " info "$(gettext "Error")"

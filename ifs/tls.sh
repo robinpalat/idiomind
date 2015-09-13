@@ -477,7 +477,7 @@ check_updates() {
     nver=`wget --user-agent 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) \
     Gecko/20100101 Firefox/31.0' -qO - http://idiomind.sourceforge.net/doc/release |sed -n 1p`
     cver=`idiomind -v`
-    pkg='https://sourceforge.net/projects/idiomind/files/idiomind.deb/download'
+    pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
     echo "$(date +%d)" > "$DC_s/9.cfg"
     if [ ${#nver} -lt 9 ] && [ ${#cver} -lt 9 ] \
     && [ ${#nver} -ge 3 ] && [ ${#cver} -ge 3 ] \
@@ -490,7 +490,7 @@ check_updates() {
         msg " $(gettext "No updates available.")\n" info "$(gettext "Information")"
     fi
     exit 0
-}
+} >/dev/null 2>&1
 
 a_check_updates() {
     source "$DS/ifs/mods/cmns.sh"
@@ -502,13 +502,13 @@ a_check_updates() {
     [[ "$(wc -l < "$DC_s/9.cfg")" -gt 1 ]] && exit 1
 
     if [[ "$d1" != "$d2" ]]; then
-        sleep 50; curl -v www.google.com 2>&1 | \
+        sleep 5; curl -v www.google.com 2>&1 | \
         grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
         echo "$d2" > "$DC_s/9.cfg"
         nver=`wget --user-agent 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) \
         Gecko/20100101 Firefox/31.0' -qO - http://idiomind.sourceforge.net/doc/release |sed -n 1p`
         cver=`idiomind -v`
-        pkg='https://sourceforge.net/projects/idiomind/files/idiomind.deb/download'
+        pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
         if [ ${#nver} -lt 9 ] && [ ${#cver} -lt 9 ] \
         && [ ${#nver} -ge 3 ] && [ ${#cver} -ge 3 ] \
         && [ "$nver" != "$cver" ]; then
@@ -519,7 +519,7 @@ a_check_updates() {
         fi
     fi
     exit 0
-}
+} >/dev/null 2>&1
 
 first_run() {
     dlg() {

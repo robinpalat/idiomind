@@ -450,7 +450,7 @@ function dlg_form_0() {
 }
 
 function dlg_form_1() {
-    yad --form --title="$(gettext "Add")" \
+    yad --form --title="$(gettext "New note")" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --separator="\n" \
     --skip-taskbar --center --on-top \
@@ -467,7 +467,7 @@ function dlg_form_1() {
 }
 
 function dlg_form_2() {
-    yad --form --title="$(gettext "Add")" \
+    yad --form --title="$(gettext "New note")" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --separator="\n" \
     --skip-taskbar --center --on-top \

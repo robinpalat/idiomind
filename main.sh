@@ -65,9 +65,6 @@ function new_session() {
         mv -f "$DT/log" "$DC_s/log"; fi
     fi
 
-    # check updates
-    "$DS/ifs/tls.sh" a_check_updates &
-    
     # update status
     [ ! -e "$DM_tl/.1.cfg" ] && touch "$DM_tl/.1.cfg"
     while read -r line; do
@@ -120,13 +117,9 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     --width=638 --height=570 --borders=6 \
     --column="$langt            " \
     --column="$langs            " \
-    --button="gtk-close":1 \
     --button="$(gettext "Install")":0
     ret=$?
-        
-        if [ $ret -eq 1 ]; then exit
-            
-        elif [ $ret -eq 0 ]; then
+        if [ $ret -eq 0 ]; then
             if [[ $(wc -l < "$DM_t/$langt/.1.cfg") -ge 120 ]]; then
                 msg "$(gettext "Maximum number of topics reached.")\n" info & exit
             fi
@@ -152,7 +145,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             for i in {1..6}; do > "${DC_tlt}/${i}.cfg"; done
             for i in {1..3}; do > "${DC_tlt}/practice/log.${i}"; done
             tail -n 1 < "${file}" |tr '&' '\n' > "${DC_tlt}/id.cfg"
-            > "${DC_tlt}/download.cfg"
+            > "${DC_tlt}/download"
             if [ ${cn} = 1  ]; then
             sed -i "s/tname=.*/tname=\"${tname}\"/g" "${DC_tlt}/id.cfg"; fi
             sed -i "s/datei=.*/datei=\"$(date +%F)\"/g" "${DC_tlt}/id.cfg"
@@ -322,13 +315,16 @@ function topic() {
 }
 
 panel() {
-    if [ ! -d "$DT" ]; then new_session; fi
+    if [ ! -d "$DT" ]; then new_session; ns=TRUE; fi
     [ ! -e "$DT/tpe" ] && echo "$(sed -n 1p "$DC_s/4.cfg")" > "$DT/tpe"
     [ "$(< "$DT/tpe")" != "${tpc}" ] && echo "$(sed -n 1p "$DC_s/4.cfg")" > "$DT/tpe"
     [ -e "$DC_s/10.cfg" ] && date=$(sed -n 1p "$DC_s/10.cfg")
     
     if [[ "$(date +%d)" != "$date" ]] || [ ! -e "$DC_s/10.cfg" ]; then
-    new_session; fi
+    new_session; ns=TRUE; fi
+
+    ( set +e; if [ "${ns}" = TRUE ]; then
+    "$DS/ifs/tls.sh" a_check_updates; fi ) &
 
     if [ -e "$DC_s/10.cfg" ]; then
         x=$(($(sed -n 2p "$DC_s/10.cfg")/2))
@@ -337,7 +333,7 @@ panel() {
 
     if [[ `grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg"` = TRUE ]] \
     && [ ! -e /tmp/.clipw ]; then "$DS/ifs/mods/clipw.sh" & fi
-
+    
     _home=gtk-home
     if [[ ${intrf} = fr || ${intrf} = pt ]]; then _home='Home!gtk-home'; fi
     yad --title="Idiomind" \
