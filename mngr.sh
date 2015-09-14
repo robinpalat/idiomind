@@ -380,9 +380,7 @@ edit_list() {
                 ${pos}s|grmr={$trgt}|grmr={$grmr_mod}|;
                 ${pos}s|id=\[\]|id=\[$id_mod\]|g" "${direc}/0.cfg"
             done < "$DT/add_lst"
-            notify-send -i idiomind "$(gettext "Changes done")" "$(gettext "Changes will become visible only after you close and reopen the main window")" 
         fi
-        [ ${invrt_msg} = TRUE ] && msg "$(gettext "Changes will become visible only after you close and reopen the main window.  ")" info " "
     fi
     rm -f "$DT/tmp1" "$DT/_tmp1" "$DT/add_lst" "$DT_r"
     exit 1
@@ -390,7 +388,6 @@ edit_list() {
 
 
 delete_topic() {
-    
     if [ -z "${tpc}" ]; then exit 1; fi
     if [ "${tpc}" != "${2}" ]; then
         msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
@@ -506,7 +503,7 @@ mark_to_learn_topic() {
     [ ! -s "${DC_tlt}/0.cfg" ] && exit 1
     
     if [ $((inx3+inx4)) -le 10 ]; then
-    msg "$(gettext "Not enough items to perform the operation").\t\n " \
+    msg "$(gettext "Not enough notes to perform the operation").\t\n " \
     info "$(gettext "Information")" & exit; fi
 
     (echo "5"
@@ -563,7 +560,7 @@ mark_as_learned_topic() {
     [ ! -s "${DC_tlt}/0.cfg" ] && exit 1
 
     if [ $((inx3+inx4)) -le 10 ]; then
-    msg "$(gettext "Not enough items to perform the operation").\t\n " \
+    msg "$(gettext "Not enough notes to perform the operation").\t\n " \
     info "$(gettext "Information")" & exit; fi
     
     (echo "5"

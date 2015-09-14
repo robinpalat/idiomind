@@ -53,18 +53,17 @@ function dlg_form_2() {
 
 function edit_list_list() {
     yad --list --title="$(gettext "Edit list")" \
-    --text="$(gettext "You can move any item by dragging and dropping or double click to edit it further.")" \
+    --text="$(gettext "You can move any item by dragging and dropping or double click to edit it further. Changes will become visible only after you close and reopen the main window.")" \
     --name=Idiomind --class=Idiomind \
     --editable --separator='' \
     --always-print-result --print-all \
     --window-icon="$DS/images/icon.png" \
     --no-headers --center \
-    --width=410 --height=260 --borders=5 \
+    --width=420 --height=280 --borders=5 \
     --column="" \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Reverse List")":2 \
     --button="gtk-apply":0
-    
 }
 
 function progr_3() {

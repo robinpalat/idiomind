@@ -9,7 +9,7 @@ function check_s() {
     DC_tlt="$DM_tl/${1}/.conf"
     if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
     [ -d "$DT_r" ] && rm -fr "$DT_r"
-    msg "$(gettext "You've reached the maximum number of notes you can add for a topic. Max allowed (200)")" info " " & exit; fi
+    msg "$(gettext "You've reached the maximum number of notes for this topic. Max allowed (200)")" info " " & exit; fi
     if [ -z "${tpe}" ]; then [ -d "$DT_r" ] && rm -fr "$DT_r" &
     msg "$(gettext "No topic is active")\n" info & exit 1; fi
 }
@@ -498,14 +498,14 @@ function dlg_checklist_1() {
 
 function dlg_checklist_3() {
     cat "${1}" | awk '{print "FALSE\n"$0}' | \
-    yad --list --checklist --title="$(gettext "Add")" \
+    yad --list --checklist --title="$(gettext "New note")" \
     --name=Idiomind --class=Idiomind \
     --dclick-action="'/usr/share/idiomind/add.sh' 'list_words_dclik'" \
     --window-icon="$DS/images/icon.png" \
     --ellipsize=END --center --no-click --text-align=right \
     --width=700 --height=380 --borders=5 \
     --column="$(gettext "Select")" \
-    --column="$(wc -l < "${1}") $(gettext "Items found")" \
+    --column="$(wc -l < "${1}") $(gettext "notes found")" \
     --button=$(gettext "Edit"):2 \
     --button="$(gettext "Cancel")":1 \
     --button="gtk-add":0 > "$slt"
@@ -539,7 +539,7 @@ function msg_3() {
 
 function dlg_text_info_3() {
     echo -e "${2}" | yad --text-info \
-    --title="$(gettext "Some items could not be added to your list")" \
+    --title="$(gettext "Some notes could not be added to your list")" \
     --text="${1}" \
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" \
@@ -565,17 +565,8 @@ function dlg_progress_1() {
     --window-icon="$DS/images/icon.png" \
     --always-print-result  --progress-text=" " \
     --pulsate --percentage="5" --auto-close \
-    --skip-taskbar --no-buttons --on-top --fixed \
-    --width=200 --height=50 --borders=4 --geometry=240x20-4-4
-}
-
-function dlg_progress_2() {
-    yad --progress --title="$(gettext "Progress")" \
-    --name=Idiomind --class=Idiomind \
-    --window-icon="$DS/images/icon.png" \
-    --always-print-result --progress-text=" " --auto-close \
-    --skip-taskbar --no-buttons --on-top --fixed \
-    --width=200 --height=50 --borders=4 --geometry=240x20-4-4
+    --undecorated --skip-taskbar --no-buttons --on-top --center --fixed \
+    --width=200 --height=50 --borders=2
 }
 
 function cleanups() {

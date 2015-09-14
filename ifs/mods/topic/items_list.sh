@@ -100,7 +100,7 @@ function notebook_1() {
     --scroll --borders=10 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
     --field=" $(gettext "Mark as learnt") ":FBTN "$cmd_mark" \
-    --field="$(gettext "Auto select items")\t\t\t\t\t\t\t":CHK "$auto_mrk" \
+    --field="$(gettext "Auto checked of checkbox on list Learning")\t\t\t":CHK "$auto_mrk" \
     --field="$label_info2\n":LBL " " \
     --field="$(gettext "Files")":FBTN "$cmd_attchs" \
     --field="$(gettext "Share")":FBTN "$cmd_share" \
@@ -167,9 +167,9 @@ function notebook_2() {
 } >/dev/null 2>&1
 
 function dialog_1() {
-    yad --title="${tpc}" \
+    yad --title="Review" \
     --class=idiomind --name=Idiomind \
-    --text=" $(gettext "<b>Would you like to go over it?</b>\n The specified period already has been completed")" \
+    --text="\"${tpc}\"\n$(gettext "<b>Would you like to go over it?</b>\n The specified period already has been completed")" \
     --image=gtk-refresh \
     --window-icon="$DS/images/icon.png" \
     --buttons-layout=edge --center --on-top \

@@ -25,7 +25,7 @@ play_sentence() {
 
 play_file() {
     if [ -f "${2}" ]; then
-        mplayer "${2}" -noconsolecontrols -title "${3}"
+        mplayer "${2}" -novideo -noconsolecontrols -title "${3}"
     elif [ -n "$synth" ]; then
         echo "${3}." |$synth
     else
@@ -95,7 +95,7 @@ play_list() {
         && title="$(gettext "Play")  (${tpc})"
     else
         tpp="$(sed -n 1p "$DT/.p_")"
-        title="$(gettext "Currently playing:") ${tpp}"
+        title="$(gettext "Playing:") ${tpp}"
         btn2="--button=gtk-media-stop:2"
     fi
     set="$(echo "${iteml[${rword}]}")"

@@ -267,7 +267,7 @@ function topic() {
                         fi 
                 fi
 
-                pres="<u><b>$(gettext "Topic learnt")</b></u>  $(gettext "* however you have new items") ($inx1).\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
+                pres="<u><b>$(gettext "Topic learnt")</b></u>  $(gettext "* however you have new notes") ($inx1).\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
                 notebook_2
             else
                 notebook_1

@@ -12,7 +12,6 @@ trans=$(grep -o trans=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
 ttrgt=$(grep -o ttrgt=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
 
 new_topic() {
-
     if [[ $(wc -l < "$DM_tl/.1.cfg") -ge 120 ]]; then
     msg "$(gettext "Maximum number of topics reached.")" info Info & exit 1; fi
     
@@ -112,7 +111,7 @@ new_items() {
             elif [[ ${#trgt} = 1 ]]; then
                 "$DS/add.sh" process ${trgt:0:2} "$DT_r" & exit 1
 
-            elif [[ ${trgt:0:4} = 'Http' ]]; then
+            elif [[ ${trgt:0:4} = 'http' ]]; then
                 "$DS/add.sh" process "${trgt}" "$DT_r" & exit 1
             
             elif [[ ${#trgt} -gt 180 ]]; then
@@ -332,7 +331,7 @@ list_words_edit() {
 
         if [ -f "$DT_r/logw" ]; then
         _log="$(< "$DT_r/logw")"
-        dlg_text_info_3 "$(gettext "Some items could not be added to your list"):" "$_log"; fi
+        dlg_text_info_3 "$(gettext "Some notes could not be added to your list"):" "$_log"; fi
         echo -e "adi.$lns.adi" >> "$DC_s/log"
     fi
     cleanups "${DT_r}" "$slt"; exit
@@ -387,7 +386,7 @@ list_words_sentence() {
 
     if [ -f "$DT_r/logw" ]; then
     _log="$(< "$DT_r/logw")"
-    dlg_text_info_3 "$(gettext "Some items could not be added to your list"):" "$_log"; fi
+    dlg_text_info_3 "$(gettext "Some notes could not be added to your list"):" "$_log"; fi
     cleanups "$DT_r"
     echo -e "adi.$lns.adi" >> "$DC_s/log"
     exit
@@ -460,7 +459,7 @@ process() {
     include "$DS/ifs/mods/add"
     include "$DS/ifs/mods/add_process"
     
-    if [[ ${2:0:4} = Http ]]; then
+    if [[ ${2:0:4} = 'http' ]]; then
         (echo "1"
         internet
         echo "# $(gettext "Processing")..." ;
@@ -708,7 +707,7 @@ process() {
         fi
         
         if [ -n "$log" ]; then sleep 1
-            dlg_text_info_3 "$(gettext "Some items could not be added to your list"):" "$log" >/dev/null 2>&1
+            dlg_text_info_3 "$(gettext "Some notes could not be added to your list"):" "$log" >/dev/null 2>&1
         fi
         cleanups "$DT_r" "$lckpr"
     else
