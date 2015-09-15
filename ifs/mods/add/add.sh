@@ -565,7 +565,8 @@ function dlg_progress_1() {
     --window-icon="$DS/images/icon.png" \
     --always-print-result  --progress-text=" " \
     --pulsate --percentage="5" --auto-close \
-    --undecorated --skip-taskbar --no-buttons --on-top --center --fixed \
+    --undecorated --skip-taskbar --no-buttons \
+    --on-top --mouse --center --fixed \
     --width=200 --height=50 --borders=2
 }
 

@@ -162,15 +162,15 @@ if [ -e "${DC_tlt}/download" ]; then
         c_images="$(grep -o 'nimag="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         fsize="$(grep -o 'nsize="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         cmd_dwl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
-        info="<b>$(gettext "Additional content available")</b>"
+        info="<b>$(gettext "Downloadable content available")</b>"
         info2="$(gettext "Audio files:") $c_audio\n$(gettext "Images:") $c_images\n$(gettext "Size:") $fsize"
         dlg=$(yad --form --columns=2 --title="$(gettext "Share")" \
         --name=Idiomind --class=Idiomind \
-        --image="$DS/images/download.png" \
+        --image="$DS/images/download.png" --image-on-top \
         --window-icon="$DS/images/icon.png" --buttons-layout=end \
         --align=left --center --on-top \
-        --width=400 --height=280 --borders=12 \
-        --field="$info:lbl" " " \
+        --width=450 --height=260 --borders=12 \
+        --text="$info" " " \
         --field="$info2:lbl" " " \
         --field="$(gettext "Download"):BTN" "${cmd_dwl}" \
         --field="\t\t\t\t\t:lbl" " " \

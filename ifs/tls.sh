@@ -438,7 +438,6 @@ fback() {
     --window-icon="$DS/images/icon.png" \
     --no-buttons --fixed --on-top --mouse \
     --width=500 --height=350
-     
 } >/dev/null 2>&1
 
 _definition() {
@@ -450,25 +449,23 @@ _definition() {
     if [ -z "$f" ]; then "$DS_a/Dics/cnfg.sh" 3
     f="$(ls "$DC_d"/*."Link.Search definition".* |head -n1)"; fi
     eval _url="$(< "$DS_a/Dics/dicts/$(basename "$f")")"
-    yad --html --title="$(gettext "Definition") - ${query}" \
+    yad --html --title="$(gettext "Definition")" \
     --name=Idiomind --class=Idiomind \
     --browser --uri="${_url}" \
     --window-icon="$DS/images/icon.png" \
     --no-buttons --fixed --on-top --mouse \
     --width=680 --height=520 --borders=2
-     
 } >/dev/null 2>&1
 
 _quick_help() {
     source /usr/share/idiomind/ifs/c.conf
-    _url='http://idiomind.com/doc/help.html'
+    _url='http://idiomind.sourceforge.net/doc/help.html'
     yad --html --title="$(gettext "Reference")" \
     --name=Idiomind --class=Idiomind \
     --browser --uri="${_url}" \
     --window-icon="$DS/images/icon.png" \
     --no-buttons --fixed --on-top --mouse \
     --width=680 --height=520 --borders=2
-     
 } >/dev/null 2>&1
 
 check_updates() {
