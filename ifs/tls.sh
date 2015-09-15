@@ -462,7 +462,7 @@ _quick_help() {
     _url='http://idiomind.sourceforge.net/doc/help.html'
     yad --html --title="$(gettext "Reference")" \
     --name=Idiomind --class=Idiomind \
-    --browser --uri="${_url}" \
+    --uri="${_url}" \
     --window-icon="$DS/images/icon.png" \
     --no-buttons --fixed --on-top --mouse \
     --width=680 --height=520 --borders=2
@@ -799,7 +799,7 @@ translate_to() {
             echo -e "  done!"
         else
             include "$DS/ifs/mods/add"
-            echo -e "\n\n  --translating \"$tpc\"...\n"
+            echo -e "\n\n  translating \"$tpc\"...\n"
             cnt=`wc -l "${DC_tlt}/0.cfg"`
             > "$DT/words.trad_tmp"
             > "$DT/index.trad_tmp"
