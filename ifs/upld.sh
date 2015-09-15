@@ -170,7 +170,7 @@ if [ -e "${DC_tlt}/download" ]; then
         --window-icon="$DS/images/icon.png" --buttons-layout=end \
         --align=left --center --on-top \
         --width=450 --height=260 --borders=12 \
-        --text="$info" " " \
+        --text="$info" \
         --field="$info2:lbl" " " \
         --field="$(gettext "Download"):BTN" "${cmd_dwl}" \
         --field="\t\t\t\t\t:lbl" " " \
