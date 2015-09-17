@@ -563,10 +563,10 @@ function dlg_progress_1() {
     yad --progress --title="$(gettext "Processing")" \
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" \
-    --always-print-result  --progress-text=" " \
+    --progress-text=" " \
     --pulsate --percentage="5" --auto-close \
     --undecorated --skip-taskbar --no-buttons \
-    --on-top --mouse --center --fixed \
+    --on-top --mouse --fixed \
     --width=200 --height=50 --borders=2
 }
 

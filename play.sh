@@ -92,7 +92,7 @@ play_list() {
         btn2="--center"
         title="$(gettext "Play")"
         [ ${mode} -gt 1 -a -n "${tpc}" ] \
-        && title="$(gettext "Play")  (${tpc})"
+        && title="$(gettext "Play") (${tpc})"
     else
         tpp="$(sed -n 1p "$DT/.p_")"
         title="$(gettext "Playing:") ${tpp}"

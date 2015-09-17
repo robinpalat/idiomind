@@ -42,27 +42,26 @@ if [[ $ret -eq 0 ]]; then
         exp=$(yad --file --save --title="$(gettext "Export")" \
         --filename="idiomind_data.tar.gz" \
         --window-icon="$DS/images/icon.png" \
-        --skip-taskbar --center --on-top \
+        --skip-taskbar --center --mouse --on-top \
         --width=600 --height=500 --borders=10 \
         --button="$(gettext "Cancel")":1 \
         --button=Ok:0)
         ret=$?
         if [[ $ret -eq 0 ]]; then
-            (
-            echo "# $(gettext "Copying")..."
+            sleep 1; notify-send -i idiomind \
+            "$(gettext "Copying")" \
+            "$(gettext "It Might take some time")..." 
             if [ -d "${DM}" ]; then
                 cd "${DM}"
             else
                 msg "$(gettext "An error occurred while copying files.")\n" error && exit 1
             fi
-            tar cvzf "$DT/backup.tar.gz" .
+            
+            find -L . -name .CACHEDIR |sed -e 's/[/]\.CACHEDIR$//g' > "$DT/excludes"
+            tar --ignore-command-error --ignore-failed-read \
+            -icvzf "$DT/backup.tar.gz" --exclude-from="$DT/excludes" .
             mv -f "$DT/backup.tar.gz" "${exp}"
             echo "# $(gettext "Completing")" ; sleep 1
-            ) | yad --progress --title="$(gettext "Copying")" \
-            --window-icon="$DS/images/icon.png" \
-            --pulsate --percentage="5" --auto-close \
-            --skip-taskbar --no-buttons --on-top --fixed \
-            --width=200 --height=50 --borders=4 --geometry=200x20-2-2
             
             if [ -f "${exp}" ]; then
                 msg "$(gettext "Data exported successfully.")\n" info
@@ -87,11 +86,15 @@ if [[ $ret -eq 0 ]]; then
             if [ -z "${add}" -o ! -d "${DM}" ]; then
                 exit 1
             fi
-            (
+            if [ ! -d "$DM/backup" ]; then
+                mkdir "$DM/backup"; fi
+            sleep 1; notify-send -i idiomind \
+            "$(gettext "Copying")" \
+            "$(gettext "It Might take some time")..."
+            
             [ -d "$DT/import" ] && rm -fr "$DT/import"
             rm -f "$DT/*.XXXXXXXX"
-          
-            echo "# $(gettext "Copying")..."
+
             mkdir "$DT/import"
             cp -f "${add}" "$DT/import/import.tar.gz"
             cd "$DT/import"
@@ -142,11 +145,6 @@ if [[ $ret -eq 0 ]]; then
                     cp -r "$DT/import/topics/$language/Podcasts" "$DM_t/$language/Podcasts"; fi
             done < "$DT/import/topics/.languages"
 
-            ) | yad --progress --title="$(gettext "Copying")" \
-            --window-icon="$DS/images/icon.png" \
-            --pulsate --percentage="5" --auto-close \
-            --skip-taskbar --no-buttons --on-top --fixed \
-            --width=200 --height=50 --borders=4 --geometry=200x20-2-2
             "$DS/mngr.sh" mkmn; rm -fr "$DT/import"
             msg "$(gettext "Data imported successfully.")\n" info
         fi

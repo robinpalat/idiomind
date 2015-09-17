@@ -71,7 +71,6 @@ function cpfile() {
 }
 
 function dlg() {
-    
     dict_list() {
     sus="${task[$1]}"
     cd "$enables/"
@@ -112,7 +111,7 @@ function dlg() {
     --window-icon="$DS/images/icon.png" \
     --expand-column=2 --hide-column=3 \
     --search-column=4 --regex-search --tooltip-column=3 \
-    --center --on-top \
+    --center --mouse --on-top \
     --width=650 --height=380 --borders=10 \
     --column="$(gettext "Enable")":CHK \
     --column="$(gettext "Resource")":TEXT \
@@ -123,7 +122,6 @@ function dlg() {
     --button="$(gettext "Cancel")":1 \
     --button=OK:0 )"
     ret=$?
-    
         if [ $ret -eq 2 ]; then
                 "$DS_a/Dics/cnfg.sh" add_dlg
         elif [ $ret -eq 0 ]; then
@@ -158,7 +156,6 @@ function dlg() {
             done < <(sed 's/<[^>]*>//g' <<<"$sel")
         fi
     exit 1
-    
 } >/dev/null 2>&1
 
 function update_config_dir() {

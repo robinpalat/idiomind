@@ -3,8 +3,8 @@
 
 source /usr/share/idiomind/ifs/c.conf
 [ ! -d "$DC" ] && "$DS/ifs/1u.sh" && exit
-info2=" $(gettext "Are you sure you want to change the language established to learn?")  "
-info1=" $(gettext "Are you sure you want to change the source language setting?")  "
+info2="$(gettext "Switch language")"
+info1="$(gettext "Switch language")"
 cd "$DS/addons"
 [[ -n "$(< "$DC_s/1.cfg")" ]] && cfg=1 || > "$DC_s/1.cfg"
 cnf1=$(mktemp "$DT/cnf1.XXXX")
@@ -25,11 +25,11 @@ sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
 'langt' 'langs' 'synth' 'txaud' 'intrf' )
 
 confirm() {
-    yad --form --title="Idiomind" \
+    yad --form --title="$(gettext "Confirm")" \
     --image=$2 --text="$1\n" \
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --center --on-top \
-    --width=540 --height=130 --borders=5 \
+    --width=380 --height=120 --borders=5 \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Yes")":0
 }
@@ -162,7 +162,7 @@ ret=$?
             [ "${lang[$n]}" != "$lgtl" ]; then
                 lgtl="${lang[$n]}"
                 if grep -o -E 'Chinese|Japanese|Russian|Vietnamese' <<< "$lgtl";
-                then info3="\n $(gettext "Some features do not yet work with this language"). ($lgtl)"; fi
+                then info3="\n$(gettext "Some things are still not working for this language"). ($lgtl)"; fi
                 confirm "$info2$info3" dialog-question "$lgtl"
                 [ $? -eq 0 ] && set_lang "${lang[$n]}"
                 break

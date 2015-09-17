@@ -17,7 +17,7 @@ sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
 
 _info() {
     yad --form --title="$(gettext "Notice")" \
-    --text="$(gettext "Some features do not yet work with this language"). ($1)\n" \
+    --text="$(gettext "Some things are still not working for this language"). ($1)\n" \
     --image=info \
     --window-icon=info \
     --skip-taskbar --center --on-top \

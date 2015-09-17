@@ -114,31 +114,30 @@ if [ -d "$DT/upload" -o -d "$DT/download" ]; then
 fi
 
 others="$(gettext "Others")"
+article="$(gettext "Article")"
+city="$(gettext "City")"
 comics="$(gettext "Comics")"
 culture="$(gettext "Culture")"
-home="$(gettext "Home")"
-entertainment="$(gettext "Entertainment")"
 education="$(gettext "Education")"
+entertainment="$(gettext "Entertainment")"
+funny="$(gettext "Funny")"
 grammar="$(gettext "Grammar")"
 history="$(gettext "History")"
-documentary="$(gettext "Documentary")"
-city="$(gettext "City")"
-movies="$(gettext "Movies")"
+home="$(gettext "Home")"
 internet="$(gettext "Internet")"
+interview="$(gettext "Interview")"
+movies="$(gettext "Movies")"
 music="$(gettext "Music")"
 nature="$(gettext "Nature")"
 news="$(gettext "News")"
 office="$(gettext "Office")"
-relations="$(gettext "Relations")"
-sport="$(gettext "Sport")"
-social_media="$(gettext "Social media")"
-quotes="$(gettext "Quotes")"
-tech="$(gettext "Tech")"
 places="$(gettext "Places")"
-article="$(gettext "Article")"
+quotes="$(gettext "Quotes")"
+relations="$(gettext "Relations")"
 science="$(gettext "Science")"
-interview="$(gettext "Interview")"
-funny="$(gettext "Funny")"
+social_media="$(gettext "Social media")"
+sport="$(gettext "Sport")"
+tech="$(gettext "Tech")"
 lnglbl="${lgtl,,}"
 usrid="$(grep -o 'usrid="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
 iuser="$(grep -o 'iuser="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
@@ -193,15 +192,18 @@ if [ -e "${DC_tlt}/download" ]; then
         ret=$?
     fi
 else
+    linkc="http://idiomind.sourceforge.net/community/${lgtl,,}"
+    LANGUAGE_TO_LEARN=${lgtl}
     dlg=$(yad --form --title="$(gettext "Share")" \
+    --text="Share your topic with users learning ${LANGUAGE_TO_LEARN}!\n<a href='$linkc'>$(gettext "Topics shared")</a> (Beta)\n" \
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" --buttons-layout=end \
     --align=right --center --on-top \
-    --width=450 --height=440 --borders=12 \
+    --width=460 --height=450 --borders=12 \
     --field="$(gettext "Author")" "$iuser" \
     --field="\t$(gettext "Contact (optional)")" "$cntct" \
     --field="$(gettext "Category"):CBE" \
-    "!$others!$article!$comics!$culture!$documentary!$entertainment!$funny!$family!$grammar!$history!$movies!$in_the_city!$interview!$internet!$music!$nature!$news!$office!$relations!$sport!$science!$shopping!$social_networks!$technology!$travel" \
+    "!$others!$article!$city!$comics!$culture!$education!$entertainment!$funny!$grammar!$history!$home!$internet!$interview!$movies!$music!$nature!$news!$office!$places!$quotes!$relations!$science!$social_media!$sport!$tech" \
     --field="$(gettext "Skill Level"):CB" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
     --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
     --field="$(gettext "Image 630x150px (optional)"):FL" "${imgm}" \

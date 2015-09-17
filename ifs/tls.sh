@@ -465,7 +465,7 @@ _quick_help() {
     --uri="${_url}" \
     --window-icon="$DS/images/icon.png" \
     --no-buttons --fixed --on-top --mouse \
-    --width=680 --height=520 --borders=2
+    --width=600 --height=520 --borders=2
 } >/dev/null 2>&1
 
 check_updates() {
@@ -951,7 +951,7 @@ PY
 }
 
 about() {
-c="$(gettext "Vocabulary learning tool")"
+c="$(gettext "A simple to use vocabulary learning tool")"
 website="$(gettext "Web Site")"
 export c website
 python << ABOUT

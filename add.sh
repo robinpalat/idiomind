@@ -571,8 +571,8 @@ process() {
         "$DT_r/addw" "$DT_r/wrds"
         
         notify-send -i idiomind \
-        $(gettext "Batch processing")" \
-        $(gettext "It Might take some time")"
+        "$(gettext "Processing")" \
+        "$(gettext "It Might take some time")"
 
         internet
         [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ] && c=c || c=w

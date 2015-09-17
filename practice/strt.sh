@@ -582,10 +582,10 @@ function lock() {
 
 function starting() {
     yad --title=$(gettext "Information") \
-    --text=" $1 \n" --image=info \
+    --text=" $1\t\n" --image=info \
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --center --on-top \
-    --width=300 --height=120 --borders=5 \
+    --height=120 --borders=5 \
     --button="    $(gettext "Ok")    ":1
     strt 0
 }

@@ -99,7 +99,7 @@ delete_item() {
 
 edit_item() {
     [ -z ${2} -o -z ${3} ] && exit 1
-    temp="$(gettext "Processing")..."
+    temp="...."
     lgt=$(lnglss $lgtl)
     lgs=$(lnglss $lgsl)
     lists="${2}";  item_pos="${3}"
@@ -138,7 +138,7 @@ edit_item() {
     link1="https://translate.google.com/\#$lgt/$lgs/${query}"
 
     if [ -z "${item}" ]; then exit 1; fi
-    if grep "${temp}" <<<"${srce}"; then
+    if [[ "${srce}" = "${temp}" ]]; then
     msg_2 "$(gettext "Wait until it finishes a previous process")\n" info OK gtk-stop "$(gettext "Warning")"
     if [ $? -eq 1 ]; then srce="" ;prcess_tmp=1 ; else "$DS/vwr.sh" "${lists}" "${trgt}" ${item_pos} & exit 1; fi; fi
 
@@ -326,7 +326,7 @@ edit_list() {
                 if [ $(wc -$c <<<"${trgt}") = 1 ]; then
                 echo "${trgt}" >> "${direc}/3.cfg"; t=1
                 else echo "${trgt}" >> "${direc}/4.cfg"; t=2; fi
-                temp="$(gettext "Processing")..."
+                temp="...."
                 item="${n}:[type={$t},trgt={$trgt},srce={$temp},exmp={},defn={},note={},wrds={},grmr={$trgt},].[tag={},mark={},].id=[]"
                 echo "${item}" >> "$DT/tmp0"
                 echo "${trgt}" >> "$DT/add_lst"
@@ -351,7 +351,7 @@ edit_list() {
         if [ -f "$DT/add_lst" ]; then
             invrt_msg=FALSE
             DT_r=$(mktemp -d "$DT/XXXX")
-            temp="$(gettext "Processing")..."
+            temp="...."
             internet
             while read -r trgt; do
                 trgt_mod="${trgt}"

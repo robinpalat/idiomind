@@ -113,7 +113,7 @@ function notebook_1() {
     --window-icon="$DS/images/icon.png" --center \
     --tab="  $(gettext "Learning") ($inx1) " \
     --tab="  $(gettext "Learnt") ($inx2) " \
-    --tab=" $(gettext "Notes") " \
+    --tab=" $(gettext "Note") " \
     --tab=" $(gettext "Edit") " \
     --width=$sx --height=$sy --borders=0 --tab-borders=3 \
     --button="$(gettext "Play")":"$cmd_play" \
@@ -160,16 +160,16 @@ function notebook_2() {
     --window-icon="$DS/images/icon.png" --center \
     --tab="  $(gettext "Review")  " \
     --tab="  $(gettext "Learnt") ($inx2) " \
-    --tab=" $(gettext "Notes") " \
+    --tab=" $(gettext "Note") " \
     --tab=" $(gettext "Edit") " \
     --width=$sx --height=$sy --borders=0 --tab-borders=3 \
     --button="gtk-close":1
 } >/dev/null 2>&1
 
 function dialog_1() {
-    yad --title="Review" \
+    yad --title="$(gettext "Review")" \
     --class=idiomind --name=Idiomind \
-    --text="\"${tpc}\"\n$(gettext "<b>Would you like to go over it?</b>\n The specified period already has been completed")" \
+    --text="\"${tpc}\"\n$(gettext "<b>Would you like to go over it?</b>\n The waiting period already has been completed")" \
     --image=gtk-refresh \
     --window-icon="$DS/images/icon.png" \
     --buttons-layout=edge --center --on-top \

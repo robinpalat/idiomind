@@ -114,13 +114,11 @@ elif [[ ${1} != 0 ]]; then
         echo "$(cd "/usr/share/idiomind/addons/"
         set -- */; printf "%s\n" "${@%/}")" > "$DC_a/list"
     fi
-    if [ -n "$1" ]; then
+    if [[ -n "$1" ]]; then
         text="--text=$1\n"
-        align="left"
         img="--image=info"
     else
-        text="--text=<small><small><a href='http://idiomind.sourceforge.net/community/${lgtl,,}'>$(gettext "Shared")</a>   </small></small>"
-        align="right"
+        text="--center"
     fi
     chk_list_addons1=$(wc -l < "$DS_a/menu_list")
     chk_list_addons2=$((`wc -l < "$DC_a/list"`*2))
@@ -136,7 +134,7 @@ elif [[ ${1} != 0 ]]; then
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-column=2 --separator="" \
     --window-icon="$DS/images/icon.png" \
-    --text-align=$align --center $img --image-on-top \
+    --text-align=left --center $img --image-on-top \
     --no-headers --ellipsize=END --expand-column=2 \
     --search-column=2 --regex-search \
     --width=620 --height=580 --borders=8 \
