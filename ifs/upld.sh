@@ -5,7 +5,6 @@ source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
-
 _cfg() {  b=$(tr -dc a-z < /dev/urandom |head -c 1)
 c=$((RANDOM%100))
 id="$b$c"
@@ -315,6 +314,7 @@ fi
 
 cd "${DM_tlt}"/
 cp -r ./* "$DT_u/${tpc}/"
+cp "${DC_tlt}/6.cfg" "$DT_u/${tpc}/conf/6.cfg"
 mkdir "$DT_u/${tpc}/share"
 [ ! -d "$DT_u/${tpc}/images" ] && mkdir "$DT_u/${tpc}/images"
 [ ! -d "$DT_u/${tpc}/files" ] && mkdir "$DT_u/${tpc}/files"
