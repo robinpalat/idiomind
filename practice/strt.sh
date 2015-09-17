@@ -585,7 +585,7 @@ function starting() {
     --text=" $1\t\n" --image=info \
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --center --on-top \
-    --height=120 --borders=5 \
+    --width=300 --height=120 --borders=5 \
     --button="    $(gettext "Ok")    ":1
     strt 0
 }
