@@ -28,7 +28,7 @@ function score() {
     [ ! -e ./${practice}.l ] && touch ./${practice}.l
     if [[ $(($(< ./${practice}.l)+easy)) -ge ${all} ]]; then
         log ${practice}; play "$dirs/all.mp3" &
-        echo "$(date "+%a %d %B")" > ./${practice}.lock
+        date "+%a %d %B" > ./${practice}.lock
         comp 0 & echo 21 > .${icon}
         strt 1
     else

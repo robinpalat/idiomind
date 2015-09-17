@@ -80,12 +80,14 @@ function check_index1() {
 }
 
 function list_inadd() {
-    while read -r t; do
-        if ! echo -e "$(ls "$DS/addons/")\n$(< "$DM_tl/.3.cfg")" \
-        |grep -Fxo "${t}" >/dev/null 2>&1; then
-            echo "${t}"
-        fi
-    done < <(cd "$DM_tl"; ls -tNd */ |head -n 20 |sed 's/\///g')
+    if ls -tNd "$DM_tl"/*/ 1> /dev/null 2>&1; then
+        while read -r t; do
+            if ! echo -e "$(ls "$DS/addons/")\n$(< "$DM_tl/.3.cfg")" \
+            |grep -Fxo "${t}" >/dev/null 2>&1; then
+                echo "${t}"
+            fi
+        done < <(cd "$DM_tl"; ls -tNd */ |head -n 20 |sed 's/\///g')
+    fi
 }
 
 function cleanups() {

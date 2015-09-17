@@ -93,7 +93,9 @@ check_index() {
             echo -n "${c}" > "${DC_tlt}/id.cfg"
             echo -ne "\nidiomind-`idiomind -v`" >> "${DC_tlt}/id.cfg"
         fi
-        for i in "${DM_tlt}"/*.mp3 ; do [[ ! -s "${i}" ]] && rm "${i}" ; done
+        if ls "${DM_tlt}"/*.mp3 1> /dev/null 2>&1; then
+            for au in "${DM_tlt}"/*.mp3 ; do [ ! -s "${au}" ] && rm "${au}" ; done
+        fi
         if grep 'rsntc=' "${DC_tlt}/10.cfg"; then
             rm "${DC_tlt}/10.cfg"; fi
         
@@ -461,7 +463,7 @@ _definition() {
 
 _quick_help() {
     source /usr/share/idiomind/ifs/c.conf
-    _url='http://idiomind.sourceforge.net/doc/help.html'
+    _url='http://idiomind.com/doc/help.html'
     yad --html --title="$(gettext "Reference")" \
     --name=Idiomind --class=Idiomind \
     --uri="${_url}" \
@@ -477,7 +479,7 @@ check_updates() {
     Gecko/20100101 Firefox/31.0' -qO - http://idiomind.sourceforge.net/doc/release |sed -n 1p`
     cver=`idiomind -v`
     pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
-    echo "$(date +%d)" > "$DC_s/9.cfg"
+    date "+%d" > "$DC_s/9.cfg"
     if [ ${#nver} -lt 9 ] && [ ${#cver} -lt 9 ] \
     && [ ${#nver} -ge 3 ] && [ ${#cver} -ge 3 ] \
     && [ "$nver" != "$cver" ]; then
@@ -493,7 +495,7 @@ check_updates() {
 
 a_check_updates() {
     source "$DS/ifs/mods/cmns.sh"
-    [[ ! -f "$DC_s/9.cfg" ]] && echo `date +%d` > "$DC_s/9.cfg" && exit
+    [[ ! -f "$DC_s/9.cfg" ]] && date "+%d" > "$DC_s/9.cfg" && exit
     d1=$(< "$DC_s/9.cfg"); d2=$(date +%d)
     if [[ "$(sed -n 1p "$DC_s/9.cfg")" = 28 ]] && \
     [[ "$(wc -l < "$DC_s/9.cfg")" -gt 1 ]]; then

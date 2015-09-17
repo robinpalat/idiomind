@@ -6,12 +6,15 @@ msg "$(gettext "Please check the language settings in the preferences dialog.")\
 fi
 
 function check_s() {
+    if [ -z "${tpe}" ]; then
+        [ -d "$DT_r" ] && rm -fr "$DT_r" &
+        msg "$(gettext "No topic is active")\n" info & exit 1
+    fi
     DC_tlt="$DM_tl/${1}/.conf"
-    if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
-    [ -d "$DT_r" ] && rm -fr "$DT_r"
-    msg "$(gettext "You've reached the maximum number of notes for this topic. Max allowed (200)")" info " " & exit; fi
-    if [ -z "${tpe}" ]; then [ -d "$DT_r" ] && rm -fr "$DT_r" &
-    msg "$(gettext "No topic is active")\n" info & exit 1; fi
+    if [[ `wc -l < "${DC_tlt}/0.cfg"` -ge 200 ]]; then
+        [ -d "$DT_r" ] && rm -fr "$DT_r"
+        msg "$(gettext "You've reached the maximum number of notes for this topic. Max allowed (200)")" info " " & exit
+    fi
 }
 
 function mksure() {
@@ -38,7 +41,6 @@ function index() {
             sed -i "s/${item}/${item_mod}/" "${1}"
             fi
         }
-        
         s=1
         while [ ${s} -le 6 ]; do
             sust "${DC_tlt}/${s}.cfg"
@@ -513,14 +515,14 @@ function dlg_checklist_3() {
 
 function dlg_text_info_1() {
     cat "${1}" | awk '{print "\n\n\n"$0}' | \
-    yad --text-info --title="$2" \
+    yad --text-info --title="$(gettext "Edit")" \
     --name=Idiomind --class=Idiomind \
     --editable \
     --window-icon="$DS/images/icon.png" \
     --wrap --margins=30 --fontname=vendana \
     --skip-taskbar --center --on-top \
     --width=700 --height=500 --borders=5 \
-    --button="gtk-ok":0 > ./sort
+    --button="gtk-ok":0
 }
 
 function msg_3() {

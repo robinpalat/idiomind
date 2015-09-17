@@ -8,7 +8,10 @@ include "$DS/ifs/mods/mngr"
 mkmn() {
     f_lock "$DT/mn_lk"; cd "$DM_tl"
     [ -d "$DM_tl/images" ] && rm -r "$DM_tl/images"
-    for i in "$(ls -tNd */ | cut -f1 -d'/')"; do echo "${i%%/}"; done > "$DM_tl/.1.cfg"
+    if ls -tNd */ 1> /dev/null 2>&1; then
+        for i in "$(ls -tNd */ | cut -f1 -d'/')"; do 
+            echo "${i%%/}"; done > "$DM_tl/.1.cfg"
+    fi
     sed -i '/^$/d' "$DM_tl/.1.cfg"; > "$DM_tl/.0.cfg"
     
     head -100 < "$DM_tl/.1.cfg" | while read -r tpc; do
@@ -139,7 +142,7 @@ edit_item() {
 
     if [ -z "${item}" ]; then exit 1; fi
     if [[ "${srce}" = "${temp}" ]]; then
-    msg_2 "$(gettext "Wait until it finishes a previous process")\n" info OK gtk-stop "$(gettext "Warning")"
+    msg_2 "$(gettext "Translating...\nWait till the process is completed. ")\n" info OK gtk-stop "$(gettext "Warning")"
     if [ $? -eq 1 ]; then srce="" ;prcess_tmp=1 ; else "$DS/vwr.sh" "${lists}" "${trgt}" ${item_pos} & exit 1; fi; fi
 
     if [ -e "${DM_tlt}/$id.mp3" ]; then
@@ -398,7 +401,7 @@ delete_topic() {
         f_lock "$DT/rm_lk"
         
         if [ -f "$DT/.n_s_pr" ]; then
-            if [ "$(sed -n 2p "$DT/.n_s_pr")" = "${tpc}" ]; then
+            if [ "$(sed -n 1p "$DT/.n_s_pr")" = "${tpc}" ]; then
             "$DS/stop.sh" 5; fi
         fi
         if [ -f "$DT/.p_" ]; then
@@ -448,17 +451,17 @@ rename_topic() {
     
     if [ ! -d "$DM_tl/${tpc}" ]; then exit 1; fi
   
-    if [ -f "$DT/.n_s_pr" ] && [ "$(sed -n 2p "$DT/.n_s_pr")" = "${tpc}" ]; then
+    if [ -f "$DT/.n_s_pr" ] && [ "$(sed -n 1p "$DT/.n_s_pr")" = "${tpc}" ]; then
     msg "$(gettext "Unable to rename at this time. Please try later ")\n" \
-    dialog-warning "$(gettext "Rename")" & exit 1; fi
+    dialog-warning "$(gettext "Information")" & exit 1; fi
         
     if [ -f "$DT/.p_" ] && [ "$(sed -n 2p "$DT/.p_")" = "${tpc}" ]; then
     msg "$(gettext "Unable to rename at this time. Please try later ")\n" \
-    dialog-warning "$(gettext "Rename")" & exit 1; fi
+    dialog-warning "$(gettext "Information")" & exit 1; fi
 
     if [ ${#jlb} -gt 55 ]; then
     msg "$(gettext "Sorry, new name too long.")\n" \
-    info "$(gettext "Rename")" & exit 1; fi
+    info "$(gettext "Information")" & exit 1; fi
 
     if [ ${chck} -ge 1 ]; then
         for i in {1..50}; do
@@ -581,12 +584,12 @@ mark_as_learned_topic() {
             if [ ${RM} -ge 50 ]; then
                 if [ ${steps} -eq 8 ]; then
                     sed -i '$ d' "${DC_tlt}/9.cfg"
-                    echo "$(date +%m/%d/%Y)" >> "${DC_tlt}/9.cfg"
+                    date "+%m/%d/%Y" >> "${DC_tlt}/9.cfg"
                 elif [ ${steps} -gt 8 ]; then
                     dts="$(head -7 < "${DC_tlt}/9.cfg")"
                     echo -e "${dts}\n$(date +%m/%d/%Y)" > "${DC_tlt}/9.cfg"
                 else
-                    echo "$(date +%m/%d/%Y)" >> "${DC_tlt}/9.cfg"
+                    date "+%m/%d/%Y" >> "${DC_tlt}/9.cfg"
                 fi
             fi
         else

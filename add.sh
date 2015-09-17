@@ -3,8 +3,6 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
-if [ $1 != new_topic -a $1 != new_items ]; then
-include "$DS/ifs/mods/add"; fi
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
 wlist=$(grep -o wlist=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
@@ -45,122 +43,11 @@ new_topic() {
     exit
 }
 
-new_items() {
-    if [ ! -d "$DT" ]; then new_session; fi
-    [ ! "$DT/tpe" ] && echo "${tpc}" > "$DT/tpe"
-
-    if [ -e "$DC_s/topics_first_run" ]; then
-    "$DS/ifs/tls.sh" first_run topics & exit 1; fi
-    
-    source "$DS/ifs/mods/add/add.sh"
-
-    [ -z "${4}" ] && txt="$(xclip -selection primary -o)" || txt="${4}"
-    txt="$(clean_4 "${txt}")"
-    
-    [ -d "${2}" ] && DT_r="${2}"
-    [ -n "${5}" ] && srce="${5}" || srce=""
-    
-    if [ ${#txt} -gt 180 ]; then "$DS/add.sh" process "${txt}" & exit 1; fi
-
-    [ -f "$DT_r/ico.jpg" ] && img="$DT_r/ico.jpg" \
-    || img="$DS/images/nw.png"
-    
-    tpcs="$(grep -vFx "${tpe}" "$DM_tl/.2.cfg" |tr "\\n" '!' |sed 's/\!*$//g')"
-    [ -n "$tpcs" ] && e='!'; [ -z "${tpe}" ] && tpe=' '
-
-    if [ "$trans" = TRUE ]; then lzgpr="$(dlg_form_1)"; \
-    else lzgpr="$(dlg_form_2)"; fi
-    ret="$?"
-    
-    trgt=$(echo "${lzgpr}" | head -n -1 | sed -n 1p)
-    srce=$(echo "${lzgpr}" | sed -n 2p)
-    chk=$(echo "${lzgpr}" | tail -1)
-    tpe=$(grep -Fxo "${chk}" "$DM_tl/.1.cfg")
-    
-        if [ $ret -eq 3 ]; then
-            [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")
-            echo "${tpe}" > "$DT/tpe"
-            cd "$DT_r"; set_image_1
-            "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
-        
-        elif [ $ret -eq 2 ]; then
-            [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")
-            echo "${tpe}" > "$DT/tpe"
-            "$DS/ifs/tls.sh" add_audio "$DT_r"
-            "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
-        
-        elif [ $ret -eq 0 ]; then
-            if [ "${chk}" = "$(gettext "New") *" ]; then
-            "$DS/add.sh" new_topic
-            else echo "${tpe}" > "$DT/tpe"; fi
-            
-            if [ "$3" = 2 ]; then
-            [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")
-            else DT_r=$(mktemp -d "$DT/XXXXXX"); fi
-            xclip -i /dev/null; cd "$DT_r"
-        
-            if [ -z "${chk}" ] && [[ ${3} != 3 ]]; then cleanups "$DT_r"
-            msg "$(gettext "No topic is active")\n" info & exit 1; fi
-
-            if [ -z "${trgt}" ]; then
-            cleanups "$DT_r"; exit 1; fi
-
-            if [[ ${trgt,,} = ocr ]] || [[ ${trgt^} = I ]]; then
-                "$DS/add.sh" process image "$DT_r" & exit 1
-
-            elif [[ ${#trgt} = 1 ]]; then
-                "$DS/add.sh" process ${trgt:0:2} "$DT_r" & exit 1
-
-            elif [[ ${trgt:0:4} = 'http' ]]; then
-                "$DS/add.sh" process "${trgt}" "$DT_r" & exit 1
-            
-            elif [[ ${#trgt} -gt 180 ]]; then
-                "$DS/add.sh" process "${trgt}" "$DT_r" & exit 1
-                
-            elif [ $lgt = ja ] || [ $lgt = 'zh-cn' ] || [ $lgt = ru ]; then
-            
-                if [ "$trans" = FALSE ] && ([ -z "${srce}" ] || [ -z "${trgt}" ]); then
-                cleanups "$DT_r"
-                msg "$(gettext "You need to fill text fields.")\n" info " " & exit 1; fi
-
-                srce=$(translate "${trgt}" auto $lgs)
-                
-                if [ $(wc -w <<<"${srce}") = 1 ]; then
-                    "$DS/add.sh" new_word "${trgt}" "$DT_r" "${srce}" & exit 1
-                    
-                elif [ "$(wc -w <<<"${srce}")" -ge 1 -a ${#srce} -le 180 ]; then
-                    "$DS/add.sh" new_sentence "${trgt}" "$DT_r" "${srce}" & exit 1
-                fi
-                
-            elif [ $lgt != ja ] || [ $lgt != 'zh-cn' ] || [ $lgt != ru ]; then
-            
-                if [ "$trans" = FALSE ]; then
-                    if [ -z "${srce}" ] || [ -z "${trgt}" ]; then cleanups "$DT_r"
-                    msg "$(gettext "You need to fill text fields.")\n" info " " & exit 1; fi
-                fi
-
-                if [ $(wc -w <<<"${trgt}") = 1 ]; then
-                    "$DS/add.sh" new_word "${trgt}" "$DT_r" "${srce}" & exit 1
-                    
-                elif [ "$(wc -w <<<"${trgt}")" -ge 1 -a ${#trgt} -le 180 ]; then
-                    "$DS/add.sh" new_sentence "${trgt}" "$DT_r" "${srce}" & exit 1
-                fi
-            fi
-        else
-            xclip -i /dev/null; cleanups "$DT_r"
-            exit 1
-        fi
-}
-
-new_sentence() {
-    DT_r="$3"
+function new_sentence() {
     db="$DS/default/dicts/$lgt"
-    DM_tlt="$DM_tl/${tpe}"
-    DC_tlt="$DM_tl/${tpe}/.conf"
-    trgt="$(clean_2 "${2}")"
-    srce="$(clean_2 "${4}")"
-    check_s "${tpe}"
-    
+    trgt="$(clean_2 "${trgt}")"
+    srce="$(clean_2 "${srce}")"
+
     if [ "$trans" = TRUE ]; then
         internet
         cd "$DT_r"
@@ -172,7 +59,7 @@ new_sentence() {
         trgt="${trgt^}"
         srce="${srce^}"
     else 
-        if [ -z "${4}" -o -z "${2}" ]; then
+        if [ -z "${srce}" -o -z "${trgt}" ]; then
         cleanups "$DT_r"
         msg "$(gettext "You need to fill text fields.")\n" info " " & exit; fi
     fi
@@ -208,8 +95,7 @@ new_sentence() {
         fi
 
         ( if [ "$wlist" = TRUE ] && [ -n "${wrds}" ]; then
-        "$DS/add.sh" list_words_sentence "${wrds}" "${trgt}" "${tpe}"
-        fi ) &
+        list_words_sentence; fi ) &
 
         fetch_audio "$aw" "$bw"
         
@@ -219,13 +105,9 @@ new_sentence() {
     fi
 }
 
-new_word() {
-    trgt="$(clean_1 "${2}")"
-    srce="$(clean_0 "${4}")"
-    DT_r="$3"; cd "$DT_r"
-    DM_tlt="$DM_tl/${tpe}"
-    DC_tlt="$DM_tl/${tpe}/.conf"
-    check_s "${tpe}"
+function new_word() {
+    trgt="$(clean_1 "${trgt}")"
+    srce="$(clean_0 "${srce}")"
 
     if [ "$trans" = TRUE ]; then
         internet
@@ -235,7 +117,7 @@ new_word() {
         srce="$(translate "${trgt}" $lgt $lgs)"
         srce="$(clean_0 "${srce}")"
     else 
-        if [ -z "${4}" -o -z "${2}" ]; then
+        if [ -z "${srce}" -o -z "${trgt}" ]; then
         cleanups "$DT_r"
         msg "$(gettext "You need to fill text fields.")\n" info " " & exit; fi
     fi
@@ -271,9 +153,10 @@ new_word() {
         else
             if [ -f "${DM_tls}/${audio}.mp3" ]; then
                 msg_3 "$(gettext "A file named "${DM_tls}/${audio}.mp3" already exists. Replace?.")\n" dialog-question "${trgt}"
-                if [ $? -eq 0 ]; then mv -f "$DT_r/audtm.mp3" "${DM_tls}/${audio}.mp3"; fi
+                if [ $? -eq 0 ]; then 
+                    cp -f "$DT_r/audtm.mp3" "${DM_tls}/${audio}.mp3"; fi
             else
-                mv -f "$DT_r/audtm.mp3" "${DM_tls}/${audio}.mp3"; fi
+                cp -f "$DT_r/audtm.mp3" "${DM_tls}/${audio}.mp3"; fi
         fi
         img_word "${trgt}" "${srce}" &
         
@@ -284,26 +167,22 @@ new_word() {
 }
 
 list_words_edit() {
-    c="${4}"
     if [[ ${3} = 1 ]]; then
         tpe="${tpc}"
         check_s "${tpe}"
         info=" -$((200-$(wc -l < "${DC_tlt}/0.cfg")))"
-        mkdir "$DT/$c"; cd "$DT/$c"
-
+        mkdir "$DT/$4"; cd "$DT/$4"
         words="$(list_words_2 "${2}")"
         slt="$(dlg_checklist_1 "${words}" "$info")"
-
+        
             if [ $? -eq 0 ]; then
                 while read -r chkst; do
-                sed 's/TRUE//g' <<<"${chkst}" >> "$DT/$c/slts"
+                sed 's/TRUE//g' <<<"${chkst}" >> "$DT/$4/slts"
                 done <<<"$(sed 's/|//g' <<<"${slt}")"
             fi
-        
     elif [[ ${3} = 2 ]]; then
         exmp_="${5}"
-        DT_r="$DT/$c"; cd "$DT_r"
-        
+        DT_r="$DT/$4"; cd "$DT_r"
         n=1
         while read -r trgt; do
             if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
@@ -311,8 +190,8 @@ list_words_edit() {
             else
                 trgt="$(clean_1 "${trgt}")"
                 audio="${trgt,,}"
-                translate "${trgt}" auto $lgs > "$DT_r/tr.$c"
-                srce=$(< "$DT_r/tr.$c")
+                translate "${trgt}" auto $lgs > "$DT_r/tr.$4"
+                srce=$(< "$DT_r/tr.$4")
                 srce="$(clean_0 "${srce}")"
                 id="$(set_name_file 1 "${trgt}" "${srce}" "${exmp_}" "" "" "" "")"
                 mksure "${trgt}" "${srce}"
@@ -337,17 +216,13 @@ list_words_edit() {
     cleanups "${DT_r}" "$slt"; exit
 }
 
-list_words_sentence() {
-    DM_tlt="$DM_tl/${4}"
-    DC_tlt="$DM_tl/${4}/.conf"
-    exmp_="${3}"
+function list_words_sentence() {
+    exmp_="${trgt}"
     c=$((RANDOM%100))
     DT_r=$(mktemp -d "$DT/XXXXXX")
-    cd "$DT_r"
-    check_s "${tpe}"
     info="-$((200-$(wc -l < "${DC_tlt}/0.cfg")))"
 
-    wrds="$(list_words_2 "${2}")"
+    wrds="$(list_words_2 "${wrds}")"
     slt="$(dlg_checklist_1 "${wrds}" "${info}")"
         
         if [ $? -eq 0 ]; then
@@ -392,14 +267,8 @@ list_words_sentence() {
     exit
 }
 
-list_words_dclik() {
-    tpe="$(sed -n 2p "$DT/.n_s_pr")"
-    DM_tlt="$DM_tl/${tpe}"
-    DC_tlt="$DM_tl/${tpe}/.conf"
-    DT_r=$(sed -n 1p "$DT/.n_s_pr")
-    cd "$DT_r"
+function list_words_dclik() {
     words="${3}"
-    sname="${3}"
     check_s "${tpe}"
     info="-$((200 - $(wc -l < "${DC_tlt}/0.cfg")))"
     
@@ -422,50 +291,34 @@ list_words_dclik() {
     if [ $? -eq 0 ]; then
         while read -r chkst; do
         sed 's/TRUE//g' <<<"${chkst}" >> "$DT_r/wrds"
-        echo "$sname" >> "$DT_r/wrdsls"
+        echo "${words}" >> "$DT_r/wrdsls"
         done <<<"$(sed 's/|//g' <<<"${slt}")"
     fi
     exit 1
     
 } >/dev/null 2>&1
 
-process() {
-    ns=$(wc -l < "${DC_tlt}/0.cfg")
+function process() {
+    echo "$tpe" > "$DT/.n_s_pr"
+    ns=`wc -l < "${DC_tlt}/0.cfg"`
     db="$DS/default/dicts/$lgt"
-    if [ -f "$DT/.n_s_pr" ]; then
-    tpe="$(sed -n 2p "$DT/.n_s_pr")"; fi
-    DM_tlt="$DM_tl/${tpe}"
-    DC_tlt="$DM_tl/${tpe}/.conf"
-    [ -d "$3" ] && DT_r="$3" || DT_r=$(mktemp -d "$DT/XXXXXX")
+    if [ ! -d "$DT_r" ] ; then
+        export DT_r=$(mktemp -d "$DT/XXXXXX"); fi
     cd "$DT_r"
-    lckpr="$DT/.n_s_pr"
-    check_s "${tpe}"
-
-    if [ -f "$lckpr" -a ${#@} -lt 4 ]; then
-        msg_2 "$(gettext "Wait until it finishes a previous process")\n" info OK gtk-stop "$(gettext "Warning")"
-        if [ $? -eq 1 ]; then
-        rm=$(sed -n 1p "$DT/.n_s_pr")
-        cleanups "${rm}" "$DT/.n_s_pr"
-        "$DS/stop.sh" 5; fi
-        cleanups "$DT_r"
-        exit 1
+    if [ -n "${trgt}" ]; then
+        conten="${trgt}"
+    else
+        conten="${1}"
     fi
-    if [ -n "$2" ]; then
-        [ -d "$DT_r" ] && echo "$DT_r" > "$DT/.n_s_pr"
-        [ -n "${tpe}" ] && echo "${tpe}" >> "$DT/.n_s_pr"
-        lckpr="$DT/.n_s_pr"
-        conten="${2}"
-    fi
-    include "$DS/ifs/mods/add"
     include "$DS/ifs/mods/add_process"
     
-    if [[ ${2:0:4} = 'http' ]]; then
+    if [[ ${1:0:4} = 'http' ]]; then
         (echo "1"
         internet
         echo "# $(gettext "Processing")..." ;
-        lynx -dump -nolist "${2}" | clean_5 > "$DT_r/sntsls_"
+        lynx -dump -nolist "${conten}" | clean_5 > "$DT_r/sntsls_"
         ) | dlg_progress_1
-    elif [[ $2 = image ]]; then
+    elif [[ $1 = image ]]; then
         pars=`mktemp`
         trap rm "$pars*" EXIT
         scrot -s "$pars.png"
@@ -478,7 +331,7 @@ process() {
         ) | dlg_progress_1
     else
         if [[ ${#conten} = 1 ]]; then
-        cleanups "$DT_r" "$lckpr"; exit 1; fi
+        cleanups "$DT_r" "$DT/.n_s_pr"; exit 1; fi
         (echo "1"
         echo "# $(gettext "Processing")..." ;
         if [ "$lgt" = ja -o "$lgt" = "zh-cn" -o "$lgt" = ru ]; then
@@ -488,7 +341,6 @@ process() {
         fi
         ) | dlg_progress_1
     fi
-
     [ -f "$DT_r/sntsls" ] && rm -f "$DT_r/sntsls"
 
     lenght() {
@@ -522,16 +374,15 @@ process() {
     
     sed -i '/^$/d' "$DT_r/sntsls"
     chk=`tr -s '\n' ' ' < "$DT_r/sntsls" |wc -c`
-    tpe="$(sed -n 2p "$lckpr")"
     info="-$((200-ns))"
 
     if [ -z "$(< "$DT_r/sntsls")" ]; then
         msg " $(gettext "Failed to get text.")\n" info
-        cleanups "$DT_r" "$lckpr" "$slt" & exit 1
+        cleanups "$DT_r" "$DT/.n_s_pr" "$slt" & exit 1
     
     elif [[ ${chk} -le 180 ]]; then
         "$DS/add.sh" new_items "" 2 "$(tr -s '\n' ' ' < "$DT_r/sntsls")"
-        cleanups "$DT_r" "$lckpr" "$slt" & exit 1
+        cleanups "$DT_r" "$DT/.n_s_pr" "$slt" & exit 1
     
     elif [[ ${chk} -gt 180 ]]; then
         slt=$(mktemp $DT/slt.XXXX.x)
@@ -541,26 +392,19 @@ process() {
     fi
     if [ $ret -eq 2 ]; then
         cleanups "$slt"
-        dlg_text_info_1 "$DT_r/sntsls" "${tpe}"
-            
-            if [ $? -eq 0 ]; then
-                "$DS/add.sh" process "$(< "$DT_r/sort")" \
-                "$DT_r" "$(sed -n 2p "$lckpr")" &
-                exit 1
+        txt="$(dlg_text_info_1 "$DT_r/sntsls")"
+            ret=$?
+            if [ $ret -eq 0 ]; then
+                unset trgt; process "${txt}"
             else
-                cleanups "$DT_r" "$lckpr" "$slt" & exit 1
+                cleanups "$DT_r" "$DT/.n_s_pr" "$slt" & exit 1
             fi
     
     elif [ $ret -eq 0 ]; then
-        sleep 1
-        tpe=$(sed -n 2p "$lckpr")
-        DM_tlt="$DM_tl/${tpe}"
-        DC_tlt="$DM_tl/${tpe}/.conf"
         touch "$DT_r/slts"
-
         if [ ! -d "${DM_tlt}" ]; then
         msg " $(gettext "An error occurred.")\n" dialog-warning
-        cleanups "$DT_r" "$lckpr" "$slt" & exit 1; fi
+        cleanups "$DT_r" "$DT/.n_s_pr" "$slt" & exit 1; fi
     
         while read -r chkst; do
             sed 's/TRUE//g' <<<"${chkst}"  >> "$DT_r/slts"
@@ -570,9 +414,9 @@ process() {
         touch "$DT_r/wlog" "$DT_r/slog" "$DT_r/adds" \
         "$DT_r/addw" "$DT_r/wrds"
         
-        notify-send -i idiomind \
+        ( sleep 1; notify-send -i idiomind \
         "$(gettext "Processing")" \
-        "$(gettext "It Might take some time")"
+        "$(gettext "It Might take some time")" )
 
         internet
         [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ] && c=c || c=w
@@ -709,10 +553,121 @@ process() {
         if [ -n "$log" ]; then sleep 1
             dlg_text_info_3 "$(gettext "Some notes could not be added to your list"):" "$log" >/dev/null 2>&1
         fi
-        cleanups "$DT_r" "$lckpr"
-    else
-        cleanups "$DT_r" "$lckpr" & exit
     fi
+    cleanups "$DT/.n_s_pr" "$DT_r" & exit
+}
+
+
+new_items() {
+    if [ ! -d "$DT" ]; then new_session; fi
+    [ ! "$DT/tpe" ] && echo "${tpc}" > "$DT/tpe"
+
+    if [ -e "$DC_s/topics_first_run" ]; then
+    "$DS/ifs/tls.sh" first_run topics & exit 1; fi
+    
+    #source "$DS/ifs/mods/add/add.sh"
+    include "$DS/ifs/mods/add"
+
+    [ -z "${4}" ] && txt="$(xclip -selection primary -o)" || txt="${4}"
+    trgt="$(clean_4 "${txt}")"
+    
+    [ -d "${2}" ] && DT_r="${2}"
+    [ -n "${5}" ] && srce="${5}" || srce=""
+    
+    if [ ${#trgt} -gt 180 ]; then process; fi
+
+    [ -f "$DT_r/ico.jpg" ] && img="$DT_r/ico.jpg" \
+    || img="$DS/images/nw.png"
+    
+    tpcs="$(grep -vFx "${tpe}" "$DM_tl/.2.cfg" |tr "\\n" '!' |sed 's/\!*$//g')"
+    [ -n "$tpcs" ] && e='!'; [ -z "${tpe}" ] && tpe=' '
+
+    if [ "$trans" = TRUE ]; then lzgpr="$(dlg_form_1)"; \
+    else lzgpr="$(dlg_form_2)"; fi
+    ret="$?"
+    
+    trgt=$(echo "${lzgpr}" | head -n -1 | sed -n 1p)
+    srce=$(echo "${lzgpr}" | sed -n 2p)
+    chk=$(echo "${lzgpr}" | tail -1)
+    export tpe=$(grep -Fxo "${chk}" "$DM_tl/.1.cfg")
+    export DM_tlt="$DM_tl/${tpe}"
+    export DC_tlt="$DM_tl/${tpe}/.conf"
+    check_s "${tpe}"
+    
+    if [ $ret -eq 3 ]; then
+        [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")
+        echo "${tpe}" > "$DT/tpe"
+        cd "$DT_r"; set_image_1
+        "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
+    
+    elif [ $ret -eq 2 ]; then
+        [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")
+        echo "${tpe}" > "$DT/tpe"
+        "$DS/ifs/tls.sh" add_audio "$DT_r"
+        "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
+    
+    elif [ $ret -eq 0 ]; then
+        if [ "${chk}" = "$(gettext "New") *" ]; then
+            "$DS/add.sh" new_topic
+        else echo "${tpe}" > "$DT/tpe"; fi
+        
+        if [ "$3" = 2 ]; then
+            [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")
+        else DT_r=$(mktemp -d "$DT/XXXXXX"); fi
+        export DT_r; cd "$DT_r"
+        xclip -i /dev/null
+    
+        if [ -z "${chk}" ] && [[ ${3} != 3 ]]; then cleanups "$DT_r"
+            msg "$(gettext "No topic is active")\n" info & exit 1; fi
+
+        if [ -z "${trgt}" ]; then
+        cleanups "$DT_r"; exit 1; fi
+
+        if [[ ${trgt,,} = ocr ]] || [[ ${trgt^} = I ]]; then
+            process image
+
+        elif [[ ${#trgt} = 1 ]]; then
+            process ${trgt:0:2}
+
+        elif [[ ${trgt:0:4} = 'http' ]]; then
+            process
+        
+        elif [[ ${#trgt} -gt 180 ]]; then
+            process
+            
+        elif [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
+        
+            if [ "$trans" = FALSE ] && ([ -z "${srce}" ] || [ -z "${trgt}" ]); then
+            cleanups "$DT_r"
+            msg "$(gettext "You need to fill text fields.")\n" info " " & exit 1; fi
+
+            srce=$(translate "${trgt}" auto $lgs)
+            
+            if [ $(wc -w <<<"${srce}") = 1 ]; then
+                new_word
+                
+            elif [ "$(wc -w <<<"${srce}")" -ge 1 -a ${#srce} -le 180 ]; then
+                new_sentence
+            fi
+            
+        elif [ $lgt != ja -o $lgt != 'zh-cn' -o $lgt != ru ]; then
+        
+            if [ "$trans" = FALSE ]; then
+                if [ -z "${srce}" -o -z "${trgt}" ]; then cleanups "$DT_r"
+                msg "$(gettext "You need to fill text fields.")\n" info " " & exit 1; fi
+            fi
+
+            if [ $(wc -w <<<"${trgt}") = 1 ]; then
+                new_word
+                
+            elif [ "$(wc -w <<<"${trgt}")" -ge 1 -a ${#trgt} -le 180 ]; then
+                new_sentence
+            fi
+        fi
+    else
+        xclip -i /dev/null; cleanups "$DT_r"
+    fi
+    exit 0
 }
 
 case "$1" in
@@ -720,16 +675,8 @@ case "$1" in
     new_topic "$@" ;;
     new_items)
     new_items "$@" ;;
-    new_sentence)
-    new_sentence "$@" ;;
-    new_word)
-    new_word "$@" ;;
     list_words_edit)
     list_words_edit "$@" ;;
     list_words_dclik)
     list_words_dclik "$@" ;;
-    list_words_sentence)
-    list_words_sentence "$@" ;;
-    process)
-    process "$@" ;;
 esac

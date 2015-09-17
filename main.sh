@@ -34,7 +34,7 @@ fi
 
 function new_session() {
     echo "--new session"
-    echo "$(date +%d)" > "$DC_s/10.cfg"
+    date "+%d" > "$DC_s/10.cfg"
     source "$DS/ifs/mods/cmns.sh"
     
     # mkdir /tmp/user
@@ -316,14 +316,14 @@ function topic() {
 
 panel() {
     if [ ! -d "$DT" ]; then new_session; ns=TRUE; fi
-    [ ! -e "$DT/tpe" ] && echo "$(sed -n 1p "$DC_s/4.cfg")" > "$DT/tpe"
-    [ "$(< "$DT/tpe")" != "${tpc}" ] && echo "$(sed -n 1p "$DC_s/4.cfg")" > "$DT/tpe"
+    [ ! -e "$DT/tpe" ] && sed -n 1p "$DC_s/4.cfg" > "$DT/tpe"
+    [ "$(< "$DT/tpe")" != "${tpc}" ] && sed -n 1p "$DC_s/4.cfg" > "$DT/tpe"
     [ -e "$DC_s/10.cfg" ] && date=$(sed -n 1p "$DC_s/10.cfg")
     
     if [[ "$(date +%d)" != "$date" ]] || [ ! -e "$DC_s/10.cfg" ]; then
     new_session; ns=TRUE; fi
 
-    ( set +e; if [ "${ns}" = TRUE ]; then
+    ( if [ "${ns}" = TRUE ]; then
     "$DS/ifs/tls.sh" a_check_updates; fi ) &
 
     if [ -e "$DC_s/10.cfg" ]; then
