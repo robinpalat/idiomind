@@ -34,12 +34,13 @@ confirm() {
 }
 
 set_lang() {
-    echo "${tpc}" > "$DM_tl/.8.cfg"
+    #echo "${tpc}" > "$DM_tl/.8.cfg"
     language="$1"
     if [ ! -d "$DM_t/$language/.share/images" ]; then
         mkdir -p "$DM_t/$language/.share/images"; fi
     echo "$language" > "$DC_s/6.cfg"
     echo "$lgsl" >> "$DC_s/6.cfg"
+    > "$DT/tpe"
     "$DS/stop.sh" 4
     source /usr/share/idiomind/ifs/c.conf
     if [ -f "$DM/topics/$language/.8.cfg" ]; then
@@ -47,6 +48,8 @@ set_lang() {
         "$DS/default/tpc.sh" "${lst}" 1
     else
         rm "$DC_s/4.cfg" && > "$DC_s/4.cfg"; fi
+    source "$DS/ifs/mods/cmns.sh"
+    list_inadd > "$DM_tl/.2.cfg"
     "$DS/mngr.sh" mkmn &
 }
 

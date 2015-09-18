@@ -11,13 +11,13 @@ ttrgt=$(grep -o ttrgt=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
 
 new_topic() {
     if [[ $(wc -l < "$DM_tl/.1.cfg") -ge 120 ]]; then
-    msg "$(gettext "Maximum number of topics reached.")" info Info & exit 1; fi
+    msg "$(gettext "Maximum number of topics reached.")" info "$(gettext "Information")" & exit 1; fi
     
     source "$DS/ifs/mods/add/add.sh"
     jlb="$(clean_3 "$(dlg_form_0 "${2}")")"
     
     if [[ ${#jlb} -gt 55 ]]; then
-        msg "$(gettext "Sorry, name too long.")\n" info
+        msg "$(gettext "Sorry, name too long.")\n" info "$(gettext "Information")"
         "$DS/add.sh" new_topic "${jlb}" & exit 1
     fi
     
@@ -61,7 +61,7 @@ function new_sentence() {
     else 
         if [ -z "${srce}" -o -z "${trgt}" ]; then
         cleanups "$DT_r"
-        msg "$(gettext "You need to fill text fields.")\n" info " " & exit; fi
+        msg "$(gettext "You need to fill text fields.")\n" info "$(gettext "Information")" & exit; fi
     fi
     
     sentence_p "$DT_r" 1
@@ -69,7 +69,7 @@ function new_sentence() {
     mksure "${trgt}" "${srce}" "${grmr}" "${wrds}"
 
     if [ $? = 1 ]; then
-        msg "$(gettext "An error has occurred while saving the note.")\n" dialog-warning
+        msg "$(gettext "An error has occurred while saving the note.")\n" dialog-warning "$(gettext "Information")"
         cleanups "$DT_r" & exit 1
     else
         index 2 "${tpe}" "${trgt}" "${srce}" "" "" "${wrds}" "${grmr}" "$id"
@@ -119,7 +119,7 @@ function new_word() {
     else 
         if [ -z "${srce}" -o -z "${trgt}" ]; then
         cleanups "$DT_r"
-        msg "$(gettext "You need to fill text fields.")\n" info " " & exit; fi
+        msg "$(gettext "You need to fill text fields.")\n" info "$(gettext "Information")" & exit; fi
     fi
     
     audio="${trgt,,}"
@@ -128,7 +128,7 @@ function new_word() {
     
     if [ $? = 1 ]; then
         cleanups "$DT_r"
-        msg "$(gettext "An error has occurred while saving the note.")\n" dialog-warning
+        msg "$(gettext "An error has occurred while saving the note.")\n" dialog-warning "$(gettext "Information")"
         exit 1
     else
         index 1 "${tpe}" "${trgt^}" "${srce^}" "${exmp_}" "" "" "" "${id}"
@@ -153,7 +153,7 @@ function new_word() {
         else
             if [ -f "${DM_tls}/${audio}.mp3" ]; then
                 msg_3 "$(gettext "A file named "${DM_tls}/${audio}.mp3" already exists. Replace?.")\n" dialog-question "${trgt}"
-                if [ $? -eq 0 ]; then 
+                if [ $? -eq 0 ]; then
                     cp -f "$DT_r/audtm.mp3" "${DM_tls}/${audio}.mp3"; fi
             else
                 cp -f "$DT_r/audtm.mp3" "${DM_tls}/${audio}.mp3"; fi
@@ -379,7 +379,7 @@ function process() {
     info="-$((200-ns))"
 
     if [ -z "$(< "$DT_r/sntsls")" ]; then
-        msg " $(gettext "Failed to get text.")\n" info
+        msg " $(gettext "Failed to get text.")\n" info "$(gettext "Information")"
         cleanups "$DT_r" "$DT/.n_s_pr" "$slt" & exit 1
     
     elif [[ ${chk} -le 180 ]]; then
@@ -405,7 +405,7 @@ function process() {
     elif [ $ret -eq 0 ]; then
         touch "$DT_r/slts"
         if [ ! -d "${DM_tlt}" ]; then
-        msg " $(gettext "An error occurred.")\n" dialog-warning
+        msg " $(gettext "An error occurred.")\n" dialog-warning "$(gettext "Information")"
         cleanups "$DT_r" "$DT/.n_s_pr" "$slt" & exit 1; fi
     
         while read -r chkst; do
@@ -581,7 +581,8 @@ new_items() {
     || img="$DS/images/nw.png"
     
     tpcs="$(grep -vFx "${tpe}" "$DM_tl/.2.cfg" |tr "\\n" '!' |sed 's/\!*$//g')"
-    [ -n "$tpcs" ] && e='!'; [ -z "${tpe}" ] && tpe=' '
+    [ -n "$tpcs" ] && e='!'
+    if [ -z "${tpe}" ]; then check_s "${tpe}" & exit 1; fi
 
     if [ "$trans" = TRUE ]; then lzgpr="$(dlg_form_1)"; \
     else lzgpr="$(dlg_form_2)"; fi
@@ -619,13 +620,13 @@ new_items() {
         xclip -i /dev/null
     
         if [ -z "${chk}" ] && [[ ${3} != 3 ]]; then cleanups "$DT_r"
-            msg "$(gettext "No topic is active")\n" info & exit 1; fi
+            msg "$(gettext "No topic is active")\n" info "$(gettext "Information")" & exit 1; fi
 
         if [ -z "${trgt}" ]; then
         cleanups "$DT_r"; exit 1; fi
 
         if [[ ${trgt,,} = ocr ]] || [[ ${trgt^} = I ]]; then
-            process image
+            unset trgt; process image
 
         elif [[ ${#trgt} = 1 ]]; then
             process ${trgt:0:2}
@@ -640,7 +641,7 @@ new_items() {
         
             if [ "$trans" = FALSE ] && ([ -z "${srce}" ] || [ -z "${trgt}" ]); then
             cleanups "$DT_r"
-            msg "$(gettext "You need to fill text fields.")\n" info " " & exit 1; fi
+            msg "$(gettext "You need to fill text fields.")\n" info "$(gettext "Information")" & exit 1; fi
 
             srce=$(translate "${trgt}" auto $lgs)
             
@@ -655,7 +656,7 @@ new_items() {
         
             if [ "$trans" = FALSE ]; then
                 if [ -z "${srce}" -o -z "${trgt}" ]; then cleanups "$DT_r"
-                msg "$(gettext "You need to fill text fields.")\n" info " " & exit 1; fi
+                msg "$(gettext "You need to fill text fields.")\n" info "$(gettext "Information")" & exit 1; fi
             fi
 
             if [ $(wc -w <<<"${trgt}") = 1 ]; then

@@ -40,7 +40,7 @@ function new_session() {
     # mkdir /tmp/user
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
     if [ $? -ne 0 ]; then
-    msg "$(gettext "Fail on try write in /tmp")\n" error & exit 1; fi
+    msg "$(gettext "Fail on try write in /tmp")\n" error "$(gettext "Information")" & exit 1; fi
     
     f_lock "$DT/ps_lk"
 
@@ -97,7 +97,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     source "$DS/ifs/tls.sh"
     check_format_1 "${1}"
     if [ $? != 18 ]; then
-    msg "$(gettext "File is corrupted.")\n" error & exit 1; fi
+    msg "$(gettext "File is corrupted.")\n" error "$(gettext "Information")" & exit 1; fi
     file="${1}"
     lv=( "$(gettext "Beginner")" "$(gettext "Intermediate")" "$(gettext "Advanced")" )
     level="${lv[${level}]}"
@@ -121,7 +121,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     ret=$?
         if [ $ret -eq 0 ]; then
             if [[ $(wc -l < "$DM_t/$langt/.1.cfg") -ge 120 ]]; then
-                msg "$(gettext "Maximum number of topics reached.")\n" info & exit
+                msg "$(gettext "Maximum number of topics reached.")\n" info "$(gettext "Information")" & exit
             fi
             cn=0
             if [[ `grep -Fxo "${tname}" "$DM_t/$langt/.1.cfg" |wc -l` -ge 1 ]]; then
@@ -234,7 +234,7 @@ function topic() {
             ntpc=$(cut -d '|' -f 1 < "${cnf4}")
             if [ "${tpc}" != "${ntpc}" -a -n "$ntpc" ]; then
             if [[ "${tpc}" != "$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")" ]]; then
-            msg "$(gettext "Sorry, this topic is currently not active.")\n" info & exit; fi
+            msg "$(gettext "Sorry, this topic is currently not active.")\n" info "$(gettext "Information")" & exit; fi
             "$DS/mngr.sh" rename_topic "${ntpc}" & exit; fi
         }
     

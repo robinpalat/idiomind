@@ -2,18 +2,18 @@
 # -*- ENCODING: UTF-8 -*-
 
 if [ -z "$lgtl" -o -z "$lgsl" ]; then
-msg "$(gettext "Please check the language settings in the preferences dialog.")\n" error & exit 1
+msg "$(gettext "Please check the language settings in the preferences dialog.")\n" error "$(gettext "Information")" & exit 1
 fi
 
 function check_s() {
     if [ -z "${tpe}" ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r" &
-        msg "$(gettext "No topic is active")\n" info & exit 1
+        msg "$(gettext "No topic is active")\n" info Information & exit 1
     fi
     DC_tlt="$DM_tl/${1}/.conf"
     if [[ `wc -l < "${DC_tlt}/0.cfg"` -ge 200 ]]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "You've reached the maximum number of notes for this topic. Max allowed (200)")" info " " & exit
+        msg "$(gettext "You've reached the maximum number of notes for this topic. Max allowed (200)")" info "$(gettext "Information")" & exit
     fi
 }
 
@@ -377,7 +377,7 @@ function voice() {
         echo "${1}" | $txaud "$DT_r/f.wav"
         sox "$DT_r"/*.wav "${3}"
         if [ $? != 0 ]; then
-        msg "$(gettext "Please check the speech synthesizer configuration in the preferences dialog.")" dialog-warning & exit 1
+        msg "$(gettext "Please check the speech synthesizer configuration in the preferences dialog.")" dialog-warning "$(gettext "Information")" & exit 1
         fi
     else
         return 1

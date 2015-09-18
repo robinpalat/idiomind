@@ -393,7 +393,7 @@ edit_list() {
 delete_topic() {
     if [ -z "${tpc}" ]; then exit 1; fi
     if [ "${tpc}" != "${2}" ]; then
-        msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
+        msg "$(gettext "Sorry, this topic is currently not active.")\n " info "$(gettext "Information")" & exit; fi
     msg_2 "$(gettext "Are you sure you want to delete this topic?")\n" \
     gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
     ret="$?"
@@ -414,7 +414,7 @@ delete_topic() {
             rm -fr "$DM_tl/${tpc}"; fi
      
         if [ -d "$DM_tl/${tpc}" ]; then sleep 0.5
-        msg "$(gettext "Could not remove the directory:")\n$DM_tl/${tpc}\n$(gettext "You must manually remove it.")" info; fi
+        msg "$(gettext "Could not remove the directory:")\n$DM_tl/${tpc}\n$(gettext "You must manually remove it.")" info "$(gettext "Information")"; fi
         
         rm -f "$DT/tpe"
         > "$DM_tl/.8.cfg"
@@ -501,7 +501,7 @@ rename_topic() {
 
 mark_to_learn_topic() {
     if [ "${tpc}" != "${2}" ]; then
-    msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
+    msg "$(gettext "Sorry, this topic is currently not active.")\n " info "$(gettext "Information")" & exit; fi
     
     [ ! -s "${DC_tlt}/0.cfg" ] && exit 1
     
@@ -558,7 +558,7 @@ mark_to_learn_topic() {
 
 mark_as_learned_topic() {
     if [ "${tpc}" != "${2}" ]; then
-    msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit; fi
+    msg "$(gettext "Sorry, this topic is currently not active.")\n " info "$(gettext "Information")" & exit; fi
     
     [ ! -s "${DC_tlt}/0.cfg" ] && exit 1
 
