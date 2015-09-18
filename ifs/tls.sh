@@ -808,6 +808,8 @@ translate_to() {
             cnt=`wc -l "${DC_tlt}/0.cfg"`
             > "$DT/words.trad_tmp"
             > "$DT/index.trad_tmp"
+            sp="/-\|"; sc=0
+            spin() { printf "\b${sp:sc++:1}"; ((sc==${#sp})) && sc=0; }
             
             while read -r item_; do
                 item="$(sed 's/},/}\n/g' <<<"${item_}")"
@@ -826,6 +828,7 @@ translate_to() {
                     | tr -d '.' | sed 's/^ *//; s/ *$//; /^$/d' >> "$DT/words.trad_tmp"
                     echo "|" >> "$DT/words.trad_tmp"
                     echo "${trgt} |" >> "$DT/index.trad_tmp"; fi
+                    spin
             done < "${DC_tlt}/0.cfg"
 
             sed -i ':a;N;$!ba;s/\n/\. /g' "$DT/words.trad_tmp"
@@ -870,6 +873,8 @@ translate_to() {
                 
                 t_item="${n}:[type={$type},trgt={$trgt},srce={$srce},exmp={$exmp},defn={$defn},note={},wrds={$wrds},grmr={$grmr},].[tag={},mark={},].id=[$id]"
                 echo -e "${t_item}" >> "${DC_tlt}/$2.data"
+                echo -e "$trgt"
+                
             let n++
             done < "${DC_tlt}/0.cfg"
             
@@ -877,7 +882,7 @@ translate_to() {
             if [ ! -e "${DC_tlt}/0.data" ]; then
                 mv "${DC_tlt}/0.cfg" "${DC_tlt}/0.data"; fi
             cp -f "${DC_tlt}/$2.data" "${DC_tlt}/0.cfg"
-            echo -e "  done!"
+            echo -e "\n\tdone!"
         fi
     fi
 }

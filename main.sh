@@ -17,7 +17,9 @@
 #  MA 02110-1301, USA.
 #
 #  2015/02/27
+
 __version='0.1'
+wicon="/usr/share/idiomind/images/icon.png"
 
 if [ ! -d "$HOME/.idiomind" ]; then
     /usr/share/idiomind/ifs/1u.sh & exit 1
@@ -112,7 +114,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     --text="${itxt}" \
     --name=Idiomind --class=Idiomind \
     --no-click --print-column=0 --dclick-action="$dclk" \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=$wicon \
     --ellipsize=END --center \
     --width=638 --height=570 --borders=6 \
     --column="$langt            " \
@@ -339,7 +341,7 @@ panel() {
     yad --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
     --always-print-result \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=$wicon \
     --form --fixed --on-top --no-buttons --align=center \
     --width=140 --height=190 --borders=0 --geometry=130x190-${x}-${y} \
     --field=gtk-new:btn "$DS/add.sh 'new_items'" \

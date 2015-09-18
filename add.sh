@@ -582,14 +582,16 @@ new_items() {
     tpcs="$(grep -vFx "${tpe}" "$DM_tl/.2.cfg" |tr "\\n" '!' |sed 's/\!*$//g')"
     [ -n "$tpcs" ] && e='!'
     if [ -z "${tpe}" ]; then check_s "${tpe}" & exit 1; fi
-
-    if [ "$trans" = TRUE ]; then lzgpr="$(dlg_form_1)"; \
-    else lzgpr="$(dlg_form_2)"; fi
+    
+    if [ "$trans" = TRUE ]; then
+        lzgpr="$(dlg_form_1)"
+    else 
+        lzgpr="$(dlg_form_2)"; fi
     
     ret="$?"
-    trgt=$(echo "${lzgpr}" | head -n -1 | sed -n 1p)
-    srce=$(echo "${lzgpr}" | sed -n 2p)
-    chk=$(echo "${lzgpr}" | tail -1)
+    trgt=$(echo "${lzgpr}" |head -n -1 |sed -n 1p)
+    srce=$(echo "${lzgpr}" |sed -n 2p)
+    chk=$(echo "${lzgpr}" |tail -1)
     tpe=$(grep -Fxo "${chk}" "$DM_tl/.1.cfg")
 
     if [ $ret -eq 3 ]; then

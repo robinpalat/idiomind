@@ -4,18 +4,19 @@
 function word_view() {
     [ -n "$defn" ] && field_defn="--field=<small>$defn</small>:lbl"
     [ -n "$note" ] && field_note="--field=<small>$note</small>\n:lbl"
-    [ -n "$exmp" ] && field_exmp="--field=<i><span color='#737373'>$exmp</span></i>:lbl"
+    [ -n "$exmp" ] && field_exmp="--field=<i><span font_desc='Sans Free 12' color='#737373'>$exmp</span></i>:lbl"
+    local sentence="$tag<span font_desc='Sans Free 25'>${trgt}</span>\n\n<span font_desc='Sans Free 14'><i>$srce</i></span>\n\n"
 
     yad --form --title=" " \
     --selectable-labels --quoted-output \
-    --text="$tag<span font_desc='Sans Free 26'>${trgt}</span>\n\n<i>$srce</i>\n\n" \
+    --text="${sentence}" \
     --window-icon="$DS/images/icon.png" \
     --align=left --scroll --skip-taskbar --text-align=center \
     --image-on-top --center --on-top \
     --width=630 --height=390 --borders=20 \
     --field="":lbl "${field_exmp}" "${field_defn}" "${field_note}" \
     --button="gtk-edit":4 \
-    --button="!$DS/images/listen.png!$(gettext "Listen")":"$cmd_listen" \
+    --button="!$DS/images/listen.png":"$cmd_listen" \
     --button=gtk-go-down:2 \
     --button=gtk-go-up:3
     
@@ -24,9 +25,10 @@ function word_view() {
 function sentence_view() {
     if [ "$(grep -o gramr=\"[^\"]* < "$DC_s/1.cfg" | grep -o '[^"]*$')"  = TRUE ]; then
     trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
+    local word="$tag<span font_desc='Sans Free 15'>${trgt_l}</span>\n\n<span font_desc='Sans Free 12'><i>$srce</i></span>\n\n"
     
     echo "${lwrd}" | yad --list --title=" " \
-    --text="$tag<span font_desc='Sans Free 15'>${trgt_l}</span>\n\n<i>$srce</i>\n\n" \
+    --text="${word}" \
     --selectable-labels --print-column=0 \
     --dclick-action="$DS/play.sh 'play_word'" \
     --window-icon="$DS/images/icon.png" \
@@ -36,7 +38,7 @@ function sentence_view() {
     --column="":TEXT \
     --column="":TEXT \
     --button=gtk-edit:4 \
-    --button="!$DS/images/listen.png!$(gettext "Listen")":"$cmd_listen" \
+    --button="!$DS/images/listen.png":"$cmd_listen" \
     --button=gtk-go-down:2 \
     --button=gtk-go-up:3
     
