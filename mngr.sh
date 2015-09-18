@@ -276,7 +276,6 @@ edit_item() {
             [ ${type} != ${type_mod} -a ${type_mod} = 1 ] && ( img_word "${trgt}" "${srce}" ) &
             [ ${col} -eq 1 ] && "$DS/ifs/tls.sh" colorize &
             [ ${mod} -eq 1 ] && sleep 0.2
-            [ $ret -eq 2 ] && "$DS/mngr.sh" edit "${lists}" $((item_pos-1))
             [ $ret -eq 0 ] && "$DS/vwr.sh" "${lists}" "${trgt}" ${item_pos} &
         else
             "$DS/vwr.sh" "${lists}" "${trgt}" ${item_pos} &

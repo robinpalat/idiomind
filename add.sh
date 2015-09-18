@@ -50,7 +50,7 @@ function new_sentence() {
 
     if [ "$trans" = TRUE ]; then
         internet
-        cd "$DT_r"
+        [ "$(cd "$(dirname "$0")" && pwd)" != "$DT_r" ] && cd "$DT_r"
         if [ "$ttrgt" = TRUE ]; then
         trgt="$(translate "${trgt,,}" auto "$lgt")"
         trgt=$(clean_2 "${trgt}"); fi
@@ -95,7 +95,7 @@ function new_sentence() {
         fi
 
         ( if [ "$wlist" = TRUE ] && [ -n "${wrds}" ]; then
-        list_words_sentence; fi ) &
+            list_words_sentence; fi ) &
 
         fetch_audio "$aw" "$bw"
         
@@ -178,7 +178,7 @@ list_words_edit() {
         
             if [ $? -eq 0 ]; then
                 while read -r chkst; do
-                sed 's/TRUE//g' <<<"${chkst}" >> "$DT/$4/slts"
+                    sed 's/TRUE//g' <<<"${chkst}" >> "$DT/$4/slts"
                 done <<<"$(sed 's/|//g' <<<"${slt}")"
             fi
     elif [[ ${3} = 2 ]]; then
@@ -200,7 +200,7 @@ list_words_edit() {
                 if [ $? = 0 ]; then
                     index 1 "${tpe}" "${trgt}" "${srce}" "${exmp_}" "" "" "" "${id}"
                     if [ ! -f "$DM_tls/$audio.mp3" ]; then
-                    ( tts_word "$audio" "$DM_tls" ); fi
+                        ( tts_word "$audio" "$DM_tls" ); fi
                     ( img_word "${trgt}" "${srce}" ) &
                 else
                     echo -e "\n\n#$n $trgt" >> "$DT_r/logw"
@@ -228,7 +228,7 @@ function list_words_sentence() {
         
         if [ $? -eq 0 ]; then
             while read -r chkst; do
-            sed 's/TRUE//g' <<<"${chkst}"  >> "$DT_r/slts"
+                sed 's/TRUE//g' <<<"${chkst}"  >> "$DT_r/slts"
             done <<<"$(sed 's/|//g' <<<"${slt}")"
         elif [ $? -eq 1 ]; then
             rm -f "$DT"/*."$c"
@@ -251,7 +251,7 @@ function list_words_sentence() {
             if [ $? = 0 ]; then
                 index 1 "${tpe}" "${trgt}" "${srce}" "${exmp_}" "" "" "" "${id}"
                 if [ ! -f "$DM_tls/$audio.mp3" ]; then
-                ( tts_word "${audio}" "${DM_tls}" ); fi
+                    ( tts_word "${audio}" "${DM_tls}" ); fi
                 ( img_word "${trgt}" "${srce}" ) &
             else
                 echo -e "\n\n#$n $trgt" >> "$DT_r/logw"
@@ -306,7 +306,8 @@ function process() {
     db="$DS/default/dicts/$lgt"
     if [ ! -d "$DT_r" ] ; then
         export DT_r=$(mktemp -d "$DT/XXXXXX"); fi
-    cd "$DT_r"
+    [ "$(cd "$(dirname "$0")" && pwd)" != "$DT_r" ] && cd "$DT_r"
+
     if [ -n "${trgt}" ]; then
         conten="${trgt}"
     else
@@ -468,7 +469,7 @@ function process() {
                     if [ ${#trgt} -ge 180 ]; then
                         echo -e "\n\n#$n [$(gettext "Sentence too long")] $trgt" >> "$DT_r/slog"
                     else
-                        cd "$DT_r"
+                        [ "$(cd "$(dirname "$0")" && pwd)" != "$DT_r" ] && cd "$DT_r"
                         ( sentence_p "$DT_r" 1
                         id="$(set_name_file 1 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}")"
                         mksure "${trgt}" "${srce}" "${wrds}" "${grmr}"
@@ -490,7 +491,6 @@ function process() {
                     fi
                 fi
             fi
-            
             prg=$((100*n/lns-1))
             echo "$prg"
             echo "# ${trgt:0:35}... " ;
@@ -522,7 +522,6 @@ function process() {
                         cleanups "${DM_tlt}/$id.mp3"
                     fi
                 fi
-                
                 nn=$((n+$(wc -l < "$DT_r/slts")-1))
                 prg=$((100*nn/lns))
                 echo "$prg"
@@ -535,16 +534,16 @@ function process() {
         if  [ $? != 0 ]; then
             "$DS/stop.sh" 5
         fi
-        wadds=" $(($(wc -l < "$DT_r/addw")-$(sed '/^$/d' < "$DT_r/wlog" | wc -l)))"
+        wadds=" $(($(wc -l < "$DT_r/addw")-$(sed '/^$/d' < "$DT_r/wlog" |wc -l)))"
         W=" $(gettext "words")"
         if [[ ${wadds} = 1 ]]; then
             W=" $(gettext "word")"; fi
-        sadds=" $(($( wc -l < "$DT_r/adds")-$(sed '/^$/d' < "$DT_r/slog" | wc -l)))"
+        sadds=" $(($( wc -l < "$DT_r/adds")-$(sed '/^$/d' < "$DT_r/slog" |wc -l)))"
         S=" $(gettext "sentences")"
         if [[ ${sadds} = 1 ]]; then
             S=" $(gettext "sentence")"; fi
         log=$(cat "$DT_r/slog" "$DT_r/wlog")
-        adds=$(cat "$DT_r/adds" "$DT_r/addw" |sed '/^$/d' | wc -l)
+        adds=$(cat "$DT_r/adds" "$DT_r/addw" |sed '/^$/d' |wc -l)
         
         if [[ ${adds} -ge 1 ]]; then
             notify-send -i idiomind "${tpe}" \
@@ -586,16 +585,13 @@ new_items() {
 
     if [ "$trans" = TRUE ]; then lzgpr="$(dlg_form_1)"; \
     else lzgpr="$(dlg_form_2)"; fi
-    ret="$?"
     
+    ret="$?"
     trgt=$(echo "${lzgpr}" | head -n -1 | sed -n 1p)
     srce=$(echo "${lzgpr}" | sed -n 2p)
     chk=$(echo "${lzgpr}" | tail -1)
-    export tpe=$(grep -Fxo "${chk}" "$DM_tl/.1.cfg")
-    export DM_tlt="$DM_tl/${tpe}"
-    export DC_tlt="$DM_tl/${tpe}/.conf"
-    check_s "${tpe}"
-    
+    tpe=$(grep -Fxo "${chk}" "$DM_tl/.1.cfg")
+
     if [ $ret -eq 3 ]; then
         [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")
         echo "${tpe}" > "$DT/tpe"
@@ -611,7 +607,13 @@ new_items() {
     elif [ $ret -eq 0 ]; then
         if [ "${chk}" = "$(gettext "New") *" ]; then
             "$DS/add.sh" new_topic
-        else echo "${tpe}" > "$DT/tpe"; fi
+            source /usr/share/idiomind/ifs/c.conf
+        else
+            echo "${tpe}" > "$DT/tpe"
+        fi
+        export tpe; check_s "${tpe}"
+        export DM_tlt="$DM_tl/${tpe}"
+        export DC_tlt="$DM_tl/${tpe}/.conf"
         
         if [ "$3" = 2 ]; then
             [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")

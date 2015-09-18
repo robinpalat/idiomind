@@ -378,7 +378,7 @@ function practice_e() {
         text="<span font_desc='Free Sans Bold $sz' color='#717171'>$hint</span>\n"
         
         entry=$(>/dev/null | yad --form --title="$(gettext "Practice")" \
-        --text="<sup>Hint:</sup>\t$text" \
+        --text="<sup>Hint</sup>\t$text" \
         --name=Idiomind --class=Idiomind \
         --separator="" \
         --window-icon="$DS/images/icon.png" --image="$DS/images/bar.png" \

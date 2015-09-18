@@ -6,7 +6,7 @@ msg "$(gettext "Please check the language settings in the preferences dialog.")\
 fi
 
 function check_s() {
-    if [ -z "${tpe}" ]; then
+    if [ -z "${1}" ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r" &
         msg "$(gettext "No topic is active")\n" info Information & exit 1
     fi
@@ -56,6 +56,9 @@ function index() {
         fi
     else
         item="${3}"; DC_tlt="${DM_tl}/${2}/.conf"
+        if [ ! -d "${DC_tlt}" ]; then
+            msg "$(gettext "No such file or directory")\n" error Information & exit 1
+        fi
         img0='/usr/share/idiomind/images/0.png'
         #
         if [ ! -z "${item}" ]; then
