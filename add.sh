@@ -167,6 +167,7 @@ function new_word() {
 }
 
 list_words_edit() {
+    include "$DS/ifs/mods/add"
     if [[ ${3} = 1 ]]; then
         tpe="${tpc}"
         check_s "${tpe}"
@@ -268,6 +269,7 @@ function list_words_sentence() {
 }
 
 function list_words_dclik() {
+    source "$DS/ifs/mods/add/add.sh"
     words="${3}"
     check_s "${tpe}"
     info="-$((200 - $(wc -l < "${DC_tlt}/0.cfg")))"
@@ -564,8 +566,7 @@ new_items() {
 
     if [ -e "$DC_s/topics_first_run" ]; then
     "$DS/ifs/tls.sh" first_run topics & exit 1; fi
-    
-    #source "$DS/ifs/mods/add/add.sh"
+
     include "$DS/ifs/mods/add"
 
     [ -z "${4}" ] && txt="$(xclip -selection primary -o)" || txt="${4}"

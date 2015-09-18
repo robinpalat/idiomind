@@ -169,7 +169,7 @@ function notebook_2() {
 function dialog_1() {
     yad --title="$(gettext "Review")" \
     --class=idiomind --name=Idiomind \
-    --text="\"${tpc}\"\n$(gettext "<b>Would you like to go over it?</b>\n The waiting period already has been completed")" \
+    --text="\"${tpc}\"\n$(gettext "<b>Would you like to go over it?</b>\n The waiting period already has been completed.")" \
     --image=gtk-refresh \
     --window-icon="$DS/images/icon.png" \
     --buttons-layout=edge --center --on-top \

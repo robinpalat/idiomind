@@ -3,8 +3,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 [ ! -d "$DC" ] && "$DS/ifs/1u.sh" && exit
-info2="$(gettext "Switch language")"
-info1="$(gettext "Switch language")"
+info2="$(gettext "Switch language.")"
 cd "$DS/addons"
 [[ -n "$(< "$DC_s/1.cfg")" ]] && cfg=1 || > "$DC_s/1.cfg"
 cnf1=$(mktemp "$DT/cnf1.XXXX")
@@ -126,7 +125,6 @@ ret=$?
             ((v=v+1)); fi
             ((n=n+1))
         done
-
         val=$(cut -d "|" -f16 < "$cnf1")
         [[ "$val" != "$synth" ]] && \
         sed -i "s/${sets[8]}=.*/${sets[8]}=\"$(sed 's|/|\\/|g' <<<"$val")\"/g" "$DC_s/1.cfg"
@@ -155,26 +153,24 @@ ret=$?
             rm "$config_dir/idiomind.desktop"
             fi
         fi
-        
         n=0
         while [ ${n} -lt 10 ]; do
             if cut -d "|" -f12 < "$cnf1" | grep "${lang[$n]}" && \
             [ "${lang[$n]}" != "$lgtl" ]; then
                 lgtl="${lang[$n]}"
-                if grep -o -E 'Chinese|Japanese|Russian|Vietnamese' <<< "$lgtl";
-                then info3="\n$(gettext "Some things are still not working for this language"). ($lgtl)"; fi
+                if grep -o -E 'Chinese|Japanese|Russian' <<< "$lgtl";
+                then info3="\n$(gettext "Some things are still not working for these languages:") Chinese, Japanese, Russian."; fi
                 confirm "$info2$info3" dialog-question "$lgtl"
                 [ $? -eq 0 ] && set_lang "${lang[$n]}"
                 break
             fi
             ((n=n+1))
         done
-        
         n=0
         while [ ${n} -lt 10 ]; do
             if cut -d "|" -f13 < "$cnf1" | grep "${lang[$n]}" && \
             [ "${lang[$n]}" != "$lgsl" ]; then
-                confirm "$info1" dialog-question
+                confirm "$info2" dialog-question
                 if [ $? -eq 0 ]; then
                     echo "$lgtl" > "$DC_s/6.cfg"
                     echo "${lang[$n]}" >> "$DC_s/6.cfg"

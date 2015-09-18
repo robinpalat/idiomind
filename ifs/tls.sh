@@ -468,8 +468,9 @@ _quick_help() {
     --name=Idiomind --class=Idiomind \
     --uri="${_url}" \
     --window-icon="$DS/images/icon.png" \
-    --no-buttons --fixed --on-top --mouse \
-    --width=600 --height=520 --borders=2
+    --fixed --on-top --mouse \
+    --width=600 --height=520 --borders=5 \
+    --button="$(gettext "OK")":0
 } >/dev/null 2>&1
 
 check_updates() {
@@ -784,7 +785,7 @@ mkpdf() {
 translate_to() {
     # usage: 
     # idiomind translate [language] / e.g. language: en.
-    # idiomind translate restore / for restore original language.
+    # idiomind translate restore / to go back to original translation
     source /usr/share/idiomind/ifs/c.conf
     source "$DS/ifs/mods/cmns.sh"
     [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "  -- error" && exit 1

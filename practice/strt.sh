@@ -77,17 +77,17 @@ function practice_a() {
         [ ${trgt_f_c} -lt 5 ] && trgt_f_c=8
         [ ${trgt_f_a} -lt 5 ] && trgt_f_a=8
         [ ${srce_f_a} -lt 5 ] && srce_f_a=8
-        cuestion="\n<span font_desc='Free Sans Bold ${trgt_f_c}'>${trgt}</span>"
+        question="\n<span font_desc='Free Sans Bold ${trgt_f_c}'>${trgt}</span>"
         answer1="\n<span font_desc='Free Sans ${trgt_f_a}'>${trgt}</span>"
         answer2="<span font_desc='Free Sans Bold ${srce_f_a}'><i>${srce}</i></span>"
     }
 
-    cuestion() {
+    question() {
         yad --form --title="$(gettext "Practice")" \
         --skip-taskbar --text-align=center --center --on-top \
         --undecorated --buttons-layout=spread --align=center \
         --width=380 --height=270 --borders=8 \
-        --field="\n$cuestion":lbl \
+        --field="\n$question":lbl \
         --button="$(gettext "Exit")":1 \
         --button="  $(gettext "Continue") >>  !$img_cont":0
     }
@@ -106,7 +106,7 @@ function practice_a() {
     }
 
     while read trgt; do
-        fonts; cuestion
+        fonts; question
         if [ $? = 1 ]; then
             ling=${hard}; hard=0
             break & score
@@ -128,7 +128,7 @@ function practice_a() {
     else
         step=2
         while read trgt; do
-            fonts; cuestion
+            fonts; question
             if [ $? = 1 ]; then
                 break & score
             else
@@ -155,7 +155,7 @@ function practice_b(){
         ras=$(sort -Ru b.srces |egrep -v "$srce" |head -${P})
         tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
         srce_s=$((35-${#trgt}))
-        cuestion="\n<span font_desc='Free Sans ${srce_s}' color='#636363'><b>${trgt}</b></span>\n\n"
+        question="\n<span font_desc='Free Sans ${srce_s}' color='#636363'><b>${trgt}</b></span>\n\n"
         }
 
     ofonts() {
@@ -166,7 +166,7 @@ function practice_b(){
         
     mchoise() {
         dlg=$(ofonts | yad --list --title="$(gettext "Practice")" \
-        --text="${cuestion}" \
+        --text="${question}" \
         --separator=" " --selectable-labels \
         --skip-taskbar --text-align=center --center --on-top \
         --buttons-layout=edge --undecorated \
@@ -231,15 +231,15 @@ function practice_c() {
         item="$(grep -F -m 1 "trgt={${trgt}}" "${cfg0}" |sed 's/},/}\n/g')"
         id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
         s=$((30-${#trgt}))
-        lcuestion="\n\n<span font_desc='Verdana ${s}' color='#717171'><b>${lst}</b></span>\n\n\n"
+        lquestion="\n\n<span font_desc='Verdana ${s}' color='#717171'><b>${lst}</b></span>\n\n\n"
         }
 
-    cuestion() {
+    question() {
         cmd_play="$DS/play.sh play_word "\"${trgt}\"" ${id}"
         (sleep 0.5 && "$DS/play.sh" play_word "${trgt}" ${id}) &
 
         yad --form --title="$(gettext "Practice")" \
-        --text="$lcuestion" \
+        --text="$lquestion" \
         --skip-taskbar --text-align=center --center --on-top \
         --buttons-layout=edge --image-on-top --undecorated \
         --width=370 --height=240 --borders=10 \
@@ -251,7 +251,7 @@ function practice_c() {
 
     p=1
     while read trgt; do
-        fonts; cuestion
+        fonts; question
         ans=$?
         if [ ${ans} = 2 ]; then
             echo "${trgt}" >> c.1
@@ -270,7 +270,7 @@ function practice_c() {
     else
         step=2; p=2
         while read trgt; do
-            fonts; cuestion
+            fonts; question
             ans=$?
             if [ ${ans} = 2 ]; then
                 hard=$((hard-1))
@@ -297,7 +297,7 @@ function practice_d() {
         aswer="<span font_desc='Free Sans ${trgt_f_c}'>${trgt}</span>"
     }
 
-    cuestion() {
+    question() {
         yad --form --title="$(gettext "Practice")" \
         --image="$img" \
         --skip-taskbar --text-align=center --align=center --center --on-top \
@@ -321,7 +321,7 @@ function practice_d() {
     }
     
     while read -r trgt; do
-        fonts; cuestion
+        fonts; question
         if [ $? = 1 ]; then
             ling=${hard}; hard=0
             break & score
@@ -343,7 +343,7 @@ function practice_d() {
     else
         step=2
         while read -r trgt; do
-            fonts; cuestion
+            fonts; question
             if [ $? = 1 ]; then
                 break & score
             else
@@ -378,7 +378,7 @@ function practice_e() {
         text="<span font_desc='Free Sans Bold $sz' color='#717171'>$hint</span>\n"
         
         entry=$(>/dev/null | yad --form --title="$(gettext "Practice")" \
-        --text="$text" \
+        --text="<sup>Hint:</sup>\t$text" \
         --name=Idiomind --class=Idiomind \
         --separator="" \
         --window-icon="$DS/images/icon.png" --image="$DS/images/bar.png" \
@@ -585,7 +585,7 @@ function starting() {
     --text=" $1\t\n" --image=info \
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --center --on-top \
-    --width=300 --height=120 --borders=5 \
+    --width=340 --height=120 --borders=5 \
     --button="    $(gettext "Ok")    ":1
     strt 0
 }

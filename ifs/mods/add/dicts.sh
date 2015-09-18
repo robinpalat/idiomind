@@ -1,5 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
+
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 function dicts() {
     cmsg() {
@@ -7,12 +8,13 @@ function dicts() {
         source "$DS/ifs/mods/cmns.sh"
         msg_2 "$(gettext "You may need to configure the list of Internet resources. \nDo you want to do this now?")" \
         info "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Information")"
-        if [ $? = 0 ]; then s=1; "$DS_a/Dics/cnfg.sh" 6; fi
+        if [ $? = 0 ]; then "$DS_a/Dics/cnfg.sh" 6; fi
+        echo $lgtl > "$DC_a/dict/.dict"
     }
     s=0
     if [ ! -d "$DC_d" -o ! -d "$DC_a/dict/disables" ]; then
         mkdir -p "$DC_d"; mkdir -p "$DC_a/dict/disables"
-        echo -e "$lgtl" > "$DC_a/dict/.dict"
+        echo $lgtl > "$DC_a/dict/.dict"
         for re in "$DS_a/Dics/dicts"/*; do
             > "$DC_a/dict/disables/$(basename "$re")"
         done
@@ -26,7 +28,6 @@ function dicts() {
     if  [[ `sed -n 1p "$DC_a/dict/.dict"` != $lgtl ]] ; then
         sleep 1; cmsg
     fi
-    [ $s = 1 ] && echo -e "$lgtl" > "$DC_a/dict/.dict"
 }
 
 dicts &
