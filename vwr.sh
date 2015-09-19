@@ -25,6 +25,7 @@ mark="$(grep -oP '(?<=mark={).*(?=})' <<<"${item}")"
 lwrd="$(grep -oP '(?<=wrds={).*(?=})' <<<"${item}" |tr '_' '\n')"
 exmp="$(sed "s/${trgt,,}/<span background='#FDFBCF'>${trgt,,}<\/\span>/g" <<<"$exmp")"
 id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
+text_missing=0
 
 if [ ${type} = 1 ]; then
     cmd_listen="$DS/play.sh play_word "\"${trgt}\"" ${id}"
@@ -35,13 +36,21 @@ elif [ ${type} = 2 ]; then
     [ "$mark" = TRUE ] && trgt="<b>$trgt</b>" && grmr="<b>$grmr</b>"
     sentence_view
 else
-    m_text "${_item}"
+    trgt="${_item} [Text missing]"
+    grmr="${trgt}"
+    if [[ `wc -w <<< "${_item}"` -lt 2 ]]; then
+        cmd_listen="$DS/play.sh play_word "\"${trgt}\"" ${id}"
+        text_missing=1
+        word_view
+    else 
+        cmd_listen="$DS/play.sh play_sentence ${id}"
+        text_missing=2
+        sentence_view
+    fi
 fi
     ret=$?
-    if [ $ret -eq 5 ]; then
-        "$DS/mngr.sh" mtext ${1} ${index_pos}
-    elif [ $ret -eq 4 ]; then
-        "$DS/mngr.sh" edit ${1} ${index_pos}
+    if [ $ret -eq 4 ]; then
+        "$DS/mngr.sh" edit ${1} ${index_pos} ${text_missing}
     elif [ $ret -eq 2 ]; then
         if [[ ${index_pos} = 1 ]]; then
             item=`tail -n 1 < "${index}"`

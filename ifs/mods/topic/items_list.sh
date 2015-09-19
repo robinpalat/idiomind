@@ -4,14 +4,14 @@
 function word_view() {
     [ -n "$defn" ] && field_defn="--field=<small>$defn</small>:lbl"
     [ -n "$note" ] && field_note="--field=<small>$note</small>\n:lbl"
-    [ -n "$exmp" ] && field_exmp="--field=<i><span font_desc='Sans Free 12' color='#737373'>$exmp</span></i>:lbl"
+    [ -n "$exmp" ] && field_exmp="--field=<span font_desc='Verdana 12' color='#5C5C5C'><i>$exmp</i></span>:lbl"
     local sentence="$tag<span font_desc='Sans Free 25'>${trgt}</span>\n\n<span font_desc='Sans Free 14'><i>$srce</i></span>\n\n"
 
     yad --form --title=" " \
     --selectable-labels --quoted-output \
     --text="${sentence}" \
     --window-icon="$DS/images/icon.png" \
-    --align=left --scroll --skip-taskbar --text-align=center \
+    --scroll --skip-taskbar --text-align=center \
     --image-on-top --center --on-top \
     --width=630 --height=390 --borders=20 \
     --field="":lbl "${field_exmp}" "${field_defn}" "${field_note}" \
@@ -44,27 +44,7 @@ function sentence_view() {
     
 } >/dev/null 2>&1
 
-function m_text() {
-    include "$DS/ifs/mods/mngr"
-    trgt="${1}"
-    cmd_del="$DS/mngr.sh delete_item "\"${tpc}\"" "\"${trgt}\"""
-    cmd_add="$DS/add.sh new_items (2) (3) "\"${trgt}\"""
-    text="<span font_desc='monospace 10'>$(gettext "Text missing")</span>\n\n\n\n"
-
-    yad --form --title=" " \
-    --text="${text}" \
-    --window-icon="$DS/images/icon.png" \
-    --align=center --skip-taskbar --text-align=center \
-    --image-on-top --center --on-top \
-    --width=620 --height=380 --borders=20 \
-    --button="$(gettext "Delete")":"$cmd_del" \
-    --button=gtk-add:"$cmd_add" \
-    --button=gtk-go-down:2 \
-    --button=gtk-go-up:3
-    
-} >/dev/null 2>&1
-
-export -f word_view sentence_view m_text
+export -f word_view sentence_view
 
 function notebook_1() {
     cmd_mark="'$DS/mngr.sh' 'mark_as_learned' "\"${tpc}\"" 1"

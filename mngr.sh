@@ -105,20 +105,25 @@ edit_item() {
     temp="...."
     lgt=$(lnglss $lgtl)
     lgs=$(lnglss $lgsl)
-    lists="${2}";  item_pos="${3}"
+    list="${2}";  item_pos=${3}; text_missing=${4}
     c=$((RANDOM%10000))
-    if [ "$lists" = 1 ]; then
+    if [ ${list} = 1 ]; then
         index_1="${DC_tlt}/1.cfg"
         index_2="${DC_tlt}/2.cfg"
         [ ${item_pos} -lt 1 ] && item_pos=${inx1}
-    elif [ "$lists" = 2 ]; then
+    elif [ ${list} = 2 ]; then
         index_1="${DC_tlt}/2.cfg"
         index_2="${DC_tlt}/1.cfg"
-        [ ${item_pos} -lt 1 ] && item_pos=${inx2}; fi
+        [ ${item_pos} -lt 1 ] && item_pos=${inx2}
+    fi
     tpcs="$(egrep -v "${tpc}" "${DM_tl}/.2.cfg" |tr "\\n" '!' |sed 's/!\+$//g')"
-    item="$(sed -n ${item_pos}p "${index_1}")"
-    edit_pos=`grep -Fon -m 1 "trgt={${item}}" "${DC_tlt}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
-    item="$(sed -n ${edit_pos}p "${DC_tlt}/0.cfg" |sed 's/},/}\n/g')"
+    item_id="$(sed -n ${item_pos}p "${index_1}")"
+    if [ ${text_missing} = 0 ]; then
+        edit_pos=`grep -Fon -m 1 "trgt={${item_id}}" "${DC_tlt}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
+        item="$(sed -n ${edit_pos}p "${DC_tlt}/0.cfg" |sed 's/},/}\n/g')"
+    else
+        item="$(sed -n ${item_pos}p "${DC_tlt}/0.cfg" |sed 's/},/}\n/g')"
+    fi
     type=`grep -oP '(?<=type={).*(?=})' <<<"${item}"`
     export trgt=`grep -oP '(?<=trgt={).*(?=})' <<<"${item}"`
     grmr=`grep -oP '(?<=grmr={).*(?=})' <<<"${item}"`
@@ -132,8 +137,8 @@ edit_item() {
     export id=`grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"`
     [ -z "${id}" ] && id=""
     query="$(sed "s/'/ /g" <<<"${trgt}")"
-    mod=0; col=0; prcess_tmp=0
-    
+    to_modify=0; colorize_run=0; transl_mark=0
+
     cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"""
     cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"""
     cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"" 1 ${c}"
@@ -141,17 +146,29 @@ edit_item() {
     link1="https://translate.google.com/\#$lgt/$lgs/${query}"
 
     if [ -z "${item}" ]; then exit 1; fi
+    if [ ${text_missing} != 0 ]; then
+        type=${text_missing}
+        edit_pos=${item_pos}
+    fi
     if [[ "${srce}" = "${temp}" ]]; then
     msg_2 "$(gettext "Translating...\nWait till the process is completed. ")\n" info OK gtk-stop "$(gettext "Warning")"
-    if [ $? -eq 1 ]; then srce="" ;prcess_tmp=1 ; else "$DS/vwr.sh" "${lists}" "${trgt}" ${item_pos} & exit 1; fi; fi
+    if [ $? -eq 1 ]; then srce="" ;transl_mark=1 ; else "$DS/vwr.sh" ${list} "${trgt}" ${item_pos} & exit 1; fi; fi
 
     if [ -e "${DM_tlt}/$id.mp3" ]; then
         audf="${DM_tlt}/$id.mp3"
     else
         audf="${DM_tls}/${trgt,,}.mp3"; fi
-    if [ ${type} = 1 ]; then edit_dlg1="$(dlg_form_1)"
-    elif [ ${type} = 2 ]; then edit_dlg2="$(dlg_form_2)"; fi
+        
+    if [ ${type} = 1 ]; then
+        edit_dlg1="$(dlg_form_1)"
+    elif [ ${type} = 2 ]; then
+        edit_dlg2="$(dlg_form_2)"
+    fi
+    
     ret=$?
+        if [ -z "${edit_dlg1}" -a -z "${edit_dlg2}" ]; then
+            item_pos=$((item_pos-1)); fi
+            
         if [ ${ret} -eq 0  ]; then
             include "$DS/ifs/mods/add"
             if [ ${type} = 1 ]; then
@@ -181,31 +198,36 @@ edit_item() {
             fi
             
             if [ "${trgt_mod}" != "${trgt}" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
-            index edit "${trgt}" "${tpc}" "${trgt_mod}"
+            if [ ${text_missing} != 0 ]; then
+                index edit "${item_id}" "${tpc}" "${trgt_mod}"
+            else
+                index edit "${trgt}" "${tpc}" "${trgt_mod}"
+            fi
             sed -i "${edit_pos}s|trgt={${trgt}}|trgt={${trgt_mod}}|;
             ${edit_pos}s|grmr={${grmr}}|grmr={${trgt_mod}}|;
             ${edit_pos}s|srce={${srce}}|srce={$temp}|g" "${DC_tlt}/0.cfg"
-            ind=1; col=1; mod=1
+            mod_index=1; colorize_run=1; to_modify=1
             fi
             if [ "${mark}" != "${mark_mod}" ]; then
                 if [ "${mark_mod}" = "TRUE" ]; then
-                mmod=1; echo "${trgt}" >> "${DC_tlt}/6.cfg"; else
-                sed -i "/${trgt}/d" "${DC_tlt}/6.cfg"; fi
-                col=1; mod=1
+                    to_modify=1; echo "${trgt}" >> "${DC_tlt}/6.cfg"; else
+                    sed -i "/${trgt}/d" "${DC_tlt}/6.cfg"; fi
+                colorize_run=1; to_modify=1
             fi
-            [[ "${prcess_tmp}" = 1 ]] && srce="$temp"
-            [ "${type}" != "${type_mod}" ] && mod=1
-            [ "${srce}" != "${srce_mod}" ] && mod=1
-            [ "${exmp}" != "${exmp_mod}" ] && mod=1
-            [ "${defn}" != "${defn_mod}" ] && mod=1
-            [ "${note}" != "${note_mod}" ] && mod=1
-            [ "${mark}" != "${mark_mod}" ] && mod=1
-            [ "${audf}" != "${audf_mod}" ] && mod=1
-            [ "${tpc}" != "${tpc_mod}" ] && mod=1
+            [[ "${transl_mark}" = 1 ]] && srce="$temp"
+            [ "${type}" != "${type_mod}" ] && to_modify=1
+            [ "${srce}" != "${srce_mod}" ] && to_modify=1
+            [ "${exmp}" != "${exmp_mod}" ] && to_modify=1
+            [ "${defn}" != "${defn_mod}" ] && to_modify=1
+            [ "${note}" != "${note_mod}" ] && to_modify=1
+            [ "${mark}" != "${mark_mod}" ] && to_modify=1
+            [ "${audf}" != "${audf_mod}" ] && to_modify=1
+            [ "${tpc}" != "${tpc_mod}" ] && to_modify=1
 
-            if [ ${mod} = 1 ]; then
+            if [ ${to_modify} = 1 ]; then
             (
-                if [ ${ind} = 1 ]; then
+                if [ ${mod_index} = 1 ]; then
+                
                     DT_r=$(mktemp -d "$DT/XXXX")
                     internet
                     if [ ${type_mod} = 1 ]; then
@@ -271,14 +293,14 @@ edit_item() {
                 cleanups "$DT_r"
             ) &
             fi
-            include "$DS/ifs/mods/mngr/a"
+
             [ -d "$DT/$c" ] && "$DS/add.sh" list_words_edit "${wrds_mod}" 2 ${c} "${trgt_mod}" &
             [ ${type} != ${type_mod} -a ${type_mod} = 1 ] && ( img_word "${trgt}" "${srce}" ) &
-            [ ${col} -eq 1 ] && "$DS/ifs/tls.sh" colorize &
-            [ ${mod} -eq 1 ] && sleep 0.2
-            [ $ret -eq 0 ] && "$DS/vwr.sh" "${lists}" "${trgt}" ${item_pos} &
+            [ ${colorize_run} = 1 ] && "$DS/ifs/tls.sh" colorize &
+            [ ${to_modify} = 1 ] && sleep 0.2
+            "$DS/vwr.sh" ${list} "${trgt}" ${item_pos} &
         else
-            "$DS/vwr.sh" "${lists}" "${trgt}" ${item_pos} &
+            "$DS/vwr.sh" ${list} "${trgt}" ${item_pos} &
         fi
     exit
 } >/dev/null 2>&1
@@ -317,16 +339,16 @@ edit_list() {
                 trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
                 
                 if [ ${type} = 1 ]; then
-                echo "${trgt}" >> "${direc}/3.cfg"
+                    echo "${trgt}" >> "${direc}/3.cfg"
                 elif [ ${type} = 2 ]; then
-                echo "${trgt}" >> "${direc}/4.cfg"; fi
+                    echo "${trgt}" >> "${direc}/4.cfg"; fi
                 if ! grep -Fxo "${trgt}" "${direc}/2.cfg"; then
-                echo "${trgt}" >> "${direc}/1.cfg"; fi
+                    echo "${trgt}" >> "${direc}/1.cfg"; fi
                 grep -F -m 1 "trgt={${trgt}}" "${direc}/0.cfg" | \
                 sed "s/${line}\:\[/${n}\:\[/g" >> "$DT/tmp0"
             else
                 if [ $(wc -$c <<<"${trgt}") = 1 ]; then
-                echo "${trgt}" >> "${direc}/3.cfg"; t=1
+                    echo "${trgt}" >> "${direc}/3.cfg"; t=1
                 else echo "${trgt}" >> "${direc}/4.cfg"; t=2; fi
                 temp="...."
                 item="${n}:[type={$t},trgt={$trgt},srce={$temp},exmp={},defn={},note={},wrds={},grmr={$trgt},].[tag={},mark={},].id=[]"

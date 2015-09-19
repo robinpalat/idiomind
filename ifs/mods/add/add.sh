@@ -56,9 +56,8 @@ function index() {
         fi
     else
         item="${3}"; DC_tlt="${DM_tl}/${2}/.conf"
-        if [ ! -d "${DC_tlt}" ]; then
-            msg "$(gettext "No such file or directory")\n" error Information & exit 1
-        fi
+        if [ ! -n "${item}" ]; then return 1; fi
+        if [ ! -d "${DC_tlt}" ]; then return 1; fi
         img0='/usr/share/idiomind/images/0.png'
         #
         if [ ! -z "${item}" ]; then

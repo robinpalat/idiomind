@@ -3,6 +3,7 @@
 
 function dlg_form_1() {
     cmd_play="$DS/play.sh play_word "\"${trgt}\"" ${id}"
+    [ -z "${trgt}" ] && trgt="${item_id}"
     yad --form --title="$(gettext "Edit")" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-all --separator="|" --selectable-labels \
@@ -30,6 +31,7 @@ function dlg_form_1() {
 function dlg_form_2() {
     if [[ `wc -w <<<"${trgt}"` -lt 4 ]]; then
     t=CHK; lbl_2="$(gettext "It is a compound word")"
+    [ -z "${trgt}" ] && trgt="${item_id}"
     else t=LBL; fi
     cmd_play="$DS/play.sh play_sentence ${id}"
     yad --form --title="$(gettext "Edit")" \
