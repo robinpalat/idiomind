@@ -291,7 +291,7 @@ function practice_d() {
         item="$(grep -F -m 1 "trgt={${trgt}}" "${cfg0}" |sed 's/},/}\n/g')"
         srce=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
         img="$DM_tls/images/${trgt,,}-0.jpg"
-        [ ${#trgt} -gt 20 -o ${#srce} -gt 20 ] && trgt_f_c=10 || trgt_f_c=11
+        [ ${#trgt} -gt 20 -o ${#srce} -gt 20 ] && trgt_f_c=11 || trgt_f_c=12
         [ ! -f "$img" ] && img="$DS/images/imgmiss.jpg"
         cuest="<span font_desc='Free Sans ${trgt_f_c}' color='#565656'> ${srce} </span>"
         aswer="<span font_desc='Free Sans ${trgt_f_c}'>${trgt}</span>"
@@ -375,10 +375,10 @@ function practice_e() {
         | tr "[:upper:]" "[:lower:]" \
         |sed 's/^\s*./\U&\E/g')"
         fi
-        text="<span font_desc='Free Sans Bold $sz' color='#717171'>$hint</span>\n"
+        text="<span font_desc='Free Sans Bold $sz' color='#717171'>Hint\t$hint</span>\n"
         
         entry=$(>/dev/null | yad --form --title="$(gettext "Practice")" \
-        --text="<sup>Hint</sup>\t$text" \
+        --text="$text" \
         --name=Idiomind --class=Idiomind \
         --separator="" \
         --window-icon="$DS/images/icon.png" --image="$DS/images/bar.png" \

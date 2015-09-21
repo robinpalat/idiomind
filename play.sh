@@ -7,9 +7,9 @@ play_word() {
     elif [ -f "${DM_tlt}/$3.mp3" ]; then
         play "${DM_tlt}/$3.mp3" &
     elif [ -n "$synth" ]; then
-        echo "${2}." |$synth &
+        sed 's/<[^>]*>//g' <<<"${2}." |$synth &
     else
-        echo "${2}." |espeak -v $lg -s 150 &
+        sed 's/<[^>]*>//g' <<<"${2}." |espeak -v $lg -s 150 &
     fi
 } >/dev/null 2>&1
 
@@ -17,9 +17,9 @@ play_sentence() {
     if [ -f "${DM_tlt}/$2.mp3" ]; then
         play "${DM_tlt}/$2.mp3" &
     elif [ -n "$synth" ]; then
-        echo "${trgt}." |$synth &
+        sed 's/<[^>]*>//g' <<<"${trgt}." |$synth &
     else
-        echo "${trgt}." |espeak -v $lg -s 150 &
+        sed 's/<[^>]*>//g' <<<"${trgt}." |espeak -v $lg -s 150 &
     fi
 } >/dev/null 2>&1
 
@@ -27,9 +27,9 @@ play_file() {
     if [ -f "${2}" ]; then
         mplayer "${2}" -novideo -noconsolecontrols -title "${3}"
     elif [ -n "$synth" ]; then
-        echo "${3}." |$synth
+        sed 's/<[^>]*>//g' <<<"${3}." |$synth
     else
-        echo "${3}." |espeak -v $lg -s 150
+        sed 's/<[^>]*>//g' <<<"${3}." |espeak -v $lg -s 150
     fi
 } >/dev/null 2>&1
 

@@ -145,7 +145,7 @@ edit_item() {
     cmd_def="'$DS/ifs/tls.sh' 'find_def' "\"${trgt}\"""
     link1="https://translate.google.com/\#$lgt/$lgs/${query}"
 
-    if [ -z "${item}" ]; then exit 1; fi
+    [ -z "${item}" ] && exit 1
     if [ ${text_missing} != 0 ]; then
         type=${text_missing}
         edit_pos=${item_pos}
@@ -298,10 +298,8 @@ edit_item() {
             [ ${type} != ${type_mod} -a ${type_mod} = 1 ] && ( img_word "${trgt}" "${srce}" ) &
             [ ${colorize_run} = 1 ] && "$DS/ifs/tls.sh" colorize &
             [ ${to_modify} = 1 ] && sleep 0.2
-            "$DS/vwr.sh" ${list} "${trgt}" ${item_pos} &
-        else
-            "$DS/vwr.sh" ${list} "${trgt}" ${item_pos} &
         fi
+        "$DS/vwr.sh" ${list} "${trgt}" ${item_pos} &
     exit
 } >/dev/null 2>&1
 

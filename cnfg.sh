@@ -112,7 +112,7 @@ yad --notebook --key=$KEY --title="$(gettext "Settings")" \
 --window-icon="$DS/images/icon.png" \
 --tab-borders=5 --sticky --center \
 --tab="$(gettext "Preferences")" \
---tab="$(gettext "Addons")" \
+--tab="$(gettext "Extensions")" \
 --width=460 --height=320 --borders=2 \
 --button="$(gettext "Cancel")":1 \
 --button="$(gettext "OK")":0

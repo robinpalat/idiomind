@@ -25,7 +25,7 @@ function word_view() {
 function sentence_view() {
     if [ "$(grep -o gramr=\"[^\"]* < "$DC_s/1.cfg" | grep -o '[^"]*$')"  = TRUE ]; then
     trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
-    local word="$tag<span font_desc='Sans Free 15'>${trgt_l}</span>\n\n<span font_desc='Sans Free 12'><i>$srce</i></span>\n\n"
+    local word="$tag<span font_desc='Sans Free 15'>${trgt_l}</span>\n\n<span font_desc='Sans Free 11'><i>$srce</i></span>\n\n"
     
     echo "${lwrd}" | yad --list --title=" " \
     --text="${word}" \
@@ -151,7 +151,7 @@ function notebook_2() {
 function dialog_1() {
     yad --title="$(gettext "Review")" \
     --class=idiomind --name=Idiomind \
-    --text="\"${tpc}\"\n$(gettext "<b>Would you like to go over it?</b>\n The waiting period already has been completed.")" \
+    --text="\"${tpc}\"\n$(gettext "<b>Would you like to review it?</b>\n The waiting period already has been completed.")" \
     --image=gtk-refresh \
     --window-icon="$DS/images/icon.png" \
     --buttons-layout=edge --center --on-top \
