@@ -199,8 +199,6 @@ function topic() {
         cnf1=$(mktemp "$DT/cnf1.XXX.x")
         cnf3=$(mktemp "$DT/cnf3.XXX.x")
         cnf4=$(mktemp "$DT/cnf4.XXX.x")
-        if [ -e "${DM_tlt}/images/Cover.jpg" ]; then
-        img="--image=${DM_tlt}/images/Cover.jpg"; fi
         sx=638; sy=580
         [ ! -z "$author" ] && author=" $(gettext "Created by") $author"
         label_info1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><small>\n $inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"

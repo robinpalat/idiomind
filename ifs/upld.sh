@@ -205,21 +205,9 @@ else
     "!$others!$article!$city!$comics!$culture!$education!$entertainment!$funny!$grammar!$history!$home!$internet!$interview!$movies!$music!$nature!$news!$office!$places!$quotes!$relations!$science!$social_media!$sport!$tech" \
     --field="$(gettext "Skill Level"):CB" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
     --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
-    --field="$(gettext "Image 630x150px (optional)"):FL" "${imgm}" \
     --button="$(gettext "PDF")":2 "$btn" \
     --button="$(gettext "Close")":4)
     ret=$?
-    img=$(echo "${dlg}" | cut -d "|" -f6)
-    if [ -f "${img}" -a "${img}" != "${imgm}" ]; then
-    wsize="$(identify "${img}" | cut -d ' ' -f 3 |cut -d 'x' -f 1)"
-    esize="$(identify "${img}" | cut -d ' ' -f 3 |cut -d 'x' -f 2)"
-    if [ ${wsize} -gt 2000 ] || [ ${wsize} -lt 400 ] \
-    || [ ${esize} -lt 100 ] || [ ${esize} -gt 1500 ]; then
-    msg "$(gettext "Sorry, the image size is not suitable.")\n " info "$(gettext "Error")"
-    "$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
-    /usr/bin/convert "${img}" -interlace Plane -thumbnail 630x150^ \
-    -gravity center -extent 630x150 \
-    -quality 100% "${DM_tlt}/images/Cover.jpg"
     fi
 fi
 
