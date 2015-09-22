@@ -208,7 +208,6 @@ else
     --button="$(gettext "PDF")":2 "$btn" \
     --button="$(gettext "Close")":4)
     ret=$?
-    fi
 fi
 
 if [ $ret = 2 ]; then
