@@ -50,7 +50,7 @@ function new_sentence() {
 
     if [ "$trans" = TRUE ]; then
         internet
-        [ "$(cd "$(dirname "$0")" && pwd)" != "$DT_r" ] && cd "$DT_r"
+        [ "$(dirname "$0")" != "$DT_r" ] && cd "$DT_r"
         if [ "$ttrgt" = TRUE ]; then
         trgt="$(translate "${trgt,,}" auto "$lgt")"
         trgt=$(clean_2 "${trgt}"); fi
@@ -306,7 +306,7 @@ function process() {
     db="$DS/default/dicts/$lgt"
     if [ ! -d "$DT_r" ] ; then
         export DT_r=$(mktemp -d "$DT/XXXXXX"); fi
-    [ "$(cd "$(dirname "$0")" && pwd)" != "$DT_r" ] && cd "$DT_r"
+    [ "$(dirname "$0")" != "$DT_r" ] && cd "$DT_r"
 
     if [ -n "${trgt}" ]; then
         conten="${trgt}"
@@ -469,7 +469,7 @@ function process() {
                     if [ ${#trgt} -ge 180 ]; then
                         echo -e "\n\n#$n [$(gettext "Sentence too long")] $trgt" >> "$DT_r/slog"
                     else
-                        [ "$(cd "$(dirname "$0")" && pwd)" != "$DT_r" ] && cd "$DT_r"
+                        [ "$(dirname "$0")" != "$DT_r" ] && cd "$DT_r"
                         ( sentence_p "$DT_r" 1
                         id="$(set_name_file 1 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}")"
                         mksure "${trgt}" "${srce}" "${wrds}" "${grmr}"

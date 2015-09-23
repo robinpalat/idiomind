@@ -48,7 +48,7 @@ play_list() {
     in0="$(grep -Fxvf "${DC_tlt}/4.cfg" "${DC_tlt}/1.cfg" |wc -l)"
     in1="$(grep -Fxvf "${DC_tlt}/3.cfg" "${DC_tlt}/1.cfg" |wc -l)"
     in2="$(grep -Fxvf "${DC_tlt}/2.cfg" "${DC_tlt}/6.cfg" |wc -l)"
-    in3="$(grep -Fxvf "${DC_tlt}/4.cfg" "${DC_tlt}/practice/log.3" |wc -l)"
+    in3="$(grep -Fxvf "${DC_tlt}/4.cfg" "${DC_tlt}/practice/log3" |wc -l)"
     [ ! -d "$DT" ] && mkdir "$DT"; cd "$DT"
 
     if [ ${cfg} = 1 ]; then
