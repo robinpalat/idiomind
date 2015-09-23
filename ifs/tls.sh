@@ -89,6 +89,7 @@ check_index() {
         [ ! -e "${DC_tlt}/9.cfg" ] && touch "${DC_tlt}/9.cfg"
         [[ `egrep -cv '#|^$' < "${DC_tlt}/id.cfg"` = 19 ]] && id=1
         if [[ ${id} != 1 ]]; then
+            datec=$(date +%F)
             eval c="$(< $DS/default/topicid)"
             echo -n "${c}" > "${DC_tlt}/id.cfg"
             echo -ne "\nidiomind-`idiomind -v`" >> "${DC_tlt}/id.cfg"

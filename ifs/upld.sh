@@ -21,7 +21,7 @@ function dwld() {
     }
     # downloading from http://server_temp/c/xxx.md5sum.tar.gz
     sleep 0.5
-    msg "$(gettext "When the download completes the files will be added to topic directory.")" info "$(gettext "Downloading")..."
+    msg "$(gettext "When the download completes the files will be added to topic directory.")" info "$(gettext "Downloading")"
     kill -9 $(pgrep -f "yad --form --columns=2")
     mkdir "$DT/download"; idcfg="$DM_tl/${2}/.conf/id.cfg"
     ilink=$(grep -o 'ilink="[^"]*' "${idcfg}" |grep -o '[^"]*$')
@@ -141,6 +141,8 @@ lnglbl="${lgtl,,}"
 usrid="$(grep -o 'usrid="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
 iuser="$(grep -o 'iuser="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
 cntct="$(grep -o 'cntct="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
+ctgry="$(grep -o 'ctgry="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+
 if [ -z "$usrid" -o ${#id} -gt 3 ]; then
 b=$(tr -dc a-z < /dev/urandom |head -c 1) # uranium?
 usrid="$b$((RANDOM%1000))"
@@ -202,7 +204,7 @@ else
     --field="$(gettext "Author")" "$iuser" \
     --field="\t$(gettext "Contact (optional)")" "$cntct" \
     --field="$(gettext "Category"):CBE" \
-    "!$others!$article!$city!$comics!$culture!$education!$entertainment!$funny!$grammar!$history!$home!$internet!$interview!$movies!$music!$nature!$news!$office!$places!$quotes!$relations!$science!$social_media!$sport!$tech" \
+    "$ctgry!$others!$article!$city!$comics!$culture!$education!$entertainment!$funny!$grammar!$history!$home!$internet!$interview!$movies!$music!$nature!$news!$office!$places!$quotes!$relations!$science!$social_media!$sport!$tech" \
     --field="$(gettext "Skill Level"):CB" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
     --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
     --button="$(gettext "PDF")":2 "$btn" \
@@ -342,7 +344,7 @@ echo -n "${c}" > "${DC_tlt}/id.cfg"
 cp -f "${DC_tlt}/0.cfg" "$DT_u/$usrid.${tpc}.$lgt"
 tr '\n' '&' < "${DC_tlt}/id.cfg" >> "$DT_u/$usrid.${tpc}.$lgt"
 echo -n "&idiomind-`idiomind -v`" >> "$DT_u/$usrid.${tpc}.$lgt"
-echo -n "\nidiomind-`idiomind -v`" >> "${DC_tlt}/id.cfg" # TODO
+echo -en "\nidiomind-`idiomind -v`" >> "${DC_tlt}/id.cfg" # TODO
 
 # uploading files to http://server_temp/lang/xxx.name.idmnd
 url="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
