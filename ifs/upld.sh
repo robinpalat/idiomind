@@ -369,7 +369,7 @@ for f in volumes:
 END
 u=$?
 if [ $u = 0 ]; then
-    info=" <b>$(gettext "Uploaded correctly")</b>\n $tpc\n"
+    info="\"$tpc\"\n<b>$(gettext "Uploaded correctly")</b>\n"
     image=dialog-ok
 else
     sleep 10

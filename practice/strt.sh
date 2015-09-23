@@ -375,7 +375,7 @@ function practice_e() {
         | tr "[:upper:]" "[:lower:]" \
         |sed 's/^\s*./\U&\E/g')"
         fi
-        text="<span font_desc='Free Sans Bold $sz' color='#717171'>Hint\t$hint</span>\n"
+        text="<span font_desc='Free Sans Bold $sz' color='#717171'>Hint         $hint</span>\n"
         
         entry=$(>/dev/null | yad --form --title="$(gettext "Practice")" \
         --text="$text" \
