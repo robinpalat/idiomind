@@ -336,16 +336,15 @@ panel() {
     
     _home=gtk-home
     if [[ ${intrf} = fr || ${intrf} = pt ]]; then _home='Home!gtk-home'; fi
-    yad --title="Idiomind" \
+    yad --title=" " \
     --name=Idiomind --class=Idiomind \
     --always-print-result \
     --window-icon=$wicon \
     --form --fixed --on-top --no-buttons --align=center \
-    --width=140 --height=190 --borders=0 --geometry=130x190-${x}-${y} \
-    --field=gtk-new:btn "$DS/add.sh 'new_items'" \
-    --field="$_home":btn "idiomind 'topic'" \
-    --field=gtk-index:btn "$DS/chng.sh" \
-    --field=gtk-preferences:btn "$DS/cnfg.sh"
+    --width=70 --height=175 --borders=0 --geometry=130x190-${x}-${y} \
+    --field="!$DS/images/new.png":fbtn "$DS/add.sh 'new_items'" \
+    --field="!$DS/images/topic.png":fbtn "idiomind 'topic'" \
+    --field="!$DS/images/index.png":fbtn "$DS/chng.sh"
     [ $? != 0 ] && "$DS/stop.sh" 1 &
     exit
 }
