@@ -17,7 +17,7 @@ sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
 
 _info() {
     yad --form --title="$(gettext "Notice")" \
-    --text="$(gettext "Some features do not yet work with this language"). ($1)\n" \
+    --text="$(gettext "Some things are still not working for this language"). ($1)\n" \
     --image=info \
     --window-icon=info \
     --skip-taskbar --center --on-top \
@@ -35,19 +35,6 @@ function set_lang() {
     echo "$1" > "$DC_s/6.cfg"
 }
 
-if [ ! -f /usr/bin/yad ]; then
-zenity --info --title="Idiomind" \
---window-icon="/usr/share/idiomind/images/icon.png" \
---text="$(gettext "Missing dependency to start.
-It seems that you have no installed on your system the program YAD.\t
-You can get it from here:  www.sourceforge.net/projects/yad-dlg
-or install it using the following commands:
-
-sudo add-apt-repository ppa:robinpalat/idiomind
-sudo apt-get update
-sudo apt-get install yad")" \
---no-wrap & exit; fi
-
 dlg=$(yad --form --title="Idiomind" \
 --text="$text" \
 --class=Idiomind --name=Idiomind \
@@ -59,7 +46,6 @@ dlg=$(yad --form --title="Idiomind" \
 --button=Cancel:1 \
 --button=gtk-ok:0)
 ret=$?
-
 
 if [ $ret -eq 1 ]; then
     killall 1u.sh & exit 1

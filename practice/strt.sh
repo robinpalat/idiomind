@@ -5,6 +5,7 @@ source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 dir="${DC_tlt}/practice"
 dirs="$DS/practice"
+export -f f_lock
 
 function log() \
 { echo "w9.$(tr -s '\n' '|' < ./${1}.1).w9" >> "$log"; }
@@ -12,8 +13,10 @@ function log() \
 function stats() {
     n=1; c=1
     while [ ${n} -le 21 ]; do
-        if [ ${v} -le ${c} ]; then
-        echo ${n} > ./.${icon}; break
+        if [ ${n} -eq 21 ]; then
+            echo $((n-1)) > .${icon}; break
+        elif [ ${v} -le ${c} ]; then
+            echo ${n} > ./.${icon}; break
         fi
         ((c=c+5))
         let n++
@@ -25,7 +28,7 @@ function score() {
     [ ! -e ./${practice}.l ] && touch ./${practice}.l
     if [[ $(($(< ./${practice}.l)+easy)) -ge ${all} ]]; then
         log ${practice}; play "$dirs/all.mp3" &
-        echo "$(date "+%a %d %B")" > ./${practice}.lock
+        date "+%a %d %B" > ./${practice}.lock
         comp 0 & echo 21 > .${icon}
         strt 1
     else
@@ -37,9 +40,9 @@ function score() {
         n=1; c=1
         while [ ${n} -le 21 ]; do
             if [ ${n} -eq 21 ]; then
-                echo $((n-1)) > .${icon}
+                echo $((n-1)) > .${icon}; break
             elif [ ${v} -le ${c} ]; then
-                echo ${n} > .${icon}; break
+                echo ${n} > ./.${icon}; break
             fi
             ((c=c+5))
             let n++
@@ -74,19 +77,19 @@ function practice_a() {
         [ ${trgt_f_c} -lt 5 ] && trgt_f_c=8
         [ ${trgt_f_a} -lt 5 ] && trgt_f_a=8
         [ ${srce_f_a} -lt 5 ] && srce_f_a=8
-        cuestion="\n<span font_desc='Free Sans Bold ${trgt_f_c}'>${trgt}</span>"
+        question="\n<span font_desc='Free Sans Bold ${trgt_f_c}'>${trgt}</span>"
         answer1="\n<span font_desc='Free Sans ${trgt_f_a}'>${trgt}</span>"
         answer2="<span font_desc='Free Sans Bold ${srce_f_a}'><i>${srce}</i></span>"
     }
 
-    cuestion() {
+    question() {
         yad --form --title="$(gettext "Practice")" \
         --skip-taskbar --text-align=center --center --on-top \
         --undecorated --buttons-layout=spread --align=center \
-        --width=360 --height=260 --borders=10 \
-        --field="\n$cuestion":lbl \
+        --width=380 --height=270 --borders=8 \
+        --field="\n$question":lbl \
         --button="$(gettext "Exit")":1 \
-        --button="    $(gettext "Continue") >>    ":0
+        --button="  $(gettext "Continue") >>  !$img_cont":0
     }
 
     answer() {
@@ -94,17 +97,16 @@ function practice_a() {
         --selectable-labels \
         --skip-taskbar --text-align=center --center --on-top \
         --undecorated --buttons-layout=spread --align=center \
-        --width=360 --height=260 --borders=10 \
+        --width=380 --height=270 --borders=8 \
         --field="$answer1":lbl \
         --field="":lbl \
         --field="$answer2":lbl \
-        --button="  $(gettext "I did not know it")  ":3 \
-        --button="  $(gettext "I Knew it")  ":2
+        --button="$(gettext "I did not know it")!$img_no":3 \
+        --button="$(gettext "I Knew it")!$img_yes":2
     }
 
     while read trgt; do
-    
-        fonts; cuestion
+        fonts; question
         if [ $? = 1 ]; then
             ling=${hard}; hard=0
             break & score
@@ -123,12 +125,10 @@ function practice_a() {
 
     if [ ! -f ./a.2 ]; then
         score
-        
-    step=2
     else
+        step=2
         while read trgt; do
-
-            fonts; cuestion
+            fonts; question
             if [ $? = 1 ]; then
                 break & score
             else
@@ -155,31 +155,30 @@ function practice_b(){
         ras=$(sort -Ru b.srces |egrep -v "$srce" |head -${P})
         tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
         srce_s=$((35-${#trgt}))
-        cuestion="\n<span font_desc='Free Sans ${srce_s}' color='#636363'><b>${trgt}</b></span>\n\n"
+        question="\n<span font_desc='Free Sans ${srce_s}' color='#636363'><b>${trgt}</b></span>\n\n"
         }
 
     ofonts() {
         while read -r item; do
-        echo "<span font_desc='Free Sans Bold 12'> $item </span>"
+        echo "<span font_desc='Free Sans 12'> $item </span>"
         done <<<"${tmp}"
         }
         
     mchoise() {
         dlg=$(ofonts | yad --list --title="$(gettext "Practice")" \
-        --text="${cuestion}" \
+        --text="${question}" \
         --separator=" " --selectable-labels \
         --skip-taskbar --text-align=center --center --on-top \
         --buttons-layout=edge --undecorated \
         --no-headers \
-        --width=380 --height=340 --borders=12 \
+        --width=390 --height=315 --borders=8 \
         --column=Option \
         --button="$(gettext "Exit")":1 \
-        --button="$(gettext "OK")":0)
+        --button="   $(gettext "Continue")   !$img_cont":0)
     }
 
-    P=5; s=11
+    P=4; s=11
     while read trgt; do
-    
         fonts; mchoise
         if [ $? = 0 ]; then
             if grep -o "$srce" <<<"${dlg}"; then
@@ -194,16 +193,13 @@ function practice_b(){
             ling=${hard}; hard=0
             break & score
         fi
-        
     done < ./b.tmp
         
     if [ ! -f ./b.2 ]; then
         score
-        
     else
         step=2; P=2; s=12
         while read trgt; do
-        
             fonts; mchoise
             if [ $? = 0 ]; then
                 if grep -o "$srce" <<<"${dlg}"; then
@@ -216,7 +212,6 @@ function practice_b(){
             elif [ $? = 1 ]; then
                 break & score
             fi
-            
         done < ./b.2
         score
     fi
@@ -236,28 +231,27 @@ function practice_c() {
         item="$(grep -F -m 1 "trgt={${trgt}}" "${cfg0}" |sed 's/},/}\n/g')"
         id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
         s=$((30-${#trgt}))
-        lcuestion="\n\n<span font_desc='Verdana ${s}' color='#717171'><b>${lst}</b></span>\n\n\n"
+        lquestion="\n\n<span font_desc='Verdana ${s}' color='#717171'><b>${lst}</b></span>\n\n\n"
         }
 
-    cuestion() {
+    question() {
         cmd_play="$DS/play.sh play_word "\"${trgt}\"" ${id}"
         (sleep 0.5 && "$DS/play.sh" play_word "${trgt}" ${id}) &
 
         yad --form --title="$(gettext "Practice")" \
-        --text="$lcuestion" \
+        --text="$lquestion" \
         --skip-taskbar --text-align=center --center --on-top \
         --buttons-layout=edge --image-on-top --undecorated \
-        --width=350 --height=210 --borders=10 \
-        --field="$(gettext "Pronounce")":BTN "$cmd_play" \
+        --width=370 --height=240 --borders=10 \
+        --field="!$DS/images/listen.png":BTN "$cmd_play" \
         --button="$(gettext "Exit")":1 \
-        --button="  $(gettext "No")  ":3 \
-        --button="  $(gettext "Yes")  ":2
+        --button=" $(gettext "No") !$img_no":3 \
+        --button=" $(gettext "Yes") !$img_yes":2
         }
 
     p=1
     while read trgt; do
-    
-        fonts; cuestion
+        fonts; question
         ans=$?
         if [ ${ans} = 2 ]; then
             echo "${trgt}" >> c.1
@@ -273,12 +267,10 @@ function practice_c() {
 
     if [ ! -f ./c.2 ]; then
         score
-        
     else
         step=2; p=2
         while read trgt; do
-        
-            fonts; cuestion
+            fonts; question
             ans=$?
             if [ ${ans} = 2 ]; then
                 hard=$((hard-1))
@@ -299,13 +291,13 @@ function practice_d() {
         item="$(grep -F -m 1 "trgt={${trgt}}" "${cfg0}" |sed 's/},/}\n/g')"
         srce=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
         img="$DM_tls/images/${trgt,,}-0.jpg"
-        [ ${#trgt} -gt 10 -o ${#srce} -gt 10 ] && trgt_f_c=14 || trgt_f_c=15
-        [ ! -f "$img" ] && img="$DS/practice/images/img_2.jpg"
-        cuest="<span font_desc='Free Sans Bold ${trgt_f_c}' color='#777777'> ${srce} </span>"
-        aswer="<span font_desc='Free Sans Bold ${trgt_f_c}'>${trgt}</span>"
+        [ ${#trgt} -gt 20 -o ${#srce} -gt 20 ] && trgt_f_c=11 || trgt_f_c=12
+        [ ! -f "$img" ] && img="$DS/images/imgmiss.jpg"
+        cuest="<span font_desc='Free Sans ${trgt_f_c}' color='#565656'> ${srce} </span>"
+        aswer="<span font_desc='Free Sans ${trgt_f_c}'>${trgt}</span>"
     }
 
-    cuestion() {
+    question() {
         yad --form --title="$(gettext "Practice")" \
         --image="$img" \
         --skip-taskbar --text-align=center --align=center --center --on-top \
@@ -313,7 +305,7 @@ function practice_d() {
         --width=418 --height=370 --borders=5 \
         --field="$cuest":lbl \
         --button="$(gettext "Exit")":1 \
-        --button=" $(gettext "Continue") >> ":0
+        --button=" $(gettext "Continue") >>!$img_cont":0
     }
 
     answer() {
@@ -324,13 +316,12 @@ function practice_d() {
         --image-on-top --undecorated --buttons-layout=spread \
         --width=418 --height=370 --borders=5 \
         --field="$aswer":lbl \
-        --button="  $(gettext "I did not know it")  ":3 \
-        --button="  $(gettext "I Knew it")  ":2
+        --button="$(gettext "I did not know it")!$img_no":3 \
+        --button="$(gettext "I Knew it")!$img_yes":2
     }
     
     while read -r trgt; do
-    
-        fonts; cuestion
+        fonts; question
         if [ $? = 1 ]; then
             ling=${hard}; hard=0
             break & score
@@ -345,17 +336,14 @@ function practice_d() {
                 hard=$((hard+1))
             fi
         fi
-        
     done < ./d.tmp
 
     if [ ! -f ./d.2 ]; then
         score
-        
     else
         step=2
         while read -r trgt; do
-        
-            fonts; cuestion
+            fonts; question
             if [ $? = 1 ]; then
                 break & score
             else
@@ -368,7 +356,6 @@ function practice_d() {
                     echo "${trgt}" >> d.3
                 fi
             fi
-            
         done < ./d.2
         score
     fi
@@ -388,20 +375,20 @@ function practice_e() {
         | tr "[:upper:]" "[:lower:]" \
         |sed 's/^\s*./\U&\E/g')"
         fi
-        text="<span font_desc='Free Sans Bold $sz' color='#717171'>$hint</span>\n"
+        text="<span font_desc='Free Sans Bold $sz' color='#717171'>Hint         $hint</span>\n"
         
         entry=$(>/dev/null | yad --form --title="$(gettext "Practice")" \
         --text="$text" \
         --name=Idiomind --class=Idiomind \
         --separator="" \
-        --window-icon="$DS/images/icon.png" --image="$DS/practice/images/bar.png" \
+        --window-icon="$DS/images/icon.png" --image="$DS/images/bar.png" \
         --buttons-layout=end --skip-taskbar --undecorated --center --on-top \
         --text-align=left --align=left --image-on-top \
         --width=510 --height=220 --borders=10 \
         --field="" "" \
-        --field="$(gettext "Listen"):BTN" "$cmd_play" \
+        --field="!$DS/images/listen.png:BTN" "$cmd_play" \
         --button="$(gettext "Exit")":1 \
-        --button="  $(gettext "Check")  ":0)
+        --button="  $(gettext "Check")  !"$img_cont:0)
         }
         
     check() {
@@ -409,7 +396,7 @@ function practice_e() {
         yad --form --title="$(gettext "Practice")" \
         --text="<span font_desc='Free Sans $sz'>${wes}</span>\\n" \
         --name=Idiomind --class=Idiomind \
-        --image="/usr/share/idiomind/practice/images/bar.png" $aut \
+        --image="$DS/images/bar.png" $aut \
         --selectable-labels \
         --window-icon="$DS/images/icon.png" \
         --skip-taskbar --wrap --scroll --image-on-top --center --on-top \
@@ -417,7 +404,7 @@ function practice_e() {
         --width=510 --height=250 --borders=10 \
         --field="":lbl \
         --field="<span font_desc='Free Sans 10'>$OK\n\n$prc $hits</span>":lbl \
-        --button="$(gettext "Continue")":2
+        --button="$(gettext "Continue")!$img_cont":2
         }
         
     get_text() {
@@ -446,7 +433,7 @@ function practice_e() {
         echo "${chk}" > ./chk.tmp; touch ./words.tmp
         for line in `sed 's/ /\n/g' <<<"$out"`; do
             if grep -Fxq "${line}" <<<"$in"; then
-                sed -i "s/"${line}"/<b>"${line}"<\/b>/g" ./chk.tmp
+                sed -i "s/"${line}"/<b>"${line}"<\/b>/g" ./chk.tmp # TODO
                 [ -n "${line}" ] && echo \
                 "<span color='#3A9000'><b>${line^}</b></span>  " >> ./words.tmp
                 [ -n "${line}" ] && echo "${line}" >> ./mtch.tmp
@@ -482,13 +469,11 @@ function practice_e() {
         
     step=2
     while read -r trgt; do
-        
         export trgt
         pos=`grep -Fon -m 1 "trgt={${trgt}}" "${cfg0}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
         item=`sed -n ${pos}p "${cfg0}" |sed 's/},/}\n/g'`
         fname=`grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"`
         get_text "${trgt}"
-        
         cmd_play="$DS/play.sh play_sentence ${fname}"
         ( sleep 0.5 && "$DS/play.sh" play_sentence ${fname} ) &
 
@@ -496,10 +481,10 @@ function practice_e() {
         ret=$?
         if [[ $ret = 1 ]]; then
             break &
-            killall play
+            if ps -A | pgrep -f 'play'; then killall play & fi
             score
         else
-            killall play &
+            if ps -A | pgrep -f 'play'; then killall play & fi
             result "${trgt}"
         fi
 
@@ -507,24 +492,21 @@ function practice_e() {
         ret=$?
         if [[ $ret = 1 ]]; then
             break &
-            killall play &
+            if ps -A | pgrep -f 'play'; then killall play & fi
             rm -f ./mtch.tmp ./words.tmp
             score
         elif [[ $ret -eq 2 ]]; then
-            killall play &
+            if ps -A | pgrep -f 'play'; then killall play & fi
             rm -f ./mtch.tmp ./words.tmp &
         fi
-
     done < ./e.tmp
     score
 }
 
 function get_list() {
-    
     if [ ${practice} = a -o ${practice} = b -o ${practice} = c ]; then
         > "$dir/${practice}.0"
         if [[ `wc -l < "${cfg4}"` -gt 0 ]]; then
-
             grep -Fvx -f "${cfg4}" "${cfg1}" > "$DT/${practice}.0"
             tac "$DT/${practice}.0" |sed '/^$/d' > "$dir/${practice}.0"
             rm -f "$DT/${practice}.0"
@@ -534,13 +516,10 @@ function get_list() {
         
         if [ ${practice} = b ]; then
             if [ ! -f "$dir/b.srces" ]; then
-            
             ( echo "5"
             while read word; do
-            
                 item="$(grep -F -m 1 "trgt={${word}}" "${cfg0}" |sed 's/},/}\n/g')"
                 echo "$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")" >> "$dir/b.srces"
-            
             done < "$dir/${practice}.0" ) | yad --progress \
             --width 50 --height 35 --undecorated \
             --pulsate --auto-close \
@@ -551,7 +530,6 @@ function get_list() {
     elif [ ${practice} = d ]; then
         > "$DT/images"
         if [[ `wc -l < "${cfg4}"` -gt 0 ]]; then
-        
             grep -Fxvf "${cfg4}" "${cfg1}" > "$DT/images"
         else
             tac "${cfg1}" > "$DT/images"
@@ -583,12 +561,11 @@ function get_list() {
 
 function lock() {
     if [ -f "$dir/${practice}.lock" ]; then
-
         dt="$dir/${practice}.lock"
         yad --title="$(gettext "Practice Completed")" \
         --text="<b>$(gettext "Practice Completed")</b>\\n   $(< "$dt")\n " \
         --window-icon="$DS/images/icon.png" --on-top --skip-taskbar \
-        --center --image="$DS/practice/images/21.png" \
+        --center --image=gtk-ok \
         --width=400 --height=130 --borders=5 \
         --button="    $(gettext "Restart")    ":0 \
         --button="    $(gettext "Ok")    ":2
@@ -604,11 +581,11 @@ function lock() {
 }
 
 function starting() {
-    yad --title="$1" \
-    --text=" $1.\n" --image=info \
+    yad --title=$(gettext "Information") \
+    --text=" $1\t\n" --image=info \
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --center --on-top \
-    --width=400 --height=130 --borders=5 \
+    --width=340 --height=120 --borders=5 \
     --button="    $(gettext "Ok")    ":1
     strt 0
 }
@@ -638,15 +615,17 @@ function practices() {
     else
         get_list
         cp -f "$dir/${practice}.0" "$dir/${practice}.tmp"
-        
         if [[ `wc -l < "$dir/${practice}.0"` -lt 2 ]]; then \
-        starting "$(gettext "Not enough items to start")"
-        echo " practice --new session"; fi
+            starting "$(gettext "Not enough items to start")"; return 1; fi
+        echo " practice --new session"
     fi
     
     [ -f "$dir/${practice}.2" ] && rm "$dir/${practice}.2"
     [ -f "$dir/${practice}.3" ] && rm "$dir/${practice}.3"
     all=$(egrep -cv '#|^$' ./${practice}.0)
+    img_cont="$DS/images/cont.png"
+    img_no="$DS/images/no.png"
+    img_yes="$DS/images/yes.png"
     easy=0
     hard=0
     ling=0
@@ -670,7 +649,7 @@ function strt() {
         echo 21 > .${icon}
     elif [ ${1} = 2 ]; then
         learnt=$(< ./${practice}.l); declare info${icon}="* "
-        info="$(gettext "Learned") <span color='#6E6E6E'><b><big>$learnt </big></b></span>   $(gettext "Easy") <span color='#6E6E6E'><b><big>$easy </big></b></span>   $(gettext "Learning") <span color='#6E6E6E'><b><big>$ling </big></b></span>   $(gettext "Difficult") <span color='#6E6E6E'><b><big>$hard </big></b></span>\n"
+        info="<small>$(gettext "Learned")</small> <span color='#6E6E6E'><b><big>$learnt </big></b></span>   <small>$(gettext "Easy")</small> <span color='#6E6E6E'><b><big>$easy </big></b></span>   <small>$(gettext "Learning")</small> <span color='#6E6E6E'><b><big>$ling </big></b></span>   <small>$(gettext "Difficult")</small> <span color='#6E6E6E'><b><big>$hard </big></b></span>\n"
     fi
 
     VAR="$(yad --list --title="$(gettext "Practice ")" \
@@ -697,7 +676,7 @@ function strt() {
         msg " $(gettext "You must choose a practice.")\n" info
         strt 0
         else
-        practices $VAR
+        practices ${VAR}
         fi
     elif [ $ret -eq 3 ]; then
         if [ -d "${dir}" ]; then

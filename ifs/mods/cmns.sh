@@ -3,14 +3,9 @@
 
 function internet() {
     curl -v www.google.com 2>&1 \
-    | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { 
-    yad --title="$(gettext "No network connection")" --image=info \
-    --name=Idiomind --class=Idiomind \
-    --window-icon="$DS/images/icon.png" \
-    --image-on-top --center --sticky --on-top --skip-taskbar \
-    --text="$(gettext "No network connection\nPlease connect to a network, then try again.")" \
-    --width=410 --height=130 --borders=3 \
-    --button="$(gettext "OK")":0 >&2; exit 1;}
+    | grep -m1 "HTTP/1.1" >/dev/null 2>&1 || { zenity --info \
+    --text="$(gettext "No network connection\nPlease connect to a network, then try again.")  " \
+    >&2; exit 1;}
 }
 
 function msg() {
@@ -49,14 +44,15 @@ function set_name_file() {
 
 function include() {
   for f in "$1"/*; do source "$f"; done
-
 }
 
 function f_lock() {
-    brk=0; while true; do
-    if [ ! -e "${1}" -o ${brk} -gt 20 ]; then touch "${1}" & break
-    elif [ -e "${1}" ]; then sleep 1; fi
-    let brk++; done
+    brk=0
+    while true; do
+        if [ ! -e "${1}" -o ${brk} -gt 20 ]; then touch "${1}" & break
+        elif [ -e "${1}" ]; then sleep 1; fi
+        let brk++
+    done
 }
 
 function lnglss() {
@@ -84,15 +80,18 @@ function check_index1() {
 }
 
 function list_inadd() {
-    while read -r t; do
-        if ! echo -e "$(ls "$DS/addons/")\n$(< "$DM_tl/.3.cfg")" \
-        | grep -Fxo "${t}" >/dev/null 2>&1; then echo "${t}"; fi
-    done < <(cd "$DM_tl"; ls -tNd */ | head -n 30 | sed 's/\///g')
+    if ls -tNd "$DM_tl"/*/ 1> /dev/null 2>&1; then
+        while read -r t; do
+            if ! echo -e "$(ls "$DS/addons/")\n$(< "$DM_tl/.3.cfg")" \
+            |grep -Fxo "${t}" >/dev/null 2>&1; then
+                echo "${t}"
+            fi
+        done < <(cd "$DM_tl"; ls -tNd */ |head -n 20 |sed 's/\///g')
+    fi
 }
 
 function cleanups() {
     for fl in "$@"; do
-    
         if [ -d "${fl}" ]; then
             rm -fr "${fl}"
         elif [ -f "${fl}" ]; then
@@ -101,58 +100,66 @@ function cleanups() {
     done
 }
 
+function progress() {
+    yad --progress \
+    --progress-text="$1" \
+    --width 50 --height 35 --undecorated \
+    --pulsate --auto-close \
+    --skip-taskbar --center --no-buttons
+}
+
 function calculate_review() {
     DC_tlt="$DM_tl/${1}/.conf"
     dts=$(sed '/^$/d' < "${DC_tlt}/9.cfg" | wc -l)
     
     if [ ${dts} = 1 ]; then
-    dte=$(sed -n 1p "${DC_tlt}/9.cfg")
-    adv="<b>  6 $cuestion_review </b>"
-    TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
-    RM=$((100*TM/6))
-    tdays=6
+        dte=$(sed -n 1p "${DC_tlt}/9.cfg")
+        adv="<b>  6 $cuestion_review </b>"
+        TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+        RM=$((100*TM/6))
+        tdays=6
     elif [ ${dts} = 2 ]; then
-    dte=$(sed -n 2p "${DC_tlt}/9.cfg")
-    adv="<b>  6 $cuestion_review </b>"
-    TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
-    RM=$((100*TM/6))
-    tdays=6
+        dte=$(sed -n 2p "${DC_tlt}/9.cfg")
+        adv="<b>  6 $cuestion_review </b>"
+        TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+        RM=$((100*TM/6))
+        tdays=6
     elif [ ${dts} = 3 ]; then
-    dte=$(sed -n 3p "${DC_tlt}/9.cfg")
-    adv="<b>  10 $cuestion_review </b>"
-    TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
-    RM=$((100*TM/10))
-    tdays=10
+        dte=$(sed -n 3p "${DC_tlt}/9.cfg")
+        adv="<b>  10 $cuestion_review </b>"
+        TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+        RM=$((100*TM/10))
+        tdays=10
     elif [ ${dts} = 4 ]; then
-    dte=$(sed -n 4p "${DC_tlt}/9.cfg")
-    adv="<b>  15 $cuestion_review </b>"
-    TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
-    RM=$((100*TM/15))
-    tdays=15
+        dte=$(sed -n 4p "${DC_tlt}/9.cfg")
+        adv="<b>  15 $cuestion_review </b>"
+        TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+        RM=$((100*TM/15))
+        tdays=15
     elif [ ${dts} = 5 ]; then
-    dte=$(sed -n 5p "${DC_tlt}/9.cfg")
-    adv="<b>  20 $cuestion_review </b>"
-    TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
-    RM=$((100*TM/20))
-    tdays=20
+        dte=$(sed -n 5p "${DC_tlt}/9.cfg")
+        adv="<b>  20 $cuestion_review </b>"
+        TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+        RM=$((100*TM/20))
+        tdays=20
     elif [ ${dts} = 6 ]; then
-    dte=$(sed -n 6p "${DC_tlt}/9.cfg")
-    adv="<b>  30 $cuestion_review </b>"
-    TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
-    RM=$((100*TM/30))
-    tdays=30
+        dte=$(sed -n 6p "${DC_tlt}/9.cfg")
+        adv="<b>  30 $cuestion_review </b>"
+        TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+        RM=$((100*TM/30))
+        tdays=30
     elif [ ${dts} = 7 ]; then
-    dte=$(sed -n 7p "${DC_tlt}/9.cfg")
-    adv="<b>  40 $cuestion_review </b>"
-    TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
-    RM=$((100*TM/40))
-    tdays=40
+        dte=$(sed -n 7p "${DC_tlt}/9.cfg")
+        adv="<b>  40 $cuestion_review </b>"
+        TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+        RM=$((100*TM/40))
+        tdays=40
     elif [ ${dts} = 8 ]; then
-    dte=$(sed -n 8p "${DC_tlt}/9.cfg")
-    adv="<b>  60 $cuestion_review </b>"
-    TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
-    RM=$((100*TM/60))
-    tdays=60
+        dte=$(sed -n 8p "${DC_tlt}/9.cfg")
+        adv="<b>  60 $cuestion_review </b>"
+        TM=$(( ( $(date +%s) - $(date -d "$dte" +%s) ) /(24 * 60 * 60 ) ))
+        RM=$((100*TM/60))
+        tdays=60
     fi
     return ${RM}
 }

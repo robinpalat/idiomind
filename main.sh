@@ -18,6 +18,9 @@
 #
 #  2015/02/27
 
+_version='0.1.10'
+wicon="/usr/share/idiomind/images/icon.png"
+
 if [ ! -d "$HOME/.idiomind" ]; then
     /usr/share/idiomind/ifs/1u.sh & exit 1
 fi
@@ -32,27 +35,17 @@ if [ -e "$DT/ps_lk" -o -e "$DT/el_lk" ]; then
 fi
 
 function new_session() {
-    
-    #set -e
     echo "--new session"
-    echo "$(date +%d)" > "$DC_s/10.cfg"
+    date "+%d" > "$DC_s/10.cfg"
     source "$DS/ifs/mods/cmns.sh"
     
     # mkdir /tmp/user
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
     if [ $? -ne 0 ]; then
-    msg "$(gettext "Fail on try write in /tmp")\n" error & exit 1; fi
+    msg "$(gettext "Fail on try write in /tmp")\n" error "$(gettext "Information")" & exit 1; fi
     
     f_lock "$DT/ps_lk"
-    
-    # addons
-    > "$DC_s/2.cfg"
-    while read -r _set; do
-    if [ -e "/usr/share/idiomind/addons/${_set}/icon.png" ]; then
-    echo -e "/usr/share/idiomind/addons/${_set}/icon.png\n${_set}" >> "$DC_s/2.cfg"
-    else echo -e "/usr/share/idiomind/images/thumb.png\n${_set}" >> "$DC_s/2.cfg"; fi
-    done < <(cd "$DS/addons"; ls -d *)
-    
+
     for strt in "$DS/ifs/mods/start"/*; do
     ( sleep 20 && "${strt}" ); done &
     
@@ -63,8 +56,7 @@ function new_session() {
     cd "$DC_s"/; rename 's/\.p$//' *.p; fi
     cd /
     
-    s="$(xrandr | grep '*' |awk '{ print $1 }' \
-    | sed 's/x/\n/')"
+    s="$(xrandr | grep '*' |awk '{ print $1 }' |sed 's/x/\n/')"
     sed -n 1p <<<"$s" >> "$DC_s/10.cfg"
     sed -n 2p <<<"$s" >> "$DC_s/10.cfg"
 
@@ -75,9 +67,6 @@ function new_session() {
         mv -f "$DT/log" "$DC_s/log"; fi
     fi
 
-    # check updates
-    "$DS/ifs/tls.sh" a_check_updates &
-    
     # update status
     [ ! -e "$DM_tl/.1.cfg" ] && touch "$DM_tl/.1.cfg"
     while read -r line; do
@@ -101,13 +90,6 @@ function new_session() {
         fi
     fi
     done < "$DM_tl/.1.cfg"
-    
-    if [ -e "$DM_tl/.5.cfg" ]; then
-    tpd="$(< "$DM_tl/.5.cfg")"
-    if grep -Fxq "${tpd}" "$DM_tl/.1.cfg"; then
-    touch "$DM_tl/${tpd}"; "$DS/default/tpc.sh" "${tpd}" 2; fi
-    fi
-
     rm -f "$DT/ps_lk"
     "$DS/mngr.sh" mkmn &
 }
@@ -116,39 +98,36 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     source "$DS/ifs/mods/cmns.sh"
     source "$DS/ifs/tls.sh"
     check_format_1 "${1}"
-    if [ $? != 23 ]; then
-    msg "$(gettext "File is corrupted.")\n" error & exit 1; fi
+    if [ $? != 18 ]; then
+    msg "$(gettext "File is corrupted.")\n" error "$(gettext "Information")" & exit 1; fi
     file="${1}"
     lv=( "$(gettext "Beginner")" "$(gettext "Intermediate")" "$(gettext "Advanced")" )
     level="${lv[${level}]}"
-    itxt="<span font_desc='Droid Sans Bold 12' color='#616161'>$tname</span>\n<sup>$(gettext "Words") $nword  $(gettext "Sentences") $nsent  $(gettext "Images") $nimag \n$(gettext "Level:") $level \n$(gettext "Language:") $langt  $(gettext "Translation:") $langs</sup>"
+    itxt="<span font_desc='Droid Sans Bold 12' color='#616161'>$tname</span>\n<sup>$nword $(gettext "Words") $nsent $(gettext "Sentences") $nimag $(gettext "Images") \n$(gettext "Level:") $level \n$(gettext "Language:") $langt  $(gettext "Translation:") $langs</sup>"
     dclk="$DS/play.sh play_word"
     _lst() { while read -r item; do
-    grep -oP '(?<=trgt={).*(?=},srce)' <<<"${item}"
-    grep -oP '(?<=srce={).*(?=},exmp)' <<<"${item}"
+        grep -oP '(?<=trgt={).*(?=},srce)' <<<"${item}"
+        grep -oP '(?<=srce={).*(?=},exmp)' <<<"${item}"
     done < <(tac "${file}"); }
 
     _lst | yad --list --title="Idiomind" \
     --text="${itxt}" \
     --name=Idiomind --class=Idiomind \
     --no-click --print-column=0 --dclick-action="$dclk" \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=$wicon \
     --ellipsize=END --center \
     --width=638 --height=570 --borders=6 \
     --column="$langt            " \
     --column="$langs            " \
-    --button="$(gettext "Install")":0 \
-    --button="gtk-close":1
+    --button="$(gettext "Install")":0
     ret=$?
-        
-        if [ $ret -eq 1 ]; then exit
-            
-        elif [ $ret -eq 0 ]; then
+        if [ $ret -eq 0 ]; then
             if [[ $(wc -l < "$DM_t/$langt/.1.cfg") -ge 120 ]]; then
-                msg "$(gettext "Maximum number of topics reached.")\n" info & exit
+                msg "$(gettext "Maximum number of topics reached.")\n" info "$(gettext "Information")" & exit
             fi
-            
-            if [[ $(grep -Fxo "${tname}" "$DM_t/$langt/.1.cfg" | wc -l) -ge 1 ]]; then
+            cn=0
+            if [[ `grep -Fxo "${tname}" "$DM_t/$langt/.1.cfg" |wc -l` -ge 1 ]]; then
+                cn=1
                 for i in {1..50}; do
                 chck=$(grep -Fxo "${tname} ($i)" "$DM_t/$langt/.1.cfg")
                 [ -z "$chck" ] && break; done
@@ -158,10 +137,9 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
   
                 if [ $? != 0 ]; then exit 1; fi
             fi
-
             if [ ! -d "$DM_t/$langt" ]; then
-            mkdir "$DM_t/$langt"
-            mkdir -p "$DM_t/$langt/.share/images"; fi
+                mkdir "$DM_t/$langt"
+                mkdir -p "$DM_t/$langt/.share/images"; fi
             mkdir -p "$DM_t/$langt/${tname}/.conf/practice"
             DM_tlt="$DM_t/$langt/${tname}"
             DC_tlt="$DM_t/$langt/${tname}/.conf"
@@ -169,7 +147,9 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             for i in {1..6}; do > "${DC_tlt}/${i}.cfg"; done
             for i in {1..3}; do > "${DC_tlt}/practice/log.${i}"; done
             tail -n 1 < "${file}" |tr '&' '\n' > "${DC_tlt}/id.cfg"
-            > "${DC_tlt}/11.cfg"
+            > "${DC_tlt}/download"
+            if [ ${cn} = 1  ]; then
+            sed -i "s/tname=.*/tname=\"${tname}\"/g" "${DC_tlt}/id.cfg"; fi
             sed -i "s/datei=.*/datei=\"$(date +%F)\"/g" "${DC_tlt}/id.cfg"
             
             while read item_; do
@@ -178,16 +158,20 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
                 trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
                 if [ -n "${trgt}" ]; then
                     if [[ ${type} = 1 ]]; then
-                    echo "${trgt}" >> "${DC_tlt}/3.cfg"
-                    else echo "${trgt}" >> "${DC_tlt}/4.cfg"; fi
+                        echo "${trgt}" >> "${DC_tlt}/3.cfg"
+                    else 
+                        echo "${trgt}" >> "${DC_tlt}/4.cfg"
+                    fi
                     echo "${trgt}" >> "${DC_tlt}/1.cfg"
-                    echo "${item_}" >> "${DC_tlt}/0.cfg"; fi    
+                    echo "${item_}" >> "${DC_tlt}/0.cfg"
+                fi    
             done < <(head -n -1 < "${file}")
 
             "$DS/ifs/tls.sh" colorize
             echo -e "$langt\n$lgsl" > "$DC_s/6.cfg"
             echo 1 > "${DC_tlt}/8.cfg"
             echo "${tname}" >> "$DM_tl/.3.cfg"
+            source /usr/share/idiomind/ifs/c.conf
             "$DS/mngr.sh" mkmn
             "$DS/default/tpc.sh" "${tname}" &
         fi
@@ -195,8 +179,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
 fi
     
 function topic() {
-
-    export mode=$(sed -n 1p "$DC_s/5.cfg")
+    export mode=`sed -n 1p "$DC_s/5.cfg"`
     source "$DS/ifs/mods/cmns.sh"
 
     if [[ ${mode} = 2 ]]; then
@@ -207,32 +190,30 @@ function topic() {
         [ -z "${tpc}" ] && exit 1
         source "$DS/ifs/mods/topic/items_list.sh"
         for n in {0..4}; do
-        [ ! -e "${DC_tlt}/${n}.cfg" ] && touch "${DC_tlt}/${n}.cfg"
-        declare ls${n}="${DC_tlt}/${n}.cfg"
-        declare inx${n}=$(wc -l < "${DC_tlt}/${n}.cfg")
-        export inx${n}; done
+            [ ! -e "${DC_tlt}/${n}.cfg" ] && touch "${DC_tlt}/${n}.cfg"
+            declare ls${n}="${DC_tlt}/${n}.cfg"
+            declare inx${n}=$(wc -l < "${DC_tlt}/${n}.cfg")
+            export inx${n}
+        done
         nt="${DC_tlt}/info"
         author="$(grep -o 'authr="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-        auto_mrk=$(grep -o 'set_1=\"[^\"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')
+        auto_mrk=$(grep -o 'acheck=\"[^\"]*' "${DC_tlt}/10.cfg" |grep -o '[^"]*$')
         c=$((RANDOM%100000)); KEY=$c
         cnf1=$(mktemp "$DT/cnf1.XXX.x")
         cnf3=$(mktemp "$DT/cnf3.XXX.x")
         cnf4=$(mktemp "$DT/cnf4.XXX.x")
-        if [ -e "${DM_tlt}/images/img.jpg" ]; then
-        img="--image=${DM_tlt}/images/img.jpg"; fi
         sx=638; sy=580
         [ ! -z "$author" ] && author=" $(gettext "Created by") $author"
         label_info1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><small>\n $inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"
 
         apply() {
-
             note_mod="$(< "${cnf3}")"
             if [ "${note_mod}" != "$(< "${nt}")" ]; then
             mv -f "${cnf3}" "${DC_tlt}/info"; fi
             
             auto_mrk_mod=$(cut -d '|' -f 3 < "${cnf4}")
             if [[ $auto_mrk_mod != $auto_mrk ]] && [ -n "$auto_mrk_mod" ]; then
-            sed -i "s/set_1=.*/set_1=\"$auto_mrk_mod\"/g" "${DC_tlt}/id.cfg"; fi
+            sed -i "s/acheck=.*/acheck=\"$auto_mrk_mod\"/g" "${DC_tlt}/10.cfg"; fi
             
             if grep TRUE "${cnf1}"; then
                 grep -Rl "|FALSE|" "${cnf1}" | while read tab1 ; do
@@ -254,131 +235,119 @@ function topic() {
             fi
         
             ntpc=$(cut -d '|' -f 1 < "${cnf4}")
-            if [ "${tpc}" != "${ntpc}" ] && [ -n "$ntpc" ]; then
-            if [ "${tpc}" != "$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")" ]]; then
-            msg "$(gettext "Sorry, this topic is currently not active.")\n" info & exit; fi
+            if [ "${tpc}" != "${ntpc}" -a -n "$ntpc" ]; then
+            if [[ "${tpc}" != "$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")" ]]; then
+            msg "$(gettext "Sorry, this topic is currently not active.")\n" info "$(gettext "Information")" & exit; fi
             "$DS/mngr.sh" rename_topic "${ntpc}" & exit; fi
         }
     
-    if [[ ${inx0} -lt 1 ]]; then
-        
-        notebook_1
-        ret=$?
+        if [[ ${inx0} -lt 1 ]]; then
+            
+            notebook_1; ret=$?
+                    
+                if [ ! -f "$DT/ps_lk" ]; then apply; fi
                 
-            if [ ! -f "$DT/ps_lk" ]; then apply; fi
-            
-            if [ $ret -eq 5 ]; then
-                "$DS/practice/strt.sh" &
-            fi
-
-        rm -f "$DT"/*.x
-
-    elif [[ ${inx1} -ge 1 ]]; then
-    
-        if [ -f "${DC_tlt}/9.cfg" -a -f "${DC_tlt}/7.cfg" ]; then
-        
-            calculate_review "${tpc}"
-            if [[ ${RM} -ge 100 ]]; then
-            
-                RM=100
-                dialog_1
-                ret=$?
-                
-                    if [ $ret -eq 2 ]; then
-                    
-                        "$DS/mngr.sh" mark_to_learn "${tpc}" 0
-                        idiomind topic & exit 1
-                    
-                    elif [ $ret -eq 3 ]; then
-                    
-                       exit 1
-                    fi 
-            fi
-
-            pres="<u><b>$(gettext "Topic learnt")</b></u>  $(gettext "* however you have new items") ($inx1).\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
-            notebook_2
-            
-        else
-            notebook_1
-        fi
-            ret=$?
-
-            if [ ! -f "$DT/ps_lk" ]; then apply; fi
-
-            if [ $ret -eq 5 ]; then
-                "$DS/practice/strt.sh" &
-            fi
+                if [ $ret -eq 5 ]; then
+                    "$DS/practice/strt.sh" &
+                fi
 
             rm -f "$DT"/*.x
 
-    elif [[ ${inx1} -eq 0 ]]; then
-        if [ ! -f "${DC_tlt}/7.cfg" -o ! -f "${DC_tlt}/9.cfg" ]; then
-            "$DS/mngr.sh" mark_as_learned "${tpc}" 0
-        fi
+        elif [[ ${inx1} -ge 1 ]]; then
         
-        calculate_review "${tpc}"
-        if [[ ${RM} -ge 100 ]]; then
-
-            RM=100
-            dialog_1
-            ret=$?
+            if [ -f "${DC_tlt}/9.cfg" -a -f "${DC_tlt}/7.cfg" ]; then
+            
+                calculate_review "${tpc}"
+                if [[ ${RM} -ge 100 ]]; then
                 
-                if [ $ret -eq 2 ]; then
-                    "$DS/mngr.sh" mark_to_learn "${tpc}" 0
-                    idiomind topic & exit 1
+                    RM=100; dialog_1; ret=$?
                     
-                elif [ $ret -eq 3 ]; then
-                       exit 1
-                fi 
+                        if [ $ret -eq 2 ]; then
+                            "$DS/mngr.sh" mark_to_learn "${tpc}" 0
+                            idiomind topic & exit 1
+                        elif [ $ret -eq 3 ]; then
+                           exit 1
+                        fi 
+                fi
+
+                pres="<u><b>$(gettext "Topic learnt")</b></u>  $(gettext "* however you have new notes") ($inx1).\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
+                notebook_2
+            else
+                notebook_1
+            fi
+                ret=$?
+                if [ ! -f "$DT/ps_lk" ]; then apply; fi
+
+                if [ $ret -eq 5 ]; then
+                    "$DS/practice/strt.sh" &
+                fi
+
+                rm -f "$DT"/*.x
+
+        elif [[ ${inx1} -eq 0 ]]; then
+            if [ ! -f "${DC_tlt}/7.cfg" -o ! -f "${DC_tlt}/9.cfg" ]; then
+                "$DS/mngr.sh" mark_as_learned "${tpc}" 0
+            fi
+            
+            calculate_review "${tpc}"
+            if [[ ${RM} -ge 100 ]]; then
+
+                RM=100; dialog_1; ret=$?
+                    
+                    if [ $ret -eq 2 ]; then
+                        "$DS/mngr.sh" mark_to_learn "${tpc}" 0
+                        idiomind topic & exit 1
+                    elif [ $ret -eq 3 ]; then
+                        exit 1
+                    fi 
+            fi
+            
+            pres="<u><b>$(gettext "Topic learnt")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
+            notebook_2
+            
+            if [ ! -f "$DT/ps_lk" ]; then apply; fi
+          
+            rm -f "$DT"/*.x & exit
         fi
-        
-        pres="<u><b>$(gettext "Topic learnt")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
-        notebook_2
-        
-        if [ ! -f "$DT/ps_lk" ]; then apply; fi
-      
-        rm -f "$DT"/*.x & exit
-    fi
-    rm -f "$DT"/*.x
-    
+        rm -f "$DT"/*.x
     else
-        if [[ "$(wc -l < "$DM_tl/.1.cfg")" -ge 1 ]]; then
+        if [[ `wc -l < "$DM_tl/.1.cfg"` -ge 1 ]]; then
             exit 1
         fi
     fi
 }
 
 panel() {
-    
-    echo -e "strt.1.strt" >> "$DC_s/log"
-    if [ ! -d "$DT" ]; then new_session; fi
-    [ ! -e "$DT/tpe" ] && echo "$(sed -n 1p "$DC_s/4.cfg")" > "$DT/tpe"
-    [ "$(< "$DT/tpe")" != "${tpc}" ] && echo "$(sed -n 1p "$DC_s/4.cfg")" > "$DT/tpe"
+    if [ ! -d "$DT" ]; then new_session; ns=TRUE; fi
+    [ ! -e "$DT/tpe" ] && sed -n 1p "$DC_s/4.cfg" > "$DT/tpe"
+    [ "$(< "$DT/tpe")" != "${tpc}" ] && sed -n 1p "$DC_s/4.cfg" > "$DT/tpe"
     [ -e "$DC_s/10.cfg" ] && date=$(sed -n 1p "$DC_s/10.cfg")
     
     if [[ "$(date +%d)" != "$date" ]] || [ ! -e "$DC_s/10.cfg" ]; then
-    new_session; fi
-    
+    new_session; ns=TRUE; fi
+
+    ( if [ "${ns}" = TRUE ]; then
+    "$DS/ifs/tls.sh" a_check_updates; fi ) &
+
     if [ -e "$DC_s/10.cfg" ]; then
         x=$(($(sed -n 2p "$DC_s/10.cfg")/2))
         y=$(($(sed -n 3p "$DC_s/10.cfg")/2)); fi
     if ! [[ ${x} =~ $numer ]]; then x=100; y=100; fi
 
-    if [ "$(grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg")" = TRUE ] \
+    if [[ `grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg"` = TRUE ]] \
     && [ ! -e /tmp/.clipw ]; then "$DS/ifs/mods/clipw.sh" & fi
-
+    
     _home=gtk-home
-    if [[ ${intrf} = fr || ${intrf} = pt ]]; then _home=Home; fi
-    yad --title="Idiomind" \
+    if [[ ${intrf} = fr || ${intrf} = pt ]]; then _home='Home!gtk-home'; fi
+    yad --title=" " \
     --name=Idiomind --class=Idiomind \
     --always-print-result \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=$wicon \
     --form --fixed --on-top --no-buttons --align=center \
-    --width=140 --height=190 --borders=0 --geometry=130x190-${x}-${y} \
-    --field=gtk-new:btn "$DS/add.sh 'new_items'" \
-    --field="$_home":btn "idiomind 'topic'" \
-    --field=gtk-index:btn "$DS/chng.sh" \
-    --field=gtk-preferences:btn "$DS/cnfg.sh"
+    --width=80 --height=165 --borders=0 --geometry=80x190-${x}-${y} \
+    --field="!$DS/images/new.png!$(gettext "Add new note")":fbtn "$DS/add.sh 'new_items'" \
+    --field="!$DS/images/topic.png!$(gettext "Open active topic")":fbtn "idiomind 'topic'" \
+    --field="!$DS/images/index.png!$(gettext "Open topics list")":fbtn "$DS/chng.sh"
     [ $? != 0 ] && "$DS/stop.sh" 1 &
     exit
 }
@@ -387,11 +356,11 @@ case "$1" in
     topic)
     topic ;;
     first_run)
-    "$DS/ifs/tls.sh" first_run ;;
+    "$DS/ifs/tls.sh" $@ ;;
     translate)
     "$DS/ifs/tls.sh" $@ ;;
     -v)
-    echo -n "0.1" ;;
+    echo -n "$_version" ;;
     -s)
     new_session; idiomind & ;;
     autostart)

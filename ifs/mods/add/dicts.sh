@@ -1,23 +1,33 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-function chk_dicts() {
+[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
+function dicts() {
+    cmsg() {
+        sleep 2
+        source "$DS/ifs/mods/cmns.sh"
+        msg_2 "$(gettext "You may need to configure the list of Internet resources. \nDo you want to do this now?")" \
+        info "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Information")"
+        if [ $? = 0 ]; then "$DS_a/Dics/cnfg.sh" 6; fi
+        echo $lgtl > "$DC_a/dict/.dict"
+    }
     s=0
-    if [ ! -d "$DC_a/dict/enables" -o ! -d "$DC_a/dict/disables" ]; then
-    mkdir -p "$DC_a/dict/enables"; mkdir -p "$DC_a/dict/disables"
-    echo -e "$lgtl\n$v_dicts" > "$DC_a/dict/.dict"
-    for re in "$DS_a/Dics/dicts"/*; do > "$DC_a/dict/disables/$(basename "$re")"; done; fi
-
-    if  [ ! -f "$DC_a/dict/.dict" ] || [[ "$(sed -n 2p "$DC_a/dict/.dict")" != $v_dicts ]] ; then s=1
-    rm "$DC_a/dict/enables"/*; rm "$DC_a/dict/disables"/*; echo -e "$lgtl\n$v_dicts" > "$DC_a/dict/.dict"
-    for r in "$DS_a/Dics/dicts"/*; do > "$DC_a/dict/disables/$(basename "$r")"; done
-    "$DS_a/Dics/cnfg.sh" 6; fi
-    
-    if ! ls "$DC_d"/* 1> /dev/null 2>&1; then s=1; "$DS_a/Dics/cnfg.sh" 6; fi
-
-    if  [[ "$(sed -n 1p "$DC_a/dict/.dict")" != $lgtl ]] ; then s=1; "$DS_a/Dics/cnfg.sh" 6; fi
-
-    [ $s = 1 ] && echo -e "$lgtl\n$v_dicts" > "$DC_a/dict/.dict"
+    if [ ! -d "$DC_d" -o ! -d "$DC_a/dict/disables" ]; then
+        mkdir -p "$DC_d"; mkdir -p "$DC_a/dict/disables"
+        echo $lgtl > "$DC_a/dict/.dict"
+        for re in "$DS_a/Dics/dicts"/*; do
+            > "$DC_a/dict/disables/$(basename "$re")"
+        done
+    fi
+    if  [ ! -f "$DC_a/dict/.dict" ]; then s=1
+        echo -e "$lgtl" > "$DC_a/dict/.dict"
+    fi
+    if ! ls "$DC_d"/* 1> /dev/null 2>&1; then
+        sleep 1; cmsg
+    fi
+    if  [[ `sed -n 1p "$DC_a/dict/.dict"` != $lgtl ]] ; then
+        sleep 1; cmsg
+    fi
 }
 
-chk_dicts
+dicts &

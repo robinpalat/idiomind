@@ -3,7 +3,8 @@
 
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
-log="$DC_s/log"
+if [ ! -e "$DC_s/log" ]; then exit 1
+else log="$DC_s/log"; fi
 items=$(mktemp "$DT/w9.XXXX")
 words=$(grep -o -P '(?<=w9.).*(?=\.w9)' "${log}" |tr '|' '\n' \
 | sort | uniq -dc | sort -n -r | sed 's/ \+/ /g')
@@ -30,7 +31,6 @@ done
 
 sed -i '/^$/d' "${items}"
 f_lock "$DT/co_lk"
-> "${DC_tlt}/5.cfg"
 dir="$DM_tl/"
 topics="${DM_tl}/.1.cfg"
 lstp="${items}"
@@ -51,7 +51,7 @@ for tpc in topics:
     if os.path.exists(cfg1):
         try:
             cont = str
-            cfg = dir + tpc + "/.conf/id.cfg"
+            cfg = dir + tpc + "/.conf/10.cfg"
             cfg5 = dir + tpc + "/.conf/5.cfg"
             cfg6 = dir + tpc + "/.conf/6.cfg"
             cfg7 = dir + tpc + "/.conf/7.cfg"
@@ -59,43 +59,50 @@ for tpc in topics:
             log1 = dir + tpc + "/.conf/practice/log1"
             log2 = dir + tpc + "/.conf/practice/log2"
             log3 = dir + tpc + "/.conf/practice/log3"
+            log1 = [line.strip() for line in open(log1)]
+            log2 = [line.strip() for line in open(log2)]
+            log3 = [line.strip() for line in open(log3)]
             cfg = [line.strip() for line in open(cfg)]
             try:
-                cont = (cfg[18].split('set_1="'))[1].split('"')[0]
+                auto_mrk = (cfg[9].split('acheck="'))[1].split('"')[0]
             except:
                 try:
-                    cont = (cfg[17].split('set_1="'))[1].split('"')[0]
+                    auto_mrk = (cfg[10].split('acheck="'))[1].split('"')[0]
                 except:
                     pass
-            if cont == 'TRUE':
-                cont = True
+                    
+            if auto_mrk == 'TRUE':
+                auto_mrk = True
             else:
-                cont = False
+                auto_mrk = False
             if os.path.exists(cfg1) and not os.path.exists(cfg7):
                 cont = True
-            if not os.path.exists(dir + tpc + "/.conf/practice") or not os.path.exists(cfg9):
+            if not os.path.exists(dir + tpc + "/.conf/practice"):
                 cont = False
+            if os.path.exists(cfg9):
+                steps = [line.strip() for line in open(cfg9)]
+            else:
+                steps = []
             if cont == True:
                 items = [line.strip() for line in open(cfg1)]
                 marks = [line.strip() for line in open(cfg6)]
-                steps = [line.strip() for line in open(cfg9)]
-                chk = False
-                if len(steps) > 3:
-                    chk = True
+                chk = 'FALSE'
+                if len(steps) > 3 and auto_mrk == True:
+                    chk = 'TRUE'
                 f = open(cfg5, "w")
                 for item in items:
                     if item in marks:
                         i="<b><big>"+item+"</big></b>"
                     else:
                         i=item
-                    if item in lstp:
-                        chk = True
+                    if item in lstp and auto_mrk == True:
+                        chk = 'TRUE'
                     if item in log3:
                         f.write("FALSE\n"+i+"\n"+img3+"\n")
                     elif item in log2:
                         f.write("FALSE\n"+i+"\n"+img2+"\n")
                     elif item in log1:
-                        print 'check - > ' + item
+                        print chk + ' check -> ' + item
                         f.write(chk+"\n"+i+"\n"+img1+"\n")
                     else:
                         f.write("FALSE\n"+i+"\n"+img0+"\n")

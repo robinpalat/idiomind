@@ -2,16 +2,19 @@
 # -*- ENCODING: UTF-8 -*-
 
 if [ -z "$lgtl" -o -z "$lgsl" ]; then
-msg "$(gettext "Please check the language settings in the preferences dialog.")\n" error & exit 1
+msg "$(gettext "Please check the language settings in the preferences dialog.")\n" error "$(gettext "Information")" & exit 1
 fi
 
 function check_s() {
+    if [ -z "${1}" ]; then
+        [ -d "$DT_r" ] && rm -fr "$DT_r" &
+        msg "$(gettext "No topic is active")\n" info Information & exit 1
+    fi
     DC_tlt="$DM_tl/${1}/.conf"
-    if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
-    [ -d "$DT_r" ] && rm -fr "$DT_r"
-    msg "$(gettext "You've reached the maximum number of notes you can add for a topic. Max allowed (200)")" info " " & exit; fi
-    if [ -z "${tpe}" ]; then [ -d "$DT_r" ] && rm -fr "$DT_r" &
-    msg "$(gettext "No topic is active")\n" info & exit 1; fi
+    if [[ `wc -l < "${DC_tlt}/0.cfg"` -ge 200 ]]; then
+        [ -d "$DT_r" ] && rm -fr "$DT_r"
+        msg "$(gettext "You've reached the maximum number of notes for this topic. Max allowed (200)")" info "$(gettext "Information")" & exit
+    fi
 }
 
 function mksure() {
@@ -19,7 +22,6 @@ function mksure() {
     for str in "${@}"; do
     if [ -z "${str##+([[:space:]])}" ]; then e=1; break; fi
     done
-    
     return $e
 }
 
@@ -39,7 +41,6 @@ function index() {
             sed -i "s/${item}/${item_mod}/" "${1}"
             fi
         }
-        
         s=1
         while [ ${s} -le 6 ]; do
             sust "${DC_tlt}/${s}.cfg"
@@ -55,6 +56,8 @@ function index() {
         fi
     else
         item="${3}"; DC_tlt="${DM_tl}/${2}/.conf"
+        if [ ! -n "${item}" ]; then return 1; fi
+        if [ ! -d "${DC_tlt}" ]; then return 1; fi
         img0='/usr/share/idiomind/images/0.png'
         #
         if [ ! -z "${item}" ]; then
@@ -266,11 +269,11 @@ function clean_8() {
     | sed 's/\&quot;/\"/g' | sed "s/\&#039;/\'/g" \
     | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
     | sed 's/ *<[^>]\+> */ /; s/[<>£§]//; s/\&amp;/\&/g' \
-    | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. //g' \
-    | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
-    | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
-    | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' \
-    | sed 's/__/\n/g'
+    | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. / /g' \
+    | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? / /g' \
+    | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! / /g' \
+    | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… / /g' \
+    | sed 's/__/ \n/g' | sed 's/ \+/ /g'
 }
 
 function set_image_1() {
@@ -372,14 +375,14 @@ function img_word() {
 function voice() {
     txaud="$(grep -o txaud=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')"
     DT_r="$2"; cd "$DT_r"
-
-    if [ -n "$txaud" ]; then
+    if [ -n "${txaud}" ]; then
         echo "${1}" | $txaud "$DT_r/f.wav"
         sox "$DT_r"/*.wav "${3}"
-        
         if [ $? != 0 ]; then
-        msg "$(gettext "Please check the speech synthesizer configuration in the preferences dialog.")" dialog-warning & exit 1
+        msg "$(gettext "Please check the speech synthesizer configuration in the preferences dialog.")" dialog-warning "$(gettext "Information")" & exit 1
         fi
+    else
+        return 1
     fi
 }
 
@@ -451,7 +454,7 @@ function dlg_form_0() {
 }
 
 function dlg_form_1() {
-    yad --form --title="$(gettext "New")" \
+    yad --form --title="$(gettext "New note")" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --separator="\n" \
     --skip-taskbar --center --on-top \
@@ -463,10 +466,12 @@ function dlg_form_1() {
     --button="$(gettext "Image")":3 \
     --button="$(gettext "Audio")":2 \
     --button=gtk-add:0
+    #--button="!$DS/images/image_add.png!$(gettext "Add a image")":3 \
+    #--button="!$DS/images/audio_add.png!$(gettext "Add an audio file")":2
 }
 
 function dlg_form_2() {
-    yad --form --title="$(gettext "New")" \
+    yad --form --title="$(gettext "New note")" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --separator="\n" \
     --skip-taskbar --center --on-top \
@@ -479,19 +484,6 @@ function dlg_form_2() {
     --button="$(gettext "Image")":3 \
     --button="$(gettext "Audio")":2 \
     --button=gtk-add:0
-}
-
-function dlg_radiolist_1() {
-    echo "${1}" | awk '{print "FALSE\n"$0}' | \
-    yad --list --radiolist --title="$(gettext "Word list")" \
-    --text="<b>$te</b> <small> $info</small>" \
-    --name=Idiomind --class=Idiomind \
-    --separator="\n" \
-    --window-icon="$DS/images/icon.png" \
-    --skip-taskbar --center --on-top --fixed --no-headers \
-    --width=150 --height=420 --borders=5 \
-    --column=" " --column=" " \
-    --button="gtk-add":0
 }
 
 function dlg_checklist_1() {
@@ -510,14 +502,14 @@ function dlg_checklist_1() {
 
 function dlg_checklist_3() {
     cat "${1}" | awk '{print "FALSE\n"$0}' | \
-    yad --list --checklist --title="Idiomind - $2" \
+    yad --list --checklist --title="$(gettext "New note")" \
     --name=Idiomind --class=Idiomind \
     --dclick-action="'/usr/share/idiomind/add.sh' 'list_words_dclik'" \
     --window-icon="$DS/images/icon.png" \
     --ellipsize=END --center --no-click --text-align=right \
-    --width=750 --height=500 --borders=5 \
+    --width=700 --height=380 --borders=5 \
     --column="$(gettext "Select")" \
-    --column="$(wc -l < "${1}") $(gettext "Items found")" \
+    --column="$(wc -l < "${1}") $(gettext "notes found")" \
     --button=$(gettext "Edit"):2 \
     --button="$(gettext "Cancel")":1 \
     --button="gtk-add":0 > "$slt"
@@ -525,14 +517,14 @@ function dlg_checklist_3() {
 
 function dlg_text_info_1() {
     cat "${1}" | awk '{print "\n\n\n"$0}' | \
-    yad --text-info --title="$2" \
+    yad --text-info --title="$(gettext "Edit")" \
     --name=Idiomind --class=Idiomind \
     --editable \
     --window-icon="$DS/images/icon.png" \
     --wrap --margins=30 --fontname=vendana \
     --skip-taskbar --center --on-top \
     --width=700 --height=500 --borders=5 \
-    --button="gtk-ok":0 > ./sort
+    --button="gtk-ok":0
 }
 
 function msg_3() {
@@ -551,13 +543,13 @@ function msg_3() {
 
 function dlg_text_info_3() {
     echo -e "${2}" | yad --text-info \
-    --title="$(gettext "Some items could not be added to your list")" \
+    --title="$(gettext "Some notes could not be added to your list")" \
     --text="${1}" \
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" \
     --wrap --margins=5 \
     --center --on-top \
-    --width=510 --height=450 --borders=5 \
+    --width=510 --height=300 --borders=5 \
     "${3}" --button="$(gettext "OK")":1
 }
 
@@ -575,19 +567,11 @@ function dlg_progress_1() {
     yad --progress --title="$(gettext "Processing")" \
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" \
-    --always-print-result  --progress-text=" " \
+    --progress-text=" " \
     --pulsate --percentage="5" --auto-close \
-    --skip-taskbar --no-buttons --on-top --fixed \
-    --width=200 --height=50 --borders=4 --geometry=240x20-4-4
-}
-
-function dlg_progress_2() {
-    yad --progress --title="$(gettext "Progress")" \
-    --name=Idiomind --class=Idiomind \
-    --window-icon="$DS/images/icon.png" \
-    --always-print-result --progress-text=" " --auto-close \
-    --skip-taskbar --no-buttons --on-top --fixed \
-    --width=200 --height=50 --borders=4 --geometry=240x20-4-4
+    --undecorated --skip-taskbar --no-buttons \
+    --on-top --mouse --fixed \
+    --width=200 --height=50 --borders=2
 }
 
 function cleanups() {

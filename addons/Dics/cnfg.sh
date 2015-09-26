@@ -69,9 +69,8 @@ function cpfile() {
     cp -f "${2}" "${3}"/
     > "${4}"; sudo chmod 777 "${4}"
 }
-    
+
 function dlg() {
-    
     dict_list() {
     sus="${task[$1]}"
     cd "$enables/"
@@ -80,16 +79,16 @@ function dlg() {
     
     while read -r dict; do
         if [ -n "${dict}" ]; then
-        echo 'TRUE'
-        sed 's/\./\n/g' <<<"${dict}"; fi
+            echo 'TRUE'
+            sed 's/\./\n/g' <<<"${dict}"; fi
     done < <(ls "$enables/")
     
     while read -r dict; do
         if [ -n "${dict}" ]; then
-        echo 'FALSE'
+            echo 'FALSE'
         if grep -E ".$lgt|.various" <<<"${dict}">/dev/null 2>&1; then
-        sed 's/\./\n/g' <<<"${dict}"| \
-        sed "3s|${sus}|<span color='#0038FF'>${sus}<\/span>|"
+            sed 's/\./\n/g' <<<"${dict}"| \
+            sed "3s|${sus}|<span color='#0038FF'>${sus}<\/span>|"
         else echo "${dict}" |sed 's/\./\n/g'; fi
         fi
     done < <(ls "$disables/")
@@ -100,7 +99,7 @@ function dlg() {
     echo -e "$lgtl\n$v_dicts" > "$DC_a/dict/.dict"
     for r in "$DS_a/Dics/dicts"/*; do > "$disables/$(basename "$r")"; done; fi
     
-    txtinf=" $(gettext "Please, select at least one resource for each task")"
+    txtinf=" $(gettext "Please, select at least one resource (script) for each task")"
     if [[ -n "${1}" ]]; then text="--text=$txtinf"; n=${1}
     else text="--center"; n=6; fi
 
@@ -112,7 +111,7 @@ function dlg() {
     --window-icon="$DS/images/icon.png" \
     --expand-column=2 --hide-column=3 \
     --search-column=4 --regex-search --tooltip-column=3 \
-    --center --on-top \
+    --center --mouse --on-top \
     --width=650 --height=380 --borders=10 \
     --column="$(gettext "Enable")":CHK \
     --column="$(gettext "Resource")":TEXT \
@@ -120,10 +119,9 @@ function dlg() {
     --column="$(gettext "Task")                                         ":TEXT \
     --column="$(gettext "Language")          ":TEXT \
     --button="$(gettext "Add")":2 \
-    --button=OK:0 \
-    --button="$(gettext "Cancel")":1)"
+    --button="$(gettext "Cancel")":1 \
+    --button=OK:0 )"
     ret=$?
-    
         if [ $ret -eq 2 ]; then
                 "$DS_a/Dics/cnfg.sh" add_dlg
         elif [ $ret -eq 0 ]; then
@@ -131,7 +129,6 @@ function dlg() {
                 name="$(cut -d "|" -f2 <<<"$dict")"
                 type="$(cut -d "|" -f3 <<<"$dict")"
                 tget="$(cut -d "|" -f4  <<<"$dict")"
-                
                 if grep 'FALSE' <<<"$dict"; then
                     if [ ! -f "$disables/$name.$type.$tget.$lgt" ]; then
                         [ -f "$enables/$name.$type.$tget.$lgt" ] \
@@ -159,8 +156,18 @@ function dlg() {
             done < <(sed 's/<[^>]*>//g' <<<"$sel")
         fi
     exit 1
-    
 } >/dev/null 2>&1
+
+function update_config_dir() {
+    [ ! -d "$enables" ] && mkdir -p "$enables"
+    [ ! -d "$disables" ] && mkdir -p "$disables"
+    while read -r dict; do
+        if [ ! -e "$enables/$(basename "${dict}")" \
+            -a ! -e "$disables/$(basename "${dict}")" ]; then
+            echo "--added dict: $(basename "${dict}")"
+            > "$disables/$(basename "${dict}")"; fi
+    done < <(ls "$DS_a/Dics/dicts/")
+}
 
 case "$1" in
     add_dlg)
@@ -169,6 +176,8 @@ case "$1" in
     dclk "$@" ;;
     cpfile)
     cpfile "$@" ;;
+    updt_dicts)
+    update_config_dir "$@" ;;
     *)
     dlg "$@" ;;
 esac

@@ -2,7 +2,6 @@
 # -*- ENCODING: UTF-8 -*-
 
 if [ -z "${1}" ]; then exit 1; fi
-source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 topic="${1}"
 DC_tlt="$DM_tl/${topic}/.conf"
@@ -10,74 +9,29 @@ DM_tlt="$DM_tl/${topic}"
 
 if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
     source "$DS/ifs/mods/topic/${topic}.sh"
-    tpa="$(sed -n 1p "$DC_a/4.cfg")"; ${tpa} 2 & exit
+    echo 2 > "$DC_s/5.cfg"
+    export mode=2; ${topic} 2 & exit
 else
     if [ -d "${DM_tlt}" ]; then
-    if [ ! -d "${DC_tlt}" -o ! -e "${DC_tlt}/id.cfg" ]; then
-export c1="tname=\"${topic}\"
-langs=\"${lgsl^}\"
-langt=\"${lgtl^}\"
-authr=\"$Author\"
-cntct=\"$Mail\"
-ctgry=\"$Ctgry\"
-ilink=\"$link\"
-oname=\"${topic}\"
-datec=\"$(date +%F)\"
-dateu=\"$dateu\"
-datei=\"$datei\"
-nword=\"$words\"
-nsent=\"$sentences\"
-nimag=\"$images\"
-naudi=\"$audio\"
-nsize=\"$size\"
-level=\"$level\"
-set_1=\"\"
-set_2=\"\"
-set_3=\"\"
-set_4=\"\""
-c2="words=\"\"
-sntcs=\"\"
-marks=\"\"
-wprct=\"\"
-nsepi=\"\"
-svepi=\"\"
-rplay=\"\"
-audio=\"TRUE\"
-ntosd=\"\"
-loop=\"0\"
-rword=\"0\""
-        
-        mkdir -p "${DM_tlt}/images"
-        mkdir "${DC_tlt}"; cd "${DC_tlt}"
-        c=0
-        while [[ ${c} -le 10 ]]; do
-        touch "${c}.cfg"; let c++
-        done
-        rm "${DC_tlt}/7.cfg" "${DC_tlt}/9.cfg"
-        echo " " > "${DC_tlt}/info"
-        echo -e "${c1}" > ./"id.cfg"
-        echo -e "${c2}" > ./"10.cfg"
-        echo 1 > "8.cfg"
+        if [ ! -d "${DC_tlt}" -o ! -e "${DC_tlt}/id.cfg" ]; then
+            mkdir -p "${DM_tlt}/images"
+            mkdir "${DC_tlt}"; cd "${DC_tlt}"
+            c=0
+            while [[ ${c} -le 10 ]]; do
+                touch "${c}.cfg"; let c++
+            done
+            rm "${DC_tlt}/7.cfg" "${DC_tlt}/9.cfg"
+            echo " " > "${DC_tlt}/info"
+            echo 1 > "8.cfg"; cd /
         fi
-        cd /
         echo "${topic}" > "$DC_s/4.cfg"
         echo "${topic}" > "$DC_s/7.cfg"
         echo "${topic}" > "$DT/tpe"
-        
-        [ ! -d "$HOME/.idiomind/backup" ] && mkdir "$HOME/.idiomind/backup"
-        if ! grep "${topic}.bk" < <(cd "$HOME/.idiomind/backup" \
-            find . -maxdepth 1 -name '*.bk' -mtime -1); then
-            if [ -n "$(< "${DC_tlt}/0.cfg")" ]; then
-                cp -f "${DC_tlt}/0.cfg" "$HOME/.idiomind/backup/${topic}.bk"; fi
-            cd /; fi
+        ( sleep 10 && "$DS/ifs/tls.sh" backup "${topic}" ) &
         if [[ ! -e "$DC_s/5.cfg" ]]; then
             echo 0 > "$DC_s/5.cfg"; fi
         if [[ `< "$DC_s/5.cfg"` != 0 ]]; then
             echo 0 > "$DC_s/5.cfg"; fi
-        if [[ ! -e "$DC_s/9.cfg" ]]; then
-            toch "$DC_s/9.cfg"; fi
-        if [[ `wc -l < "${DC_tlt}/id.cfg"` -lt 16 ]]; then
-            echo -e "${cfgfile}" > "${DC_tlt}/id.cfg"; fi
         if [ ! -f "$DT/.n_s_pr" ]; then
             "$DS/ifs/tls.sh" check_index "${topic}"; fi
         if [[ $(grep -Fxon "${topic}" "${DM_tl}/.1.cfg" \
@@ -111,6 +65,7 @@ rword=\"0\""
         fi
     else
         [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
+        "$DS/mngr.sh" mkmn
         msg "$(gettext "No such file or directory")\n${topic}\n" error & exit 1
     fi
 fi

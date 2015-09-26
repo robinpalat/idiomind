@@ -4,18 +4,19 @@
 function word_view() {
     [ -n "$defn" ] && field_defn="--field=<small>$defn</small>:lbl"
     [ -n "$note" ] && field_note="--field=<small>$note</small>\n:lbl"
-    [ -n "$exmp" ] && field_exmp="--field=<i><span color='#737373'>$exmp</span></i>:lbl"
+    [ -n "$exmp" ] && field_exmp="--field=<span font_desc='Verdana 12' color='#5C5C5C'><i>$exmp</i></span>:lbl"
+    local sentence="$tag<span font_desc='Sans Free 25'>${trgt}</span>\n\n<span font_desc='Sans Free 14'><i>$srce</i></span>\n\n"
 
     yad --form --title=" " \
     --selectable-labels --quoted-output \
-    --text="$tag<span font_desc='Sans Free 26'>${trgt}</span>\n\n<i>$srce</i>\n\n" \
+    --text="${sentence}" \
     --window-icon="$DS/images/icon.png" \
-    --align=left --scroll --skip-taskbar --text-align=center \
+    --scroll --skip-taskbar --text-align=center \
     --image-on-top --center --on-top \
     --width=630 --height=390 --borders=20 \
     --field="":lbl "${field_exmp}" "${field_defn}" "${field_note}" \
-    --button=gtk-edit:4 \
-    --button="$(gettext "Listen")":"$cmd_listen" \
+    --button="gtk-edit":4 \
+    --button="!$DS/images/listen.png":"$cmd_listen" \
     --button=gtk-go-down:2 \
     --button=gtk-go-up:3
     
@@ -24,9 +25,10 @@ function word_view() {
 function sentence_view() {
     if [ "$(grep -o gramr=\"[^\"]* < "$DC_s/1.cfg" | grep -o '[^"]*$')"  = TRUE ]; then
     trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
+    local word="$tag<span font_desc='Sans Free 15'>${trgt_l}</span>\n\n<span font_desc='Sans Free 11'><i>$srce</i></span>\n\n"
     
     echo "${lwrd}" | yad --list --title=" " \
-    --text="$tag<span font_desc='Sans Free 15'>${trgt_l}</span>\n\n<i>$srce</i>\n\n" \
+    --text="${word}" \
     --selectable-labels --print-column=0 \
     --dclick-action="$DS/play.sh 'play_word'" \
     --window-icon="$DS/images/icon.png" \
@@ -36,33 +38,13 @@ function sentence_view() {
     --column="":TEXT \
     --column="":TEXT \
     --button=gtk-edit:4 \
-    --button="$(gettext "Listen")":"$cmd_listen" \
+    --button="!$DS/images/listen.png":"$cmd_listen" \
     --button=gtk-go-down:2 \
     --button=gtk-go-up:3
     
 } >/dev/null 2>&1
 
-function m_text() {
-    include "$DS/ifs/mods/mngr"
-    trgt="${1}"
-    cmd_del="$DS/mngr.sh delete_item "\"${tpc}\"" "\"${trgt}\"""
-    cmd_add="$DS/add.sh new_items (2) (3) "\"${trgt}\"""
-    text="<span font_desc='monospace 10'>$(gettext "Text missing")</span>\n\n\n\n"
-
-    yad --form --title=" " \
-    --text="${text}" \
-    --window-icon="$DS/images/icon.png" \
-    --align=center --skip-taskbar --text-align=center \
-    --image-on-top --center --on-top \
-    --width=620 --height=380 --borders=20 \
-    --button="$(gettext "Delete")":"$cmd_del" \
-    --button=gtk-add:"$cmd_add" \
-    --button=gtk-go-down:2 \
-    --button=gtk-go-up:3
-    
-} >/dev/null 2>&1
-
-export -f word_view sentence_view m_text
+export -f word_view sentence_view
 
 function notebook_1() {
     cmd_mark="'$DS/mngr.sh' 'mark_as_learned' "\"${tpc}\"" 1"
@@ -99,8 +81,8 @@ function notebook_1() {
     --text="$label_info1\n" \
     --scroll --borders=10 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
-    --field="$(gettext "Mark as learnt")":FBTN "$cmd_mark" \
-    --field="$(gettext "Auto select items")\t\t\t\t\t\t\t":CHK "$auto_mrk" \
+    --field=" $(gettext "Mark as learnt") ":FBTN "$cmd_mark" \
+    --field="$(gettext "Auto-checked of checkbox on list Learning")\t\t\t":CHK "$auto_mrk" \
     --field="$label_info2\n":LBL " " \
     --field="$(gettext "Files")":FBTN "$cmd_attchs" \
     --field="$(gettext "Share")":FBTN "$cmd_share" \
@@ -109,11 +91,11 @@ function notebook_1() {
     yad --notebook --title="Idiomind - $tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
-    --center --align=right "$img" --fixed --ellipsize=END --image-on-top \
+    --center --align=right "$img" --ellipsize=END --image-on-top \
     --window-icon="$DS/images/icon.png" --center \
     --tab="  $(gettext "Learning") ($inx1) " \
     --tab="  $(gettext "Learnt") ($inx2) " \
-    --tab=" $(gettext "Notes") " \
+    --tab=" $(gettext "Note") " \
     --tab=" $(gettext "Edit") " \
     --width=$sx --height=$sy --borders=0 --tab-borders=3 \
     --button="$(gettext "Play")":"$cmd_play" \
@@ -146,7 +128,7 @@ function notebook_2() {
     --text="$label_info1\n" \
     --scroll --borders=10 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
-    --field="   $(gettext "Review")   ":FBTN "$cmd_mark" \
+    --field=" $(gettext "Review") ":FBTN "$cmd_mark" \
     --field="\t\t\t\t\t\t\t\t\t\t\t\t\t\t":LBL "_" \
     --field="$label_info2\n":LBL " " \
     --field="$(gettext "Files")":FBTN "$cmd_attchs" \
@@ -156,20 +138,20 @@ function notebook_2() {
     yad --notebook --title="Idiomind - $tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
-    --center --align=right "$img" --fixed --ellipsize=END --image-on-top \
+    --center --align=right "$img" --ellipsize=END --image-on-top \
     --window-icon="$DS/images/icon.png" --center \
     --tab="  $(gettext "Review")  " \
     --tab="  $(gettext "Learnt") ($inx2) " \
-    --tab=" $(gettext "Notes") " \
+    --tab=" $(gettext "Note") " \
     --tab=" $(gettext "Edit") " \
     --width=$sx --height=$sy --borders=0 --tab-borders=3 \
     --button="gtk-close":1
 } >/dev/null 2>&1
 
 function dialog_1() {
-    yad --title="${tpc}" \
+    yad --title="$(gettext "Review")" \
     --class=idiomind --name=Idiomind \
-    --text=" $(gettext "<b>Would you like to go over it?</b>\n The specified period already has been completed")" \
+    --text="\"${tpc}\"\n$(gettext "<b>Would you like to review it?</b>\n The waiting period already has been completed.")" \
     --image=gtk-refresh \
     --window-icon="$DS/images/icon.png" \
     --buttons-layout=edge --center --on-top \

@@ -3,8 +3,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 [ ! -d "$DC" ] && "$DS/ifs/1u.sh" && exit
-info2=" $(gettext "Are you sure you want to change the language established to learn?")  "
-info1=" $(gettext "Are you sure you want to change the source language setting?")  "
+info2="<b>$(gettext "Switch language")</b>"
 cd "$DS/addons"
 [[ -n "$(< "$DC_s/1.cfg")" ]] && cfg=1 || > "$DC_s/1.cfg"
 cnf1=$(mktemp "$DT/cnf1.XXXX")
@@ -25,28 +24,32 @@ sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
 'langt' 'langs' 'synth' 'txaud' 'intrf' )
 
 confirm() {
-    yad --form --title="Idiomind" \
+    yad --form --title="$(gettext "Confirm")" \
     --image=$2 --text="$1\n" \
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --center --on-top \
-    --width=540 --height=130 --borders=5 \
+    --width=340 --height=120 --borders=5 \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Yes")":0
 }
 
 set_lang() {
-    echo "${tpc}" > "$DM_tl/.8.cfg"
     language="$1"
+    [ -n "${tpc}" ] && echo "${tpc}" > "$DM_tl/.8.cfg"
     if [ ! -d "$DM_t/$language/.share/images" ]; then
-    mkdir -p "$DM_t/$language/.share/images"; fi
+        mkdir -p "$DM_t/$language/.share/images"; fi
     echo "$language" > "$DC_s/6.cfg"
     echo "$lgsl" >> "$DC_s/6.cfg"
+    > "$DT/tpe"
     "$DS/stop.sh" 4
     source /usr/share/idiomind/ifs/c.conf
     if [ -f "$DM/topics/$language/.8.cfg" ]; then
-    lst="$(sed -n 1p "$DM/topics/$language/.8.cfg")"
-    "$DS/default/tpc.sh" "${lst}" 1
-    else rm "$DC_s/4.cfg" && > "$DC_s/4.cfg"; fi
+        lst="$(sed -n 1p "$DM/topics/$language/.8.cfg")"
+        "$DS/default/tpc.sh" "${lst}" 1
+    else
+        rm "$DC_s/4.cfg" && > "$DC_s/4.cfg"; fi
+    source "$DS/ifs/mods/cmns.sh"
+    list_inadd > "$DM_tl/.2.cfg"
     "$DS/mngr.sh" mkmn &
 }
 
@@ -97,9 +100,9 @@ yad --plug=$KEY --form --tabnum=1 \
 --field="$(gettext "Help")":BTN "$DS/ifs/tls.sh help" \
 --field="$(gettext "Send Feedback")":BTN "$DS/ifs/tls.sh 'fback'" \
 --field="$(gettext "Check for Updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
---field="$(gettext "Backups")":BTN "$DS/ifs/tls.sh '_backup'" \
+--field="$(gettext "Backups")":BTN "$DS/ifs/tls.sh 'dlg_backups'" \
 --field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" > "$cnf1" &
-cat "$DC_s/2.cfg" | yad --plug=$KEY --tabnum=2 --list \
+cat "$DS_a/menu_list" | yad --plug=$KEY --tabnum=2 --list \
 --text=" $(gettext "Double-click to set") " \
 --print-all --dclick-action="$DS/ifs/dclik.sh" \
 --expand-column=2 --no-headers \
@@ -109,10 +112,10 @@ yad --notebook --key=$KEY --title="$(gettext "Settings")" \
 --window-icon="$DS/images/icon.png" \
 --tab-borders=5 --sticky --center \
 --tab="$(gettext "Preferences")" \
---tab="$(gettext "Addons")" \
+--tab="$(gettext "Extensions")" \
 --width=460 --height=320 --borders=2 \
---button="$(gettext "OK")":0 \
---button="$(gettext "Cancel")":1
+--button="$(gettext "Cancel")":1 \
+--button="$(gettext "OK")":0
 ret=$?
 
     if [ $ret -eq 0 ]; then
@@ -125,7 +128,6 @@ ret=$?
             ((v=v+1)); fi
             ((n=n+1))
         done
-
         val=$(cut -d "|" -f16 < "$cnf1")
         [[ "$val" != "$synth" ]] && \
         sed -i "s/${sets[8]}=.*/${sets[8]}=\"$(sed 's|/|\\/|g' <<<"$val")\"/g" "$DC_s/1.cfg"
@@ -154,26 +156,24 @@ ret=$?
             rm "$config_dir/idiomind.desktop"
             fi
         fi
-        
         n=0
         while [ ${n} -lt 10 ]; do
             if cut -d "|" -f12 < "$cnf1" | grep "${lang[$n]}" && \
             [ "${lang[$n]}" != "$lgtl" ]; then
                 lgtl="${lang[$n]}"
-                if grep -o -E 'Chinese|Japanese|Russian|Vietnamese' <<< "$lgtl";
-                then info3="\n $(gettext "Some features do not yet work with this language"). ($lgtl)"; fi
+                if grep -o -E 'Chinese|Japanese|Russian' <<< "$lgtl";
+                then info3="\n$(gettext "Some things are still not working for these languages:") Chinese, Japanese, Russian."; fi
                 confirm "$info2$info3" dialog-question "$lgtl"
                 [ $? -eq 0 ] && set_lang "${lang[$n]}"
                 break
             fi
             ((n=n+1))
         done
-        
         n=0
         while [ ${n} -lt 10 ]; do
             if cut -d "|" -f13 < "$cnf1" | grep "${lang[$n]}" && \
             [ "${lang[$n]}" != "$lgsl" ]; then
-                confirm "$info1" dialog-question
+                confirm "$info2" dialog-question
                 if [ $? -eq 0 ]; then
                     echo "$lgtl" > "$DC_s/6.cfg"
                     echo "${lang[$n]}" >> "$DC_s/6.cfg"
@@ -182,8 +182,7 @@ ret=$?
             fi
             ((n=n+1))
         done
-    
     fi
-    
     rm -f "$cnf1" "$DT/.lc"
     exit
+    
