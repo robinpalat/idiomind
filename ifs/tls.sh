@@ -465,7 +465,7 @@ _definition() {
 
 _quick_help() {
     source /usr/share/idiomind/ifs/c.conf
-    _url='http://idiomind.sourceforge.net/doc/help.html'
+    _url='http://idiomind.com/doc/help.html'
     yad --html --title="$(gettext "Reference")" \
     --name=Idiomind --class=Idiomind \
     --uri="${_url}" \
@@ -478,8 +478,8 @@ _quick_help() {
 check_updates() {
     source "$DS/ifs/mods/cmns.sh"
     internet
-    nver=`wget --user-agent 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) \
-    Gecko/20100101 Firefox/31.0' -qO - http://idiomind.sourceforge.net/doc/release |sed -n 1p`
+    ua="Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0"
+    nver=`wget --user-agent "$ua" -qO - http://idiomind.sourceforge.net/doc/version.html |grep \<body\> | sed 's/<[^>]*>//g'`
     cver=`idiomind -v`
     pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
     date "+%d" > "$DC_s/9.cfg"
@@ -509,8 +509,8 @@ a_check_updates() {
         sleep 5; curl -v www.google.com 2>&1 | \
         grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
         echo "$d2" > "$DC_s/9.cfg"
-        nver=`wget --user-agent 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) \
-        Gecko/20100101 Firefox/31.0' -qO - http://idiomind.sourceforge.net/doc/release |sed -n 1p`
+        ua="Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0"
+        nver=`wget --user-agent "$ua" -qO - http://idiomind.sourceforge.net/doc/version.html |grep \<body\> | sed 's/<[^>]*>//g'`
         cver=`idiomind -v`
         pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
         if [ ${#nver} -lt 9 ] && [ ${#cver} -lt 9 ] \
