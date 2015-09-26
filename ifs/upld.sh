@@ -96,7 +96,7 @@ function dwld() {
 }
 
 function upld() {
-if [ $((inx3+inx4)) -lt 2 ]; then exit 1; fi
+if [ $((inx3+inx4)) -lt 15 ]; then exit 1; fi
 
 if [ "${tpc}" != "${2}" ]; then
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit 1
@@ -205,7 +205,7 @@ else
     "$ctgry!$others!$article!$city!$comics!$culture!$education!$entertainment!$funny!$grammar!$history!$home!$internet!$interview!$movies!$music!$nature!$news!$office!$places!$quotes!$relations!$science!$social_media!$sport!$tech" \
     --field="$(gettext "Skill Level"):CB" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
     --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
-    --button="$(gettext "Close")":4)
+    "$btn" --button="$(gettext "Close")":4)
     ret=$?
 fi
  

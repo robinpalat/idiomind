@@ -465,7 +465,7 @@ _definition() {
 
 _quick_help() {
     source /usr/share/idiomind/ifs/c.conf
-    _url='http://idiomind.sourceforge.net/doc/help.html'
+    _url='http://idiomind.com/doc/help.html'
     yad --html --title="$(gettext "Reference")" \
     --name=Idiomind --class=Idiomind \
     --uri="${_url}" \
