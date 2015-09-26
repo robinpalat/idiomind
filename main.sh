@@ -171,6 +171,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             echo -e "$langt\n$lgsl" > "$DC_s/6.cfg"
             echo 1 > "${DC_tlt}/8.cfg"
             echo "${tname}" >> "$DM_tl/.3.cfg"
+            source /usr/share/idiomind/ifs/c.conf
             "$DS/mngr.sh" mkmn
             "$DS/default/tpc.sh" "${tname}" &
         fi

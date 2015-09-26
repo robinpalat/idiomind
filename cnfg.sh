@@ -3,7 +3,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 [ ! -d "$DC" ] && "$DS/ifs/1u.sh" && exit
-info2="$(gettext "Switch language.")"
+info2="<b>$(gettext "Switch language")</b>"
 cd "$DS/addons"
 [[ -n "$(< "$DC_s/1.cfg")" ]] && cfg=1 || > "$DC_s/1.cfg"
 cnf1=$(mktemp "$DT/cnf1.XXXX")
@@ -28,13 +28,14 @@ confirm() {
     --image=$2 --text="$1\n" \
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --center --on-top \
-    --width=380 --height=120 --borders=5 \
+    --width=340 --height=120 --borders=5 \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Yes")":0
 }
 
 set_lang() {
     language="$1"
+    [ -n "${tpc}" ] && echo "${tpc}" > "$DM_tl/.8.cfg"
     if [ ! -d "$DM_t/$language/.share/images" ]; then
         mkdir -p "$DM_t/$language/.share/images"; fi
     echo "$language" > "$DC_s/6.cfg"
