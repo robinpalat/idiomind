@@ -339,7 +339,7 @@ panel() {
     
     _home=gtk-home
     if [[ ${intrf} = fr || ${intrf} = pt ]]; then _home='Home!gtk-home'; fi
-    yad --title=" " \
+    yad --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
     --always-print-result \
     --window-icon=$wicon \
