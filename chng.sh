@@ -140,6 +140,7 @@ elif [[ ${1} != 0 ]]; then
     --width=620 --height=580 --borders=8 \
     --column=img:IMG \
     --column=File:TEXT \
+    --button="$(gettext "Preferences")":"$DS/cnfg.sh" \
     --button=gtk-new:3 \
     --button="$(gettext "Apply")":2 \
     --button="gtk-close":1)

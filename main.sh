@@ -159,7 +159,9 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
                 if [ -n "${trgt}" ]; then
                     if [[ ${type} = 1 ]]; then
                         echo "${trgt}" >> "${DC_tlt}/3.cfg"
-                    else echo "${trgt}" >> "${DC_tlt}/4.cfg"; fi
+                    else 
+                        echo "${trgt}" >> "${DC_tlt}/4.cfg"
+                    fi
                     echo "${trgt}" >> "${DC_tlt}/1.cfg"
                     echo "${item_}" >> "${DC_tlt}/0.cfg"
                 fi    
@@ -341,7 +343,7 @@ panel() {
     --always-print-result \
     --window-icon=$wicon \
     --form --fixed --on-top --no-buttons --align=center \
-    --width=70 --height=175 --borders=0 --geometry=130x190-${x}-${y} \
+    --width=80 --height=190 --borders=0 --geometry=80x190-${x}-${y} \
     --field="!$DS/images/new.png":fbtn "$DS/add.sh 'new_items'" \
     --field="!$DS/images/topic.png":fbtn "idiomind 'topic'" \
     --field="!$DS/images/index.png":fbtn "$DS/chng.sh"

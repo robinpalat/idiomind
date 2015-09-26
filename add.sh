@@ -315,13 +315,7 @@ function process() {
     fi
     include "$DS/ifs/mods/add_process"
     
-    if [[ ${1:0:4} = 'http' ]]; then
-        (echo "1"
-        internet
-        echo "# $(gettext "Processing")..." ;
-        lynx -dump -nolist "${conten}" | clean_5 > "$DT_r/sntsls_"
-        ) | dlg_progress_1
-    elif [[ $1 = image ]]; then
+    if [[ $1 = image ]]; then
         pars=`mktemp`
         trap rm "$pars*" EXIT
         scrot -s "$pars.png"
@@ -635,9 +629,6 @@ new_items() {
         elif [[ ${#trgt} = 1 ]]; then
             process ${trgt:0:2}
 
-        elif [[ ${trgt:0:4} = 'http' ]]; then
-            process
-        
         elif [[ ${#trgt} -gt 180 ]]; then
             process
             

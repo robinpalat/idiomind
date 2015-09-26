@@ -169,13 +169,12 @@ if [ -e "${DC_tlt}/download" ]; then
         --image="$DS/images/download.png" --image-on-top \
         --window-icon="$DS/images/icon.png" --buttons-layout=end \
         --align=left --center --on-top \
-        --width=450 --height=260 --borders=12 \
+        --width=400 --height=220 --borders=12 \
         --text="$info" \
         --field="$info2:lbl" " " \
-        --field="$(gettext "Download"):BTN" "${cmd_dwl}" \
+        --field="$(gettext "Download"):FBTN" "${cmd_dwl}" \
         --field="\t\t\t\t\t:lbl" " " \
         --field=" :lbl" " " \
-        --button="$(gettext "PDF")":2 \
         --button="$(gettext "Close")":4)
         ret=$?
     elif [ -s "${DC_tlt}/download" ]; then
@@ -188,7 +187,6 @@ if [ -e "${DC_tlt}/download" ]; then
         --field="$(gettext "Latest downloads:"):lbl" " " \
         --field="$(< "${DC_tlt}/download"):lbl" " " \
         --field=" :lbl" " " \
-        --button="$(gettext "PDF")":2 \
         --button="$(gettext "Close")":4)
         ret=$?
     fi
@@ -207,15 +205,11 @@ else
     "$ctgry!$others!$article!$city!$comics!$culture!$education!$entertainment!$funny!$grammar!$history!$home!$internet!$interview!$movies!$music!$nature!$news!$office!$places!$quotes!$relations!$science!$social_media!$sport!$tech" \
     --field="$(gettext "Skill Level"):CB" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
     --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
-    --button="$(gettext "PDF")":2 "$btn" \
     --button="$(gettext "Close")":4)
     ret=$?
 fi
-
-if [ $ret = 2 ]; then
-    "$DS/ifs/tls.sh" pdf & exit 1
-    
-elif [ $ret = 0 ]; then
+ 
+if [ $ret = 0 ]; then
 Ctgry=$(echo "${dlg}" | cut -d "|" -f3)
 level=$(echo "${dlg}" | cut -d "|" -f4)
 iuser_m=$(echo "${dlg}" | cut -d "|" -f1)

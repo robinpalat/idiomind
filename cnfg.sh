@@ -34,7 +34,6 @@ confirm() {
 }
 
 set_lang() {
-    #echo "${tpc}" > "$DM_tl/.8.cfg"
     language="$1"
     if [ ! -d "$DM_t/$language/.share/images" ]; then
         mkdir -p "$DM_t/$language/.share/images"; fi

@@ -13,7 +13,7 @@ if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
     export mode=2; ${topic} 2 & exit
 else
     if [ -d "${DM_tlt}" ]; then
-    if [ ! -d "${DC_tlt}" -o ! -e "${DC_tlt}/id.cfg" ]; then
+        if [ ! -d "${DC_tlt}" -o ! -e "${DC_tlt}/id.cfg" ]; then
             mkdir -p "${DM_tlt}/images"
             mkdir "${DC_tlt}"; cd "${DC_tlt}"
             c=0
@@ -65,6 +65,7 @@ else
         fi
     else
         [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
+        "$DS/mngr.sh" mkmn
         msg "$(gettext "No such file or directory")\n${topic}\n" error & exit 1
     fi
 fi
