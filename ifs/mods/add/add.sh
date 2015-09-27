@@ -134,7 +134,7 @@ function sentence_p() {
             echo "<span color='#CF387F'>${wrd}</span>" >> ./"g.$r"
         else
             echo "${wrd}" >> ./"g.$r"
-        fi 
+        fi
     done < <(sed 's/ /\n/g' <<<"${trgt_p}")
     
     sed -i 's/\. /\n/g' "$bw"
