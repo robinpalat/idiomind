@@ -79,10 +79,9 @@ check_index() {
         if [ ! -d "${DM_tlt}" ]; then mkdir "${DC_tlt}"; fi
         if [ ! -d "${DM_tlt}/images" ]; then mkdir "${DM_tlt}/images"; fi
         for n in {0..4}; do
-            [ ! -e "${DC_tlt}/$n.cfg" ] && touch "${DC_tlt}/$n.cfg" && a=1
-            if grep '^$' "${DC_tlt}/$n.cfg"; then
-                sed -i '/^$/d' "${DC_tlt}/$n.cfg"; fi
-            check_index1 "${DC_tlt}/$n.cfg"
+            [ ! -e "${DC_tlt}/${n}.cfg" ] && touch "${DC_tlt}/${n}.cfg" && a=1
+            if grep '^$' "${DC_tlt}/${n}.cfg"; then
+                sed -i '/^$/d' "${DC_tlt}/${n}.cfg"; fi
         done
         [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "${c1}" > "${DC_tlt}/id.cfg"
         [ ! -e "${DC_tlt}/10.cfg" ] && echo -e "${c2}" > "${DC_tlt}/10.cfg"

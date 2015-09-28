@@ -342,26 +342,12 @@ panel() {
     --always-print-result \
     --window-icon=$wicon \
     --form --fixed --on-top --no-buttons --align=center \
-    --width=80 --height=165 --borders=0 --geometry=80x190-${x}-${y} \
+    --width=70 --height=165 --borders=0 --geometry=80x190-${x}-${y} \
     --field="!$DS/images/new.png!$(gettext "Add new note")":fbtn "$DS/add.sh 'new_items'" \
     --field="!$DS/images/topic.png!$(gettext "Open active topic")":fbtn "idiomind 'topic'" \
     --field="!$DS/images/index.png!$(gettext "Open topics list")":fbtn "$DS/chng.sh"
     [ $? != 0 ] && "$DS/stop.sh" 1 &
     exit
-    
-    
-    #yad --title="Idiomind" \
-    #--name=Idiomind --class=Idiomind \
-    #--always-print-result \
-    #--window-icon=$wicon \
-    #--form --fixed --on-top --no-buttons --align=center \
-    #--width=130 --height=165 --borders=0 --geometry=80x190-${x}-${y} \
-    #--field="$(gettext "Add")!$DS/images/new.png!$(gettext "Add new note")":fbtn "$DS/add.sh 'new_items'" \
-    #--field="$(gettext "Topic")!$DS/images/topic.png!$(gettext "Open active topic")":fbtn "idiomind 'topic'" \
-    #--field="$(gettext "Index")!$DS/images/index.png!$(gettext "Open topics list")":fbtn "$DS/chng.sh"
-    #[ $? != 0 ] && "$DS/stop.sh" 1 &
-    #exit
-    
 }
 
 case "$1" in
