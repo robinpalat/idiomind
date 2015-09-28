@@ -42,18 +42,18 @@ function new_session() {
     # mkdir /tmp/user
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
     if [ $? -ne 0 ]; then
-    msg "$(gettext "Fail on try write in /tmp")\n" error "$(gettext "Information")" & exit 1; fi
+        msg "$(gettext "Fail on try write in /tmp")\n" error "$(gettext "Information")" & exit 1; fi
     
     f_lock "$DT/ps_lk"
 
     for strt in "$DS/ifs/mods/start"/*; do
-    ( sleep 20 && "${strt}" ); done &
+        ( sleep 20 && "${strt}" ); done &
     
     list_inadd > "$DM_tl/.2.cfg"
     check_index1 "$DM_tl/.3.cfg"
     
     if ls "$DC_s"/*.p 1> /dev/null 2>&1; then
-    cd "$DC_s"/; rename 's/\.p$//' *.p; fi
+        cd "$DC_s"/; rename 's/\.p$//' *.p; fi
     cd /
     
     s="$(xrandr | grep '*' |awk '{ print $1 }' |sed 's/x/\n/')"
@@ -63,8 +63,8 @@ function new_session() {
     # log file
     if [ -f "$DC_s/log" ]; then
         if [[ "$(du -sb "$DC_s/log" |awk '{ print $1 }')" -gt 100000 ]]; then
-        tail -n2000 < "$DC_s/log" > "$DT/log"
-        mv -f "$DT/log" "$DC_s/log"; fi
+            tail -n2000 < "$DC_s/log" > "$DT/log"
+            mv -f "$DT/log" "$DC_s/log"; fi
     fi
 
     # update status
