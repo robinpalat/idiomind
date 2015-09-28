@@ -96,12 +96,18 @@ function sentence_p() {
     trgt_p="${trgt_mod}"
     srce_p="${srce_mod}"
     fi
-    
+    cdb="$DM_tl/.${lgtl}Dict.db"
+    table=`date +%b%y`
+    echo -n "create table if not exists ${table^^} \
+    (Word TEXT, Translation TEXT, Example TEXT);" |sqlite3 $cdb
+
     r=$((RANDOM%10000))
     cd /; DT_r="$1"; cd "$DT_r"; touch "swrd.$r" "twrd.$r"
     if [ "$lgt" = ja -o "$lgt" = "zh-cn" -o "$lgt" = ru ]; then
-    vrbl="${srce_p}"; lg=$lgt; aw="./swrd.$r"; bw="./twrd.$r"
-    else vrbl="${trgt_p}"; lg=$lgs; aw="./twrd.$r"; bw="./swrd.$r"; fi
+        vrbl="${srce_p}"; lg=$lgt; aw="./swrd.$r"; bw="./twrd.$r"
+    else
+        vrbl="${trgt_p}"; lg=$lgs; aw="./twrd.$r"; bw="./swrd.$r"
+    fi
     
     echo "${vrbl}" \
     | python -c 'import sys; print(" ".join(sorted(set(sys.stdin.read().split()))))' \
@@ -116,21 +122,21 @@ function sentence_p() {
     
     while read -r wrd; do
         w="$(tr -d '\.,;“”"' <<<"${wrd,,}")"
-        if [[ `sqlite3 $db "SELECT items from pronouns WHERE items IS '${w}';"` = "${w}" ]]; then
+        if [[ `sqlite3 $db "select items from pronouns where items is '${w}';"` ]]; then
             echo "<span color='#3E539A'>${wrd}</span>" >> ./"g.$r"
-        elif [[ `sqlite3 $db "SELECT items from nouns_adjetives WHERE items IS '${w}';"` = "${w}" ]]; then
+        elif [[ `sqlite3 $db "select items from nouns_adjetives where items is '${w}';"` ]]; then
             echo "<span color='#496E60'>${wrd}</span>" >> ./"g.$r"
-        elif [[ `sqlite3 $db "SELECT items from nouns_verbs WHERE items IS '${w}';"` = "${w}" ]]; then
+        elif [[ `sqlite3 $db "select items from nouns_verbs where items is '${w}';"` ]]; then
             echo "<span color='#62426A'>${wrd}</span>" >> ./"g.$r"
-        elif [[ `sqlite3 $db "SELECT items from conjunctions WHERE items IS '${w}';"` = "${w}" ]]; then
+        elif [[ `sqlite3 $db "select items from conjunctions where items is '${w}';"` ]]; then
             echo "<span color='#90B33B'>${wrd}</span>" >> ./"g.$r"
-        elif [[ `sqlite3 $db "SELECT items from prepositions WHERE items IS '${w}';"` = "${w}" ]]; then
+        elif [[ `sqlite3 $db "select items from prepositions where items is '${w}';"` ]]; then
             echo "<span color='#D67B2D'>${wrd}</span>" >> ./"g.$r"
-        elif [[ `sqlite3 $db "SELECT items from adverbs WHERE items IS '${w}';"` = "${w}" ]]; then
+        elif [[ `sqlite3 $db "select items from adverbs where items is '${w}';"` ]]; then
             echo "<span color='#9C68BD'>${wrd}</span>" >> ./"g.$r"
-        elif [[ `sqlite3 $db "SELECT items from adjetives WHERE items IS '${w}';"` = "${w}" ]]; then
+        elif [[ `sqlite3 $db "select items from adjetives where items is '${w}';"` ]]; then
             echo "<span color='#3E8A3B'>${wrd}</span>" >> ./"g.$r"
-        elif [[ `sqlite3 $db "SELECT items from verbs WHERE items IS '${w}';"` = "${w}" ]]; then
+        elif [[ `sqlite3 $db "select items from verbs where items is '${w}';"` ]]; then
             echo "<span color='#CF387F'>${wrd}</span>" >> ./"g.$r"
         else
             echo "${wrd}" >> ./"g.$r"
@@ -146,6 +152,10 @@ function sentence_p() {
         s=$(sed -n "$bcle"p $aw |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
         t=$(sed -n "$bcle"p $bw |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
         echo "$t"_"$s""" >> "$DT_r/B.$r"
+        if ! [[ `sqlite3 $cdb "select Word from ${table^^} where Word is '${t}';"` ]]; then
+            echo -n "insert into ${table^^} (Word,Translation,Example) \
+            values ('${t}','${s}','${trgt}');" |sqlite3 $cdb
+        fi
         let bcle++
         done
     else
@@ -153,6 +163,10 @@ function sentence_p() {
         t=$(sed -n "$bcle"p $aw |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
         s=$(sed -n "$bcle"p $bw |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
         echo "$t"_"$s""" >> "$DT_r/B.$r"
+        if ! [[ `sqlite3 $cdb "select Word from ${table^^} where Word is '${t}';"` ]]; then
+            echo -n "insert into ${table^^} (Word,Translation,Example) \
+            values ('${t}','${s}','${trgt}');" |sqlite3 $cdb
+        fi
         let bcle++
         done
     fi
