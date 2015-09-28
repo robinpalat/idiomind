@@ -11,6 +11,11 @@ if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
     source "$DS/ifs/mods/topic/${topic}.sh"
     echo 2 > "$DC_s/5.cfg"
     export mode=2; ${topic} 2 & exit
+    
+elif [ "${topic}" = "$(gettext "Dictionary")" ]; then
+    source "$DS/ifs/mods/topic/Dictionary.sh"
+    echo 1 > "$DC_s/5.cfg"
+    export mode=1; Dictionary & exit
 else
     if [ -d "${DM_tlt}" ]; then
         if [ ! -d "${DC_tlt}" -o ! -e "${DC_tlt}/id.cfg" ]; then

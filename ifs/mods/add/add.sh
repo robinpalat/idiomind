@@ -96,7 +96,8 @@ function sentence_p() {
     trgt_p="${trgt_mod}"
     srce_p="${srce_mod}"
     fi
-    cdb="$DM_tl/.${lgtl}Dict.db"
+    
+    cdb="$DM_tl/Dictionary/${lgtl}.db"
     table=`date +%b%y`
     echo -n "create table if not exists ${table^^} \
     (Word TEXT, Translation TEXT, Example TEXT);" |sqlite3 $cdb

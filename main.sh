@@ -107,7 +107,6 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     dclk="$DS/play.sh play_word"
     _lst() { while read -r item; do
         grep -oP '(?<=trgt={).*(?=},srce)' <<<"${item}"
-        grep -oP '(?<=srce={).*(?=},exmp)' <<<"${item}"
     done < <(tac "${file}"); }
 
     _lst | yad --list --title="Idiomind" \
@@ -115,10 +114,9 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     --name=Idiomind --class=Idiomind \
     --no-click --print-column=0 --dclick-action="$dclk" \
     --window-icon=$wicon \
-    --ellipsize=END --center \
+    --no-headers --ellipsize=END --center \
     --width=638 --height=570 --borders=6 \
-    --column="$langt            " \
-    --column="$langs            " \
+    --column="$langt" \
     --button="$(gettext "Install")":0
     ret=$?
         if [ $ret -eq 0 ]; then
@@ -186,7 +184,13 @@ function topic() {
         tpa="$(sed -n 1p "$DC_a/4.cfg")"
         source "$DS/ifs/mods/topic/${tpa}.sh"
         ${tpa} & exit 1
-    elif [[ ${mode} = 0 ]] || [[ ${mode} = 1 ]]; then
+    
+    elif [[ ${mode} = 1 ]]; then
+        tpa="$(gettext "Dictionary")"
+        source "$DS/ifs/mods/topic/Dictionary.sh"
+        ${tpa} & exit 1
+
+    elif [[ ${mode} = 0 ]]; then
         [ -z "${tpc}" ] && exit 1
         source "$DS/ifs/mods/topic/items_list.sh"
         for n in {0..4}; do
