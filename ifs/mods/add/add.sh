@@ -88,6 +88,7 @@ function index() {
     rm -f "$DT/i_lk"
 }
 
+
 function sentence_p() {
     if [ ${2} = 1 ]; then 
     trgt_p="${trgt}"
@@ -97,7 +98,7 @@ function sentence_p() {
     srce_p="${srce_mod}"
     fi
     
-    cdb="$DM_tl/Dictionary/${lgtl}.db"
+    cdb="$DM_tls/Dictionary/${lgtl}.db"
     table=`date +%b%y`
     echo -n "create table if not exists ${table^^} \
     (Word TEXT, Translation TEXT, Example TEXT);" |sqlite3 ${cdb}
@@ -470,7 +471,7 @@ function dlg_form_0() {
     --skip-taskbar --center --on-top \
     --width=450 --height=100 --borders=2 \
     --field="$(gettext "Name")" "$1" \
-    --field="$(gettext "Type")":CB "Default!Feed!Tag" \
+    --field="$(gettext "Type")":CB "$(gettext "Normal")!$(gettext "Tag")!$(gettext "Feed")" \
     --button=gtk-ok:0
 }
 

@@ -20,7 +20,7 @@ export -f word_view sentence_view
 
 function Dictionary() {
     cmd_play="$DS/play.sh play_list"
-    cdb="$DM_tl/Dictionary/${lgtl}.db"
+    cdb="$DM_tls/Dictionary/${lgtl}.db"
     table=`date +%b%y`
     sqlite3 "$cdb" "select * FROM  ${table^^}" \
     |sed 's/|/\n/g' | yad --list --title="$(gettext "Dictionary")" \

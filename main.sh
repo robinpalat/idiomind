@@ -60,6 +60,12 @@ function new_session() {
     sed -n 1p <<<"$s" >> "$DC_s/10.cfg"
     sed -n 2p <<<"$s" >> "$DC_s/10.cfg"
     
+    
+    #find -maxdepth 1 -type l
+    #if [[ -L "$file" && -d "$file" ]]
+    #then
+	#echo "$file is a symlink to a directory"
+    #fi
     cdb="$DM_tl/Dictionary/${lgtl}.db"
     echo -n "create table if not exists Words (Word TEXT);" |sqlite3 ${cdb}
 
@@ -310,29 +316,24 @@ function topic() {
         rm -f "$DT"/*.x
     
     elif [[ ${mode} = 12 ]]; then
-        tpa="$(gettext "Dictionary")"
         source "$DS/ifs/mods/topic/tags.sh"
         ${tpa} & exit 1
     
     elif [[ ${mode} = 13 ]]; then
-        tpa="$(gettext "Dictionary")"
         source "$DS/ifs/mods/topic/tags.sh"
         ${tpa} & exit 1
 
     elif [[ ${mode} = 14 ]]; then
-        tpa="$(gettext "Dictionary")"
         source "$DS/ifs/mods/topic/tags.sh"
         tags_list & exit 1
         
     elif [[ ${mode} = 15 ]]; then
-        tpa="$(gettext "Dictionary")"
         source "$DS/ifs/mods/topic/feeds.sh"
         ${tpa} & exit 1
         
     elif [[ ${mode} = 0 ]]; then
-        tpa="$(gettext "Dictionary")"
         source "$DS/ifs/mods/topic/Dictionary.sh"
-        ${tpa} & exit 1
+        Dictionary & exit 1
 
     else
         tpa="$(sed -n 1p "$DC_s/4.cfg")"

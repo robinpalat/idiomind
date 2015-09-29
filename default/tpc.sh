@@ -58,12 +58,11 @@ if [ -d "${DM_tlt}" ]; then
         if [ ! -d "${DC_tlt}" ]; then
             mkdir "${DC_tlt}"; cd "${DC_tlt}"
             echo 14 > "${DC_tlt}/8.cfg"
+            > "${DC_tlt}/info"
         fi
-        for n in {0..5}; do touch "${DC_tlt}/${n}.cfg"; done
+        for n in {0..5}; do
+        [ ! -e "${DC_tlt}/${n}.cfg" ] && touch "${DC_tlt}/${n}.cfg"; done
         echo "${topic}" > "$DC_s/4.cfg"
-        > "${DC_tlt}/info"
-        source "$DS/ifs/mods/topic/tags.sh"
-        tags_list & exit
 
     elif [ ${mode} = 15 ]; then
         echo "${topic}" > "$DC_s/4.cfg"

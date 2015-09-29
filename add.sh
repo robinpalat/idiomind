@@ -38,20 +38,18 @@ new_topic() {
     fi
     
     if [ -z "${jlb}" ]; then exit 1; fi
-    
-    if [ ${type} = 'Default' ]; then
+    if [ ${type} = "$(gettext "Normal")" ]; then
         mkdir "$DM_tl/${jlb}"
         list_inadd > "$DM_tl/.2.cfg"
         "$DS/default/tpc.sh" "${jlb}" 1 1
         "$DS/mngr.sh" mkmn
-        
-    elif  [ ${type} = 'Tag' ]; then
+    elif  [ ${type} = "$(gettext "Tag")" ]; then
         mkdir "$DM_tl/${jlb}"
         list_inadd > "$DM_tl/.2.cfg"
+        echo "${jlb}" >> "${DM_tl}/.tags"
         "$DS/default/tpc.sh" "${jlb}" 14 1
         "$DS/mngr.sh" mkmn
-        
-    elif  [ ${type} = 'Feed' ]; then
+    elif  [ ${type} = "$(gettext "Feed")" ]; then
         mkdir "$DM_tl/${jlb}"
         "$DS/default/tpc.sh" "${jlb}" 15 1
         "$DS/mngr.sh" mkmn

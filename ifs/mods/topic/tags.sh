@@ -62,9 +62,9 @@ function tags_list() {
     list | yad --list --title="${tpc}" \
     --text="${text}" \
     --name=Idiomind --class=Idiomind  \
-    --dclick-action="$DS/vwr.sh '3'" \
+    --dclick-action="$DS/vwr.sh '1'" \
     --no-headers --search-column=1 --hide-column=3 --regex-search \
-    --print-all --always-print-result \
+    --always-print-result \
     --center --align=right --ellipsize=END --image-on-top \
     --window-icon="$DS/images/icon.png" --center \
     --width=600 --height=560 --borders=10  \
