@@ -100,7 +100,7 @@ function sentence_p() {
     cdb="$DM_tl/Dictionary/${lgtl}.db"
     table=`date +%b%y`
     echo -n "create table if not exists ${table^^} \
-    (Word TEXT, Translation TEXT, Example TEXT);" |sqlite3 $cdb
+    (Word TEXT, Translation TEXT, Example TEXT);" |sqlite3 ${cdb}
 
     r=$((RANDOM%10000))
     cd /; DT_r="$1"; cd "$DT_r"; touch "swrd.$r" "twrd.$r"
@@ -153,9 +153,11 @@ function sentence_p() {
         s=$(sed -n "$bcle"p $aw |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
         t=$(sed -n "$bcle"p $bw |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
         echo "$t"_"$s""" >> "$DT_r/B.$r"
-        if ! [[ `sqlite3 $cdb "select Word from ${table^^} where Word is '${t}';"` ]]; then
+        if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]] && \
+        [ -n "${t}" ] && [ -n "${s}" ]; then
             echo -n "insert into ${table^^} (Word,Translation,Example) \
-            values ('${t}','${s}','${trgt}');" |sqlite3 $cdb
+            values ('${t}','${s}','${trgt}');" |sqlite3 ${cdb}
+            echo -n "insert into Words (Word) values ('${t}');" |sqlite3 ${cdb}
         fi
         let bcle++
         done
@@ -164,9 +166,11 @@ function sentence_p() {
         t=$(sed -n "$bcle"p $aw |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
         s=$(sed -n "$bcle"p $bw |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
         echo "$t"_"$s""" >> "$DT_r/B.$r"
-        if ! [[ `sqlite3 $cdb "select Word from ${table^^} where Word is '${t}';"` ]]; then
+        if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]] && \
+        [ -n "${t}" ] && [ -n "${s}" ]; then
             echo -n "insert into ${table^^} (Word,Translation,Example) \
-            values ('${t}','${s}','${trgt}');" |sqlite3 $cdb
+            values ('${t}','${s}','${trgt}');" |sqlite3 ${cdb}
+            echo -n "insert into Words (Word) values ('${t}');" |sqlite3 ${cdb}
         fi
         let bcle++
         done
@@ -461,10 +465,12 @@ function list_words_3() {
 function dlg_form_0() {
     yad --form --title="$(gettext "New Topic")" \
     --name=Idiomind --class=Idiomind \
+    --separator='|' \
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --center --on-top \
-    --width=450 --height=100 --borders=5 \
+    --width=450 --height=100 --borders=2 \
     --field="$(gettext "Name")" "$1" \
+    --field="$(gettext "Type")":CB "Default!Feed!Tag" \
     --button=gtk-ok:0
 }
 
@@ -481,8 +487,6 @@ function dlg_form_1() {
     --button="$(gettext "Image")":3 \
     --button="$(gettext "Audio")":2 \
     --button=gtk-add:0
-    #--button="!$DS/images/image_add.png!$(gettext "Add a image")":3 \
-    #--button="!$DS/images/audio_add.png!$(gettext "Add an audio file")":2
 }
 
 function dlg_form_2() {

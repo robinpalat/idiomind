@@ -599,6 +599,26 @@ set_image() {
     
 } >/dev/null 2>&1
 
+edit_tag() {
+    cmd_del="'$DS/mngr.sh' 'delete_topic' "\"${2}\"""
+    cmd_exp="'$DS/ifs/upld.sh' 'upld' "\"${2}\"""
+    desc="$(< "${DC_tlt}/info")"
+    dlg="$(yad --form --title="$(gettext "Edit")" \
+    --name=Idiomind --class=Idiomind \
+    --separator='|' \
+    --window-icon="$DS/images/icon.png" --center \
+    --width=300 --height=180 --borders=5 \
+    --field="$(gettext "Description")":TXT "$desc" \
+    --field="$(gettext "Export as")":FBTN "$cmd_exp" \
+    --field="$(gettext "Delete")":FBTN "$cmd_del" \
+    --button="$(gettext "Close")")"
+    ret=$?
+    desc_mod="$(cut -d "|" -f1 <<<"${dlg}")"
+    if [ -n "$desc_mod" -a "$desc_mod" != "$desc" ]; then
+    echo "${desc_mod}" > "${DC_tlt}/info"; fi
+
+} >/dev/null 2>&1
+
 translate_to() {
     # usage: 
     # idiomind translate [language] / e.g. language: en.
@@ -861,6 +881,8 @@ case "$1" in
     check_updates ;;
     a_check_updates)
     a_check_updates ;;
+    edit_tag)
+    edit_tag "$@" ;;
     set_image)
     set_image "$@" ;;
     first_run)

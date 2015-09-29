@@ -2,11 +2,10 @@
 # -*- ENCODING: UTF-8 -*-
 
 function word_view() {
-    [ -n "$tag" ] && field_tag="--field=<small>$tag</small>:lbl"
     [ -n "$defn" ] && field_defn="--field=<small>$defn</small>:lbl"
     [ -n "$note" ] && field_note="--field=<small>$note</small>\n:lbl"
     [ -n "$exmp" ] && field_exmp="--field=<span font_desc='Verdana 11' color='#5C5C5C'><i>$exmp</i></span>:lbl"
-    local sentence="<span font_desc='Sans Free 25'>${trgt}</span>\n\n<span font_desc='Sans Free 14'><i>$srce</i></span>\n\n"
+    local sentence="$tag<span font_desc='Sans Free 25'>${trgt}</span>\n\n<span font_desc='Sans Free 14'><i>$srce</i></span>\n\n"
 
     yad --form --title=" " \
     --selectable-labels --quoted-output \
@@ -15,7 +14,7 @@ function word_view() {
     --scroll --skip-taskbar --text-align=center \
     --image-on-top --center --on-top \
     --width=630 --height=390 --borders=20 \
-    --field="":lbl "${field_tag}" "${field_exmp}" "${field_defn}" "${field_note}" \
+    --field="":lbl "${field_exmp}" "${field_defn}" "${field_note}" \
     --button="gtk-edit":4 \
     --button="!$DS/images/listen.png":"$cmd_listen" \
     --button=gtk-go-down:2 \
@@ -26,7 +25,7 @@ function word_view() {
 function sentence_view() {
     if [ "$(grep -o gramr=\"[^\"]* < "$DC_s/1.cfg" | grep -o '[^"]*$')"  = TRUE ]; then
     trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
-    local word="<span font_desc='Sans Free 15'>${trgt_l}</span>\n\n<span font_desc='Sans Free 11'><i>$srce</i></span>\n<span font_desc='Sans Free 6'>$tag</span>\n"
+    local word="$tag<span font_desc='Sans Free 15'>${trgt_l}</span>\n\n<span font_desc='Sans Free 11'><i>$srce</i></span>\n\n"
     
     echo "${lwrd}" | yad --list --title=" " \
     --text="${word}" \

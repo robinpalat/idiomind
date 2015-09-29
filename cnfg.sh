@@ -53,70 +53,71 @@ set_lang() {
     "$DS/mngr.sh" mkmn &
 }
 
-n=0
-if [ "$cfg" = 1 ]; then
-    while [ ${n} -lt 11 ]; do
-        get="${sets[$n]}"
-        val=$(grep -o "$get"=\"[^\"]* "$DC_s/1.cfg" | grep -o '[^"]*$')
-        declare "${sets[$n]}"="$val"
+config_dlg() {
+    n=0
+    if [ "$cfg" = 1 ]; then
+        while [ ${n} -lt 11 ]; do
+            get="${sets[$n]}"
+            val=$(grep -o "$get"=\"[^\"]* "$DC_s/1.cfg" | grep -o '[^"]*$')
+            declare "${sets[$n]}"="$val"
+            ((n=n+1))
+        done
+    else
+        n=0; > "$DC_s/1.cfg"
+        while [ ${n} -lt 11 ]; do
+        echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
         ((n=n+1))
-    done
-else
-    n=0; > "$DC_s/1.cfg"
-    while [ ${n} -lt 11 ]; do
-    echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
-    ((n=n+1))
-    done
-fi
+        done
+    fi
 
-if [ -z "$intrf" ]; then intrf=Default; fi
-lst="$intrf"$(sed "s/\!$intrf//g" <<<"!Default!en!es!fr!it!pt")""
-if [ "$ntosd" != TRUE ]; then audio=TRUE; fi
-if [ "$trans" != TRUE ]; then ttrgt=FALSE; fi
+    if [ -z "$intrf" ]; then intrf=Default; fi
+    lst="$intrf"$(sed "s/\!$intrf//g" <<<"!Default!en!es!fr!it!pt")""
+    if [ "$ntosd" != TRUE ]; then audio=TRUE; fi
+    if [ "$trans" != TRUE ]; then ttrgt=FALSE; fi
 
-c=$((RANDOM%100000)); KEY=$c
-yad --plug=$KEY --form --tabnum=1 \
---align=right --scroll \
---separator='|' --always-print-result --print-all \
---field="$(gettext "General Options")\t":lbl " " \
---field=":LBL" " " \
---field="$(gettext "Use color to highlight grammar")":CHK "$gramr" \
---field="$(gettext "List words after adding a sentence")":CHK "$wlist" \
---field="$(gettext "Use automatic translation, if available")":CHK "$trans" \
---field="$(gettext "Detect language of source text (slower)")":CHK "$ttrgt" \
---field="$(gettext "Clipboard watcher")":CHK "$clipw" \
---field="$(gettext "Perform tasks at startup")":CHK "$stsks" \
---field=" :LBL" " " \
---field="$(gettext "Languages")\t":LBL " " \
---field=":LBL" " " \
---field="$(gettext "I'm learning")":CB "$lgtl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
---field="$(gettext "My language is")":CB "$lgsl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
---field=" :LBL" " " \
---field=":LBL" " " \
---field="<small>$(gettext "Use this speech synthesizer instead eSpeak")</small>" "$synth" \
---field="<small>$(gettext "Program to convert text to WAV file")</small>" "$txaud" \
---field="$(gettext "Display in")":CB "$lst" \
---field=" :LBL" " " \
---field="$(gettext "Help")":BTN "$DS/ifs/tls.sh help" \
---field="$(gettext "Send Feedback")":BTN "$DS/ifs/tls.sh 'fback'" \
---field="$(gettext "Check for Updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
---field="$(gettext "Backups")":BTN "$DS/ifs/tls.sh 'dlg_backups'" \
---field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" > "$cnf1" &
-cat "$DS_a/menu_list" | yad --plug=$KEY --tabnum=2 --list \
---text=" $(gettext "Double-click to set") " \
---print-all --dclick-action="$DS/ifs/dclik.sh" \
---expand-column=2 --no-headers \
---column=icon:IMG --column=Action &
-yad --notebook --key=$KEY --title="$(gettext "Settings")" \
---name=Idiomind --class=Idiomind \
---window-icon="$DS/images/icon.png" \
---tab-borders=5 --sticky --center \
---tab="$(gettext "Preferences")" \
---tab="$(gettext "Extensions")" \
---width=460 --height=320 --borders=2 \
---button="$(gettext "Cancel")":1 \
---button="$(gettext "OK")":0
-ret=$?
+    c=$((RANDOM%100000)); KEY=$c
+    yad --plug=$KEY --form --tabnum=1 \
+    --align=right --scroll \
+    --separator='|' --always-print-result --print-all \
+    --field="$(gettext "General Options")\t":lbl " " \
+    --field=":LBL" " " \
+    --field="$(gettext "Use color to highlight grammar")":CHK "$gramr" \
+    --field="$(gettext "List words after adding a sentence")":CHK "$wlist" \
+    --field="$(gettext "Use automatic translation, if available")":CHK "$trans" \
+    --field="$(gettext "Detect language of source text (slower)")":CHK "$ttrgt" \
+    --field="$(gettext "Clipboard watcher")":CHK "$clipw" \
+    --field="$(gettext "Perform tasks at startup")":CHK "$stsks" \
+    --field=" :LBL" " " \
+    --field="$(gettext "Languages")\t":LBL " " \
+    --field=":LBL" " " \
+    --field="$(gettext "I'm learning")":CB "$lgtl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
+    --field="$(gettext "My language is")":CB "$lgsl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
+    --field=" :LBL" " " \
+    --field=":LBL" " " \
+    --field="<small>$(gettext "Use this speech synthesizer instead eSpeak")</small>" "$synth" \
+    --field="<small>$(gettext "Program to convert text to WAV file")</small>" "$txaud" \
+    --field="$(gettext "Display in")":CB "$lst" \
+    --field=" :LBL" " " \
+    --field="$(gettext "Help")":BTN "$DS/ifs/tls.sh help" \
+    --field="$(gettext "Send Feedback")":BTN "$DS/ifs/tls.sh 'fback'" \
+    --field="$(gettext "Check for Updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
+    --field="$(gettext "Backups")":BTN "$DS/ifs/tls.sh 'dlg_backups'" \
+    --field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" > "$cnf1" &
+    cat "$DS_a/menu_list" | yad --plug=$KEY --tabnum=2 --list \
+    --text=" $(gettext "Double-click to set") " \
+    --print-all --dclick-action="$DS/ifs/dclik.sh" \
+    --expand-column=2 --no-headers \
+    --column=icon:IMG --column=Action &
+    yad --notebook --key=$KEY --title="$(gettext "Settings")" \
+    --name=Idiomind --class=Idiomind \
+    --window-icon="$DS/images/icon.png" \
+    --tab-borders=5 --sticky --center \
+    --tab="$(gettext "Preferences")" \
+    --tab="$(gettext "Extensions")" \
+    --width=460 --height=320 --borders=2 \
+    --button="$(gettext "Cancel")":1 \
+    --button="$(gettext "OK")":0
+    ret=$?
 
     if [ $ret -eq 0 ]; then
         n=1; v=0
@@ -184,5 +185,10 @@ ret=$?
         done
     fi
     rm -f "$cnf1" "$DT/.lc"
+     >/dev/null 2>&1
     exit
     
+}  >/dev/null 2>&1
+
+
+config_dlg

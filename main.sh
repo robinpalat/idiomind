@@ -59,6 +59,9 @@ function new_session() {
     s="$(xrandr | grep '*' |awk '{ print $1 }' |sed 's/x/\n/')"
     sed -n 1p <<<"$s" >> "$DC_s/10.cfg"
     sed -n 2p <<<"$s" >> "$DC_s/10.cfg"
+    
+    cdb="$DM_tl/Dictionary/${lgtl}.db"
+    echo -n "create table if not exists Words (Word TEXT);" |sqlite3 ${cdb}
 
     # log file
     if [ -f "$DC_s/log" ]; then
@@ -177,20 +180,11 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
 fi
     
 function topic() {
-    export mode=`sed -n 1p "$DC_s/5.cfg"`
+    export mode=`sed -n 1p "${DC_tlt}/8.cfg"`
     source "$DS/ifs/mods/cmns.sh"
+    if ! [[ ${mode} =~ $numer ]]; then exit 1; fi
 
-    if [[ ${mode} = 2 ]]; then
-        tpa="$(sed -n 1p "$DC_a/4.cfg")"
-        source "$DS/ifs/mods/topic/${tpa}.sh"
-        ${tpa} & exit 1
-    
-    elif [[ ${mode} = 1 ]]; then
-        tpa="$(gettext "Dictionary")"
-        source "$DS/ifs/mods/topic/Dictionary.sh"
-        ${tpa} & exit 1
-
-    elif [[ ${mode} = 0 ]]; then
+    if ((mode>=1 && mode<=10)); then
         [ -z "${tpc}" ] && exit 1
         source "$DS/ifs/mods/topic/items_list.sh"
         for n in {0..4}; do
@@ -314,10 +308,36 @@ function topic() {
             rm -f "$DT"/*.x & exit
         fi
         rm -f "$DT"/*.x
+    
+    elif [[ ${mode} = 12 ]]; then
+        tpa="$(gettext "Dictionary")"
+        source "$DS/ifs/mods/topic/tags.sh"
+        ${tpa} & exit 1
+    
+    elif [[ ${mode} = 13 ]]; then
+        tpa="$(gettext "Dictionary")"
+        source "$DS/ifs/mods/topic/tags.sh"
+        ${tpa} & exit 1
+
+    elif [[ ${mode} = 14 ]]; then
+        tpa="$(gettext "Dictionary")"
+        source "$DS/ifs/mods/topic/tags.sh"
+        tags_list & exit 1
+        
+    elif [[ ${mode} = 15 ]]; then
+        tpa="$(gettext "Dictionary")"
+        source "$DS/ifs/mods/topic/feeds.sh"
+        ${tpa} & exit 1
+        
+    elif [[ ${mode} = 0 ]]; then
+        tpa="$(gettext "Dictionary")"
+        source "$DS/ifs/mods/topic/Dictionary.sh"
+        ${tpa} & exit 1
+
     else
-        if [[ `wc -l < "$DM_tl/.1.cfg"` -ge 1 ]]; then
-            exit 1
-        fi
+        tpa="$(sed -n 1p "$DC_s/4.cfg")"
+        source "$DS/ifs/mods/topic/${tpa}.sh"
+        ${tpa} & exit 1
     fi
 }
 

@@ -14,8 +14,10 @@ new_topic() {
     msg "$(gettext "Maximum number of topics reached.")" info "$(gettext "Information")" & exit 1; fi
     
     source "$DS/ifs/mods/add/add.sh"
-    jlb="$(clean_3 "$(dlg_form_0 "${2}")")"
-    
+    add="$(dlg_form_0)"
+    jlb="$(clean_3 "$(cut -d "|" -f1 <<<"${add}")")"
+    type="$(cut -d "|" -f2 <<<"${add}")"
+
     if [[ ${#jlb} -gt 55 ]]; then
         msg "$(gettext "Sorry, name too long.")\n" info "$(gettext "Information")"
         "$DS/add.sh" new_topic "${jlb}" & exit 1
@@ -34,10 +36,24 @@ new_topic() {
     else
         jlb="${jlb}"
     fi
-    if [ -n "${jlb}" ]; then
+    
+    if [ -z "${jlb}" ]; then exit 1; fi
+    
+    if [ ${type} = 'Default' ]; then
         mkdir "$DM_tl/${jlb}"
         list_inadd > "$DM_tl/.2.cfg"
-        "$DS/default/tpc.sh" "${jlb}" 1
+        "$DS/default/tpc.sh" "${jlb}" 1 1
+        "$DS/mngr.sh" mkmn
+        
+    elif  [ ${type} = 'Tag' ]; then
+        mkdir "$DM_tl/${jlb}"
+        list_inadd > "$DM_tl/.2.cfg"
+        "$DS/default/tpc.sh" "${jlb}" 14 1
+        "$DS/mngr.sh" mkmn
+        
+    elif  [ ${type} = 'Feed' ]; then
+        mkdir "$DM_tl/${jlb}"
+        "$DS/default/tpc.sh" "${jlb}" 15 1
         "$DS/mngr.sh" mkmn
     fi
     exit

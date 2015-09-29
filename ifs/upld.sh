@@ -96,7 +96,7 @@ function dwld() {
 }
 
 function upld() {
-if [ $((inx3+inx4)) -lt 15 ]; then exit 1; fi
+#if [ $((inx3+inx4)) -lt 15 ]; then exit 1; fi
 
 if [ "${tpc}" != "${2}" ]; then
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit 1
@@ -155,7 +155,7 @@ if [ $((inx3+inx4)) -ge 15 ]; then
 btn="--button="$(gettext "Upload")":0"; else
 btn="--center"; fi
 cd "$HOME"
-
+btn="--button="$(gettext "Upload")":0"
 if [ -e "${DC_tlt}/download" ]; then
     if [ ! -s "${DC_tlt}/download" ]; then
         c_audio="$(grep -o 'naudi="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
@@ -338,19 +338,35 @@ echo -n "${c}" > "${DC_tlt}/id.cfg"
 cp -f "${DC_tlt}/0.cfg" "$DT_u/$usrid.${tpc}.$lgt"
 tr '\n' '&' < "${DC_tlt}/id.cfg" >> "$DT_u/$usrid.${tpc}.$lgt"
 echo -n "&idiomind-`idiomind -v`" >> "$DT_u/$usrid.${tpc}.$lgt"
-echo -en "\nidiomind-`idiomind -v`" >> "${DC_tlt}/id.cfg" # TODO
+echo -en "\nidiomind-`idiomind -v`" >> "${DC_tlt}/id.cfg"
 
 # uploading files to http://server_temp/lang/xxx.name.idmnd
 url="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
 | grep -o 'UPLOADS="[^"]*' | grep -o '[^"]*$')"
 direc="$DT_u"
 log="$DT_u/log"
-export direc url log
+user='robin'
+pwd='333333'
+title="$tpc"
+body="$(tac "${DC_tlt}/1.cfg")"
+export direc url log user pwd title body
 
 python << END
-import os, sys, requests, time
+import os, sys, requests, time, xmlrpclib
 reload(sys)
 sys.setdefaultencoding("utf-8")
+site_url  = 'http://test.com/'
+post_type = 'blog'
+publish  = True
+user = os.environ['user']
+pwd = os.environ['pwd']
+title = os.environ['title']
+body = os.environ['body']
+try:
+	server = xmlrpclib.Server(site_url + 'xmlrpc.php')
+	nid = server.metaWeblog.newPost(post_type, user, pwd, {'title': title, 'description': body}, publish)
+except:
+    pass
 url = os.environ['url']
 direc = os.environ['direc']
 log = os.environ['log']
@@ -366,11 +382,11 @@ END
 u=$?
 if [ $u = 0 ]; then
     info="\"$tpc\"\n<b>$(gettext "Uploaded correctly")</b>\n"
-    image=dialog-ok
+    image=gtk-ok
 else
     sleep 10
     info="$(gettext "A problem has occurred with the file upload, try again later.")\n"
-    image=dialog-warning
+    image=gtk-warning
 fi
 msg "$info" $image
 

@@ -20,8 +20,8 @@ function dlg_form_1() {
     --field="<small>$(gettext "Note")</small>":TXT "${note}" \
     --field="<small>$(gettext "Search")  <a href='$link1'>$(gettext "Translation")</a>  </small>":LBL " " \
     --field="$(gettext "Mark")":CHK "$mark" \
+    --field="<small>$(gettext "Tag")</small>":CB "$tags_list" \
     --field="$(gettext "Definition")!info":FBTN "${cmd_def}" \
-    --field=" ":LBL " " \
     --button="$(gettext "Image")":"${cmd_image}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \
     --button="!$DS/images/listen.png!$(gettext "Listen")":"$cmd_play" \
@@ -39,14 +39,15 @@ function dlg_form_2() {
     --always-print-result --print-all --separator="|" --selectable-labels \
     --window-icon="$DS/images/icon.png" \
     --buttons-layout=end --align=right --center --on-top \
-    --width=650 --height=450 --borders=10 \
-    --field="$(gettext "Mark")":CHK "$mark" \
-    --field=" $lbl_2":${t} "$type" \
+    --width=600 --height=420 --borders=10 \
     --field="<small>$lgtl</small>":TXT "${trgt}" \
     --field="<small><a href='$link1'>$(gettext "Translation")</a></small>\t":LBL " " \
     --field="<small>$lgsl</small>":TXT "${srce}" \
     --field="<small>$(gettext "Topic")</small>":CB "${tpc}!${tpcs}" \
     --field="<small>$(gettext "Audio")</small>":FL "${audf}" \
+    --field="<small>$(gettext "Tag")</small>":CB "$tags_list" \
+    --field="$(gettext "Mark")":CHK "$mark" \
+    --field=" $lbl_2":${t} "$type" \
     --button="$(gettext "Words")":"${cmd_words}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \
     --button="!$DS/images/listen.png!$(gettext "Listen")":"$cmd_play" \

@@ -8,29 +8,33 @@ include "$DS/ifs/mods/mngr"
 mkmn() {
     f_lock "$DT/mn_lk"; cd "$DM_tl"
     [ -d "$DM_tl/images" ] && rm -r "$DM_tl/images"
+    dirimg='/usr/share/idiomind/images'
     if ls -tNd */ 1> /dev/null 2>&1; then
         for i in "$(ls -tNd */ | cut -f1 -d'/')"; do 
-            echo "${i%%/}"; done > "$DM_tl/.1.cfg"
+            echo "${i%%/}"
+        done > "$DM_tl/.1.cfg"
     fi
     sed -i '/^$/d' "$DM_tl/.1.cfg"; > "$DM_tl/.0.cfg"
     
     head -100 < "$DM_tl/.1.cfg" | while read -r tpc; do
         unset stts
         [ ! -d "$DM_tl/${tpc}/.conf" ] && mkdir -p "$DM_tl/${tpc}/.conf"
-        if [ ! -f "$DM_tl/${tpc}/.conf/8.cfg" ] \
-        || [ ! "$DM_tl/${tpc}/.conf/0.cfg" ]; then
-            stts=13; echo 13 > "$DM_tl/${tpc}/.conf/8.cfg"
-        else stts=$(sed -n 1p "$DM_tl/${tpc}/.conf/8.cfg"); fi
-        echo -e "/usr/share/idiomind/images/img.${stts}.png\n${tpc}" >> "$DM_tl/.0.cfg"
+        if [ ! -f "$DM_tl/${tpc}/.conf/8.cfg" ]; then
+            stts=13; echo ${stts} > "$DM_tl/${tpc}/.conf/8.cfg"
+        else
+            stts=$(sed -n 1p "$DM_tl/${tpc}/.conf/8.cfg")
+        fi
+        echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$DM_tl/.0.cfg"
     done
     tail -n+101 < "$DM_tl/.1.cfg" | while read -r tpc; do
         unset stts
         [ ! -d "$DM_tl/${tpc}/.conf" ] && mkdir -p "$DM_tl/${tpc}/.conf"
-        if [ ! -f "$DM_tl/${tpc}/.conf/8.cfg" ] \
-        || [ ! "$DM_tl/${tpc}/.conf/0.cfg" ]; then
-            stts=13; echo 13 > "$DM_tl/${tpc}/.conf/8.cfg"
-        else stts=12; fi
-        echo -e "/usr/share/idiomind/images/img.${stts}.png\n${tpc}" >> "$DM_tl/.0.cfg"
+        if [ ! -f "$DM_tl/${tpc}/.conf/8.cfg" ]; then
+            stts=13; echo ${stts} > "$DM_tl/${tpc}/.conf/8.cfg"
+        else 
+            stts=12
+        fi
+        echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$DM_tl/.0.cfg"
     done
     rm -f "$DT/mn_lk"; exit
 }
@@ -63,6 +67,7 @@ delete_item_ok() {
         if [ -f "${DC_tlt}/lst" ]; then rm "${DC_tlt}/lst"; fi
         rm "${DC_tlt}"/*.tmp
     fi
+    "$DS/ifs/tls.sh" colorize &
     rm -f "$DT/ps_lk" & exit 1
 }
 
@@ -116,7 +121,7 @@ edit_item() {
         index_2="${DC_tlt}/1.cfg"
         [ ${item_pos} -lt 1 ] && item_pos=${inx2}
     fi
-    tpcs="$(egrep -v "${tpc}" "${DM_tl}/.2.cfg" |tr "\\n" '!' |sed 's/!\+$//g')"
+
     item_id="$(sed -n ${item_pos}p "${index_1}")"
     if [ ${text_missing} = 0 ]; then
         edit_pos=`grep -Fon -m 1 "trgt={${item_id}}" "${DC_tlt}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
@@ -134,10 +139,14 @@ edit_item() {
     grmr=`grep -oP '(?<=grmr={).*(?=})' <<<"${item}"`
     wrds=`grep -oP '(?<=wrds={).*(?=})' <<<"${item}"`
     mark=`grep -oP '(?<=mark={).*(?=})' <<<"${item}"`
+    tag=`grep -oP '(?<=tag={).*(?=})' <<<"${item}"`
     export id=`grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"`
     [ -z "${id}" ] && id=""
     query="$(sed "s/'/ /g" <<<"${trgt}")"
     to_modify=0; colorize_run=0; transl_mark=0
+    tpcs="$(egrep -v "${tpc}" "${DM_tl}/.2.cfg" |tr "\\n" '!' |sed 's/!\+$//g')"
+    [ -n "${tag}" ] && tags="$(egrep -v "${tag}" < "${DM_tl}/.tags")" || tags="$(< "${DM_tl}/.tags")"
+    [ -n "${tags}" ] && tags_list="${tag}!"$(tr "\\n" '!' <<<"${tags}" |sed 's/!\+$//g')"" || tags_list=""
 
     cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"""
     cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"""
@@ -174,6 +183,7 @@ edit_item() {
             if [ ${type} = 1 ]; then
                 edit_dlg="${edit_dlg1}"
                 tpc_mod="$(cut -d "|" -f3 <<<"${edit_dlg}")"
+                tag_mod="$(cut -d "|" -f10 <<<"${edit_dlg}")"
                 trgt_mod="$(clean_1 "$(cut -d "|" -f1 <<<"${edit_dlg}")")"
                 srce_mod="$(clean_0 "$(cut -d "|" -f2 <<<"${edit_dlg}")")"
                 audf_mod="$(cut -d "|" -f4 <<<"${edit_dlg}")"
@@ -184,12 +194,13 @@ edit_item() {
                 type_mod=1
             elif [ ${type} = 2 ]; then
                 edit_dlg="${edit_dlg2}"
-                tpc_mod="$(cut -d "|" -f6 <<<"${edit_dlg}")"
-                mark_mod="$(cut -d "|" -f1 <<<"${edit_dlg}")"
-                type_mod="$(cut -d "|" -f2 <<<"${edit_dlg}")"
-                trgt_mod="$(clean_2 "$(cut -d "|" -f3 <<<"${edit_dlg}")")"
-                srce_mod="$(clean_2 "$(cut -d "|" -f5 <<<"${edit_dlg}")")"
-                audf_mod="$(cut -d "|" -f7 <<<"${edit_dlg}")"
+                tpc_mod="$(cut -d "|" -f4 <<<"${edit_dlg}")"
+                tag_mod="$(cut -d "|" -f6 <<<"${edit_dlg}")"
+                mark_mod="$(cut -d "|" -f7 <<<"${edit_dlg}")"
+                type_mod="$(cut -d "|" -f8 <<<"${edit_dlg}")"
+                trgt_mod="$(clean_2 "$(cut -d "|" -f1 <<<"${edit_dlg}")")"
+                srce_mod="$(clean_2 "$(cut -d "|" -f3 <<<"${edit_dlg}")")"
+                audf_mod="$(cut -d "|" -f5 <<<"${edit_dlg}")"
                 grmr_mod="${grmr}"
                 wrds_mod="${wrds}"
                 [ "${type_mod}" = TRUE ] && type_mod=1
@@ -223,6 +234,7 @@ edit_item() {
             [ "${mark}" != "${mark_mod}" ] && to_modify=1
             [ "${audf}" != "${audf_mod}" ] && to_modify=1
             [ "${tpc}" != "${tpc_mod}" ] && to_modify=1
+            [ "${tag}" != "${tag_mod}" ] && to_modify=1 && tagset=1
 
             if [ ${to_modify} = 1 ]; then
             (
@@ -274,6 +286,7 @@ edit_item() {
                     ${pos}s|note={$note}|note={$note_mod}|;
                     ${pos}s|wrds={$wrds}|wrds={$wrds_mod}|;
                     ${pos}s|grmr={$grmr}|grmr={$grmr_mod}|;
+                    ${pos}s|tag={$tag}|tag={$tag_mod}|;
                     ${pos}s|mark={$mark}|mark={$mark_mod}|;
                     ${pos}s|id=\[$id\]|id=\[$id_mod\]|g" "${cfg0}"
                     
@@ -297,11 +310,34 @@ edit_item() {
             [ -d "$DT/$c" ] && "$DS/add.sh" list_words_edit "${wrds_mod}" 2 ${c} "${trgt_mod}" &
             [ ${type} != ${type_mod} -a ${type_mod} = 1 ] && ( img_word "${trgt}" "${srce}" ) &
             [ ${colorize_run} = 1 ] && "$DS/ifs/tls.sh" colorize &
+            [ ${tagset} = 1 ] && tagget_item &
             [ ${to_modify} = 1 ] && sleep 0.2
         fi
         "$DS/vwr.sh" ${list} "${trgt}" ${item_pos} &
     exit
 } >/dev/null 2>&1
+
+tagget_item() {
+	if [ -n "${tag_mod}" ]; then
+		img0='/usr/share/idiomind/images/0.png'
+		dir="$DM_tl/${tag_mod}"
+		if ! grep -Fo "trgt={${trgt_mod}}" "$dir/.conf/0.cfg"; then
+			item="0:[type={$type_mod},trgt={$trgt_mod},srce={$srce_mod},exmp={$exmp_mod},defn={$defn_mod},note={$note_mod},wrds={$wrds_mod},grmr={$grmr_mod},].[topic={$tpc_mod},mark={$mark_mod},].id=[$id_mod]"
+			echo "${item}" >> "$dir/.conf/0.cfg"
+			echo "${trgt_mod}" >> "$dir/.conf/1.cfg"
+			echo -e "FALSE\n${trgt_mod}\n$img0" >> "$dir/.conf/5.cfg"
+			if [ ${type_mod} = 1 ]; then
+				echo "${trgt_mod}" >> "$dir/.conf/3.cfg"
+			elif [ ${type_mod} = 2 ]; then
+				echo "${trgt_mod}" >> "$dir/.conf/4.cfg"
+			fi
+		fi
+	fi
+	
+	if [ -n "${tag}" ]; then
+		delete_item_ok "" "${tag}" "${trgt_mod}"
+	fi
+}
 
 edit_list() {
     [ -e "$DT/add_lst" -o -e "$DT/el_lk" ] && exit
@@ -454,8 +490,9 @@ delete_topic() {
             if grep -Fxq "${tpd}" "$DM_tl/.1.cfg"; then
             "$DS/default/tpc.sh" "${tpd}" 2; fi
         fi
-        > "$DC_s/7.cfg"
     fi
+    grep -vxF "${tpc}" "$DM_tl/.tags" > "$DM_tl/.tags.tmp"
+    sed '/^$/d' "$DM_tl/.tags.tmp" > "$DM_tl/.tags"
     rm -f "$DT/rm_lk" "$DM_tl"/.*.tmp & exit 1
 }
 
