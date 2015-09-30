@@ -23,7 +23,8 @@ function Dictionary() {
     cdb="$DM_tls/Dictionary/${lgtl}.db"
     table=`date +%b%y`
     sqlite3 "$cdb" "select * FROM  ${table^^}" \
-    |sed 's/|/\n/g' | yad --list --title="$(gettext "Dictionary")" \
+    |sed 's/|/\n/g' | yad --list --title="${tpc}" \
+    --text="$(gettext "$lgtlLorem ipsum dolor sit amet, consectetur adipisicing elit, sed doeiusmod tempor incididunt ut labore et dolore magna aliq")\n" \
     --print-all \
     --dclick-action="$DS/vwr.sh '3'" \
     --search-column=1 --hide-column=3 --regex-search \

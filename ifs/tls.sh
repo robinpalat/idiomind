@@ -607,9 +607,9 @@ edit_tag() {
     --name=Idiomind --class=Idiomind \
     --separator='|' \
     --window-icon="$DS/images/icon.png" --center \
-    --width=300 --height=180 --borders=5 \
+    --width=300 --height=220 --borders=5 \
     --field="$(gettext "Description")":TXT "$desc" \
-    --field="$(gettext "Export as")":FBTN "$cmd_exp" \
+    --field="$(gettext "Export")":FBTN "$cmd_exp" \
     --field="$(gettext "Delete")":FBTN "$cmd_del" \
     --button="$(gettext "Close")")"
     ret=$?

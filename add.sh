@@ -566,6 +566,125 @@ function process() {
     cleanups "$DT/.n_s_pr" "$DT_r" & exit
 }
 
+fetch_feeds() {
+    internet
+    notify-send -i idiomind "Updating..."
+    news="${DC_tlt}/news.html"
+    feeds="${DC_tlt}/feeds"
+    DT_r=$(mktemp -d "$DT/XXXXXX")
+    tmplchannel="<?xml version='1.0' encoding='UTF-8'?>
+    <xsl:stylesheet version='1.0'
+      xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
+      xmlns:itunes='http://www.itunes.com/dtds/feed-1.0.dtd'
+      xmlns:media='http://search.yahoo.com/mrss/'
+      xmlns:atom='http://www.w3.org/2005/Atom'>
+      <xsl:output method='text'/>
+      <xsl:template match='/'>
+        <xsl:for-each select='/rss/channel'>
+          <xsl:value-of select='title'/><xsl:text>-!-</xsl:text>
+          <xsl:value-of select='link'/><xsl:text>-!-</xsl:text>
+        </xsl:for-each>
+      </xsl:template>
+    </xsl:stylesheet>"
+    tmplitem="<?xml version='1.0' encoding='UTF-8'?>
+    <xsl:stylesheet version='1.0'
+      xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
+      xmlns:itunes='http://www.itunes.com/dtds/feed-1.0.dtd'
+      xmlns:media='http://search.yahoo.com/mrss/'
+      xmlns:atom='http://www.w3.org/2005/Atom'>
+      <xsl:output method='text'/>
+      <xsl:template match='/'>
+        <xsl:for-each select='/rss/channel/item'>
+          <xsl:value-of select='enclosure/@url'/><xsl:text>-!-</xsl:text>
+          <xsl:value-of select='media:cache[@type=\"image/jpeg\"]/@url'/><xsl:text>-!-</xsl:text>
+          <xsl:value-of select='title'/><xsl:text>-!-</xsl:text>
+          <xsl:value-of select='media:cache[@type=\"image/jpeg\"]/@duration'/><xsl:text>-!-</xsl:text>
+          <xsl:value-of select='itunes:summary'/><xsl:text>-!-</xsl:text>
+          <xsl:value-of select='description'/><xsl:text>EOL</xsl:text>
+        </xsl:for-each>
+      </xsl:template>
+    </xsl:stylesheet>"
+    source "$DS/ifs/mods/add/add.sh"
+
+    mediatype () {
+        if echo "$1" | grep -o ".jpg"; then ex="jpg"
+        elif echo "$1" | grep -o ".jpeg"; then ex="jpeg"
+        elif echo "$1" | grep -o ".png"; then ex="png"
+        fi
+    }
+
+    get_images_main () {
+        cd "$DT_r"
+        echo "$sumlink" |grep -o 'img src="[^"]*' |grep -o '[^"]*$' |sed -n 1p
+    }
+
+    nmfile() { echo -n "${1}" |md5sum |rev |cut -c 4- |rev; }
+
+     echo -e "<!DOCTYPE html><html><head>
+    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />
+    <title></title><head>
+    <link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/feeds.css\">
+    </head><body>" > "${news}"
+    
+    for FEED in $(cat "${feeds}"); do
+        channel_info="$(xsltproc - "$FEED" <<<"${tmplchannel}" 2> /dev/null)"
+        channel_info="$(echo "$channel_info" | tr '\n' ' ' | tr -s '[:space:]' | sed 's/EOL/\n/g' | head -n 1)"
+        field="$(echo "$channel_info" | sed -r 's|-\!-|\n|g')"
+        channel="$(echo "$field" | sed -n 1p | iconv -c -f utf8 -t ascii | sed 's/\://g' | sed 's/\&/&amp;/g')"
+        link=$(echo "$field" | sed -n 2p)
+        feed_items="$(xsltproc - "$FEED" <<<"${tmplitem}" 2> /dev/null)"
+        feed_items="$(echo "$feed_items" | tr '\n' ' ' | tr -s '[:space:]' | sed 's/EOL/\n/g' | head -n2)"
+        feed_items="$(echo "$feed_items" | sed '/^$/d')"
+
+        while read -r item; do
+            fields="$(echo "$item" | sed -r 's|-\!-|\n|g')"
+            enclosure=$(echo "$fields" | sed -n 4p)
+            title=$(echo "$fields" | sed -n 3p \
+            | iconv -c -f utf8 -t ascii | sed 's/\://g' \
+            | sed 's/\&/&amp;/g' | sed 's/^\s*./\U&\E/g' \
+            | sed 's/<[^>]*>//g' | sed 's/^ *//; s/ *$//; /^$/d')
+            title="$(sed 's/./\L&/g' <<<"${title}")"
+            trad="$(translate "${title,,}" auto "$lgs")"
+            sumlink=$(echo "$fields" | sed -n 5p)
+            summary=$(echo "$fields" | sed -n 6p \
+            | iconv -c -f utf8 -t ascii \
+            | sed 's/\&quot;/\"/g' | sed "s/\&#039;/\'/g" \
+            | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
+            | sed 's/<!\[CDATA\[\|\]\]>//g' \
+            | sed 's/ *<[^>]\+> */ /g' \
+            | sed 's/[<>£§]//g' | sed 's/&amp;/\&/g' \
+            | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. //g' \
+            | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
+            | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
+            | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g')
+            summary="$(sed 's/./\L&/g' <<<"${summary}")"
+            trad2="$(translate "${summary,,}" auto "$lgs")"
+            fname="$(nmfile "${title}")"
+            if [ -n "${title}" ]; then
+                if ! grep -Fxo "${title}" < "${DC_tlt}/1.cfg"; then
+                    #if [ -n "$enclosure" ]; then
+                        #enclosure_url=$(curl -s -I -L -w %"{url_effective}" \
+                        #--url "$enclosure" | tail -n 1)
+                    #else
+                        #enclosure_url=$(curl -s -I -L -w %"{url_effective}" \
+                        #--url "$(get_images_main)" | tail -n 1)
+                    #fi
+                    #mediatype "$enclosure_url"
+                    #cd "$DT_r"; rm -f *.jpg *.png *.jpeg
+                    #wget -q -c -T 30 -O "media.$ex" "$enclosure_url"
+                    echo -e "<br><titl>${title^}</titl><br><trad>${trad^}</trad><br>" >> "${news}"
+                    echo -e "<summ>${summary^}</summ><br><trad2>${trad2^}</trad2><br><hr>" >> "${news}"
+                    echo -e "${title}" >> "${DC_tlt}/1.cfg"
+                    notify-send -i idiomind "${title^}" "${trad^}"
+                fi
+            fi
+        done <<<"${feed_items}"
+    done
+    
+    echo "</body></html>" >> "${news}"
+    cleanups "$DT_r"
+}
+
 
 new_items() {
     if [ ! -d "$DT" ]; then new_session; fi
@@ -690,4 +809,6 @@ case "$1" in
     list_words_edit "$@" ;;
     list_words_dclik)
     list_words_dclik "$@" ;;
+    fetch_feeds)
+    fetch_feeds ;;
 esac

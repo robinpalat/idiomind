@@ -46,116 +46,48 @@ function sentence_view() {
 
 export -f word_view sentence_view
 
-function notebook_1() {
-    cmd_mark="'$DS/mngr.sh' 'mark_as_learned' "\"${tpc}\"" 1"
-    cmd_attchs="'$DS/ifs/tls.sh' 'attachs'"
+function feeds_view() {
+    c=$((RANDOM%100000)); KEY=$c
+    cmd_update="$DS/add.sh 'fetch_feeds'"
     cmd_del="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
-    cmd_adv="'$DS/ifs/tls.sh' adv "\"${tpc}\"""
-    cmd_share="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
-    cmd_eind="'$DS/mngr.sh' edit_list "\"${tpc}\"""
     cmd_play="$DS/play.sh play_list"
     chk1=$((`wc -l < "${DC_tlt}/1.cfg"`*3))
     chk5=`wc -l < "${DC_tlt}/5.cfg"`
-    
+
     list() { if [[ ${chk1} = ${chk5} ]]; then
     tac "${DC_tlt}/5.cfg"; else tac "$ls1" | \
     awk '{print "/usr/share/idiomind/images/0.png\n"$0"\nFALSE"}'; fi; }
     
-    list | yad --list --tabnum=1 \
-    --plug=$KEY --print-all --separator='|' \
-    --dclick-action="$DS/vwr.sh '1'" \
-    --expand-column=2 --no-headers --ellipsize=END --tooltip-column=2 \
-    --search-column=2 --regex-search \
-    --column=Name:IMG --column=Name:TEXT --column=Learned:CHK > "$cnf1" &
+    yad --html --tabnum=1 \
+    --plug=$KEY  \
+    --uri="${DC_tlt}/news.html" --browser &
     tac "$ls2" | yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh '2'" \
     --expand-column=0 --no-headers --ellipsize=END --tooltip-column=1 \
     --column=Name:TEXT &
-    yad --text-info --tabnum=3 \
-    --plug=$KEY \
-    --filename="$nt" --editable --wrap --fore='gray30' \
-    --show-uri --fontname='vendana 11' --margins=14 > "$cnf3" &
-    yad --form --tabnum=4 \
+    yad --form --tabnum=3 \
     --plug=$KEY \
     --text="$label_info1\n" \
     --scroll --borders=10 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
-    --field=" $(gettext "Mark as learnt") ":FBTN "$cmd_mark" \
-    --field="$(gettext "Auto-checked of checkbox on list Learning")\t\t\t":CHK "$auto_mrk" \
-    --field="$label_info2\n":LBL " " \
-    --field="$(gettext "Files")":FBTN "$cmd_attchs" \
-    --field="$(gettext "Share")":FBTN "$cmd_share" \
+    --field="$(gettext "Update feeds at startup")\t\t\t":CHK "$auto_mrk" \
     --field="$(gettext "Delete")":FBTN "$cmd_del" \
-    --field="$(gettext "Edit list")":FBTN "$cmd_eind" > "$cnf4" &
-    yad --notebook --title="Idiomind - $tpc" \
+    --field="$(gettext "Feeds")":FBTN "$cmd_eind"  &
+    yad --notebook --title="Idiomind - ${tpc}" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
-    --center --align=right "$img" --ellipsize=END --image-on-top \
+    --center --align=right --ellipsize=END --image-on-top \
     --window-icon="$DS/images/icon.png" --center \
-    --tab="  $(gettext "Learning") ($inx1) " \
-    --tab="  $(gettext "Learnt") ($inx2) " \
-    --tab=" $(gettext "Note") " \
+    --tab="  $(gettext "News")" \
+    --tab="  $(gettext "Saved Items")" \
     --tab=" $(gettext "Edit") " \
-    --width=$sx --height=$sy --borders=0 --tab-borders=3 \
+    --width=600 --height=560 --borders=0 --tab-borders=3 \
     --button="$(gettext "Play")":"$cmd_play" \
-    --button="$(gettext "Practice")":5 \
+    --button="$(gettext "Update")":5 \
     --button="gtk-close":1
-} >/dev/null 2>&1
-
-function notebook_2() {
-    cmd_mark="'$DS/mngr.sh' 'mark_to_learn' "\"${tpc}\"" 1"
-    cmd_attchs="'$DS/ifs/tls.sh' 'attachs'"
-    cmd_del="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
-    cmd_share="'$DS/ifs/upld.sh' 'upld' "\"${tpc}\"""
-
-    yad --multi-progress --tabnum=1 \
-    --text="$pres" \
-    --plug=$KEY \
-    --align=center --borders=80 --bar="":NORM $RM &
-    tac "$ls2" | yad --list --tabnum=2 \
-    --plug=$KEY --print-all --separator='|' \
-    --dclick-action="$DS/vwr.sh '2'" \
-    --expand-column=0 --no-headers --ellipsize=END --tooltip-column=1 \
-    --search-column=1 --regex-search \
-    --column=Name:TEXT &
-    yad --text-info --tabnum=3 \
-    --plug=$KEY \
-    --filename="$nt" --editable --wrap --fore='gray30' \
-    --show-uri --fontname='vendana 11' --margins=14 > "$cnf3" &
-    yad --form --tabnum=4 \
-    --plug=$KEY \
-    --text="$label_info1\n" \
-    --scroll --borders=10 --columns=2 \
-    --field="<small>$(gettext "Rename")</small>" "${tpc}" \
-    --field=" $(gettext "Review") ":FBTN "$cmd_mark" \
-    --field="\t\t\t\t\t\t\t\t\t\t\t\t\t\t":LBL "_" \
-    --field="$label_info2\n":LBL " " \
-    --field="$(gettext "Files")":FBTN "$cmd_attchs" \
-    --field="$(gettext "Share")":FBTN "$cmd_share" \
-    --field="$(gettext "Delete")":FBTN "$cmd_del" \
-    --field="$(gettext "Edit list")":FBTN "$cmd_eind" > "$cnf4" &
-    yad --notebook --title="Idiomind - $tpc" \
-    --name=Idiomind --class=Idiomind --key=$KEY \
-    --always-print-result \
-    --center --align=right "$img" --ellipsize=END --image-on-top \
-    --window-icon="$DS/images/icon.png" --center \
-    --tab="  $(gettext "Review")  " \
-    --tab="  $(gettext "Learnt") ($inx2) " \
-    --tab=" $(gettext "Note") " \
-    --tab=" $(gettext "Edit") " \
-    --width=$sx --height=$sy --borders=0 --tab-borders=3 \
-    --button="gtk-close":1
-} >/dev/null 2>&1
-
-function dialog_1() {
-    yad --title="$(gettext "Review")" \
-    --class=idiomind --name=Idiomind \
-    --text="\"${tpc}\"\n$(gettext "<b>Would you like to review it?</b>\n The waiting period already has been completed.")" \
-    --image=gtk-refresh \
-    --window-icon="$DS/images/icon.png" \
-    --buttons-layout=edge --center --on-top \
-    --width=420 --height=140 --borders=10 \
-    --button=" $(gettext "Not Yet") ":1 \
-    --button=" $(gettext "Yes") ":2
+    ret=$?
+    if [ $ret -eq 5 ]; then
+	"$DS/add.sh" fetch_feeds &
+    fi
 }

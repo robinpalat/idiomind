@@ -112,7 +112,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     file="${1}"
     lv=( "$(gettext "Beginner")" "$(gettext "Intermediate")" "$(gettext "Advanced")" )
     level="${lv[${level}]}"
-    itxt="<span font_desc='Droid Sans Bold 12' color='#616161'>$tname</span>\n<sup>$nword $(gettext "Words") $nsent $(gettext "Sentences") $nimag $(gettext "Images") \n$(gettext "Level:") $level \n$(gettext "Language:") $langt  $(gettext "Translation:") $langs</sup>"
+    itxt="<span font_desc='Droid Sans Bold 12' color='#616161'>$tname</span>\n<sup>$nword $(gettext "Words") $nsent $(gettext "Sentences") $nimag $(gettext "Images") \n$(gettext "Level:") $level \n$(gettext "Language:") $(gettext "$langt")  $(gettext "Translation:") $(gettext "$langs")</sup>"
     dclk="$DS/play.sh play_word"
     _lst() { while read -r item; do
         grep -oP '(?<=trgt={).*(?=},srce)' <<<"${item}"
@@ -206,7 +206,7 @@ function topic() {
         cnf1=$(mktemp "$DT/cnf1.XXX.x")
         cnf3=$(mktemp "$DT/cnf3.XXX.x")
         cnf4=$(mktemp "$DT/cnf4.XXX.x")
-        sx=638; sy=580
+        sx=600; sy=560
         [ ! -z "$author" ] && author=" $(gettext "Created by") $author"
         label_info1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><small>\n $inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"
 
@@ -329,7 +329,7 @@ function topic() {
         
     elif [[ ${mode} = 15 ]]; then
         source "$DS/ifs/mods/topic/feeds.sh"
-        ${tpa} & exit 1
+        feeds_view & exit 1
         
     elif [[ ${mode} = 0 ]]; then
         source "$DS/ifs/mods/topic/Dictionary.sh"
