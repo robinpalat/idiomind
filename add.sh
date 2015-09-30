@@ -621,7 +621,7 @@ fetch_feeds() {
     nmfile() { echo -n "${1}" |md5sum |rev |cut -c 4- |rev; }
 
      echo -e "<!DOCTYPE html><html><head>
-    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />
+    <meta http-equiv=\"refresh\" content=\"5\" charset=\"utf-8\">
     <title></title><head>
     <link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/feeds.css\">
     </head><body>" > "${news}"

@@ -88,7 +88,6 @@ function index() {
     rm -f "$DT/i_lk"
 }
 
-
 function sentence_p() {
     if [ ${2} = 1 ]; then 
     trgt_p="${trgt}"

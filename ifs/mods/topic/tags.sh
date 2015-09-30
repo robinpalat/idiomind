@@ -65,7 +65,7 @@ function tags_list() {
     --always-print-result \
     --center --align=right --ellipsize=END --image-on-top \
     --window-icon="$DS/images/icon.png" --center \
-    --width=600 --height=560 --borders=10  \
+    --width=600 --height=560 --borders=5  \
     --column="$(gettext "$lgtl")":IMG \
     --column="$(gettext "$lgsl")":TEXT \
     --column="$(gettext "$lgsl")":TEXT \
