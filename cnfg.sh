@@ -55,7 +55,7 @@ set_lang() {
     "$DS/mngr.sh" mkmn &
      if [ ! -d "$DM_tl/.share/Dictionary/.conf" ]; then
         mkdir -p "$DM_tls/Dictionary/.conf"
-	echo 15 > "$DM_tls/Dictionary/.conf/8.cfg"
+	echo 0 > "$DM_tls/Dictionary/.conf/8.cfg"
 	cdb="$DM_tls/Dictionary/${lgtl}.db"
 	echo -n "create table if not exists Words (Word TEXT);" |sqlite3 ${cdb}
 	ln -fs "$DM_tls/Dictionary" "$DM_tl/$(gettext "New Words")"
