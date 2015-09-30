@@ -51,10 +51,46 @@ new_topic() {
         "$DS/mngr.sh" mkmn
     elif  [ ${type} = "$(gettext "Feed")" ]; then
         mkdir "$DM_tl/${jlb}"
-        "$DS/default/tpc.sh" "${jlb}" 15 1
+        mkdir "$DM_tl/${jlb}/.conf"
+        touch "$DM_tl/${jlb}/.conf/feeds"
+        echo "${jlb}" >> "${DM_tl}/.feeds"
+        "$DS/default/tpc.sh" "${jlb}" 1 1
         "$DS/mngr.sh" mkmn
     fi
     exit
+}
+
+function new_item() {
+    export tpe; check_s "${tpe}"
+    export DM_tlt="$DM_tl/${tpe}"
+    export DC_tlt="$DM_tl/${tpe}/.conf"
+    export DT_r=$(mktemp -d "$DT/XXXXXX")
+    cd "$DT_r"
+        
+    if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
+        if [ "$trans" = FALSE ] && ([ -z "${srce}" ] || [ -z "${trgt}" ]); then
+        cleanups "$DT_r"
+        msg "$(gettext "You need to fill text fields.")\n" info "$(gettext "Information")" & exit 1; fi
+        
+        srce=$(translate "${trgt}" auto $lgs)
+        if [ $(wc -w <<<"${srce}") = 1 ]; then
+            new_word
+        elif [ "$(wc -w <<<"${srce}")" -ge 1 -a ${#srce} -le 180 ]; then
+            new_sentence
+        fi
+        
+    elif [ $lgt != ja -o $lgt != 'zh-cn' -o $lgt != ru ]; then
+        if [ "$trans" = FALSE ]; then
+            if [ -z "${srce}" -o -z "${trgt}" ]; then cleanups "$DT_r"
+            msg "$(gettext "You need to fill text fields.")\n" info "$(gettext "Information")" & exit 1; fi
+        fi
+
+        if [ $(wc -w <<<"${trgt}") = 1 ]; then
+            new_word
+        elif [ "$(wc -w <<<"${trgt}")" -ge 1 -a ${#trgt} -le 180 ]; then
+            new_sentence
+        fi
+    fi
 }
 
 function new_sentence() {
@@ -112,10 +148,7 @@ function new_sentence() {
             list_words_sentence; fi ) &
 
         fetch_audio "$aw" "$bw"
-        
         cleanups "$DT_r"
-        echo -e "adi.1.adi" >> "$DC_s/log"
-        exit 1
     fi
 }
 
@@ -175,8 +208,6 @@ function new_word() {
         img_word "${trgt}" "${srce}" &
         
         cleanups "${DT_r}"
-        echo -e "adi.1.adi" >> "$DC_s/log"
-        exit
     fi
 }
 
@@ -228,7 +259,7 @@ list_words_edit() {
         dlg_text_info_3 "$(gettext "Some notes could not be added to your list"):" "$_log"; fi
         echo -e "adi.$lns.adi" >> "$DC_s/log"
     fi
-    cleanups "${DT_r}" "$slt"; exit
+    cleanups "${DT_r}" "$slt"; exit 0
 }
 
 function list_words_sentence() {
@@ -279,7 +310,7 @@ function list_words_sentence() {
     dlg_text_info_3 "$(gettext "Some notes could not be added to your list"):" "$_log"; fi
     cleanups "$DT_r"
     echo -e "adi.$lns.adi" >> "$DC_s/log"
-    exit
+    exit 0
 }
 
 function list_words_dclik() {
@@ -310,7 +341,7 @@ function list_words_dclik() {
         echo "${words}" >> "$DT_r/wrdsls"
         done <<<"$(sed 's/|//g' <<<"${slt}")"
     fi
-    exit 1
+    exit 0
     
 } >/dev/null 2>&1
 
@@ -563,29 +594,13 @@ function process() {
             dlg_text_info_3 "$(gettext "Some notes could not be added to your list"):" "$log" >/dev/null 2>&1
         fi
     fi
-    cleanups "$DT/.n_s_pr" "$DT_r" & exit
+    cleanups "$DT/.n_s_pr" "$DT_r" & exit 0
 }
 
 fetch_feeds() {
     internet
-    notify-send -i idiomind "Updating..."
-    news="${DC_tlt}/news.html"
     feeds="${DC_tlt}/feeds"
-    DT_r=$(mktemp -d "$DT/XXXXXX")
-    tmplchannel="<?xml version='1.0' encoding='UTF-8'?>
-    <xsl:stylesheet version='1.0'
-      xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
-      xmlns:itunes='http://www.itunes.com/dtds/feed-1.0.dtd'
-      xmlns:media='http://search.yahoo.com/mrss/'
-      xmlns:atom='http://www.w3.org/2005/Atom'>
-      <xsl:output method='text'/>
-      <xsl:template match='/'>
-        <xsl:for-each select='/rss/channel'>
-          <xsl:value-of select='title'/><xsl:text>-!-</xsl:text>
-          <xsl:value-of select='link'/><xsl:text>-!-</xsl:text>
-        </xsl:for-each>
-      </xsl:template>
-    </xsl:stylesheet>"
+    source "$DS/ifs/mods/add/add.sh"
     tmplitem="<?xml version='1.0' encoding='UTF-8'?>
     <xsl:stylesheet version='1.0'
       xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
@@ -604,87 +619,31 @@ fetch_feeds() {
         </xsl:for-each>
       </xsl:template>
     </xsl:stylesheet>"
-    source "$DS/ifs/mods/add/add.sh"
 
-    mediatype () {
-        if echo "$1" | grep -o ".jpg"; then ex="jpg"
-        elif echo "$1" | grep -o ".jpeg"; then ex="jpeg"
-        elif echo "$1" | grep -o ".png"; then ex="png"
-        fi
-    }
-
-    get_images_main () {
-        cd "$DT_r"
-        echo "$sumlink" |grep -o 'img src="[^"]*' |grep -o '[^"]*$' |sed -n 1p
-    }
-
-    nmfile() { echo -n "${1}" |md5sum |rev |cut -c 4- |rev; }
-
-     echo -e "<!DOCTYPE html><html><head>
-    <meta http-equiv=\"refresh\" content=\"5\" charset=\"utf-8\">
-    <title></title><head>
-    <link rel=\"stylesheet\" href=\"/usr/share/idiomind/default/feeds.css\">
-    </head><body>" > "${news}"
-    
-    for FEED in $(cat "${feeds}"); do
-        channel_info="$(xsltproc - "$FEED" <<<"${tmplchannel}" 2> /dev/null)"
-        channel_info="$(echo "$channel_info" | tr '\n' ' ' | tr -s '[:space:]' | sed 's/EOL/\n/g' | head -n 1)"
-        field="$(echo "$channel_info" | sed -r 's|-\!-|\n|g')"
-        channel="$(echo "$field" | sed -n 1p | iconv -c -f utf8 -t ascii | sed 's/\://g' | sed 's/\&/&amp;/g')"
-        link=$(echo "$field" | sed -n 2p)
-        feed_items="$(xsltproc - "$FEED" <<<"${tmplitem}" 2> /dev/null)"
+   while read -r _feed; do
+        feed_items="$(xsltproc - "$_feed" <<<"${tmplitem}" 2> /dev/null)"
         feed_items="$(echo "$feed_items" | tr '\n' ' ' | tr -s '[:space:]' | sed 's/EOL/\n/g' | head -n2)"
         feed_items="$(echo "$feed_items" | sed '/^$/d')"
-
+        
         while read -r item; do
             fields="$(echo "$item" | sed -r 's|-\!-|\n|g')"
-            enclosure=$(echo "$fields" | sed -n 4p)
             title=$(echo "$fields" | sed -n 3p \
             | iconv -c -f utf8 -t ascii | sed 's/\://g' \
             | sed 's/\&/&amp;/g' | sed 's/^\s*./\U&\E/g' \
             | sed 's/<[^>]*>//g' | sed 's/^ *//; s/ *$//; /^$/d')
             title="$(sed 's/./\L&/g' <<<"${title}")"
-            trad="$(translate "${title,,}" auto "$lgs")"
-            sumlink=$(echo "$fields" | sed -n 5p)
-            summary=$(echo "$fields" | sed -n 6p \
-            | iconv -c -f utf8 -t ascii \
-            | sed 's/\&quot;/\"/g' | sed "s/\&#039;/\'/g" \
-            | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
-            | sed 's/<!\[CDATA\[\|\]\]>//g' \
-            | sed 's/ *<[^>]\+> */ /g' \
-            | sed 's/[<>£§]//g' | sed 's/&amp;/\&/g' \
-            | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. //g' \
-            | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
-            | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
-            | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g')
-            summary="$(sed 's/./\L&/g' <<<"${summary}")"
-            trad2="$(translate "${summary,,}" auto "$lgs")"
-            fname="$(nmfile "${title}")"
             if [ -n "${title}" ]; then
-                if ! grep -Fxo "${title}" < "${DC_tlt}/1.cfg"; then
-                    #if [ -n "$enclosure" ]; then
-                        #enclosure_url=$(curl -s -I -L -w %"{url_effective}" \
-                        #--url "$enclosure" | tail -n 1)
-                    #else
-                        #enclosure_url=$(curl -s -I -L -w %"{url_effective}" \
-                        #--url "$(get_images_main)" | tail -n 1)
-                    #fi
-                    #mediatype "$enclosure_url"
-                    #cd "$DT_r"; rm -f *.jpg *.png *.jpeg
-                    #wget -q -c -T 30 -O "media.$ex" "$enclosure_url"
-                    echo -e "<br><titl>${title^}</titl><br><trad>${trad^}</trad><br>" >> "${news}"
-                    echo -e "<summ>${summary^}</summ><br><trad2>${trad2^}</trad2><br><hr>" >> "${news}"
-                    echo -e "${title}" >> "${DC_tlt}/1.cfg"
-                    notify-send -i idiomind "${title^}" "${trad^}"
+                if ! grep -Fo "trgt={${title^}}" "${DC_tlt}/0.cfg"; then
+                    wlist='FALSE'
+                    tpe="$tpc"
+                    trgt="${title^}"
+                    new_item
                 fi
             fi
         done <<<"${feed_items}"
-    done
-    
-    echo "</body></html>" >> "${news}"
-    cleanups "$DT_r"
-}
-
+    done < "${feeds}"
+    exit 0
+} >/dev/null 2>&1
 
 new_items() {
     if [ ! -d "$DT" ]; then new_session; fi
@@ -740,9 +699,6 @@ new_items() {
         else
             echo "${tpe}" > "$DT/tpe"
         fi
-        export tpe; check_s "${tpe}"
-        export DM_tlt="$DM_tl/${tpe}"
-        export DC_tlt="$DM_tl/${tpe}/.conf"
         
         if [ "$3" = 2 ]; then
             [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")
@@ -765,34 +721,8 @@ new_items() {
         elif [[ ${#trgt} -gt 180 ]]; then
             process
             
-        elif [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
-        
-            if [ "$trans" = FALSE ] && ([ -z "${srce}" ] || [ -z "${trgt}" ]); then
-            cleanups "$DT_r"
-            msg "$(gettext "You need to fill text fields.")\n" info "$(gettext "Information")" & exit 1; fi
-
-            srce=$(translate "${trgt}" auto $lgs)
-            
-            if [ $(wc -w <<<"${srce}") = 1 ]; then
-                new_word
-                
-            elif [ "$(wc -w <<<"${srce}")" -ge 1 -a ${#srce} -le 180 ]; then
-                new_sentence
-            fi
-            
-        elif [ $lgt != ja -o $lgt != 'zh-cn' -o $lgt != ru ]; then
-        
-            if [ "$trans" = FALSE ]; then
-                if [ -z "${srce}" -o -z "${trgt}" ]; then cleanups "$DT_r"
-                msg "$(gettext "You need to fill text fields.")\n" info "$(gettext "Information")" & exit 1; fi
-            fi
-
-            if [ $(wc -w <<<"${trgt}") = 1 ]; then
-                new_word
-                
-            elif [ "$(wc -w <<<"${trgt}")" -ge 1 -a ${#trgt} -le 180 ]; then
-                new_sentence
-            fi
+        else
+            new_item
         fi
     else
         xclip -i /dev/null; cleanups "$DT_r"

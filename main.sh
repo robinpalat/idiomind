@@ -315,26 +315,13 @@ function topic() {
         fi
         rm -f "$DT"/*.x
     
-    elif [[ ${mode} = 12 ]]; then
-        source "$DS/ifs/mods/topic/tags.sh"
-        ${tpa} & exit 1
-    
-    elif [[ ${mode} = 13 ]]; then
-        source "$DS/ifs/mods/topic/tags.sh"
-        ${tpa} & exit 1
-
     elif [[ ${mode} = 14 ]]; then
         source "$DS/ifs/mods/topic/tags.sh"
         tags_list & exit 1
         
-    elif [[ ${mode} = 15 ]]; then
-        source "$DS/ifs/mods/topic/feeds.sh"
-        feeds_view & exit 1
-        
     elif [[ ${mode} = 0 ]]; then
         source "$DS/ifs/mods/topic/Dictionary.sh"
         Dictionary & exit 1
-
     else
         tpa="$(sed -n 1p "$DC_s/4.cfg")"
         source "$DS/ifs/mods/topic/${tpa}.sh"

@@ -69,6 +69,18 @@ function edit_list_list() {
     --button="gtk-apply":0
 }
 
+function edit_feeds_list() {
+    yad --list --title="$(gettext "Feeds")" \
+    --name=Idiomind --class=Idiomind \
+    --editable --separator='\n' \
+    --always-print-result --print-all \
+    --window-icon="$DS/images/icon.png" \
+    --no-headers --center \
+    --width=420 --height=280 --borders=5 \
+    --column="" \
+    --button="$(gettext "OK")":0
+}
+
 function progr_3() {
     yad --progress \
     --width 50 --height 35 --undecorated \

@@ -64,15 +64,6 @@ if [ -d "${DM_tlt}" ]; then
         [ ! -e "${DC_tlt}/${n}.cfg" ] && touch "${DC_tlt}/${n}.cfg"; done
         echo "${topic}" > "$DC_s/4.cfg"
 
-    elif [ ${mode} = 15 ]; then
-        echo "${topic}" > "$DC_s/4.cfg"
-        if [ ! -d "${DC_tlt}"  ]; then
-            mkdir -p "${DM_tlt}/cache"
-            mkdir "${DC_tlt}"; cd "${DC_tlt}"
-            echo 15 > "${DC_tlt}/8.cfg"
-            > "${DC_tlt}/feeds"
-        fi
-
     elif [ ${mode} = 0 ]; then
         echo "${topic}" > "$DC_s/4.cfg"
         source "$DS/ifs/mods/topic/Dictionary.sh"

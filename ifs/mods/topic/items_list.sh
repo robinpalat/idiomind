@@ -49,12 +49,26 @@ export -f word_view sentence_view
 
 function notebook_1() {
     cmd_mark="'$DS/mngr.sh' 'mark_as_learned' "\"${tpc}\"" 1"
-    cmd_attchs="'$DS/ifs/tls.sh' 'attachs'"
-    cmd_del="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
-    cmd_adv="'$DS/ifs/tls.sh' adv "\"${tpc}\"""
-    cmd_share="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
-    cmd_eind="'$DS/mngr.sh' edit_list "\"${tpc}\"""
     cmd_play="$DS/play.sh play_list"
+    if [ ! -e "${DC_tlt}/feeds" ]; then
+    btn0="$(gettext "Files")"
+    btn1="$(gettext "Share")"
+    btn2="$(gettext "Delete")"
+    btn3="$(gettext "Edit list")"
+    cmd0="'$DS/ifs/tls.sh' 'attachs'"
+    cmd1="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
+    cmd2="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
+    cmd3="'$DS/mngr.sh' edit_list "\"${tpc}\"""
+    else
+    btn0="$(gettext "Feeds")"
+    btn1="$(gettext "Update")"
+    btn2="$(gettext "Share")"
+    btn3="$(gettext "Delete")"
+    cmd0="'$DS/mngr.sh' edit_feeds "\"${tpc}\"""
+    cmd1="$DS/add.sh 'fetch_feeds'"
+    cmd2="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
+    cmd3="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
+    fi
     chk1=$((`wc -l < "${DC_tlt}/1.cfg"`*3))
     chk5=`wc -l < "${DC_tlt}/5.cfg"`
     
@@ -85,10 +99,10 @@ function notebook_1() {
     --field=" $(gettext "Mark as learnt") ":FBTN "$cmd_mark" \
     --field="$(gettext "Auto-checked of checkbox on list Learning")\t\t\t":CHK "$auto_mrk" \
     --field="$label_info2\n":LBL " " \
-    --field="$(gettext "Files")":FBTN "$cmd_attchs" \
-    --field="$(gettext "Share")":FBTN "$cmd_share" \
-    --field="$(gettext "Delete")":FBTN "$cmd_del" \
-    --field="$(gettext "Edit list")":FBTN "$cmd_eind" > "$cnf4" &
+    --field="$btn0":FBTN "$cmd0" \
+    --field="$btn1":FBTN "$cmd1" \
+    --field="$btn2":FBTN "$cmd2" \
+    --field="$btn3":FBTN "$cmd3" > "$cnf4" &
     yad --notebook --title="Idiomind - $tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
@@ -98,7 +112,7 @@ function notebook_1() {
     --tab="  $(gettext "Learnt") ($inx2) " \
     --tab=" $(gettext "Note") " \
     --tab=" $(gettext "Edit") " \
-    --width=$sx --height=$sy --borders=0 --tab-borders=3 \
+    --width=600 --height=560 --borders=0 --tab-borders=3 \
     --button="$(gettext "Play")":"$cmd_play" \
     --button="$(gettext "Practice")":5 \
     --button="gtk-close":1
@@ -106,9 +120,22 @@ function notebook_1() {
 
 function notebook_2() {
     cmd_mark="'$DS/mngr.sh' 'mark_to_learn' "\"${tpc}\"" 1"
-    cmd_attchs="'$DS/ifs/tls.sh' 'attachs'"
-    cmd_del="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
-    cmd_share="'$DS/ifs/upld.sh' 'upld' "\"${tpc}\"""
+    if [ ! -e "${DC_tlt}/feeds" ]; then
+    btn1="$(gettext "Files")"
+    btn2="$(gettext "Share")"
+    btn3="$(gettext "Delete")"
+    cmd0="'$DS/ifs/tls.sh' 'attachs'"
+    cmd1="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
+    cmd2="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
+    else
+    btn0="$(gettext "Feeds")"
+    btn2="$(gettext "Share")"
+    btn3="$(gettext "Delete")"
+    cmd0="'$DS/mngr.sh' edit_feeds "\"${tpc}\"""
+    cmd1="$DS/add.sh 'fetch_feeds'"
+    cmd2="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
+    cmd3="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
+    fi
 
     yad --multi-progress --tabnum=1 \
     --text="$pres" \
@@ -132,10 +159,9 @@ function notebook_2() {
     --field=" $(gettext "Review") ":FBTN "$cmd_mark" \
     --field="\t\t\t\t\t\t\t\t\t\t\t\t\t\t":LBL "_" \
     --field="$label_info2\n":LBL " " \
-    --field="$(gettext "Files")":FBTN "$cmd_attchs" \
-    --field="$(gettext "Share")":FBTN "$cmd_share" \
-    --field="$(gettext "Delete")":FBTN "$cmd_del" \
-    --field="$(gettext "Edit list")":FBTN "$cmd_eind" > "$cnf4" &
+    --field="$btn0":FBTN "$cmd0" \
+    --field="$btn1":FBTN "$cmd1" \
+    --field="$btn2":FBTN "$cmd2" > "$cnf4" &
     yad --notebook --title="Idiomind - $tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
@@ -145,7 +171,7 @@ function notebook_2() {
     --tab="  $(gettext "Learnt") ($inx2) " \
     --tab=" $(gettext "Note") " \
     --tab=" $(gettext "Edit") " \
-    --width=$sx --height=$sy --borders=0 --tab-borders=3 \
+    --width=600 --height=560 --borders=0 --tab-borders=3 \
     --button="gtk-close":1
 } >/dev/null 2>&1
 

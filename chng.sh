@@ -145,7 +145,7 @@ elif [[ ${1} != 0 ]]; then
     --button="$(gettext "Apply")":2 \
     --button="gtk-close":1)
     ret=$?
-    mode="$(< "$DM_tl/$tpc/.conf/8.cfg")"
+    mode="$(< "$DM_tl/${tpc}/.conf/8.cfg")"
     if [[ ${#mode} -lt 3 ]]; then
         if [ $ret -eq 3 ]; then
             "$DS/add.sh" new_topic

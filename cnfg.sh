@@ -43,17 +43,19 @@ set_lang() {
     > "$DT/tpe"
     "$DS/stop.sh" 4
     source /usr/share/idiomind/ifs/c.conf
-    if [ -f "$DM_tl/.8.cfg" ]; then
-        lst="$(sed -n 1p "$DM_tl/.8.cfg")"
-        "$DS/default/tpc.sh" "${lst}" 1
+    last="$(cd "$DM_tl"/; ls -tNd */ | cut -f1 -d'/' |head -n1)"
+    if [ -d "$DM_tl/$last" ]; then
+        "$DS/default/tpc.sh" "${last}" 1
     else
-        rm "$DC_s/4.cfg" && > "$DC_s/4.cfg"; fi
+        [ "$DC_s/4.cfg" ] && rm "$DC_s/4.cfg"
+        > "$DC_s/4.cfg"
+    fi
     source "$DS/ifs/mods/cmns.sh"
     list_inadd > "$DM_tl/.2.cfg"
     "$DS/mngr.sh" mkmn &
      if [ ! -d "$DM_tl/.share/Dictionary/.conf" ]; then
         mkdir -p "$DM_tls/Dictionary/.conf"
-	echo 0 > "$DM_tls/Dictionary/.conf/8.cfg"
+	echo 15 > "$DM_tls/Dictionary/.conf/8.cfg"
 	cdb="$DM_tls/Dictionary/${lgtl}.db"
 	echo -n "create table if not exists Words (Word TEXT);" |sqlite3 ${cdb}
 	ln -fs "$DM_tls/Dictionary" "$DM_tl/$(gettext "New Words")"

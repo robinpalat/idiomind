@@ -444,6 +444,16 @@ edit_list() {
     exit 1
 } >/dev/null 2>&1
 
+edit_feeds() {
+    file="$DM_tl/${2}/.conf/feeds"
+    if [ -e "${file}" ]; then
+        feeds="$(< "${file}")"
+        mods="$(echo "${feeds}" |edit_feeds_list)"
+        if [ "${feeds}" != "$mods" ]; then
+            echo "${mods}" |sed -e '/^$/d' > "${file}"
+        fi
+    fi
+} >/dev/null 2>&1
 
 delete_topic() {
     if [ -z "${tpc}" ]; then exit 1; fi
@@ -698,6 +708,8 @@ case "$1" in
     edit_item "$@" ;;
     edit_list)
     edit_list "$@" ;;
+    edit_feeds)
+    edit_feeds "$@" ;;
     colorize)
     colorize "$@" ;;
     delete_topic)
