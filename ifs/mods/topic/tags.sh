@@ -3,8 +3,8 @@
 
 function word_view() {
     [ -n "$defn" ] && field_defn="--field=<small>$defn</small>:lbl"
-    [ -n "$note" ] && field_note="--field=<small>$note</small>\n:lbl"
-    [ -n "$exmp" ] && field_exmp="--field=<span font_desc='Verdana 11' color='#5C5C5C'><i>$exmp</i></span>:lbl"
+    [ -n "$note" ] && field_note="--field=<small><i>$note<i></small>\n:lbl"
+    [ -n "$exmp" ] && field_exmp="--field=<span font_desc='Verdana 11' color='#5C5C5C'>$exmp</span>:lbl"
     local sentence="$tag<span font_desc='Sans Free 25'>${trgt}</span>\n\n<span font_desc='Sans Free 14'><i>$srce</i></span>\n\n"
 
     yad --form --title=" " \
@@ -23,7 +23,7 @@ function word_view() {
 } >/dev/null 2>&1
 
 function sentence_view() {
-    if [ "$(grep -o gramr=\"[^\"]* < "$DC_s/1.cfg" |grep -o '[^"]*$')"  = TRUE ]; then
+    if [ "$(grep -o gramr=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')"  = TRUE ]; then
     trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
     local word="$tag<span font_desc='Sans Free 15'>${trgt_l}</span>\n\n<span font_desc='Sans Free 11'><i>$srce</i></span>\n\n"
     

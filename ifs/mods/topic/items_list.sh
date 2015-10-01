@@ -25,9 +25,9 @@ function word_view() {
 } >/dev/null 2>&1
 
 function sentence_view() {
-    if [ "$(grep -o gramr=\"[^\"]* < "$DC_s/1.cfg" | grep -o '[^"]*$')"  = TRUE ]; then
+    if [ "$(grep -o gramr=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')"  = TRUE ]; then
     trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
-    [ $show_link = 1  ] && link=" <a href='$link'>$(gettext "Read more")</a>"
+    [ $show_link = 1  ] && link=" <a href='$link'>$(gettext "Link")</a>"
     local sentence="<span font_desc='Sans Free 15'>${trgt_l}</span>\n\n<span font_desc='Sans Free 11'><i>$srce</i>$link</span>\n<span font_desc='Sans Free 6'>$tag</span>\n"
     
     echo "${lwrd}" | yad --list --title=" " \
