@@ -50,6 +50,9 @@ export -f word_view sentence_view
 function notebook_1() {
     cmd_mark="'$DS/mngr.sh' 'mark_as_learned' "\"${tpc}\"" 1"
     cmd_play="$DS/play.sh play_list"
+    lbl2=" "
+    lbl3="--center"
+    cmd4="LBL"
     if [ ! -e "${DC_tlt}/feeds" ]; then
     btn0="$(gettext "Files")"
     btn1="$(gettext "Share")"
@@ -65,9 +68,11 @@ function notebook_1() {
     btn2="$(gettext "Share")"
     btn3="$(gettext "Delete")"
     cmd0="'$DS/mngr.sh' edit_feeds "\"${tpc}\"""
-    cmd1="$DS/add.sh 'fetch_feeds'"
+    cmd1="'$DS/add.sh' fetch_content "\"${tpc}\"""
     cmd2="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
     cmd3="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
+    if [ -e "${DC_tlt}/lk" ]; then
+    lbl3="--text="$(< "${DC_tlt}/lk")""; fi
     fi
     chk1=$((`wc -l < "${DC_tlt}/1.cfg"`*3))
     chk5=`wc -l < "${DC_tlt}/5.cfg"`
@@ -76,7 +81,7 @@ function notebook_1() {
     tac "${DC_tlt}/5.cfg"; else tac "$ls1" | \
     awk '{print "/usr/share/idiomind/images/0.png\n"$0"\nFALSE"}'; fi; }
     
-    list | yad --list --tabnum=1 \
+    list | yad --list --tabnum=1 "${lbl3}" \
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh '1'" \
     --expand-column=2 --no-headers --ellipsize=END --tooltip-column=2 \
@@ -93,12 +98,12 @@ function notebook_1() {
     --show-uri --fontname='vendana 11' --margins=14 > "$cnf3" &
     yad --form --tabnum=4 \
     --plug=$KEY \
-    --text="$label_info1\n" \
+    --text="$lbl1\n" \
     --scroll --borders=10 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
     --field=" $(gettext "Mark as learnt") ":FBTN "$cmd_mark" \
     --field="$(gettext "Auto-checked of checkbox on list Learning")\t\t\t":CHK "$auto_mrk" \
-    --field="$label_info2\n":LBL " " \
+    --field="$lbl2":$cmd4 " " \
     --field="$btn0":FBTN "$cmd0" \
     --field="$btn1":FBTN "$cmd1" \
     --field="$btn2":FBTN "$cmd2" \

@@ -71,13 +71,15 @@ function edit_list_list() {
 
 function edit_feeds_list() {
     yad --list --title="$(gettext "Feeds")" \
+    --text="$(gettext "Configure feed urls to add content automatically from news headlines.")" \
     --name=Idiomind --class=Idiomind \
     --editable --separator='\n' \
     --always-print-result --print-all \
     --window-icon="$DS/images/icon.png" \
     --no-headers --center \
-    --width=420 --height=200 --borders=2 \
+    --width=420 --height=190 --borders=2 \
     --column="" \
+    --button="$(gettext "Cancel")":1 \
     --button="$(gettext "OK")":0
 }
 

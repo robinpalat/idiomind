@@ -307,19 +307,18 @@ function set_image_2() {
 }
 
 function translate() {
-    cdb="$DM_tls/Dictionary/${lgtl}.db"
-    trans="$lgsl"
-    if [[ `wc -w <<<$1` = 1 ]] && \
-    [[ `sqlite3 ${cdb} "select Word from Words where Word is '${1}';"` ]]; then
-        yad --text=${1}
-    else
+    #cdb="$DM_tls/Dictionary/${lgtl}.db"
+    #trans="$lgsl"
+    #if [[ `wc -w <<<$1` = 1 ]] && \
+    #[[ `sqlite3 ${cdb} "select Word from Words where Word is '${1}';"` ]]; then
+    #else
         if ! ls "$DC_d"/*."Traslator online.Translator".* 1> /dev/null 2>&1; then
         "$DS_a/Dics/cnfg.sh" 2; fi
         for trans in "$DC_d"/*."Traslator online.Translator".*; do
             trans="$DS_a/Dics/dicts/$(basename "${trans}")"
             [ -e "${trans}" ] && "${trans}" "$@" && break
         done
-    fi
+    #fi
 }
 
 

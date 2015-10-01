@@ -210,7 +210,7 @@ function topic() {
         cnf4=$(mktemp "$DT/cnf4.XXX.x")
         sx=600; sy=560
         [ ! -z "$author" ] && author=" $(gettext "Created by") $author"
-        label_info1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><small>\n $inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"
+        lbl1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><small>\n $inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"
 
         apply() {
             note_mod="$(< "${cnf3}")"

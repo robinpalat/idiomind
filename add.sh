@@ -601,7 +601,19 @@ function process() {
     cleanups "$DT/.n_s_pr" "$DT_r" & exit 0
 }
 
-fetch_feeds() {
+fetch_content() {
+    export tpe="${2}"
+    DC_tlt="$DM_tl/${tpe}/.conf"
+    
+    if [[ `wc -l < "${DC_tlt}/0.cfg"` -ge 200 ]]; then
+        echo "$(gettext "Reached the maximum number of notes")" > "${DC_tlt}/lk"
+        exit 1
+    fi
+    if [ -e "$DT/updating_feeds" ]; then
+        notify-send "$(gettext "Information")" "$(gettext "An update was already in progress")" & exit
+    else
+        > "$DT/updating_feeds"
+    fi
     internet
     feeds="${DC_tlt}/feeds"
     source "$DS/ifs/mods/add/add.sh"
@@ -635,7 +647,6 @@ fetch_feeds() {
             |iconv -c -f utf8 -t ascii |sed 's/\://g' \
             |sed 's/\&/&amp;/g' |sed 's/^\s*./\U&\E/g' \
             |sed 's/<[^>]*>//g' |sed 's/^ *//; s/ *$//; /^$/d')
-            title="$(sed 's/./\L&/g' <<<"${title}")"
             if [ -n "${title}" ]; then
                 if ! grep -Fo "trgt={${title^}}" "${DC_tlt}/0.cfg"; then
                     wlist='FALSE'
@@ -645,7 +656,7 @@ fetch_feeds() {
             fi
         done <<<"${feed_items}"
     done < "${feeds}"
-    exit 0
+    rm -f "$DT/updating_feeds"; exit 0
     
 } >/dev/null 2>&1
 
@@ -743,6 +754,6 @@ case "$1" in
     list_words_edit "$@" ;;
     list_words_dclik)
     list_words_dclik "$@" ;;
-    fetch_feeds)
-    fetch_feeds ;;
+    fetch_content)
+    fetch_content "$@" ;;
 esac

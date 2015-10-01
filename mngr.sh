@@ -98,10 +98,14 @@ delete_item() {
                 grep -vxF "${trgt}" "${DC_tlt}/${n}.cfg" > "${DC_tlt}/${n}.cfg.tmp"
                 sed '/^$/d' "${DC_tlt}/${n}.cfg.tmp" > "${DC_tlt}/${n}.cfg"; fi
             done
+            if [[ `wc -l < "${DC_tlt}/0.cfg"` -lt 200 ]] \
+            && [[ -e "${DC_tlt}/lk" ]]; then
+            rm -f "${DC_tlt}/lk"; fi
             "$DS/ifs/tls.sh" colorize &
             rm "${DC_tlt}"/*.tmp
         fi
     fi
+    
     rm -f "$DT/ps_lk" & exit 1
 }
 
