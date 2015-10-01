@@ -144,9 +144,12 @@ edit_item() {
     [ -z "${id}" ] && id=""
     query="$(sed "s/'/ /g" <<<"${trgt}")"
     to_modify=0; colorize_run=0; transl_mark=0
+    if ((mode>=1 && mode<=10)); then
     tpcs="$(egrep -v "${tpc}" "${DM_tl}/.2.cfg" |tr "\\n" '!' |sed 's/!\+$//g')"
+    tpc_list="${tpc}!${tpcs}"
     [ -n "${tag}" ] && tags="$(egrep -v "${tag}" < "${DM_tl}/.tags")" || tags="$(< "${DM_tl}/.tags")"
     [ -n "${tags}" ] && tags_list="${tag}!"$(tr "\\n" '!' <<<"${tags}" |sed 's/!\+$//g')"" || tags_list=""
+    else tags_list=""; tpc_list=""; fi
 
     cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"""
     cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"""
@@ -194,13 +197,13 @@ edit_item() {
                 type_mod=1
             elif [ ${type} = 2 ]; then
                 edit_dlg="${edit_dlg2}"
-                tpc_mod="$(cut -d "|" -f4 <<<"${edit_dlg}")"
-                tag_mod="$(cut -d "|" -f6 <<<"${edit_dlg}")"
-                mark_mod="$(cut -d "|" -f7 <<<"${edit_dlg}")"
-                type_mod="$(cut -d "|" -f8 <<<"${edit_dlg}")"
-                trgt_mod="$(clean_2 "$(cut -d "|" -f1 <<<"${edit_dlg}")")"
-                srce_mod="$(clean_2 "$(cut -d "|" -f3 <<<"${edit_dlg}")")"
-                audf_mod="$(cut -d "|" -f5 <<<"${edit_dlg}")"
+                tpc_mod="$(cut -d "|" -f6 <<<"${edit_dlg}")"
+                tag_mod="$(cut -d "|" -f8 <<<"${edit_dlg}")"
+                mark_mod="$(cut -d "|" -f1 <<<"${edit_dlg}")"
+                type_mod="$(cut -d "|" -f2 <<<"${edit_dlg}")"
+                trgt_mod="$(clean_2 "$(cut -d "|" -f3 <<<"${edit_dlg}")")"
+                srce_mod="$(clean_2 "$(cut -d "|" -f5 <<<"${edit_dlg}")")"
+                audf_mod="$(cut -d "|" -f7 <<<"${edit_dlg}")"
                 grmr_mod="${grmr}"
                 wrds_mod="${wrds}"
                 [ "${type_mod}" = TRUE ] && type_mod=1
@@ -234,7 +237,8 @@ edit_item() {
             [ "${mark}" != "${mark_mod}" ] && to_modify=1
             [ "${audf}" != "${audf_mod}" ] && to_modify=1
             [ "${tpc}" != "${tpc_mod}" ] && to_modify=1
-            [ "${tag}" != "${tag_mod}" ] && to_modify=1 && tagset=1
+            if [[ "${tag}" != "${tag_mod}" && ${mode} != 14 ]]; then
+			to_modify=1; tagset=1; fi
 
             if [ ${to_modify} = 1 ]; then
             (
@@ -259,6 +263,7 @@ edit_item() {
                 id_mod="$(set_name_file ${type_mod} "${trgt_mod}" "${srce_mod}" \
                 "${exmp_mod}" "${defn_mod}" "${note_mod}" "${wrds_mod}" "${grmr_mod}")"
 
+				[ ${mode} = 14 ] && tpc_mod="${tpc}"
                 if [ "${tpc}" != "${tpc_mod}" ]; then
                     if [ "${audf}" != "${audf_mod}" ]; then
                         if [ ${type_mod} = 1 ]; then

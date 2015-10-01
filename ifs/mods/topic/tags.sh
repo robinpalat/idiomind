@@ -15,6 +15,7 @@ function word_view() {
     --image-on-top --center --on-top \
     --width=630 --height=390 --borders=20 \
     --field="":lbl "${field_exmp}" "${field_defn}" "${field_note}" \
+    --button="gtk-edit":4 \
     --button="!$DS/images/listen.png":"$cmd_listen" \
     --button=gtk-go-down:2 \
     --button=gtk-go-up:3
@@ -36,6 +37,7 @@ function sentence_view() {
     --width=630 --height=390 --borders=20 \
     --column="":TEXT \
     --column="":TEXT \
+    --button="gtk-edit":4 \
     --button="!$DS/images/listen.png":"$cmd_listen" \
     --button=gtk-go-down:2 \
     --button=gtk-go-up:3
