@@ -61,16 +61,19 @@ new_topic() {
 }
 
 function new_item() {
-    export tpe; check_s "${tpe}"
-    export DM_tlt="$DM_tl/${tpe}"
-    export DC_tlt="$DM_tl/${tpe}/.conf"
-    export DT_r=$(mktemp -d "$DT/XXXXXX")
+    export tpe; \
+    DM_tlt="$DM_tl/${tpe}"; \
+    DC_tlt="$DM_tl/${tpe}/.conf"; \
+    DT_r=$(mktemp -d "$DT/XXXXXX")
+    check_s "${tpe}"
     cd "$DT_r"
-        
+
     if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
+    
         if [ "$trans" = FALSE ] && ([ -z "${srce}" ] || [ -z "${trgt}" ]); then
-        cleanups "$DT_r"
-        msg "$(gettext "You need to fill text fields.")\n" info "$(gettext "Information")" & exit 1; fi
+            cleanups "$DT_r"
+            msg "$(gettext "You need to fill text fields.")\n" info "$(gettext "Information")" & exit 1
+        fi
         
         srce=$(translate "${trgt}" auto $lgs)
         if [ $(wc -w <<<"${srce}") = 1 ]; then
@@ -78,11 +81,12 @@ function new_item() {
         elif [ "$(wc -w <<<"${srce}")" -ge 1 -a ${#srce} -le 180 ]; then
             new_sentence
         fi
-        
+
     elif [ $lgt != ja -o $lgt != 'zh-cn' -o $lgt != ru ]; then
-        if [ "$trans" = FALSE ]; then
-            if [ -z "${srce}" -o -z "${trgt}" ]; then cleanups "$DT_r"
-            msg "$(gettext "You need to fill text fields.")\n" info "$(gettext "Information")" & exit 1; fi
+    
+        if [ "$trans" = FALSE ] && ([ -z "${srce}" ] || [ -z "${trgt}" ]); then
+            cleanups "$DT_r"
+            msg "$(gettext "You need to fill text fields.")\n" info "$(gettext "Information")" & exit 1
         fi
 
         if [ $(wc -w <<<"${trgt}") = 1 ]; then
@@ -102,8 +106,8 @@ function new_sentence() {
         internet
         [ "$(dirname "$0")" != "$DT_r" ] && cd "$DT_r"
         if [ "$ttrgt" = TRUE ]; then
-        trgt="$(translate "${trgt,,}" auto "$lgt")"
-        trgt=$(clean_2 "${trgt}"); fi
+            trgt="$(translate "${trgt,,}" auto "$lgt")"
+            trgt=$(clean_2 "${trgt}"); fi
         srce="$(translate "${trgt,,}" $lgt $lgs)"
         srce="$(clean_2 "${srce}")"
         trgt="${trgt^}"
@@ -622,20 +626,19 @@ fetch_feeds() {
 
    while read -r _feed; do
         feed_items="$(xsltproc - "$_feed" <<<"${tmplitem}" 2> /dev/null)"
-        feed_items="$(echo "$feed_items" | tr '\n' ' ' | tr -s '[:space:]' | sed 's/EOL/\n/g' | head -n2)"
-        feed_items="$(echo "$feed_items" | sed '/^$/d')"
+        feed_items="$(echo "$feed_items" |tr '\n' ' ' |tr -s '[:space:]' |sed 's/EOL/\n/g' |head -n2)"
+        feed_items="$(echo "$feed_items" |sed '/^$/d')"
         
         while read -r item; do
-            fields="$(echo "$item" | sed -r 's|-\!-|\n|g')"
-            title=$(echo "$fields" | sed -n 3p \
-            | iconv -c -f utf8 -t ascii | sed 's/\://g' \
-            | sed 's/\&/&amp;/g' | sed 's/^\s*./\U&\E/g' \
-            | sed 's/<[^>]*>//g' | sed 's/^ *//; s/ *$//; /^$/d')
+            fields="$(echo "$item" |sed -r 's|-\!-|\n|g')"
+            title=$(echo "$fields" |sed -n 3p \
+            |iconv -c -f utf8 -t ascii |sed 's/\://g' \
+            |sed 's/\&/&amp;/g' |sed 's/^\s*./\U&\E/g' \
+            |sed 's/<[^>]*>//g' |sed 's/^ *//; s/ *$//; /^$/d')
             title="$(sed 's/./\L&/g' <<<"${title}")"
             if [ -n "${title}" ]; then
                 if ! grep -Fo "trgt={${title^}}" "${DC_tlt}/0.cfg"; then
                     wlist='FALSE'
-                    tpe="$tpc"
                     trgt="${title^}"
                     new_item
                 fi
@@ -643,6 +646,7 @@ fetch_feeds() {
         done <<<"${feed_items}"
     done < "${feeds}"
     exit 0
+    
 } >/dev/null 2>&1
 
 new_items() {
@@ -673,8 +677,8 @@ new_items() {
         lzgpr="$(dlg_form_1)"
     else 
         lzgpr="$(dlg_form_2)"; fi
-    
     ret="$?"
+    
     trgt=$(echo "${lzgpr}" |head -n -1 |sed -n 1p)
     srce=$(echo "${lzgpr}" |sed -n 2p)
     chk=$(echo "${lzgpr}" |tail -1)

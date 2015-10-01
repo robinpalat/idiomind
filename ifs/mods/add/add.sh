@@ -97,9 +97,9 @@ function sentence_p() {
     fi
 
     cdb="$DM_tls/Dictionary/${lgtl}.db"
-    table="T`date +%m%y`"; trans="$lgsl"
+    table="T`date +%m%y`"; row_trans="$lgsl"
     echo -n "create table if not exists ${table} \
-    (Word TEXT, ${trans^} TEXT, Example TEXT, Example2 TEXT);" |sqlite3 ${cdb}
+    (Word TEXT, ${row_trans^} TEXT, Example TEXT, Example2 TEXT);" |sqlite3 ${cdb}
 
     r=$((RANDOM%10000))
     cd /; DT_r="$1"; cd "$DT_r"; touch "swrd.$r" "twrd.$r"
@@ -154,7 +154,7 @@ function sentence_p() {
         echo "$t"_"$s""" >> "$DT_r/B.$r"
         if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]] && \
         [ -n "${t}" ] && [ -n "${s}" ]; then
-            echo -n "insert into ${table} (Word,${trans^},Example) \
+            echo -n "insert into ${table} (Word,${row_trans^},Example) \
             values ('${t}','${s}','${trgt}');" |sqlite3 ${cdb}
             echo -n "insert into Words (Word) values ('${t}');" |sqlite3 ${cdb}
         fi
@@ -167,7 +167,7 @@ function sentence_p() {
         echo "$t"_"$s""" >> "$DT_r/B.$r"
         if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]] && \
         [ -n "${t}" ] && [ -n "${s}" ]; then
-            echo -n "insert into ${table} (Word,${trans^},Example) \
+            echo -n "insert into ${table} (Word,${row_trans^},Example) \
             values ('${t}','${s}','${trgt}');" |sqlite3 ${cdb}
             echo -n "insert into Words (Word) values ('${t}');" |sqlite3 ${cdb}
         fi
@@ -321,6 +321,7 @@ function translate() {
         done
     fi
 }
+
 
 function tts() {
     if ! ls "$DC_d"/*."TTS online.Pronunciation".* 1> /dev/null 2>&1; then

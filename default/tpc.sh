@@ -23,7 +23,8 @@ if [ -d "${DM_tlt}" ]; then
             echo 1 > "8.cfg"; cd /
         fi
         echo "${topic}" > "$DC_s/4.cfg"
-        echo "${topic}" > "$DT/tpe"
+        if [ ! -e "${DC_tlt}/feeds" ]; then
+            echo "${topic}" > "$DT/tpe"; fi
         
         ( sleep 10 && "$DS/ifs/tls.sh" backup "${topic}" ) &
         if [[ ! -e "$DC_s/5.cfg" ]]; then
