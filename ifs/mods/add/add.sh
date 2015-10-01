@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-if [ -z "$lgtl" -o -z "$lgsl" ]; then
+if [ -z "${lgtl}" -o -z "${lgsl}" ]; then
 msg "$(gettext "Please check the language settings in the preferences dialog.")\n" error "$(gettext "Information")" & exit 1
 fi
 
@@ -83,7 +83,6 @@ function index() {
             fi
         fi
     fi
-    
     sleep 0.5
     rm -f "$DT/i_lk"
 }
@@ -96,11 +95,11 @@ function sentence_p() {
     trgt_p="${trgt_mod}"
     srce_p="${srce_mod}"
     fi
-    
+
     cdb="$DM_tls/Dictionary/${lgtl}.db"
-    table=`date +%b%y`
-    echo -n "create table if not exists ${table^^} \
-    (Word TEXT, Translation TEXT, Example TEXT);" |sqlite3 ${cdb}
+    table="T`date +%m%y`"; trans="$lgsl"
+    echo -n "create table if not exists ${table} \
+    (Word TEXT, ${trans^} TEXT, Example TEXT, Example2 TEXT);" |sqlite3 ${cdb}
 
     r=$((RANDOM%10000))
     cd /; DT_r="$1"; cd "$DT_r"; touch "swrd.$r" "twrd.$r"
@@ -155,7 +154,7 @@ function sentence_p() {
         echo "$t"_"$s""" >> "$DT_r/B.$r"
         if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]] && \
         [ -n "${t}" ] && [ -n "${s}" ]; then
-            echo -n "insert into ${table^^} (Word,Translation,Example) \
+            echo -n "insert into ${table} (Word,${trans^},Example) \
             values ('${t}','${s}','${trgt}');" |sqlite3 ${cdb}
             echo -n "insert into Words (Word) values ('${t}');" |sqlite3 ${cdb}
         fi
@@ -168,7 +167,7 @@ function sentence_p() {
         echo "$t"_"$s""" >> "$DT_r/B.$r"
         if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]] && \
         [ -n "${t}" ] && [ -n "${s}" ]; then
-            echo -n "insert into ${table^^} (Word,Translation,Example) \
+            echo -n "insert into ${table} (Word,${trans^},Example) \
             values ('${t}','${s}','${trgt}');" |sqlite3 ${cdb}
             echo -n "insert into Words (Word) values ('${t}');" |sqlite3 ${cdb}
         fi
@@ -308,12 +307,19 @@ function set_image_2() {
 }
 
 function translate() {
-    if ! ls "$DC_d"/*."Traslator online.Translator".* 1> /dev/null 2>&1; then
-    "$DS_a/Dics/cnfg.sh" 2; fi
-    for trans in "$DC_d"/*."Traslator online.Translator".*; do
-        trans="$DS_a/Dics/dicts/$(basename "${trans}")"
-        [ -e "${trans}" ] && "${trans}" "$@" && break
-    done
+    cdb="$DM_tls/Dictionary/${lgtl}.db"
+    trans="$lgsl"
+    if [[ `wc -w <<<$1` = 1 ]] && \
+    [[ `sqlite3 ${cdb} "select Word from Words where Word is '${1}';"` ]]; then
+        yad --text=${1}
+    else
+        if ! ls "$DC_d"/*."Traslator online.Translator".* 1> /dev/null 2>&1; then
+        "$DS_a/Dics/cnfg.sh" 2; fi
+        for trans in "$DC_d"/*."Traslator online.Translator".*; do
+            trans="$DS_a/Dics/dicts/$(basename "${trans}")"
+            [ -e "${trans}" ] && "${trans}" "$@" && break
+        done
+    fi
 }
 
 function tts() {
