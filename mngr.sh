@@ -67,6 +67,9 @@ delete_item_ok() {
         if [ -f "${DC_tlt}/lst" ]; then rm "${DC_tlt}/lst"; fi
         rm "${DC_tlt}"/*.tmp
     fi
+    if [[ `wc -l < "${DC_tlt}/0.cfg"` -lt 200 ]] \
+    && [[ -e "${DC_tlt}/lk" ]]; then
+        rm -f "${DC_tlt}/lk"; fi
     "$DS/ifs/tls.sh" colorize &
     rm -f "$DT/ps_lk" & exit 1
 }
@@ -100,12 +103,13 @@ delete_item() {
             done
             if [[ `wc -l < "${DC_tlt}/0.cfg"` -lt 200 ]] \
             && [[ -e "${DC_tlt}/lk" ]]; then
-            rm -f "${DC_tlt}/lk"; fi
+                rm -f "${DC_tlt}/lk"; fi
+            if [ -e "${DC_tlt}/feeds" ]; then
+                echo "${trgt}" >> "${DC_tlt}/exclude"; fi
             "$DS/ifs/tls.sh" colorize &
             rm "${DC_tlt}"/*.tmp
         fi
     fi
-    
     rm -f "$DT/ps_lk" & exit 1
 }
 
@@ -151,7 +155,7 @@ edit_item() {
     if ((mode>=1 && mode<=10)); then
     tpcs="$(egrep -v "${tpc}" "${DM_tl}/.2.cfg" |tr "\\n" '!' |sed 's/!\+$//g')"
     tpc_list="${tpc}!${tpcs}"
-    [ -n "${tag}" ] && tags="$(egrep -v "${tag}" < "${DM_tl}/.tags")" || tags="$(< "${DM_tl}/.tags")"
+    [ -n "${tag}" ] && tags="$(egrep -v "${tag}" < "${DM_tl}/.5.cfg")" || tags="$(< "${DM_tl}/.5.cfg")"
     [ -n "${tags}" ] && tags_list="${tag}!"$(tr "\\n" '!' <<<"${tags}" |sed 's/!\+$//g')"" || tags_list=""
     else tags_list=""; tpc_list=""; fi
 
@@ -214,12 +218,13 @@ edit_item() {
                 [ "${type_mod}" = FALSE ] && type_mod=2
                 [ -z "${type_mod}" ] && type_mod=2
             fi
-            
+            if [ "${tag_mod}" = '(null)' ]; then tag_mod=""; fi
             if [ "${trgt_mod}" != "${trgt}" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
             if [ ${text_missing} != 0 ]; then
-                index edit "${item_id}" "${tpc}" "${trgt_mod}"
+                trgt="${item_id}"
+                index edit "${tpc}"
             else
-                index edit "${trgt}" "${tpc}" "${trgt_mod}"
+                index edit "${tpc}"
             fi
             sed -i "${edit_pos}s|trgt={${trgt}}|trgt={${trgt_mod}}|;
             ${edit_pos}s|grmr={${grmr}}|grmr={${trgt_mod}}|;
@@ -281,8 +286,11 @@ edit_item() {
                             [ -e "${DM_tlt}/$id.mp3" ] && mv -f "${DM_tlt}/$id.mp3" "$DM_tl/${tpc_mod}/$id_mod.mp3"; fi
                     fi
                     "$DS/mngr.sh" delete_item_ok "${tpc}" "${trgt}"
-                    index ${type_mod} "${tpc_mod}" "${trgt_mod}" "${srce_mod}" \
-                    "${exmp_mod}" "${defn_mod}" "${wrds_mod}" "${grmr_mod}" "${id_mod}"
+                    trgt="${trgt_mod}"; srce="${srce_mod}"; tpe="${tpc_mod}"
+                    exmp="${exmp_mod}"; defn="${defn_mod}"; note="${note_mod}"
+                    wrds="${wrds_mod}"; grmr="${grmr_mod}"; tag="${tag_mod}"
+                    mark="${mark_mod}"; link="${link_mod}"; id="${id_mod}"
+                    index ${type_mod}
                     unset type trgt srce exmp defn note wrds grmr mark id
 
                 elif [ "${tpc}" = "${tpc_mod}" ]; then
@@ -295,8 +303,8 @@ edit_item() {
                     ${pos}s|note={$note}|note={$note_mod}|;
                     ${pos}s|wrds={$wrds}|wrds={$wrds_mod}|;
                     ${pos}s|grmr={$grmr}|grmr={$grmr_mod}|;
-                    ${pos}s|tag={$tag}|tag={$tag_mod}|;
                     ${pos}s|mark={$mark}|mark={$mark_mod}|;
+                    ${pos}s|tag={$tag}|tag={$tag_mod}|;
                     ${pos}s|id=\[$id\]|id=\[$id_mod\]|g" "${cfg0}"
                     
                     if [ "${audf}" != "${audf_mod}" ]; then
@@ -324,7 +332,7 @@ edit_item() {
         fi
         "$DS/vwr.sh" ${list} "${trgt}" ${item_pos} &
     exit
-} >/dev/null 2>&1
+}
 
 tagget_item() {
 	if [ -n "${tag_mod}" ]; then
@@ -491,27 +499,18 @@ delete_topic() {
         msg "$(gettext "Could not remove the directory:")\n$DM_tl/${tpc}\n$(gettext "You must manually remove it.")" info "$(gettext "Information")"; fi
         
         rm -f "$DT/tpe"
-        > "$DM_tl/.8.cfg"
         > "$DC_s/4.cfg"
-        for n in {0..4}; do
+        for n in {0..6}; do
             if [ -e "$DM_tl/.${n}.cfg" ]; then
-            grep -vxF "${tpc}" "$DM_tl/.$n.cfg" > "$DM_tl/.${n}.cfg.tmp"
-            sed '/^$/d' "$DM_tl/.$n.cfg.tmp" > "$DM_tl/.${n}.cfg"; fi
+                grep -vxF "${tpc}" "$DM_tl/.$n.cfg" > "$DM_tl/.${n}.cfg.tmp"
+                sed '/^$/d' "$DM_tl/.$n.cfg.tmp" > "$DM_tl/.${n}.cfg"; fi
         done
         kill -9 $(pgrep -f "yad --list ") &
         kill -9 $(pgrep -f "yad --text-info ") &
         kill -9 $(pgrep -f "yad --form ") &
         kill -9 $(pgrep -f "yad --notebook ") &
         "$DS/mngr.sh" mkmn &
-        
-        if [ -e "$DM_tl/.5.cfg" ]; then
-            tpd="$(< "$DM_tl/.5.cfg")"
-            if grep -Fxq "${tpd}" "$DM_tl/.1.cfg"; then
-            "$DS/default/tpc.sh" "${tpd}" 2; fi
-        fi
     fi
-    grep -vxF "${tpc}" "$DM_tl/.tags" > "$DM_tl/.tags.tmp"
-    sed '/^$/d' "$DM_tl/.tags.tmp" > "$DM_tl/.tags"
     rm -f "$DT/rm_lk" "$DM_tl"/.*.tmp & exit 1
 }
 
@@ -553,22 +552,22 @@ rename_topic() {
         mv -f "$DM_tl/${tpc}" "$DM_tl/${jlb}"
         sed -i "s/tname=.*/tname=\"${jlb}\"/g" "$DM_tl/${jlb}/.conf/id.cfg"
         echo "${jlb}" > "$DC_s/4.cfg"
-        echo "${jlb}" > "$DM_tl/.8.cfg"
-        echo "${jlb}" >> "$DM_tl/.1.cfg"
-        list_inadd > "$DM_tl/.2.cfg"
+        
         echo "${jlb}" > "$DT/tpe"
         echo 0 > "$DC_s/5.cfg"
         
-        for n in {1..3}; do
-        if [ -f "$DM_tl/.${n}.cfg" ]; then
-        grep -vxF "${tpc}" "$DM_tl/.$n.cfg" > "$DM_tl/.${n}.cfg.tmp"
-        sed '/^$/d' "$DM_tl/.$n.cfg.tmp" > "$DM_tl/.${n}.cfg"; fi
+        for n in {1..6}; do
+            if grep -Fxq "${tpc}" "$DM_tl/.$n.cfg"; then
+                grep -vxF "${tpc}" "$DM_tl/.$n.cfg" > "$DM_tl/.${n}.cfg.tmp"
+                sed '/^$/d' "$DM_tl/.$n.cfg.tmp" > "$DM_tl/.${n}.cfg"
+                echo "${jlb}" >> "$DM_tl/.$n.cfg"
+            fi
         done
         
+        list_inadd > "$DM_tl/.2.cfg"
         rm "$DM_tl"/.*.tmp
         [ -d "$DM_tl/${tpc}" ] && rm -r "$DM_tl/${tpc}"
         [ -f "$DM/backup/${tpc}.bk" ] && rm "$DM/backup/${tpc}.bk"
-        [[ ${i} = 1 ]] &&  echo "${jlb}" >> "$DM_tl/.3.cfg"
         
         rm -f "$DT/rm_lk"; "$DS/mngr.sh" mkmn & exit 1
     fi
@@ -620,6 +619,9 @@ mark_to_learn_topic() {
     
     ) | progr_3
 
+    if [ -e "${DC_tlt}/lk" ]; then
+    rm "${DC_tlt}/lk"; fi
+        
     if [[ ${3} = 1 ]]; then
     kill -9 $(pgrep -f "yad --multi-progress ") &
     kill -9 $(pgrep -f "yad --list ") &
@@ -674,6 +676,9 @@ mark_as_learned_topic() {
         if [ -d "${DC_tlt}/practice" ]; then
             (cd "${DC_tlt}/practice"; rm .*; rm *
             touch ./log1 ./log2 ./log3); fi
+            
+        if [ -e "${DC_tlt}/feeds" ]; then
+        echo "$(gettext "Updating paused")" > "${DC_tlt}/lk"; fi
         
         > "${DC_tlt}/7.cfg"
         if [[ $((stts%2)) = 0 ]]; then

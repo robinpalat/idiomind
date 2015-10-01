@@ -80,6 +80,6 @@ function tags_list() {
 	"$DS/practice/strt.sh" &
     fi
 
-} >/dev/null 2>&1
+}
 
 export -f word_view tags_list

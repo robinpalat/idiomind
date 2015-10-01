@@ -3,10 +3,11 @@
 
 function word_view() {
     [ -n "$tag" ] && field_tag="--field=<small>$tag</small>:lbl"
-    [ -n "$defn" ] && field_defn="--field=<small>$defn</small>:lbl"
-    [ -n "$note" ] && field_note="--field=<small>$note</small>\n:lbl"
-    [ -n "$exmp" ] && field_exmp="--field=<span font_desc='Verdana 11' color='#5C5C5C'><i>$exmp</i></span>:lbl"
-    local sentence="<span font_desc='Sans Free 25'>${trgt}</span>\n\n<span font_desc='Sans Free 14'><i>$srce</i></span>\n\n"
+    [ -n "$defn" ] && field_defn="--field=$defn:lbl"
+    [ -n "$note" ] && field_note="--field=<i>$note</i>\n:lbl"
+    [ -n "$exmp" ] && field_exmp="--field=<span font_desc='Verdana 11' color='#5C5C5C'>$exmp</span>:lbl"
+    [ $show_link = 1  ] && link=" <a href='$link'>$(gettext "Read more")</a>"
+    local sentence="<span font_desc='Sans Free 25'>${trgt}</span>\n\n<span font_desc='Sans Free 14'><i>$srce</i></span>$link\n\n"
 
     yad --form --title=" " \
     --selectable-labels --quoted-output \
@@ -26,10 +27,11 @@ function word_view() {
 function sentence_view() {
     if [ "$(grep -o gramr=\"[^\"]* < "$DC_s/1.cfg" | grep -o '[^"]*$')"  = TRUE ]; then
     trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
-    local word="<span font_desc='Sans Free 15'>${trgt_l}</span>\n\n<span font_desc='Sans Free 11'><i>$srce</i></span>\n<span font_desc='Sans Free 6'>$tag</span>\n"
+    [ $show_link = 1  ] && link=" <a href='$link'>$(gettext "Read more")</a>"
+    local sentence="<span font_desc='Sans Free 15'>${trgt_l}</span>\n\n<span font_desc='Sans Free 11'><i>$srce</i>$link</span>\n<span font_desc='Sans Free 6'>$tag</span>\n"
     
     echo "${lwrd}" | yad --list --title=" " \
-    --text="${word}" \
+    --text="${sentence}" \
     --selectable-labels --print-column=0 \
     --dclick-action="$DS/play.sh 'play_word'" \
     --window-icon="$DS/images/icon.png" \
@@ -54,6 +56,7 @@ function notebook_1() {
     lbl3="--center"
     cmd4="LBL"
     if [ ! -e "${DC_tlt}/feeds" ]; then
+    export show_link=0
     btn0="$(gettext "Files")"
     btn1="$(gettext "Share")"
     btn2="$(gettext "Delete")"
@@ -63,6 +66,7 @@ function notebook_1() {
     cmd2="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
     cmd3="'$DS/mngr.sh' edit_list "\"${tpc}\"""
     else
+    export show_link=1
     btn0="$(gettext "Feeds")"
     btn1="$(gettext "Update")"
     btn2="$(gettext "Share")"

@@ -46,14 +46,14 @@ new_topic() {
     elif  [ ${type} = "$(gettext "Tag")" ]; then
         mkdir "$DM_tl/${jlb}"
         list_inadd > "$DM_tl/.2.cfg"
-        echo "${jlb}" >> "${DM_tl}/.tags"
+        echo "${jlb}" >> "${DM_tl}/.5.cfg"
         "$DS/default/tpc.sh" "${jlb}" 14 1
         "$DS/mngr.sh" mkmn
     elif  [ ${type} = "$(gettext "Feed")" ]; then
         mkdir "$DM_tl/${jlb}"
         mkdir "$DM_tl/${jlb}/.conf"
         touch "$DM_tl/${jlb}/.conf/feeds"
-        echo "${jlb}" >> "${DM_tl}/.feeds"
+        echo "${jlb}" >> "${DM_tl}/.6.cfg"
         "$DS/default/tpc.sh" "${jlb}" 1 1
         "$DS/mngr.sh" mkmn
     fi
@@ -126,7 +126,7 @@ function new_sentence() {
         msg "$(gettext "An error has occurred while saving the note.")\n" dialog-warning "$(gettext "Information")"
         cleanups "$DT_r" & exit 1
     else
-        index 2 "${tpe}" "${trgt}" "${srce}" "" "" "${wrds}" "${grmr}" "$id"
+        index 2
         if [ -f "$DT_r/img.jpg" ]; then
         mv -f  "$DT_r/img.jpg" "${DM_tlt}/images/$id.jpg"; fi
         
@@ -174,7 +174,7 @@ function new_word() {
     fi
     
     audio="${trgt,,}"
-    id="$(set_name_file 1 "${trgt}" "${srce}" "${exmp_}" "" "" "" "")"
+    id="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
     mksure "${trgt}" "${srce}"
     
     if [ $? = 1 ]; then
@@ -182,7 +182,7 @@ function new_word() {
         msg "$(gettext "An error has occurred while saving the note.")\n" dialog-warning "$(gettext "Information")"
         exit 1
     else
-        index 1 "${tpe}" "${trgt^}" "${srce^}" "${exmp_}" "" "" "" "${id}"
+        index 1
 
         if [ -f "$DT_r/img.jpg" ]; then
             if [ -f "${DM_tls}/images/${trgt,,}-0.jpg" ]; then
@@ -231,7 +231,7 @@ list_words_edit() {
                 done <<<"$(sed 's/|//g' <<<"${slt}")"
             fi
     elif [[ ${3} = 2 ]]; then
-        exmp_="${5}"
+        exmp="${5}"
         DT_r="$DT/$4"; cd "$DT_r"
         n=1
         while read -r trgt; do
@@ -243,11 +243,11 @@ list_words_edit() {
                 translate "${trgt}" auto $lgs > "$DT_r/tr.$4"
                 srce=$(< "$DT_r/tr.$4")
                 srce="$(clean_0 "${srce}")"
-                id="$(set_name_file 1 "${trgt}" "${srce}" "${exmp_}" "" "" "" "")"
+                id="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
                 mksure "${trgt}" "${srce}"
 
                 if [ $? = 0 ]; then
-                    index 1 "${tpe}" "${trgt}" "${srce}" "${exmp_}" "" "" "" "${id}"
+                    index 1
                     if [ ! -f "$DM_tls/$audio.mp3" ]; then
                         ( tts_word "$audio" "$DM_tls" ); fi
                     ( img_word "${trgt}" "${srce}" ) &
@@ -267,7 +267,7 @@ list_words_edit() {
 }
 
 function list_words_sentence() {
-    exmp_="${trgt}"
+    exmp="${trgt}"
     c=$((RANDOM%100))
     DT_r=$(mktemp -d "$DT/XXXXXX")
     info="-$((200-$(wc -l < "${DC_tlt}/0.cfg")))"
@@ -294,11 +294,11 @@ function list_words_sentence() {
             translate "${trgt}" auto $lgs > "$DT_r/tr.$c"
             srce=$(< "$DT_r/tr.$c")
             srce="$(clean_0 "${srce}")"
-            id="$(set_name_file 1 "${trgt}" "${srce}" "${exmp_}" "" "" "" "")"
+            id="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
             mksure "${trgt}" "${srce}"
             
             if [ $? = 0 ]; then
-                index 1 "${tpe}" "${trgt}" "${srce}" "${exmp_}" "" "" "" "${id}"
+                index 1
                 if [ ! -f "$DM_tls/$audio.mp3" ]; then
                     ( tts_word "${audio}" "${DM_tls}" ); fi
                 ( img_word "${trgt}" "${srce}" ) &
@@ -489,7 +489,7 @@ function process() {
                     mksure "${trgt}" "${srce}"
                     
                     if [ $? = 0 ]; then
-                        index 1 "${tpe}" "${trgt}" "${srce}" "" "" "" "" "${id}"
+                        index 1
                         ( tts_word "${audio}" "${DM_tlt}" ) &&
                         if [ -f "${DM_tlt}/${audio}.mp3" ]; then
                         mv "${DM_tlt}/${audio}.mp3" "${DM_tlt}/$id.mp3"
@@ -518,7 +518,7 @@ function process() {
                         mksure "${trgt}" "${srce}" "${wrds}" "${grmr}"
                         
                         if [ $? = 0 ]; then
-                            index 2 "${tpe}" "${trgt}" "${srce}" "" "" "${wrds}" "${grmr}" "${id}"
+                            index 2
                             if [ "$trans" = TRUE ]; then
                             tts "${trgt}" $lgt "$DT_r" "${DM_tlt}/$id.mp3"
                             [ ! -f "${DM_tlt}/$id.mp3" ] && voice "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
@@ -543,7 +543,7 @@ function process() {
         if [ -s "$DT_r/wrds" ]; then
             n=1
             while read -r trgt; do
-                exmp_=$(sed -n ${n}p "$DT_r/wrdsls" |sed 's/\[ \.\.\. \]//g')
+                exmp=$(sed -n ${n}p "$DT_r/wrdsls" |sed 's/\[ \.\.\. \]//g')
                 trgt=$(echo "${trgt,,}" |sed 's/^\s*./\U&\E/g')
                 audio="${trgt,,}"
                 
@@ -551,11 +551,11 @@ function process() {
                     echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] ${trgt}" >> "$DT_r/wlog"
                 else
                     srce="$(translate "${trgt}" auto $lgs)"
-                    id="$(set_name_file 1 "${trgt}" "${srce}" "${exmp_}" "" "" "" "")"
+                    id="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
                     mksure "${trgt}" "${srce}"
                     
                     if [ $? = 0 ]; then
-                        index 1 "${tpc}" "${trgt}" "${srce}" "${exmp_}" "" "" "" "${id}"
+                        index 1
                         if [ ! -f "${DM_tls}/$audio.mp3" ]; then
                         ( tts_word "$audio" "${DM_tls}" )
                         ( img_word "${trgt}" "${srce}" ) & fi
@@ -629,7 +629,7 @@ fetch_content() {
           <xsl:value-of select='enclosure/@url'/><xsl:text>-!-</xsl:text>
           <xsl:value-of select='media:cache[@type=\"image/jpeg\"]/@url'/><xsl:text>-!-</xsl:text>
           <xsl:value-of select='title'/><xsl:text>-!-</xsl:text>
-          <xsl:value-of select='media:cache[@type=\"image/jpeg\"]/@duration'/><xsl:text>-!-</xsl:text>
+          <xsl:value-of select='link'/><xsl:text>-!-</xsl:text>
           <xsl:value-of select='itunes:summary'/><xsl:text>-!-</xsl:text>
           <xsl:value-of select='description'/><xsl:text>EOL</xsl:text>
         </xsl:for-each>
@@ -638,7 +638,7 @@ fetch_content() {
 
    while read -r _feed; do
         feed_items="$(xsltproc - "$_feed" <<<"${tmplitem}" 2> /dev/null)"
-        feed_items="$(echo "$feed_items" |tr '\n' ' ' |tr -s '[:space:]' |sed 's/EOL/\n/g' |head -n2)"
+        feed_items="$(echo "$feed_items" |tr '\n' '*' |tr -s '[:space:]' |sed 's/EOL/\n/g' |head -n2)"
         feed_items="$(echo "$feed_items" |sed '/^$/d')"
         
         while read -r item; do
@@ -647,8 +647,12 @@ fetch_content() {
             |iconv -c -f utf8 -t ascii |sed 's/\://g' \
             |sed 's/\&/&amp;/g' |sed 's/^\s*./\U&\E/g' \
             |sed 's/<[^>]*>//g' |sed 's/^ *//; s/ *$//; /^$/d')
+            link="$(echo "$fields" |sed -n 4p \
+            |sed 's|/|\\/|g' |sed 's/\&/\&amp\;/g')"
+
             if [ -n "${title}" ]; then
-                if ! grep -Fo "trgt={${title^}}" "${DC_tlt}/0.cfg"; then
+                if ! grep -Fo "trgt={${title^}}" "${DC_tlt}/0.cfg" && \
+                ! grep -Fxq "${title^}" "${DC_tlt}/exclude"; then
                     wlist='FALSE'
                     trgt="${title^}"
                     new_item

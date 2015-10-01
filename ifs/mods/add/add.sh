@@ -30,15 +30,13 @@ function index() {
     if [ ! -f "$DT/i_lk" -o ${brk} -gt 20 ]; then > "$DT/i_lk" & break
     elif [ -f "$DT/i_lk" ]; then sleep 1; fi
     let brk++; done
-        
+
     if [[ ${1} = edit ]]; then
-            
-        item="${2}"; item_mod="${4}"
-        DC_tlt="$DM_tl/${3}/.conf"
+        DC_tlt="$DM_tl/${2}/.conf"
         
         sust(){
-            if grep -Fxo "${item}" "${1}"; then
-            sed -i "s/${item}/${item_mod}/" "${1}"
+            if grep -Fxo "${trgt}" "${1}"; then
+            sed -i "s/${trgt}/${trgt_mod}/" "${1}"
             fi
         }
         s=1
@@ -55,30 +53,30 @@ function index() {
             cd /
         fi
     else
-        item="${3}"; DC_tlt="${DM_tl}/${2}/.conf"
-        if [ ! -n "${item}" ]; then return 1; fi
+        DC_tlt="${DM_tl}/${tpe}/.conf"
+        if [ ! -n "${trgt}" ]; then return 1; fi
         if [ ! -d "${DC_tlt}" ]; then return 1; fi
         img0='/usr/share/idiomind/images/0.png'
         #
-        if [ ! -z "${item}" ]; then
-            if ! grep -Fo "trgt={${item}}" "${DC_tlt}/0.cfg"; then
+        if [ ! -z "${trgt}" ]; then
+            if ! grep -Fo "trgt={${trgt}}" "${DC_tlt}/0.cfg"; then
                 pos=`wc -l < "${DC_tlt}/0.cfg"`
-                t_item="${pos}:[type={$1},trgt={$item},srce={$4},exmp={$5},defn={$6},note={},wrds={$7},grmr={$8},].[tag={},mark={},].id=[$9]"
-                echo -e "${t_item}" >> "${DC_tlt}/0.cfg"
+                item="${pos}:[type={$1},trgt={$trgt},srce={$srce},exmp={$exmp},defn={$defn},note={$note},wrds={$wrds},grmr={$grmr},].[tag={$tag},mark={$mark},link={$link},].id=[$id]"
+                echo -e "${item}" >> "${DC_tlt}/0.cfg"
             fi
-            if ! grep -Fxq "${item}" < <(cat "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg"); then
+            if ! grep -Fxq "${trgt}" < <(cat "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg"); then
                 if [[ ${1} = 1 ]]; then
                     if [ "$(grep "$4" "${DC_tlt}/1.cfg")" ] && [ -n "$4" ]; then
-                    sed -i "s/${4}/${4}\n${item}/" "${DC_tlt}/1.cfg"
+                    sed -i "s/${4}/${4}\n${trgt}/" "${DC_tlt}/1.cfg"
                     else
-                    echo "${item}" >> "${DC_tlt}/1.cfg"; fi
-                    echo "${item}" >> "${DC_tlt}/3.cfg"
-                    echo -e "FALSE\n${item}\n$img0" >> "${DC_tlt}/5.cfg"
+                    echo "${trgt}" >> "${DC_tlt}/1.cfg"; fi
+                    echo "${trgt}" >> "${DC_tlt}/3.cfg"
+                    echo -e "FALSE\n${trgt}\n$img0" >> "${DC_tlt}/5.cfg"
 
                 elif [[ ${1} = 2 ]]; then
-                    echo "${item}" >> "${DC_tlt}/1.cfg"
-                    echo "${item}" >> "${DC_tlt}/4.cfg"
-                    echo -e "FALSE\n${item}\n$img0" >> "${DC_tlt}/5.cfg"
+                    echo "${trgt}" >> "${DC_tlt}/1.cfg"
+                    echo "${trgt}" >> "${DC_tlt}/4.cfg"
+                    echo -e "FALSE\n${trgt}\n$img0" >> "${DC_tlt}/5.cfg"
                 fi
             fi
         fi

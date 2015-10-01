@@ -600,6 +600,7 @@ set_image() {
 } >/dev/null 2>&1
 
 edit_tag() {
+    
     cmd_del="'$DS/mngr.sh' 'delete_topic' "\"${2}\"""
     cmd_exp="'$DS/ifs/upld.sh' 'upld' "\"${2}\"""
     desc="$(< "${DC_tlt}/info")"
@@ -607,9 +608,10 @@ edit_tag() {
     --name=Idiomind --class=Idiomind \
     --separator='|' \
     --window-icon="$DS/images/icon.png" --center \
-    --width=300 --height=220 --borders=5 \
-    --field="$(gettext "Description")":TXT "$desc" \
-    --field="$(gettext "Export")":FBTN "$cmd_exp" \
+    --width=300 --height=200 --borders=5 \
+    --field="$(gettext "Description")" "$desc" \
+    $(for fl in $DS/ifs/mods/export/*; do
+    echo "--field=$(basename $fl |sed 's/\.sh//'):FBTN "${fl}""; done) \
     --field="$(gettext "Delete")":FBTN "$cmd_del" \
     --button="$(gettext "Close")")"
     ret=$?
@@ -617,7 +619,7 @@ edit_tag() {
     if [ -n "$desc_mod" -a "$desc_mod" != "$desc" ]; then
     echo "${desc_mod}" > "${DC_tlt}/info"; fi
 
-} >/dev/null 2>&1
+}
 
 translate_to() {
     # usage: 
