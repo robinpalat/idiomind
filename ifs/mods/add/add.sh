@@ -112,10 +112,10 @@ function sentence_p() {
     | sed 's/ /\n/g' | grep -v '^.$' | grep -v '^..$' \
     | tr -d '*)(,;"“”:' | tr -s '&|{}[]' ' ' \
     | sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
-    | sed 's/\]//;s/\[//;s/<[^>]*>//g' \
+    | sed 's/\]//;s/\[//;s/<[^>]*>//g' | sed "s/'$//;s/^'//"\
     | sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //;s/"//g' \
-    | tr -d '.' | sed 's/^ *//; s/ *$//; /^$/d' > "$aw"
-    translate "$(sed '/^$/d' "$aw")" auto $lg | tr -d '!?¿,;.' > "$bw"
+    | tr -d '.' | sed 's/^ *//; s/ *$//; /^$/d' > "${aw}"
+    translate "$(sed '/^$/d' "${aw}")" auto $lg | tr -d '!?¿,;.' > "${bw}"
     touch "A.$r" "B.$r" "g.$r"
     
     while read -r wrd; do
@@ -141,14 +141,14 @@ function sentence_p() {
         fi
     done < <(sed 's/ /\n/g' <<<"${trgt_p}")
     
-    sed -i 's/\. /\n/g' "$bw"
-    sed -i 's/\. /\n/g' "$aw"
+    sed -i 's/\. /\n/g' "${bw}"
+    sed -i 's/\. /\n/g' "${aw}"
     touch "$DT_r/A.$r" "$DT_r/B.$r" "$DT_r/g.$r"; bcle=1
     
     if [ "$lgt" = ja -o "$lgt" = "zh-cn" -o "$lgt" = ru ]; then
-        while [[ ${bcle} -le "$(wc -l < "$aw")" ]]; do
-        s=$(sed -n "$bcle"p $aw |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
-        t=$(sed -n "$bcle"p $bw |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
+        while [[ ${bcle} -le "$(wc -l < "${aw}")" ]]; do
+        s=$(sed -n "$bcle"p ${aw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
+        t=$(sed -n "$bcle"p ${bw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
         echo "$t"_"$s""" >> "$DT_r/B.$r"
         if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]] && \
         [ -n "${t}" ] && [ -n "${s}" ]; then
@@ -159,9 +159,9 @@ function sentence_p() {
         let bcle++
         done
     else
-        while [[ ${bcle} -le "$(wc -l < "$aw")" ]]; do
-        t=$(sed -n "$bcle"p $aw |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
-        s=$(sed -n "$bcle"p $bw |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
+        while [[ ${bcle} -le "$(wc -l < "${aw}")" ]]; do
+        t=$(sed -n "$bcle"p ${aw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
+        s=$(sed -n "$bcle"p ${bw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
         echo "$t"_"$s""" >> "$DT_r/B.$r"
         if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]] && \
         [ -n "${t}" ] && [ -n "${s}" ]; then
