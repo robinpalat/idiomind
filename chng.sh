@@ -145,14 +145,16 @@ elif [[ ${1} != 0 ]]; then
     --button="$(gettext "Apply")":2 \
     --button="gtk-close":1)
     ret=$?
-    mode="$(< "$DM_tl/${tpc}/.conf/8.cfg")"
-    if [[ ${#mode} -lt 3 ]]; then
-        if [ $ret -eq 3 ]; then
+    if [ $ret -eq 3 ]; then
             "$DS/add.sh" new_topic
-        elif [ $ret -eq 2 ]; then
-            "$DS/default/tpc.sh" "$tpc" ${mode} 1 &
-        elif [ $ret -eq 0 ]; then
-            "$DS/default/tpc.sh" "$tpc" ${mode} &
+    elif [ -n "${tpc}" ]; then
+        mode="$(< "$DM_tl/${tpc}/.conf/8.cfg")"
+        if ((mode>=0 && mode<=20)); then
+            if [ $ret -eq 2 ]; then
+                "$DS/default/tpc.sh" "$tpc" ${mode} 1 &
+            elif [ $ret -eq 0 ]; then
+                "$DS/default/tpc.sh" "$tpc" ${mode} &
+            fi
         fi
     fi
     exit

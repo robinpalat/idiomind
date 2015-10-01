@@ -17,22 +17,26 @@ sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
 
 _info() {
     yad --form --title="$(gettext "Notice")" \
-    --text="$(gettext "Some things are still not working for this language"). ($1)\n" \
+    --text="$(gettext "Some things are still not working for these languages:") Chinese, Japanese, Russian." \
     --image=info \
     --window-icon=info \
     --skip-taskbar --center --on-top \
-    --width=460 --height=120 --borders=5 \
+    --width=340 --height=120 --borders=5 \
     --button="$(gettext "OK")":0
 }
 
 function set_lang() {
-    if [ ! -d "$DM_t/$1" ]; then
-    mkdir "$DM_t/$1"
-    touch "$DM_t/$1/.1.cfg"
-    touch "$DM_t/$1/.2.cfg"
-    touch "$DM_t/$1/.3.cfg"
-    mkdir -p "$DM_t/$1/.share/images"; fi
-    echo "$1" > "$DC_s/6.cfg"
+    language="$1"
+    if [ ! -d "$DM_t/$language/.share/images" ]; then
+        mkdir -p "$DM_t/$language/.share/images"
+        mkdir -p "$DM_t/$language/.share/Dictionary/.conf"
+        echo 0 > "$DM_t/$language/.share/Dictionary/.conf/8.cfg"
+        cdb="$DM_t/$language/.share/Dictionary/${language}.db"
+        echo -n "create table if not exists Words (Word TEXT);" |sqlite3 ${cdb}
+        echo -n "create table if not exists Config (Study TEXT, Expire INTEGER);" |sqlite3 ${cdb}
+    fi
+    for n in {0..3}; do touch "$DM_t/$language/.$n.cfg"; done
+    echo "$language" > "$DC_s/6.cfg"
 }
 
 dlg=$(yad --form --title="Idiomind" \
@@ -104,8 +108,8 @@ elif [ $ret -eq 0 ]; then
     
     n=0; > "$DC_s/1.cfg"
     while [ ${n} -lt 11 ]; do
-    echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
-    ((n=n+1))
+        echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
+        ((n=n+1))
     done
     touch "$DC_s/4.cfg"
     
@@ -116,10 +120,7 @@ elif [ $ret -eq 0 ]; then
     config="usrid=\"$id\"\niuser=\"\"\ncntct=\"\""
     echo -e "${config}" > "$DC_s/3.cfg"
     /usr/share/idiomind/ifs/tls.sh first_run
-    
+    export u=1
     idiomind -s
-
-    exit
-else
-    exit 1
 fi
+exit 0

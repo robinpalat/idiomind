@@ -49,6 +49,7 @@ on_lang() {
     if ps -A | pgrep -f "notify-osd"; then killall notify-osd & fi
     if ps -A | pgrep -f "play"; then killall play & fi
     [ -d "$DT/p" ] && rm -fr "$DT/p"
+    > "$DT/tpe"
     exit
 }
 

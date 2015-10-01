@@ -21,7 +21,7 @@ export -f word_view sentence_view
 function Dictionary() {
     cmd_play="$DS/play.sh play_list"
     cdb="$DM_tls/Dictionary/${lgtl}.db"
-    table=`date +%b%y`
+    table="T`date +%m%y`"
     sqlite3 "$cdb" "select * FROM  ${table^^}" \
     |sed 's/|/\n/g' | yad --list --title="${tpc}" \
     --text="$(gettext "$lgtlLorem ipsum dolor sit amet, consectetur adipisicing elit, sed doeiusmod tempor incididunt ut labore et dolore magna aliq")\n" \

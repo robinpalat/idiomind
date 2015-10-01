@@ -76,7 +76,7 @@ function edit_feeds_list() {
     --always-print-result --print-all \
     --window-icon="$DS/images/icon.png" \
     --no-headers --center \
-    --width=420 --height=280 --borders=5 \
+    --width=420 --height=200 --borders=2 \
     --column="" \
     --button="$(gettext "OK")":0
 }

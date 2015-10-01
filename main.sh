@@ -60,14 +60,16 @@ function new_session() {
     sed -n 1p <<<"$s" >> "$DC_s/10.cfg"
     sed -n 2p <<<"$s" >> "$DC_s/10.cfg"
     
-    
-    #find -maxdepth 1 -type l
-    #if [[ -L "$file" && -d "$file" ]]
-    #then
-	#echo "$file is a symlink to a directory"
-    #fi
-    cdb="$DM_tl/Dictionary/${lgtl}.db"
+    # create database if not exist
+    cdb="$DM_tls/Dictionary/${lgtl}.db"
+    if [[ ! -e ${cdb} ]]; then
+    [ ! -d "$DM_tls/Dictionary" ] && mkdir -p "$DM_tls/Dictionary" 
     echo -n "create table if not exists Words (Word TEXT);" |sqlite3 ${cdb}
+    echo -n "create table if not exists Config (Study TEXT, Expire INTEGER);" |sqlite3 ${cdb}
+    fi
+    link="$(readlink -f "$(find "$DM_tl"/ -maxdepth 1 -type l)")"
+    if [[ "$(basename "$link")" !=  "$(basename "$DM_tls/Dictionary")" ]]; then
+	[ "$u" != 1 ] && ln -fs "$DM_tls/Dictionary" "$DM_tl/$(gettext "New Words")"; fi
 
     # log file
     if [ -f "$DC_s/log" ]; then
@@ -184,7 +186,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
         fi
     exit 1
 fi
-    
+
 function topic() {
     export mode=`sed -n 1p "${DC_tlt}/8.cfg"`
     source "$DS/ifs/mods/cmns.sh"
