@@ -198,12 +198,12 @@ edit_item() {
             elif [ ${type} = 2 ]; then
                 edit_dlg="${edit_dlg2}"
                 tpc_mod="$(cut -d "|" -f6 <<<"${edit_dlg}")"
-                tag_mod="$(cut -d "|" -f8 <<<"${edit_dlg}")"
+                tag_mod="$(cut -d "|" -f7 <<<"${edit_dlg}")"
                 mark_mod="$(cut -d "|" -f1 <<<"${edit_dlg}")"
                 type_mod="$(cut -d "|" -f2 <<<"${edit_dlg}")"
                 trgt_mod="$(clean_2 "$(cut -d "|" -f3 <<<"${edit_dlg}")")"
                 srce_mod="$(clean_2 "$(cut -d "|" -f5 <<<"${edit_dlg}")")"
-                audf_mod="$(cut -d "|" -f7 <<<"${edit_dlg}")"
+                audf_mod="$(cut -d "|" -f8 <<<"${edit_dlg}")"
                 grmr_mod="${grmr}"
                 wrds_mod="${wrds}"
                 [ "${type_mod}" = TRUE ] && type_mod=1

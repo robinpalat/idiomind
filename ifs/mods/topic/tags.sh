@@ -23,7 +23,7 @@ function word_view() {
 } >/dev/null 2>&1
 
 function sentence_view() {
-    if [ "$(grep -o gramr=\"[^\"]* < "$DC_s/1.cfg" | grep -o '[^"]*$')"  = TRUE ]; then
+    if [ "$(grep -o gramr=\"[^\"]* < "$DC_s/1.cfg" |grep -o '[^"]*$')"  = TRUE ]; then
     trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
     local word="$tag<span font_desc='Sans Free 15'>${trgt_l}</span>\n\n<span font_desc='Sans Free 11'><i>$srce</i></span>\n\n"
     
@@ -72,6 +72,7 @@ function tags_list() {
     --column="$(gettext "$lgsl")":TEXT \
     --column="$(gettext "$lgsl")":TEXT \
     --button="$(gettext "Edit")":"$cmd_edit" \
+    --button="$(gettext "Play")":"$cmd_play" \
     --button="$(gettext "Practice")":5 \
     --button="gtk-close":1
     ret=$?

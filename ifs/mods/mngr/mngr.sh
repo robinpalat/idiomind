@@ -46,8 +46,8 @@ function dlg_form_2() {
     --field="<small><a href='$link1'>$(gettext "Translation")</a></small>\t":LBL " " \
     --field="<small>$lgsl</small>":TXT "${srce}" \
     --field="<small>$(gettext "Topic")</small>":CB "${tpc_list}" \
-    --field="<small>$(gettext "Audio")</small>":FL "${audf}" \
     --field="<small>$(gettext "Tag")</small>":CB "${tags_list}" \
+    --field="<small>$(gettext "Audio")</small>":FL "${audf}" \
     --button="$(gettext "Words")":"${cmd_words}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \
     --button="!$DS/images/listen.png!$(gettext "Listen")":"$cmd_play" \
