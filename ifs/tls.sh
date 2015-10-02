@@ -693,6 +693,10 @@ translate_to() {
                 grmr="$(grep -oP '(?<=grmr={).*(?=})' <<<"${item}")"
                 exmp="$(grep -oP '(?<=exmp={).*(?=})' <<<"${item}")"
                 defn="$(grep -oP '(?<=defn={).*(?=})' <<<"${item}")"
+                note="$(grep -oP '(?<=note={).*(?=})' <<<"${item}")"
+                mark="$(grep -oP '(?<=mark={).*(?=})' <<<"${item}")"
+                tag="$(grep -oP '(?<=tag={).*(?=})' <<<"${item}")"
+                link="$(grep -oP '(?<=link={).*(?=})' <<<"${item}")"
                 id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
                 srce="$(sed -n ${n}p "$DT/index.trad")"
                 tt="$(sed -n ${n}p "$DT/mix_words.trad_tmp" |cut -d '&' -f1 \
@@ -710,7 +714,7 @@ translate_to() {
                 done )
                 wrds="$(tr '\n' '_' < "$DT/w.tmp" |sed '/^$/d')"
                 
-                t_item="${n}:[type={$type},trgt={$trgt},srce={$srce},exmp={$exmp},defn={$defn},note={},wrds={$wrds},grmr={$grmr},].[tag={},mark={},].id=[$id]"
+                t_item="${n}:[type={$type},trgt={$trgt},srce={$srce},exmp={$exmp},defn={$defn},note={$note},wrds={$wrds},grmr={$grmr},].[tag={$tag},mark={$mark},link={$link},].id=[$id]"
                 echo -e "${t_item}" >> "${DC_tlt}/$2.data"
                 echo -e "$trgt"
                 

@@ -59,13 +59,9 @@ function index() {
         img0='/usr/share/idiomind/images/0.png'
         #
         if [ ! -z "${trgt}" ]; then
-            if ! grep -Fo "trgt={${trgt}}" "${DC_tlt}/0.cfg"; then
-                pos=`wc -l < "${DC_tlt}/0.cfg"`
-                item="${pos}:[type={$1},trgt={$trgt},srce={$srce},exmp={$exmp},defn={$defn},note={$note},wrds={$wrds},grmr={$grmr},].[tag={$tag},mark={$mark},link={$link},].id=[$id]"
-                echo -e "${item}" >> "${DC_tlt}/0.cfg"
-            fi
             if ! grep -Fxq "${trgt}" < <(cat "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg"); then
                 if [[ ${1} = 1 ]]; then
+                    unset wrds grmr
                     if [ "$(grep "$4" "${DC_tlt}/1.cfg")" ] && [ -n "$4" ]; then
                     sed -i "s/${4}/${4}\n${trgt}/" "${DC_tlt}/1.cfg"
                     else
@@ -74,10 +70,16 @@ function index() {
                     echo -e "FALSE\n${trgt}\n$img0" >> "${DC_tlt}/5.cfg"
 
                 elif [[ ${1} = 2 ]]; then
+                    unset exmp
                     echo "${trgt}" >> "${DC_tlt}/1.cfg"
                     echo "${trgt}" >> "${DC_tlt}/4.cfg"
                     echo -e "FALSE\n${trgt}\n$img0" >> "${DC_tlt}/5.cfg"
                 fi
+            fi
+            if ! grep -Fo "trgt={${trgt}}" "${DC_tlt}/0.cfg"; then
+                pos=`wc -l < "${DC_tlt}/0.cfg"`
+                item="${pos}:[type={$1},trgt={$trgt},srce={$srce},exmp={$exmp},defn={$defn},note={$note},wrds={$wrds},grmr={$grmr},].[tag={$tag},mark={$mark},link={$link},].id=[$id]"
+                echo "${item}" >> "${DC_tlt}/0.cfg"
             fi
         fi
     fi

@@ -215,7 +215,7 @@ function new_word() {
     fi
 }
 
-list_words_edit() {
+function list_words_edit() {
     include "$DS/ifs/mods/add"
     if [[ ${3} = 1 ]]; then
         tpe="${tpc}"
