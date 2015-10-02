@@ -31,7 +31,7 @@ mark="$(grep -oP '(?<=mark={).*(?=})' <<<"${item}")"
 link="$(grep -oP '(?<=link={).*(?=})' <<<"${item}")"
 tag="$(grep -oP '(?<=tag={).*(?=})' <<<"${item}")"
 lwrd="$(grep -oP '(?<=wrds={).*(?=})' <<<"${item}" |tr '_' '\n')"
-exmp="$(sed "s/${trgt,,}/<span background='#FDFBCF'>${trgt,,}<\/\span>/g" <<<"$exmp")"
+exmp="$(sed "s/${trgt,,}/<span background='#FDFBCF'>${trgt,,}<\/\span>/g" <<<"${exmp}")"
 id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
 text_missing=0
 

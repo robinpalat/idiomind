@@ -96,7 +96,7 @@ function dwld() {
 }
 
 function upld() {
-#if [ $((inx3+inx4)) -lt 15 ]; then exit 1; fi
+if [ $((inx3+inx4)) -lt 5 ]; then exit 1; fi
 
 if [ "${tpc}" != "${2}" ]; then
     msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit 1
@@ -155,7 +155,7 @@ if [ $((inx3+inx4)) -ge 15 ]; then
 btn="--button="$(gettext "Upload")":0"; else
 btn="--center"; fi
 cd "$HOME"
-btn="--button="$(gettext "Upload")":0"
+
 if [ -e "${DC_tlt}/download" ]; then
     if [ ! -s "${DC_tlt}/download" ]; then
         c_audio="$(grep -o 'naudi="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
@@ -205,11 +205,14 @@ else
     "$ctgry!$others!$article!$city!$comics!$culture!$education!$entertainment!$funny!$grammar!$history!$home!$internet!$interview!$movies!$music!$nature!$news!$office!$places!$quotes!$relations!$science!$social_media!$sport!$tech" \
     --field="$(gettext "Skill Level"):CB" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
     --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
-    "$btn" --button="$(gettext "Close")":4)
+    --button="$(gettext "PDF")":2 "$btn" --button="$(gettext "Close")":4)
     ret=$?
 fi
+
+if [ $ret = 2 ]; then
+    "$DS/ifs/mods/export/PDF.sh" & exit 1
  
-if [ $ret = 0 ]; then
+elif [ $ret = 0 ]; then
 Ctgry=$(echo "${dlg}" | cut -d "|" -f3)
 level=$(echo "${dlg}" | cut -d "|" -f4)
 iuser_m=$(echo "${dlg}" | cut -d "|" -f1)
