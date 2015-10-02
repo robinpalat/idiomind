@@ -37,7 +37,7 @@ set_lang() {
     language="$1"
     if [ ! -d "$DM_t/$language/.share/images" ]; then
         mkdir -p "$DM_t/$language/.share/images"; fi
-    echo -e "$language\n$lgsl" >> "$DC_s/6.cfg"
+    echo -e "$language\n$lgsl" > "$DC_s/6.cfg"
     "$DS/stop.sh" 4
     source /usr/share/idiomind/ifs/c.conf
     last="$(cd "$DM_tl"/; ls -tNd */ |cut -f1 -d'/' |head -n1)"

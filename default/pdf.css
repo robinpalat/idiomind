@@ -1,15 +1,19 @@
-w1 {margin-top: 0;padding-right: 5px;padding-left: 5px;color: #5E5A54;font-size: 15px;font-weight: bold;font-family: sans-serif, Verdana, Geneva;}
-w2 {margin-top: 0;padding-right: 5px;padding-left: 5px;color: #61615B;font-size: 13px;font-style: normal;font-family: sans-serif, Verdana, Geneva;}
-strgt {padding-left: 5px;color: #4A4A4A;font-size: 11px;font-weight: normal;font-family: sans-serif;}
-ssrce {padding-left: 5px;color: #4C4C49;font-size: 11px;font-weight: normal;font-family: sans-serif;}
-h3 {margin-top: 0;padding-right: 5px;padding-left: 5px;color: #565656;font-size: 16px;font-weight: bold;font-family: sans-serif, Verdana, Geneva;}
-mark {background-color: #E5E5E5;color: #0000FF;font-weight: normal;}
-.examples {width: 80%;padding-left: 25px;padding-bottom: 10px;padding-top: 5px;padding-right: 0;}
-.ifont {color: #3E3E3E;font-family: sans-serif, Verdana, Geneva;font-size: 13px;text-align: left;}
-.efont {color: #6F6F6F;font-family: sans-serif, Verdana, Geneva;font-size: 14px;text-align: left;}
-.nfont {color: #6F6F6F;font-family: sans-serif, Verdana, Geneva;font-size: 10px;text-align: left;}
+w1 {margin-top: 0;padding-right: 0px;padding-left: 5px;color: #5E5A54;font-size: 15px;font-weight: bold;font-family: sans-serif, Verdana, Geneva;}
+w2 {margin-top: 0;padding-right: 0px;padding-left: 5px;color: #61615B;font-size: 13px;font-style: normal;font-family: sans-serif, Verdana, Geneva;}
+s1 {padding-left: 0px;color: #545454;font-size: 12px;font-weight: bold;font-family: sans-serif;}
+s2 {padding-left: 0px;color: #545454;font-size: 11px;font-weight: normal;font-family: sans-serif;}
+h3 {margin-top: 10;padding-right: 0px;padding-left: 5px;color: #616161;font-size: 15px;font-weight: bold;font-family: sans-serif, Verdana, Geneva;}
+mark {background-color: #FFFEEB;color: #5E5A54;font-weight: normal;}
+
+exmp {color: #5E5A54;font-size: 11px;font-weight: italic;font-family: sans-serif, Verdana, Geneva;margin: 1px;}
+defn {color: #5E5A54;font-size: 10px;font-weight: normal;font-family: sans-serif, Verdana, Geneva;margin: 1px;}
+note {color: #696968;font-size: 10px;font-weight: italic;font-family: sans-serif, Verdana, Geneva;margin: 1px;}
 a img { border: none;}
+.ifont {width: 70%;color: #696968;font-size: 10px;font-weight: normal;font-family: sans-serif, Verdana, Geneva;margin-top: 0px;}
 .images {font-family: sans-serif, Verdana, Geneva;font-size: 16px;font-weight: bold;color: #666;}
 .wrdstable {font-family: sans-serif, Verdana, Geneva;font-size: 13px;font-weight: bold;color: #666;}
 .side {width: 3px;}
-body {margin-left: 60pt;margin-right: 80pt;margin-top: 20pt;margin-bottom: 20pt;}
+body {margin-left: 10%;margin-right: 5%;margin-top: 20pt;margin-bottom: 20pt;vertical-align:middle;}
+
+body {width:80%; margin-left:auto; margin-right:auto;}
+

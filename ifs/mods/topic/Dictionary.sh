@@ -16,7 +16,7 @@ function word_view() {
     
 } >/dev/null 2>&1
 
-export -f word_view sentence_view
+export -f word_view
 
 function Dictionary() {
     cmd_play="$DS/play.sh play_list"
