@@ -22,8 +22,22 @@ function Dictionary() {
     cmd_play="$DS/play.sh play_list"
     cdb="$DM_tls/Dictionary/${lgtl}.db"
     table="T`date +%m%y`"
-    sqlite3 "$cdb" "select * FROM  ${table^^}" \
-    |sed 's/|/\n/g' | yad --list --title="${tpc}" \
+    list() {
+        exec 3< <(sqlite3 "$cdb" "select Word FROM  ${table}")
+        exec 4< <(sqlite3 "$cdb" "select ${lgsl} FROM ${table}")
+        exec 5< <(sqlite3 "$cdb" "select Example FROM ${table}")
+        while :; do
+            read word <&3
+            read tran <&4
+            read exam <&5
+            echo "$word"
+            echo "$tran"
+            echo "$exam"
+            [  -z "$word" -a -z "$tran" ] && break
+        done
+    }
+
+    list | yad --list --title="${tpc}" \
     --text="$(gettext "$lgtlLorem ipsum dolor sit amet, consectetur adipisicing elit, sed doeiusmod tempor incididunt ut labore et dolore magna aliq")\n" \
     --print-all \
     --dclick-action="$DS/vwr.sh '3'" \
