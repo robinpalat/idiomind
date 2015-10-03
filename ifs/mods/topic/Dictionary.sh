@@ -26,7 +26,7 @@ function Dictionary() {
     --name=Idiomind --class=Idiomind  \
     --center --align=right --ellipsize=END --image-on-top \
     --window-icon="$DS/images/icon.png" --center \
-    --width=450 --height=380 --borders=5 \
+    --width=580 --height=540 --borders=5 \
     --button="$(gettext "Edit")":"$cmd_play" \
     --button="$(gettext "Practice")":5 \
     --button="gtk-close":1
