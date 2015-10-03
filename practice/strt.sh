@@ -604,14 +604,16 @@ function lock() {
         --window-icon="$DS/images/icon.png" --on-top --skip-taskbar --center \
         --width=400 --height=130 --borders=5 \
         --button="    ${bttn_dlg}    ":$bttn_out \
-        --button="    $(gettext "Ok")    ":1
+        --button="    $(gettext "OK")    ":1
         ret=$?
         
         if [ $ret -eq 0 ]; then
+        
             rm "${lock}" ./${practice}.0 ./${practice}.1 \
             ./${practice}.2 ./${practice}.3
             [ -f ./${practice}.srces ] && rm ./${practice}.srces
             echo 1 > ./.${icon}; echo 0 > ./${practice}.l
+            
         elif [ $ret -eq 2 ]; then
             rm "${lock}" & return 0
         fi
@@ -665,15 +667,14 @@ function practices() {
     img_cont="$DS/images/cont.png"
     img_no="$DS/images/no.png"
     img_yes="$DS/images/yes.png"
-    easy=0
-    hard=0
-    ling=0
-    step=1
+    export easy=0
+    export hard=0
+    export ling=0
+    export step=1
     practice_${practice}
 }
 
 function strt() {
-    [[ ${hard} -lt 0 ]] && hard=0
     [ ! -d "${dir}" ] && mkdir -p "${dir}"
     cd "${dir}"
     [ ! -f ./.1 ] && echo 1 > .1
@@ -681,6 +682,7 @@ function strt() {
     [ ! -f ./.3 ] && echo 1 > .3
     [ ! -f ./.4 ] && echo 1 > .4
     [ ! -f ./.5 ] && echo 1 > .5
+    [[ ${hard} -lt 0 ]] && hard=0
     if [[ ${ling} -ge 1 && ${hard} = 0 ]]; then
         echo -e "wait=\"`date +%d`\"" > ./${practice}.lock; fi
 
