@@ -2,8 +2,7 @@
 
 mkpdf() {
     source "$DS/ifs/mods/cmns.sh"
-    cd "$HOME"
-    pdf=$(yad --file --save --title="$(gettext "Export to PDF")" \
+    cd "$HOME"; fileout=$(yad --file --save --title="$(gettext "Export to PDF")" \
     --name=Idiomind --class=Idiomind \
     --filename="$HOME/$tpc.pdf" \
     --window-icon="$DS/images/icon.png" --center --on-top \
@@ -12,7 +11,7 @@ mkpdf() {
     --button="$(gettext "OK")":0)
     ret=$?
     if [ $ret -eq 0 ]; then
-        [ -d "$DT/mkhtml" ] && rm -fr "$DT/mkhtml"
+        cleanups "$DT/mkhtml"
         mkdir -p "$DT/mkhtml"
         file="$DT/mkhtml/temp.html"
         note="$(sed ':a;N;$!ba;s/\n/<br>/g' < "${DC_tlt}/info" |sed 's/\&/&amp;/g')"
@@ -73,7 +72,6 @@ mkpdf() {
             tr=$((tr+1))
         
         done < <(tac "${DC_tlt}/0.cfg")
-        
         echo -e "$(< "$file.words2")" >> "$file"
         echo -e "$(< "$file.words0")" >> "$file"
         echo -e "$(< "$file.words1")" >> "$file"
@@ -81,8 +79,8 @@ mkpdf() {
         echo -e "$(< "$file.sente")" >> "$file"
         echo -e "</body></html>" >> "$file"
         wkhtmltopdf -s A4 -O Portrait "$file" "$DT/mkhtml/tmp.pdf"
-        mv -f "$DT/mkhtml/tmp.pdf" "${pdf}"
-        rm -fr "$DT/mkhtml"
+        mv -f "$DT/mkhtml/tmp.pdf" "${fileout}"
+        cleanups "$DT/mkhtml"
     fi
     exit 0
 }
