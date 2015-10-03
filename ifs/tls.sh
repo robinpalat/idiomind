@@ -687,17 +687,7 @@ translate_to() {
             
             n=1
             while read -r item_; do
-                item="$(sed 's/},/}\n/g' <<<"${item_}")"
-                type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
-                trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
-                grmr="$(grep -oP '(?<=grmr={).*(?=})' <<<"${item}")"
-                exmp="$(grep -oP '(?<=exmp={).*(?=})' <<<"${item}")"
-                defn="$(grep -oP '(?<=defn={).*(?=})' <<<"${item}")"
-                note="$(grep -oP '(?<=note={).*(?=})' <<<"${item}")"
-                mark="$(grep -oP '(?<=mark={).*(?=})' <<<"${item}")"
-                tag="$(grep -oP '(?<=tag={).*(?=})' <<<"${item}")"
-                link="$(grep -oP '(?<=link={).*(?=})' <<<"${item}")"
-                id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
+                get_item "${item_}"
                 srce="$(sed -n ${n}p "$DT/index.trad")"
                 tt="$(sed -n ${n}p "$DT/mix_words.trad_tmp" |cut -d '&' -f1 \
                 |sed 's/\. /\n/g' |sed 's/^ *//; s/ *$//g' | tr -d '|.')"
@@ -720,7 +710,7 @@ translate_to() {
                 
             let n++
             done < "${DC_tlt}/0.cfg"
-            
+            unset item type trgt srce exmp defn note grmr mark link tag id
             rm -f "$DT"/*.tmp "$DT"/*.trad "$DT"/*.trad_tmp
             if [ ! -e "${DC_tlt}/0.data" ]; then
                 mv "${DC_tlt}/0.cfg" "${DC_tlt}/0.data"; fi

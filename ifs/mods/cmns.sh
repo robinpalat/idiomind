@@ -100,6 +100,21 @@ function cleanups() {
     done
 }
 
+function get_item() {
+    export item="$(sed 's/},/}\n/g' <<<"${1}")"
+    export type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
+    export trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
+    export srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
+    export exmp="$(grep -oP '(?<=exmp={).*(?=})' <<<"${item}")"
+    export defn="$(grep -oP '(?<=defn={).*(?=})' <<<"${item}")"
+    export note="$(grep -oP '(?<=note={).*(?=})' <<<"${item}")"
+    export grmr="$(grep -oP '(?<=grmr={).*(?=})' <<<"${item}")"
+    export mark="$(grep -oP '(?<=mark={).*(?=})' <<<"${item}")"
+    export link="$(grep -oP '(?<=link={).*(?=})' <<<"${item}")"
+    export tag="$(grep -oP '(?<=tag={).*(?=})' <<<"${item}")"
+    export id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
+}
+
 function progress() {
     yad --progress \
     --progress-text="$1" \
@@ -107,6 +122,7 @@ function progress() {
     --pulsate --auto-close \
     --skip-taskbar --center --no-buttons
 }
+
 
 function calculate_review() {
     DC_tlt="$DM_tl/${1}/.conf"

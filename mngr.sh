@@ -133,22 +133,10 @@ edit_item() {
     item_id="$(sed -n ${item_pos}p "${index_1}")"
     if [ ${text_missing} = 0 ]; then
         edit_pos=`grep -Fon -m 1 "trgt={${item_id}}" "${DC_tlt}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
-        item="$(sed -n ${edit_pos}p "${DC_tlt}/0.cfg" |sed 's/},/}\n/g')"
+        get_item "$(sed -n ${edit_pos}p "${DC_tlt}/0.cfg")"
     else
-        item="$(sed -n ${item_pos}p "${DC_tlt}/0.cfg" |sed 's/},/}\n/g')"
+        get_item "$(sed -n ${item_pos}p "${DC_tlt}/0.cfg")"
     fi
-    type=`grep -oP '(?<=type={).*(?=})' <<<"${item}"`
-    export trgt=`grep -oP '(?<=trgt={).*(?=})' <<<"${item}"`
-    grmr=`grep -oP '(?<=grmr={).*(?=})' <<<"${item}"`
-    srce=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
-    exmp=`grep -oP '(?<=exmp={).*(?=})' <<<"${item}"`
-    defn=`grep -oP '(?<=defn={).*(?=})' <<<"${item}"`
-    note=`grep -oP '(?<=note={).*(?=})' <<<"${item}"`
-    grmr=`grep -oP '(?<=grmr={).*(?=})' <<<"${item}"`
-    wrds=`grep -oP '(?<=wrds={).*(?=})' <<<"${item}"`
-    mark=`grep -oP '(?<=mark={).*(?=})' <<<"${item}"`
-    tag=`grep -oP '(?<=tag={).*(?=})' <<<"${item}"`
-    export id=`grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"`
     [ -z "${id}" ] && id=""
     query="$(sed "s/'/ /g" <<<"${trgt}")"
     to_modify=0; colorize_run=0; transl_mark=0

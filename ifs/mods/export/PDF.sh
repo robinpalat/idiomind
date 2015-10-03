@@ -27,18 +27,7 @@ mkpdf() {
         while read -r _item; do
             unset img trgt srce type
             [ ${tr} -gt 3 ] && tr=1
-            item="$(sed 's/},/}\n/g' <<<"${_item}")"
-            type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
-            trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
-            srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
-            exmp="$(grep -oP '(?<=exmp={).*(?=})' <<<"${item}")"
-            defn="$(grep -oP '(?<=defn={).*(?=})' <<<"${item}")"
-            note="$(grep -oP '(?<=note={).*(?=})' <<<"${item}")"
-            grmr="$(grep -oP '(?<=grmr={).*(?=})' <<<"${item}")"
-            mark="$(grep -oP '(?<=mark={).*(?=})' <<<"${item}")"
-            link="$(grep -oP '(?<=link={).*(?=})' <<<"${item}")"
-            tag="$(grep -oP '(?<=tag={).*(?=})' <<<"${item}")"
-            id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
+            get_item "${_item}"
 
             if [ -n "${trgt}" -a -n "${srce}" -a -n "${type}" ]; then
                 if [ -f "${DM_tls}/images/${trgt,,}-0.jpg" ]; then
@@ -54,10 +43,10 @@ mkpdf() {
                         [ -n "${note}" ] && note="${note}<br><br>"
                         field="<w1>${trgt}</w1><br><w2>${srce}</w2>"
                         field2="<exmp>${exmp}</exmp><defn>${defn}</defn><note>${note}</note>"
-                        echo -e "<table width=\"100%\" align=\"center\" cellpadding=\"10\" cellspacing=\"10\"><tr>" >> "$fw"
+                        echo -e "<table width=\"100%\" align=\"center\" cellpadding=\"0\" cellspacing=\"15\"><tr>" >> "$fw"
                         [ -n "$img" ] && echo -e "<td style=\"vertical-align:top; align:left\">$img<br><br></td>" >> "$fw"
                         echo -e "<td style=\"width: 20%; vertical-align:top; align:left\">$field<br><br></td>" >> "$fw"
-                        echo -e "<td style=\"width: 70%; vertical-align:center; align:$algn\">$field2<br><br></td></tr></table>" >> "$fw"
+                        echo -e "<td style=\"width: 70%; vertical-align:bottom; align:$algn\">$field2<br><br></td></tr></table>" >> "$fw"
                         tr=$((tr-1))
                     elif [ -z "${exmp}" -a -z "${defn}" -a -z "${note}" ]; then
                         field="<w1>${trgt}</w1><br><w2>${srce}</w2>"
@@ -73,7 +62,7 @@ mkpdf() {
                     fi
                 elif [ ${type} = 2 ]; then
                     algn=left
-                    echo -e "<table width=\"90%\" align=\"center\" cellpadding=\"10\" cellspacing=\"10\">" >> "$file.sente"
+                    echo -e "<table width=\"90%\" align=\"left\" cellpadding=\"0\" cellspacing=\"15\">" >> "$file.sente"
                     echo -e "<tr><td style=\"width: 50%; vertical-align:top; align:$algn\"><s1>${trgt}</s1></td>" >> "$file.sente"
                     echo -e "<td style=\"width:  50%; vertical-align:top; align:$algn\"><s2>${srce}</s2></td></tr></table>" >> "$file.sente"
                     tr=$((tr-1))
@@ -88,6 +77,7 @@ mkpdf() {
         echo -e "$(< "$file.words2")" >> "$file"
         echo -e "$(< "$file.words0")" >> "$file"
         echo -e "$(< "$file.words1")" >> "$file"
+        echo -e "<br><br><br>" >> "$file"
         echo -e "$(< "$file.sente")" >> "$file"
         echo -e "</body></html>" >> "$file"
         wkhtmltopdf -s A4 -O Portrait "$file" "$DT/mkhtml/tmp.pdf"
