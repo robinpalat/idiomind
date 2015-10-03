@@ -175,6 +175,7 @@ if [ -e "${DC_tlt}/download" ]; then
         --field="$(gettext "Download"):FBTN" "${cmd_dwl}" \
         --field="\t\t\t\t\t:lbl" " " \
         --field=" :lbl" " " \
+        --button="$(gettext "PDF")":2 \
         --button="$(gettext "Close")":4)
         ret=$?
     elif [ -s "${DC_tlt}/download" ]; then
@@ -187,6 +188,7 @@ if [ -e "${DC_tlt}/download" ]; then
         --field="$(gettext "Latest downloads:"):lbl" " " \
         --field="$(< "${DC_tlt}/download"):lbl" " " \
         --field=" :lbl" " " \
+        --button="$(gettext "PDF")":2 \
         --button="$(gettext "Close")":4)
         ret=$?
     fi
@@ -194,7 +196,7 @@ else
     linkc="http://idiomind.sourceforge.net/community/${lgtl,,}"
     LANGUAGE_TO_LEARN=${lgtl}
     dlg=$(yad --form --title="$(gettext "Share")" \
-    --text="Share your topic with users learning ${LANGUAGE_TO_LEARN}!\n<a href='$linkc'>$(gettext "Topics shared")</a> (Beta)\n" \
+    --text="$(gettext "Share your notes with other ${LANGUAGE_TO_LEARN} learners!")\n<a href='$linkc'>$(gettext "Topics shared")</a> (Beta)\n" \
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" --buttons-layout=end \
     --align=right --center --on-top \

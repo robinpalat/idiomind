@@ -11,9 +11,8 @@ function Dictionary() {
         while :; do
             read word <&3
             read tran <&4
-            read exam <&5
-            echo "<span color='#6F6F6F' font_desc='Free Sans Bold 13'>$word</span>"
-            echo "<span color='#6F6F6F' font_desc='Free Sans Bold 13'>$tran</span>"
+            echo "<span font_desc='Free Sans 12'>$word</span>"
+            echo "<span font_desc='Free Sans 12'>$tran</span>"
             [  -z "$word" -a -z "$tran" ] && break
         done
     }

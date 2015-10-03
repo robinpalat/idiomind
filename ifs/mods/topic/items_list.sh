@@ -6,7 +6,7 @@ function word_view() {
     [ -n "$defn" ] && field_defn="--field=$defn:lbl"
     [ -n "$note" ] && field_note="--field=<i>$note</i>\n:lbl"
     [ -n "$exmp" ] && field_exmp="--field=<span font_desc='Verdana 11' color='#5C5C5C'>$exmp</span>:lbl"
-    [ $show_link = 1  ] && link=" <a href='$link'>$(gettext "link")</a>"
+    [ $show_link = 1  ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
     local sentence="<span font_desc='Sans Free 25'>${trgt}</span>\n\n<span font_desc='Sans Free 14'><i>$srce</i></span>$link\n\n"
 
     yad --form --title=" " \
@@ -27,7 +27,7 @@ function word_view() {
 function sentence_view() {
     if [ "$(grep -o gramr=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')"  = TRUE ]; then
     trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
-    [ $show_link = 1  ] && link=" <a href='$link'>$(gettext "link")</a>"
+    [ $show_link = 1  ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
     local sentence="<span font_desc='Sans Free 15'>${trgt_l}</span>\n\n<span font_desc='Sans Free 11'><i>$srce</i>$link</span>\n<span font_desc='Sans Free 6'>$tag</span>\n"
     
     echo "${lwrd}" | yad --list --title=" " \

@@ -156,11 +156,15 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             for i in {1..6}; do > "${DC_tlt}/${i}.cfg"; done
             for i in {1..3}; do > "${DC_tlt}/practice/log.${i}"; done
             tail -n 1 < "${file}" |tr '&' '\n' > "${DC_tlt}/id.cfg"
-            > "${DC_tlt}/download"
+            
             if [ ${cn} = 1  ]; then
             sed -i "s/tname=.*/tname=\"${tname}\"/g" "${DC_tlt}/id.cfg"; fi
             sed -i "s/datei=.*/datei=\"$(date +%F)\"/g" "${DC_tlt}/id.cfg"
-            
+
+            chkaud="$(grep -oP '(?<=naudi={).*(?=})' < "${DC_tlt}/id.cfg")"
+            chkimg="$(grep -oP '(?<=nimag={).*(?=})' < "${DC_tlt}/id.cfg")"
+            [[ $((chkaud+chkimg)) -ge 2 ]] && > "${DC_tlt}/download" || echo -e "\n" > "${DC_tlt}/download"
+
             while read item_; do
                 item="$(sed 's/},/}\n/g' <<<"${item_}")"
                 type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"

@@ -109,6 +109,7 @@ function practice_a() {
         fonts; question
         if [ $? = 1 ]; then
             ling=${hard}; hard=0
+            export hard ling
             break & score
         else
             answer
@@ -124,12 +125,14 @@ function practice_a() {
     done < ./a.tmp
 
     if [ ! -f ./a.2 ]; then
+        export hard ling
         score
     else
         step=2
         while read trgt; do
             fonts; question
             if [ $? = 1 ]; then
+                export hard ling
                 break & score
             else
                 answer
@@ -142,6 +145,7 @@ function practice_a() {
                 fi
             fi
         done < ./a.2
+        export hard ling
         score
     fi
 }
@@ -191,11 +195,13 @@ function practice_b(){
             fi  
         elif [ $? = 1 ]; then
             ling=${hard}; hard=0
+            export hard ling
             break & score
         fi
     done < ./b.tmp
         
     if [ ! -f ./b.2 ]; then
+        export hard ling
         score
     else
         step=2; P=2; s=12
@@ -210,9 +216,11 @@ function practice_b(){
                     echo "${trgt}" >> b.3
                 fi
             elif [ $? = 1 ]; then
+                export hard ling
                 break & score
             fi
         done < ./b.2
+        export hard ling
         score
     fi
 }
@@ -261,11 +269,13 @@ function practice_c() {
             hard=$((hard+1))
         elif [ ${ans} = 1 ]; then
             ling=${hard}; hard=0
+            export hard ling
             break & score
         fi
     done < ./c.tmp
 
     if [ ! -f ./c.2 ]; then
+        export hard ling
         score
     else
         step=2; p=2
@@ -278,9 +288,11 @@ function practice_c() {
             elif [ ${ans} = 3 ]; then
                 echo "${trgt}" >> c.3
             elif [ ${ans} = 1 ]; then
+                export hard ling
                 break & score
             fi
         done < ./c.2
+        export hard ling
         score
     fi
 }
@@ -324,6 +336,7 @@ function practice_d() {
         fonts; question
         if [ $? = 1 ]; then
             ling=${hard}; hard=0
+            export hard ling
             break & score
         else
             answer
@@ -339,12 +352,14 @@ function practice_d() {
     done < ./d.tmp
 
     if [ ! -f ./d.2 ]; then
+        export hard ling
         score
     else
         step=2
         while read -r trgt; do
             fonts; question
             if [ $? = 1 ]; then
+                export hard ling
                 break & score
             else
                 answer
@@ -357,6 +372,7 @@ function practice_d() {
                 fi
             fi
         done < ./d.2
+        export hard ling
         score
     fi
 }
@@ -482,6 +498,7 @@ function practice_e() {
         if [[ $ret = 1 ]]; then
             break &
             if ps -A | pgrep -f 'play'; then killall play & fi
+            export hard ling
             score
         else
             if ps -A | pgrep -f 'play'; then killall play & fi
@@ -494,12 +511,14 @@ function practice_e() {
             break &
             if ps -A | pgrep -f 'play'; then killall play & fi
             rm -f ./mtch.tmp ./words.tmp
+            export hard ling
             score
         elif [[ $ret -eq 2 ]]; then
             if ps -A | pgrep -f 'play'; then killall play & fi
             rm -f ./mtch.tmp ./words.tmp &
         fi
     done < ./e.tmp
+    export hard ling
     score
 }
 
@@ -561,20 +580,40 @@ function get_list() {
 
 function lock() {
     if [ -f "$dir/${practice}.lock" ]; then
-        dt="$dir/${practice}.lock"
-        yad --title="$(gettext "Practice Completed")" \
-        --text="<b>$(gettext "Practice Completed")</b>\\n   $(< "$dt")\n " \
-        --window-icon="$DS/images/icon.png" --on-top --skip-taskbar \
-        --center --image=gtk-ok \
+        local lock="$dir/${practice}.lock"
+        if ! grep 'wait' <<< "$(< "${lock}")"; then
+            ttle_dlg="$(gettext "Practice Completed")"
+            text_dlg="<b>$(gettext "Practice Completed")</b>\\n   $(< "${lock}")\n"
+            imag_dlg="gtk-ok"
+            bttn_dlg="$(gettext "Restart")"
+            bttn_out=0
+        else
+            if [ $(grep -o "wait"=\"[^\"]* "${lock}" |grep -o '[^"]*$') != `date +%d` ]; then
+                rm "${lock}" & return 0
+            else
+                ttle_dlg="$(gettext "Wait")"
+                text_dlg="$(gettext "Consider waiting a while before resuming to practice some items")"
+                imag_dlg="info"
+                bttn_dlg="$(gettext "Practice")"
+                bttn_out=2
+            fi
+        fi
+        yad --title="$ttle_dlg" \
+        --text="${text_dlg}" \
+        --image="$imag_dlg" \
+        --window-icon="$DS/images/icon.png" --on-top --skip-taskbar --center \
         --width=400 --height=130 --borders=5 \
-        --button="    $(gettext "Restart")    ":0 \
-        --button="    $(gettext "Ok")    ":2
+        --button="    ${bttn_dlg}    ":$bttn_out \
+        --button="    $(gettext "Ok")    ":1
+        ret=$?
         
-        if [ $? -eq 0 ]; then
-            rm ./${practice}.lock ./${practice}.0 ./${practice}.1 \
+        if [ $ret -eq 0 ]; then
+            rm "${lock}" ./${practice}.0 ./${practice}.1 \
             ./${practice}.2 ./${practice}.3
             [ -f ./${practice}.srces ] && rm ./${practice}.srces
             echo 1 > ./.${icon}; echo 0 > ./${practice}.l
+        elif [ $ret -eq 2 ]; then
+            rm "${lock}" & return 0
         fi
         strt 0
     fi
@@ -634,7 +673,6 @@ function practices() {
 }
 
 function strt() {
-    echo "$practice..."
     [[ ${hard} -lt 0 ]] && hard=0
     [ ! -d "${dir}" ] && mkdir -p "${dir}"
     cd "${dir}"
@@ -643,6 +681,8 @@ function strt() {
     [ ! -f ./.3 ] && echo 1 > .3
     [ ! -f ./.4 ] && echo 1 > .4
     [ ! -f ./.5 ] && echo 1 > .5
+    if [[ ${ling} -ge 1 && ${hard} = 0 ]]; then
+        echo -e "wait=\"`date +%d`\"" > ./${practice}.lock; fi
 
     if [ ${1} = 1 ]; then
         declare info${icon}="<b>$(gettext "Test completed!")</b>"

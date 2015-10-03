@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-[ -z"${DM}" ] && source /usr/share/idiomind/ifs/c.conf
+
 if [[ ${1} = 0 ]]; then
     w="$(grep -oP '(?<=words=\").*(?=\")' "${cfg}")"
     s="$(grep -oP '(?<=sntcs=\").*(?=\")' "${cfg}")"
@@ -92,7 +92,7 @@ if [[ ${1} = 0 ]]; then
     include "$DS/ifs/mods/chng"
 
 elif [[ ${1} != 0 ]]; then
-
+    [ -z"${DM}" ] && source /usr/share/idiomind/ifs/c.conf
     remove_d() {
         ins="$(cd "/usr/share/idiomind/addons/"
         set -- */; printf "%s\n" "${@%/}")"

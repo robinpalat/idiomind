@@ -459,11 +459,12 @@ function process() {
 
         touch "$DT_r/wlog" "$DT_r/slog" "$DT_r/adds" \
         "$DT_r/addw" "$DT_r/wrds"
+        number_of_items=$(($(wc -l < "$DT_r/slts")+$(wc -l < "$DT_r/wrds")))
         
         ( sleep 1; notify-send -i idiomind \
-        "$(gettext "Processing")" \
-        "$(gettext "It Might take some time")" )
-
+        "$(gettext "Adding $number_of_items notes")" \
+        "$(gettext "The process might take some time")" )
+        
         internet
         [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ] && c=c || c=w
         lns="$(cat "$DT_r/slts" "$DT_r/wrds" |sed '/^$/d' |wc -l)"
