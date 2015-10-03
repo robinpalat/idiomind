@@ -609,7 +609,7 @@ edit_tag() {
     --separator='|' \
     --window-icon="$DS/images/icon.png" --center \
     --width=300 --height=200 --borders=5 \
-    --field="$(gettext "Description")" "$desc" \
+    --field="$(gettext "Description")":TXT "$desc" \
     $(for fl in $DS/ifs/mods/export/*; do
     echo "--field=$(basename $fl |sed 's/\.sh//'):FBTN "${fl}""; done) \
     --field="$(gettext "Delete")":FBTN "$cmd_del" \

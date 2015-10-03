@@ -1,12 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
-if [ ${1} = 3 ]; then
-    trgt=${2}
-    srce=${3}
-    exmp="$(sed "s/${trgt,,}/<span background='#FDFBCF'>${trgt,,}<\/\span>/g" <<<"${4}")"
-    cmd_listen="$DS/play.sh play_word "\"${trgt}\"" ${id}"
-    word_view
-else
+
 [ ${1} = 1 ] && index="${DC_tlt}/1.cfg" && item_name="$(sed 's/<[^>]*>//g' <<<"${3}")"
 [ ${1} = 2 ] && index="${DC_tlt}/2.cfg" && item_name="$(sed 's/<[^>]*>//g' <<<"${2}")"
 
@@ -74,5 +68,4 @@ fi
     else 
         exit 1
     fi
-fi
 exit

@@ -2,14 +2,15 @@
 # -*- ENCODING: UTF-8 -*-
 
 play_word() {
-    if [ -f "${DM_tls}/${2,,}.mp3" ]; then
-        play "${DM_tls}/${2,,}.mp3" &
+    w="$(sed 's/<[^>]*>//g' <<<"${2}")"
+    if [ -f "${DM_tls}/${w,,}.mp3" ]; then
+        play "${DM_tls}/${w,,}.mp3" &
     elif [ -f "${DM_tlt}/$3.mp3" ]; then
         play "${DM_tlt}/$3.mp3" &
     elif [ -n "$synth" ]; then
-        sed 's/<[^>]*>//g' <<<"${2}." |$synth &
+        sed "${w}." |$synth &
     else
-        sed 's/<[^>]*>//g' <<<"${2}." |espeak -v $lg -s 150 &
+        sed "${w}." |espeak -v $lg -s 150 &
     fi
 } >/dev/null 2>&1
 
@@ -130,8 +131,9 @@ play_list() {
     --tab=" $(gettext "Lists") " \
     --tab="$(gettext "Options")" \
     --width=400 --height=300 --borders=0 \
-    "$btn2" --button="$btn1"
+    --button="$(gettext "Close")":1 "$btn2" --button="$btn1"
     ret=$?
+        if [ $ret -eq 1 ]; then exit 0; fi
         tab1=$(< $tab1); tab2=$(< $tab2); rm -f "$DT"/*.p
         f=1; n=0; count=0
         for item in "${sets[@]:0:4}"; do

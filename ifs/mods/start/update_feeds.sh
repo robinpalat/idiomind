@@ -5,4 +5,4 @@
     if [ -d "$DM_tl/${item}/.conf" -a ! -e "$DM_tl/${item}/.conf/lk" ]; then
         "$DS/add.sh" fetch_content "${item}"
     fi
-done < "$DM_tl/.feeds" ) &
+done < "$DM_tl/.6.cfg" ) &
