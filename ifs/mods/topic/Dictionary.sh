@@ -12,8 +12,8 @@ function Dictionary() {
             read word <&3
             read tran <&4
             read exam <&5
-            echo "<span font_desc='Free Sans Bold 12'>$word</span>"
-            echo "<span font_desc='Free Sans 12'>$tran</span>"
+            echo "<span color='#6F6F6F' font_desc='Free Sans Bold 13'>$word</span>"
+            echo "<span color='#6F6F6F' font_desc='Free Sans Bold 13'>$tran</span>"
             [  -z "$word" -a -z "$tran" ] && break
         done
     }
@@ -27,7 +27,7 @@ function Dictionary() {
     --center --align=right --ellipsize=END --image-on-top \
     --window-icon="$DS/images/icon.png" --center \
     --width=580 --height=540 --borders=5 \
-    --button="$(gettext "Edit")":"$cmd_play" \
+    --button="$(gettext "Edit")":"leafpad" \
     --button="$(gettext "Practice")":5 \
     --button="gtk-close":1
     
