@@ -355,7 +355,7 @@ panel() {
     if [[ `grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg"` = TRUE ]] \
     && [ ! -e /tmp/.clipw ]; then "$DS/ifs/mods/clipw.sh" & fi
 
-    yad --title="" \
+    yad --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
     --always-print-result \
     --window-icon=$wicon \

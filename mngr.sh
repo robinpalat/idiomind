@@ -454,8 +454,12 @@ edit_feeds() {
     if [ -e "${file}" ]; then
         feeds="$(< "${file}")"
         mods="$(echo "${feeds}" |edit_feeds_list)"
+        ret=$?
         if [ "${feeds}" != "$mods" ]; then
             echo "${mods}" |sed -e '/^$/d' > "${file}"
+        fi
+        if  [ $ret = 2 ]; then
+            "$DS/add.sh" fetch_content "${tpc}" &
         fi
     fi
 } >/dev/null 2>&1

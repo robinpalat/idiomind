@@ -70,6 +70,7 @@ function edit_list_list() {
 }
 
 function edit_feeds_list() {
+    
     yad --list --title="$(gettext "Feeds")" \
     --text="$(gettext "Configure feed urls to add content automatically from news headlines.")" \
     --name=Idiomind --class=Idiomind \
@@ -80,6 +81,7 @@ function edit_feeds_list() {
     --width=500 --height=190 --borders=2 \
     --column="" \
     --button="$(gettext "Cancel")":1 \
+    --button="$(gettext "Update")":2 \
     --button="$(gettext "OK")":0
 }
 
