@@ -360,10 +360,10 @@ panel() {
     --always-print-result \
     --window-icon=$wicon \
     --form --fixed --on-top --no-buttons --align=center \
-    --width=80 --height=165 --borders=0 --geometry=80x190-${x}-${y} \
-    --field="!$DS/images/new.png!$(gettext "Add new note")":fbtn "$DS/add.sh 'new_items'" \
-    --field="!$DS/images/topic.png!$(gettext "Open active topic")":fbtn "idiomind 'topic'" \
-    --field="!$DS/images/index.png!$(gettext "Open topics list")":fbtn "$DS/chng.sh"
+    --width=140 --height=170 --borders=0 --geometry=80x190-${x}-${y} \
+    --field="!$DS/images/new.png!$(gettext "Add new note")":btn "$DS/add.sh 'new_items'" \
+    --field="!$DS/images/topic.png!$(gettext "Open active topic")":btn "idiomind 'topic'" \
+    --field="!$DS/images/index.png!$(gettext "Open topics list")":btn "$DS/chng.sh"
     [ $? != 0 ] && "$DS/stop.sh" 1 &
     exit
 }
