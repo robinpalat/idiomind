@@ -208,16 +208,17 @@ edit_item() {
             fi
             if [ "${tag_mod}" = '(null)' ]; then tag_mod=""; fi
             if [ "${trgt_mod}" != "${trgt}" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
-            if [ ${text_missing} != 0 ]; then
-                trgt="${item_id}"
-                index edit "${tpc}"
-            else
-                index edit "${tpc}"
-            fi
-            sed -i "${edit_pos}s|trgt={${trgt}}|trgt={${trgt_mod}}|;
-            ${edit_pos}s|grmr={${grmr}}|grmr={${trgt_mod}}|;
-            ${edit_pos}s|srce={${srce}}|srce={$temp}|g" "${DC_tlt}/0.cfg"
-            mod_index=1; colorize_run=1; to_modify=1
+                if [ ${text_missing} != 0 ]; then
+                    trgt="${item_id}"
+                    index edit "${tpc}"
+                    yad --text="${edit_pos}"
+                else
+                    index edit "${tpc}"
+                fi
+                sed -i "${edit_pos}s|trgt={${trgt}}|trgt={${trgt_mod}}|;
+                ${edit_pos}s|grmr={${grmr}}|grmr={${trgt_mod}}|;
+                ${edit_pos}s|srce={${srce}}|srce={$temp}|g" "${DC_tlt}/0.cfg"
+                mod_index=1; colorize_run=1; to_modify=1
             fi
             if [ "${mark}" != "${mark_mod}" ]; then
                 if [ "${mark_mod}" = "TRUE" ]; then
@@ -235,7 +236,7 @@ edit_item() {
             [ "${audf}" != "${audf_mod}" ] && to_modify=1
             [ "${tpc}" != "${tpc_mod}" ] && to_modify=1
             if [[ "${tag}" != "${tag_mod}" && ${mode} != 14 ]]; then
-			to_modify=1; tagset=1; fi
+            to_modify=1; tagset=1; fi
 
             if [ ${to_modify} = 1 ]; then
             (
@@ -260,7 +261,7 @@ edit_item() {
                 id_mod="$(set_name_file ${type_mod} "${trgt_mod}" "${srce_mod}" \
                 "${exmp_mod}" "${defn_mod}" "${note_mod}" "${wrds_mod}" "${grmr_mod}")"
 
-				[ ${mode} = 14 ] && tpc_mod="${tpc}"
+                [ ${mode} = 14 ] && tpc_mod="${tpc}"
                 if [ "${tpc}" != "${tpc_mod}" ]; then
                     if [ "${audf}" != "${audf_mod}" ]; then
                         if [ ${type_mod} = 1 ]; then
@@ -323,25 +324,25 @@ edit_item() {
 }
 
 tagget_item() {
-	if [ -n "${tag_mod}" ]; then
-		img0='/usr/share/idiomind/images/0.png'
-		dir="$DM_tl/${tag_mod}"
-		if ! grep -Fo "trgt={${trgt_mod}}" "$dir/.conf/0.cfg"; then
-			item="0:[type={$type_mod},trgt={$trgt_mod},srce={$srce_mod},exmp={$exmp_mod},defn={$defn_mod},note={$note_mod},wrds={$wrds_mod},grmr={$grmr_mod},].[topic={$tpc_mod},mark={$mark_mod},].id=[$id_mod]"
-			echo "${item}" >> "$dir/.conf/0.cfg"
-			echo "${trgt_mod}" >> "$dir/.conf/1.cfg"
-			echo -e "FALSE\n${trgt_mod}\n$img0" >> "$dir/.conf/5.cfg"
-			if [ ${type_mod} = 1 ]; then
-				echo "${trgt_mod}" >> "$dir/.conf/3.cfg"
-			elif [ ${type_mod} = 2 ]; then
-				echo "${trgt_mod}" >> "$dir/.conf/4.cfg"
-			fi
-		fi
-	fi
-	
-	if [ -n "${tag}" ]; then
-		delete_item_ok "" "${tag}" "${trgt_mod}"
-	fi
+    if [ -n "${tag_mod}" ]; then
+        img0='/usr/share/idiomind/images/0.png'
+        dir="$DM_tl/${tag_mod}"
+        if ! grep -Fo "trgt={${trgt_mod}}" "$dir/.conf/0.cfg"; then
+            item="0:[type={$type_mod},trgt={$trgt_mod},srce={$srce_mod},exmp={$exmp_mod},defn={$defn_mod},note={$note_mod},wrds={$wrds_mod},grmr={$grmr_mod},].[topic={$tpc_mod},link={$link_mod},mark={$mark_mod},].id=[$id_mod]"
+            echo "${item}" >> "$dir/.conf/0.cfg"
+            echo "${trgt_mod}" >> "$dir/.conf/1.cfg"
+            echo -e "FALSE\n${trgt_mod}\n$img0" >> "$dir/.conf/5.cfg"
+            if [ ${type_mod} = 1 ]; then
+                echo "${trgt_mod}" >> "$dir/.conf/3.cfg"
+            elif [ ${type_mod} = 2 ]; then
+                echo "${trgt_mod}" >> "$dir/.conf/4.cfg"
+            fi
+        fi
+    fi
+    
+    if [ -n "${tag}" ]; then
+        delete_item_ok "" "${tag}" "${trgt_mod}"
+    fi
 }
 
 edit_list() {

@@ -82,7 +82,7 @@ function check_index1() {
 function list_inadd() {
     if ls -tNd "$DM_tl"/*/ 1> /dev/null 2>&1; then
         while read -r topic; do
-            if ! echo -e "$(ls "$DS/addons/")\n$(cat "$DM_tl/.3.cfg" "$DM_tl/.6.cfg")" \
+            if ! echo -e "$(ls "$DS/addons/")\n$(cat "$DM_tl/.3.cfg")" \
             |grep -Fxo "${topic}" >/dev/null 2>&1; then
                 [ ! -L "$DM_tl/${topic}" ] && echo "${topic}"
             fi
@@ -108,6 +108,7 @@ function get_item() {
     export exmp="$(grep -oP '(?<=exmp={).*(?=})' <<<"${item}")"
     export defn="$(grep -oP '(?<=defn={).*(?=})' <<<"${item}")"
     export note="$(grep -oP '(?<=note={).*(?=})' <<<"${item}")"
+    export wrds="$(grep -oP '(?<=wrds={).*(?=})' <<<"${item}")"
     export grmr="$(grep -oP '(?<=grmr={).*(?=})' <<<"${item}")"
     export mark="$(grep -oP '(?<=mark={).*(?=})' <<<"${item}")"
     export link="$(grep -oP '(?<=link={).*(?=})' <<<"${item}")"

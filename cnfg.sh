@@ -3,7 +3,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 [ ! -d "$DC" ] && "$DS/ifs/1u.sh" && exit
-info2="<b>$(gettext "Switch language")</b>"
+info2="$(gettext "Switch Language")"
 cd "$DS/addons"
 [[ -n "$(< "$DC_s/1.cfg")" ]] && cfg=1 || > "$DC_s/1.cfg"
 cnf1=$(mktemp "$DT/cnf1.XXXX")

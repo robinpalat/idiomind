@@ -123,7 +123,7 @@ function new_sentence() {
         if [ -f "$DT_r/img.jpg" ]; then
         mv -f  "$DT_r/img.jpg" "${DM_tlt}/images/$id.jpg"; fi
         
-        notify-send "${trgt}" "${srce}\\n(${tpe})" -t 10000
+        notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000
 
         if [ ! -f "$DT_r/audtm.mp3" ]; then
             if [ "$trans" = TRUE ]; then
@@ -188,7 +188,7 @@ function new_word() {
         set_image_2 "$DT_r/img.jpg" "$name_img"
         fi
 
-        notify-send "${trgt}" "${srce}\\n(${tpe})" -t 10000
+        notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000
         
         if [ ! -f "$DT_r/audtm.mp3" ]; then
             if [ ! -f "${DM_tls}/${audio}.mp3" ]; then
