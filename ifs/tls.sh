@@ -87,6 +87,7 @@ check_index() {
         [ ! -e "${DC_tlt}/10.cfg" ] && echo -e "${c2}" > "${DC_tlt}/10.cfg"
         [ ! -e "${DC_tlt}/9.cfg" ] && touch "${DC_tlt}/9.cfg"
         [[ `egrep -cv '#|^$' < "${DC_tlt}/id.cfg"` = 19 ]] && id=1
+        
         if [[ ${id} != 1 ]]; then
             datec=$(date +%F)
             eval c="$(< $DS/default/topicid)"

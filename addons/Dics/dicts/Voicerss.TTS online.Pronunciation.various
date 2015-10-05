@@ -1,0 +1,64 @@
+#!/bin/bash
+
+# Text-to-speech (TTS) API Documentation
+#http://www.voicerss.org/api/documentation.aspx
+label='Text-to-speech (TTS) API Documentation
+http://www.voicerss.org/api/documentation.aspx'
+DC_a="$HOME/.config/idiomind/addons"
+
+
+if [[ "$1" = dlgcnfg ]]; then
+    if [ ! -f "$DC_a/voicerss.cfg" ] || [[ -z "$(< "$DC_a/voicerss.cfg")" ]]; then
+    echo -e "voice=\"\"\nspeed=\"\"\nkey=\"\"" > "$DC_a/voicerss.cfg"; fi
+    voice=$(grep -o voice=\"[^\"]* "$DC_a/voicerss.cfg" |grep -o '[^"]*$')
+    speed=$(grep -o speed=\"[^\"]* "$DC_a/voicerss.cfg" |grep -o '[^"]*$')
+    key=$(grep -o key=\"[^\"]* "$DC_a/voicerss.cfg" |grep -o '[^"]*$')
+    c=$(yad --form --title="${4}" \
+    --text="${label}" \
+    --selectable-labels \
+    --name=Idiomind --class=Idiomind \
+    --window-icon="$DS/images/icon.png" --center \
+    --on-top --skip-taskbar --expand-column=3 \
+    --width=420 --height=200 --borders=10 \
+    --always-print-result --editable --print-all --align=right \
+    --field=Voice:CB "" \
+    --field=Speed:CB "$speed!Slow!Normal!Fast" \
+    --field="Key" "$key" \
+    --button="$(gettext "Cancel")":1 \
+    --button="$(gettext "OK")":0)
+    ret=$?
+    if [ $ret = 0 ]; then
+        sed -i "s/voice=.*/voice=\"$(cut -d "|" -f1 <<<"$c")\"/g" "$DC_a/voicerss.cfg"
+        sed -i "s/speed=.*/speed=\"$(cut -d "|" -f2 <<<"$c")\"/g" "$DC_a/voicerss.cfg"
+        sed -i "s/key=.*/key=\"$(cut -d "|" -f3 <<<"$c")\"/g" "$DC_a/voicerss.cfg"
+    fi
+else
+    DT_r="$3"; cd "$DT_r"
+    if [[ `pwd` != "${3}" ]]; then exit; fi
+    k=$(grep -o key=\"[^\"]* "$DC_a/voicerss.cfg" |grep -o '[^"]*$')
+    speed=$(grep -o speed=\"[^\"]* "$DC_a/voicerss.cfg" |grep -o '[^"]*$')
+    if [ "$speed" = Slow ]; then s='-2'
+    elif [ "$speed" = Normal ]; then s='0'
+    elif [ "$speed" = Fast ]; then s='2'
+    else exit; fi
+
+    if [ -z "$voice" ]; then
+    if [ "$2" = en ]; then v='en-us'
+    elif [ "$2" = es ]; then v='es-es'
+    elif [ "$2" = pt ]; then v='pt-br'
+    elif [ "$2" = ru ]; then v='ru-ru'
+    elif [ "$2" = it ]; then v='it-it'
+    elif [ "$2" = de ]; then v='de-de'
+    elif [ "$2" = fr ]; then v='fr-fr'
+    elif [ "$2" = zh-cn ]; then v='zh-cn'
+    else exit; fi
+    else
+    v=$(grep -o voice=\"[^\"]* "$DC_a/voicerss.cfg" |grep -o '[^"]*$')
+    fi
+
+    wget -T 51 -q -U Mozilla -O "$DT_r/tmp1.mp3" \
+    "http://api.voicerss.org/?key=$k&hl=$v&r=$s&f=16khz_16bit_mono&src=${1}" || rm -f "$DT_r/tmp1.mp3"
+    [ -e "$DT_r/tmp1.mp3" ] && mv -f "$DT_r/tmp1.mp3" "${4}"
+
+    exit
+fi

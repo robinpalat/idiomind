@@ -476,7 +476,7 @@ function dlg_form_0() {
     --skip-taskbar --center --on-top \
     --width=450 --height=100 --borders=2 \
     --field="$(gettext "Name")" "$1" \
-    --field="$(gettext "Type")":CB "$(gettext "Normal")!$(gettext "Tag")!$(gettext "Feed")" \
+    --field="$(gettext "Type")":CB "$(gettext "Normal")!$(gettext "Tag")" \
     --button=gtk-ok:0
 }
 

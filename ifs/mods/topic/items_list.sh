@@ -2,11 +2,11 @@
 # -*- ENCODING: UTF-8 -*-
 
 function word_view() {
-    [ -n "$tag" ] && field_tag="--field=<small>$tag</small>:lbl"
-    [ -n "$defn" ] && field_defn="--field=$defn:lbl"
-    [ -n "$note" ] && field_note="--field=<i>$note</i>\n:lbl"
-    [ -n "$exmp" ] && field_exmp="--field=<span font_desc='Verdana 11' color='#5C5C5C'>$exmp</span>:lbl"
-    [ $show_link = 1  ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
+    [ -n "${tag}" ] && field_tag="--field=<small>$tag</small>:lbl"
+    [ -n "${defn}" ] && field_defn="--field=$defn:lbl"
+    [ -n "${note}" ] && field_note="--field=<i>$note</i>\n:lbl"
+    [ -n "${exmp}" ] && field_exmp="--field=<span font_desc='Verdana 11' color='#5C5C5C'>$exmp</span>:lbl"
+    [ -n "${link}" ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
     local sentence="<span font_desc='Sans Free 25'>${trgt}</span>\n\n<span font_desc='Sans Free 14'><i>$srce</i></span>$link\n\n"
 
     yad --form --title=" " \
@@ -27,7 +27,7 @@ function word_view() {
 function sentence_view() {
     if [ "$(grep -o gramr=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')"  = TRUE ]; then
     trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
-    [ $show_link = 1  ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
+    [ -n "${link}" ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
     local sentence="<span font_desc='Sans Free 15'>${trgt_l}</span>\n\n<span font_desc='Sans Free 11'><i>$srce</i>$link</span>\n<span font_desc='Sans Free 6'>$tag</span>\n"
     
     echo "${lwrd}" | yad --list --title=" " \
@@ -52,40 +52,19 @@ export -f word_view sentence_view
 function notebook_1() {
     cmd_mark="'$DS/mngr.sh' 'mark_as_learned' "\"${tpc}\"" 1"
     cmd_play="$DS/play.sh play_list"
-    lbl2=" "
-    lbl3="--center"
-    cmd4="LBL"
-    if [ ! -e "${DC_tlt}/feeds" ]; then
-    export show_link=0
-    btn0="$(gettext "Files")"
     btn1="$(gettext "Share")"
-    btn2="$(gettext "Delete")"
-    btn3="$(gettext "Edit list")"
-    cmd0="'$DS/ifs/tls.sh' 'attachs'"
-    cmd1="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
-    cmd2="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
-    cmd3="'$DS/mngr.sh' edit_list "\"${tpc}\"""
-    else
-    export show_link=1
-    btn0="$(gettext "Feeds")"
-    btn1="$(gettext "Update")"
-    btn2="$(gettext "Share")"
     btn3="$(gettext "Delete")"
-    cmd0="'$DS/mngr.sh' edit_feeds "\"${tpc}\"""
-    cmd1="'$DS/add.sh' fetch_content "\"${tpc}\"""
-    cmd2="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
+    btn2="$(gettext "Edit list")"
+    cmd1="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
     cmd3="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
-    if [ -e "${DC_tlt}/lk" ]; then
-    lbl3="--text="$(< "${DC_tlt}/lk")""; fi
-    fi
+    cmd2="'$DS/mngr.sh' edit_list "\"${tpc}\"""
     chk1=$((`wc -l < "${DC_tlt}/1.cfg"`*3))
     chk5=`wc -l < "${DC_tlt}/5.cfg"`
-    
     list() { if [[ ${chk1} = ${chk5} ]]; then
     tac "${DC_tlt}/5.cfg"; else tac "$ls1" | \
     awk '{print "/usr/share/idiomind/images/0.png\n"$0"\nFALSE"}'; fi; }
     
-    list | yad --list --tabnum=1 "${lbl3}" \
+    list | yad --list --tabnum=1 \
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh '1'" \
     --expand-column=2 --no-headers --ellipsize=END --tooltip-column=2 \
@@ -107,15 +86,13 @@ function notebook_1() {
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
     --field=" $(gettext "Mark as learnt") ":FBTN "$cmd_mark" \
     --field="$(gettext "Auto-checked of checkbox on list Learning")\t\t\t":CHK "$auto_mrk" \
-    --field="$lbl2":$cmd4 " " \
-    --field="$btn0":FBTN "$cmd0" \
     --field="$btn1":FBTN "$cmd1" \
     --field="$btn2":FBTN "$cmd2" \
     --field="$btn3":FBTN "$cmd3" > "$cnf4" &
     yad --notebook --title="Idiomind - $tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
-    --center --align=right "$img" --ellipsize=END --image-on-top \
+    --center --align=right --ellipsize=END --image-on-top \
     --window-icon="$DS/images/icon.png" --center \
     --tab="  $(gettext "Learning") ($inx1) " \
     --tab="  $(gettext "Learnt") ($inx2) " \
@@ -129,21 +106,10 @@ function notebook_1() {
 
 function notebook_2() {
     cmd_mark="'$DS/mngr.sh' 'mark_to_learn' "\"${tpc}\"" 1"
-    if [ ! -e "${DC_tlt}/feeds" ]; then
-    btn0="$(gettext "Files")"
     btn1="$(gettext "Share")"
     btn2="$(gettext "Delete")"
-    cmd0="'$DS/ifs/tls.sh' 'attachs'"
     cmd1="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
     cmd2="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
-    else
-    btn0="$(gettext "Feeds")"
-    btn1="$(gettext "Share")"
-    btn2="$(gettext "Delete")"
-    cmd0="'$DS/mngr.sh' edit_feeds "\"${tpc}\"""
-    cmd1="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
-    cmd2="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
-    fi
 
     yad --multi-progress --tabnum=1 \
     --text="$pres" \
@@ -167,9 +133,9 @@ function notebook_2() {
     --field=" $(gettext "Review") ":FBTN "$cmd_mark" \
     --field="\t\t\t\t\t\t\t\t\t\t\t\t\t\t":LBL "_" \
     --field="$label_info2\n":LBL " " \
-    --field="$btn0":FBTN "$cmd0" \
     --field="$btn1":FBTN "$cmd1" \
-    --field="$btn2":FBTN "$cmd2" > "$cnf4" &
+    --field="$btn2":FBTN "$cmd2" \
+    --field=" ":LBL " " > "$cnf4" &
     yad --notebook --title="Idiomind - $tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \

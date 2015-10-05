@@ -342,7 +342,8 @@ panel() {
     [ -e "$DC_s/10.cfg" ] && date=$(sed -n 1p "$DC_s/10.cfg")
     
     if [[ "$(date +%d)" != "$date" ]] || [ ! -e "$DC_s/10.cfg" ]; then
-    new_session; ns=TRUE; fi
+        new_session; ns=TRUE
+    fi
 
     ( if [ "${ns}" = TRUE ]; then
     "$DS/ifs/tls.sh" a_check_updates; fi ) &
@@ -353,17 +354,20 @@ panel() {
     if ! [[ ${x} =~ $numer ]]; then x=100; y=100; fi
 
     if [[ `grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg"` = TRUE ]] \
-    && [ ! -e /tmp/.clipw ]; then "$DS/ifs/mods/clipw.sh" & fi
+    && [ ! -e /tmp/.clipw ]; then
+        "$DS/ifs/mods/clipw.sh" &
+    fi
 
     yad --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
     --always-print-result \
     --window-icon=$wicon \
     --form --fixed --on-top --no-buttons --align=center \
-    --width=140 --height=170 --borders=0 --geometry=80x190-${x}-${y} \
-    --field="!$DS/images/new.png!$(gettext "Add new note")":btn "$DS/add.sh 'new_items'" \
-    --field="!$DS/images/topic.png!$(gettext "Open active topic")":btn "idiomind 'topic'" \
-    --field="!$DS/images/index.png!$(gettext "Open topics list")":btn "$DS/chng.sh"
+    --width=140 --height=190 --borders=0 --geometry=80x190-${x}-${y} \
+    --field="gtk-new":btn "$DS/add.sh 'new_items'" \
+    --field="gtk-home":btn "idiomind 'topic'" \
+    --field="gtk-index":btn "$DS/chng.sh" \
+    --field="Options!gtk-preferences":btn "$DS/cnfg.sh"
     [ $? != 0 ] && "$DS/stop.sh" 1 &
     exit
 }

@@ -49,13 +49,6 @@ new_topic() {
         echo "${jlb}" >> "${DM_tl}/.5.cfg"
         "$DS/default/tpc.sh" "${jlb}" 14 1
         "$DS/mngr.sh" mkmn
-    elif  [ ${type} = "$(gettext "Feed")" ]; then
-        mkdir "$DM_tl/${jlb}"
-        mkdir "$DM_tl/${jlb}/.conf"
-        touch "$DM_tl/${jlb}/.conf/feeds"
-        echo "${jlb}" >> "${DM_tl}/.6.cfg"
-        "$DS/default/tpc.sh" "${jlb}" 1 1
-        "$DS/mngr.sh" mkmn
     fi
     exit
 }
@@ -638,28 +631,30 @@ fetch_content() {
     </xsl:stylesheet>"
 
    while read -r _feed; do
-        feed_items="$(xsltproc - "$_feed" <<<"${tmplitem}" 2> /dev/null)"
-        feed_items="$(echo "$feed_items" |tr '\n' '*' |tr -s '[:space:]' |sed 's/EOL/\n/g' |head -n2)"
-        feed_items="$(echo "$feed_items" |sed '/^$/d')"
-        
-        while read -r item; do
-            fields="$(echo "$item" |sed -r 's|-\!-|\n|g')"
-            title=$(echo "$fields" |sed -n 3p \
-            |iconv -c -f utf8 -t ascii |sed 's/\://g' \
-            |sed 's/\&/&amp;/g' |sed 's/^\s*./\U&\E/g' \
-            |sed 's/<[^>]*>//g' |sed 's/^ *//; s/ *$//; /^$/d')
-            link="$(echo "$fields" |sed -n 4p \
-            |sed 's|/|\\/|g' |sed 's/\&/\&amp\;/g')"
+        if [ -n "$_feed" ]; then
+            feed_items="$(xsltproc - "$_feed" <<<"${tmplitem}" 2> /dev/null)"
+            feed_items="$(echo "$feed_items" |tr '\n' '*' |tr -s '[:space:]' |sed 's/EOL/\n/g' |head -n2)"
+            feed_items="$(echo "$feed_items" |sed '/^$/d')"
+            
+            while read -r item; do
+                fields="$(echo "$item" |sed -r 's|-\!-|\n|g')"
+                title=$(echo "$fields" |sed -n 3p \
+                |iconv -c -f utf8 -t ascii |sed 's/\://g' \
+                |sed 's/\&/&amp;/g' |sed 's/^\s*./\U&\E/g' \
+                |sed 's/<[^>]*>//g' |sed 's/^ *//; s/ *$//; /^$/d')
+                link="$(echo "$fields" |sed -n 4p \
+                |sed 's|/|\\/|g' |sed 's/\&/\&amp\;/g')"
 
-            if [ -n "${title}" ]; then
-                if ! grep -Fo "trgt={${title^}}" "${DC_tlt}/0.cfg" && \
-                ! grep -Fxq "${title^}" "${DC_tlt}/exclude"; then
-                    wlist='FALSE'
-                    trgt="${title^}"
-                    new_item
+                if [ -n "${title}" ]; then
+                    if ! grep -Fo "trgt={${title^}}" "${DC_tlt}/0.cfg" && \
+                    ! grep -Fxq "${title^}" "${DC_tlt}/exclude"; then
+                        wlist='FALSE'
+                        trgt="${title^}"
+                        new_item
+                    fi
                 fi
-            fi
-        done <<<"${feed_items}"
+            done <<<"${feed_items}"
+        fi
     done < "${feeds}"
     rm -f "$DT/updating_feeds"; exit 0
     
