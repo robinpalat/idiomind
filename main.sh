@@ -126,7 +126,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     --no-click --print-column=0 --dclick-action="$dclk" \
     --window-icon=$wicon \
     --no-headers --ellipsize=END --center \
-    --width=638 --height=570 --borders=6 \
+    --width=600 --height=560 --borders=6 \
     --column="$langt" \
     --button="$(gettext "Install")":0
     ret=$?
@@ -212,7 +212,6 @@ function topic() {
         cnf1=$(mktemp "$DT/cnf1.XXX.x")
         cnf3=$(mktemp "$DT/cnf3.XXX.x")
         cnf4=$(mktemp "$DT/cnf4.XXX.x")
-        sx=600; sy=560
         [ ! -z "$author" ] && author=" $(gettext "Created by") $author"
         lbl1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><small>\n $inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"
 

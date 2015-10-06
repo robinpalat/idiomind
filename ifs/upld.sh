@@ -96,6 +96,82 @@ function dwld() {
 }
 
 function upld() {
+
+    dlg_getuser() {
+        yad --form --title="$(gettext "Share")" \
+        --text="$text_upld" \
+        --name=Idiomind --class=Idiomind \
+        --window-icon="$DS/images/icon.png" --buttons-layout=end \
+        --align=right --center --on-top \
+        --width=460 --height=450 --borders=12 \
+        --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
+        --field="$(gettext "Author")": "$iuser" \
+        --field="\t$(gettext "Password")": "$cntct" \
+        --field="$(gettext "Create Account"):FBTN" " " \
+        --button="$(gettext "PDF")":2 "$btn" --button="$(gettext "Close")":4
+        ret=$?
+    }
+    
+    dlg_upload() {
+        yad --form --title="$(gettext "Share")" \
+        --text="$text_upld" \
+        --name=Idiomind --class=Idiomind \
+        --window-icon="$DS/images/icon.png" --buttons-layout=end \
+        --align=right --center --on-top \
+        --width=460 --height=450 --borders=12 \
+        --field="$(gettext "Category"):CBE" "!$_categories" \
+        --field="$(gettext "Skill Level"):CB" "$_levels" \
+        --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
+        --field="$(gettext "Author")":RO "$iuser" \
+        --field="\t$(gettext "Password")":RO "$cntct" \
+        --button="$(gettext "PDF")":2 "$btn" --button="$(gettext "Close")":4
+        Ctgry=$(echo "${dlg}" | cut -d "|" -f3)
+        level=$(echo "${dlg}" | cut -d "|" -f4)
+        iuser_m=$(echo "${dlg}" | cut -d "|" -f1)
+        cntct_m=$(echo "${dlg}" | cut -d "|" -f2)
+        notes_m=$(echo "${dlg}" | cut -d "|" -f5)
+        ret=$?
+    }
+
+    dlg_dwld_content() {
+        c_audio="$(grep -o 'naudi="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+        c_images="$(grep -o 'nimag="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+        fsize="$(grep -o 'nsize="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+        cmd_dwl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
+        info="<b>$(gettext "Downloadable content available")</b>"
+        info2="$(gettext "Audio files:") $c_audio\n$(gettext "Images:") $c_images\n$(gettext "Size:") $fsize"
+        yad --form --columns=2 --title="$(gettext "Share")" \
+        --name=Idiomind --class=Idiomind \
+        --image="$DS/images/download.png" --image-on-top \
+        --window-icon="$DS/images/icon.png" --buttons-layout=end \
+        --align=left --center --on-top \
+        --width=400 --height=220 --borders=12 \
+        --text="$info" \
+        --field="$info2:lbl" " " \
+        --field="$(gettext "Download"):FBTN" "${cmd_dwl}" \
+        --field="\t\t\t\t\t:lbl" " " \
+        --field=" :lbl" " " \
+        --button="$(gettext "PDF")":2 \
+        --button="$(gettext "Close")":4
+        ret=$?
+    }
+    
+    dlg_export() {
+        yad --form --title="$(gettext "Share")" \
+        --columns=2 --separator="|" \
+        --name=Idiomind --class=Idiomind \
+        --window-icon="$DS/images/icon.png" --buttons-layout=end \
+        --align=left --center --on-top \
+        --width=400 --height=200 --borders=12 \
+        --field="$(gettext "Latest downloads:"):lbl" " " \
+        --field="$(< "${DC_tlt}/download"):lbl" " " \
+        --field=" :lbl" " " \
+        --button="$(gettext "PDF")":2 \
+        --button="$(gettext "Close")":4
+        ret=$?
+    }
+    
+
 if [ $((inx3+inx4)) -lt 5 ]; then exit 1; fi
 
 if [ "${tpc}" != "${2}" ]; then
@@ -142,6 +218,20 @@ usrid="$(grep -o 'usrid="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
 iuser="$(grep -o 'iuser="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
 cntct="$(grep -o 'cntct="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
 ctgry="$(grep -o 'ctgry="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+text_upld="$(gettext "Share your notes with other ${LANGUAGE_TO_LEARN} learners!")\n<a href='$linkc'>$(gettext "Topics shared")</a> (Beta)\n"
+_categories="$ctgry!$others!$article!$city!$comics!$culture!$education!$entertainment!$funny!$grammar!$history!$home!$internet!$interview!$movies!$music!$nature!$news!$office!$places!$quotes!$relations!$science!$social_media!$sport!$tech"
+_levels="!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")"
+
+
+
+
+
+
+
+
+
+
+
 
 if [ -z "$usrid" -o ${#id} -gt 3 ]; then
 b=$(tr -dc a-z < /dev/urandom |head -c 1) # uranium?
@@ -156,70 +246,26 @@ btn="--button="$(gettext "Upload")":0"; else
 btn="--center"; fi
 cd "$HOME"
 
-if [ -e "${DC_tlt}/download" ]; then
-    if [ ! -s "${DC_tlt}/download" ]; then
-        c_audio="$(grep -o 'naudi="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-        c_images="$(grep -o 'nimag="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-        fsize="$(grep -o 'nsize="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-        cmd_dwl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
-        info="<b>$(gettext "Downloadable content available")</b>"
-        info2="$(gettext "Audio files:") $c_audio\n$(gettext "Images:") $c_images\n$(gettext "Size:") $fsize"
-        dlg=$(yad --form --columns=2 --title="$(gettext "Share")" \
-        --name=Idiomind --class=Idiomind \
-        --image="$DS/images/download.png" --image-on-top \
-        --window-icon="$DS/images/icon.png" --buttons-layout=end \
-        --align=left --center --on-top \
-        --width=400 --height=220 --borders=12 \
-        --text="$info" \
-        --field="$info2:lbl" " " \
-        --field="$(gettext "Download"):FBTN" "${cmd_dwl}" \
-        --field="\t\t\t\t\t:lbl" " " \
-        --field=" :lbl" " " \
-        --button="$(gettext "PDF")":2 \
-        --button="$(gettext "Close")":4)
-        ret=$?
-    elif [ -s "${DC_tlt}/download" ]; then
-        dlg=$(yad --form --title="$(gettext "Share")" \
-        --columns=2 --separator="|" \
-        --name=Idiomind --class=Idiomind \
-        --window-icon="$DS/images/icon.png" --buttons-layout=end \
-        --align=left --center --on-top \
-        --width=400 --height=200 --borders=12 \
-        --field="$(gettext "Latest downloads:"):lbl" " " \
-        --field="$(< "${DC_tlt}/download"):lbl" " " \
-        --field=" :lbl" " " \
-        --button="$(gettext "PDF")":2 \
-        --button="$(gettext "Close")":4)
-        ret=$?
+# ------------------------------------------------------------ dialogs
+if [[ -e "${DC_tlt}/download" ]]; then
+    if [[ ! -s "${DC_tlt}/download" ]]; then
+        dlg_dwld_content
+    elif [[ -s "${DC_tlt}/download" ]]; then
+        dlg_export
     fi
 else
-    linkc="http://idiomind.sourceforge.net/community/${lgtl,,}"
-    LANGUAGE_TO_LEARN=${lgtl}
-    dlg=$(yad --form --title="$(gettext "Share")" \
-    --text="$(gettext "Share your notes with other ${LANGUAGE_TO_LEARN} learners!")\n<a href='$linkc'>$(gettext "Topics shared")</a> (Beta)\n" \
-    --name=Idiomind --class=Idiomind \
-    --window-icon="$DS/images/icon.png" --buttons-layout=end \
-    --align=right --center --on-top \
-    --width=460 --height=450 --borders=12 \
-    --field="$(gettext "Author")" "$iuser" \
-    --field="\t$(gettext "Contact (optional)")" "$cntct" \
-    --field="$(gettext "Category"):CBE" \
-    "$ctgry!$others!$article!$city!$comics!$culture!$education!$entertainment!$funny!$grammar!$history!$home!$internet!$interview!$movies!$music!$nature!$news!$office!$places!$quotes!$relations!$science!$social_media!$sport!$tech" \
-    --field="$(gettext "Skill Level"):CB" "!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")" \
-    --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
-    --button="$(gettext "PDF")":2 "$btn" --button="$(gettext "Close")":4)
-    ret=$?
+    if [[  -s "$DC_s/3.cfg" ]]; then
+        dlg_getuser
+    elif [[ ! -s "$DC_s/3.cfg" ]]; then
+        dlg_upload
+    fi
 fi
-
+# ------------------------------------------------------------
 if [ $ret = 2 ]; then
     "$DS/ifs/mods/export/PDF.sh" & exit 1
  
 elif [ $ret = 0 ]; then
-Ctgry=$(echo "${dlg}" | cut -d "|" -f3)
-level=$(echo "${dlg}" | cut -d "|" -f4)
-iuser_m=$(echo "${dlg}" | cut -d "|" -f1)
-cntct_m=$(echo "${dlg}" | cut -d "|" -f2)
-notes_m=$(echo "${dlg}" | cut -d "|" -f5)
+
 [ "$Ctgry" = "$others" ] && Ctgry=others
 [ "$Ctgry" = "$comics" ] && Ctgry=comics
 [ "$Ctgry" = "$culture" ] && Ctgry=culture
@@ -254,11 +300,6 @@ if [ -z "${iuser_m##+([[:space:]])}" -o ${#iuser_m} -gt 60 ] || \
 [ "$(grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${iuser_m}")" ]; then
 msg "$(gettext "You have entered an invalid author name.")\n " info
 "$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
-
-if [ ${#cntct_m} -gt 30 ] || \
-[ "$(grep -o -E '\*|\/|$|\)|\(|=' <<<"${cntct_m}")" ]; then
-    msg "$(gettext "You have entered an invalid contact format.")\n " info
-    "$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
 
 if [ -z "${Ctgry}" ]; then
     msg "$(gettext "Please select a category.")\n " info
@@ -372,17 +413,17 @@ try:
 	nid = server.metaWeblog.newPost(post_type, user, pwd, {'title': title, 'description': body}, publish)
 except:
     pass
-url = os.environ['url']
-direc = os.environ['direc']
-log = os.environ['log']
-volumes = [i for i in os.listdir(direc)]
-for f in volumes:
-    file = {'file': open(f, 'rb')}
-    r = requests.post(url, files=file)
-    p = open(log, "w")
-    p.write("x")
-    p.close()
-    time.sleep(5)
+#url = os.environ['url']
+#direc = os.environ['direc']
+#log = os.environ['log']
+#volumes = [i for i in os.listdir(direc)]
+#for f in volumes:
+    #file = {'file': open(f, 'rb')}
+    #r = requests.post(url, files=file)
+    #p = open(log, "w")
+    #p.write("x")
+    #p.close()
+    #time.sleep(5)
 END
 u=$?
 if [ $u = 0 ]; then

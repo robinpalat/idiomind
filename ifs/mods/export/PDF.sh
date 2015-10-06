@@ -42,6 +42,7 @@ sentences() {
 }
 
 single_word(){
+    img_size=150
     cat <<!EOF
 <table width="100%" align="center" cellpadding="10" cellspacing="10">
 <tr><td style="width: 33%; vertical-align:top; align:$algn">${img1}<w1>${trgt1}</w1><br><w2>${srce1}</w2><br><br></td>
@@ -51,6 +52,7 @@ single_word(){
 }
 
 word_with_example2(){
+    img_size=150
     hint="$(echo "${trgt,,}" |sed "s|[a-z]|"\ \ _"|g")"
     [ -n "${exmp}" ] && exmp="$(sed "s|${trgt,}|<b> ${hint} <\/b>|g" <<<"${exmp}")<br><br>"
     echo -e "<table width=\"80%\" align=\"left\" cellpadding=\"0\" cellspacing=\"5\"><tr>" >> "$file.words1"
@@ -59,6 +61,7 @@ word_with_example2(){
 }
 
 word_with_example1(){
+    img_size=100
     [ -n "$img" ] && fw="$file.words0" || fw="$file.words1"
     [ -n "${exmp}" ] && exmp="$(sed "s|${trgt,}|<mark>${trgt,}<\/mark>|g" <<<"${exmp}")<br><br>"
     [ -n "${defn}" ] && defn="${defn}<br><br>"
@@ -75,6 +78,7 @@ mkhtml() {
     mkdir -p "$DT/mkhtml"
     imagesdir="${DM_tls}/images"
     file="$DT/mkhtml/temp.html"
+    img_size=150
     
     if [ $ret -eq 2 ]; then
         while read -r word; do
@@ -95,7 +99,7 @@ mkhtml() {
         if [ -n "${trgt}" -a -n "${srce}" -a -n "${type}" ]; then
             fimg="$imagesdir/${trgt,,}-0.jpg"
             if [ -f "$fimg" ]; then
-                img="<img src=\"$fimg\" border=0 width=150px></img><br>"
+                img="<img src=\"$fimg\" border=0 width=${img_size}px></img><br>"
             fi
             
             if [ ${type} = 1 -a $ret = 0 ]; then
