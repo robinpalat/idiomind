@@ -29,11 +29,19 @@ function set_lang() {
     language="$1"
     if [ ! -d "$DM_t/$language/.share/images" ]; then
         mkdir -p "$DM_t/$language/.share/images"
+    fi
+    if [ ! -d "$DM_t/$language/.share/audio" ]; then
+        mkdir -p "$DM_t/$language/.share/audio"
+    fi
+    if [ ! -d "$DM_t/$language/.share/Dictionary/.conf" ]; then
         mkdir -p "$DM_t/$language/.share/Dictionary/.conf"
         echo 0 > "$DM_t/$language/.share/Dictionary/.conf/8.cfg"
         cdb="$DM_t/$language/.share/Dictionary/${language}.db"
-        echo -n "create table if not exists Words (Word TEXT);" |sqlite3 ${cdb}
-        echo -n "create table if not exists Config (Study TEXT, Expire INTEGER);" |sqlite3 ${cdb}
+        echo -n "create table if not exists Words \
+        (Word TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${cdb}
+        echo -n "create table if not exists Config \
+        (Study TEXT, Expire INTEGER);" |sqlite3 ${cdb}
+        echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${cdb}
     fi
     for n in {0..3}; do touch "$DM_t/$language/.$n.cfg"; done
     echo "$language" > "$DC_s/6.cfg"
@@ -80,7 +88,6 @@ elif [ $ret -eq 0 ]; then
     --button=gtk-ok:1 & exit 1
     fi
     
-    mkdir -p "$HOME/.idiomind/topics/saved"
     DM_t="$HOME/.idiomind/topics"
     [ ! -d  "$HOME/.config" ] && mkdir "$HOME/.config"
     mkdir -p "$HOME/.config/idiomind/s"
@@ -91,7 +98,7 @@ elif [ $ret -eq 0 ]; then
     while [ ${n} -lt 10 ]; do
         if echo "$target" | grep "${lang[$n]}"; then
         set_lang "${lang[$n]}"
-        if grep -o -E 'Chinese|Japanese|Russian|Vietnamese' <<< "$target";
+        if grep -o -E 'Chinese|Japanese|Russian|Vietnamese' <<<"$target";
         then _info "$target"; fi
         break
         fi
@@ -101,7 +108,11 @@ elif [ $ret -eq 0 ]; then
     n=0
     while [ ${n} -lt 10 ]; do
         if echo "$source" | grep "${lang[$n]}"; then
-        echo "${lang[$n]}" >> "$DC_s/6.cfg" & break
+        echo "${lang[$n]}" >> "$DC_s/6.cfg"
+        if ! grep -q ${lang[$n]} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(Words);")"; then
+            sqlite3 ${cdb} "alter table Words add column ${lang[$n]} TEXT;"
+        fi
+        break
         fi
         ((n=n+1))
     done

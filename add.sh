@@ -90,10 +90,10 @@ function new_sentence() {
     trgt="$(clean_2 "${trgt}")"
     srce="$(clean_2 "${srce}")"
 
-    if [ "$trans" = TRUE ]; then
+    if [[ $trans = TRUE ]]; then
         internet
         [ "$(dirname "$0")" != "$DT_r" ] && cd "$DT_r"
-        if [ "$ttrgt" = TRUE ]; then
+        if [[ $ttrgt = TRUE ]]; then
             trgt="$(translate "${trgt,,}" auto "$lgt")"
             trgt=$(clean_2 "${trgt}"); fi
         srce="$(translate "${trgt,,}" $lgt $lgs)"
@@ -115,15 +115,15 @@ function new_sentence() {
         cleanups "$DT_r" & exit 1
     else
         index 2
-        if [ -f "$DT_r/img.jpg" ]; then
+        if [ -e "$DT_r/img.jpg" ]; then
         mv -f  "$DT_r/img.jpg" "${DM_tlt}/images/$id.jpg"; fi
         
         notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000
 
-        if [ ! -f "$DT_r/audtm.mp3" ]; then
+        if [ ! -e "$DT_r/audtm.mp3" ]; then
             if [ "$trans" = TRUE ]; then
                 tts "${trgt}" "$lgt" "$DT_r" "${DM_tlt}/$id.mp3"
-                    if [ ! -f "${DM_tlt}/$id.mp3" ]; then
+                    if [ ! -e "${DM_tlt}/$id.mp3" ]; then
                         voice "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
                     fi
             else
@@ -136,7 +136,7 @@ function new_sentence() {
             mv -f "$DT_r/audtm.mp3" "${DM_tlt}/$id.mp3"
         fi
 
-        ( if [ "$wlist" = TRUE ] && [ -n "${wrds}" ]; then
+        ( if [[ $wlist = TRUE ]] && [ -n "${wrds}" ]; then
             list_words_sentence; fi ) &
 
         fetch_audio "$aw" "$bw"
@@ -149,9 +149,8 @@ function new_word() {
     srce="$(clean_0 "${srce}")"
     cdb="$DM_tls/Dictionary/${lgtl}.db"
     
-    if [ "$trans" = TRUE ]; then
-        internet
-        if [ "$ttrgt" = TRUE ] && [[ ${5} != 0 ]]; then
+    if [[ $trans = TRUE ]]; then
+        if [[ $ttrgt = TRUE ]]; then
             trgt="$(translate "${trgt}" auto "$lgt")"
             trgt="$(clean_1 "${trgt}")"
         fi
@@ -175,25 +174,24 @@ function new_word() {
     else
         index 1
 
-        if [ -f "$DT_r/img.jpg" ]; then
-            if [ -f "${DM_tls}/images/${trgt,,}-0.jpg" ]; then
+        if [ -e "$DT_r/img.jpg" ]; then
+            if [ -e "${DM_tls}/images/${trgt,,}-0.jpg" ]; then
                 n=`ls "${DM_tls}/images/${trgt,,}-"*.jpg |wc -l`
                 name_img="${DM_tls}/images/${trgt,,}-"${n}.jpg
             else
                 name_img="${DM_tls}/images/${trgt,,}-0.jpg"
             fi
-            
         set_image_2 "$DT_r/img.jpg" "$name_img"
         fi
 
         notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000
         
-        if [ ! -f "$DT_r/audtm.mp3" ]; then
-            if [ ! -f "${DM_tls}/audio/${audio}.mp3" ]; then
+        if [ ! -e "$DT_r/audtm.mp3" ]; then
+            if [ ! -e "${DM_tls}/audio/${audio}.mp3" ]; then
                 tts_word "${audio}" "${DM_tls}/audio"
             fi
         else
-            if [ -f "${DM_tls}/audio/${audio}.mp3" ]; then
+            if [ -e "${DM_tls}/audio/${audio}.mp3" ]; then
                 msg_3 "$(gettext "A file named "${DM_tls}/audio/${audio}.mp3" already exists. Replace?.")\n" dialog-question "${trgt}"
                 if [ $? -eq 0 ]; then
                     cp -f "$DT_r/audtm.mp3" "${DM_tls}/audio/${audio}.mp3"; fi
@@ -239,7 +237,7 @@ function list_words_edit() {
 
                 if [ $? = 0 ]; then
                     index 1
-                    if [ ! -f "$DM_tls/audio/$audio.mp3" ]; then
+                    if [ ! -e "$DM_tls/audio/$audio.mp3" ]; then
                         ( tts_word "$audio" "$DM_tls/audio" ); fi
                     ( img_word "${trgt}" "${srce}" ) &
                 else
@@ -249,7 +247,7 @@ function list_words_edit() {
             let n++
         done < <(head -200 < "$DT_r/slts")
 
-        if [ -f "$DT_r/logw" ]; then
+        if [ -e "$DT_r/logw" ]; then
         _log="$(< "$DT_r/logw")"
         dlg_text_info_3 "$(gettext "Some notes could not be added to your list"):" "$_log"; fi
         echo -e "adi.$lns.adi" >> "$DC_s/log"
@@ -290,7 +288,7 @@ function list_words_sentence() {
             
             if [ $? = 0 ]; then
                 index 1
-                if [ ! -f "$DM_tls/audio/$audio.mp3" ]; then
+                if [ ! -e "$DM_tls/audio/$audio.mp3" ]; then
                     ( tts_word "${audio}" "${DM_tls}/audio" ); fi
                 ( img_word "${trgt}" "${srce}" ) &
             else
@@ -300,7 +298,7 @@ function list_words_sentence() {
         let n++
     done < <(head -200 < "$DT_r/slts")
 
-    if [ -f "$DT_r/logw" ]; then
+    if [ -e "$DT_r/logw" ]; then
     _log="$(< "$DT_r/logw")"
     dlg_text_info_3 "$(gettext "Some notes could not be added to your list"):" "$_log"; fi
     cleanups "$DT_r"
@@ -378,7 +376,7 @@ function process() {
         fi
         ) | dlg_progress_1
     fi
-    [ -f "$DT_r/sntsls" ] && rm -f "$DT_r/sntsls"
+    [ -e "$DT_r/sntsls" ] && rm -f "$DT_r/sntsls"
 
     lenght() {
         if [ $(wc -c <<<"${1}") -le 180 ]; then
@@ -463,7 +461,7 @@ function process() {
         n=1
         while read -r trgt; do
             trgt="$(clean_2 "${trgt}")"
-            if [ "$ttrgt" = TRUE ]; then
+            if [[ $ttrgt = TRUE ]]; then
             trgt="$(translate "${trgt}" auto $lgt)"
             trgt="$(clean_2 "${trgt}")"; fi
             srce="$(translate "${trgt}" $lgt $lgs)"
@@ -483,10 +481,10 @@ function process() {
                     if [ $? = 0 ]; then
                         index 1
                         ( tts_word "${audio}" "${DM_tlt}" ) &&
-                        if [ -f "${DM_tlt}/${audio}.mp3" ]; then
+                        if [ -e "${DM_tlt}/${audio}.mp3" ]; then
                         mv "${DM_tlt}/${audio}.mp3" "${DM_tlt}/$id.mp3"
                         else
-                        if [ -f "${DM_tls}/audio/${audio}.mp3" ]; then
+                        if [ -e "${DM_tls}/audio/${audio}.mp3" ]; then
                         cp "${DM_tls}/audio/${audio}.mp3" "${DM_tlt}/$id.mp3"; fi
                         fi
                         ( img_word "${trgt}" "${srce}" ) &
@@ -511,9 +509,9 @@ function process() {
                         
                         if [ $? = 0 ]; then
                             index 2
-                            if [ "$trans" = TRUE ]; then
+                            if [[ $trans = TRUE ]]; then
                             tts "${trgt}" $lgt "$DT_r" "${DM_tlt}/$id.mp3"
-                            [ ! -f "${DM_tlt}/$id.mp3" ] && voice "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
+                            [ ! -e "${DM_tlt}/$id.mp3" ] && voice "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
                             else voice "${trgt}" "${DT_r}" "${DM_tlt}/$id.mp3"; fi #TODO
                             ( fetch_audio "$aw" "$bw" )
                             echo "${trgt}" >> "$DT_r/adds"
@@ -548,7 +546,7 @@ function process() {
                     
                     if [ $? = 0 ]; then
                         index 1
-                        if [ ! -f "${DM_tls}/audio/$audio.mp3" ]; then
+                        if [ ! -e "${DM_tls}/audio/$audio.mp3" ]; then
                         ( tts_word "$audio" "${DM_tls}/audio" )
                         ( img_word "${trgt}" "${srce}" ) & fi
                         echo "${trgt}" >> "$DT_r/addw"
@@ -675,14 +673,14 @@ new_items() {
     
     if [ ${#trgt} -gt 180 ]; then process; fi
 
-    [ -f "$DT_r/ico.jpg" ] && img="$DT_r/ico.jpg" \
+    [ -e "$DT_r/ico.jpg" ] && img="$DT_r/ico.jpg" \
     || img="$DS/images/nw.png"
     
     tpcs="$(grep -vFx "${tpe}" "$DM_tl/.2.cfg" |tr "\\n" '!' |sed 's/\!*$//g')"
     [ -n "$tpcs" ] && e='!'
     if [ -z "${tpe}" ]; then check_s "${tpe}" & exit 1; fi
     
-    if [ "$trans" = TRUE ]; then
+    if [[ $trans = TRUE ]]; then
         lzgpr="$(dlg_form_1)"
     else 
         lzgpr="$(dlg_form_2)"; fi

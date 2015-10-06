@@ -67,9 +67,6 @@ function new_session() {
     echo -n "create table if not exists Words (Word TEXT);" |sqlite3 ${cdb}
     echo -n "create table if not exists Config (Study TEXT, Expire INTEGER);" |sqlite3 ${cdb}
     fi
-    link="$(readlink -f "$(find "$DM_tl"/ -maxdepth 1 -type l)")"
-    if [[ "$(basename "$link")" !=  "$(basename "$DM_tls/Dictionary")" ]]; then
-	[ "$u" != 1 ] && ln -fs "$DM_tls/Dictionary" "$DM_tl/$(gettext "New Words")"; fi
 
     # log file
     if [ -f "$DC_s/log" ]; then
@@ -325,9 +322,6 @@ function topic() {
         source "$DS/ifs/mods/topic/tags.sh"
         tags_list & exit 1
         
-    elif [[ ${mode} = 0 ]]; then
-        source "$DS/ifs/mods/topic/Dictionary.sh"
-        Dictionary & exit 1
     else
         tpa="$(sed -n 1p "$DC_s/4.cfg")"
         source "$DS/ifs/mods/topic/${tpa}.sh"

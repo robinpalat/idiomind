@@ -61,10 +61,10 @@ set_lang() {
         echo 0 > "$DM_tls/Dictionary/.conf/8.cfg"
         cdb="$DM_tls/Dictionary/${lgtl}.db"
         echo -n "create table if not exists Words \
-        (Word TEXT, ${lgtl} TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${cdb}
+        (Word TEXT, ${lgsl^} TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${cdb}
         echo -n "create table if not exists Config \
         (Study TEXT, Expire INTEGER);" |sqlite3 ${cdb}
-        ln -fs "$DM_tls/Dictionary" "$DM_tl/$(gettext "New Words")"
+        echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${cdb}
     fi
 }
 
@@ -186,6 +186,7 @@ config_dlg() {
             ((n=n+1))
         done
         n=0
+        cdb="$DM_tls/Dictionary/${lgtl}.db"
         while [ ${n} -lt 10 ]; do
             if cut -d "|" -f13 < "$cnf1" | grep "${lang[$n]}" && \
             [ "${lang[$n]}" != "$lgsl" ]; then
@@ -193,6 +194,9 @@ config_dlg() {
                 if [ $? -eq 0 ]; then
                     echo "$lgtl" > "$DC_s/6.cfg"
                     echo "${lang[$n]}" >> "$DC_s/6.cfg"
+                    if ! grep -q ${lang[$n]} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(Words);")"; then
+                        sqlite3 ${cdb} "alter table Words add column ${lang[$n]} TEXT;"
+                    fi
                     break
                 fi
             fi

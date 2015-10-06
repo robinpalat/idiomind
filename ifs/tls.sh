@@ -205,8 +205,9 @@ add_audio() {
 _backup() {
     dt=$(date +%F)
     source /usr/share/idiomind/ifs/c.conf
-    [ ! -d "$HOME/.idiomind/backup" ] \
-    && mkdir "$HOME/.idiomind/backup"
+    if [ ! -d "$HOME/.idiomind/backup" ]; then
+        mkdir "$HOME/.idiomind/backup"
+    fi
     file="$HOME/.idiomind/backup/${2}.bk"
     if ! grep "${2}.bk" < <(cd "$HOME/.idiomind/backup"/; find . -maxdepth 1 -name '*.bk' -mtime -2); then
         if [ -s "$DM_tl/${2}/.conf/0.cfg" ]; then

@@ -99,6 +99,9 @@ function sentence_p() {
     table="T`date +%m%y`"; row_trans="$lgsl"
     echo -n "create table if not exists ${table} \
     (Word TEXT, ${row_trans^} TEXT);" |sqlite3 ${cdb}
+    if ! grep -q ${lgsl} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(${table});")"; then
+        sqlite3 ${cdb} "alter table ${table} add column ${lgsl} TEXT;"
+    fi
 
     r=$((RANDOM%10000))
     cd /; DT_r="$1"; cd "$DT_r"; touch "swrd.$r" "twrd.$r"
@@ -159,8 +162,6 @@ function sentence_p() {
             echo -n "insert into Words (Word,${row_trans^},Example) \
             values ('${t}','${s}','${trgt}');" |sqlite3 ${cdb}
         fi
-        [[ ! $(which gettext.sh) ]]
-        
         let bcle++
         done
     else
@@ -316,6 +317,7 @@ function translate() {
     [[ `sqlite3 ${cdb} "select ${lgsl} from Words where Word is '${1}';"` ]]; then
         sqlite3 ${cdb} "select ${lgsl} from Words where Word is '${1}';"
     else
+        internet
         if ! ls "$DC_d"/*."Traslator online.Translator".* 1> /dev/null 2>&1; then
         "$DS_a/Dics/cnfg.sh" 2; fi
         for trans in "$DC_d"/*."Traslator online.Translator".*; do
@@ -324,7 +326,6 @@ function translate() {
         done
     fi
 }
-
 
 function tts() {
     if ! ls "$DC_d"/*."TTS online.Pronunciation".* 1> /dev/null 2>&1; then
@@ -408,7 +409,7 @@ function voice() {
         echo "${1}" | $txaud "$DT_r/f.wav"
         sox "$DT_r"/*.wav "${3}"
         if [ $? != 0 ]; then
-        msg "$(gettext "Please check the speech synthesizer configuration in the preferences dialog.")" dialog-warning "$(gettext "Information")" & exit 1
+            notify-send -i idiomind "$(gettext "Please check the speech synthesizer configuration in the preferences dialog.")" & exit 1
         fi
     else
         return 1
