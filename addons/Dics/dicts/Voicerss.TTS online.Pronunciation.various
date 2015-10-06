@@ -59,6 +59,4 @@ else
     wget -T 51 -q -U Mozilla -O "$DT_r/tmp1.mp3" \
     "http://api.voicerss.org/?key=$k&hl=$v&r=$s&f=16khz_16bit_mono&src=${1}" || rm -f "$DT_r/tmp1.mp3"
     [ -e "$DT_r/tmp1.mp3" ] && mv -f "$DT_r/tmp1.mp3" "${4}"
-
-    exit
 fi

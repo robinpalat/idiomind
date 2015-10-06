@@ -89,12 +89,14 @@ function new_session() {
             if [ ${RM} -ge 180 -a ${stts} = 8 ]; then
                 echo 10 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"
             elif [ ${RM} -ge 100 -a ${stts} -lt 8 ]; then
-                echo 8 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"; fi
+                echo 8 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"
+            fi
         else
             if [ ${RM} -ge 180 -a ${stts} = 7 ]; then
                 echo 9 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"
             elif [ ${RM} -ge 100 -a ${stts} -lt 7 ]; then
-                echo 7 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"; fi
+                echo 7 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"
+            fi
         fi
     fi
     done < "$DM_tl/.1.cfg"
@@ -107,7 +109,8 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     source "$DS/ifs/tls.sh"
     check_format_1 "${1}"
     if [ $? != 18 ]; then
-    msg "$(gettext "File is corrupted.")\n" error "$(gettext "Information")" & exit 1; fi
+        msg "$(gettext "File is corrupted.")\n" error "$(gettext "Information")" & exit 1
+    fi
     file="${1}"
     lv=( "$(gettext "Beginner")" "$(gettext "Intermediate")" "$(gettext "Advanced")" )
     level="${lv[${level}]}"
@@ -240,7 +243,6 @@ function topic() {
                 "$DS/ifs/tls.sh" colorize
                 echo -e "oki.$(wc -l < "${cnf1}").oki" >> "$DC_s/log"
             fi
-        
             ntpc=$(cut -d '|' -f 1 < "${cnf4}")
             if [ "${tpc}" != "${ntpc}" -a -n "$ntpc" ]; then
             if [[ "${tpc}" != "$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")" ]]; then
@@ -274,7 +276,7 @@ function topic() {
                             idiomind topic & exit 1
                         elif [ $ret -eq 3 ]; then
                            exit 1
-                        fi 
+                        fi
                 fi
 
                 pres="<u><b>$(gettext "Topic learnt")</b></u>  $(gettext "* however you have new notes") ($inx1).\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
@@ -356,7 +358,8 @@ panel() {
 
     if [ -e "$DC_s/10.cfg" ]; then
         x=$(($(sed -n 2p "$DC_s/10.cfg")/2))
-        y=$(($(sed -n 3p "$DC_s/10.cfg")/2)); fi
+        y=$(($(sed -n 3p "$DC_s/10.cfg")/2))
+    fi
     if ! [[ ${x} =~ $numer ]]; then x=100; y=100; fi
 
     if [[ `grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg"` = TRUE ]] \
