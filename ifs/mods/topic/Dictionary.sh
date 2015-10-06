@@ -20,7 +20,7 @@ function Dictionary() {
             let limit++
         done
     }
-    list | yad --list --title="${tpc}" \
+    list | yad --list --title="$(gettext "New Words")" \
     --print-all \
     --dclick-action="$DS/play.sh play_word" \
     --search-column=1 --hide-column=3 --regex-search \

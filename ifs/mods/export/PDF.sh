@@ -64,11 +64,11 @@ word_with_example1(){
     [ -n "${defn}" ] && defn="${defn}<br><br>"
     [ -n "${note}" ] && note="${note}<br><br>"
     field="<w1>${trgt}</w1><br><w2>${srce}</w2>"
-    field2="<exmp>${exmp}</exmp><defn>${defn}</defn><note>${note}</note>"
+    field2="<texmp>${exmp}</texmp><defn>${defn}</defn><note>${note}</note>"
     echo -e "<table width=\"100%\" align=\"center\" cellpadding=\"0\" cellspacing=\"15\"><tr>" >> "$fw"
     [ -n "$img" ] && echo -e "<td style=\"vertical-align:top; align:left\">$img<br><br></td>" >> "$fw"
     echo -e "<td style=\"width: 20%; vertical-align:top; align:left\">$field<br><br></td>" >> "$fw"
-    echo -e "<td style=\"width: 70%; vertical-align:bottom; align:$algn\">$field2<br><br></td></tr></table>" >> "$fw"
+    echo -e "<td style=\"width: 70%; vertical-align:middle\">$field2<br><br></td></tr></table>" >> "$fw"
 }
 
 mkhtml() {
