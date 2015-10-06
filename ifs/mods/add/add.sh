@@ -70,7 +70,6 @@ function index() {
                     echo -e "FALSE\n${trgt}\n$img0" >> "${DC_tlt}/5.cfg"
 
                 elif [[ ${1} = 2 ]]; then
-                    unset exmp
                     echo "${trgt}" >> "${DC_tlt}/1.cfg"
                     echo "${trgt}" >> "${DC_tlt}/4.cfg"
                     echo -e "FALSE\n${trgt}\n$img0" >> "${DC_tlt}/5.cfg"
@@ -89,17 +88,17 @@ function index() {
 
 function sentence_p() {
     if [ ${2} = 1 ]; then 
-    trgt_p="${trgt}"
-    srce_p="${srce}"
+        trgt_p="${trgt}"
+        srce_p="${srce}"
     elif [ ${2} = 2 ]; then
-    trgt_p="${trgt_mod}"
-    srce_p="${srce_mod}"
+        trgt_p="${trgt_mod}"
+        srce_p="${srce_mod}"
     fi
-
+    
     cdb="$DM_tls/Dictionary/${lgtl}.db"
     table="T`date +%m%y`"; row_trans="$lgsl"
     echo -n "create table if not exists ${table} \
-    (Word TEXT, ${row_trans^} TEXT, Example TEXT, Example2 TEXT);" |sqlite3 ${cdb}
+    (Word TEXT, ${row_trans^} TEXT);" |sqlite3 ${cdb}
 
     r=$((RANDOM%10000))
     cd /; DT_r="$1"; cd "$DT_r"; touch "swrd.$r" "twrd.$r"
@@ -152,12 +151,16 @@ function sentence_p() {
         s=$(sed -n "$bcle"p ${aw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
         t=$(sed -n "$bcle"p ${bw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
         echo "$t"_"$s""" >> "$DT_r/B.$r"
-        if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]] && \
-        [ -n "${t}" ] && [ -n "${s}" ]; then
-            echo -n "insert into ${table} (Word,${row_trans^},Example) \
+        
+        if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]] \
+        && ! [[ "${t}" =~ [0-9] ]] && [ -n "${t}" ] && [ -n "${s}" ]; then
+            echo -n "insert into ${table} (Word,${row_trans^}) \
+            values ('${t}','${s}');" |sqlite3 ${cdb}
+            echo -n "insert into Words (Word,${row_trans^},Example) \
             values ('${t}','${s}','${trgt}');" |sqlite3 ${cdb}
-            echo -n "insert into Words (Word) values ('${t}');" |sqlite3 ${cdb}
         fi
+        [[ ! $(which gettext.sh) ]]
+        
         let bcle++
         done
     else
@@ -165,11 +168,12 @@ function sentence_p() {
         t=$(sed -n "$bcle"p ${aw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
         s=$(sed -n "$bcle"p ${bw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
         echo "$t"_"$s""" >> "$DT_r/B.$r"
-        if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]] && \
-        [ -n "${t}" ] && [ -n "${s}" ]; then
-            echo -n "insert into ${table} (Word,${row_trans^},Example) \
+        if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]] \
+        && ! [[ "${t}" =~ [0-9] ]] && [ -n "${t}" ] && [ -n "${s}" ]; then
+            echo -n "insert into ${table} (Word,${row_trans^}) \
+            values ('${t}','${s}');" |sqlite3 ${cdb}
+            echo -n "insert into Words (Word,${row_trans^},Example) \
             values ('${t}','${s}','${trgt}');" |sqlite3 ${cdb}
-            echo -n "insert into Words (Word) values ('${t}');" |sqlite3 ${cdb}
         fi
         let bcle++
         done
@@ -307,18 +311,18 @@ function set_image_2() {
 }
 
 function translate() {
-    #cdb="$DM_tls/Dictionary/${lgtl}.db"
-    #trans="$lgsl"
-    #if [[ `wc -w <<<$1` = 1 ]] && \
-    #[[ `sqlite3 ${cdb} "select Word from Words where Word is '${1}';"` ]]; then
-    #else
+    cdb="$DM_tls/Dictionary/${lgtl}.db"
+    if [[ `wc -w <<<${1}` = 1 ]] && \
+    [[ `sqlite3 ${cdb} "select ${lgsl} from Words where Word is '${1}';"` ]]; then
+        sqlite3 ${cdb} "select ${lgsl} from Words where Word is '${1}';"
+    else
         if ! ls "$DC_d"/*."Traslator online.Translator".* 1> /dev/null 2>&1; then
         "$DS_a/Dics/cnfg.sh" 2; fi
         for trans in "$DC_d"/*."Traslator online.Translator".*; do
             trans="$DS_a/Dics/dicts/$(basename "${trans}")"
             [ -e "${trans}" ] && "${trans}" "$@" && break
         done
-    #fi
+    fi
 }
 
 
@@ -419,10 +423,10 @@ function fetch_audio() {
     words_list="${2}"; else words_list="${1}"; fi
     
     while read Word; do
-        [ -d "$DM_tls" ] && cd "$DM_tls"/ || exit 1
+        [ -d "$DM_tls/audio" ] && cd "$DM_tls/audio"/ || exit 1
         word="${Word,,}"
         
-        if [ ! -e "$DM_tls/${word}.mp3" ]; then
+        if [ ! -e "$DM_tls/audio/${word}.mp3" ]; then
             for dict in "$DC_d"/*."TTS online.Word pronunciation.$lgt"; do
                 dict="$DS_a/Dics/dicts/$(basename "${dict}")"
                 if [ ! -e ./"${word}.mp3" ]; then

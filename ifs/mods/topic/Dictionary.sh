@@ -20,14 +20,12 @@ function Dictionary() {
     --print-all \
     --dclick-action="$DS/play.sh play_word" \
     --search-column=1 --hide-column=3 --regex-search \
-    --column="$(gettext "$lgtl")                                            ":TEXT \
+    --column="$(gettext "$lgtl")                                                ":TEXT \
     --column="$(gettext "$lgsl")":TEXT \
     --name=Idiomind --class=Idiomind  \
     --center --align=right --ellipsize=END --image-on-top \
     --window-icon="$DS/images/icon.png" --center \
     --width=580 --height=540 --borders=5 \
-    --button="$(gettext "Edit")":"leafpad" \
-    --button="$(gettext "Practice")":5 \
     --button="gtk-close":1
     
 } >/dev/null 2>&1

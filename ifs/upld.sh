@@ -66,7 +66,7 @@ function dwld() {
             
             mv -f "${tmp}/conf/info" "${DC_tlt}/info"
             [ ! -d "$DM_t/$langt/.share" ] && mkdir -p "$DM_t/$langt/.share/images"
-            mv -n "${tmp}/share"/*.mp3 "$DM_t/$langt/.share"/
+            mv -n "${tmp}/share"/*.mp3 "$DM_t/$langt/.share/audio"/
             [ ! -f "${DM_tlt}/images" ] && mkdir "${DM_tlt}/images"
             [ -f "${tmp}"/images/img.jpg  ] && \
             mv "${tmp}"/images/img.jpg "${DM_tlt}"/images/img.jpg
@@ -314,12 +314,12 @@ auds="$(uniq < "${DC_tlt}/4.cfg" \
 |  sed 's/\!//; s/\¡//; s/\]//; s/\[//; s/\.//; s/  / /'g \
 | tr -d ')' | tr -d '(' | tr '[:upper:]' '[:lower:]')"
 while read -r audio; do
-    if [ -f "$DM_tl/.share/$audio.mp3" ]; then
-    cp -f "$DM_tl/.share/$audio.mp3" "$DT_u/${tpc}/share/$audio.mp3"; fi
+    if [ -f "$DM_tl/.share/audio/$audio.mp3" ]; then
+    cp -f "$DM_tl/.share/audio/$audio.mp3" "$DT_u/${tpc}/share/$audio.mp3"; fi
 done <<<"$auds"
 while read -r audio; do
-    if [ -f "$DM_tl/.share/${audio,,}.mp3" ]; then
-    cp -f "$DM_tl/.share/${audio,,}.mp3" "$DT_u/${tpc}/share/${audio,,}.mp3"; fi
+    if [ -f "$DM_tl/.share/audio/${audio,,}.mp3" ]; then
+    cp -f "$DM_tl/.share/audio/${audio,,}.mp3" "$DT_u/${tpc}/share/${audio,,}.mp3"; fi
 done < "${DC_tlt}/3.cfg"
 
 c_audio=$(find "$DT_u/${tpc}" -maxdepth 5 -name '*.mp3' |wc -l)

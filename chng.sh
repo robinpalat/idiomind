@@ -63,7 +63,7 @@ if [[ ${1} = 0 ]]; then
             if [ -f "${DM_tlt}/$id.mp3" ]; then
                 file="${DM_tlt}/$id.mp3"
             else
-                file="${DM_tls}/${trgt,,}.mp3"; fi
+                file="${DM_tls}/audio/${trgt,,}.mp3"; fi
             stnrd=1
         else
             ((f=f+1))

@@ -3,8 +3,8 @@
 
 play_word() {
     w="$(sed 's/<[^>]*>//g' <<<"${2}")"
-    if [ -f "${DM_tls}/${w,,}.mp3" ]; then
-        play "${DM_tls}/${w,,}.mp3" &
+    if [ -f "${DM_tls}/audio/${w,,}.mp3" ]; then
+        play "${DM_tls}/audio/${w,,}.mp3" &
     elif [ -f "${DM_tlt}/$3.mp3" ]; then
         play "${DM_tlt}/$3.mp3" &
     elif [ -n "$synth" ]; then

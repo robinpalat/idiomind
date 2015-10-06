@@ -165,7 +165,7 @@ edit_item() {
     if [ -e "${DM_tlt}/$id.mp3" ]; then
         audf="${DM_tlt}/$id.mp3"
     else
-        audf="${DM_tls}/${trgt,,}.mp3"; fi
+        audf="${DM_tls}/audio/${trgt,,}.mp3"; fi
         
     if [ ${type} = 1 ]; then
         edit_dlg1="$(dlg_form_1)"
@@ -253,7 +253,7 @@ edit_item() {
                         srce_mod="$(clean_2 "$(translate "${trgt_mod}" $lgt $lgs)")"
                         db="$DS/default/dicts/$lgt"
                         sentence_p "$DT_r" 2
-                        fetch_audio "${aw}" "${bw}" "$DT_r" "${DM_tls}"
+                        fetch_audio "${aw}" "${bw}" "$DT_r" "${DM_tls}/audio"
                         srce="$temp"
                         grmr="${trgt_mod}"
                     fi
@@ -265,7 +265,7 @@ edit_item() {
                 if [ "${tpc}" != "${tpc_mod}" ]; then
                     if [ "${audf}" != "${audf_mod}" ]; then
                         if [ ${type_mod} = 1 ]; then
-                            cp -f "${audf_mod}" "${DM_tls}/${trgt_mod,,}.mp3"
+                            cp -f "${audf_mod}" "${DM_tls}/audio/${trgt_mod,,}.mp3"
                         elif [ ${type_mod} = 2 ]; then
                             cp -f "${audf_mod}" "$DM_tl/${tpc_mod}/$id_mod.mp3"; fi
                     else
@@ -298,7 +298,7 @@ edit_item() {
                     
                     if [ "${audf}" != "${audf_mod}" ]; then
                         if [ ${type_mod} = 1 ]; then
-                            cp -f "${audf_mod}" "${DM_tls}/${trgt_mod,,}.mp3"
+                            cp -f "${audf_mod}" "${DM_tls}/audio/${trgt_mod,,}.mp3"
                         elif [ ${type_mod} = 2 ]; then
                             [ -e "${DM_tlt}/$id.mp3" ] && rm "${DM_tlt}/$id.mp3"
                             cp -f "${audf_mod}" "${DM_tlt}/$id_mod.mp3"; fi
@@ -432,7 +432,7 @@ edit_list() {
                     srce_mod="$(clean_2 "$(translate "${trgt}" $lgt $lgs)")"
                     db="$DS/default/dicts/$lgt"
                     sentence_p "$DT_r" 2
-                    fetch_audio "${aw}" "${bw}" "$DT_r" "${DM_tls}"
+                    fetch_audio "${aw}" "${bw}" "$DT_r" "${DM_tls}/audio"
                 fi
                  
                 id_mod="$(set_name_file ${type} "${trgt}" "${srce_mod}" \

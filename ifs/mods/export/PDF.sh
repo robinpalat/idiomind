@@ -1,18 +1,6 @@
 #!/bin/bash
 
-cd "$HOME"
-fileout=$(yad --file \
---save --title="$(gettext "Save as PDF")" \
---name=Idiomind --class=Idiomind \
---filename="$HOME/$tpc.pdf" \
---window-icon="$DS/images/icon.png" --center --on-top \
---width=600 --height=500 --borders=5 \
---button="$(gettext "Cancel")":1 \
---button="$(gettext "Test Mode")":2 \
---button="$(gettext "Save")":0)
-ret=$?
-
-checkimg="<img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3woDEzoH0hTl5gAAABl0RVh0Q29tbWVudABDcmVhdGVkIHdpdGggR0lNUFeBDhcAAAA2SURBVDjL7dVBEQAwDAJB6FQh0RmNiYdO+XEC9nuUNDB0AaC7+ROtqjkwFThw4MCBA79F10wX13oIF8HVFq4AAAAASUVORK5CYII=\"/>"
+_checkbox="<img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3woDEzoH0hTl5gAAABl0RVh0Q29tbWVudABDcmVhdGVkIHdpdGggR0lNUFeBDhcAAAA2SURBVDjL7dVBEQAwDAJB6FQh0RmNiYdO+XEC9nuUNDB0AaC7+ROtqjkwFThw4MCBA79F10wX13oIF8HVFq4AAAAASUVORK5CYII=\"/>"
 
 _head(){
     cat <<!EOF
@@ -30,23 +18,23 @@ _note(){
 !EOF
 }
 
-table() {
+table_x3() {
     cat <<!EOF
 <table width="100%" cellpadding="0" cellspacing="10"><tr>
 <td width="50%"><tw1>${trgt1}</tw1></td><td width="50%"><tw1>${trgt}</tw1></td></tr><tr><td><table><tr>
-<td><exmp>$checkimg ${item1}</exmp></td><td><exmp>$checkimg ${item2}</exmp></td>
-<td><exmp>$checkimg ${item3}</exmp></td></tr><tr>
-<td><exmp>$checkimg ${item4}</exmp></td><td><exmp>$checkimg ${item5}</exmp></td>
-<td><exmp>$checkimg ${item6}</exmp></td></tr></table></td><td><table><tr>
-<td><exmp>$checkimg ${item7}</exmp></td><td><exmp>$checkimg ${item8}</exmp></td>
-<td><exmp>$checkimg ${item9}</exmp></td></tr><tr>
-<td><exmp>$checkimg ${item10}</exmp></td><td><exmp>$checkimg ${item11}</exmp></td>
-<td><exmp>$checkimg ${item12}</exmp></td></tr></table></td></tr></table>
+<td><exmp>$_checkbox ${item1}</exmp></td><td><exmp>$_checkbox ${item2}</exmp></td>
+<td><exmp>$_checkbox ${item3}</exmp></td></tr><tr>
+<td><exmp>$_checkbox ${item4}</exmp></td><td><exmp>$_checkbox ${item5}</exmp></td>
+<td><exmp>$_checkbox ${item6}</exmp></td></tr></table></td><td><table><tr>
+<td><exmp>$_checkbox ${item7}</exmp></td><td><exmp>$_checkbox ${item8}</exmp></td>
+<td><exmp>$_checkbox ${item9}</exmp></td></tr><tr>
+<td><exmp>$_checkbox ${item10}</exmp></td><td><exmp>$_checkbox ${item11}</exmp></td>
+<td><exmp>$_checkbox ${item12}</exmp></td></tr></table></td></tr></table>
 !EOF
 }
 
 sentences() {
-cat <<!EOF
+    cat <<!EOF
 <table width="90%" align="left" cellpadding="0" cellspacing="15">
 <tr><td style="width: 50%; vertical-align:top; align:$algn"><s1>${trgt}</s1></td>
 <td style="width:  50%; vertical-align:top; align:$algn"><s2>${srce}</s2></td></tr></table>
@@ -89,7 +77,7 @@ mkhtml() {
     file="$DT/mkhtml/temp.html"
     
     if [ $ret -eq 2 ]; then
-        while read word; do
+        while read -r word; do
             item="$(grep -F -m 1 "trgt={${word}}" "${DC_tlt}/0.cfg" |sed 's/},/}\n/g')"
             grep -oP '(?<=srce={).*(?=})' <<<"${item}" >> "$DT/mkhtml/b.srces"
         done < "${DC_tlt}/3.cfg"
@@ -131,8 +119,8 @@ mkhtml() {
             elif [ ${type} = 1 -a $ret = 2 ]; then
                 [[ ${n} -gt 12 ]] && n=1
                 ras="$(sort -Ru "$DT/mkhtml/b.srces" |egrep -v "$srce" |head -n5)"
-                while read -r i; do
-                    declare item$n="${i}"
+                while read -r m; do
+                    declare item$n="${m}"
                     let n++
                 done < <(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')
                 
@@ -140,7 +128,7 @@ mkhtml() {
                     trgt1="${trgt}"
                     
                 elif [ ${tr} = 2 ]; then
-                    table >> "$file.words2"
+                    table_x3 >> "$file.words2"
                 fi
             elif [ ${type} = 2 -a $ret = 2 ]; then
                 let tr--
@@ -162,6 +150,18 @@ mkhtml() {
     echo -e "$(< "$file.sente")" >> "$file"
     echo -e "</body></html>" >> "$file"
 }
+
+cd "$HOME"
+fileout=$(yad --file \
+--save --title="$(gettext "Save as PDF")" \
+--name=Idiomind --class=Idiomind \
+--filename="$HOME/$tpc.pdf" \
+--window-icon="$DS/images/icon.png" --center --on-top \
+--width=600 --height=500 --borders=5 \
+--button="$(gettext "Cancel")":1 \
+--button="$(gettext "Test Mode")":2 \
+--button="$(gettext "Save")":0)
+ret=$?
 
 if [ $ret -eq 0 -o $ret -eq 2 ]; then
     source "$DS/ifs/mods/cmns.sh"

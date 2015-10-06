@@ -60,14 +60,14 @@ function new_item() {
     DT_r=$(mktemp -d "$DT/XXXXXX")
     check_s "${tpe}"
     cd "$DT_r"
+    
+    if [ "$trans" = FALSE ] && ([ -z "${srce}" ] || [ -z "${trgt}" ]); then
+        cleanups "$DT_r"
+        msg "$(gettext "You need to fill text fields.")\n" info "$(gettext "Information")" & exit 1
+    fi
 
     if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
-    
-        if [ "$trans" = FALSE ] && ([ -z "${srce}" ] || [ -z "${trgt}" ]); then
-            cleanups "$DT_r"
-            msg "$(gettext "You need to fill text fields.")\n" info "$(gettext "Information")" & exit 1
-        fi
-        
+
         srce=$(translate "${trgt}" auto $lgs)
         if [ $(wc -w <<<"${srce}") = 1 ]; then
             new_word
@@ -77,11 +77,6 @@ function new_item() {
 
     elif [ $lgt != ja -o $lgt != 'zh-cn' -o $lgt != ru ]; then
     
-        if [ "$trans" = FALSE ] && ([ -z "${srce}" ] || [ -z "${trgt}" ]); then
-            cleanups "$DT_r"
-            msg "$(gettext "You need to fill text fields.")\n" info "$(gettext "Information")" & exit 1
-        fi
-
         if [ $(wc -w <<<"${trgt}") = 1 ]; then
             new_word
         elif [ "$(wc -w <<<"${trgt}")" -ge 1 -a ${#trgt} -le 180 ]; then
@@ -152,12 +147,14 @@ function new_sentence() {
 function new_word() {
     trgt="$(clean_1 "${trgt}")"
     srce="$(clean_0 "${srce}")"
-
+    cdb="$DM_tls/Dictionary/${lgtl}.db"
+    
     if [ "$trans" = TRUE ]; then
         internet
         if [ "$ttrgt" = TRUE ] && [[ ${5} != 0 ]]; then
-        trgt="$(translate "${trgt}" auto "$lgt")"
-        trgt="$(clean_1 "${trgt}")"; fi
+            trgt="$(translate "${trgt}" auto "$lgt")"
+            trgt="$(clean_1 "${trgt}")"
+        fi
         srce="$(translate "${trgt}" $lgt $lgs)"
         srce="$(clean_0 "${srce}")"
     else 
@@ -165,9 +162,10 @@ function new_word() {
         cleanups "$DT_r"
         msg "$(gettext "You need to fill text fields.")\n" info "$(gettext "Information")" & exit; fi
     fi
-    
+
     audio="${trgt,,}"
     id="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
+    exmp="$(sqlite3 ${cdb} "select Example from Words where Word is '${trgt}';")"
     mksure "${trgt}" "${srce}"
     
     if [ $? = 1 ]; then
@@ -191,16 +189,16 @@ function new_word() {
         notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000
         
         if [ ! -f "$DT_r/audtm.mp3" ]; then
-            if [ ! -f "${DM_tls}/${audio}.mp3" ]; then
-                tts_word "${audio}" "${DM_tls}"
+            if [ ! -f "${DM_tls}/audio/${audio}.mp3" ]; then
+                tts_word "${audio}" "${DM_tls}/audio"
             fi
         else
-            if [ -f "${DM_tls}/${audio}.mp3" ]; then
-                msg_3 "$(gettext "A file named "${DM_tls}/${audio}.mp3" already exists. Replace?.")\n" dialog-question "${trgt}"
+            if [ -f "${DM_tls}/audio/${audio}.mp3" ]; then
+                msg_3 "$(gettext "A file named "${DM_tls}/audio/${audio}.mp3" already exists. Replace?.")\n" dialog-question "${trgt}"
                 if [ $? -eq 0 ]; then
-                    cp -f "$DT_r/audtm.mp3" "${DM_tls}/${audio}.mp3"; fi
+                    cp -f "$DT_r/audtm.mp3" "${DM_tls}/audio/${audio}.mp3"; fi
             else
-                cp -f "$DT_r/audtm.mp3" "${DM_tls}/${audio}.mp3"; fi
+                cp -f "$DT_r/audtm.mp3" "${DM_tls}/audio/${audio}.mp3"; fi
         fi
         img_word "${trgt}" "${srce}" &
         
@@ -241,8 +239,8 @@ function list_words_edit() {
 
                 if [ $? = 0 ]; then
                     index 1
-                    if [ ! -f "$DM_tls/$audio.mp3" ]; then
-                        ( tts_word "$audio" "$DM_tls" ); fi
+                    if [ ! -f "$DM_tls/audio/$audio.mp3" ]; then
+                        ( tts_word "$audio" "$DM_tls/audio" ); fi
                     ( img_word "${trgt}" "${srce}" ) &
                 else
                     echo -e "\n\n#$n $trgt" >> "$DT_r/logw"
@@ -292,8 +290,8 @@ function list_words_sentence() {
             
             if [ $? = 0 ]; then
                 index 1
-                if [ ! -f "$DM_tls/$audio.mp3" ]; then
-                    ( tts_word "${audio}" "${DM_tls}" ); fi
+                if [ ! -f "$DM_tls/audio/$audio.mp3" ]; then
+                    ( tts_word "${audio}" "${DM_tls}/audio" ); fi
                 ( img_word "${trgt}" "${srce}" ) &
             else
                 echo -e "\n\n#$n $trgt" >> "$DT_r/logw"
@@ -488,8 +486,8 @@ function process() {
                         if [ -f "${DM_tlt}/${audio}.mp3" ]; then
                         mv "${DM_tlt}/${audio}.mp3" "${DM_tlt}/$id.mp3"
                         else
-                        if [ -f "${DM_tls}/${audio}.mp3" ]; then
-                        cp "${DM_tls}/${audio}.mp3" "${DM_tlt}/$id.mp3"; fi
+                        if [ -f "${DM_tls}/audio/${audio}.mp3" ]; then
+                        cp "${DM_tls}/audio/${audio}.mp3" "${DM_tlt}/$id.mp3"; fi
                         fi
                         ( img_word "${trgt}" "${srce}" ) &
                         echo "${trgt}" >> "$DT_r/addw"
@@ -550,8 +548,8 @@ function process() {
                     
                     if [ $? = 0 ]; then
                         index 1
-                        if [ ! -f "${DM_tls}/$audio.mp3" ]; then
-                        ( tts_word "$audio" "${DM_tls}" )
+                        if [ ! -f "${DM_tls}/audio/$audio.mp3" ]; then
+                        ( tts_word "$audio" "${DM_tls}/audio" )
                         ( img_word "${trgt}" "${srce}" ) & fi
                         echo "${trgt}" >> "$DT_r/addw"
                     else

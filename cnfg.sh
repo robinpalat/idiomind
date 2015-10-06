@@ -36,26 +36,35 @@ confirm() {
 set_lang() {
     language="$1"
     if [ ! -d "$DM_t/$language/.share/images" ]; then
-        mkdir -p "$DM_t/$language/.share/images"; fi
+        mkdir -p "$DM_t/$language/.share/images"
+    fi
+    if [ ! -d "$DM_t/$language/.share/audio" ]; then
+        mkdir -p "$DM_t/$language/.share/audio"
+    fi
     echo -e "$language\n$lgsl" > "$DC_s/6.cfg"
     "$DS/stop.sh" 4
     source /usr/share/idiomind/ifs/c.conf
     last="$(cd "$DM_tl"/; ls -tNd */ |cut -f1 -d'/' |head -n1)"
     if [ -d "$DM_tl/$last" ]; then
-        "$DS/default/tpc.sh" "${last}" 1
+        mode="$(< "$DM_tl/${last}/.conf/8.cfg")"
+        if ((mode>=0 && mode<=20)); then
+            "$DS/default/tpc.sh" "${last}" ${mode} 1 &
+        fi
     else
         rm > "$DC_s/4.cfg"
     fi
     source "$DS/ifs/mods/cmns.sh"
     list_inadd > "$DM_tl/.2.cfg"
     "$DS/mngr.sh" mkmn &
-     if [ ! -d "$DM_tl/.share/Dictionary/.conf" ]; then
+    if [ ! -d "$DM_tl/.share/Dictionary/.conf" ]; then
         mkdir -p "$DM_tls/Dictionary/.conf"
-	echo 0 > "$DM_tls/Dictionary/.conf/8.cfg"
-	cdb="$DM_tls/Dictionary/${lgtl}.db"
-	echo -n "create table if not exists Words (Word TEXT);" |sqlite3 ${cdb}
-    echo -n "create table if not exists Config (Study TEXT, Expire INTEGER);" |sqlite3 ${cdb}
-	ln -fs "$DM_tls/Dictionary" "$DM_tl/$(gettext "New Words")"
+        echo 0 > "$DM_tls/Dictionary/.conf/8.cfg"
+        cdb="$DM_tls/Dictionary/${lgtl}.db"
+        echo -n "create table if not exists Words \
+        (Word TEXT, ${lgtl} TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${cdb}
+        echo -n "create table if not exists Config \
+        (Study TEXT, Expire INTEGER);" |sqlite3 ${cdb}
+        ln -fs "$DM_tls/Dictionary" "$DM_tl/$(gettext "New Words")"
     fi
 }
 
@@ -193,8 +202,7 @@ config_dlg() {
     rm -f "$cnf1" "$DT/.lc"
      >/dev/null 2>&1
     exit
-    
-}  >/dev/null 2>&1
 
+}  >/dev/null 2>&1
 
 config_dlg
