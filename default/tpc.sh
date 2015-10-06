@@ -64,19 +64,12 @@ if [ -d "${DM_tlt}" ]; then
         for n in {0..5}; do
         [ ! -e "${DC_tlt}/${n}.cfg" ] && touch "${DC_tlt}/${n}.cfg"; done
         echo "${topic}" > "$DC_s/4.cfg"
-
-    elif [ ${mode} = 0 ]; then
-        echo "${topic}" > "$DC_s/4.cfg"
-        source "$DS/ifs/mods/topic/Dictionary.sh"
-        Dictionary & exit
-        
     else
         if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
         source "$DS/ifs/mods/topic/${topic}.sh"
         ${topic} ${mode} & exit; fi
         fi
 
-    # ------------------------------------
     if [[ "$3" = 1 ]]; then
         ( sleep 2
         notify-send --icon=idiomind \
