@@ -5,14 +5,6 @@ source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
-_cfg() {  b=$(tr -dc a-z < /dev/urandom |head -c 1)
-c=$((RANDOM%100))
-id="$b$c"
-id=${id:0:3}
-echo -e "usrid=\"$id\"
-iuser=\"\"
-cntct=\"\"" > "$DC_s/3.cfg"; }
-[ ! $(grep -oP '(?<=usrid=\").*(?=\")' "$DC_s/3.cfg") ] && _cfg
 
 function dwld() {
     err() {
@@ -96,6 +88,33 @@ function dwld() {
 }
 
 function upld() {
+    
+    conditions_for_upload() {
+        if [ -n "${usrid}" -o -n "${passw}" ]; then
+            msg "$(gettext "Sorry, Authentication failed.")\n " info "$(gettext "Information")" & exit 1
+        fi
+        if [ -z "${Ctgry}" ]; then
+            msg "$(gettext "Please select a category.")\n " info
+            "$DS/ifs/upld.sh" upld "${tpc}" & exit 1
+        fi
+        [ -d "$DT" ] && cd "$DT" || exit 1
+        [ -d "$DT/upload" ] && rm -fr "$DT/upload"
+        
+        if [ "${tpc}" != "${1}" ]; then
+            msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit 1
+        fi
+        if [ -d "$DT/upload" -o -d "$DT/download" ]; then
+            [ -e "$DT/download" ] && t="$(gettext "Downloading")..." || t="$(gettext "Uploading")..."
+            msg_2 "$(gettext "Wait until it finishes a previous process")\n" dialog-warning OK gtk-stop "$t"
+            ret="$?"
+            if [ $ret -eq 1 ]; then
+                cleanups "$DT/upload" "$DT/download"
+                "$DS/stop.sh" 5
+            fi
+            exit 1
+        fi
+        internet
+    }
 
     dlg_getuser() {
         yad --form --title="$(gettext "Share")" \
@@ -105,11 +124,10 @@ function upld() {
         --align=right --center --on-top \
         --width=460 --height=450 --borders=12 \
         --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
-        --field="$(gettext "Author")": "$iuser" \
-        --field="\t$(gettext "Password")": "$cntct" \
-        --field="$(gettext "Create Account"):FBTN" " " \
+        --field="$(gettext "Author")": "$usrid" \
+        --field="\t$(gettext "Password")": "$passw" \
+        --field="$(gettext "Create Account"):FBTN" "$cmd_link" \
         --button="$(gettext "PDF")":2 "$btn" --button="$(gettext "Close")":4
-        ret=$?
     }
     
     dlg_upload() {
@@ -119,18 +137,12 @@ function upld() {
         --window-icon="$DS/images/icon.png" --buttons-layout=end \
         --align=right --center --on-top \
         --width=460 --height=450 --borders=12 \
-        --field="$(gettext "Category"):CBE" "!$_categories" \
+        --field="$(gettext "Category"):CBE" "$_categories" \
         --field="$(gettext "Skill Level"):CB" "$_levels" \
         --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
-        --field="$(gettext "Author")":RO "$iuser" \
-        --field="\t$(gettext "Password")":RO "$cntct" \
+        --field="$(gettext "Author")": "$usrid" \
+        --field="\t$(gettext "Password")": "$passw" \
         --button="$(gettext "PDF")":2 "$btn" --button="$(gettext "Close")":4
-        Ctgry=$(echo "${dlg}" | cut -d "|" -f3)
-        level=$(echo "${dlg}" | cut -d "|" -f4)
-        iuser_m=$(echo "${dlg}" | cut -d "|" -f1)
-        cntct_m=$(echo "${dlg}" | cut -d "|" -f2)
-        notes_m=$(echo "${dlg}" | cut -d "|" -f5)
-        ret=$?
     }
 
     dlg_dwld_content() {
@@ -153,7 +165,6 @@ function upld() {
         --field=" :lbl" " " \
         --button="$(gettext "PDF")":2 \
         --button="$(gettext "Close")":4
-        ret=$?
     }
     
     dlg_export() {
@@ -168,26 +179,10 @@ function upld() {
         --field=" :lbl" " " \
         --button="$(gettext "PDF")":2 \
         --button="$(gettext "Close")":4
-        ret=$?
     }
     
-
-if [ $((inx3+inx4)) -lt 5 ]; then exit 1; fi
-
-if [ "${tpc}" != "${2}" ]; then
-    msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit 1
-fi
-if [ -d "$DT/upload" -o -d "$DT/download" ]; then
-    [ -e "$DT/download" ] && t="$(gettext "Downloading")..." || t="$(gettext "Uploading")..."
-    msg_2 "$(gettext "Wait until it finishes a previous process")\n" dialog-warning OK gtk-stop "$t"
-    ret="$?"
-    if [ $ret -eq 1 ]; then
-        cleanups "$DT/upload" "$DT/download"
-        "$DS/stop.sh" 5
-    fi
-    exit 1
-fi
-
+    random_id() { tr -dc a-z < /dev/urandom |head -c 1; echo $((RANDOM%100)); }
+    
 others="$(gettext "Others")"
 article="$(gettext "Article")"
 city="$(gettext "City")"
@@ -213,59 +208,47 @@ science="$(gettext "Science")"
 social_media="$(gettext "Social media")"
 sport="$(gettext "Sport")"
 tech="$(gettext "Tech")"
-lnglbl="${lgtl,,}"
-usrid="$(grep -o 'usrid="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
-iuser="$(grep -o 'iuser="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
-cntct="$(grep -o 'cntct="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
+LANGUAGE_TO_LEARN="${lgtl}"
 ctgry="$(grep -o 'ctgry="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
 text_upld="$(gettext "Share your notes with other ${LANGUAGE_TO_LEARN} learners!")\n<a href='$linkc'>$(gettext "Topics shared")</a> (Beta)\n"
 _categories="$ctgry!$others!$article!$city!$comics!$culture!$education!$entertainment!$funny!$grammar!$history!$home!$internet!$interview!$movies!$music!$nature!$news!$office!$places!$quotes!$relations!$science!$social_media!$sport!$tech"
 _levels="!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")"
-
-
-
-
-
-
-
-
-
-
-
-
-if [ -z "$usrid" -o ${#id} -gt 3 ]; then
-b=$(tr -dc a-z < /dev/urandom |head -c 1) # uranium?
-usrid="$b$((RANDOM%1000))"
-usrid=${usrid:0:3}; fi
-[ -z "$iuser" ] && iuser=$USER
 note=$(< "${DC_tlt}/info")
-imgm="${DM_tlt}/images/Cover.jpg"
+cmd_link="xdg-open 'http://test.com/?q=user/register'"
+usrid="$(grep -o 'usrid="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
+passw="$(grep -o 'passw="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
 
+
+# ------------------------------------------------------------ dialogs
+if [ $((inx3+inx4)) -lt 5 ]; then exit 1; fi
 if [ $((inx3+inx4)) -ge 15 ]; then
 btn="--button="$(gettext "Upload")":0"; else
 btn="--center"; fi
-cd "$HOME"
 
-# ------------------------------------------------------------ dialogs
 if [[ -e "${DC_tlt}/download" ]]; then
     if [[ ! -s "${DC_tlt}/download" ]]; then
-        dlg_dwld_content
+        dlg="$(dlg_dwld_content)"; ret=$?
     elif [[ -s "${DC_tlt}/download" ]]; then
-        dlg_export
+        dlg="$(dlg_export)"; ret=$?
     fi
-else
-    if [[  -s "$DC_s/3.cfg" ]]; then
-        dlg_getuser
-    elif [[ ! -s "$DC_s/3.cfg" ]]; then
-        dlg_upload
+elif [[ ! -e "${DC_tlt}/download" ]]; then
+    if [ -z "${usrid}" -a -z "${passw}" ]; then
+        dlg="$(dlg_getuser)"; ret=$?
+        notes_m=$(echo "${dlg}" | cut -d "|" -f1)
+        usrid_m=$(echo "${dlg}" | cut -d "|" -f2)
+        passw_m=$(echo "${dlg}" | cut -d "|" -f3)
+
+    elif [ -n "${usrid}" -o -n "${passw}" ]; then
+        dlg="$(dlg_upload)"; ret=$?
+        Ctgry=$(echo "${dlg}" | cut -d "|" -f1)
+        level=$(echo "${dlg}" | cut -d "|" -f2)
+        notes_m=$(echo "${dlg}" | cut -d "|" -f3)
+        usrid_m=$(echo "${dlg}" | cut -d "|" -f4)
+        passw_m=$(echo "${dlg}" | cut -d "|" -f5)
     fi
 fi
-# ------------------------------------------------------------
-if [ $ret = 2 ]; then
-    "$DS/ifs/mods/export/PDF.sh" & exit 1
- 
-elif [ $ret = 0 ]; then
 
+# ------------------------------------------------------------ get data output
 [ "$Ctgry" = "$others" ] && Ctgry=others
 [ "$Ctgry" = "$comics" ] && Ctgry=comics
 [ "$Ctgry" = "$culture" ] && Ctgry=culture
@@ -296,108 +279,91 @@ elif [ $ret = 0 ]; then
 [ "$level" = $(gettext "Intermediate") ] && level=1
 [ "$level" = $(gettext "Advanced") ] && level=2
 
-if [ -z "${iuser_m##+([[:space:]])}" -o ${#iuser_m} -gt 60 ] || \
-[ "$(grep -o -E '\*|\/|\@|$|\)|\(|=|-' <<<"${iuser_m}")" ]; then
-msg "$(gettext "You have entered an invalid author name.")\n " info
-"$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
-
-if [ -z "${Ctgry}" ]; then
-    msg "$(gettext "Please select a category.")\n " info
-    "$DS/ifs/upld.sh" upld "${tpc}" & exit 1; fi
-
-if [ -d "${DM_tlt}/files" ]; then
-    du=$(du -sb "${DM_tlt}/files" | cut -f1)
-    if [[ "$du" -gt 50000000 ]]; then
-    msg "$(gettext "Sorry, the size of the attachments is too large.")\n " info & exit 1; fi
+# ------------------------------------------------------------ save data
+if [ "${usrid}" != "${usrid_m}" -o "${passw}" != "${passw_m}" ]; then
+    echo -e "usrid=\"$usrid_m\"\npassw=\"$passw_m\"" > "$DC_s/3.cfg"
 fi
 
-internet
-[ -d "$DT" ] && cd "$DT" || exit 1
-[ -d "$DT/upload" ] && rm -fr "$DT/upload"
 
-notify-send -i info "$(gettext "Upload in progress")" \
-"$(gettext "This can take some time, please wait")" -t 6000
-
-"$DS/ifs/tls.sh" check_index "${tpc}" 1
-mkdir "$DT/upload"
-DT_u="$DT/upload/"
-mkdir -p "$DT/upload/${tpc}/conf"
-c_words=${inx3}
-c_sntncs=${inx4}
-
-if [ -e "${DC_tlt}/id.cfg" ]; then
+# ------------------------------------------------------------ actions
+if [ $ret = 2 ]; then
+    "$DS/ifs/mods/export/PDF.sh" & exit 1
+ 
+elif [ $ret = 0 ]; then
+    conditions_for_upload "${2}"
+    notify-send -i info "$(gettext "Upload in progress")" \
+    "$(gettext "This can take some time, please wait")" -t 6000
+    "$DS/ifs/tls.sh" check_index "${tpc}" 1
+    mkdir -p "$DT/upload/${tpc}/conf"
+    DT_u="$DT/upload/"
     oname="$(grep -o 'oname="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+    [ -z "${oname}" ] && oname="${tpc}"
     datec="$(grep -o 'datec="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
     datei="$(grep -o 'datei="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-fi
-dateu=$(date +%F)
-sum=`md5sum "${DC_tlt}/0.cfg" | cut -d' ' -f1`
-[ -z "${oname}" ] && oname="${tpc}"
+    dateu=$(date +%F)
+    tpcid=`random_id`
+    c_words=${inx3}
+    c_sntncs=${inx4}
+    sum=`md5sum "${DC_tlt}/0.cfg" | cut -d' ' -f1`
 
-if [ "${iuser}" != "${iuser_m}" ] \
-|| [ "${cntct}" != "${cntct_m}" ]; then
-echo -e "usrid=\"$usrid\"
-iuser=\"$iuser_m\"
-cntct=\"$cntct_m\"" > "$DC_s/3.cfg"
-fi
+    # ------------------------------------------------------------ preparando para subir
+    cd "${DM_tlt}"/
+    cp -r ./* "$DT_u/${tpc}/"
+    cp "${DC_tlt}/6.cfg" "$DT_u/${tpc}/conf/6.cfg"
+    mkdir "$DT_u/${tpc}/share"
+    [ ! -d "$DT_u/${tpc}/images" ] && mkdir "$DT_u/${tpc}/images"
 
-cd "${DM_tlt}"/
-cp -r ./* "$DT_u/${tpc}/"
-cp "${DC_tlt}/6.cfg" "$DT_u/${tpc}/conf/6.cfg"
-mkdir "$DT_u/${tpc}/share"
-[ ! -d "$DT_u/${tpc}/images" ] && mkdir "$DT_u/${tpc}/images"
-[ ! -d "$DT_u/${tpc}/files" ] && mkdir "$DT_u/${tpc}/files"
+    auds="$(uniq < "${DC_tlt}/4.cfg" \
+    | sed 's/\n/ /g' | sed 's/ /\n/g' \
+    | grep -v '^.$' | grep -v '^..$' \
+    | sed 's/&//; s/,//; s/\?//; s/\¿//; s/;//'g \
+    |  sed 's/\!//; s/\¡//; s/\]//; s/\[//; s/\.//; s/  / /'g \
+    | tr -d ')' | tr -d '(' | tr '[:upper:]' '[:lower:]')"
+    while read -r audio; do
+        if [ -f "$DM_tl/.share/audio/$audio.mp3" ]; then
+        cp -f "$DM_tl/.share/audio/$audio.mp3" "$DT_u/${tpc}/share/$audio.mp3"; fi
+    done <<<"$auds"
+    while read -r audio; do
+        if [ -f "$DM_tl/.share/audio/${audio,,}.mp3" ]; then
+        cp -f "$DM_tl/.share/audio/${audio,,}.mp3" "$DT_u/${tpc}/share/${audio,,}.mp3"; fi
+    done < "${DC_tlt}/3.cfg"
 
-auds="$(uniq < "${DC_tlt}/4.cfg" \
-| sed 's/\n/ /g' | sed 's/ /\n/g' \
-| grep -v '^.$' | grep -v '^..$' \
-| sed 's/&//; s/,//; s/\?//; s/\¿//; s/;//'g \
-|  sed 's/\!//; s/\¡//; s/\]//; s/\[//; s/\.//; s/  / /'g \
-| tr -d ')' | tr -d '(' | tr '[:upper:]' '[:lower:]')"
-while read -r audio; do
-    if [ -f "$DM_tl/.share/audio/$audio.mp3" ]; then
-    cp -f "$DM_tl/.share/audio/$audio.mp3" "$DT_u/${tpc}/share/$audio.mp3"; fi
-done <<<"$auds"
-while read -r audio; do
-    if [ -f "$DM_tl/.share/audio/${audio,,}.mp3" ]; then
-    cp -f "$DM_tl/.share/audio/${audio,,}.mp3" "$DT_u/${tpc}/share/${audio,,}.mp3"; fi
-done < "${DC_tlt}/3.cfg"
+    c_audio=$(find "$DT_u/${tpc}" -maxdepth 5 -name '*.mp3' |wc -l)
+    while read -r img; do
+        if [ -f "$DM_tl/.share/images/${img,,}-0.jpg" ]; then
+        cp -f "$DM_tl/.share/images/${img,,}-0.jpg" "$DT_u/${tpc}/images/${img,,}-0.jpg"; fi
+    done < "${DC_tlt}/3.cfg"
+    c_images=$(cd "$DT_u/${tpc}/images"/; ls *.jpg |wc -l)
 
-c_audio=$(find "$DT_u/${tpc}" -maxdepth 5 -name '*.mp3' |wc -l)
-while read -r img; do
-    if [ -f "$DM_tl/.share/images/${img,,}-0.jpg" ]; then
-    cp -f "$DM_tl/.share/images/${img,,}-0.jpg" "$DT_u/${tpc}/images/${img,,}-0.jpg"; fi
-done < "${DC_tlt}/3.cfg"
-c_images=$(cd "$DT_u/${tpc}/images"/; ls *.jpg |wc -l)
+    echo -e "${notes_m}" > "$DT_u/${tpc}/conf/info"
 
-echo -e "${notes_m}" > "$DT_u/${tpc}/conf/info"
+    cd "$DT/upload"/
+    pre="$(sed 's/ /_/g' <<< "${oname:0:10}")"
+    find "$DT_u"/ -type f -exec chmod 644 {} \;
+    tar czpvf - ./"${tpc}" |split -d -b 2500k - ./"${pre}${sum}"
+    rm -fr ./"${tpc}"; rename 's/(.*)/$1.tar.gz/' *
+    f_size=$(du -h . |cut -f1)
 
-cd "$DT/upload"/
-pre="$(sed 's/ /_/g' <<< "${oname:0:10}")"
-find "$DT_u"/ -type f -exec chmod 644 {} \;
-tar czpvf - ./"${tpc}" |split -d -b 2500k - ./"${pre}${sum}"
-rm -fr ./"${tpc}"; rename 's/(.*)/$1.tar.gz/' *
-f_size=$(du -h . |cut -f1)
+    eval c="$(< "$DS/default/topicid")"
+    echo -n "${c}" > "${DC_tlt}/id.cfg"
+    cp -f "${DC_tlt}/0.cfg" "$DT_u/$tpcid.${tpc}.$lgt"
+    tr '\n' '&' < "${DC_tlt}/id.cfg" >> "$DT_u/$tpcid.${tpc}.$lgt"
+    echo -n "&idiomind-`idiomind -v`" >> "$DT_u/$tpcid.${tpc}.$lgt"
+    echo -en "\nidiomind-`idiomind -v`" >> "${DC_tlt}/id.cfg"
 
-eval c="$(< "$DS/default/topicid")"
-echo -n "${c}" > "${DC_tlt}/id.cfg"
-cp -f "${DC_tlt}/0.cfg" "$DT_u/$usrid.${tpc}.$lgt"
-tr '\n' '&' < "${DC_tlt}/id.cfg" >> "$DT_u/$usrid.${tpc}.$lgt"
-echo -n "&idiomind-`idiomind -v`" >> "$DT_u/$usrid.${tpc}.$lgt"
-echo -en "\nidiomind-`idiomind -v`" >> "${DC_tlt}/id.cfg"
+    # ------------------------------------------------------------ SUBIENDO
+    # uploading files to http://server_temp/lang/xxx.name.idmnd
+    url="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
+    | grep -o 'UPLOADS="[^"]*' | grep -o '[^"]*$')"
+    direc="$DT_u"
+    log="$DT_u/log"
+    user='robin'
+    pwd='333333'
+    title="$tpc"
+    body="$(tac "${DC_tlt}/1.cfg")"
+    export direc url log user pwd title body
 
-# uploading files to http://server_temp/lang/xxx.name.idmnd
-url="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
-| grep -o 'UPLOADS="[^"]*' | grep -o '[^"]*$')"
-direc="$DT_u"
-log="$DT_u/log"
-user='robin'
-pwd='333333'
-title="$tpc"
-body="$(tac "${DC_tlt}/1.cfg")"
-export direc url log user pwd title body
-
-python << END
+    python << END
 import os, sys, requests, time, xmlrpclib
 reload(sys)
 sys.setdefaultencoding("utf-8")
@@ -425,19 +391,19 @@ except:
     #p.close()
     #time.sleep(5)
 END
-u=$?
-if [ $u = 0 ]; then
-    info="\"$tpc\"\n<b>$(gettext "Uploaded correctly")</b>\n"
-    image=gtk-ok
-else
-    sleep 10
-    info="$(gettext "A problem has occurred with the file upload, try again later.")\n"
-    image=gtk-warning
-fi
-msg "$info" $image
+    u=$?
+    if [ $u = 0 ]; then
+        info="\"$tpc\"\n<b>$(gettext "Uploaded correctly")</b>\n"
+        image=gtk-ok
+    else
+        sleep 10
+        info="$(gettext "A problem has occurred with the file upload, try again later.")\n"
+        image=gtk-warning
+    fi
+    msg "$info" $image
 
-cleanups "${DT_u}"
-exit 0
+    cleanups "${DT_u}"
+    exit 0
 fi
     
 } >/dev/null 2>&1

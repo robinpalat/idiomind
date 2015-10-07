@@ -60,12 +60,10 @@ function new_item() {
     DT_r=$(mktemp -d "$DT/XXXXXX")
     check_s "${tpe}"
     cd "$DT_r"
-    
     if [ "$trans" = FALSE ] && ([ -z "${srce}" ] || [ -z "${trgt}" ]); then
         cleanups "$DT_r"
         msg "$(gettext "You need to fill text fields.")\n" info "$(gettext "Information")" & exit 1
     fi
-
     if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
 
         srce=$(translate "${trgt}" auto $lgs)
@@ -74,7 +72,6 @@ function new_item() {
         elif [ "$(wc -w <<<"${srce}")" -ge 1 -a ${#srce} -le 180 ]; then
             new_sentence
         fi
-
     elif [ $lgt != ja -o $lgt != 'zh-cn' -o $lgt != ru ]; then
     
         if [ $(wc -w <<<"${trgt}") = 1 ]; then
@@ -313,8 +310,7 @@ function list_words_dclik() {
     info="-$((200 - $(wc -l < "${DC_tlt}/0.cfg")))"
     
     if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
-        (
-        echo "1"
+        ( echo "1"
         echo "# $(gettext "Processing")..." ;
         srce="$(translate "${words}" $lgtl $lgsl)"
         cd "$DT_r"
@@ -357,7 +353,7 @@ function process() {
         pars=`mktemp`
         trap rm "$pars*" EXIT
         scrot -s "$pars.png"
-        (echo "1"
+        ( echo "1"
         echo "# $(gettext "Processing")..." ;
         mogrify -modulate 100,0 -resize 400% "$pars.png"
         tesseract "$pars.png" "$pars" &> /dev/null # -l $lgt
@@ -367,7 +363,7 @@ function process() {
     else
         if [[ ${#conten} = 1 ]]; then
         cleanups "$DT_r" "$DT/.n_s_pr"; exit 1; fi
-        (echo "1"
+        ( echo "1"
         echo "# $(gettext "Processing")..." ;
         if [ "$lgt" = ja -o "$lgt" = "zh-cn" -o "$lgt" = ru ]; then
         echo "${conten}" | clean_7 > "$DT_r/sntsls_"
