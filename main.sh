@@ -160,10 +160,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             if [ ${cn} = 1  ]; then
             sed -i "s/tname=.*/tname=\"${tname}\"/g" "${DC_tlt}/id.cfg"; fi
             sed -i "s/datei=.*/datei=\"$(date +%F)\"/g" "${DC_tlt}/id.cfg"
-
-            chkaud="$(grep -oP '(?<=naudi={).*(?=})' < "${DC_tlt}/id.cfg")"
-            chkimg="$(grep -oP '(?<=nimag={).*(?=})' < "${DC_tlt}/id.cfg")"
-            [[ $((chkaud+chkimg)) -ge 2 ]] && > "${DC_tlt}/download" || echo -e "\n" > "${DC_tlt}/download"
+			> "${DC_tlt}/download"
 
             while read item_; do
                 item="$(sed 's/},/}\n/g' <<<"${item_}")"

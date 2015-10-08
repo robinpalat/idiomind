@@ -8,9 +8,9 @@ play_word() {
     elif [ -f "${DM_tlt}/$3.mp3" ]; then
         play "${DM_tlt}/$3.mp3" &
     elif [ -n "$synth" ]; then
-        sed "${w}." |$synth &
+        echo "${w}." |$synth &
     else
-        sed "${w}." |espeak -v $lg -s 150 &
+        echo "${w}." |espeak -v $lg -s 150 &
     fi
 } >/dev/null 2>&1
 
