@@ -88,11 +88,11 @@ function new_sentence() {
     srce="$(clean_2 "${srce}")"
 
     if [[ $trans = TRUE ]]; then
-        internet
         [ "$(dirname "$0")" != "$DT_r" ] && cd "$DT_r"
         if [[ $ttrgt = TRUE ]]; then
             trgt="$(translate "${trgt,,}" auto "$lgt")"
-            trgt=$(clean_2 "${trgt}"); fi
+            trgt=$(clean_2 "${trgt}")
+        fi
         srce="$(translate "${trgt,,}" $lgt $lgs)"
         srce="$(clean_2 "${srce}")"
         trgt="${trgt^}"

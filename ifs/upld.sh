@@ -222,12 +222,12 @@ function upld() {
     btn="--center"; fi
 
     if [[ -e "${DC_tlt}/download" ]]; then
-        if [[ -s "${DC_tlt}/download" ]]; then
+        if [[ ! -s "${DC_tlt}/download" ]]; then
             dlg="$(dlg_dwld_content)"; ret=$?
-        elif [[ ! -s "${DC_tlt}/download" ]]; then
+        else
             dlg="$(dlg_export)"; ret=$?
         fi
-    elif [[ ! -e "${DC_tlt}/download" ]]; then
+    else
         if [ -z "${usrid}" -a -z "${passw}" ]; then
             dlg="$(dlg_getuser)"; ret=$?
             notes_m=$(echo "${dlg}" | cut -d "|" -f1)

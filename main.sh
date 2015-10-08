@@ -332,35 +332,28 @@ function topic() {
 
 panel() {
     if [ ! -d "$DT" ]; then new_session; ns=TRUE; fi
-
     if [ ! -e "$DT/tpe" ]; then
         tpe="$(sed -n 1p "$DC_s/4.cfg")"
         if ! echo -e "$(ls "$DS/addons/")" |grep -Fxo "${tpe}" >/dev/null 2>&1; then
             [ ! -L "$DM_tl/${tpe}" ] && echo "${tpe}" > "$DT/tpe"
         fi
     fi
-
     if [ "$(< "$DT/tpe")" != "${tpc}" ]; then
         if ! echo -e "$(ls "$DS/addons/")" |grep -Fxo "${tpe}" >/dev/null 2>&1; then
             [ ! -L "$DM_tl/${tpe}" ] && echo "${tpc}" > "$DT/tpe"
         fi
     fi
-    
     [ -e "$DC_s/10.cfg" ] && date=$(sed -n 1p "$DC_s/10.cfg")
-    
     if [[ "$(date +%d)" != "$date" ]] || [ ! -e "$DC_s/10.cfg" ]; then
         new_session; ns=TRUE
     fi
-
     ( if [ "${ns}" = TRUE ]; then
     "$DS/ifs/tls.sh" a_check_updates; fi ) &
-
     if [ -e "$DC_s/10.cfg" ]; then
         x=$(($(sed -n 2p "$DC_s/10.cfg")/2))
         y=$(($(sed -n 3p "$DC_s/10.cfg")/2))
     fi
     if ! [[ ${x} =~ $numer ]]; then x=100; y=100; fi
-
     if [[ `grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg"` = TRUE ]] \
     && [ ! -e /tmp/.clipw ]; then
         "$DS/ifs/mods/clipw.sh" &
