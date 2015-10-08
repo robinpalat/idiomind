@@ -205,6 +205,7 @@ function upld() {
     sport="$(gettext "Sport")"
     tech="$(gettext "Tech")"
     LANGUAGE_TO_LEARN="${lgtl}"
+    linkc="http://idiomind.sourceforge.net/community/${lgtl,,}"
     ctgry="$(grep -o 'ctgry="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
     text_upld="$(gettext "Share your notes with other ${LANGUAGE_TO_LEARN} learners!")\n<a href='$linkc'>$(gettext "Topics shared")</a> (Beta)\n"
     _categories="$ctgry!$others!$article!$city!$comics!$culture!$education!$entertainment!$funny!$grammar!$history!$home!$internet!$interview!$movies!$music!$nature!$news!$office!$places!$quotes!$relations!$science!$social_media!$sport!$tech"
@@ -221,9 +222,9 @@ function upld() {
     btn="--center"; fi
 
     if [[ -e "${DC_tlt}/download" ]]; then
-        if [[ ! -s "${DC_tlt}/download" ]]; then
+        if [[ -s "${DC_tlt}/download" ]]; then
             dlg="$(dlg_dwld_content)"; ret=$?
-        elif [[ -s "${DC_tlt}/download" ]]; then
+        elif [[ ! -s "${DC_tlt}/download" ]]; then
             dlg="$(dlg_export)"; ret=$?
         fi
     elif [[ ! -e "${DC_tlt}/download" ]]; then
