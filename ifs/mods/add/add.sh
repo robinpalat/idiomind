@@ -150,42 +150,63 @@ function sentence_p() {
     touch "$DT_r/A.$r" "$DT_r/B.$r" "$DT_r/g.$r"; bcle=1
     
     if [ "$lgt" = ja -o "$lgt" = "zh-cn" -o "$lgt" = ru ]; then
-        while [[ ${bcle} -le "$(wc -l < "${aw}")" ]]; do
-        s=$(sed -n "$bcle"p ${aw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
-        t=$(sed -n "$bcle"p ${bw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
+        while [[ ${bcle} -le $(wc -l < "${aw}") ]]; do
+        s=$(sed -n ${bcle}p ${aw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
+        t=$(sed -n ${bcle}p ${bw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
         echo "$t"_"$s""" >> "$DT_r/B.$r"
-        
-        if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]] \
-        && ! [[ "${t}" =~ [0-9] ]] && [ -n "${t}" ] && [ -n "${s}" ]; then
-            echo -n "insert into ${table} (Word,${row_trans^}) \
-            values ('${t}','${s}');" |sqlite3 ${cdb}
-            echo -n "insert into Words (Word,${row_trans^},Example) \
-            values ('${t}','${s}','${trgt}');" |sqlite3 ${cdb}
+        if ! [[ "${t}" =~ [0-9] ]] && [ -n "${t}" ] && [ -n "${s}" ]; then
+            if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]]; then
+                echo -n "insert into ${table} (Word,${row_trans^}) \
+                values ('${t}','${s}');" |sqlite3 ${cdb}
+                echo -n "insert into Words (Word,${row_trans^},Example) \
+                values ('${t}','${s}','${trgt}');" |sqlite3 ${cdb}
+            elif ! [[ `sqlite3 ${cdb} "select Example from Words where Word is '${t}';"` ]]; then
+                echo -n "update Words set Example='${trgt}' where Word='${t}';" |sqlite3 ${cdb}
+            fi
         fi
         let bcle++
         done
     else
-        while [[ ${bcle} -le "$(wc -l < "${aw}")" ]]; do
-        t=$(sed -n "$bcle"p ${aw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
-        s=$(sed -n "$bcle"p ${bw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
+        while [[ ${bcle} -le $(wc -l < "${aw}") ]]; do
+        t=$(sed -n ${bcle}p ${aw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
+        s=$(sed -n ${bcle}p ${bw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
         echo "$t"_"$s""" >> "$DT_r/B.$r"
-        if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]] \
-        && ! [[ "${t}" =~ [0-9] ]] && [ -n "${t}" ] && [ -n "${s}" ]; then
-            echo -n "insert into ${table} (Word,${row_trans^}) \
-            values ('${t}','${s}');" |sqlite3 ${cdb}
-            echo -n "insert into Words (Word,${row_trans^},Example) \
-            values ('${t}','${s}','${trgt}');" |sqlite3 ${cdb}
+        if ! [[ "${t}" =~ [0-9] ]] && [ -n "${t}" ] && [ -n "${s}" ]; then
+            if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]]; then
+                echo -n "insert into ${table} (Word,${row_trans^}) \
+                values ('${t}','${s}');" |sqlite3 ${cdb}
+                echo -n "insert into Words (Word,${row_trans^},Example) \
+                values ('${t}','${s}','${trgt}');" |sqlite3 ${cdb}
+            elif ! [[ `sqlite3 ${cdb} "select Example from Words where Word is '${t}';"` ]]; then
+                echo -n "update Words set Example='${trgt}' where Word='${t}';" |sqlite3 ${cdb}
+            fi
         fi
         let bcle++
         done
     fi
-    
     if [ ${2} = 1 ]; then
     grmr="$(sed ':a;N;$!ba;s/\n/ /g' < "$DT_r/g.$r")"
     wrds="$(tr '\n' '_' < "$DT_r/B.$r")"
     elif [ ${2} = 2 ]; then
     grmr_mod="$(sed ':a;N;$!ba;s/\n/ /g' < "$DT_r/g.$r")"
     wrds_mod="$(tr '\n' '_' < "$DT_r/B.$r")"
+    fi
+}
+
+function word_p() {
+    cdb="$DM_tls/Dictionary/${lgtl}.db"
+    table="T`date +%m%y`"; row_trans="$lgsl"
+    echo -n "create table if not exists ${table} \
+    (Word TEXT, ${row_trans^} TEXT);" |sqlite3 ${cdb}
+    if ! grep -q ${lgsl} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(${table});")"; then
+        sqlite3 ${cdb} "alter table ${table} add column ${lgsl} TEXT;"
+    fi
+    if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${trgt}';"` ]] \
+    && ! [[ "${trgt}" =~ [0-9] ]] && [ -n "${trgt}" ] && [ -n "${srce}" ]; then
+        echo -n "insert into ${table} (Word,${row_trans^}) \
+        values ('${trgt}','${srce}');" |sqlite3 ${cdb}
+        echo -n "insert into Words (Word,${row_trans^}) \
+        values ('${trgt}','${srce}');" |sqlite3 ${cdb}
     fi
 }
 

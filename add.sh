@@ -182,7 +182,6 @@ function new_word() {
         fi
 
         notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000
-        
         if [ ! -e "$DT_r/audtm.mp3" ]; then
             if [ ! -e "${DM_tls}/audio/${audio}.mp3" ]; then
                 tts_word "${audio}" "${DM_tls}/audio"
@@ -195,8 +194,8 @@ function new_word() {
             else
                 cp -f "$DT_r/audtm.mp3" "${DM_tls}/audio/${audio}.mp3"; fi
         fi
+        word_p
         img_word "${trgt}" "${srce}" &
-        
         cleanups "${DT_r}"
     fi
 }
@@ -448,7 +447,7 @@ function process() {
         
         ( sleep 1; notify-send -i idiomind \
         "$(gettext "Adding $number_of_items notes")" \
-        "$(gettext "The process might take some time")" )
+        "$(gettext "This might take some time")" )
         
         internet
         [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ] && c=c || c=w

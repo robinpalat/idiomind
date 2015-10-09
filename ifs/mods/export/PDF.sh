@@ -1,24 +1,23 @@
 #!/bin/bash
 
-_checkbox="<img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3woDEzoH0hTl5gAAABl0RVh0Q29tbWVudABDcmVhdGVkIHdpdGggR0lNUFeBDhcAAAA2SURBVDjL7dVBEQAwDAJB6FQh0RmNiYdO+XEC9nuUNDB0AaC7+ROtqjkwFThw4MCBA79F10wX13oIF8HVFq4AAAAASUVORK5CYII=\"/>"
-
 _head(){
     cat <<!EOF
 <head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>$tpc</title>
 <link rel="stylesheet" href="/usr/share/idiomind/default/pdf.css">
-</head><body><p></p><h3>$tpc</h3><hr><p><br>
+</head><body><h3>$tpc</h3><hr><br>
 !EOF
 }
+
+_checkbox="<img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAWCAYAAADEtGw7AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3woDEzoH0hTl5gAAABl0RVh0Q29tbWVudABDcmVhdGVkIHdpdGggR0lNUFeBDhcAAAA2SURBVDjL7dVBEQAwDAJB6FQh0RmNiYdO+XEC9nuUNDB0AaC7+ROtqjkwFThw4MCBA79F10wX13oIF8HVFq4AAAAASUVORK5CYII=\"/>"
 
 _note(){
     note="$(sed ':a;N;$!ba;s/\n/<br>/g' < "${DC_tlt}/info" |sed 's/\&/&amp;/g')"
     cat <<!EOF
-<div width="60%" align="left" border="0" class="ifont"><br>$note<p>&nbsp;</p></div><br>
+<div width="60%" align="left" border="0" class="ifont"><br>$note<p>&nbsp;</div><br>
 !EOF
 }
 
-table_x3() {
+word_examen() {
     cat <<!EOF
 <table width="100%" cellpadding="0" cellspacing="10"><tr>
 <td width="50%"><tw1>${trgt1}</tw1></td><td width="50%"><tw1>${trgt}</tw1></td></tr><tr><td><table><tr>
@@ -33,7 +32,7 @@ table_x3() {
 !EOF
 }
 
-sentences() {
+sentence_normal() {
     cat <<!EOF
 <table width="90%" align="left" cellpadding="0" cellspacing="15">
 <tr><td style="width: 50%; vertical-align:top; align:$algn"><s1>${trgt}</s1></td>
@@ -41,7 +40,7 @@ sentences() {
 !EOF
 }
 
-single_word(){
+word_image_normal(){
     img_size=150
     cat <<!EOF
 <table width="100%" align="center" cellpadding="10" cellspacing="10">
@@ -51,7 +50,7 @@ single_word(){
 !EOF
 }
 
-word_with_example2(){
+word_example_examen(){
     img_size=150
     hint="$(echo "${trgt,,}" |sed "s|[a-z]|"\ \ _"|g")"
     [ -n "${exmp}" ] && exmp="$(sed "s|${trgt,}|<b> ${hint} <\/b>|g" <<<"${exmp}")<br><br>"
@@ -60,7 +59,7 @@ word_with_example2(){
     echo -e "<td width=\"70%\"><texmp>${exmp}</texmp></td></table>" >> "$file.words1"
 }
 
-word_with_example1(){
+word_example_normal(){
     img_size=100
     [ -n "$img" ] && fw="$file.words0" || fw="$file.words1"
     [ -n "${exmp}" ] && exmp="$(sed "s|${trgt,}|<mark>${trgt,}<\/mark>|g" <<<"${exmp}")<br><br>"
@@ -70,8 +69,8 @@ word_with_example1(){
     field2="<texmp>${exmp}</texmp><defn>${defn}</defn><note>${note}</note>"
     echo -e "<table width=\"100%\" align=\"center\" cellpadding=\"0\" cellspacing=\"15\"><tr>" >> "$fw"
     [ -n "$img" ] && echo -e "<td style=\"vertical-align:top; align:left\">$img<br><br></td>" >> "$fw"
-    echo -e "<td style=\"width: 20%; vertical-align:top; align:left\">$field<br><br></td>" >> "$fw"
-    echo -e "<td style=\"width: 70%; vertical-align:middle\">$field2<br><br></td></tr></table>" >> "$fw"
+    echo -e "<td style=\"width: 20%; vertical-align:top; align:left\">$field<br><br></td>
+    <td style=\"width: 70%; vertical-align:middle\">$field2<br><br></td></tr></table>" >> "$fw"
 }
 
 mkhtml() {
@@ -104,7 +103,7 @@ mkhtml() {
             
             if [ ${type} = 1 -a $ret = 0 ]; then
                 if [[ -n "${exmp}${defn}${note}" ]]; then
-                    word_with_example1
+                    word_example_normal
                     let tr--
 
                 elif [[ -z "${exmp}${defn}${note}" ]]; then
@@ -113,11 +112,11 @@ mkhtml() {
                     elif [ ${tr} = 2 ]; then
                         trgt2="${trgt}"; srce2="${srce}"; img2="${img}"
                     elif [ ${tr} = 3 ]; then
-                        single_word >> "$file.words2"
+                        word_image_normal >> "$file.words2"
                     fi
                 fi
             elif [ ${type} = 2 -a $ret = 0 ]; then
-                sentences >> "$file.sente"
+                sentence_normal >> "$file.sente"
                 let tr--
 
             elif [ ${type} = 1 -a $ret = 2 ]; then
@@ -132,13 +131,13 @@ mkhtml() {
                     trgt1="${trgt}"
                     
                 elif [ ${tr} = 2 ]; then
-                    table_x3 >> "$file.words2"
+                    word_examen >> "$file.words2"
                 fi
             elif [ ${type} = 2 -a $ret = 2 ]; then
                 let tr--
             fi
             if [ -n "${exmp}" -a $ret = 2 ]; then
-                word_with_example2
+                word_example_examen
             fi
         elif [ ${tr} = 2 ]; then
             echo -e "</td></table>" >> "$file.words2"

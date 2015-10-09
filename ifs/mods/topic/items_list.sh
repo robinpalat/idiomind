@@ -29,6 +29,7 @@ function sentence_view() {
     trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
     [ -n "${link}" ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
     local sentence="<span font_desc='Sans Free 15'>${trgt_l}</span>\n\n<span font_desc='Sans Free 11'><i>$srce</i>$link</span>\n<span font_desc='Sans Free 6'>$tag</span>\n"
+    cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"" 1 ${c}"
     
     echo "${lwrd}" | yad --list --title=" " \
     --text="${sentence}" \
@@ -41,9 +42,9 @@ function sentence_view() {
     --column="":TEXT \
     --column="":TEXT \
     --button=gtk-edit:4 \
+    --button="$(gettext "Words")":"$cmd_words" \
     --button="!$DS/images/listen.png":"$cmd_listen" \
-    --button=gtk-go-down:2 \
-    --button=gtk-go-up:3
+    --button="$(gettext "Next")!gtk-go-down":2 
     
 } >/dev/null 2>&1
 
