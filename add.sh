@@ -201,55 +201,56 @@ function new_word() {
 }
 
 function list_words_edit() {
+
     include "$DS/ifs/mods/add"
-    if [[ ${3} = 1 ]]; then
-        tpe="${tpc}"
-        check_s "${tpe}"
-        info=" -$((200-$(wc -l < "${DC_tlt}/0.cfg")))"
-        mkdir "$DT/$4"; cd "$DT/$4"
-        words="$(list_words_2 "${2}")"
-        slt="$(dlg_checklist_1 "${words}" "$info")"
-        
-            if [ $? -eq 0 ]; then
-                while read -r chkst; do
-                    sed 's/TRUE//g' <<<"${chkst}" >> "$DT/$4/slts"
-                done <<<"$(sed 's/|//g' <<<"${slt}")"
-            fi
-    elif [[ ${3} = 2 ]]; then
-        exmp="${5}"
-        DT_r="$DT/$4"; cd "$DT_r"
-        n=1
-        while read -r trgt; do
-            if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
-                echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> ./logw
-            else
-                trgt="$(clean_1 "${trgt}")"
-                audio="${trgt,,}"
-                translate "${trgt}" auto $lgs > "$DT_r/tr.$4"
-                srce=$(< "$DT_r/tr.$4")
-                srce="$(clean_0 "${srce}")"
-                id="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
-                mksure "${trgt}" "${srce}"
 
-                if [ $? = 0 ]; then
-                    index 1
-                    if [ ! -e "$DM_tls/audio/$audio.mp3" ]; then
-                        ( tts_word "$audio" "$DM_tls/audio" ); fi
-                    ( img_word "${trgt}" "${srce}" ) &
-                else
-                    echo -e "\n\n#$n $trgt" >> "$DT_r/logw"
-                    cleanups "${DM_tlt}/$id.mp3"; fi
-            fi
-            let n++
-        done < <(head -200 < "$DT_r/slts")
-
-        if [ -e "$DT_r/logw" ]; then
-        _log="$(< "$DT_r/logw")"
-        dlg_text_info_3 "$(gettext "Some notes could not be added to your list"):" "$_log"; fi
-        echo -e "adi.$lns.adi" >> "$DC_s/log"
+    tpe="${tpc}"
+    check_s "${tpe}"
+    info=" -$((200-$(wc -l < "${DC_tlt}/0.cfg")))"
+    DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
+    words="$(list_words_2 "${2}")"
+    slt="$(dlg_checklist_1 "${words}" "$info")"
+    
+    if [ $? -eq 0 ]; then
+        while read -r chkst; do
+            sed 's/TRUE//g' <<<"${chkst}" >> "$DT/$4/slts"
+        done <<<"$(sed 's/|//g' <<<"${slt}")"
     fi
+
+    exmp="${3}"
+    n=1
+    while read -r trgt; do
+        if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
+            echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> ./logw
+        else
+            trgt="$(clean_1 "${trgt}")"
+            audio="${trgt,,}"
+            translate "${trgt}" auto $lgs > "$DT_r/tr.$4"
+            srce=$(< "$DT_r/tr.$4")
+            srce="$(clean_0 "${srce}")"
+            id="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
+            mksure "${trgt}" "${srce}"
+
+            if [ $? = 0 ]; then
+                index 1
+                if [ ! -e "$DM_tls/audio/$audio.mp3" ]; then
+                    ( tts_word "$audio" "$DM_tls/audio" ); fi
+                ( img_word "${trgt}" "${srce}" ) &
+            else
+                echo -e "\n\n#$n $trgt" >> "$DT_r/logw"
+                cleanups "${DM_tlt}/$id.mp3"; fi
+        fi
+        let n++
+    done < <(head -200 < "$DT_r/slts")
+
+    if [ -e "$DT_r/logw" ]; then
+    _log="$(< "$DT_r/logw")"
+    dlg_text_info_3 "$(gettext "Some notes could not be added to your list"):" "$_log"; fi
+    echo -e "adi.$lns.adi" >> "$DC_s/log"
+
     cleanups "${DT_r}" "$slt"; exit 0
-}
+    
+} >/dev/null 2>&1
 
 function list_words_sentence() {
     exmp="${trgt}"

@@ -149,7 +149,7 @@ edit_item() {
 
     cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"""
     cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"""
-    cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"" 1 ${c}"
+    cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"" "\"${trgt}\"""
     cmd_def="'$DS/ifs/tls.sh' 'find_def' "\"${trgt}\"""
     link1="https://translate.google.com/\#$lgt/$lgs/${query}"
 
