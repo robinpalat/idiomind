@@ -119,7 +119,6 @@ edit_item() {
     lgt=$(lnglss $lgtl)
     lgs=$(lnglss $lgsl)
     list="${2}";  item_pos=${3}; text_missing=${4}
-    c=$((RANDOM%10000))
     if [ ${list} = 1 ]; then
         index_1="${DC_tlt}/1.cfg"
         index_2="${DC_tlt}/2.cfg"
@@ -313,7 +312,6 @@ edit_item() {
             ) &
             fi
 
-            [ -d "$DT/$c" ] && "$DS/add.sh" list_words_edit "${wrds_mod}" 2 ${c} "${trgt_mod}" &
             [ ${type} != ${type_mod} -a ${type_mod} = 1 ] && ( img_word "${trgt}" "${srce}" ) &
             [ ${colorize_run} = 1 ] && "$DS/ifs/tls.sh" colorize &
             [ ${tagset} = 1 ] && tagget_item &

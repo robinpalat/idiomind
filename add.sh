@@ -188,11 +188,13 @@ function new_word() {
             fi
         else
             if [ -e "${DM_tls}/audio/${audio}.mp3" ]; then
-                msg_3 "$(gettext "A file named "${DM_tls}/audio/${audio}.mp3" already exists. Replace?.")\n" dialog-question "${trgt}"
+                msg_3 "$(gettext "A file named "${audio}.mp3" already exists. Replace?.")\n" dialog-question "${trgt}"
                 if [ $? -eq 0 ]; then
-                    cp -f "$DT_r/audtm.mp3" "${DM_tls}/audio/${audio}.mp3"; fi
+                    cp -f "$DT_r/audtm.mp3" "${DM_tls}/audio/${audio}.mp3"
+                fi
             else
-                cp -f "$DT_r/audtm.mp3" "${DM_tls}/audio/${audio}.mp3"; fi
+                cp -f "$DT_r/audtm.mp3" "${DM_tls}/audio/${audio}.mp3"
+            fi
         fi
         word_p
         img_word "${trgt}" "${srce}" &
@@ -201,10 +203,9 @@ function new_word() {
 }
 
 function list_words_edit() {
-
     include "$DS/ifs/mods/add"
-
     tpe="${tpc}"
+    exmp="${3}"
     check_s "${tpe}"
     info=" -$((200-$(wc -l < "${DC_tlt}/0.cfg")))"
     DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
@@ -213,11 +214,9 @@ function list_words_edit() {
     
     if [ $? -eq 0 ]; then
         while read -r chkst; do
-            sed 's/TRUE//g' <<<"${chkst}" >> "$DT/$4/slts"
+            sed 's/TRUE//g' <<<"${chkst}" >> "$DT_r/slts"
         done <<<"$(sed 's/|//g' <<<"${slt}")"
     fi
-
-    exmp="${3}"
     n=1
     while read -r trgt; do
         if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
@@ -225,8 +224,8 @@ function list_words_edit() {
         else
             trgt="$(clean_1 "${trgt}")"
             audio="${trgt,,}"
-            translate "${trgt}" auto $lgs > "$DT_r/tr.$4"
-            srce=$(< "$DT_r/tr.$4")
+            translate "${trgt}" auto $lgs > "$DT_r/tr"
+            srce=$(< "$DT_r/tr")
             srce="$(clean_0 "${srce}")"
             id="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
             mksure "${trgt}" "${srce}"
@@ -234,21 +233,22 @@ function list_words_edit() {
             if [ $? = 0 ]; then
                 index 1
                 if [ ! -e "$DM_tls/audio/$audio.mp3" ]; then
-                    ( tts_word "$audio" "$DM_tls/audio" ); fi
+                    ( tts_word "$audio" "$DM_tls/audio" )
+                fi
                 ( img_word "${trgt}" "${srce}" ) &
             else
                 echo -e "\n\n#$n $trgt" >> "$DT_r/logw"
-                cleanups "${DM_tlt}/$id.mp3"; fi
+                cleanups "${DM_tlt}/$id.mp3"
+            fi
         fi
         let n++
     done < <(head -200 < "$DT_r/slts")
 
     if [ -e "$DT_r/logw" ]; then
-    _log="$(< "$DT_r/logw")"
-    dlg_text_info_3 "$(gettext "Some notes could not be added to your list"):" "$_log"; fi
-    echo -e "adi.$lns.adi" >> "$DC_s/log"
-
-    cleanups "${DT_r}" "$slt"; exit 0
+        _log="$(< "$DT_r/logw")"
+        dlg_text_info_3 "$(gettext "Some notes could not be added to your list"):" "$_log"
+    fi
+    cleanups "${DT_r}"; exit 0
     
 } >/dev/null 2>&1
 
@@ -257,7 +257,6 @@ function list_words_sentence() {
     c=$((RANDOM%100))
     DT_r=$(mktemp -d "$DT/XXXXXX")
     info="-$((200-$(wc -l < "${DC_tlt}/0.cfg")))"
-
     wrds="$(list_words_2 "${wrds}")"
     slt="$(dlg_checklist_1 "${wrds}" "${info}")"
         
@@ -286,7 +285,8 @@ function list_words_sentence() {
             if [ $? = 0 ]; then
                 index 1
                 if [ ! -e "$DM_tls/audio/$audio.mp3" ]; then
-                    ( tts_word "${audio}" "${DM_tls}/audio" ); fi
+                    ( tts_word "${audio}" "${DM_tls}/audio" )
+                fi
                 ( img_word "${trgt}" "${srce}" ) &
             else
                 echo -e "\n\n#$n $trgt" >> "$DT_r/logw"
@@ -296,11 +296,10 @@ function list_words_sentence() {
     done < <(head -200 < "$DT_r/slts")
 
     if [ -e "$DT_r/logw" ]; then
-    _log="$(< "$DT_r/logw")"
-    dlg_text_info_3 "$(gettext "Some notes could not be added to your list"):" "$_log"; fi
-    cleanups "$DT_r"
-    echo -e "adi.$lns.adi" >> "$DC_s/log"
-    exit 0
+        _log="$(< "$DT_r/logw")"
+        dlg_text_info_3 "$(gettext "Some notes could not be added to your list"):" "$_log"
+    fi
+    cleanups "$DT_r"; exit 0
 }
 
 function list_words_dclik() {

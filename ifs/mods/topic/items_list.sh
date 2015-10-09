@@ -19,8 +19,7 @@ function word_view() {
     --field="":lbl "${field_tag}" "${field_exmp}" "${field_defn}" "${field_note}" \
     --button="gtk-edit":4 \
     --button="!$DS/images/listen.png":"$cmd_listen" \
-    --button=gtk-go-down:2 \
-    --button=gtk-go-up:3
+    --button="$(gettext "Next")!gtk-go-down":2 
     
 } >/dev/null 2>&1
 
