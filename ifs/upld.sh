@@ -52,7 +52,6 @@ function dwld() {
             hfiles="$(cd "${tmp}"; ls -d ./.[^.]* | less | wc -l)"
             exfiles="$(find "${tmp}" -maxdepth 5 -perm -111 -type f | wc -l)"
             others=$((wchfiles+wcexfiles))
-            
             mv -f "${tmp}/conf/info" "${DC_tlt}/info"
             [ ! -d "$DM_t/$langt/.share/images" ] && mkdir -p "$DM_t/$langt/.share/images"
             [ ! -d "$DM_t/$langt/.share/audio" ] && mkdir -p "$DM_t/$langt/.share/audio"
@@ -388,7 +387,7 @@ END
             info="\"$tpc\"\n<b>$(gettext "Uploaded correctly")</b>\n"
             image=gtk-ok
         elif [ $u = 3 ]; then
-            info="$(gettext "Authentication error.")"
+            info="$(gettext "Authentication error.")\n"
             image=error
         else
             sleep 10

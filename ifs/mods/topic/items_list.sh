@@ -8,7 +8,7 @@ function word_view() {
     [ -n "${exmp}" ] && field_exmp="--field=<span font_desc='Verdana 11' color='#5C5C5C'>$exmp</span>:lbl"
     [ -n "${link}" ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
     local sentence="<span font_desc='Sans Free 25'>${trgt}</span>\n\n<span font_desc='Sans Free 14'><i>$srce</i></span>$link\n\n"
-    cmd_def="'$DS/ifs/tls.sh' 'find_def' "\"${trgt}\"""
+    #cmd_def="'$DS/ifs/tls.sh' 'find_def' "\"${trgt}\""" --button="!info":"$cmd_def" \
 
     yad --form --title=" " \
     --selectable-labels --quoted-output \
@@ -19,9 +19,8 @@ function word_view() {
     --width=630 --height=390 --borders=20 \
     --field="":lbl "${field_tag}" "${field_exmp}" "${field_defn}" "${field_note}" \
     --button="gtk-edit":4 \
-    --button="!info":"$cmd_def" \
     --button="!$DS/images/listen.png":"$cmd_listen" \
-    --button="$(gettext "Next")!gtk-go-down":2 
+    --button="$(gettext "Next")!gtk-go-down":2
     
 } >/dev/null 2>&1
 
@@ -46,7 +45,7 @@ function sentence_view() {
     --button="gtk-edit":4 \
     --button="$(gettext "Words")":"$cmd_words" \
     --button="!$DS/images/listen.png":"$cmd_listen" \
-    --button="$(gettext "Next")!gtk-go-down":2 
+    --button="$(gettext "Next")!gtk-go-down":2
     
 } >/dev/null 2>&1
 
