@@ -377,8 +377,6 @@ case "$1" in
     "$DS/ifs/tls.sh" $@ ;;
     --translate)
     "$DS/ifs/tls.sh" $@ ;;
-    -h|--help)
-    "$DS/ifs/tls.sh" echo_help ;;
     -v|--version)
     echo -n "$_version" ;;
     -s)

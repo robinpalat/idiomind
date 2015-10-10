@@ -60,7 +60,7 @@ function new_item() {
     DC_tlt="$DM_tl/${tpe}/.conf"; \
     DT_r=$(mktemp -d "$DT/XXXXXX")
     check_s "${tpe}"
-    if [ -z "$trgt" ]; then trgt="${@}"; fi
+    if [ -z "$trgt" ]; then trgt="${3}"; fi
     cd "$DT_r"
     if [ "$trans" = FALSE ] && ([ -z "${srce}" ] || [ -z "${trgt}" ]); then
         cleanups "$DT_r"

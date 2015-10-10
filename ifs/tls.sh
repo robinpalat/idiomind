@@ -700,20 +700,6 @@ $(gettext "Difficult words")
 $(gettext "Does not need configuration")
 }>/dev/null 2>&1
 
-echo_help() {
-echo "
-Usage: 
-  idiomind [OPTION...] [text]
-  -s                         New session
-  -v                         Show version number
-
-Active topic:
-  -a, --add [TEXT]           Add new note
-  --feeds [URL]              Manage RSS subscriptions
-  --translate [language]     Translates the source language.
-  --translate restore        Restore to original source language
-  "
-}
 
 case "$1" in
     backup)
@@ -748,8 +734,6 @@ case "$1" in
     colorize "$@" ;;
     translate)
     translate_to "$@" ;;
-    echo_help)
-    echo_help ;;
     about)
     about ;;
 esac
