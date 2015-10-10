@@ -8,13 +8,12 @@ function check_format_1() {
     LANGUAGES=( 'English' 'Chinese' 'French' \
     'German' 'Italian' 'Japanese' 'Portuguese' \
     'Russian' 'Spanish' 'Vietnamese' )
-    CATEGORIES=( 'others' 'comics' 'culture' \
-    'family' 'entertainment' 'grammar' 'history' \
-    'documentary' 'in_the_city' 'movies' 'internet' \
-    'music' 'nature' 'news' 'office' \
-    'relations' 'sport' 'social_networks' 'shopping' \
-    'technology' 'travel' 'article' \
-    'science' 'interview' 'funny' )
+
+    CATEGORIES=( 'article' 'city' 'comic' 'culture' 'education' \
+    'entertainment' 'funny' 'grammar' 'history' 'home' 'internet' \
+    'interview' 'movies' 'music' 'nature' 'news' 'office' 'others' \
+    'places' 'quotes' 'relations' 'science' 'social_media' 'sport' 'tech' )
+
     sets=( 'tname' 'langs' 'langt' \
     'authr' 'cntct' 'ctgry' 'ilink' 'oname' \
     'datec' 'dateu' 'datei' \
@@ -39,7 +38,7 @@ function check_format_1() {
             if [ ${#val} -gt 30 ] || \
             [ "$(grep -o -E '\*|\/|$|\)|\(|=' <<<"${val}")" ]; then invalid $n; fi
         elif [[ ${n} = 5 ]]; then
-            if ! grep -Fo "${val}" <<<"${CATEGORIES[@]}"; then invalid $n; fi
+            if ! grep -Fo "${val,,}" <<<"${CATEGORIES[@]}"; then invalid $n; fi
         elif [[ ${n} = 6 ]]; then
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 8 ]; then invalid $n; fi
         elif [[ ${n} = 7 ]]; then
@@ -701,6 +700,21 @@ $(gettext "Difficult words")
 $(gettext "Does not need configuration")
 }>/dev/null 2>&1
 
+echo_help() {
+echo "
+Usage: 
+  idiomind [OPTION...] [text]
+  -s                         New session
+  -v                         Show version number
+
+Active topic:
+  -a, --add [TEXT]           Add new note
+  --feeds [URL]              Manage RSS subscriptions
+  --translate [language]     Translates the source language.
+  --translate restore        Restore to original source language
+  "
+}
+
 case "$1" in
     backup)
     _backup "$@" ;;
@@ -734,6 +748,8 @@ case "$1" in
     colorize "$@" ;;
     translate)
     translate_to "$@" ;;
+    echo_help)
+    echo_help ;;
     about)
     about ;;
 esac

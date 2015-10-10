@@ -5,6 +5,10 @@ source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
+CATEGORIES=( 'article' 'city' 'comic' 'culture' 'education' \
+'entertainment' 'funny' 'grammar' 'history' 'home' 'internet' \
+'interview' 'movies' 'music' 'nature' 'news' 'office' 'others' \
+'places' 'quotes' 'relations' 'science' 'social_media' 'sport' 'tech' )
 
 function dwld() {
     err() {
@@ -177,37 +181,18 @@ function upld() {
     }
     
     random_id() { tr -dc a-z < /dev/urandom |head -c 1; echo $((RANDOM%100)); }
+
+    emrk='!'; list=" "
+    for val in ${CATEGORIES[@]}; do
+        declare clocal="$(gettext "${val^}")"
+        list="${list}${emrk}${clocal}"
+    done
     
-    others="$(gettext "Others")"
-    article="$(gettext "Article")"
-    city="$(gettext "City")"
-    comics="$(gettext "Comics")"
-    culture="$(gettext "Culture")"
-    education="$(gettext "Education")"
-    entertainment="$(gettext "Entertainment")"
-    funny="$(gettext "Funny")"
-    grammar="$(gettext "Grammar")"
-    history="$(gettext "History")"
-    home="$(gettext "Home")"
-    internet="$(gettext "Internet")"
-    interview="$(gettext "Interview")"
-    movies="$(gettext "Movies")"
-    music="$(gettext "Music")"
-    nature="$(gettext "Nature")"
-    news="$(gettext "News")"
-    office="$(gettext "Office")"
-    places="$(gettext "Places")"
-    quotes="$(gettext "Quotes")"
-    relations="$(gettext "Relations")"
-    science="$(gettext "Science")"
-    social_media="$(gettext "Social media")"
-    sport="$(gettext "Sport")"
-    tech="$(gettext "Tech")"
     LANGUAGE_TO_LEARN="${lgtl}"
     linkc="http://idiomind.sourceforge.net/community/${lgtl,,}"
     ctgry="$(grep -o 'ctgry="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
     text_upld="$(gettext "Share your notes with other ${LANGUAGE_TO_LEARN} learners!")\n<a href='$linkc'>$(gettext "Topics shared")</a> (Beta)\n"
-    _categories="$ctgry!$others!$article!$city!$comics!$culture!$education!$entertainment!$funny!$grammar!$history!$home!$internet!$interview!$movies!$music!$nature!$news!$office!$places!$quotes!$relations!$science!$social_media!$sport!$tech"
+    _categories="${ctgry}${list}"
     _levels="!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")"
     note=$(< "${DC_tlt}/info")
     cmd_link="xdg-open 'http://test.com/?q=user/register'"
@@ -244,32 +229,9 @@ function upld() {
     fi
 
     # get data output
-    [ "$Ctgry" = "$others" ] && Ctgry=others
-    [ "$Ctgry" = "$comics" ] && Ctgry=comics
-    [ "$Ctgry" = "$culture" ] && Ctgry=culture
-    [ "$Ctgry" = "$family" ] && Ctgry=family
-    [ "$Ctgry" = "$entertainment" ] && Ctgry=entertainment
-    [ "$Ctgry" = "$grammar" ] && Ctgry=grammar
-    [ "$Ctgry" = "$history" ] && Ctgry=history
-    [ "$Ctgry" = "$documentary" ] && Ctgry=documentary
-    [ "$Ctgry" = "$in_the_city" ] && Ctgry=in_the_city
-    [ "$Ctgry" = "$movies" ] && Ctgry=movies
-    [ "$Ctgry" = "$internet" ] && Ctgry=internet
-    [ "$Ctgry" = "$music" ] && Ctgry=music
-    [ "$Ctgry" = "$nature" ] && Ctgry=nature
-    [ "$Ctgry" = "$news" ] && Ctgry=news
-    [ "$Ctgry" = "$office" ] && Ctgry=office
-    [ "$Ctgry" = "$relations" ] && Ctgry=relations
-    [ "$Ctgry" = "$sport" ] && Ctgry=sport
-    [ "$Ctgry" = "$social_networks" ] && Ctgry=social_networks
-    [ "$Ctgry" = "$shopping" ] && Ctgry=shopping
-    [ "$Ctgry" = "$technology" ] && Ctgry=technology
-    [ "$Ctgry" = "$article" ] && Ctgry=article
-    [ "$Ctgry" = "$travel" ] && Ctgry=travel
-    [ "$Ctgry" = "$interview" ] && Ctgry=interview
-    [ "$Ctgry" = "$science" ] && Ctgry=science
-    [ "$Ctgry" = "$funny" ] && Ctgry=funny
-    [ "$Ctgry" = "$others" ] && Ctgry=others
+    for val in ${CATEGORIES[@]}; do
+        [ "$Ctgry" = "$(gettext "${val^}")" ] && Ctgry=$val && break
+    done
     [ "$level" = $(gettext "Beginner") ] && level=0
     [ "$level" = $(gettext "Intermediate") ] && level=1
     [ "$level" = $(gettext "Advanced") ] && level=2
@@ -365,22 +327,22 @@ usrid = os.environ['usrid_m']
 passw = os.environ['passw_m']
 tpc = os.environ['tpc']
 body = os.environ['body']
-try:
-    server = xmlrpclib.Server('http://test.com/xmlrpc.php')
-    nid = server.metaWeblog.newPost('blog', usrid, passw, {'title': tpc, 'description': body}, True)
-except:
-    sys.exit(3)
-#url = os.environ['url']
-#direc = os.environ['direc']
-#log = os.environ['log']
-#volumes = [i for i in os.listdir(direc)]
-#for f in volumes:
-    #file = {'file': open(f, 'rb')}
-    #r = requests.post(url, files=file)
-    #p = open(log, "w")
-    #p.write("x")
-    #p.close()
-    #time.sleep(5)
+#try:
+    #server = xmlrpclib.Server('http://server.com/xmlrpc.php')
+    #nid = server.metaWeblog.newPost('blog', usrid, passw, {'title': tpc, 'description': body}, True)
+#except:
+    #sys.exit(3)
+url = os.environ['url']
+direc = os.environ['direc']
+log = os.environ['log']
+volumes = [i for i in os.listdir(direc)]
+for f in volumes:
+    file = {'file': open(f, 'rb')}
+    r = requests.post(url, files=file)
+    p = open(log, "w")
+    p.write("x")
+    p.close()
+    time.sleep(5)
 END
         u=$?
         if [ $u = 0 ]; then

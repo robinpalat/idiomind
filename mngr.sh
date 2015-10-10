@@ -450,16 +450,16 @@ edit_list() {
 
 edit_feeds() {
     file="$DM_tl/${2}/.conf/feeds"
-    if [ -e "${file}" ]; then
-        feeds="$(< "${file}")"
-        mods="$(echo "${feeds}" |edit_feeds_list)"
-        ret=$?
-        if [ "${feeds}" != "$mods" ]; then
-            echo "${mods}" |sed -e '/^$/d' > "${file}"
-        fi
-        if  [ $ret = 2 ]; then
-            "$DS/add.sh" fetch_content "${tpc}" &
-        fi
+    feeds="$(< "${file}")"
+    mods="$(echo "${feeds}" |edit_feeds_list)"
+    ret=$?
+    if [ "${feeds}" != "${mods}" ]; then
+        echo "${mods}" |sed -e '/^$/d' > "${file}"
+    elif [ -z "${mods}" ]; then
+        rm "${file}"
+    fi
+    if  [ $ret = 2 ]; then
+        "$DS/add.sh" fetch_content "${tpc}" &
     fi
 } >/dev/null 2>&1
 

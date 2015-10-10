@@ -160,7 +160,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             if [ ${cn} = 1  ]; then
             sed -i "s/tname=.*/tname=\"${tname}\"/g" "${DC_tlt}/id.cfg"; fi
             sed -i "s/datei=.*/datei=\"$(date +%F)\"/g" "${DC_tlt}/id.cfg"
-			> "${DC_tlt}/download"
+            > "${DC_tlt}/download"
 
             while read item_; do
                 item="$(sed 's/},/}\n/g' <<<"${item_}")"
@@ -370,23 +370,6 @@ panel() {
     exit
 }
 
-_help="\nTopic active: \"$tpc\"
-
-Usage: 
-  idiomind [OPTION...] [text/URL/LANG]
-  
-  -s                         New session
-  -v                         Show version number
-
-Active topic actions:
-  --translate [language]     Translates the source language. (Format e.g: en, es)
-  --translate restore        Restore original source language
-  --add-feed [URL]           set up an RSS subscription to add content from news headlines
-  --remove-feeds             Remove all feeds (Cancel feeds feature)
-  --update-feed              Fetch content from RSS feeds
-  -a, --add                  Add new note to topic"
-  
-
 case "$1" in
     topic)
     topic ;;
@@ -395,7 +378,7 @@ case "$1" in
     --translate)
     "$DS/ifs/tls.sh" $@ ;;
     -h|--help)
-    echo -e "$_help" ;;
+    "$DS/ifs/tls.sh" echo_help ;;
     -v|--version)
     echo -n "$_version" ;;
     -s)
@@ -404,6 +387,8 @@ case "$1" in
     sleep 50; [ ! -e "$DT/ps_lk" ] && new_session ;;
     -a|--add)
     "$DS/add.sh" new_item "${@}" ;;
+    --feeds)
+    "$DS/mngr.sh" edit_feeds "${tpc}" ;;
     play)
     "$DS/bcle.sh" ;;
     stop)
