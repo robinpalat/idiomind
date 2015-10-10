@@ -470,8 +470,8 @@ edit_tag() {
 
 translate_to() {
     # usage: 
-    # idiomind translate [language] / e.g. language: en.
-    # idiomind translate restore / to go back to original translation
+    # idiomind --translate [language] / e.g. language: en.
+    # idiomind --translate restore / to go back to original translation
     source /usr/share/idiomind/ifs/c.conf
     source "$DS/ifs/mods/cmns.sh"
     [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "  -- error" && exit 1

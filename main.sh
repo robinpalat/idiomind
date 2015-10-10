@@ -370,21 +370,40 @@ panel() {
     exit
 }
 
+_help="\nTopic active: \"$tpc\"
+
+Usage: 
+  idiomind [OPTION...] [text/URL/LANG]
+  
+  -s                         New session
+  -v                         Show version number
+
+Active topic actions:
+  --translate [language]     Translates the source language. (Format e.g: en, es)
+  --translate restore        Restore original source language
+  --add-feed [URL]           set up an RSS subscription to add content from news headlines
+  --remove-feeds             Remove all feeds (Cancel feeds feature)
+  --update-feed              Fetch content from RSS feeds
+  -a, --add                  Add new note to topic"
+  
+
 case "$1" in
     topic)
     topic ;;
     first_run)
     "$DS/ifs/tls.sh" $@ ;;
-    translate)
+    --translate)
     "$DS/ifs/tls.sh" $@ ;;
-    -v)
+    -h|--help)
+    echo -e "$_help" ;;
+    -v|--version)
     echo -n "$_version" ;;
     -s)
     new_session; idiomind & ;;
     autostart)
     sleep 50; [ ! -e "$DT/ps_lk" ] && new_session ;;
-    add)
-    "$DS/add.sh" new_items "$dir" 2 "${2}" ;;
+    -a|--add)
+    "$DS/add.sh" new_item "${@}" ;;
     play)
     "$DS/bcle.sh" ;;
     stop)

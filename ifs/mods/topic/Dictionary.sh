@@ -7,8 +7,8 @@ function Dictionary() {
     table="T`date +%m%y`"
     limit=0
     list() {
-        exec 3< <(sqlite3 "$cdb" "select Word FROM  ${table}" | tac)
-        exec 4< <(sqlite3 "$cdb" "select ${lgsl} FROM ${table}"| tac)
+        exec 3< <(sqlite3 "$cdb" "select Word FROM  ${table}" |tac)
+        exec 4< <(sqlite3 "$cdb" "select ${lgsl} FROM ${table}"|tac)
         while :; do
             read word <&3
             read tran <&4
