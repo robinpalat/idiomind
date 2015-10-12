@@ -102,15 +102,17 @@ if [[ $ret -eq 0 ]]; then
             if [ -d "$DT/import/backup/" ]; then
             cp -f "$DT/import/backup"/* "$DM/backup"/; fi
             cd "$DT/import/topics/"
-            list="$(ls * -d |sed 's/saved//g' |sed '/^$/d')"
+            list="$(ls * -d |sed '/^$/d')"
 
             while read -r lng; do
                 if [ ! -d "$DM_t/$lng" ]; then
                     mkdir "$DM_t/$lng"; fi
                 if [ ! -d "$DM_t/$lng/.share" ]; then
-                    mkdir "$DM_t/$lng/.share"; fi
+                    mkdir -p "$DM_t/$lng/.share/Dictionary"
+                    mkdir -p "$DM_t/$lng/.share/images"
+                    mkdir -p "$DM_t/$lng/.share/audio"; fi
                 if [ "$(ls -A "./$lng/.share")" ]; then
-                    mv -f "./$lng/.share"/* "$DM_t/$lng/.share"/
+                    mv -f "./$lng/.share"/* "$DM_t/$lng/.share/audio"/
                 fi
                 echo "$lng" >> ./.languages
             done <<<"${list}"

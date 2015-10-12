@@ -453,10 +453,10 @@ edit_feeds() {
     feeds="$(< "${file}")"
     mods="$(echo "${feeds}" |edit_feeds_list)"
     ret=$?
-    if [ "${feeds}" != "${mods}" ]; then
+    if [ -z "${mods}" ]; then
+        [ -e "${file}" ] && rm "${file}"
+    elif [ "${feeds}" != "${mods}" ]; then
         echo "${mods}" |sed -e '/^$/d' > "${file}"
-    elif [ -z "${mods}" ]; then
-        rm "${file}"
     fi
     if  [ $ret = 2 ]; then
         "$DS/add.sh" fetch_content "${tpc}" &

@@ -182,7 +182,7 @@ function upld() {
     
     random_id() { tr -dc a-z < /dev/urandom |head -c 1; echo $((RANDOM%100)); }
 
-    emrk='!'; list=" "
+    emrk='!'
     for val in ${CATEGORIES[@]}; do
         declare clocal="$(gettext "${val^}")"
         list="${list}${emrk}${clocal}"
@@ -280,18 +280,23 @@ function upld() {
         | tr -d ')' | tr -d '(' | tr '[:upper:]' '[:lower:]')"
         while read -r audio; do
             if [ -f "$DM_tl/.share/audio/$audio.mp3" ]; then
-            cp -f "$DM_tl/.share/audio/$audio.mp3" "$DT_u/${tpc}/share/$audio.mp3"; fi
+                cp -f "$DM_tl/.share/audio/$audio.mp3" \
+                "$DT_u/${tpc}/share/$audio.mp3"
+            fi
         done <<<"$auds"
         while read -r audio; do
             if [ -f "$DM_tl/.share/audio/${audio,,}.mp3" ]; then
-            cp -f "$DM_tl/.share/audio/${audio,,}.mp3" "$DT_u/${tpc}/share/${audio,,}.mp3"; fi
+                cp -f "$DM_tl/.share/audio/${audio,,}.mp3" \
+                "$DT_u/${tpc}/share/${audio,,}.mp3"
+            fi
         done < "${DC_tlt}/3.cfg"
-
-        c_audio=$(find "$DT_u/${tpc}" -maxdepth 5 -name '*.mp3' |wc -l)
         while read -r img; do
             if [ -f "$DM_tl/.share/images/${img,,}-0.jpg" ]; then
-            cp -f "$DM_tl/.share/images/${img,,}-0.jpg" "$DT_u/${tpc}/images/${img,,}-0.jpg"; fi
+                cp -f "$DM_tl/.share/images/${img,,}-0.jpg" \
+                "$DT_u/${tpc}/images/${img,,}-0.jpg"
+            fi
         done < "${DC_tlt}/3.cfg"
+        c_audio=$(find "$DT_u/${tpc}" -maxdepth 5 -name '*.mp3' |wc -l)
         c_images=$(cd "$DT_u/${tpc}/images"/; ls *.jpg |wc -l)
         cp "${DC_tlt}/6.cfg" "$DT_u/${tpc}/conf/6.cfg"
         cp "${DC_tlt}/info" "$DT_u/${tpc}/conf/info"
