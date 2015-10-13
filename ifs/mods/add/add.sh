@@ -390,36 +390,34 @@ function tts_word() {
 
 function img_word() {
     if ls "$DC_d"/*."Script.Download image".* 1> /dev/null 2>&1; then
-    if [ ! -e "${DM_tls}/images/${1,,}-0.jpg" ]; then
-    
-        touch "$DT/img${1}.lk"
-        for img in "$DC_d"/*."Script.Download image".*; do
-            img="$DS_a/Dics/dicts/$(basename "${img}")"
-            [ -e "${img}" ] && "${img}" "${1}"
+        if [ ! -e "${DM_tls}/images/${1,,}-0.jpg" ]; then
+            touch "$DT/img${1}.lk"
+            for img in "$DC_d"/*."Script.Download image".*; do
+                img="$DS_a/Dics/dicts/$(basename "${img}")"
+                [ -e "${img}" ] && "${img}" "${1}"
+                
+                if [ -e "$DT/${1}.jpg" ]; then
+                if [[ `du "$DT/${1}.jpg" |cut -f1` -gt 10 ]]; then
+                break; else rm -f "$DT/${1}.jpg"; fi; fi
+            done
             
-            if [ -e "$DT/${1}.jpg" ]; then
-            if [[ `du "$DT/${1}.jpg" |cut -f1` -gt 10 ]]; then
-            break; else rm -f "$DT/${1}.jpg"; fi; fi
-        done
-        
-        if [ ! -e "$DT/${1}.jpg" ]; then
-        for img in "$DC_d"/*."Script.Download image".*; do
-            img="$DS_a/Dics/dicts/$(basename "${img}")"
-            [ -e "${img}" ] && "${img}" "${2}"
+            if [ ! -e "$DT/${1}.jpg" ]; then
+            for img in "$DC_d"/*."Script.Download image".*; do
+                img="$DS_a/Dics/dicts/$(basename "${img}")"
+                [ -e "${img}" ] && "${img}" "${2}"
+                
+                if [ -e "$DT/${2}.jpg" ]; then
+                if [[ `du "$DT/${2}.jpg" |cut -f1` -gt 10 ]]; then
+                break; else rm -f "$DT/${2}.jpg"; fi; fi
+            done; fi
             
-            if [ -e "$DT/${2}.jpg" ]; then
-            if [[ `du "$DT/${2}.jpg" |cut -f1` -gt 10 ]]; then
-            break; else rm -f "$DT/${2}.jpg"; fi; fi
-        done; fi
-        
-        if [ -e "$DT/${1}.jpg" -o -e "$DT/${2}.jpg" ]; then
-        [ -e "$DT/${1}.jpg" ] && img_file="$DT/${1}.jpg" || img_file="$DT/${2}.jpg"
-        /usr/bin/convert "${img_file}" -interlace Plane -thumbnail 405x275^ \
-        -gravity center -extent 400x270 -quality 90% "${DM_tls}/images/${1,,}-0.jpg"
-        rm -f "${img_file}"; fi
-            
-        rm -f "$DT/img${1}.lk"
-    fi
+            if [ -e "$DT/${1}.jpg" -o -e "$DT/${2}.jpg" ]; then
+            [ -e "$DT/${1}.jpg" ] && img_file="$DT/${1}.jpg" || img_file="$DT/${2}.jpg"
+            /usr/bin/convert "${img_file}" -interlace Plane -thumbnail 405x275^ \
+            -gravity center -extent 400x270 -quality 90% "${DM_tls}/images/${1,,}-0.jpg"
+            rm -f "${img_file}"; fi
+            rm -f "$DT/img${1}.lk"
+        fi
     fi
 }
 

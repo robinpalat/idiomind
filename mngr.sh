@@ -144,7 +144,7 @@ edit_item() {
     tpc_list="${tpc}!${tpcs}"
     [ -n "${tag}" ] && tags="$(egrep -v "${tag}" < "${DM_tl}/.5.cfg")" || tags="$(< "${DM_tl}/.5.cfg")"
     [ -n "${tags}" ] && tags_list="${tag}!"$(tr "\\n" '!' <<<"${tags}" |sed 's/!\+$//g')"" || tags_list=""
-    else tags_list=""; tpc_list=""; fi
+    else tags_list=""; fi
 
     cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"""
     cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"""
@@ -210,7 +210,6 @@ edit_item() {
                 if [ ${text_missing} != 0 ]; then
                     trgt="${item_id}"
                     index edit "${tpc}"
-                    yad --text="${edit_pos}"
                 else
                     index edit "${tpc}"
                 fi

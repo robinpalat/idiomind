@@ -15,6 +15,14 @@ lang=( 'English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
 'langt' 'langs' 'synth' 'txaud' 'intrf' )
 
+if [[ ! $(which yad) ]]; then
+zenity --info --text="$(gettext "Oops. sorry! To run idiomind we need to use a GUI output with yad.\nPlease install [yad], you can use:")
+\nadd-apt-repository ppa:robinpalat/idiomind
+apt-get update
+apt-get install yad"
+exit 1
+fi
+
 _info() {
     yad --form --title="$(gettext "Notice")" \
     --text="$(gettext "Some things are still not working for these languages:") Chinese, Japanese, Russian." \

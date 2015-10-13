@@ -310,7 +310,7 @@ _definition() {
 
 _quick_help() {
     source /usr/share/idiomind/ifs/c.conf
-    _url='http://idiomind.com/doc/help.html'
+    _url='http://idiomind.sourceforge.net/doc/help.html'
     yad --html --title="$(gettext "Reference")" \
     --name=Idiomind --class=Idiomind \
     --uri="${_url}" \
@@ -442,11 +442,9 @@ set_image() {
     fi
     cleanups "$DT/temp.jpg"
     exit
-    
 } >/dev/null 2>&1
 
 edit_tag() {
-    
     cmd_del="'$DS/mngr.sh' 'delete_topic' "\"${2}\"""
     cmd_exp="'$DS/ifs/upld.sh' 'upld' "\"${2}\"""
     desc="$(< "${DC_tlt}/info")"
@@ -464,13 +462,12 @@ edit_tag() {
     desc_mod="$(cut -d "|" -f1 <<<"${dlg}")"
     if [ -n "$desc_mod" -a "$desc_mod" != "$desc" ]; then
     echo "${desc_mod}" > "${DC_tlt}/info"; fi
-
 }
 
 translate_to() {
     # usage: 
-    # idiomind --translate [language] / e.g. language: en.
-    # idiomind --translate restore / to go back to original translation
+    # idiomind translate [language] - e.g. language: en.
+    # idiomind translate restore - to go back to original translation
     source /usr/share/idiomind/ifs/c.conf
     source "$DS/ifs/mods/cmns.sh"
     [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "  -- error" && exit 1

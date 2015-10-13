@@ -198,7 +198,7 @@ function new_word() {
                 cp -f "$DT_r/audtm.mp3" "${DM_tls}/audio/${audio}.mp3"
             fi
         fi
-        word_p
+        word_p &
         img_word "${trgt}" "${srce}" &
         cleanups "${DT_r}"
     fi
@@ -454,7 +454,7 @@ function process() {
         
         ( sleep 1; notify-send -i idiomind \
         "$(gettext "Adding $number_of_items notes")" \
-        "$(gettext "This might take some time")" )
+        "$(gettext "Please wait while some data is downloaded")" )
         
         internet
         [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ] && c=c || c=w

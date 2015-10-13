@@ -2,10 +2,12 @@
 # -*- ENCODING: UTF-8 -*-
 
 function word_view() {
-    [ -n "$defn" ] && field_defn="--field=<small>$defn</small>:lbl"
-    [ -n "$note" ] && field_note="--field=<small><i>$note<i></small>\n:lbl"
-    [ -n "$exmp" ] && field_exmp="--field=<span font_desc='Verdana 11' color='#5C5C5C'>$exmp</span>:lbl"
-    local sentence="$tag<span font_desc='Sans Free 25'>${trgt}</span>\n\n<span font_desc='Sans Free 14'><i>$srce</i></span>\n\n"
+    [ -n "${tag}" ] && field_tag="--field=<small>$tag</small>:lbl"
+    [ -n "${defn}" ] && field_defn="--field=$defn:lbl"
+    [ -n "${note}" ] && field_note="--field=<i>$note</i>\n:lbl"
+    [ -n "${exmp}" ] && field_exmp="--field=<span font_desc='Verdana 11' color='#5C5C5C'>$exmp</span>:lbl"
+    [ -n "${link}" ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
+    local sentence="<span font_desc='Sans Free 25'>${trgt}</span>\n\n<span font_desc='Sans Free 14'><i>$srce</i></span>$link\n\n"
 
     yad --form --title=" " \
     --selectable-labels --quoted-output \
@@ -14,21 +16,23 @@ function word_view() {
     --scroll --skip-taskbar --text-align=center \
     --image-on-top --center --on-top \
     --width=630 --height=390 --borders=20 \
-    --field="":lbl "${field_exmp}" "${field_defn}" "${field_note}" \
+    --field="":lbl "${field_tag}" "${field_exmp}" "${field_defn}" "${field_note}" \
     --button="gtk-edit":4 \
     --button="!$DS/images/listen.png":"$cmd_listen" \
-    --button=gtk-go-down:2 \
-    --button=gtk-go-up:3
+    --button="$(gettext "Next")":2
     
 } >/dev/null 2>&1
 
 function sentence_view() {
     if [ "$(grep -o gramr=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')"  = TRUE ]; then
     trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
-    local word="$tag<span font_desc='Sans Free 15'>${trgt_l}</span>\n\n<span font_desc='Sans Free 11'><i>$srce</i></span>\n\n"
-    
-    echo "${lwrd}" | yad --list --title=" " \
-    --text="${word}" \
+    [ -n "${link}" ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
+    local sentence="<span font_desc='Sans Free 15'>${trgt_l}</span>\n\n<span font_desc='Sans Free 11'><i>$srce</i>$link</span>\n<span font_desc='Sans Free 6'>$tag</span>\n"
+    cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"" "\"${trgt}\"""
+    lwrds="$(tr '_' '\n' <<<"${wrds}")"
+
+    echo -e "${lwrds}" |yad --list --title=" " \
+    --text="${sentence}" \
     --selectable-labels --print-column=0 \
     --dclick-action="$DS/play.sh 'play_word'" \
     --window-icon="$DS/images/icon.png" \
@@ -38,9 +42,9 @@ function sentence_view() {
     --column="":TEXT \
     --column="":TEXT \
     --button="gtk-edit":4 \
+    --button="$(gettext "Words")":"$cmd_words" \
     --button="!$DS/images/listen.png":"$cmd_listen" \
-    --button=gtk-go-down:2 \
-    --button=gtk-go-up:3
+    --button="$(gettext "Next")":2
     
 } >/dev/null 2>&1
 

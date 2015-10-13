@@ -251,7 +251,7 @@ function upld() {
     elif [ $ret = 0 ]; then
         conditions_for_upload "${2}"
         notify-send -i info "$(gettext "Upload in progress")" \
-        "$(gettext "This can take some time, please wait")" -t 6000
+        "$(gettext "This can take some time please wait")" -t 6000
         "$DS/ifs/tls.sh" check_index "${tpc}" 1
         mkdir -p "$DT/upload/${tpc}/conf"
         DT_u="$DT/upload/"

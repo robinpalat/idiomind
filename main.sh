@@ -375,7 +375,7 @@ case "$1" in
     topic ;;
     first_run)
     "$DS/ifs/tls.sh" $@ ;;
-    --translate)
+    translate)
     "$DS/ifs/tls.sh" $@ ;;
     -v|--version)
     echo -n "$_version" ;;
@@ -383,11 +383,11 @@ case "$1" in
     new_session; idiomind & ;;
     autostart)
     sleep 50; [ ! -e "$DT/ps_lk" ] && new_session ;;
-    add)
+    --add)
    "$DS/add.sh" new_items "$dir" 2 "${2}" ;;
-    -a|--add)
+    add)
     "$DS/add.sh" new_item "${@}" ;;
-    --feeds)
+    mfeeds)
     "$DS/mngr.sh" edit_feeds "${tpc}" ;;
     play)
     "$DS/bcle.sh" ;;
