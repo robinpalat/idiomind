@@ -365,7 +365,7 @@ panel() {
     --field="gtk-new":btn "$DS/add.sh 'new_items'" \
     --field="gtk-home":btn "idiomind 'topic'" \
     --field="gtk-index":btn "$DS/chng.sh" \
-    --field="$(gettext "Play")!gtk-media-play":btn "$DS/play.sh play_list"
+    --field="Options!gtk-preferences":btn "$DS/cnfg.sh"
     [ $? != 0 ] && "$DS/stop.sh" 1 &
     exit
 }

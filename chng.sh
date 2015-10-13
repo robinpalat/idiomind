@@ -140,7 +140,6 @@ elif [[ ${1} != 0 ]]; then
     --width=620 --height=580 --borders=8 \
     --column=img:IMG \
     --column=File:TEXT \
-    --button="$(gettext "Options")!gtk-preferences":"$DS/cnfg.sh" \
     --button="$(gettext "New Words")":"$DS/ifs/mods/topic/Dictionary.sh" \
     --button=gtk-new:3 \
     --button="$(gettext "Apply")":2 \
