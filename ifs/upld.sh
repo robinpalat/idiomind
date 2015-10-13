@@ -229,7 +229,7 @@ function upld() {
         fi
     fi
 
-    # get data output
+    # get data
     for val in ${CATEGORIES[@]}; do
         [ "$Ctgry" = "$(gettext "${val^}")" ] && Ctgry=$val && break
     done
@@ -267,7 +267,7 @@ function upld() {
         c_sntncs=${inx4}
         sum=`md5sum "${DC_tlt}/0.cfg" | cut -d' ' -f1`
 
-        # copiando archivos
+        # copying files
         cd "${DM_tlt}"/
         cp -r ./* "$DT_u/${tpc}/"
         mkdir "$DT_u/${tpc}/share"
@@ -302,13 +302,13 @@ function upld() {
         cp "${DC_tlt}/6.cfg" "$DT_u/${tpc}/conf/6.cfg"
         cp "${DC_tlt}/info" "$DT_u/${tpc}/conf/info"
 
-        # create 'tar'
+        # create tar
         cd "$DT/upload"/
         find "$DT_u"/ -type f -exec chmod 644 {} \;
         tar czpvf - ./"${tpc}" |split -d -b 2500k - ./"${pre}${sum}"
         rm -fr ./"${tpc}"; rename 's/(.*)/$1.tar.gz/' *
         
-        # create 'id'
+        # create id
         f_size=$(du -h . |cut -f1)
         eval c="$(< "$DS/default/topicid")"
         echo -n "${c}" > "${DC_tlt}/id.cfg"
@@ -317,7 +317,6 @@ function upld() {
         echo -n "&idiomind-`idiomind -v`" >> "$DT_u/$tpcid.${tpc}.$lgt"
         echo -en "\nidiomind-`idiomind -v`" >> "${DC_tlt}/id.cfg"
 
-        # SUBIENDO
         url="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
         | grep -o 'UPLOADS="[^"]*' | grep -o '[^"]*$')"
         direc="$DT_u"
@@ -333,11 +332,11 @@ usrid = os.environ['usrid_m']
 passw = os.environ['passw_m']
 tpc = os.environ['tpc']
 body = os.environ['body']
-#try:
-    #server = xmlrpclib.Server('http://server.com/xmlrpc.php')
-    #nid = server.metaWeblog.newPost('blog', usrid, passw, {'title': tpc, 'description': body}, True)
-#except:
-    #sys.exit(3)
+try:
+    server = xmlrpclib.Server('http://idiomind.xyz/xmlrpc.php')
+    nid = server.metaWeblog.newPost('blog', usrid, passw, {'title': tpc, 'description': body}, True)
+except:
+    sys.exit(3)
 url = os.environ['url']
 direc = os.environ['direc']
 log = os.environ['log']
