@@ -18,7 +18,6 @@
 #
 #  2015/02/27
 
-_version='0.1.10'
 wicon="/usr/share/idiomind/images/icon.png"
 
 if [ ! -d "$HOME/.idiomind" ]; then

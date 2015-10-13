@@ -324,7 +324,7 @@ check_updates() {
     source "$DS/ifs/mods/cmns.sh"
     internet
     ua="Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0"
-    nver=`wget --user-agent "$ua" -qO - http://idiomind.sourceforge.net/doc/version.html |grep \<body\> | sed 's/<[^>]*>//g'`
+    nver=`wget --user-agent "$ua" -qO - http://idiomind.sourceforge.net/doc/version |grep \<body\> | sed 's/<[^>]*>//g'`
     cver=`idiomind -v`
     pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
     date "+%d" > "$DC_s/9.cfg"
@@ -355,7 +355,7 @@ a_check_updates() {
         grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
         echo "$d2" > "$DC_s/9.cfg"
         ua="Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0"
-        nver=`wget --user-agent "$ua" -qO - http://idiomind.sourceforge.net/doc/version.html |grep \<body\> | sed 's/<[^>]*>//g'`
+        nver=`wget --user-agent "$ua" -qO - http://idiomind.sourceforge.net/doc/version |grep \<body\> | sed 's/<[^>]*>//g'`
         cver=`idiomind -v`
         pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
         if [ ${#nver} -lt 9 ] && [ ${#cver} -lt 9 ] \
@@ -599,7 +599,7 @@ colorize() {
     log2 log3 img0 img1 img2 img3
     cd / 
 
-python <<PY
+    python <<PY
 import os
 chk = os.environ['chk']
 cfg1 = os.environ['cfg1']
@@ -637,16 +637,17 @@ PY
 }
 
 about() {
-c="$(gettext "A simple to use vocabulary learning tool")"
-website="$(gettext "Web Site")"
-export c website
-python << ABOUT
+    source /usr/share/idiomind/ifs/c.conf
+    c="$(gettext "A simple to use vocabulary learning tool")"
+    website="$(gettext "Web Site")"
+    export c website _version
+    python << ABOUT
 import gtk
 import os
 app_logo = os.path.join('/usr/share/idiomind/images/idiomind.png')
 app_icon = os.path.join('/usr/share/idiomind/images/icon.png')
 app_name = 'Idiomind'
-app_version = 'v0.1-beta'
+app_version = os.environ['_version']
 app_comments = os.environ['c']
 web = os.environ['website']
 app_copyright = 'Copyright (c) 2015 Robin Palatnik'
