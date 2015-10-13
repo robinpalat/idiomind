@@ -183,7 +183,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             echo "${tname}" >> "$DM_tl/.3.cfg"
             source /usr/share/idiomind/ifs/c.conf
             "$DS/mngr.sh" mkmn
-            "$DS/default/tpc.sh" "${tname}" &
+            "$DS/default/tpc.sh" "${tname}" 1 &
         fi
     exit 1
 fi

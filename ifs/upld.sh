@@ -87,6 +87,17 @@ function dwld() {
 }
 
 function upld() {
+    if [ -d "$DT/upload" -o -d "$DT/download" ]; then
+        [ -e "$DT/download" ] && t="$(gettext "Downloading")..." || t="$(gettext "Uploading")..."
+        msg_2 "$(gettext "Wait until it finishes a previous process")\n" dialog-warning OK gtk-stop "$t"
+        ret="$?"
+        if [ $ret -eq 1 ]; then
+            cleanups "$DT/upload" "$DT/download"
+            "$DS/stop.sh" 5
+        fi
+        exit 1
+    fi
+    
     conditions_for_upload() {
         if [ -z "${usrid}" -o -z "${passw}" ]; then
             msg "$(gettext "Sorry, Authentication failed.")\n" info "$(gettext "Information")" & exit 1
@@ -101,16 +112,7 @@ function upld() {
         if [ "${tpc}" != "${1}" ]; then
             msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit 1
         fi
-        if [ -d "$DT/upload" -o -d "$DT/download" ]; then
-            [ -e "$DT/download" ] && t="$(gettext "Downloading")..." || t="$(gettext "Uploading")..."
-            msg_2 "$(gettext "Wait until it finishes a previous process")\n" dialog-warning OK gtk-stop "$t"
-            ret="$?"
-            if [ $ret -eq 1 ]; then
-                cleanups "$DT/upload" "$DT/download"
-                "$DS/stop.sh" 5
-            fi
-            exit 1
-        fi
+
         internet
     }
 

@@ -164,7 +164,7 @@ function update_config_dir() {
     while read -r dict; do
         if [ ! -e "$enables/$(basename "${dict}")" \
             -a ! -e "$disables/$(basename "${dict}")" ]; then
-            echo "--added dict: $(basename "${dict}")"
+            echo "-- added dict: $(basename "${dict}")"
             > "$disables/$(basename "${dict}")"; fi
     done < <(ls "$DS_a/Dics/dicts/")
 }

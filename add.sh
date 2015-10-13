@@ -57,8 +57,10 @@ new_topic() {
 function new_item() {
     export tpe; \
     DM_tlt="$DM_tl/${tpe}"; \
-    DC_tlt="$DM_tl/${tpe}/.conf"; \
-    DT_r=$(mktemp -d "$DT/XXXXXX")
+    DC_tlt="$DM_tl/${tpe}/.conf"
+    if [ ! -d "$DT_r" ]; then
+        export DT_r=$(mktemp -d "$DT/XXXXXX")
+    fi
     check_s "${tpe}"
     if [ -z "$trgt" ]; then trgt="${3}"; fi
     cd "$DT_r"
@@ -198,7 +200,7 @@ function new_word() {
                 cp -f "$DT_r/audtm.mp3" "${DM_tls}/audio/${audio}.mp3"
             fi
         fi
-        word_p &
+        word_p
         img_word "${trgt}" "${srce}" &
         cleanups "${DT_r}"
     fi

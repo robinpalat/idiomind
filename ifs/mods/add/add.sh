@@ -498,7 +498,7 @@ function dlg_form_0() {
     --separator='|' \
     --window-icon="$DS/images/icon.png" \
     --skip-taskbar --center --on-top \
-    --width=450 --height=100 --borders=2 \
+    --width=450 --height=100 --borders=0 \
     --field="$(gettext "Name")" "$1" \
     --field="$(gettext "Type")":CB "$(gettext "Normal")!$(gettext "Tag")" \
     --button=gtk-ok:0

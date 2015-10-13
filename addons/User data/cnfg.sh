@@ -87,7 +87,8 @@ if [[ $ret -eq 0 ]]; then
                 exit 1
             fi
             if [ ! -d "$DM/backup" ]; then
-                mkdir "$DM/backup"; fi
+                mkdir "$DM/backup"
+            fi
             sleep 1; notify-send -i idiomind \
             "$(gettext "Copying")" \
             "$(gettext "It Might take some time")..."
@@ -111,13 +112,19 @@ if [[ $ret -eq 0 ]]; then
                     mkdir -p "$DM_t/$lng/.share/Dictionary"
                     mkdir -p "$DM_t/$lng/.share/images"
                     mkdir -p "$DM_t/$lng/.share/audio"; fi
-                if [ "$(ls -A "./$lng/.share")" ]; then
-                    mv -f "./$lng/.share"/* "$DM_t/$lng/.share/audio"/
+                if [ "$(ls -A "./$lng/.share/audio")" ]; then
+                    mv -f "./$lng/.share/audio"/* "$DM_t/$lng/.share/audio"/
                 fi
-                echo "$lng" >> ./.languages
+                if [ "$(ls -A "./$lng/.share/images")" ]; then
+                    mv -f "./$lng/.share/images"/* "$DM_t/$lng/.share/images"/
+                fi
+                if [ "$(ls -A "./$lng/.share/Dictionary")" ]; then
+                    mv -f "./$lng/.share/Dictionary"/* "$DM_t/$lng/.share/Dictionary"/
+                fi
+                echo "$lng" >> ./languages
             done <<<"${list}"
 
-            while read language; do
+            while read -r language; do
                 if [ -d "$DT/import/topics/$language/" ] &&  \
                 [ "$(ls -A "$DT/import/topics/$language/")" ] ; then
                     cd "$DT/import/topics/$language/"
@@ -145,12 +152,11 @@ if [[ $ret -eq 0 ]]; then
                 
                 if [ -d "$DT/import/topics/$language/Podcasts" ]; then
                     cp -r "$DT/import/topics/$language/Podcasts" "$DM_t/$language/Podcasts"; fi
-            done < "$DT/import/topics/.languages"
+            done < "$DT/import/topics/languages"
 
             "$DS/mngr.sh" mkmn; rm -fr "$DT/import"
             msg "$(gettext "Data imported successfully.")\n" info
         fi
     fi
 fi
-
 exit
