@@ -96,7 +96,7 @@ play_list() {
         && title="$(gettext "Play") (${tpc})"
     else
         tpp="$(sed -n 1p "$DT/.p_")"
-        title="$(gettext "Playing:") ${tpp}"
+        title="${tpp}"
         btn2="--button=gtk-media-stop:2"
     fi
     set="$(echo "${iteml[${rword}]}")"
@@ -133,7 +133,7 @@ play_list() {
     --width=400 --height=300 --borders=0 \
     "$btn2" --button="$btn1" --button="$(gettext "Close")":1
     ret=$?
-        if [ $ret -eq 1 ]; then exit 0; fi
+        if [ $ret -eq 1 ]; then rm -f "$DT"/*.p; exit 0; fi
         tab1=$(< $tab1); tab2=$(< $tab2); rm -f "$DT"/*.p
         f=1; n=0; count=0
         for item in "${sets[@]:0:4}"; do

@@ -87,7 +87,6 @@ function dwld() {
 }
 
 function upld() {
-    
     conditions_for_upload() {
         if [ -z "${usrid}" -o -z "${passw}" ]; then
             msg "$(gettext "Sorry, Authentication failed.")\n" info "$(gettext "Information")" & exit 1
