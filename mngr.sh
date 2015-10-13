@@ -143,7 +143,7 @@ edit_item() {
     tpcs="$(egrep -v "${tpc}" "${DM_tl}/.2.cfg" |tr "\\n" '!' |sed 's/!\+$//g')"
     tpc_list="${tpc}!${tpcs}"
     [ -n "${tag}" ] && tags="$(egrep -v "${tag}" < "${DM_tl}/.5.cfg")" || tags="$(< "${DM_tl}/.5.cfg")"
-    [ -n "${tags}" ] && tags_list="${tag}!"$(tr "\\n" '!' <<<"${tags}" |sed 's/!\+$//g')"" || tags_list=""
+    [ -n "${tags}" ] && tags_list="${tag}!"$(tr '\n' '!' <<<"${tags}" |sed 's/!\+$//g')"\!" || tags_list=""
     else tags_list=""; fi
 
     cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"""

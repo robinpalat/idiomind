@@ -336,7 +336,7 @@ panel() {
         fi
     fi
     if [ "$(< "$DT/tpe")" != "${tpc}" ]; then
-        if ! echo -e "$(ls "$DS/addons/")" |grep -Fxo "${tpe}" >/dev/null 2>&1; then
+        if ! echo -e "$(ls "$DS/addons/")" |grep -Fxo "${tpc}" >/dev/null 2>&1; then
             [ ! -L "$DM_tl/${tpe}" ] && echo "${tpc}" > "$DT/tpe"
         fi
     fi

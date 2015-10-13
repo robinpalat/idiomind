@@ -38,7 +38,7 @@ elif [ ${type} = 2 ]; then
     [ "$mark" = TRUE ] && trgt="<b>$trgt</b>" && grmr="<b>$grmr</b>"
     sentence_view
 else
-    trgt="${_item} [Text missing]"
+    trgt="${_item} <small>[Text missing]</small>"
     grmr="${trgt}"
     if [[ `wc -w <<< "${_item}"` -lt 2 ]]; then
         cmd_listen="$DS/play.sh play_word "\"${trgt}\"" ${id}"
