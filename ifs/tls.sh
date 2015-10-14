@@ -316,7 +316,7 @@ _quick_help() {
     --uri="${_url}" \
     --window-icon="$DS/images/icon.png" \
     --fixed --on-top --mouse \
-    --width=600 --height=520 --borders=5 \
+    --width=500 --height=400 --borders=5 \
     --button="$(gettext "OK")":1 &
 } >/dev/null 2>&1
 

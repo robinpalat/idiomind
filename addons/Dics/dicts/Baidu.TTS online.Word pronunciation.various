@@ -13,4 +13,3 @@ fi
 export LINK="http://tts.baidu.com/text2audio?lan=$t&ie=UTF-8&text=${word}"
 export ex='mp3'
 fi
-
