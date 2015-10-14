@@ -1,0 +1,48 @@
+#!/bin/bash
+
+if [[ "$1" = dlgcnfg ]]; then
+voices=""
+if [ ! -f "$DC_a/ispeech.cfg" ] || [[ -z "$(< "$DC_a/ispeech.cfg")" ]]; then
+    echo -e "voice=\"\"\nspeed=\"\"\nkey=\"\"" > "$DC_a/ispeech.cfg"; fi
+    voice=$(grep -o voice=\"[^\"]* "$DC_a/ispeech.cfg" |grep -o '[^"]*$')
+    speed=$(grep -o speed=\"[^\"]* "$DC_a/ispeech.cfg" |grep -o '[^"]*$')
+    key=$(grep -o key=\"[^\"]* "$DC_a/ispeech.cfg" |grep -o '[^"]*$')
+    c=$(yad --form --title="ispeech" \
+    --name=Idiomind --class=Idiomind \
+    --window-icon="$DS/images/icon.png" --center \
+    --on-top --skip-taskbar --expand-column=3 \
+    --width=400 --height=200 --borders=10 \
+    --always-print-result --editable --print-all --align=right \
+    --field=Voice:CB "$voice!$voices" \
+    --field=Speed:CB "$speed!Slow!Normal!Fast" \
+    --field="Key" "$key" \
+    --button="$(gettext "Cancel")":1 \
+    --button="$(gettext "OK")":0)
+    ret=$?
+    if [ $ret = 0 ]; then
+        val1="$(cut -d "|" -f1 <<<"$c")"
+        val2="$(cut -d "|" -f2 <<<"$c")"
+        val3="$(cut -d "|" -f3 <<<"$c")"
+        sed -i "s/voice=.*/voice=\"$val1\"/g" "$DC_a/ispeech.cfg"
+        sed -i "s/speed=.*/speed=\"$val2\"/g" "$DC_a/ispeech.cfg"
+        sed -i "s/key=.*/key=\"$val3\"/g" "$DC_a/ispeech.cfg"
+    fi
+else
+    k=$(grep -o key=\"[^\"]* "$DC_a/ispeech.cfg" |grep -o '[^"]*$')
+    speed=$(grep -o speed=\"[^\"]* "$DC_a/ispeech.cfg" |grep -o '[^"]*$')
+    if [ "$speed" = Slow ]; then s=-2
+    elif [ "$speed" = Normal ]; then s=0
+    elif [ "$speed" = Fast ]; then s=2
+    fi
+    if [ "$lgt" = en ]; then v=ukenglishmale
+    elif [ "$lgt" = es ]; then v=eurspanishmale
+    elif [ "$lgt" = pt ]; then v=brportuguesefemale
+    elif [ "$lgt" = ru ]; then v=rurussianfemale
+    elif [ "$lgt" = it ]; then v=euritalianmale
+    elif [ "$lgt" = de ]; then v=eurgermanfemale
+    elif [ "$lgt" = fr ]; then v=eurfrenchmale
+    elif [ "$lgt" = zh-cn ]; then v=chchinesefemale
+    elif [ "$lgt" = ja ]; then v=jpjapanesefemale
+    fi
+    export RMFILE="https://api.ispeech.org/api/rest?apikey=$k&action=convert&voice=$v&speed=$s&pitch=0&text=${word}"
+fi

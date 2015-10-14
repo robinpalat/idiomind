@@ -3,7 +3,7 @@
 
 source /usr/share/idiomind/ifs/c.conf
 [ ! -d "$DC" ] && "$DS/ifs/1u.sh" && exit
-info2="$(gettext "Switch Language")"
+info2="$(gettext "Switch Language.")"
 cd "$DS/addons"
 [[ -n "$(< "$DC_s/1.cfg")" ]] && cfg=1 || > "$DC_s/1.cfg"
 cnf1=$(mktemp "$DT/cnf1.XXXX")
@@ -47,11 +47,11 @@ set_lang() {
     last="$(cd "$DM_tl"/; ls -tNd */ |cut -f1 -d'/' |head -n1)"
     if [ -d "$DM_tl/$last" ]; then
         mode="$(< "$DM_tl/${last}/.conf/8.cfg")"
-        if ((mode>=0 && mode<=20)); then
+        if ((mode>=1 && mode<=20)); then
             "$DS/default/tpc.sh" "${last}" ${mode} 1 &
         fi
     else
-        rm > "$DC_s/4.cfg"
+        > "$DC_s/4.cfg"
     fi
     source "$DS/ifs/mods/cmns.sh"
     list_inadd > "$DM_tl/.2.cfg"

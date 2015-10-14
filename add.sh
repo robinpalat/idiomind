@@ -737,7 +737,7 @@ new_items() {
         elif [[ ${#trgt} = 1 ]]; then
             process ${trgt:0:2}
 
-        elif [[ ${#trgt} -gt 180 ]]; then
+        elif [[ ${#trgt} -gt 180 ]]; then #TODO
             process
             
         else

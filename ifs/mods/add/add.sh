@@ -361,29 +361,41 @@ function tts() {
 export -f translate tts
 
 function tts_word() {
-    [ -d "${2}" ] && cd "${2}"/ || exit 1
     if ! ls "$DC_d"/*."TTS online.Word pronunciation".* 1> /dev/null 2>&1; then
-    "$DS_a/Dics/cnfg.sh" 0; fi
-    
-    for convert in "$DC_d"/*."TTS online.Word pronunciation.$lgt"; do
-        convert="$DS_a/Dics/dicts/$(basename "${convert}")"
-        [ -e "${convert}" ] && "${convert}" "${1}"
-        
-        if [ -e "${2}/${1}.mp3" ]; then
-        if [[ `du "${2}/${1}.mp3" |cut -f1` -gt 1 ]]; then
-        break; else rm -f "${2}/${1}.mp3"; fi; fi
-    done
-    
+        "$DS_a/Dics/cnfg.sh" 0
+    fi
+    word="${1,,}"
+    audio_file="${2}/${word}.mp3"
+    if ls "$DC_d"/*."TTS online.Word pronunciation".* 1> /dev/null 2>&1; then
+        for dict in $DC_d/*."TTS online.Word pronunciation.$lgt"; do
+            RMFILE=""; source "$DS_a/Dics/dicts/$(basename "${dict}")"
+            if [ "${RMFILE}" -a ! -e "$audio_file" ]; then
+                wget -T 51 -q -U Mozilla -O "$audio_file" "${RMFILE}"
+            fi
+            if [ -e "$audio_file" ]; then
+                if [[ `du "$audio_file" |cut -f1` -gt 1 ]]; then
+                    break
+                else 
+                    rm "$audio_file"
+                fi
+            fi
+        done
+    fi
     if ls "$DC_d"/*."TTS online.Word pronunciation.various" 1> /dev/null 2>&1; then
         if [ ! -e "${2}/${1}.mp3" ]; then
-        for convert in "$DC_d"/*."TTS online.Word pronunciation.various"; do
-            convert="$DS_a/Dics/dicts/$(basename "${convert}")"
-            [ -e "${convert}" ] && "${convert}" "${1}" ${lgt}
-            
-            if [ -e "${2}/${1}.mp3" ]; then
-            if [[ `du "${2}/${1}.mp3" |cut -f1` -gt 1 ]]; then
-            break; else rm -f "${2}/${1}.mp3"; fi; fi
-        done
+            for dict in $DC_d/*."TTS online.Word pronunciation.various"; do
+                RMFILE=""; source "$DS_a/Dics/dicts/$(basename "${dict}")"
+                if [ "${RMFILE}" -a ! -e "$audio_file" ]; then
+                    wget -T 51 -q -U Mozilla -O "$audio_file" "${RMFILE}"
+                fi
+                if [ -e "$audio_file" ]; then
+                    if [[ `du "$audio_file" |cut -f1` -gt 1 ]]; then
+                        break
+                    else 
+                        rm "$audio_file"
+                    fi
+                fi
+            done
         fi
     fi
 }
@@ -437,31 +449,41 @@ function voice() {
 
 function fetch_audio() {
     if ! ls "$DC_d"/*."TTS online.Word pronunciation".* 1> /dev/null 2>&1; then
-    "$DS_a/Dics/cnfg.sh" 0; fi
-    
+    "$DS_a/Dics/cnfg.sh" 0
+    fi
     if [ $lgt = ja -o $lgt = "zh-cn" -o $lgt = ru ]; then
-    words_list="${2}"; else words_list="${1}"; fi
-    
-    while read Word; do
-        [ -d "$DM_tls/audio" ] && cd "$DM_tls/audio"/ || exit 1
+        words_list="${2}"; else words_list="${1}"
+    fi
+    while read -r Word; do
         word="${Word,,}"
-        
-        if [ ! -e "$DM_tls/audio/${word}.mp3" ]; then
+        audio_file="$DM_tls/audio/${word}.mp3"
+        if [ ! -e "$audio_file" ]; then
             for dict in "$DC_d"/*."TTS online.Word pronunciation.$lgt"; do
-                dict="$DS_a/Dics/dicts/$(basename "${dict}")"
-                if [ ! -e ./"${word}.mp3" ]; then
-                [ -e "${dict}" ] && "${dict}" "${word}"; fi
-            done
-
-            if ls "$DC_d"/*."TTS online.Word pronunciation.various" 1> /dev/null 2>&1; then
-                if [ ! -e ./"${word}.mp3" ]; then
-                for dict in "$DC_d"/*."TTS online.Word pronunciation.various"; do
-                    dict="$DS_a/Dics/dicts/$(basename "${dict}")"
-                    if [ ! -e ./"${word}.mp3" ]; then
-                    [ -e "${dict}" ] && "${dict}" "${word}" ${lgt}; fi
-                done
+                RMFILE=""; source "$DS_a/Dics/dicts/$(basename "${dict}")"
+                if [ "${RMFILE}" -a ! -e "$audio_file" ]; then
+                    wget -T 51 -q -U Mozilla -O "$audio_file" "${RMFILE}"
                 fi
-            fi
+                if [ -e "$audio_file" ]; then
+                    if [[ `du "$audio_file" |cut -f1` -gt 1 ]]; then
+                        break
+                    else 
+                        rm "$audio_file"
+                    fi
+                fi
+            done
+            for dict in "$DC_d"/*."TTS online.Word pronunciation.various"; do
+                RMFILE=""; source "$DS_a/Dics/dicts/$(basename "${dict}")"
+                if [ "${RMFILE}" -a ! -e "$audio_file" ]; then
+                    wget -T 51 -q -U Mozilla -O "$audio_file" "${RMFILE}"
+                fi
+                if [ -e "$audio_file" ]; then
+                    if [[ `du "$audio_file" |cut -f1` -gt 1 ]]; then
+                        break
+                    else 
+                        rm "$audio_file"
+                    fi
+                fi
+            done
         fi
     done < "${words_list}"
 }
