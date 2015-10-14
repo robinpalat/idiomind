@@ -182,7 +182,7 @@ function new_word() {
             else
                 name_img="${DM_tls}/images/${trgt,,}-0.jpg"
             fi
-        set_image_2 "$DT_r/img.jpg" "$name_img"
+            set_image_2 "$DT_r/img.jpg" "$name_img"
         fi
 
         notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000
@@ -262,8 +262,11 @@ function list_words_sentence() {
     DT_r=$(mktemp -d "$DT/XXXXXX")
     info="-$((200-$(wc -l < "${DC_tlt}/0.cfg")))"
     wrds="$(list_words_2 "${wrds}")"
-    slt="$(dlg_checklist_1 "${wrds}" "${info}")"
-        
+    if [ -n "${wrds}" ]; then
+        slt="$(dlg_checklist_1 "${wrds}" "${info}")"
+    else
+        return 1
+    fi
         if [ $? -eq 0 ]; then
             while read -r chkst; do
                 sed 's/TRUE//g' <<<"${chkst}"  >> "$DT_r/slts"
