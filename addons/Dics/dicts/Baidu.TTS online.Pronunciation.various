@@ -4,20 +4,12 @@ if [[ "$1" = dlgcnfg ]]; then
 source "$DS/ifs/mods/cmns.sh"
 msg "$(gettext "Does not need configuration")\n" info "$4"
 
-
 else
-DT_r="$3"; f=1
-if [[ `pwd` != "${3}" ]]; then exit; fi
-
-if [ "$2" = zh-cn ]; then t=zh
-elif [ "$2" = en ]; then t=en
-elif [ "$2" = ja ]; then t=jp
-elif [ "$2" = pt ]; then t=pt
-else exit; fi
-
-wget -T 51 -q -U Mozilla -O "$DT_r/tmp1.mp3" \
-"http://tts.baidu.com/text2audio?lan=$t&ie=UTF-8&text=${1}" || rm -f "$DT_r/tmp1.mp3"
-[ -e "$DT_r/tmp1.mp3" ] && mv -f "$DT_r/tmp1.mp3" "${4}"
-
-exit
+if [ "$lgt" = zh-cn ]; then t=zh
+elif [ "$lgt" = en ]; then t=en
+elif [ "$lgt" = ja ]; then t=jp
+elif [ "$lgt" = pt ]; then t=pt
+else continue; fi
+local LINK="http://tts.baidu.com/text2audio?lan=$t&ie=UTF-8&text=${word}"
+local ex='mp3'
 fi

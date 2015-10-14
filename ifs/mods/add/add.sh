@@ -365,12 +365,16 @@ function tts_word() {
         "$DS_a/Dics/cnfg.sh" 0
     fi
     word="${1,,}"
-    audio_file="${2}/${word}.mp3"
+    audio_file="${2}/$word.mp3"
+    audio_dwld="${2}/$word"
     if ls "$DC_d"/*."TTS online.Word pronunciation".* 1> /dev/null 2>&1; then
         for dict in $DC_d/*."TTS online.Word pronunciation.$lgt"; do
-            RMFILE=""; source "$DS_a/Dics/dicts/$(basename "${dict}")"
-            if [ "${RMFILE}" -a ! -e "$audio_file" ]; then
-                wget -T 51 -q -U Mozilla -O "$audio_file" "${RMFILE}"
+            LINK=""; source "$DS_a/Dics/dicts/$(basename "${dict}")"
+            if [ "${LINK}" -a ! -e "$audio_file" ]; then
+                wget -T 51 -q -U Mozilla -O "$audio_dwld.$ex" "${LINK}"
+                if [[ ${ex} != 'mp3' ]]; then
+                    sox "$audio_dwld.$ex" "$audio_dwld.mp3"; rm "$audio_dwld.$ex"
+                fi
             fi
             if [ -e "$audio_file" ]; then
                 if [[ `du "$audio_file" |cut -f1` -gt 1 ]]; then
@@ -384,9 +388,12 @@ function tts_word() {
     if ls "$DC_d"/*."TTS online.Word pronunciation.various" 1> /dev/null 2>&1; then
         if [ ! -e "${2}/${1}.mp3" ]; then
             for dict in $DC_d/*."TTS online.Word pronunciation.various"; do
-                RMFILE=""; source "$DS_a/Dics/dicts/$(basename "${dict}")"
-                if [ "${RMFILE}" -a ! -e "$audio_file" ]; then
-                    wget -T 51 -q -U Mozilla -O "$audio_file" "${RMFILE}"
+                LINK=""; source "$DS_a/Dics/dicts/$(basename "${dict}")"
+                if [ "${LINK}" -a ! -e "$audio_file" ]; then
+                    wget -T 51 -q -U Mozilla -O "$audio_dwld.$ex" "${LINK}"
+                    if [[ ${ex} != 'mp3' ]]; then
+                        sox "$audio_dwld.$ex" "$audio_dwld.mp3"; rm "$audio_dwld.$ex"
+                    fi
                 fi
                 if [ -e "$audio_file" ]; then
                     if [[ `du "$audio_file" |cut -f1` -gt 1 ]]; then
@@ -456,12 +463,16 @@ function fetch_audio() {
     fi
     while read -r Word; do
         word="${Word,,}"
-        audio_file="$DM_tls/audio/${word}.mp3"
+        audio_file="$DM_tls/audio/$word.mp3"
+        audio_dwld="${2}/$word"
         if [ ! -e "$audio_file" ]; then
             for dict in "$DC_d"/*."TTS online.Word pronunciation.$lgt"; do
-                RMFILE=""; source "$DS_a/Dics/dicts/$(basename "${dict}")"
-                if [ "${RMFILE}" -a ! -e "$audio_file" ]; then
-                    wget -T 51 -q -U Mozilla -O "$audio_file" "${RMFILE}"
+                LINK=""; source "$DS_a/Dics/dicts/$(basename "${dict}")"
+                if [ "${LINK}" -a ! -e "$audio_file" ]; then
+                    wget -T 51 -q -U Mozilla -O "$audio_dwld.$ex" "${LINK}"
+                    if [[ ${ex} != 'mp3' ]]; then
+                        sox "$audio_dwld.$ex" "$audio_dwld.mp3"; rm "$audio_dwld.$ex"
+                    fi
                 fi
                 if [ -e "$audio_file" ]; then
                     if [[ `du "$audio_file" |cut -f1` -gt 1 ]]; then
@@ -472,9 +483,12 @@ function fetch_audio() {
                 fi
             done
             for dict in "$DC_d"/*."TTS online.Word pronunciation.various"; do
-                RMFILE=""; source "$DS_a/Dics/dicts/$(basename "${dict}")"
-                if [ "${RMFILE}" -a ! -e "$audio_file" ]; then
-                    wget -T 51 -q -U Mozilla -O "$audio_file" "${RMFILE}"
+                LINK=""; source "$DS_a/Dics/dicts/$(basename "${dict}")"
+                if [ "${LINK}" -a ! -e "$audio_file" ]; then
+                    wget -T 51 -q -U Mozilla -O "$audio_dwld.$ex" "${LINK}"
+                    if [[ ${ex} != 'mp3' ]]; then
+                        sox "$audio_dwld.$ex" "$audio_dwld.mp3"; rm "$audio_dwld.$ex"
+                    fi
                 fi
                 if [ -e "$audio_file" ]; then
                     if [[ `du "$audio_file" |cut -f1` -gt 1 ]]; then

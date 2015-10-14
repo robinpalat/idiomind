@@ -2,12 +2,11 @@
 
 # Text-to-speech (TTS) API Documentation
 #http://www.voicerss.org/api/documentation.aspx
-label='Text-to-speech (TTS) API Documentation
-http://www.voicerss.org/api/documentation.aspx'
-DC_a="$HOME/.config/idiomind/addons"
-
 
 if [[ "$1" = dlgcnfg ]]; then
+    label='Text-to-speech (TTS) API Documentation
+    http://www.voicerss.org/api/documentation.aspx'
+    DC_a="$HOME/.config/idiomind/addons"
     if [ ! -f "$DC_a/voicerss.cfg" ] || [[ -z "$(< "$DC_a/voicerss.cfg")" ]]; then
     echo -e "voice=\"\"\nspeed=\"\"\nkey=\"\"" > "$DC_a/voicerss.cfg"; fi
     voice=$(grep -o voice=\"[^\"]* "$DC_a/voicerss.cfg" |grep -o '[^"]*$')
@@ -33,30 +32,26 @@ if [[ "$1" = dlgcnfg ]]; then
         sed -i "s/key=.*/key=\"$(cut -d "|" -f3 <<<"$c")\"/g" "$DC_a/voicerss.cfg"
     fi
 else
-    DT_r="$3"; cd "$DT_r"
-    if [[ `pwd` != "${3}" ]]; then exit; fi
     k=$(grep -o key=\"[^\"]* "$DC_a/voicerss.cfg" |grep -o '[^"]*$')
     speed=$(grep -o speed=\"[^\"]* "$DC_a/voicerss.cfg" |grep -o '[^"]*$')
-    if [ "$speed" = Slow ]; then s='-2'
-    elif [ "$speed" = Normal ]; then s='0'
-    elif [ "$speed" = Fast ]; then s='2'
-    else exit; fi
+    if [ "$speed" = Slow ]; then s=-2
+    elif [ "$speed" = Normal ]; then s=0
+    elif [ "$speed" = Fast ]; then s=2
+    else continue; fi
 
     if [ -z "$voice" ]; then
-    if [ "$2" = en ]; then v='en-us'
-    elif [ "$2" = es ]; then v='es-es'
-    elif [ "$2" = pt ]; then v='pt-br'
-    elif [ "$2" = ru ]; then v='ru-ru'
-    elif [ "$2" = it ]; then v='it-it'
-    elif [ "$2" = de ]; then v='de-de'
-    elif [ "$2" = fr ]; then v='fr-fr'
-    elif [ "$2" = zh-cn ]; then v='zh-cn'
-    else exit; fi
+    if [ "$lgt" = en ]; then v='en-us'
+    elif [ "$lgt" = es ]; then v='es-es'
+    elif [ "$lgt" = pt ]; then v='pt-br'
+    elif [ "$lgt" = ru ]; then v='ru-ru'
+    elif [ "$lgt" = it ]; then v='it-it'
+    elif [ "$lgt" = de ]; then v='de-de'
+    elif [ "$lgt" = fr ]; then v='fr-fr'
+    elif [ "$lgt" = zh-cn ]; then v='zh-cn'
+    else continue; fi
     else
     v=$(grep -o voice=\"[^\"]* "$DC_a/voicerss.cfg" |grep -o '[^"]*$')
     fi
-
-    wget -T 51 -q -U Mozilla -O "$DT_r/tmp1.mp3" \
-    "http://api.voicerss.org/?key=$k&hl=$v&r=$s&f=16khz_16bit_mono&src=${1}" || rm -f "$DT_r/tmp1.mp3"
-    [ -e "$DT_r/tmp1.mp3" ] && mv -f "$DT_r/tmp1.mp3" "${4}"
+    local LINK="http://api.voicerss.org/?key=$k&hl=$v&r=$s&f=16khz_16bit_mono&src=${word}"
+    local ex='mp3'
 fi

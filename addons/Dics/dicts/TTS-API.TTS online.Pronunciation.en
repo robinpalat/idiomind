@@ -4,16 +4,10 @@ if [[ "$1" = dlgcnfg ]]; then
 source "$DS/ifs/mods/cmns.sh"
 msg "$(gettext "Does not need configuration")\n" info "$4"
 
-
 else
-DT_r="$3"; f=1
-if [[ `pwd` != "${3}" ]]; then exit; fi
-
-if [ "$2" = en ]; then t=en
-else exit; fi
-
-wget -T 51 -q -U Mozilla -O "$DT_r/tmp1.mp3" "http://tts-api.com/tts.mp3?q=${1}" || rm -f "$DT_r/tmp1.mp3"
-[ -e "$DT_r/tmp1.mp3" ] && mv -f "$DT_r/tmp1.mp3" "${4}"
-
-exit
+f=1
+if [ "$lgt" = en ]; then t=en
+else continue; fi
+local LINK="http://tts-api.com/tts.mp3?q=${word}"
+local ex='mp3'
 fi

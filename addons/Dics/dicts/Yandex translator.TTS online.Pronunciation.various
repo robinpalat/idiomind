@@ -4,23 +4,15 @@ if [[ "$1" = dlgcnfg ]]; then
 source "$DS/ifs/mods/cmns.sh"
 msg "$(gettext "Does not need configuration")\n" info "$4"
 
-
 else
-DT_r="$3"; cd "$DT_r"
-if [[ `pwd` != "${3}" ]]; then exit; fi
-
-if [ "$2" = en ]; then t=en_GB
-elif [ "$2" = es ]; then t=es_ES
-elif [ "$2" = pt ]; then t=pt_PT
-elif [ "$2" = ru ]; then t=ru_RU
-elif [ "$2" = it ]; then t=it_IT
-elif [ "$2" = de ]; then t=de_DE
-elif [ "$2" = fr ]; then t=fr_FR
-else exit; fi
-
-wget -T 51 -q -U Mozilla -O "$DT_r/tmp1.mp3" \
-"http://tts.voicetech.yandex.net/tts?format=mp3&quality=hi&platform=web&application=translate&lang=$t&text=${1}" || rm -f "$DT_r/tmp1.mp3"
-[ -e "$DT_r/tmp1.mp3" ] && mv -f "$DT_r/tmp1.mp3" "${4}"
-
-exit
+if [ "$lgt" = en ]; then t=en_GB
+elif [ "$lgt" = es ]; then t=es_ES
+elif [ "$lgt" = pt ]; then t=pt_PT
+elif [ "$lgt" = ru ]; then t=ru_RU
+elif [ "$lgt" = it ]; then t=it_IT
+elif [ "$lgt" = de ]; then t=de_DE
+elif [ "$lgt" = fr ]; then t=fr_FR
+else continue; fi
+local LINK="http://tts.voicetech.yandex.net/tts?format=mp3&quality=hi&platform=web&application=translate&lang=$t&text=${word}"
+local ex='mp3'
 fi

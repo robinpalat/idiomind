@@ -4,13 +4,8 @@ if [[ "$1" = dlgcnfg ]]; then
 source "$DS/ifs/mods/cmns.sh"
 msg "$(gettext "Does not need configuration")\n" info "$4"
 
-
 else
-name="macmillandictionary"
-lang="en"
-
-[[ ${#1} -lt 5 ]] && s="${1:0:5}_" || s="${1:0:5}"
-wget -T 51 -q -U Mozilla "http://www.macmillandictionary.com/media/british/uk_pron/${1:0:1}/${1:0:3}/$s/${1}_British_English_pronunciation.mp3"
-[ -f ./"${1}_British_English_pronunciation.mp3" ] && mv -f ./"${1}_British_English_pronunciation.mp3" ./"${1}.mp3"
-exit
+[[ ${#word} -lt 5 ]] && s="${word:0:5}_" || s="${word:0:5}"
+local LINK="http://www.macmillandictionary.com/media/british/uk_pron/${word:0:1}/${word:0:3}/$s/${word}_British_English_pronunciation.mp3"
+local ex='mp3'
 fi
