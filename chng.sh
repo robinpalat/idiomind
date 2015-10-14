@@ -141,9 +141,9 @@ elif [[ ${1} != 0 ]]; then
     --column=img:IMG \
     --column=File:TEXT \
     --button="$(gettext "New Words")":"$DS/ifs/mods/topic/Dictionary.sh" \
-    --button=gtk-new:3 \
+    --button="$(gettext "New")"!gtk-new:3 \
     --button="$(gettext "Apply")":2 \
-    --button="gtk-close":1)
+    --button="$(gettext "Close")"!gtk-close:1)
     ret=$?
     if [ $ret -eq 3 ]; then
             "$DS/add.sh" new_topic

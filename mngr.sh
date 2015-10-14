@@ -666,10 +666,7 @@ mark_as_learned_topic() {
         if [ -d "${DC_tlt}/practice" ]; then
             (cd "${DC_tlt}/practice"; rm .*; rm *
             touch ./log1 ./log2 ./log3); fi
-            
-        if [ -e "${DC_tlt}/feeds" ]; then
-        echo "$(gettext "Updating paused")" > "${DC_tlt}/lk"; fi
-        
+
         > "${DC_tlt}/7.cfg"
         if [[ $((stts%2)) = 0 ]]; then
             echo 4 > "${DC_tlt}/8.cfg"

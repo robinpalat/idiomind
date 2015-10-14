@@ -670,7 +670,7 @@ fetch_content() {
 } >/dev/null 2>&1
 
 new_items() {
-    if [ ! -d "$DT" ]; then new_session; fi
+    if [ ! -d "$DT" ]; then idiomind -s; fi
     [ ! "$DT/tpe" ] && echo "${tpc}" > "$DT/tpe"
 
     if [ -e "$DC_s/topics_first_run" ]; then

@@ -112,7 +112,6 @@ function upld() {
         if [ "${tpc}" != "${1}" ]; then
             msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit 1
         fi
-
         internet
     }
 

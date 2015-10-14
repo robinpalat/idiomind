@@ -361,10 +361,10 @@ panel() {
     --window-icon=$wicon \
     --form --fixed --on-top --no-buttons --align=center \
     --width=140 --height=190 --borders=0 --geometry=80x190-${x}-${y} \
-    --field="gtk-new":btn "$DS/add.sh 'new_items'" \
-    --field="gtk-home":btn "idiomind 'topic'" \
-    --field="gtk-index":btn "$DS/chng.sh" \
-    --field="Options!gtk-preferences":btn "$DS/cnfg.sh"
+    --field="$(gettext "New")"!gtk-new:btn "$DS/add.sh 'new_items'" \
+    --field="$(gettext "Home")"!gtk-home:btn "idiomind 'topic'" \
+    --field="$(gettext "Index")"!gtk-index:btn "$DS/chng.sh" \
+    --field="$(gettext "Options")"!gtk-preferences:btn "$DS/cnfg.sh"
     [ $? != 0 ] && "$DS/stop.sh" 1 &
     exit
 }

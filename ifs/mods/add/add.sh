@@ -350,12 +350,13 @@ function translate() {
 dwld1() {
     LINK=""; source "$DS_a/Dics/dicts/$(basename "${dict}")"
     if [ "${LINK}" -a ! -e "$audio_file" ]; then
-    wget -T 51 -q -U Mozilla -O "$audio_dwld.$ex" "${LINK}"
+        wget -T 51 -q -U Mozilla -O "$audio_dwld.$ex" "${LINK}"
         if [[ ${ex} != 'mp3' ]]; then
         sox "$audio_dwld.$ex" "$audio_dwld.mp3"; rm "$audio_dwld.$ex"; fi
     fi
-    if [ -e "$audio_file" ] && [[ `du "$audio_file" |cut -f1` -gt 1 ]]; then
-    break
+    if file -b --mime-type "$audio_file" |grep 'mp3' >/dev/null 2>&1 \
+    && [[ `du -b "$audio_file" |cut -f1` -gt 100 ]]; then
+        break
     else [ -e "$audio_file" ] && rm "$audio_file"; fi
 }
 
@@ -364,7 +365,8 @@ dwld2() {
     if [ "${LINK}" -a ! -e "${audio_file}" ]; then
         wget -T 51 -q -U Mozilla -O "$DT_r/audio.mp3" "${LINK}"
     fi
-    if [ -e "$DT_r/audio.mp3" ] && [[ `du "$DT_r/audio.mp3" |cut -f1` -gt 1 ]]; then
+    if file -b --mime-type "$DT_r/audio.mp3" |grep 'mp3' >/dev/null 2>&1 \
+    && [[ `du -b "$DT_r/audio.mp3" |cut -f1` -gt 100 ]]; then
         mv -f "$DT_r/audio.mp3" "${audio_file}"; break
     else [ -e "$DT_r/audio.mp3" ] && rm "$DT_r/audio.mp3"; fi
 }
@@ -523,7 +525,7 @@ function dlg_form_1() {
     --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
     --button="$(gettext "Image")":3 \
     --button="$(gettext "Audio")":2 \
-    --button=gtk-add:0
+    --button="$(gettext "Add")"!gtk-add:0
 }
 
 function dlg_form_2() {
@@ -539,7 +541,7 @@ function dlg_form_2() {
     --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
     --button="$(gettext "Image")":3 \
     --button="$(gettext "Audio")":2 \
-    --button=gtk-add:0
+    --button="$(gettext "Add")"!gtk-add:0
 }
 
 function dlg_checklist_1() {
