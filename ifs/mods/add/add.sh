@@ -367,8 +367,8 @@ function tts_word() {
     word="${1,,}"
     audio_file="${2}/$word.mp3"
     audio_dwld="${2}/$word"
-    if ls "$DC_d"/*."TTS online.Word pronunciation".* 1> /dev/null 2>&1; then
-        for dict in $DC_d/*."TTS online.Word pronunciation.$lgt"; do
+    if ls "$DC_d"/*."TTS online.Word pronunciation".$lgt 1> /dev/null 2>&1; then
+        for dict in $DC_d/*."TTS online.Word pronunciation".$lgt; do
             LINK=""; source "$DS_a/Dics/dicts/$(basename "${dict}")"
             if [ "${LINK}" -a ! -e "$audio_file" ]; then
                 wget -T 51 -q -U Mozilla -O "$audio_dwld.$ex" "${LINK}"
@@ -385,9 +385,9 @@ function tts_word() {
             fi
         done
     fi
-    if ls "$DC_d"/*."TTS online.Word pronunciation.various" 1> /dev/null 2>&1; then
+    if ls "$DC_d"/*."TTS online.Word pronunciation".various 1> /dev/null 2>&1; then
         if [ ! -e "${2}/${1}.mp3" ]; then
-            for dict in $DC_d/*."TTS online.Word pronunciation.various"; do
+            for dict in $DC_d/*."TTS online.Word pronunciation".various; do
                 LINK=""; source "$DS_a/Dics/dicts/$(basename "${dict}")"
                 if [ "${LINK}" -a ! -e "$audio_file" ]; then
                     wget -T 51 -q -U Mozilla -O "$audio_dwld.$ex" "${LINK}"
@@ -466,7 +466,7 @@ function fetch_audio() {
         audio_file="$DM_tls/audio/$word.mp3"
         audio_dwld="${2}/$word"
         if [ ! -e "$audio_file" ]; then
-            for dict in "$DC_d"/*."TTS online.Word pronunciation.$lgt"; do
+            for dict in "$DC_d"/*."TTS online.Word pronunciation".$lgt; do
                 LINK=""; source "$DS_a/Dics/dicts/$(basename "${dict}")"
                 if [ "${LINK}" -a ! -e "$audio_file" ]; then
                     wget -T 51 -q -U Mozilla -O "$audio_dwld.$ex" "${LINK}"
@@ -482,7 +482,7 @@ function fetch_audio() {
                     fi
                 fi
             done
-            for dict in "$DC_d"/*."TTS online.Word pronunciation.various"; do
+            for dict in "$DC_d"/*."TTS online.Word pronunciation".various; do
                 LINK=""; source "$DS_a/Dics/dicts/$(basename "${dict}")"
                 if [ "${LINK}" -a ! -e "$audio_file" ]; then
                     wget -T 51 -q -U Mozilla -O "$audio_dwld.$ex" "${LINK}"
