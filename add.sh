@@ -123,14 +123,14 @@ function new_sentence() {
 
         if [ ! -e "$DT_r/audtm.mp3" ]; then
             if [ "$trans" = TRUE ]; then
-                tts "${trgt}" "$lgt" "$DT_r" "${DM_tlt}/$id.mp3"
+                tts_sentence "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
                     if [ ! -e "${DM_tlt}/$id.mp3" ]; then
                         voice "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
                     fi
             else
                 voice "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
                 if [ $? = 1 ]; then
-                    tts "${trgt}" "$lgt" "$DT_r" "${DM_tlt}/$id.mp3"
+                    tts_sentence "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
                 fi
             fi
         else
@@ -516,7 +516,7 @@ function process() {
                         if [ $? = 0 ]; then
                             index 2
                             if [[ $trans = TRUE ]]; then
-                                tts "${trgt}" $lgt "$DT_r" "${DM_tlt}/$id.mp3"
+                                tts_sentence "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
                                 [ ! -e "${DM_tlt}/$id.mp3" ] && voice "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
                             else 
                                 voice "${trgt}" "${DT_r}" "${DM_tlt}/$id.mp3"

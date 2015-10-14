@@ -6,6 +6,6 @@ msg "$(gettext "Does not need configuration")\n" info "$4"
 
 else
 [[ ${#word} -lt 5 ]] && s="${word:0:5}_" || s="${word:0:5}"
-local LINK="http://www.macmillandictionary.com/media/british/uk_pron/${word:0:1}/${word:0:3}/$s/${word}_British_English_pronunciation.mp3"
-local ex='mp3'
+export LINK="http://www.macmillandictionary.com/media/british/uk_pron/${word:0:1}/${word:0:3}/$s/${word}_British_English_pronunciation.mp3"
+export ex='mp3'
 fi

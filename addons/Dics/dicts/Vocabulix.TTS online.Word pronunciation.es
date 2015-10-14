@@ -5,6 +5,6 @@ source "$DS/ifs/mods/cmns.sh"
 msg "$(gettext "Does not need configuration")\n" info "$4"
 
 else
-local LINK="http://static.vocabulix.com//speech/dict/spanish/${word}.mp3"
-local ex='mp3'
+export LINK="http://static.vocabulix.com//speech/dict/spanish/${word}.mp3"
+export ex='mp3'
 fi

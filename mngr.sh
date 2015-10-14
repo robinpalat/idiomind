@@ -434,7 +434,7 @@ edit_list() {
                  
                 id_mod="$(set_name_file ${type} "${trgt}" "${srce_mod}" \
                 "${exmp_mod}" "${defn_mod}" "${note_mod}" "${wrds_mod}" "${grmr_mod}")"
-                [ ${type} = 2 ] && cd "$DT_r"; tts "${trgt}" "$lgt" "$DT_r" "${DM_tlt}/$id_mod.mp3"
+                [ ${type} = 2 ] && cd "$DT_r"; tts_sentence "${trgt}" "$DT_r" "${DM_tlt}/$id_mod.mp3"
                 
                 sed -i "${pos}s|srce={$srce}|srce={$srce_mod}|;
                 ${pos}s|wrds={}|wrds={$wrds_mod}|;

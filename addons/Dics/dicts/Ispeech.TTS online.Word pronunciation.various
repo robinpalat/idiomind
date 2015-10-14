@@ -44,6 +44,6 @@ else
     elif [ "$lgt" = zh-cn ]; then v=chchinesefemale
     elif [ "$lgt" = ja ]; then v=jpjapanesefemale
     fi
-    local LINK="https://api.ispeech.org/api/rest?apikey=$k&action=convert&voice=$v&speed=$s&pitch=0&text=${word}"
-    local ex='mp3'
+    export LINK="https://api.ispeech.org/api/rest?apikey=$k&action=convert&voice=$v&speed=$s&pitch=0&text=${word}"
+    export ex='mp3'
 fi

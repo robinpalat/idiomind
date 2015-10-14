@@ -12,7 +12,7 @@ elif [ "$lgt" = ru ]; then t=ru_RU
 elif [ "$lgt" = it ]; then t=it_IT
 elif [ "$lgt" = de ]; then t=de_DE
 elif [ "$lgt" = fr ]; then t=fr_FR
-else continue; fi
-local LINK="http://tts.voicetech.yandex.net/tts?format=mp3&quality=hi&platform=web&application=translate&lang=$t&text=${word}"
-local ex='mp3'
+fi
+export LINK="http://tts.voicetech.yandex.net/tts?format=mp3&quality=hi&platform=web&application=translate&lang=$t&text=${word}"
+export ex='mp3'
 fi

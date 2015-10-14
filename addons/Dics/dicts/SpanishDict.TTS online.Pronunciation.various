@@ -8,9 +8,9 @@ msg "$(gettext "Does not need configuration")\n" info "$4"
 else
 if [ "$lgt" = en ]; then t=en
 elif [ "$lgt" = es ]; then t=es
-else continue; fi
-local LINK="http://audio1.spanishdict.com/audio?lang=$t&text=${word}"
-local ex='mp3'
+fi
+export LINK="http://audio1.spanishdict.com/audio?lang=$t&text=${word}"
+export ex='mp3'
 fi
 
 

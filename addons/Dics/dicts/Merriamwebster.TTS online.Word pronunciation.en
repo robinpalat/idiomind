@@ -5,8 +5,9 @@ source "$DS/ifs/mods/cmns.sh"
 msg "$(gettext "Does not need configuration")\n" info "$4"
 
 else
-[ ${#word} -gt 6 ] && continue
-c=0000000
-local LINK="http://media.merriam-webster.com/soundc11/${word:0:1}/${word}${c::-${#word}}1.wav"
-local ex='wav'
+if [ ${#word} -lt 6 ]; then
+    c=0000000
+    export LINK="http://media.merriam-webster.com/soundc11/${word:0:1}/${word}${c::-${#word}}1.wav"
+    export ex='wav'
+fi
 fi

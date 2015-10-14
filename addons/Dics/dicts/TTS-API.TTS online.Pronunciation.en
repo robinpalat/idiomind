@@ -5,9 +5,6 @@ source "$DS/ifs/mods/cmns.sh"
 msg "$(gettext "Does not need configuration")\n" info "$4"
 
 else
-f=1
-if [ "$lgt" = en ]; then t=en
-else continue; fi
-local LINK="http://tts-api.com/tts.mp3?q=${word}"
-local ex='mp3'
+export LINK="http://tts-api.com/tts.mp3?q=${word}"
+export ex='mp3'
 fi
