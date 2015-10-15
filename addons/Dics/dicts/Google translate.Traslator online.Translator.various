@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# This software is provided for the purpose of reasonable personal use of
+# the Google Translate service, i.e., for those who prefer command line to
+# web interface. For other purposes, please refer to the official Google
+# Translate API <https://developers.google.com/translate/>.
+# 
+# By using this software, the user are aware that:
+# 
+# 1. Google Translate is a proprietary service provided and owned by
+# Google Inc.
+# 
+# 2. This script is NOT a Google product. Neither this software nor
+# its author is affiliated with Google Inc.
+# 
+# 3. The software is provided "AS IS", without warranty of any kind,
+# express or implied, including but not limited to the warranties of
+# merchantability, fitness for a particular purpose and noninfringement. In
+# no event shall the authors be liable for any claim, damages or other
+# liability, whether in an action of contract, tort or otherwise, arising
+# from, out of or in connection with the software or the use or other
+# dealings in the software.
+
+if [[ "$1" = dlgcnfg ]]; then
+source "$DS/ifs/mods/cmns.sh"
+msg "$(gettext "Does not need configuration")\n" info "$4"
+
+else
+useragent='Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0'
+result=$(curl -s -i --user-agent "$useragent" -d "sl=$2" -d "tl=$3" --data-urlencode text="${1,}" https://translate.google.com)
+encoding=$(awk '/Content-Type: .* charset=/ {sub(/^.*charset=["'\'']?/,""); sub(/[ "'\''].*$/,""); print}' <<<"${result}")
+iconv -f "${encoding}" <<<"$result" | awk 'BEGIN {RS="</div>"};/<span[^>]* id=["'\'']?result_box["'\'']?/' | html2text -utf8
+fi

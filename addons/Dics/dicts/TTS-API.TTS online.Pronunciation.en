@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [[ "$1" = dlgcnfg ]]; then
+source "$DS/ifs/mods/cmns.sh"
+msg "$(gettext "Does not need configuration")\n" info "$4"
+
+else
+export LINK="http://tts-api.com/tts.mp3?q=${word}"
+export ex='mp3'
+fi

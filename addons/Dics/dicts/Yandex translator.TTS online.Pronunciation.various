@@ -1,0 +1,18 @@
+#!/bin/bash
+
+if [[ "$1" = dlgcnfg ]]; then
+source "$DS/ifs/mods/cmns.sh"
+msg "$(gettext "Does not need configuration")\n" info "$4"
+
+else
+if [ "$lgt" = en ]; then t=en_GB
+elif [ "$lgt" = es ]; then t=es_ES
+elif [ "$lgt" = pt ]; then t=pt_PT
+elif [ "$lgt" = ru ]; then t=ru_RU
+elif [ "$lgt" = it ]; then t=it_IT
+elif [ "$lgt" = de ]; then t=de_DE
+elif [ "$lgt" = fr ]; then t=fr_FR
+fi
+export LINK="http://tts.voicetech.yandex.net/tts?format=mp3&quality=hi&platform=web&application=translate&lang=$t&text=${word}"
+export ex='mp3'
+fi

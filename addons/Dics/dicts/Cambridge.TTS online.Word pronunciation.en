@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [[ "$1" = dlgcnfg ]]; then
+source "$DS/ifs/mods/cmns.sh"
+msg "$(gettext "Does not need configuration")\n" info "$4"
+
+else
+[[ ${#word} -lt 5 ]] && s="${word:0:5}_" || s="${word:0:5}"
+export LINK="http://dictionary.cambridge.org/media/british/us_pron/${word:0:1}/${word:0:3}/$s/${word}.mp3"
+export ex='mp3'
+fi

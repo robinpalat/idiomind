@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [[ "$1" = dlgcnfg ]]; then
+source "$DS/ifs/mods/cmns.sh"
+msg "$(gettext "Does not need configuration")\n" info "$4"
+
+else
+if [ "$lgt" = zh-cn ]; then t=zh
+elif [ "$lgt" = en ]; then t=en
+elif [ "$lgt" = ja ]; then t=jp
+elif [ "$lgt" = pt ]; then t=pt
+fi
+export LINK="http://tts.baidu.com/text2audio?lan=$t&ie=UTF-8&text=${word}"
+export ex='mp3'
+fi
