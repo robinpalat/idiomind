@@ -359,6 +359,7 @@ panel() {
     --name=Idiomind --class=Idiomind \
     --always-print-result \
     --window-icon=$wicon \
+    --gtkrc='/usr/share/idiomind/default/gtkrc.ini' \
     --form --fixed --on-top --no-buttons --align=center \
     --width=140 --height=190 --borders=0 --geometry=80x190-${x}-${y} \
     --field="$(gettext "New")"!gtk-new:btn "$DS/add.sh 'new_items'" \

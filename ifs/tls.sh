@@ -638,7 +638,7 @@ PY
 
 about() {
     source /usr/share/idiomind/ifs/c.conf
-    c="$(gettext "A simple to use vocabulary learning tool")"
+    c="$(gettext "A simple to use utility for learning foreign vocabulary")"
     website="$(gettext "Web Site")"
     export c website _version
     python << ABOUT
