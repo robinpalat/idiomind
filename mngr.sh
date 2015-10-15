@@ -333,6 +333,7 @@ tagget_item() {
                 echo "${trgt_mod}" >> "$dir/.conf/3.cfg"
             elif [ ${type_mod} = 2 ]; then
                 echo "${trgt_mod}" >> "$dir/.conf/4.cfg"
+                [ -e "${DM_tlt}/$id.mp3" ] && cp "${DM_tlt}/$id.mp3" "$dir/$id_mod.mp3"
             fi
         fi
     fi
