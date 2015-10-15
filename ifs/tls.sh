@@ -317,7 +317,8 @@ _quick_help() {
     --window-icon="$DS/images/icon.png" \
     --fixed --on-top --mouse \
     --width=550 --height=450 --borders=5 \
-    --button="$(gettext "OK")":1 &
+    --button="$(gettext "Send Feedback")":"$DS/ifs/tls.sh 'fback'" \
+    --button="$(gettext "Close")":1 &
 } >/dev/null 2>&1
 
 check_updates() {
