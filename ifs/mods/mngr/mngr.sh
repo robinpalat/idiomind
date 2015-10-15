@@ -10,7 +10,7 @@ function dlg_form_1() {
     --window-icon="$DS/images/icon.png" \
     --align=left --text-align=center --columns=2 \
     --buttons-layout=end --scroll --center --on-top \
-    --width=680 --height=520 --borders=10 \
+    --width=690 --height=520 --borders=10 \
     --field="<small>$lgtl</small>" "${trgt}" \
     --field="<small>$lgsl</small>" "${srce}" \
     --field="<small>$(gettext "Topic")</small>":CB "${tpc_list}" \

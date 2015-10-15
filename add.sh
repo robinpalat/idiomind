@@ -210,6 +210,7 @@ function list_words_edit() {
     include "$DS/ifs/mods/add"
     tpe="${tpc}"
     exmp="${3}"
+    [ -z "${exmp}" ] && exmp="${trgt}"
     check_s "${tpe}"
     info=" -$((200-$(wc -l < "${DC_tlt}/0.cfg")))"
     DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"

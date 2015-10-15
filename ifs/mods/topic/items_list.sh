@@ -28,7 +28,7 @@ function sentence_view() {
     trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
     [ -n "${link}" ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
     local sentence="<span font_desc='Sans Free 15'>${trgt_l}</span>\n\n<span font_desc='Sans Free 11'><i>$srce</i>$link</span>\n<span font_desc='Sans Free 6'>$tag</span>\n"
-    cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"" "\"${trgt}\"""
+    cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"""
     lwrds="$(tr '_' '\n' <<<"${wrds}")"
 
     echo -e "${lwrds}" |yad --list --title=" " \

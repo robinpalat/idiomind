@@ -665,7 +665,7 @@ app_license = (('Idiomind is free software: you can redistribute it and/or modif
 '\n'+
 'You should have received a copy of the GNU General Public License\n'+
 'along with this program.  If not, see http://www.gnu.org/licenses'))
-app_authors = ['Robin Palatnik <patapatass@hotmail.com>']
+app_authors = ['Robin Palatnik <robinpalat@users.sourceforge.net>']
 app_artists = ["Logo based on rg1024's openclipart Ufo Cartoon."]
 
 class AboutDialog:

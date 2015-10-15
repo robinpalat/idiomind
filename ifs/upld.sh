@@ -191,11 +191,11 @@ function upld() {
     LANGUAGE_TO_LEARN="${lgtl}"
     linkc="http://idiomind.sourceforge.net/community/${lgtl,,}"
     ctgry="$(grep -o 'ctgry="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-    text_upld="$(gettext "Share your notes with other ${LANGUAGE_TO_LEARN} learners!")\n<a href='$linkc'>$(gettext "Topics shared")</a> (Beta)\n"
+    text_upld="<big>$(gettext "Share online with other ${LANGUAGE_TO_LEARN} learners!")</big>\n<a href='$linkc'>$(gettext "Topics shared")</a> (Beta)\n"
     _categories="${ctgry}${list}"
     _levels="!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")"
     note=$(< "${DC_tlt}/info")
-    cmd_link="xdg-open 'http://test.com/?q=user/register'"
+    cmd_link="xdg-open 'http://idiomind.net/register.html'"
     usrid="$(grep -o 'usrid="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
     passw="$(grep -o 'passw="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
 
@@ -332,7 +332,7 @@ passw = os.environ['passw_m']
 tpc = os.environ['tpc']
 body = os.environ['body']
 try:
-    server = xmlrpclib.Server('http://idiomind.xyz/xmlrpc.php')
+    server = xmlrpclib.Server('http://idiomind.net/xmlrpc.php')
     nid = server.metaWeblog.newPost('blog', usrid, passw, {'title': tpc, 'description': body}, True)
 except:
     sys.exit(3)
