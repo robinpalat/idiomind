@@ -45,9 +45,9 @@ set_lang() {
     "$DS/stop.sh" 4
     source /usr/share/idiomind/ifs/c.conf
     last="$(cd "$DM_tl"/; ls -tNd */ |cut -f1 -d'/' |head -n1)"
-    if [ -d "$DM_tl/$last" ]; then
+    if [ -d "$DM_tl/${last}" ]; then
         mode="$(< "$DM_tl/${last}/.conf/8.cfg")"
-        if ((mode>=1 && mode<=20)); then
+        if [[ ${mode} =~ $numer ]]; then
             "$DS/default/tpc.sh" "${last}" ${mode} 1 &
         fi
     else

@@ -18,13 +18,13 @@
 #
 #  2015/02/27
 
-wicon="/usr/share/idiomind/images/icon.png"
 
 if [ ! -d "$HOME/.idiomind" ]; then
     /usr/share/idiomind/ifs/1u.sh & exit 1
 fi
 
 source /usr/share/idiomind/ifs/c.conf
+wicon="/usr/share/idiomind/images/icon.png"
 
 if [ -e "$DT/ps_lk" -o -e "$DT/el_lk" ]; then
     sleep 5
@@ -361,7 +361,7 @@ panel() {
     --window-icon=$wicon \
     --gtkrc='/usr/share/idiomind/default/gtkrc.ini' \
     --form --fixed --on-top --no-buttons --align=center \
-    --width=130 --height=190 --borders=0 --geometry=80x190-${x}-${y} \
+    --width=140 --height=190 --borders=0 --geometry=80x190-${x}-${y} \
     --field="$(gettext "New")"!gtk-new:btn "$DS/add.sh 'new_items'" \
     --field="$(gettext "Home")"!gtk-home:btn "idiomind 'topic'" \
     --field="$(gettext "Index")"!gtk-index:btn "$DS/chng.sh" \

@@ -122,6 +122,8 @@ function upld() {
         --window-icon="$DS/images/icon.png" --buttons-layout=end \
         --align=right --center --on-top \
         --width=460 --height=450 --borders=12 \
+        --field="$(gettext "Category"):CB" "" \
+        --field="$(gettext "Skill Level"):CB" "" \
         --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
         --field="$(gettext "Author")": "$usrid" \
         --field="\t$(gettext "Password")": "$passw" \
@@ -195,7 +197,7 @@ function upld() {
     _categories="${ctgry}${list}"
     _levels="!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")"
     note=$(< "${DC_tlt}/info")
-    cmd_link="xdg-open 'http://idiomind.net/register.html'"
+    cmd_link="xdg-open 'http://idiomind.sourceforge.net/community/?q=user/register'"
     usrid="$(grep -o 'usrid="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
     passw="$(grep -o 'passw="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
 
@@ -212,20 +214,17 @@ function upld() {
             dlg="$(dlg_export)"; ret=$?
         fi
     else
-        if [ -z "${usrid}" -a -z "${passw}" ]; then
+        shopt -s extglob
+        if [ -z "${usrid##+([[:space:]])}" -o -z "${passw##+([[:space:]])}" ]; then
             dlg="$(dlg_getuser)"; ret=$?
-            notes_m=$(echo "${dlg}" | cut -d "|" -f1)
-            usrid_m=$(echo "${dlg}" | cut -d "|" -f2)
-            passw_m=$(echo "${dlg}" | cut -d "|" -f3)
-
         elif [ -n "${usrid}" -o -n "${passw}" ]; then
             dlg="$(dlg_upload)"; ret=$?
-            Ctgry=$(echo "${dlg}" | cut -d "|" -f1)
-            level=$(echo "${dlg}" | cut -d "|" -f2)
-            notes_m=$(echo "${dlg}" | cut -d "|" -f3)
-            usrid_m=$(echo "${dlg}" | cut -d "|" -f4)
-            passw_m=$(echo "${dlg}" | cut -d "|" -f5)
         fi
+        Ctgry=$(echo "${dlg}" | cut -d "|" -f1)
+        level=$(echo "${dlg}" | cut -d "|" -f2)
+        notes_m=$(echo "${dlg}" | cut -d "|" -f3)
+        usrid_m=$(echo "${dlg}" | cut -d "|" -f4)
+        passw_m=$(echo "${dlg}" | cut -d "|" -f5)
     fi
 
     # get data
@@ -332,7 +331,7 @@ passw = os.environ['passw_m']
 tpc = os.environ['tpc']
 body = os.environ['body']
 try:
-    server = xmlrpclib.Server('http://idiomind.net/xmlrpc.php')
+    server = xmlrpclib.Server('http://idiomind.sourceforge.net/community/xmlrpc.php')
     nid = server.metaWeblog.newPost('blog', usrid, passw, {'title': tpc, 'description': body}, True)
 except:
     sys.exit(3)
@@ -356,7 +355,7 @@ END
             info="$(gettext "Authentication error.")\n"
             image=error
         else
-            sleep 10
+            sleep 5
             info="$(gettext "A problem has occurred with the file upload, try again later.")\n"
             image=error
         fi

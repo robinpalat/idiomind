@@ -43,12 +43,14 @@ if [ -d "${DM_tlt}" ]; then
                     if [ ${RM} -ge 180 -a ${stts} = 8 ]; then
                         echo 10 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"
                     elif [ ${RM} -ge 100 -a ${stts} -lt 8 ]; then
-                        echo 8 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"; fi
+                        echo 8 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"
+                    fi
                 else
                     if [ ${RM} -ge 180 -a ${stts} = 7 ]; then
                         echo 9 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"
                     elif [ ${RM} -ge 100 -a ${stts} -lt 7 ]; then
-                        echo 7 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"; fi
+                        echo 7 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"
+                    fi
                 fi
             fi
             "$DS/mngr.sh" mkmn
@@ -66,12 +68,13 @@ if [ -d "${DM_tlt}" ]; then
         echo "${topic}" > "$DC_s/4.cfg"
     else
         if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
-        source "$DS/ifs/mods/topic/${topic}.sh"
-        ${topic} ${mode} & exit; fi
+            source "$DS/ifs/mods/topic/${topic}.sh"
+            echo "${tpc}" > "$DC_s/4.cfg"
         fi
+    fi
 
-    if [[ "$3" = 1 ]]; then
-        ( sleep 2
+    if [[ ${3} = 1 ]]; then
+        ( sleep 1
         notify-send --icon=idiomind \
         "${topic}" "$(gettext "Is now your topic")" -t 4000 ) & exit
     elif [[ -z "$3" ]]; then 

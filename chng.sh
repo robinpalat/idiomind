@@ -93,6 +93,7 @@ if [[ ${1} = 0 ]]; then
 
 elif [[ ${1} != 0 ]]; then
     [ -z"${DM}" ] && source /usr/share/idiomind/ifs/c.conf
+    if [ -e "$DC_s/topics_first_run" ]; then exit 1; fi
     remove_d() {
         ins="$(cd "/usr/share/idiomind/addons/"
         set -- */; printf "%s\n" "${@%/}")"

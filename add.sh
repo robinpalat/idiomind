@@ -610,11 +610,10 @@ fetch_content() {
     DC_tlt="$DM_tl/${tpe}/.conf"
     
     if [[ `wc -l < "${DC_tlt}/0.cfg"` -ge 200 ]]; then
-        echo "$(gettext "Reached the maximum number of notes")" > "${DC_tlt}/lk"
         exit 1
     fi
     if [ -e "$DT/updating_feeds" ]; then
-        notify-send "$(gettext "Information")" "$(gettext "An update was already in progress")" & exit
+        exit 1
     else
         > "$DT/updating_feeds"
     fi
