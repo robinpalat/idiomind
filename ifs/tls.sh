@@ -321,6 +321,10 @@ _quick_help() {
     --button="$(gettext "Close")":1 &
 } >/dev/null 2>&1
 
+_uregister() {
+    xdg-open 'http://idiomind.sourceforge.net/community/?q=user/register'
+} >/dev/null 2>&1
+
 check_updates() {
     source "$DS/ifs/mods/cmns.sh"
     internet
@@ -713,6 +717,8 @@ case "$1" in
     add_audio "$@" ;;
     help)
     _quick_help ;;
+    uregister)
+    _uregister ;;
     check_updates)
     check_updates ;;
     a_check_updates)

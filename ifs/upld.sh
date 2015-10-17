@@ -197,7 +197,7 @@ function upld() {
     _categories="${ctgry}${list}"
     _levels="!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")"
     note=$(< "${DC_tlt}/info")
-    cmd_link="xdg-open 'http://idiomind.sourceforge.net/community/?q=user/register'"
+    cmd_link="$DS/ifs/tls.sh uregister"
     usrid="$(grep -o 'usrid="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
     passw="$(grep -o 'passw="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
 
@@ -319,7 +319,7 @@ function upld() {
         | grep -o 'UPLOADS="[^"]*' | grep -o '[^"]*$')"
         direc="$DT_u"
         log="$DT_u/log"
-        body="$(tac "${DC_tlt}/1.cfg")"
+        body=""
         export tpc direc url log usrid_m passw_m body
 
         python << END
