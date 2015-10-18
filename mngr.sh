@@ -128,7 +128,6 @@ edit_item() {
         index_2="${DC_tlt}/1.cfg"
         [ ${item_pos} -lt 1 ] && item_pos=${inx2}
     fi
-
     item_id="$(sed -n ${item_pos}p "${index_1}")"
     if [ ${text_missing} = 0 ]; then
         edit_pos=`grep -Fon -m 1 "trgt={${item_id}}" "${DC_tlt}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
@@ -494,7 +493,8 @@ delete_topic() {
         for n in {0..6}; do
             if [ -e "$DM_tl/.${n}.cfg" ]; then
                 grep -vxF "${tpc}" "$DM_tl/.$n.cfg" > "$DM_tl/.${n}.cfg.tmp"
-                sed '/^$/d' "$DM_tl/.$n.cfg.tmp" > "$DM_tl/.${n}.cfg"; fi
+                sed '/^$/d' "$DM_tl/.$n.cfg.tmp" > "$DM_tl/.${n}.cfg"
+            fi
         done
         kill -9 $(pgrep -f "yad --list ") &
         kill -9 $(pgrep -f "yad --text-info ") &

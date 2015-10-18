@@ -550,7 +550,7 @@ function dlg_checklist_1() {
     --text="<small> $2 </small>" \
     --name=Idiomind --class=Idiomind \
     --window-icon="$DS/images/icon.png" \
-    --center --on-top --no-headers \
+    --mouse --on-top --no-headers \
     --text-align=right --buttons-layout=end \
     --width=400 --height=280 --borders=5  \
     --column=" " --column="Select" \
