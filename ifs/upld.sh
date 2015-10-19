@@ -151,31 +151,29 @@ function upld() {
         c_images="$(grep -o 'nimag="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         fsize="$(grep -o 'nsize="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         cmd_dwl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
-        info="<b>$(gettext "Downloadable content available")</b>"
+        info="<big>$(gettext "Downloadable content available")</big>"
         info2="$(gettext "Audio files:") $c_audio\n$(gettext "Images:") $c_images\n$(gettext "Size:") $fsize"
-        yad --form --columns=2 --title="$(gettext "Share")" \
+        yad --form  --title="$(gettext "Share")" \
         --name=Idiomind --class=Idiomind \
-        --image="$DS/images/download.png" --image-on-top \
+        --image="$DS/images/download.png" \
         --window-icon="$DS/images/icon.png" --buttons-layout=end \
         --align=left --center --on-top \
-        --width=400 --height=220 --borders=12 \
+        --width=440 --height=220 --borders=12 \
         --text="$info" \
         --field="$info2:lbl" " " \
-        --field="$(gettext "Download"):FBTN" "${cmd_dwl}" \
-        --field="\t\t\t\t\t:lbl" " " \
-        --field=" :lbl" " " \
+        --field="$(gettext "Download"):BTN" "${cmd_dwl}" \
         --button="$(gettext "PDF")":2 \
         --button="$(gettext "Close")":4
-    }
+    } 
     
     dlg_export() {
         yad --form --title="$(gettext "Share")" \
-        --columns=2 --separator="|" \
+        --separator="|" \
         --name=Idiomind --class=Idiomind \
         --window-icon="$DS/images/icon.png" --buttons-layout=end \
         --align=left --center --on-top \
-        --width=400 --height=200 --borders=12 \
-        --field="$(gettext "Latest downloads:"):lbl" " " \
+        --width=440 --height=220 --borders=12 \
+        --field="$(gettext "Downloaded files"):lbl" " " \
         --field="$(< "${DC_tlt}/download"):lbl" " " \
         --field=" :lbl" " " \
         --button="$(gettext "PDF")":2 \
@@ -225,22 +223,21 @@ function upld() {
         notes_m=$(echo "${dlg}" | cut -d "|" -f3)
         usrid_m=$(echo "${dlg}" | cut -d "|" -f4)
         passw_m=$(echo "${dlg}" | cut -d "|" -f5)
-    fi
+        # get data
+        for val in ${CATEGORIES[@]}; do
+            [ "$Ctgry" = "$(gettext "${val^}")" ] && Ctgry=$val && break
+        done
+        [ "$level" = $(gettext "Beginner") ] && level=0
+        [ "$level" = $(gettext "Intermediate") ] && level=1
+        [ "$level" = $(gettext "Advanced") ] && level=2
 
-    # get data
-    for val in ${CATEGORIES[@]}; do
-        [ "$Ctgry" = "$(gettext "${val^}")" ] && Ctgry=$val && break
-    done
-    [ "$level" = $(gettext "Beginner") ] && level=0
-    [ "$level" = $(gettext "Intermediate") ] && level=1
-    [ "$level" = $(gettext "Advanced") ] && level=2
-
-    # save data
-    if [ "${usrid}" != "${usrid_m}" -o "${passw}" != "${passw_m}" ]; then
-        echo -e "usrid=\"$usrid_m\"\npassw=\"$passw_m\"" > "$DC_s/3.cfg"
-    fi
-    if [ "${note}" != "${notes_m}"  ]; then
-        echo -e "${notes_m}" > "${DC_tlt}/info"
+        # save data
+        if [ "${usrid}" != "${usrid_m}" -o "${passw}" != "${passw_m}" ]; then
+            echo -e "usrid=\"$usrid_m\"\npassw=\"$passw_m\"" > "$DC_s/3.cfg"
+        fi
+        if [ "${note}" != "${notes_m}"  ]; then
+            echo -e "${notes_m}" > "${DC_tlt}/info"
+        fi
     fi
 
     # actions
