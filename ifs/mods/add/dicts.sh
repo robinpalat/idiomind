@@ -5,11 +5,13 @@
 function dicts() {
     cmsg() {
         sleep 2
-        source "$DS/ifs/mods/cmns.sh"
-        msg_2 "$(gettext "You may need to configure the list of Internet resources. \nDo you want to do this now?")" \
-        info "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Information")"
-        if [ $? = 0 ]; then "$DS_a/Dics/cnfg.sh" 6; fi
-        echo $lgtl > "$DC_a/dict/.dict"
+        if [ ! -e "$DC_s/topics_first_run" ]; then
+            source "$DS/ifs/mods/cmns.sh"
+            msg_2 "$(gettext "You may need to configure the list of Internet resources. \nDo you want to do this now?")" \
+            info "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Information")"
+            if [ $? = 0 ]; then "$DS_a/Dics/cnfg.sh" 6; fi
+            echo $lgtl > "$DC_a/dict/.dict"
+        fi
     }
     s=0
     if [ ! -d "$DC_d" -o ! -d "$DC_a/dict/disables" ]; then

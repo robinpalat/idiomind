@@ -93,7 +93,6 @@ if [[ ${1} = 0 ]]; then
 
 elif [[ ${1} != 0 ]]; then
     [ -z"${DM}" ] && source /usr/share/idiomind/ifs/c.conf
-    if [ -e "$DC_s/topics_first_run" ]; then exit 1; fi
     remove_d() {
         ins="$(cd "/usr/share/idiomind/addons/"
         set -- */; printf "%s\n" "${@%/}")"
@@ -125,10 +124,9 @@ elif [[ ${1} != 0 ]]; then
     chk_list_addons2=$((`wc -l < "$DC_a/list"`*2))
     chk_list_topics1=$((`wc -l < "$DM_tl/.0.cfg"`/2))
     chk_list_topics2=$(wc -l < "$DM_tl/.1.cfg")
-    if [[ ${chk_list_addons1} != ${chk_list_addons2} ]]; then
-        remove_d; fi
-    if [[ ${chk_list_topics1} != ${chk_list_topics2} ]]; then
-        "$DS/mngr.sh" mkmn; fi
+    if [[ ${chk_list_addons1} != ${chk_list_addons2} ]]; then remove_d; fi
+    if [[ ${chk_list_topics1} != ${chk_list_topics2} ]]; then "$DS/mngr.sh" mkmn; fi
+    if [ -e "$DC_s/topics_first_run" -a -z "${1}" ]; then exit 1; fi
 
     tpc=$(cat "$DM_tl/.0.cfg" | \
     yad --list --title="$(gettext "Topics")" "$text" \

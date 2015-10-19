@@ -17,7 +17,7 @@ function dwld() {
     }
     sleep 0.5
     msg "$(gettext "When the download completes the files will be added to topic directory.")" info "$(gettext "Downloading")"
-    kill -9 $(pgrep -f "yad --form --columns=2")
+    kill -9 $(pgrep -f "yad --form --columns=1")
     mkdir "$DT/download"; idcfg="$DM_tl/${2}/.conf/id.cfg"
     ilink=$(grep -o 'ilink="[^"]*' "${idcfg}" |grep -o '[^"]*$')
     md5id=$(grep -o 'md5id="[^"]*' "${idcfg}" |grep -o '[^"]*$')
@@ -153,7 +153,7 @@ function upld() {
         cmd_dwl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
         info="<big>$(gettext "Downloadable content available")</big>"
         info2="$(gettext "Audio files:") $c_audio\n$(gettext "Images:") $c_images\n$(gettext "Size:") $fsize"
-        yad --form  --title="$(gettext "Share")" \
+        yad --form --columns=1 --title="$(gettext "Share")" \
         --name=Idiomind --class=Idiomind \
         --image="$DS/images/download.png" \
         --window-icon="$DS/images/icon.png" --buttons-layout=end \
