@@ -41,7 +41,6 @@ sentence_normal() {
 }
 
 word_image_normal(){
-    img_size=150
     cat <<!EOF
 <table width="100%" align="center" cellpadding="10" cellspacing="10">
 <tr><td style="width: 33%; vertical-align:top; align:$algn">${img1}<w1>${trgt1}</w1><br><w2>${srce1}</w2><br><br></td>
@@ -51,7 +50,6 @@ word_image_normal(){
 }
 
 word_example_examen(){
-    img_size=150
     hint="$(echo "${trgt,,}" |sed "s|[a-z]|"\ \ _"|g")"
     [ -n "${exmp}" ] && exmp="$(sed "s|${trgt,}|<b> ${hint} <\/b>|g" <<<"${exmp}")<br><br>"
     echo -e "<table width=\"80%\" align=\"left\" cellpadding=\"0\" cellspacing=\"5\"><tr>" >> "$file.words1"
@@ -60,7 +58,6 @@ word_example_examen(){
 }
 
 word_example_normal(){
-    img_size=100
     [ -n "$img" ] && fw="$file.words0" || fw="$file.words1"
     [ -n "${exmp}" ] && exmp="$(sed "s|${trgt,}|<mark>${trgt,}<\/mark>|g" <<<"${exmp}")<br><br>"
     [ -n "${defn}" ] && defn="${defn}<br><br>"
@@ -77,7 +74,6 @@ mkhtml() {
     mkdir -p "$DT/mkhtml"
     imagesdir="${DM_tls}/images"
     file="$DT/mkhtml/temp.html"
-    img_size=150
     
     if [ $ret -eq 2 ]; then
         while read -r word; do
@@ -98,20 +94,25 @@ mkhtml() {
         if [ -n "${trgt}" -a -n "${srce}" -a -n "${type}" ]; then
             fimg="$imagesdir/${trgt,,}-0.jpg"
             if [ -f "$fimg" ]; then
-                img="<img src=\"$fimg\" border=0 width=${img_size}px></img><br>"
+                img_small="<img src=\"$fimg\" border=0 width=100px></img><br>"
+                img_large="<img src=\"$fimg\" border=0 width=150px></img><br>"
+            else
+                img_small=""; img_large=""
             fi
             
             if [ ${type} = 1 -a $ret = 0 ]; then
                 if [[ -n "${exmp}${defn}${note}" ]]; then
+                    img="$img_small"
                     word_example_normal
                     let tr--
 
                 elif [[ -z "${exmp}${defn}${note}" ]]; then
                     if [ ${tr} = 1 ]; then
-                        trgt1="${trgt}"; srce1="${srce}"; img1="${img}"
+                        trgt1="${trgt}"; srce1="${srce}"; img1="${img_large}"
                     elif [ ${tr} = 2 ]; then
-                        trgt2="${trgt}"; srce2="${srce}"; img2="${img}"
+                        trgt2="${trgt}"; srce2="${srce}"; img2="${img_large}"
                     elif [ ${tr} = 3 ]; then
+                        img="${img_large}"
                         word_image_normal >> "$file.words2"
                     fi
                 fi
@@ -137,6 +138,7 @@ mkhtml() {
                 let tr--
             fi
             if [ -n "${exmp}" -a $ret = 2 ]; then
+                img="$img_small"
                 word_example_examen
             fi
         elif [ ${tr} = 2 ]; then

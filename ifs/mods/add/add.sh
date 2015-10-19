@@ -119,7 +119,6 @@ function sentence_p() {
     | sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //;s/"//g' \
     | tr -d '.' | sed 's/^ *//; s/ *$//; /^$/d' > "${aw}"
     translate "$(sed '/^$/d' "${aw}")" auto $lg | tr -d '!?¿,;.' > "${bw}"
-    touch "A.$r" "B.$r" "g.$r"
     
     while read -r wrd; do
         w="$(tr -d '\.,;“”"' <<<"${wrd,,}")"
@@ -228,15 +227,15 @@ function clean_0() {
 }
 
 function clean_2() {
-    if [ "$lgt" = ja -o "$lgt" = "zh-cn" -o "$lgt" = ru ]; then
+    if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
     echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' \
-    | sed "s/’/'/g" \
+    | sed "s/’/'/g" | sed 's/quot\;/"/g' \
     | tr -d '*\/' | tr -s '*&|{}[]<>+' ' ' \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//; s/ *$//g' | sed 's/ — /__/g' | sed 's/<[^>]*>//g'
     else
     echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' \
-    | sed "s/’/'/g" \
+    | sed "s/’/'/g" | sed 's/quot\;/"/g' \
     | tr -d '*\/' | tr -s '*&|{}[]<>+' ' ' \
     | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
     | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \

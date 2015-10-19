@@ -6,7 +6,6 @@ h3 {margin-top: 10;padding-right: 0px;padding-left: 0px;color: #616161;font-size
 tw1 {margin-top: 0;padding-right: 0px;padding-left: 0px;color: #5787B8;font-size: 15px;font-weight: bold;font-family: sans-serif, Verdana, Geneva;}
 texmp {margin-top: 0;padding-right: 0px;padding-left: 0px;color: #2B2B2B;font-size: 12px;font-weight: normal;font-family: sans-serif, Verdana, Geneva;}
 mark {background-color: #FEFCCF;color: #444444;font-weight: normal;}
-
 exmp {color: #5E5A54;font-size: 12px;font-weight: italic;font-family: sans-serif, Verdana, Geneva;margin: 1px;}
 defn {color: #5E5A54;font-size: 11px;font-weight: normal;font-family: sans-serif, Verdana, Geneva;margin: 1px;}
 note {color: #696968;font-size: 11px;font-weight: italic;font-family: sans-serif, Verdana, Geneva;margin: 1px;}
@@ -14,8 +13,6 @@ a img { border: none;}
 .ifont {width: 70%;color: #696968;font-size: 10px;font-weight: normal;font-family: sans-serif, Verdana, Geneva;margin-top: 0px;}
 .images {font-family: sans-serif, Verdana, Geneva;font-size: 16px;font-weight: bold;color: #666;}
 .wrdstable {font-family: sans-serif, Verdana, Geneva;font-size: 13px;font-weight: bold;color: #666;}
-.side {width: 3px;}
-body {margin-left: 10%;margin-right: 5%;margin-top: 20pt;margin-bottom: 20pt;vertical-align:middle;}
-
+.side {width: 3px;background-color: #71FF54;}
 body {width:80%; margin-left:auto; margin-right:auto;}
 

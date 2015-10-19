@@ -106,7 +106,7 @@ function new_sentence() {
         cleanups "$DT_r"
         msg "$(gettext "You need to fill text fields.")\n" info "$(gettext "Information")" & exit; fi
     fi
-    
+    notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000
     sentence_p "$DT_r" 1
     id="$(set_name_file 2 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}")"
     mksure "${trgt}" "${srce}" "${grmr}" "${wrds}"
@@ -119,8 +119,6 @@ function new_sentence() {
         if [ -e "$DT_r/img.jpg" ]; then
         mv -f  "$DT_r/img.jpg" "${DM_tlt}/images/$id.jpg"; fi
         
-        notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000
-
         if [ ! -e "$DT_r/audtm.mp3" ]; then
             if [ "$trans" = TRUE ]; then
                 tts_sentence "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
@@ -139,7 +137,6 @@ function new_sentence() {
 
         ( if [[ $wlist = TRUE ]] && [ -n "${wrds}" ]; then
             list_words_sentence; fi ) &
-
         fetch_audio "$aw" "$bw"
         cleanups "$DT_r"
     fi
