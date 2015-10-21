@@ -4,6 +4,7 @@
 if [ -z "${lgtl}" -o -z "${lgsl}" ]; then
 msg "$(gettext "Please check the language settings in the preferences dialog.")\n" error "$(gettext "Information")" & exit 1
 fi
+ua="Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0"
 
 function check_s() {
     if [ -z "${1}" ]; then
@@ -349,7 +350,7 @@ function translate() {
 dwld1() {
     LINK=""; source "$DS_a/Dics/dicts/$(basename "${dict}")"
     if [ "${LINK}" -a ! -e "$audio_file" ]; then
-        wget -T 51 -q -U Mozilla -O "$audio_dwld.$ex" "${LINK}"
+        wget -T 51 -q -U "$ua" -O "$audio_dwld.$ex" "${LINK}"
         if [[ ${ex} != 'mp3' ]]; then
         sox "$audio_dwld.$ex" "$audio_dwld.mp3"; rm "$audio_dwld.$ex"; fi
     fi
@@ -362,7 +363,7 @@ dwld1() {
 dwld2() {
     LINK=""; source "$DS_a/Dics/dicts/$(basename "${dict}")"
     if [ "${LINK}" -a ! -e "${audio_file}" ]; then
-        wget -T 51 -q -U Mozilla -O "$DT_r/audio.mp3" "${LINK}"
+        wget -T 51 -q -U "$ua" -O "$DT_r/audio.mp3" "${LINK}"
     fi
     if file -b --mime-type "$DT_r/audio.mp3" |grep -E 'audio\/mpeg|mp3|' >/dev/null 2>&1 \
     && [[ `du -b "$DT_r/audio.mp3" |cut -f1` -gt 100 ]]; then
