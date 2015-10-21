@@ -235,7 +235,6 @@ dlg_backups() {
     --print-column=1 --no-headers \
     --column=Nombre:TEXT \
     --button=gtk-close:1
-
 } >/dev/null 2>&1
 
 dlg_restfile() {
@@ -304,7 +303,7 @@ _definition() {
     --browser --uri="${_url}" \
     --window-icon="$DS/images/icon.png" \
     --fixed --on-top --mouse \
-    --width=680 --height=520 --borders=2 \
+    --width=680 --height=520 --borders=0 \
     --button="$(gettext "Close")":1 &
 } >/dev/null 2>&1
 
@@ -316,7 +315,7 @@ _quick_help() {
     --uri="${_url}" \
     --window-icon="$DS/images/icon.png" \
     --fixed --on-top --mouse \
-    --width=550 --height=450 --borders=5 \
+    --width=550 --height=450 --borders=2 \
     --button="$(gettext "Send Feedback")":"$DS/ifs/tls.sh 'fback'" \
     --button="$(gettext "Close")":1 &
 } >/dev/null 2>&1

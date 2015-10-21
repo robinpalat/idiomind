@@ -18,5 +18,6 @@ if [[ "$rplay" = TRUE ]]; then
     done
 else
     "$DS/chng.sh" 0
+    notify-send -i idiomind "$(gettext "Playback")" "$(gettext "Stopped")" -t 4000
     rm -fr "$DT/.p_" & exit 0
 fi
