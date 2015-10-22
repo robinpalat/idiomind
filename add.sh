@@ -655,7 +655,7 @@ fetch_content() {
                 if [ -n "${title}" ]; then
                     if ! grep -Fo "trgt={${title^}}" "${DC_tlt}/0.cfg" && \
                     ! grep -Fxq "${title^}" "${DC_tlt}/exclude"; then
-                        wlist='FALSE'
+                        wlist='FALSE'; trans='TRUE'
                         trgt="${title^}"
                         new_item
                     fi

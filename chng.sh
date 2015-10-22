@@ -1,7 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-
 if [[ ${1} = 0 ]]; then
     w="$(grep -oP '(?<=words=\").*(?=\")' "${cfg}")"
     s="$(grep -oP '(?<=sntcs=\").*(?=\")' "${cfg}")"
@@ -93,6 +92,7 @@ if [[ ${1} = 0 ]]; then
 
 elif [[ ${1} != 0 ]]; then
     [ -z"${DM}" ] && source /usr/share/idiomind/ifs/c.conf
+    linkc="http://idiomind.sourceforge.net/community/${lgtl,,}"
     remove_d() {
         ins="$(cd "/usr/share/idiomind/addons/"
         set -- */; printf "%s\n" "${@%/}")"
@@ -115,11 +115,10 @@ elif [[ ${1} != 0 ]]; then
         set -- */; printf "%s\n" "${@%/}")" > "$DC_a/list"
     fi
     if [[ -n "$1" ]]; then
-        text="--text=$1\n"
-        img="--image=info"
-    else
-        text="--center"
-    fi
+    var1="--text=$1\n"
+    var2="--image=info"; else
+    var1="--text=<small><a href='$linkc'>$(gettext "Share")</a>  </small>"
+    var2="--text-align=right"; fi
     chk_list_addons1=$(wc -l < "$DS_a/menu_list")
     chk_list_addons2=$((`wc -l < "$DC_a/list"`*2))
     chk_list_topics1=$((`wc -l < "$DM_tl/.0.cfg"`/2))
@@ -129,11 +128,11 @@ elif [[ ${1} != 0 ]]; then
     if [ -e "$DC_s/topics_first_run" -a -z "${1}" ]; then exit 1; fi
 
     tpc=$(cat "$DM_tl/.0.cfg" | \
-    yad --list --title="$(gettext "Topics")" "$text" \
+    yad --list --title="$(gettext "Topics")" "$var1" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-column=2 --separator="" \
     --window-icon="$DS/images/icon.png" \
-    --text-align=left --center $img --image-on-top \
+    --text-align=left --center $var2 --image-on-top \
     --no-headers --ellipsize=END --expand-column=2 \
     --search-column=2 --regex-search \
     --width=620 --height=580 --borders=8 \
