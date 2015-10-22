@@ -4,7 +4,6 @@
 if [ -z "${lgtl}" -o -z "${lgsl}" ]; then
 msg "$(gettext "Please check the language settings in the preferences dialog.")\n" error "$(gettext "Information")" & exit 1
 fi
-ua="Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0"
 
 function check_s() {
     if [ -z "${1}" ]; then

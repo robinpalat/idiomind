@@ -51,6 +51,7 @@ else
     fi
 fi
     ret=$?
+    if ps -A | pgrep -f 'play'; then killall play & fi
     if [ $ret -eq 4 ]; then
         "$DS/mngr.sh" edit ${1} ${index_pos} ${text_missing}
     elif [ $ret -eq 2 ]; then
@@ -65,7 +66,8 @@ fi
     elif [ $ret -eq 3 ]; then
         ff=$((index_pos+1))
         "$DS/vwr.sh" ${1} "" ${ff} &
-    else 
+    else
+        if ps -A | pgrep -f 'play'; then killall play & fi
         exit 1
     fi
 exit
