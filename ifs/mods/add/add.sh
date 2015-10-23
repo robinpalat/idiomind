@@ -515,6 +515,7 @@ function dlg_form_0() {
 function dlg_form_1() {
     yad --form --title="$(gettext "New note")" \
     --name=Idiomind --class=Idiomind \
+    --gtkrc='/usr/share/idiomind/default/gtkrc.ini' \
     --always-print-result --separator="\n" \
     --skip-taskbar --center --on-top \
     --align=right --image="$img" \
@@ -530,6 +531,7 @@ function dlg_form_1() {
 function dlg_form_2() {
     yad --form --title="$(gettext "New note")" \
     --name=Idiomind --class=Idiomind \
+    --gtkrc='/usr/share/idiomind/default/gtkrc.ini' \
     --always-print-result --separator="\n" \
     --skip-taskbar --center --on-top \
     --align=right --image="$img" \
@@ -548,6 +550,7 @@ function dlg_checklist_1() {
     yad --list --checklist --title="$(gettext "Word list")" \
     --text="<small> $2 </small>" \
     --name=Idiomind --class=Idiomind \
+    --gtkrc='/usr/share/idiomind/default/gtkrc.ini' \
     --window-icon="$DS/images/icon.png" \
     --mouse --on-top --no-headers \
     --text-align=right --buttons-layout=end \
@@ -561,6 +564,7 @@ function dlg_checklist_3() {
     cat "${1}" | awk '{print "FALSE\n"$0}' | \
     yad --list --checklist --title="$(gettext "New note")" \
     --name=Idiomind --class=Idiomind \
+    --gtkrc='/usr/share/idiomind/default/gtkrc.ini' \
     --dclick-action="'/usr/share/idiomind/add.sh' 'list_words_dclik'" \
     --window-icon="$DS/images/icon.png" \
     --ellipsize=END --center --no-click --text-align=right \
