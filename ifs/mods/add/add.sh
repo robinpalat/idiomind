@@ -149,9 +149,11 @@ function sentence_p() {
     
     if [ "$lgt" = ja -o "$lgt" = "zh-cn" -o "$lgt" = ru ]; then
         while [[ ${bcle} -le $(wc -l < "${aw}") ]]; do
-        s=$(sed -n ${bcle}p ${aw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g'|sed "s/'/''/")
-        t=$(sed -n ${bcle}p ${bw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g'|sed "s/'/''/")
-        echo "$t"_"$s""" >> "$DT_r/B.$r"
+        s=$(sed -n ${bcle}p ${aw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
+        t=$(sed -n ${bcle}p ${bw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
+        echo "$t"_"$s" >> "$DT_r/B.$r"
+        t="$(echo "${t}" |sed "s/'/''/")"
+        s="$(echo "${s}" |sed "s/'/''/")"
         if ! [[ "${t}" =~ [0-9] ]] && [ -n "${t}" ] && [ -n "${s}" ]; then
             if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]]; then
                 sqlite3 ${cdb} "insert into Words (Word,${lgsl^},Example) values ('${t}','${s}','${trgt_q}');"
@@ -164,9 +166,11 @@ function sentence_p() {
         done
     else
         while [[ ${bcle} -le $(wc -l < "${aw}") ]]; do
-        t=$(sed -n ${bcle}p ${aw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g'|sed "s/'/''/")
-        s=$(sed -n ${bcle}p ${bw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g'|sed "s/'/''/")
-        echo "$t"_"$s""" >> "$DT_r/B.$r"
+        t=$(sed -n ${bcle}p ${aw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
+        s=$(sed -n ${bcle}p ${bw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
+        echo "$t"_"$s" >> "$DT_r/B.$r"
+        t="$(echo "${t}" |sed "s/'/''/")"
+        s="$(echo "${s}" |sed "s/'/''/")"
         if ! [[ "${t}" =~ [0-9] ]] && [ -n "${t}" ] && [ -n "${s}" ]; then
             if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]]; then
                 sqlite3 ${cdb} "insert into Words (Word,${lgsl^},Example) values ('${t}','${s}','${trgt_q}');" 
