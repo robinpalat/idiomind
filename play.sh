@@ -124,7 +124,6 @@ play_list() {
     --field="$(gettext "Repeat sounding out")":CB "$lst_opts1" > $tab2 &
     yad --notebook --key=$KEY --title="$title" \
     --name=Idiomind --class=Idiomind \
-    --gtkrc='/usr/share/idiomind/default/gtkrc.ini' \
     --always-print-result --print-all \
     --window-icon="$DS/images/icon.png" \
     --align=right --center --on-top \

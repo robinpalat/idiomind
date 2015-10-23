@@ -117,7 +117,7 @@ elif [[ ${1} != 0 ]]; then
     if [[ -n "$1" ]]; then
     var1="--text=$1\n"
     var2="--image=info"; else
-    var1="--text=<small><a href='$linkc'>$(gettext "Share")</a>  </small>"
+    var1="--text=<small><a href='$linkc'>$(gettext "Share")</a> </small>"
     var2="--text-align=right"; fi
     chk_list_addons1=$(wc -l < "$DS_a/menu_list")
     chk_list_addons2=$((`wc -l < "$DC_a/list"`*2))

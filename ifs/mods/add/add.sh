@@ -93,11 +93,10 @@ function sentence_p() {
         trgt_p="${trgt_mod}"
         srce_p="${srce_mod}"
     fi
-    
     cdb="$DM_tls/Dictionary/${lgtl}.db"
-    table="T`date +%m%y`"; row_trans="$lgsl"
+    table="T`date +%m%y`"
     echo -n "create table if not exists ${table} \
-    (Word TEXT, ${row_trans^} TEXT);" |sqlite3 ${cdb}
+    (Word TEXT, ${lgsl^} TEXT);" |sqlite3 ${cdb}
     if ! grep -q ${lgsl} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(${table});")"; then
         sqlite3 ${cdb} "alter table ${table} add column ${lgsl} TEXT;"
     fi
@@ -146,43 +145,41 @@ function sentence_p() {
     sed -i 's/\. /\n/g' "${bw}"
     sed -i 's/\. /\n/g' "${aw}"
     touch "$DT_r/A.$r" "$DT_r/B.$r" "$DT_r/g.$r"; bcle=1
+    trgt_q="$(echo "${trgt}" |sed "s/'/''/")"
     
     if [ "$lgt" = ja -o "$lgt" = "zh-cn" -o "$lgt" = ru ]; then
         while [[ ${bcle} -le $(wc -l < "${aw}") ]]; do
-        s=$(sed -n ${bcle}p ${aw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
-        t=$(sed -n ${bcle}p ${bw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
+        s=$(sed -n ${bcle}p ${aw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g'|sed "s/'/''/")
+        t=$(sed -n ${bcle}p ${bw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g'|sed "s/'/''/")
         echo "$t"_"$s""" >> "$DT_r/B.$r"
         if ! [[ "${t}" =~ [0-9] ]] && [ -n "${t}" ] && [ -n "${s}" ]; then
             if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]]; then
-                echo -n "insert into ${table} (Word,${row_trans^}) \
-                values ('${t}','${s}');" |sqlite3 ${cdb}
-                echo -n "insert into Words (Word,${row_trans^},Example) \
-                values ('${t}','${s}','${trgt}');" |sqlite3 ${cdb}
+                sqlite3 ${cdb} "insert into Words (Word,${lgsl^},Example) values ('${t}','${s}','${trgt_q}');"
+                sqlite3 ${cdb} "insert into ${table} (Word,${lgsl^}) values ('${t}','${s}');"
             elif ! [[ `sqlite3 ${cdb} "select Example from Words where Word is '${t}';"` ]]; then
-                echo -n "update Words set Example='${trgt}' where Word='${t}';" |sqlite3 ${cdb}
+                sqlite3 ${cdb} "update Words set Example='${trgt_q}' where Word='${t}';"
             fi
         fi
         let bcle++
         done
     else
         while [[ ${bcle} -le $(wc -l < "${aw}") ]]; do
-        t=$(sed -n ${bcle}p ${aw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
-        s=$(sed -n ${bcle}p ${bw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
+        t=$(sed -n ${bcle}p ${aw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g'|sed "s/'/''/")
+        s=$(sed -n ${bcle}p ${bw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g'|sed "s/'/''/")
         echo "$t"_"$s""" >> "$DT_r/B.$r"
         if ! [[ "${t}" =~ [0-9] ]] && [ -n "${t}" ] && [ -n "${s}" ]; then
             if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]]; then
-                echo -n "insert into ${table} (Word,${row_trans^}) \
-                values ('${t}','${s}');" |sqlite3 ${cdb}
-                echo -n "insert into Words (Word,${row_trans^},Example) \
-                values ('${t}','${s}','${trgt}');" |sqlite3 ${cdb}
+                sqlite3 ${cdb} "insert into Words (Word,${lgsl^},Example) values ('${t}','${s}','${trgt_q}');" 
+                sqlite3 ${cdb} "insert into ${table} (Word,${lgsl^}) values ('${t}','${s}');"
             elif ! [[ `sqlite3 ${cdb} "select Example from Words where Word is '${t}';"` ]]; then
-                echo -n "update Words set Example='${trgt}' where Word='${t}';" |sqlite3 ${cdb}
+                sqlite3 ${cdb} "update Words set Example='${trgt_q}' where Word='${t}';"
             fi
         fi
         let bcle++
         done
     fi
     if [ ${2} = 1 ]; then
+    grmr=""; wrds=""
     grmr="$(sed ':a;N;$!ba;s/\n/ /g' < "$DT_r/g.$r")"
     wrds="$(tr '\n' '_' < "$DT_r/B.$r")"
     elif [ ${2} = 2 ]; then
@@ -193,18 +190,18 @@ function sentence_p() {
 
 function word_p() {
     cdb="$DM_tls/Dictionary/${lgtl}.db"
-    table="T`date +%m%y`"; row_trans="$lgsl"
+    table="T`date +%m%y`"
+    trgt_q="$(echo "${trgt}" |sed "s/'/''/")"
+    srce_q="$(echo "${srce}" |sed "s/'/''/")"
     echo -n "create table if not exists ${table} \
-    (Word TEXT, ${row_trans^} TEXT);" |sqlite3 ${cdb}
+    (Word TEXT, ${lgsl^} TEXT);" |sqlite3 ${cdb}
     if ! grep -q ${lgsl} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(${table});")"; then
         sqlite3 ${cdb} "alter table ${table} add column ${lgsl} TEXT;"
     fi
     if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${trgt}';"` ]] \
     && ! [[ "${trgt}" =~ [0-9] ]] && [ -n "${trgt}" ] && [ -n "${srce}" ]; then
-        echo -n "insert into ${table} (Word,${row_trans^}) \
-        values ('${trgt}','${srce}');" |sqlite3 ${cdb}
-        echo -n "insert into Words (Word,${row_trans^}) \
-        values ('${trgt}','${srce}');" |sqlite3 ${cdb}
+        sqlite3 ${cdb} "insert into ${table} (Word,${lgsl^}) values ('${trgt_q}','${srce_q}');"
+        sqlite3 ${cdb} "insert into Words (Word,${lgsl^}) values ('${trgt_q}','${srce_q}');"
     fi
 }
 
