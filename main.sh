@@ -32,7 +32,7 @@ if [ -e "$DT/ps_lk" -o -e "$DT/el_lk" ]; then
     [ -e "$DT/el_lk" ] && rm -f "$DT/el_lk"
     exit 1
 fi
-
+#pIrl47v7vC_KiYk
 function new_session() {
     echo "--new session"
     date "+%d" > "$DC_s/10.cfg"
