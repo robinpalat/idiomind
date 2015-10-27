@@ -81,15 +81,14 @@ play_list() {
             source "${ad}"
             for item in "${!items[@]}"; do
                 echo "$DS/images/add.png"
-                echo "  <span font_desc='Arial 11'>$(gettext "${item}")</span>"
+                echo "  <span font_desc='Arial 10'>$(gettext "${item}")</span>"
                 grep -o ${items[$item]}=\"[^\"]* "${file_cfg}" |grep -o '[^"]*$'
             done
             unset items
         done
     }
-    if grep -E 'vivid|wily' <<<"`lsb_release -a`" >/dev/null 2>&1; then
-    btn1="gtk-media-play:0"; else
-    btn1="$(gettext "Play"):0"; fi
+
+    btn1="$(gettext "Play"):0"
     if [ ! -f "$DT/.p_" ]; then
         btn2="--center"
         title="$(gettext "Play")"
@@ -125,6 +124,7 @@ play_list() {
     --field="$(gettext "Repeat sounding out")":CB "$lst_opts1" > $tab2 &
     yad --notebook --key=$KEY --title="$title" \
     --name=Idiomind --class=Idiomind \
+    --gtkrc="$DS/default/gtkrc.ini" \
     --always-print-result --print-all \
     --window-icon=idiomind \
     --align=right --center --on-top \
