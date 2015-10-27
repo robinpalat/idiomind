@@ -17,7 +17,7 @@ function dlg_form_1() {
     --field="$lgsl" "${srce}" \
     --field="$(gettext "Topic")":CB "${tpc_list}" \
     --field="$(gettext "Audio")":FL "${audf}" \
-    --field="$(gettext "Example")\t\t\t\t\t\t\t\t\t\t\t\t\t":TXT "${exmp}" \
+    --field="$(gettext "Example")\t\t\t\t\t\t\t\t\t\t\t":TXT "${exmp}" \
     --field="$(gettext "Definition")":TXT "${defn}" \
     --field="$(gettext "Note")":TXT "${note}" \
     --field="$(gettext "Search")  <a href='$link1'>$(gettext "Translation")</a>  ":LBL " " \

@@ -353,7 +353,7 @@ panel() {
     && [ ! -e /tmp/.clipw ]; then
         "$DS/ifs/mods/clipw.sh" &
     fi
-
+    
     yad --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
     --always-print-result \
