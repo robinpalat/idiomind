@@ -13,16 +13,16 @@ function dlg_form_1() {
     --align=left --text-align=center --columns=2 \
     --buttons-layout=end --scroll --center --on-top \
     --width=690 --height=520 --borders=10 \
-    --field="<small>$lgtl</small>" "${trgt}" \
-    --field="<small>$lgsl</small>" "${srce}" \
-    --field="<small>$(gettext "Topic")</small>":CB "${tpc_list}" \
-    --field="<small>$(gettext "Audio")</small>":FL "${audf}" \
-    --field="<small>$(gettext "Example")</small>\t\t\t\t\t\t\t\t\t\t\t":TXT "${exmp}" \
-    --field="<small>$(gettext "Definition")</small>":TXT "${defn}" \
-    --field="<small>$(gettext "Note")</small>":TXT "${note}" \
-    --field="<small>$(gettext "Search")  <a href='$link1'>$(gettext "Translation")</a>  </small>":LBL " " \
+    --field="$lgtl" "${trgt}" \
+    --field="$lgsl" "${srce}" \
+    --field="$(gettext "Topic")":CB "${tpc_list}" \
+    --field="$(gettext "Audio")":FL "${audf}" \
+    --field="$(gettext "Example")\t\t\t\t\t\t\t\t\t\t\t\t\t":TXT "${exmp}" \
+    --field="$(gettext "Definition")":TXT "${defn}" \
+    --field="$(gettext "Note")":TXT "${note}" \
+    --field="$(gettext "Search")  <a href='$link1'>$(gettext "Translation")</a>  ":LBL " " \
     --field="$(gettext "Mark")":CHK "$mark" \
-    --field="<small>$(gettext "Tag")</small>":CB "${tags_list}" \
+    --field="$(gettext "Tag")":CB "${tags_list}" \
     --field="$(gettext "Definition")!info":FBTN "${cmd_def}" \
     --button="$(gettext "Image")":"${cmd_image}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \
@@ -46,12 +46,12 @@ function dlg_form_2() {
     --width=600 --height=420 --borders=10 \
     --field="$(gettext "Mark")":CHK "$mark" \
     --field=" $lbl_2":${t} "$type" \
-    --field="<small>$lgtl</small>":TXT "${trgt}" \
-    --field="<small><a href='$link1'>$(gettext "Translation")</a></small>\t":LBL " " \
-    --field="<small>$lgsl</small>":TXT "${srce}" \
-    --field="<small>$(gettext "Topic")</small>":CB "${tpc_list}" \
-    --field="<small>$(gettext "Tag")</small>":CB "${tags_list}" \
-    --field="<small>$(gettext "Audio")</small>":FL "${audf}" \
+    --field="$lgtl":TXT "${trgt}" \
+    --field="<a href='$link1'>$(gettext "Translation")</a>\t":LBL " " \
+    --field="$lgsl":TXT "${srce}" \
+    --field="$(gettext "Topic")":CB "${tpc_list}" \
+    --field="$(gettext "Tag")":CB "${tags_list}" \
+    --field="$(gettext "Audio")":FL "${audf}" \
     --button="$(gettext "Words")":"${cmd_words}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \
     --button="!$DS/images/listen.png!$(gettext "Listen")":"$cmd_play" \
