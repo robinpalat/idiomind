@@ -15,6 +15,7 @@ play_word() {
 } >/dev/null 2>&1
 
 play_sentence() {
+    if ps -A | pgrep -f 'play'; then killall 'play'; fi
     if [ -f "${DM_tlt}/$2.mp3" ]; then
         play "${DM_tlt}/$2.mp3" &
     elif [ -n "$synth" ]; then
