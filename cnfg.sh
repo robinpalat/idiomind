@@ -26,7 +26,7 @@ sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
 confirm() {
     yad --form --title="$(gettext "Confirm")" \
     --image=$2 --text="$1\n" \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --skip-taskbar --center --on-top \
     --width=340 --height=120 --borders=5 \
     --button="$(gettext "Cancel")":1 \
@@ -124,7 +124,7 @@ config_dlg() {
     --column=icon:IMG --column=Action &
     yad --notebook --key=$KEY --title="$(gettext "Settings")" \
     --name=Idiomind --class=Idiomind \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --tab-borders=5 --sticky --center \
     --tab="$(gettext "Preferences")" \
     --tab="$(gettext "Extensions")" \

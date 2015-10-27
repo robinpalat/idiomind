@@ -505,7 +505,7 @@ function dlg_form_0() {
     yad --form --title="$(gettext "New Topic")" \
     --name=Idiomind --class=Idiomind \
     --separator='|' \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --skip-taskbar --center --on-top \
     --width=450 --height=100 --borders=0 \
     --field="$(gettext "Name")" "$1" \
@@ -520,7 +520,7 @@ function dlg_form_1() {
     --always-print-result --separator="\n" \
     --skip-taskbar --center --on-top \
     --align=right --image="$img" \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --width=450 --height=130 --borders=0 \
     --field="" "$txt" \
     --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
@@ -536,7 +536,7 @@ function dlg_form_2() {
     --always-print-result --separator="\n" \
     --skip-taskbar --center --on-top \
     --align=right --image="$img" \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --width=450 --height=150 --borders=0 \
     --field="" "$txt" \
     --field="" "$srce" \
@@ -552,7 +552,7 @@ function dlg_checklist_1() {
     --text="<small> $2 </small>" \
     --name=Idiomind --class=Idiomind \
     --gtkrc='/usr/share/idiomind/default/gtkrc.ini' \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --mouse --on-top --no-headers \
     --text-align=right --buttons-layout=end \
     --width=400 --height=280 --borders=5  \
@@ -567,7 +567,7 @@ function dlg_checklist_3() {
     --name=Idiomind --class=Idiomind \
     --gtkrc='/usr/share/idiomind/default/gtkrc.ini' \
     --dclick-action="'/usr/share/idiomind/add.sh' 'list_words_dclik'" \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --ellipsize=END --center --no-click --text-align=right \
     --width=700 --height=380 --borders=5 \
     --column="$(gettext "Select")" \
@@ -582,7 +582,7 @@ function dlg_text_info_1() {
     yad --text-info --title="$(gettext "Edit")" \
     --name=Idiomind --class=Idiomind \
     --editable \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --wrap --margins=30 --fontname=vendana \
     --skip-taskbar --center --on-top \
     --width=700 --height=500 --borders=5 \
@@ -595,7 +595,7 @@ function msg_3() {
     yad --title="$title" --text="$1" --image="$2" \
     --name=Idiomind --class=Idiomind \
     --always-print-result \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --image-on-top --on-top --sticky --center \
     --width=400 --height=120 --borders=3 \
     --button="$(gettext "Cancel")":1 \
@@ -608,7 +608,7 @@ function dlg_text_info_3() {
     --title="$(gettext "Some notes could not be added to your list")" \
     --text="${1}" \
     --name=Idiomind --class=Idiomind \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --wrap --margins=5 \
     --center --on-top \
     --width=510 --height=300 --borders=5 \
@@ -618,7 +618,7 @@ function dlg_text_info_3() {
 function dlg_form_3() {
     yad --form --title=$(gettext "Image") "$image" "$label" \
     --name=Idiomind --class=Idiomind \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --skip-taskbar --image-on-top \
     --align=center --text-align=center --center --on-top \
     --width=420 --height=320 --borders=5 \
@@ -628,7 +628,7 @@ function dlg_form_3() {
 function dlg_progress_1() {
     yad --progress --title="$(gettext "Processing")" \
     --name=Idiomind --class=Idiomind \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --progress-text=" " \
     --pulsate --percentage="5" --auto-close \
     --undecorated --skip-taskbar --no-buttons \

@@ -123,7 +123,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     --text="${itxt}" \
     --name=Idiomind --class=Idiomind \
     --no-click --print-column=0 --dclick-action="$dclk" \
-    --window-icon=$wicon \
+    --window-icon=idiomind \
     --no-headers --ellipsize=END --center \
     --width=600 --height=560 --borders=6 \
     --column="$langt" \
@@ -358,7 +358,7 @@ panel() {
     yad --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
     --always-print-result \
-    --window-icon=$wicon \
+    --window-icon=idiomind \
     --gtkrc='/usr/share/idiomind/default/gtkrc.ini' \
     --form --fixed --on-top --no-buttons --align=center \
     --width=140 --height=190 --borders=0 --geometry=80x190-${x}-${y} \

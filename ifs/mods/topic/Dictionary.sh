@@ -16,7 +16,7 @@ function Dictionary() {
                 echo "<span font_desc='Free Sans 11'>$word</span>"
                 echo "<span font_desc='Free Sans 11'>$tran</span>"
             fi
-            [ ${limit} -gt 100 ] && break
+            [ ${limit} -gt 200 ] && break
             let limit++
         done
     }
@@ -28,7 +28,7 @@ function Dictionary() {
     --column="$(gettext "$lgsl")":TEXT \
     --name=Idiomind --class=Idiomind  \
     --center --align=right --ellipsize=END --image-on-top \
-    --window-icon="$DS/images/icon.png" --center \
+    --window-icon=idiomind --center \
     --width=620 --height=580 --borders=8 \
     --button="gtk-close":1
     

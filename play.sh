@@ -125,7 +125,7 @@ play_list() {
     yad --notebook --key=$KEY --title="$title" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-all \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --align=right --center --on-top \
     --tab-pos=right --tab-borders=0 \
     --tab=" $(gettext "Lists") " \

@@ -161,7 +161,7 @@ fileout=$(yad --file \
 --save --title="$(gettext "Save as PDF")" \
 --name=Idiomind --class=Idiomind \
 --filename="$HOME/$tpc.pdf" \
---window-icon="$DS/images/icon.png" --center --on-top \
+--window-icon=idiomind --center --on-top \
 --width=600 --height=500 --borders=5 \
 --button="$(gettext "Cancel")":1 \
 --button="$(gettext "Test Mode")":2 \

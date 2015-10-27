@@ -397,7 +397,7 @@ function practice_e() {
         --text="$text" \
         --name=Idiomind --class=Idiomind \
         --separator="" \
-        --window-icon="$DS/images/icon.png" --image="$DS/images/bar.png" \
+        --window-icon=idiomind --image="$DS/images/bar.png" \
         --buttons-layout=end --skip-taskbar --undecorated --center --on-top \
         --text-align=left --align=left --image-on-top \
         --width=510 --height=220 --borders=10 \
@@ -414,7 +414,7 @@ function practice_e() {
         --name=Idiomind --class=Idiomind \
         --image="$DS/images/bar.png" $aut \
         --selectable-labels \
-        --window-icon="$DS/images/icon.png" \
+        --window-icon=idiomind \
         --skip-taskbar --wrap --scroll --image-on-top --center --on-top \
         --undecorated --buttons-layout=end \
         --width=510 --height=250 --borders=10 \
@@ -601,7 +601,7 @@ function lock() {
         yad --title="$ttle_dlg" \
         --text="${text_dlg}" \
         --image="$imag_dlg" \
-        --window-icon="$DS/images/icon.png" --on-top --skip-taskbar --center \
+        --window-icon=idiomind --on-top --skip-taskbar --center \
         --width=400 --height=130 --borders=5 \
         --button="    ${bttn_dlg}    ":$bttn_out \
         --button="    $(gettext "OK")    ":1
@@ -624,7 +624,7 @@ function lock() {
 function starting() {
     yad --title=$(gettext "Information") \
     --text=" $1\t\n" --image=info \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --skip-taskbar --center --on-top \
     --width=340 --height=120 --borders=5 \
     --button="    $(gettext "Ok")    ":1
@@ -698,7 +698,7 @@ function strt() {
     --text="$info" \
     --class=Idiomind --name=Idiomind \
     --print-column=1 --separator="" \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --buttons-layout=edge --image-on-top --center --on-top --text-align=center \
     --ellipsize=NONE --no-headers --expand-column=2 --hide-column=1 \
     --width=500 --height=460 --borders=10 \

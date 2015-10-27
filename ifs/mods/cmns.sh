@@ -13,7 +13,7 @@ function msg() {
     [ -n "$4" ] && btn="$4" || btn="$(gettext "OK")"
     yad --title="$title" --text="$1" --image="$2" \
     --name=Idiomind --class=Idiomind \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --image-on-top --center --sticky --on-top \
     --width=410 --height=130 --borders=3 \
     --button="$btn":0
@@ -25,7 +25,7 @@ function msg_2() {
     yad --title="$title" --text="$1" --image="$2" \
     --name=Idiomind --class=Idiomind \
     --always-print-result \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --image-on-top --on-top --sticky --center \
     --width=400 --height=120 --borders=3 \
     "$btn3" --button="$4":1 --button="$3":0

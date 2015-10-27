@@ -12,7 +12,7 @@ function word_view() {
     yad --form --title=" " \
     --selectable-labels --quoted-output \
     --text="${sentence}" \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --scroll --skip-taskbar --text-align=center \
     --image-on-top --center --on-top \
     --width=630 --height=390 --borders=20 \
@@ -35,7 +35,7 @@ function sentence_view() {
     --text="${sentence}" \
     --selectable-labels --print-column=0 \
     --dclick-action="$DS/play.sh 'play_word'" \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --skip-taskbar --image-on-top --center --on-top \
     --scroll --text-align=left --expand-column=0 --no-headers \
     --width=630 --height=390 --borders=20 \
@@ -94,7 +94,7 @@ function notebook_1() {
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
     --center --align=right --ellipsize=END --image-on-top \
-    --window-icon="$DS/images/icon.png" --center \
+    --window-icon=idiomind --center \
     --tab="  $(gettext "Learning") ($inx1) " \
     --tab="  $(gettext "Learnt") ($inx2) " \
     --tab="  $(gettext "Note")  " \
@@ -141,7 +141,7 @@ function notebook_2() {
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
     --center --align=right "$img" --ellipsize=END --image-on-top \
-    --window-icon="$DS/images/icon.png" --center \
+    --window-icon=idiomind --center \
     --tab="  $(gettext "Review")  " \
     --tab="  $(gettext "Learnt") ($inx2) " \
     --tab="  $(gettext "Note")  " \
@@ -155,7 +155,7 @@ function dialog_1() {
     --class=idiomind --name=Idiomind \
     --text="\"${tpc}\"\n$(gettext "<b>Would you like to review it?</b>\n The waiting period already has been completed.")" \
     --image=gtk-refresh \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --buttons-layout=edge --center --on-top \
     --width=420 --height=140 --borders=10 \
     --button=" $(gettext "Not Yet") ":1 \

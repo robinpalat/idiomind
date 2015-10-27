@@ -12,7 +12,7 @@ function word_view() {
     yad --form --title=" " \
     --selectable-labels --quoted-output \
     --text="${sentence}" \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --scroll --skip-taskbar --text-align=center \
     --image-on-top --center --on-top \
     --width=630 --height=390 --borders=20 \
@@ -35,7 +35,7 @@ function sentence_view() {
     --text="${sentence}" \
     --selectable-labels --print-column=0 \
     --dclick-action="$DS/play.sh 'play_word'" \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --skip-taskbar --image-on-top --center --on-top \
     --scroll --text-align=left --expand-column=0 --no-headers \
     --width=630 --height=390 --borders=20 \
@@ -70,7 +70,7 @@ function tags_list() {
     --no-headers --search-column=1 --hide-column=3 --regex-search \
     --always-print-result \
     --center --align=right --ellipsize=END --image-on-top \
-    --window-icon="$DS/images/icon.png" --center \
+    --window-icon=idiomind --center \
     --width=600 --height=560 --borders=5  \
     --column="$(gettext "$lgtl")":IMG \
     --column="$(gettext "$lgsl")":TEXT \

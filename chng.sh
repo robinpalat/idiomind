@@ -131,7 +131,7 @@ elif [[ ${1} != 0 ]]; then
     yad --list --title="$(gettext "Topics")" "$var1" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-column=2 --separator="" \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --text-align=left --center $var2 --image-on-top \
     --no-headers --ellipsize=END --expand-column=2 \
     --search-column=2 --regex-search \

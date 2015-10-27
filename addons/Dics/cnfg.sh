@@ -17,7 +17,7 @@ function add_dlg() {
     add="$(yad --file --title="$(gettext "Add resource")" \
     --text=" $(gettext "Browse to and select the file that you want to add.")" \
     --class=Idiomind --name=Idiomind \
-    --window-icon="$DS/images/icon.png" --center --on-top \
+    --window-icon=idiomind --center --on-top \
     --width=650 --height=550 --borders=5 \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "OK")":0 |cut -d "|" -f1)"
@@ -108,7 +108,7 @@ function dlg() {
     --name=Idiomind --class=Idiomind "${text}" \
     --print-all --always-print-result --separator="|" \
     --dclick-action="$DS_a/Dics/cnfg.sh dclk" \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --expand-column=2 --hide-column=3 \
     --search-column=4 --regex-search --tooltip-column=3 \
     --center --mouse --on-top \

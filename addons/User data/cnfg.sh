@@ -22,7 +22,7 @@ D=$(yad --list --radiolist --title="$(gettext "User Data")" \
 --name=Idiomind --class=Idiomind \
 --text="$(gettext "Total size:") $size" \
 --always-print-result --print-all --separator=" " \
---window-icon="$DS/images/icon.png" \
+--window-icon=idiomind \
 --center --on-top --expand-column=2 --image-on-top \
 --skip-taskbar --image=folder \
 --width=450 --height=280 --borders=10 \
@@ -41,7 +41,7 @@ if [[ $ret -eq 0 ]]; then
         cd "$HOME"
         exp=$(yad --file --save --title="$(gettext "Export")" \
         --filename="idiomind_data.tar.gz" \
-        --window-icon="$DS/images/icon.png" \
+        --window-icon=idiomind \
         --skip-taskbar --center --mouse --on-top \
         --width=600 --height=500 --borders=10 \
         --button="$(gettext "Cancel")":1 \
@@ -76,7 +76,7 @@ if [[ $ret -eq 0 ]]; then
         cd "$HOME"
         add=$(yad --file --title="$(gettext "Import")" \
         --file-filter="*.gz" \
-        --window-icon="$DS/images/icon.png" \
+        --window-icon=idiomind \
         --skip-taskbar --center --on-top \
         --width=600 --height=500 --borders=10 \
         --button="$(gettext "Cancel")":1 \

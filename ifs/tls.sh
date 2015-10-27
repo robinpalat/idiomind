@@ -191,7 +191,7 @@ add_audio() {
     --text=" $(gettext "Browse to and select the audio file that you want to add.")" \
     --class=Idiomind --name=Idiomind \
     --file-filter="*.mp3" \
-    --window-icon="$DS/images/icon.png" --center --on-top \
+    --window-icon=idiomind --center --on-top \
     --width=620 --height=500 --borders=5 \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "OK")":0 |cut -d "|" -f1)"
@@ -230,7 +230,7 @@ dlg_backups() {
     yad --list --title="$(gettext "Backups")" \
     --name=Idiomind --class=Idiomind \
     --dclick-action="$DS/ifs/tls.sh '_restfile'" \
-    --window-icon="$DS/images/icon.png" --center --on-top \
+    --window-icon=idiomind --center --on-top \
     --width=520 --height=380 --borders=10 \
     --print-column=1 --no-headers \
     --column=Nombre:TEXT \
@@ -249,7 +249,7 @@ dlg_restfile() {
         --text="${2}" \
         --name=Idiomind --class=Idiomind \
         --print-all --expand-column=2 --no-click \
-        --window-icon="$DS/images/icon.png" \
+        --window-icon=idiomind \
         --image-on-top --on-top --center \
         --width=450 --height=180 --borders=5 \
         --column="$(gettext "Select")":RD \
@@ -284,7 +284,7 @@ fback() {
     yad --html --title="$(gettext "Send Feedback")" \
     --name=Idiomind --class=Idiomind \
     --browser --uri="$URL" \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --no-buttons --fixed --on-top --mouse \
     --width=500 --height=350 &
 } >/dev/null 2>&1
@@ -301,7 +301,7 @@ _definition() {
     yad --html --title="$(gettext "Definition")" \
     --name=Idiomind --class=Idiomind \
     --browser --uri="${_url}" \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --fixed --on-top --mouse \
     --width=680 --height=520 --borders=0 \
     --button="$(gettext "Close")":1 &
@@ -314,7 +314,7 @@ _quick_help() {
     --name=Idiomind --class=Idiomind \
     --gtkrc='/usr/share/idiomind/default/gtkrc.ini' \
     --uri="${_url}" \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --fixed --on-top --mouse \
     --width=550 --height=450 --borders=2 \
     --button="$(gettext "Send Feedback")":"$DS/ifs/tls.sh 'fback'" \
@@ -382,7 +382,7 @@ first_run() {
         --name=Idiomind --class=Idiomind \
         --image="$image" \
         --always-print-result --selectable-labels \
-        --window-icon="$DS/images/icon.png" \
+        --window-icon=idiomind \
         --image-on-top --on-top --sticky --center \
         --width=500 --height=140 --borders=5 \
         --button="$(gettext "Do not show again")":1 \
@@ -456,7 +456,7 @@ edit_tag() {
     dlg="$(yad --form --title="$(gettext "Edit")" \
     --name=Idiomind --class=Idiomind \
     --separator='|' \
-    --window-icon="$DS/images/icon.png" --center \
+    --window-icon=idiomind --center \
     --width=300 --height=240 --borders=5 \
     --field="$(gettext "Description")":TXT "$desc" \
     $(for fl in $DS/ifs/mods/export/*; do

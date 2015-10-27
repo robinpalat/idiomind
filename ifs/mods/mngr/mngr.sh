@@ -7,7 +7,7 @@ function dlg_form_1() {
     yad --form --title="$(gettext "Edit")" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-all --separator="|" --selectable-labels \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --align=left --text-align=center --columns=2 \
     --buttons-layout=end --scroll --center --on-top \
     --width=690 --height=520 --borders=10 \
@@ -37,7 +37,7 @@ function dlg_form_2() {
     yad --form --title="$(gettext "Edit")" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-all --separator="|" --selectable-labels \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --buttons-layout=end --align=right --center --on-top \
     --width=600 --height=420 --borders=10 \
     --field="$(gettext "Mark")":CHK "$mark" \
@@ -60,7 +60,7 @@ function edit_list_list() {
     --name=Idiomind --class=Idiomind \
     --editable --separator='' \
     --always-print-result --print-all \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --no-headers --center \
     --width=420 --height=280 --borders=5 \
     --column="" \
@@ -76,7 +76,7 @@ function edit_feeds_list() {
     --name=Idiomind --class=Idiomind \
     --editable --separator='\n' \
     --always-print-result --print-all \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --no-headers --center \
     --width=500 --height=160 --borders=2 \
     --column="" \

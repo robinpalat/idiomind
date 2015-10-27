@@ -58,7 +58,7 @@ function set_lang() {
 dlg=$(yad --form --title="Idiomind" \
 --text="$text" \
 --class=Idiomind --name=Idiomind \
---window-icon="/usr/share/idiomind/images/icon.png" \
+--window-icon=idiomind \
 --image-on-top --buttons-layout=end --align=right --center --on-top \
 --width=470 --height=270 --borders=15 \
 --field="$(gettext "Select foreign language"):CB" "English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
@@ -90,7 +90,7 @@ elif [ $ret -eq 0 ]; then
     --text="$(gettext "Error occurred trying to write in file system")\n" \
     --image=error \
     --name=idiomind --class=idiomind \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --image-on-top --sticky --skip-taskbar --center \
     --width=420 --height=120 --borders=2 \
     --button=gtk-ok:1 & exit 1
