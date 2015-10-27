@@ -24,7 +24,6 @@ if [ ! -d "$HOME/.idiomind" ]; then
 fi
 
 source /usr/share/idiomind/ifs/c.conf
-wicon="/usr/share/idiomind/images/icon.png"
 
 if [ -e "$DT/ps_lk" -o -e "$DT/el_lk" ]; then
     sleep 5
@@ -359,7 +358,7 @@ panel() {
     --name=Idiomind --class=Idiomind \
     --always-print-result \
     --window-icon=idiomind \
-    --gtkrc='/usr/share/idiomind/default/gtkrc.ini' \
+    --gtkrc="$DS/default/gtkrc.ini" \
     --form --fixed --on-top --no-buttons --align=center \
     --width=140 --height=190 --borders=0 --geometry=80x190-${x}-${y} \
     --field="$(gettext "New")"!gtk-new:btn "$DS/add.sh 'new_items'" \

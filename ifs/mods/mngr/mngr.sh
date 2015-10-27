@@ -6,7 +6,9 @@ function dlg_form_1() {
     [ -z "${trgt}" ] && trgt="${item_id}"
     yad --form --title="$(gettext "Edit")" \
     --name=Idiomind --class=Idiomind \
-    --always-print-result --print-all --separator="|" --selectable-labels \
+    --gtkrc="$DS/default/gtkrc.ini" \
+    --always-print-result --print-all \
+    --separator="|" --selectable-labels \
     --window-icon=idiomind \
     --align=left --text-align=center --columns=2 \
     --buttons-layout=end --scroll --center --on-top \
@@ -36,7 +38,9 @@ function dlg_form_2() {
     cmd_play="$DS/play.sh play_sentence ${id}"
     yad --form --title="$(gettext "Edit")" \
     --name=Idiomind --class=Idiomind \
-    --always-print-result --print-all --separator="|" --selectable-labels \
+    --gtkrc="$DS/default/gtkrc.ini" \
+    --always-print-result --print-all \
+    --separator="|" --selectable-labels \
     --window-icon=idiomind \
     --buttons-layout=end --align=right --center --on-top \
     --width=600 --height=420 --borders=10 \

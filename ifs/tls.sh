@@ -312,7 +312,7 @@ _quick_help() {
     _url='http://idiomind.sourceforge.net/doc/help.html'
     yad --html --title="$(gettext "Reference")" \
     --name=Idiomind --class=Idiomind \
-    --gtkrc='/usr/share/idiomind/default/gtkrc.ini' \
+    --gtkrc="$DS/default/gtkrc.ini" \
     --uri="${_url}" \
     --window-icon=idiomind \
     --fixed --on-top --mouse \
