@@ -41,13 +41,13 @@ function dlg_form_2() {
     --separator="|" --selectable-labels \
     --window-icon=idiomind \
     --buttons-layout=end --align=right --center --on-top \
-    --width=700 --height=450 --borders=10 \
+    --width=700 --height=480 --borders=10 \
     --field="$(gettext "Mark")":CHK "$mark" \
     --field=" $lbl_2":${t} "$type" \
     --field="$lgtl":TXT "${trgt}" \
     --field="<a href='$link1'>$(gettext "Go to Google Translate")</a>\t":LBL " " \
     --field="$lgsl":TXT "${srce}" \
-    --field="$(gettext "Topic")":CB "${tpc_list}" \
+    --field="\t\t\t$(gettext "Topic")":CB "${tpc_list}" \
     --field="$(gettext "Tag")":CB "${tags_list}" \
     --field="$(gettext "Audio")":FL "${audf}" \
     --button="$(gettext "Words")":"${cmd_words}" \
