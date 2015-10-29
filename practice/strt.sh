@@ -7,7 +7,7 @@ dir="${DC_tlt}/practice"
 dirs="$DS/practice"
 export -f f_lock
 
-function log() \
+function _log() \
 { echo "w9.$(tr -s '\n' '|' < ./${1}.1).w9" >> "$log"; }
 
 function stats() {
@@ -27,7 +27,7 @@ function score() {
     rm ./*.tmp
     [ ! -e ./${practice}.l ] && touch ./${practice}.l
     if [[ $(($(< ./${practice}.l)+easy)) -ge ${all} ]]; then
-        log ${practice}; play "$dirs/all.mp3" &
+        _log ${practice}; play "$dirs/all.mp3" &
         date "+%a %d %B" > ./${practice}.lock
         comp 0 & echo 21 > .${icon}
         strt 1

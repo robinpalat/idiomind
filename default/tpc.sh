@@ -27,10 +27,6 @@ if [ -d "${DM_tlt}" ]; then
             echo "${topic}" > "$DT/tpe"; fi
         
         ( sleep 10 && "$DS/ifs/tls.sh" backup "${topic}" ) &
-        if [[ ! -e "$DC_s/5.cfg" ]]; then
-            echo 1 > "$DC_s/5.cfg"; fi
-        if [[ `< "$DC_s/5.cfg"` != 1 ]]; then
-            echo 1 > "$DC_s/5.cfg"; fi
         if [ ! -f "$DT/.n_s_pr" ]; then
             "$DS/ifs/tls.sh" check_index "${topic}"; fi
         if [[ $(grep -Fxon "${topic}" "${DM_tl}/.1.cfg" \

@@ -131,13 +131,8 @@ elif [ $ret -eq 0 ]; then
         ((n=n+1))
     done
     touch "$DC_s/4.cfg"
-    
-    b=$(tr -dc a-z < /dev/urandom |head -c 1)
-    c=$((RANDOM%100))
-    id="$b$c"
-    id=${id:0:3}
-    config="usrid=\"$id\"\niuser=\"\"\ncntct=\"\""
-    echo -e "${config}" > "$DC_s/3.cfg"
+
+    echo -e "usrid=\"\"\npassw=\"\"\ncntct=\"\"" > "$DC_s/3.cfg"
     /usr/share/idiomind/ifs/tls.sh first_run
     export u=1
     idiomind -s
