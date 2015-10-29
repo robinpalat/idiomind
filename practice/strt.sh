@@ -67,15 +67,10 @@ function comp() {
 }
 
 function practice_a() {
-    [[ -e ./a.rev ]] && rev=1 || rev=0
+    
     fonts() {
         item="$(grep -F -m 1 "trgt={${trgt}}" "${cfg0}" |sed 's/},/}\n/g')"
-        if [[ ${rev} = 0 ]]; then
-            srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
-        else
-            srce="${trgt}"
-            trgt="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
-        fi
+        srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
         trgt_f_c=$((38-${#trgt}))
         trgt_f_a=$((25-${#trgt}))
         srce_f_a=$((38-${#srce}))
@@ -156,24 +151,15 @@ function practice_a() {
 }
 
 function practice_b(){
-    [[ -e ./b.rev ]] && rev=1 || rev=0
+
     snd="$dirs/no.mp3"
     fonts() {
         item="$(grep -F -m 1 "trgt={${trgt}}" "${cfg0}" |sed 's/},/}\n/g')"
-        if [[ ${rev} = 0 ]]; then
-            srce=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
-            ras=$(sort -Ru b.srces |egrep -v "$srce" |head -${P})
-            tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
-            srce_s=$((35-${#trgt}))
-            question="\n<span font_desc='Free Sans ${srce_s}' color='#636363'><b>${trgt}</b></span>\n\n"
-        else
-            srce="${trgt}"
-            trgt=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
-            ras=$(sort -Ru "${cfg3}" |egrep -v "$srce" |head -${P})
-            tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
-            srce_s=$((35-${#trgt}))
-            question="\n<span font_desc='Free Sans ${srce_s}' color='#636363'><b>${trgt}</b></span>\n\n"
-        fi
+        srce=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
+        ras=$(sort -Ru b.srces |egrep -v "$srce" |head -${P})
+        tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
+        srce_s=$((35-${#trgt}))
+        question="\n<span font_desc='Free Sans ${srce_s}' color='#636363'><b>${trgt}</b></span>\n\n"
         }
 
     ofonts() {
@@ -312,20 +298,15 @@ function practice_c() {
 }
 
 function practice_d() {
-    [[ -e ./d.rev ]] && rev=1 || rev=0
+
     fonts() {
-        img="$DM_tls/images/${trgt,,}-0.jpg"
         item="$(grep -F -m 1 "trgt={${trgt}}" "${cfg0}" |sed 's/},/}\n/g')"
-        if [[ ${rev} = 0 ]]; then
         srce=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
-        else
-        srce="${trgt}"
-        trgt=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
-        fi
+        img="$DM_tls/images/${trgt,,}-0.jpg"
         [ ${#trgt} -gt 20 -o ${#srce} -gt 20 ] && trgt_f_c=11 || trgt_f_c=12
         [ ! -f "$img" ] && img="$DS/images/imgmiss.jpg"
-        cuest="<span font_desc='Free Sans ${trgt_f_c}' color='#565656'> ${trgt} </span>"
-        aswer="<span font_desc='Free Sans ${trgt_f_c}'>${srce}</span>"
+        cuest="<span font_desc='Free Sans ${trgt_f_c}' color='#565656'> ${srce} </span>"
+        aswer="<span font_desc='Free Sans ${trgt_f_c}'>${trgt}</span>"
     }
 
     question() {
@@ -602,26 +583,15 @@ function lock() {
         local lock="$dir/${practice}.lock"
         if ! grep 'wait' <<< "$(< "${lock}")"; then
             text_dlg="<b>$(gettext "Practice Completed")</b>\\n   $(< "${lock}")\n"
-            if grep -o -E 'a|b|d' <<< ${practice}; then
-                yad --title="$(gettext "Practice Completed")" \
-                --text="${text_dlg}" \
-                --image="gtk-apply" \
-                --window-icon=idiomind --on-top --skip-taskbar --center \
-                --width=400 --height=130 --borders=5 \
-                --button=" $(gettext "Restart  B ") !!$(gettext "Questions: $lgsl | Answers: $lgtl") ":2 \
-                --button=" $(gettext "Restart") !!$(gettext "Questions: $lgtl | Answers: $lgsl") ":0 \
-                --button="    $(gettext "OK")    ":1
-                ret=$?
-            elif grep -o -E 'c|e' <<< ${practice}; then
-                yad --title="$(gettext "Practice Completed")" \
-                --text="${text_dlg}" \
-                --image="gtk-apply" \
-                --window-icon=idiomind --on-top --skip-taskbar --center \
-                --width=400 --height=130 --borders=5 \
-                --button=" $(gettext "Restart") !!$(gettext "Questions: $lgtl | Answers: $lgsl") ":0 \
-                --button="    $(gettext "OK")    ":1
-                ret=$?
-            fi
+            yad --title="$(gettext "Practice Completed")" \
+            --text="${text_dlg}" \
+            --image="gtk-apply" \
+            --window-icon=idiomind --on-top --skip-taskbar --center \
+            --width=400 --height=130 --borders=5 \
+            --button="  $(gettext "Restart A-B")  ":0 \
+            --button="  $(gettext "Restart B-A")  ":2 \
+            --button="    $(gettext "OK")    ":1
+            ret=$?
         else
             if [ $(grep -o "wait"=\"[^\"]* "${lock}" |grep -o '[^"]*$') != `date +%d` ]; then
                 rm "${lock}" & return 0
@@ -714,7 +684,7 @@ function strt() {
     [ ! -f ./.4 ] && echo 1 > .4
     [ ! -f ./.5 ] && echo 1 > .5
     [[ ${hard} -lt 0 ]] && hard=0
-    if [[ ${step} -ge 1 && ${ling} -ge 1 && ${hard} = 0 ]]; then
+    if [[ ${ling} -ge 1 && ${hard} = 0 ]]; then
         echo -e "wait=\"`date +%d`\"" > ./${practice}.lock; fi
 
     if [ ${1} = 1 ]; then
