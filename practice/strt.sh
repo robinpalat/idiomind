@@ -714,7 +714,7 @@ function strt() {
     [ ! -f ./.4 ] && echo 1 > .4
     [ ! -f ./.5 ] && echo 1 > .5
     [[ ${hard} -lt 0 ]] && hard=0
-    if [[ ${ling} -ge 1 && ${hard} = 0 ]]; then
+    if [[ ${step} -ge 1 && ${ling} -ge 1 && ${hard} = 0 ]]; then
         echo -e "wait=\"`date +%d`\"" > ./${practice}.lock; fi
 
     if [ ${1} = 1 ]; then

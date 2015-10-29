@@ -11,7 +11,7 @@ function dlg_form_1() {
     --window-icon=idiomind \
     --align=left --text-align=center --columns=2 \
     --buttons-layout=end --scroll --center --on-top \
-    --width=690 --height=520 --borders=10 \
+    --width=820 --height=550 --borders=10 \
     --field="$lgtl" "${trgt}" \
     --field="$lgsl" "${srce}" \
     --field="$(gettext "Topic")":CB "${tpc_list}" \
@@ -19,7 +19,7 @@ function dlg_form_1() {
     --field="$(gettext "Example")\t\t\t\t\t\t\t\t\t\t\t":TXT "${exmp}" \
     --field="$(gettext "Definition")":TXT "${defn}" \
     --field="$(gettext "Note")":TXT "${note}" \
-    --field="$(gettext "Search")  <a href='$link1'>$(gettext "Translation")</a>  ":LBL " " \
+    --field="<a href='$link1'>$(gettext "Go to Google Translate")</a>  ":LBL " " \
     --field="$(gettext "Mark")":CHK "$mark" \
     --field="$(gettext "Tag")":CB "${tags_list}" \
     --field="$(gettext "Definition")!info":FBTN "${cmd_def}" \
@@ -41,11 +41,11 @@ function dlg_form_2() {
     --separator="|" --selectable-labels \
     --window-icon=idiomind \
     --buttons-layout=end --align=right --center --on-top \
-    --width=600 --height=420 --borders=10 \
+    --width=700 --height=450 --borders=10 \
     --field="$(gettext "Mark")":CHK "$mark" \
     --field=" $lbl_2":${t} "$type" \
     --field="$lgtl":TXT "${trgt}" \
-    --field="<a href='$link1'>$(gettext "Translation")</a>\t":LBL " " \
+    --field="<a href='$link1'>$(gettext "Go to Google Translate")</a>\t":LBL " " \
     --field="$lgsl":TXT "${srce}" \
     --field="$(gettext "Topic")":CB "${tpc_list}" \
     --field="$(gettext "Tag")":CB "${tags_list}" \
