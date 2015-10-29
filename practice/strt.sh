@@ -605,17 +605,17 @@ function lock() {
             if grep -o -E 'a|b|d' <<< ${practice}; then
                 yad --title="$(gettext "Practice Completed")" \
                 --text="${text_dlg}" \
-                --image="gtk-apply" \
+                --image="$dirs/images/21.png" \
                 --window-icon=idiomind --on-top --skip-taskbar --center \
                 --width=400 --height=130 --borders=5 \
-                --button=" $(gettext "Restart  B ") !!$(gettext "Questions: $lgsl | Answers: $lgtl") ":2 \
-                --button=" $(gettext "Restart") !!$(gettext "Questions: $lgtl | Answers: $lgsl") ":0 \
+                --button=" $(gettext "Restart - B") !!$(gettext "Questions in $lgsl - Answers in $lgtl") ":2 \
+                --button=" $(gettext "Restart - A") !!$(gettext "Questions in $lgtl - Answers in $lgsl") ":0 \
                 --button="    $(gettext "OK")    ":1
                 ret=$?
             elif grep -o -E 'c|e' <<< ${practice}; then
                 yad --title="$(gettext "Practice Completed")" \
                 --text="${text_dlg}" \
-                --image="gtk-apply" \
+                --image="$dirs/images/21.png" \
                 --window-icon=idiomind --on-top --skip-taskbar --center \
                 --width=400 --height=130 --borders=5 \
                 --button=" $(gettext "Restart") !!$(gettext "Questions: $lgtl | Answers: $lgsl") ":0 \
