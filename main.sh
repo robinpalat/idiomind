@@ -327,11 +327,14 @@ function topic() {
 }
 
 panel() {
-    set_post(){
+    set_geo(){
+        sleep 1
+        spost=`xwininfo -name Idiomind |grep geometry |cut -d ' ' -f 4`
+        sed -i "s/.*/\"$spost\"/g" "$DC_s/5.cfg"
         for n in {1..10}; do
             sleep 1
             cpost=`xwininfo -name Idiomind |grep geometry |cut -d ' ' -f 4`
-            [ -z ${cpost} ] && exit 1
+            [ -z ${cpost} ] && break && exit 1
             if [ ${spost} != ${cpost} ]; then
             sed -i "s/.*/\"${cpost}\"/g" "$DC_s/5.cfg"; spost=${cpost}
             fi
@@ -371,7 +374,7 @@ panel() {
         "$DS/ifs/mods/clipw.sh" &
     fi
     
-    yad --title="Idiomind" \
+    ( yad --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
     --always-print-result \
     --window-icon=idiomind \
@@ -382,11 +385,7 @@ panel() {
     --field="$(gettext "Home")"!gtk-home:btn "idiomind 'topic'" \
     --field="$(gettext "Index")"!gtk-index:btn "$DS/chng.sh" \
     --field="$(gettext "Options")"!gtk-preferences:btn "$DS/cnfg.sh"
-    ret=$?
-    #( sleep 1
-    #spost=`xwininfo -name Idiomind |grep geometry |cut -d ' ' -f 4`
-    #sed -i "s/.*/\"$spost\"/g" "$DC_s/5.cfg"; set_post ) &
-    [ $ret != 0 ] && "$DS/stop.sh" 1 & exit
+    [ $? != 0 ] && "$DS/stop.sh" 1 & exit ) & set_geo
 }
 
 case "$1" in
