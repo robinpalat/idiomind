@@ -360,7 +360,7 @@ panel() {
     --window-icon=idiomind \
     --gtkrc="$DS/default/gtkrc.ini" \
     --form --fixed --on-top --no-buttons --align=center \
-    --width=140 --height=190 --borders=0 --geometry=80x190-${x}-${y} \
+    --width=140 --height=180 --borders=0 --geometry=80x190-${x}-${y} \
     --field="$(gettext "New")"!gtk-new:btn "$DS/add.sh 'new_items'" \
     --field="$(gettext "Home")"!gtk-home:btn "idiomind 'topic'" \
     --field="$(gettext "Index")"!gtk-index:btn "$DS/chng.sh" \

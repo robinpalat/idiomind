@@ -551,7 +551,6 @@ function dlg_checklist_1() {
     yad --list --checklist --title="$(gettext "Word list")" \
     --text="<small> $2 </small>" \
     --name=Idiomind --class=Idiomind \
-    --gtkrc="$DS/default/gtkrc.ini" \
     --window-icon=idiomind \
     --mouse --on-top --no-headers \
     --text-align=right --buttons-layout=end \
