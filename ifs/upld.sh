@@ -121,13 +121,13 @@ function upld() {
         --name=Idiomind --class=Idiomind \
         --window-icon=idiomind --buttons-layout=end \
         --align=right --center --on-top \
-        --width=460 --height=450 --borders=12 \
+        --width=480 --height=470 --borders=14 \
         --field="$(gettext "Category"):CB" "" \
         --field="$(gettext "Skill Level"):CB" "" \
         --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
-        --field="$(gettext "Author")": "$usrid" \
-        --field="\t$(gettext "Password")": "$passw" \
-        --field="$(gettext "Create Account"):FBTN" "$cmd_link" \
+        --field="$(gettext "Author")" "$usrid" \
+        --field="\t$(gettext "Password")" "$passw" \
+        --field="<a href='$linkac'>$(gettext "Create Account")</a> \n":LBL \
         --button="$(gettext "PDF")":2 --button="$(gettext "Close")":4
     }
     
@@ -137,12 +137,13 @@ function upld() {
         --name=Idiomind --class=Idiomind \
         --window-icon=idiomind --buttons-layout=end \
         --align=right --center --on-top \
-        --width=460 --height=450 --borders=12 \
+        --width=480 --height=470 --borders=14 \
         --field="$(gettext "Category"):CBE" "$_categories" \
         --field="$(gettext "Skill Level"):CB" "$_levels" \
         --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
-        --field="$(gettext "Author")": "$usrid" \
-        --field="\t$(gettext "Password")": "$passw" \
+        --field="$(gettext "Author")" "$usrid" \
+        --field="\t$(gettext "Password")" "$passw" \
+        --field=" ":LBL \
         --button="$(gettext "PDF")":2 "$btn" --button="$(gettext "Close")":4
     }
 
@@ -190,12 +191,12 @@ function upld() {
     
     LANGUAGE_TO_LEARN="${lgtl}"
     linkc="http://idiomind.sourceforge.net/community/${lgtl,,}"
+    linkac='http://idiomind.sourceforge.net/community/?q=user/register'
     ctgry="$(grep -o 'ctgry="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-    text_upld="<big>$(gettext "Share online with other ${LANGUAGE_TO_LEARN} learners!")</big>\n<a href='$linkc'>$(gettext "Topics shared")</a> (Beta)\n"
+    text_upld="<span font_desc='Arial 12'>$(gettext "Share online with other ${LANGUAGE_TO_LEARN} learners!")</span>\n<a href='$linkc'>$(gettext "Topics shared")</a> Beta\n"
     _categories="${ctgry}${list}"
     _levels="!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")"
     note=$(< "${DC_tlt}/info")
-    cmd_link="$DS/ifs/tls.sh uregister"
     usrid="$(grep -o 'usrid="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
     passw="$(grep -o 'passw="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
 

@@ -306,6 +306,23 @@ edit_item() {
                             [ -e "${DM_tlt}/$id.mp3" ] && mv -f "${DM_tlt}/$id.mp3" "${DM_tlt}/$id_mod.mp3"; fi
                     fi
                 fi
+                if [ "$type" != "$type_mod" ]; then
+                    if [ ${type_mod} = 1 ]; then
+                        if grep -Fxq "${trgt_mod}" "${DC_tlt}/4.cfg"; then
+                            grep -vxF "${trgt_mod}" "${DC_tlt}/4.cfg" > "${DC_tlt}/4.cfg.tmp"
+                            sed '/^$/d' "${DC_tlt}/4.cfg.tmp" > "${DC_tlt}/4.cfg"
+                        fi
+                        echo "${trgt_mod}" >> "${DC_tlt}/3.cfg"
+                        rm "${DC_tlt}"/*.tmp
+                    elif [ ${type_mod} = 2 ]; then
+                        if grep -Fxq "${trgt_mod}" "${DC_tlt}/3.cfg"; then
+                            grep -vxF "${trgt_mod}" "${DC_tlt}/3.cfg" > "${DC_tlt}/3.cfg.tmp"
+                            sed '/^$/d' "${DC_tlt}/3.cfg.tmp" > "${DC_tlt}/3.cfg"
+                        fi
+                        echo "${trgt_mod}" >> "${DC_tlt}/4.cfg"
+                        rm "${DC_tlt}"/*.tmp
+                    fi
+                fi
                 cleanups "$DT_r"
             ) &
             fi
