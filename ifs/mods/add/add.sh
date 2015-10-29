@@ -546,6 +546,28 @@ function dlg_form_2() {
     --button="$(gettext "Add")"!gtk-add:0
 }
 
+function dlg_checklist_3() {
+    fkey=$(($RANDOM * $$))
+    cat "${1}" | awk '{print "FALSE\n"$0}' | \
+    yad --list --checklist --tabnum=1 --plug="$fkey" \
+    --dclick-action="$DS/add.sh 'list_words_dclik'" --multiple \
+    --ellipsize=END --no-headers --text-align=right \
+    --column=" " --column=" " |sed '/^$/d' > "$slt" &
+    yad --form --tabnum=2 --plug="$fkey" --columns=2 \
+    --separator="" \
+    --field=" ":lbl null \
+    --field="$(gettext "Topic"):CB" "$2!$(gettext "New") *$e$tpcs" &
+    yad --paned --key="$fkey" \
+    --title="$(wc -l < "${1}") $(gettext "notes found")" \
+    --name=Idiomind --class=Idiomind \
+    --orient=vert --window-icon=idiomind --center \
+    --gtkrc="$DS/default/gtkrc.ini" \
+    --width=700 --height=380 --borders=5 --splitter=260 \
+    --button="$(gettext "Edit")":2 \
+    --button="$(gettext "Cancel")":1 \
+    --button="gtk-add":0
+}
+
 function dlg_checklist_1() {
     echo "${1}" | awk '{print "FALSE\n"$0}' | \
     yad --list --checklist --title="$(gettext "Word list")" \
@@ -558,22 +580,6 @@ function dlg_checklist_1() {
     --column=" " --column="Select" \
     --button="$(gettext "Cancel")":1 \
     --button="gtk-add":0
-}
-
-function dlg_checklist_3() {
-    cat "${1}" | awk '{print "FALSE\n"$0}' | \
-    yad --list --checklist --title="$(gettext "New note")" \
-    --name=Idiomind --class=Idiomind \
-    --gtkrc="$DS/default/gtkrc.ini" \
-    --dclick-action="$DS/add.sh 'list_words_dclik'" \
-    --window-icon=idiomind \
-    --ellipsize=END --center --no-click --text-align=right \
-    --width=700 --height=380 --borders=5 \
-    --column="$(gettext "Select")" \
-    --column="$(wc -l < "${1}") $(gettext "notes found")" \
-    --button=$(gettext "Edit"):2 \
-    --button="$(gettext "Cancel")":1 \
-    --button="gtk-add":0 > "$slt"
 }
 
 function dlg_text_info_1() {

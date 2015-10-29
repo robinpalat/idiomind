@@ -331,7 +331,8 @@ panel() {
         for n in {1..10}; do
             sleep 1
             cpost=`xwininfo -name Idiomind |grep geometry |cut -d ' ' -f 4`
-            if [ ${spost} != ${cpost} -a -n ${cpost} ]; then
+            [ -z ${cpost} ] && exit 1
+            if [ ${spost} != ${cpost} ]; then
             sed -i "s/.*/\"${cpost}\"/g" "$DC_s/5.cfg"; spost=${cpost}
             fi
         done
@@ -380,11 +381,12 @@ panel() {
     --field="$(gettext "New")"!gtk-new:btn "$DS/add.sh 'new_items'" \
     --field="$(gettext "Home")"!gtk-home:btn "idiomind 'topic'" \
     --field="$(gettext "Index")"!gtk-index:btn "$DS/chng.sh" \
-    --field="$(gettext "Options")"!gtk-preferences:btn "$DS/cnfg.sh" &
-    ( sleep 1
-    spost=`xwininfo -name Idiomind |grep geometry |cut -d ' ' -f 4`
-    sed -i "s/.*/\"$spost\"/g" "$DC_s/5.cfg"; set_post )
-    [ $? != 0 ] && "$DS/stop.sh" 1 && exit
+    --field="$(gettext "Options")"!gtk-preferences:btn "$DS/cnfg.sh"
+    ret=$?
+    #( sleep 1
+    #spost=`xwininfo -name Idiomind |grep geometry |cut -d ' ' -f 4`
+    #sed -i "s/.*/\"$spost\"/g" "$DC_s/5.cfg"; set_post ) &
+    [ $ret != 0 ] && "$DS/stop.sh" 1 & exit
 }
 
 case "$1" in

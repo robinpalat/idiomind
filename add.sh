@@ -343,6 +343,7 @@ function process() {
     echo "$tpe" > "$DT/.n_s_pr"
     ns=`wc -l < "${DC_tlt}/0.cfg"`
     db="$DS/default/dicts/$lgt"
+    
     if [ ! -d "$DT_r" ] ; then
         export DT_r=$(mktemp -d "$DT/XXXXXX")
     fi
@@ -426,7 +427,9 @@ function process() {
     elif [[ ${chk} -gt 180 ]]; then
         slt=$(mktemp $DT/slt.XXXX.x)
         xclip -i /dev/null
-        dlg_checklist_3 "$DT_r/sntsls" "${tpe}"
+        tpcs="$(grep -vFx "${tpe}" "$DM_tl/.2.cfg" |tr "\\n" '!' |sed 's/\!*$//g')"
+        [ -n "$tpcs" ] && e='!'
+        tpe="$(dlg_checklist_3 "$DT_r/sntsls" "${tpe}")"
         ret="$?"
     fi
     if [ $ret -eq 2 ]; then
@@ -442,23 +445,29 @@ function process() {
     elif [ $ret -eq 0 ]; then
         unset link
         touch "$DT_r/slts"
+        echo "${tpe}" > "$DT/tpe"
+        DM_tlt="$DM_tl/${tpe}"
+        DC_tlt="$DM_tl/${tpe}/.conf"
         if [ ! -d "${DM_tlt}" ]; then
             msg " $(gettext "An error occurred.")\n" dialog-warning "$(gettext "Information")"
             cleanups "$DT_r" "$DT/.n_s_pr" "$slt" & exit 1
         fi
-    
         while read -r chkst; do
             sed 's/TRUE//g' <<<"${chkst}"  >> "$DT_r/slts"
-        done <<<"$(tac "${slt}" |sed '/^$/d' |sed 's/|//g')"
+        done <<<"$(tac "${slt}" |sed 's/|//g')"
         cleanups "$slt"
 
         touch "$DT_r/wlog" "$DT_r/slog" "$DT_r/adds" \
         "$DT_r/addw" "$DT_r/wrds"
-        number_of_items=$(($(wc -l < "$DT_r/slts")+$(wc -l < "$DT_r/wrds")))
         
-        ( sleep 1; notify-send -i idiomind \
-        "$(gettext "Adding $number_of_items notes")" \
-        "$(gettext "Please wait while some data is downloaded")" )
+        if [[ -n "$(< "$DT_r/slts")$(< "$DT_r/wrds")" ]]; then
+            number_of_items=$(($(wc -l < "$DT_r/slts")+$(wc -l < "$DT_r/wrds")))
+            ( sleep 1; notify-send -i idiomind \
+            "$(gettext "Adding $number_of_items notes")" \
+            "$(gettext "Please wait till the process is completed")" )
+        else
+            cleanups "$DT_r" "$DT/.n_s_pr" "$slt" & exit 1
+        fi
         
         internet
         [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ] && c=c || c=w
@@ -607,9 +616,7 @@ fetch_content() {
     export tpe="${2}"
     DC_tlt="$DM_tl/${tpe}/.conf"
     
-    if [[ `wc -l < "${DC_tlt}/0.cfg"` -ge 200 ]]; then
-        exit 1
-    fi
+    if [[ `wc -l < "${DC_tlt}/0.cfg"` -ge 200 ]]; then exit 1; fi
     if [ -e "$DT/updating_feeds" ]; then
         exit 1
     else
@@ -644,6 +651,7 @@ fetch_content() {
             feed_items="$(echo "$feed_items" |sed '/^$/d')"
             
             while read -r item; do
+                if [[ `wc -l < "${DC_tlt}/0.cfg"` -ge 200 ]]; then exit 1; fi
                 fields="$(echo "$item" |sed -r 's|-\!-|\n|g')"
                 title=$(echo "$fields" |sed -n 3p \
                 |iconv -c -f utf8 -t ascii |sed 's/\://g' \
