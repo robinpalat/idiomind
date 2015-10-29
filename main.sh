@@ -327,6 +327,15 @@ function topic() {
 }
 
 panel() {
+    set_post(){
+        for n in {1..10}; do
+            sleep 1
+            cpost=`xwininfo -name Idiomind |grep geometry |cut -d ' ' -f 4`
+            if [ ${spost} != ${cpost} -a -n ${cpost} ]; then
+            sed -i "s/.*/\"${cpost}\"/g" "$DC_s/5.cfg"; spost=${cpost}
+            fi
+        done
+    }
     if [ ! -d "$DT" ]; then new_session; ns=TRUE; fi
     if [ ! -e "$DT/tpe" ]; then
         tpe="$(sed -n 1p "$DC_s/4.cfg")"
@@ -372,9 +381,9 @@ panel() {
     --field="$(gettext "Home")"!gtk-home:btn "idiomind 'topic'" \
     --field="$(gettext "Index")"!gtk-index:btn "$DS/chng.sh" \
     --field="$(gettext "Options")"!gtk-preferences:btn "$DS/cnfg.sh" &
-    ( sleep 2
-    spost=`xwininfo -name Idiomind |grep  geometry |cut -d ' ' -f 4`
-    sed -i "s/.*/\"$spost\"/g" "$DC_s/5.cfg" )
+    ( sleep 1
+    spost=`xwininfo -name Idiomind |grep geometry |cut -d ' ' -f 4`
+    sed -i "s/.*/\"$spost\"/g" "$DC_s/5.cfg"; set_post )
     [ $? != 0 ] && "$DS/stop.sh" 1 && exit
 }
 
