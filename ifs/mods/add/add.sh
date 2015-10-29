@@ -591,7 +591,7 @@ function dlg_text_info_1() {
     --wrap --margins=30 --fontname=vendana \
     --skip-taskbar --center --on-top \
     --width=700 --height=500 --borders=5 \
-    --button="gtk-ok":0
+    --button="gtk-apply":0
 }
 
 function msg_3() {
