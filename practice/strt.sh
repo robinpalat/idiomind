@@ -611,8 +611,8 @@ function lock() {
                 --image="$dirs/images/21.png" \
                 --window-icon=idiomind --on-top --skip-taskbar --center \
                 --width=400 --height=130 --borders=5 \
-                --button=" $(gettext "B - Restart") !!$(gettext "Questions in $lgsl - Answers in $lgtl") ":2 \
-                --button=" $(gettext "A - Restart") !!$(gettext "Questions in $lgtl - Answers in $lgsl") ":0 \
+                --button=" $(gettext "B  Restart") !!$(gettext "Questions in $lgsl - Answers in $lgtl") ":2 \
+                --button=" $(gettext "A  Restart") !!$(gettext "Questions in $lgtl - Answers in $lgsl") ":0 \
                 --button="    $(gettext "OK")    ":1
                 ret=$?
             elif grep -o -E 'c|e' <<< ${practice}; then
