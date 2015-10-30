@@ -9,19 +9,19 @@ function dlg_form_1() {
     --always-print-result --print-all \
     --separator="|" --selectable-labels \
     --window-icon=idiomind \
-    --align=left --text-align=center --columns=2 \
+    --align=right --text-align=center --columns=2 \
     --buttons-layout=end --scroll --center --on-top \
-    --width=820 --height=550 --borders=10 \
+    --width=700 --height=500 --borders=10 \
     --field="$lgtl" "${trgt}" \
     --field="$lgsl" "${srce}" \
     --field="$(gettext "Topic")":CB "${tpc_list}" \
-    --field="$(gettext "Audio")":FL "${audf}" \
+    --field="$(gettext "Tag")":CB "${tags_list}" \
     --field="$(gettext "Example")\t\t\t\t\t\t\t\t\t\t\t":TXT "${exmp}" \
     --field="$(gettext "Definition")":TXT "${defn}" \
     --field="$(gettext "Note")":TXT "${note}" \
     --field="<a href='$link1'>$(gettext "Go to Google Translate")</a>  ":LBL " " \
     --field="$(gettext "Mark")":CHK "$mark" \
-    --field="$(gettext "Tag")":CB "${tags_list}" \
+    --field="$(gettext "Audio")":FL "${audf}" \
     --field="$(gettext "Definition")!info":FBTN "${cmd_def}" \
     --button="$(gettext "Image")":"${cmd_image}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \

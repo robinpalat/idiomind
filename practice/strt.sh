@@ -722,7 +722,7 @@ function strt() {
         echo -e "wait=\"`date +%d`\"" > ./${practice}.lock; fi
 
     if [ ${1} = 1 ]; then
-        declare info${icon}="<b>$(gettext "Test completed!")</b>"
+        declare info${icon}="<span font_desc='Arial Bold 12'>$(gettext "Test completed!")</span>"
         echo 21 > .${icon}
     elif [ ${1} = 2 ]; then
         learnt=$(< ./${practice}.l); declare info${icon}="* "

@@ -121,7 +121,7 @@ function upld() {
         --name=Idiomind --class=Idiomind \
         --window-icon=idiomind --buttons-layout=end \
         --align=right --center --on-top \
-        --width=480 --height=470 --borders=14 \
+        --width=490 --height=470 --borders=14 \
         --field="$(gettext "Category"):CB" "" \
         --field="$(gettext "Skill Level"):CB" "" \
         --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
@@ -137,7 +137,7 @@ function upld() {
         --name=Idiomind --class=Idiomind \
         --window-icon=idiomind --buttons-layout=end \
         --align=right --center --on-top \
-        --width=480 --height=470 --borders=14 \
+        --width=490 --height=470 --borders=14 \
         --field="$(gettext "Category"):CBE" "$_categories" \
         --field="$(gettext "Skill Level"):CB" "$_levels" \
         --field="\n$(gettext "Description/Notes"):TXT" "${note}" \

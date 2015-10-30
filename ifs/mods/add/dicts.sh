@@ -4,7 +4,7 @@
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 function dicts() {
     cmsg() {
-        sleep 4
+        sleep 5
         if [ ! -e "$DC_s/topics_first_run" ]; then
             source "$DS/ifs/mods/cmns.sh"
             msg_2 "$(gettext "You may need to configure the list of Internet resources. \nDo you want to do this now?")" \

@@ -188,7 +188,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
 fi
 
 function topic() {
-    export mode=`sed -n 1p "${DC_tlt}/8.cfg"`
+    [ -e "${DC_tlt}/8.cfg" ] && export mode=`sed -n 1p "${DC_tlt}/8.cfg"`
     source "$DS/ifs/mods/cmns.sh"
     if ! [[ ${mode} =~ $numer ]]; then exit 1; fi
 
