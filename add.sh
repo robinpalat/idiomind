@@ -439,7 +439,7 @@ function process() {
             if [ $ret -eq 0 ]; then
                 unset trgt; process "${txt}"
             else
-                cleanups "$DT_r" "$DT/.n_s_pr" "$slt" & exit 1
+                unset trgt; process "$(< "$DT_r/sntsls")"
             fi
     
     elif [ $ret -eq 0 ]; then
