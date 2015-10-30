@@ -69,12 +69,13 @@ function comp() {
 function practice_a() {
     [[ -e ./a.rev ]] && rev=1 || rev=0
     fonts() {
-        item="$(grep -F -m 1 "trgt={${trgt}}" "${cfg0}" |sed 's/},/}\n/g')"
+        _item="$(grep -F -m 1 "trgt={${item}}" "${cfg0}" |sed 's/},/}\n/g')"
         if [[ ${rev} = 0 ]]; then
-            srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
+            trgt="${item}"
+            srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${_item}")"
         else
-            srce="${trgt}"
-            trgt="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
+            srce="${item}"
+            trgt="$(grep -oP '(?<=srce={).*(?=})' <<<"${_item}")"
         fi
         trgt_f_c=$((38-${#trgt}))
         trgt_f_a=$((25-${#trgt}))
@@ -110,7 +111,7 @@ function practice_a() {
         --button="$(gettext "I Knew it")!$img_yes":2
     }
 
-    while read trgt; do
+    while read item; do
         fonts; question
         if [ $? = 1 ]; then
             ling=${hard}; hard=0
@@ -120,21 +121,21 @@ function practice_a() {
             answer
             ans=$?
             if [ ${ans} = 2 ]; then
-                echo "${trgt}" >> a.1
+                echo "${item}" >> a.1
                 easy=$((easy+1))
             elif [ ${ans} = 3 ]; then
-                echo "${trgt}" >> a.2
+                echo "${item}" >> a.2
                 hard=$((hard+1))
             fi
         fi
     done < ./a.tmp
 
-    if [ ! -f ./a.2 ]; then
+    if [ ! -e ./a.2 ]; then
         export hard ling
         score
     else
         step=2
-        while read trgt; do
+        while read item; do
             fonts; question
             if [ $? = 1 ]; then
                 export hard ling
@@ -146,7 +147,7 @@ function practice_a() {
                     hard=$((hard-1))
                     ling=$((ling+1))
                 elif [ ${ans} = 3 ]; then
-                    echo "${trgt}" >> a.3
+                    echo "${item}" >> a.3
                 fi
             fi
         done < ./a.2
@@ -159,16 +160,17 @@ function practice_b(){
     [[ -e ./b.rev ]] && rev=1 || rev=0
     snd="$dirs/no.mp3"
     fonts() {
-        item="$(grep -F -m 1 "trgt={${trgt}}" "${cfg0}" |sed 's/},/}\n/g')"
+        _item="$(grep -F -m 1 "trgt={${trgt}}" "${cfg0}" |sed 's/},/}\n/g')"
         if [[ ${rev} = 0 ]]; then
-            srce=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
+            trgt="${trgt}"
+            srce=`grep -oP '(?<=srce={).*(?=})' <<<"${_item}"`
             ras=$(sort -Ru b.srces |egrep -v "$srce" |head -${P})
             tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
             srce_s=$((35-${#trgt}))
             question="\n<span font_desc='Free Sans ${srce_s}' color='#636363'><b>${trgt}</b></span>\n\n"
         else
             srce="${trgt}"
-            trgt=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
+            trgt=`grep -oP '(?<=srce={).*(?=})' <<<"${_item}"`
             ras=$(sort -Ru "${cfg3}" |egrep -v "$srce" |head -${P})
             tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
             srce_s=$((35-${#trgt}))
@@ -177,8 +179,8 @@ function practice_b(){
         }
 
     ofonts() {
-        while read -r item; do
-        echo "<span font_desc='Free Sans 12'> $item </span>"
+        while read -r name; do
+        echo "<span font_desc='Free Sans 12'> $name </span>"
         done <<<"${tmp}"
         }
         
@@ -200,11 +202,11 @@ function practice_b(){
         fonts; mchoise
         if [ $? = 0 ]; then
             if grep -o "$srce" <<<"${dlg}"; then
-                echo "${trgt}" >> b.1
+                echo "${item}" >> b.1
                 easy=$((easy+1))
             else
                 play "$snd" &
-                echo "${trgt}" >> b.2
+                echo "${item}" >> b.2
                 hard=$((hard+1))
             fi  
         elif [ $? = 1 ]; then
@@ -214,7 +216,7 @@ function practice_b(){
         fi
     done < ./b.tmp
         
-    if [ ! -f ./b.2 ]; then
+    if [ ! -e ./b.2 ]; then
         export hard ling
         score
     else
@@ -227,7 +229,7 @@ function practice_b(){
                     ling=$((ling+1))
                 else
                     play "$snd" &
-                    echo "${trgt}" >> b.3
+                    echo "${item}" >> b.3
                 fi
             elif [ $? = 1 ]; then
                 export hard ling
@@ -288,7 +290,7 @@ function practice_c() {
         fi
     done < ./c.tmp
 
-    if [ ! -f ./c.2 ]; then
+    if [ ! -e ./c.2 ]; then
         export hard ling
         score
     else
@@ -314,16 +316,17 @@ function practice_c() {
 function practice_d() {
     [[ -e ./d.rev ]] && rev=1 || rev=0
     fonts() {
-        img="$DM_tls/images/${trgt,,}-0.jpg"
-        item="$(grep -F -m 1 "trgt={${trgt}}" "${cfg0}" |sed 's/},/}\n/g')"
+        img="$DM_tls/images/${item,,}-0.jpg"
+        _item="$(grep -F -m 1 "trgt={${item}}" "${cfg0}" |sed 's/},/}\n/g')"
         if [[ ${rev} = 0 ]]; then
-        srce=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
+        trgt="${item}"
+        srce=`grep -oP '(?<=srce={).*(?=})' <<<"${_item}"`
         else
-        srce="${trgt}"
-        trgt=`grep -oP '(?<=srce={).*(?=})' <<<"${item}"`
+        srce="${item}"
+        trgt=`grep -oP '(?<=srce={).*(?=})' <<<"${_item}"`
         fi
         [ ${#trgt} -gt 20 -o ${#srce} -gt 20 ] && trgt_f_c=11 || trgt_f_c=12
-        [ ! -f "$img" ] && img="$DS/images/imgmiss.jpg"
+        [ ! -e "$img" ] && img="$DS/images/imgmiss.jpg"
         cuest="<span font_desc='Free Sans ${trgt_f_c}' color='#565656'> ${trgt} </span>"
         aswer="<span font_desc='Free Sans ${trgt_f_c}'>${srce}</span>"
     }
@@ -351,7 +354,7 @@ function practice_d() {
         --button="$(gettext "I Knew it")!$img_yes":2
     }
     
-    while read -r trgt; do
+    while read -r item; do
         fonts; question
         if [ $? = 1 ]; then
             ling=${hard}; hard=0
@@ -361,21 +364,21 @@ function practice_d() {
             answer
             ans=$?
             if [ ${ans} = 2 ]; then
-                echo "${trgt}" >> d.1
+                echo "${item}" >> d.1
                 easy=$((easy+1))
             elif [ ${ans} = 3 ]; then
-                echo "${trgt}" >> d.2
+                echo "${item}" >> d.2
                 hard=$((hard+1))
             fi
         fi
     done < ./d.tmp
 
-    if [ ! -f ./d.2 ]; then
+    if [ ! -e ./d.2 ]; then
         export hard ling
         score
     else
         step=2
-        while read -r trgt; do
+        while read -r item; do
             fonts; question
             if [ $? = 1 ]; then
                 export hard ling
@@ -387,7 +390,7 @@ function practice_d() {
                     hard=$((hard-1))
                     ling=$((ling+1))
                 elif [ ${ans} = 3 ]; then
-                    echo "${trgt}" >> d.3
+                    echo "${item}" >> d.3
                 fi
             fi
         done < ./d.2
@@ -553,7 +556,7 @@ function get_list() {
         fi
         
         if [ ${practice} = b ]; then
-            if [ ! -f "$dir/b.srces" ]; then
+            if [ ! -e "$dir/b.srces" ]; then
             ( echo "5"
             while read word; do
                 item="$(grep -F -m 1 "trgt={${word}}" "${cfg0}" |sed 's/},/}\n/g')"
@@ -576,7 +579,7 @@ function get_list() {
         
         ( echo "5"
         while read -r itm; do
-        if [ -f "$DM_tls/images/${itm,,}-0.jpg" ]; then
+        if [ -e "$DM_tls/images/${itm,,}-0.jpg" ]; then
         echo "${itm}" >> "$dir/${practice}.0"; fi
         done < "$DT/images" ) | yad --progress \
         --width 50 --height 35 --undecorated \
@@ -640,8 +643,9 @@ function lock() {
         if [ $ret -eq 0 -o $ret -eq 2 ]; then
         
             rm "${lock}" ./${practice}.0 ./${practice}.1 \
-            ./${practice}.2 ./${practice}.3 ./${practice}.rev
-            [ -f ./${practice}.srces ] && rm ./${practice}.srces
+            ./${practice}.2 ./${practice}.3
+            [ -e ./${practice}.srces ] && rm ./${practice}.srces
+            [ -e ./${practice}.rev ] && rm ./${practice}.rev
             echo 1 > ./.${icon}; echo 0 > ./${practice}.l
             [ $ret -eq 2 ] && > ./${practice}.rev
             
@@ -708,11 +712,11 @@ function practices() {
 function strt() {
     [ ! -d "${dir}" ] && mkdir -p "${dir}"
     cd "${dir}"
-    [ ! -f ./.1 ] && echo 1 > .1
-    [ ! -f ./.2 ] && echo 1 > .2
-    [ ! -f ./.3 ] && echo 1 > .3
-    [ ! -f ./.4 ] && echo 1 > .4
-    [ ! -f ./.5 ] && echo 1 > .5
+    [ ! -e ./.1 ] && echo 1 > .1
+    [ ! -e ./.2 ] && echo 1 > .2
+    [ ! -e ./.3 ] && echo 1 > .3
+    [ ! -e ./.4 ] && echo 1 > .4
+    [ ! -e ./.5 ] && echo 1 > .5
     [[ ${hard} -lt 0 ]] && hard=0
     if [[ ${step} -ge 1 && ${ling} -ge 1 && ${hard} = 0 ]]; then
         echo -e "wait=\"`date +%d`\"" > ./${practice}.lock; fi
