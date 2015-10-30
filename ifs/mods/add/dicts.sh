@@ -4,7 +4,7 @@
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 function dicts() {
     cmsg() {
-        sleep 2
+        sleep 4
         if [ ! -e "$DC_s/topics_first_run" ]; then
             source "$DS/ifs/mods/cmns.sh"
             msg_2 "$(gettext "You may need to configure the list of Internet resources. \nDo you want to do this now?")" \
@@ -24,12 +24,8 @@ function dicts() {
     if  [ ! -f "$DC_a/dict/.dict" ]; then s=1
         echo -e "$lgtl" > "$DC_a/dict/.dict"
     fi
-    if ! ls "$DC_d"/* 1> /dev/null 2>&1; then
-        sleep 1; cmsg
-    fi
-    if  [[ `sed -n 1p "$DC_a/dict/.dict"` != $lgtl ]] ; then
-        sleep 1; cmsg
-    fi
+    if ! ls "$DC_d"/* 1> /dev/null 2>&1; then cmsg; fi
+    if  [[ `sed -n 1p "$DC_a/dict/.dict"` != $lgtl ]] ; then cmsg; fi
 }
 
 dicts &
