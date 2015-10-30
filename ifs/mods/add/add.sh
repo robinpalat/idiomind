@@ -590,7 +590,7 @@ function dlg_text_info_1() {
     --window-icon=idiomind \
     --wrap --margins=30 --fontname=vendana \
     --skip-taskbar --center --on-top \
-    --width=700 --height=500 --borders=5 \
+    --width=700 --height=380 --borders=5 \
     --button="gtk-apply":0
 }
 

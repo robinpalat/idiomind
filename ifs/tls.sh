@@ -253,7 +253,7 @@ dlg_restfile() {
         --image-on-top --on-top --center \
         --width=450 --height=180 --borders=5 \
         --column="$(gettext "Select")":RD \
-        --column="$(gettext "Revert to this previous version")":TXT \
+        --column="$(gettext "Revert to this previous version"):":TXT \
         --button="$(gettext "Cancel")":1 \
         --button="$(gettext "OK")":0)"
         ret="$?"
