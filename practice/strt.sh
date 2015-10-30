@@ -160,16 +160,16 @@ function practice_b(){
     [[ -e ./b.rev ]] && rev=1 || rev=0
     snd="$dirs/no.mp3"
     fonts() {
-        _item="$(grep -F -m 1 "trgt={${trgt}}" "${cfg0}" |sed 's/},/}\n/g')"
+        _item="$(grep -F -m 1 "trgt={${item}}" "${cfg0}" |sed 's/},/}\n/g')"
         if [[ ${rev} = 0 ]]; then
-            trgt="${trgt}"
+            trgt="${item}"
             srce=`grep -oP '(?<=srce={).*(?=})' <<<"${_item}"`
             ras=$(sort -Ru b.srces |egrep -v "$srce" |head -${P})
             tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
             srce_s=$((35-${#trgt}))
             question="\n<span font_desc='Free Sans ${srce_s}' color='#636363'><b>${trgt}</b></span>\n\n"
         else
-            srce="${trgt}"
+            srce="${item}"
             trgt=`grep -oP '(?<=srce={).*(?=})' <<<"${_item}"`
             ras=$(sort -Ru "${cfg3}" |egrep -v "$srce" |head -${P})
             tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
@@ -198,7 +198,7 @@ function practice_b(){
     }
 
     P=4; s=11
-    while read trgt; do
+    while read item; do
         fonts; mchoise
         if [ $? = 0 ]; then
             if grep -o "$srce" <<<"${dlg}"; then
@@ -221,7 +221,7 @@ function practice_b(){
         score
     else
         step=2; P=2; s=12
-        while read trgt; do
+        while read item; do
             fonts; mchoise
             if [ $? = 0 ]; then
                 if grep -o "$srce" <<<"${dlg}"; then
@@ -611,8 +611,8 @@ function lock() {
                 --image="$dirs/images/21.png" \
                 --window-icon=idiomind --on-top --skip-taskbar --center \
                 --width=400 --height=130 --borders=5 \
-                --button=" $(gettext "Restart - B") !!$(gettext "Questions in $lgsl - Answers in $lgtl") ":2 \
-                --button=" $(gettext "Restart - A") !!$(gettext "Questions in $lgtl - Answers in $lgsl") ":0 \
+                --button=" $(gettext "B - Restart") !!$(gettext "Questions in $lgsl - Answers in $lgtl") ":2 \
+                --button=" $(gettext "A - Restart") !!$(gettext "Questions in $lgtl - Answers in $lgsl") ":0 \
                 --button="    $(gettext "OK")    ":1
                 ret=$?
             elif grep -o -E 'c|e' <<< ${practice}; then
