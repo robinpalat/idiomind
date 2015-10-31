@@ -407,21 +407,23 @@ function practice_e() {
         else
         hint="$(echo "$@" | tr -d "',.;?!¿¡()" | tr -d '"' \
         | awk '{print tolower($0)}' \
-        |sed 's/\b\(.\)/\u\1/g' | sed 's/ /     /g' \
-        |sed "s|[a-z]|<span color='#B1B1B1'>\.<\/span>|g" \
+        |sed 's/\b\(.\)/\u\1/g' | sed 's/ /      /g' \
+        |sed "s|[a-z]|\.|g" \
         |sed 's|\.|\ .|g' \
-        | tr "[:upper:]" "[:lower:]" \
-        |sed 's/^\s*./\U&\E/g')"
+        |tr "[:upper:]" "[:lower:]" \
+        |sed 's/^\s*./\U&\E/g' |tr '[a-z]' '[A-Z]' \
+        |sed "s|\.|<span color='#B1B1B1'>\.<\/span>|g")"
         fi
-        text="<span font_desc='Arial Black $sz'> $hint </span>\n"
+        text="<span font_desc='Arial Black 11'> $hint </span>\n"
         
         entry=$(>/dev/null | yad --form --title="$(gettext "Practice")" \
-        --text="$text" \
+        --text="${text}" \
         --name=Idiomind --class=Idiomind \
         --separator="" \
         --window-icon=idiomind  --image="$DS/images/bar.png" \
-        --buttons-layout=end --skip-taskbar --undecorated --center --on-top \
-        --text-align="left" --align="center" --image-on-top \
+        --buttons-layout=end --skip-taskbar \
+        --undecorated --center --on-top \
+        --text-align=center --align=center --image-on-top \
         --width=510 --height=200 --borders=6 \
         --field="" "" \
         --button="$(gettext "Exit")":1 \
@@ -432,7 +434,7 @@ function practice_e() {
     check() {
         sz=$((sz+3))
         yad --form --title="$(gettext "Practice")" \
-        --text="<span font_desc='Free Sans 12'>${wes}</span>\\n" \
+        --text="<span font_desc='Free Sans 12'>${wes^}</span>\\n" \
         --name=Idiomind --class=Idiomind \
         --selectable-labels \
         --window-icon=idiomind \
@@ -445,10 +447,8 @@ function practice_e() {
         }
         
     get_text() {
-        trgt=$(echo "${1}" | sed 's/^ *//; s/ *$//')
-        [ ${#trgt} -ge 110 ] && sz=11 || sz=12
-        [ ${#trgt} -le 80 ] && sz=13
-        chk=`echo "${trgt}" | awk '{print tolower($0)}'`
+        trgt=$(echo "${1}" |sed 's/^ *//;s/ *$//')
+        chk=`echo "${trgt}" |awk '{print tolower($0)}'`
         }
 
     clean() {
