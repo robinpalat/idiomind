@@ -246,14 +246,14 @@ dlg_restfile() {
     if [ -f "${file}" ]; then
         rest="$(echo -e "FALSE\n$date1$val\n$date2" \
         | sed '/^$/d' | yad --list --title="$(gettext "Restore")" \
-        --text="${2}" \
+        --text="\"${2}\"\n$(gettext "Revert to a previous state.")" \
         --name=Idiomind --class=Idiomind \
         --print-all --expand-column=2 --no-click \
         --window-icon=idiomind \
         --image-on-top --on-top --center \
         --width=450 --height=180 --borders=5 \
         --column="$(gettext "Select")":RD \
-        --column="$(gettext "Revert to this previous version"):":TXT \
+        --column="$(gettext "Date")":TXT \
         --button="$(gettext "Cancel")":1 \
         --button="$(gettext "OK")":0)"
         ret="$?"

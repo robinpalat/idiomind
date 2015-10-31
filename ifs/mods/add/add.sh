@@ -560,9 +560,9 @@ function dlg_checklist_3() {
     yad --paned --key="$fkey" \
     --title="$(wc -l < "${1}") $(gettext "notes found")" \
     --name=Idiomind --class=Idiomind \
-    --orient=vert --window-icon=idiomind --center \
+    --orient=vert --window-icon=idiomind --on-top --center \
     --gtkrc="$DS/default/gtkrc.ini" \
-    --width=700 --height=380 --borders=5 --splitter=260 \
+    --width=700 --height=380 --borders=5 --splitter=265 \
     --button="$(gettext "Edit")":2 \
     --button="$(gettext "Cancel")":1 \
     --button="gtk-add":0
@@ -572,7 +572,7 @@ function dlg_checklist_1() {
     list() {
         echo "${1}" | while read -r word; do
         if [ -n "$word" ]; then
-        echo; echo "<span font_desc='DejaVu Sans Bold 12'>$word</span>"
+        echo; echo "<span font_desc='Sans Bold 11'>$word</span>"
         fi
         done
     }
@@ -582,7 +582,7 @@ function dlg_checklist_1() {
     --window-icon=idiomind \
     --mouse --on-top --no-headers \
     --text-align=right --buttons-layout=end \
-    --width=380 --height=280 --borders=5  \
+    --width=400 --height=250 --borders=5  \
     --column=" " --column="Select" \
     --button="$(gettext "Cancel")":1 \
     --button="gtk-add":0

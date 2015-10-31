@@ -588,7 +588,7 @@ mark_to_learn_topic() {
     [ ! -s "${DC_tlt}/0.cfg" ] && exit 1
     
     if [ $((inx3+inx4)) -le 10 ]; then
-    msg "$(gettext "Not enough notes to perform the operation").\t\n " \
+    msg "$(gettext "Insufficient number of items to perform the action").\t\n " \
     info "$(gettext "Information")" & exit; fi
 
     (echo "5"
@@ -648,7 +648,7 @@ mark_as_learned_topic() {
     [ ! -s "${DC_tlt}/0.cfg" ] && exit 1
 
     if [ $((inx3+inx4)) -le 10 ]; then
-    msg "$(gettext "Not enough notes to perform the operation").\t\n " \
+    msg "$(gettext "Insufficient number of items to perform the action").\t\n " \
     info "$(gettext "Information")" & exit; fi
     
     (echo "5"

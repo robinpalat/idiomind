@@ -68,7 +68,7 @@ function notebook_1() {
     list | yad --list --tabnum=1 \
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh '1'" \
-    --expand-column=2 --no-headers --ellipsize=END --tooltip-column=2 \
+    --expand-column=2 --no-headers --ellipsize=END \
     --search-column=2 --regex-search \
     --column=Name:IMG --column=Name:TEXT --column=Learned:CHK > "$cnf1" &
     tac "$ls2" | yad --list --tabnum=2 \
@@ -119,7 +119,7 @@ function notebook_2() {
     tac "$ls2" | yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh '2'" \
-    --expand-column=0 --no-headers --ellipsize=END --tooltip-column=1 \
+    --expand-column=0 --no-headers --ellipsize=END \
     --search-column=1 --regex-search \
     --column=Name:TEXT &
     yad --text-info --tabnum=3 \

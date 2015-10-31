@@ -116,6 +116,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     dclk="$DS/play.sh play_word"
     _lst() { while read -r item; do
         grep -oP '(?<=trgt={).*(?=},srce)' <<<"${item}"
+        grep -oP '(?<=srce={).*(?=},exmp)' <<<"${item}"
     done < <(tac "${file}"); }
 
     _lst | yad --list --title="Idiomind" \
@@ -123,9 +124,10 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     --name=Idiomind --class=Idiomind \
     --no-click --print-column=0 --dclick-action="$dclk" \
     --window-icon=idiomind \
+    --hide-column=2 --tooltip-column=2 \
     --no-headers --ellipsize=END --center \
-    --width=600 --height=560 --borders=6 \
-    --column="$langt" \
+    --width=600 --height=560 --borders=8 \
+    --column=" " --column=" " \
     --button="$(gettext "Install")":0
     ret=$?
         if [ $ret -eq 0 ]; then
@@ -202,14 +204,17 @@ function topic() {
             export inx${n}
         done
         nt="${DC_tlt}/info"
-        author="$(grep -o 'authr="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-        auto_mrk=$(grep -o 'acheck=\"[^\"]*' "${DC_tlt}/10.cfg" |grep -o '[^"]*$')
+        authr="$(grep -oP '(?<=authr=\").*(?=\")' "${DC_tlt}/id.cfg")"
+        datec="$(grep -oP '(?<=datec=\").*(?=\")' "${DC_tlt}/id.cfg")"
+        datei="$(grep -oP '(?<=datei=\").*(?=\")' "${DC_tlt}/id.cfg")"
+        auto_mrk="$(grep -oP '(?<=acheck=\").*(?=\")' "${DC_tlt}/10.cfg")"
         c=$((RANDOM%100000)); KEY=$c
         cnf1=$(mktemp "$DT/cnf1.XXX.x")
         cnf3=$(mktemp "$DT/cnf3.XXX.x")
         cnf4=$(mktemp "$DT/cnf4.XXX.x")
-        [ ! -z "$author" ] && author=" $(gettext "Created by") $author"
-        lbl1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><small>\n $inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$author</small>"
+        if [ ! -z "$datei" ]; then infolbl="$(gettext "Installed on $datei, created by $authr.")"
+        elif [ ! -z "$datec" ]; then infolbl="$(gettext "Created on $datec.")"; fi
+        lbl1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><small>\n$inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$infolbl</small>"
 
         apply() {
             note_mod="$(< "${cnf3}")"
@@ -371,7 +376,7 @@ panel() {
 
     if [[ `grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg"` = TRUE ]] \
     && [ ! -e /tmp/.clipw ]; then
-        "$DS/ifs/mods/clipw.sh" &
+        sed -i "s/clipw=.*/clipw=\"FALSE\"/g" "$DC_s/1.cfg"
     fi
     
     ( yad --title="Idiomind" \

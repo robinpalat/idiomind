@@ -407,34 +407,33 @@ function practice_e() {
         else
         hint="$(echo "$@" | tr -d "',.;?!¿¡()" | tr -d '"' \
         | awk '{print tolower($0)}' \
-        |sed 's/\b\(.\)/\u\1/g' | sed 's/ /         /g' \
-        |sed 's|[a-z]|\.|g' \
+        |sed 's/\b\(.\)/\u\1/g' | sed 's/ /     /g' \
+        |sed "s|[a-z]|<span color='#B1B1B1'>\.<\/span>|g" \
         |sed 's|\.|\ .|g' \
         | tr "[:upper:]" "[:lower:]" \
         |sed 's/^\s*./\U&\E/g')"
         fi
-        text="<span font_desc='Free Sans Bold $sz' color='#717171'>Hint         $hint</span>\n"
+        text="<span font_desc='Arial Black $sz'> $hint </span>\n"
         
         entry=$(>/dev/null | yad --form --title="$(gettext "Practice")" \
         --text="$text" \
         --name=Idiomind --class=Idiomind \
         --separator="" \
-        --window-icon=idiomind --image="$DS/images/bar.png" \
+        --window-icon=idiomind  --image="$DS/images/bar.png" \
         --buttons-layout=end --skip-taskbar --undecorated --center --on-top \
-        --text-align=left --align=left --image-on-top \
-        --width=510 --height=220 --borders=10 \
+        --text-align="left" --align="center" --image-on-top \
+        --width=510 --height=250 --borders=6 \
         --field="" "" \
-        --field="!$DS/images/listen.png:BTN" "$cmd_play" \
         --button="$(gettext "Exit")":1 \
-        --button="  $(gettext "Check")  !"$img_cont:0)
+        --button="!$DS/images/listen.png":"$cmd_play" \
+        --button="  $(gettext "Check")  ":0)
         }
         
     check() {
         sz=$((sz+3))
         yad --form --title="$(gettext "Practice")" \
-        --text="<span font_desc='Free Sans $sz'>${wes}</span>\\n" \
+        --text="<span font_desc='Free Sans 12'>${wes}</span>\\n" \
         --name=Idiomind --class=Idiomind \
-        --image="$DS/images/bar.png" $aut \
         --selectable-labels \
         --window-icon=idiomind \
         --skip-taskbar --wrap --scroll --image-on-top --center --on-top \
@@ -442,13 +441,13 @@ function practice_e() {
         --width=510 --height=250 --borders=10 \
         --field="":lbl \
         --field="<span font_desc='Free Sans 10'>$OK\n\n$prc $hits</span>":lbl \
-        --button="$(gettext "Continue")!$img_cont":2
+        --button="$(gettext "Continue")":2
         }
         
     get_text() {
         trgt=$(echo "${1}" | sed 's/^ *//; s/ *$//')
-        [ ${#trgt} -ge 110 ] && sz=10 || sz=11
-        [ ${#trgt} -le 80 ] && sz=12
+        [ ${#trgt} -ge 110 ] && sz=11 || sz=12
+        [ ${#trgt} -le 80 ] && sz=13
         chk=`echo "${trgt}" | awk '{print tolower($0)}'`
         }
 
@@ -692,7 +691,8 @@ function practices() {
         get_list
         cp -f "$dir/${practice}.0" "$dir/${practice}.tmp"
         if [[ `wc -l < "$dir/${practice}.0"` -lt 2 ]]; then \
-            starting "$(gettext "Not enough items to start")"; return 1; fi
+            starting "$(gettext "Insufficient number of items to start")"; return 1
+        fi
         echo " practice --new session"
     fi
     
