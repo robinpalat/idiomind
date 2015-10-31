@@ -245,8 +245,9 @@ dlg_restfile() {
     source "$DS/ifs/mods/cmns.sh"
     if [ -f "${file}" ]; then
         rest="$(echo -e "FALSE\n$date1$val\n$date2" \
-        | sed '/^$/d' | yad --list --title="$(gettext "Restore")" \
-        --text="\"${2}\"\n$(gettext "Revert to a previous state.")" \
+        | sed '/^$/d' | yad --list \
+        --title="$(gettext "Revert to a previous state")" \
+        --text="\"${2}\"" \
         --name=Idiomind --class=Idiomind \
         --print-all --expand-column=2 --no-click \
         --window-icon=idiomind \
