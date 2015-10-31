@@ -422,7 +422,7 @@ function practice_e() {
         --window-icon=idiomind  --image="$DS/images/bar.png" \
         --buttons-layout=end --skip-taskbar --undecorated --center --on-top \
         --text-align="left" --align="center" --image-on-top \
-        --width=510 --height=250 --borders=6 \
+        --width=510 --height=200 --borders=6 \
         --field="" "" \
         --button="$(gettext "Exit")":1 \
         --button="!$DS/images/listen.png":"$cmd_play" \
@@ -438,7 +438,7 @@ function practice_e() {
         --window-icon=idiomind \
         --skip-taskbar --wrap --scroll --image-on-top --center --on-top \
         --undecorated --buttons-layout=end \
-        --width=510 --height=250 --borders=10 \
+        --width=510 --height=220 --borders=10 \
         --field="":lbl \
         --field="<span font_desc='Free Sans 10'>$OK\n\n$prc $hits</span>":lbl \
         --button="$(gettext "Continue")":2
