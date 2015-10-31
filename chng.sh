@@ -92,7 +92,7 @@ if [[ ${1} = 0 ]]; then
 
 elif [[ ${1} != 0 ]]; then
     [ -z"${DM}" ] && source /usr/share/idiomind/ifs/c.conf
-    linkc="http://idiomind.sourceforge.net/community/${lgtl,,}"
+    linkc="http://idiomind.net/community/${lgtl,,}"
     remove_d() {
         ins="$(cd "/usr/share/idiomind/addons/"
         set -- */; printf "%s\n" "${@%/}")"

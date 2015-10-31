@@ -190,8 +190,8 @@ function upld() {
     done
     
     LANGUAGE_TO_LEARN="${lgtl}"
-    linkc="http://idiomind.sourceforge.net/community/${lgtl,,}"
-    linkac='http://idiomind.sourceforge.net/community/?q=user/register'
+    linkc="http://idiomind.net/community/${lgtl,,}"
+    linkac='http://idiomind.net/community/user/register'
     ctgry="$(grep -o 'ctgry="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
     text_upld="<span font_desc='Arial 12'>$(gettext "Share online with other ${LANGUAGE_TO_LEARN} learners!")</span>\n<a href='$linkc'>$(gettext "Topics shared")</a> Beta\n"
     _categories="${ctgry}${list}"
@@ -329,7 +329,7 @@ passw = os.environ['passw_m']
 tpc = os.environ['tpc']
 body = os.environ['body']
 try:
-    server = xmlrpclib.Server('http://idiomind.sourceforge.net/community/xmlrpc.php')
+    server = xmlrpclib.Server('http://idiomind.net/community/xmlrpc.php')
     nid = server.metaWeblog.newPost('blog', usrid, passw, {'title': tpc, 'description': body}, True)
 except:
     sys.exit(3)
