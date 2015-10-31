@@ -217,9 +217,10 @@ function list_words_edit() {
     
     if [ $? -eq 0 ]; then
         while read -r chkst; do
-            sed 's/TRUE//g' <<<"${chkst}" >> "$DT_r/slts"
+            sed 's/TRUE//;s/<[^>]*>//g' <<<"${chkst}" >> "$DT_r/slts"
         done <<<"$(sed 's/|//g' <<<"${slt}")"
     fi
+    
     n=1
     while read -r trgt; do
         if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
@@ -268,7 +269,7 @@ function list_words_sentence() {
     fi
         if [ $? -eq 0 ]; then
             while read -r chkst; do
-                sed 's/TRUE//g' <<<"${chkst}"  >> "$DT_r/slts"
+                sed 's/TRUE//;s/<[^>]*>//g' <<<"${chkst}"  >> "$DT_r/slts"
             done <<<"$(sed 's/|//g' <<<"${slt}")"
         elif [ $? -eq 1 ]; then
             rm -f "$DT"/*."$c"
@@ -331,8 +332,8 @@ function list_words_dclik() {
     
     if [ $? -eq 0 ]; then
         while read -r chkst; do
-        sed 's/TRUE//g' <<<"${chkst}" >> "$DT_r/wrds"
-        echo "${words}" >> "$DT_r/wrdsls"
+            sed 's/TRUE//;s/<[^>]*>//g' <<<"${chkst}" >> "$DT_r/wrds"
+            echo "${words}" >> "$DT_r/wrdsls"
         done <<<"$(sed 's/|//g' <<<"${slt}")"
     fi
     exit 0

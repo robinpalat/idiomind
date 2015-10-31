@@ -569,14 +569,20 @@ function dlg_checklist_3() {
 }
 
 function dlg_checklist_1() {
-    echo "${1}" | awk '{print "FALSE\n"$0}' | \
-    yad --list --checklist --title="$(gettext "Word list")" \
+    list() {
+        echo "${1}" | while read -r word; do
+        if [ -n "$word" ]; then
+        echo; echo "<span font_desc='Verdana Bold 12' color='#6F6F6F'>$word</span>"
+        fi
+        done
+    }
+    list "${1}" | yad --list --checklist --title="$(gettext "Word list")" \
     --text="<small> $2 </small>" \
     --name=Idiomind --class=Idiomind \
     --window-icon=idiomind \
     --mouse --on-top --no-headers \
     --text-align=right --buttons-layout=end \
-    --width=400 --height=280 --borders=5  \
+    --width=370 --height=280 --borders=5  \
     --column=" " --column="Select" \
     --button="$(gettext "Cancel")":1 \
     --button="gtk-add":0

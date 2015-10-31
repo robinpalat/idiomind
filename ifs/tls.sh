@@ -322,7 +322,7 @@ _quick_help() {
 } >/dev/null 2>&1
 
 _uregister() {
-    xdg-open 'http://idiomind.sourceforge.net/community/?q=user/register'
+    xdg-open 'http://idiomind.net/community/?q=user/register'
 } >/dev/null 2>&1
 
 check_updates() {
@@ -643,9 +643,8 @@ PY
 
 about() {
     source /usr/share/idiomind/ifs/c.conf
-    c="$(gettext "A simple to use utility for learning foreign vocabulary")"
-    website="$(gettext "Web Site")"
-    export c website _version
+    web_site_label="$(gettext "Web Site")"
+    export _label web_site web_site_label _version
     python << ABOUT
 import gtk
 import os
@@ -653,10 +652,10 @@ app_logo = os.path.join('/usr/share/idiomind/images/idiomind.png')
 app_icon = os.path.join('/usr/share/idiomind/images/icon.png')
 app_name = 'Idiomind'
 app_version = os.environ['_version']
-app_comments = os.environ['c']
-web = os.environ['website']
+app_comments = os.environ['_label']
+website_label = os.environ['web_site_label']
+app_website = os.environ['web_site']
 app_copyright = 'Copyright (c) 2015 Robin Palatnik'
-app_website = 'http://idiomind.sourceforge.net'
 app_license = (('Idiomind is free software: you can redistribute it and/or modify\n'+
 'it under the terms of the GNU General Public License as published by\n'+
 'the Free Software Foundation, either version 3 of the License, or\n'+
@@ -687,7 +686,7 @@ class AboutDialog:
         about.set_authors(app_authors)
         about.set_artists(app_artists)
         about.set_website(app_website)
-        about.set_website_label(web)
+        about.set_website_label(website_label)
         about.run()
         about.destroy()
 
