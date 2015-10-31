@@ -572,7 +572,7 @@ function dlg_checklist_1() {
     list() {
         echo "${1}" | while read -r word; do
         if [ -n "$word" ]; then
-        echo; echo "<span font_desc='Verdana Bold 12' color='#6F6F6F'>$word</span>"
+        echo; echo "<span font_desc='DejaVu Sans Bold 12'>$word</span>"
         fi
         done
     }
@@ -582,7 +582,7 @@ function dlg_checklist_1() {
     --window-icon=idiomind \
     --mouse --on-top --no-headers \
     --text-align=right --buttons-layout=end \
-    --width=370 --height=280 --borders=5  \
+    --width=380 --height=280 --borders=5  \
     --column=" " --column="Select" \
     --button="$(gettext "Cancel")":1 \
     --button="gtk-add":0
