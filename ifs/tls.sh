@@ -330,10 +330,10 @@ check_updates() {
     source "$DS/ifs/mods/cmns.sh"
     internet
     ua="Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0"
-    nver=`wget --user-agent "$ua" -qO - http://idiomind.sourceforge.net/doc/version |grep \<body\> | sed 's/<[^>]*>//g'`
+    nver=`wget --user-agent "$ua" -qO - http://idiomind.sourceforge.net/doc/checkversion |grep \<body\> |sed 's/<[^>]*>//g'`
     cver=`idiomind -v`
     pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
-    date "+%d" > "$DC_s/9.cfg"
+    date "+%d" > "$DC_s/9.cfg"e
     if [ ${#nver} -lt 9 ] && [ ${#cver} -lt 9 ] \
     && [ ${#nver} -ge 3 ] && [ ${#cver} -ge 3 ] \
     && [ "$nver" != "$cver" ]; then
@@ -361,7 +361,7 @@ a_check_updates() {
         grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
         echo "$d2" > "$DC_s/9.cfg"
         ua="Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0"
-        nver=`wget --user-agent "$ua" -qO - http://idiomind.sourceforge.net/doc/version |grep \<body\> | sed 's/<[^>]*>//g'`
+        nver=`wget --user-agent "$ua" -qO - http://idiomind.sourceforge.net/doc/checkversion |grep \<body\> |sed 's/<[^>]*>//g'`
         cver=`idiomind -v`
         pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
         if [ ${#nver} -lt 9 ] && [ ${#cver} -lt 9 ] \
