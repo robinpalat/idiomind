@@ -18,7 +18,7 @@ on_quit() {
     kill "$(< /tmp/.clipw)"; rm -f /tmp/.clipw; fi
     if [ -f "$DT/.p_" ]; then
     if ps -A |pgrep -f "mplayer"; then killall mplayer & fi
-    notify-send -i idiomind "$(gettext "Playback")" "$(gettext "Stopped")" -t 4000
+    ( sleep 1; notify-send -i idiomind "$(gettext "Playback")" "$(gettext "Stopped")" -t 4000 ) &
     rm -f "$DT/.p_" "$DT/tpp"
     [ -f "$DT/list.m3u" ] && rm -f "$DT/list.m3u"; fi
     exit

@@ -8,12 +8,10 @@ function check_format_1() {
     LANGUAGES=( 'English' 'Chinese' 'French' \
     'German' 'Italian' 'Japanese' 'Portuguese' \
     'Russian' 'Spanish' 'Vietnamese' )
-
     CATEGORIES=( 'article' 'city' 'comic' 'culture' 'education' \
     'entertainment' 'funny' 'grammar' 'history' 'home' 'internet' \
     'interview' 'movies' 'music' 'nature' 'news' 'office' 'others' \
     'places' 'quotes' 'relations' 'science' 'social_media' 'sport' 'tech' )
-
     sets=( 'tname' 'langs' 'langt' \
     'authr' 'cntct' 'ctgry' 'ilink' 'oname' \
     'datec' 'dateu' 'datei' \
@@ -279,8 +277,7 @@ dlg_restfile() {
 }
 
 fback() {
-    source "$DS/ifs/mods/cmns.sh"
-    internet
+    source "$DS/ifs/mods/cmns.sh"; internet
     URL="http://idiomind.sourceforge.net/doc/msg.html"
     yad --html --title="$(gettext "Send Feedback")" \
     --name=Idiomind --class=Idiomind \
@@ -322,21 +319,15 @@ _quick_help() {
     --button="$(gettext "Close")":1 &
 } >/dev/null 2>&1
 
-_uregister() {
-    xdg-open 'http://idiomind.net/community/?q=user/register'
-} >/dev/null 2>&1
-
 check_updates() {
     source "$DS/ifs/mods/cmns.sh"
     internet
-    ua="Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0"
     nver=`wget --user-agent "$ua" -qO - http://idiomind.sourceforge.net/doc/checkversion |grep \<body\> |sed 's/<[^>]*>//g'`
-    cver=`idiomind -v`
     pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
     date "+%d" > "$DC_s/9.cfg"e
-    if [ ${#nver} -lt 9 ] && [ ${#cver} -lt 9 ] \
-    && [ ${#nver} -ge 3 ] && [ ${#cver} -ge 3 ] \
-    && [ "$nver" != "$cver" ]; then
+    if [ ${#nver} -lt 9 ] && [ ${#_version} -lt 9 ] \
+    && [ ${#nver} -ge 3 ] && [ ${#_version} -ge 3 ] \
+    && [ "$nver" != "$_version" ]; then
         msg_2 " <b>$(gettext "A new version of Idiomind available\!")</b>\t\n" \
         info "$(gettext "Download")" "$(gettext "Cancel")" "$(gettext "Information")"
         ret=$?
@@ -360,13 +351,11 @@ a_check_updates() {
         sleep 5; curl -v www.google.com 2>&1 | \
         grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
         echo "$d2" > "$DC_s/9.cfg"
-        ua="Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0"
         nver=`wget --user-agent "$ua" -qO - http://idiomind.sourceforge.net/doc/checkversion |grep \<body\> |sed 's/<[^>]*>//g'`
-        cver=`idiomind -v`
         pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
-        if [ ${#nver} -lt 9 ] && [ ${#cver} -lt 9 ] \
-        && [ ${#nver} -ge 3 ] && [ ${#cver} -ge 3 ] \
-        && [ "$nver" != "$cver" ]; then
+        if [ ${#nver} -lt 9 ] && [ ${#_version} -lt 9 ] \
+        && [ ${#nver} -ge 3 ] && [ ${#_version} -ge 3 ] \
+        && [ "$nver" != "$_version" ]; then
             msg_2 " <b>$(gettext "A new version of Idiomind available\!")\t\n</b> $(gettext "Do you want to download it now?")\n" info "$(gettext "Download")" "$(gettext "Cancel")" "$(gettext "New Version")" "$(gettext "Ignore")"
             ret=$?
             if [ $ret -eq 0 ]; then xdg-open "$pkg"
@@ -717,8 +706,6 @@ case "$1" in
     add_audio "$@" ;;
     help)
     _quick_help ;;
-    uregister)
-    _uregister ;;
     check_updates)
     check_updates ;;
     a_check_updates)

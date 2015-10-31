@@ -603,7 +603,7 @@ function lock() {
     if [ -f "$dir/${practice}.lock" ]; then
         local lock="$dir/${practice}.lock"
         if ! grep 'wait' <<< "$(< "${lock}")"; then
-            text_dlg="<b>$(gettext "Practice Completed")</b>\\n   $(< "${lock}")\n"
+            text_dlg="<b>$(gettext "Practice Completed")</b>\\n$(< "${lock}")\n"
             if grep -o -E 'a|b|d' <<< ${practice}; then
                 yad --title="$(gettext "Practice Completed")" \
                 --text="${text_dlg}" \

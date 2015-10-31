@@ -6,7 +6,6 @@ source "$DS/ifs/mods/cmns.sh"
 include "$DS/ifs/mods/add"
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
-ua="Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0"
 wlist=$(grep -o wlist=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
 trans=$(grep -o trans=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
 ttrgt=$(grep -o ttrgt=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
