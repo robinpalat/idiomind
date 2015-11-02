@@ -92,7 +92,7 @@ function practice_a() {
         yad --form --title="$(gettext "Practice")" \
         --skip-taskbar --text-align=center --center --on-top \
         --undecorated --buttons-layout=spread --align=center \
-        --width=380 --height=270 --borders=8 \
+        --width=380 --height=260 --borders=8 \
         --field="\n$question":lbl \
         --button="$(gettext "Exit")":1 \
         --button="  $(gettext "Continue") >>  !$img_cont":0
@@ -103,7 +103,7 @@ function practice_a() {
         --selectable-labels \
         --skip-taskbar --text-align=center --center --on-top \
         --undecorated --buttons-layout=spread --align=center \
-        --width=380 --height=270 --borders=8 \
+        --width=380 --height=260 --borders=8 \
         --field="$answer1":lbl \
         --field="":lbl \
         --field="$answer2":lbl \
