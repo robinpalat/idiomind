@@ -113,6 +113,7 @@ play_list() {
         title="${tpp}"
         btn2="--button=gtk-media-stop:2"
     fi
+    [ -z "$rword" ] && rword=0
     set="$(echo "${iteml[${rword}]}")"
     unset iteml[${rword}]
     lst=`for i in "${iteml[@]}"; do echo -n "!$i"; done`
