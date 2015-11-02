@@ -610,8 +610,8 @@ function lock() {
                 --image="$dirs/images/21.png" \
                 --window-icon=idiomind --on-top --skip-taskbar --center \
                 --width=400 --height=130 --borders=5 \
-                --button=" $(gettext "B  Restart") !!$(gettext "Questions in $lgsl - Answers in $lgtl") ":2 \
-                --button=" $(gettext "A  Restart") !!$(gettext "Questions in $lgtl - Answers in $lgsl") ":0 \
+                --button=" $(gettext "Restart -B") !!$(gettext "Questions in $lgsl - Answers in $lgtl") ":2 \
+                --button=" $(gettext "Restart") !!$(gettext "Questions in $lgtl - Answers in $lgsl") ":0 \
                 --button="    $(gettext "OK")    ":1
                 ret=$?
             elif grep -o -E 'c|e' <<< ${practice}; then
@@ -722,7 +722,8 @@ function strt() {
         echo -e "wait=\"`date +%d`\"" > ./${practice}.lock; fi
 
     if [ ${1} = 1 ]; then
-        declare info${icon}="<span font_desc='Arial Bold 12'>$(gettext "Test completed!")</span>"
+        NUMBER="<span color='#6E6E6E'><b><big>$(wc -l < ${practice}.0)</big></b></span>"; declare info${icon}="<span font_desc='Arial Bold 12'>$(gettext "Test completed") </span> —"
+        info="<span font_desc='Arial 11'>$(gettext "Congratulations! You have finished this test of $NUMBER words")</span>\n"
         echo 21 > .${icon}
     elif [ ${1} = 2 ]; then
         learnt=$(< ./${practice}.l); declare info${icon}="* "
@@ -738,11 +739,11 @@ function strt() {
     --ellipsize=NONE --no-headers --expand-column=2 --hide-column=1 \
     --width=500 --height=460 --borders=10 \
     --column="Action" --column="Pick":IMG --column="Label" \
-    "a" "$dirs/images/`< ./.1`.png" "   $info1   $(gettext "Flashcards")" \
-    "b" "$dirs/images/`< ./.2`.png" "   $info2   $(gettext "Multiple Choice")" \
-    "c" "$dirs/images/`< ./.3`.png" "   $info3   $(gettext "Recognizing Words")" \
-    "d" "$dirs/images/`< ./.4`.png" "   $info4   $(gettext "Images")" \
-    "e" "$dirs/images/`< ./.5`.png" "   $info5   $(gettext "Writing Sentences")" \
+    "a" "$dirs/images/`< ./.1`.png" "   $info1  $(gettext "Flashcards")" \
+    "b" "$dirs/images/`< ./.2`.png" "   $info2  $(gettext "Multiple Choice")" \
+    "c" "$dirs/images/`< ./.3`.png" "   $info3  $(gettext "Recognizing Words")" \
+    "d" "$dirs/images/`< ./.4`.png" "   $info4  $(gettext "Images")" \
+    "e" "$dirs/images/`< ./.5`.png" "   $info5  $(gettext "Writing Sentences")" \
     --button="$(gettext "Restart")":3 \
     --button="$(gettext "Start")":0)"
     ret=$?

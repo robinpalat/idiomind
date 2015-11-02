@@ -20,7 +20,7 @@ StartupWMClass=Idiomind"
 
 lang=( 'English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian' )
-sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
+sets=( 'gramr' 'wlist' 'trans' 'dlaud' 'ttrgt' 'clipw' 'stsks' \
 'langt' 'langs' 'synth' 'txaud' 'intrf' )
 
 confirm() {
@@ -51,7 +51,7 @@ set_lang() {
             "$DS/default/tpc.sh" "${last}" ${mode} 1 &
         fi
     else
-        > "$DC_s/4.cfg"
+        > "$DT/tpe"; > "$DC_s/4.cfg"
     fi
     source "$DS/ifs/mods/cmns.sh"
     list_inadd > "$DM_tl/.2.cfg"
@@ -71,7 +71,7 @@ set_lang() {
 config_dlg() {
     n=0
     if [ "$cfg" = 1 ]; then
-        while [ ${n} -lt 11 ]; do
+        while [ ${n} -lt 12 ]; do
             get="${sets[$n]}"
             val=$(grep -o "$get"=\"[^\"]* "$DC_s/1.cfg" | grep -o '[^"]*$')
             declare "${sets[$n]}"="$val"
@@ -79,10 +79,8 @@ config_dlg() {
         done
     else
         n=0; > "$DC_s/1.cfg"
-        while [ ${n} -lt 11 ]; do
-        echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
-        ((n=n+1))
-        done
+        for n in {0..11}; do 
+        echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"; done
     fi
 
     if [ -z "$intrf" ]; then intrf=Default; fi
@@ -99,6 +97,7 @@ config_dlg() {
     --field="$(gettext "Use color to highlight grammar")":CHK "$gramr" \
     --field="$(gettext "List words after adding a sentence")":CHK "$wlist" \
     --field="$(gettext "Use automatic translation, if available")":CHK "$trans" \
+    --field="$(gettext "Download audio pronunciation")":CHK "$dlaud" \
     --field="$(gettext "Detect language of source text (slower)")":CHK "$ttrgt" \
     --field="$(gettext "Clipboard watcher")":CHK "$clipw" \
     --field="$(gettext "Perform tasks at startup")":CHK "$stsks" \
@@ -135,23 +134,23 @@ config_dlg() {
 
     if [ $ret -eq 0 ]; then
         n=1; v=0
-        while [ ${n} -le 15 ]; do
+        while [ ${n} -le 16 ]; do
             val=$(cut -d "|" -f$n < "$cnf1")
             if [ -n "$val" ]; then
             sed -i "s/${sets[$v]}=.*/${sets[$v]}=\"$val\"/g" "$DC_s/1.cfg"
-            if [ ${v} = 4 ]; then [ "$val" = FALSE ] && CW=0 || CW=1; fi
+            if [ ${v} = 5 ]; then [ "$val" = FALSE ] && CW=0 || CW=1; fi
             ((v=v+1)); fi
             ((n=n+1))
         done
-        val=$(cut -d "|" -f16 < "$cnf1")
-        [[ "$val" != "$synth" ]] && \
-        sed -i "s/${sets[8]}=.*/${sets[8]}=\"$(sed 's|/|\\/|g' <<<"$val")\"/g" "$DC_s/1.cfg"
         val=$(cut -d "|" -f17 < "$cnf1")
-        [[ "$val" != "$txaud" ]] && \
+        [[ "$val" != "$synth" ]] && \
         sed -i "s/${sets[9]}=.*/${sets[9]}=\"$(sed 's|/|\\/|g' <<<"$val")\"/g" "$DC_s/1.cfg"
         val=$(cut -d "|" -f18 < "$cnf1")
+        [[ "$val" != "$txaud" ]] && \
+        sed -i "s/${sets[10]}=.*/${sets[10]}=\"$(sed 's|/|\\/|g' <<<"$val")\"/g" "$DC_s/1.cfg"
+        val=$(cut -d "|" -f19 < "$cnf1")
         [[ "$val" != "$intrf" ]] && \
-        sed -i "s/${sets[10]}=.*/${sets[10]}=\"$val\"/g" "$DC_s/1.cfg"
+        sed -i "s/${sets[11]}=.*/${sets[11]}=\"$val\"/g" "$DC_s/1.cfg"
         
         if [ ${CW} = 0 -a -f /tmp/.clipw ]; then
         kill $(cat /tmp/.clipw); rm -f /tmp/.clipw
@@ -161,8 +160,7 @@ config_dlg() {
         [ ! -d  "$HOME/.config/autostart" ] \
         && mkdir "$HOME/.config/autostart"
         config_dir="$HOME/.config/autostart"
-        
-        if cut -d "|" -f8 < "$cnf1" | grep "TRUE"; then
+        if cut -d "|" -f9 < "$cnf1" | grep "TRUE"; then
             if [ ! -f "$config_dir/idiomind.desktop" ]; then
             echo "$desktopfile" > "$config_dir/idiomind.desktop"
             fi
@@ -173,7 +171,7 @@ config_dlg() {
         fi
         n=0
         while [ ${n} -lt 10 ]; do
-            if cut -d "|" -f12 < "$cnf1" | grep "${lang[$n]}" && \
+            if cut -d "|" -f13 < "$cnf1" | grep "${lang[$n]}" && \
             [ "${lang[$n]}" != "$lgtl" ]; then
                 lgtl="${lang[$n]}"
                 if grep -o -E 'Chinese|Japanese|Russian' <<< "$lgtl";
@@ -187,7 +185,7 @@ config_dlg() {
         n=0
         cdb="$DM_tls/Dictionary/${lgtl}.db"
         while [ ${n} -lt 10 ]; do
-            if cut -d "|" -f13 < "$cnf1" | grep "${lang[$n]}" && \
+            if cut -d "|" -f14 < "$cnf1" | grep "${lang[$n]}" && \
             [ "${lang[$n]}" != "$lgsl" ]; then
                 confirm "$info2" dialog-question
                 if [ $? -eq 0 ]; then

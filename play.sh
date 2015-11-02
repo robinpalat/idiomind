@@ -1,6 +1,8 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+info="$(gettext "Please check about voice synthesizer configuration in the settings dialog.")"
+
 play_word() {
     w="$(sed 's/<[^>]*>//g' <<<"${2}")"
     if [ -f "${DM_tls}/audio/${w,,}.mp3" ]; then
@@ -8,7 +10,11 @@ play_word() {
     elif [ -f "${DM_tlt}/$3.mp3" ]; then
         play "${DM_tlt}/$3.mp3" &
     elif [ -n "$synth" ]; then
-        echo "${w}." |$synth &
+        echo "${w}." |$synth
+        if [ $? != 0 ]; then
+            source "$DS/ifs/mods/cmns.sh"
+            msg "$info" error Info
+        fi
     else
         echo "${w}." |espeak -v $lg -s 150 &
     fi
@@ -19,7 +25,11 @@ play_sentence() {
     if [ -f "${DM_tlt}/$2.mp3" ]; then
         play "${DM_tlt}/$2.mp3" &
     elif [ -n "$synth" ]; then
-        sed 's/<[^>]*>//g' <<<"${trgt}." |$synth &
+        sed 's/<[^>]*>//g' <<<"${trgt}." |$synth
+        if [ $? != 0 ]; then
+            source "$DS/ifs/mods/cmns.sh"
+            msg "$info" error Info
+        fi
     else
         sed 's/<[^>]*>//g' <<<"${trgt}." |espeak -v $lg -s 150 &
     fi
@@ -30,6 +40,10 @@ play_file() {
         mplayer "${2}" -novideo -noconsolecontrols -title "${3}"
     elif [ -n "$synth" ]; then
         sed 's/<[^>]*>//g' <<<"${3}." |$synth
+        if [ $? != 0 ]; then
+            source "$DS/ifs/mods/cmns.sh"
+            msg "$info" error Info
+        fi
     else
         sed 's/<[^>]*>//g' <<<"${3}." |espeak -v $lg -s 150
     fi

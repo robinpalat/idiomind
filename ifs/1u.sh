@@ -12,7 +12,7 @@ text="<span font_desc='Free Sans Bold 14'>$(gettext "Welcome") ${USER^} </span>
 \n      $(gettext "To get started, please configure the following:")\n"
 lang=( 'English' 'Spanish' 'Italian' 'Portuguese' 'German' \
 'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian' )
-sets=( 'gramr' 'wlist' 'trans' 'ttrgt' 'clipw' 'stsks' \
+sets=( 'gramr' 'wlist' 'trans' 'dlaud' 'ttrgt' 'clipw' 'stsks' \
 'langt' 'langs' 'synth' 'txaud' 'intrf' )
 
 if [[ ! $(which yad) ]]; then
@@ -125,13 +125,10 @@ elif [ $ret -eq 0 ]; then
         ((n=n+1))
     done
     
-    n=0; > "$DC_s/1.cfg"
-    while [ ${n} -lt 11 ]; do
-        echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"
-        ((n=n+1))
-    done
+    > "$DC_s/1.cfg"
+    for n in {0..11}; do 
+    echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"; done
     touch "$DC_s/4.cfg"
-
     echo -e "usrid=\"\"\npassw=\"\"\ncntct=\"\"" > "$DC_s/3.cfg"
     /usr/share/idiomind/ifs/tls.sh first_run
     export u=1

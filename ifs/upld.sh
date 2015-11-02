@@ -119,6 +119,7 @@ function upld() {
         yad --form --title="$(gettext "Share")" \
         --text="$text_upld" \
         --name=Idiomind --class=Idiomind \
+        --always-print-result \
         --window-icon=idiomind --buttons-layout=end \
         --align=right --center --on-top \
         --width=490 --height=470 --borders=14 \
@@ -126,15 +127,16 @@ function upld() {
         --field="$(gettext "Skill Level"):CB" "" \
         --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
         --field="$(gettext "Author")" "$usrid" \
-        --field="\t$(gettext "Password")" "$passw" \
-        --field="<a href='$linkac'>$(gettext "Create Account")</a> \n":LBL \
-        --button="$(gettext "PDF")":2 --button="$(gettext "Close")":4
+        --field="\t\t$(gettext "Password")" "$passw" \
+        --field="<a href='$linkac'>$(gettext "Get account to publish")</a> \n":LBL \
+        --button="$(gettext "Export")":2 --button="$(gettext "Close")":4
     }
     
     dlg_upload() {
         yad --form --title="$(gettext "Share")" \
         --text="$text_upld" \
         --name=Idiomind --class=Idiomind \
+        --always-print-result \
         --window-icon=idiomind --buttons-layout=end \
         --align=right --center --on-top \
         --width=490 --height=470 --borders=14 \
@@ -142,9 +144,9 @@ function upld() {
         --field="$(gettext "Skill Level"):CB" "$_levels" \
         --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
         --field="$(gettext "Author")" "$usrid" \
-        --field="\t$(gettext "Password")" "$passw" \
+        --field="\t\t$(gettext "Password")" "$passw" \
         --field=" ":LBL \
-        --button="$(gettext "PDF")":2 "$btn" --button="$(gettext "Close")":4
+        --button="$(gettext "Export")":2 "$btn" --button="$(gettext "Close")":4
     }
 
     dlg_dwld_content() {
@@ -152,18 +154,19 @@ function upld() {
         c_images="$(grep -o 'nimag="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         fsize="$(grep -o 'nsize="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         cmd_dwl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
-        info="<big>$(gettext "Downloadable content available")</big>"
+        info="<b>$(gettext "Downloadable content available")</b>"
         info2="$(gettext "Audio files:") $c_audio\n$(gettext "Images:") $c_images\n$(gettext "Size:") $fsize"
         yad --form --columns=1 --title="$(gettext "Share")" \
         --name=Idiomind --class=Idiomind \
-        --image="$DS/images/download.png" \
+        --always-print-result \
+        --image="info" \
         --window-icon=idiomind --buttons-layout=end \
         --align=left --center --on-top \
-        --width=440 --height=220 --borders=12 \
+        --width=440 --height=200 --borders=12 \
         --text="$info" \
         --field="$info2:lbl" " " \
-        --field="$(gettext "Download"):BTN" "${cmd_dwl}" \
-        --button="$(gettext "PDF")":2 \
+        --button="$(gettext "Export")":2 \
+        --button="$(gettext "Download")":"${cmd_dwl}" \
         --button="$(gettext "Close")":4
     } 
     
@@ -173,11 +176,11 @@ function upld() {
         --name=Idiomind --class=Idiomind \
         --window-icon=idiomind --buttons-layout=end \
         --align=left --center --on-top \
-        --width=440 --height=220 --borders=12 \
-        --field="$(gettext "Downloaded files"):lbl" " " \
+        --width=440 --height=200 --borders=12 \
+        --field="<b>$(gettext "Downloaded files")</b>:lbl" " " \
         --field="$(< "${DC_tlt}/download"):lbl" " " \
         --field=" :lbl" " " \
-        --button="$(gettext "PDF")":2 \
+        --button="$(gettext "Export")":2 \
         --button="$(gettext "Close")":4
     }
     
@@ -218,7 +221,9 @@ function upld() {
             dlg="$(dlg_getuser)"; ret=$?
         elif [ -n "${usrid}" -o -n "${passw}" ]; then
             dlg="$(dlg_upload)"; ret=$?
+            
         fi
+        [ $ret = 0 -o $ret = 1 ] && exit 1
         Ctgry=$(echo "${dlg}" | cut -d "|" -f1)
         level=$(echo "${dlg}" | cut -d "|" -f2)
         notes_m=$(echo "${dlg}" | cut -d "|" -f3)
@@ -243,7 +248,7 @@ function upld() {
 
     # actions
     if [ $ret = 2 ]; then
-        "$DS/ifs/mods/export/PDF.sh" & exit 1
+        "$DS/ifs/upld.sh" _export "${tpc}" & exit 1
      
     elif [ $ret = 0 ]; then
         conditions_for_upload "${2}"
@@ -365,6 +370,31 @@ END
     
 } >/dev/null 2>&1
 
+fdlg() {
+    tpcs="$(cd "$DS/ifs/mods/export"; ls \
+    |sed 's/\.sh//g'|tr "\\n" '!' |sed 's/\!*$//g')"
+    key=$((RANDOM%100000)); cd "$HOME"
+    yad --file --save --filename="$HOME/$tpc" --tabnum=1 --plug="$key" &
+    yad --form --tabnum=2 --plug="$key" \
+    --separator="" --align=right \
+    --field="\t\t\t\t$(gettext "Export to"):CB" "$tpcs" &
+    yad --paned --key="$key" --title="$(gettext "Export")" \
+    --name=Idiomind --class=Idiomind \
+    --window-icon=idiomind --center --on-top \
+    --width=600 --height=500 --borders=8 --splitter=380 \
+    --button="$(gettext "Cancel")":1 \
+    --button="$(gettext "Save")":0
+}
+
+_export() {
+    dlg="$(fdlg)"
+    ret=$?
+    if [ $ret -eq 0 ]; then
+        "$DS/ifs/mods/export/$(head -n 1 <<<"$dlg").sh" \
+        "$(tail -n 1 <<<"$dlg")" "${tpc}" & exit 0
+    fi
+} >/dev/null 2>&1
+
 case "$1" in
     vsd)
     vsd "$@" ;;
@@ -374,6 +404,8 @@ case "$1" in
     dwld "$@" ;;
     upld)
     upld "$@" ;;
+    _export)
+    _export "$@" ;;
     share)
     download "$@" ;;
 esac

@@ -441,22 +441,27 @@ set_image() {
 
 edit_tag() {
     cmd_del="'$DS/mngr.sh' 'delete_topic' "\"${2}\"""
-    cmd_exp="'$DS/ifs/upld.sh' 'upld' "\"${2}\"""
     desc="$(< "${DC_tlt}/info")"
-    dlg="$(yad --form --title="$(gettext "Edit")" \
-    --name=Idiomind --class=Idiomind \
-    --separator='|' \
-    --window-icon=idiomind --center \
-    --width=300 --height=240 --borders=5 \
-    --field="$(gettext "Description")":TXT "$desc" \
-    $(for fl in $DS/ifs/mods/export/*; do
-    echo "--field=$(basename $fl |sed 's/\.sh//'):FBTN "${fl}""; done) \
-    --field="$(gettext "Delete")":FBTN "$cmd_del" \
-    --button="$(gettext "Close")")"
-    ret=$?
+    dlgedit() {
+        yad --form --title="$(gettext "Edit")" \
+        --name=Idiomind --class=Idiomind \
+        --always-print-result \
+        --separator='|' \
+        --window-icon=idiomind --center \
+        --width=300 --height=220 --borders=5 \
+        --field="$(gettext "Description")":TXT "${desc}" \
+        --field="$(gettext "Delete")":FBTN "${cmd_del}" \
+        --button="$(gettext "Export")":2 \
+        --button="$(gettext "Close")":1
+    }
+    dlg="$(dlgedit)"; ret=$?
     desc_mod="$(cut -d "|" -f1 <<<"${dlg}")"
     if [ -n "$desc_mod" -a "$desc_mod" != "$desc" ]; then
-    echo "${desc_mod}" > "${DC_tlt}/info"; fi
+        echo "${desc_mod}" > "${DC_tlt}/info"
+    fi
+    if [ $ret = 2 ]; then
+        "$DS/ifs/upld.sh"  _export "${2}"
+    fi
 }
 
 translate_to() {

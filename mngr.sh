@@ -177,6 +177,7 @@ edit_item() {
             
         if [ ${ret} -eq 0  ]; then
             include "$DS/ifs/mods/add"
+            dlaud="$(grep -oP '(?<=dlaud=\").*(?=\")' "$DC_s/1.cfg")"
             if [ ${type} = 1 ]; then
                 edit_dlg="${edit_dlg1}"
                 tpc_mod="$(cut -d "|" -f3 <<<"${edit_dlg}")"
@@ -244,13 +245,13 @@ edit_item() {
                     if [ ${type_mod} = 1 ]; then
                         srce_mod="$(clean_1 "$(translate "${trgt_mod}" $lgt $lgs)")"
                         audio="${trgt_mod,,}"
-                        tts_word "${audio}" "$DT_r"
+                        [[ ${dlaud} = TRUE ]] && tts_word "${audio}" "$DT_r"
                         srce="$temp"
                     elif [ ${type_mod} = 2 ]; then
                         srce_mod="$(clean_2 "$(translate "${trgt_mod}" $lgt $lgs)")"
                         db="$DS/default/dicts/$lgt"
                         sentence_p "$DT_r" 2
-                        fetch_audio "${aw}" "${bw}" "$DT_r" "${DM_tls}/audio"
+                        [[ ${dlaud} = TRUE ]] && fetch_audio "${aw}" "${bw}" "$DT_r" "${DM_tls}/audio"
                         srce="$temp"
                         grmr="${trgt_mod}"
                     fi
@@ -382,6 +383,7 @@ edit_list() {
     if [ $ret -eq 0 -o $ret -eq 2 ]; then
         [ $ret = 0 ] && cmd=tac && invrt_msg=FALSE
         [ $ret = 2 ] && cmd=cat && invrt_msg=TRUE
+        dlaud="$(grep -oP '(?<=dlaud=\").*(?=\")' "$DC_s/1.cfg")"
         include "$DS/ifs/mods/add"
         n=1; f_lock "$DT/el_lk"
         rm "${direc}/1.cfg" "${direc}/3.cfg" "${direc}/4.cfg"
@@ -441,17 +443,17 @@ edit_list() {
                 if [ ${type} = 1 ]; then
                     srce_mod="$(clean_1 "$(translate "${trgt}" $lgt $lgs)")"
                     audio="${trgt,,}"
-                    tts_word "${audio}" "$DT_r"
+                    [[ ${dlaud} = TRUE ]] && tts_word "${audio}" "$DT_r"
                 elif [ ${type} = 2 ]; then
                     srce_mod="$(clean_2 "$(translate "${trgt}" $lgt $lgs)")"
                     db="$DS/default/dicts/$lgt"
                     sentence_p "$DT_r" 2
-                    fetch_audio "${aw}" "${bw}" "$DT_r" "${DM_tls}/audio"
+                    [[ ${dlaud} = TRUE ]] && fetch_audio "${aw}" "${bw}" "$DT_r" "${DM_tls}/audio"
                 fi
                  
                 id_mod="$(set_name_file ${type} "${trgt}" "${srce_mod}" \
                 "${exmp_mod}" "${defn_mod}" "${note_mod}" "${wrds_mod}" "${grmr_mod}")"
-                [ ${type} = 2 ] && cd "$DT_r"; tts_sentence "${trgt}" "$DT_r" "${DM_tlt}/$id_mod.mp3"
+                [ ${type} = 2 -a ${dlaud} = TRUE ] && cd "$DT_r"; tts_sentence "${trgt}" "$DT_r" "${DM_tlt}/$id_mod.mp3"
                 
                 sed -i "${pos}s|srce={$srce}|srce={$srce_mod}|;
                 ${pos}s|wrds={}|wrds={$wrds_mod}|;

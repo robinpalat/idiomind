@@ -1,4 +1,6 @@
 #!/bin/bash
+source /usr/share/idiomind/ifs/c.conf
+source "$DS/ifs/mods/cmns.sh"
 
 _head(){
     cat <<!EOF
@@ -75,7 +77,7 @@ mkhtml() {
     imagesdir="${DM_tls}/images"
     file="$DT/mkhtml/temp.html"
     
-    if [ $ret -eq 2 ]; then
+    if [ $f -eq 2 ]; then
         while read -r word; do
             item="$(grep -F -m 1 "trgt={${word}}" "${DC_tlt}/0.cfg" |sed 's/},/}\n/g')"
             grep -oP '(?<=srce={).*(?=})' <<<"${item}" >> "$DT/mkhtml/b.srces"
@@ -87,8 +89,8 @@ mkhtml() {
     tr=1; n=1
     while read -r _item; do
         unset img trgt srce type
-        [ $ret -eq 0 ] && [[ ${tr} -gt 3 ]] && tr=1
-        [ $ret -eq 2 ] && [[ ${tr} -gt 2 ]] && tr=1
+        [ $f -eq 0 ] && [[ ${tr} -gt 3 ]] && tr=1
+        [ $f -eq 2 ] && [[ ${tr} -gt 2 ]] && tr=1
         get_item "${_item}"
         
         if [ -n "${trgt}" -a -n "${srce}" -a -n "${type}" ]; then
@@ -100,7 +102,7 @@ mkhtml() {
                 img_small=""; img_large=""
             fi
             
-            if [ ${type} = 1 -a $ret = 0 ]; then
+            if [ ${type} = 1 -a $f = 0 ]; then
                 if [[ -n "${exmp}${defn}${note}" ]]; then
                     img="$img_small"
                     word_example_normal
@@ -116,11 +118,11 @@ mkhtml() {
                         word_image_normal >> "$file.words2"
                     fi
                 fi
-            elif [ ${type} = 2 -a $ret = 0 ]; then
+            elif [ ${type} = 2 -a $f = 0 ]; then
                 sentence_normal >> "$file.sente"
                 let tr--
 
-            elif [ ${type} = 1 -a $ret = 2 ]; then
+            elif [ ${type} = 1 -a $f = 2 ]; then
                 [[ ${n} -gt 12 ]] && n=1
                 ras="$(sort -Ru "$DT/mkhtml/b.srces" |egrep -v "$srce" |head -n5)"
                 while read -r m; do
@@ -134,10 +136,10 @@ mkhtml() {
                 elif [ ${tr} = 2 ]; then
                     word_examen >> "$file.words2"
                 fi
-            elif [ ${type} = 2 -a $ret = 2 ]; then
+            elif [ ${type} = 2 -a $f = 2 ]; then
                 let tr--
             fi
-            if [ -n "${exmp}" -a $ret = 2 ]; then
+            if [ -n "${exmp}" -a $f = 2 ]; then
                 img="$img_small"
                 word_example_examen
             fi
@@ -156,24 +158,8 @@ mkhtml() {
     echo -e "</body></html>" >> "$file"
 }
 
-cd "$HOME"
-fileout=$(yad --file \
---save --title="$(gettext "Save as PDF")" \
---name=Idiomind --class=Idiomind \
---filename="$HOME/$tpc.pdf" \
---window-icon=idiomind --center --on-top \
---width=600 --height=500 --borders=5 \
---button="$(gettext "Cancel")":1 \
---button="$(gettext "Test Mode")":2 \
---button="$(gettext "Save")":0)
-ret=$?
-
-if [ $ret -eq 0 -o $ret -eq 2 ]; then
-    source "$DS/ifs/mods/cmns.sh"
-    mkhtml
-    wkhtmltopdf -s A4 -O Portrait "$file" "$DT/mkhtml/tmp.pdf"
-    mv -f "$DT/mkhtml/tmp.pdf" "${fileout}"
-    cleanups "$DT/mkhtml"
-    exit 0
-fi
-
+[ -z "${f}" ] && f=0
+export f; mkhtml
+wkhtmltopdf -s A4 -O Portrait "$file" "$DT/mkhtml/tmp.pdf"
+mv -f "$DT/mkhtml/tmp.pdf" "${1}.pdf"
+cleanups "$DT/mkhtml"
