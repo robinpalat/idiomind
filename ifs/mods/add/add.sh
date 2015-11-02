@@ -519,7 +519,7 @@ function dlg_form_1() {
     --gtkrc="$DS/default/gtkrc.ini" \
     --always-print-result --separator="\n" \
     --skip-taskbar --center --on-top \
-    --align=right --image="$img" \
+    --align=right --image="${img}" \
     --window-icon=idiomind \
     --width=450 --height=130 --borders=0 \
     --field="" "$txt" \
@@ -535,7 +535,7 @@ function dlg_form_2() {
     --gtkrc="$DS/default/gtkrc.ini" \
     --always-print-result --separator="\n" \
     --skip-taskbar --center --on-top \
-    --align=right --image="$img" \
+    --align=right --image="${img}" \
     --window-icon=idiomind \
     --width=450 --height=150 --borders=0 \
     --field="" "$txt" \
@@ -572,7 +572,7 @@ function dlg_checklist_1() {
     list() {
         echo "${1}" | while read -r word; do
         if [ -n "$word" ]; then
-        echo; echo "<span font_desc='Sans Bold 11'>$word</span>"
+        echo; echo "<span font_desc='Droid Sans 12'>$word</span>"
         fi
         done
     }

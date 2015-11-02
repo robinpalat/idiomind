@@ -211,8 +211,8 @@ function topic() {
         cnf1=$(mktemp "$DT/cnf1.XXX.x")
         cnf3=$(mktemp "$DT/cnf3.XXX.x")
         cnf4=$(mktemp "$DT/cnf4.XXX.x")
-        if [ ! -z "$datei" ]; then infolbl="$(gettext "Installed on $datei, created by $authr")"
-        elif [ ! -z "$datec" ]; then infolbl="$(gettext "Created on $datec")"; fi
+        if [ ! -z "$datei" ]; then infolbl="$(gettext "Installed on") $datei, $(gettext "created by") $authr"
+        elif [ ! -z "$datec" ]; then infolbl="$(gettext "Created on") $datec"; fi
         lbl1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><small>\n$inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$infolbl</small>"
 
         apply() {
