@@ -193,8 +193,8 @@ function upld() {
     done
     
     LANGUAGE_TO_LEARN="${lgtl}"
-    linkc="http://idiomind.net/community/${lgtl,,}"
-    linkac='http://idiomind.net/community/user/register'
+    linkc="http://community.idiomind.net/${lgtl,,}"
+    linkac='http://community.idiomind.net/user/register'
     ctgry="$(grep -o 'ctgry="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
     text_upld="<span font_desc='Arial 12'>$(gettext "Share online with other ${LANGUAGE_TO_LEARN} learners!")</span>\n<a href='$linkc'>$(gettext "Topics shared")</a> Beta\n"
     _categories="${ctgry}${list}"
@@ -223,7 +223,7 @@ function upld() {
             dlg="$(dlg_upload)"; ret=$?
             
         fi
-        [ $ret = 0 -o $ret = 1 ] && exit 1
+        [ $ret = 1 ] && exit 1
         Ctgry=$(echo "${dlg}" | cut -d "|" -f1)
         level=$(echo "${dlg}" | cut -d "|" -f2)
         notes_m=$(echo "${dlg}" | cut -d "|" -f3)
@@ -252,9 +252,9 @@ function upld() {
      
     elif [ $ret = 0 ]; then
         conditions_for_upload "${2}"
+        "$DS/ifs/tls.sh" check_index "${tpc}" 1
         notify-send -i info "$(gettext "Upload in progress")" \
         "$(gettext "This can take some time please wait")" -t 6000
-        "$DS/ifs/tls.sh" check_index "${tpc}" 1
         mkdir -p "$DT/upload/${tpc}/conf"
         DT_u="$DT/upload/"
         oname="$(grep -o 'oname="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
@@ -334,8 +334,9 @@ passw = os.environ['passw_m']
 tpc = os.environ['tpc']
 body = os.environ['body']
 try:
-    server = xmlrpclib.Server('http://idiomind.net/community/xmlrpc.php')
-    nid = server.metaWeblog.newPost('blog', usrid, passw, {'title': tpc, 'description': body}, True)
+    server = xmlrpclib.Server('http://community.idiomind.net/xmlrpc.php')
+    nid = server.metaWeblog.newPost('blog', usrid, passw, 
+    {'title': tpc, 'description': body}, True)
 except:
     sys.exit(3)
 url = os.environ['url']

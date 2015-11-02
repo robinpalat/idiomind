@@ -723,7 +723,11 @@ function strt() {
 
     if [ ${1} = 1 ]; then
         NUMBER="<span color='#6E6E6E'><b><big>$(wc -l < ${practice}.0)</big></b></span>"; declare info${icon}="<span font_desc='Arial Bold 12'>$(gettext "Test completed") </span> —"
-        info="<span font_desc='Arial 11'>$(gettext "Congratulations! You have finished this test of $NUMBER words")</span>\n"
+        if [ ${practice} = e ]; then
+            info="<span font_desc='Arial 11'>$(gettext "Congratulations! You have completed this test of $NUMBER sentences")</span>\n"
+        else
+            info="<span font_desc='Arial 11'>$(gettext "Congratulations! You have completed this test of $NUMBER words")</span>\n"
+        fi
         echo 21 > .${icon}
     elif [ ${1} = 2 ]; then
         learnt=$(< ./${practice}.l); declare info${icon}="* "
