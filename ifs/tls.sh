@@ -258,7 +258,7 @@ dlg_restfile() {
         --column="$(gettext "Select")":RD \
         --column="$(gettext "Date")":TXT \
         --button="$(gettext "Cancel")":1 \
-        --button="$(gettext "OK")":0)"
+        --button="$(gettext "Restore")":0)"
         ret="$?"
         if [ $ret -eq 0 ]; then
             if [ ! -d "${DM_tl}/${2}" ]; then

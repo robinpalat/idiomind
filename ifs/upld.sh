@@ -128,7 +128,7 @@ function upld() {
         --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
         --field="$(gettext "Author")" "$usrid" \
         --field="\t\t$(gettext "Password")" "$passw" \
-        --field="<a href='$linkac'>$(gettext "Get account to publish")</a> \n":LBL \
+        --field="<a href='$linkac'>$(gettext "Get account to share")</a> \n":LBL \
         --button="$(gettext "Export")":2 --button="$(gettext "Close")":4
     }
     

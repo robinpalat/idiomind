@@ -556,7 +556,7 @@ function dlg_checklist_3() {
     yad --form --tabnum=2 --plug="$fkey" --columns=2 \
     --separator="" \
     --field=" ":lbl null \
-    --field="$(gettext "Topic"):CB" "$2!$(gettext "New") *$e$tpcs" &
+    --field=":CB" "$2!$(gettext "New") *$e$tpcs" &
     yad --paned --key="$fkey" \
     --title="$(wc -l < "${1}") $(gettext "notes found")" \
     --name=Idiomind --class=Idiomind \

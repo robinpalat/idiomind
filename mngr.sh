@@ -327,7 +327,6 @@ edit_item() {
                 cleanups "$DT_r"
             ) &
             fi
-
             [ ${type} != ${type_mod} -a ${type_mod} = 1 ] && ( img_word "${trgt}" "${srce}" ) &
             [ ${colorize_run} = 1 ] && "$DS/ifs/tls.sh" colorize &
             [ ${tagset} = 1 ] && tagget_item &
@@ -342,7 +341,7 @@ tagget_item() {
         img0='/usr/share/idiomind/images/0.png'
         dir="$DM_tl/${tag_mod}"
         if ! grep -Fo "trgt={${trgt_mod}}" "$dir/.conf/0.cfg"; then
-            item="0:[type={$type_mod},trgt={$trgt_mod},srce={$srce_mod},exmp={$exmp_mod},defn={$defn_mod},note={$note_mod},wrds={$wrds_mod},grmr={$grmr_mod},].[topic={$tpc_mod},link={$link_mod},mark={$mark_mod},].id=[$id_mod]"
+            item="0:[type={$type_mod},trgt={$trgt_mod},srce={$srce_mod},exmp={$exmp_mod},defn={$defn_mod},note={$note_mod},wrds={$wrds_mod},grmr={$grmr_mod},].[topic={$tpc_mod},link={$link_mod},mark={$mark_mod},].id=[$id]"
             echo "${item}" >> "$dir/.conf/0.cfg"
             echo "${trgt_mod}" >> "$dir/.conf/1.cfg"
             echo -e "FALSE\n${trgt_mod}\n$img0" >> "$dir/.conf/5.cfg"
@@ -350,7 +349,7 @@ tagget_item() {
                 echo "${trgt_mod}" >> "$dir/.conf/3.cfg"
             elif [ ${type_mod} = 2 ]; then
                 echo "${trgt_mod}" >> "$dir/.conf/4.cfg"
-                [ -e "${DM_tlt}/$id.mp3" ] && cp "${DM_tlt}/$id.mp3" "$dir/$id_mod.mp3"
+                [ -e "${DM_tlt}/$id.mp3" ] && cp "${DM_tlt}/$id.mp3" "$dir/$id.mp3"
             fi
         fi
     fi
