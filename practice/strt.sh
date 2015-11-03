@@ -420,7 +420,7 @@ function practice_e() {
         --text="${text}" \
         --name=Idiomind --class=Idiomind \
         --separator="" \
-        --window-icon=idiomind  --image="$DS/images/bar.png" \
+        --window-icon=idiomind --image="$DS/images/bar.png" \
         --buttons-layout=end --skip-taskbar \
         --undecorated --center --on-top \
         --text-align=center --align=center --image-on-top \
@@ -610,7 +610,7 @@ function lock() {
                 --image="$dirs/images/21.png" \
                 --window-icon=idiomind --on-top --skip-taskbar --center \
                 --width=400 --height=130 --borders=5 \
-                --button=" $(gettext "Restart -B") !!$(gettext "Questions in $lgsl - Answers in $lgtl") ":2 \
+                --button=" $(gettext "Restart B") !!$(gettext "Questions in $lgsl - Answers in $lgtl") ":2 \
                 --button=" $(gettext "Restart") !!$(gettext "Questions in $lgtl - Answers in $lgsl") ":0 \
                 --button="    $(gettext "OK")    ":1
                 ret=$?

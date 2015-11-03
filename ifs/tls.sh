@@ -69,7 +69,8 @@ check_index() {
     DC_tlt="$DM_tl/${2}/.conf"; DM_tlt="$DM_tl/${2}"
     tpc="${2}"; mkmn=0; f=0; a=0; id=0
     [[ ${3} = 1 ]] && r=1 || r=0
-    
+    psets=( 'words' 'sntcs' 'marks' 'wprct' 'rplay' \
+    'audio' 'ntosd' 'loop' 'rword' 'acheck' )
     _check() {
         if [ ! -f "${DC_tlt}/0.cfg" ]; then f=1; fi
         if [ ! -d "${DC_tlt}" ]; then mkdir "${DC_tlt}"; fi
@@ -80,11 +81,14 @@ check_index() {
             if grep '^$' "${DC_tlt}/${n}.cfg"; then
                 sed -i '/^$/d' "${DC_tlt}/${n}.cfg"; fi
         done
-        [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "${c1}" > "${DC_tlt}/id.cfg"
-        [ ! -e "${DC_tlt}/10.cfg" ] && echo -e "${c2}" > "${DC_tlt}/10.cfg"
+        if [ ! -e "${DC_tlt}/10.cfg" -o ! -s "${DC_tlt}/10.cfg" ]; then
+        > "${DC_tlt}/10.cfg"
+        for n in {0..9}; do echo -e "${psets[$n]}=\"\"" >> "${DC_tlt}/10.cfg"; done
+        fi
         [ ! -e "${DC_tlt}/9.cfg" ] && touch "${DC_tlt}/9.cfg"
-        [[ `egrep -cv '#|^$' < "${DC_tlt}/id.cfg"` = 19 ]] && id=1
         
+        if [[ `egrep -cv '#|^$' < "${DC_tlt}/id.cfg"` = 19 ]]; then id=1; fi
+        if [ ! -e "${DC_tlt}/id.cfg" ]; then id=0; fi
         if [[ ${id} != 1 ]]; then
             datec=$(date +%F)
             eval c="$(< $DS/default/topicid)"
@@ -578,7 +582,6 @@ colorize() {
     [ ! -e "${DC_tlt}/1.cfg" ] && touch "${DC_tlt}/1.cfg"
     [ ! -e "${DC_tlt}/6.cfg" ] && touch "${DC_tlt}/6.cfg"
     [ ! -e "${DC_tlt}/9.cfg" ] && touch "${DC_tlt}/9.cfg"
-    e="$(grep -oP '(?<=set_1=\").*(?=\")' "${DC_tlt}/id.cfg")"
     if [[ `egrep -cv '#|^$' < "${DC_tlt}/9.cfg"` -ge 4 ]] \
     && [[ `grep -oP '(?<=acheck=\").*(?=\")' "${DC_tlt}/10.cfg"` = TRUE ]]; then
     chk=TRUE; else chk=FALSE; fi
