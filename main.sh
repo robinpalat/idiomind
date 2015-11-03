@@ -347,12 +347,12 @@ panel() {
     if [ ! -d "$DT" ]; then new_session; ns=TRUE; fi
     if [ ! -e "$DT/tpe" ]; then
         tpe="$(sed -n 1p "$DC_s/4.cfg")"
-        if ! echo -e "$(ls "$DS/addons/")" |grep -Fxo "${tpe}" >/dev/null 2>&1; then
+        if ! ls -1a "$DS/addons/" |grep -Fxo "${tpe}" >/dev/null 2>&1; then
             [ ! -L "$DM_tl/${tpe}" ] && echo "${tpe}" > "$DT/tpe"
         fi
     fi
     if [ "$(< "$DT/tpe")" != "${tpc}" ]; then
-        if ! echo -e "$(ls "$DS/addons/")" |grep -Fxo "${tpc}" >/dev/null 2>&1; then
+        if ! ls -1a "$DS/addons/" |grep -Fxo "${tpc}" >/dev/null 2>&1; then
             [ ! -L "$DM_tl/${tpe}" ] && echo "${tpc}" > "$DT/tpe"
         fi
     fi

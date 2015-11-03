@@ -70,13 +70,10 @@ if [ -d "${DM_tlt}" ]; then
     fi
 
     if [[ ${3} = 1 ]]; then
-        ( sleep 1
-        notify-send --icon=idiomind \
-        "${topic}" "$(gettext "Is now your topic")" -t 4000 ) & exit
+        ( sleep 1; notify-send -i idiomind "${topic}" "$(gettext "Is now your topic")" -t 4000 ) & exit
     elif [[ -z "$3" ]]; then 
         idiomind topic & exit
     fi
-        
 else
     [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
     "$DS/mngr.sh" mkmn

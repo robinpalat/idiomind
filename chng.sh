@@ -91,7 +91,8 @@ if [[ ${1} = 0 ]]; then
     include "$DS/ifs/mods/chng"
 
 elif [[ ${1} != 0 ]]; then
-    [ -z"${DM}" ] && source /usr/share/idiomind/ifs/c.conf
+    [ -z "${DM}" ] && source /usr/share/idiomind/ifs/c.conf
+    if [ ! -d "$DT" ]; then idiomind -s; wait; fi
     linkc="http://community.idiomind.net/${lgtl,,}"
     remove_d() {
         ins="$(cd "/usr/share/idiomind/addons/"

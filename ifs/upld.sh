@@ -317,7 +317,6 @@ function upld() {
         tr '\n' '&' < "${DC_tlt}/id.cfg" >> "$DT_u/$tpcid.${tpc}.$lgt"
         echo -n "&idiomind-`idiomind -v`" >> "$DT_u/$tpcid.${tpc}.$lgt"
         echo -en "\nidiomind-`idiomind -v`" >> "${DC_tlt}/id.cfg"
-
         url="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
         | grep -o 'UPLOADS="[^"]*' | grep -o '[^"]*$')"
         direc="$DT_u"

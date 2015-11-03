@@ -554,6 +554,7 @@ function dlg_checklist_3() {
     --ellipsize=END --no-headers --text-align=right \
     --column=" " --column=" " |sed '/^$/d' > "$slt" &
     yad --form --tabnum=2 --plug="$fkey" --columns=2 \
+    --gtkrc="$DS/default/gtkrc.ini" \
     --separator="" \
     --field=" ":lbl null \
     --field=":CB" "$2!$(gettext "New") *$e$tpcs" &
