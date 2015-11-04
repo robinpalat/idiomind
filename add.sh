@@ -682,16 +682,20 @@ fetch_content() {
 } >/dev/null 2>&1
 
 new_items() {
-    if [ ! -d "$DT" ]; then idiomind -s; wait; fi
+    if [ ! -d "$DT" ]; then 
+        idiomind -s; sleep 0.5
+    fi
     if [ ! -e "$DT/tpe" ]; then
         tpc="$(sed -n 1p "$DC_s/4.cfg")"
         if ! ls -1a "$DS/addons/" |grep -Fxo "${tpc}" >/dev/null 2>&1; then
             [ ! -L "$DM_tl/${tpc}" ] && echo "${tpc}" > "$DT/tpe"
         fi
+        tpe="$(sed -n 1p "$DT/tpe")"
     fi
-
+    
     if [ -e "$DC_s/topics_first_run" ]; then
-    "$DS/ifs/tls.sh" first_run topics & exit 1; fi
+        "$DS/ifs/tls.sh" first_run topics & exit 1
+    fi
 
     [ -z "${4}" ] && txt="$(xclip -selection primary -o)" || txt="${4}"
     trgt="$(clean_4 "${txt}")"

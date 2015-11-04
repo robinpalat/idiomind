@@ -330,8 +330,15 @@ function topic() {
     fi
 }
 
+bgroud_session() {
+    sleep 50
+    if [ ! -e "$DT/ps_lk" -a ! -d "$DT" ]; then
+        new_session
+    fi
+}
+
 panel() {
-    set_geo(){
+    set_geom(){
         sleep 1
         spost=`xwininfo -name Idiomind |grep geometry |cut -d ' ' -f 4`
         sed -i "s/.*/\"$spost\"/g" "$DC_s/5.cfg"
@@ -389,7 +396,7 @@ panel() {
     --field="$(gettext "Home")"!gtk-home:btn "idiomind 'topic'" \
     --field="$(gettext "Index")"!gtk-index:btn "$DS/chng.sh" \
     --field="$(gettext "Options")"!gtk-preferences:btn "$DS/cnfg.sh"
-    [ $? != 0 ] && "$DS/stop.sh" 1 & exit ) & set_geo
+    [ $? != 0 ] && "$DS/stop.sh" 1 & exit ) & set_geom
 }
 
 case "$1" in
@@ -402,9 +409,9 @@ case "$1" in
     -v|--version)
     echo -n "$_version" ;;
     -s)
-    new_session; idiomind & ;;
+    new_session; idiomind ;;
     autostart)
-    sleep 50; [ ! -e "$DT/ps_lk" ] && new_session ;;
+    bgroud_session ;;
     --add)
    "$DS/add.sh" new_items "$dir" 2 "${2}" ;;
     add)
