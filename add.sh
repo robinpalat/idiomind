@@ -682,7 +682,8 @@ fetch_content() {
 } >/dev/null 2>&1
 
 new_items() {
-    if [ ! -d "$DT" ]; then 
+    if [ ! -d "$DT" ]; then
+        ( "$DS/ifs/tls.sh" a_check_updates ) &
         idiomind -s; sleep 0.5
     fi
     if [ ! -e "$DT/tpe" ]; then

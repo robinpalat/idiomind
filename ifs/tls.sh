@@ -288,7 +288,7 @@ fback() {
     --browser --uri="$URL" \
     --window-icon=idiomind \
     --no-buttons --fixed --on-top --mouse \
-    --width=500 --height=350 &
+    --width=550 --height=400 &
 } >/dev/null 2>&1
 
 _definition() {
@@ -319,7 +319,6 @@ _quick_help() {
     --window-icon=idiomind \
     --fixed --on-top --mouse \
     --width=550 --height=450 --borders=2 \
-    --button="$(gettext "Send Feedback")":"$DS/ifs/tls.sh 'fback'" \
     --button="$(gettext "Close")":1 &
 } >/dev/null 2>&1
 
@@ -331,7 +330,7 @@ check_updates() {
     date "+%d" > "$DC_s/9.cfg"e
     if [ ${#nver} -lt 9 ] && [ ${#_version} -lt 9 ] \
     && [ ${#nver} -ge 3 ] && [ ${#_version} -ge 3 ] \
-    && [ "$nver" != "$_version" ]; then
+    && [[ ${nver} != ${_version} ]]; then
         msg_2 " <b>$(gettext "A new version of Idiomind available\!")</b>\t\n" \
         info "$(gettext "Download")" "$(gettext "Cancel")" "$(gettext "Information")"
         ret=$?
@@ -344,22 +343,21 @@ check_updates() {
 
 a_check_updates() {
     source "$DS/ifs/mods/cmns.sh"
-    [[ ! -f "$DC_s/9.cfg" ]] && date "+%d" > "$DC_s/9.cfg" && exit
+    [ ! -e "$DC_s/9.cfg" ] && date "+%d" > "$DC_s/9.cfg" && exit
     d1=$(< "$DC_s/9.cfg"); d2=$(date +%d)
-    if [[ "$(sed -n 1p "$DC_s/9.cfg")" = 28 ]] && \
-    [[ "$(wc -l < "$DC_s/9.cfg")" -gt 1 ]]; then
-    rm -f "$DC_s/9.cfg"; fi
-    [[ "$(wc -l < "$DC_s/9.cfg")" -gt 1 ]] && exit 1
+    if [ `sed -n 1p "$DC_s/9.cfg"` = 28 ] && [ `wc -l < "$DC_s/9.cfg"` -gt 1 ]; then
+        rm -f "$DC_s/9.cfg"; fi
+    [ `wc -l < "$DC_s/9.cfg"` -gt 1 ] && exit 1
 
-    if [[ "$d1" != "$d2" ]]; then
+    if [ ${d1} != ${d2} ]; then
         sleep 5; curl -v www.google.com 2>&1 | \
         grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
-        echo "$d2" > "$DC_s/9.cfg"
+        echo ${d2} > "$DC_s/9.cfg"
         nver=`wget --user-agent "$ua" -qO - http://idiomind.sourceforge.net/doc/checkversion |grep \<body\> |sed 's/<[^>]*>//g'`
         pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
         if [ ${#nver} -lt 9 ] && [ ${#_version} -lt 9 ] \
         && [ ${#nver} -ge 3 ] && [ ${#_version} -ge 3 ] \
-        && [ "$nver" != "$_version" ]; then
+        && [[ ${nver} != ${_version} ]]; then
             msg_2 " <b>$(gettext "A new version of Idiomind available\!")\t\n</b> $(gettext "Do you want to download it now?")\n" info "$(gettext "Download")" "$(gettext "Cancel")" "$(gettext "New Version")" "$(gettext "Ignore")"
             ret=$?
             if [ $ret -eq 0 ]; then xdg-open "$pkg"

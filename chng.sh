@@ -92,7 +92,10 @@ if [[ ${1} = 0 ]]; then
 
 elif [[ ${1} != 0 ]]; then
     [ -z "${DM}" ] && source /usr/share/idiomind/ifs/c.conf
-    if [ ! -d "$DT" ]; then idiomind -s; sleep 1; fi
+    if [ ! -d "$DT" ]; then
+        ( "$DS/ifs/tls.sh" a_check_updates ) &
+        idiomind -s; sleep 1
+    fi
     linkc="http://community.idiomind.net/${lgtl,,}"
     remove_d() {
         ins="$(cd "/usr/share/idiomind/addons/"
