@@ -6,10 +6,10 @@ source "$DS/ifs/mods/cmns.sh"
 include "$DS/ifs/mods/add"
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
-wlist=$(grep -o wlist=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
-trans=$(grep -o trans=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
-ttrgt=$(grep -o ttrgt=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
-dlaud=$(grep -o dlaud=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
+wlist=$(grep -oP '(?<=wlist=\").*(?=\")' "$DC_s/1.cfg")
+trans=$(grep -oP '(?<=trans=\").*(?=\")' "$DC_s/1.cfg")
+ttrgt=$(grep -oP '(?<=ttrgt=\").*(?=\")' "$DC_s/1.cfg")
+dlaud=$(grep -oP '(?<=dlaud=\").*(?=\")' "$DC_s/1.cfg")
 
 new_topic() {
     if [[ $(wc -l < "$DM_tl/.1.cfg") -ge 120 ]]; then
@@ -70,7 +70,6 @@ function new_item() {
         msg "$(gettext "You need to fill text fields.")\n" info "$(gettext "Information")" & exit 1
     fi
     if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
-
         srce=$(translate "${trgt}" auto $lgs)
         if [ $(wc -w <<<"${srce}") = 1 ]; then
             new_word
@@ -655,7 +654,6 @@ fetch_content() {
             feed_items="$(xsltproc - "$_feed" <<<"${tmplitem}" 2> /dev/null)"
             feed_items="$(echo "$feed_items" |tr '\n' '*' |tr -s '[:space:]' |sed 's/EOL/\n/g' |head -n2)"
             feed_items="$(echo "$feed_items" |sed '/^$/d')"
-            
             while read -r item; do
                 if [[ `wc -l < "${DC_tlt}/0.cfg"` -ge 200 ]]; then exit 1; fi
                 fields="$(echo "$item" |sed -r 's|-\!-|\n|g')"

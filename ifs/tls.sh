@@ -82,8 +82,10 @@ check_index() {
                 sed -i '/^$/d' "${DC_tlt}/${n}.cfg"; fi
         done
         if [ ! -e "${DC_tlt}/10.cfg" -o ! -s "${DC_tlt}/10.cfg" ]; then
-        > "${DC_tlt}/10.cfg"
-        for n in {0..9}; do echo -e "${psets[$n]}=\"\"" >> "${DC_tlt}/10.cfg"; done
+            > "${DC_tlt}/10.cfg"
+            for n in {0..9}; do 
+                echo -e "${psets[$n]}=\"\"" >> "${DC_tlt}/10.cfg"
+            done
         fi
         [ ! -e "${DC_tlt}/9.cfg" ] && touch "${DC_tlt}/9.cfg"
         
@@ -98,8 +100,6 @@ check_index() {
         if ls "${DM_tlt}"/*.mp3 1> /dev/null 2>&1; then
             for au in "${DM_tlt}"/*.mp3 ; do [ ! -s "${au}" ] && rm "${au}" ; done
         fi
-        if grep 'rsntc=' "${DC_tlt}/10.cfg"; then
-            rm "${DC_tlt}/10.cfg"; fi
         
         if [ ! -f "${DC_tlt}/8.cfg" ]; then
             echo 1 > "${DC_tlt}/8.cfg"; fi
@@ -342,7 +342,6 @@ check_updates() {
 } >/dev/null 2>&1
 
 a_check_updates() {
-    yad
     source "$DS/ifs/mods/cmns.sh"
     [ ! -e "$DC_s/9.cfg" ] && date "+%d" > "$DC_s/9.cfg" && exit
     d1=$(< "$DC_s/9.cfg"); d2=$(date +%d)
