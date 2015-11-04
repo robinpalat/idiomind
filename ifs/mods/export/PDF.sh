@@ -1,4 +1,5 @@
 #!/bin/bash
+
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 
@@ -49,14 +50,6 @@ word_image_normal(){
 <td style="width: 33%; vertical-align:top; align:$algn">${img2}<w1>${trgt2}</w1><br><w2>${srce2}</w2><br><br></td>
 <td style="width: 33%; vertical-align:top; align:$algn">${img}<w1>${trgt}</w1><br><w2>${srce}</w2><br><br></td></tr></table>
 !EOF
-}
-
-word_example_examen(){
-    hint="$(echo "${trgt,,}" |sed "s|[a-z]|"\ \ _"|g")"
-    [ -n "${exmp}" ] && exmp="$(sed "s|${trgt,}|<b> ${hint} <\/b>|g" <<<"${exmp}")<br><br>"
-    echo -e "<table width=\"80%\" align=\"left\" cellpadding=\"0\" cellspacing=\"5\"><tr>" >> "$file.words1"
-    [ -n "$img" ] && echo -e "<td style=\"vertical-align:top; align:left\">$img</td>" >> "$file.words1"
-    echo -e "<td width=\"70%\"><texmp>${exmp}</texmp></td></table>" >> "$file.words1"
 }
 
 word_example_normal(){
@@ -138,10 +131,6 @@ mkhtml() {
                 fi
             elif [ ${type} = 2 -a $f = 2 ]; then
                 let tr--
-            fi
-            if [ -n "${exmp}" -a $f = 2 ]; then
-                img="$img_small"
-                word_example_examen
             fi
         elif [ ${tr} = 2 ]; then
             echo -e "</td></table>" >> "$file.words2"

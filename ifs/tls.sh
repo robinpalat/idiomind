@@ -342,13 +342,13 @@ check_updates() {
 } >/dev/null 2>&1
 
 a_check_updates() {
+    yad
     source "$DS/ifs/mods/cmns.sh"
     [ ! -e "$DC_s/9.cfg" ] && date "+%d" > "$DC_s/9.cfg" && exit
     d1=$(< "$DC_s/9.cfg"); d2=$(date +%d)
     if [ `sed -n 1p "$DC_s/9.cfg"` = 28 ] && [ `wc -l < "$DC_s/9.cfg"` -gt 1 ]; then
         rm -f "$DC_s/9.cfg"; fi
     [ `wc -l < "$DC_s/9.cfg"` -gt 1 ] && exit 1
-
     if [ ${d1} != ${d2} ]; then
         sleep 5; curl -v www.google.com 2>&1 | \
         grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
