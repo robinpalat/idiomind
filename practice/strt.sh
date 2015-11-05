@@ -325,10 +325,9 @@ function practice_d() {
         srce="${item}"
         trgt=`grep -oP '(?<=srce={).*(?=})' <<<"${_item}"`
         fi
-        [ ${#trgt} -gt 20 -o ${#srce} -gt 20 ] && trgt_f_c=11 || trgt_f_c=12
         [ ! -e "$img" ] && img="$DS/images/imgmiss.jpg"
-        cuest="<span font_desc='Free Sans ${trgt_f_c}' color='#565656'> ${trgt} </span>"
-        aswer="<span font_desc='Free Sans ${trgt_f_c}'>${srce}</span>"
+        cuest="<span font_desc='Arial Bold 11' color='#616161'>${trgt}</span>"
+        aswer="<span font_desc='Arial Bold 11' color='#616161'>${srce}</span>"
     }
 
     question() {

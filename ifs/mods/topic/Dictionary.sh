@@ -23,7 +23,7 @@ function Dictionary() {
     list | yad --list --title="$(gettext "New Words")" \
     --dclick-action="$DS/play.sh play_word" \
     --search-column=1 --hide-column=3 --regex-search \
-    --column="$(gettext "$lgtl")                                                                  ":TEXT \
+    --column="$(gettext "$lgtl")                                        ":TEXT \
     --column="$(gettext "$lgsl")":TEXT \
     --name=Idiomind --class=Idiomind  \
     --center --align=right --ellipsize=END --image-on-top \

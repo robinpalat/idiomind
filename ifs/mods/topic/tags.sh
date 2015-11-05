@@ -69,8 +69,8 @@ function tags_list() {
     --dclick-action="$DS/vwr.sh '1'" \
     --no-headers --search-column=1 --hide-column=3 --regex-search \
     --always-print-result \
-    --center --align=right --ellipsize=END --image-on-top \
-    --window-icon=idiomind --center \
+    --center --align=right --ellipsize=END \
+    --window-icon=idiomind \
     --width=600 --height=560 --borders=8  \
     --column="$(gettext "$lgtl")":IMG \
     --column="$(gettext "$lgsl")":TEXT \

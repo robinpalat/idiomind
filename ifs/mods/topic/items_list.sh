@@ -93,8 +93,8 @@ function notebook_1() {
     yad --notebook --title="Idiomind - $tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
-    --center --align=right --ellipsize=END --image-on-top \
-    --window-icon=idiomind --center \
+    --center --align=right --ellipsize=END \
+    --window-icon=idiomind \
     --tab="  $(gettext "Learning") ($inx1) " \
     --tab="  $(gettext "Learnt") ($inx2) " \
     --tab="  $(gettext "Note")  " \
@@ -140,8 +140,8 @@ function notebook_2() {
     yad --notebook --title="Idiomind - $tpc" \
     --name=Idiomind --class=Idiomind --key=$KEY \
     --always-print-result \
-    --center --align=right "$img" --ellipsize=END --image-on-top \
-    --window-icon=idiomind --center \
+    --center --align=right --ellipsize=END \
+    --window-icon=idiomind \
     --tab="  $(gettext "Review")  " \
     --tab="  $(gettext "Learnt") ($inx2) " \
     --tab="  $(gettext "Note")  " \

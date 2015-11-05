@@ -8,7 +8,7 @@ lgs=$(lnglss $lgsl)
 CATEGORIES=( 'article' 'city' 'comic' 'culture' 'education' \
 'entertainment' 'funny' 'grammar' 'history' 'home' 'internet' \
 'interview' 'movies' 'music' 'nature' 'news' 'office' 'others' \
-'places' 'quotes' 'relations' 'science' 'social_media' 'sport' 'tech' )
+'places' 'quotes' 'relations' 'science' 'social media' 'sport' 'tech' )
 
 function dwld() {
     err() {
@@ -102,7 +102,7 @@ function upld() {
         if [ -z "${usrid}" -o -z "${passw}" ]; then
             msg "$(gettext "Sorry, Authentication failed.")\n" info "$(gettext "Information")" & exit 1
         fi
-        if [ -z "${Ctgry}" ]; then
+        if [ -z "${ctgry}" ]; then
             msg "$(gettext "Please select a category.")\n " info
             "$DS/ifs/upld.sh" upld "${tpc}" & exit 1
         fi
@@ -187,7 +187,7 @@ function upld() {
     random_id() { tr -dc a-z < /dev/urandom |head -c 1; echo $((RANDOM%100)); }
 
     emrk='!'
-    for val in ${CATEGORIES[@]}; do
+    for val in "${CATEGORIES[@]}"; do
         declare clocal="$(gettext "${val^}")"
         list="${list}${emrk}${clocal}"
     done
@@ -224,14 +224,14 @@ function upld() {
             
         fi
         [ $ret = 1 ] && exit 1
-        Ctgry=$(echo "${dlg}" | cut -d "|" -f1)
+        ctgry=$(echo "${dlg}" | cut -d "|" -f1)
         level=$(echo "${dlg}" | cut -d "|" -f2)
         notes_m=$(echo "${dlg}" | cut -d "|" -f3)
         usrid_m=$(echo "${dlg}" | cut -d "|" -f4)
         passw_m=$(echo "${dlg}" | cut -d "|" -f5)
         # get data
         for val in ${CATEGORIES[@]}; do
-            [ "$Ctgry" = "$(gettext "${val^}")" ] && Ctgry=$val && break
+            [ "$ctgry" = "$(gettext "${val^}")" ] && ctgry=$val && break
         done
         [ "$level" = $(gettext "Beginner") ] && level=0
         [ "$level" = $(gettext "Intermediate") ] && level=1
@@ -321,7 +321,8 @@ function upld() {
         | grep -o 'UPLOADS="[^"]*' | grep -o '[^"]*$')"
         direc="$DT_u"
         log="$DT_u/log"
-        body=""
+        body="$(tac "${DC_tlt}/1.cfg")<hr><br><br>
+        <a href='/${lgtl,}/${ctgry,}/$tpcid.$oname.idmnd'>Download</a>"
         export tpc direc url log usrid_m passw_m body
 
         python << END
