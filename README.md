@@ -1,5 +1,5 @@
 
-<a href='https://poeditor.com/join/project/Nc2kc89iSY'>Collaborate with translations</a>
+
 
 
 <b>Dependencies:</b>
@@ -17,4 +17,7 @@ Adding repository
       sudo apt-get update
       
       sudo apt-get install idiomind
-      
+
+
+
+<a href='https://poeditor.com/join/project/Nc2kc89iSY'>Collaborate with translations</a>
