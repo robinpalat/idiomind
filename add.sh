@@ -209,10 +209,9 @@ function list_words_edit() {
     exmp="${3}"
     [ -z "${exmp}" ] && exmp="${trgt}"
     check_s "${tpe}"
-    info=" -$((200-$(wc -l < "${DC_tlt}/0.cfg")))"
     DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
     words="$(list_words_2 "${2}")"
-    slt="$(dlg_checklist_1 "${words}" "$info")"
+    slt="$(dlg_checklist_1 "${words}")"
     
     if [ $? -eq 0 ]; then
         while read -r chkst; do
@@ -259,10 +258,9 @@ function list_words_sentence() {
     exmp="${trgt}"
     c=$((RANDOM%100))
     DT_r=$(mktemp -d "$DT/XXXXXX")
-    info="-$((200-$(wc -l < "${DC_tlt}/0.cfg")))"
     wrds="$(list_words_2 "${wrds}")"
     if [ -n "${wrds}" ]; then
-        slt="$(dlg_checklist_1 "${wrds}" "${info}")"
+        slt="$(dlg_checklist_1 "${wrds}")"
     else
         return 1
     fi
@@ -312,7 +310,6 @@ function list_words_dclik() {
     source "$DS/ifs/mods/add/add.sh"
     words="${3}"
     check_s "${tpe}"
-    info="-$((200 - $(wc -l < "${DC_tlt}/0.cfg")))"
     
     if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
         ( echo "1"
@@ -327,7 +324,7 @@ function list_words_dclik() {
         list_words_3 "${words}"
     fi
     wrds="$(< "$DT_r/lst")"
-    slt="$(dlg_checklist_1 "${wrds}" "${info}")"
+    slt="$(dlg_checklist_1 "${wrds}")"
     
     if [ $? -eq 0 ]; then
         while read -r chkst; do

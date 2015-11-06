@@ -582,7 +582,7 @@ function dlg_checklist_1() {
     --window-icon=idiomind \
     --mouse --on-top --no-headers \
     --text-align=right --buttons-layout=end \
-    --width=400 --height=250 --borders=5  \
+    --width=420 --height=270 --borders=5  \
     --column=" " --column="Select" \
     --button="$(gettext "Cancel")":1 \
     --button="gtk-add":0
@@ -598,7 +598,7 @@ function dlg_text_info_1() {
     --skip-taskbar --center --on-top \
     --width=700 --height=380 --borders=5 \
     --button="$(gettext "Cancel")":1 \
-    --button="gtk-apply":0
+    --button="$(gettext "Apply")":0
 }
 
 function msg_3() {
