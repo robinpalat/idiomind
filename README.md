@@ -19,4 +19,4 @@ bash (>=4.1), mplayer, scrot, imagemagick, wkhtmltopdf, lynx, curl, html2text, s
 
 
 
-<a href='https://poeditor.com/join/project/Nc2kc89iSY'>Collaborate with translations</a>
+<a href='https://poeditor.com/join/project/Nc2kc89iSY'>Collaborate with translations!</a>
