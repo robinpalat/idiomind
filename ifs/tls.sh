@@ -327,7 +327,7 @@ check_updates() {
     internet
     nver=`wget --user-agent "$ua" -qO - http://idiomind.sourceforge.net/doc/checkversion |grep \<body\> |sed 's/<[^>]*>//g'`
     pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
-    date "+%d" > "$DC_s/9.cfg"e
+    date "+%d" > "$DC_s/9.cfg"
     if [ ${#nver} -lt 9 ] && [ ${#_version} -lt 9 ] \
     && [ ${#nver} -ge 3 ] && [ ${#_version} -ge 3 ] \
     && [[ ${nver} != ${_version} ]]; then

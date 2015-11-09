@@ -91,7 +91,7 @@ if [[ ${1} = 0 ]]; then
     include "$DS/ifs/mods/chng"
 
 elif [[ ${1} != 0 ]]; then
-    [ -z "${DM}" ] && source /usr/share/idiomind/ifs/c.conf
+    source /usr/share/idiomind/ifs/c.conf
     if [ ! -d "$DT" ]; then
         ( "$DS/ifs/tls.sh" a_check_updates ) &
         idiomind -s; sleep 1

@@ -121,7 +121,8 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     _lst | yad --list --title="Idiomind" \
     --text="${itxt}" \
     --name=Idiomind --class=Idiomind \
-    --no-click --print-column=0 --dclick-action="$dclk" \
+    --no-click --print-column=0 \
+    --dclick-action="${dclk}" \
     --window-icon=idiomind \
     --hide-column=2 --tooltip-column=2 \
     --no-headers --ellipsize=END --center \

@@ -319,11 +319,11 @@ function practice_d() {
         img="$DM_tls/images/${item,,}-0.jpg"
         _item="$(grep -F -m 1 "trgt={${item}}" "${cfg0}" |sed 's/},/}\n/g')"
         if [[ ${rev} = 0 ]]; then
-        trgt="${item}"
-        srce=`grep -oP '(?<=srce={).*(?=})' <<<"${_item}"`
-        else
         srce="${item}"
         trgt=`grep -oP '(?<=srce={).*(?=})' <<<"${_item}"`
+        else
+        trgt="${item}"
+        srce=`grep -oP '(?<=srce={).*(?=})' <<<"${_item}"`
         fi
         [ ! -e "$img" ] && img="$DS/images/imgmiss.jpg"
         cuest="<span font_desc='Arial Bold 11' color='#616161'>${trgt}</span>"

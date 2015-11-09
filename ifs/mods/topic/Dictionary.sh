@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-function Dictionary() {
+function dictionary() {
     cmd_play="$DS/play.sh play_list"
     cdb="$DM_tls/Dictionary/${lgtl}.db"
     table="T`date +%m%y`"
@@ -33,4 +33,4 @@ function Dictionary() {
     
 } >/dev/null 2>&1
 
-Dictionary
+dictionary
