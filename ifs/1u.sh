@@ -9,6 +9,8 @@ Encoding=UTF-8
 alias gettext='gettext "idiomind"'
 
 source /usr/share/idiomind/default/sets.cfg
+lang1="${!lang[@]}"; declare lt=( $lang1 )
+lang2="${!slang[@]}"; declare ls=( $lang2 )
 text="<span font_desc='Free Sans Bold 14'>$(gettext "Welcome") ${USER^} </span>
 \n      $(gettext "To get started, please configure the following:")\n"
 sets=( 'gramr' 'wlist' 'trans' 'dlaud' 'ttrgt' 'clipw' 'stsks' \
@@ -111,30 +113,26 @@ elif [ $ret -eq 0 ]; then
     mkdir -p "$HOME/.config/idiomind/s"
     DC_s="$HOME/.config/idiomind/s"
     mkdir "$HOME/.config/idiomind/addons"
-    
-    n=0
-    while [ ${n} -lt 10 ]; do
-        if echo "$target" | grep "${lang[$n]}"; then
-        set_lang "${lang[$n]}"
-        if grep -o -E 'Chinese|Japanese|Russian|Vietnamese' <<<"$target";
-        then _info "$target"; fi
-        break
+
+    for val in "${lt[@]}"; do
+        if [[ ${target} = $(gettext ${val}) ]]; then
+            export lgtl=$val
         fi
-        ((n=n+1))
     done
-    
-    n=0
-    while [ ${n} -lt 10 ]; do
-        if echo "$source" | grep "${slang[$n]}"; then
-        echo "${slang[$n]}" >> "$DC_s/6.cfg"
-        if ! grep -q ${slang[$n]} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(Words);")"; then
-            sqlite3 ${cdb} "alter table Words add column ${slang[$n]} TEXT;"
+    for val in "${ls[@]}"; do
+        if [[ ${source} = $(gettext ${val}) ]]; then
+            export lgsl=$val
         fi
-        break
-        fi
-        ((n=n+1))
     done
-    
+    if [ $? -eq 0 ]; then
+        echo ${lgsl} >> "$DC_s/6.cfg"
+        if ! grep -q ${lgsl} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(Words);")"; then
+            sqlite3 ${cdb} "alter table Words add column ${lgsl} TEXT;"
+        fi
+    fi
+    if echo "$target$source" |grep -oE 'Chinese|Japanese|Russian'; then _info; fi
+    [ $? -eq 0 ] && set_lang ${lgtl}
+
     > "$DC_s/1.cfg"
     for n in {0..11}; do 
     echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"; done

@@ -4,8 +4,9 @@
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 source "$DS/default/sets.cfg"
-export lgt=${lang[$lgtl]}
-export lgs=${slang[$lgsl]}
+lgt=${lang[$lgtl]}
+lgs=${slang[$lgsl]}
+export lgt lgs
 include "$DS/ifs/mods/mngr"
 
 mkmn() {

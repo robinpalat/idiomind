@@ -8,6 +8,8 @@ cd "$DS/addons"
 [[ -n "$(< "$DC_s/1.cfg")" ]] && cfg=1 || > "$DC_s/1.cfg"
 cnf1=$(mktemp "$DT/cnf1.XXXX")
 source $DS/default/sets.cfg
+lang1="${!lang[@]}"; lt=( $lang1 )
+lang2="${!slang[@]}"; ls=( $lang2 )
 
 desktopfile="[Desktop Entry]
 Name=Idiomind
@@ -114,8 +116,8 @@ config_dlg() {
     --field=" :LBL" " " \
     --field="$(gettext "Languages")\t":LBL " " \
     --field=":LBL" " " \
-    --field="$(gettext "I'm learning")":CB "$lgtl$list1" \
-    --field="$(gettext "My language is")":CB "$lgsl$list2" \
+    --field="$(gettext "I'm learning")":CB "$(gettext ${lgtl})$list1" \
+    --field="$(gettext "My language is")":CB "$(gettext ${lgsl})$list2" \
     --field=" :LBL" " " \
     --field=":LBL" " " \
     --field="<small>$(gettext "Use this speech synthesizer instead eSpeak")</small>" "$synth" \
@@ -180,36 +182,37 @@ config_dlg() {
             rm "$config_dir/idiomind.desktop"
             fi
         fi
-        n=0
-        while [ ${n} -lt 10 ]; do
-            if cut -d "|" -f13 < "$cnf1" | grep "${lang[$n]}" && \
-            [ "${lang[$n]}" != "$lgtl" ]; then
-                lgtl="${lang[$n]}"
-                if grep -o -E 'Chinese|Japanese|Russian' <<< "$lgtl";
-                then info3="\n$(gettext "Some things are still not working for these languages:") Chinese, Japanese, Russian."; fi
-                confirm "$info2$info3" dialog-question "$lgtl"
-                [ $? -eq 0 ] && set_lang "${lang[$n]}"
-                break
+
+        ntlang=$(cut -d "|" -f13 < "$cnf1")
+        if [[ $(gettext ${lgtl}) != ${ntlang} ]]; then
+            for val in "${lt[@]}"; do
+                if [[ ${ntlang} = $(gettext ${val}) ]]; then
+                    export lgtl=$val
+                fi
+            done
+            if echo "$lgtl$lgsl" |grep -oE 'Chinese|Japanese|Russian'; then
+                info3="\n$(gettext "Some things are still not working for these languages:") Chinese, Japanese, Russian."
             fi
-            ((n=n+1))
-        done
-        n=0
-        cdb="$DM_tls/Dictionary/${lgtl}.db"
-        while [ ${n} -lt 10 ]; do
-            if cut -d "|" -f14 < "$cnf1" | grep "${slang[$n]}" && \
-            [ "${lang[$n]}" != "$lgsl" ]; then
-                confirm "$info2" dialog-question
-                if [ $? -eq 0 ]; then
-                    echo "$lgtl" > "$DC_s/6.cfg"
-                    echo "${slang[$n]}" >> "$DC_s/6.cfg"
-                    if ! grep -q ${slang[$n]} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(Words);")"; then
-                        sqlite3 ${cdb} "alter table Words add column ${slang[$n]} TEXT;"
-                    fi
-                    break
+            confirm "$info2$info3" dialog-question ${lgtl}
+            [ $? -eq 0 ] && set_lang ${lgtl}
+        fi
+        
+        nslang=$(cut -d "|" -f14 < "$cnf1")
+        if [[ $(gettext ${lgsl}) != ${nslang} ]]; then
+            for val in "${ls[@]}"; do
+                if [[ ${nslang} = $(gettext ${val}) ]]; then
+                    export lgsl=$val
+                fi
+            done
+            confirm "$info2" dialog-question ${lgsl}
+            if [ $? -eq 0 ]; then
+                echo ${lgtl} > "$DC_s/6.cfg"
+                echo ${lgsl} >> "$DC_s/6.cfg"
+                if ! grep -q ${lgsl} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(Words);")"; then
+                    sqlite3 ${cdb} "alter table Words add column ${lgsl} TEXT;"
                 fi
             fi
-            ((n=n+1))
-        done
+        fi
     fi
     rm -f "$cnf1" "$DT/.lc"
      >/dev/null 2>&1
