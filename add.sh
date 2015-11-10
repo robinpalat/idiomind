@@ -3,9 +3,10 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
+source "$DS/default/sets.cfg"
+export lgt=${lang[$lgtl]}
+export lgs=${slang[$lgsl]}
 include "$DS/ifs/mods/add"
-lgt=$(lnglss $lgtl)
-lgs=$(lnglss $lgsl)
 wlist=$(grep -oP '(?<=wlist=\").*(?=\")' "$DC_s/1.cfg")
 trans=$(grep -oP '(?<=trans=\").*(?=\")' "$DC_s/1.cfg")
 ttrgt=$(grep -oP '(?<=ttrgt=\").*(?=\")' "$DC_s/1.cfg")
@@ -94,7 +95,7 @@ function new_sentence() {
     if [[ ${trans} = TRUE ]]; then
         [ "$(dirname "$0")" != "$DT_r" ] && cd "$DT_r"
         if [[ ${ttrgt} = TRUE ]]; then
-            trgt="$(translate "${trgt,,}" auto "$lgt")"
+            trgt="$(translate "${trgt,,}" auto $lgt)"
             trgt=$(clean_2 "${trgt}")
         fi
         srce="$(translate "${trgt,,}" $lgt $lgs)"
@@ -149,7 +150,7 @@ function new_word() {
     
     if [[ ${trans} = TRUE ]]; then
         if [[ ${ttrgt} = TRUE ]]; then
-            trgt="$(translate "${trgt}" auto "$lgt")"
+            trgt="$(translate "${trgt}" auto $lgt)"
             trgt="$(clean_1 "${trgt}")"
         fi
         srce="$(translate "${trgt}" $lgt $lgs)"
@@ -314,7 +315,7 @@ function list_words_dclik() {
     if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
         ( echo "1"
         echo "# $(gettext "Processing")..." ;
-        srce="$(translate "${words}" $lgtl $lgsl)"
+        srce="$(translate "${words}" $lgt $lgs)"
         cd "$DT_r"
         sentence_p "$DT_r" 1
         echo "$wrds"
@@ -369,7 +370,7 @@ function process() {
         cleanups "$DT_r" "$DT/.n_s_pr"; exit 1; fi
         ( echo "1"
         echo "# $(gettext "Processing")..." ;
-        if [ "$lgt" = ja -o "$lgt" = "zh-cn" -o "$lgt" = ru ]; then
+        if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
             echo "${conten}" | clean_7 > "$DT_r/sntsls_"
         else
             echo "${conten}" | clean_8 > "$DT_r/sntsls_"

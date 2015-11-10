@@ -1,17 +1,13 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+source "$DS/default/sets.cfg"
+export lgt=${lang[$lgtl]}
+export lgs=${slang[$lgsl]}
+
 function check_format_1() {
     source "$DS/ifs/mods/cmns.sh"
-    lgt=$(lnglss "$lgtl")
-    lgs=$(lnglss "$lgsl")
-    LANGUAGES=( 'English' 'Chinese' 'French' \
-    'German' 'Italian' 'Japanese' 'Portuguese' \
-    'Russian' 'Spanish' 'Vietnamese' )
-    CATEGORIES=( 'article' 'city' 'comic' 'culture' 'education' \
-    'entertainment' 'funny' 'grammar' 'history' 'home' 'internet' \
-    'interview' 'movies' 'music' 'nature' 'news' 'office' 'others' \
-    'places' 'quotes' 'relations' 'science' 'social_media' 'sport' 'tech' )
+    source $DS/default/sets.cfg
     sets=( 'tname' 'langs' 'langt' \
     'authr' 'cntct' 'ctgry' 'ilink' 'oname' \
     'datec' 'dateu' 'datei' \
@@ -294,7 +290,6 @@ fback() {
 _definition() {
     source /usr/share/idiomind/ifs/c.conf
     source "$DS/ifs/mods/cmns.sh"
-    lgt=$(lnglss $lgtl); lgs=$(lnglss $lgsl)
     query="$(sed 's/<[^>]*>//g' <<<"${2}")"
     f="$(ls "$DC_d"/*."Link.Search definition".* |head -n1)"
     if [ -z "$f" ]; then "$DS_a/Dics/cnfg.sh" 3
@@ -416,21 +411,23 @@ set_image() {
     
     if [ -e "$DT/img$trgt.lk" ]; then
     msg_2 "$(gettext "Attempting download image")...\n" info OK gtk-stop "$(gettext "Warning")"
-    if [ $? -eq 1 ]; then "$DT/img$trgt.lk"; else exit 1 ; fi; fi
+    if [ $? -eq 1 ]; then rm -f "$DT/img$trgt".lk; else exit 1 ; fi; fi
 
     if [ -f "$ifile" ]; then
-        image="--image=$ifile"
         btn2="--button=gtk-delete:2"
-        dlg_form_3
-        ret=$?
-        if [ $ret -eq 2 ]; then
-            rm -f "$ifile"
-            ls "${DM_tls}/images/${trgt,,}"-*.jpg | while read -r img; do
-            mv -f "$img" "${DM_tls}/images/${trgt,,}"-${r}.jpg
-            let r++
-            done
-        fi
-    else 
+        image="--image=$ifile"
+    else
+        btn2="--button="$(gettext "Screen clipping")":0"
+        image="--image=$DS/images/bar.png"
+    fi
+    dlg_form_3; ret=$?
+    if [ $ret -eq 2 ]; then
+        rm -f "$ifile"
+        ls "${DM_tls}/images/${trgt,,}"-*.jpg | while read -r img; do
+        mv -f "$img" "${DM_tls}/images/${trgt,,}"-${r}.jpg
+        let r++
+        done
+    elif [ $ret -eq 0 ]; then
         scrot -s --quality 90 "$DT/temp.jpg"
         /usr/bin/convert "$DT/temp.jpg" -interlace Plane -thumbnail 405x275^ \
         -gravity center -extent 400x270 -quality 90% "$ifile"
@@ -448,14 +445,14 @@ edit_tag() {
         --always-print-result \
         --separator='|' \
         --window-icon=idiomind --center \
-        --width=300 --height=220 --borders=5 \
+        --width=300 --height=200 --borders=5 \
         --field="$(gettext "Description")":TXT "${desc}" \
-        --field="$(gettext "Delete")":FBTN "${cmd_del}" \
+        --button="$(gettext "Delete")":"${cmd_del}" \
         --button="$(gettext "Export")":2 \
         --button="$(gettext "Close")":1)"
     ret=$?
     desc_mod="$(cut -d "|" -f1 <<<"${dlg}")"
-    if [ -n "$desc_mod" -a "$desc_mod" != "$desc" ]; then
+    if [[ "$desc_mod" != "$desc" ]]; then
         echo "${desc_mod}" > "${DC_tlt}/info"
     fi
     if [ $ret = 2 ]; then
@@ -471,9 +468,9 @@ translate_to() {
     source "$DS/ifs/mods/cmns.sh"
     [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "  -- error" && exit 1
     l="$(grep -o 'langt="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-    lgt=$(lnglss $l)
+    lgt=${lang[$l]}
     if [ -z "$lgt" ]; then
-        lgt=$(lnglss $l)
+        lgt=${lang[$l]}
     fi
     if [ $2 = restore ]; then
         if [ -e "${DC_tlt}/0.data" ]; then

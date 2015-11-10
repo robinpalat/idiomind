@@ -7,6 +7,7 @@ info2="$(gettext "Switch Language.")"
 cd "$DS/addons"
 [[ -n "$(< "$DC_s/1.cfg")" ]] && cfg=1 || > "$DC_s/1.cfg"
 cnf1=$(mktemp "$DT/cnf1.XXXX")
+source $DS/default/sets.cfg
 
 desktopfile="[Desktop Entry]
 Name=Idiomind
@@ -18,8 +19,6 @@ Type=Application
 Icon=idiomind
 StartupWMClass=Idiomind"
 
-lang=( 'English' 'Spanish' 'Italian' 'Portuguese' 'German' \
-'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian' )
 sets=( 'gramr' 'wlist' 'trans' 'dlaud' 'ttrgt' 'clipw' 'stsks' \
 'langt' 'langs' 'synth' 'txaud' 'intrf' )
 
@@ -87,6 +86,17 @@ config_dlg() {
     lst="$intrf"$(sed "s/\!$intrf//g" <<<"!Default!en!es!fr!it!pt")""
     if [ "$ntosd" != TRUE ]; then audio=TRUE; fi
     if [ "$trans" != TRUE ]; then ttrgt=FALSE; fi
+    
+    emrk='!'
+    for val in "${!lang[@]}"; do
+        declare clocal="$(gettext "${val}")"
+        list1="${list1}${emrk}${clocal}"
+    done
+    unset clocal
+    for val in "${!slang[@]}"; do
+        declare clocal="$(gettext "${val}")"
+        list2="${list2}${emrk}${clocal}"
+    done
 
     c=$((RANDOM%100000)); KEY=$c
     yad --plug=$KEY --form --tabnum=1 \
@@ -104,8 +114,8 @@ config_dlg() {
     --field=" :LBL" " " \
     --field="$(gettext "Languages")\t":LBL " " \
     --field=":LBL" " " \
-    --field="$(gettext "I'm learning")":CB "$lgtl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
-    --field="$(gettext "My language is")":CB "$lgsl!English!Chinese!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese" \
+    --field="$(gettext "I'm learning")":CB "$lgtl$list1" \
+    --field="$(gettext "My language is")":CB "$lgsl$list2" \
     --field=" :LBL" " " \
     --field=":LBL" " " \
     --field="<small>$(gettext "Use this speech synthesizer instead eSpeak")</small>" "$synth" \
@@ -186,14 +196,14 @@ config_dlg() {
         n=0
         cdb="$DM_tls/Dictionary/${lgtl}.db"
         while [ ${n} -lt 10 ]; do
-            if cut -d "|" -f14 < "$cnf1" | grep "${lang[$n]}" && \
+            if cut -d "|" -f14 < "$cnf1" | grep "${slang[$n]}" && \
             [ "${lang[$n]}" != "$lgsl" ]; then
                 confirm "$info2" dialog-question
                 if [ $? -eq 0 ]; then
                     echo "$lgtl" > "$DC_s/6.cfg"
-                    echo "${lang[$n]}" >> "$DC_s/6.cfg"
-                    if ! grep -q ${lang[$n]} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(Words);")"; then
-                        sqlite3 ${cdb} "alter table Words add column ${lang[$n]} TEXT;"
+                    echo "${slang[$n]}" >> "$DC_s/6.cfg"
+                    if ! grep -q ${slang[$n]} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(Words);")"; then
+                        sqlite3 ${cdb} "alter table Words add column ${slang[$n]} TEXT;"
                     fi
                     break
                 fi

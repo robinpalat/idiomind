@@ -5,10 +5,7 @@ source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
 lgt=$(lnglss $lgtl)
 lgs=$(lnglss $lgsl)
-CATEGORIES=( 'article' 'city' 'comic' 'culture' 'education' \
-'entertainment' 'funny' 'grammar' 'history' 'home' 'internet' \
-'interview' 'movies' 'music' 'nature' 'news' 'office' 'others' \
-'places' 'quotes' 'relations' 'science' 'social media' 'sport' 'tech' )
+source $DS/default/sets.cfg
 
 function dwld() {
     err() {

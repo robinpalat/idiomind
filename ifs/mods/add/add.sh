@@ -103,7 +103,7 @@ function sentence_p() {
 
     r=$((RANDOM%10000))
     cd /; DT_r="$1"; cd "$DT_r"; touch "swrd.$r" "twrd.$r"
-    if [ "$lgt" = ja -o "$lgt" = "zh-cn" -o "$lgt" = ru ]; then
+    if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
         vrbl="${srce_p}"; lg=$lgt; aw="./swrd.$r"; bw="./twrd.$r"
     else
         vrbl="${trgt_p}"; lg=$lgs; aw="./twrd.$r"; bw="./swrd.$r"
@@ -147,7 +147,7 @@ function sentence_p() {
     touch "$DT_r/A.$r" "$DT_r/B.$r" "$DT_r/g.$r"; bcle=1
     trgt_q="$(echo "${trgt}" |sed "s/'/''/")"
     
-    if [ "$lgt" = ja -o "$lgt" = "zh-cn" -o "$lgt" = ru ]; then
+    if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
         while [[ ${bcle} -le $(wc -l < "${aw}") ]]; do
         s=$(sed -n ${bcle}p ${aw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
         t=$(sed -n ${bcle}p ${bw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
@@ -405,7 +405,7 @@ function tts_word() {
 function fetch_audio() {
     if ! ls "$DC_d"/*."TTS online.Word pronunciation".* 1> /dev/null 2>&1; then
     "$DS_a/Dics/cnfg.sh" 0; fi
-    [ $lgt = ja -o $lgt = "zh-cn" -o $lgt = ru ] \
+    [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ] \
     && words_list="${2}" || words_list="${1}"
     
     while read -r Word; do
@@ -630,6 +630,7 @@ function dlg_text_info_3() {
 function dlg_form_3() {
     yad --form --title=$(gettext "Image") "$image" "$label" \
     --name=Idiomind --class=Idiomind \
+    --gtkrc="$DS/default/gtkrc.ini" \
     --window-icon=idiomind \
     --skip-taskbar --image-on-top \
     --align=center --text-align=center --center --on-top \

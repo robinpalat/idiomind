@@ -3,6 +3,9 @@
 
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
+source "$DS/default/sets.cfg"
+export lgt=${lang[$lgtl]}
+export lgs=${slang[$lgsl]}
 include "$DS/ifs/mods/mngr"
 
 mkmn() {
@@ -116,8 +119,6 @@ delete_item() {
 edit_item() {
     [ -z ${2} -o -z ${3} ] && exit 1
     temp="...."
-    lgt=$(lnglss $lgtl)
-    lgs=$(lnglss $lgsl)
     list="${2}";  item_pos=${3}; text_missing=${4}
     if [ ${list} = 1 ]; then
         index_1="${DC_tlt}/1.cfg"
@@ -367,8 +368,6 @@ edit_list() {
     [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ] && c=c || c=w
     direc="$DM_tl/${2}/.conf"
     [ ! -s "${direc}/0.cfg" ] && exit 1
-    lgt=$(lnglss $lgtl)
-    lgs=$(lnglss $lgsl)
     > "$DT/_tmp1"
     tac "${direc}/0.cfg" | while read -r item_; do
         item="$(sed 's/},/}\n/g' <<<"${item_}")"

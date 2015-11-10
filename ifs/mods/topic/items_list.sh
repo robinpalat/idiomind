@@ -5,7 +5,7 @@ function word_view() {
     [ -n "${tag}" ] && field_tag="--field=<small>$tag</small>:lbl"
     [ -n "${defn}" ] && field_defn="--field=$defn:lbl"
     [ -n "${note}" ] && field_note="--field=<i>$note</i>\n:lbl"
-    [ -n "${exmp}" ] && field_exmp="--field=<span font_desc='Verdana 11' color='#5C5C5C'>$exmp</span>:lbl"
+    [ -n "${exmp}" ] && field_exmp="--field=<span font_desc='Verdana 11' color='#6D6D6D'>$exmp</span>:lbl"
     [ -n "${link}" ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
     local sentence="<span font_desc='Sans Free 25'>${trgt}</span>\n\n<span font_desc='Sans Free 14'><i>$srce</i></span>$link\n\n"
 
@@ -24,7 +24,7 @@ function word_view() {
 } >/dev/null 2>&1
 
 function sentence_view() {
-    if [ "$(grep -o gramr=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')"  = TRUE ]; then
+    if [ $(grep -oP '(?<=gramr=\").*(?=\")' "$DC_s/1.cfg")  = TRUE ]; then
     trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
     [ -n "${link}" ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
     local sentence="<span font_desc='Sans Free 15'>${trgt_l}</span>\n\n<span font_desc='Sans Free 11'><i>$srce</i>$link</span>\n<small>$tag</small>\n"
@@ -78,7 +78,7 @@ function notebook_1() {
     --column=Name:TEXT &
     yad --text-info --tabnum=3 \
     --plug=$KEY \
-    --filename="${nt}" --editable --wrap --fore='gray30' \
+    --filename="${nt}" --editable --wrap --back='#FFFDF7' --fore='gray30' \
     --show-uri --fontname='vendana 11' --margins=14 > "$cnf3" &
     yad --form --tabnum=4 \
     --plug=$KEY \
@@ -124,7 +124,7 @@ function notebook_2() {
     --column=Name:TEXT &
     yad --text-info --tabnum=3 \
     --plug=$KEY \
-    --filename="${nt}" --editable --wrap --fore='gray30' \
+    --filename="${nt}" --editable --wrap --back='#FFFDF7' --fore='gray30' \
     --show-uri --fontname='vendana 11' --margins=14 > "$cnf3" &
     yad --form --tabnum=4 \
     --plug=$KEY \

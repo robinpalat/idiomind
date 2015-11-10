@@ -155,8 +155,7 @@ play_list() {
         for item in "${sets[@]:0:4}"; do
             val=$(sed -n $((${n}+1))p <<<"${tab1}" |cut -d "|" -f3)
             [ -n "${val}" ] && sed -i "s/$item=.*/$item=\"$val\"/g" "${DC_tlt}/10.cfg"
-            if [ "$val" = TRUE ]; then
-                count=$((count+$(egrep -cv '#|^$' <<<"${!in[${n}]}"))); fi
+            [ "$val" = TRUE ] && count=$((count+$(wc -l |sed '/^$/d' <<<"${!in[${n}]}")))
             ((n=n+1))
         done
         for ad in "$DS/ifs/mods/play"/*; do
@@ -164,7 +163,7 @@ play_list() {
             for item in "${!items[@]}"; do
                 val=$(sed -n $((${n}+1))p <<<"${tab1}" |cut -d "|" -f3)
                 [ -n "${val}" ] && sed -i "s/${items[$item]}=.*/${items[$item]}=\"$val\"/g" "${file_cfg}"
-                count=$((count+1))
+                [ "$val" = TRUE ] && count=$((count+1))
                 ((n=n+1))
             done
             unset items
@@ -183,7 +182,7 @@ play_list() {
         if [ $ret -eq 0 ]; then
             if [ ${count} -lt 1 ]; then
                 notify-send "$(gettext "Nothing to play")" \
-                "$(gettext "Exiting...")" -i idiomind -t 3000 &
+                "$(gettext "Exiting...")" -t 3000 &
                 [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
                 "$DS/stop.sh" 2 & exit 1; fi
             if [ -d "${DM_tlt}" ] && [ -n "${tpc}" ]; then

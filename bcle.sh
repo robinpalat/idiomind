@@ -17,6 +17,7 @@ if [[ "$rplay" = TRUE ]]; then
         sleep 10
     done
 else
+    sleep 1
     "$DS/chng.sh" 0
     notify-send "$(gettext "Playback stopped")" -t 4000
     rm -fr "$DT/.p_" & exit 0

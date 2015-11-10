@@ -52,7 +52,7 @@ if [ -d "${DM_tlt}" ]; then
             "$DS/mngr.sh" mkmn
         fi
         [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
-        
+    
     elif [ ${mode} = 14 ]; then
         if [ ! -d "${DC_tlt}" ]; then
             mkdir "${DC_tlt}"; cd "${DC_tlt}"
@@ -60,15 +60,16 @@ if [ -d "${DM_tlt}" ]; then
             > "${DC_tlt}/info"
         fi
         for n in {0..5}; do
-        [ ! -e "${DC_tlt}/${n}.cfg" ] && touch "${DC_tlt}/${n}.cfg"; done
+            [ ! -e "${DC_tlt}/${n}.cfg" ] && touch "${DC_tlt}/${n}.cfg"
+        done
         echo "${topic}" > "$DC_s/4.cfg"
+        echo "${topic}" > "$DT/tpe"
     else
         if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
             source "$DS/ifs/mods/topic/${topic}.sh"
             echo "${tpc}" > "$DC_s/4.cfg"
         fi
     fi
-
     if [[ ${3} = 1 ]]; then
         ( sleep 1; notify-send -i idiomind "${topic}" "$(gettext "Is now your topic")" -t 4000 ) & exit
     elif [[ -z "$3" ]]; then 

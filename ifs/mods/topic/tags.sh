@@ -24,7 +24,7 @@ function word_view() {
 } >/dev/null 2>&1
 
 function sentence_view() {
-    if [ "$(grep -o gramr=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')"  = TRUE ]; then
+    if [ $(grep -oP '(?<=gramr=\").*(?=\")' "$DC_s/1.cfg")  = TRUE ]; then
     trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
     [ -n "${link}" ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
     local sentence="<span font_desc='Sans Free 15'>${trgt_l}</span>\n\n<span font_desc='Sans Free 11'><i>$srce</i>$link</span>\n<span font_desc='Sans Free 6'>$tag</span>\n"
@@ -58,13 +58,12 @@ function tags_list() {
     chk5=`wc -l < "${DC_tlt}/5.cfg"`
     ls1="${DC_tlt}/1.cfg"
     desc="$(< "${DC_tlt}/info")"
-    [ "$desc" ] && text="$desc\n" || text=""
+    [ "${desc}" ] && text="--text=${desc}\n" || text="--center"
     list() { if [[ ${chk1} = ${chk5} ]]; then
     tac "${DC_tlt}/5.cfg"; else tac "$ls1" | \
     awk '{print "/usr/share/idiomind/images/0.png\n"$0""}'; fi; }
     
-    list | yad --list --title="${tpc}" \
-    --text="${text}" \
+    list | yad --list --title="${tpc}" "${text}" \
     --name=Idiomind --class=Idiomind  \
     --dclick-action="$DS/vwr.sh '1'" \
     --no-headers --search-column=1 --hide-column=3 --regex-search \
@@ -81,7 +80,7 @@ function tags_list() {
     --button="gtk-close":1
     ret=$?
     if [ $ret -eq 5 ]; then
-	"$DS/practice/strt.sh" &
+        "$DS/practice/strt.sh" &
     fi
 
 }

@@ -87,6 +87,7 @@ if [[ ${1} = 0 ]]; then
     if [ ${p} = TRUE ]; then
         echo "${tpc}" > "$DT/.p_"
         while read item; do getitem; _play
+        yad
         done < <(grep -Fxv "${DC_tlt}/4.cfg" "${DC_tlt}/practice/log3"); fi
     include "$DS/ifs/mods/chng"
 

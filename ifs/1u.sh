@@ -8,10 +8,9 @@ export TEXTDOMAINDIR
 Encoding=UTF-8
 alias gettext='gettext "idiomind"'
 
+source /usr/share/idiomind/default/sets.cfg
 text="<span font_desc='Free Sans Bold 14'>$(gettext "Welcome") ${USER^} </span>
 \n      $(gettext "To get started, please configure the following:")\n"
-lang=( 'English' 'Spanish' 'Italian' 'Portuguese' 'German' \
-'Japanese' 'French' 'Vietnamese' 'Chinese' 'Russian' )
 sets=( 'gramr' 'wlist' 'trans' 'dlaud' 'ttrgt' 'clipw' 'stsks' \
 'langt' 'langs' 'synth' 'txaud' 'intrf' )
 
@@ -32,6 +31,17 @@ _info() {
     --width=340 --height=120 --borders=5 \
     --button="$(gettext "OK")":0
 }
+
+emrk='!'
+for val in "${!lang[@]}"; do
+    declare clocal="$(gettext "${val}")"
+    list1="${list1}${emrk}${clocal}"
+done
+unset clocal
+for val in "${!slang[@]}"; do
+    declare clocal="$(gettext "${val}")"
+    list2="${list2}${emrk}${clocal}"
+done
 
 function set_lang() {
     language="$1"
@@ -61,8 +71,8 @@ dlg=$(yad --form --title="Idiomind" \
 --window-icon=idiomind \
 --image-on-top --buttons-layout=end --align=right --center --on-top \
 --width=470 --height=270 --borders=15 \
---field="$(gettext "Select foreign language"):CB" "English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
---field="$(gettext "Select native language"):CB" "English!French!German!Italian!Japanese!Portuguese!Russian!Spanish!Vietnamese!Chinese" \
+--field="$(gettext "Select foreign language"):CB" "$list1" \
+--field="$(gettext "Select native language"):CB" "$list2" \
 --button=Cancel:1 \
 --button=gtk-ok:0)
 ret=$?
@@ -115,10 +125,10 @@ elif [ $ret -eq 0 ]; then
     
     n=0
     while [ ${n} -lt 10 ]; do
-        if echo "$source" | grep "${lang[$n]}"; then
-        echo "${lang[$n]}" >> "$DC_s/6.cfg"
-        if ! grep -q ${lang[$n]} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(Words);")"; then
-            sqlite3 ${cdb} "alter table Words add column ${lang[$n]} TEXT;"
+        if echo "$source" | grep "${slang[$n]}"; then
+        echo "${slang[$n]}" >> "$DC_s/6.cfg"
+        if ! grep -q ${slang[$n]} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(Words);")"; then
+            sqlite3 ${cdb} "alter table Words add column ${slang[$n]} TEXT;"
         fi
         break
         fi

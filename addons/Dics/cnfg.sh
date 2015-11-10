@@ -3,11 +3,12 @@
 
 [ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
+source "$DS/default/sets.cfg"
+export lgt=${lang[$lgtl]}
+export lgs=${slang[$lgsl]}
 dir="$DC/addons/dict"
 enables="$DC/addons/dict/enables"
 disables="$DC/addons/dict/disables"
-lgt=$(lnglss "$lgtl")
-lgs=$(lnglss "$lgsl")
 task=( 'Word pronunciation' 'Pronunciation' 'Translator' \
 'Search definition' 'Search images' 'Download images' '_' )
 
@@ -110,7 +111,7 @@ function dlg() {
     --dclick-action="$DS_a/Dics/cnfg.sh dclk" \
     --window-icon=idiomind \
     --expand-column=2 --hide-column=3 \
-    --search-column=4 --regex-search --tooltip-column=3 \
+    --search-column=4 --regex-search \
     --center --mouse --on-top \
     --width=650 --height=380 --borders=10 \
     --column="$(gettext "Enable")":CHK \
