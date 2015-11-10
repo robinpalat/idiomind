@@ -27,7 +27,7 @@ function check_format_1() {
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
             [ "$(grep -o -E '\*|\/|\@|$|=|-' <<<"${val}")" ]; then invalid $n; fi
         elif [[ ${n} = 1 || ${n} = 2 ]]; then
-            if ! grep -Fo "${val}" <<<"${LANGUAGES[@]}"; then invalid $n; fi
+            if ! grep -Fo "${val}" <<<"${!lang[@]}"; then invalid $n; fi
         elif [[ ${n} = 3 || ${n} = 4 ]]; then
             if [ ${#val} -gt 30 ] || \
             [ "$(grep -o -E '\*|\/|$|\)|\(|=' <<<"${val}")" ]; then invalid $n; fi
@@ -366,7 +366,6 @@ first_run() {
         sleep 3; mv -f "${file}" "${file}".p
         yad --title="${title}" --text="${note}" \
         --name=Idiomind --class=Idiomind \
-        --image="$image" \
         --always-print-result --selectable-labels \
         --window-icon=idiomind \
         --image-on-top --on-top --sticky --center \
@@ -376,14 +375,13 @@ first_run() {
         if [ $? = 1 ]; then rm -f "${file}" "${file}".p; fi
     }
     source /usr/share/idiomind/ifs/c.conf
-    NOTE2="$(gettext "NOTE: If you change the text of an item here listed, then its audio file can be overwritten by another new file. To avoid this, you can edit it individually through its edit dialog.")"
-    NOTE3="$(gettext "To start adding notes you need to have a topic.\nTo create one, you can click on the New button...")"
+    NOTE2="$(gettext "You can move any item by dragging and dropping or double click to edit it. Close and reopen the main window to see any changes.\nNOTE: If you change the text of an item here listed, then its audio file can be overwritten by another new file. To avoid this, you can edit it individually through its edit dialog.")"
+    NOTE3="$(gettext "To start adding notes you need to have a Topic.\nTo create one, you can click on the New button...")"
 
     if [[ ${2} = edit_list ]]; then
-        title=" "
+        title="$(gettext "Information")"
         note="${NOTE2}"
         file="$DC_s/elist_first_run"
-        image=gtk-help
         dlg
     elif [[ ${2} = topics ]]; then
         "$DS/chng.sh" "$NOTE3"; sleep 1
@@ -632,9 +630,9 @@ PY
 }
 
 about() {
-    source /usr/share/idiomind/ifs/c.conf
+    source /usr/share/idiomind/default/sets.cfg
     web_site_label="$(gettext "Web Site")"
-    export _label web_site web_site_label _version
+    export web_site_label
     python << ABOUT
 import gtk
 import os
@@ -642,10 +640,10 @@ app_logo = os.path.join('/usr/share/idiomind/images/idiomind.png')
 app_icon = os.path.join('/usr/share/idiomind/images/icon.png')
 app_name = 'Idiomind'
 app_version = os.environ['_version']
-app_comments = os.environ['_label']
+app_comments = os.environ['_descrip']
 website_label = os.environ['web_site_label']
-app_website = os.environ['web_site']
-app_copyright = 'Copyright (c) 2015 Robin Palatnik'
+app_website = os.environ['_website']
+app_copyright = os.environ['_cpright']
 app_license = (('Idiomind is free software: you can redistribute it and/or modify\n'+
 'it under the terms of the GNU General Public License as published by\n'+
 'the Free Software Foundation, either version 3 of the License, or\n'+

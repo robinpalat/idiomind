@@ -3,9 +3,9 @@
 
 source /usr/share/idiomind/ifs/c.conf
 source "$DS/ifs/mods/cmns.sh"
-lgt=$(lnglss $lgtl)
-lgs=$(lnglss $lgsl)
 source $DS/default/sets.cfg
+lgt=${lang[$lgtl]}
+lgs=${slang[$lgsl]}
 
 function dwld() {
     err() {
@@ -227,8 +227,8 @@ function upld() {
         usrid_m=$(echo "${dlg}" | cut -d "|" -f4)
         passw_m=$(echo "${dlg}" | cut -d "|" -f5)
         # get data
-        for val in ${CATEGORIES[@]}; do
-            [ "$ctgry" = "$(gettext "${val^}")" ] && ctgry=$val && break
+        for val in "${CATEGORIES[@]}"; do
+            [ "$ctgry" = "$(gettext "${val^}")" ] && ctgry=$val
         done
         [ "$level" = $(gettext "Beginner") ] && level=0
         [ "$level" = $(gettext "Intermediate") ] && level=1
@@ -242,7 +242,7 @@ function upld() {
             echo -e "${notes_m}" > "${DC_tlt}/info"
         fi
     fi
-
+yad --text="$ctgry" ####################################################################################3
     # actions
     if [ $ret = 2 ]; then
         "$DS/ifs/upld.sh" _export "${tpc}" & exit 1

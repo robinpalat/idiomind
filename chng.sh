@@ -38,7 +38,7 @@ if [[ ${1} = 0 ]]; then
             "$DS"/play.sh play_file "${file}" "${trgt}"
         fi
         
-        [ ${n} = TRUE -a ${l} -lt 11 -a ${type} -lt 3 ] && l=11
+        [ ${n} = TRUE -a ${l} -lt 5 -a ${type} -lt 3 ] && l=5
         [ ${stnrd} = 1 ] && sleep ${l}
     }
     export -f _play
@@ -87,7 +87,6 @@ if [[ ${1} = 0 ]]; then
     if [ ${p} = TRUE ]; then
         echo "${tpc}" > "$DT/.p_"
         while read item; do getitem; _play
-        yad
         done < <(grep -Fxv "${DC_tlt}/4.cfg" "${DC_tlt}/practice/log3"); fi
     include "$DS/ifs/mods/chng"
 

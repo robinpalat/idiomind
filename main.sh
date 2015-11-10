@@ -412,6 +412,7 @@ case "$1" in
     translate)
     "$DS/ifs/tls.sh" $@ ;;
     -v|--version)
+    source $DS/default/sets.cfg
     echo -n "$_version" ;;
     -s)
     new_session; idiomind ;;

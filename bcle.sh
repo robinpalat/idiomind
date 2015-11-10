@@ -10,14 +10,13 @@ ritem=0; stnrd=0; f=0
 [ -z "${tpc}" -a ! -d "${DC_tlt}" ] && exit 1
 export tpc DC_tlt cfg f ritem stnrd numer
 export -f include msg
-
+sleep 1
 if [[ "$rplay" = TRUE ]]; then
     while [ 1 ]; do
         "$DS/chng.sh" 0
         sleep 10
     done
 else
-    sleep 1
     "$DS/chng.sh" 0
     notify-send "$(gettext "Playback stopped")" -t 4000
     rm -fr "$DT/.p_" & exit 0
