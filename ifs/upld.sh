@@ -242,7 +242,6 @@ function upld() {
             echo -e "${notes_m}" > "${DC_tlt}/info"
         fi
     fi
-yad --text="$ctgry" ####################################################################################3
     # actions
     if [ $ret = 2 ]; then
         "$DS/ifs/upld.sh" _export "${tpc}" & exit 1

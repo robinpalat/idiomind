@@ -113,7 +113,7 @@ function new_sentence() {
     mksure "${trgt}" "${srce}" "${grmr}" "${wrds}"
 
     if [ $? = 1 ]; then
-        msg "$(gettext "An error has occurred while saving the note.")\n" dialog-warning "$(gettext "Information")"
+        echo "$trgt" >> "${DC_tlt}/err"
         cleanups "$DT_r" & exit 1
     else
         index 2
@@ -168,7 +168,7 @@ function new_word() {
     
     if [ $? = 1 ]; then
         cleanups "$DT_r"
-        msg "$(gettext "An error has occurred while saving the note.")\n" dialog-warning "$(gettext "Information")"
+        echo "$trgt" >> "${DC_tlt}/err"
         exit 1
     else
         index 1
@@ -248,8 +248,7 @@ function list_words_edit() {
     done < <(head -200 < "$DT_r/slts")
 
     if [ -e "$DT_r/logw" ]; then
-        _log="$(< "$DT_r/logw")"
-        dlg_text_info_3 "$(gettext "Some notes could not be added to your list"):" "$_log"
+        echo "$(< "$DT_r/logw")" >> "${DC_tlt}/err"
     fi
     cleanups "${DT_r}"; exit 0
     
@@ -301,8 +300,7 @@ function list_words_sentence() {
     done < <(head -200 < "$DT_r/slts")
 
     if [ -e "$DT_r/logw" ]; then
-        _log="$(< "$DT_r/logw")"
-        dlg_text_info_3 "$(gettext "Some notes could not be added to your list"):" "$_log"
+        echo "$(< "$DT_r/logw")" >> "${DC_tlt}/err"
     fi
     cleanups "$DT_r"; exit 0
 }
@@ -608,8 +606,8 @@ function process() {
             echo -e "adi.$adds.adi" >> "$DC_s/log"
         fi
         
-        if [ -n "$log" ]; then sleep 1
-            dlg_text_info_3 "$(gettext "Some notes could not be added to your list"):" "$log" >/dev/null 2>&1
+        if [ -n "$log" ]; then
+            echo "$log" >> "${DC_tlt}/err"
         fi
     fi
     cleanups "$DT/.n_s_pr" "$DT_r" & exit 0

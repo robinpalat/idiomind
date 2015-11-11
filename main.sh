@@ -209,6 +209,9 @@ function topic() {
         datec="$(grep -oP '(?<=datec=\").*(?=\")' "${DC_tlt}/id.cfg")"
         datei="$(grep -oP '(?<=datei=\").*(?=\")' "${DC_tlt}/id.cfg")"
         auto_mrk="$(grep -oP '(?<=acheck=\").*(?=\")' "${DC_tlt}/10.cfg")"
+        ( if [ -e "${DC_tlt}/err" ]; then
+        sleep 5; include "$DS/ifs/mods/add"
+        dlg_text_info_3 "$(cat "${DC_tlt}/err")"; fi ) &
         c=$((RANDOM%100000)); KEY=$c
         cnf1=$(mktemp "$DT/cnf1.XXX.x")
         cnf3=$(mktemp "$DT/cnf3.XXX.x")
@@ -227,7 +230,7 @@ function topic() {
             sed -i "s/acheck=.*/acheck=\"$auto_mrk_mod\"/g" "${DC_tlt}/10.cfg"; fi
             
             if grep TRUE "${cnf1}"; then
-                grep -Rl "|FALSE|" "${cnf1}" | while read tab1 ; do
+                grep -Rl "|FALSE|" "${cnf1}" | while read tab1; do
                      sed '/|FALSE|/d' "${cnf1}" > "$DT/tmpf1"
                      mv "$DT/tmpf1" "$tab1"
                 done
@@ -254,7 +257,8 @@ function topic() {
         if [[ ${inx0} -lt 1 ]]; then
             
             notebook_1; ret=$?
-                    
+                
+                if [ $ret -eq 1 ]; then exit 1; fi
                 if [ ! -f "$DT/ps_lk" ]; then apply; fi
                 
                 if [ $ret -eq 5 ]; then
@@ -286,6 +290,7 @@ function topic() {
                 notebook_1
             fi
                 ret=$?
+                if [ $ret -eq 1 ]; then exit 1; fi
                 if [ ! -f "$DT/ps_lk" ]; then apply; fi
 
                 if [ $ret -eq 5 ]; then
@@ -315,6 +320,7 @@ function topic() {
             pres="<u><b>$(gettext "Topic learnt")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
             notebook_2
             
+            if [ $ret -eq 1 ]; then exit 1; fi
             if [ ! -f "$DT/ps_lk" ]; then apply; fi
           
             rm -f "$DT"/*.x & exit

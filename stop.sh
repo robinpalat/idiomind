@@ -23,7 +23,7 @@ on_quit() {
     rm -f "$DT/.p_" "$DT/tpp"
     [ -f "$DT/list.m3u" ] && rm -f "$DT/list.m3u"; fi
     exit
-}
+} >/dev/null 2>&1
 
 on_play() {
     killall bcle.sh &

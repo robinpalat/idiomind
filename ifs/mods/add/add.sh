@@ -616,15 +616,16 @@ function msg_3() {
 }
 
 function dlg_text_info_3() {
-    echo -e "${2}" | yad --text-info \
-    --title="$(gettext "Some notes could not be added to your list")" \
-    --text="${1}" \
+    echo -e "${1}" | yad --text-info \
+    --title="$(gettext "Error found")" \
+    --text="$(gettext "Some notes could not be added to your list"):" \
     --name=Idiomind --class=Idiomind \
     --window-icon=idiomind \
     --wrap --margins=5 \
     --center --on-top \
-    --width=510 --height=300 --borders=5 \
+    --width=440 --height=200 --borders=2 \
     "${3}" --button="$(gettext "OK")":1
+    rm -f "${DC_tlt}"/err
 }
 
 function dlg_form_3() {

@@ -167,14 +167,14 @@ function practice_b(){
             ras=$(sort -Ru b.srces |egrep -v "$srce" |head -${P})
             tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
             srce_s=$((35-${#trgt}))
-            question="\n<span font_desc='Free Sans ${srce_s}' color='#636363'><b>${trgt}</b></span>\n\n"
+            question="\n<span font_desc='Free Sans ${srce_s}'><b>${trgt}</b></span>\n\n"
         else
             srce="${item}"
             trgt=`grep -oP '(?<=srce={).*(?=})' <<<"${_item}"`
             ras=$(sort -Ru "${cfg3}" |egrep -v "$srce" |head -${P})
             tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
             srce_s=$((35-${#trgt}))
-            question="\n<span font_desc='Free Sans ${srce_s}' color='#636363'><b>${trgt}</b></span>\n\n"
+            question="\n<span font_desc='Free Sans ${srce_s}'><b>${trgt}</b></span>\n\n"
         fi
         }
 
@@ -255,7 +255,7 @@ function practice_c() {
         item="$(grep -F -m 1 "trgt={${trgt}}" "${cfg0}" |sed 's/},/}\n/g')"
         id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
         s=$((30-${#trgt}))
-        lquestion="\n\n<span font_desc='Verdana ${s}' color='#717171'><b>${lst}</b></span>\n\n\n"
+        lquestion="\n\n<span font_desc='Verdana ${s}'><b>${lst}</b></span>\n\n\n"
         }
 
     question() {
@@ -326,8 +326,8 @@ function practice_d() {
         srce=`grep -oP '(?<=srce={).*(?=})' <<<"${_item}"`
         fi
         [ ! -e "$img" ] && img="$DS/images/imgmiss.jpg"
-        cuest="<span font_desc='Arial Bold 11' color='#616161'>${trgt}</span>"
-        aswer="<span font_desc='Arial Bold 11' color='#616161'>${srce}</span>"
+        cuest="<span font_desc='Arial Bold 11'>${trgt}</span>"
+        aswer="<span font_desc='Arial Bold 11'>${srce}</span>"
     }
 
     question() {
@@ -602,13 +602,13 @@ function lock() {
     if [ -f "$dir/${practice}.lock" ]; then
         local lock="$dir/${practice}.lock"
         if ! grep 'wait' <<< "$(< "${lock}")"; then
-            text_dlg="<b>$(gettext "Practice Completed")</b>\\n$(< "${lock}")\n"
+            text_dlg="<b>$(gettext "Practice Completed")</b>\\n$(< "${lock}")"
             if grep -o -E 'a|b|d' <<< ${practice}; then
                 yad --title="$(gettext "Practice Completed")" \
                 --text="${text_dlg}" \
                 --image="$dirs/images/21.png" \
                 --window-icon=idiomind --on-top --skip-taskbar --center \
-                --width=400 --height=130 --borders=5 \
+                --width=400 --height=100 --borders=2 \
                 --button=" $(gettext "Restart B") !!$(gettext "Questions in $lgsl - Answers in $lgtl") ":2 \
                 --button=" $(gettext "Restart") !!$(gettext "Questions in $lgtl - Answers in $lgsl") ":0 \
                 --button="    $(gettext "OK")    ":1
@@ -618,7 +618,7 @@ function lock() {
                 --text="${text_dlg}" \
                 --image="$dirs/images/21.png" \
                 --window-icon=idiomind --on-top --skip-taskbar --center \
-                --width=400 --height=130 --borders=5 \
+                --width=400 --height=100 --borders=2 \
                 --button=" $(gettext "Restart") !!$(gettext "Questions: $lgtl | Answers: $lgsl") ":0 \
                 --button="    $(gettext "OK")    ":1
                 ret=$?
@@ -632,7 +632,7 @@ function lock() {
                 --text="${text_dlg}" \
                 --image="info" \
                 --window-icon=idiomind --on-top --skip-taskbar --center \
-                --width=400 --height=130 --borders=5 \
+                --width=400 --height=100 --borders=2 \
                 --button="    "$(gettext "Practice")"    ":4 \
                 --button="    $(gettext "OK")    ":1
                 ret=$?

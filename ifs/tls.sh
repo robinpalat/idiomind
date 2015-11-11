@@ -591,7 +591,6 @@ colorize() {
     export chk cfg1 cfg5 cfg6 log1 \
     log2 log3 img0 img1 img2 img3
     cd / 
-
     python <<PY
 import os
 chk = os.environ['chk']
@@ -631,19 +630,19 @@ PY
 
 about() {
     source /usr/share/idiomind/default/sets.cfg
-    web_site_label="$(gettext "Web Site")"
-    export web_site_label
+    export website="$(gettext "Web Site")"
+    export _descrip="$(gettext "Utility for learning foreign vocabulary")"
     python << ABOUT
 import gtk
 import os
 app_logo = os.path.join('/usr/share/idiomind/images/idiomind.png')
 app_icon = os.path.join('/usr/share/idiomind/images/icon.png')
 app_name = 'Idiomind'
-app_version = os.environ['_version']
+app_version = os.environ['app_version']
 app_comments = os.environ['_descrip']
-website_label = os.environ['web_site_label']
-app_website = os.environ['_website']
-app_copyright = os.environ['_cpright']
+website_label = os.environ['website']
+app_website = ['app_website']
+app_copyright = ['app_copyright']
 app_license = (('Idiomind is free software: you can redistribute it and/or modify\n'+
 'it under the terms of the GNU General Public License as published by\n'+
 'the Free Software Foundation, either version 3 of the License, or\n'+
@@ -656,9 +655,8 @@ app_license = (('Idiomind is free software: you can redistribute it and/or modif
 '\n'+
 'You should have received a copy of the GNU General Public License\n'+
 'along with this program.  If not, see http://www.gnu.org/licenses'))
-app_authors = ['Robin Palatnik <robinpalat@users.sourceforge.net>']
-app_artists = ["Logo based on rg1024's openclipart Ufo Cartoon."]
-
+app_authors = os.environ['app_authors']
+app_artists = os.environ['app_artists']
 class AboutDialog:
     def __init__(self):
         about = gtk.AboutDialog()
@@ -677,7 +675,6 @@ class AboutDialog:
         about.set_website_label(website_label)
         about.run()
         about.destroy()
-
 if __name__ == "__main__":
     AboutDialog = AboutDialog()
     main()
