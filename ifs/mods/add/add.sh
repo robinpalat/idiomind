@@ -333,7 +333,7 @@ function set_image_2() {
 
 function translate() {
     cdb="$DM_tls/Dictionary/${lgtl}.db"
-    if [[ `wc -w <<<${1}` = 1 ]] && \
+    if [[ `wc -w <<<${1}` = 1 ]] && [ ${ttrgt} != TRUE ] && \
     [[ `sqlite3 ${cdb} "select ${lgsl} from Words where Word is '${1}';"` ]]; then
         sqlite3 ${cdb} "select ${lgsl} from Words where Word is '${1}';"
     else

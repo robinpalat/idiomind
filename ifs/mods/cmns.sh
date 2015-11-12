@@ -34,12 +34,12 @@ function msg_2() {
 numer='^[0-9]+$'
 
 function nmfile() {
-    echo -n "${1}" | md5sum | rev | cut -c 4- | rev
+    echo -n "${1}" |md5sum |rev |cut -c 4- |rev
 }
 
 function set_name_file() {
     id=":[type={$1},trgt={$2},srce={$3},exmp={$4},defn={$5},note={$6},wrds={$7},grmr={$8},]."
-    echo -n "${id}" | md5sum | rev | cut -c 4- | rev
+    echo -n "${id}" |md5sum |rev |cut -c 4- |rev
 }
 
 function include() {
@@ -57,7 +57,7 @@ function f_lock() {
 
 function check_index1() {
     for i in "${@}"; do
-        if [ -n "$(sort -n < "$i" | uniq -dc)" ]; then
+        if [ -n "$(sort -n < "$i" |uniq -dc)" ]; then
             awk '!array_temp[$0]++' < "$i" > "$DT/tmp"
             sed '/^$/d' "$DT/tmp" > "$i"; rm -f "$DT/tmp"
         fi
