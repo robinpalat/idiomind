@@ -320,7 +320,8 @@ _quick_help() {
 check_updates() {
     source "$DS/ifs/mods/cmns.sh"
     internet
-    nver=`wget --user-agent "$ua" -qO - http://idiomind.sourceforge.net/doc/checkversion |grep \<body\> |sed 's/<[^>]*>//g'`
+    link='http://idiomind.sourceforge.net/doc/checkversion'
+    nver=`wget --user-agent "$ua" -qO - "$link" |grep \<body\> |sed 's/<[^>]*>//g'`
     pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
     date "+%d" > "$DC_s/9.cfg"
     if [ ${#nver} -lt 9 ] && [ ${#_version} -lt 9 ] \
@@ -347,7 +348,8 @@ a_check_updates() {
         sleep 5; curl -v www.google.com 2>&1 | \
         grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
         echo ${d2} > "$DC_s/9.cfg"
-        nver=`wget --user-agent "$ua" -qO - http://idiomind.sourceforge.net/doc/checkversion |grep \<body\> |sed 's/<[^>]*>//g'`
+        link='http://idiomind.sourceforge.net/doc/checkversion'
+        nver=`wget --user-agent "$ua" -qO - "$link" |grep \<body\> |sed 's/<[^>]*>//g'`
         pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
         if [ ${#nver} -lt 9 ] && [ ${#_version} -lt 9 ] \
         && [ ${#nver} -ge 3 ] && [ ${#_version} -ge 3 ] \
@@ -630,19 +632,19 @@ PY
 
 about() {
     source /usr/share/idiomind/default/sets.cfg
-    export website="$(gettext "Web Site")"
     export _descrip="$(gettext "Utility for learning foreign vocabulary")"
+    export website="$(gettext "Web Site")"
     python << ABOUT
 import gtk
 import os
 app_logo = os.path.join('/usr/share/idiomind/images/idiomind.png')
 app_icon = os.path.join('/usr/share/idiomind/images/icon.png')
 app_name = 'Idiomind'
-app_version = os.environ['app_version']
+app_version = os.environ['_version']
+app_website = os.environ['_website']
 app_comments = os.environ['_descrip']
 website_label = os.environ['website']
-app_website = ['app_website']
-app_copyright = ['app_copyright']
+app_copyright = 'Copyright (c) 2015 Robin Palatnik'
 app_license = (('Idiomind is free software: you can redistribute it and/or modify\n'+
 'it under the terms of the GNU General Public License as published by\n'+
 'the Free Software Foundation, either version 3 of the License, or\n'+
@@ -655,8 +657,8 @@ app_license = (('Idiomind is free software: you can redistribute it and/or modif
 '\n'+
 'You should have received a copy of the GNU General Public License\n'+
 'along with this program.  If not, see http://www.gnu.org/licenses'))
-app_authors = os.environ['app_authors']
-app_artists = os.environ['app_artists']
+app_authors = ['Robin Palatnik <robinpalat@users.sourceforge.net>']
+app_artists = ["Logo based on rg1024's openclipart Ufo Cartoon."]
 class AboutDialog:
     def __init__(self):
         about = gtk.AboutDialog()
