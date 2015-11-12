@@ -348,13 +348,17 @@ function process() {
     if [[ $1 = image ]]; then
         pars=`mktemp`
         trap rm "$pars*" EXIT
-        scrot -s "$pars.png"
+        scrot -s "$DT_r/img_.png"
+        /usr/bin/convert "$DT_r/img_.png" -shave 1x1 "$pars.png"
         ( echo "1"
         echo "# $(gettext "Processing")..." ;
         mogrify -modulate 100,0 -resize 400% "$pars.png"
-        tesseract "$pars.png" "$pars" &> /dev/null # -l $lgt
+        tesseract "$pars.png" "$pars" -l ${tlang[$lgtl]} &> /dev/null
+        if [ $? != 0 ]; then
+        info="$(gettext "Failed loading language")\nPlease install <b>tesseract-ocr-${tlang[$lgtl]}</b> package"
+        msg "$info" error Error; fi
         cat "$pars.txt" | clean_6 > "$DT_r/sntsls_"
-        rm "$pars.png"
+        rm -f "$pars".png "$DT_r"/img_.png
         ) | dlg_progress_1
     else
         if [[ ${#conten} = 1 ]]; then

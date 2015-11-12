@@ -2,6 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 info="$(gettext "Please check about voice synthesizer configuration in the settings dialog.")"
+source "$DS/default/sets.cfg"
 
 play_word() {
     w="$(sed 's/<[^>]*>//g' <<<"${2}")"
@@ -16,7 +17,7 @@ play_word() {
             msg "$info" error Info
         fi
     else
-        echo "${w}." |espeak -v $lg -s 150 &
+        echo "${w}." |espeak -v ${lang[$lgtl]} -s 120 -b 1 -p 70 &
     fi
 } >/dev/null 2>&1
 
@@ -31,7 +32,8 @@ play_sentence() {
             msg "$info" error Info
         fi
     else
-        sed 's/<[^>]*>//g' <<<"${trgt}." |espeak -v $lg -s 150 &
+        sed 's/<[^>]*>//g' <<<"${trgt}." \
+        |espeak -v ${lang[$lgtl]} -s 120 -b 1 -p 70 &
     fi
 } >/dev/null 2>&1
 
@@ -45,7 +47,8 @@ play_file() {
             msg "$info" error Info
         fi
     else
-        sed 's/<[^>]*>//g' <<<"${3}." |espeak -v $lg -s 150
+        sed 's/<[^>]*>//g' <<<"${3}." \
+        |espeak -v ${lang[$lgtl]} -s 120 -b 1 -p 70
     fi
 } >/dev/null 2>&1
 
