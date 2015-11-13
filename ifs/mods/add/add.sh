@@ -617,7 +617,7 @@ function msg_3() {
 
 function dlg_text_info_3() {
     echo -e "${1}" | yad --text-info \
-    --title="$(gettext "Error found")" \
+    --title="$(gettext "Errors found")" \
     --text="$(gettext "Some notes could not be added to your list"):" \
     --name=Idiomind --class=Idiomind \
     --window-icon=idiomind \

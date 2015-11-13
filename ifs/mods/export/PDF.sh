@@ -21,17 +21,17 @@ _note(){
 sentence_normal() {
     cat <<!EOF
 <table width="90%" align="left" cellpadding="0" cellspacing="15">
-<td style="width: 50%; vertical-align:top; align:$algn"><s1>${trgt}</s1></td>
-<td style="width:  50%; vertical-align:top; align:$algn"><s2>${srce}</s2></td></table>
+<td style="width: 50%; vertical-align:top"><s1>${trgt}</s1></td>
+<td style="width:  50%; vertical-align:top"><s2>${srce}</s2></td></table>
 !EOF
 }
 
 word_image_normal(){
     cat <<!EOF
-<table width="100%" align="center" cellpadding="10" cellspacing="10">
-<tr><td style="width: 33%; vertical-align:top; align:$algn">${img1}<w1>${trgt1}</w1><br><w2>${srce1}</w2><br><br></td>
-<td style="width: 33%; vertical-align:top; align:$algn">${img2}<w1>${trgt2}</w1><br><w2>${srce2}</w2><br><br></td>
-<td style="width: 33%; vertical-align:top; align:$algn">${img}<w1>${trgt}</w1><br><w2>${srce}</w2><br><br></td></tr></table>
+<table width="100%" align="center" cellpadding="10" cellspacing="15">
+<tr align="center"><td style="width: 33%; vertical-align:top">${img1}<w1>${trgt1}</w1><br><w2>${srce1}</w2><br><br></td>
+<td style="width: 33%; vertical-align:top">${img2}<w1>${trgt2}</w1><br><w2>${srce2}</w2><br><br></td>
+<td style="width: 33%; vertical-align:top">${img}<w1>${trgt}</w1><br><w2>${srce}</w2><br><br></td></tr></table><hr class="dashed">
 !EOF
 }
 
@@ -43,9 +43,9 @@ word_example_normal(){
     field="<w1>${trgt}</w1><br><w2>${srce}</w2>"
     field2="<texmp>${exmp}</texmp><defn>${defn}</defn><note>${note}</note>"
     echo -e "<table width=\"100%\" align=\"center\" cellpadding=\"0\" cellspacing=\"15\"><tr>" >> "$fw"
-    [ -n "$img" ] && echo -e "<td style=\"vertical-align:top; align:left\">$img<br><br></td>" >> "$fw"
-    echo -e "<td style=\"width: 20%; vertical-align:top; align:left\">$field<br><br></td>
-    <td style=\"width: 70%; vertical-align:middle; background:blue\">$field2<br><br></td></tr></table>" >> "$fw"
+    [ -n "$img" ] && echo -e "<td style=\"vertical-align:middle; align:left\">$img<br><br></td>" >> "$fw"
+    echo -e "<td style=\"width: 20%; vertical-align:middle; align:left\">$field<br><br></td>
+    <td class=\"block1\" style=\"width: 70%; vertical-align:middle; align:left\">$field2<br><br></td></tr></table>" >> "$fw"
 }
 
 mkhtml() {

@@ -440,18 +440,16 @@ set_image() {
 edit_tag() {
     cmd_del="'$DS/mngr.sh' 'delete_topic' "\"${2}\"""
     desc="$(< "${DC_tlt}/info")"
-    dlg="$(yad --form --title="$(gettext "Edit")" \
+    dlg="$(echo "${desc}" | yad --text-info --title="$(gettext "Edit")" \
         --name=Idiomind --class=Idiomind \
-        --always-print-result \
-        --separator='|' \
+        --always-print-result --editable \
         --window-icon=idiomind --center \
         --width=300 --height=200 --borders=5 \
-        --field="$(gettext "Description")":TXT "${desc}" \
         --button="$(gettext "Delete")":"${cmd_del}" \
         --button="$(gettext "Export")":2 \
         --button="$(gettext "Close")":1)"
     ret=$?
-    desc_mod="$(cut -d "|" -f1 <<<"${dlg}")"
+    desc_mod="${dlg}"
     if [[ "$desc_mod" != "$desc" ]]; then
         echo "${desc_mod}" > "${DC_tlt}/info"
     fi

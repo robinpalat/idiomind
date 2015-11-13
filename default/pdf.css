@@ -1,9 +1,9 @@
-w1 {margin-top: 0;padding-right: 0px;padding-left: 0px;color: #3E3E3E;font-size: 15px;font-weight: bold;font-family: sans-serif, Verdana, Geneva;}
-w2 {margin-top: 0;padding-right: 0px;padding-left: 0px;color: #52524E;font-size: 13px;font-style: normal;font-family: sans-serif, Verdana, Geneva;}
-s1 {padding-left: 0px;color: #444444;font-size: 12px;font-weight: bold;font-family: sans-serif;}
-s2 {padding-left: 0px;color: #444444;font-size: 11px;font-weight: normal;font-family: sans-serif;}
-h3 {margin-top: 10;padding-right: 0px;padding-left: 0px;color: #616161;font-size: 15px;font-weight: bold;font-family: sans-serif, Verdana, Geneva;}
-tw1 {margin-top: 0;padding-right: 0px;padding-left: 0px;color: #5787B8;font-size: 15px;font-weight: bold;font-family: sans-serif, Verdana, Geneva;}
+w1 {color: #729fcf;font-size: 15px;font-weight: bold;font-family: sans-serif, Verdana, Geneva;line-height:1.8em;}
+w2 {color: #52524E;font-size: 13px;font-style: normal;font-family: sans-serif, Verdana, Geneva;}
+s1 {color: #444444;font-size: 12px;font-weight: bold;font-family: sans-serif;}
+s2 {color: #444444;font-size: 11px;font-weight: normal;font-family: sans-serif;}
+h3 {margin-top: 10;padding-right: 0px;color: #616161;font-size: 15px;font-weight: bold;font-family: sans-serif, Verdana, Geneva;}
+tw1 {margin-top: 0;padding-right: 0px;color: #5787B8;font-size: 15px;font-weight: bold;font-family: sans-serif, Verdana, Geneva;}
 texmp {margin-top: 0;padding-right: 0px;padding-left: 0px;color: #2B2B2B;font-size: 12px;font-weight: normal;font-family: sans-serif, Verdana, Geneva;}
 mark {background-color: #FEFCCF;color: #444444;font-weight: normal;}
 exmp {color: #5E5A54;font-size: 12px;font-weight: italic;font-family: sans-serif, Verdana, Geneva;margin: 1px;}
@@ -11,7 +11,27 @@ defn {color: #5E5A54;font-size: 11px;font-weight: normal;font-family: sans-serif
 note {color: #696968;font-size: 11px;font-weight: italic;font-family: sans-serif, Verdana, Geneva;margin: 1px;}
 .ifont {width: 70%;color: #696968;font-size: 10px;font-weight: normal;font-family: sans-serif, Verdana, Geneva;margin-top: 0px;}
 .images {font-family: sans-serif, Verdana, Geneva;font-size: 16px;font-weight: bold;color: #666;}
-.wrdstable {font-family: sans-serif, Verdana, Geneva;font-size: 13px;font-weight: bold;color: #666;}
+.wrdstable {font-family: sans-serif, Verdana, Geneva;font-size: 13px;font-weight: bold;color: #666; background:#eeeeec}
 .side {width: 3px;background-color: #71FF54;}
 body {width:80%; margin-left:auto; margin-right:auto;}
-img {box-shadow: 1px 1px 1px #ccc;-webkit-box-shadow: 2px 2px 2px #ccc;-moz-box-shadow: 1px 1px 1px #ccc;}
+img {box-shadow: 1px 2px 1px #ccc;-webkit-box-shadow: 1px 2px 1px #ccc;-moz-box-shadow: 1px 2px 1px #729fcf;}
+
+.block1 {
+  position:relative;
+  padding:15px;
+  margin:100px 0 0.5em;
+  color:#333;
+  background:#eeeeec;
+  -webkit-border-radius:10px;
+  -moz-border-radius:10px;
+  border-radius:10px;
+}
+
+.dashed {
+  border:none;
+  border-top:1px dashed #babdb6;
+  color:#fff;
+  background-color:#fff;
+  height:1px;
+  width:50%;
+}
