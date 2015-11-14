@@ -28,7 +28,7 @@ sentence_normal() {
 word_image_normal(){
     cat <<!EOF
 <table width="100%" align="center" cellpadding="10" cellspacing="15">
-<tr align="center"><td style="width: 33%;vertical-align:top">${img1}<w0>${trgt1}</w0><br><w2>${srce1}</w2><br><br></td>
+<tr align="left"><td style="width: 33%;vertical-align:top">${img1}<w0>${trgt1}</w0><br><w2>${srce1}</w2><br><br></td>
 <td style="width: 33%;vertical-align:top">${img2}<w0>${trgt2}</w0><br><w2>${srce2}</w2><br><br></td>
 <td style="width: 33%;vertical-align:top">${img}<w0>${trgt}</w0><br><w2>${srce}</w2><br><br></td></tr></table>
 !EOF
