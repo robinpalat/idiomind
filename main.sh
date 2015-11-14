@@ -1,6 +1,8 @@
 #!/bin/bash
 
 #  AUTHOR: Robin Palatnik
+#  WEB: https://idiomind.sourceforge.net
+#  EMAIL: robinpalat@openmailbox.org
 #  DATE: 2015/11/00
 #  VERSION: 0.2.4
 #
@@ -400,7 +402,7 @@ panel() {
     --name=Idiomind --class=Idiomind \
     --always-print-result \
     --window-icon=idiomind \
-    --gtkrc="$DS/default/gtkrc.ini" \
+    --gtkrc="$DS/default/gtkrc.cfg" \
     --form --fixed --on-top --no-buttons --align=center \
     --width=140 --height=190 --borders=0 --geometry=${geom} \
     --field="$(gettext "New")"!gtk-new:btn "$DS/add.sh 'new_items'" \

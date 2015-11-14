@@ -307,7 +307,7 @@ function upld() {
         
         # create id
         f_size=$(du -h . |cut -f1)
-        eval c="$(< "$DS/default/topicid")"
+        eval c="$(< "$DS/default/topic.cfg")"
         echo -n "${c}" > "${DC_tlt}/id.cfg"
         cp -f "${DC_tlt}/0.cfg" "$DT_u/$tpcid.${tpc}.$lgt"
         tr '\n' '&' < "${DC_tlt}/id.cfg" >> "$DT_u/$tpcid.${tpc}.$lgt"

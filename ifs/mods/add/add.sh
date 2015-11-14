@@ -516,7 +516,7 @@ function dlg_form_0() {
 function dlg_form_1() {
     yad --form --title="$(gettext "New note")" \
     --name=Idiomind --class=Idiomind \
-    --gtkrc="$DS/default/gtkrc.ini" \
+    --gtkrc="$DS/default/gtkrc.cfg" \
     --always-print-result --separator="\n" \
     --skip-taskbar --center --on-top \
     --align=right --image="${img}" \
@@ -532,7 +532,7 @@ function dlg_form_1() {
 function dlg_form_2() {
     yad --form --title="$(gettext "New note")" \
     --name=Idiomind --class=Idiomind \
-    --gtkrc="$DS/default/gtkrc.ini" \
+    --gtkrc="$DS/default/gtkrc.cfg" \
     --always-print-result --separator="\n" \
     --skip-taskbar --center --on-top \
     --align=right --image="${img}" \
@@ -554,7 +554,7 @@ function dlg_checklist_3() {
     --ellipsize=END --no-headers --text-align=right \
     --column=" " --column=" " |sed '/^$/d' > "$slt" &
     yad --form --tabnum=2 --plug="$fkey" --columns=2 \
-    --gtkrc="$DS/default/gtkrc.ini" \
+    --gtkrc="$DS/default/gtkrc.cfg" \
     --separator="" \
     --field=" ":lbl null \
     --field=":CB" "$2!$(gettext "New") *$e$tpcs" &
@@ -562,7 +562,7 @@ function dlg_checklist_3() {
     --title="$(wc -l < "${1}") $(gettext "notes found")" \
     --name=Idiomind --class=Idiomind \
     --orient=vert --window-icon=idiomind --on-top --center \
-    --gtkrc="$DS/default/gtkrc.ini" \
+    --gtkrc="$DS/default/gtkrc.cfg" \
     --width=700 --height=380 --borders=5 --splitter=265 \
     --button="$(gettext "Edit")":2 \
     --button="$(gettext "Cancel")":1 \
@@ -631,7 +631,7 @@ function dlg_text_info_3() {
 function dlg_form_3() {
     yad --form --title=$(gettext "Image") "$image" "$label" \
     --name=Idiomind --class=Idiomind \
-    --gtkrc="$DS/default/gtkrc.ini" \
+    --gtkrc="$DS/default/gtkrc.cfg" \
     --window-icon=idiomind \
     --skip-taskbar --image-on-top \
     --align=center --text-align=center --center --on-top \

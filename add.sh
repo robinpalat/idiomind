@@ -600,7 +600,6 @@ function process() {
         if [[ ${adds} -ge 1 ]]; then
             notify-send -i idiomind "${tpe}" \
             "$(gettext "Have been added:")\n$sadds$S$wadds$W" -t 2000 &
-            echo -e "adi.$adds.adi" >> "$DC_s/log"
         fi
         
         [ -n "$log" ] && echo "$log" >> "${DC_tlt}/err"

@@ -89,7 +89,7 @@ check_index() {
         if [ ! -e "${DC_tlt}/id.cfg" ]; then id=0; fi
         if [[ ${id} != 1 ]]; then
             datec=$(date +%F)
-            eval c="$(< $DS/default/topicid)"
+            eval c="$(< $DS/default/topic.cfg)"
             echo -n "${c}" > "${DC_tlt}/id.cfg"
             echo -ne "\nidiomind-`idiomind -v`" >> "${DC_tlt}/id.cfg"
         fi
