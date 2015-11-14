@@ -582,7 +582,7 @@ function dlg_checklist_1() {
     --window-icon=idiomind \
     --mouse --on-top --no-headers \
     --text-align=right --buttons-layout=end \
-    --width=420 --height=270 --borders=5  \
+    --width=380 --height=260 --borders=5  \
     --column=" " --column="Select" \
     --button="$(gettext "Cancel")":1 \
     --button="gtk-add":0

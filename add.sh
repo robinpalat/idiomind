@@ -189,7 +189,7 @@ function new_word() {
             fi
         else
             if [ -e "${DM_tls}/audio/${audio}.mp3" ]; then
-                msg_3 "$(gettext "A file named "${audio}.mp3" already exists. Replace?.")\n" dialog-question "${trgt}"
+                msg_3 "$(gettext "A file named "${audio}.mp3" already exists, do you want to replace it?")\n" dialog-question "${trgt}"
                 if [ $? -eq 0 ]; then
                     cp -f "$DT_r/audtm.mp3" "${DM_tls}/audio/${audio}.mp3"
                 fi

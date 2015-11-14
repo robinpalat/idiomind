@@ -7,7 +7,7 @@ _head(){
     cat <<!EOF
 <head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="/usr/share/idiomind/default/pdf.css">
-</head><body><h3>$tpc</h3><hr><br>
+</head><body><br><br><h3>$tpc</h3><hr><br>
 !EOF
 }
 
@@ -20,32 +20,31 @@ _note(){
 
 sentence_normal() {
     cat <<!EOF
-<table width="90%" align="left" cellpadding="0" cellspacing="15">
-<td style="width: 50%; vertical-align:top"><s1>${trgt}</s1></td>
-<td style="width:  50%; vertical-align:top"><s2>${srce}</s2></td></table>
+<table style="vertical-align:top" width="90%" align="left" cellpadding="0" cellspacing="10">
+<td><s1>${trgt}</s1><br><s2>${srce}</s2><hr class="dashed"></td></table>
 !EOF
 }
 
 word_image_normal(){
     cat <<!EOF
 <table width="100%" align="center" cellpadding="10" cellspacing="15">
-<tr align="center"><td style="width: 33%; vertical-align:top">${img1}<w1>${trgt1}</w1><br><w2>${srce1}</w2><br><br></td>
-<td style="width: 33%; vertical-align:top">${img2}<w1>${trgt2}</w1><br><w2>${srce2}</w2><br><br></td>
-<td style="width: 33%; vertical-align:top">${img}<w1>${trgt}</w1><br><w2>${srce}</w2><br><br></td></tr></table><hr class="dashed">
+<tr align="center"><td style="width: 33%;vertical-align:top">${img1}<w0>${trgt1}</w0><br><w2>${srce1}</w2><br><br></td>
+<td style="width: 33%;vertical-align:top">${img2}<w0>${trgt2}</w0><br><w2>${srce2}</w2><br><br></td>
+<td style="width: 33%;vertical-align:top">${img}<w0>${trgt}</w0><br><w2>${srce}</w2><br><br></td></tr></table>
 !EOF
 }
 
 word_example_normal(){
     [ -n "$img" ] && fw="$file.words0" || fw="$file.words1"
-    [ -n "${exmp}" ] && exmp="$(sed "s|${trgt,}|<mark>${trgt,}<\/mark>|g" <<<"${exmp}")<br><br>"
-    [ -n "${defn}" ] && defn="${defn}<br><br>"
-    [ -n "${note}" ] && note="${note}<br><br>"
-    field="<w1>${trgt}</w1><br><w2>${srce}</w2>"
+    [ -n "${exmp}" ] && exmp="$(sed "s|${trgt,}|<mark>${trgt,}<\/mark>|g" <<<"${exmp}")<br>"
+    [ -n "${defn}" ] && defn="${defn}<br>"
+    [ -n "${note}" ] && note="${note}<br>"
+    field="<w1>${trgt}</w1><br><texmp>${srce}</texmp>"
     field2="<texmp>${exmp}</texmp><defn>${defn}</defn><note>${note}</note>"
-    echo -e "<table width=\"100%\" align=\"center\" cellpadding=\"0\" cellspacing=\"15\"><tr>" >> "$fw"
-    [ -n "$img" ] && echo -e "<td style=\"vertical-align:middle; align:left\">$img<br><br></td>" >> "$fw"
-    echo -e "<td style=\"width: 20%; vertical-align:middle; align:left\">$field<br><br></td>
-    <td class=\"block1\" style=\"width: 70%; vertical-align:middle; align:left\">$field2<br><br></td></tr></table>" >> "$fw"
+    echo -e "<table class=\"block1\" width=\"100%\" align=\"center\" cellpadding=\"0\" cellspacing=\"15\"><tr>" >> "$fw"
+    [ -n "$img" ] && echo -e "<td style=\"vertical-align:top;align:left\">$img</td>" >> "$fw"
+    echo -e "<td style=\"width: 20%;vertical-align:top; align:left\">$field</td>
+    <td style=\"width: 70%;vertical-align:top;align:left\">$field2</td></tr></table>" >> "$fw"
 }
 
 mkhtml() {
@@ -122,10 +121,10 @@ mkhtml() {
     done < <(tac "${DC_tlt}/0.cfg")
     
     echo -e "$(< "$file.words2")" >> "$file"
-    echo -e "<br><br><br>" >> "$file"
+    echo -e "<br><br>" >> "$file"
     echo -e "$(< "$file.words0")" >> "$file"
     echo -e "$(< "$file.words1")" >> "$file"
-    echo -e "<br><br><br>" >> "$file"
+    echo -e "<br><br>" >> "$file"
     echo -e "$(< "$file.sente")" >> "$file"
     echo -e "</body></html>" >> "$file"
 }
