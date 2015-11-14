@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
+[ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
 function dicts() {
     cmsg() {
         sleep 5

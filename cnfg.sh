@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-source /usr/share/idiomind/ifs/c.conf
+source /usr/share/idiomind/default/c.conf
 [ ! -d "$DC" ] && "$DS/ifs/1u.sh" && exit
 info2="$(gettext "Switch Language.")"
 cd "$DS/addons"
@@ -44,7 +44,7 @@ set_lang() {
     fi
     echo -e "$language\n$lgsl" > "$DC_s/6.cfg"
     "$DS/stop.sh" 4
-    source /usr/share/idiomind/ifs/c.conf
+    source $DS/default/c.conf
     last="$(cd "$DM_tl"/; ls -tNd */ |cut -f1 -d'/' |head -n1)"
     if [ -d "$DM_tl/${last}" ]; then
         mode="$(< "$DM_tl/${last}/.conf/8.cfg")"

@@ -26,7 +26,7 @@ if [ ! -d "$HOME/.idiomind" ]; then
     /usr/share/idiomind/ifs/1u.sh & exit 1
 fi
 
-source /usr/share/idiomind/ifs/c.conf
+source /usr/share/idiomind/default/c.conf
 
 if [ -e "$DT/ps_lk" -o -e "$DT/el_lk" ]; then
     sleep 5
@@ -185,7 +185,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             echo -e "$langt\n$lgsl" > "$DC_s/6.cfg"
             echo 1 > "${DC_tlt}/8.cfg"
             echo "${tname}" >> "$DM_tl/.3.cfg"
-            source /usr/share/idiomind/ifs/c.conf
+            source /usr/share/idiomind/default/c.conf
             "$DS/mngr.sh" mkmn
             "$DS/default/tpc.sh" "${tname}" 1 &
         fi

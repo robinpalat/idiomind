@@ -1,13 +1,13 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+source /usr/share/idiomind/default/c.conf
 source "$DS/default/sets.cfg"
 export lgt=${lang[$lgtl]}
 export lgs=${slang[$lgsl]}
 
 function check_format_1() {
     source "$DS/ifs/mods/cmns.sh"
-    source $DS/default/sets.cfg
     sets=( 'tname' 'langs' 'langt' \
     'authr' 'cntct' 'ctgry' 'ilink' 'oname' \
     'datec' 'dateu' 'datei' \
@@ -201,7 +201,6 @@ add_audio() {
 
 _backup() {
     dt=$(date +%F)
-    source /usr/share/idiomind/ifs/c.conf
     if [ ! -d "$HOME/.idiomind/backup" ]; then
         mkdir "$HOME/.idiomind/backup"
     fi
@@ -288,7 +287,6 @@ fback() {
 } >/dev/null 2>&1
 
 _definition() {
-    source /usr/share/idiomind/ifs/c.conf
     source "$DS/ifs/mods/cmns.sh"
     query="$(sed 's/<[^>]*>//g' <<<"${2}")"
     f="$(ls "$DC_d"/*."Link.Search definition".* |head -n1)"
@@ -305,11 +303,9 @@ _definition() {
 } >/dev/null 2>&1
 
 _quick_help() {
-    source /usr/share/idiomind/ifs/c.conf
     _url='http://idiomind.sourceforge.net/doc/help.html'
     yad --html --title="$(gettext "Reference")" \
     --name=Idiomind --class=Idiomind \
-    --gtkrc="$DS/default/gtkrc.ini" \
     --uri="${_url}" \
     --window-icon=idiomind \
     --fixed --on-top --mouse \
@@ -376,7 +372,6 @@ first_run() {
         --button="$(gettext "OK")":0
         if [ $? = 1 ]; then rm -f "${file}" "${file}".p; fi
     }
-    source /usr/share/idiomind/ifs/c.conf
     NOTE2="$(gettext "You can move any item by dragging and dropping or double click to edit it. Close and reopen the main window to see any changes.\nNOTE: If you change the text of an item here listed, then its audio file can be overwritten by another new file. To avoid this, you can edit it individually through its edit dialog.")"
     NOTE3="$(gettext "To start adding notes you need to have a Topic.\nTo create one, you can click on the New button...")"
 
@@ -387,7 +382,7 @@ first_run() {
         dlg
     elif [[ ${2} = topics ]]; then
         "$DS/chng.sh" "$NOTE3"; sleep 1
-        source /usr/share/idiomind/ifs/c.conf
+        source /usr/share/idiomind/default/c.conf
         if [ -n "$tpc" ]; then
         rm -f "$DC_s/topics_first_run"
         "$DS/add.sh" new_items & fi
@@ -462,7 +457,6 @@ translate_to() {
     # usage: 
     # idiomind translate [language] - e.g. language: en.
     # idiomind translate restore - to go back to original translation
-    source /usr/share/idiomind/ifs/c.conf
     source "$DS/ifs/mods/cmns.sh"
     [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "  -- error" && exit 1
     l="$(grep -o 'langt="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
@@ -629,14 +623,13 @@ PY
 }
 
 about() {
-    source /usr/share/idiomind/default/sets.cfg
     export _descrip="$(gettext "Utility for learning foreign vocabulary")"
     export website="$(gettext "Web Site")"
     python << ABOUT
 import gtk
 import os
-app_logo = os.path.join('/usr/share/idiomind/images/idiomind.png')
-app_icon = os.path.join('/usr/share/idiomind/images/icon.png')
+app_logo = os.path.join('/usr/share/idiomind/images/logo.png')
+app_icon = os.path.join('/usr/share/icons/hicolor/22x22/apps/idiomind.png')
 app_name = 'Idiomind'
 app_version = os.environ['_version']
 app_website = os.environ['_website']

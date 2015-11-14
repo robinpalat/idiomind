@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-source /usr/share/idiomind/ifs/c.conf
+source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/mods/cmns.sh"
 source "$DS/default/sets.cfg"
 export lgt=${lang[$lgtl]}
@@ -440,7 +440,7 @@ function process() {
         touch "$DT_r/slts"
         if [ "${tpe}" = "$(gettext "New") *" ]; then
             "$DS/add.sh" new_topic
-            source /usr/share/idiomind/ifs/c.conf
+            source $DS/default/c.conf
         else
             echo "${tpe}" > "$DT/tpe"
         fi
@@ -727,7 +727,7 @@ new_items() {
     elif [ $ret -eq 0 ]; then
         if [ "${chk}" = "$(gettext "New") *" ]; then
             "$DS/add.sh" new_topic
-            source /usr/share/idiomind/ifs/c.conf
+            source $DS/default/c.conf
         else
             echo "${tpe}" > "$DT/tpe"
         fi

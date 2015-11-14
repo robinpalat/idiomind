@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source /usr/share/idiomind/ifs/c.conf
+source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/mods/cmns.sh"
 
 _head(){
