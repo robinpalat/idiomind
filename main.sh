@@ -1,8 +1,9 @@
 #!/bin/bash
+# -*- ENCODING: UTF-8 -*-
 
 #  AUTHOR: Robin Palatnik
 #  WEB: https://idiomind.sourceforge.net
-#  EMAIL: robinpalat@openmailbox.org
+#  EMAIL: robinpalat@users.sourceforge.net
 #  DATE: 2015/11/00
 #  VERSION: 0.2.4
 #

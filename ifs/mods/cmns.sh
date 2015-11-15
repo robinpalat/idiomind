@@ -9,29 +9,29 @@ function internet() {
 }
 
 function msg() {
-    [ -n "$3" ] && title="$3" || title=Idiomind
-    [ -n "$4" ] && btn="$4" || btn="$(gettext "OK")"
-    yad --title="$title" --text="$1" --image="$2" \
+    [ -n "${3}" ] && title="${3}" || title=Idiomind
+    [ -n "${4}" ] && btn="${4}" || btn="$(gettext "OK")"
+    yad --title="${title}" --text="${1}" --image="${2}" \
     --name=Idiomind --class=Idiomind \
     --window-icon=idiomind \
     --image-on-top --center --sticky --on-top \
     --width=410 --height=130 --borders=3 \
-    --button="$btn":0
+    --button="${btn}":0
 }
 
 function msg_2() {
-    [ -n "$5" ] && title="$5" || title=Idiomind
-    [ -n "$6" ] && btn3="--button=$6:2" || btn3=""
-    yad --title="$title" --text="$1" --image="$2" \
+    [ -n "${5}" ] && title="${5}" || title=Idiomind
+    [ -n "${6}" ] && btn3="--button=${6}:2" || btn3=""
+    yad --title="${title}" --text="${1}" --image="${2}" \
     --name=Idiomind --class=Idiomind \
     --always-print-result \
     --window-icon=idiomind \
     --image-on-top --on-top --sticky --center \
     --width=400 --height=120 --borders=3 \
-    "$btn3" --button="$4":1 --button="$3":0
+    "${btn3}" --button="${4}":1 --button="${3}":0
 }
 
-numer='^[0-9]+$'
+export numer='^[0-9]+$'
 
 function nmfile() {
     echo -n "${1}" |md5sum |rev |cut -c 4- |rev
@@ -43,7 +43,7 @@ function set_name_file() {
 }
 
 function include() {
-  for f in "$1"/*; do source "$f"; done
+  for f in "${1}"/*; do source "${f}"; done
 }
 
 function f_lock() {
@@ -58,8 +58,8 @@ function f_lock() {
 function check_index1() {
     for i in "${@}"; do
         if [ -n "$(sort -n < "$i" |uniq -dc)" ]; then
-            awk '!array_temp[$0]++' < "$i" > "$DT/tmp"
-            sed '/^$/d' "$DT/tmp" > "$i"; rm -f "$DT/tmp"
+            awk '!array_temp[$0]++' < "${i}" > "$DT/tmp"
+            sed '/^$/d' "$DT/tmp" > "${i}"; rm -f "$DT/tmp"
         fi
     done
 }
