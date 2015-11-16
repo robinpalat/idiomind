@@ -11,6 +11,6 @@ texmp {color: #5E5A54;font-size: 10px;font-weight: italic;}
 defn {color: #5E5A54;font-size: 10px;font-weight: normal;}
 note {color: #696968;font-size: 10px;font-weight: italic;}
 body {width:80%; margin-left:auto; margin-right:auto;font-family: sans-serif, Verdana, Geneva;}
-img {box-shadow: 1px 1px 1px 1px #ccc;-webkit-box-shadow: 1px 1px 1px 1px #ccc;-moz-box-shadow: 1px 1px 1px 1px #ccc;}
+.simg {box-shadow: 1px 1px 1px 1px #ccc;-moz-border-radius:10px;-webkit-border-radius:10px;}
 .block1 {position:relative;padding:0px;margin:15px 0 0.5em;color:#333;background:#F5F4F3;-webkit-border-radius:15px;-moz-border-radius:15px;border-radius:15px;}
-.dashed {border:none;border-top:1px dashed #DCDCDC;color:#fff;background-color:#fff;height:1px;width:100%;line-height:0.1em;}
+.dashed {border:none;border-top:1px dashed #EBEBEB;color:#fff;background-color:#fff;height:1px;width:100%;line-height:0.1em;}

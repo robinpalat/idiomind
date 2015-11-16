@@ -48,8 +48,6 @@ function sentence_view() {
     
 } >/dev/null 2>&1
 
-export -f word_view sentence_view
-
 function tags_list() {
     c=$((RANDOM%100000)); KEY=$c
     cmd_play="$DS/play.sh play_list"
@@ -85,4 +83,4 @@ function tags_list() {
 
 }
 
-export -f word_view tags_list
+export -f word_view sentence_view tags_list

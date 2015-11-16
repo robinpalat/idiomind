@@ -435,21 +435,30 @@ set_image() {
 edit_tag() {
     cmd_del="'$DS/mngr.sh' 'delete_topic' "\"${2}\"""
     desc="$(< "${DC_tlt}/info")"
-    dlg="$(echo "${desc}" | yad --text-info --title="$(gettext "Edit")" \
+    dlg="$(yad --form --title="$(gettext "Edit")" \
         --name=Idiomind --class=Idiomind \
+        --separator="|" \
         --always-print-result --editable \
         --window-icon=idiomind --center \
-        --width=300 --height=200 --borders=5 \
+        --width=340 --height=240 --borders=5 \
+        --field="$(gettext "Rename")" "${tpc}" \
+        --field="$(gettext "Description"):txt" "${desc}" \
         --button="$(gettext "Delete")":"${cmd_del}" \
         --button="$(gettext "Export")":2 \
         --button="$(gettext "Close")":1)"
     ret=$?
-    desc_mod="${dlg}"
-    if [[ "$desc_mod" != "$desc" ]]; then
+    desc_mod="$(cut -d "|" -f2 <<<"${dlg}")"
+    if [[ "${desc_mod}" != "${desc}" ]]; then
         echo "${desc_mod}" > "${DC_tlt}/info"
     fi
+    name_mod="$(cut -d "|" -f1 <<<"${dlg}")"
+    if [ "${name_mod}" != "${tpc}" -a -n "${name_mod}" ]; then
+        "$DS/mngr.sh" rename_topic "${name_mod}" &
+        source "$DS/ifs/mods/cmns.sh"
+        msg "$(gettext "Close and reopen the main window to see any changes")\n" info
+    fi
     if [ $ret = 2 ]; then
-        "$DS/ifs/upld.sh"  _export "${2}"
+        "$DS/ifs/upld.sh"  _export "${name_mod}"
     fi
 }
 
@@ -461,9 +470,8 @@ translate_to() {
     [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "  -- error" && exit 1
     l="$(grep -o 'langt="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
     lgt=${lang[$l]}
-    if [ -z "$lgt" ]; then
-        lgt=${lang[$l]}
-    fi
+    if [ -z "$lgt" ]; then lgt=${lang[$l]}; fi
+    
     if [ $2 = restore ]; then
         if [ -e "${DC_tlt}/0.data" ]; then
             mv -f "${DC_tlt}/0.data" "${DC_tlt}/0.cfg"
@@ -480,13 +488,11 @@ translate_to() {
             > "$DT/index.trad_tmp"
             sp="/-\|"; sc=0
             spin() { printf "\b${sp:sc++:1}"; ((sc==${#sp})) && sc=0; }
-            
             while read -r item_; do
                 item="$(sed 's/},/}\n/g' <<<"${item_}")"
                 type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
                 trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
                 pos="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
-
                 if [ -n "${trgt}" ]; then
                     echo "${trgt}" \
                     | python -c 'import sys; print(" ".join(sorted(set(sys.stdin.read().split()))))' \
@@ -500,7 +506,6 @@ translate_to() {
                     echo "${trgt} |" >> "$DT/index.trad_tmp"; fi
                     spin
             done < "${DC_tlt}/0.cfg"
-
             sed -i ':a;N;$!ba;s/\n/\. /g' "$DT/words.trad_tmp"
             sed -i 's/|/|\n/g' "$DT/words.trad_tmp"
             sed -i 's/^..//' "$DT/words.trad_tmp"
@@ -515,21 +520,21 @@ translate_to() {
             sed -i 's/|/\n/g' "$DT/words.trad"
             sed -i 's/^ *//; s/ *$//;s/\。/\. /g' "$DT/words.trad"
             paste -d '&' "$DT/words.trad_tmp" "$DT/words.trad" > "$DT/mix_words.trad_tmp"
-            
+            echo "${srce}"
             n=1
             while read -r item_; do
                 get_item "${item_}"
                 srce="$(sed -n ${n}p "$DT/index.trad")"
                 tt="$(sed -n ${n}p "$DT/mix_words.trad_tmp" |cut -d '&' -f1 \
-                |sed 's/\. /\n/g' |sed 's/^ *//; s/ *$//g' | tr -d '|.')"
+                |sed 's/\. /\n/g' |sed 's/^ *//; s/ *$//g' |tr -d '|.')"
                 st="$(sed -n ${n}p "$DT/mix_words.trad_tmp" |cut -d '&' -f2 \
-                |sed 's/\. /\n/g' |sed 's/^ *//; s/ *$//g' | tr -d '|.')"
+                |sed 's/\. /\n/g' |sed 's/^ *//; s/ *$//g' |tr -d '|.')"
 
                 ( bcle=1
                 > "$DT/w.tmp"
-                while [[ ${bcle} -le `wc -l <<<"$tt"` ]]; do
-                    t="$(sed -n ${bcle}p <<<"$tt" |sed 's/^\s*./\U&\E/g')"
-                    s="$(sed -n ${bcle}p <<<"$st" |sed 's/^\s*./\U&\E/g')"
+                while [[ ${bcle} -le `wc -l <<<"${tt}"` ]]; do
+                    t="$(sed -n ${bcle}p <<<"${tt}" |sed 's/^\s*./\U&\E/g')"
+                    s="$(sed -n ${bcle}p <<<"${st}" |sed 's/^\s*./\U&\E/g')"
                     echo "${t}_${s}" >> "$DT/w.tmp"
                     let bcle++
                 done )
@@ -537,7 +542,7 @@ translate_to() {
                 
                 t_item="${n}:[type={$type},trgt={$trgt},srce={$srce},exmp={$exmp},defn={$defn},note={$note},wrds={$wrds},grmr={$grmr},].[tag={$tag},mark={$mark},link={$link},].id=[$id]"
                 echo -e "${t_item}" >> "${DC_tlt}/$2.data"
-                echo -e "$trgt"
+                echo "${srce}"
                 
             let n++
             done < "${DC_tlt}/0.cfg"

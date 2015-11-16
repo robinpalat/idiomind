@@ -71,8 +71,8 @@ mkhtml() {
         if [ -n "${trgt}" -a -n "${srce}" -a -n "${type}" ]; then
             fimg="$imagesdir/${trgt,,}-0.jpg"
             if [ -f "$fimg" ]; then
-                img_small="<img src=\"$fimg\" border=0 width=100px></img><br>"
-                img_large="<img src=\"$fimg\" border=0 width=150px></img><br>"
+                img_small="<img class=\"simg\" src=\"$fimg\" width=100px></img><br>"
+                img_large="<img class=\"simg\" src=\"$fimg\" width=150px></img><br>"
             else
                 img_small=""; img_large=""
             fi
