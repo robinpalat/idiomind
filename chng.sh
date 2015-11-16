@@ -21,6 +21,7 @@ if [[ ${1} = 0 ]]; then
             if ! [[ ${rw} =~ $numer ]]; then rw=0; fi
 
             if [ ${n} = TRUE ]; then
+                ! [ ps -A |pgrep -f "notify-osd" ] && \
                 notify-send -i "${icon}" "${trgt}" "${srce}"; fi &
             if [ ${a} = TRUE ]; then sleep 0.5; sle=0.5; spn=1
                 [ ${type} = 1 -a ${rw} = 1 ] && spn=3
@@ -38,7 +39,7 @@ if [[ ${1} = 0 ]]; then
             "$DS"/play.sh play_file "${file}" "${trgt}"
         fi
         
-        [ ${n} = TRUE -a ${l} -lt 5 -a ${type} -lt 3 ] && l=5
+        [ ${n} = TRUE -a ${l} -lt 10 -a ${type} -lt 10 ] && l=10
         [ ${stnrd} = 1 ] && sleep ${l}
     }
     export -f _play
