@@ -36,7 +36,10 @@ word_image_normal(){
 
 word_example_normal(){
     [ -n "$img" ] && fw="$file.words0" || fw="$file.words1"
-    [ -n "${exmp}" ] && exmp="$(sed "s|${trgt,}|<mark>${trgt,}<\/mark>|g" <<<"${exmp}")<br>"
+    if [ -n "${exmp}" ]; then
+    exmp="$(sed "s|${trgt,}|<mark>${trgt,}<\/mark>|g" <<<"${exmp}")<br>"
+    exmp="$(sed "s|${trgt^}|<mark>${trgt^}<\/mark>|g" <<<"${exmp}")<br>"
+    fi
     [ -n "${defn}" ] && defn="${defn}<br>"
     [ -n "${note}" ] && note="${note}<br>"
     field="<w1>${trgt}</w1><br><texmp>${srce}</texmp>"
