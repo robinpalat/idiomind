@@ -20,7 +20,7 @@ _note(){
 
 sentence_normal() {
     cat <<!EOF
-<table style="vertical-align:top" width="90%" align="left" cellpadding="0" cellspacing="10">
+<table style="vertical-align:top" width="80%" align="left" cellpadding="0" cellspacing="10">
 <td><s1>${trgt}</s1><br><s2>${srce}</s2><hr class="dashed"></td></table>
 !EOF
 }
@@ -28,9 +28,9 @@ sentence_normal() {
 word_image_normal(){
     cat <<!EOF
 <table width="100%" align="center" cellpadding="10" cellspacing="15">
-<tr align="left"><td style="width: 33%;vertical-align:top">${img1}<w0>${trgt1}</w0><br><w2>${srce1}</w2><br><br></td>
-<td style="width: 33%;vertical-align:top">${img2}<w0>${trgt2}</w0><br><w2>${srce2}</w2><br><br></td>
-<td style="width: 33%;vertical-align:top">${img}<w0>${trgt}</w0><br><w2>${srce}</w2><br><br></td></tr></table>
+<tr align="center"><td style="width: 33%;vertical-align:top">${img1}<w0 align="left">${trgt1}</w0><br><w2>${srce1}</w2><br><br></td>
+<td style="width: 33%;vertical-align:top">${img2}<w0 align="left">${trgt2}</w0><br><w2>${srce2}</w2><br><br></td>
+<td style="width: 33%;vertical-align:top">${img}<w0 align="left">${trgt}</w0><br><w2>${srce}</w2><br><br></td></tr></table>
 !EOF
 }
 
@@ -51,14 +51,14 @@ word_example_normal(){
 }
 
 mkhtml() {
-    mkdir -p "$DT/mkhtml"
+    mkdir -p "$DT/export"
     imagesdir="${DM_tls}/images"
-    file="$DT/mkhtml/temp.html"
+    file="$DT/export/temp.html"
     
     if [ $f -eq 2 ]; then
         while read -r word; do
             item="$(grep -F -m 1 "trgt={${word}}" "${DC_tlt}/0.cfg" |sed 's/},/}\n/g')"
-            grep -oP '(?<=srce={).*(?=})' <<<"${item}" >> "$DT/mkhtml/b.srces"
+            grep -oP '(?<=srce={).*(?=})' <<<"${item}" >> "$DT/export/b.srces"
         done < "${DC_tlt}/3.cfg"
     fi
     _head > "$file"
@@ -66,6 +66,7 @@ mkhtml() {
     
     tr=1; n=1
     while read -r _item; do
+        if [ ! -d "$DT/export" ]; then break & exit 1; fi
         unset img trgt srce type
         [ $f -eq 0 ] && [[ ${tr} -gt 3 ]] && tr=1
         [ $f -eq 2 ] && [[ ${tr} -gt 2 ]] && tr=1
@@ -102,7 +103,7 @@ mkhtml() {
 
             elif [ ${type} = 1 -a $f = 2 ]; then
                 [[ ${n} -gt 12 ]] && n=1
-                ras="$(sort -Ru "$DT/mkhtml/b.srces" |egrep -v "$srce" |head -n5)"
+                ras="$(sort -Ru "$DT/export/b.srces" |egrep -v "$srce" |head -n5)"
                 while read -r m; do
                     declare item$n="${m}"
                     let n++
@@ -134,6 +135,6 @@ mkhtml() {
 
 [ -z "${f}" ] && f=0
 export f; mkhtml
-wkhtmltopdf -s A4 -O Portrait "$file" "$DT/mkhtml/tmp.pdf"
-mv -f "$DT/mkhtml/tmp.pdf" "${1}.pdf"
-cleanups "$DT/mkhtml"
+wkhtmltopdf -s A4 -O Portrait "$file" "$DT/export/tmp.pdf"
+mv -f "$DT/export/tmp.pdf" "${1}.pdf"
+cleanups "$DT/export"

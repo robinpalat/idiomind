@@ -1,5 +1,12 @@
 #!/bin/bash
 
+source /usr/share/idiomind/default/c.conf
+source "$DS/ifs/mods/cmns.sh"
+
+if [[ `wc -l < "$DC_tlt/3.cfg"` -lt 2 ]]; then
+msg "$(gettext "Words not found in the topic.")\n" error "$(gettext "Information")" & exit 1
+fi
+
 word_examen() {
     cat <<!EOF
 <table width="100%" cellpadding="0" cellspacing="10"><tr>

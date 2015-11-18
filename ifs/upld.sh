@@ -244,8 +244,16 @@ function upld() {
     fi
     # actions
     if [ $ret = 2 ]; then
-        "$DS/ifs/upld.sh" _export "${tpc}" & exit 1
-     
+        if [ -d "$DT/export" ]; then
+            msg_2 "$(gettext "Wait until it finishes a previous process").\n" info OK gtk-stop "$(gettext "Information")"
+            ret=$?
+            if [ $ret -eq 1 ]; then
+                [ -d "$DT/export" ] && rm -fr "$DT/export"
+            fi
+            exit 1
+        else
+            "$DS/ifs/upld.sh" _export "${tpc}" & exit 1
+        fi
     elif [ $ret = 0 ]; then
         conditions_for_upload "${2}"
         "$DS/ifs/tls.sh" check_index "${tpc}" 1
