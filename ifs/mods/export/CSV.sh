@@ -14,7 +14,7 @@ while read -r _item; do
     fi
 done < <(tac "${DC_tlt}/0.cfg")
 if [ -e "$DT/export/txt" ]; then
-(echo -e "$lgtl\t$lgsl"; cat "$DT/export/txt")  > "$file"
+cat "$DT/export/txt" > "$file"
 else
 msg "$(gettext "Words not found in the topic.")\n" error "$(gettext "Information")"
 fi
