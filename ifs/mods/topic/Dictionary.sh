@@ -28,7 +28,7 @@ function dictionary() {
         done
     }
     fkey=$(($RANDOM * $$))
-    yad --html --uri="/usr/share/idiomind/stats/1.html" --browser \
+    yad --html --uri="/usr/share/idiomind/ifs/stats/1.html" --browser \
     --text="Palabras aprendidas a traves de meses" \
     --tabnum=1 --plug="$fkey" &
     list | yad --list --title="$(gettext "New Words")" \

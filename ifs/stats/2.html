@@ -1,27 +1,21 @@
-<!doctype html>
+
 <html>
 	<head>
-    	<script src="./thirdparty/jquery-1.10.2.min.js"></script>
-	<script src="./thirdparty/Chart.js"></script>
-
-
-
-       <script type="text/javascript" src="global.json"></script>
+    <script src="./thirdparty/jquery-1.10.2.min.js"></script>
+    <script src="./thirdparty/Chart.js"></script>
+    <script type="text/javascript" src="/home/robin/.idiomind/topics/English/Noviembre seremenge/.conf/log"></script>
 	</head>
 	<body>
-	Global stats
+	Topics stats
         <div>
             <canvas id="canvas" height="180" width="560"></canvas>
         </div>
-
-	<script >
+    
+    <script>
 	  	var a = window.location.toString();
 		var name = a.substring(a.indexOf("q=")+2);
   	</script>
-
- 	
-
-
+        
 	<script>
         var mydata = JSON.parse(data);
 		var lineChartData = {
@@ -37,18 +31,16 @@
 	}
 	</script>
 
-
 	<div valign="center">
 	<a id="previous" ><img src="a.png" align="left" /></a>
 	<a id="next" ><img src="b.png" align="right" /></a>
 	</div>
 
 	<script>
-	var page = 1;
+	var page = 2;
 	</script>
+    
 	<script src="pages.js"></script>
-
-
 
 	</body>
 </html>

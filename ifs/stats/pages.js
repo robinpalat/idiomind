@@ -15,18 +15,15 @@ $('#next').click( function() {
 	if (page == 3)
 	{
 	page = 1
-	}
-			
+	}		
     goPage();
 });
 
 $('#previous').click( function() {
     page = page - 1;
-
 	if (page == 0)
 	{
 	page = 2
 	}
-
     goPage();
 });
