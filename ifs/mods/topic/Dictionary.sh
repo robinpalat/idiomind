@@ -20,8 +20,8 @@ function dictionary() {
             read word <&3
             read tran <&4
             if [ -n "$word" -a -n "$tran" ]; then
-                echo "<span font_desc='Arial Bold 14'>$word</span>"
-                echo "<span font_desc='Arial 14'>$tran</span>"
+                echo "<span font_desc='Arial Bold 13'>$word</span>"
+                echo "<span font_desc='Arial 13'>$tran</span>"
             fi
             [ ${limit} -gt 100 ] && break
             let limit++
