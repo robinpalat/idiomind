@@ -208,6 +208,7 @@ config_dlg() {
             if [ $? -eq 0 ]; then
                 echo ${lgtl} > "$DC_s/6.cfg"
                 echo ${lgsl} >> "$DC_s/6.cfg"
+                cdb="$DM_tls/Dictionary/${lgtl}.db"
                 if ! grep -q ${lgsl} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(Words);")"; then
                     sqlite3 ${cdb} "alter table Words add column ${lgsl} TEXT;"
                 fi

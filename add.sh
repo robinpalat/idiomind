@@ -66,7 +66,7 @@ function new_item() {
     check_s "${tpe}"
     if [ -z "$trgt" ]; then trgt="${3}"; fi
     cd "$DT_r"
-    if [ ${trans} = FALSE ] && ([ -z "${srce}" ] || [ -z "${trgt}" ]); then
+    if [[ ${trans} = FALSE ]] && ([ -z "${srce}" ] || [ -z "${trgt}" ]); then
         cleanups "$DT_r"
         msg "$(gettext "You need to fill text fields.")\n" info "$(gettext "Information")" & exit 1
     fi
