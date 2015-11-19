@@ -20,31 +20,22 @@ function dictionary() {
             read word <&3
             read tran <&4
             if [ -n "$word" -a -n "$tran" ]; then
-                echo "<span font_desc='Arial Bold 12'>$word</span>"
-                echo "<span font_desc='Arial 12'>$tran</span>"
+                echo "<span font_desc='Arial Bold 14'>$word</span>"
+                echo "<span font_desc='Arial 14'>$tran</span>"
             fi
             [ ${limit} -gt 100 ] && break
             let limit++
         done
     }
-    fkey=$(($RANDOM * $$))
-    yad --html --uri="/usr/share/idiomind/stats/1.html" --browser \
-    --text="Palabras aprendidas a traves de meses" \
-    --tabnum=1 --plug="$fkey" &
     list | yad --list --title="$(gettext "New Words")" \
-    --text="Ultimas palabras desconocidas" \
-    --tabnum=2 --plug="$fkey"  \
     --dclick-action="$find_cmd" \
-    --no-headers --search-column=1 --regex-search --print-column=1 \
+    --search-column=1 --regex-search --print-column=1 \
     --column="$(gettext "$lgtl")":TEXT \
     --column="$(gettext "$lgsl")":TEXT \
-    --align=right --image-on-top &
-    yad --paned --key="$fkey" \
-    --title="$(gettext "Stats")" \
-    --name=Idiomind --class=Idiomind \
-    --orient=vert --window-icon=idiomind --on-top --center \
-    --gtkrc="$DS/default/gtkrc.cfg" \
-    --width=620 --height=580 --borders=2 --splitter=280 \
+    --name=Idiomind --class=Idiomind  \
+    --center --align=right --image-on-top \
+    --window-icon=idiomind --center \
+    --width=620 --height=580 --borders=10 \
     --button="gtk-close":1
     
 } >/dev/null 2>&1
