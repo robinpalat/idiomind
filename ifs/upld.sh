@@ -119,7 +119,7 @@ function upld() {
         --always-print-result \
         --window-icon=idiomind --buttons-layout=end \
         --align=right --center --on-top \
-        --width=480 --height=470 --borders=14 \
+        --width=480 --height=470 --borders=12 \
         --field="$(gettext "Category"):CB" "" \
         --field="$(gettext "Skill Level"):CB" "" \
         --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
@@ -136,7 +136,7 @@ function upld() {
         --always-print-result \
         --window-icon=idiomind --buttons-layout=end \
         --align=right --center --on-top \
-        --width=480 --height=470 --borders=14 \
+        --width=480 --height=470 --borders=12 \
         --field="$(gettext "Category"):CBE" "$_categories" \
         --field="$(gettext "Skill Level"):CB" "$_levels" \
         --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
@@ -325,8 +325,7 @@ function upld() {
         | grep -o 'UPLOADS="[^"]*' | grep -o '[^"]*$')"
         direc="$DT_u"
         log="$DT_u/log"
-        body="$(tac "${DC_tlt}/1.cfg")<hr><br><br>
-        <a href='/${lgtl,}/${ctgry,}/$tpcid.$oname.idmnd'>Download</a>"
+        body="<hr><br><a href='/${lgtl,}/${ctgry,}/$tpcid.$oname.idmnd'>Download</a>"
         export tpc direc url log usrid_m passw_m body
 
         python << END
