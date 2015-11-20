@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
+[ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/mods/cmns.sh"
 if [ ! -e "$DC_s/log" ]; then exit 1
 else log="$DC_s/log"; fi

@@ -1,13 +1,14 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-[ -z "$DM" ] && source /usr/share/idiomind/ifs/c.conf
+[ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/mods/cmns.sh"
+source "$DS/default/sets.cfg"
+export lgt=${lang[$lgtl]}
+export lgs=${slang[$lgsl]}
 dir="$DC/addons/dict"
 enables="$DC/addons/dict/enables"
 disables="$DC/addons/dict/disables"
-lgt=$(lnglss "$lgtl")
-lgs=$(lnglss "$lgsl")
 task=( 'Word pronunciation' 'Pronunciation' 'Translator' \
 'Search definition' 'Search images' 'Download images' '_' )
 
@@ -17,7 +18,7 @@ function add_dlg() {
     add="$(yad --file --title="$(gettext "Add resource")" \
     --text=" $(gettext "Browse to and select the file that you want to add.")" \
     --class=Idiomind --name=Idiomind \
-    --window-icon="$DS/images/icon.png" --center --on-top \
+    --window-icon=idiomind --center --on-top \
     --width=650 --height=550 --borders=5 \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "OK")":0 |cut -d "|" -f1)"
@@ -108,15 +109,15 @@ function dlg() {
     --name=Idiomind --class=Idiomind "${text}" \
     --print-all --always-print-result --separator="|" \
     --dclick-action="$DS_a/Dics/cnfg.sh dclk" \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --expand-column=2 --hide-column=3 \
-    --search-column=4 --regex-search --tooltip-column=3 \
+    --search-column=4 --regex-search \
     --center --mouse --on-top \
     --width=650 --height=380 --borders=10 \
     --column="$(gettext "Enable")":CHK \
     --column="$(gettext "Resource")":TEXT \
     --column="$(gettext "Type")":TEXT \
-    --column="$(gettext "Task")                                         ":TEXT \
+    --column="$(gettext "Task")                            ":TEXT \
     --column="$(gettext "Language")          ":TEXT \
     --button="$(gettext "Add")":2 \
     --button="$(gettext "Cancel")":1 \
@@ -164,7 +165,7 @@ function update_config_dir() {
     while read -r dict; do
         if [ ! -e "$enables/$(basename "${dict}")" \
             -a ! -e "$disables/$(basename "${dict}")" ]; then
-            echo "--added dict: $(basename "${dict}")"
+            echo "-- added dict: $(basename "${dict}")"
             > "$disables/$(basename "${dict}")"; fi
     done < <(ls "$DS_a/Dics/dicts/")
 }

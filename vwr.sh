@@ -22,8 +22,10 @@ defn="$(grep -oP '(?<=defn={).*(?=})' <<<"${item}")"
 note="$(grep -oP '(?<=note={).*(?=})' <<<"${item}")"
 grmr="$(grep -oP '(?<=grmr={).*(?=})' <<<"${item}")"
 mark="$(grep -oP '(?<=mark={).*(?=})' <<<"${item}")"
-lwrd="$(grep -oP '(?<=wrds={).*(?=})' <<<"${item}" |tr '_' '\n')"
-exmp="$(sed "s/${trgt,,}/<span background='#FDFBCF'>${trgt,,}<\/\span>/g" <<<"$exmp")"
+link="$(grep -oP '(?<=link={).*(?=})' <<<"${item}")"
+tag="$(grep -oP '(?<=tag={).*(?=})' <<<"${item}")"
+wrds="$(grep -oP '(?<=wrds={).*(?=})' <<<"${item}")"
+exmp="$(sed "s/${trgt,,}/<span background='#FDFBCF'>${trgt,,}<\/\span>/g" <<<"${exmp}")"
 id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
 text_missing=0
 
@@ -36,7 +38,7 @@ elif [ ${type} = 2 ]; then
     [ "$mark" = TRUE ] && trgt="<b>$trgt</b>" && grmr="<b>$grmr</b>"
     sentence_view
 else
-    trgt="${_item} [Text missing]"
+    trgt="${_item} <small>[Text missing]</small>"
     grmr="${trgt}"
     if [[ `wc -w <<< "${_item}"` -lt 2 ]]; then
         cmd_listen="$DS/play.sh play_word "\"${trgt}\"" ${id}"
@@ -49,6 +51,7 @@ else
     fi
 fi
     ret=$?
+    if ps -A | pgrep -f 'play'; then killall play & fi
     if [ $ret -eq 4 ]; then
         "$DS/mngr.sh" edit ${1} ${index_pos} ${text_missing}
     elif [ $ret -eq 2 ]; then
@@ -63,7 +66,8 @@ fi
     elif [ $ret -eq 3 ]; then
         ff=$((index_pos+1))
         "$DS/vwr.sh" ${1} "" ${ff} &
-    else 
+    else
+        if ps -A | pgrep -f 'play'; then killall play & fi
         exit 1
     fi
 exit

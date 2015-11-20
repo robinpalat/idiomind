@@ -1,15 +1,16 @@
-w1 {margin-top: 0;padding-right: 5px;padding-left: 5px;color: #5E5A54;font-size: 15px;font-weight: bold;font-family: Verdana, Geneva, sans-serif;}
-w2 {margin-top: 0;padding-right: 5px;padding-left: 5px;color: #61615B;font-size: 13px;font-style: normal;font-family: Verdana, Geneva, sans-serif;}
-strgt {padding-left: 5px;color: #0000FF;font-size: 11px;font-weight: normal;font-family: Verdana, Geneva, sans-serif;}
-ssrce {padding-left: 5px;color: #4C4C49;font-size: 11px;font-weight: normal;font-family: Verdana, Geneva, sans-serif;}
-h3 {margin-top: 0;padding-right: 5px;padding-left: 5px;color: #565656;font-size: 16px;font-weight: bold;font-family: Verdana, Geneva, sans-serif;}
-mark {background-color: #E5E5E5;color: #0000FF;font-weight: normal;}
-.examples {width: 80%;padding-left: 25px;padding-bottom: 10px;padding-top: 5px;padding-right: 0;}
-.ifont {color: #3E3E3E;font-family: Verdana, Geneva, sans-serif;font-size: 13px;text-align: left;}
-.efont {color: #6F6F6F;font-family: Verdana, Geneva, sans-serif;font-size: 14px;text-align: left;}
-.nfont {color: #6F6F6F;font-family: Verdana, Geneva, sans-serif;font-size: 10px;text-align: left;}
-a img { border: none;}
-.images {font-family: sans-serif, Verdana, Geneva;font-size: 16px;font-weight: bold;color: #666;}
-.wrdstable {font-family: Verdana, Geneva, sans-serif;font-size: 13px;font-weight: bold;color: #666;}
-.side {width: 3px;}
-body {margin-left: 40pt;margin-right: 40pt;margin-top: 20pt;margin-bottom: 10pt;}
+w0 {color: #5B5F62;font-size: 13px;font-weight: bold;line-height:1.8em;}
+w1 {color: #5D6164;font-size: 13px;font-weight: bold;}
+w2 {color: #52524E;font-size: 11px;font-style: normal;}
+s1 {color: #424242;font-size: 12px;font-weight: normal;}
+s2 {color: #929292;font-size: 10px;font-weight: normal;}
+tw1 {margin-top: 0;padding-right: 0px;color: #5787B8;font-size: 15px;font-weight: bold;font-family: sans-serif, Verdana, Geneva;}
+h3 {margin-top: 10;padding-right: 0px;color: #616161;font-size: 15px;font-weight: bold;}
+mark {background-color: #F5F4F3;color: #5D6164;font-weight: bold;}
+exmp {color: #5E5A54;font-size: 12px;font-weight: italic;font-family: sans-serif, Verdana, Geneva;margin: 1px;}
+texmp {color: #5E5A54;font-size: 10px;font-weight: italic;}
+defn {color: #5E5A54;font-size: 10px;font-weight: normal;}
+note {color: #696968;font-size: 10px;font-weight: italic;}
+body {width:80%; margin-left:auto; margin-right:auto;font-family: sans-serif, Verdana, Geneva;}
+.simg {-moz-border-radius:10px;-webkit-border-radius:10px;}
+.block1 {position:relative;padding:0px;margin:15px 0 0.5em;color:#333;background:#F5F4F3;-webkit-border-radius:15px;-moz-border-radius:15px;border-radius:15px;}
+.dashed {border:none;border-top:1px dashed #EBEBEB;color:#fff;background-color:#fff;height:1px;width:100%;line-height:0.1em;}

@@ -4,12 +4,8 @@ if [[ "$1" = dlgcnfg ]]; then
 source "$DS/ifs/mods/cmns.sh"
 msg "$(gettext "Does not need configuration")\n" info "$4"
 
-
 else
-Name="Vocabolaudio"
-Language="it"
-
-wget -T 51 -q -U Mozilla "http://www.vocabolaudio.com/audio-it/${1}.mp3"
-exit
+export LINK="http://www.vocabolaudio.com/audio-it/${word}.mp3"
+export ex='mp3'
 fi
 

@@ -1,7 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-[ -z"${DM}" ] && source /usr/share/idiomind/ifs/c.conf
 if [[ ${1} = 0 ]]; then
     w="$(grep -oP '(?<=words=\").*(?=\")' "${cfg}")"
     s="$(grep -oP '(?<=sntcs=\").*(?=\")' "${cfg}")"
@@ -22,6 +21,7 @@ if [[ ${1} = 0 ]]; then
             if ! [[ ${rw} =~ $numer ]]; then rw=0; fi
 
             if [ ${n} = TRUE ]; then
+                ! [ ps -A |pgrep -f "notify-osd" ] && \
                 notify-send -i "${icon}" "${trgt}" "${srce}"; fi &
             if [ ${a} = TRUE ]; then sleep 0.5; sle=0.5; spn=1
                 [ ${type} = 1 -a ${rw} = 1 ] && spn=3
@@ -38,8 +38,8 @@ if [[ ${1} = 0 ]]; then
             notify-send -i "${icon}" "${trgt}" "${srce}" -t 10000 &
             "$DS"/play.sh play_file "${file}" "${trgt}"
         fi
-        
-        [ ${n} = TRUE -a ${l} -lt 11 -a ${type} -lt 3 ] && l=11
+        [ ${n} = TRUE -a ${l} -lt 3 -a ${type} = 1 ] && l=3
+        [ ${n} = TRUE -a ${l} -lt 10 -a ${type} = 2 ] && l=10
         [ ${stnrd} = 1 ] && sleep ${l}
     }
     export -f _play
@@ -63,7 +63,7 @@ if [[ ${1} = 0 ]]; then
             if [ -f "${DM_tlt}/$id.mp3" ]; then
                 file="${DM_tlt}/$id.mp3"
             else
-                file="${DM_tls}/${trgt,,}.mp3"; fi
+                file="${DM_tls}/audio/${trgt,,}.mp3"; fi
             stnrd=1
         else
             ((f=f+1))
@@ -92,7 +92,12 @@ if [[ ${1} = 0 ]]; then
     include "$DS/ifs/mods/chng"
 
 elif [[ ${1} != 0 ]]; then
-
+    source /usr/share/idiomind/default/c.conf
+    if [ ! -d "$DT" ]; then
+        ( "$DS/ifs/tls.sh" a_check_updates ) &
+        idiomind -s; sleep 1
+    fi
+    linkc="http://community.idiomind.net/${lgtl,,}"
     remove_d() {
         ins="$(cd "/usr/share/idiomind/addons/"
         set -- */; printf "%s\n" "${@%/}")"
@@ -115,43 +120,46 @@ elif [[ ${1} != 0 ]]; then
         set -- */; printf "%s\n" "${@%/}")" > "$DC_a/list"
     fi
     if [[ -n "$1" ]]; then
-        text="--text=$1\n"
-        img="--image=info"
-    else
-        text="--center"
-    fi
+    var1="--text=$1\n"
+    var2="--image=info"; else
+    #var1="--text=<small><a href='$linkc'>$(gettext "Shared")</a> </small>"
+    var1="--center"
+    var2="--text-align=right"; fi
     chk_list_addons1=$(wc -l < "$DS_a/menu_list")
     chk_list_addons2=$((`wc -l < "$DC_a/list"`*2))
     chk_list_topics1=$((`wc -l < "$DM_tl/.0.cfg"`/2))
     chk_list_topics2=$(wc -l < "$DM_tl/.1.cfg")
-    if [[ ${chk_list_addons1} != ${chk_list_addons2} ]]; then
-        remove_d; fi
-    if [[ ${chk_list_topics1} != ${chk_list_topics2} ]]; then
-        "$DS/mngr.sh" mkmn; fi
+    if [[ ${chk_list_addons1} != ${chk_list_addons2} ]]; then remove_d; fi
+    if [[ ${chk_list_topics1} != ${chk_list_topics2} ]]; then "$DS/mngr.sh" mkmn; fi
+    if [ -e "$DC_s/topics_first_run" -a -z "${1}" ]; then exit 1; fi
 
     tpc=$(cat "$DM_tl/.0.cfg" | \
-    yad --list --title="$(gettext "Topics")" "$text" \
+    yad --list --title="$(gettext "Topics")" "$var1" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-column=2 --separator="" \
-    --window-icon="$DS/images/icon.png" \
-    --text-align=left --center $img --image-on-top \
+    --window-icon=idiomind \
+    --text-align=left --center $var2 --image-on-top \
     --no-headers --ellipsize=END --expand-column=2 \
     --search-column=2 --regex-search \
     --width=620 --height=580 --borders=8 \
     --column=img:IMG \
     --column=File:TEXT \
-    --button="$(gettext "Preferences")":"$DS/cnfg.sh" \
-    --button=gtk-new:3 \
+    --button="<small>$(gettext "New Words")</small>":"$DS/ifs/mods/topic/Dictionary.sh" \
+    --button="$(gettext "New")"!gtk-new:3 \
     --button="$(gettext "Apply")":2 \
-    --button="gtk-close":1)
+    --button="$(gettext "Close")"!gtk-close:1)
     ret=$?
-
     if [ $ret -eq 3 ]; then
-        "$DS/add.sh" new_topic
-    elif [ $ret -eq 2 ]; then
-        "$DS/default/tpc.sh" "$tpc" 1 &
-    elif [ $ret -eq 0 ]; then
-        "$DS/default/tpc.sh" "$tpc" &
+            "$DS/add.sh" new_topic
+    elif [ -n "${tpc}" ]; then
+        mode="$(< "$DM_tl/${tpc}/.conf/8.cfg")"
+        if ((mode>=0 && mode<=20)); then
+            if [ $ret -eq 2 ]; then
+                "$DS/default/tpc.sh" "$tpc" ${mode} 1 &
+            elif [ $ret -eq 0 ]; then
+                "$DS/default/tpc.sh" "$tpc" ${mode} &
+            fi
+        fi
     fi
     exit
 fi

@@ -1,25 +1,39 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
+info="$(gettext "Please check about voice synthesizer configuration in the settings dialog.")"
+source "$DS/default/sets.cfg"
+
 play_word() {
-    if [ -f "${DM_tls}/${2,,}.mp3" ]; then
-        play "${DM_tls}/${2,,}.mp3" &
+    w="$(sed 's/<[^>]*>//g' <<<"${2}")"
+    if [ -f "${DM_tls}/audio/${w,,}.mp3" ]; then
+        play "${DM_tls}/audio/${w,,}.mp3" &
     elif [ -f "${DM_tlt}/$3.mp3" ]; then
         play "${DM_tlt}/$3.mp3" &
     elif [ -n "$synth" ]; then
-        sed 's/<[^>]*>//g' <<<"${2}." |$synth &
+        echo "${w}." |$synth
+        if [ $? != 0 ]; then
+            source "$DS/ifs/mods/cmns.sh"
+            msg "$info" error Info
+        fi
     else
-        sed 's/<[^>]*>//g' <<<"${2}." |espeak -v $lg -s 150 &
+        echo "${w}." |espeak -v ${lang[$lgtl]} -s 110 -b 1 -p 60 &
     fi
 } >/dev/null 2>&1
 
 play_sentence() {
+    if ps -A | pgrep -f 'play'; then killall 'play'; fi
     if [ -f "${DM_tlt}/$2.mp3" ]; then
         play "${DM_tlt}/$2.mp3" &
     elif [ -n "$synth" ]; then
-        sed 's/<[^>]*>//g' <<<"${trgt}." |$synth &
+        sed 's/<[^>]*>//g' <<<"${trgt}." |$synth
+        if [ $? != 0 ]; then
+            source "$DS/ifs/mods/cmns.sh"
+            msg "$info" error Info
+        fi
     else
-        sed 's/<[^>]*>//g' <<<"${trgt}." |espeak -v $lg -s 150 &
+        sed 's/<[^>]*>//g' <<<"${trgt}." \
+        |espeak -v ${lang[$lgtl]} -s 110 -b 1 -p 60 &
     fi
 } >/dev/null 2>&1
 
@@ -28,8 +42,13 @@ play_file() {
         mplayer "${2}" -novideo -noconsolecontrols -title "${3}"
     elif [ -n "$synth" ]; then
         sed 's/<[^>]*>//g' <<<"${3}." |$synth
+        if [ $? != 0 ]; then
+            source "$DS/ifs/mods/cmns.sh"
+            msg "$info" error Info
+        fi
     else
-        sed 's/<[^>]*>//g' <<<"${3}." |espeak -v $lg -s 150
+        sed 's/<[^>]*>//g' <<<"${3}." \
+        |espeak -v ${lang[$lgtl]} -s 120 -b 1 -p 60
     fi
 } >/dev/null 2>&1
 
@@ -79,15 +98,14 @@ play_list() {
             source "${ad}"
             for item in "${!items[@]}"; do
                 echo "$DS/images/add.png"
-                echo "  <span font_desc='Arial 11'>$(gettext "${item}")</span>"
+                echo "  <span font_desc='Arial 10'>$(gettext "${item}")</span>"
                 grep -o ${items[$item]}=\"[^\"]* "${file_cfg}" |grep -o '[^"]*$'
             done
             unset items
         done
     }
-    if grep -E 'vivid|wily' <<<"`lsb_release -a`" >/dev/null 2>&1; then
-    btn1="gtk-media-play:0"; else
-    btn1="$(gettext "Play"):0"; fi
+
+    btn1="$(gettext "Play"):0"
     if [ ! -f "$DT/.p_" ]; then
         btn2="--center"
         title="$(gettext "Play")"
@@ -95,9 +113,10 @@ play_list() {
         && title="$(gettext "Play") (${tpc})"
     else
         tpp="$(sed -n 1p "$DT/.p_")"
-        title="$(gettext "Playing:") ${tpp}"
+        title="${tpp}"
         btn2="--button=gtk-media-stop:2"
     fi
+    [ -z "$rword" ] && rword=0
     set="$(echo "${iteml[${rword}]}")"
     unset iteml[${rword}]
     lst=`for i in "${iteml[@]}"; do echo -n "!$i"; done`
@@ -123,22 +142,22 @@ play_list() {
     --field="$(gettext "Repeat sounding out")":CB "$lst_opts1" > $tab2 &
     yad --notebook --key=$KEY --title="$title" \
     --name=Idiomind --class=Idiomind \
+    --gtkrc="$DS/default/gtkrc.cfg" \
     --always-print-result --print-all \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --align=right --center --on-top \
     --tab-pos=right --tab-borders=0 \
     --tab=" $(gettext "Lists") " \
     --tab="$(gettext "Options")" \
     --width=400 --height=300 --borders=0 \
-    "$btn2" --button="$btn1"
+    "$btn2" --button="$btn1" --button="$(gettext "Close")":1
     ret=$?
         tab1=$(< $tab1); tab2=$(< $tab2); rm -f "$DT"/*.p
         f=1; n=0; count=0
         for item in "${sets[@]:0:4}"; do
             val=$(sed -n $((${n}+1))p <<<"${tab1}" |cut -d "|" -f3)
             [ -n "${val}" ] && sed -i "s/$item=.*/$item=\"$val\"/g" "${DC_tlt}/10.cfg"
-            if [ "$val" = TRUE ]; then
-                count=$((count+$(egrep -cv '#|^$' <<<"${!in[${n}]}"))); fi
+            [ "$val" = TRUE ] && count=$((count+$(wc -l |sed '/^$/d' <<<"${!in[${n}]}")))
             ((n=n+1))
         done
         for ad in "$DS/ifs/mods/play"/*; do
@@ -146,7 +165,7 @@ play_list() {
             for item in "${!items[@]}"; do
                 val=$(sed -n $((${n}+1))p <<<"${tab1}" |cut -d "|" -f3)
                 [ -n "${val}" ] && sed -i "s/${items[$item]}=.*/${items[$item]}=\"$val\"/g" "${file_cfg}"
-                count=$((count+1))
+                [ "$val" = TRUE ] && count=$((count+1))
                 ((n=n+1))
             done
             unset items
@@ -165,7 +184,7 @@ play_list() {
         if [ $ret -eq 0 ]; then
             if [ ${count} -lt 1 ]; then
                 notify-send "$(gettext "Nothing to play")" \
-                "$(gettext "Exiting...")" -i idiomind -t 3000 &
+                "$(gettext "Exiting...")" -t 3000 &
                 [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
                 "$DS/stop.sh" 2 & exit 1; fi
             if [ -d "${DM_tlt}" ] && [ -n "${tpc}" ]; then

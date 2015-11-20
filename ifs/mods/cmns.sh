@@ -9,41 +9,41 @@ function internet() {
 }
 
 function msg() {
-    [ -n "$3" ] && title="$3" || title=Idiomind
-    [ -n "$4" ] && btn="$4" || btn="$(gettext "OK")"
-    yad --title="$title" --text="$1" --image="$2" \
+    [ -n "${3}" ] && title="${3}" || title=Idiomind
+    [ -n "${4}" ] && btn="${4}" || btn="$(gettext "OK")"
+    yad --title="${title}" --text="${1}" --image="${2}" \
     --name=Idiomind --class=Idiomind \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --image-on-top --center --sticky --on-top \
     --width=410 --height=130 --borders=3 \
-    --button="$btn":0
+    --button="${btn}":0
 }
 
 function msg_2() {
-    [ -n "$5" ] && title="$5" || title=Idiomind
-    [ -n "$6" ] && btn3="--button=$6:2" || btn3=""
-    yad --title="$title" --text="$1" --image="$2" \
+    [ -n "${5}" ] && title="${5}" || title=Idiomind
+    [ -n "${6}" ] && btn3="--button=${6}:2" || btn3=""
+    yad --title="${title}" --text="${1}" --image="${2}" \
     --name=Idiomind --class=Idiomind \
     --always-print-result \
-    --window-icon="$DS/images/icon.png" \
+    --window-icon=idiomind \
     --image-on-top --on-top --sticky --center \
     --width=400 --height=120 --borders=3 \
-    "$btn3" --button="$4":1 --button="$3":0
+    "${btn3}" --button="${4}":1 --button="${3}":0
 }
 
-numer='^[0-9]+$'
+export numer='^[0-9]+$'
 
 function nmfile() {
-    echo -n "${1}" | md5sum | rev | cut -c 4- | rev
+    echo -n "${1}" |md5sum |rev |cut -c 4- |rev
 }
 
 function set_name_file() {
     id=":[type={$1},trgt={$2},srce={$3},exmp={$4},defn={$5},note={$6},wrds={$7},grmr={$8},]."
-    echo -n "${id}" | md5sum | rev | cut -c 4- | rev
+    echo -n "${id}" |md5sum |rev |cut -c 4- |rev
 }
 
 function include() {
-  for f in "$1"/*; do source "$f"; done
+  for f in "${1}"/*; do source "${f}"; done
 }
 
 function f_lock() {
@@ -55,38 +55,23 @@ function f_lock() {
     done
 }
 
-function lnglss() {
-    if [ "${1^}" = English ]; then lg=en
-    elif [ "${1^}" = French ]; then lg=fr
-    elif [ "${1^}" = German ]; then lg=de
-    elif [ "${1^}" = Chinese ]; then lg=zh-cn
-    elif [ "${1^}" = Italian ]; then lg=it
-    elif [ "${1^}" = Japanese ]; then lg=ja
-    elif [ "${1^}" = Portuguese ]; then lg=pt
-    elif [ "${1^}" = Spanish ]; then lg=es
-    elif [ "${1^}" = Vietnamese ]; then lg=vi
-    elif [ "${1^}" = Russian ]; then lg=ru
-    fi
-    echo "$lg"
-}
-
 function check_index1() {
     for i in "${@}"; do
-        if [ -n "$(sort -n < "$i" | uniq -dc)" ]; then
-            awk '!array_temp[$0]++' < "$i" > "$DT/tmp"
-            sed '/^$/d' "$DT/tmp" > "$i"; rm -f "$DT/tmp"
+        if [ -n "$(sort -n < "$i" |uniq -dc)" ]; then
+            awk '!array_temp[$0]++' < "${i}" > "$DT/tmp"
+            sed '/^$/d' "$DT/tmp" > "${i}"; rm -f "$DT/tmp"
         fi
     done
 }
 
 function list_inadd() {
     if ls -tNd "$DM_tl"/*/ 1> /dev/null 2>&1; then
-        while read -r t; do
-            if ! echo -e "$(ls "$DS/addons/")\n$(< "$DM_tl/.3.cfg")" \
-            |grep -Fxo "${t}" >/dev/null 2>&1; then
-                echo "${t}"
+        while read -r topic; do
+            if ! echo -e "$(ls -1a "$DS/addons/")\n$(cat "$DM_tl/.3.cfg")" \
+            |grep -Fxo "${topic}" >/dev/null 2>&1; then
+                [ ! -L "$DM_tl/${topic}" ] && echo "${topic}"
             fi
-        done < <(cd "$DM_tl"; ls -tNd */ |head -n 20 |sed 's/\///g')
+        done < <(cd "$DM_tl"; ls -tNd */ |head -n 50 |sed 's/\///g')
     fi
 }
 
@@ -100,6 +85,22 @@ function cleanups() {
     done
 }
 
+function get_item() {
+    export item="$(sed 's/},/}\n/g' <<<"${1}")"
+    export type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
+    export trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
+    export srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
+    export exmp="$(grep -oP '(?<=exmp={).*(?=})' <<<"${item}")"
+    export defn="$(grep -oP '(?<=defn={).*(?=})' <<<"${item}")"
+    export note="$(grep -oP '(?<=note={).*(?=})' <<<"${item}")"
+    export wrds="$(grep -oP '(?<=wrds={).*(?=})' <<<"${item}")"
+    export grmr="$(grep -oP '(?<=grmr={).*(?=})' <<<"${item}")"
+    export mark="$(grep -oP '(?<=mark={).*(?=})' <<<"${item}")"
+    export link="$(grep -oP '(?<=link={).*(?=})' <<<"${item}")"
+    export tag="$(grep -oP '(?<=tag={).*(?=})' <<<"${item}")"
+    export id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
+}
+
 function progress() {
     yad --progress \
     --progress-text="$1" \
@@ -107,6 +108,7 @@ function progress() {
     --pulsate --auto-close \
     --skip-taskbar --center --no-buttons
 }
+
 
 function calculate_review() {
     DC_tlt="$DM_tl/${1}/.conf"
