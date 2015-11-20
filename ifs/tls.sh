@@ -1,12 +1,11 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-source /usr/share/idiomind/default/c.conf
-source "$DS/default/sets.cfg"
-export lgt=${lang[$lgtl]}
-export lgs=${slang[$lgsl]}
-
 function check_format_1() {
+    [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
+    source "$DS/default/sets.cfg"
+    lgt=${lang[$lgtl]}
+    lgs=${slang[$lgsl]}
     source "$DS/ifs/mods/cmns.sh"
     sets=( 'tname' 'langs' 'langt' \
     'authr' 'cntct' 'ctgry' 'ilink' 'oname' \
@@ -61,6 +60,7 @@ function check_format_1() {
 }
 
 check_index() {
+    [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
     source "$DS/ifs/mods/cmns.sh"
     DC_tlt="$DM_tl/${2}/.conf"; DM_tlt="$DM_tl/${2}"
     tpc="${2}"; mkmn=0; f=0; a=0; id=0
@@ -466,6 +466,7 @@ translate_to() {
     # usage: 
     # idiomind translate [language] - e.g. language: en.
     # idiomind translate restore - to go back to original translation
+    source /usr/share/idiomind/default/c.conf
     source "$DS/ifs/mods/cmns.sh"
     [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "  -- error" && exit 1
     l="$(grep -o 'langt="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
