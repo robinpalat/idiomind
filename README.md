@@ -8,7 +8,7 @@ bash (>=4.1), mplayer, scrot, imagemagick, wkhtmltopdf, lynx, curl, html2text, s
 
 
 
-<b>Installing in Ubuntu and it's derivatives:</b>
+<b>Installing in Debian, Ubuntu, and derivatives:</b>
 
 
       sudo add-apt-repository ppa:robinpalat/idiomind

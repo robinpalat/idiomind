@@ -124,14 +124,16 @@ elif [ $ret -eq 0 ]; then
             export lgsl=$val
         fi
     done
-    if [ $? -eq 0 ]; then
-        echo ${lgsl} >> "$DC_s/6.cfg"
-        if ! grep -q ${lgsl} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(Words);")"; then
-            sqlite3 ${cdb} "alter table Words add column ${lgsl} TEXT;"
-        fi
+    
+    set_lang ${lgtl}
+
+    if ! grep -q ${lgsl} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(Words);")"; then
+        sqlite3 ${cdb} "alter table Words add column ${lgsl} TEXT;"
     fi
+    
+    echo ${lgsl} >> "$DC_s/6.cfg"
+
     if echo "$target$source" |grep -oE 'Chinese|Japanese|Russian'; then _info; fi
-    [ $? -eq 0 ] && set_lang ${lgtl}
 
     > "$DC_s/1.cfg"
     for n in {0..11}; do 
