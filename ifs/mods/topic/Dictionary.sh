@@ -4,7 +4,7 @@
 find_cmd='@bash -c "item \"$0\""'
 function item() {
     $DS/play.sh play_word "$1" &
-    sed 's/<[^>]*>//g' <<<"$1" | xclip -i
+    sed 's/<[^>]*>//g' <<<"$1" |xclip -i
 } >/dev/null 2>&1
 export -f item
 
