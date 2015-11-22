@@ -99,7 +99,6 @@ function new_session() {
             fi
         fi
     fi
-    
     done < "$DM_tl/.1.cfg"
     rm -f "$DT/ps_lk"
     "$DS/mngr.sh" mkmn &

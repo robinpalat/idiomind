@@ -12,6 +12,6 @@ defn {color: #5E5A54;font-size: 14px;font-weight: normal;}
 note {color: #696968;font-size: 14px;font-weight: italic;}
 body {width:85%;height:85%;margin-top:50;margin-bottom:10;margin-right:auto;margin-left:auto;font-family: sans-serif, Verdana, Geneva;}
 .simg {-moz-border-radius:10px;-webkit-border-radius:10px;}
-.block0 {position:relative;padding:0px;color:#4C4C4C;font-size: 15px;}
+.block0 {position:relative;padding:0px;color:#4C4C4C;font-size: 15px;margin:0.25em 0;padding:0.25em 40px;line-height:1.45;}
 .block1 {position:relative;padding:0px;margin:15px 0 0.5em;color:#333;background:#F5F4F3;-webkit-border-radius:15px;-moz-border-radius:15px;border-radius:15px;}
 .dashed {border:none;border-top:1px solid #fff;color:#fff;background-color:#fff;height:1px;width:100%;line-height:0.1em;}
