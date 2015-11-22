@@ -7,27 +7,26 @@ _head(){
     cat <<!EOF
 <head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="stylesheet" href="/usr/share/idiomind/default/pdf.css">
-</head><body><br><br><h3>$tpc</h3><hr><br>
+</head><body><h2>$tpc</h2><hr><br>
 !EOF
 }
 
 _note(){
-    note="$(sed ':a;N;$!ba;s/\n/<br>/g' < "${DC_tlt}/info" |sed 's/\&/&amp;/g')"
     cat <<!EOF
-<div width="60%" align="left" border="0" class="ifont"><br>$note<p>&nbsp;</div><br>
+<div align="left" border="0" class="block0">$note<br><br></div><br>
 !EOF
 }
 
 sentence_normal() {
     cat <<!EOF
-<table style="vertical-align:top" width="80%" align="left" cellpadding="0" cellspacing="10">
+<table style="vertical-align:top" width="100%" align="left" cellpadding="0" cellspacing="10">
 <td><s1>${trgt}</s1><br><s2>${srce}</s2><hr class="dashed"></td></table>
 !EOF
 }
 
 word_image_normal(){
     cat <<!EOF
-<table width="100%" align="center" cellpadding="10" cellspacing="15">
+<table width="100%" align="center" cellpadding="10" cellspacing="10">
 <tr align="center"><td style="width: 33%;vertical-align:top">${img1}<w0 align="left">${trgt1}</w0><br><w2>${srce1}</w2><br><br></td>
 <td style="width: 33%;vertical-align:top">${img2}<w0 align="left">${trgt2}</w0><br><w2>${srce2}</w2><br><br></td>
 <td style="width: 33%;vertical-align:top">${img}<w0 align="left">${trgt}</w0><br><w2>${srce}</w2><br><br></td></tr></table>
@@ -62,6 +61,7 @@ mkhtml() {
         done < "${DC_tlt}/3.cfg"
     fi
     _head > "$file"
+    note="$(sed ':a;N;$!ba;s/\n/<br>/g' < "${DC_tlt}/info" |sed 's/\&/&amp;/g')"
     [ -n "${note}" ] && _note >> "$file"
     
     tr=1; n=1

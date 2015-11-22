@@ -272,7 +272,7 @@ function list_words_sentence() {
     n=1
     while read -r trgt; do
         if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
-            echo "${trgt}" >> "$DT_r/logw"
+            echo -e "\n$trgt" >> "${DC_tlt}/err"
         else
             trgt="$(clean_1 "${trgt}")"
             audio="${trgt,,}"

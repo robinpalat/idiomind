@@ -134,7 +134,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     --button="$(gettext "Install")":0
     ret=$?
         if [ $ret -eq 0 ]; then
-            if [[ $(wc -l < "$DM_t/$langt/.1.cfg") -ge 120 ]]; then
+            if [[ `wc -l < "$DM_t/$langt/.1.cfg"` -ge 120 ]]; then
                 msg "$(gettext "Maximum number of topics reached.")\n" info "$(gettext "Information")" & exit
             fi
             cn=0

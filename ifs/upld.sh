@@ -385,7 +385,7 @@ fdlg() {
     yad --paned --key="$key" --title="$(gettext "Export")" \
     --name=Idiomind --class=Idiomind \
     --window-icon=idiomind --center --on-top \
-    --width=600 --height=500 --borders=8 --splitter=380 \
+    --width=600 --height=500 --borders=8 --splitter=370 \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Save")":0
 }
