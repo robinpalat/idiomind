@@ -200,6 +200,7 @@ add_audio() {
 } >/dev/null 2>&1
 
 _backup() {
+    source /usr/share/idiomind/default/c.conf
     dt=$(date +%F)
     if [ ! -d "$HOME/.idiomind/backup" ]; then
         mkdir "$HOME/.idiomind/backup"
@@ -223,6 +224,7 @@ _backup() {
 } >/dev/null 2>&1
 
 dlg_backups() {
+    [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
     cd "$DM/backup"; ls -t *.bk |sed 's/\.bk//g' | \
     yad --list --title="$(gettext "Backups")" \
     --name=Idiomind --class=Idiomind \
@@ -235,6 +237,7 @@ dlg_backups() {
 } >/dev/null 2>&1
 
 dlg_restfile() {
+    [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
     file="$HOME/.idiomind/backup/${2}.bk"
     date1=`grep '\----- newest' "${file}" |cut -d' ' -f3`
     date2=`grep '\----- oldest' "${file}" |cut -d' ' -f3`
@@ -360,6 +363,7 @@ a_check_updates() {
 } >/dev/null 2>&1
 
 first_run() {
+    source /usr/share/idiomind/default/c.conf
     dlg() {
         sleep 3; mv -f "${file}" "${file}".p
         yad --title="${title}" --text="${note}" \
