@@ -17,6 +17,4 @@ bash (>=4.1), mplayer, scrot, imagemagick, wkhtmltopdf, lynx, curl, html2text, s
       
       sudo apt-get install idiomind
 
-
-
-<a href='https://poeditor.com/join/project/Nc2kc89iSY'>Collaborate with translations!</a>
+If you want to help translate Idiomind for your language, please go to <a href='https://poeditor.com/join/project/Nc2kc89iSY'>Poeditor's Idiomind page</a>.
