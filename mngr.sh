@@ -437,6 +437,7 @@ edit_list() {
                 pos=`grep -Fon -m 1 "trgt={${trgt}}" "${direc}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
                 item="$(sed -n ${pos}p "${direc}/0.cfg" |sed 's/},/}\n/g')"
                 type=`grep -oP '(?<=type={).*(?=})' <<<"${item}"`
+                id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
                 trgt=`grep -oP '(?<=trgt={).*(?=})' <<<"${item}"`
                 srce="$temp"
                 if [ ${type} = 1 ]; then
@@ -453,6 +454,7 @@ edit_list() {
                 id_mod="$(set_name_file ${type} "${trgt}" "${srce_mod}" \
                 "${exmp_mod}" "${defn_mod}" "${note_mod}" "${wrds_mod}" "${grmr_mod}")"
                 [ ${type} = 2 -a ${dlaud} = TRUE ] && cd "$DT_r"; tts_sentence "${trgt}" "$DT_r" "${DM_tlt}/$id_mod.mp3"
+                #[ ${type} = 2 ] && mv -f "${DM_tlt}/$id.mp3" "${DM_tlt}/$id_mod.mp3"
                 
                 sed -i "${pos}s|srce={$srce}|srce={$srce_mod}|;
                 ${pos}s|wrds={}|wrds={$wrds_mod}|;
