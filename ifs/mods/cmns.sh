@@ -109,7 +109,6 @@ function progress() {
     --skip-taskbar --center --no-buttons
 }
 
-
 function calculate_review() {
     DC_tlt="$DM_tl/${1}/.conf"
     dts=$(sed '/^$/d' < "${DC_tlt}/9.cfg" | wc -l)
@@ -165,5 +164,3 @@ function calculate_review() {
     fi
     return ${RM}
 }
-
-
