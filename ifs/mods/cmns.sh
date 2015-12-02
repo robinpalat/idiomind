@@ -71,7 +71,7 @@ function list_inadd() {
             |grep -Fxo "${topic}" >/dev/null 2>&1; then
                 [ ! -L "$DM_tl/${topic}" ] && echo "${topic}"
             fi
-        done < <(cd "$DM_tl"; ls -tNd */ |head -n 50 |sed 's/\///g')
+        done < <(cd "$DM_tl"; ls -tNd */ |head -n 100 |sed 's/\///g')
     fi
 }
 

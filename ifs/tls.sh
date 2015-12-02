@@ -145,10 +145,9 @@ check_index() {
     }
     
     _fix() {
-        if [ ${stts} -eq 13 ]; then
-            if [ -f "${DC_tlt}/8.cfg_" ] && [ -n $(< "${DC_tlt}/8.cfg_") ]; then
-                stts=$(sed -n 1p "${DC_tlt}/8.cfg_")
-                rm "${DC_tlt}/8.cfg_"
+        if [ ${stts} = 13 ]; then
+            if [ -f "${DC_tlt}/8.cfg" ] && [ -n $(< "${DC_tlt}/8.cfg") ]; then
+                stts=$(sed -n 1p "${DC_tlt}/8.cfg")
             else
                 stts=1
             fi

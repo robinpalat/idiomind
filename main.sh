@@ -433,7 +433,7 @@ case "$1" in
     mfeeds)
     "$DS/mngr.sh" edit_feeds "${tpc}" ;;
     play)
-    "$DS/bcle.sh" ;;
+    "$DS/play.sh" play_list ;;
     stop)
     "$DS/stop.sh" 2 ;;
     *)
