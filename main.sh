@@ -212,7 +212,7 @@ function topic() {
         datei="$(grep -oP '(?<=datei=\").*(?=\")' "${DC_tlt}/id.cfg")"
         auto_mrk="$(grep -oP '(?<=acheck=\").*(?=\")' "${DC_tlt}/10.cfg")"
         ( if [ -e "${DC_tlt}/err" ]; then
-        sleep 5; include "$DS/ifs/mods/add"
+        sleep 2; include "$DS/ifs/mods/add"
         dlg_text_info_3 "$(cat "${DC_tlt}/err")"; fi ) &
         c=$((RANDOM%100000)); KEY=$c
         cnf1=$(mktemp "$DT/cnf1.XXX.x")
