@@ -158,6 +158,7 @@ edit_item() {
         type=${text_missing}
         edit_pos=${item_pos}
     fi
+    
     if [[ "${srce}" = "${temp}" ]]; then
     msg_2 "$(gettext "Translating...\nWait till the process is completed. ")\n" info OK gtk-stop "$(gettext "Warning")"
     if [ $? -eq 1 ]; then srce="" ;transl_mark=1 ; else "$DS/vwr.sh" ${list} "${trgt}" ${item_pos} & exit 1; fi; fi
