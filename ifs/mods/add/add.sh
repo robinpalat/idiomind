@@ -584,8 +584,7 @@ function dlg_checklist_1() {
     --text-align=right --buttons-layout=end \
     --width=380 --height=260 --borders=5  \
     --column=" " --column="Select" \
-    --button="$(gettext "Cancel")":1 \
-    --button="gtk-add":0
+    --button="  $(gettext "Close")  ":0
 }
 
 function dlg_text_info_1() {

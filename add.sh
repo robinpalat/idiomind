@@ -223,6 +223,8 @@ function list_words_edit() {
     while read -r trgt; do
         if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
             echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> ./logw
+        elif [ -z "$(< "$DT_r/slts")" ]; then
+            cleanups "${DT_r}"; exit 0
         else
             trgt="$(clean_1 "${trgt}")"
             audio="${trgt,,}"
@@ -273,6 +275,8 @@ function list_words_sentence() {
     while read -r trgt; do
         if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
             echo -e "\n$trgt" >> "${DC_tlt}/err"
+        elif [ -z "$(< "$DT_r/slts")" ]; then
+            cleanups "${DT_r}"; exit 0
         else
             trgt="$(clean_1 "${trgt}")"
             audio="${trgt,,}"
