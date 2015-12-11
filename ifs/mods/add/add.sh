@@ -627,6 +627,7 @@ function dlg_text_info_3() {
     rm -f "${DC_tlt}"/err
 }
 
+
 function dlg_form_3() {
     yad --form --title=$(gettext "Image") "$image" "$label" \
     --name=Idiomind --class=Idiomind \
