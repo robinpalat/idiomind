@@ -22,7 +22,7 @@ function dlg_form_1() {
     --field="<a href='$link1'>$(gettext "Go to Google Translate")</a>  ":LBL " " \
     --field="$(gettext "Mark")":CHK "$mark" \
     --field="$(gettext "Audio")":FL "${audf}" \
-    --field="$(gettext "Definition")!gtk-info":FBTN "${cmd_def}" \
+    --field="$(gettext "Definition")":FBTN "${cmd_def}" \
     --button="$(gettext "Image")":"${cmd_image}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \
     --button="!$DS/images/listen.png!$(gettext "Listen")":"$cmd_play" \
