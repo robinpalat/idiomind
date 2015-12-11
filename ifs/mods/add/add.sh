@@ -635,7 +635,7 @@ function dlg_form_3() {
     --skip-taskbar --image-on-top \
     --align=center --text-align=center --center --on-top \
     --width=420 --height=320 --borders=5 \
-    "${btn2}" --button="    $(gettext "Close")    ":1
+    "${btn2}" --button=" $(gettext "Close") ":1
 }
 
 function dlg_progress_1() {
