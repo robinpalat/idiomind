@@ -87,8 +87,9 @@ if [[ ${1} = 0 ]]; then
         done < "${DC_tlt}/6.cfg"; fi
     if [ ${p} = TRUE ]; then
         echo "${tpc}" > "$DT/.p_"
+        wrds="$(cat "${DC_tlt}/practice/log2" "${DC_tlt}/practice/log3")"
         while read item; do getitem; _play
-        done < <(grep -Fxv "${DC_tlt}/4.cfg" "${DC_tlt}/practice/log3"); fi
+        done < <(grep -Fxv "${DC_tlt}/4.cfg" <<<"${wrds}"); fi
     include "$DS/ifs/mods/chng"
 
 elif [[ ${1} != 0 ]]; then
