@@ -251,7 +251,7 @@ function topic() {
             fi
             ntpc=$(cut -d '|' -f 1 < "${cnf4}")
             if [ "${tpc}" != "${ntpc}" -a -n "$ntpc" ]; then
-            if [[ "${tpc}" != "$(sed -n 1p "$HOME/.config/idiomind/s/4.cfg")" ]]; then
+            if [[ "${tpc}" != "$(sed -n 1p "$HOME/.config/idiomind/4.cfg")" ]]; then
             msg "$(gettext "Sorry, this topic is currently not active.")\n" info "$(gettext "Information")" & exit; fi
             "$DS/mngr.sh" rename_topic "${ntpc}" & exit; fi
         }
