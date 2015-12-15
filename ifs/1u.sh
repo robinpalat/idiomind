@@ -110,8 +110,7 @@ elif [ $ret -eq 0 ]; then
     
     DM_t="$HOME/.idiomind/topics"
     [ ! -d  "$HOME/.config" ] && mkdir "$HOME/.config"
-    mkdir -p "$HOME/.config/idiomind/s"
-    DC_s="$HOME/.config/idiomind/s"
+    DC_s="$HOME/.config/idiomind"
     mkdir "$HOME/.config/idiomind/addons"
 
     for val in "${lt[@]}"; do
