@@ -151,7 +151,7 @@ edit_item() {
     cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"""
     cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"" "\"${trgt}\"""
     cmd_def="'$DS/ifs/tls.sh' 'find_def' "\"${trgt}\"""
-    link1="https://translate.google.com/\#$lgt/$lgs/${query}"
+    cmd_trad="'$DS/ifs/tls.sh' 'find_trad' "\"${trgt}\"""
 
     [ -z "${item}" ] && exit 1
     if [ ${text_missing} != 0 ]; then
@@ -177,7 +177,8 @@ edit_item() {
         if [ -z "${edit_dlg1}" -a -z "${edit_dlg2}" ]; then
             item_pos=$((item_pos-1)); fi
             
-        if [ ${ret} -eq 0  ]; then
+        if [ ${ret} -eq 0  -o ${ret} -eq 2 ]; then
+        
             include "$DS/ifs/mods/add"
             dlaud="$(grep -oP '(?<=dlaud=\").*(?=\")' "$DC_s/1.cfg")"
             if [ ${type} = 1 ]; then
@@ -332,10 +333,13 @@ edit_item() {
             [ ${type} != ${type_mod} -a ${type_mod} = 1 ] && ( img_word "${trgt}" "${srce}" ) &
             [ ${colorize_run} = 1 ] && "$DS/ifs/tls.sh" colorize &
             [ ${tagset} = 1 ] && tagget_item &
-            [ ${to_modify} = 1 ] && sleep 0.2
+            [ ${to_modify} = 1 -a $ret -eq 0 ] && sleep 0.2
+            [ $ret -eq 2 ] && "$DS/mngr.sh" edit ${list} $((item_pos-1))
+            [ $ret -eq 0 ] && "$DS/vwr.sh" ${list} "${trgt}" ${item_pos} &
+        else
+            "$DS/vwr.sh" ${list} "${trgt}" ${item_pos} &
         fi
-        "$DS/vwr.sh" ${list} "${trgt}" ${item_pos} &
-    exit
+        exit
 }
 
 tagget_item() {
