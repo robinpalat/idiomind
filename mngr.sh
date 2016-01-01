@@ -14,7 +14,7 @@ mkmn() {
     [ -d "$DM_tl/images" ] && rm -r "$DM_tl/images"
     dirimg='/usr/share/idiomind/images'
     if ls -tNd */ 1> /dev/null 2>&1; then
-        for i in "$(ls -tNd */ | cut -f1 -d'/')"; do 
+        for i in "$(ls -tNd */ |cut -f1 -d'/')"; do 
             echo "${i%%/}"
         done > "$DM_tl/.1.cfg"
     fi

@@ -17,7 +17,7 @@ play_word() {
             msg "$info" error Info
         fi
     else
-        echo "${w}." |espeak -v ${lang[$lgtl]} -s 100 -b 1 -p 60 &
+        echo "${w}." |espeak -v ${lang[$lgtl]} -s 110 -b 1 -p 60 &
     fi
 } >/dev/null 2>&1
 
@@ -33,7 +33,7 @@ play_sentence() {
         fi
     else
         sed 's/<[^>]*>//g' <<<"${trgt}." \
-        |espeak -v ${lang[$lgtl]} -s 100 -b 1 -p 50 &
+        |espeak -v ${lang[$lgtl]} -s 120 -b 1 -p 60 &
     fi
 } >/dev/null 2>&1
 
@@ -48,7 +48,7 @@ play_file() {
         fi
     else
         sed 's/<[^>]*>//g' <<<"${3}." \
-        |espeak -v ${lang[$lgtl]} -s 100 -b 1 -p 60
+        |espeak -v ${lang[$lgtl]} -s 120 -b 1 -p 60
     fi
 } >/dev/null 2>&1
 
