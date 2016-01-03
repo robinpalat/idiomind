@@ -304,6 +304,12 @@ _definition() {
     --button="$(gettext "Close")":1 &
 } >/dev/null 2>&1
 
+_translation() {
+    source "$DS/ifs/mods/cmns.sh"
+    source /usr/share/idiomind/default/c.conf
+    xdg-open "https://translate.google.com/\#$lgt/$lgs/${2}"
+} >/dev/null 2>&1
+
 _quick_help() {
     _url='http://idiomind.sourceforge.net/doc/help.html'
     yad --html --title="$(gettext "Reference")" \
@@ -717,6 +723,8 @@ case "$1" in
     fback ;;
     find_def)
     _definition "$@" ;;
+    find_trad)
+    _translation "$@" ;;
     update_menu)
     menu_addons ;;
     colorize)

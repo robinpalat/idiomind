@@ -19,14 +19,15 @@ function dlg_form_1() {
     --field="$(gettext "Example")\t\t\t\t\t\t\t\t\t\t\t":TXT "${exmp}" \
     --field="$(gettext "Definition")":TXT "${defn}" \
     --field="$(gettext "Note")":TXT "${note}" \
-    --field="<a href='$link1'>$(gettext "Go to Google Translate")</a>  ":LBL " " \
+    --field="$(gettext "Go to Google Translate")":FBTN "${cmd_trad}" \
     --field="$(gettext "Mark")":CHK "$mark" \
     --field="$(gettext "Audio")":FL "${audf}" \
     --field="$(gettext "Definition")":FBTN "${cmd_def}" \
     --button="$(gettext "Image")":"${cmd_image}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \
+    --button="$(gettext "Close")":0 \
     --button="!$DS/images/listen.png!$(gettext "Listen")":"$cmd_play" \
-    --button="$(gettext "Close")":0 |tail -n 1 |tr '\n' ' '
+    --button="$(gettext "Next")":2
 }
 
 function dlg_form_2() {
@@ -45,15 +46,16 @@ function dlg_form_2() {
     --field="$(gettext "Mark")":CHK "$mark" \
     --field=" $lbl_2":${t} "$type" \
     --field="$lgtl":TXT "${trgt}" \
-    --field="<a href='$link1'>$(gettext "Go to Google Translate")</a>\t":LBL " " \
     --field="$lgsl":TXT "${srce}" \
+    --field="$(gettext "Go to Google Translate")":FBTN "${cmd_trad}" \
     --field="\t\t\t$(gettext "Topic")":CB "${tpc_list}" \
     --field="$(gettext "Tag")":CB "${tags_list}" \
     --field="$(gettext "Audio")":FL "${audf}" \
     --button="$(gettext "Words")":"${cmd_words}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \
+    --button="$(gettext "Close")":0 \
     --button="!$DS/images/listen.png!$(gettext "Listen")":"$cmd_play" \
-    --button="$(gettext "Close")":0 |tail -n 1 |tr '\n' ' '
+    --button="$(gettext "Next")":2
 }
 
 function edit_list_list() {

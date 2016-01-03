@@ -33,7 +33,7 @@ play_sentence() {
         fi
     else
         sed 's/<[^>]*>//g' <<<"${trgt}." \
-        |espeak -v ${lang[$lgtl]} -s 110 -b 1 -p 60 &
+        |espeak -v ${lang[$lgtl]} -s 120 -b 1 -p 60 &
     fi
 } >/dev/null 2>&1
 
