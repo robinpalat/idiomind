@@ -200,7 +200,7 @@ edit_item() {
                 mark_mod="$(cut -d "|" -f1 <<<"${edit_dlg}")"
                 type_mod="$(cut -d "|" -f2 <<<"${edit_dlg}")"
                 trgt_mod="$(clean_2 "$(cut -d "|" -f3 <<<"${edit_dlg}")")"
-                srce_mod="$(clean_2 "$(cut -d "|" -f5 <<<"${edit_dlg}")")"
+                srce_mod="$(clean_2 "$(cut -d "|" -f4 <<<"${edit_dlg}")")"
                 audf_mod="$(cut -d "|" -f8 <<<"${edit_dlg}")"
                 grmr_mod="${grmr}"
                 wrds_mod="${wrds}"

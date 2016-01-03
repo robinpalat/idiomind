@@ -46,8 +46,8 @@ function dlg_form_2() {
     --field="$(gettext "Mark")":CHK "$mark" \
     --field=" $lbl_2":${t} "$type" \
     --field="$lgtl":TXT "${trgt}" \
-    --field="$(gettext "Go to Google Translate")":FBTN "${cmd_trad}" \
     --field="$lgsl":TXT "${srce}" \
+    --field="$(gettext "Go to Google Translate")":FBTN "${cmd_trad}" \
     --field="\t\t\t$(gettext "Topic")":CB "${tpc_list}" \
     --field="$(gettext "Tag")":CB "${tags_list}" \
     --field="$(gettext "Audio")":FL "${audf}" \
