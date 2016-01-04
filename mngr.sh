@@ -166,7 +166,8 @@ edit_item() {
     if [ -e "${DM_tlt}/$id.mp3" ]; then
         audf="${DM_tlt}/$id.mp3"
     else
-        audf="${DM_tls}/audio/${trgt,,}.mp3"; fi
+        audf="${DM_tls}/audio/${trgt,,}.mp3"
+    fi
         
     if [ ${type} = 1 ]; then
         edit_dlg1="$(dlg_form_1)"
@@ -178,7 +179,7 @@ edit_item() {
         if [ -z "${edit_dlg1}" -a -z "${edit_dlg2}" ]; then
             item_pos=$((item_pos-1)); fi
             
-        if [ ${ret} -eq 0  -o ${ret} -eq 2 ]; then
+        if [ ${ret} -eq 0 -o ${ret} -eq 2 ]; then
         
             include "$DS/ifs/mods/add"
             dlaud="$(grep -oP '(?<=dlaud=\").*(?=\")' "$DC_s/1.cfg")"
@@ -286,7 +287,7 @@ edit_item() {
 
                 elif [ "${tpc}" = "${tpc_mod}" ]; then
                     cfg0="${DC_tlt}/0.cfg"
-                    pos=${edit_pos}
+                    pos=${item_pos}
                     sed -i "${pos}s|type={$type}|type={$type_mod}|;
                     ${pos}s|srce={$srce}|srce={$srce_mod}|;
                     ${pos}s|exmp={$exmp}|exmp={$exmp_mod}|;
@@ -335,8 +336,10 @@ edit_item() {
             [ ${colorize_run} = 1 ] && "$DS/ifs/tls.sh" colorize &
             [ ${tagset} = 1 ] && tagget_item &
             [ ${to_modify} = 1 -a $ret -eq 0 ] && sleep 0.2
-            [ $ret -eq 2 ] && "$DS/mngr.sh" edit ${list} $((item_pos-1))
-            [ $ret -eq 0 ] && "$DS/vwr.sh" ${list} "${trgt}" ${item_pos} &
+            
+            if [ $ret -eq 2 ]; then "$DS/mngr.sh" edit ${list} $((item_pos-1)) &
+            elif [ $ret -eq 0 ]; then "$DS/vwr.sh" ${list} "${trgt}" ${item_pos} & fi
+            
         else
             "$DS/vwr.sh" ${list} "${trgt}" ${item_pos} &
         fi
