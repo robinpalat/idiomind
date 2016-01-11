@@ -19,7 +19,7 @@ _note(){
 
 sentence_normal() {
     cat <<!EOF
-<table style="vertical-align:top" width="100%" align="left" cellpadding="0" cellspacing="10">
+<table style="vertical-align:top" width="100%" align="left" cellpadding="0" cellspacing="0">
 <td><s1>${trgt}</s1><br><s2>${srce}</s2><hr class="dashed"></td></table>
 !EOF
 }

@@ -231,6 +231,9 @@ function topic() {
             if [[ $auto_mrk_mod != $auto_mrk ]] && [ -n "$auto_mrk_mod" ]; then
             sed -i "s/acheck=.*/acheck=\"$auto_mrk_mod\"/g" "${DC_tlt}/10.cfg"; fi
             
+            if [[ $auto_mrk_mod = FALSE ]] && [[ $auto_mrk != FALSE ]]; then
+                "$DS/ifs/tls.sh" colorize; rm "${cnf1}"; fi
+
             if grep TRUE "${cnf1}"; then
                 grep -Rl "|FALSE|" "${cnf1}" | while read tab1; do
                      sed '/|FALSE|/d' "${cnf1}" > "$DT/tmpf1"
