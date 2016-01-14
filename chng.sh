@@ -145,7 +145,8 @@ elif [[ ${1} != 0 ]]; then
     --width=620 --height=580 --borders=8 \
     --column=img:IMG \
     --column=File:TEXT \
-    --button="$(gettext "Info")":"$DS/ifs/mods/topic/Dictionary.sh" \
+    --button="<small>$(gettext "Statistics")</small>":"$DS/ifs/stats/stats.sh" \
+    --button="<small>$(gettext "New Words")</small>":"$DS/ifs/mods/topic/Dictionary.sh" \
     --button="$(gettext "New")"!gtk-new:3 \
     --button="$(gettext "Apply")":2 \
     --button="$(gettext "Close")"!gtk-close:1)

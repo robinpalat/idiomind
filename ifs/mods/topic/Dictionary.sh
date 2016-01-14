@@ -27,25 +27,18 @@ function dictionary() {
             let limit++
         done
     }
-    fkey=$(($RANDOM * $$))
-    yad --html --uri="/usr/share/idiomind/ifs/stats/1.html" --browser \
-    --text="Palabras aprendidas a traves de meses" \
-    --tabnum=1 --plug="$fkey" &
     list | yad --list --title="$(gettext "New Words")" \
     --text="Ultimas palabras desconocidas" \
-    --tabnum=2 --plug="$fkey"  \
     --dclick-action="$find_cmd" \
     --no-headers --search-column=1 --regex-search --print-column=1 \
     --column="$(gettext "$lgtl")":TEXT \
     --column="$(gettext "$lgsl")":TEXT \
-    --align=right --image-on-top &
-    yad --paned --key="$fkey" \
-    --title="$(gettext "Stats")" \
+    --align=right --image-on-top \
     --name=Idiomind --class=Idiomind \
     --orient=vert --window-icon=idiomind --on-top --center \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --width=620 --height=580 --borders=2 --splitter=280 \
-    --button="gtk-close":1
+    --button="<small>$(gettext "Close")</small>":1
     
 } >/dev/null 2>&1
 
