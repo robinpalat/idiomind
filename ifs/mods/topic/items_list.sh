@@ -16,7 +16,7 @@ function word_view() {
     --scroll --skip-taskbar --text-align=center \
     --image-on-top --center --on-top \
     --width=630 --height=390 --borders=20 \
-    --field="":lbl "${field_tag}" "${field_exmp}" "${field_defn}" "${field_note}" \
+    "${field_tag}" "${field_exmp}" "${field_defn}" "${field_note}" \
     --button="gtk-edit":4 \
     --button="!$DS/images/listen.png":"$cmd_listen" \
     --button="$(gettext "Next")":2

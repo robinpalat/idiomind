@@ -403,7 +403,7 @@ panel() {
     
     ( yad --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
-    --always-print-result \
+    --always-print-result --no-focus \
     --window-icon=idiomind \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --form --fixed --on-top --no-buttons --align=center \

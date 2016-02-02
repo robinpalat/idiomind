@@ -93,7 +93,7 @@ function practice_a() {
         --skip-taskbar --text-align=center --center --on-top \
         --undecorated --buttons-layout=spread --align=center \
         --width=380 --height=260 --borders=8 \
-        --field="\n$question":lbl \
+        --field="\n$question":lbl "" \
         --button="$(gettext "Exit")":1 \
         --button="  $(gettext "Continue") >>  !$img_cont":0
     }
@@ -104,9 +104,9 @@ function practice_a() {
         --skip-taskbar --text-align=center --center --on-top \
         --undecorated --buttons-layout=spread --align=center \
         --width=380 --height=260 --borders=8 \
-        --field="$answer1":lbl \
-        --field="":lbl \
-        --field="$answer2":lbl \
+        --field="$answer1":lbl "" \
+        --field="":lbl "" \
+        --field="$answer2":lbl "" \
         --button="$(gettext "I did not know it")!$img_no":3 \
         --button="$(gettext "I Knew it")!$img_yes":2
     }
@@ -336,7 +336,7 @@ function practice_d() {
         --skip-taskbar --text-align=center --align=center --center --on-top \
         --image-on-top --undecorated --buttons-layout=spread \
         --width=418 --height=370 --borders=5 \
-        --field="$cuest":lbl \
+        --field="$cuest":lbl "" \
         --button="$(gettext "Exit")":1 \
         --button=" $(gettext "Continue") >>!$img_cont":0
     }
@@ -348,7 +348,7 @@ function practice_d() {
         --skip-taskbar --text-align=center --align=center --center --on-top \
         --image-on-top --undecorated --buttons-layout=spread \
         --width=418 --height=370 --borders=5 \
-        --field="$aswer":lbl \
+        --field="$aswer":lbl "" \
         --button="$(gettext "I did not know it")!$img_no":3 \
         --button="$(gettext "I Knew it")!$img_yes":2
     }
@@ -440,7 +440,7 @@ function practice_e() {
         --skip-taskbar --wrap --scroll --image-on-top --center --on-top \
         --undecorated --buttons-layout=end \
         --width=510 --height=220 --borders=10 \
-        --field="":lbl \
+        --field="":lbl "" \
         --field="<span font_desc='Free Sans 10'>$OK\n\n$prc $hits</span>":lbl \
         --button="$(gettext "Continue")":2
         }
