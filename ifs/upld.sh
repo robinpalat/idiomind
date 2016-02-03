@@ -142,7 +142,7 @@ function upld() {
         --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
         --field="$(gettext "Author")" "$usrid" \
         --field="\t\t$(gettext "Password")" "$passw" \
-        --field=" ":LBL \
+        --field=" ":LBL "" \
         --button="$(gettext "Export")":2 "$btn" --button="$(gettext "Close")":4
     }
 
@@ -221,6 +221,7 @@ function upld() {
             
         fi
         [ $ret = 1 ] && exit 1
+        dlg="$(echo "${dlg}" |tail -n1)"
         ctgry=$(echo "${dlg}" | cut -d "|" -f1)
         level=$(echo "${dlg}" | cut -d "|" -f2)
         notes_m=$(echo "${dlg}" | cut -d "|" -f3)

@@ -28,7 +28,6 @@ function dictionary() {
         done
     }
     list | yad --list --title="$(gettext "New Words")" \
-    --text="Ultimas palabras desconocidas" \
     --dclick-action="$find_cmd" \
     --no-headers --search-column=1 --regex-search --print-column=1 \
     --column="$(gettext "$lgtl")":TEXT \
@@ -37,7 +36,7 @@ function dictionary() {
     --name=Idiomind --class=Idiomind \
     --orient=vert --window-icon=idiomind --on-top --center \
     --gtkrc="$DS/default/gtkrc.cfg" \
-    --width=620 --height=580 --borders=2 --splitter=280 \
+    --width=620 --height=420 --borders=2 --splitter=280 \
     --button="<small>$(gettext "Close")</small>":1
     
 } >/dev/null 2>&1
