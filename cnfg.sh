@@ -140,7 +140,7 @@ config_dlg() {
     --tab-borders=5 --sticky --center \
     --tab="$(gettext "Preferences")" \
     --tab="$(gettext "Extensions")" \
-    --width=470 --height=330 --borders=2 \
+    --width=490 --height=350 --borders=2 \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "OK")":0
     ret=$?

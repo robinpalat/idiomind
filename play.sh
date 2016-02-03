@@ -149,7 +149,7 @@ play_list() {
     --tab-pos=right --tab-borders=0 \
     --tab=" $(gettext "Lists") " \
     --tab="$(gettext "Options")" \
-    --width=400 --height=300 --borders=0 \
+    --width=420 --height=300 --borders=0 \
     "$btn2" --button="$btn1" --button="$(gettext "Close")":1
     ret=$?
         tab1=$(< $tab1); tab2=$(< $tab2); rm -f "$DT"/*.p
