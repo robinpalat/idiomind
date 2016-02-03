@@ -63,7 +63,7 @@ check_index() {
     [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
     source "$DS/ifs/mods/cmns.sh"
     DC_tlt="$DM_tl/${2}/.conf"; DM_tlt="$DM_tl/${2}"
-    tpc="${2}"; mkmn=0; f=0; a=0; id=0
+    tpc="${2}"; mkmn=0; f=0; a=0; id=1
     [[ ${3} = 1 ]] && r=1 || r=0
     psets=( 'words' 'sntcs' 'marks' 'wprct' 'rplay' \
     'audio' 'ntosd' 'loop' 'rword' 'acheck' )
@@ -72,6 +72,10 @@ check_index() {
         if [ ! -d "${DC_tlt}" ]; then mkdir "${DC_tlt}"; fi
         if [ ! -d "${DM_tlt}" ]; then mkdir "${DC_tlt}"; fi
         if [ ! -d "${DM_tlt}/images" ]; then mkdir "${DM_tlt}/images"; fi
+        if [ ! -d "${DC_tlt}/practice" ]; then 
+        mkdir "${DC_tlt}/practice"; touch "${DC_tlt}/practice/log1" \
+        "${DC_tlt}/practice/log2" "${DC_tlt}/practice/log3"; fi
+
         for n in {0..4}; do
             [ ! -e "${DC_tlt}/${n}.cfg" ] && touch "${DC_tlt}/${n}.cfg" && a=1
             if grep '^$' "${DC_tlt}/${n}.cfg"; then
@@ -84,9 +88,9 @@ check_index() {
             done
         fi
         [ ! -e "${DC_tlt}/9.cfg" ] && touch "${DC_tlt}/9.cfg"
-        
-        if [[ `egrep -cv '#|^$' < "${DC_tlt}/id.cfg"` = 19 ]]; then id=1; fi
-        if [ ! -e "${DC_tlt}/id.cfg" ]; then id=0; fi
+        [ ! -e "${DC_tlt}/id.cfg" ] && touch "${DC_tlt}/id.cfg"; id=0
+        ! [[ `egrep -cv '#|^$' < "${DC_tlt}/id.cfg"` = 19 ]] &&  id=0
+
         if [[ ${id} != 1 ]]; then
             datec=$(date +%F)
             eval c="$(< $DS/default/topic.cfg)"
@@ -578,6 +582,7 @@ menu_addons() {
 }
 
 colorize() {
+    source "$DS/ifs/mods/cmns.sh"
     f_lock "$DT/co_lk"
     rm "${DC_tlt}/5.cfg"
     [ ! -e "${DC_tlt}/1.cfg" ] && touch "${DC_tlt}/1.cfg"

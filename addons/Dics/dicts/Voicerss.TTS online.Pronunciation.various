@@ -32,12 +32,14 @@ if [[ "$1" = dlgcnfg ]]; then
         sed -i "s/key=.*/key=\"$(cut -d "|" -f3 <<<"$c")\"/g" "$DC_a/voicerss.cfg"
     fi
 else
+    ! [ "$DC_a/voicerss.cfg" ] && touch "$DC_a/voicerss.cfg"
     k=$(grep -o key=\"[^\"]* "$DC_a/voicerss.cfg" |grep -o '[^"]*$')
+    [ -z "${k}" ] && "$DS_a/Dics/dicts/Voicerss.TTS online.Pronunciation.various" dlgcnfg & exit 1
     speed=$(grep -o speed=\"[^\"]* "$DC_a/voicerss.cfg" |grep -o '[^"]*$')
     if [ "$speed" = Slow ]; then s=-2
     elif [ "$speed" = Normal ]; then s=0
     elif [ "$speed" = Fast ]; then s=2
-    fi
+    else s=0; fi
 
     if [ -z "$voice" ]; then
     if [ "$lgt" = en ]; then v='en-us'

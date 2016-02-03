@@ -56,10 +56,10 @@
 	Chart.defaults = {
 		global: {
 			// Boolean - Whether to animate the chart
-			animation: false,
+			animation: true,
 
 			// Number - Number of animation steps
-			animationSteps: 60,
+			animationSteps: 5,
 
 			// String - Animation easing effect
 			animationEasing: "easeOutQuart",
@@ -115,7 +115,7 @@
 			maintainAspectRatio: true,
 
 			// Boolean - Determines whether to draw tooltips on the canvas or not - attaches events to touchmove & mousemove
-			showTooltips: true,
+			showTooltips: false,
 
 			// Boolean - Determines whether to draw built-in tooltip or call custom tooltip function
 			customTooltips: false,

@@ -1,3 +1,5 @@
 #!/bin/bash
 
-"$(dirname "$0")/Ispeech.TTS online.Pronunciation.various" "$@"
+dir="/usr/share/idiomind/addons/Dics/dicts"
+source "$dir/Ispeech.TTS online.Pronunciation.various"
+

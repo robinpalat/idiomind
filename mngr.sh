@@ -20,6 +20,7 @@ mkmn() {
     fi
     sed -i '/^$/d' "$DM_tl/.1.cfg"; > "$DM_tl/.0.cfg"
     
+    # -----------------------------------------------------------------------------------------------
     head -100 < "$DM_tl/.1.cfg" | while read -r tpc; do
         unset stts
         [ ! -d "$DM_tl/${tpc}/.conf" ] && mkdir -p "$DM_tl/${tpc}/.conf"
@@ -29,6 +30,21 @@ mkmn() {
             stts=$(sed -n 1p "$DM_tl/${tpc}/.conf/8.cfg")
         fi
         echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$DM_tl/.0.cfg"
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        # -----------------------------------------------------------------------------------------------
     done
     tail -n+101 < "$DM_tl/.1.cfg" | while read -r tpc; do
         unset stts

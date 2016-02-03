@@ -8,7 +8,7 @@
 	<body>
 	Global stats
         <div>
-            <canvas id="canvas" height="180" width="560"></canvas>
+            <canvas id="canvas" height="280" width="560"></canvas>
         </div>
         
 	<script>
@@ -19,15 +19,28 @@
 	<script>
         var mydata = JSON.parse(data);
 		var lineChartData = {
-			labels : ["Jan","Feb","Mar","Apr","May","Jun","Jul",
-            "Aug","Sep","Oct","Nov","Dec"],
-			datasets : [{data : mydata[0].f1},{data : mydata[0].f2}]
+            
+			labels : ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+            
+			datasets : [{ label: "My First dataset", 
+                fillColor: "rgba(220,120,220,0.5)", 
+                strokeColor: "rgba(220,210,220,0.8)", 
+                highlightFill: "rgba(220,220,220,0.75)", 
+                highlightStroke: "rgba(220,220,220,1)", 
+                data : mydata[0].f1},{data : mydata[0].f2},{data : mydata[0].f3},{data : mydata[0].f4}]
+
 		}
+        
 	window.onload = function(){
 		var ctx = document.getElementById("canvas").getContext("2d");
 		window.myLine = new Chart(ctx).Line(lineChartData, {
 			responsive: true
 		});
+        //nuevos colores
+        myLine.datasets[0].Line[0].fillColor = "green"; //bar 1
+        myLine.datasets[0].Line[1].fillColor = "orange"; //bar 2
+        myLine.datasets[0].line[2].fillColor = "red"; //bar 3
+        myLine.update();
 	}
 	</script>
 
