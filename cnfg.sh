@@ -3,7 +3,7 @@
 
 source /usr/share/idiomind/default/c.conf
 [ ! -d "$DC" ] && "$DS/ifs/1u.sh" && exit
-info2="$(gettext "Switch Language.")"
+info2="$(gettext "Switch Language")"
 cd "$DS/addons"
 [[ -n "$(< "$DC_s/1.cfg")" ]] && cfg=1 || > "$DC_s/1.cfg"
 cnf1=$(mktemp "$DT/cnf1.XXXX")
@@ -26,7 +26,7 @@ sets=( 'gramr' 'wlist' 'trans' 'dlaud' 'ttrgt' 'clipw' 'stsks' \
 
 confirm() {
     yad --form --title="$(gettext "Confirm")" \
-    --image=$2 --text="$1\n" \
+    --image="$DS/images/translate.png" --text="$1\n" \
     --window-icon=idiomind \
     --skip-taskbar --center --on-top \
     --width=340 --height=120 --borders=5 \
