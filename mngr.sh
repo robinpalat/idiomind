@@ -20,7 +20,7 @@ mkmn() {
     fi
     sed -i '/^$/d' "$DM_tl/.1.cfg"; > "$DM_tl/.0.cfg"
     
-    # -----------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------
     head -100 < "$DM_tl/.1.cfg" | while read -r tpc; do
         unset stts
         [ ! -d "$DM_tl/${tpc}/.conf" ] && mkdir -p "$DM_tl/${tpc}/.conf"
@@ -30,21 +30,7 @@ mkmn() {
             stts=$(sed -n 1p "$DM_tl/${tpc}/.conf/8.cfg")
         fi
         echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$DM_tl/.0.cfg"
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        # -----------------------------------------------------------------------------------------------
+    # --------------------------------------------------------------
     done
     tail -n+101 < "$DM_tl/.1.cfg" | while read -r tpc; do
         unset stts
@@ -56,6 +42,24 @@ mkmn() {
         fi
         echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$DM_tl/.0.cfg"
     done
+    
+    stats() {
+        pdata="$DM_tl/.pre_data"; > "$pdata"
+        head -100 < "$DM_tl/.1.cfg" |while read -r tpc; do
+            if [ -f "$DM_tl/${tpc}/.conf/1.cfg" ]; then
+            pos=`egrep -cv '#|^$' < "$DM_tl/${tpc}/.conf/1.cfg"`; else pos=0; fi
+            if [ -f "$DM_tl/${tpc}/.conf/2.cfg" ]; then
+            neg=`egrep -cv '#|^$' < "$DM_tl/${tpc}/.conf/2.cfg"`; else neg=0; fi
+            tot=$((pos+neg))
+            echo "$tot,$pos,$neg" >> "$pdata"
+        done
+        tot=$(( $(cat "$pdata" |cut -d ',' -f 1 |tr "\n" "+" |xargs -I{} echo {} 0) ))
+        pos=$(( $(cat "$pdata" |cut -d ',' -f 2 |tr "\n" "+" |xargs -I{} echo {} 0) ))
+        neg=$(( $(cat "$pdata" |cut -d ',' -f 3 |tr "\n" "+" |xargs -I{} echo {} 0) ))
+        echo "$tot,$pos,$neg" > "$pdata"
+    }
+    
+    stats &
     rm -f "$DT/mn_lk"; exit
 }
 
