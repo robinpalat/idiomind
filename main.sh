@@ -50,8 +50,8 @@ function new_session() {
     for strt in "$DS/ifs/mods/start"/*; do
     ( sleep 20 && "${strt}" ); done &
     
-    list_inadd > "$DM_tl/.2.cfg"
-    check_index1 "$DM_tl/.3.cfg"
+    list_inadd > "$DM_tl/.share/2.cfg"
+    check_index1 "$DM_tl/.share/3.cfg"
     
     if ls "$DC_s"/*.p 1> /dev/null 2>&1; then
     cd "$DC_s"/; rename 's/\.p$//' *.p; fi; cd /
@@ -61,9 +61,9 @@ function new_session() {
     sed -n 2p <<<"$s" >> "$DC_s/10.cfg"
     
     # create database if not exist
-    cdb="$DM_tls/Dictionary/${lgtl}.db"
+    cdb="$DM_tls/data/${lgtl}.db"
     if [[ ! -e ${cdb} ]]; then
-    [ ! -d "$DM_tls/Dictionary" ] && mkdir -p "$DM_tls/Dictionary" 
+    [ ! -d "$DM_tls/data" ] && mkdir -p "$DM_tls/data" 
     echo -n "create table if not exists Words (Word TEXT);" |sqlite3 ${cdb}
     echo -n "create table if not exists Config (Study TEXT, Expire INTEGER);" |sqlite3 ${cdb}
     fi
@@ -76,7 +76,7 @@ function new_session() {
     fi
 
     # update status
-    [ ! -e "$DM_tl/.1.cfg" ] && touch "$DM_tl/.1.cfg"
+    [ ! -e "$DM_tl/.share/1.cfg" ] && touch "$DM_tl/.share/1.cfg"
     while read -r line; do
     unset stts
     DM_tlt="$DM_tl/${line}"
@@ -99,7 +99,7 @@ function new_session() {
             fi
         fi
     fi
-    done < "$DM_tl/.1.cfg"
+    done < "$DM_tl/.share/1.cfg"
     rm -f "$DT/ps_lk"
     "$DS/mngr.sh" mkmn &
 }
@@ -184,7 +184,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             "$DS/ifs/tls.sh" colorize
             echo -e "$langt\n$lgsl" > "$DC_s/6.cfg"
             echo 1 > "${DC_tlt}/8.cfg"
-            echo "${tname}" >> "$DM_tl/.3.cfg"
+            echo "${tname}" >> "$DM_tl/.share/3.cfg"
             source /usr/share/idiomind/default/c.conf
             "$DS/mngr.sh" mkmn
             "$DS/default/tpc.sh" "${tname}" 1 &

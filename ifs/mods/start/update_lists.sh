@@ -32,7 +32,7 @@ done
 sed -i '/^$/d' "${items}"
 f_lock "$DT/co_lk"
 dir="$DM_tl/"
-topics="${DM_tl}/.1.cfg"
+topics="${DM_tl}/.share/1.cfg"
 lstp="${items}"
 export dir topics lstp img0 img1 img2 img3
 python <<PY

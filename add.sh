@@ -13,7 +13,7 @@ ttrgt=$(grep -oP '(?<=ttrgt=\").*(?=\")' "$DC_s/1.cfg")
 dlaud=$(grep -oP '(?<=dlaud=\").*(?=\")' "$DC_s/1.cfg")
 
 new_topic() {
-    if [[ $(wc -l < "$DM_tl/.1.cfg") -ge 120 ]]; then
+    if [[ $(wc -l < "$DM_tl/.share/1.cfg") -ge 120 ]]; then
     msg "$(gettext "Maximum number of topics reached.")" info "$(gettext "Information")" & exit 1; fi
     
     source "$DS/ifs/mods/add/add.sh"
@@ -27,7 +27,7 @@ new_topic() {
     fi
     
     if grep -Fxo "${jlb}" < <(ls "$DS/addons/"); then jlb="${jlb} (1)"; fi
-    chck=$(grep -Fxo "${jlb}" "$DM_tl/.1.cfg" |wc -l)
+    chck=$(grep -Fxo "${jlb}" "$DM_tl/.share/1.cfg" |wc -l)
     
     if [[ ${chck} -ge 1 ]]; then
         for i in {1..50}; do
@@ -43,13 +43,13 @@ new_topic() {
     if [ -z "${jlb}" ]; then exit 1; fi
     if [ ${type} = "$(gettext "Normal")" ]; then
         mkdir "$DM_tl/${jlb}"
-        list_inadd > "$DM_tl/.2.cfg"
+        list_inadd > "$DM_tl/.share/2.cfg"
         "$DS/default/tpc.sh" "${jlb}" 1 1
         "$DS/mngr.sh" mkmn
     elif  [ ${type} = "$(gettext "Tag")" ]; then
         mkdir "$DM_tl/${jlb}"
-        list_inadd > "$DM_tl/.2.cfg"
-        echo "${jlb}" >> "${DM_tl}/.5.cfg"
+        list_inadd > "$DM_tl/.share/2.cfg"
+        echo "${jlb}" >> "$DM_tl/.share/5.cfg"
         "$DS/default/tpc.sh" "${jlb}" 14 1
         "$DS/mngr.sh" mkmn
     fi
@@ -146,7 +146,7 @@ function new_sentence() {
 function new_word() {
     trgt="$(clean_1 "${trgt}")"
     srce="$(clean_0 "${srce}")"
-    cdb="$DM_tls/Dictionary/${lgtl}.db"
+    cdb="$DM_tls/data/${lgtl}.db"
     
     if [[ ${trans} = TRUE ]]; then
         if [[ ${ttrgt} = TRUE ]]; then
@@ -424,7 +424,7 @@ function process() {
     elif [[ ${chk} -gt 180 ]]; then
         slt=$(mktemp $DT/slt.XXXX.x)
         xclip -i /dev/null
-        tpcs="$(grep -vFx "${tpe}" "$DM_tl/.2.cfg" |tr "\\n" '!' |sed 's/\!*$//g')"
+        tpcs="$(grep -vFx "${tpe}" "$DM_tl/.share/2.cfg" |tr "\\n" '!' |sed 's/\!*$//g')"
         [ -n "$tpcs" ] && e='!'
         tpe="$(dlg_checklist_3 "$DT_r/sntsls" "${tpe}")"
         ret="$?"
@@ -701,7 +701,7 @@ new_items() {
     [ -e "$DT_r/ico.jpg" ] && img="$DT_r/ico.jpg" \
     || img="$DS/images/nw.png"
     
-    tpcs="$(grep -vFx "${tpe}" "$DM_tl/.2.cfg" |tr "\\n" '!' |sed 's/\!*$//g')"
+    tpcs="$(grep -vFx "${tpe}" "$DM_tl/.share/2.cfg" |tr "\\n" '!' |sed 's/\!*$//g')"
     [ -n "$tpcs" ] && e='!'
     if [ -z "${tpe}" ]; then check_s "${tpe}" & exit 1; fi
     
@@ -714,7 +714,7 @@ new_items() {
     trgt=$(echo "${lzgpr}" |head -n -1 |sed -n 1p)
     srce=$(echo "${lzgpr}" |sed -n 2p)
     chk=$(echo "${lzgpr}" |tail -1)
-    tpe=$(grep -Fxo "${chk}" "$DM_tl/.1.cfg")
+    tpe=$(grep -Fxo "${chk}" "$DM_tl/.share/1.cfg")
 
     if [ $ret -eq 3 ]; then
         [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")

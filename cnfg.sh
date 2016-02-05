@@ -55,12 +55,11 @@ set_lang() {
         > "$DT/tpe"; > "$DC_s/4.cfg"
     fi
     source "$DS/ifs/mods/cmns.sh"
-    list_inadd > "$DM_tl/.2.cfg"
+    list_inadd > "$DM_tl/.share/2.cfg"
     "$DS/mngr.sh" mkmn &
-    if [ ! -d "$DM_tl/.share/Dictionary/.conf" ]; then
-        mkdir -p "$DM_tls/Dictionary/.conf"
-        echo 0 > "$DM_tls/Dictionary/.conf/8.cfg"
-        cdb="$DM_tls/Dictionary/${lgtl}.db"
+    if [ ! -d "$DM_tl/.share/data" ]; then
+        mkdir -p "$DM_tls/data"
+        cdb="$DM_tls/data/${lgtl}.db"
         echo -n "create table if not exists Words \
         (Word TEXT, ${lgsl^} TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${cdb}
         echo -n "create table if not exists Config \
@@ -208,7 +207,7 @@ config_dlg() {
             if [ $? -eq 0 ]; then
                 echo ${lgtl} > "$DC_s/6.cfg"
                 echo ${lgsl} >> "$DC_s/6.cfg"
-                cdb="$DM_tls/Dictionary/${lgtl}.db"
+                cdb="$DM_tls/data/${lgtl}.db"
                 if ! grep -q ${lgsl} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(Words);")"; then
                     sqlite3 ${cdb} "alter table Words add column ${lgsl} TEXT;"
                 fi

@@ -1,9 +1,9 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-pdata="$DM_tl/.pre_data"
+pdata="$DM_tl/.share/data/pre_data"
 if [ -e "$pdata" ]; then
-    data="$DM_tl/.data"
+    data="$DM_tl/.share/data/data"
     tot=$(cut -d ',' -f 1 < "$pdata")
     pos=$(cut -d ',' -f 2 < "$pdata")
     neg=$(cut -d ',' -f 3 < "$pdata")

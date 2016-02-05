@@ -16,12 +16,12 @@ mkmn() {
     if ls -tNd */ 1> /dev/null 2>&1; then
         for i in "$(ls -tNd */ |cut -f1 -d'/')"; do 
             echo "${i%%/}"
-        done > "$DM_tl/.1.cfg"
+        done > "$DM_tl/.share/1.cfg"
     fi
-    sed -i '/^$/d' "$DM_tl/.1.cfg"; > "$DM_tl/.0.cfg"
+    sed -i '/^$/d' "$DM_tl/.share/1.cfg"; > "$DM_tl/.share/0.cfg"
     
     # ------------------------------------------------------------------
-    head -100 < "$DM_tl/.1.cfg" | while read -r tpc; do
+    head -100 < "$DM_tl/.share/1.cfg" | while read -r tpc; do
         unset stts
         [ ! -d "$DM_tl/${tpc}/.conf" ] && mkdir -p "$DM_tl/${tpc}/.conf"
         if [ ! -f "$DM_tl/${tpc}/.conf/8.cfg" ]; then
@@ -29,10 +29,10 @@ mkmn() {
         else
             stts=$(sed -n 1p "$DM_tl/${tpc}/.conf/8.cfg")
         fi
-        echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$DM_tl/.0.cfg"
-    # --------------------------------------------------------------
+        echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$DM_tl/.share/0.cfg"
+    # ------------------------------------------------------------------
     done
-    tail -n+101 < "$DM_tl/.1.cfg" | while read -r tpc; do
+    tail -n+101 < "$DM_tl/.share/1.cfg" | while read -r tpc; do
         unset stts
         [ ! -d "$DM_tl/${tpc}/.conf" ] && mkdir -p "$DM_tl/${tpc}/.conf"
         if [ ! -f "$DM_tl/${tpc}/.conf/8.cfg" ]; then
@@ -40,12 +40,12 @@ mkmn() {
         else 
             stts=12
         fi
-        echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$DM_tl/.0.cfg"
+        echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$DM_tl/.share/0.cfg"
     done
     
     stats() {
-        pdata="$DM_tl/.pre_data"; > "$pdata"
-        head -100 < "$DM_tl/.1.cfg" |while read -r tpc; do
+        pdata="$DM_tl/.share/data/pre_data"; > "$pdata"
+        head -100 < "$DM_tl/.share/1.cfg" |while read -r tpc; do
             if [ -f "$DM_tl/${tpc}/.conf/1.cfg" ]; then
             pos=`egrep -cv '#|^$' < "$DM_tl/${tpc}/.conf/1.cfg"`; else pos=0; fi
             if [ -f "$DM_tl/${tpc}/.conf/2.cfg" ]; then
@@ -161,9 +161,9 @@ edit_item() {
     query="$(sed "s/'/ /g" <<<"${trgt}")"
     to_modify=0; colorize_run=0; transl_mark=0
     if ((mode>=1 && mode<=10)); then
-    tpcs="$(egrep -v "${tpc}" "${DM_tl}/.2.cfg" |tr "\\n" '!' |sed 's/!\+$//g')"
+    tpcs="$(egrep -v "${tpc}" "$DM_tl/.share/2.cfg" |tr "\\n" '!' |sed 's/!\+$//g')"
     tpc_list="${tpc}!${tpcs}"
-    [ -n "${tag}" ] && tags="$(egrep -v "${tag}" < "${DM_tl}/.5.cfg")" || tags="$(< "${DM_tl}/.5.cfg")"
+    [ -n "${tag}" ] && tags="$(egrep -v "${tag}" < "$DM_tl/.share/5.cfg")" || tags="$(< "$DM_tl/.share/5.cfg")"
     [ -n "${tags}" ] && tags_list="${tag}!"$(tr '\n' '!' <<<"${tags}" |sed 's/!\+$//g')"\!" || tags_list=""
     else tags_list=""; fi
 
@@ -539,9 +539,9 @@ delete_topic() {
         rm -f "$DT/tpe"
         > "$DC_s/4.cfg"
         for n in {0..6}; do
-            if [ -e "$DM_tl/.${n}.cfg" ]; then
-                grep -vxF "${tpc}" "$DM_tl/.$n.cfg" > "$DM_tl/.${n}.cfg.tmp"
-                sed '/^$/d' "$DM_tl/.$n.cfg.tmp" > "$DM_tl/.${n}.cfg"
+            if [ -e "$DM_tl/.share/${n}.cfg" ]; then
+                grep -vxF "${tpc}" "$DM_tl/.share/${n}.cfg" > "$DM_tl/.share/${n}.cfg.tmp"
+                sed '/^$/d' "$DM_tl/.share/${n}.cfg.tmp" > "$DM_tl/.share/${n}.cfg"
             fi
         done
         kill -9 $(pgrep -f "yad --list ") &
@@ -550,17 +550,17 @@ delete_topic() {
         kill -9 $(pgrep -f "yad --notebook ") &
         "$DS/mngr.sh" mkmn &
     fi
-    rm -f "$DT/rm_lk" "$DM_tl"/.*.tmp & exit 1
+    rm -f "$DT/rm_lk" "$DM_tl/.share"/*.tmp & exit 1
 }
 
 rename_topic() {
     source "$DS/ifs/mods/add/add.sh"
-    info2=$(wc -l < "$DM_tl/.1.cfg")
-    if grep -Fxo "${tpc}" < "$DM_tl/.3.cfg"; then i=1; fi
+    info2=$(wc -l < "$DM_tl/.share/1.cfg")
+    if grep -Fxo "${tpc}" < "$DM_tl/.share/3.cfg"; then i=1; fi
     jlb="$(clean_3 "${2}")"
     
     if grep -Fxo "${jlb}" < <(ls "$DS/addons/"); then jlb="${jlb} (1)"; fi
-    chck="$(grep -Fxo "${jlb}" "$DM_tl/.1.cfg" | wc -l)"
+    chck="$(grep -Fxo "${jlb}" "$DM_tl/.share/1.cfg" |wc -l)"
     
     if [ ! -d "$DM_tl/${tpc}" ]; then exit 1; fi
   
@@ -596,15 +596,15 @@ rename_topic() {
         echo 0 > "$DC_s/5.cfg"
         
         for n in {1..6}; do
-            if grep -Fxq "${tpc}" "$DM_tl/.$n.cfg"; then
-                grep -vxF "${tpc}" "$DM_tl/.$n.cfg" > "$DM_tl/.${n}.cfg.tmp"
-                sed '/^$/d' "$DM_tl/.$n.cfg.tmp" > "$DM_tl/.${n}.cfg"
-                echo "${jlb}" >> "$DM_tl/.$n.cfg"
+            if grep -Fxq "${tpc}" "$DM_tl/.share/${n}.cfg"; then
+                grep -vxF "${tpc}" "$DM_tl/.share/${n}.cfg" > "$DM_tl/.share/${n}.cfg.tmp"
+                sed '/^$/d' "$DM_tl/.share/${n}.cfg.tmp" > "$DM_tl/.share/${n}.cfg"
+                echo "${jlb}" >> "$DM_tl/.share/${n}.cfg"
             fi
         done
         
-        list_inadd > "$DM_tl/.2.cfg"
-        rm "$DM_tl"/.*.tmp
+        list_inadd > "$DM_tl/.share/2.cfg"
+        rm "$DM_tl/.share"/*.tmp
         [ -d "$DM_tl/${tpc}" ] && rm -r "$DM_tl/${tpc}"
         [ -f "$DM/backup/${tpc}.bk" ] && rm "$DM/backup/${tpc}.bk"
         

@@ -10,7 +10,7 @@ export -f item
 
 function dictionary() {
     cmd_play="$DS/play.sh play_list"
-    cdb="$DM_tls/Dictionary/${lgtl}.db"
+    cdb="$DM_tls/data/${lgtl}.db"
     table="T`date +%m%y`"
     limit=0
     list() {

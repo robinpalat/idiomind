@@ -114,8 +114,8 @@ elif [[ ${1} != 0 ]]; then
         done < <(grep -Fvx "${ins}" <<<"${old}")
         echo "$ins" > "$DC_a/list"
     }
-    if [ ! -e "$DM_tl/.0.cfg" ]; then > "$DM_tl/.0.cfg"; fi
-    if [ ! -e "$DM_tl/.1.cfg" ]; then > "$DM_tl/.1.cfg"; fi
+    if [ ! -e "$DM_tl/.share/0.cfg" ]; then > "$DM_tl/.share/0.cfg"; fi
+    if [ ! -e "$DM_tl/.share/1.cfg" ]; then > "$DM_tl/.share/1.cfg"; fi
     if [ ! -e "$DC_a/list" ]; then
         echo "$(cd "/usr/share/idiomind/addons/"
         set -- */; printf "%s\n" "${@%/}")" > "$DC_a/list"
@@ -128,13 +128,13 @@ elif [[ ${1} != 0 ]]; then
     var2="--text-align=right"; fi
     chk_list_addons1=$(wc -l < "$DS_a/menu_list")
     chk_list_addons2=$((`wc -l < "$DC_a/list"`*2))
-    chk_list_topics1=$((`wc -l < "$DM_tl/.0.cfg"`/2))
-    chk_list_topics2=$(wc -l < "$DM_tl/.1.cfg")
+    chk_list_topics1=$((`wc -l < "$DM_tl/.share/0.cfg"`/2))
+    chk_list_topics2=$(wc -l < "$DM_tl/.share/1.cfg")
     if [[ ${chk_list_addons1} != ${chk_list_addons2} ]]; then remove_d; fi
     if [[ ${chk_list_topics1} != ${chk_list_topics2} ]]; then "$DS/mngr.sh" mkmn; fi
     if [ -e "$DC_s/topics_first_run" -a -z "${1}" ]; then exit 1; fi
 
-    tpc=$(cat "$DM_tl/.0.cfg" | \
+    tpc=$(cat "$DM_tl/.share/0.cfg" | \
     yad --list --title="$(gettext "Topics")" "$var1" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-column=2 --separator="" \
@@ -146,7 +146,7 @@ elif [[ ${1} != 0 ]]; then
     --column=img:IMG \
     --column=File:TEXT \
     --button="<small>$(gettext "Statistics")</small>":"$DS/ifs/stats/stats.sh" \
-    --button="<small>$(gettext "New Words")</small>":"$DS/ifs/mods/topic/Dictionary.sh" \
+    --button="<small>$(gettext "Words")</small>":"$DS/ifs/mods/topic/Dictionary.sh" \
     --button="$(gettext "New")"!gtk-new:3 \
     --button="$(gettext "Apply")":2 \
     --button="$(gettext "Close")"!gtk-close:1)

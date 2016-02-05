@@ -70,7 +70,7 @@ function dwld() {
             done < "${DC_tlt}/3.cfg"
             rm -fr "${tmp}/share" "${tmp}/conf" "${tmp}/images"
             mv -f "${tmp}"/*.mp3 "${DM_tlt}"/
-            echo "${oname}" >> "$DM_tl/.3.cfg"
+            echo "${oname}" >> "$DM_tl/.share/3.cfg"
             echo -e "$ltotal $total\n$laudio $c_audio\n$limage $c_images\n$lothers $others" > "${DC_tlt}/download"
             "$DS/ifs/tls.sh" colorize
             rm -fr "$DT/download"

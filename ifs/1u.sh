@@ -53,10 +53,9 @@ function set_lang() {
     if [ ! -d "$DM_t/$language/.share/audio" ]; then
         mkdir -p "$DM_t/$language/.share/audio"
     fi
-    if [ ! -d "$DM_t/$language/.share/Dictionary/.conf" ]; then
-        mkdir -p "$DM_t/$language/.share/Dictionary/.conf"
-        echo 0 > "$DM_t/$language/.share/Dictionary/.conf/8.cfg"
-        cdb="$DM_t/$language/.share/Dictionary/${language}.db"
+    if [ ! -d "$DM_t/$language/.share/data" ]; then
+        mkdir -p "$DM_t/$language/.share/data"
+        cdb="$DM_t/$language/.share/data/${language}.db"
         echo -n "create table if not exists Words \
         (Word TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${cdb}
         echo -n "create table if not exists Config \
