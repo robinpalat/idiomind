@@ -93,7 +93,7 @@ function sentence_p() {
         trgt_p="${trgt_mod}"
         srce_p="${srce_mod}"
     fi
-    cdb="$DM_tls/Dictionary/${lgtl}.db"
+    cdb="$DM_tls/data/${lgtl}.db"
     table="T`date +%m%y`"
     echo -n "create table if not exists ${table} \
     (Word TEXT, ${lgsl^} TEXT);" |sqlite3 ${cdb}
@@ -193,7 +193,7 @@ function sentence_p() {
 }
 
 function word_p() {
-    cdb="$DM_tls/Dictionary/${lgtl}.db"
+    cdb="$DM_tls/data/${lgtl}.db"
     table="T`date +%m%y`"
     trgt_q="$(echo "${trgt}" |sed "s/'/''/")"
     srce_q="$(echo "${srce}" |sed "s/'/''/")"
@@ -332,7 +332,7 @@ function set_image_2() {
 }
 
 function translate() {
-    cdb="$DM_tls/Dictionary/${lgtl}.db"
+    cdb="$DM_tls/data/${lgtl}.db"
     if [[ `wc -w <<<${1}` = 1 ]] && [ ${ttrgt} != TRUE ] && \
     [[ `sqlite3 ${cdb} "select ${lgsl} from Words where Word is '${1}';"` ]]; then
         sqlite3 ${cdb} "select ${lgsl} from Words where Word is '${1}';"

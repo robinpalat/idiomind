@@ -31,7 +31,7 @@ new_topic() {
     
     if [[ ${chck} -ge 1 ]]; then
         for i in {1..50}; do
-        chck=$(grep -Fxo "${jlb} ($i)" "$DM_t/$language_target/.1.cfg")
+        chck=$(grep -Fxo "${jlb} ($i)" "$DM_tl/.share/1.cfg")
         [ -z "${chck}" ] && break; done
         jlb="${jlb} ($i)"
         msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "Notice that the name for this one is now\:")\n<b>${jlb}</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"

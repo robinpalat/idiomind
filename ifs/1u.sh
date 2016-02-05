@@ -62,7 +62,7 @@ function set_lang() {
         (Study TEXT, Expire INTEGER);" |sqlite3 ${cdb}
         echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${cdb}
     fi
-    for n in {0..3}; do touch "$DM_t/$language/.$n.cfg"; done
+    for n in {0..3}; do touch "$DM_t/$language/.share/$n.cfg"; done
     echo "$language" > "$DC_s/6.cfg"
 }
 

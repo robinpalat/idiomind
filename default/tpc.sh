@@ -29,7 +29,7 @@ if [ -d "${DM_tlt}" ]; then
         ( sleep 10 && "$DS/ifs/tls.sh" backup "${topic}" ) &
         if [ ! -f "$DT/.n_s_pr" ]; then
             "$DS/ifs/tls.sh" check_index "${topic}"; fi
-        if [[ $(grep -Fxon "${topic}" "${DM_tl}/.1.cfg" \
+        if [[ $(grep -Fxon "${topic}" "$DM_tl/.share/1.cfg" \
         | sed -n 's/^\([0-9]*\)[:].*/\1/p') -ge 100 ]]; then
             stts=$(sed -n 1p "${DC_tlt}/8.cfg")
         
