@@ -2,10 +2,8 @@
 # -*- ENCODING: UTF-8 -*-
 
 TEXTDOMAIN=idiomind
-export TEXTDOMAIN
 TEXTDOMAINDIR=/usr/share/locale
-export TEXTDOMAINDIR
-Encoding=UTF-8
+export TEXTDOMAINDIR TEXTDOMAIN
 alias gettext='gettext "idiomind"'
 
 source /usr/share/idiomind/default/sets.cfg
