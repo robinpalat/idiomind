@@ -134,14 +134,14 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     --button="$(gettext "Install")":0
     ret=$?
         if [ $ret -eq 0 ]; then
-            if [[ `wc -l < "$DM_t/$langt/.1.cfg"` -ge 120 ]]; then
+            if [[ `wc -l < "$DM_t/$langt/.share/1.cfg"` -ge 120 ]]; then
                 msg "$(gettext "Maximum number of topics reached.")\n" info "$(gettext "Information")" & exit
             fi
             cn=0
-            if [[ `grep -Fxo "${tname}" "$DM_t/$langt/.1.cfg" |wc -l` -ge 1 ]]; then
+            if [[ `grep -Fxo "${tname}" "$DM_t/$langt/.share/1.cfg" |wc -l` -ge 1 ]]; then
                 cn=1
                 for i in {1..50}; do
-                chck=$(grep -Fxo "${tname} ($i)" "$DM_t/$langt/.1.cfg")
+                chck=$(grep -Fxo "${tname} ($i)" "$DM_t/$langt/.share/1.cfg")
                 [ -z "$chck" ] && break; done
             
                 tname="${tname} ($i)"
@@ -150,15 +150,16 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
                 if [ $? != 0 ]; then exit 1; fi
             fi
             if [ ! -d "$DM_t/$langt" ]; then
-                mkdir "$DM_t/$langt"
                 mkdir -p "$DM_t/$langt/.share/images"
+                mkdir "$DM_t/$langt/.share/audio"
+                mkdir "$DM_t/$langt/.share/data"
             fi
             mkdir -p "$DM_t/$langt/${tname}/.conf/practice"
             DM_tlt="$DM_t/$langt/${tname}"
             DC_tlt="$DM_t/$langt/${tname}/.conf"
             
             for i in {1..6}; do > "${DC_tlt}/${i}.cfg"; done
-            for i in {1..3}; do > "${DC_tlt}/practice/log.${i}"; done
+            for i in {1..3}; do > "${DC_tlt}/practice/log${i}"; done
             tail -n 1 < "${file}" |tr '&' '\n' > "${DC_tlt}/id.cfg"
             
             if [ ${cn} = 1  ]; then

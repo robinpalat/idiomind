@@ -88,7 +88,7 @@ check_index() {
             done
         fi
         [ ! -e "${DC_tlt}/9.cfg" ] && touch "${DC_tlt}/9.cfg"
-        [ ! -e "${DC_tlt}/id.cfg" ] && touch "${DC_tlt}/id.cfg"; id=0
+        [ ! -e "${DC_tlt}/id.cfg" ] && touch "${DC_tlt}/id.cfg" && id=0
         ! [[ `egrep -cv '#|^$' < "${DC_tlt}/id.cfg"` = 19 ]] &&  id=0
 
         if [[ ${id} != 1 ]]; then
