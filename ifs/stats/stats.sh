@@ -3,20 +3,20 @@
 
 month=`date +%m`; year=`date +%y`
 ydata="$DM_tl/.share/data/$year.log"
-pdata="$DM_tl/.share/data/pre_data"
+pre_data="$DM_tl/.share/data/pre_data"
 data="/tmp/.idiomind_stats"
 [ ! -e "$ydata" ] && c=0 || c=1
-
-if [ -e "$pdata" ]; then
-    for m in {01..12}; do declare t$m=0; declare p$m=0; declare n$m=0
+if [ -e "$pre_data" ]; then
+    for m in {01..12}; do 
+        declare t$m=0; declare p$m=0; declare n$m=0
         [ ${c} = 0 ] && echo "M$m.0,0,0.M$m" >> "$ydata"
     done
     for m in {01..12}; do
         if [[ ${month} = ${m} ]]; then
-            declare t$m=`cut -d ',' -f 1 <"$pdata"`
-            declare p$m=`cut -d ',' -f 2 <"$pdata"`
-            declare n$m=`cut -d ',' -f 3 <"$pdata"`
-            rm "$pdata"; break
+            declare t$m=`cut -d ',' -f 1 <"$pre_data"`
+            declare p$m=`cut -d ',' -f 2 <"$pre_data"`
+            declare n$m=`cut -d ',' -f 3 <"$pre_data"`
+            rm "$pre_data"; break
         else
             var=`grep -o -P "(?<=M$m.).*(?=\.M$m)" "$ydata"`
             declare t$m=`cut -d ',' -f 1 <<<"$var"`
