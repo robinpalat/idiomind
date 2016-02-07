@@ -95,7 +95,7 @@ function upld() {
         exit 1
     fi
     
-    conditions_for_upload() {
+    conds_upload() {
         if [ -z "${usrid}" -o -z "${passw}" ]; then
             msg "$(gettext "Sorry, Authentication failed.")\n" info "$(gettext "Information")" & exit 1
         fi
@@ -342,7 +342,8 @@ try:
     nid = server.metaWeblog.newPost('blog', usrid, passw, 
     {'title': tpc, 'description': body}, True)
 except:
-    sys.exit(3)
+    pass
+    #sys.exit(3)
 url = os.environ['url']
 direc = os.environ['direc']
 log = os.environ['log']

@@ -45,6 +45,11 @@ function new_session() {
     if [ $? -ne 0 ]; then
     msg "$(gettext "Fail on try write in /tmp")\n" error "$(gettext "Information")" & exit 1; fi
     
+    if [ -z "${lgtl}" -o -z "${lgsl}" ]; then
+        msg "$(gettext "Please check the language settings in the preferences dialog.")\n" \
+        error "$(gettext "Information")" & exit 1
+    else
+    
     f_lock "$DT/ps_lk"
 
     for strt in "$DS/ifs/mods/start"/*; do
@@ -102,6 +107,7 @@ function new_session() {
     done < "$DM_tl/.share/1.cfg"
     rm -f "$DT/ps_lk"
     "$DS/mngr.sh" mkmn &
+    fi
 }
 
 if grep -o '.idmnd' <<<"${1: -6}"; then
