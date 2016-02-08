@@ -17,11 +17,31 @@
   	</script>
         
 	<script>
-        var mydata = JSON.parse(data);
-		var lineChartData = {
-			labels : ["Jan","Feb","Mar","Apr","May","Jun","Jul",
-            "Aug","Sep","Oct","Nov","Dec"],
-			datasets : [{data : mydata[0].f1},{data : mydata[0].f2}]
+        var mydata = JSON.parse(data2);
+            var lineChartData = {
+			labels : ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+			datasets : [{ label: "Total", 
+            fillColor : "rgba(220,220,220,0.2)",
+            strokeColor : "rgba(220,220,220,1)",
+            pointColor : "rgba(220,220,220,1)",
+            pointStrokeColor : "#fff",
+            pointHighlightFill : "#fff",
+            pointHighlightStroke : "rgba(220,220,220,1)",
+            data : mydata[0].f0},
+            { label: "Learnt", 
+            fillColor : "rgba(151,187,205,0.2)",
+            strokeColor : "rgba(151,187,205,1)",
+            pointColor : "rgba(220,220,220,1)",
+            pointStrokeColor : "#fff",
+            pointHighlightFill : "#fff",
+            pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f1},
+            { label: "Learning", 
+            fillColor : "rgba(255,236,214,0.2)",
+            strokeColor : "rgba(235,186,125,1)",
+            pointColor : "rgba(220,220,220,1)",
+            pointStrokeColor : "#fff",
+            pointHighlightFill : "#fff",
+            pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f2}]
 		}
 	window.onload = function(){
 		var ctx = document.getElementById("canvas").getContext("2d");

@@ -27,7 +27,7 @@ if [ -e "$pre_data" ]; then
     field_1="[$t01,$t02,$t03,$t04,$t05,$t06,$t07,$t08,$t09,$t10,$t11,$t12]"
     field_2="[$p01,$p02,$p03,$p04,$p05,$p06,$p07,$p08,$p09,$p10,$p11,$p12]"
     field_3="[$n01,$n02,$n03,$n04,$n05,$n06,$n07,$n08,$n09,$n10,$n11,$n12]"
-    echo -e "data='[{\"f0\":$field_1,\"f1\":$field_2,\"f2\":$field_3}]';" > "$data"
+    echo -e "data1='[{\"f0\":$field_1,\"f1\":$field_2,\"f2\":$field_3}]';" > "$data"
 fi
 
 function stats() {
