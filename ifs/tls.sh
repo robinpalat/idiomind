@@ -477,9 +477,11 @@ edit_tag() {
 
 translate_to() {
     # usage: 
-    # idiomind translate [language] - e.g. language: en.
+    # idiomind translate [language] - eg. idiomind translate en
     # idiomind translate restore - to go back to original translation
+    
     source /usr/share/idiomind/default/c.conf
+    source $DS/default/sets.cfg
     source "$DS/ifs/mods/cmns.sh"
     [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "  -- error" && exit 1
     l="$(grep -o 'langt="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"

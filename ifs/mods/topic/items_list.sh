@@ -128,7 +128,7 @@ function notebook_2() {
     --show-uri --fontname='vendana 11' --margins=14 > "$cnf3" &
     yad --form --tabnum=4 \
     --plug=$KEY \
-    --text="$label_info1\n" \
+    --text="$lbl1\n" \
     --scroll --borders=10 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
     --field=" $(gettext "Review") ":FBTN "$cmd_mark" \
