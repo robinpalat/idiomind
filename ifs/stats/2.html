@@ -11,47 +11,47 @@ WXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3wsTAQsQ5UFuogAAAJxJREFUSMft1L0OAVEQxfFfVuIJ
 lILSx0ok6729jAKrYVVeguZKtkCCuaFw6nv/MzlzZvjr2+p88LdCD+ccjU3R4ID5s4fFG/AhVugn
 B7qRnU+wxQU7zKLhxwSvMYqED7BJ8Ca683ELXqOMhC9atqzTgF9S8QvL2LZoH23RoyFnKZI1pvcW
 rY6Oa/tU3IqcsMx97Mpc6apywv+K0xVGTiT+KENx6gAAAABJRU5ErkJggg=" align="right" /></a>
-        <div>
-            <canvas id="canvas" height="300" width="560"></canvas>
-        </div>
+    <div>
+    <canvas id="canvas" height="300" width="560"></canvas>
+    </div>
     
     <script>
-	  	var a = window.location.toString();
-		var name = a.substring(a.indexOf("q=")+2);
+    var a = window.location.toString();
+    var name = a.substring(a.indexOf("q=")+2);
   	</script>
         
 	<script>
-        var mydata = JSON.parse(data2);
-            var lineChartData = {
-			labels : ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
-			datasets : [{ label: "Total", 
-            fillColor : "rgba(220,220,220,0.2)",
-            strokeColor : "rgba(220,220,220,1)",
-            pointColor : "rgba(220,220,220,1)",
-            pointStrokeColor : "#fff",
-            pointHighlightFill : "#fff",
-            pointHighlightStroke : "rgba(220,220,220,1)",
-            data : mydata[0].f0},
-            { label: "Learnt", 
-            fillColor : "rgba(151,187,205,0.2)",
-            strokeColor : "rgba(151,187,205,1)",
-            pointColor : "rgba(220,220,220,1)",
-            pointStrokeColor : "#fff",
-            pointHighlightFill : "#fff",
-            pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f1},
-            { label: "Learning", 
-            fillColor : "rgba(255,236,214,0.2)",
-            strokeColor : "rgba(235,186,125,1)",
-            pointColor : "rgba(220,220,220,1)",
-            pointStrokeColor : "#fff",
-            pointHighlightFill : "#fff",
-            pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f2}]
-		}
+    var mydata = JSON.parse(data2);
+    var lineChartData = {
+    labels : ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+    datasets : [{ label: "Total", 
+    fillColor : "rgba(220,220,220,0.2)",
+    strokeColor : "rgba(220,220,220,1)",
+    pointColor : "rgba(220,220,220,1)",
+    pointStrokeColor : "#fff",
+    pointHighlightFill : "#fff",
+    pointHighlightStroke : "rgba(220,220,220,1)",
+    data : mydata[0].f0},
+    { label: "Learnt", 
+    fillColor : "rgba(151,187,205,0.2)",
+    strokeColor : "rgba(151,187,205,1)",
+    pointColor : "rgba(220,220,220,1)",
+    pointStrokeColor : "#fff",
+    pointHighlightFill : "#fff",
+    pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f1},
+    { label: "Learning", 
+    fillColor : "rgba(255,236,214,0.2)",
+    strokeColor : "rgba(235,186,125,1)",
+    pointColor : "rgba(220,220,220,1)",
+    pointStrokeColor : "#fff",
+    pointHighlightFill : "#fff",
+    pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f2}]
+    }
 	window.onload = function(){
-		var ctx = document.getElementById("canvas").getContext("2d");
-		window.myLine = new Chart(ctx).Line(lineChartData, {
-			responsive: true
-		});
+    var ctx = document.getElementById("canvas").getContext("2d");
+    window.myLine = new Chart(ctx).Line(lineChartData, {
+        responsive: true
+    });
 	}
 	</script>
 
