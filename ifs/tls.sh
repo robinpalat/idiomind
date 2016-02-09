@@ -583,6 +583,43 @@ menu_addons() {
     done < <(cd "/usr/share/idiomind/addons/"; set -- */; printf "%s\n" "${@%/}")
 }
 
+words_stats() {
+    pdata="$DM_tl/.share/data/pre_data_words"; > "$pdata"
+    dir1="$DM_tl/${tpc}/.conf"
+    dir2="$DM_tl/${tpc}/.conf/practice"
+    
+    cat "$DM_tl/.share/1.cfg" |while read -r tpc; do
+        stts=$(sed -n 1p "$dir1/8.cfg")
+        if [ -f "$dir2/log1" ]; then
+        log1=`egrep -cv '#|^$' < "$dir2/log1"`; fi
+        if [ -f "$dir2/log2" ]; then
+        log2=`egrep -cv '#|^$' < "$dir2/log2"`; fi
+        if [ -f "$dir2/log3" ]; then
+        log3=`egrep -cv '#|^$' < "$dir2/log3"`; fi
+        if [ -f "$dir1/3.cfg" ]; then
+        cfg3=`egrep -cv '#|^$' < "$dir1/3.cfg"`; fi
+        
+        if [ ${stts} -le 10 -a ${stts} -ge 7 ]; then
+            _log1=0;_log2=0;_log3=0
+        elif [ ${stts} = 5 -o ${stts} = 6 ]; then
+            _log1=${log1};_log2=${log2};_log3=${log3}
+        elif [ ${stts} = 3 -o ${stts} = 4 ]; then
+            _log1=${cfg3};_log2=0;_log3=0
+        else 
+            _log1=${log1}; _log2=0; _log3=0
+        fi
+        
+        echo "$cfg3,$_log1,$_log2,$_log3" >> "$pdata"
+        log1=0;log2=0;log3=0;_log1=0;_log2=0;_log3=0;cfg3=0
+    done
+
+    cfg3=$(( $(cat "$pdata" |cut -d ',' -f 1 |tr "\n" "+" |xargs -I{} echo {} 0) ))
+    log1=$(( $(cat "$pdata" |cut -d ',' -f 2 |tr "\n" "+" |xargs -I{} echo {} 0) ))
+    log2=$(( $(cat "$pdata" |cut -d ',' -f 3 |tr "\n" "+" |xargs -I{} echo {} 0) ))
+    log3=$(( $(cat "$pdata" |cut -d ',' -f 4 |tr "\n" "+" |xargs -I{} echo {} 0) ))
+    echo "$cfg3,$log1,$log2,$log3" > "$pdata"
+}
+
 colorize() {
     source "$DS/ifs/mods/cmns.sh"
     f_lock "$DT/co_lk"
@@ -734,6 +771,8 @@ case "$1" in
     _translation "$@" ;;
     update_menu)
     menu_addons ;;
+    words_stats)
+    words_stats "$@" ;;
     colorize)
     colorize "$@" ;;
     translate)

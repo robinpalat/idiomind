@@ -9,8 +9,7 @@ function item() {
 export -f item
 
 function dictionary() {
-    words=$(grep -o -P '(?<=w3.).*(?=\.w3)' "$DC_s/log" \
-    |tr '|' '\n' | sort | uniq -dc | sort -n -r | sed 's/ \+/ /g')
+    words=$(grep -o -P '(?<=w3.).*(?=\.w3)' "$DC_s/log" |tr '|' '\n' |sort -u)
     cmd_play="$DS/play.sh play_list"
     cdb="$DM_tls/data/${lgtl}.db"
     table="T`date +%m%y`"
@@ -30,16 +29,13 @@ function dictionary() {
         done
     }
     list2() {
-       for n in {1..25}; do
-        if [[ $(sed -n ${n}p <<<"${words}" |awk '{print ($1)}') -ge 0 ]]; then
-            word=$(sed -n ${n}p <<<"${words}" |awk '{print ($2)}')
+       while read -r word; do
             if [ -n "${word}" ]; then
                 echo "<span font_desc='Arial Bold 12'>$word</span>"
-                word="$(sqlite3 ${cdb} "select ${lgsl} from Words where Word is '${word}';")"
-                echo "<span font_desc='Arial 12'>$word</span>"
+                trad="$(sqlite3 ${cdb} "select ${lgsl} from Words where Word is '${word}';")"
+                echo "<span font_desc='Arial 12'>$trad</span>"
             fi
-        fi
-        done
+        done <<<"${words}"
     }
 
     fkey=$(($RANDOM * $$))
@@ -61,7 +57,7 @@ function dictionary() {
     | yad --text-info --text="$(gettext "Difficult words")" \
     --dclick-action="$find_cmd" --tabnum=2 --plug="$fkey" \
     --wrap --back='#FFFFFF' --fore='gray15' \
-    --fontname='vendana 9' --margins=14  &
+    --fontname='vendana 9' --margins=10  &
     fi
     yad --paned --key="$fkey" --title="$(gettext "Words")" \
     --orient=hor --align=right --image-on-top \
