@@ -7,8 +7,11 @@ dir="${DC_tlt}/practice"
 dirs="$DS/practice"
 export -f f_lock
 
-function _log() \
-{ echo "w9.$(tr -s '\n' '|' < ./${1}.1).w9" >> "$log"; }
+function _log() { 
+    echo "w1.$(tr -s '\n' '|' < ./${1}.1).w1" >> "$log"
+    echo "w2.$(tr -s '\n' '|' < ./${1}.2).w2" >> "$log"
+    echo "w3.$(tr -s '\n' '|' < ./${1}.3).w3" >> "$log"
+    }
 
 function stats() {
     n=1; c=1
@@ -34,7 +37,7 @@ function score() {
     else
         [ -e ./${practice}.l ] && \
         echo $(($(< ./${practice}.l)+easy)) > ./${practice}.l || \
-        echo ${easy} > ./${practice}.l
+        echo ${easy} > ./${practice}.l; _log ${practice}
         s=$(< ./${practice}.l)
         v=$((100*s/all))
         n=1; c=1

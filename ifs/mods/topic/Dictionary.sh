@@ -27,16 +27,25 @@ function dictionary() {
             let limit++
         done
     }
-    list | yad --list --title="$(gettext "New Words")" \
-    --dclick-action="$find_cmd" \
+    fkey=$(($RANDOM * $$))
+    list | yad --list \
+    --text="$(gettext "New")" \
+    --dclick-action="$find_cmd" --tabnum=1 --plug="$fkey" \
     --no-headers --search-column=1 --regex-search --print-column=1 \
     --column="$(gettext "$lgtl")":TEXT \
-    --column="$(gettext "$lgsl")":TEXT \
-    --align=right --image-on-top \
+    --column="$(gettext "$lgsl")":TEXT &
+    list | yad --list \
+    --text="$(gettext "Hadrs")" \
+    --dclick-action="$find_cmd" --tabnum=2 --plug="$fkey" \
+    --no-headers --search-column=1 --regex-search --print-column=1 \
+    --column="$(gettext "$lgtl")":TEXT \
+    --column="$(gettext "$lgsl")":TEXT &
+    yad --paned --key="$fkey" --title="$(gettext "Words")" \
+    --orient=hor --align=right --image-on-top \
     --name=Idiomind --class=Idiomind \
     --orient=vert --window-icon=idiomind --on-top --center \
     --gtkrc="$DS/default/gtkrc.cfg" \
-    --width=670 --height=470 --borders=0 --splitter=280 \
+    --width=670 --height=470 --borders=5 --splitter=310 \
     --button="<small>$(gettext "Close")</small>":1
     
 } >/dev/null 2>&1

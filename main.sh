@@ -28,6 +28,14 @@ fi
 
 source /usr/share/idiomind/default/c.conf
 
+if [ -z "${lgtl}" -o -z "${lgsl}" ]; then
+    source "$DS/ifs/mods/cmns.sh"
+    msg_2 "$(gettext "Please check the language settings in the preferences dialog")\n" \
+    error "$(gettext "Open")" "$(gettext "Cancel")"
+    [ $? = 0 ] && "$DS/cnfg.sh"
+    exit 1
+fi
+
 if [ -e "$DT/ps_lk" -o -e "$DT/el_lk" ]; then
     sleep 5
     [ -e "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
@@ -44,11 +52,6 @@ function new_session() {
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
     if [ $? -ne 0 ]; then
     msg "$(gettext "Fail on try write in /tmp")\n" error "$(gettext "Information")" & exit 1; fi
-    
-    if [ -z "${lgtl}" -o -z "${lgsl}" ]; then
-        msg "$(gettext "Please check the language settings in the preferences dialog.")\n" \
-        error "$(gettext "Information")" & exit 1
-    else
     
     f_lock "$DT/ps_lk"
 
@@ -107,7 +110,6 @@ function new_session() {
     done < "$DM_tl/.share/1.cfg"
     rm -f "$DT/ps_lk"
     "$DS/mngr.sh" mkmn &
-    fi
 }
 
 if grep -o '.idmnd' <<<"${1: -6}"; then

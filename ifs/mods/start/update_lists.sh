@@ -5,8 +5,8 @@
 source "$DS/ifs/mods/cmns.sh"
 if [ ! -e "$DC_s/log" ]; then exit 1
 else log="$DC_s/log"; fi
-items=$(mktemp "$DT/w9.XXXX")
-words=$(grep -o -P '(?<=w9.).*(?=\.w9)' "${log}" |tr '|' '\n' \
+items=$(mktemp "$DT/w1.XXXX")
+words=$(grep -o -P '(?<=w1.).*(?=\.w1)' "${log}" |tr '|' '\n' \
 | sort | uniq -dc | sort -n -r | sed 's/ \+/ /g')
 sentences=$(grep -o -P '(?<=s9.).*(?=\.s9)' "${log}" |tr '|' '\n' \
 | sort | uniq -dc | sort -n -r | sed 's/ \+/ /g')
