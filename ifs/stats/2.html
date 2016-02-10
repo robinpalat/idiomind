@@ -23,29 +23,35 @@ rY6Oa/tU3IqcsMx97Mpc6apywv+K0xVGTiT+KENx6gAAAABJRU5ErkJggg=" align="right" /></a
 	<script>
     var mydata = JSON.parse(data2);
     var lineChartData = {
-    labels : ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
-    datasets : [{ label: "Total", 
+    labels : mydata[0].f0,
+    datasets : [{ label: "total", 
     fillColor : "rgba(220,220,220,0.2)",
     strokeColor : "rgba(220,220,220,1)",
     pointColor : "rgba(220,220,220,1)",
     pointStrokeColor : "#fff",
     pointHighlightFill : "#fff",
-    pointHighlightStroke : "rgba(220,220,220,1)",
-    data : mydata[0].f0},
-    { label: "Learnt", 
-    fillColor : "rgba(151,187,205,0.2)",
-    strokeColor : "rgba(151,187,205,1)",
-    pointColor : "rgba(220,220,220,1)",
+    pointHighlightStroke : "rgba(220,220,220,1)", data : mydata[0].f1},
+    { label: "facil", 
+    fillColor : "rgba(228,251,226,0.2)",
+    strokeColor : "rgba(72,185,81,1)",
+    pointColor : "rgba(72,185,81,1)",
     pointStrokeColor : "#fff",
     pointHighlightFill : "#fff",
-    pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f1},
-    { label: "Learning", 
+    pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f2},
+    { label: "olvidados", 
     fillColor : "rgba(255,236,214,0.2)",
-    strokeColor : "rgba(235,186,125,1)",
-    pointColor : "rgba(220,220,220,1)",
+    strokeColor : "rgba(238,159,80,1)",
+    pointColor : "rgba(238,159,80,1)",
     pointStrokeColor : "#fff",
     pointHighlightFill : "#fff",
-    pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f2}]
+    pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f3},
+    { label: "dificiles", 
+    fillColor : "rgba(255,236,214,0.2)",
+    strokeColor : "rgba(203,130,130,1)",
+    pointColor : "rgba(203,130,130,1)",
+    pointStrokeColor : "#fff",
+    pointHighlightFill : "#fff",
+    pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f4}]
     }
 	window.onload = function(){
     var ctx = document.getElementById("canvas").getContext("2d");

@@ -40,35 +40,6 @@ mkmn() {
         echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$DM_tl/.share/0.cfg"
     done
     
-    stats() {
-        pdata="$DM_tl/.share/data/pre_data"; > "$pdata"
-        cat "$DM_tl/.share/1.cfg" |while read -r tpc; do
-            pos=0;neg=0;rev=0;emp=0;cfg1=0;cfg2=0
-            stts=$(sed -n 1p "$DM_tl/${tpc}/.conf/8.cfg")
-            if [ -f "$DM_tl/${tpc}/.conf/1.cfg" ]; then
-            cfg1=`egrep -cv '#|^$' < "$DM_tl/${tpc}/.conf/1.cfg"`; fi
-            if [ -f "$DM_tl/${tpc}/.conf/2.cfg" ]; then
-            cfg2=`egrep -cv '#|^$' < "$DM_tl/${tpc}/.conf/2.cfg"`; fi
-            if [ ${stts} -le 10 -a ${stts} -ge 7 ]; then
-                pos=0; neg=${cfg2}; rev=0
-            elif [ ${stts} = 5 -o ${stts} = 6 ]; then
-                pos=${cfg2}; neg=0; rev=${cfg1}
-            elif [ ${stts} = 3 -o ${stts} = 4 ]; then
-                pos=${cfg2}; neg=0; rev=0
-            else
-                pos=${cfg2}; neg=0; rev=0; emp=${cfg1}
-            fi
-            tot=$((pos+neg+rev+emp))
-            echo "$tot,$pos,$rev,$neg" >> "$pdata"
-        done
-        tot=$(( $(cat "$pdata" |cut -d ',' -f 1 |tr "\n" "+" |xargs -I{} echo {} 0) ))
-        pos=$(( $(cat "$pdata" |cut -d ',' -f 2 |tr "\n" "+" |xargs -I{} echo {} 0) ))
-        rev=$(( $(cat "$pdata" |cut -d ',' -f 3 |tr "\n" "+" |xargs -I{} echo {} 0) ))
-        neg=$(( $(cat "$pdata" |cut -d ',' -f 4 |tr "\n" "+" |xargs -I{} echo {} 0) ))
-        echo "$tot,$pos,$rev,$neg" > "$pdata"
-    }
-    
-    stats &
     rm -f "$DT/mn_lk"; exit
 }
 
