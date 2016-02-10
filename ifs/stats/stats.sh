@@ -1,15 +1,11 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-month=`date +%m`; year=`date +%y`
-ydata="$DM_tl/.share/data/$year.log"
 pre_data="$DM_tl/.share/data/pre_data"
-pre_data_words="$DM_tl/.share/data/pre_data_words"
 data="/tmp/.idiomind_stats"
 db="$DM_tl/.share/data/log.db"
 week=`date +%b%d`
 month=`date +%b`
-[ ! -e "$ydata" ] && c=0 || c=1
 
 function create_db() {
     if [ ! -e db="$DM_tl/.share/data/log.db" ]; then
@@ -128,8 +124,15 @@ function mk_topic_stats() {
     
     data="/tmp/.idiomind_stats"
     month=`date +%m`
+    mtable="M`date +%y`"
+    exec 4< <(sqlite3 "$db" "select val0 FROM ${mtable}")
+    exec 5< <(sqlite3 "$db" "select val1 FROM ${mtable}")
+    exec 6< <(sqlite3 "$db" "select val2 FROM ${mtable}")
+    exec 7< <(sqlite3 "$db" "select val3 FROM ${mtable}")
+    
     for m in {01..12}; do
-        declare t$m=0; declare p$m=0; declare r$m=0; declare n$m=0
+        declare t$m=0; declare p$m=0
+        declare r$m=0; declare n$m=0
     done
     
     for m in {01..12}; do
@@ -140,11 +143,14 @@ function mk_topic_stats() {
             declare n$m=`cut -d ',' -f 4 <"$pre_data"`
             rm "$pre_data"; break
         else
-            var=`grep -o -P "(?<=M$m.).*(?=\.M$m)" "$ydata"`
-            declare t$m=`cut -d ',' -f 1 <<<"$var"`
-            declare p$m=`cut -d ',' -f 2 <<<"$var"`
-            declare r$m=`cut -d ',' -f 3 <<<"$var"`
-            declare n$m=`cut -d ',' -f 4 <<<"$var"`
+            read cfg0 <&4
+            read cfg1 <&5
+            read cfg2 <&6
+            read cfg3 <&7
+            declare t$m=${cfg0}
+            declare p$m=${cfg1}
+            declare r$m=${cfg2}
+            declare n$m=${cfg3}
         fi
     done
     field_0="[$t01,$t02,$t03,$t04,$t05,$t06,$t07,$t08,$t09,$t10,$t11,$t12]"
