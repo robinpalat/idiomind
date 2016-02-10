@@ -3,7 +3,7 @@
 
 source /usr/share/idiomind/default/c.conf
 [ ! -d "$DC" ] && "$DS/ifs/1u.sh" && exit
-info2="$(gettext "Switch Language")"
+info2="$(gettext "Switch Language")?"
 cd "$DS/addons"
 [[ -n "$(< "$DC_s/1.cfg")" ]] && cfg=1 || > "$DC_s/1.cfg"
 cnf1=$(mktemp "$DT/cnf1.XXXX")
@@ -57,6 +57,7 @@ set_lang() {
     source "$DS/ifs/mods/cmns.sh"
     list_inadd > "$DM_tl/.share/2.cfg"
     "$DS/mngr.sh" mkmn &
+    touch "$DM_tl/.share/data/pre_data"
     if [ ! -d "$DM_tl/.share/data" ]; then
         mkdir -p "$DM_tls/data"
         cdb="$DM_tls/data/${lgtl}.db"
