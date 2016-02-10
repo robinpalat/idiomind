@@ -117,22 +117,22 @@
 			customTooltips: false,
 
 			// Array - Array of string names to attach tooltip events
-			tooltipEvents: ["mousemove", "touchstart", "touchmove", "mouseout"],
+			tooltipEvents: ["mousemove"],
 
 			// String - Tooltip background colour
-			tooltipFillColor: "rgba(0,0,0,0.8)",
+			tooltipFillColor: "rgba(255,255,255,0.9)",
 
 			// String - Tooltip label font declaration for the scale label
 			tooltipFontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
 
 			// Number - Tooltip label font size in pixels
-			tooltipFontSize: 14,
+			tooltipFontSize: 12,
 
 			// String - Tooltip font weight style
 			tooltipFontStyle: "normal",
 
 			// String - Tooltip label font colour
-			tooltipFontColor: "#fff",
+			tooltipFontColor: "#4E4E4E",
 
 			// String - Tooltip title font declaration for the scale label
 			tooltipTitleFontFamily: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
@@ -144,16 +144,16 @@
 			tooltipTitleFontStyle: "bold",
 
 			// String - Tooltip title font colour
-			tooltipTitleFontColor: "#fff",
+			tooltipTitleFontColor: "#4E4E4E",
 
 			// String - Tooltip title template
 			tooltipTitleTemplate: "<%= label%>",
 
 			// Number - pixel width of padding around tooltip text
-			tooltipYPadding: 6,
+			tooltipYPadding: 8,
 
 			// Number - pixel width of padding around tooltip text
-			tooltipXPadding: 6,
+			tooltipXPadding: 8,
 
 			// Number - Size of the caret on the tooltip
 			tooltipCaretSize: 8,
