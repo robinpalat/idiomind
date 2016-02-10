@@ -40,8 +40,6 @@ mkmn() {
         echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$DM_tl/.share/0.cfg"
     done
     
-    source "$DS/ifs/stats/stats.sh"
-    ( sleep 5; save_topic_stats; save_word_stats; mk_topic_stats ) &
     rm -f "$DT/mn_lk"; exit
 }
 

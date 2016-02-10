@@ -133,7 +133,7 @@ play_list() {
     --column=TXT:TXT \
     --column=CHK:CHK > $tab1 &
     yad --plug=$KEY --form --tabnum=2 --borders=5 \
-    --align=right --scroll \
+    --align=right \
     --separator='|' --always-print-result --print-all \
     --field="$(gettext "Repeat")":CHK "$rplay" \
     --field="$(gettext "Play audio")":CHK "$audio" \

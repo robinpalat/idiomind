@@ -10,7 +10,7 @@ function dlg_form_1() {
     --separator="|" --selectable-labels \
     --window-icon=idiomind \
     --align=right --text-align=center --columns=2 \
-    --buttons-layout=end --scroll --center --on-top \
+    --buttons-layout=end --center --on-top \
     --width=700 --height=500 --borders=10 \
     --field="$lgtl" "${trgt}" \
     --field="$lgsl" "${srce}" \

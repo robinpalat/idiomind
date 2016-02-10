@@ -1,11 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-[ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
-source "$DS/ifs/mods/cmns.sh"
-
-dir1="$DM_tl/${tpc}/.conf"
-dir2="$DM_tl/${tpc}/.conf/practice"
 month=`date +%m`; year=`date +%y`
 ydata="$DM_tl/.share/data/$year.log"
 pre_data="$DM_tl/.share/data/pre_data"
@@ -57,9 +52,9 @@ function save_topic_stats() {
             echo "${a},${b},${c},${d}"
             
         done | tail -n 1
+        IFS=$old_IFS
     }
-    
-    IFS=$old_IFS
+
     data=`count`
     tot=`cut -d ',' -f 1 <<<"$data"`
     pos=`cut -d ',' -f 2 <<<"$data"`
@@ -112,9 +107,9 @@ function save_word_stats() {
             echo "${d},${a},${b},${c},${e}"
             
         done | tail -n 1
+        IFS=$old_IFS
     }
     
-    IFS=$old_IFS
     data=`count`
     log0=`cut -d ',' -f 1 <<<"$data"`
     log1=`cut -d ',' -f 2 <<<"$data"`
@@ -195,7 +190,6 @@ function mk_topic_stats() {
     field_4="[$e01,$e02,$e03,$e04,$e05,$e06,$e07,$e08,$e09,$e10]"
     field_5="[$f01,$f02,$f03,$f04,$f05,$f06,$f07,$f08,$f09,$f10]"
     echo -e "data2='[{\"f0\":$field_0,\"f1\":$field_1,\"f2\":$field_2,\"f3\":$field_3,\"f4\":$field_4,\"f5\":$field_5}]';" >> "$data"
-    
 }
 
 create_db
@@ -211,7 +205,12 @@ function stats() {
     if [ ${mk} = 1 ]; then
         mk_topic_stats
     fi
+    if [ ! -e "/tmp/.idiomind_stats" -a  ${mk} = 0 ]; then
+        save_topic_stats 1
+        mk_topic_stats
+    fi
     ) | progress
+    
     yad --html --uri="$DS/ifs/stats/1.html" --browser \
     --title="$(gettext "Stats")" \
     --name=Idiomind --class=Idiomind \

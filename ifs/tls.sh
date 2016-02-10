@@ -202,6 +202,19 @@ add_audio() {
     fi
 } >/dev/null 2>&1
 
+dlg_backups() {
+    [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
+    cd "$DM/backup"; ls -t *.bk |sed 's/\.bk//g' | \
+    yad --list --title="$(gettext "Backups")" \
+    --name=Idiomind --class=Idiomind \
+    --dclick-action="$DS/ifs/tls.sh '_restfile'" \
+    --window-icon=idiomind --center --on-top \
+    --width=520 --height=380 --borders=10 \
+    --print-column=1 --no-headers \
+    --column=Nombre:TEXT \
+    --button=gtk-close:1
+} >/dev/null 2>&1
+
 _backup() {
     source /usr/share/idiomind/default/c.conf
     dt=$(date +%F)
@@ -224,19 +237,6 @@ _backup() {
             echo "----- end" >> "${file}"
         fi
     fi 
-} >/dev/null 2>&1
-
-dlg_backups() {
-    [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
-    cd "$DM/backup"; ls -t *.bk |sed 's/\.bk//g' | \
-    yad --list --title="$(gettext "Backups")" \
-    --name=Idiomind --class=Idiomind \
-    --dclick-action="$DS/ifs/tls.sh '_restfile'" \
-    --window-icon=idiomind --center --on-top \
-    --width=520 --height=380 --borders=10 \
-    --print-column=1 --no-headers \
-    --column=Nombre:TEXT \
-    --button=gtk-close:1
 } >/dev/null 2>&1
 
 dlg_restfile() {
@@ -479,7 +479,6 @@ translate_to() {
     # usage: 
     # idiomind translate [language] - eg. idiomind translate en
     # idiomind translate restore - to go back to original translation
-    
     source /usr/share/idiomind/default/c.conf
     source $DS/default/sets.cfg
     source "$DS/ifs/mods/cmns.sh"

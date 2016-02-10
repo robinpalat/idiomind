@@ -13,7 +13,7 @@ function word_view() {
     --selectable-labels --quoted-output \
     --text="${sentence}" \
     --window-icon=idiomind \
-    --scroll --skip-taskbar --text-align=center \
+    --skip-taskbar --text-align=center \
     --image-on-top --center --on-top \
     --width=630 --height=390 --borders=20 \
     "${field_tag}" "${field_exmp}" "${field_defn}" "${field_note}" \
@@ -83,7 +83,7 @@ function notebook_1() {
     yad --form --tabnum=4 \
     --plug=$KEY \
     --text="$lbl1\n" \
-    --scroll --borders=10 --columns=2 \
+    --borders=10 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
     --field=" $(gettext "Mark as learnt") ":FBTN "$cmd_mark" \
     --field="$(gettext "Auto-checked of checkbox on list Learning")\t\t":CHK "$auto_mrk" \
@@ -129,7 +129,7 @@ function notebook_2() {
     yad --form --tabnum=4 \
     --plug=$KEY \
     --text="$lbl1\n" \
-    --scroll --borders=10 --columns=2 \
+    --borders=10 --columns=2 \
     --field="<small>$(gettext "Rename")</small>" "${tpc}" \
     --field=" $(gettext "Review") ":FBTN "$cmd_mark" \
     --field="\t\t\t\t\t\t\t\t\t\t\t":LBL "_" \
