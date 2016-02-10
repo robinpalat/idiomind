@@ -64,7 +64,7 @@ function dictionary() {
     --name=Idiomind --class=Idiomind \
     --orient=vert --window-icon=idiomind --on-top --center \
     --gtkrc="$DS/default/gtkrc.cfg" \
-    --width=670 --height=470 --borders=5 --splitter=310 \
+    --width=670 --height=410 --borders=5 --splitter=310 \
     --button="<small>$(gettext "Close")</small>":1
     
 } >/dev/null 2>&1

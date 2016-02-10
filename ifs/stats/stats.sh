@@ -236,7 +236,7 @@ function stats() {
     --name=Idiomind --class=Idiomind \
     --orient=vert --window-icon=idiomind --on-top --center \
     --buttons-layout=edge --gtkrc="$DS/default/gtkrc.cfg" \
-    --width=670 --height=450 --borders=0  \
+    --width=670 --height=410 --borders=0  \
     --button="<small>$(gettext "Words")</small>":"$DS/ifs/mods/topic/Dictionary.sh" \
     --button="<small>$(gettext "Close")</small>":1
     
