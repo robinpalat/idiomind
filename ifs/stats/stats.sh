@@ -247,11 +247,11 @@ function stats() {
     fi
     
     yad --html --uri="$DS/ifs/stats/1.html" --browser \
-    --title="$(gettext "Stats")" \
+    --title="$(gettext "Stats (Beta)")" \
     --name=Idiomind --class=Idiomind \
     --orient=vert --window-icon=idiomind --center \
-    --buttons-layout=edge --gtkrc="$DS/default/gtkrc.cfg" \
-    --width=660 --height=410 --borders=0  \
-    --button="<small>$(gettext "Words")</small>":"$DS/ifs/mods/topic/Dictionary.sh" \
+    --gtkrc="$DS/default/gtkrc.cfg" \
+    --width=660 --height=420 --borders=0  \
+    --no-buttons \
     --button="<small>$(gettext "Close")</small>":1
 } >/dev/null 2>&1

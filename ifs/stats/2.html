@@ -10,20 +10,23 @@
     </style>
 	</head>
 	<body>
-	<a id="previous"><font class="wrapTxt" size="2" color="#666">Weekly report of words based on activity of practice<span class="mask"></span></font><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAAACXBI
+    <div>
+    <font size="1.5" color="#666"><svg height="7" width="7"><circle cx="4" cy="4" r="3"  fill="#DCDCDC" /></svg> Total number of words <svg height="7" width="7"><circle cx="4" cy="4" r="3"  fill="#48B951" /></svg> Learnt <svg height="7" width="7"><circle cx="4" cy="4" r="3"  fill="#B2CCDA" /></svg> Reviewing <svg height="7" width="7"><circle cx="4" cy="4" r="3"  fill="#EE9F50" /></svg> Difficult <svg height="7" width="7"><circle cx="4" cy="4" r="3"  fill="#EE9F50" /></svg> Olvidadas</font>
+    </div>
+    <div>
+    <canvas id="canvas" height="270" width="530"></canvas>
+    </div>
+    <div align="center">
+    <a id="previous"><font class="wrapTxt" size="1.5" color="#666"><br><br>Weekly report of words based on activity of practice<span class="mask"></span></font><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAAACXBI
 WXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3wsTAQsQ5UFuogAAAJxJREFUSMft1L0OAVEQxfFfVuIJ
 lILSx0ok6729jAKrYVVeguZKtkCCuaFw6nv/MzlzZvjr2+p88LdCD+ccjU3R4ID5s4fFG/AhVugn
 B7qRnU+wxQU7zKLhxwSvMYqED7BJ8Ca683ELXqOMhC9atqzTgF9S8QvL2LZoH23RoyFnKZI1pvcW
 rY6Oa/tU3IqcsMx97Mpc6apywv+K0xVGTiT+KENx6gAAAABJRU5ErkJggg=" align="right" /></a>
-    <div>
-    <canvas id="canvas" height="260" width="530"></canvas>
     </div>
-    
     <script>
     var a = window.location.toString();
     var name = a.substring(a.indexOf("q=")+2);
   	</script>
-        
 	<script>
     var mydata = JSON.parse(data2);
     var lineChartData = {
@@ -71,12 +74,9 @@ rY6Oa/tU3IqcsMx97Mpc6apywv+K0xVGTiT+KENx6gAAAABJRU5ErkJggg=" align="right" /></a
     });
 	}
 	</script>
-
 	<script>
 	var page = 2;
 	</script>
-    
 	<script src="./js/pages.js"></script>
-
 	</body>
 </html>
