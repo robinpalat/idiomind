@@ -16,7 +16,6 @@ week=`date +%b%d`
 month=`date +%b`
 [ ! -e "$ydata" ] && c=0 || c=1
 
-
 function create_db() {
     if [ ! -e db="$DM_tl/.share/data/log.db" ]; then
         
@@ -30,7 +29,6 @@ function create_db() {
         
     fi
 }
-
 
 function save_topic_stats() {
 
@@ -87,12 +85,12 @@ function save_topic_stats() {
 function save_word_stats() {
 
     count() {
-        a=0; b=0; c=10; d=0
+        a=0; b=0; c=10; d=0; e=0
         old_IFS=$IFS; IFS=$'\n'
     
         for tpc in $(cat "$DM_tl/.share/1.cfg"); do
             log1=0; log2=0; log3=0
-            _log1=0; _log2=0; _log3=0; cfg3=0; stts=""
+            _log1=0; _log2=0; _log3=0; _log4=0; cfg3=0; stts=""
             dir1="$DM_tl/${tpc}/.conf"
             dir2="$DM_tl/${tpc}/.conf/practice"
             stts=$(sed -n 1p "$dir1/8.cfg")
@@ -108,19 +106,23 @@ function save_word_stats() {
             
             if [[ ${stts} =~ $numer ]]; then
                 if [ ${stts} -le 10 -a ${stts} -ge 7 ]; then
-                    _log1=0; _log2=0; _log3=0
+                    _log1=0; _log2=0; _log3=0; _log4=0
+                    
                 elif [ ${stts} = 5 -o ${stts} = 6 ]; then
                     _log1=${log1}; _log2=${log2}; _log3=${log3}
+                    _log4=$((log2+log3))
+                    
                 elif [ ${stts} = 3 -o ${stts} = 4 ]; then
-                    _log1=${cfg3}; _log2=0; _log3=0
+                    _log1=${cfg3}; _log2=0; _log3=0; _log4=0
+                    
                 else 
-                    _log1=0; _log2=0; _log3=0
+                    _log1=${log1}; _log2=${log2}; _log3=${log3}; _log4=0
                 fi
             fi
 
             a=$((a+_log1)); b=$((b+_log2))
-            c=$((c+_log3)); d=$((d+cfg3))
-            echo "${d},${a},${b},${c}"
+            c=$((c+_log3)); e=$((e+_log4)); d=$((d+cfg3))
+            echo "${d},${a},${b},${c},${e}"
             
         done | tail -n 1
     }
@@ -131,11 +133,12 @@ function save_word_stats() {
     log1=`cut -d ',' -f 2 <<<"$data"`
     log2=`cut -d ',' -f 3 <<<"$data"`
     log3=`cut -d ',' -f 4 <<<"$data"`
+    log4=`cut -d ',' -f 5 <<<"$data"`
     wtable="W`date +%y`"
     
     if ! [ `sqlite3 ${db} "select week from '${wtable}' where week is '${week}';"` ]; then
-    sqlite3 ${db} "insert into ${wtable} (week,val0,val1,val2,val3) \
-    values ('${week}','${log0}','${log1}','${log2}','${log3}');"
+    sqlite3 ${db} "insert into ${wtable} (week,total,val1,val2,val3,val4) \
+    values ('${week}','${log0}','${log1}','${log2}','${log3}','${log4}');"
     fi
 }
 
@@ -171,28 +174,32 @@ function mk_topic_stats() {
     # -------------------------------------------
     wtable="W`date +%y`"
     exec 3< <(sqlite3 "$db" "select week FROM ${wtable}")
-    exec 4< <(sqlite3 "$db" "select val0 FROM ${wtable}")
+    exec 4< <(sqlite3 "$db" "select total FROM ${wtable}")
     exec 5< <(sqlite3 "$db" "select val1 FROM ${wtable}")
     exec 6< <(sqlite3 "$db" "select val2 FROM ${wtable}")
     exec 7< <(sqlite3 "$db" "select val3 FROM ${wtable}")
+    exec 8< <(sqlite3 "$db" "select val4 FROM ${wtable}")
     for m in {01..10}; do
         read week <&3
         read log0 <&4
         read log1 <&5
         read log2 <&6
         read log3 <&7
+        read log4 <&8
         if [ -n "$week" ]; then
             declare a$m=${week}
             declare b$m=${log0}
             declare c$m=${log1}
             declare d$m=${log2}
             declare e$m=${log3}
+            declare f$m=${log4}
         else
             declare a$m=""
             declare b$m=0
             declare c$m=0
             declare d$m=0
             declare e$m=0
+            declare f$m=0
         fi
     done
     field_0="[\"$a01\",\"$a02\",\"$a03\",\"$a04\",\"$a05\",\"$a06\",\"$a07\",\"$a08\",\"$a09\",\"$a10\"]"
@@ -200,11 +207,10 @@ function mk_topic_stats() {
     field_2="[$c01,$c02,$c03,$c04,$c05,$c06,$c07,$c08,$c09,$c10]"
     field_3="[$d01,$d02,$d03,$d04,$d05,$d06,$d07,$d08,$d09,$d10]"
     field_4="[$e01,$e02,$e03,$e04,$e05,$e06,$e07,$e08,$e09,$e10]"
-    echo -e "data2='[{\"f0\":$field_0,\"f1\":$field_1,\"f2\":$field_2,\"f3\":$field_3,\"f4\":$field_4}]';" >> "$data"
+    field_5="[$f01,$f02,$f03,$f04,$f05,$f06,$f07,$f08,$f09,$f10]"
+    echo -e "data2='[{\"f0\":$field_0,\"f1\":$field_1,\"f2\":$field_2,\"f3\":$field_3,\"f4\":$field_4,\"f5\":$field_5}]';" >> "$data"
     
 }
-
-
 
 # ----------------------------------------------
 create_db
@@ -218,6 +224,9 @@ fi
 if [ `date +%w` = 7 ]; then
     save_word_stats
 fi
+
+#save_topic_stats 0
+#save_word_stats
 #mk_topic_stats
 ) | progress
 
@@ -227,7 +236,7 @@ function stats() {
     --name=Idiomind --class=Idiomind \
     --orient=vert --window-icon=idiomind --on-top --center \
     --buttons-layout=edge --gtkrc="$DS/default/gtkrc.cfg" \
-    --width=670 --height=470 --borders=0  \
+    --width=670 --height=500 --borders=0  \
     --button="<small>$(gettext "Words")</small>":"$DS/ifs/mods/topic/Dictionary.sh" \
     --button="<small>$(gettext "Close")</small>":1
     
