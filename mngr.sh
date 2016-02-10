@@ -558,7 +558,7 @@ rename_topic() {
 
     if [ ${chck} -ge 1 ]; then
         for i in {1..50}; do
-        chck=$(grep -Fxo "${jlb} ($i)" "$DM_t/$language_target/.1.cfg")
+        chck=$(grep -Fxo "${jlb} ($i)" "$DM_t/$language_target/.share/1.cfg")
         [ -z "${chck}" ] && break; done
         
         jlb="${jlb} ($i)"

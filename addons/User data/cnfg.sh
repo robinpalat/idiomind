@@ -49,8 +49,8 @@ if [[ $ret -eq 0 ]]; then
         ret=$?
         if [[ $ret -eq 0 ]]; then
             sleep 1; notify-send -i idiomind \
-            "$(gettext "Copying")" \
-            "$(gettext "It Might take some time")..." 
+            "$(gettext "Copying")..." \
+            "$(gettext "It Might take some time")" 
             if [ -d "${DM}" ]; then
                 cd "${DM}"
             else
@@ -86,12 +86,11 @@ if [[ $ret -eq 0 ]]; then
             if [ -z "${add}" -o ! -d "${DM}" ]; then
                 exit 1
             fi
-            if [ ! -d "$DM/backup" ]; then
-                mkdir "$DM/backup"
-            fi
+            [ ! -d "$DM/backup" ] && mkdir "$DM/backup"
+
             sleep 1; notify-send -i idiomind \
-            "$(gettext "Copying")" \
-            "$(gettext "It Might take some time")..."
+            "$(gettext "Copying...")" \
+            "$(gettext "It Might take some time")"
             
             [ -d "$DT/import" ] && rm -fr "$DT/import"
             rm -f "$DT/*.XXXXXXXX"
@@ -109,7 +108,7 @@ if [[ $ret -eq 0 ]]; then
                 if [ ! -d "$DM_t/$lng" ]; then
                     mkdir "$DM_t/$lng"; fi
                 if [ ! -d "$DM_t/$lng/.share" ]; then
-                    mkdir -p "$DM_t/$lng/.share/Dictionary"
+                    mkdir -p "$DM_t/$lng/.share/data"
                     mkdir -p "$DM_t/$lng/.share/images"
                     mkdir -p "$DM_t/$lng/.share/audio"; fi
                 if [ "$(ls -A "./$lng/.share/audio")" ]; then
@@ -118,9 +117,9 @@ if [[ $ret -eq 0 ]]; then
                 if [ "$(ls -A "./$lng/.share/images")" ]; then
                     mv -f "./$lng/.share/images"/* "$DM_t/$lng/.share/images"/
                 fi
-                if [ "$(ls -A "./$lng/.share/Dictionary")" ]; then
-                    mv -f "./$lng/.share/Dictionary"/* "$DM_t/$lng/.share/Dictionary"/
-                fi
+                #if [ "$(ls -A "./$lng/.share/data")" ]; then
+                    #mv -f "./$lng/.share/data"/* "$DM_t/$lng/.share/data"/
+                #fi
                 echo "$lng" >> ./languages
             done <<<"${list}"
 
@@ -146,7 +145,7 @@ if [[ $ret -eq 0 ]]; then
                     if [ ! -f "$DM_t/$language/${topic}/.conf/8.cfg" ]; then
                         echo 1 > "$DM_t/$language/${topic}/.conf/8.cfg"; fi
                     if [ -d "$DT/import/topics/$language/${topic}" ]; then
-                        echo "$topic" >> "$DM_t/$language/.3.cfg"; fi
+                        echo "${topic}" >> "$DM_t/$language/.share/3.cfg"; fi
                     cd "$DT/import/topics"
                 done < "$DT/import/topics/$language/.topics"
                 

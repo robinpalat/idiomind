@@ -56,7 +56,7 @@ play_list() {
     if [ -z "${tpc}" ]; then source "$DS/ifs/mods/cmns.sh"
     msg "$(gettext "No topic is active")\n" info & exit 1; fi
     tpc="$(sed -n 1p "$HOME/.config/idiomind/4.cfg")"
-    touch "${DC_tlt}/practice/log.3"
+    touch "${DC_tlt}/practice/log3"
     DC_tlt="${DM_tl}/${tpc}/.conf"; cfg=0
     [[ `wc -l < "${DC_tlt}/10.cfg"` = 10 ]] && cfg=1
     
