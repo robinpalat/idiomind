@@ -583,6 +583,13 @@ menu_addons() {
     done < <(cd "/usr/share/idiomind/addons/"; set -- */; printf "%s\n" "${@%/}")
 }
 
+stats_dlg() {
+    source /usr/share/idiomind/default/c.conf
+    source "$DS/ifs/mods/cmns.sh"
+    source "$DS/ifs/stats/stats.sh"
+    stats
+}
+
 colorize() {
     source "$DS/ifs/mods/cmns.sh"
     f_lock "$DT/co_lk"
@@ -734,6 +741,8 @@ case "$1" in
     _translation "$@" ;;
     update_menu)
     menu_addons ;;
+    _stats)
+    stats_dlg ;;
     colorize)
     colorize "$@" ;;
     translate)

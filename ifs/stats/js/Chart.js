@@ -78,7 +78,7 @@
 			scaleLineColor: "rgba(0,0,0,.1)",
 
 			// Number - Pixel width of the scale line
-			scaleLineWidth: 1,
+			scaleLineWidth: 2,
 
 			// Boolean - Whether to show labels on the scale
 			scaleShowLabels: true,

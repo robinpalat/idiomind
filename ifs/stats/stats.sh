@@ -18,15 +18,12 @@ month=`date +%b`
 
 function create_db() {
     if [ ! -e db="$DM_tl/.share/data/log.db" ]; then
-        
         mtable="M`date +%y`"
         echo -n "create table if not exists ${mtable} \
         (month TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT);" |sqlite3 ${db}
-        
         wtable="W`date +%y`"
         echo -n "create table if not exists ${wtable} \
         (week TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT);" |sqlite3 ${db}
-        
     fi
 }
 
@@ -35,7 +32,6 @@ function save_topic_stats() {
     count() {
         n=1; a=0; b=0; c=0; d=0; tot=0; pos=0; rev=0; neg=0
         old_IFS=$IFS; IFS=$'\n'
-        
         for tpc in $(< "$DM_tl/.share/1.cfg"); do
             pos=0; rev=0; neg=0; emp=0; cfg1=0; cfg2=0; stts=""
             dir1="$DM_tl/${tpc}/.conf"
@@ -62,22 +58,20 @@ function save_topic_stats() {
             
         done | tail -n 1
     }
-    IFS=$old_IFS
     
+    IFS=$old_IFS
     data=`count`
     tot=`cut -d ',' -f 1 <<<"$data"`
     pos=`cut -d ',' -f 2 <<<"$data"`
     rev=`cut -d ',' -f 3 <<<"$data"`
     neg=`cut -d ',' -f 4 <<<"$data"`
     mtable="M`date +%y`"
-    
     if [ $1 = 0 ]; then
         if ! grep -q ${month} <<<"$(sqlite3 ${db} "PRAGMA table_info(${mtable});")"; then
             sqlite3 ${db} "insert into ${mtable} (month,val0,val1,val2,val3) \
             values ('${month}','${tot}','${pos}','${rev}','${neg}');"
         fi
     fi
-    
     echo "${tot},${pos},${rev},${neg}" > "$pre_data"
 }
 
@@ -87,14 +81,12 @@ function save_word_stats() {
     count() {
         a=0; b=0; c=10; d=0; e=0
         old_IFS=$IFS; IFS=$'\n'
-    
         for tpc in $(cat "$DM_tl/.share/1.cfg"); do
             log1=0; log2=0; log3=0
             _log1=0; _log2=0; _log3=0; _log4=0; cfg3=0; stts=""
             dir1="$DM_tl/${tpc}/.conf"
             dir2="$DM_tl/${tpc}/.conf/practice"
             stts=$(sed -n 1p "$dir1/8.cfg")
-            
             if [ -f "$dir2/log1" ]; then
             log1=`wc -l < "$dir2/log1"`; fi
             if [ -f "$dir2/log2" ]; then
@@ -103,23 +95,18 @@ function save_word_stats() {
             log3=`wc -l < "$dir2/log3"`; fi
             if [ -f "$dir1/3.cfg" ]; then
             cfg3=`wc -l < "$dir1/3.cfg"`; fi
-            
             if [[ ${stts} =~ $numer ]]; then
                 if [ ${stts} -le 10 -a ${stts} -ge 7 ]; then
                     _log1=0; _log2=0; _log3=0; _log4=0
-                    
                 elif [ ${stts} = 5 -o ${stts} = 6 ]; then
                     _log1=${log1}; _log2=${log2}; _log3=${log3}
                     _log4=$((log2+log3))
-                    
                 elif [ ${stts} = 3 -o ${stts} = 4 ]; then
                     _log1=${cfg3}; _log2=0; _log3=0; _log4=0
-                    
                 else 
                     _log1=${log1}; _log2=${log2}; _log3=${log3}; _log4=0
                 fi
             fi
-
             a=$((a+_log1)); b=$((b+_log2))
             c=$((c+_log3)); e=$((e+_log4)); d=$((d+cfg3))
             echo "${d},${a},${b},${c},${e}"
@@ -135,7 +122,6 @@ function save_word_stats() {
     log3=`cut -d ',' -f 4 <<<"$data"`
     log4=`cut -d ',' -f 5 <<<"$data"`
     wtable="W`date +%y`"
-    
     if ! [ `sqlite3 ${db} "select week from '${wtable}' where week is '${week}';"` ]; then
     sqlite3 ${db} "insert into ${wtable} (week,total,val1,val2,val3,val4) \
     values ('${week}','${log0}','${log1}','${log2}','${log3}','${log4}');"
@@ -212,48 +198,26 @@ function mk_topic_stats() {
     
 }
 
-# ----------------------------------------------
 create_db
 
-
-( echo "1"
-if [ `date +%d` = 28 ]; then
-    save_topic_stats 0
-fi
-
-if [ `date +%w` = 7 ]; then
-    save_word_stats
-fi
-
-#save_topic_stats 0
-#save_word_stats
-#mk_topic_stats
-) | progress
-
 function stats() {
+    ( echo "1"; mk=0
+    if [ `date +%d` = 28 ]; then
+        save_topic_stats 0; mk=1
+    fi
+    if [ `date +%w` = 7 ]; then
+        save_word_stats; mk=1
+    fi
+    if [ ${mk} = 1 ]; then
+        mk_topic_stats
+    fi
+    ) | progress
     yad --html --uri="$DS/ifs/stats/1.html" --browser \
     --title="$(gettext "Stats")" \
     --name=Idiomind --class=Idiomind \
     --orient=vert --window-icon=idiomind --on-top --center \
     --buttons-layout=edge --gtkrc="$DS/default/gtkrc.cfg" \
-    --width=670 --height=410 --borders=0  \
+    --width=660 --height=410 --borders=0  \
     --button="<small>$(gettext "Words")</small>":"$DS/ifs/mods/topic/Dictionary.sh" \
     --button="<small>$(gettext "Close")</small>":1
-    
 }
-
-stats
-
-
-
-
-
-
-
-
-
-
-
-
-
-
