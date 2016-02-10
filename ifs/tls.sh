@@ -282,14 +282,7 @@ dlg_restfile() {
 }
 
 fback() {
-    source "$DS/ifs/mods/cmns.sh"; internet
-    URL="http://idiomind.sourceforge.net/doc/msg.html"
-    yad --html --title="$(gettext "Send Feedback")" \
-    --name=Idiomind --class=Idiomind \
-    --browser --uri="$URL" \
-    --window-icon=idiomind \
-    --no-buttons --fixed --on-top --mouse \
-    --width=550 --height=400 &
+    xdg-open "http://idiomind.sourceforge.net/doc/msg.html"
 } >/dev/null 2>&1
 
 _definition() {
