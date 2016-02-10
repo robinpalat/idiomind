@@ -649,6 +649,8 @@ mark_to_learn_topic() {
     kill -9 $(pgrep -f "yad --notebook ") & fi
     touch "${DM_tlt}"
     "$DS/mngr.sh" mkmn &
+    touch "$DM_tl/.share/data/pre_data"
+    
     [[ ${3} = 1 ]] && idiomind topic &
 }
 
@@ -723,6 +725,8 @@ mark_as_learned_topic() {
     kill -9 $(pgrep -f "yad --form ") &
     kill -9 $(pgrep -f "yad --notebook ") & fi
     "$DS/mngr.sh" mkmn &
+    touch "$DM_tl/.share/data/pre_data"
+    
     [[ ${3} = 1 ]] && idiomind topic &
     exit 1
 }

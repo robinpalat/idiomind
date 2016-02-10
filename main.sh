@@ -110,6 +110,7 @@ function new_session() {
     done < "$DM_tl/.share/1.cfg"
     rm -f "$DT/ps_lk"
     "$DS/mngr.sh" mkmn &
+    touch "$DM_tl/.share/data/pre_data"
 }
 
 if grep -o '.idmnd' <<<"${1: -6}"; then
@@ -196,6 +197,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             echo "${tname}" >> "$DM_tl/.share/3.cfg"
             source /usr/share/idiomind/default/c.conf
             "$DS/mngr.sh" mkmn
+            touch "$DM_tl/.share/data/pre_data"
             "$DS/default/tpc.sh" "${tname}" 1 &
         fi
     exit 1
@@ -259,7 +261,7 @@ function topic() {
                     sed '/^$/d' "$DT/ls1.x" > "${ls1}"
                 fi
                 "$DS/ifs/tls.sh" colorize
-                echo -e "oki.$(wc -l < "${cnf1}").oki" >> "$DC_s/log"
+                touch "$DM_tl/.share/data/pre_data"
             fi
             ntpc=$(cut -d '|' -f 1 < "${cnf4}")
             if [ "${tpc}" != "${ntpc}" -a -n "$ntpc" ]; then
@@ -292,6 +294,7 @@ function topic() {
                     
                         if [ $ret -eq 2 ]; then
                             "$DS/mngr.sh" mark_to_learn "${tpc}" 0
+                            touch "$DM_tl/.share/data/pre_data"
                             idiomind topic & exit 1
                         elif [ $ret -eq 3 ]; then
                            exit 1
@@ -316,6 +319,7 @@ function topic() {
         elif [[ ${inx1} -eq 0 ]]; then
             if [ ! -f "${DC_tlt}/7.cfg" -o ! -f "${DC_tlt}/9.cfg" ]; then
                 "$DS/mngr.sh" mark_as_learned "${tpc}" 0
+                touch "$DM_tl/.share/data/pre_data"
             fi
             
             calculate_review "${tpc}"
@@ -325,6 +329,7 @@ function topic() {
                     
                     if [ $ret -eq 2 ]; then
                         "$DS/mngr.sh" mark_to_learn "${tpc}" 0
+                        touch "$DM_tl/.share/data/pre_data"
                         idiomind topic & exit 1
                     elif [ $ret -eq 3 ]; then
                         exit 1

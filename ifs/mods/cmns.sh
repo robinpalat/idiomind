@@ -105,7 +105,7 @@ function progress() {
     yad --progress \
     --progress-text="$1" \
     --width 50 --height 35 --undecorated \
-    --pulsate --auto-close \
+    --pulsate --auto-close --on-top \
     --skip-taskbar --center --no-buttons
 }
 

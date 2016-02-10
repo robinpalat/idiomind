@@ -3,6 +3,7 @@
 
 pre_data="$DM_tl/.share/data/pre_data"
 data="/tmp/.idiomind_stats"
+databk="$DM_tl/.share/data/idiomind_stats"
 db="$DM_tl/.share/data/log.db"
 week=`date +%b%d`
 month=`date +%b`
@@ -21,7 +22,7 @@ function create_db() {
 function save_topic_stats() {
 
     count() {
-        n=1; a=0; b=0; c=0; d=0; tot=0; pos=0; rev=0; neg=0
+        n=1; a=0; b=0; c=0; d=0
         old_IFS=$IFS; IFS=$'\n'
         for tpc in $(< "$DM_tl/.share/1.cfg"); do
             pos=0; rev=0; neg=0; emp=0; cfg1=0; cfg2=0; stts=""
@@ -56,6 +57,11 @@ function save_topic_stats() {
     pos=`cut -d ',' -f 2 <<<"$data"`
     rev=`cut -d ',' -f 3 <<<"$data"`
     neg=`cut -d ',' -f 4 <<<"$data"`
+    ! [[ ${tot} =~ $numer ]] && tot=0
+    ! [[ ${pos} =~ $numer ]] && pos=0
+    ! [[ ${rev} =~ $numer ]] && rev=0
+    ! [[ ${neg} =~ $numer ]] && neg=0
+    
     mtable="M`date +%y`"
     if [ $1 = 0 ]; then
         if ! grep -q ${month} <<<"$(sqlite3 ${db} "PRAGMA table_info(${mtable});")"; then
@@ -99,7 +105,8 @@ function save_word_stats() {
                 fi
             fi
             a=$((a+_log1)); b=$((b+_log2))
-            c=$((c+_log3)); e=$((e+_log4)); d=$((d+cfg3))
+            c=$((c+_log3)); e=$((e+_log4))
+            d=$((d+cfg3))
             echo "${d},${a},${b},${c},${e}"
             
         done | tail -n 1
@@ -112,10 +119,15 @@ function save_word_stats() {
     log2=`cut -d ',' -f 3 <<<"$data"`
     log3=`cut -d ',' -f 4 <<<"$data"`
     log4=`cut -d ',' -f 5 <<<"$data"`
+    ! [[ ${log0} =~ $numer ]] && log0=0
+    ! [[ ${log1} =~ $numer ]] && log1=0
+    ! [[ ${log2} =~ $numer ]] && log2=0
+    ! [[ ${log3} =~ $numer ]] && log3=0
+    ! [[ ${log4} =~ $numer ]] && log4=0
     wtable="W`date +%y`"
     if ! [ `sqlite3 ${db} "select week from '${wtable}' where week is '${week}';"` ]; then
-    sqlite3 ${db} "insert into ${wtable} (week,total,val1,val2,val3,val4) \
-    values ('${week}','${log0}','${log1}','${log2}','${log3}','${log4}');"
+        sqlite3 ${db} "insert into ${wtable} (week,total,val1,val2,val3,val4) \
+        values ('${week}','${log0}','${log1}','${log2}','${log3}','${log4}');"
     fi
 }
 
@@ -147,6 +159,10 @@ function mk_topic_stats() {
             read cfg1 <&5
             read cfg2 <&6
             read cfg3 <&7
+            ! [[ ${cfg0} =~ $numer ]] && cfg0=0
+            ! [[ ${cfg1} =~ $numer ]] && cfg1=0
+            ! [[ ${cfg2} =~ $numer ]] && cfg2=0
+            ! [[ ${cfg3} =~ $numer ]] && cfg3=0
             declare t$m=${cfg0}
             declare p$m=${cfg1}
             declare r$m=${cfg2}
@@ -158,7 +174,7 @@ function mk_topic_stats() {
     field_2="[$r01,$r02,$r03,$r04,$r05,$r06,$r07,$r08,$r09,$r10,$r11,$r12]"
     field_3="[$n01,$n02,$n03,$n04,$n05,$n06,$n07,$n08,$n09,$n10,$n11,$n12]"
     echo -e "data1='[{\"f0\":$field_0,\"f1\":$field_1,\"f2\":$field_2,\"f3\":$field_3}]';" > "$data"
-    # -------------------------------------------
+
     wtable="W`date +%y`"
     exec 3< <(sqlite3 "$db" "select week FROM ${wtable}")
     exec 4< <(sqlite3 "$db" "select total FROM ${wtable}")
@@ -174,6 +190,11 @@ function mk_topic_stats() {
         read log3 <&7
         read log4 <&8
         if [ -n "$week" ]; then
+            ! [[ ${log0} =~ $numer ]] && log0=0
+            ! [[ ${log1} =~ $numer ]] && log1=0
+            ! [[ ${log2} =~ $numer ]] && log2=0
+            ! [[ ${log3} =~ $numer ]] && log3=0
+            ! [[ ${log4} =~ $numer ]] && log4=0
             declare a$m=${week}
             declare b$m=${log0}
             declare c$m=${log1}
@@ -196,33 +217,41 @@ function mk_topic_stats() {
     field_4="[$e01,$e02,$e03,$e04,$e05,$e06,$e07,$e08,$e09,$e10]"
     field_5="[$f01,$f02,$f03,$f04,$f05,$f06,$f07,$f08,$f09,$f10]"
     echo -e "data2='[{\"f0\":$field_0,\"f1\":$field_1,\"f2\":$field_2,\"f3\":$field_3,\"f4\":$field_4,\"f5\":$field_5}]';" >> "$data"
+    cp -f "$data" "$databk"
 }
 
 create_db
 
 function stats() {
-    ( echo "1"; mk=0
-    if [ `date +%d` = 28 ]; then
-        save_topic_stats 0; mk=1
+
+    if [ `date +%d` = 01 -o `date +%w` = 7 \
+    -o ! -e "${data}" -o -e "${pre_data}" ]; then
+    
+        ( echo "1"; mk=0
+        if [ `date +%d` = 1 ]; then
+            save_topic_stats 0; mk=1
+        fi
+        if [ `date +%w` = 7 ]; then
+            save_word_stats; mk=1
+        fi
+        if [ ! -e "${data}" -o -e "${pre_data}" ]; then
+            cp -f "$databk" "/tmp/.idiomind_stats"
+            save_topic_stats 1; mk=1
+        fi
+        if [ ${mk} = 1 ]; then
+            mk_topic_stats
+        fi
+        
+        ) | progress "$(gettext "Updating")" &
+        
     fi
-    if [ `date +%w` = 7 ]; then
-        save_word_stats; mk=1
-    fi
-    if [ ${mk} = 1 ]; then
-        mk_topic_stats
-    fi
-    if [ ! -e "/tmp/.idiomind_stats" -a  ${mk} = 0 ]; then
-        save_topic_stats 1
-        mk_topic_stats
-    fi
-    ) | progress
     
     yad --html --uri="$DS/ifs/stats/1.html" --browser \
     --title="$(gettext "Stats")" \
     --name=Idiomind --class=Idiomind \
-    --orient=vert --window-icon=idiomind --on-top --center \
+    --orient=vert --window-icon=idiomind --center \
     --buttons-layout=edge --gtkrc="$DS/default/gtkrc.cfg" \
     --width=660 --height=410 --borders=0  \
     --button="<small>$(gettext "Words")</small>":"$DS/ifs/mods/topic/Dictionary.sh" \
     --button="<small>$(gettext "Close")</small>":1
-}
+} >/dev/null 2>&1
