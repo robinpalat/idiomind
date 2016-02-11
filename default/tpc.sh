@@ -52,7 +52,8 @@ if [ -d "${DM_tlt}" ]; then
             "$DS/mngr.sh" mkmn
         fi
         [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
-    
+    elif [ ${mode} = 14 ]; then # TODO
+        echo 1 > "${DC_tlt}/8.cfg"
     else
         if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
             source "$DS/ifs/mods/topic/${topic}.sh"
