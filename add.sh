@@ -19,7 +19,6 @@ new_topic() {
     source "$DS/ifs/mods/add/add.sh"
     add="$(dlg_form_0)"
     jlb="$(clean_3 "$(cut -d "|" -f1 <<<"${add}")")"
-    type="$(cut -d "|" -f2 <<<"${add}")"
 
     if [[ ${#jlb} -gt 55 ]]; then
         msg "$(gettext "Sorry, name too long.")\n" info "$(gettext "Information")"
@@ -41,18 +40,10 @@ new_topic() {
     fi
     
     if [ -z "${jlb}" ]; then exit 1; fi
-    if [ ${type} = "$(gettext "Normal")" ]; then
-        mkdir "$DM_tl/${jlb}"
-        list_inadd > "$DM_tl/.share/2.cfg"
-        "$DS/default/tpc.sh" "${jlb}" 1 1
-        "$DS/mngr.sh" mkmn
-    elif  [ ${type} = "$(gettext "Tag")" ]; then
-        mkdir "$DM_tl/${jlb}"
-        list_inadd > "$DM_tl/.share/2.cfg"
-        echo "${jlb}" >> "$DM_tl/.share/5.cfg"
-        "$DS/default/tpc.sh" "${jlb}" 14 1
-        "$DS/mngr.sh" mkmn
-    fi
+    mkdir "$DM_tl/${jlb}"
+    list_inadd > "$DM_tl/.share/2.cfg"
+    "$DS/default/tpc.sh" "${jlb}" 1 1
+    "$DS/mngr.sh" mkmn
     exit
 }
 

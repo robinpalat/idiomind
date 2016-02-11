@@ -53,17 +53,6 @@ if [ -d "${DM_tlt}" ]; then
         fi
         [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
     
-    elif [ ${mode} = 14 ]; then
-        if [ ! -d "${DC_tlt}" ]; then
-            mkdir "${DC_tlt}"; cd "${DC_tlt}"
-            echo 14 > "${DC_tlt}/8.cfg"
-            > "${DC_tlt}/info"
-        fi
-        for n in {0..5}; do
-            [ ! -e "${DC_tlt}/${n}.cfg" ] && touch "${DC_tlt}/${n}.cfg"
-        done
-        echo "${topic}" > "$DC_s/4.cfg"
-        echo "${topic}" > "$DT/tpe"
     else
         if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
             source "$DS/ifs/mods/topic/${topic}.sh"

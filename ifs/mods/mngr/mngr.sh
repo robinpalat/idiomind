@@ -15,7 +15,7 @@ function dlg_form_1() {
     --field="$lgtl" "${trgt}" \
     --field="$lgsl" "${srce}" \
     --field="$(gettext "Topic")":CB "${tpc_list}" \
-    --field="$(gettext "Tag")":CB "${tags_list}" \
+    --field=" ":LBL " " \
     --field="$(gettext "Example")\t\t\t\t\t\t\t\t\t\t\t":TXT "${exmp}" \
     --field="$(gettext "Definition")":TXT "${defn}" \
     --field="$(gettext "Note")":TXT "${note}" \
@@ -49,7 +49,6 @@ function dlg_form_2() {
     --field="$lgsl":TXT "${srce}" \
     --field="$(gettext "Go to Google Translate")":FBTN "${cmd_trad}" \
     --field="\t\t\t$(gettext "Topic")":CB "${tpc_list}" \
-    --field="$(gettext "Tag")":CB "${tags_list}" \
     --field="$(gettext "Audio")":FL "${audf}" \
     --button="$(gettext "Words")":"${cmd_words}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \

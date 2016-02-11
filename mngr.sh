@@ -143,9 +143,7 @@ edit_item() {
     if ((mode>=1 && mode<=10)); then
     tpcs="$(egrep -v "${tpc}" "$DM_tl/.share/2.cfg" |tr "\\n" '!' |sed 's/!\+$//g')"
     tpc_list="${tpc}!${tpcs}"
-    [ -n "${tag}" ] && tags="$(egrep -v "${tag}" < "$DM_tl/.share/5.cfg")" || tags="$(< "$DM_tl/.share/5.cfg")"
-    [ -n "${tags}" ] && tags_list="${tag}!"$(tr '\n' '!' <<<"${tags}" |sed 's/!\+$//g')"\!" || tags_list=""
-    else tags_list=""; fi
+    fi
 
     cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"""
     cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"""
@@ -186,31 +184,28 @@ edit_item() {
             if [ ${type} = 1 ]; then
                 edit_dlg="${edit_dlg1}"
                 tpc_mod="$(cut -d "|" -f3 <<<"${edit_dlg}")"
-                tag_mod="$(cut -d "|" -f4 <<<"${edit_dlg}")"
                 trgt_mod="$(clean_1 "$(cut -d "|" -f1 <<<"${edit_dlg}")")"
                 srce_mod="$(clean_0 "$(cut -d "|" -f2 <<<"${edit_dlg}")")"
                 audf_mod="$(cut -d "|" -f10 <<<"${edit_dlg}")"
-                exmp_mod="$(clean_0 "$(cut -d "|" -f5 <<<"${edit_dlg}")")"
-                defn_mod="$(clean_0 "$(cut -d "|" -f6 <<<"${edit_dlg}")")"
+                exmp_mod="$(clean_0 "$(cut -d "|" -f4 <<<"${edit_dlg}")")"
+                defn_mod="$(clean_0 "$(cut -d "|" -f5 <<<"${edit_dlg}")")"
                 note_mod="$(clean_0 "$(cut -d "|" -f7 <<<"${edit_dlg}")")"
                 mark_mod="$(cut -d "|" -f9 <<<"${edit_dlg}")"
                 type_mod=1
             elif [ ${type} = 2 ]; then
                 edit_dlg="${edit_dlg2}"
                 tpc_mod="$(cut -d "|" -f6 <<<"${edit_dlg}")"
-                tag_mod="$(cut -d "|" -f7 <<<"${edit_dlg}")"
                 mark_mod="$(cut -d "|" -f1 <<<"${edit_dlg}")"
                 type_mod="$(cut -d "|" -f2 <<<"${edit_dlg}")"
                 trgt_mod="$(clean_2 "$(cut -d "|" -f3 <<<"${edit_dlg}")")"
                 srce_mod="$(clean_2 "$(cut -d "|" -f4 <<<"${edit_dlg}")")"
-                audf_mod="$(cut -d "|" -f8 <<<"${edit_dlg}")"
+                audf_mod="$(cut -d "|" -f7 <<<"${edit_dlg}")"
                 grmr_mod="${grmr}"
                 wrds_mod="${wrds}"
                 [ "${type_mod}" = TRUE ] && type_mod=1
                 [ "${type_mod}" = FALSE ] && type_mod=2
                 [ -z "${type_mod}" ] && type_mod=2
             fi
-            if [ "${tag_mod}" = '(null)' ]; then tag_mod=""; fi
             if [ "${trgt_mod}" != "${trgt}" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
                 if [ ${text_missing} != 0 ]; then
                     trgt="${item_id}"
@@ -238,8 +233,6 @@ edit_item() {
             [ "${mark}" != "${mark_mod}" ] && to_modify=1
             [ "${audf}" != "${audf_mod}" ] && to_modify=1
             [ "${tpc}" != "${tpc_mod}" ] && to_modify=1
-            if [[ "${tag}" != "${tag_mod}" && ${mode} != 14 ]]; then
-            to_modify=1; tagset=1; fi
 
             if [ ${to_modify} = 1 ]; then
             (
@@ -280,7 +273,7 @@ edit_item() {
                     "$DS/mngr.sh" delete_item_ok "${tpc}" "${trgt}"
                     trgt="${trgt_mod}"; srce="${srce_mod}"; tpe="${tpc_mod}"
                     exmp="${exmp_mod}"; defn="${defn_mod}"; note="${note_mod}"
-                    wrds="${wrds_mod}"; grmr="${grmr_mod}"; tag="${tag_mod}"
+                    wrds="${wrds_mod}"; grmr="${grmr_mod}";
                     mark="${mark_mod}"; link="${link_mod}"; id="${id_mod}"
                     index ${type_mod}
                     unset type trgt srce exmp defn note wrds grmr mark id
@@ -296,7 +289,6 @@ edit_item() {
                     ${pos}s|wrds={$wrds}|wrds={$wrds_mod}|;
                     ${pos}s|grmr={$grmr}|grmr={$grmr_mod}|;
                     ${pos}s|mark={$mark}|mark={$mark_mod}|;
-                    ${pos}s|tag={$tag}|tag={$tag_mod}|;
                     ${pos}s|id=\[$id\]|id=\[$id_mod\]|g" "${cfg0}"
                     
                     if [ "${audf}" != "${audf_mod}" ]; then
@@ -334,7 +326,6 @@ edit_item() {
             fi
             [ ${type} != ${type_mod} -a ${type_mod} = 1 ] && ( img_word "${trgt}" "${srce}" ) &
             [ ${colorize_run} = 1 ] && "$DS/ifs/tls.sh" colorize &
-            [ ${tagset} = 1 ] && tagget_item &
             [ ${to_modify} = 1 -a $ret -eq 0 ] && sleep 0.2
             
             if [ $ret -eq 2 ]; then "$DS/mngr.sh" edit ${list} $((item_pos-1)) &
@@ -344,29 +335,6 @@ edit_item() {
             "$DS/vwr.sh" ${list} "${trgt}" ${item_pos} &
         fi
         exit
-}
-
-tagget_item() {
-    if [ -n "${tag_mod}" ]; then
-        img0='/usr/share/idiomind/images/0.png'
-        dir="$DM_tl/${tag_mod}"
-        if ! grep -Fo "trgt={${trgt_mod}}" "$dir/.conf/0.cfg"; then
-            item="0:[type={$type_mod},trgt={$trgt_mod},srce={$srce_mod},exmp={$exmp_mod},defn={$defn_mod},note={$note_mod},wrds={$wrds_mod},grmr={$grmr_mod},].[topic={$tpc_mod},link={$link_mod},mark={$mark_mod},].id=[$id]"
-            echo "${item}" >> "$dir/.conf/0.cfg"
-            echo "${trgt_mod}" >> "$dir/.conf/1.cfg"
-            echo -e "FALSE\n${trgt_mod}\n$img0" >> "$dir/.conf/5.cfg"
-            if [ ${type_mod} = 1 ]; then
-                echo "${trgt_mod}" >> "$dir/.conf/3.cfg"
-            elif [ ${type_mod} = 2 ]; then
-                echo "${trgt_mod}" >> "$dir/.conf/4.cfg"
-                [ -e "${DM_tlt}/$id.mp3" ] && cp "${DM_tlt}/$id.mp3" "$dir/$id.mp3"
-            fi
-        fi
-    fi
-    
-    if [ -n "${tag}" ]; then
-        delete_item_ok "" "${tag}" "${trgt_mod}"
-    fi
 }
 
 edit_list() {

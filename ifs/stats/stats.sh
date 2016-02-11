@@ -249,9 +249,9 @@ function stats() {
     yad --html --uri="$DS/ifs/stats/1.html" --browser \
     --title="$(gettext "Stats (Beta)")" \
     --name=Idiomind --class=Idiomind \
-    --orient=vert --window-icon=idiomind --center \
+    --orient=vert --window-icon=idiomind --center --on-top \
     --gtkrc="$DS/default/gtkrc.cfg" \
-    --width=660 --height=420 --borders=0  \
+    --width=650 --height=410 --borders=0  \
     --no-buttons \
     --button="<small>$(gettext "Close")</small>":1
 } >/dev/null 2>&1

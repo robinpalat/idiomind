@@ -314,7 +314,7 @@ _quick_help() {
     --uri="${_url}" \
     --window-icon=idiomind \
     --fixed --on-top --mouse \
-    --width=780 --height=650 --borders=2 \
+    --width=620 --height=580 --borders=2 \
     --button="$(gettext "Close")":1 &
 } >/dev/null 2>&1
 
@@ -437,36 +437,6 @@ set_image() {
     cleanups "$DT/temp.jpg"
     exit
 } >/dev/null 2>&1
-
-edit_tag() {
-    cmd_del="'$DS/mngr.sh' 'delete_topic' "\"${2}\"""
-    desc="$(< "${DC_tlt}/info")"
-    dlg="$(yad --form --title="$(gettext "Edit")" \
-        --name=Idiomind --class=Idiomind \
-        --separator="|" \
-        --always-print-result --editable \
-        --window-icon=idiomind --center \
-        --width=340 --height=240 --borders=5 \
-        --field="$(gettext "Rename")" "${tpc}" \
-        --field="$(gettext "Description"):txt" "${desc}" \
-        --button="$(gettext "Delete")":"${cmd_del}" \
-        --button="$(gettext "Export")":2 \
-        --button="$(gettext "Close")":1)"
-    ret=$?
-    desc_mod="$(cut -d "|" -f2 <<<"${dlg}")"
-    if [[ "${desc_mod}" != "${desc}" ]]; then
-        echo "${desc_mod}" > "${DC_tlt}/info"
-    fi
-    name_mod="$(cut -d "|" -f1 <<<"${dlg}")"
-    if [ "${name_mod}" != "${tpc}" -a -n "${name_mod}" ]; then
-        "$DS/mngr.sh" rename_topic "${name_mod}" &
-        source "$DS/ifs/mods/cmns.sh"
-        msg "$(gettext "Close and reopen the main window to see any changes")\n" info
-    fi
-    if [ $ret = 2 ]; then
-        "$DS/ifs/upld.sh"  _export "${name_mod}"
-    fi
-}
 
 translate_to() {
     # usage: 
