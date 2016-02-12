@@ -4,30 +4,24 @@
 if [ -z "${1}" ]; then exit 1; fi
 source "$DS/ifs/mods/cmns.sh"
 topic="${1}"
+notif="${3}"
 DC_tlt="$DM_tl/${topic}/.conf"
 DM_tlt="$DM_tl/${topic}"
 export mode=${2}
 
-if [ -d "${DM_tlt}" ]; then
-
-    if ((mode>=1 && mode<=10)); then
-        if [ ! -d "${DC_tlt}" -o ! -e "${DC_tlt}/id.cfg" ]; then
-            mkdir -p "${DM_tlt}/images"
-            mkdir "${DC_tlt}"; cd "${DC_tlt}"
-            c=0
-            while [[ ${c} -le 10 ]]; do
-                touch "${c}.cfg"; let c++
-            done
-            rm "${DC_tlt}/7.cfg" "${DC_tlt}/9.cfg"
-            echo " " > "${DC_tlt}/info"
-            echo 1 > "8.cfg"; cd /
-        fi
-        echo "${topic}" > "$DC_s/4.cfg"
-        if [ ! -e "${DC_tlt}/feeds" ]; then
-            echo "${topic}" > "$DT/tpe"; fi
-        
-        ( sleep 10 && "$DS/ifs/tls.sh" backup "${topic}" ) &
-        if [ ! -f "$DT/.n_s_pr" ]; then
+checkt() {
+    if [ ! -d "${DC_tlt}" -o ! -e "${DC_tlt}/id.cfg" ]; then
+        mkdir -p "${DM_tlt}/images"
+        mkdir "${DC_tlt}"; cd "${DC_tlt}"
+        c=0
+        while [[ ${c} -le 10 ]]; do
+            touch "${c}.cfg"; let c++
+        done
+        rm "${DC_tlt}/7.cfg" "${DC_tlt}/9.cfg"
+        echo " " > "${DC_tlt}/info"
+        echo 1 > "8.cfg"; cd /
+    fi
+    if [ ! -f "$DT/.n_s_pr" ]; then
             "$DS/ifs/tls.sh" check_index "${topic}"; fi
         if [[ $(grep -Fxon "${topic}" "$DM_tl/.share/1.cfg" \
         | sed -n 's/^\([0-9]*\)[:].*/\1/p') -ge 100 ]]; then
@@ -49,37 +43,64 @@ if [ -d "${DM_tlt}" ]; then
                     fi
                 fi
             fi
-            "$DS/mngr.sh" mkmn
+            "$DS/mngr.sh" mkmn 1
         fi
+}
+
+shakeit() {
+    if [[ ${notif} = 1 ]]; then
+        ( sleep 1; notify-send -i idiomind "${topic}" "$(gettext "Is now your topic")" -t 4000 ) & exit
+    elif [[ -z "$notif" ]]; then
+        idiomind topic & exit
+    fi
+}
+
+if [ -d "${DM_tlt}" ]; then
+
+    if ((mode>=1 && mode<=10)); then
+    
+        checkt
+        echo "${topic}" > "$DC_s/4.cfg"
+        if [ ! -e "${DC_tlt}/feeds" ]; then
+            echo "${topic}" > "$DT/tpe"; fi
+        
+        ( sleep 10 && "$DS/ifs/tls.sh" backup "${topic}" ) &
+
         [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
         
+        shakeit
+        
      elif [ ${mode} = 12 ]; then
-        msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "Notice that the name for this one is now\:")\n<b>$tname</b>\n" info "$(gettext "OK")" "$(gettext "Cancel")"
-        if [ $? != 0 ]; then
-            rm "${DM_tlt}/.conf/8.cfg"
-            mv "${DM_tlt}/.conf/8.bk" "${DM_tlt}/.conf/8.cfg"
-            "$DS/default/tpc.sh" "$tpc" ${mode} & exit 0
+     
+        msg_2 "$(gettext "This topic is inactive, do you want to activate?")\n<b>$tname</b>\n" info "$(gettext "Yes")" "$(gettext "No")"
+        
+        if [ $? = 0 ]; then
+            mv -f "${DM_tlt}/.conf/8.bk" "${DM_tlt}/.conf/8.cfg"
+            mode="$(< "$DM_tl/${tpc}/.conf/8.cfg")"
+            touch "${DM_tlt}"
+            echo "${topic}" > "$DC_s/4.cfg"
+            checkt
+            "$DS/mngr.sh" mkmn 1
+            ( sleep 10 && "$DS/ifs/tls.sh" backup "${topic}" ) &
+            
+            shakeit
         else
             echo "${topic}" > "$DC_s/4.cfg"
-            idiomind topic 
+            idiomind topic & exit 0
         fi
-        
-        
+
     elif [ ${mode} = 14 ]; then # TODO
         echo 1 > "${DC_tlt}/8.cfg"
+        
     else
         if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
             source "$DS/ifs/mods/topic/${topic}.sh"
             echo "${tpc}" > "$DC_s/4.cfg"
         fi
     fi
-    if [[ ${3} = 1 ]]; then
-        ( sleep 1; notify-send -i idiomind "${topic}" "$(gettext "Is now your topic")" -t 4000 ) & exit
-    elif [[ -z "$3" ]]; then 
-        idiomind topic & exit
-    fi
+    
 else
     [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
-    "$DS/mngr.sh" mkmn
+    "$DS/mngr.sh" mkmn 0
     msg "$(gettext "No such file or directory")\n${topic}\n" error & exit 1
 fi

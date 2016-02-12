@@ -153,7 +153,7 @@ if [[ $ret -eq 0 ]]; then
                     cp -r "$DT/import/topics/$language/Podcasts" "$DM_t/$language/Podcasts"; fi
             done < "$DT/import/topics/languages"
 
-            "$DS/mngr.sh" mkmn; rm -fr "$DT/import"
+            "$DS/mngr.sh" mkmn 1; rm -fr "$DT/import"
             msg "$(gettext "Data imported successfully.")\n" info
         fi
     fi

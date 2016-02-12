@@ -115,4 +115,5 @@ if [ $(date +%d) = 28 -o $(date +%d) = 14 ]; then
 rm "$log"; touch "$log"; fi
 rm -f "$items"
 echo "--updated lists"
+touch "$DM_tl/.share/data/pre_data"
 exit

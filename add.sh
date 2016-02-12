@@ -43,7 +43,7 @@ new_topic() {
     mkdir "$DM_tl/${jlb}"
     list_inadd > "$DM_tl/.share/2.cfg"
     "$DS/default/tpc.sh" "${jlb}" 1 1
-    "$DS/mngr.sh" mkmn
+    "$DS/mngr.sh" mkmn 0
     exit
 }
 

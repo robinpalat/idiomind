@@ -179,7 +179,7 @@ check_index() {
     fi
     if [ ${mkmn} = 1 ] ;then
         "$DS/ifs/tls.sh" colorize
-        "$DS/mngr.sh" mkmn
+        "$DS/mngr.sh" mkmn 0
     fi
     if [ -f "$DT/ps_lk" ]; then 
         rm -f "$DT/ps_lk"

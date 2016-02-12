@@ -84,7 +84,6 @@ function new_session() {
     fi
 
     # update status
-    [ ! -e "$DM_tl/.share/1.cfg" ] && touch "$DM_tl/.share/1.cfg"
     while read -r line; do
         unset stts
         DM_tlt="$DM_tl/${line}"; [ ! -d "${DM_tlt}/.conf" ] && continue
@@ -93,7 +92,7 @@ function new_session() {
             mv "${DM_tlt}/.conf/8.bk" "${DM_tlt}/.conf/8.cfg"
         fi
         stts=$(sed -n 1p "${DM_tlt}/.conf/8.cfg")
-        [ -z "$stts" ] && stts=1
+        ! [[ ${stts} =~ $numer ]] && stts=1
         if [ -e "${DM_tlt}/.conf/9.cfg" ] && \
         [ -e "${DM_tlt}/.conf/7.cfg" ]; then
             calculate_review "${line}"
@@ -117,6 +116,7 @@ function new_session() {
         unset stts
         DM_tlt="$DM_tl/${line}"; [ ! -d "${DM_tlt}/.conf" ] && continue
         stts=$(sed -n 1p "${DM_tlt}/.conf/8.cfg")
+        ! [[ ${stts} =~ $numer ]] && stts=1
         if [ ${stts} != 12 ]; then
             mv -f "${DM_tlt}/.conf/8.cfg"  "${DM_tlt}/.conf/8.bk"
             echo 12 > "${DM_tlt}/.conf/8.cfg"
@@ -125,8 +125,7 @@ function new_session() {
     -type d ! -path "./.share" |sed 's|\./||g'|sed '/^$/d')
 
     rm -f "$DT/ps_lk"
-    "$DS/mngr.sh" mkmn &
-    touch "$DM_tl/.share/data/pre_data"
+    "$DS/mngr.sh" mkmn 1 &
 }
 
 if grep -o '.idmnd' <<<"${1: -6}"; then
@@ -212,8 +211,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             echo 1 > "${DC_tlt}/8.cfg"
             echo "${tname}" >> "$DM_tl/.share/3.cfg"
             source /usr/share/idiomind/default/c.conf
-            "$DS/mngr.sh" mkmn
-            touch "$DM_tl/.share/data/pre_data"
+            "$DS/mngr.sh" mkmn 1
             "$DS/default/tpc.sh" "${tname}" 1 &
         fi
     exit 1
@@ -223,15 +221,14 @@ function topic() {
     [ -e "${DC_tlt}/8.cfg" ] && export mode=`sed -n 1p "${DC_tlt}/8.cfg"`
     source "$DS/ifs/mods/cmns.sh"
     if ! [[ ${mode} =~ $numer ]]; then exit 1; fi
-
-    if ((mode>=1 && mode<=10)); then
+    
+    readd(){
         [ -z "${tpc}" ] && exit 1
         source "$DS/ifs/mods/topic/items_list.sh"
         for n in {0..4}; do
             [ ! -e "${DC_tlt}/${n}.cfg" ] && touch "${DC_tlt}/${n}.cfg"
-            declare ls${n}="${DC_tlt}/${n}.cfg"
-            declare inx${n}=$(wc -l < "${DC_tlt}/${n}.cfg")
-            export inx${n}
+            export ls${n}="${DC_tlt}/${n}.cfg"
+            export inx${n}=$(wc -l < "${DC_tlt}/${n}.cfg")
         done
         nt="${DC_tlt}/info"
         authr="$(grep -oP '(?<=authr=\").*(?=\")' "${DC_tlt}/id.cfg")"
@@ -248,8 +245,9 @@ function topic() {
         if [ ! -z "$datei" ]; then infolbl="$(gettext "Installed on") $datei, $(gettext "created by") $authr"
         elif [ ! -z "$datec" ]; then infolbl="$(gettext "Created on") $datec"; fi
         lbl1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><small>\n$inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$infolbl</small>"
-
-        apply() {
+    }
+    
+    apply() {
             note_mod="$(< "${cnf3}")"
             if [ "${note_mod}" != "$(< "${nt}")" ]; then
             mv -f "${cnf3}" "${DC_tlt}/info"; fi
@@ -285,7 +283,11 @@ function topic() {
             msg "$(gettext "Sorry, this topic is currently not active.")\n" info "$(gettext "Information")" & exit; fi
             "$DS/mngr.sh" rename_topic "${ntpc}" & exit; fi
         }
-    
+        
+    if ((mode>=1 && mode<=10)); then
+        
+        readd
+        
         if [[ ${inx0} -lt 1 ]]; then
             
             notebook_1; ret=$?
@@ -361,11 +363,57 @@ function topic() {
             rm -f "$DT"/*.x & exit
         fi
         rm -f "$DT"/*.x
+
+    elif [[ ${mode} = 12 ]]; then
     
-    elif [[ ${mode} = 14 ]]; then
-        source "$DS/ifs/mods/topic/tags.sh"
-        tags_list & exit 1
+        readd
+
+        if [[ ${inx0} -lt 1 ]]; then
+            
+            notebook_1; ret=$?
+                
+                if [ $ret -eq 1 ]; then exit 1; fi
+                if [ ! -f "$DT/ps_lk" ]; then apply; fi
+                
+                if [ $ret -eq 5 ]; then
+                    "$DS/practice/strt.sh" &
+                fi
+
+            rm -f "$DT"/*.x
+
+        elif [[ ${inx1} -ge 1 ]]; then
         
+            if [ -f "${DC_tlt}/9.cfg" -a -f "${DC_tlt}/7.cfg" ]; then
+                notebook_2
+            else
+                notebook_1
+            fi
+                ret=$?
+                if [ $ret -eq 1 ]; then exit 1; fi
+                if [ ! -f "$DT/ps_lk" ]; then apply; fi
+
+                if [ $ret -eq 5 ]; then
+                    "$DS/practice/strt.sh" &
+                fi
+
+                rm -f "$DT"/*.x
+
+        elif [[ ${inx1} -eq 0 ]]; then
+
+            calculate_review "${tpc}"
+            pres="<u><b>$(gettext "Topic learnt")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
+            notebook_2
+            
+            if [ $ret -eq 1 ]; then exit 1; fi
+          
+            rm -f "$DT"/*.x & exit
+        fi
+        rm -f "$DT"/*.x
+        
+    elif [[ ${mode} = 14 ]]; then
+    
+        echo 1 > "${DC_tlt}/8.cfg" & exit 1
+
     else
         tpa="$(sed -n 1p "$DC_s/4.cfg")"
         source "$DS/ifs/mods/topic/${tpa}.sh"

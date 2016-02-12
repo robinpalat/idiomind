@@ -107,7 +107,7 @@ elif [[ ${1} != 0 ]]; then
         while read -r _rm; do
             if [ -n "${_rm}" ]; then
                 if [ -d "$DM_tl/${_rm}" ]; then
-                ( echo "5"; sleep 1; rm -fr "$DM_tl/${_rm}"; "$DS/mngr.sh" mkmn ) \
+                ( echo "5"; sleep 1; rm -fr "$DM_tl/${_rm}"; "$DS/mngr.sh" mkmn 0 ) \
                 | progress "$(gettext "Removing") ${_rm}"
                 fi
             fi

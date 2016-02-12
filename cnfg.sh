@@ -56,8 +56,7 @@ set_lang() {
     fi
     source "$DS/ifs/mods/cmns.sh"
     list_inadd > "$DM_tl/.share/2.cfg"
-    "$DS/mngr.sh" mkmn &
-    touch "$DM_tl/.share/data/pre_data"
+
     if [ ! -d "$DM_tl/.share/data" ]; then
         mkdir -p "$DM_tls/data"
         cdb="$DM_tls/data/${lgtl}.db"
@@ -67,6 +66,8 @@ set_lang() {
         (Study TEXT, Expire INTEGER);" |sqlite3 ${cdb}
         echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${cdb}
     fi
+    
+    "$DS/mngr.sh" mkmn 1 &
 }
 
 config_dlg() {

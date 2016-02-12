@@ -10,35 +10,48 @@ export lgt lgs
 include "$DS/ifs/mods/mngr"
 
 mkmn() {
-    f_lock "$DT/mn_lk"; cd "$DM_tl"
+    f_lock "$DT/mn_lk"
     [ -d "$DM_tl/images" ] && rm -r "$DM_tl/images"
     dirimg='/usr/share/idiomind/images'
-    if ls -tNd */ 1> /dev/null 2>&1; then
-        for i in "$(ls -tNd */ |cut -f1 -d'/')"; do 
-            echo "${i%%/}"
-        done > "$DM_tl/.share/1.cfg"
-    fi
-    sed -i '/^$/d' "$DM_tl/.share/1.cfg"; > "$DM_tl/.share/0.cfg"
-    head -100 < "$DM_tl/.share/1.cfg" |while read -r tpc; do
+    > "$DM_tl/.share/0.cfg"; > "$DM_tl/.share/0.cfg"
+    
+    while read -r tpc; do
+    
         unset stts
         [ ! -d "$DM_tl/${tpc}/.conf" ] && mkdir -p "$DM_tl/${tpc}/.conf"
         if [ ! -f "$DM_tl/${tpc}/.conf/8.cfg" ]; then
             stts=13; echo ${stts} > "$DM_tl/${tpc}/.conf/8.cfg"
         else
             stts=$(sed -n 1p "$DM_tl/${tpc}/.conf/8.cfg")
+            ! [[ ${stts} =~ $numer ]] && stts=13
         fi
         echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$DM_tl/.share/0.cfg"
-    done
-    tail -n+101 < "$DM_tl/.share/1.cfg" |while read -r tpc; do
+        echo "${tpc}" >> "$DM_tl/.share/1.cfg"
+        
+    done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 \
+    -type d ! -path "./.share" |sed 's|\./||g'|sed '/^$/d')
+
+    while read -r tpc; do
+    
         unset stts
         [ ! -d "$DM_tl/${tpc}/.conf" ] && mkdir -p "$DM_tl/${tpc}/.conf"
         if [ ! -f "$DM_tl/${tpc}/.conf/8.cfg" ]; then
             stts=13; echo ${stts} > "$DM_tl/${tpc}/.conf/8.cfg"
         else 
-            stts=12
+            stts=$(sed -n 1p "${DM_tlt}/.conf/8.cfg")
+            ! [[ ${stts} =~ $numer ]] && stts=13
+            if [ ${stts} != 12 ]; then
+                mv -f "${DM_tlt}/.conf/8.cfg"  "${DM_tlt}/.conf/8.bk"
+                echo 12 > "${DM_tlt}/.conf/8.cfg"
+            fi
         fi
         echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$DM_tl/.share/0.cfg"
-    done
+        echo "${tpc}" >> "$DM_tl/.share/1.cfg"
+        
+    done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime +80 \
+    -type d ! -path "./.share" |sed 's|\./||g'|sed '/^$/d')
+    
+    [[ "$1" = 1 ]] && touch "$DM_tl/.share/data/pre_data"
     
     rm -f "$DT/mn_lk"; exit
 }
@@ -496,7 +509,7 @@ delete_topic() {
         kill -9 $(pgrep -f "yad --text-info ") &
         kill -9 $(pgrep -f "yad --form ") &
         kill -9 $(pgrep -f "yad --notebook ") &
-        "$DS/mngr.sh" mkmn &
+        "$DS/mngr.sh" mkmn 1 &
     fi
     rm -f "$DT/rm_lk" "$DM_tl/.share"/*.tmp & exit 1
 }
@@ -556,7 +569,7 @@ rename_topic() {
         [ -d "$DM_tl/${tpc}" ] && rm -r "$DM_tl/${tpc}"
         [ -f "$DM/backup/${tpc}.bk" ] && rm "$DM/backup/${tpc}.bk"
         
-        rm -f "$DT/rm_lk"; "$DS/mngr.sh" mkmn & exit 1
+        rm -f "$DT/rm_lk"; "$DS/mngr.sh" mkmn 0 & exit 1
     fi
 }
 
@@ -616,8 +629,7 @@ mark_to_learn_topic() {
     kill -9 $(pgrep -f "yad --form ") &
     kill -9 $(pgrep -f "yad --notebook ") & fi
     touch "${DM_tlt}"
-    "$DS/mngr.sh" mkmn &
-    touch "$DM_tl/.share/data/pre_data"
+    "$DS/mngr.sh" mkmn 1 &
     
     [[ ${3} = 1 ]] && idiomind topic &
 }
@@ -692,8 +704,7 @@ mark_as_learned_topic() {
     kill -9 $(pgrep -f "yad --text-info ") &
     kill -9 $(pgrep -f "yad --form ") &
     kill -9 $(pgrep -f "yad --notebook ") & fi
-    "$DS/mngr.sh" mkmn &
-    touch "$DM_tl/.share/data/pre_data"
+    "$DS/mngr.sh" mkmn 1 &
     
     [[ ${3} = 1 ]] && idiomind topic &
     exit 1
@@ -701,7 +712,7 @@ mark_as_learned_topic() {
 
 case "$1" in
     mkmn)
-    mkmn ;;
+    mkmn "$@" ;;
     delete_item_ok)
     delete_item_ok "$@" ;;
     delete_item)
