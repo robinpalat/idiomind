@@ -723,7 +723,7 @@ new_items() {
         "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
     
     elif [ $ret -eq 0 ]; then
-        if [ "${chk}" = "$(gettext "New") *" ]; then
+        if [ "${tpe}" = "$(gettext "New") *" ]; then
             "$DS/add.sh" new_topic
             source $DS/default/c.conf
         else
@@ -736,7 +736,7 @@ new_items() {
         export DT_r; cd "$DT_r"
         xclip -i /dev/null
     
-        if [ -z "${chk}" ] && [[ ${3} != 3 ]]; then cleanups "$DT_r"
+        if [ -z "${tpe}" ] && [[ ${3} != 3 ]]; then cleanups "$DT_r"
             msg "$(gettext "No topic is active")\n" info "$(gettext "Information")" & exit 1; fi
 
         if [ -z "${trgt}" ]; then

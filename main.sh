@@ -89,9 +89,9 @@ function new_session() {
         dir="$DM_tl/${line}/.conf"
         dim="$DM_tl/${line}"
         [ ! -d "${dir}" ] && continue
-
         stts=$(sed -n 1p "${dir}/8.cfg")
         ! [[ ${stts} =~ $numer ]] && stts=1
+        [[ ${stts} = 12 ]] && continue
         if [ -e "${dir}/9.cfg" ] && \
         [ -e "${dir}/7.cfg" ]; then
             calculate_review "${line}"
@@ -357,7 +357,7 @@ function topic() {
             fi
             
             pres="<u><b>$(gettext "Topic learnt")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
-            notebook_2
+            notebook_2; ret=$?
             
             if [ $ret -eq 1 ]; then exit 1; fi
             if [ ! -f "$DT/ps_lk" ]; then apply; fi
@@ -404,7 +404,7 @@ function topic() {
 
             calculate_review "${tpc}"
             pres="<u><b>$(gettext "Topic learnt")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
-            notebook_2
+            notebook_2; ret=$?
             
             if [ $ret -eq 1 ]; then exit 1; fi
           

@@ -13,6 +13,7 @@ mkmn() {
     f_lock "$DT/mn_lk"
     [[ "$2" = 1 ]] && touch "$DM_tl/.share/data/pre_data"
     [ -d "$DM_tl/images" ] && rm -r "$DM_tl/images"
+    [ -d "$DM_tl/.conf" ] && rm -r "$DM_tl/.conf"
     dirimg='/usr/share/idiomind/images'
     > "$DM_tl/.share/0.cfg"
     

@@ -253,17 +253,19 @@ function mk_topic_stats() {
 }
 
 create_db
+dtweek=`date +%w`
+dtmnth=`date +%d`
 
 function stats() {
 
-    if [ `date +%d` = 01 -o `date +%w` = 7 \
+    if [ ${dtmnth} = 01 -o ${dtweek} = 7 \
     -o ! -e "${data}" -o -e "${pre_data}" ]; then
     
         ( echo "1"; mk=0
-        if [ `date +%d` = 01 ]; then
+        if [ ${dtmnth} = 01 ]; then
             save_topic_stats 0; mk=1
         fi
-        if [ `date +%w` = 7 ]; then
+        if [ ${dtweek} = 7 ]; then
             save_word_stats; mk=1
         fi
         if [ ! -e "${data}" -o -e "${pre_data}" ]; then

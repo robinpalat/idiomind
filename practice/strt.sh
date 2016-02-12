@@ -426,7 +426,7 @@ function practice_e() {
         --buttons-layout=end --skip-taskbar \
         --undecorated --center --on-top \
         --text-align=center --align=center --image-on-top \
-        --width=510 --height=200 --borders=6 \
+        --width=520 --height=200 --borders=6 \
         --field="" "" \
         --button="$(gettext "Exit")":1 \
         --button="!$DS/images/listen.png":"$cmd_play" \
@@ -436,15 +436,15 @@ function practice_e() {
     check() {
         sz=$((sz+3))
         yad --form --title="$(gettext "Practice")" \
-        --text="<span font_desc='Free Sans 12'>${wes^}</span>\\n" \
+        --text="<span font_desc='Free Sans 11'>${wes^}</span>\\n" \
         --name=Idiomind --class=Idiomind \
         --selectable-labels \
         --window-icon=idiomind \
-        --skip-taskbar --wrap --scroll --image-on-top --center --on-top \
+        --skip-taskbar --wrap --image-on-top --center --on-top \
         --undecorated --buttons-layout=end \
-        --width=510 --height=220 --borders=10 \
+        --width=520 --height=220 --borders=10 \
         --field="":lbl "" \
-        --field="<span font_desc='Free Sans 10'>$OK\n\n$prc $hits</span>":lbl \
+        --field="<span font_desc='Free Sans 9'>$OK\n\n$prc $hits</span>":lbl \
         --button="$(gettext "Continue")":2
         }
         
