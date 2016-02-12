@@ -52,6 +52,19 @@ if [ -d "${DM_tlt}" ]; then
             "$DS/mngr.sh" mkmn
         fi
         [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
+        
+     elif [ ${mode} = 12 ]; then
+        msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "Notice that the name for this one is now\:")\n<b>$tname</b>\n" info "$(gettext "OK")" "$(gettext "Cancel")"
+        if [ $? != 0 ]; then
+            rm "${DM_tlt}/.conf/8.cfg"
+            mv "${DM_tlt}/.conf/8.bk" "${DM_tlt}/.conf/8.cfg"
+            "$DS/default/tpc.sh" "$tpc" ${mode} & exit 0
+        else
+            echo "${topic}" > "$DC_s/4.cfg"
+            idiomind topic 
+        fi
+        
+        
     elif [ ${mode} = 14 ]; then # TODO
         echo 1 > "${DC_tlt}/8.cfg"
     else

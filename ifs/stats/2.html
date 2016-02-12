@@ -10,13 +10,13 @@
 </head>
 <body>
     <div>
-    <font size="1.5" color="#666"><svg height="7" width="7"><circle cx="4" cy="4" r="3"  fill="#D4D4D4" /></svg> All the words <svg height="7" width="7"><circle cx="4" cy="4" r="3"  fill="#48B951" /></svg> Easy <svg height="7" width="7"><circle cx="4" cy="4" r="3"  fill="#EE9F50" /></svg> Learning <svg height="7" width="7"><circle cx="4" cy="4" r="3"  fill="#E46577" /></svg> Difficult <svg height="7" width="7"><circle cx="4" cy="4" r="3"  fill="#807FD9" /></svg> Forgotten </font>
+    <font size="1.5" color="#666"><svg height="7" width="7"><circle cx="4" cy="4" r="3"  fill="#8FC6E8" /></svg> All the words <svg height="7" width="7"><circle cx="4" cy="4" r="3"  fill="#48B951" /></svg> Easy <svg height="7" width="7"><circle cx="4" cy="4" r="3"  fill="#EE9F50" /></svg> Learning <svg height="7" width="7"><circle cx="4" cy="4" r="3"  fill="#E46577" /></svg> Difficult <svg height="7" width="7"><circle cx="4" cy="4" r="3"  fill="#545454" /></svg> Forgotten <svg height="7" width="7"><circle cx="4" cy="4" r="3"  fill="#E6E6E6" /></svg> Iddle </font>
     </div>
     <div>
     <canvas id="canvas" height="260" width="520"></canvas>
     </div>
     <div align="center">
-    <a id="previous"><font class="wrapTxt" size="1.5" color="#2B2B2B"><br><br>Weekly report of words based on practice activity<span class="mask"></span></font><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAPCAYAAADd/14OAAAABmJLR0QA/wD/AP+gvaeTAAAACXBI
+    <a id="previous"><font class="wrapTxt" size="1.5" color="#2B2B2B"><br><br>Weekly report of words based on practices activity<span class="mask"></span></font><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAPCAYAAADd/14OAAAABmJLR0QA/wD/AP+gvaeTAAAACXBI
 WXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AILEi8JAzOSlAAAAHxJREFUKM+tzjEKAjEQBdDHpvce
 orXsETyCbuN59GhWHmJVZDvRws4mwhLMrIUDIQRe/nz+MAukz6MJ0C7fYdIBqym0R/tLUoiWU+sa
 zNDhhGMNJrxwxRp3nGsQhgw6PNDX4Bhv8CxxKj4OuGBb1khf6oxr3PIJZ14JiucNxQka1AxC9+wA
@@ -31,40 +31,47 @@ AAAASUVORK5CYII=" align="right" /></a>
     var lineChartData = {
     labels : mydata[0].f0,
     datasets : [{ label: "total", 
-    fillColor : "rgba(220,220,220,0.2)",
-    strokeColor : "rgba(220,220,220,1)",
-    pointColor : "rgba(220,220,220,1)",
+    fillColor : "rgba(143,198,232,0.0)",
+    strokeColor : "rgba(143,198,232,1)",
+    pointColor : "rgba(143,198,232,1)",
     pointStrokeColor : "#fff",
     pointHighlightFill : "#fff",
     pointHighlightStroke : "rgba(220,220,220,1)", data : mydata[0].f1},
     { label: "Easy", 
-    fillColor : "rgba(145,188,137,0.2)",
+    fillColor : "rgba(72,185,81,0.3)",
     strokeColor : "rgba(72,185,81,1)",
     pointColor : "rgba(72,185,81,1)",
     pointStrokeColor : "#fff",
     pointHighlightFill : "#fff",
     pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f2},
     { label: "Learning", 
-    fillColor : "rgba(255,236,214,0.2)",
-    strokeColor : "rgba(238,159,80,1)",
-    pointColor : "rgba(238,159,80,1)",
+    fillColor : "rgba(222,118,7,0.0)",
+    strokeColor : "rgba(222,118,7,1)",
+    pointColor : "rgba(222,118,7,1)",
     pointStrokeColor : "#fff",
     pointHighlightFill : "#fff",
     pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f3},
     { label: "Difficult", 
-    fillColor : "rgba(255,236,214,0.2)",
-    strokeColor : "rgba(203,130,130,1)",
-    pointColor : "rgba(203,130,130,1)",
+    fillColor : "rgba(195,47,124,0.0)",
+    strokeColor : "rgba(195,47,124,1)",
+    pointColor : "rgba(195,47,124,1)",
     pointStrokeColor : "#fff",
     pointHighlightFill : "#fff",
     pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f4},
     { label: "Forgotten", 
-    fillColor : "rgba(219,212,255,0.2)",
-    strokeColor : "rgba(151,187,205,1)",
-    pointColor : "rgba(151,187,205,1)",
+    fillColor : "rgba(219,212,255,0.0)",
+    strokeColor : "rgba(77,77,77,1)",
+    pointColor : "rgba(77,77,77,1)",
     pointStrokeColor : "#fff",
     pointHighlightFill : "#fff",
-    pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f5}]
+    pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f5},
+    { label: "Iddle", 
+    fillColor : "rgba(220,220,220,0.0)",
+    strokeColor : "rgba(230,230,230,1)",
+    pointColor : "rgba(230,230,230,1)",
+    pointStrokeColor : "#fff",
+    pointHighlightFill : "#fff",
+    pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f6}]
     }
 	window.onload = function(){
     var ctx = document.getElementById("canvas").getContext("2d");

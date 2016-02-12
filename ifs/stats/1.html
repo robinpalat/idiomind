@@ -10,7 +10,7 @@
 </head>
 <body>
     <div>
-    <font size="1.5" color="#666"><svg height="8" width="8"><circle cx="5" cy="5" r="3"  fill="#D4D4D4" /></svg> It includes new items and items of idle topics <svg height="8" width="8"><circle cx="5" cy="5" r="3"  fill="#48B951" /></svg> Learnt items <svg height="8" width="8"><circle cx="5" cy="5" r="3"  fill="#B2CCDA" /></svg> Reviewing <svg height="8" width="8"><circle cx="5" cy="5" r="3"  fill="#EE9F50" /></svg> Learnt but need to review </font>
+    <font size="1.5" color="#666"><svg height="8" width="8"><circle cx="5" cy="5" r="3"  fill="#6CBEC5" /></svg> It includes new items and items of topics <svg height="8" width="8"><circle cx="5" cy="5" r="3"  fill="#48B951" /></svg> Learnt items <svg height="8" width="8"><circle cx="5" cy="5" r="3"  fill="#5A8AD8" /></svg> Reviewing <svg height="8" width="8"><circle cx="5" cy="5" r="3"  fill="#DC8E7A" /></svg> Learnt but need to review <svg height="8" width="8"><circle cx="5" cy="5" r="3"  fill="#CACACA" /></svg> Iddle</font>
     </div>
     <div>
     <canvas id="canvas" height="260" width="520"></canvas>
@@ -30,34 +30,41 @@ opJmFgAAAABJRU5ErkJggg==" align="right" /></a>
     var mydata = JSON.parse(data1);
     var lineChartData = {
     labels : ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
-    datasets : [{ label: "Total", 
-    fillColor : "rgba(220,220,220,0.2)",
-    strokeColor : "rgba(220,220,220,1)",
-    pointColor : "rgba(220,220,220,1)",
+    datasets : [{ label: "Total",
+    fillColor : "rgba(108,190,197,0.0)",
+    strokeColor : "rgba(108,190,197,1)",
+    pointColor : "rgba(108,190,197,1)",
     pointStrokeColor : "#fff",
     pointHighlightFill : "#fff",
     pointHighlightStroke : "rgba(220,220,220,1)", data : mydata[0].f0},
     { label: "Learnt", 
-    fillColor : "rgba(228,251,226,0.2)",
+    fillColor : "rgba(228,251,226,0.3)",
     strokeColor : "rgba(72,185,81,1)",
     pointColor : "rgba(72,185,81,1)",
     pointStrokeColor : "#fff",
     pointHighlightFill : "#fff",
     pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f1},
     { label: "Reviewing", 
-    fillColor : "rgba(226,240,251,0.2)",
-    strokeColor : "rgba(151,187,205,1)",
-    pointColor : "rgba(151,187,205,1)",
+    fillColor : "rgba(226,240,251,0.0)",
+    strokeColor : "rgba(90,138,216,1)",
+    pointColor : "rgba(90,138,216,1)",
     pointStrokeColor : "#fff",
     pointHighlightFill : "#fff",
     pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f2},
     { label: "Alert", 
-    fillColor : "rgba(255,236,214,0.2)",
-    strokeColor : "rgba(238,159,80,1)",
-    pointColor : "rgba(238,159,80,1)",
+    fillColor : "rgba(236,119,89,0.0)",
+    strokeColor : "rgba(236,119,89,1)",
+    pointColor : "rgba(236,119,89,1)",
     pointStrokeColor : "#fff",
     pointHighlightFill : "#fff",
-    pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f3}]
+    pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f3},
+    { label: "Iddle", 
+    fillColor : "rgba(220,220,220,0.0)",
+    strokeColor : "rgba(230,230,230,1)",
+    pointColor : "rgba(230,230,230,1)",
+    pointStrokeColor : "#fff",
+    pointHighlightFill : "#fff",
+    pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f4}]
     }
     window.onload = function(){
     var ctx = document.getElementById("canvas").getContext("2d");

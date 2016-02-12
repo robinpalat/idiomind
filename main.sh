@@ -86,28 +86,44 @@ function new_session() {
     # update status
     [ ! -e "$DM_tl/.share/1.cfg" ] && touch "$DM_tl/.share/1.cfg"
     while read -r line; do
-    unset stts
-    DM_tlt="$DM_tl/${line}"
-    stts=$(sed -n 1p "${DM_tlt}/.conf/8.cfg")
-    [ -z $stts ] && stts=1
-    if [ -e "${DM_tlt}/.conf/9.cfg" ] && \
-    [ -e "${DM_tlt}/.conf/7.cfg" ]; then
-        calculate_review "${line}"
-        if [[ $((stts%2)) = 0 ]]; then
-            if [ ${RM} -ge 180 -a ${stts} = 8 ]; then
-                echo 10 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"
-            elif [ ${RM} -ge 100 -a ${stts} -lt 8 ]; then
-                echo 8 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"
-            fi
-        else
-            if [ ${RM} -ge 180 -a ${stts} = 7 ]; then
-                echo 9 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"
-            elif [ ${RM} -ge 100 -a ${stts} -lt 7 ]; then
-                echo 7 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"
+        unset stts
+        DM_tlt="$DM_tl/${line}"; [ ! -d "${DM_tlt}/.conf" ] && continue
+        if [ -e "${DM_tlt}/.conf/8.bk" ]; then
+            rm "${DM_tlt}/.conf/8.cfg"
+            mv "${DM_tlt}/.conf/8.bk" "${DM_tlt}/.conf/8.cfg"
+        fi
+        stts=$(sed -n 1p "${DM_tlt}/.conf/8.cfg")
+        [ -z "$stts" ] && stts=1
+        if [ -e "${DM_tlt}/.conf/9.cfg" ] && \
+        [ -e "${DM_tlt}/.conf/7.cfg" ]; then
+            calculate_review "${line}"
+            if [[ $((stts%2)) = 0 ]]; then
+                if [ ${RM} -ge 180 -a ${stts} = 8 ]; then
+                    echo 10 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"
+                elif [ ${RM} -ge 100 -a ${stts} -lt 8 ]; then
+                    echo 8 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"
+                fi
+            else
+                if [ ${RM} -ge 180 -a ${stts} = 7 ]; then
+                    echo 9 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"
+                elif [ ${RM} -ge 100 -a ${stts} -lt 7 ]; then
+                    echo 7 > "${DM_tlt}/.conf/8.cfg"; touch "${DM_tlt}"
+                fi
             fi
         fi
-    fi
-    done < "$DM_tl/.share/1.cfg"
+    done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 \
+    -type d ! -path "./.share" |sed 's|\./||g'|sed '/^$/d')
+    while read -r line; do
+        unset stts
+        DM_tlt="$DM_tl/${line}"; [ ! -d "${DM_tlt}/.conf" ] && continue
+        stts=$(sed -n 1p "${DM_tlt}/.conf/8.cfg")
+        if [ ${stts} != 12 ]; then
+            mv -f "${DM_tlt}/.conf/8.cfg"  "${DM_tlt}/.conf/8.bk"
+            echo 12 > "${DM_tlt}/.conf/8.cfg"
+        fi
+    done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime +80 \
+    -type d ! -path "./.share" |sed 's|\./||g'|sed '/^$/d')
+
     rm -f "$DT/ps_lk"
     "$DS/mngr.sh" mkmn &
     touch "$DM_tl/.share/data/pre_data"

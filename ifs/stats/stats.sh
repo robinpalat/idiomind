@@ -12,20 +12,20 @@ function create_db() {
     if [ ! -e db="$DM_tl/.share/data/log.db" ]; then
         mtable="M`date +%y`"
         echo -n "create table if not exists ${mtable} \
-        (month TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT);" |sqlite3 ${db}
+        (month TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT);" |sqlite3 ${db}
         wtable="W`date +%y`"
         echo -n "create table if not exists ${wtable} \
-        (week TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT);" |sqlite3 ${db}
+        (week TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT, val5 TEXT);" |sqlite3 ${db}
     fi
 }
 
 function save_topic_stats() {
 
     count() {
-        n=1; a=0; b=0; c=0; d=0
+        n=1; a=0; b=0; c=0; d=0; e=0
         old_IFS=$IFS; IFS=$'\n'
         for tpc in $(< "$DM_tl/.share/1.cfg"); do
-            pos=0; rev=0; neg=0; emp=0; cfg1=0; cfg2=0; stts=""
+            pos=0; rev=0; neg=0; emp=0; idd=0; cfg1=0; cfg2=0; stts=""
             dir1="$DM_tl/${tpc}/.conf"
             dir2="$DM_tl/${tpc}/.conf/practice"
             stts=$(sed -n 1p "$dir1/8.cfg")
@@ -35,20 +35,25 @@ function save_topic_stats() {
             cfg2=`egrep -cv '#|^$' < "$dir1/2.cfg"`; fi
             if [[ ${stts} =~ $numer ]]; then
                 if [ ${stts} -le 10 -a ${stts} -ge 7 ]; then
-                    pos=0; neg=${cfg2}; rev=0; emp=0
+                    neg=${cfg2}
                 elif [ ${stts} = 5 -o ${stts} = 6 ]; then
-                    pos=${cfg2}; neg=0; rev=${cfg1}; emp=0
+                    pos=${cfg2}; rev=${cfg1}
                 elif [ ${stts} = 3 -o ${stts} = 4 ]; then
-                    pos=${cfg2}; neg=0; rev=0; emp=0
+                    pos=${cfg2}
+                elif [ ${stts} = 12 ]; then
+                    idd=$((cfg1+cfg2))
                 else
-                    pos=${cfg2}; neg=0; rev=0; emp=${cfg1}
+                    pos=${cfg2}; emp=${cfg1}
                 fi
             fi
-            a=$((a+emp)); b=$((b+pos))
-            c=$((c+rev)); d=$((d+neg))
-            echo "${a},${b},${c},${d}"
+            a=$((a+emp))
+            b=$((b+pos))
+            c=$((c+rev))
+            d=$((d+neg))
+            e=$((e+idd))
+            echo "${a},${b},${c},${d},${e}"
             
-        done | tail -n 1
+        done |tail -n 1
         IFS=$old_IFS
     }
 
@@ -57,30 +62,34 @@ function save_topic_stats() {
     pos=`cut -d ',' -f 2 <<<"$data"`
     rev=`cut -d ',' -f 3 <<<"$data"`
     neg=`cut -d ',' -f 4 <<<"$data"`
+    idd=`cut -d ',' -f 5 <<<"$data"`
     ! [[ ${tot} =~ $numer ]] && tot=0
     ! [[ ${pos} =~ $numer ]] && pos=0
     ! [[ ${rev} =~ $numer ]] && rev=0
     ! [[ ${neg} =~ $numer ]] && neg=0
+    ! [[ ${idd} =~ $numer ]] && idd=0
     
     mtable="M`date +%y`"
     if [ $1 = 0 ]; then
-        if ! grep -q ${month} <<<"$(sqlite3 ${db} "PRAGMA table_info(${mtable});")"; then
-            sqlite3 ${db} "insert into ${mtable} (month,val0,val1,val2,val3) \
-            values ('${month}','${tot}','${pos}','${rev}','${neg}');"
+    
+        if [[ `sqlite3 ${db} "select month from '${mtable}' where month is '${month}';"` ]]; then :
+        else
+            sqlite3 ${db} "insert into ${mtable} (month,val0,val1,val2,val3,val4) \
+            values ('${month}','${tot}','${pos}','${rev}','${neg}','${idd}');"
         fi
     fi
-    echo "${tot},${pos},${rev},${neg}" > "$pre_data"
+    echo "${tot},${pos},${rev},${neg},${idd}" > "$pre_data"
 }
 
 
 function save_word_stats() {
 
     count() {
-        a=0; b=0; c=10; d=0; e=0
+        a=0; b=0; c=10; d=0; e=0; f=0
         old_IFS=$IFS; IFS=$'\n'
         for tpc in $(cat "$DM_tl/.share/1.cfg"); do
             log1=0; log2=0; log3=0
-            _log1=0; _log2=0; _log3=0; _log4=0; cfg3=0; stts=""
+            _log1=0; _log2=0; _log3=0; _log4=0; _log5=0; cfg3=0; stts=""
             dir1="$DM_tl/${tpc}/.conf"
             dir2="$DM_tl/${tpc}/.conf/practice"
             stts=$(sed -n 1p "$dir1/8.cfg")
@@ -94,22 +103,27 @@ function save_word_stats() {
             cfg3=`wc -l < "$dir1/3.cfg"`; fi
             if [[ ${stts} =~ $numer ]]; then
                 if [ ${stts} -le 10 -a ${stts} -ge 7 ]; then
-                    _log1=0; _log2=0; _log3=0; _log4=0
+                    :
                 elif [ ${stts} = 5 -o ${stts} = 6 ]; then
                     _log1=${log1}; _log2=${log2}; _log3=${log3}
                     _log4=$((log2+log3))
                 elif [ ${stts} = 3 -o ${stts} = 4 ]; then
-                    _log1=${cfg3}; _log2=0; _log3=0; _log4=0
+                    _log1=${cfg3};
+                elif [ ${stts} = 12 ]; then
+                    _log5=${cfg3}
                 else 
-                    _log1=${log1}; _log2=${log2}; _log3=${log3}; _log4=0
+                    _log1=${log1}; _log2=${log2}; _log3=${log3};
                 fi
             fi
-            a=$((a+_log1)); b=$((b+_log2))
-            c=$((c+_log3)); e=$((e+_log4))
+            a=$((a+_log1))
+            b=$((b+_log2))
+            c=$((c+_log3))
+            e=$((e+_log4))
             d=$((d+cfg3))
-            echo "${d},${a},${b},${c},${e}"
+            f=$((f+_log5))
+            echo "${d},${a},${b},${c},${e},${f}"
             
-        done | tail -n 1
+        done |tail -n 1
         IFS=$old_IFS
     }
     
@@ -119,15 +133,18 @@ function save_word_stats() {
     log2=`cut -d ',' -f 3 <<<"$data"`
     log3=`cut -d ',' -f 4 <<<"$data"`
     log4=`cut -d ',' -f 5 <<<"$data"`
+    log5=`cut -d ',' -f 6 <<<"$data"`
     ! [[ ${log0} =~ $numer ]] && log0=0
     ! [[ ${log1} =~ $numer ]] && log1=0
     ! [[ ${log2} =~ $numer ]] && log2=0
     ! [[ ${log3} =~ $numer ]] && log3=0
     ! [[ ${log4} =~ $numer ]] && log4=0
+    ! [[ ${log5} =~ $numer ]] && log5=0
     wtable="W`date +%y`"
-    if ! [ `sqlite3 ${db} "select week from '${wtable}' where week is '${week}';"` ]; then
-        sqlite3 ${db} "insert into ${wtable} (week,total,val1,val2,val3,val4) \
-        values ('${week}','${log0}','${log1}','${log2}','${log3}','${log4}');"
+    if [[ `sqlite3 ${db} "select week from '${wtable}' where week is '${week^}';"` ]]; then :
+    else
+        sqlite3 ${db} "insert into ${wtable} (week,val0,val1,val2,val3,val4,val5) \
+        values ('${week^}','${log0}','${log1}','${log2}','${log3}','${log4}','${log5}');"
     fi
 }
 
@@ -141,10 +158,12 @@ function mk_topic_stats() {
     exec 5< <(sqlite3 "$db" "select val1 FROM ${mtable}")
     exec 6< <(sqlite3 "$db" "select val2 FROM ${mtable}")
     exec 7< <(sqlite3 "$db" "select val3 FROM ${mtable}")
+    exec 8< <(sqlite3 "$db" "select val4 FROM ${mtable}")
     
     for m in {01..12}; do
         declare t$m=0; declare p$m=0
         declare r$m=0; declare n$m=0
+        declare i$m=0
     done
     
     for m in {01..12}; do
@@ -153,35 +172,41 @@ function mk_topic_stats() {
             declare p$m=`cut -d ',' -f 2 <"$pre_data"`
             declare r$m=`cut -d ',' -f 3 <"$pre_data"`
             declare n$m=`cut -d ',' -f 4 <"$pre_data"`
+            declare i$m=`cut -d ',' -f 5 <"$pre_data"`
             rm "$pre_data"; break
         else
             read cfg0 <&4
             read cfg1 <&5
             read cfg2 <&6
             read cfg3 <&7
+            read cfg4 <&7
             ! [[ ${cfg0} =~ $numer ]] && cfg0=0
             ! [[ ${cfg1} =~ $numer ]] && cfg1=0
             ! [[ ${cfg2} =~ $numer ]] && cfg2=0
             ! [[ ${cfg3} =~ $numer ]] && cfg3=0
+            ! [[ ${cfg4} =~ $numer ]] && cfg4=0
             declare t$m=${cfg0}
             declare p$m=${cfg1}
             declare r$m=${cfg2}
             declare n$m=${cfg3}
+            declare n$m=${cfg4}
         fi
     done
     field_0="[$t01,$t02,$t03,$t04,$t05,$t06,$t07,$t08,$t09,$t10,$t11,$t12]"
     field_1="[$p01,$p02,$p03,$p04,$p05,$p06,$p07,$p08,$p09,$p10,$p11,$p12]"
     field_2="[$r01,$r02,$r03,$r04,$r05,$r06,$r07,$r08,$r09,$r10,$r11,$r12]"
     field_3="[$n01,$n02,$n03,$n04,$n05,$n06,$n07,$n08,$n09,$n10,$n11,$n12]"
-    echo -e "data1='[{\"f0\":$field_0,\"f1\":$field_1,\"f2\":$field_2,\"f3\":$field_3}]';" > "$data"
+    field_4="[$i01,$i02,$i03,$i04,$i05,$i06,$i07,$i08,$i09,$i10,$i11,$i12]"
+    echo -e "data1='[{\"f0\":$field_0,\"f1\":$field_1,\"f2\":$field_2,\"f3\":$field_3,\"f4\":$field_4}]';" > "$data"
 
     wtable="W`date +%y`"
     exec 3< <(sqlite3 "$db" "select week FROM ${wtable}")
-    exec 4< <(sqlite3 "$db" "select total FROM ${wtable}")
+    exec 4< <(sqlite3 "$db" "select val0 FROM ${wtable}")
     exec 5< <(sqlite3 "$db" "select val1 FROM ${wtable}")
     exec 6< <(sqlite3 "$db" "select val2 FROM ${wtable}")
     exec 7< <(sqlite3 "$db" "select val3 FROM ${wtable}")
     exec 8< <(sqlite3 "$db" "select val4 FROM ${wtable}")
+    exec 9< <(sqlite3 "$db" "select val5 FROM ${wtable}")
     for m in {01..10}; do
         read week <&3
         read log0 <&4
@@ -189,18 +214,21 @@ function mk_topic_stats() {
         read log2 <&6
         read log3 <&7
         read log4 <&8
+        read log5 <&8
         if [ -n "$week" ]; then
             ! [[ ${log0} =~ $numer ]] && log0=0
             ! [[ ${log1} =~ $numer ]] && log1=0
             ! [[ ${log2} =~ $numer ]] && log2=0
             ! [[ ${log3} =~ $numer ]] && log3=0
             ! [[ ${log4} =~ $numer ]] && log4=0
+            ! [[ ${log5} =~ $numer ]] && log5=0
             declare a$m=${week}
             declare b$m=${log0}
             declare c$m=${log1}
             declare d$m=${log2}
             declare e$m=${log3}
             declare f$m=${log4}
+            declare g$m=${log5}
         else
             declare a$m=""
             declare b$m=0
@@ -208,6 +236,7 @@ function mk_topic_stats() {
             declare d$m=0
             declare e$m=0
             declare f$m=0
+            declare g$m=0
         fi
     done
     field_0="[\"$a01\",\"$a02\",\"$a03\",\"$a04\",\"$a05\",\"$a06\",\"$a07\",\"$a08\",\"$a09\",\"$a10\"]"
@@ -216,7 +245,8 @@ function mk_topic_stats() {
     field_3="[$d01,$d02,$d03,$d04,$d05,$d06,$d07,$d08,$d09,$d10]"
     field_4="[$e01,$e02,$e03,$e04,$e05,$e06,$e07,$e08,$e09,$e10]"
     field_5="[$f01,$f02,$f03,$f04,$f05,$f06,$f07,$f08,$f09,$f10]"
-    echo -e "data2='[{\"f0\":$field_0,\"f1\":$field_1,\"f2\":$field_2,\"f3\":$field_3,\"f4\":$field_4,\"f5\":$field_5}]';" >> "$data"
+    field_6="[$g01,$g02,$g03,$g04,$g05,$g06,$g07,$g08,$g09,$g10]"
+    echo -e "data2='[{\"f0\":$field_0,\"f1\":$field_1,\"f2\":$field_2,\"f3\":$field_3,\"f4\":$field_4,\"f5\":$field_5,\"f6\":$field_6}]';" >> "$data"
     cp -f "$data" "$databk"
 }
 
@@ -228,7 +258,7 @@ function stats() {
     -o ! -e "${data}" -o -e "${pre_data}" ]; then
     
         ( echo "1"; mk=0
-        if [ `date +%d` = 1 ]; then
+        if [ `date +%d` = 01 ]; then
             save_topic_stats 0; mk=1
         fi
         if [ `date +%w` = 7 ]; then
