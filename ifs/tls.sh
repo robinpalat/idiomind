@@ -65,8 +65,7 @@ check_index() {
     DC_tlt="$DM_tl/${2}/.conf"; DM_tlt="$DM_tl/${2}"
     tpc="${2}"; mkmn=0; f=0; a=0; id=1
     [[ ${3} = 1 ]] && r=1 || r=0
-    psets=( 'words' 'sntcs' 'marks' 'wprct' 'rplay' \
-    'audio' 'ntosd' 'loop' 'rword' 'acheck' )
+    psets=( 'words' 'sntcs' 'marks' 'wprct' 'rplay' 'audio' 'ntosd' 'loop' 'rword' 'acheck' )
     _check() {
         if [ ! -f "${DC_tlt}/0.cfg" ]; then f=1; fi
         if [ ! -d "${DC_tlt}" ]; then mkdir "${DC_tlt}"; fi
@@ -102,10 +101,19 @@ check_index() {
         fi
         
         if [ ! -f "${DC_tlt}/8.cfg" ]; then
-            echo 1 > "${DC_tlt}/8.cfg"; fi
-        export stts=$(sed -n 1p "${DC_tlt}/8.cfg")
-        [ $stts = 13 ] && export f=1
+            echo 1 > "${DC_tlt}/8.cfg"
+            export f=1
+        fi
+            
+        stts=$(sed -n 1p "${DC_tlt}/8.cfg")
+
+        if [ $stts = 13 ]; then
+            echo 1 > "${DC_tlt}/8.cfg"
+            export f=1
+        fi
         
+        export stts
+
         cnt0=`wc -l < "${DC_tlt}/0.cfg" |sed '/^$/d'`
         cnt1=`egrep -cv '#|^$' < "${DC_tlt}/1.cfg"`
         cnt2=`egrep -cv '#|^$' < "${DC_tlt}/2.cfg"`

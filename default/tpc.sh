@@ -75,8 +75,9 @@ if [ -d "${DM_tlt}" ]; then
         msg_2 "$(gettext "This topic is inactive, do you want to activate?")\n<b>$tname</b>\n" info "$(gettext "Yes")" "$(gettext "No")"
         
         if [ $? = 0 ]; then
-            mv -f "${DM_tlt}/.conf/8.bk" "${DM_tlt}/.conf/8.cfg"
-            mode="$(< "$DM_tl/${tpc}/.conf/8.cfg")"
+        
+            export mode="$(< "${DC_tlt}/8.bk")"
+            rm "${DC_tlt}/8.bk"; echo ${mode} > "${DC_tlt}/8.cfg"
             touch "${DM_tlt}"
             echo "${topic}" > "$DC_s/4.cfg"
             checkt
@@ -89,8 +90,11 @@ if [ -d "${DM_tlt}" ]; then
             idiomind topic & exit 0
         fi
 
-    elif [ ${mode} = 14 ]; then # TODO
-        echo 1 > "${DC_tlt}/8.cfg"
+    elif [ ${mode} = 14 -o ${mode} = 13 ]; then
+    
+        checkt
+        echo "${topic}" > "$DC_s/4.cfg"
+        shakeit
         
     else
         if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then

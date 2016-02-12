@@ -154,6 +154,9 @@ elif [[ ${1} != 0 ]]; then
             "$DS/add.sh" new_topic
     elif [ -n "${tpc}" ]; then
         mode="$(< "$DM_tl/${tpc}/.conf/8.cfg")"
+        if [ -z "$mode" ]; then
+            echo 13 > "${DC_tlt}/8.cfg"; mode=13
+        fi
         if ((mode>=0 && mode<=20)); then
             if [ $ret -eq 2 ]; then
                 "$DS/default/tpc.sh" "$tpc" ${mode} 1 &

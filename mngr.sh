@@ -11,18 +11,19 @@ include "$DS/ifs/mods/mngr"
 
 mkmn() {
     f_lock "$DT/mn_lk"
+    [[ "$2" = 1 ]] && touch "$DM_tl/.share/data/pre_data"
     [ -d "$DM_tl/images" ] && rm -r "$DM_tl/images"
     dirimg='/usr/share/idiomind/images'
-    > "$DM_tl/.share/0.cfg"; > "$DM_tl/.share/0.cfg"
+    > "$DM_tl/.share/1.cfg"; > "$DM_tl/.share/0.cfg"
     
     while read -r tpc; do
     
-        unset stts
-        [ ! -d "$DM_tl/${tpc}/.conf" ] && mkdir -p "$DM_tl/${tpc}/.conf"
-        if [ ! -f "$DM_tl/${tpc}/.conf/8.cfg" ]; then
-            stts=13; echo ${stts} > "$DM_tl/${tpc}/.conf/8.cfg"
+        dir="$DM_tl/${tpc}/.conf"; unset stts
+        [ ! -d "${dir}" ] && mkdir -p "${dir}"
+        if [ ! -f "$dir/8.cfg" ]; then
+            stts=13; echo ${stts} > "$dir/8.cfg"
         else
-            stts=$(sed -n 1p "$DM_tl/${tpc}/.conf/8.cfg")
+            stts=$(sed -n 1p "${dir}/8.cfg")
             ! [[ ${stts} =~ $numer ]] && stts=13
         fi
         echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$DM_tl/.share/0.cfg"
@@ -33,16 +34,16 @@ mkmn() {
 
     while read -r tpc; do
     
-        unset stts
-        [ ! -d "$DM_tl/${tpc}/.conf" ] && mkdir -p "$DM_tl/${tpc}/.conf"
-        if [ ! -f "$DM_tl/${tpc}/.conf/8.cfg" ]; then
-            stts=13; echo ${stts} > "$DM_tl/${tpc}/.conf/8.cfg"
+        dir="$DM_tl/${tpc}/.conf"; unset stts
+        [ ! -d "${dir}" ] && mkdir -p "${dir}"
+        if [ ! -f "$dir/8.cfg" ]; then
+            stts=13; echo ${stts} > "${dir}/8.cfg"
         else 
-            stts=$(sed -n 1p "${DM_tlt}/.conf/8.cfg")
+            stts=$(sed -n 1p "${dir}/8.cfg")
             ! [[ ${stts} =~ $numer ]] && stts=13
             if [ ${stts} != 12 ]; then
-                mv -f "${DM_tlt}/.conf/8.cfg"  "${DM_tlt}/.conf/8.bk"
-                echo 12 > "${DM_tlt}/.conf/8.cfg"
+                mv -f "${dir}/8.cfg"  "${dir}/8.bk"
+                echo 12 > "${dir}/8.cfg"
             fi
         fi
         echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$DM_tl/.share/0.cfg"
@@ -50,9 +51,7 @@ mkmn() {
         
     done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime +80 \
     -type d ! -path "./.share" |sed 's|\./||g'|sed '/^$/d')
-    
-    [[ "$1" = 1 ]] && touch "$DM_tl/.share/data/pre_data"
-    
+
     rm -f "$DT/mn_lk"; exit
 }
 
