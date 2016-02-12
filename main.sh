@@ -89,12 +89,7 @@ function new_session() {
         dir="$DM_tl/${line}/.conf"
         dim="$DM_tl/${line}"
         [ ! -d "${dir}" ] && continue
-        
-        #if [ -e "${dir}/8.bk" ]; then
-            #rm "${dir}/8.cfg"
-            #mv "${dir}/8.bk" "${dir}/8.cfg"
-        #fi
-        
+
         stts=$(sed -n 1p "${dir}/8.cfg")
         ! [[ ${stts} =~ $numer ]] && stts=1
         if [ -e "${dir}/9.cfg" ] && \
@@ -114,8 +109,8 @@ function new_session() {
                 fi
             fi
         fi
-    done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 \
-    -type d ! -path "./.share" |sed 's|\./||g'|sed '/^$/d')
+    done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
+    ! -path "./.share" -exec ls -tNd {} + |sed 's|\./||g'|sed '/^$/d')
     
     while read -r line; do
         unset stts
@@ -126,8 +121,8 @@ function new_session() {
             mv -f "${dir}/8.cfg"  "${dir}/8.bk"
             echo 12 > "${dir}/8.cfg"
         fi
-    done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime +80 \
-    -type d ! -path "./.share" |sed 's|\./||g'|sed '/^$/d')
+    done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime +80 -type d \
+    ! -path "./.share" -exec ls -tNd {} + |sed 's|\./||g'|sed '/^$/d')
 
     rm -f "$DT/ps_lk"
     "$DS/mngr.sh" mkmn 1 &
@@ -163,14 +158,16 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
     --button="$(gettext "Install")":0
     ret=$?
         if [ $ret -eq 0 ]; then
-            if [[ `wc -l < "$DM_t/$langt/.share/1.cfg"` -ge 120 ]]; then
+            listt="$(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
+            ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
+            if [[ `wc -l <<<"$listt"` -ge 120 ]]; then
                 msg "$(gettext "Maximum number of topics reached.")\n" info "$(gettext "Information")" & exit
             fi
             cn=0
-            if [[ `grep -Fxo "${tname}" "$DM_t/$langt/.share/1.cfg" |wc -l` -ge 1 ]]; then
+            if [[ `grep -Fxo "${tname}" <<<"$listt" |wc -l` -ge 1 ]]; then
                 cn=1
                 for i in {1..50}; do
-                chck=$(grep -Fxo "${tname} ($i)" "$DM_t/$langt/.share/1.cfg")
+                chck=$(grep -Fxo "${tname} ($i)" <<<"$listt")
                 [ -z "$chck" ] && break; done
             
                 tname="${tname} ($i)"

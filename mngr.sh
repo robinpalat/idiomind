@@ -14,7 +14,7 @@ mkmn() {
     [[ "$2" = 1 ]] && touch "$DM_tl/.share/data/pre_data"
     [ -d "$DM_tl/images" ] && rm -r "$DM_tl/images"
     dirimg='/usr/share/idiomind/images'
-    > "$DM_tl/.share/1.cfg"; > "$DM_tl/.share/0.cfg"
+    > "$DM_tl/.share/0.cfg"
     
     while read -r tpc; do
     
@@ -25,12 +25,12 @@ mkmn() {
         else
             stts=$(sed -n 1p "${dir}/8.cfg")
             ! [[ ${stts} =~ $numer ]] && stts=13
+            [[ ${stts} = 12 ]] && continue
         fi
         echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$DM_tl/.share/0.cfg"
-        echo "${tpc}" >> "$DM_tl/.share/1.cfg"
         
-    done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 \
-    -type d ! -path "./.share" |sed 's|\./||g'|sed '/^$/d')
+    done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
+    ! -path "./.share" -exec ls -tNd {} + |sed 's|\./||g'|sed '/^$/d')
 
     while read -r tpc; do
     
@@ -41,16 +41,13 @@ mkmn() {
         else 
             stts=$(sed -n 1p "${dir}/8.cfg")
             ! [[ ${stts} =~ $numer ]] && stts=13
-            if [ ${stts} != 12 ]; then
-                mv -f "${dir}/8.cfg"  "${dir}/8.bk"
-                echo 12 > "${dir}/8.cfg"
-            fi
         fi
-        echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$DM_tl/.share/0.cfg"
-        echo "${tpc}" >> "$DM_tl/.share/1.cfg"
-        
-    done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime +80 \
-    -type d ! -path "./.share" |sed 's|\./||g'|sed '/^$/d')
+        if [ ${stts} = 12 -o ${stts} = 13 ]; then
+            echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$DM_tl/.share/0.cfg"
+        fi
+
+    done < <(cd "$DM_tl"; find ./ -maxdepth 1  -type d \
+    ! -path "./.share" -exec ls -tNd {} + |sed 's|\./||g'|sed '/^$/d')
 
     rm -f "$DT/mn_lk"; exit
 }
@@ -515,12 +512,14 @@ delete_topic() {
 
 rename_topic() {
     source "$DS/ifs/mods/add/add.sh"
-    info2=$(wc -l < "$DM_tl/.share/1.cfg")
+    listt="$(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
+    ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
+    info2=$(wc -l <<<"$listt")
     if grep -Fxo "${tpc}" < "$DM_tl/.share/3.cfg"; then i=1; fi
     jlb="$(clean_3 "${2}")"
     
     if grep -Fxo "${jlb}" < <(ls "$DS/addons/"); then jlb="${jlb} (1)"; fi
-    chck="$(grep -Fxo "${jlb}" "$DM_tl/.share/1.cfg" |wc -l)"
+    chck="$(grep -Fxo "${jlb}" <<<"$listt" |wc -l)"
     
     if [ ! -d "$DM_tl/${tpc}" ]; then exit 1; fi
   
@@ -538,7 +537,7 @@ rename_topic() {
 
     if [ ${chck} -ge 1 ]; then
         for i in {1..50}; do
-        chck=$(grep -Fxo "${jlb} ($i)" "$DM_t/$language_target/.share/1.cfg")
+        chck=$(grep -Fxo "${jlb} ($i)" <<<"$listt")
         [ -z "${chck}" ] && break; done
         
         jlb="${jlb} ($i)"

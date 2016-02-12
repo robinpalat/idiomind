@@ -13,7 +13,11 @@ ttrgt=$(grep -oP '(?<=ttrgt=\").*(?=\")' "$DC_s/1.cfg")
 dlaud=$(grep -oP '(?<=dlaud=\").*(?=\")' "$DC_s/1.cfg")
 
 new_topic() {
-    if [[ $(wc -l < "$DM_tl/.share/1.cfg") -ge 120 ]]; then
+    
+    listt="$(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
+    ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
+    
+    if [[ $(wc -l <<<"${listt}") -ge 120 ]]; then
     msg "$(gettext "Maximum number of topics reached.")" info "$(gettext "Information")" & exit 1; fi
     
     source "$DS/ifs/mods/add/add.sh"
@@ -26,11 +30,11 @@ new_topic() {
     fi
     
     if grep -Fxo "${jlb}" < <(ls "$DS/addons/"); then jlb="${jlb} (1)"; fi
-    chck=$(grep -Fxo "${jlb}" "$DM_tl/.share/1.cfg" |wc -l)
+    chck=$(grep -Fxo "${jlb}" <<<"$listt" |wc -l)
     
     if [[ ${chck} -ge 1 ]]; then
         for i in {1..50}; do
-        chck=$(grep -Fxo "${jlb} ($i)" "$DM_tl/.share/1.cfg")
+        chck=$(grep -Fxo "${jlb} ($i)" <<<"$listt")
         [ -z "${chck}" ] && break; done
         jlb="${jlb} ($i)"
         msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "Notice that the name for this one is now\:")\n<b>${jlb}</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
@@ -40,10 +44,10 @@ new_topic() {
     fi
     
     if [ -z "${jlb}" ]; then exit 1; fi
-    mkdir "$DM_tl/${jlb}"
-    list_inadd > "$DM_tl/.share/2.cfg"
-    "$DS/default/tpc.sh" "${jlb}" 1 1
-    "$DS/mngr.sh" mkmn 0
+        mkdir "$DM_tl/${jlb}"
+        list_inadd > "$DM_tl/.share/2.cfg"
+        "$DS/default/tpc.sh" "${jlb}" 1 1
+        "$DS/mngr.sh" mkmn 0
     exit
 }
 
@@ -704,8 +708,7 @@ new_items() {
     
     trgt=$(echo "${lzgpr}" |head -n -1 |sed -n 1p)
     srce=$(echo "${lzgpr}" |sed -n 2p)
-    chk=$(echo "${lzgpr}" |tail -1)
-    tpe=$(grep -Fxo "${chk}" "$DM_tl/.share/1.cfg")
+    tpe=$(echo "${lzgpr}" |tail -1)
 
     if [ $ret -eq 3 ]; then
         [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")

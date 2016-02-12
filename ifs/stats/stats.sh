@@ -24,7 +24,8 @@ function save_topic_stats() {
     count() {
         n=1; a=0; b=0; c=0; d=0; e=0
         old_IFS=$IFS; IFS=$'\n'
-        for tpc in $(< "$DM_tl/.share/1.cfg"); do
+        for tpc in $(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
+        ! -name "./.*" |sed 's|\./||g'|sed '/^$/d'); do
             pos=0; rev=0; neg=0; emp=0; idd=0; cfg1=0; cfg2=0; stts=""
             dir1="$DM_tl/${tpc}/.conf"
             dir2="$DM_tl/${tpc}/.conf/practice"
@@ -87,7 +88,8 @@ function save_word_stats() {
     count() {
         a=0; b=0; c=10; d=0; e=0; f=0
         old_IFS=$IFS; IFS=$'\n'
-        for tpc in $(cat "$DM_tl/.share/1.cfg"); do
+        for tpc in $(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
+        ! -name "./.*" |sed 's|\./||g'|sed '/^$/d'); do
             log1=0; log2=0; log3=0
             _log1=0; _log2=0; _log3=0; _log4=0; _log5=0; cfg3=0; stts=""
             dir1="$DM_tl/${tpc}/.conf"
