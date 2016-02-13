@@ -45,7 +45,7 @@ function index() {
         done
         if [ -d "${DC_tlt}/practice" ]; then
             cd "${DC_tlt}/practice"
-            while read file_pr; do
+            while read -r file_pr; do
                 sust "${file_pr}"
             done < <(ls ./*)
             rm ./*.tmp

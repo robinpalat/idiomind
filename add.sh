@@ -30,11 +30,11 @@ new_topic() {
     fi
     
     if grep -Fxo "${jlb}" < <(ls "$DS/addons/"); then jlb="${jlb} (1)"; fi
-    chck=$(grep -Fxo "${jlb}" <<<"$listt" |wc -l)
+    chck=$(grep -Fxo "${jlb}" <<<"${listt}" |wc -l)
     
     if [[ ${chck} -ge 1 ]]; then
         for i in {1..50}; do
-        chck=$(grep -Fxo "${jlb} ($i)" <<<"$listt")
+        chck=$(grep -Fxo "${jlb} ($i)" <<<"${listt}")
         [ -z "${chck}" ] && break; done
         jlb="${jlb} ($i)"
         msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "Notice that the name for this one is now\:")\n<b>${jlb}</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
@@ -52,8 +52,8 @@ new_topic() {
 }
 
 function new_item() {
-    export tpe; \
-    DM_tlt="$DM_tl/${tpe}"; \
+    export tpe
+    DM_tlt="$DM_tl/${tpe}"
     DC_tlt="$DM_tl/${tpe}/.conf"
     if [ ! -d "$DT_r" ]; then
         export DT_r=$(mktemp -d "$DT/XXXXXX")
@@ -422,7 +422,7 @@ function process() {
         tpcs="$(grep -vFx "${tpe}" "$DM_tl/.share/2.cfg" |tr "\\n" '!' |sed 's/\!*$//g')"
         [ -n "$tpcs" ] && e='!'
         tpe="$(dlg_checklist_3 "$DT_r/sntsls" "${tpe}")"
-        ret="$?"
+        ret=$?
     fi
     if [ $ret -eq 2 ]; then
         cleanups "$slt"
