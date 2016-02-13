@@ -103,9 +103,9 @@ function new_session() {
                 fi
             else
                 if [ ${RM} -ge 180 -a ${stts} = 7 ]; then
-                    echo 9 > "${dir}/8.cfg"; touch "${DM_tlt}"
+                    echo 9 > "${dir}/8.cfg"; touch "${dim}"
                 elif [ ${RM} -ge 100 -a ${stts} -lt 7 ]; then
-                    echo 7 > "${dir}/8.cfg"; touch "${DM_tlt}"
+                    echo 7 > "${dir}/8.cfg"; touch "${dim}"
                 fi
             fi
         fi

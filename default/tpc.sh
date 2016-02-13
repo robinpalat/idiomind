@@ -100,6 +100,7 @@ if [ -d "${DM_tlt}" ]; then
         if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
             source "$DS/ifs/mods/topic/${topic}.sh"
             echo "${tpc}" > "$DC_s/4.cfg"
+            shakeit
         fi
     fi
     
