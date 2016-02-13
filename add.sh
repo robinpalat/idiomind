@@ -43,11 +43,14 @@ new_topic() {
         jlb="${jlb}"
     fi
     
-    if [ -z "${jlb}" ]; then exit 1; fi
+    if [ -z "${jlb}" ]; then 
+        exit 1
+    else
         mkdir "$DM_tl/${jlb}"
         list_inadd > "$DM_tl/.share/2.cfg"
         "$DS/default/tpc.sh" "${jlb}" 1 1
         "$DS/mngr.sh" mkmn 0
+    fi
     exit
 }
 
