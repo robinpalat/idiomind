@@ -120,13 +120,15 @@ function upld() {
         --window-icon=idiomind --buttons-layout=end \
         --align=right --center --on-top \
         --width=480 --height=470 --borders=12 \
+        --field=" :LBL" "" \
         --field="$(gettext "Category"):CB" "" \
         --field="$(gettext "Skill Level"):CB" "" \
         --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
         --field="$(gettext "Author")" "$usrid" \
         --field="\t\t$(gettext "Password")" "$passw" \
         --field="<a href='$linkac'>$(gettext "Get account to share")</a> \n":LBL \
-        --button="$(gettext "Export")":2 --button="$(gettext "Close")":4
+        --button="$(gettext "Export")":2 \
+        --button="$(gettext "Close")":4
     }
     
     dlg_upload() {
@@ -136,14 +138,15 @@ function upld() {
         --always-print-result \
         --window-icon=idiomind --buttons-layout=end \
         --align=right --center --on-top \
-        --width=480 --height=470 --borders=12 \
+        --width=480 --height=470 --borders=12 --field=" :LBL" "" \
         --field="$(gettext "Category"):CBE" "$_categories" \
         --field="$(gettext "Skill Level"):CB" "$_levels" \
         --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
         --field="$(gettext "Author")" "$usrid" \
         --field="\t\t$(gettext "Password")" "$passw" \
         --field=" ":LBL "" \
-        --button="$(gettext "Export")":2 "$btn" --button="$(gettext "Close")":4
+        --button="$(gettext "Export")":2 "$btn" \
+        --button="$(gettext "Close")":4
     }
 
     dlg_dwld_content() {
@@ -208,25 +211,29 @@ function upld() {
 
     if [[ -e "${DC_tlt}/download" ]]; then
         if [[ ! -s "${DC_tlt}/download" ]]; then
-            dlg="$(dlg_dwld_content)"; ret=$?
+            dlg="$(dlg_dwld_content)"
+            ret=$?
         else
-            dlg="$(dlg_export)"; ret=$?
+            dlg="$(dlg_export)"
+            ret=$?
         fi
     else
         shopt -s extglob
         if [ -z "${usrid##+([[:space:]])}" -o -z "${passw##+([[:space:]])}" ]; then
-            dlg="$(dlg_getuser)"; ret=$?
+            dlg="$(dlg_getuser)"
+            ret=$?
         elif [ -n "${usrid}" -o -n "${passw}" ]; then
-            dlg="$(dlg_upload)"; ret=$?
+            dlg="$(dlg_upload)"
+            ret=$?
             
         fi
         [ $ret = 1 ] && exit 1
-        dlg="$(echo "${dlg}" |tail -n1)"
-        ctgry=$(echo "${dlg}" | cut -d "|" -f1)
-        level=$(echo "${dlg}" | cut -d "|" -f2)
-        notes_m=$(echo "${dlg}" | cut -d "|" -f3)
-        usrid_m=$(echo "${dlg}" | cut -d "|" -f4)
-        passw_m=$(echo "${dlg}" | cut -d "|" -f5)
+        dlg="$(grep -oP '(?<=|).*(?=\|)' <<<"$dlg")"
+        ctgry=$(echo "${dlg}" | cut -d "|" -f2)
+        level=$(echo "${dlg}" | cut -d "|" -f3)
+        notes_m=$(echo "${dlg}" | cut -d "|" -f4)
+        usrid_m=$(echo "${dlg}" | cut -d "|" -f5)
+        passw_m=$(echo "${dlg}" | cut -d "|" -f6)
         # get data
         for val in "${CATEGORIES[@]}"; do
             [ "$ctgry" = "$(gettext "${val^}")" ] && ctgry=$val

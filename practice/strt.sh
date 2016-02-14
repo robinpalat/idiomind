@@ -583,6 +583,7 @@ function get_list() {
         if [ -e "$DM_tls/images/${itm,,}-0.jpg" ]; then
         echo "${itm}" >> "$dir/${practice}.0"; fi
         done < "$DT/images" ) | yad --progress \
+        --name=Idiomind --class=Idiomind \
         --width 50 --height 35 --undecorated \
         --pulsate --auto-close \
         --skip-taskbar --center --no-buttons

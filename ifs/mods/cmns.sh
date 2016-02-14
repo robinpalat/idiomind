@@ -31,6 +31,15 @@ function msg_2() {
     "${btn3}" --button="${4}":1 --button="${3}":0
 }
 
+function progress() {
+    yad --progress \
+    --progress-text="$1" \
+    --name=Idiomind --class=Idiomind \
+    --width 50 --height 35 --undecorated \
+    --pulsate --auto-close --on-top \
+    --skip-taskbar --center --no-buttons
+}
+
 export numer='^[0-9]+$'
 
 function nmfile() {
@@ -99,14 +108,6 @@ function get_item() {
     export link="$(grep -oP '(?<=link={).*(?=})' <<<"${item}")"
     export tag="$(grep -oP '(?<=tag={).*(?=})' <<<"${item}")"
     export id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
-}
-
-function progress() {
-    yad --progress \
-    --progress-text="$1" \
-    --width 50 --height 35 --undecorated \
-    --pulsate --auto-close --on-top \
-    --skip-taskbar --center --no-buttons
 }
 
 function calculate_review() {
