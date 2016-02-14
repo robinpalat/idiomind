@@ -114,8 +114,8 @@ elif [[ ${1} != 0 ]]; then
         done < <(grep -Fvx "${ins}" <<<"${old}")
         echo "$ins" > "$DC_a/list"
     }
-    if [ ! -e "$DM_tl/.share/0.cfg" ]; then > "$DM_tl/.share/0.cfg"; fi
-    if [ ! -e "$DM_tl/.share/1.cfg" ]; then > "$DM_tl/.share/1.cfg"; fi
+    [ ! -e "$DM_tl/.share/0.cfg" ] && > "$DM_tl/.share/0.cfg"
+    [ ! -e "$DM_tl/.share/1.cfg" ] && > "$DM_tl/.share/1.cfg"
     if [ ! -e "$DC_a/list" ]; then
         echo "$(cd "/usr/share/idiomind/addons/"
         set -- */; printf "%s\n" "${@%/}")" > "$DC_a/list"
@@ -123,8 +123,8 @@ elif [[ ${1} != 0 ]]; then
     if [[ -n "$1" ]]; then
     var1="--text=$1\n"
     var2="--image=info"; else
-    #var1="--text=<small><a href='$linkc'>$(gettext "Shared")</a> </small>"
-    var1="--center"
+    var1="--text=<small><a href='$linkc'>$(gettext "Shared")</a> </small>"
+    var3="--center"
     var2="--text-align=right"; fi
     chk_list_addons1=$(wc -l < "$DS_a/menu_list")
     chk_list_addons2=$((`wc -l < "$DC_a/list"`*2))

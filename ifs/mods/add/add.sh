@@ -20,7 +20,8 @@ function check_s() {
 function mksure() {
     e=0; shopt -s extglob
     for str in "${@}"; do
-    if [ -z "${str##+([[:space:]])}" ]; then e=1; break; fi
+    if [ -z "${str##+([[:space:]])}" ]; then
+    e=1; break; fi
     done
     return $e
 }
@@ -61,10 +62,7 @@ function index() {
             if ! grep -Fxq "${trgt}" < <(cat "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg"); then
                 if [[ ${1} = 1 ]]; then
                     unset wrds grmr
-                    if [ "$(grep "$4" "${DC_tlt}/1.cfg")" ] && [ -n "$4" ]; then
-                    sed -i "s/${4}/${4}\n${trgt}/" "${DC_tlt}/1.cfg"
-                    else
-                    echo "${trgt}" >> "${DC_tlt}/1.cfg"; fi
+                    echo "${trgt}" >> "${DC_tlt}/1.cfg"
                     echo "${trgt}" >> "${DC_tlt}/3.cfg"
                     echo -e "FALSE\n${trgt}\n$img0" >> "${DC_tlt}/5.cfg"
 
@@ -507,7 +505,7 @@ function dlg_form_0() {
     --separator='|' \
     --window-icon=idiomind \
     --skip-taskbar --center --on-top \
-    --width=450 --height=100 --borders=0 \
+    --width=450 --height=80 --borders=0 \
     --field="$(gettext "Name")" "$1" \
     --button=gtk-ok:0
 }
