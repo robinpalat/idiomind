@@ -8,9 +8,16 @@ dirs="$DS/practice"
 export -f f_lock
 
 function _log() { 
-    echo "w1.$(tr -s '\n' '|' < ./${1}.1).w1" >> "$log"
-    echo "w2.$(tr -s '\n' '|' < ./${1}.2).w2" >> "$log"
-    echo "w3.$(tr -s '\n' '|' < ./${1}.3).w3" >> "$log"
+   # grep -o -P '(?<=w1.).*(?=\.w1)' "${log}" |tr '|' '\n' | sort | uniq
+    echo "w1.$(tr -s '\n' '|' < ./${1}.1).w1"  \
+    |sed -e '/\.\./d' >> "$log"
+    if [ ${mode} -gt 1 ]; then
+        echo "w2.$(tr -s '\n' '|' < ./${1}.2).w2"  \
+        |sed -e '/\.\./d' >> "$log"
+        echo "w3.$(tr -s '\n' '|' < ./${1}.3).w3"  \
+        |sed -e '/\.\./d' >> "$log"
+    fi
+        
     }
 
 function stats() {
