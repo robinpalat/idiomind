@@ -104,6 +104,7 @@ function practice_a() {
         --undecorated --buttons-layout=spread --align=center \
         --width=380 --height=260 --borders=8 \
         --field="\n$question":lbl "" \
+        --field="":lbl "" \
         --button="$(gettext "Exit")":1 \
         --button="  $(gettext "Continue") >>  !$img_cont":0
     }
