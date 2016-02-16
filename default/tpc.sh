@@ -72,7 +72,7 @@ if [ -d "${DM_tlt}" ]; then
         
      elif [ ${mode} = 12 ]; then
      
-        msg_2 "$(gettext "This topic is inactive, do you want to activate?")\n<b>$tname</b>\n" info "$(gettext "Yes")" "$(gettext "No")"
+        msg_2 "$(gettext "Topic considered inactive \(due to it has not been used for more than 80 days\). Do you want to enable it now?")" info "$(gettext "Yes")" "$(gettext "No")"
         
         if [ $? = 0 ]; then
         
