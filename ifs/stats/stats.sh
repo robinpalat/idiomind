@@ -52,7 +52,6 @@ function save_topic_stats() {
             d=$((d+neg))
             e=$((e+idd))
             echo "${a},${b},${c},${d},${e}"
-            
         done |tail -n 1
         IFS=$old_IFS
     }
@@ -122,7 +121,6 @@ function save_word_stats() {
             d=$((d+cfg3))
             f=$((f+_log5))
             echo "${d},${a},${b},${c},${e},${f}"
-            
         done |tail -n 1
         IFS=$old_IFS
     }
@@ -255,7 +253,6 @@ dtmnth=`date +%d`
 val1=0; val2=0; val3=0
 
 function stats() {
-    
     if [ ${dtmnth} = 01 -o ${dtweek} = 0 \
     -o ! -e ${data} -o -e ${pre_data} ]; then
 
@@ -273,8 +270,7 @@ function stats() {
         [ ${val1} = 1 ] && save_topic_stats
         [ ${val2} = 1 ] && save_word_stats
         [ ${val3} = 1 ] && mk_topic_stats
-        ) | progress "$(gettext "Updating")" &
-        
+        ) | progress &
     fi
     
     yad --html --uri="$DS/ifs/stats/1.html" --browser \
@@ -282,7 +278,7 @@ function stats() {
     --name=Idiomind --class=Idiomind \
     --orient=vert --window-icon=idiomind --center --on-top \
     --gtkrc="$DS/default/gtkrc.cfg" \
-    --width=650 --height=410 --borders=0  \
+    --width=650 --height=410 --borders=0 \
     --no-buttons \
     --button="<small>$(gettext "Close")</small>":1
 } >/dev/null 2>&1
