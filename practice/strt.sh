@@ -571,7 +571,7 @@ function get_list() {
                 item="$(grep -F -m 1 "trgt={${word}}" "${cfg0}" |sed 's/},/}\n/g')"
                 echo "$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")" >> "$dir/b.srces"
             done < "$dir/${practice}.0" ) | yad --progress \
-            --width 50 --height 35 --undecorated \
+            --undecorated \
             --pulsate --auto-close \
             --skip-taskbar --center --no-buttons
             fi
@@ -592,7 +592,7 @@ function get_list() {
         echo "${itm}" >> "$dir/${practice}.0"; fi
         done < "$DT/images" ) | yad --progress \
         --name=Idiomind --class=Idiomind \
-        --width 50 --height 35 --undecorated \
+        --undecorated \
         --pulsate --auto-close \
         --skip-taskbar --center --no-buttons
         
