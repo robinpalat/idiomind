@@ -619,7 +619,7 @@ function dlg_text_info_3() {
     --window-icon=idiomind \
     --wrap --margins=5 \
     --center --on-top \
-    --width=440 --height=200 --borders=2 \
+    --width=420 --height=150 --borders=2 \
     "${3}" --button="$(gettext "OK")":1
     rm -f "${DC_tlt}"/err
 }

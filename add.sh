@@ -13,7 +13,6 @@ ttrgt=$(grep -oP '(?<=ttrgt=\").*(?=\")' "$DC_s/1.cfg")
 dlaud=$(grep -oP '(?<=dlaud=\").*(?=\")' "$DC_s/1.cfg")
 
 new_topic() {
-    
     listt="$(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
     ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
     
@@ -36,6 +35,7 @@ new_topic() {
         for i in {1..50}; do
         chck=$(grep -Fxo "${jlb} ($i)" <<<"${listt}")
         [ -z "${chck}" ] && break; done
+        
         jlb="${jlb} ($i)"
         msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "Notice that the name for this one is now\:")\n<b>${jlb}</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
         [ $? -eq 1 ] && exit 1

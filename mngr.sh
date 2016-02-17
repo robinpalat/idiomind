@@ -338,11 +338,11 @@ edit_item() {
             [ ${colorize_run} = 1 ] && "$DS/ifs/tls.sh" colorize &
             [ ${to_modify} = 1 -a $ret -eq 0 ] && sleep 0.2
             
-            if [ $ret -eq 2 ]; then "$DS/mngr.sh" edit ${list} $((item_pos-1)) &
-            elif [ $ret -eq 0 ]; then "$DS/vwr.sh" ${list} "${trgt}" ${item_pos} & fi
+            if [ $ret -eq 2 ]; then $DS/mngr.sh edit ${list} $((item_pos-1)) &
+            elif [ $ret -eq 0 ]; then $DS/vwr.sh ${list} "${trgt}" ${item_pos} & fi
             
         else
-            "$DS/vwr.sh" ${list} "${trgt}" ${item_pos} &
+            $DS/vwr.sh ${list} "${trgt}" $((item_pos+1)) &
         fi
         exit
 }
