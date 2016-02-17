@@ -35,7 +35,7 @@ function progress() {
     yad --progress \
     --progress-text="$1" \
     --name=Idiomind --class=Idiomind \
-    --width 50 --height 35 --undecorated \
+    --undecorated \
     --pulsate --auto-close --on-top \
     --skip-taskbar --center --no-buttons
 }
