@@ -88,7 +88,7 @@ function cleanups() {
     for fl in "$@"; do
         if [ -d "${fl}" ]; then
             rm -fr "${fl}"
-        elif [ -f "${fl}" ]; then
+        elif [ -e "${fl}" ]; then
             rm -f "${fl}"
         fi
     done

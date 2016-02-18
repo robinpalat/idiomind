@@ -483,11 +483,11 @@ panel() {
     
     ( yad --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
-    --always-print-result --no-focus \
+    --always-print-result \
     --window-icon=idiomind \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --form --fixed --on-top --no-buttons --align=center \
-    --width=140 --height=190 --borders=0 --geometry=${geom} \
+    --width=140 --height=180 --borders=0 --geometry=${geom} \
     --field="$(gettext "New")"!gtk-new:btn "$DS/add.sh 'new_items'" \
     --field="$(gettext "Home")"!gtk-home:btn "idiomind 'topic'" \
     --field="$(gettext "Index")"!gtk-index:btn "$DS/chng.sh" \

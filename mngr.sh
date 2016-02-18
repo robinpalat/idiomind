@@ -12,8 +12,7 @@ include "$DS/ifs/mods/mngr"
 mkmn() {
     f_lock "$DT/mn_lk"
     [[ "$2" = 1 ]] && touch "$DM_tl/.share/data/pre_data"
-    [ -d "$DM_tl/images" ] && rm -r "$DM_tl/images"
-    [ -d "$DM_tl/.conf" ] && rm -r "$DM_tl/.conf"
+    cleanups "$DM_tl/images" "$DM_tl/.conf"
     dirimg='/usr/share/idiomind/images'
     > "$DM_tl/.share/0.cfg"
     
@@ -98,7 +97,7 @@ delete_item() {
         
         if [ $ret -eq 0 ]; then
             (sleep 0.1 && kill -9 $(pgrep -f "yad --form "))
-            [ -f "${DM_tlt}/$id.mp3" ] && rm "${DM_tlt}/$id.mp3"
+            cleanups "${DM_tlt}/$id.mp3"
             sed -i "/trgt={${trgt}}/d" "${DC_tlt}/0.cfg"
             
             if [ -d "${DC_tlt}/practice" ]; then
@@ -371,7 +370,7 @@ edit_list() {
         dlaud="$(grep -oP '(?<=dlaud=\").*(?=\")' "$DC_s/1.cfg")"
         include "$DS/ifs/mods/add"
         n=1; f_lock "$DT/el_lk"
-        rm "${direc}/1.cfg" "${direc}/3.cfg" "${direc}/4.cfg"
+        cleanups "${direc}/1.cfg" "${direc}/3.cfg" "${direc}/4.cfg"
         $cmd "$DT/tmp1" | while read -r trgt; do
             if grep -F -m 1 "trgt={${trgt}}" "${direc}/0.cfg"; then
                 item="$(grep -F -m 1 "trgt={${trgt}}" "${direc}/0.cfg" |sed 's/},/}\n/g')"
@@ -405,8 +404,7 @@ edit_list() {
         if [ -d "$DM_tl/${2}" -a `wc -l < "${direc}/0.cfg"` -ge 1 ]; then
         while read -r r_item; do
            id=`basename "${r_item}" |sed "s/\(.*\).\{4\}/\1/" |tr -d '.'`
-           if ! grep "${id}" "${direc}/0.cfg"; then
-           [ -f "${r_item}" ] && rm "${r_item}"; fi
+           if ! grep "${id}" "${direc}/0.cfg"; then cleanups "${r_item}"; fi
         done < <(find "$DM_tl/${2}"/*.mp3); fi
         if [[ "$(cat "${direc}/1.cfg" "${direc}/2.cfg" |wc -l)" -lt 1 ]]; then
         > "${direc}/0.cfg"; fi
@@ -459,7 +457,7 @@ edit_feeds() {
     mods="$(echo "${feeds}" |edit_feeds_list)"
     ret=$?
     if [ -z "${mods}" ]; then
-        [ -e "${file}" ] && rm "${file}"
+        cleanups "${file}"
     elif [ "${feeds}" != "${mods}" ]; then
         echo "${mods}" |sed -e '/^$/d' > "${file}"
     fi
@@ -486,10 +484,9 @@ delete_topic() {
             if [ "$(sed -n 2p "$DT/.p_")" = "${tpc}" ]; then 
             "$DS/stop.sh" 2; fi
         fi
-        [ -f "$DM/backup/${tpc}.bk" ] && rm "$DM/backup/${tpc}.bk"
+        cleanups "$DM/backup/${tpc}.bk"
 
-        if [ -d "$DM_tl/${tpc}" ]; then
-            rm -fr "$DM_tl/${tpc}"; fi
+        if [ -d "$DM_tl/${tpc}" ]; then cleanups "$DM_tl/${tpc}"; fi
      
         if [ -d "$DM_tl/${tpc}" ]; then sleep 0.5
         msg "$(gettext "Could not remove the directory:")\n$DM_tl/${tpc}\n$(gettext "You must manually remove it.")" info "$(gettext "Information")"; fi
@@ -565,10 +562,9 @@ rename_topic() {
         
         list_inadd > "$DM_tl/.share/2.cfg"
         rm "$DM_tl/.share"/*.tmp
-        [ -d "$DM_tl/${tpc}" ] && rm -r "$DM_tl/${tpc}"
-        [ -f "$DM/backup/${tpc}.bk" ] && rm "$DM/backup/${tpc}.bk"
+        cleanups "$DM_tl/${tpc}" "$DM/backup/${tpc}.bk" "$DT/rm_lk"
         
-        rm -f "$DT/rm_lk"; "$DS/mngr.sh" mkmn 0 & exit 1
+        "$DS/mngr.sh" mkmn 0 & exit 1
     fi
 }
 
@@ -685,7 +681,7 @@ mark_as_learned_topic() {
         fi
     fi
     
-    rm "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg"
+    cleanups "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg"
     touch "${DC_tlt}/1.cfg"
     
     while read item_; do
