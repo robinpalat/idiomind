@@ -73,12 +73,12 @@ function edit_list_list() {
 
 function edit_feeds_list() {
     yad --list --title="${tpc}" \
-    --text="$(gettext "Configure feed urls to add content automatically from news headlines.")" \
+    --text="$(gettext "Configure feed urls to add content automatically from news headlines.")\n" \
     --name=Idiomind --class=Idiomind \
     --editable --separator='\n' \
     --always-print-result --print-all \
     --window-icon=idiomind \
-    --no-headers --fixed --center \
+    --no-headers --center \
     --width=550 --height=160 --borders=2 \
     --column="" \
     --button="$(gettext "Cancel")":1 \
@@ -88,7 +88,7 @@ function edit_feeds_list() {
 
 function progr_3() {
     yad --progress \
-    --width 50 --height 35 --undecorated \
-    --pulsate --auto-close \
+    --name=Idiomind --class=Idiomind \
+    --undecorated --pulsate --auto-close \
     --skip-taskbar --center --no-buttons
 }

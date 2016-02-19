@@ -93,8 +93,8 @@ function new_sentence() {
     if [[ ${trans} = TRUE ]]; then
         [ "$(dirname "$0")" != "$DT_r" ] && cd "$DT_r"
         if [[ ${ttrgt} = TRUE ]]; then
-            trgt="$(translate "${trgt,,}" auto $lgt)"
-            trgt=$(clean_2 "${trgt}")
+            _trgt="$(translate "${trgt,,}" auto $lgt)"
+            [ -n "${_trgt}" ] && trgt=$(clean_2 "${_trgt}")
         fi
         srce="$(translate "${trgt,,}" $lgt $lgs)"
         srce="$(clean_2 "${srce}")"
@@ -111,7 +111,7 @@ function new_sentence() {
     mksure "${trgt}" "${srce}" "${grmr}" "${wrds}"
 
     if [ $? = 1 ]; then
-        echo "${trgt}" >> "${DC_tlt}/err"
+        echo -e "${trgt}" >> "${DC_tlt}/err"
         cleanups "$DT_r"; exit 1
     else
         index 2
@@ -148,8 +148,8 @@ function new_word() {
     
     if [[ ${trans} = TRUE ]]; then
         if [[ ${ttrgt} = TRUE ]]; then
-            trgt="$(translate "${trgt}" auto $lgt)"
-            trgt="$(clean_1 "${trgt}")"
+            _trgt="$(translate "${trgt}" auto $lgt)"
+            [ -n "${_trgt}" ] && trgt="$(clean_1 "${_trgt}")"
         fi
         srce="$(translate "${trgt}" $lgt $lgs)"
         srce="$(clean_0 "${srce}")"
@@ -165,7 +165,7 @@ function new_word() {
     mksure "${trgt}" "${srce}"
     
     if [ $? = 1 ]; then
-        echo "${trgt}" >> "${DC_tlt}/err"
+        echo -e "${trgt}" >> "${DC_tlt}/err"
         cleanups "$DT_r"; exit 1
     else
         index 1
@@ -596,7 +596,7 @@ function process() {
         if [[ ${sadds} = 1 ]]; then
             S=" $(gettext "sentence")"
         fi
-        log=$(cat "$DT_r/slog" "$DT_r/wlog")
+        log=$(cat "$DT_r/slog" "$DT_r/wlog" |sed '/^$/d')
         adds=$(cat "$DT_r/adds" "$DT_r/addw" |sed '/^$/d' |wc -l)
         
         if [[ ${adds} -ge 1 ]]; then

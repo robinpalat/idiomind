@@ -613,15 +613,14 @@ function msg_3() {
 
 function dlg_text_info_3() {
     echo -e "${1}" | yad --text-info \
-    --title="$(gettext "Errors found")" \
-    --text="$(gettext "Some notes could not be added to your list"):" \
+    --title="$(gettext "Some notes could not be added to your list")" \
     --name=Idiomind --class=Idiomind \
     --window-icon=idiomind \
     --wrap --margins=5 \
     --center --on-top \
-    --width=420 --height=150 --borders=2 \
+    --width=420 --height=150 --borders=0 \
     "${3}" --button="$(gettext "OK")":1
-    rm -f "${DC_tlt}"/err
+    rm -f "${DC_tlt}/err"
 }
 
 function dlg_form_3() {
