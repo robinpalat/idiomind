@@ -217,7 +217,7 @@ dlg_backups() {
     --name=Idiomind --class=Idiomind \
     --dclick-action="$DS/ifs/tls.sh '_restfile'" \
     --window-icon=idiomind --center --on-top \
-    --width=520 --height=380 --borders=10 \
+    --width=520 --height=380 --borders=5 \
     --print-column=1 --no-headers \
     --column=Nombre:TEXT \
     --button=gtk-close:1

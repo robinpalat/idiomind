@@ -635,14 +635,13 @@ function dlg_form_3() {
 }
 
 function dlg_progress_1() {
-    yad --progress --title="$(gettext "Processing")" \
+    yad --progress \
     --name=Idiomind --class=Idiomind \
     --window-icon=idiomind \
-    --progress-text=" " \
-    --pulsate --percentage="5" --auto-close \
+    --progress-text="$1" \
+    --pulsate --auto-close \
     --undecorated --skip-taskbar --no-buttons \
-    --on-top --mouse --fixed \
-    --width=200 --height=50 --borders=2
+    --on-top --mouse --fixed
 }
 
 function cleanups() {
