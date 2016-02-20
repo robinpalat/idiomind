@@ -175,18 +175,22 @@ play_list() {
             [ -n "${val}" ] && sed -i "s/$item=.*/$item=\"$val\"/g" "${DC_tlt}/10.cfg"
             let f++
         done
+        
         pval="$(cut -d "|" -f5 <<<"${tab2}")"
         if [[ "$pval" = "$(gettext "Words")" ]]; then  val=1
         elif [[ "$pval" = "$(gettext "Sentences")" ]]; then  val=2
         else  val=0; fi
+        
         [ -n "${val}" ] && sed -i "s/rword=.*/rword=\"$val\"/g" "${DC_tlt}/10.cfg"
  
         if [ $ret -eq 0 ]; then
             if [ ${count} -lt 1 ]; then
-                notify-send "$(gettext "Nothing to play")" \
-                "$(gettext "Exiting...")" -t 3000 &
+            
+                notify-send "$(gettext "Nothing to play")" "$(gettext "Exiting...")" -t 3000 &
+                
                 [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
                 "$DS/stop.sh" 2 & exit 1; fi
+                
             if [ -d "${DM_tlt}" ] && [ -n "${tpc}" ]; then
                     if grep TRUE <<<"$words$sntcs$marks$wprct"; then
                         echo -e "$tpc" > "$DT/.p_"
