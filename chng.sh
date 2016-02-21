@@ -143,7 +143,7 @@ elif [[ ${1} != 0 ]]; then
     --width=620 --height=580 --borders=8 \
     --column=img:IMG \
     --column=File:TEXT \
-    --button="<small>$(gettext "Statistics")</small>":"'$DS/ifs/tls.sh' _stats" \
+    --button="$(gettext "Statistics")":"'$DS/ifs/tls.sh' _stats" \
     --button="$(gettext "New")"!gtk-new:3 \
     --button="$(gettext "Apply")":2 \
     --button="$(gettext "Close")"!gtk-close:1)
