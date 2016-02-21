@@ -4,7 +4,7 @@
 #  Author: Robin Palatnik
 #  Email: robinpalat@users.sourceforge.net
 #  Web site: https://idiomind.sourceforge.net
-#  Date: 2015/11/00
+#  Date: 2016/02/00
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by

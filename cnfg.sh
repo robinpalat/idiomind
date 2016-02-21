@@ -26,7 +26,7 @@ sets=( 'gramr' 'wlist' 'trans' 'dlaud' 'ttrgt' 'clipw' 'stsks' \
 
 confirm() {
     yad --form --title="$(gettext "Confirm")" \
-    --image="gtk-refresh" --text=" $1\n" \
+    --image="gtk-refresh" --text="$1\n" \
     --window-icon=idiomind \
     --skip-taskbar --center --on-top \
     --width=340 --height=120 --borders=5 \
