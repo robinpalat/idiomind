@@ -115,7 +115,6 @@ elif [[ ${1} != 0 ]]; then
         echo "$ins" > "$DC_a/list"
     }
     [ ! -e "$DM_tl/.share/0.cfg" ] && > "$DM_tl/.share/0.cfg"
-    [ ! -e "$DM_tl/.share/1.cfg" ] && > "$DM_tl/.share/1.cfg"
     if [ ! -e "$DC_a/list" ]; then
         echo "$(cd "/usr/share/idiomind/addons/"
         set -- */; printf "%s\n" "${@%/}")" > "$DC_a/list"
@@ -129,10 +128,9 @@ elif [[ ${1} != 0 ]]; then
     chk_list_addons1=$(wc -l < "$DS_a/menu_list")
     chk_list_addons2=$((`wc -l < "$DC_a/list"`*2))
     chk_list_topics1=$((`wc -l < "$DM_tl/.share/0.cfg"`/2))
-    chk_list_topics2=$(wc -l < "$DM_tl/.share/1.cfg")
     if [[ ${chk_list_addons1} != ${chk_list_addons2} ]]; then remove_d; fi
-    if [[ ${chk_list_topics1} != ${chk_list_topics2} ]]; then "$DS/mngr.sh" mkmn; fi
     if [ -e "$DC_s/topics_first_run" -a -z "${1}" ]; then exit 1; fi
+    if [[ $((chk_list_topics1%2)) != 0 ]]; then "$DS/mngr.sh" mkmn 0; fi
 
     tpc=$(cat "$DM_tl/.share/0.cfg" | \
     yad --list --title="$(gettext "Topics")" "$var1" \
