@@ -8,7 +8,7 @@ fi
 function check_s() {
     if [ -z "${1}" ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r" &
-        msg "$(gettext "No topic is selected")\n" info Information & exit 1
+        msg "$(gettext "No topic selected")\n" info Information & exit 1
     fi
     DC_tlt="$DM_tl/${1}/.conf"
     if [[ `wc -l < "${DC_tlt}/0.cfg"` -ge 200 ]]; then
