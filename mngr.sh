@@ -241,7 +241,7 @@ edit_item() {
             [ "${note}" != "${note_mod}" ] && to_modify=1
             [ "${mark}" != "${mark_mod}" ] && to_modify=1
             [ "${audf}" != "${audf_mod}" ] && to_modify=1
-            [ "${tpc}" != "${tpc_mod}" ] && to_modify=1
+            [ "${tpc}" != "${tpc_mod}" ] && to_modify=1 && item_pos=$((item_pos+1))
 
             if [ ${to_modify} = 1 ]; then
             (
