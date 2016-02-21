@@ -8,7 +8,7 @@ fi
 function check_s() {
     if [ -z "${1}" ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r" &
-        msg "$(gettext "No topic is active")\n" info Information & exit 1
+        msg "$(gettext "No topic is selected")\n" info Information & exit 1
     fi
     DC_tlt="$DM_tl/${1}/.conf"
     if [[ `wc -l < "${DC_tlt}/0.cfg"` -ge 200 ]]; then
@@ -100,7 +100,7 @@ function sentence_p() {
     fi
 
     r=$((RANDOM%10000))
-    cd /; DT_r="$1"; cd "$DT_r"; touch "swrd.$r" "twrd.$r"
+    touch "swrd.$r" "twrd.$r"
     if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
         vrbl="${srce_p}"; lg=$lgt; aw="./swrd.$r"; bw="./twrd.$r"
     else
@@ -461,7 +461,6 @@ function img_word() {
 
 function voice() {
     txaud="$(grep -o txaud=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')"
-    DT_r="$2"; cd "$DT_r"
     if [ -n "${txaud}" ]; then
         echo "${1}" |sed 's/<[^>]*>//g' |$txaud "$DT_r/f.wav"
         sox "$DT_r"/*.wav "${3}"
@@ -514,7 +513,7 @@ function dlg_form_1() {
     yad --form --title="$(gettext "New note")" \
     --name=Idiomind --class=Idiomind \
     --gtkrc="$DS/default/gtkrc.cfg" \
-    --always-print-result --separator="\n" \
+    --always-print-result --separator="|" \
     --skip-taskbar --center --on-top \
     --align=right --image="${img}" \
     --window-icon=idiomind \
@@ -530,7 +529,7 @@ function dlg_form_2() {
     yad --form --title="$(gettext "New note")" \
     --name=Idiomind --class=Idiomind \
     --gtkrc="$DS/default/gtkrc.cfg" \
-    --always-print-result --separator="\n" \
+    --always-print-result --separator="|" \
     --skip-taskbar --center --on-top \
     --align=right --image="${img}" \
     --window-icon=idiomind \

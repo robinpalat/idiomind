@@ -15,7 +15,7 @@ mkmn() {
     cleanups "$DM_tl/images" "$DM_tl/.conf"
     dirimg='/usr/share/idiomind/images'
     > "$DM_tl/.share/0.cfg"
-    
+
     while read -r tpc; do
     
         dir="$DM_tl/${tpc}/.conf"; unset stts
@@ -59,7 +59,7 @@ delete_item_ok() {
     id=`grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"`
 
     if [ -n "${trgt}" ]; then
-        [ -f "${DM_tlt}/$id.mp3" ] && rm "${DM_tlt}/$id.mp3"
+        cleanups "${DM_tlt}/$id.mp3"
         sed -i "/trgt={${trgt}}/d" "${DC_tlt}/0.cfg"
 
         if [ -d "${DC_tlt}/practice" ]; then
@@ -77,7 +77,7 @@ delete_item_ok() {
             sed '/^$/d' "${DC_tlt}/${n}.cfg.tmp" > "${DC_tlt}/${n}.cfg"; fi
         done
         
-        if [ -f "${DC_tlt}/lst" ]; then rm "${DC_tlt}/lst"; fi
+        cleanups "${DC_tlt}/lst"
         rm "${DC_tlt}"/*.tmp
     fi
     if [[ `wc -l < "${DC_tlt}/0.cfg"` -lt 200 ]] \

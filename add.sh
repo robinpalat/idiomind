@@ -59,11 +59,11 @@ function new_item() {
     DM_tlt="$DM_tl/${tpe}"
     DC_tlt="$DM_tl/${tpe}/.conf"
     if [ ! -d "$DT_r" ]; then
-        export DT_r=$(mktemp -d "$DT/XXXXXX")
+        export DT_r=$(mktemp -d "$DT/XXXXXX"); cd "$DT_r"
     fi
     check_s "${tpe}"
     if [ -z "$trgt" ]; then trgt="${3}"; fi
-    cd "$DT_r"
+    
     if [[ ${trans} = FALSE ]] && ([ -z "${srce}" ] || [ -z "${trgt}" ]); then
         cleanups "$DT_r"
         msg "$(gettext "You need to fill text fields.")\n" info "$(gettext "Information")" & exit 1
@@ -91,7 +91,6 @@ function new_sentence() {
     srce="$(clean_2 "${srce}")"
 
     if [[ ${trans} = TRUE ]]; then
-        [ "$(dirname "$0")" != "$DT_r" ] && cd "$DT_r"
         if [[ ${ttrgt} = TRUE ]]; then
             _trgt="$(translate "${trgt,,}" auto $lgt)"
             [ -n "${_trgt}" ] && trgt=$(clean_2 "${_trgt}")
@@ -271,7 +270,7 @@ function list_words_sentence() {
         fi
     n=1
     while read -r trgt; do
-        if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
+        if [ `wc -l < "${DC_tlt}/0.cfg"` -ge 200 ]; then
             echo -e "\n$trgt" >> "${DC_tlt}/err"
         elif [ -z "$(< "$DT_r/slts")" ]; then
             cleanups "${DT_r}"; exit 0
@@ -337,8 +336,8 @@ function process() {
     
     if [ ! -d "$DT_r" ] ; then
         export DT_r=$(mktemp -d "$DT/XXXXXX")
+        cd "$DT_r"
     fi
-    [ "$(dirname "$0")" != "$DT_r" ] && cd "$DT_r"
 
     if [ -n "${trgt}" ]; then
         conten="${trgt}"
@@ -519,7 +518,6 @@ function process() {
                     if [ ${#trgt} -ge 180 ]; then
                         echo -e "\n\n#$n [$(gettext "Sentence too long")] $trgt" >> "$DT_r/slog"
                     else
-                        [ "$(dirname "$0")" != "$DT_r" ] && cd "$DT_r"
                         ( sentence_p "$DT_r" 1
                         id="$(set_name_file 1 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}")"
                         mksure "${trgt}" "${srce}" "${wrds}" "${grmr}"
@@ -696,36 +694,40 @@ new_items() {
     
     if [ ${#trgt} -gt 180 ]; then process; fi
 
-    [ -e "$DT_r/ico.jpg" ] && img="$DT_r/ico.jpg" \
-    || img="$DS/images/nw.png"
+    [ -e "$DT_r/ico.jpg" ] && img="$DT_r/ico.jpg" || img="$DS/images/nw.png"
     
     tpcs="$(grep -vFx "${tpe}" "$DM_tl/.share/2.cfg" |tr "\\n" '!' |sed 's/\!*$//g')"
     [ -n "$tpcs" ] && e='!'
-    if [ -z "${tpe}" ]; then check_s "${tpe}" & exit 1; fi
     
     if [[ ${trans} = TRUE ]]; then
-        lzgpr="$(dlg_form_1)"
+        lzgpr="$(dlg_form_1)"; ret=$?
+        trgt=$(cut -d "|" -f1 <<<"${lzgpr}")
+        tpe=$(cut -d "|" -f2 <<<"${lzgpr}")
+        
     else 
-        lzgpr="$(dlg_form_2)"; fi
-    ret="$?"
-    
-    trgt=$(echo "${lzgpr}" |head -n -1 |sed -n 1p)
-    srce=$(echo "${lzgpr}" |sed -n 2p)
-    tpe=$(echo "${lzgpr}" |tail -1)
+        lzgpr="$(dlg_form_2)"; ret=$?
+        trgt=$(cut -d "|" -f1 <<<"${lzgpr}")
+        srce=$(cut -d "|" -f2 <<<"${lzgpr}")
+        tpe=$(cut -d "|" -f3 <<<"${lzgpr}")
+    fi
 
     if [ $ret -eq 3 ]; then
+    
         [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")
         echo "${tpe}" > "$DT/tpe"
         cd "$DT_r"; set_image_1
         "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
     
     elif [ $ret -eq 2 ]; then
+    
         [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")
         echo "${tpe}" > "$DT/tpe"
         "$DS/ifs/tls.sh" add_audio "$DT_r"
         "$DS/add.sh" new_items "$DT_r" 2 "${trgt}" "${srce}" && exit
     
     elif [ $ret -eq 0 ]; then
+    
+        [ -z "${tpe}" ] && check_s "${tpe}" && exit 1
         if [ "${tpe}" = "$(gettext "New") *" ]; then
             "$DS/add.sh" new_topic
             source $DS/default/c.conf
@@ -735,7 +737,9 @@ new_items() {
         
         if [ "$3" = 2 ]; then
             [ -d "$2" ] && DT_r="$2" || DT_r=$(mktemp -d "$DT/XXXXXX")
-        else DT_r=$(mktemp -d "$DT/XXXXXX"); fi
+        else 
+            DT_r=$(mktemp -d "$DT/XXXXXX")
+        fi
         export DT_r; cd "$DT_r"
         xclip -i /dev/null
     
@@ -743,7 +747,7 @@ new_items() {
             msg "$(gettext "No topic is active")\n" info "$(gettext "Information")" & exit 1; fi
 
         if [ -z "${trgt}" ]; then
-        cleanups "$DT_r"; exit 1; fi
+            cleanups "$DT_r"; exit 1; fi
 
         if [[ ${trgt,,} = ocr ]] || [[ ${trgt^} = I ]]; then
             unset trgt; process image
