@@ -125,9 +125,9 @@ elif [[ ${1} != 0 ]]; then
     #var1="--text=<small><a href='$linkc'>$(gettext "Shared")</a> </small>"
     var1="--center"
     var2="--text-align=right"; fi
-    chk_list_addons1=$(wc -l < "$DS_a/menu_list")
+    chk_list_addons1=`wc -l < "$DS_a/menu_list"`
     chk_list_addons2=$((`wc -l < "$DC_a/list"`*2))
-    chk_list_topics1=$((`wc -l < "$DM_tl/.share/0.cfg"`/2))
+    chk_list_topics1=`wc -l < "$DM_tl/.share/0.cfg"`
     if [[ ${chk_list_addons1} != ${chk_list_addons2} ]]; then remove_d; fi
     if [ -e "$DC_s/topics_first_run" -a -z "${1}" ]; then exit 1; fi
     if [[ $((chk_list_topics1%2)) != 0 ]]; then "$DS/mngr.sh" mkmn 0; fi
@@ -151,10 +151,10 @@ elif [[ ${1} != 0 ]]; then
     if [ $ret -eq 3 ]; then
             "$DS/add.sh" new_topic
     elif [ -n "${tpc}" ]; then
+    
         mode="$(< "$DM_tl/${tpc}/.conf/8.cfg")"
-        if [ -z "$mode" ]; then
-            echo 13 > "${DC_tlt}/8.cfg"; mode=13
-        fi
+        [ -z "$mode" ] && echo 13 > "${DC_tlt}/8.cfg" && mode=13
+        
         if ((mode>=0 && mode<=20)); then
             if [ $ret -eq 2 ]; then
                 "$DS/default/tpc.sh" "$tpc" ${mode} 1 &

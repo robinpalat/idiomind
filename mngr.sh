@@ -15,7 +15,7 @@ mkmn() {
     cleanups "$DM_tl/images" "$DM_tl/.conf"
     dirimg='/usr/share/idiomind/images'
     > "$DM_tl/.share/0.cfg"
-
+yad
     while read -r tpc; do
     
         dir="$DM_tl/${tpc}/.conf"; unset stts
