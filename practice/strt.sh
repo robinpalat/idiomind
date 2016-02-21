@@ -429,12 +429,12 @@ function practice_e() {
         entry=$(>/dev/null | yad --form --title="$(gettext "Practice")" \
         --text="${text}" \
         --name=Idiomind --class=Idiomind \
-        --separator="" \
+        --separator="" --focus-field=1 \
         --window-icon=idiomind --image="$DS/images/bar.png" \
         --buttons-layout=end --skip-taskbar \
         --undecorated --center --on-top \
         --text-align=center --align=center --image-on-top \
-        --width=520 --height=200 --borders=6 \
+        --width=540 --height=220 --borders=8 \
         --field="" "" \
         --button="$(gettext "Exit")":1 \
         --button="!$DS/images/listen.png":"$cmd_play" \
