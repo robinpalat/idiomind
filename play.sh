@@ -142,7 +142,6 @@ play_list() {
     --field="$(gettext "Repeat sounding out")":CB "$lst_opts1" > $tab2 &
     yad --notebook --key=$KEY --title="$title" \
     --name=Idiomind --class=Idiomind \
-    --gtkrc="$DS/default/gtkrc.cfg" \
     --always-print-result --print-all \
     --window-icon=idiomind \
     --align=right --center --on-top \
@@ -187,7 +186,6 @@ play_list() {
             if [ ${count} -lt 1 ]; then
             
                 notify-send "$(gettext "Nothing to play")" "$(gettext "Exiting...")" -t 3000 &
-                
                 [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
                 "$DS/stop.sh" 2 & exit 1; fi
                 
@@ -200,8 +198,10 @@ play_list() {
                 else
                     "$DS/stop.sh" 2 && exit 1
                 fi
+                
             "$DS/stop.sh" 2
             "$DS/bcle.sh" &
+            
         elif [ $ret -eq 2 ]; then
             [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
             [ -f "$DT/index.m3u" ] && rm -f "$DT/index.m3u"
