@@ -113,8 +113,7 @@ check_index() {
         cnt0=`wc -l < "${DC_tlt}/0.cfg" |sed '/^$/d'`
         cnt1=`egrep -cv '#|^$' < "${DC_tlt}/1.cfg"`
         cnt2=`egrep -cv '#|^$' < "${DC_tlt}/2.cfg"`
-        if [ $((cnt1+cnt2)) != ${cnt0} ]; then
-            export a=1; fi
+        if [ $((cnt1+cnt2)) != ${cnt0} ]; then export a=1; fi
     }
     
     _restore() {
@@ -171,17 +170,20 @@ check_index() {
         > "$DT/ps_lk"; (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
         "$(gettext "Fixing...")" -t 3000) & 
     fi
+    
     if [ ${f} = 1 ]; then
-
         check_dir "${DM_tlt}/.conf" "${DM_tlt}/images"
+        _restore; _fix; mkmn=1
+    fi
         
-        _restore; _fix; mkmn=1; fi
     if [ ${a} = 1 ]; then
         _restore; _sanity; mkmn=1
     fi
+    
     if [ ${r} = 1 ]; then
         _restore; _sanity
     fi
+    
     if [ ${mkmn} = 1 ] ;then
         "$DS/ifs/tls.sh" colorize; "$DS/mngr.sh" mkmn 0
     fi
