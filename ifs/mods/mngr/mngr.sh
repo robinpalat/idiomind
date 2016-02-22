@@ -90,5 +90,5 @@ function progr_3() {
     yad --progress \
     --name=Idiomind --class=Idiomind \
     --undecorated --pulsate --auto-close \
-    --skip-taskbar --center --no-buttons
+    --skip-taskbar --center --on-top --no-buttons
 }

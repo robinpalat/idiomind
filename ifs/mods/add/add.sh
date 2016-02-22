@@ -429,7 +429,7 @@ function fetch_audio() {
 function img_word() {
     if ls "$DC_d"/*."Script.Download image".* 1> /dev/null 2>&1; then
         if [ ! -e "${DM_tls}/images/${1,,}-0.jpg" ]; then
-            touch "$DT/img${1}.lk"
+            touch "$DT/${1}.img"
             for img in "$DC_d"/*."Script.Download image".*; do
                 img="$DS_a/Dics/dicts/$(basename "${img}")"
                 [ -e "${img}" ] && "${img}" "${1}"
@@ -454,7 +454,7 @@ function img_word() {
                 -gravity center -extent 400x270 -quality 90% "${DM_tls}/images/${1,,}-0.jpg"
                 rm -f "${img_file}"
             fi
-            rm -f "$DT/img${1}.lk"
+            rm -f "$DT/${1}.img"
         fi
     fi
 }

@@ -169,7 +169,7 @@ edit_item() {
     fi
     
     if [[ "${srce}" = "${temp}" ]]; then
-    msg_2 "$(gettext "Translating...\nWait till the process is completed. ")\n" info OK gtk-stop "$(gettext "Warning")"
+    msg_2 "$(gettext "Translating... Wait till the process is completed. ")\n" info OK gtk-stop "$(gettext "Warning")"
     if [ $? -eq 1 ]; then srce="" ;transl_mark=1 ; else "$DS/vwr.sh" ${list} "${trgt}" ${item_pos} & exit 1; fi; fi
 
     if [ -e "${DM_tlt}/$id.mp3" ]; then
@@ -252,6 +252,7 @@ edit_item() {
                     DT_r=$(mktemp -d "$DT/XXXX")
                     internet
                     if [ ${type_mod} = 1 ]; then
+                    yad
                         srce_mod="$(clean_1 "$(translate "${trgt_mod}" $lgt $lgs)")"
                         audio="${trgt_mod,,}"
                         [[ ${dlaud} = TRUE ]] && tts_word "${audio}" "$DT_r"
@@ -260,7 +261,7 @@ edit_item() {
                         srce_mod="$(clean_2 "$(translate "${trgt_mod}" $lgt $lgs)")"
                         db="$DS/default/dicts/$lgt"
                         sentence_p "$DT_r" 2
-                        [[ ${dlaud} = TRUE ]] && fetch_audio "${aw}" "${bw}" "$DT_r" "${DM_tls}/audio"
+                        [[ ${dlaud} = TRUE ]] && fetch_audio "${aw}" "${bw}"
                         srce="$temp"
                         grmr="${trgt_mod}"
                     fi
@@ -434,7 +435,7 @@ edit_list() {
                     srce_mod="$(clean_2 "$(translate "${trgt}" $lgt $lgs)")"
                     db="$DS/default/dicts/$lgt"
                     sentence_p "$DT_r" 2
-                    [[ ${dlaud} = TRUE ]] && fetch_audio "${aw}" "${bw}" "$DT_r" "${DM_tls}/audio"
+                    [[ ${dlaud} = TRUE ]] && fetch_audio "${aw}" "${bw}"
                 fi
                  
                 id_mod="$(set_name_file ${type} "${trgt}" "${srce_mod}" \

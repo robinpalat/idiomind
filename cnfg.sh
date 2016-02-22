@@ -122,7 +122,7 @@ config_dlg() {
     --field="$(gettext "Display in")":CB "$lst" \
     --field=" :LBL" " " \
     --field="$(gettext "Help")":BTN "$DS/ifs/tls.sh help" \
-    --field="$(gettext "Send feedback")":BTN "$DS/ifs/tls.sh fback" \
+    --field="$(gettext "Report a problem")":BTN "$DS/ifs/tls.sh fback" \
     --field="$(gettext "Check for updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
     --field="$(gettext "Backups")":BTN "$DS/ifs/tls.sh 'dlg_backups'" \
     --field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" > "$cnf1" &

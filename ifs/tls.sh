@@ -63,37 +63,46 @@ check_index() {
     [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
     source "$DS/ifs/mods/cmns.sh"
     DC_tlt="$DM_tl/${2}/.conf"; DM_tlt="$DM_tl/${2}"
-    tpc="${2}"; mkmn=0; f=0; a=0; id=1
+    tpc="${2}"; mkmn=0; f=0
     [[ ${3} = 1 ]] && r=1 || r=0
-    psets=( 'words' 'sntcs' 'marks' 'wprct' 'rplay' 'audio' 'ntosd' 'loop' 'rword' 'acheck' )
+    psets=( 'words' 'sntcs' 'marks' 'wprct' \
+    'rplay' 'audio' 'ntosd' 'loop' 'rword' 'acheck' )
+    
     _check() {
-        if [ ! -f "${DC_tlt}/0.cfg" ]; then f=1; fi
+        if [ ! -f "${DC_tlt}/0.cfg" ]; then export f=1; fi
+        
         check_dir "${DC_tlt}" "${DC_tlt}" "${DM_tlt}/images" "${DC_tlt}/practice"
         check_file "${DC_tlt}/practice/log1" "${DC_tlt}/practice/log2" "${DC_tlt}/practice/log3"
-
+        
         for n in {0..4}; do
-            [ ! -e "${DC_tlt}/${n}.cfg" ] && touch "${DC_tlt}/${n}.cfg" && a=1
+            [ ! -e "${DC_tlt}/${n}.cfg" ] && touch "${DC_tlt}/${n}.cfg" && export f=1
             if grep '^$' "${DC_tlt}/${n}.cfg"; then
-                sed -i '/^$/d' "${DC_tlt}/${n}.cfg"; fi
+                sed -i '/^$/d' "${DC_tlt}/${n}.cfg"
+            fi
         done
+        
         if [ ! -e "${DC_tlt}/10.cfg" -o ! -s "${DC_tlt}/10.cfg" ]; then
             > "${DC_tlt}/10.cfg"
             for n in {0..9}; do 
                 echo -e "${psets[$n]}=\"\"" >> "${DC_tlt}/10.cfg"
             done
         fi
-        [ ! -e "${DC_tlt}/9.cfg" ] && touch "${DC_tlt}/9.cfg"
+        
+        check_file "${DC_tlt}/9.cfg" "${DC_tlt}/info"
+        
         [ ! -e "${DC_tlt}/id.cfg" ] && touch "${DC_tlt}/id.cfg" && id=0
         ! [[ `egrep -cv '#|^$' < "${DC_tlt}/id.cfg"` = 19 ]] &&  id=0
-
         if [[ ${id} != 1 ]]; then
             datec=$(date +%F)
             eval c="$(< $DS/default/topic.cfg)"
             echo -n "${c}" > "${DC_tlt}/id.cfg"
             echo -ne "\nidiomind-`idiomind -v`" >> "${DC_tlt}/id.cfg"
         fi
+        
         if ls "${DM_tlt}"/*.mp3 1> /dev/null 2>&1; then
-            for au in "${DM_tlt}"/*.mp3 ; do [ ! -s "${au}" ] && rm "${au}" ; done
+            for au in "${DM_tlt}"/*.mp3 ; do 
+                [ ! -s "${au}" ] && rm "${au}"
+            done
         fi
         
         if [ ! -f "${DC_tlt}/8.cfg" ]; then
@@ -102,9 +111,11 @@ check_index() {
         fi
             
         stts=$(sed -n 1p "${DC_tlt}/8.cfg")
+        ! [[ ${stts} =~ $numer ]] && stts=13
 
         if [ $stts = 13 ]; then
             echo 1 > "${DC_tlt}/8.cfg"
+            mkmn=1
             export f=1
         fi
         
@@ -113,10 +124,17 @@ check_index() {
         cnt0=`wc -l < "${DC_tlt}/0.cfg" |sed '/^$/d'`
         cnt1=`egrep -cv '#|^$' < "${DC_tlt}/1.cfg"`
         cnt2=`egrep -cv '#|^$' < "${DC_tlt}/2.cfg"`
-        if [ $((cnt1+cnt2)) != ${cnt0} ]; then export a=1; fi
+        if [ $((cnt1+cnt2)) != ${cnt0} ]; then export f=1; fi
     }
     
     _restore() {
+        if [ ! -e "${DC_tlt}/0.cfg" ]; then
+            if [ -e "$DM/backup/${tpc}.bk" ]; then
+                cp -f "$DM/backup/${tpc}.bk" "${DC_tlt}/0.cfg"
+            else
+                msg "$(gettext "No such file or directory")\n${topic}\n" error & exit 1
+            fi
+        fi
         rm "${DC_tlt}/1.cfg" "${DC_tlt}/3.cfg" "${DC_tlt}/4.cfg"
         while read -r item_; do
             item="$(sed 's/},/}\n/g' <<<"${item_}")"
@@ -129,21 +147,17 @@ check_index() {
                     echo "${trgt}" >> "${DC_tlt}/4.cfg"
                 fi
                 echo "${trgt}" >> "${DC_tlt}/1.cfg"
-                echo "${item_}" >> "$DT/cfg0"
             fi
         done < "${DC_tlt}/0.cfg"
         > "${DC_tlt}/2.cfg"
-    }
 
-    _sanity() {
-        cfg0="${DC_tlt}/0.cfg"
-        sed -i "/trgt={}/d" "${cfg0}"
-        sed -i '/^$/d' "${cfg0}"
+        sed -i "/trgt={}/d" "${DC_tlt}/0.cfg"
+        sed -i '/^$/d' "${DC_tlt}/0.cfg"
         for n in {1..200}; do
             line=$(sed -n ${n}p "${cfg0}" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
             if [ -n "${line}" ]; then
                 if [[ ${line} -ne ${n} ]]; then
-                    sed -i ""${n}"s|"${line}"\:|"${n}"\:|g" "${cfg0}"
+                    sed -i ""${n}"s|"${line}"\:|"${n}"\:|g" "${DC_tlt}/0.cfg"
                 fi
             else 
                 break
@@ -151,39 +165,18 @@ check_index() {
         done
     }
     
-    _fix() {
-        if [ ${stts} = 13 ]; then
-            if [ -f "${DC_tlt}/8.cfg" ] && [ -n $(< "${DC_tlt}/8.cfg") ]; then
-                stts=$(sed -n 1p "${DC_tlt}/8.cfg")
-            else
-                stts=1
-            fi
-            echo ${stts} > "${DC_tlt}/8.cfg"
-        fi
-        touch "${DC_tlt}/0.cfg" "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg" \
-        "${DC_tlt}/3.cfg" "${DC_tlt}/4.cfg"
-    }
-    
     _check
     
-    if [ ${f} = 1 -o ${a} = 1 ] && [[ ${3} != 1 ]]; then
-        > "$DT/ps_lk"; (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
-        "$(gettext "Fixing...")" -t 3000) & 
-    fi
-    
-    if [ ${f} = 1 ]; then
-        check_dir "${DM_tlt}/.conf" "${DM_tlt}/images"
-        _restore; _fix; mkmn=1
-    fi
+    if [ ${f} = 1  ]; then
+        > "$DT/ps_lk"; 
+        if [[ ${r} = 0 ]]; then
+            (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
+            "$(gettext "Fixing...")" -t 3000) &
+        fi
         
-    if [ ${a} = 1 ]; then
-        _restore; _sanity; mkmn=1
+        _restore
     fi
-    
-    if [ ${r} = 1 ]; then
-        _restore; _sanity
-    fi
-    
+
     if [ ${mkmn} = 1 ] ;then
         "$DS/ifs/tls.sh" colorize; "$DS/mngr.sh" mkmn 0
     fi
@@ -363,8 +356,11 @@ a_check_updates() {
         && [[ ${nver} != ${_version} ]]; then
             msg_2 " <b>$(gettext "A new version of Idiomind available\!")\t\n</b> $(gettext "Do you want to download it now?")\n" info "$(gettext "Download")" "$(gettext "Cancel")" "$(gettext "New Version")" "$(gettext "Ignore")"
             ret=$?
-            if [ $ret -eq 0 ]; then xdg-open "$pkg"
-            elif [ $ret -eq 2 ]; then echo "$d2" >> "$DC_s/9.cfg"; fi
+            if [ $ret -eq 0 ]; then
+                xdg-open "$pkg"
+            elif [ $ret -eq 2 ]; then
+                echo "$d2" >> "$DC_s/9.cfg"
+            fi
         fi
     fi
     exit 0
@@ -416,9 +412,9 @@ set_image() {
     source "$DS/ifs/mods/add/add.sh"
     ifile="${DM_tls}/images/${trgt,,}-0.jpg"
     
-    if [ -e "$DT/img$trgt.lk" ]; then
+    if [ -e "$DT/$trgt.img" ]; then
     msg_2 "$(gettext "Attempting download image")...\n" info OK gtk-stop "$(gettext "Warning")"
-    if [ $? -eq 1 ]; then rm -f "$DT/img$trgt".lk; else exit 1 ; fi; fi
+    if [ $? -eq 1 ]; then rm -f "$DT/$trgt".img; else exit 1 ; fi; fi
 
     if [ -f "$ifile" ]; then
         btn2="--button=gtk-delete:2"

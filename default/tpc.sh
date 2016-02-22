@@ -9,7 +9,7 @@ DC_tlt="$DM_tl/${topic}/.conf"
 DM_tlt="$DM_tl/${topic}"
 export mode=${2}
 
-checkt() {
+chk_topic() {
     if [ ! -d "${DC_tlt}" -o ! -e "${DC_tlt}/id.cfg" ]; then
         mkdir -p "${DM_tlt}/images"
         mkdir "${DC_tlt}"; cd "${DC_tlt}"
@@ -17,8 +17,8 @@ checkt() {
         while [[ ${c} -le 10 ]]; do
             touch "${c}.cfg"; let c++
         done
-        rm "${DC_tlt}/7.cfg" "${DC_tlt}/9.cfg"
-        echo " " > "${DC_tlt}/info"
+        rm "7.cfg" "9.cfg"
+        echo " " > "info"
         echo 1 > "8.cfg"; cd /
     fi
     
@@ -27,7 +27,7 @@ checkt() {
     fi
 }
 
-shakeit() {
+act_topic() {
     if [[ ${notif} = 1 ]]; then
         ( sleep 1; notify-send -i idiomind "${topic}" "$(gettext "Is now your topic")" -t 4000 ) & exit
     elif [[ -z "$notif" ]]; then
@@ -39,7 +39,7 @@ if [ -d "${DM_tlt}" ]; then
 
     if ((mode>=1 && mode<=10)); then
     
-        checkt
+        chk_topic
         echo "${topic}" > "$DC_s/4.cfg"
         if [ ! -e "${DC_tlt}/feeds" ]; then
             echo "${topic}" > "$DT/tpe"; fi
@@ -48,7 +48,7 @@ if [ -d "${DM_tlt}" ]; then
 
         [ -f "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
         
-        shakeit
+        act_topic
         
      elif [ ${mode} = 12 ]; then
      
@@ -79,11 +79,11 @@ if [ -d "${DM_tlt}" ]; then
                 fi
             fi
             echo "${topic}" > "$DC_s/4.cfg"
-            checkt
+            chk_topic
             "$DS/mngr.sh" mkmn 1
             ( sleep 10 && "$DS/ifs/tls.sh" backup "${topic}" ) &
             
-            shakeit
+            act_topic
         else
             echo "${topic}" > "$DC_s/4.cfg"
             idiomind topic & exit 0
@@ -91,15 +91,15 @@ if [ -d "${DM_tlt}" ]; then
 
     elif [ ${mode} = 14 -o ${mode} = 13 ]; then
     
-        checkt
+        chk_topic
         echo "${topic}" > "$DC_s/4.cfg"
-        shakeit
+        act_topic
         
     else
         if grep -Fxo "${topic}" < <(ls "$DS/addons"/); then
             source "$DS/ifs/mods/topic/${topic}.sh"
             echo "${tpc}" > "$DC_s/4.cfg"
-            shakeit
+            act_topic
         fi
     fi
     

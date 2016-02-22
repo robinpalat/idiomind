@@ -47,26 +47,25 @@ function dwld() {
             limage="$(gettext "Images")"
             lothers="$(gettext "Others")"
             tmp="$DT/download/${oname}"
-            total=$(find "${tmp}" -maxdepth 5 -type f | wc -l)
-            c_audio=$(find "${tmp}" -maxdepth 5 -name '*.mp3' | wc -l)
-            c_images=$(find "${tmp}" -maxdepth 5 -name '*.jpg' | wc -l)
-            hfiles="$(cd "${tmp}"; ls -d ./.[^.]* | less | wc -l)"
-            exfiles="$(find "${tmp}" -maxdepth 5 -perm -111 -type f | wc -l)"
+            total=$(find "${tmp}" -maxdepth 5 -type f |wc -l)
+            c_audio=$(find "${tmp}" -maxdepth 5 -name '*.mp3' |wc -l)
+            c_images=$(find "${tmp}" -maxdepth 5 -name '*.jpg' |wc -l)
+            hfiles="$(cd "${tmp}"; ls -d ./.[^.]* |less |wc -l)"
+            exfiles="$(find "${tmp}" -maxdepth 5 -perm -111 -type f |wc -l)"
             others=$((wchfiles+wcexfiles))
             mv -f "${tmp}/conf/info" "${DC_tlt}/info"
-            [ ! -d "$DM_t/$langt/.share/images" ] && mkdir -p "$DM_t/$langt/.share/images"
-            [ ! -d "$DM_t/$langt/.share/audio" ] && mkdir -p "$DM_t/$langt/.share/audio"
+            check_dir "$DM_t/$langt/.share/images" "$DM_t/$langt/.share/audio"
             mv -n "${tmp}/share"/*.mp3 "$DM_t/$langt/.share/audio"/
-            [ ! -f "${DM_tlt}/images" ] && mkdir "${DM_tlt}/images"
-            [ -f "${tmp}"/images/img.jpg  ] && \
-            mv "${tmp}"/images/img.jpg "${DM_tlt}"/images/img.jpg
             while read -r img; do
                 if [ -f "${tmp}/images/${img,,}-0.jpg" ]; then
-                if [ -f "$DM_t/$langt/.share/images/${img,,}-0.jpg" ]; then
-                    n=`ls "${DM_tls}/images/${img,,}"-*.jpg |wc -l`
-                    name_img="${DM_tls}/images/${img,,}"-${n}.jpg
-                else name_img="${DM_tls}/images/${img,,}-0.jpg"; fi
-                    mv -f "${tmp}/images/${img,,}-0.jpg" "${name_img}"; fi
+                    if [ -f "$DM_t/$langt/.share/images/${img,,}-0.jpg" ]; then
+                        n=`ls "${DM_tls}/images/${img,,}"-*.jpg |wc -l`
+                        name_img="${DM_tls}/images/${img,,}"-${n}.jpg
+                    else 
+                        name_img="${DM_tls}/images/${img,,}-0.jpg"
+                    fi
+                    mv -f "${tmp}/images/${img,,}-0.jpg" "${name_img}"
+                fi
             done < "${DC_tlt}/3.cfg"
             rm -fr "${tmp}/share" "${tmp}/conf" "${tmp}/images"
             mv -f "${tmp}"/*.mp3 "${DM_tlt}"/
@@ -96,6 +95,10 @@ function upld() {
     fi
     
     conds_upload() {
+        if [ $((inx3+inx4)) -lt 8 ]; then
+            msg "$(gettext "Insufficient number of items to perform the action").\t\n " \
+            info "$(gettext "Information")" & exit 1
+        fi
         if [ -z "${usrid}" -o -z "${passw}" ]; then
             msg "$(gettext "Sorry, Authentication failed.")\n" info "$(gettext "Information")" & exit 1
         fi
@@ -145,7 +148,8 @@ function upld() {
         --field="$(gettext "Author")" "$usrid" \
         --field="\t\t$(gettext "Password")" "$passw" \
         --field=" ":LBL "" \
-        --button="$(gettext "Export")":2 "$btn" \
+        --button="$(gettext "Export")":2 \
+        --button="$(gettext "Upload")":0 \
         --button="$(gettext "Close")":4
     }
 
@@ -204,11 +208,6 @@ function upld() {
     passw="$(grep -o 'passw="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
 
     # dialogs
-    if [ $((inx3+inx4)) -lt 5 ]; then exit 1; fi
-    if [ $((inx3+inx4)) -ge 15 ]; then
-    btn="--button="$(gettext "Upload")":0"; else
-    btn="--center"; fi
-
     if [[ -e "${DC_tlt}/download" ]]; then
         if [[ ! -s "${DC_tlt}/download" ]]; then
             dlg="$(dlg_dwld_content)"
@@ -229,11 +228,11 @@ function upld() {
         fi
         [ $ret = 1 ] && exit 1
         dlg="$(grep -oP '(?<=|).*(?=\|)' <<<"$dlg")"
-        ctgry=$(echo "${dlg}" | cut -d "|" -f2)
-        level=$(echo "${dlg}" | cut -d "|" -f3)
-        notes_m=$(echo "${dlg}" | cut -d "|" -f4)
-        usrid_m=$(echo "${dlg}" | cut -d "|" -f5)
-        passw_m=$(echo "${dlg}" | cut -d "|" -f6)
+        ctgry=$(echo "${dlg}" |cut -d "|" -f2)
+        level=$(echo "${dlg}" |cut -d "|" -f3)
+        notes_m=$(echo "${dlg}" |cut -d "|" -f4)
+        usrid_m=$(echo "${dlg}" |cut -d "|" -f5)
+        passw_m=$(echo "${dlg}" |cut -d "|" -f6)
         # get data
         for val in "${CATEGORIES[@]}"; do
             [ "$ctgry" = "$(gettext "${val^}")" ] && ctgry=$val
@@ -263,7 +262,7 @@ function upld() {
             "$DS/ifs/upld.sh" _export "${tpc}" & exit 1
         fi
     elif [ $ret = 0 ]; then
-        conditions_for_upload "${2}"
+        conds_upload "${2}"
         "$DS/ifs/tls.sh" check_index "${tpc}" 1
         notify-send -i info "$(gettext "Upload in progress")" \
         "$(gettext "This can take some time please wait")" -t 6000
@@ -330,7 +329,7 @@ function upld() {
         echo -n "&idiomind-`idiomind -v`" >> "$DT_u/$tpcid.${tpc}.$lgt"
         echo -en "\nidiomind-`idiomind -v`" >> "${DC_tlt}/id.cfg"
         url="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
-        | grep -o 'UPLOADS="[^"]*' | grep -o '[^"]*$')"
+        | grep -o 'UPLOADS="[^"]*' |grep -o '[^"]*$')"
         direc="$DT_u"
         log="$DT_u/log"
         body="<hr><br><a href='/${lgtl,}/${ctgry,}/$tpcid.$oname.idmnd'>Download</a>"
