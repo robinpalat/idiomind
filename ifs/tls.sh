@@ -90,9 +90,10 @@ check_index() {
         
         check_file "${DC_tlt}/9.cfg" "${DC_tlt}/info"
         
+        id=1
         [ ! -e "${DC_tlt}/id.cfg" ] && touch "${DC_tlt}/id.cfg" && id=0
-        ! [[ `egrep -cv '#|^$' < "${DC_tlt}/id.cfg"` = 19 ]] &&  id=0
-        if [[ ${id} != 1 ]]; then
+        [[ `egrep -cv '#|^$' < "${DC_tlt}/id.cfg"` != 19 ]] && id=0
+        if [ ${id} != 1 ]; then
             datec=$(date +%F)
             eval c="$(< $DS/default/topic.cfg)"
             echo -n "${c}" > "${DC_tlt}/id.cfg"

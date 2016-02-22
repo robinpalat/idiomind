@@ -53,6 +53,7 @@ function set_name_file() {
 
 function include() {
   for f in "${1}"/*; do source "${f}"; done
+  unset f
 }
 
 function f_lock() {
@@ -85,29 +86,29 @@ function list_inadd() {
 }
 
 function cleanups() {
-    for fl in "$@"; do
-        if [ -d "${fl}" ]; then
-            rm -fr "${fl}"
-        elif [ -e "${fl}" ]; then
-            rm -f "${fl}"
+    for _fl in "$@"; do
+        if [ -d "${_fl}" ]; then
+            rm -fr "${_fl}"
+        elif [ -e "${_fl}" ]; then
+            rm -f "${_fl}"
         fi
     done
 }
 
 function check_dir() {
-    f=0
-    for dir in "$@"; do
-        if [ ! -d "${dir}" ]; then mkdir -p "${dir}"; f=1; fi
+    _ret=0
+    for _dir in "$@"; do
+        if [ ! -d "${_dir}" ]; then mkdir -p "${_dir}"; _ret=1; fi
     done
-    return $f
+    return $_ret
 }
 
 function check_file() {
-    f=0
-    for fil in "$@"; do
-        if [ ! -e "${fil}" ]; then > "${fil}"; f=1; fi
+    _ret=0
+    for _fil in "$@"; do
+        if [ ! -e "${_fil}" ]; then > "${_fil}"; _ret=1; fi
     done
-    return $f
+    return $_ret
 }
 
 function get_item() {
