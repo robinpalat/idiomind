@@ -197,7 +197,7 @@ function mk_topic_stats() {
     echo -e "data1='[{\"f0\":$field_0,\"f1\":$field_1,\"f2\":$field_2,\"f3\":$field_3,\"f4\":$field_4}]';" > ${data}
 
     wtable="W`date +%y`"
-    exec 3< <(sqlite3 "$db" "select week FROM ${wtable}")
+    exec 3< <(sqlite3 "$db" "select week FROM ${wtable}") # |head -n9
     exec 4< <(sqlite3 "$db" "select val0 FROM ${wtable}")
     exec 5< <(sqlite3 "$db" "select val1 FROM ${wtable}")
     exec 6< <(sqlite3 "$db" "select val2 FROM ${wtable}")
