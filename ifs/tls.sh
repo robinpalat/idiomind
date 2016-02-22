@@ -68,12 +68,8 @@ check_index() {
     psets=( 'words' 'sntcs' 'marks' 'wprct' 'rplay' 'audio' 'ntosd' 'loop' 'rword' 'acheck' )
     _check() {
         if [ ! -f "${DC_tlt}/0.cfg" ]; then f=1; fi
-        if [ ! -d "${DC_tlt}" ]; then mkdir "${DC_tlt}"; fi
-        if [ ! -d "${DM_tlt}" ]; then mkdir "${DC_tlt}"; fi
-        if [ ! -d "${DM_tlt}/images" ]; then mkdir "${DM_tlt}/images"; fi
-        if [ ! -d "${DC_tlt}/practice" ]; then 
-        mkdir "${DC_tlt}/practice"; touch "${DC_tlt}/practice/log1" \
-        "${DC_tlt}/practice/log2" "${DC_tlt}/practice/log3"; fi
+        check_dir "${DC_tlt}" "${DC_tlt}" "${DM_tlt}/images" "${DC_tlt}/practice"
+        check_file "${DC_tlt}/practice/log1" "${DC_tlt}/practice/log2" "${DC_tlt}/practice/log3"
 
         for n in {0..4}; do
             [ ! -e "${DC_tlt}/${n}.cfg" ] && touch "${DC_tlt}/${n}.cfg" && a=1
@@ -176,8 +172,9 @@ check_index() {
         "$(gettext "Fixing...")" -t 3000) & 
     fi
     if [ ${f} = 1 ]; then
-        [ ! -d "${DM_tlt}/.conf" ] && mkdir "${DM_tlt}/.conf"
-        [ ! -d "${DM_tlt}/images" ] && mkdir "${DM_tlt}/images"
+
+        check_dir "${DM_tlt}/.conf" "${DM_tlt}/images"
+        
         _restore; _fix; mkmn=1; fi
     if [ ${a} = 1 ]; then
         _restore; _sanity; mkmn=1
@@ -186,12 +183,10 @@ check_index() {
         _restore; _sanity
     fi
     if [ ${mkmn} = 1 ] ;then
-        "$DS/ifs/tls.sh" colorize
-        "$DS/mngr.sh" mkmn 0
+        "$DS/ifs/tls.sh" colorize; "$DS/mngr.sh" mkmn 0
     fi
-    if [ -f "$DT/ps_lk" ]; then 
-        rm -f "$DT/ps_lk"
-    fi
+    
+    cleanups "$DT/ps_lk"
 }
 
 add_audio() {
@@ -206,7 +201,9 @@ add_audio() {
     --button="$(gettext "OK")":0 |cut -d "|" -f1)"
     ret=$?
     if [ $ret -eq 0 ]; then
-        if [ -f "${aud}" ]; then mv -f "${aud}" "${2}/audtm.mp3"; fi
+        if [ -f "${aud}" ]; then 
+            mv -f "${aud}" "${2}/audtm.mp3"
+        fi
     fi
 } >/dev/null 2>&1
 
@@ -225,10 +222,9 @@ dlg_backups() {
 
 _backup() {
     source /usr/share/idiomind/default/c.conf
+    source "$DS/ifs/mods/cmns.sh"
     dt=$(date +%F)
-    if [ ! -d "$HOME/.idiomind/backup" ]; then
-        mkdir "$HOME/.idiomind/backup"
-    fi
+    check_dir "$HOME/.idiomind/backup"
     file="$HOME/.idiomind/backup/${2}.bk"
     if ! grep "${2}.bk" < <(cd "$HOME/.idiomind/backup"/; find . -maxdepth 1 -name '*.bk' -mtime -2); then
         if [ -s "$DM_tl/${2}/.conf/0.cfg" ]; then
@@ -535,7 +531,8 @@ translate_to() {
             unset item type trgt srce exmp defn note grmr mark link tag id
             rm -f "$DT"/*.tmp "$DT"/*.trad "$DT"/*.trad_tmp
             if [ ! -e "${DC_tlt}/0.data" ]; then
-                mv "${DC_tlt}/0.cfg" "${DC_tlt}/0.data"; fi
+                mv "${DC_tlt}/0.cfg" "${DC_tlt}/0.data"
+            fi
             cp -f "${DC_tlt}/$2.data" "${DC_tlt}/0.cfg"
             echo -e "\n\tdone!"
         fi
@@ -564,9 +561,7 @@ colorize() {
     source "$DS/ifs/mods/cmns.sh"
     f_lock "$DT/co_lk"
     rm "${DC_tlt}/5.cfg"
-    [ ! -e "${DC_tlt}/1.cfg" ] && touch "${DC_tlt}/1.cfg"
-    [ ! -e "${DC_tlt}/6.cfg" ] && touch "${DC_tlt}/6.cfg"
-    [ ! -e "${DC_tlt}/9.cfg" ] && touch "${DC_tlt}/9.cfg"
+    check_file "${DC_tlt}/1.cfg" "${DC_tlt}/6.cfg" "${DC_tlt}/9.cfg"
     if [[ `egrep -cv '#|^$' < "${DC_tlt}/9.cfg"` -ge 4 ]] \
     && [[ `grep -oP '(?<=acheck=\").*(?=\")' "${DC_tlt}/10.cfg"` = TRUE ]]; then
     chk=TRUE; else chk=FALSE; fi

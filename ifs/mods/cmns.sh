@@ -94,6 +94,22 @@ function cleanups() {
     done
 }
 
+function check_dir() {
+    f=0
+    for dir in "$@"; do
+        if [ ! -d "${dir}" ]; then mkdir -p "${dir}"; f=1; fi
+    done
+    return $f
+}
+
+function check_file() {
+    f=0
+    for fil in "$@"; do
+        if [ ! -e "${fil}" ]; then > "${fil}"; f=1; fi
+    done
+    return $f
+}
+
 function get_item() {
     export item="$(sed 's/},/}\n/g' <<<"${1}")"
     export type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"

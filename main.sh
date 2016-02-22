@@ -175,12 +175,11 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
   
                 if [ $? != 0 ]; then exit 1; fi
             fi
-            if [ ! -d "$DM_t/$langt" ]; then
-                mkdir -p "$DM_t/$langt/.share/images"
-                mkdir "$DM_t/$langt/.share/audio"
-                mkdir "$DM_t/$langt/.share/data"
-            fi
-            mkdir -p "$DM_t/$langt/${tname}/.conf/practice"
+
+            check_dir "$DM_t/$langt" "$DM_t/$langt/.share/images" \
+            "$DM_t/$langt/.share/audio" "$DM_t/$langt/.share/data" \
+            "$DM_t/$langt/${tname}/.conf/practice"
+
             DM_tlt="$DM_t/$langt/${tname}"
             DC_tlt="$DM_t/$langt/${tname}/.conf"
             
@@ -221,7 +220,7 @@ fi
 
 function topic() {
     [ -e "${DC_tlt}/8.cfg" ] && export mode=`sed -n 1p "${DC_tlt}/8.cfg"`
-    source "$DS/ifs/mods/cmns.sh"
+    
     if ! [[ ${mode} =~ $numer ]]; then exit 1; fi
     
     readd(){

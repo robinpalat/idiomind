@@ -36,12 +36,8 @@ confirm() {
 
 set_lang() {
     language="$1"
-    if [ ! -d "$DM_t/$language/.share/images" ]; then
-        mkdir -p "$DM_t/$language/.share/images"
-    fi
-    if [ ! -d "$DM_t/$language/.share/audio" ]; then
-        mkdir -p "$DM_t/$language/.share/audio"
-    fi
+    source "$DS/ifs/mods/cmns.sh"
+    check_dir "$DM_t/$language/.share/images" "$DM_t/$language/.share/audio"
     echo -e "$language\n$lgsl" > "$DC_s/6.cfg"
     "$DS/stop.sh" 4
     source $DS/default/c.conf
@@ -54,7 +50,7 @@ set_lang() {
     else
         > "$DT/tpe"; > "$DC_s/4.cfg"
     fi
-    source "$DS/ifs/mods/cmns.sh"
+    
     list_inadd > "$DM_tl/.share/2.cfg"
 
     if [ ! -d "$DM_tl/.share/data" ]; then

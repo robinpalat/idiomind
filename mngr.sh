@@ -67,7 +67,8 @@ delete_item_ok() {
             while read -r file_pr; do
                 if grep -Fxq "${trgt}" "${file_pr}"; then
                     grep -vxF "${trgt}" "${file_pr}" > ./rm.tmp
-                    sed '/^$/d' ./rm.tmp > "${file_pr}"; fi
+                    sed '/^$/d' ./rm.tmp > "${file_pr}"
+                fi
             done < <(ls ./*)
             rm ./*.tmp; cd /
         fi
@@ -80,9 +81,9 @@ delete_item_ok() {
         cleanups "${DC_tlt}/lst"
         rm "${DC_tlt}"/*.tmp
     fi
-    if [[ `wc -l < "${DC_tlt}/0.cfg"` -lt 200 ]] \
-    && [[ -e "${DC_tlt}/lk" ]]; then
-        rm -f "${DC_tlt}/lk"; fi
+    if [[ `wc -l < "${DC_tlt}/0.cfg"` -lt 200 ]] && [[ -e "${DC_tlt}/lk" ]]; then
+        rm -f "${DC_tlt}/lk"
+    fi
     "$DS/ifs/tls.sh" colorize &
     rm -f "$DT/ps_lk" & exit 1
 }
@@ -118,7 +119,8 @@ delete_item() {
             && [[ -e "${DC_tlt}/lk" ]]; then
                 rm -f "${DC_tlt}/lk"; fi
             if [ -e "${DC_tlt}/feeds" ]; then
-                echo "${trgt}" >> "${DC_tlt}/exclude"; fi
+                echo "${trgt}" >> "${DC_tlt}/exclude"
+            fi
             "$DS/ifs/tls.sh" colorize &
             rm "${DC_tlt}"/*.tmp
         fi
