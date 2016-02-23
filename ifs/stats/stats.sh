@@ -151,11 +151,11 @@ function mk_topic_stats() {
     data="/tmp/.idiomind_stats"
     month=`date +%m`
     mtable="M`date +%y`"
-    exec 4< <(sqlite3 "$db" "select val0 FROM ${mtable}")
-    exec 5< <(sqlite3 "$db" "select val1 FROM ${mtable}")
-    exec 6< <(sqlite3 "$db" "select val2 FROM ${mtable}")
-    exec 7< <(sqlite3 "$db" "select val3 FROM ${mtable}")
-    exec 8< <(sqlite3 "$db" "select val4 FROM ${mtable}")
+    exec 4< <(sqlite3 "$db" "select val0 FROM ${mtable}" |tail -n11)
+    exec 5< <(sqlite3 "$db" "select val1 FROM ${mtable}" |tail -n11)
+    exec 6< <(sqlite3 "$db" "select val2 FROM ${mtable}" |tail -n11)
+    exec 7< <(sqlite3 "$db" "select val3 FROM ${mtable}" |tail -n11)
+    exec 8< <(sqlite3 "$db" "select val4 FROM ${mtable}" |tail -n11)
     
     for m in {01..12}; do
         declare t$m=0; declare p$m=0
@@ -197,13 +197,13 @@ function mk_topic_stats() {
     echo -e "data1='[{\"f0\":$field_0,\"f1\":$field_1,\"f2\":$field_2,\"f3\":$field_3,\"f4\":$field_4}]';" > ${data}
 
     wtable="W`date +%y`"
-    exec 3< <(sqlite3 "$db" "select week FROM ${wtable}") # |head -n9
-    exec 4< <(sqlite3 "$db" "select val0 FROM ${wtable}")
-    exec 5< <(sqlite3 "$db" "select val1 FROM ${wtable}")
-    exec 6< <(sqlite3 "$db" "select val2 FROM ${wtable}")
-    exec 7< <(sqlite3 "$db" "select val3 FROM ${wtable}")
-    exec 8< <(sqlite3 "$db" "select val4 FROM ${wtable}")
-    exec 9< <(sqlite3 "$db" "select val5 FROM ${wtable}")
+    exec 3< <(sqlite3 "$db" "select week FROM ${wtable}" |tail -n9)
+    exec 4< <(sqlite3 "$db" "select val0 FROM ${wtable}" |tail -n9)
+    exec 5< <(sqlite3 "$db" "select val1 FROM ${wtable}" |tail -n9)
+    exec 6< <(sqlite3 "$db" "select val2 FROM ${wtable}" |tail -n9)
+    exec 7< <(sqlite3 "$db" "select val3 FROM ${wtable}" |tail -n9)
+    exec 8< <(sqlite3 "$db" "select val4 FROM ${wtable}" |tail -n9)
+    exec 9< <(sqlite3 "$db" "select val5 FROM ${wtable}" |tail -n9)
     for m in {01..10}; do
         read week <&3
         read log0 <&4

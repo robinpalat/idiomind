@@ -98,7 +98,7 @@ play_list() {
             source "${ad}"
             for item in "${!items[@]}"; do
                 echo "$DS/images/add.png"
-                echo "  <span font_desc='Arial 10'>$(gettext "${item}")</span>"
+                echo "  <span font_desc='Arial 11'>$(gettext "${item}")</span>"
                 grep -o ${items[$item]}=\"[^\"]* "${file_cfg}" |grep -o '[^"]*$'
             done
             unset items
