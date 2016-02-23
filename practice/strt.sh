@@ -421,10 +421,10 @@ function practice_e() {
         |sed "s|[a-z]|\.|g" \
         |sed 's|\.|\ .|g' \
         |tr "[:upper:]" "[:lower:]" \
-        |sed 's/^\s*./\U&\E/g' |tr '[a-z]' '[A-Z]' \
-        |sed "s|\.|<span color='#B1B1B1'>\.<\/span>|g")"
+        |sed 's/^\s*./\U&\E/g' \
+        |sed "s|\.|<span color='#A3A3A3'>\.<\/span>|g")"
         fi
-        text="<span font_desc='Arial Black 11'> $hint </span>\n"
+        text="<span font_desc='Serif Bold 14'>$hint</span>\n"
         
         entry=$(>/dev/null | yad --form --title="$(gettext "Practice")" \
         --text="${text}" \
@@ -433,8 +433,8 @@ function practice_e() {
         --window-icon=idiomind --image="$DS/images/bar.png" \
         --buttons-layout=end --skip-taskbar \
         --undecorated --center --on-top \
-        --text-align=center --align=center --image-on-top \
-        --width=540 --height=220 --borders=8 \
+        --align=center --image-on-top \
+        --width=550 --height=230 --borders=8 \
         --field="" "" \
         --button="$(gettext "Exit")":1 \
         --button="!$DS/images/listen.png":"$cmd_play" \
@@ -444,13 +444,13 @@ function practice_e() {
     check() {
         sz=$((sz+3))
         yad --form --title="$(gettext "Practice")" \
-        --text="<span font_desc='Free Sans 11'>${wes^}</span>\\n" \
+        --text="<span font_desc='Free Sans 12'>${wes^}</span>\\n" \
         --name=Idiomind --class=Idiomind \
         --selectable-labels \
         --window-icon=idiomind \
         --skip-taskbar --wrap --image-on-top --center --on-top \
         --undecorated --buttons-layout=end \
-        --width=520 --height=220 --borders=10 \
+        --width=530 --height=230 --borders=10 \
         --field="":lbl "" \
         --field="<span font_desc='Free Sans 9'>$OK\n\n$prc $hits</span>":lbl \
         --button="$(gettext "Continue")":2

@@ -218,10 +218,9 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
 fi
 
 function topic() {
-    source "$DS/ifs/mods/cmns.sh"
     [ -e "${DC_tlt}/8.cfg" ] && export mode=`sed -n 1p "${DC_tlt}/8.cfg"`
-    
-    if ! [[ ${mode} =~ $numer ]]; then exit 1; fi
+    num='^[0-9]+$'
+    if ! [[ ${mode} =~ $num ]]; then exit 1; fi
     
     readd(){
         [ -z "${tpc}" ] && exit 1
@@ -294,7 +293,7 @@ function topic() {
             notebook_1; ret=$?
                 
                 if [ $ret -eq 1 ]; then exit 1; fi
-                if [ ! -f "$DT/ps_lk" ]; then apply; fi
+                if [ ! -e "$DT/ps_lk" ]; then apply; fi
                 
                 if [ $ret -eq 5 ]; then
                     "$DS/practice/strt.sh" &
@@ -304,20 +303,20 @@ function topic() {
 
         elif [[ ${inx1} -ge 1 ]]; then
         
-            if [ -f "${DC_tlt}/9.cfg" -a -f "${DC_tlt}/7.cfg" ]; then
+            if [ -e "${DC_tlt}/9.cfg" -a -e "${DC_tlt}/7.cfg" ]; then
             
                 calculate_review "${tpc}"
                 if [[ ${RM} -ge 100 ]]; then
                 
                     RM=100; dialog_1; ret=$?
                     
-                        if [ $ret -eq 2 ]; then
-                            "$DS/mngr.sh" mark_to_learn "${tpc}" 0
-                            touch "$DM_tl/.share/data/pre_data"
-                            idiomind topic & exit 1
-                        elif [ $ret -eq 3 ]; then
-                           exit 1
-                        fi
+                    if [ $ret -eq 2 ]; then
+                        "$DS/mngr.sh" mark_to_learn "${tpc}" 0
+                        touch "$DM_tl/.share/data/pre_data"
+                        idiomind topic & exit 1
+                    elif [ $ret -eq 3 ]; then
+                       exit 1
+                    fi
                 fi
 
                 pres="<u><b>$(gettext "Topic learnt")</b></u>  $(gettext "* however you have new notes") ($inx1).\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
@@ -327,7 +326,7 @@ function topic() {
             fi
                 ret=$?
                 if [ $ret -eq 1 ]; then exit 1; fi
-                if [ ! -f "$DT/ps_lk" ]; then apply; fi
+                if [ ! -e "$DT/ps_lk" ]; then apply; fi
 
                 if [ $ret -eq 5 ]; then
                     "$DS/practice/strt.sh" &
@@ -336,7 +335,7 @@ function topic() {
                 rm -f "$DT"/*.x
 
         elif [[ ${inx1} -eq 0 ]]; then
-            if [ ! -f "${DC_tlt}/7.cfg" -o ! -f "${DC_tlt}/9.cfg" ]; then
+            if [ ! -e "${DC_tlt}/7.cfg" -o ! -e "${DC_tlt}/9.cfg" ]; then
                 "$DS/mngr.sh" mark_as_learned "${tpc}" 0
                 touch "$DM_tl/.share/data/pre_data"
             fi
@@ -346,20 +345,20 @@ function topic() {
 
                 RM=100; dialog_1; ret=$?
                     
-                    if [ $ret -eq 2 ]; then
-                        "$DS/mngr.sh" mark_to_learn "${tpc}" 0
-                        touch "$DM_tl/.share/data/pre_data"
-                        idiomind topic & exit 1
-                    elif [ $ret -eq 3 ]; then
-                        exit 1
-                    fi 
+                if [ $ret -eq 2 ]; then
+                    "$DS/mngr.sh" mark_to_learn "${tpc}" 0
+                    touch "$DM_tl/.share/data/pre_data"
+                    idiomind topic & exit 1
+                elif [ $ret -eq 3 ]; then
+                    exit 1
+                fi 
             fi
             
             pres="<u><b>$(gettext "Topic learnt")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
             notebook_2; ret=$?
             
             if [ $ret -eq 1 ]; then exit 1; fi
-            if [ ! -f "$DT/ps_lk" ]; then apply; fi
+            if [ ! -e "$DT/ps_lk" ]; then apply; fi
           
             rm -f "$DT"/*.x & exit
         fi
@@ -374,7 +373,7 @@ function topic() {
             notebook_1; ret=$?
                 
                 if [ $ret -eq 1 ]; then exit 1; fi
-                if [ ! -f "$DT/ps_lk" ]; then apply; fi
+                if [ ! -e "$DT/ps_lk" ]; then apply; fi
                 
                 if [ $ret -eq 5 ]; then
                     "$DS/practice/strt.sh" &
@@ -384,14 +383,14 @@ function topic() {
 
         elif [[ ${inx1} -ge 1 ]]; then
         
-            if [ -f "${DC_tlt}/9.cfg" -a -f "${DC_tlt}/7.cfg" ]; then
+            if [ -e "${DC_tlt}/9.cfg" -a -e "${DC_tlt}/7.cfg" ]; then
                 notebook_2
             else
                 notebook_1
             fi
                 ret=$?
                 if [ $ret -eq 1 ]; then exit 1; fi
-                if [ ! -f "$DT/ps_lk" ]; then apply; fi
+                if [ ! -e "$DT/ps_lk" ]; then apply; fi
 
                 if [ $ret -eq 5 ]; then
                     "$DS/practice/strt.sh" &

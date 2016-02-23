@@ -252,7 +252,6 @@ edit_item() {
                     DT_r=$(mktemp -d "$DT/XXXX")
                     internet
                     if [ ${type_mod} = 1 ]; then
-                    yad
                         srce_mod="$(clean_1 "$(translate "${trgt_mod}" $lgt $lgs)")"
                         audio="${trgt_mod,,}"
                         [[ ${dlaud} = TRUE ]] && tts_word "${audio}" "$DT_r"

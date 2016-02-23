@@ -31,8 +31,8 @@ function dlg_form_1() {
 }
 
 function dlg_form_2() {
-    if [[ `wc -w <<<"${trgt}"` -lt 4 ]]; then
-    t=CHK; lbl_2="$(gettext "It is a compound word")"
+    if [[ `wc -w <<<"${trgt}"` -lt 8 ]]; then
+    t=CHK; lbl_2="$(gettext "Change viewer")"
     [ -z "${trgt}" ] && trgt="${item_id}"
     else t=LBL; fi
     cmd_play="$DS/play.sh play_sentence ${id}"
