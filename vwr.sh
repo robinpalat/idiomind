@@ -53,12 +53,12 @@ fi
     ret=$?
     if ps -A | pgrep -f 'play'; then killall play & fi
     if [ $ret -eq 4 ]; then
-        "$DS/mngr.sh" edit ${1} ${index_pos} ${text_missing}
+        "$DS/mngr.sh" edit ${1} ${index_pos} ${text_missing} &
     elif [ $ret -eq 2 ]; then
         if [[ ${index_pos} = 1 ]]; then
             item=`tail -n 1 < "${index}"`
-            [ ${1} = 1 ] && "$DS/vwr.sh" ${1} "" "${item}"
-            [ ${1} = 2 ] && "$DS/vwr.sh" ${1} "${item}"
+            [ ${1} = 1 ] && "$DS/vwr.sh" ${1} "" "${item}" &
+            [ ${1} = 2 ] && "$DS/vwr.sh" ${1} "${item}" &
         else
             ff=$((index_pos-1))
             "$DS/vwr.sh" ${1} "" ${ff} &
