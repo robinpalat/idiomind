@@ -68,7 +68,7 @@ function edit_list_list() {
     --column="" \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Reverse List")":2 \
-    --button="gtk-apply":0
+    --button="$(gettext "Apply")!dialog-apply":0
 }
 
 function edit_feeds_list() {

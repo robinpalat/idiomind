@@ -668,7 +668,7 @@ function lock() {
 
 function starting() {
     yad --title=$(gettext "Information") \
-    --text=" $1\t\n" --image=dialog-information \
+    --text=" $1\t\n" --image="dialog-information" \
     --window-icon=idiomind \
     --skip-taskbar --center --on-top \
     --width=340 --height=120 --borders=5 \

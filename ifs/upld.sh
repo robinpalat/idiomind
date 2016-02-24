@@ -85,7 +85,7 @@ function dwld() {
 function upld() {
     if [ -d "$DT/upload" -o -d "$DT/download" ]; then
         [ -e "$DT/download" ] && t="$(gettext "Downloading")..." || t="$(gettext "Uploading")..."
-        msg_2 "$(gettext "Wait until it finishes a previous process")\n" dialog-warning OK process-stop "$t"
+        msg_2 "$(gettext "Wait until it finishes a previous process")\n" dialog-warning OK "$(gettext "Stop")" "$t"
         ret="$?"
         if [ $ret -eq 1 ]; then
             cleanups "$DT/upload" "$DT/download"
@@ -252,7 +252,7 @@ function upld() {
     # actions
     if [ $ret = 2 ]; then
         if [ -d "$DT/export" ]; then
-            msg_2 "$(gettext "Wait until it finishes a previous process").\n" dialog-information OK process-stop "$(gettext "Information")"
+            msg_2 "$(gettext "Wait until it finishes a previous process").\n" dialog-information OK "$(gettext "Stop")" "$(gettext "Information")"
             ret=$?
             if [ $ret -eq 1 ]; then
                 [ -d "$DT/export" ] && rm -fr "$DT/export"
@@ -365,7 +365,7 @@ END
         u=$?
         if [ $u = 0 ]; then
             info="\"$tpc\"\n<b>$(gettext "Uploaded correctly")</b>\n"
-            image=dialog-apply
+            image=dialog-ok-apply
         elif [ $u = 3 ]; then
             info="$(gettext "Authentication error.")\n"
             image=error

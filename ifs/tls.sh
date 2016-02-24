@@ -416,11 +416,11 @@ set_image() {
     ifile="${DM_tls}/images/${trgt,,}-0.jpg"
     
     if [ -e "$DT/$trgt.img" ]; then
-    msg_2 "$(gettext "Attempting download image")...\n" dialog-information OK gtk-stop "$(gettext "Warning")"
+    msg_2 "$(gettext "Attempting download image")...\n" dialog-information OK "$(gettext "Stop")" "$(gettext "Warning")"
     if [ $? -eq 1 ]; then rm -f "$DT/$trgt".img; else exit 1 ; fi; fi
 
     if [ -f "$ifile" ]; then
-        btn2="--button=edit-delete:2"
+        btn2="--button=$(gettext "Remove")!edit-delete:2"
         image="--image=$ifile"
     else
         btn2="--button="$(gettext "Screen clipping")":0"

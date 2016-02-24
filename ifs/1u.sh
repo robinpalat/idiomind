@@ -71,8 +71,8 @@ dlg=$(yad --form --title="Idiomind" \
 --width=470 --height=270 --borders=15 \
 --field="$(gettext "Select foreign language"):CB" "$list1" \
 --field="$(gettext "Select native language"):CB" "$list2" \
---button=Cancel:1 \
---button=gtk-ok:0)
+--button="$(gettext "Cancel")":1 \
+--button="$(gettext "OK")":0)
 ret=$?
 
 if [ $ret -eq 1 ]; then
@@ -101,7 +101,7 @@ elif [ $ret -eq 0 ]; then
     --window-icon=idiomind \
     --image-on-top --sticky --skip-taskbar --center \
     --width=420 --height=120 --borders=2 \
-    --button=gtk-ok:1 & exit 1
+    --button="$(gettext "OK")":1 & exit 1
     fi
     
     DM_t="$HOME/.idiomind/topics"

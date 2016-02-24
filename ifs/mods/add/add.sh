@@ -627,7 +627,7 @@ function dlg_form_3() {
     --name=Idiomind --class=Idiomind \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --window-icon=idiomind \
-    --skip-taskbar --image-on-top \
+    --buttons-layout=spread --skip-taskbar --image-on-top \
     --align=center --text-align=center --center --on-top \
     --width=420 --height=320 --borders=5 \
     "${btn2}" --button=" $(gettext "Close") ":1

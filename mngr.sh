@@ -169,7 +169,7 @@ edit_item() {
     fi
     
     if [[ "${srce}" = "${temp}" ]]; then
-    msg_2 "$(gettext "Translating... Wait till the process is completed. ")\n" dialog-information OK process-stop "$(gettext "Warning")"
+    msg_2 "$(gettext "Translating... Wait till the process is completed. ")\n" dialog-information OK "$(gettext "Stop")" "$(gettext "Warning")"
     if [ $? -eq 1 ]; then srce="" ;transl_mark=1 ; else "$DS/vwr.sh" ${list} "${trgt}" ${item_pos} & exit 1; fi; fi
 
     if [ -e "${DM_tlt}/$id.mp3" ]; then
