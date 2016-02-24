@@ -102,7 +102,7 @@ function notebook_1() {
     --width=600 --height=560 --borders=0 --tab-borders=3 \
     --button="$(gettext "Play")":"$cmd_play" \
     --button="$(gettext "Practice")":5 \
-    --button="gtk-close":2
+    --button="$(gettext "Close")"!'window-close':2
 } >/dev/null 2>&1
 
 function notebook_2() {
@@ -147,14 +147,14 @@ function notebook_2() {
     --tab="  $(gettext "Note")  " \
     --tab="  $(gettext "Edit")  " \
     --width=600 --height=560 --borders=0 --tab-borders=3 \
-    --button="gtk-close":2
+    --button="$(gettext "Close")"!'window-close':2
 } >/dev/null 2>&1
 
 function dialog_1() {
     yad --title="$(gettext "Review")" \
     --class=idiomind --name=Idiomind \
     --text="\"${tpc}\"\n$(gettext "<b>Would you like to review it?</b>\n The waiting period already has been completed.")" \
-    --image=gtk-refresh \
+    --image='view-refresh' \
     --window-icon=idiomind \
     --buttons-layout=edge --center --on-top \
     --width=420 --height=140 --borders=10 \

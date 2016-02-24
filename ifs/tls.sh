@@ -329,38 +329,40 @@ check_updates() {
     && [ ${#nver} -ge 3 ] && [ ${#_version} -ge 3 ] \
     && [[ ${nver} != ${_version} ]]; then
         msg_2 " <b>$(gettext "A new version of Idiomind available\!")</b>\t\n" \
-        info "$(gettext "Download")" "$(gettext "Cancel")" "$(gettext "Information")"
+        dialog-information "$(gettext "Download")" "$(gettext "Cancel")" "$(gettext "Information")"
         ret=$?
         if [ $ret -eq 0 ]; then xdg-open "$pkg"; fi
     else
-        msg " $(gettext "No updates available.")\n" info "$(gettext "Information")"
+        msg " $(gettext "No updates available.")\n" dialog-information "$(gettext "Information")"
     fi
     exit 0
 } >/dev/null 2>&1
 
 a_check_updates() {
     source "$DS/ifs/mods/cmns.sh"
+    source "$DS/default/sets.cfg"
     [ ! -e "$DC_s/9.cfg" ] && date "+%d" > "$DC_s/9.cfg" && exit
     d1=$(< "$DC_s/9.cfg"); d2=$(date +%d)
     if [ `sed -n 1p "$DC_s/9.cfg"` = 28 ] && [ `wc -l < "$DC_s/9.cfg"` -gt 1 ]; then
         rm -f "$DC_s/9.cfg"; fi
     [ `wc -l < "$DC_s/9.cfg"` -gt 1 ] && exit 1
     if [ ${d1} != ${d2} ]; then
+    
         sleep 5; curl -v www.google.com 2>&1 | \
         grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
-        echo ${d2} > "$DC_s/9.cfg"
+        echo -n ${d2} > "$DC_s/9.cfg"
         link='http://idiomind.sourceforge.net/doc/checkversion'
         nver=`wget --user-agent "$ua" -qO - "$link" |grep \<body\> |sed 's/<[^>]*>//g'`
         pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
         if [ ${#nver} -lt 9 ] && [ ${#_version} -lt 9 ] \
         && [ ${#nver} -ge 3 ] && [ ${#_version} -ge 3 ] \
         && [[ ${nver} != ${_version} ]]; then
-            msg_2 " <b>$(gettext "A new version of Idiomind available\!")\t\n</b> $(gettext "Do you want to download it now?")\n" info "$(gettext "Download")" "$(gettext "Cancel")" "$(gettext "New Version")" "$(gettext "Ignore")"
+            msg_2 " <b>$(gettext "A new version of Idiomind available\!")\t\n</b> $(gettext "Do you want to download it now?")\n" dialog-information "$(gettext "Download")" "$(gettext "Cancel")" "$(gettext "New Version")" "$(gettext "Ignore")"
             ret=$?
             if [ $ret -eq 0 ]; then
                 xdg-open "$pkg"
             elif [ $ret -eq 2 ]; then
-                echo "$d2" >> "$DC_s/9.cfg"
+                echo ${d2} >> "$DC_s/9.cfg"
             fi
         fi
     fi
@@ -414,11 +416,11 @@ set_image() {
     ifile="${DM_tls}/images/${trgt,,}-0.jpg"
     
     if [ -e "$DT/$trgt.img" ]; then
-    msg_2 "$(gettext "Attempting download image")...\n" info OK gtk-stop "$(gettext "Warning")"
+    msg_2 "$(gettext "Attempting download image")...\n" dialog-information OK gtk-stop "$(gettext "Warning")"
     if [ $? -eq 1 ]; then rm -f "$DT/$trgt".img; else exit 1 ; fi; fi
 
     if [ -f "$ifile" ]; then
-        btn2="--button=gtk-delete:2"
+        btn2="--button=edit-delete:2"
         image="--image=$ifile"
     else
         btn2="--button="$(gettext "Screen clipping")":0"

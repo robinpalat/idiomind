@@ -17,14 +17,14 @@ new_topic() {
     ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
     
     if [[ $(wc -l <<<"${listt}") -ge 120 ]]; then
-    msg "$(gettext "Maximum number of topics reached.")" info "$(gettext "Information")" & exit 1; fi
+    msg "$(gettext "Maximum number of topics reached.")" dialog-information "$(gettext "Information")" & exit 1; fi
     
     source "$DS/ifs/mods/add/add.sh"
     add="$(dlg_form_0)"
     jlb="$(clean_3 "$(cut -d "|" -f1 <<<"${add}")")"
 
     if [[ ${#jlb} -gt 55 ]]; then
-        msg "$(gettext "Sorry, name too long.")\n" info "$(gettext "Information")"
+        msg "$(gettext "Sorry, name too long.")\n" dialog-information "$(gettext "Information")"
         "$DS/add.sh" new_topic "${jlb}" & exit 1
     fi
     
@@ -37,7 +37,7 @@ new_topic() {
         [ -z "${chck}" ] && break; done
         
         jlb="${jlb} ($i)"
-        msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "Notice that the name for this one is now\:")\n<b>${jlb}</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
+        msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "Notice that the name for this one is now\:")\n<b>${jlb}</b> \n" dialog-information "$(gettext "OK")" "$(gettext "Cancel")"
         [ $? -eq 1 ] && exit 1
     else
         jlb="${jlb}"
@@ -66,7 +66,7 @@ function new_item() {
     
     if [[ ${trans} = FALSE ]] && ([ -z "${srce}" ] || [ -z "${trgt}" ]); then
         cleanups "$DT_r"
-        msg "$(gettext "You need to fill text fields.")\n" info "$(gettext "Information")" & exit 1
+        msg "$(gettext "You need to fill text fields.")\n" dialog-information "$(gettext "Information")" & exit 1
     fi
     if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
         srce=$(translate "${trgt}" auto $lgs)
@@ -102,7 +102,7 @@ function new_sentence() {
     else 
         if [ -z "${srce}" -o -z "${trgt}" ]; then
         cleanups "$DT_r"
-        msg "$(gettext "You need to fill text fields.")\n" info "$(gettext "Information")" & exit; fi
+        msg "$(gettext "You need to fill text fields.")\n" dialog-information "$(gettext "Information")" & exit; fi
     fi
     notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000
     sentence_p "$DT_r" 1
@@ -155,7 +155,7 @@ function new_word() {
     else 
         if [ -z "${srce}" -o -z "${trgt}" ]; then
         cleanups "$DT_r"
-        msg "$(gettext "You need to fill text fields.")\n" info "$(gettext "Information")" & exit; fi
+        msg "$(gettext "You need to fill text fields.")\n" dialog-information "$(gettext "Information")" & exit; fi
     fi
 
     audio="${trgt,,}"
@@ -411,7 +411,7 @@ function process() {
     info="-$((200-ns))"
 
     if [ -z "$(< "$DT_r/sntsls")" ]; then
-        msg " $(gettext "Failed to get text.")\n" info "$(gettext "Information")"
+        msg " $(gettext "Failed to get text.")\n" dialog-information "$(gettext "Information")"
         cleanups "$DT_r" "$DT/.n_s_pr" "$slt" & exit 1
     
     elif [[ ${chk} -le 180 ]]; then
@@ -744,7 +744,7 @@ new_items() {
         xclip -i /dev/null
     
         if [ -z "${tpe}" ] && [[ ${3} != 3 ]]; then cleanups "$DT_r"
-            msg "$(gettext "No topic is active")\n" info "$(gettext "Information")" & exit 1; fi
+            msg "$(gettext "No topic is active")\n" dialog-information "$(gettext "Information")" & exit 1; fi
 
         if [ -z "${trgt}" ]; then
             cleanups "$DT_r"; exit 1; fi

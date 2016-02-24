@@ -54,7 +54,7 @@ play_file() {
 
 play_list() {
     if [ -z "${tpc}" ]; then source "$DS/ifs/mods/cmns.sh"
-    msg "$(gettext "No topic is active")\n" info & exit 1; fi
+    msg "$(gettext "No topic is active")\n" dialog-information & exit 1; fi
     tpc="$(sed -n 1p "$HOME/.config/idiomind/4.cfg")"
     touch "${DC_tlt}/practice/log3"
     DC_tlt="${DM_tl}/${tpc}/.conf"; cfg=0

@@ -64,7 +64,7 @@ if [[ $ret -eq 0 ]]; then
             echo "# $(gettext "Completing")" ; sleep 1
             
             if [ -f "${exp}" ]; then
-                msg "$(gettext "Data exported successfully.")\n" info
+                msg "$(gettext "Data exported successfully.")\n" dialog-information
             else
                 [ -f "$DT/backup.tar.gz" ] && rm -f "$DT/backup.tar.gz"
                 msg "$(gettext "An error occurred while copying files.")\n" error
@@ -154,7 +154,7 @@ if [[ $ret -eq 0 ]]; then
             done < "$DT/import/topics/languages"
 
             "$DS/mngr.sh" mkmn 1; rm -fr "$DT/import"
-            msg "$(gettext "Data imported successfully.")\n" info
+            msg "$(gettext "Data imported successfully.")\n" dialog-information
         fi
     fi
 fi

@@ -46,7 +46,7 @@ if [[ ${1} = 0 ]]; then
     
     getitem() {
         if [ ${f} -gt 5 -o ! -d "${DM_tlt}" ]; then
-            msg "$(gettext "An error has occurred. Playback stopped")" info &
+            msg "$(gettext "An error has occurred. Playback stopped")" dialog-information &
             "$DS"/stop.sh 2; fi
         [ -f "$DT/list.m3u" ] && rm -f "$DT/list.m3u"
             
@@ -121,7 +121,7 @@ elif [[ ${1} != 0 ]]; then
     fi
     if [[ -n "$1" ]]; then
     var1="--text=$1\n"
-    var2="--image=info"; else
+    var2="--image=dialog-information"; else
     #var1="--text=<small><a href='$linkc'>$(gettext "Shared")</a> </small>"
     var1="--center"
     var2="--text-align=right"; fi
@@ -144,9 +144,9 @@ elif [[ ${1} != 0 ]]; then
     --column=img:IMG \
     --column=File:TEXT \
     --button="$(gettext "Statistics")":"'$DS/ifs/tls.sh' _stats" \
-    --button="$(gettext "New")"!gtk-new:3 \
+    --button="$(gettext "New")"!document-new:3 \
     --button="$(gettext "Apply")":2 \
-    --button="$(gettext "Close")"!gtk-close:1)
+    --button="$(gettext "Close")"!window-close:1)
     ret=$?
     if [ $ret -eq 3 ]; then
             "$DS/add.sh" new_topic

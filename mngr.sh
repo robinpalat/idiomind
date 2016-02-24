@@ -93,7 +93,7 @@ delete_item() {
     DM_tlt="$DM_tl/${2}"; DC_tlt="$DM_tl/${2}/.conf"
     if [ -n "${trgt}" ]; then
         msg_2 "$(gettext "Are you sure you want to delete this item?")\n" \
-        gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
+        edit-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
         ret="$?"
         
         if [ $ret -eq 0 ]; then
@@ -169,7 +169,7 @@ edit_item() {
     fi
     
     if [[ "${srce}" = "${temp}" ]]; then
-    msg_2 "$(gettext "Translating... Wait till the process is completed. ")\n" info OK gtk-stop "$(gettext "Warning")"
+    msg_2 "$(gettext "Translating... Wait till the process is completed. ")\n" dialog-information OK process-stop "$(gettext "Warning")"
     if [ $? -eq 1 ]; then srce="" ;transl_mark=1 ; else "$DS/vwr.sh" ${list} "${trgt}" ${item_pos} & exit 1; fi; fi
 
     if [ -e "${DM_tlt}/$id.mp3" ]; then
@@ -471,9 +471,9 @@ edit_feeds() {
 delete_topic() {
     if [ -z "${tpc}" ]; then exit 1; fi
     if [ "${tpc}" != "${2}" ]; then
-        msg "$(gettext "Sorry, this topic is currently not active.")\n " info "$(gettext "Information")" & exit; fi
+        msg "$(gettext "Sorry, this topic is currently not active.")\n " dialog-information "$(gettext "Information")" & exit; fi
     msg_2 "$(gettext "Are you sure you want to delete this topic?")\n" \
-    gtk-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
+    edit-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
     ret="$?"
     if [ ${ret} -eq 0 ]; then
         f_lock "$DT/rm_lk"
@@ -491,7 +491,7 @@ delete_topic() {
         if [ -d "$DM_tl/${tpc}" ]; then cleanups "$DM_tl/${tpc}"; fi
      
         if [ -d "$DM_tl/${tpc}" ]; then sleep 0.5
-        msg "$(gettext "Could not remove the directory:")\n$DM_tl/${tpc}\n$(gettext "You must manually remove it.")" info "$(gettext "Information")"; fi
+        msg "$(gettext "Could not remove the directory:")\n$DM_tl/${tpc}\n$(gettext "You must manually remove it.")" dialog-information "$(gettext "Information")"; fi
         
         rm -f "$DT/tpe"
         > "$DC_s/4.cfg"
@@ -533,7 +533,7 @@ rename_topic() {
 
     if [ ${#jlb} -gt 55 ]; then
     msg "$(gettext "Sorry, new name too long.")\n" \
-    info "$(gettext "Information")" & exit 1; fi
+    dialog-information "$(gettext "Information")" & exit 1; fi
 
     if [ ${chck} -ge 1 ]; then
         for i in {1..50}; do
@@ -541,7 +541,7 @@ rename_topic() {
         [ -z "${chck}" ] && break; done
         
         jlb="${jlb} ($i)"
-        msg_2 "$(gettext "Another topic with the same name already exist.") \n$(gettext "Notice that the name for this one is now\:")\n<b>$jlb</b> \n" info "$(gettext "OK")" "$(gettext "Cancel")"
+        msg_2 "$(gettext "Another topic with the same name already exist.") \n$(gettext "Notice that the name for this one is now\:")\n<b>$jlb</b> \n" dialog-information "$(gettext "OK")" "$(gettext "Cancel")"
         ret="$?"
         if [ ${ret} -eq 1 ]; then exit 1; fi
     fi
@@ -572,13 +572,13 @@ rename_topic() {
 
 mark_to_learn_topic() {
     if [ "${tpc}" != "${2}" ]; then
-    msg "$(gettext "Sorry, this topic is currently not active.")\n " info "$(gettext "Information")" & exit; fi
+    msg "$(gettext "Sorry, this topic is currently not active.")\n " dialog-information "$(gettext "Information")" & exit; fi
     
     [ ! -s "${DC_tlt}/0.cfg" ] && exit 1
     
     if [ $((inx3+inx4)) -le 10 ]; then
     msg "$(gettext "Insufficient number of items to perform the action").\t\n " \
-    info "$(gettext "Information")" & exit; fi
+    dialog-information "$(gettext "Information")" & exit; fi
 
     (echo "5"
     stts=$(sed -n 1p "${DC_tlt}/8.cfg")
@@ -633,13 +633,13 @@ mark_to_learn_topic() {
 
 mark_as_learned_topic() {
     if [ "${tpc}" != "${2}" ]; then
-    msg "$(gettext "Sorry, this topic is currently not active.")\n " info "$(gettext "Information")" & exit; fi
+    msg "$(gettext "Sorry, this topic is currently not active.")\n " dialog-information "$(gettext "Information")" & exit; fi
     
     [ ! -s "${DC_tlt}/0.cfg" ] && exit 1
 
     if [ $((inx3+inx4)) -le 10 ]; then
     msg "$(gettext "Insufficient number of items to perform the action").\t\n " \
-    info "$(gettext "Information")" & exit; fi
+    dialog-information "$(gettext "Information")" & exit; fi
     
     (echo "5"
     stts=$(sed -n 1p "${DC_tlt}/8.cfg")

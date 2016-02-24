@@ -160,7 +160,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             listt="$(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
             ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
             if [[ `wc -l <<<"$listt"` -ge 120 ]]; then
-                msg "$(gettext "Maximum number of topics reached.")\n" info "$(gettext "Information")" & exit
+                msg "$(gettext "Maximum number of topics reached.")\n" dialog-information "$(gettext "Information")" & exit
             fi
             cn=0
             if [[ `grep -Fxo "${tname}" <<<"$listt" |wc -l` -ge 1 ]]; then
@@ -170,7 +170,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
                 [ -z "$chck" ] && break; done
             
                 tname="${tname} ($i)"
-                msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "Notice that the name for this one is now\:")\n<b>$tname</b>\n" info "$(gettext "OK")" "$(gettext "Cancel")"
+                msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "Notice that the name for this one is now\:")\n<b>$tname</b>\n" dialog-information "$(gettext "OK")" "$(gettext "Cancel")"
   
                 if [ $? != 0 ]; then exit 1; fi
             fi
@@ -280,7 +280,7 @@ function topic() {
             ntpc=$(cut -d '|' -f 1 < "${cnf4}")
             if [ "${tpc}" != "${ntpc}" -a -n "$ntpc" ]; then
             if [[ "${tpc}" != "$(sed -n 1p "$HOME/.config/idiomind/4.cfg")" ]]; then
-            msg "$(gettext "Sorry, this topic is currently not active.")\n" info "$(gettext "Information")" & exit; fi
+            msg "$(gettext "Sorry, this topic is currently not active.")\n" dialog-information "$(gettext "Information")" & exit; fi
             "$DS/mngr.sh" rename_topic "${ntpc}" & exit; fi
         }
         
@@ -483,13 +483,14 @@ panel() {
     --name=Idiomind --class=Idiomind \
     --always-print-result \
     --window-icon=idiomind \
+    --image-path="/usr/share/idiomind/images/icons" \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --form --fixed --on-top --no-buttons --align=center \
     --width=140 --height=180 --borders=0 --geometry=${geom} \
-    --field="$(gettext "New")"!gtk-new:btn "$DS/add.sh 'new_items'" \
-    --field="$(gettext "Home")"!gtk-home:btn "idiomind 'topic'" \
-    --field="$(gettext "Index")"!gtk-index:btn "$DS/chng.sh" \
-    --field="$(gettext "Options")"!gtk-preferences:btn "$DS/cnfg.sh"
+    --field="$(gettext "New")"!'document-new':btn "$DS/add.sh 'new_items'" \
+    --field="$(gettext "Home")"!'go-home':btn "idiomind 'topic'" \
+    --field="$(gettext "Index")"!'gtk-index':btn "$DS/chng.sh" \
+    --field="$(gettext "Options")"!'gtk-preferences':btn "$DS/cnfg.sh"
     [ $? != 0 ] && "$DS/stop.sh" 1 & exit ) & set_geom
 }
 

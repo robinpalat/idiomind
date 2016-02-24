@@ -12,7 +12,7 @@ function dicts() {
             if [ ! -e "$DC_s/topics_first_run" ]; then
                 source "$DS/ifs/mods/cmns.sh"
                 msg_2 "$(gettext "You may need to configure the list of Internet resources. \nDo you want to do this now?")" \
-                info "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Information")"
+                dialog-information "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Information")"
                 if [ $? = 0 ]; then "$DS_a/Dics/cnfg.sh" 6; fi
                 echo $lgtl > "$DC_a/dict/.dict"
             fi

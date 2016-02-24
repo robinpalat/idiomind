@@ -642,7 +642,7 @@ function lock() {
                 text_dlg="$(gettext "Consider waiting a while before resuming to practice some items")"
                 yad --title="$(gettext "Wait")" \
                 --text="${text_dlg}" \
-                --image="info" \
+                --image="dialog-information" \
                 --window-icon=idiomind --on-top --skip-taskbar --center \
                 --width=400 --height=100 --borders=2 \
                 --button="    "$(gettext "Practice")"    ":4 \
@@ -668,7 +668,7 @@ function lock() {
 
 function starting() {
     yad --title=$(gettext "Information") \
-    --text=" $1\t\n" --image=info \
+    --text=" $1\t\n" --image=dialog-information \
     --window-icon=idiomind \
     --skip-taskbar --center --on-top \
     --width=340 --height=120 --borders=5 \
@@ -766,7 +766,7 @@ function strt() {
 
     if [ $ret -eq 0 ]; then
         if [ -z "$VAR" ]; then
-        msg " $(gettext "You must choose a practice.")\n" info
+        msg " $(gettext "You must choose a practice.")\n" dialog-information
         strt 0
         else
         practices ${VAR}

@@ -10,10 +10,10 @@ lgs=${slang[$lgsl]}
 function dwld() {
     err() {
         cleanups "$DT/download" &
-        msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" info
+        msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" dialog-information
     }
     sleep 0.5
-    msg "$(gettext "When the download completes the files will be added to topic directory.")" info "$(gettext "Downloading")"
+    msg "$(gettext "When the download completes the files will be added to topic directory.")" dialog-information "$(gettext "Downloading")"
     kill -9 $(pgrep -f "yad --form --columns=1")
     mkdir "$DT/download"; idcfg="$DM_tl/${2}/.conf/id.cfg"
     ilink=$(grep -o 'ilink="[^"]*' "${idcfg}" |grep -o '[^"]*$')
@@ -85,7 +85,7 @@ function dwld() {
 function upld() {
     if [ -d "$DT/upload" -o -d "$DT/download" ]; then
         [ -e "$DT/download" ] && t="$(gettext "Downloading")..." || t="$(gettext "Uploading")..."
-        msg_2 "$(gettext "Wait until it finishes a previous process")\n" dialog-warning OK gtk-stop "$t"
+        msg_2 "$(gettext "Wait until it finishes a previous process")\n" dialog-warning OK process-stop "$t"
         ret="$?"
         if [ $ret -eq 1 ]; then
             cleanups "$DT/upload" "$DT/download"
@@ -97,20 +97,20 @@ function upld() {
     conds_upload() {
         if [ $((inx3+inx4)) -lt 8 ]; then
             msg "$(gettext "Insufficient number of items to perform the action").\t\n " \
-            info "$(gettext "Information")" & exit 1
+            dialog-information "$(gettext "Information")" & exit 1
         fi
         if [ -z "${usrid}" -o -z "${passw}" ]; then
-            msg "$(gettext "Sorry, Authentication failed.")\n" info "$(gettext "Information")" & exit 1
+            msg "$(gettext "Sorry, Authentication failed.")\n" dialog-information "$(gettext "Information")" & exit 1
         fi
         if [ -z "${ctgry}" ]; then
-            msg "$(gettext "Please select a category.")\n " info
+            msg "$(gettext "Please select a category.")\n " dialog-information
             "$DS/ifs/upld.sh" upld "${tpc}" & exit 1
         fi
         [ -d "$DT" ] && cd "$DT" || exit 1
         [ -d "$DT/upload" ] && rm -fr "$DT/upload"
         
         if [ "${tpc}" != "${1}" ]; then
-            msg "$(gettext "Sorry, this topic is currently not active.")\n " info & exit 1
+            msg "$(gettext "Sorry, this topic is currently not active.")\n " dialog-information & exit 1
         fi
         internet
     }
@@ -163,7 +163,7 @@ function upld() {
         yad --form --columns=1 --title="$(gettext "Share")" \
         --name=Idiomind --class=Idiomind \
         --always-print-result \
-        --image="info" \
+        --image="dialog-information" \
         --window-icon=idiomind --buttons-layout=end \
         --align=left --center --on-top \
         --width=450 --height=180 --borders=10 \
@@ -252,7 +252,7 @@ function upld() {
     # actions
     if [ $ret = 2 ]; then
         if [ -d "$DT/export" ]; then
-            msg_2 "$(gettext "Wait until it finishes a previous process").\n" info OK gtk-stop "$(gettext "Information")"
+            msg_2 "$(gettext "Wait until it finishes a previous process").\n" dialog-information OK process-stop "$(gettext "Information")"
             ret=$?
             if [ $ret -eq 1 ]; then
                 [ -d "$DT/export" ] && rm -fr "$DT/export"
@@ -264,7 +264,7 @@ function upld() {
     elif [ $ret = 0 ]; then
         conds_upload "${2}"
         "$DS/ifs/tls.sh" check_index "${tpc}" 1
-        notify-send -i info "$(gettext "Upload in progress")" \
+        notify-send -i dialog-information "$(gettext "Upload in progress")" \
         "$(gettext "This can take some time please wait")" -t 6000
         mkdir -p "$DT/upload/${tpc}/conf"
         DT_u="$DT/upload/"
@@ -365,7 +365,7 @@ END
         u=$?
         if [ $u = 0 ]; then
             info="\"$tpc\"\n<b>$(gettext "Uploaded correctly")</b>\n"
-            image=gtk-ok
+            image=dialog-apply
         elif [ $u = 3 ]; then
             info="$(gettext "Authentication error.")\n"
             image=error

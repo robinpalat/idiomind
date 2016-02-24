@@ -8,12 +8,12 @@ fi
 function check_s() {
     if [ -z "${1}" ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r" &
-        msg "$(gettext "No topic selected")\n" info Information & exit 1
+        msg "$(gettext "No topic selected")\n" dialog-information "$(gettext "Information")" & exit 1
     fi
     DC_tlt="$DM_tl/${1}/.conf"
     if [[ `wc -l < "${DC_tlt}/0.cfg"` -ge 200 ]]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "You've reached the maximum number of notes for this topic. Max allowed (200)")" info "$(gettext "Information")" & exit
+        msg "$(gettext "You've reached the maximum number of notes for this topic. Max allowed (200)")" dialog-information "$(gettext "Information")" & exit
     fi
 }
 
@@ -522,7 +522,7 @@ function dlg_form_1() {
     --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
     --button="$(gettext "Image")":3 \
     --button="$(gettext "Audio")":2 \
-    --button="$(gettext "Add")"!gtk-add:0
+    --button="$(gettext "Add")"!'list-add':0
 }
 
 function dlg_form_2() {
@@ -539,7 +539,7 @@ function dlg_form_2() {
     --field=":CB" "$tpe!$(gettext "New") *$e$tpcs" \
     --button="$(gettext "Image")":3 \
     --button="$(gettext "Audio")":2 \
-    --button="$(gettext "Add")"!gtk-add:0
+    --button="$(gettext "Add")"!'list-add':0
 }
 
 function dlg_checklist_3() {
@@ -562,7 +562,7 @@ function dlg_checklist_3() {
     --width=700 --height=380 --borders=5 --splitter=280 \
     --button="$(gettext "Edit")":2 \
     --button="$(gettext "Cancel")":1 \
-    --button="gtk-add":0
+    --button="$(gettext "Add")"!'list-add':0
 }
 
 function dlg_checklist_1() {

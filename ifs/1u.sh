@@ -24,8 +24,8 @@ fi
 _info() {
     yad --form --title="$(gettext "Notice")" \
     --text="$(gettext "Some things are still not working for these languages:") Chinese, Japanese, Russian." \
-    --image=info \
-    --window-icon=info \
+    --image=dialog-information \
+    --window-icon=dialog-information \
     --skip-taskbar --center --on-top \
     --width=340 --height=120 --borders=5 \
     --button="$(gettext "OK")":0
