@@ -506,7 +506,7 @@ function dlg_form_0() {
     --skip-taskbar --center --on-top \
     --width=450 --height=80 --borders=0 \
     --field="$(gettext "Name")" "$1" \
-    --button=gtk-ok:0
+    --button="$(gettext "OK")":0
 }
 
 function dlg_form_1() {

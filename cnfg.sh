@@ -26,10 +26,11 @@ sets=( 'gramr' 'wlist' 'trans' 'dlaud' 'ttrgt' 'clipw' 'stsks' \
 
 confirm() {
     yad --form --title="$(gettext "Confirm")" \
+    --name=Idiomind --class=Idiomind \
     --image="dialog-question" --text="$1\n" \
     --window-icon=idiomind \
     --skip-taskbar --center --on-top \
-    --width=340 --height=120 --borders=5 \
+    --width=380 --height=120 --borders=5 \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Yes")":0
 }

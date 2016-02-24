@@ -129,6 +129,7 @@ function new_session() {
 }
 
 if grep -o '.idmnd' <<<"${1: -6}"; then
+    if [ ! -d "$DT" ]; then mkdir "$DT"; fi
     source "$DS/ifs/tls.sh"
     check_format_1 "${1}"
     if [ $? != 18 ]; then

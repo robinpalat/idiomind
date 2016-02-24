@@ -365,10 +365,10 @@ END
         u=$?
         if [ $u = 0 ]; then
             info="\"$tpc\"\n<b>$(gettext "Uploaded correctly")</b>\n"
-            image=dialog-ok-apply
+            image='dialog-ok-apply'
         elif [ $u = 3 ]; then
             info="$(gettext "Authentication error.")\n"
-            image=error
+            image='error'
         else
             sleep 5
             info="$(gettext "A problem has occurred with the file upload, try again later.")\n"

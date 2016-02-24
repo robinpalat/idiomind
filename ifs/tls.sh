@@ -213,7 +213,7 @@ dlg_backups() {
     --width=520 --height=380 --borders=5 \
     --print-column=1 --no-headers \
     --column=Nombre:TEXT \
-    --button=gtk-close:1
+    --button="$(gettext "Close")"!'window-close':1
 } >/dev/null 2>&1
 
 _backup() {

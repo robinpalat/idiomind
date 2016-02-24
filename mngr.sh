@@ -169,9 +169,18 @@ edit_item() {
     fi
     
     if [[ "${srce}" = "${temp}" ]]; then
-    msg_2 "$(gettext "Translating... Wait till the process is completed. ")\n" dialog-information OK "$(gettext "Stop")" "$(gettext "Warning")"
-    if [ $? -eq 1 ]; then srce="" ;transl_mark=1 ; else "$DS/vwr.sh" ${list} "${trgt}" ${item_pos} & exit 1; fi; fi
-
+        if [ -e "$DT/${trgt}.edit" ]; then
+            msg_2 "$(gettext "Translating... Wait till the process is completed. ")\n" dialog-information OK "$(gettext "Stop")" "$(gettext "Warning")"
+            if [ $? -eq 1 ]; then
+                srce=""; transl_mark=1; rm -f "$DT/${trgt}.edit"
+            else 
+                "$DS/vwr.sh" ${list} "${trgt}" ${item_pos} & exit 1
+            fi
+        else
+            srce=""; transl_mark=1
+        fi
+    fi
+        
     if [ -e "${DM_tlt}/$id.mp3" ]; then
         audf="${DM_tlt}/$id.mp3"
     else
@@ -250,6 +259,7 @@ edit_item() {
                 if [ ${mod_index} = 1 ]; then
                 
                     DT_r=$(mktemp -d "$DT/XXXX")
+                    > "$DT/${trgt_mod}.edit"
                     internet
                     if [ ${type_mod} = 1 ]; then
                         srce_mod="$(clean_1 "$(translate "${trgt_mod}" $lgt $lgs)")"
@@ -332,7 +342,7 @@ edit_item() {
                         rm "${DC_tlt}"/*.tmp
                     fi
                 fi
-                cleanups "$DT_r"
+                cleanups "$DT_r" "$DT/${trgt_mod}.edit"
             ) &
             fi
             [ ${type} != ${type_mod} -a ${type_mod} = 1 ] && ( img_word "${trgt}" "${srce}" ) &

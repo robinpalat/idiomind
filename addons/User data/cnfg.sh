@@ -27,7 +27,7 @@ D=$(yad --list --radiolist --title="$(gettext "User Data")" \
 --skip-taskbar --image=folder \
 --width=450 --height=280 --borders=10 \
 --button="$(gettext "Cancel")":1 \
---button=Ok:0 \
+--button="$(gettext "OK")":0 \
 --column="" \
 --column="$(gettext "Options")" \
 "FALSE" "$(gettext "Import")" "FALSE" "$(gettext "Export")")
@@ -45,7 +45,7 @@ if [[ $ret -eq 0 ]]; then
         --skip-taskbar --center --mouse --on-top \
         --width=600 --height=500 --borders=10 \
         --button="$(gettext "Cancel")":1 \
-        --button=Ok:0)
+        --button="$(gettext "OK")":0)
         ret=$?
         if [[ $ret -eq 0 ]]; then
             sleep 1; notify-send -i idiomind \
@@ -80,7 +80,7 @@ if [[ $ret -eq 0 ]]; then
         --skip-taskbar --center --on-top \
         --width=600 --height=500 --borders=10 \
         --button="$(gettext "Cancel")":1 \
-        --button=Ok:0)
+        --button="$(gettext "OK")":0)
         
         if [[ $ret -eq 0 ]]; then
             if [ -z "${add}" -o ! -d "${DM}" ]; then

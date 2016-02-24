@@ -434,7 +434,7 @@ function practice_e() {
         --buttons-layout=end --skip-taskbar \
         --undecorated --center --on-top \
         --align=center --image-on-top \
-        --width=550 --height=230 --borders=8 \
+        --width=560 --height=240 --borders=10 \
         --field="" "" \
         --button="$(gettext "Exit")":1 \
         --button="!$DS/images/listen.png":"$cmd_play" \
@@ -450,7 +450,7 @@ function practice_e() {
         --window-icon=idiomind \
         --skip-taskbar --wrap --image-on-top --center --on-top \
         --undecorated --buttons-layout=end \
-        --width=530 --height=230 --borders=10 \
+        --width=530 --height=230 --borders=12 \
         --field="":lbl "" \
         --field="<span font_desc='Free Sans 9'>$OK\n\n$prc $hits</span>":lbl \
         --button="$(gettext "Continue")":2
@@ -618,7 +618,7 @@ function lock() {
             if grep -o -E 'a|b|d' <<< ${practice}; then
                 yad --title="$(gettext "Practice Completed")" \
                 --text="${text_dlg}" \
-                --image="$dirs/images/21.png" \
+                --image="dialog-ok-apply" \
                 --window-icon=idiomind --on-top --skip-taskbar --center \
                 --width=400 --height=100 --borders=2 \
                 --button=" $(gettext "Restart B") !!$(gettext "Questions in $lgsl - Answers in $lgtl") ":2 \
@@ -628,7 +628,7 @@ function lock() {
             elif grep -o -E 'c|e' <<< ${practice}; then
                 yad --title="$(gettext "Practice Completed")" \
                 --text="${text_dlg}" \
-                --image="$dirs/images/21.png" \
+                --image="dialog-ok-apply" \
                 --window-icon=idiomind --on-top --skip-taskbar --center \
                 --width=400 --height=100 --borders=2 \
                 --button=" $(gettext "Restart") !!$(gettext "Questions: $lgtl | Answers: $lgsl") ":0 \
