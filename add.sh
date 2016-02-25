@@ -144,7 +144,7 @@ function new_word() {
     trgt="$(clean_1 "${trgt}")"
     srce="$(clean_0 "${srce}")"
     cdb="$DM_tls/data/${lgtl}.db"
-    
+
     if [[ ${trans} = TRUE ]]; then
         if [[ ${ttrgt} = TRUE ]]; then
             _trgt="$(translate "${trgt}" auto $lgt)"
