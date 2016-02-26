@@ -360,12 +360,11 @@ edit_item() {
 
 edit_list() {
     [ -e "$DT/add_lst" -o -e "$DT/el_lk" ] && exit
-    [ $((inx3+inx4)) -le 1 ] && exit
     if [ -e "$DC_s/elist_first_run" ]; then 
     "$DS/ifs/tls.sh" first_run edit_list & fi
     [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ] && c=c || c=w
     direc="$DM_tl/${2}/.conf"
-    [ ! -s "${direc}/0.cfg" ] && exit 1
+    #[ ! -s "${direc}/0.cfg" ] && exit 1
     > "$DT/_tmp1"
     tac "${direc}/0.cfg" | while read -r item_; do
         item="$(sed 's/},/}\n/g' <<<"${item_}")"
@@ -373,6 +372,7 @@ edit_list() {
         [ -n "${trgt}" ] && echo "${trgt}" >> "$DT/_tmp1"
     done
 
+    cmd_resfile="$DS/ifs/tls.sh _restfile "\"${tpc}\"""
     cat "$DT/_tmp1" |edit_list_list > "$DT/tmp1"
     ret=$?
     

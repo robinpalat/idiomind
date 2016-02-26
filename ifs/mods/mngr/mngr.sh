@@ -64,11 +64,12 @@ function edit_list_list() {
     --always-print-result --print-all \
     --window-icon=idiomind \
     --no-headers --center \
-    --width=420 --height=260 --borders=5 \
+    --width=500 --height=350 --borders=5 \
     --column="" \
     --button="$(gettext "Cancel")":1 \
-    --button="$(gettext "Reverse List")":2 \
-    --button="$(gettext "Apply")!dialog-apply":0
+    --button="$(gettext "Restore")!!$(gettext "Revert to a previous state")":"${cmd_resfile}" \
+    --button="$(gettext "Inverse")!!$(gettext "Reverse items order")":2 \
+    --button="$(gettext "Save")":0
 }
 
 function edit_feeds_list() {

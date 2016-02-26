@@ -125,7 +125,6 @@ config_dlg() {
     --field="$(gettext "Help")":BTN "$DS/ifs/tls.sh help" \
     --field="$(gettext "Report a problem")":BTN "$DS/ifs/tls.sh fback" \
     --field="$(gettext "Check for updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
-    --field="$(gettext "Backups")":BTN "$DS/ifs/tls.sh 'dlg_backups'" \
     --field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" > "$cnf1" &
     cat "$DS_a/menu_list" | yad --plug=$KEY --tabnum=2 --list \
     --text=" $(gettext "Double-click to set") " \
