@@ -222,7 +222,7 @@ function topic() {
     source "$DS/ifs/mods/cmns.sh"
     [ -e "${DC_tlt}/8.cfg" ] && export mode=`sed -n 1p "${DC_tlt}/8.cfg"`
     if ! [[ ${mode} =~ $num ]]; then exit 1; fi
-    
+
     readd(){
         [ -z "${tpc}" ] && exit 1
         source "$DS/ifs/mods/topic/items_list.sh"
@@ -240,9 +240,9 @@ function topic() {
         sleep 2; include "$DS/ifs/mods/add"
         dlg_text_info_3 "$(cat "${DC_tlt}/err")"; fi ) &
         c=$((RANDOM%100000)); KEY=$c
-        cnf1=$(mktemp "$DT/cnf1.XXX.x")
-        cnf3=$(mktemp "$DT/cnf3.XXX.x")
-        cnf4=$(mktemp "$DT/cnf4.XXX.x")
+        cnf1=$(mktemp "$DT/cnf1.XXXX")
+        cnf3=$(mktemp "$DT/cnf3.XXXX")
+        cnf4=$(mktemp "$DT/cnf4.XXXX")
         if [ ! -z "$datei" ]; then infolbl="$(gettext "Installed on") $datei, $(gettext "created by") $authr"
         elif [ ! -z "$datec" ]; then infolbl="$(gettext "Created on") $datec"; fi
         lbl1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><small>\n$inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$infolbl</small>"
@@ -300,7 +300,7 @@ function topic() {
                     "$DS/practice/strt.sh" &
                 fi
 
-            rm -f "$DT"/*.x
+            cleanups "$cnf1" "$cnf3" "$cnf4"
 
         elif [[ ${inx1} -ge 1 ]]; then
         
@@ -333,7 +333,7 @@ function topic() {
                     "$DS/practice/strt.sh" &
                 fi
 
-                rm -f "$DT"/*.x
+                cleanups "$cnf1" "$cnf3" "$cnf4"
 
         elif [[ ${inx1} -eq 0 ]]; then
             if [ ! -e "${DC_tlt}/7.cfg" -o ! -e "${DC_tlt}/9.cfg" ]; then
@@ -361,9 +361,9 @@ function topic() {
             if [ $ret -eq 1 ]; then exit 1; fi
             if [ ! -e "$DT/ps_lk" ]; then apply; fi
           
-            rm -f "$DT"/*.x & exit
+            cleanups "$cnf1" "$cnf3" "$cnf4" & exit
         fi
-        rm -f "$DT"/*.x
+        cleanups "$cnf1" "$cnf3" "$cnf4"
 
     elif [[ ${mode} = 12 ]]; then
     
@@ -380,7 +380,7 @@ function topic() {
                     "$DS/practice/strt.sh" &
                 fi
 
-            rm -f "$DT"/*.x
+            cleanups "$cnf1" "$cnf3" "$cnf4"
 
         elif [[ ${inx1} -ge 1 ]]; then
         
@@ -397,7 +397,7 @@ function topic() {
                     "$DS/practice/strt.sh" &
                 fi
 
-                rm -f "$DT"/*.x
+                cleanups "$cnf1" "$cnf3" "$cnf4"
 
         elif [[ ${inx1} -eq 0 ]]; then
 
@@ -407,9 +407,9 @@ function topic() {
             
             if [ $ret -eq 1 ]; then exit 1; fi
           
-            rm -f "$DT"/*.x & exit
+            cleanups "$cnf1" "$cnf3" "$cnf4" & exit
         fi
-        rm -f "$DT"/*.x
+        cleanups "$cnf1" "$cnf3" "$cnf4"
         
     elif [[ ${mode} = 14 ]]; then
     

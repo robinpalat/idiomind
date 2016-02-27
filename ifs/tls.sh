@@ -314,7 +314,7 @@ _quick_help() {
     --uri="${_url}" \
     --window-icon=idiomind \
     --fixed --on-top --mouse \
-    --width=620 --height=580 --borders=2 \
+    --width=620 --height=580 --borders=5 \
     --button="$(gettext "Close")":1 &
 } >/dev/null 2>&1
 
