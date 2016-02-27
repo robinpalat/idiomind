@@ -484,7 +484,6 @@ panel() {
     --name=Idiomind --class=Idiomind \
     --always-print-result \
     --window-icon=idiomind \
-    --image-path="/usr/share/idiomind/images/icons" \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --form --fixed --on-top --no-buttons --align=center \
     --width=140 --height=180 --borders=0 --geometry=${geom} \
