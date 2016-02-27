@@ -573,7 +573,7 @@ function dlg_checklist_1() {
         fi
         done
     }
-    list "${1}" | yad --list --checklist --title="$(gettext "Word list")" \
+    list "${1}" | yad --list --checklist --title="$(gettext "Words")" \
     --name=Idiomind --class=Idiomind \
     --window-icon=idiomind \
     --mouse --on-top --no-headers \

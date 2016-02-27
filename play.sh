@@ -59,7 +59,7 @@ play_list() {
     touch "${DC_tlt}/practice/log3"
     DC_tlt="${DM_tl}/${tpc}/.conf"; cfg=0
     [[ `wc -l < "${DC_tlt}/10.cfg"` = 10 ]] && cfg=1
-    
+    ntosd=""; audio=""
     lbls=( 'Words' 'Sentences' 'Marked items' 'Difficult words' )
     sets=( 'words' 'sntcs' 'marks' 'wprct' 'rplay' 'audio' 'ntosd' 'loop' 'rword' 'acheck' )
     in=( 'in0' 'in1' 'in2' 'in3' )
@@ -114,7 +114,7 @@ play_list() {
     else
         tpp="$(sed -n 1p "$DT/.p_")"
         title="${tpp}"
-        btn2="--button=gtk-media-stop:2"
+        btn2="--button=$(gettext "Stop")!media-playback-stop:2"
     fi
     [ -z "$rword" ] && rword=0
     set="$(echo "${iteml[${rword}]}")"
