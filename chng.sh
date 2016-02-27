@@ -153,13 +153,14 @@ elif [[ ${1} != 0 ]]; then
     elif [ -n "${tpc}" ]; then
     
         mode="$(< "$DM_tl/${tpc}/.conf/8.cfg")"
-        [ -z "$mode" ] && echo 13 > "${DC_tlt}/8.cfg" && mode=13
+        numer='^[0-9]+$'
+        ! [[ ${mode} =~ $num ]] && echo 13 > "$DM_tl/${tpc}/.conf/8.cfg" && mode=13
         
         if ((mode>=0 && mode<=20)); then
             if [ $ret -eq 2 ]; then
-                "$DS/default/tpc.sh" "$tpc" ${mode} 1 &
+                "$DS/default/tpc.sh" "${tpc}" ${mode} 1 &
             elif [ $ret -eq 0 ]; then
-                "$DS/default/tpc.sh" "$tpc" ${mode} &
+                "$DS/default/tpc.sh" "${tpc}" ${mode} &
             fi
         fi
     fi

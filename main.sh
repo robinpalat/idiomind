@@ -64,13 +64,13 @@ function new_session() {
     if ls "$DC_s"/*.p 1> /dev/null 2>&1; then
     cd "$DC_s"/; rename 's/\.p$//' *.p; fi; cd /
     
-    s="$(xrandr | grep '*' |awk '{ print $1 }' |sed 's/x/\n/')"
+    s="$(xrandr |grep '*' |awk '{ print $1 }' |sed 's/x/\n/')"
     sed -n 1p <<<"$s" >> "$DC_s/10.cfg"
     sed -n 2p <<<"$s" >> "$DC_s/10.cfg"
     
     # create database if not exist
     cdb="$DM_tls/data/${lgtl}.db"
-    if [[ ! -e ${cdb} ]]; then
+    if [ ! -e ${cdb} ]; then
     [ ! -d "$DM_tls/data" ] && mkdir -p "$DM_tls/data" 
     echo -n "create table if not exists Words (Word TEXT);" |sqlite3 ${cdb}
     echo -n "create table if not exists Config (Study TEXT, Expire INTEGER);" |sqlite3 ${cdb}
@@ -261,7 +261,7 @@ function topic() {
                 "$DS/ifs/tls.sh" colorize; rm "${cnf1}"; fi
 
             if grep TRUE "${cnf1}"; then
-                grep -Rl "|FALSE|" "${cnf1}" | while read tab1; do
+                grep -Rl "|FALSE|" "${cnf1}" |while read tab1; do
                      sed '/|FALSE|/d' "${cnf1}" > "$DT/tmpf1"
                      mv "$DT/tmpf1" "$tab1"
                 done
@@ -272,7 +272,7 @@ function topic() {
                 grep -Fxvf "${cnf1}" "${ls1}" > "$DT/ls1.x"
                 mv -f "$DT/ls1.x" "${ls1}"
                 if [ -n "$(cat "${ls1}" |sort -n |uniq -dc)" ]; then
-                    cat "${ls1}" | awk '!array_temp[$0]++' > "$DT/ls1.x"
+                    cat "${ls1}" |awk '!array_temp[$0]++' > "$DT/ls1.x"
                     sed '/^$/d' "$DT/ls1.x" > "${ls1}"
                 fi
                 "$DS/ifs/tls.sh" colorize

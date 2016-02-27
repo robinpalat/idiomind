@@ -63,7 +63,6 @@ set_lang() {
         (Study TEXT, Expire INTEGER);" |sqlite3 ${cdb}
         echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${cdb}
     fi
-    
     "$DS/mngr.sh" mkmn 1 &
 }
 

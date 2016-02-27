@@ -203,19 +203,6 @@ add_audio() {
     fi
 } >/dev/null 2>&1
 
-dlg_backups() {
-    [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
-    cd "$DM/backup"; ls -t *.bk |sed 's/\.bk//g' | \
-    yad --list --title="$(gettext "Backups")" \
-    --name=Idiomind --class=Idiomind \
-    --dclick-action="$DS/ifs/tls.sh '_restfile'" \
-    --window-icon=idiomind --center --on-top \
-    --width=520 --height=380 --borders=5 \
-    --print-column=1 --no-headers \
-    --column=Nombre:TEXT \
-    --button="$(gettext "Close")"!'window-close':1
-} >/dev/null 2>&1
-
 _backup() {
     source /usr/share/idiomind/default/c.conf
     source "$DS/ifs/mods/cmns.sh"
@@ -246,11 +233,11 @@ dlg_restfile() {
     date2=`grep '\----- oldest' "${file}" |cut -d' ' -f3`
     [ -n "$date2" ] && val='\nFALSE'
     source "$DS/ifs/mods/cmns.sh"
+    
     if [ -f "${file}" ]; then
         rest="$(echo -e "FALSE\n$date1$val\n$date2" \
         | sed '/^$/d' | yad --list \
         --title="$(gettext "Revert to a previous state")" \
-        --text="\"${2}\"" \
         --name=Idiomind --class=Idiomind \
         --print-all --expand-column=2 --no-click \
         --window-icon=idiomind \
@@ -273,8 +260,11 @@ dlg_restfile() {
                 |grep -v '\----- oldest' |grep -v '\----- end' > \
                 "${DM_tl}/${2}/.conf/0.cfg"
             fi
+            
             "$DS/ifs/tls.sh" check_index "${2}" 1
-            "$DS/default/tpc.sh" "${2}" 1 &
+            mode="$(< "$DM_tl/${2}/.conf/8.cfg")"
+            ! [[ ${mode} =~ $num ]] && echo 13 > "$DM_tl/${2}/.conf/8.cfg" && mode=13
+            "$DS/default/tpc.sh" "${2}" ${mode} 1 &
         fi
     else
         msg "$(gettext "Backup not found")\n" dialog-warning
@@ -679,8 +669,6 @@ $(gettext "Does not need configuration")
 case "$1" in
     backup)
     _backup "$@" ;;
-    dlg_backups)
-    dlg_backups "$@" ;;
     _restfile)
     dlg_restfile "$@" ;;
     check_index)
