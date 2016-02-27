@@ -359,9 +359,17 @@ edit_item() {
 }
 
 edit_list() {
-    [ -e "$DT/add_lst" -o -e "$DT/el_lk" ] && exit
+    if [ -e "$DT/add_lst" -o -e "$DT/el_lk" ]; then
+        msg_2 "$(gettext "Wait until it finishes a previous process")\n" dialog-warning OK "$(gettext "Stop")" "$(gettext "Information")"
+        ret=$?
+        if [ $ret -eq 1 ]; then
+            cleanups "$DT/add_lst" "$DT/el_lk"
+        else
+            exit 1
+        fi
+    fi
     if [ -e "$DC_s/elist_first_run" ]; then 
-    "$DS/ifs/tls.sh" first_run edit_list & fi
+        "$DS/ifs/tls.sh" first_run edit_list & fi
     [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ] && c=c || c=w
     direc="$DM_tl/${2}/.conf"
     #[ ! -s "${direc}/0.cfg" ] && exit 1
@@ -459,7 +467,7 @@ edit_list() {
             done < "$DT/add_lst"
         fi
     fi
-    rm -f "$DT/tmp1" "$DT/_tmp1" "$DT/add_lst" "$DT_r"
+    cleanups "$DT/tmp1" "$DT/_tmp1" "$DT/add_lst" "$DT_r"
     exit 1
 } >/dev/null 2>&1
 

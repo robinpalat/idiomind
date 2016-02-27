@@ -28,7 +28,8 @@ function dicts() {
             > "$DC_a/dict/disables/$(basename "$re")"
         done
     fi
-    if  [ ! -f "$DC_a/dict/.dict" ]; then s=1
+    if  [ ! -f "$DC_a/dict/.dict" ]; then
+        s=1
         echo -e "$lgtl" > "$DC_a/dict/.dict"
     fi
     if ! ls "$DC_d"/* 1> /dev/null 2>&1; then dlg=1; fi

@@ -3,20 +3,19 @@
 
 [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/mods/cmns.sh"
-if [ ! -e "$DC_s/log" ]; then exit 1
-else log="$DC_s/log"; fi
+[ ! -e "$DC_s/log" ] && exit 1 || log="$DC_s/log"
 items=$(mktemp "$DT/w1.XXXX")
 words=$(grep -o -P '(?<=w1.).*(?=\.w1)' "${log}" |tr '|' '\n' \
-| sort | uniq -dc | sort -n -r | sed 's/ \+/ /g')
+|sort |uniq -dc |sort -n -r |sed 's/ \+/ /g')
 sentences=$(grep -o -P '(?<=s9.).*(?=\.s9)' "${log}" |tr '|' '\n' \
-| sort | uniq -dc | sort -n -r | sed 's/ \+/ /g')
-img1='/usr/share/idiomind/images/1.png'
-img2='/usr/share/idiomind/images/2.png'
-img3='/usr/share/idiomind/images/3.png'
-img0='/usr/share/idiomind/images/0.png'
-[ ! -e "${DC_tlt}/1.cfg" ] && touch "${DC_tlt}/1.cfg"
-[ ! -e "${DC_tlt}/6.cfg" ] && touch "${DC_tlt}/6.cfg"
-[ ! -e "${DC_tlt}/9.cfg" ] && touch "${DC_tlt}/9.cfg"
+|sort |uniq -dc |sort -n -r |sed 's/ \+/ /g')
+topics="$(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d ! \
+-path "./.share" -exec ls -tNd {} + |sed 's|\./||g'|sed '/^$/d')"
+check_file "${DC_tlt}/1.cfg" "${DC_tlt}/6.cfg" "${DC_tlt}/9.cfg"
+img1="$DS/images/1.png"
+img2="$DS/images/2.png"
+img3="$DS/images/3.png"
+img0="$DS/images/0.png"
 
 for n in {1..100}; do
     if [[ $(sed -n ${n}p <<<"${words}" |awk '{print ($1)}') -ge 3 ]]; then
@@ -32,13 +31,12 @@ done
 sed -i '/^$/d' "${items}"
 f_lock "$DT/co_lk"
 dir="$DM_tl/"
-topics="${DM_tl}/.share/1.cfg"
 lstp="${items}"
 export dir topics lstp img0 img1 img2 img3
+
 python <<PY
 import os
 topics = os.environ['topics']
-topics = [line.strip() for line in open(topics)]
 dir = os.environ['dir']
 img0 = os.environ['img0']
 img1 = os.environ['img1']
@@ -46,6 +44,7 @@ img2 = os.environ['img2']
 img3 = os.environ['img3']
 lstp = os.environ['lstp']
 lstp = [line.strip() for line in open(lstp)]
+topics = topics.split ('\n')
 for tpc in topics:
     cfg1 = dir + tpc + "/.conf/1.cfg"
     if os.path.exists(cfg1):
@@ -110,10 +109,9 @@ for tpc in topics:
         except:
             print 'err -> ' + tpc
 PY
-rm -f "$DT/co_lk"
-if [ $(date +%d) = 28 -o $(date +%d) = 14 ]; then
-rm "$log"; touch "$log"; fi
-rm -f "$items"
+
+[ $(date +%d) = 1 -o $(date +%d) = 14 ] && rm "$log"; touch "$log"
+cleanups "$items" "$DT/co_lk"
 echo "--updated lists"
 touch "$DM_tl/.share/data/pre_data"
 exit

@@ -236,10 +236,10 @@ dlg_restfile() {
     
     if [ -f "${file}" ]; then
         rest="$(echo -e "FALSE\n$date1$val\n$date2" \
-        | sed '/^$/d' | yad --list \
+        |sed '/^$/d' |yad --list \
         --title="$(gettext "Revert to a previous state")" \
         --name=Idiomind --class=Idiomind \
-        --print-all --expand-column=2 --no-click \
+        --expand-column=2 --no-click \
         --window-icon=idiomind \
         --image-on-top --on-top --center \
         --width=450 --height=180 --borders=5 \
@@ -249,13 +249,12 @@ dlg_restfile() {
         --button="$(gettext "Restore")":0)"
         ret="$?"
         if [ $ret -eq 0 ]; then
-            if [ ! -d "${DM_tl}/${2}" ]; then
-                mkdir -p "${DM_tl}/${2}/.conf/practice"; fi
-            if grep TRUE <<< "$(sed -n 1p <<<"$rest")"; then
+            check_dir "${DM_tl}/${2}/.conf"
+            if grep TRUE <<< "$(sed -n 1p <<<"$rest")" >/dev/null 2>&1; then
                 sed -n  '/----- newest/,/----- oldest/p' "${file}" \
                 |grep -v '\----- newest' |grep -v '\----- oldest' > \
                 "${DM_tl}/${2}/.conf/0.cfg"
-            elif grep TRUE <<< "$(sed -n 2p <<<"$rest")"; then
+            elif grep TRUE <<< "$(sed -n 2p <<<"$rest")" >/dev/null 2>&1; then
                 sed -n  '/----- oldest/,/----- end/p' "${file}" \
                 |grep -v '\----- oldest' |grep -v '\----- end' > \
                 "${DM_tl}/${2}/.conf/0.cfg"
