@@ -271,7 +271,7 @@ dlg_restfile() {
 }
 
 fback() {
-    xdg-open "http://idiomind.net/contact"
+    xdg-open "http://idiomind.sourceforge.net/contact"
 } >/dev/null 2>&1
 
 _definition() {

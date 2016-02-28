@@ -44,7 +44,7 @@ img2 = os.environ['img2']
 img3 = os.environ['img3']
 lstp = os.environ['lstp']
 lstp = [line.strip() for line in open(lstp)]
-topics = topics.split ('\n')
+topics = topics.split('\n')
 for tpc in topics:
     cfg1 = dir + tpc + "/.conf/1.cfg"
     if os.path.exists(cfg1):
