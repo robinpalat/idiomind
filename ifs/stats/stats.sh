@@ -269,13 +269,13 @@ val1=0; val2=0; val3=0
 function pre_comp() {
     if [ -e ${tdate} ]; then
         dte=$(< ${tdate})
-        if [ $((( $(date +%s)-$(date -d ${dte} +%s) )/(24*60*60))) -gt 31 ]; then
+        if [ $((($(date +%s)-$(date -d ${dte} +%s))/(24*60*60))) -gt 31 ]; then
             rm -f ${tdate}
         fi
     fi
     if [ -e ${wdate} ]; then
         dte=$(< ${wdate})
-        if [ $((($(date +%s)-$(date -d ${dte} +%s) )/(24*60*60))) -gt 7 ]; then
+        if [ $((($(date +%s)-$(date -d ${dte} +%s))/(24*60*60))) -gt 7 ]; then
             rm -f ${wdate}
         fi
     fi
@@ -287,9 +287,7 @@ function pre_comp() {
         
         if [ ! -e ${data} -o -e ${pross} ]; then
             val1=1; val3=1
-            cp -f ${databk} ${data}
         fi
-        
         [ ${val1} = 1 ] && save_topic_stats 0
         [ ${val2} = 1 ] && save_word_stats 0
         [ ${val3} = 1 ] && mk_topic_stats
