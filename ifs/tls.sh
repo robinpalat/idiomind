@@ -242,7 +242,7 @@ dlg_restfile() {
         --expand-column=2 --no-click \
         --window-icon=idiomind \
         --image-on-top --on-top --center \
-        --width=450 --height=180 --borders=5 \
+        --width=410 --height=130 --borders=3 \
         --column="$(gettext "Select")":RD \
         --column="$(gettext "Date")":TXT \
         --button="$(gettext "Cancel")":1 \

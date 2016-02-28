@@ -383,6 +383,11 @@ edit_list() {
     cmd_resfile="$DS/ifs/tls.sh _restfile "\"${tpc}\"""
     cat "$DT/_tmp1" |edit_list_list > "$DT/tmp1"
     ret=$?
+    	if [ $ret = 2 ]; then
+			msg_2 "$(gettext "Are you sure you want to inverse order of items?")\n" \
+			dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
+			[ $? != 0 ] && ret=0
+		fi
     
     if [ $ret -eq 0 -o $ret -eq 2 -a ! -e "$DT/act_restfile" ]; then
         [ $ret = 0 ] && cmd=tac && invrt_msg=FALSE
