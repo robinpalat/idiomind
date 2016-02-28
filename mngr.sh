@@ -384,7 +384,7 @@ edit_list() {
     cat "$DT/_tmp1" |edit_list_list > "$DT/tmp1"
     ret=$?
     	if [ $ret = 2 ]; then
-			msg_2 "$(gettext "Are you sure you want to inverse order of items?")\n" \
+			msg_2 "$(gettext "Are you sure you want to reverse the list?")\n" \
 			dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
 			[ $? != 0 ] && ret=0
 		fi
