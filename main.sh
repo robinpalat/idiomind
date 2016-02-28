@@ -126,6 +126,7 @@ function new_session() {
 
     rm -f "$DT/ps_lk"
     "$DS/mngr.sh" mkmn 1 &
+    ( source "$DS/ifs/stats/stats.sh"; sleep 10; pre_comp ) &
 }
 
 if grep -o '.idmnd' <<<"${1: -6}"; then
