@@ -219,7 +219,7 @@ function list_words_edit() {
     n=1
     while read -r trgt; do
         if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
-            echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> ./logw
+            echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> "${DC_tlt}/err"
         elif [ -z "$(< "$DT_r/slts")" ]; then
             cleanups "${DT_r}"; exit 0
         else
@@ -744,7 +744,7 @@ new_items() {
         xclip -i /dev/null
     
         if [ -z "${tpe}" ] && [[ ${3} != 3 ]]; then cleanups "$DT_r"
-            msg "$(gettext "No topic is active")\n" dialog-information "$(gettext "Information")" & exit 1; fi
+            msg "$(gettext "No topic is active")\n" dialog-warning "$(gettext "Information")" & exit 1; fi
 
         if [ -z "${trgt}" ]; then
             cleanups "$DT_r"; exit 1; fi

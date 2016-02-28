@@ -372,7 +372,7 @@ END
         else
             sleep 5
             info="$(gettext "A problem has occurred with the file upload, try again later.")\n"
-            image=error
+            image='error'
         fi
         msg "$info" $image
 

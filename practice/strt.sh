@@ -17,7 +17,6 @@ function _log() {
         [ -e ./${1}.3 ] && echo "w3.$(tr -s '\n' '|' < ./${1}.3).w3"  \
         |sed -e '/\.\./d' >> "$log"
     fi
-        
     }
 
 function stats() {

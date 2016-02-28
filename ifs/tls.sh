@@ -405,7 +405,7 @@ set_image() {
     ifile="${DM_tls}/images/${trgt,,}-0.jpg"
     
     if [ -e "$DT/$trgt.img" ]; then
-    msg_2 "$(gettext "Attempting download image")...\n" dialog-information OK "$(gettext "Stop")" "$(gettext "Warning")"
+    msg_2 "$(gettext "Attempting download image")...\n" dialog-warning OK "$(gettext "Stop")" "$(gettext "Information")"
     if [ $? -eq 1 ]; then rm -f "$DT/$trgt".img; else exit 1 ; fi; fi
 
     if [ -f "$ifile" ]; then
