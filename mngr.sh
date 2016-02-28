@@ -585,7 +585,7 @@ rename_topic() {
             fi
         done
         
-        list_inadd > "$DM_tl/.share/2.cfg"
+        check_list > "$DM_tl/.share/2.cfg"
         rm "$DM_tl/.share"/*.tmp
         cleanups "$DM_tl/${tpc}" "$DM/backup/${tpc}.bk" "$DT/rm_lk"
         

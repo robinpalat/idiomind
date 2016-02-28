@@ -58,7 +58,7 @@ function new_session() {
     for strt in "$DS/ifs/mods/start"/*; do
     ( sleep 20 && "${strt}" ); done &
     
-    list_inadd > "$DM_tl/.share/2.cfg"
+    check_list > "$DM_tl/.share/2.cfg"
     check_index1 "$DM_tl/.share/3.cfg"
     
     if ls "$DC_s"/*.p 1> /dev/null 2>&1; then

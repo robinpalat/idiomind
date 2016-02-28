@@ -67,22 +67,40 @@ function f_lock() {
 
 function check_index1() {
     for i in "${@}"; do
-        if [ -n "$(sort -n < "$i" |uniq -dc)" ]; then
+        if [ -n "$(sort -n < "${i}" |uniq -dc)" ]; then
             awk '!array_temp[$0]++' < "${i}" > "$DT/tmp"
             sed '/^$/d' "$DT/tmp" > "${i}"; rm -f "$DT/tmp"
         fi
+        if grep '^$' "${i}"; then sed -i '/^$/d' "${i}"; fi
     done
 }
 
-function list_inadd() {
+function check_list() {
     if ls -tNd "$DM_tl"/*/ 1> /dev/null 2>&1; then
         while read -r topic; do
             if ! echo -e "$(ls -1a "$DS/addons/")\n$(cat "$DM_tl/.share/3.cfg")" \
             |grep -Fxo "${topic}" >/dev/null 2>&1; then
                 [ ! -L "$DM_tl/${topic}" ] && echo "${topic}"
             fi
-        done < <(cd "$DM_tl"; ls -tNd */ |head -n 100 |sed 's/\///g')
+        done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
+        -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
     fi
+}
+
+function check_dir() {
+    dret=0
+    for _dir in "$@"; do
+        if [ ! -d "${_dir}" ]; then mkdir -p "${_dir}"; dret=1; fi
+    done
+    return $dret
+}
+
+function check_file() {
+    fret=0
+    for _fil in "$@"; do
+        if [ ! -e "${_fil}" ]; then > "${_fil}"; fret=1; fi
+    done
+    return $fret
 }
 
 function cleanups() {
@@ -93,22 +111,6 @@ function cleanups() {
             rm -f "${_fl}"
         fi
     done
-}
-
-function check_dir() {
-    _ret=0
-    for _dir in "$@"; do
-        if [ ! -d "${_dir}" ]; then mkdir -p "${_dir}"; _ret=1; fi
-    done
-    return $_ret
-}
-
-function check_file() {
-    _ret=0
-    for _fil in "$@"; do
-        if [ ! -e "${_fil}" ]; then > "${_fil}"; _ret=1; fi
-    done
-    return $_ret
 }
 
 function get_item() {

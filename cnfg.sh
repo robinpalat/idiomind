@@ -52,7 +52,7 @@ set_lang() {
         > "$DT/tpe"; > "$DC_s/4.cfg"
     fi
     
-    list_inadd > "$DM_tl/.share/2.cfg"
+    check_list > "$DM_tl/.share/2.cfg"
 
     if [ ! -d "$DM_tl/.share/data" ]; then
         mkdir -p "$DM_tls/data"
