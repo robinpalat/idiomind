@@ -4,7 +4,6 @@
 function progress() {
     yad --progress \
     --progress-text="$1" \
-    --name=Idiomind --class=Idiomind \
     --undecorated \
     --pulsate --auto-close --on-top \
     --skip-taskbar --center --no-buttons
@@ -18,6 +17,8 @@ function create_db() {
         wtable="W`date +%y`"
         echo -n "create table if not exists ${wtable} \
         (week TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT, val5 TEXT);" |sqlite3 ${db}
+        echo -n "$(date +%m/%d/%Y)" > ${tdate}
+        echo -n "$(date +%m/%d/%Y)" > ${wdate}
     fi
 }
 
@@ -77,7 +78,7 @@ function save_topic_stats() {
         else
             sqlite3 ${db} "insert into ${mtable} (month,val0,val1,val2,val3,val4) \
             values ('${month}','${tot}','${pos}','${rev}','${neg}','${idd}');"
-            echo "$(date +%m/%d/%Y)" > ${tdate}
+            echo -n "$(date +%m/%d/%Y)" > ${tdate}
         fi
     fi
     echo "${tot},${pos},${rev},${neg},${idd}" > ${pross}
@@ -96,13 +97,13 @@ function save_word_stats() {
             dir2="$DM_tl/${tpc}/.conf/practice"
             stts=$(sed -n 1p "$dir1/8.cfg")
             if [ -f "$dir2/log1" ]; then
-            log1=`wc -l < "$dir2/log1"`; fi
+                log1=`wc -l < "$dir2/log1"`; fi
             if [ -f "$dir2/log2" ]; then
-            log2=`wc -l < "$dir2/log2"`; fi
+                log2=`wc -l < "$dir2/log2"`; fi
             if [ -f "$dir2/log3" ]; then
-            log3=`wc -l < "$dir2/log3"`; fi
+                log3=`wc -l < "$dir2/log3"`; fi
             if [ -f "$dir1/3.cfg" ]; then
-            cfg3=`wc -l < "$dir1/3.cfg"`; fi
+                cfg3=`wc -l < "$dir1/3.cfg"`; fi
             if [[ ${stts} =~ $numer ]]; then
                 if [ ${stts} -le 10 -a ${stts} -ge 7 ]; then
                     :
@@ -128,13 +129,13 @@ function save_word_stats() {
         IFS=$old_IFS
     }
     
-    local data=`count`
-    log0=`cut -d ',' -f 1 <<<"$data"`
-    log1=`cut -d ',' -f 2 <<<"$data"`
-    log2=`cut -d ',' -f 3 <<<"$data"`
-    log3=`cut -d ',' -f 4 <<<"$data"`
-    log4=`cut -d ',' -f 5 <<<"$data"`
-    log5=`cut -d ',' -f 6 <<<"$data"`
+    data=`count`
+    log0=`cut -d ',' -f 1 <<< "${data}"`
+    log1=`cut -d ',' -f 2 <<< "${data}"`
+    log2=`cut -d ',' -f 3 <<< "${data}"`
+    log3=`cut -d ',' -f 4 <<< "${data}"`
+    log4=`cut -d ',' -f 5 <<< "${data}"`
+    log5=`cut -d ',' -f 6 <<< "${data}"`
     ! [[ ${log0} =~ $numer ]] && log0=0
     ! [[ ${log1} =~ $numer ]] && log1=0
     ! [[ ${log2} =~ $numer ]] && log2=0
@@ -146,7 +147,7 @@ function save_word_stats() {
     else
         sqlite3 ${db} "insert into ${wtable} (week,val0,val1,val2,val3,val4,val5) \
         values ('${week^}','${log0}','${log1}','${log2}','${log3}','${log4}','${log5}');"
-        echo "$(date +%m/%d/%Y)" > ${wdate}
+        echo -n "$(date +%m/%d/%Y)" > ${wdate}
     fi
 }
 
@@ -169,12 +170,12 @@ function mk_topic_stats() {
     
     for m in {01..12}; do
         if [[ ${month} = ${m} ]]; then
-            declare t$m=`cut -d ',' -f 1 <"$pross"`
-            declare p$m=`cut -d ',' -f 2 <"$pross"`
-            declare r$m=`cut -d ',' -f 3 <"$pross"`
-            declare n$m=`cut -d ',' -f 4 <"$pross"`
-            declare i$m=`cut -d ',' -f 5 <"$pross"`
-            rm "$pross"; break
+            declare t$m=`cut -d ',' -f 1 < ${pross}`
+            declare p$m=`cut -d ',' -f 2 < ${pross}`
+            declare r$m=`cut -d ',' -f 3 < ${pross}`
+            declare n$m=`cut -d ',' -f 4 < ${pross}`
+            declare i$m=`cut -d ',' -f 5 < ${pross}`
+            rm -f ${pross}; break
         else
             read cfg0 <&4
             read cfg1 <&5
@@ -231,7 +232,7 @@ function mk_topic_stats() {
             declare f$m=${log4}
             declare g$m=${log5}
         else
-            declare a$m=""
+            declare a$m=" "
             declare b$m=0
             declare c$m=0
             declare d$m=0
@@ -251,12 +252,13 @@ function mk_topic_stats() {
     cp -f ${data} ${databk}
 }
 
-pross="$DM_tl/.share/data/pross"
+pross="$DM_tl/.share/data/pre_data"
 wdate="$DM_tl/.share/data/wdate"
 tdate="$DM_tl/.share/data/tdate"
 data="/tmp/.idiomind_stats"
 databk="$DM_tl/.share/data/idiomind_stats"
 db="$DM_tl/.share/data/log.db"
+numer='^[0-9]+$'
 week=`date +%b%d`
 month=`date +%b`
 create_db
@@ -267,13 +269,13 @@ val1=0; val2=0; val3=0
 function pre_comp() {
     if [ -e ${tdate} ]; then
         dte=$(< ${tdate})
-        if [ $(( ( $(date +%s) - $(date -d ${dte} +%s) ) /(24 * 60 * 60 ) )) -gt 31 ]; then
+        if [ $((( $(date +%s)-$(date -d ${dte} +%s) )/(24*60*60))) -gt 31 ]; then
             rm -f ${tdate}
         fi
     fi
     if [ -e ${wdate} ]; then
         dte=$(< ${wdate})
-        if [ $(( ( $(date +%s) - $(date -d ${dte} +%s) ) /(24 * 60 * 60 ) )) -gt 7 ]; then
+        if [ $((($(date +%s)-$(date -d ${dte} +%s) )/(24*60*60))) -gt 7 ]; then
             rm -f ${wdate}
         fi
     fi
