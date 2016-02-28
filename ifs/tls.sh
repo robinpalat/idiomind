@@ -249,7 +249,7 @@ dlg_restfile() {
         --button="$(gettext "Restore")":0)"
         ret="$?"
         if [ $ret -eq 0 ]; then
-            check_dir "${DM_tl}/${2}/.conf"
+            check_dir "${DM_tl}/${2}/.conf"; > "$DT/act_restfile"
             if grep TRUE <<< "$(sed -n 1p <<<"$rest")" >/dev/null 2>&1; then
                 sed -n  '/----- newest/,/----- oldest/p' "${file}" \
                 |grep -v '\----- newest' |grep -v '\----- oldest' > \

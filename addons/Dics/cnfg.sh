@@ -113,7 +113,7 @@ function dlg() {
     --expand-column=2 --hide-column=3 \
     --search-column=4 --regex-search \
     --center --mouse --on-top \
-    --width=650 --height=380 --borders=10 \
+    --width=650 --height=380 --borders=5 \
     --column="$(gettext "Enable")":CHK \
     --column="$(gettext "Resource")":TEXT \
     --column="$(gettext "Type")":TEXT \

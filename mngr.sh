@@ -384,7 +384,7 @@ edit_list() {
     cat "$DT/_tmp1" |edit_list_list > "$DT/tmp1"
     ret=$?
     
-    if [ $ret -eq 0 -o $ret -eq 2 ]; then
+    if [ $ret -eq 0 -o $ret -eq 2 -a ! -e "$DT/act_restfile" ]; then
         [ $ret = 0 ] && cmd=tac && invrt_msg=FALSE
         [ $ret = 2 ] && cmd=cat && invrt_msg=TRUE
         dlaud="$(grep -oP '(?<=dlaud=\").*(?=\")' "$DC_s/1.cfg")"
@@ -467,7 +467,7 @@ edit_list() {
             done < "$DT/add_lst"
         fi
     fi
-    cleanups "$DT/tmp1" "$DT/_tmp1" "$DT/add_lst" "$DT_r"
+    cleanups "$DT/tmp1" "$DT/_tmp1" "$DT/add_lst" "$DT_r" "$DT/act_restfile"
     exit 1
 } >/dev/null 2>&1
 
