@@ -15,9 +15,9 @@ sets=( 'gramr' 'wlist' 'trans' 'dlaud' 'ttrgt' \
 
 if [[ ! $(which yad) ]]; then
 zenity --info --text="$(gettext "Oops. sorry! To run idiomind we need to use a GUI output with yad.\nPlease install [yad], you can use:")
-\nadd-apt-repository ppa:robinpalat/idiomind
-apt-get update
-apt-get install yad"
+\nsudo add-apt-repository ppa:robinpalat/idiomind
+sudo apt-get update
+sudo apt-get install yad"
 exit 1
 fi
 
