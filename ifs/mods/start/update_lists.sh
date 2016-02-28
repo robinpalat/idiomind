@@ -9,8 +9,8 @@ words=$(grep -o -P '(?<=w1.).*(?=\.w1)' "${log}" |tr '|' '\n' \
 |sort |uniq -dc |sort -n -r |sed 's/ \+/ /g')
 sentences=$(grep -o -P '(?<=s9.).*(?=\.s9)' "${log}" |tr '|' '\n' \
 |sort |uniq -dc |sort -n -r |sed 's/ \+/ /g')
-topics="$(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d ! \
--path "./.share" -exec ls -tNd {} + |sed 's|\./||g'|sed '/^$/d')"
+topics="$(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
+-not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')"
 check_file "${DC_tlt}/1.cfg" "${DC_tlt}/6.cfg" "${DC_tlt}/9.cfg"
 img1="$DS/images/1.png"
 img2="$DS/images/2.png"

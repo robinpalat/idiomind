@@ -110,7 +110,7 @@ function new_session() {
             fi
         fi
     done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
-    ! -path "./.share" -exec ls -tNd {} + |sed 's|\./||g'|sed '/^$/d')
+    -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
     
     while read -r line; do
         unset stts
@@ -122,7 +122,7 @@ function new_session() {
             echo 12 > "${dir}/8.cfg"
         fi
     done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime +80 -type d \
-    ! -path "./.share" -exec ls -tNd {} + |sed 's|\./||g'|sed '/^$/d')
+    -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
 
     rm -f "$DT/ps_lk"
     "$DS/mngr.sh" mkmn 1 &

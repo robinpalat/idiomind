@@ -608,7 +608,6 @@ PY
 
 about() {
     export _descrip="$(gettext "Utility for learning foreign vocabulary")"
-    export website="$(gettext "Web Site")"
     python << ABOUT
 import gtk
 import os
@@ -618,7 +617,7 @@ app_name = 'Idiomind'
 app_version = os.environ['_version']
 app_website = os.environ['_website']
 app_comments = os.environ['_descrip']
-website_label = os.environ['website']
+website_label = os.environ['_website']
 app_copyright = 'Copyright (c) 2016 Robin Palatnik'
 app_license = (('Idiomind is free software: you can redistribute it and/or modify\n'+
 'it under the terms of the GNU General Public License as published by\n'+

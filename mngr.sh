@@ -30,7 +30,7 @@ mkmn() {
         echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$DM_tl/.share/0.cfg"
         
     done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
-    ! -path "./.share" -exec ls -tNd {} + |sed 's|\./||g'|sed '/^$/d')
+    -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
 
     while read -r tpc; do
     
@@ -47,7 +47,7 @@ mkmn() {
         fi
 
     done < <(cd "$DM_tl"; find ./ -maxdepth 1  -type d \
-    ! -path "./.share" -exec ls -tNd {} + |sed 's|\./||g'|sed '/^$/d')
+    -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
 
     rm -f "$DT/mn_lk"; exit
 }
