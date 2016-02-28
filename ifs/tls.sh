@@ -542,7 +542,6 @@ menu_addons() {
 
 stats_dlg() {
     source /usr/share/idiomind/default/c.conf
-    source "$DS/ifs/mods/cmns.sh"
     source "$DS/ifs/stats/stats.sh"
     stats
 }

@@ -1,12 +1,14 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-pre_data="$DM_tl/.share/data/pre_data"
-data="/tmp/.idiomind_stats"
-databk="$DM_tl/.share/data/idiomind_stats"
-db="$DM_tl/.share/data/log.db"
-week=`date +%b%d`
-month=`date +%b`
+function progress() {
+    yad --progress \
+    --progress-text="$1" \
+    --name=Idiomind --class=Idiomind \
+    --undecorated \
+    --pulsate --auto-close --on-top \
+    --skip-taskbar --center --no-buttons
+}
 
 function create_db() {
     if [ ! -e db="$DM_tl/.share/data/log.db" ]; then
@@ -75,9 +77,10 @@ function save_topic_stats() {
         else
             sqlite3 ${db} "insert into ${mtable} (month,val0,val1,val2,val3,val4) \
             values ('${month}','${tot}','${pos}','${rev}','${neg}','${idd}');"
+            echo "$(date +%m/%d/%Y)" > ${tdate}
         fi
     fi
-    echo "${tot},${pos},${rev},${neg},${idd}" > ${pre_data}
+    echo "${tot},${pos},${rev},${neg},${idd}" > ${pross}
 }
 
 
@@ -125,7 +128,7 @@ function save_word_stats() {
         IFS=$old_IFS
     }
     
-    data=`count`
+    local data=`count`
     log0=`cut -d ',' -f 1 <<<"$data"`
     log1=`cut -d ',' -f 2 <<<"$data"`
     log2=`cut -d ',' -f 3 <<<"$data"`
@@ -143,6 +146,7 @@ function save_word_stats() {
     else
         sqlite3 ${db} "insert into ${wtable} (week,val0,val1,val2,val3,val4,val5) \
         values ('${week^}','${log0}','${log1}','${log2}','${log3}','${log4}','${log5}');"
+        echo "$(date +%m/%d/%Y)" > ${wdate}
     fi
 }
 
@@ -165,12 +169,12 @@ function mk_topic_stats() {
     
     for m in {01..12}; do
         if [[ ${month} = ${m} ]]; then
-            declare t$m=`cut -d ',' -f 1 <"$pre_data"`
-            declare p$m=`cut -d ',' -f 2 <"$pre_data"`
-            declare r$m=`cut -d ',' -f 3 <"$pre_data"`
-            declare n$m=`cut -d ',' -f 4 <"$pre_data"`
-            declare i$m=`cut -d ',' -f 5 <"$pre_data"`
-            rm "$pre_data"; break
+            declare t$m=`cut -d ',' -f 1 <"$pross"`
+            declare p$m=`cut -d ',' -f 2 <"$pross"`
+            declare r$m=`cut -d ',' -f 3 <"$pross"`
+            declare n$m=`cut -d ',' -f 4 <"$pross"`
+            declare i$m=`cut -d ',' -f 5 <"$pross"`
+            rm "$pross"; break
         else
             read cfg0 <&4
             read cfg1 <&5
@@ -247,32 +251,57 @@ function mk_topic_stats() {
     cp -f ${data} ${databk}
 }
 
+pross="$DM_tl/.share/data/pross"
+wdate="$DM_tl/.share/data/wdate"
+tdate="$DM_tl/.share/data/tdate"
+data="/tmp/.idiomind_stats"
+databk="$DM_tl/.share/data/idiomind_stats"
+db="$DM_tl/.share/data/log.db"
+week=`date +%b%d`
+month=`date +%b`
 create_db
 dtweek=`date +%w`
 dtmnth=`date +%d`
 val1=0; val2=0; val3=0
 
-function stats() {
-    if [ ${dtmnth} = 01 -o ${dtweek} = 0 \
-    -o ! -e ${data} -o -e ${pre_data} ]; then
-
-        if [ ${dtmnth} = 01 ]; then val1=1; val3=1; fi
-        if [ ${dtweek} = 0 ]; then val2=1; val3=1; fi
-        
-        if [ ! -e ${data} -o -e ${pre_data} ]; then
-            val1=1; val3=1
-            cp -f ${databk} /tmp/.idiomind_stats
-        else
-            val1=0; val2=0; val3=0
+function pre_comp() {
+    if [ -e ${tdate} ]; then
+        dte=$(< ${tdate})
+        if [ $(( ( $(date +%s) - $(date -d ${dte} +%s) ) /(24 * 60 * 60 ) )) -gt 31 ]; then
+            rm -f ${tdate}
         fi
-    
-        ( echo 1;
-        [ ${val1} = 1 ] && save_topic_stats
-        [ ${val2} = 1 ] && save_word_stats
+    fi
+    if [ -e ${wdate} ]; then
+        dte=$(< ${wdate})
+        if [ $(( ( $(date +%s) - $(date -d ${dte} +%s) ) /(24 * 60 * 60 ) )) -gt 7 ]; then
+            rm -f ${wdate}
+        fi
+    fi
+    if [ ${dtmnth} = 01 -o ${dtweek} = 0 -o ! -e ${data} -o \
+    -e ${pross} -o ! -e ${tdate} -o ! -e ${wdate} ]; then
+
+        [ ${dtmnth} = 01 -o ! -e ${tdate} ] && val1=1 && val3=1
+        [ ${dtweek} = 0 -o ! -e ${wdate} ] && val2=1 && val3=1
+        
+        if [ ! -e ${data} -o -e ${pross} ]; then
+            val1=1; val3=1
+            cp -f ${databk} ${data}
+        fi
+        
+        [ ${val1} = 1 ] && save_topic_stats 0
+        [ ${val2} = 1 ] && save_word_stats 0
         [ ${val3} = 1 ] && mk_topic_stats
+    fi
+}
+
+function stats() {
+    if [ ! -e ${data} -o -e ${pross} ]; then
+        cp -f ${databk} ${data}
+        ( echo 1;
+        save_topic_stats 1
+        mk_topic_stats
         ) | progress &
     fi
-    
     yad --html --uri="$DS/ifs/stats/1.html" --browser \
     --title="$(gettext "Stats (Beta)")" \
     --name=Idiomind --class=Idiomind \
