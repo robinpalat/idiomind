@@ -122,7 +122,7 @@ function upld() {
         --always-print-result \
         --window-icon=idiomind --buttons-layout=end \
         --align=right --center --on-top \
-        --width=480 --height=470 --borders=12 \
+        --width=490 --height=470 --borders=12 \
         --field=" :LBL" "" \
         --field="$(gettext "Category"):CB" "" \
         --field="$(gettext "Skill Level"):CB" "" \
@@ -141,7 +141,7 @@ function upld() {
         --always-print-result \
         --window-icon=idiomind --buttons-layout=end \
         --align=right --center --on-top \
-        --width=480 --height=470 --borders=12 --field=" :LBL" "" \
+        --width=490 --height=470 --borders=12 --field=" :LBL" "" \
         --field="$(gettext "Category"):CBE" "$_categories" \
         --field="$(gettext "Skill Level"):CB" "$_levels" \
         --field="\n$(gettext "Description/Notes"):TXT" "${note}" \

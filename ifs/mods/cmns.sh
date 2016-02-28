@@ -15,7 +15,7 @@ function msg() {
     --name=Idiomind --class=Idiomind \
     --window-icon=idiomind \
     --image-on-top --center --sticky --on-top \
-    --width=410 --height=130 --borders=3 \
+    --width=450 --height=130 --borders=3 \
     --button="${btn}":0
 }
 
@@ -27,7 +27,7 @@ function msg_2() {
     --always-print-result \
     --window-icon=idiomind \
     --image-on-top --on-top --sticky --center \
-    --width=400 --height=120 --borders=3 \
+    --width=450 --height=130 --borders=3 \
     "${btn3}" --button="${4}":1 --button="${3}":0
 }
 
