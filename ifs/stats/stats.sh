@@ -293,7 +293,7 @@ function pre_comp() {
     fi
     
     [ ${dtmnth} = 01 -o ! -e ${tdate} ] && val1=1
-    [ ${dtweek} = 1 -o ! -e ${wdate} ] && val2=1
+    [ ${dtweek} = 0 -o ! -e ${wdate} ] && val2=1
 
     if [ ${val1} = 1 -a ${val2} != 1 ]; then
         save_topic_stats 1
