@@ -114,5 +114,4 @@ PY
 [ $(date +%d) = 1 -o $(date +%d) = 14 ] && rm "$log"; touch "$log"
 cleanups "$items" "$DT/co_lk"
 echo "--updated lists"
-touch "$DM_tl/.share/data/pre_data"
 exit

@@ -11,10 +11,9 @@ include "$DS/ifs/mods/mngr"
 
 mkmn() {
     f_lock "$DT/mn_lk"
-    [[ "$2" = 1 ]] && touch "$DM_tl/.share/data/pre_data"
     cleanups "$DM_tl/images" "$DM_tl/.conf"
     dirimg='/usr/share/idiomind/images'
-    > "$DM_tl/.share/0.cfg"
+    rm -f "$DM_tl"/.share/0.cfg
 
     while read -r tpc; do
     
@@ -48,6 +47,11 @@ mkmn() {
 
     done < <(cd "$DM_tl"; find ./ -maxdepth 1  -type d \
     -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
+    
+    if [[ "$2" = 1 ]]; then
+        source "$DS/ifs/stats/stats.sh"
+        save_topic_stats 0
+    fi
 
     rm -f "$DT/mn_lk"; exit
 }

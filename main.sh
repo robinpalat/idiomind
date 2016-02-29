@@ -223,7 +223,7 @@ fi
 function topic() {
     source "$DS/ifs/mods/cmns.sh"
     [ -e "${DC_tlt}/8.cfg" ] && export mode=`sed -n 1p "${DC_tlt}/8.cfg"`
-    if ! [[ ${mode} =~ $num ]]; then exit 1; fi
+    if ! [[ ${mode} =~ $numer ]]; then exit 1; fi
 
     readd(){
         [ -z "${tpc}" ] && exit 1
@@ -278,7 +278,8 @@ function topic() {
                     sed '/^$/d' "$DT/ls1.x" > "${ls1}"
                 fi
                 "$DS/ifs/tls.sh" colorize
-                touch "$DM_tl/.share/data/pre_data"
+                source "$DS/ifs/stats/stats.sh"
+                save_topic_stats 0
             fi
             ntpc=$(cut -d '|' -f 1 < "${cnf4}")
             if [ "${tpc}" != "${ntpc}" -a -n "$ntpc" ]; then
@@ -315,7 +316,6 @@ function topic() {
                     
                     if [ $ret -eq 2 ]; then
                         "$DS/mngr.sh" mark_to_learn "${tpc}" 0
-                        touch "$DM_tl/.share/data/pre_data"
                         idiomind topic & exit 1
                     elif [ $ret -eq 3 ]; then
                        exit 1
@@ -340,7 +340,6 @@ function topic() {
         elif [[ ${inx1} -eq 0 ]]; then
             if [ ! -e "${DC_tlt}/7.cfg" -o ! -e "${DC_tlt}/9.cfg" ]; then
                 "$DS/mngr.sh" mark_as_learned "${tpc}" 0
-                touch "$DM_tl/.share/data/pre_data"
             fi
             
             calculate_review "${tpc}"
@@ -350,7 +349,6 @@ function topic() {
                     
                 if [ $ret -eq 2 ]; then
                     "$DS/mngr.sh" mark_to_learn "${tpc}" 0
-                    touch "$DM_tl/.share/data/pre_data"
                     idiomind topic & exit 1
                 elif [ $ret -eq 3 ]; then
                     exit 1
