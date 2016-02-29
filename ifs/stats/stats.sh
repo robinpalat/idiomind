@@ -187,7 +187,7 @@ function mk_topic_stats() {
             read D1 <&5
             read D2 <&6
             read D3 <&7
-            read D4 <&7
+            read D4 <&8
             ! [[ ${D0} =~ $numer ]] && D0=0
             ! [[ ${D1} =~ $numer ]] && D1=0
             ! [[ ${D2} =~ $numer ]] && D2=0
@@ -312,6 +312,7 @@ function stats() {
         f_lock "$DT/p_stats"
         [ ! -e ${data} ] && cp -f ${databk} ${data}
         ( echo 1;
+        [ ! -e ${pross} ] && save_topic_stats 0
         mk_topic_stats
         rm -f "$DT/p_stats"
         ) | progress &

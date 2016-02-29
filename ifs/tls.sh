@@ -403,13 +403,17 @@ set_image() {
     source "$DS/ifs/mods/cmns.sh"
     cd "$DT"; r=0
     source "$DS/ifs/mods/add/add.sh"
-    ifile="${DM_tls}/images/${trgt,,}-0.jpg"
-    
+    if [ -e "${DM_tlt}/images/${3}.jpg" ]; then
+    ifile="${DM_tlt}/images/${3}.jpg"; im=1
+    else
+    ifile="${DM_tls}/images/${trgt,,}-0.jpg"; im=0
+    fi
+
     if [ -e "$DT/$trgt.img" ]; then
     msg_2 "$(gettext "Attempting download image")...\n" dialog-warning OK "$(gettext "Stop")" "$(gettext "Information")"
     if [ $? -eq 1 ]; then rm -f "$DT/$trgt".img; else exit 1 ; fi; fi
 
-    if [ -f "$ifile" ]; then
+    if [ -e "$ifile" ]; then
         btn2="--button=$(gettext "Remove")!edit-delete:2"
         image="--image=$ifile"
     else
@@ -419,15 +423,19 @@ set_image() {
     dlg_form_3; ret=$?
     if [ $ret -eq 2 ]; then
         rm -f "$ifile"
+        if [ ${im} = 0 ]; then
+        mv -f "$img" "${DM_tlt}/images/${3}.jpg"
+        else
         ls "${DM_tls}/images/${trgt,,}"-*.jpg | while read -r img; do
         mv -f "$img" "${DM_tls}/images/${trgt,,}"-${r}.jpg
         let r++
         done
+        fi
     elif [ $ret -eq 0 ]; then
         scrot -s --quality 90 "$DT/temp.jpg"
         /usr/bin/convert "$DT/temp.jpg" -interlace Plane -thumbnail 405x275^ \
         -gravity center -extent 400x270 -quality 90% "$ifile"
-        "$DS/ifs/tls.sh" set_image "${2}" "${trgt}" & exit
+        "$DS/ifs/tls.sh" set_image "${2}" "${trgt}" ${3} & exit
     fi
     cleanups "$DT/temp.jpg"
     exit

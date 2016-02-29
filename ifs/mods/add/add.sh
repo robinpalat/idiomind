@@ -207,45 +207,46 @@ function word_p() {
     fi
 }
 
-function clean_1() {
-    echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' \
-    | sed "s/’/'/g" \
-    | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
-    | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \
-    | tr -d '/*|",;!¿?()[]&:.<>+'  | sed 's/\¡//g' \
-    | sed 's/<[^>]*>//g' | sed 's/ \+/ /g'
-}
-
 function clean_0() {
     echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' \
     | sed "s/’/'/g" \
-    | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
+    | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
     | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \
     | tr -d '*|;!¿?[]&:<>+'  | sed 's/\¡//g' \
-    | sed 's/<[^>]*>//g' | sed 's/ \+/ /g'
+    | sed 's/<[^>]*>//g; s/ \+/ /g'
+}
+
+function clean_1() {
+    echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' \
+    | sed "s/’/'/g" \
+    | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
+    | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \
+    | tr -s '/' '-' | tr -d '/*|",;!¿?()[]&:.<>+'  | sed 's/\¡//g' \
+    | sed 's/<[^>]*>//g; s/ \+/ /g'
 }
 
 function clean_2() {
     if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
     echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' \
     | sed "s/’/'/g" | sed 's/quot\;/"/g' \
-    | tr -d '*\/' | tr -s '*&|{}[]<>+' ' ' \
-    | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
-    | sed 's/^ *//; s/ *$//g' | sed 's/ — /__/g' | sed 's/<[^>]*>//g'
+    | tr -s '/' '-' | tr -d '*\/' | tr -s '*&|{}[]<>+' ' ' \
+    | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
+    | sed 's/^ *//; s/ *$//g; s/ — /__/g; s/<[^>]*>//g; s/-.\s*./\U&\E/g'
     else
     echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' \
     | sed "s/’/'/g" | sed 's/quot\;/"/g' \
-    | tr -d '*\/' | tr -s '*&|{}[]<>+' ' ' \
-    | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/ -//;s/- //g' \
-    | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \
-    | sed 's/ — /__/g' | sed "s|/||g" | sed 's/<[^>]*>//g'
+    | tr -d '*\' | tr -s '*&|{}[]<>+' ' ' \
+    | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
+    | sed 's/^ *//;s/ *$//g; s/^\s*./\U&\E/g' | tr -s '/' '-' \
+    | sed 's/ — /__/g; s|/||g; s/<[^>]*>//g; s/-.\s*./\U&\E/g'
     fi
 }
 
 function clean_3() {
     echo "${1}" | cut -d "|" -f1 | sed 's/!//;s/&//;s/\://g' \
-    | sed "s/-//g" | sed 's/^[ \t]*//;s/[ \t]*$//' | sed "s|/||g" \
-    | sed 's/^\s*./\U&\E/g' | sed 's/\：//g' | sed 's/<[^>]*>//g' \
+    | sed 's/^[ \t]*//;s/[ \t]*$//' \
+    | sed 's/^\s*./\U&\E/g; s/-.\s*./\U&\E/g' \
+    | sed 's/\：//g;s/<[^>]*>//g' \
     | tr -d '.*/' | tr -s '&:|{}[]<>+' ' ' | sed 's/ \+/ /g'
 }  
 
@@ -253,11 +254,11 @@ function clean_4() {
     if [ `wc -c <<<"${1}"` -lt 180 ]; then
     echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' \
     | tr -d '*/"' | tr -s '&:|{}[]<>+' ' ' \
-    | sed 's/ — / /;s/--/ /g' | sed '/^$/d' | sed 's/ \+/ /g'
+    | sed 's/ — / /;s/--/ /g; /^$/d; s/ \+/ /g'
     else
     echo "${1}" | sed ':a;N;$!ba;s/\n/\__/g' \
     | tr -d '*/"' | tr -s '&:|{}[]<>+' ' ' \
-    | sed 's/ — /__/;s/--/ /g' | sed '/^$/d' | sed 's/ \+/ /g'
+    | sed 's/ — /__/;s/--/ /g; /^$/d; s/ \+/ /g'
     fi
 }
 
@@ -272,10 +273,10 @@ function clean_5() {
     | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
     | sed 's/ — /\n/g' \
     | sed 's/[<>£§]//; s/&amp;/\&/g' | sed 's/ *<[^>]\+> */ /g' \
-    | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. //g' \
-    | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
-    | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
-    | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g' \
+    | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g; s/\. //g' \
+    | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g; s/\? //g' \
+    | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g; s/\! //g' \
+    | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g; s/\… //g' \
     | sed 's/__/\n/g'
 }
 
@@ -284,10 +285,10 @@ function clean_6() {
     | sed '/^$/d' | sed 's/^[ \t]*//;s/[ \t]*$//' \
     | sed 's/ — /\n/g' \
     | sed 's/ \+/ /;s/\://;s/\&quot;/\"/;s/^ *//;s/ *$//g' \
-    | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. //g' \
-    | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? //g' \
-    | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! //g' \
-    | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… //g'
+    | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g; s/\. //g' \
+    | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g; s/\? //g' \
+    | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g; s/\! //g' \
+    | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g; s/\… //g'
     
 }
 
@@ -298,8 +299,7 @@ function clean_7() {
     | sed 's/\&quot;/\"/g' | sed "s/\&#039;/\'/g" \
     | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
     | sed 's/ *<[^>]\+> */ /; s/[<>£§]//; s/\&amp;/\&/g' \
-    | sed 's/,/\n/g' | sed 's/。/\n/g' \
-    | sed 's/__/\n/g'
+    | sed 's/,/\n/g;s/。/\n/g;s/__/\n/g'
 }
 
 function clean_8() {
@@ -314,7 +314,7 @@ function clean_8() {
     | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? / /g' \
     | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! / /g' \
     | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… / /g' \
-    | sed 's/__/ \n/g' | sed 's/ \+/ /g'
+    | sed 's/__/ \n/g;s/ \+/ /g'
 }
 
 function set_image_1() {
@@ -428,7 +428,7 @@ function fetch_audio() {
 
 function img_word() {
     if ls "$DC_d"/*."Script.Download image".* 1> /dev/null 2>&1; then
-        if [ ! -e "${DM_tls}/images/${1,,}-0.jpg" ]; then
+        if [ ! -e "${DM_tls}/images/${1,,}-0.jpg" -a ! -e "${DM_tlt}/images/${3}.jpg" ]; then
             touch "$DT/${1}.img"
             for img in "$DC_d"/*."Script.Download image".*; do
                 img="$DS_a/Dics/dicts/$(basename "${img}")"

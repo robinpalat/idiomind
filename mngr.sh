@@ -161,7 +161,7 @@ edit_item() {
     fi
 
     cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"""
-    cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"""
+    cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"" ${id}"
     cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"" "\"${trgt}\"""
     cmd_def="'$DS/ifs/tls.sh' 'find_def' "\"${trgt}\"""
     cmd_trad="'$DS/ifs/tls.sh' 'find_trad' "\"${trgt}\"""
@@ -230,6 +230,7 @@ edit_item() {
                 [ "${type_mod}" = FALSE ] && type_mod=2
                 [ -z "${type_mod}" ] && type_mod=2
             fi
+
             if [ "${trgt_mod}" != "${trgt}" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
                 if [ ${text_missing} != 0 ]; then
                     trgt="${item_id}"
@@ -245,7 +246,8 @@ edit_item() {
             if [ "${mark}" != "${mark_mod}" ]; then
                 if [ "${mark_mod}" = "TRUE" ]; then
                     to_modify=1; echo "${trgt}" >> "${DC_tlt}/6.cfg"; else
-                    sed -i "/${trgt}/d" "${DC_tlt}/6.cfg"; fi
+                    sed -i "/${trgt}/d" "${DC_tlt}/6.cfg"
+                fi
                 colorize_run=1; to_modify=1
             fi
             [[ "${transl_mark}" = 1 ]] && srce="$temp"
@@ -295,6 +297,8 @@ edit_item() {
                         elif [ ${type_mod} = 1 ]; then
                             [ -e "${DM_tlt}/$id.mp3" ] && mv -f "${DM_tlt}/$id.mp3" "$DM_tl/${tpc_mod}/$id_mod.mp3"; fi
                     fi
+                    [ -e "${DM_tlt}/images/$id.jpg" ] && mv -f "${DM_tlt}/images/$id.jpg" "$DM_tl/${tpc_mod}/images/$id_mod.jpg"
+                    
                     "$DS/mngr.sh" delete_item_ok "${tpc}" "${trgt}"
                     trgt="${trgt_mod}"; srce="${srce_mod}"; tpe="${tpc_mod}"
                     exmp="${exmp_mod}"; defn="${defn_mod}"; note="${note_mod}"
@@ -346,10 +350,11 @@ edit_item() {
                         rm "${DC_tlt}"/*.tmp
                     fi
                 fi
+                [ -e "${DM_tlt}/images/$id.jpg" ] && mv -f "${DM_tlt}/images/$id.jpg" "${DM_tlt}/images/$id_mod.jpg"
                 cleanups "$DT_r" "$DT/${trgt_mod}.edit"
             ) &
             fi
-            [ ${type} != ${type_mod} -a ${type_mod} = 1 ] && ( img_word "${trgt}" "${srce}" ) &
+            [ ${type} != ${type_mod} -a ${type_mod} = 1 ] && ( img_word "${trgt}" "${srce}" "${id_mod}" ) &
             [ ${colorize_run} = 1 ] && "$DS/ifs/tls.sh" colorize &
             [ ${to_modify} = 1 -a $ret -eq 0 ] && sleep 0.2
             
@@ -431,10 +436,16 @@ edit_list() {
         touch "${direc}/3.cfg" "${direc}/4.cfg"
         mv -f "$DT/tmp0" "${direc}/0.cfg"
         if [ -d "$DM_tl/${2}" -a `wc -l < "${direc}/0.cfg"` -ge 1 ]; then
-        while read -r r_item; do
-           id=`basename "${r_item}" |sed "s/\(.*\).\{4\}/\1/" |tr -d '.'`
-           if ! grep "${id}" "${direc}/0.cfg"; then cleanups "${r_item}"; fi
-        done < <(find "$DM_tl/${2}"/*.mp3); fi
+            while read -r r_item; do
+               id=`basename "${r_item}" |sed "s/\(.*\).\{4\}/\1/" |tr -d '.'`
+               if ! grep "${id}" "${direc}/0.cfg"; then cleanups "${r_item}"; fi
+            done < <(find "$DM_tl/${2}"/*.mp3)
+            while read -r r_item; do
+               id=`basename "${r_item}" |sed "s/\(.*\).\{4\}/\1/" |tr -d '.'`
+               if ! grep "${id}" "${direc}/0.cfg"; then cleanups "${r_item}"; fi
+            done < <(find "$DM_tl/${2}/images"/*.jpg)
+        fi
+        
         if [[ "$(cat "${direc}/1.cfg" "${direc}/2.cfg" |wc -l)" -lt 1 ]]; then
         > "${direc}/0.cfg"; fi
         "$DS/ifs/tls.sh" colorize
