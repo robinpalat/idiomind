@@ -86,6 +86,7 @@ check_index() {
             for n in {0..9}; do 
                 echo -e "${psets[$n]}=\"\"" >> "${DC_tlt}/10.cfg"
             done
+            sed -i "s/acheck=.*/acheck=\"TRUE\"/g" "${DC_tlt}/10.cfg"
         fi
         
         check_file "${DC_tlt}/9.cfg" "${DC_tlt}/info"

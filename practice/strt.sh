@@ -7,18 +7,6 @@ dir="${DC_tlt}/practice"
 dirs="$DS/practice"
 export -f f_lock
 
-function _log() { 
-   # grep -o -P '(?<=w1.).*(?=\.w1)' "${log}" |tr '|' '\n' | sort | uniq
-    [ -e ./${1}.1 ] && echo "w1.$(tr -s '\n' '|' < ./${1}.1).w1"  \
-    |sed -e '/\.\./d' >> "$log"
-    if [ ${mode} -gt 1 ]; then
-        [ -e ./${1}.2 ] && echo "w2.$(tr -s '\n' '|' < ./${1}.2).w2"  \
-        |sed -e '/\.\./d' >> "$log"
-        [ -e ./${1}.3 ] && echo "w3.$(tr -s '\n' '|' < ./${1}.3).w3"  \
-        |sed -e '/\.\./d' >> "$log"
-    fi
-    }
-
 function stats() {
     n=1; c=1
     while [ ${n} -le 21 ]; do
@@ -75,6 +63,19 @@ function comp() {
     fi
 }
 
+function _log() { 
+    if [ ${mode} -lt 1 -a ${1} != 'e' ]; then
+        [ -e ./${1}.1 ] && echo "w1.$(tr -s '\n' '|' < ./${1}.1).w1" |sed '/\.\./d' >> "$log"
+    elif [ ${mode} -gt 1 -a ${1} != 'e' ]; then
+        [ -e ./${1}.2 ] && echo "w2.$(tr -s '\n' '|' < ./${1}.2).w2" |sed '/\.\./d' >> "$log"
+        [ -e ./${1}.3 ] && echo "w3.$(tr -s '\n' '|' < ./${1}.3).w3" |sed '/\.\./d' >> "$log"
+    elif [ ${1} = 'e' ]; then
+        [ -e ./${1}.1 ] && echo "s1.$(tr -s '\n' '|' < ./${1}.1).s1" |sed '/\.\./d' >> "$log"
+        [ -e ./${1}.2 ] && echo "s2.$(tr -s '\n' '|' < ./${1}.2).s2" |sed '/\.\./d' >> "$log"
+        [ -e ./${1}.3 ] && echo "s3.$(tr -s '\n' '|' < ./${1}.3).s3" |sed '/\.\./d' >> "$log"
+    fi
+}
+    
 function practice_a() {
     [[ -e ./a.rev ]] && rev=1 || rev=0
     fonts() {

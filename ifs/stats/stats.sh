@@ -9,6 +9,15 @@ function progress() {
     --skip-taskbar --center --no-buttons
 }
 
+function f_lock() {
+    brk=0
+    while true; do
+        if [ ! -e "${1}" -o ${brk} -gt 20 ]; then touch "${1}" & break
+        elif [ -e "${1}" ]; then sleep 1; fi
+        let brk++
+    done
+}
+
 function create_db() {
     if [ ! -e db="$DM_tl/.share/data/log.db" ]; then
         mtable="M`date +%y`"
@@ -73,7 +82,6 @@ function save_topic_stats() {
     
     mtable="M`date +%y`"
     if [ $1 = 0 ]; then
-    
         if [[ `sqlite3 ${db} "select month from '${mtable}' where month is '${month}';"` ]]; then :
         else
             sqlite3 ${db} "insert into ${mtable} (month,val0,val1,val2,val3,val4) \
@@ -264,7 +272,7 @@ month=`date +%b`
 create_db
 dtweek=`date +%w`
 dtmnth=`date +%d`
-val1=0; val2=0; val3=0
+val1=0; val2=0
 
 function pre_comp() {
     if [ -e ${tdate} ]; then
@@ -281,33 +289,40 @@ function pre_comp() {
     fi
     if [ ${dtmnth} = 01 -o ${dtweek} = 0 -o ! -e ${data} -o \
     -e ${pross} -o ! -e ${tdate} -o ! -e ${wdate} ]; then
-
-        [ ${dtmnth} = 01 -o ! -e ${tdate} ] && val1=1 && val3=1
-        [ ${dtweek} = 0 -o ! -e ${wdate} ] && val2=1 && val3=1
+    
+        f_lock "$DT/p_stats"
+        [ ${dtmnth} = 01 -o ! -e ${tdate} ] && val1=1
+        [ ${dtweek} = 0 -o ! -e ${wdate} ] && val2=1
         
         if [ ! -e ${data} -o -e ${pross} ]; then
-            val1=1; val3=1
+            val1=1
         fi
-        [ ${val1} = 1 ] && save_topic_stats 0
-        [ ${val2} = 1 ] && save_word_stats 0
-        [ ${val3} = 1 ] && mk_topic_stats
+
+        if [ ${val1} = 1 -a ${val2} != 1 ]; then
+            save_topic_stats 0
+        elif [ ${val2} = 1 ]; then
+            save_topic_stats 0; save_word_stats 0
+        fi
+
+        mk_topic_stats
+        rm -f "$DT/p_stats"
     fi
 }
 
 function stats() {
     if [ ! -e ${data} -o -e ${pross} ]; then
         cp -f ${databk} ${data}
+        f_lock "$DT/p_stats"
         ( echo 1;
         save_topic_stats 1
         mk_topic_stats
+        rm -f "$DT/p_stats"
         ) | progress &
     fi
     yad --html --uri="$DS/ifs/stats/1.html" --browser \
     --title="$(gettext "Stats (Beta)")" \
     --name=Idiomind --class=Idiomind \
     --orient=vert --window-icon=idiomind --center --on-top \
-    --gtkrc="$DS/default/gtkrc.cfg" \
     --width=650 --height=410 --borders=0 \
-    --no-buttons \
-    --button="<small>$(gettext "Close")</small>":1
+    --no-buttons
 } >/dev/null 2>&1

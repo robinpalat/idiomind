@@ -87,10 +87,12 @@ function dlg() {
     while read -r dict; do
         if [ -n "${dict}" ]; then
             echo 'FALSE'
-        if grep -E ".$lgt|.various" <<<"${dict}">/dev/null 2>&1; then
-            sed 's/\./\n/g' <<<"${dict}"| \
-            sed "3s|${sus}|<span color='#0038FF'>${sus}<\/span>|"
-        else echo "${dict}" |sed 's/\./\n/g'; fi
+            if grep -E ".$lgt|.various" <<<"${dict}">/dev/null 2>&1; then
+                sed 's/\./\n/g' <<<"${dict}"| \
+                sed "3s|${sus}|<span color='#0038FF'>${sus}<\/span>|"
+            else 
+                echo "${dict}" |sed 's/\./\n/g'
+            fi
         fi
     done < <(ls "$disables/")
     }

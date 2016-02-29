@@ -151,11 +151,10 @@ elif [[ ${1} != 0 ]]; then
     if [ $ret -eq 3 ]; then
             "$DS/add.sh" new_topic
     elif [ -n "${tpc}" ]; then
-    
         mode="$(< "$DM_tl/${tpc}/.conf/8.cfg")"
         numer='^[0-9]+$'
-        ! [[ ${mode} =~ $num ]] && echo 13 > "$DM_tl/${tpc}/.conf/8.cfg" && mode=13
-        
+        ! [[ ${mode} =~ $num ]] && echo 13 > \
+        "$DM_tl/${tpc}/.conf/8.cfg" && mode=13
         if ((mode>=0 && mode<=20)); then
             if [ $ret -eq 2 ]; then
                 "$DS/default/tpc.sh" "${tpc}" ${mode} 1 &

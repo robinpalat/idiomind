@@ -7,15 +7,17 @@ source "$DS/ifs/mods/cmns.sh"
 items=$(mktemp "$DT/w1.XXXX")
 words=$(grep -o -P '(?<=w1.).*(?=\.w1)' "${log}" |tr '|' '\n' \
 |sort |uniq -dc |sort -n -r |sed 's/ \+/ /g')
-sentences=$(grep -o -P '(?<=s9.).*(?=\.s9)' "${log}" |tr '|' '\n' \
+sentences=$(grep -o -P '(?<=s1.).*(?=\.s1)' "${log}" |tr '|' '\n' \
 |sort |uniq -dc |sort -n -r |sed 's/ \+/ /g')
 topics="$(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
 -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')"
 check_file "${DC_tlt}/1.cfg" "${DC_tlt}/6.cfg" "${DC_tlt}/9.cfg"
+# grep -o -P '(?<=w1.).*(?=\.w1)' "${log}" |tr '|' '\n' | sort | uniq
 img1="$DS/images/1.png"
 img2="$DS/images/2.png"
 img3="$DS/images/3.png"
 img0="$DS/images/0.png"
+dir="$DM_tl/"
 
 for n in {1..100}; do
     if [[ $(sed -n ${n}p <<<"${words}" |awk '{print ($1)}') -ge 3 ]]; then
@@ -28,9 +30,8 @@ for n in {1..100}; do
     fi
 done
 
-sed -i '/^$/d' "${items}"
+if grep '^$' "${items}"; then sed -i '/^$/d' "${items}"; fi
 f_lock "$DT/co_lk"
-dir="$DM_tl/"
 lstp="${items}"
 export dir topics lstp img0 img1 img2 img3
 

@@ -15,8 +15,6 @@ dte=$(date +%F)
 path="$(grep -o path=\"[^\"]* "$DC_a/user_data.cfg"| grep -o '[^"]*$')"
 size="$(grep -o size=\"[^\"]* "$DC_a/user_data.cfg"| grep -o '[^"]*$')"
 others="$(grep -o others=\"[^\"]* "$DC_a/user_data.cfg"| grep -o '[^"]*$')"
-[ -f "$path/.udt" ] && udt=$(< "$path/.udt") || udt=" "
-cmd_rest="'$DS_a/User data/cnfg.sh' restore 1 "\"${tpc}\"""
 
 D=$(yad --list --radiolist --title="$(gettext "User Data")" \
 --name=Idiomind --class=Idiomind \

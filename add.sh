@@ -703,7 +703,6 @@ new_items() {
         lzgpr="$(dlg_form_1)"; ret=$?
         trgt=$(cut -d "|" -f1 <<<"${lzgpr}")
         tpe=$(cut -d "|" -f2 <<<"${lzgpr}")
-        
     else 
         lzgpr="$(dlg_form_2)"; ret=$?
         trgt=$(cut -d "|" -f1 <<<"${lzgpr}")

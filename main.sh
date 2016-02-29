@@ -48,13 +48,13 @@ function new_session() {
     date "+%d" > "$DC_s/10.cfg"
     source "$DS/ifs/mods/cmns.sh"
     
-    # mkdir /tmp/user
+    # mkdir tmp dir
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
     if [ $? -ne 0 ]; then
     msg "$(gettext "Fail on try write in /tmp")\n" error "$(gettext "Information")" & exit 1; fi
     
     f_lock "$DT/ps_lk"
-
+    # run tasks
     for strt in "$DS/ifs/mods/start"/*; do
     ( sleep 20 && "${strt}" ); done &
     
@@ -68,7 +68,7 @@ function new_session() {
     sed -n 1p <<<"$s" >> "$DC_s/10.cfg"
     sed -n 2p <<<"$s" >> "$DC_s/10.cfg"
     
-    # create database if not exist
+    # check database
     cdb="$DM_tls/data/${lgtl}.db"
     if [ ! -e ${cdb} ]; then
     [ ! -d "$DM_tls/data" ] && mkdir -p "$DM_tls/data" 
@@ -83,7 +83,7 @@ function new_session() {
         mv -f "$DT/log" "$DC_s/log"; fi
     fi
 
-    # update status
+    # update topic status
     while read -r line; do
         unset stts
         dir="$DM_tl/${line}/.conf"
@@ -125,7 +125,9 @@ function new_session() {
     -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
 
     rm -f "$DT/ps_lk"
-    "$DS/mngr.sh" mkmn 1 &
+    "$DS/mngr.sh" mkmn 0 &
+    
+    # statistics
     ( source "$DS/ifs/stats/stats.sh"; sleep 10; pre_comp ) &
 }
 
@@ -180,7 +182,6 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
             check_dir "$DM_t/$langt" "$DM_t/$langt/.share/images" \
             "$DM_t/$langt/.share/audio" "$DM_t/$langt/.share/data" \
             "$DM_t/$langt/${tname}/.conf/practice"
-
             DM_tlt="$DM_t/$langt/${tname}"
             DC_tlt="$DM_t/$langt/${tname}/.conf"
             
