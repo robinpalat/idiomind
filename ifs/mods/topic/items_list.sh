@@ -53,12 +53,12 @@ export -f word_view sentence_view
 function notebook_1() {
     cmd_mark="'$DS/mngr.sh' 'mark_as_learned' "\"${tpc}\"" 1"
     cmd_play="$DS/play.sh play_list"
-    btn1="$(gettext "Share")"
+    btn1="$(gettext "Edit list")"
+    btn2="$(gettext "Share")"
     btn3="$(gettext "Delete")"
-    btn2="$(gettext "Edit list")"
-    cmd1="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
+    cmd1="'$DS/mngr.sh' edit_list "\"${tpc}\"""
+    cmd2="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
     cmd3="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
-    cmd2="'$DS/mngr.sh' edit_list "\"${tpc}\"""
     chk1=$((`wc -l < "${DC_tlt}/1.cfg"`*3))
     chk5=`wc -l < "${DC_tlt}/5.cfg"`
     list() { if [[ ${chk1} = ${chk5} ]]; then
