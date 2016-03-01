@@ -317,9 +317,10 @@ function stats() {
         rm -f "$DT/p_stats"
         ) | progress &
     fi
-    yad --html --uri="$DS/ifs/stats/1.html" --browser \
+    yad --html --uri="$DS/ifs/stats/1.html" \
     --title="$(gettext "Stats (Beta)")" \
     --name=Idiomind --class=Idiomind \
+    --browser --encoding=UTF-8 \
     --orient=vert --window-icon=idiomind --center --on-top \
     --width=650 --height=410 --borders=0 \
     --no-buttons

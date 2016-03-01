@@ -250,7 +250,7 @@ dlg_restfile() {
         --button="$(gettext "Restore")":0)"
         ret="$?"
         if [ $ret -eq 0 ]; then
-            check_dir "${DM_tl}/${2}/.conf"; > "$DT/act_restfile"
+            touch "$DT/act_restfile"; check_dir "${DM_tl}/${2}/.conf"
             if grep TRUE <<< "$(sed -n 1p <<<"$rest")" >/dev/null 2>&1; then
                 sed -n  '/----- newest/,/----- oldest/p' "${file}" \
                 |grep -v '\----- newest' |grep -v '\----- oldest' > \
@@ -404,9 +404,9 @@ set_image() {
     cd "$DT"; r=0
     source "$DS/ifs/mods/add/add.sh"
     if [ -e "${DM_tlt}/images/${3}.jpg" ]; then
-    ifile="${DM_tlt}/images/${3}.jpg"; im=1
+        ifile="${DM_tlt}/images/${3}.jpg"; im=1
     else
-    ifile="${DM_tls}/images/${trgt,,}-0.jpg"; im=0
+        ifile="${DM_tls}/images/${trgt,,}-0.jpg"; im=0
     fi
 
     if [ -e "$DT/$trgt.img" ]; then
@@ -420,16 +420,18 @@ set_image() {
         btn2="--button="$(gettext "Screen clipping")":0"
         image="--image=$DS/images/bar.png"
     fi
+    
     dlg_form_3; ret=$?
+    
     if [ $ret -eq 2 ]; then
         rm -f "$ifile"
         if [ ${im} = 0 ]; then
-        mv -f "$img" "${DM_tlt}/images/${3}.jpg"
+            mv -f "$img" "${DM_tlt}/images/${3}.jpg"
         else
-        ls "${DM_tls}/images/${trgt,,}"-*.jpg | while read -r img; do
-        mv -f "$img" "${DM_tls}/images/${trgt,,}"-${r}.jpg
-        let r++
-        done
+            ls "${DM_tls}/images/${trgt,,}"-*.jpg | while read -r img; do
+            mv -f "$img" "${DM_tls}/images/${trgt,,}"-${r}.jpg
+            let r++
+            done
         fi
     elif [ $ret -eq 0 ]; then
         scrot -s --quality 90 "$DT/temp.jpg"

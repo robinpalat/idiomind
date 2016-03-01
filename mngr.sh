@@ -174,7 +174,8 @@ edit_item() {
     
     if [[ "${srce}" = "${temp}" ]]; then
         if [ -e "$DT/${trgt}.edit" ]; then
-            msg_2 "$(gettext "Translating... Wait till the process is completed. ")\n" dialog-information OK "$(gettext "Stop")" "$(gettext "Warning")"
+            msg_2 "$(gettext "Translating... Wait till the process is completed. ")\n" \
+            dialog-information OK "$(gettext "Stop")" "$(gettext "Warning")"
             if [ $? -eq 1 ]; then
                 srce=""; transl_mark=1; rm -f "$DT/${trgt}.edit"
             else 
@@ -294,11 +295,14 @@ edit_item() {
                             cp -f "${audf_mod}" "$DM_tl/${tpc_mod}/$id_mod.mp3"; fi
                     else
                         if [ ${type_mod} = 2 ]; then
-                            [ -e "${DM_tlt}/$id.mp3" ] && mv -f "${DM_tlt}/$id.mp3" "$DM_tl/${tpc_mod}/$id_mod.mp3"
+                            [ -e "${DM_tlt}/$id.mp3" ] && \
+                            mv -f "${DM_tlt}/$id.mp3" "$DM_tl/${tpc_mod}/$id_mod.mp3"
                         elif [ ${type_mod} = 1 ]; then
-                            [ -e "${DM_tlt}/$id.mp3" ] && mv -f "${DM_tlt}/$id.mp3" "$DM_tl/${tpc_mod}/$id_mod.mp3"; fi
+                            [ -e "${DM_tlt}/$id.mp3" ] && \
+                            mv -f "${DM_tlt}/$id.mp3" "$DM_tl/${tpc_mod}/$id_mod.mp3"; fi
                     fi
-                    [ -e "${DM_tlt}/images/$id.jpg" ] && mv -f "${DM_tlt}/images/$id.jpg" "$DM_tl/${tpc_mod}/images/$id_mod.jpg"
+                    [ -e "${DM_tlt}/images/$id.jpg" ] && \
+                    mv -f "${DM_tlt}/images/$id.jpg" "$DM_tl/${tpc_mod}/images/$id_mod.jpg"
                     
                     "$DS/mngr.sh" delete_item_ok "${tpc}" "${trgt}"
                     trgt="${trgt_mod}"; srce="${srce_mod}"; tpe="${tpc_mod}"
@@ -329,9 +333,11 @@ edit_item() {
                             cp -f "${audf_mod}" "${DM_tlt}/$id_mod.mp3"; fi
                     else
                         if [ ${type_mod} = 2 ]; then
-                            [ -e "${DM_tlt}/$id.mp3" ] && mv -f "${DM_tlt}/$id.mp3" "${DM_tlt}/$id_mod.mp3"
+                            [ -e "${DM_tlt}/$id.mp3" ] && \
+                            mv -f "${DM_tlt}/$id.mp3" "${DM_tlt}/$id_mod.mp3"
                         elif [ ${type_mod} = 1 ]; then
-                            [ -e "${DM_tlt}/$id.mp3" ] && mv -f "${DM_tlt}/$id.mp3" "${DM_tlt}/$id_mod.mp3"; fi
+                            [ -e "${DM_tlt}/$id.mp3" ] && \
+                            mv -f "${DM_tlt}/$id.mp3" "${DM_tlt}/$id_mod.mp3"; fi
                     fi
                 fi
                 if [ "$type" != "$type_mod" ]; then
@@ -351,7 +357,8 @@ edit_item() {
                         rm "${DC_tlt}"/*.tmp
                     fi
                 fi
-                [ -e "${DM_tlt}/images/$id.jpg" ] && mv -f "${DM_tlt}/images/$id.jpg" "${DM_tlt}/images/$id_mod.jpg"
+                [ -e "${DM_tlt}/images/$id.jpg" ] && \
+                mv -f "${DM_tlt}/images/$id.jpg" "${DM_tlt}/images/$id_mod.jpg"
                 cleanups "$DT_r" "$DT/${trgt_mod}.edit"
             ) &
             fi
@@ -370,7 +377,8 @@ edit_item() {
 
 edit_list() {
     if [ -e "$DT/add_lst" -o -e "$DT/el_lk" ]; then
-        msg_2 "$(gettext "Wait until it finishes a previous process")\n" dialog-warning OK "$(gettext "Stop")" "$(gettext "Information")"
+        msg_2 "$(gettext "Wait until it finishes a previous process")\n" \
+        dialog-warning OK "$(gettext "Stop")" "$(gettext "Information")"
         ret=$?
         if [ $ret -eq 1 ]; then
             cleanups "$DT/add_lst" "$DT/el_lk"
@@ -398,8 +406,9 @@ edit_list() {
 			dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
 			[ $? != 0 ] && ret=0
 		fi
+    [ -e "$DT/act_restfile" ] && ret=3
     
-    if [ $ret -eq 0 -o $ret -eq 2 -a ! -e "$DT/act_restfile" ]; then
+    if [ $ret -eq 0 -o $ret -eq 2  ]; then
         [ $ret = 0 ] && cmd=tac && invrt_msg=FALSE
         [ $ret = 2 ] && cmd=cat && invrt_msg=TRUE
         dlaud="$(grep -oP '(?<=dlaud=\").*(?=\")' "$DC_s/1.cfg")"
