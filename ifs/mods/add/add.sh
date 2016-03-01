@@ -229,7 +229,7 @@ function clean_2() {
     if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
     echo "${1}" |sed 's/\\n/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
     |sed "s/’/'/g" |sed 's/quot\;/"/g' \
-    |tr -s '/' '-' |tr -d '*\/' |tr -s '*&|{}[]<>+' ' ' \
+    |tr -s '/' '-' |tr -d '\*' |tr -s '*&|{}[]<>+' ' ' \
     |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
     |sed 's/^ *//; s/ *$//g; s/ — /__/g; s/<[^>]*>//g; s/-.\s*./\U&\E/g'
     else
