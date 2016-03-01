@@ -241,9 +241,7 @@ edit_item() {
                 sed -i "${edit_pos}s|trgt={${trgt}}|trgt={${trgt_mod}}|;
                 ${edit_pos}s|grmr={${grmr}}|grmr={${trgt_mod}}|;
                 ${edit_pos}s|srce={${srce}}|srce={$temp}|g" "${DC_tlt}/0.cfg"
-                yad --text="${edit_pos}s|trgt={${trgt}}|trgt={${trgt_mod}}|;
-                ${edit_pos}s|grmr={${grmr}}|grmr={${trgt_mod}}|;
-                ${edit_pos}s|srce={${srce}}|srce={$temp}|g" "${DC_tlt}/0.cfg"
+                
                 mod_index=1; colorize_run=1; to_modify=1
             fi
             if [ "${mark}" != "${mark_mod}" ]; then
