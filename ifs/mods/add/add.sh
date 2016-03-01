@@ -108,14 +108,14 @@ function sentence_p() {
     fi
     
     echo "${vrbl}" \
-    | python -c 'import sys; print(" ".join(sorted(set(sys.stdin.read().split()))))' \
-    | sed 's/ /\n/g' | grep -v '^.$' | grep -v '^..$' \
-    | tr -d '*)(,;"“”:' | tr -s '_&|{}[]' ' ' \
-    | sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
-    | sed 's/\]//;s/\[//;s/<[^>]*>//g' | sed "s/'$//;s/^'//"\
-    | sed 's/\.//;s/  / /;s/ /\. /;s/ -//;s/- //;s/"//g' \
-    | tr -d '.' | sed 's/^ *//; s/ *$//; /^$/d' > "${aw}"
-    translate "$(sed '/^$/d' "${aw}")" auto $lg | tr -d '!?¿,;.' > "${bw}"
+    |python -c 'import sys; print(" ".join(sorted(set(sys.stdin.read().split()))))' \
+    |sed 's/ /\n/g' |grep -v '^.$' |grep -v '^..$' \
+    |tr -d '*)(,;"“”:' |tr -s '_&|{}[]' ' ' \
+    |sed 's/,//;s/\?//;s/\¿//;s/;//g;s/\!//;s/\¡//g' \
+    |sed 's/\]//;s/\[//;s/<[^>]*>//g' |sed "s/'$//;s/^'//"\
+    |sed 's/\.//;s/  / /;s/ /\. /;s/-$//;s/^-//;s/"//g' \
+    |tr -d '.' |sed 's/^ *//; s/ *$//; /^$/d' > "${aw}"
+    translate "$(sed '/^$/d' "${aw}")" auto $lg |tr -d '!?¿,;.' > "${bw}"
     
     while read -r wrd; do
         w="$(tr -d '\.,;“”"' <<<"${wrd,,}")"
@@ -208,113 +208,113 @@ function word_p() {
 }
 
 function clean_0() {
-    echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' \
-    | sed "s/’/'/g" \
-    | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
-    | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \
-    | tr -d '*|;!¿?[]&:<>+'  | sed 's/\¡//g' \
-    | sed 's/<[^>]*>//g; s/ \+/ /g'
+    echo "${1}" |sed 's/\\n/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
+    |sed "s/’/'/g" \
+    |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
+    |sed 's/^ *//;s/ *$//g' |sed 's/^\s*./\U&\E/g' \
+    |tr -d '*|;!¿?[]&:<>+'  |sed 's/\¡//g' \
+    |sed 's/<[^>]*>//g; s/ \+/ /g'
 }
 
 function clean_1() {
-    echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' \
-    | sed "s/’/'/g" \
-    | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
-    | sed 's/^ *//;s/ *$//g' | sed 's/^\s*./\U&\E/g' \
-    | tr -s '/' '-' | tr -d '/*|",;!¿?()[]&:.<>+'  | sed 's/\¡//g' \
-    | sed 's/<[^>]*>//g; s/ \+/ /g'
+    echo "${1}" |sed 's/\\n/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
+    |sed "s/’/'/g" \
+    |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
+    |sed 's/^ *//;s/ *$//g' |sed 's/^\s*./\U&\E/g' \
+    |tr -s '/' '-' |tr -d '/*|",;!¿?()[]&:.<>+'  |sed 's/\¡//g' \
+    |sed 's/<[^>]*>//g; s/ \+/ /g'
 }
 
 function clean_2() {
     if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
-    echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' \
-    | sed "s/’/'/g" | sed 's/quot\;/"/g' \
-    | tr -s '/' '-' | tr -d '*\/' | tr -s '*&|{}[]<>+' ' ' \
-    | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
-    | sed 's/^ *//; s/ *$//g; s/ — /__/g; s/<[^>]*>//g; s/-.\s*./\U&\E/g'
+    echo "${1}" |sed 's/\\n/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
+    |sed "s/’/'/g" |sed 's/quot\;/"/g' \
+    |tr -s '/' '-' |tr -d '*\/' |tr -s '*&|{}[]<>+' ' ' \
+    |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
+    |sed 's/^ *//; s/ *$//g; s/ — /__/g; s/<[^>]*>//g; s/-.\s*./\U&\E/g'
     else
-    echo "${1}" | sed 's/\\n/ /g' | sed ':a;N;$!ba;s/\n/ /g' \
-    | sed "s/’/'/g" | sed 's/quot\;/"/g' \
-    | tr -d '*\' | tr -s '*&|{}[]<>+' ' ' \
-    | sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
-    | sed 's/^ *//;s/ *$//g; s/^\s*./\U&\E/g' | tr -s '/' '-' \
-    | sed 's/ — /__/g; s|/||g; s/<[^>]*>//g; s/-.\s*./\U&\E/g'
+    echo "${1}" |sed 's/\\n/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
+    |sed "s/’/'/g" |sed 's/quot\;/"/g' \
+    |tr -s '\*&|{}[]<>+' ' ' \
+    |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
+    |sed 's/^ *//;s/ *$//g; s/^\s*./\U&\E/g' |tr -s '/' '-' \
+    |sed 's/ — /__/g; s|/||g; s/<[^>]*>//g; s/-.\s*./\U&\E/g'
     fi
 }
 
 function clean_3() {
-    echo "${1}" | cut -d "|" -f1 | sed 's/!//;s/&//;s/\://g' \
-    | sed 's/^[ \t]*//;s/[ \t]*$//' \
-    | sed 's/^\s*./\U&\E/g; s/-.\s*./\U&\E/g' \
-    | sed 's/\：//g;s/<[^>]*>//g' \
-    | tr -d '.*/' | tr -s '&:|{}[]<>+' ' ' | sed 's/ \+/ /g'
+    echo "${1}" |cut -d "|" -f1 |sed 's/!//;s/&//;s/\://g' \
+    |sed 's/^[ \t]*//;s/[ \t]*$//' \
+    |sed 's/^\s*./\U&\E/g; s/-.\s*./\U&\E/g' \
+    |sed 's/\：//g;s/<[^>]*>//g' \
+    |tr -d './*' |tr -s '&:|{}[]<>+' ' ' |sed 's/ \+/ /g'
 }  
 
 function clean_4() {
     if [ `wc -c <<<"${1}"` -lt 180 ]; then
-    echo "${1}" | sed ':a;N;$!ba;s/\n/ /g' \
-    | tr -d '*/"' | tr -s '&:|{}[]<>+' ' ' \
-    | sed 's/ — / /;s/--/ /g; /^$/d; s/ \+/ /g'
+    echo "${1}" |sed ':a;N;$!ba;s/\n/ /g' \
+    |tr -d '*/"' |tr -s '&:|{}[]<>+' ' ' \
+    |sed 's/ — / /;s/--/ /g; /^$/d; s/ \+/ /g'
     else
-    echo "${1}" | sed ':a;N;$!ba;s/\n/\__/g' \
-    | tr -d '*/"' | tr -s '&:|{}[]<>+' ' ' \
-    | sed 's/ — /__/;s/--/ /g; /^$/d; s/ \+/ /g'
+    echo "${1}" |sed ':a;N;$!ba;s/\n/\__/g' \
+    |tr -d '*/"' |tr -s '&:|{}[]<>+' ' ' \
+    |sed 's/ — /__/;s/--/ /g; /^$/d; s/ \+/ /g'
     fi
 }
 
 function clean_5() {
     sed -n -e '1x;1!H;${x;s-\n- -gp}' \
-    | sed 's/<[^>]*>//g' | sed 's/ \+/ /g' \
-    | sed '/^$/d' |  sed 's/ \+/ /;s/\://;s/"//g' \
-    | sed 's/^[ \t]*//;s/[ \t]*$//;s/^ *//; s/ *$//g' \
-    | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' | grep -v '^..$' \
-    | grep -v '^.$' | sed 's/<[^>]\+>//;s/\://g' \
-    | sed 's/\&quot;/\"/g' | sed "s/\&#039;/\'/g" \
-    | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
-    | sed 's/ — /\n/g' \
-    | sed 's/[<>£§]//; s/&amp;/\&/g' | sed 's/ *<[^>]\+> */ /g' \
-    | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g; s/\. //g' \
-    | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g; s/\? //g' \
-    | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g; s/\! //g' \
-    | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g; s/\… //g' \
-    | sed 's/__/\n/g'
+    |sed 's/<[^>]*>//g' |sed 's/ \+/ /g' \
+    |sed '/^$/d' |sed 's/ \+/ /;s/\://;s/"//g' \
+    |sed 's/^[ \t]*//;s/[ \t]*$//;s/^ *//; s/ *$//g' \
+    |sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' |grep -v '^..$' \
+    |grep -v '^.$' |sed 's/<[^>]\+>//;s/\://g' \
+    |sed 's/\&quot;/\"/g' |sed "s/\&#039;/\'/g" \
+    |sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
+    |sed 's/ — /\n/g' \
+    |sed 's/[<>£§]//; s/&amp;/\&/g' |sed 's/ *<[^>]\+> */ /g' \
+    |sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g; s/\. //g' \
+    |sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g; s/\? //g' \
+    |sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g; s/\! //g' \
+    |sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g; s/\… //g' \
+    |sed 's/__/\n/g'
 }
 
 function clean_6() {
     sed 's/\\n/./g' \
-    | sed '/^$/d' | sed 's/^[ \t]*//;s/[ \t]*$//' \
-    | sed 's/ — /\n/g' \
-    | sed 's/ \+/ /;s/\://;s/\&quot;/\"/;s/^ *//;s/ *$//g' \
-    | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g; s/\. //g' \
-    | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g; s/\? //g' \
-    | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g; s/\! //g' \
-    | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g; s/\… //g'
+    |sed '/^$/d' |sed 's/^[ \t]*//;s/[ \t]*$//' \
+    |sed 's/ — /\n/g' \
+    |sed 's/ \+/ /;s/\://;s/\&quot;/\"/;s/^ *//;s/ *$//g' \
+    |sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g; s/\. //g' \
+    |sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g; s/\? //g' \
+    |sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g; s/\! //g' \
+    |sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g; s/\… //g'
     
 }
 
 function clean_7() {
-    sed 's/^ *//;s/ *$//g' | sed 's/^[ \t]*//;s/[ \t]*$//' \
-    | sed 's/ \+/ /;s/\://;s/"//g' \
-    | sed '/^$/d' | sed 's/ — /\n/g' \
-    | sed 's/\&quot;/\"/g' | sed "s/\&#039;/\'/g" \
-    | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
-    | sed 's/ *<[^>]\+> */ /; s/[<>£§]//; s/\&amp;/\&/g' \
-    | sed 's/,/\n/g;s/。/\n/g;s/__/\n/g'
+    sed 's/^ *//;s/ *$//g' |sed 's/^[ \t]*//;s/[ \t]*$//' \
+    |sed 's/ \+/ /;s/\://;s/"//g' \
+    |sed '/^$/d' |sed 's/ — /\n/g' \
+    |sed 's/\&quot;/\"/g' |sed "s/\&#039;/\'/g" \
+    |sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
+    |sed 's/ *<[^>]\+> */ /; s/[<>£§]//; s/\&amp;/\&/g' \
+    |sed 's/,/\n/g;s/。/\n/g;s/__/\n/g'
 }
 
 function clean_8() {
      sed 's/\[ \.\.\. \]//g' \
-    | sed 's/^ *//;s/ *$//g' | sed 's/^[ \t]*//;s/[ \t]*$//' \
-    | sed 's/ \+/ /;s/\://;s/"//g' \
-    | sed '/^$/d' | sed 's/ — /\n/g' \
-    | sed 's/\&quot;/\"/g' | sed "s/\&#039;/\'/g" \
-    | sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
-    | sed 's/ *<[^>]\+> */ /; s/[<>£§]//; s/\&amp;/\&/g' \
-    | sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' | sed 's/\. / /g' \
-    | sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' | sed 's/\? / /g' \
-    | sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' | sed 's/\! / /g' \
-    | sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' | sed 's/\… / /g' \
-    | sed 's/__/ \n/g;s/ \+/ /g'
+    |sed 's/^ *//;s/ *$//g' |sed 's/^[ \t]*//;s/[ \t]*$//' \
+    |sed 's/ \+/ /;s/\://;s/"//g' \
+    |sed '/^$/d' |sed 's/ — /\n/g' \
+    |sed 's/\&quot;/\"/g' |sed "s/\&#039;/\'/g" \
+    |sed '/</ {:k s/<[^>]*>//g; /</ {N; bk}}' \
+    |sed 's/ *<[^>]\+> */ /; s/[<>£§]//; s/\&amp;/\&/g' \
+    |sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g' |sed 's/\. / /g' \
+    |sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g' |sed 's/\? / /g' \
+    |sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g' |sed 's/\! / /g' \
+    |sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g' |sed 's/\… / /g' \
+    |sed 's/__/ \n/g;s/ \+/ /g'
 }
 
 function set_image_1() {
@@ -475,26 +475,26 @@ function voice() {
 function list_words_2() {
     if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
     echo "${1}" | awk 'BEGIN{RS=ORS=" "}!a[$0]++' \
-    | tr -d '*/“”"' | tr '_' '\n' | sed -n 1~2p | sed '/^$/d'
+    |tr -d '*/“”"' |tr '_' '\n' |sed -n 1~2p |sed '/^$/d'
     else
     echo "${1}" | awk 'BEGIN{RS=ORS=" "}!a[$0]++' \
-    | tr -d '*/“”"' | tr '_' '\n' | sed -n 1~2p | sed '/^$/d'
+    |tr -d '*/“”"' |tr '_' '\n' |sed -n 1~2p |sed '/^$/d'
     fi
 }
 
 function list_words_3() {
     if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
     echo "${2}" | awk 'BEGIN{RS=ORS=" "}!a[$0]++' \
-    | sed 's/\[ \.\.\. ] //g' | sed 's/\.//g' \
-    | tr '_' '\n' | tr -d ',;' | sed -n 1~2p | sed '/^$/d' > "$DT_r/lst"
+    |sed 's/\[ \.\.\. ] //g' |sed 's/\.//g' \
+    |tr '_' '\n' |tr -d ',;' |sed -n 1~2p |sed '/^$/d' > "$DT_r/lst"
     else
     echo "${1}" | awk 'BEGIN{RS=ORS=" "}!a[$0]++' \
-    | sed 's/\[ \.\.\. ] //g' | sed 's/\.//g' \
-    | tr -s "[:blank:]" '\n' | tr -d ',;()' \
-    | sed '/^$/d' | sed '/"("/d' \
-    | grep -v '^.$' | grep -v '^..$' \
-    | sed 's/[^ ]\+/\L\u&/g' \
-    | head -n100 | egrep -v "FALSE" | egrep -v "TRUE" > "$DT_r/lst"
+    |sed 's/\[ \.\.\. ] //g' |sed 's/\.//g' \
+    |tr -s "[:blank:]" '\n' |tr -d ',;()' \
+    |sed '/^$/d' |sed '/"("/d' \
+    |grep -v '^.$' |grep -v '^..$' \
+    |sed 's/[^ ]\+/\L\u&/g' \
+    |head -n100 |egrep -v "FALSE" |egrep -v "TRUE" > "$DT_r/lst"
     fi
 } >/dev/null 2>&1
 

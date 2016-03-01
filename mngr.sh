@@ -241,6 +241,9 @@ edit_item() {
                 sed -i "${edit_pos}s|trgt={${trgt}}|trgt={${trgt_mod}}|;
                 ${edit_pos}s|grmr={${grmr}}|grmr={${trgt_mod}}|;
                 ${edit_pos}s|srce={${srce}}|srce={$temp}|g" "${DC_tlt}/0.cfg"
+                yad --text="${edit_pos}s|trgt={${trgt}}|trgt={${trgt_mod}}|;
+                ${edit_pos}s|grmr={${grmr}}|grmr={${trgt_mod}}|;
+                ${edit_pos}s|srce={${srce}}|srce={$temp}|g" "${DC_tlt}/0.cfg"
                 mod_index=1; colorize_run=1; to_modify=1
             fi
             if [ "${mark}" != "${mark_mod}" ]; then
@@ -275,7 +278,7 @@ edit_item() {
                     elif [ ${type_mod} = 2 ]; then
                         srce_mod="$(clean_2 "$(translate "${trgt_mod}" $lgt $lgs)")"
                         db="$DS/default/dicts/$lgt"
-                        sentence_p "$DT_r" 2
+                        cd "$DT_r"; sentence_p "$DT_r" 2
                         [[ ${dlaud} = TRUE ]] && fetch_audio "${aw}" "${bw}"
                         srce="$temp"
                         grmr="${trgt_mod}"
