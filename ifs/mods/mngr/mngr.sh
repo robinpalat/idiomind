@@ -11,7 +11,7 @@ function dlg_form_1() {
     --window-icon=idiomind \
     --align=right --text-align=center --columns=2 \
     --buttons-layout=end --center --on-top \
-    --width=700 --height=450 --borders=10 \
+    --width=650 --height=480 --borders=10 \
     --field="$lgtl" "${trgt}" \
     --field="$lgsl" "${srce}" \
     --field="$(gettext "Topic")":CB "${tpc_list}" \
