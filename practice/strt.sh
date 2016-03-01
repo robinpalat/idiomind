@@ -629,7 +629,7 @@ function lock() {
                 --window-icon=idiomind --on-top --skip-taskbar --center \
                 --width=400 --height=100 --borders=2 \
                 --button=" $(gettext "Restart B") !!$(gettext "Questions in $lgsl - Answers in $lgtl") ":2 \
-                --button=" $(gettext "Restart") !!$(gettext "Questions in $lgtl - Answers in $lgsl") ":0 \
+                --button=" $(gettext "Restart A") !!$(gettext "Questions in $lgtl - Answers in $lgsl") ":0 \
                 --button="    $(gettext "OK")    ":1
                 ret=$?
             elif grep -o -E 'c|e' <<< ${practice}; then
