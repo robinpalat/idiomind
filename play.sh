@@ -106,7 +106,7 @@ play_list() {
     }
 
     btn1="$(gettext "Play"):0"
-    if [ -z "$(< $DT/playlck)" ]; then
+    if [ "$(< $DT/playlck)" = 0 ]; then
         btn2="--center"
         title="$(gettext "Play")"
         [ ${mode} -gt 1 -a -n "${tpc}" ] \
@@ -185,16 +185,15 @@ play_list() {
         # cmd play
         if [ $ret -eq 0 ]; then
             if [ ${count} -lt 1 ]; then
-            
                 notify-send "$(gettext "Nothing to play")" "$(gettext "Exiting...")" -t 3000 &
-                [ -f "$DT/playlck" ] && rm -f "$DT/playlck"
+                echo 0 > "$DT/playlck"
                 "$DS/stop.sh" 2 & exit 1; fi
                 
             if [ -d "${DM_tlt}" ] && [ -n "${tpc}" ]; then
                     if grep TRUE <<<"$words$sntcs$marks$wprct"; then
-                        echo -e "$tpc" > "$DT/playlck"
+                        echo -e "${tpc}" > "$DT/playlck"
                     else 
-                        > "$DT/playlck"
+                        echo 0 > "$DT/playlck"
                     fi
             else
                 "$DS/stop.sh" 2 && exit 1
@@ -205,7 +204,7 @@ play_list() {
             
         # cmd stop
         elif [ $ret -eq 2 ]; then
-            [ -e "$DT/playlck" ] && > "$DT/playlck"
+            [ -e "$DT/playlck" ] && echo 0 > "$DT/playlck"
             [ -e "$DT/index.m3u" ] && rm -f "$DT/index.m3u"
             "$DS/stop.sh" 2 &
         fi

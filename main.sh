@@ -501,7 +501,7 @@ idiomind_start() {
     
     tray=$(grep -oP '(?<=itray=\").*(?=\")' "$DC_s/1.cfg")
     if [ ${tray} = TRUE ] && [[ -z $(pgrep -f "/usr/share/idiomind/ifs/tls.sh itray") ]]; then
-        ( $DS/ifs/tls.sh itray; [ $? != 0] && ipanel ) &
+        $DS/ifs/tls.sh itray &
     else
         ipanel
     fi

@@ -2,14 +2,14 @@
 
 DT="/tmp/.idiomind-$USER"
 on_quit() {
-    if ps -A |pgrep -f "/usr/share/idiomind/bcle.sh"; then killall "/usr/share/idiomind/bcle.sh" & fi
-    if ps -A |pgrep -f "/usr/share/idiomind/bcle.sh"; then killall "/usr/share/idiomind/bcle.sh"; fi
-    if ps -A |pgrep -f "/usr/share/idiomind/chng.sh"; then killall "/usr/share/idiomind/chng.sh"; fi
-    if ps -A |pgrep -f "/usr/share/idiomind/mngr.sh"; then killall "/usr/share/idiomind/mngr.sh" & fi
-    if ps -A |pgrep -f "/usr/share/idiomind/vwr.sh"; then killall"/usr/share/idiomind/vwr.sh" & fi
-    if ps -A |pgrep -f "/usr/share/idiomind/main.sh"; then killall "/usr/share/idiomind/main.sh" & fi
+    if ps -A |pgrep -f "/usr/share/idiomind/bcle.sh"; then killall bcle.sh & fi
+    if ps -A |pgrep -f "/usr/share/idiomind/bcle.sh"; then killall bcle.sh; fi
+    if ps -A |pgrep -f "/usr/share/idiomind/chng.sh"; then killall chng.sh; fi
+    if ps -A |pgrep -f "/usr/share/idiomind/mngr.sh"; then killall mngr.sh & fi
+    if ps -A |pgrep -f "/usr/share/idiomind/vwr.sh"; then killall vwr.sh & fi
+    if ps -A |pgrep -f "/usr/share/idiomind/main.sh"; then killall main.sh & fi
     if ps -A |pgrep -f "yad --fixed --form"; then
-    kill -9 $(pgrep -f "yad --fixed --form") & fi
+    kill -9 $(pgrep -f "yad --fixed --form") >/dev/null 2>&1 & fi
     if ps -A |pgrep -f "play"; then killall play & fi
     if ps -A |pgrep -f "yad --notebook "; then
     kill -9 $(pgrep -f "yad --multi-progress ") &
@@ -20,16 +20,16 @@ on_quit() {
     if [ -f /tmp/.clipw ]; then
         ( sleep 1; notify-send "$(gettext "Clipboard watcher stopped")" -t 4000 ) &
         kill "$(< /tmp/.clipw)"; rm -f /tmp/.clipw; fi
-    if [ -n "$(< $DT/playlck)" ]; then
+    if [ "$(< $DT/playlck)" != 0 ]; then
         if ps -A |pgrep -f "mplayer"; then killall mplayer & fi
-        > "$DT/playlck"; rm -f "$DT/tpp"
-        [ -f "$DT/list.m3u" ] && rm -f "$DT/list.m3u"
+        echo 0 > "$DT/playlck"
+        [ -e "$DT/list.m3u" ] && rm -f "$DT/list.m3u"
     fi
     exit
 } >/dev/null 2>&1
 
 on_play() {
-    [ -e "$DT/playlck" ] && > "$DT/playlck"
+    [ -e "$DT/playlck" ] && echo 0 > "$DT/playlck"
     killall bcle.sh &
     if ps -A |pgrep -f "mplayer"; then killall mplayer & fi
     if ps -A |pgrep -f "play"; then killall play & fi
@@ -38,19 +38,18 @@ on_play() {
     if ps -A |pgrep -f "notify-osd"; then killall notify-osd & fi
     [ -e "$DT/list.m3u" ] && rm -f "$DT/list.m3u"
     exit
-}
+} >/dev/null 2>&1
 
 on_playm() {
-    [ -e "$DT/playlck" ] && > "$DT/playlck"
+    [ -e "$DT/playlck" ] && echo 0 > "$DT/playlck"
     killall bcle.sh &
     if ps -A |pgrep -f "/usr/share/idiomind/bcle.sh"; then killall bcle.sh & fi
     if ps -A |pgrep -f "/usr/share/idiomind/chng.sh"; then killall chng.sh & fi
-    [ -e "$DT/playlck" ] && > "$DT/playlck"
     exit
-}
+} >/dev/null 2>&1
 
 on_lang() {
-    [ -e "$DT/playlck" ] && > "$DT/playlck"
+    [ -e "$DT/playlck" ] && echo 0 > "$DT/playlck"
     killall bcle.sh &
     if ps -A |pgrep -f "/usr/share/idiomind/bcle.sh"; then killall bcle.sh & fi
     if ps -A |pgrep -f "/usr/share/idiomind/chng.sh"; then killall chng.sh; fi
@@ -58,7 +57,7 @@ on_lang() {
     if ps -A |pgrep -f "play"; then killall play & fi
     > "$DT/tpe"
     exit
-}
+} >/dev/null 2>&1
 
 on_add() {
     killall bcle.sh &
@@ -77,7 +76,7 @@ on_edit() {
 }
 
 on_play2() {
-    [ -e "$DT/playlck" ] && > "$DT/playlck"
+    [ -e "$DT/playlck" ] && echo 0 > "$DT/playlck"
     killall bcle.sh &
     if ps -A |pgrep -f "/usr/share/idiomind/bcle.sh"; then killall bcle.sh & fi
     if ps -A |pgrep -f "/usr/share/idiomind/chng.sh"; then killall chng.sh; fi

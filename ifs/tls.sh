@@ -655,16 +655,13 @@ class IdiomindIndicator:
     def _on_menu_update(self):
         time.sleep(0.5)
         if os.path.exists(self.playlck):
-            
             m = open(self.playlck).readlines()
-            
             for bm in m:
                 label = bm.rstrip('\n')
-                if not label:
+                if label == "0":
                     self.stts = 1
                 else:
                     self.stts = 0
-
         else:
             self.stts = 1
         self.change_label()
@@ -748,7 +745,7 @@ class IdiomindIndicator:
         os.system("/usr/share/idiomind/stop.sh 2 &")
         self._on_menu_update()
     def on_Quit_click(self, widget):
-        os.system("/usr/share/idiomind/stop.sh 1")
+        os.system("/usr/share/idiomind/stop.sh 1 &")
         gtk.main_quit()
     def on_Topic_Changed(self, filemonitor, file, other_file, event_type):
         if event_type == gio.FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
@@ -765,7 +762,7 @@ if __name__ == "__main__":
     monitor.connect("changed", i.on_Topic_Changed)
     file2 = gio.File(i.playlck)
     monitor2 = file2.monitor_file()
-    monitor2.connect("changed", i.on_play_Changed)  
+    monitor2.connect("changed", i.on_play_Changed)
     
     gtk.main()
 PY

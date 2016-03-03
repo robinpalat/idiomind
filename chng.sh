@@ -21,8 +21,10 @@ if [[ ${1} = 0 ]]; then
             if ! [[ ${rw} =~ $numer ]]; then rw=0; fi
 
             if [ ${n} = TRUE ]; then
-                ! [ ps -A |pgrep -f "notify-osd" ] && \
-                notify-send -i "${icon}" "${trgt}" "${srce}"; fi &
+                if ! ps -A |pgrep -f "notify-osd"; then
+                    notify-send -i "${icon}" "${trgt}" "${srce}"
+                fi
+            fi &
             if [ ${a} = TRUE ]; then sleep 0.5; sle=0.5; spn=1
                 [ ${type} = 1 -a ${rw} = 1 ] && spn=3
                 [ ${type} = 2 -a ${rw} = 2 ] && spn=2 && sle=2.5
@@ -91,6 +93,7 @@ if [[ ${1} = 0 ]]; then
         while read item; do getitem; _play
         done < <(grep -Fxv "${DC_tlt}/4.cfg" <<< "${wrds}"); fi
     include "$DS/ifs/mods/chng"
+    
 
 elif [[ ${1} != 0 ]]; then
     source /usr/share/idiomind/default/c.conf
