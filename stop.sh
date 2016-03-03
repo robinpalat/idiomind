@@ -32,6 +32,7 @@ on_play() {
     if ps -A |pgrep -f "/usr/share/idiomind/chng.sh"; then killall chng.sh; fi
     if ps -A |pgrep -f "notify-osd"; then killall notify-osd & fi
     [ -f "$DT/list.m3u" ] && rm -f "$DT/list.m3u"
+    [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
     exit
 }
 

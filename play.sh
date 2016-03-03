@@ -52,6 +52,11 @@ play_file() {
     fi
 } >/dev/null 2>&1
 
+play_list2() {
+    ret=1
+    export ret
+}
+
 play_list() {
     if [ -z "${tpc}" ]; then source "$DS/ifs/mods/cmns.sh"
     msg "$(gettext "No topic is active")\n" dialog-information & exit 1; fi
@@ -217,6 +222,8 @@ case "$1" in
     play_sentence "$@" ;;
     play_file)
     play_file "$@" ;;
+    play_list2)
+    play_list2 "$@" ;;
     play_list)
     play_list "$@" ;;
 esac

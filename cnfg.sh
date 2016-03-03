@@ -109,7 +109,7 @@ config_dlg() {
     --field="$(gettext "Download audio pronunciation")":CHK "$dlaud" \
     --field="$(gettext "Detect language of source text (slower)")":CHK "$ttrgt" \
     --field="$(gettext "Clipboard watcher")":CHK "$clipw" \
-    --field="$(gettext "Use icon tray (Need restart panel)")":CHK "$itray" \
+    --field="$(gettext "Enable System tray (Need restart panel)")":CHK "$itray" \
     --field="$(gettext "Perform tasks at startup")":CHK "$stsks" \
     --field=" :LBL" " " \
     --field="$(gettext "Languages")\t":LBL " " \
@@ -148,7 +148,7 @@ config_dlg() {
             val=$(cut -d "|" -f$n < "$cnf1")
             if [ -n "$val" ]; then
             sed -i "s/${sets[$v]}=.*/${sets[$v]}=\"$val\"/g" "$DC_s/1.cfg"
-            [ ${v} = 6 ] && [ "$val" = FALSE ] && CW=0 || CW=1
+            if [ ${v} = 5 ]; then [ "$val" = FALSE ] && CW=0 || CW=1; fi
             ((v=v+1)); fi
             ((n=n+1))
         done
@@ -162,9 +162,9 @@ config_dlg() {
         [[ "$val" != "$intrf" ]] && \
         sed -i "s/${sets[12]}=.*/${sets[12]}=\"$val\"/g" "$DC_s/1.cfg"
         
-        if [ ${CW} = 0 -a -f /tmp/.clipw ]; then
+        if [ ${CW} = 0 -e /tmp/.clipw ]; then
         kill $(cat /tmp/.clipw); rm -f /tmp/.clipw
-        elif [ ${CW} = 1 -a ! -f /tmp/.clipw ]; then
+        elif [ ${CW} = 1 -a ! -e /tmp/.clipw ]; then
         "$DS/ifs/mods/clipw.sh" & fi
 
         [ ! -d  "$HOME/.config/autostart" ] \
