@@ -123,7 +123,7 @@ elif [[ ${1} != 0 ]]; then
     var1="--text=$1\n"
     var2="--image=dialog-information"; else
     #var1="--text=<small><a href='$linkc'>$(gettext "Shared")</a> </small>"
-    var1="--regex-search"
+    var1="--center"
     var2="--text-align=right"; fi
     chk_list_addons1=`wc -l < "$DS_a/menu_list"`
     chk_list_addons2=$((`wc -l < "$DC_a/list"`*2))
@@ -139,7 +139,7 @@ elif [[ ${1} != 0 ]]; then
     --window-icon=idiomind \
     --text-align=left $var2 --image-on-top \
     --no-headers --ellipsize=END --expand-column=2 \
-    --search-column=2 --regex-search --geometry=620x580-600-400 \
+    --search-column=2 --regex-search --center \
     --width=620 --height=580 --borders=8 \
     --column=img:IMG \
     --column=File:TEXT \
