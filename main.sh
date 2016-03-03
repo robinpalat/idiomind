@@ -429,7 +429,7 @@ bgroud_session() {
     fi
 }
 
-panel() {
+ipanel() {
     set_geom(){
         sleep 1
         spost=`xwininfo -name Idiomind |grep geometry |cut -d ' ' -f 4`
@@ -443,6 +443,35 @@ panel() {
             fi
         done
     }
+    
+    if ! [[ ${x} =~ $numer ]]; then x=100; y=100; fi
+    
+    if [ -e "$DC_s/5.cfg" ]; then
+        geom=$(grep -o \"[^\"]* "$DC_s/5.cfg" |grep -o '[^"]*$')
+    elif [ -e "$DC_s/10.cfg" ]; then
+        x=$(($(sed -n 2p "$DC_s/10.cfg")/2))
+        y=$(($(sed -n 3p "$DC_s/10.cfg")/2))
+        geom="140x190-${x}-${y}"
+        echo -e "\"$geom\"" > "$DC_s/5.cfg"
+    fi
+    
+    ( yad --title="Idiomind" \
+    --name=Idiomind --class=Idiomind \
+    --always-print-result \
+    --window-icon=idiomind \
+    --gtkrc="$DS/default/gtkrc.cfg" \
+    --form --fixed --on-top --no-buttons --align=center \
+    --width=140 --height=180 --borders=0 --geometry=${geom} \
+    --field="$(gettext "New")"!'document-new':btn "$DS/add.sh 'new_items'" \
+    --field="$(gettext "Home")"!'go-home':btn "idiomind 'topic'" \
+    --field="$(gettext "Index")"!'gtk-index':btn "$DS/chng.sh" \
+    --field="$(gettext "Options")"!'gtk-preferences':btn "$DS/cnfg.sh"
+    if [ $? != 0 ] && [ -z $(pgrep -f "/usr/share/idiomind/ifs/tls.sh itray") ]; then \
+    "$DS/stop.sh" 1 & fi; exit ) & set_geom
+}
+
+idiomind_start() {
+
     if [ ! -d "$DT" ]; then 
         new_session; cu=TRUE
     fi
@@ -465,34 +494,17 @@ panel() {
     ( if [[ "${cu}" = TRUE ]]; then
     "$DS/ifs/tls.sh" a_check_updates; fi ) &
     
-    if ! [[ ${x} =~ $numer ]]; then x=100; y=100; fi
-    
-    if [ -e "$DC_s/5.cfg" ]; then
-        geom=$(grep -o \"[^\"]* "$DC_s/5.cfg" |grep -o '[^"]*$')
-    elif [ -e "$DC_s/10.cfg" ]; then
-        x=$(($(sed -n 2p "$DC_s/10.cfg")/2))
-        y=$(($(sed -n 3p "$DC_s/10.cfg")/2))
-        geom="140x190-${x}-${y}"
-        echo -e "\"$geom\"" > "$DC_s/5.cfg"
-    fi
-
     if [[ `grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg"` = TRUE ]] \
     && [ ! -e /tmp/.clipw ]; then
         sed -i "s/clipw=.*/clipw=\"FALSE\"/g" "$DC_s/1.cfg"
     fi
     
-    ( yad --title="Idiomind" \
-    --name=Idiomind --class=Idiomind \
-    --always-print-result \
-    --window-icon=idiomind \
-    --gtkrc="$DS/default/gtkrc.cfg" \
-    --form --fixed --on-top --no-buttons --align=center \
-    --width=140 --height=180 --borders=0 --geometry=${geom} \
-    --field="$(gettext "New")"!'document-new':btn "$DS/add.sh 'new_items'" \
-    --field="$(gettext "Home")"!'go-home':btn "idiomind 'topic'" \
-    --field="$(gettext "Index")"!'gtk-index':btn "$DS/chng.sh" \
-    --field="$(gettext "Options")"!'gtk-preferences':btn "$DS/cnfg.sh"
-    [ $? != 0 ] && "$DS/stop.sh" 1 & exit ) & set_geom
+    tray=$(grep -oP '(?<=itray=\").*(?=\")' "$DC_s/1.cfg")
+    if [ ${tray} = TRUE ] && [[ -z $(pgrep -f "/usr/share/idiomind/ifs/tls.sh itray") ]]; then
+        ( $DS/ifs/tls.sh itray; [ $? != 0] && ipanel ) &
+    else
+        ipanel
+    fi
 }
 
 case "$1" in
@@ -515,10 +527,10 @@ case "$1" in
     "$DS/add.sh" new_item "${@}" ;;
     mfeeds)
     "$DS/mngr.sh" edit_feeds "${tpc}" ;;
-    play)
-    "$DS/play.sh" play_list ;;
+    panel)
+    ipanel ;;
     stop)
     "$DS/stop.sh" 2 ;;
     *)
-    panel ;;
+    idiomind_start ;;
 esac

@@ -57,14 +57,13 @@ function dwld() {
             check_dir "$DM_t/$langt/.share/images" "$DM_t/$langt/.share/audio"
             mv -n "${tmp}/share"/*.mp3 "$DM_t/$langt/.share/audio"/
             while read -r img; do
-                if [ -f "${tmp}/images/${img,,}-0.jpg" ]; then
-                    if [ -f "$DM_t/$langt/.share/images/${img,,}-0.jpg" ]; then
-                        n=`ls "${DM_tls}/images/${img,,}"-*.jpg |wc -l`
-                        name_img="${DM_tls}/images/${img,,}"-${n}.jpg
+                if [ -e "${tmp}/images/${img,,}.jpg" ]; then
+                    if [ -e "$DM_t/$langt/.share/images/${img,,}-0.jpg" -o `wc -w <<<"${img}"` -gt 1 ]; then
+                        img_path="${DM_tlt}/images/${img,,}.jpg"
                     else 
-                        name_img="${DM_tls}/images/${img,,}-0.jpg"
+                        img_path="${DM_tls}/images/${img,,}-0.jpg"
                     fi
-                    mv -f "${tmp}/images/${img,,}-0.jpg" "${name_img}"
+                    mv -f "${tmp}/images/${img,,}.jpg" "${img_path}"
                 fi
             done < "${DC_tlt}/3.cfg"
             rm -fr "${tmp}/share" "${tmp}/conf" "${tmp}/images"
@@ -304,9 +303,13 @@ function upld() {
             fi
         done < "${DC_tlt}/3.cfg"
         while read -r img; do
-            if [ -f "$DM_tl/.share/images/${img,,}-0.jpg" ]; then
-                cp -f "$DM_tl/.share/images/${img,,}-0.jpg" \
-                "$DT_u/${tpc}/images/${img,,}-0.jpg"
+            if [ -e "$DM_tlt/images/${img,,}.jpg" ]; then
+                img_path="$DM_tlt/images/${img,,}.jpg"
+            elif [ -e "$DM_tls/images/${img,,}-0.jpg" ]; then
+                img_path="$DM_tls/images/${img,,}-0.jpg"
+            fi
+            if [ -e "${img_path}" ]; then
+                cp -f "${img_path}" "$DT_u/${tpc}/images/${img,,}.jpg"
             fi
         done < "${DC_tlt}/3.cfg"
         c_audio=$(find "$DT_u/${tpc}" -maxdepth 5 -name '*.mp3' |wc -l)

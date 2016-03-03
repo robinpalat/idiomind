@@ -21,7 +21,7 @@ Type=Application
 Icon=idiomind
 StartupWMClass=Idiomind"
 
-sets=( 'gramr' 'wlist' 'trans' 'dlaud' 'ttrgt' 'clipw' 'stsks' \
+sets=( 'gramr' 'wlist' 'trans' 'dlaud' 'ttrgt' 'clipw' 'itray' 'stsks' \
 'langt' 'langs' 'synth' 'txaud' 'intrf' )
 
 confirm() {
@@ -71,13 +71,13 @@ config_dlg() {
     if [ "$cfg" = 1 ]; then
         while [ ${n} -lt 12 ]; do
             get="${sets[$n]}"
-            val=$(grep -o "$get"=\"[^\"]* "$DC_s/1.cfg" | grep -o '[^"]*$')
+            val=$(grep -o "$get"=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
             declare "${sets[$n]}"="$val"
             ((n=n+1))
         done
     else
         n=0; > "$DC_s/1.cfg"
-        for n in {0..11}; do 
+        for n in {0..12}; do 
         echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"; done
     fi
 
@@ -109,6 +109,7 @@ config_dlg() {
     --field="$(gettext "Download audio pronunciation")":CHK "$dlaud" \
     --field="$(gettext "Detect language of source text (slower)")":CHK "$ttrgt" \
     --field="$(gettext "Clipboard watcher")":CHK "$clipw" \
+    --field="$(gettext "Use icon tray (Need restart panel)")":CHK "$itray" \
     --field="$(gettext "Perform tasks at startup")":CHK "$stsks" \
     --field=" :LBL" " " \
     --field="$(gettext "Languages")\t":LBL " " \
@@ -143,23 +144,23 @@ config_dlg() {
 
     if [ $ret -eq 0 ]; then
         n=1; v=0
-        while [ ${n} -le 16 ]; do
+        while [ ${n} -le 17 ]; do
             val=$(cut -d "|" -f$n < "$cnf1")
             if [ -n "$val" ]; then
             sed -i "s/${sets[$v]}=.*/${sets[$v]}=\"$val\"/g" "$DC_s/1.cfg"
-            if [ ${v} = 5 ]; then [ "$val" = FALSE ] && CW=0 || CW=1; fi
+            [ ${v} = 6 ] && [ "$val" = FALSE ] && CW=0 || CW=1
             ((v=v+1)); fi
             ((n=n+1))
         done
-        val=$(cut -d "|" -f17 < "$cnf1")
-        [[ "$val" != "$synth" ]] && \
-        sed -i "s/${sets[9]}=.*/${sets[9]}=\"$(sed 's|/|\\/|g' <<<"$val")\"/g" "$DC_s/1.cfg"
         val=$(cut -d "|" -f18 < "$cnf1")
-        [[ "$val" != "$txaud" ]] && \
+        [[ "$val" != "$synth" ]] && \
         sed -i "s/${sets[10]}=.*/${sets[10]}=\"$(sed 's|/|\\/|g' <<<"$val")\"/g" "$DC_s/1.cfg"
         val=$(cut -d "|" -f19 < "$cnf1")
+        [[ "$val" != "$txaud" ]] && \
+        sed -i "s/${sets[11]}=.*/${sets[11]}=\"$(sed 's|/|\\/|g' <<<"$val")\"/g" "$DC_s/1.cfg"
+        val=$(cut -d "|" -f20 < "$cnf1")
         [[ "$val" != "$intrf" ]] && \
-        sed -i "s/${sets[11]}=.*/${sets[11]}=\"$val\"/g" "$DC_s/1.cfg"
+        sed -i "s/${sets[12]}=.*/${sets[12]}=\"$val\"/g" "$DC_s/1.cfg"
         
         if [ ${CW} = 0 -a -f /tmp/.clipw ]; then
         kill $(cat /tmp/.clipw); rm -f /tmp/.clipw
@@ -169,7 +170,7 @@ config_dlg() {
         [ ! -d  "$HOME/.config/autostart" ] \
         && mkdir "$HOME/.config/autostart"
         config_dir="$HOME/.config/autostart"
-        if cut -d "|" -f9 < "$cnf1" | grep "TRUE"; then
+        if cut -d "|" -f10 < "$cnf1" | grep "TRUE"; then
             if [ ! -f "$config_dir/idiomind.desktop" ]; then
             echo "$desktopfile" > "$config_dir/idiomind.desktop"
             fi
@@ -179,7 +180,7 @@ config_dlg() {
             fi
         fi
 
-        ntlang=$(cut -d "|" -f13 < "$cnf1")
+        ntlang=$(cut -d "|" -f14 < "$cnf1")
         if [[ $(gettext ${lgtl}) != ${ntlang} ]]; then
             for val in "${lt[@]}"; do
                 if [[ ${ntlang} = $(gettext ${val}) ]]; then
@@ -193,7 +194,7 @@ config_dlg() {
             [ $? -eq 0 ] && set_lang ${lgtl}
         fi
         
-        nslang=$(cut -d "|" -f14 < "$cnf1")
+        nslang=$(cut -d "|" -f15 < "$cnf1")
         if [[ $(gettext ${lgsl}) != ${nslang} ]]; then
             for val in "${ls[@]}"; do
                 if [[ ${nslang} = $(gettext ${val}) ]]; then

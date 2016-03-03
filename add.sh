@@ -116,7 +116,7 @@ function new_sentence() {
         index 2
         
         if [ -e "$DT_r/img.jpg" ]; then
-            set_image_2 "$DT_r/img.jpg" "${DM_tlt}/images/$id.jpg"
+            set_image_2 "$DT_r/img.jpg" "${DM_tlt}/images/${trgt,,}.jpg"
         fi
 
         if [ ! -e "$DT_r/audtm.mp3" ]; then
@@ -197,7 +197,7 @@ function new_word() {
             fi
         fi
         word_p
-        img_word "${trgt}" "${srce}" "${id}" &
+        img_word "${trgt}" "${srce}" &
         cleanups "${DT_r}"
     fi
 }
@@ -238,7 +238,7 @@ function list_words_edit() {
                 if [ ! -e "$DM_tls/audio/$audio.mp3" ]; then
                     ( [[ ${dlaud} = TRUE ]] && tts_word "$audio" "$DM_tls/audio" )
                 fi
-                ( img_word "${trgt}" "${srce}" "${id}" ) &
+                ( img_word "${trgt}" "${srce}" ) &
             else
                 echo -e "\n$trgt" >> "${DC_tlt}/err"
                 cleanups "${DM_tlt}/$id.mp3"
@@ -290,7 +290,7 @@ function list_words_sentence() {
                 if [ ! -e "$DM_tls/audio/$audio.mp3" ]; then
                     ( [[ ${dlaud} = TRUE ]] && tts_word "${audio}" "${DM_tls}/audio" )
                 fi
-                ( img_word "${trgt}" "${srce}" "${id}" ) &
+                ( img_word "${trgt}" "${srce}" ) &
             else
                 echo -e "\n$trgt" >> "${DC_tlt}/err"
             fi
@@ -505,7 +505,7 @@ function process() {
                             cp "${DM_tls}/audio/${audio}.mp3" "${DM_tlt}/$id.mp3"
                             fi
                         fi
-                        ( img_word "${trgt}" "${srce}" "${id}" ) &
+                        ( img_word "${trgt}" "${srce}" ) &
                         echo "${trgt}" >> "$DT_r/addw"
                     else
                         echo -e "\n\n#$n ${trgt}" >> "$DT_r/wlog"
@@ -567,7 +567,7 @@ function process() {
                         index 1
                         if [ ! -e "${DM_tls}/audio/$audio.mp3" ]; then
                         ( [[ ${dlaud} = TRUE ]] && tts_word "$audio" "${DM_tls}/audio" )
-                        ( img_word "${trgt}" "${srce}" "${id}" ) & fi
+                        ( img_word "${trgt}" "${srce}" ) & fi
                         echo "${trgt}" >> "$DT_r/addw"
                     else
                         echo -e "\n\n#$n $trgt" >> "$DT_r/wlog"

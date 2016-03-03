@@ -327,11 +327,10 @@ function practice_c() {
 function practice_d() {
     [[ -e ./d.rev ]] && rev=1 || rev=0
     fonts() {
+        [ -e "$DM_tlt/images/${item,,}.jpg" ] && \
+        img="$DM_tlt/images/${item,,}.jpg" || \
         img="$DM_tls/images/${item,,}-0.jpg"
         _item="$(grep -F -m 1 "trgt={${item}}" "${cfg0}" |sed 's/},/}\n/g')"
-         id=`grep -oP '(?<=id=\[).*(?=\])' <<<"${_item}"`
-         [ -e "$DM_tlt/images/$id.jpg" ] && img="$DM_tlt/images/$id.jpg"
-         
         if [[ ${rev} = 0 ]]; then
         srce="${item}"
         trgt=`grep -oP '(?<=srce={).*(?=})' <<<"${_item}"`
@@ -592,9 +591,8 @@ function get_list() {
         ( echo "5"
         while read -r itm; do
         _item="$(grep -F -m 1 "trgt={${itm}}" "${cfg0}" |sed 's/},/}\n/g')"
-         id=`grep -oP '(?<=id=\[).*(?=\])' <<<"${_item}"`
         if [ -e "$DM_tls/images/${itm,,}-0.jpg" \
-        -o -e "$DM_tlt/images/$id.jpg" ]; then
+        -o -e "$DM_tlt/images/${itm,,}.jpg" ]; then
             echo "${itm}" >> "$dir/${practice}.0"
         fi
         done < "$DT/images" ) | yad --progress \
