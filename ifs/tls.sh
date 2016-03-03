@@ -619,7 +619,7 @@ PY
 itray() {
     export TOPICS="$(gettext "Topics")"
     export ADD="$(gettext "Add")"
-    export PANEL="$(gettext "Panel")"
+    export PANEL="$(gettext "Show Panel")"
     export PLAY="$(gettext "Play")"
     export STOP="$(gettext "Stop")"
     export QUIT="$(gettext "Salir")"
