@@ -258,7 +258,7 @@ function clean_4() {
     else
     echo "${1}" |sed ':a;N;$!ba;s/\n/\__/g' \
     |tr -d '*/"' |tr -s '&:|{}[]<>+' ' ' \
-    |sed 's/ — /__/;s/--/ /g; /^$/d; s/ \+/ /g'
+    |sed 's/ — /__/;s/--/ /g; /^$/d; s/ \+/ /g;s/ʺͶ//g'
     fi
 }
 
@@ -277,13 +277,13 @@ function clean_5() {
     |sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g; s/\? //g' \
     |sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g; s/\! //g' \
     |sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g; s/\… //g' \
-    |sed 's/__/\n/g'
+    |sed 's/__/\n/g;s/ʺͶ//g'
 }
 
 function clean_6() {
     sed 's/\\n/./g' \
     |sed '/^$/d' |sed 's/^[ \t]*//;s/[ \t]*$//' \
-    |sed 's/ — /\n/g' \
+    |sed 's/ — /\n/g;s/ʺͶ//g' \
     |sed 's/ \+/ /;s/\://;s/\&quot;/\"/;s/^ *//;s/ *$//g' \
     |sed 's/\(\. [A-Z][^ ]\)/\.\n\1/g; s/\. //g' \
     |sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g; s/\? //g' \
@@ -545,11 +545,11 @@ function dlg_form_2() {
 function dlg_checklist_3() {
     fkey=$(($RANDOM * $$))
     cat "${1}" | awk '{print "FALSE\n"$0}' | \
-    yad --list --checklist --tabnum=1 --plug="$fkey" \
+    yad --list --checklist --tabnum=1 --plug="$fkey" --mouse \
     --dclick-action="$DS/add.sh 'list_words_dclik'" --multiple \
     --ellipsize=END --no-headers --text-align=right \
     --column=" " --column=" " |sed '/^$/d' > "$slt" &
-    yad --form --tabnum=2 --plug="$fkey" --columns=2 \
+    yad --form --tabnum=2 --plug="$fkey" --columns=2 --mouse \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --separator="" \
     --field=" ":lbl null \
@@ -557,7 +557,7 @@ function dlg_checklist_3() {
     yad --paned --key="$fkey" \
     --title="$(wc -l < "${1}") $(gettext "notes found")" \
     --name=Idiomind --class=Idiomind \
-    --orient=vert --window-icon=idiomind --on-top --center \
+    --orient=vert --window-icon=idiomind --on-top --mouse \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --width=700 --height=380 --borders=5 --splitter=280 \
     --button="$(gettext "Edit")":2 \
@@ -584,7 +584,7 @@ function dlg_checklist_1() {
 }
 
 function dlg_text_info_1() {
-    cat "${1}" | awk '{print "\n\n\n"$0}' | \
+    cat "${1}" | awk '{print "\n\n"$0}' | \
     yad --text-info --title="$(gettext "Edit")" \
     --name=Idiomind --class=Idiomind \
     --editable \

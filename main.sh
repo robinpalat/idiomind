@@ -465,6 +465,8 @@ panel() {
     ( if [[ "${cu}" = TRUE ]]; then
     "$DS/ifs/tls.sh" a_check_updates; fi ) &
     
+    if ! [[ ${x} =~ $numer ]]; then x=100; y=100; fi
+    
     if [ -e "$DC_s/5.cfg" ]; then
         geom=$(grep -o \"[^\"]* "$DC_s/5.cfg" |grep -o '[^"]*$')
     elif [ -e "$DC_s/10.cfg" ]; then
@@ -473,7 +475,6 @@ panel() {
         geom="140x190-${x}-${y}"
         echo -e "\"$geom\"" > "$DC_s/5.cfg"
     fi
-    if ! [[ ${x} =~ $numer ]]; then x=100; y=100; fi
 
     if [[ `grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg"` = TRUE ]] \
     && [ ! -e /tmp/.clipw ]; then
