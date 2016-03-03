@@ -12,7 +12,7 @@ if [[ ${1} = 0 ]]; then
             n="$(grep -oP '(?<=ntosd=\").*(?=\")' "${cfg}")"
             l="$(grep -oP '(?<=loop=\").*(?=\")' "${cfg}")"
             rw="$(grep -oP '(?<=rword=\").*(?=\")' "${cfg}")"
-            [ ! -f "$DT"/.p_ ] && > "$DT"/.p_
+            [ ! -e "$DT"/playlck ] && > "$DT"/playlck
 
             if [ ${n} != TRUE -a ${a} != TRUE -a ${stnrd} = 1 ]; then a=TRUE; fi
             if ! grep TRUE <<<"$n$w$s$m$p$ne$se">/dev/null 2>&1; then
@@ -70,23 +70,23 @@ if [[ ${1} = 0 ]]; then
         fi
     }
     if [ ${w} = TRUE -a ${s} = TRUE ]; then
-        echo "${tpc}" > "$DT/.p_"
+        echo "${tpc}" > "$DT/playlck"
         while read item; do getitem; _play
         done < <(tac "${DC_tlt}/1.cfg"); fi
     if [ ${w} = TRUE -a ${s} = FALSE ]; then
-        echo "${tpc}" > "$DT/.p_"
+        echo "${tpc}" > "$DT/playlck"
         while read item; do getitem; _play
         done < <(grep -Fxvf "${DC_tlt}/4.cfg" "${DC_tlt}/1.cfg" |tac); fi
     if [ ${w} = FALSE -a ${s} = TRUE ]; then
-        echo "${tpc}" > "$DT/.p_"
+        echo "${tpc}" > "$DT/playlck"
         while read item; do getitem; _play
         done < <(grep -Fxvf "${DC_tlt}/3.cfg" "${DC_tlt}/1.cfg" |tac); fi
     if [ ${m} = TRUE ]; then
-        echo "${tpc}" > "$DT/.p_"
+        echo "${tpc}" > "$DT/playlck"
         while read item; do getitem; _play
         done < "${DC_tlt}/6.cfg"; fi
     if [ ${p} = TRUE ]; then
-        echo "${tpc}" > "$DT/.p_"
+        echo "${tpc}" > "$DT/playlck"
         wrds="$(cat "${DC_tlt}/practice/log2" "${DC_tlt}/practice/log3")"
         while read item; do getitem; _play
         done < <(grep -Fxv "${DC_tlt}/4.cfg" <<< "${wrds}"); fi

@@ -455,12 +455,12 @@ ipanel() {
         echo -e "\"$geom\"" > "$DC_s/5.cfg"
     fi
     
-    ( yad --title="Idiomind" \
+    ( yad --fixed --form --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
     --always-print-result \
     --window-icon=idiomind \
     --gtkrc="$DS/default/gtkrc.cfg" \
-    --form --fixed --on-top --no-buttons --align=center \
+    --on-top --no-buttons --align=center \
     --width=140 --height=180 --borders=0 --geometry=${geom} \
     --field="$(gettext "New")"!'document-new':btn "$DS/add.sh 'new_items'" \
     --field="$(gettext "Home")"!'go-home':btn "idiomind 'topic'" \

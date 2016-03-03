@@ -646,7 +646,7 @@ class IdiomindIndicator:
         self.indicator = appindicator.Indicator(icon, icon, appindicator.CATEGORY_APPLICATION_STATUS)
         self.indicator.set_status(appindicator.STATUS_ACTIVE)
         self.cfg = os.getenv('HOME') + '/.config/idiomind/4.cfg'
-        self.ply = os.environ['DTEMP'] + '.p_'
+        self.playlck = os.environ['DTEMP'] + 'playlck'
         self.menu_items = []
         self.stts = 1
         self.change_label()
@@ -654,8 +654,17 @@ class IdiomindIndicator:
         
     def _on_menu_update(self):
         time.sleep(0.5)
-        if os.path.exists(self.ply):
-            self.stts = 0
+        if os.path.exists(self.playlck):
+            
+            m = open(self.playlck).readlines()
+            
+            for bm in m:
+                label = bm.rstrip('\n')
+                if not label:
+                    self.stts = 1
+                else:
+                    self.stts = 0
+
         else:
             self.stts = 1
         self.change_label()
@@ -754,7 +763,7 @@ if __name__ == "__main__":
     file = gio.File(i.cfg)
     monitor = file.monitor_file()
     monitor.connect("changed", i.on_Topic_Changed)
-    file2 = gio.File(i.ply)
+    file2 = gio.File(i.playlck)
     monitor2 = file2.monitor_file()
     monitor2.connect("changed", i.on_play_Changed)  
     

@@ -52,11 +52,6 @@ play_file() {
     fi
 } >/dev/null 2>&1
 
-play_list2() {
-    ret=1
-    export ret
-}
-
 play_list() {
     if [ -z "${tpc}" ]; then source "$DS/ifs/mods/cmns.sh"
     msg "$(gettext "No topic is active")\n" dialog-information & exit 1; fi
@@ -111,15 +106,15 @@ play_list() {
     }
 
     btn1="$(gettext "Play"):0"
-    if [ ! -f "$DT/.p_" ]; then
+    if [ -z "$(< $DT/playlck)" ]; then
         btn2="--center"
         title="$(gettext "Play")"
         [ ${mode} -gt 1 -a -n "${tpc}" ] \
         && title="$(gettext "Play") (${tpc})"
     else
-        tpp="$(sed -n 1p "$DT/.p_")"
+        tpp="$(sed -n 1p "$DT/playlck")"
         title="${tpp}"
-        btn2="--button=$(gettext "Stop")!media-playback-stop:2"
+        btn2="--button=$(gettext "Stop"):2"
     fi
     [ -z "$rword" ] && rword=0
     set="$(echo "${iteml[${rword}]}")"
@@ -187,29 +182,31 @@ play_list() {
         
         [ -n "${val}" ] && sed -i "s/rword=.*/rword=\"$val\"/g" "${DC_tlt}/10.cfg"
  
+        # cmd play
         if [ $ret -eq 0 ]; then
             if [ ${count} -lt 1 ]; then
             
                 notify-send "$(gettext "Nothing to play")" "$(gettext "Exiting...")" -t 3000 &
-                [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
+                [ -f "$DT/playlck" ] && rm -f "$DT/playlck"
                 "$DS/stop.sh" 2 & exit 1; fi
                 
             if [ -d "${DM_tlt}" ] && [ -n "${tpc}" ]; then
                     if grep TRUE <<<"$words$sntcs$marks$wprct"; then
-                        echo -e "$tpc" > "$DT/.p_"
+                        echo -e "$tpc" > "$DT/playlck"
                     else 
-                        > "$DT/.p_"
+                        > "$DT/playlck"
                     fi
-                else
-                    "$DS/stop.sh" 2 && exit 1
-                fi
+            else
+                "$DS/stop.sh" 2 && exit 1
+            fi
                 
             "$DS/stop.sh" 2
             "$DS/bcle.sh" &
             
+        # cmd stop
         elif [ $ret -eq 2 ]; then
-            [ -f "$DT/.p_" ] && rm -f "$DT/.p_"
-            [ -f "$DT/index.m3u" ] && rm -f "$DT/index.m3u"
+            [ -e "$DT/playlck" ] && > "$DT/playlck"
+            [ -e "$DT/index.m3u" ] && rm -f "$DT/index.m3u"
             "$DS/stop.sh" 2 &
         fi
     exit 0
