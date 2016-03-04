@@ -109,7 +109,7 @@ config_dlg() {
     --field="$(gettext "Download audio pronunciation")":CHK "$dlaud" \
     --field="$(gettext "Detect language of source text (slower)")":CHK "$ttrgt" \
     --field="$(gettext "Clipboard watcher")":CHK "$clipw" \
-    --field="$(gettext "Enable System tray (Need restart panel)")":CHK "$itray" \
+    --field="$(gettext "Show icon in the notification area")":CHK "$itray" \
     --field="$(gettext "Perform tasks at startup")":CHK "$stsks" \
     --field=" :LBL" " " \
     --field="$(gettext "Languages")\t":LBL " " \
@@ -126,7 +126,7 @@ config_dlg() {
     --field="$(gettext "Report a problem")":BTN "$DS/ifs/tls.sh fback" \
     --field="$(gettext "Check for updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
     --field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" > "$cnf1" &
-    cat "$DS_a/menu_list" | yad --plug=$KEY --tabnum=2 --list \
+    cat "$DS_a/menu_list" |yad --plug=$KEY --tabnum=2 --list \
     --text=" $(gettext "Double-click to set") " \
     --print-all --dclick-action="$DS/ifs/dclik.sh" \
     --expand-column=2 --no-headers \

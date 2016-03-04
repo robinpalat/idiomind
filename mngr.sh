@@ -531,7 +531,7 @@ delete_topic() {
             "$DS/stop.sh" 5; fi
         fi
         if [ -e "$DT/playlck" ]; then
-            if [ "$(sed -n 2p "$DT/playlck")" = "${tpc}" ]; then 
+            if [ "$(sed -n 1p "$DT/playlck")" = "${tpc}" ]; then 
             "$DS/stop.sh" 2; fi
         fi
         cleanups "$DM/backup/${tpc}.bk"
@@ -575,7 +575,7 @@ rename_topic() {
     msg "$(gettext "Unable to rename at this time. Please try later ")\n" \
     dialog-warning "$(gettext "Information")" & exit 1; fi
         
-    if [ -e "$DT/playlck" ] && [ "$(sed -n 2p "$DT/playlck")" = "${tpc}" ]; then
+    if [ -e "$DT/playlck" ] && [ "$(sed -n 1p "$DT/playlck")" = "${tpc}" ]; then
     msg "$(gettext "Unable to rename at this time. Please try later ")\n" \
     dialog-warning "$(gettext "Information")" & exit 1; fi
 

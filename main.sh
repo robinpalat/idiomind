@@ -75,14 +75,14 @@ function new_session() {
     echo -n "create table if not exists Words (Word TEXT);" |sqlite3 ${cdb}
     echo -n "create table if not exists Config (Study TEXT, Expire INTEGER);" |sqlite3 ${cdb}
     fi
-
+    
     # log file
     if [ -f "$DC_s/log" ]; then
         if [[ "$(du -sb "$DC_s/log" |awk '{ print $1 }')" -gt 100000 ]]; then
         tail -n2000 < "$DC_s/log" > "$DT/log"
         mv -f "$DT/log" "$DC_s/log"; fi
     fi
-
+    
     # update topic status
     while read -r line; do
         unset stts
