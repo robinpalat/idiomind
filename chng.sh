@@ -35,10 +35,9 @@ if [[ ${1} = 0 ]]; then
             fi
         else
             notify-send -i "${icon}" "${trgt}" "${srce}" -t 10000 &
-            "$DS"/play.sh play_file "${file}" "${trgt}"
+            "$DS/play.sh" play_file "${file}" "${trgt}"
         fi
-        [ ${n} = TRUE -a ${l} -lt 3 -a ${type} = 1 ] && l=3
-        [ ${n} = TRUE -a ${l} -lt 10 -a ${type} = 2 ] && l=10
+        [ ${n} = TRUE -a ${l} -lt 10 ] && l=10
         [ ${stnrd} = 1 ] && sleep ${l}
     }
     export -f _play

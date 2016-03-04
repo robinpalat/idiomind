@@ -13,8 +13,7 @@ play_word() {
     elif [ -n "$synth" ]; then
         echo "${w}." |$synth
         if [ $? != 0 ]; then
-            source "$DS/ifs/mods/cmns.sh"
-            msg "$info" error Info
+            source "$DS/ifs/mods/cmns.sh"; msg "$info" error Info
         fi
     else
         echo "${w}." |espeak -v ${lang[$lgtl]} -s 110 -b 1 -p 60 &
@@ -28,8 +27,7 @@ play_sentence() {
     elif [ -n "$synth" ]; then
         sed 's/<[^>]*>//g' <<<"${trgt}." |$synth
         if [ $? != 0 ]; then
-            source "$DS/ifs/mods/cmns.sh"
-            msg "$info" error Info
+            source "$DS/ifs/mods/cmns.sh"; msg "$info" error Info
         fi
     else
         sed 's/<[^>]*>//g' <<<"${trgt}." \
@@ -38,13 +36,14 @@ play_sentence() {
 } >/dev/null 2>&1
 
 play_file() {
-    if [ -f "${2}" ]; then
-        mplayer "${2}" -novideo -noconsolecontrols -title "${3}"
+    if [ -e "${2}" ]; then
+        if [[ $mime = 2 ]]; then
+        mplayer "${2}" -noconsolecontrols -title "${3}"; else
+        mplayer "${2}" -novideo -noconsolecontrols -title "${3}"; fi
     elif [ -n "$synth" ]; then
         sed 's/<[^>]*>//g' <<<"${3}." |$synth
         if [ $? != 0 ]; then
-            source "$DS/ifs/mods/cmns.sh"
-            msg "$info" error Info
+            source "$DS/ifs/mods/cmns.sh"; msg "$info" error Info
         fi
     else
         sed 's/<[^>]*>//g' <<<"${3}." \
@@ -157,7 +156,7 @@ play_list() {
             val=$(sed -n $((${n}+1))p <<<"${tab1}" |cut -d "|" -f3)
             [ -n "${val}" ] && sed -i "s/$item=.*/$item=\"$val\"/g" "${DC_tlt}/10.cfg"
             [ "$val" = TRUE ] && count=$((count+$(wc -l |sed '/^$/d' <<<"${!in[${n}]}")))
-            ((n=n+1))
+            let n++
         done
         for ad in "$DS/ifs/mods/play"/*; do
             source "${ad}"
@@ -165,7 +164,7 @@ play_list() {
                 val=$(sed -n $((${n}+1))p <<<"${tab1}" |cut -d "|" -f3)
                 [ -n "${val}" ] && sed -i "s/${items[$item]}=.*/${items[$item]}=\"$val\"/g" "${file_cfg}"
                 [ "$val" = TRUE ] && count=$((count+1))
-                ((n=n+1))
+                let n++
             done
             unset items
         done

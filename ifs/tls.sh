@@ -617,13 +617,16 @@ PY
 }
 
 itray() {
-    export TOPICS="$(gettext "Index")"
-    export ADD="$(gettext "Add")"
-    export PANEL="$(gettext "Show panel")"
-    export PLAY="$(gettext "Play")"
-    export STOP="$(gettext "Stop")"
-    export QUIT="$(gettext "Salir")"
-    export DTEMP="$DT/"
+    [ ! -e "$HOME/.config/idiomind/4.cfg" ] && \
+    touch "$HOME/.config/idiomind/4.cfg"
+    export lbl1="$(gettext "Add")"
+    export lbl2="$(gettext "Play")"
+    export lbl3="$(gettext "Stop")"
+    export lbl4="$(gettext "Index")"
+    export lbl5="$(gettext "Options")"
+    export lbl6="$(gettext "Show panel")"
+    export lbl7="$(gettext "Quit")"
+    export dirt="$DT/"
     python <<PY
 import time
 import os
@@ -634,18 +637,19 @@ import signal
 import appindicator
 icon = '/usr/share/idiomind/images/logo.png'
 HOME = os.getenv('HOME')
-add = os.environ['ADD']
-play = os.environ['PLAY']
-stop = os.environ['STOP']
-topics = os.environ['TOPICS']
-panel = os.environ['PANEL']
-quit = os.environ['QUIT']
+add = os.environ['lbl1']
+play = os.environ['lbl2']
+stop = os.environ['lbl3']
+topics = os.environ['lbl4']
+options = os.environ['lbl5']
+panel = os.environ['lbl6']
+quit = os.environ['lbl7']
 class IdiomindIndicator:
     def __init__(self):
         self.indicator = appindicator.Indicator(icon, icon, appindicator.CATEGORY_APPLICATION_STATUS)
         self.indicator.set_status(appindicator.STATUS_ACTIVE)
         self.cfg = os.getenv('HOME') + '/.config/idiomind/4.cfg'
-        self.playlck = os.environ['DTEMP'] + 'playlck'
+        self.playlck = os.environ['dirt'] + 'playlck'
         self.menu_items = []
         self.stts = 1
         self.change_label()
@@ -710,6 +714,9 @@ class IdiomindIndicator:
         item = self.create_menu_label(topics)
         item.connect("activate", self.on_Topics_click)
         popup_menu.append(item)
+        item = self.create_menu_label(options)
+        item.connect("activate", self.on_Options_click)
+        popup_menu.append(item)
         item = self.create_menu_label(panel)
         item.connect("activate", self.on_Panel_click)
         popup_menu.append(item)
@@ -727,6 +734,8 @@ class IdiomindIndicator:
         os.system("/usr/share/idiomind/add.sh new_items &")
     def on_Topics_click(self, widget):
         os.system("/usr/share/idiomind/chng.sh &")
+    def on_Options_click(self, widget):
+        os.system("/usr/share/idiomind/cnfg.sh &")
     def on_Panel_click(self, widget):
         os.system("/usr/share/idiomind/main.sh panel &")
     def on_play(self, widget):
@@ -743,7 +752,7 @@ class IdiomindIndicator:
     def on_Topic_Changed(self, filemonitor, file, other_file, event_type):
         if event_type == gio.FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
             self._on_menu_update()
-    def on_play_Changed(self, filemonitor, file2, other_file, event_type):
+    def on_Play_Changed(self, filemonitor, file2, other_file, event_type):
         if event_type == gio.FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
             self._on_menu_update()
 if __name__ == "__main__":
@@ -754,8 +763,7 @@ if __name__ == "__main__":
     monitor.connect("changed", i.on_Topic_Changed)
     file2 = gio.File(i.playlck)
     monitor2 = file2.monitor_file()
-    monitor2.connect("changed", i.on_play_Changed)
-    
+    monitor2.connect("changed", i.on_Play_Changed)
     gtk.main()
 PY
 return 0

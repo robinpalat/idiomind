@@ -470,7 +470,6 @@ ipanel() {
 }
 
 idiomind_start() {
-
     if [ ! -d "$DT" ]; then 
         new_session; cu=TRUE
     fi
@@ -494,7 +493,7 @@ idiomind_start() {
     "$DS/ifs/tls.sh" a_check_updates; fi ) &
     
     if [[ `grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg"` = TRUE ]] \
-    && [ ! -e /tmp/.clipw ]; then
+    && [ ! -e $DT/clipw ]; then
         sed -i "s/clipw=.*/clipw=\"FALSE\"/g" "$DC_s/1.cfg"
     fi
     

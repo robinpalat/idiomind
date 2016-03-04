@@ -2,11 +2,12 @@
 # -*- ENCODING: UTF-8 -*-
 
 id=$(xinput --list |grep -i -m 1 'mouse' |grep -o 'id=[0-9]\+' |grep -o '[0-9]\+')
-echo $$ > /tmp/.clipw
+DT="/tmp/.idiomind-$USER"
+echo $$ > $DT/clipw
 
 cbwatch() {
     while [ 1 ]; do
-        [ ! -f /tmp/.clipw ] && break
+        [ ! -e $DT/clipw ] && break
         xclip -i /dev/null
         sleep 0.5
         if [ -n "$(xclip -selection primary -o)" ]; then

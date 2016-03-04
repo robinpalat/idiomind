@@ -17,9 +17,8 @@ on_quit() {
     kill -9 $(pgrep -f "yad --text-info ") &
     kill -9 $(pgrep -f "yad --form ") &
     kill -9 $(pgrep -f "yad --notebook ") & fi
-    if [ -f /tmp/.clipw ]; then
-        ( sleep 1; notify-send "$(gettext "Clipboard watcher stopped")" -t 4000 ) &
-        kill "$(< /tmp/.clipw)"; rm -f /tmp/.clipw; fi
+    if [ -e $DT/clipw ]; then
+        kill "$(< $DT/clipw)"; rm -f $DT/clipw; fi
     if [ "$(< $DT/playlck)" != 0 ]; then
         if ps -A |pgrep -f "mplayer"; then killall mplayer & fi
         echo 0 > "$DT/playlck"

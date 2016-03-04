@@ -147,9 +147,9 @@ config_dlg() {
         while [ ${n} -le 17 ]; do
             val=$(cut -d "|" -f$n < "$cnf1")
             if [ -n "$val" ]; then
-            sed -i "s/${sets[$v]}=.*/${sets[$v]}=\"$val\"/g" "$DC_s/1.cfg"
-            if [ ${v} = 5 ]; then [ "$val" = FALSE ] && CW=0 || CW=1; fi
-            ((v=v+1)); fi
+                sed -i "s/${sets[$v]}=.*/${sets[$v]}=\"$val\"/g" "$DC_s/1.cfg"
+                ((v=v+1))
+            fi
             ((n=n+1))
         done
         val=$(cut -d "|" -f18 < "$cnf1")
@@ -162,10 +162,11 @@ config_dlg() {
         [[ "$val" != "$intrf" ]] && \
         sed -i "s/${sets[12]}=.*/${sets[12]}=\"$val\"/g" "$DC_s/1.cfg"
         
-        if [ ${CW} = 0 -e /tmp/.clipw ]; then
-        kill $(cat /tmp/.clipw); rm -f /tmp/.clipw
-        elif [ ${CW} = 1 -a ! -e /tmp/.clipw ]; then
-        "$DS/ifs/mods/clipw.sh" & fi
+        if [[ $(grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]] && [ ! -e $DT/clipw ]; then
+            "$DS/ifs/mods/clipw.sh" &
+        else 
+            if [ -e $DT/clipw ]; then kill $(cat $DT/clipw); rm -f $DT/clipw; fi
+        fi
 
         [ ! -d  "$HOME/.config/autostart" ] \
         && mkdir "$HOME/.config/autostart"
