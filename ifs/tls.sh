@@ -619,7 +619,7 @@ PY
 itray() {
     export TOPICS="$(gettext "Topics")"
     export ADD="$(gettext "Add")"
-    export PANEL="$(gettext "Show Panel")"
+    export PANEL="$(gettext "Show panel")"
     export PLAY="$(gettext "Play")"
     export STOP="$(gettext "Stop")"
     export QUIT="$(gettext "Salir")"
@@ -641,7 +641,6 @@ topics = os.environ['TOPICS']
 panel = os.environ['PANEL']
 quit = os.environ['QUIT']
 class IdiomindIndicator:
-    
     def __init__(self):
         self.indicator = appindicator.Indicator(icon, icon, appindicator.CATEGORY_APPLICATION_STATUS)
         self.indicator.set_status(appindicator.STATUS_ACTIVE)
@@ -651,7 +650,6 @@ class IdiomindIndicator:
         self.stts = 1
         self.change_label()
         self._on_menu_update()
-        
     def _on_menu_update(self):
         time.sleep(0.5)
         if os.path.exists(self.playlck):
@@ -665,12 +663,10 @@ class IdiomindIndicator:
         else:
             self.stts = 1
         self.change_label()
-    
     def create_menu_label(self, label):
         item = gtk.ImageMenuItem()
         item.set_label(label)
         return item
-
     def create_menu_icon(self, label, icon_name):
         image = gtk.Image()
         image.set_from_icon_name(icon_name, 24)
@@ -679,7 +675,6 @@ class IdiomindIndicator:
         item.set_image(image)
         item.set_always_show_image(True)
         return item
-
     def make_menu_items(self):
         menu_items = []
         menu_items.append((add, self.on_Add_click))
@@ -688,7 +683,6 @@ class IdiomindIndicator:
         else:
             menu_items.append((play, self.on_play))
         return menu_items
-        
     def change_label(self):
         menu_items = self.make_menu_items()
         popup_menu = gtk.Menu()
@@ -713,9 +707,9 @@ class IdiomindIndicator:
             popup_menu.append(item)
         item = gtk.SeparatorMenuItem()
         popup_menu.append(item)
-        item = self.create_menu_label(topics)
-        item.connect("activate", self.on_Topics_click)
-        popup_menu.append(item)
+        #item = self.create_menu_label(topics)
+        #item.connect("activate", self.on_Topics_click)
+        #popup_menu.append(item)
         item = self.create_menu_label(panel)
         item.connect("activate", self.on_Panel_click)
         popup_menu.append(item)
@@ -727,7 +721,6 @@ class IdiomindIndicator:
         popup_menu.show_all()
         self.indicator.set_menu(popup_menu)
         self.menu_items = menu_items
-
     def on_Home(self, widget):
         os.system("idiomind topic &")
     def on_Add_click(self, widget):
@@ -753,7 +746,6 @@ class IdiomindIndicator:
     def on_play_Changed(self, filemonitor, file2, other_file, event_type):
         if event_type == gio.FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
             self._on_menu_update()
-
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, lambda signal, frame: gtk.main_quit())
     i = IdiomindIndicator()

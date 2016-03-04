@@ -12,7 +12,7 @@ if [[ ${1} = 0 ]]; then
             n="$(grep -oP '(?<=ntosd=\").*(?=\")' "${cfg}")"
             l="$(grep -oP '(?<=loop=\").*(?=\")' "${cfg}")"
             rw="$(grep -oP '(?<=rword=\").*(?=\")' "${cfg}")"
-            [ ! -e "$DT"/playlck ] && > "$DT"/playlck
+            [ ! -e "$DT"/playlck ] && echo 0 > "$DT"/playlck
 
             if [ ${n} != TRUE -a ${a} != TRUE -a ${stnrd} = 1 ]; then a=TRUE; fi
             if ! grep TRUE <<<"$n$w$s$m$p$ne$se">/dev/null 2>&1; then

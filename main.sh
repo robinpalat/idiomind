@@ -4,7 +4,7 @@
 #  Author: Robin Palatnik
 #  Email: robinpalat@users.sourceforge.net
 #  Web site: https://idiomind.sourceforge.net
-#  Date: 2016/02/00
+#  Date: 2016/02
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -442,9 +442,7 @@ ipanel() {
             sed -i "s/.*/\"${cpost}\"/g" "$DC_s/5.cfg"; spost=${cpost}
             fi
         done
-    }
-    
-    if ! [[ ${x} =~ $numer ]]; then x=100; y=100; fi
+    } >/dev/null 2>&1
     
     if [ -e "$DC_s/5.cfg" ]; then
         geom=$(grep -o \"[^\"]* "$DC_s/5.cfg" |grep -o '[^"]*$')
@@ -454,6 +452,7 @@ ipanel() {
         geom="140x190-${x}-${y}"
         echo -e "\"$geom\"" > "$DC_s/5.cfg"
     fi
+    if ! [[ ${x} =~ $numer ]]; then x=100; y=100; fi
     
     ( yad --fixed --form --title="Idiomind" \
     --name=Idiomind --class=Idiomind \

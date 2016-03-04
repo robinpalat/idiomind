@@ -409,18 +409,11 @@ function process() {
     else mv "$DT_r/sntsls_" "$DT_r/sntsls"; fi
     
     sed -i '/^$/d' "$DT_r/sntsls"
-    chk=`tr -s '\n' ' ' < "$DT_r/sntsls" |wc -c`
-    info="-$((200-ns))"
 
     if [ -z "$(< "$DT_r/sntsls")" ]; then
         msg " $(gettext "Failed to get text.")\n" dialog-information "$(gettext "Information")"
         cleanups "$DT_r" "$DT/.n_s_pr" "$slt" & exit 1
-    
-    elif [[ ${chk} -le 180 ]]; then
-        "$DS/add.sh" new_items "" 2 "$(tr -s '\n' ' ' < "$DT_r/sntsls")"
-        cleanups "$DT_r" "$DT/.n_s_pr" "$slt" & exit 1
-    
-    elif [[ ${chk} -gt 180 ]]; then
+    else
         slt=$(mktemp $DT/slt.XXXX.x)
         xclip -i /dev/null
         tpcs="$(grep -vFx "${tpe}" "$DM_tl/.share/2.cfg" |tr "\\n" '!' |sed 's/\!*$//g')"
@@ -694,13 +687,15 @@ new_items() {
     [ -d "${2}" ] && DT_r="${2}"
     [ -n "${5}" ] && srce="${5}" || srce=""
     
-    if [ ${#trgt} -gt 180 ]; then process; fi
+    if [ `wc -c <<<"${trgt}"` -le 180 ] && \
+    [ `echo -e "${trgt}" |wc -l` -gt 2 ]; then process & return; fi
+    if [ ${#trgt} -gt 180 ]; then process & return; fi
 
     [ -e "$DT_r/ico.jpg" ] && img="$DT_r/ico.jpg" || img="$DS/images/nw.png"
     
     tpcs="$(grep -vFx "${tpe}" "$DM_tl/.share/2.cfg" |tr "\\n" '!' |sed 's/\!*$//g')"
     [ -n "$tpcs" ] && e='!'
-    
+    eturn
     if [[ ${trans} = TRUE ]]; then
         lzgpr="$(dlg_form_1)"; ret=$?
         trgt=$(cut -d "|" -f1 <<<"${lzgpr}")

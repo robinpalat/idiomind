@@ -251,10 +251,14 @@ function clean_3() {
 }  
 
 function clean_4() {
-    if [ `wc -c <<<"${1}"` -lt 180 ]; then
+    if [ `wc -c <<<"${1}"` -le 180 ] && \
+    [ `echo -e "${1}" |wc -l` -gt 2 ]; then
+    echo "${1}" | tr -d '*/"' |tr -s '&:|{}[]<>+' ' ' \
+    |sed 's/ — / /;s/--/ /g; /^$/d; s/ \+/ /g;s/ʺͶ//g'
+    elif [ `wc -c <<<"${1}"` -le 180 ]; then
     echo "${1}" |sed ':a;N;$!ba;s/\n/ /g' \
     |tr -d '*/"' |tr -s '&:|{}[]<>+' ' ' \
-    |sed 's/ — / /;s/--/ /g; /^$/d; s/ \+/ /gs/ʺͶ//g'
+    |sed 's/ — / /;s/--/ /g; /^$/d; s/ \+/ /g;s/ʺͶ//g'
     else
     echo "${1}" |sed ':a;N;$!ba;s/\n/\__/g' \
     |tr -d '*/"' |tr -s '&:|{}[]<>+' ' ' \
@@ -289,7 +293,6 @@ function clean_6() {
     |sed 's/\(\? [A-Z][^ ]\)/\?\n\1/g; s/\? //g' \
     |sed 's/\(\! [A-Z][^ ]\)/\!\n\1/g; s/\! //g' \
     |sed 's/\(\… [A-Z][^ ]\)/\…\n\1/g; s/\… //g'
-    
 }
 
 function clean_7() {
@@ -584,7 +587,7 @@ function dlg_checklist_1() {
 }
 
 function dlg_text_info_1() {
-    cat "${1}" | awk '{print "\n\n"$0}' | \
+    cat "${1}" | awk '{print "\n"$0}' | \
     yad --text-info --title="$(gettext "Edit")" \
     --name=Idiomind --class=Idiomind \
     --editable \
