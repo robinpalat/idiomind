@@ -1,8 +1,11 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
-
-info="$(gettext "Please check about voice synthesizer configuration in the settings dialog.")"
 source "$DS/default/sets.cfg"
+
+msg_err1() {
+    local info="$(gettext "Please check about voice synthesizer configuration in the settings dialog.")"
+    source "$DS/ifs/mods/cmns.sh"; msg "$info" error Info
+}
 
 play_word() {
     w="$(sed 's/<[^>]*>//g' <<<"${2}")"
@@ -11,10 +14,7 @@ play_word() {
     elif [ -f "${DM_tlt}/$3.mp3" ]; then
         play "${DM_tlt}/$3.mp3" &
     elif [ -n "$synth" ]; then
-        echo "${w}." |$synth
-        if [ $? != 0 ]; then
-            source "$DS/ifs/mods/cmns.sh"; msg "$info" error Info
-        fi
+        echo "${w}." |${synth}; [ $? != 0 ] && msg_err1
     else
         echo "${w}." |espeak -v ${lang[$lgtl]} -s 110 -b 1 -p 60 &
     fi
@@ -25,13 +25,9 @@ play_sentence() {
     if [ -f "${DM_tlt}/$2.mp3" ]; then
         play "${DM_tlt}/$2.mp3" &
     elif [ -n "$synth" ]; then
-        sed 's/<[^>]*>//g' <<<"${trgt}." |$synth
-        if [ $? != 0 ]; then
-            source "$DS/ifs/mods/cmns.sh"; msg "$info" error Info
-        fi
+        sed 's/<[^>]*>//g' <<<"${trgt}." |${synth}; [ $? != 0 ] && msg_err1
     else
-        sed 's/<[^>]*>//g' <<<"${trgt}." \
-        |espeak -v ${lang[$lgtl]} -s 120 -b 1 -p 60 &
+        sed 's/<[^>]*>//g' <<<"${trgt}." |espeak -v ${lang[$lgtl]} -s 120 -b 1 -p 60 &
     fi
 } >/dev/null 2>&1
 
@@ -41,13 +37,9 @@ play_file() {
         mplayer "${2}" -noconsolecontrols -title "${3}"; else
         mplayer "${2}" -novideo -noconsolecontrols -title "${3}"; fi
     elif [ -n "$synth" ]; then
-        sed 's/<[^>]*>//g' <<<"${3}." |$synth
-        if [ $? != 0 ]; then
-            source "$DS/ifs/mods/cmns.sh"; msg "$info" error Info
-        fi
+        sed 's/<[^>]*>//g' <<<"${3}." |${synth}; [ $? != 0 ] && msg_err1
     else
-        sed 's/<[^>]*>//g' <<<"${3}." \
-        |espeak -v ${lang[$lgtl]} -s 120 -b 1 -p 60
+        sed 's/<[^>]*>//g' <<<"${3}." |espeak -v ${lang[$lgtl]} -s 120 -b 1 -p 60
     fi
 } >/dev/null 2>&1
 
@@ -68,6 +60,7 @@ play_list() {
     in2="$(grep -Fxvf "${DC_tlt}/2.cfg" "${DC_tlt}/6.cfg" |wc -l)"
     in3="$(grep -Fxvf "${DC_tlt}/4.cfg" "${DC_tlt}/practice/log3" |wc -l)"
     [ ! -d "$DT" ] && mkdir "$DT"; cd "$DT"
+    [ ! -e $DT/playlck ] && echo 0 > $DT/playlck
 
     if [ ${cfg} = 1 ]; then
         n=0
@@ -105,7 +98,7 @@ play_list() {
     }
 
     btn1="$(gettext "Play"):0"
-    if [ "$(< $DT/playlck)" = 0 ]; then
+    if [ "$(< $DT/playlck)" = 0  ]; then
         btn2="--center"
         title="$(gettext "Play")"
         [ ${mode} -gt 1 -a -n "${tpc}" ] \

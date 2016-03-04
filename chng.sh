@@ -15,7 +15,7 @@ if [[ ${1} = 0 ]]; then
             [ ! -e "$DT"/playlck ] && echo 0 > "$DT"/playlck
 
             if [ ${n} != TRUE -a ${a} != TRUE -a ${stnrd} = 1 ]; then a=TRUE; fi
-            if ! grep TRUE <<<"$n$w$s$m$p$ne$se">/dev/null 2>&1; then "$DS"/stop.sh 2 & exit 1; fi
+            if ! grep TRUE <<<"$n$w$s$m$p">/dev/null 2>&1; then "$DS"/stop.sh 2 & exit 1; fi
             if ! [[ ${l} =~ $numer ]]; then l=1; fi
             if ! [[ ${rw} =~ $numer ]]; then rw=0; fi
 
@@ -34,7 +34,8 @@ if [[ ${1} = 0 ]]; then
                 done )
             fi
         else
-            notify-send -i "${icon}" "${trgt}" "${srce}" -t 10000 &
+            echo "$(gettext "Playing: ") $trgt" > "$DT/playlck"
+            [ $mime = 1 ] && notify-send -i "${icon}" "${trgt}" "${srce}" -t 10000 &
             "$DS/play.sh" play_file "${file}" "${trgt}"
         fi
         [ ${n} = TRUE -a ${l} -lt 10 ] && l=10

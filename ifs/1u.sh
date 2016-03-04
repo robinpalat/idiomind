@@ -10,8 +10,8 @@ lang1="${!lang[@]}"; declare lt=( $lang1 )
 lang2="${!slang[@]}"; declare ls=( $lang2 )
 text="<span font_desc='Free Sans Bold 14'>$(gettext "Welcome") ${USER^} </span>
 \n      $(gettext "To get started, please configure the following:")\n\n"
-sets=( 'gramr' 'wlist' 'trans' 'dlaud' 'ttrgt' \
-'clipw' 'stsks' 'langt' 'langs' 'synth' 'txaud' 'intrf' )
+sets=( 'gramr' 'wlist' 'trans' 'dlaud' 'ttrgt' 'clipw' 'itray' 'stsks' \
+'langt' 'langs' 'synth' 'txaud' 'intrf' )
 
 if [[ ! $(which yad) ]]; then
 zenity --info --text="$(gettext "Oops. sorry! To run idiomind we need to use a GUI output with yad.\nPlease install [yad], you can use:")
@@ -131,7 +131,7 @@ elif [ $ret -eq 0 ]; then
     if echo "$target$source" |grep -oE 'Chinese|Japanese|Russian'; then _info; fi
 
     > "$DC_s/1.cfg"
-    for n in {0..11}; do 
+    for n in {0..12}; do
         echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"; done
     touch "$DC_s/4.cfg"
     echo -e "usrid=\"\"\npassw=\"\"\ncntct=\"\"" > "$DC_s/3.cfg"

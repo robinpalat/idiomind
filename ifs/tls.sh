@@ -373,7 +373,7 @@ first_run() {
         --button="$(gettext "OK")":0
         if [ $? = 1 ]; then rm -f "${file}" "${file}".p; fi
     }
-    NOTE2="$(gettext "* You can move any item by dragging and dropping or double click to edit it.\n* If you change the text of an item, its audio file can be overwritten by another new file, to avoid this you can edit it individually through its edit dialog.\nClose and reopen the main window to see any changes.")"
+    NOTE2="$(gettext " - You can move any item by dragging and dropping or double click to edit it.\n - If you change the text of an item, its audio file can be overwritten by another new file, to avoid this you can edit it individually through its edit dialog.\n - Close and reopen the main window to see any changes.")"
     NOTE3="$(gettext "To start adding notes you need to have a Topic.\nTo create one you can click on the New button...")"
 
     if [[ ${2} = edit_list ]]; then
@@ -621,11 +621,12 @@ itray() {
     touch "$HOME/.config/idiomind/4.cfg"
     export lbl1="$(gettext "Add")"
     export lbl2="$(gettext "Play")"
-    export lbl3="$(gettext "Stop")"
-    export lbl4="$(gettext "Index")"
-    export lbl5="$(gettext "Options")"
-    export lbl6="$(gettext "Show panel")"
-    export lbl7="$(gettext "Quit")"
+    export lbl3="$(gettext "Stop playback")"
+    export lbl4="$(gettext "Next")"
+    export lbl5="$(gettext "Index")"
+    export lbl6="$(gettext "Options")"
+    export lbl7="$(gettext "Show panel")"
+    export lbl8="$(gettext "Quit")"
     export dirt="$DT/"
     python <<PY
 import time
@@ -640,10 +641,11 @@ HOME = os.getenv('HOME')
 add = os.environ['lbl1']
 play = os.environ['lbl2']
 stop = os.environ['lbl3']
-topics = os.environ['lbl4']
-options = os.environ['lbl5']
-panel = os.environ['lbl6']
-quit = os.environ['lbl7']
+next = os.environ['lbl4']
+topics = os.environ['lbl5']
+options = os.environ['lbl6']
+panel = os.environ['lbl7']
+quit = os.environ['lbl8']
 class IdiomindIndicator:
     def __init__(self):
         self.indicator = appindicator.Indicator(icon, icon, appindicator.CATEGORY_APPLICATION_STATUS)
@@ -699,10 +701,9 @@ class IdiomindIndicator:
             popup_menu.append(item)
         try:
             m = open(self.cfg).readlines()
-            menutopic = m
-        except IOError:
-            pass
-        for bm in menutopic:
+        except:
+            m = []
+        for bm in m:
             label = bm.rstrip('\n')
             if not label:
                 label = ""
@@ -746,6 +747,8 @@ class IdiomindIndicator:
         self.stts = 1
         os.system("/usr/share/idiomind/stop.sh 2 &")
         self._on_menu_update()
+    def on_next(self, widget):
+        os.system("/usr/share/idiomind/play.sh skip &")
     def on_Quit_click(self, widget):
         os.system("/usr/share/idiomind/stop.sh 1 &")
         gtk.main_quit()

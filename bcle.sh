@@ -20,6 +20,5 @@ if [[ "$rplay" = TRUE ]]; then
     done
 else
     "$DS/chng.sh" 0
-    #notify-send "$(gettext "Playback stopped")" -t 4000
     echo 0 > "$DT/playlck" & exit 0
 fi
