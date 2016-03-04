@@ -617,7 +617,7 @@ PY
 }
 
 itray() {
-    export TOPICS="$(gettext "Topics")"
+    export TOPICS="$(gettext "Index")"
     export ADD="$(gettext "Add")"
     export PANEL="$(gettext "Show panel")"
     export PLAY="$(gettext "Play")"

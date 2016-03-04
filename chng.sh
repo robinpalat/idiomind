@@ -15,16 +15,13 @@ if [[ ${1} = 0 ]]; then
             [ ! -e "$DT"/playlck ] && echo 0 > "$DT"/playlck
 
             if [ ${n} != TRUE -a ${a} != TRUE -a ${stnrd} = 1 ]; then a=TRUE; fi
-            if ! grep TRUE <<<"$n$w$s$m$p$ne$se">/dev/null 2>&1; then
-            "$DS"/stop.sh 2 & exit 1; fi
+            if ! grep TRUE <<<"$n$w$s$m$p$ne$se">/dev/null 2>&1; then "$DS"/stop.sh 2 & exit 1; fi
             if ! [[ ${l} =~ $numer ]]; then l=1; fi
             if ! [[ ${rw} =~ $numer ]]; then rw=0; fi
 
             if [ ${n} = TRUE ]; then
-                if ! ps -A |pgrep -f "notify-osd"; then
-                    notify-send -i "${icon}" "${trgt}" "${srce}"
-                fi
-            fi &
+                notify-send -i "${icon}" "${trgt}" "${srce}" &
+            fi
             if [ ${a} = TRUE ]; then sleep 0.5; sle=0.5; spn=1
                 [ ${type} = 1 -a ${rw} = 1 ] && spn=3
                 [ ${type} = 2 -a ${rw} = 2 ] && spn=2 && sle=2.5
@@ -59,7 +56,8 @@ if [[ ${1} = 0 ]]; then
             export trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${_item}")"
             srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${_item}")"
             id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${_item}")"
-            img="${DM_tls}/images/${trgt,,}-0.jpg"; [ -f "$img" ] && icon="$img"
+            [ -e "${DM_tlt}/images/${trgt,,}.jpg" ] && icon="${DM_tlt}/images/${trgt,,}.jpg"
+            [ -e "${DM_tls}/images/${trgt,,}-0.jpg" ] &&  icon="${DM_tls}/images/${trgt,,}-0.jpg"
             [ -z "$trgt" ] && trgt="$item"
             
             if [ -f "${DM_tlt}/$id.mp3" ]; then
