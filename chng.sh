@@ -99,7 +99,7 @@ elif [[ ${1} != 0 ]]; then
         ( "$DS/ifs/tls.sh" a_check_updates ) &
         idiomind -s; sleep 1
     fi
-    linkc="http://community.idiomind.net/${lgtl,,}"
+    linkc="http://idiomind.net/${lgtl,,}"
     remove_d() {
         ins="$(cd "/usr/share/idiomind/addons/"
         set -- */; printf "%s\n" "${@%/}")"
