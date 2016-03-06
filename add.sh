@@ -455,7 +455,7 @@ function process() {
         "$DT_r/addw" "$DT_r/wrds"
         
         if [[ -n "$(< "$DT_r/slts")$(< "$DT_r/wrds")" ]]; then
-            number_items=$(($(wc -l < "$DT_r/slts")+$(wc -l < "$DT_r/wrds")))
+            number_items=$(($(egrep -cv '#|^$' "$DT_r/slts")+$(egrep -cv '#|^$' "$DT_r/wrds")))
             ( sleep 1; notify-send -i idiomind \
             "$(gettext "Adding $number_items notes")" \
             "$(gettext "Please wait till the process is completed")" )
@@ -695,7 +695,7 @@ new_items() {
     
     tpcs="$(grep -vFx "${tpe}" "$DM_tl/.share/2.cfg" |tr "\\n" '!' |sed 's/\!*$//g')"
     [ -n "$tpcs" ] && e='!'
-    eturn
+
     if [[ ${trans} = TRUE ]]; then
         lzgpr="$(dlg_form_1)"; ret=$?
         trgt=$(cut -d "|" -f1 <<<"${lzgpr}")
