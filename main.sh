@@ -4,7 +4,6 @@
 #  Author: Robin Palatnik
 #  Email: robinpalat@users.sourceforge.net
 #  Web site: https://idiomind.sourceforge.net
-#  Date: 2016/02
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -54,7 +53,7 @@ function new_session() {
     msg "$(gettext "Fail on try write in /tmp")\n" error "$(gettext "Information")" & exit 1; fi
     
     f_lock "$DT/ps_lk"
-    # run tasks
+    # run scripts
     for strt in "$DS/ifs/mods/start"/*; do
     ( sleep 20 && "${strt}" ); done &
     
@@ -492,13 +491,13 @@ idiomind_start() {
     ( if [[ "${cu}" = TRUE ]]; then
     "$DS/ifs/tls.sh" a_check_updates; fi ) &
     
-    if [[ `grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg"` = TRUE ]] \
-    && [ ! -e $DT/clipw ]; then
+    if [[ `grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg"` = TRUE ]] && \
+    [ ! -e $DT/clipw ]; then
         sed -i "s/clipw=.*/clipw=\"FALSE\"/g" "$DC_s/1.cfg"
     fi
     
-    tray=$(grep -oP '(?<=itray=\").*(?=\")' "$DC_s/1.cfg")
-    if [[ ${tray} = TRUE ]] && [[ -z $(pgrep -f "/usr/share/idiomind/ifs/tls.sh itray") ]]; then
+    if [[ $(grep -oP '(?<=itray=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]] && \
+    [[ -z $(pgrep -f "/usr/share/idiomind/ifs/tls.sh itray") ]]; then
         $DS/ifs/tls.sh itray &
     else
         ipanel

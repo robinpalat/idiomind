@@ -455,9 +455,9 @@ function process() {
         "$DT_r/addw" "$DT_r/wrds"
         
         if [[ -n "$(< "$DT_r/slts")$(< "$DT_r/wrds")" ]]; then
-            number_of_items=$(($(wc -l < "$DT_r/slts")+$(wc -l < "$DT_r/wrds")))
+            number_items=$(($(wc -l < "$DT_r/slts")+$(wc -l < "$DT_r/wrds")))
             ( sleep 1; notify-send -i idiomind \
-            "$(gettext "Adding $number_of_items notes")" \
+            "$(gettext "Adding $number_items notes")" \
             "$(gettext "Please wait till the process is completed")" )
         else
             cleanups "$DT_r" "$DT/.n_s_pr" "$slt" & exit 1
