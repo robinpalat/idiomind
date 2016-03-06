@@ -2,8 +2,7 @@
 
 if [[ "$1" = dlgcnfg ]]; then
 source "$DS/ifs/mods/cmns.sh"
-msg "$(gettext "Does not need configuration")\n" info "$4"
-
+msg "$(gettext "Does not need configuration")\n" dialog-information "$4"
 else
 [[ ${#word} -lt 5 ]] && s="${word:0:5}_" || s="${word:0:5}"
 export LINK="http://www.macmillandictionary.com/media/british/uk_pron/${word:0:1}/${word:0:3}/$s/${word}_British_English_pronunciation.mp3"

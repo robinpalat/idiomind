@@ -304,7 +304,7 @@ _quick_help() {
     --uri="${_url}" \
     --window-icon=idiomind \
     --fixed --on-top --mouse \
-    --width=620 --height=580 --borders=5 \
+    --width=620 --height=520 --borders=5 \
     --button="$(gettext "Close")":1 &
 } >/dev/null 2>&1
 
@@ -707,7 +707,7 @@ class IdiomindIndicator:
             label = bm.rstrip('\n')
             if not label:
                 label = ""
-            item = self.create_menu_icon(label, "gtk-home")
+            item = self.create_menu_icon(label, "go-home")
             item.connect("activate", self.on_Home)
             popup_menu.append(item)
         item = gtk.SeparatorMenuItem()
