@@ -22,7 +22,7 @@ Icon=idiomind
 StartupWMClass=Idiomind"
 
 sets=( 'gramr' 'wlist' 'trans' 'dlaud' 'ttrgt' 'clipw' 'itray' 'stsks' \
-'langt' 'langs' 'synth' 'txaud' 'intrf' )
+'langt' 'langs' 'intrf' 'synth' 'txaud' )
 
 confirm() {
     yad --form --title="$(gettext "Confirm")" \
@@ -69,15 +69,15 @@ set_lang() {
 config_dlg() {
     n=0
     if [ "$cfg" = 1 ]; then
-        while [ ${n} -lt 12 ]; do
+        while [ ${n} -lt 13 ]; do
             get="${sets[$n]}"
             val=$(grep -o "$get"=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
             declare "${sets[$n]}"="$val"
-            ((n=n+1))
+            let n++
         done
     else
         n=0; > "$DC_s/1.cfg"
-        for n in {0..12}; do 
+        for n in {0..13}; do 
         echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"; done
     fi
 
@@ -116,11 +116,12 @@ config_dlg() {
     --field=":LBL" " " \
     --field="$(gettext "I'm learning")":CB "$(gettext ${lgtl})$list1" \
     --field="$(gettext "My language is")":CB "$(gettext ${lgsl})$list2" \
+    --field="$(gettext "Display in")":CB "$lst" \
     --field=" :LBL" " " \
+    --field="$(gettext "Text to Speech")\t":LBL " " \
     --field=":LBL" " " \
     --field="<small>$(gettext "Use this speech synthesizer instead eSpeak")</small>" "$synth" \
     --field="<small>$(gettext "Program to convert text to WAV file")</small>" "$txaud" \
-    --field="$(gettext "Display in")":CB "$lst" \
     --field=" :LBL" " " \
     --field="$(gettext "Help")":BTN "$DS/ifs/tls.sh help" \
     --field="$(gettext "Report a problem")":BTN "$DS/ifs/tls.sh fback" \
@@ -152,15 +153,12 @@ config_dlg() {
             fi
             ((n=n+1))
         done
-        val=$(cut -d "|" -f18 < "$cnf1")
-        [[ "$val" != "$synth" ]] && \
-        sed -i "s/${sets[10]}=.*/${sets[10]}=\"$(sed 's|/|\\/|g' <<<"$val")\"/g" "$DC_s/1.cfg"
-        val=$(cut -d "|" -f19 < "$cnf1")
-        [[ "$val" != "$txaud" ]] && \
-        sed -i "s/${sets[11]}=.*/${sets[11]}=\"$(sed 's|/|\\/|g' <<<"$val")\"/g" "$DC_s/1.cfg"
         val=$(cut -d "|" -f20 < "$cnf1")
-        [[ "$val" != "$intrf" ]] && \
-        sed -i "s/${sets[12]}=.*/${sets[12]}=\"$val\"/g" "$DC_s/1.cfg"
+        [[ "$val" != "$synth" ]] && \
+        sed -i "s/${sets[11]}=.*/${sets[11]}=\"$(sed 's|/|\\/|g' <<<"$val")\"/g" "$DC_s/1.cfg"
+        val=$(cut -d "|" -f21 < "$cnf1")
+        [[ "$val" != "$txaud" ]] && \
+        sed -i "s/${sets[12]}=.*/${sets[12]}=\"$(sed 's|/|\\/|g' <<<"$val")\"/g" "$DC_s/1.cfg"
         
         if [[ $(grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]] && [ ! -e $DT/clipw ]; then
             "$DS/ifs/mods/clipw.sh" &

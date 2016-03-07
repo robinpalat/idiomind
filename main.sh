@@ -421,7 +421,7 @@ function topic() {
     fi
 }
 
-bgroud_session() {
+bground_session() {
     
     if [ ! -e "$DT/ps_lk" -a ! -d "$DT" ]; then
         sleep 20; new_session
@@ -520,9 +520,9 @@ case "$1" in
     -s)
     new_session; idiomind ;;
     autostart)
-    bgroud_session ;;
+    bground_session ;;
     --add)
-   "$DS/add.sh" new_items "$dir" 2 "${2}" ;;
+   "$DS/add.sh" new_items "${dir}" 2 "${2}" ;;
     add)
     "$DS/add.sh" new_item "${@}" ;;
     mfeeds)

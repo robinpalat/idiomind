@@ -466,10 +466,11 @@ function voice() {
     txaud="$(grep -o txaud=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')"
     if [ -n "${txaud}" ]; then
         echo "${1}" |sed 's/<[^>]*>//g' |$txaud "$DT_r/f.wav"
-        sox "$DT_r"/*.wav "${3}"
         if [ $? != 0 ]; then
-            notify-send -i idiomind "$(gettext "Please check the speech synthesizer configuration in the preferences dialog.")" & exit 1
+            local info="$(gettext "Please check the speech synthesizer configuration in the preferences dialog.")"
+            msg "$info" error Info & exit 1
         fi
+        sox "$DT_r"/*.wav "${3}"
     else
         return 1
     fi

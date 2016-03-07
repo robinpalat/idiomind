@@ -119,8 +119,8 @@ function dlg() {
     --column="$(gettext "Enable")":CHK \
     --column="$(gettext "Resource")":TEXT \
     --column="$(gettext "Type")":TEXT \
-    --column="$(gettext "Task")                            ":TEXT \
-    --column="$(gettext "Language")          ":TEXT \
+    --column="$(gettext "Task")                                    ":TEXT \
+    --column="$(gettext "Language")                                ":TEXT \
     --button="$(gettext "Add")":2 \
     --button="$(gettext "Cancel")":1 \
     --button=OK:0 )"

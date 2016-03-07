@@ -315,7 +315,7 @@ function stats() {
         [ ! -e ${pross} ] && save_topic_stats 0
         mk_topic_stats
         rm -f "$DT/p_stats"
-        ) | progress &
+        ) | progress
     fi
     yad --html --uri="$DS/ifs/stats/1.html" \
     --title="$(gettext "Stats (Beta)")" \
