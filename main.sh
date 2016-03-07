@@ -426,6 +426,9 @@ bgroud_session() {
     if [ ! -e "$DT/ps_lk" -a ! -d "$DT" ]; then
         new_session
     fi
+    if [[ $(grep -oP '(?<=itray=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]] && \
+    [[ -z $(pgrep -f "/usr/share/idiomind/ifs/tls.sh itray") ]]; then
+    idiomind_start; fi
 }
 
 ipanel() {

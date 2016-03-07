@@ -20,6 +20,7 @@ msg "$(gettext "Words not found in the topic.")\n" error "$(gettext "Information
 fi
 
 mv -f "$file" "${1}.csv"
+chmod 664 "${1}.csv"
 cleanups "$DT/export"
 
 

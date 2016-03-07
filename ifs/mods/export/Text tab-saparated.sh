@@ -20,4 +20,5 @@ else
     msg "$(gettext "Words not found in the topic.")\n" error "$(gettext "Information")"
 fi
 mv -f "$file" "${1}.txt"
+chmod 664 "${1}.txt"
 cleanups "$DT/export"

@@ -137,4 +137,5 @@ mkhtml() {
 export f; mkhtml
 wkhtmltopdf -s A4 -O Portrait "$file" "$DT/export/tmp.pdf"
 mv -f "$DT/export/tmp.pdf" "${1}.pdf"
+chmod 664 "${1}.pdf"
 cleanups "$DT/export"
