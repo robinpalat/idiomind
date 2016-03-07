@@ -695,7 +695,7 @@ new_items() {
     
     tpcs="$(grep -vFx "${tpe}" "$DM_tl/.share/2.cfg" |tr "\\n" '!' |sed 's/\!*$//g')"
     [ -n "$tpcs" ] && e='!'
-    eturn
+
     if [[ ${trans} = TRUE ]]; then
         lzgpr="$(dlg_form_1)"; ret=$?
         trgt=$(cut -d "|" -f1 <<<"${lzgpr}")
