@@ -422,10 +422,10 @@ function topic() {
 }
 
 bgroud_session() {
-    sleep 50
+    
     if [ ! -e "$DT/ps_lk" -a ! -d "$DT" ]; then
-        new_session
-    fi
+        sleep 20; new_session
+    fi &
     if [[ $(grep -oP '(?<=itray=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]] && \
     [[ -z $(pgrep -f "/usr/share/idiomind/ifs/tls.sh itray") ]]; then
     idiomind_start; fi
