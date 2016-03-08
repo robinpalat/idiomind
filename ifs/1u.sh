@@ -11,7 +11,7 @@ lang2="${!slang[@]}"; declare ls=( $lang2 )
 text="<span font_desc='Free Sans Bold 14'>$(gettext "Welcome") ${USER^} </span>
 \n      $(gettext "To get started, please configure the following:")\n\n"
 sets=( 'gramr' 'wlist' 'trans' 'dlaud' 'ttrgt' 'clipw' 'itray' 'stsks' \
-'langt' 'langs' 'intrf' 'synth' 'txaud' )
+'langt' 'langs' 'synth' 'txaud' 'intrf' )
 
 if [[ ! $(which yad) ]]; then
 zenity --info --text="$(gettext "Oops. sorry! To run idiomind we need to use a GUI output with yad.\nPlease install [yad], you can use:")

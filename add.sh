@@ -72,14 +72,14 @@ function new_item() {
         srce=$(translate "${trgt}" auto $lgs)
         if [ $(wc -w <<<"${srce}") = 1 ]; then
             new_word
-        elif [ "$(wc -w <<<"${srce}")" -ge 1 -a ${#srce} -le 180 ]; then
+        elif [ "$(wc -w <<<"${srce}")" -ge 1 -a ${#srce} -le ${sentence_chars} ]; then
             new_sentence
         fi
     elif [ $lgt != ja -o $lgt != 'zh-cn' -o $lgt != ru ]; then
     
         if [ $(wc -w <<<"${trgt}") = 1 ]; then
             new_word
-        elif [ "$(wc -w <<<"${trgt}")" -ge 1 -a ${#trgt} -le 180 ]; then
+        elif [ "$(wc -w <<<"${trgt}")" -ge 1 -a ${#trgt} -le ${sentence_chars} ]; then
             new_sentence
         fi
     fi
@@ -378,7 +378,7 @@ function process() {
     [ -e "$DT_r/sntsls" ] && rm -f "$DT_r/sntsls"
 
     lenght() {
-        if [ $(wc -c <<<"${1}") -le 180 ]; then
+        if [ $(wc -c <<<"${1}") -le ${sentence_chars} ]; then
             echo -e "${1}" >> "$DT_r/sntsls"
         else
             echo -e "[ ... ]  ${1}" >> "$DT_r/sntsls"
@@ -510,7 +510,7 @@ function process() {
                 if [[ $(wc -l < "${DC_tlt}/0.cfg") -ge 200 ]]; then
                     echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> "$DT_r/slog"
                 else
-                    if [ ${#trgt} -ge 180 ]; then
+                    if [ ${#trgt} -ge ${sentence_chars} ]; then
                         echo -e "\n\n#$n [$(gettext "Sentence too long")] $trgt" >> "$DT_r/slog"
                     else
                         ( sentence_p "$DT_r" 1
@@ -687,9 +687,9 @@ new_items() {
     [ -d "${2}" ] && DT_r="${2}"
     [ -n "${5}" ] && srce="${5}" || srce=""
     
-    if [ `wc -c <<<"${trgt}"` -le 180 ] && \
-    [ `echo -e "${trgt}" |wc -l` -gt 2 ]; then process & return; fi
-    if [ ${#trgt} -gt 180 ]; then process & return; fi
+    if [ ${#trgt} -le ${sentence_chars} ] && \
+    [ `echo -e "${trgt}" |wc -l` -gt ${sentence_lines} ]; then process & return; fi
+    if [ ${#trgt} -gt ${sentence_chars} ]; then process & return; fi
 
     [ -e "$DT_r/ico.jpg" ] && img="$DT_r/ico.jpg" || img="$DS/images/nw.png"
     
@@ -751,7 +751,7 @@ new_items() {
         elif [[ ${#trgt} = 1 ]]; then
             process ${trgt:0:2}
 
-        elif [[ ${#trgt} -gt 180 ]]; then #TODO
+        elif [[ ${#trgt} -gt ${sentence_chars} ]]; then #TODO
             process
             
         else

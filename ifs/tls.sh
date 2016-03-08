@@ -210,7 +210,8 @@ _backup() {
     dt=$(date +%F)
     check_dir "$HOME/.idiomind/backup"
     file="$HOME/.idiomind/backup/${2}.bk"
-    if ! grep "${2}.bk" < <(cd "$HOME/.idiomind/backup"/; find . -maxdepth 1 -name '*.bk' -mtime -2); then
+    if ! grep "${2}.bk" < <(cd "$HOME/.idiomind/backup"/; \
+    find . -maxdepth 1 -name '*.bk' -mtime -2); then
         if [ -s "$DM_tl/${2}/.conf/0.cfg" ]; then
             if [ -e "${file}" ]; then
                 dt2=`grep '\----- newest' "${file}" |cut -d' ' -f3`
@@ -263,7 +264,9 @@ dlg_restfile() {
             
             "$DS/ifs/tls.sh" check_index "${2}" 1
             mode="$(< "$DM_tl/${2}/.conf/8.cfg")"
-            ! [[ ${mode} =~ $num ]] && echo 13 > "$DM_tl/${2}/.conf/8.cfg" && mode=13
+            if ! [[ ${mode} =~ $num ]]; then
+                echo 13 > "$DM_tl/${2}/.conf/8.cfg"; mode=13
+            fi
             "$DS/default/tpc.sh" "${2}" ${mode} 1 &
         fi
     else
@@ -280,7 +283,8 @@ _definition() {
     query="$(sed 's/<[^>]*>//g' <<<"${2}")"
     f="$(ls "$DC_d"/*."Link.Search definition".* |head -n1)"
     if [ -z "$f" ]; then "$DS_a/Dics/cnfg.sh" 3
-    f="$(ls "$DC_d"/*."Link.Search definition".* |head -n1)"; fi
+        f="$(ls "$DC_d"/*."Link.Search definition".* |head -n1)"
+    fi
     eval _url="$(< "$DS_a/Dics/dicts/$(basename "$f")")"
     yad --html --title="$(gettext "Definition")" \
     --name=Idiomind --class=Idiomind \
@@ -333,9 +337,10 @@ a_check_updates() {
     source "$DS/default/sets.cfg"
     [ ! -e "$DC_s/9.cfg" ] && date "+%d" > "$DC_s/9.cfg" && exit
     d1=$(< "$DC_s/9.cfg"); d2=$(date +%d)
-    if [ `sed -n 1p "$DC_s/9.cfg"` = 28 ] && [ `wc -l < "$DC_s/9.cfg"` -gt 1 ]; then
+    if [ `sed -n 1p "$DC_s/9.cfg"` = 28 ] \
+    && [ `wc -l < "$DC_s/9.cfg"` -gt 1 ]; then
         rm -f "$DC_s/9.cfg"; fi
-    [ `wc -l < "$DC_s/9.cfg"` -gt 1 ] && exit 1
+    [[ `wc -l < "$DC_s/9.cfg"` -gt 1 ]] && exit 1
     if [ ${d1} != ${d2} ]; then
     
         sleep 5; curl -v www.google.com 2>&1 | \
@@ -747,8 +752,6 @@ class IdiomindIndicator:
         self.stts = 1
         os.system("/usr/share/idiomind/stop.sh 2 &")
         self._on_menu_update()
-    def on_next(self, widget):
-        os.system("/usr/share/idiomind/play.sh skip &")
     def on_Quit_click(self, widget):
         os.system("/usr/share/idiomind/stop.sh 1 &")
         gtk.main_quit()

@@ -52,7 +52,7 @@ function dwld() {
             c_images=$(find "${tmp}" -maxdepth 5 -name '*.jpg' |wc -l)
             hfiles="$(cd "${tmp}"; ls -d ./.[^.]* |less |wc -l)"
             exfiles="$(find "${tmp}" -maxdepth 5 -perm -111 -type f |wc -l)"
-            others=$((wchfiles+wcexfiles))
+            others=$((hfiles+exfiles))
             mv -f "${tmp}/conf/info" "${DC_tlt}/info"
             check_dir "$DM_t/$langt/.share/images" "$DM_t/$langt/.share/audio"
             mv -n "${tmp}/share"/*.mp3 "$DM_t/$langt/.share/audio"/

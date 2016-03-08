@@ -251,11 +251,11 @@ function clean_3() {
 }  
 
 function clean_4() {
-    if [ `wc -c <<<"${1}"` -le 180 ] && \
-    [ `echo -e "${1}" |wc -l` -gt 2 ]; then
+    if [ `wc -c <<<"${1}"` -le ${sentence_chars} ] && \
+    [ `echo -e "${1}" |wc -l` -gt ${sentence_lines} ]; then
     echo "${1}" | tr -d '*/"' |tr -s '&:|{}[]<>+' ' ' \
     |sed 's/ — / /;s/--/ /g; /^$/d; s/ \+/ /g;s/ʺͶ//g'
-    elif [ `wc -c <<<"${1}"` -le 180 ]; then
+    elif [ `wc -c <<<"${1}"` -le ${sentence_chars} ]; then
     echo "${1}" |sed ':a;N;$!ba;s/\n/ /g' \
     |tr -d '*/"' |tr -s '&:|{}[]<>+' ' ' \
     |sed 's/ — / /;s/--/ /g; /^$/d; s/ \+/ /g;s/ʺͶ//g'
@@ -573,7 +573,7 @@ function dlg_checklist_1() {
     list() {
         echo "${1}" | while read -r word; do
         if [ -n "$word" ]; then
-        echo; echo "<span font_desc='Droid Sans 12'>$word</span>"
+            echo; echo "<span font_desc='Droid Sans 12'>$word</span>"
         fi
         done
     }
