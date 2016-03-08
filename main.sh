@@ -525,7 +525,7 @@ case "$1" in
    "$DS/add.sh" new_items "${dir}" 2 "${2}" ;;
     add)
     "$DS/add.sh" new_item "${@}" ;;
-    mfeeds)
+    feeds)
     "$DS/mngr.sh" edit_feeds "${tpc}" ;;
     panel)
     ipanel ;;

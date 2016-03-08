@@ -25,9 +25,9 @@ function dlg_form_1() {
     --field="$(gettext "Definition")":FBTN "${cmd_def}" \
     --button="$(gettext "Image")":"${cmd_image}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \
-    --button="$(gettext "Close")":0 \
     --button="!$DS/images/listen.png!$(gettext "Listen")":"$cmd_play" \
-    --button="$(gettext "Next")":2
+    --button="$(gettext "Next")":2 \
+    --button="$(gettext "Close")":0
 }
 
 function dlg_form_2() {
@@ -52,9 +52,9 @@ function dlg_form_2() {
     --field="$(gettext "Audio")":FL "${audf}" \
     --button="$(gettext "Words")":"${cmd_words}" \
     --button="$(gettext "Delete")":"${cmd_delete}" \
-    --button="$(gettext "Close")":0 \
     --button="!$DS/images/listen.png!$(gettext "Listen")":"$cmd_play" \
-    --button="$(gettext "Next")":2
+    --button="$(gettext "Next")":2 \
+    --button="$(gettext "Close")":0
 }
 
 function edit_list_list() {
