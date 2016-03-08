@@ -26,7 +26,7 @@ opJmFgAAAABJRU5ErkJggg==" align="right" /></a>
     var name = a.substring(a.indexOf("q=")+2);
   	</script>
 	<script>
-    var mydata = JSON.parse(data1);
+    var fdata = JSON.parse(data1);
     var lineChartData = {
     labels : ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
     datasets : [{ label: "Total",
@@ -35,35 +35,35 @@ opJmFgAAAABJRU5ErkJggg==" align="right" /></a>
     pointColor : "rgba(108,190,197,1)",
     pointStrokeColor : "#fff",
     pointHighlightFill : "#fff",
-    pointHighlightStroke : "rgba(220,220,220,1)", data : mydata[0].f0},
+    pointHighlightStroke : "rgba(220,220,220,1)", data : fdata[0].f0},
     { label: "Learnt", 
     fillColor : "rgba(228,251,226,0.3)",
     strokeColor : "rgba(72,185,81,1)",
     pointColor : "rgba(72,185,81,1)",
     pointStrokeColor : "#fff",
     pointHighlightFill : "#fff",
-    pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f1},
+    pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f1},
     { label: "Reviewing", 
     fillColor : "rgba(226,240,251,0.0)",
     strokeColor : "rgba(90,138,216,1)",
     pointColor : "rgba(90,138,216,1)",
     pointStrokeColor : "#fff",
     pointHighlightFill : "#fff",
-    pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f2},
+    pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f2},
     { label: "Alert", 
     fillColor : "rgba(236,119,89,0.0)",
     strokeColor : "rgba(236,119,89,1)",
     pointColor : "rgba(236,119,89,1)",
     pointStrokeColor : "#fff",
     pointHighlightFill : "#fff",
-    pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f3},
+    pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f3},
     { label: "Iddle", 
     fillColor : "rgba(220,220,220,0.0)",
     strokeColor : "rgba(230,230,230,1)",
     pointColor : "rgba(230,230,230,1)",
     pointStrokeColor : "#fff",
     pointHighlightFill : "#fff",
-    pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f4}]
+    pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f4}]
     }
     window.onload = function(){
     var ctx = document.getElementById("canvas").getContext("2d");

@@ -26,51 +26,51 @@ AAAASUVORK5CYII=" align="right" /></a>
     var name = a.substring(a.indexOf("q=")+2);
   	</script>
 	<script>
-    var mydata = JSON.parse(data2);
+    var fdata = JSON.parse(data2);
     var lineChartData = {
-    labels : mydata[0].wk,
+    labels : fdata[0].wk,
     datasets : [{ label: "total", 
     fillColor : "rgba(143,198,232,0.0)",
     strokeColor : "rgba(143,198,232,1)",
     pointColor : "rgba(143,198,232,1)",
     pointStrokeColor : "#fff",
     pointHighlightFill : "#fff",
-    pointHighlightStroke : "rgba(220,220,220,1)", data : mydata[0].f0},
+    pointHighlightStroke : "rgba(220,220,220,1)", data : fdata[0].f0},
     { label: "Easy", 
     fillColor : "rgba(72,185,81,0.3)",
     strokeColor : "rgba(72,185,81,1)",
     pointColor : "rgba(72,185,81,1)",
     pointStrokeColor : "#fff",
     pointHighlightFill : "#fff",
-    pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f1},
+    pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f1},
     { label: "Learning", 
     fillColor : "rgba(222,118,7,0.0)",
     strokeColor : "rgba(222,118,7,1)",
     pointColor : "rgba(222,118,7,1)",
     pointStrokeColor : "#fff",
     pointHighlightFill : "#fff",
-    pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f2},
+    pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f2},
     { label: "Difficult", 
     fillColor : "rgba(195,47,124,0.0)",
     strokeColor : "rgba(195,47,124,1)",
     pointColor : "rgba(195,47,124,1)",
     pointStrokeColor : "#fff",
     pointHighlightFill : "#fff",
-    pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f3},
+    pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f3},
     { label: "Forgotten", 
     fillColor : "rgba(219,212,255,0.0)",
     strokeColor : "rgba(77,77,77,1)",
     pointColor : "rgba(77,77,77,1)",
     pointStrokeColor : "#fff",
     pointHighlightFill : "#fff",
-    pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f4},
+    pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f4},
     { label: "Iddle", 
     fillColor : "rgba(220,220,220,0.0)",
     strokeColor : "rgba(230,230,230,1)",
     pointColor : "rgba(230,230,230,1)",
     pointStrokeColor : "#fff",
     pointHighlightFill : "#fff",
-    pointHighlightStroke : "rgba(151,187,205,1)", data : mydata[0].f5}]
+    pointHighlightStroke : "rgba(151,187,205,1)", data : fdata[0].f5}]
     }
 	window.onload = function(){
     var ctx = document.getElementById("canvas").getContext("2d");
