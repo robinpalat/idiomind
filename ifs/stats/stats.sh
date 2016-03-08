@@ -69,16 +69,11 @@ function save_topic_stats() {
     }
 
     rdata=`count`
-    f0=`cut -d ',' -f 1 <<<"$rdata"`
-    f1=`cut -d ',' -f 2 <<<"$rdata"`
-    f2=`cut -d ',' -f 3 <<<"$rdata"`
-    f3=`cut -d ',' -f 4 <<<"$rdata"`
-    f4=`cut -d ',' -f 5 <<<"$rdata"`
-    ! [[ ${f0} =~ $numer ]] && f0=0
-    ! [[ ${f1} =~ $numer ]] && f1=0
-    ! [[ ${f2} =~ $numer ]] && f2=0
-    ! [[ ${f3} =~ $numer ]] && f3=0
-    ! [[ ${f4} =~ $numer ]] && f4=0
+    f0=`cut -d ',' -f 1 <<<"$rdata"`; ! [[ ${f0} =~ $numer ]] && f0=0
+    f1=`cut -d ',' -f 2 <<<"$rdata"`; ! [[ ${f1} =~ $numer ]] && f1=0
+    f2=`cut -d ',' -f 3 <<<"$rdata"`; ! [[ ${f2} =~ $numer ]] && f2=0
+    f3=`cut -d ',' -f 4 <<<"$rdata"`; ! [[ ${f3} =~ $numer ]] && f3=0
+    f4=`cut -d ',' -f 5 <<<"$rdata"`; ! [[ ${f4} =~ $numer ]] && f4=0
 
     if [[ "$1" = 1 ]]; then
         if [[ `sqlite3 ${db} "select month from '${mtable}' where month is '${month}';"` ]]; then :
@@ -141,18 +136,13 @@ function save_word_stats() {
     if [[ `sqlite3 ${db} "select week from '${wtable}' where week is '${week^}';"` ]]; then :
     else
         rdata=`count`
-        D0=`cut -d ',' -f 1 <<< "${rdata}"`
-        D1=`cut -d ',' -f 2 <<< "${rdata}"`
-        D2=`cut -d ',' -f 3 <<< "${rdata}"`
-        D3=`cut -d ',' -f 4 <<< "${rdata}"`
-        D4=`cut -d ',' -f 5 <<< "${rdata}"`
-        D5=`cut -d ',' -f 6 <<< "${rdata}"`
-        ! [[ ${D0} =~ $numer ]] && D0=0
-        ! [[ ${D1} =~ $numer ]] && D1=0
-        ! [[ ${D2} =~ $numer ]] && D2=0
-        ! [[ ${D3} =~ $numer ]] && D3=0
-        ! [[ ${D4} =~ $numer ]] && D4=0
-        ! [[ ${D5} =~ $numer ]] && D5=0
+        D0=`cut -d ',' -f 1 <<< "${rdata}"`; ! [[ ${D0} =~ $numer ]] && D0=0
+        D1=`cut -d ',' -f 2 <<< "${rdata}"`; ! [[ ${D1} =~ $numer ]] && D1=0
+        D2=`cut -d ',' -f 3 <<< "${rdata}"`; ! [[ ${D2} =~ $numer ]] && D2=0
+        D3=`cut -d ',' -f 4 <<< "${rdata}"`; ! [[ ${D3} =~ $numer ]] && D3=0
+        D4=`cut -d ',' -f 5 <<< "${rdata}"`; ! [[ ${D4} =~ $numer ]] && D4=0
+        D5=`cut -d ',' -f 6 <<< "${rdata}"`; ! [[ ${D5} =~ $numer ]] && D5=0
+        
         sqlite3 ${db} "insert into ${wtable} (week,val0,val1,val2,val3,val4,val5) \
         values ('${week^}','${D0}','${D1}','${D2}','${D3}','${D4}','${D5}');"
         echo -n ${cdate} > ${wdate}
@@ -183,16 +173,11 @@ function mk_topic_stats() {
             declare e$m=`cut -d ',' -f 5 < ${pross}`
             rm -f ${pross}; break
         else
-            read D0 <&4
-            read D1 <&5
-            read D2 <&6
-            read D3 <&7
-            read D4 <&8
-            ! [[ ${D0} =~ $numer ]] && D0=0
-            ! [[ ${D1} =~ $numer ]] && D1=0
-            ! [[ ${D2} =~ $numer ]] && D2=0
-            ! [[ ${D3} =~ $numer ]] && D3=0
-            ! [[ ${D4} =~ $numer ]] && D4=0
+            read D0 <&4; ! [[ ${D0} =~ $numer ]] && D0=0
+            read D1 <&5; ! [[ ${D1} =~ $numer ]] && D1=0
+            read D2 <&6; ! [[ ${D2} =~ $numer ]] && D2=0
+            read D3 <&7; ! [[ ${D3} =~ $numer ]] && D3=0
+            read D4 <&8; ! [[ ${D4} =~ $numer ]] && D4=0
             declare a$m=${D0}
             declare b$m=${D1}
             declare c$m=${D2}
