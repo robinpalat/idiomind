@@ -21,9 +21,6 @@ Type=Application
 Icon=idiomind
 StartupWMClass=Idiomind"
 
-sets=( 'gramr' 'wlist' 'trans' 'dlaud' 'ttrgt' 'clipw' 'itray' 'stsks' \
-'langt' 'langs' 'synth' 'txaud' 'intrf' )
-
 confirm() {
     yad --form --title="$(gettext "Confirm")" \
     --name=Idiomind --class=Idiomind \
@@ -70,15 +67,15 @@ config_dlg() {
     n=0
     if [ "$cfg" = 1 ]; then
         while [ ${n} -lt 12 ]; do
-            get="${sets[$n]}"
+            get="${csets[$n]}"
             val=$(grep -o "$get"=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
-            declare "${sets[$n]}"="$val"
+            declare "${csets[$n]}"="$val"
             ((n=n+1))
         done
     else
         n=0; > "$DC_s/1.cfg"
         for n in {0..12}; do 
-        echo -e "${sets[$n]}=\"\"" >> "$DC_s/1.cfg"; done
+        echo -e "${csets[$n]}=\"\"" >> "$DC_s/1.cfg"; done
     fi
 
     if [ -z "$intrf" ]; then intrf=Default; fi
@@ -147,20 +144,20 @@ config_dlg() {
         while [ ${n} -le 17 ]; do
             val=$(cut -d "|" -f$n < "$cnf1")
             if [ -n "$val" ]; then
-                sed -i "s/${sets[$v]}=.*/${sets[$v]}=\"$val\"/g" "$DC_s/1.cfg"
+                sed -i "s/${csets[$v]}=.*/${csets[$v]}=\"$val\"/g" "$DC_s/1.cfg"
                 ((v=v+1))
             fi
             ((n=n+1))
         done
         val=$(cut -d "|" -f18 < "$cnf1")
         [[ "$val" != "$synth" ]] && \
-        sed -i "s/${sets[10]}=.*/${sets[10]}=\"$(sed 's|/|\\/|g' <<<"$val")\"/g" "$DC_s/1.cfg"
+        sed -i "s/${csets[10]}=.*/${csets[10]}=\"$(sed 's|/|\\/|g' <<<"$val")\"/g" "$DC_s/1.cfg"
         val=$(cut -d "|" -f19 < "$cnf1")
         [[ "$val" != "$txaud" ]] && \
-        sed -i "s/${sets[11]}=.*/${sets[11]}=\"$(sed 's|/|\\/|g' <<<"$val")\"/g" "$DC_s/1.cfg"
+        sed -i "s/${csets[11]}=.*/${csets[11]}=\"$(sed 's|/|\\/|g' <<<"$val")\"/g" "$DC_s/1.cfg"
         val=$(cut -d "|" -f20 < "$cnf1")
         [[ "$val" != "$intrf" ]] && \
-        sed -i "s/${sets[12]}=.*/${sets[12]}=\"$val\"/g" "$DC_s/1.cfg"
+        sed -i "s/${csets[12]}=.*/${csets[12]}=\"$val\"/g" "$DC_s/1.cfg"
         
         if [[ $(grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]] && [ ! -e $DT/clipw ]; then
             "$DS/ifs/mods/clipw.sh" &

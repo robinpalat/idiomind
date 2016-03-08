@@ -7,11 +7,6 @@ function check_format_1() {
     lgt=${lang[$lgtl]}
     lgs=${slang[$lgsl]}
     source "$DS/ifs/mods/cmns.sh"
-    sets=( 'tname' 'langs' 'langt' \
-    'authr' 'cntct' 'ctgry' 'ilink' 'oname' \
-    'datec' 'dateu' 'datei' \
-    'nword' 'nsent' 'nimag' 'naudi' 'nsize' \
-    'level' 'md5id' )
     file="${1}"
     invalid() {
         msg "$1. $(gettext "File is corrupted.")\n" error & exit 1
@@ -20,7 +15,7 @@ function check_format_1() {
     shopt -s extglob; n=0
     while read -r line; do
         if [ -z "$line" ]; then continue; fi
-        get="${sets[${n}]}"
+        get="${tsets[${n}]}"
         val=$(echo "${line}" |grep -o "$get"=\"[^\"]* |grep -o '[^"]*$')
         if [[ ${n} = 0 ]]; then
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
@@ -53,7 +48,7 @@ function check_format_1() {
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 40 ] || \
             [ "$(grep -o -E '\*|\/|\@|$|=|-' <<<"${val}")" ]; then invalid $n; fi
         fi
-        export ${sets[$n]}="${val}"
+        export ${tsets[$n]}="${val}"
         let n++
     done < <(tail -n 1 < "${file}" |tr '&' '\n')
     return ${n}
@@ -65,8 +60,6 @@ check_index() {
     DC_tlt="$DM_tl/${2}/.conf"; DM_tlt="$DM_tl/${2}"
     tpc="${2}"; mkmn=0; f=0
     [[ ${3} = 1 ]] && r=1 || r=0
-    psets=( 'words' 'sntcs' 'marks' 'wprct' \
-    'rplay' 'audio' 'ntosd' 'loop' 'rword' 'acheck' )
     
     _check() {
         if [ ! -f "${DC_tlt}/0.cfg" ]; then export f=1; fi
@@ -82,7 +75,7 @@ check_index() {
         done
         
         if [ ! -e "${DC_tlt}/10.cfg" -o ! -s "${DC_tlt}/10.cfg" ]; then
-            > "${DC_tlt}/10.cfg"
+            source "$DS/default/sets.cfg"; > "${DC_tlt}/10.cfg"
             for n in {0..9}; do 
                 echo -e "${psets[$n]}=\"\"" >> "${DC_tlt}/10.cfg"
             done
@@ -577,13 +570,11 @@ colorize() {
     cfg1="${DC_tlt}/1.cfg"
     cfg5="${DC_tlt}/5.cfg"
     cfg6="${DC_tlt}/6.cfg"
-    cd "${DC_tlt}/practice"
-    log3="$(cat ./log3)"
-    log2="$(cat ./log2)"
-    log1="$(cat ./log1)"
+    log3="$(cat "${DC_tlt}/practice"/log3)"
+    log2="$(cat "${DC_tlt}/practice"/log2)"
+    log1="$(cat "${DC_tlt}/practice"/log1)"
     export chk cfg1 cfg5 cfg6 log1 \
     log2 log3 img0 img1 img2 img3
-    cd / 
     python <<PY
 import os
 chk = os.environ['chk']
