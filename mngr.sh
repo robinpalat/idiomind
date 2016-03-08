@@ -49,7 +49,7 @@ mkmn() {
     -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
     
     if [[ "$2" = 1 ]]; then
-        source "$DS/ifs/stats/stats.sh"
+        source "$DS/ifs/stats.sh"
         save_topic_stats 0
     fi
 

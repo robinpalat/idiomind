@@ -127,7 +127,7 @@ function new_session() {
     "$DS/mngr.sh" mkmn 0 &
     
     # statistics
-    ( source "$DS/ifs/stats/stats.sh"; sleep 5; pre_comp ) &
+    ( source "$DS/ifs/stats.sh"; sleep 5; pre_comp ) &
 }
 
 if grep -o '.idmnd' <<<"${1: -6}"; then
@@ -277,7 +277,7 @@ function topic() {
                     sed '/^$/d' "$DT/ls1.x" > "${ls1}"
                 fi
                 "$DS/ifs/tls.sh" colorize
-                source "$DS/ifs/stats/stats.sh"
+                source "$DS/ifs/stats.sh"
                 save_topic_stats 0
             fi
             ntpc=$(cut -d '|' -f 1 < "${cnf4}")
