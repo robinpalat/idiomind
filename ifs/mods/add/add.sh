@@ -320,6 +320,15 @@ function clean_8() {
     |sed 's/__/ \n/g;s/ \+/ /g'
 }
 
+function clean_9() {
+    echo "${1}" |sed 's/\\n/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
+    |sed "s/’/'/g" \
+    |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
+    |sed 's/^ *//;s/ *$//g' |sed 's/^\s*./\U&\E/g' \
+    |tr -s '/' '-' |tr -d '/*|()[]&:<>+' \
+    |sed 's/<[^>]*>//g; s/ \+/ /g'
+}
+
 function set_image_1() {
     scrot -s --quality 90 "$DT_r/img.jpg"
     /usr/bin/convert "$DT_r/img.jpg" -interlace Plane -thumbnail 110x90^ \

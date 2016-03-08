@@ -209,8 +209,8 @@ edit_item() {
             if [ ${type} = 1 ]; then
                 edit_dlg="${edit_dlg1}"
                 tpc_mod="$(cut -d "|" -f3 <<<"${edit_dlg}")"
-                trgt_mod="$(clean_1 "$(cut -d "|" -f1 <<<"${edit_dlg}")")"
-                srce_mod="$(clean_0 "$(cut -d "|" -f2 <<<"${edit_dlg}")")"
+                trgt_mod="$(clean_9 "$(cut -d "|" -f1 <<<"${edit_dlg}")")"
+                srce_mod="$(clean_9 "$(cut -d "|" -f2 <<<"${edit_dlg}")")"
                 audf_mod="$(cut -d "|" -f10 <<<"${edit_dlg}")"
                 exmp_mod="$(clean_0 "$(cut -d "|" -f5 <<<"${edit_dlg}")")"
                 defn_mod="$(clean_0 "$(cut -d "|" -f6 <<<"${edit_dlg}")")"
@@ -270,7 +270,7 @@ edit_item() {
                     > "$DT/${trgt_mod}.edit"
                     internet
                     if [ ${type_mod} = 1 ]; then
-                        srce_mod="$(clean_1 "$(translate "${trgt_mod}" $lgt $lgs)")"
+                        srce_mod="$(clean_9 "$(translate "${trgt_mod}" $lgt $lgs)")"
                         audio="${trgt_mod,,}"
                         [[ ${dlaud} = TRUE ]] && tts_word "${audio}" "$DT_r"
                         srce="$temp"
@@ -475,7 +475,7 @@ edit_list() {
                 trgt=`grep -oP '(?<=trgt={).*(?=})' <<<"${item}"`
                 srce="$temp"
                 if [ ${type} = 1 ]; then
-                    srce_mod="$(clean_1 "$(translate "${trgt}" $lgt $lgs)")"
+                    srce_mod="$(clean_9 "$(translate "${trgt}" $lgt $lgs)")"
                     audio="${trgt,,}"
                     [[ ${dlaud} = TRUE ]] && tts_word "${audio}" "$DT_r"
                 elif [ ${type} = 2 ]; then

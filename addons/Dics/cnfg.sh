@@ -26,16 +26,12 @@ function add_dlg() {
     
     if [ $ret -eq 0 -a -f "${add}" ]; then
         info="$(basename "${add}")"
-        name="$(cut -d "." -f1 <<<"$info")"
-        type="$(cut -d "." -f2 <<<"$info")"
-        tget="$(cut -d "." -f3  <<<"$info")"
-        lang="$(cut -d "." -f4  <<<"$info")"
-        test="$(cut -d "." -f5  <<<"$info")"
-        if [ -z "$name" ]; then i=TRUE; fi
-        if [ -z "$type" ]; then i=TRUE; fi
-        if [ -z "$tget" ]; then i=TRUE; fi
-        if [ -z "$lang" ]; then i=TRUE; fi
-        if [ -n "$test" ]; then i=TRUE; fi
+        name="$(cut -d "." -f1 <<<"$info")"; if [ -z "$name" ]; then i=TRUE; fi
+        type="$(cut -d "." -f2 <<<"$info")"; if [ -z "$type" ]; then i=TRUE; fi
+        tget="$(cut -d "." -f3  <<<"$info")"; if [ -z "$tget" ]; then i=TRUE; fi
+        lang="$(cut -d "." -f4  <<<"$info")"; if [ -z "$lang" ]; then i=TRUE; fi
+        test="$(cut -d "." -f5  <<<"$info")"; if [ -n "$test" ]; then i=TRUE; fi
+
         if [ ${#name} -gt 50 -o ${#type} -gt 50 ]; then i=TRUE; fi
         if ! grep -Fo "${tget}" <<<"${task[@]}"; then i=TRUE; fi
         if ! grep -Fo "${lang}" <<<"${langs[@]}"; then i=TRUE; fi
@@ -114,13 +110,13 @@ function dlg() {
     --window-icon=idiomind \
     --expand-column=2 --hide-column=3 \
     --search-column=4 --regex-search \
-    --center --mouse --on-top \
+    --center \
     --width=650 --height=380 --borders=5 \
     --column="$(gettext "Enable")":CHK \
     --column="$(gettext "Resource")":TEXT \
     --column="$(gettext "Type")":TEXT \
-    --column="$(gettext "Task")                                    ":TEXT \
-    --column="$(gettext "Language")                                ":TEXT \
+    --column="$(gettext "Task")":TEXT \
+    --column="$(gettext "Language")":TEXT \
     --button="$(gettext "Add")":2 \
     --button="$(gettext "Cancel")":1 \
     --button=OK:0 )"
@@ -184,4 +180,3 @@ case "$1" in
     *)
     dlg "$@" ;;
 esac
-

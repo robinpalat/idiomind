@@ -7,18 +7,16 @@ if [[ ${1} = 0 ]]; then
     m="$(grep -oP '(?<=marks=\").*(?=\")' "${cfg}")"
     p="$(grep -oP '(?<=wprct=\").*(?=\")' "${cfg}")"
     _play() {
-        if [ ${stnrd} = 1 ]; then
+        if [[ ${stnrd} = 1 ]]; then
             a="$(grep -oP '(?<=audio=\").*(?=\")' "${cfg}")"
             n="$(grep -oP '(?<=ntosd=\").*(?=\")' "${cfg}")"
-            l="$(grep -oP '(?<=loop=\").*(?=\")' "${cfg}")"
-            rw="$(grep -oP '(?<=rword=\").*(?=\")' "${cfg}")"
+            l="$(grep -oP '(?<=loop=\").*(?=\")' "${cfg}")"; ! [[ ${l} =~ $numer ]] &&  l=1
+            rw="$(grep -oP '(?<=rword=\").*(?=\")' "${cfg}")"; ! [[ ${rw} =~ $numer ]] && rw=0
             [ ! -e "$DT"/playlck ] && echo 0 > "$DT"/playlck
 
             if [ ${n} != TRUE -a ${a} != TRUE -a ${stnrd} = 1 ]; then a=TRUE; fi
-            if ! grep TRUE <<<"$n$w$s$m$p">/dev/null 2>&1; then "$DS"/stop.sh 2 & exit 1; fi
-            if ! [[ ${l} =~ $numer ]]; then l=1; fi
-            if ! [[ ${rw} =~ $numer ]]; then rw=0; fi
-
+            if ! grep TRUE <<< "$n$w$s$m$p">/dev/null 2>&1; then "$DS"/stop.sh 2 & exit 1; fi
+            
             if [ ${n} = TRUE ]; then
                 notify-send -i "${icon}" "${trgt}" "${srce}" &
             fi
@@ -38,8 +36,8 @@ if [[ ${1} = 0 ]]; then
             [ $mime = 1 ] && notify-send -i "${icon}" "${trgt}" "${srce}" -t 10000 &
             "$DS/play.sh" play_file "${file}" "${trgt}"
         fi
-        [ ${n} = TRUE -a ${l} -lt 10 ] && l=10
-        [ ${stnrd} = 1 ] && sleep ${l}
+        [[ ${n} = TRUE ]] && [[ ${l} -lt 10 ]] && l=10
+        [[ ${stnrd} = 1 ]] && sleep ${l}
     }
     export -f _play
     

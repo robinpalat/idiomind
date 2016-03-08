@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ "$1" = dlgcnfg ]]; then
-source "$DS/ifs/mods/cmns.sh"
+source "$DS/ifs/cmns.sh"
 msg "$(gettext "Does not need configuration")\n" dialog-information "$4"
 else
 export LINK="http://static.vocabulix.com//speech/dict/spanish/${word}.mp3"

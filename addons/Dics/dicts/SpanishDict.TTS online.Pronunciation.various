@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 if [[ "$1" = dlgcnfg ]]; then
-source "$DS/ifs/mods/cmns.sh"
+source "$DS/ifs/cmns.sh"
 msg "$(gettext "Does not need configuration")\n" dialog-information "$4"
 else
 if [ "$lgt" = en ]; then t=en
