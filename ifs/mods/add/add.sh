@@ -561,9 +561,9 @@ function dlg_checklist_3() {
     yad --paned --key="$fkey" \
     --title="$(wc -l < "${1}") $(gettext "notes found")" \
     --name=Idiomind --class=Idiomind \
-    --orient=vert --window-icon=idiomind --on-top --center \
+    --skip-taskbar --orient=vert --window-icon=idiomind --on-top \
     --gtkrc="$DS/default/gtkrc.cfg" \
-    --width=700 --height=380 --borders=5 --splitter=280 \
+    --width=700 --height=350 --borders=5 --splitter=250 \
     --button="$(gettext "Edit")":2 \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Add")"!'list-add':0
@@ -595,7 +595,7 @@ function dlg_text_info_1() {
     --window-icon=idiomind \
     --wrap --margins=30 --fontname=vendana \
     --skip-taskbar --center --on-top \
-    --width=700 --height=500 --borders=5 \
+    --width=700 --height=450 --borders=5 \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Apply")":0
 }
