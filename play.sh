@@ -47,12 +47,10 @@ play_list() {
     if [ -z "${tpc}" ]; then source "$DS/ifs/mods/cmns.sh"
     msg "$(gettext "No topic is active")\n" dialog-information & exit 1; fi
     tpc="$(sed -n 1p "$HOME/.config/idiomind/4.cfg")"
-    touch "${DC_tlt}/practice/log3"
     DC_tlt="${DM_tl}/${tpc}/.conf"; cfg=0
     [[ `wc -l < "${DC_tlt}/10.cfg"` = 10 ]] && cfg=1
     ntosd=""; audio=""
     lbls=( 'Words' 'Sentences' 'Marked items' 'Difficult words' )
-    sets=( 'words' 'sntcs' 'marks' 'wprct' 'rplay' 'audio' 'ntosd' 'loop' 'rword' 'acheck' )
     in=( 'in0' 'in1' 'in2' 'in3' )
     iteml=( "$(gettext "No repeat")" "$(gettext "Words")" "$(gettext "Sentences")" )
     in0="$(grep -Fxvf "${DC_tlt}/4.cfg" "${DC_tlt}/1.cfg" |wc -l)"
@@ -65,15 +63,15 @@ play_list() {
     if [ ${cfg} = 1 ]; then
         n=0
         while [ ${n} -le 8 ]; do
-            get="${sets[$n]}"
+            get="${psets[$n]}"
             cfg="${DC_tlt}/10.cfg"
             val=$(grep -o "$get"=\"[^\"]* "${cfg}" |grep -o '[^"]*$')
-            declare ${sets[$n]}="$val"
+            declare ${psets[$n]}="$val"
             let n++
         done
     else
         n=0; > "${DC_tlt}/10.cfg"
-        for s in "${sets[@]}"; do
+        for s in "${psets[@]}"; do
             echo -e "${s}=\"0\"" >> "${DC_tlt}/10.cfg"
         done
     fi
@@ -83,14 +81,14 @@ play_list() {
             arr="in${n}"
             [[ ${!arr} -lt 1 ]] && echo "$DS/images/addi.png" || echo "$DS/images/add.png"
             echo "  <span font_desc='Arial 11'>$(gettext "${lbls[$n]}")</span>"
-            echo ${!sets[${n}]}
+            echo ${!psets[${n}]}
             let n++
         done
         for ad in "$DS/ifs/mods/play"/*; do
             source "${ad}"
             for item in "${!items[@]}"; do
                 echo "$DS/images/add.png"
-                echo "  <span font_desc='Arial 11'>$(gettext "${item}") <i><small><small>$aname</small></small></i></span>"
+                echo "  <span font_desc='Arial 11'>$(gettext "${item}") <i><small><small>${aname}</small></small></i></span>"
                 echo `grep -o ${items[$item]}=\"[^\"]* "${file_cfg}" |grep -o '[^"]*$'`
             done
             unset items
@@ -143,9 +141,9 @@ play_list() {
     --width=420 --height=300 --borders=0 \
     "$btn2" --button="$btn1" --button="$(gettext "Close")":1
     ret=$?
-        tab1=$(< $tab1); tab2=$(< $tab2); rm -f "$DT"/*.p
+        tab1=$(< $tab1); tab2=$(< $tab2)
         f=1; n=0; count=0
-        for item in "${sets[@]:0:4}"; do
+        for item in "${psets[@]:0:4}"; do
             val=$(sed -n $((${n}+1))p <<<"${tab1}" |cut -d "|" -f3)
             [ -n "${val}" ] && sed -i "s/$item=.*/$item=\"$val\"/g" "${DC_tlt}/10.cfg"
             [ "$val" = TRUE ] && count=$((count+$(wc -l |sed '/^$/d' <<<"${!in[${n}]}")))
@@ -161,7 +159,7 @@ play_list() {
             done
             unset items
         done
-        for item in "${sets[@]:4:8}"; do
+        for item in "${psets[@]:4:8}"; do
             val="$(cut -d "|" -f${f} <<<"${tab2}")"
             [ -n "${val}" ] && sed -i "s/$item=.*/$item=\"$val\"/g" "${DC_tlt}/10.cfg"
             let f++

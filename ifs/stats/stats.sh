@@ -1,14 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-function progress() {
-    yad --progress \
-    --progress-text="$1" \
-    --undecorated \
-    --pulsate --auto-close --on-top \
-    --skip-taskbar --center --no-buttons
-}
-
 function f_lock() {
     brk=0
     while true; do
@@ -44,7 +36,7 @@ function save_topic_stats() {
             if [ -e "$dir1/2.cfg" ]; then
                 G2=`egrep -cv '#|^$' "$dir1/2.cfg"`; fi
 
-            if [[ ${stts} =~ $numer ]]; then
+            if [[ ${stts} =~ $int ]]; then
                 if [ ${stts} -le 10 -a ${stts} -ge 7 ]; then
                     C3=${G2}
                 elif [ ${stts} = 5 -o ${stts} = 6 ]; then
@@ -69,11 +61,11 @@ function save_topic_stats() {
     }
 
     rdata=`count`
-    f0=`cut -d ',' -f 1 <<<"$rdata"`; ! [[ ${f0} =~ $numer ]] && f0=0
-    f1=`cut -d ',' -f 2 <<<"$rdata"`; ! [[ ${f1} =~ $numer ]] && f1=0
-    f2=`cut -d ',' -f 3 <<<"$rdata"`; ! [[ ${f2} =~ $numer ]] && f2=0
-    f3=`cut -d ',' -f 4 <<<"$rdata"`; ! [[ ${f3} =~ $numer ]] && f3=0
-    f4=`cut -d ',' -f 5 <<<"$rdata"`; ! [[ ${f4} =~ $numer ]] && f4=0
+    f0=`cut -d ',' -f 1 <<<"$rdata"`; ! [[ ${f0} =~ $int ]] && f0=0
+    f1=`cut -d ',' -f 2 <<<"$rdata"`; ! [[ ${f1} =~ $int ]] && f1=0
+    f2=`cut -d ',' -f 3 <<<"$rdata"`; ! [[ ${f2} =~ $int ]] && f2=0
+    f3=`cut -d ',' -f 4 <<<"$rdata"`; ! [[ ${f3} =~ $int ]] && f3=0
+    f4=`cut -d ',' -f 5 <<<"$rdata"`; ! [[ ${f4} =~ $int ]] && f4=0
 
     if [[ "$1" = 1 ]]; then
         if [[ `sqlite3 ${db} "select month from '${mtable}' where month is '${month}';"` ]]; then :
@@ -85,7 +77,6 @@ function save_topic_stats() {
     fi
     echo "${f0},${f1},${f2},${f3},${f4}" > ${pross}
 }
-
 
 function save_word_stats() {
     count() {
@@ -108,7 +99,7 @@ function save_word_stats() {
             if [ -f "$dir2/log3" ]; then
                 G3=`egrep -cv '#|^$' "$dir2/log3"`; fi
             
-            if [[ ${stts} =~ $numer ]]; then
+            if [[ ${stts} =~ $int ]]; then
                 if [ ${stts} -le 10 -a ${stts} -ge 7 ]; then :
                 elif [ ${stts} = 5 -o ${stts} = 6 ]; then
                     C1=${G1}; C2=${G2}; C3=${G3}
@@ -136,12 +127,12 @@ function save_word_stats() {
     if [[ `sqlite3 ${db} "select week from '${wtable}' where week is '${week^}';"` ]]; then :
     else
         rdata=`count`
-        D0=`cut -d ',' -f 1 <<< "${rdata}"`; ! [[ ${D0} =~ $numer ]] && D0=0
-        D1=`cut -d ',' -f 2 <<< "${rdata}"`; ! [[ ${D1} =~ $numer ]] && D1=0
-        D2=`cut -d ',' -f 3 <<< "${rdata}"`; ! [[ ${D2} =~ $numer ]] && D2=0
-        D3=`cut -d ',' -f 4 <<< "${rdata}"`; ! [[ ${D3} =~ $numer ]] && D3=0
-        D4=`cut -d ',' -f 5 <<< "${rdata}"`; ! [[ ${D4} =~ $numer ]] && D4=0
-        D5=`cut -d ',' -f 6 <<< "${rdata}"`; ! [[ ${D5} =~ $numer ]] && D5=0
+        D0=`cut -d ',' -f 1 <<< "${rdata}"`; ! [[ ${D0} =~ $int ]] && D0=0
+        D1=`cut -d ',' -f 2 <<< "${rdata}"`; ! [[ ${D1} =~ $int ]] && D1=0
+        D2=`cut -d ',' -f 3 <<< "${rdata}"`; ! [[ ${D2} =~ $int ]] && D2=0
+        D3=`cut -d ',' -f 4 <<< "${rdata}"`; ! [[ ${D3} =~ $int ]] && D3=0
+        D4=`cut -d ',' -f 5 <<< "${rdata}"`; ! [[ ${D4} =~ $int ]] && D4=0
+        D5=`cut -d ',' -f 6 <<< "${rdata}"`; ! [[ ${D5} =~ $int ]] && D5=0
         sqlite3 ${db} "insert into ${wtable} (week,val0,val1,val2,val3,val4,val5) \
         values ('${week^}','${D0}','${D1}','${D2}','${D3}','${D4}','${D5}');"
         echo -n ${cdate} > ${wdate}
@@ -172,11 +163,11 @@ function mk_topic_stats() {
             declare e$m=`cut -d ',' -f 5 < ${pross}`
             rm -f ${pross}; break
         else
-            read D0 <&4; ! [[ ${D0} =~ $numer ]] && D0=0
-            read D1 <&5; ! [[ ${D1} =~ $numer ]] && D1=0
-            read D2 <&6; ! [[ ${D2} =~ $numer ]] && D2=0
-            read D3 <&7; ! [[ ${D3} =~ $numer ]] && D3=0
-            read D4 <&8; ! [[ ${D4} =~ $numer ]] && D4=0
+            read D0 <&4; ! [[ ${D0} =~ $int ]] && D0=0
+            read D1 <&5; ! [[ ${D1} =~ $int ]] && D1=0
+            read D2 <&6; ! [[ ${D2} =~ $int ]] && D2=0
+            read D3 <&7; ! [[ ${D3} =~ $int ]] && D3=0
+            read D4 <&8; ! [[ ${D4} =~ $int ]] && D4=0
             declare a$m=${D0}
             declare b$m=${D1}
             declare c$m=${D2}
@@ -207,12 +198,12 @@ function mk_topic_stats() {
         read D4 <&8
         read D5 <&9
         if [ -n "$week" ]; then
-            ! [[ ${D0} =~ $numer ]] && D0=0
-            ! [[ ${D1} =~ $numer ]] && D1=0
-            ! [[ ${D2} =~ $numer ]] && D2=0
-            ! [[ ${D3} =~ $numer ]] && D3=0
-            ! [[ ${D4} =~ $numer ]] && D4=0
-            ! [[ ${D5} =~ $numer ]] && D5=0
+            ! [[ ${D0} =~ $int ]] && D0=0
+            ! [[ ${D1} =~ $int ]] && D1=0
+            ! [[ ${D2} =~ $int ]] && D2=0
+            ! [[ ${D3} =~ $int ]] && D3=0
+            ! [[ ${D4} =~ $int ]] && D4=0
+            ! [[ ${D5} =~ $int ]] && D5=0
             declare a$m=${week}
             declare b$m=${D0}
             declare c$m=${D1}
@@ -247,7 +238,7 @@ tdate="$DM_tls/data/tdate"
 data="/tmp/.idiomind_stats"
 databk="$DM_tls/data/idiomind_stats"
 db="$DM_tls/data/log.db"
-numer='^[0-9]+$'
+int='^[0-9]+$'
 week=`date +%b%d`
 month=`date +%b`
 dtweek=`date +%w`
@@ -268,7 +259,6 @@ function pre_comp() {
             rm -f ${tdate}
         fi
     fi
-    
     if [ -e ${wdate} ]; then
         dte=$(< ${wdate})
         if [ $((($(date +%s)-$(date -d ${dte} +%s))/(24*60*60))) -gt 7 ]; then
@@ -295,12 +285,11 @@ function stats() {
     if [ ! -e ${data} -o -e ${pross} ]; then
         f_lock "$DT/p_stats"
         [ ! -e ${data} ] && cp -f ${databk} ${data}
-        ( echo 1;
         [ ! -e ${pross} ] && save_topic_stats 0
         mk_topic_stats
         rm -f "$DT/p_stats"
-        ) | progress
     fi
+    
     yad --html --uri="$DS/ifs/stats/1.html" \
     --title="$(gettext "Stats (Beta)")" \
     --name=Idiomind --class=Idiomind \
