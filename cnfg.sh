@@ -160,7 +160,7 @@ config_dlg() {
         sed -i "s/${csets[12]}=.*/${csets[12]}=\"$val\"/g" "$DC_s/1.cfg"
         
         if [[ $(grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]] && [ ! -e $DT/clipw ]; then
-            "$DS/ifs/mods/clipw.sh" &
+            "$DS/ifs/clipw.sh" &
         else 
             if [ -e $DT/clipw ]; then kill $(cat $DT/clipw); rm -f $DT/clipw; fi
         fi

@@ -290,7 +290,7 @@ function stats() {
         rm -f "$DT/p_stats"
     fi
     
-    yad --html --uri="$DS/default/spg1.html" \
+    yad --html --uri="$DS/default/pg1.html" \
     --title="$(gettext "Stats (Beta)")" \
     --name=Idiomind --class=Idiomind \
     --browser --encoding=UTF-8 \

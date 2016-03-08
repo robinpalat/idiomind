@@ -2,7 +2,7 @@
 function goPage()
 {
    var dirPath = dirname(location.href);
-   fullPath = dirPath + "/spg" + page + ".html";
+   fullPath = dirPath + "/pg" + page + ".html";
    window.location=fullPath;
 }
 function dirname(path)
