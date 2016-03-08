@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/default/c.conf
-source "$DS/ifs/mods/cmns.sh"
+source "$DS/ifs/cmns.sh"
 cfg="${DC_tlt}/10.cfg"
 rplay="$(grep -o rplay=\"[^\"]* "${DC_tlt}/10.cfg" |grep -o '[^"]*$')"
 ritem=0; stnrd=0; f=0

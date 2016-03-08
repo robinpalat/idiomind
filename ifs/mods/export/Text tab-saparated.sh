@@ -1,7 +1,7 @@
 #!/bin/bash
 
 source /usr/share/idiomind/default/c.conf
-source "$DS/ifs/mods/cmns.sh"
+source "$DS/ifs/cmns.sh"
 mkdir -p "$DT/export"
 file="$DT/export/file.csv"
 

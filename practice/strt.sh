@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 source /usr/share/idiomind/default/c.conf
-source "$DS/ifs/mods/cmns.sh"
+source "$DS/ifs/cmns.sh"
 dir="${DC_tlt}/practice"
 dirs="$DS/practice"
 export -f f_lock

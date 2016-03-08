@@ -34,7 +34,7 @@ confirm() {
 
 set_lang() {
     language="$1"
-    source "$DS/ifs/mods/cmns.sh"
+    source "$DS/ifs/cmns.sh"
     check_dir "$DM_t/$language/.share/images" "$DM_t/$language/.share/audio"
     echo -e "$language\n$lgsl" > "$DC_s/6.cfg"
     "$DS/stop.sh" 4

@@ -28,7 +28,7 @@ fi
 source /usr/share/idiomind/default/c.conf
 
 if [ -z "${lgtl}" -o -z "${lgsl}" ]; then
-    source "$DS/ifs/mods/cmns.sh"
+    source "$DS/ifs/cmns.sh"
     msg_2 "$(gettext "Please check the language settings in the preferences dialog")\n" \
     error "$(gettext "Open")" "$(gettext "Cancel")"
     [ $? = 0 ] && "$DS/cnfg.sh"
@@ -45,7 +45,7 @@ fi
 function new_session() {
     echo "--new session"
     date "+%d" > "$DC_s/10.cfg"
-    source "$DS/ifs/mods/cmns.sh"
+    source "$DS/ifs/cmns.sh"
     
     # mkdir tmp dir
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
@@ -220,7 +220,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
 fi
 
 function topic() {
-    source "$DS/ifs/mods/cmns.sh"
+    source "$DS/ifs/cmns.sh"
     [ -e "${DC_tlt}/8.cfg" ] && export mode=`sed -n 1p "${DC_tlt}/8.cfg"`
     if ! [[ ${mode} =~ $numer ]]; then exit 1; fi
 

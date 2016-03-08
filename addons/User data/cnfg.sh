@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
-source "$DS/ifs/mods/cmns.sh"
+source "$DS/ifs/cmns.sh"
 
 if [ ! -f "$DC_a/user_data.cfg" ]; then
 echo -e "backup=\"FALSE\"

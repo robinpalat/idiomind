@@ -4,7 +4,7 @@ source "$DS/default/sets.cfg"
 
 msg_err1() {
     local info="$(gettext "Please check about voice synthesizer configuration in the settings dialog.")"
-    source "$DS/ifs/mods/cmns.sh"; msg "$info" error Info
+    source "$DS/ifs/cmns.sh"; msg "$info" error Info
 }
 
 play_word() {
@@ -44,7 +44,7 @@ play_file() {
 } >/dev/null 2>&1
 
 play_list() {
-    if [ -z "${tpc}" ]; then source "$DS/ifs/mods/cmns.sh"
+    if [ -z "${tpc}" ]; then source "$DS/ifs/cmns.sh"
     msg "$(gettext "No topic is active")\n" dialog-information & exit 1; fi
     tpc="$(sed -n 1p "$HOME/.config/idiomind/4.cfg")"
     DC_tlt="${DM_tl}/${tpc}/.conf"; cfg=0

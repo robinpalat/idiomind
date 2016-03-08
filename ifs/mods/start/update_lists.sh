@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
-source "$DS/ifs/mods/cmns.sh"
+source "$DS/ifs/cmns.sh"
 [ ! -e "$DC_s/log" ] && exit 1 || log="$DC_s/log"
 items=$(mktemp "$DT/w1.XXXX")
 words=$(grep -o -P '(?<=w1.).*(?=\.w1)' "${log}" |tr '|' '\n' \

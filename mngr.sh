@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
-source "$DS/ifs/mods/cmns.sh"
+source "$DS/ifs/cmns.sh"
 source "$DS/default/sets.cfg"
 lgt=${lang[$lgtl]}
 lgs=${slang[$lgsl]}

@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 if [ -z "${1}" ]; then exit 1; fi
-source "$DS/ifs/mods/cmns.sh"
+source "$DS/ifs/cmns.sh"
 topic="${1}"
 notif="${3}"
 DC_tlt="$DM_tl/${topic}/.conf"

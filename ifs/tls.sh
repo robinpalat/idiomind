@@ -6,7 +6,7 @@ function check_format_1() {
     source "$DS/default/sets.cfg"
     lgt=${lang[$lgtl]}
     lgs=${slang[$lgsl]}
-    source "$DS/ifs/mods/cmns.sh"
+    source "$DS/ifs/cmns.sh"
     file="${1}"
     invalid() {
         msg "$1. $(gettext "File is corrupted.")\n" error & exit 1
@@ -56,7 +56,7 @@ function check_format_1() {
 
 check_index() {
     [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
-    source "$DS/ifs/mods/cmns.sh"
+    source "$DS/ifs/cmns.sh"
     DC_tlt="$DM_tl/${2}/.conf"; DM_tlt="$DM_tl/${2}"
     tpc="${2}"; mkmn=0; f=0
     [[ ${3} = 1 ]] && r=1 || r=0
@@ -199,7 +199,7 @@ add_audio() {
 
 _backup() {
     source /usr/share/idiomind/default/c.conf
-    source "$DS/ifs/mods/cmns.sh"
+    source "$DS/ifs/cmns.sh"
     dt=$(date +%F)
     check_dir "$HOME/.idiomind/backup"
     file="$HOME/.idiomind/backup/${2}.bk"
@@ -227,7 +227,7 @@ dlg_restfile() {
     date1=`grep '\----- newest' "${file}" |cut -d' ' -f3`
     date2=`grep '\----- oldest' "${file}" |cut -d' ' -f3`
     [ -n "$date2" ] && val='\nFALSE'
-    source "$DS/ifs/mods/cmns.sh"
+    source "$DS/ifs/cmns.sh"
     
     if [ -f "${file}" ]; then
         rest="$(echo -e "FALSE\n$date1$val\n$date2" \
@@ -272,7 +272,7 @@ fback() {
 } >/dev/null 2>&1
 
 _definition() {
-    source "$DS/ifs/mods/cmns.sh"
+    source "$DS/ifs/cmns.sh"
     query="$(sed 's/<[^>]*>//g' <<<"${2}")"
     f="$(ls "$DC_d"/*."Link.Search definition".* |head -n1)"
     if [ -z "$f" ]; then "$DS_a/Dics/cnfg.sh" 3
@@ -289,7 +289,7 @@ _definition() {
 } >/dev/null 2>&1
 
 _translation() {
-    source "$DS/ifs/mods/cmns.sh"
+    source "$DS/ifs/cmns.sh"
     source /usr/share/idiomind/default/c.conf
     xdg-open "https://translate.google.com/\#$lgt/$lgs/${2}"
 } >/dev/null 2>&1
@@ -306,7 +306,7 @@ _quick_help() {
 } >/dev/null 2>&1
 
 check_updates() {
-    source "$DS/ifs/mods/cmns.sh"
+    source "$DS/ifs/cmns.sh"
     internet
     link='http://idiomind.sourceforge.net/doc/checkversion'
     nver=`wget --user-agent "$ua" -qO - "$link" |grep \<body\> |sed 's/<[^>]*>//g'`
@@ -326,7 +326,7 @@ check_updates() {
 } >/dev/null 2>&1
 
 a_check_updates() {
-    source "$DS/ifs/mods/cmns.sh"
+    source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
     [ ! -e "$DC_s/9.cfg" ] && date "+%d" > "$DC_s/9.cfg" && exit
     d1=$(< "$DC_s/9.cfg"); d2=$(date +%d)
@@ -398,7 +398,7 @@ first_run() {
 }
 
 set_image() {
-    source "$DS/ifs/mods/cmns.sh"
+    source "$DS/ifs/cmns.sh"
     cd "$DT"; r=0
     source "$DS/ifs/mods/add/add.sh"
     if [ -e "${DM_tlt}/images/${trgt,,}.jpg" ]; then
@@ -447,7 +447,7 @@ translate_to() {
     # idiomind translate restore - to go back to original translation
     source /usr/share/idiomind/default/c.conf
     source $DS/default/sets.cfg
-    source "$DS/ifs/mods/cmns.sh"
+    source "$DS/ifs/cmns.sh"
     [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "  -- error" && exit 1
     l="$(grep -o 'langt="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
     lgt=${lang[$l]}
@@ -551,12 +551,12 @@ menu_addons() {
 
 stats_dlg() {
     source /usr/share/idiomind/default/c.conf
-    source "$DS/ifs/stats/stats.sh"
+    source "$DS/ifs/stats.sh"
     stats
 }
 
 colorize() {
-    source "$DS/ifs/mods/cmns.sh"
+    source "$DS/ifs/cmns.sh"
     f_lock "$DT/co_lk"
     rm "${DC_tlt}/5.cfg"
     check_file "${DC_tlt}/1.cfg" "${DC_tlt}/6.cfg" "${DC_tlt}/9.cfg"
