@@ -142,7 +142,6 @@ function save_word_stats() {
         D3=`cut -d ',' -f 4 <<< "${rdata}"`; ! [[ ${D3} =~ $numer ]] && D3=0
         D4=`cut -d ',' -f 5 <<< "${rdata}"`; ! [[ ${D4} =~ $numer ]] && D4=0
         D5=`cut -d ',' -f 6 <<< "${rdata}"`; ! [[ ${D5} =~ $numer ]] && D5=0
-        
         sqlite3 ${db} "insert into ${wtable} (week,val0,val1,val2,val3,val4,val5) \
         values ('${week^}','${D0}','${D1}','${D2}','${D3}','${D4}','${D5}');"
         echo -n ${cdate} > ${wdate}

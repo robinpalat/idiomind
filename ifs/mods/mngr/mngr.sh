@@ -66,10 +66,10 @@ function edit_list_list() {
     --no-headers --center \
     --width=500 --height=350 --borders=5 \
     --column="" \
-    --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Restore")!!$(gettext "Revert to a previous state")":"${cmd_resfile}" \
     --button="$(gettext "Inverse")!!$(gettext "Reverse items order")":2 \
-    --button="$(gettext "Save")":0
+    --button="$(gettext "Save")":0 \
+    --button="$(gettext "Close")":1
 }
 
 function edit_feeds_list() {

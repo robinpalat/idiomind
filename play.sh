@@ -69,7 +69,7 @@ play_list() {
             cfg="${DC_tlt}/10.cfg"
             val=$(grep -o "$get"=\"[^\"]* "${cfg}" |grep -o '[^"]*$')
             declare ${sets[$n]}="$val"
-            ((n=n+1))
+            let n++
         done
     else
         n=0; > "${DC_tlt}/10.cfg"
@@ -90,7 +90,7 @@ play_list() {
             source "${ad}"
             for item in "${!items[@]}"; do
                 echo "$DS/images/add.png"
-                echo "  <span font_desc='Arial 11'>$(gettext "${item}")</span>"
+                echo "  <span font_desc='Arial 11'>$(gettext "${item}") <i><small><small>$aname</small></small></i></span>"
                 echo `grep -o ${items[$item]}=\"[^\"]* "${file_cfg}" |grep -o '[^"]*$'`
             done
             unset items
