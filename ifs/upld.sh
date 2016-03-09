@@ -22,16 +22,9 @@ function dwld() {
     langt=$(grep -o 'langt="[^"]*' "${idcfg}" |grep -o '[^"]*$')
     [ -z "${oname}" ] && oname="${tpc}"
     pre="$(sed 's/ /_/g' <<< "${oname:0:10}")"
-    url1="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
-    |grep -o 'DOWNLOADS="[^"]*' |grep -o '[^"]*$')"
-    url2="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
-    |grep -o 'DOWNLOADS2="[^"]*' |grep -o '[^"]*$')"
-    url1="$url1/c/${langt,,}/${pre}${md5id}.tar.gz"
-    url2="$url2/c/${langt,,}/${pre}${md5id}.tar.gz"
+    url1="http://idiomind.sourceforge.net/dl.php/?lang=${langt,,}&file=${pre}${md5id}"
     if wget -S --spider "${url1}" 2>&1 |grep 'HTTP/1.1 200 OK'; then
         URL="${url1}"
-    elif wget -S --spider "${url2}" 2>&1 |grep 'HTTP/1.1 200 OK'; then
-        URL="${url2}"
     else err & exit
     fi
     wget -q -c -T 80 -O "$DT/download/${md5id}.tar.gz" "${URL}"
@@ -331,8 +324,7 @@ function upld() {
         tr '\n' '&' < "${DC_tlt}/id.cfg" >> "$DT_u/$tpcid.${tpc}.$lgt"
         echo -n "&idiomind-`idiomind -v`" >> "$DT_u/$tpcid.${tpc}.$lgt"
         echo -en "\nidiomind-`idiomind -v`" >> "${DC_tlt}/id.cfg"
-        url="$(curl http://idiomind.sourceforge.net/doc/SITE_TMP \
-        | grep -o 'UPLOADS="[^"]*' |grep -o '[^"]*$')"
+        url="http://idiomind.sourceforge.net/uploads.php"
         direc="$DT_u"
         log="$DT_u/log"
         body="<hr><br><a href='/${lgtl,}/${ctgry,}/$tpcid.$oname.idmnd'>Download</a>"
