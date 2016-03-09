@@ -460,10 +460,12 @@ function img_word() {
                     fi
                 done
             fi
+            
             if [ -e "$DT/${1}.jpg" -o -e "$DT/${2}.jpg" ]; then
+                [[ `wc -w <<< ${1}` -gt 1 ]] && sf="${DM_tlt}/images/${1,,}.jpg" || sf="${DM_tls}/images/${1,,}-0.jpg"
                 [ -e "$DT/${1}.jpg" ] && img_file="$DT/${1}.jpg" || img_file="$DT/${2}.jpg"
                 /usr/bin/convert "${img_file}" -interlace Plane -thumbnail 405x275^ \
-                -gravity center -extent 400x270 -quality 90% "${DM_tls}/images/${1,,}-0.jpg"
+                -gravity center -extent 400x270 -quality 90% "${sf}"
                 rm -f "${img_file}"
             fi
             rm -f "$DT/${1}.img"

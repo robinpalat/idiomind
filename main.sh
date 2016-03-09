@@ -171,11 +171,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
                 for i in {1..50}; do
                 chck=$(grep -Fxo "${tname} ($i)" <<<"$listt")
                 [ -z "$chck" ] && break; done
-            
                 tname="${tname} ($i)"
-                msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "Notice that the name for this one is now\:")\n<b>$tname</b>\n" dialog-information "$(gettext "OK")" "$(gettext "Cancel")"
-  
-                if [ $? != 0 ]; then exit 1; fi
             fi
 
             check_dir "$DM_t/$langt" "$DM_t/$langt/.share/images" \

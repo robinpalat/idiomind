@@ -587,11 +587,7 @@ rename_topic() {
         for i in {1..50}; do
         chck=$(grep -Fxo "${jlb} ($i)" <<<"$listt")
         [ -z "${chck}" ] && break; done
-        
         jlb="${jlb} ($i)"
-        msg_2 "$(gettext "Another topic with the same name already exist.") \n$(gettext "Notice that the name for this one is now\:")\n<b>$jlb</b> \n" dialog-information "$(gettext "OK")" "$(gettext "Cancel")"
-        ret="$?"
-        if [ ${ret} -eq 1 ]; then exit 1; fi
     fi
     if [ -n "${jlb}" ]; then
         f_lock "$DT/rm_lk"

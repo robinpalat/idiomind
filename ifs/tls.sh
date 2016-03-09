@@ -26,7 +26,7 @@ function check_format_1() {
             if [ ${#val} -gt 30 ] || \
             [ "$(grep -o -E '\*|\/|$|\)|\(|=' <<<"${val}")" ]; then invalid $n; fi
         elif [[ ${n} = 5 ]]; then
-            if ! grep -Fo "${val,,}" <<<"${CATEGORIES[@]}"; then invalid $n; fi
+            if ! grep -Fo "${val,,}" <<<"${Categories[@]}"; then invalid $n; fi
         elif [[ ${n} = 6 ]]; then
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 8 ]; then invalid $n; fi
         elif [[ ${n} = 7 ]]; then

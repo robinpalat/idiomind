@@ -141,7 +141,7 @@ function upld() {
         --window-icon=idiomind --buttons-layout=end \
         --align=right --center --on-top \
         --width=490 --height=470 --borders=12 --field=" :LBL" "" \
-        --field="$(gettext "Category"):CBE" "$_categories" \
+        --field="$(gettext "Category"):CBE" "$_Categories" \
         --field="$(gettext "Skill Level"):CB" "$_levels" \
         --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
         --field="$(gettext "Author")" "$usrid" \
@@ -190,7 +190,7 @@ function upld() {
     random_id() { tr -dc a-z < /dev/urandom |head -c 1; echo $((RANDOM%100)); }
 
     emrk='!'
-    for val in "${CATEGORIES[@]}"; do
+    for val in "${Categories[@]}"; do
         declare clocal="$(gettext "${val^}")"
         list="${list}${emrk}${clocal}"
     done
@@ -200,7 +200,7 @@ function upld() {
     linkac='http://idiomind.net/community/?q=user/register'
     ctgry="$(grep -o 'ctgry="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
     text_upld="<span font_desc='Arial 12'>$(gettext "Share online with other ${LANGUAGE_TO_LEARN} learners!")</span>\n<a href='$linkc'>$(gettext "Topics shared")</a> Beta\n"
-    _categories="${ctgry}${list}"
+    _Categories="${ctgry}${list}"
     _levels="!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")"
     note=$(< "${DC_tlt}/info")
     usrid="$(grep -o 'usrid="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
@@ -233,7 +233,7 @@ function upld() {
         usrid_m=$(echo "${dlg}" |cut -d "|" -f5)
         passw_m=$(echo "${dlg}" |cut -d "|" -f6)
         # get data
-        for val in "${CATEGORIES[@]}"; do
+        for val in "${Categories[@]}"; do
             [ "$ctgry" = "$(gettext "${val^}")" ] && ctgry=$val
         done
         [ "$level" = $(gettext "Beginner") ] && level=0

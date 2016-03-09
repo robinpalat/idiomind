@@ -21,8 +21,8 @@ if [[ ${1} = 0 ]]; then
                 notify-send -i "${icon}" "${trgt}" "${srce}" &
             fi
             if [ ${a} = TRUE ]; then sleep 0.5; sle=0.5; spn=1
-                [ ${type} = 1 -a ${rw} = 1 ] && spn=3
-                [ ${type} = 2 -a ${rw} = 2 ] && spn=2 && sle=2.5
+                [ ${type} = 1 -a ${rw} = 1 ] && spn=${word_rep}
+                [ ${type} = 2 -a ${rw} = 2 ] && spn=${sentence_rep} && sle=1
                 ( while [ ${ritem} -lt ${spn} ]; do
                     "$DS"/play.sh play_file "${file}" "${trgt}"
                     [ ${ritem} = 0 ] && sleep ${sle}

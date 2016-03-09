@@ -16,7 +16,8 @@ play_word() {
     elif [ -n "$synth" ]; then
         echo "${w}." |${synth}; [ $? != 0 ] && msg_err1
     else
-        echo "${w}." |espeak -v ${lang[$lgtl]} -s 110 -b 1 -p 60 &
+        echo "${w}." |espeak -v ${lang[$lgtl]} \
+        -a ${sAmplitude} -s ${sSpeed} -p ${sPitch} -g ${sWordgap} -b ${sEncoding} &
     fi
 } >/dev/null 2>&1
 
@@ -27,7 +28,8 @@ play_sentence() {
     elif [ -n "$synth" ]; then
         sed 's/<[^>]*>//g' <<<"${trgt}." |${synth}; [ $? != 0 ] && msg_err1
     else
-        sed 's/<[^>]*>//g' <<<"${trgt}." |espeak -v ${lang[$lgtl]} -s 120 -b 1 -p 60 &
+        sed 's/<[^>]*>//g' <<<"${trgt}." |espeak -v ${lang[$lgtl]} \
+        -a ${sAmplitude} -s ${sSpeed} -p ${sPitch} -g ${sWordgap} -b ${sEncoding} &
     fi
 } >/dev/null 2>&1
 
@@ -39,7 +41,8 @@ play_file() {
     elif [ -n "$synth" ]; then
         sed 's/<[^>]*>//g' <<<"${3}." |${synth}; [ $? != 0 ] && msg_err1
     else
-        sed 's/<[^>]*>//g' <<<"${3}." |espeak -v ${lang[$lgtl]} -s 120 -b 1 -p 60
+        sed 's/<[^>]*>//g' <<<"${3}." |espeak -v ${lang[$lgtl]} \
+        -a ${sAmplitude} -s ${sSpeed} -p ${sPitch} -g ${sWordgap} -b ${sEncoding}
     fi
 } >/dev/null 2>&1
 
