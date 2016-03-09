@@ -2,10 +2,13 @@
 # -*- ENCODING: UTF-8 -*-
 
 if [[ ${1} = 0 ]]; then
-    w="$(grep -oP '(?<=words=\").*(?=\")' "${cfg}")"
-    s="$(grep -oP '(?<=sntcs=\").*(?=\")' "${cfg}")"
-    m="$(grep -oP '(?<=marks=\").*(?=\")' "${cfg}")"
-    p="$(grep -oP '(?<=wprct=\").*(?=\")' "${cfg}")"
+    W="$(grep -oP '(?<=words=\").*(?=\")' "${cfg}")"
+    S="$(grep -oP '(?<=sntcs=\").*(?=\")' "${cfg}")"
+    M="$(grep -oP '(?<=marks=\").*(?=\")' "${cfg}")"
+    L="$(grep -oP '(?<=learn=\").*(?=\")' "${cfg}")"
+    D="$(grep -oP '(?<=diffi=\").*(?=\")' "${cfg}")"
+    _stop=0
+
     _play() {
         if [[ ${stnrd} = 1 ]]; then
             a="$(grep -oP '(?<=audio=\").*(?=\")' "${cfg}")"
@@ -15,7 +18,7 @@ if [[ ${1} = 0 ]]; then
             [ ! -e "$DT"/playlck ] && echo 0 > "$DT"/playlck
 
             if [ ${n} != TRUE -a ${a} != TRUE -a ${stnrd} = 1 ]; then a=TRUE; fi
-            if ! grep TRUE <<< "$n$w$s$m$p">/dev/null 2>&1; then "$DS"/stop.sh 2 & exit 1; fi
+            if ! grep 'TRUE' <<< "$W$S$M$L$D">/dev/null 2>&1; then "$DS"/stop.sh 2 & exit 1; fi
             
             if [ ${n} = TRUE ]; then
                 notify-send -i "${icon}" "${trgt}" "${srce}" &
@@ -33,63 +36,69 @@ if [[ ${1} = 0 ]]; then
             fi
         else
             echo "$(gettext "Playing: ") $trgt" > "$DT/playlck"
-            [ $mime = 1 ] && notify-send -i "${icon}" "${trgt}" "${srce}" -t 10000 &
+            [ ${mime} = 1 ] && notify-send -i "${icon}" "${trgt}" "${srce}" -t 10000 &
             "$DS/play.sh" play_file "${file}" "${trgt}"
         fi
-        [[ ${n} = TRUE ]] && [[ ${l} -lt 10 ]] && l=10
+        [[ ${n} = TRUE ]] && [[ ${l} -lt ${pause_osd} ]] && l=${pause_osd}
         [[ ${stnrd} = 1 ]] && sleep ${l}
     }
     export -f _play
     
     getitem() {
-        if [ ${f} -gt 5 -o ! -d "${DM_tlt}" ]; then
+        if [ ${f} -gt 5 -o ! -d "${DC_tlt}" ]; then
             msg "$(gettext "An error has occurred. Playback stopped")" dialog-information &
-            "$DS"/stop.sh 2; fi
-        [ -f "$DT/list.m3u" ] && rm -f "$DT/list.m3u"
-            
+            "$DS"/stop.sh 2
+        fi
         if [ -n "${item}" ]; then
-            unset file icon
+            local file icon
             _item="$(grep -F -m 1 "trgt={${item}}" "${DC_tlt}/0.cfg" |sed 's/},/}\n/g')"
             type="$(grep -oP '(?<=type={).*(?=})' <<<"${_item}")"
             export trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${_item}")"
             srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${_item}")"
             id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${_item}")"
             [ -e "${DM_tlt}/images/${trgt,,}.jpg" ] && icon="${DM_tlt}/images/${trgt,,}.jpg"
-            [ -e "${DM_tls}/images/${trgt,,}-0.jpg" ] &&  icon="${DM_tls}/images/${trgt,,}-0.jpg"
-            [ -z "$trgt" ] && trgt="$item"
-            
-            if [ -f "${DM_tlt}/$id.mp3" ]; then
-                file="${DM_tlt}/$id.mp3"
-            else
-                file="${DM_tls}/audio/${trgt,,}.mp3"; fi
+            [ -e "${DM_tls}/images/${trgt,,}-0.jpg" ] && icon="${DM_tls}/images/${trgt,,}-0.jpg"
+            [ -e "${DM_tlt}/$id.mp3" ] && file="${DM_tlt}/$id.mp3" || file="${DM_tls}/audio/${trgt,,}.mp3"
             stnrd=1
         else
-            ((f=f+1))
+            let f++
         fi
     }
-    if [ ${w} = TRUE -a ${s} = TRUE ]; then
+
+    if [ ${W} = TRUE -a ${S} = TRUE ]; then
         echo "${tpc}" > "$DT/playlck"
-        while read item; do getitem; _play
-        done < <(tac "${DC_tlt}/1.cfg"); fi
-    if [ ${w} = TRUE -a ${s} = FALSE ]; then
+        while read item; do _stop=1; getitem; _play
+        done < <(tac "${DC_tlt}/1.cfg")
+    fi
+    if [ ${W} = TRUE -a ${S} = FALSE ]; then
         echo "${tpc}" > "$DT/playlck"
-        while read item; do getitem; _play
-        done < <(grep -Fxvf "${DC_tlt}/4.cfg" "${DC_tlt}/1.cfg" |tac); fi
-    if [ ${w} = FALSE -a ${s} = TRUE ]; then
+        while read item; do _stop=1; getitem; _play
+        done < <(grep -Fxvf "${DC_tlt}/4.cfg" "${DC_tlt}/1.cfg" |tac)
+    fi
+    if [ ${W} = FALSE -a ${S} = TRUE ]; then
         echo "${tpc}" > "$DT/playlck"
-        while read item; do getitem; _play
-        done < <(grep -Fxvf "${DC_tlt}/3.cfg" "${DC_tlt}/1.cfg" |tac); fi
-    if [ ${m} = TRUE ]; then
+        while read item; do _stop=1; getitem; _play
+        done < <(grep -Fxvf "${DC_tlt}/3.cfg" "${DC_tlt}/1.cfg" |tac)
+    fi
+    if [ ${M} = TRUE ]; then
         echo "${tpc}" > "$DT/playlck"
-        while read item; do getitem; _play
-        done < "${DC_tlt}/6.cfg"; fi
-    if [ ${p} = TRUE ]; then
+        while read item; do _stop=1; getitem; _play
+        done < "${DC_tlt}/6.cfg"
+    fi
+    if [ ${L} = TRUE ]; then
         echo "${tpc}" > "$DT/playlck"
-        wrds="$(cat "${DC_tlt}/practice/log2" "${DC_tlt}/practice/log3")"
-        while read item; do getitem; _play
-        done < <(grep -Fxv "${DC_tlt}/4.cfg" <<< "${wrds}"); fi
+        while read item; do _stop=1; getitem; _play
+        done < <(grep -Fxvf "${DC_tlt}/practice/log3" \
+        "${DC_tlt}/practice/log2" |sort |uniq)
+    fi
+    if [ ${D} = TRUE ]; then
+        echo "${tpc}" > "$DT/playlck"
+        while read item; do _stop=1; getitem; _play
+        done < <(sort |uniq "${DC_tlt}/practice/log3")
+    fi
     include "$DS/ifs/mods/chng"
-    
+    echo ${_stop} > $DT/playlck
+
 
 elif [[ ${1} != 0 ]]; then
     source /usr/share/idiomind/default/c.conf

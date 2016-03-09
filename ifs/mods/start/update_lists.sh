@@ -12,7 +12,7 @@ sentences=$(grep -o -P '(?<=s1.).*(?=\.s1)' "${log}" |tr '|' '\n' \
 topics="$(cd "$DM_tl"; find ./ -maxdepth 1 -mtime -80 -type d \
 -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')"
 check_file "${DC_tlt}/1.cfg" "${DC_tlt}/6.cfg" "${DC_tlt}/9.cfg"
-# grep -o -P '(?<=w1.).*(?=\.w1)' "${log}" |tr '|' '\n' | sort | uniq
+# grep -o -P '(?<=w1.).*(?=\.w1)' "${log}" |tr '|' '\n' |sort |uniq
 img1="$DS/images/1.png"
 img2="$DS/images/2.png"
 img3="$DS/images/3.png"

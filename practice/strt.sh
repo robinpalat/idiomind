@@ -602,7 +602,7 @@ function get_list() {
         --skip-taskbar --center --no-buttons
         
         sed -i '/^$/d' "$dir/${practice}.0"
-        [ -f "$DT/images" ] && rm -f "$DT/images"
+        [ -e "$DT/images" ] && rm -f "$DT/images"
     
     elif [ ${practice} = e ]; then
         if [[ `wc -l < "${cfg3}"` -gt 0 ]]; then

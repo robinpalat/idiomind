@@ -1,5 +1,6 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
+
 source "$DS/default/sets.cfg"
 
 msg_err1() {
@@ -51,21 +52,22 @@ play_list() {
     msg "$(gettext "No topic is active")\n" dialog-information & exit 1; fi
     tpc="$(sed -n 1p "$HOME/.config/idiomind/4.cfg")"
     DC_tlt="${DM_tl}/${tpc}/.conf"; cfg=0
-    [[ `wc -l < "${DC_tlt}/10.cfg"` = 10 ]] && cfg=1
+    [[ `wc -l < "${DC_tlt}/10.cfg"` = 11 ]] && cfg=1
     ntosd=""; audio=""
-    lbls=( 'Words' 'Sentences' 'Marked items' 'Difficult words' )
-    in=( 'in0' 'in1' 'in2' 'in3' )
+    lbls=( 'Words' 'Sentences' 'Marked items' 'Learning' 'Difficult' )
+    in=( 'in0' 'in1' 'in2' 'in3' 'in4' )
     iteml=( "$(gettext "No repeat")" "$(gettext "Words")" "$(gettext "Sentences")" )
     in0="$(grep -Fxvf "${DC_tlt}/4.cfg" "${DC_tlt}/1.cfg" |wc -l)"
     in1="$(grep -Fxvf "${DC_tlt}/3.cfg" "${DC_tlt}/1.cfg" |wc -l)"
     in2="$(grep -Fxvf "${DC_tlt}/2.cfg" "${DC_tlt}/6.cfg" |wc -l)"
-    in3="$(grep -Fxvf "${DC_tlt}/4.cfg" "${DC_tlt}/practice/log3" |wc -l)"
+    in3="$(egrep -cv '#|^$' "${DC_tlt}/practice/log2")"
+    in4="$(egrep -cv '#|^$' "${DC_tlt}/practice/log3")"
     [ ! -d "$DT" ] && mkdir "$DT"; cd "$DT"
     [ ! -e $DT/playlck ] && echo 0 > $DT/playlck
 
     if [ ${cfg} = 1 ]; then
         n=0
-        while [ ${n} -le 8 ]; do
+        while [ ${n} -le 9 ]; do
             get="${psets[$n]}"
             cfg="${DC_tlt}/10.cfg"
             val=$(grep -o "$get"=\"[^\"]* "${cfg}" |grep -o '[^"]*$')
@@ -80,7 +82,7 @@ play_list() {
     fi
     setting_1() {
         n=0
-        while [ ${n} -le 3 ]; do
+        while [ ${n} -le 4 ]; do
             arr="in${n}"
             [[ ${!arr} -lt 1 ]] && echo "$DS/images/addi.png" || echo "$DS/images/add.png"
             echo "  <span font_desc='Arial 11'>$(gettext "${lbls[$n]}")</span>"
@@ -90,7 +92,7 @@ play_list() {
         for ad in "$DS/ifs/mods/play"/*; do
             source "${ad}"
             for item in "${!items[@]}"; do
-                echo "$DS/images/add.png"
+                echo "$DS/images/${items[$item]}.png"
                 echo "  <span font_desc='Arial 11'>$(gettext "${item}") <i><small><small>${aname}</small></small></i></span>"
                 echo `grep -o ${items[$item]}=\"[^\"]* "${file_cfg}" |grep -o '[^"]*$'`
             done
@@ -146,7 +148,7 @@ play_list() {
     ret=$?
         tab1=$(< $tab1); tab2=$(< $tab2)
         f=1; n=0; count=0
-        for item in "${psets[@]:0:4}"; do
+        for item in "${psets[@]:0:5}"; do
             val=$(sed -n $((${n}+1))p <<<"${tab1}" |cut -d "|" -f3)
             [ -n "${val}" ] && sed -i "s/$item=.*/$item=\"$val\"/g" "${DC_tlt}/10.cfg"
             [ "$val" = TRUE ] && count=$((count+$(wc -l |sed '/^$/d' <<<"${!in[${n}]}")))
@@ -162,7 +164,7 @@ play_list() {
             done
             unset items
         done
-        for item in "${psets[@]:4:8}"; do
+        for item in "${psets[@]:5:9}"; do
             val="$(cut -d "|" -f${f} <<<"${tab2}")"
             [ -n "${val}" ] && sed -i "s/$item=.*/$item=\"$val\"/g" "${DC_tlt}/10.cfg"
             let f++

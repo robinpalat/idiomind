@@ -450,7 +450,7 @@ ipanel() {
         geom="140x190-${x}-${y}"
         echo -e "\"$geom\"" > "$DC_s/5.cfg"
     fi
-    if ! [[ ${x} =~ $numer ]]; then x=100; y=100; fi
+    if ! [[ ${x} =~ $numer ]]; then x=200; y=200; fi
     
     ( yad --fixed --form --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
