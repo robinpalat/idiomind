@@ -50,7 +50,7 @@ if [[ ${1} = 0 ]]; then
             "$DS"/stop.sh 2
         fi
         if [ -n "${item}" ]; then
-            local file icon
+            unset file icon
             _item="$(grep -F -m 1 "trgt={${item}}" "${DC_tlt}/0.cfg" |sed 's/},/}\n/g')"
             type="$(grep -oP '(?<=type={).*(?=})' <<<"${_item}")"
             export trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${_item}")"

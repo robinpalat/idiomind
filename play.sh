@@ -36,7 +36,7 @@ play_sentence() {
 
 play_file() {
     if [ -e "${2}" ]; then
-        if [[ $mime = 2 ]]; then
+        if [[ ${mime} = 2 ]]; then
         mplayer "${2}" -noconsolecontrols -title "${3}"; else
         mplayer "${2}" -novideo -noconsolecontrols -title "${3}"; fi
     elif [ -n "$synth" ]; then
