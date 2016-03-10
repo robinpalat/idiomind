@@ -423,7 +423,7 @@ bground_session() {
         sleep 20; new_session
     fi &
     if [[ $(grep -oP '(?<=itray=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]] && \
-    ! pgrep -f "/usr/share/idiomind/ifs/tls.sh itray"; then
+    ! pgrep -f "$DS/ifs/tls.sh itray"; then
     idiomind_start; fi
 }
 
@@ -463,7 +463,7 @@ ipanel() {
     --field="$(gettext "Home")"!'go-home':btn "idiomind 'topic'" \
     --field="$(gettext "Index")"!'gtk-index':btn "$DS/chng.sh" \
     --field="$(gettext "Options")"!'gtk-preferences':btn "$DS/cnfg.sh"
-    if [ $? != 0 ] && ! pgrep -f "/usr/share/idiomind/ifs/tls.sh itray"; then \
+    if [ $? != 0 ] && ! pgrep -f "$DS/ifs/tls.sh itray"; then \
     "$DS/stop.sh" 1 & fi; exit ) & set_geom
 }
 
@@ -496,7 +496,7 @@ idiomind_start() {
     fi
     
     if [[ $(grep -oP '(?<=itray=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]] && \
-    ! pgrep -f "/usr/share/idiomind/ifs/tls.sh itray"; then
+    ! pgrep -f "$DS/ifs/tls.sh itray"; then
         $DS/ifs/tls.sh itray &
     else
         ipanel
