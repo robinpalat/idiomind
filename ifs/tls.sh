@@ -291,7 +291,7 @@ _definition() {
 _translation() {
     source "$DS/ifs/cmns.sh"
     source /usr/share/idiomind/default/c.conf
-    xdg-open "https://translate.google.com/\#$lgt/$lgs/${2}"
+    xdg-open "https://translate.google.com/#$lgt/$lgs/${2}"
 } >/dev/null 2>&1
 
 _quick_help() {
