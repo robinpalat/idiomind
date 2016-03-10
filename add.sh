@@ -86,7 +86,7 @@ function new_item() {
 }
 
 function new_sentence() {
-    db="$DS/default/dicts/$lgt"
+    export db="$DS/default/dicts/$lgt"
     trgt="$(clean_2 "${trgt}")"
     srce="$(clean_2 "${srce}")"
 
@@ -145,7 +145,7 @@ function new_sentence() {
 function new_word() {
     trgt="$(clean_1 "${trgt}")"
     srce="$(clean_0 "${srce}")"
-    cdb="$DM_tls/data/${lgtl}.db"
+    export cdb="$DM_tls/data/${lgtl}.db"
 
     if [[ ${trans} = TRUE ]]; then
         if [[ ${ttrgt} = TRUE ]]; then
@@ -333,8 +333,8 @@ function list_words_dclik() {
 
 function process() {
     echo "$tpe" > "$DT/.n_s_pr"
-    ns=`wc -l < "${DC_tlt}/0.cfg"`
-    db="$DS/default/dicts/$lgt"
+    export ns=`wc -l < "${DC_tlt}/0.cfg"`
+    export db="$DS/default/dicts/$lgt"
     
     if [ ! -d "$DT_r" ] ; then
         export DT_r=$(mktemp -d "$DT/XXXXXX")
@@ -360,7 +360,7 @@ function process() {
         if [ $? != 0 ]; then
         info="$(gettext "Failed loading language")\nPlease install <b>tesseract-ocr-${tlang[$lgtl]}</b> package"
         msg "$info" error Error; fi
-        cat "$pars.txt" | clean_6 > "$DT_r/sntsls_"
+        clean_6 < "$pars.txt" > "$DT_r/sntsls_"
         rm -f "$pars".png "$DT_r"/img_.png
         ) | dlg_progress_1
     else
@@ -417,7 +417,7 @@ function process() {
         slt=$(mktemp $DT/slt.XXXX.x)
         xclip -i /dev/null
         tpcs="$(grep -vFx "${tpe}" "$DM_tl/.share/2.cfg" |tr "\\n" '!' |sed 's/\!*$//g')"
-        [ -n "$tpcs" ] && e='!'
+        [ -n "$tpcs" ] && export e='!'
         tpe="$(dlg_checklist_3 "$DT_r/sntsls" "${tpe}")"
         ret=$?
     fi
@@ -646,7 +646,7 @@ fetch_content() {
                 |iconv -c -f utf8 -t ascii |sed 's/\://g' \
                 |sed 's/\&/&amp;/g' |sed 's/^\s*./\U&\E/g' \
                 |sed 's/<[^>]*>//g' |sed 's/^ *//; s/ *$//; /^$/d')
-                link="$(echo "$fields" |sed -n 4p \
+                export link="$(echo "$fields" |sed -n 4p \
                 |sed 's|/|\\/|g' |sed 's/\&/\&amp\;/g')"
 
                 if [ -n "${title}" ]; then
@@ -692,6 +692,7 @@ new_items() {
     if [ ${#trgt} -gt ${sentence_chars} ]; then process & return; fi
 
     [ -e "$DT_r/ico.jpg" ] && img="$DT_r/ico.jpg" || img="$DS/images/nw.png"
+    export img
     
     tpcs="$(grep -vFx "${tpe}" "$DM_tl/.share/2.cfg" |tr "\\n" '!' |sed 's/\!*$//g')"
     [ -n "$tpcs" ] && e='!'

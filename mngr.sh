@@ -153,18 +153,18 @@ edit_item() {
         get_item "$(sed -n ${item_pos}p "${DC_tlt}/0.cfg")"
     fi
     [ -z "${id}" ] && id=""
-    query="$(sed "s/'/ /g" <<<"${trgt}")"
+    export query="$(sed "s/'/ /g" <<<"${trgt}")"
     to_modify=0; colorize_run=0; transl_mark=0
     if ((mode>=1 && mode<=10)); then
     tpcs="$(egrep -v "${tpc}" "$DM_tl/.share/2.cfg" |tr "\\n" '!' |sed 's/!\+$//g')"
-    tpc_list="${tpc}!${tpcs}"
+    export tpc_list="${tpc}!${tpcs}"
     fi
 
-    cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"""
-    cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"" ${id}"
-    cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"" "\"${trgt}\"""
-    cmd_def="'$DS/ifs/tls.sh' 'find_def' "\"${trgt}\"""
-    cmd_trad="'$DS/ifs/tls.sh' 'find_trad' "\"${trgt}\"""
+    export cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"""
+    export cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"" ${id}"
+    export cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"" "\"${trgt}\"""
+    export cmd_def="'$DS/ifs/tls.sh' 'find_def' "\"${trgt}\"""
+    export cmd_trad="'$DS/ifs/tls.sh' 'find_trad' "\"${trgt}\"""
 
     [ -z "${item}" ] && exit 1
     if [ ${text_missing} != 0 ]; then
@@ -399,7 +399,7 @@ edit_list() {
     done
 
     cmd_resfile="$DS/ifs/tls.sh _restfile "\"${tpc}\"""
-    cat "$DT/_tmp1" |edit_list_list > "$DT/tmp1"
+    edit_list_list < "$DT/_tmp1" > "$DT/tmp1"
     ret=$?
     	if [ $ret = 2 ]; then
 			msg_2 "$(gettext "Are you sure you want to reverse the list?")\n" \
@@ -447,11 +447,11 @@ edit_list() {
         mv -f "$DT/tmp0" "${direc}/0.cfg"
         if [ -d "$DM_tl/${2}" -a `wc -l < "${direc}/0.cfg"` -ge 1 ]; then
             while read -r fname; do
-               id=`basename "${fname}" |sed "s/\(.*\).\{4\}/\1/" |tr -d '.'`
+               id=$(basename "${fname}" |sed "s/\(.*\).\{4\}/\1/" |tr -d '.')
                if ! grep "${id}" "${direc}/0.cfg"; then cleanups "${fname}"; fi
             done < <(find "$DM_tl/${2}"/*.mp3)
             while read -r fname; do
-               trgt=`basename "${fname}" |sed "s/\(.*\).\{4\}/\1/" |tr -d '.'`
+               trgt=$(basename "${fname}" |sed "s/\(.*\).\{4\}/\1/" |tr -d '.')
                if ! grep "trgt={${trgt^}}" "${direc}/0.cfg"; then cleanups "${fname}"; fi
             done < <(find "$DM_tl/${2}/images"/*.jpg)
         fi
@@ -562,12 +562,12 @@ rename_topic() {
     source "$DS/ifs/mods/add/add.sh"
     listt="$(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
     ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
-    info2=$(wc -l <<<"$listt")
+
     if grep -Fxo "${tpc}" < "$DM_tl/.share/3.cfg"; then i=1; fi
     jlb="$(clean_3 "${2}")"
     
     if grep -Fxo "${jlb}" < <(ls "$DS/addons/"); then jlb="${jlb} (1)"; fi
-    chck="$(grep -Fxo "${jlb}" <<<"$listt" |wc -l)"
+    chck="$(grep -Fxo "${jlb}" <<<"${listt}" |wc -l)"
     
     if [ ! -d "$DM_tl/${tpc}" ]; then exit 1; fi
   
@@ -585,7 +585,7 @@ rename_topic() {
 
     if [ ${chck} -ge 1 ]; then
         for i in {1..50}; do
-        chck=$(grep -Fxo "${jlb} ($i)" <<<"$listt")
+        chck=$(grep -Fxo "${jlb} ($i)" <<<"${listt}")
         [ -z "${chck}" ] && break; done
         jlb="${jlb} ($i)"
     fi
@@ -712,11 +712,11 @@ mark_as_learned_topic() {
                 fi
             fi
         else
-            echo "$(date +%m/%d/%Y)" > "${DC_tlt}/9.cfg"
+            date +%m/%d/%Y > "${DC_tlt}/9.cfg"
         fi
         
         if [ -d "${DC_tlt}/practice" ]; then
-            (cd "${DC_tlt}/practice"; rm .*; rm *
+            (cd "${DC_tlt}/practice"; rm ./.*; rm ./*
             touch ./log1 ./log2 ./log3); fi
 
         > "${DC_tlt}/7.cfg"

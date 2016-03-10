@@ -16,36 +16,36 @@ item="$(grep -F -m 1 "trgt={${_item}}" "$DC_tlt/0.cfg" |sed 's/},/}\n/g')"
 
 type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
 export trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
-srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
-exmp="$(grep -oP '(?<=exmp={).*(?=})' <<<"${item}")"
-defn="$(grep -oP '(?<=defn={).*(?=})' <<<"${item}")"
-note="$(grep -oP '(?<=note={).*(?=})' <<<"${item}")"
-grmr="$(grep -oP '(?<=grmr={).*(?=})' <<<"${item}")"
-mark="$(grep -oP '(?<=mark={).*(?=})' <<<"${item}")"
-link="$(grep -oP '(?<=link={).*(?=})' <<<"${item}")"
-tag="$(grep -oP '(?<=tag={).*(?=})' <<<"${item}")"
-wrds="$(grep -oP '(?<=wrds={).*(?=})' <<<"${item}")"
-exmp="$(sed "s/${trgt,,}/<span background='#FDFBCF'>${trgt,,}<\/\span>/g" <<<"${exmp}")"
-id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
+export srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
+export exmp="$(grep -oP '(?<=exmp={).*(?=})' <<<"${item}")"
+export defn="$(grep -oP '(?<=defn={).*(?=})' <<<"${item}")"
+export note="$(grep -oP '(?<=note={).*(?=})' <<<"${item}")"
+export grmr="$(grep -oP '(?<=grmr={).*(?=})' <<<"${item}")"
+export mark="$(grep -oP '(?<=mark={).*(?=})' <<<"${item}")"
+export link="$(grep -oP '(?<=link={).*(?=})' <<<"${item}")"
+export tag="$(grep -oP '(?<=tag={).*(?=})' <<<"${item}")"
+export wrds="$(grep -oP '(?<=wrds={).*(?=})' <<<"${item}")"
+export exmp="$(sed "s/${trgt,,}/<span background='#FDFBCF'>${trgt,,}<\/\span>/g" <<<"${exmp}")"
+export id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
 text_missing=0
 
 if [ ${type} = 1 ]; then
-    cmd_listen="$DS/play.sh play_word "\"${trgt}\"" ${id}"
+    export cmd_listen="$DS/play.sh play_word "\"${trgt}\"" ${id}"
     [ "$mark" = TRUE ] && trgt="<b>$trgt</b>" && grmr="<b>$grmr</b>"
     word_view
 elif [ ${type} = 2 ]; then
-    cmd_listen="$DS/play.sh play_sentence ${id}"
+    export cmd_listen="$DS/play.sh play_sentence ${id}"
     [ "$mark" = TRUE ] && trgt="<b>$trgt</b>" && grmr="<b>$grmr</b>"
     sentence_view
 else
     trgt="${_item} <small>[Text missing]</small>"
     grmr="${trgt}"
     if [[ `wc -w <<< "${_item}"` -lt 2 ]]; then
-        cmd_listen="$DS/play.sh play_word "\"${trgt}\"" ${id}"
+        export cmd_listen="$DS/play.sh play_word "\"${trgt}\"" ${id}"
         text_missing=1
         word_view
     else 
-        cmd_listen="$DS/play.sh play_sentence ${id}"
+        export cmd_listen="$DS/play.sh play_sentence ${id}"
         text_missing=2
         sentence_view
     fi

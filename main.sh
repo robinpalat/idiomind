@@ -268,8 +268,8 @@ function topic() {
 
                 grep -Fxvf "${cnf1}" "${ls1}" > "$DT/ls1.x"
                 mv -f "$DT/ls1.x" "${ls1}"
-                if [ -n "$(cat "${ls1}" |sort -n |uniq -dc)" ]; then
-                    cat "${ls1}" |awk '!array_temp[$0]++' > "$DT/ls1.x"
+                if [ -n "$(< "${ls1}" |sort -n |uniq -dc)" ]; then
+                    awk '!array_temp[$0]++' < "${ls1}" > "$DT/ls1.x"
                     sed '/^$/d' "$DT/ls1.x" > "${ls1}"
                 fi
                 "$DS/ifs/tls.sh" colorize
@@ -423,18 +423,18 @@ bground_session() {
         sleep 20; new_session
     fi &
     if [[ $(grep -oP '(?<=itray=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]] && \
-    [[ -z $(pgrep -f "/usr/share/idiomind/ifs/tls.sh itray") ]]; then
+    ! pgrep -f "/usr/share/idiomind/ifs/tls.sh itray"; then
     idiomind_start; fi
 }
 
 ipanel() {
     set_geom(){
         sleep 1
-        spost=`xwininfo -name Idiomind |grep geometry |cut -d ' ' -f 4`
+        spost=$(xwininfo -name Idiomind |grep geometry |cut -d ' ' -f 4)
         sed -i "s/.*/\"$spost\"/g" "$DC_s/5.cfg"
         for n in {1..10}; do
             sleep 1
-            cpost=`xwininfo -name Idiomind |grep geometry |cut -d ' ' -f 4`
+            cpost=$(xwininfo -name Idiomind |grep geometry |cut -d ' ' -f 4)
             [ -z ${cpost} ] && break && exit 1
             if [ ${spost} != ${cpost} ]; then
             sed -i "s/.*/\"${cpost}\"/g" "$DC_s/5.cfg"; spost=${cpost}
@@ -463,7 +463,7 @@ ipanel() {
     --field="$(gettext "Home")"!'go-home':btn "idiomind 'topic'" \
     --field="$(gettext "Index")"!'gtk-index':btn "$DS/chng.sh" \
     --field="$(gettext "Options")"!'gtk-preferences':btn "$DS/cnfg.sh"
-    if [ $? != 0 ] && [ -z $(pgrep -f "/usr/share/idiomind/ifs/tls.sh itray") ]; then \
+    if [ $? != 0 ] && ! pgrep -f "/usr/share/idiomind/ifs/tls.sh itray"; then \
     "$DS/stop.sh" 1 & fi; exit ) & set_geom
 }
 
@@ -496,7 +496,7 @@ idiomind_start() {
     fi
     
     if [[ $(grep -oP '(?<=itray=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]] && \
-    [[ -z $(pgrep -f "/usr/share/idiomind/ifs/tls.sh itray") ]]; then
+    ! pgrep -f "/usr/share/idiomind/ifs/tls.sh itray"; then
         $DS/ifs/tls.sh itray &
     else
         ipanel
@@ -507,9 +507,9 @@ case "$1" in
     topic)
     topic ;;
     first_run)
-    "$DS/ifs/tls.sh" $@ ;;
+    "$DS/ifs/tls.sh" "$@" ;;
     translate)
-    "$DS/ifs/tls.sh" $@ ;;
+    "$DS/ifs/tls.sh" "$@" ;;
     -v|--version)
     source $DS/default/sets.cfg
     echo -n "$_version" ;;

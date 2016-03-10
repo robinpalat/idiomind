@@ -149,7 +149,7 @@ play_list() {
         tab1=$(< $tab1); tab2=$(< $tab2)
         f=1; n=0; count=0
         for item in "${psets[@]:0:5}"; do
-            val=$(sed -n $((${n}+1))p <<<"${tab1}" |cut -d "|" -f3)
+            val=$(sed -n $((n+1))p <<<"${tab1}" |cut -d "|" -f3)
             [ -n "${val}" ] && sed -i "s/$item=.*/$item=\"$val\"/g" "${DC_tlt}/10.cfg"
             [ "$val" = TRUE ] && count=$((count+$(wc -l |sed '/^$/d' <<<"${!in[${n}]}")))
             let n++
@@ -157,7 +157,7 @@ play_list() {
         for ad in "$DS/ifs/mods/play"/*; do
             source "${ad}"
             for item in "${!items[@]}"; do
-                val=$(sed -n $((${n}+1))p <<<"${tab1}" |cut -d "|" -f3)
+                val=$(sed -n $((n+1))p <<<"${tab1}" |cut -d "|" -f3)
                 [ -n "${val}" ] && sed -i "s/${items[$item]}=.*/${items[$item]}=\"$val\"/g" "${file_cfg}"
                 [ "$val" = TRUE ] && count=$((count+1))
                 let n++
