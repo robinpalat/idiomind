@@ -22,7 +22,7 @@ function dwld() {
     langt=$(grep -o 'langt="[^"]*' "${idcfg}" |grep -o '[^"]*$')
     [ -z "${oname}" ] && oname="${tpc}"
     pre="$(sed 's/ /_/g' <<< "${oname:0:10}")"
-    url1="http://idiomind.sourceforge.net/dl.php/?lang=${langt,,}&file=${pre}${md5id}"
+    url1="http://idiomind.sourceforge.net/dl.php/?lg=${langt,,}&fl=${pre}${md5id}"
     if wget -S --spider "${url1}" 2>&1 |grep 'HTTP/1.1 200 OK'; then
         URL="${url1}"
     else err & exit
@@ -256,8 +256,8 @@ function upld() {
     elif [ $ret = 0 ]; then
         conds_upload "${2}"
         "$DS/ifs/tls.sh" check_index "${tpc}" 1
-        notify-send -i dialog-information "$(gettext "Upload in progress")" \
-        "$(gettext "This can take some time please wait")" -t 6000
+        ( sleep 1; notify-send -i dialog-information "$(gettext "Upload in progress")" \
+        "$(gettext "This can take some time please wait")" -t 6000 ) &
         mkdir -p "$DT/upload/${tpc}/conf"
         DT_u="$DT/upload/"
         oname="$(grep -o 'oname="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
@@ -324,11 +324,9 @@ function upld() {
         tr '\n' '&' < "${DC_tlt}/id.cfg" >> "$DT_u/$tpcid.${tpc}.$lgt"
         echo -n "&idiomind-`idiomind -v`" >> "$DT_u/$tpcid.${tpc}.$lgt"
         echo -en "\nidiomind-`idiomind -v`" >> "${DC_tlt}/id.cfg"
-        url="http://idiomind.sourceforge.net/uploads.php"
         direc="$DT_u"
-        log="$DT_u/log"
         body="<hr><br><a href='/${lgtl,}/${ctgry,}/$tpcid.$oname.idmnd'>Download</a>"
-        export tpc direc url log usrid_m passw_m body
+        export tpc direc usrid_m passw_m body
 
         python << END
 import os, sys, requests, time, xmlrpclib
@@ -345,16 +343,12 @@ try:
 except:
     pass
     #sys.exit(3)
-url = requests.get(os.environ['url']).url
+url = requests.get('http://idiomind.sourceforge.net/uploads.php').url
 direc = os.environ['direc']
-log = os.environ['log']
 volumes = [i for i in os.listdir(direc)]
 for f in volumes:
     file = {'file': open(f, 'rb')}
     r = requests.post(url, files=file)
-    p = open(log, "w")
-    p.write("x")
-    p.close()
     time.sleep(5)
 END
         u=$?

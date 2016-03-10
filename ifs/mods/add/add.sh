@@ -118,7 +118,7 @@ function sentence_p() {
     translate "$(sed '/^$/d' "${aw}")" auto $lg |tr -d '!?¿,;.' > "${bw}"
     
     while read -r wrd; do
-        w="$(tr -d '\.,;“”"' <<<"${wrd,,}")"
+        w="$(tr -d '\.,;“”"' <<< "${wrd,,}")"
         if [[ `sqlite3 $db "select items from pronouns where items is '${w}';"` ]]; then
             echo "<span color='#3E539A'>${wrd}</span>" >> ./"g.$r"
         elif [[ `sqlite3 $db "select items from nouns_adjetives where items is '${w}';"` ]]; then
@@ -138,20 +138,21 @@ function sentence_p() {
         else
             echo "${wrd}" >> ./"g.$r"
         fi
-    done < <(sed 's/ /\n/g' <<<"${trgt_p}")
+    done < <(sed 's/ /\n/g' <<< "${trgt_p}")
     
     sed -i 's/\. /\n/g' "${bw}"
     sed -i 's/\. /\n/g' "${aw}"
     touch "$DT_r/A.$r" "$DT_r/B.$r" "$DT_r/g.$r"; bcle=1
-    trgt_q="$(echo "${trgt}" |sed "s/'/''/")"
+    trgt_q="${trgt//\'/\'\'}"
     
     if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
         while [[ ${bcle} -le $(wc -l < "${aw}") ]]; do
         s=$(sed -n ${bcle}p ${aw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
         t=$(sed -n ${bcle}p ${bw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
-        echo "$t"_"$s" >> "$DT_r/B.$r"
-        t="$(echo "${t}" |sed "s/'/''/")"
-        s="$(echo "${s}" |sed "s/'/''/")"
+        echo "${t}_${s}" >> "$DT_r/B.$r"
+        t="${t//\'/\'\'}"
+        s="${s//\'/\'\'}"
+        
         if ! [[ "${t}" =~ [0-9] ]] && [ -n "${t}" ] && [ -n "${s}" ]; then
             if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]]; then
                 sqlite3 ${cdb} "insert into Words (Word,${lgsl^},Example) values ('${t}','${s}','${trgt_q}');"
@@ -167,8 +168,9 @@ function sentence_p() {
         t=$(sed -n ${bcle}p ${aw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
         s=$(sed -n ${bcle}p ${bw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
         echo "$t"_"$s" >> "$DT_r/B.$r"
-        t="$(echo "${t}" |sed "s/'/''/")"
-        s="$(echo "${s}" |sed "s/'/''/")"
+        t="${t//\'/\'\'}"
+        s="${s//\'/\'\'}"
+        
         if ! [[ "${t}" =~ [0-9] ]] && [ -n "${t}" ] && [ -n "${s}" ]; then
             if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]]; then
                 sqlite3 ${cdb} "insert into Words (Word,${lgsl^},Example) values ('${t}','${s}','${trgt_q}');" 
@@ -182,19 +184,20 @@ function sentence_p() {
     fi
     if [ ${2} = 1 ]; then
     grmr=""; wrds=""
-    grmr="$(sed ':a;N;$!ba;s/\n/ /g' < "$DT_r/g.$r")"
-    wrds="$(tr '\n' '_' < "$DT_r/B.$r")"
+    export grmr="$(sed ':a;N;$!ba;s/\n/ /g' < "$DT_r/g.$r")"
+    export wrds="$(tr '\n' '_' < "$DT_r/B.$r")"
     elif [ ${2} = 2 ]; then
-    grmr_mod="$(sed ':a;N;$!ba;s/\n/ /g' < "$DT_r/g.$r")"
-    wrds_mod="$(tr '\n' '_' < "$DT_r/B.$r")"
+    export grmr_mod="$(sed ':a;N;$!ba;s/\n/ /g' < "$DT_r/g.$r")"
+    export wrds_mod="$(tr '\n' '_' < "$DT_r/B.$r")"
     fi
 }
 
 function word_p() {
     cdb="$DM_tls/data/${lgtl}.db"
     table="T`date +%m%y`"
-    trgt_q="$(echo "${trgt}" |sed "s/'/''/")"
-    srce_q="$(echo "${srce}" |sed "s/'/''/")"
+    trgt_q="${trgt//\'/\'\'}"
+    srce_q="${srce//\'/\'\'}"
+    
     echo -n "create table if not exists ${table} \
     (Word TEXT, ${lgsl^} TEXT);" |sqlite3 ${cdb}
     if ! grep -q ${lgsl} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(${table});")"; then
@@ -251,11 +254,11 @@ function clean_3() {
 }  
 
 function clean_4() {
-    if [ `wc -c <<<"${1}"` -le ${sentence_chars} ] && \
+    if [ $(wc -c <<<"${1}") -le ${sentence_chars} ] && \
     [ `echo -e "${1}" |wc -l` -gt ${sentence_lines} ]; then
     echo "${1}" | tr -d '*/"' |tr -s '&:|{}[]<>+' ' ' \
     |sed 's/ — / /;s/--/ /g; /^$/d; s/ \+/ /g;s/ʺͶ//g'
-    elif [ `wc -c <<<"${1}"` -le ${sentence_chars} ]; then
+    elif [ $(wc -c <<<"${1}") -le ${sentence_chars} ]; then
     echo "${1}" |sed ':a;N;$!ba;s/\n/ /g' \
     |tr -d '*/"' |tr -s '&:|{}[]<>+' ' ' \
     |sed 's/ — / /;s/--/ /g; /^$/d; s/ \+/ /g;s/ʺͶ//g'
@@ -366,7 +369,7 @@ dwld1() {
     fi
     if file -b --mime-type "$audio_file" |grep -E 'audio\/mpeg|mp3|' >/dev/null 2>&1 \
     && [[ `du -b "$audio_file" |cut -f1` -gt 100 ]]; then
-        break
+        return 5
     else [ -e "$audio_file" ] && rm "$audio_file"; fi
 }
 
@@ -377,7 +380,7 @@ dwld2() {
     fi
     if file -b --mime-type "$DT_r/audio.mp3" |grep -E 'audio\/mpeg|mp3|' >/dev/null 2>&1 \
     && [[ `du -b "$DT_r/audio.mp3" |cut -f1` -gt 100 ]]; then
-        mv -f "$DT_r/audio.mp3" "${audio_file}"; break
+        mv -f "$DT_r/audio.mp3" "${audio_file}"; return 5
     else [ -e "$DT_r/audio.mp3" ] && rm "$DT_r/audio.mp3"; fi
 }
 
@@ -389,7 +392,7 @@ function tts_sentence() {
     fi
     word="${1}"; DT_r="$2"; audio_file="${3}"
     for dict in "$DC_d"/*."TTS online.Pronunciation".*; do
-        dwld2
+        dwld2; [ $? = 5 ] && break
     done
 }
 
@@ -400,13 +403,13 @@ function tts_word() {
     word="${1,,}"; audio_file="${2}/$word.mp3"; audio_dwld="${2}/$word"
     if ls "$DC_d"/*."TTS online.Word pronunciation".$lgt 1> /dev/null 2>&1; then
         for dict in $DC_d/*."TTS online.Word pronunciation".$lgt; do
-            dwld1
+            dwld1; [ $? = 5 ] && break
         done
     fi
     if ls "$DC_d"/*."TTS online.Word pronunciation".various 1> /dev/null 2>&1; then
         if [ ! -e "${2}/${1}.mp3" ]; then
             for dict in $DC_d/*."TTS online.Word pronunciation".various; do
-                dwld1
+                dwld1; [ $? = 5 ] && break
             done
         fi
     fi
@@ -424,13 +427,13 @@ function fetch_audio() {
         if [ ! -e "$audio_file" ]; then
             if ls "$DC_d"/*."TTS online.Word pronunciation".$lgt 1> /dev/null 2>&1; then
                 for dict in "$DC_d"/*."TTS online.Word pronunciation".$lgt; do
-                    dwld1
+                    dwld1; [ $? = 5 ] && break
                 done
             fi
             if [ ! -e "$audio_file" ]; then
                 if ls "$DC_d"/*."TTS online.Word pronunciation".various 1> /dev/null 2>&1; then
                     for dict in "$DC_d"/*."TTS online.Word pronunciation".various; do
-                        dwld1
+                        dwld1; [ $? = 5 ] && break
                     done
                 fi
             fi
@@ -558,8 +561,8 @@ function dlg_form_2() {
 }
 
 function dlg_checklist_3() {
-    fkey=$(($RANDOM * $$))
-    cat "${1}" | awk '{print "FALSE\n"$0}' | \
+    fkey=$((RANDOM*$$))
+    awk '{print "FALSE\n"$0}' < "${1}" | \
     yad --list --checklist --tabnum=1 --plug="$fkey" \
     --dclick-action="$DS/add.sh 'list_words_dclik'" --multiple \
     --ellipsize=END --no-headers --text-align=right \
@@ -599,7 +602,7 @@ function dlg_checklist_1() {
 }
 
 function dlg_text_info_1() {
-    cat "${1}" | awk '{print "\n"$0}' | \
+    awk '{print "\n"$0}' < "${1}" | \
     yad --text-info --title="$(gettext "Edit")" \
     --name=Idiomind --class=Idiomind \
     --editable \

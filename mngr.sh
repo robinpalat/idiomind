@@ -174,7 +174,7 @@ edit_item() {
     
     if [[ "${srce}" = "${temp}" ]]; then
         if [ -e "$DT/${trgt}.edit" ]; then
-            msg_2 "$(gettext "Translating... Wait till the process is completed. ")\n" \
+            msg_2 "$(gettext "Wait till the process is completed. Translating...")\n" \
             dialog-information OK "$(gettext "Stop")" "$(gettext "Warning")"
             if [ $? -eq 1 ]; then
                 srce=""; transl_mark=1; rm -f "$DT/${trgt}.edit"

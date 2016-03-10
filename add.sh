@@ -448,7 +448,7 @@ function process() {
         fi
         while read -r chkst; do
             sed 's/TRUE//g' <<<"${chkst}"  >> "$DT_r/slts"
-        done <<<"$(tac "${slt}" |sed 's/|//g')"
+        done <<< "$(tac "${slt}" |sed 's/|//g')"
         cleanups "$slt"
 
         touch "$DT_r/wlog" "$DT_r/slog" "$DT_r/adds" \

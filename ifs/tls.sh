@@ -273,7 +273,7 @@ fback() {
 
 _definition() {
     source "$DS/ifs/cmns.sh"
-    query="$(sed 's/<[^>]*>//g' <<<"${2}")"
+    export query="$(sed 's/<[^>]*>//g' <<<"${2}")"
     f="$(ls "$DC_d"/*."Link.Search definition".* |head -n1)"
     if [ -z "$f" ]; then "$DS_a/Dics/cnfg.sh" 3
         f="$(ls "$DC_d"/*."Link.Search definition".* |head -n1)"
@@ -412,11 +412,11 @@ set_image() {
     if [ $? -eq 1 ]; then rm -f "$DT/$trgt".img; else exit 1 ; fi; fi
 
     if [ -e "$ifile" ]; then
-        btn2="--button=$(gettext "Remove")!edit-delete:2"
-        image="--image=$ifile"
+        export btn2="--button=$(gettext "Remove")!edit-delete:2"
+        export image="--image=$ifile"
     else
-        btn2="--button="$(gettext "Screen clipping")":0"
-        image="--image=$DS/images/bar.png"
+        export btn2="--button="$(gettext "Screen clipping")":0"
+        export image="--image=$DS/images/bar.png"
     fi
     
     dlg_form_3; ret=$?
@@ -473,7 +473,6 @@ translate_to() {
                 item="$(sed 's/},/}\n/g' <<<"${item_}")"
                 type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
                 trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
-                pos="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
                 if [ -n "${trgt}" ]; then
                     echo "${trgt}" \
                     | python -c 'import sys; print(" ".join(sorted(set(sys.stdin.read().split()))))' \

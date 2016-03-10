@@ -229,10 +229,10 @@ function topic() {
             export inx${n}=$(wc -l < "${DC_tlt}/${n}.cfg")
         done
         nt="${DC_tlt}/info"
-        authr="$(grep -oP '(?<=authr=\").*(?=\")' "${DC_tlt}/id.cfg")"
-        datec="$(grep -oP '(?<=datec=\").*(?=\")' "${DC_tlt}/id.cfg")"
-        datei="$(grep -oP '(?<=datei=\").*(?=\")' "${DC_tlt}/id.cfg")"
-        auto_mrk="$(grep -oP '(?<=acheck=\").*(?=\")' "${DC_tlt}/10.cfg")"
+        authr=$(grep -oP '(?<=authr=\").*(?=\")' "${DC_tlt}/id.cfg")
+        datec=$(grep -oP '(?<=datec=\").*(?=\")' "${DC_tlt}/id.cfg")
+        datei=$(grep -oP '(?<=datei=\").*(?=\")' "${DC_tlt}/id.cfg")
+        auto_mrk=$(grep -oP '(?<=acheck=\").*(?=\")' "${DC_tlt}/10.cfg")
         ( if [ -e "${DC_tlt}/err" ]; then
         sleep 2; include "$DS/ifs/mods/add"
         dlg_text_info_3 "$(cat "${DC_tlt}/err")"; fi ) &
@@ -248,7 +248,7 @@ function topic() {
     apply() {
             note_mod="$(< "${cnf3}")"
             if [ "${note_mod}" != "$(< "${nt}")" ]; then
-            mv -f "${cnf3}" "${DC_tlt}/info"; fi
+            echo -e "\n${note_mod}" > "${DC_tlt}/info"; fi
             
             auto_mrk_mod=$(cut -d '|' -f 3 < "${cnf4}")
             if [[ $auto_mrk_mod != $auto_mrk ]] && [ -n "$auto_mrk_mod" ]; then

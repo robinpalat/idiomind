@@ -759,11 +759,11 @@ function strt() {
     --ellipsize=NONE --no-headers --expand-column=2 --hide-column=1 \
     --width=500 --height=470 --borders=10 \
     --column="Action" --column="Pick":IMG --column="Label" \
-    "a" "$dirs/images/`< ./.1`.png" "   $info1  $(gettext "Flashcards")" \
-    "b" "$dirs/images/`< ./.2`.png" "   $info2  $(gettext "Multiple Choice")" \
-    "c" "$dirs/images/`< ./.3`.png" "   $info3  $(gettext "Recognizing Words")" \
-    "d" "$dirs/images/`< ./.4`.png" "   $info4  $(gettext "Images")" \
-    "e" "$dirs/images/`< ./.5`.png" "   $info5  $(gettext "Writing Sentences")" \
+    "a" "$dirs/images/$(< ./.1).png" "   $info1  $(gettext "Flashcards")" \
+    "b" "$dirs/images/$(< ./.2).png" "   $info2  $(gettext "Multiple Choice")" \
+    "c" "$dirs/images/$(< ./.3).png" "   $info3  $(gettext "Recognizing Words")" \
+    "d" "$dirs/images/$(< ./.4).png" "   $info4  $(gettext "Images")" \
+    "e" "$dirs/images/$(< ./.5).png" "   $info5  $(gettext "Writing Sentences")" \
     --button="$(gettext "Restart")":3 \
     --button="$(gettext "Start")":0)"
     ret=$?

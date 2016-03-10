@@ -183,5 +183,6 @@ function calculate_review() {
         RM=$((100*TM/notice8))
         tdays=${notice8}
     fi
+    export tdays adv
     return ${RM}
 }
