@@ -625,13 +625,7 @@ itray() {
     export lbl8="$(gettext "Quit")"
     export dirt="$DT/"
     python <<PY
-import time
-import os
-import os.path
-import gtk
-import gio
-import signal
-import appindicator
+import time, os, os.path, gtk, gio, signal, appindicator
 icon = '/usr/share/idiomind/images/logo.png'
 HOME = os.getenv('HOME')
 add = os.environ['lbl1']
@@ -769,8 +763,7 @@ return 0
 about() {
     export _descrip="$(gettext "Utility for learning foreign vocabulary")"
     python << ABOUT
-import gtk
-import os
+import gtk, os
 app_logo = os.path.join('/usr/share/idiomind/images/logo.png')
 app_icon = os.path.join('/usr/share/icons/hicolor/22x22/apps/idiomind.png')
 app_name = 'Idiomind'

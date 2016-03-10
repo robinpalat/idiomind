@@ -345,7 +345,7 @@ try:
 except:
     pass
     #sys.exit(3)
-url = os.environ['url']
+url = requests.get(os.environ['url']).url
 direc = os.environ['direc']
 log = os.environ['log']
 volumes = [i for i in os.listdir(direc)]
