@@ -69,7 +69,7 @@ function edit_list_list() {
     --button="$(gettext "Restore")!!$(gettext "Revert to a previous state")":"${cmd_resfile}" \
     --button="$(gettext "Inverse")!!$(gettext "Reverse items order")":2 \
     --button="$(gettext "Save")":0 \
-    --button="$(gettext "Close")":1
+    --button="$(gettext "Cancel")":1
 }
 
 function edit_feeds_list() {

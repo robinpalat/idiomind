@@ -123,7 +123,7 @@ function upld() {
         --field="\t\t$(gettext "Password")" "$passw" \
         --field="<a href='$linkac'>$(gettext "Get account to share")</a> \n":LBL \
         --button="$(gettext "Export")":2 \
-        --button="$(gettext "Close")":4
+        --button="$(gettext "Cancel")":4
     }
     
     dlg_upload() {
@@ -142,7 +142,7 @@ function upld() {
         --field=" ":LBL "" \
         --button="$(gettext "Export")":2 \
         --button="$(gettext "Upload")":0 \
-        --button="$(gettext "Close")":4
+        --button="$(gettext "Cancel")":4
     }
 
     dlg_dwld_content() {
@@ -163,7 +163,7 @@ function upld() {
         --field="$info2:lbl" " " \
         --button="$(gettext "Export")":2 \
         --button="$(gettext "Download")":"${cmd_dwl}" \
-        --button="$(gettext "Close")":4
+        --button="$(gettext "Cancel")":4
     } 
     
     dlg_export() {
@@ -177,7 +177,7 @@ function upld() {
         --field="$(< "${DC_tlt}/download"):lbl" " " \
         --field=" :lbl" " " \
         --button="$(gettext "Export")":2 \
-        --button="$(gettext "Close")":4
+        --button="$(gettext "Cancel")":4
     }
     
     random_id() { tr -dc a-z < /dev/urandom |head -c 1; echo $((RANDOM%100)); }
