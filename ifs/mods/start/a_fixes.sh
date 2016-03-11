@@ -2,8 +2,6 @@
 
 $DS_a/Dics/cnfg.sh updt_dicts &
 
-if ! grep 'itray' "$DC_s/1.cfg"; then rm -f "$DC_s/1.cfg"; fi
-
 if [ -d "$DM_tl/.share/Dictionary" ]; then
     if [ -d "$DM_tl/.share/Dictionary" ]; then
         [ -d "$DM_tl/.share/Dictionary/.conf" ] && rm -r "$DM_tl/.share/Dictionary/.conf"

@@ -5,11 +5,12 @@ source /usr/share/idiomind/default/c.conf
 [ ! -d "$DC" ] && "$DS/ifs/1u.sh" && exit
 info2="$(gettext "Switch Language")?"
 cd "$DS/addons"
-if [[ -n "$(< "$DC_s/1.cfg")" ]]; then cfg=1; else > "$DC_s/1.cfg"; fi
 cnf1=$(mktemp "$DT/cnf1.XXXX")
 source $DS/default/sets.cfg
 lang1="${!lang[@]}"; lt=( $lang1 )
 lang2="${!slang[@]}"; ls=( $lang2 )
+if [[ $(egrep -cv '#|^$' "$DC_s/1.cfg") = ${#csets[*]} ]]; then
+cfg=1; else > "$DC_s/1.cfg"; fi
 
 desktopfile="[Desktop Entry]
 Name=Idiomind
@@ -64,18 +65,16 @@ set_lang() {
 }
 
 config_dlg() {
-    n=0
-    if [ "$cfg" = 1 ]; then
-        while [ ${n} -lt 12 ]; do
-            get="${csets[$n]}"
+    if [ ${cfg} = 1 ]; then
+        for get in ${csets[@]}; do
             val=$(grep -o "$get"=\"[^\"]* "$DC_s/1.cfg" |grep -o '[^"]*$')
-            declare "${csets[$n]}"="$val"
-            ((n=n+1))
+            declare "$get"="$val"
         done
     else
         n=0; > "$DC_s/1.cfg"
-        for n in {0..12}; do 
-        echo -e "${csets[$n]}=\"\"" >> "$DC_s/1.cfg"; done
+        for _set in ${csets[@]}; do
+            echo -e "$_set=\"\"" >> "$DC_s/1.cfg"
+        done
     fi
 
     if [ -z "$intrf" ]; then intrf=Default; fi

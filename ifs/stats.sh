@@ -291,7 +291,7 @@ function stats() {
     fi
     
     yad --html --uri="$DS/default/pg1.html" \
-    --title="$(gettext "Stats (Beta)")" \
+    --title="$(gettext "Stats (beta)")" \
     --name=Idiomind --class=Idiomind \
     --browser --encoding=UTF-8 \
     --orient=vert --window-icon=idiomind --center --on-top \
