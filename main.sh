@@ -132,10 +132,9 @@ function new_session() {
     ( source "$DS/ifs/stats.sh"; sleep 5; pre_comp ) &
 }
 
-if grep -o '.idmnd' <<<"${1: -6}"; then
+if grep -o '.idmnd' <<<"${1: -6}">/dev/null 2>&1; then
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
-    source "$DS/ifs/tls.sh"
-    check_format_1 "${1}"
+    source "$DS/ifs/tls.sh"; check_format_1 "${1}"
     if [ $? != 18 ]; then
         msg "$(gettext "File is corrupted.")\n" error "$(gettext "Information")" & exit 1
     fi
@@ -206,7 +205,7 @@ if grep -o '.idmnd' <<<"${1: -6}"; then
                 fi    
             done < <(head -n -1 < "${file}")
 
-            "$DS/ifs/tls.sh" colorize
+            "$DS/ifs/tls.sh" colorize 1
             echo -e "$langt\n$lgsl" > "$DC_s/6.cfg"
             echo 1 > "${DC_tlt}/8.cfg"
             echo "${tname}" >> "$DM_tl/.share/3.cfg"
@@ -257,7 +256,7 @@ function topic() {
             sed -i "s/acheck=.*/acheck=\"$auto_mrk_mod\"/g" "${DC_tlt}/10.cfg"; fi
             
             if [[ $auto_mrk_mod = FALSE ]] && [[ $auto_mrk != FALSE ]]; then
-                "$DS/ifs/tls.sh" colorize; rm "${cnf1}"; fi
+                "$DS/ifs/tls.sh" colorize 1; rm "${cnf1}"; fi
 
             if grep TRUE "${cnf1}"; then
                 grep -Rl "|FALSE|" "${cnf1}" |while read tab1; do
@@ -274,7 +273,7 @@ function topic() {
                     awk '!array_temp[$0]++' < "${ls1}" > "$DT/ls1.x"
                     sed '/^$/d' "$DT/ls1.x" > "${ls1}"
                 fi
-                "$DS/ifs/tls.sh" colorize
+                "$DS/ifs/tls.sh" colorize 1
                 source "$DS/ifs/stats.sh"
                 save_topic_stats 0
             fi
@@ -420,7 +419,6 @@ function topic() {
 }
 
 bground_session() {
-    
     if [ ! -e "$DT/ps_lk" -a ! -d "$DT" ]; then
         sleep 20; new_session
     fi &

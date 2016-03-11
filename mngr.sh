@@ -88,7 +88,7 @@ delete_item_ok() {
     if [[ `wc -l < "${DC_tlt}/0.cfg"` -lt 200 ]] && [[ -e "${DC_tlt}/lk" ]]; then
         rm -f "${DC_tlt}/lk"
     fi
-    "$DS/ifs/tls.sh" colorize &
+    "$DS/ifs/tls.sh" colorize 1 &
     rm -f "$DT/ps_lk" & exit 1
 }
 
@@ -125,7 +125,7 @@ delete_item() {
             if [ -e "${DC_tlt}/feeds" ]; then
                 echo "${trgt}" >> "${DC_tlt}/exclude"
             fi
-            "$DS/ifs/tls.sh" colorize &
+            "$DS/ifs/tls.sh" colorize 1 &
             rm "${DC_tlt}"/*.tmp
         fi
     fi
@@ -363,7 +363,7 @@ edit_item() {
             ) &
             fi
             [ ${type} != ${type_mod} -a ${type_mod} = 1 ] && ( img_word "${trgt}" "${srce}" ) &
-            [ ${colorize_run} = 1 ] && "$DS/ifs/tls.sh" colorize &
+            [ ${colorize_run} = 1 ] && "$DS/ifs/tls.sh" colorize 1 &
             [ ${to_modify} = 1 -a $ret -eq 0 ] && sleep 0.2
             
             if [ $ret -eq 2 ]; then $DS/mngr.sh edit ${list} $((item_pos-1)) &
@@ -458,7 +458,7 @@ edit_list() {
         
         if [[ "$(cat "${direc}/1.cfg" "${direc}/2.cfg" |wc -l)" -lt 1 ]]; then
         > "${direc}/0.cfg"; fi
-        "$DS/ifs/tls.sh" colorize
+        "$DS/ifs/tls.sh" colorize 1
         rm -f "$DT/el_lk"
 
         if [ -f "$DT/add_lst" ]; then
@@ -748,6 +748,7 @@ mark_as_learned_topic() {
     "$DS/mngr.sh" mkmn 1 &
     
     [[ ${3} = 1 ]] && idiomind topic &
+    ( sleep 1; "$DS/ifs/tls.sh" colorize 0 ) &
     exit 1
 }
 

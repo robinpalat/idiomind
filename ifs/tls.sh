@@ -21,12 +21,12 @@ function check_format_1() {
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
             [ "$(grep -o -E '\*|\/|\@|$|=|-' <<<"${val}")" ]; then invalid $n; fi
         elif [[ ${n} = 1 || ${n} = 2 ]]; then
-            if ! grep -Fo "${val}" <<<"${!lang[@]}"; then invalid $n; fi
+            if ! grep -Fo "${val}" <<<"${!lang[@]}" >/dev/null 2>&1; then invalid $n; fi
         elif [[ ${n} = 3 || ${n} = 4 ]]; then
             if [ ${#val} -gt 30 ] || \
             [ "$(grep -o -E '\*|\/|$|\)|\(|=' <<<"${val}")" ]; then invalid $n; fi
         elif [[ ${n} = 5 ]]; then
-            if ! grep -Fo "${val,,}" <<<"${Categories[@]}"; then invalid $n; fi
+            if ! grep -Fo "${val,,}" <<<"${Categories[@]}" >/dev/null 2>&1; then invalid $n; fi
         elif [[ ${n} = 6 ]]; then
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 36 ]; then invalid $n; fi
         elif [[ ${n} = 7 ]]; then
@@ -173,7 +173,7 @@ check_index() {
     fi
 
     if [ ${mkmn} = 1 ] ;then
-        "$DS/ifs/tls.sh" colorize; "$DS/mngr.sh" mkmn 0
+        "$DS/ifs/tls.sh" colorize 1; "$DS/mngr.sh" mkmn 0
     fi
     
     cleanups "$DT/ps_lk"
@@ -551,7 +551,7 @@ menu_addons() {
 stats_dlg() {
     source /usr/share/idiomind/default/c.conf
     source "$DS/ifs/stats.sh"
-    stats
+    stats &
 }
 
 colorize() {
@@ -559,9 +559,9 @@ colorize() {
     f_lock "$DT/co_lk"
     rm "${DC_tlt}/5.cfg"
     check_file "${DC_tlt}/1.cfg" "${DC_tlt}/6.cfg" "${DC_tlt}/9.cfg"
-    if [[ `egrep -cv '#|^$' < "${DC_tlt}/9.cfg"` -ge 4 ]] \
-    && [[ `grep -oP '(?<=acheck=\").*(?=\")' "${DC_tlt}/10.cfg"` = TRUE ]]; then
-    chk=TRUE; else chk=FALSE; fi
+    if [[ $(egrep -cv '#|^$' < "${DC_tlt}/9.cfg") -ge 4 ]] \
+    && [[ $(grep -oP '(?<=acheck=\").*(?=\")' "${DC_tlt}/10.cfg") = TRUE ]] \
+    && [[ ${2} = 1 ]]; then chk=TRUE; else chk=FALSE; fi
     img1='/usr/share/idiomind/images/1.png'
     img2='/usr/share/idiomind/images/2.png'
     img3='/usr/share/idiomind/images/3.png'

@@ -782,7 +782,7 @@ function strt() {
         touch ./log1 ./log2 ./log3; fi
         strt 0
     else
-        "$DS/ifs/tls.sh" colorize & exit
+        "$DS/ifs/tls.sh" colorize 1 & exit
     fi
 }
 

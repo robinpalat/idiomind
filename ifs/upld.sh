@@ -61,7 +61,7 @@ function dwld() {
             mv -f "${tmp}"/*.mp3 "${DM_tlt}"/
             echo "${tpc}" >> "$DM_tl/.share/3.cfg"
             echo -e "$ltotal $total\n$laudio $c_audio\n$limage $c_images\n$lothers $others" > "${DC_tlt}/download"
-            "$DS/ifs/tls.sh" colorize
+            "$DS/ifs/tls.sh" colorize 0
             rm -fr "$DT/download"
         else
             err & exit
