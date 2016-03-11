@@ -52,7 +52,7 @@ play_list() {
     msg "$(gettext "No topic is active")\n" dialog-information & exit 1; fi
     tpc="$(sed -n 1p "$HOME/.config/idiomind/4.cfg")"
     DC_tlt="${DM_tl}/${tpc}/.conf"; cfg=0
-    [[ `wc -l < "${DC_tlt}/10.cfg"` = 11 ]] && cfg=1
+    [[ $(wc -l < "${DC_tlt}/10.cfg") = ${#psets[*]} ]] && cfg=1
     ntosd=""; audio=""
     lbls=( 'Words' 'Sentences' 'Marked items' 'Learning' 'Difficult' )
     in=( 'in0' 'in1' 'in2' 'in3' 'in4' )
@@ -149,7 +149,7 @@ play_list() {
         tab1=$(< $tab1); tab2=$(< $tab2); rm -f "$DT"/*.p
         f=1; n=0; count=0
         for item in "${psets[@]:0:5}"; do
-            val=$(sed -n $((n+1))p <<<"${tab1}" |cut -d "|" -f3)
+            val=$(sed -n $((n+1))p <<< "${tab1}" |cut -d "|" -f3)
             [ -n "${val}" ] && sed -i "s/$item=.*/$item=\"$val\"/g" "${DC_tlt}/10.cfg"
             [ "$val" = TRUE ] && count=$((count+$(wc -l |sed '/^$/d' <<<"${!in[${n}]}")))
             let n++
@@ -157,7 +157,7 @@ play_list() {
         for ad in "$DS/ifs/mods/play"/*; do
             source "${ad}"
             for item in "${!items[@]}"; do
-                val=$(sed -n $((n+1))p <<<"${tab1}" |cut -d "|" -f3)
+                val=$(sed -n $((n+1))p <<< "${tab1}" |cut -d "|" -f3)
                 [ -n "${val}" ] && sed -i "s/${items[$item]}=.*/${items[$item]}=\"$val\"/g" "${file_cfg}"
                 [ "$val" = TRUE ] && count=$((count+1))
                 let n++
@@ -165,12 +165,12 @@ play_list() {
             unset items
         done
         for item in "${psets[@]:5:9}"; do
-            val="$(cut -d "|" -f${f} <<<"${tab2}")"
+            val="$(cut -d "|" -f${f} <<< "${tab2}")"
             [ -n "${val}" ] && sed -i "s/$item=.*/$item=\"$val\"/g" "${DC_tlt}/10.cfg"
             let f++
         done
         
-        pval="$(cut -d "|" -f5 <<<"${tab2}")"
+        pval="$(cut -d "|" -f5 <<< "${tab2}")"
         if [[ "$pval" = "$(gettext "Words")" ]]; then  val=1
         elif [[ "$pval" = "$(gettext "Sentences")" ]]; then  val=2
         else  val=0; fi

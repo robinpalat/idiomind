@@ -641,8 +641,9 @@ mark_to_learn_topic() {
     fi
 
     for i in {1..4}; do rm "${DC_tlt}/${i}.cfg"; done
-    rm "${DC_tlt}/7.cfg"
-    touch "${DC_tlt}/5.cfg" "${DC_tlt}/2.cfg"
+    rm "${DC_tlt}/7.cfg"; touch "${DC_tlt}/5.cfg" "${DC_tlt}/2.cfg"
+    steps=$(egrep -cv '#|^$' < "${DC_tlt}/9.cfg")
+    sed -i "s/repass=.*/repass=\"${steps}\"/g" "${DC_tlt}/10.cfg"
     
     while read -r item_; do
         item="$(sed 's/},/}\n/g' <<<"${item_}")"
@@ -726,16 +727,14 @@ mark_as_learned_topic() {
             echo 3 > "${DC_tlt}/8.cfg"
         fi
     fi
-    
+
     cleanups "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg"
     touch "${DC_tlt}/1.cfg"
     
-    while read item_; do
-        item="$(sed 's/},/}\n/g' <<<"${item_}")"
-        trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
-        if [ -n "${trgt}" ]; then
-            echo "${trgt}" >> "${DC_tlt}/2.cfg"
-        fi
+    while read -r item_; do
+        item="$(sed 's/},/}\n/g' <<< "${item_}")"
+        trgt="$(grep -oP '(?<=trgt={).*(?=})' <<< "${item}")"
+        [ -n "${trgt}" ] && echo "${trgt}" >> "${DC_tlt}/2.cfg"
     done < "${DC_tlt}/0.cfg"
     
     ) | progr_3

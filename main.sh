@@ -132,7 +132,7 @@ function new_session() {
     ( source "$DS/ifs/stats.sh"; sleep 5; pre_comp ) &
 }
 
-if grep -o '.idmnd' <<<"${1: -6}">/dev/null 2>&1; then
+if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
     source "$DS/ifs/tls.sh"; check_format_1 "${1}"
     if [ $? != 18 ]; then
@@ -163,15 +163,17 @@ if grep -o '.idmnd' <<<"${1: -6}">/dev/null 2>&1; then
         if [ $ret -eq 0 ]; then
             listt="$(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
             ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
-            if [[ `wc -l <<<"$listt"` -ge 120 ]]; then
-                msg "$(gettext "Maximum number of topics reached.")\n" dialog-information "$(gettext "Information")" & exit
+            if [ $(wc -l <<<"$listt") -ge 120 ]; then
+                msg "$(gettext "Maximum number of topics reached.")\n" \
+                dialog-information "$(gettext "Information")" & exit
             fi
             cn=0
-            if [[ `grep -Fxo "${tname}" <<<"$listt" |wc -l` -ge 1 ]]; then
+            if [[ $(grep -Fxo "${tname}" <<<"$listt" |wc -l) -ge 1 ]]; then
                 cn=1
                 for i in {1..50}; do
-                chck=$(grep -Fxo "${tname} ($i)" <<<"$listt")
-                [ -z "$chck" ] && break; done
+                    chck=$(grep -Fxo "${tname} ($i)" <<<"$listt")
+                    [ -z "$chck" ] && break
+                done
                 tname="${tname} ($i)"
             fi
 
@@ -230,10 +232,13 @@ function topic() {
             export inx${n}=$(wc -l < "${DC_tlt}/${n}.cfg")
         done
         nt="${DC_tlt}/info"
-        authr=$(grep -oP '(?<=authr=\").*(?=\")' "${DC_tlt}/id.cfg")
-        datec=$(grep -oP '(?<=datec=\").*(?=\")' "${DC_tlt}/id.cfg")
-        datei=$(grep -oP '(?<=datei=\").*(?=\")' "${DC_tlt}/id.cfg")
-        auto_mrk=$(grep -oP '(?<=acheck=\").*(?=\")' "${DC_tlt}/10.cfg")
+        inf="$(< "${DC_tlt}/id.cfg")"
+        authr=$(grep -oP '(?<=authr=\").*(?=\")' <<< "${inf}")
+        datec=$(grep -oP '(?<=datec=\").*(?=\")' <<< "${inf}")
+        datei=$(grep -oP '(?<=datei=\").*(?=\")' <<< "${inf}")
+        acheck=$(grep -oP '(?<=acheck=\").*(?=\")' "${DC_tlt}/10.cfg")
+        repass=$(grep -oP '(?<=repass=\").*(?=\")' "${DC_tlt}/10.cfg")
+        [ -z $repass ] && repass=0
         ( if [ -e "${DC_tlt}/err" ]; then
         sleep 2; include "$DS/ifs/mods/add"
         dlg_text_info_3 "$(cat "${DC_tlt}/err")"; fi ) &
@@ -241,8 +246,8 @@ function topic() {
         cnf1=$(mktemp "$DT/cnf1.XXXX")
         cnf3=$(mktemp "$DT/cnf3.XXXX")
         cnf4=$(mktemp "$DT/cnf4.XXXX")
-        if [ ! -z "$datei" ]; then infolbl="$(gettext "Installed on") $datei, $(gettext "created by") $authr"
-        elif [ ! -z "$datec" ]; then infolbl="$(gettext "Created on") $datec"; fi
+        if [ ! -z "$datei" ]; then infolbl="$(gettext "Review ")$repass, $(gettext "installed on") $datei\n$(gettext "created by") $authr"
+        elif [ ! -z "$datec" ]; then infolbl="$(gettext "Review ")$repass, $(gettext "created on") $datec"; fi
         lbl1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><small>\n$inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$infolbl</small>"
     }
     
@@ -251,11 +256,11 @@ function topic() {
             if [ "${note_mod}" != "$(< "${nt}")" ]; then
             echo -e "\n${note_mod}" > "${DC_tlt}/info"; fi
             
-            auto_mrk_mod=$(cut -d '|' -f 3 < "${cnf4}")
-            if [[ $auto_mrk_mod != $auto_mrk ]] && [ -n "$auto_mrk_mod" ]; then
-            sed -i "s/acheck=.*/acheck=\"$auto_mrk_mod\"/g" "${DC_tlt}/10.cfg"; fi
+            acheck_mod=$(cut -d '|' -f 3 < "${cnf4}")
+            if [[ $acheck_mod != $acheck ]] && [ -n "$acheck_mod" ]; then
+            sed -i "s/acheck=.*/acheck=\"$acheck_mod\"/g" "${DC_tlt}/10.cfg"; fi
             
-            if [[ $auto_mrk_mod = FALSE ]] && [[ $auto_mrk != FALSE ]]; then
+            if [[ $acheck_mod = FALSE ]] && [[ $acheck != FALSE ]]; then
                 "$DS/ifs/tls.sh" colorize 1; rm "${cnf1}"; fi
 
             if grep TRUE "${cnf1}"; then

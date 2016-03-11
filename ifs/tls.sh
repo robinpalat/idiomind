@@ -76,10 +76,11 @@ check_index() {
         
         if [ ! -e "${DC_tlt}/10.cfg" -o ! -s "${DC_tlt}/10.cfg" ]; then
             source "$DS/default/sets.cfg"; > "${DC_tlt}/10.cfg"
-            for n in {0..9}; do 
-                echo -e "${psets[$n]}=\"\"" >> "${DC_tlt}/10.cfg"
+            for n in ${psets[@]}; do
+                echo -e "${n}=\"\"" >> "${DC_tlt}/10.cfg"
             done
             sed -i "s/acheck=.*/acheck=\"TRUE\"/g" "${DC_tlt}/10.cfg"
+            sed -i "s/repass=.*/repass=\"0\"/g" "${DC_tlt}/10.cfg"
         fi
         
         check_file "${DC_tlt}/9.cfg" "${DC_tlt}/info"
