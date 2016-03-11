@@ -17,29 +17,27 @@ function dwld() {
     kill -9 $(pgrep -f "yad --form --columns=1")
     mkdir "$DT/download"; idcfg="$DM_tl/${2}/.conf/id.cfg"
     ilink=$(grep -o 'ilink="[^"]*' "${idcfg}" |grep -o '[^"]*$')
-    md5id=$(grep -o 'md5id="[^"]*' "${idcfg}" |grep -o '[^"]*$')
-    oname=$(grep -o 'oname="[^"]*' "${idcfg}" |grep -o '[^"]*$')
     langt=$(grep -o 'langt="[^"]*' "${idcfg}" |grep -o '[^"]*$')
-    [ -z "${oname}" ] && oname="${tpc}"
-    pre="$(sed 's/ /_/g' <<< "${oname:0:10}")"
-    url1="http://idiomind.sourceforge.net/dl.php/?lg=${langt,,}&fl=${pre}${md5id}"
+    [ -z "${ilink}" ] &&  err
+
+    url1="http://idiomind.sourceforge.net/dl.php/?lg=${langt,,}&fl=${ilink}"
     if wget -S --spider "${url1}" 2>&1 |grep 'HTTP/1.1 200 OK'; then
         URL="${url1}"
     else err & exit
     fi
-    wget -q -c -T 80 -O "$DT/download/${md5id}.tar.gz" "${URL}"
+    wget -q -c -T 80 -O "$DT/download/${ilink}.tar.gz" "${URL}"
     [ $? != 0 ] && err && exit 1
     
-    if [ -f "$DT/download/${md5id}.tar.gz" ]; then
+    if [ -f "$DT/download/${ilink}.tar.gz" ]; then
         cd "$DT/download"/
-        tar -xzvf "$DT/download/${md5id}.tar.gz"
+        tar -xzvf "$DT/download/${ilink}.tar.gz"
         
-        if [ -d "$DT/download/${oname}" ]; then
+        if [ -d "$DT/download/files" ]; then
             ltotal="$(gettext "Total")"
             laudio="$(gettext "Audio files")"
             limage="$(gettext "Images")"
             lothers="$(gettext "Others")"
-            tmp="$DT/download/${oname}"
+            tmp="$DT/download/files"
             total=$(find "${tmp}" -maxdepth 5 -type f |wc -l)
             c_audio=$(find "${tmp}" -maxdepth 5 -name '*.mp3' |wc -l)
             c_images=$(find "${tmp}" -maxdepth 5 -name '*.jpg' |wc -l)
@@ -61,7 +59,7 @@ function dwld() {
             done < "${DC_tlt}/3.cfg"
             rm -fr "${tmp}/share" "${tmp}/conf" "${tmp}/images"
             mv -f "${tmp}"/*.mp3 "${DM_tlt}"/
-            echo "${oname}" >> "$DM_tl/.share/3.cfg"
+            echo "${tpc}" >> "$DM_tl/.share/3.cfg"
             echo -e "$ltotal $total\n$laudio $c_audio\n$limage $c_images\n$lothers $others" > "${DC_tlt}/download"
             "$DS/ifs/tls.sh" colorize
             rm -fr "$DT/download"
@@ -180,8 +178,6 @@ function upld() {
         --button="$(gettext "Cancel")":4
     }
     
-    random_id() { tr -dc a-z < /dev/urandom |head -c 1; echo $((RANDOM%100)); }
-
     emrk='!'
     for val in "${Categories[@]}"; do
         declare clocal="$(gettext "${val^}")"
@@ -258,24 +254,26 @@ function upld() {
         "$DS/ifs/tls.sh" check_index "${tpc}" 1
         ( sleep 1; notify-send -i dialog-information "$(gettext "Upload in progress")" \
         "$(gettext "This can take some time please wait")" -t 6000 ) &
-        mkdir -p "$DT/upload/${tpc}/conf"
+        mkdir -p "$DT/upload/files/conf"
         DT_u="$DT/upload/"
         oname="$(grep -o 'oname="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         [ -z "${oname}" ] && oname="${tpc}"
-        pre="$(sed 's/ /_/g' <<< "${oname:0:10}")"
-        datec="$(grep -o 'datec="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-        datei="$(grep -o 'datei="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-        dateu=$(date +%F)
-        tpcid=`random_id`
-        c_words=${inx3}
-        c_sntncs=${inx4}
-        sum=`md5sum "${DC_tlt}/0.cfg" | cut -d' ' -f1`
-
+        pre=$(sed "s/ /_/g;s/'//g" <<< "${oname:0:15}" |iconv -c -f utf8 -t ascii)
+        export sum=$(md5sum "${DC_tlt}/0.cfg" |cut -d' ' -f1)
+        export ilink="${pre,,}${sum:0:20}"
+        export datec="$(grep -o 'datec="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+        export datei="$(grep -o 'datei="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+        export dateu=$(date +%F)
+        tpcid=$(strings /dev/urandom |tr -cd '[:alnum:]' |fold -w 3 |head -n 1)
+        export c_words=${inx3}
+        export c_sntncs=${inx4}
+        export oname level ctgry
+        
         # copying files
         cd "${DM_tlt}"/
-        cp -r ./* "$DT_u/${tpc}/"
-        mkdir "$DT_u/${tpc}/share"
-        [ ! -d "$DT_u/${tpc}/images" ] && mkdir "$DT_u/${tpc}/images"
+        cp -r ./* "$DT_u/files/"
+        mkdir "$DT_u/files/share"
+        [ ! -d "$DT_u/files/images" ] && mkdir "$DT_u/files/images"
 
         auds="$(uniq < "${DC_tlt}/4.cfg" \
         | sed 's/\n/ /g' | sed 's/ /\n/g' \
@@ -286,13 +284,13 @@ function upld() {
         while read -r audio; do
             if [ -f "$DM_tl/.share/audio/$audio.mp3" ]; then
                 cp -f "$DM_tl/.share/audio/$audio.mp3" \
-                "$DT_u/${tpc}/share/$audio.mp3"
+                "$DT_u/files/share/$audio.mp3"
             fi
         done <<<"$auds"
         while read -r audio; do
             if [ -f "$DM_tl/.share/audio/${audio,,}.mp3" ]; then
                 cp -f "$DM_tl/.share/audio/${audio,,}.mp3" \
-                "$DT_u/${tpc}/share/${audio,,}.mp3"
+                "$DT_u/files/share/${audio,,}.mp3"
             fi
         done < "${DC_tlt}/3.cfg"
         while read -r img; do
@@ -302,22 +300,22 @@ function upld() {
                 img_path="$DM_tls/images/${img,,}-0.jpg"
             fi
             if [ -e "${img_path}" ]; then
-                cp -f "${img_path}" "$DT_u/${tpc}/images/${img,,}.jpg"
+                cp -f "${img_path}" "$DT_u/files/images/${img,,}.jpg"
             fi
         done < "${DC_tlt}/3.cfg"
-        c_audio=$(find "$DT_u/${tpc}" -maxdepth 5 -name '*.mp3' |wc -l)
-        c_images=$(cd "$DT_u/${tpc}/images"/; ls *.jpg |wc -l)
-        cp "${DC_tlt}/6.cfg" "$DT_u/${tpc}/conf/6.cfg"
-        cp "${DC_tlt}/info" "$DT_u/${tpc}/conf/info"
+        export c_audio=$(find "$DT_u/files" -maxdepth 5 -name '*.mp3' |wc -l)
+        export c_images=$(cd "$DT_u/files/images"/; ls *.jpg |wc -l)
+        cp "${DC_tlt}/6.cfg" "$DT_u/files/conf/6.cfg"
+        cp "${DC_tlt}/info" "$DT_u/files/conf/info"
 
         # create tar
         cd "$DT/upload"/
         find "$DT_u"/ -type f -exec chmod 644 {} \;
-        tar czpvf - ./"${tpc}" |split -d -b 2500k - ./"${pre}${sum}"
-        rm -fr ./"${tpc}"; rename 's/(.*)/$1.tar.gz/' *
+        tar czpvf - ./"files" |split -d -b 2500k - ./"${ilink}"
+        rm -fr ./"files"; rename 's/(.*)/$1.tar.gz/' *
         
         # create id
-        f_size=$(du -h . |cut -f1)
+        export f_size=$(du -h . |cut -f1)
         eval c="$(< "$DS/default/topic.cfg")"
         echo -n "${c}" > "${DC_tlt}/id.cfg"
         cp -f "${DC_tlt}/0.cfg" "$DT_u/$tpcid.${tpc}.$lgt"

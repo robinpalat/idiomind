@@ -28,7 +28,7 @@ function check_format_1() {
         elif [[ ${n} = 5 ]]; then
             if ! grep -Fo "${val,,}" <<<"${Categories[@]}"; then invalid $n; fi
         elif [[ ${n} = 6 ]]; then
-            if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 8 ]; then invalid $n; fi
+            if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 36 ]; then invalid $n; fi
         elif [[ ${n} = 7 ]]; then
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
             [ "$(grep -o -E '\*|\/|\@|$|=|-' <<<"${val}")" ]; then invalid $n; fi
