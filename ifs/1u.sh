@@ -93,7 +93,7 @@ elif [ $ret -eq 0 ]; then
     mkdir "$HOME/.idiomind"
     if [ $? -ne 0 ]; then
     yad --title=Idiomind \
-    --text="$(gettext "Error occurred trying to write in file system")\n" \
+    --text="$(gettext "An error occurred while trying to write on file system")\n" \
     --image=error \
     --name=idiomind --class=idiomind \
     --window-icon=idiomind \
