@@ -34,7 +34,6 @@ if [ -z "${lgtl}" -o -z "${lgsl}" ]; then
     [ $? = 0 ] && "$DS/cnfg.sh"
     exit 1
 fi
-
 if [ -e "$DT/ps_lk" -o -e "$DT/el_lk" ]; then
     sleep 5
     [ -e "$DT/ps_lk" ] && rm -f "$DT/ps_lk"
@@ -76,7 +75,7 @@ function new_session() {
     echo -n "create table if not exists Words (Word TEXT);" |sqlite3 ${cdb}
     echo -n "create table if not exists Config (Study TEXT, Expire INTEGER);" |sqlite3 ${cdb}
     fi
-    
+
     # log file
     if [ -f "$DC_s/log" ]; then
         if [[ "$(du -sb "$DC_s/log" |awk '{ print $1 }')" -gt 100000 ]]; then

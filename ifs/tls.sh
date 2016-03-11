@@ -9,14 +9,15 @@ function check_format_1() {
     source "$DS/ifs/cmns.sh"
     file="${1}"
     invalid() {
-        msg "$1. $(gettext "File is corrupted.")\n" error & exit 1
+        echo "Error! Value: ${get}"
+        msg "$(gettext "File is corrupted.")\n" error & exit 1
     }
     [ ! -f "${file}" ] && invalid
     shopt -s extglob; n=0
     while read -r line; do
         if [ -z "$line" ]; then continue; fi
         get="${tsets[${n}]}"
-        val=$(echo "${line}" |grep -o "$get"=\"[^\"]* |grep -o '[^"]*$')
+        val=$(grep -o "$get"=\"[^\"]* <<< "${line}" |grep -o '[^"]*$')
         if [[ ${n} = 0 ]]; then
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
             [ "$(grep -o -E '\*|\/|\@|$|=|-' <<<"${val}")" ]; then invalid $n; fi
@@ -94,18 +95,16 @@ check_index() {
             echo -n "${c}" > "${DC_tlt}/id.cfg"
             echo -ne "\nidiomind-`idiomind -v`" >> "${DC_tlt}/id.cfg"
         fi
-        
         if ls "${DM_tlt}"/*.mp3 1> /dev/null 2>&1; then
             for au in "${DM_tlt}"/*.mp3 ; do 
                 [ ! -s "${au}" ] && rm "${au}"
             done
         fi
-        
         if [ ! -f "${DC_tlt}/8.cfg" ]; then
             echo 1 > "${DC_tlt}/8.cfg"
             export f=1
         fi
-            
+        
         stts=$(sed -n 1p "${DC_tlt}/8.cfg")
         ! [[ ${stts} =~ $numer ]] && stts=13
 
@@ -172,7 +171,6 @@ check_index() {
         
         _restore
     fi
-
     if [ ${mkmn} = 1 ] ;then
         "$DS/ifs/tls.sh" colorize 1; "$DS/mngr.sh" mkmn 0
     fi
