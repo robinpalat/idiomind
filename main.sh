@@ -50,7 +50,7 @@ function new_session() {
     # mkdir tmp dir
     if [ ! -d "$DT" ]; then mkdir "$DT"; fi
     if [ $? -ne 0 ]; then
-    msg "$(gettext "Fail on try write in /tmp")\n" error "$(gettext "Information")" & exit 1; fi
+    msg "$(gettext "An error occurred while trying to write on '/tmp'")\n" error "$(gettext "Error")" & exit 1; fi
     
     f_lock "$DT/ps_lk"
     # run scripts
