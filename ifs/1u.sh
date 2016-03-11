@@ -23,6 +23,7 @@ _info() {
     yad --form --title="$(gettext "Notice")" \
     --text="$(gettext "Some things are still not working for these languages:") Chinese, Japanese, Russian." \
     --image=dialog-information \
+    --name=Idiomind --class=Idiomind \
     --window-icon=dialog-information \
     --skip-taskbar --center --on-top \
     --width=340 --height=120 --borders=5 \
@@ -95,9 +96,9 @@ elif [ $ret -eq 0 ]; then
     yad --title=Idiomind \
     --text="$(gettext "An error occurred while trying to write on file system")\n" \
     --image=error \
-    --name=idiomind --class=idiomind \
+    --name=Idiomind --class=Idiomind \
     --window-icon=idiomind \
-    --image-on-top --sticky --skip-taskbar --center \
+    --skip-taskbar --center \
     --width=420 --height=120 --borders=2 \
     --button="$(gettext "OK")":1 & exit 1
     fi
