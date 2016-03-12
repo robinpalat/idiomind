@@ -121,7 +121,7 @@ function upld() {
         --field="\t\t$(gettext "Password")" "$passw" \
         --field="<a href='$linkac'>$(gettext "Get account to share")</a> \n":LBL \
         --button="$(gettext "Export")":2 \
-        --button="$(gettext "Cancel")":4
+        --button="$(gettext "Close")":4
     }
     
     dlg_upload() {
@@ -339,8 +339,7 @@ try:
     nid = server.metaWeblog.newPost('blog', usrid, passw, 
     {'title': tpc, 'description': body}, True)
 except:
-    pass
-    #sys.exit(3)
+    sys.exit(3)
 url = requests.get('http://idiomind.sourceforge.net/uploads.php').url
 direc = os.environ['direc']
 volumes = [i for i in os.listdir(direc)]
