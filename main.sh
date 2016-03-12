@@ -245,8 +245,8 @@ function topic() {
         cnf1=$(mktemp "$DT/cnf1.XXXX")
         cnf3=$(mktemp "$DT/cnf3.XXXX")
         cnf4=$(mktemp "$DT/cnf4.XXXX")
-        if [ ! -z "$datei" ]; then infolbl="$(gettext "Review ")$repass, $(gettext "installed on") $datei\n$(gettext "created by") $authr"
-        elif [ ! -z "$datec" ]; then infolbl="$(gettext "Review ")$repass, $(gettext "created on") $datec"; fi
+        if [ ! -z "$datei" ]; then infolbl="$(gettext "Review ")$repass. $(gettext "Installed on") $datei\n$(gettext "created by") $authr"
+        elif [ ! -z "$datec" ]; then infolbl="$(gettext "Review ")$repass. $(gettext "Created on") $datec"; fi
         lbl1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><small>\n$inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$infolbl</small>"
     }
     
