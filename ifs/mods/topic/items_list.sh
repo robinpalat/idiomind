@@ -99,7 +99,7 @@ function notebook_1() {
     --tab="  $(gettext "Learnt") ($inx2) " \
     --tab="  $(gettext "Note")  " \
     --tab="  $(gettext "Edit")  " \
-    --width=560 --height=520 --borders=0 --tab-borders=3 \
+    --width=600 --height=560 --borders=0 --tab-borders=3 \
     --button="$(gettext "Play")":"$cmd_play" \
     --button="$(gettext "Practice")":5 \
     --button="$(gettext "Close")"!'window-close':2
@@ -146,7 +146,7 @@ function notebook_2() {
     --tab="  $(gettext "Learnt") ($inx2) " \
     --tab="  $(gettext "Note")  " \
     --tab="  $(gettext "Edit")  " \
-    --width=560 --height=520 --borders=0 --tab-borders=3 \
+    --width=600 --height=560 --borders=0 --tab-borders=3 \
     --button="$(gettext "Close")"!'window-close':2
 } >/dev/null 2>&1
 
