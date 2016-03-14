@@ -231,7 +231,7 @@ function upld() {
         passw_m=$(echo "${dlg}" |cut -d "|" -f6)
         # get data
         for val in "${Categories[@],}"; do
-            [ "${ctgry^}" = "$(gettext "${val}")" ] && ctgry="${val// /_}"
+            [ "${ctgry^}" = "$(gettext "${val^}")" ] && export ctgry="${val// /_}"
         done
         [ "$level" = $(gettext "Beginner") ] && level=0
         [ "$level" = $(gettext "Intermediate") ] && level=1
@@ -271,7 +271,7 @@ function upld() {
         tpcid=$(strings /dev/urandom |tr -cd '[:alnum:]' |fold -w 3 |head -n 1)
         export c_words=${inx3}
         export c_sntncs=${inx4}
-        export oname level ctgry
+        export oname level
         
         # copying files
         cd "${DM_tlt}"/
