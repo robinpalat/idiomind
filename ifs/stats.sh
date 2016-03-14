@@ -11,7 +11,7 @@ function f_lock() {
 }
 
 function create_db() {
-    if [ ! -e db="$DM_tl/.share/data/log.db" ]; then
+    if [ ! -e "${db}" ]; then
         echo -n "create table if not exists ${mtable} \
         (month TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT);" |sqlite3 ${db}
         echo -n "create table if not exists ${wtable} \
