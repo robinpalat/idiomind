@@ -178,9 +178,18 @@ function upld() {
         --button="$(gettext "Cancel")":4
     }
     
+    sv_data() {
+        if [ "${usrid}" != "${usrid_m}" -o "${passw}" != "${passw_m}" ]; then
+            echo -e "usrid=\"$usrid_m\"\npassw=\"$passw_m\"" > "$DC_s/3.cfg"
+        fi
+        if [ "${note}" != "${notes_m}"  ]; then
+            echo -e "\n${notes_m}" > "${DC_tlt}/info"
+        fi
+    }
+    
     emrk='!'
     for val in "${Categories[@]}"; do
-        declare clocal="$(gettext "${val^}")"
+        declare clocal="$(gettext "${val}")"
         list="${list}${emrk}${clocal}"
     done
     
@@ -214,7 +223,6 @@ function upld() {
             ret=$?
             
         fi
-        [ $ret = 1 ] && exit 1
         dlg="$(grep -oP '(?<=|).*(?=\|)' <<<"$dlg")"
         ctgry=$(echo "${dlg}" |cut -d "|" -f2)
         level=$(echo "${dlg}" |cut -d "|" -f3)
@@ -222,23 +230,18 @@ function upld() {
         usrid_m=$(echo "${dlg}" |cut -d "|" -f5)
         passw_m=$(echo "${dlg}" |cut -d "|" -f6)
         # get data
-        for val in "${Categories[@]}"; do
-            [ "$ctgry" = "$(gettext "${val^}")" ] && ctgry=$val
+        for val in "${Categories[@],}"; do
+            [ "${ctgry^}" = "$(gettext "${val}")" ] && ctgry="${val// /_}"
         done
         [ "$level" = $(gettext "Beginner") ] && level=0
         [ "$level" = $(gettext "Intermediate") ] && level=1
         [ "$level" = $(gettext "Advanced") ] && level=2
-
-        # save data
-        if [ "${usrid}" != "${usrid_m}" -o "${passw}" != "${passw_m}" ]; then
-            echo -e "usrid=\"$usrid_m\"\npassw=\"$passw_m\"" > "$DC_s/3.cfg"
-        fi
-        if [ "${note}" != "${notes_m}"  ]; then
-            echo -e "${notes_m}" > "${DC_tlt}/info"
-        fi
     fi
-    # actions
-    if [ $ret = 2 ]; then
+    
+    if [ $ret = 1 -o $ret = 4 ]; then
+        sv_data
+    elif [ $ret = 2 ]; then
+        sv_data
         if [ -d "$DT/export" ]; then
             msg_2 "$(gettext "Wait until it finishes a previous process").\n" dialog-information OK "$(gettext "Stop")" "$(gettext "Information")"
             ret=$?
@@ -250,10 +253,11 @@ function upld() {
             "$DS/ifs/upld.sh" _export "${tpc}" & exit 1
         fi
     elif [ $ret = 0 ]; then
+        sv_data
         conds_upload "${2}"
         "$DS/ifs/tls.sh" check_index "${tpc}" 1
         ( sleep 1; notify-send -i dialog-information "$(gettext "Upload in progress")" \
-        "$(gettext "This can take some time please wait")" -t 6000 ) &
+        "$(gettext "This can take a while...")" -t 6000 ) &
         mkdir -p "$DT/upload/files/conf"
         DT_u="$DT/upload/"
         oname="$(grep -o 'oname="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
