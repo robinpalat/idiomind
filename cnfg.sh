@@ -29,7 +29,7 @@ confirm() {
     --window-icon=idiomind \
     --skip-taskbar --center --on-top \
     --width=380 --height=120 --borders=5 \
-    --button="$(gettext "Cancel")":1 \
+    --button="      $(gettext "Cancel")      ":1 \
     --button="$(gettext "Yes")":0
 }
 
@@ -51,7 +51,7 @@ set_lang() {
     fi
     
     check_list > "$DM_tl/.share/2.cfg"
-
+    
     if [ ! -d "$DM_tl/.share/data" ]; then
         mkdir -p "$DM_tls/data"
         cdb="$DM_tls/data/${lgtl}.db"

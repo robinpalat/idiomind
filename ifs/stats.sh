@@ -19,6 +19,8 @@ function create_db() {
         echo -n ${cdate} > ${tdate}
         echo -n ${cdate} > ${wdate}
     fi
+    [ ! -e ${tdate} ] && echo -n ${cdate} > ${tdate}
+    [ ! -e ${wdate} ] && echo -n ${cdate} > ${wdate}
 }
 
 function save_topic_stats() {

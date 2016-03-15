@@ -19,7 +19,7 @@ mkmn() {
     
         dir="$DM_tl/${tpc}/.conf"; unset stts
         [ ! -d "${dir}" ] && mkdir -p "${dir}"
-        if [ ! -f "$dir/8.cfg" ]; then
+        if [ ! -e "$dir/8.cfg" ]; then
             stts=13; echo ${stts} > "$dir/8.cfg"
         else
             stts=$(sed -n 1p "${dir}/8.cfg")
@@ -35,7 +35,7 @@ mkmn() {
     
         dir="$DM_tl/${tpc}/.conf"; unset stts
         [ ! -d "${dir}" ] && mkdir -p "${dir}"
-        if [ ! -f "$dir/8.cfg" ]; then
+        if [ ! -e "$dir/8.cfg" ]; then
             stts=13; echo ${stts} > "${dir}/8.cfg"
         else 
             stts=$(sed -n 1p "${dir}/8.cfg")
@@ -45,7 +45,7 @@ mkmn() {
             echo -e "$dirimg/img.${stts}.png\n${tpc}" >> "$DM_tl/.share/0.cfg"
         fi
 
-    done < <(cd "$DM_tl"; find ./ -maxdepth 1  -type d \
+    done < <(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
     -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
     
     if [[ "$2" = 1 ]]; then
