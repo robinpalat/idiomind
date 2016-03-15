@@ -48,9 +48,17 @@ mkmn() {
     done < <(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
     -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
     
+    while read -r tpc; do
+    
+        dir="$DM_tl/${tpc}/.conf"; unset stts tpc
+        if [ ${stts} != 12 ]; then
+            mv -f "${dir}/8.cfg"  "${dir}/8.bk"; echo 12 > "${dir}/8.cfg"
+        fi
+    done < <(cd "$DM_tl"; find ./ -maxdepth 1 -mtime +80 -type d \
+    -not -path '*/\.*' -exec ls -tNd {} + |sed 's|\./||g;/^$/d')
+    
     if [[ "$2" = 1 ]]; then
-        source "$DS/ifs/stats.sh"
-        save_topic_stats 0
+        source "$DS/ifs/stats.sh"; save_topic_stats 0
     fi
 
     rm -f "$DT/mn_lk"; exit
