@@ -79,13 +79,13 @@ function _log() {
 function practice_a() {
     [[ -e ./a.rev ]] && rev=1 || rev=0
     fonts() {
-        _item="$(grep -F -m 1 "trgt={${item}}" "${cfg0}" |sed 's/},/}\n/g')"
+        _item="$(grep -F -m 1 "trgt{${item}}" "${cfg0}" |sed 's/}/}\n/g')"
         if [[ ${rev} = 0 ]]; then
             trgt="${item}"
-            srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${_item}")"
+            srce="$(grep -oP '(?<=srce{).*(?=})' <<<"${_item}")"
         else
             srce="${item}"
-            trgt="$(grep -oP '(?<=srce={).*(?=})' <<<"${_item}")"
+            trgt="$(grep -oP '(?<=srce{).*(?=})' <<<"${_item}")"
         fi
         trgt_f_c=$((38-${#trgt}))
         trgt_f_a=$((25-${#trgt}))
@@ -171,17 +171,17 @@ function practice_b(){
     [[ -e ./b.rev ]] && rev=1 || rev=0
     snd="$dirs/no.mp3"
     fonts() {
-        _item="$(grep -F -m 1 "trgt={${item}}" "${cfg0}" |sed 's/},/}\n/g')"
+        _item="$(grep -F -m 1 "trgt{${item}}" "${cfg0}" |sed 's/}/}\n/g')"
         if [[ ${rev} = 0 ]]; then
             trgt="${item}"
-            srce=`grep -oP '(?<=srce={).*(?=})' <<<"${_item}"`
+            srce=$(grep -oP '(?<=srce{).*(?=})' <<<"${_item}")
             ras=$(sort -Ru b.srces |egrep -v "$srce" |head -${P})
             tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
             srce_s=$((35-${#trgt}))
             question="\n<span font_desc='Free Sans ${srce_s}'><b>${trgt}</b></span>\n\n"
         else
             srce="${item}"
-            trgt=`grep -oP '(?<=srce={).*(?=})' <<<"${_item}"`
+            trgt=$(grep -oP '(?<=srce{).*(?=})' <<<"${_item}")
             ras=$(sort -Ru "${cfg3}" |egrep -v "$srce" |head -${P})
             tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
             srce_s=$((35-${#trgt}))
@@ -212,7 +212,7 @@ function practice_b(){
     while read item; do
         fonts; mchoise
         if [ $? = 0 ]; then
-            if grep -o "$srce" <<<"${dlg}"; then
+            if grep -o "$srce" <<< "${dlg}"; then
                 echo "${item}" >> b.1
                 easy=$((easy+1))
             else
@@ -235,7 +235,7 @@ function practice_b(){
         while read item; do
             fonts; mchoise
             if [ $? = 0 ]; then
-                if grep -o "$srce" <<<"${dlg}"; then
+                if grep -o "$srce" <<< "${dlg}"; then
                     hard=$((hard-1))
                     ling=$((ling+1))
                 else
@@ -263,15 +263,15 @@ function practice_c() {
         && lst="${trgt:0:1} ${trgt:5:5}" || lst=$(echo "${trgt^}" |sed "s|[a-z]|"\ \."|g")
         fi
         
-        item="$(grep -F -m 1 "trgt={${trgt}}" "${cfg0}" |sed 's/},/}\n/g')"
-        id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
+        item="$(grep -F -m 1 "trgt{${trgt}}" "${cfg0}" |sed 's/}/}\n/g')"
+        cdid="$(grep -oP '(?<=cdid{).*(?=})' <<<"${item}")"
         s=$((30-${#trgt}))
         lquestion="\n\n<span font_desc='Verdana ${s}'><b>${lst}</b></span>\n\n\n"
         }
 
     question() {
-        cmd_play="$DS/play.sh play_word "\"${trgt}\"" ${id}"
-        (sleep 0.5 && "$DS/play.sh" play_word "${trgt}" ${id}) &
+        cmd_play="$DS/play.sh play_word "\"${trgt}\"" ${cdid}"
+        (sleep 0.5 && "$DS/play.sh" play_word "${trgt}" ${cdid}) &
 
         yad --form --title="$(gettext "Practice")" \
         --text="$lquestion" \
@@ -330,13 +330,13 @@ function practice_d() {
         [ -e "$DM_tlt/images/${item,,}.jpg" ] && \
         img="$DM_tlt/images/${item,,}.jpg" || \
         img="$DM_tls/images/${item,,}-0.jpg"
-        _item="$(grep -F -m 1 "trgt={${item}}" "${cfg0}" |sed 's/},/}\n/g')"
+        _item="$(grep -F -m 1 "trgt{${item}}" "${cfg0}" |sed 's/}/}\n/g')"
         if [[ ${rev} = 0 ]]; then
         srce="${item}"
-        trgt=`grep -oP '(?<=srce={).*(?=})' <<<"${_item}"`
+        trgt=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
         else
         trgt="${item}"
-        srce=`grep -oP '(?<=srce={).*(?=})' <<<"${_item}"`
+        srce=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
         fi
         [ ! -e "$img" ] && img="$DS/images/imgmiss.jpg"
         cuest="<span font_desc='Arial Bold 11'>${trgt}</span>"
@@ -417,9 +417,9 @@ function practice_e() {
         if [ $lgtl = Japanese -o $lgtl = Chinese -o $lgtl = Russian ]; then
         hint=" "
         else
-        hint="$(echo "$@" | tr -d "',.;?!¿¡()" | tr -d '"' \
-        | awk '{print tolower($0)}' \
-        |sed 's/\b\(.\)/\u\1/g' | sed 's/ /      /g' \
+        hint="$(echo "$@" |tr -d "',.;?!¿¡()" |tr -d '"' \
+        |awk '{print tolower($0)}' \
+        |sed 's/\b\(.\)/\u\1/g' |sed 's/ /      /g' \
         |sed "s|[a-z]|\.|g" \
         |sed 's|\.|\ .|g' \
         |tr "[:upper:]" "[:lower:]" \
@@ -471,12 +471,12 @@ function practice_e() {
         }
 
     result() {
-        if [[ `wc -w <<<"$chk"` -gt 6 ]]; then
-        out=`awk '{print tolower($0)}' <<<"${entry}" | clean | grep -v '^.$'`
-        in=`awk '{print tolower($0)}' <<<"${chk}" | clean | grep -v '^.$'`
+        if [[ $(wc -w <<<"$chk") -gt 6 ]]; then
+        out=$(awk '{print tolower($0)}' <<<"${entry}" |clean |grep -v '^.$')
+        in=$(awk '{print tolower($0)}' <<<"${chk}" |clean |grep -v '^.$')
         else
-        out=`awk '{print tolower($0)}' <<<"${entry}" | clean`
-        in=`awk '{print tolower($0)}' <<<"${chk}" | clean`
+        out=$(awk '{print tolower($0)}' <<<"${entry}" |clean)
+        in=$(awk '{print tolower($0)}' <<<"${chk}" |clean)
         fi
         
         echo "${chk}" > ./chk.tmp; touch ./words.tmp
@@ -494,7 +494,7 @@ function practice_e() {
         
         OK=$(tr '\n' ' ' < ./words.tmp)
         sed 's/ /\n/g' < ./chk.tmp > ./all.tmp; touch ./mtch.tmp
-        val1=$(cat ./mtch.tmp | wc -l)
+        val1=$(cat ./mtch.tmp |wc -l)
         val2=$(wc -l < ./all.tmp)
         porc=$((100*val1/val2))
         
@@ -519,22 +519,22 @@ function practice_e() {
     step=2
     while read -r trgt; do
         export trgt
-        pos=`grep -Fon -m 1 "trgt={${trgt}}" "${cfg0}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
-        item=`sed -n ${pos}p "${cfg0}" |sed 's/},/}\n/g'`
-        fname=`grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"`
+        pos=$(grep -Fon -m 1 "trgt{${trgt}}" "${cfg0}" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
+        item=$(sed -n ${pos}p "${cfg0}" |sed 's/}/}\n/g')
+        cdid=$(grep -oP '(?<=cdid{).*(?=})' <<<"${item}")
         get_text "${trgt}"
-        cmd_play="$DS/play.sh play_sentence ${fname}"
-        ( sleep 0.5 && "$DS/play.sh" play_sentence ${fname} ) &
+        cmd_play="$DS/play.sh play_sentence ${cdid}"
+        ( sleep 0.5 && "$DS/play.sh" play_sentence ${cdid} ) &
 
         dialog2 "${trgt}"
         ret=$?
         if [[ $ret = 1 ]]; then
             break &
-            if ps -A | pgrep -f 'play'; then killall play & fi
+            if ps -A |pgrep -f 'play'; then killall play & fi
             export hard ling
             score
         else
-            if ps -A | pgrep -f 'play'; then killall play & fi
+            if ps -A |pgrep -f 'play'; then killall play & fi
             result "${trgt}"
         fi
 
@@ -542,12 +542,12 @@ function practice_e() {
         ret=$?
         if [[ $ret = 1 ]]; then
             break &
-            if ps -A | pgrep -f 'play'; then killall play & fi
+            if ps -A |pgrep -f 'play'; then killall play & fi
             rm -f ./mtch.tmp ./words.tmp
             export hard ling
             score
         elif [[ $ret -eq 2 ]]; then
-            if ps -A | pgrep -f 'play'; then killall play & fi
+            if ps -A |pgrep -f 'play'; then killall play & fi
             rm -f ./mtch.tmp ./words.tmp &
         fi
     done < ./e.tmp
@@ -558,7 +558,7 @@ function practice_e() {
 function get_list() {
     if [ ${practice} = a -o ${practice} = b -o ${practice} = c ]; then
         > "$dir/${practice}.0"
-        if [[ `wc -l < "${cfg4}"` -gt 0 ]]; then
+        if [[ $(wc -l < "${cfg4}") -gt 0 ]]; then
             grep -Fvx -f "${cfg4}" "${cfg1}" > "$DT/${practice}.0"
             tac "$DT/${practice}.0" |sed '/^$/d' > "$dir/${practice}.0"
             rm -f "$DT/${practice}.0"
@@ -570,8 +570,8 @@ function get_list() {
             if [ ! -e "$dir/b.srces" ]; then
             ( echo "5"
             while read word; do
-                item="$(grep -F -m 1 "trgt={${word}}" "${cfg0}" |sed 's/},/}\n/g')"
-                echo "$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")" >> "$dir/b.srces"
+                item="$(grep -F -m 1 "trgt{${word}}" "${cfg0}" |sed 's/}/}\n/g')"
+                echo "$(grep -oP '(?<=srce{).*(?=})' <<<"${item}")" >> "$dir/b.srces"
             done < "$dir/${practice}.0" ) | yad --progress \
             --undecorated \
             --pulsate --auto-close \
@@ -581,7 +581,7 @@ function get_list() {
         
     elif [ ${practice} = d ]; then
         > "$DT/images"
-        if [[ `wc -l < "${cfg4}"` -gt 0 ]]; then
+        if [[ $(wc -l < "${cfg4}") -gt 0 ]]; then
             grep -Fxvf "${cfg4}" "${cfg1}" > "$DT/images"
         else
             tac "${cfg1}" > "$DT/images"
@@ -590,7 +590,7 @@ function get_list() {
         
         ( echo "5"
         while read -r itm; do
-        _item="$(grep -F -m 1 "trgt={${itm}}" "${cfg0}" |sed 's/},/}\n/g')"
+        _item="$(grep -F -m 1 "trgt{${itm}}" "${cfg0}" |sed 's/}/}\n/g')"
         if [ -e "$DM_tls/images/${itm,,}-0.jpg" \
         -o -e "$DM_tlt/images/${itm,,}.jpg" ]; then
             echo "${itm}" >> "$dir/${practice}.0"
@@ -605,7 +605,7 @@ function get_list() {
         [ -e "$DT/images" ] && rm -f "$DT/images"
     
     elif [ ${practice} = e ]; then
-        if [[ `wc -l < "${cfg3}"` -gt 0 ]]; then
+        if [[ $(wc -l < "${cfg3}") -gt 0 ]]; then
             grep -Fxvf "${cfg3}" "${cfg1}" > "$DT/slist"
             tac "$DT/slist" |sed '/^$/d' > "$dir/${practice}.0"
             rm -f "$DT/slist"
@@ -616,7 +616,7 @@ function get_list() {
 }
 
 function lock() {
-    if [ -f "$dir/${practice}.lock" ]; then
+    if [ -e "$dir/${practice}.lock" ]; then
         local lock="$dir/${practice}.lock"
         if ! grep 'wait' <<< "$(< "${lock}")"; then
             text_dlg="<b>$(gettext "Practice Completed")</b>\\n$(< "${lock}")"
@@ -641,7 +641,7 @@ function lock() {
                 ret=$?
             fi
         else
-            if [ $(grep -o "wait"=\"[^\"]* "${lock}" |grep -o '[^"]*$') != `date +%d` ]; then
+            if [ $(grep -o "wait"=\"[^\"]* "${lock}" |grep -o '[^"]*$') != $(date +%d) ]; then
                 rm "${lock}" & return 0
             else
                 text_dlg="$(gettext "Consider waiting a while before resuming to practice some items")"
@@ -698,7 +698,7 @@ function practices() {
     else exit; fi
     lock
     
-    if [ -f "$dir/${practice}.0" -a -f "$dir/${practice}.1" ]; then
+    if [ -e "$dir/${practice}.0" -a -e "$dir/${practice}.1" ]; then
         grep -Fxvf "$dir/${practice}.1" "$dir/${practice}.0" > "$dir/${practice}.tmp"
         if [[ "$(egrep -cv '#|^$' < "$dir/${practice}.tmp")" = 0 ]]; then
         lock; fi
@@ -706,14 +706,14 @@ function practices() {
     else
         get_list
         cp -f "$dir/${practice}.0" "$dir/${practice}.tmp"
-        if [[ `wc -l < "$dir/${practice}.0"` -lt 2 ]]; then \
+        if [[ $(wc -l < "$dir/${practice}.0") -lt 2 ]]; then \
             starting "$(gettext "Insufficient number of items to start")"; return 1
         fi
         echo " practice --new session"
     fi
     
-    [ -f "$dir/${practice}.2" ] && rm "$dir/${practice}.2"
-    [ -f "$dir/${practice}.3" ] && rm "$dir/${practice}.3"
+    [ -e "$dir/${practice}.2" ] && rm "$dir/${practice}.2"
+    [ -e "$dir/${practice}.3" ] && rm "$dir/${practice}.3"
     all=$(egrep -cv '#|^$' ./${practice}.0)
     img_cont="$DS/images/cont.png"
     img_no="$DS/images/no.png"

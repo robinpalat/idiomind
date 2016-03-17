@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 function word_view() {
-    [ -n "${tag}" ] && field_tag="--field=<small>$tag</small>:lbl"
+    [ -n "${tags}" ] && field_tag="--field=<small>$tags</small>:lbl"
     [ -n "${defn}" ] && field_defn="--field=$defn:lbl"
     [ -n "${note}" ] && field_note="--field=<i>$note</i>\n:lbl"
     [ -n "${exmp}" ] && field_exmp="--field=<span font_desc='Verdana 11' color='#6D6D6D'>$exmp</span>:lbl"
@@ -59,8 +59,8 @@ function notebook_1() {
     cmd1="'$DS/mngr.sh' edit_list "\"${tpc}\"""
     cmd2="'$DS/ifs/upld.sh' upld "\"${tpc}\"""
     cmd3="'$DS/mngr.sh' 'delete_topic' "\"${tpc}\"""
-    chk1=$((`wc -l < "${DC_tlt}/1.cfg"`*3))
-    chk5=`wc -l < "${DC_tlt}/5.cfg"`
+    chk1=$(($(wc -l < "${DC_tlt}/1.cfg")*3))
+    chk5=$(wc -l < "${DC_tlt}/5.cfg")
     list() { if [[ ${chk1} = ${chk5} ]]; then
     tac "${DC_tlt}/5.cfg"; else tac "$ls1" | \
     awk '{print "/usr/share/idiomind/images/0.png\n"$0"\nFALSE"}'; fi; }

@@ -101,7 +101,7 @@ play_list() {
     }
 
     btn1="$(gettext "Play"):0"
-    if [ "$(< $DT/playlck)" = 0  ]; then
+    if [ "$(< $DT/playlck)" = 0 ]; then
         btn2="--center"
         title="$(gettext "Play")"
         [ ${mode} -gt 1 -a -n "${tpc}" ] \

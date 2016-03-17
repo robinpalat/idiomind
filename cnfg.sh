@@ -29,7 +29,7 @@ confirm() {
     --window-icon=idiomind \
     --skip-taskbar --center --on-top \
     --width=380 --height=120 --borders=5 \
-    --button="      $(gettext "Cancel")      ":1 \
+    --button="   $(gettext "Cancel")   ":1 \
     --button="$(gettext "Yes")":0
 }
 
@@ -150,10 +150,10 @@ config_dlg() {
         done
         val=$(cut -d "|" -f18 < "$cnf1")
         [[ "$val" != "$synth" ]] && \
-        sed -i "s/${csets[10]}=.*/${csets[10]}=\"$(sed 's|/|\\/|g' <<<"$val")\"/g" "$DC_s/1.cfg"
+        sed -i "s/${csets[10]}=.*/${csets[10]}=\"$(sed 's|/|\\/|g' <<< "$val")\"/g" "$DC_s/1.cfg"
         val=$(cut -d "|" -f19 < "$cnf1")
         [[ "$val" != "$txaud" ]] && \
-        sed -i "s/${csets[11]}=.*/${csets[11]}=\"$(sed 's|/|\\/|g' <<<"$val")\"/g" "$DC_s/1.cfg"
+        sed -i "s/${csets[11]}=.*/${csets[11]}=\"$(sed 's|/|\\/|g' <<< "$val")\"/g" "$DC_s/1.cfg"
         val=$(cut -d "|" -f20 < "$cnf1")
         [[ "$val" != "$intrf" ]] && \
         sed -i "s/${csets[12]}=.*/${csets[12]}=\"$val\"/g" "$DC_s/1.cfg"

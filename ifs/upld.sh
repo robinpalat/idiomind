@@ -330,13 +330,12 @@ function upld() {
         while read -r _item; do
             get_item "${_item}"
             eval itm="$(sed -n 1p "$DS/default/vars")"
-            echo -en "${itm}" >> "$DT_u/$tpcid.$oname.$lgt"
+            [ -n "${trgt}" ] && echo -en "${itm}" >> "$DT_u/$tpcid.$oname.$lgt"
         done < <(tac "${DC_tlt}/0.cfg")
         sed -i 's/,$//' "$DT_u/$tpcid.$oname.$lgt"
         echo "}," >> "$DT_u/$tpcid.$oname.$lgt"
         eval head="$(sed -n 2p "$DS/default/vars")"
-        echo -e "${head}" >> "$DT_u/$tpcid.$oname.$lgt"
-        echo -n "}" >> "$DT_u/$tpcid.$oname.$lgt"
+        echo -e "${head}}" >> "$DT_u/$tpcid.$oname.$lgt"
 
         python << END
 import os, sys, requests, time, xmlrpclib

@@ -12,40 +12,41 @@ nll=""; fi
 _item="$(sed -n ${index_pos}p "${index}")"
 if [ -z "${_item}" ]; then
     _item="$(sed -n 1p "${index}")"; index_pos=1; fi
-item="$(grep -F -m 1 "trgt={${_item}}" "$DC_tlt/0.cfg" |sed 's/},/}\n/g')"
+    
+item="$(grep -F -m 1 "trgt{${_item}}" "$DC_tlt/0.cfg" |sed 's/}/}\n/g')"
 
-type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
-export trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
-export srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
-export exmp="$(grep -oP '(?<=exmp={).*(?=})' <<<"${item}")"
-export defn="$(grep -oP '(?<=defn={).*(?=})' <<<"${item}")"
-export note="$(grep -oP '(?<=note={).*(?=})' <<<"${item}")"
-export grmr="$(grep -oP '(?<=grmr={).*(?=})' <<<"${item}")"
-export mark="$(grep -oP '(?<=mark={).*(?=})' <<<"${item}")"
-export link="$(grep -oP '(?<=link={).*(?=})' <<<"${item}")"
-export tag="$(grep -oP '(?<=tag={).*(?=})' <<<"${item}")"
-export wrds="$(grep -oP '(?<=wrds={).*(?=})' <<<"${item}")"
+type="$(grep -oP '(?<=type{).*(?=})' <<<"${item}")"
+export trgt="$(grep -oP '(?<=trgt{).*(?=})' <<<"${item}")"
+export srce="$(grep -oP '(?<=srce{).*(?=})' <<<"${item}")"
+export exmp="$(grep -oP '(?<=exmp{).*(?=})' <<<"${item}")"
+export defn="$(grep -oP '(?<=defn{).*(?=})' <<<"${item}")"
+export note="$(grep -oP '(?<=note{).*(?=})' <<<"${item}")"
+export grmr="$(grep -oP '(?<=grmr{).*(?=})' <<<"${item}")"
+export mark="$(grep -oP '(?<=mark{).*(?=})' <<<"${item}")"
+export link="$(grep -oP '(?<=link{).*(?=})' <<<"${item}")"
+export tags="$(grep -oP '(?<=tags{).*(?=})' <<<"${item}")"
+export wrds="$(grep -oP '(?<=wrds{).*(?=})' <<<"${item}")"
 export exmp="$(sed "s/${trgt,,}/<span background='#FDFBCF'>${trgt,,}<\/\span>/g" <<<"${exmp}")"
-export id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
+export cdid="$(grep -oP '(?<=cdid{).*(?=})' <<<"${item}")"
 text_missing=0
 
 if [ ${type} = 1 ]; then
-    export cmd_listen="$DS/play.sh play_word "\"${trgt}\"" ${id}"
+    export cmd_listen="$DS/play.sh play_word "\"${trgt}\"" ${cdid}"
     [ "$mark" = TRUE ] && trgt="<b>$trgt</b>" && grmr="<b>$grmr</b>"
     word_view
 elif [ ${type} = 2 ]; then
-    export cmd_listen="$DS/play.sh play_sentence ${id}"
+    export cmd_listen="$DS/play.sh play_sentence ${cdid}"
     [ "$mark" = TRUE ] && trgt="<b>$trgt</b>" && grmr="<b>$grmr</b>"
     sentence_view
 else
     trgt="${_item} <small>[Text missing]</small>"
     grmr="${trgt}"
-    if [[ `wc -w <<< "${_item}"` -lt 2 ]]; then
-        export cmd_listen="$DS/play.sh play_word "\"${trgt}\"" ${id}"
+    if [[ $(wc -w <<< "${_item}") -lt 2 ]]; then
+        export cmd_listen="$DS/play.sh play_word "\"${trgt}\"" ${cdid}"
         text_missing=1
         word_view
     else 
-        export cmd_listen="$DS/play.sh play_sentence ${id}"
+        export cmd_listen="$DS/play.sh play_sentence ${cdid}"
         text_missing=2
         sentence_view
     fi
@@ -56,7 +57,7 @@ fi
         "$DS/mngr.sh" edit ${1} ${index_pos} ${text_missing} &
     elif [ $ret -eq 2 ]; then
         if [[ ${index_pos} = 1 ]]; then
-            item=`tail -n 1 < "${index}"`
+            item=$(tail -n 1 < "${index}")
             [ ${1} = 1 ] && "$DS/vwr.sh" ${1} "" "${item}" &
             [ ${1} = 2 ] && "$DS/vwr.sh" ${1} "${item}" &
         else
@@ -70,4 +71,5 @@ fi
         if ps -A | pgrep -f 'play'; then killall play & fi
         exit 1
     fi
+    
 exit

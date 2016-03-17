@@ -13,11 +13,8 @@ chk_topic() {
     if [ ! -d "${DC_tlt}" -o ! -e "${DC_tlt}/id.cfg" ]; then
         mkdir -p "${DM_tlt}/images"
         mkdir "${DC_tlt}"; cd "${DC_tlt}"
-        c=0
-        while [[ ${c} -le 10 ]]; do
-            touch "${c}.cfg"; let c++
-        done
-        rm "7.cfg" "9.cfg"
+        for i in {0..10}; do touch "${DC_tlt}/${i}.cfg"; done
+        rm ./"7.cfg" ./"9.cfg"
         echo " " > "info"
         echo 1 > "8.cfg"; cd /
     fi

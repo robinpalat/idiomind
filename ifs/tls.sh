@@ -9,10 +9,12 @@ function check_format_1() {
     source "$DS/ifs/cmns.sh"
     file="${1}"
     invalid() {
-        echo "Error! Value: ${get}"
-        msg "$(gettext "File is corrupted.")\n" error & exit 1
+        echo "Error! Value: ${1}"
+        msg "$(gettext "File is corrupted.")\n ${n}" error & exit 1
     }
     [ ! -f "${file}" ] && invalid
+    [ $(wc -l < "${file}") != 3 ] && invalid 'lines'
+    
     shopt -s extglob; n=0
     while read -r line; do
         if [ -z "$line" ]; then continue; fi
@@ -87,12 +89,12 @@ check_index() {
         
         id=1
         [ ! -e "${DC_tlt}/id.cfg" ] && touch "${DC_tlt}/id.cfg" && id=0
-        [[ `egrep -cv '#|^$' < "${DC_tlt}/id.cfg"` != 19 ]] && id=0
+        [[ $(egrep -cv '#|^$' < "${DC_tlt}/id.cfg") != 19 ]] && id=0
         if [ ${id} != 1 ]; then
             datec=$(date +%F)
-            eval c="$(sed -n 5p $DS/default/vars)"
-            echo -n "${c}" > "${DC_tlt}/id.cfg"
-            echo -ne "\nidiomind-`idiomind -v`" >> "${DC_tlt}/id.cfg"
+            eval c="$(sed -n 4p $DS/default/vars)"
+            echo -e "${c}" > "${DC_tlt}/id.cfg"
+            echo -n "idiomind-`idiomind -v`" >> "${DC_tlt}/id.cfg"
         fi
         if ls "${DM_tlt}"/*.mp3 1> /dev/null 2>&1; then
             for au in "${DM_tlt}"/*.mp3 ; do 
@@ -108,17 +110,17 @@ check_index() {
         ! [[ ${stts} =~ $numer ]] && stts=13
 
         if [ $stts = 13 ]; then
-            echo 1 > "${DC_tlt}/8.cfg"
-            mkmn=1
-            export f=1
+            echo 1 > "${DC_tlt}/8.cfg"; mkmn=1; export f=1
         fi
         
         export stts
 
-        cnt0=`wc -l < "${DC_tlt}/0.cfg" |sed '/^$/d'`
-        cnt1=`egrep -cv '#|^$' < "${DC_tlt}/1.cfg"`
-        cnt2=`egrep -cv '#|^$' < "${DC_tlt}/2.cfg"`
+        cnt0=$(wc -l < "${DC_tlt}/0.cfg" |sed '/^$/d')
+        cnt1=$(egrep -cv '#|^$' < "${DC_tlt}/1.cfg")
+        cnt2=$(egrep -cv '#|^$' < "${DC_tlt}/2.cfg")
         if [ $((cnt1+cnt2)) != ${cnt0} ]; then export f=1; fi
+        
+        if grep '},' "${DC_tlt}/0.cfg"; then c=1; fi
     }
     
     _restore() {
@@ -131,9 +133,9 @@ check_index() {
         fi
         rm "${DC_tlt}/1.cfg" "${DC_tlt}/3.cfg" "${DC_tlt}/4.cfg"
         while read -r item_; do
-            item="$(sed 's/},/}\n/g' <<<"${item_}")"
-            type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
-            trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
+            item="$(sed 's/}/}\n/g' <<<"${item_}")"
+            type="$(grep -oP '(?<=type{).*(?=})' <<<"${item}")"
+            trgt="$(grep -oP '(?<=trgt{).*(?=})' <<<"${item}")"
             if [ -n "${trgt}" ]; then
                 if [ ${type} = 1 ]; then
                     echo "${trgt}" >> "${DC_tlt}/3.cfg"
@@ -145,21 +147,42 @@ check_index() {
         done < "${DC_tlt}/0.cfg"
         > "${DC_tlt}/2.cfg"
 
-        sed -i "/trgt={}/d" "${DC_tlt}/0.cfg"
+        sed -i "/trgt{}/d" "${DC_tlt}/0.cfg"
         sed -i '/^$/d' "${DC_tlt}/0.cfg"
-        for n in {1..200}; do
-            line=$(sed -n ${n}p "${cfg0}" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
-            if [ -n "${line}" ]; then
-                if [[ ${line} -ne ${n} ]]; then
-                    sed -i ""${n}"s|"${line}"\:|"${n}"\:|g" "${DC_tlt}/0.cfg"
-                fi
-            else 
-                break
-            fi
-        done
+    }
+    
+    _newformat() {
+        get_item() {
+            export item="$(sed 's/},/}\n/g' <<<"${1}" |sed 's/"/\\"/g')"
+            export type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
+            export trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
+            export srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
+            export exmp="$(grep -oP '(?<=exmp={).*(?=})' <<<"${item}")"
+            export defn="$(grep -oP '(?<=defn={).*(?=})' <<<"${item}")"
+            export note="$(grep -oP '(?<=note={).*(?=})' <<<"${item}")"
+            export wrds="$(grep -oP '(?<=wrds={).*(?=})' <<<"${item}")"
+            export grmr="$(grep -oP '(?<=grmr={).*(?=})' <<<"${item}")"
+            export mark="$(grep -oP '(?<=mark={).*(?=})' <<<"${item}")"
+            export link="$(grep -oP '(?<=link={).*(?=})' <<<"${item}")"
+            export tags="$(grep -oP '(?<=tag={).*(?=})' <<<"${item}")"
+            export cdid="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
+        }
+        while read -r _item; do
+            get_item "${_item}"
+            eval line="$(sed -n 5p $DS/default/vars)"
+            echo -e "${line}" >> "${DC_tlt}/cfg"
+        done < <(tac "${DC_tlt}/0.cfg")
+        mv -f "${DC_tlt}/cfg" "${DC_tlt}/0.cfg"
     }
     
     _check
+    
+    if [ ${c} = 1  ]; then
+        > "$DT/ps_lk"; 
+        (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
+        "$(gettext "Convert to new format...")" -t 3000) &
+        _newformat
+    fi
     
     if [ ${f} = 1  ]; then
         > "$DT/ps_lk"; 
@@ -441,8 +464,8 @@ set_image() {
 
 translate_to() {
     # usage: 
-    # idiomind translate [language] - eg. idiomind translate en
-    # idiomind translate restore - to go back to original translation
+    # idiomind [translate] [*language*] - eg: idiomind translate [en]
+    # idiomind [translate] [restore] - to go back to original translation
     source /usr/share/idiomind/default/c.conf
     source $DS/default/sets.cfg
     source "$DS/ifs/cmns.sh"
@@ -468,9 +491,9 @@ translate_to() {
             sp="/-\|"; sc=0
             spin() { printf "\b${sp:sc++:1}"; ((sc==${#sp})) && sc=0; }
             while read -r item_; do
-                item="$(sed 's/},/}\n/g' <<<"${item_}")"
-                type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
-                trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
+                item="$(sed 's/}/}\n/g' <<<"${item_}")"
+                type="$(grep -oP '(?<=type{).*(?=})' <<<"${item}")"
+                trgt="$(grep -oP '(?<=trgt{).*(?=})' <<<"${item}")"
                 if [ -n "${trgt}" ]; then
                     echo "${trgt}" \
                     | python -c 'import sys; print(" ".join(sorted(set(sys.stdin.read().split()))))' \
@@ -516,10 +539,9 @@ translate_to() {
                     echo "${t}_${s}" >> "$DT/w.tmp"
                     let bcle++
                 done )
-                wrds="$(tr '\n' '_' < "$DT/w.tmp" |sed '/^$/d')"
-                
-                t_item="${n}:[type={$type},trgt={$trgt},srce={$srce},exmp={$exmp},defn={$defn},note={$note},wrds={$wrds},grmr={$grmr},].[tag={$tag},mark={$mark},link={$link},].id=[$id]"
-                echo -e "${t_item}" >> "${DC_tlt}/$2.data"
+                wrds="$(tr '\n' '_' < "$DT/w.tmp" |sed '/^$/d')"; cdid="$id"
+                eval line="$(sed -n 5p $DS/default/vars)"
+                echo -e "${line}" >> "${DC_tlt}/$2.data"
                 echo "${srce}"
                 
             let n++

@@ -53,7 +53,7 @@ function index() {
             cd /
         fi
     else
-        DC_tlt="${DM_tl}/${tpe}/.conf"
+        DC_tlt="${DM_tl}/${tpe}/.conf"; type=${1}
         if [ ! -n "${trgt}" ]; then return 1; fi
         if [ ! -d "${DC_tlt}" ]; then return 1; fi
         img0='/usr/share/idiomind/images/0.png'
@@ -72,10 +72,9 @@ function index() {
                     echo -e "FALSE\n${trgt}\n$img0" >> "${DC_tlt}/5.cfg"
                 fi
             fi
-            if ! grep -Fo "trgt={${trgt}}" "${DC_tlt}/0.cfg"; then
-                pos=`wc -l < "${DC_tlt}/0.cfg"`
-                item="${pos}:[type={$1},trgt={$trgt},srce={$srce},exmp={$exmp},defn={$defn},note={$note},wrds={$wrds},grmr={$grmr},].[tag={$tag},mark={$mark},link={$link},].id=[$id]"
-                echo "${item}" >> "${DC_tlt}/0.cfg"
+            if ! grep -Fo "trgt{${trgt}}" "${DC_tlt}/0.cfg"; then
+                eval newline="$(sed -n 5p $DS/default/vars)"
+                echo "${newline}" >> "${DC_tlt}/0.cfg"
             fi
         fi
     fi
@@ -247,10 +246,10 @@ function clean_2() {
 
 function clean_3() {
     echo "${1}" |cut -d "|" -f1 |sed 's/!//;s/&//;s/\://g' \
-    |sed 's/^[ \t]*//;s/[ \t]*$//' \
+    |sed "s/^[ \t]*//;s/[ \t]*$//;s/‘/'/g" \
     |sed 's/^\s*./\U&\E/g; s/-.\s*./\U&\E/g' \
     |sed 's/\：//g;s/<[^>]*>//g' \
-    |tr -d './*' |tr -s '&:|{}[]<>+' ' ' |sed 's/ \+/ /g'
+    |tr -d '?./*' |tr -s '&:|{}[]<>+' ' ' |sed 's/ \+/ /g'
 }  
 
 function clean_4() {

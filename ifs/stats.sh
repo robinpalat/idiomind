@@ -16,8 +16,7 @@ function create_db() {
         (month TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT);" |sqlite3 ${db}
         echo -n "create table if not exists ${wtable} \
         (week TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT, val5 TEXT);" |sqlite3 ${db}
-        echo -n ${cdate} > ${tdate}
-        echo -n ${cdate} > ${wdate}
+        echo -n ${cdate} |tee ${tdate} ${wdate}
     fi
     [ ! -e ${tdate} ] && echo -n ${cdate} > ${tdate}
     [ ! -e ${wdate} ] && echo -n ${cdate} > ${wdate}
@@ -34,9 +33,9 @@ function save_topic_stats() {
             stts=""; stts=$(sed -n 1p "$dir1/8.cfg")
 
             if [ -e "$dir1/1.cfg" ]; then
-                G1=`egrep -cv '#|^$' "$dir1/1.cfg"`; fi
+                G1=$(egrep -cv '#|^$' "$dir1/1.cfg"); fi
             if [ -e "$dir1/2.cfg" ]; then
-                G2=`egrep -cv '#|^$' "$dir1/2.cfg"`; fi
+                G2=$(egrep -cv '#|^$' "$dir1/2.cfg"); fi
 
             if [[ ${stts} =~ $int ]]; then
                 if [ ${stts} -le 10 -a ${stts} -ge 7 ]; then
@@ -62,15 +61,15 @@ function save_topic_stats() {
         IFS=$old_IFS
     }
 
-    rdata=`count`
-    f0=`cut -d ',' -f 1 <<<"$rdata"`; ! [[ ${f0} =~ $int ]] && f0=0
-    f1=`cut -d ',' -f 2 <<<"$rdata"`; ! [[ ${f1} =~ $int ]] && f1=0
-    f2=`cut -d ',' -f 3 <<<"$rdata"`; ! [[ ${f2} =~ $int ]] && f2=0
-    f3=`cut -d ',' -f 4 <<<"$rdata"`; ! [[ ${f3} =~ $int ]] && f3=0
-    f4=`cut -d ',' -f 5 <<<"$rdata"`; ! [[ ${f4} =~ $int ]] && f4=0
+    rdata=$(count)
+    f0=$(cut -d ',' -f 1 <<<"$rdata"); ! [[ ${f0} =~ $int ]] && f0=0
+    f1=$(cut -d ',' -f 2 <<<"$rdata"); ! [[ ${f1} =~ $int ]] && f1=0
+    f2=$(cut -d ',' -f 3 <<<"$rdata"); ! [[ ${f2} =~ $int ]] && f2=0
+    f3=$(cut -d ',' -f 4 <<<"$rdata"); ! [[ ${f3} =~ $int ]] && f3=0
+    f4=$(cut -d ',' -f 5 <<<"$rdata"); ! [[ ${f4} =~ $int ]] && f4=0
 
     if [[ "$1" = 1 ]]; then
-        if [[ `sqlite3 ${db} "select month from '${mtable}' where month is '${month}';"` ]]; then :
+        if [[ $(sqlite3 ${db} "select month from '${mtable}' where month is '${month}';") ]]; then :
         else
             sqlite3 ${db} "insert into ${mtable} (month,val0,val1,val2,val3,val4) \
             values ('${month}','${f0}','${f1}','${f2}','${f3}','${f4}');"
@@ -93,13 +92,13 @@ function save_word_stats() {
             stts=""; stts=$(sed -n 1p "$dir1/8.cfg")
             
             if [ -f "$dir1/3.cfg" ]; then
-                G0=`egrep -cv '#|^$' "$dir1/3.cfg"`; fi
+                G0=$(egrep -cv '#|^$' "$dir1/3.cfg"); fi
             if [ -f "$dir2/log1" ]; then
-                G1=`egrep -cv '#|^$' "$dir2/log1"`; fi
+                G1=$(egrep -cv '#|^$' "$dir2/log1"); fi
             if [ -f "$dir2/log2" ]; then
-                G2=`egrep -cv '#|^$' "$dir2/log2"`; fi
+                G2=$(egrep -cv '#|^$' "$dir2/log2"); fi
             if [ -f "$dir2/log3" ]; then
-                G3=`egrep -cv '#|^$' "$dir2/log3"`; fi
+                G3=$(egrep -cv '#|^$' "$dir2/log3"); fi
             
             if [[ ${stts} =~ $int ]]; then
                 if [ ${stts} -le 10 -a ${stts} -ge 7 ]; then :
@@ -126,15 +125,15 @@ function save_word_stats() {
         IFS=$old_IFS
     }
 
-    if [[ `sqlite3 ${db} "select week from '${wtable}' where week is '${week^}';"` ]]; then :
+    if [[ $(sqlite3 ${db} "select week from '${wtable}' where week is '${week^}';") ]]; then :
     else
-        rdata=`count`
-        D0=`cut -d ',' -f 1 <<< "${rdata}"`; ! [[ ${D0} =~ $int ]] && D0=0
-        D1=`cut -d ',' -f 2 <<< "${rdata}"`; ! [[ ${D1} =~ $int ]] && D1=0
-        D2=`cut -d ',' -f 3 <<< "${rdata}"`; ! [[ ${D2} =~ $int ]] && D2=0
-        D3=`cut -d ',' -f 4 <<< "${rdata}"`; ! [[ ${D3} =~ $int ]] && D3=0
-        D4=`cut -d ',' -f 5 <<< "${rdata}"`; ! [[ ${D4} =~ $int ]] && D4=0
-        D5=`cut -d ',' -f 6 <<< "${rdata}"`; ! [[ ${D5} =~ $int ]] && D5=0
+        rdata=$(count)
+        D0=$(cut -d ',' -f 1 <<< "${rdata}"); ! [[ ${D0} =~ $int ]] && D0=0
+        D1=$(cut -d ',' -f 2 <<< "${rdata}"); ! [[ ${D1} =~ $int ]] && D1=0
+        D2=$(cut -d ',' -f 3 <<< "${rdata}"); ! [[ ${D2} =~ $int ]] && D2=0
+        D3=$(cut -d ',' -f 4 <<< "${rdata}"); ! [[ ${D3} =~ $int ]] && D3=0
+        D4=$(cut -d ',' -f 5 <<< "${rdata}"); ! [[ ${D4} =~ $int ]] && D4=0
+        D5=$(cut -d ',' -f 6 <<< "${rdata}"); ! [[ ${D5} =~ $int ]] && D5=0
         sqlite3 ${db} "insert into ${wtable} (week,val0,val1,val2,val3,val4,val5) \
         values ('${week^}','${D0}','${D1}','${D2}','${D3}','${D4}','${D5}');"
         echo -n ${cdate} > ${wdate}
@@ -158,11 +157,11 @@ function mk_topic_stats() {
     
     for m in {01..12}; do
         if [[ ${dmonth} = ${m} ]]; then
-            declare a$m=`cut -d ',' -f 1 < ${pross}`
-            declare b$m=`cut -d ',' -f 2 < ${pross}`
-            declare c$m=`cut -d ',' -f 3 < ${pross}`
-            declare d$m=`cut -d ',' -f 4 < ${pross}`
-            declare e$m=`cut -d ',' -f 5 < ${pross}`
+            declare a$m=$(cut -d ',' -f 1 < ${pross})
+            declare b$m=$(cut -d ',' -f 2 < ${pross})
+            declare c$m=$(cut -d ',' -f 3 < ${pross})
+            declare d$m=$(cut -d ',' -f 4 < ${pross})
+            declare e$m=$(cut -d ',' -f 5 < ${pross})
             rm -f ${pross}; break
         else
             read D0 <&4; ! [[ ${D0} =~ $int ]] && D0=0
@@ -241,14 +240,14 @@ data="/tmp/.idiomind_stats"
 databk="$DM_tls/data/idiomind_stats"
 db="$DM_tls/data/log.db"
 int='^[0-9]+$'
-week=`date +%b%d`
-month=`date +%b`
-dtweek=`date +%w`
-dtmnth=`date +%d`
-mtable="M`date +%y`"
-wtable="W`date +%y`"
-dmonth=`date +%m`
-cdate=`date +%m/%d/%Y`
+week=$(date +%b%d)
+month=$(date +%b)
+dtweek=$(date +%w)
+dtmnth=$(date +%d)
+mtable="M$(date +%y)"
+wtable="W$(date +%y)"
+dmonth=$(date +%m)
+cdate=$(date +%m/%d/%Y)
 create_db
 
 function pre_comp() {

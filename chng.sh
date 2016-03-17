@@ -51,11 +51,11 @@ if [[ ${1} = 0 ]]; then
         fi
         if [ -n "${item}" ]; then
             unset file icon
-            _item="$(grep -F -m 1 "trgt={${item}}" "${DC_tlt}/0.cfg" |sed 's/},/}\n/g')"
-            type="$(grep -oP '(?<=type={).*(?=})' <<<"${_item}")"
-            export trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${_item}")"
-            srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${_item}")"
-            id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${_item}")"
+            _item="$(grep -F -m 1 "trgt{${item}}" "${DC_tlt}/0.cfg" |sed 's/}/}\n/g')"
+            type="$(grep -oP '(?<=type{).*(?=})' <<<"${_item}")"
+            export trgt="$(grep -oP '(?<=trgt{).*(?=})' <<<"${_item}")"
+            srce="$(grep -oP '(?<=srce{).*(?=})' <<<"${_item}")"
+            id="$(grep -oP '(?<=cdid{).*(?=})' <<<"${_item}")"
             [ -e "${DM_tlt}/images/${trgt,,}.jpg" ] && icon="${DM_tlt}/images/${trgt,,}.jpg"
             [ -e "${DM_tls}/images/${trgt,,}-0.jpg" ] && icon="${DM_tls}/images/${trgt,,}-0.jpg"
             [ -e "${DM_tlt}/$id.mp3" ] && file="${DM_tlt}/$id.mp3" || file="${DM_tls}/audio/${trgt,,}.mp3"

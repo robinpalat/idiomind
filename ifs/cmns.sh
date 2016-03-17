@@ -47,8 +47,8 @@ function nmfile() {
 }
 
 function set_name_file() {
-    id=":[type={$1},trgt={$2},srce={$3},exmp={$4},defn={$5},note={$6},wrds={$7},grmr={$8},]."
-    echo -n "${id}" |md5sum |rev |cut -c 4- |rev
+    cdid="trgt{$2}srce{$3}exmp{$4}defn{$5}note{$6}wrds{$7}grmr{$8}tags{}mark{}link{}cdid{}type{$1}"
+    echo -n "${cdid}" |md5sum |rev |cut -c 4- |rev
 }
 
 function include() {
@@ -114,19 +114,19 @@ function cleanups() {
 }
 
 function get_item() {
-    export item="$(sed 's/},/}\n/g' <<<"${1}" |sed 's/"/\\"/g')"
-    export type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
-    export trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
-    export srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
-    export exmp="$(grep -oP '(?<=exmp={).*(?=})' <<<"${item}")"
-    export defn="$(grep -oP '(?<=defn={).*(?=})' <<<"${item}")"
-    export note="$(grep -oP '(?<=note={).*(?=})' <<<"${item}")"
-    export wrds="$(grep -oP '(?<=wrds={).*(?=})' <<<"${item}")"
-    export grmr="$(grep -oP '(?<=grmr={).*(?=})' <<<"${item}")"
-    export mark="$(grep -oP '(?<=mark={).*(?=})' <<<"${item}")"
-    export link="$(grep -oP '(?<=link={).*(?=})' <<<"${item}")"
-    export tag="$(grep -oP '(?<=tag={).*(?=})' <<<"${item}")"
-    export id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
+    export item="$(sed 's/}/}\n/g' <<<"${1}" |sed 's/"/\\"/g')"
+    export type="$(grep -oP '(?<=type{).*(?=})' <<<"${item}")"
+    export trgt="$(grep -oP '(?<=trgt{).*(?=})' <<<"${item}")"
+    export srce="$(grep -oP '(?<=srce{).*(?=})' <<<"${item}")"
+    export exmp="$(grep -oP '(?<=exmp{).*(?=})' <<<"${item}")"
+    export defn="$(grep -oP '(?<=defn{).*(?=})' <<<"${item}")"
+    export note="$(grep -oP '(?<=note{).*(?=})' <<<"${item}")"
+    export wrds="$(grep -oP '(?<=wrds{).*(?=})' <<<"${item}")"
+    export grmr="$(grep -oP '(?<=grmr{).*(?=})' <<<"${item}")"
+    export mark="$(grep -oP '(?<=mark{).*(?=})' <<<"${item}")"
+    export link="$(grep -oP '(?<=link{).*(?=})' <<<"${item}")"
+    export tags="$(grep -oP '(?<=tags{).*(?=})' <<<"${item}")"
+    export cdid="$(grep -oP '(?<=cdid{).*(?=})' <<<"${item}")"
 }
 
 function calculate_review() {

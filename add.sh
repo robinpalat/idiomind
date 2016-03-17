@@ -106,7 +106,7 @@ function new_sentence() {
     fi
     notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000
     sentence_p "$DT_r" 1
-    id="$(set_name_file 2 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}")"
+    cdid="$(set_name_file 2 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}")"
     mksure "${trgt}" "${srce}" "${grmr}" "${wrds}"
 
     if [ $? = 1 ]; then
@@ -121,18 +121,18 @@ function new_sentence() {
 
         if [ ! -e "$DT_r/audtm.mp3" ]; then
             if [[ ${dlaud} = TRUE ]]; then
-                tts_sentence "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
-                    if [ ! -e "${DM_tlt}/$id.mp3" ]; then
-                        voice "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
+                tts_sentence "${trgt}" "$DT_r" "${DM_tlt}/$cdid.mp3"
+                    if [ ! -e "${DM_tlt}/$cdid.mp3" ]; then
+                        voice "${trgt}" "$DT_r" "${DM_tlt}/$cdid.mp3"
                     fi
             else
-                voice "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
+                voice "${trgt}" "$DT_r" "${DM_tlt}/$cdid.mp3"
                 if [ $? = 1 ]; then
-                    [[ ${dlaud} = TRUE ]] && tts_sentence "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
+                    [[ ${dlaud} = TRUE ]] && tts_sentence "${trgt}" "$DT_r" "${DM_tlt}/$cdid.mp3"
                 fi
             fi
         else
-            mv -f "$DT_r/audtm.mp3" "${DM_tlt}/$id.mp3"
+            mv -f "$DT_r/audtm.mp3" "${DM_tlt}/$cdid.mp3"
         fi
 
         ( if [[ ${wlist} = TRUE ]] && [ -n "${wrds}" ]; then
@@ -161,7 +161,7 @@ function new_word() {
     fi
 
     audio="${trgt,,}"
-    id="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
+    cdid="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
     exmp="$(sqlite3 ${cdb} "select Example from Words where Word is '${trgt}';")"
     mksure "${trgt}" "${srce}"
     
@@ -230,7 +230,7 @@ function list_words_edit() {
             translate "${trgt}" auto $lgs > "$DT_r/tr"
             srce=$(< "$DT_r/tr")
             srce="$(clean_0 "${srce}")"
-            id="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
+            cdid="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
             mksure "${trgt}" "${srce}"
 
             if [ $? = 0 ]; then
@@ -241,7 +241,7 @@ function list_words_edit() {
                 ( img_word "${trgt}" "${srce}" ) &
             else
                 echo -e "\n$trgt" >> "${DC_tlt}/err"
-                cleanups "${DM_tlt}/$id.mp3"
+                cleanups "${DM_tlt}/$cdid.mp3"
             fi
         fi
         let n++
@@ -282,7 +282,7 @@ function list_words_sentence() {
             translate "${trgt}" auto $lgs > "$DT_r/tr.$c"
             srce=$(< "$DT_r/tr.$c")
             srce="$(clean_0 "${srce}")"
-            id="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
+            cdid="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
             mksure "${trgt}" "${srce}"
             
             if [ $? = 0 ]; then
@@ -476,7 +476,7 @@ function process() {
             fi
             srce="$(translate "${trgt}" $lgt $lgs)"
             srce="$(clean_2 "${srce}")"
-            id="$(set_name_file 2 "${trgt}" "${srce}" "" "" "" "" "")"
+            cdid="$(set_name_file 2 "${trgt}" "${srce}" "" "" "" "" "")"
 
             if [[ $(wc -$c <<<"${trgt}") = 1 ]]; then
                 if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
@@ -484,7 +484,7 @@ function process() {
                 else
                     trgt="$(clean_1 "${trgt}")"
                     srce="$(clean_0 "${srce}")"
-                    id="$(set_name_file 1 "${trgt}" "${srce}" "" "" "" "" "")"
+                    cdid="$(set_name_file 1 "${trgt}" "${srce}" "" "" "" "" "")"
                     audio="${trgt,,}"
                     mksure "${trgt}" "${srce}"
                     
@@ -492,17 +492,17 @@ function process() {
                         index 1
                         ( [[ ${dlaud} = TRUE ]] && tts_word "${audio}" "${DM_tlt}" ) &&
                         if [ -e "${DM_tlt}/${audio}.mp3" ]; then
-                            mv "${DM_tlt}/${audio}.mp3" "${DM_tlt}/$id.mp3"
+                            mv "${DM_tlt}/${audio}.mp3" "${DM_tlt}/$cdid.mp3"
                         else
                             if [ -e "${DM_tls}/audio/${audio}.mp3" ]; then
-                            cp "${DM_tls}/audio/${audio}.mp3" "${DM_tlt}/$id.mp3"
+                            cp "${DM_tls}/audio/${audio}.mp3" "${DM_tlt}/$cdid.mp3"
                             fi
                         fi
                         ( img_word "${trgt}" "${srce}" ) &
                         echo "${trgt}" >> "$DT_r/addw"
                     else
                         echo -e "\n\n#$n ${trgt}" >> "$DT_r/wlog"
-                        rm "${DM_tlt}/$id.mp3"
+                        rm "${DM_tlt}/$cdid.mp3"
                     fi
                 fi
             elif [[ $(wc -$c <<<"${trgt}") -ge 1 ]]; then
@@ -514,23 +514,23 @@ function process() {
                         echo -e "\n\n#$n [$(gettext "Sentence too long")] $trgt" >> "$DT_r/slog"
                     else
                         ( sentence_p "$DT_r" 1
-                        id="$(set_name_file 1 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}")"
+                        cdid="$(set_name_file 1 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}")"
                         mksure "${trgt}" "${srce}" "${wrds}" "${grmr}"
                         
                         if [ $? = 0 ]; then
                             index 2
                             if [[ ${dlaud} = TRUE ]]; then
-                                tts_sentence "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
-                                [ ! -e "${DM_tlt}/$id.mp3" ] && voice "${trgt}" "$DT_r" "${DM_tlt}/$id.mp3"
+                                tts_sentence "${trgt}" "$DT_r" "${DM_tlt}/$cdid.mp3"
+                                [ ! -e "${DM_tlt}/$cdid.mp3" ] && voice "${trgt}" "$DT_r" "${DM_tlt}/$cdid.mp3"
                             else 
-                                voice "${trgt}" "${DT_r}" "${DM_tlt}/$id.mp3"
+                                voice "${trgt}" "${DT_r}" "${DM_tlt}/$cdid.mp3"
                             fi #TODO
                             ( [[ ${dlaud} = TRUE ]] && fetch_audio "$aw" "$bw" )
                             echo "${trgt}" >> "$DT_r/adds"
                             ((adds=adds+1))
                         else
                             echo -e "\n\n#$n $trgt" >> "$DT_r/slog"
-                            rm "${DM_tlt}/$id.mp3"
+                            rm "${DM_tlt}/$cdid.mp3"
                         fi
                         rm -f "$aw" "$bw" )
                     fi
@@ -553,7 +553,7 @@ function process() {
                     echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] ${trgt}" >> "$DT_r/wlog"
                 else
                     srce="$(translate "${trgt}" auto $lgs)"
-                    id="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
+                    cdid="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
                     mksure "${trgt}" "${srce}"
                     
                     if [ $? = 0 ]; then
@@ -564,7 +564,7 @@ function process() {
                         echo "${trgt}" >> "$DT_r/addw"
                     else
                         echo -e "\n\n#$n $trgt" >> "$DT_r/wlog"
-                        cleanups "${DM_tlt}/$id.mp3"
+                        cleanups "${DM_tlt}/$cdid.mp3"
                     fi
                 fi
                 nn=$((n+$(wc -l < "$DT_r/slts")-1))
@@ -650,7 +650,7 @@ fetch_content() {
                 |sed 's|/|\\/|g' |sed 's/\&/\&amp\;/g')"
 
                 if [ -n "${title}" ]; then
-                    if ! grep -Fo "trgt={${title^}}" "${DC_tlt}/0.cfg" && \
+                    if ! grep -Fo "trgt{${title^}}" "${DC_tlt}/0.cfg" && \
                     ! grep -Fxq "${title^}" "${DC_tlt}/exclude"; then
                         wlist='FALSE'; trans='TRUE'
                         trgt="${title^}"

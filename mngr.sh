@@ -67,12 +67,12 @@ mkmn() {
 delete_item_ok() {
     f_lock "$DT/ps_lk"
     trgt="${3}"; DM_tlt="$DM_tl/${2}"; DC_tlt="$DM_tl/${2}/.conf"
-    item="$(grep -F -m 1 "trgt={${trgt}}" "$DC_tlt/0.cfg" |sed 's/},/}\n/g')"
-    id=`grep -oP '(?<=id=\[).*(?=\])' <<<"${item}"`
+    item="$(grep -F -m 1 "trgt{${trgt}}" "$DC_tlt/0.cfg" |sed 's/}/}\n/g')"
+    cdid=$(grep -oP '(?<=cdid{).*(?=})' <<< "${item}")
 
     if [ -n "${trgt}" ]; then
-        cleanups "${DM_tlt}/$id.mp3" "${DM_tlt}/images/${trgt,,}.jpg"
-        sed -i "/trgt={${trgt}}/d" "${DC_tlt}/0.cfg"
+        cleanups "${DM_tlt}/$cdid.mp3" "${DM_tlt}/images/${trgt,,}.jpg"
+        sed -i "/trgt{${trgt}}/d" "${DC_tlt}/0.cfg"
 
         if [ -d "${DC_tlt}/practice" ]; then
             cd "${DC_tlt}/practice"
@@ -110,8 +110,8 @@ delete_item() {
         
         if [ $ret -eq 0 ]; then
             (sleep 0.1 && kill -9 $(pgrep -f "yad --form "))
-            cleanups "${DM_tlt}/$id.mp3" "${DM_tlt}/images/${trgt,,}.jpg"
-            sed -i "/trgt={${trgt}}/d" "${DC_tlt}/0.cfg"
+            cleanups "${DM_tlt}/$cdid.mp3" "${DM_tlt}/images/${trgt,,}.jpg"
+            sed -i "/trgt{${trgt}}/d" "${DC_tlt}/0.cfg"
             
             if [ -d "${DC_tlt}/practice" ]; then
                 cd "${DC_tlt}/practice"
@@ -155,12 +155,12 @@ edit_item() {
     fi
     item_id="$(sed -n ${item_pos}p "${index_1}")"
     if [ ${text_missing} = 0 ]; then
-        edit_pos=`grep -Fon -m 1 "trgt={${item_id}}" "${DC_tlt}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
+        edit_pos=$(grep -Fon -m 1 "trgt{${item_id}}" "${DC_tlt}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
         get_item "$(sed -n ${edit_pos}p "${DC_tlt}/0.cfg")"
     else
         get_item "$(sed -n ${item_pos}p "${DC_tlt}/0.cfg")"
     fi
-    [ -z "${id}" ] && id=""
+    [ -z "${cdid}" ] && cdid=""
     export query="$(sed "s/'/ /g" <<<"${trgt}")"
     to_modify=0; colorize_run=0; transl_mark=0
     if ((mode>=1 && mode<=10)); then
@@ -169,7 +169,7 @@ edit_item() {
     fi
 
     export cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"""
-    export cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"" ${id}"
+    export cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"" ${cdid}"
     export cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"" "\"${trgt}\"""
     export cmd_def="'$DS/ifs/tls.sh' 'find_def' "\"${trgt}\"""
     export cmd_trad="'$DS/ifs/tls.sh' 'find_trad' "\"${trgt}\"""
@@ -194,8 +194,8 @@ edit_item() {
         fi
     fi
         
-    if [ -e "${DM_tlt}/$id.mp3" ]; then
-        audf="${DM_tlt}/$id.mp3"
+    if [ -e "${DM_tlt}/$cdid.mp3" ]; then
+        audf="${DM_tlt}/$cdid.mp3"
     else
         audf="${DM_tls}/audio/${trgt,,}.mp3"
     fi
@@ -247,9 +247,9 @@ edit_item() {
                 else
                     index edit "${tpc}"
                 fi
-                sed -i "${edit_pos}s|trgt={${trgt}}|trgt={${trgt_mod}}|;
-                ${edit_pos}s|grmr={${grmr}}|grmr={${trgt_mod}}|;
-                ${edit_pos}s|srce={${srce}}|srce={$temp}|g" "${DC_tlt}/0.cfg"
+                sed -i "${edit_pos}s|trgt{${trgt}}|trgt{${trgt_mod}}|;
+                ${edit_pos}s|grmr{${grmr}}|grmr{${trgt_mod}}|;
+                ${edit_pos}s|srce{${srce}}|srce{$temp}|g" "${DC_tlt}/0.cfg"
                 
                 mod_index=1; colorize_run=1; to_modify=1
             fi
@@ -300,14 +300,14 @@ edit_item() {
                         if [ ${type_mod} = 1 ]; then
                             cp -f "${audf_mod}" "${DM_tls}/audio/${trgt_mod,,}.mp3"
                         elif [ ${type_mod} = 2 ]; then
-                            cp -f "${audf_mod}" "$DM_tl/${tpc_mod}/$id_mod.mp3"; fi
+                            cp -f "${audf_mod}" "$DM_tl/${tpc_mod}/$cdid_mod.mp3"; fi
                     else
                         if [ ${type_mod} = 2 ]; then
-                            [ -e "${DM_tlt}/$id.mp3" ] && \
-                            mv -f "${DM_tlt}/$id.mp3" "$DM_tl/${tpc_mod}/$id_mod.mp3"
+                            [ -e "${DM_tlt}/$cdid.mp3" ] && \
+                            mv -f "${DM_tlt}/$cdid.mp3" "$DM_tl/${tpc_mod}/$cdid_mod.mp3"
                         elif [ ${type_mod} = 1 ]; then
-                            [ -e "${DM_tlt}/$id.mp3" ] && \
-                            mv -f "${DM_tlt}/$id.mp3" "$DM_tl/${tpc_mod}/$id_mod.mp3"; fi
+                            [ -e "${DM_tlt}/$cdid.mp3" ] && \
+                            mv -f "${DM_tlt}/$cdid.mp3" "$DM_tl/${tpc_mod}/$cdid_mod.mp3"; fi
                     fi
                     [ -e "${DM_tlt}/images/${trgt,,}.jpg" ] && \
                     mv -f "${DM_tlt}/images/${trgt,,}.jpg" "$DM_tl/${tpc_mod}/images/${trgt_mod,,}.jpg"
@@ -316,36 +316,36 @@ edit_item() {
                     trgt="${trgt_mod}"; srce="${srce_mod}"; tpe="${tpc_mod}"
                     exmp="${exmp_mod}"; defn="${defn_mod}"; note="${note_mod}"
                     wrds="${wrds_mod}"; grmr="${grmr_mod}";
-                    mark="${mark_mod}"; link="${link_mod}"; id="${id_mod}"
+                    mark="${mark_mod}"; link="${link_mod}"; cdid="${cdid_mod}"
                     index ${type_mod}
                     unset type trgt srce exmp defn note wrds grmr mark id
 
                 elif [ "${tpc}" = "${tpc_mod}" ]; then
                     cfg0="${DC_tlt}/0.cfg"
                     pos=${item_pos}
-                    sed -i "${pos}s|type={$type}|type={$type_mod}|;
-                    ${pos}s|srce={$srce}|srce={$srce_mod}|;
-                    ${pos}s|exmp={$exmp}|exmp={$exmp_mod}|;
-                    ${pos}s|defn={$defn}|defn={$defn_mod}|;
-                    ${pos}s|note={$note}|note={$note_mod}|;
-                    ${pos}s|wrds={$wrds}|wrds={$wrds_mod}|;
-                    ${pos}s|grmr={$grmr}|grmr={$grmr_mod}|;
-                    ${pos}s|mark={$mark}|mark={$mark_mod}|;
-                    ${pos}s|id=\[$id\]|id=\[$id_mod\]|g" "${cfg0}"
+                    sed -i "${pos}s|type{$type}|type{$type_mod}|;
+                    ${pos}s|srce{$srce}|srce{$srce_mod}|;
+                    ${pos}s|exmp{$exmp}|exmp{$exmp_mod}|;
+                    ${pos}s|defn{$defn}|defn{$defn_mod}|;
+                    ${pos}s|note{$note}|note{$note_mod}|;
+                    ${pos}s|wrds{$wrds}|wrds{$wrds_mod}|;
+                    ${pos}s|grmr{$grmr}|grmr{$grmr_mod}|;
+                    ${pos}s|mark{$mark}|mark{$mark_mod}|;
+                    ${pos}s|cdid{$cdid}|cdid{$cdid_mod}|g" "${cfg0}"
                     
                     if [ "${audf}" != "${audf_mod}" ]; then
                         if [ ${type_mod} = 1 ]; then
                             cp -f "${audf_mod}" "${DM_tls}/audio/${trgt_mod,,}.mp3"
                         elif [ ${type_mod} = 2 ]; then
-                            [ -e "${DM_tlt}/$id.mp3" ] && rm "${DM_tlt}/$id.mp3"
-                            cp -f "${audf_mod}" "${DM_tlt}/$id_mod.mp3"; fi
+                            [ -e "${DM_tlt}/$cdid.mp3" ] && rm "${DM_tlt}/$cdid.mp3"
+                            cp -f "${audf_mod}" "${DM_tlt}/$cdid_mod.mp3"; fi
                     else
                         if [ ${type_mod} = 2 ]; then
-                            [ -e "${DM_tlt}/$id.mp3" ] && \
-                            mv -f "${DM_tlt}/$id.mp3" "${DM_tlt}/$id_mod.mp3"
+                            [ -e "${DM_tlt}/$cdid.mp3" ] && \
+                            mv -f "${DM_tlt}/$cdid.mp3" "${DM_tlt}/$cdid_mod.mp3"
                         elif [ ${type_mod} = 1 ]; then
-                            [ -e "${DM_tlt}/$id.mp3" ] && \
-                            mv -f "${DM_tlt}/$id.mp3" "${DM_tlt}/$id_mod.mp3"; fi
+                            [ -e "${DM_tlt}/$cdid.mp3" ] && \
+                            mv -f "${DM_tlt}/$cdid.mp3" "${DM_tlt}/$cdid_mod.mp3"; fi
                     fi
                 fi
                 if [ "$type" != "$type_mod" ]; then
@@ -401,8 +401,8 @@ edit_list() {
     #[ ! -s "${direc}/0.cfg" ] && exit 1
     > "$DT/_tmp1"
     tac "${direc}/0.cfg" | while read -r item_; do
-        item="$(sed 's/},/}\n/g' <<<"${item_}")"
-        trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
+        item="$(sed 's/}/}\n/g' <<<"${item_}")"
+        trgt="$(grep -oP '(?<=trgt{).*(?=})' <<<"${item}")"
         [ -n "${trgt}" ] && echo "${trgt}" >> "$DT/_tmp1"
     done
 
@@ -424,11 +424,10 @@ edit_list() {
         n=1; f_lock "$DT/el_lk"
         cleanups "${direc}/1.cfg" "${direc}/3.cfg" "${direc}/4.cfg"
         $cmd "$DT/tmp1" | while read -r trgt; do
-            if grep -F -m 1 "trgt={${trgt}}" "${direc}/0.cfg"; then
-                item="$(grep -F -m 1 "trgt={${trgt}}" "${direc}/0.cfg" |sed 's/},/}\n/g')"
-                line="$(sed -n 's/^\([0-9]*\)[:].*/\1/p' <<<"${item}")"
-                type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
-                trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
+            if grep -F -m 1 "trgt{${trgt}}" "${direc}/0.cfg"; then
+                item="$(grep -F -m 1 "trgt{${trgt}}" "${direc}/0.cfg" |sed 's/}/}\n/g')"
+                type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")"
+                trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
                 
                 if [ ${type} = 1 ]; then
                     echo "${trgt}" >> "${direc}/3.cfg"
@@ -436,15 +435,15 @@ edit_list() {
                     echo "${trgt}" >> "${direc}/4.cfg"; fi
                 if ! grep -Fxo "${trgt}" "${direc}/2.cfg"; then
                     echo "${trgt}" >> "${direc}/1.cfg"; fi
-                grep -F -m 1 "trgt={${trgt}}" "${direc}/0.cfg" | \
-                sed "s/${line}\:\[/${n}\:\[/g" >> "$DT/tmp0"
             else
                 if [ $(wc -$c <<<"${trgt}") = 1 ]; then
                     echo "${trgt}" >> "${direc}/3.cfg"; t=1
-                else echo "${trgt}" >> "${direc}/4.cfg"; t=2; fi
-                temp="...."
-                item="${n}:[type={$t},trgt={$trgt},srce={$temp},exmp={},defn={},note={},wrds={},grmr={$trgt},].[tag={},mark={},].id=[]"
-                echo "${item}" >> "$DT/tmp0"
+                else 
+                    echo "${trgt}" >> "${direc}/4.cfg"; t=2
+                fi
+                temp="...."; grmr="${trgt}"; srce="${temp}"
+                eval newline="$(sed -n 5p $DS/default/vars)"
+                echo "${newline}" >> "$DT/tmp0"
                 echo "${trgt}" >> "$DT/add_lst"
                 echo "${trgt}" >> "${direc}/1.cfg"
             fi
@@ -455,12 +454,12 @@ edit_list() {
         mv -f "$DT/tmp0" "${direc}/0.cfg"
         if [ -d "$DM_tl/${2}" -a `wc -l < "${direc}/0.cfg"` -ge 1 ]; then
             while read -r fname; do
-               id=$(basename "${fname}" |sed "s/\(.*\).\{4\}/\1/" |tr -d '.')
-               if ! grep "${id}" "${direc}/0.cfg"; then cleanups "${fname}"; fi
+               cdid=$(basename "${fname}" |sed "s/\(.*\).\{4\}/\1/" |tr -d '.')
+               if ! grep "${cdid}" "${direc}/0.cfg"; then cleanups "${fname}"; fi
             done < <(find "$DM_tl/${2}"/*.mp3)
             while read -r fname; do
                trgt=$(basename "${fname}" |sed "s/\(.*\).\{4\}/\1/" |tr -d '.')
-               if ! grep "trgt={${trgt^}}" "${direc}/0.cfg"; then cleanups "${fname}"; fi
+               if ! grep "trgt{${trgt^}}" "${direc}/0.cfg"; then cleanups "${fname}"; fi
             done < <(find "$DM_tl/${2}/images"/*.jpg)
         fi
         
@@ -476,11 +475,11 @@ edit_list() {
             internet
             while read -r trgt; do
                 trgt_mod="${trgt}"
-                pos=`grep -Fon -m 1 "trgt={${trgt}}" "${direc}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
-                item="$(sed -n ${pos}p "${direc}/0.cfg" |sed 's/},/}\n/g')"
-                type=`grep -oP '(?<=type={).*(?=})' <<<"${item}"`
-                id="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
-                trgt=`grep -oP '(?<=trgt={).*(?=})' <<<"${item}"`
+                pos=$(grep -Fon -m 1 "trgt{${trgt}}" "${direc}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
+                item="$(sed -n ${pos}p "${direc}/0.cfg" |sed 's/}/}\n/g')"
+                type=$(grep -oP '(?<=type{).*(?=})' <<<"${item}")
+                cdid=$(grep -oP '(?<=cdid{).*(?=})' <<<"${item}")
+                trgt=$(grep -oP '(?<=trgt{).*(?=})' <<<"${item}")
                 srce="$temp"
                 if [ ${type} = 1 ]; then
                     srce_mod="$(clean_9 "$(translate "${trgt}" $lgt $lgs)")"
@@ -495,13 +494,13 @@ edit_list() {
                  
                 id_mod="$(set_name_file ${type} "${trgt}" "${srce_mod}" \
                 "${exmp_mod}" "${defn_mod}" "${note_mod}" "${wrds_mod}" "${grmr_mod}")"
-                [ ${type} = 2 -a ${dlaud} = TRUE ] && cd "$DT_r"; tts_sentence "${trgt}" "$DT_r" "${DM_tlt}/$id_mod.mp3"
-                #[ ${type} = 2 ] && mv -f "${DM_tlt}/$id.mp3" "${DM_tlt}/$id_mod.mp3"
+                [ ${type} = 2 -a ${dlaud} = TRUE ] && cd "$DT_r"; tts_sentence "${trgt}" "$DT_r" "${DM_tlt}/$cdid_mod.mp3"
+                #[ ${type} = 2 ] && mv -f "${DM_tlt}/$cdid.mp3" "${DM_tlt}/$cdid_mod.mp3"
                 
-                sed -i "${pos}s|srce={$srce}|srce={$srce_mod}|;
-                ${pos}s|wrds={}|wrds={$wrds_mod}|;
-                ${pos}s|grmr={$trgt}|grmr={$grmr_mod}|;
-                ${pos}s|id=\[\]|id=\[$id_mod\]|g" "${direc}/0.cfg"
+                sed -i "${pos}s|srce{$srce}|srce{$srce_mod}|;
+                ${pos}s|wrds{}|wrds{$wrds_mod}|;
+                ${pos}s|grmr{$trgt}|grmr{$grmr_mod}|;
+                ${pos}s|cdid{}|cdid{$cdid_mod}|g" "${direc}/0.cfg"
             done < "$DT/add_lst"
         fi
     fi
@@ -654,9 +653,9 @@ mark_to_learn_topic() {
     sed -i "s/repass=.*/repass=\"${steps}\"/g" "${DC_tlt}/10.cfg"
     
     while read -r item_; do
-        item="$(sed 's/},/}\n/g' <<<"${item_}")"
-        type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
-        trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
+        item="$(sed 's/}/}\n/g' <<<"${item_}")"
+        type="$(grep -oP '(?<=type{).*(?=})' <<<"${item}")"
+        trgt="$(grep -oP '(?<=trgt{).*(?=})' <<<"${item}")"
         if [ -n "${trgt}" ]; then
             if [ ${type} -eq 1 ]; then
                 echo "${trgt}" >> "${DC_tlt}/3.cfg"
@@ -740,8 +739,8 @@ mark_as_learned_topic() {
     touch "${DC_tlt}/1.cfg"
     
     while read -r item_; do
-        item="$(sed 's/},/}\n/g' <<< "${item_}")"
-        trgt="$(grep -oP '(?<=trgt={).*(?=})' <<< "${item}")"
+        item="$(sed 's/}/}\n/g' <<< "${item_}")"
+        trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
         [ -n "${trgt}" ] && echo "${trgt}" >> "${DC_tlt}/2.cfg"
     done < "${DC_tlt}/0.cfg"
     

@@ -144,8 +144,8 @@ if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
     dclk="$DS/play.sh play_word"
     _lst() {
         while read -r line; do
-            cut -d ':' -f1 <<< "${line}"
-        done < <(sed -n 2p "$file" |sed 's/},/\n/g' |tr -d '"}')
+        [ -n "${line}" ] && cut -d ':' -f1 <<< "${line}"
+        done < <(sed -n 2p "${file}"|sed 's/},/\n/g'|tr -d '"}')
     }
 
     _lst | yad --list --title="Idiomind" \
@@ -185,17 +185,22 @@ if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
             
             for i in {1..6}; do > "${DC_tlt}/${i}.cfg"; done
             for i in {1..3}; do > "${DC_tlt}/practice/log${i}"; done
-            tail -n 1 < "${file}" |tr '&' '\n' > "${DC_tlt}/id.cfg"
+            tail -n2 < "${file}" |sed 's/,"/\n/g;s/":/=/g;\
+            s/^\s*.//g;$s/$/`idiomind -v`/' > "${DC_tlt}/id.cfg"
             
             if [ ${cn} = 1  ]; then
             sed -i "s/tname=.*/tname=\"${tname}\"/g" "${DC_tlt}/id.cfg"; fi
             sed -i "s/datei=.*/datei=\"$(date +%F)\"/g" "${DC_tlt}/id.cfg"
             > "${DC_tlt}/download"
-
+            
+            sed -n 2p "${file}" > "${DC_tlt}/0.cfg"
+            sed -i 's/},/}\n/g;s|","|}|g;s|":"|{|g;s|":{"|}|g;s/"}/}/g' "${DC_tlt}/0.cfg"
+            sed -i 's/^\s*./trgt{/g' "${DC_tlt}/0.cfg"
+        
             while read item_; do
-                item="$(sed 's/},/}\n/g' <<<"${item_}")"
-                type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
-                trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
+                item="$(sed 's/}/}\n/g' <<<"${item_}")"
+                type="$(grep -oP '(?<=type{).*(?=})' <<<"${item}")"
+                trgt="$(grep -oP '(?<=trgt{).*(?=})' <<<"${item}")"
                 if [ -n "${trgt}" ]; then
                     if [[ ${type} = 1 ]]; then
                         echo "${trgt}" >> "${DC_tlt}/3.cfg"
@@ -203,9 +208,8 @@ if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
                         echo "${trgt}" >> "${DC_tlt}/4.cfg"
                     fi
                     echo "${trgt}" >> "${DC_tlt}/1.cfg"
-                    echo "${item_}" >> "${DC_tlt}/0.cfg"
                 fi    
-            done < <(head -n -1 < "${file}")
+            done < "${DC_tlt}/0.cfg"
 
             "$DS/ifs/tls.sh" colorize 1
             echo -e "$langt\n$lgsl" > "$DC_s/6.cfg"
@@ -477,8 +481,7 @@ idiomind_start() {
         new_session; cu=TRUE
     fi
     if [ ! -e "$DT/tpe" ]; then
-        cu=TRUE
-        tpe="$(sed -n 1p "$DC_s/4.cfg")"
+        cu=TRUE; tpe="$(sed -n 1p "$DC_s/4.cfg")"
         if ! ls -1a "$DS/addons/" |grep -Fxo "${tpe}" >/dev/null 2>&1; then
             [ ! -L "$DM_tl/${tpe}" ] && echo "${tpe}" > "$DT/tpe"
         fi
