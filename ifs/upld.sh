@@ -320,15 +320,23 @@ function upld() {
         
         # create id
         export f_size=$(du -h . |cut -f1)
-        eval c="$(< "$DS/default/topic.cfg")"
+        eval c="$(sed -n 4p "$DS/default/vars")"
         echo -n "${c}" > "${DC_tlt}/id.cfg"
-        cp -f "${DC_tlt}/0.cfg" "$DT_u/$tpcid.${tpc}.$lgt"
-        tr '\n' '&' < "${DC_tlt}/id.cfg" >> "$DT_u/$tpcid.${tpc}.$lgt"
-        echo -n "&idiomind-`idiomind -v`" >> "$DT_u/$tpcid.${tpc}.$lgt"
         echo -en "\nidiomind-`idiomind -v`" >> "${DC_tlt}/id.cfg"
         direc="$DT_u"
-        body="<hr><br><a href='/${lgtl,}/${ctgry,}/$tpcid.$oname.idmnd'>Download</a>"
+        eval body="$(sed -n 3p "$DS/default/vars")"
         export tpc direc usrid_m passw_m body
+        echo -e "{\"items\":{" > "$DT_u/$tpcid.$oname.$lgt"
+        while read -r _item; do
+            get_item "${_item}"
+            eval itm="$(sed -n 1p "$DS/default/vars")"
+            echo -en "${itm}" >> "$DT_u/$tpcid.$oname.$lgt"
+        done < <(tac "${DC_tlt}/0.cfg")
+        sed -i 's/,$//' "$DT_u/$tpcid.$oname.$lgt"
+        echo "}," >> "$DT_u/$tpcid.$oname.$lgt"
+        eval head="$(sed -n 2p "$DS/default/vars")"
+        echo -e "${head}" >> "$DT_u/$tpcid.$oname.$lgt"
+        echo -n "}" >> "$DT_u/$tpcid.$oname.$lgt"
 
         python << END
 import os, sys, requests, time, xmlrpclib

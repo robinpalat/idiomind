@@ -142,10 +142,11 @@ if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
     level="${lv[${level}]}"
     itxt="<span font_desc='Droid Sans Bold 12' color='#616161'>$tname</span>\n$nword $(gettext "Words") $nsent $(gettext "Sentences") $nimag $(gettext "Images") \n$(gettext "Level:") $level \n$(gettext "Language:") $(gettext "$langt")  $(gettext "Translation:") $(gettext "$langs")"
     dclk="$DS/play.sh play_word"
-    _lst() { while read -r item; do
-        grep -oP '(?<=trgt={).*(?=},srce)' <<<"${item}"
-        grep -oP '(?<=srce={).*(?=},exmp)' <<<"${item}"
-    done < <(tac "${file}"); }
+    _lst() {
+        while read -r line; do
+            cut -d ':' -f1 <<< "${line}"
+        done < <(sed -n 2p "$file" |sed 's/},/\n/g' |tr -d '"}')
+    }
 
     _lst | yad --list --title="Idiomind" \
     --text="${itxt}" \
@@ -156,7 +157,7 @@ if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
     --hide-column=2 --tooltip-column=2 \
     --no-headers --ellipsize=END --center \
     --width=600 --height=560 --borders=8 \
-    --column=" " --column=" " \
+    --column=" " \
     --button="$(gettext "Install")":0
     ret=$?
         if [ $ret -eq 0 ]; then
@@ -167,10 +168,10 @@ if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
                 dialog-information "$(gettext "Information")" & exit
             fi
             cn=0
-            if [[ $(grep -Fxo "${tname}" <<<"$listt" |wc -l) -ge 1 ]]; then
+            if [[ $(grep -Fxo "${tname}" <<<"${listt}" |wc -l) -ge 1 ]]; then
                 cn=1
                 for i in {1..50}; do
-                    chck=$(grep -Fxo "${tname} ($i)" <<<"$listt")
+                    chck=$(grep -Fxo "${tname} ($i)" <<<"${listt}")
                     [ -z "$chck" ] && break
                 done
                 tname="${tname} ($i)"

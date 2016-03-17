@@ -16,8 +16,7 @@ function check_format_1() {
     shopt -s extglob; n=0
     while read -r line; do
         if [ -z "$line" ]; then continue; fi
-        get="${tsets[${n}]}"
-        val=$(grep -o "$get"=\"[^\"]* <<< "${line}" |grep -o '[^"]*$')
+        val="$(cut -d ':' -f2 <<< "${line}")"
         if [[ ${n} = 0 ]]; then
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
             [ "$(grep -o -E '\*|\/|\@|$|=|-' <<<"${val}")" ]; then invalid $n; fi
@@ -51,7 +50,7 @@ function check_format_1() {
         fi
         export ${tsets[$n]}="${val}"
         let n++
-    done < <(tail -n 1 < "${file}" |tr '&' '\n')
+    done < <(sed -n 3p "$file"|sed 's/\",\"/\"\n\"/g'|tr -d '"}')
     return ${n}
 }
 
@@ -91,7 +90,7 @@ check_index() {
         [[ `egrep -cv '#|^$' < "${DC_tlt}/id.cfg"` != 19 ]] && id=0
         if [ ${id} != 1 ]; then
             datec=$(date +%F)
-            eval c="$(< $DS/default/topic.cfg)"
+            eval c="$(sed -n 5p $DS/default/vars)"
             echo -n "${c}" > "${DC_tlt}/id.cfg"
             echo -ne "\nidiomind-`idiomind -v`" >> "${DC_tlt}/id.cfg"
         fi
@@ -624,7 +623,7 @@ itray() {
     export dirt="$DT/"
     python <<PY
 import time, os, os.path, gtk, gio, signal, appindicator
-icon = '/usr/share/idiomind/images/logo.png'
+icon = 'gtk-edit'
 HOME = os.getenv('HOME')
 add = os.environ['lbl1']
 play = os.environ['lbl2']
