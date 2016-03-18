@@ -12,8 +12,8 @@ function check_format_1() {
         echo "Error! Value: ${1}"
         msg "$(gettext "File is corrupted.")\n ${n}" error & exit 1
     }
-    [ ! -f "${file}" ] && invalid
-    [ $(wc -l < "${file}") != 3 ] && invalid 'lines'
+    if [ ! -f "${file}" ]; then invalid
+    elif [ $(wc -l < "${file}") != 3 ]; then invalid 'lines'; fi
     
     shopt -s extglob; n=0
     while read -r line; do
@@ -21,19 +21,19 @@ function check_format_1() {
         val="$(cut -d ':' -f2 <<< "${line}")"
         if [[ ${n} = 0 ]]; then
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
-            [ "$(grep -o -E '\*|\/|\@|$|=|-' <<<"${val}")" ]; then invalid $n; fi
+            [ "$(grep -o -E '\*|\/|\@|$|=|-' <<< "${val}")" ]; then invalid $n; fi
         elif [[ ${n} = 1 || ${n} = 2 ]]; then
-            if ! grep -Fo "${val}" <<<"${!lang[@]}" >/dev/null 2>&1; then invalid $n; fi
+            if ! grep -Fo "${val}" <<< "${!lang[@]}" >/dev/null 2>&1; then invalid $n; fi
         elif [[ ${n} = 3 || ${n} = 4 ]]; then
             if [ ${#val} -gt 30 ] || \
-            [ "$(grep -o -E '\*|\/|$|\)|\(|=' <<<"${val}")" ]; then invalid $n; fi
+            [ "$(grep -o -E '\*|\/|$|\)|\(|=' <<< "${val}")" ]; then invalid $n; fi
         elif [[ ${n} = 5 ]]; then
             if ! grep -Fo "${val//_/ }" <<< "${Categories[@],}" >/dev/null 2>&1; then invalid $n; fi
         elif [[ ${n} = 6 ]]; then
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 36 ]; then invalid $n; fi
         elif [[ ${n} = 7 ]]; then
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
-            [ "$(grep -o -E '\*|\/|\@|$|=|-' <<<"${val}")" ]; then invalid $n; fi
+            [ "$(grep -o -E '\*|\/|\@|$|=|-' <<< "${val}")" ]; then invalid $n; fi
         elif [[ ${n} = 8 || ${n} = 9 || ${n} = 10 ]]; then
             if [ -n "${val}" ]; then
             if ! [[ ${val} =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] \
@@ -48,7 +48,7 @@ function check_format_1() {
             if ! [[ $val =~ $numer ]] || [ ${#val} -gt 2 ]; then invalid $n; fi
         elif [[ ${n} = 17 ]]; then
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 40 ] || \
-            [ "$(grep -o -E '\*|\/|\@|$|=|-' <<<"${val}")" ]; then invalid $n; fi
+            [ "$(grep -o -E '\*|\/|\@|$|=|-' <<< "${val}")" ]; then invalid $n; fi
         fi
         export ${tsets[$n]}="${val}"
         let n++
@@ -89,19 +89,18 @@ check_index() {
         
         id=1
         [ ! -e "${DC_tlt}/id.cfg" ] && touch "${DC_tlt}/id.cfg" && id=0
-        [[ $(egrep -cv '#|^$' < "${DC_tlt}/id.cfg") != 19 ]] && id=0
+        [[ $(egrep -cv '#|^$' < "${DC_tlt}/id.cfg") != 18 ]] && id=0
         if [ ${id} != 1 ]; then
             datec=$(date +%F)
             eval c="$(sed -n 4p $DS/default/vars)"
             echo -e "${c}" > "${DC_tlt}/id.cfg"
-            echo -n "idiomind-`idiomind -v`" >> "${DC_tlt}/id.cfg"
         fi
         if ls "${DM_tlt}"/*.mp3 1> /dev/null 2>&1; then
             for au in "${DM_tlt}"/*.mp3 ; do 
                 [ ! -s "${au}" ] && rm "${au}"
             done
         fi
-        if [ ! -f "${DC_tlt}/8.cfg" ]; then
+        if [ ! -e "${DC_tlt}/8.cfg" ]; then
             echo 1 > "${DC_tlt}/8.cfg"
             export f=1
         fi
@@ -137,12 +136,13 @@ check_index() {
             type="$(grep -oP '(?<=type{).*(?=})' <<<"${item}")"
             trgt="$(grep -oP '(?<=trgt{).*(?=})' <<<"${item}")"
             if [ -n "${trgt}" ]; then
-                if [ ${type} = 1 ]; then
+                if [[ ${type} = 1 ]]; then
                     echo "${trgt}" >> "${DC_tlt}/3.cfg"
-                elif [ ${type} = 2 ]; then
+                    echo "${trgt}" >> "${DC_tlt}/1.cfg"
+                elif [[ ${type} = 2 ]]; then
                     echo "${trgt}" >> "${DC_tlt}/4.cfg"
+                    echo "${trgt}" >> "${DC_tlt}/1.cfg"
                 fi
-                echo "${trgt}" >> "${DC_tlt}/1.cfg"
             fi
         done < "${DC_tlt}/0.cfg"
         > "${DC_tlt}/2.cfg"
@@ -153,7 +153,7 @@ check_index() {
     
     _newformat() {
         get_item() {
-            export item="$(sed 's/},/}\n/g' <<<"${1}" |sed 's/"/\\"/g')"
+            export item="$(sed 's/},/}\n/g' <<< "${1}")"
             export type="$(grep -oP '(?<=type={).*(?=})' <<<"${item}")"
             export trgt="$(grep -oP '(?<=trgt={).*(?=})' <<<"${item}")"
             export srce="$(grep -oP '(?<=srce={).*(?=})' <<<"${item}")"
@@ -167,24 +167,28 @@ check_index() {
             export tags="$(grep -oP '(?<=tag={).*(?=})' <<<"${item}")"
             export cdid="$(grep -oP '(?<=id=\[).*(?=\])' <<<"${item}")"
         }
+        rm -f "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg"
         while read -r _item; do
             get_item "${_item}"
             eval line="$(sed -n 5p $DS/default/vars)"
             echo -e "${line}" >> "${DC_tlt}/cfg"
+            echo "${trgt}" >> "${DC_tlt}/1.cfg"
         done < <(tac "${DC_tlt}/0.cfg")
         mv -f "${DC_tlt}/cfg" "${DC_tlt}/0.cfg"
+        touch "${DC_tlt}/2.cfg"
+        "$DS/ifs/tls.sh" colorize 1
     }
     
     _check
     
-    if [ ${c} = 1  ]; then
+    if [[ ${c} = 1  ]]; then
         > "$DT/ps_lk"; 
         (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
         "$(gettext "Convert to new format...")" -t 3000) &
         _newformat
     fi
     
-    if [ ${f} = 1  ]; then
+    if [[ ${f} = 1  ]]; then
         > "$DT/ps_lk"; 
         if [[ ${r} = 0 ]]; then
             (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
@@ -193,7 +197,7 @@ check_index() {
         
         _restore
     fi
-    if [ ${mkmn} = 1 ] ;then
+    if [[ ${mkmn} = 1 ]] ;then
         "$DS/ifs/tls.sh" colorize 1; "$DS/mngr.sh" mkmn 0
     fi
     
@@ -213,7 +217,7 @@ add_audio() {
     ret=$?
     if [ $ret -eq 0 ]; then
         if [ -f "${aud}" ]; then 
-            mv -f "${aud}" "${2}/audtm.mp3"
+            cp -f "${aud}" "${2}/audtm.mp3"
         fi
     fi
 } >/dev/null 2>&1
@@ -228,8 +232,8 @@ _backup() {
     find . -maxdepth 1 -name '*.bk' -mtime -2); then
         if [ -s "$DM_tl/${2}/.conf/0.cfg" ]; then
             if [ -e "${file}" ]; then
-                dt2=`grep '\----- newest' "${file}" |cut -d' ' -f3`
-                old="$(sed -n  '/----- newest/,/----- oldest/p' "${file}" \
+                dt2=$(grep '\----- newest' "${file}" |cut -d' ' -f3)
+                old="$(sed -n '/----- newest/,/----- oldest/p' "${file}" \
                 |grep -v '\----- newest' |grep -v '\----- oldest')"
             fi
             new="$(cat "$DM_tl/${2}/.conf/0.cfg")"
@@ -245,8 +249,8 @@ _backup() {
 dlg_restfile() {
     [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
     file="$HOME/.idiomind/backup/${2}.bk"
-    date1=`grep '\----- newest' "${file}" |cut -d' ' -f3`
-    date2=`grep '\----- oldest' "${file}" |cut -d' ' -f3`
+    date1=$(grep '\----- newest' "${file}" |cut -d' ' -f3)
+    date2=$(grep '\----- oldest' "${file}" |cut -d' ' -f3)
     [ -n "$date2" ] && val='\nFALSE'
     source "$DS/ifs/cmns.sh"
     
@@ -266,12 +270,12 @@ dlg_restfile() {
         ret="$?"
         if [ $ret -eq 0 ]; then
             touch "$DT/act_restfile"; check_dir "${DM_tl}/${2}/.conf"
-            if grep TRUE <<< "$(sed -n 1p <<<"$rest")" >/dev/null 2>&1; then
-                sed -n  '/----- newest/,/----- oldest/p' "${file}" \
+            if grep TRUE <<< "$(sed -n 1p <<< "$rest")" >/dev/null 2>&1; then
+                sed -n '/----- newest/,/----- oldest/p' "${file}" \
                 |grep -v '\----- newest' |grep -v '\----- oldest' > \
                 "${DM_tl}/${2}/.conf/0.cfg"
-            elif grep TRUE <<< "$(sed -n 2p <<<"$rest")" >/dev/null 2>&1; then
-                sed -n  '/----- oldest/,/----- end/p' "${file}" \
+            elif grep TRUE <<< "$(sed -n 2p <<< "$rest")" >/dev/null 2>&1; then
+                sed -n '/----- oldest/,/----- end/p' "${file}" \
                 |grep -v '\----- oldest' |grep -v '\----- end' > \
                 "${DM_tl}/${2}/.conf/0.cfg"
             fi
@@ -618,13 +622,13 @@ while n < len(items):
     else:
         i=item
     if item in log3:
-        f.write("FALSE\n"+i+"\n"+img3+"\n")
+        f.write(img3+"\n"+i+"\nFALSE\n")
     elif item in log2:
-        f.write("FALSE\n"+i+"\n"+img2+"\n")
+        f.write(img2+"\n"+i+"\nFALSE\n")
     elif item in log1:
-        f.write(chk+"\n"+i+"\n"+img1+"\n")
+        f.write(img1+"\n"+i+"\n"+chk+"\n")
     else:
-        f.write("FALSE\n"+i+"\n"+img0+"\n")
+        f.write(img0+"\n"+i+"\nFALSE\n")
     n += 1
 f.close()
 PY

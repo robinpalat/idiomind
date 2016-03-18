@@ -374,7 +374,7 @@ edit_item() {
             [ ${colorize_run} = 1 ] && "$DS/ifs/tls.sh" colorize 1 &
             [ ${to_modify} = 1 -a $ret -eq 0 ] && sleep 0.2
             
-            if [ $ret -eq 2 ]; then $DS/mngr.sh edit ${list} $((item_pos-1)) &
+            if [ $ret -eq 2 ]; then $DS/mngr.sh edit ${list} $((item_pos+1)) &
             elif [ $ret -eq 0 ]; then $DS/vwr.sh ${list} "${trgt}" ${item_pos} & fi
             
         else
@@ -400,7 +400,7 @@ edit_list() {
     direc="$DM_tl/${2}/.conf"
     #[ ! -s "${direc}/0.cfg" ] && exit 1
     > "$DT/_tmp1"
-    tac "${direc}/0.cfg" | while read -r item_; do
+    cat "${direc}/0.cfg" | while read -r item_; do
         item="$(sed 's/}/}\n/g' <<<"${item_}")"
         trgt="$(grep -oP '(?<=trgt{).*(?=})' <<<"${item}")"
         [ -n "${trgt}" ] && echo "${trgt}" >> "$DT/_tmp1"

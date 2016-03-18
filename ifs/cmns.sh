@@ -114,7 +114,7 @@ function cleanups() {
 }
 
 function get_item() {
-    export item="$(sed 's/}/}\n/g' <<<"${1}" |sed 's/"/\\"/g')"
+    export item="$(sed 's/}/}\n/g' <<< "${1}")"
     export type="$(grep -oP '(?<=type{).*(?=})' <<<"${item}")"
     export trgt="$(grep -oP '(?<=trgt{).*(?=})' <<<"${item}")"
     export srce="$(grep -oP '(?<=srce{).*(?=})' <<<"${item}")"

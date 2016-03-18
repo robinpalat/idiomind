@@ -124,7 +124,7 @@ mkhtml() {
             echo -e "</td></table>" >> "$file.words2"
         fi
         let tr++
-    done < <(tac "${DC_tlt}/0.cfg")
+    done < "${DC_tlt}/0.cfg"
     
     echo -e "$(< "$file.words2")" >> "$file"
     echo -e "<br><br>" >> "$file"

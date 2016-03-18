@@ -12,7 +12,7 @@ while read -r _item; do
     if [ -n "$trgt" -a -n "$srce" ]; then
         printf "%5s\t%s\n" "$trgt" "$srce" >> "$DT/export/txt"
     fi
-done < <(tac "${DC_tlt}/0.cfg")
+done < "${DC_tlt}/0.cfg"
 
 if [ -e "$DT/export/txt" ]; then
     cat "$DT/export/txt" > "$file"

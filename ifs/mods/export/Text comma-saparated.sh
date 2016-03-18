@@ -12,7 +12,7 @@ while read -r _item; do
     if [ $type = 1 ]; then
         echo -e "$trgt,$srce" >> "$DT/export/txt"
     fi
-done < <(tac "${DC_tlt}/0.cfg")
+done < "${DC_tlt}/0.cfg"
 if [ -e "$DT/export/txt" ]; then
 cat "$DT/export/txt" > "$file"
 else

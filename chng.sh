@@ -68,17 +68,17 @@ if [[ ${1} = 0 ]]; then
     if [ ${W} = TRUE -a ${S} = TRUE ]; then
         echo "${tpc}" > "$DT/playlck"
         while read item; do _stop=1; getitem; _play
-        done < <(tac "${DC_tlt}/1.cfg")
+        done < "${DC_tlt}/1.cfg"
     fi
     if [ ${W} = TRUE -a ${S} = FALSE ]; then
         echo "${tpc}" > "$DT/playlck"
         while read item; do _stop=1; getitem; _play
-        done < <(grep -Fxvf "${DC_tlt}/4.cfg" "${DC_tlt}/1.cfg" |tac)
+        done < <(grep -Fxvf "${DC_tlt}/4.cfg" "${DC_tlt}/1.cfg")
     fi
     if [ ${W} = FALSE -a ${S} = TRUE ]; then
         echo "${tpc}" > "$DT/playlck"
         while read item; do _stop=1; getitem; _play
-        done < <(grep -Fxvf "${DC_tlt}/3.cfg" "${DC_tlt}/1.cfg" |tac)
+        done < <(grep -Fxvf "${DC_tlt}/3.cfg" "${DC_tlt}/1.cfg")
     fi
     if [ ${M} = TRUE ]; then
         echo "${tpc}" > "$DT/playlck"

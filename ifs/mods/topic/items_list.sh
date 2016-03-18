@@ -24,7 +24,7 @@ function word_view() {
 } >/dev/null 2>&1
 
 function sentence_view() {
-    if [ $(grep -oP '(?<=gramr=\").*(?=\")' "$DC_s/1.cfg")  = TRUE ]; then
+    if [ $(grep -oP '(?<=gramr=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]; then
     trgt_l="${grmr}"; else trgt_l="${trgt}"; fi
     [ -n "${link}" ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
     local sentence="<span font_desc='Sans Free 16'>${trgt_l}</span>\n\n<span font_desc='Sans Free 11'><i>$srce</i>$link</span>\n<small>$tag</small>\n"
@@ -62,7 +62,7 @@ function notebook_1() {
     chk1=$(($(wc -l < "${DC_tlt}/1.cfg")*3))
     chk5=$(wc -l < "${DC_tlt}/5.cfg")
     list() { if [[ ${chk1} = ${chk5} ]]; then
-    tac "${DC_tlt}/5.cfg"; else tac "$ls1" | \
+    cat "${DC_tlt}/5.cfg"; else yad; cat "$ls1" | \
     awk '{print "/usr/share/idiomind/images/0.png\n"$0"\nFALSE"}'; fi; }
     
     list | yad --list --tabnum=1 \

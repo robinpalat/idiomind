@@ -7,14 +7,15 @@
 re='^[0-9]+$'; index_pos="$3"
 if ! [[ ${index_pos} =~ $re ]]; then
 index_pos=`grep -Fxon -m 1 "${item_name}" "${index}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
-nll=""; fi
+nll=""
+fi
 
 _item="$(sed -n ${index_pos}p "${index}")"
 if [ -z "${_item}" ]; then
-    _item="$(sed -n 1p "${index}")"; index_pos=1; fi
-    
-item="$(grep -F -m 1 "trgt{${_item}}" "$DC_tlt/0.cfg" |sed 's/}/}\n/g')"
+    _item="$(sed -n 1p "${index}")"; index_pos=1
+fi
 
+item="$(grep -F -m 1 "trgt{${_item}}" "$DC_tlt/0.cfg" |sed 's/}/}\n/g')"
 type="$(grep -oP '(?<=type{).*(?=})' <<<"${item}")"
 export trgt="$(grep -oP '(?<=trgt{).*(?=})' <<<"${item}")"
 export srce="$(grep -oP '(?<=srce{).*(?=})' <<<"${item}")"
@@ -55,17 +56,13 @@ fi
     if ps -A | pgrep -f 'play'; then killall play & fi
     if [ $ret -eq 4 ]; then
         "$DS/mngr.sh" edit ${1} ${index_pos} ${text_missing} &
+        
     elif [ $ret -eq 2 ]; then
-        if [[ ${index_pos} = 1 ]]; then
-            item=$(tail -n 1 < "${index}")
-            [ ${1} = 1 ] && "$DS/vwr.sh" ${1} "" "${item}" &
-            [ ${1} = 2 ] && "$DS/vwr.sh" ${1} "${item}" &
-        else
-            ff=$((index_pos-1))
-            "$DS/vwr.sh" ${1} "" ${ff} &
-        fi
-    elif [ $ret -eq 3 ]; then
         ff=$((index_pos+1))
+        "$DS/vwr.sh" ${1} "" ${ff} &
+
+    elif [ $ret -eq 3 ]; then
+        ff=$((index_pos-1))
         "$DS/vwr.sh" ${1} "" ${ff} &
     else
         if ps -A | pgrep -f 'play'; then killall play & fi

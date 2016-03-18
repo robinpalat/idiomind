@@ -70,7 +70,6 @@ for tpc in topics:
                     auto_mrk = (cfg[10].split('acheck="'))[1].split('"')[0]
                 except:
                     pass
-                    
             if auto_mrk == 'TRUE':
                 auto_mrk = True
             else:
@@ -98,14 +97,14 @@ for tpc in topics:
                     if item in lstp and auto_mrk == True:
                         chk = 'TRUE'
                     if item in log3:
-                        f.write("FALSE\n"+i+"\n"+img3+"\n")
+                        f.write(img3+"\n"+i+"\nFALSE\n")
                     elif item in log2:
-                        f.write("FALSE\n"+i+"\n"+img2+"\n")
+                        f.write(img2+"\n"+i+"\nFALSE\n")
                     elif item in log1:
                         print chk + ' check -> ' + item
-                        f.write(chk+"\n"+i+"\n"+img1+"\n")
+                        f.write(img1+"\n"+i+"\n"+chk+"\n")
                     else:
-                        f.write("FALSE\n"+i+"\n"+img0+"\n")
+                        f.write(img0+"\n"+i+"\nFALSE\n")
                 f.close()
         except:
             print 'err -> ' + tpc

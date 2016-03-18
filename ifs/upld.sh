@@ -39,8 +39,8 @@ function dwld() {
             lothers="$(gettext "Others")"
             tmp="$DT/download/files"
             total=$(find "${tmp}" -maxdepth 5 -type f |wc -l)
-            c_audio=$(find "${tmp}" -maxdepth 5 -name '*.mp3' |wc -l)
-            c_images=$(find "${tmp}" -maxdepth 5 -name '*.jpg' |wc -l)
+            naudi=$(find "${tmp}" -maxdepth 5 -name '*.mp3' |wc -l)
+            nimag=$(find "${tmp}" -maxdepth 5 -name '*.jpg' |wc -l)
             hfiles="$(cd "${tmp}"; ls -d ./.[^.]* |less |wc -l)"
             exfiles="$(find "${tmp}" -maxdepth 5 -perm -111 -type f |wc -l)"
             others=$((hfiles+exfiles))
@@ -49,7 +49,8 @@ function dwld() {
             mv -n "${tmp}/share"/*.mp3 "$DM_t/$langt/.share/audio"/
             while read -r img; do
                 if [ -e "${tmp}/images/${img,,}.jpg" ]; then
-                    if [ -e "$DM_t/$langt/.share/images/${img,,}-0.jpg" -o `wc -w <<<"${img}"` -gt 1 ]; then
+                    if [ -e "$DM_t/$langt/.share/images/${img,,}-0.jpg" \
+                    -o $(wc -w <<<"${img}") -gt 1 ]; then
                         img_path="${DM_tlt}/images/${img,,}.jpg"
                     else 
                         img_path="${DM_tls}/images/${img,,}-0.jpg"
@@ -60,7 +61,7 @@ function dwld() {
             rm -fr "${tmp}/share" "${tmp}/conf" "${tmp}/images"
             mv -f "${tmp}"/*.mp3 "${DM_tlt}"/
             echo "${tpc}" >> "$DM_tl/.share/3.cfg"
-            echo -e "$ltotal $total\n$laudio $c_audio\n$limage $c_images\n$lothers $others" > "${DC_tlt}/download"
+            echo -e "$ltotal $total\n$laudio $naudi\n$limage $nimag\n$lothers $others" > "${DC_tlt}/download"
             "$DS/ifs/tls.sh" colorize 0
             rm -fr "$DT/download"
         else
@@ -144,12 +145,12 @@ function upld() {
     }
 
     dlg_dwld_content() {
-        c_audio="$(grep -o 'naudi="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-        c_images="$(grep -o 'nimag="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+        naudi="$(grep -o 'naudi="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+        nimag="$(grep -o 'nimag="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         fsize="$(grep -o 'nsize="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         cmd_dwl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
         info="<b>$(gettext "Downloadable content available")</b>"
-        info2="$(gettext "Audio files:") $c_audio\n$(gettext "Images:") $c_images\n$(gettext "Size:") $fsize"
+        info2="$(gettext "Audio files:") $naudi\n$(gettext "Images:") $nimag\n$(gettext "Size:") $fsize"
         yad --form --columns=1 --title="$(gettext "Share")" \
         --name=Idiomind --class=Idiomind \
         --always-print-result \
@@ -263,19 +264,19 @@ function upld() {
         oname="$(grep -o 'oname="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         [ -z "${oname}" ] && oname="${tpc}"
         pre=$(sed "s/ /_/g;s/'//g" <<< "${oname:0:15}" |iconv -c -f utf8 -t ascii)
-        export sum=$(md5sum "${DC_tlt}/0.cfg" |cut -d' ' -f1)
-        export ilink="${pre,,}${sum:0:20}"
+        export md5id=$(md5sum "${DC_tlt}/0.cfg" |cut -d' ' -f1)
+        export ilink="${pre,,}${md5id:0:20}"
         export datec="$(grep -o 'datec="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         export datei="$(grep -o 'datei="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         export dateu=$(date +%F)
         tpcid=$(strings /dev/urandom |tr -cd '[:alnum:]' |fold -w 3 |head -n 1)
-        export c_words=${inx3}
-        export c_sntncs=${inx4}
+        export nword=${inx3}
+        export nsent=${inx4}
         export oname level
         
         # copying files
         cd "${DM_tlt}"/
-        cp -r ./* "$DT_u/files/"
+        #cp -r ./* "$DT_u/files/"
         mkdir "$DT_u/files/share"
         [ ! -d "$DT_u/files/images" ] && mkdir "$DT_u/files/images"
 
@@ -285,30 +286,30 @@ function upld() {
         | sed 's/&//; s/,//; s/\?//; s/\¿//; s/;//'g \
         |  sed 's/\!//; s/\¡//; s/\]//; s/\[//; s/\.//; s/  / /'g \
         | tr -d ')' | tr -d '(' | tr '[:upper:]' '[:lower:]')"
-        while read -r audio; do
-            if [ -f "$DM_tl/.share/audio/$audio.mp3" ]; then
-                cp -f "$DM_tl/.share/audio/$audio.mp3" \
-                "$DT_u/files/share/$audio.mp3"
-            fi
-        done <<<"$auds"
-        while read -r audio; do
-            if [ -f "$DM_tl/.share/audio/${audio,,}.mp3" ]; then
-                cp -f "$DM_tl/.share/audio/${audio,,}.mp3" \
-                "$DT_u/files/share/${audio,,}.mp3"
-            fi
-        done < "${DC_tlt}/3.cfg"
-        while read -r img; do
-            if [ -e "$DM_tlt/images/${img,,}.jpg" ]; then
-                img_path="$DM_tlt/images/${img,,}.jpg"
-            elif [ -e "$DM_tls/images/${img,,}-0.jpg" ]; then
-                img_path="$DM_tls/images/${img,,}-0.jpg"
-            fi
-            if [ -e "${img_path}" ]; then
-                cp -f "${img_path}" "$DT_u/files/images/${img,,}.jpg"
-            fi
-        done < "${DC_tlt}/3.cfg"
-        export c_audio=$(find "$DT_u/files" -maxdepth 5 -name '*.mp3' |wc -l)
-        export c_images=$(cd "$DT_u/files/images"/; ls *.jpg |wc -l)
+        #while read -r audio; do
+            #if [ -f "$DM_tl/.share/audio/$audio.mp3" ]; then
+                #cp -f "$DM_tl/.share/audio/$audio.mp3" \
+                #"$DT_u/files/share/$audio.mp3"
+            #fi
+        #done <<<"$auds"
+        #while read -r audio; do
+            #if [ -f "$DM_tl/.share/audio/${audio,,}.mp3" ]; then
+                #cp -f "$DM_tl/.share/audio/${audio,,}.mp3" \
+                #"$DT_u/files/share/${audio,,}.mp3"
+            #fi
+        #done < "${DC_tlt}/3.cfg"
+        #while read -r img; do
+            #if [ -e "$DM_tlt/images/${img,,}.jpg" ]; then
+                #img_path="$DM_tlt/images/${img,,}.jpg"
+            #elif [ -e "$DM_tls/images/${img,,}-0.jpg" ]; then
+                #img_path="$DM_tls/images/${img,,}-0.jpg"
+            #fi
+            #if [ -e "${img_path}" ]; then
+                #cp -f "${img_path}" "$DT_u/files/images/${img,,}.jpg"
+            #fi
+        #done < "${DC_tlt}/3.cfg"
+        export naudi=$(find "$DT_u/files" -maxdepth 5 -name '*.mp3' |wc -l)
+        export nimag=$(cd "$DT_u/files/images"/; ls *.jpg |wc -l)
         cp "${DC_tlt}/6.cfg" "$DT_u/files/conf/6.cfg"
         cp "${DC_tlt}/info" "$DT_u/files/conf/info"
 
@@ -319,10 +320,9 @@ function upld() {
         rm -fr ./"files"; rename 's/(.*)/$1.tar.gz/' *
         
         # create id
-        export f_size=$(du -h . |cut -f1)
+        export nsize=$(du -h . |cut -f1)
         eval c="$(sed -n 4p "$DS/default/vars")"
         echo -n "${c}" > "${DC_tlt}/id.cfg"
-        echo -en "\nidiomind-`idiomind -v`" >> "${DC_tlt}/id.cfg"
         direc="$DT_u"
         eval body="$(sed -n 3p "$DS/default/vars")"
         export tpc direc usrid_m passw_m body
@@ -331,34 +331,34 @@ function upld() {
             get_item "${_item}"
             eval itm="$(sed -n 1p "$DS/default/vars")"
             [ -n "${trgt}" ] && echo -en "${itm}" >> "$DT_u/$tpcid.$oname.$lgt"
-        done < <(tac "${DC_tlt}/0.cfg")
+        done < <(sed 's|"|\\"|g' < "${DC_tlt}/0.cfg")
         sed -i 's/,$//' "$DT_u/$tpcid.$oname.$lgt"
         echo "}," >> "$DT_u/$tpcid.$oname.$lgt"
         eval head="$(sed -n 2p "$DS/default/vars")"
         echo -e "${head}}" >> "$DT_u/$tpcid.$oname.$lgt"
 
-        python << END
-import os, sys, requests, time, xmlrpclib
-reload(sys)
-sys.setdefaultencoding("utf-8")
-usrid = os.environ['usrid_m']
-passw = os.environ['passw_m']
-tpc = os.environ['tpc']
-body = os.environ['body']
-try:
-    server = xmlrpclib.Server('http://idiomind.net/community/xmlrpc.php')
-    nid = server.metaWeblog.newPost('blog', usrid, passw, 
-    {'title': tpc, 'description': body}, True)
-except:
-    sys.exit(3)
-url = requests.get('http://idiomind.sourceforge.net/uploads.php').url
-direc = os.environ['direc']
-volumes = [i for i in os.listdir(direc)]
-for f in volumes:
-    file = {'file': open(f, 'rb')}
-    r = requests.post(url, files=file)
-    time.sleep(5)
-END
+        #python << END
+#import os, sys, requests, time, xmlrpclib
+#reload(sys)
+#sys.setdefaultencoding("utf-8")
+#usrid = os.environ['usrid_m']
+#passw = os.environ['passw_m']
+#tpc = os.environ['tpc']
+#body = os.environ['body']
+#try:
+    #server = xmlrpclib.Server('http://idiomind.net/community/xmlrpc.php')
+    #nid = server.metaWeblog.newPost('blog', usrid, passw, 
+    #{'title': tpc, 'description': body}, True)
+#except:
+    #sys.exit(3)
+#url = requests.get('http://idiomind.sourceforge.net/uploads.php').url
+#direc = os.environ['direc']
+#volumes = [i for i in os.listdir(direc)]
+#for f in volumes:
+    #file = {'file': open(f, 'rb')}
+    #r = requests.post(url, files=file)
+    #time.sleep(5)
+#END
         u=$?
         if [ $u = 0 ]; then
             info="\"$tpc\"\n<b>$(gettext "Uploaded correctly")</b>\n"

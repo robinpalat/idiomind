@@ -144,8 +144,8 @@ if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
     dclk="$DS/play.sh play_word"
     _lst() {
         while read -r line; do
-        [ -n "${line}" ] && cut -d ':' -f1 <<< "${line}"
-        done < <(sed -n 2p "${file}"|sed 's/},/\n/g'|tr -d '"}')
+        cut -d ':' -f1 <<< "${line}" |sed 's/\"*//;s/\"$//'
+        done < <(sed -n 2p "${file}"|sed 's/},/\n/g'|tr -d '\'|sed '/^$/d')
     }
 
     _lst | yad --list --title="Idiomind" \
@@ -185,18 +185,18 @@ if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
             
             for i in {1..6}; do > "${DC_tlt}/${i}.cfg"; done
             for i in {1..3}; do > "${DC_tlt}/practice/log${i}"; done
-            tail -n2 < "${file}" |sed 's/,"/\n/g;s/":/=/g;\
-            s/^\s*.//g;$s/$/`idiomind -v`/' > "${DC_tlt}/id.cfg"
-            
+            sed -n 3p "${file}" \
+            |sed 's/,"/\n/g;s/":/=/g;s/^\s*.//g' > "${DC_tlt}/id.cfg"
+
             if [ ${cn} = 1  ]; then
             sed -i "s/tname=.*/tname=\"${tname}\"/g" "${DC_tlt}/id.cfg"; fi
             sed -i "s/datei=.*/datei=\"$(date +%F)\"/g" "${DC_tlt}/id.cfg"
             > "${DC_tlt}/download"
             
-            sed -n 2p "${file}" > "${DC_tlt}/0.cfg"
+            sed -n 2p "${file}" |tr -d '\' > "${DC_tlt}/0.cfg"
             sed -i 's/},/}\n/g;s|","|}|g;s|":"|{|g;s|":{"|}|g;s/"}/}/g' "${DC_tlt}/0.cfg"
             sed -i 's/^\s*./trgt{/g' "${DC_tlt}/0.cfg"
-        
+
             while read item_; do
                 item="$(sed 's/}/}\n/g' <<<"${item_}")"
                 type="$(grep -oP '(?<=type{).*(?=})' <<<"${item}")"

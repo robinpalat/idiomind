@@ -102,7 +102,7 @@ function practice_a() {
         yad --form --title="$(gettext "Practice")" \
         --skip-taskbar --text-align=center --center --on-top \
         --undecorated --buttons-layout=spread --align=center \
-        --width=380 --height=260 --borders=8 \
+        --width=400 --height=270 --borders=8 \
         --field="\n$question":lbl "" \
         --field="":lbl "" \
         --button="$(gettext "Exit")":1 \
@@ -114,7 +114,7 @@ function practice_a() {
         --selectable-labels \
         --skip-taskbar --text-align=center --center --on-top \
         --undecorated --buttons-layout=spread --align=center \
-        --width=380 --height=260 --borders=8 \
+        --width=400 --height=270 --borders=8 \
         --field="$answer1":lbl "" \
         --field="":lbl "" \
         --field="$answer2":lbl "" \
@@ -191,7 +191,7 @@ function practice_b(){
 
     ofonts() {
         while read -r name; do
-        echo "<span font_desc='Free Sans 12'> $name </span>"
+        echo "<span font_desc='Free Sans 13'> $name </span>"
         done <<<"${tmp}"
         }
         
@@ -202,7 +202,7 @@ function practice_b(){
         --skip-taskbar --text-align=center --center --on-top \
         --buttons-layout=edge --undecorated \
         --no-headers \
-        --width=390 --height=315 --borders=8 \
+        --width=400 --height=325 --borders=8 \
         --column=Option \
         --button="$(gettext "Exit")":1 \
         --button="   $(gettext "Continue")   !$img_cont":0)
@@ -277,7 +277,7 @@ function practice_c() {
         --text="$lquestion" \
         --skip-taskbar --text-align=center --center --on-top \
         --buttons-layout=edge --image-on-top --undecorated \
-        --width=370 --height=240 --borders=10 \
+        --width=390 --height=260 --borders=10 \
         --field="!$DS/images/listen.png":BTN "$cmd_play" \
         --button="$(gettext "Exit")":1 \
         --button=" $(gettext "No") !$img_no":3 \
@@ -519,7 +519,8 @@ function practice_e() {
     step=2
     while read -r trgt; do
         export trgt
-        pos=$(grep -Fon -m 1 "trgt{${trgt}}" "${cfg0}" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
+        pos=$(grep -Fon -m 1 "trgt{${trgt}}" "${cfg0}" \
+        |sed -n 's/^\([0-9]*\)[:].*/\1/p')
         item=$(sed -n ${pos}p "${cfg0}" |sed 's/}/}\n/g')
         cdid=$(grep -oP '(?<=cdid{).*(?=})' <<<"${item}")
         get_text "${trgt}"
@@ -560,10 +561,10 @@ function get_list() {
         > "$dir/${practice}.0"
         if [[ $(wc -l < "${cfg4}") -gt 0 ]]; then
             grep -Fvx -f "${cfg4}" "${cfg1}" > "$DT/${practice}.0"
-            tac "$DT/${practice}.0" |sed '/^$/d' > "$dir/${practice}.0"
+            sed '/^$/d' < "$DT/${practice}.0" > "$dir/${practice}.0"
             rm -f "$DT/${practice}.0"
         else
-            tac "${cfg1}" |sed '/^$/d' > "$dir/${practice}.0"
+            sed '/^$/d' < "${cfg1}" > "$dir/${practice}.0"
         fi
         
         if [ ${practice} = b ]; then
@@ -584,7 +585,7 @@ function get_list() {
         if [[ $(wc -l < "${cfg4}") -gt 0 ]]; then
             grep -Fxvf "${cfg4}" "${cfg1}" > "$DT/images"
         else
-            tac "${cfg1}" > "$DT/images"
+            cat "${cfg1}" > "$DT/images"
         fi
         > "$dir/${practice}.0"
         
@@ -607,10 +608,10 @@ function get_list() {
     elif [ ${practice} = e ]; then
         if [[ $(wc -l < "${cfg3}") -gt 0 ]]; then
             grep -Fxvf "${cfg3}" "${cfg1}" > "$DT/slist"
-            tac "$DT/slist" |sed '/^$/d' > "$dir/${practice}.0"
+            sed '/^$/d' < "$DT/slist"  > "$dir/${practice}.0"
             rm -f "$DT/slist"
         else
-            tac "${cfg1}" |sed '/^$/d' > "$dir/${practice}.0"
+            sed '/^$/d' < "${cfg1}" > "$dir/${practice}.0"
         fi
     fi
 }
