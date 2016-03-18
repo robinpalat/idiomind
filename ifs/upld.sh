@@ -276,7 +276,7 @@ function upld() {
         
         # copying files
         cd "${DM_tlt}"/
-        #cp -r ./* "$DT_u/files/"
+        cp -r ./* "$DT_u/files/"
         mkdir "$DT_u/files/share"
         [ ! -d "$DT_u/files/images" ] && mkdir "$DT_u/files/images"
 
@@ -286,28 +286,28 @@ function upld() {
         | sed 's/&//; s/,//; s/\?//; s/\¿//; s/;//'g \
         |  sed 's/\!//; s/\¡//; s/\]//; s/\[//; s/\.//; s/  / /'g \
         | tr -d ')' | tr -d '(' | tr '[:upper:]' '[:lower:]')"
-        #while read -r audio; do
-            #if [ -f "$DM_tl/.share/audio/$audio.mp3" ]; then
-                #cp -f "$DM_tl/.share/audio/$audio.mp3" \
-                #"$DT_u/files/share/$audio.mp3"
-            #fi
-        #done <<<"$auds"
-        #while read -r audio; do
-            #if [ -f "$DM_tl/.share/audio/${audio,,}.mp3" ]; then
-                #cp -f "$DM_tl/.share/audio/${audio,,}.mp3" \
-                #"$DT_u/files/share/${audio,,}.mp3"
-            #fi
-        #done < "${DC_tlt}/3.cfg"
-        #while read -r img; do
-            #if [ -e "$DM_tlt/images/${img,,}.jpg" ]; then
-                #img_path="$DM_tlt/images/${img,,}.jpg"
-            #elif [ -e "$DM_tls/images/${img,,}-0.jpg" ]; then
-                #img_path="$DM_tls/images/${img,,}-0.jpg"
-            #fi
-            #if [ -e "${img_path}" ]; then
-                #cp -f "${img_path}" "$DT_u/files/images/${img,,}.jpg"
-            #fi
-        #done < "${DC_tlt}/3.cfg"
+        while read -r audio; do
+            if [ -f "$DM_tl/.share/audio/$audio.mp3" ]; then
+                cp -f "$DM_tl/.share/audio/$audio.mp3" \
+                "$DT_u/files/share/$audio.mp3"
+            fi
+        done <<<"$auds"
+        while read -r audio; do
+            if [ -f "$DM_tl/.share/audio/${audio,,}.mp3" ]; then
+                cp -f "$DM_tl/.share/audio/${audio,,}.mp3" \
+                "$DT_u/files/share/${audio,,}.mp3"
+            fi
+        done < "${DC_tlt}/3.cfg"
+        while read -r img; do
+            if [ -e "$DM_tlt/images/${img,,}.jpg" ]; then
+                img_path="$DM_tlt/images/${img,,}.jpg"
+            elif [ -e "$DM_tls/images/${img,,}-0.jpg" ]; then
+                img_path="$DM_tls/images/${img,,}-0.jpg"
+            fi
+            if [ -e "${img_path}" ]; then
+                cp -f "${img_path}" "$DT_u/files/images/${img,,}.jpg"
+            fi
+        done < "${DC_tlt}/3.cfg"
         export naudi=$(find "$DT_u/files" -maxdepth 5 -name '*.mp3' |wc -l)
         export nimag=$(cd "$DT_u/files/images"/; ls *.jpg |wc -l)
         cp "${DC_tlt}/6.cfg" "$DT_u/files/conf/6.cfg"
@@ -337,28 +337,28 @@ function upld() {
         eval head="$(sed -n 2p "$DS/default/vars")"
         echo -e "${head}}" >> "$DT_u/$tpcid.$oname.$lgt"
 
-        #python << END
-#import os, sys, requests, time, xmlrpclib
-#reload(sys)
-#sys.setdefaultencoding("utf-8")
-#usrid = os.environ['usrid_m']
-#passw = os.environ['passw_m']
-#tpc = os.environ['tpc']
-#body = os.environ['body']
-#try:
-    #server = xmlrpclib.Server('http://idiomind.net/community/xmlrpc.php')
-    #nid = server.metaWeblog.newPost('blog', usrid, passw, 
-    #{'title': tpc, 'description': body}, True)
-#except:
-    #sys.exit(3)
-#url = requests.get('http://idiomind.sourceforge.net/uploads.php').url
-#direc = os.environ['direc']
-#volumes = [i for i in os.listdir(direc)]
-#for f in volumes:
-    #file = {'file': open(f, 'rb')}
-    #r = requests.post(url, files=file)
-    #time.sleep(5)
-#END
+        python << END
+import os, sys, requests, time, xmlrpclib
+reload(sys)
+sys.setdefaultencoding("utf-8")
+usrid = os.environ['usrid_m']
+passw = os.environ['passw_m']
+tpc = os.environ['tpc']
+body = os.environ['body']
+try:
+    server = xmlrpclib.Server('http://idiomind.net/community/xmlrpc.php')
+    nid = server.metaWeblog.newPost('blog', usrid, passw, 
+    {'title': tpc, 'description': body}, True)
+except:
+    sys.exit(3)
+url = requests.get('http://idiomind.sourceforge.net/uploads.php').url
+direc = os.environ['direc']
+volumes = [i for i in os.listdir(direc)]
+for f in volumes:
+    file = {'file': open(f, 'rb')}
+    r = requests.post(url, files=file)
+    time.sleep(5)
+END
         u=$?
         if [ $u = 0 ]; then
             info="\"$tpc\"\n<b>$(gettext "Uploaded correctly")</b>\n"

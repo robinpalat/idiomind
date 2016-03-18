@@ -417,8 +417,8 @@ edit_list() {
     [ -e "$DT/act_restfile" ] && ret=3
     
     if [ $ret -eq 0 -o $ret -eq 2  ]; then
-        [ $ret = 0 ] && cmd=tac && invrt_msg=FALSE
-        [ $ret = 2 ] && cmd=cat && invrt_msg=TRUE
+        if [ $ret = 0 ]; then cmd=cat && invrt_msg=FALSE
+        elif [ $ret = 2 ]; then cmd=tac && invrt_msg=TRUE; fi
         dlaud="$(grep -oP '(?<=dlaud=\").*(?=\")' "$DC_s/1.cfg")"
         include "$DS/ifs/mods/add"
         n=1; f_lock "$DT/el_lk"
@@ -653,7 +653,7 @@ mark_to_learn_topic() {
     sed -i "s/repass=.*/repass=\"${steps}\"/g" "${DC_tlt}/10.cfg"
     
     while read -r item_; do
-        item="$(sed 's/}/}\n/g' <<<"${item_}")"
+        item="$(sed 's/}/}\n/g' <<< "${item_}")"
         type="$(grep -oP '(?<=type{).*(?=})' <<<"${item}")"
         trgt="$(grep -oP '(?<=trgt{).*(?=})' <<<"${item}")"
         if [ -n "${trgt}" ]; then

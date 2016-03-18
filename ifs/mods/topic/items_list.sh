@@ -62,7 +62,7 @@ function notebook_1() {
     chk1=$(($(wc -l < "${DC_tlt}/1.cfg")*3))
     chk5=$(wc -l < "${DC_tlt}/5.cfg")
     list() { if [[ ${chk1} = ${chk5} ]]; then
-    cat "${DC_tlt}/5.cfg"; else yad; cat "$ls1" | \
+    cat "${DC_tlt}/5.cfg"; else cat "$ls1" | \
     awk '{print "/usr/share/idiomind/images/0.png\n"$0"\nFALSE"}'; fi; }
     
     list | yad --list --tabnum=1 \
@@ -116,7 +116,7 @@ function notebook_2() {
     --text="$pres" \
     --plug=$KEY \
     --align=center --borders=80 --bar="":NORM $RM &
-    tac "$ls2" | yad --list --tabnum=2 \
+    cat "$ls2" | yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh '2'" \
     --expand-column=0 --no-headers --ellipsize=END \

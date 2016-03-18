@@ -181,14 +181,14 @@ check_index() {
     
     _check
     
-    if [[ ${c} = 1  ]]; then
+    if [[ ${c} = 1 ]]; then
         > "$DT/ps_lk"; 
         (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
         "$(gettext "Convert to new format...")" -t 3000) &
         _newformat
     fi
     
-    if [[ ${f} = 1  ]]; then
+    if [[ ${f} = 1 ]]; then
         > "$DT/ps_lk"; 
         if [[ ${r} = 0 ]]; then
             (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
