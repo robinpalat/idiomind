@@ -1,5 +1,12 @@
-"\"$trgt\":{\"srce\":\"$srce\",\"exmp\":\"$exmp\",\"defn\":\"$defn\",\"note\":\"$note\",\"wrds\":\"$wrds\",\"grmr\":\"$grmr\",\"tag\":\"$tag\",\"mark\":\"$mark\",\"id\":\"$id\",\"type\":\"$type\"},"
-"\"tname\":\"${tpc}\",\"langs\":\"${lgsl^}\",\"langt\":\"${lgtl^}\",\"authr\":\"${usrid_m}\",\"cntct\":\"\",\"ctgry\":\"${ctgry}\",\"ilink\":\"${ilink}\",\"oname\":\"${tpc}\",\"datec\":\"${datec}\",\"dateu\":\"${dateu}\",\"datei\":\"${datei}\",\"nword\":\"${nword}\",\"nsent\":\"${nsent}\",\"nimag\":\"${nimag}\",\"naudi\":\"${naudi}\",\"nsize\":\"${nsize}\",\"level\":\"${level}\",\"md5id\":\"${md5id}\""
-"<a href='/${lgtl,}/${ctgry,}/$tpcid.${name}.idmnd'>Download</a> | <a href='/study.php?l=${lgtl,}&c=${ctgry,}&set=$tpcid.${oname}'>Study</a><br>"
-"tname=\"${tpc}\"\nlangs=\"${lgsl^}\"\nlangt=\"${lgtl^}\"\nauthr=\"${usrid_m}\"\ncntct=\"${cntct_m}\"\nctgry=\"${ctgry}\"\nilink=\"${ilink}\"\noname=\"${oname}\"\ndatec=\"${datec}\"\ndateu=\"${dateu}\"\ndatei=\"${datei}\"\nnword=\"${c_words}\"\nnsent=\"${c_sntncs}\"\nnimag=\"${c_images}\"\nnaudi=\"${c_audio}\"\nnsize=\"${f_size}\"\nlevel=\"${level}\"\nmd5id=\"${sum}\""
+"\"$trgt\":{\"srce\":\"$srce\",\"s_ch\":\"$s_ch\",\"s_de\":\"$s_de\",\"s_en\":\"$s_en\",\"s_es\":\"$s_es\",\"s_fr\":\"$s_fr\",\"s_it\":\"$s_it\",\"s_ja\":\"$s_ja\",\"s_pt\":\"$s_pt\",\"s_ru\":\"$s_ru\",\"s_vi\":\"$s_vi\",\"exmp\":\"$exmp\",\"defn\":\"$defn\",\"note\":\"$note\",\"wrds\":\"$wrds\",\"grmr\":\"$grmr\",\"tags\":\"$tags\",\"mark\":\"$mark\",\"link\":\"$link\",\"cdid\":\"$cdid\",\"type\":\"$type\"},"
 "trgt{$trgt}srce{$srce}exmp{$exmp}defn{$defn}note{$note}wrds{$wrds}grmr{$grmr}tags{$tags}mark{$mark}link{$link}cdid{$cdid}type{$type}"
+"\"name\":\"${tpc}\",\"slng\":\"${slng^}\",\"tlng\":\"${tlng^}\",\"autr\":\"${autr}\",\"cntt\":\"${cntt}\",\"ctgy\":\"${ctgy}\",\"ilnk\":\"${ilnk}\",\"orig\":\"${tpc}\",\"dtec\":\"${dtec}\",\"dteu\":\"${dteu}\",\"dtei\":\"${dtei}\",\"nwrd\":\"${nwrd}\",\"nsnt\":\"${nsnt}\",\"nimg\":\"${nimg}\",\"naud\":\"${naud}\",\"nsze\":\"${nsze}\",\"levl\":\"${levl}\",\"md5i\":\"${md5i}\""
+"name=\"${tpc}\"\nslng=\"${slng^}\"\ntlng=\"${tlng^}\"\nautr=\"${autr}\"\ncntt=\"${cntt}\"\nctgy=\"${ctgy}\"\nilnk=\"${ilnk}\"\norig=\"${orig}\"\ndtec=\"${dtec}\"\ndteu=\"${dteu}\"\ndtei=\"${dtei}\"\nnwrd=\"${nwrd}\"\nnsnt=\"${nsnt}\"\nnimg=\"${nimg}\"\nnaud=\"${naud}\"\nnsze=\"${nsze}\"\nlevl=\"${levl}\"\nmd5i=\"${md5i}\""
+"<a href='/${tlng,}/${ctgy,}/$tpcid.${orig}.idmnd'>Download</a> | <a href='/study.php?l=${tlng,}&c=${ctgy,}&set=$tpcid.${orig}'>Study</a><br>"
+
+
+#1 item json
+#2 item data
+#3 info json
+#4 info data
+#5 html

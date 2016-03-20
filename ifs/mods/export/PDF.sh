@@ -68,8 +68,8 @@ mkhtml() {
     while read -r _item; do
         if [ ! -d "$DT/export" ]; then break & exit 1; fi
         unset img trgt srce type
-        [ $f -eq 0 ] && [[ ${tr} -gt 3 ]] && tr=1
-        [ $f -eq 2 ] && [[ ${tr} -gt 2 ]] && tr=1
+        if [ $f -eq 0 ]; then [[ ${tr} -gt 3 ]] && tr=1; fi
+        if [ $f -eq 2 ]; then [[ ${tr} -gt 2 ]] && tr=1; fi
         get_item "${_item}"
         
         if [ -n "${trgt}" -a -n "${srce}" -a -n "${type}" ]; then
@@ -102,14 +102,14 @@ mkhtml() {
             elif [ ${type} = 2 -a $f = 0 ]; then
                 sentence_normal >> "$file.sente"
                 let tr--
-
+            
             elif [ ${type} = 1 -a $f = 2 ]; then
                 [[ ${n} -gt 12 ]] && n=1
-                ras="$(sort -Ru "$DT/export/b.srces" |egrep -v "$srce" |head -n5)"
+                ras="$(sort -Ru "$DT/export/b.srces" |egrep -v "${srce}" |head -n5)"
                 while read -r m; do
                     declare item$n="${m}"
                     let n++
-                done < <(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')
+                done < <(echo -e "${ras}\n${srce}" |sort -Ru |sed '/^$/d')
                 
                 if [ ${tr} = 1 ]; then
                     trgt1="${trgt}"

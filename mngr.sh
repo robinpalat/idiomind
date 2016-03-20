@@ -4,8 +4,8 @@
 [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
 source "$DS/default/sets.cfg"
-lgt=${lang[$lgtl]}
-lgs=${slang[$lgsl]}
+lgt=${tlangs[$tlng]}
+lgs=${slangs[$slng]}
 export lgt lgs
 include "$DS/ifs/mods/mngr"
 
@@ -176,10 +176,9 @@ edit_item() {
 
     [ -z "${item}" ] && exit 1
     if [ ${text_missing} != 0 ]; then
-        type=${text_missing}
-        edit_pos=${item_pos}
+        type=${text_missing}; edit_pos=${item_pos}
     fi
-    
+
     if [[ "${srce}" = "${temp}" ]]; then
         if [ -e "$DT/${trgt}.edit" ]; then
             msg_2 "$(gettext "Wait till the process is completed. Translating...")\n" \
@@ -285,7 +284,7 @@ edit_item() {
                     elif [ ${type_mod} = 2 ]; then
                         srce_mod="$(clean_2 "$(translate "${trgt_mod}" $lgt $lgs)")"
                         db="$DS/default/dicts/$lgt"
-                        cd "$DT_r"; sentence_p "$DT_r" 2
+                        export DT_r; sentence_p 2
                         [[ ${dlaud} = TRUE ]] && fetch_audio "${aw}" "${bw}"
                         srce="$temp"
                         grmr="${trgt_mod}"
@@ -318,7 +317,7 @@ edit_item() {
                     wrds="${wrds_mod}"; grmr="${grmr_mod}";
                     mark="${mark_mod}"; link="${link_mod}"; cdid="${cdid_mod}"
                     index ${type_mod}
-                    unset type trgt srce exmp defn note wrds grmr mark id
+                    unset type trgt srce exmp defn note wrds grmr mark cdid
 
                 elif [ "${tpc}" = "${tpc_mod}" ]; then
                     cfg0="${DC_tlt}/0.cfg"
@@ -384,12 +383,12 @@ edit_item() {
 }
 
 edit_list() {
-    if [ -e "$DT/add_lst" -o -e "$DT/el_lk" ]; then
+    if [ -e "$DT/items_to_add" -o -e "$DT/el_lk" ]; then
         msg_2 "$(gettext "Wait until it finishes a previous process")\n" \
         dialog-warning OK "$(gettext "Stop")" "$(gettext "Information")"
         ret=$?
         if [ $ret -eq 1 ]; then
-            cleanups "$DT/add_lst" "$DT/el_lk"
+            cleanups "$DT/items_to_add" "$DT/el_lk"
         else
             exit 1
         fi
@@ -398,68 +397,90 @@ edit_list() {
         "$DS/ifs/tls.sh" first_run edit_list & fi
     [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ] && c=c || c=w
     direc="$DM_tl/${2}/.conf"
-    #[ ! -s "${direc}/0.cfg" ] && exit 1
-    > "$DT/_tmp1"
+
+    > "$DT/list_input"
     cat "${direc}/0.cfg" | while read -r item_; do
         item="$(sed 's/}/}\n/g' <<<"${item_}")"
         trgt="$(grep -oP '(?<=trgt{).*(?=})' <<<"${item}")"
-        [ -n "${trgt}" ] && echo "${trgt}" >> "$DT/_tmp1"
+        [ -n "${trgt}" ] && echo "${trgt}" >> "$DT/list_input"
     done
 
     cmd_resfile="$DS/ifs/tls.sh _restfile "\"${tpc}\"""
-    edit_list_list < "$DT/_tmp1" > "$DT/tmp1"
+    edit_list_list < "$DT/list_input" > "$DT/list_output"
     ret=$?
+    
     	if [ $ret = 2 ]; then
 			msg_2 "$(gettext "Are you sure you want to reverse the list?")\n" \
 			dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
-			[ $? != 0 ] && ret=0
-		fi
-    [ -e "$DT/act_restfile" ] && ret=3
+			[ $? = 0 ] && ret=2 || ret=1
+		elif [ $ret = 4 ]; then
+            msg_2 "$(gettext "Are you sure you want to change viewer to sentence?")\n" \
+			dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
+            [ $? = 0 ] && ret=4 || ret=1
+        fi
+        
+    [ -e "$DT/act_restfile" ] && ret=1
+
+    if [ $ret -eq 0 -o $ret -eq 2 -o $ret -eq 4 ]; then
     
-    if [ $ret -eq 0 -o $ret -eq 2  ]; then
         if [ $ret = 0 ]; then cmd=cat && invrt_msg=FALSE
-        elif [ $ret = 2 ]; then cmd=tac && invrt_msg=TRUE; fi
+        elif [ $ret = 2 ]; then cmd=tac && invrt_msg=TRUE
+        elif [ $ret = 4 ]; then cmd=cat && invrt_msg=FALSE; fi
+        
         dlaud="$(grep -oP '(?<=dlaud=\").*(?=\")' "$DC_s/1.cfg")"
         include "$DS/ifs/mods/add"
         n=1; f_lock "$DT/el_lk"
         cleanups "${direc}/1.cfg" "${direc}/3.cfg" "${direc}/4.cfg"
-        $cmd "$DT/tmp1" | while read -r trgt; do
+
+        $cmd "$DT/list_output" |sed '/^$/d;/(null)/d' |while read -r trgt; do
             if grep -F -m 1 "trgt{${trgt}}" "${direc}/0.cfg"; then
                 item="$(grep -F -m 1 "trgt{${trgt}}" "${direc}/0.cfg" |sed 's/}/}\n/g')"
-                type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")"
-                trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
-                
+                get_item "${item}"
+                if [ $ret -eq 4 ]; then
+                    if [[ $(wc -$c <<< "${trgt}") -lt 4 ]]; then
+                        type=1; echo "d" > /home/rkoc/dd
+                    fi
+                fi
                 if [ ${type} = 1 ]; then
                     echo "${trgt}" >> "${direc}/3.cfg"
                 elif [ ${type} = 2 ]; then
-                    echo "${trgt}" >> "${direc}/4.cfg"; fi
-                if ! grep -Fxo "${trgt}" "${direc}/2.cfg"; then
-                    echo "${trgt}" >> "${direc}/1.cfg"; fi
-            else
-                if [ $(wc -$c <<<"${trgt}") = 1 ]; then
-                    echo "${trgt}" >> "${direc}/3.cfg"; t=1
-                else 
-                    echo "${trgt}" >> "${direc}/4.cfg"; t=2
+                    echo "${trgt}" >> "${direc}/4.cfg"
                 fi
-                temp="...."; grmr="${trgt}"; srce="${temp}"
-                eval newline="$(sed -n 5p $DS/default/vars)"
-                echo "${newline}" >> "$DT/tmp0"
-                echo "${trgt}" >> "$DT/add_lst"
+                if ! grep -Fxo "${trgt}" "${direc}/2.cfg"; then
+                    echo "${trgt}" >> "${direc}/1.cfg"
+                fi
+            else
+                unset_item
+                if [[ $(wc -$c <<< "${trgt}") = 1 ]]; then
+                    echo "${trgt}" >> "${direc}/3.cfg"; type=1
+                else 
+                    echo "${trgt}" >> "${direc}/4.cfg"; type=2
+                fi
                 echo "${trgt}" >> "${direc}/1.cfg"
+                temp="...."; grmr="${trgt}"; srce="${temp}"
+                echo "${trgt}" >> "$DT/items_to_add"
             fi
+            
+            eval newline="$(sed -n 2p "$DS/default/vars")"
+            echo "${newline}" >> "$DT/new_data"
             let n++
         done
 
         touch "${direc}/3.cfg" "${direc}/4.cfg"
-        mv -f "$DT/tmp0" "${direc}/0.cfg"
-        if [ -d "$DM_tl/${2}" -a `wc -l < "${direc}/0.cfg"` -ge 1 ]; then
+        mv -f "$DT/new_data" "${direc}/0.cfg"
+
+        if [ -d "$DM_tl/${2}" -a $(wc -l < "${direc}/0.cfg") -ge 1 ]; then
             while read -r fname; do
-               cdid=$(basename "${fname}" |sed "s/\(.*\).\{4\}/\1/" |tr -d '.')
-               if ! grep "${cdid}" "${direc}/0.cfg"; then cleanups "${fname}"; fi
+                cdid=$(basename "${fname}" |sed "s/\(.*\).\{4\}/\1/" |tr -d '.')
+                if ! grep "${cdid}" "${direc}/0.cfg"; then
+                    cleanups "${fname}"
+                fi
             done < <(find "$DM_tl/${2}"/*.mp3)
             while read -r fname; do
-               trgt=$(basename "${fname}" |sed "s/\(.*\).\{4\}/\1/" |tr -d '.')
-               if ! grep "trgt{${trgt^}}" "${direc}/0.cfg"; then cleanups "${fname}"; fi
+                trgt=$(basename "${fname}" |sed "s/\(.*\).\{4\}/\1/" |tr -d '.')
+                if ! grep "trgt{${trgt^}}" "${direc}/0.cfg"; then
+                    cleanups "${fname}"
+                fi
             done < <(find "$DM_tl/${2}/images"/*.jpg)
         fi
         
@@ -468,43 +489,46 @@ edit_list() {
         "$DS/ifs/tls.sh" colorize 1
         rm -f "$DT/el_lk"
 
-        if [ -f "$DT/add_lst" ]; then
+        if [ -e "$DT/items_to_add" ]; then
             invrt_msg=FALSE
-            DT_r=$(mktemp -d "$DT/XXXX")
+            export DT_r=$(mktemp -d "$DT/XXXX")
             temp="...."
             internet
             while read -r trgt; do
-                trgt_mod="${trgt}"
-                pos=$(grep -Fon -m 1 "trgt{${trgt}}" "${direc}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
+                pos=$(grep -Fon -m 1 "trgt{${trgt}}" "${direc}/0.cfg" \
+                |sed -n 's/^\([0-9]*\)[:].*/\1/p')
                 item="$(sed -n ${pos}p "${direc}/0.cfg" |sed 's/}/}\n/g')"
                 type=$(grep -oP '(?<=type{).*(?=})' <<<"${item}")
                 cdid=$(grep -oP '(?<=cdid{).*(?=})' <<<"${item}")
-                trgt=$(grep -oP '(?<=trgt{).*(?=})' <<<"${item}")
-                srce="$temp"
+                trgt_mod="${trgt}"; grmr="${trgt}"; srce="$temp"
+                
                 if [ ${type} = 1 ]; then
                     srce_mod="$(clean_9 "$(translate "${trgt}" $lgt $lgs)")"
                     audio="${trgt,,}"
                     [[ ${dlaud} = TRUE ]] && tts_word "${audio}" "$DT_r"
+
                 elif [ ${type} = 2 ]; then
                     srce_mod="$(clean_2 "$(translate "${trgt}" $lgt $lgs)")"
                     db="$DS/default/dicts/$lgt"
-                    sentence_p "$DT_r" 2
+                    export DT_r; sentence_p 2
                     [[ ${dlaud} = TRUE ]] && fetch_audio "${aw}" "${bw}"
                 fi
                  
-                id_mod="$(set_name_file ${type} "${trgt}" "${srce_mod}" \
-                "${exmp_mod}" "${defn_mod}" "${note_mod}" "${wrds_mod}" "${grmr_mod}")"
-                [ ${type} = 2 -a ${dlaud} = TRUE ] && cd "$DT_r"; tts_sentence "${trgt}" "$DT_r" "${DM_tlt}/$cdid_mod.mp3"
-                #[ ${type} = 2 ] && mv -f "${DM_tlt}/$cdid.mp3" "${DM_tlt}/$cdid_mod.mp3"
+                cdid_mod="$(set_name_file ${type} "${trgt}" "${srce_mod}" \
+                "${exmp}" "${defn}" "${note}" "${wrds_mod}" "${grmr_mod}")"
+                
+                if [ ${type} = 2 -a ${dlaud} = TRUE ]; then cd "$DT_r"
+                tts_sentence "${trgt}" "$DT_r" "${DM_tlt}/$cdid_mod.mp3"; fi
                 
                 sed -i "${pos}s|srce{$srce}|srce{$srce_mod}|;
-                ${pos}s|wrds{}|wrds{$wrds_mod}|;
+                ${pos}s|wrds{$wrds}|wrds{$wrds_mod}|;
                 ${pos}s|grmr{$trgt}|grmr{$grmr_mod}|;
-                ${pos}s|cdid{}|cdid{$cdid_mod}|g" "${direc}/0.cfg"
-            done < "$DT/add_lst"
+                ${pos}s|cdid{$cdid}|cdid{$cdid_mod}|g" "${direc}/0.cfg"
+            done < "$DT/items_to_add"
         fi
     fi
-    cleanups "$DT/tmp1" "$DT/_tmp1" "$DT/add_lst" "$DT_r" "$DT/act_restfile"
+    cleanups "$DT/list_output" "$DT/list_input" \
+    "$DT/items_to_add" "$DT_r" "$DT/act_restfile"
     exit 1
 } >/dev/null 2>&1
 
@@ -571,10 +595,10 @@ rename_topic() {
     ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
 
     if grep -Fxo "${tpc}" < "$DM_tl/.share/3.cfg"; then i=1; fi
-    jlb="$(clean_3 "${2}")"
+    name="$(clean_3 "${2}")"
     
-    if grep -Fxo "${jlb}" < <(ls "$DS/addons/"); then jlb="${jlb} (1)"; fi
-    chck="$(grep -Fxo "${jlb}" <<<"${listt}" |wc -l)"
+    if grep -Fxo "${name}" < <(ls "$DS/addons/"); then name="${name} (1)"; fi
+    chck="$(grep -Fxo "${name}" <<<"${listt}" |wc -l)"
     
     if [ ! -d "$DM_tl/${tpc}" ]; then exit 1; fi
   
@@ -586,30 +610,30 @@ rename_topic() {
     msg "$(gettext "Unable to rename at this time. Please try later ")\n" \
     dialog-warning "$(gettext "Information")" & exit 1; fi
 
-    if [ ${#jlb} -gt 55 ]; then
+    if [ ${#name} -gt 55 ]; then
     msg "$(gettext "Sorry, new name too long.")\n" \
     dialog-information "$(gettext "Information")" & exit 1; fi
 
     if [ ${chck} -ge 1 ]; then
         for i in {1..50}; do
-        chck=$(grep -Fxo "${jlb} ($i)" <<<"${listt}")
+        chck=$(grep -Fxo "${name} ($i)" <<<"${listt}")
         [ -z "${chck}" ] && break; done
-        jlb="${jlb} ($i)"
+        name="${name} ($i)"
     fi
-    if [ -n "${jlb}" ]; then
+    if [ -n "${name}" ]; then
         f_lock "$DT/rm_lk"
-        mv -f "$DM_tl/${tpc}" "$DM_tl/${jlb}"
-        sed -i "s/tname=.*/tname=\"${jlb}\"/g" "$DM_tl/${jlb}/.conf/id.cfg"
-        echo "${jlb}" > "$DC_s/4.cfg"
+        mv -f "$DM_tl/${tpc}" "$DM_tl/${name}"
+        sed -i "s/name=.*/name=\"${name}\"/g" "$DM_tl/${name}/.conf/id.cfg"
+        echo "${name}" > "$DC_s/4.cfg"
         
-        echo "${jlb}" > "$DT/tpe"
+        echo "${name}" > "$DT/tpe"
         echo 0 > "$DC_s/5.cfg"
         
         for n in {1..6}; do
             if grep -Fxq "${tpc}" "$DM_tl/.share/${n}.cfg"; then
                 grep -vxF "${tpc}" "$DM_tl/.share/${n}.cfg" > "$DM_tl/.share/${n}.cfg.tmp"
                 sed '/^$/d' "$DM_tl/.share/${n}.cfg.tmp" > "$DM_tl/.share/${n}.cfg"
-                echo "${jlb}" >> "$DM_tl/.share/${n}.cfg"
+                echo "${name}" >> "$DM_tl/.share/${n}.cfg"
             fi
         done
         

@@ -256,10 +256,10 @@ function practice_c() {
 
     fonts() {
         if [[ $p = 2 ]]; then
-        [ $lgtl = Japanese -o $lgtl = Chinese -o $lgtl = Russian ] \
+        [ $tlng = Japanese -o $tlng = Chinese -o $tlng = Russian ] \
         && lst="${trgt:0:1} ${trgt:5:5}" || lst=$(echo "${trgt,,}" |awk '$1=$1' FS= OFS=" " |tr aeiouy '.')
         elif [[ $p = 1 ]]; then
-        [ $lgtl = Japanese -o $lgtl = Chinese -o $lgtl = Russian ] \
+        [ $tlng = Japanese -o $tlng = Chinese -o $tlng = Russian ] \
         && lst="${trgt:0:1} ${trgt:5:5}" || lst=$(echo "${trgt^}" |sed "s|[a-z]|"\ \."|g")
         fi
         
@@ -414,7 +414,7 @@ function practice_d() {
 function practice_e() {
 
     dialog2() {
-        if [ $lgtl = Japanese -o $lgtl = Chinese -o $lgtl = Russian ]; then
+        if [ $tlng = Japanese -o $tlng = Chinese -o $tlng = Russian ]; then
         hint=" "
         else
         hint="$(echo "$@" |tr -d "',.;?!¿¡()" |tr -d '"' \
@@ -627,8 +627,8 @@ function lock() {
                 --image="dialog-ok-apply" \
                 --window-icon=idiomind --on-top --skip-taskbar --center \
                 --width=400 --height=100 --borders=2 \
-                --button=" $(gettext "Restart B") !!$(gettext "Questions in $lgsl - Answers in $lgtl") ":2 \
-                --button=" $(gettext "Restart A") !!$(gettext "Questions in $lgtl - Answers in $lgsl") ":0 \
+                --button=" $(gettext "Restart B") !!$(gettext "Questions in $slng - Answers in $tlng") ":2 \
+                --button=" $(gettext "Restart A") !!$(gettext "Questions in $tlng - Answers in $slng") ":0 \
                 --button="    $(gettext "OK")    ":1
                 ret=$?
             elif grep -o -E 'c|e' <<< ${practice}; then
@@ -637,7 +637,7 @@ function lock() {
                 --image="dialog-ok-apply" \
                 --window-icon=idiomind --on-top --skip-taskbar --center \
                 --width=400 --height=100 --borders=2 \
-                --button=" $(gettext "Restart") !!$(gettext "Questions: $lgtl | Answers: $lgsl") ":0 \
+                --button=" $(gettext "Restart") !!$(gettext "Questions: $tlng | Answers: $slng") ":0 \
                 --button="    $(gettext "OK")    ":1
                 ret=$?
             fi

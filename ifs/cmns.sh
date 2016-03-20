@@ -129,6 +129,13 @@ function get_item() {
     export cdid="$(grep -oP '(?<=cdid{).*(?=})' <<<"${item}")"
 }
 
+function unset_item() {
+    srce=""; exmp=""; defn=""; note=""; wrds=""
+    grmr=""; tags=""; mark=""; link=""; cdid=""
+    export srce exmp defn note wrds
+    export grmr tags mark link cdid
+}
+
 function calculate_review() {
     [ -z ${notice1} ] && source "$DS/default/sets.cfg"
     DC_tlt="$DM_tl/${1}/.conf"

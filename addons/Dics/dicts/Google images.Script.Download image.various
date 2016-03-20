@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [[ "$1" = dlgcnfg ]]; then
+source "$DS/ifs/cmns.sh"
+msg "$(gettext "Does not need configuration")\n" dialog-information "$4"
+else
+useragent='Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0'
+link="www.google.com/search?q=${1}\&tbm=isch"
+imagelink=$(wget -e robots=off --user-agent "$useragent" -qO - "$link" |sed 's/</\n</g' |grep '<a href.*\(png\|jpg\|jpeg\)' |sed 's/.*imgurl=\([^&]*\)\&.*/\1/' |head -n 2 |tail -n1)
+imagelink="${imagelink%\%*}"
+ext=$(echo $imagelink | sed "s/.*\(\.[^\.]*\)$/\1/")
+wget --max-redirect 0 -qO "$DT/$1.jpg" "$urimg" "${imagelink}"
+fi

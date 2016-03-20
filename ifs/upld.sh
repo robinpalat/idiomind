@@ -4,8 +4,8 @@
 source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
 source $DS/default/sets.cfg
-lgt=${lang[$lgtl]}
-lgs=${slang[$lgsl]}
+lgt=${tlangs[$tlng]}
+lgs=${slangs[$slng]}
 
 function dwld() {
     err() {
@@ -15,41 +15,41 @@ function dwld() {
     sleep 0.5
     msg "$(gettext "When the download completes the files will be added to topic directory.")" dialog-information "$(gettext "Downloading")"
     kill -9 $(pgrep -f "yad --form --columns=1")
-    mkdir "$DT/download"; idcfg="$DM_tl/${2}/.conf/id.cfg"
-    ilink=$(grep -o 'ilink="[^"]*' "${idcfg}" |grep -o '[^"]*$')
-    langt=$(grep -o 'langt="[^"]*' "${idcfg}" |grep -o '[^"]*$')
-    [ -z "${ilink}" ] &&  err
+    mkdir "$DT/download"
+    ilnk=$(grep -o 'ilnk="[^"]*' "$DM_tl/${2}/.conf/id.cfg" |grep -o '[^"]*$')
+    tlng=$(grep -o 'tlng="[^"]*' "$DM_tl/${2}/.conf/id.cfg" |grep -o '[^"]*$')
+    [ -z "${ilnk}" ] &&  err
 
-    url1="http://idiomind.sourceforge.net/dl.php/?lg=${langt,,}&fl=${ilink}"
+    url1="http://idiomind.sourceforge.net/dl.php/?lg=${tlng,,}&fl=${ilnk}"
     if wget -S --spider "${url1}" 2>&1 |grep 'HTTP/1.1 200 OK'; then
         URL="${url1}"
     else err & exit
     fi
-    wget -q -c -T 80 -O "$DT/download/${ilink}.tar.gz" "${URL}"
+    wget -q -c -T 80 -O "$DT/download/${ilnk}.tar.gz" "${URL}"
     [ $? != 0 ] && err && exit 1
     
-    if [ -f "$DT/download/${ilink}.tar.gz" ]; then
+    if [ -f "$DT/download/${ilnk}.tar.gz" ]; then
         cd "$DT/download"/
-        tar -xzvf "$DT/download/${ilink}.tar.gz"
+        tar -xzvf "$DT/download/${ilnk}.tar.gz"
         
         if [ -d "$DT/download/files" ]; then
-            ltotal="$(gettext "Total")"
-            laudio="$(gettext "Audio files")"
-            limage="$(gettext "Images")"
-            lothers="$(gettext "Others")"
+            total_lbl="$(gettext "Total")"
+            audio_lbl="$(gettext "Audio files")"
+            image_lbl="$(gettext "Images")"
+            others_lbl="$(gettext "Others")"
             tmp="$DT/download/files"
             total=$(find "${tmp}" -maxdepth 5 -type f |wc -l)
-            naudi=$(find "${tmp}" -maxdepth 5 -name '*.mp3' |wc -l)
-            nimag=$(find "${tmp}" -maxdepth 5 -name '*.jpg' |wc -l)
+            naud=$(find "${tmp}" -maxdepth 5 -name '*.mp3' |wc -l)
+            nimg=$(find "${tmp}" -maxdepth 5 -name '*.jpg' |wc -l)
             hfiles="$(cd "${tmp}"; ls -d ./.[^.]* |less |wc -l)"
             exfiles="$(find "${tmp}" -maxdepth 5 -perm -111 -type f |wc -l)"
             others=$((hfiles+exfiles))
             mv -f "${tmp}/conf/info" "${DC_tlt}/info"
-            check_dir "$DM_t/$langt/.share/images" "$DM_t/$langt/.share/audio"
-            mv -n "${tmp}/share"/*.mp3 "$DM_t/$langt/.share/audio"/
+            check_dir "$DM_t/$tlng/.share/images" "$DM_t/$tlng/.share/audio"
+            mv -n "${tmp}/share"/*.mp3 "$DM_t/$tlng/.share/audio"/
             while read -r img; do
                 if [ -e "${tmp}/images/${img,,}.jpg" ]; then
-                    if [ -e "$DM_t/$langt/.share/images/${img,,}-0.jpg" \
+                    if [ -e "$DM_t/$tlng/.share/images/${img,,}-0.jpg" \
                     -o $(wc -w <<<"${img}") -gt 1 ]; then
                         img_path="${DM_tlt}/images/${img,,}.jpg"
                     else 
@@ -61,7 +61,7 @@ function dwld() {
             rm -fr "${tmp}/share" "${tmp}/conf" "${tmp}/images"
             mv -f "${tmp}"/*.mp3 "${DM_tlt}"/
             echo "${tpc}" >> "$DM_tl/.share/3.cfg"
-            echo -e "$ltotal $total\n$laudio $naudi\n$limage $nimag\n$lothers $others" > "${DC_tlt}/download"
+            echo -e "$total_lbl $total\n$audio_lbl $naud\n$image_lbl $nimg\n$others_lbl $others" > "${DC_tlt}/download"
             "$DS/ifs/tls.sh" colorize 0
             rm -fr "$DT/download"
         else
@@ -90,10 +90,10 @@ function upld() {
             msg "$(gettext "Insufficient number of items to perform the action").\t\n " \
             dialog-information "$(gettext "Information")" & exit 1
         fi
-        if [ -z "${usrid}" -o -z "${passw}" ]; then
+        if [ -z "${autr_mod}" -o -z "${pass_mod}" ]; then
             msg "$(gettext "Sorry, Authentication failed.")\n" dialog-information "$(gettext "Information")" & exit 1
         fi
-        if [ -z "${ctgry}" ]; then
+        if [ -z "${ctgy}" ]; then
             msg "$(gettext "Please select a category.")\n " dialog-information
             "$DS/ifs/upld.sh" upld "${tpc}" & exit 1
         fi
@@ -118,8 +118,8 @@ function upld() {
         --field="$(gettext "Category"):CB" "" \
         --field="$(gettext "Skill Level"):CB" "" \
         --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
-        --field="$(gettext "Author")" "$usrid" \
-        --field="\t\t$(gettext "Password")" "$passw" \
+        --field="$(gettext "Author")" "$autr" \
+        --field="\t\t$(gettext "Password")" "$pass" \
         --field="<a href='$linkac'>$(gettext "Get account to share")</a> \n":LBL \
         --button="$(gettext "Export")":2 \
         --button="$(gettext "Close")":4
@@ -136,8 +136,8 @@ function upld() {
         --field="$(gettext "Category"):CBE" "$_Categories" \
         --field="$(gettext "Skill Level"):CB" "$_levels" \
         --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
-        --field="$(gettext "Author")" "$usrid" \
-        --field="\t\t$(gettext "Password")" "$passw" \
+        --field="$(gettext "Author")" "$autr" \
+        --field="\t\t$(gettext "Password")" "$pass" \
         --field=" ":LBL "" \
         --button="$(gettext "Export")":2 \
         --button="$(gettext "Upload")":0 \
@@ -145,12 +145,12 @@ function upld() {
     }
 
     dlg_dwld_content() {
-        naudi="$(grep -o 'naudi="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-        nimag="$(grep -o 'nimag="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-        fsize="$(grep -o 'nsize="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+        naud="$(grep -o 'naud="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+        nimg="$(grep -o 'nimg="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+        fsize="$(grep -o 'nsze="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         cmd_dwl="$DS/ifs/upld.sh 'dwld' "\"${tpc}\"""
         info="<b>$(gettext "Downloadable content available")</b>"
-        info2="$(gettext "Audio files:") $naudi\n$(gettext "Images:") $nimag\n$(gettext "Size:") $fsize"
+        info2="$(gettext "Audio files:") $naud\n$(gettext "Images:") $nimg\n$(gettext "Size:") $fsize"
         yad --form --columns=1 --title="$(gettext "Share")" \
         --name=Idiomind --class=Idiomind \
         --always-print-result \
@@ -180,11 +180,11 @@ function upld() {
     }
     
     sv_data() {
-        if [ "${usrid}" != "${usrid_m}" -o "${passw}" != "${passw_m}" ]; then
-            echo -e "usrid=\"$usrid_m\"\npassw=\"$passw_m\"" > "$DC_s/3.cfg"
+        if [ "${autr}" != "${autr_mod}" -o "${pass}" != "${pass_mod}" ]; then
+            echo -e "autr=\"$autr_mod\"\npass=\"$pass_mod\"" > "$DC_s/3.cfg"
         fi
-        if [ "${note}" != "${notes_m}"  ]; then
-            echo -e "\n${notes_m}" > "${DC_tlt}/info"
+        if [ "${note}" != "${note_mod}"  ]; then
+            echo -e "\n${note_mod}" > "${DC_tlt}/info"
         fi
     }
     
@@ -194,16 +194,16 @@ function upld() {
         list="${list}${emrk}${clocal}"
     done
     
-    LANGUAGE_TO_LEARN="${lgtl}"
-    linkc="http://idiomind.net/${lgtl,,}"
+    LANGUAGE_TO_LEARN="${tlng^}"
+    linkc="http://idiomind.net/${tlng,,}"
     linkac='http://idiomind.net/community/?q=user/register'
-    ctgry="$(grep -o 'ctgry="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+    ctgy="$(grep -o 'ctgy="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
     text_upld="<span font_desc='Arial 12'>$(gettext "Share online with other ${LANGUAGE_TO_LEARN} learners!")</span>\n<a href='$linkc'>$(gettext "Topics shared")</a> Beta\n"
-    _Categories="${ctgry}${list}"
+    _Categories="${ctgy}${list}"
     _levels="!$(gettext "Beginner")!$(gettext "Intermediate")!$(gettext "Advanced")"
     note=$(< "${DC_tlt}/info")
-    usrid="$(grep -o 'usrid="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
-    passw="$(grep -o 'passw="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
+    autr="$(grep -o 'autr="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
+    pass="$(grep -o 'pass="[^"]*' "$DC_s/3.cfg" |grep -o '[^"]*$')"
 
     # dialogs
     if [[ -e "${DC_tlt}/download" ]]; then
@@ -216,27 +216,27 @@ function upld() {
         fi
     else
         shopt -s extglob
-        if [ -z "${usrid##+([[:space:]])}" -o -z "${passw##+([[:space:]])}" ]; then
+        if [ -z "${autr##+([[:space:]])}" -o -z "${pass##+([[:space:]])}" ]; then
             dlg="$(dlg_getuser)"
             ret=$?
-        elif [ -n "${usrid}" -o -n "${passw}" ]; then
+        elif [ -n "${autr}" -o -n "${pass}" ]; then
             dlg="$(dlg_upload)"
             ret=$?
             
         fi
         dlg="$(grep -oP '(?<=|).*(?=\|)' <<<"$dlg")"
-        ctgry=$(echo "${dlg}" |cut -d "|" -f2)
-        level=$(echo "${dlg}" |cut -d "|" -f3)
-        notes_m=$(echo "${dlg}" |cut -d "|" -f4)
-        usrid_m=$(echo "${dlg}" |cut -d "|" -f5)
-        passw_m=$(echo "${dlg}" |cut -d "|" -f6)
+        ctgy=$(echo "${dlg}" |cut -d "|" -f2)
+        levl=$(echo "${dlg}" |cut -d "|" -f3)
+        note_mod=$(echo "${dlg}" |cut -d "|" -f4)
+        autr_mod=$(echo "${dlg}" |cut -d "|" -f5)
+        pass_mod=$(echo "${dlg}" |cut -d "|" -f6)
         # get data
         for val in "${Categories[@],}"; do
-            [ "${ctgry^}" = "$(gettext "${val^}")" ] && export ctgry="${val// /_}"
+            [ "${ctgy^}" = "$(gettext "${val^}")" ] && export ctgy="${val// /_}"
         done
-        [ "$level" = $(gettext "Beginner") ] && level=0
-        [ "$level" = $(gettext "Intermediate") ] && level=1
-        [ "$level" = $(gettext "Advanced") ] && level=2
+        [ "$levl" = $(gettext "Beginner") ] && levl=0
+        [ "$levl" = $(gettext "Intermediate") ] && levl=1
+        [ "$levl" = $(gettext "Advanced") ] && levl=2
     fi
     
     if [ $ret = 1 -o $ret = 4 ]; then
@@ -261,22 +261,24 @@ function upld() {
         "$(gettext "This can take a while...")" -t 6000 ) &
         mkdir -p "$DT/upload/files/conf"
         DT_u="$DT/upload/"
-        oname="$(grep -o 'oname="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-        [ -z "${oname}" ] && oname="${tpc}"
-        pre=$(sed "s/ /_/g;s/'//g" <<< "${oname:0:15}" |iconv -c -f utf8 -t ascii)
-        export md5id=$(md5sum "${DC_tlt}/0.cfg" |cut -d' ' -f1)
-        export ilink="${pre,,}${md5id:0:20}"
-        export datec="$(grep -o 'datec="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-        export datei="$(grep -o 'datei="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-        export dateu=$(date +%F)
+        orig="$(grep -o 'orig="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+        [ -z "${orig}" ] && orig="${tpc}"
+        pre=$(sed "s/ /_/g;s/'//g" <<< "${orig:0:15}" |iconv -c -f utf8 -t ascii)
+        export autr="${autr_mod}"
+        export pass="${pass_mod}"
+        export md5i=$(md5sum "${DC_tlt}/0.cfg" |cut -d' ' -f1)
+        export ilnk="${pre,,}${md5i:0:20}"
+        export dtec="$(grep -o 'dtec="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+        export dtei="$(grep -o 'dtei="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+        export dteu=$(date +%F)
         tpcid=$(strings /dev/urandom |tr -cd '[:alnum:]' |fold -w 3 |head -n 1)
-        export nword=${inx3}
-        export nsent=${inx4}
-        export oname level
+        export nwrd=${inx3}
+        export nsnt=${inx4}
+        export orig levl
         
         # copying files
         cd "${DM_tlt}"/
-        cp -r ./* "$DT_u/files/"
+        #cp -r ./* "$DT_u/files/"
         mkdir "$DT_u/files/share"
         [ ! -d "$DT_u/files/images" ] && mkdir "$DT_u/files/images"
 
@@ -286,72 +288,73 @@ function upld() {
         | sed 's/&//; s/,//; s/\?//; s/\¿//; s/;//'g \
         |  sed 's/\!//; s/\¡//; s/\]//; s/\[//; s/\.//; s/  / /'g \
         | tr -d ')' | tr -d '(' | tr '[:upper:]' '[:lower:]')"
-        while read -r audio; do
-            if [ -f "$DM_tl/.share/audio/$audio.mp3" ]; then
-                cp -f "$DM_tl/.share/audio/$audio.mp3" \
-                "$DT_u/files/share/$audio.mp3"
-            fi
-        done <<<"$auds"
-        while read -r audio; do
-            if [ -f "$DM_tl/.share/audio/${audio,,}.mp3" ]; then
-                cp -f "$DM_tl/.share/audio/${audio,,}.mp3" \
-                "$DT_u/files/share/${audio,,}.mp3"
-            fi
-        done < "${DC_tlt}/3.cfg"
-        while read -r img; do
-            if [ -e "$DM_tlt/images/${img,,}.jpg" ]; then
-                img_path="$DM_tlt/images/${img,,}.jpg"
-            elif [ -e "$DM_tls/images/${img,,}-0.jpg" ]; then
-                img_path="$DM_tls/images/${img,,}-0.jpg"
-            fi
-            if [ -e "${img_path}" ]; then
-                cp -f "${img_path}" "$DT_u/files/images/${img,,}.jpg"
-            fi
-        done < "${DC_tlt}/3.cfg"
-        export naudi=$(find "$DT_u/files" -maxdepth 5 -name '*.mp3' |wc -l)
-        export nimag=$(cd "$DT_u/files/images"/; ls *.jpg |wc -l)
+        #while read -r audio; do
+            #if [ -f "$DM_tl/.share/audio/$audio.mp3" ]; then
+                #cp -f "$DM_tl/.share/audio/$audio.mp3" \
+                #"$DT_u/files/share/$audio.mp3"
+            #fi
+        #done <<<"$auds"
+        #while read -r audio; do
+            #if [ -f "$DM_tl/.share/audio/${audio,,}.mp3" ]; then
+                #cp -f "$DM_tl/.share/audio/${audio,,}.mp3" \
+                #"$DT_u/files/share/${audio,,}.mp3"
+            #fi
+        #done < "${DC_tlt}/3.cfg"
+        #while read -r img; do
+            #if [ -e "$DM_tlt/images/${img,,}.jpg" ]; then
+                #img_path="$DM_tlt/images/${img,,}.jpg"
+            #elif [ -e "$DM_tls/images/${img,,}-0.jpg" ]; then
+                #img_path="$DM_tls/images/${img,,}-0.jpg"
+            #fi
+            #if [ -e "${img_path}" ]; then
+                #cp -f "${img_path}" "$DT_u/files/images/${img,,}.jpg"
+            #fi
+        #done < "${DC_tlt}/3.cfg"
+        export naud=$(find "$DT_u/files" -maxdepth 5 -name '*.mp3' |wc -l)
+        export nimg=$(cd "$DT_u/files/images"/; ls *.jpg |wc -l)
         cp "${DC_tlt}/6.cfg" "$DT_u/files/conf/6.cfg"
         cp "${DC_tlt}/info" "$DT_u/files/conf/info"
 
         # create tar
         cd "$DT/upload"/
         find "$DT_u"/ -type f -exec chmod 644 {} \;
-        tar czpvf - ./"files" |split -d -b 2500k - ./"${ilink}"
+        tar czpvf - ./"files" |split -d -b 2500k - ./"${ilnk}"
         rm -fr ./"files"; rename 's/(.*)/$1.tar.gz/' *
         
         # create id
-        export nsize=$(du -h . |cut -f1)
+        export nsze=$(du -h . |cut -f1)
         eval c="$(sed -n 4p "$DS/default/vars")"
-        echo -n "${c}" > "${DC_tlt}/id.cfg"
+        echo -e "${c}" > "${DC_tlt}/id.cfg"
         direc="$DT_u"
-        eval body="$(sed -n 3p "$DS/default/vars")"
-        export tpc direc usrid_m passw_m body
-        echo -e "{\"items\":{" > "$DT_u/$tpcid.$oname.$lgt"
+        eval body="$(sed -n 5p "$DS/default/vars")"
+        export tpc direc body
+        echo -e "{\"items\":{" > "$DT_u/$tpcid.$orig.$lgt"
         while read -r _item; do
             get_item "${_item}"
             eval itm="$(sed -n 1p "$DS/default/vars")"
-            [ -n "${trgt}" ] && echo -en "${itm}" >> "$DT_u/$tpcid.$oname.$lgt"
+            [ -n "${trgt}" ] && echo -en "${itm}" >> "$DT_u/$tpcid.$orig.$lgt"
         done < <(sed 's|"|\\"|g' < "${DC_tlt}/0.cfg")
-        sed -i 's/,$//' "$DT_u/$tpcid.$oname.$lgt"
-        echo "}," >> "$DT_u/$tpcid.$oname.$lgt"
-        eval head="$(sed -n 2p "$DS/default/vars")"
-        echo -e "${head}}" >> "$DT_u/$tpcid.$oname.$lgt"
+        sed -i 's/,$//' "$DT_u/$tpcid.$orig.$lgt"
+        echo "}," >> "$DT_u/$tpcid.$orig.$lgt"
+        eval head="$(sed -n 3p "$DS/default/vars")"
+        echo -e "${head}}" >> "$DT_u/$tpcid.$orig.$lgt"
 
         python << END
 import os, sys, requests, time, xmlrpclib
 reload(sys)
 sys.setdefaultencoding("utf-8")
-usrid = os.environ['usrid_m']
-passw = os.environ['passw_m']
+autr = os.environ['autr']
+pssw = os.environ['pass']
 tpc = os.environ['tpc']
 body = os.environ['body']
 try:
-    server = xmlrpclib.Server('http://idiomind.net/community/xmlrpc.php')
-    nid = server.metaWeblog.newPost('blog', usrid, passw, 
+    server = xmlrpclib.Server('http://idiomind.com/community/xmlrpc.php')
+    nid = server.metaWeblog.newPost('blog', autr, pssw, 
     {'title': tpc, 'description': body}, True)
 except:
     sys.exit(3)
-url = requests.get('http://idiomind.sourceforge.net/uploads.php').url
+#url = requests.get('http://idiomind.sourceforge.net/uploads.php').url
+url = 'http://idiomind.uploads.com/share.php'
 direc = os.environ['direc']
 volumes = [i for i in os.listdir(direc)]
 for f in volumes:

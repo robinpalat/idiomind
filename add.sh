@@ -4,8 +4,8 @@
 source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
 source "$DS/default/sets.cfg"
-export lgt=${lang[$lgtl]}
-export lgs=${slang[$lgsl]}
+export lgt=${tlangs[$tlng]}
+export lgs=${slangs[$slng]}
 include "$DS/ifs/mods/add"
 wlist=$(grep -oP '(?<=wlist=\").*(?=\")' "$DC_s/1.cfg")
 trans=$(grep -oP '(?<=trans=\").*(?=\")' "$DC_s/1.cfg")
@@ -21,34 +21,31 @@ new_topic() {
     
     source "$DS/ifs/mods/add/add.sh"
     add="$(dlg_form_0)"
-    jlb="$(clean_3 "$(cut -d "|" -f1 <<<"${add}")")"
+    name="$(clean_3 "$(cut -d "|" -f1 <<<"${add}")")"
 
-    if [[ ${#jlb} -gt 55 ]]; then
+    if [[ ${#name} -gt 55 ]]; then
         msg "$(gettext "Sorry, name too long.")\n" dialog-information "$(gettext "Information")"
-        "$DS/add.sh" new_topic "${jlb}" & exit 1
+        "$DS/add.sh" new_topic "${name}" & exit 1
     fi
     
-    if grep -Fxo "${jlb}" < <(ls "$DS/addons/"); then jlb="${jlb} (1)"; fi
-    chck=$(grep -Fxo "${jlb}" <<<"${listt}" |wc -l)
+    if grep -Fxo "${name}" < <(ls "$DS/addons/"); then name="${name} (1)"; fi
+    chck=$(grep -Fxo "${name}" <<<"${listt}" |wc -l)
     
     if [[ ${chck} -ge 1 ]]; then
         for i in {1..50}; do
-        chck=$(grep -Fxo "${jlb} ($i)" <<<"${listt}")
+        chck=$(grep -Fxo "${name} ($i)" <<<"${listt}")
         [ -z "${chck}" ] && break; done
-        
-        jlb="${jlb} ($i)"
-        msg_2 "$(gettext "Another topic with the same name already exist.")\n$(gettext "Notice that the name for this one is now\:")\n<b>${jlb}</b> \n" dialog-information "$(gettext "OK")" "$(gettext "Cancel")"
-        [ $? -eq 1 ] && exit 1
+        name="${name} ($i)"
     else
-        jlb="${jlb}"
+        name="${name}"
     fi
     
-    if [ -z "${jlb}" ]; then 
+    if [ -z "${name}" ]; then 
         exit 1
     else
-        mkdir "$DM_tl/${jlb}"
+        mkdir "$DM_tl/${name}"
         check_list > "$DM_tl/.share/2.cfg"
-        "$DS/default/tpc.sh" "${jlb}" 1 1
+        "$DS/default/tpc.sh" "${name}" 1 1
         "$DS/mngr.sh" mkmn 0
     fi
     exit
@@ -105,7 +102,7 @@ function new_sentence() {
         msg "$(gettext "You need to fill text fields.")\n" dialog-information "$(gettext "Information")" & exit; fi
     fi
     notify-send -i idiomind "${trgt}" "${srce}\\n(${tpe})" -t 10000
-    sentence_p "$DT_r" 1
+    sentence_p 1
     cdid="$(set_name_file 2 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}")"
     mksure "${trgt}" "${srce}" "${grmr}" "${wrds}"
 
@@ -145,7 +142,7 @@ function new_sentence() {
 function new_word() {
     trgt="$(clean_1 "${trgt}")"
     srce="$(clean_0 "${srce}")"
-    export cdb="$DM_tls/data/${lgtl}.db"
+    export cdb="$DM_tls/data/${tlng}.db"
 
     if [[ ${trans} = TRUE ]]; then
         if [[ ${ttrgt} = TRUE ]]; then
@@ -173,7 +170,7 @@ function new_word() {
 
         if [ -e "$DT_r/img.jpg" ]; then
             if [ -e "${DM_tls}/images/${trgt,,}-0.jpg" ]; then
-                n=`ls "${DM_tls}/images/${trgt,,}-"*.jpg |wc -l`
+                n=$(ls "${DM_tls}/images/${trgt,,}-"*.jpg |wc -l)
                 name_img="${DM_tls}/images/${trgt,,}-"${n}.jpg
             else
                 name_img="${DM_tls}/images/${trgt,,}-0.jpg"
@@ -221,7 +218,7 @@ function list_words_edit() {
     n=1
     while read -r trgt; do
         if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
-            echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> "${DC_tlt}/err"
+            echo -e "\n\n$n) [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> "${DC_tlt}/err"
         elif [ -z "$(< "$DT_r/slts")" ]; then
             cleanups "${DT_r}"; exit 0
         else
@@ -263,8 +260,8 @@ function list_words_sentence() {
     fi
         if [ $? -eq 0 ]; then
             while read -r chkst; do
-                sed 's/TRUE//;s/<[^>]*>//g' <<<"${chkst}"  >> "$DT_r/slts"
-            done <<<"$(sed 's/|//g' <<<"${slt}")"
+                sed 's/TRUE//;s/<[^>]*>//g' <<< "${chkst}"  >> "$DT_r/slts"
+            done <<<"$(sed 's/|//g' <<< "${slt}")"
         elif [ $? -eq 1 ]; then
             rm -f "$DT"/*."$c"
             cleanups "$DT_r"
@@ -272,7 +269,7 @@ function list_words_sentence() {
         fi
     n=1
     while read -r trgt; do
-        if [ `wc -l < "${DC_tlt}/0.cfg"` -ge 200 ]; then
+        if [ $(wc -l < "${DC_tlt}/0.cfg") -ge 200 ]; then
             echo -e "\n$trgt" >> "${DC_tlt}/err"
         elif [ -z "$(< "$DT_r/slts")" ]; then
             cleanups "${DT_r}"; exit 0
@@ -310,8 +307,7 @@ function list_words_dclik() {
         ( echo "1"
         echo "# $(gettext "Processing")..." ;
         srce="$(translate "${words}" $lgt $lgs)"
-        cd "$DT_r"
-        sentence_p "$DT_r" 1
+        export $DT_r; sentence_p 1
         echo "$wrds"
         list_words_3 "${words}" "${wrds}"
         ) | dlg_progress_1
@@ -323,9 +319,9 @@ function list_words_dclik() {
     
     if [ $? -eq 0 ]; then
         while read -r chkst; do
-            sed 's/TRUE//;s/<[^>]*>//g' <<<"${chkst}" >> "$DT_r/wrds"
+            sed 's/TRUE//;s/<[^>]*>//g' <<< "${chkst}" >> "$DT_r/wrds"
             echo "${words}" >> "$DT_r/wrdsls"
-        done <<<"$(sed 's/|//g' <<<"${slt}")"
+        done <<<"$(sed 's/|//g' <<< "${slt}")"
     fi
     exit 0
     
@@ -333,7 +329,7 @@ function list_words_dclik() {
 
 function process() {
     echo "$tpe" > "$DT/.n_s_pr"
-    export ns=`wc -l < "${DC_tlt}/0.cfg"`
+    export ns=$(wc -l < "${DC_tlt}/0.cfg")
     export db="$DS/default/dicts/$lgt"
     
     if [ ! -d "$DT_r" ] ; then
@@ -356,9 +352,9 @@ function process() {
         ( echo "1"
         echo "# $(gettext "Processing")..." ;
         mogrify -modulate 100,0 -resize 400% "$pars.png"
-        tesseract "$pars.png" "$pars" -l ${tlang[$lgtl]} &> /dev/null
+        tesseract "$pars.png" "$pars" -l ${tesseract_lngs[$tlng]} &> /dev/null
         if [ $? != 0 ]; then
-        info="$(gettext "Failed loading language")\nPlease install <b>tesseract-ocr-${tlang[$lgtl]}</b> package"
+        info="$(gettext "Failed loading language")\nPlease install <b>tesseract-ocr-${tesseract_lngs[$tlng]}</b> package"
         msg "$info" error Error; fi
         clean_6 < "$pars.txt" > "$DT_r/sntsls_"
         rm -f "$pars".png "$DT_r"/img_.png
@@ -378,7 +374,7 @@ function process() {
     [ -e "$DT_r/sntsls" ] && rm -f "$DT_r/sntsls"
 
     lenght() {
-        if [ $(wc -c <<<"${1}") -le ${sentence_chars} ]; then
+        if [ $(wc -c <<< "${1}") -le ${sentence_chars} ]; then
             echo -e "${1}" >> "$DT_r/sntsls"
         else
             echo -e "[ ... ]  ${1}" >> "$DT_r/sntsls"
@@ -388,16 +384,16 @@ function process() {
     if [ ${#@} -lt 4 ]; then
         while read l; do
             if [ $(wc -c <<<"${l}") -gt 140 ]; then
-                if grep -o -E '\,|\;' <<<"${l}"; then
+                if grep -o -E '\,|\;' <<< "${l}"; then
                     while read -r split; do
-                        if [ $(wc -c <<<"${split}") -le 140 ]; then
+                        if [ $(wc -c <<< "${split}") -le 140 ]; then
                             lenght "${split}"
                         else
                             while read -r split2; do
                                 lenght "${split2}"
-                            done < <(sed 's/;/ \n/g' <<<"${split}") # TODO
+                            done < <(sed 's/;/ \n/g' <<< "${split}") # TODO
                         fi
-                    done < <(sed 's/,/ \n/g' <<<"${l}") # TODO
+                    done < <(sed 's/,/ \n/g' <<< "${l}") # TODO
                 else
                     lenght "${l}"
                 fi
@@ -447,8 +443,8 @@ function process() {
             cleanups "$DT_r" "$DT/.n_s_pr" "$slt" & exit 1
         fi
         while read -r chkst; do
-            sed 's/TRUE//g' <<<"${chkst}"  >> "$DT_r/slts"
-        done <<< "$(tac "${slt}" |sed 's/|//g')"
+            sed 's/TRUE//g' <<< "${chkst}"  >> "$DT_r/slts"
+        done <<< "$(sed 's/|//g' < "${slt}")"
         cleanups "$slt"
 
         touch "$DT_r/wlog" "$DT_r/slog" "$DT_r/adds" \
@@ -478,9 +474,9 @@ function process() {
             srce="$(clean_2 "${srce}")"
             cdid="$(set_name_file 2 "${trgt}" "${srce}" "" "" "" "" "")"
 
-            if [[ $(wc -$c <<<"${trgt}") = 1 ]]; then
+            if [[ $(wc -$c <<< "${trgt}") = 1 ]]; then
                 if [ "$(wc -l < "${DC_tlt}/0.cfg")" -ge 200 ]; then
-                    echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] ${trgt}" >> "$DT_r/wlog"
+                    echo -e "\n\n$n) [$(gettext "Maximum number of notes has been exceeded")] ${trgt}" >> "$DT_r/wlog"
                 else
                     trgt="$(clean_1 "${trgt}")"
                     srce="$(clean_0 "${srce}")"
@@ -501,19 +497,19 @@ function process() {
                         ( img_word "${trgt}" "${srce}" ) &
                         echo "${trgt}" >> "$DT_r/addw"
                     else
-                        echo -e "\n\n#$n ${trgt}" >> "$DT_r/wlog"
+                        echo -e "\n\n$n) ${trgt}" >> "$DT_r/wlog"
                         rm "${DM_tlt}/$cdid.mp3"
                     fi
                 fi
-            elif [[ $(wc -$c <<<"${trgt}") -ge 1 ]]; then
+            elif [[ $(wc -$c <<< "${trgt}") -ge 1 ]]; then
                 
                 if [[ $(wc -l < "${DC_tlt}/0.cfg") -ge 200 ]]; then
-                    echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> "$DT_r/slog"
+                    echo -e "\n\n$n) [$(gettext "Maximum number of notes has been exceeded")] $trgt" >> "$DT_r/slog"
                 else
                     if [ ${#trgt} -ge ${sentence_chars} ]; then
-                        echo -e "\n\n#$n [$(gettext "Sentence too long")] $trgt" >> "$DT_r/slog"
+                        echo -e "\n\n$n) [$(gettext "Sentence too long")] $trgt" >> "$DT_r/slog"
                     else
-                        ( sentence_p "$DT_r" 1
+                        ( export DT_r; sentence_p 1
                         cdid="$(set_name_file 1 "${trgt}" "${srce}" "" "" "" "${wrds}" "${grmr}")"
                         mksure "${trgt}" "${srce}" "${wrds}" "${grmr}"
                         
@@ -529,7 +525,7 @@ function process() {
                             echo "${trgt}" >> "$DT_r/adds"
                             ((adds=adds+1))
                         else
-                            echo -e "\n\n#$n $trgt" >> "$DT_r/slog"
+                            echo -e "\n\n$n) $trgt" >> "$DT_r/slog"
                             rm "${DM_tlt}/$cdid.mp3"
                         fi
                         rm -f "$aw" "$bw" )
@@ -537,8 +533,7 @@ function process() {
                 fi
             fi
             prg=$((100*n/lns-1))
-            echo "$prg"
-            echo "# ${trgt:0:35}... " ;
+            echo "$prg"; echo "# ${trgt:0:35}... " ;
             let n++
         done < <(head -200 < "$DT_r/slts")
         
@@ -550,7 +545,7 @@ function process() {
                 audio="${trgt,,}"
                 
                 if [[ $(wc -l < "${DC_tlt}/0.cfg") -ge 200 ]]; then
-                    echo -e "\n\n#$n [$(gettext "Maximum number of notes has been exceeded")] ${trgt}" >> "$DT_r/wlog"
+                    echo -e "\n\n$n) [$(gettext "Maximum number of notes has been exceeded")] ${trgt}" >> "$DT_r/wlog"
                 else
                     srce="$(translate "${trgt}" auto $lgs)"
                     cdid="$(set_name_file 1 "${trgt}" "${srce}" "${exmp}" "" "" "" "")"
@@ -563,7 +558,7 @@ function process() {
                         ( img_word "${trgt}" "${srce}" ) & fi
                         echo "${trgt}" >> "$DT_r/addw"
                     else
-                        echo -e "\n\n#$n $trgt" >> "$DT_r/wlog"
+                        echo -e "\n\n$n) $trgt" >> "$DT_r/wlog"
                         cleanups "${DM_tlt}/$cdid.mp3"
                     fi
                 fi
@@ -606,7 +601,7 @@ fetch_content() {
     export tpe="${2}"
     DC_tlt="$DM_tl/${tpe}/.conf"
     
-    if [[ `wc -l < "${DC_tlt}/0.cfg"` -ge 200 ]]; then exit 1; fi
+    if [[ $(wc -l < "${DC_tlt}/0.cfg") -ge 200 ]]; then exit 1; fi
     if [ -e "$DT/updating_feeds" ]; then
         exit 1
     else
@@ -636,11 +631,11 @@ fetch_content() {
 
    while read -r _feed; do
         if [ -n "$_feed" ]; then
-            feed_items="$(xsltproc - "$_feed" <<<"${tmplitem}" 2> /dev/null)"
+            feed_items="$(xsltproc - "$_feed" <<< "${tmplitem}" 2> /dev/null)"
             feed_items="$(echo "$feed_items" |tr '\n' '*' |tr -s '[:space:]' |sed 's/EOL/\n/g' |head -n2)"
             feed_items="$(echo "$feed_items" |sed '/^$/d')"
             while read -r item; do
-                if [[ `wc -l < "${DC_tlt}/0.cfg"` -ge 200 ]]; then exit 1; fi
+                if [[ $(wc -l < "${DC_tlt}/0.cfg") -ge 200 ]]; then exit 1; fi
                 fields="$(echo "$item" |sed -r 's|-\!-|\n|g')"
                 title=$(echo "$fields" |sed -n 3p \
                 |iconv -c -f utf8 -t ascii |sed 's/\://g' \
@@ -657,7 +652,7 @@ fetch_content() {
                         new_item
                     fi
                 fi
-            done <<<"${feed_items}"
+            done <<< "${feed_items}"
         fi
     done < "${feeds}"
     rm -f "$DT/updating_feeds"; exit 0
@@ -688,7 +683,7 @@ new_items() {
     [ -n "${5}" ] && srce="${5}" || srce=""
     
     if [ ${#trgt} -le ${sentence_chars} ] && \
-    [ `echo -e "${trgt}" |wc -l` -gt ${sentence_lines} ]; then process & return; fi
+    [ $(echo -e "${trgt}" |wc -l) -gt ${sentence_lines} ]; then process & return; fi
     if [ ${#trgt} -gt ${sentence_chars} ]; then process & return; fi
 
     [ -e "$DT_r/ico.jpg" ] && img="$DT_r/ico.jpg" || img="$DS/images/nw.png"
@@ -699,13 +694,13 @@ new_items() {
 
     if [[ ${trans} = TRUE ]]; then
         lzgpr="$(dlg_form_1)"; ret=$?
-        trgt=$(cut -d "|" -f1 <<<"${lzgpr}")
-        tpe=$(cut -d "|" -f2 <<<"${lzgpr}")
+        trgt=$(cut -d "|" -f1 <<< "${lzgpr}")
+        tpe=$(cut -d "|" -f2 <<< "${lzgpr}")
     else 
         lzgpr="$(dlg_form_2)"; ret=$?
-        trgt=$(cut -d "|" -f1 <<<"${lzgpr}")
-        srce=$(cut -d "|" -f2 <<<"${lzgpr}")
-        tpe=$(cut -d "|" -f3 <<<"${lzgpr}")
+        trgt=$(cut -d "|" -f1 <<< "${lzgpr}")
+        srce=$(cut -d "|" -f2 <<< "${lzgpr}")
+        tpe=$(cut -d "|" -f3 <<< "${lzgpr}")
     fi
 
     if [ $ret -eq 3 ]; then

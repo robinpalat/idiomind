@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- ENCODING: UTF-8 -*-
 
-if [ -z "${lgtl}" -o -z "${lgsl}" ]; then
+if [ -z "${tlng}" -o -z "${slng}" ]; then
 msg "$(gettext "Please check the language settings in the preferences dialog.")\n" error "$(gettext "Information")" & exit 1
 fi
 
@@ -64,16 +64,16 @@ function index() {
                     unset wrds grmr
                     echo "${trgt}" >> "${DC_tlt}/1.cfg"
                     echo "${trgt}" >> "${DC_tlt}/3.cfg"
-                    echo -e "FALSE\n${trgt}\n$img0" >> "${DC_tlt}/5.cfg"
+                    echo -e "$img0\n${trgt}\nFALSE" >> "${DC_tlt}/5.cfg"
 
                 elif [[ ${1} = 2 ]]; then
                     echo "${trgt}" >> "${DC_tlt}/1.cfg"
                     echo "${trgt}" >> "${DC_tlt}/4.cfg"
-                    echo -e "FALSE\n${trgt}\n$img0" >> "${DC_tlt}/5.cfg"
+                    echo -e "$img0\n${trgt}\nFALSE" >> "${DC_tlt}/5.cfg"
                 fi
             fi
             if ! grep -Fo "trgt{${trgt}}" "${DC_tlt}/0.cfg"; then
-                eval newline="$(sed -n 5p $DS/default/vars)"
+                eval newline="$(sed -n 2p $DS/default/vars)"
                 echo "${newline}" >> "${DC_tlt}/0.cfg"
             fi
         fi
@@ -83,27 +83,29 @@ function index() {
 }
 
 function sentence_p() {
-    if [ ${2} = 1 ]; then 
+
+    if [ ${1} = 1 ]; then 
         trgt_p="${trgt}"
         srce_p="${srce}"
-    elif [ ${2} = 2 ]; then
+    elif [ ${1} = 2 ]; then
         trgt_p="${trgt_mod}"
         srce_p="${srce_mod}"
     fi
-    cdb="$DM_tls/data/${lgtl}.db"
+
+    cdb="$DM_tls/data/${tlng}.db"
     table="T`date +%m%y`"
     echo -n "create table if not exists ${table} \
-    (Word TEXT, ${lgsl^} TEXT);" |sqlite3 ${cdb}
-    if ! grep -q ${lgsl} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(${table});")"; then
-        sqlite3 ${cdb} "alter table ${table} add column ${lgsl} TEXT;"
+    (Word TEXT, ${slng^} TEXT);" |sqlite3 ${cdb}
+    if ! grep -q ${slng} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(${table});")"; then
+        sqlite3 ${cdb} "alter table ${table} add column ${slng} TEXT;"
     fi
 
     r=$((RANDOM%10000))
-    touch "swrd.$r" "twrd.$r"
+    touch "$DT_r/swrd.$r" "$DT_r/twrd.$r"
     if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
-        vrbl="${srce_p}"; lg=$lgt; aw="./swrd.$r"; bw="./twrd.$r"
+        vrbl="${srce_p}"; lg=$lgt; aw="$DT_r/swrd.$r"; bw="$DT_r/twrd.$r"
     else
-        vrbl="${trgt_p}"; lg=$lgs; aw="./twrd.$r"; bw="./swrd.$r"
+        vrbl="${trgt_p}"; lg=$lgs; aw="$DT_r/twrd.$r"; bw="$DT_r/swrd.$r"
     fi
     
     echo "${vrbl}" \
@@ -119,23 +121,23 @@ function sentence_p() {
     while read -r wrd; do
         w="$(tr -d '\.,;“”"' <<< "${wrd,,}")"
         if [[ `sqlite3 $db "select items from pronouns where items is '${w}';"` ]]; then
-            echo "<span color='#3E539A'>${wrd}</span>" >> ./"g.$r"
+            echo "<span color='#3E539A'>${wrd}</span>" >> "$DT_r/g.$r"
         elif [[ `sqlite3 $db "select items from nouns_adjetives where items is '${w}';"` ]]; then
-            echo "<span color='#496E60'>${wrd}</span>" >> ./"g.$r"
+            echo "<span color='#496E60'>${wrd}</span>" >> "$DT_r/g.$r"
         elif [[ `sqlite3 $db "select items from nouns_verbs where items is '${w}';"` ]]; then
-            echo "<span color='#62426A'>${wrd}</span>" >> ./"g.$r"
+            echo "<span color='#62426A'>${wrd}</span>" >> "$DT_r/g.$r"
         elif [[ `sqlite3 $db "select items from conjunctions where items is '${w}';"` ]]; then
-            echo "<span color='#90B33B'>${wrd}</span>" >> ./"g.$r"
+            echo "<span color='#90B33B'>${wrd}</span>" >> "$DT_r/g.$r"
         elif [[ `sqlite3 $db "select items from prepositions where items is '${w}';"` ]]; then
-            echo "<span color='#D67B2D'>${wrd}</span>" >> ./"g.$r"
+            echo "<span color='#D67B2D'>${wrd}</span>" >> "$DT_r/g.$r"
         elif [[ `sqlite3 $db "select items from adverbs where items is '${w}';"` ]]; then
-            echo "<span color='#9C68BD'>${wrd}</span>" >> ./"g.$r"
+            echo "<span color='#9C68BD'>${wrd}</span>" >> "$DT_r/g.$r"
         elif [[ `sqlite3 $db "select items from adjetives where items is '${w}';"` ]]; then
-            echo "<span color='#3E8A3B'>${wrd}</span>" >> ./"g.$r"
+            echo "<span color='#3E8A3B'>${wrd}</span>" >> "$DT_r/g.$r"
         elif [[ `sqlite3 $db "select items from verbs where items is '${w}';"` ]]; then
-            echo "<span color='#CF387F'>${wrd}</span>" >> ./"g.$r"
+            echo "<span color='#CF387F'>${wrd}</span>" >> "$DT_r/g.$r"
         else
-            echo "${wrd}" >> ./"g.$r"
+            echo "${wrd}" >> "$DT_r/g.$r"
         fi
     done < <(sed 's/ /\n/g' <<< "${trgt_p}")
     
@@ -154,8 +156,8 @@ function sentence_p() {
         
         if ! [[ "${t}" =~ [0-9] ]] && [ -n "${t}" ] && [ -n "${s}" ]; then
             if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]]; then
-                sqlite3 ${cdb} "insert into Words (Word,${lgsl^},Example) values ('${t}','${s}','${trgt_q}');"
-                sqlite3 ${cdb} "insert into ${table} (Word,${lgsl^}) values ('${t}','${s}');"
+                sqlite3 ${cdb} "insert into Words (Word,${slng^},Example) values ('${t}','${s}','${trgt_q}');"
+                sqlite3 ${cdb} "insert into ${table} (Word,${slng^}) values ('${t}','${s}');"
             elif ! [[ `sqlite3 ${cdb} "select Example from Words where Word is '${t}';"` ]]; then
                 sqlite3 ${cdb} "update Words set Example='${trgt_q}' where Word='${t}';"
             fi
@@ -166,14 +168,14 @@ function sentence_p() {
         while [[ ${bcle} -le $(wc -l < "${aw}") ]]; do
         t=$(sed -n ${bcle}p ${aw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
         s=$(sed -n ${bcle}p ${bw} |awk '{print tolower($0)}' |sed 's/^\s*./\U&\E/g')
-        echo "$t"_"$s" >> "$DT_r/B.$r"
+        echo "${t}_${s}" >> "$DT_r/B.$r"
         t="${t//\'/\'\'}"
         s="${s//\'/\'\'}"
         
         if ! [[ "${t}" =~ [0-9] ]] && [ -n "${t}" ] && [ -n "${s}" ]; then
             if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]]; then
-                sqlite3 ${cdb} "insert into Words (Word,${lgsl^},Example) values ('${t}','${s}','${trgt_q}');" 
-                sqlite3 ${cdb} "insert into ${table} (Word,${lgsl^}) values ('${t}','${s}');"
+                sqlite3 ${cdb} "insert into Words (Word,${slng^},Example) values ('${t}','${s}','${trgt_q}');" 
+                sqlite3 ${cdb} "insert into ${table} (Word,${slng^}) values ('${t}','${s}');"
             elif ! [[ `sqlite3 ${cdb} "select Example from Words where Word is '${t}';"` ]]; then
                 sqlite3 ${cdb} "update Words set Example='${trgt_q}' where Word='${t}';"
             fi
@@ -181,31 +183,31 @@ function sentence_p() {
         let bcle++
         done
     fi
-    if [ ${2} = 1 ]; then
-    grmr=""; wrds=""
-    export grmr="$(sed ':a;N;$!ba;s/\n/ /g' < "$DT_r/g.$r")"
-    export wrds="$(tr '\n' '_' < "$DT_r/B.$r")"
-    elif [ ${2} = 2 ]; then
-    export grmr_mod="$(sed ':a;N;$!ba;s/\n/ /g' < "$DT_r/g.$r")"
-    export wrds_mod="$(tr '\n' '_' < "$DT_r/B.$r")"
+
+    if [ ${1} = 1 ]; then
+        export grmr="$(sed ':a;N;$!ba;s/\n/ /g' < "$DT_r/g.$r")"
+        export wrds="$(tr '\n' '_' < "$DT_r/B.$r")"
+    elif [ ${1} = 2 ]; then
+        export grmr_mod="$(sed ':a;N;$!ba;s/\n/ /g' < "$DT_r/g.$r")"
+        export wrds_mod="$(tr '\n' '_' < "$DT_r/B.$r")"
     fi
 }
 
 function word_p() {
-    cdb="$DM_tls/data/${lgtl}.db"
+    cdb="$DM_tls/data/${tlng}.db"
     table="T`date +%m%y`"
     trgt_q="${trgt//\'/\'\'}"
     srce_q="${srce//\'/\'\'}"
     
     echo -n "create table if not exists ${table} \
-    (Word TEXT, ${lgsl^} TEXT);" |sqlite3 ${cdb}
-    if ! grep -q ${lgsl} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(${table});")"; then
-        sqlite3 ${cdb} "alter table ${table} add column ${lgsl} TEXT;"
+    (Word TEXT, ${slng^} TEXT);" |sqlite3 ${cdb}
+    if ! grep -q ${slng} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(${table});")"; then
+        sqlite3 ${cdb} "alter table ${table} add column ${slng} TEXT;"
     fi
     if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${trgt}';"` ]] \
     && ! [[ "${trgt}" =~ [0-9] ]] && [ -n "${trgt}" ] && [ -n "${srce}" ]; then
-        sqlite3 ${cdb} "insert into ${table} (Word,${lgsl^}) values ('${trgt_q}','${srce_q}');"
-        sqlite3 ${cdb} "insert into Words (Word,${lgsl^}) values ('${trgt_q}','${srce_q}');"
+        sqlite3 ${cdb} "insert into ${table} (Word,${slng^}) values ('${trgt_q}','${srce_q}');"
+        sqlite3 ${cdb} "insert into Words (Word,${slng^}) values ('${trgt_q}','${srce_q}');"
     fi
 }
 
@@ -344,10 +346,10 @@ function set_image_2() {
 }
 
 function translate() {
-    cdb="$DM_tls/data/${lgtl}.db"
+    cdb="$DM_tls/data/${tlng}.db"
     if [[ `wc -w <<<${1}` = 1 ]] && [ ${ttrgt} != TRUE ] && \
-    [[ `sqlite3 ${cdb} "select ${lgsl} from Words where Word is '${1}';"` ]]; then
-        sqlite3 ${cdb} "select ${lgsl} from Words where Word is '${1}';"
+    [[ `sqlite3 ${cdb} "select ${slng} from Words where Word is '${1}';"` ]]; then
+        sqlite3 ${cdb} "select ${slng} from Words where Word is '${1}';"
     else
         internet
         if ! ls "$DC_d"/*."Traslator online.Translator".* 1> /dev/null 2>&1; then

@@ -17,7 +17,7 @@ play_word() {
     elif [ -n "$synth" ]; then
         echo "${w}." |${synth}; [ $? != 0 ] && msg_err1
     else
-        echo "${w}." |espeak -v ${lang[$lgtl]} \
+        echo "${w}." |espeak -v ${lang[$tlng]} \
         -a ${sAmplitude} -s ${sSpeed} -p ${sPitch} -g ${sWordgap} -b ${sEncoding} &
     fi
 } >/dev/null 2>&1
@@ -29,20 +29,24 @@ play_sentence() {
     elif [ -n "$synth" ]; then
         sed 's/<[^>]*>//g' <<<"${trgt}." |${synth}; [ $? != 0 ] && msg_err1
     else
-        sed 's/<[^>]*>//g' <<<"${trgt}." |espeak -v ${lang[$lgtl]} \
+        sed 's/<[^>]*>//g' <<<"${trgt}." |espeak -v ${lang[$tlng]} \
         -a ${sAmplitude} -s ${sSpeed} -p ${sPitch} -g ${sWordgap} -b ${sEncoding} &
     fi
 } >/dev/null 2>&1
 
 play_file() {
     if [ -e "${2}" ]; then
-        if [[ ${mime} = 2 ]]; then
-        mplayer "${2}" -noconsolecontrols -title "${3}"; else
-        mplayer "${2}" -novideo -noconsolecontrols -title "${3}"; fi
+        if [[ ${mime} = 0 ]]; then
+            exit 1
+        elif [[ ${mime} = 2 ]]; then
+            mplayer "${2}" -noconsolecontrols -title "${3}"
+        else
+            mplayer "${2}" -novideo -noconsolecontrols -title "${3}"
+        fi
     elif [ -n "$synth" ]; then
         sed 's/<[^>]*>//g' <<<"${3}." |${synth}; [ $? != 0 ] && msg_err1
     else
-        sed 's/<[^>]*>//g' <<<"${3}." |espeak -v ${lang[$lgtl]} \
+        sed 's/<[^>]*>//g' <<<"${3}." |espeak -v ${lang[$tlng]} \
         -a ${sAmplitude} -s ${sSpeed} -p ${sPitch} -g ${sWordgap} -b ${sEncoding}
     fi
 } >/dev/null 2>&1

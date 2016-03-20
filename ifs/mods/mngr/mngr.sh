@@ -2,7 +2,7 @@
 # -*- ENCODING: UTF-8 -*-
 
 function dlg_form_1() {
-    cmd_play="$DS/play.sh play_word "\"${trgt}\"" ${id}"
+    cmd_play="$DS/play.sh play_word "\"${trgt}\"" ${cdid}"
     [ -z "${trgt}" ] && trgt="${item_id}"
     yad --form --title="$(gettext "Edit")" \
     --name=Idiomind --class=Idiomind \
@@ -12,8 +12,8 @@ function dlg_form_1() {
     --align=right --text-align=center --columns=2 \
     --buttons-layout=end --center \
     --width=650 --height=480 --borders=10 \
-    --field="$lgtl" "${trgt}" \
-    --field="$lgsl" "${srce}" \
+    --field="$tlng" "${trgt}" \
+    --field="$slng" "${srce}" \
     --field="$(gettext "Topic")":CB "${tpc_list}" \
     --field=" ":LBL " " \
     --field="$(gettext "Example")\t\t\t\t\t\t\t\t\t\t\t":TXT "${exmp}" \
@@ -31,11 +31,11 @@ function dlg_form_1() {
 }
 
 function dlg_form_2() {
-    if [[ `wc -w <<<"${trgt}"` -lt 8 ]]; then
+    if [[ $(wc -w <<<"${trgt}") -lt 8 ]]; then
     t=CHK; lbl_2="$(gettext "Change viewer")"
     [ -z "${trgt}" ] && trgt="${item_id}"
     else t=LBL; fi
-    cmd_play="$DS/play.sh play_sentence ${id}"
+    cmd_play="$DS/play.sh play_sentence ${cdid}"
     yad --form --title="$(gettext "Edit")" \
     --name=Idiomind --class=Idiomind \
     --always-print-result --print-all \
@@ -45,8 +45,8 @@ function dlg_form_2() {
     --width=650 --height=420 --borders=10 \
     --field="$(gettext "Mark")":CHK "$mark" \
     --field=" $lbl_2":${t} "$type" \
-    --field="$lgtl":TXT "${trgt}" \
-    --field="$lgsl":TXT "${srce}" \
+    --field="$tlng":TXT "${trgt}" \
+    --field="$slng":TXT "${srce}" \
     --field="$(gettext "Go to Google Translate")":FBTN "${cmd_trad}" \
     --field="\t\t\t$(gettext "Topic")":CB "${tpc_list}" \
     --field="$(gettext "Audio")":FL "${audf}" \
@@ -56,7 +56,7 @@ function dlg_form_2() {
     --button="$(gettext "Next")":2 \
     --button="$(gettext "Close")":0
 }
-
+#    --button="$(gettext "Inverse")!!$(gettext "Reverse items order")":2
 function edit_list_list() {
     yad --list --title="$(gettext "Edit list")" \
     --name=Idiomind --class=Idiomind \
@@ -64,11 +64,11 @@ function edit_list_list() {
     --always-print-result --print-all \
     --window-icon=idiomind \
     --no-headers --center \
-    --width=500 --height=300 --borders=5 \
+    --width=580 --height=380 --borders=5 \
     --column="" \
+    --button="$(gettext "More")":"${cmd_resfile}" \
     --button="$(gettext "Restore")!!$(gettext "Revert to a previous state")":"${cmd_resfile}" \
-    --button="$(gettext "Inverse")!!$(gettext "Reverse items order")":2 \
-    --button="$(gettext "Save")":0 \
+    --button="$(gettext "Save")!gtk-save":0 \
     --button="$(gettext "Cancel")":1
 }
 

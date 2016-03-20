@@ -4,8 +4,8 @@
 [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
 source "$DS/ifs/cmns.sh"
 source "$DS/default/sets.cfg"
-export lgt=${lang[$lgtl]}
-export lgs=${slang[$lgsl]}
+export lgt=${tlangs[$tlng]}
+export lgs=${slangs[$slng]}
 dir="$DC/addons/dict"
 enables="$DC/addons/dict/enables"
 disables="$DC/addons/dict/disables"
@@ -95,7 +95,7 @@ function dlg() {
    
     if [ ! -d "$DC_d" -o ! -d "$DC_a/dict/disables" ]; then
     mkdir -p "$enables"; mkdir -p "$disables"
-    echo -e "$lgtl\n$v_dicts" > "$DC_a/dict/.dict"
+    echo -e "$tlng\n$v_dicts" > "$DC_a/dict/.dict"
     for r in "$DS_a/Dics/dicts"/*; do > "$disables/$(basename "$r")"; done; fi
     
     txtinf=" $(gettext "Please, select at least one resource (script) for each task")"

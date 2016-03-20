@@ -4,8 +4,8 @@
 function check_format_1() {
     [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
     source "$DS/default/sets.cfg"
-    lgt=${lang[$lgtl]}
-    lgs=${slang[$lgsl]}
+    lgt=${tlangs[$tlng]}
+    lgs=${slangs[$slng]}
     source "$DS/ifs/cmns.sh"
     file="${1}"
     invalid() {
@@ -13,7 +13,9 @@ function check_format_1() {
         msg "$(gettext "File is corrupted.")\n ${n}" error & exit 1
     }
     if [ ! -f "${file}" ]; then invalid
-    elif [ $(wc -l < "${file}") != 3 ]; then invalid 'lines'; fi
+    elif [ $(wc -l < "${file}") != 3 ]; then invalid 'lines'
+    elif [ $(sed -n 1p "$file" |tr -d '"{' |cut -d':' -f1) != 'items' ]; then
+        invalid; fi
     
     shopt -s extglob; n=0
     while read -r line; do
@@ -23,7 +25,7 @@ function check_format_1() {
             if [ -z "${val##+([[:space:]])}" ] || [ ${#val} -gt 60 ] || \
             [ "$(grep -o -E '\*|\/|\@|$|=|-' <<< "${val}")" ]; then invalid $n; fi
         elif [[ ${n} = 1 || ${n} = 2 ]]; then
-            if ! grep -Fo "${val}" <<< "${!lang[@]}" >/dev/null 2>&1; then invalid $n; fi
+            if ! grep -Fo "${val}" <<< "${!tlangs[@]}" >/dev/null 2>&1; then invalid $n; fi
         elif [[ ${n} = 3 || ${n} = 4 ]]; then
             if [ ${#val} -gt 30 ] || \
             [ "$(grep -o -E '\*|\/|$|\)|\(|=' <<< "${val}")" ]; then invalid $n; fi
@@ -91,7 +93,7 @@ check_index() {
         [ ! -e "${DC_tlt}/id.cfg" ] && touch "${DC_tlt}/id.cfg" && id=0
         [[ $(egrep -cv '#|^$' < "${DC_tlt}/id.cfg") != 18 ]] && id=0
         if [ ${id} != 1 ]; then
-            datec=$(date +%F)
+            dtec=$(date +%F)
             eval c="$(sed -n 4p $DS/default/vars)"
             echo -e "${c}" > "${DC_tlt}/id.cfg"
         fi
@@ -170,7 +172,7 @@ check_index() {
         rm -f "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg"
         while read -r _item; do
             get_item "${_item}"
-            eval line="$(sed -n 5p $DS/default/vars)"
+            eval line="$(sed -n 2p $DS/default/vars)"
             echo -e "${line}" >> "${DC_tlt}/cfg"
             echo "${trgt}" >> "${DC_tlt}/1.cfg"
         done < <(tac "${DC_tlt}/0.cfg")
@@ -474,11 +476,10 @@ translate_to() {
     source $DS/default/sets.cfg
     source "$DS/ifs/cmns.sh"
     [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "  -- error" && exit 1
-    l="$(grep -o 'langt="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-    lgt=${lang[$l]}
-    if [ -z "$lgt" ]; then lgt=${lang[$l]}; fi
-    
-    if [ $2 = restore ]; then
+    l="$(grep -o 'tlng="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
+    if [[ ${tlangs[$l]} ]]; then lgt=${tlangs[$l]}; else lgt=${tlangs[$tlng]}; fi
+
+    if [[ $2 = restore ]]; then
         if [ -e "${DC_tlt}/0.data" ]; then
             mv -f "${DC_tlt}/0.data" "${DC_tlt}/0.cfg"
             echo -e "  done!"; else echo -e "  -- error"; fi
@@ -544,7 +545,7 @@ translate_to() {
                     let bcle++
                 done )
                 wrds="$(tr '\n' '_' < "$DT/w.tmp" |sed '/^$/d')"; cdid="$id"
-                eval line="$(sed -n 5p $DS/default/vars)"
+                eval line="$(sed -n 2p $DS/default/vars)"
                 echo -e "${line}" >> "${DC_tlt}/$2.data"
                 echo "${srce}"
                 

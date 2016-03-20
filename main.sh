@@ -27,7 +27,7 @@ fi
 
 source /usr/share/idiomind/default/c.conf
 
-if [ -z "${lgtl}" -o -z "${lgsl}" ]; then
+if [ -z "${tlng}" -o -z "${slng}" ]; then
     source "$DS/ifs/cmns.sh"
     msg_2 "$(gettext "Please check the language settings in the preferences dialog")\n" \
     error "$(gettext "Open")" "$(gettext "Cancel")"
@@ -69,7 +69,7 @@ function new_session() {
     sed -n 2p <<<"$s" >> "$DC_s/10.cfg"
     
     # check database
-    cdb="$DM_tls/data/${lgtl}.db"
+    cdb="$DM_tls/data/${tlng}.db"
     if [ ! -e ${cdb} ]; then
     [ ! -d "$DM_tls/data" ] && mkdir -p "$DM_tls/data" 
     echo -n "create table if not exists Words (Word TEXT);" |sqlite3 ${cdb}
@@ -139,8 +139,10 @@ if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
     fi
     file="${1}"
     lv=( "$(gettext "Beginner")" "$(gettext "Intermediate")" "$(gettext "Advanced")" )
-    level="${lv[${level}]}"
-    itxt="<span font_desc='Droid Sans Bold 12' color='#616161'>$tname</span>\n$nword $(gettext "Words") $nsent $(gettext "Sentences") $nimag $(gettext "Images") \n$(gettext "Level:") $level \n$(gettext "Language:") $(gettext "$langt")  $(gettext "Translation:") $(gettext "$langs")"
+    level="${lv[${levl}]}"
+    itxt="<span font_desc='Droid Sans Bold 12' color='#616161'>$name</span>\n$nwrd $(gettext "Words") \
+    $nsnt $(gettext "Sentences") $nimg $(gettext "Images") \n$(gettext "Level:") \
+    $levl \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(gettext "$slng")"
     dclk="$DS/play.sh play_word"
     _lst() {
         while read -r line; do
@@ -168,20 +170,20 @@ if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
                 dialog-information "$(gettext "Information")" & exit
             fi
             cn=0
-            if [[ $(grep -Fxo "${tname}" <<<"${listt}" |wc -l) -ge 1 ]]; then
+            if [[ $(grep -Fxo "${name}" <<<"${listt}" |wc -l) -ge 1 ]]; then
                 cn=1
                 for i in {1..50}; do
-                    chck=$(grep -Fxo "${tname} ($i)" <<<"${listt}")
+                    chck=$(grep -Fxo "${name} ($i)" <<<"${listt}")
                     [ -z "$chck" ] && break
                 done
-                tname="${tname} ($i)"
+                name="${name} ($i)"
             fi
 
             check_dir "$DM_t/$langt" "$DM_t/$langt/.share/images" \
             "$DM_t/$langt/.share/audio" "$DM_t/$langt/.share/data" \
-            "$DM_t/$langt/${tname}/.conf/practice"
-            DM_tlt="$DM_t/$langt/${tname}"
-            DC_tlt="$DM_t/$langt/${tname}/.conf"
+            "$DM_t/$langt/${name}/.conf/practice"
+            DM_tlt="$DM_t/$langt/${name}"
+            DC_tlt="$DM_t/$langt/${name}/.conf"
             
             for i in {1..6}; do > "${DC_tlt}/${i}.cfg"; done
             for i in {1..3}; do > "${DC_tlt}/practice/log${i}"; done
@@ -189,8 +191,8 @@ if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
             |sed 's/,"/\n/g;s/":/=/g;s/^\s*.//g' > "${DC_tlt}/id.cfg"
 
             if [ ${cn} = 1  ]; then
-            sed -i "s/tname=.*/tname=\"${tname}\"/g" "${DC_tlt}/id.cfg"; fi
-            sed -i "s/datei=.*/datei=\"$(date +%F)\"/g" "${DC_tlt}/id.cfg"
+            sed -i "s/name=.*/name=\"${name}\"/g" "${DC_tlt}/id.cfg"; fi
+            sed -i "s/dtei=.*/dtei=\"$(date +%F)\"/g" "${DC_tlt}/id.cfg"
             > "${DC_tlt}/download"
             
             sed -n 2p "${file}" |tr -d '\' > "${DC_tlt}/0.cfg"
@@ -212,12 +214,12 @@ if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
             done < "${DC_tlt}/0.cfg"
 
             "$DS/ifs/tls.sh" colorize 1
-            echo -e "$langt\n$lgsl" > "$DC_s/6.cfg"
+            echo -e "$langt\n$slng" > "$DC_s/6.cfg"
             echo 1 > "${DC_tlt}/8.cfg"
-            echo "${tname}" >> "$DM_tl/.share/3.cfg"
+            echo "${name}" >> "$DM_tl/.share/3.cfg"
             source /usr/share/idiomind/default/c.conf
             "$DS/mngr.sh" mkmn 1
-            "$DS/default/tpc.sh" "${tname}" 1 &
+            "$DS/default/tpc.sh" "${name}" 1 &
         fi
     exit 1
 fi
@@ -237,9 +239,9 @@ function topic() {
         done
         nt="${DC_tlt}/info"
         inf="$(< "${DC_tlt}/id.cfg")"
-        authr=$(grep -oP '(?<=authr=\").*(?=\")' <<< "${inf}")
-        datec=$(grep -oP '(?<=datec=\").*(?=\")' <<< "${inf}")
-        datei=$(grep -oP '(?<=datei=\").*(?=\")' <<< "${inf}")
+        autr=$(grep -oP '(?<=autr=\").*(?=\")' <<< "${inf}")
+        dtec=$(grep -oP '(?<=dtec=\").*(?=\")' <<< "${inf}")
+        dtei=$(grep -oP '(?<=dtei=\").*(?=\")' <<< "${inf}")
         acheck=$(grep -oP '(?<=acheck=\").*(?=\")' "${DC_tlt}/10.cfg")
         repass=$(grep -oP '(?<=repass=\").*(?=\")' "${DC_tlt}/10.cfg")
         [ -z $repass ] && repass=0
@@ -250,8 +252,8 @@ function topic() {
         cnf1=$(mktemp "$DT/cnf1.XXXX")
         cnf3=$(mktemp "$DT/cnf3.XXXX")
         cnf4=$(mktemp "$DT/cnf4.XXXX")
-        if [ ! -z "$datei" ]; then infolbl="$(gettext "Review ")$repass. $(gettext "Installed on") $datei\n$(gettext "created by") $authr"
-        elif [ ! -z "$datec" ]; then infolbl="$(gettext "Review ")$repass. $(gettext "Created on") $datec"; fi
+        if [ ! -z "$dtei" ]; then infolbl="$(gettext "Review ")$repass. $(gettext "Installed on") $dtei\n$(gettext "created by") $autr"
+        elif [ ! -z "$dtec" ]; then infolbl="$(gettext "Review ")$repass. $(gettext "Created on") $dtec"; fi
         lbl1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><small>\n$inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$infolbl</small>"
     }
     

@@ -6,8 +6,8 @@ TEXTDOMAINDIR=/usr/share/locale
 export TEXTDOMAINDIR TEXTDOMAIN
 alias gettext='gettext "idiomind"'
 source /usr/share/idiomind/default/sets.cfg
-lang1="${!lang[@]}"; declare lt=( $lang1 )
-lang2="${!slang[@]}"; declare ls=( $lang2 )
+lang1="${!tlangs[@]}"; declare lt=( $lang1 )
+lang2="${!slangs[@]}"; declare ls=( $lang2 )
 text="<span font_desc='Free Sans Bold 14'>$(gettext "Welcome") ${USER^} </span>
 \n      $(gettext "To get started, please configure the following:")\n\n"
 
@@ -31,35 +31,35 @@ _info() {
 }
 
 emrk='!'
-for val in "${!lang[@]}"; do
+for val in "${!tlangs[@]}"; do
     declare clocal="$(gettext "${val}")"
     list1="${list1}${emrk}${clocal}"
 done
 unset clocal
-for val in "${!slang[@]}"; do
+for val in "${!slangs[@]}"; do
     declare clocal="$(gettext "${val}")"
     list2="${list2}${emrk}${clocal}"
 done
 
 function set_lang() {
     language="$1"
-    if [ ! -d "$DM_t/$language/.share/images" ]; then
-        mkdir -p "$DM_t/$language/.share/images"
+    if [ ! -d "$DM_t/$lang/.share/images" ]; then
+        mkdir -p "$DM_t/$lang/.share/images"
     fi
-    if [ ! -d "$DM_t/$language/.share/audio" ]; then
-        mkdir -p "$DM_t/$language/.share/audio"
+    if [ ! -d "$DM_t/$lang/.share/audio" ]; then
+        mkdir -p "$DM_t/$lang/.share/audio"
     fi
-    if [ ! -d "$DM_t/$language/.share/data" ]; then
-        mkdir -p "$DM_t/$language/.share/data"
-        cdb="$DM_t/$language/.share/data/${language}.db"
+    if [ ! -d "$DM_t/$lang/.share/data" ]; then
+        mkdir -p "$DM_t/$lang/.share/data"
+        cdb="$DM_t/$lang/.share/data/${language}.db"
         echo -n "create table if not exists Words \
         (Word TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${cdb}
         echo -n "create table if not exists Config \
         (Study TEXT, Expire INTEGER);" |sqlite3 ${cdb}
         echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${cdb}
     fi
-    for n in {0..3}; do touch "$DM_t/$language/.share/$n.cfg"; done
-    echo "$language" > "$DC_s/6.cfg"
+    for n in {0..3}; do touch "$DM_t/$lang/.share/$n.cfg"; done
+    echo "$lang" > "$DC_s/6.cfg"
 }
 
 dlg=$(yad --form --title="Idiomind" \
@@ -110,29 +110,29 @@ elif [ $ret -eq 0 ]; then
 
     for val in "${lt[@]}"; do
         if [[ ${target} = $(gettext ${val}) ]]; then
-            export lgtl=$val
+            export tlng=$val
         fi
     done
     for val in "${ls[@]}"; do
         if [[ ${source} = $(gettext ${val}) ]]; then
-            export lgsl=$val
+            export slng=$val
         fi
     done
     
-    set_lang ${lgtl}
+    set_lang ${tlng}
 
-    if ! grep -q ${lgsl} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(Words);")"; then
-        sqlite3 ${cdb} "alter table Words add column ${lgsl} TEXT;"
+    if ! grep -q ${slng} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(Words);")"; then
+        sqlite3 ${cdb} "alter table Words add column ${slng} TEXT;"
     fi
     
-    echo ${lgsl} >> "$DC_s/6.cfg"
+    echo ${slng} >> "$DC_s/6.cfg"
 
     if echo "$target$source" |grep -oE 'Chinese|Japanese|Russian'; then _info; fi
 
     > "$DC_s/1.cfg"
     for n in {0..12}; do echo -e "${csets[$n]}=\"\"" >> "$DC_s/1.cfg"; done
     touch "$DC_s/4.cfg"
-    echo -e "usrid=\"\"\npassw=\"\"\ncntct=\"\"" > "$DC_s/3.cfg"
+    echo -e "authr=\"\"\pass=\"\"\ncntt=\"\"" > "$DC_s/3.cfg"
     /usr/share/idiomind/ifs/tls.sh first_run
     export u=1
     idiomind -s

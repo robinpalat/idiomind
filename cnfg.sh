@@ -7,8 +7,8 @@ info2="$(gettext "Switch Language")?"
 cd "$DS/addons"
 cnf1=$(mktemp "$DT/cnf1.XXXX")
 source $DS/default/sets.cfg
-lang1="${!lang[@]}"; lt=( $lang1 )
-lang2="${!slang[@]}"; ls=( $lang2 )
+lang1="${!tlangs[@]}"; lt=( $lang1 )
+lang2="${!slangs[@]}"; ls=( $lang2 )
 if [[ $(egrep -cv '#|^$' "$DC_s/1.cfg") = ${#csets[*]} ]]; then
 cfg=1; else > "$DC_s/1.cfg"; fi
 
@@ -37,7 +37,7 @@ set_lang() {
     language="$1"
     source "$DS/ifs/cmns.sh"
     check_dir "$DM_t/$language/.share/images" "$DM_t/$language/.share/audio"
-    echo -e "$language\n$lgsl" > "$DC_s/6.cfg"
+    echo -e "$language\n$slng" > "$DC_s/6.cfg"
     "$DS/stop.sh" 4
     source $DS/default/c.conf
     last="$(cd "$DM_tl"/; ls -tNd */ |cut -f1 -d'/' |head -n1)"
@@ -54,9 +54,9 @@ set_lang() {
     
     if [ ! -d "$DM_tl/.share/data" ]; then
         mkdir -p "$DM_tls/data"
-        cdb="$DM_tls/data/${lgtl}.db"
+        cdb="$DM_tls/data/${tlng}.db"
         echo -n "create table if not exists Words \
-        (Word TEXT, ${lgsl^} TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${cdb}
+        (Word TEXT, ${slng^} TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${cdb}
         echo -n "create table if not exists Config \
         (Study TEXT, Expire INTEGER);" |sqlite3 ${cdb}
         echo -n "PRAGMA foreign_keys=ON" |sqlite3 ${cdb}
@@ -83,12 +83,12 @@ config_dlg() {
     if [ "$trans" != TRUE ]; then ttrgt=FALSE; fi
     
     emrk='!'
-    for val in "${!lang[@]}"; do
+    for val in "${!tlangs[@]}"; do
         declare clocal="$(gettext "${val}")"
         list1="${list1}${emrk}${clocal}"
     done
     unset clocal
-    for val in "${!slang[@]}"; do
+    for val in "${!slangs[@]}"; do
         declare clocal="$(gettext "${val}")"
         list2="${list2}${emrk}${clocal}"
     done
@@ -110,8 +110,8 @@ config_dlg() {
     --field=" :LBL" " " \
     --field="$(gettext "Languages")\t":LBL " " \
     --field=":LBL" " " \
-    --field="$(gettext "I'm learning")":CB "$(gettext ${lgtl})$list1" \
-    --field="$(gettext "My language is")":CB "$(gettext ${lgsl})$list2" \
+    --field="$(gettext "I'm learning")":CB "$(gettext ${tlng})$list1" \
+    --field="$(gettext "My language is")":CB "$(gettext ${slng})$list2" \
     --field=" :LBL" " " \
     --field=":LBL" " " \
     --field="<small>$(gettext "Use this speech synthesizer instead eSpeak")</small>" "$synth" \
@@ -133,7 +133,7 @@ config_dlg() {
     --tab-borders=5 --sticky --center \
     --tab="$(gettext "Preferences")" \
     --tab="$(gettext "Extensions")" \
-    --width=490 --height=350 --borders=2 \
+    --width=470 --height=330 --borders=2 \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "OK")":0
     ret=$?
@@ -178,33 +178,33 @@ config_dlg() {
         fi
 
         ntlang=$(cut -d "|" -f14 < "$cnf1")
-        if [[ $(gettext ${lgtl}) != ${ntlang} ]]; then
+        if [[ $(gettext ${tlng}) != ${ntlang} ]]; then
             for val in "${lt[@]}"; do
                 if [[ ${ntlang} = $(gettext ${val}) ]]; then
-                    export lgtl=$val
+                    export tlng=$val
                 fi
             done
-            if echo "$lgtl$lgsl" |grep -oE 'Chinese|Japanese|Russian'; then
+            if echo "$tlng$slng" |grep -oE 'Chinese|Japanese|Russian'; then
                 info3="\n$(gettext "Some things are still not working for these languages:") Chinese, Japanese, Russian."
             fi
-            confirm "$info2$info3" dialog-question ${lgtl}
-            [ $? -eq 0 ] && set_lang ${lgtl}
+            confirm "$info2$info3" dialog-question ${tlng}
+            [ $? -eq 0 ] && set_lang ${tlng}
         fi
         
         nslang=$(cut -d "|" -f15 < "$cnf1")
-        if [[ $(gettext ${lgsl}) != ${nslang} ]]; then
+        if [[ $(gettext ${slng}) != ${nslang} ]]; then
             for val in "${ls[@]}"; do
                 if [[ ${nslang} = $(gettext ${val}) ]]; then
-                    export lgsl=$val
+                    export slng=$val
                 fi
             done
-            confirm "$info2" dialog-question ${lgsl}
+            confirm "$info2" dialog-question ${slng}
             if [ $? -eq 0 ]; then
-                echo ${lgtl} > "$DC_s/6.cfg"
-                echo ${lgsl} >> "$DC_s/6.cfg"
-                cdb="$DM_tls/data/${lgtl}.db"
-                if ! grep -q ${lgsl} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(Words);")"; then
-                    sqlite3 ${cdb} "alter table Words add column ${lgsl} TEXT;"
+                echo ${tlng} > "$DC_s/6.cfg"
+                echo ${slng} >> "$DC_s/6.cfg"
+                cdb="$DM_tls/data/${tlng}.db"
+                if ! grep -q ${slng} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(Words);")"; then
+                    sqlite3 ${cdb} "alter table Words add column ${slng} TEXT;"
                 fi
             fi
         fi
