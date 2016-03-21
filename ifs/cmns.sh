@@ -31,6 +31,18 @@ function msg_2() {
     "${btn3}" --button="${4}":1 --button="${3}":0
 }
 
+function msg_4() {
+    [ -n "${5}" ] && title="${5}" || title=Idiomind
+    [ -n "${6}" ] && btn3="--button=${6}:2" || btn3=""
+    yad --progress --title="${title}" --text="${1}" --image="${2}" \
+    --name=Idiomind --class=Idiomind \
+    --pulsate --always-print-result \
+    --window-icon=idiomind \
+    --image-on-top --on-top --sticky --center \
+    --width=380 --height=120 --borders=5 \
+    "${btn3}" --button="${4}":1 --button="${3}":0
+}
+
 function progress() {
     yad --progress \
     --progress-text="$1" \

@@ -181,7 +181,7 @@ edit_item() {
 
     if [[ "${srce}" = "${temp}" ]]; then
         if [ -e "$DT/${trgt}.edit" ]; then
-            msg_2 "$(gettext "Wait till the process is completed. Translating...")\n" \
+            msg_4 "$(gettext "Wait till the process is completed. Translating...")\n" \
             dialog-information OK "$(gettext "Stop")" "$(gettext "Warning")"
             if [ $? -eq 1 ]; then
                 srce=""; transl_mark=1; rm -f "$DT/${trgt}.edit"
@@ -208,7 +208,7 @@ edit_item() {
     ret=$?
         if [ -z "${edit_dlg1}" -a -z "${edit_dlg2}" ]; then
             item_pos=$((item_pos-1)); fi
-            
+        
         if [ ${ret} -eq 0 -o ${ret} -eq 2 ]; then
         
             include "$DS/ifs/mods/add"
@@ -383,8 +383,52 @@ edit_item() {
 }
 
 edit_list() {
+    list1="English!Spanish!Chinese!Italian!Portuguese"
+    
+    dlg_more() {
+        file="$HOME/.idiomind/backup/${tpc}.bk"
+        cols1="$(gettext "Reverse items order")\n$(gettext "Show sentences en words view")\n$(gettext "Translate source language")"
+        dt1=$(grep '\----- newest' "${file}" |cut -d' ' -f3)
+        dt2=$(grep '\----- oldest' "${file}" |cut -d' ' -f3)
+        if [ -n "$dt2" ]; then
+            cols2="$(gettext "Restore backup:") $dt1\n$(gettext "Restore backup:") $dt2"
+        elif [ -n "$dt1" ]; then
+            cols2="$(gettext "Restore backup:") $dt1"
+        else
+            cols2=""
+        fi
+        rest="$(echo -e "${cols1}\n${cols2}" |awk '{print "FALSE\n"$0}' \
+        |sed '/^$/d' |yad --list --radiolist --title="$(gettext "Tools")"\
+        --name=Idiomind --class=Idiomind \
+        --expand-column=2 --no-click \
+        --window-icon=idiomind --on-top --center \
+        --width=500 --height=220 --borders=5 \
+        --column="":RD \
+        --column="$(gettext "Options")":TXT \
+        --button="$(gettext "Cancel")":1 \
+        --button="$(gettext "OK")":0)"
+        ret="$?"
+        if [ $ret -eq 0 ]; then
+        
+            if grep "$(gettext "Reverse items order")" <<< "$rest"; then
+                return 2
+            elif grep "$(gettext "Show sentences en words view")" <<< "$rest"; then
+                return 4
+            elif grep "$(gettext "Translate source language")" <<< "$rest"; then
+                return 5
+            elif grep "$(gettext "Restore backup:")" <<< "$rest"; then
+                if grep ${dt1} <<< "$rest"; then
+                    export line=1
+                elif grep ${dt2} <<< "$rest"; then
+                    export line=2
+                fi
+                return 6
+            fi
+        fi
+    }
+
     if [ -e "$DT/items_to_add" -o -e "$DT/el_lk" ]; then
-        msg_2 "$(gettext "Wait until it finishes a previous process")\n" \
+        msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
         dialog-warning OK "$(gettext "Stop")" "$(gettext "Information")"
         ret=$?
         if [ $ret -eq 1 ]; then
@@ -394,7 +438,8 @@ edit_list() {
         fi
     fi
     if [ -e "$DC_s/elist_first_run" ]; then 
-        "$DS/ifs/tls.sh" first_run edit_list & fi
+        "$DS/ifs/tls.sh" first_run edit_list &
+    fi
     [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ] && c=c || c=w
     direc="$DM_tl/${2}/.conf"
 
@@ -405,21 +450,36 @@ edit_list() {
         [ -n "${trgt}" ] && echo "${trgt}" >> "$DT/list_input"
     done
 
-    cmd_resfile="$DS/ifs/tls.sh _restfile "\"${tpc}\"""
     edit_list_list < "$DT/list_input" > "$DT/list_output"
     ret=$?
+
+    if [ $ret = 5 ]; then dlg_more; ret=$?; fi
     
-    	if [ $ret = 2 ]; then
-			msg_2 "$(gettext "Are you sure you want to reverse the list?")\n" \
-			dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
-			[ $? = 0 ] && ret=2 || ret=1
-		elif [ $ret = 4 ]; then
+        if [ $ret = 2 ]; then
+            msg_2 "$(gettext "Are you sure you want to reverse the list?")\n" \
+            dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
+            [ $? = 0 ] && ret=2 || ret=1
+            
+        elif [ $ret = 4 ]; then
             msg_2 "$(gettext "Are you sure you want to change viewer to sentence?")\n" \
-			dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
+            dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
             [ $? = 0 ] && ret=4 || ret=1
+            
+        elif [ $ret = 5 ]; then
+            l="$(yad --form --title="$(gettext "Translate")" \
+            --text=" " \
+            --class=Idiomind --name=Idiomind \
+            --separator='' --always-print-result --window-icon=idiomind \
+            --buttons-layout=end --align=right --center --on-top \
+            --width=470 --height=190 --borders=15 \
+            --field="$(gettext "Select source language to translate")":CB "$list1" \
+            --button="$(gettext "Cancel")":1 \
+            --button="$(gettext "OK")":0)"
+            [ $l != $slng ] && idiomind translate $l & ret=1
+            
+        elif [ $ret = 6 ]; then
+            "$DS/ifs/tls.sh" restore "${tpc}" ${line} & ret=1
         fi
-        
-    [ -e "$DT/act_restfile" ] && ret=1
 
     if [ $ret -eq 0 -o $ret -eq 2 -o $ret -eq 4 ]; then
     
@@ -437,9 +497,7 @@ edit_list() {
                 item="$(grep -F -m 1 "trgt{${trgt}}" "${direc}/0.cfg" |sed 's/}/}\n/g')"
                 get_item "${item}"
                 if [ $ret -eq 4 ]; then
-                    if [[ $(wc -$c <<< "${trgt}") -lt 4 ]]; then
-                        type=1; echo "d" > /home/rkoc/dd
-                    fi
+                    [[ $(wc -$c <<< "${trgt}") -lt 4 ]] && type=1
                 fi
                 if [ ${type} = 1 ]; then
                     echo "${trgt}" >> "${direc}/3.cfg"

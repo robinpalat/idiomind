@@ -56,7 +56,7 @@ function dlg_form_2() {
     --button="$(gettext "Next")":2 \
     --button="$(gettext "Close")":0
 }
-#    --button="$(gettext "Inverse")!!$(gettext "Reverse items order")":2
+
 function edit_list_list() {
     yad --list --title="$(gettext "Edit list")" \
     --name=Idiomind --class=Idiomind \
@@ -64,10 +64,9 @@ function edit_list_list() {
     --always-print-result --print-all \
     --window-icon=idiomind \
     --no-headers --center \
-    --width=580 --height=380 --borders=5 \
+    --width=560 --height=350 --borders=5 \
     --column="" \
-    --button="$(gettext "More")":"${cmd_resfile}" \
-    --button="$(gettext "Restore")!!$(gettext "Revert to a previous state")":"${cmd_resfile}" \
+    --button="$(gettext "More")":5 \
     --button="$(gettext "Save")!gtk-save":0 \
     --button="$(gettext "Cancel")":1
 }

@@ -15,7 +15,8 @@ function check_format_1() {
     if [ ! -f "${file}" ]; then invalid
     elif [ $(wc -l < "${file}") != 3 ]; then invalid 'lines'
     elif [ $(sed -n 1p "$file" |tr -d '"{' |cut -d':' -f1) != 'items' ]; then
-        invalid; fi
+        invalid
+    fi
     
     shopt -s extglob; n=0
     while read -r line; do
@@ -230,6 +231,7 @@ _backup() {
     dt=$(date +%F)
     check_dir "$HOME/.idiomind/backup"
     file="$HOME/.idiomind/backup/${2}.bk"
+    
     if ! grep "${2}.bk" < <(cd "$HOME/.idiomind/backup"/; \
     find . -maxdepth 1 -name '*.bk' -mtime -2); then
         if [ -s "$DM_tl/${2}/.conf/0.cfg" ]; then
@@ -248,50 +250,30 @@ _backup() {
     fi 
 } >/dev/null 2>&1
 
-dlg_restfile() {
+
+_restore_backup() {
     [ -z "$DM" ] && source /usr/share/idiomind/default/c.conf
-    file="$HOME/.idiomind/backup/${2}.bk"
-    date1=$(grep '\----- newest' "${file}" |cut -d' ' -f3)
-    date2=$(grep '\----- oldest' "${file}" |cut -d' ' -f3)
-    [ -n "$date2" ] && val='\nFALSE'
     source "$DS/ifs/cmns.sh"
-    
-    if [ -f "${file}" ]; then
-        rest="$(echo -e "FALSE\n$date1$val\n$date2" \
-        |sed '/^$/d' |yad --list \
-        --title="$(gettext "Revert to a previous state")" \
-        --name=Idiomind --class=Idiomind \
-        --expand-column=2 --no-click \
-        --window-icon=idiomind \
-        --image-on-top --on-top --center \
-        --width=410 --height=140 --borders=3 \
-        --column="$(gettext "Select")":RD \
-        --column="$(gettext "Date")":TXT \
-        --button="$(gettext "Cancel")":1 \
-        --button="$(gettext "Restore")":0)"
-        ret="$?"
-        if [ $ret -eq 0 ]; then
-            touch "$DT/act_restfile"; check_dir "${DM_tl}/${2}/.conf"
-            if grep TRUE <<< "$(sed -n 1p <<< "$rest")" >/dev/null 2>&1; then
-                sed -n '/----- newest/,/----- oldest/p' "${file}" \
-                |grep -v '\----- newest' |grep -v '\----- oldest' > \
-                "${DM_tl}/${2}/.conf/0.cfg"
-            elif grep TRUE <<< "$(sed -n 2p <<< "$rest")" >/dev/null 2>&1; then
-                sed -n '/----- oldest/,/----- end/p' "${file}" \
-                |grep -v '\----- oldest' |grep -v '\----- end' > \
-                "${DM_tl}/${2}/.conf/0.cfg"
-            fi
-            
-            "$DS/ifs/tls.sh" check_index "${2}" 1
-            mode="$(< "$DM_tl/${2}/.conf/8.cfg")"
-            if ! [[ ${mode} =~ $num ]]; then
-                echo 13 > "$DM_tl/${2}/.conf/8.cfg"; mode=13
-            fi
-            "$DS/default/tpc.sh" "${2}" ${mode} 1 &
-        fi
-    else
-        msg "$(gettext "Backup not found")\n" dialog-warning
+    file="$HOME/.idiomind/backup/${2}.bk"
+
+    touch "$DT/act_restfile"; check_dir "${DM_tl}/${2}/.conf"
+    if [[ ${3} = 1 ]]; then
+        sed -n '/----- newest/,/----- oldest/p' "${file}" \
+        |grep -v '\----- newest' |grep -v '\----- oldest' > \
+        "${DM_tl}/${2}/.conf/0.cfg"
+        
+    elif [[ ${3} = 2 ]]; then
+        sed -n '/----- oldest/,/----- end/p' "${file}" \
+        |grep -v '\----- oldest' |grep -v '\----- end' > \
+        "${DM_tl}/${2}/.conf/0.cfg"
     fi
+    
+    "$DS/ifs/tls.sh" check_index "${2}" 1
+    mode="$(< "$DM_tl/${2}/.conf/8.cfg")"
+    if ! [[ ${mode} =~ $num ]]; then
+        echo 13 > "$DM_tl/${2}/.conf/8.cfg"; mode=13
+    fi
+    "$DS/default/tpc.sh" "${2}" ${mode} 1 &
 }
 
 fback() {
@@ -336,7 +318,7 @@ check_updates() {
     source "$DS/ifs/cmns.sh"
     internet
     link='http://idiomind.sourceforge.net/doc/checkversion'
-    nver=`wget --user-agent "$ua" -qO - "$link" |grep \<body\> |sed 's/<[^>]*>//g'`
+    nver=$(wget --user-agent "$ua" -qO - "$link" |grep \<body\> |sed 's/<[^>]*>//g')
     pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
     date "+%d" > "$DC_s/9.cfg"
     if [ ${#nver} -lt 9 ] && [ ${#_version} -lt 9 ] \
@@ -357,17 +339,17 @@ a_check_updates() {
     source "$DS/default/sets.cfg"
     [ ! -e "$DC_s/9.cfg" ] && date "+%d" > "$DC_s/9.cfg" && exit
     d1=$(< "$DC_s/9.cfg"); d2=$(date +%d)
-    if [ `sed -n 1p "$DC_s/9.cfg"` = 28 ] \
-    && [ `wc -l < "$DC_s/9.cfg"` -gt 1 ]; then
+    if [ $(sed -n 1p "$DC_s/9.cfg") = 28 ] \
+    && [ $(wc -l < "$DC_s/9.cfg") -gt 1 ]; then
         rm -f "$DC_s/9.cfg"; fi
-    [[ `wc -l < "$DC_s/9.cfg"` -gt 1 ]] && exit 1
+    [[ $(wc -l < "$DC_s/9.cfg") -gt 1 ]] && exit 1
     if [ ${d1} != ${d2} ]; then
     
         sleep 5; curl -v www.google.com 2>&1 | \
         grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
         echo -n ${d2} > "$DC_s/9.cfg"
         link='http://idiomind.sourceforge.net/doc/checkversion'
-        nver=`wget --user-agent "$ua" -qO - "$link" |grep \<body\> |sed 's/<[^>]*>//g'`
+        nver=$(wget --user-agent "$ua" -qO - "$link" |grep \<body\> |sed 's/<[^>]*>//g')
         pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
         if [ ${#nver} -lt 9 ] && [ ${#_version} -lt 9 ] \
         && [ ${#nver} -ge 3 ] && [ ${#_version} -ge 3 ] \
@@ -435,7 +417,8 @@ set_image() {
     fi
 
     if [ -e "$DT/$trgt.img" ]; then
-    msg_2 "$(gettext "Attempting download image")...\n" dialog-warning OK "$(gettext "Stop")" "$(gettext "Information")"
+    msg_4 "$(gettext "Attempting download image")...\n" \
+    dialog-warning OK "$(gettext "Stop")" "$(gettext "Information")"
     if [ $? -eq 1 ]; then rm -f "$DT/$trgt".img; else exit 1 ; fi; fi
 
     if [ -e "$ifile" ]; then
@@ -469,28 +452,27 @@ set_image() {
 } >/dev/null 2>&1
 
 translate_to() {
-    # usage: 
-    # idiomind [translate] [*language*] - eg: idiomind translate [en]
-    # idiomind [translate] [restore] - to go back to original translation
     source /usr/share/idiomind/default/c.conf
     source $DS/default/sets.cfg
     source "$DS/ifs/cmns.sh"
+    internet
     [ ! -e "${DC_tlt}/id.cfg" ] && echo -e "  -- error" && exit 1
     l="$(grep -o 'tlng="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
-    if [[ ${tlangs[$l]} ]]; then lgt=${tlangs[$l]}; else lgt=${tlangs[$tlng]}; fi
+    if [ -n "$l" ]; then lgt=${tlangs[$l]}; else lgt=${tlangs[$tlng]}; fi
 
     if [[ $2 = restore ]]; then
         if [ -e "${DC_tlt}/0.data" ]; then
             mv -f "${DC_tlt}/0.data" "${DC_tlt}/0.cfg"
             echo -e "  done!"; else echo -e "  -- error"; fi
     else
-        if [ -e "${DC_tlt}/$2.data" ]; then
-            cp -f "${DC_tlt}/$2.data" "${DC_tlt}/0.cfg"
+        tl=${slangs[$2]}
+        if [ -e "${DC_tlt}/$tl.data" ]; then
+            cp -f "${DC_tlt}/$tl.data" "${DC_tlt}/0.cfg"
             echo -e "  done!"
         else
             include "$DS/ifs/mods/add"
             echo -e "\n\n  translating \"$tpc\"...\n"
-            cnt=`wc -l "${DC_tlt}/0.cfg"`
+            cnt=$(wc -l "${DC_tlt}/0.cfg")
             > "$DT/words.trad_tmp"
             > "$DT/index.trad_tmp"
             sp="/-\|"; sc=0
@@ -517,8 +499,8 @@ translate_to() {
             sed -i 's/^..//' "$DT/words.trad_tmp"
             index_to_trad="$(< "$DT/index.trad_tmp")"
             words_to_trad="$(< "$DT/words.trad_tmp")"
-            translate "${index_to_trad}" $lgt $2 > "$DT/index.trad"
-            translate "${words_to_trad}" $lgt $2 > "$DT/words.trad"
+            translate "${index_to_trad}" $lgt $tl > "$DT/index.trad"
+            translate "${words_to_trad}" $lgt $tl > "$DT/words.trad"
             sed -i ':a;N;$!ba;s/\n/ /g' "$DT/index.trad"
             sed -i 's/|/\n/g' "$DT/index.trad"
             sed -i 's/^ *//; s/ *$//g' "$DT/index.trad"
@@ -538,7 +520,7 @@ translate_to() {
 
                 ( bcle=1
                 > "$DT/w.tmp"
-                while [[ ${bcle} -le `wc -l <<<"${tt}"` ]]; do
+                while [[ ${bcle} -le $(wc -l <<<"${tt}") ]]; do
                     t="$(sed -n ${bcle}p <<<"${tt}" |sed 's/^\s*./\U&\E/g')"
                     s="$(sed -n ${bcle}p <<<"${st}" |sed 's/^\s*./\U&\E/g')"
                     echo "${t}_${s}" >> "$DT/w.tmp"
@@ -546,7 +528,7 @@ translate_to() {
                 done )
                 wrds="$(tr '\n' '_' < "$DT/w.tmp" |sed '/^$/d')"; cdid="$id"
                 eval line="$(sed -n 2p $DS/default/vars)"
-                echo -e "${line}" >> "${DC_tlt}/$2.data"
+                echo -e "${line}" >> "${DC_tlt}/$tl.data"
                 echo "${srce}"
                 
             let n++
@@ -556,7 +538,7 @@ translate_to() {
             if [ ! -e "${DC_tlt}/0.data" ]; then
                 mv "${DC_tlt}/0.cfg" "${DC_tlt}/0.data"
             fi
-            cp -f "${DC_tlt}/$2.data" "${DC_tlt}/0.cfg"
+            cp -f "${DC_tlt}/$tl.data" "${DC_tlt}/0.cfg"
             echo -e "\n\tdone!"
         fi
     fi
@@ -843,8 +825,8 @@ $(gettext "Does not need configuration")
 case "$1" in
     backup)
     _backup "$@" ;;
-    _restfile)
-    dlg_restfile "$@" ;;
+    restore)
+    _restore_backup "$@" ;;
     check_index)
     check_index "$@" ;;
     add_audio)

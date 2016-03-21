@@ -34,6 +34,7 @@ function sentence_view() {
     echo -e "${lwrds}" |yad --list --title=" " \
     --text="${sentence}" \
     --selectable-labels --print-column=0 \
+    --select-action="$DS/play.sh 'play_word'" \
     --dclick-action="$DS/play.sh 'play_word'" \
     --window-icon=idiomind \
     --skip-taskbar --image-on-top --center --on-top \
@@ -67,7 +68,7 @@ function notebook_1() {
     
     list | yad --list --tabnum=1 \
     --plug=$KEY --print-all --separator='|' \
-    --dclick-action="$DS/vwr.sh '1'" \
+    --select-action="$DS/vwr.sh '1'" --dclick-action="$DS/play.sh play_file" \
     --expand-column=2 --no-headers --ellipsize=END \
     --search-column=2 --regex-search \
     --column=Name:IMG --column=Name:TEXT --column=Learned:CHK > "$cnf1" &
@@ -118,7 +119,7 @@ function notebook_2() {
     --align=center --borders=80 --bar="":NORM $RM &
     cat "$ls2" | yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
-    --dclick-action="$DS/vwr.sh '2'" \
+    --select-action="$DS/vwr.sh '2'" --dclick-action="$DS/vwr.sh '2'" \
     --expand-column=0 --no-headers --ellipsize=END \
     --search-column=1 --regex-search \
     --column=Name:TEXT &
