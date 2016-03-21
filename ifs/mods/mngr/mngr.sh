@@ -64,7 +64,7 @@ function edit_list_list() {
     --always-print-result --print-all \
     --window-icon=idiomind \
     --no-headers --center \
-    --width=560 --height=350 --borders=5 \
+    --width=560 --height=350 --borders=0 \
     --column="" \
     --button="$(gettext "More")":5 \
     --button="$(gettext "Save")!gtk-save":0 \

@@ -383,7 +383,6 @@ edit_item() {
 }
 
 edit_list() {
-    list1="English!Spanish!Chinese!Italian!Portuguese"
     
     dlg_more() {
         file="$HOME/.idiomind/backup/${tpc}.bk"
@@ -402,7 +401,7 @@ edit_list() {
         --name=Idiomind --class=Idiomind \
         --expand-column=2 --no-click \
         --window-icon=idiomind --on-top --center \
-        --width=500 --height=220 --borders=5 \
+        --width=440 --height=300 --borders=3 \
         --column="":RD \
         --column="$(gettext "Options")":TXT \
         --button="$(gettext "Cancel")":1 \
@@ -466,6 +465,8 @@ edit_list() {
             [ $? = 0 ] && ret=4 || ret=1
             
         elif [ $ret = 5 ]; then
+            source "$DS/default/source_langs.cfg"
+            list1=$(for i in "${!tranlangs[@]}"; do echo -n "!$i"; done)
             l="$(yad --form --title="$(gettext "Translate")" \
             --text=" " \
             --class=Idiomind --name=Idiomind \
