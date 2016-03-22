@@ -401,14 +401,13 @@ edit_list() {
         --name=Idiomind --class=Idiomind \
         --expand-column=2 --no-click \
         --window-icon=idiomind --on-top --center \
-        --width=440 --height=300 --borders=3 \
+        --width=460 --height=260 --borders=3 \
         --column="":RD \
         --column="$(gettext "Options")":TXT \
         --button="$(gettext "Cancel")":1 \
         --button="$(gettext "OK")":0)"
         ret="$?"
         if [ $ret -eq 0 ]; then
-        
             if grep "$(gettext "Reverse items order")" <<< "$rest"; then
                 return 2
             elif grep "$(gettext "Show sentences en words view")" <<< "$rest"; then
@@ -422,7 +421,11 @@ edit_list() {
                     export line=2
                 fi
                 return 6
+            else
+                return 1
             fi
+        else
+            return 1
         fi
     }
 
@@ -443,11 +446,11 @@ edit_list() {
     direc="$DM_tl/${2}/.conf"
 
     > "$DT/list_input"
-    cat "${direc}/0.cfg" | while read -r item_; do
+    (echo "5"; cat "${direc}/0.cfg" | while read -r item_; do
         item="$(sed 's/}/}\n/g' <<<"${item_}")"
         trgt="$(grep -oP '(?<=trgt{).*(?=})' <<<"${item}")"
         [ -n "${trgt}" ] && echo "${trgt}" >> "$DT/list_input"
-    done
+    done ) | progr_3
 
     edit_list_list < "$DT/list_input" > "$DT/list_output"
     ret=$?
@@ -472,7 +475,7 @@ edit_list() {
             --class=Idiomind --name=Idiomind \
             --separator='' --always-print-result --window-icon=idiomind \
             --buttons-layout=end --align=right --center --on-top \
-            --width=470 --height=190 --borders=15 \
+            --width=460 --height=170 --borders=10 \
             --field="$(gettext "Select source language to translate")":CB "$list1" \
             --button="$(gettext "Cancel")":1 \
             --button="$(gettext "OK")":0)"
@@ -616,8 +619,8 @@ delete_topic() {
     if [ ${ret} -eq 0 ]; then
         f_lock "$DT/rm_lk"
         
-        if [ -f "$DT/.n_s_pr" ]; then
-            if [ "$(sed -n 1p "$DT/.n_s_pr")" = "${tpc}" ]; then
+        if [ -f "$DT/n_s_pr" ]; then
+            if [ "$(sed -n 1p "$DT/n_s_pr")" = "${tpc}" ]; then
             "$DS/stop.sh" 5; fi
         fi
         if [ -e "$DT/playlck" ]; then
@@ -661,7 +664,7 @@ rename_topic() {
     
     if [ ! -d "$DM_tl/${tpc}" ]; then exit 1; fi
   
-    if [ -e "$DT/.n_s_pr" ] && [ "$(sed -n 1p "$DT/.n_s_pr")" = "${tpc}" ]; then
+    if [ -e "$DT/n_s_pr" ] && [ "$(sed -n 1p "$DT/n_s_pr")" = "${tpc}" ]; then
     msg "$(gettext "Unable to rename at this time. Please try later ")\n" \
     dialog-warning "$(gettext "Information")" & exit 1; fi
         

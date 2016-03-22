@@ -194,7 +194,7 @@ function practice_b(){
         echo "<span font_desc='Free Sans 13'> $name </span>"
         done <<<"${tmp}"
         }
-        
+
     mchoise() {
         dlg=$(ofonts | yad --list --title="$(gettext "Practice")" \
         --text="${question}" \

@@ -19,7 +19,7 @@ chk_topic() {
         echo 1 > "8.cfg"; cd /
     fi
     
-    if [ ! -f "$DT/.n_s_pr" ]; then
+    if [ ! -e "$DT/n_s_pr" ]; then
         "$DS/ifs/tls.sh" check_index "${topic}"
     fi
 }

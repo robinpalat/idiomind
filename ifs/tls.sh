@@ -73,7 +73,9 @@ check_index() {
         check_file "${DC_tlt}/practice/log1" "${DC_tlt}/practice/log2" "${DC_tlt}/practice/log3"
         
         for n in {0..4}; do
-            [ ! -e "${DC_tlt}/${n}.cfg" ] && touch "${DC_tlt}/${n}.cfg" && export f=1
+            if [ ! -e "${DC_tlt}/${n}.cfg" ]; then 
+                touch "${DC_tlt}/${n}.cfg"; export f=1
+            fi
             if grep '^$' "${DC_tlt}/${n}.cfg"; then
                 sed -i '/^$/d' "${DC_tlt}/${n}.cfg"
             fi
@@ -95,8 +97,8 @@ check_index() {
         [[ $(egrep -cv '#|^$' < "${DC_tlt}/id.cfg") != 18 ]] && id=0
         if [ ${id} != 1 ]; then
             dtec=$(date +%F)
-            eval c="$(sed -n 4p $DS/default/vars)"
-            echo -e "${c}" > "${DC_tlt}/id.cfg"
+            eval vls="$(sed -n 4p $DS/default/vars)"
+            echo -e "${vls}" > "${DC_tlt}/id.cfg"
         fi
         if ls "${DM_tlt}"/*.mp3 1> /dev/null 2>&1; then
             for au in "${DM_tlt}"/*.mp3 ; do 
@@ -112,7 +114,7 @@ check_index() {
         ! [[ ${stts} =~ $numer ]] && stts=13
 
         if [ $stts = 13 ]; then
-            echo 1 > "${DC_tlt}/8.cfg"; mkmn=1; export f=1
+            echo 1 > "${DC_tlt}/8.cfg"; export mkmn=1; export f=1
         fi
         
         export stts
@@ -122,7 +124,7 @@ check_index() {
         cnt2=$(egrep -cv '#|^$' < "${DC_tlt}/2.cfg")
         if [ $((cnt1+cnt2)) != ${cnt0} ]; then export f=1; fi
         
-        if grep '},' "${DC_tlt}/0.cfg"; then c=1; fi
+        if grep '},' "${DC_tlt}/0.cfg"; then export c=1; fi
     }
     
     _restore() {
@@ -135,7 +137,7 @@ check_index() {
         fi
         rm "${DC_tlt}/1.cfg" "${DC_tlt}/3.cfg" "${DC_tlt}/4.cfg"
         while read -r item_; do
-            item="$(sed 's/}/}\n/g' <<<"${item_}")"
+            item="$(sed 's/}/}\n/g' <<< "${item_}")"
             type="$(grep -oP '(?<=type{).*(?=})' <<<"${item}")"
             trgt="$(grep -oP '(?<=trgt{).*(?=})' <<<"${item}")"
             if [ -n "${trgt}" ]; then
@@ -149,8 +151,7 @@ check_index() {
             fi
         done < "${DC_tlt}/0.cfg"
         > "${DC_tlt}/2.cfg"
-
-        sed -i "/trgt{}/d" "${DC_tlt}/0.cfg"
+        
         sed -i '/^$/d' "${DC_tlt}/0.cfg"
     }
     
@@ -190,14 +191,12 @@ check_index() {
         "$(gettext "Convert to new format...")" -t 3000) &
         _newformat
     fi
-    
     if [[ ${f} = 1 ]]; then
-        > "$DT/ps_lk"; 
+        > "$DT/ps_lk"; mkmn=1
         if [[ ${r} = 0 ]]; then
             (sleep 1; notify-send -i idiomind "$(gettext "Index Error")" \
             "$(gettext "Fixing...")" -t 3000) &
         fi
-        
         _restore
     fi
     if [[ ${mkmn} = 1 ]] ;then

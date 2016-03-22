@@ -65,7 +65,7 @@ on_add() {
     if ps -A |pgrep -f "add.sh"; then killall add.sh & fi
     if ps -A |pgrep -f "mogrify"; then killall mogrify & fi
     if ps -A |pgrep -f "yad --progress"; then kill -9 $(pgrep -f "yad --progress") & fi
-    [ -e "$DT/.n_s_pr" ] && rm -f "$DT/.n_s_pr"
+    [ -e "$DT/n_s_pr" ] && rm -f "$DT/n_s_pr"
     exit
 }
 

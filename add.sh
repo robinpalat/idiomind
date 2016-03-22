@@ -328,7 +328,7 @@ function list_words_dclik() {
 } >/dev/null 2>&1
 
 function process() {
-    echo "$tpe" > "$DT/.n_s_pr"
+    echo "$tpe" > "$DT/n_s_pr"
     export ns=$(wc -l < "${DC_tlt}/0.cfg")
     export db="$DS/default/dicts/$lgt"
     
@@ -361,7 +361,7 @@ function process() {
         ) | dlg_progress_1
     else
         if [[ ${#conten} = 1 ]]; then
-        cleanups "$DT_r" "$DT/.n_s_pr"; exit 1; fi
+        cleanups "$DT_r" "$DT/n_s_pr"; exit 1; fi
         ( echo "1"
         echo "# $(gettext "Processing")..." ;
         if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
@@ -408,7 +408,7 @@ function process() {
 
     if [ -z "$(< "$DT_r/sntsls")" ]; then
         msg " $(gettext "Failed to get text.")\n" dialog-information "$(gettext "Information")"
-        cleanups "$DT_r" "$DT/.n_s_pr" "$slt" & exit 1
+        cleanups "$DT_r" "$DT/n_s_pr" "$slt" & exit 1
     else
         slt=$(mktemp $DT/slt.XXXX.x)
         xclip -i /dev/null
@@ -440,7 +440,7 @@ function process() {
         DC_tlt="$DM_tl/${tpe}/.conf"
         if [ ! -d "${DM_tlt}" ]; then
             msg " $(gettext "An error occurred.")\n" dialog-warning "$(gettext "Information")"
-            cleanups "$DT_r" "$DT/.n_s_pr" "$slt" & exit 1
+            cleanups "$DT_r" "$DT/n_s_pr" "$slt" & exit 1
         fi
         while read -r chkst; do
             sed 's/TRUE//g' <<< "${chkst}"  >> "$DT_r/slts"
@@ -456,7 +456,7 @@ function process() {
             "$(gettext "Adding $number_items notes")" \
             "$(gettext "Please wait till the process is completed")" )
         else
-            cleanups "$DT_r" "$DT/.n_s_pr" "$slt" & exit 1
+            cleanups "$DT_r" "$DT/n_s_pr" "$slt" & exit 1
         fi
         
         internet
@@ -594,7 +594,7 @@ function process() {
         
         [ -n "$log" ] && echo "$log" >> "${DC_tlt}/err"
     fi
-    cleanups "$DT/.n_s_pr" "$DT_r" & exit 0
+    cleanups "$DT/n_s_pr" "$DT_r" & exit 0
 }
 
 fetch_content() {
