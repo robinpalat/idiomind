@@ -452,7 +452,7 @@ function practice_e() {
         --window-icon=idiomind \
         --skip-taskbar --wrap --image-on-top --center --on-top \
         --undecorated --buttons-layout=end \
-        --width=530 --height=230 --borders=12 \
+        --width=530 --height=230 --borders=14 \
         --field="":lbl "" \
         --field="<span font_desc='Free Sans 9'>$OK\n\n$prc $hits</span>":lbl \
         --button="$(gettext "Continue")":2
