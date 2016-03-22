@@ -87,7 +87,7 @@ function upld() {
     fi
     
     conds_upload() {
-        if [ $((inx3+inx4)) -lt 8 ]; then
+        if [ $((cfg3+cfg4)) -lt 8 ]; then
             msg "$(gettext "Insufficient number of items to perform the action").\t\n " \
             dialog-information "$(gettext "Information")" & exit 1
         fi
@@ -274,8 +274,8 @@ function upld() {
         export dtei="$(grep -o 'dtei="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
         export dteu=$(date +%F)
         tpcid=$(strings /dev/urandom |tr -cd '[:alnum:]' |fold -w 3 |head -n 1)
-        export nwrd=${inx3}
-        export nsnt=${inx4}
+        export nwrd=${cfg3}
+        export nsnt=${cfg4}
         export orig levl
         
         # copying files

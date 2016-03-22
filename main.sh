@@ -235,7 +235,7 @@ function topic() {
         for n in {0..4}; do
             [ ! -e "${DC_tlt}/${n}.cfg" ] && touch "${DC_tlt}/${n}.cfg"
             export ls${n}="${DC_tlt}/${n}.cfg"
-            export inx${n}=$(wc -l < "${DC_tlt}/${n}.cfg")
+            export cfg${n}=$(wc -l < "${DC_tlt}/${n}.cfg")
         done
         nt="${DC_tlt}/info"
         inf="$(< "${DC_tlt}/id.cfg")"
@@ -254,7 +254,7 @@ function topic() {
         cnf4=$(mktemp "$DT/cnf4.XXXX")
         if [ ! -z "$dtei" ]; then infolbl="$(gettext "Review ")$repass. $(gettext "Installed on") $dtei\n$(gettext "created by") $autr"
         elif [ ! -z "$dtec" ]; then infolbl="$(gettext "Review ")$repass. $(gettext "Created on") $dtec"; fi
-        lbl1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><small>\n$inx4 $(gettext "Sentences") $inx3 $(gettext "Words") \n$infolbl</small>"
+        lbl1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><small>\n$cfg4 $(gettext "Sentences") $cfg3 $(gettext "Words") \n$infolbl</small>"
     }
     
     apply() {
@@ -299,7 +299,7 @@ function topic() {
         
         readd
         
-        if [[ ${inx0} -lt 1 ]]; then
+        if [ ${cfg0} -lt 1 ]; then
             
             notebook_1; ret=$?
                 
@@ -312,7 +312,7 @@ function topic() {
 
             cleanups "$cnf1" "$cnf3" "$cnf4"
 
-        elif [[ ${inx1} -ge 1 ]]; then
+        elif [ ${cfg1} -ge 1 ] || [ ${cfg1} -ge 0 -a ${cfg0} -lt 15 ]; then
         
             if [ -e "${DC_tlt}/9.cfg" -a -e "${DC_tlt}/7.cfg" ]; then
             
@@ -329,7 +329,7 @@ function topic() {
                     fi
                 fi
 
-                pres="<u><b>$(gettext "Topic learnt")</b></u>  $(gettext "* however you have new notes") ($inx1).\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
+                pres="<u><b>$(gettext "Topic learnt")</b></u>  $(gettext "* however you have new notes") ($cfg1).\\n$(gettext "Time set to review:") $tdays $(gettext "days")"
                 notebook_2
             else
                 notebook_1
@@ -344,7 +344,8 @@ function topic() {
 
                 cleanups "$cnf1" "$cnf3" "$cnf4"
 
-        elif [[ ${inx1} -eq 0 ]]; then
+        elif [ ${cfg1} -eq 0 -a ${cfg0} -ge 15 ]; then
+        
             if [ ! -e "${DC_tlt}/7.cfg" -o ! -e "${DC_tlt}/9.cfg" ]; then
                 "$DS/mngr.sh" mark_as_learned "${tpc}" 0
             fi
@@ -376,7 +377,7 @@ function topic() {
     
         readd
 
-        if [[ ${inx0} -lt 1 ]]; then
+        if [ ${cfg0} -lt 1 ]; then
             
             notebook_1; ret=$?
                 
@@ -389,7 +390,7 @@ function topic() {
 
             cleanups "$cnf1" "$cnf3" "$cnf4"
 
-        elif [[ ${inx1} -ge 1 ]]; then
+        elif [ ${cfg1} -ge 1 ]; then
         
             if [ -e "${DC_tlt}/9.cfg" -a -e "${DC_tlt}/7.cfg" ]; then
                 notebook_2
@@ -406,7 +407,7 @@ function topic() {
 
                 cleanups "$cnf1" "$cnf3" "$cnf4"
 
-        elif [[ ${inx1} -eq 0 ]]; then
+        elif [[ ${cfg1} -eq 0 ]]; then
 
             calculate_review "${tpc}"
             pres="<u><b>$(gettext "Topic learnt")</b></u>\\n$(gettext "Time set to review:") $tdays $(gettext "days")"

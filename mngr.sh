@@ -149,21 +149,20 @@ edit_item() {
     if [ ${list} = 1 ]; then
         index_1="${DC_tlt}/1.cfg"
         index_2="${DC_tlt}/2.cfg"
-        [ ${item_pos} -lt 1 ] && item_pos=${inx1}
+        [ ${item_pos} -lt 1 ] && item_pos=${cfg1}
     elif [ ${list} = 2 ]; then
         index_1="${DC_tlt}/2.cfg"
         index_2="${DC_tlt}/1.cfg"
-        [ ${item_pos} -lt 1 ] && item_pos=${inx2}
+        [ ${item_pos} -lt 1 ] && item_pos=${cfg2}
     fi
-    item_id="$(sed -n ${item_pos}p "${index_1}")"
-    if [ ${text_missing} = 0 ]; then
-        edit_pos=$(grep -Fon -m 1 "trgt{${item_id}}" "${DC_tlt}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
-        get_item "$(sed -n ${edit_pos}p "${DC_tlt}/0.cfg")"
-    else
-        get_item "$(sed -n ${item_pos}p "${DC_tlt}/0.cfg")"
-    fi
+
+    item_trgt="$(sed -n ${item_pos}p "${index_1}")"
+    edit_pos=$(grep -Fon -m 1 "trgt{${item_trgt}}" "${DC_tlt}/0.cfg" |sed -n 's/^\([0-9]*\)[:].*/\1/p')
+    if ! [[ ${edit_pos} =~ ${numer} ]]; then $DS/vwr.sh ${list} "${trgt}" 1 & return; fi
+    get_item "$(sed -n ${edit_pos}p "${DC_tlt}/0.cfg")"
+
     [ -z "${cdid}" ] && cdid=""
-    export query="$(sed "s/'/ /g" <<<"${trgt}")"
+    export query="$(sed "s/'/ /g" <<< "${trgt}")"
     to_modify=0; colorize_run=0; transl_mark=0
     if ((mode>=1 && mode<=10)); then
     tpcs="$(egrep -v "${tpc}" "$DM_tl/.share/2.cfg" |tr "\\n" '!' |sed 's/!\+$//g')"
@@ -175,9 +174,9 @@ edit_item() {
     export cmd_def="'$DS/ifs/tls.sh' 'find_def' "\"${trgt}\"""
     export cmd_trad="'$DS/ifs/tls.sh' 'find_trad' "\"${trgt}\"""
 
-    [ -z "${item}" ] && exit 1
+    [ -z "${item}" ] && return 1
     if [ ${text_missing} != 0 ]; then
-        type=${text_missing}; edit_pos=${item_pos}
+        type=${text_missing}
     fi
     if [[ "${srce}" = "${temp}" ]]; then
         if [ -e "$DT/${trgt}.edit" ]; then
@@ -213,23 +212,23 @@ edit_item() {
             dlaud="$(grep -oP '(?<=dlaud=\").*(?=\")' "$DC_s/1.cfg")"
             if [ ${type} = 1 ]; then
                 edit_dlg="${edit_dlg1}"
-                tpc_mod="$(cut -d "|" -f3 <<<"${edit_dlg}")"
-                trgt_mod="$(clean_9 "$(cut -d "|" -f1 <<<"${edit_dlg}")")"
-                srce_mod="$(clean_9 "$(cut -d "|" -f2 <<<"${edit_dlg}")")"
+                tpc_mod="$(cut -d "|" -f3 <<< "${edit_dlg}")"
+                trgt_mod="$(clean_9 "$(cut -d "|" -f1 <<< "${edit_dlg}")")"
+                srce_mod="$(clean_9 "$(cut -d "|" -f2 <<< "${edit_dlg}")")"
                 audf_mod="$(cut -d "|" -f10 <<<"${edit_dlg}")"
-                exmp_mod="$(clean_0 "$(cut -d "|" -f5 <<<"${edit_dlg}")")"
-                defn_mod="$(clean_0 "$(cut -d "|" -f6 <<<"${edit_dlg}")")"
-                note_mod="$(clean_0 "$(cut -d "|" -f7 <<<"${edit_dlg}")")"
+                exmp_mod="$(clean_0 "$(cut -d "|" -f5 <<< "${edit_dlg}")")"
+                defn_mod="$(clean_0 "$(cut -d "|" -f6 <<< "${edit_dlg}")")"
+                note_mod="$(clean_0 "$(cut -d "|" -f7 <<< "${edit_dlg}")")"
                 mark_mod="$(cut -d "|" -f9 <<<"${edit_dlg}")"
                 type_mod=1
             elif [ ${type} = 2 ]; then
                 edit_dlg="${edit_dlg2}"
-                tpc_mod="$(cut -d "|" -f6 <<<"${edit_dlg}")"
-                mark_mod="$(cut -d "|" -f1 <<<"${edit_dlg}")"
-                type_mod="$(cut -d "|" -f2 <<<"${edit_dlg}")"
-                trgt_mod="$(clean_2 "$(cut -d "|" -f3 <<<"${edit_dlg}")")"
-                srce_mod="$(clean_2 "$(cut -d "|" -f4 <<<"${edit_dlg}")")"
-                audf_mod="$(cut -d "|" -f7 <<<"${edit_dlg}")"
+                tpc_mod="$(cut -d "|" -f6 <<< "${edit_dlg}")"
+                mark_mod="$(cut -d "|" -f1 <<< "${edit_dlg}")"
+                type_mod="$(cut -d "|" -f2 <<< "${edit_dlg}")"
+                trgt_mod="$(clean_2 "$(cut -d "|" -f3 <<< "${edit_dlg}")")"
+                srce_mod="$(clean_2 "$(cut -d "|" -f4 <<< "${edit_dlg}")")"
+                audf_mod="$(cut -d "|" -f7 <<< "${edit_dlg}")"
                 grmr_mod="${grmr}"
                 wrds_mod="${wrds}"
                 [ "${type_mod}" = TRUE ] && type_mod=1
@@ -238,7 +237,7 @@ edit_item() {
             fi
             if [ "${trgt_mod}" != "${trgt}" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
                 if [ ${text_missing} != 0 ]; then
-                    trgt="${item_id}"
+                    trgt="${item_trgt}"
                     index edit "${tpc}"
                 else
                     index edit "${tpc}"
@@ -375,8 +374,8 @@ edit_item() {
         else
             $DS/vwr.sh ${list} "${trgt}" $((item_pos+1)) &
         fi
-        exit
-}
+        return 0
+} >/dev/null 2>&1
 
 edit_list() {
     dlg_more() {
@@ -710,7 +709,7 @@ mark_to_learn_topic() {
         msg "$(gettext "Sorry, this topic is currently not active.")\n " \
         dialog-information "$(gettext "Information")" & exit
     fi
-    if [ $((inx3+inx4)) -le 10 ]; then
+    if [ $((cfg3+cfg4)) -le 10 ]; then
         msg "$(gettext "Insufficient number of items to perform the action").\t\n " \
         dialog-information "$(gettext "Information")" & exit
     fi
@@ -771,7 +770,7 @@ mark_as_learned_topic() {
     
     [ ! -s "${DC_tlt}/0.cfg" ] && exit 1
 
-    if [ $((inx3+inx4)) -le 10 ]; then
+    if [ $((cfg3+cfg4)) -le 15 ]; then
     msg "$(gettext "Insufficient number of items to perform the action").\t\n " \
     dialog-information "$(gettext "Information")" & exit; fi
     

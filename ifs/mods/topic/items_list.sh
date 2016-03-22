@@ -29,7 +29,7 @@ function sentence_view() {
     [ -n "${link}" ] && link=" <a href='$link'>$(gettext "link")</a>" || link=""
     local sentence="<span font_desc='Sans Free 16'>${trgt_l}</span>\n\n<span font_desc='Sans Free 11'><i>$srce</i>$link</span>\n<small>$tag</small>\n"
     cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"""
-    lwrds="$(tr '_' '\n' <<<"${wrds}")"
+    lwrds="$(tr '_' '\n' <<< "${wrds}")"
 
     echo -e "${lwrds}" |yad --list --title=" " \
     --text="${sentence}" \
@@ -68,13 +68,13 @@ function notebook_1() {
     
     list | yad --list --tabnum=1 \
     --plug=$KEY --print-all --separator='|' \
-    --select-action="$DS/vwr.sh '1'" --dclick-action="$DS/vwr.sh '1'" \
+    --dclick-action="$DS/vwr.sh 1" \
     --expand-column=2 --no-headers --ellipsize=END \
     --search-column=2 --regex-search \
     --column=Name:IMG --column=Name:TEXT --column=Learned:CHK > "$cnf1" &
     tac "$ls2" | yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
-    --dclick-action="$DS/vwr.sh '2'" \
+    --dclick-action="$DS/vwr.sh 2"  \
     --expand-column=0 --no-headers --ellipsize=END --tooltip-column=1 \
     --column=Name:TEXT &
     yad --text-info --tabnum=3 \
@@ -96,8 +96,8 @@ function notebook_1() {
     --always-print-result \
     --center --align=right --ellipsize=END \
     --window-icon=idiomind \
-    --tab="  $(gettext "Learning") ($inx1) " \
-    --tab="  $(gettext "Learnt") ($inx2) " \
+    --tab="  $(gettext "Learning") ($cfg1) " \
+    --tab="  $(gettext "Learnt") ($cfg2) " \
     --tab="  $(gettext "Note")  " \
     --tab="  $(gettext "Edit")  " \
     --width=600 --height=560 --borders=0 --tab-borders=3 \
@@ -119,7 +119,7 @@ function notebook_2() {
     --align=center --borders=80 --bar="":NORM $RM &
     cat "$ls2" | yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
-    --select-action="$DS/vwr.sh '2'" --dclick-action="$DS/vwr.sh '2'" \
+    --dclick-action="$DS/vwr.sh 2" \
     --expand-column=0 --no-headers --ellipsize=END \
     --search-column=1 --regex-search \
     --column=Name:TEXT &
@@ -144,7 +144,7 @@ function notebook_2() {
     --center --align=right --ellipsize=END \
     --window-icon=idiomind \
     --tab="  $(gettext "Review")  " \
-    --tab="  $(gettext "Learnt") ($inx2) " \
+    --tab="  $(gettext "Learnt") ($cfg2) " \
     --tab="  $(gettext "Note")  " \
     --tab="  $(gettext "Edit")  " \
     --width=600 --height=560 --borders=0 --tab-borders=3 \
