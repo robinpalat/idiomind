@@ -32,15 +32,17 @@ function msg_2() {
 }
 
 function msg_4() {
-    [ -n "${5}" ] && title="${5}" || title=Idiomind
-    [ -n "${6}" ] && btn3="--button=${6}:2" || btn3=""
-    yad --progress --title="${title}" --text="${1}" --image="${2}" \
+	[ -n "${5}" ] && title="${5}" || title=Idiomind
+	( echo "#"; while true; do
+	sleep 1; [ ! -e "${6}" ] && break
+	done )  |yad --progress --title="${title}" --text="${1}" \
     --name=Idiomind --class=Idiomind \
-    --pulsate --always-print-result \
+    --image="${2}" \
+    --pulsate --auto-close --always-print-result \
     --window-icon=idiomind \
     --image-on-top --on-top --sticky --center \
     --width=380 --height=120 --borders=5 \
-    "${btn3}" --button="${4}":1 --button="${3}":0
+    --button="${4}":1 --button="${3}":0
 }
 
 function progress() {

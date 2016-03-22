@@ -68,7 +68,7 @@ function notebook_1() {
     
     list | yad --list --tabnum=1 \
     --plug=$KEY --print-all --separator='|' \
-    --select-action="$DS/vwr.sh '1'" --dclick-action="$DS/play.sh play_file" \
+    --select-action="$DS/vwr.sh '1'" --dclick-action="$DS/vwr.sh '1'" \
     --expand-column=2 --no-headers --ellipsize=END \
     --search-column=2 --regex-search \
     --column=Name:IMG --column=Name:TEXT --column=Learned:CHK > "$cnf1" &

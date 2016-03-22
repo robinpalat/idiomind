@@ -76,7 +76,8 @@ function dwld() {
 function upld() {
     if [ -d "$DT/upload" -o -d "$DT/download" ]; then
         [ -e "$DT/download" ] && t="$(gettext "Downloading")..." || t="$(gettext "Uploading")..."
-        msg_4 "$(gettext "Wait until it finishes a previous process")\n" dialog-warning OK "$(gettext "Stop")" "$t"
+        msg_4 "$(gettext "Wait until it finishes a previous process")\n" \
+        dialog-warning OK "$(gettext "Stop")" "$t"
         ret="$?"
         if [ $ret -eq 1 ]; then
             cleanups "$DT/upload" "$DT/download"
@@ -244,7 +245,8 @@ function upld() {
     elif [ $ret = 2 ]; then
         sv_data
         if [ -d "$DT/export" ]; then
-            msg_4 "$(gettext "Wait until it finishes a previous process").\n" dialog-information OK "$(gettext "Stop")" "$(gettext "Information")"
+            msg_4 "$(gettext "Wait until it finishes a previous process").\n" \
+            dialog-information OK "$(gettext "Stop")" "$(gettext "Information")"
             ret=$?
             if [ $ret -eq 1 ]; then
                 [ -d "$DT/export" ] && rm -fr "$DT/export"
