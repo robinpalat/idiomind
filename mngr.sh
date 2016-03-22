@@ -86,14 +86,15 @@ delete_item_ok() {
         fi
         for n in {1..6}; do
             if [ -f "${DC_tlt}/${n}.cfg" ]; then
-            grep -vxF "${trgt}" "${DC_tlt}/${n}.cfg" > "${DC_tlt}/${n}.cfg.tmp"
-            sed '/^$/d' "${DC_tlt}/${n}.cfg.tmp" > "${DC_tlt}/${n}.cfg"; fi
+                grep -vxF "${trgt}" "${DC_tlt}/${n}.cfg" > "${DC_tlt}/${n}.cfg.tmp"
+                sed '/^$/d' "${DC_tlt}/${n}.cfg.tmp" > "${DC_tlt}/${n}.cfg"
+            fi
         done
         
         cleanups "${DC_tlt}/lst"
         rm "${DC_tlt}"/*.tmp
     fi
-    if [[ `wc -l < "${DC_tlt}/0.cfg"` -lt 200 ]] && [[ -e "${DC_tlt}/lk" ]]; then
+    if [[ $(wc -l < "${DC_tlt}/0.cfg") -lt 200 ]] && [[ -e "${DC_tlt}/lk" ]]; then
         rm -f "${DC_tlt}/lk"
     fi
     "$DS/ifs/tls.sh" colorize 1 &
@@ -124,10 +125,11 @@ delete_item() {
             fi
             for n in {1..6}; do
                 if [ -f "${DC_tlt}/${n}.cfg" ]; then
-                grep -vxF "${trgt}" "${DC_tlt}/${n}.cfg" > "${DC_tlt}/${n}.cfg.tmp"
-                sed '/^$/d' "${DC_tlt}/${n}.cfg.tmp" > "${DC_tlt}/${n}.cfg"; fi
+                    grep -vxF "${trgt}" "${DC_tlt}/${n}.cfg" > "${DC_tlt}/${n}.cfg.tmp"
+                    sed '/^$/d' "${DC_tlt}/${n}.cfg.tmp" > "${DC_tlt}/${n}.cfg"
+                fi
             done
-            if [[ `wc -l < "${DC_tlt}/0.cfg"` -lt 200 ]] \
+            if [[ $(wc -l < "${DC_tlt}/0.cfg") -lt 200 ]] \
             && [[ -e "${DC_tlt}/lk" ]]; then
                 rm -f "${DC_tlt}/lk"; fi
             if [ -e "${DC_tlt}/feeds" ]; then
@@ -167,7 +169,6 @@ edit_item() {
     tpcs="$(egrep -v "${tpc}" "$DM_tl/.share/2.cfg" |tr "\\n" '!' |sed 's/!\+$//g')"
     export tpc_list="${tpc}!${tpcs}"
     fi
-
     export cmd_delete="$DS/mngr.sh delete_item "\"${tpc}\"""
     export cmd_image="$DS/ifs/tls.sh set_image "\"${tpc}\"" ${cdid}"
     export cmd_words="$DS/add.sh list_words_edit "\"${wrds}\"" "\"${trgt}\"""
@@ -178,7 +179,6 @@ edit_item() {
     if [ ${text_missing} != 0 ]; then
         type=${text_missing}; edit_pos=${item_pos}
     fi
-
     if [[ "${srce}" = "${temp}" ]]; then
         if [ -e "$DT/${trgt}.edit" ]; then
             msg_4 "$(gettext "Wait till the process is completed. Translating...")\n" \
@@ -192,13 +192,11 @@ edit_item() {
             srce=""; transl_mark=1
         fi
     fi
-        
     if [ -e "${DM_tlt}/$cdid.mp3" ]; then
         audf="${DM_tlt}/$cdid.mp3"
     else
         audf="${DM_tls}/audio/${trgt,,}.mp3"
     fi
-        
     if [ ${type} = 1 ]; then
         edit_dlg1="$(dlg_form_1)"
     elif [ ${type} = 2 ]; then
@@ -238,7 +236,6 @@ edit_item() {
                 [ "${type_mod}" = FALSE ] && type_mod=2
                 [ -z "${type_mod}" ] && type_mod=2
             fi
-
             if [ "${trgt_mod}" != "${trgt}" ] && [ ! -z "${trgt_mod##+([[:space:]])}" ]; then
                 if [ ${text_missing} != 0 ]; then
                     trgt="${item_id}"
@@ -375,7 +372,6 @@ edit_item() {
             
             if [ $ret -eq 2 ]; then $DS/mngr.sh edit ${list} $((item_pos+1)) &
             elif [ $ret -eq 0 ]; then $DS/vwr.sh ${list} "${trgt}" ${item_pos} & fi
-            
         else
             $DS/vwr.sh ${list} "${trgt}" $((item_pos+1)) &
         fi
@@ -383,20 +379,19 @@ edit_item() {
 }
 
 edit_list() {
-    
     dlg_more() {
         file="$HOME/.idiomind/backup/${tpc}.bk"
         cols1="$(gettext "Reverse items order")\n$(gettext "Show sentences en words view")\n$(gettext "Translate source language")"
         dt1=$(grep '\----- newest' "${file}" |cut -d' ' -f3)
         dt2=$(grep '\----- oldest' "${file}" |cut -d' ' -f3)
         if [ -n "$dt2" ]; then
-            cols2="$(gettext "Restore backup:") $dt1\n$(gettext "Restore backup:") $dt2"
+            cols2="\n$(gettext "Restore backup:") $dt1\n$(gettext "Restore backup:") $dt2"
         elif [ -n "$dt1" ]; then
-            cols2="$(gettext "Restore backup:") $dt1"
+            cols2="\n$(gettext "Restore backup:") $dt1"
         else
             cols2=""
         fi
-        rest="$(echo -e "${cols1}\n${cols2}" |awk '{print "FALSE\n"$0}' \
+        rest="$(echo -e "${cols1}${cols2}" |awk '{print "FALSE\n"$0}' \
         |sed '/^$/d' |yad --list --radiolist --title="$(gettext "Tools")"\
         --name=Idiomind --class=Idiomind \
         --expand-column=2 --no-click \
@@ -486,7 +481,6 @@ edit_list() {
         fi
 
     if [ $ret -eq 0 -o $ret -eq 2 -o $ret -eq 4 ]; then
-    
         if [ $ret = 0 ]; then cmd=cat && invrt_msg=FALSE
         elif [ $ret = 2 ]; then cmd=tac && invrt_msg=TRUE
         elif [ $ret = 4 ]; then cmd=cat && invrt_msg=FALSE; fi
@@ -612,7 +606,9 @@ edit_feeds() {
 delete_topic() {
     if [ -z "${tpc}" ]; then exit 1; fi
     if [ "${tpc}" != "${2}" ]; then
-        msg "$(gettext "Sorry, this topic is currently not active.")\n " dialog-information "$(gettext "Information")" & exit; fi
+        msg "$(gettext "Sorry, this topic is currently not active.")\n " \
+        dialog-information "$(gettext "Information")" & exit
+    fi
     msg_2 "$(gettext "Are you sure you want to delete this topic?")\n" \
     edit-delete "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
     ret="$?"
@@ -632,7 +628,9 @@ delete_topic() {
         if [ -d "$DM_tl/${tpc}" ]; then cleanups "$DM_tl/${tpc}"; fi
      
         if [ -d "$DM_tl/${tpc}" ]; then sleep 0.5
-        msg "$(gettext "Could not remove the directory:")\n$DM_tl/${tpc}\n$(gettext "You must manually remove it.")" dialog-information "$(gettext "Information")"; fi
+            msg "$(gettext "Could not remove the directory:")\n$DM_tl/${tpc}\n$(gettext "You must manually remove it.")" \
+            dialog-information "$(gettext "Information")"
+        fi
         
         rm -f "$DT/tpe"
         > "$DC_s/4.cfg"
@@ -665,17 +663,17 @@ rename_topic() {
     if [ ! -d "$DM_tl/${tpc}" ]; then exit 1; fi
   
     if [ -e "$DT/n_s_pr" ] && [ "$(sed -n 1p "$DT/n_s_pr")" = "${tpc}" ]; then
-    msg "$(gettext "Unable to rename at this time. Please try later ")\n" \
-    dialog-warning "$(gettext "Information")" & exit 1; fi
-        
+        msg "$(gettext "Unable to rename at this time. Please try later ")\n" \
+        dialog-warning "$(gettext "Information")" & exit 1
+    fi
     if [ -e "$DT/playlck" ] && [ "$(sed -n 1p "$DT/playlck")" = "${tpc}" ]; then
-    msg "$(gettext "Unable to rename at this time. Please try later ")\n" \
-    dialog-warning "$(gettext "Information")" & exit 1; fi
-
+        msg "$(gettext "Unable to rename at this time. Please try later ")\n" \
+        dialog-warning "$(gettext "Information")" & exit 1
+    fi
     if [ ${#name} -gt 55 ]; then
-    msg "$(gettext "Sorry, new name too long.")\n" \
-    dialog-information "$(gettext "Information")" & exit 1; fi
-
+        msg "$(gettext "Sorry, new name too long.")\n" \
+        dialog-information "$(gettext "Information")" & exit 1
+    fi
     if [ ${chck} -ge 1 ]; then
         for i in {1..50}; do
         chck=$(grep -Fxo "${name} ($i)" <<<"${listt}")
@@ -688,8 +686,7 @@ rename_topic() {
         sed -i "s/name=.*/name=\"${name}\"/g" "$DM_tl/${name}/.conf/id.cfg"
         echo "${name}" > "$DC_s/4.cfg"
         
-        echo "${name}" > "$DT/tpe"
-        echo 0 > "$DC_s/5.cfg"
+        echo "${name}" > "$DT/tpe"; echo 0 > "$DC_s/5.cfg"
         
         for n in {1..6}; do
             if grep -Fxq "${tpc}" "$DM_tl/.share/${n}.cfg"; then
@@ -702,20 +699,21 @@ rename_topic() {
         check_list > "$DM_tl/.share/2.cfg"
         rm "$DM_tl/.share"/*.tmp
         cleanups "$DM_tl/${tpc}" "$DM/backup/${tpc}.bk" "$DT/rm_lk"
-        
         "$DS/mngr.sh" mkmn 0 & exit 1
     fi
 }
 
 mark_to_learn_topic() {
-    if [ "${tpc}" != "${2}" ]; then
-    msg "$(gettext "Sorry, this topic is currently not active.")\n " dialog-information "$(gettext "Information")" & exit; fi
-    
     [ ! -s "${DC_tlt}/0.cfg" ] && exit 1
     
+    if [ "${tpc}" != "${2}" ]; then
+        msg "$(gettext "Sorry, this topic is currently not active.")\n " \
+        dialog-information "$(gettext "Information")" & exit
+    fi
     if [ $((inx3+inx4)) -le 10 ]; then
-    msg "$(gettext "Insufficient number of items to perform the action").\t\n " \
-    dialog-information "$(gettext "Information")" & exit; fi
+        msg "$(gettext "Insufficient number of items to perform the action").\t\n " \
+        dialog-information "$(gettext "Information")" & exit
+    fi
 
     (echo "5"
     stts=$(sed -n 1p "${DC_tlt}/8.cfg")
@@ -750,9 +748,7 @@ mark_to_learn_topic() {
             fi
             echo "${trgt}" >> "${DC_tlt}/1.cfg"
         fi
-    done < "${DC_tlt}/0.cfg"
-    
-    ) | progr_3
+    done < "${DC_tlt}/0.cfg" ) | progr_3
 
     if [ -e "${DC_tlt}/lk" ]; then
     rm "${DC_tlt}/lk"; fi
@@ -820,7 +816,6 @@ mark_as_learned_topic() {
             echo 3 > "${DC_tlt}/8.cfg"
         fi
     fi
-
     cleanups "${DC_tlt}/1.cfg" "${DC_tlt}/2.cfg"
     touch "${DC_tlt}/1.cfg"
     
@@ -828,9 +823,7 @@ mark_as_learned_topic() {
         item="$(sed 's/}/}\n/g' <<< "${item_}")"
         trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
         [ -n "${trgt}" ] && echo "${trgt}" >> "${DC_tlt}/2.cfg"
-    done < "${DC_tlt}/0.cfg"
-    
-    ) | progr_3
+    done < "${DC_tlt}/0.cfg" ) | progr_3
 
     if [[ ${3} = 1 ]]; then
     kill -9 $(pgrep -f "yad --list ") &

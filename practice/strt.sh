@@ -64,7 +64,7 @@ function comp() {
 }
 
 function _log() { 
-    if [ ${mode} -lt 1 -a ${1} != 'e' ]; then
+    if [ ${mode} -le 1 -a ${1} != 'e' ]; then
         [ -e ./${1}.1 ] && echo "w1.$(tr -s '\n' '|' < ./${1}.1).w1" |sed '/\.\./d' >> "$log"
     elif [ ${mode} -gt 1 -a ${1} != 'e' ]; then
         [ -e ./${1}.2 ] && echo "w2.$(tr -s '\n' '|' < ./${1}.2).w2" |sed '/\.\./d' >> "$log"

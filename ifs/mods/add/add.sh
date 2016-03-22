@@ -11,7 +11,7 @@ function check_s() {
         msg "$(gettext "No topic selected")\n" dialog-information "$(gettext "Information")" & exit 1
     fi
     DC_tlt="$DM_tl/${1}/.conf"
-    if [[ `wc -l < "${DC_tlt}/0.cfg"` -ge 200 ]]; then
+    if [[ $(wc -l < "${DC_tlt}/0.cfg") -ge 200 ]]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
         msg "$(gettext "You've reached the maximum number of notes for this topic. Max allowed (200)")" dialog-information "$(gettext "Information")" & exit
     fi
@@ -187,7 +187,6 @@ function sentence_p() {
         let bcle++
         done
     fi
-
     if [ ${1} = 1 ]; then
         export grmr="$(sed ':a;N;$!ba;s/\n/ /g' < "$DT_r/g.$r")"
         export wrds="$(tr '\n' '_' < "$DT_r/B.$r")"
@@ -263,7 +262,7 @@ function clean_3() {
 
 function clean_4() {
     if [ $(wc -c <<<"${1}") -le ${sentence_chars} ] && \
-    [ `echo -e "${1}" |wc -l` -gt ${sentence_lines} ]; then
+    [ $(echo -e "${1}" |wc -l) -gt ${sentence_lines} ]; then
     echo "${1}" | tr -d '*/"' |tr -s '&:|{}[]<>+' ' ' \
     |sed 's/ — / /;s/--/ /g; /^$/d; s/ \+/ /g;s/ʺͶ//g'
     elif [ $(wc -c <<<"${1}") -le ${sentence_chars} ]; then
@@ -354,7 +353,7 @@ function set_image_2() {
 
 function translate() {
     cdb="$DM_tls/data/${tlng}.db"
-    if [[ `wc -w <<<${1}` = 1 ]] && [ ${ttrgt} != TRUE ] && \
+    if [[ $(wc -w <<<${1}) = 1 ]] && [ ${ttrgt} != TRUE ] && \
     [[ `sqlite3 ${cdb} "select ${slng} from Words where Word is '${1}';"` ]]; then
         sqlite3 ${cdb} "select ${slng} from Words where Word is '${1}';"
     else
@@ -376,7 +375,7 @@ dwld1() {
         sox "$audio_dwld.$ex" "$audio_dwld.mp3"; rm "$audio_dwld.$ex"; fi
     fi
     if file -b --mime-type "$audio_file" |grep -E 'audio\/mpeg|mp3|' >/dev/null 2>&1 \
-    && [[ `du -b "$audio_file" |cut -f1` -gt 100 ]]; then
+    && [[ $(du -b "$audio_file" |cut -f1) -gt 100 ]]; then
         return 5
     else [ -e "$audio_file" ] && rm "$audio_file"; fi
 }
@@ -387,7 +386,7 @@ dwld2() {
         wget -T 51 -q -U "$ua" -O "$DT_r/audio.mp3" "${LINK}"
     fi
     if file -b --mime-type "$DT_r/audio.mp3" |grep -E 'audio\/mpeg|mp3|' >/dev/null 2>&1 \
-    && [[ `du -b "$DT_r/audio.mp3" |cut -f1` -gt 100 ]]; then
+    && [[ $(du -b "$DT_r/audio.mp3" |cut -f1) -gt 100 ]]; then
         mv -f "$DT_r/audio.mp3" "${audio_file}"; return 5
     else [ -e "$DT_r/audio.mp3" ] && rm "$DT_r/audio.mp3"; fi
 }
@@ -457,7 +456,7 @@ function img_word() {
                 img="$DS_a/Dics/dicts/$(basename "${img}")"
                 [ -e "${img}" ] && "${img}" "${1}"
                 if [ -e "$DT/${1}.jpg" ]; then
-                    if [[ `du "$DT/${1}.jpg" |cut -f1` -gt 10 ]]; then
+                    if [[ $(du "$DT/${1}.jpg" |cut -f1) -gt 10 ]]; then
                     break; else rm -f "$DT/${1}.jpg"; fi
                 fi
             done
@@ -466,14 +465,14 @@ function img_word() {
                     img="$DS_a/Dics/dicts/$(basename "${img}")"
                     [ -e "${img}" ] && "${img}" "${2}"
                     if [ -e "$DT/${2}.jpg" ]; then
-                        if [[ `du "$DT/${2}.jpg" |cut -f1` -gt 10 ]]; then
+                        if [[ $(du "$DT/${2}.jpg" |cut -f1) -gt 10 ]]; then
                         break; else rm -f "$DT/${2}.jpg"; fi
                     fi
                 done
             fi
             
             if [ -e "$DT/${1}.jpg" -o -e "$DT/${2}.jpg" ]; then
-                [[ `wc -w <<< ${1}` -gt 1 ]] && sf="${DM_tlt}/images/${1,,}.jpg" || sf="${DM_tls}/images/${1,,}-0.jpg"
+                [[ $(wc -w <<< ${1}) -gt 1 ]] && sf="${DM_tlt}/images/${1,,}.jpg" || sf="${DM_tls}/images/${1,,}-0.jpg"
                 [ -e "$DT/${1}.jpg" ] && img_file="$DT/${1}.jpg" || img_file="$DT/${2}.jpg"
                 /usr/bin/convert "${img_file}" -interlace Plane -thumbnail 405x275^ \
                 -gravity center -extent 400x270 -quality 90% "${sf}"
@@ -643,7 +642,7 @@ function dlg_text_info_3() {
     --window-icon=idiomind \
     --wrap --margins=5 \
     --center --on-top \
-    --width=420 --height=150 --borders=0 \
+    --width=450 --height=180 --borders=0 \
     "${3}" --button="$(gettext "OK")":1
     rm -f "${DC_tlt}/err"
 }

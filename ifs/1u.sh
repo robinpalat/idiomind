@@ -42,7 +42,7 @@ for val in "${!slangs[@]}"; do
 done
 
 function set_lang() {
-    language="$1"
+    lang="$1"
     if [ ! -d "$DM_t/$lang/.share/images" ]; then
         mkdir -p "$DM_t/$lang/.share/images"
     fi
@@ -51,7 +51,7 @@ function set_lang() {
     fi
     if [ ! -d "$DM_t/$lang/.share/data" ]; then
         mkdir -p "$DM_t/$lang/.share/data"
-        cdb="$DM_t/$lang/.share/data/${language}.db"
+        cdb="$DM_t/$lang/.share/data/$lang.db"
         echo -n "create table if not exists Words \
         (Word TEXT, Example TEXT, Definition TEXT);" |sqlite3 ${cdb}
         echo -n "create table if not exists Config \

@@ -64,7 +64,7 @@ function edit_list_list() {
     --always-print-result --print-all \
     --window-icon=idiomind \
     --no-headers --center \
-    --width=560 --height=350 --borders=0 \
+    --width=560 --height=350 --borders=3 \
     --column="" \
     --button="$(gettext "More")":5 \
     --button="$(gettext "Save")!gtk-save":0 \
@@ -79,7 +79,7 @@ function edit_feeds_list() {
     --always-print-result --print-all \
     --window-icon=idiomind \
     --no-headers --center \
-    --width=550 --height=160 --borders=2 \
+    --width=550 --height=160 --borders=3 \
     --column="" \
     --button="$(gettext "Cancel")":1 \
     --button="$(gettext "Update")":2 \
