@@ -56,7 +56,7 @@ function new_session() {
     f_lock "$DT/ps_lk"
     # run scripts
     for strt in "$DS/ifs/mods/start"/*; do
-    ( sleep 20 && "${strt}" ); done &
+    ( sleep 10 && "${strt}" ); done &
     
     check_list > "$DM_tl/.share/2.cfg"
     check_index1 "$DM_tl/.share/3.cfg"

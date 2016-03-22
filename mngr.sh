@@ -401,7 +401,7 @@ edit_list() {
         --name=Idiomind --class=Idiomind \
         --expand-column=2 --no-click \
         --window-icon=idiomind --on-top --center \
-        --width=460 --height=260 --borders=3 \
+        --width=460 --height=250 --borders=3 \
         --column="":RD \
         --column="$(gettext "Options")":TXT \
         --button="$(gettext "Cancel")":1 \

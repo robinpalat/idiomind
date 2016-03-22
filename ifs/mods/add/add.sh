@@ -158,6 +158,8 @@ function sentence_p() {
             if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]]; then
                 sqlite3 ${cdb} "insert into Words (Word,${slng^},Example) values ('${t}','${s}','${trgt_q}');"
                 sqlite3 ${cdb} "insert into ${table} (Word,${slng^}) values ('${t}','${s}');"
+            elif ! [[ `sqlite3 ${cdb} "select ${slng^} from Words where Word is '${t}';"` ]]; then
+                sqlite3 ${cdb} "update Words set ${slng^}='${s}' where Word='${t}';"
             elif ! [[ `sqlite3 ${cdb} "select Example from Words where Word is '${t}';"` ]]; then
                 sqlite3 ${cdb} "update Words set Example='${trgt_q}' where Word='${t}';"
             fi
@@ -176,6 +178,8 @@ function sentence_p() {
             if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${t}';"` ]]; then
                 sqlite3 ${cdb} "insert into Words (Word,${slng^},Example) values ('${t}','${s}','${trgt_q}');" 
                 sqlite3 ${cdb} "insert into ${table} (Word,${slng^}) values ('${t}','${s}');"
+            elif ! [[ `sqlite3 ${cdb} "select ${slng^} from Words where Word is '${t}';"` ]]; then
+                sqlite3 ${cdb} "update Words set ${slng^}='${s}' where Word='${t}';"
             elif ! [[ `sqlite3 ${cdb} "select Example from Words where Word is '${t}';"` ]]; then
                 sqlite3 ${cdb} "update Words set Example='${trgt_q}' where Word='${t}';"
             fi
@@ -204,10 +208,13 @@ function word_p() {
     if ! grep -q ${slng} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(${table});")"; then
         sqlite3 ${cdb} "alter table ${table} add column ${slng} TEXT;"
     fi
-    if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${trgt}';"` ]] \
-    && ! [[ "${trgt}" =~ [0-9] ]] && [ -n "${trgt}" ] && [ -n "${srce}" ]; then
-        sqlite3 ${cdb} "insert into ${table} (Word,${slng^}) values ('${trgt_q}','${srce_q}');"
-        sqlite3 ${cdb} "insert into Words (Word,${slng^}) values ('${trgt_q}','${srce_q}');"
+    if ! [[ "${trgt}" =~ [0-9] ]] && [ -n "${trgt}" ] && [ -n "${srce}" ]; then
+        if ! [[ `sqlite3 ${cdb} "select Word from Words where Word is '${trgt}';"` ]]; then
+            sqlite3 ${cdb} "insert into ${table} (Word,${slng^}) values ('${trgt_q}','${srce_q}');"
+            sqlite3 ${cdb} "insert into Words (Word,${slng^}) values ('${trgt_q}','${srce_q}');"
+        elif ! [[ `sqlite3 ${cdb} "select ${slng^} from Words where Word is '${trgt}';"` ]]; then
+            sqlite3 ${cdb} "update Words set ${slng^}='${srce_q}' where Word='${trgt}';"
+        fi
     fi
 }
 

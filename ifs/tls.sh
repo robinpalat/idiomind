@@ -17,7 +17,6 @@ function check_format_1() {
     elif [ $(sed -n 1p "$file" |tr -d '"{' |cut -d':' -f1) != 'items' ]; then
         invalid
     fi
-    
     shopt -s extglob; n=0
     while read -r line; do
         if [ -z "$line" ]; then continue; fi
@@ -328,7 +327,8 @@ check_updates() {
         ret=$?
         if [ $ret -eq 0 ]; then xdg-open "$pkg"; fi
     else
-        msg " $(gettext "No updates available.")\n" dialog-information "$(gettext "Information")"
+        msg " $(gettext "No updates available.")\n" \
+        dialog-information "$(gettext "Information")"
     fi
     exit 0
 } >/dev/null 2>&1
@@ -336,24 +336,27 @@ check_updates() {
 a_check_updates() {
     source "$DS/ifs/cmns.sh"
     source "$DS/default/sets.cfg"
-    [ ! -e "$DC_s/9.cfg" ] && date "+%d" > "$DC_s/9.cfg" && exit
+    if [ ! -e "$DC_s/9.cfg" ]; then
+        date "+%d" > "$DC_s/9.cfg"; exit 1
+    fi
     d1=$(< "$DC_s/9.cfg"); d2=$(date +%d)
-    if [ $(sed -n 1p "$DC_s/9.cfg") = 28 ] \
+    if [ $(sed -n 1p "$DC_s/9.cfg") = 1 ] \
     && [ $(wc -l < "$DC_s/9.cfg") -gt 1 ]; then
-        rm -f "$DC_s/9.cfg"; fi
+        rm -f "$DC_s/9.cfg"; exit 1
+    fi
     [[ $(wc -l < "$DC_s/9.cfg") -gt 1 ]] && exit 1
     if [ ${d1} != ${d2} ]; then
-    
         sleep 5; curl -v www.google.com 2>&1 | \
         grep -m1 "HTTP/1.1" >/dev/null 2>&1 || exit 1
-        echo -n ${d2} > "$DC_s/9.cfg"
+        echo ${d2} > "$DC_s/9.cfg"
         link='http://idiomind.sourceforge.net/doc/checkversion'
         nver=$(wget --user-agent "$ua" -qO - "$link" |grep \<body\> |sed 's/<[^>]*>//g')
         pkg='https://sourceforge.net/projects/idiomind/files/latest/download'
         if [ ${#nver} -lt 9 ] && [ ${#_version} -lt 9 ] \
         && [ ${#nver} -ge 3 ] && [ ${#_version} -ge 3 ] \
         && [[ ${nver} != ${_version} ]]; then
-            msg_2 " <b>$(gettext "A new version of Idiomind available\!")\t\n</b> $(gettext "Do you want to download it now?")\n" dialog-information "$(gettext "Download")" "$(gettext "Cancel")" "$(gettext "New Version")" "$(gettext "Ignore")"
+            msg_2 " <b>$(gettext "A new version of Idiomind available\!")\t\n</b> $(gettext "Do you want to download it now?")\n" \
+            dialog-information "$(gettext "Download")" "$(gettext "Cancel")" "$(gettext "New Version")" "$(gettext "Ignore")"
             ret=$?
             if [ $ret -eq 0 ]; then
                 xdg-open "$pkg"
