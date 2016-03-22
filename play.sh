@@ -127,12 +127,12 @@ play_list() {
     
     setting_1 | yad --plug=$KEY --tabnum=1 --list \
     --print-all --always-print-result --separator="|" \
-    --expand-column=2 --no-headers --borders=0 \
+    --center --expand-column=2 --no-headers --borders=0 \
     --column=IMG:IMG \
     --column=TXT:TXT \
     --column=CHK:CHK > $tab1 &
     yad --plug=$KEY --form --tabnum=2 --borders=5 \
-    --align=right \
+    --align=right --center \
     --separator='|' --always-print-result --print-all \
     --field="$(gettext "Repeat")":CHK "$rplay" \
     --field="$(gettext "Play audio")":CHK "$audio" \
@@ -147,7 +147,7 @@ play_list() {
     --tab-pos=right --tab-borders=0 \
     --tab=" $(gettext "Lists") " \
     --tab="$(gettext "Options")" \
-    --width=420 --height=300 --borders=0 \
+    --width=440 --height=300 --borders=0 \
     "$btn2" --button="$btn1" --button="$(gettext "Close")":1
     ret=$?
         tab1=$(< $tab1); tab2=$(< $tab2); rm -f "$DT"/*.p
@@ -197,7 +197,7 @@ play_list() {
             else
                 "$DS/stop.sh" 2 && exit 1
             fi
-                
+            
             "$DS/stop.sh" 2
             "$DS/bcle.sh" &
             

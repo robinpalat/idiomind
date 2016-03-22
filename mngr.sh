@@ -290,7 +290,7 @@ edit_item() {
                         grmr="${trgt_mod}"
                     fi
                 fi
-                id_mod="$(set_name_file ${type_mod} "${trgt_mod}" "${srce_mod}" \
+                cdid_mod="$(set_name_file ${type_mod} "${trgt_mod}" "${srce_mod}" \
                 "${exmp_mod}" "${defn_mod}" "${note_mod}" "${wrds_mod}" "${grmr_mod}")"
 
                 [ ${mode} = 14 ] && tpc_mod="${tpc}"
