@@ -585,7 +585,7 @@ function dlg_checklist_3() {
     yad --paned --key="$fkey" \
     --title="$(wc -l < "${1}") $(gettext "notes found")" \
     --name=Idiomind --class=Idiomind \
-    --skip-taskbar --orient=vert --window-icon=idiomind --on-top \
+    --skip-taskbar --orient=vert --window-icon=idiomind --center --on-top \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --width=700 --height=350 --borders=5 --splitter=250 \
     --button="$(gettext "Edit")":2 \
@@ -612,7 +612,7 @@ function dlg_checklist_1() {
 }
 
 function dlg_text_info_1() {
-    awk '{print "\n"$0}' < "${1}" | \
+    cat "${1}" |awk '{print "\n"$0}' | \
     yad --text-info --title="$(gettext "Edit")" \
     --name=Idiomind --class=Idiomind \
     --editable \

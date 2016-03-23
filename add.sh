@@ -361,7 +361,7 @@ function process() {
         tesseract "$pars.png" "$pars" -l ${tesseract_lngs[$tlng]} &> /dev/null
         if [ $? != 0 ]; then
         info="$(gettext "Failed loading language")\nPlease install <b>tesseract-ocr-${tesseract_lngs[$tlng]}</b> package"
-        msg "$info" error Error; fi
+        msg "${info}" error Error; fi
         clean_6 < "$pars.txt" > "$DT_r/sntsls_"
         rm -f "$pars".png "$DT_r"/img_.png
         ) | dlg_progress_1
@@ -371,9 +371,9 @@ function process() {
         ( echo "1"
         echo "# $(gettext "Processing")..." ;
         if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
-            echo "${conten}" | clean_7 > "$DT_r/sntsls_"; epa=0
+            echo "${conten}" |clean_7 > "$DT_r/sntsls_"; epa=0
         else
-            echo "${conten}" | clean_8 > "$DT_r/sntsls_"; epa=1
+            echo "${conten}" |clean_8 > "$DT_r/sntsls_"; epa=1
         fi
         ) | dlg_progress_1
     fi
@@ -425,12 +425,12 @@ function process() {
         dialog-information "$(gettext "Information")"
         cleanups "$DT_r" "$DT/n_s_pr" "$slt" & exit 1
     else
-        slt=$(mktemp $DT/slt.XXXX.x)
         xclip -i /dev/null
+        export slt=$(mktemp $DT/slt.XXXX.x)
         export tpcs="$(grep -vFx "${tpe}" "$DM_tl/.share/2.cfg" |tr "\\n" '!' |sed 's/\!*$//g')"
         [ -n "$tpcs" ] && export e='!'
-        export tpe="$(dlg_checklist_3 "$DT_r/sntsls" "${tpe}")"
-        ret=$?
+        tpe=`dlg_checklist_3 "$DT_r/sntsls" "${tpe}"`
+        ret="$?"
     fi
     if [ $ret -eq 2 ]; then
         cleanups "$slt"

@@ -380,7 +380,7 @@ edit_item() {
 edit_list() {
     dlg_more() {
         file="$HOME/.idiomind/backup/${tpc}.bk"
-        cols1="$(gettext "Reverse items order")\n$(gettext "Sentences with less than 5 words show on word's view")\n$(gettext "Translate source language")"
+        cols1="$(gettext "Reverse items order")\n$(gettext "Sentences with less than 5 words, show on word's view")\n$(gettext "Translate source language")"
         dt1=$(grep '\----- newest' "${file}" |cut -d' ' -f3)
         dt2=$(grep '\----- oldest' "${file}" |cut -d' ' -f3)
         if [ -n "$dt2" ]; then
@@ -390,7 +390,7 @@ edit_list() {
         else
             cols2=""
         fi
-        rest="$(echo -e "${cols1}${cols2}" |awk '{print "FALSE\n"$0}' \
+        more="$(echo -e "${cols1}${cols2}" |awk '{print "FALSE\n"$0}' \
         |sed '/^$/d' |yad --list --radiolist --title="$(gettext "Tools")"\
         --name=Idiomind --class=Idiomind \
         --expand-column=2 --no-click \
@@ -402,16 +402,16 @@ edit_list() {
         --button="$(gettext "OK")":0)"
         ret="$?"
         if [ $ret -eq 0 ]; then
-            if grep "$(gettext "Reverse items order")" <<< "$rest"; then
+            if grep "$(gettext "Reverse items order")" <<< "${more}"; then
                 return 2
-            elif grep "$(gettext "Sentences with less than 5 words show on word's view")" <<< "$rest"; then
+            elif grep "$(gettext "Sentences with less than 5 words, show on word's view")" <<< "${more}"; then
                 return 4
-            elif grep "$(gettext "Translate source language")" <<< "$rest"; then
+            elif grep "$(gettext "Translate source language")" <<< "${more}"; then
                 return 5
-            elif grep "$(gettext "Restore backup:")" <<< "$rest"; then
-                if grep ${dt1} <<< "$rest"; then
+            elif grep "$(gettext "Restore backup:")" <<< "${more}"; then
+                if grep ${dt1} <<< "${more}"; then
                     export line=1
-                elif grep ${dt2} <<< "$rest"; then
+                elif grep ${dt2} <<< "${more}"; then
                     export line=2
                 fi
                 return 6
@@ -464,8 +464,7 @@ edit_list() {
         elif [ $ret = 5 ]; then
             source "$DS/default/source_langs.cfg"
             list1=$(for i in "${!tranlangs[@]}"; do echo -n "!$i"; done)
-            l="$(yad --form --title="$(gettext "Translate")" \
-            --text=" " \
+            l="$(yad --form --title="$(gettext "Translate")" --text=" " \
             --class=Idiomind --name=Idiomind \
             --separator='' --always-print-result --window-icon=idiomind \
             --buttons-layout=end --align=right --center --on-top \
