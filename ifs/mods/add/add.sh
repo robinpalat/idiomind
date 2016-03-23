@@ -2,18 +2,21 @@
 # -*- ENCODING: UTF-8 -*-
 
 if [ -z "${tlng}" -o -z "${slng}" ]; then
-msg "$(gettext "Please check the language settings in the preferences dialog.")\n" error "$(gettext "Information")" & exit 1
+msg "$(gettext "Please check the language settings in the preferences dialog.")\n" \
+error "$(gettext "Information")" & exit 1
 fi
 
 function check_s() {
     if [ -z "${1}" ]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r" &
-        msg "$(gettext "No topic selected")\n" dialog-information "$(gettext "Information")" & exit 1
+        msg "$(gettext "No topic selected")\n" \
+        dialog-information "$(gettext "Information")" & exit 1
     fi
     DC_tlt="$DM_tl/${1}/.conf"
     if [[ $(wc -l < "${DC_tlt}/0.cfg") -ge 200 ]]; then
         [ -d "$DT_r" ] && rm -fr "$DT_r"
-        msg "$(gettext "You've reached the maximum number of notes for this topic. Max allowed (200)")" dialog-information "$(gettext "Information")" & exit
+        msg "$(gettext "You've reached the maximum number of notes for this topic. Max allowed (200)")" \
+        dialog-information "$(gettext "Information")" & exit
     fi
 }
 
@@ -96,7 +99,7 @@ function sentence_p() {
     table="T`date +%m%y`"
     echo -n "create table if not exists ${table} \
     (Word TEXT, ${slng^} TEXT);" |sqlite3 ${cdb}
-    if ! grep -q ${slng} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(${table});")"; then
+    if ! grep -q ${slng} <<< "$(sqlite3 ${cdb} "PRAGMA table_info(${table});")"; then
         sqlite3 ${cdb} "alter table ${table} add column ${slng} TEXT;"
     fi
 
@@ -108,7 +111,7 @@ function sentence_p() {
         vrbl="${trgt_p}"; lg=$lgs; aw="$DT_r/twrd.$r"; bw="$DT_r/swrd.$r"
     fi
     
-    echo "${vrbl}" \
+    echo "${vrbl}" |sed 's/ ./\U&/g' \
     |python -c 'import sys; print(" ".join(sorted(set(sys.stdin.read().split()))))' \
     |sed 's/ /\n/g' |grep -v '^.$' |grep -v '^..$' \
     |tr -d '*)(,;"“”:' |tr -s '_&|{}[]' ' ' \
@@ -204,7 +207,7 @@ function word_p() {
     
     echo -n "create table if not exists ${table} \
     (Word TEXT, ${slng^} TEXT);" |sqlite3 ${cdb}
-    if ! grep -q ${slng} <<<"$(sqlite3 ${cdb} "PRAGMA table_info(${table});")"; then
+    if ! grep -q ${slng} <<< "$(sqlite3 ${cdb} "PRAGMA table_info(${table});")"; then
         sqlite3 ${cdb} "alter table ${table} add column ${slng} TEXT;"
     fi
     if ! [[ "${trgt}" =~ [0-9] ]] && [ -n "${trgt}" ] && [ -n "${srce}" ]; then
@@ -222,7 +225,7 @@ function clean_0() {
     |sed "s/’/'/g" \
     |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
     |sed 's/^ *//;s/ *$//g' |sed 's/^\s*./\U&\E/g' \
-    |tr -d '*|;!¿?[]&:<>+'  |sed 's/\¡//g' \
+    |tr -d ':*|;!¿?[]&:<>+'  |sed 's/\¡//g' \
     |sed 's/<[^>]*>//g; s/ \+/ /g'
 }
 
@@ -239,13 +242,13 @@ function clean_2() {
     if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
     echo "${1}" |sed 's/\\n/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
     |sed "s/’/'/g" |sed 's/quot\;/"/g' \
-    |tr -s '/' '-' |tr -d '\*' |tr -s '*&|{}[]<>+' ' ' \
+    |tr -s '/' '-' |tr -d ':\*' |tr -s '*&|{}[]<>+' ' ' \
     |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
     |sed 's/^ *//; s/ *$//g; s/ — /__/g; s/<[^>]*>//g; s/-.\s*./\U&\E/g'
     else
     echo "${1}" |sed 's/\\n/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
     |sed "s/’/'/g" |sed 's/quot\;/"/g' \
-    |tr -s '\*&|{}[]<>+' ' ' \
+    |tr -s ':\*&|{}[]<>+' ' ' \
     |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
     |sed 's/^ *//;s/ *$//g; s/^\s*./\U&\E/g' |tr -s '/' '-' \
     |sed 's/ — /__/g; s|/||g; s/<[^>]*>//g; s/-.\s*./\U&\E/g'
@@ -261,11 +264,11 @@ function clean_3() {
 }  
 
 function clean_4() {
-    if [ $(wc -c <<<"${1}") -le ${sentence_chars} ] && \
+    if [ $(wc -c <<< "${1}") -le ${sentence_chars} ] && \
     [ $(echo -e "${1}" |wc -l) -gt ${sentence_lines} ]; then
     echo "${1}" | tr -d '*/"' |tr -s '&:|{}[]<>+' ' ' \
     |sed 's/ — / /;s/--/ /g; /^$/d; s/ \+/ /g;s/ʺͶ//g'
-    elif [ $(wc -c <<<"${1}") -le ${sentence_chars} ]; then
+    elif [ $(wc -c <<< "${1}") -le ${sentence_chars} ]; then
     echo "${1}" |sed ':a;N;$!ba;s/\n/ /g' \
     |tr -d '*/"' |tr -s '&:|{}[]<>+' ' ' \
     |sed 's/ — / /;s/--/ /g; /^$/d; s/ \+/ /g;s/ʺͶ//g'
@@ -316,7 +319,7 @@ function clean_7() {
 }
 
 function clean_8() {
-     sed 's/\[ \.\.\. \]//g' \
+    sed 's/\[ \.\.\. \]//g' \
     |sed 's/^ *//;s/ *$//g' |sed 's/^[ \t]*//;s/[ \t]*$//' \
     |sed 's/ \+/ /;s/\://;s/"//g' \
     |sed '/^$/d' |sed 's/ — /\n/g' \
@@ -335,7 +338,7 @@ function clean_9() {
     |sed "s/’/'/g" \
     |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
     |sed 's/^ *//;s/ *$//g' |sed 's/^\s*./\U&\E/g' \
-    |tr -s '/' '-' |tr -d '/*|()[]&:<>+' \
+    |tr -s '/' '-' |tr -d ':/*|()[]&:<>+' \
     |sed 's/<[^>]*>//g; s/ \+/ /g'
 }
 

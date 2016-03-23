@@ -10,10 +10,12 @@ lgs=${slangs[$slng]}
 function dwld() {
     err() {
         cleanups "$DT/download" &
-        msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" dialog-information
+        msg "$(gettext "A problem has occurred while fetching data, try again later.")\n" \
+        dialog-information
     }
     sleep 0.5
-    msg "$(gettext "When the download completes the files will be added to topic directory.")" dialog-information "$(gettext "Downloading")"
+    msg "$(gettext "When the download completes the files will be added to topic directory.")" \
+    dialog-information "$(gettext "Downloading")"
     kill -9 $(pgrep -f "yad --form --columns=1")
     mkdir "$DT/download"
     ilnk=$(grep -o 'ilnk="[^"]*' "$DM_tl/${2}/.conf/id.cfg" |grep -o '[^"]*$')
@@ -92,17 +94,20 @@ function upld() {
             dialog-information "$(gettext "Information")" & exit 1
         fi
         if [ -z "${autr_mod}" -o -z "${pass_mod}" ]; then
-            msg "$(gettext "Sorry, Authentication failed.")\n" dialog-information "$(gettext "Information")" & exit 1
+            msg "$(gettext "Sorry, Authentication failed.")\n" \
+            dialog-information "$(gettext "Information")" & exit 1
         fi
         if [ -z "${ctgy}" ]; then
-            msg "$(gettext "Please select a category.")\n " dialog-information
+            msg "$(gettext "Please select a category.")\n " \
+            dialog-information
             "$DS/ifs/upld.sh" upld "${tpc}" & exit 1
         fi
         [ -d "$DT" ] && cd "$DT" || exit 1
         [ -d "$DT/upload" ] && rm -fr "$DT/upload"
         
         if [ "${tpc}" != "${1}" ]; then
-            msg "$(gettext "Sorry, this topic is currently not active.")\n " dialog-information & exit 1
+            msg "$(gettext "Sorry, this topic is currently not active.")\n " \
+            dialog-information & exit 1
         fi
         internet
     }
@@ -114,7 +119,7 @@ function upld() {
         --always-print-result \
         --window-icon=idiomind --buttons-layout=end \
         --align=right --center --on-top \
-        --width=490 --height=470 --borders=12 \
+        --width=490 --height=440 --borders=12 \
         --field=" :LBL" "" \
         --field="$(gettext "Category"):CB" "" \
         --field="$(gettext "Skill Level"):CB" "" \
@@ -133,7 +138,7 @@ function upld() {
         --always-print-result \
         --window-icon=idiomind --buttons-layout=end \
         --align=right --center --on-top \
-        --width=490 --height=470 --borders=12 --field=" :LBL" "" \
+        --width=490 --height=440 --borders=12 --field=" :LBL" "" \
         --field="$(gettext "Category"):CBE" "$_Categories" \
         --field="$(gettext "Skill Level"):CB" "$_levels" \
         --field="\n$(gettext "Description/Notes"):TXT" "${note}" \
@@ -280,7 +285,7 @@ function upld() {
         
         # copying files
         cd "${DM_tlt}"/
-        #cp -r ./* "$DT_u/files/"
+        cp -r ./* "$DT_u/files/"
         mkdir "$DT_u/files/share"
         [ ! -d "$DT_u/files/images" ] && mkdir "$DT_u/files/images"
 
@@ -290,28 +295,28 @@ function upld() {
         | sed 's/&//; s/,//; s/\?//; s/\¿//; s/;//'g \
         |  sed 's/\!//; s/\¡//; s/\]//; s/\[//; s/\.//; s/  / /'g \
         | tr -d ')' | tr -d '(' | tr '[:upper:]' '[:lower:]')"
-        #while read -r audio; do
-            #if [ -f "$DM_tl/.share/audio/$audio.mp3" ]; then
-                #cp -f "$DM_tl/.share/audio/$audio.mp3" \
-                #"$DT_u/files/share/$audio.mp3"
-            #fi
-        #done <<<"$auds"
-        #while read -r audio; do
-            #if [ -f "$DM_tl/.share/audio/${audio,,}.mp3" ]; then
-                #cp -f "$DM_tl/.share/audio/${audio,,}.mp3" \
-                #"$DT_u/files/share/${audio,,}.mp3"
-            #fi
-        #done < "${DC_tlt}/3.cfg"
-        #while read -r img; do
-            #if [ -e "$DM_tlt/images/${img,,}.jpg" ]; then
-                #img_path="$DM_tlt/images/${img,,}.jpg"
-            #elif [ -e "$DM_tls/images/${img,,}-0.jpg" ]; then
-                #img_path="$DM_tls/images/${img,,}-0.jpg"
-            #fi
-            #if [ -e "${img_path}" ]; then
-                #cp -f "${img_path}" "$DT_u/files/images/${img,,}.jpg"
-            #fi
-        #done < "${DC_tlt}/3.cfg"
+        while read -r audio; do
+            if [ -f "$DM_tl/.share/audio/$audio.mp3" ]; then
+                cp -f "$DM_tl/.share/audio/$audio.mp3" \
+                "$DT_u/files/share/$audio.mp3"
+            fi
+        done <<<"$auds"
+        while read -r audio; do
+            if [ -f "$DM_tl/.share/audio/${audio,,}.mp3" ]; then
+                cp -f "$DM_tl/.share/audio/${audio,,}.mp3" \
+                "$DT_u/files/share/${audio,,}.mp3"
+            fi
+        done < "${DC_tlt}/3.cfg"
+        while read -r img; do
+            if [ -e "$DM_tlt/images/${img,,}.jpg" ]; then
+                img_path="$DM_tlt/images/${img,,}.jpg"
+            elif [ -e "$DM_tls/images/${img,,}-0.jpg" ]; then
+                img_path="$DM_tls/images/${img,,}-0.jpg"
+            fi
+            if [ -e "${img_path}" ]; then
+                cp -f "${img_path}" "$DT_u/files/images/${img,,}.jpg"
+            fi
+        done < "${DC_tlt}/3.cfg"
         export naud=$(find "$DT_u/files" -maxdepth 5 -name '*.mp3' |wc -l)
         export nimg=$(cd "$DT_u/files/images"/; ls *.jpg |wc -l)
         cp "${DC_tlt}/6.cfg" "$DT_u/files/conf/6.cfg"
@@ -350,13 +355,12 @@ pssw = os.environ['pass']
 tpc = os.environ['tpc']
 body = os.environ['body']
 try:
-    server = xmlrpclib.Server('http://idiomind.com/community/xmlrpc.php')
+    server = xmlrpclib.Server('http://idiomind.net/community/xmlrpc.php')
     nid = server.metaWeblog.newPost('blog', autr, pssw, 
     {'title': tpc, 'description': body}, True)
 except:
     sys.exit(3)
-#url = requests.get('http://idiomind.sourceforge.net/uploads.php').url
-url = 'http://idiomind.uploads.com/share.php'
+url = requests.get('http://idiomind.sourceforge.net/uploads.php').url
 direc = os.environ['direc']
 volumes = [i for i in os.listdir(direc)]
 for f in volumes:

@@ -94,7 +94,7 @@ delete_item_ok() {
         cleanups "${DC_tlt}/lst"
         rm "${DC_tlt}"/*.tmp
     fi
-    if [[ $(wc -l < "${DC_tlt}/0.cfg") -lt 200 ]] && [[ -e "${DC_tlt}/lk" ]]; then
+    if [[ $(wc -l < "${DC_tlt}/0.cfg") -lt 200 ]] && [ -e "${DC_tlt}/lk" ]; then
         rm -f "${DC_tlt}/lk"
     fi
     "$DS/ifs/tls.sh" colorize 1 &
@@ -130,7 +130,7 @@ delete_item() {
                 fi
             done
             if [[ $(wc -l < "${DC_tlt}/0.cfg") -lt 200 ]] \
-            && [[ -e "${DC_tlt}/lk" ]]; then
+            && [ -e "${DC_tlt}/lk" ]; then
                 rm -f "${DC_tlt}/lk"; fi
             if [ -e "${DC_tlt}/feeds" ]; then
                 echo "${trgt}" >> "${DC_tlt}/exclude"
@@ -380,7 +380,7 @@ edit_item() {
 edit_list() {
     dlg_more() {
         file="$HOME/.idiomind/backup/${tpc}.bk"
-        cols1="$(gettext "Reverse items order")\n$(gettext "Show sentences en words view")\n$(gettext "Translate source language")"
+        cols1="$(gettext "Reverse items order")\n$(gettext "Sentences with less than 5 words show on word's view")\n$(gettext "Translate source language")"
         dt1=$(grep '\----- newest' "${file}" |cut -d' ' -f3)
         dt2=$(grep '\----- oldest' "${file}" |cut -d' ' -f3)
         if [ -n "$dt2" ]; then
@@ -404,7 +404,7 @@ edit_list() {
         if [ $ret -eq 0 ]; then
             if grep "$(gettext "Reverse items order")" <<< "$rest"; then
                 return 2
-            elif grep "$(gettext "Show sentences en words view")" <<< "$rest"; then
+            elif grep "$(gettext "Sentences with less than 5 words show on word's view")" <<< "$rest"; then
                 return 4
             elif grep "$(gettext "Translate source language")" <<< "$rest"; then
                 return 5
@@ -452,12 +452,12 @@ edit_list() {
     if [ $ret = 5 ]; then dlg_more; ret=$?; fi
     
         if [ $ret = 2 ]; then
-            msg_2 "$(gettext "Are you sure you want to reverse the list?")\n" \
+            msg_2 "$(gettext "Are you sure you want to do this?")\n" \
             dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
             [ $? = 0 ] && ret=2 || ret=1
             
         elif [ $ret = 4 ]; then
-            msg_2 "$(gettext "Are you sure you want to change viewer to sentence?")\n" \
+            msg_2 "$(gettext "Are you sure you want to do this?")\n" \
             dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
             [ $? = 0 ] && ret=4 || ret=1
             
@@ -494,7 +494,7 @@ edit_list() {
                 item="$(grep -F -m 1 "trgt{${trgt}}" "${direc}/0.cfg" |sed 's/}/}\n/g')"
                 get_item "${item}"
                 if [ $ret -eq 4 ]; then
-                    [[ $(wc -$c <<< "${trgt}") -lt 4 ]] && type=1
+                    [ $(wc -$c <<< "${trgt}") -lt 4 ] && type=1
                 fi
                 if [ ${type} = 1 ]; then
                     echo "${trgt}" >> "${direc}/3.cfg"
@@ -556,6 +556,7 @@ edit_list() {
                 type=$(grep -oP '(?<=type{).*(?=})' <<<"${item}")
                 cdid=$(grep -oP '(?<=cdid{).*(?=})' <<<"${item}")
                 trgt_mod="${trgt}"; grmr="${trgt}"; srce="$temp"
+                > "$DT/${trgt}.edit"
                 
                 if [ ${type} = 1 ]; then
                     srce_mod="$(clean_9 "$(translate "${trgt}" $lgt $lgs)")"
@@ -579,6 +580,7 @@ edit_list() {
                 ${pos}s|wrds{$wrds}|wrds{$wrds_mod}|;
                 ${pos}s|grmr{$trgt}|grmr{$grmr_mod}|;
                 ${pos}s|cdid{$cdid}|cdid{$cdid_mod}|g" "${direc}/0.cfg"
+                cleanups "$DT/${trgt}.edit"
             done < "$DT/items_to_add"
         fi
     fi
