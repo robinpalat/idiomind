@@ -217,8 +217,10 @@ function list_words_edit() {
     
     if [ $? -eq 0 ]; then
         while read -r chkst; do
-            sed 's/TRUE//;s/<[^>]*>//g' <<< "${chkst}" >> "$DT_r/slts"
-        done <<< "$(sed 's/|//g' <<< "${slt}")"
+            if [ -n "$chkst" ]; then
+            sed 's/TRUE//;s/<[^>]*>//g;s/|//g' <<< "${chkst}" >> "$DT_r/slts"
+            fi
+        done <<< "${slt}"
     fi
     
     n=1
@@ -266,8 +268,10 @@ function list_words_sentence() {
     fi
         if [ $? -eq 0 ]; then
             while read -r chkst; do
-                sed 's/TRUE//;s/<[^>]*>//g' <<< "${chkst}"  >> "$DT_r/slts"
-            done <<< "$(sed 's/|//g' <<< "${slt}")"
+                if [ -n "$chkst" ]; then
+                sed 's/TRUE//;s/<[^>]*>//g;s/|//g' <<< "${chkst}" >> "$DT_r/slts"
+                fi
+            done <<< "${slt}"
         elif [ $? -eq 1 ]; then
             rm -f "$DT"/*."$c"
             cleanups "$DT_r"
@@ -307,7 +311,6 @@ function list_words_sentence() {
 function list_words_dclik() {
     source "$DS/ifs/mods/add/add.sh"
     words="${3}"
-    check_s "${tpe}"
     
     if [ $lgt = ja -o $lgt = 'zh-cn' -o $lgt = ru ]; then
         ( echo "1"
@@ -325,9 +328,11 @@ function list_words_dclik() {
     
     if [ $? -eq 0 ]; then
         while read -r chkst; do
-            sed 's/TRUE//;s/<[^>]*>//g' <<< "${chkst}" >> "$DT_r/wrds"
+            if [ -n "$chkst" ]; then
+            sed 's/TRUE//;s/<[^>]*>//g;s/|//g' <<< "${chkst}" >> "$DT_r/wrds"
             echo "${words}" >> "$DT_r/wrdsls"
-        done <<< "$(sed 's/|//g' <<< "${slt}")"
+            fi
+        done <<< "${slt}"
     fi
     exit 0
     
@@ -458,15 +463,18 @@ function process() {
             cleanups "$DT_r" "$DT/n_s_pr" "$slt" & exit 1
         fi
         while read -r chkst; do
-            sed 's/TRUE//g' <<< "${chkst}"  >> "$DT_r/slts"
-        done <<< "$(sed 's/|//g' < "${slt}")"
+            [ -n "$chkst" ] && sed 's/TRUE//g;s/|//g' <<< "${chkst}" >> "$DT_r/slts"
+        done < "${slt}"
         cleanups "$slt"
 
         touch "$DT_r/wlog" "$DT_r/slog" "$DT_r/adds" \
         "$DT_r/addw" "$DT_r/wrds"
         
-        if [[ -n "$(< "$DT_r/slts")$(< "$DT_r/wrds")" ]]; then
-            number_items=$(($(wc -l < "$DT_r/slts")+$(wc -l < "$DT_r/wrds")))
+        cnta=$(sed '/^$/d' "$DT_r/slts" |wc -l)
+        cntb=$(sed '/^$/d' "$DT_r/wrds" |wc -l)
+        
+        if [ -n "$(< "$DT_r/slts")" -o -n "$(< "$DT_r/wrds")" ]; then
+            number_items=$((cnta+cntb))
             ( sleep 1; notify-send -i idiomind \
             "$(gettext "Adding $number_items notes")" \
             "$(gettext "Please wait till the process is completed")" )
@@ -589,12 +597,19 @@ function process() {
         if  [ $? != 0 ]; then
             "$DS/stop.sh" 5
         fi
-        wadds=" $(($(wc -l < "$DT_r/addw")-$(sed '/^$/d' < "$DT_r/wlog" |wc -l)))"
+        
+        a=$(sed '/^$/d' "$DT_r/addw" |wc -l)
+        b=$(sed '/^$/d' "$DT_r/wlog" |wc -l)
+        wadds=" $((a-b))"
+        
         W=" $(gettext "words")"
         if [[ ${wadds} = 1 ]]; then
             W=" $(gettext "word")"
         fi
-        sadds=" $(($( wc -l < "$DT_r/adds")-$(sed '/^$/d' < "$DT_r/slog" |wc -l)))"
+        
+        a=$(sed '/^$/d' "$DT_r/adds" |wc -l)
+        b=$(sed '/^$/d' "$DT_r/slog" |wc -l)
+        sadds=" $((a-b))"
         S=" $(gettext "sentences")"
         if [[ ${sadds} = 1 ]]; then
             S=" $(gettext "sentence")"
