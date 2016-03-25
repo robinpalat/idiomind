@@ -260,11 +260,9 @@ function topic() {
     apply() {
             note_mod="$(< "${cnf3}")"
             if [ "${note_mod}" != "$(< "${nt}")" ]; then
-                if ! grep '^$' < <(sed -n '1p' "${cnf3}"); then
-                    echo -e "\n${note_mod}" > "${DC_tlt}/info"
-                else
-                    echo "${note_mod}" > "${DC_tlt}/info"
-                fi
+                if ! grep '^$' < <(sed -n '1p' "${cnf3}")
+                then echo -e "\n${note_mod}" > "${nt}"
+                else echo "${note_mod}" > "${nt}"; fi
             fi
             acheck_mod=$(cut -d '|' -f 3 < "${cnf4}")
             if [[ $acheck_mod != $acheck ]] && [ -n "$acheck_mod" ]; then

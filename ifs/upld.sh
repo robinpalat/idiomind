@@ -52,7 +52,7 @@ function dwld() {
             while read -r img; do
                 if [ -e "${tmp}/images/${img,,}.jpg" ]; then
                     if [ -e "$DM_t/$tlng/.share/images/${img,,}-0.jpg" \
-                    -o $(wc -w <<<"${img}") -gt 1 ]; then
+                    -o $(wc -w <<< "${img}") -gt 1 ]; then
                         img_path="${DM_tlt}/images/${img,,}.jpg"
                     else 
                         img_path="${DM_tls}/images/${img,,}-0.jpg"
@@ -190,7 +190,9 @@ function upld() {
             echo -e "autr=\"$autr_mod\"\npass=\"$pass_mod\"" > "$DC_s/3.cfg"
         fi
         if [ "${note}" != "${note_mod}"  ]; then
-            echo -e "\n${note_mod}" > "${DC_tlt}/info"
+            if ! grep '^$' <<< "${note_mod}"
+            then echo -e "\n${note_mod}" > "${DC_tlt}/info"
+            else echo "${note_mod}" > "${DC_tlt}/info"; fi
         fi
     }
     
@@ -230,7 +232,7 @@ function upld() {
             ret=$?
             
         fi
-        dlg="$(grep -oP '(?<=|).*(?=\|)' <<<"$dlg")"
+        dlg="$(grep -oP '(?<=|).*(?=\|)' <<< "$dlg")"
         ctgy=$(echo "${dlg}" |cut -d "|" -f2)
         levl=$(echo "${dlg}" |cut -d "|" -f3)
         note_mod=$(echo "${dlg}" |cut -d "|" -f4)
@@ -300,7 +302,7 @@ function upld() {
                 cp -f "$DM_tl/.share/audio/$audio.mp3" \
                 "$DT_u/files/share/$audio.mp3"
             fi
-        done <<<"$auds"
+        done <<< "$auds"
         while read -r audio; do
             if [ -f "$DM_tl/.share/audio/${audio,,}.mp3" ]; then
                 cp -f "$DM_tl/.share/audio/${audio,,}.mp3" \
@@ -406,8 +408,8 @@ _export() {
     dlg="$(fdlg)"
     ret=$?
     if [ $ret -eq 0 ]; then
-        "$DS/ifs/mods/export/$(head -n 1 <<<"$dlg").sh" \
-        "$(tail -n 1 <<<"$dlg")" "${tpc}" & exit 0
+        "$DS/ifs/mods/export/$(head -n 1 <<< "$dlg").sh" \
+        "$(tail -n 1 <<< "$dlg")" "${tpc}" & exit 0
     fi
 } >/dev/null 2>&1
 
