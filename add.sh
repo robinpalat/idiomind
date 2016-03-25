@@ -426,7 +426,7 @@ function process() {
     sed -i '/^$/d' "$DT_r/sntsls"
 
     if [ -z "$(< "$DT_r/sntsls")" ]; then
-        msg " $(gettext "Failed to get text.")\n" \
+        msg "$(gettext "Failed to get text.")\n" \
         dialog-information "$(gettext "Information")"
         cleanups "$DT_r" "$DT/n_s_pr" "$slt" & exit 1
     else
@@ -459,7 +459,7 @@ function process() {
         export DM_tlt="$DM_tl/${tpe}"
         export DC_tlt="$DM_tl/${tpe}/.conf"
         if [ ! -d "${DM_tlt}" ]; then
-            msg " $(gettext "An error occurred.")\n" dialog-warning "$(gettext "Information")"
+            msg "$(gettext "An error occurred.")\n" dialog-warning "$(gettext "Information")"
             cleanups "$DT_r" "$DT/n_s_pr" "$slt" & exit 1
         fi
         while read -r chkst; do
