@@ -242,26 +242,30 @@ function topic() {
         autr=$(grep -oP '(?<=autr=\").*(?=\")' <<< "${inf}")
         dtec=$(grep -oP '(?<=dtec=\").*(?=\")' <<< "${inf}")
         dtei=$(grep -oP '(?<=dtei=\").*(?=\")' <<< "${inf}")
-        acheck=$(grep -oP '(?<=acheck=\").*(?=\")' "${DC_tlt}/10.cfg")
         repass=$(grep -oP '(?<=repass=\").*(?=\")' "${DC_tlt}/10.cfg")
+        export acheck=$(grep -oP '(?<=acheck=\").*(?=\")' "${DC_tlt}/10.cfg")
         [ -z $repass ] && repass=0
         ( if [ -e "${DC_tlt}/err" ]; then
         sleep 2; include "$DS/ifs/mods/add"
         dlg_text_info_3 "$(cat "${DC_tlt}/err")"; fi ) &
-        c=$((RANDOM%100000)); KEY=$c
-        cnf1=$(mktemp "$DT/cnf1.XXXX")
-        cnf3=$(mktemp "$DT/cnf3.XXXX")
-        cnf4=$(mktemp "$DT/cnf4.XXXX")
-        if [ ! -z "$dtei" ]; then infolbl="$(gettext "Review ")$repass. $(gettext "Installed on") $dtei\n$(gettext "created by") $autr"
-        elif [ ! -z "$dtec" ]; then infolbl="$(gettext "Review ")$repass. $(gettext "Created on") $dtec"; fi
-        lbl1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><small>\n$cfg4 $(gettext "Sentences") $cfg3 $(gettext "Words") \n$infolbl</small>"
+        c=$((RANDOM%100000)); export KEY=$c
+        export cnf1=$(mktemp "$DT/cnf1.XXXX")
+        export cnf3=$(mktemp "$DT/cnf3.XXXX")
+        export cnf4=$(mktemp "$DT/cnf4.XXXX")
+        if [ ! -z "$dtei" ]; then export infolbl="$(gettext "Review ")$repass. $(gettext "Installed on") $dtei\n$(gettext "created by") $autr"
+        elif [ ! -z "$dtec" ]; then export infolbl="$(gettext "Review ")$repass. $(gettext "Created on") $dtec"; fi
+        export lbl1="<span font_desc='Free Sans 15' color='#505050'>${tpc}</span><small>\n$cfg4 $(gettext "Sentences") $cfg3 $(gettext "Words") \n$infolbl</small>"
     }
     
     apply() {
             note_mod="$(< "${cnf3}")"
             if [ "${note_mod}" != "$(< "${nt}")" ]; then
-            echo -e "\n${note_mod}" > "${DC_tlt}/info"; fi
-            
+                if ! grep '^$' < <(sed -n '1p' "${cnf3}"); then
+                    echo -e "\n${note_mod}" > "${DC_tlt}/info"
+                else
+                    echo "${note_mod}" > "${DC_tlt}/info"
+                fi
+            fi
             acheck_mod=$(cut -d '|' -f 3 < "${cnf4}")
             if [[ $acheck_mod != $acheck ]] && [ -n "$acheck_mod" ]; then
             sed -i "s/acheck=.*/acheck=\"$acheck_mod\"/g" "${DC_tlt}/10.cfg"; fi

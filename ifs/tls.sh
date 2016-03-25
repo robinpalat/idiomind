@@ -375,14 +375,14 @@ first_run() {
         yad --title="${title}" --text="${note}" \
         --name=Idiomind --class=Idiomind \
         --always-print-result --selectable-labels \
-        --window-icon=idiomind \
+        --image=dialog-information --window-icon=idiomind \
         --image-on-top --on-top --sticky --center \
         --width=500 --height=140 --borders=5 \
         --button="$(gettext "Do not show again")":1 \
         --button="$(gettext "OK")":0
         if [ $? = 1 ]; then rm -f "${file}" "${file}".p; fi
     }
-    NOTE2="$(gettext "You can move any item by dragging and dropping or double click to edit it.\nIf you change the text of an item, its audio file can be overwritten by another new file, to avoid this you can edit it individually through its edit dialog.\nClose and reopen the main window to see any changes.")"
+    NOTE2="$(gettext "You can move any item by dragging and dropping or double click to edit it.\n\nIf you change the text of an item, its audio file can be overwritten by another new file, to avoid this you can edit it individually through its edit dialog.\n\nClose and reopen the main window to see any changes.")"
     NOTE3="$(gettext "To start adding notes you need to have a Topic.\nTo create one you can click on the New button...")"
 
     if [[ ${2} = edit_list ]]; then
@@ -565,10 +565,10 @@ colorize() {
     if [[ $(egrep -cv '#|^$' < "${DC_tlt}/9.cfg") -ge 4 ]] \
     && [[ $(grep -oP '(?<=acheck=\").*(?=\")' "${DC_tlt}/10.cfg") = TRUE ]] \
     && [[ ${2} = 1 ]]; then chk=TRUE; else chk=FALSE; fi
-    img1='/usr/share/idiomind/images/1.png'
-    img2='/usr/share/idiomind/images/2.png'
-    img3='/usr/share/idiomind/images/3.png'
-    img0='/usr/share/idiomind/images/0.png'
+    img1="$DS/images/1.png"
+    img2="$DS/images/2.png"
+    img3="$DS/images/3.png"
+    img0="$DS/images/0.png"
     cfg1="${DC_tlt}/1.cfg"
     cfg5="${DC_tlt}/5.cfg"
     cfg6="${DC_tlt}/6.cfg"

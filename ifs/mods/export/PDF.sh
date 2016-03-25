@@ -13,7 +13,7 @@ _head(){
 
 _note(){
     cat <<!EOF
-<div align="left" border="0" class="block0">$note<br><br></div><br>
+<div align="left" border="0" class="block0">$note<br><br></div>
 !EOF
 }
 
@@ -61,8 +61,8 @@ mkhtml() {
         done < "${DC_tlt}/3.cfg"
     fi
     _head > "$file"
-    note="$(sed ':a;N;$!ba;s/\n/<br>/g' < "${DC_tlt}/info" |sed 's/\&/&amp;/g')"
-    [ -n "${note}" ] && _note >> "$file"
+    note="$(sed '/^$/d' "${DC_tlt}/info" |sed ':a;N;$!ba;s/\n/<br>/g;s/\&/&amp;/g')"
+    [ -n "${note}" ] && _note >> "$file" || echo "<br>" >> "$file"
     
     tr=1; n=1
     while read -r _item; do
@@ -126,13 +126,10 @@ mkhtml() {
         let tr++
     done < "${DC_tlt}/0.cfg"
     
-    echo -e "$(< "$file.words2")" >> "$file"
-    echo -e "<br>" >> "$file"
+    echo -e "$(< "$file.words2")\n<br>" >> "$file"
     echo -e "$(< "$file.words0")" >> "$file"
-    echo -e "$(< "$file.words1")" >> "$file"
-    echo -e "<br>" >> "$file"
-    echo -e "$(< "$file.sente")" >> "$file"
-    echo -e "</body></html>" >> "$file"
+    echo -e "$(< "$file.words1")\n<br><br>" >> "$file"
+    echo -e "$(< "$file.sente")</body></html>" >> "$file"
 }
 
 [ -z "${f}" ] && f=0

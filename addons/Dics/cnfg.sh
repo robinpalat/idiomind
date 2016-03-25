@@ -26,15 +26,15 @@ function add_dlg() {
     
     if [ $ret -eq 0 -a -f "${add}" ]; then
         info="$(basename "${add}")"
-        name="$(cut -d "." -f1 <<<"$info")"; if [ -z "$name" ]; then i=TRUE; fi
-        type="$(cut -d "." -f2 <<<"$info")"; if [ -z "$type" ]; then i=TRUE; fi
-        tget="$(cut -d "." -f3  <<<"$info")"; if [ -z "$tget" ]; then i=TRUE; fi
-        lang="$(cut -d "." -f4  <<<"$info")"; if [ -z "$lang" ]; then i=TRUE; fi
-        test="$(cut -d "." -f5  <<<"$info")"; if [ -n "$test" ]; then i=TRUE; fi
+        name="$(cut -d "." -f1 <<< "$info")"; if [ -z "$name" ]; then i=TRUE; fi
+        type="$(cut -d "." -f2 <<< "$info")"; if [ -z "$type" ]; then i=TRUE; fi
+        tget="$(cut -d "." -f3 <<< "$info")"; if [ -z "$tget" ]; then i=TRUE; fi
+        lang="$(cut -d "." -f4 <<< "$info")"; if [ -z "$lang" ]; then i=TRUE; fi
+        test="$(cut -d "." -f5 <<< "$info")"; if [ -n "$test" ]; then i=TRUE; fi
 
         if [ ${#name} -gt 50 -o ${#type} -gt 50 ]; then i=TRUE; fi
-        if ! grep -Fo "${tget}" <<<"${task[@]}"; then i=TRUE; fi
-        if ! grep -Fo "${lang}" <<<"${langs[@]}"; then i=TRUE; fi
+        if ! grep -Fo "${tget}" <<< "${task[@]}"; then i=TRUE; fi
+        if ! grep -Fo "${lang}" <<< "${langs[@]}"; then i=TRUE; fi
 
         if [ ${i} = TRUE ]; then
             msg "$(gettext "You have entered an Invalid format").\n" \
@@ -77,14 +77,14 @@ function dlg() {
     while read -r dict; do
         if [ -n "${dict}" ]; then
             echo 'TRUE'
-            sed 's/\./\n/g' <<<"${dict}"; fi
+            sed 's/\./\n/g' <<< "${dict}"; fi
     done < <(ls "$enables/")
     
     while read -r dict; do
         if [ -n "${dict}" ]; then
             echo 'FALSE'
-            if grep -E ".$lgt|.various" <<<"${dict}">/dev/null 2>&1; then
-                sed 's/\./\n/g' <<<"${dict}"| \
+            if grep -E ".$lgt|.various" <<< "${dict}">/dev/null 2>&1; then
+                sed 's/\./\n/g' <<< "${dict}"| \
                 sed "3s|${sus}|<span color='#0038FF'>${sus}<\/span>|"
             else 
                 echo "${dict}" |sed 's/\./\n/g'
@@ -99,10 +99,10 @@ function dlg() {
     for r in "$DS_a/Dics/dicts"/*; do > "$disables/$(basename "$r")"; done; fi
     
     txtinf=" $(gettext "Please, select at least one resource (script) for each task")"
-    if [[ -n "${1}" ]]; then text="--text=$txtinf"; n=${1}
+    if [ -n "${1}" ]; then text="--text=$txtinf"; n=${1}
     else text="--center"; n=6; fi
 
-    sel="$(dict_list ${n} | yad --list \
+    sel="$(dict_list ${n} |yad --list \
     --title="$(gettext "Dictionaries")" \
     --name=Idiomind --class=Idiomind "${text}" \
     --print-all --always-print-result --separator="|" \
@@ -125,10 +125,10 @@ function dlg() {
                 "$DS_a/Dics/cnfg.sh" add_dlg
         elif [ $ret -eq 0 ]; then
             while read -r dict; do
-                name="$(cut -d "|" -f2 <<<"$dict")"
-                type="$(cut -d "|" -f3 <<<"$dict")"
-                tget="$(cut -d "|" -f4  <<<"$dict")"
-                if grep 'FALSE' <<<"$dict"; then
+                name="$(cut -d "|" -f2 <<< "$dict")"
+                type="$(cut -d "|" -f3 <<< "$dict")"
+                tget="$(cut -d "|" -f4 <<< "$dict")"
+                if grep 'FALSE' <<< "$dict"; then
                     if [ ! -f "$disables/$name.$type.$tget.$lgt" ]; then
                         [ -f "$enables/$name.$type.$tget.$lgt" ] \
                         && mv -f "$enables/$name.$type.$tget.$lgt" \
@@ -140,7 +140,7 @@ function dlg() {
                         "$disables/$name.$type.$tget.various"
                     fi
                 fi
-                if grep 'TRUE'  <<<"$dict"; then
+                if grep 'TRUE' <<< "$dict"; then
                     if [ ! -f "$enables/$name.$type.$tget.$lgt" ]; then
                         [ -f "$disables/$name.$type.$tget.$lgt" ] \
                         && mv -f "$disables/$name.$type.$tget.$lgt" \
@@ -152,7 +152,7 @@ function dlg() {
                         "$enables/$name.$type.$tget.various"
                     fi
                 fi
-            done < <(sed 's/<[^>]*>//g' <<<"${sel}")
+            done < <(sed 's/<[^>]*>//g' <<< "${sel}")
         fi
     exit 1
 } >/dev/null 2>&1

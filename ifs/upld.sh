@@ -322,13 +322,11 @@ function upld() {
         cp "${DC_tlt}/6.cfg" "$DT_u/files/conf/6.cfg"
         cp "${DC_tlt}/info" "$DT_u/files/conf/info"
 
-        # create tar
         cd "$DT/upload"/
         find "$DT_u"/ -type f -exec chmod 644 {} \;
         tar czpvf - ./"files" |split -d -b 2500k - ./"${ilnk}"
         rm -fr ./"files"; rename 's/(.*)/$1.tar.gz/' *
         
-        # create id
         export nsze=$(du -h . |cut -f1)
         eval c="$(sed -n 4p "$DS/default/vars")"
         echo -e "${c}" > "${DC_tlt}/id.cfg"

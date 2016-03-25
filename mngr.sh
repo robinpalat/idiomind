@@ -493,7 +493,7 @@ edit_list() {
                 item="$(grep -F -m 1 "trgt{${trgt}}" "${direc}/0.cfg" |sed 's/}/}\n/g')"
                 get_item "${item}"
                 if [ $ret -eq 4 ]; then
-                    [ $(wc -$c <<< "${trgt}") -lt 4 ] && type=1
+                    [ $(wc -$c <<< "${trgt}") -lt 5 ] && type=1
                 fi
                 if [ ${type} = 1 ]; then
                     echo "${trgt}" >> "${direc}/3.cfg"
@@ -750,8 +750,9 @@ mark_to_learn_topic() {
         fi
     done < "${DC_tlt}/0.cfg" ) | progr_3
 
-    if [ -e "${DC_tlt}/lk" ]; then
-    rm "${DC_tlt}/lk"; fi
+    if [ -e "${DC_tlt}/lk" ]; then rm "${DC_tlt}/lk"; fi
+    
+    cp -f "${DC_tlt}/info" "${DC_tlt}/info.bk"
         
     if [[ ${3} = 1 ]]; then
     kill -9 $(pgrep -f "yad --multi-progress ") &
@@ -760,6 +761,9 @@ mark_to_learn_topic() {
     kill -9 $(pgrep -f "yad --form ") &
     kill -9 $(pgrep -f "yad --notebook ") & fi
     touch "${DM_tlt}"
+    
+    ( sleep 1; mv -f "${DC_tlt}/info.bk" "${DC_tlt}/info" ) &
+
     "$DS/mngr.sh" mkmn 1 &
     
     [[ ${3} = 1 ]] && idiomind topic &
@@ -824,6 +828,8 @@ mark_as_learned_topic() {
         trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
         [ -n "${trgt}" ] && echo "${trgt}" >> "${DC_tlt}/2.cfg"
     done < "${DC_tlt}/0.cfg" ) | progr_3
+    
+    cp -f "${DC_tlt}/info" "${DC_tlt}/info.bk"
 
     if [[ ${3} = 1 ]]; then
     kill -9 $(pgrep -f "yad --list ") &
@@ -831,6 +837,8 @@ mark_as_learned_topic() {
     kill -9 $(pgrep -f "yad --form ") &
     kill -9 $(pgrep -f "yad --notebook ") & fi
     "$DS/mngr.sh" mkmn 1 &
+    
+    ( sleep 1; mv -f "${DC_tlt}/info.bk" "${DC_tlt}/info" ) &
     
     [[ ${3} = 1 ]] && idiomind topic &
     ( sleep 1; "$DS/ifs/tls.sh" colorize 0 ) &
