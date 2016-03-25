@@ -142,7 +142,7 @@ if grep -o '.idmnd' <<<"${1: -6}" >/dev/null 2>&1; then
     level="${lv[${levl}]}"
     itxt="<span font_desc='Droid Sans Bold 12' color='#616161'>$name</span>\n$nwrd $(gettext "Words") \
 $nsnt $(gettext "Sentences") $nimg $(gettext "Images") \n$(gettext "Level:") \
-$levl \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(gettext "$slng")"
+$level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(gettext "$slng")"
     dclk="$DS/play.sh play_word"
     _lst() {
         while read -r line; do
@@ -179,11 +179,11 @@ $levl \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(g
                 name="${name} ($i)"
             fi
 
-            check_dir "$DM_t/$langt" "$DM_t/$langt/.share/images" \
-            "$DM_t/$langt/.share/audio" "$DM_t/$langt/.share/data" \
-            "$DM_t/$langt/${name}/.conf/practice"
-            DM_tlt="$DM_t/$langt/${name}"
-            DC_tlt="$DM_t/$langt/${name}/.conf"
+            check_dir "$DM_t/$tlng" "$DM_t/$tlng/.share/images" \
+            "$DM_t/$tlng/.share/audio" "$DM_t/$tlng/.share/data" \
+            "$DM_t/$tlng/${name}/.conf/practice"
+            DM_tlt="$DM_t/$tlng/${name}"
+            DC_tlt="$DM_t/$tlng/${name}/.conf"
             
             for i in {1..6}; do > "${DC_tlt}/${i}.cfg"; done
             for i in {1..3}; do > "${DC_tlt}/practice/log${i}"; done
@@ -214,7 +214,7 @@ $levl \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(g
             done < "${DC_tlt}/0.cfg"
 
             "$DS/ifs/tls.sh" colorize 1
-            echo -e "$langt\n$slng" > "$DC_s/6.cfg"
+            echo -e "$tlng\n$slng" > "$DC_s/6.cfg"
             echo 1 > "${DC_tlt}/8.cfg"
             echo "${name}" >> "$DM_tl/.share/3.cfg"
             source /usr/share/idiomind/default/c.conf
