@@ -212,23 +212,23 @@ edit_item() {
             dlaud="$(grep -oP '(?<=dlaud=\").*(?=\")' "$DC_s/1.cfg")"
             if [ ${type} = 1 ]; then
                 edit_dlg="${edit_dlg1}"
-                tpc_mod="$(cut -d "|" -f3 <<< "${edit_dlg}")"
                 trgt_mod="$(clean_9 "$(cut -d "|" -f1 <<< "${edit_dlg}")")"
                 srce_mod="$(clean_9 "$(cut -d "|" -f2 <<< "${edit_dlg}")")"
-                audf_mod="$(cut -d "|" -f10 <<<"${edit_dlg}")"
                 exmp_mod="$(clean_0 "$(cut -d "|" -f5 <<< "${edit_dlg}")")"
                 defn_mod="$(clean_0 "$(cut -d "|" -f6 <<< "${edit_dlg}")")"
                 note_mod="$(clean_0 "$(cut -d "|" -f7 <<< "${edit_dlg}")")"
-                mark_mod="$(cut -d "|" -f9 <<<"${edit_dlg}")"
+                tpc_mod="$(cut -d "|" -f3 <<< "${edit_dlg}")"
+                mark_mod="$(cut -d "|" -f9 <<< "${edit_dlg}")"
+                audf_mod="$(cut -d "|" -f10 <<< "${edit_dlg}")"
                 type_mod=1
             elif [ ${type} = 2 ]; then
                 edit_dlg="${edit_dlg2}"
-                tpc_mod="$(cut -d "|" -f6 <<< "${edit_dlg}")"
-                mark_mod="$(cut -d "|" -f1 <<< "${edit_dlg}")"
-                type_mod="$(cut -d "|" -f2 <<< "${edit_dlg}")"
                 trgt_mod="$(clean_2 "$(cut -d "|" -f3 <<< "${edit_dlg}")")"
                 srce_mod="$(clean_2 "$(cut -d "|" -f4 <<< "${edit_dlg}")")"
                 audf_mod="$(cut -d "|" -f7 <<< "${edit_dlg}")"
+                tpc_mod="$(cut -d "|" -f6 <<< "${edit_dlg}")"
+                mark_mod="$(cut -d "|" -f1 <<< "${edit_dlg}")"
+                type_mod="$(cut -d "|" -f2 <<< "${edit_dlg}")"
                 grmr_mod="${grmr}"
                 wrds_mod="${wrds}"
                 [ "${type_mod}" = TRUE ] && type_mod=1
@@ -312,8 +312,7 @@ edit_item() {
                     exmp="${exmp_mod}"; defn="${defn_mod}"; note="${note_mod}"
                     wrds="${wrds_mod}"; grmr="${grmr_mod}";
                     mark="${mark_mod}"; link="${link_mod}"; cdid="${cdid_mod}"
-                    index ${type_mod}
-                    unset type trgt srce exmp defn note wrds grmr mark cdid
+                    index ${type_mod}; unset type trgt srce exmp defn note wrds grmr mark cdid
 
                 elif [ "${tpc}" = "${tpc_mod}" ]; then
                     cfg0="${DC_tlt}/0.cfg"
@@ -441,8 +440,8 @@ edit_list() {
 
     > "$DT/list_input"
     (echo "5"; cat "${direc}/0.cfg" | while read -r item_; do
-        item="$(sed 's/}/}\n/g' <<<"${item_}")"
-        trgt="$(grep -oP '(?<=trgt{).*(?=})' <<<"${item}")"
+        item="$(sed 's/}/}\n/g' <<< "${item_}")"
+        trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
         [ -n "${trgt}" ] && echo "${trgt}" >> "$DT/list_input"
     done ) | progr_3
 
@@ -552,8 +551,8 @@ edit_list() {
                 pos=$(grep -Fon -m 1 "trgt{${trgt}}" "${direc}/0.cfg" \
                 |sed -n 's/^\([0-9]*\)[:].*/\1/p')
                 item="$(sed -n ${pos}p "${direc}/0.cfg" |sed 's/}/}\n/g')"
-                type=$(grep -oP '(?<=type{).*(?=})' <<<"${item}")
-                cdid=$(grep -oP '(?<=cdid{).*(?=})' <<<"${item}")
+                type=$(grep -oP '(?<=type{).*(?=})' <<< "${item}")
+                cdid=$(grep -oP '(?<=cdid{).*(?=})' <<< "${item}")
                 trgt_mod="${trgt}"; grmr="${trgt}"; srce="$temp"
                 > "$DT/${trgt}.edit"
                 
@@ -658,7 +657,7 @@ rename_topic() {
     name="$(clean_3 "${2}")"
     
     if grep -Fxo "${name}" < <(ls "$DS/addons/"); then name="${name} (1)"; fi
-    chck="$(grep -Fxo "${name}" <<<"${listt}" |wc -l)"
+    chck="$(grep -Fxo "${name}" <<< "${listt}" |wc -l)"
     
     if [ ! -d "$DM_tl/${tpc}" ]; then exit 1; fi
   
@@ -676,7 +675,7 @@ rename_topic() {
     fi
     if [ ${chck} -ge 1 ]; then
         for i in {1..50}; do
-        chck=$(grep -Fxo "${name} ($i)" <<<"${listt}")
+        chck=$(grep -Fxo "${name} ($i)" <<< "${listt}")
         [ -z "${chck}" ] && break; done
         name="${name} ($i)"
     fi
@@ -738,8 +737,8 @@ mark_to_learn_topic() {
     
     while read -r item_; do
         item="$(sed 's/}/}\n/g' <<< "${item_}")"
-        type="$(grep -oP '(?<=type{).*(?=})' <<<"${item}")"
-        trgt="$(grep -oP '(?<=trgt{).*(?=})' <<<"${item}")"
+        type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")"
+        trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
         if [ -n "${trgt}" ]; then
             if [ ${type} -eq 1 ]; then
                 echo "${trgt}" >> "${DC_tlt}/3.cfg"

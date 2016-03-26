@@ -244,14 +244,14 @@ function clean_2() {
     |sed "s/’/'/g" |sed 's/quot\;/"/g' \
     |tr -s '/' '-' |tr -d ':\*' |tr -s '*&|{}[]<>+' ' ' \
     |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
-    |sed 's/^ *//; s/ *$//g; s/ — /__/g; s/<[^>]*>//g; s/-.\s*./\U&\E/g'
+    |sed 's/^ *//;s/ *$//g;s/<[^>]*>//g;s/^\s*./\U&\E/g'
     else
     echo "${1}" |sed 's/\\n/ /g' |sed ':a;N;$!ba;s/\n/ /g' \
     |sed "s/’/'/g" |sed 's/quot\;/"/g' \
     |tr -s ':\*&|{}[]<>+' ' ' \
     |sed 's/ \+/ /;s/^[ \t]*//;s/[ \t]*$//;s/-$//;s/^-//' \
     |sed 's/^ *//;s/ *$//g; s/^\s*./\U&\E/g' |tr -s '/' '-' \
-    |sed 's/ — /__/g; s|/||g; s/<[^>]*>//g; s/-.\s*./\U&\E/g'
+    |sed 's|/||g; s/<[^>]*>//g;s/^\s*./\U&\E/g' #; s/-.\s*./\U&\E/g
     fi
 }
 
@@ -267,11 +267,11 @@ function clean_4() {
     if [ $(wc -c <<< "${1}") -le ${sentence_chars} ] && \
     [ $(echo -e "${1}" |wc -l) -gt ${sentence_lines} ]; then
     echo "${1}" | tr -d '*/"' |tr -s '&:|{}[]<>+' ' ' \
-    |sed 's/ — / /;s/--/ /g; /^$/d; s/ \+/ /g;s/ʺͶ//g'
+    |sed 's/ — / - /;s/--/ /g; /^$/d; s/ \+/ /g;s/ʺͶ//g'
     elif [ $(wc -c <<< "${1}") -le ${sentence_chars} ]; then
     echo "${1}" |sed ':a;N;$!ba;s/\n/ /g' \
     |tr -d '*/"' |tr -s '&:|{}[]<>+' ' ' \
-    |sed 's/ — / /;s/--/ /g; /^$/d; s/ \+/ /g;s/ʺͶ//g'
+    |sed 's/ — / - /;s/--/ /g; /^$/d; s/ \+/ /g;s/ʺͶ//g'
     else
     echo "${1}" |sed ':a;N;$!ba;s/\n/\__/g' \
     |tr -d '*/"' |tr -s '&:|{}[]<>+' ' ' \
