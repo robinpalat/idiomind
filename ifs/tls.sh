@@ -137,19 +137,23 @@ check_index() {
         rm "${DC_tlt}/1.cfg" "${DC_tlt}/3.cfg" "${DC_tlt}/4.cfg"
         while read -r item_; do
             item="$(sed 's/}/}\n/g' <<< "${item_}")"
-            type="$(grep -oP '(?<=type{).*(?=})' <<<"${item}")"
-            trgt="$(grep -oP '(?<=trgt{).*(?=})' <<<"${item}")"
-            if [ -n "${trgt}" ]; then
-                if [[ ${type} = 1 ]]; then
-                    echo "${trgt}" >> "${DC_tlt}/3.cfg"
-                    echo "${trgt}" >> "${DC_tlt}/1.cfg"
-                elif [[ ${type} = 2 ]]; then
-                    echo "${trgt}" >> "${DC_tlt}/4.cfg"
-                    echo "${trgt}" >> "${DC_tlt}/1.cfg"
+            type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")"
+            trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
+            if [ -n "${trgt}" -a -n ${type} ]; then
+                if ! grep -Fxq "${trgt}" "${DC_tlt}/1.cfg"; then
+                    if [ ${type} = 1 ]; then
+                        echo "${trgt}" >> "${DC_tlt}/3.cfg"
+                        echo "${trgt}" >> "${DC_tlt}/1.cfg"
+                        echo "${item_}" >> "${DC_tlt}/0"
+                    elif [ ${type} = 2 ]; then
+                        echo "${trgt}" >> "${DC_tlt}/4.cfg"
+                        echo "${trgt}" >> "${DC_tlt}/1.cfg"
+                        echo "${item_}" >> "${DC_tlt}/0"
+                    fi
                 fi
             fi
         done < "${DC_tlt}/0.cfg"
-        > "${DC_tlt}/2.cfg"
+        > "${DC_tlt}/2.cfg"; mv -f "${DC_tlt}/0" "${DC_tlt}/0.cfg"
         
         sed -i '/^$/d' "${DC_tlt}/0.cfg"
     }

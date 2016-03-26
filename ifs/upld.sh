@@ -230,7 +230,6 @@ function upld() {
         elif [ -n "${autr}" -o -n "${pass}" ]; then
             dlg="$(dlg_upload)"
             ret=$?
-            
         fi
         dlg="$(grep -oP '(?<=|).*(?=\|)' <<< "$dlg")"
         ctgy=$(echo "${dlg}" |cut -d "|" -f2)
