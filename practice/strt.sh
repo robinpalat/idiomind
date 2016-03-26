@@ -677,7 +677,7 @@ function starting() {
     --text=" $1\t\n" --image="dialog-information" \
     --window-icon=idiomind \
     --skip-taskbar --center --on-top \
-    --width=340 --height=120 --borders=5 \
+    --width=340 --height=100 --borders=5 \
     --button="    $(gettext "Ok")    ":1
     strt 0
 }

@@ -144,17 +144,16 @@ check_index() {
                     if [ ${type} = 1 ]; then
                         echo "${trgt}" >> "${DC_tlt}/3.cfg"
                         echo "${trgt}" >> "${DC_tlt}/1.cfg"
-                        echo "${item_}" >> "${DC_tlt}/0"
+                        echo "${item_}" >> "$DT/0.cfg"
                     elif [ ${type} = 2 ]; then
                         echo "${trgt}" >> "${DC_tlt}/4.cfg"
                         echo "${trgt}" >> "${DC_tlt}/1.cfg"
-                        echo "${item_}" >> "${DC_tlt}/0"
+                        echo "${item_}" >> "$DT/0.cfg"
                     fi
                 fi
             fi
         done < "${DC_tlt}/0.cfg"
-        > "${DC_tlt}/2.cfg"; mv -f "${DC_tlt}/0" "${DC_tlt}/0.cfg"
-        
+        > "${DC_tlt}/2.cfg"; mv -f "$DT/0.cfg" "${DC_tlt}/0.cfg"
         sed -i '/^$/d' "${DC_tlt}/0.cfg"
     }
     
