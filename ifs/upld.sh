@@ -363,8 +363,8 @@ url = requests.get('http://idiomind.sourceforge.net/uploads.php').url
 direc = os.environ['direc']
 volumes = [i for i in os.listdir(direc)]
 for f in volumes:
-    file = {'file': open(f, 'rb')}
-    r = requests.post(url, files=file)
+    fl = {'file': open(f, 'rb')}
+    r = requests.post(url, files=fl)
     time.sleep(5)
 END
         u=$?
