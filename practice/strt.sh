@@ -82,10 +82,10 @@ function practice_a() {
         _item="$(grep -F -m 1 "trgt{${item}}" "${cfg0}" |sed 's/}/}\n/g')"
         if [[ ${rev} = 0 ]]; then
             trgt="${item}"
-            srce="$(grep -oP '(?<=srce{).*(?=})' <<<"${_item}")"
+            srce="$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")"
         else
             srce="${item}"
-            trgt="$(grep -oP '(?<=srce{).*(?=})' <<<"${_item}")"
+            trgt="$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")"
         fi
         trgt_f_c=$((38-${#trgt}))
         trgt_f_a=$((25-${#trgt}))
@@ -174,14 +174,14 @@ function practice_b(){
         _item="$(grep -F -m 1 "trgt{${item}}" "${cfg0}" |sed 's/}/}\n/g')"
         if [[ ${rev} = 0 ]]; then
             trgt="${item}"
-            srce=$(grep -oP '(?<=srce{).*(?=})' <<<"${_item}")
+            srce=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
             ras=$(sort -Ru b.srces |egrep -v "$srce" |head -${P})
             tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
             srce_s=$((35-${#trgt}))
             question="\n<span font_desc='Free Sans ${srce_s}'><b>${trgt}</b></span>\n\n"
         else
             srce="${item}"
-            trgt=$(grep -oP '(?<=srce{).*(?=})' <<<"${_item}")
+            trgt=$(grep -oP '(?<=srce{).*(?=})' <<< "${_item}")
             ras=$(sort -Ru "${cfg3}" |egrep -v "$srce" |head -${P})
             tmp="$(echo -e "$ras\n$srce" |sort -Ru |sed '/^$/d')"
             srce_s=$((35-${#trgt}))
@@ -192,8 +192,8 @@ function practice_b(){
     ofonts() {
         while read -r name; do
         echo "<span font_desc='Free Sans 13'> $name </span>"
-        done <<<"${tmp}"
-        }
+        done <<< "${tmp}"
+    }
 
     mchoise() {
         dlg=$(ofonts | yad --list --title="$(gettext "Practice")" \
@@ -264,7 +264,7 @@ function practice_c() {
         fi
         
         item="$(grep -F -m 1 "trgt{${trgt}}" "${cfg0}" |sed 's/}/}\n/g')"
-        cdid="$(grep -oP '(?<=cdid{).*(?=})' <<<"${item}")"
+        cdid="$(grep -oP '(?<=cdid{).*(?=})' <<< "${item}")"
         s=$((30-${#trgt}))
         lquestion="\n\n<span font_desc='Verdana ${s}'><b>${lst}</b></span>\n\n\n"
         }
@@ -280,8 +280,8 @@ function practice_c() {
         --width=390 --height=260 --borders=10 \
         --field="!$DS/images/listen.png":BTN "$cmd_play" \
         --button="$(gettext "Exit")":1 \
-        --button=" $(gettext "No") !$img_no":3 \
-        --button=" $(gettext "Yes") !$img_yes":2
+        --button="  $(gettext "No")  !$img_no":3 \
+        --button="  $(gettext "Yes")  !$img_yes":2
         }
 
     p=1
@@ -351,7 +351,7 @@ function practice_d() {
         --width=418 --height=370 --borders=5 \
         --field="$cuest":lbl "" \
         --button="$(gettext "Exit")":1 \
-        --button=" $(gettext "Continue") >>!$img_cont":0
+        --button="  $(gettext "Continue") >>  !$img_cont":0
     }
 
     answer() {
@@ -440,7 +440,7 @@ function practice_e() {
         --field="" "" \
         --button="$(gettext "Exit")":1 \
         --button="!$DS/images/listen.png":"$cmd_play" \
-        --button="  $(gettext "Check")  ":0)
+        --button="    $(gettext "Check")    ":0)
         }
         
     check() {
@@ -455,7 +455,7 @@ function practice_e() {
         --width=530 --height=230 --borders=14 \
         --field="":lbl "" \
         --field="<span font_desc='Free Sans 9'>$OK\n\n$prc $hits</span>":lbl \
-        --button="$(gettext "Continue")":2
+        --button="    $(gettext "Continue")    ":2
         }
         
     get_text() {
@@ -463,7 +463,7 @@ function practice_e() {
         chk=`echo "${trgt}" |awk '{print tolower($0)}'`
         }
 
-    clean() {
+    _clean() {
         sed 's/ /\n/g' \
         | sed 's/,//;s/\!//;s/\?//;s/¿//;s/\¡//;s/(//;s/)//;s/"//g' \
         | sed 's/\-//;s/\[//;s/\]//;s/\.//;s/\://;s/\|//;s/)//;s/"//g' \
@@ -471,17 +471,17 @@ function practice_e() {
         }
 
     result() {
-        if [[ $(wc -w <<<"$chk") -gt 6 ]]; then
-        out=$(awk '{print tolower($0)}' <<<"${entry}" |clean |grep -v '^.$')
-        in=$(awk '{print tolower($0)}' <<<"${chk}" |clean |grep -v '^.$')
+        if [[ $(wc -w <<< "$chk") -gt 6 ]]; then
+        out=$(awk '{print tolower($0)}' <<< "${entry}" |_clean |grep -v '^.$')
+        in=$(awk '{print tolower($0)}' <<< "${chk}" |_clean |grep -v '^.$')
         else
-        out=$(awk '{print tolower($0)}' <<<"${entry}" |clean)
-        in=$(awk '{print tolower($0)}' <<<"${chk}" |clean)
+        out=$(awk '{print tolower($0)}' <<< "${entry}" |_clean)
+        in=$(awk '{print tolower($0)}' <<< "${chk}" |_clean)
         fi
         
         echo "${chk}" > ./chk.tmp; touch ./words.tmp
-        for line in `sed 's/ /\n/g' <<<"$out"`; do
-            if grep -Fxq "${line}" <<<"$in"; then
+        for line in `sed 's/ /\n/g' <<< "$out"`; do
+            if grep -Fxq "${line}" <<< "$in"; then
                 sed -i "s/"${line}"/<b>"${line}"<\/b>/g" ./chk.tmp # TODO
                 [ -n "${line}" ] && echo \
                 "<span color='#3A9000'><b>${line^}</b></span>  " >> ./words.tmp
@@ -522,7 +522,7 @@ function practice_e() {
         pos=$(grep -Fon -m 1 "trgt{${trgt}}" "${cfg0}" \
         |sed -n 's/^\([0-9]*\)[:].*/\1/p')
         item=$(sed -n ${pos}p "${cfg0}" |sed 's/}/}\n/g')
-        cdid=$(grep -oP '(?<=cdid{).*(?=})' <<<"${item}")
+        cdid=$(grep -oP '(?<=cdid{).*(?=})' <<< "${item}")
         get_text "${trgt}"
         cmd_play="$DS/play.sh play_sentence ${cdid}"
         ( sleep 0.5 && "$DS/play.sh" play_sentence ${cdid} ) &
@@ -572,7 +572,7 @@ function get_list() {
             ( echo "5"
             while read word; do
                 item="$(grep -F -m 1 "trgt{${word}}" "${cfg0}" |sed 's/}/}\n/g')"
-                echo "$(grep -oP '(?<=srce{).*(?=})' <<<"${item}")" >> "$dir/b.srces"
+                echo "$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")" >> "$dir/b.srces"
             done < "$dir/${practice}.0" ) | yad --progress \
             --undecorated \
             --pulsate --auto-close \
@@ -608,7 +608,7 @@ function get_list() {
     elif [ ${practice} = e ]; then
         if [[ $(wc -l < "${cfg3}") -gt 0 ]]; then
             grep -Fxvf "${cfg3}" "${cfg1}" > "$DT/slist"
-            sed '/^$/d' < "$DT/slist"  > "$dir/${practice}.0"
+            sed '/^$/d' < "$DT/slist" > "$dir/${practice}.0"
             rm -f "$DT/slist"
         else
             sed '/^$/d' < "${cfg1}" > "$dir/${practice}.0"
@@ -627,9 +627,9 @@ function lock() {
                 --image="dialog-ok-apply" \
                 --window-icon=idiomind --on-top --skip-taskbar --center \
                 --width=400 --height=100 --borders=2 \
-                --button=" $(gettext "Restart B") !!$(gettext "Questions in $slng - Answers in $tlng") ":2 \
-                --button=" $(gettext "Restart A") !!$(gettext "Questions in $tlng - Answers in $slng") ":0 \
-                --button="    $(gettext "OK")    ":1
+                --button="$(gettext "Restart B")!!$(gettext "Questions in $slng - Answers in $tlng") ":2 \
+                --button="$(gettext "Restart A")!!$(gettext "Questions in $tlng - Answers in $slng") ":0 \
+                --button="$(gettext "OK")":1
                 ret=$?
             elif grep -o -E 'c|e' <<< ${practice}; then
                 yad --title="$(gettext "Practice Completed")" \
@@ -637,8 +637,8 @@ function lock() {
                 --image="dialog-ok-apply" \
                 --window-icon=idiomind --on-top --skip-taskbar --center \
                 --width=400 --height=100 --borders=2 \
-                --button=" $(gettext "Restart") !!$(gettext "Questions: $tlng | Answers: $slng") ":0 \
-                --button="    $(gettext "OK")    ":1
+                --button="$(gettext "Restart")!!$(gettext "Questions: $tlng | Answers: $slng") ":0 \
+                --button="$(gettext "OK")":1
                 ret=$?
             fi
         else
@@ -651,8 +651,8 @@ function lock() {
                 --image="dialog-information" \
                 --window-icon=idiomind --on-top --skip-taskbar --center \
                 --width=400 --height=100 --borders=2 \
-                --button="    "$(gettext "Practice")"    ":4 \
-                --button="    $(gettext "OK")    ":1
+                --button="$(gettext "Practice")":4 \
+                --button="$(gettext "OK")":1
                 ret=$?
             fi
         fi
@@ -677,8 +677,8 @@ function starting() {
     --text=" $1\t\n" --image="dialog-information" \
     --window-icon=idiomind \
     --skip-taskbar --center --on-top \
-    --width=340 --height=100 --borders=5 \
-    --button="    $(gettext "Ok")    ":1
+    --width=380 --height=100 --borders=5 \
+    --button="$(gettext "Ok")":1
     strt 0
 }
 

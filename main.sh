@@ -63,11 +63,7 @@ function new_session() {
     
     if ls "$DC_s"/*.p 1> /dev/null 2>&1; then
     cd "$DC_s"/; rename 's/\.p$//' *.p; fi; cd /
-    
-    s="$(xrandr |grep '*' |awk '{ print $1 }' |sed 's/x/\n/')"
-    sed -n 1p <<<"$s" >> "$DC_s/10.cfg"
-    sed -n 2p <<<"$s" >> "$DC_s/10.cfg"
-    
+
     # check database
     cdb="$DM_tls/data/${tlng}.db"
     if [ ! -e ${cdb} ]; then
@@ -165,15 +161,15 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
         if [ $ret -eq 0 ]; then
             listt="$(cd "$DM_tl"; find ./ -maxdepth 1 -type d \
             ! -path "./.share"  |sed 's|\./||g'|sed '/^$/d')"
-            if [ $(wc -l <<<"$listt") -ge 120 ]; then
+            if [ $(wc -l <<< "$listt") -ge 120 ]; then
                 msg "$(gettext "Maximum number of topics reached.")\n" \
                 dialog-information "$(gettext "Information")" & exit
             fi
             cn=0
-            if [[ $(grep -Fxo "${name}" <<<"${listt}" |wc -l) -ge 1 ]]; then
+            if [[ $(grep -Fxo "${name}" <<< "${listt}" |wc -l) -ge 1 ]]; then
                 cn=1
                 for i in {1..50}; do
-                    chck=$(grep -Fxo "${name} ($i)" <<<"${listt}")
+                    chck=$(grep -Fxo "${name} ($i)" <<< "${listt}")
                     [ -z "$chck" ] && break
                 done
                 name="${name} ($i)"
@@ -200,9 +196,9 @@ $level \n$(gettext "Language:") $(gettext "$tlng")  $(gettext "Translation:") $(
             sed -i 's/^\s*./trgt{/g' "${DC_tlt}/0.cfg"
 
             while read item_; do
-                item="$(sed 's/}/}\n/g' <<<"${item_}")"
-                type="$(grep -oP '(?<=type{).*(?=})' <<<"${item}")"
-                trgt="$(grep -oP '(?<=trgt{).*(?=})' <<<"${item}")"
+                item="$(sed 's/}/}\n/g' <<< "${item_}")"
+                type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")"
+                trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
                 if [ -n "${trgt}" ]; then
                     if [[ ${type} = 1 ]]; then
                         echo "${trgt}" >> "${DC_tlt}/3.cfg"
@@ -457,22 +453,18 @@ ipanel() {
     } >/dev/null 2>&1
     
     if [ -e "$DC_s/5.cfg" ]; then
-        geom=$(grep -o \"[^\"]* "$DC_s/5.cfg" |grep -o '[^"]*$')
-    elif [ -e "$DC_s/10.cfg" ]; then
-        x=$(($(sed -n 2p "$DC_s/10.cfg")/2))
-        y=$(($(sed -n 3p "$DC_s/10.cfg")/2))
-        geom="140x190-${x}-${y}"
-        echo -e "\"$geom\"" > "$DC_s/5.cfg"
+    geometry=$(grep -o \"[^\"]* "$DC_s/5.cfg" |grep -o '[^"]*$')
+    if [ -n "$geometry" ]; then geometry="--geometry=$geometry"; fi
     fi
-    if ! [[ ${x} =~ $numer ]]; then x=200; y=200; fi
-    
+    if [ -z "$geometry" ]; then geometry="--center"; fi
+
     ( yad --fixed --form --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
     --always-print-result \
     --window-icon=idiomind \
     --gtkrc="$DS/default/gtkrc.cfg" \
     --on-top --no-buttons --align=center \
-    --width=140 --height=180 --borders=0 --geometry=${geom} \
+    --width=140 --height=180 --borders=0 ${geometry} \
     --field="$(gettext "New")"!'document-new':btn "$DS/add.sh 'new_items'" \
     --field="$(gettext "Home")"!'go-home':btn "idiomind 'topic'" \
     --field="$(gettext "Index")"!'gtk-index':btn "$DS/chng.sh" \
