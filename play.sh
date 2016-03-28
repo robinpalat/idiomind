@@ -38,8 +38,6 @@ play_file() {
     if [ -e "${2}" ]; then
         if [[ ${mime} = 0 ]]; then
             exit 1
-        elif [[ ${mime} = 2 ]]; then
-            mplayer "${2}" -noconsolecontrols -title "${3}"
         else
             mplayer "${2}" -novideo -noconsolecontrols -title "${3}"
         fi

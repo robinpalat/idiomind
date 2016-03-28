@@ -621,7 +621,7 @@ function dlg_text_info_1() {
     --skip-taskbar --center --on-top \
     --width=700 --height=450 --borders=5 \
     --button="$(gettext "Cancel")":1 \
-    --button="$(gettext "Apply")":0
+    --button="$(gettext "Save")":0
 }
 
 function msg_3() {

@@ -2,8 +2,8 @@
 # -*- ENCODING: UTF-8 -*-
 
 function vwr() {
-    [ ${1} = 1 ] && index="${DC_tlt}/1.cfg" && item_name="$(sed 's/<[^>]*>//g' <<<"${3}")"
-    [ ${1} = 2 ] && index="${DC_tlt}/2.cfg" && item_name="$(sed 's/<[^>]*>//g' <<<"${2}")"
+    [ ${1} = 1 ] && index="${DC_tlt}/1.cfg" && item_name="$(sed 's/<[^>]*>//g' <<< "${3}")"
+    [ ${1} = 2 ] && index="${DC_tlt}/2.cfg" && item_name="$(sed 's/<[^>]*>//g' <<< "${2}")"
     re='^[0-9]+$'; index_pos="$3"
     if ! [[ ${index_pos} =~ $re ]]; then
         index_pos=`grep -Fxon -m 1 "${item_name}" "${index}" |sed -n 's/^\([0-9]*\)[:].*/\1/p'`
@@ -14,19 +14,19 @@ function vwr() {
         _item="$(sed -n 1p "${index}")"; index_pos=1
     fi
     item="$(grep -F -m 1 "trgt{${_item}}" "$DC_tlt/0.cfg" |sed 's/}/}\n/g')"
-    type="$(grep -oP '(?<=type{).*(?=})' <<<"${item}")"
-    export trgt="$(grep -oP '(?<=trgt{).*(?=})' <<<"${item}")"
-    export srce="$(grep -oP '(?<=srce{).*(?=})' <<<"${item}")"
-    export exmp="$(grep -oP '(?<=exmp{).*(?=})' <<<"${item}")"
-    export defn="$(grep -oP '(?<=defn{).*(?=})' <<<"${item}")"
-    export note="$(grep -oP '(?<=note{).*(?=})' <<<"${item}")"
-    export grmr="$(grep -oP '(?<=grmr{).*(?=})' <<<"${item}")"
-    export mark="$(grep -oP '(?<=mark{).*(?=})' <<<"${item}")"
-    export link="$(grep -oP '(?<=link{).*(?=})' <<<"${item}")"
-    export tags="$(grep -oP '(?<=tags{).*(?=})' <<<"${item}")"
-    export wrds="$(grep -oP '(?<=wrds{).*(?=})' <<<"${item}")"
-    export exmp="$(sed "s/${trgt,,}/<span background='#FDFBCF'>${trgt,,}<\/\span>/g" <<<"${exmp}")"
-    export cdid="$(grep -oP '(?<=cdid{).*(?=})' <<<"${item}")"
+    type="$(grep -oP '(?<=type{).*(?=})' <<< "${item}")"
+    export trgt="$(grep -oP '(?<=trgt{).*(?=})' <<< "${item}")"
+    export srce="$(grep -oP '(?<=srce{).*(?=})' <<< "${item}")"
+    export exmp="$(grep -oP '(?<=exmp{).*(?=})' <<< "${item}")"
+    export defn="$(grep -oP '(?<=defn{).*(?=})' <<< "${item}")"
+    export note="$(grep -oP '(?<=note{).*(?=})' <<< "${item}")"
+    export grmr="$(grep -oP '(?<=grmr{).*(?=})' <<< "${item}")"
+    export mark="$(grep -oP '(?<=mark{).*(?=})' <<< "${item}")"
+    export link="$(grep -oP '(?<=link{).*(?=})' <<< "${item}")"
+    export tags="$(grep -oP '(?<=tags{).*(?=})' <<< "${item}")"
+    export wrds="$(grep -oP '(?<=wrds{).*(?=})' <<< "${item}")"
+    export cdid="$(grep -oP '(?<=cdid{).*(?=})' <<< "${item}")"
+    export exmp="$(sed "s/${trgt,,}/<span background='#FDFBCF'>${trgt,,}<\/\span>/g" <<< "${exmp}")"
     text_missing=0
 
     if [ ${type} = 1 ]; then
@@ -129,7 +129,7 @@ function notebook_1() {
     chk1=$(($(wc -l < "${DC_tlt}/1.cfg")*3))
     chk5=$(wc -l < "${DC_tlt}/5.cfg")
     list() { if [[ ${chk1} = ${chk5} ]]; then
-    cat "${DC_tlt}/5.cfg"; else cat "$ls1" | \
+    cat "${DC_tlt}/5.cfg"; else cat "${ls1}" | \
     awk '{print "/usr/share/idiomind/images/0.png\n"$0"\nFALSE"}'; fi; }
     
     list | yad --list --tabnum=1 \
@@ -138,7 +138,7 @@ function notebook_1() {
     --expand-column=2 --no-headers --ellipsize=END \
     --search-column=2 --regex-search \
     --column=Name:IMG --column=Name:TEXT --column=Learned:CHK > "$cnf1" &
-    tac "$ls2" | yad --list --tabnum=2 \
+    cat "${ls2}" | yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh 2"  \
     --expand-column=0 --no-headers --ellipsize=END --tooltip-column=1 \
@@ -183,7 +183,7 @@ function notebook_2() {
     --text="$pres" \
     --plug=$KEY \
     --align=center --borders=80 --bar="":NORM $RM &
-    cat "$ls2" | yad --list --tabnum=2 \
+    cat "${ls2}" | yad --list --tabnum=2 \
     --plug=$KEY --print-all --separator='|' \
     --dclick-action="$DS/vwr.sh 2" \
     --expand-column=0 --no-headers --ellipsize=END \

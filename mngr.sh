@@ -476,7 +476,10 @@ edit_list() {
             [ $l != $slng ] && idiomind translate $l & ret=1
             
         elif [ $ret = 6 ]; then
-            "$DS/ifs/tls.sh" restore "${tpc}" ${line} & ret=1
+            msg_2 "$(gettext "Are you sure you want to do this?")\n" \
+            dialog-question "$(gettext "Yes")" "$(gettext "Cancel")" "$(gettext "Confirm")"
+            [ $? = 0 ] && "$DS/ifs/tls.sh" restore "${tpc}" ${line}
+            ret=1
         fi
 
     if [ $ret -eq 0 -o $ret -eq 2 -o $ret -eq 4 ]; then

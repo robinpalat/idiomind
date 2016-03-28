@@ -440,23 +440,24 @@ bground_session() {
 ipanel() {
     set_geom(){
         sleep 1
+        [ ! -e "$DC_s/5.cfg" ] && > "$DC_s/5.cfg"
         spost=$(xwininfo -name Idiomind |grep geometry |cut -d ' ' -f 4)
-        sed -i "s/.*/\"$spost\"/g" "$DC_s/5.cfg"
+        echo -e "\"${spost}\"" > "$DC_s/5.cfg"
         for n in {1..10}; do
             sleep 1
             cpost=$(xwininfo -name Idiomind |grep geometry |cut -d ' ' -f 4)
-            [ -z ${cpost} ] && break && exit 1
+            if [ -z ${cpost} ]; then break; return 1; fi
             if [ ${spost} != ${cpost} ]; then
-            sed -i "s/.*/\"${cpost}\"/g" "$DC_s/5.cfg"; spost=${cpost}
+                echo -e "\"${cpost}\"" > "$DC_s/5.cfg"; spost=${cpost}
             fi
         done
     } >/dev/null 2>&1
     
     if [ -e "$DC_s/5.cfg" ]; then
-    geometry=$(grep -o \"[^\"]* "$DC_s/5.cfg" |grep -o '[^"]*$')
-    if [ -n "$geometry" ]; then geometry="--geometry=$geometry"; fi
-    fi
-    if [ -z "$geometry" ]; then geometry="--center"; fi
+    geometry=$(grep -o \"[^\"]* "$DC_s/5.cfg" |grep -o '[^"]*$'); fi
+    if [ -n "$geometry" ]; then
+    geometry="--geometry=$geometry"
+    else geometry="--mouse"; fi
 
     ( yad --fixed --form --title="Idiomind" \
     --name=Idiomind --class=Idiomind \
