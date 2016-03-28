@@ -14,14 +14,14 @@ cbwatch() {
             stt1=$(xinput --query-state $id |grep 'button\[' |sort)
             while true; do
                 stt2=$(xinput --query-state $id |grep 'button\[' |sort)
-                if grep 'up' <<<$(comm -13 <(echo "$stt1") <(echo "$stt2")); then break; fi
+                if grep 'up' <<< $(comm -13 <(echo "$stt1") <(echo "$stt2")); then break; fi
                 sleep 0.2
-                if grep 'down' <<<$(comm -13 <(echo "$stt1") <(echo "$stt2")); then break; fi
-                done
+                if grep 'down' <<< $(comm -13 <(echo "$stt1") <(echo "$stt2")); then break; fi
+            done
             "/usr/share/idiomind/add.sh" new_items "" 2 "$(xclip -selection primary -o)"
         fi
     done
-    exit 0
+    return 0
 }
 
 cbwatch
