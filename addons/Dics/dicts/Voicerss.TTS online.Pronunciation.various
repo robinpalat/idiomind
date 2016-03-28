@@ -4,7 +4,8 @@
 #http://www.voicerss.org/api/documentation.aspx
 
 if [[ "$1" = dlgcnfg ]]; then
-    label='Text-to-speech (TTS) API Documentation\nhttp://www.voicerss.org/api/documentation.aspx'
+    label="$(gettext "Languages"): English, Spanish, Portuguese, Russian, Italian, German, French, Chinese
+Text-to-speech (TTS) API Documentation\nhttp://www.voicerss.org/api/documentation.aspx"
     DC_a="$HOME/.config/idiomind/addons"
     if [ ! -f "$DC_a/voicerss.cfg" ] || [[ -z "$(< "$DC_a/voicerss.cfg")" ]]; then
     echo -e "voice=\"\"\nspeed=\"\"\nkey=\"\"" > "$DC_a/voicerss.cfg"; fi

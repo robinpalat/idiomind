@@ -218,9 +218,9 @@ function notebook_2() {
 } >/dev/null 2>&1
 
 function dialog_1() {
-    yad --title="$(gettext "Review")" \
+    yad --title="$(gettext "Review") - ${tpc}" \
     --class=idiomind --name=Idiomind \
-    --text="\"${tpc}\"\n$(gettext "<b>Would you like to review it?</b>\n The waiting period already has been completed.")" \
+    --text="$(gettext "<b>Would you like to review it?</b>\n The waiting period already has been completed.")" \
     --image='view-refresh' \
     --window-icon=idiomind \
     --buttons-layout=edge --center --on-top \

@@ -403,7 +403,7 @@ function process() {
     if [ ${#@} -lt 4 ]; then
         while read l; do
             if [ $(wc -c <<< "${l}") -gt 140 ]; then
-                if grep -o -E '\,|\;' <<< "${l}"; then
+                if grep -o -E '\,|\;' <<< "${l}" >/dev/null 2>&1; then
                     while read -r split; do
                         if [ $(wc -c <<< "${split}") -le 140 ]; then
                             lenght "${split}"
