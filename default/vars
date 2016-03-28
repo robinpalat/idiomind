@@ -2,7 +2,7 @@
 "trgt{$trgt}srce{$srce}exmp{$exmp}defn{$defn}note{$note}wrds{$wrds}grmr{$grmr}tags{$tags}mark{$mark}link{$link}cdid{$cdid}type{$type}"
 "\"name\":\"${tpc}\",\"slng\":\"${slng^}\",\"tlng\":\"${tlng^}\",\"autr\":\"${autr}\",\"cntt\":\"${cntt}\",\"ctgy\":\"${ctgy}\",\"ilnk\":\"${ilnk}\",\"orig\":\"${tpc}\",\"dtec\":\"${dtec}\",\"dteu\":\"${dteu}\",\"dtei\":\"${dtei}\",\"nwrd\":\"${nwrd}\",\"nsnt\":\"${nsnt}\",\"nimg\":\"${nimg}\",\"naud\":\"${naud}\",\"nsze\":\"${nsze}\",\"levl\":\"${levl}\",\"md5i\":\"${md5i}\""
 "name=\"${tpc}\"\nslng=\"${slng^}\"\ntlng=\"${tlng^}\"\nautr=\"${autr}\"\ncntt=\"${cntt}\"\nctgy=\"${ctgy}\"\nilnk=\"${ilnk}\"\norig=\"${orig}\"\ndtec=\"${dtec}\"\ndteu=\"${dteu}\"\ndtei=\"${dtei}\"\nnwrd=\"${nwrd}\"\nnsnt=\"${nsnt}\"\nnimg=\"${nimg}\"\nnaud=\"${naud}\"\nnsze=\"${nsze}\"\nlevl=\"${levl}\"\nmd5i=\"${md5i}\""
-"<a href='/${tlng,}/${ctgy,}/$tpcid.${orig}.idmnd'>"$(gettext "Download")"</a> | <a href='/study.php?l=${tlng,}&c=${ctgy,}&set=$tpcid.${orig}'>"$(gettext "Study")"</a><br>"
+"<a href=\"/${tlng,}/${ctgy,}/$tpcid.${orig}.idmnd\">"$(gettext "Download")"</a> | <a href=\"/study.php?l=${tlng,}&c=${ctgy,}&set=$tpcid.${orig}\">"$(gettext "Study")"</a><br>"
 
 
 #1line item json

@@ -461,22 +461,18 @@ edit_list() {
             [ $? = 0 ] && ret=4 || ret=1
             
         elif [ $ret = 5 ]; then
-        
-            if [ -e "$direc/0.data" ]; then
-            field="--field=$(gettext "Restore")!edit-delete:8"
-            else field="--field=" ":lbl"; fi
-            
+            if [ -e "$direc/0.data" ]; then r="$(gettext "Restore")"; fi
             source "$DS/default/source_langs.cfg"
             list1=$(for i in "${!tranlangs[@]}"; do echo -n "!$i"; done)
             l="$(yad --form --title="$(gettext "Translate")" --text=" " \
             --class=Idiomind --name=Idiomind \
             --separator='' --always-print-result --window-icon=idiomind \
             --buttons-layout=end --align=right --center --on-top \
-            --width=460 --height=170 --borders=10 "$field" \
-            --field="$(gettext "Select source language to translate")":CB "$list1" \
+            --width=460 --height=170 --borders=10 \
+            --field="$(gettext "Select source language to translate")":CB "${r}${list1}" \
             --button="$(gettext "Cancel")":1 \
             --button="$(gettext "OK")":0)"
-            r="$?"; if [ $r = 8 ]; then 
+            r="$?"
             [ $l != $slng ] && idiomind translate $l & ret=1
             
         elif [ $ret = 6 ]; then
