@@ -222,7 +222,7 @@ fi
 
 function topic() {
     source "$DS/ifs/cmns.sh"
-    [ -e "${DC_tlt}/8.cfg" ] && export mode=`sed -n 1p "${DC_tlt}/8.cfg"`
+    [ -e "${DC_tlt}/8.cfg" ] && export mode=$(sed -n 1p "${DC_tlt}/8.cfg")
     if ! [[ ${mode} =~ $numer ]]; then exit 1; fi
 
     readd(){
@@ -495,7 +495,7 @@ idiomind_start() {
     ( if [[ "${cu}" = TRUE ]]; then
     "$DS/ifs/tls.sh" a_check_updates; fi ) &
     
-    if [[ `grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg"` = TRUE ]] && \
+    if [[ $(grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]] && \
     [ ! -e $DT/clipw ]; then
         sed -i "s/clipw=.*/clipw=\"FALSE\"/g" "$DC_s/1.cfg"
     fi
