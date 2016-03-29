@@ -123,8 +123,8 @@ config_dlg() {
     --field="$(gettext "Check for updates")":BTN "$DS/ifs/tls.sh 'check_updates'" \
     --field="$(gettext "About")":BTN "$DS/ifs/tls.sh 'about'" > "$cnf1" &
     cat "$DS_a/menu_list" |yad --plug=$KEY --tabnum=2 --list \
-    --text=" $(gettext "Double-click to set") " \
-    --print-all --dclick-action="$DS/ifs/dclik.sh" \
+    --text=" $(gettext "Click to configure") " \
+    --print-all --select-action="$DS/ifs/dclik.sh" \
     --expand-column=2 --no-headers \
     --column=icon:IMG --column=Action &
     yad --notebook --key=$KEY --title="$(gettext "Settings")" \

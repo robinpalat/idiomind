@@ -473,6 +473,7 @@ edit_list() {
             --button="$(gettext "Cancel")":1 \
             --button="$(gettext "OK")":0)"
             r="$?"
+            [ "$r" != 0 ] && return 1
             [ "$l" != $slng ] && idiomind translate "$l" & ret=1
             
         elif [ $ret = 6 ]; then
