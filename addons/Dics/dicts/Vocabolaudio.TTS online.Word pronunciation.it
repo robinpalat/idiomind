@@ -4,9 +4,8 @@ if [[ "$1" = dlgcnfg ]]; then
 source "$DS/ifs/cmns.sh"
 msg "$(gettext "Languages"): Italian
 \n$(gettext "Does not need configuration")\n" dialog-information "$4"
-
 else
-export LINK="http://www.vocabolaudio.com/audio-it/${word}.mp3"
-export ex='mp3'
+    export LINK="http://www.vocabolaudio.com/audio-it/${word}.mp3"
+    export ex='mp3'
 fi
 

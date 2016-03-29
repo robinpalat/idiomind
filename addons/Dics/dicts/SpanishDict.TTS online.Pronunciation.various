@@ -6,11 +6,11 @@ source "$DS/ifs/cmns.sh"
 msg "$(gettext "Languages"): English, Spanish
 \n$(gettext "Does not need configuration")\n" dialog-information "$4"
 else
-if [ "$lgt" = en ]; then t=en
-elif [ "$lgt" = es ]; then t=es
-fi
-export LINK="http://audio1.spanishdict.com/audio?lang=$t&text=${word}"
-export ex='mp3'
+    if [ "$lgt" = en ]; then t=en
+    elif [ "$lgt" = es ]; then t=es
+    fi
+    export LINK="http://audio1.spanishdict.com/audio?lang=$t&text=${word}"
+    export ex='mp3'
 fi
 
 

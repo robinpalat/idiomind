@@ -5,12 +5,11 @@ source "$DS/ifs/cmns.sh"
 msg "$(gettext "Languages"): Chinese, English, Japanese, Portuguese, Spanish
 \n$(gettext "Does not need configuration")\n" dialog-information "$4"
 else
-if [ "$lgt" = zh-cn ]; then t=zh
-elif [ "$lgt" = en ]; then t=en
-elif [ "$lgt" = ja ]; then t=jp
-elif [ "$lgt" = pt ]; then t=pt
-elif [ "$lgt" = es ]; then t=es
-fi
-export LINK="http://tts.baidu.com/text2audio?lan=$t&ie=UTF-8&text=${word}"
-export ex='mp3'
+    if [ "$lgt" = zh-cn ]; then t=zh
+    elif [ "$lgt" = en ]; then t=en
+    elif [ "$lgt" = ja ]; then t=jp
+    elif [ "$lgt" = pt ]; then t=pt
+    elif [ "$lgt" = es ]; then t=es; fi
+    export LINK="http://tts.baidu.com/text2audio?lan=$t&ie=UTF-8&text=${word}"
+    export ex='mp3'
 fi

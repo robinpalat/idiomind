@@ -4,7 +4,7 @@ if [[ "$1" = dlgcnfg ]]; then
 source "$DS/ifs/cmns.sh"
 msg "$(gettext "Does not need configuration")\n" dialog-information "$4"
 else
-url="https://commons.wikimedia.org/wiki/$1"
-urimg="$(wget -q "$url" -O - |grep -o -P '//upload.*?jpg' |sed -e 's/\(thumb\/\)//g' |sed -e 's/^/http:/g' |head -n1)"
-wget -T 51 -q -U Mozilla -O "$DT/$1.jpg" "$urimg"
+    url="https://commons.wikimedia.org/wiki/$1"
+    urimg="$(wget -q "$url" -O - |grep -o -P '//upload.*?jpg' |sed -e 's/\(thumb\/\)//g' |sed -e 's/^/http:/g' |head -n1)"
+    wget -T 51 -q -U Mozilla -O "$DT/$1.jpg" "$urimg"
 fi

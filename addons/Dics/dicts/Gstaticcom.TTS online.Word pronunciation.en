@@ -5,7 +5,7 @@ source "$DS/ifs/cmns.sh"
 msg "$(gettext "Languages"): English
 \n$(gettext "Does not need configuration")\n" dialog-information "$4"
 else
-export LINK="http://ssl.gstatic.com/dictionary/static/sounds/de/0/${word}.mp3"
-export ex='mp3'
+    export LINK="http://ssl.gstatic.com/dictionary/static/sounds/de/0/${word}.mp3"
+    export ex='mp3'
 fi
 
