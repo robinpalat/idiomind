@@ -23,13 +23,13 @@ if [[ ${1} = 0 ]]; then
             if [ ${n} = TRUE ]; then
                 notify-send -i "${icon}" "${trgt}" "${srce}" &
             fi
-            if [ ${a} = TRUE ]; then sleep 0.5; sle=0.5; spn=1
+            if [ ${a} = TRUE ]; then sleep 0.2; sle=0.1; spn=1
                 [ ${type} = 1 -a ${rw} = 1 ] && spn=${word_rep}
                 [ ${type} = 2 -a ${rw} = 2 ] && spn=${sentence_rep} && sle=1
                 ( while [ ${ritem} -lt ${spn} ]; do
                     "$DS"/play.sh play_file "${file}" "${trgt}"
                     [ ${ritem} = 0 ] && sleep ${sle}
-                    [ ${ritem} = 1 ] && sleep 2.5
+                    [ ${ritem} = 1 ] && sleep 2
                     [ ${ritem} = 2 ] && sleep 2
                     let ritem++
                 done )

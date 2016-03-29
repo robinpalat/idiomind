@@ -272,7 +272,6 @@ function topic() {
                      sed '/|FALSE|/d' "${cnf1}" > "$DT/tmpf1"
                      mv "$DT/tmpf1" "$tab1"
                 done
-                
                 sed -i 's/|TRUE|//;s/|//;s/<[^>]*>//g' "${cnf1}"
                 cat "${cnf1}" >> "${ls2}"
 

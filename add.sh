@@ -277,6 +277,7 @@ function list_words_sentence() {
             cleanups "$DT_r"
             exit 1
         fi
+    [ ! -e "$DT_r/slts" ] && return 1
     n=1
     while read -r trgt; do
         if [ $(wc -l < "${DC_tlt}/0.cfg") -ge 200 ]; then
