@@ -467,7 +467,7 @@ translate_to() {
     l="$(grep -o 'tlng="[^"]*' "${DC_tlt}/id.cfg" |grep -o '[^"]*$')"
     if [ -n "$l" ]; then lgt=${tlangs[$l]}; else lgt=${tlangs[$tlng]}; fi
 
-    if [ "$2" = "$(gettext "Restore")" -o $2 = restore ]; then
+    if [ "$2" = "$(gettext "Restore original")" -o "$2" = restore ]; then
         if [ -e "${DC_tlt}/0.data" ]; then
             mv -f "${DC_tlt}/0.data" "${DC_tlt}/0.cfg"
             echo -e "  done!"

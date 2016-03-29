@@ -461,7 +461,7 @@ edit_list() {
             [ $? = 0 ] && ret=4 || ret=1
             
         elif [ $ret = 5 ]; then
-            if [ -e "$direc/0.data" ]; then r="$(gettext "Restore")"; fi
+            if [ -e "$direc/0.data" ]; then r="$(gettext "Restore original")"; fi
             source "$DS/default/source_langs.cfg"
             list1=$(for i in "${!tranlangs[@]}"; do echo -n "!$i"; done)
             l="$(yad --form --title="$(gettext "Translate")" --text=" " \
@@ -473,7 +473,7 @@ edit_list() {
             --button="$(gettext "Cancel")":1 \
             --button="$(gettext "OK")":0)"
             r="$?"
-            [ $l != $slng ] && idiomind translate $l & ret=1
+            [ "$l" != $slng ] && idiomind translate "$l" & ret=1
             
         elif [ $ret = 6 ]; then
             msg_2 "$(gettext "Are you sure you want to do this?")\n" \
