@@ -13,13 +13,13 @@ function f_lock() {
 function create_db() {
     if [ ! -e "${db}" ]; then
         echo -n "create table if not exists ${mtable} \
-        (month TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT);" |sqlite3 ${db}
+        (month TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT);" |sqlite3 "${db}"
         echo -n "create table if not exists ${wtable} \
-        (week TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT, val5 TEXT);" |sqlite3 ${db}
-        echo -n ${cdate} |tee ${tdate} ${wdate}
+        (week TEXT, val0 TEXT, val1 TEXT, val2 TEXT, val3 TEXT, val4 TEXT, val5 TEXT);" |sqlite3 "${db}"
+        echo -n ${cdate} |tee "${tdate}" "${wdate}"
     fi
-    [ ! -e ${tdate} ] && echo -n ${cdate} > ${tdate}
-    [ ! -e ${wdate} ] && echo -n ${cdate} > ${wdate}
+    [ ! -e "${tdate}" ] && echo -n ${cdate} > "${tdate}"
+    [ ! -e "${wdate}" ] && echo -n ${cdate} > "${wdate}"
 }
 
 function save_topic_stats() {
@@ -62,21 +62,21 @@ function save_topic_stats() {
     }
 
     rdata=$(count)
-    f0=$(cut -d ',' -f 1 <<<"$rdata"); ! [[ ${f0} =~ $int ]] && f0=0
-    f1=$(cut -d ',' -f 2 <<<"$rdata"); ! [[ ${f1} =~ $int ]] && f1=0
-    f2=$(cut -d ',' -f 3 <<<"$rdata"); ! [[ ${f2} =~ $int ]] && f2=0
-    f3=$(cut -d ',' -f 4 <<<"$rdata"); ! [[ ${f3} =~ $int ]] && f3=0
-    f4=$(cut -d ',' -f 5 <<<"$rdata"); ! [[ ${f4} =~ $int ]] && f4=0
+    f0=$(cut -d ',' -f 1 <<< "$rdata"); ! [[ ${f0} =~ $int ]] && f0=0
+    f1=$(cut -d ',' -f 2 <<< "$rdata"); ! [[ ${f1} =~ $int ]] && f1=0
+    f2=$(cut -d ',' -f 3 <<< "$rdata"); ! [[ ${f2} =~ $int ]] && f2=0
+    f3=$(cut -d ',' -f 4 <<< "$rdata"); ! [[ ${f3} =~ $int ]] && f3=0
+    f4=$(cut -d ',' -f 5 <<< "$rdata"); ! [[ ${f4} =~ $int ]] && f4=0
 
     if [[ "$1" = 1 ]]; then
         if [[ $(sqlite3 ${db} "select month from '${mtable}' where month is '${month}';") ]]; then :
         else
             sqlite3 ${db} "insert into ${mtable} (month,val0,val1,val2,val3,val4) \
             values ('${month}','${f0}','${f1}','${f2}','${f3}','${f4}');"
-            echo -n ${cdate} > ${tdate}
+            echo -n ${cdate} > "${tdate}"
         fi
     fi
-    echo "${f0},${f1},${f2},${f3},${f4}" > ${pross}
+    echo "${f0},${f1},${f2},${f3},${f4}" > "${pross}"
 }
 
 function save_word_stats() {
@@ -134,9 +134,9 @@ function save_word_stats() {
         D3=$(cut -d ',' -f 4 <<< "${rdata}"); ! [[ ${D3} =~ $int ]] && D3=0
         D4=$(cut -d ',' -f 5 <<< "${rdata}"); ! [[ ${D4} =~ $int ]] && D4=0
         D5=$(cut -d ',' -f 6 <<< "${rdata}"); ! [[ ${D5} =~ $int ]] && D5=0
-        sqlite3 ${db} "insert into ${wtable} (week,val0,val1,val2,val3,val4,val5) \
+        sqlite3 "${db}" "insert into ${wtable} (week,val0,val1,val2,val3,val4,val5) \
         values ('${week^}','${D0}','${D1}','${D2}','${D3}','${D4}','${D5}');"
-        echo -n ${cdate} > ${wdate}
+        echo -n ${cdate} > "${wdate}"
     fi
 }
 
@@ -229,8 +229,8 @@ function mk_topic_stats() {
     field3="[$e01,$e02,$e03,$e04,$e05,$e06,$e07,$e08,$e09,$e10]"
     field4="[$f01,$f02,$f03,$f04,$f05,$f06,$f07,$f08,$f09,$f10]"
     field5="[$g01,$g02,$g03,$g04,$g05,$g06,$g07,$g08,$g09,$g10]"
-    echo -e "data2='[{\"wk\":$fieldw,\"f0\":$field0,\"f1\":$field1,\"f2\":$field2,\"f3\":$field3,\"f4\":$field4,\"f5\":$field5}]';" >> ${data}
-    cp -f ${data} ${databk}
+    echo -e "data2='[{\"wk\":$fieldw,\"f0\":$field0,\"f1\":$field1,\"f2\":$field2,\"f3\":$field3,\"f4\":$field4,\"f5\":$field5}]';" >> "${data}"
+    cp -f "${data}" "${databk}"
 }
 
 pross="$DM_tls/data/pre_data"
@@ -254,21 +254,21 @@ function pre_comp() {
     f_lock "$DT/p_stats"
     val1=0; val2=0
     
-    if [ -e ${tdate} ]; then
-        dte=$(< ${tdate})
+    if [ -e "${tdate}" ]; then
+        dte=$(< "${tdate}")
         if [ $((($(date +%s)-$(date -d ${dte} +%s))/(24*60*60))) -gt 31 ]; then
-            rm -f ${tdate}
+            rm -f "${tdate}"
         fi
     fi
-    if [ -e ${wdate} ]; then
-        dte=$(< ${wdate})
+    if [ -e "${wdate}" ]; then
+        dte=$(< "${wdate}")
         if [ $((($(date +%s)-$(date -d ${dte} +%s))/(24*60*60))) -gt 7 ]; then
-            rm -f ${wdate}
+            rm -f "${wdate}"
         fi
     fi
     
-    [ ${dtmnth} = 01 -o ! -e ${tdate} ] && val1=1
-    [ ${dtweek} = 0 -o ! -e ${wdate} ] && val2=1
+    [ ${dtmnth} = 01 -o ! -e "${tdate}" ] && val1=1
+    [ ${dtweek} = 0 -o ! -e "${wdate}" ] && val2=1
 
     if [ ${val1} = 1 -a ${val2} != 1 ]; then
         save_topic_stats 1
@@ -283,10 +283,10 @@ function pre_comp() {
 }
 
 function stats() {
-    if [ ! -e ${data} -o -e ${pross} ]; then
+    if [ ! -e "${data}" -o -e "${pross}" ]; then
         f_lock "$DT/p_stats"
-        [ ! -e ${data} ] && cp -f ${databk} ${data}
-        [ ! -e ${pross} ] && save_topic_stats 0
+        [ ! -e "${data}" ] && cp -f "${databk}" "${data}"
+        [ ! -e "${pross}" ] && save_topic_stats 0
         mk_topic_stats
         rm -f "$DT/p_stats"
     fi
