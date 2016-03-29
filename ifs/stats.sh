@@ -181,7 +181,7 @@ function mk_topic_stats() {
     field2="[$c01,$c02,$c03,$c04,$c05,$c06,$c07,$c08,$c09,$c10,$c11,$c12]"
     field3="[$d01,$d02,$d03,$d04,$d05,$d06,$d07,$d08,$d09,$d10,$d11,$d12]"
     field4="[$e01,$e02,$e03,$e04,$e05,$e06,$e07,$e08,$e09,$e10,$e11,$e12]"
-    echo -e "data1='[{\"f0\":$field0,\"f1\":$field1,\"f2\":$field2,\"f3\":$field3,\"f4\":$field4}]';" > ${data}
+    echo -e "data1='[{\"f0\":$field0,\"f1\":$field1,\"f2\":$field2,\"f3\":$field3,\"f4\":$field4}]';" > "${data}"
 
     exec 3< <(sqlite3 "$db" "select week FROM ${wtable}" |tail -n9)
     exec 4< <(sqlite3 "$db" "select val0 FROM ${wtable}" |tail -n9)
