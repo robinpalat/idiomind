@@ -23,8 +23,7 @@
 
 if [[ "$1" = dlgcnfg ]]; then
 source "$DS/ifs/cmns.sh"
-msg "$(gettext "Languages"): All
-\n$(gettext "Does not need configuration")\n" dialog-information "$4"
+msg "$(gettext "Does not need configuration")\n" dialog-information "$4"
 else
     useragent='Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0'
     result=$(curl -s -i --user-agent "$useragent" -d "sl=$2" -d "tl=$3" --data-urlencode text="${1,}" https://translate.google.com)

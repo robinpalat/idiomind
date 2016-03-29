@@ -98,7 +98,7 @@ function dlg() {
     echo -e "$tlng\n$v_dicts" > "$DC_a/dict/.dict"
     for r in "$DS_a/Dics/dicts"/*; do > "$disables/$(basename "$r")"; done; fi
     
-    txtinf=" $(gettext "Please, select at least one resource (script) for each task")"
+    txtinf="$(gettext "Please, select at least one script for each task.\n<small>To start, is okay select all, later according to your preferences, you can go testing to disable some.</small>")"
     if [ -n "${1}" ]; then text="--text=$txtinf"; n=${1}
     else text="--center"; n=6; fi
 
@@ -119,7 +119,7 @@ function dlg() {
     --column="$(gettext "Language")":TEXT \
     --button="$(gettext "Add")":2 \
     --button="$(gettext "Cancel")":1 \
-    --button=OK:0 )"
+    --button=OK:0)"
     ret=$?
         if [ $ret -eq 2 ]; then
                 "$DS_a/Dics/cnfg.sh" add_dlg
