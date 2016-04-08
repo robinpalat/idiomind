@@ -106,6 +106,7 @@ config_dlg() {
     --field="$(gettext "Detect language of source text (slower)")":CHK "$ttrgt" \
     --field="$(gettext "Clipboard watcher")":CHK "$clipw" \
     --field="$(gettext "Show icon in the notification area")":CHK "$itray" \
+    --field="$(gettext "Make smaller windows")":CHK "$swind" \
     --field="$(gettext "Perform tasks at startup")":CHK "$stsks" \
     --field=" :LBL" " " \
     --field="$(gettext "Languages")\t":LBL " " \
@@ -149,15 +150,15 @@ config_dlg() {
             fi
             ((n=n+1))
         done
-        val=$(cut -d "|" -f18 < "$cnf1")
-        [[ "$val" != "$synth" ]] && \
-        sed -i "s/${csets[10]}=.*/${csets[10]}=\"$(sed 's|/|\\/|g' <<< "$val")\"/g" "$DC_s/1.cfg"
         val=$(cut -d "|" -f19 < "$cnf1")
-        [[ "$val" != "$txaud" ]] && \
+        [[ "$val" != "$synth" ]] && \
         sed -i "s/${csets[11]}=.*/${csets[11]}=\"$(sed 's|/|\\/|g' <<< "$val")\"/g" "$DC_s/1.cfg"
         val=$(cut -d "|" -f20 < "$cnf1")
+        [[ "$val" != "$txaud" ]] && \
+        sed -i "s/${csets[12]}=.*/${csets[12]}=\"$(sed 's|/|\\/|g' <<< "$val")\"/g" "$DC_s/1.cfg"
+        val=$(cut -d "|" -f21 < "$cnf1")
         [[ "$val" != "$intrf" ]] && \
-        sed -i "s/${csets[12]}=.*/${csets[12]}=\"$val\"/g" "$DC_s/1.cfg"
+        sed -i "s/${csets[13]}=.*/${csets[13]}=\"$val\"/g" "$DC_s/1.cfg"
         
         if [[ $(grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]] && [ ! -e $DT/clipw ]; then
             "$DS/ifs/clipw.sh" &
@@ -168,7 +169,7 @@ config_dlg() {
         [ ! -d  "$HOME/.config/autostart" ] \
         && mkdir "$HOME/.config/autostart"
         config_dir="$HOME/.config/autostart"
-        if cut -d "|" -f10 < "$cnf1" | grep "TRUE"; then
+        if cut -d "|" -f11 < "$cnf1" | grep "TRUE"; then
             if [ ! -f "$config_dir/idiomind.desktop" ]; then
             echo "$desktopfile" > "$config_dir/idiomind.desktop"
             fi
@@ -178,7 +179,7 @@ config_dlg() {
             fi
         fi
 
-        ntlang=$(cut -d "|" -f14 < "$cnf1")
+        ntlang=$(cut -d "|" -f15 < "$cnf1")
         if [[ $(gettext ${tlng}) != ${ntlang} ]]; then
             for val in "${lt[@]}"; do
                 if [[ ${ntlang} = $(gettext ${val}) ]]; then
@@ -192,7 +193,7 @@ config_dlg() {
             [ $? -eq 0 ] && set_lang ${tlng}
         fi
         
-        nslang=$(cut -d "|" -f15 < "$cnf1")
+        nslang=$(cut -d "|" -f16 < "$cnf1")
         if [[ $(gettext ${slng}) != ${nslang} ]]; then
             for val in "${ls[@]}"; do
                 if [[ ${nslang} = $(gettext ${val}) ]]; then

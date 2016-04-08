@@ -477,6 +477,7 @@ idiomind_start() {
     if [ ! -d "$DT" ]; then 
         new_session; cu=TRUE
     fi
+    
     if [ ! -e "$DT/tpe" ]; then
         cu=TRUE; tpe="$(sed -n 1p "$DC_s/4.cfg")"
         if ! ls -1a "$DS/addons/" |grep -Fxo "${tpe}" >/dev/null 2>&1; then
@@ -494,6 +495,8 @@ idiomind_start() {
     fi
     ( if [[ "${cu}" = TRUE ]]; then
     "$DS/ifs/tls.sh" a_check_updates; fi ) &
+    
+    export swind=$(grep -oP '(?<=itray=\").*(?=\")' "$DC_s/1.cfg")
     
     if [[ $(grep -oP '(?<=clipw=\").*(?=\")' "$DC_s/1.cfg") = TRUE ]] && \
     [ ! -e $DT/clipw ]; then
